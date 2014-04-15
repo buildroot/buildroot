@@ -34,6 +34,15 @@ config BR2_PACKAGE_AVAHI_DAEMON
 	  The daemon registers local IP addresses and services using
 	  mDNS/DNS-SD.
 
+config BR2_PACKAGE_AVAHI_LIBDNS_COMPAT
+	bool "mDNS/DNS-SD compat layer"
+	depends on BR2_PACKAGE_DBUS
+	help
+	  The Avahi mDNS/DNS-SD daemon implementing Apple's ZeroConf
+	  architecture (also known as "Rendezvous" or "Bonjour"). This
+	  option includes headers and library code needed to compile
+	  packages targeting the Apple API
+
 endif
 
 comment "avahi needs a toolchain w/ threads"
