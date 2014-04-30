@@ -1,0 +1,9 @@
+config BR2_PACKAGE_TCLBONJOUR
+	bool "tclbonjour"
+	select BR2_PACKAGE_AVAHI
+	select BR2_PACKAGE_AVAHI_LIBDNS_COMPAT
+	help
+	  A Tcl package for publishing and subscribing to network services via Multicast 
+	  DNS/DNS-SD (also known as Bonjour on OS X).
+	  
+	  https://github.com/eviltwinskippy/tcl_bonjour

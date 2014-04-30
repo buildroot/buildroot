@@ -101,6 +101,10 @@ else
 AVAHI_CONF_OPT += --with-xml=none
 endif
 
+ifeq ($(BR2_PACKAGE_AVAHI_LIBDNS_COMPAT),y)
+AVAHI_CONF_OPT += --enable-compat-libdns_sd=yes
+endif
+
 ifeq ($(BR2_PACKAGE_DBUS),y)
 AVAHI_DEPENDENCIES += dbus
 else

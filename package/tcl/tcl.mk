@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-TCL_VERSION_MAJOR = 8.4
-TCL_VERSION = $(TCL_VERSION_MAJOR).19
+TCL_VERSION_MAJOR = 8.6
+TCL_VERSION = $(TCL_VERSION_MAJOR).1
 TCL_SOURCE = tcl$(TCL_VERSION)-src.tar.gz
 TCL_SITE = http://downloads.sourceforge.net/project/tcl/Tcl/$(TCL_VERSION)
 TCL_LICENSE = tcl license
@@ -21,6 +21,9 @@ HOST_TCL_CONF_OPT = \
 		--disable-symbols \
 		--disable-langinfo \
 		--disable-framework
+
+TCL_CONF_ENV += ac_cv_func_strtod=yes \
+		tcl_cv_strtod_buggy=1
 
 ifeq ($(BR2_PACKAGE_TCL_DEL_ENCODINGS),y)
 define TCL_REMOVE_ENCODINGS
