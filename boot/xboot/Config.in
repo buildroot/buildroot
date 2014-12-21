@@ -1,0 +1,17 @@
+config BR2_TARGET_XBOOT
+	bool "xboot"
+	depends on BR2_arm || BR2_x86_64
+	select BR2_PACKAGE_SDL2
+	help
+	  The xboot not just a bootloader. It is a runtime environment
+	  for many SOC chips. It has a lua virtual machine and powerful
+	  2D graphic engine and may other furtures. Of course, It
+	  can be running on linux, windows or other operate systems.
+
+if BR2_TARGET_XBOOT
+config BR2_TARGET_XBOOT_PLATFORM
+	string "xboot platform name"
+	default "arm32-sandbox
+	help
+	  One of xboot supported platform to be built.
+endif
