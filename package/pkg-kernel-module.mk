@@ -60,7 +60,7 @@ $(2)_MODULE_SUBDIRS ?= .
 # includes and other support files (Booo!)
 define $(2)_KERNEL_MODULES_BUILD
 	@$$(call MESSAGE,"Building kernel module(s)")
-	@if ! grep -Fqx 'CONFIG_MODULES=y' $(LINUX_DIR)/.config; then \
+	@if ! grep -Fqx 'CONFIG_MODULES=y' $$(LINUX_DIR)/.config; then \
 		echo "ERROR: Kernel does not support loadable modules"; \
 		exit 1; \
 	fi
