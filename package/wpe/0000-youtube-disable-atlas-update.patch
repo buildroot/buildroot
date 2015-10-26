@@ -1,0 +1,59 @@
+diff --git a/Source/WebCore/platform/graphics/texmap/coordinated/CompositingCoordinator.cpp b/Source/WebCore/platform/graphics/texmap/coordinated/CompositingCoordinator.cpp
+index b38a9d6..cc62a6d 100644
+--- a/Source/WebCore/platform/graphics/texmap/coordinated/CompositingCoordinator.cpp
++++ b/Source/WebCore/platform/graphics/texmap/coordinated/CompositingCoordinator.cpp
+@@ -375,6 +375,7 @@ void CompositingCoordinator::purgeBackingStores()
+ 
+ bool CompositingCoordinator::paintToSurface(const IntSize& size, CoordinatedSurface::Flags flags, uint32_t& atlasID, IntPoint& offset, CoordinatedSurface::Client* client)
+ {
++#if 0
+     for (auto& updateAtlas : m_updateAtlases) {
+         UpdateAtlas* atlas = updateAtlas.get();
+         if (atlas->supportsAlpha() == (flags & CoordinatedSurface::SupportsAlpha)) {
+@@ -383,9 +384,10 @@ bool CompositingCoordinator::paintToSurface(const IntSize& size, CoordinatedSurf
+                 return true;
+         }
+     }
++#endif
+ 
+-    static const int ScratchBufferDimension = 512; // Should be a power of two.
+-    m_updateAtlases.append(std::make_unique<UpdateAtlas>(this, ScratchBufferDimension, flags));
++    // static const int ScratchBufferDimension = 512; // Should be a power of two.
++    m_updateAtlases.append(std::make_unique<UpdateAtlas>(this, size, flags));
+     scheduleReleaseInactiveAtlases();
+     return m_updateAtlases.last()->paintOnAvailableBuffer(size, atlasID, offset, client);
+ }
+diff --git a/Source/WebCore/platform/graphics/texmap/coordinated/UpdateAtlas.cpp b/Source/WebCore/platform/graphics/texmap/coordinated/UpdateAtlas.cpp
+index 5ff6125..a33df75 100644
+--- a/Source/WebCore/platform/graphics/texmap/coordinated/UpdateAtlas.cpp
++++ b/Source/WebCore/platform/graphics/texmap/coordinated/UpdateAtlas.cpp
+@@ -56,13 +56,13 @@ private:
+     bool m_supportsAlpha;
+ };
+ 
+-UpdateAtlas::UpdateAtlas(Client* client, int dimension, CoordinatedSurface::Flags flags)
++UpdateAtlas::UpdateAtlas(Client* client, const IntSize& size, CoordinatedSurface::Flags flags)
+     : m_client(client)
+     , m_inactivityInSeconds(0)
+ {
+     static uint32_t nextID = 0;
+     m_ID = ++nextID;
+-    IntSize size = nextPowerOfTwo(IntSize(dimension, dimension));
++    // IntSize size = nextPowerOfTwo(IntSize(dimension, dimension));
+     m_surface = CoordinatedSurface::create(size, flags);
+ 
+     m_client->createUpdateAtlas(m_ID, m_surface);
+diff --git a/Source/WebCore/platform/graphics/texmap/coordinated/UpdateAtlas.h b/Source/WebCore/platform/graphics/texmap/coordinated/UpdateAtlas.h
+index cf86782..58b00df 100644
+--- a/Source/WebCore/platform/graphics/texmap/coordinated/UpdateAtlas.h
++++ b/Source/WebCore/platform/graphics/texmap/coordinated/UpdateAtlas.h
+@@ -42,7 +42,7 @@ public:
+         virtual void removeUpdateAtlas(uint32_t /* id */) = 0;
+     };
+ 
+-    UpdateAtlas(Client*, int dimension, CoordinatedSurface::Flags);
++    UpdateAtlas(Client*, const IntSize&, CoordinatedSurface::Flags);
+     ~UpdateAtlas();
+ 
+     inline IntSize size() const { return m_surface->size(); }
+
