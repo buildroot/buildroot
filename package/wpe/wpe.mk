@@ -8,7 +8,7 @@ WPE_VERSION = ae9091e2168b8de95033f77c1e20861363da9bc8
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
-WPE_DEPENDENCIES = host-flex host-bison host-gperf host-ruby ruby \
+WPE_DEPENDENCIES = host-flex host-bison host-gperf host-ruby \
 	host-pkgconf zlib pcre libgles libegl cairo freetype fontconfig \
 	harfbuzz icu libxml2 libxslt sqlite libsoup jpeg libpng webp \
 	gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad
@@ -24,10 +24,6 @@ endif
 ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
 WPE_EXTRA_CFLAGS += \
 	-D__UCLIBC__
-endif
-
-ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_GL),y)
-WPE_FLAGS += -DUSE_GSTREAMER_GL=OFF
 endif
 
 WPE_CONF_OPTS = -DPORT=WPE -DCMAKE_BUILD_TYPE=Release \
