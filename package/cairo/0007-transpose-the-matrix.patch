@@ -1,0 +1,31 @@
+From dd8e6a461d53add34008ea9f33e7f1dba5d2c5cb Mon Sep 17 00:00:00 2001
+From: Zan Dobersek <zdobersek@igalia.com>
+Date: Mon, 17 Nov 2014 01:29:03 -0800
+Subject: [PATCH] Manually transpose the matrix in
+ _cairo_gl_shader_bind_matrix().
+
+---
+ src/cairo-gl-shaders.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/cairo-gl-shaders.c b/src/cairo-gl-shaders.c
+index 2710606..fe975d2 100644
+--- a/src/cairo-gl-shaders.c
++++ b/src/cairo-gl-shaders.c
+@@ -973,12 +973,12 @@ _cairo_gl_shader_bind_matrix (cairo_gl_context_t *ctx,
+ {
+     cairo_gl_dispatch_t *dispatch = &ctx->dispatch;
+     float gl_m[9] = {
+-	m->xx, m->xy, m->x0,
+-	m->yx, m->yy, m->y0,
+-	0,     0,     1
++	m->xx, m->yx, 0,
++	m->xy, m->yy, 0,
++	m->x0, m->y0, 1
+     };
+     assert (location != -1);
+-    dispatch->UniformMatrix3fv (location, 1, GL_TRUE, gl_m);
++    dispatch->UniformMatrix3fv (location, 1, GL_FALSE, gl_m);
+ }
+ 
+ void
