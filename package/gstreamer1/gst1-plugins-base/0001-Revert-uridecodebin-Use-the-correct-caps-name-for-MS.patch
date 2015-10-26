@@ -1,0 +1,27 @@
+From 940df6998804e9b2b23614aa916e6c6bfc43de45 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Tue, 22 Sep 2015 09:00:15 +0200
+Subject: [PATCH] Revert "uridecodebin: Use the correct caps name for MS Smooth
+ Streaming manifests"
+
+This reverts commit 2a1e046dd9853fb13caf80e3b3bc11fbcae09d86.
+---
+ gst/playback/gsturidecodebin.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gst/playback/gsturidecodebin.c b/gst/playback/gsturidecodebin.c
+index 24e4427..784d010 100644
+--- a/gst/playback/gsturidecodebin.c
++++ b/gst/playback/gsturidecodebin.c
+@@ -1288,7 +1288,7 @@ static const gchar *blacklisted_uris[] = { NULL };
+ 
+ /* media types that use adaptive streaming */
+ static const gchar *adaptive_media[] = {
+-  "application/x-hls", "application/vnd.ms-sstr+xml",
++  "application/x-hls", "application/x-smoothstreaming-manifest",
+   "application/dash+xml", NULL
+ };
+ 
+-- 
+2.5.0
+

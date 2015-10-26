@@ -1,0 +1,12 @@
+diff -rupN a/plugins/elements/gsttypefindelement.c b/plugins/elements/gsttypefindelement.c
+--- a/plugins/elements/gsttypefindelement.c	2015-03-09 14:23:30.699546672 +0000
++++ b/plugins/elements/gsttypefindelement.c	2015-03-09 14:25:12.575549401 +0000
+@@ -97,7 +97,7 @@ GST_STATIC_PAD_TEMPLATE ("src",
+ 
+ /* Require at least 2kB of data before we attempt typefinding in chain-mode.
+  * 128kB is massive overkill for the maximum, but doesn't do any harm */
+-#define TYPE_FIND_MIN_SIZE   (2*1024)
++#define TYPE_FIND_MIN_SIZE   (1*1024)
+ #define TYPE_FIND_MAX_SIZE (128*1024)
+ 
+ /* TypeFind signals and args */

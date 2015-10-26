@@ -1,0 +1,37 @@
+From a00abaad62e671d86709b631d2c21d886438c8e6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Sat, 11 Jul 2015 12:06:38 +0000
+Subject: [PATCH 1/2] Use the tfdt decode time when it's higher than the time
+ in the last sample
+
+---
+ gst/isomp4/qtdemux.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index 811523c..2eeb3fe 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -578,6 +578,7 @@ gst_qtdemux_init (GstQTDemux * qtdemux)
+       qtdemux_sink_activate_mode);
+   gst_pad_set_chain_function (qtdemux->sinkpad, gst_qtdemux_chain);
+   gst_pad_set_event_function (qtdemux->sinkpad, gst_qtdemux_handle_sink_event);
++
+   gst_element_add_pad (GST_ELEMENT_CAST (qtdemux), qtdemux->sinkpad);
+ 
+   qtdemux->state = QTDEMUX_STATE_INITIAL;
+@@ -2819,6 +2820,11 @@ qtdemux_parse_trun (GstQTDemux * qtdemux, GstByteReader * trun,
+           stream->samples[stream->n_samples - 1].timestamp +
+           stream->samples[stream->n_samples - 1].duration;
+ 
++      if (decode_ts > timestamp) {
++          GST_INFO_OBJECT (qtdemux, "decode_ts > timestamp, using decode_ts");
++          timestamp = decode_ts;
++      }
++
+       gst_ts = QTSTREAMTIME_TO_GSTTIME (stream, timestamp);
+       GST_INFO_OBJECT (qtdemux, "first sample ts %" GST_TIME_FORMAT
+           " (extends previous samples)", GST_TIME_ARGS (gst_ts));
+-- 
+1.8.3.2
+
