@@ -8,9 +8,9 @@ WPE_VERSION = ae9091e2168b8de95033f77c1e20861363da9bc8
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
-WPE_DEPENDENCIES = host-flex host-bison host-gperf host-ruby \
-	host-pkgconf zlib pcre libgles libegl cairo freetype fontconfig \
-	harfbuzz icu libxml2 libxslt sqlite libsoup jpeg libpng webp \
+WPE_DEPENDENCIES = host-flex host-bison host-gperf host-ruby host-pkgconf \
+	zlib pcre libgles libegl cairo freetype fontconfig harfbuzz icu \
+	libxml2 libxslt sqlite libsoup jpeg libpng webp libinput libxkbcommon \
 	gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad
 
 ifeq ($(BR2_PACKAGE_WAYLAND),y)
