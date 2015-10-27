@@ -1,10 +1,4 @@
 #!/bin/sh
-if [ "$1" = "--loop" ];
-then
-	killall WPELauncher WPEWebProcess WPENetworkProcess &> /dev/null
-else
-	/etc/init.d/S90wpe stop &> /dev/null
-fi
 
 # Enable cookie persistent storage
 export WPE_SHELL_COOKIE_STORAGE=1
