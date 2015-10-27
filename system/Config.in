@@ -18,6 +18,11 @@ config BR2_TARGET_GENERIC_ISSUE
 	  Leave empty to not create /etc/issue, or to keep the
 	  one from a custom skeleton.
 
+config BR2_TARGET_GENERIC_CABUNDLE
+	bool "Install CA bundle"
+	help
+	  Install CA bundle from curl.
+
 choice
 	bool "Passwords encoding"
 	default BR2_TARGET_GENERIC_PASSWD_MD5

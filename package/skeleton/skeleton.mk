@@ -64,6 +64,14 @@ endef
 TARGET_FINALIZE_HOOKS += SYSTEM_HOSTNAME
 endif
 
+ifeq ($(BR2_TARGET_GENERIC_CABUNDLE),y)
+define SYSTEM_CABUDLE
+	mkdir -p $(TARGET_DIR)/etc/ssl/certs/
+	$(WGET) -O $(TARGET_DIR)/etc/ssl/certs/ca-certificates.crt http://curl.haxx.se/ca/cacert.pem
+endef
+TARGET_FINALIZE_HOOKS += SYSTEM_CABUDLE
+endif
+
 ifneq ($(SKELETON_TARGET_GENERIC_ISSUE),)
 define SYSTEM_ISSUE
 	mkdir -p $(TARGET_DIR)/etc
