@@ -19,7 +19,7 @@ start() {
 
 stop() {
 	echo -n "Stopping WPE: "
-	killall wpe athol WPELauncher WPEWebProcess WPENetworkProcess &> /dev/null
+	killall wpe WPELauncher WPEWebProcess WPENetworkProcess &> /dev/null
 	echo "OK"
 }
 
