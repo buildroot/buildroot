@@ -32,6 +32,9 @@ GST_OMX_CONF_ENV = \
 		-DOMX_VERSION_STEP=0"
 endif
 
+GST_OMX_CONF_OPTS += \
+	--disable-examples
+
 GST_OMX_DEPENDENCIES = gstreamer1 gst1-plugins-base libopenmax
 
 # adjust library paths to where buildroot installs them
