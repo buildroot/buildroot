@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = ae9091e2168b8de95033f77c1e20861363da9bc8
+WPE_VERSION = 8d1e6add2b60bcc258b98187af8f17f050fdc83e
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -32,6 +32,16 @@ endif
 
 ifeq ($(BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V2),y)
 WPE_FLAGS += -DENABLE_ENCRYPTED_MEDIA_V2=ON
+endif
+
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_GL),y)
+WPE_FLAGS += -DUSE_GSTREAMER_GL=ON
+else
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_LIB_OPENGL_DISPMANX),y)
+WPE_FLAGS += -DUSE_HOLE_PUNCH_GSTREAMER=ON
+else
+WPE_FLAGS += -DUSE_HOLE_PUNCH_EXTERNAL=ON
+endif
 endif
 
 WPE_CONF_OPTS = -DPORT=WPE -DCMAKE_BUILD_TYPE=Release \
