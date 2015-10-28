@@ -30,7 +30,7 @@ ifeq ($(BR2_ENABLE_DEBUG),y)
 WPE_BUILD_TYPE = Debug
 WPE_EXTRA_CFLAGS += \
 	-DCMAKE_C_FLAGS_RELEASE="-O0 -g -Wno-cast-align" \
-	-DCMAKE_CXX_FLAGS_RELEASE="-O0 -g -Wno-cast-align" \
+	-DCMAKE_CXX_FLAGS_RELEASE="-O0 -g -Wno-cast-align"
 ifeq ($(BR2_BINUTILS_VERSION_2_25),y)
 WPE_EXTRA_CFLAGS += \
 	-DDEBUG_FISSION=TRUE
@@ -39,7 +39,7 @@ else
 WPE_BUILD_TYPE = Release
 WPE_EXTRA_CFLAGS += \
 	-DCMAKE_C_FLAGS_RELEASE="-O2 -DNDEBUG -Wno-cast-align" \
-	-DCMAKE_CXX_FLAGS_RELEASE="-O2 -DNDEBUG -Wno-cast-align" \
+	-DCMAKE_CXX_FLAGS_RELEASE="-O2 -DNDEBUG -Wno-cast-align"
 endif
 
 WPE_FLAGS = \
