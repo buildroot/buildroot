@@ -21,23 +21,32 @@ ifeq ($(BR2_PACKAGE_WESTON),y)
 WPE_DEPENDENCIES += weston
 endif
 
+ifeq ($(BR2_PACKAGE_NINJA),y)
+WPE_DEPENDENCIES += host-ninja
+WPE_EXTRA_FLAGS += \
+	-G Ninja
+ifeq ($(VERBOSE),1)
+WPE_EXTRA_OPTIONS += -v
+endif
+endif
+
 ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
-WPE_EXTRA_CFLAGS += \
+WPE_EXTRA_FLAGS += \
 	-D__UCLIBC__
 endif
 
 ifeq ($(BR2_ENABLE_DEBUG),y)
 WPE_BUILD_TYPE = Debug
-WPE_EXTRA_CFLAGS += \
+WPE_EXTRA_FLAGS += \
 	-DCMAKE_C_FLAGS_RELEASE="-O0 -g -Wno-cast-align" \
 	-DCMAKE_CXX_FLAGS_RELEASE="-O0 -g -Wno-cast-align"
 ifeq ($(BR2_BINUTILS_VERSION_2_25),y)
-WPE_EXTRA_CFLAGS += \
+WPE_EXTRA_FLAGS += \
 	-DDEBUG_FISSION=TRUE
 endif
 else
 WPE_BUILD_TYPE = Release
-WPE_EXTRA_CFLAGS += \
+WPE_EXTRA_FLAGS += \
 	-DCMAKE_C_FLAGS_RELEASE="-O2 -DNDEBUG -Wno-cast-align" \
 	-DCMAKE_CXX_FLAGS_RELEASE="-O2 -DNDEBUG -Wno-cast-align"
 endif
@@ -77,8 +86,31 @@ WPE_FLAGS += -DUSE_HOLE_PUNCH_EXTERNAL=ON
 endif
 endif
 
-WPE_CONF_OPTS = -DPORT=WPE -DCMAKE_BUILD_TYPE=$(WPE_BUILD_TYPE) \
-	$(WPE_EXTRA_CFLAGS) \
+WPE_CONF_OPTS = \
+	-DPORT=WPE \
+	-DCMAKE_BUILD_TYPE=$(WPE_BUILD_TYPE) \
+	$(WPE_EXTRA_FLAGS) \
 	$(WPE_FLAGS)
+
+ifeq ($(BR2_PACKAGE_NINJA),y)
+define WPE_BUILD_CMDS
+	$(TARGET_MAKE_ENV) $(HOST_DIR)/usr/bin/ninja -C $(@D) $(WPE_EXTRA_OPTIONS) libWPEWebKit.so libWPEWebInspectorResources.so WPE{Web,Network}Process
+endef
+
+define WPE_INSTALL_STAGING_CMDS
+	(cd $(@D) && \
+	cp bin/WPE{Network,Web}Process $(STAGING_DIR)/usr/bin/ && \
+	cp -d lib/libWPE* $(STAGING_DIR)/usr/lib/ )
+	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P $(@D)/Source/WebKit2/cmake_install.cmake
+endef
+
+define WPE_INSTALL_TARGET_CMDS
+	(pushd $(@D) > /dev/null && \
+	cp bin/WPE{Network,Web}Process $(TARGET_DIR)/usr/bin/ && \
+	cp -d lib/libWPE* $(TARGET_DIR)/usr/lib/ && \
+	$(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.1 && \
+	popd > /dev/null)
+endef
+endif
 
 $(eval $(cmake-package))
