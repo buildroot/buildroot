@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = 81ae1cb29ce71441a14d27ddd9aed51f88db24a3
+WPE_VERSION = f63ee95da99c5de7cf3b898a8d74bf165601e106
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -24,6 +24,22 @@ endif
 ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
 WPE_EXTRA_CFLAGS += \
 	-D__UCLIBC__
+endif
+
+ifeq ($(BR2_ENABLE_DEBUG),y)
+WPE_BUILD_TYPE = Debug
+WPE_EXTRA_CFLAGS += \
+	-DCMAKE_C_FLAGS_RELEASE="-O0 -g -Wno-cast-align" \
+	-DCMAKE_CXX_FLAGS_RELEASE="-O0 -g -Wno-cast-align" \
+ifeq ($(BR2_BINUTILS_VERSION_2_25),y)
+WPE_EXTRA_CFLAGS += \
+	-DDEBUG_FISSION=TRUE
+endif
+else
+WPE_BUILD_TYPE = Release
+WPE_EXTRA_CFLAGS += \
+	-DCMAKE_C_FLAGS_RELEASE="-O2 -DNDEBUG -Wno-cast-align" \
+	-DCMAKE_CXX_FLAGS_RELEASE="-O2 -DNDEBUG -Wno-cast-align" \
 endif
 
 WPE_FLAGS = \
@@ -61,9 +77,7 @@ WPE_FLAGS += -DUSE_HOLE_PUNCH_EXTERNAL=ON
 endif
 endif
 
-WPE_CONF_OPTS = -DPORT=WPE -DCMAKE_BUILD_TYPE=Release \
-	-DCMAKE_C_FLAGS_RELEASE="-O2 -DNDEBUG -Wno-cast-align" \
-	-DCMAKE_CXX_FLAGS_RELEASE="-O2 -DNDEBUG -Wno-cast-align" \
+WPE_CONF_OPTS = -DPORT=WPE -DCMAKE_BUILD_TYPE=$(WPE_BUILD_TYPE) \
 	$(WPE_EXTRA_CFLAGS) \
 	$(WPE_FLAGS)
 
