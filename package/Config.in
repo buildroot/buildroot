@@ -149,6 +149,10 @@ endif
 	source "package/yasm/Config.in"
 endmenu
 
+menu "Digital rights management"
+	source "package/dxdrm/Config.in"
+endmenu
+
 menu "Filesystem and flash utilities"
 	source "package/btrfs-progs/Config.in"
 	source "package/cifs-utils/Config.in"
@@ -354,6 +358,7 @@ endif
 	source "package/gpm/Config.in"
 	source "package/gpsd/Config.in"
 	source "package/gptfdisk/Config.in"
+	source "package/greenpeak/Config.in"
 	source "package/gvfs/Config.in"
 if BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
 	source "package/hdparm/Config.in"
@@ -1078,6 +1083,7 @@ menu "Other"
 	source "package/clapack/Config.in"
 	source "package/classpath/Config.in"
 	source "package/cppcms/Config.in"
+	source "package/cppsdk/Config.in"
 	source "package/dawgdic/Config.in"
 	source "package/ding-libs/Config.in"
 	source "package/eigen/Config.in"
@@ -1532,6 +1538,7 @@ if BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
 	source "package/tar/Config.in"
 endif
 	source "package/util-linux/Config.in"
+	source "package/webbridge/Config.in"
 endmenu
 
 menu "Text editors and viewers"

@@ -1,0 +1,34 @@
+#!/bin/sh
+
+start() {
+	echo -n "Starting webbridge: "
+	start-stop-daemon -S -q -b -m -p /var/run/webbridge.pid --exec /usr/bin/webbridge -- -b </dev/null >/dev/null 2>&1
+	[ $? == 0 ] && echo "OK" || echo "FAIL"
+}
+stop() {
+    echo -n "Stopping webbridge: "
+    start-stop-daemon -K -q -p /var/run/webbridge.pid
+    [ $? == 0 ] && echo "OK" || echo "FAIL"
+    rm -rf /var/run/webbridge.pid
+}
+restart() {
+    stop
+    start
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart|reload)
+    restart
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+
+exit $?
