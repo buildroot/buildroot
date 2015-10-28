@@ -9,8 +9,8 @@ WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
 WPE_DEPENDENCIES = host-flex host-bison host-gperf host-ruby host-pkgconf zlib \
-	pcre libgles libegl cairo freetype fontconfig harfbuzz icu libxml2 libxslt \
-	sqlite libsoup jpeg libpng webp libinput libxkbcommon xkeyboard-config \
+	openssl pcre libgles libegl cairo freetype fontconfig harfbuzz icu libxml2 \
+	libxslt sqlite libsoup jpeg libpng webp libinput libxkbcommon xkeyboard-config \
 	gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad
 
 ifeq ($(BR2_PACKAGE_WAYLAND),y)
@@ -24,6 +24,14 @@ endif
 ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
 WPE_EXTRA_CFLAGS += \
 	-D__UCLIBC__
+endif
+
+ifeq ($(BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V1),y)
+WPE_FLAGS += -DENABLE_ENCRYPTED_MEDIA=ON
+endif
+
+ifeq ($(BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V2),y)
+WPE_FLAGS += -DENABLE_ENCRYPTED_MEDIA_V2=ON
 endif
 
 WPE_CONF_OPTS = -DPORT=WPE -DCMAKE_BUILD_TYPE=Release \

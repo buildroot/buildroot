@@ -20,8 +20,28 @@ config BR2_PACKAGE_WPE
 	select BR2_PACKAGE_LIBGLIB2
 	select BR2_PACKAGE_LIBINPUT
 	select BR2_PACKAGE_LIBXKBCOMMON
+	select BR2_PACKAGE_OPENSSL
 	select BR2_PACKAGE_SQLITE
 	select BR2_PACKAGE_WEBP
 	select BR2_PACKAGE_XKEYBOARD_CONFIG
+	depends on BR2_PACKAGE_WAYLAND || BR2_PACKAGE_RPI_USERLAND
 	help
 	  Here be dragons.
+
+choice
+	bool "EME"
+	default BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V1
+	help
+	  Choose the EME backend API version.
+
+config BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V1
+	bool "v1"
+	help
+	  Use EME V1 backend.
+
+config BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V2
+	bool "v2"
+	help
+	  Use EME V2 backend.
+
+endchoice
