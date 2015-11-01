@@ -4,19 +4,27 @@
 #
 ################################################################################
 
-NETFLIX_VERSION = a06cc1dd83ec52f3fb92411ad8fbd5ffc7e5f357
+NETFLIX_VERSION = 9600887bb2b2ed82370bfee3aed8eb6b70feb3d0
 NETFLIX_SITE = git@github.com:Metrological/netflix.git
 NETFLIX_SITE_METHOD = git
 NETFLIX_LICENSE = PROPRIETARY
 NETFLIX_DEPENDENCIES = freetype icu jpeg libpng libmng webp harfbuzz expat openssl c-ares libcurl graphite2
-NETFLIX_INSTALL_STAGING = YES
 NETFLIX_INSTALL_TARGET = YES
 NETFLIX_SUBDIR = netflix
 
 NETFLIX_CONF_OPTS = \
 	-DBUILD_DPI_DIRECTORY=$(@D)/partner/dpi \
 	-DCMAKE_BUILD_TYPE=Release \
+	-DCMAKE_INSTALL_PREFIX=/netflix \
+	-DBUILD_COMPILE_RESOURCES=1 \
+	-DBUILD_SHARED_LIBS=0 \
+	-DBUILD_QA=0 \
+	-DBUILD_SYMBOLS=0 \
+	-DBUILD_DEBUG=0 \
+	-DBUILD_PRODUCTION=1 \
 	-DGIBBON_MODE=executable \
+	-DGIBBON_SCRIPT_JSC_DYNAMIC=1 \
+	-DGIBBON_SCRIPT_JSC_DEBUG=0 \
 	-DGIBBON_INPUT=devinput
 
 NETFLIX_CONF_ENV += \
@@ -72,5 +80,10 @@ endif
 NETFLIX_CONF_OPTS += \
 	-DCMAKE_C_FLAGS="$(NETFLIX_FLAGS)" \
 	-DCMAKE_CXX_FLAGS="$(NETFLIX_FLAGS)"
+
+define NETFLIX_INSTALL_TARGET_CMDS
+	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/libJavaScriptCore.so $(TARGET_DIR)/usr/lib
+	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/netflix $(TARGET_DIR)/usr/bin
+endef
 
 $(eval $(cmake-package))
