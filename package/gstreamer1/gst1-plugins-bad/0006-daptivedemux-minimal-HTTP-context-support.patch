@@ -1,0 +1,142 @@
+From de20975b2df9e3856dd22ea6550039e8fe13839b Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Wed, 28 Oct 2015 11:52:49 +0100
+Subject: [PATCH] adaptivedemux: minimal HTTP context support
+
+The uridownloader is now querying the source element for an HTTP
+context, which stores session data (cookies only for now), and reusing
+the data when fetching data over HTTP. Additionally the context is set
+on adaptivedemux, which allows it to also properly use session data
+when downloading fragments.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=726314
+---
+ gst-libs/gst/adaptivedemux/gstadaptivedemux.c | 16 ++++++++++++-
+ gst-libs/gst/uridownloader/gsturidownloader.c | 34 +++++++++++++++++++++++++--
+ gst-libs/gst/uridownloader/gsturidownloader.h |  2 +-
+ 3 files changed, 48 insertions(+), 4 deletions(-)
+
+diff --git a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
+index f5d598a..28c2493 100644
+--- a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
++++ b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
+@@ -335,7 +335,7 @@ gst_adaptive_demux_init (GstAdaptiveDemux * demux,
+ 
+   demux->priv = GST_ADAPTIVE_DEMUX_GET_PRIVATE (demux);
+   demux->priv->input_adapter = gst_adapter_new ();
+-  demux->downloader = gst_uri_downloader_new ();
++  demux->downloader = gst_uri_downloader_new (GST_ELEMENT (demux));
+   demux->stream_struct_size = sizeof (GstAdaptiveDemuxStream);
+   demux->priv->segment_seqnum = gst_util_seqnum_next ();
+   demux->have_group_id = FALSE;
+@@ -1823,6 +1823,7 @@ gst_adaptive_demux_stream_update_source (GstAdaptiveDemuxStream * stream,
+     GstElement *queue;
+     GObjectClass *gobject_class;
+     GstPad *internal_pad;
++    GstContext *context = NULL;
+ 
+     /* Our src consists of a bin containing uri_handler -> queue2 . The
+      * purpose of the queue2 is to allow the uri_handler to download an
+@@ -1874,6 +1875,19 @@ gst_adaptive_demux_stream_update_source (GstAdaptiveDemuxStream * stream,
+       }
+     }
+ 
++    context =
++        gst_element_get_context (GST_ELEMENT_CAST (demux), "http-headers");
++    if (context) {
++      const GstStructure *s = gst_context_get_structure (context);
++      const gchar **cookies = NULL;
++      gst_structure_get (s, "cookies", G_TYPE_STRV, &cookies, NULL);
++      if (cookies) {
++        GST_DEBUG_OBJECT (demux, "Passing cookies through");
++        g_object_set (uri_handler, "cookies", cookies, NULL);
++      }
++      gst_context_unref (context);
++    }
++
+     /* Source bin creation */
+     stream->src = gst_bin_new (NULL);
+     if (stream->src == NULL) {
+diff --git a/gst-libs/gst/uridownloader/gsturidownloader.c b/gst-libs/gst/uridownloader/gsturidownloader.c
+index 72e5e79..a31b709 100644
+--- a/gst-libs/gst/uridownloader/gsturidownloader.c
++++ b/gst-libs/gst/uridownloader/gsturidownloader.c
+@@ -33,6 +33,8 @@ GST_DEBUG_CATEGORY (uridownloader_debug);
+ 
+ struct _GstUriDownloaderPrivate
+ {
++  GstElement *parent;
++
+   /* Fragments fetcher */
+   GstElement *urisrc;
+   GstBus *bus;
+@@ -148,9 +150,11 @@ gst_uri_downloader_finalize (GObject * object)
+ }
+ 
+ GstUriDownloader *
+-gst_uri_downloader_new (void)
++gst_uri_downloader_new (GstElement * parent)
+ {
+-  return g_object_new (GST_TYPE_URI_DOWNLOADER, NULL);
++  GstUriDownloader *downloader = g_object_new (GST_TYPE_URI_DOWNLOADER, NULL);
++  downloader->priv->parent = parent;
++  return downloader;
+ }
+ 
+ static gboolean
+@@ -353,6 +357,7 @@ gst_uri_downloader_set_uri (GstUriDownloader * downloader, const gchar * uri,
+ {
+   GstPad *pad;
+   GObjectClass *gobject_class;
++  GstContext *context = NULL;
+ 
+   if (!gst_uri_is_valid (uri))
+     return FALSE;
+@@ -428,6 +433,31 @@ gst_uri_downloader_set_uri (GstUriDownloader * downloader, const gchar * uri,
+     }
+   }
+ 
++  context = gst_element_get_context (downloader->priv->parent, "http-headers");
++  if (!context) {
++    GstQuery *context_query = gst_query_new_context ("http-headers");
++    GstPad *parent_sink_pad =
++        gst_element_get_static_pad (downloader->priv->parent, "sink");
++    if (gst_pad_peer_query (parent_sink_pad, context_query)) {
++
++      gst_query_parse_context (context_query, &context);
++      gst_element_set_context (downloader->priv->parent, context);
++    }
++    gst_object_unref (parent_sink_pad);
++    gst_query_unref (context_query);
++  }
++
++  if (context) {
++    const GstStructure *s = gst_context_get_structure (context);
++    const gchar **cookies = NULL;
++    gst_structure_get (s, "cookies", G_TYPE_STRV, &cookies, NULL);
++    if (cookies) {
++      GST_DEBUG_OBJECT (downloader, "Passing cookies through");
++      g_object_set (downloader->priv->urisrc, "cookies", cookies, NULL);
++    }
++    gst_context_unref (context);
++  }
++
+   /* add a sync handler for the bus messages to detect errors in the download */
+   gst_element_set_bus (GST_ELEMENT (downloader->priv->urisrc),
+       downloader->priv->bus);
+diff --git a/gst-libs/gst/uridownloader/gsturidownloader.h b/gst-libs/gst/uridownloader/gsturidownloader.h
+index 80b8a3e..36cbf65 100644
+--- a/gst-libs/gst/uridownloader/gsturidownloader.h
++++ b/gst-libs/gst/uridownloader/gsturidownloader.h
+@@ -60,7 +60,7 @@ struct _GstUriDownloaderClass
+ 
+ GType gst_uri_downloader_get_type (void);
+ 
+-GstUriDownloader * gst_uri_downloader_new (void);
++GstUriDownloader * gst_uri_downloader_new (GstElement * parent);
+ GstFragment * gst_uri_downloader_fetch_uri (GstUriDownloader * downloader, const gchar * uri, const gchar * referer, gboolean compress, gboolean refresh, gboolean allow_cache, GError ** err);
+ GstFragment * gst_uri_downloader_fetch_uri_with_range (GstUriDownloader * downloader, const gchar * uri, const gchar * referer, gboolean compress, gboolean refresh, gboolean allow_cache, gint64 range_start, gint64 range_end, GError ** err);
+ void gst_uri_downloader_reset (GstUriDownloader *downloader);
+-- 
+2.6.1
+
