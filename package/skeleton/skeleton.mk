@@ -44,6 +44,7 @@ define SKELETON_INSTALL_TARGET_CMDS
 		$(TARGET_DIR_WARNING_FILE)
 endef
 
+SKELETON_TARGET_GENERIC_TIMESERVER = $(call qstrip,$(BR2_TARGET_GENERIC_TIMESERVER))
 SKELETON_TARGET_GENERIC_HOSTNAME = $(call qstrip,$(BR2_TARGET_GENERIC_HOSTNAME))
 SKELETON_TARGET_GENERIC_ISSUE = $(call qstrip,$(BR2_TARGET_GENERIC_ISSUE))
 SKELETON_TARGET_GENERIC_ROOT_PASSWD = $(call qstrip,$(BR2_TARGET_GENERIC_ROOT_PASSWD))
@@ -53,6 +54,20 @@ SKELETON_TARGET_GENERIC_GETTY_PORT = $(call qstrip,$(BR2_TARGET_GENERIC_GETTY_PO
 SKELETON_TARGET_GENERIC_GETTY_BAUDRATE = $(call qstrip,$(BR2_TARGET_GENERIC_GETTY_BAUDRATE))
 SKELETON_TARGET_GENERIC_GETTY_TERM = $(call qstrip,$(BR2_TARGET_GENERIC_GETTY_TERM))
 SKELETON_TARGET_GENERIC_GETTY_OPTIONS = $(call qstrip,$(BR2_TARGET_GENERIC_GETTY_OPTIONS))
+
+ifneq ($(SKELETON_TARGET_GENERIC_TIMESERVER),)
+define SYSTEM_TIMESERVER
+	( \
+		echo "#!/bin/sh";                                                        \
+		echo ;                                                                   \
+		echo "if [ \`rdate -s $(SKELETON_TARGET_GENERIC_TIMESERVER)\` ]; then";  \
+		echo "	echo \"rdate: success\"";                                        \
+		echo "fi";                                                               \
+	) > $(TARGET_DIR)/etc/network/if-up.d/rdate
+	chmod +x $(TARGET_DIR)/etc/network/if-up.d/rdate
+endef
+TARGET_FINALIZE_HOOKS += SYSTEM_TIMESERVER
+endif
 
 ifneq ($(SKELETON_TARGET_GENERIC_HOSTNAME),)
 define SYSTEM_HOSTNAME

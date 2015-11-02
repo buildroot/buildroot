@@ -23,6 +23,14 @@ config BR2_TARGET_GENERIC_CABUNDLE
 	help
 	  Install CA bundle from curl.
 
+config BR2_TARGET_GENERIC_TIMESERVER
+	string "Time Server"
+	default "time.nist.gov"
+	help
+	  Select a server that can be used to ask the time.
+
+	  Create an empty setting to prevent a time request from being issued.
+
 choice
 	bool "Passwords encoding"
 	default BR2_TARGET_GENERIC_PASSWD_MD5
