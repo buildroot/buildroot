@@ -74,7 +74,7 @@ index f3b0ecb..1cc6345 100644
  
    GST_DEBUG_CATEGORY_INIT (mssdemux_debug, "mssdemux", 0, "mssdemux plugin");
  }
-@@ -624,6 +636,17 @@ gst_mss_demux_get_manifest_update_interval (GstAdaptiveDemux * demux)
+@@ -635,6 +647,17 @@ gst_mss_demux_get_manifest_update_interval (GstAdaptiveDemux * demux)
    return interval;
  }
  
@@ -92,7 +92,7 @@ index f3b0ecb..1cc6345 100644
  static GstFlowReturn
  gst_mss_demux_update_manifest_data (GstAdaptiveDemux * demux,
      GstBuffer * buffer)
-@@ -635,3 +658,41 @@ gst_mss_demux_update_manifest_data (GstAdaptiveDemux * demux,
+@@ -646,3 +669,41 @@ gst_mss_demux_update_manifest_data (GstAdaptiveDemux * demux,
    gst_mss_manifest_reload_fragments (mssdemux->manifest, buffer);
    return GST_FLOW_OK;
  }
@@ -853,7 +853,7 @@ diff --git a/gst-libs/gst/adaptivedemux/gstadaptivedemux.h b/gst-libs/gst/adapti
 index 8d53815..cc64bd9 100644
 --- a/gst-libs/gst/adaptivedemux/gstadaptivedemux.h
 +++ b/gst-libs/gst/adaptivedemux/gstadaptivedemux.h
-@@ -414,6 +414,20 @@ struct _GstAdaptiveDemuxClass
+@@ -421,6 +421,20 @@ struct _GstAdaptiveDemuxClass
     * selected period.
     */
    GstClockTime (*get_period_start_time) (GstAdaptiveDemux *demux);

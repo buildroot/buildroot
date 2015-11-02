@@ -262,7 +262,7 @@ diff --git a/gst-libs/gst/adaptivedemux/gstadaptivedemux.h b/gst-libs/gst/adapti
 index 15476d0..8d53815 100644
 --- a/gst-libs/gst/adaptivedemux/gstadaptivedemux.h
 +++ b/gst-libs/gst/adaptivedemux/gstadaptivedemux.h
-@@ -135,6 +135,8 @@ struct _GstAdaptiveDemuxStream
+@@ -142,6 +142,8 @@ struct _GstAdaptiveDemuxStream
    /* download tooling */
    GstElement *src;
    GstPad *src_srcpad;
@@ -271,7 +271,7 @@ index 15476d0..8d53815 100644
    GMutex fragment_download_lock;
    GCond fragment_download_cond;
    gboolean download_finished;
-@@ -146,15 +148,6 @@ struct _GstAdaptiveDemuxStream
+@@ -153,15 +155,6 @@ struct _GstAdaptiveDemuxStream
    gint64 download_total_bytes;
    guint64 current_download_rate;
  

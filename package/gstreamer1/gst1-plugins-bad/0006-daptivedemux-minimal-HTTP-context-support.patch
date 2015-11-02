@@ -20,7 +20,7 @@ diff --git a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c b/gst-libs/gst/adapti
 index f5d598a..28c2493 100644
 --- a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
 +++ b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
-@@ -335,7 +335,7 @@ gst_adaptive_demux_init (GstAdaptiveDemux * demux,
+@@ -336,7 +336,7 @@ gst_adaptive_demux_init (GstAdaptiveDemux * demux,
  
    demux->priv = GST_ADAPTIVE_DEMUX_GET_PRIVATE (demux);
    demux->priv->input_adapter = gst_adapter_new ();
@@ -29,7 +29,7 @@ index f5d598a..28c2493 100644
    demux->stream_struct_size = sizeof (GstAdaptiveDemuxStream);
    demux->priv->segment_seqnum = gst_util_seqnum_next ();
    demux->have_group_id = FALSE;
-@@ -1823,6 +1823,7 @@ gst_adaptive_demux_stream_update_source (GstAdaptiveDemuxStream * stream,
+@@ -1824,6 +1824,7 @@ gst_adaptive_demux_stream_update_source (GstAdaptiveDemuxStream * stream,
      GstElement *queue;
      GObjectClass *gobject_class;
      GstPad *internal_pad;
@@ -37,7 +37,7 @@ index f5d598a..28c2493 100644
  
      /* Our src consists of a bin containing uri_handler -> queue2 . The
       * purpose of the queue2 is to allow the uri_handler to download an
-@@ -1874,6 +1875,19 @@ gst_adaptive_demux_stream_update_source (GstAdaptiveDemuxStream * stream,
+@@ -1875,6 +1876,19 @@ gst_adaptive_demux_stream_update_source (GstAdaptiveDemuxStream * stream,
        }
      }
  
