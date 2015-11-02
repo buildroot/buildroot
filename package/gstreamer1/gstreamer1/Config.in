@@ -12,6 +12,11 @@ config BR2_PACKAGE_GSTREAMER1
 
 if BR2_PACKAGE_GSTREAMER1
 
+config BR2_PACKAGE_GSTREAMER1_GIT
+	bool "git snapshot"
+	help
+	  Use git snapshot version of master branch.
+
 config BR2_PACKAGE_GSTREAMER1_PARSE
 	bool "enable command-line parser"
 	default y
