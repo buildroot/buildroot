@@ -36,11 +36,14 @@ define RPI_FIRMWARE_INSTALL_TARGET_CMDS
 endef
 endif # INSTALL_VCDBG
 
-ifeq ($(BR2_TARGET_ROOTFS_INITRAMFS),y)
-define RPI_FIRMWARE_USE_RAMDISK
+define RPI_FIRMWARE_MOUNT_BOOT
 	mkdir -p $(TARGET_DIR)/boot
 	grep -q '^/dev/mmcblk0p1' $(TARGET_DIR)/etc/fstab || \
 		echo -e '/dev/mmcblk0p1 /boot vfat defaults 0 0' >> $(TARGET_DIR)/etc/fstab
+endef
+
+ifeq ($(BR2_PACKAGE_RPI_FIRMWARE_MOUNT_ROOT),y)
+define RPI_FIRMWARE_MOUNT_ROOT
 	mkdir -p $(TARGET_DIR)/root
 	grep -q '^/dev/mmcblk0p2' $(TARGET_DIR)/etc/fstab || \
 		echo -e '/dev/mmcblk0p2 /root ext4 defaults 0 0' >> $(TARGET_DIR)/etc/fstab
@@ -53,7 +56,8 @@ define RPI_FIRMWARE_INSTALL_IMAGES_CMDS
 	$(INSTALL) -D -m 0644 $(@D)/boot/fixup$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).dat $(BINARIES_DIR)/rpi-firmware/fixup.dat
 	$(INSTALL) -D -m 0644 package/rpi-firmware/config.txt $(BINARIES_DIR)/rpi-firmware/config.txt
 	$(INSTALL) -D -m 0644 package/rpi-firmware/cmdline.txt $(BINARIES_DIR)/rpi-firmware/cmdline.txt
-	$(RPI_FIRMWARE_USE_RAMDISK)
+	$(RPI_FIRMWARE_MOUNT_BOOT)
+	$(RPI_FIRMWARE_MOUNT_ROOT)
 	$(RPI_FIRMWARE_INSTALL_DTB)
 	$(RPI_FIRMWARE_INSTALL_DTB_OVERLAYS)
 endef
