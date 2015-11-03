@@ -98,20 +98,24 @@ WPE_CONF_OPTS = \
 	$(WPE_EXTRA_FLAGS) \
 	$(WPE_FLAGS)
 
+WPE_BUILDDIR = $(@D)/build-$(WPE_BUILD_TYPE)
+
 ifeq ($(BR2_PACKAGE_NINJA),y)
 define WPE_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(HOST_DIR)/usr/bin/ninja -C $(@D) $(WPE_EXTRA_OPTIONS) libWPEWebKit.so libWPEWebInspectorResources.so WPE{Web,Network}Process
+	$(TARGET_MAKE_ENV) $(HOST_DIR)/usr/bin/ninja -C $(WPE_BUILDDIR) $(WPE_EXTRA_OPTIONS) libWPEWebKit.so libWPEWebInspectorResources.so WPE{Web,Network}Process
 endef
 
 define WPE_INSTALL_STAGING_CMDS
-	(cd $(@D) && \
+	(pushd $(WPE_BUILDDIR) && \
 	cp bin/WPE{Network,Web}Process $(STAGING_DIR)/usr/bin/ && \
-	cp -d lib/libWPE* $(STAGING_DIR)/usr/lib/ )
-	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P $(@D)/Source/WebKit2/cmake_install.cmake
+	cp -d lib/libWPE* $(STAGING_DIR)/usr/lib/ && \
+	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P Source/WebKit2/cmake_install.cmake && \
+	popd > /dev/null )
+
 endef
 
 define WPE_INSTALL_TARGET_CMDS
-	(pushd $(@D) > /dev/null && \
+	(pushd $(WPE_BUILDDIR) > /dev/null && \
 	cp bin/WPE{Network,Web}Process $(TARGET_DIR)/usr/bin/ && \
 	cp -d lib/libWPE* $(TARGET_DIR)/usr/lib/ && \
 	$(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.1 && \
