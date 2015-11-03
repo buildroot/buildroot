@@ -123,4 +123,6 @@ define WPE_INSTALL_TARGET_CMDS
 endef
 endif
 
+RSYNC_VCS_EXCLUSIONS += --exclude LayoutTests --exclude WebKitBuild
+
 $(eval $(cmake-package))
