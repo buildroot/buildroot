@@ -42,7 +42,7 @@ define RPI_FIRMWARE_MOUNT_BOOT
 		echo -e '/dev/mmcblk0p1 /boot vfat defaults 0 0' >> $(TARGET_DIR)/etc/fstab
 endef
 
-ifeq ($(BR2_PACKAGE_RPI_FIRMWARE_MOUNT_ROOT),y)
+ifeq ($(BR2_TARGET_ROOTFS_CPIO),y)
 define RPI_FIRMWARE_MOUNT_ROOT
 	mkdir -p $(TARGET_DIR)/root
 	grep -q '^/dev/mmcblk0p2' $(TARGET_DIR)/etc/fstab || \

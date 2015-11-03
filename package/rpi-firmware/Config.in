@@ -76,11 +76,4 @@ config BR2_PACKAGE_RPI_FIRMWARE_INSTALL_VCDBG
 comment "vcdbg needs an (e)glibc toolchain w/ C++"
 	depends on !BR2_TOOLCHAIN_USES_GLIBC || !BR2_INSTALL_LIBSTDCPP
 
-config BR2_PACKAGE_RPI_FIRMWARE_MOUNT_ROOT
-	bool "root"
-	depends on BR2_TARGET_ROOTFS_INITRAMFS || BR2_TARGET_ROOTFS_CPIO
-	default y
-	help
-	  Mount root folder to second ext4 partition
-
 endif # BR2_PACKAGE_RPI_FIRMWARE
