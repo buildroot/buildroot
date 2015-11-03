@@ -4,22 +4,13 @@
 #
 ################################################################################
 
-WPE_VERSION = fb754add992e04a36d3fcc55d080d0e01b949b0a
+WPE_VERSION = 4ef64d691ead0756fde395a632705211d2d91b4f
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
 WPE_DEPENDENCIES = host-flex host-bison host-gperf host-ruby host-pkgconf zlib \
 	openssl pcre libgles libegl cairo freetype fontconfig harfbuzz icu libxml2 \
-	libxslt sqlite libsoup jpeg libpng webp libinput libxkbcommon xkeyboard-config \
-	gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad
-
-ifeq ($(BR2_PACKAGE_WAYLAND),y)
-WPE_DEPENDENCIES += wayland
-endif
-
-ifeq ($(BR2_PACKAGE_WESTON),y)
-WPE_DEPENDENCIES += weston
-endif
+	libxslt sqlite libsoup jpeg libpng webp libinput libxkbcommon xkeyboard-config
 
 ifeq ($(BR2_PACKAGE_NINJA),y)
 WPE_DEPENDENCIES += host-ninja
@@ -33,6 +24,13 @@ endif
 ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
 WPE_EXTRA_FLAGS += \
 	-D__UCLIBC__
+endif
+
+ifeq ($(BR2_PACKAGE_WAYLAND),y)
+WPE_DEPENDENCIES += wayland
+WPE_FLAGS += -DUSE_WPE_BACKEND_WAYLAND=ON
+else ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
+WPE_FLAGS += -DUSE_WPE_BACKEND_BCM_RPI=ON
 endif
 
 ifeq ($(BR2_ENABLE_DEBUG),y)
@@ -51,10 +49,18 @@ WPE_EXTRA_FLAGS += \
 	-DCMAKE_CXX_FLAGS_RELEASE="-O2 -DNDEBUG -Wno-cast-align"
 endif
 
-WPE_FLAGS = \
+ifeq ($(BR2_PACKAGE_GSTREAMER1),y)
+WPE_DEPENDENCIES += gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad
+WPE_FLAGS += \
 	-DENABLE_VIDEO=ON \
 	-DENABLE_VIDEO_TRACK=ON \
 	-DENABLE_WEB_AUDIO=ON
+else
+WPE_FLAGS += \
+	-DENABLE_VIDEO=OFF \
+	-DENABLE_VIDEO_TRACK=OFF \
+	-DENABLE_WEB_AUDIO=OFF
+endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_ISOMP4),y)
 WPE_FLAGS += -DENABLE_MEDIA_SOURCE=ON
