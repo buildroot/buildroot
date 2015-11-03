@@ -21,6 +21,10 @@ define GSTREAMER1_FIX_AUTOPOINT
 	cd $(@D) && $(HOST_DIR)/usr/bin/autopoint --force
 endef
 
+define GSTREAMER1_RUN_AUTORECONF
+	cd $(@D) && $(HOST_DIR)/usr/bin/autoreconf --force --install
+endef
+
 define GSTREAMER1_REMOVE_LA_FILES
 	rm -f $(TARGET_DIR)/usr/lib/libgst*.la $(TARGET_DIR)/usr/lib/gstreamer-1.0/*.la
 	rm -f $(TARGET_DIR)/usr/lib/libgst*.a $(TARGET_DIR)/usr/lib/gstreamer-1.0/*.a
