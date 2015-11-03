@@ -60,6 +60,8 @@ define SYSTEM_TIMESERVER
 	( \
 		echo "#!/bin/sh";                                                        \
 		echo ;                                                                   \
+		echo "sleep 1";                                                          \
+		echo ;                                                                   \
 		echo "if [ \`rdate -s $(SKELETON_TARGET_GENERIC_TIMESERVER)\` ]; then";  \
 		echo "	echo \"rdate: success\"";                                        \
 		echo "fi";                                                               \
