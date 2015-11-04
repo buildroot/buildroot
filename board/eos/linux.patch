@@ -1,0 +1,408 @@
+diff -Naur linux/arch/arm/kernel/devtree.c linux-custom/arch/arm/kernel/devtree.c
+--- linux/arch/arm/kernel/devtree.c	2015-04-25 06:29:57.000000000 +0200
++++ linux-custom/arch/arm/kernel/devtree.c	2015-09-19 00:18:42.000000000 +0200
+@@ -50,6 +50,9 @@
+ 		u32 dtb_size = be32_to_cpu(initial_boot_params->totalsize);
+ 		void *virt_new_dtb;
+ 
++		if (phys_start < 0x200000) // prevent SDDB from being overwritten by dtb
++			continue;
++
+ 		if ((phys_end - phys_start) < dtb_size)
+ 			continue;
+ 
+diff -Naur linux/arch/arm/mach-bcm/pci-brcmstb.c linux-custom/arch/arm/mach-bcm/pci-brcmstb.c
+--- linux/arch/arm/mach-bcm/pci-brcmstb.c	2015-04-25 06:29:57.000000000 +0200
++++ linux-custom/arch/arm/mach-bcm/pci-brcmstb.c	2015-09-19 00:18:42.000000000 +0200
+@@ -307,8 +307,8 @@
+ 	__raw_writel(0x00000011, base + PCIE_MISC_RC_BAR2_CONFIG_LO);
+ 	__raw_writel(0x00000000, base + PCIE_MISC_RC_BAR2_CONFIG_HI);
+ 
+-	/* field: SCB0_SIZE = 1 Gb */
+-	wr_fld(base + PCIE_MISC_MISC_CTRL, 0xf8000000, 27, 0x0f);
++	/* field: SCB0_SIZE = 2 Gb (the latter 1GB is a memory hole */
++	wr_fld(base + PCIE_MISC_MISC_CTRL, 0xf8000000, 27, 0x10);
+ 	/* field: SCB1_SIZE = 1 Gb */
+ 	if (num_memc > 1)
+ 		wr_fld(base + PCIE_MISC_MISC_CTRL, 0x07c00000, 22, 0x0f);
+diff -Naur linux/arch/arm/Makefile linux-custom/arch/arm/Makefile
+--- linux/arch/arm/Makefile	2015-04-25 06:29:57.000000000 +0200
++++ linux-custom/arch/arm/Makefile	2015-09-19 00:12:47.000000000 +0200
+@@ -129,6 +129,7 @@
+ head-y		:= arch/arm/kernel/head$(MMUEXT).o
+ textofs-y	:= 0x00008000
+ textofs-$(CONFIG_ARCH_CLPS711X) := 0x00028000
++textofs-$(CONFIG_BRCMSTB)       := 0x00208000
+ # We don't want the htc bootloader to corrupt kernel during resume
+ textofs-$(CONFIG_PM_H1940)      := 0x00108000
+ # SA1111 DMA bug: we don't want the kernel to live in precious DMA-able memory
+diff -Naur linux/arch/arm/mm/mmap.c linux-custom/arch/arm/mm/mmap.c
+--- linux/arch/arm/mm/mmap.c	2015-04-25 06:29:58.000000000 +0200
++++ linux-custom/arch/arm/mm/mmap.c	2015-09-19 00:12:47.000000000 +0200
+@@ -222,6 +222,8 @@
+  */
+ int devmem_is_allowed(unsigned long pfn)
+ {
++	if (pfn < 512)
++		return 1;
+ 	if (iomem_is_exclusive(pfn << PAGE_SHIFT))
+ 		return 0;
+ 	if (!page_is_ram(pfn))
+diff -Naur linux/arch/sh/boot/compressed/vmlinux.scr linux-custom/arch/sh/boot/compressed/vmlinux.scr
+--- linux/arch/sh/boot/compressed/vmlinux.scr	2015-04-25 06:29:59.000000000 +0200
++++ linux-custom/arch/sh/boot/compressed/vmlinux.scr	1970-01-01 01:00:00.000000000 +0100
+@@ -1,10 +0,0 @@
+-SECTIONS
+-{
+-  .rodata..compressed : {
+-	input_len = .;
+-	LONG(input_data_end - input_data) input_data = .;
+-	*(.data)
+-	output_len = . - 4;
+-	input_data_end = .;
+-	}
+-}
+diff -Naur linux/arch/sh/boot/romimage/vmlinux.scr linux-custom/arch/sh/boot/romimage/vmlinux.scr
+--- linux/arch/sh/boot/romimage/vmlinux.scr	2015-04-25 06:29:59.000000000 +0200
++++ linux-custom/arch/sh/boot/romimage/vmlinux.scr	1970-01-01 01:00:00.000000000 +0100
+@@ -1,8 +0,0 @@
+-SECTIONS
+-{
+-  .text : {
+-	zero_page_pos = .;
+-	*(.data)
+-	end_data = .;
+-	}
+-}
+diff -Naur linux/drivers/net/ethernet/broadcom/genet/bcmgenet.h linux-custom/drivers/net/ethernet/broadcom/genet/bcmgenet.h
+--- linux/drivers/net/ethernet/broadcom/genet/bcmgenet.h	2015-04-25 06:30:00.000000000 +0200
++++ linux-custom/drivers/net/ethernet/broadcom/genet/bcmgenet.h	2015-09-19 00:18:42.000000000 +0200
+@@ -579,6 +579,7 @@
+ 	wait_queue_head_t	wq;		/* mii wait queue */
+ 	struct phy_device *phydev;
+ 	struct device_node *phy_dn;
++	struct device_node *mdio_dn;
+ 	struct mii_bus *mii_bus;
+ 	u16 gphy_rev;
+ 	struct clk *clk_eee;
+diff -Naur linux/drivers/net/ethernet/broadcom/genet/bcmmii.c linux-custom/drivers/net/ethernet/broadcom/genet/bcmmii.c
+--- linux/drivers/net/ethernet/broadcom/genet/bcmmii.c	2015-04-25 06:30:00.000000000 +0200
++++ linux-custom/drivers/net/ethernet/broadcom/genet/bcmmii.c	2015-09-19 00:18:42.000000000 +0200
+@@ -276,7 +276,6 @@
+ 					bcmgenet_mii_setup,
+ 					priv->phy_interface);
+ 	}
+-
+ 	if (!phydev) {
+ 		pr_err("could not attach to PHY\n");
+ 		return -ENODEV;
+@@ -297,6 +296,52 @@
+ 	return 0;
+ }
+ 
++/* Workaround for integrated BCM7xxx Gigabit PHYs which have a problem with
++ * their internal MDIO management controller making them fail to successfully
++ * be read from or written to for the first transaction.  We insert a dummy
++ * BMSR read here to make sure that phy_get_device() and get_phy_id() can
++ * correctly read the PHY MII_PHYSID1/2 registers and successfully register a
++ * PHY device for this peripheral.
++ *
++ * Once the PHY driver is registered, we can workaround subsequent reads from
++ * there (e.g: during system-wide power management).
++ *
++ * bus->reset is invoked before mdiobus_scan during mdiobus_register and is
++ * therefore the right location to stick that workaround. Since we do not want
++ * to read from non-existing PHYs, we either use bus->phy_mask or do a manual
++ * Device Tree scan to limit the search area.
++ */
++static int bcmgenet_mii_bus_reset(struct mii_bus *bus)
++{
++       struct net_device *dev = bus->priv;
++       struct bcmgenet_priv *priv = netdev_priv(dev);
++       struct device_node *np = priv->mdio_dn;
++       struct device_node *child = NULL;
++       u32 read_mask = 0;
++       int addr = 0;
++
++       if (!np) {
++               read_mask = 1 << priv->phy_addr;
++       } else {
++               for_each_available_child_of_node(np, child) {
++                       addr = of_mdio_parse_addr(&dev->dev, child);
++                       if (addr < 0)
++                               continue;
++
++                       read_mask |= 1 << addr;
++               }
++       }
++
++       for (addr = 0; addr < PHY_MAX_ADDR; addr++) {
++               if (read_mask & 1 << addr) {
++                       dev_dbg(&dev->dev, "Workaround for PHY @ %d\n", addr);
++                       mdiobus_read(bus, addr, MII_BMSR);
++               }
++       }
++
++       return 0;
++}
++
+ static int bcmgenet_mii_alloc(struct bcmgenet_priv *priv)
+ {
+ 	struct mii_bus *bus;
+@@ -317,6 +362,7 @@
+ 	bus->parent = &priv->pdev->dev;
+ 	bus->read = bcmgenet_mii_read;
+ 	bus->write = bcmgenet_mii_write;
++	bus->reset = bcmgenet_mii_bus_reset;
+ 	if (priv->old_dt_binding)
+ 		bus->phy_mask = ~(1 << priv->phy_addr);
+ 	snprintf(bus->id, MII_BUS_ID_SIZE, "%s-%d",
+@@ -475,20 +521,19 @@
+ {
+ 	struct device_node *dn = priv->pdev->dev.of_node;
+ 	struct device *kdev = &priv->pdev->dev;
+-	struct device_node *mdio_dn;
+ 	const char *phy_mode_str = NULL;
+ 	const __be32 *fixed_link;
+ 	u32 propval;
+ 	int phy_mode;
+ 	int ret, sz;
+ 
+-	mdio_dn = of_get_next_child(dn, NULL);
+-	if (!mdio_dn) {
++	priv->mdio_dn = of_get_next_child(dn, NULL);
++        if (!priv->mdio_dn) {
+ 		dev_err(kdev, "unable to find MDIO bus node\n");
+ 		return -ENODEV;
+ 	}
+ 
+-	ret = of_mdiobus_register(priv->mii_bus, mdio_dn);
++	ret = of_mdiobus_register(priv->mii_bus, priv->mdio_dn);
+ 	if (ret) {
+ 		dev_err(kdev, "failed to register MDIO bus\n");
+ 		return ret;
+diff -Naur linux/drivers/net/phy/bcm7xxx.c linux-custom/drivers/net/phy/bcm7xxx.c
+--- linux/drivers/net/phy/bcm7xxx.c	2015-04-25 06:30:00.000000000 +0200
++++ linux-custom/drivers/net/phy/bcm7xxx.c	2015-09-19 00:18:42.000000000 +0200
+@@ -215,6 +215,13 @@
+ 	pr_info_once("%s: %s PHY revision: 0x%02x, patch: %d\n",
+ 		     dev_name(&phydev->dev), phydev->drv->name, rev, patch);
+ 
++        /* Dummy read to a register to workaround an issue upon reset where the
++         * internal inverter may not allow the first MDIO transaction to pass
++         * the MDIO management controller and make us return 0xffff for such
++         * reads.
++         */
++        phy_read(phydev, MII_BMSR);
++
+ 	switch (rev) {
+ 	case 0xb0:
+ 		ret = bcm7xxx_28nm_b0_afe_config_init(phydev);
+diff -Naur linux/drivers/net/phy/mdio-unimac.c linux-custom/drivers/net/phy/mdio-unimac.c
+--- linux/drivers/net/phy/mdio-unimac.c	2015-04-25 06:30:00.000000000 +0200
++++ linux-custom/drivers/net/phy/mdio-unimac.c	2015-09-19 00:18:42.000000000 +0200
+@@ -115,6 +115,48 @@
+ 	return 0;
+ }
+ 
++/* Workaround for integrated BCM7xxx Gigabit PHYs which have a problem with
++ * their internal MDIO management controller making them fail to successfully
++ * be read from or written to for the first transaction.  We insert a dummy
++ * BMSR read here to make sure that phy_get_device() and get_phy_id() can
++ * correctly read the PHY MII_PHYSID1/2 registers and successfully register a
++ * PHY device for this peripheral.
++ *
++ * Once the PHY driver is registered, we can workaround subsequent reads from
++ * there (e.g: during system-wide power management).
++ *
++ * bus->reset is invoked before mdiobus_scan during mdiobus_register and is
++ * therefore the right location to stick that workaround. Since we do not want
++ * to read from non-existing PHYs, we either use bus->phy_mask or do a manual
++ * Device Tree scan to limit the search area.
++ */
++static int unimac_mdio_reset(struct mii_bus *bus)
++{
++        struct device_node *np = bus->dev.of_node;
++        struct device_node *child;
++        u32 read_mask = 0;
++        int addr;
++ 
++        if (!np) {
++                read_mask = ~bus->phy_mask;
++        } else {
++                for_each_available_child_of_node(np, child) {
++                        addr = of_mdio_parse_addr(&bus->dev, child);
++                        if (addr < 0)
++                                continue;
++ 
++                        read_mask |= 1 << addr;
++                }
++        }
++ 
++        for (addr = 0; addr < PHY_MAX_ADDR; addr++) {
++                if (read_mask & 1 << addr)
++                        mdiobus_read(bus, addr, MII_BMSR);
++        }
++ 
++        return 0;
++}
++
+ static int unimac_mdio_probe(struct platform_device *pdev)
+ {
+ 	struct unimac_mdio_priv *priv;
+@@ -150,6 +192,7 @@
+ 	bus->parent = &pdev->dev;
+ 	bus->read = unimac_mdio_read;
+ 	bus->write = unimac_mdio_write;
++	bus->reset = unimac_mdio_reset;
+ 	snprintf(bus->id, MII_BUS_ID_SIZE, "%s", pdev->name);
+ 
+ 	bus->irq = kzalloc(sizeof(int) * PHY_MAX_ADDR, GFP_KERNEL);
+diff -Naur linux/drivers/of/of_mdio.c linux-custom/drivers/of/of_mdio.c
+--- linux/drivers/of/of_mdio.c	2015-04-25 06:30:00.000000000 +0200
++++ linux-custom/drivers/of/of_mdio.c	2015-09-19 00:18:42.000000000 +0200
+@@ -93,6 +93,28 @@
+ 	return 0;
+ }
+ 
++int of_mdio_parse_addr(struct device *dev, const struct device_node *np)
++{
++       u32 addr;
++       int ret;
++
++       ret = of_property_read_u32(np, "reg", &addr);
++       if (ret < 0) {
++               dev_err(dev, "%s has invalid PHY address\n", np->full_name);
++               return ret;
++       }
++
++       /* A PHY must have a reg property in the range [0-31] */
++       if (addr >= PHY_MAX_ADDR) {
++               dev_err(dev, "%s PHY address %i is too large\n",
++                       np->full_name, addr);
++               return -EINVAL;
++       }
++
++       return addr;
++}
++EXPORT_SYMBOL(of_mdio_parse_addr);
++
+ /**
+  * of_mdiobus_register - Register mii_bus and create PHYs from the device tree
+  * @mdio: pointer to mii_bus structure
+@@ -105,9 +127,8 @@
+ {
+ 	struct device_node *child;
+ 	const __be32 *paddr;
+-	u32 addr;
+ 	bool scanphys = false;
+-	int rc, i, len;
++	int addr, rc, i;
+ 
+ 	/* Mask out all PHYs from auto probing.  Instead the PHYs listed in
+ 	 * the device tree are populated after the bus has been registered */
+@@ -127,19 +148,9 @@
+ 
+ 	/* Loop over the child nodes and register a phy_device for each one */
+ 	for_each_available_child_of_node(np, child) {
+-		/* A PHY must have a reg property in the range [0-31] */
+-		paddr = of_get_property(child, "reg", &len);
+-		if (!paddr || len < sizeof(*paddr)) {
++		addr = of_mdio_parse_addr(&mdio->dev, child);
++                if (addr < 0) {
+ 			scanphys = true;
+-			dev_err(&mdio->dev, "%s has invalid PHY address\n",
+-				child->full_name);
+-			continue;
+-		}
+-
+-		addr = be32_to_cpup(paddr);
+-		if (addr >= PHY_MAX_ADDR) {
+-			dev_err(&mdio->dev, "%s PHY address %i is too large\n",
+-				child->full_name, addr);
+ 			continue;
+ 		}
+ 
+@@ -154,7 +165,7 @@
+ 	/* auto scan for PHYs with empty reg property */
+ 	for_each_available_child_of_node(np, child) {
+ 		/* Skip PHYs with reg property set */
+-		paddr = of_get_property(child, "reg", &len);
++		paddr = of_get_property(child, "reg", NULL);
+ 		if (paddr)
+ 			continue;
+ 
+diff -Naur linux/include/linux/of_mdio.h linux-custom/include/linux/of_mdio.h
+--- linux/include/linux/of_mdio.h	2015-04-25 06:30:02.000000000 +0200
++++ linux-custom/include/linux/of_mdio.h	2015-09-19 00:18:42.000000000 +0200
+@@ -27,6 +27,7 @@
+ 					 phy_interface_t iface);
+ 
+ extern struct mii_bus *of_mdio_find_bus(struct device_node *mdio_np);
++extern int of_mdio_parse_addr(struct device *dev, const struct device_node *np);
+ 
+ #else /* CONFIG_OF */
+ static inline int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
+@@ -65,6 +66,12 @@
+ {
+ 	return NULL;
+ }
++
++static inline int of_mdio_parse_addr(struct device *dev,
++                                    const struct device_node *np)
++{
++       return -ENOSYS;
++}
+ #endif /* CONFIG_OF */
+ 
+ #endif /* __LINUX_OF_MDIO_H */
+diff -urN linux/arch/arm/lib/Makefile linux.hfgcc49/arch/arm/lib/Makefile
+--- linux/arch/arm/lib/Makefile	2015-04-25 06:29:57.000000000 +0200
++++ linux.hfgcc49/arch/arm/lib/Makefile	2015-11-03 23:39:50.152810339 +0100
+@@ -46,7 +46,7 @@
+ $(obj)/csumpartialcopyuser.o:	$(obj)/csumpartialcopygeneric.S
+ 
+ ifeq ($(CONFIG_KERNEL_MODE_NEON),y)
+-  NEON_FLAGS			:= -mfloat-abi=softfp -mfpu=neon
++  NEON_FLAGS			:= -mfloat-abi=hard -mfpu=neon
+   CFLAGS_xor-neon.o		+= $(NEON_FLAGS)
+   obj-$(CONFIG_XOR_BLOCKS)	+= xor-neon.o
+ endif
+diff -urN linux/arch/arm/Makefile linux.hfgcc49/arch/arm/Makefile
+--- linux/arch/arm/Makefile	2015-04-25 06:29:57.000000000 +0200
++++ linux.hfgcc49/arch/arm/Makefile	2015-11-03 23:40:57.376810370 +0100
+@@ -120,8 +120,8 @@
+ endif
+ 
+ # Need -Uarm for gcc < 3.x
+-KBUILD_CFLAGS	+=$(CFLAGS_ABI) $(CFLAGS_ISA) $(arch-y) $(tune-y) $(call cc-option,-mshort-load-bytes,$(call cc-option,-malignment-traps,)) -msoft-float -Uarm
+-KBUILD_AFLAGS	+=$(CFLAGS_ABI) $(AFLAGS_ISA) $(arch-y) $(tune-y) -include asm/unified.h -msoft-float
++KBUILD_CFLAGS	+=$(CFLAGS_ABI) $(CFLAGS_ISA) $(arch-y) $(tune-y) $(call cc-option,-mshort-load-bytes,$(call cc-option,-malignment-traps,)) -mhard-float -Uarm
++KBUILD_AFLAGS	+=$(CFLAGS_ABI) $(AFLAGS_ISA) $(arch-y) $(tune-y) -include asm/unified.h -mhard-float
+ 
+ CHECKFLAGS	+= -D__arm__
+ 
+diff -urN linux/arch/arm/vfp/Makefile linux.hfgcc49/arch/arm/vfp/Makefile
+--- linux/arch/arm/vfp/Makefile	2015-04-25 06:29:58.000000000 +0200
++++ linux.hfgcc49/arch/arm/vfp/Makefile	2015-11-03 23:40:13.112810350 +0100
+@@ -7,7 +7,7 @@
+ # ccflags-y := -DDEBUG
+ # asflags-y := -DDEBUG
+ 
+-KBUILD_AFLAGS	:=$(KBUILD_AFLAGS:-msoft-float=-Wa,-mfpu=softvfp+vfp -mfloat-abi=soft)
++KBUILD_AFLAGS	:=$(KBUILD_AFLAGS:-mhard-float=-Wa,-mfpu=vfp -mfloat-abi=hard)
+ LDFLAGS		+=--no-warn-mismatch
+ 
+ obj-y			+= vfp.o
+diff -urN linux/drivers/net/ethernet/broadcom/genet/bcmgenet.h linux.hfgcc49/drivers/net/ethernet/broadcom/genet/bcmgenet.h
+--- linux/drivers/net/ethernet/broadcom/genet/bcmgenet.h	2015-04-25 06:30:00.000000000 +0200
++++ linux.hfgcc49/drivers/net/ethernet/broadcom/genet/bcmgenet.h	2015-11-03 23:41:28.760810385 +0100
+@@ -21,7 +21,7 @@
+ #define __BCMGENET_H__
+ 
+ #define VERSION     "2.0"
+-#define VER_STR     "v" VERSION " " __DATE__ " " __TIME__
++#define VER_STR     "v" VERSION
+ 
+ #include <linux/skbuff.h>
+ #include <linux/netdevice.h>
