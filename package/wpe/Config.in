@@ -23,9 +23,11 @@ config BR2_PACKAGE_WPE
 	select BR2_PACKAGE_SQLITE
 	select BR2_PACKAGE_WEBP
 	select BR2_PACKAGE_XKEYBOARD_CONFIG
-	depends on BR2_PACKAGE_WAYLAND || BR2_PACKAGE_RPI_USERLAND
+	depends on BR2_PACKAGE_WAYLAND || BR2_PACKAGE_RPI_USERLAND || BR2_PACKAGE_BCM_REFSW
 	help
 	  Here be dragons.
+
+if BR2_PACKAGE_WPE
 
 menu "Extra options"
 
@@ -67,7 +69,7 @@ config BR2_PACKAGE_WPE_USE_PUNCH_HOLE_NONE
 
 config BR2_PACKAGE_WPE_USE_PUNCH_HOLE_GSTREAMER
 	bool "gstreamer"
-	depends on BR2_PACKAGE_GSTREAMER
+	depends on BR2_PACKAGE_GSTREAMER1
 	help
 	  Use Gstreamer.
 
@@ -79,3 +81,5 @@ config BR2_PACKAGE_WPE_USE_PUNCH_HOLE_EXTERNAL
 endchoice
 
 endmenu
+
+endif
