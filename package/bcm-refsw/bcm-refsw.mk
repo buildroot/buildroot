@@ -10,6 +10,8 @@ BCM_REFSW_SITE = file://../bcm-refsw
 BCM_REFSW_STRIP_COMPONENTS = 0
 BCM_REFSW_DEPENDENCIES = linux host-pkgconf host-flex host-bison host-gperf
 BCM_REFSW_LICENSE = PROPRIETARY
+BCM_REFSW_INSTALL_STAGING = YES
+BCM_REFSW_INSTALL_TARGET = YES
 
 BCM_REFSW_PLATFORM = 97439
 BCM_REFSW_PLATFORM_REV = B0
@@ -28,11 +30,12 @@ BCM_REFSW_MAKE_ENV += \
 	NEXUS_PLATFORM=$(BCM_REFSW_PLATFORM) \
 	NEXUS_USE_7439_SFF=y \
 	NEXUS_MODE=proxy \
+	NEXUS_HEADERS=y \
 	VCX=$(BCM_REFSW_PLATFORM_VC)
 
-BCM_REFSW_VCX = "$(@D)/rockford/middleware/${BCM_REFSW_PLATFORM_VC}"
-BCM_REFSW_OUTPUT = "$(@D)/obj.${BCM_REFSW_PLATFORM}"
-BCM_REWSW_BIN = "${BCM_REFSW_OUTPUT}/nexus/bin"
+BCM_REFSW_VCX = $(@D)/rockford/middleware/${BCM_REFSW_PLATFORM_VC}
+BCM_REFSW_OUTPUT = $(@D)/obj.${BCM_REFSW_PLATFORM}
+BCM_REWSW_BIN = ${BCM_REFSW_OUTPUT}/nexus/bin
 
 define BCM_REFSW_BUILD_NEXUS
 	$(TARGET_CONFIGURE_OPTS) \
@@ -76,7 +79,6 @@ define BCM_REFSW_INSTALL_STAGING_CMDS
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/GLES
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/GLES2
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/EGL
-	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/VG
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/refsw
 	$(INSTALL) -m 644 package/bcm-refsw/egl.pc $(STAGING_DIR)/usr/lib/pkgconfig/
 	$(INSTALL) -m 644 package/bcm-refsw/glesv2.pc $(STAGING_DIR)/usr/lib/pkgconfig/
@@ -86,7 +88,6 @@ define BCM_REFSW_INSTALL_STAGING_CMDS
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/driver/interface/khronos/include/GLES/*.h $(STAGING_DIR)/usr/include/GLES/
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/driver/interface/khronos/include/GLES2/*.h $(STAGING_DIR)/usr/include/GLES2/
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/driver/interface/khronos/include/EGL/*.h $(STAGING_DIR)/usr/include/EGL/
-	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/driver/interface/khronos/include/VG/*.h $(STAGING_DIR)/usr/include/VG/
 	$(INSTALL) -m 644 -D ${BCM_REFSW_VCX}/driver/interface/khronos/include/KHR/khrplatform.h $(STAGING_DIR)/usr/include/KHR/khrplatform.h;
 	$(call BCM_REFSW_INSTALL_LIBS,$(STAGING_DIR))
 endef
