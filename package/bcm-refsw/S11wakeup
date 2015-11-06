@@ -1,16 +1,16 @@
 #!/bin/sh
 start() {
-        echo -n "Starting display wakeup driver"
+        echo -n "Starting display wakeup driver: "
         insmod /lib/modules/wakeup_drv.ko
         [ $? == 0 ] && echo "OK" || echo "FAIL"
         if [ ! -e /dev/wake0 ]; then
-           echo -n "Creating wakeup device"
+           echo -n "Creating wakeup device: "
            mknod -m a=rw /dev/wake0 c 34 0
            [ $? == 0 ] && echo "OK" || echo "FAIL"
         fi
 }
 stop() {
-        echo -n "Stopping display wakeup driver "
+        echo -n "Stopping display wakeup driver: "
         rmmod /lib/modules/wakeup_drv.ko
       [ $? == 0 ] && echo "OK" || echo "FAIL"
 }
