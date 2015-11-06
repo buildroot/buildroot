@@ -36,7 +36,7 @@ config BR2_PACKAGE_LIBDRM_AMDGPU
 
 config BR2_PACKAGE_LIBDRM_NOUVEAU
 	bool "nouveau"
-	depends on BR2_i386 || BR2_x86_64
+	depends on BR2_i386 || BR2_x86_64 || BR2_arm
 	help
 	  Install NVIDIA graphics driver.
 
