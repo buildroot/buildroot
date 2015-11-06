@@ -1,0 +1,10 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: glesv2
+Description: Broadcom implementation of OpenGL ESv2
+Version: 2.0
+Libs: -L${libdir} -lnexus -lnxpl -lv3ddriver 
+Cflags: -I${includedir} -I${includedir}/refsw -I${includedir}/GLES2

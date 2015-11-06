@@ -30,6 +30,7 @@ BCM_REFSW_MAKE_ENV += \
 	NEXUS_MODE=proxy \
 	VCX=$(BCM_REFSW_PLATFORM_VC)
 
+BCM_REFSW_VCX = "$(@D)/rockford/middleware/${BCM_REFSW_PLATFORM_VC}"
 BCM_REFSW_OUTPUT = "$(@D)/obj.${BCM_REFSW_PLATFORM}"
 BCM_REWSW_BIN = "${BCM_REFSW_OUTPUT}/nexus/bin"
 
@@ -46,21 +47,57 @@ define BCM_REFSW_BUILD_VCX
 	$(TARGET_MAKE_ENV) \
 	$(BCM_REFSW_CONF_OPTS) \
 	$(BCM_REFSW_MAKE_ENV) \
-		$(MAKE) -C $(@D)/rockford/middleware/${BCM_REFSW_PLATFORM_VC}/driver -f V3DDriver.mk \
+		$(MAKE) -C ${BCM_REFSW_VCX}/driver -f V3DDriver.mk \
 			OBJDIR=${BCM_REFSW_OUTPUT}/rockford/middleware/v3d/driver/obj_${BCM_REFSW_PLATFORM}_release \
 			LIBDIR=${BCM_REWSW_BIN}
 	$(TARGET_CONFIGURE_OPTS) \
 	$(TARGET_MAKE_ENV) \
 	$(BCM_REFSW_CONF_OPTS) \
 	$(BCM_REFSW_MAKE_ENV) \
-		$(MAKE) -C $(@D)/rockford/middleware/${BCM_REFSW_PLATFORM_VC}/platform/nexus -f platform_nexus.mk \
+		$(MAKE) -C ${BCM_REFSW_VCX}/platform/nexus -f platform_nexus.mk \
 			OBJDIR=${BCM_REFSW_OUTPUT}/rockford/middleware/v3d/platform/obj_${BCM_REFSW_PLATFORM}_release \
 			LIBDIR=${BCM_REWSW_BIN}
+endef
+
+define BCM_REFSW_INSTALL_LIBS
+	$(INSTALL) -D $(BCM_REWSW_BIN)/libnexus.so $1/usr/lib/libnexus.so
+	$(INSTALL) -D $(BCM_REWSW_BIN)/libv3ddriver.so $1/usr/lib/libv3ddriver.so
+	$(INSTALL) -D $(BCM_REWSW_BIN)/libnxpl.so $1/usr/lib/libnxpl.so
+	cd $1/usr/lib && ln -sf libv3ddriver.so libEGL.so && ln -sf libv3ddriver.so libGLESv2.so
 endef
 
 define BCM_REFSW_BUILD_CMDS
 	$(BCM_REFSW_BUILD_NEXUS)
 	$(BCM_REFSW_BUILD_VCX)
+endef
+
+define BCM_REFSW_INSTALL_STAGING_CMDS
+	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/lib/pkgconfig
+	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/GLES
+	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/GLES2
+	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/EGL
+	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/VG
+	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/refsw
+	$(INSTALL) -m 644 package/bcm-refsw/egl.pc $(STAGING_DIR)/usr/lib/pkgconfig/
+	$(INSTALL) -m 644 package/bcm-refsw/glesv2.pc $(STAGING_DIR)/usr/lib/pkgconfig/
+	$(INSTALL) -m 644 $(BCM_REWSW_BIN)/include/*.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 $(BCM_REWSW_BIN)/include/platform_app.inc $(STAGING_DIR)/usr/include/
+	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/platform/nexus/*.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/driver/interface/khronos/include/GLES/*.h $(STAGING_DIR)/usr/include/GLES/
+	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/driver/interface/khronos/include/GLES2/*.h $(STAGING_DIR)/usr/include/GLES2/
+	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/driver/interface/khronos/include/EGL/*.h $(STAGING_DIR)/usr/include/EGL/
+	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/driver/interface/khronos/include/VG/*.h $(STAGING_DIR)/usr/include/VG/
+	$(INSTALL) -m 644 -D ${BCM_REFSW_VCX}/driver/interface/khronos/include/KHR/khrplatform.h $(STAGING_DIR)/usr/include/KHR/khrplatform.h;
+	$(call BCM_REFSW_INSTALL_LIBS,$(STAGING_DIR))
+endef
+
+define BCM_REFSW_INSTALL_TARGET_CMDS
+	$(INSTALL) -m 750 -D $(BCM_REWSW_BIN)/nexus $(TARGET_DIR)/sbin/nexus
+	$(INSTALL) -m 644 -D $(BCM_REWSW_BIN)/nexus.ko $(TARGET_DIR)/lib/modules/nexus.ko
+    $(INSTALL) -m 644 -D $(BCM_REWSW_BIN)/wakeup_drv.ko $(TARGET_DIR)/lib/modules/wakeup_drv.ko
+	$(INSTALL) -D -m 755 package/bcm-refsw/S11nexus $(TARGET_DIR)/etc/init.d/S11nexus
+	$(INSTALL) -D -m 755 package/bcm-refsw/S11wakeup $(TARGET_DIR)/etc/init.d/S11wakeup
+	$(call BCM_REFSW_INSTALL_LIBS,$(TARGET_DIR))
 endef
 
 $(eval $(generic-package))
