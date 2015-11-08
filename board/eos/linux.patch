@@ -1,39 +1,3 @@
---- linux/arch/arm/lib/Makefile	2015-04-25 06:29:57.000000000 +0200
-+++ linux.hfgcc49/arch/arm/lib/Makefile	2015-11-03 23:39:50.152810339 +0100
-@@ -46,7 +46,7 @@
- $(obj)/csumpartialcopyuser.o:	$(obj)/csumpartialcopygeneric.S
- 
- ifeq ($(CONFIG_KERNEL_MODE_NEON),y)
--  NEON_FLAGS			:= -mfloat-abi=softfp -mfpu=neon
-+  NEON_FLAGS			:= -mfloat-abi=hard -mfpu=neon
-   CFLAGS_xor-neon.o		+= $(NEON_FLAGS)
-   obj-$(CONFIG_XOR_BLOCKS)	+= xor-neon.o
- endif
-diff -urN linux/arch/arm/Makefile linux.hfgcc49/arch/arm/Makefile
---- linux/arch/arm/Makefile	2015-04-25 06:29:57.000000000 +0200
-+++ linux.hfgcc49/arch/arm/Makefile	2015-11-03 23:40:57.376810370 +0100
-@@ -120,8 +120,8 @@
- endif
- 
- # Need -Uarm for gcc < 3.x
--KBUILD_CFLAGS	+=$(CFLAGS_ABI) $(CFLAGS_ISA) $(arch-y) $(tune-y) $(call cc-option,-mshort-load-bytes,$(call cc-option,-malignment-traps,)) -msoft-float -Uarm
--KBUILD_AFLAGS	+=$(CFLAGS_ABI) $(AFLAGS_ISA) $(arch-y) $(tune-y) -include asm/unified.h -msoft-float
-+KBUILD_CFLAGS	+=$(CFLAGS_ABI) $(CFLAGS_ISA) $(arch-y) $(tune-y) $(call cc-option,-mshort-load-bytes,$(call cc-option,-malignment-traps,)) -mhard-float -Uarm
-+KBUILD_AFLAGS	+=$(CFLAGS_ABI) $(AFLAGS_ISA) $(arch-y) $(tune-y) -include asm/unified.h -mhard-float
- 
- CHECKFLAGS	+= -D__arm__
- 
---- linux/arch/arm/vfp/Makefile	2015-04-25 06:29:58.000000000 +0200
-+++ linux.hfgcc49/arch/arm/vfp/Makefile	2015-11-03 23:40:13.112810350 +0100
-@@ -7,7 +7,7 @@
- # ccflags-y := -DDEBUG
- # asflags-y := -DDEBUG
- 
--KBUILD_AFLAGS	:=$(KBUILD_AFLAGS:-msoft-float=-Wa,-mfpu=softvfp+vfp -mfloat-abi=soft)
-+KBUILD_AFLAGS	:=$(KBUILD_AFLAGS:-mhard-float=-Wa,-mfpu=vfp -mfloat-abi=hard)
- LDFLAGS		+=--no-warn-mismatch
- 
- obj-y			+= vfp.o
 --- linux/drivers/net/ethernet/broadcom/genet/bcmgenet.h	2015-04-25 06:30:00.000000000 +0200
 +++ linux.hfgcc49/drivers/net/ethernet/broadcom/genet/bcmgenet.h	2015-11-03 23:41:28.760810385 +0100
 @@ -21,7 +21,7 @@
@@ -52,7 +16,7 @@ diff -urN linux/arch/arm/Makefile linux.hfgcc49/arch/arm/Makefile
  	select ARCH_HAS_CPUFREQ
  	select PM_OPP if PM
 -	select ARM_ERRATA_798181 if SMP
-+#	select ARM_ERRATA_798181 if SMP
++	select ARM_ERRATA_798181 if SMP
  	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
  	select GENERIC_IRQ_CHIP
  	select BRCMSTB_GISB_ARB
