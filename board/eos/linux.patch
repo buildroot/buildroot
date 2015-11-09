@@ -9,14 +9,3 @@
  
  #include <linux/skbuff.h>
  #include <linux/netdevice.h>
---- linux/arch/arm/mach-bcm/Kconfig	2015-04-25 06:29:57.000000000 +0200
-+++ linux.vfp/arch/arm/mach-bcm/Kconfig	2015-11-07 10:31:23.911801107 +0100
-@@ -44,7 +44,7 @@
- 	select ARCH_HAS_OPP
- 	select ARCH_HAS_CPUFREQ
- 	select PM_OPP if PM
--	select ARM_ERRATA_798181 if SMP
-+	select ARM_ERRATA_798181 if SMP
- 	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
- 	select GENERIC_IRQ_CHIP
- 	select BRCMSTB_GISB_ARB
