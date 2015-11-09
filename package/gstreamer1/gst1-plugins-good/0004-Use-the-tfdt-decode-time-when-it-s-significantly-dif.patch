@@ -1,4 +1,4 @@
-From 37569cfcbb695082b2e078d4f0ece0cfac5e1b72 Mon Sep 17 00:00:00 2001
+From 906cd930a80b10bd7fad7de02d316d0700e51f67 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
 Date: Thu, 5 Nov 2015 14:39:22 +0000
 Subject: [PATCH] Use the tfdt decode time when it's significantly different
@@ -7,16 +7,16 @@ Subject: [PATCH] Use the tfdt decode time when it's significantly different
 https://bugzilla.gnome.org/show_bug.cgi?id=754230
 ---
  gst/isomp4/qtdemux.c | 65 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- gst/isomp4/qtdemux.h |  9 ++++++++
- 2 files changed, 74 insertions(+)
+ gst/isomp4/qtdemux.h |  8 +++++++
+ 2 files changed, 73 insertions(+)
 
 diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
-index d727a54..37ad059 100644
+index a9f41fd..a776f2a 100644
 --- a/gst/isomp4/qtdemux.c
 +++ b/gst/isomp4/qtdemux.c
-@@ -530,6 +530,11 @@ static void check_update_duration (GstQTDemux * qtdemux, GstClockTime duration);
- static void gst_qtdemux_append_protection_system_id (GstQTDemux * qtdemux,
+@@ -535,6 +535,11 @@ static void gst_qtdemux_append_protection_system_id (GstQTDemux * qtdemux,
      const gchar * id);
+ static void qtdemux_gst_structure_free (GstStructure * gststructure);
  
 +static void gst_qtdemux_set_property (GObject * object, guint prop_id,
 +    const GValue * value, GParamSpec * spec);
@@ -26,7 +26,7 @@ index d727a54..37ad059 100644
  static void
  gst_qtdemux_class_init (GstQTDemuxClass * klass)
  {
-@@ -541,8 +546,21 @@ gst_qtdemux_class_init (GstQTDemuxClass * klass)
+@@ -546,8 +551,21 @@ gst_qtdemux_class_init (GstQTDemuxClass * klass)
  
    parent_class = g_type_class_peek_parent (klass);
  
@@ -48,15 +48,15 @@ index d727a54..37ad059 100644
    gstelement_class->change_state = GST_DEBUG_FUNCPTR (gst_qtdemux_change_state);
  #if 0
    gstelement_class->set_index = GST_DEBUG_FUNCPTR (gst_qtdemux_set_index);
-@@ -603,6 +621,7 @@ gst_qtdemux_init (GstQTDemux * qtdemux)
-   qtdemux->have_group_id = FALSE;
-   qtdemux->group_id = G_MAXUINT;
+@@ -611,6 +629,7 @@ gst_qtdemux_init (GstQTDemux * qtdemux)
+   qtdemux->info_sizes = NULL;
+   qtdemux->sample_count = 0;
    qtdemux->protection_system_ids = NULL;
 +  qtdemux->always_honor_tfdt = FALSE;
    g_queue_init (&qtdemux->protection_event_queue);
    gst_segment_init (&qtdemux->segment, GST_FORMAT_TIME);
    qtdemux->flowcombiner = gst_flow_combiner_new ();
-@@ -628,6 +647,42 @@ gst_qtdemux_dispose (GObject * object)
+@@ -641,6 +660,42 @@ gst_qtdemux_dispose (GObject * object)
  }
  
  static void
@@ -99,7 +99,7 @@ index d727a54..37ad059 100644
  gst_qtdemux_post_no_playable_stream_error (GstQTDemux * qtdemux)
  {
    if (qtdemux->posted_redirect) {
-@@ -2798,6 +2853,16 @@ qtdemux_parse_trun (GstQTDemux * qtdemux, GstByteReader * trun,
+@@ -2952,6 +3007,16 @@ qtdemux_parse_trun (GstQTDemux * qtdemux, GstByteReader * trun,
            stream->samples[stream->n_samples - 1].timestamp +
            stream->samples[stream->n_samples - 1].duration;
  
@@ -117,14 +117,13 @@ index d727a54..37ad059 100644
        GST_INFO_OBJECT (qtdemux, "first sample ts %" GST_TIME_FORMAT
            " (extends previous samples)", GST_TIME_ARGS (gst_ts));
 diff --git a/gst/isomp4/qtdemux.h b/gst/isomp4/qtdemux.h
-index 8f0553b..692d677 100644
+index a34f380..c762af6 100644
 --- a/gst/isomp4/qtdemux.h
 +++ b/gst/isomp4/qtdemux.h
-@@ -149,12 +149,21 @@ struct _GstQTDemux {
-   /* protection support */
-   GPtrArray *protection_system_ids; /* Holds identifiers of all content protection systems for all tracks */
-   GQueue protection_event_queue; /* holds copy of upstream protection events */
-+
+@@ -153,12 +153,20 @@ struct _GstQTDemux {
+   guint8 *info_sizes;
+   guint32 sample_count;
+ 
 +  gboolean always_honor_tfdt;
  };
  
