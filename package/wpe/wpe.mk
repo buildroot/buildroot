@@ -26,6 +26,11 @@ WPE_EXTRA_FLAGS += \
 	-D__UCLIBC__
 endif
 
+ifeq ($(BR2_mipsel),y)
+WPE_FLAGS += \
+	-DENABLE_JIT=OFF
+endif
+
 ifeq ($(BR2_PACKAGE_WAYLAND),y)
 WPE_DEPENDENCIES += wayland
 WPE_FLAGS += -DUSE_WPE_BACKEND_WAYLAND=ON
