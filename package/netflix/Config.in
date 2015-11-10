@@ -14,15 +14,3 @@ config BR2_PACKAGE_NETFLIX
 	depends on BR2_PACKAGE_RPI_USERLAND
 	help
 	  Netflix
-
-if BR2_PACKAGE_NETFLIX
-
-config BR2_PACKAGE_NETFLIX_RESOURCE_LOCATION
-        string "resource location"
-        default ""
-        help
-          Location of resources used by netflix like config files and fonts. If 
-          the locatin is left empty, the resources will be embedded in the 
-	  application.
-
-endif
