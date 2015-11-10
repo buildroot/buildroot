@@ -4,10 +4,9 @@
 #
 ################################################################################
 
-BCM_REFSW_VERSION = 20150619
-BCM_REFSW_SOURCE = refsw_release_unified_$(BCM_REFSW_VERSION).src.tar.xz
-BCM_REFSW_SITE = file://../bcm-refsw
-BCM_REFSW_STRIP_COMPONENTS = 0
+BCM_REFSW_VERSION = 15.2
+BCM_REFSW_SITE = git@github.com:Metrological/bcm-refsw.git
+BCM_REFSW_SITE_METHOD = git
 BCM_REFSW_DEPENDENCIES = linux host-pkgconf host-flex host-bison host-gperf
 BCM_REFSW_LICENSE = PROPRIETARY
 BCM_REFSW_INSTALL_STAGING = YES
