@@ -1,7 +1,7 @@
-From de20975b2df9e3856dd22ea6550039e8fe13839b Mon Sep 17 00:00:00 2001
+From 951c4f61931a94ef18d9ab1eae70be1d6c43aad1 Mon Sep 17 00:00:00 2001
 From: Philippe Normand <philn@igalia.com>
 Date: Wed, 28 Oct 2015 11:52:49 +0100
-Subject: [PATCH] adaptivedemux: minimal HTTP context support
+Subject: [PATCH 2/2] adaptivedemux: minimal HTTP context support
 
 The uridownloader is now querying the source element for an HTTP
 context, which stores session data (cookies only for now), and reusing
@@ -17,10 +17,10 @@ https://bugzilla.gnome.org/show_bug.cgi?id=726314
  3 files changed, 48 insertions(+), 4 deletions(-)
 
 diff --git a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
-index f5d598a..28c2493 100644
+index d39e099..53562b1 100644
 --- a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
 +++ b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
-@@ -335,7 +335,7 @@ gst_adaptive_demux_init (GstAdaptiveDemux * demux,
+@@ -414,7 +414,7 @@ gst_adaptive_demux_init (GstAdaptiveDemux * demux,
  
    demux->priv = GST_ADAPTIVE_DEMUX_GET_PRIVATE (demux);
    demux->priv->input_adapter = gst_adapter_new ();
@@ -29,15 +29,15 @@ index f5d598a..28c2493 100644
    demux->stream_struct_size = sizeof (GstAdaptiveDemuxStream);
    demux->priv->segment_seqnum = gst_util_seqnum_next ();
    demux->have_group_id = FALSE;
-@@ -1823,6 +1823,7 @@ gst_adaptive_demux_stream_update_source (GstAdaptiveDemuxStream * stream,
-     GstElement *queue;
+@@ -2140,6 +2140,7 @@ gst_adaptive_demux_stream_update_source (GstAdaptiveDemuxStream * stream,
+     GstPadLinkReturn pad_link_ret;
      GObjectClass *gobject_class;
      GstPad *internal_pad;
 +    GstContext *context = NULL;
  
      /* Our src consists of a bin containing uri_handler -> queue2 . The
       * purpose of the queue2 is to allow the uri_handler to download an
-@@ -1874,6 +1875,19 @@ gst_adaptive_demux_stream_update_source (GstAdaptiveDemuxStream * stream,
+@@ -2193,6 +2194,19 @@ gst_adaptive_demux_stream_update_source (GstAdaptiveDemuxStream * stream,
        }
      }
  

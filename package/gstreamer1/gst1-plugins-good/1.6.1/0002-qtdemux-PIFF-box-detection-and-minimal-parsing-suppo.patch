@@ -1,4 +1,4 @@
-From a88e2bd8353f08465150188aa5e0ad8bae99508f Mon Sep 17 00:00:00 2001
+From 849f5d4add0232fbaee43bc8d52f5c7c4e5b9f9a Mon Sep 17 00:00:00 2001
 From: Philippe Normand <philn@igalia.com>
 Date: Fri, 10 Jul 2015 09:44:15 +0200
 Subject: [PATCH] qtdemux: PIFF box detection and minimal parsing support
@@ -13,7 +13,7 @@ https://bugzilla.gnome.org/show_bug.cgi?id=753614
  1 file changed, 163 insertions(+), 6 deletions(-)
 
 diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
-index 19ecaac..bce63ff 100644
+index 6d5b4cf..e146239 100644
 --- a/gst/isomp4/qtdemux.c
 +++ b/gst/isomp4/qtdemux.c
 @@ -527,8 +527,13 @@ static void qtdemux_do_allocation (GstQTDemux * qtdemux,
@@ -30,7 +30,7 @@ index 19ecaac..bce63ff 100644
  
  static void
  gst_qtdemux_class_init (GstQTDemuxClass * klass)
-@@ -2412,6 +2417,139 @@ qtdemux_handle_xmp_taglist (GstQTDemux * qtdemux, GstTagList * taglist,
+@@ -2388,6 +2393,139 @@ qtdemux_handle_xmp_taglist (GstQTDemux * qtdemux, GstTagList * taglist,
  }
  
  static void
@@ -138,16 +138,16 @@ index 19ecaac..bce63ff 100644
 +    gst_buffer_unref (kid_buf);
 +  }
 +
-+  if (!gst_byte_reader_get_uint32_be (&br, &qtdemux->cenc_aux_sample_count)) {
++  if (!gst_byte_reader_get_uint32_be (&br, &qtdemux->sample_count)) {
 +    GST_ERROR_OBJECT (qtdemux, "Error getting box's sample count field");
 +    return;
 +  }
 +
 +  ss_info->crypto_info =
-+      g_ptr_array_new_full (qtdemux->cenc_aux_sample_count,
++      g_ptr_array_new_full (qtdemux->sample_count,
 +      (GDestroyNotify) qtdemux_gst_structure_free);
 +
-+  for (i = 0; i < qtdemux->cenc_aux_sample_count; ++i) {
++  for (i = 0; i < qtdemux->sample_count; ++i) {
 +    GstStructure *properties;
 +    GstBuffer *box;
 +
@@ -170,7 +170,7 @@ index 19ecaac..bce63ff 100644
  qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
  {
    static const guint8 xmp_uuid[] = { 0xBE, 0x7A, 0xCF, 0xCB,
-@@ -2423,6 +2561,12 @@ qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
+@@ -2399,6 +2537,12 @@ qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
      0xd0, 0x8a, 0x4f, 0x18, 0x10, 0xf3, 0x4a, 0x82,
      0xb6, 0xc8, 0x32, 0xd8, 0xab, 0xa1, 0x83, 0xd3
    };
@@ -183,7 +183,7 @@ index 19ecaac..bce63ff 100644
    guint offset;
  
    /* counts as header data */
-@@ -2461,6 +2605,8 @@ qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
+@@ -2437,6 +2581,8 @@ qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
      GST_ELEMENT_ERROR (qtdemux, STREAM, DECRYPT,
          (_("Cannot play stream because it is encrypted with PlayReady DRM.")),
          (NULL));
@@ -192,7 +192,7 @@ index 19ecaac..bce63ff 100644
    } else {
      GST_DEBUG_OBJECT (qtdemux, "Ignoring unknown uuid: %08x-%08x-%08x-%08x",
          GST_READ_UINT32_LE (buffer + offset),
-@@ -3345,7 +3491,8 @@ static gboolean
+@@ -3321,7 +3467,8 @@ static gboolean
  qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
      guint64 moof_offset, QtDemuxStream * stream)
  {
@@ -202,7 +202,7 @@ index 19ecaac..bce63ff 100644
    GstByteReader mfhd_data, trun_data, tfhd_data, tfdt_data;
    GNode *saiz_node, *saio_node, *pssh_node;
    GstByteReader saiz_data, saio_data;
-@@ -3490,6 +3637,14 @@ qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
+@@ -3462,6 +3609,14 @@ qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
        trun_node = qtdemux_tree_get_sibling_by_type_full (trun_node, FOURCC_trun,
            &trun_data);
      }
@@ -217,7 +217,7 @@ index 19ecaac..bce63ff 100644
      /* if no new base_offset provided for next traf,
       * base is end of current traf */
      base_offset = running_offset;
-@@ -6862,11 +7017,13 @@ gst_qtdemux_configure_protected_caps (GstQTDemux * qtdemux,
+@@ -6779,11 +6934,13 @@ gst_qtdemux_configure_protected_caps (GstQTDemux * qtdemux,
    }
  
    s = gst_caps_get_structure (stream->caps, 0);
@@ -237,5 +237,5 @@ index 19ecaac..bce63ff 100644
  }
  
 -- 
-2.6.1
+2.5.0
 
