@@ -10,7 +10,7 @@ GST_OMX_SITE = http://gstreamer.freedesktop.org/src/gst-omx
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1_GIT),y)
 GST_OMX_VERSION = bd50715ef29251abc9f72a164674e51d279800ba
-GST_OMX_SOURCE = gst-plugins-bad-$(GST_OMX_VERSION).tar.xz
+GST_OMX_SOURCE = gst-omx-$(GST_OMX_VERSION).tar.xz
 GST_OMX_SITE = http://cgit.freedesktop.org/gstreamer/gst-omx/snapshot
 BR_NO_CHECK_HASH_FOR += $(GST_OMX_SOURCE)
 GST_OMX_POST_DOWNLOAD_HOOKS += GSTREAMER1_COMMON_DOWNLOAD
