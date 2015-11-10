@@ -1,3 +1,1761 @@
+--- a/arch/mips/brcmstb/Platform  2013-08-28 01:30:56.000000000 +0200
++++ b/arch/mips/brcmstb/Platform 2013-11-29 10:10:03.163205852 +0100
+@@ -3,6 +3,6 @@
+ #
+ platform-$(CONFIG_BRCMSTB) += brcmstb/
+ cflags-$(CONFIG_BRCMSTB) += -I$(srctree)/arch/mips/include/asm/mach-brcmstb
+-load-$(CONFIG_BRCMSTB)   += 0x80001000
++load-$(CONFIG_BRCMSTB)   += 0x80004000
+ 
+ cflags-$(CONFIG_NO_INLINE) += -fno-inline
+--- a/drivers/brcmstb/board.c 2013-08-28 01:30:58.000000000 +0200
++++ b/drivers/brcmstb/board.c  2013-11-29 10:10:28.798987230 +0100
+@@ -49,6 +49,12 @@
+ unsigned long brcm_moca_rf_band = MOCA_BAND_HIGHRF;
+ #endif
+ 
++
++/*prototypes */
++static void board_pinux_setup_DMC7000KLG_CADA(void);
++static void board_pinux_setup_DMC7000KLG_CADB(void);
++void board_pinmux_setup_default(void);
++
+ /***********************************************************************
+  * PIN_MUX setup
+  *
+@@ -100,8 +106,1696 @@
+         (BCHP_SDIO_0_CFG_##y - \
+          BCHP_SDIO_0_CFG_REG_START))
+ 
++#define IODIR(reg,shift,val) do{ \
++        BDEV_WR(BCHP_GIO_##reg, \
++        (BDEV_RD(BCHP_GIO_##reg) & ~(1<<shift)) | ((val) << shift)); \
++        } while(0)
++
++#define ODEN(reg,shift,val) do{ \
++        BDEV_WR(BCHP_GIO_##reg, \
++        (BDEV_RD(BCHP_GIO_##reg) & ~(1<<shift)) | ((val) << shift)); \
++        } while(0)
++
++#define DATA(reg,shift,val) do { \
++        BDEV_WR(BCHP_GIO_##reg, \
++                ((BDEV_RD(BCHP_GIO_##reg) & \
++                 ~(1 << shift)) | ((val) << shift)));\
++        } while (0)
++
++
++#define PAD_CTRL(reg, field, val) do { \
++        BDEV_WR(BCHP_SUN_TOP_CTRL_PIN_MUX_PAD_CTRL_##reg, \
++                (BDEV_RD(BCHP_SUN_TOP_CTRL_PIN_MUX_PAD_CTRL_##reg) & \
++                 ~BCHP_SUN_TOP_CTRL_PIN_MUX_PAD_CTRL_##reg##_##field##_pad_ctrl_MASK) | \
++                ((val) << \
++                 BCHP_SUN_TOP_CTRL_PIN_MUX_PAD_CTRL_##reg##_##field##_pad_ctrl_SHIFT)); \
++        } while (0)
++
+ void board_pinmux_setup(void)
+ {
++ char lower_boardname [CFE_STRING_SIZE] ;
++ int i ;
++ for (i=0; i<CFE_STRING_SIZE;i++ )
++ {
++   if ( brcm_cfe_boardname[i] >= 'A' && brcm_cfe_boardname[i] <='Z' )
++   {
++     lower_boardname[i] = brcm_cfe_boardname[i] + 0x20 ;
++   }
++   else
++   {
++     lower_boardname[i] = brcm_cfe_boardname[i] ;
++   }
++   
++ }
++
++ printk (KERN_INFO " Board detected : ******* %s ******* . \n",lower_boardname );
++
++    if  (strstarts(lower_boardname, "pace_c281_cada") ||
++         strstarts(lower_boardname, "pace_dmc7000klg_cada"))
++ {
++   board_pinux_setup_DMC7000KLG_CADA (); 
++ }
++    else if (strstarts(lower_boardname, "pace_dmc7000klg_cadb"))
++ {
++   board_pinux_setup_DMC7000KLG_CADB (); 
++ } 
++    else
++ {
++   printk (KERN_INFO " Default pin mux configuration for Broadcom Board. \n");
++   board_pinmux_setup_default() ;
++ }
++
++}
++
++
++#define PULL_NONE   (0)
++#define PULL_DOWN   (1)
++#define PULL_UP     (2)
++#define IODIR_OUT   (0)
++#define IODIR_IN    (1)
++#define TOTEM_POLE  (0)
++#define OPEN_DRAIN  (1)
++
++void board_pinux_setup_DMC7000KLG_CADA(void)
++{
++    printk (KERN_INFO " Specific init for PACE DMC7000KLG CADA Board. \n");
++    printk (KERN_INFO " Based on D915_GPIO_MAP_CADA_d1-5_23-05.xls\n");
++
++    /* AON_GPIO_00  AON_GP0_AUD_SPDIF   O   AUD_SPDIF  N/A             N/A    SPDIF output + strapping for boot (strap_xcore_bias_sel_0) */
++    AON_PINMUX(0, aon_gpio_00, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_0_aon_gpio_00_AUD_SPDIF);
++    AON_PADCTRL(0, aon_gpio_00_pad_ctrl, PULL_NONE);
++    IODIR(AON_IODIR_LO, 0, IODIR_OUT);
++
++    /* AON_GPIO_01  not_switch_irq      I   GPIO       LOW             N/A    From ethernet switch BCM53125    */
++#if 0
++    AON_PINMUX(0, aon_gpio_01, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_0_aon_gpio_01_AON_GPIO_01);
++    AON_PADCTRL(0, aon_gpio_01_pad_ctrl, PULL_NONE);
++    IODIR(AON_IODIR_LO, 1, IODIR_IN);
++#else
++    #warning "AON_GPIO_01 => SPEC ISSUE INPUT NOT POSSIBLE ACCORDING TO BCM SPEC"
++#endif
++
++    /* AON_GPIO_02  CM_PWR_EN           O   GPIO       HIgh            HIgh    cable modem power switch. 1=> cable modem power ON    */
++    AON_PINMUX(0, aon_gpio_02, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_0_aon_gpio_02_AON_GPIO_02);
++    AON_PADCTRL(0, aon_gpio_02_pad_ctrl, PULL_NONE);
++    IODIR(AON_IODIR_LO, 2, IODIR_OUT);
++    DATA(AON_DATA_LO, 2, 1);
++
++    /* AON_GPIO_03    led_pwr_grn       O   GPIO       HIgh            LOW    "1 => green power LED ON    - init value to be confirmed, depending on standby LED behavior requested at boot"    */
++    AON_PINMUX(0, aon_gpio_03, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_0_aon_gpio_03_AON_GPIO_03);
++    AON_PADCTRL(0, aon_gpio_03_pad_ctrl, PULL_NONE);
++    IODIR(AON_IODIR_LO, 3, IODIR_OUT);
++
++    /* AON_GPIO_04    led_cathode_0     I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(0, aon_gpio_04, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_0_aon_gpio_04_AON_GPIO_04);
++    AON_PADCTRL(0, aon_gpio_04_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 4, IODIR_IN);
++
++    /* AON_GPIO_05    led_cathode_1     I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(0, aon_gpio_05, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_0_aon_gpio_05_AON_GPIO_05);
++    AON_PADCTRL(0, aon_gpio_05_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 5, IODIR_IN);
++
++    /* AON_GPIO_06    led_cathode_2     I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(1, aon_gpio_06, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_1_aon_gpio_06_AON_GPIO_06);
++    AON_PADCTRL(0, aon_gpio_06_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 6, IODIR_IN);
++
++    /* AON_GPIO_07    led_cathode_3     I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(1, aon_gpio_07, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_1_aon_gpio_07_AON_GPIO_07);
++    AON_PADCTRL(0, aon_gpio_07_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 7, IODIR_IN);
++
++    /* AON_GPIO_08    led_cathode_4     I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(1, aon_gpio_08, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_1_aon_gpio_08_AON_GPIO_08);
++    AON_PADCTRL(1, aon_gpio_08_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 8, IODIR_IN);
++
++    /* AON_GPIO_09    led_cathode_5     I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(1, aon_gpio_09, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_1_aon_gpio_09_AON_GPIO_09);
++    AON_PADCTRL(1, aon_gpio_09_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 9, IODIR_IN);
++
++    /* AON_GPIO_10    led_cathode_6     I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(1, aon_gpio_10, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_1_aon_gpio_10_AON_GPIO_10);
++    AON_PADCTRL(1, aon_gpio_10_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 10, IODIR_IN);
++
++    /* AON_GPIO_11    led_cathode_7     I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(1, aon_gpio_11, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_1_aon_gpio_11_AON_GPIO_11);
++    AON_PADCTRL(1, aon_gpio_11_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 11, IODIR_IN);
++
++    /* AON_GPIO_12    led_anode_0n      I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(1, aon_gpio_12, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_1_aon_gpio_12_AON_GPIO_12);
++    AON_PADCTRL(1, aon_gpio_12_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 12, IODIR_IN);
++
++    /* AON_GPIO_13    led_anode_1n      I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(1, aon_gpio_13, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_1_aon_gpio_13_AON_GPIO_13);
++    AON_PADCTRL(1, aon_gpio_13_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 13, IODIR_IN);
++
++    /* AON_GPIO_14    led_anode_2n      I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(2, aon_gpio_14, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_2_aon_gpio_14_AON_GPIO_14);
++    AON_PADCTRL(1, aon_gpio_14_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 14, IODIR_IN);
++
++    /* AON_GPIO_15    led_anode_3n      I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(2, aon_gpio_15, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_2_aon_gpio_15_AON_GPIO_15);
++    AON_PADCTRL(1, aon_gpio_15_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 15, IODIR_IN);
++
++    /* AON_GPIO_16    led_pwr_red       O   GPIO       HIgh            HIgh    "1 => red power LED ON - init value to be confirmed, depending on standby LED behavior requested at boot"    */
++    AON_PINMUX(2, aon_gpio_16, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_2_aon_gpio_16_AON_GPIO_16);
++    AON_PADCTRL(1, aon_gpio_16_pad_ctrl, PULL_NONE);
++    IODIR(AON_IODIR_LO, 16, IODIR_OUT);
++    DATA(AON_DATA_LO, 16, 1);
++
++    /* AON_GPIO_17    sw_standby_n      I   GPIO       HIgh    LOW    N/A    stand-by key input, 1 => key pressed    */
++    AON_PINMUX(2, aon_gpio_17, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_2_aon_gpio_17_AON_GPIO_17);
++    AON_PADCTRL(1, aon_gpio_17_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 17, IODIR_IN);
++
++    /* AON_GPIO_18    sw_ch_up_n        I   GPIO       HIgh    LOW    N/A    channel up key input, 1 => key pressed    */
++    AON_PINMUX(2, aon_gpio_18, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_2_aon_gpio_18_AON_GPIO_18);
++    AON_PADCTRL(1, aon_gpio_18_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 18, IODIR_IN);
++
++    /* AON_GPIO_19    sw_ch_dwn_n       I   GPIO       HIgh    LOW    N/A    channel down key input,  1 => key pressed    */
++    AON_PINMUX(2, aon_gpio_19, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_2_aon_gpio_19_AON_GPIO_19);
++    AON_PADCTRL(1, aon_gpio_19_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 19, IODIR_IN);
++
++    /* AON_GPIO_20    PVR_POWER_EN      O   GPIO       HIgh            HIgh    HDD supply switch, 1=> HDD power ON    */
++    AON_PINMUX(2, aon_gpio_20, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_2_aon_gpio_20_AON_GPIO_20);
++    AON_PADCTRL(1, aon_gpio_20_pad_ctrl, PULL_NONE);
++    IODIR(AON_IODIR_LO, 20, IODIR_OUT);
++    DATA(AON_DATA_LO, 20, 1);
++
++    /* AON_SGPIO_00     rf4ce_irq_n     I   GPIO        LOW                  HIgh   N/A */
++    AON_PINMUX(2, aon_sgpio_00, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_2_aon_sgpio_00_AON_SGPIO_00);
++    IODIR(AON_IODIR_EXT, 0, IODIR_IN);
++
++    /* AON_SGPIO_01     rf4ce_wkup      O               LOW    open drain    High */
++    AON_PINMUX(3, aon_sgpio_01, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_3_aon_sgpio_01_AON_SGPIO_01);
++    IODIR(AON_IODIR_EXT, 1, IODIR_OUT);
++    ODEN(AON_ODEN_EXT, 1, 1);
++    DATA(AON_DATA_EXT, 1, 0);
++
++    /* AON_SGPIO_02    RF4CE_SCL        O   AON_BSC_M1_SCL                      RF4CE_I2C   */
++    AON_PINMUX(3, aon_sgpio_02, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_3_aon_sgpio_02_AON_BSC_M1_SCL);
++    IODIR(AON_IODIR_EXT, 2, IODIR_OUT);
++
++    /* AON_SGPIO_03    RF4CE_SDA        I/O AON_BSC_M1_SDA                      RF4CE_I2C   */
++    AON_PINMUX(3, aon_sgpio_03, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_3_aon_sgpio_03_AON_BSC_M1_SDA);
++
++    /* AON_SGPIO_04    HDMI_SCL         O   AON_BSC_M2_SCL                      HDMI I2C    */
++    AON_PINMUX(3, aon_sgpio_04, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_3_aon_sgpio_04_AON_BSC_M2_SCL);
++    IODIR(AON_IODIR_EXT, 4, IODIR_OUT);
++
++    /* AON_SGPIO_05    HDMI_SDA         I/O AON_BSC_M2_SDA                      HDMI I2C    */
++    AON_PINMUX(3, aon_sgpio_05, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_3_aon_sgpio_05_AON_BSC_M2_SDA);
++
++    /* GPIO_000    sc_pwr_fail_n        I   GPIO    LOW     HIgh    N/A    detection of power fail to interrupt smart card dialog    */
++    PINMUX(0, gpio_000, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_0_gpio_000_GPIO_000);
++    PADCTRL(0, gpio_000_pad_ctrl, PULL_UP);
++    IODIR(IODIR_LO, 0, IODIR_IN);
++
++    /* GPIO_001    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(0, gpio_001_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 1, IODIR_IN);
++
++    /* GPIO_002    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(0, gpio_002_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 2, IODIR_IN);
++
++    /* GPIO_003    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(0, gpio_003_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 3, IODIR_IN);
++
++    /* GPIO_004    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(0, gpio_004_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 4, IODIR_IN);
++
++    /* GPIO_005    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(0, gpio_005_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 5, IODIR_IN);
++
++    /* GPIO_006    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_006_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 6, IODIR_IN);
++
++    /* GPIO_007    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_007_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 7, IODIR_IN);
++
++    /* GPIO_008    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_008_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 8, IODIR_IN);
++
++    /* GPIO_009    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_009_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 9, IODIR_IN);
++
++    /* GPIO_010    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_010_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 10, IODIR_IN);
++
++    /* GPIO_011    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_011_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 11, IODIR_IN);
++
++    /* GPIO_012    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_012_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 12, IODIR_IN);
++
++    /* GPIO_013    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_013_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 13, IODIR_IN);
++
++    /* GPIO_014    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_014_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 14, IODIR_IN);
++
++    /* GPIO_015    BCM7430_SPIM_SS1b    I   GPIO    n/a     Low    n/a    option for SPI bus to BCM53125 (not used on D915)    */
++    PINMUX(1, gpio_015, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_1_gpio_015_GPIO_015);
++    PADCTRL(1, gpio_015_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 15, IODIR_IN);
++
++    /* GPIO_016    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_016_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 16, IODIR_IN);
++
++    /* GPIO_017    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_017_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 17, IODIR_IN);
++
++    /* GPIO_018    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_018_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 18, IODIR_IN);
++
++    /* GPIO_019    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_019_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 19, IODIR_IN);
++
++    /* GPIO_020    7430_NAND_CS_N       O   EBI_CS0b        HIgh    NAND FLASH INTERFACE    */
++    PINMUX(2, gpio_020, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_2_gpio_020_EBI_CS0B);
++    PADCTRL(1, gpio_020_pad_ctrl, PULL_UP);
++    IODIR(IODIR_LO, 20, IODIR_OUT);
++
++    /* GPIO_021    7430_NAND_CE_NOT     O   EBI_CS1b        HIgh    */
++    PINMUX(2, gpio_021, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_2_gpio_021_EBI_CS1B);
++    PADCTRL(2, gpio_021_pad_ctrl, PULL_UP);
++    IODIR(IODIR_LO, 21, IODIR_OUT);
++
++    /* GPIO_022    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(2, gpio_022_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 22, IODIR_IN);
++
++    /* GPIO_023    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(2, gpio_023_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 23, IODIR_IN);
++
++    /* GPIO_024    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(2, gpio_024_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 24, IODIR_IN);
++
++    /* GPIO_025    7430_NAND_DATA0      I/O    NAND_DATA_0    */
++    PINMUX(3, gpio_025, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_3_gpio_025_EBI_DATA0);
++    PADCTRL(2, gpio_025_pad_ctrl, PULL_NONE);
++
++    /* GPIO_026    7430_NAND_DATA1      I/O    NAND_DATA_1    */
++    PINMUX(3, gpio_026, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_3_gpio_026_EBI_DATA1);
++    PADCTRL(2, gpio_026_pad_ctrl, PULL_NONE);
++
++    /* GPIO_027    7430_NAND_DATA2      I/O    NAND_DATA_2    */
++    PINMUX(3, gpio_027, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_3_gpio_027_EBI_DATA2);
++    PADCTRL(2, gpio_027_pad_ctrl, PULL_NONE);
++
++    /* GPIO_028    7430_NAND_DATA3      I/O    NAND_DATA_3    */
++    PINMUX(3, gpio_028, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_3_gpio_028_EBI_DATA3);
++    PADCTRL(2, gpio_028_pad_ctrl, PULL_NONE);
++
++    /* GPIO_029    7430_NAND_DATA4      I/O    NAND_DATA_4    */
++    PINMUX(3, gpio_029, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_3_gpio_029_EBI_DATA4);
++    PADCTRL(2, gpio_029_pad_ctrl, PULL_NONE);
++
++    /* GPIO_030    7430_NAND_DATA5      I/O    NAND_DATA_5    */
++    PINMUX(3, gpio_030, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_3_gpio_030_EBI_DATA5);
++    PADCTRL(2, gpio_030_pad_ctrl, PULL_NONE);
++
++    /* GPIO_031    7430_NAND_DATA6      I/O    NAND_DATA_6    */
++    PINMUX(3, gpio_031, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_3_gpio_031_EBI_DATA6);
++    PADCTRL(2, gpio_031_pad_ctrl, PULL_NONE);
++
++    /* GPIO_032    7430_NAND_DATA7      I/O    NAND_DATA_7    */
++    PINMUX(4, gpio_032, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_4_gpio_032_EBI_DATA7);
++    PADCTRL(2, gpio_032_pad_ctrl, PULL_NONE);
++
++    /* GPIO_033    Unused               I   GPIO    n/a    Low    n/a    */
++    PADCTRL(2, gpio_033_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 1, IODIR_IN);
++
++    /* GPIO_034    SCART_SBnot          O   GPIO        HIGH     1=> SB off    */
++    PINMUX(4, gpio_034, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_4_gpio_034_GPIO_034);
++    PADCTRL(2, gpio_034_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_HI, 2, IODIR_OUT);
++    DATA(DATA_HI, 2, 1);
++
++    /* GPIO_035    SCART_SB_6V          O   GPIO        N/a     1=> SB=6V (if  SCART_SBnot=0)    */
++    PINMUX(4, gpio_035, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_4_gpio_035_GPIO_035);
++    PADCTRL(2, gpio_035_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_HI, 3, IODIR_OUT);
++
++    /* GPIO_036    SCART_FB             O   GPIO    HIGH    LOW     1=> FB on    */
++    PINMUX(4, gpio_036, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_4_gpio_036_GPIO_036);
++    PADCTRL(3, gpio_036_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_HI, 4, IODIR_OUT);
++    DATA(DATA_HI, 4, 0);
++
++    /* GPIO_037    AUDIO_MUTE           O   GPIO    LOW    HIgh    LOW    shall remain low during the boot process until the DACs are properly initialized to avoid any plop.    */
++    PINMUX(4, gpio_037, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_4_gpio_037_GPIO_037);
++    PADCTRL(3, gpio_037_pad_ctrl, PULL_UP);
++    IODIR(IODIR_HI, 5, IODIR_OUT);
++    DATA(DATA_HI, 5, 0);
++
++    /* GPIO_038    BCM7430_SPIM_MOSI    I   GPIO    n/a    Low    n/a    option for SPI bus to BCM53125 (not used on D915)    */
++    PINMUX(4, gpio_038, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_4_gpio_038_GPIO_038);
++    PADCTRL(3, gpio_038_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 6, IODIR_IN);
++
++    /* GPIO_039    BCM7430_SPIM_MISO    I   GPIO    n/a    Low    n/a    option for SPI bus to BCM53125 (not used on D915)    */
++    PINMUX(4, gpio_039, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_4_gpio_039_GPIO_039);
++    PADCTRL(3, gpio_039_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 7, IODIR_IN);
++
++    /* GPIO_040    BCM7430_SPIM_SCK     I   GPIO    n/a    Low    n/a    option for SPI bus to BCM53125 (not used on D915)    */
++    PINMUX(5, gpio_040, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_5_gpio_040_GPIO_040);
++    PADCTRL(3, gpio_040_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 8, IODIR_IN);
++
++    /* GPIO_041    7430_NAND_READ_N     O   NAND_REb    HIgh    NAND FLASH INTERFACE    */
++    PINMUX(5, gpio_041, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_5_gpio_041_EBI_RDB);
++    PADCTRL(3, gpio_041_pad_ctrl, PULL_UP);
++    IODIR(IODIR_HI, 9, IODIR_OUT);
++
++    /* GPIO_042    7430_NAND_WE_N       O   NAND_WEb    HIgh    */
++    PINMUX(5, gpio_042, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_5_gpio_042_EBI_WE0B);
++    PADCTRL(3, gpio_042_pad_ctrl, PULL_UP);
++    IODIR(IODIR_HI, 10, IODIR_OUT);
++
++    /* GPIO_043    7430_NAND_WE_ALE     I   NAND_ALE    HIgh    */
++    PINMUX(5, gpio_043, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_5_gpio_043_EBI_DSB);
++    PADCTRL(3, gpio_043_pad_ctrl, PULL_UP);
++    IODIR(IODIR_HI, 11, IODIR_IN);
++
++    /* GPIO_044    7430_NAND_WE_CLE     I   NAND_CLE    HIgh    */
++    PINMUX(5, gpio_044, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_5_gpio_044_EBI_TSB);
++    PADCTRL(3, gpio_044_pad_ctrl, PULL_UP);
++    IODIR(IODIR_HI, 12, IODIR_IN);
++
++    /* GPIO_045    7430_NAND_RB_N       I   NAND_RBb    HIgh        */
++    PINMUX(5, gpio_045, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_5_gpio_045_EBI_NAND_RBB);
++    PADCTRL(3, gpio_045_pad_ctrl, PULL_UP);
++    IODIR(IODIR_HI, 13, IODIR_IN);
++
++    /* GPIO_046    HDMI_OFF             O   GPIO        HIgh    HIgh    Low    HDMI 5V switch command. 1 => HDMI 5V ON    */
++    PINMUX(5, gpio_046, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_5_gpio_046_GPIO_046);
++    PADCTRL(3, gpio_046_pad_ctrl, PULL_UP);
++    IODIR(IODIR_HI, 14, IODIR_OUT);
++    DATA(DATA_HI, 14, 0);
++
++    /* GPIO_047    Unused               I   GPIO    n/a    Low    n/a    */
++    PADCTRL(3, gpio_047_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 15, IODIR_IN);
++
++    /* GPIO_048    Unused               I   GPIO    n/a    Low    n/a    */
++    PADCTRL(3, gpio_048_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 16, IODIR_IN);
++
++    /* GPIO_049    Scart_vid_buf_enable_n    O    GPIO    HIgh    HIgh    Low    1 => Video buffer ON    */
++    PINMUX(6, gpio_049, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_6_gpio_049_GPIO_049);
++    PADCTRL(3, gpio_049_pad_ctrl, PULL_UP);
++    IODIR(IODIR_HI, 17, IODIR_OUT);
++    DATA(DATA_HI, 17, 0);
++
++    /* GPIO_050    Unused               I   GPIO    n/a    Low    n/a    */
++    PADCTRL(3, gpio_050_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 18, IODIR_IN);
++
++    /* GPIO_051    Moca_powerdown_n     O   GPIO    LOW    HIgh    HIgh    0 => MoCA 3V3 off    */
++    PINMUX(6, gpio_051, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_6_gpio_051_GPIO_051);
++    PADCTRL(4, gpio_051_pad_ctrl, PULL_UP);
++    IODIR(IODIR_HI, 19, IODIR_OUT);
++    DATA(DATA_HI, 19, 1);
++    brcm_moca_i2c_base = BPHYSADDR(BCHP_BSCD_REG_START);
++
++    /* GPIO_052    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_052_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 20, IODIR_IN);
++
++    /* GPIO_053    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_053_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 21, IODIR_IN);
++
++    /* GPIO_054    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_054_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 22, IODIR_IN);
++
++    /* GPIO_055    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_055_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 23, IODIR_IN);
++
++    /* GPIO_056    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_056_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 24, IODIR_IN);
++
++    /* GPIO_057    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_057_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 25, IODIR_IN);
++
++    /* GPIO_058    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_058_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 26, IODIR_IN);
++
++    /* GPIO_059    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_059_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 27, IODIR_IN);
++
++    /* GPIO_060    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_060_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 28, IODIR_IN);
++
++    /* GPIO_061    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_061_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 29, IODIR_IN);
++
++    /* GPIO_062    Unused               I    GPIO    n/a    Low    n/a    */
++    PINMUX(7, gpio_062, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_7_gpio_062_GPIO_062);
++    PADCTRL(4, gpio_062_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 30, IODIR_IN);
++
++    /* GPIO_063    Unused               I    GPIO    n/a    Low    n/a    */
++    PINMUX(7, gpio_063, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_7_gpio_063_GPIO_063);
++    PADCTRL(4, gpio_063_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 31, IODIR_IN);
++
++    /* GPIO_064    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_064_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 4, IODIR_IN);
++
++    /* GPIO_065    UART_TXD_1    UART_TX1        TESTTASK interface    */
++    PINMUX(8, gpio_065, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_8_gpio_065_UART_TX1);
++    PADCTRL(4, gpio_065_pad_ctrl, PULL_NONE);
++
++    /* GPIO_066    UART_RXD_1    UART_RX1        TESTTASK interface    */
++    PINMUX(8, gpio_066, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_8_gpio_066_UART_RX1);
++    PADCTRL(5, gpio_066_pad_ctrl, PULL_NONE);
++
++    /* GPIO_067    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(5, gpio_067_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 7, IODIR_IN);
++
++    /* GPIO_068    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(5, gpio_068_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 8, IODIR_IN);
++
++    /* GPIO_069    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(5, gpio_069_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 9, IODIR_IN);
++
++    /* GPIO_070    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(5, gpio_070_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 10, IODIR_IN);
++
++    /* GPIO_071    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(5, gpio_071_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 11, IODIR_IN);
++
++    /* GPIO_072    RF4CE_resetn         O    GPIO    Low    None    LOW     to reset RF4CE (0 ==> GP510 resetted). */
++    PINMUX(9, gpio_072, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_9_gpio_072_GPIO_072);
++    PADCTRL(5, gpio_072_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 12, IODIR_OUT);
++    DATA(DATA_EXT, 12, 0);
++
++    /* GPIO_073    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(5, gpio_073_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 13, IODIR_IN);
++
++    /* GPIO_074    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(5, gpio_074_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 14, IODIR_IN);
++
++    /* GPIO_075    led_rec              O    GPIO    HIGH    LOW    1=> record LED ON    */
++    PINMUX(9, gpio_075, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_9_gpio_075_GPIO_075);
++    PADCTRL(5, gpio_075_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 15, IODIR_OUT);
++    DATA(DATA_EXT, 15, 0);
++
++    /* GPIO_076    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(5, gpio_076_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 16, IODIR_IN);
++
++    /* GPIO_077    not_sc_1v8           I    GPIO    */
++    PINMUX(9, gpio_077, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_9_gpio_077_GPIO_077);
++    PADCTRL(5, gpio_077_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 17, IODIR_IN);
++
++    /* GPIO_078    sc_5v_not_3v         O    GPIO    */
++    PINMUX(9, gpio_078, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_9_gpio_078_GPIO_078);
++    PADCTRL(5, gpio_078_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 18, IODIR_OUT);
++
++    /* GPIO_079    SC_VCC               O    SC0_VCC    */
++    PINMUX(9, gpio_079, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_9_gpio_079_SC0_VCC);
++    PADCTRL(5, gpio_079_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 19, IODIR_OUT);
++
++    /* GPIO_080    SC_CLK               O    SC0_CLK    */
++    PINMUX(10, gpio_080, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_10_gpio_080_SC0_CLK);
++    PADCTRL(5, gpio_080_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 20, IODIR_OUT);
++
++    /* GPIO_081    SC_RST               O    SC0_RST    */
++    PINMUX(10, gpio_081, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_10_gpio_081_SC0_RST);
++    PADCTRL(6, gpio_081_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 21, IODIR_OUT);
++
++    /* GPIO_082    SC_data              I/O    SC0_IO    */
++    PINMUX(10, gpio_082, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_10_gpio_082_SC0_IO);
++    PADCTRL(6, gpio_082_pad_ctrl, PULL_NONE);
++
++    /* GPIO_083    SC_PRES              I    SC0_PRES        */
++    PINMUX(10, gpio_083, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_10_gpio_083_SC0_PRES);
++    PADCTRL(6, gpio_083_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 23, IODIR_IN);
++
++    /* GPIO_084    SC_AUX0              I    GPIO    n/a    Low    n/a    not used on D915    */
++    PINMUX(10, gpio_084, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_10_gpio_084_GPIO_084);
++    PADCTRL(6, gpio_084_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 24, IODIR_IN);
++
++    /* GPIO_085    SC_AUX1              I    GPIO    n/a    Low    n/a    not used on D915    */
++    PINMUX(10, gpio_085, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_10_gpio_085_GPIO_085);
++    PADCTRL(6, gpio_085_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 25, IODIR_IN);
++
++    /* GPIO_086    Unused               I    GPIO    n/a    Low    n/a    */
++    PINMUX(10, gpio_086, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_10_gpio_086_GPIO_086);
++    PADCTRL(6, gpio_086_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 26, IODIR_IN);
++
++    /* GPIO_087    MTSIF_CLK            I    MTSIF0_CLK        Multiplex Transport Stream interface with BCM3383    */
++    PINMUX(10, gpio_087, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_10_gpio_087_MTSIF0_CLK);
++    PADCTRL(6, gpio_087_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 27, IODIR_IN);
++
++    /* GPIO_088    MTSIF_DATA0          I    MTSIF0_DATA0    */
++    PINMUX(11, gpio_088, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_11_gpio_088_MTSIF0_DATA0);
++    PADCTRL(6, gpio_088_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 28, IODIR_IN);
++
++    /* GPIO_089    MTSIF_SYNC           I    MTSIF0_SYNC        */
++    PINMUX(11, gpio_089, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_11_gpio_089_MTSIF0_SYNC);
++    PADCTRL(6, gpio_089_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 29, IODIR_IN);
++
++    /* GPIO_090    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(6, gpio_090_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 30, IODIR_IN);
++
++    /* GPIO_091    MTSIF_DATA1          I    MTSIF0_DATA1    */
++    PINMUX(11, gpio_091, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_11_gpio_091_MTSIF0_DATA1);
++    PADCTRL(6, gpio_091_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 31, IODIR_IN);
++
++    /* GPIO_092    UART_TXD_0           UART_TX0        CFE interface    */
++    PINMUX(11, gpio_092, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_11_gpio_092_UART_TX0);
++    PADCTRL(6, gpio_092_pad_ctrl, PULL_NONE);
++
++    /* GPIO_093    UART_RXD_0           UART_RX0        CFE interface    */
++    PINMUX(11, gpio_093, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_11_gpio_093_UART_RX0);
++    PADCTRL(6, gpio_093_pad_ctrl, PULL_NONE);
++
++    /* GPIO_094    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(6, gpio_094_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT_HI, 2, IODIR_IN);
++
++    /* GPIO_095    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(6, gpio_095_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT_HI, 3, IODIR_IN);
++
++    /* GPIO_096    FAN_CTRL             O    PWM0    N/A    HIgh    low    fan pwm, fan speed is increased when PWM duty cycle is decreasing    */
++    PINMUX(12, gpio_096, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_12_gpio_096_PWM0);
++    PADCTRL(7, gpio_096_pad_ctrl, PULL_UP);
++    IODIR(IODIR_EXT_HI, 4, IODIR_OUT);
++    DATA(DATA_EXT_HI, 4, 0);
++
++    /* GPIO_097    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(7, gpio_097_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT_HI, 5, IODIR_IN);
++
++    /* GPIO_098    fan_tacho            I    N/A    HIgh    N/A    This is a special GPIO. Check with BCM.*/
++#if 0
++    PINMUX(12, gpio_098, 0);
++    PADCTRL(7, gpio_098_pad_ctrl, PULL_UP);
++    IODIR(IODIR_EXT_HI, 6, IODIR_IN);
++#else
++    #warning "GPIO_098 fan_tacho => SPEC ISSUE TBC"
++#endif
++
++    /* GPIO_099    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(7, gpio_099_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT_HI, 7, IODIR_IN);
++
++    /* GPIO_100    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(7, gpio_100_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT_HI, 8, IODIR_IN);
++
++    /* GPIO_101    MTSIF_DATA2          I    MTSIF0_DATA2        Multiplex Transport Stream interface with BCM3383 */
++    PINMUX(12, gpio_101, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_12_gpio_101_MTSIF0_DATA2);
++    PADCTRL(7, gpio_101_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT_HI, 9, IODIR_IN);
++
++    /* GPIO_102    MTSIF_DATA3          I    MTSIF0_DATA3    */
++    PINMUX(12, gpio_102, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_12_gpio_102_MTSIF0_DATA3);
++    PADCTRL(7, gpio_102_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT_HI, 10, IODIR_IN);
++
++    /* GPIO_103    MTSIF_DATA4          I    MTSIF0_DATA4    */
++    PINMUX(12, gpio_103, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_12_gpio_103_MTSIF0_DATA4);
++    PADCTRL(7, gpio_103_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT_HI, 11, IODIR_IN);
++
++    /* GPIO_104    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(7, gpio_104_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT_HI, 12, IODIR_IN);
++
++    /* GPIO_105    MTSIF_DATA5          I    MTSIF0_DATA5    */
++    PINMUX(13, gpio_105, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_13_gpio_105_MTSIF0_DATA5);
++    PADCTRL(7, gpio_105_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT_HI, 13, IODIR_IN);
++
++    /* GPIO_106 ???? */
++    /* GPIO_107 ???? */
++    /* GPIO_108 ???? */
++    /* GPIO_109 ???? */
++    /* GPIO_110 ???? */
++    /* GPIO_111 ???? */
++    /* GPIO_112 ???? */
++    /* GPIO_113 ???? */
++
++    /* GPIO_114    "GP114_ENET0_ACTIVITY    (unused, but strapping resistor connected)"    I    GPIO    */
++    PINMUX(14, gpio_114, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_14_gpio_114_GPIO_114);
++    PADCTRL(8, gpio_114_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT_HI, 22, IODIR_IN);
++
++    /* GPIO_115 ???? */
++
++    /* GPIO_116    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(8, gpio_116_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT_HI, 24, IODIR_IN);
++
++    /* GPIO_117    MTSIF_DATA6          I    MTSIF0_DATA6    */
++    PINMUX(14, gpio_117, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_14_gpio_117_MTSIF0_DATA6);
++    PADCTRL(8, gpio_117_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT_HI, 25, IODIR_IN);
++
++    /* GPIO_118    MTSIF_DATA7          I    MTSIF0_DATA7    */
++    PINMUX(14, gpio_118, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_14_gpio_118_MTSIF0_DATA7);
++    PADCTRL(8, gpio_118_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT_HI, 26, IODIR_IN);
++
++    /* GPIO_119 ???? */
++    /* GPIO_120 ???? */
++    /* GPIO_121 ???? */
++
++    /* GPIO_122    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(8, gpio_122_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT_HI, 30, IODIR_IN);
++
++    /* GPIO_123    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(8, gpio_123_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT_HI, 31, IODIR_IN);
++
++    /* GPIO_124    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(8, gpio_124_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 0, IODIR_IN);
++
++    /* GPIO_125    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(8, gpio_125_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 1, IODIR_IN);
++
++    /* GPIO_126    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(8, gpio_126_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 2, IODIR_IN);
++
++    /* GPIO_127    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(8, gpio_127_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 3, IODIR_IN);
++
++    /* GPIO_128    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(8, gpio_128_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 4, IODIR_IN);
++
++    /* GPIO_129    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(8, gpio_129_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 5, IODIR_IN);
++
++    /* GPIO_130    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(9, gpio_130_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 6, IODIR_IN);
++
++    /* GPIO_131    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(9, gpio_131_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 7, IODIR_IN);
++
++    /* GPIO_132    53125_7430_RGMII_RXDV    I    MII_RX_DV        EMAC0 interface with ethernet switch    */
++    PINMUX(15, gpio_132, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_15_gpio_132_MII_RX_DV);
++    PADCTRL(9, gpio_132_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 8, IODIR_IN);
++
++    /* GPIO_133    Unused               I    n/a    Low    n/a    */
++    PADCTRL(9, gpio_133_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 9, IODIR_IN);
++
++    /* GPIO_134    53125_7430_RGMII_RXCLK    I    MII_RX_CLK    */
++    PINMUX(16, gpio_134, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_16_gpio_134_MII_RX_CLK);
++    PADCTRL(9, gpio_134_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 10, IODIR_IN);
++
++    /* GPIO_135    Unused               I    n/a    Low    n/a    */
++    PADCTRL(9, gpio_135_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 11, IODIR_IN);
++
++    /* GPIO_136    Unused               I    n/a    Low    n/a    */
++    PADCTRL(9, gpio_136_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 12, IODIR_IN);
++
++    /* GPIO_137    7430_GP_137_MII_MDIO (option not used on D915)    I/O    GPIO    */
++    PINMUX(16, gpio_137, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_16_gpio_137_GPIO_137);
++    PADCTRL(9, gpio_137_pad_ctrl, PULL_NONE);
++
++    /* GPIO_138    53125_7430_RMII_TXCLK    O    MII_TX_CLK    */
++    PINMUX(16, gpio_138, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_16_gpio_138_MII_TX_CLK);
++    PADCTRL(9, gpio_138_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 14, IODIR_OUT);
++
++    /* GPIO_139    53125_7430_RGMII_RXD3    I    MII_RXD_03    */
++    PINMUX(16, gpio_139, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_16_gpio_139_MII_RXD_03);
++    PADCTRL(9, gpio_139_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 15, IODIR_IN);
++
++    /* GPIO_140    53125_7430_RGMII_RXD2    I    MII_RXD_02    */
++    PINMUX(16, gpio_140, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_16_gpio_140_MII_RXD_02);
++    PADCTRL(9, gpio_140_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 16, IODIR_IN);
++
++    /* GPIO_141    53125_7430_RGMII_RXD1    I    MII_RXD_01    */
++    PINMUX(17, gpio_141, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_17_gpio_141_MII_RXD_01);
++    PADCTRL(9, gpio_141_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 17, IODIR_IN);
++
++    /* GPIO_142    53125_7430_RGMII_RXD0    i    MII_RXD_00    */
++    PINMUX(17, gpio_142, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_17_gpio_142_MII_RXD_00);
++    PADCTRL(9, gpio_142_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 18, IODIR_IN);
++
++    /* GPIO_143    53125_7430_RGMII_TXD3    O    MII_TXD_03    */
++    PINMUX(17, gpio_143, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_17_gpio_143_MII_TXD_03);
++    PADCTRL(9, gpio_143_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 19, IODIR_OUT);
++
++    /* GPIO_144    53125_7430_RGMII_TXD2    O    MII_TXD_02    */
++    PINMUX(17, gpio_144, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_17_gpio_144_MII_TXD_02);
++    PADCTRL(9, gpio_144_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 20, IODIR_OUT);
++
++    /* GPIO_145    53125_7430_RGMII_TXD1    O    MII_TXD_01    */
++    PINMUX(17, gpio_145, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_17_gpio_145_MII_TXD_01);
++    PADCTRL(10, gpio_145_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 21, IODIR_OUT);
++
++    /* GPIO_146    53125_7430_RGMII_TXD0    O    MII_TXD_00    */
++    PINMUX(17, gpio_146, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_17_gpio_146_MII_TXD_00);
++    PADCTRL(10, gpio_146_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 22, IODIR_OUT);
++
++    /* GPIO_147    53125_7430_RGMII_TXDV    O    MII_TXD_EN    */
++    PINMUX(17, gpio_147, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_17_gpio_147_MII_TX_EN);
++    PADCTRL(10, gpio_147_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 23, IODIR_OUT);
++
++    /* GPIO_148    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(10, gpio_148_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 24, IODIR_IN);
++
++    /* GPIO_149    53125_7430_MII_MDC (option not used on D915)    O    GPIO    */
++    PINMUX(18, gpio_149, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_18_gpio_149_GPIO_149);
++    PADCTRL(10, gpio_149_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 25, IODIR_OUT);
++
++    /* SGPIO_00    3450_BSC_SCL         O    BSC_M3_SDA        MOCA_I2C    */
++    PINMUX(18, sgpio_00, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_18_sgpio_00_BSC_M3_SCL);
++    IODIR(IODIR_EXT, 0, IODIR_OUT);
++
++    /* SGPIO_01    3450_BSC_SDA         I/O    BSC_M3_SCL        MOCA_I2C    */
++    PINMUX(18, sgpio_01, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_18_sgpio_01_BSC_M3_SDA);
++
++    /* SGPIO_02    Unused               I    SGPIO    n/a    Low    n/a */
++    IODIR(IODIR_EXT, 2, IODIR_IN);
++
++    /* SGPIO_03    Unused               I    SGPIO    n/a    Low    n/a    */
++    IODIR(IODIR_EXT, 3, IODIR_IN);
++}
++
++void board_pinux_setup_DMC7000KLG_CADB(void)
++{
++    printk (KERN_INFO " Specific init for PACE DMC7000KLG CADB Board. \n");
++    printk (KERN_INFO " Based on D915_GPIO_MAP_CADB_d1-1_29-5.xls\n");
++
++    /* AON_GPIO_00  AON_GP0_AUD_SPDIF   O   AUD_SPDIF  N/A  PULL_NONE  totem-pole    N/A    SPDIF output + strapping for boot (strap_xcore_bias_sel_0) */
++    AON_PINMUX(0, aon_gpio_00, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_0_aon_gpio_00_AUD_SPDIF);
++    AON_PADCTRL(0, aon_gpio_00_pad_ctrl, PULL_NONE);
++    IODIR(AON_IODIR_LO, 0, IODIR_OUT);
++    ODEN(AON_ODEN_LO, 0, TOTEM_POLE);
++
++    /* AON_GPIO_01  Moca_powerdown_n    O   GPIO       LOW  PULL_HIGH   open-drain  HIGH    0 => MoCA 3V3 off + strapping for boot (strap_xcore_bias_sel_1) */
++    AON_PINMUX(0, aon_gpio_01, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_0_aon_gpio_01_AON_GPIO_01);
++    AON_PADCTRL(0, aon_gpio_01_pad_ctrl, PULL_UP);
++    IODIR(AON_IODIR_LO, 1, IODIR_OUT);
++    ODEN(AON_ODEN_LO, 1, TOTEM_POLE);
++    DATA(AON_DATA_LO, 1, 1);
++    brcm_moca_i2c_base = BPHYSADDR(BCHP_BSCD_REG_START);
++
++    /* AON_GPIO_02  CM_PWR_EN   O   GPIO    HIgh    PULL_HIGH   totem-pole  HIgh    cable modem power switch. 1=> cable modem power ON */
++    AON_PINMUX(0, aon_gpio_02, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_0_aon_gpio_02_AON_GPIO_02);
++    AON_PADCTRL(0, aon_gpio_02_pad_ctrl, PULL_UP);
++    IODIR(AON_IODIR_LO, 2, IODIR_OUT);
++    ODEN(AON_ODEN_LO, 2, TOTEM_POLE);
++    DATA(AON_DATA_LO, 2, 1);
++
++    /* AON_GPIO_03  wake_on_lan I   GPIO    LOW     PULL_HIGH   N/A    N/A    From ethernet switch BCM53125 */
++    AON_PINMUX(0, aon_gpio_03, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_0_aon_gpio_03_AON_GPIO_03);
++    AON_PADCTRL(0, aon_gpio_03_pad_ctrl, PULL_UP);
++    IODIR(AON_IODIR_LO, 3, IODIR_IN);
++
++    /* AON_GPIO_04    led_cathode_0     I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915 - option to drive red power led with LDK to reduce power consumption in S3 mode. */
++    AON_PINMUX(0, aon_gpio_04, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_0_aon_gpio_04_AON_GPIO_04);
++    AON_PADCTRL(0, aon_gpio_04_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 4, IODIR_IN);
++
++    /* AON_GPIO_05    led_cathode_1     I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915 - option for wake-up of S3 mode managed by BCM3383. */
++    AON_PINMUX(0, aon_gpio_05, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_0_aon_gpio_05_AON_GPIO_05);
++    AON_PADCTRL(0, aon_gpio_05_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 5, IODIR_IN);
++
++    /* AON_GPIO_06    led_cathode_2     I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(1, aon_gpio_06, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_1_aon_gpio_06_AON_GPIO_06);
++    AON_PADCTRL(0, aon_gpio_06_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 6, IODIR_IN);
++
++    /* AON_GPIO_07    led_cathode_3     I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(1, aon_gpio_07, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_1_aon_gpio_07_AON_GPIO_07);
++    AON_PADCTRL(0, aon_gpio_07_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 7, IODIR_IN);
++
++    /* AON_GPIO_08    led_cathode_4     I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(1, aon_gpio_08, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_1_aon_gpio_08_AON_GPIO_08);
++    AON_PADCTRL(1, aon_gpio_08_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 8, IODIR_IN);
++
++    /* AON_GPIO_09    led_cathode_5     I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(1, aon_gpio_09, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_1_aon_gpio_09_AON_GPIO_09);
++    AON_PADCTRL(1, aon_gpio_09_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 9, IODIR_IN);
++
++    /* AON_GPIO_10    led_cathode_6     I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(1, aon_gpio_10, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_1_aon_gpio_10_AON_GPIO_10);
++    AON_PADCTRL(1, aon_gpio_10_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 10, IODIR_IN);
++
++    /* AON_GPIO_11    led_cathode_7     I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(1, aon_gpio_11, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_1_aon_gpio_11_AON_GPIO_11);
++    AON_PADCTRL(1, aon_gpio_11_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 11, IODIR_IN);
++
++    /* AON_GPIO_12    led_anode_0n      I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(1, aon_gpio_12, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_1_aon_gpio_12_AON_GPIO_12);
++    AON_PADCTRL(1, aon_gpio_12_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 12, IODIR_IN);
++
++    /* AON_GPIO_13    led_anode_1n      I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(1, aon_gpio_13, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_1_aon_gpio_13_AON_GPIO_13);
++    AON_PADCTRL(1, aon_gpio_13_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 13, IODIR_IN);
++
++    /* AON_GPIO_14    led_anode_2n      I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(2, aon_gpio_14, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_2_aon_gpio_14_AON_GPIO_14);
++    AON_PADCTRL(1, aon_gpio_14_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 14, IODIR_IN);
++
++    /* AON_GPIO_15    led_anode_3n      I   GPIO       n/a     Low    n/a    option for 7 segment display, not used on D915    */
++    AON_PINMUX(2, aon_gpio_15, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_2_aon_gpio_15_AON_GPIO_15);
++    AON_PADCTRL(1, aon_gpio_15_pad_ctrl, PULL_DOWN);
++    IODIR(AON_IODIR_LO, 15, IODIR_IN);
++
++    /* AON_GPIO_16        led_pwr_red    O    GPIO    HIgh    PULL_NONE    totem-pole    HIGH    "1 => red power LED ON init value to be confirmed, depending on standby LED behavior requested at boot" */
++    AON_PINMUX(2, aon_gpio_16, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_2_aon_gpio_16_AON_GPIO_16);
++    AON_PADCTRL(1, aon_gpio_16_pad_ctrl, PULL_NONE);
++    IODIR(AON_IODIR_LO, 16, IODIR_OUT);
++    ODEN(AON_ODEN_LO, 16, TOTEM_POLE);
++    DATA(AON_DATA_LO, 16, 1);
++
++    /* AON_GPIO_17        sw_standby_n    I    GPIO    HIgh    PULL_NONE    N/A    N/A    stand-by key input, 1 => key pressed */
++    AON_PINMUX(2, aon_gpio_17, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_2_aon_gpio_17_AON_GPIO_17);
++    AON_PADCTRL(1, aon_gpio_17_pad_ctrl, PULL_NONE);
++    IODIR(AON_IODIR_LO, 17, IODIR_IN);
++
++    /* AON_GPIO_18        sw_ch_up_n    I    GPIO    HIgh    PULL_NONE    N/A    N/A    channel up key input, 1 => key pressed */
++     AON_PINMUX(2, aon_gpio_18, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_2_aon_gpio_18_AON_GPIO_18);
++    AON_PADCTRL(1, aon_gpio_18_pad_ctrl, PULL_NONE);
++    IODIR(AON_IODIR_LO, 18, IODIR_IN);
++
++    /* AON_GPIO_19        sw_ch_dwn_n    I    GPIO    HIgh    PULL_NONE    N/A    N/A    channel down key input,  1 => key pressed */
++    AON_PINMUX(2, aon_gpio_19, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_2_aon_gpio_19_AON_GPIO_19);
++    AON_PADCTRL(1, aon_gpio_19_pad_ctrl, PULL_NONE);
++    IODIR(AON_IODIR_LO, 19, IODIR_IN);
++
++    /* AON_GPIO_20        PVR_POWER_EN    O    GPIO    HIgh    PULL_HIGH    totem-pole    HIgh    HDD supply switch, 1=> HDD power ON */
++    AON_PINMUX(2, aon_gpio_20, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_2_aon_gpio_20_AON_GPIO_20);
++    AON_PADCTRL(1, aon_gpio_20_pad_ctrl, PULL_UP);
++    IODIR(AON_IODIR_LO, 20, IODIR_OUT);
++    ODEN(AON_ODEN_LO, 20, TOTEM_POLE);
++    DATA(AON_DATA_LO, 20, 1);
++
++    /* AON_SGPIO_00        rf4ce_irq_n    I    GPIO    LOW    N/A    N/A    N/A    */
++    AON_PINMUX(2, aon_sgpio_00, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_2_aon_sgpio_00_AON_SGPIO_00);
++    IODIR(AON_IODIR_EXT, 0, IODIR_IN);
++
++    /* AON_SGPIO_01        rf4ce_wkup    O    GPIO    LOW    N/A    open-drain    High */
++    AON_PINMUX(3, aon_sgpio_01, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_3_aon_sgpio_01_AON_SGPIO_01);
++    IODIR(AON_IODIR_EXT, 1, IODIR_OUT);
++    ODEN(AON_ODEN_EXT, 1, OPEN_DRAIN);
++    DATA(AON_DATA_EXT, 1, 1);
++
++    /* AON_SGPIO_02        RF4CE_SCL    O    AON_BSC_M1_SCL    LOW    N/A    open-drain    High    RF4CE_I2C */
++    AON_PINMUX(3, aon_sgpio_02, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_3_aon_sgpio_02_AON_BSC_M1_SCL);
++    IODIR(AON_IODIR_EXT, 2, IODIR_OUT);
++    ODEN(AON_ODEN_EXT, 2, OPEN_DRAIN);
++    DATA(AON_DATA_EXT, 2, 1);
++
++    /* AON_SGPIO_03        RF4CE_SDA    I/O    AON_BSC_M1_SDA    N/A    N/A    open-drain    High    RF4CE_I2C */
++    AON_PINMUX(3, aon_sgpio_03, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_3_aon_sgpio_03_AON_BSC_M1_SDA);
++    ODEN(AON_ODEN_EXT, 3, OPEN_DRAIN);
++    DATA(AON_DATA_EXT, 3, 1);
++
++    /* AON_SGPIO_04        HDMI_SCL    O    AON_BSC_M2_SCL    LOW    N/A    open-drain    High    HDMI I2C */
++    AON_PINMUX(3, aon_sgpio_04, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_3_aon_sgpio_04_AON_BSC_M2_SCL);
++    IODIR(AON_IODIR_EXT, 4, IODIR_OUT);
++    ODEN(AON_ODEN_EXT, 4, OPEN_DRAIN);
++    DATA(AON_DATA_EXT, 4, 1);
++
++    /* AON_SGPIO_05        HDMI_SDA    I/O    AON_BSC_M2_SDA    N/A    N/A    open-drain    High    HDMI I2C */
++    AON_PINMUX(3, aon_sgpio_05, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_3_aon_sgpio_05_AON_BSC_M2_SDA);
++    ODEN(AON_ODEN_EXT, 5, OPEN_DRAIN);
++    DATA(AON_DATA_EXT, 5, 1);
++
++    /* GPIO_000    sc_pwr_fail_n        I   GPIO    LOW     HIgh    N/A    detection of power fail to interrupt smart card dialog    */
++    PINMUX(0, gpio_000, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_0_gpio_000_GPIO_000);
++    PADCTRL(0, gpio_000_pad_ctrl, PULL_UP);
++    IODIR(IODIR_LO, 0, IODIR_IN);
++
++    /* GPIO_001    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(0, gpio_001_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 1, IODIR_IN);
++
++    /* GPIO_002    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(0, gpio_002_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 2, IODIR_IN);
++
++    /* GPIO_003    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(0, gpio_003_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 3, IODIR_IN);
++
++    /* GPIO_004    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(0, gpio_004_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 4, IODIR_IN);
++
++    /* GPIO_005    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(0, gpio_005_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 5, IODIR_IN);
++
++    /* GPIO_006    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_006_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 6, IODIR_IN);
++
++    /* GPIO_007    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_007_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 7, IODIR_IN);
++
++    /* GPIO_008    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_008_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 8, IODIR_IN);
++
++    /* GPIO_009    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_009_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 9, IODIR_IN);
++
++    /* GPIO_010    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_010_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 10, IODIR_IN);
++
++    /* GPIO_011    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_011_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 11, IODIR_IN);
++
++    /* GPIO_012    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_012_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 12, IODIR_IN);
++
++    /* GPIO_013    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_013_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 13, IODIR_IN);
++
++    /* GPIO_014    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_014_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 14, IODIR_IN);
++
++    /* GPIO_015    BCM7430_SPIM_SS1b    I   GPIO    n/a     Low    n/a    option for SPI bus to BCM53125 (not used on D915)    */
++    PINMUX(1, gpio_015, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_1_gpio_015_GPIO_015);
++    PADCTRL(1, gpio_015_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 15, IODIR_IN);
++
++    /* GPIO_016    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_016_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 16, IODIR_IN);
++
++    /* GPIO_017    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_017_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 17, IODIR_IN);
++
++    /* GPIO_018    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_018_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 18, IODIR_IN);
++
++    /* GPIO_019    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(1, gpio_019_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 19, IODIR_IN);
++
++    /* GPIO_020        7430_NOR_CS_N    O    EBI_CS0b    low    PULL_HIGH    totem-pole    HIGH   NAND FLASH INTERFACE */
++    PINMUX(2, gpio_020, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_2_gpio_020_EBI_CS0B);
++    PADCTRL(1, gpio_020_pad_ctrl, PULL_UP);
++    IODIR(IODIR_LO, 20, IODIR_OUT);
++    ODEN(ODEN_LO, 20, TOTEM_POLE);
++    DATA(DATA_LO, 20, 1);
++
++    /*  GPIO_021        7430_NAND_CE_NOT    O    EBI_CS1b    low    PULL_HIGH    totem-pole    HIGH */
++    PINMUX(2, gpio_021, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_2_gpio_021_EBI_CS1B);
++    PADCTRL(2, gpio_021_pad_ctrl, PULL_UP);
++    IODIR(IODIR_LO, 21, IODIR_OUT);
++    ODEN(ODEN_LO, 21, TOTEM_POLE);
++    DATA(DATA_LO, 21, 1);
++
++    /* GPIO_022    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(2, gpio_022_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 22, IODIR_IN);
++
++    /* GPIO_023    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(2, gpio_023_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 23, IODIR_IN);
++
++    /* GPIO_024    Unused               I   GPIO    n/a     Low    n/a    */
++    PADCTRL(2, gpio_024_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_LO, 24, IODIR_IN);
++
++    /* GPIO_025    7430_NAND_DATA0      I/O    NAND_DATA_0    */
++    PINMUX(3, gpio_025, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_3_gpio_025_EBI_DATA0);
++    PADCTRL(2, gpio_025_pad_ctrl, PULL_NONE);
++
++    /* GPIO_026    7430_NAND_DATA1      I/O    NAND_DATA_1    */
++    PINMUX(3, gpio_026, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_3_gpio_026_EBI_DATA1);
++    PADCTRL(2, gpio_026_pad_ctrl, PULL_NONE);
++
++    /* GPIO_027    7430_NAND_DATA2      I/O    NAND_DATA_2    */
++    PINMUX(3, gpio_027, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_3_gpio_027_EBI_DATA2);
++    PADCTRL(2, gpio_027_pad_ctrl, PULL_NONE);
++
++    /* GPIO_028    7430_NAND_DATA3      I/O    NAND_DATA_3    */
++    PINMUX(3, gpio_028, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_3_gpio_028_EBI_DATA3);
++    PADCTRL(2, gpio_028_pad_ctrl, PULL_NONE);
++
++    /* GPIO_029    7430_NAND_DATA4      I/O    NAND_DATA_4    */
++    PINMUX(3, gpio_029, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_3_gpio_029_EBI_DATA4);
++    PADCTRL(2, gpio_029_pad_ctrl, PULL_NONE);
++
++    /* GPIO_030    7430_NAND_DATA5      I/O    NAND_DATA_5    */
++    PINMUX(3, gpio_030, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_3_gpio_030_EBI_DATA5);
++    PADCTRL(2, gpio_030_pad_ctrl, PULL_NONE);
++
++    /* GPIO_031    7430_NAND_DATA6      I/O    NAND_DATA_6    */
++    PINMUX(3, gpio_031, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_3_gpio_031_EBI_DATA6);
++    PADCTRL(2, gpio_031_pad_ctrl, PULL_NONE);
++
++    /* GPIO_032    7430_NAND_DATA7      I/O    NAND_DATA_7    */
++    PINMUX(4, gpio_032, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_4_gpio_032_EBI_DATA7);
++    PADCTRL(2, gpio_032_pad_ctrl, PULL_NONE);
++
++    /* GPIO_033    Unused               I   GPIO    n/a    Low    n/a    */
++    PADCTRL(2, gpio_033_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 1, IODIR_IN);
++
++    /* GPIO_034        SCART_SBnot    O    GPIO    LOW    PULL_NONE    open-drain     LOW     1=> SB off */
++    PINMUX(4, gpio_034, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_4_gpio_034_GPIO_034);
++    PADCTRL(2, gpio_034_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_HI, 2, IODIR_OUT);
++    ODEN(ODEN_HI, 2, OPEN_DRAIN);
++    DATA(DATA_HI, 2, 0);
++
++    /* GPIO_035        SCART_SB_6V    O    GPIO    HIGH    PULL_NONE    totem-pole    LOW     1=> SB=6V (if  SCART_SBnot=0) */
++    PINMUX(4, gpio_035, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_4_gpio_035_GPIO_035);
++    PADCTRL(2, gpio_035_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_HI, 3, IODIR_OUT);
++    ODEN(ODEN_HI, 3, TOTEM_POLE);
++    DATA(DATA_HI, 3, 0);
++
++    /* GPIO_036        SCART_FB    O    GPIO    HIGH    PULL_NONE    totem-pole    LOW     1=> FB on */
++    PINMUX(4, gpio_036, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_4_gpio_036_GPIO_036);
++    PADCTRL(3, gpio_036_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_HI, 4, IODIR_OUT);
++    ODEN(ODEN_HI, 4, TOTEM_POLE);
++    DATA(DATA_HI, 4, 0);
++
++    /* GPIO_037        AUDIO_MUTE    O    GPIO    LOW    PULL_NONE    totem-pole    LOW    shall remain low during the boot process until the DACs are properly initialized to avoid any plop. */
++    PINMUX(4, gpio_037, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_4_gpio_037_GPIO_037);
++    PADCTRL(3, gpio_037_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_HI, 5, IODIR_OUT);
++    ODEN(ODEN_HI, 5, TOTEM_POLE);
++    DATA(DATA_HI, 5, 0);
++
++    /* GPIO_038    BCM7430_SPIM_MOSI    I   GPIO    n/a    Low    n/a    option for SPI bus to BCM53125 (not used on D915)    */
++    PINMUX(4, gpio_038, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_4_gpio_038_GPIO_038);
++    PADCTRL(3, gpio_038_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 6, IODIR_IN);
++
++    /* GPIO_039    BCM7430_SPIM_MISO    I   GPIO    n/a    Low    n/a    option for SPI bus to BCM53125 (not used on D915)    */
++    PINMUX(4, gpio_039, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_4_gpio_039_GPIO_039);
++    PADCTRL(3, gpio_039_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 7, IODIR_IN);
++
++    /* GPIO_040    BCM7430_SPIM_SCK     I   GPIO    n/a    Low    n/a    option for SPI bus to BCM53125 (not used on D915)    */
++    PINMUX(5, gpio_040, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_5_gpio_040_GPIO_040);
++    PADCTRL(3, gpio_040_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 8, IODIR_IN);
++
++    /* GPIO_041        7430_NAND_READ_N    O    NAND_REb    N/A    PULL_NONE    N/A    N/A NAND FLASH INTERFACE*/
++    PINMUX(5, gpio_041, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_5_gpio_041_EBI_RDB);
++    PADCTRL(3, gpio_041_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_HI, 9, IODIR_OUT);
++
++    /* GPIO_042        7430_NAND_WE_N    O    NAND_WEb    N/A    PULL_NONE    N/A    N/A NAND FLASH INTERFACE*/
++     PINMUX(5, gpio_042, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_5_gpio_042_EBI_WE0B);
++    PADCTRL(3, gpio_042_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_HI, 10, IODIR_OUT);
++
++    /* GPIO_043        7430_NAND_WE_ALE    I    NAND_ALE    N/A    PULL_NONE    N/A    N/A NAND FLASH INTERFACE*/
++    PINMUX(5, gpio_043, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_5_gpio_043_EBI_DSB);
++    PADCTRL(3, gpio_043_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_HI, 11, IODIR_IN);
++
++    /* GPIO_044        7430_NAND_WE_CLE    I    NAND_CLE    N/A    PULL_NONE    N/A    N/A NAND FLASH INTERFACE*/
++    PINMUX(5, gpio_044, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_5_gpio_044_EBI_TSB);
++    PADCTRL(3, gpio_044_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_HI, 12, IODIR_IN);
++
++    /* GPIO_045        7430_NAND_RB_N    I    NAND_RBb    N/A    PULL_NONE    N/A    N/A NAND FLASH INTERFACE*/
++    PINMUX(5, gpio_045, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_5_gpio_045_EBI_NAND_RBB);
++    PADCTRL(3, gpio_045_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_HI, 13, IODIR_IN);
++
++    /* GPIO_046        HDMI_OFF    O    GPIO    HIgh    PULL_NONE    totem-pole    HIGH    HDMI 5V switch command. 1 => HDMI 5V ON */
++    PINMUX(5, gpio_046, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_5_gpio_046_GPIO_046);
++    PADCTRL(3, gpio_046_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_HI, 14, IODIR_OUT);
++    ODEN(ODEN_HI, 14, TOTEM_POLE);
++    DATA(DATA_HI, 14, 1);
++
++    /* GPIO_047    Unused               I   GPIO    n/a    Low    n/a    */
++    PADCTRL(3, gpio_047_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 15, IODIR_IN);
++
++    /* GPIO_048    Unused               I   GPIO    n/a    Low    n/a    */
++    PADCTRL(3, gpio_048_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 16, IODIR_IN);
++
++    /* GPIO_049     Scart_vid_buf_enable_n  I   GPIO    N/A PULL_LOW    N/A N/A option not used on D915 (if option included: 1 => Video buffer ON) */
++    PINMUX(6, gpio_049, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_6_gpio_049_GPIO_049);
++    PADCTRL(3, gpio_049_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 17, IODIR_IN);
++
++    /* GPIO_050    Unused               I   GPIO    n/a    Low    n/a    */
++    PADCTRL(3, gpio_050_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 18, IODIR_IN);
++
++    /* GPIO_051        led_pwr_grn    O    GPIO    HIgh    PULL_NONE    totem-pole    LOW    "1 => green power LED ON init value to be confirmed, depending on standby LED behavior requested at boot" */
++    PINMUX(6, gpio_051, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_6_gpio_051_GPIO_051);
++    PADCTRL(4, gpio_051_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_HI, 19, IODIR_OUT);
++    ODEN(ODEN_HI, 19, TOTEM_POLE);
++    DATA(DATA_HI, 19, 0);
++
++    /* GPIO_052    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_052_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 20, IODIR_IN);
++
++    /* GPIO_053    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_053_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 21, IODIR_IN);
++
++    /* GPIO_054    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_054_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 22, IODIR_IN);
++
++    /* GPIO_055    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_055_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 23, IODIR_IN);
++
++    /* GPIO_056    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_056_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 24, IODIR_IN);
++
++    /* GPIO_057    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_057_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 25, IODIR_IN);
++
++    /* GPIO_058    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_058_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 26, IODIR_IN);
++
++    /* GPIO_059    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_059_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 27, IODIR_IN);
++
++    /* GPIO_060    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_060_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 28, IODIR_IN);
++
++    /* GPIO_061    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_061_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 29, IODIR_IN);
++
++    /* GPIO_062    Unused               I    GPIO    n/a    Low    n/a    */
++    PINMUX(7, gpio_062, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_7_gpio_062_GPIO_062);
++    PADCTRL(4, gpio_062_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 30, IODIR_IN);
++
++    /* GPIO_063    Unused               I    GPIO    n/a    Low    n/a    */
++    PINMUX(7, gpio_063, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_7_gpio_063_GPIO_063);
++    PADCTRL(4, gpio_063_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_HI, 31, IODIR_IN);
++
++    /* GPIO_064    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(4, gpio_064_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 4, IODIR_IN);
++
++    /* GPIO_065     UART_TXD_1  O   UART_TX1    N/A PULL_NONE   N/A HIGH    TESTTASK    interface   */
++    PINMUX(8, gpio_065, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_8_gpio_065_UART_TX1);
++    PADCTRL(4, gpio_065_pad_ctrl, PULL_NONE);
++    DATA(DATA_EXT, 5, 1);
++
++    /* GPIO_066    UART_RXD_1    UART_RX1        TESTTASK interface    */
++    PINMUX(8, gpio_066, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_8_gpio_066_UART_RX1);
++    PADCTRL(5, gpio_066_pad_ctrl, PULL_NONE);
++
++    /* GPIO_067    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(5, gpio_067_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 7, IODIR_IN);
++
++    /* GPIO_068    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(5, gpio_068_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 8, IODIR_IN);
++
++    /* GPIO_069    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(5, gpio_069_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 9, IODIR_IN);
++
++    /* GPIO_070    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(5, gpio_070_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 10, IODIR_IN);
++
++    /* GPIO_071    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(5, gpio_071_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 11, IODIR_IN);
++
++    /* GPIO_072        RF4CE_resetn    O    GPIO    Low    PULL_NONE    totem-pole    LOW    to reset RF4CE (0 ==> GP510 resetted). GP510 has to be resetted at start-up. */
++    PINMUX(9, gpio_072, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_9_gpio_072_GPIO_072);
++    PADCTRL(5, gpio_072_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 12, IODIR_OUT);
++    ODEN(ODEN_EXT, 12, TOTEM_POLE);
++    DATA(DATA_EXT, 12, 0);
++
++    /* GPIO_073    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(5, gpio_073_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 13, IODIR_IN);
++
++    /* GPIO_074    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(5, gpio_074_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 14, IODIR_IN);
++
++    /* GPIO_075        led_rec    O    GPIO    HIGH    PULL_NONE    totem-pole    LOW    1=> record LED ON */
++    PINMUX(9, gpio_075, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_9_gpio_075_GPIO_075);
++    PADCTRL(5, gpio_075_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 15, IODIR_OUT);
++    ODEN(ODEN_EXT, 15, TOTEM_POLE);
++    DATA(DATA_EXT, 15, 0);
++
++    /* GPIO_076    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(5, gpio_076_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 16, IODIR_IN);
++
++    /* GPIO_077    not_sc_1v8           I    GPIO    */
++    PINMUX(9, gpio_077, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_9_gpio_077_GPIO_077);
++    PADCTRL(5, gpio_077_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 17, IODIR_IN);
++
++    /* GPIO_078    sc_5v_not_3v         O    GPIO    */
++    PINMUX(9, gpio_078, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_9_gpio_078_GPIO_078);
++    PADCTRL(5, gpio_078_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 18, IODIR_OUT);
++
++    /* GPIO_079    SC_VCC               O    SC0_VCC    */
++    PINMUX(9, gpio_079, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_9_gpio_079_SC0_VCC);
++    PADCTRL(5, gpio_079_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 19, IODIR_OUT);
++
++    /* GPIO_080    SC_CLK               O    SC0_CLK    */
++    PINMUX(10, gpio_080, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_10_gpio_080_SC0_CLK);
++    PADCTRL(5, gpio_080_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 20, IODIR_OUT);
++
++    /* GPIO_081    SC_RST               O    SC0_RST    */
++    PINMUX(10, gpio_081, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_10_gpio_081_SC0_RST);
++    PADCTRL(6, gpio_081_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 21, IODIR_OUT);
++
++    /* GPIO_082    SC_data              I/O    SC0_IO    */
++    PINMUX(10, gpio_082, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_10_gpio_082_SC0_IO);
++    PADCTRL(6, gpio_082_pad_ctrl, PULL_NONE);
++
++    /* GPIO_083    SC_PRES              I    SC0_PRES        */
++    PINMUX(10, gpio_083, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_10_gpio_083_SC0_PRES);
++    PADCTRL(6, gpio_083_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 23, IODIR_IN);
++
++    /* GPIO_084    SC_AUX0              I    GPIO    n/a    Low    n/a    not used on D915    */
++    PINMUX(10, gpio_084, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_10_gpio_084_GPIO_084);
++    PADCTRL(6, gpio_084_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 24, IODIR_IN);
++
++    /* GPIO_085    SC_AUX1              I    GPIO    n/a    Low    n/a    not used on D915    */
++    PINMUX(10, gpio_085, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_10_gpio_085_GPIO_085);
++    PADCTRL(6, gpio_085_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 25, IODIR_IN);
++
++    /* GPIO_086    Unused               I    GPIO    n/a    Low    n/a    */
++    PINMUX(10, gpio_086, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_10_gpio_086_GPIO_086);
++    PADCTRL(6, gpio_086_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 26, IODIR_IN);
++
++    /* GPIO_087    MTSIF_CLK            I    MTSIF0_CLK        Multiplex Transport Stream interface with BCM3383    */
++    PINMUX(10, gpio_087, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_10_gpio_087_MTSIF0_CLK);
++    PADCTRL(6, gpio_087_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 27, IODIR_IN);
++
++    /* GPIO_088    MTSIF_DATA0          I    MTSIF0_DATA0    */
++    PINMUX(11, gpio_088, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_11_gpio_088_MTSIF0_DATA0);
++    PADCTRL(6, gpio_088_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 28, IODIR_IN);
++
++    /* GPIO_089    MTSIF_SYNC           I    MTSIF0_SYNC        */
++    PINMUX(11, gpio_089, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_11_gpio_089_MTSIF0_SYNC);
++    PADCTRL(6, gpio_089_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 29, IODIR_IN);
++
++    /* GPIO_090    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(6, gpio_090_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT, 30, IODIR_IN);
++
++    /* GPIO_091    MTSIF_DATA1          I    MTSIF0_DATA1    */
++    PINMUX(11, gpio_091, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_11_gpio_091_MTSIF0_DATA1);
++    PADCTRL(6, gpio_091_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT, 31, IODIR_IN);
++
++    /* GPIO_092    UART_TXD_0           UART_TX0        CFE interface    */
++    PINMUX(11, gpio_092, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_11_gpio_092_UART_TX0);
++    PADCTRL(6, gpio_092_pad_ctrl, PULL_NONE);
++    DATA(DATA_EXT_HI, 0, 1);
++
++    /* GPIO_093    UART_RXD_0           UART_RX0        CFE interface    */
++    PINMUX(11, gpio_093, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_11_gpio_093_UART_RX0);
++    PADCTRL(6, gpio_093_pad_ctrl, PULL_NONE);
++
++    /* GPIO_094    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(6, gpio_094_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT_HI, 2, IODIR_IN);
++
++    /* GPIO_095    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(6, gpio_095_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT_HI, 3, IODIR_IN);
++
++    /* GPIO_096    FAN_CTRL             O    PWM0    N/A    HIgh    low    fan pwm, fan speed is increased when PWM duty cycle is decreasing    */
++    PINMUX(12, gpio_096, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_12_gpio_096_PWM0);
++    PADCTRL(7, gpio_096_pad_ctrl, PULL_UP);
++    IODIR(IODIR_EXT_HI, 4, IODIR_OUT);
++    DATA(DATA_EXT_HI, 4, 0);
++
++    /* GPIO_097    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(7, gpio_097_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT_HI, 5, IODIR_IN);
++
++    /* GPIO_098        fan_tacho    I    ????    N/A    PULL_NONE    N/A    N/A    This is a special GPIO. Check with BCM. */
++#if 0
++    PINMUX(12, gpio_098, 0);
++    PADCTRL(7, gpio_098_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT_HI, 6, IODIR_IN);
++#else
++    #warning "GPIO_098 fan_tacho => SPEC ISSUE TBC"
++#endif
++
++    /* GPIO_099    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(7, gpio_099_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT_HI, 7, IODIR_IN);
++
++    /* GPIO_100    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(7, gpio_100_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT_HI, 8, IODIR_IN);
++
++    /* GPIO_101    MTSIF_DATA2          I    MTSIF0_DATA2        Multiplex Transport Stream interface with BCM3383 */
++    PINMUX(12, gpio_101, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_12_gpio_101_MTSIF0_DATA2);
++    PADCTRL(7, gpio_101_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT_HI, 9, IODIR_IN);
++
++    /* GPIO_102    MTSIF_DATA3          I    MTSIF0_DATA3    */
++    PINMUX(12, gpio_102, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_12_gpio_102_MTSIF0_DATA3);
++    PADCTRL(7, gpio_102_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT_HI, 10, IODIR_IN);
++
++    /* GPIO_103    MTSIF_DATA4          I    MTSIF0_DATA4    */
++    PINMUX(12, gpio_103, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_12_gpio_103_MTSIF0_DATA4);
++    PADCTRL(7, gpio_103_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT_HI, 11, IODIR_IN);
++
++    /* GPIO_104        MTSIF_ATS_RST    I    MTSIF_ATS_RST    N/A        N/A    N/A */
++    PINMUX(12, gpio_104, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_12_gpio_104_MTSIF_ATS_RST);
++    IODIR(IODIR_EXT_HI, 12, IODIR_IN);
++
++    /* GPIO_105    MTSIF_DATA5          I    MTSIF0_DATA5    */
++    PINMUX(13, gpio_105, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_13_gpio_105_MTSIF0_DATA5);
++    PADCTRL(7, gpio_105_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT_HI, 13, IODIR_IN);
++
++    /* GPIO_0106 to 0113 are used for dedicated USB interface */
++    /* GPIO_106 ???? */
++    /* GPIO_107 ???? */
++    /* GPIO_108 ???? */
++    /* GPIO_109 ???? */
++    /* GPIO_110 ???? */
++    /* GPIO_111 ???? */
++    /* GPIO_112 ???? */
++    /* GPIO_113 ???? */
++
++    /* GPIO_114    "GP114_ENET0_ACTIVITY    (unused, but strapping resistor connected)"    I    GPIO    */
++    PINMUX(14, gpio_114, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_14_gpio_114_GPIO_114);
++    PADCTRL(8, gpio_114_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT_HI, 22, IODIR_IN);
++
++    /* GPIO_115 ???? */
++
++    /* GPIO_116        MTSIF_ATS_INC    I    MTSIF_ATS_INC    N/A        N/A    N/A */
++    PINMUX(14, gpio_116, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_14_gpio_116_MTSIF_ATS_INC);
++    IODIR(IODIR_EXT_HI, 24, IODIR_IN);
++
++    /* GPIO_117    MTSIF_DATA6          I    MTSIF0_DATA6    */
++    PINMUX(14, gpio_117, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_14_gpio_117_MTSIF0_DATA6);
++    PADCTRL(8, gpio_117_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT_HI, 25, IODIR_IN);
++
++    /* GPIO_118    MTSIF_DATA7          I    MTSIF0_DATA7    */
++    PINMUX(14, gpio_118, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_14_gpio_118_MTSIF0_DATA7);
++    PADCTRL(8, gpio_118_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT_HI, 26, IODIR_IN);
++
++    /* GPIO_119 ???? */
++    /* GPIO_120 ???? */
++    /* GPIO_121 ???? */
++
++    /* GPIO_122    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(8, gpio_122_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT_HI, 30, IODIR_IN);
++
++    /* GPIO_123    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(8, gpio_123_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT_HI, 31, IODIR_IN);
++
++    /* GPIO_124    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(8, gpio_124_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 0, IODIR_IN);
++
++    /* GPIO_125    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(8, gpio_125_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 1, IODIR_IN);
++
++    /* GPIO_126    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(8, gpio_126_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 2, IODIR_IN);
++
++    /* GPIO_127    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(8, gpio_127_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 3, IODIR_IN);
++
++    /* GPIO_128    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(8, gpio_128_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 4, IODIR_IN);
++
++    /* GPIO_129    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(8, gpio_129_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 5, IODIR_IN);
++
++    /* GPIO_130    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(9, gpio_130_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 6, IODIR_IN);
++
++    /* GPIO_131    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(9, gpio_131_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 7, IODIR_IN);
++
++    /* GPIO_132    53125_7430_RGMII_RXDV    I    MII_RX_DV        EMAC0 interface with ethernet switch    */
++    PINMUX(15, gpio_132, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_15_gpio_132_MII_RX_DV);
++    PADCTRL(9, gpio_132_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 8, IODIR_IN);
++
++    /* GPIO_133    Unused               I    n/a    Low    n/a    */
++    PADCTRL(9, gpio_133_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 9, IODIR_IN);
++
++    /* GPIO_134    53125_7430_RGMII_RXCLK    I    MII_RX_CLK    */
++    PINMUX(16, gpio_134, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_16_gpio_134_MII_RX_CLK);
++    PADCTRL(9, gpio_134_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 10, IODIR_IN);
++
++    /* GPIO_135    Unused               I    n/a    Low    n/a    */
++    PADCTRL(9, gpio_135_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 11, IODIR_IN);
++
++    /* GPIO_136    Unused               I    n/a    Low    n/a    */
++    PADCTRL(9, gpio_136_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 12, IODIR_IN);
++
++    /* GPIO_137        7430_GP_137_MII_MDIO (option not used on D915)    I    GPIO    N/A    PULL_LOW    N/A    N/A */
++    PINMUX(16, gpio_137, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_16_gpio_137_GPIO_137);
++    PADCTRL(9, gpio_137_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 13, IODIR_IN);
++
++    /* GPIO_138    53125_7430_RMII_TXCLK    O    MII_TX_CLK    */
++    PINMUX(16, gpio_138, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_16_gpio_138_MII_TX_CLK);
++    PADCTRL(9, gpio_138_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 14, IODIR_OUT);
++
++    /* GPIO_139    53125_7430_RGMII_RXD3    I    MII_RXD_03    */
++    PINMUX(16, gpio_139, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_16_gpio_139_MII_RXD_03);
++    PADCTRL(9, gpio_139_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 15, IODIR_IN);
++
++    /* GPIO_140    53125_7430_RGMII_RXD2    I    MII_RXD_02    */
++    PINMUX(16, gpio_140, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_16_gpio_140_MII_RXD_02);
++    PADCTRL(9, gpio_140_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 16, IODIR_IN);
++
++    /* GPIO_141    53125_7430_RGMII_RXD1    I    MII_RXD_01    */
++    PINMUX(17, gpio_141, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_17_gpio_141_MII_RXD_01);
++    PADCTRL(9, gpio_141_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 17, IODIR_IN);
++
++    /* GPIO_142    53125_7430_RGMII_RXD0    i    MII_RXD_00    */
++    PINMUX(17, gpio_142, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_17_gpio_142_MII_RXD_00);
++    PADCTRL(9, gpio_142_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 18, IODIR_IN);
++
++    /* GPIO_143    53125_7430_RGMII_TXD3    O    MII_TXD_03    */
++    PINMUX(17, gpio_143, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_17_gpio_143_MII_TXD_03);
++    PADCTRL(9, gpio_143_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 19, IODIR_OUT);
++
++    /* GPIO_144    53125_7430_RGMII_TXD2    O    MII_TXD_02    */
++    PINMUX(17, gpio_144, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_17_gpio_144_MII_TXD_02);
++    PADCTRL(9, gpio_144_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 20, IODIR_OUT);
++
++    /* GPIO_145    53125_7430_RGMII_TXD1    O    MII_TXD_01    */
++    PINMUX(17, gpio_145, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_17_gpio_145_MII_TXD_01);
++    PADCTRL(10, gpio_145_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 21, IODIR_OUT);
++
++    /* GPIO_146    53125_7430_RGMII_TXD0    O    MII_TXD_00    */
++    PINMUX(17, gpio_146, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_17_gpio_146_MII_TXD_00);
++    PADCTRL(10, gpio_146_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 22, IODIR_OUT);
++
++    /* GPIO_147    53125_7430_RGMII_TXDV    O    MII_TXD_EN    */
++    PINMUX(17, gpio_147, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_17_gpio_147_MII_TX_EN);
++    PADCTRL(10, gpio_147_pad_ctrl, PULL_NONE);
++    IODIR(IODIR_EXT2, 23, IODIR_OUT);
++
++    /* GPIO_148    Unused               I    GPIO    n/a    Low    n/a    */
++    PADCTRL(10, gpio_148_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 24, IODIR_IN);
++
++    /* GPIO_149 53125_7430_MII_MDC  (option not used on D915)   +   spare strapping for boot    I   GPIO    N/A PULL_LOW    N/A N/A */
++    PINMUX(18, gpio_149, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_18_gpio_149_GPIO_149);
++    PADCTRL(10, gpio_149_pad_ctrl, PULL_DOWN);
++    IODIR(IODIR_EXT2, 25, IODIR_IN);
++
++    /* SGPIO_00        3450_BSC_SCL    O    BSC_M3_SCL    LOW    N/A    open-drain    HIGH    MOCA I2C Clock */
++    PINMUX(18, sgpio_00, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_18_sgpio_00_BSC_M3_SCL);
++    IODIR(IODIR_EXT, 0, IODIR_OUT);
++    ODEN(DATA_EXT, 0, OPEN_DRAIN);
++    DATA(DATA_EXT, 0, 1);
++
++    /* SGPIO_01        3450_BSC_SDA    I/O    BSC_M3_SDA    N/A    N/A    open-drain    HIGH    MOCA I2C Data */
++    PINMUX(18, sgpio_01, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_18_sgpio_01_BSC_M3_SDA);
++    ODEN(DATA_EXT, 1, OPEN_DRAIN);
++    DATA(DATA_EXT, 1, 1);
++
++    /* SGPIO_02    Unused               I    SGPIO    n/a    Low    n/a */
++    IODIR(IODIR_EXT, 2, IODIR_IN);
++
++    /* SGPIO_03    Unused               I    SGPIO    n/a    Low    n/a    */
++    IODIR(IODIR_EXT, 3, IODIR_IN);
++}
++
++void board_pinmux_setup_default(void)
++{
+ #if !defined(CONFIG_BRCM_IKOS)
+ #if defined(CONFIG_BCM7231)
+ 
+@@ -632,14 +2326,15 @@
+  * FLASH configuration
+  ***********************************************************************/
+ 
++#if !defined CONFIG_PACE_MULTI_DEVICE_MTD_SUPPORT
+ #if defined(CONFIG_BRCM_FIXED_MTD_PARTITIONS)
+ 
+ static struct mtd_partition fixed_partition_map[] = {
+  {
+-   .name = "entire_device",
++   .name = "entire_device",  
+    .size = MTDPART_SIZ_FULL,
+    .offset = 0x00000000
+- },
++ },  
+ };
+ 
+ /*
+@@ -664,7 +2359,7 @@
+ int __init board_get_partition_map(struct mtd_partition **p)
+ {
+  struct mtd_partition *ret;
+- int nr_parts;
++int nr_parts;
+ 
+  if (brcm_mtd_rootfs_len == 0)
+    return -ENODEV;
+@@ -696,6 +2391,8 @@
+ }
+ #endif /* defined(CONFIG_BRCM_FIXED_MTD_PARTITIONS) */
+ 
++#endif
++
+ void brcm_get_ocap_info(struct brcm_ocap_info *info)
+ {
+  info->ocap_part_start = brcm_mtd_ocap_start;
 --- a/arch/mips/kernel/mips_ksyms.c
 +++ b/arch/mips/kernel/mips_ksyms.c
 @@ -5,7 +5,7 @@
