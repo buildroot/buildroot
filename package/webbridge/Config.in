@@ -122,6 +122,20 @@ config BR2_PACKAGE_PLUGIN_BROWSER
 	help
 	  A plugin that has browser functionality (QtWebKit)
 
+config BR2_PACKAGE_PLUGIN_WEBKITBROWSER
+	bool "webkitbrowser"
+	depends on BR2_PACKAGE_WPE
+	help
+	  A plugin that manages the webkit browser functionality
+
+comment "webkitbrowser requires the package wpe"
+	depends on !BR2_PACKAGE_WPE
+
+config BR2_PACKAGE_PLUGIN_DIALSERVER
+	bool "dialserver"
+	help
+	  A plugin that implements DIscovery And Launch protocol specification
+
 config BR2_PACKAGE_PLUGIN_SURFACECOMPOSITOR
 	bool "surfacecompositor"
 	depends on BR2_PACKAGE_BCM_REFSW
