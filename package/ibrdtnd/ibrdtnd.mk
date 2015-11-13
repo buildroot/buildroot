@@ -9,7 +9,7 @@ IBRDTND_SOURCE = ibrdtnd-$(IBRDTND_VERSION).tar.gz
 IBRDTND_SITE = https://www.ibr.cs.tu-bs.de/projects/ibr-dtn/releases
 IBRDTND_LICENSE = Apache-2.0
 IBRDTND_LICENSE_FILES = COPYING
-IBRDTND_DEPENDENCIES = ibrdtn ibrcommon
+IBRDTND_DEPENDENCIES = ibrdtn ibrcommon host-pkgconf
 
 # Disable features that don't have the necessary dependencies in
 # Buildroot
@@ -17,6 +17,9 @@ IBRDTND_CONF_OPTS = \
 	--disable-dtndht \
 	--without-wifip2p \
 	--without-vmime
+
+# don't build documentation
+IBRDTND_CONF_ENV = PDFLATEX='no'
 
 ifeq ($(BR2_PACKAGE_LIBDAEMON),y)
 IBRDTND_CONF_OPTS += --enable-libdaemon
