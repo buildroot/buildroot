@@ -1,0 +1,54 @@
+menuconfig BR2_PACKAGE_GST1_BCM
+	bool "gst1-bcm"
+	select BR2_PACKAGE_GST1_PLUGINS_BASE
+	depends on BR2_PACKAGE_BCM_REFSW
+	help
+	  Broadcom NEXUS GStreamer 1.x plugins
+
+if BR2_PACKAGE_GST1_BCM
+
+comment "Broadcom Nexus specific plugins"
+
+config BR2_PACKAGE_GST1_BCM_AUDFILTER
+	bool "audfilter"
+	default y
+	help 
+	  Add BRCM libbrcmaudiofilter.so    
+
+config BR2_PACKAGE_GST1_BCM_AUDIODECODE
+	bool "audiodecode"
+	default y
+	help 
+	  Add BRCM libbrcmaudiodecoder.so
+
+config BR2_PACKAGE_GST1_BCM_AUDIOSINK  
+	bool "audiosink"
+	default y
+	help 
+	  Add BRCM libbrcmaudiosink.so
+
+config BR2_PACKAGE_GST1_BCM_GFXSINK
+	bool "gfxsink"
+	default y
+	help 
+	  Add BRCM libbrcmgfxsink.so
+
+config BR2_PACKAGE_GST1_BCM_VIDEODECODE
+	bool "videodecode"
+	default y
+	help 
+	  Add BRCM libbrcmvideodecoder.so
+   
+config BR2_PACKAGE_GST1_BCM_VIDEOSINK     
+	bool "videosink"
+	default y
+	help 
+	  Add BRCM libbrcmvideosink.so
+  
+config BR2_PACKAGE_GST1_BCM_VIDFILTER      
+	bool "vidfilter"
+	default y
+	help 
+	  Add BRCM libbrcmvidfilter.so
+		
+endif

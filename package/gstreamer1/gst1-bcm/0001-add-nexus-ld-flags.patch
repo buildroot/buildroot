@@ -1,0 +1,348 @@
+diff --git a/audfilter/src/Makefile.am b/audfilter/src/Makefile.am
+index b04e1f0..e37fc11 100644
+--- a/audfilter/src/Makefile.am
++++ b/audfilter/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS) -lnxclient
++AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS) $(NEXUS_LD_LIBRARIES) -lnxclient
+ 
+ plugin_LTLIBRARIES = libbrcmaudiofilter.la
+ 
+diff --git a/audiodecode/src/Makefile.am b/audiodecode/src/Makefile.am
+index 864a92a..18f52d2 100644
+--- a/audiodecode/src/Makefile.am
++++ b/audiodecode/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS) -lnxclient
++AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS) $(NEXUS_LD_LIBRARIES) -lnxclient
+ 
+ plugin_LTLIBRARIES = libbrcmaudiodecoder.la
+ 
+diff --git a/audiosink/src/Makefile.am b/audiosink/src/Makefile.am
+index dbbc2d7..fb0acf6 100644
+--- a/audiosink/src/Makefile.am
++++ b/audiosink/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS) -lnxclient
++AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS)  $(NEXUS_LD_LIBRARIES) -lnxclient
+ 
+ plugin_LTLIBRARIES = libbrcmaudiosink.la
+ 
+diff --git a/avi/src/Makefile.am b/avi/src/Makefile.am
+index 07671fb..8ce6dd4 100644
+--- a/avi/src/Makefile.am
++++ b/avi/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) -lnxclient
++AM_LDFLAGS = $(GST_LIBS)  $(NEXUS_LD_LIBRARIES)  -lnxclient
+ 
+ plugin_LTLIBRARIES = libgstavi.la
+ 
+diff --git a/gfxsink/src/Makefile.am b/gfxsink/src/Makefile.am
+index 82b96bb..ed33967 100644
+--- a/gfxsink/src/Makefile.am
++++ b/gfxsink/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS) -lnxclient
++AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS)  $(NEXUS_LD_LIBRARIES) -lnxclient
+ 
+ plugin_LTLIBRARIES = libbrcmgfxsink.la
+ 
+diff --git a/httpsrc/src/Makefile.am b/httpsrc/src/Makefile.am
+index a3ee69d..e506b6e 100644
+--- a/httpsrc/src/Makefile.am
++++ b/httpsrc/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS) $(CURL_LIBS) -lnxclient
++AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS) $(CURL_LIBS) $(NEXUS_LD_LIBRARIES) -lnxclient
+ 
+ plugin_LTLIBRARIES = libbrcmhttpsrc.la
+ 
+diff --git a/ivfparse/src/Makefile.am b/ivfparse/src/Makefile.am
+index 79064c5..df52fb9 100644
+--- a/ivfparse/src/Makefile.am
++++ b/ivfparse/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) -lnxclient
++AM_LDFLAGS = $(GST_LIBS)  $(NEXUS_LD_LIBRARIES) -lnxclient
+ 
+ plugin_LTLIBRARIES = libgstivfparse.la
+ 
+diff --git a/matroska/src/Makefile.am b/matroska/src/Makefile.am
+index 07000bb..077974a 100644
+--- a/matroska/src/Makefile.am
++++ b/matroska/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) -lnxclient
++AM_LDFLAGS = $(GST_LIBS)  $(NEXUS_LD_LIBRARIES) -lnxclient
+ 
+ plugin_LTLIBRARIES = libgstmatroska.la
+ 
+diff --git a/mp3swdecode/src/Makefile.am b/mp3swdecode/src/Makefile.am
+index bb45467..c3e82cc 100644
+--- a/mp3swdecode/src/Makefile.am
++++ b/mp3swdecode/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS) $(MPG123_LIBS) -lnxclient
++AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS) $(MPG123_LIBS)  $(NEXUS_LD_LIBRARIES) -lnxclient
+ 
+ plugin_LTLIBRARIES = libbrcmmp3swdecode.la
+ 
+diff --git a/mp4demux/src/Makefile.am b/mp4demux/src/Makefile.am
+index 736d131..a9bf4a4 100644
+--- a/mp4demux/src/Makefile.am
++++ b/mp4demux/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) -lnxclient -lmedia
++AM_LDFLAGS = $(GST_LIBS)  $(NEXUS_LD_LIBRARIES)  -lnxclient -lmedia
+ 
+ plugin_LTLIBRARIES = libbrcmmp4demux.la
+ 
+diff --git a/pcmsink/src/Makefile.am b/pcmsink/src/Makefile.am
+index 4785da1..3f4a0d1 100644
+--- a/pcmsink/src/Makefile.am
++++ b/pcmsink/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS) -lnxclient
++AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS)  $(NEXUS_LD_LIBRARIES) -lnxclient
+ 
+ plugin_LTLIBRARIES = libbrcmpcmsink.la
+ 
+diff --git a/pesdemux/src/Makefile.am b/pesdemux/src/Makefile.am
+index 55705d5..8a69bc9 100644
+--- a/pesdemux/src/Makefile.am
++++ b/pesdemux/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) -lnxclient
++AM_LDFLAGS = $(GST_LIBS)  $(NEXUS_LD_LIBRARIES) -lnxclient
+ 
+ plugin_LTLIBRARIES = libbrcmpesdemux.la
+ 
+diff --git a/playback/src/Makefile.am b/playback/src/Makefile.am
+index c339a03..4a4996c 100644
+--- a/playback/src/Makefile.am
++++ b/playback/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) -lnxclient
++AM_LDFLAGS = $(GST_LIBS)  $(NEXUS_LD_LIBRARIES) -lnxclient
+ 
+ plugin_LTLIBRARIES = libbrcmplayback.la
+ 
+diff --git a/playersinkbin/src/Makefile.am b/playersinkbin/src/Makefile.am
+index 13bf499..3b21980 100644
+--- a/playersinkbin/src/Makefile.am
++++ b/playersinkbin/src/Makefile.am
+@@ -3,5 +3,5 @@
+ plugin_LTLIBRARIES = libgstplayersinkbin.la
+ libgstplayersinkbin_la_SOURCES = gstplayersinkbin.c playersinkbinpmtinfo.c playersinkbinstreaminfo.c
+ libgstplayersinkbin_la_CFLAGS =  $(GST_CFLAGS)
+-libgstplayersinkbin_la_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS)
++libgstplayersinkbin_la_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS)  $(NEXUS_LD_LIBRARIES) 
+ libgstplayersinkbin_la_LDFLAGS += -module -avoid-version
+diff --git a/playersinkbin/src/gstplayersinkbin.c b/playersinkbin/src/gstplayersinkbin.c
+index e306230..a0c567d 100755
+--- a/playersinkbin/src/gstplayersinkbin.c
++++ b/playersinkbin/src/gstplayersinkbin.c
+@@ -794,7 +794,7 @@ void gst_player_sinkbin_video_buffer_underflow_callback (GstElement *pSinkElemen
+     PBIN_UNUSED(value2);
+ 
+     GstPlayerSinkBin *playersinkbin = GST_PLAYER_SINKBIN (data);
+-    uint fifoDepth, fifoSize;
++    unsigned int fifoDepth, fifoSize;
+     gboolean is_music_channel = FALSE; 
+ 
+     g_object_get(playersinkbin->demux,"is-music-channel",&is_music_channel,NULL);
+@@ -815,7 +815,7 @@ void gst_player_sinkbin_audio_buffer_underflow_callback (GstElement *pSinkElemen
+     PBIN_UNUSED(value2);
+ 
+     GstPlayerSinkBin *playersinkbin = GST_PLAYER_SINKBIN (data);
+-    uint fifoDepth, fifoSize;
++    unsigned int fifoDepth, fifoSize;
+     if (playersinkbin->is_live) {
+         g_object_get(playersinkbin->demux,"fifo-depth",&fifoDepth,NULL);
+         g_object_get(playersinkbin->demux,"fifo-size",&fifoSize,NULL);
+@@ -1242,21 +1242,21 @@ gst_player_sinkbin_get_property (GObject * object, guint prop_id,
+         break;
+     case PROP_FIFO_SIZE:
+        {
+-            uint fifoSize;
++            unsigned int fifoSize;
+             g_object_get(playersinkbin->demux,"fifo-size",&fifoSize,NULL);
+             g_value_set_uint(value,fifoSize);
+             break;
+         }
+     case PROP_FIFO_DEPTH:
+        {
+-            uint fifoDepth;
++            unsigned int fifoDepth;
+             g_object_get(playersinkbin->demux,"fifo-depth",&fifoDepth,NULL);
+             g_value_set_uint(value,fifoDepth);
+             break;
+         }
+     case PROP_FIFO_PRE_BUF_MIN:
+        {
+-            uint fifo_pre_buf_min;
++            unsigned int fifo_pre_buf_min;
+             g_object_get(playersinkbin->demux,"fifo-pre-buf-min",&fifo_pre_buf_min,NULL);
+             g_value_set_uint(value,fifo_pre_buf_min);
+             break;
+@@ -1386,14 +1386,14 @@ gst_player_sinkbin_set_property (GObject * object, guint prop_id,
+         }
+ 		case PROP_FIFO_SIZE:
+        {
+-            uint fifoSize  = g_value_get_uint(value);
++            unsigned int fifoSize  = g_value_get_uint(value);
+             g_object_set(playersinkbin->demux,"fifo-size",fifoSize,NULL);
+             break;
+         }
+ 
+ 		case PROP_FIFO_PRE_BUF_MIN:
+        {
+-            uint fifo_pre_buf_min  = g_value_get_uint(value);
++            unsigned int fifo_pre_buf_min  = g_value_get_uint(value);
+             g_object_set(playersinkbin->demux,"fifo-pre-buf-min",fifo_pre_buf_min,NULL);
+             break;
+         }
+diff --git a/qtdemux/src/Makefile.am b/qtdemux/src/Makefile.am
+index 2d87555..16683b2 100644
+--- a/qtdemux/src/Makefile.am
++++ b/qtdemux/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS) $(GSTRTP_LIBS) $(GSTAUDIO_LIBS) $(GSTRIFF_LIBS) $(GSTTAG_LIBS) -lnxclient
++AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS) $(GSTRTP_LIBS) $(GSTAUDIO_LIBS) $(GSTRIFF_LIBS) $(GSTTAG_LIBS)  $(NEXUS_LD_LIBRARIES) -lnxclient
+ 
+ plugin_LTLIBRARIES = libgstqtdemux.la
+ 
+diff --git a/systemclock/src/Makefile.am b/systemclock/src/Makefile.am
+index 4056e65..28e881a 100644
+--- a/systemclock/src/Makefile.am
++++ b/systemclock/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = -DB_HAS_NAV_PLAYER=1 -DNEXUS_KERNEL_MODE -DB_HAS_SSL -DB_AUTO_PSI_SUPPORT $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) -lnxclient
++AM_LDFLAGS = $(GST_LIBS) $(NEXUS_LD_LIBRARIES) -lnxclient
+ 
+ lib_LTLIBRARIES = libbrcmsystemclock.la
+ 
+diff --git a/transcode/src/Makefile.am b/transcode/src/Makefile.am
+index 7d64ed5..875b7d3 100644
+--- a/transcode/src/Makefile.am
++++ b/transcode/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) -lnxclient
++AM_LDFLAGS = $(GST_LIBS)  $(NEXUS_LD_LIBRARIES) -lnxclient
+ 
+ plugin_LTLIBRARIES = libbrcmtranscode.la
+ 
+diff --git a/tsdemux/src/Makefile.am b/tsdemux/src/Makefile.am
+index 6ace065..f99c01a 100644
+--- a/tsdemux/src/Makefile.am
++++ b/tsdemux/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS) -lnxclient -lb_os
++AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS)  $(NEXUS_LD_LIBRARIES) -lnxclient -lb_os
+ 
+ plugin_LTLIBRARIES = libbrcmtsdemux.la
+ 
+diff --git a/tsparse/src/Makefile.am b/tsparse/src/Makefile.am
+index 67887d4..3f3ee0c 100644
+--- a/tsparse/src/Makefile.am
++++ b/tsparse/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) -lnxclient
++AM_LDFLAGS = $(GST_LIBS)  $(NEXUS_LD_LIBRARIES) -lnxclient
+ 
+ plugin_LTLIBRARIES = libbrcmtsparse.la
+ 
+diff --git a/videodecode/src/Makefile.am b/videodecode/src/Makefile.am
+index 5317b6c..6ab7537 100644
+--- a/videodecode/src/Makefile.am
++++ b/videodecode/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) -lnxclient
++AM_LDFLAGS = $(GST_LIBS)  $(NEXUS_LD_LIBRARIES) -lnxclient
+ 
+ plugin_LTLIBRARIES = libbrcmvideodecoder.la
+ 
+diff --git a/videosink/src/Makefile.am b/videosink/src/Makefile.am
+index 9ac3664..349179d 100644
+--- a/videosink/src/Makefile.am
++++ b/videosink/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS)  -lnxclient
++AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS) $(NEXUS_LD_LIBRARIES) -lnxclient
+ 
+ plugin_LTLIBRARIES = libbrcmvideosink.la
+ 
+diff --git a/vidfilter/src/Makefile.am b/vidfilter/src/Makefile.am
+index d1b4ec8..734a6e6 100644
+--- a/vidfilter/src/Makefile.am
++++ b/vidfilter/src/Makefile.am
+@@ -1,7 +1,7 @@
+ -include ${PKG_CONFIG_SYSROOT_DIR}/usr/include/platform_app.inc
+ 
+ AM_CFLAGS = $(NEXUS_CFLAGS) $(GST_CFLAGS)
+-AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS) -lnxclient
++AM_LDFLAGS = $(GST_LIBS) $(GSTBASE_LIBS) $(NEXUS_LD_LIBRARIES) -lnxclient
+ 
+ plugin_LTLIBRARIES = libbrcmvidfilter.la
+ 
