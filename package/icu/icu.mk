@@ -27,6 +27,25 @@ HOST_ICU_CONF_OPTS = \
 ICU_SUBDIR = source
 HOST_ICU_SUBDIR = source
 
+ifeq ($(BR2_PACKAGE_ICU_CUSTOM_DATA_METROLOGICAL),y)
+ICU_CUSTOM_DATA_VERSION = f576e17a3234e468322ce087f473ff89b60190ba
+define ICU_CUSTOM_DATA_DOWNLOAD
+	$(EXTRA_ENV) $(DL_WRAPPER) -b git \
+		-o $(@D)/source/data/in/icudata.tar.gz \
+		$(QUIET) \
+		-- \
+		https://github.com/Metrological/icudata.git \
+		$(ICU_CUSTOM_DATA_VERSION) \
+		icudata
+endef
+define ICU_CUSTOM_DATA_EXTRACT
+	$(INFLATE.gz) $(@D)/source/data/in/icudata.tar.gz | \
+		$(TAR) --strip-components=1 -C $(@D)/source/data/in/ $(TAR_OPTIONS) -
+endef
+ICU_POST_PATCH_HOOKS += ICU_CUSTOM_DATA_DOWNLOAD
+ICU_POST_PATCH_HOOKS += ICU_CUSTOM_DATA_EXTRACT
+endif
+
 ICU_CUSTOM_DATA_PATH = $(call qstrip,$(BR2_PACKAGE_ICU_CUSTOM_DATA_PATH))
 
 ifneq ($(ICU_CUSTOM_DATA_PATH),)
