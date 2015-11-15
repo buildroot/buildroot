@@ -1,6 +1,28 @@
 #!/bin/sh
 
+env() {
+	# Enable cookie persistent storage
+	export WPE_SHELL_COOKIE_STORAGE=1
+
+	# FIXME: gst-gl's dispmanx backend is messing up with our compositor
+	# when it creates its initial 16x16px surface.
+	export GST_GL_WINDOW=dummy
+
+	# Use cairo noaa compositor
+	#export CAIRO_GL_COMPOSITOR=noaa
+
+	# WebInspector
+	#export WEBKIT_INSPECTOR_SERVER=0.0.0.0:9998
+
+	# FPS
+	#export WPE_THREADED_COMPOSITOR_FPS=1
+
+	# RPI mouse support
+	#export WPE_BCMRPI_CURSOR=1
+}
+
 start() {
+	env
 	echo -n "Starting webbridge: "
 	start-stop-daemon -S -q -b -m -p /var/run/webbridge.pid --exec /usr/bin/webbridge -- -b </dev/null >/dev/null 2>&1
 	[ $? == 0 ] && echo "OK" || echo "FAIL"
