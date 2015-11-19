@@ -95,6 +95,7 @@ define BCM_REFSW_INSTALL_STAGING_CMDS
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/GLES2
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/EGL
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/refsw
+	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/BSEAV
 	$(INSTALL) -m 644 package/bcm-refsw/egl.pc $(STAGING_DIR)/usr/lib/pkgconfig/
 	$(INSTALL) -m 644 package/bcm-refsw/glesv2.pc $(STAGING_DIR)/usr/lib/pkgconfig/
 	$(INSTALL) -m 644 $(BCM_REWSW_BIN)/include/*.h $(STAGING_DIR)/usr/include/refsw/
@@ -104,6 +105,7 @@ define BCM_REFSW_INSTALL_STAGING_CMDS
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/driver/interface/khronos/include/GLES2/*.h $(STAGING_DIR)/usr/include/GLES2/
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/driver/interface/khronos/include/EGL/*.h $(STAGING_DIR)/usr/include/EGL/
 	$(INSTALL) -m 644 -D ${BCM_REFSW_VCX}/driver/interface/khronos/include/KHR/khrplatform.h $(STAGING_DIR)/usr/include/KHR/khrplatform.h;
+	$(INSTALL) -m 644 $(@D)/BSEAV/api/include/*.h -d $(STAGING_DIR)/usr/include/BSEAV
 	$(call BCM_REFSW_INSTALL_LIBS,$(STAGING_DIR))
 endef
 
