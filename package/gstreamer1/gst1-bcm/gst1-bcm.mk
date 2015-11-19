@@ -3,7 +3,7 @@
 # gst1-bcm
 #
 ################################################################################
-GST1_BCM_VERSION = 726bbcf894a59aefdeee0a9179eb4927d7907bb3
+GST1_BCM_VERSION = f0ea3d4c08a63f78d3f5b832cda10b34182f27ae
 GST1_BCM_SITE = git@github.com:Metrological/gstreamer-plugins-soc.git
 GST1_BCM_SITE_METHOD = git
 GST1_BCM_LICENSE = PROPRIETARY
