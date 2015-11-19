@@ -85,13 +85,13 @@ mkdir -p /run/network
 
 case "$1" in
   start)
- 	echo "Starting network..."
-		nameservers
-		network_up
+	echo "Starting network..."
+	nameservers
+	network_up
 	;;
   stop)
 	printf "Stopping network..."
-		network_down
+	network_down
 	;;
   restart|reload)
 	"$0" stop
