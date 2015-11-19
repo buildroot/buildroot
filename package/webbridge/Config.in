@@ -1,6 +1,8 @@
 config BR2_PACKAGE_WEBBRIDGE
 	bool "webbridge"
 	select BR2_PACKAGE_CPPSDK
+	select BR2_PACKAGE_CPPSDK_WEBSOCKET
+	select BR2_PACKAGE_CPPSDK_TRACING
 	help
 	  This application allows plugins to be hosted in a process that 
 	  handles webrequest and websockets. 
@@ -28,7 +30,6 @@ comment "fancontrol needs the package cppsdk/devices."
 
 config BR2_PACKAGE_PLUGIN_TRACECONTROL
 	bool "tracecontrol"
-	select BR2_PACKAGE_CPPSDK_TRACING
 	help
 	  A plugin that exposes the tracing api over the web interface.
 	  Clients can use this interface to enable (and disable) at run-
@@ -47,7 +48,6 @@ config BR2_PACKAGE_PLUGIN_DELAYEDRESPONSE
 config BR2_PACKAGE_PLUGIN_PROVISIONING
 	bool "provisioning"
 	depends on BR2_PACKAGE_DXDRM_EXTERNAL
-	select BR2_PACKAGE_CPPSDK_CRYPTALGO
 	help
 	  A component to allow external provisioning of devices with the 
 	  proper credentials. Currently focused on provisioning from the
@@ -58,7 +58,6 @@ comment "provisioning needs the package DxDRM in external mode."
 
 config BR2_PACKAGE_PLUGIN_WEBPROXY
 	bool "webproxy"
-	select BR2_PACKAGE_CPPSDK_WEBSOCKET
 	help
 	  Provide functionality to proxy WebSockets (initiative) to tcp connections. 
 
@@ -122,7 +121,7 @@ config BR2_PACKAGE_PLUGIN_BROWSER
 	help
 	  A plugin that has browser functionality (QtWebKit)
 
-config BR2_PACKAGE_PLUGIN_WEBKITBROWSER
+config BR2_PACKAGE_PLUGIN_WEBKITBROWSER 
 	bool "webkitbrowser"
 	depends on BR2_PACKAGE_WPE
 	help
