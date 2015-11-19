@@ -7,9 +7,23 @@ GST1_BCM_VERSION = 726bbcf894a59aefdeee0a9179eb4927d7907bb3
 GST1_BCM_SITE = git@github.com:Metrological/gstreamer-plugins-soc.git
 GST1_BCM_SITE_METHOD = git
 GST1_BCM_LICENSE = PROPRIETARY
-GST1_BCM_DEPENDENCIES = gstreamer1 gst1-plugins-base bcm-refsw
+GST1_BCM_DEPENDENCIES = gstreamer1 gst1-plugins-base bcm-refsw libcurl mpg123
 
 GST1_BCM_AUTORECONF = YES
+
+GST1_BCM_CONF_ENV += \
+	$(BCM_REFSW_MAKE_ENV) \
+	GSTREAMER_REFSW_SERVER_NXCLIENT_SUPPORT=n \
+	PKG_CONFIG_SYSROOT_DIR=$(STAGING_DIR)
+
+GST1_BCM_MAKE_ENV += \
+	$(BCM_REFSW_MAKE_ENV) \
+	PKG_CONFIG_SYSROOT_DIR=$(STAGING_DIR)
+
+GST1_BCM_MAKE_OPTS += "\
+	CFLAGS+=${CFLAGS} \
+		-std=c99 \
+		-I${BCM_REWSW_BIN}/include"
 
 GST1_BCM_CONF_OPTS = \
 	--enable-gstreamer1  \
