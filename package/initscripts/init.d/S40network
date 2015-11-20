@@ -27,10 +27,10 @@ nfsbootdevice()
 	fi
 }
 
+nfs=$(nfsbootdevice)
+
 network_up()
 {
-	nfs=$(nfsbootdevice)
-
 	for ifs in $(ip link show | grep -v ^'   ' | cut -d: -f2)
 	do
 		if [ ! "x${ifs}" = "x" ] ; then
@@ -46,8 +46,6 @@ network_up()
 
 network_down()
 {
-	nfs=$(nfsbootdevice)
-
 	for ifs in $(ip link show | grep -v ^'   ' | cut -d: -f2)
 	do
 		if [ ! "x${ifs}" = "x" ] ; then
@@ -86,12 +84,20 @@ mkdir -p /run/network
 case "$1" in
   start)
 	echo "Starting network..."
-	nameservers
-	network_up
+	if [ ! "x${nfs}" = "x" ] ; then
+		nameservers
+		network_up
+	else
+		/sbin/ifup -a
+	fi
 	;;
   stop)
 	printf "Stopping network..."
-	network_down
+	if [ ! "x${nfs}" = "x" ] ; then
+		network_down
+	else
+		/sbin/ifdown -a
+	fi
 	;;
   restart|reload)
 	"$0" stop
