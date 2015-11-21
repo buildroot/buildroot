@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NOUVEAU_DRM_VERSION = b4db5569f487cb772e601460055c6ca521d64d3a
+NOUVEAU_DRM_VERSION = 79f596095cb1cad393a59de14370ad1df0aed5fe
 NOUVEAU_DRM_SITE = $(call github,Gnurou,nouveau,$(NOUVEAU_DRM_VERSION))
 
 NOUVEAU_DRM_DEPENDENCIES = linux
