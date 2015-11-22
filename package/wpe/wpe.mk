@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = e9661a224530e4047a9bf3202465bfeaeb9f722d
+WPE_VERSION = 7209aa42c26dc2114e7a577fc789f63d464a1887
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -76,9 +76,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V1),y)
 WPE_FLAGS += -DENABLE_ENCRYPTED_MEDIA=ON
-endif
-
-ifeq ($(BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V2),y)
+else ifeq ($(BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V2),y)
 WPE_FLAGS += -DENABLE_ENCRYPTED_MEDIA_V2=ON
 endif
 
