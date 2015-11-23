@@ -23,7 +23,9 @@ GST1_BCM_MAKE_ENV += \
 GST1_BCM_MAKE_OPTS += "\
 	CFLAGS+=${CFLAGS} \
 		-std=c99 \
-		-I${BCM_REWSW_BIN}/include"
+		-I${BCM_REWSW_BIN}/include \
+		-I${BCM_REFSW_DIR}/BSEAV/api/include \
+		-I${BCM_REFSW_DIR}/BSEAV/lib/media/"
 
 GST1_BCM_CONF_OPTS = \
 	--enable-gstreamer1  \
@@ -46,6 +48,12 @@ GST1_BCM_CONF_OPTS = \
 	--disable-tsdemux \
 	--disable-tsparse \
 	--disable-playersinkbin
+
+ifeq ($(BR2_PACKAGE_HAS_COMMON_RESOURCE_ALLOCATION),y)
+GST1_BCM_CONF_OPTS += --enable-sharedresource
+else
+GST1_BCM_CONF_OPTS += --disable-sharedresource
+endif
 
 ifeq ($(BR2_PACKAGE_GST1_BCM_AUDFILTER),y)
 GST1_BCM_CONF_OPTS += --enable-audfilter

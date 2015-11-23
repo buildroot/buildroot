@@ -10,10 +10,22 @@ config BR2_PACKAGE_BCM_REFSW
 
 if BR2_PACKAGE_BCM_REFSW
 
+config BR2_PACKAGE_HAS_COMMON_RESOURCE_ALLOCATION
+	bool
+
 config BR2_PACKAGE_PROVIDES_LIBEGL
 	default "bcm-refsw"
 
 config BR2_PACKAGE_PROVIDES_LIBGLES
 	default "bcm-refsw"
+
+config BR2_PACKAGE_BCM_REFSW_NXSERVER
+        bool "nxserver"
+	select BR2_PACKAGE_HAS_COMMON_RESOURCE_ALLOCATION
+        default n
+        help
+          Build the nxserver component. This component acts as a 
+	  System Wide Singleton and distributes the resources for 
+	  Audio and Video amongsts the requesting processes.
 
 endif

@@ -1,0 +1,26 @@
+--- a/nexus/nxclient/server/Makefile	2015-11-10 16:13:41.000000000 +0100
++++ b/nexus/nxclient/server/Makefile	2015-11-23 09:29:44.074310694 +0100
+@@ -191,7 +191,7 @@
+ 
+ %.o: %.c
+ 	@echo [Compile... $@]
+-	$(Q_)$(CC) -c -o $@ $(filter %.c,$^) $(CFLAGS)
++	$(Q_)$(CC) -c -o $@ $< $(CFLAGS)
+ 
+ $(NXSERVERLIB): $(patsubst %.c,%.o,$(NXSERVERLIB_SRCS)) $(EXTRA_OBJS)
+ 	@echo [Archive... $@]
+--- a/nexus/nxclient/apps/Makefile	2015-11-10 16:13:41.000000000 +0100
++++ b/nexus/nxclient/apps/Makefile	2015-11-23 10:21:16.979528296 +0100
+@@ -301,10 +301,9 @@
+ APPLIB_INCLUDES := $(foreach lib,$(B_LIBS),$($(lib)_PUBLIC_INCLUDES))
+ APPLIB_DEFINES := $(foreach lib,$(B_LIBS),$($(lib)_DEFINES))
+ ccgfx: CFLAGS += $(addprefix -I,$(APPLIB_INCLUDES)) $(addprefix -D,$(APPLIB_DEFINES)) $(B_DCC_LIB_CFLAGS_OPTIONS) -I$(NEXUS_TOP)/../magnum/commonutils/udp/include -I$(NEXUS_TOP)/../magnum/commonutils/avc/include
+-ccgfx: LDFLAGS += -lm -lb_dcc
+-ccgfx: %: %.c dcclib $(NEXUS_TOP)/../magnum/commonutils/udp/src/budp_dccparse.c $(NEXUS_TOP)/../magnum/commonutils/udp/src/budp_bitread.c parse_userdata.c $(NXCLIENT_APPS_UTILS_LIB)
++ccgfx: %: %.c dcclib $(NEXUS_TOP)/../magnum/commonutils/udp/src/budp_dccparse.c $(NEXUS_TOP)/../magnum/commonutils/udp/src/budp_bitread.c parse_userdata.c $(NXCLIENT_APPS_UTILS_LIB) dcclib
+ 	@echo [Compile... $(notdir $<)]
+-	$(Q_)$(CC) -o $@ $(filter %.c %.s %.o %.a, $^) $(CFLAGS) $(PLAYBACK_IP_CFLAGS) $(LDFLAGS) $(PLAYBACK_IP_LDFLAGS)
++	$(Q_)$(CC) -o $@ $(filter %.c %.s %.o %.a, $^) $(CFLAGS) $(PLAYBACK_IP_CFLAGS) $(LDFLAGS) -lm -lb_dcc $(PLAYBACK_IP_LDFLAGS)
+ 	@echo [Install... $@]
+ 	$(CP) $@ ${NEXUS_BIN_DIR}
+ 	@if [ ! -d $(NEXUS_BIN_DIR)/cc_fonts ]; then \
