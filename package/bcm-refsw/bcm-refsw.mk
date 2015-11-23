@@ -45,10 +45,6 @@ BCM_REFSW_VCX = $(BCM_REFSW_DIR)/rockford/middleware/${BCM_REFSW_PLATFORM_VC}
 BCM_REFSW_OUTPUT = $(BCM_REFSW_DIR)/obj.${BCM_REFSW_PLATFORM}
 BCM_REFSW_BIN = ${BCM_REFSW_OUTPUT}/nexus/bin
 
-ifeq ($(BR2_PACKAGE_BCM_REFSW_NXSERVER),y)
-BCM_REFSW_BUILD_ADDITIONS += $(MAKE) -C $(@D)/nexus/nxclient all
-endif
-
 define BCM_REFSW_BUILD_NEXUS
 	$(TARGET_CONFIGURE_OPTS) \
 	$(TARGET_MAKE_ENV) \
@@ -74,6 +70,17 @@ define BCM_REFSW_BUILD_VCX
 			OBJDIR=${BCM_REFSW_OUTPUT}/rockford/middleware/v3d/platform/obj_${BCM_REFSW_PLATFORM}_release \
 			LIBDIR=${BCM_REFSW_BIN}
 endef
+
+ifeq ($(BR2_PACKAGE_BCM_REFSW_NXSERVER),y)
+define BCM_REFSW_BUILD_NXSERVER
+	$(TARGET_CONFIGURE_OPTS) \
+	$(TARGET_MAKE_ENV) \
+	$(BCM_REFSW_CONF_OPTS) \
+	$(BCM_REFSW_MAKE_ENV) \
+		$(MAKE) -C $(@D)/nexus/nxclient all \
+			LIBDIR=${BCM_REFSW_BIN}
+endef
+endif
 
 define BCM_REFSW_INSTALL_LIBS
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libnexus.so $1/usr/lib/libnexus.so
@@ -102,6 +109,7 @@ endif
 define BCM_REFSW_BUILD_CMDS
 	$(BCM_REFSW_BUILD_NEXUS)
 	$(BCM_REFSW_BUILD_VCX)
+	$(BCM_REFSW_BUILD_NXSERVER)
 endef
 
 define BCM_REFSW_INSTALL_STAGING_CMDS
