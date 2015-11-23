@@ -1,0 +1,17 @@
+--- a/host_applications/linux/CMakeLists.txt	2015-11-21 17:15:29.643108609 +0100
++++ b/host_applications/linux/CMakeLists.txt	2015-11-21 17:19:11.227108475 +0100
+@@ -4,13 +4,13 @@
+ add_subdirectory(apps/gencmd)
+ add_subdirectory(apps/tvservice)
+ add_subdirectory(apps/vcmailbox)
+-add_subdirectory(apps/raspicam)
+ add_subdirectory(libs/sm)
+ add_subdirectory(apps/smem)
+ add_subdirectory(libs/debug_sym)
+ 
+ if(ALL_APPS)
+  # add_subdirectory(apps/smct)
++ add_subdirectory(apps/raspicam)
+  add_subdirectory(apps/hello_pi)
+ endif()
+ 
