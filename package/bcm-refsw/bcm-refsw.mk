@@ -103,6 +103,7 @@ endef
 define BCM_REFSW_INSTALL_TARGET_NXSERVER
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libnxclient.so $1/usr/lib/libnxclient.so
 	$(INSTALL) -m 755 -D $(BCM_REFSW_BIN)/nxserver $1/usr/bin/nxserver
+	$(INSTALL) -D -m 755 package/bcm-refsw/S70nxserver $(TARGET_DIR)/etc/init.d/B70nxserver
 endef
 endif
 
