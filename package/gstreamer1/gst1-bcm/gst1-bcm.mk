@@ -3,7 +3,7 @@
 # gst1-bcm
 #
 ################################################################################
-GST1_BCM_VERSION = 5b3acca383d90adbb69b1abf83913ba297b26c2c
+GST1_BCM_VERSION = 726bbcf894a59aefdeee0a9179eb4927d7907bb3
 GST1_BCM_SITE = git@github.com:Metrological/gstreamer-plugins-soc.git
 GST1_BCM_SITE_METHOD = git
 GST1_BCM_LICENSE = PROPRIETARY
@@ -47,13 +47,8 @@ GST1_BCM_CONF_OPTS = \
 	--disable-transcode \
 	--disable-tsdemux \
 	--disable-tsparse \
-	--disable-playersinkbin
-
-ifeq ($(BR2_PACKAGE_HAS_COMMON_RESOURCE_ALLOCATION),y)
-GST1_BCM_CONF_OPTS += --enable-sharedresource
-else
-GST1_BCM_CONF_OPTS += --disable-sharedresource
-endif
+	--disable-playersinkbin \
+	--disable-gfxsink
 
 ifeq ($(BR2_PACKAGE_GST1_BCM_AUDFILTER),y)
 GST1_BCM_CONF_OPTS += --enable-audfilter
@@ -71,12 +66,6 @@ ifeq ($(BR2_PACKAGE_GST1_BCM_AUDIOSINK),y)
 GST1_BCM_CONF_OPTS += --enable-audiosink
 else
 GST1_BCM_CONF_OPTS += --disable-audiosink
-endif
-
-ifeq ($(BR2_PACKAGE_GST1_BCM_GFXSINK),y)
-GST1_BCM_CONF_OPTS += --enable-gfxsink
-else
-GST1_BCM_CONF_OPTS += --disable-gfxsink
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_BCM_VIDEODECODE),y)
