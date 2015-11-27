@@ -1,6 +1,27 @@
---- old/rockford/middleware/v3d/driver/V3DDriver.mk	2015-01-29 16:27:08.440975013 +0530
-+++ new/rockford/middleware/v3d/driver/V3DDriver.mk	2015-01-29 16:30:26.844973549 +0530
-@@ -23,7 +23,7 @@ endif
+--- a/BSEAV/build/refsw_inc.mak
++++ b/BSEAV/build/refsw_inc.mak
+@@ -214,7 +214,6 @@
+ endif
+ # -O2 is required for kernel inline functions
+ B_REFSW_CFLAGS += -O2
+-B_REFSW_CFLAGS += -msoft-float
+ B_REFSW_CFLAGS += -pipe
+ 
+ ifeq ($(LINUX_VER_GE_2_6_31),y)
+--- a/nexus/build/os/linuxkernel/os_flags.inc
++++ b/nexus/build/os/linuxkernel/os_flags.inc
+@@ -117,7 +117,7 @@
+ # Seperate MIPS and ARM here
+ ifneq ($(filter ${B_REFSW_ARCH}, arm-linux), ${B_REFSW_ARCH})
+ NEXUS_CFLAGS += -fomit-frame-pointer -G 0 -mno-abicalls -fno-pic -Wa,--trap -DMODULE -mlong-calls
+-NEXUS_CFLAGS += -msoft-float -pipe
++NEXUS_CFLAGS += -pipe
+ NEXUS_CFLAGS += -DLINUX -D__KERNEL__
+ ifeq ($(LINUX_VER_GE_2_6_31),y)
+ LINUX_ASM_INC ?= $(LINUX)/arch/mips/include/asm/mach-brcmstb
+--- a/rockford/middleware/v3d/driver/V3DDriver.mk
++++ b/rockford/middleware/v3d/driver/V3DDriver.mk
+@@ -23,7 +23,7 @@
  CC = $(B_REFSW_CROSS_COMPILE)gcc
  C++ = $(B_REFSW_CROSS_COMPILE)g++
  
@@ -9,15 +30,14 @@
  
  ifeq ($(findstring mips, ${B_REFSW_ARCH}), mips)
  CFLAGS += \
-
---- old/rockford/middleware/vc5/driver/V3DDriver.mk	2015-01-29 16:27:08.440975013 +0530
-+++ new/rockford/middleware/vc5/driver/V3DDriver.mk	2015-01-29 16:30:26.844973549 +0530
-@@ -23,7 +23,7 @@ endif
+--- a/rockford/middleware/vc5/driver/V3DDriver.mk
++++ b/rockford/middleware/vc5/driver/V3DDriver.mk
+@@ -23,7 +23,7 @@
  CC = $(B_REFSW_CROSS_COMPILE)gcc
  C++ = $(B_REFSW_CROSS_COMPILE)g++
  
 -GCCGTEQ_40800 := $(shell expr `$(CC) -dumpversion | awk 'BEGIN { FS = "." }; { printf("%d%02d%02d", $$1, $$2, $$3) }'` \>= 40800)
 +GCCGTEQ_40800 :=
  
- ifeq ($(findstring mips, ${B_REFSW_ARCH}), mips)
- CFLAGS += \
+ ifeq ($(findstring arm, ${B_REFSW_ARCH}), arm)
+ ifeq ("$(GCCGTEQ_40800)", "1")
