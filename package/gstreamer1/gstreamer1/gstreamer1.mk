@@ -53,4 +53,14 @@ ifeq ($(BR2_PACKAGE_GSTREAMER1_GIT),y)
 GSTREAMER1_DEPENDENCIES += gst1-common
 endif
 
+# gstreamer-1.6 changed the location of its gstconfig.h file,
+# and unfortunately, not all (by far!) consumers have been
+# updated to look in the correct location.
+# Add a symlink to the legacy location
+define GSTREAMER1_LEGACY_CGSTCONFIG_H
+	ln -sf $(STAGING_DIR)/usr/lib/gstreamer-1.0/include/gst/gstconfig.h \
+	       $(STAGING_DIR)/usr/include/gstreamer-1.0/gst/gstconfig.h
+endef
+GSTREAMER1_POST_INSTALL_STAGING_HOOKS += GSTREAMER1_LEGACY_CGSTCONFIG_H
+
 $(eval $(autotools-package))
