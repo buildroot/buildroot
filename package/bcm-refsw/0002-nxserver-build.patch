@@ -24,3 +24,25 @@
  	@echo [Install... $@]
  	$(CP) $@ ${NEXUS_BIN_DIR}
  	@if [ ! -d $(NEXUS_BIN_DIR)/cc_fonts ]; then \
+--- a/nexus/nxclient/build/Makefile	2015-11-26 17:57:28.000000000 +0100
++++ b/nexus/nxclient/build/Makefile	2015-11-26 16:59:35.707800123 +0100
+@@ -125,7 +125,7 @@
+ 
+ $(IPC_LIB): nxclient_ipc.o nxclient_common.o bipc_util.o bipc_client.o
+ 	${Q_}echo "[Linking $(notdir $@)]"
+-	${Q_}$(B_LINKER) ${LDFLAGS} -shared -Wl,-Map,$(NEXUS_BIN_DIR)/libnxclient.map -Wl,--cref -Wl,-x -o $@ -Wl,-soname,libnxclient.so $^
++	${Q_}$(B_LINKER) -shared -Wl,-Map,$(NEXUS_BIN_DIR)/libnxclient.map -Wl,--cref -Wl,-x -o $@ -Wl,-soname,libnxclient.so $^
+ 
+ $(LOCAL_LIB): nxclient_local.o nxclient_common.o
+ 	${Q_}echo "[Linking $(notdir $@)]"
+--- a/rockford/middleware/vc5/driver/vcos/include/vcos_types.h	2015-11-26 20:02:23.209547740 +0100
++++ b/rockford/middleware/vc5/driver/vcos/include/vcos_types.h	2015-11-26 20:01:31.799219869 +0100
+@@ -98,6 +98,8 @@
+ /* good portion of C99, somehow the inline keyword missed the list */
+ #if defined(_MSC_VER) && !defined(inline) && !defined(__cplusplus)
+ #define inline __inline
++#else
++#define inline
+ #endif
+ 
+ #if defined(__HIGHC__) || defined(__HIGHC_ANSI__) || defined(__VECTORC__)
