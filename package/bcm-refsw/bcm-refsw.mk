@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BCM_REFSW_VERSION = 5546bd5a976a84afbf6ec6aaee53e80d3b0269ad
+BCM_REFSW_VERSION = a313e0d2dc9afa09c64a1c84750801d422b9759f
 BCM_REFSW_SITE = git@github.com:Metrological/bcm-refsw.git
 BCM_REFSW_SITE_METHOD = git
 BCM_REFSW_DEPENDENCIES = linux host-pkgconf host-flex host-bison host-gperf
@@ -13,7 +13,6 @@ BCM_REFSW_INSTALL_STAGING = YES
 BCM_REFSW_INSTALL_TARGET = YES
 
 BCM_REFSW_PROVIDES = libegl libgles
-BCM_REFSW_PACKAGE = egl.pc
 
 ifeq ($(BR2_arm),y)
 BCM_REFSW_PLATFORM = 97439
@@ -40,7 +39,12 @@ BCM_REFSW_MAKE_ENV += \
 	NEXUS_USE_7439_SFF=y \
 	NEXUS_MODE=proxy \
 	NEXUS_HEADERS=y \
-	VCX=$(BCM_REFSW_PLATFORM_VC)
+	NEXUS_EXTRA_CFLAGS="$(TARGET_CFLAGS)" \
+	NEXUS_EXTRA_LDFLAGS="$(TARGET_LDFLAGS)" \
+	VCX=$(BCM_REFSW_PLATFORM_VC) \
+	V3D_EXTRA_CFLAGS="$(TARGET_CFLAGS)" \
+	V3D_EXTRA_LDFLAGS="$(TARGET_LDFLAGS)" \
+	CLIENT=y
 
 BCM_REFSW_VCX = $(BCM_REFSW_DIR)/rockford/middleware/${BCM_REFSW_PLATFORM_VC}
 BCM_REFSW_OUTPUT = $(BCM_REFSW_DIR)/obj.${BCM_REFSW_PLATFORM}
@@ -72,18 +76,14 @@ define BCM_REFSW_BUILD_VCX
 			LIBDIR=${BCM_REFSW_BIN}
 endef
 
-ifeq ($(BR2_PACKAGE_BCM_REFSW_NXSERVER),y)
 define BCM_REFSW_BUILD_NXSERVER
 	$(TARGET_CONFIGURE_OPTS) \
 	$(TARGET_MAKE_ENV) \
 	$(BCM_REFSW_CONF_OPTS) \
 	$(BCM_REFSW_MAKE_ENV) \
-		$(MAKE) -C $(@D)/nexus/nxclient all \
+		$(MAKE) -C $(@D)/nexus/nxclient/server all \
 			LIBDIR=${BCM_REFSW_BIN}
 endef
-BCM_REFSW_MAKE_ENV += CLIENT=y
-BCM_REFSW_PACKAGE = eglnx.pc
-endif
 
 ifeq ($(BR2_PACKAGE_BCM_REFSW_EGLCUBE),y)
 define BCM_REFSW_BUILD_EGLCUBE
@@ -110,7 +110,6 @@ define BCM_REFSW_INSTALL_EXTRA
 endef
 endif
 
-ifeq ($(BR2_PACKAGE_BCM_REFSW_NXSERVER),y)
 define BCM_REFSW_INSTALL_STAGING_NXSERVER
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libnxclient.so $1/usr/lib/libnxclient.so
 endef
@@ -119,7 +118,6 @@ define BCM_REFSW_INSTALL_TARGET_NXSERVER
 	$(INSTALL) -m 755 -D $(BCM_REFSW_BIN)/nxserver $1/usr/bin/nxserver
 	$(INSTALL) -D -m 755 package/bcm-refsw/S70nxserver $(TARGET_DIR)/etc/init.d/S70nxserver
 endef
-endif
 
 ifeq ($(BR2_PACKAGE_BCM_REFSW_EGLCUBE),y)
 define BCM_REFSW_INSTALL_TARGET_EGLCUBE
@@ -128,8 +126,8 @@ endif
 
 define BCM_REFSW_BUILD_CMDS
 	$(BCM_REFSW_BUILD_NEXUS)
-	$(BCM_REFSW_BUILD_VCX)
 	$(BCM_REFSW_BUILD_NXSERVER)
+	$(BCM_REFSW_BUILD_VCX)
 	$(BCM_REFSW_BUILD_EGLCUBE)
 endef
 
@@ -139,7 +137,7 @@ define BCM_REFSW_INSTALL_STAGING_CMDS
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/GLES2
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/EGL
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/refsw
-	$(INSTALL) -m 644 package/bcm-refsw/$(BCM_REFSW_PACKAGE) $(STAGING_DIR)/usr/lib/pkgconfig/egl.pc
+	$(INSTALL) -m 644 package/bcm-refsw/egl.pc $(STAGING_DIR)/usr/lib/pkgconfig/egl.pc
 	$(INSTALL) -m 644 package/bcm-refsw/glesv2.pc $(STAGING_DIR)/usr/lib/pkgconfig/
 	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/include/*.h $(STAGING_DIR)/usr/include/refsw/
 	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/include/platform_app.inc $(STAGING_DIR)/usr/include/

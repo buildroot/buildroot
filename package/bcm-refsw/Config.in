@@ -5,29 +5,16 @@ config BR2_PACKAGE_BCM_REFSW
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_PACKAGE_HAS_LIBEGL
 	select BR2_PACKAGE_HAS_LIBGLES
-	select BR2_PACKAGE_BCM_REFSW_NXSERVER
-	select BR2_PACKAGE_HAS_COMMON_RESOURCE_ALLOCATION
 	help
 	  bcm-refsw
 
 if BR2_PACKAGE_BCM_REFSW
-
-config BR2_PACKAGE_HAS_COMMON_RESOURCE_ALLOCATION
-	bool
 
 config BR2_PACKAGE_PROVIDES_LIBEGL
 	default "bcm-refsw"
 
 config BR2_PACKAGE_PROVIDES_LIBGLES
 	default "bcm-refsw"
-
-config BR2_PACKAGE_BCM_REFSW_NXSERVER
-	bool
-	select BR2_PACKAGE_HAS_COMMON_RESOURCE_ALLOCATION
-	help
-	  Build the nxserver component. This component acts as a
-	  System Wide Singleton and distributes the resources for 
-	  Audio and Video amongsts the requesting processes.
 
 config BR2_PACKAGE_BCM_REFSW_EGLCUBE
 	bool "eglcube"
