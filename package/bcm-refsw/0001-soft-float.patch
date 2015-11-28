@@ -8,17 +8,6 @@
  B_REFSW_CFLAGS += -pipe
  
  ifeq ($(LINUX_VER_GE_2_6_31),y)
---- a/nexus/build/os/linuxkernel/os_flags.inc
-+++ b/nexus/build/os/linuxkernel/os_flags.inc
-@@ -117,7 +117,7 @@
- # Seperate MIPS and ARM here
- ifneq ($(filter ${B_REFSW_ARCH}, arm-linux), ${B_REFSW_ARCH})
- NEXUS_CFLAGS += -fomit-frame-pointer -G 0 -mno-abicalls -fno-pic -Wa,--trap -DMODULE -mlong-calls
--NEXUS_CFLAGS += -msoft-float -pipe
-+NEXUS_CFLAGS += -pipe
- NEXUS_CFLAGS += -DLINUX -D__KERNEL__
- ifeq ($(LINUX_VER_GE_2_6_31),y)
- LINUX_ASM_INC ?= $(LINUX)/arch/mips/include/asm/mach-brcmstb
 --- a/rockford/middleware/v3d/driver/V3DDriver.mk
 +++ b/rockford/middleware/v3d/driver/V3DDriver.mk
 @@ -23,7 +23,7 @@
