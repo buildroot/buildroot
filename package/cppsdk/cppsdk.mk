@@ -3,10 +3,18 @@
 # cppsdk
 #
 ################################################################################
-CPPSDK_VERSION = dbfb23f6418af3ce92eebbd7579ffd6d5602523b
+CPPSDK_VERSION = 83377eae0341efea1244f82d316d075883ce5de9
 CPPSDK_SITE_METHOD = git
 CPPSDK_SITE = git@github.com:Metrological/cppsdk.git
 CPPSDK_INSTALL_STAGING = YES
+
+ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
+CPPSDK_CONF_OPTS += -DCPPSDK_PLATFORM=RPI
+else ifeq ($(BR2_PACKAGE_BCM_REFSW)$(BR2_arm),yy) 
+CPPSDK_CONF_OPTS += -DCPPSDK_PLATFORM=EOS
+else ifeq ($(BR2_PACKAGE_BCM_REFSW)$(BR2_mipsel),yy)
+CPPSDK_CONF_OPTS += -DCPPSDK_PLATFORM=DAWN
+endif
 
 ifeq ($(BR2_ENABLE_DEBUG),y)
 CPPSDK_CONF_OPTS += -DCPPSDK_DEBUG=ON
