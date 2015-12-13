@@ -11,7 +11,7 @@ export GST_GL_WINDOW=dummy
 #export CAIRO_GL_COMPOSITOR=noaa
 
 # WebInspector
-#export WEBKIT_INSPECTOR_SERVER=0.0.0.0:9998
+export WEBKIT_INSPECTOR_SERVER=0.0.0.0:9998
 
 # FPS
 #export WPE_THREADED_COMPOSITOR_FPS=1
@@ -48,6 +48,7 @@ fi
 if [ "$1" = "--loop" ];
 then
 	export HOME=/root
+	mkdir -p $HOME
 	while true;
 	do
 		cd /root && eval "$WPE_CONFIG $PREFIX WPELauncher \"$2\""
