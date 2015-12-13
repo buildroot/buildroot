@@ -42,18 +42,18 @@ choice
 	  Select the version of Node.js you wish to use.
 
 config BR2_BR2_PACKAGE_NODEJS_0_10_X
-	bool "v0.10.40"
+	bool "v0.10.41"
 
 config BR2_BR2_PACKAGE_NODEJS_0_12_X
-	bool "v0.12.7"
+	bool "v0.12.9"
 	depends on BR2_PACKAGE_NODEJS_V8_ARCH_SUPPORTS
 
 config BR2_BR2_PACKAGE_NODEJS_4_X
-	bool "v4.1.2"
+	bool "v4.2.3"
 	depends on BR2_PACKAGE_NODEJS_V8_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
 
-comment "v4.1.2 needs a toolchain w/ gcc >= 4.8"
+comment "v4.2.3 needs a toolchain w/ gcc >= 4.8"
 	depends on BR2_PACKAGE_NODEJS_V8_ARCH_SUPPORTS
 	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
 
@@ -61,9 +61,9 @@ endchoice
 
 config BR2_PACKAGE_NODEJS_VERSION_STRING
 	string
-	default "0.10.40"	if BR2_BR2_PACKAGE_NODEJS_0_10_X
-	default "0.12.7"	if BR2_BR2_PACKAGE_NODEJS_0_12_X
-	default "4.1.2"		if BR2_BR2_PACKAGE_NODEJS_4_X
+	default "0.10.41"	if BR2_BR2_PACKAGE_NODEJS_0_10_X
+	default "0.12.9"	if BR2_BR2_PACKAGE_NODEJS_0_12_X
+	default "4.2.3"		if BR2_BR2_PACKAGE_NODEJS_4_X
 
 menu "Module Selection"
 
