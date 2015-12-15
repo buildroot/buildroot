@@ -1,33 +1,25 @@
-From 2e54434e4dd178773e8e11e48afc81299771f3e7 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?J=C3=B6rg=20Krause?= <joerg.krause@embedded.rocks>
-Date: Tue, 4 Aug 2015 22:13:20 +0200
-Subject: [PATCH 1/1] drop configh from tools
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-We need to build u-boot tools without a board configuration for the target.
-fw_env just uses config.h to define the default environment of the created
-image, so it really isn't mandatory.
-
-Signed-off-by: Gustavo Zacarias <gustavo@zacarias.com.ar>
-[Jörg Krause: update for version 2015.07]
-Signed-off-by: Jörg Krause <joerg.krause@embedded.rocks>
----
- tools/env/fw_env.h | 11 -----------
- 1 file changed, 11 deletions(-)
-
+diff --git a/tools/env/Makefile b/tools/env/Makefile
+index 0e798e0..3a71fd5 100644
+--- a/tools/env/Makefile
++++ b/tools/env/Makefile
+@@ -26,7 +26,7 @@ include $(TOPDIR)/config.mk
+ HOSTSRCS := $(SRCTREE)/lib/crc32.c  fw_env.c  fw_env_main.c
+ HOSTSRCS += $(SRCTREE)/lib/ctype.c $(SRCTREE)/lib/linux_string.c
+ HOSTSRCS += $(SRCTREE)/common/env_attr.c $(SRCTREE)/common/env_flags.c
+-HEADERS	:= fw_env.h $(OBJTREE)/include/config.h
++HEADERS	:= fw_env.h
+ 
+ # Compile for a hosted environment on the target
+ HOSTCPPFLAGS  = -idirafter $(SRCTREE)/include \
 diff --git a/tools/env/fw_env.h b/tools/env/fw_env.h
-index 60c0517..1c5daaa 100644
+index a1a6807..b16cb59 100644
 --- a/tools/env/fw_env.h
 +++ b/tools/env/fw_env.h
-@@ -5,17 +5,6 @@
-  * SPDX-License-Identifier:	GPL-2.0+
+@@ -21,15 +21,6 @@
+  * MA 02111-1307 USA
   */
  
 -/* Pull in the current config to define the default environment */
--#include <linux/kconfig.h>
--
 -#ifndef __ASSEMBLY__
 -#define __ASSEMBLY__ /* get only #defines from config.h */
 -#include <config.h>
@@ -39,6 +31,3 @@ index 60c0517..1c5daaa 100644
  /*
   * To build the utility with the static configuration
   * comment out the next line.
--- 
-2.5.0
-
