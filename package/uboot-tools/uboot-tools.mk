@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-UBOOT_TOOLS_VERSION = 2015.10
-UBOOT_TOOLS_SOURCE = u-boot-$(UBOOT_TOOLS_VERSION).tar.bz2
-UBOOT_TOOLS_SITE = ftp://ftp.denx.de/pub/u-boot
+UBOOT_TOOLS_VERSION = 2013.04-blue740uboot-4
+UBOOT_TOOLS_SOURCE = blue740-uboot-$(UBOOT_TOOLS_VERSION).tar.gz
+UBOOT_TOOLS_SITE = http://archive.bluesolutions.polyconseil.fr/btm/install
 UBOOT_TOOLS_LICENSE = GPLv2+
 UBOOT_TOOLS_LICENSE_FILES = Licenses/gpl-2.0.txt
 
@@ -18,16 +18,16 @@ endef
 define UBOOT_TOOLS_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) 	\
 		CROSS_COMPILE="$(TARGET_CROSS)"	\
-		CFLAGS="$(TARGET_CFLAGS)"	\
-		LDFLAGS="$(TARGET_LDFLAGS)"	\
+		HOSTCC="$(TARGET_CROSS)gcc"	\
+		HOSTSTRIP="$(TARGET_CROSS)strip"	\
 		CROSS_BUILD_TOOLS=y		\
-		CONFIG_FIT_SIGNATURE=$(BR2_PACKAGE_UBOOT_TOOLS_MKIMAGE_FIT_SIGNATURE_SUPPORT) \
-		tools-only
+		tools
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) 	\
 		CROSS_COMPILE="$(TARGET_CROSS)"	\
-		CFLAGS="$(TARGET_CFLAGS)"	\
-		LDFLAGS="$(TARGET_LDFLAGS)"	\
-		env no-dot-config-targets=env
+		HOSTCC="$(TARGET_CROSS)gcc"	\
+		HOSTSTRIP="$(TARGET_CROSS)strip"	\
+		CROSS_BUILD_TOOLS=y		\
+		env
 endef
 
 ifeq ($(BR2_PACKAGE_UBOOT_TOOLS_MKIMAGE),y)
@@ -71,9 +71,7 @@ define HOST_UBOOT_TOOLS_BUILD_CMDS
 	$(MAKE1) -C $(@D) 			\
 		CONFIG_FIT_SIGNATURE=$(BR2_PACKAGE_UBOOT_TOOLS_MKIMAGE_FIT_SIGNATURE_SUPPORT) \
 		HOSTCC="$(HOSTCC)"		\
-		HOSTCFLAGS="$(HOST_CFLAGS)"	\
-		HOSTLDFLAGS="$(HOST_LDFLAGS)"	\
-		tools-only
+		tools
 endef
 
 define HOST_UBOOT_TOOLS_INSTALL_CMDS
