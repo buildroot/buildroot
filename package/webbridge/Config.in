@@ -38,6 +38,19 @@ config BR2_PACKAGE_PLUGIN_TRACECONTROL
 	  NOTE: Tracing does NOT replace logging but is a tool for 
 	  developpers to analyse there code. 
 
+config BR2_PACKAGE_PLUGIN_DICTIONARY
+	bool "dictionary"
+	help
+	  A plugin that allows for a persistent storage of data (key, value)
+          that can be accessed as a system-wide singleton and allows for 
+          notification on change by any instance in any process.
+
+config BR2_PACKAGE_PLUGIN_BACKOFFICE
+	bool "backofffice"
+	help
+	  A plugin that acts as a gateway between the webbridge and a back
+          office system living in the cloud.
+
 config BR2_PACKAGE_PLUGIN_DELAYEDRESPONSE
 	bool "delayedresponse"
 	help
@@ -63,7 +76,6 @@ config BR2_PACKAGE_PLUGIN_WEBPROXY
 
 config BR2_PACKAGE_PLUGIN_REMOTECONTROL
 	bool "remotecontrol"
-	depends on BR2_PACKAGE_GREENPEAK_USERLANDLIB && (BR2_PACKAGE_GREENPEAK_GP501 || BR2_PACKAGE_GREENPEAK_GP711)
 	help
 	  A remote control implementation that translates keys coming in from a 
 	  different source into the linux key system. 
