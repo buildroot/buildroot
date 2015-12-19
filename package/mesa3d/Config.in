@@ -13,8 +13,7 @@ menuconfig BR2_PACKAGE_MESA3D
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
 	# Triggers the _gp link issue in nios2
-	depends on !BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_NIOSII201305
-	depends on !BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_NIOSII201405
+	depends on !BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_NIOSII
 	help
 	  Mesa 3D, an open-source implementation of the OpenGL specification.
 
@@ -77,6 +76,13 @@ config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_SWRAST
 	  This is a software opengl implementation using the Gallium3D
 	  infrastructure.
 
+config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_VIRGL
+	bool "Gallium virgl driver"
+	select BR2_PACKAGE_MESA3D_GALLIUM_DRIVER
+	help
+	  virgl is the 3D acceleration backend for the virtio-gpu
+	  shipping with qemu.
+
 comment "DRI drivers need X.Org"
 	depends on !BR2_PACKAGE_XORG7
 
@@ -106,6 +112,13 @@ config BR2_PACKAGE_MESA3D_DRI_DRIVER_I965
 	select BR2_PACKAGE_LIBDRM_INTEL
 	help
 	  Support for i965-based Intel GPUs.
+
+config BR2_PACKAGE_MESA3D_DRI_DRIVER_NOUVEAU
+	bool "DRI nouveau driver"
+	select BR2_PACKAGE_MESA3D_DRI_DRIVER
+	select BR2_PACKAGE_LIBDRM_NOUVEAU
+	help
+	  Support for Nvidia-based GPUs.
 
 config BR2_PACKAGE_MESA3D_DRI_DRIVER_RADEON
 	bool "DRI radeon driver"
@@ -153,7 +166,6 @@ config BR2_PACKAGE_PROVIDES_LIBGLES
 endif # BR2_PACKAGE_MESA3D
 
 comment "mesa3d needs a toolchain w/ C++, NPTL, dynamic library"
-	depends on !BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_NIOSII201305
-	depends on !BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_NIOSII201405
+	depends on !BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_NIOSII
 	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS_NPTL || \
 		BR2_STATIC_LIBS
