@@ -145,75 +145,99 @@ endif
 ###############################################################################
 comment "Legacy options removed in 2016.02"
 
+config BR2_PACKAGE_DIRECTFB_CLE266
+	bool "cle266 driver for directfb"
+	select BR2_LEGACY
+	help
+	  The cle266 directfb driver support has been removed.
+	  It doesn't build in the latest version and it's unlikely
+	  anyone has any use for it.
+
+config BR2_PACKAGE_DIRECTFB_UNICHROME
+	bool "unichrome driver for directfb"
+	select BR2_LEGACY
+	help
+	  The unichrome directfb driver support has been removed.
+	  It doesn't build in the latest version and it's unlikely
+	  anyone has any use for it.
+
+config BR2_PACKAGE_LIBELEMENTARY
+	bool "libelementary has been renamed to elementary"
+	select BR2_LEGACY
+	select BR2_PACKAGE_ELEMENTARY
+	help
+	  The libelementary package has been renamed to match the upstream
+	  name.
+
 config BR2_PACKAGE_LIBEINA
 	bool "libeina package has been removed"
 	select BR2_LEGACY
 	select BR2_PACKAGE_EFL
 	help
-	  With EFL 1.15, libeina is now provided by the libefl package.
+	  With EFL 1.15, libeina is now provided by the efl package.
 
 config BR2_PACKAGE_LIBEET
 	bool "libeet package has been removed"
 	select BR2_LEGACY
 	select BR2_PACKAGE_EFL
 	help
-	  With EFL 1.15, libeet is now provided by the libefl package.
+	  With EFL 1.15, libeet is now provided by the efl package.
 
 config BR2_PACKAGE_LIBEVAS
 	bool "libevas package has been removed"
 	select BR2_LEGACY
 	select BR2_PACKAGE_EFL
 	help
-	  With EFL 1.15, libevas is now provided by the libefl package.
+	  With EFL 1.15, libevas is now provided by the efl package.
 
 config BR2_PACKAGE_LIBECORE
 	bool "libecore package has been removed"
 	select BR2_LEGACY
 	select BR2_PACKAGE_EFL
 	help
-	  With EFL 1.15, libecore is now provided by the libefl package.
+	  With EFL 1.15, libecore is now provided by the efl package.
 
 config BR2_PACKAGE_LIBEDBUS
 	bool "libedbus package has been removed"
 	select BR2_LEGACY
 	select BR2_PACKAGE_EFL
 	help
-	  With EFL 1.15, libedbus is now provided by the libefl package.
+	  With EFL 1.15, libedbus is now provided by the efl package.
 
 config BR2_PACKAGE_LIBEFREET
 	bool "libefreet package has been removed"
 	select BR2_LEGACY
 	select BR2_PACKAGE_EFL
 	help
-	  With EFL 1.15, libefreet is now provided by the libefl package.
+	  With EFL 1.15, libefreet is now provided by the efl package.
 
 config BR2_PACKAGE_LIBEIO
 	bool "libeio package has been removed"
 	select BR2_LEGACY
 	select BR2_PACKAGE_EFL
 	help
-	  With EFL 1.15, libeio is now provided by the libefl package.
+	  With EFL 1.15, libeio is now provided by the efl package.
 
 config BR2_PACKAGE_LIBEMBRYO
 	bool "libembryo package has been removed"
 	select BR2_LEGACY
 	select BR2_PACKAGE_EFL
 	help
-	  With EFL 1.15, libembryo is now provided by the libefl package.
+	  With EFL 1.15, libembryo is now provided by the efl package.
 
 config BR2_PACKAGE_LIBEDJE
 	bool "libedje package has been removed"
 	select BR2_LEGACY
 	select BR2_PACKAGE_EFL
 	help
-	  With EFL 1.15, libedje is now provided by the libefl package.
+	  With EFL 1.15, libedje is now provided by the efl package.
 
 config BR2_PACKAGE_LIBETHUMB
 	bool "libethumb package has been removed"
 	select BR2_LEGACY
 	select BR2_PACKAGE_EFL
 	help
-	  With EFL 1.15, libethumb is now provided by the libefl package.
+	  With EFL 1.15, libethumb is now provided by the efl package.
 
 config BR2_PACKAGE_INFOZIP
 	bool "infozip option has been renamed to zip"

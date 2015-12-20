@@ -250,6 +250,8 @@ comment "Graphic libraries"
 	source "package/cegui06/Config.in"
 	source "package/directfb/Config.in"
 	source "package/directfb-examples/Config.in"
+	source "package/efl/Config.in"
+	source "package/elementary/Config.in"
 	source "package/fbdump/Config.in"
 	source "package/fbgrab/Config.in"
 if BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
@@ -276,7 +278,6 @@ endif
 	source "package/sdl2/Config.in"
 
 comment "Other GUIs"
-	source "package/efl/Config.in"
 	source "package/qt/Config.in"
 	source "package/qt5/Config.in"
 if BR2_PACKAGE_QT || BR2_PACKAGE_QT5
@@ -900,6 +901,7 @@ menu "Graphics"
 	source "package/webkitgtk24/Config.in"
 	source "package/webp/Config.in"
 	source "package/wpe/Config.in"
+	source "package/zbar/Config.in"
 	source "package/zxing-cpp/Config.in"
 endmenu
 
@@ -1259,6 +1261,7 @@ menu "Miscellaneous"
 	source "package/shared-mime-info/Config.in"
 	source "package/snowball-init/Config.in"
 	source "package/wine/Config.in"
+	source "package/xutil_util-macros/Config.in"
 endmenu
 
 menu "Networking applications"
