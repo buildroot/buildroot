@@ -1,0 +1,16 @@
+diff --git a/omx/gstomx.c b/omx/gstomx.c
+index 69696c4..c382019 100644
+--- a/omx/gstomx.c
++++ b/omx/gstomx.c
+@@ -1508,8 +1508,8 @@ gst_omx_port_set_flushing (GstOMXPort * port, GstClockTime timeout,
+     last_error = OMX_ErrorNone;
+     gst_omx_component_handle_messages (comp);
+     while (signalled && last_error == OMX_ErrorNone && !port->flushed
+-        && port->buffers
+-        && port->buffers->len > g_queue_get_length (&port->pending_buffers)) {
++     /* && port->buffers
++        && port->buffers->len > g_queue_get_length (&port->pending_buffers) */) {
+       signalled = gst_omx_component_wait_message (comp, timeout);
+       if (signalled)
+         gst_omx_component_handle_messages (comp);
+
