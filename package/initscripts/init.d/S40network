@@ -42,6 +42,9 @@ network_up()
 			fi
 		fi
 	done
+	if [ -f /etc/network/if-up.d/rdate ] ; then
+		/etc/network/if-up.d/rdate
+	fi
 }
 
 network_down()
