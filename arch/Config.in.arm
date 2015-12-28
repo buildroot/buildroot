@@ -185,6 +185,26 @@ config BR2_iwmmxt
 	select BR2_ARCH_HAS_MMU_OPTIONAL
 endchoice
 
+config BR2_ARM_ENABLE_NEON
+	bool "Enable NEON SIMD extension support"
+	depends on BR2_ARM_CPU_MAYBE_HAS_NEON
+	select BR2_ARM_CPU_HAS_NEON
+	help
+	  For some CPU cores, the NEON SIMD extension is optional.
+	  Select this option if you are certain your particular
+	  implementation has NEON support and you want to use it.
+
+config BR2_ARM_ENABLE_VFP
+	bool "Enable VFP extension support"
+	depends on BR2_ARM_CPU_MAYBE_HAS_VFPV2
+	select BR2_ARM_CPU_HAS_VFPV4 if BR2_ARM_CPU_MAYBE_HAS_VFPV4
+	select BR2_ARM_CPU_HAS_VFPV3 if BR2_ARM_CPU_MAYBE_HAS_VFPV3
+	select BR2_ARM_CPU_HAS_VFPV2 if BR2_ARM_CPU_MAYBE_HAS_VFPV2
+	help
+	  For some CPU cores, the VFP extension is optional. Select
+	  this option if you are certain your particular
+	  implementation has VFP support and you want to use it.
+
 choice
 	prompt "Target ABI"
 	depends on BR2_arm || BR2_armeb
@@ -222,7 +242,7 @@ config BR2_ARM_EABI
 
 config BR2_ARM_EABIHF
 	bool "EABIhf"
-	depends on BR2_ARM_CPU_MAYBE_HAS_VFPV2 || BR2_ARM_CPU_HAS_VFPV2
+	depends on BR2_ARM_CPU_HAS_VFPV2
 	help
 	  The EABIhf is an extension of EABI which supports the 'hard'
 	  floating point model. This model uses the floating point
@@ -239,15 +259,6 @@ config BR2_ARM_EABIHF
 	  likely the best choice.
 
 endchoice
-
-config BR2_ARM_ENABLE_NEON
-	bool "Enable NEON SIMD extension support"
-	depends on BR2_ARM_CPU_MAYBE_HAS_NEON
-	select BR2_ARM_CPU_HAS_NEON
-	help
-	  For some CPU cores, the NEON SIMD extension is optional.
-	  Select this option if you are certain your particular
-	  implementation has NEON support and you want to use it.
 
 choice
 	prompt "Floating point strategy"
@@ -269,7 +280,7 @@ config BR2_ARM_SOFT_FLOAT
 
 config BR2_ARM_FPU_VFPV2
 	bool "VFPv2"
-	depends on BR2_ARM_CPU_HAS_VFPV2 || BR2_ARM_CPU_MAYBE_HAS_VFPV2
+	depends on BR2_ARM_CPU_HAS_VFPV2
 	help
 	  This option allows to use the VFPv2 floating point unit, as
 	  available in some ARMv5 processors (ARM926EJ-S) and some
@@ -282,7 +293,7 @@ config BR2_ARM_FPU_VFPV2
 
 config BR2_ARM_FPU_VFPV3
 	bool "VFPv3"
-	depends on BR2_ARM_CPU_HAS_VFPV3 || BR2_ARM_CPU_MAYBE_HAS_VFPV3
+	depends on BR2_ARM_CPU_HAS_VFPV3
 	help
 	  This option allows to use the VFPv3 floating point unit, as
 	  available in some ARMv7 processors (Cortex-A{8, 9}). This
@@ -298,7 +309,7 @@ config BR2_ARM_FPU_VFPV3
 
 config BR2_ARM_FPU_VFPV3D16
 	bool "VFPv3-D16"
-	depends on BR2_ARM_CPU_HAS_VFPV3 || BR2_ARM_CPU_MAYBE_HAS_VFPV3
+	depends on BR2_ARM_CPU_HAS_VFPV3
 	help
 	  This option allows to use the VFPv3 floating point unit, as
 	  available in some ARMv7 processors (Cortex-A{8, 9}). This
@@ -313,7 +324,7 @@ config BR2_ARM_FPU_VFPV3D16
 
 config BR2_ARM_FPU_VFPV4
 	bool "VFPv4"
-	depends on BR2_ARM_CPU_HAS_VFPV4 || BR2_ARM_CPU_MAYBE_HAS_VFPV4
+	depends on BR2_ARM_CPU_HAS_VFPV4
 	help
 	  This option allows to use the VFPv4 floating point unit, as
 	  available in some ARMv7 processors (Cortex-A{5, 7, 12,
@@ -328,7 +339,7 @@ config BR2_ARM_FPU_VFPV4
 
 config BR2_ARM_FPU_VFPV4D16
 	bool "VFPv4-D16"
-	depends on BR2_ARM_CPU_HAS_VFPV4 || BR2_ARM_CPU_MAYBE_HAS_VFPV4
+	depends on BR2_ARM_CPU_HAS_VFPV4
 	help
 	  This option allows to use the VFPv4 floating point unit, as
 	  available in some ARMv7 processors (Cortex-A{5, 7, 12,
@@ -353,7 +364,7 @@ config BR2_ARM_FPU_NEON
 
 config BR2_ARM_FPU_NEON_VFPV4
 	bool "NEON/VFPv4"
-	depends on BR2_ARM_CPU_HAS_VFPV4 || BR2_ARM_CPU_MAYBE_HAS_VFPV4
+	depends on BR2_ARM_CPU_HAS_VFPV4
 	depends on BR2_ARM_CPU_HAS_NEON
 	help
 	  This option allows to use both the VFPv4 and the NEON SIMD

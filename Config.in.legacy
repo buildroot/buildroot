@@ -145,6 +145,14 @@ endif
 ###############################################################################
 comment "Legacy options removed in 2016.02"
 
+# BR2_ENABLE_SSP is still referenced in Config.in (default in choice)
+config BR2_ENABLE_SSP
+	bool "Stack Smashing protection now has different levels"
+	help
+	  The protection offered by SSP can now be selected from different
+	  protection levels. Be sure to review the SSP level in the build
+	  options menu.
+
 config BR2_PACKAGE_DIRECTFB_CLE266
 	bool "cle266 driver for directfb removed"
 	select BR2_LEGACY
@@ -247,6 +255,14 @@ config BR2_PACKAGE_INFOZIP
 	  Info-Zip's Zip package has been renamed from infozip to zip,
 	  to avoid ambiguities with Info-Zip's UnZip which has been added
 	  in the unzip package.
+
+config BR2_BR2_PACKAGE_NODEJS_0_10_X
+	bool "nodejs 0.10.x option renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_NODEJS
+	help
+	  nodejs 0.10.x option was named incorrectly and has been renamed
+	  to BR2_PACKAGE_NODEJS_0_10_X.
 
 config BR2_BR2_PACKAGE_NODEJS_0_12_X
 	bool "nodejs version 0.12.x has been removed"
