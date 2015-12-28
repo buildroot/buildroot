@@ -31,6 +31,12 @@ if BR2_PACKAGE_WPE
 
 menu "Extra options"
 
+config BR2_PACKAGE_WPE_ENABLE_LOGGING
+	depends on !BR2_ENABLE_DEBUG
+	bool "logging"
+	help
+	  Enable logging for non debug builds.
+
 choice
 	bool "EME"
 	default BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V1

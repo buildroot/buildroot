@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = e10f2b4709f80c3e896e2fab10a9dcf37d43dc86
+WPE_VERSION = 4447f6aa8d82d15d8bbdaaccbaddf1a8439e5607
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -47,6 +47,10 @@ endif
 ifeq ($(BR2_PACKAGE_XLIB_LIBX11),)
 WPE_EXTRA_CFLAGS += -DMESA_EGL_NO_X11_HEADERS
 endif
+endif
+
+ifeq ($(BR2_PACKAGE_WPE_ENABLE_LOGGING),y)
+WPE_EXTRA_CFLAGS += -DLOG_DISABLED=0
 endif
 
 ifeq ($(BR2_ENABLE_DEBUG),y)
