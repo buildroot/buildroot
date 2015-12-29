@@ -2,7 +2,7 @@ diff --git a/Source/WebCore/platform/graphics/texmap/coordinated/CompositingCoor
 index b38a9d6..cc62a6d 100644
 --- a/Source/WebCore/platform/graphics/texmap/coordinated/CompositingCoordinator.cpp
 +++ b/Source/WebCore/platform/graphics/texmap/coordinated/CompositingCoordinator.cpp
-@@ -375,6 +375,7 @@ void CompositingCoordinator::purgeBackingStores()
+@@ -374,6 +374,7 @@ void CompositingCoordinator::purgeBackingStores()
  
  bool CompositingCoordinator::paintToSurface(const IntSize& size, CoordinatedSurface::Flags flags, uint32_t& atlasID, IntPoint& offset, CoordinatedSurface::Client* client)
  {
@@ -10,7 +10,7 @@ index b38a9d6..cc62a6d 100644
      for (auto& updateAtlas : m_updateAtlases) {
          UpdateAtlas* atlas = updateAtlas.get();
          if (atlas->supportsAlpha() == (flags & CoordinatedSurface::SupportsAlpha)) {
-@@ -383,9 +384,10 @@ bool CompositingCoordinator::paintToSurface(const IntSize& size, CoordinatedSurf
+@@ -382,9 +383,10 @@ bool CompositingCoordinator::paintToSurface(const IntSize& size, CoordinatedSurf
                  return true;
          }
      }
