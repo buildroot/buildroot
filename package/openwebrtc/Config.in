@@ -1,6 +1,7 @@
 config BR2_PACKAGE_OPENWEBRTC
 	bool "openwebrtc"
 	select BR2_PACKAGE_LIBNICE
+	select BR2_PACKAGE_PULSEAUDIO
 	select BR2_PACKAGE_GST1_OPENWEBRTC
 	help
 	  A flexible cross-platform WebRTC client framework based on GStreamer.
