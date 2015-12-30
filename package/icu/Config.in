@@ -17,6 +17,7 @@ if BR2_PACKAGE_ICU
 
 config BR2_PACKAGE_ICU_USE_ICUDATA
 	bool "use icudata"
+	select BR2_PACKAGE_ICUDATA
 	help
 	  Use minimised icudata from Metrological repo.
 
