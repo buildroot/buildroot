@@ -39,7 +39,7 @@ BCM_REFSW_MAKE_ENV += \
 	NEXUS_USE_7439_SFF=y \
 	NEXUS_MODE=proxy \
 	NEXUS_HEADERS=y \
-	NEXUS_EXTRA_CFLAGS="$(TARGET_CFLAGS)" \
+	NEXUS_EXTRA_CFLAGS="$(TARGET_CFLAGS) -fPIC" \
 	NEXUS_EXTRA_LDFLAGS="$(TARGET_LDFLAGS)" \
 	VCX=$(BCM_REFSW_PLATFORM_VC) \
 	V3D_EXTRA_CFLAGS="$(TARGET_CFLAGS)" \
@@ -100,7 +100,9 @@ define BCM_REFSW_INSTALL_LIBS
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libnexus.so $1/usr/lib/libnexus.so
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libv3ddriver.so $1/usr/lib/libv3ddriver.so
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libnxpl.so $1/usr/lib/libnxpl.so
+	$(INSTALL) -D $(BCM_REFSW_BIN)/libnxclient.so $1/usr/lib/libnxclient.so
 	cd $1/usr/lib && ln -sf libv3ddriver.so libEGL.so && ln -sf libv3ddriver.so libGLESv2.so
+	
 endef
 
 ifeq ($(BCM_REFSW_PLATFORM_VC),vc5)
@@ -111,12 +113,15 @@ endef
 endif
 
 define BCM_REFSW_INSTALL_STAGING_NXSERVER
-	$(INSTALL) -D $(BCM_REFSW_BIN)/libnxclient.so $1/usr/lib/libnxclient.so
+       $(INSTALL) -D $(BCM_REFSW_BIN)/libnxclient.so $1/usr/lib/libnxclient.so
 endef
 define BCM_REFSW_INSTALL_TARGET_NXSERVER
-	$(INSTALL) -D $(BCM_REFSW_BIN)/libnxclient.so $1/usr/lib/libnxclient.so
-	$(INSTALL) -m 755 -D $(BCM_REFSW_BIN)/nxserver $1/usr/bin/nxserver
-	$(INSTALL) -D -m 755 package/bcm-refsw/S70nxserver $(TARGET_DIR)/etc/init.d/S70nxserver
+       $(INSTALL) -D $(BCM_REFSW_BIN)/libnxclient.so $1/usr/lib/libnxclient.so
+       #install nxserver if webbridge nxresourcecenter plugin is not chosen.
+       if [ "x$(BR2_PACKAGE_PLUGIN_NXRESOURCECENTER)" = "x" ]  ; then \
+         $(INSTALL) -m 755 -D $(BCM_REFSW_BIN)/nxserver $1/usr/bin/nxserver; \
+         $(INSTALL) -D -m 755 package/bcm-refsw/S70nxserver $(TARGET_DIR)/etc/init.d/S70nxserver; \
+       fi
 endef
 
 ifeq ($(BR2_PACKAGE_BCM_REFSW_EGLCUBE),y)
@@ -140,12 +145,14 @@ define BCM_REFSW_INSTALL_STAGING_CMDS
 	$(INSTALL) -m 644 package/bcm-refsw/egl.pc $(STAGING_DIR)/usr/lib/pkgconfig/egl.pc
 	$(INSTALL) -m 644 package/bcm-refsw/glesv2.pc $(STAGING_DIR)/usr/lib/pkgconfig/
 	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/include/*.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 $(BCM_REFSW_DIR)/nexus/nxclient/server/*.h $(STAGING_DIR)/usr/include/refsw/
 	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/include/platform_app.inc $(STAGING_DIR)/usr/include/
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/platform/nexus/*.h $(STAGING_DIR)/usr/include/refsw/
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/driver/interface/khronos/include/GLES/*.h $(STAGING_DIR)/usr/include/GLES/
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/driver/interface/khronos/include/GLES2/*.h $(STAGING_DIR)/usr/include/GLES2/
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/driver/interface/khronos/include/EGL/*.h $(STAGING_DIR)/usr/include/EGL/
 	$(INSTALL) -m 644 -D ${BCM_REFSW_VCX}/driver/interface/khronos/include/KHR/khrplatform.h $(STAGING_DIR)/usr/include/KHR/khrplatform.h;
+	$(INSTALL) -m 644 -D $(BCM_REFSW_BIN)/libnxserver.a $(STAGING_DIR)/usr/lib/libnxserver.a
 	$(call BCM_REFSW_INSTALL_LIBS,$(STAGING_DIR))
 	$(call BCM_REFSW_INSTALL_STAGING_NXSERVER,$(STAGING_DIR))
 endef
