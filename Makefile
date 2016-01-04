@@ -434,6 +434,34 @@ include fs/common.mk
 
 include $(BR2_EXTERNAL)/external.mk
 
+# Now we are sure we have all the packages scanned and defined. We now
+# check for each package in the list of enabled packages, that all its
+# dependencies are indeed enabled.
+#
+# Only trigger the check for default builds. If the user forces building
+# a package, even if not enabled in the configuration, we want to accept
+# it.
+#
+ifeq ($(MAKECMDGOALS),)
+
+define CHECK_ONE_DEPENDENCY
+ifeq ($$($(2)_TYPE),target)
+ifeq ($$($(2)_IS_VIRTUAL),)
+ifneq ($$($$($(2)_KCONFIG_VAR)),y)
+$$(error $$($(2)_NAME) is in the dependency chain of $$($(1)_NAME) that \
+has added it to its _DEPENDENCIES variable without selecting it or \
+depending on it from Config.in)
+endif
+endif
+endif
+endef
+
+$(foreach pkg,$(call UPPERCASE,$(PACKAGES)),\
+	$(foreach dep,$(call UPPERCASE,$($(pkg)_FINAL_ALL_DEPENDENCIES)),\
+		$(eval $(call CHECK_ONE_DEPENDENCY,$(pkg),$(dep))$(sep))))
+
+endif
+
 dirs: $(BUILD_DIR) $(STAGING_DIR) $(TARGET_DIR) \
 	$(HOST_DIR) $(BINARIES_DIR)
 
@@ -604,20 +632,11 @@ endif
 # debugging symbols.
 	find $(TARGET_DIR)/lib -type f -name 'ld-*.so*' | \
 		xargs -r $(STRIPCMD) $(STRIP_STRIP_DEBUG)
-
+	test -f $(TARGET_DIR)/etc/ld.so.conf && \
+		{ echo "ERROR: we shouldn't have a /etc/ld.so.conf file"; exit 1; } || true
+	test -d $(TARGET_DIR)/etc/ld.so.conf.d && \
+		{ echo "ERROR: we shouldn't have a /etc/ld.so.conf.d directory"; exit 1; } || true
 	mkdir -p $(TARGET_DIR)/etc
-	# Mandatory configuration file and auxiliary cache directory
-	# for recent versions of ldconfig
-	touch $(TARGET_DIR)/etc/ld.so.conf
-	mkdir -p $(TARGET_DIR)/var/cache/ldconfig
-	if [ -x "$(TARGET_CROSS)ldconfig" ]; \
-	then \
-		$(TARGET_CROSS)ldconfig -r $(TARGET_DIR) \
-					-f $(TARGET_DIR)/etc/ld.so.conf; \
-	else \
-		/sbin/ldconfig -r $(TARGET_DIR) \
-			       -f $(TARGET_DIR)/etc/ld.so.conf; \
-	fi
 	( \
 		echo "NAME=Buildroot"; \
 		echo "VERSION=$(BR2_VERSION_FULL)"; \
