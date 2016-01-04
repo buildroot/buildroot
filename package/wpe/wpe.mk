@@ -142,7 +142,7 @@ define WPE_INSTALL_TARGET_CMDS
 	(pushd $(WPE_BUILDDIR) > /dev/null && \
 	cp bin/WPE{Network,Web}Process $(TARGET_DIR)/usr/bin/ && \
 	cp -d lib/libWPE* $(TARGET_DIR)/usr/lib/ && \
-	$(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.1 && \
+	$(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.* && \
 	popd > /dev/null)
 endef
 endif
