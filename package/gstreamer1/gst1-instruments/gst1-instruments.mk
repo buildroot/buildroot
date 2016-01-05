@@ -15,9 +15,4 @@ GST1_INSTRUMENTS_DEPENDENCIES = \
 	gstreamer1 \
 	gst1-plugins-base
 
-define GST1_INSTRUMENTS_RUN_AUTOGEN
-	cd $(@D) && PATH=$(BR_PATH) ./autogen.sh
-endef
-GST1_INSTRUMENTS_PRE_CONFIGURE_HOOKS += GST1_INSTRUMENTS_RUN_AUTOGEN
-
 $(eval $(autotools-package))
