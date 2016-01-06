@@ -132,8 +132,8 @@ define WPE_INSTALL_STAGING_CMDS
 	(pushd $(WPE_BUILDDIR) && \
 	cp bin/WPE{Network,Web}Process $(STAGING_DIR)/usr/bin/ && \
 	cp -d lib/libWPE* $(STAGING_DIR)/usr/lib/ && \
-	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P Source/JavaScriptCore/cmake_install.cmake && \
-	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P Source/WebKit2/cmake_install.cmake && \
+	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P Source/JavaScriptCore/cmake_install.cmake > /dev/null && \
+	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P Source/WebKit2/cmake_install.cmake > /dev/null && \
 	popd > /dev/null )
 
 endef
