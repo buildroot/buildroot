@@ -129,21 +129,18 @@ define WPE_BUILD_CMDS
 endef
 
 define WPE_INSTALL_STAGING_CMDS
-	(pushd $(WPE_BUILDDIR) && \
-	cp bin/WPE{Network,Web}Process $(STAGING_DIR)/usr/bin/ && \
-	cp -d lib/libWPE* $(STAGING_DIR)/usr/lib/ && \
-	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P Source/JavaScriptCore/cmake_install.cmake > /dev/null && \
-	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P Source/WebKit2/cmake_install.cmake > /dev/null && \
-	popd > /dev/null )
+	(cp $(WPE_BUILDDIR)/bin/WPE{Network,Web}Process $(STAGING_DIR)/usr/bin/ && \
+	cp -d $(WPE_BUILDDIR)/lib/libWPE* $(STAGING_DIR)/usr/lib/ && \
+	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P $(WPE_BUILDDIR)/Source/JavaScriptCore/cmake_install.cmake > /dev/null && \
+	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P $(WPE_BUILDDIR)/Source/WebKit2/cmake_install.cmake > /dev/null )
+
 
 endef
 
 define WPE_INSTALL_TARGET_CMDS
-	(pushd $(WPE_BUILDDIR) > /dev/null && \
-	cp bin/WPE{Network,Web}Process $(TARGET_DIR)/usr/bin/ && \
-	cp -d lib/libWPE* $(TARGET_DIR)/usr/lib/ && \
-	$(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.* && \
-	popd > /dev/null)
+	(cp $(WPE_BUILDDIR)/bin/WPE{Network,Web}Process $(TARGET_DIR)/usr/bin/ && \
+	cp -d $(WPE_BUILDDIR)/lib/libWPE* $(TARGET_DIR)/usr/lib/ && \
+	$(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.*)
 endef
 endif
 
