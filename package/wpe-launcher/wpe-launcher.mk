@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_LAUNCHER_VERSION = f1244c0e4fd9f74350f97bfe21dd7369056ee9e2
+WPE_LAUNCHER_VERSION = 7e218aacc728e574e4d8f6df1c4b354d7d812451
 WPE_LAUNCHER_SITE = $(call github,Metrological,wpe-launcher,$(WPE_LAUNCHER_VERSION))
 
 WPE_LAUNCHER_DEPENDENCIES = wpe
