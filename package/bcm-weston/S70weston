@@ -1,0 +1,47 @@
+#!/bin/sh
+
+export HOME=/root
+export LD_LIBRARY_PATH=/usr/lib
+export XDG_DATA_DIRS=/usr/share/X11/xkb/
+export XDG_RUNTIME_DIR=/tmp
+export XCURSOR_PATH=/usr/share/icons/whiteglass/cursors
+export PATH=/usr/local/sbin:/usr/local/bin:.:/sbin:/usr/sbin:/bin:/usr/bin:/usr/bin/weston
+export FONTCONFIG_PATH=/usr/local/etc/fonts
+
+/usr/bin/udevadm trigger --type=devices --subsystem-match=input
+chown root /usr/bin/weston/weston-launch
+chmod +s /usr/bin/weston/weston-launch
+
+
+start() {
+	echo -n "Starting weston: "
+	start-stop-daemon -S -q -b -m -p /var/run/weston.pid --exec /usr/bin/weston/weston-launch -- -u root </dev/null >/dev/null 2>&1
+	[ $? == 0 ] && echo "OK" || echo "FAIL"
+}
+stop() {
+	echo -n "Stopping weston: "
+	start-stop-daemon -K -q -p /var/run/weston.pid
+	[ $? == 0 ] && echo "OK" || echo "FAIL"
+	rm -rf /var/run/weston.pid
+}
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	restart|reload)
+		restart
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+esac
+
+exit $?

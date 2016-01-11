@@ -1,0 +1,8 @@
+config BR2_PACKAGE_BCM_WESTON
+	bool "bcm-weston"
+        select BR2_PACKAGE_LINUX_PAM
+	select BR2_PACKAGE_IMAGEMAGICK
+	select BR2_PACKAGE_LIBXML2
+	depends on BR2_PACKAGE_BCM_REFSW
+	help
+	  bcm-weston
