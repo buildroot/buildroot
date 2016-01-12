@@ -44,7 +44,7 @@ For more information on buildroot way of working please see their documentation:
 ## Usage
 To launch the browser:
 ```
-WPELauncher <url>
+wpe <url>
 ```
 
 Additionally (by default) there is a WebInspector enabled which can be reached at:
