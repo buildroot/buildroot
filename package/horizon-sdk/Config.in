@@ -1,0 +1,22 @@
+config BR2_PACKAGE_HORIZON_SDK
+	bool "horizon-sdk"
+	depends on BR2_i386
+	select BR2_PACKAGE_HAS_OPENGL_EGL
+	select BR2_PACKAGE_HAS_OPENGL_ES
+	select BR2_PACKAGE_HAS_OPENVG
+	help
+	  HORIZON SDK
+	  Pre-compiled binaries of the Samsumng-intel libraries
+
+if BR2_PACKAGE_HORIZON_SDK
+
+config BR2_PACKAGE_PROVIDES_OPENGL_EGL
+	default "horizon-sdk"
+
+config BR2_PACKAGE_PROVIDES_OPENGL_ES
+	default "horizon-sdk"
+
+config BR2_PACKAGE_PROVIDES_OPENVG
+	default "horizon-sdk"
+
+endif
