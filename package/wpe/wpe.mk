@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = 6e743ee4aba86decfd71ae278ebdb01268e8195a
+WPE_VERSION = e20366872f8afab25028967b9d1ab3b7615c8d4e
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -26,7 +26,9 @@ WPE_EXTRA_FLAGS += \
 	-D__UCLIBC__
 endif
 
-WPE_FLAGS = -DENABLE_ACCELERATED_2D_CANVAS=ON
+WPE_FLAGS = \
+	-DENABLE_ACCELERATED_2D_CANVAS=ON \
+	-DENABLE_GEOLOCATION=ON
 
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 WPE_FLAGS += -DUSE_WPE_BACKEND_BCM_RPI=ON
