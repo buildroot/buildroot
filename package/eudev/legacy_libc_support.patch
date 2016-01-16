@@ -1,0 +1,26 @@
+--- a/src/shared/missing.h	2016-01-15 18:00:17.335693942 +0100
++++ b/src/shared/missing.h	2016-01-15 17:57:33.453151611 +0100
+@@ -159,7 +159,7 @@
+ #define AT_EMPTY_PATH 0x1000
+ #endif
+ 
+-#if !HAVE_DECL_STRNDUPA
++#if !HAVE_DECL_STRNDUPA && !defined(strndupa)
+ #define strndupa(s, n) \
+   ({ \
+     const char *__old = (s); \
+--- a/src/shared/util.c	2016-01-15 17:52:16.815757270 +0100
++++ b/src/shared/util.c	2016-01-15 17:51:15.749815703 +0100
+@@ -71,6 +71,12 @@
+ #include "random-util.h"
+ #include "terminal-util.h"
+ 
++// Patch is stolen from: busybox-1.24.1/util-linux/switch_root.c
++// Make up for header deficiencies
++#ifndef RAMFS_MAGIC
++# define RAMFS_MAGIC ((unsigned)0x858458f6)
++#endif
++
+ /* Put this test here for a lack of better place */
+ assert_cc(EAGAIN == EWOULDBLOCK);
+ 

@@ -4,19 +4,19 @@ config BR2_PACKAGE_HORIZON_SDK
 	select BR2_PACKAGE_HAS_OPENGL_EGL
 	select BR2_PACKAGE_HAS_OPENGL_ES
 	select BR2_PACKAGE_HAS_OPENVG
+	select BR2_PACKAGE_HAS_LIBGLES
 	help
-	  HORIZON SDK
-	  Pre-compiled binaries of the Samsumng-intel libraries
+	  Pre-compiled binaries for a platform
 
 if BR2_PACKAGE_HORIZON_SDK
 
-config BR2_PACKAGE_PROVIDES_OPENGL_EGL
+config BR2_PACKAGE_PROVIDES_LIBEGL
 	default "horizon-sdk"
 
-config BR2_PACKAGE_PROVIDES_OPENGL_ES
+config BR2_PACKAGE_PROVIDES_LIBGLES
 	default "horizon-sdk"
 
-config BR2_PACKAGE_PROVIDES_OPENVG
+config BR2_PACKAGE_PROVIDES_LIBOPENVG
 	default "horizon-sdk"
 
 endif
