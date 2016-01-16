@@ -47,6 +47,13 @@ config BR2_PACKAGE_CPPSDK_TRACING
 	  Functionality to handle runtime enabling and disabling of 
 	  tracing. This is NOT intended for LOGGING !!!
 
+config BR2_PACKAGE_CPPSDK_PROFILER
+	bool "profiler"
+	select BR2_PACKAGE_CPPSDK_GENERICS
+	help
+	  Functionality to handle runtime enabling and disabling of 
+	  profiler information. This is NOT intended for PRODUCTION !!!
+
 config BR2_PACKAGE_CPPSDK_WEBSOCKET
 	bool "websocket"
 	select BR2_PACKAGE_CPPSDK_GENERICS
