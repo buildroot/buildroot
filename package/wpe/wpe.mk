@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = e20366872f8afab25028967b9d1ab3b7615c8d4e
+WPE_VERSION = 81d97b8bbaa21da63650a2b5b5cdbc53469b8714
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -138,8 +138,6 @@ define WPE_INSTALL_STAGING_CMDS
 	cp -d $(WPE_BUILDDIR)/lib/libWPE* $(STAGING_DIR)/usr/lib/ && \
 	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P $(WPE_BUILDDIR)/Source/JavaScriptCore/cmake_install.cmake > /dev/null && \
 	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P $(WPE_BUILDDIR)/Source/WebKit2/cmake_install.cmake > /dev/null )
-
-
 endef
 
 define WPE_INSTALL_TARGET_CMDS
