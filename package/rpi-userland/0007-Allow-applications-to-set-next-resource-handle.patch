@@ -1,0 +1,208 @@
+From d065dcbc590aa7647098e87488dae32cc1e47797 Mon Sep 17 00:00:00 2001
+From: Dom Cobley <dc4@broadcom.com>
+Date: Tue, 9 Jul 2013 09:26:26 -0400
+Subject: [PATCH 1/3] Allow applications to set next resource handle
+
+This patch adds provisions in userland to
+let apps callers set the next rendereing dispmanx resource.
+It's useful for implementing, say, a buffer carousel.
+---
+ interface/khronos/common/khrn_client_rpc.h |  2 ++
+ interface/khronos/common/khrn_int_ids.h    |  2 ++
+ interface/khronos/egl/egl_client.c         | 30 +++++++++++++++++++++++++++---
+ interface/khronos/egl/egl_client_surface.c | 24 +++++++++++++++++++++++-
+ interface/khronos/egl/egl_client_surface.h |  3 ++-
+ interface/khronos/egl/egl_int_impl.h       |  5 +++--
+ 6 files changed, 59 insertions(+), 7 deletions(-)
+
+diff --git a/interface/khronos/common/khrn_client_rpc.h b/interface/khronos/common/khrn_client_rpc.h
+index 418aa67..a7557a8 100644
+--- a/interface/khronos/common/khrn_client_rpc.h
++++ b/interface/khronos/common/khrn_client_rpc.h
+@@ -683,6 +683,7 @@ static INLINE void rpc_call12_out_ctrl(CLIENT_THREAD_STATE_T *thread,uint32_t id
+ static INLINE void rpc_call13_out_ctrl(CLIENT_THREAD_STATE_T *thread,uint32_t id, uint32_t p0, uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4, uint32_t p5, uint32_t p6, uint32_t p7, uint32_t p8, uint32_t p9, uint32_t p10, uint32_t p11, void *out)               { rpc_begin(thread); RPC_CALL(thread, id, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);      rpc_recv(thread, out, NULL, (RPC_RECV_FLAG_T)(RPC_RECV_FLAG_CTRL | RPC_RECV_FLAG_LEN)); rpc_end(thread); }
+ static INLINE void rpc_call14_out_ctrl(CLIENT_THREAD_STATE_T *thread,uint32_t id, uint32_t p0, uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4, uint32_t p5, uint32_t p6, uint32_t p7, uint32_t p8, uint32_t p9, uint32_t p10, uint32_t p11, uint32_t p12, void *out) { rpc_begin(thread); RPC_CALL(thread, id, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12); rpc_recv(thread, out, NULL, (RPC_RECV_FLAG_T)(RPC_RECV_FLAG_CTRL | RPC_RECV_FLAG_LEN)); rpc_end(thread); }
+ static INLINE void rpc_call15_out_ctrl(CLIENT_THREAD_STATE_T *thread,uint32_t id, uint32_t p0, uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4, uint32_t p5, uint32_t p6, uint32_t p7, uint32_t p8, uint32_t p9, uint32_t p10, uint32_t p11, uint32_t p12, uint32_t p13, void *out) { rpc_begin(thread); RPC_CALL(thread, id, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13); rpc_recv(thread, out, NULL, (RPC_RECV_FLAG_T)(RPC_RECV_FLAG_CTRL | RPC_RECV_FLAG_LEN)); rpc_end(thread); }
++static INLINE void rpc_call16_out_ctrl(CLIENT_THREAD_STATE_T *thread,uint32_t id, uint32_t p0, uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4, uint32_t p5, uint32_t p6, uint32_t p7, uint32_t p8, uint32_t p9, uint32_t p10, uint32_t p11, uint32_t p12, uint32_t p13, uint32_t p14, void *out) { rpc_begin(thread); RPC_CALL(thread, id, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14); rpc_recv(thread, out, NULL, (RPC_RECV_FLAG_T)(RPC_RECV_FLAG_CTRL | RPC_RECV_FLAG_LEN)); rpc_end(thread); }
+ #endif
+ 
+ #define RPC_CALL1_OUT_CTRL(fn, thread, id, out)                                               rpc_call1_out_ctrl(thread, id, out)
+@@ -700,6 +701,7 @@ static INLINE void rpc_call15_out_ctrl(CLIENT_THREAD_STATE_T *thread,uint32_t id
+ #define RPC_CALL13_OUT_CTRL(fn, thread, id, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, out)      rpc_call13_out_ctrl(thread, id, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, out)
+ #define RPC_CALL14_OUT_CTRL(fn, thread, id, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, out) rpc_call14_out_ctrl(thread, id, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, out)
+ #define RPC_CALL15_OUT_CTRL(fn, thread, id, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, out) rpc_call15_out_ctrl(thread, id, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, out)
++#define RPC_CALL16_OUT_CTRL(fn, thread, id, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, out) rpc_call16_out_ctrl(thread, id, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, out)
+ 
+ # if !defined(__SYMBIAN32__)  //use functions defined in khrpc.cpp
+ static INLINE uint32_t rpc_call1_out_ctrl_res(CLIENT_THREAD_STATE_T *thread,uint32_t id, void *out)                                                                                                                       { uint32_t res; rpc_begin(thread); RPC_CALL(thread, id);                                     res = rpc_recv(thread, out, NULL, (RPC_RECV_FLAG_T)(RPC_RECV_FLAG_RES | RPC_RECV_FLAG_CTRL | RPC_RECV_FLAG_LEN)); rpc_end(thread); return res; }
+diff --git a/interface/khronos/common/khrn_int_ids.h b/interface/khronos/common/khrn_int_ids.h
+index 8378f4a..ec961e0 100644
+--- a/interface/khronos/common/khrn_int_ids.h
++++ b/interface/khronos/common/khrn_int_ids.h
+@@ -367,6 +367,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ 
+ #define EGLINTCREATESURFACE_ID            0x4000
++#define EGLINTCREATESURFACE_ID_V2         0x4100
+ #define EGLINTCREATEGLES11_ID             0x4001
+ #define EGLINTCREATEGLES20_ID             0x4002
+ #define EGLINTCREATEVG_ID                 0x4003
+@@ -377,6 +378,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #define EGLINTMAKECURRENT_ID              0x4008
+ #define EGLINTFLUSHANDWAIT_ID             0x4009
+ #define EGLINTSWAPBUFFERS_ID              0x400a
++#define EGLINTSWAPBUFFERS_ID_V2           0x410a
+ #define EGLINTSELECTMIPMAP_ID             0x400b
+ #define EGLINTFLUSH_ID                    0x400c
+ #define EGLINTGETCOLORDATA_ID             0x400d
+diff --git a/interface/khronos/egl/egl_client.c b/interface/khronos/egl/egl_client.c
+index 472ef0c..234da65 100644
+--- a/interface/khronos/egl/egl_client.c
++++ b/interface/khronos/egl/egl_client.c
+@@ -162,6 +162,17 @@ static void egl_current_release(CLIENT_PROCESS_STATE_T *process, EGL_CURRENT_T *
+ void egl_gl_flush_callback(bool wait);
+ void egl_vg_flush_callback(bool wait);
+ 
++#include "interface/vmcs_host/vc_dispmanx_types.h"
++/**HACKHACK - give us the ability to inject a DispmanX 
++ * resource handle into the CreateWindowSurface and 
++ * SwapBuffers calls */ 
++static DISPMANX_RESOURCE_HANDLE_T next_resource_handle;
++
++EGLAPI EGLBoolean EGLAPIENTRY eglSetNextResourceHandle(DISPMANX_RESOURCE_HANDLE_T handle)
++{
++   next_resource_handle = handle;
++}
++
+ /*
+ TODO: do an RPC call to make sure the Khronos vll is loaded (and that it stays loaded until eglTerminate)
+ Also affects global image (and possibly others?)
+@@ -644,7 +655,8 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreateWindowSurface(EGLDisplay dpy, EGLConfig c
+                                 false,
+                                 EGL_NO_TEXTURE,
+                                 EGL_NO_TEXTURE,
+-                                0, 0);
++                                0, 0,
++                                next_resource_handle);
+ 
+                if (surface) {
+                   if (khrn_pointer_map_insert(&process->surfaces, process->next_surface, surface)) {
+@@ -889,7 +901,7 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(EGLDisplay dpy, EGLConfig
+                              mipmap_texture,
+                              texture_format,
+                              texture_target,
+-                             0, 0);
++                             0, 0, 0);
+ 
+             if (surface) {
+                if (khrn_pointer_map_insert(&process->surfaces, process->next_surface, surface)) {
+@@ -1031,7 +1043,7 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreatePixmapSurface(EGLDisplay dpy, EGLConfig c
+                                    false,
+                                    EGL_NO_TEXTURE,
+                                    EGL_NO_TEXTURE,
+-                                   pixmap, ((server_handle[0] == 0) && (server_handle[1] == (uint32_t)(-1))) ? NULL : server_handle);
++                                   pixmap, ((server_handle[0] == 0) && (server_handle[1] == (uint32_t)(-1))) ? NULL : server_handle, 0);
+ 
+                      if (surface) {
+                         if (khrn_pointer_map_insert(&process->surfaces, process->next_surface, surface)) {
+@@ -2303,6 +2315,18 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay dpy, EGLSurface surf)
+ 
+                vcos_log_trace("eglSwapBuffers server call");
+ 
++               if (next_resource_handle)
++               RPC_CALL7(eglIntSwapBuffers_impl,
++                     thread,
++                     EGLINTSWAPBUFFERS_ID_V2,
++                     RPC_UINT(surface->serverbuffer),
++                     RPC_UINT(surface->width),
++                     RPC_UINT(surface->height),
++                     RPC_UINT(surface->internal_handle),
++                     RPC_UINT(surface->swap_behavior == EGL_BUFFER_PRESERVED ? 1 : 0),
++                     RPC_UINT(khrn_platform_get_window_position(surface->win)),
++                     RPC_INT(next_resource_handle));
++               else
+                RPC_CALL6(eglIntSwapBuffers_impl,
+                      thread,
+                      EGLINTSWAPBUFFERS_ID,
+diff --git a/interface/khronos/egl/egl_client_surface.c b/interface/khronos/egl/egl_client_surface.c
+index 0fa1fd1..0dc10e2 100644
+--- a/interface/khronos/egl/egl_client_surface.c
++++ b/interface/khronos/egl/egl_client_surface.c
+@@ -314,7 +314,8 @@ EGL_SURFACE_T *egl_surface_create(
+    EGLenum texture_format,
+    EGLenum texture_target,
+    EGLNativePixmapType pixmap,
+-   const uint32_t *pixmap_server_handle)
++   const uint32_t *pixmap_server_handle,
++   DISPMANX_RESOURCE_HANDLE_T next_resource_handle)
+ {
+    KHRN_IMAGE_FORMAT_T color;
+    KHRN_IMAGE_FORMAT_T depth;
+@@ -473,6 +474,27 @@ EGL_SURFACE_T *egl_surface_create(
+ #endif
+          uint32_t results[3];
+ 
++         if (next_resource_handle)
++         RPC_CALL16_OUT_CTRL(eglIntCreateSurface_impl,
++                             thread,
++                             EGLINTCREATESURFACE_ID_V2,
++                             RPC_UINT(serverwin),
++                             RPC_UINT(buffers),
++                             RPC_UINT(width),
++                             RPC_UINT(height),
++                             RPC_UINT(color),
++                             RPC_UINT(depth),
++                             RPC_UINT(mask),
++                             RPC_UINT(multi),
++                             RPC_UINT(largest_pbuffer),
++                             RPC_UINT(mipmap_texture),
++                             RPC_UINT(config_depth_bits),
++                             RPC_UINT(config_stencil_bits),
++                             RPC_UINT(sem_name),
++                             RPC_UINT(type),
++                             RPC_INT(next_resource_handle),
++                             results);
++         else
+          RPC_CALL15_OUT_CTRL(eglIntCreateSurface_impl,
+                              thread,
+                              EGLINTCREATESURFACE_ID,
+diff --git a/interface/khronos/egl/egl_client_surface.h b/interface/khronos/egl/egl_client_surface.h
+index c99d44c..b5bf70a 100644
+--- a/interface/khronos/egl/egl_client_surface.h
++++ b/interface/khronos/egl/egl_client_surface.h
+@@ -322,7 +322,8 @@ extern EGL_SURFACE_T *egl_surface_create(
+    EGLenum texture_format,
+    EGLenum texture_target,
+    EGLNativePixmapType pixmap,
+-   const uint32_t *pixmap_server_handle);
++   const uint32_t *pixmap_server_handle,
++   DISPMANX_RESOURCE_HANDLE_T next_resource_handle);
+ extern EGL_SURFACE_T *egl_surface_from_vg_image(
+    VGImage vg_handle,
+    EGLSurface name,
+diff --git a/interface/khronos/egl/egl_int_impl.h b/interface/khronos/egl/egl_int_impl.h
+index 8a5734c..51b3580 100644
+--- a/interface/khronos/egl/egl_int_impl.h
++++ b/interface/khronos/egl/egl_int_impl.h
+@@ -56,7 +56,8 @@ FN(int, eglIntCreateSurface_impl, (
+    uint32_t config_stencil_bits,
+    uint32_t sem,
+    uint32_t type,
+-   uint32_t *results))
++   uint32_t *results,
++   DISPMANX_RESOURCE_HANDLE_T next_resource_handle))
+ 
+ FN(int, eglIntCreatePbufferFromVGImage_impl, (
+    VGImage vg_handle,
+@@ -110,7 +111,7 @@ FN(void, eglIntMakeCurrent_impl, (uint32_t pid_0, uint32_t pid_1, uint32_t glver
+ FN(int, eglIntFlushAndWait_impl, (uint32_t flushgl, uint32_t flushvg))
+ FN(void, eglIntFlush_impl, (uint32_t flushgl, uint32_t flushvg))
+ 
+-FN(void, eglIntSwapBuffers_impl, (EGL_SURFACE_ID_T s, uint32_t width, uint32_t height, uint32_t handle, uint32_t preserve, uint32_t position))
++FN(void, eglIntSwapBuffers_impl, (EGL_SURFACE_ID_T s, uint32_t width, uint32_t height, uint32_t handle, uint32_t preserve, uint32_t position, DISPMANX_RESOURCE_HANDLE_T new_back_buffer))
+ FN(void, eglIntSelectMipmap_impl, (EGL_SURFACE_ID_T s, int level))
+ 
+ FN(void, eglIntGetColorData_impl, (EGL_SURFACE_ID_T s, KHRN_IMAGE_FORMAT_T format, uint32_t width, uint32_t height, int32_t stride, uint32_t y_offset, void *data))
+-- 
+1.9.1
+
