@@ -190,7 +190,7 @@ define WPA_SUPPLICANT_CONFIGURE_WLAN
 		echo "  ssid=\"$(BR2_PACKAGE_WPA_SUPPLICANT_SSID)\" ";	\
 		echo "  psk=$(BR2_PACKAGE_WPA_SUPPLICANT_PSK)";			\
 		echo "}";												\
-	) >> $(TARGET_DIR)/etc/wpa_supplicant.conf
+	) > $(TARGET_DIR)/etc/wpa_supplicant.conf
 endef
 endif
 
