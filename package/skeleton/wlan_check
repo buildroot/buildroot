@@ -9,10 +9,11 @@ fi
 
 updown=$1
 iface=$2
+opts=$3
 
 case "$updown" in 
   *up*)
-	/usr/sbin/wpa_supplicant -B -i$iface -c /etc/wpa_supplicant.conf
+	/usr/sbin/wpa_supplicant -B -i$iface $opts -c /etc/wpa_supplicant.conf
     ;;
 
   *down*)

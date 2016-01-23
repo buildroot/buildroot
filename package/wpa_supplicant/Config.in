@@ -108,4 +108,10 @@ config BR2_PACKAGE_WPA_SUPPLICANT_PSK
 	help
 	  Set SSID from buildroot config 
 
+config BR2_PACKAGE_WPA_SUPPLICANT_OPTIONS
+	string "Optional wpa supplication options"
+	depends on BR2_PACKAGE_WPA_SUPPLICANT_CLI
+	help
+		Optional flags to be provided to wpa_supplicant
+
 endif
