@@ -96,4 +96,22 @@ config BR2_PACKAGE_WPA_SUPPLICANT_DBUS_INTROSPECTION
 	help
 	  Add introspection support for new DBus control interface.
 
+config BR2_PACKAGE_WPA_SUPPLICANT_SSID
+	string "Set SSID from buildroot"
+	depends on BR2_PACKAGE_WPA_SUPPLICANT_CLI 
+	help
+	  Set SSID from buildroot config
+
+config BR2_PACKAGE_WPA_SUPPLICANT_PSK
+	string "Set PSK from buildroot"
+	depends on BR2_PACKAGE_WPA_SUPPLICANT_CLI 
+	help
+	  Set SSID from buildroot config 
+
+config BR2_PACKAGE_WPA_SUPPLICANT_OPTIONS
+	string "Optional wpa supplication options"
+	depends on BR2_PACKAGE_WPA_SUPPLICANT_CLI
+	help
+		Optional flags to be provided to wpa_supplicant
+
 endif

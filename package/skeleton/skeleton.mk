@@ -178,14 +178,18 @@ NETWORK_DHCP_IFACE = $(call qstrip,$(BR2_SYSTEM_DHCP))
 ifneq ($(NETWORK_DHCP_IFACE),)
 define SET_NETWORK_DHCP
 	( \
-		echo ;                                               \
-		echo "auto $(NETWORK_DHCP_IFACE)";                   \
-		echo "iface $(NETWORK_DHCP_IFACE) inet dhcp";        \
-		echo "	pre-up /etc/network/nfs_check";              \
-		echo "	wait-delay 15";                              \
+		echo ;																											\
+		echo "auto $(NETWORK_DHCP_IFACE)";																				\
+		echo "iface $(NETWORK_DHCP_IFACE) inet dhcp";																	\
+		echo "	pre-up /etc/network/nfs_check";																			\
+		echo "	pre-up /etc/network/wlan_check up $(NETWORK_DHCP_IFACE) \"$(BR2_PACKAGE_WPA_SUPPLICANT_OPTIONS)\"";		\
+		echo "	post-down /etc/network/wlan_check" down $(NETWORK_DHCP_IFACE) ;											\
+		echo "	wait-delay 15";																							\
 	) >> $(TARGET_DIR)/etc/network/interfaces
 	$(INSTALL) -m 0755 -D $(SKELETON_PKGDIR)/nfs_check \
 		$(TARGET_DIR)/etc/network/nfs_check
+	$(INSTALL) -m 0755 -D $(SKELETON_PKGDIR)/wlan_check \
+		$(TARGET_DIR)/etc/network/wlan_check		
 endef
 endif
 
