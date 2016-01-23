@@ -348,6 +348,13 @@ LINUX_FIRMWARE_FILES += \
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.broadcom_bcm43xx
 endif
 
+# gk20a
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_NVIDIA_GK20A),y)
+LINUX_FIRMWARE_DIRS += nvidia
+# No license file; the license is in the file WHENCE
+# which is installed unconditionally
+endif
+
 ifneq ($(LINUX_FIRMWARE_FILES),)
 define LINUX_FIRMWARE_INSTALL_FILES
 	$(TAR) c -C $(@D) $(sort $(LINUX_FIRMWARE_FILES)) | \

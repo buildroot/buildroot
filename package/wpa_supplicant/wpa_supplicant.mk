@@ -182,11 +182,26 @@ define WPA_SUPPLICANT_INSTALL_STAGING_CMDS
 	$(WPA_SUPPLICANT_INSTALL_STAGING_WPA_CLIENT_SO)
 endef
 
+ifneq ($(BR2_PACKAGE_WPA_SUPPLICANT_SSID),)
+define WPA_SUPPLICANT_CONFIGURE_WLAN
+	( \
+		echo ;													\
+		echo "network={";										\
+		echo "  ssid=\"$(BR2_PACKAGE_WPA_SUPPLICANT_SSID)\" ";	\
+		echo "  psk=$(BR2_PACKAGE_WPA_SUPPLICANT_PSK)";			\
+		echo "}";												\
+	) > $(TARGET_DIR)/etc/wpa_supplicant.conf
+endef
+endif
+
+
 define WPA_SUPPLICANT_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 0755 -D $(@D)/$(WPA_SUPPLICANT_SUBDIR)/wpa_supplicant \
 		$(TARGET_DIR)/usr/sbin/wpa_supplicant
 	$(INSTALL) -m 644 -D package/wpa_supplicant/wpa_supplicant.conf \
 		$(TARGET_DIR)/etc/wpa_supplicant.conf
+
+	$(WPA_SUPPLICANT_CONFIGURE_WLAN)
 	$(WPA_SUPPLICANT_INSTALL_CLI)
 	$(WPA_SUPPLICANT_INSTALL_PASSPHRASE)
 	$(WPA_SUPPLICANT_INSTALL_DBUS)

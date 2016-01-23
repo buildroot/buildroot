@@ -1,0 +1,241 @@
+From a88e2bd8353f08465150188aa5e0ad8bae99508f Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Fri, 10 Jul 2015 09:44:15 +0200
+Subject: [PATCH] qtdemux: PIFF box detection and minimal parsing support
+
+The PIFF data is stored in a custom UUID box which is parsed and the
+crypto_info of the element is updated accordingly. This allows
+downstream decryptors to process and decrypt the protected content.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=753614
+---
+ gst/isomp4/qtdemux.c | 169 +++++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 163 insertions(+), 6 deletions(-)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index 19ecaac..bce63ff 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -527,8 +527,13 @@ static void qtdemux_do_allocation (GstQTDemux * qtdemux,
+ static gboolean qtdemux_pull_mfro_mfra (GstQTDemux * qtdemux);
+ static void check_update_duration (GstQTDemux * qtdemux, GstClockTime duration);
+ 
++static gchar *qtdemux_uuid_bytes_to_string (gconstpointer uuid_bytes);
++
++static GstStructure *qtdemux_get_cenc_sample_properties (GstQTDemux * qtdemux,
++    QtDemuxStream * stream, guint sample_index);
+ static void gst_qtdemux_append_protection_system_id (GstQTDemux * qtdemux,
+     const gchar * id);
++static void qtdemux_gst_structure_free (GstStructure * gststructure);
+ 
+ static void
+ gst_qtdemux_class_init (GstQTDemuxClass * klass)
+@@ -2412,6 +2417,139 @@ qtdemux_handle_xmp_taglist (GstQTDemux * qtdemux, GstTagList * taglist,
+ }
+ 
+ static void
++qtdemux_parse_piff (GstQTDemux * qtdemux, const guint8 * buffer, gint length,
++    guint offset)
++{
++  GstByteReader br;
++  guint8 version;
++  guint32 flags = 0;
++  guint i;
++  guint8 iv_size = 8;
++  QtDemuxStream *stream;
++  GstStructure *structure;
++  QtDemuxCencSampleSetInfo *ss_info = NULL;
++  const gchar *system_id;
++
++  if (!qtdemux->streams) {
++    return;
++  }
++
++  stream = qtdemux->streams[0];
++
++  structure = gst_caps_get_structure (stream->caps, 0);
++  g_assert (gst_structure_has_name (structure, "application/x-cenc"));
++  gst_structure_get (structure, GST_PROTECTION_SYSTEM_ID_CAPS_FIELD,
++      G_TYPE_STRING, &system_id, NULL);
++  gst_qtdemux_append_protection_system_id (qtdemux, system_id);
++
++  stream->protected = TRUE;
++  stream->protection_scheme_type = FOURCC_cenc;
++
++  if (!stream->protection_scheme_info) {
++    stream->protection_scheme_info =
++        g_malloc0 (sizeof (QtDemuxCencSampleSetInfo));
++  }
++
++  ss_info = (QtDemuxCencSampleSetInfo *) stream->protection_scheme_info;
++
++  if (ss_info->default_properties)
++    gst_structure_free (ss_info->default_properties);
++
++  ss_info->default_properties =
++      gst_structure_new ("application/x-cenc",
++      "iv_size", G_TYPE_UINT, iv_size, "encrypted", G_TYPE_BOOLEAN, TRUE, NULL);
++
++  if (ss_info->crypto_info) {
++    GST_LOG_OBJECT (qtdemux, "unreffing existing crypto_info");
++    g_ptr_array_free (ss_info->crypto_info, TRUE);
++  }
++
++  /* skip UUID */
++  gst_byte_reader_init (&br, buffer + offset + 16, length - offset - 16);
++
++  if (!gst_byte_reader_get_uint8 (&br, &version)) {
++    GST_ERROR_OBJECT (qtdemux, "Error getting box's version field");
++    return;
++  }
++
++  if (!gst_byte_reader_get_uint24_be (&br, &flags)) {
++    GST_ERROR_OBJECT (qtdemux, "Error getting box's flags field");
++    return;
++  }
++
++  if (flags & 0x000001) {
++    guint32 algorithm_id = 0;
++    const guint8 *kid;
++    GstBuffer *kid_buf;
++    gboolean is_encrypted = TRUE;
++
++    if (!gst_byte_reader_get_uint24_le (&br, &algorithm_id)) {
++      GST_ERROR_OBJECT (qtdemux, "Error getting box's algorithm ID field");
++      return;
++    }
++
++    algorithm_id >>= 8;
++    if (algorithm_id == 0) {
++      is_encrypted = FALSE;
++    } else if (algorithm_id == 1) {
++      /* FIXME: maybe store this in properties? */
++      GST_DEBUG_OBJECT (qtdemux, "AES 128-bits CTR encrypted stream");
++    } else if (algorithm_id == 2) {
++      /* FIXME: maybe store this in properties? */
++      GST_DEBUG_OBJECT (qtdemux, "AES 128-bits CBC encrypted stream");
++    }
++
++    if (!gst_byte_reader_get_uint8 (&br, &iv_size)) {
++      return;
++    }
++
++    if (!gst_byte_reader_get_data (&br, 16, &kid)) {
++      return;
++    }
++
++    kid_buf = gst_buffer_new_allocate (NULL, 16, NULL);
++    gst_buffer_fill (kid_buf, 0, kid, 16);
++    if (ss_info->default_properties)
++      gst_structure_free (ss_info->default_properties);
++    ss_info->default_properties =
++        gst_structure_new ("application/x-cenc",
++        "iv_size", G_TYPE_UINT, iv_size,
++        "encrypted", G_TYPE_BOOLEAN, is_encrypted,
++        "kid", GST_TYPE_BUFFER, kid_buf, NULL);
++    GST_DEBUG_OBJECT (qtdemux, "default sample properties: "
++        "is_encrypted=%u, iv_size=%u", is_encrypted, iv_size);
++    gst_buffer_unref (kid_buf);
++  }
++
++  if (!gst_byte_reader_get_uint32_be (&br, &qtdemux->cenc_aux_sample_count)) {
++    GST_ERROR_OBJECT (qtdemux, "Error getting box's sample count field");
++    return;
++  }
++
++  ss_info->crypto_info =
++      g_ptr_array_new_full (qtdemux->cenc_aux_sample_count,
++      (GDestroyNotify) qtdemux_gst_structure_free);
++
++  for (i = 0; i < qtdemux->cenc_aux_sample_count; ++i) {
++    GstStructure *properties;
++    GstBuffer *box;
++
++    properties = qtdemux_get_cenc_sample_properties (qtdemux, stream, i);
++    if (properties == NULL) {
++      GST_ERROR_OBJECT (qtdemux, "failed to get properties for sample %u", i);
++      return;
++    }
++
++    box = gst_buffer_new_wrapped (g_memdup (buffer, length), length);
++    gst_structure_set (properties, "box", GST_TYPE_BUFFER, box,
++        "sample-index", G_TYPE_UINT, i, NULL);
++    gst_buffer_unref (box);
++
++    g_ptr_array_add (ss_info->crypto_info, properties);
++  }
++}
++
++static void
+ qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
+ {
+   static const guint8 xmp_uuid[] = { 0xBE, 0x7A, 0xCF, 0xCB,
+@@ -2423,6 +2561,12 @@ qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
+     0xd0, 0x8a, 0x4f, 0x18, 0x10, 0xf3, 0x4a, 0x82,
+     0xb6, 0xc8, 0x32, 0xd8, 0xab, 0xa1, 0x83, 0xd3
+   };
++
++  static const guint8 piff_uuid[] = {
++    0xa2, 0x39, 0x4f, 0x52, 0x5a, 0x9b, 0x4f, 0x14,
++    0xa2, 0x44, 0x6c, 0x42, 0x7c, 0x64, 0x8d, 0xf4
++  };
++
+   guint offset;
+ 
+   /* counts as header data */
+@@ -2461,6 +2605,8 @@ qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
+     GST_ELEMENT_ERROR (qtdemux, STREAM, DECRYPT,
+         (_("Cannot play stream because it is encrypted with PlayReady DRM.")),
+         (NULL));
++  } else if (memcmp (buffer + offset, piff_uuid, 16) == 0) {
++    qtdemux_parse_piff (qtdemux, buffer, length, offset);
+   } else {
+     GST_DEBUG_OBJECT (qtdemux, "Ignoring unknown uuid: %08x-%08x-%08x-%08x",
+         GST_READ_UINT32_LE (buffer + offset),
+@@ -3345,7 +3491,8 @@ static gboolean
+ qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
+     guint64 moof_offset, QtDemuxStream * stream)
+ {
+-  GNode *moof_node, *traf_node, *tfhd_node, *trun_node, *tfdt_node, *mfhd_node;
++  GNode *moof_node, *traf_node, *tfhd_node, *trun_node, *tfdt_node, *mfhd_node,
++      *uuid_node;
+   GstByteReader mfhd_data, trun_data, tfhd_data, tfdt_data;
+   GNode *saiz_node, *saio_node, *pssh_node;
+   GstByteReader saiz_data, saio_data;
+@@ -3490,6 +3637,14 @@ qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
+       trun_node = qtdemux_tree_get_sibling_by_type_full (trun_node, FOURCC_trun,
+           &trun_data);
+     }
++
++    uuid_node = qtdemux_tree_get_child_by_type (traf_node, FOURCC_uuid);
++    if (uuid_node) {
++      guint8 *uuid_buffer = (guint8 *) uuid_node->data;
++      guint32 box_length = QT_UINT32 (uuid_buffer);
++      qtdemux_parse_uuid (qtdemux, uuid_buffer, box_length);
++    }
++
+     /* if no new base_offset provided for next traf,
+      * base is end of current traf */
+     base_offset = running_offset;
+@@ -6862,11 +7017,13 @@ gst_qtdemux_configure_protected_caps (GstQTDemux * qtdemux,
+   }
+ 
+   s = gst_caps_get_structure (stream->caps, 0);
+-  gst_structure_set (s,
+-      "original-media-type", G_TYPE_STRING, gst_structure_get_name (s),
+-      GST_PROTECTION_SYSTEM_ID_CAPS_FIELD, G_TYPE_STRING, selected_system,
+-      NULL);
+-  gst_structure_set_name (s, "application/x-cenc");
++  if (!gst_structure_has_name (s, "application/x-cenc")) {
++    gst_structure_set (s,
++        "original-media-type", G_TYPE_STRING, gst_structure_get_name (s),
++        GST_PROTECTION_SYSTEM_ID_CAPS_FIELD, G_TYPE_STRING, selected_system,
++        NULL);
++    gst_structure_set_name (s, "application/x-cenc");
++  }
+   return TRUE;
+ }
+ 
+-- 
+2.6.1
+

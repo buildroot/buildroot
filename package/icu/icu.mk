@@ -27,6 +27,14 @@ HOST_ICU_CONF_OPTS = \
 ICU_SUBDIR = source
 HOST_ICU_SUBDIR = source
 
+# FIXME: Disable ccache for host-icu to prevent a possible segmentation violation. 
+HOST_ICU_CONF_ENV = CXX="$(HOSTCXX_NOCCACHE)" CC="$(HOSTCC_NOCCACHE)"
+
+ifeq ($(BR2_PACKAGE_ICU_USE_ICUDATA),y)
+ICU_DEPENDENCIES += icudata
+ICU_POST_PATCH_HOOKS += ICUDATA_EXTRACT
+endif
+
 ICU_CUSTOM_DATA_PATH = $(call qstrip,$(BR2_PACKAGE_ICU_CUSTOM_DATA_PATH))
 
 ifneq ($(ICU_CUSTOM_DATA_PATH),)

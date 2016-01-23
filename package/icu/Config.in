@@ -15,6 +15,16 @@ config BR2_PACKAGE_ICU
 
 if BR2_PACKAGE_ICU
 
+config BR2_PACKAGE_ICU_USE_ICUDATA
+	bool "use icudata"
+	select BR2_PACKAGE_ICUDATA
+	help
+	  Use minimised icudata from Metrological repo.
+
+endif
+
+if BR2_PACKAGE_ICU && !BR2_PACKAGE_ICU_USE_ICUDATA
+
 config BR2_PACKAGE_ICU_CUSTOM_DATA_PATH
 	string "Path to custom data library file"
 	help

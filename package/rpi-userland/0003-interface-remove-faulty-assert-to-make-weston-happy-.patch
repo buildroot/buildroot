@@ -20,7 +20,7 @@ diff --git a/interface/vmcs_host/vc_vchi_dispmanx.c b/interface/vmcs_host/vc_vch
 index 85b373c..59a01f8 100755
 --- a/interface/vmcs_host/vc_vchi_dispmanx.c
 +++ b/interface/vmcs_host/vc_vchi_dispmanx.c
-@@ -1296,7 +1296,6 @@ static void *dispmanx_notify_func( void *arg ) {
+@@ -1304,7 +1304,6 @@ static void *dispmanx_notify_func( void *arg ) {
           // Decrement the use count - the corresponding "use" is in vc_dispmanx_update_submit.
           vchi_service_release(dispmanx_client.notify_handle[0]);
           if (dispmanx_client.update_callback ) {

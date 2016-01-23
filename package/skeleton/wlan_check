@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Checks if we are using a wlan interface and if wpa_supplicant is
+# present. If so it will start/stop wpa_supplicant respectively
+
+if [ ! -f /usr/sbin/wpa_supplicant ]
+	then exit 0
+fi
+
+updown=$1
+iface=$2
+opts=$3
+
+case "$updown" in 
+  *up*)
+	/usr/sbin/wpa_supplicant -B -i$iface $opts -c /etc/wpa_supplicant.conf
+    ;;
+
+  *down*)
+	killall -q wpa_supplicant	
+	;;
+esac

@@ -1,0 +1,879 @@
+From 4722780bad3a04b7f2152e1a140ab90dff0acad0 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Thu, 10 Sep 2015 16:13:30 +0200
+Subject: [PATCH 4/6] mssdemux: improved live playback support
+
+When a MSS server hosts a live stream the fragments listed in the
+manifest usually don't have accurate timestamps and duration, except
+for the first fragment, which additionally stores timing information
+for the few upcoming fragments. In this scenario it is useless to
+periodically fetch and update the manifest and the fragments list can
+be incrementally built by parsing the first/current fragment.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=755036
+---
+ ext/smoothstreaming/Makefile.am               |   2 +
+ ext/smoothstreaming/gstmssdemux.c             |  61 ++++++
+ ext/smoothstreaming/gstmssfragmentparser.c    | 255 ++++++++++++++++++++++++++
+ ext/smoothstreaming/gstmssfragmentparser.h    |  84 +++++++++
+ ext/smoothstreaming/gstmssmanifest.c          | 155 ++++++++++++++--
+ ext/smoothstreaming/gstmssmanifest.h          |   3 +
+ gst-libs/gst/adaptivedemux/gstadaptivedemux.c |  20 +-
+ gst-libs/gst/adaptivedemux/gstadaptivedemux.h |  14 ++
+ 8 files changed, 577 insertions(+), 17 deletions(-)
+ create mode 100644 ext/smoothstreaming/gstmssfragmentparser.c
+ create mode 100644 ext/smoothstreaming/gstmssfragmentparser.h
+
+diff --git a/ext/smoothstreaming/Makefile.am b/ext/smoothstreaming/Makefile.am
+index 5f331f3..80965e3 100644
+--- a/ext/smoothstreaming/Makefile.am
++++ b/ext/smoothstreaming/Makefile.am
+@@ -14,8 +14,10 @@ libgstsmoothstreaming_la_LIBADD = \
+ libgstsmoothstreaming_la_LDFLAGS = ${GST_PLUGIN_LDFLAGS}
+ libgstsmoothstreaming_la_SOURCES = gstsmoothstreaming-plugin.c \
+ 	gstmssdemux.c \
++	gstmssfragmentparser.c \
+ 	gstmssmanifest.c
+ libgstsmoothstreaming_la_LIBTOOLFLAGS = --tag=disable-static
+ 
+ noinst_HEADERS = gstmssdemux.h \
++	gstmssfragmentparser.h \
+ 	gstmssmanifest.h
+diff --git a/ext/smoothstreaming/gstmssdemux.c b/ext/smoothstreaming/gstmssdemux.c
+index f3b0ecb..1cc6345 100644
+--- a/ext/smoothstreaming/gstmssdemux.c
++++ b/ext/smoothstreaming/gstmssdemux.c
+@@ -134,9 +134,16 @@ gst_mss_demux_stream_update_fragment_info (GstAdaptiveDemuxStream * stream);
+ static gboolean gst_mss_demux_seek (GstAdaptiveDemux * demux, GstEvent * seek);
+ static gint64
+ gst_mss_demux_get_manifest_update_interval (GstAdaptiveDemux * demux);
++static gint64
++gst_mss_demux_stream_get_fragment_waiting_time (GstAdaptiveDemuxStream *
++    stream);
+ static GstFlowReturn
+ gst_mss_demux_update_manifest_data (GstAdaptiveDemux * demux,
+     GstBuffer * buffer);
++static GstFlowReturn gst_mss_demux_data_received (GstAdaptiveDemux * demux,
++    GstAdaptiveDemuxStream * stream);
++static gboolean
++gst_mss_demux_requires_periodical_playlist_update (GstAdaptiveDemux * demux);
+ 
+ static void
+ gst_mss_demux_class_init (GstMssDemuxClass * klass)
+@@ -189,8 +196,13 @@ gst_mss_demux_class_init (GstMssDemuxClass * klass)
+       gst_mss_demux_stream_select_bitrate;
+   gstadaptivedemux_class->stream_update_fragment_info =
+       gst_mss_demux_stream_update_fragment_info;
++  gstadaptivedemux_class->stream_get_fragment_waiting_time =
++      gst_mss_demux_stream_get_fragment_waiting_time;
+   gstadaptivedemux_class->update_manifest_data =
+       gst_mss_demux_update_manifest_data;
++  gstadaptivedemux_class->data_received = gst_mss_demux_data_received;
++  gstadaptivedemux_class->requires_periodical_playlist_update =
++      gst_mss_demux_requires_periodical_playlist_update;
+ 
+   GST_DEBUG_CATEGORY_INIT (mssdemux_debug, "mssdemux", 0, "mssdemux plugin");
+ }
+@@ -635,6 +647,17 @@ gst_mss_demux_get_manifest_update_interval (GstAdaptiveDemux * demux)
+   return interval;
+ }
+ 
++static gint64
++gst_mss_demux_stream_get_fragment_waiting_time (GstAdaptiveDemuxStream * stream)
++{
++  GstMssDemuxStream *mssstream = (GstMssDemuxStream *) stream;
++  GstMssStreamType streamtype =
++      gst_mss_stream_get_type (mssstream->manifest_stream);
++
++  /* Wait a second for live audio streams so we don't try premature fragments downloading */
++  return streamtype == MSS_STREAM_TYPE_AUDIO ? GST_SECOND : 0;
++}
++
+ static GstFlowReturn
+ gst_mss_demux_update_manifest_data (GstAdaptiveDemux * demux,
+     GstBuffer * buffer)
+@@ -646,3 +669,41 @@ gst_mss_demux_update_manifest_data (GstAdaptiveDemux * demux,
+   gst_mss_manifest_reload_fragments (mssdemux->manifest, buffer);
+   return GST_FLOW_OK;
+ }
++
++
++static GstFlowReturn
++gst_mss_demux_data_received (GstAdaptiveDemux * demux,
++    GstAdaptiveDemuxStream * stream)
++{
++  GstMssDemux *mssdemux = GST_MSS_DEMUX_CAST (demux);
++  GstMssDemuxStream *mssstream = (GstMssDemuxStream *) stream;
++  gsize available;
++
++  if (!gst_mss_manifest_is_live (mssdemux->manifest)) {
++    return GST_ADAPTIVE_DEMUX_CLASS (parent_class)->data_received (demux,
++        stream);
++  }
++
++  if (gst_mss_stream_fragment_parsing_needed (mssstream->manifest_stream)) {
++    available = gst_adapter_available (stream->adapter);
++    // FIXME: try to reduce this minimal size.
++    if (available < 4096) {
++      return GST_FLOW_OK;
++    } else {
++      GstBuffer *buffer = gst_adapter_get_buffer (stream->adapter, available);
++      GST_LOG_OBJECT (stream->pad, "enough data, parsing fragment.");
++      gst_mss_stream_fragment_parse (mssstream->manifest_stream, buffer);
++      gst_buffer_unref (buffer);
++    }
++  }
++
++  return GST_ADAPTIVE_DEMUX_CLASS (parent_class)->data_received (demux, stream);
++}
++
++static gboolean
++gst_mss_demux_requires_periodical_playlist_update (GstAdaptiveDemux * demux)
++{
++  GstMssDemux *mssdemux = GST_MSS_DEMUX_CAST (demux);
++
++  return (!gst_mss_manifest_is_live (mssdemux->manifest));
++}
+diff --git a/ext/smoothstreaming/gstmssfragmentparser.c b/ext/smoothstreaming/gstmssfragmentparser.c
+new file mode 100644
+index 0000000..01c3b15
+--- /dev/null
++++ b/ext/smoothstreaming/gstmssfragmentparser.c
+@@ -0,0 +1,255 @@
++/*
++ * Microsoft Smooth-Streaming fragment parsing library
++ *
++ * gstmssfragmentparser.h
++ *
++ * Copyright (C) 2015 Igalia S.L
++ * Copyright (C) 2015 Metrological
++ *   Author: Philippe Normand <philn@igalia.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Library General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Library General Public License for more details.
++ *
++ * You should have received a copy of the GNU Library General Public
++ * License along with this library (COPYING); if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++ * Boston, MA 02111-1307, USA.
++ */
++
++#include "gstmssfragmentparser.h"
++#include <gst/base/gstbytereader.h>
++#include <string.h>
++
++GST_DEBUG_CATEGORY_EXTERN (mssdemux_debug);
++#define GST_CAT_DEFAULT mssdemux_debug
++
++void
++gst_mss_fragment_parser_init (GstMssFragmentParser * parser)
++{
++  parser->status = GST_MSS_FRAGMENT_HEADER_PARSER_INIT;
++  parser->tfrf.entries_count = 0;
++}
++
++void
++gst_mss_fragment_parser_clear (GstMssFragmentParser * parser)
++{
++  parser->tfrf.entries_count = 0;
++  if (parser->tfrf.entries) {
++    g_free (parser->tfrf.entries);
++    parser->tfrf.entries = 0;
++  }
++}
++
++static gboolean
++_parse_tfrf_box (GstMssFragmentParser * parser, GstByteReader * reader)
++{
++  guint8 version;
++  guint32 flags = 0;
++  guint8 fragment_count = 0;
++  guint8 index = 0;
++
++  if (!gst_byte_reader_get_uint8 (reader, &version)) {
++    GST_ERROR ("Error getting box's version field");
++    return FALSE;
++  }
++
++  if (!gst_byte_reader_get_uint24_be (reader, &flags)) {
++    GST_ERROR ("Error getting box's flags field");
++    return FALSE;
++  }
++
++  gst_byte_reader_get_uint8 (reader, &fragment_count);
++  parser->tfrf.entries_count = fragment_count;
++  parser->tfrf.entries =
++      g_malloc (sizeof (GstTfrfBoxEntry) * parser->tfrf.entries_count);
++  for (index = 0; index < fragment_count; index++) {
++    guint64 absolute_time = 0;
++    guint64 absolute_duration = 0;
++    if (version & 0x01) {
++      gst_byte_reader_get_uint64_be (reader, &absolute_time);
++      gst_byte_reader_get_uint64_be (reader, &absolute_duration);
++    } else {
++      guint32 time = 0;
++      guint32 duration = 0;
++      gst_byte_reader_get_uint32_be (reader, &time);
++      gst_byte_reader_get_uint32_be (reader, &duration);
++      time = ~time;
++      duration = ~duration;
++      absolute_time = ~time;
++      absolute_duration = ~duration;
++    }
++    parser->tfrf.entries[index].time = absolute_time;
++    parser->tfrf.entries[index].duration = absolute_duration;
++  }
++
++  GST_LOG ("tfrf box parsed");
++  return TRUE;
++}
++
++static gboolean
++_parse_tfxd_box (GstMssFragmentParser * parser, GstByteReader * reader)
++{
++  guint8 version;
++  guint32 flags = 0;
++  guint64 absolute_time = 0;
++  guint64 absolute_duration = 0;
++
++  if (!gst_byte_reader_get_uint8 (reader, &version)) {
++    GST_ERROR ("Error getting box's version field");
++    return FALSE;
++  }
++
++  if (!gst_byte_reader_get_uint24_be (reader, &flags)) {
++    GST_ERROR ("Error getting box's flags field");
++    return FALSE;
++  }
++
++  if (version & 0x01) {
++    gst_byte_reader_get_uint64_be (reader, &absolute_time);
++    gst_byte_reader_get_uint64_be (reader, &absolute_duration);
++  } else {
++    guint32 time = 0;
++    guint32 duration = 0;
++    gst_byte_reader_get_uint32_be (reader, &time);
++    gst_byte_reader_get_uint32_be (reader, &duration);
++    time = ~time;
++    duration = ~duration;
++    absolute_time = ~time;
++    absolute_duration = ~duration;
++  }
++
++  parser->tfxd.time = absolute_time;
++  parser->tfxd.duration = absolute_duration;
++  GST_LOG ("tfxd box parsed");
++  return TRUE;
++}
++
++gboolean
++gst_mss_fragment_parser_add_buffer (GstMssFragmentParser * parser,
++    GstBuffer * buffer)
++{
++  GstByteReader reader;
++  GstMapInfo info;
++  guint32 size;
++  guint32 fourcc;
++  const guint8 *uuid;
++  gboolean error = FALSE;
++  gboolean mdat_box_found = FALSE;
++
++  static const guint8 tfrf_uuid[] = {
++    0xd4, 0x80, 0x7e, 0xf2, 0xca, 0x39, 0x46, 0x95,
++    0x8e, 0x54, 0x26, 0xcb, 0x9e, 0x46, 0xa7, 0x9f
++  };
++
++  static const guint8 tfxd_uuid[] = {
++    0x6d, 0x1d, 0x9b, 0x05, 0x42, 0xd5, 0x44, 0xe6,
++    0x80, 0xe2, 0x14, 0x1d, 0xaf, 0xf7, 0x57, 0xb2
++  };
++
++  static const guint8 piff_uuid[] = {
++    0xa2, 0x39, 0x4f, 0x52, 0x5a, 0x9b, 0x4f, 0x14,
++    0xa2, 0x44, 0x6c, 0x42, 0x7c, 0x64, 0x8d, 0xf4
++  };
++
++  if (!gst_buffer_map (buffer, &info, GST_MAP_READ)) {
++    return FALSE;
++  }
++
++  gst_byte_reader_init (&reader, info.data, info.size);
++  GST_TRACE ("Total buffer size: %u", gst_byte_reader_get_size (&reader));
++
++  size = gst_byte_reader_get_uint32_be_unchecked (&reader);
++  fourcc = gst_byte_reader_get_uint32_le_unchecked (&reader);
++  if (fourcc == GST_MSS_FRAGMENT_FOURCC_MOOF) {
++    GST_TRACE ("moof box found");
++    size = gst_byte_reader_get_uint32_be_unchecked (&reader);
++    fourcc = gst_byte_reader_get_uint32_le_unchecked (&reader);
++    if (fourcc == GST_MSS_FRAGMENT_FOURCC_MFHD) {
++      gst_byte_reader_skip_unchecked (&reader, size - 8);
++
++      size = gst_byte_reader_get_uint32_be_unchecked (&reader);
++      fourcc = gst_byte_reader_get_uint32_le_unchecked (&reader);
++      if (fourcc == GST_MSS_FRAGMENT_FOURCC_TRAF) {
++        size = gst_byte_reader_get_uint32_be_unchecked (&reader);
++        fourcc = gst_byte_reader_get_uint32_le_unchecked (&reader);
++        if (fourcc == GST_MSS_FRAGMENT_FOURCC_TFHD) {
++          gst_byte_reader_skip_unchecked (&reader, size - 8);
++
++          size = gst_byte_reader_get_uint32_be_unchecked (&reader);
++          fourcc = gst_byte_reader_get_uint32_le_unchecked (&reader);
++          if (fourcc == GST_MSS_FRAGMENT_FOURCC_TRUN) {
++            gst_byte_reader_skip_unchecked (&reader, size - 8);
++            GST_TRACE ("trun box found, size: %u", size);
++          }
++        }
++      }
++    }
++  }
++
++  while (!mdat_box_found) {
++    GST_TRACE ("remaining data: %u", gst_byte_reader_get_remaining (&reader));
++    if (!gst_byte_reader_get_uint32_be (&reader, &size)) {
++      GST_WARNING ("Failed to get box size, enough data?");
++      error = TRUE;
++      break;
++    }
++
++    GST_TRACE ("box size: %" G_GUINT32_FORMAT, size);
++    fourcc = gst_byte_reader_get_uint32_le_unchecked (&reader);
++
++    if (fourcc == GST_MSS_FRAGMENT_FOURCC_MDAT) {
++      GST_LOG ("mdat box found");
++      mdat_box_found = TRUE;
++      break;
++    }
++
++    if (fourcc != GST_MSS_FRAGMENT_FOURCC_UUID) {
++      GST_ERROR ("invalid UUID fourcc");
++      error = TRUE;
++      break;
++    }
++
++    if (!gst_byte_reader_peek_data (&reader, 16, &uuid)) {
++      GST_ERROR ("not enough data in UUID box");
++      error = TRUE;
++      break;
++    }
++
++    if (memcmp (uuid, piff_uuid, 16) == 0) {
++      gst_byte_reader_skip_unchecked (&reader, size - 8);
++      GST_LOG ("piff box detected");
++    }
++
++    if (memcmp (uuid, tfrf_uuid, 16) == 0) {
++      gst_byte_reader_get_data (&reader, 16, &uuid);
++      if (!_parse_tfrf_box (parser, &reader)) {
++        GST_ERROR ("txrf box parsing error");
++        error = TRUE;
++        break;
++      }
++    }
++
++    if (memcmp (uuid, tfxd_uuid, 16) == 0) {
++      gst_byte_reader_get_data (&reader, 16, &uuid);
++      if (!_parse_tfxd_box (parser, &reader)) {
++        GST_ERROR ("tfrf box parsing error");
++        error = TRUE;
++        break;
++      }
++    }
++  }
++
++  if (!error)
++    parser->status = GST_MSS_FRAGMENT_HEADER_PARSER_FINISHED;
++
++  GST_LOG ("Fragment parsing successful: %s", error ? "no" : "yes");
++  gst_buffer_unmap (buffer, &info);
++  return !error;
++}
+diff --git a/ext/smoothstreaming/gstmssfragmentparser.h b/ext/smoothstreaming/gstmssfragmentparser.h
+new file mode 100644
+index 0000000..6626358
+--- /dev/null
++++ b/ext/smoothstreaming/gstmssfragmentparser.h
+@@ -0,0 +1,84 @@
++/*
++ * Microsoft Smooth-Streaming fragment parsing library
++ *
++ * gstmssfragmentparser.h
++ *
++ * Copyright (C) 2015 Igalia S.L
++ * Copyright (C) 2015 Metrological
++ *   Author: Philippe Normand <philn@igalia.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Library General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Library General Public License for more details.
++ *
++ * You should have received a copy of the GNU Library General Public
++ * License along with this library (COPYING); if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++ * Boston, MA 02111-1307, USA.
++ */
++
++#ifndef __GST_MSS_FRAGMENT_PARSER_H__
++#define __GST_MSS_FRAGMENT_PARSER_H__
++
++#include <gst/gst.h>
++
++G_BEGIN_DECLS
++
++#define GST_MSS_FRAGMENT_FOURCC_MOOF GST_MAKE_FOURCC('m','o','o','f')
++#define GST_MSS_FRAGMENT_FOURCC_MFHD GST_MAKE_FOURCC('m','f','h','d')
++#define GST_MSS_FRAGMENT_FOURCC_TRAF GST_MAKE_FOURCC('t','r','a','f')
++#define GST_MSS_FRAGMENT_FOURCC_TFHD GST_MAKE_FOURCC('t','f','h','d')
++#define GST_MSS_FRAGMENT_FOURCC_TRUN GST_MAKE_FOURCC('t','r','u','n')
++#define GST_MSS_FRAGMENT_FOURCC_UUID GST_MAKE_FOURCC('u','u','i','d')
++#define GST_MSS_FRAGMENT_FOURCC_MDAT GST_MAKE_FOURCC('m','d','a','t')
++
++typedef struct _GstTfxdBox
++{
++  guint8 version;
++  guint32 flags;
++
++  guint64 time;
++  guint64 duration;
++} GstTfxdBox;
++
++typedef struct _GstTfrfBoxEntry
++{
++  guint64 time;
++  guint64 duration;
++} GstTfrfBoxEntry;
++
++typedef struct _GstTfrfBox
++{
++  guint8 version;
++  guint32 flags;
++
++  gint entries_count;
++  GstTfrfBoxEntry *entries;
++} GstTfrfBox;
++
++typedef enum _GstFragmentHeaderParserStatus
++{
++  GST_MSS_FRAGMENT_HEADER_PARSER_INIT,
++  GST_MSS_FRAGMENT_HEADER_PARSER_FINISHED
++} GstFragmentHeaderParserStatus;
++
++typedef struct _GstMssFragmentParser
++{
++  GstFragmentHeaderParserStatus status;
++  GstTfxdBox tfxd;
++  GstTfrfBox tfrf;
++} GstMssFragmentParser;
++
++void gst_mss_fragment_parser_init (GstMssFragmentParser * parser);
++void gst_mss_fragment_parser_clear (GstMssFragmentParser * parser);
++gboolean gst_mss_fragment_parser_add_buffer (GstMssFragmentParser * parser, GstBuffer * buf);
++
++G_END_DECLS
++
++#endif /* __GST_MSS_FRAGMENT_PARSER_H__ */
+diff --git a/ext/smoothstreaming/gstmssmanifest.c b/ext/smoothstreaming/gstmssmanifest.c
+index 33dc76f..9778090 100644
+--- a/ext/smoothstreaming/gstmssmanifest.c
++++ b/ext/smoothstreaming/gstmssmanifest.c
+@@ -1,5 +1,7 @@
+ /* GStreamer
+  * Copyright (C) 2012 Smart TV Alliance
++ * Copyright (C) 2015 Igalia S.L
++ * Copyright (C) 2015 Metrological
+  *  Author: Thiago Sousa Santos <thiago.sousa.santos@collabora.com>, Collabora Ltd.
+  *
+  * gstmssmanifest.c:
+@@ -31,6 +33,7 @@
+ #include <gst/codecparsers/gsth264parser.h>
+ 
+ #include "gstmssmanifest.h"
++#include "gstmssfragmentparser.h"
+ 
+ GST_DEBUG_CATEGORY_EXTERN (mssdemux_debug);
+ #define GST_CAT_DEFAULT mssdemux_debug
+@@ -73,12 +76,17 @@ struct _GstMssStream
+   gboolean active;              /* if the stream is currently being used */
+   gint selectedQualityIndex;
+ 
++  gboolean has_live_fragments;
++  GQueue live_fragments;
++
+   GList *fragments;
+   GList *qualities;
+ 
+   gchar *url;
+   gchar *lang;
+ 
++  GstMssFragmentParser fragment_parser;
++
+   guint fragment_repetition_index;
+   GList *current_fragment;
+   GList *current_quality;
+@@ -94,6 +102,7 @@ struct _GstMssManifest
+   xmlNodePtr xmlrootnode;
+ 
+   gboolean is_live;
++  guint64 look_ahead_fragment_count;
+ 
+   GString *protection_system_id;
+   gchar *protection_data;
+@@ -233,7 +242,8 @@ compare_bitrate (GstMssStreamQuality * a, GstMssStreamQuality * b)
+ }
+ 
+ static void
+-_gst_mss_stream_init (GstMssStream * stream, xmlNodePtr node)
++_gst_mss_stream_init (GstMssManifest * manifest, GstMssStream * stream,
++    xmlNodePtr node)
+ {
+   xmlNodePtr iter;
+   GstMssFragmentListBuilder builder;
+@@ -246,9 +256,18 @@ _gst_mss_stream_init (GstMssStream * stream, xmlNodePtr node)
+   stream->url = (gchar *) xmlGetProp (node, (xmlChar *) MSS_PROP_URL);
+   stream->lang = (gchar *) xmlGetProp (node, (xmlChar *) MSS_PROP_LANGUAGE);
+ 
++  /* for live playback each fragment usually has timing
++   * information for the few next look-ahead fragments so the
++   * playlist can be built incrementally from the first fragment
++   * of the manifest.
++   */
++  stream->has_live_fragments = manifest->is_live
++      && manifest->look_ahead_fragment_count;
++
+   for (iter = node->children; iter; iter = iter->next) {
+     if (node_has_type (iter, MSS_NODE_STREAM_FRAGMENT)) {
+-      gst_mss_fragment_list_builder_add (&builder, iter);
++      if (!stream->has_live_fragments || !builder.fragments)
++        gst_mss_fragment_list_builder_add (&builder, iter);
+     } else if (node_has_type (iter, MSS_NODE_STREAM_QUALITY)) {
+       GstMssStreamQuality *quality = gst_mss_stream_quality_new (iter);
+       stream->qualities = g_list_prepend (stream->qualities, quality);
+@@ -257,17 +276,26 @@ _gst_mss_stream_init (GstMssStream * stream, xmlNodePtr node)
+     }
+   }
+ 
+-  stream->fragments = g_list_reverse (builder.fragments);
++  if (stream->has_live_fragments) {
++    g_queue_init (&stream->live_fragments);
++    g_queue_push_tail (&stream->live_fragments, builder.fragments->data);
++    stream->current_fragment = g_queue_peek_head_link (&stream->live_fragments);
++  }
++
++  if (builder.fragments) {
++    stream->fragments = g_list_reverse (builder.fragments);
++    stream->current_fragment = stream->fragments;
++  }
+ 
+   /* order them from smaller to bigger based on bitrates */
+   stream->qualities =
+       g_list_sort (stream->qualities, (GCompareFunc) compare_bitrate);
+-
+-  stream->current_fragment = stream->fragments;
+   stream->current_quality = stream->qualities;
+ 
+   stream->regex_bitrate = g_regex_new ("\\{[Bb]itrate\\}", 0, 0, NULL);
+   stream->regex_position = g_regex_new ("\\{start[ _]time\\}", 0, 0, NULL);
++
++  gst_mss_fragment_parser_init (&stream->fragment_parser);
+ }
+ 
+ 
+@@ -313,6 +341,7 @@ gst_mss_manifest_new (GstBuffer * data)
+   xmlNodePtr nodeiter;
+   gchar *live_str;
+   GstMapInfo mapinfo;
++  gchar *look_ahead_fragment_count_str;
+ 
+   if (!gst_buffer_map (data, &mapinfo, GST_MAP_READ)) {
+     return NULL;
+@@ -330,13 +359,21 @@ gst_mss_manifest_new (GstBuffer * data)
+     xmlFree (live_str);
+   }
+ 
++  look_ahead_fragment_count_str =
++      (gchar *) xmlGetProp (root, (xmlChar *) "LookAheadFragmentCount");
++  if (look_ahead_fragment_count_str) {
++    manifest->look_ahead_fragment_count =
++        g_ascii_strtoull (look_ahead_fragment_count_str, NULL, 10);
++    xmlFree (look_ahead_fragment_count_str);
++  }
++
+   for (nodeiter = root->children; nodeiter; nodeiter = nodeiter->next) {
+     if (nodeiter->type == XML_ELEMENT_NODE
+         && (strcmp ((const char *) nodeiter->name, "StreamIndex") == 0)) {
+       GstMssStream *stream = g_new0 (GstMssStream, 1);
+ 
+       manifest->streams = g_slist_append (manifest->streams, stream);
+-      _gst_mss_stream_init (stream, nodeiter);
++      _gst_mss_stream_init (manifest, stream, nodeiter);
+     }
+ 
+     if (nodeiter->type == XML_ELEMENT_NODE
+@@ -353,7 +390,12 @@ gst_mss_manifest_new (GstBuffer * data)
+ static void
+ gst_mss_stream_free (GstMssStream * stream)
+ {
+-  g_list_free_full (stream->fragments, g_free);
++  if (stream->has_live_fragments) {
++    g_queue_foreach (&stream->live_fragments, (GFunc) g_free, NULL);
++    g_queue_clear (&stream->live_fragments);
++  } else {
++    g_list_free_full (stream->fragments, g_free);
++  }
+   g_list_free_full (stream->qualities,
+       (GDestroyNotify) gst_mss_stream_quality_free);
+   xmlFree (stream->url);
+@@ -361,6 +403,7 @@ gst_mss_stream_free (GstMssStream * stream)
+   g_regex_unref (stream->regex_position);
+   g_regex_unref (stream->regex_bitrate);
+   g_free (stream);
++  gst_mss_fragment_parser_clear (&stream->fragment_parser);
+ }
+ 
+ void
+@@ -968,7 +1011,12 @@ gst_mss_stream_get_fragment_gst_timestamp (GstMssStream * stream)
+   g_return_val_if_fail (stream->active, GST_CLOCK_TIME_NONE);
+ 
+   if (!stream->current_fragment) {
+-    GList *last = g_list_last (stream->fragments);
++    GList *last;
++
++    if (stream->has_live_fragments)
++      last = g_queue_peek_tail_link (&stream->live_fragments);
++    else
++      last = g_list_last (stream->fragments);
+     if (last == NULL)
+       return GST_CLOCK_TIME_NONE;
+ 
+@@ -976,7 +1024,9 @@ gst_mss_stream_get_fragment_gst_timestamp (GstMssStream * stream)
+     time = fragment->time + (fragment->duration * fragment->repetitions);
+   } else {
+     fragment = stream->current_fragment->data;
+-    time = fragment->time + (fragment->duration * stream->fragment_repetition_index);
++    time =
++        fragment->time +
++        (fragment->duration * stream->fragment_repetition_index);
+   }
+ 
+   timescale = gst_mss_stream_get_timescale (stream);
+@@ -1019,21 +1069,54 @@ GstFlowReturn
+ gst_mss_stream_advance_fragment (GstMssStream * stream)
+ {
+   GstMssStreamFragment *fragment;
++  GstMssStreamFragment *prev_fragment;
++  const gchar *stream_type_name =
++      gst_mss_stream_type_name (gst_mss_stream_get_type (stream));
++
+   g_return_val_if_fail (stream->active, GST_FLOW_ERROR);
+ 
+   if (stream->current_fragment == NULL)
+     return GST_FLOW_EOS;
+ 
+-  fragment = stream->current_fragment->data;
++  prev_fragment = fragment = stream->current_fragment->data;
+   stream->fragment_repetition_index++;
+-  if (stream->fragment_repetition_index < fragment->repetitions) {
+-    return GST_FLOW_OK;
+-  }
++  if (stream->fragment_repetition_index < fragment->repetitions)
++    goto beach;
+ 
+   stream->fragment_repetition_index = 0;
+-  stream->current_fragment = g_list_next (stream->current_fragment);
++
++  if (stream->has_live_fragments)
++    stream->current_fragment = g_queue_pop_head_link (&stream->live_fragments);
++  else
++    stream->current_fragment = g_list_next (stream->current_fragment);
++
++  if (stream->current_fragment != NULL) {
++    fragment = stream->current_fragment->data;
++    if (fragment->time <= prev_fragment->time) {
++      while (fragment->time <= prev_fragment->time) {
++        if (stream->has_live_fragments)
++          stream->current_fragment =
++              g_queue_pop_head_link (&stream->live_fragments);
++        else
++          stream->current_fragment = g_list_next (stream->current_fragment);
++        if (stream->current_fragment == NULL)
++          break;
++        fragment = stream->current_fragment->data;
++      }
++    }
++  }
++
++  GST_DEBUG ("Advanced to fragment #%d on %s stream", fragment->number,
++      stream_type_name);
++  if (stream->has_live_fragments)
++    GST_LOG ("%u fragments left in the %s stream queue",
++        g_queue_get_length (&stream->live_fragments), stream_type_name);
+   if (stream->current_fragment == NULL)
+     return GST_FLOW_EOS;
++
++beach:
++  gst_mss_fragment_parser_clear (&stream->fragment_parser);
++  gst_mss_fragment_parser_init (&stream->fragment_parser);
+   return GST_FLOW_OK;
+ }
+ 
+@@ -1358,3 +1441,47 @@ gst_mss_stream_get_lang (GstMssStream * stream)
+ {
+   return stream->lang;
+ }
++
++gboolean
++gst_mss_stream_fragment_parsing_needed (GstMssStream * stream)
++{
++  return stream->fragment_parser.status == GST_MSS_FRAGMENT_HEADER_PARSER_INIT;
++}
++
++void
++gst_mss_stream_fragment_parse (GstMssStream * stream, GstBuffer * buffer)
++{
++  GstMssStreamFragment *current_fragment = NULL;
++  const gchar *stream_type_name =
++      gst_mss_stream_type_name (gst_mss_stream_get_type (stream));
++
++  if (!stream->has_live_fragments)
++    return;
++
++  if (!gst_mss_fragment_parser_add_buffer (&stream->fragment_parser, buffer))
++    return;
++
++  current_fragment = stream->current_fragment->data;
++  current_fragment->time = stream->fragment_parser.tfxd.time;
++  current_fragment->duration = stream->fragment_parser.tfxd.duration;
++
++  for (guint8 index = 0; index < stream->fragment_parser.tfrf.entries_count;
++      index++) {
++    GstMssStreamFragment *last = g_queue_peek_tail (&stream->live_fragments);
++    GstMssStreamFragment *fragment;
++
++    if (last == NULL)
++        break;
++    fragment = g_new (GstMssStreamFragment, 1);
++    fragment->number = last->number + 1;
++    fragment->repetitions = 1;
++    fragment->time = stream->fragment_parser.tfrf.entries[index].time;
++    fragment->duration = stream->fragment_parser.tfrf.entries[index].duration;
++
++    g_queue_push_tail (&stream->live_fragments, fragment);
++    GST_LOG ("Adding fragment number: %u to %s stream, time: %" G_GUINT64_FORMAT
++        ", duration: %" G_GUINT64_FORMAT ", repetitions: %u",
++        fragment->number, stream_type_name,
++        fragment->time, fragment->duration, fragment->repetitions);
++  }
++}
+diff --git a/ext/smoothstreaming/gstmssmanifest.h b/ext/smoothstreaming/gstmssmanifest.h
+index 65330b4..45bb464 100644
+--- a/ext/smoothstreaming/gstmssmanifest.h
++++ b/ext/smoothstreaming/gstmssmanifest.h
+@@ -72,5 +72,8 @@ const gchar * gst_mss_stream_get_lang (GstMssStream * stream);
+ 
+ const gchar * gst_mss_stream_type_name (GstMssStreamType streamtype);
+ 
++gboolean gst_mss_stream_fragment_parsing_needed(GstMssStream * stream);
++void gst_mss_stream_fragment_parse(GstMssStream * stream, GstBuffer * buffer);
++
+ G_END_DECLS
+ #endif /* __GST_MSS_MANIFEST_H__ */
+diff --git a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
+index ddf7320..9fbc91e 100644
+--- a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
++++ b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
+@@ -193,7 +193,9 @@ gst_adaptive_demux_stream_data_received_default (GstAdaptiveDemux * demux,
+ static GstFlowReturn
+ gst_adaptive_demux_stream_finish_fragment_default (GstAdaptiveDemux * demux,
+     GstAdaptiveDemuxStream * stream);
+-
++static gboolean
++gst_adaptive_demux_requires_periodical_playlist_update_default (GstAdaptiveDemux
++    * demux);
+ 
+ /* we can't use G_DEFINE_ABSTRACT_TYPE because we need the klass in the _init
+  * method to get to the padtemplates */
+@@ -318,6 +320,9 @@ gst_adaptive_demux_class_init (GstAdaptiveDemuxClass * klass)
+   klass->data_received = gst_adaptive_demux_stream_data_received_default;
+   klass->finish_fragment = gst_adaptive_demux_stream_finish_fragment_default;
+   klass->update_manifest = gst_adaptive_demux_update_manifest_default;
++  klass->requires_periodical_playlist_update =
++      gst_adaptive_demux_requires_periodical_playlist_update_default;
++
+ }
+ 
+ static void
+@@ -516,7 +521,9 @@ gst_adaptive_demux_sink_event (GstPad * pad, GstObject * parent,
+           gst_adaptive_demux_start_tasks (demux);
+           if (gst_adaptive_demux_is_live (demux)) {
+             /* Task to periodically update the manifest */
+-            gst_task_start (demux->priv->updates_task);
++            if (demux_class->requires_periodical_playlist_update (demux)) {
++              gst_task_start (demux->priv->updates_task);
++            }
+           }
+         } else {
+           /* no streams */
+@@ -1552,6 +1559,13 @@ gst_adaptive_demux_stream_data_received_default (GstAdaptiveDemux * demux,
+   return gst_adaptive_demux_stream_push_buffer (stream, buffer);
+ }
+ 
++static gboolean
++gst_adaptive_demux_requires_periodical_playlist_update_default (GstAdaptiveDemux
++    * demux)
++{
++  return TRUE;
++}
++
+ static GstFlowReturn
+ _src_chain (GstPad * pad, GstObject * parent, GstBuffer * buffer)
+ {
+@@ -1599,7 +1613,7 @@ _src_chain (GstPad * pad, GstObject * parent, GstBuffer * buffer)
+   stream->download_total_bytes += gst_buffer_get_size (buffer);
+ 
+   gst_adapter_push (stream->adapter, buffer);
+-  GST_DEBUG_OBJECT (stream->pad, "Received buffer of size %" G_GSIZE_FORMAT
++  GST_LOG_OBJECT (stream->pad, "Received buffer of size %" G_GSIZE_FORMAT
+       ". Now %" G_GSIZE_FORMAT " on adapter", gst_buffer_get_size (buffer),
+       gst_adapter_available (stream->adapter));
+   ret = klass->data_received (demux, stream);
+diff --git a/gst-libs/gst/adaptivedemux/gstadaptivedemux.h b/gst-libs/gst/adaptivedemux/gstadaptivedemux.h
+index 8d53815..cc64bd9 100644
+--- a/gst-libs/gst/adaptivedemux/gstadaptivedemux.h
++++ b/gst-libs/gst/adaptivedemux/gstadaptivedemux.h
+@@ -421,6 +421,20 @@ struct _GstAdaptiveDemuxClass
+    * selected period.
+    */
+   GstClockTime (*get_period_start_time) (GstAdaptiveDemux *demux);
++
++  /**
++   * requires_periodical_playlist_update:
++   * @demux: #GstAdaptiveDemux
++   *
++   * Some adaptive streaming protocols allow the client to download
++   * the playlist once and build up the fragment list based on the
++   * current fragment metadata. For those protocols the demuxer
++   * doesn't need to periodically refresh the playlist. This vfunc
++   * is relevant only for live playback scenarios.
++   *
++   * Return: %TRUE if the playlist needs to be refreshed periodically by the demuxer.
++   */
++  gboolean (*requires_periodical_playlist_update) (GstAdaptiveDemux * demux);
+ };
+ 
+ GType    gst_adaptive_demux_get_type (void);
+-- 
+2.5.0
+

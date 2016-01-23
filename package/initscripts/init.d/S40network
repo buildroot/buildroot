@@ -2,18 +2,105 @@
 #
 # Start the network....
 #
+nfsbootdevice()
+{
+	nfsboot=0;
+
+	for item in $(cat /proc/cmdline)
+	do
+		key=$(echo $item | cut -d= -f1)
+		value=$(echo $item | cut -d= -f2)
+
+		if [ "x${key}" = "xroot" ] && [ "x${value}" = "x/dev/nfs" ] ; then
+			nfsboot=$(( ${nfsboot} + 1 ))
+		fi
+		if [ "x${key}" = "xnfsroot" ] ; then
+			nfsboot=$(( ${nfsboot} + 1 ))
+		fi
+		if [ "x${key}" = "xip" ] ; then
+			bootdevice=$(echo $value | cut -d: -f6)
+		fi
+	done
+
+	if [ ${nfsboot} == 2 ] ; then
+		echo $bootdevice
+	fi
+}
+
+nfs=$(nfsbootdevice)
+
+network_up()
+{
+	for ifs in $(ip link show | grep -v ^'   ' | cut -d: -f2)
+	do
+		if [ ! "x${ifs}" = "x" ] ; then
+			if [ ! "x${ifs}" = "x${nfs}" ] ; then
+				echo "Bringing up interface [${ifs}]"
+				/sbin/ifup ${ifs}
+			else
+				echo "Skipping nfs root interface [${ifs}], already up !!"
+			fi
+		fi
+	done
+	if [ -f /etc/network/if-up.d/rdate ] ; then
+		/etc/network/if-up.d/rdate
+	fi
+}
+
+network_down()
+{
+	for ifs in $(ip link show | grep -v ^'   ' | cut -d: -f2)
+	do
+		if [ ! "x${ifs}" = "x" ] ; then
+			if [ ! "x${ifs}" = "x${nfs}" ] ; then
+				echo "Bringing down interface [${ifs}]"
+				/sbin/ifdown ${ifs}
+			else
+				echo "Skipping nfs root interface [${ifs}], kernel will bring it down !!"
+			fi
+		fi
+	done
+}
+
+nameservers()
+{
+	# Add the DNS entries that were aquired during the "net boot" of the image.
+	if [ -f /proc/net/pnp ] ; then
+		while read line
+		do
+			keyword=$(echo $line | cut -d' ' -f1)
+			value=$(echo $line | cut -d' ' -f2)
+			if [ "x${keyword}" = "xnameserver" ] && [ ! "x${value}" = "x0.0.0.0" ] ; then
+				echo "nameserver $value" >> /etc/resolv.conf
+			elif [ "x${keyword}" = "xbootserver" ] && [ ! "x${value}" = "x0.0.0.0" ] ; then
+				echo "bootserver $value" >> /etc/resolv.conf
+			elif [ "x${keyword}" = "xdomain" ] ; then
+				echo "domain $value" >> /etc/resolv.conf
+			fi
+		done < /proc/net/pnp
+	fi  
+}
 
 # Debian ifupdown needs the /run/network lock directory
 mkdir -p /run/network
 
 case "$1" in
   start)
- 	echo "Starting network..."
-	/sbin/ifup -a
+	echo "Starting network..."
+	if [ ! "x${nfs}" = "x" ] ; then
+		nameservers
+		network_up
+	else
+		/sbin/ifup -a
+	fi
 	;;
   stop)
 	printf "Stopping network..."
-	/sbin/ifdown -a
+	if [ ! "x${nfs}" = "x" ] ; then
+		network_down
+	else
+		/sbin/ifdown -a
+	fi
 	;;
   restart|reload)
 	"$0" stop

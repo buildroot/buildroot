@@ -1,0 +1,12 @@
+diff --git a/interface/khronos/ext/gl_oes_egl_image_client.c b/interface/khronos/ext/gl_oes_egl_image_client.c
+index f9b7287..b04ffef 100644
+--- a/interface/khronos/ext/gl_oes_egl_image_client.c
++++ b/interface/khronos/ext/gl_oes_egl_image_client.c
+@@ -107,7 +107,6 @@ GL_API void GL_APIENTRY glEGLImageTargetTexture2DOES (GLenum target, GLeglImageO
+                    GLEGLIMAGETARGETTEXTURE2DOES_ID,
+                    RPC_ENUM(target),
+                    RPC_EGLID(image));
+-         RPC_FLUSH(thread);
+ #if EGL_BRCM_global_image
+       }
+ #endif

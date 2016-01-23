@@ -20,6 +20,11 @@ config BR2_PACKAGE_BUSYBOX_CONFIG
 
 	  Most people will just use the default BusyBox configuration file.
 
+config BR2_PACKAGE_BUSYBOX_SMP
+	bool "Support SMP"
+	help
+	  Make top SMP aware.
+
 config BR2_PACKAGE_BUSYBOX_CONFIG_FRAGMENT_FILES
 	string "Additional BusyBox configuration fragment files"
 	help

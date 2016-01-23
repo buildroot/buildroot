@@ -1,0 +1,66 @@
+config BR2_PACKAGE_CPPSDK
+	bool "cppsdk"
+	help
+	  Lightweight C++ platform abstraction wrapper classes 
+	  to assist C++ developers to build platform abstracted
+	  applications. 
+
+	  The library is developed to abstract the Windows OS
+	  and the linux OS.
+
+	  Abstractions for Threading, Sockets, Synchronisation,
+	  Web/WebSockets etc..
+
+if BR2_PACKAGE_CPPSDK
+
+config BR2_PACKAGE_CPPSDK_DEBUG
+	bool "debug"
+	default n
+	help
+	  Build the cppsdk in debug mode. Always usefull to have a
+	  partial enabled debug stack.
+
+config BR2_PACKAGE_CPPSDK_GENERICS
+	bool "generics"
+	help
+	  Base set of platform abstraction wrappers, part opf cppsdk.
+	  Minimal set, required to use any part of this library.
+
+config BR2_PACKAGE_CPPSDK_CRYPTALGO
+	bool "cryptalgo"
+	select BR2_PACKAGE_CPPSDK_GENERICS
+	help
+	  Functionality to realize crypto algorithms used to encrypt and
+	  decrypt contenet in an object oriented design.
+
+config BR2_PACKAGE_CPPSDK_DEVICES
+	bool "devices"
+	select BR2_PACKAGE_CPPSDK_GENERICS
+	help
+	  Functionality to handle hardware specific device in an
+	  object oriented design.
+
+config BR2_PACKAGE_CPPSDK_TRACING
+	bool "tracing"
+	select BR2_PACKAGE_CPPSDK_GENERICS
+	help
+	  Functionality to handle runtime enabling and disabling of 
+	  tracing. This is NOT intended for LOGGING !!!
+
+config BR2_PACKAGE_CPPSDK_PROFILER
+	bool "profiler"
+	select BR2_PACKAGE_CPPSDK_GENERICS
+	help
+	  Functionality to handle runtime enabling and disabling of 
+	  profiler information. This is NOT intended for PRODUCTION !!!
+
+config BR2_PACKAGE_CPPSDK_WEBSOCKET
+	bool "websocket"
+	select BR2_PACKAGE_CPPSDK_GENERICS
+	select BR2_PACKAGE_CPPSDK_CRYPTALGO
+	select BR2_PACKAGE_ZLIB
+	help
+	  Functionality to handle web communiciation and web socket
+	  communication.
+
+endif

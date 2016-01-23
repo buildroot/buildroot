@@ -66,9 +66,9 @@ $(3)_SUPPORTS_IN_SOURCE_BUILD ?= YES
 
 
 ifeq ($$($(3)_SUPPORTS_IN_SOURCE_BUILD),YES)
-$(2)_BUILDDIR			= $$($(2)_SRCDIR)
+$(2)_BUILDDIR			?= $$($(2)_SRCDIR)
 else
-$(2)_BUILDDIR			= $$($(2)_SRCDIR)/buildroot-build
+$(2)_BUILDDIR			?= $$($(2)_SRCDIR)/buildroot-build
 endif
 
 #

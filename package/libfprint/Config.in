@@ -1,0 +1,10 @@
+config BR2_PACKAGE_LIBFPRINT
+	bool "libfprint"
+	select BR2_PACKAGE_LIBUSB
+	select BR2_PACKAGE_LIBNSS
+	select BR2_PACKAGE_GDK_PIXBUF
+	help
+	  Library for fingerprint readers
+
+	  http://www.freedesktop.org/wiki/Software/fprint/libfprint
+

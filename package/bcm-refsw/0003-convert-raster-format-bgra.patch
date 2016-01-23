@@ -1,0 +1,16 @@
+diff --git a/rockford/middleware/v3d/driver/middleware/khronos/glxx/glxx_texture.c b/rockford/middleware/v3d/driver/middleware/khronos/glxx/glxx_texture.c
+index 25acc04..03e4e96 100644
+--- a/rockford/middleware/v3d/driver/middleware/khronos/glxx/glxx_texture.c
++++ b/rockford/middleware/v3d/driver/middleware/khronos/glxx/glxx_texture.c
+@@ -307,7 +307,11 @@ static KHRN_IMAGE_FORMAT_T convert_raster_format(GLenum format, GLenum type)
+ #if GL_EXT_texture_format_BGRA8888
+    case GL_BGRA_EXT:
+       vcos_assert(type == GL_UNSIGNED_BYTE);
++#ifdef BIG_ENDIAN_CPU
+       return BGRA_8888_RSO;
++#else
++      return ARGB_8888_RSO;
++#endif
+ #endif
+ #if GL_APPLE_rgb_422
+    case GL_RGB_422_APPLE:

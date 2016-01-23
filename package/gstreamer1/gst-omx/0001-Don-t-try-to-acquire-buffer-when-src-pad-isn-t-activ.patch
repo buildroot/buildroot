@@ -1,0 +1,48 @@
+From 2e111e52f96f0b942abda120c30a876629bd73fc Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Mon, 25 May 2015 14:53:35 +0200
+Subject: [PATCH] Don't try to acquire buffer when src pad isn't active
+
+This solves a race condition when setting the pipeline from PAUSE to
+NULL while the decoder loop is still running. Without this patch, the
+thread which interacts with the decode sink pad gets blocked here:
+
+  gst_element_change_state()
+  gst_element_change_state_func()
+  gst_element_pads_activate() --> Deactivating pads
+  activate_pads()
+  gst_pad_set_active()
+  gst_pad_activate_mode()
+  post_activate()
+  GST_PAD_STREAM_LOCK()
+
+while gst_omx_port_acquire_buffer() gets stalled forever in
+gst_omx_component_wait_message() waiting for a message that will never
+arrive:
+
+  gst_omx_video_dec_loop()
+  gst_omx_port_acquire_buffer()
+  gst_omx_component_wait_message()
+---
+ omx/gstomxvideodec.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/omx/gstomxvideodec.c b/omx/gstomxvideodec.c
+index cd24944..57a61dd 100644
+--- a/omx/gstomxvideodec.c
++++ b/omx/gstomxvideodec.c
+@@ -1247,6 +1247,11 @@ gst_omx_video_dec_loop (GstOMXVideoDec * self)
+   GstClockTimeDiff deadline;
+   OMX_ERRORTYPE err;
+ 
++  if (!gst_pad_is_active(GST_VIDEO_DECODER_SRC_PAD (self))) {
++    GST_DEBUG_OBJECT (self, "Src pad not active, not acquiring buffer and flushing instead");
++      goto flushing;
++  }
++
+ #if defined (USE_OMX_TARGET_RPI) && defined (HAVE_GST_GL)
+   port = self->eglimage ? self->egl_out_port : self->dec_out_port;
+ #else
+-- 
+1.8.3.2
+

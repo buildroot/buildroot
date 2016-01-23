@@ -1,0 +1,29 @@
+#!/bin/sh
+
+start() {
+	insmod /lib/modules/nexus.ko
+}
+stop() {
+	rmmod /lib/modules/nexus.ko
+}
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+	;;
+	restart|reload)
+		restart
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+esac
+
+exit $?

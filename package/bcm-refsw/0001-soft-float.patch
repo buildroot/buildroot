@@ -1,0 +1,32 @@
+--- a/BSEAV/build/refsw_inc.mak
++++ b/BSEAV/build/refsw_inc.mak
+@@ -214,7 +214,6 @@
+ endif
+ # -O2 is required for kernel inline functions
+ B_REFSW_CFLAGS += -O2
+-B_REFSW_CFLAGS += -msoft-float
+ B_REFSW_CFLAGS += -pipe
+ 
+ ifeq ($(LINUX_VER_GE_2_6_31),y)
+--- a/rockford/middleware/v3d/driver/V3DDriver.mk
++++ b/rockford/middleware/v3d/driver/V3DDriver.mk
+@@ -23,7 +23,7 @@
+ CC = $(B_REFSW_CROSS_COMPILE)gcc
+ C++ = $(B_REFSW_CROSS_COMPILE)g++
+ 
+-GCCGTEQ_40800 := $(shell expr `$(CC) -dumpversion | awk 'BEGIN { FS = "." }; { printf("%d%02d%02d", $$1, $$2, $$3) }'` \>= 40800)
++GCCGTEQ_40800 :=
+ 
+ ifeq ($(findstring mips, ${B_REFSW_ARCH}), mips)
+ CFLAGS += \
+--- a/rockford/middleware/vc5/driver/V3DDriver.mk
++++ b/rockford/middleware/vc5/driver/V3DDriver.mk
+@@ -23,7 +23,7 @@
+ CC = $(B_REFSW_CROSS_COMPILE)gcc
+ C++ = $(B_REFSW_CROSS_COMPILE)g++
+ 
+-GCCGTEQ_40800 := $(shell expr `$(CC) -dumpversion | awk 'BEGIN { FS = "." }; { printf("%d%02d%02d", $$1, $$2, $$3) }'` \>= 40800)
++GCCGTEQ_40800 :=
+ 
+ ifeq ($(findstring arm, ${B_REFSW_ARCH}), arm)
+ ifeq ("$(GCCGTEQ_40800)", "1")

@@ -1,0 +1,22 @@
+--- a/configure.ac	2015-05-19 15:38:03.000000000 +0200
++++ b/configure.ac	2015-05-20 21:32:26.449288577 +0200
+@@ -324,7 +324,4 @@
+ tests/Makefile
+ bindings/Makefile
+ bindings/java/Makefile
+-docs/Makefile
+-docs/reference/Makefile
+-docs/reference/owr/Makefile
+ ])
+
+--- a/Makefile.am	2015-05-19 15:38:03.000000000 +0200
++++ b/Makefile.am	2015-06-24 14:07:55.661150937 +0200
+@@ -10,7 +10,7 @@ if OWR_GST
+ SUBDIRS += gst
+ endif
+ 
+-SUBDIRS += docs
++# SUBDIRS += docs
+ 
+ if OWR_TESTS
+ SUBDIRS += tests

@@ -1,0 +1,38 @@
+From ade7c19c744cfc81e1f99de76cd758c373ab88fc Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Wed, 21 Oct 2015 16:21:45 +0200
+Subject: [PATCH] qtdemux: read saio aux_info_type as a FOURCC
+
+https://bugzilla.gnome.org/show_bug.cgi?id=756897
+---
+ gst/isomp4/qtdemux.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index 27cbd97..9f11c77 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -3283,6 +3283,7 @@ qtdemux_parse_saio (GstQTDemux * qtdemux, QtDemuxStream * stream,
+   guint32 entry_count;
+   guint32 off_32;
+   guint64 off_64;
++  const guint8 *aux_info_type_data = NULL;
+ 
+   g_return_val_if_fail (qtdemux != NULL, FALSE);
+   g_return_val_if_fail (stream != NULL, FALSE);
+@@ -3296,8 +3297,11 @@ qtdemux_parse_saio (GstQTDemux * qtdemux, QtDemuxStream * stream,
+     return FALSE;
+ 
+   if (flags & 0x1) {
+-    if (!gst_byte_reader_get_uint32_be (br, &aux_info_type))
++
++    if (!gst_byte_reader_get_data (br, 4, &aux_info_type_data))
+       return FALSE;
++    aux_info_type = QT_FOURCC (aux_info_type_data);
++
+     if (!gst_byte_reader_get_uint32_be (br, &aux_info_type_parameter))
+       return FALSE;
+   } else if (stream->protected) {
+-- 
+2.6.1
+

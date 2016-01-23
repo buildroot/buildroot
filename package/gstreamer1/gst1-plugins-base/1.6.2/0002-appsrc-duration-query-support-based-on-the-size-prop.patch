@@ -1,0 +1,36 @@
+From eac0e783de8047b3232b08f71d4989710bc8c1a9 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Tue, 8 Dec 2015 11:15:34 +0100
+Subject: [PATCH] appsrc: duration query support based on the size property
+
+https://bugzilla.gnome.org/show_bug.cgi?id=759126
+---
+ gst-libs/gst/app/gstappsrc.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/gst-libs/gst/app/gstappsrc.c b/gst-libs/gst/app/gstappsrc.c
+index e540cf4..ae7ce10 100644
+--- a/gst-libs/gst/app/gstappsrc.c
++++ b/gst-libs/gst/app/gstappsrc.c
+@@ -926,6 +926,18 @@ gst_app_src_query (GstBaseSrc * src, GstQuery * query)
+       res = TRUE;
+       break;
+     }
++    case GST_QUERY_DURATION:
++    {
++      GstFormat format;
++      gst_query_parse_duration (query, &format, NULL);
++      if (format == GST_FORMAT_BYTES) {
++        gst_query_set_duration (query, format, priv->size);
++        res = TRUE;
++      } else {
++        res = FALSE;
++      }
++      break;
++    }
+     default:
+       res = GST_BASE_SRC_CLASS (parent_class)->query (src, query);
+       break;
+-- 
+2.6.2
+

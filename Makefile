@@ -506,7 +506,7 @@ $(STAGING_DIR):
 	@mkdir -p $(STAGING_DIR)
 	@ln -snf $(STAGING_DIR) $(BASE_DIR)/staging
 
-RSYNC_VCS_EXCLUSIONS = \
+RSYNC_VCS_EXCLUSIONS += \
 	--exclude .svn --exclude .git --exclude .hg --exclude .bzr \
 	--exclude CVS
 

@@ -1,0 +1,6 @@
+config BR2_PACKAGE_WPE_LAUNCHER
+	bool "wpe-launcher"
+	depends on !BR2_PACKAGE_WAYLAND
+	depends on BR2_PACKAGE_WPE
+	help
+	  WPE launcher app.

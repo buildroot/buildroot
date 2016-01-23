@@ -1,0 +1,180 @@
+From 8ae8b2723d0cf179a4f09b2f6c5f797e2d97034d Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Wed, 4 Nov 2015 12:02:51 +0100
+Subject: [PATCH] queue2: add overrun signal
+
+Notifies that the queue2 is full, same as queue does
+
+https://bugzilla.gnome.org/show_bug.cgi?id=733959
+---
+ plugins/elements/gstqueue2.c  | 27 +++++++++++++++-
+ plugins/elements/gstqueue2.h  |  3 ++
+ tests/check/elements/queue2.c | 72 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 101 insertions(+), 1 deletion(-)
+
+diff --git a/plugins/elements/gstqueue2.c b/plugins/elements/gstqueue2.c
+index f6b1c70..596f4c7 100644
+--- a/plugins/elements/gstqueue2.c
++++ b/plugins/elements/gstqueue2.c
+@@ -89,6 +89,7 @@ GST_DEBUG_CATEGORY_STATIC (queue_dataflow);
+ 
+ enum
+ {
++  SIGNAL_OVERRUN,
+   LAST_SIGNAL
+ };
+ 
+@@ -281,7 +282,7 @@ typedef struct
+   GstMiniObject *item;
+ } GstQueue2Item;
+ 
+-/* static guint gst_queue2_signals[LAST_SIGNAL] = { 0 }; */
++static guint gst_queue2_signals[LAST_SIGNAL] = { 0 };
+ 
+ static void
+ gst_queue2_class_init (GstQueue2Class * klass)
+@@ -292,6 +293,23 @@ gst_queue2_class_init (GstQueue2Class * klass)
+   gobject_class->set_property = gst_queue2_set_property;
+   gobject_class->get_property = gst_queue2_get_property;
+ 
++  /* signals */
++  /**
++   * GstQueue2::overrun:
++   * @queue: the queue2 instance
++   *
++   * Reports that the buffer became full (overrun).
++   * A buffer is full if the total amount of data inside it (num-buffers, time,
++   * size) is higher than the boundary values which can be set through the
++   * GObject properties.
++   *
++   * Since: 1.8
++   */
++  gst_queue2_signals[SIGNAL_OVERRUN] =
++      g_signal_new ("overrun", G_TYPE_FROM_CLASS (klass), G_SIGNAL_RUN_FIRST,
++      G_STRUCT_OFFSET (GstQueue2Class, overrun), NULL, NULL,
++      g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
++
+   /* properties */
+   g_object_class_install_property (gobject_class, PROP_CUR_LEVEL_BYTES,
+       g_param_spec_uint ("current-level-bytes", "Current level (kB)",
+@@ -1651,6 +1669,13 @@ gst_queue2_wait_free_space (GstQueue2 * queue)
+     GST_CAT_DEBUG_OBJECT (queue_dataflow, queue,
+         "queue is full, waiting for free space");
+     do {
++      GST_QUEUE2_MUTEX_UNLOCK (queue);
++      g_signal_emit (queue, gst_queue2_signals[SIGNAL_OVERRUN], 0);
++      GST_QUEUE2_MUTEX_LOCK_CHECK (queue, queue->srcresult, out_flushing);
++      /* we recheck, the signal could have changed the thresholds */
++      if (!gst_queue2_is_filled (queue))
++        break;
++
+       /* Wait for space to be available, we could be unlocked because of a flush. */
+       GST_QUEUE2_WAIT_DEL_CHECK (queue, queue->sinkresult, out_flushing);
+     }
+diff --git a/plugins/elements/gstqueue2.h b/plugins/elements/gstqueue2.h
+index 9a881b0..63f67eb 100644
+--- a/plugins/elements/gstqueue2.h
++++ b/plugins/elements/gstqueue2.h
+@@ -165,6 +165,9 @@ struct _GstQueue2
+ struct _GstQueue2Class
+ {
+   GstElementClass parent_class;
++
++  /* signals */
++  void (*overrun)       (GstQueue2 *queue2);
+ };
+ 
+ G_GNUC_INTERNAL GType gst_queue2_get_type (void);
+diff --git a/tests/check/elements/queue2.c b/tests/check/elements/queue2.c
+index 18170c1..4970f03 100644
+--- a/tests/check/elements/queue2.c
++++ b/tests/check/elements/queue2.c
+@@ -269,6 +269,77 @@ GST_START_TEST (test_filled_read)
+ 
+ GST_END_TEST;
+ 
++static gint overrun_count;
++
++static void
++queue_overrun (GstElement * queue, gpointer user_data)
++{
++  overrun_count++;
++  GST_DEBUG ("queue overrun %d", overrun_count);
++}
++
++static gpointer
++pull_buffer (GstPad * srcpad)
++{
++  GstBuffer *buffer = NULL;
++  gst_pad_get_range (srcpad, 0, 1024, &buffer);
++  gst_buffer_unref (buffer);
++  return NULL;
++}
++
++GST_START_TEST (test_overrun)
++{
++  GstElement *queue2;
++  GstBuffer *buffer;
++  GstPad *sinkpad, *srcpad;
++  GstSegment segment;
++  GThread *thread;
++
++  overrun_count = 0;
++  queue2 = gst_element_factory_make ("queue2", NULL);
++  sinkpad = gst_element_get_static_pad (queue2, "sink");
++  srcpad = gst_element_get_static_pad (queue2, "src");
++
++  g_signal_connect (queue2, "overrun", G_CALLBACK (queue_overrun), srcpad);
++  g_object_set (queue2, "ring-buffer-max-size", (guint64) 4 * 1024,
++      "use-buffering", FALSE,
++      "max-size-buffers", (guint) 0, "max-size-time", (guint64) 0,
++      "max-size-bytes", (guint) 4 * 1024, NULL);
++
++
++  gst_pad_activate_mode (srcpad, GST_PAD_MODE_PULL, TRUE);
++  gst_element_set_state (queue2, GST_STATE_PLAYING);
++
++  gst_segment_init (&segment, GST_FORMAT_BYTES);
++  gst_pad_send_event (sinkpad, gst_event_new_stream_start ("test"));
++  gst_pad_send_event (sinkpad, gst_event_new_segment (&segment));
++
++  /* Fill the queue */
++  buffer = gst_buffer_new_and_alloc (4 * 1024);
++  fail_unless (gst_pad_chain (sinkpad, buffer) == GST_FLOW_OK);
++
++
++  /* Make sure the queue doesn't remain full */
++  thread =
++      g_thread_try_new ("gst-check", (GThreadFunc) pull_buffer, srcpad, NULL);
++  fail_unless (thread != NULL);
++
++  /* Push a new buffer in the full queue, should trigger overrun */
++  buffer = gst_buffer_new_and_alloc (1024);
++  fail_unless (gst_pad_chain (sinkpad, buffer) == GST_FLOW_OK);
++  fail_unless (overrun_count == 1);
++
++  g_thread_join (thread);
++
++  gst_element_set_state (queue2, GST_STATE_NULL);
++
++  gst_object_unref (sinkpad);
++  gst_object_unref (srcpad);
++  gst_object_unref (queue2);
++}
++
++GST_END_TEST;
++
+ 
+ static Suite *
+ queue2_suite (void)
+@@ -283,6 +354,7 @@ queue2_suite (void)
+   tcase_add_test (tc_chain, test_simple_shutdown_while_running);
+   tcase_add_test (tc_chain, test_simple_shutdown_while_running_ringbuffer);
+   tcase_add_test (tc_chain, test_filled_read);
++  tcase_add_test (tc_chain, test_overrun);
+   return s;
+ }
+ 
+-- 
+2.6.1
+
