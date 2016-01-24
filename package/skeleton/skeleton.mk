@@ -176,20 +176,28 @@ endef
 NETWORK_DHCP_IFACE = $(call qstrip,$(BR2_SYSTEM_DHCP))
 
 ifneq ($(NETWORK_DHCP_IFACE),)
+ifeq ($(BR2_PACKAGE_WPA_SUPPLICANT),y)
+IFACE_WPA_SUPPLICANT = \
+	[[ "$(NETWORK_DHCP_IFACE)" == "wlan"* ]] && \
+		echo "	pre-up /etc/network/wlan_check up $(NETWORK_DHCP_IFACE) \"$(BR2_PACKAGE_WPA_SUPPLICANT_OPTIONS)\"" && \
+		echo "	pre-down /etc/network/wlan_check down $(NETWORK_DHCP_IFACE)";
+define INSTALL_WPA_CHECK
+	$(INSTALL) -m 0755 -D $(SKELETON_PKGDIR)/wlan_check \
+		$(TARGET_DIR)/etc/network/wlan_check
+endef
+endif
 define SET_NETWORK_DHCP
 	( \
-		echo ;																											\
-		echo "auto $(NETWORK_DHCP_IFACE)";																				\
-		echo "iface $(NETWORK_DHCP_IFACE) inet dhcp";																	\
-		echo "	pre-up /etc/network/nfs_check";																			\
-		echo "	pre-up /etc/network/wlan_check up $(NETWORK_DHCP_IFACE) \"$(BR2_PACKAGE_WPA_SUPPLICANT_OPTIONS)\"";		\
-		echo "	post-down /etc/network/wlan_check" down $(NETWORK_DHCP_IFACE) ;											\
-		echo "	wait-delay 15";																							\
+		echo ;                                               \
+		echo "auto $(NETWORK_DHCP_IFACE)";                   \
+		echo "iface $(NETWORK_DHCP_IFACE) inet dhcp";        \
+		echo "	pre-up /etc/network/nfs_check";              \
+		$(IFACE_WPA_SUPPLICANT)                              \
+		echo "	wait-delay 15";                              \
 	) >> $(TARGET_DIR)/etc/network/interfaces
 	$(INSTALL) -m 0755 -D $(SKELETON_PKGDIR)/nfs_check \
 		$(TARGET_DIR)/etc/network/nfs_check
-	$(INSTALL) -m 0755 -D $(SKELETON_PKGDIR)/wlan_check \
-		$(TARGET_DIR)/etc/network/wlan_check		
+	$(INSTALL_WPA_CHECK)
 endef
 endif
 

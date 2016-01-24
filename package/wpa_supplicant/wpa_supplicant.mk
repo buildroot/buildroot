@@ -194,13 +194,11 @@ define WPA_SUPPLICANT_CONFIGURE_WLAN
 endef
 endif
 
-
 define WPA_SUPPLICANT_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 0755 -D $(@D)/$(WPA_SUPPLICANT_SUBDIR)/wpa_supplicant \
 		$(TARGET_DIR)/usr/sbin/wpa_supplicant
 	$(INSTALL) -m 644 -D package/wpa_supplicant/wpa_supplicant.conf \
 		$(TARGET_DIR)/etc/wpa_supplicant.conf
-
 	$(WPA_SUPPLICANT_CONFIGURE_WLAN)
 	$(WPA_SUPPLICANT_INSTALL_CLI)
 	$(WPA_SUPPLICANT_INSTALL_PASSPHRASE)

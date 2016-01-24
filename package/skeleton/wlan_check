@@ -3,13 +3,17 @@
 # Checks if we are using a wlan interface and if wpa_supplicant is
 # present. If so it will start/stop wpa_supplicant respectively
 
-if [ ! -f /usr/sbin/wpa_supplicant ]
-	then exit 0
+if [ ! -f /usr/sbin/wpa_supplicant ]; then
+	exit 0
 fi
 
 updown=$1
 iface=$2
 opts=$3
+
+if [[ "$iface" != "wlan"* ]]; then
+	exit 0
+fi
 
 case "$updown" in 
   *up*)
