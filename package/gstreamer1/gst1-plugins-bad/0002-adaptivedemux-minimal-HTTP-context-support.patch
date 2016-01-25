@@ -1,7 +1,7 @@
-From 951c4f61931a94ef18d9ab1eae70be1d6c43aad1 Mon Sep 17 00:00:00 2001
+From de20975b2df9e3856dd22ea6550039e8fe13839b Mon Sep 17 00:00:00 2001
 From: Philippe Normand <philn@igalia.com>
 Date: Wed, 28 Oct 2015 11:52:49 +0100
-Subject: [PATCH 2/2] adaptivedemux: minimal HTTP context support
+Subject: [PATCH] adaptivedemux: minimal HTTP context support
 
 The uridownloader is now querying the source element for an HTTP
 context, which stores session data (cookies only for now), and reusing
@@ -17,10 +17,10 @@ https://bugzilla.gnome.org/show_bug.cgi?id=726314
  3 files changed, 48 insertions(+), 4 deletions(-)
 
 diff --git a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
-index d39e099..53562b1 100644
+index f5d598a..28c2493 100644
 --- a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
 +++ b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
-@@ -414,7 +414,7 @@ gst_adaptive_demux_init (GstAdaptiveDemux * demux,
+@@ -409,7 +409,7 @@ gst_adaptive_demux_init (GstAdaptiveDemux * demux,
  
    demux->priv = GST_ADAPTIVE_DEMUX_GET_PRIVATE (demux);
    demux->priv->input_adapter = gst_adapter_new ();
@@ -29,15 +29,15 @@ index d39e099..53562b1 100644
    demux->stream_struct_size = sizeof (GstAdaptiveDemuxStream);
    demux->priv->segment_seqnum = gst_util_seqnum_next ();
    demux->have_group_id = FALSE;
-@@ -2140,6 +2140,7 @@ gst_adaptive_demux_stream_update_source (GstAdaptiveDemuxStream * stream,
+@@ -2209,6 +2209,7 @@ gst_adaptive_demux_stream_update_source (GstAdaptiveDemuxStream * stream,
      GstPadLinkReturn pad_link_ret;
      GObjectClass *gobject_class;
-     GstPad *internal_pad;
+     gchar *internal_name, *bin_name;
 +    GstContext *context = NULL;
  
      /* Our src consists of a bin containing uri_handler -> queue2 . The
       * purpose of the queue2 is to allow the uri_handler to download an
-@@ -2193,6 +2194,19 @@ gst_adaptive_demux_stream_update_source (GstAdaptiveDemuxStream * stream,
+@@ -2262,6 +2263,19 @@ gst_adaptive_demux_stream_update_source (GstAdaptiveDemuxStream * stream,
        }
      }
  
@@ -55,8 +55,8 @@ index d39e099..53562b1 100644
 +    }
 +
      /* Source bin creation */
-     stream->src = gst_bin_new (NULL);
-     if (stream->src == NULL) {
+     bin_name = g_strdup_printf ("srcbin-%s", GST_PAD_NAME (stream->pad));
+     stream->src = gst_bin_new (bin_name);
 diff --git a/gst-libs/gst/uridownloader/gsturidownloader.c b/gst-libs/gst/uridownloader/gsturidownloader.c
 index 72e5e79..a31b709 100644
 --- a/gst-libs/gst/uridownloader/gsturidownloader.c
@@ -139,4 +139,3 @@ index 80b8a3e..36cbf65 100644
  void gst_uri_downloader_reset (GstUriDownloader *downloader);
 -- 
 2.6.1
-

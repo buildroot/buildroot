@@ -74,7 +74,7 @@ index c6fbd1a..6bf1c1a 100644
  
    GST_DEBUG_CATEGORY_INIT (mssdemux_debug, "mssdemux", 0, "mssdemux plugin");
  }
-@@ -636,6 +648,17 @@ gst_mss_demux_get_manifest_update_interval (GstAdaptiveDemux * demux)
+@@ -635,6 +647,17 @@ gst_mss_demux_get_manifest_update_interval (GstAdaptiveDemux * demux)
    return interval;
  }
  
@@ -92,7 +92,7 @@ index c6fbd1a..6bf1c1a 100644
  static GstFlowReturn
  gst_mss_demux_update_manifest_data (GstAdaptiveDemux * demux,
      GstBuffer * buffer)
-@@ -647,3 +670,41 @@ gst_mss_demux_update_manifest_data (GstAdaptiveDemux * demux,
+@@ -646,3 +669,41 @@ gst_mss_demux_update_manifest_data (GstAdaptiveDemux * demux,
    gst_mss_manifest_reload_fragments (mssdemux->manifest, buffer);
    return GST_FLOW_OK;
  }
@@ -644,7 +644,7 @@ index 0d50a20..9778090 100644
  }
  
  void
-@@ -968,7 +1011,12 @@ gst_mss_stream_get_fragment_gst_timestamp (GstMssStream * stream)
+@@ -979,7 +1022,12 @@ gst_mss_stream_get_fragment_gst_timestamp (GstMssStream * stream)
    g_return_val_if_fail (stream->active, GST_CLOCK_TIME_NONE);
  
    if (!stream->current_fragment) {
@@ -658,7 +658,7 @@ index 0d50a20..9778090 100644
      if (last == NULL)
        return GST_CLOCK_TIME_NONE;
  
-@@ -1021,21 +1069,54 @@ GstFlowReturn
+@@ -1032,21 +1080,54 @@ GstFlowReturn
  gst_mss_stream_advance_fragment (GstMssStream * stream)
  {
    GstMssStreamFragment *fragment;
@@ -718,7 +718,7 @@ index 0d50a20..9778090 100644
    return GST_FLOW_OK;
  }
  
-@@ -1360,3 +1441,47 @@ gst_mss_stream_get_lang (GstMssStream * stream)
+@@ -1371,3 +1452,47 @@ gst_mss_stream_get_lang (GstMssStream * stream)
  {
    return stream->lang;
  }
@@ -783,7 +783,7 @@ diff --git a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c b/gst-libs/gst/adapti
 index 4ec230a..d39e099 100644
 --- a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
 +++ b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
-@@ -261,6 +261,9 @@ gst_adaptive_demux_stream_finish_fragment_default (GstAdaptiveDemux * demux,
+@@ -269,6 +269,9 @@ gst_adaptive_demux_stream_finish_fragment_default (GstAdaptiveDemux * demux,
  static GstFlowReturn
  gst_adaptive_demux_stream_advance_fragment_unlocked (GstAdaptiveDemux * demux,
      GstAdaptiveDemuxStream * stream, GstClockTime duration);
@@ -793,7 +793,7 @@ index 4ec230a..d39e099 100644
  
  
  /* we can't use G_DEFINE_ABSTRACT_TYPE because we need the klass in the _init
-@@ -396,6 +399,9 @@ gst_adaptive_demux_class_init (GstAdaptiveDemuxClass * klass)
+@@ -391,6 +394,9 @@ gst_adaptive_demux_class_init (GstAdaptiveDemuxClass * klass)
    klass->data_received = gst_adaptive_demux_stream_data_received_default;
    klass->finish_fragment = gst_adaptive_demux_stream_finish_fragment_default;
    klass->update_manifest = gst_adaptive_demux_update_manifest_default;
@@ -803,7 +803,7 @@ index 4ec230a..d39e099 100644
  }
  
  static void
-@@ -626,7 +632,9 @@ gst_adaptive_demux_sink_event (GstPad * pad, GstObject * parent,
+@@ -622,7 +628,9 @@ gst_adaptive_demux_sink_event (GstPad * pad, GstObject * parent,
            gst_adaptive_demux_start_tasks (demux);
            if (gst_adaptive_demux_is_live (demux)) {
              /* Task to periodically update the manifest */
@@ -814,7 +814,7 @@ index 4ec230a..d39e099 100644
            }
          } else {
            /* no streams */
-@@ -1800,6 +1808,13 @@ gst_adaptive_demux_stream_data_received_default (GstAdaptiveDemux * demux,
+@@ -1861,6 +1869,13 @@ gst_adaptive_demux_stream_data_received_default (GstAdaptiveDemux * demux,
    return gst_adaptive_demux_stream_push_buffer (stream, buffer);
  }
  
@@ -828,7 +828,7 @@ index 4ec230a..d39e099 100644
  static GstFlowReturn
  _src_chain (GstPad * pad, GstObject * parent, GstBuffer * buffer)
  {
-@@ -1860,7 +1875,7 @@ _src_chain (GstPad * pad, GstObject * parent, GstBuffer * buffer)
+@@ -1957,7 +1972,7 @@ _src_chain (GstPad * pad, GstObject * parent, GstBuffer * buffer)
    stream->download_total_bytes += gst_buffer_get_size (buffer);
  
    gst_adapter_push (stream->adapter, buffer);
@@ -841,7 +841,7 @@ diff --git a/gst-libs/gst/adaptivedemux/gstadaptivedemux.h b/gst-libs/gst/adapti
 index bfc42a0..9bbb56f 100644
 --- a/gst-libs/gst/adaptivedemux/gstadaptivedemux.h
 +++ b/gst-libs/gst/adaptivedemux/gstadaptivedemux.h
-@@ -413,6 +413,20 @@ struct _GstAdaptiveDemuxClass
+@@ -420,6 +420,20 @@ struct _GstAdaptiveDemuxClass
     * selected period.
     */
    GstClockTime (*get_period_start_time) (GstAdaptiveDemux *demux);
