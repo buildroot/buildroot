@@ -24,7 +24,7 @@ NETFLIX_CONF_OPTS = \
 	-DGIBBON_SCRIPT_JSC_DYNAMIC=1 \
 	-DGIBBON_SCRIPT_JSC_DEBUG=0 \
 	-DGIBBON_INPUT=devinput \
-	-DNRDP_TOOLS="manufSSgenerator"
+	-DNRDP_TOOLS="all"
 
 NETFLIX_CONF_ENV += \
 	TARGET_CROSS="$(GNU_TARGET_NAME)-"
@@ -96,6 +96,7 @@ NETFLIX_POST_EXTRACT_HOOKS += NETFLIX_FIX_CONFIG_XMLS
 define NETFLIX_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/libJavaScriptCore.so $(TARGET_DIR)/usr/lib
 	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/netflix $(TARGET_DIR)/usr/bin
+	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/manufss $(TARGET_DIR)/usr/bin
 	mkdir -p $(TARGET_DIR)/usr/share/fonts/netflix
 	$(INSTALL) -m 644 $(@D)/netflix/src/platform/gibbon/data/fonts/* $(TARGET_DIR)/usr/share/fonts/netflix/
 	$(INSTALL) -m 644 $(@D)/netflix/src/platform/gibbon/resources/gibbon/fonts/LastResort.ttf $(TARGET_DIR)/usr/share/fonts/netflix/
