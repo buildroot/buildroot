@@ -11,20 +11,13 @@ https://bugzilla.gnome.org/show_bug.cgi?id=754230
  2 files changed, 73 insertions(+)
 
 diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
-index 0e4b737..d033506 100644
+index 880595e..d8b54f0 100644
 --- a/gst/isomp4/qtdemux.c
 +++ b/gst/isomp4/qtdemux.c
-@@ -535,6 +535,18 @@ static void gst_qtdemux_append_protection_system_id (GstQTDemux * qtdemux,
+@@ -535,6 +535,11 @@ static void gst_qtdemux_append_protection_system_id (GstQTDemux * qtdemux,
      const gchar * id);
  static void qtdemux_gst_structure_free (GstStructure * gststructure);
  
-+/* props */
-+enum
-+{
-+  PROP_0,
-+  PROP_ALWAYS_HONOR_TFDT
-+};
-+
 +static void gst_qtdemux_set_property (GObject * object, guint prop_id,
 +    const GValue * value, GParamSpec * spec);
 +static void gst_qtdemux_get_property (GObject * object, guint prop_id,
@@ -33,7 +26,7 @@ index 0e4b737..d033506 100644
  static void
  gst_qtdemux_class_init (GstQTDemuxClass * klass)
  {
-@@ -546,8 +558,21 @@ gst_qtdemux_class_init (GstQTDemuxClass * klass)
+@@ -546,8 +551,21 @@ gst_qtdemux_class_init (GstQTDemuxClass * klass)
  
    parent_class = g_type_class_peek_parent (klass);
  
@@ -42,7 +35,7 @@ index 0e4b737..d033506 100644
 +
    gobject_class->dispose = gst_qtdemux_dispose;
  
-+  /**
++ /**
 +   * GstQtDemux::always-honor-tfdt:
 +   *
 +   * Requests the demuxer to respect what the TFDT atom says in order to produce presentation timestamps. Defaults to FALSE.
@@ -55,7 +48,7 @@ index 0e4b737..d033506 100644
    gstelement_class->change_state = GST_DEBUG_FUNCPTR (gst_qtdemux_change_state);
  #if 0
    gstelement_class->set_index = GST_DEBUG_FUNCPTR (gst_qtdemux_set_index);
-@@ -611,6 +636,7 @@ gst_qtdemux_init (GstQTDemux * qtdemux)
+@@ -611,6 +629,7 @@ gst_qtdemux_init (GstQTDemux * qtdemux)
    qtdemux->cenc_aux_info_sizes = NULL;
    qtdemux->cenc_aux_sample_count = 0;
    qtdemux->protection_system_ids = NULL;
@@ -63,7 +56,7 @@ index 0e4b737..d033506 100644
    g_queue_init (&qtdemux->protection_event_queue);
    gst_segment_init (&qtdemux->segment, GST_FORMAT_TIME);
    qtdemux->flowcombiner = gst_flow_combiner_new ();
-@@ -639,6 +665,42 @@ gst_qtdemux_dispose (GObject * object)
+@@ -639,6 +658,42 @@ gst_qtdemux_dispose (GObject * object)
  }
  
  static void
@@ -106,9 +99,9 @@ index 0e4b737..d033506 100644
  gst_qtdemux_post_no_playable_stream_error (GstQTDemux * qtdemux)
  {
    if (qtdemux->posted_redirect) {
-@@ -2964,6 +3026,16 @@ qtdemux_parse_trun (GstQTDemux * qtdemux, GstByteReader * trun,
-         timestamp = 0;
-       }
+@@ -2995,6 +3050,16 @@ qtdemux_parse_trun (GstQTDemux * qtdemux, GstByteReader * trun,
+           stream->samples[stream->n_samples - 1].timestamp +
+           stream->samples[stream->n_samples - 1].duration;
  
 +      /* If we're always honoring TFDT and there's a significative difference
 +       * between the decode_ts and the timestamp, prefer decode_ts */
@@ -121,13 +114,13 @@ index 0e4b737..d033506 100644
 +      }
 +
        gst_ts = QTSTREAMTIME_TO_GSTTIME (stream, timestamp);
-       GST_INFO_OBJECT (stream->pad, "first sample ts %" GST_TIME_FORMAT,
-           GST_TIME_ARGS (gst_ts));
+       GST_INFO_OBJECT (qtdemux, "first sample ts %" GST_TIME_FORMAT
+           " (extends previous samples)", GST_TIME_ARGS (gst_ts));
 diff --git a/gst/isomp4/qtdemux.h b/gst/isomp4/qtdemux.h
-index 05cd806..541e0cd 100644
+index 53bd071..ecf0c63 100644
 --- a/gst/isomp4/qtdemux.h
 +++ b/gst/isomp4/qtdemux.h
-@@ -153,6 +153,7 @@ struct _GstQTDemux {
+@@ -154,12 +154,20 @@ struct _GstQTDemux {
    guint8 *cenc_aux_info_sizes;
    guint32 cenc_aux_sample_count;
  
@@ -135,6 +128,19 @@ index 05cd806..541e0cd 100644
  };
  
  struct _GstQTDemuxClass {
+   GstElementClass parent_class;
+ };
+ 
++/* props */
++enum
++{
++  PROP_0,
++  PROP_ALWAYS_HONOR_TFDT
++};
++
+ GType gst_qtdemux_get_type (void);
+ 
+ G_END_DECLS
 -- 
 2.6.1
 

@@ -12,7 +12,7 @@ diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
 index 27cbd97..9f11c77 100644
 --- a/gst/isomp4/qtdemux.c
 +++ b/gst/isomp4/qtdemux.c
-@@ -3283,6 +3283,7 @@ qtdemux_parse_saio (GstQTDemux * qtdemux, QtDemuxStream * stream,
+@@ -3303,6 +3303,7 @@ qtdemux_parse_saio (GstQTDemux * qtdemux, QtDemuxStream * stream,
    guint32 entry_count;
    guint32 off_32;
    guint64 off_64;
@@ -20,7 +20,7 @@ index 27cbd97..9f11c77 100644
  
    g_return_val_if_fail (qtdemux != NULL, FALSE);
    g_return_val_if_fail (stream != NULL, FALSE);
-@@ -3296,8 +3297,11 @@ qtdemux_parse_saio (GstQTDemux * qtdemux, QtDemuxStream * stream,
+@@ -3316,8 +3317,11 @@ qtdemux_parse_saio (GstQTDemux * qtdemux, QtDemuxStream * stream,
      return FALSE;
  
    if (flags & 0x1) {

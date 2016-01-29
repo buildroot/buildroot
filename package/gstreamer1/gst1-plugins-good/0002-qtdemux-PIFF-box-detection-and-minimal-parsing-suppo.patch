@@ -1,4 +1,4 @@
-From a88e2bd8353f08465150188aa5e0ad8bae99508f Mon Sep 17 00:00:00 2001
+From 0c17f113fa6997d864174d6f8cd5a1fb5460ffca Mon Sep 17 00:00:00 2001
 From: Philippe Normand <philn@igalia.com>
 Date: Fri, 10 Jul 2015 09:44:15 +0200
 Subject: [PATCH] qtdemux: PIFF box detection and minimal parsing support
@@ -9,11 +9,11 @@ downstream decryptors to process and decrypt the protected content.
 
 https://bugzilla.gnome.org/show_bug.cgi?id=753614
 ---
- gst/isomp4/qtdemux.c | 169 +++++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 163 insertions(+), 6 deletions(-)
+ gst/isomp4/qtdemux.c | 173 +++++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 167 insertions(+), 6 deletions(-)
 
 diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
-index 19ecaac..bce63ff 100644
+index 31aba9d..54f46e4 100644
 --- a/gst/isomp4/qtdemux.c
 +++ b/gst/isomp4/qtdemux.c
 @@ -527,8 +527,13 @@ static void qtdemux_do_allocation (GstQTDemux * qtdemux,
@@ -30,7 +30,7 @@ index 19ecaac..bce63ff 100644
  
  static void
  gst_qtdemux_class_init (GstQTDemuxClass * klass)
-@@ -2412,6 +2417,139 @@ qtdemux_handle_xmp_taglist (GstQTDemux * qtdemux, GstTagList * taglist,
+@@ -2430,6 +2435,143 @@ qtdemux_handle_xmp_taglist (GstQTDemux * qtdemux, GstTagList * taglist,
  }
  
  static void
@@ -54,7 +54,11 @@ index 19ecaac..bce63ff 100644
 +  stream = qtdemux->streams[0];
 +
 +  structure = gst_caps_get_structure (stream->caps, 0);
-+  g_assert (gst_structure_has_name (structure, "application/x-cenc"));
++  if (!gst_structure_has_name (structure, "application/x-cenc")) {
++    GST_WARNING_OBJECT (qtdemux, "Attempting PIFF box parsing on an unencrypted stream.");
++    return;
++  }
++
 +  gst_structure_get (structure, GST_PROTECTION_SYSTEM_ID_CAPS_FIELD,
 +      G_TYPE_STRING, &system_id, NULL);
 +  gst_qtdemux_append_protection_system_id (qtdemux, system_id);
@@ -170,12 +174,12 @@ index 19ecaac..bce63ff 100644
  qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
  {
    static const guint8 xmp_uuid[] = { 0xBE, 0x7A, 0xCF, 0xCB,
-@@ -2423,6 +2561,12 @@ qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
+@@ -2441,6 +2583,12 @@ qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
      0xd0, 0x8a, 0x4f, 0x18, 0x10, 0xf3, 0x4a, 0x82,
      0xb6, 0xc8, 0x32, 0xd8, 0xab, 0xa1, 0x83, 0xd3
    };
 +
-+  static const guint8 piff_uuid[] = {
++  static const guint8 piff_sample_encryption_uuid[] = {
 +    0xa2, 0x39, 0x4f, 0x52, 0x5a, 0x9b, 0x4f, 0x14,
 +    0xa2, 0x44, 0x6c, 0x42, 0x7c, 0x64, 0x8d, 0xf4
 +  };
@@ -183,16 +187,16 @@ index 19ecaac..bce63ff 100644
    guint offset;
  
    /* counts as header data */
-@@ -2461,6 +2605,8 @@ qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
+@@ -2479,6 +2627,8 @@ qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
      GST_ELEMENT_ERROR (qtdemux, STREAM, DECRYPT,
          (_("Cannot play stream because it is encrypted with PlayReady DRM.")),
          (NULL));
-+  } else if (memcmp (buffer + offset, piff_uuid, 16) == 0) {
++  } else if (memcmp (buffer + offset, piff_sample_encryption_uuid, 16) == 0) {
 +    qtdemux_parse_piff (qtdemux, buffer, length, offset);
    } else {
      GST_DEBUG_OBJECT (qtdemux, "Ignoring unknown uuid: %08x-%08x-%08x-%08x",
          GST_READ_UINT32_LE (buffer + offset),
-@@ -3345,7 +3491,8 @@ static gboolean
+@@ -3363,7 +3513,8 @@ static gboolean
  qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
      guint64 moof_offset, QtDemuxStream * stream)
  {
@@ -202,7 +206,7 @@ index 19ecaac..bce63ff 100644
    GstByteReader mfhd_data, trun_data, tfhd_data, tfdt_data;
    GNode *saiz_node, *saio_node, *pssh_node;
    GstByteReader saiz_data, saio_data;
-@@ -3490,6 +3637,14 @@ qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
+@@ -3508,6 +3659,14 @@ qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
        trun_node = qtdemux_tree_get_sibling_by_type_full (trun_node, FOURCC_trun,
            &trun_data);
      }
@@ -217,7 +221,7 @@ index 19ecaac..bce63ff 100644
      /* if no new base_offset provided for next traf,
       * base is end of current traf */
      base_offset = running_offset;
-@@ -6862,11 +7017,13 @@ gst_qtdemux_configure_protected_caps (GstQTDemux * qtdemux,
+@@ -6895,11 +7054,13 @@ gst_qtdemux_configure_protected_caps (GstQTDemux * qtdemux,
    }
  
    s = gst_caps_get_structure (stream->caps, 0);
@@ -237,5 +241,4 @@ index 19ecaac..bce63ff 100644
  }
  
 -- 
-2.6.1
-
+2.6.2

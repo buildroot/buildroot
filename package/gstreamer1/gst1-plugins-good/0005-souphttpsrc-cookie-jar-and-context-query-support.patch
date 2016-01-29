@@ -17,7 +17,7 @@ diff --git a/ext/soup/gstsouphttpsrc.c b/ext/soup/gstsouphttpsrc.c
 index 3852e9d..217b168 100644
 --- a/ext/soup/gstsouphttpsrc.c
 +++ b/ext/soup/gstsouphttpsrc.c
-@@ -478,6 +478,7 @@ gst_soup_http_src_init (GstSoupHTTPSrc * src)
+@@ -494,6 +494,7 @@ gst_soup_http_src_init (GstSoupHTTPSrc * src)
    src->loop = NULL;
    src->context = NULL;
    src->session = NULL;
@@ -25,7 +25,7 @@ index 3852e9d..217b168 100644
    src->msg = NULL;
    src->timeout = DEFAULT_TIMEOUT;
    src->log_level = DEFAULT_SOUP_LOG_LEVEL;
-@@ -974,6 +975,9 @@ gst_soup_http_src_session_open (GstSoupHTTPSrc * src)
+@@ -994,6 +995,9 @@ gst_soup_http_src_session_open (GstSoupHTTPSrc * src)
      soup_session_remove_feature_by_type (src->session,
          SOUP_TYPE_CONTENT_DECODER);
  
@@ -35,7 +35,7 @@ index 3852e9d..217b168 100644
    return TRUE;
  }
  
-@@ -1000,6 +1004,10 @@ gst_soup_http_src_session_close (GstSoupHTTPSrc * src)
+@@ -1020,6 +1024,10 @@ gst_soup_http_src_session_close (GstSoupHTTPSrc * src)
      src->session = NULL;
      src->msg = NULL;
    }
@@ -46,7 +46,7 @@ index 3852e9d..217b168 100644
    if (src->loop) {
  #ifdef LIBSOUP_DOES_NOT_STEAL_OUR_CONTEXT
      GSource *idle_source;
-@@ -1645,11 +1653,12 @@ gst_soup_http_src_build_message (GstSoupHTTPSrc * src, const gchar * method)
+@@ -1665,11 +1673,12 @@ gst_soup_http_src_build_message (GstSoupHTTPSrc * src, const gchar * method)
    }
    if (src->cookies) {
      gchar **cookie;
@@ -61,7 +61,7 @@ index 3852e9d..217b168 100644
    }
    src->retry = FALSE;
  
-@@ -2001,6 +2010,12 @@ gst_soup_http_src_query (GstBaseSrc * bsrc, GstQuery * query)
+@@ -2021,6 +2030,12 @@ gst_soup_http_src_query (GstBaseSrc * bsrc, GstQuery * query)
    gboolean ret;
    GstSchedulingFlags flags;
    gint minsize, maxsize, align;
@@ -74,7 +74,7 @@ index 3852e9d..217b168 100644
  
    switch (GST_QUERY_TYPE (query)) {
      case GST_QUERY_URI:
-@@ -2012,6 +2027,27 @@ gst_soup_http_src_query (GstBaseSrc * bsrc, GstQuery * query)
+@@ -2032,6 +2047,27 @@ gst_soup_http_src_query (GstBaseSrc * bsrc, GstQuery * query)
        }
        ret = TRUE;
        break;
