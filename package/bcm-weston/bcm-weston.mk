@@ -21,7 +21,7 @@ define BCM_WESTON_BUILD_WAYLAND
 	$(HOST_MAKE_ENV) \
 		$(MAKE) -C $(@D)/AppLibs/opensource/wayland wayland-scanner -f Makefile.buildroot
 	$(INSTALL) -m 755 -D $(@D)/AppLibs/opensource/wayland/build/wayland-scanner $(HOST_DIR)/usr/bin/wayland-scanner
-	$(INSTALL) -m 0644 -D $(@D)/AppLibs/opensource/wayland/scanner/src/wayland-scanner.pc  $(STAGING_DIR)/usr/lib/pkgconfig/wayland-scanner.pc
+	$(INSTALL) -m 0644 -D $(@D)/AppLibs/opensource/wayland/scanner/src/wayland-scanner.pc $(STAGING_DIR)/usr/lib/pkgconfig/wayland-scanner.pc
 	$(SED) 's:^prefix=.*:prefix=/usr:' \
 		-e 's:^wayland_scanner=.*:wayland_scanner=$(HOST_DIR)/usr/bin/wayland-scanner:' \
 		$(STAGING_DIR)/usr/lib/pkgconfig/wayland-scanner.pc
@@ -31,11 +31,11 @@ define BCM_WESTON_BUILD_WAYLAND
 	$(BCM_WESTON_MAKE_ENV) \
 		$(MAKE) -C $(@D)/AppLibs/opensource/wayland wayland -f Makefile.buildroot \
 			TARGET_NAME=$(GNU_TARGET_NAME) HOST_NAME=$(GNU_HOST_NAME) \
-			STAGING_DIR=$(STAGING_DIR) TARGET_DIR=$(TARGET_DIR);
-	$(SED) 's:^libdir=.*:libdir='\''$(STAGING_DIR)/usr/lib'\'':' $(STAGING_DIR)/usr/lib/libwayland-client.la;
-	$(SED) 's:^libdir=.*:libdir='\''$(STAGING_DIR)/usr/lib'\'':' $(STAGING_DIR)/usr/lib/libwayland-server.la;
-	$(SED) 's:^libdir=.*:libdir='\''$(STAGING_DIR)/usr/lib'\'':' $(STAGING_DIR)/usr/lib/libwayland-cursor.la;
-	$(SED) 's:/usr/lib/libwayland-client.la:$(STAGING_DIR)/usr/lib/libwayland-client.la:' $(STAGING_DIR)/usr/lib/libwayland-cursor.la;
+			STAGING_DIR=$(STAGING_DIR) TARGET_DIR=$(TARGET_DIR)
+	$(SED) 's:^libdir=.*:libdir='\''$(STAGING_DIR)/usr/lib'\'':' $(STAGING_DIR)/usr/lib/libwayland-client.la
+	$(SED) 's:^libdir=.*:libdir='\''$(STAGING_DIR)/usr/lib'\'':' $(STAGING_DIR)/usr/lib/libwayland-server.la
+	$(SED) 's:^libdir=.*:libdir='\''$(STAGING_DIR)/usr/lib'\'':' $(STAGING_DIR)/usr/lib/libwayland-cursor.la
+	$(SED) 's:/usr/lib/libwayland-client.la:$(STAGING_DIR)/usr/lib/libwayland-client.la:' $(STAGING_DIR)/usr/lib/libwayland-cursor.la
 endef
 
 define BCM_WESTON_BUILD_NSC_PROTOCOL
@@ -84,7 +84,7 @@ define BCM_WESTON_BUILD_WESTON
 	$(BCM_WESTON_CONF_OPTS) \
 	$(TARGET_MAKE_ENV) \
 	$(BCM_WESTON_MAKE_ENV) \
-		$(MAKE) -C $(@D)/AppLibs/opensource/weston -f Makefile.buildroot all \
+		$(MAKE) -C $(@D)/AppLibs/opensource/weston -f Makefile.buildroot \
 			TARGET_NAME=$(GNU_TARGET_NAME) HOST_NAME=$(GNU_HOST_NAME) \
 			STAGING_DIR=$(STAGING_DIR) TARGET_DIR=$(TARGET_DIR)
 	mkdir -p $(TARGET_DIR)/usr/share/fonts
