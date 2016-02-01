@@ -10,7 +10,8 @@ WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 WPE_INSTALL_STAGING = YES
 WPE_DEPENDENCIES = host-flex host-bison host-gperf host-ruby host-pkgconf zlib \
 	openssl pcre libgles libegl cairo freetype fontconfig harfbuzz icu libxml2 \
-	libxslt sqlite libsoup jpeg libpng webp libinput libxkbcommon xkeyboard-config
+	libxslt sqlite libsoup jpeg libpng webp libinput libxkbcommon xkeyboard-config \
+	libgcrypt
 
 ifeq ($(BR2_PACKAGE_NINJA),y)
 WPE_DEPENDENCIES += host-ninja
