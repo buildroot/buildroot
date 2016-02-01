@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = c6c73ab9078efbc23ce381365de250468550717d
+WPE_VERSION = 301a849b63d8fb1a80251bf5ad2ca4fb6ae0e956
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -32,8 +32,6 @@ WPE_FLAGS = \
 	-DENABLE_DEVICE_ORIENTATION=ON \
 	-DENABLE_GAMEPAD=ON \
 	-DENABLE_SUBTLE_CRYPTO=ON \
-	-DENABLE_SHADOW_DOM=ON \
-	-DENABLE_FULLSCREEN_API=ON \
 	-DENABLE_NOTIFICATIONS=ON
 
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
