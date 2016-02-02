@@ -54,6 +54,21 @@ config BR2_PACKAGE_CPPSDK_PROFILER
 	  Functionality to handle runtime enabling and disabling of 
 	  profiler information. This is NOT intended for PRODUCTION !!!
 
+config BR2_PACKAGE_CPPSDK_PROXYSTUB
+	bool "proxystub"
+	select BR2_PACKAGE_CPPSDK_GENERICS
+	help
+	  Functionality to allow for easy implementation of marshalling
+	  and unmarshalling of data to pass process boundaries.
+
+config BR2_PACKAGE_CPPSDK_PROCESS
+	bool "process"
+	select BR2_PACKAGE_CPPSDK_GENERICS
+	select BR2_PACKAGE_CPPSDK_PROXYSTUB
+	help
+	  Functionality to start services out of process space.
+          Add the additional package (proxystub/process) to be added for out-of-process building.
+
 config BR2_PACKAGE_CPPSDK_WEBSOCKET
 	bool "websocket"
 	select BR2_PACKAGE_CPPSDK_GENERICS

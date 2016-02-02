@@ -20,8 +20,12 @@ config BR2_PACKAGE_PLUGIN_MINIMIZED
 
 config BR2_PACKAGE_PLUGIN_NXRESOURCECENTER
 	bool "nxresourcecenter"
+	depends on BR2_PACKAGE_BCM_REFSW
 	help
 	  Nexus resource center for bcm platfoms.
+
+comment "nxresource centre depends on package bcm-refsw package."
+	depends on !BR2_PACKAGE_PLUGIN_NXRESOURCECENTER
 
 config BR2_PACKAGE_PLUGIN_FANCONTROL
 	bool "fancontrol"
