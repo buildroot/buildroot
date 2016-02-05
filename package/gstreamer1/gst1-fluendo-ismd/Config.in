@@ -1,0 +1,17 @@
+config BR2_PACKAGE_GST_FLUENDO_ISMD
+	bool "gst-fluendo-ismd"
+	depends on BR2_PACKAGE_INTELCE_SDK
+	help
+		This set of GStreamer elements is made for the Intel CE3100 and CE4100
+		platforms. It provides video decoders, postprocessing and rendering elements
+		as well as audio decoders and rendering elements. This work is based on Intel's
+		existing SDK for those platforms and contains improvements made by FLUENDO S.A.
+
+		Those elements are provided in source code form under the license described in
+		the COPYING file attached to this source package. They are provided as is.
+
+		If you need support or have questions regarding those please contact Fluendo by
+		mail at support@fluendo.com.
+
+comment "gst-fluendo-ismd requires an Intelce SDK"
+	depends on !BR2_PACKAGE_INTELCE_SDK
