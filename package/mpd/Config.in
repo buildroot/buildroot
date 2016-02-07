@@ -200,6 +200,7 @@ config BR2_PACKAGE_MPD_LIBSMBCLIENT
 	depends on BR2_TOOLCHAIN_USES_GLIBC
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_TOOLCHAIN_HAS_NATIVE_RPC
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	select BR2_PACKAGE_SAMBA4
 	help
 	  Enable Samba support.
@@ -234,13 +235,14 @@ config BR2_PACKAGE_MPD_HTTPD_OUTPUT
 
 config BR2_PACKAGE_MPD_JACK2
 	bool "jack2"
-	depends on BR2_ARCH_HAS_ATOMICS
 	depends on !BR2_STATIC_LIBS # jack2
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	select BR2_PACKAGE_JACK2
 	help
 	  Enable jack output support.
 
 comment "jack support needs a toolchain w/ dynamic library"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on BR2_STATIC_LIBS
 
 config BR2_PACKAGE_MPD_OSS
@@ -250,13 +252,14 @@ config BR2_PACKAGE_MPD_OSS
 
 config BR2_PACKAGE_MPD_PULSEAUDIO
 	bool "pulseaudio"
-	depends on BR2_ARCH_HAS_ATOMICS # pulseaudio
 	depends on !BR2_STATIC_LIBS # pulseaudio
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # pulseaudio -> json-c
 	select BR2_PACKAGE_PULSEAUDIO
 	help
 	  Enable pulseaudio output support.
 
 comment "pulseaudio support needs a toolchain w/ dynamic library"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on BR2_STATIC_LIBS
 
 comment "Miscellaneous plugins"
