@@ -721,8 +721,10 @@ graph-depends: graph-depends-requirements
 	@$(INSTALL) -d $(GRAPHS_DIR)
 	@cd "$(CONFIG_DIR)"; \
 	$(TOPDIR)/support/scripts/graph-depends $(BR2_GRAPH_DEPS_OPTS) \
-	|tee $(GRAPHS_DIR)/$(@).dot \
-	|dot $(BR2_GRAPH_DOT_OPTS) -T$(BR_GRAPH_OUT) -o $(GRAPHS_DIR)/$(@).$(BR_GRAPH_OUT)
+		-o $(GRAPHS_DIR)/$(@).dot
+	dot $(BR2_GRAPH_DOT_OPTS) -T$(BR_GRAPH_OUT) \
+		-o $(GRAPHS_DIR)/$(@).$(BR_GRAPH_OUT) \
+		$(GRAPHS_DIR)/$(@).dot
 
 graph-size:
 	$(Q)mkdir -p $(GRAPHS_DIR)
@@ -730,6 +732,10 @@ graph-size:
 		--graph $(GRAPHS_DIR)/graph-size.$(BR_GRAPH_OUT) \
 		--file-size-csv $(GRAPHS_DIR)/file-size-stats.csv \
 		--package-size-csv $(GRAPHS_DIR)/package-size-stats.csv
+
+check-dependencies:
+	@cd "$(CONFIG_DIR)"; \
+	$(TOPDIR)/support/scripts/graph-depends -C
 
 else # ifeq ($(BR2_HAVE_DOT_CONFIG),y)
 

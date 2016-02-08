@@ -38,6 +38,10 @@ max_depth = 0
 transitive = True
 
 parser = argparse.ArgumentParser(description="Graph packages dependencies")
+parser.add_argument("--check-only", "-C", dest="check_only", action="store_true", default=False,
+                    help="Only do the dependency checks (circular deps...)")
+parser.add_argument("--outfile", "-o", metavar="OUT_FILE", dest="outfile",
+                    help="File in which to generate the dot representation")
 parser.add_argument("--package", '-p', metavar="PACKAGE",
                     help="Graph the dependencies of PACKAGE")
 parser.add_argument("--depth", '-d', metavar="DEPTH", dest="depth", type=int, default=0,
@@ -59,6 +63,16 @@ parser.add_argument("--transitive", dest="transitive", action='store_true',
 parser.add_argument("--no-transitive", dest="transitive", action='store_false',
                     help="Draw (do not draw) transitive dependencies")
 args = parser.parse_args()
+
+check_only = args.check_only
+
+if args.outfile is None:
+    outfile = sys.stdout
+else:
+    if check_only:
+        sys.stderr.write("don't specify outfile and check-only at the same time\n")
+        sys.exit(1)
+    outfile = open(args.outfile, "wb")
 
 if args.package is None:
     mode = MODE_FULL
@@ -306,6 +320,32 @@ def remove_transitive_deps(pkg,deps):
 def remove_mandatory_deps(pkg,deps):
     return [p for p in deps[pkg] if p not in ['toolchain', 'skeleton']]
 
+# This function will check that there is no loop in the dependency chain
+# As a side effect, it builds up the dependency cache.
+def check_circular_deps(deps):
+    def recurse(pkg):
+        if not pkg in list(deps.keys()):
+            return
+        if pkg in not_loop:
+            return
+        not_loop.append(pkg)
+        chain.append(pkg)
+        for p in deps[pkg]:
+            if p in chain:
+                sys.stderr.write("\nRecursion detected for  : %s\n" % (p))
+                while True:
+                    _p = chain.pop()
+                    sys.stderr.write("which is a dependency of: %s\n" % (_p))
+                    if p == _p:
+                        sys.exit(1)
+            recurse(p)
+        chain.pop()
+
+    not_loop = []
+    chain = []
+    for pkg in list(deps.keys()):
+        recurse(pkg)
+
 # This functions trims down the dependency list of all packages.
 # It applies in sequence all the dependency-elimination methods.
 def remove_extra_deps(deps):
@@ -316,6 +356,10 @@ def remove_extra_deps(deps):
         if not transitive or pkg == 'all':
             deps[pkg] = remove_transitive_deps(pkg,deps)
     return deps
+
+check_circular_deps(dict_deps)
+if check_only:
+    sys.exit(0)
 
 dict_deps = remove_extra_deps(dict_deps)
 dict_version = get_version([pkg for pkg in allpkgs
@@ -339,10 +383,10 @@ def print_attrs(pkg):
             color = target_colour
     version = dict_version.get(pkg)
     if version == "virtual":
-        print("%s [label = <<I>%s</I>>]" % (name, label))
+        outfile.write("%s [label = <<I>%s</I>>]\n" % (name, label))
     else:
-        print("%s [label = \"%s\"]" % (name, label))
-    print("%s [color=%s,style=filled]" % (name, color))
+        outfile.write("%s [label = \"%s\"]\n" % (name, label))
+    outfile.write("%s [color=%s,style=filled]\n" % (name, color))
 
 # Print the dependency graph of a package
 def print_pkg_deps(depth, pkg):
@@ -369,13 +413,13 @@ def print_pkg_deps(depth, pkg):
                     add = False
                     break
             if add:
-                print("%s -> %s" % (pkg_node_name(pkg), pkg_node_name(d)))
+                outfile.write("%s -> %s\n" % (pkg_node_name(pkg), pkg_node_name(d)))
                 print_pkg_deps(depth+1, d)
 
 # Start printing the graph data
-print("digraph G {")
+outfile.write("digraph G {\n")
 
 done_deps = []
 print_pkg_deps(0, rootpkg)
 
-print("}")
+outfile.write("}\n")
