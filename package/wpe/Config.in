@@ -55,6 +55,26 @@ config BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V2
 
 endchoice
 
+choice
+  bool "Playready backend"
+  default BR2_PACKAGE_WPE_USE_PLAYREADY
+  help
+    Choose the Playready backend.
+
+config BR2_PACKAGE_WPE_USE_PLAYREADY
+  bool "playready SDK"
+  depends on BR2_PACKAGE_PLAYREADY
+  help
+    Use the Microsoft Playready SDK
+
+config BR2_PACKAGE_WPE_USE_DXDRM
+  bool "dxdrm"
+  depends on BR2_PACKAGE_DXDRM
+  help
+    Use the Discretix DRM SDK
+
+endchoice
+
 config BR2_PACKAGE_WPE_USE_GSTREAMER_GL
 	bool "gstreamer-gl"
 	depends on BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_GL && BR2_PACKAGE_GSTREAMER1_GIT
