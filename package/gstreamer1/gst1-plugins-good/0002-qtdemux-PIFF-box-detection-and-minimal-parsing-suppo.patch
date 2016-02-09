@@ -1,7 +1,7 @@
-From 0c17f113fa6997d864174d6f8cd5a1fb5460ffca Mon Sep 17 00:00:00 2001
+From 84f1a31112020cfb6dab2879edfa684aabf3b9e7 Mon Sep 17 00:00:00 2001
 From: Philippe Normand <philn@igalia.com>
 Date: Fri, 10 Jul 2015 09:44:15 +0200
-Subject: [PATCH] qtdemux: PIFF box detection and minimal parsing support
+Subject: [PATCH] qtdemux: PIFF box detection and parsing support
 
 The PIFF data is stored in a custom UUID box which is parsed and the
 crypto_info of the element is updated accordingly. This allows
@@ -9,14 +9,14 @@ downstream decryptors to process and decrypt the protected content.
 
 https://bugzilla.gnome.org/show_bug.cgi?id=753614
 ---
- gst/isomp4/qtdemux.c | 173 +++++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 167 insertions(+), 6 deletions(-)
+ gst/isomp4/qtdemux.c | 213 +++++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 207 insertions(+), 6 deletions(-)
 
 diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
-index 31aba9d..54f46e4 100644
+index de5f5d5..ec0ec16 100644
 --- a/gst/isomp4/qtdemux.c
 +++ b/gst/isomp4/qtdemux.c
-@@ -527,8 +527,13 @@ static void qtdemux_do_allocation (GstQTDemux * qtdemux,
+@@ -530,8 +530,13 @@ static void qtdemux_do_allocation (GstQTDemux * qtdemux,
  static gboolean qtdemux_pull_mfro_mfra (GstQTDemux * qtdemux);
  static void check_update_duration (GstQTDemux * qtdemux, GstClockTime duration);
  
@@ -30,7 +30,7 @@ index 31aba9d..54f46e4 100644
  
  static void
  gst_qtdemux_class_init (GstQTDemuxClass * klass)
-@@ -2430,6 +2435,143 @@ qtdemux_handle_xmp_taglist (GstQTDemux * qtdemux, GstTagList * taglist,
+@@ -2440,6 +2445,183 @@ qtdemux_handle_xmp_taglist (GstQTDemux * qtdemux, GstTagList * taglist,
  }
  
  static void
@@ -46,6 +46,7 @@ index 31aba9d..54f46e4 100644
 +  GstStructure *structure;
 +  QtDemuxCencSampleSetInfo *ss_info = NULL;
 +  const gchar *system_id;
++  gboolean uses_sub_sample_encryption = FALSE;
 +
 +  if (!qtdemux->streams) {
 +    return;
@@ -55,7 +56,8 @@ index 31aba9d..54f46e4 100644
 +
 +  structure = gst_caps_get_structure (stream->caps, 0);
 +  if (!gst_structure_has_name (structure, "application/x-cenc")) {
-+    GST_WARNING_OBJECT (qtdemux, "Attempting PIFF box parsing on an unencrypted stream.");
++    GST_WARNING_OBJECT (qtdemux,
++        "Attempting PIFF box parsing on an unencrypted stream.");
 +    return;
 +  }
 +
@@ -140,7 +142,8 @@ index 31aba9d..54f46e4 100644
 +    GST_DEBUG_OBJECT (qtdemux, "default sample properties: "
 +        "is_encrypted=%u, iv_size=%u", is_encrypted, iv_size);
 +    gst_buffer_unref (kid_buf);
-+  }
++  } else if (flags & 0x000002)
++    uses_sub_sample_encryption = TRUE;
 +
 +  if (!gst_byte_reader_get_uint32_be (&br, &qtdemux->cenc_aux_sample_count)) {
 +    GST_ERROR_OBJECT (qtdemux, "Error getting box's sample count field");
@@ -153,7 +156,8 @@ index 31aba9d..54f46e4 100644
 +
 +  for (i = 0; i < qtdemux->cenc_aux_sample_count; ++i) {
 +    GstStructure *properties;
-+    GstBuffer *box;
++    guint8 *data;
++    GstBuffer *buf;
 +
 +    properties = qtdemux_get_cenc_sample_properties (qtdemux, stream, i);
 +    if (properties == NULL) {
@@ -161,10 +165,46 @@ index 31aba9d..54f46e4 100644
 +      return;
 +    }
 +
-+    box = gst_buffer_new_wrapped (g_memdup (buffer, length), length);
-+    gst_structure_set (properties, "box", GST_TYPE_BUFFER, box,
-+        "sample-index", G_TYPE_UINT, i, NULL);
-+    gst_buffer_unref (box);
++    if (!gst_byte_reader_dup_data (&br, iv_size, &data)) {
++      GST_ERROR_OBJECT (qtdemux, "IV data not present for sample %u", i);
++      gst_structure_free (properties);
++      return;
++    }
++    buf = gst_buffer_new_wrapped (data, iv_size);
++    if (!buf) {
++      gst_structure_free (properties);
++      return;
++    }
++    gst_structure_set (properties, "iv", GST_TYPE_BUFFER, buf, NULL);
++
++    if (uses_sub_sample_encryption) {
++      guint16 n_subsamples;
++
++      if (!gst_byte_reader_get_uint16_be (&br, &n_subsamples)
++          || !(n_subsamples > 0)) {
++        GST_ERROR_OBJECT (qtdemux,
++            "failed to get subsample count for sample %u", i);
++        gst_structure_free (properties);
++        return;
++      }
++      GST_LOG_OBJECT (qtdemux, "subsample count: %u", n_subsamples);
++      if (!gst_byte_reader_dup_data (&br, n_subsamples * 6, &data)) {
++        GST_ERROR_OBJECT (qtdemux, "failed to get subsample data for sample %u",
++            i);
++        gst_structure_free (properties);
++        return;
++      }
++      buf = gst_buffer_new_wrapped (data, n_subsamples * 6);
++      if (!buf) {
++        gst_structure_free (properties);
++        return;
++      }
++      gst_structure_set (properties,
++          "subsample_count", G_TYPE_UINT, n_subsamples,
++          "subsamples", GST_TYPE_BUFFER, buf, NULL);
++    } else {
++      gst_structure_set (properties, "subsample_count", G_TYPE_UINT, 0, NULL);
++    }
 +
 +    g_ptr_array_add (ss_info->crypto_info, properties);
 +  }
@@ -174,7 +214,7 @@ index 31aba9d..54f46e4 100644
  qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
  {
    static const guint8 xmp_uuid[] = { 0xBE, 0x7A, 0xCF, 0xCB,
-@@ -2441,6 +2583,12 @@ qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
+@@ -2451,6 +2633,12 @@ qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
      0xd0, 0x8a, 0x4f, 0x18, 0x10, 0xf3, 0x4a, 0x82,
      0xb6, 0xc8, 0x32, 0xd8, 0xab, 0xa1, 0x83, 0xd3
    };
@@ -187,7 +227,7 @@ index 31aba9d..54f46e4 100644
    guint offset;
  
    /* counts as header data */
-@@ -2479,6 +2627,8 @@ qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
+@@ -2489,6 +2677,8 @@ qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
      GST_ELEMENT_ERROR (qtdemux, STREAM, DECRYPT,
          (_("Cannot play stream because it is encrypted with PlayReady DRM.")),
          (NULL));
@@ -196,7 +236,7 @@ index 31aba9d..54f46e4 100644
    } else {
      GST_DEBUG_OBJECT (qtdemux, "Ignoring unknown uuid: %08x-%08x-%08x-%08x",
          GST_READ_UINT32_LE (buffer + offset),
-@@ -3363,7 +3513,8 @@ static gboolean
+@@ -3375,7 +3565,8 @@ static gboolean
  qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
      guint64 moof_offset, QtDemuxStream * stream)
  {
@@ -206,7 +246,7 @@ index 31aba9d..54f46e4 100644
    GstByteReader mfhd_data, trun_data, tfhd_data, tfdt_data;
    GNode *saiz_node, *saio_node, *pssh_node;
    GstByteReader saiz_data, saio_data;
-@@ -3508,6 +3659,14 @@ qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
+@@ -3524,6 +3715,14 @@ qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
        trun_node = qtdemux_tree_get_sibling_by_type_full (trun_node, FOURCC_trun,
            &trun_data);
      }
@@ -221,7 +261,7 @@ index 31aba9d..54f46e4 100644
      /* if no new base_offset provided for next traf,
       * base is end of current traf */
      base_offset = running_offset;
-@@ -6895,11 +7054,13 @@ gst_qtdemux_configure_protected_caps (GstQTDemux * qtdemux,
+@@ -6935,11 +7134,13 @@ gst_qtdemux_configure_protected_caps (GstQTDemux * qtdemux,
    }
  
    s = gst_caps_get_structure (stream->caps, 0);
@@ -241,4 +281,5 @@ index 31aba9d..54f46e4 100644
  }
  
 -- 
-2.6.2
+2.7.0
+
