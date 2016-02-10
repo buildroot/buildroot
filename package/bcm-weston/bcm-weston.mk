@@ -51,19 +51,6 @@ define BCM_WESTON_BUILD_NXPL_WAYLAND
 		$(MAKE) -C $(@D)/AppLibs/broadcom/weston/nxpl-wayland -f Makefile.buildroot
 	$(INSTALL) -D $(@D)/AppLibs/broadcom/weston/nxpl-wayland/libnxpl-weston.so $(STAGING_DIR)/usr/lib/
 	$(INSTALL) -D $(@D)/AppLibs/broadcom/weston/nxpl-wayland/libnxpl-weston.so $(TARGET_DIR)/usr/lib/
-	$(TARGET_CONFIGURE_OPTS) \
-	$(BCM_WESTON_CONF_OPTS) \
-	$(TARGET_MAKE_ENV) \
-	$(BCM_WESTON_MAKE_ENV) \
-		$(MAKE) -C $(@D)/AppLibs/broadcom/weston/nxpl-wayland -f Makefile.buildroot clean
-	$(TARGET_CONFIGURE_OPTS) \
-	$(BCM_WESTON_CONF_OPTS) \
-	$(TARGET_MAKE_ENV) \
-	$(BCM_WESTON_MAKE_ENV) \
-		$(MAKE) -C $(@D)/AppLibs/broadcom/weston/nxpl-wayland -f Makefile.buildroot \
-			NXPL_USE_NXCLIENT="y"
-	$(INSTALL) -D $(@D)/AppLibs/broadcom/weston/nxpl-wayland/libnxpl-nxclient.so $(STAGING_DIR)/usr/lib/
-	$(INSTALL) -D $(@D)/AppLibs/broadcom/weston/nxpl-wayland/libnxpl-nxclient.so $(TARGET_DIR)/usr/lib/
 endef
 
 define BCM_WESTON_BUILD_WAYLAND_EGL
@@ -101,15 +88,6 @@ define BCM_WESTON_BUILD_NSC_BACKEND
 			STAGING_DIR=$(STAGING_DIR) TARGET_DIR=$(TARGET_DIR)
 endef
 
-define BCM_WESTON_BUILD_WAYLAND_NXCLIENT
-	$(TARGET_CONFIGURE_OPTS) \
-	$(BCM_WESTON_CONF_OPTS) \
-	$(TARGET_MAKE_ENV) \
-	$(BCM_WESTON_MAKE_ENV) \
-		$(MAKE) -C $(@D)/AppLibs/broadcom/weston/wayland-nxclient -f Makefile.buildroot \
-			STAGING_DIR=$(STAGING_DIR) TARGET_DIR=$(TARGET_DIR)
-endef
-
 define BCM_WESTON_BUILD_CMDS
 	$(BCM_WESTON_BUILD_WAYLAND)
 	$(BCM_WESTON_BUILD_NSC_PROTOCOL)
@@ -117,7 +95,11 @@ define BCM_WESTON_BUILD_CMDS
 	$(BCM_WESTON_BUILD_WAYLAND_EGL)
 	$(BCM_WESTON_BUILD_WESTON)
 	$(BCM_WESTON_BUILD_NSC_BACKEND)
-	$(BCM_WESTON_BUILD_WAYLAND_NXCLIENT)
+endef
+
+define BCM_WESTON_INSTALL_STAGING_CMDS
+	$(INSTALL) -m 644 package/bcm-weston/egl.pc $(STAGING_DIR)/usr/lib/pkgconfig/egl.pc
+	$(INSTALL) -m 644 package/bcm-weston/glesv2.pc $(STAGING_DIR)/usr/lib/pkgconfig/
 endef
 
 define BCM_WESTON_INSTALL_TARGET_CMDS
