@@ -14,11 +14,11 @@ DXDRM_INSTALL_STAGING = YES
 
 DXDRM_DEPENDENCIES += libcurl
 
-ifeq ($(BR2_PACKAGE_DXDRM_INTERNAL),y)
-DXDRM_LOCATOR = internal
-else
-DXDRM_LOCATOR = external
+ifeq ($(BR2_PACKAGE_DXDRM_EXTERNAL),y)
 DXDRM_DEPENDENCIES += libprovision
+DXDRM_LOCATOR = external
+else
+DXDRM_LOCATOR = internal
 endif
 
 define DXDRM_INSTALL_STAGING_CMDS
@@ -28,7 +28,6 @@ define DXDRM_INSTALL_STAGING_CMDS
 	$(INSTALL) -m 644 $(@D)/$(DXDRM_LOCATOR)/include/*.h $(STAGING_DIR)/usr/include/dxdrm
 	$(INSTALL) -m 644 $(@D)/external/dxdrm.pc $(STAGING_DIR)/usr/lib/pkgconfig
 endef
-
 
 define DXDRM_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 755 $(@D)/$(DXDRM_LOCATOR)/$(call qstrip,$(BR2_ARCH))/release/libDxDrm.so $(TARGET_DIR)/usr/lib/libDxDrm.so

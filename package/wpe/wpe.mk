@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = 68e855af03d0f74669364c324543d75e093d6625
+WPE_VERSION = ad5dc2abdac4f0c2f9dc0a2400f2975fa9922042
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -120,9 +120,10 @@ WPE_FLAGS += -DENABLE_PLAYREADY=ON
 else ifeq ($(BR2_PACKAGE_WPE_USE_DXDRM),y)
 WPE_DEPENDENCIES += dxdrm
 WPE_FLAGS += -DENABLE_DXDRM=ON
-ifeq ($(BR2_PACKAGE_DXDRM_EXTERNAL),y)
-WPE_FLAGS += -DENABLE_PROVISIONING=ON
 endif
+
+ifeq ($(BR2_PACKAGE_LIBPROVISION),y)
+WPE_FLAGS += -DENABLE_PROVISIONING=ON
 endif
 
 ifeq ($(BR2_PACKAGE_OPENWEBRTC),y)
