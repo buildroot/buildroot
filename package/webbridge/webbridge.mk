@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WEBBRIDGE_VERSION = 92ca7b8682b83e02941394b05a670fef92a9f08b
+WEBBRIDGE_VERSION = e2d210f3ec1869210292758448d8c8c107b814e8
 WEBBRIDGE_SITE_METHOD = git
 WEBBRIDGE_SITE = git@github.com:Metrological/webbridge.git
 WEBBRIDGE_INSTALL_STAGING = YES
@@ -38,7 +38,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_PLUGIN_PROVISIONING),y)
 WEBBRIDGE_CONF_OPTS += -DWEBBRIDGE_PLUGIN_PROVISIONING=ON
-WEBBRIDGE_DEPENDENCIES += dxdrm
+WEBBRIDGE_DEPENDENCIES += libprovision
 endif
 
 ifeq ($(BR2_PACKAGE_PLUGIN_WEBPROXY),y)

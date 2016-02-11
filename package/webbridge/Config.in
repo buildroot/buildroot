@@ -69,14 +69,14 @@ config BR2_PACKAGE_PLUGIN_DELAYEDRESPONSE
 
 config BR2_PACKAGE_PLUGIN_PROVISIONING
 	bool "provisioning"
-	depends on BR2_PACKAGE_DXDRM_EXTERNAL
+	depends on BR2_PACKAGE_LIBPROVISION
 	help
 	  A component to allow external provisioning of devices with the 
 	  proper credentials. Currently focused on provisioning from the
 	  Metrological Back Office.
 
-comment "provisioning needs the package DxDRM in external mode."
-	depends on !BR2_PACKAGE_DXDRM_EXTERNAL
+comment "provisioning needs the package libprovision in external mode."
+	depends on !BR2_PACKAGE_LIBPROVISION
 
 config BR2_PACKAGE_PLUGIN_WEBPROXY
 	bool "webproxy"
