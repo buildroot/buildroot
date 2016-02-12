@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = ad5dc2abdac4f0c2f9dc0a2400f2975fa9922042
+WPE_VERSION = 6a12a4a8e623f26ff5bfa1135212cc1c56dc357d
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -44,7 +44,12 @@ else
 WPE_FLAGS += -DUSE_WPE_BACKEND_BCM_RPI=ON
 endif
 else ifeq ($(BR2_PACKAGE_BCM_REFSW),y)
+ifeq ($(BR2_PACKAGE_BCM_WESTON),y)
+WPE_DEPENDENCIES += bcm-weston
+WPE_FLAGS += -DUSE_WPE_BACKEND_WAYLAND=ON -DUSE_WPE_BUFFER_MANAGEMENT_BCM_NEXUS=ON
+else
 WPE_FLAGS += -DUSE_WPE_BACKEND_BCM_NEXUS=ON
+endif
 else
 ifeq ($(BR2_PACKAGE_WAYLAND),y)
 WPE_DEPENDENCIES += wayland
