@@ -1,0 +1,28 @@
+From 406f32a9468c837a4d71f988de10dc2198a8edc9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Sebastian=20Dr=C3=B6ge?= <sebastian@centricular.com>
+Date: Fri, 12 Dec 2014 09:51:05 +0100
+Subject: video-converter: Fix compiler warning because of missing prototype of
+ non-static function
+
+video-converter.c:838:1: error: no previous prototype for function
+      '_custom_video_orc_matrix8' [-Werror,-Wmissing-prototypes]
+
+diff --git a/gst-libs/gst/video/video-converter.c b/gst-libs/gst/video/video-converter.c
+index c49c265..4d05852 100644
+--- a/gst-libs/gst/video/video-converter.c
++++ b/gst-libs/gst/video/video-converter.c
+@@ -374,6 +374,11 @@ gst_line_cache_alloc_line (GstLineCache * cache, gint idx)
+   return res;
+ }
+ 
++/* Custom backup functions for ORC */
++void _custom_video_orc_matrix8 (guint8 * ORC_RESTRICT d1,
++    const guint8 * ORC_RESTRICT s1, orc_int64 p1, orc_int64 p2, orc_int64 p3,
++    orc_int64 p4, int n);
++
+ static void video_converter_generic (GstVideoConverter * convert,
+     const GstVideoFrame * src, GstVideoFrame * dest);
+ static gboolean video_converter_lookup_fastpath (GstVideoConverter * convert);
+-- 
+cgit v0.10.2
+
