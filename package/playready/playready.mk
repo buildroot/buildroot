@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PLAYREADY_VERSION = 4bc0680e4a7a4f08a8d94d85c01ffbb9f56411ce
+PLAYREADY_VERSION = 996b20cdaa012fde09404849141bc8e27185c461
 PLAYREADY_SITE = git@github.com:Metrological/playready.git
 PLAYREADY_SITE_METHOD = git
 PLAYREADY_LICENSE = PROPRIETARY
@@ -16,6 +16,11 @@ PLAYREADY_SUBDIR = src
 PLAYREADY_CONF_OPTS = \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DCMAKE_C_FLAGS="-std=c99 -D_GNU_SOURCE"
+
+ifeq ($(BR2_PACKAGE_LIBPROVISION),y)
+PLAYREADY_CONF_OPTS += \
+	-DPLAYREADY_USE_PROVISION=ON
+endif
 
 define PLAYREADY_INSTALL_STAGING_PC
 	$(INSTALL) -D package/playready/playready.pc \
