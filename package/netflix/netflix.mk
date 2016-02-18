@@ -109,6 +109,7 @@ define NETFLIX_INSTALL_STAGING_CMDS
 	$(INSTALL) -D package/netflix/netflix.pc $(STAGING_DIR)/usr/lib/pkgconfig/netflix.pc
 	mkdir -p $(STAGING_DIR)/usr/include/netflix
 	cp -Rpf $(@D)/release/include/* $(STAGING_DIR)/usr/include/netflix/
+	cp -Rpf $(@D)/netflix/include/nrdbase/config.h $(STAGING_DIR)/usr/include/netflix/nrdbase/
 	mkdir -p $(STAGING_DIR)/usr/include/netflix
 	cp -Rpf $(@D)/netflix/src/platform/gibbon/*.h $(STAGING_DIR)/usr/include/netflix
 	cp -Rpf $(@D)/netflix/src/platform/gibbon/bridge/*.h $(STAGING_DIR)/usr/include/netflix
