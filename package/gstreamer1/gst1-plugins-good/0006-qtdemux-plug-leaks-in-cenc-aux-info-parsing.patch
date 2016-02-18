@@ -1,0 +1,32 @@
+From ee052da64d56083e4354246e5382da9635341fba Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Thu, 18 Feb 2016 18:33:13 +0100
+Subject: [PATCH] qtdemux: plug leaks in cenc aux info parsing
+
+---
+ gst/isomp4/qtdemux.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index 9d52359..5800e2f 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -3547,6 +3547,7 @@ qtdemux_parse_cenc_aux_info (GstQTDemux * qtdemux, QtDemuxStream * stream,
+     }
+     buf = gst_buffer_new_wrapped (data, iv_size);
+     gst_structure_set (properties, "iv", GST_TYPE_BUFFER, buf, NULL);
++    gst_buffer_unref (buf);
+     size = info_sizes[i];
+     if (size > iv_size) {
+       if (!gst_byte_reader_get_uint16_be (br, &n_subsamples)
+@@ -3571,6 +3572,7 @@ qtdemux_parse_cenc_aux_info (GstQTDemux * qtdemux, QtDemuxStream * stream,
+       gst_structure_set (properties,
+           "subsample_count", G_TYPE_UINT, n_subsamples,
+           "subsamples", GST_TYPE_BUFFER, buf, NULL);
++      gst_buffer_unref (buf);
+     } else {
+       gst_structure_set (properties, "subsample_count", G_TYPE_UINT, 0, NULL);
+     }
+-- 
+2.7.0
+
