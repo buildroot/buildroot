@@ -6,6 +6,11 @@ start() {
 	echo -n "Starting Greenpeak: "
 	modprobe -q greenpeak_GP501_drv
 	MAJOR=`awk '$2=="GP501" {print $1}' /proc/devices`
+	if [ "x$MAJOR" = "x" ];
+	then
+		echo "FAILED"
+		exit
+	fi
 	mknod /dev/gpK5 c $MAJOR 0
 	if [ -e "$ZRC" ];
 	then
