@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/netflix
+
+Name: netflix
+Description: Netflix
+Requires:
+Version: 4.2.2
+Libs: -L${libdir} -lnetflix -lJavaScriptCore
+Cflags: -I${includedir}

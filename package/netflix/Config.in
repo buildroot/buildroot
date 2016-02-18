@@ -13,3 +13,29 @@ config BR2_PACKAGE_NETFLIX
 	select BR2_PACKAGE_GRAPHITE2
 	help
 	  Netflix
+
+if BR2_PACKAGE_NETFLIX
+
+menu "Extra options"
+
+choice
+	bool "Application type"
+	default BR2_PACKAGE_NETFLIX_APP
+	help
+	  Choose application type.
+
+config BR2_PACKAGE_NETFLIX_APP
+	bool "executable"
+	help
+	  Create Netflix standalone app.
+
+config BR2_PACKAGE_NETFLIX_LIB
+	bool "library"
+	help
+	  Create Netflix library.
+
+endchoice
+
+endmenu
+
+endif
