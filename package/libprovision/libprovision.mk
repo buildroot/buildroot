@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBPROVISION_VERSION = 3b68f177bf8ec51b3c36ba1e7e160a349ede328d
+LIBPROVISION_VERSION = 7d79b319b3c02d906526e295b46e7139593e8cf9
 LIBPROVISION_SITE_METHOD = git
 LIBPROVISION_SITE = git@github.com:Metrological/libprovision.git
 LIBPROVISION_LICENSE = PROPRIETARY
@@ -13,11 +13,22 @@ LIBPROVISION_INSTALL_STAGING = YES
 
 LIBPROVISION_DEPENDENCIES = openssl cppsdk
 
-define LIBPROVISION_INSTALL_STAGING_CMDS
-	$(INSTALL) -m 755 $(@D)/$(call qstrip,$(BR2_ARCH))/libprovision.so $(STAGING_DIR)/usr/lib/libprovision.so
+ifeq ($(BR2_PACKAGE_DXDRM),y)
+define LIBPROVISIONPROXY_INSTALL_STAGING
 	$(INSTALL) -m 755 $(@D)/$(call qstrip,$(BR2_ARCH))/libprovisionproxy.so $(STAGING_DIR)/usr/lib/libprovisionproxy.so
-	$(INSTALL) -d -m 755 $(STAGING_DIR)/usr/include/rpc
-	$(INSTALL) -m 644 $(@D)/include/rpc/*.h $(STAGING_DIR)/usr/include/rpc
+endef
+define LIBPROVISIONPROXY_INSTALL_TARGET
+	$(INSTALL) -m 755 $(@D)/$(call qstrip,$(BR2_ARCH))/libprovisionproxy.so $(TARGET_DIR)/usr/lib/libprovisionproxy.so
+endef
+else
+define LIBPROVISIONPROXY_INSTALL_STAGING
+	$(INSTALL) -m 644 $(@D)/$(call qstrip,$(BR2_ARCH))/libprovisionproxy.a $(STAGING_DIR)/usr/lib/libprovisionproxy.a
+endef
+endif
+
+define LIBPROVISION_INSTALL_STAGING_CMDS
+	$(LIBPROVISIONPROXY_INSTALL_STAGING)
+	$(INSTALL) -m 755 $(@D)/$(call qstrip,$(BR2_ARCH))/libprovision.so $(STAGING_DIR)/usr/lib/libprovision.so
 	$(INSTALL) -d -m 755 $(STAGING_DIR)/usr/include/provision
 	$(INSTALL) -m 644 $(@D)/include/provision/*.h $(STAGING_DIR)/usr/include/provision
 	$(INSTALL) -m 644 $(@D)/provision.pc $(STAGING_DIR)/usr/lib/pkgconfig
@@ -25,7 +36,7 @@ endef
 
 define LIBPROVISION_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 755 $(@D)/$(call qstrip,$(BR2_ARCH))/libprovision.so $(TARGET_DIR)/usr/lib/libprovision.so
-	$(INSTALL) -m 755 $(@D)/$(call qstrip,$(BR2_ARCH))/libprovisionproxy.so $(TARGET_DIR)/usr/lib/libprovisionproxy.so
+	$(LIBPROVISIONPROXY_INSTALL_TARGET)
 endef
 
 $(eval $(generic-package))
