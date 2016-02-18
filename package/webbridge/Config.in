@@ -38,15 +38,6 @@ config BR2_PACKAGE_PLUGIN_FANCONTROL
 comment "fancontrol needs the package cppsdk/devices."
 	depends on !BR2_PACKAGE_CPPSDK_DEVICES
 
-config BR2_PACKAGE_PLUGIN_NETFLIX
-	bool "netflix"
-	help
-	  A wrapper around the netflix app to start it as a
-	  webbridge plugin.
-
-comment "netflix is dependent on ......"
-	depends on !BR2_PACKAGE_CPPSDK_DEVICES
-
 config BR2_PACKAGE_PLUGIN_TRACECONTROL
 	bool "tracecontrol"
 	help
@@ -151,6 +142,16 @@ config BR2_PACKAGE_PLUGIN_BROWSER
 	depends on BR2_PACKAGE_QT5WEBKIT
 	help
 	  A plugin that has browser functionality (QtWebKit)
+
+config BR2_PACKAGE_PLUGIN_NETFLIX
+	bool "netflix"
+	depends on BR2_PACKAGE_NETFLIX_LIB
+	help
+	  A wrapper around the netflix app to start it as a
+	  webbridge plugin.
+
+comment "netflix is dependent on the netflix package compiled as library"
+	depends on !BR2_PACKAGE_NETFLIX_LIB
 
 config BR2_PACKAGE_PLUGIN_WEBKITBROWSER 
 	bool "webkitbrowser"
