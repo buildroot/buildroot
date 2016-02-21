@@ -47,6 +47,7 @@ config BR2_PACKAGE_PLUGIN_DICTIONARY
 
 config BR2_PACKAGE_PLUGIN_BACKOFFICE
 	bool "backofffice"
+	select BR2_PACKAGE_CPPSDK_PROFILER
 	help
 	  A plugin that acts as a gateway between the webbridge and a back
           office system living in the cloud.
@@ -73,7 +74,7 @@ config BR2_PACKAGE_PLUGIN_REMOTECONTROL
 	  A remote control implementation that translates keys coming in from a 
 	  different source into the linux key system. 
 
-	  Current implementations supprts:
+	  Current implementations supports:
 	  - GreeenPeak RF4CE chip (510) with RF4CE remotes.
 
 comment "remotecontrol requires the GreenPeak GP501 or GP711 to be selected and userland lib to be build."
