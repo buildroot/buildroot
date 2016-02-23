@@ -3,7 +3,7 @@
 start() {
 	export GST_GL_WINDOW=dummy
 	echo -n "Starting webbridge: "
-	start-stop-daemon -S -q -b -m -p /var/run/webbridge.pid --exec /usr/bin/webbridge </dev/null >/dev/null 2>&1
+	start-stop-daemon -S -q -b -m -p /var/run/webbridge.pid --exec /usr/bin/webbridge -- -b </dev/null >/dev/null 2>&1
 	[ $? == 0 ] && echo "OK" || echo "FAIL"
 }
 stop() {
