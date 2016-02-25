@@ -1,0 +1,26 @@
+################################################################################
+#
+# intelce-config_database
+#
+################################################################################
+INTELCE_CONFIG_DATABASE_VERSION = ${INTELCE_SDK_VERSION}
+INTELCE_CONFIG_DATABASE_SITE = ${INTELCE_SDK_DIR}/config_database
+INTELCE_CONFIG_DATABASE_SITE_METHOD = local
+INTELCE_CONFIG_DATABASE_LICENSE = PROPRIETARY
+INTELCE_CONFIG_DATABASE_REDISTRIBUTE = NO
+INTELCE_CONFIG_DATABASE_DEPENDENCIES = intelce-sdk
+INTELCE_CONFIG_DATABASE_INSTALL_STAGING = YES
+
+define INTELCE_CONFIG_DATABASE_BUILD_CMDS
+    $(INTELCE_SDK_MAKE_ENV) $(MAKE) ${INTELCE_SDK_MAKE_OPTS} -C $(@D) all
+endef
+
+define INTELCE_CONFIG_DATABASE_INSTALL_STAGING_CMDS
+    $(INTELCE_SDK_MAKE_ENV) $(MAKE) ${INTELCE_SDK_MAKE_OPTS} -C $(@D) install_dev
+endef
+
+define INTELCE_CONFIG_DATABASE_INSTALL_TARGET_CMDS
+    $(INTELCE_SDK_MAKE_ENV) $(MAKE) ${INTELCE_SDK_MAKE_OPTS} -C $(@D) install_dev
+endef
+
+$(eval $(generic-package))

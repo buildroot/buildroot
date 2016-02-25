@@ -1,0 +1,8 @@
+config BR2_PACKAGE_INTELCE_THERMAL
+	bool "thermal"
+	default n
+	depends on BR2_PACKAGE_INTELCE_SDK
+	select BR2_PACKAGE_INTELCE_OSAL
+	select BR2_PACKAGE_INTELCE_PAL
+	help
+	  None

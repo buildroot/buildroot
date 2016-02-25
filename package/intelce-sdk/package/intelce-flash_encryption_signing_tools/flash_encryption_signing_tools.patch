@@ -1,0 +1,87 @@
+diff -rupN flash_encryption_signing_tools-36.0.14495.347773/BootBlockVerifier/Makefile b/flash_encryption_signing_tools-36.0.14495.347773/BootBlockVerifier/Makefile
+--- flash_encryption_signing_tools-36.0.14495.347773/BootBlockVerifier/Makefile	2013-03-14 00:18:22.000000000 +0100
++++ flash_encryption_signing_tools-36.0.14495.347773/BootBlockVerifier/Makefile	2016-01-12 04:09:34.291470000 +0100
+@@ -35,7 +35,7 @@ endif
+ 
+ CFLAGS+= -DVER="\"$(VER)\""
+ CFLAGS+= -DVER1=$(VER1) -DVER2=$(VER2) -DVER3=$(VER3) -DVER4=$(VER4)
+-LDFLAGS+= -ldl $(BUILD_DEST)/lib/libcrypto.a
++LDFLAGS+= -ldl $(BUILD_DEST)/usr/lib/libcrypto.a
+ 
+ export BUILD_BASE?=$(CURDIR)
+ 
+diff -rupN flash_encryption_signing_tools-36.0.14495.347773/CodeSignEmulator/Makefile b/flash_encryption_signing_tools-36.0.14495.347773/CodeSignEmulator/Makefile
+--- flash_encryption_signing_tools-36.0.14495.347773/CodeSignEmulator/Makefile	2013-03-14 00:18:22.000000000 +0100
++++ flash_encryption_signing_tools-36.0.14495.347773/CodeSignEmulator/Makefile	2016-01-12 04:09:34.291470000 +0100
+@@ -35,7 +35,7 @@ endif
+ 
+ CFLAGS+= -DVER="\"$(VER)\""
+ CFLAGS+= -DVER1=$(VER1) -DVER2=$(VER2) -DVER3=$(VER3) -DVER4=$(VER4)
+-LDFLAGS+= -ldl $(BUILD_DEST)/lib/libcrypto.a
++LDFLAGS+= -ldl $(BUILD_DEST)/usr/lib/libcrypto.a
+ 
+ export BUILD_BASE?=$(CURDIR)
+ 
+diff -rupN flash_encryption_signing_tools-36.0.14495.347773/CSSInput/Makefile b/flash_encryption_signing_tools-36.0.14495.347773/CSSInput/Makefile
+--- flash_encryption_signing_tools-36.0.14495.347773/CSSInput/Makefile	2013-03-14 00:18:22.000000000 +0100
++++ flash_encryption_signing_tools-36.0.14495.347773/CSSInput/Makefile	2016-01-12 04:09:34.291470000 +0100
+@@ -35,7 +35,7 @@ endif
+ 
+ CFLAGS+= -DVER="\"$(VER)\""
+ CFLAGS+= -DVER1=$(VER1) -DVER2=$(VER2) -DVER3=$(VER3) -DVER4=$(VER4)
+-LDFLAGS+= -ldl $(BUILD_DEST)/lib/libcrypto.a
++LDFLAGS+= -ldl $(BUILD_DEST)/usr/lib/libcrypto.a
+ 
+ export BUILD_BASE?=$(CURDIR)
+ 
+diff -rupN flash_encryption_signing_tools-36.0.14495.347773/CSSOutput/Makefile b/flash_encryption_signing_tools-36.0.14495.347773/CSSOutput/Makefile
+--- flash_encryption_signing_tools-36.0.14495.347773/CSSOutput/Makefile	2013-01-02 18:14:32.000000000 +0100
++++ flash_encryption_signing_tools-36.0.14495.347773/CSSOutput/Makefile	2016-01-12 04:09:34.287470000 +0100
+@@ -35,7 +35,7 @@ endif
+ 
+ CFLAGS+= -DVER="\"$(VER)\""
+ CFLAGS+= -DVER1=$(VER1) -DVER2=$(VER2) -DVER3=$(VER3) -DVER4=$(VER4)
+-LDFLAGS+= -ldl $(BUILD_DEST)/lib/libcrypto.a
++LDFLAGS+= -ldl $(BUILD_DEST)/usr/lib/libcrypto.a
+ 
+ export BUILD_BASE?=$(CURDIR)
+ 
+diff -rupN flash_encryption_signing_tools-36.0.14495.347773/EncryptCSSOutput/Makefile b/flash_encryption_signing_tools-36.0.14495.347773/EncryptCSSOutput/Makefile
+--- flash_encryption_signing_tools-36.0.14495.347773/EncryptCSSOutput/Makefile	2013-03-14 00:18:22.000000000 +0100
++++ flash_encryption_signing_tools-36.0.14495.347773/EncryptCSSOutput/Makefile	2016-01-12 04:09:34.295469000 +0100
+@@ -35,7 +35,7 @@ endif
+ 
+ CFLAGS+= -DVER="\"$(VER)\""
+ CFLAGS+= -DVER1=$(VER1) -DVER2=$(VER2) -DVER3=$(VER3) -DVER4=$(VER4)
+-LDFLAGS+= -ldl $(BUILD_DEST)/lib/libcrypto.a
++LDFLAGS+= -ldl $(BUILD_DEST)/usr/lib/libcrypto.a
+ 
+ export BUILD_BASE?=$(CURDIR)
+ 
+
+diff -rupN flash_encryption_signing_tools-36.0.14495.347773/GenSigningTool/Makefile b/flash_encryption_signing_tools-36.0.14495.347773/GenSigningTool/Makefile
+--- flash_encryption_signing_tools-36.0.14495.347773/GenSigningTool/Makefile	2013-03-14 00:18:22.000000000 +0100
++++ flash_encryption_signing_tools-36.0.14495.347773/GenSigningTool/Makefile	2016-01-12 04:09:34.287470000 +0100
+@@ -35,7 +35,7 @@ endif
+ 
+ CFLAGS+= -DVER="\"$(VER)\"" -m32
+ CFLAGS+= -DVER1=$(VER1) -DVER2=$(VER2) -DVER3=$(VER3) -DVER4=$(VER4)
+-LDFLAGS+= -ldl $(BUILD_DEST)/lib/libcrypto.a
++LDFLAGS+= -ldl $(BUILD_DEST)/usr/lib/libcrypto.a
+ 
+ export BUILD_BASE?=$(CURDIR)
+ 
+diff -rupN flash_encryption_signing_tools-36.0.14495.347773/Makefile b/flash_encryption_signing_tools-36.0.14495.347773/Makefile
+--- flash_encryption_signing_tools-36.0.14495.347773/Makefile	2013-01-02 18:14:32.000000000 +0100
++++ flash_encryption_signing_tools-36.0.14495.347773/Makefile	2016-01-12 04:09:34.299469000 +0100
+@@ -22,8 +22,8 @@ export BUILD_MIRROR:= $(BUILD_BASE)/expo
+ 
+ ifdef BUILD_DEST
+ dir_target_bin:=$(BUILD_DEST)/bin
+-dir_target_include:=$(BUILD_DEST)/include
+-dir_target_lib:=$(BUILD_DEST)/lib
++dir_target_include:=$(BUILD_DEST)/usr/include
++dir_target_lib:=$(BUILD_DEST)/usr/lib
+ dir_root:=$(BUILD_DEST)
+  ifndef FSROOT
+   ifneq ($(wildcard $(BUILD_DEST)../target/fsroot),)

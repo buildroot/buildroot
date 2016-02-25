@@ -1,0 +1,28 @@
+source package/intelce-sdk/intelce-sdk/Config.in
+
+if BR2_PACKAGE_INTELCE_SDK
+
+choice
+	default BR2_PACKAGE_INTELCE_SDK_V21
+    bool "Intel SDK version"
+	help
+	  Choose the Intel SDK version.
+
+config BR2_PACKAGE_INTELCE_SDK_V21
+	bool "21.1.11182.271361"
+	help
+	  Choose the Intel SDK v21.
+
+#config BR2_PACKAGE_INTELCE_SDK_V36
+#	bool "36.0.14495.347773"
+#	help
+#	  Choose the Intel SDK v36.
+
+endchoice
+    
+	menu "Intel SDK Package Selection"
+	    source "package/intelce-sdk/package/Config.in"  
+    endmenu
+endif
+
+

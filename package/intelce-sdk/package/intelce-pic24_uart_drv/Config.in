@@ -1,0 +1,8 @@
+config BR2_PACKAGE_INTELCE_PIC24_UART_DRV
+	bool "pic24_uart_drv"
+	default n
+	depends on BR2_PACKAGE_INTELCE_SDK
+	select BR2_PACKAGE_INTELCE_OSAL
+	select BR2_PACKAGE_INTELCE_INTEL_CE_PM
+	help
+	  None

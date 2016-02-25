@@ -1,0 +1,135 @@
+From de10ab15477323470bf890a5dfd7e5617872d096 Mon Sep 17 00:00:00 2001
+From: tinykim <tinykim83@samsung.com>
+Date: Tue, 20 Oct 2015 11:07:20 +0900
+Subject: [PATCH] HDCP fix
+
+---
+ .../flashtool/driver/intel_ce_flash.c              | 67 +++++++++++++++++++++-
+ 1 file changed, 65 insertions(+), 2 deletions(-)
+
+diff --git a/package/flashtool/flashtool-None-SRC-36.0.14461.347511.tgz_unpacked/project_build_i686/IntelCE/flashtool-36.0.14461.347511/flashtool/driver/intel_ce_flash.c b/package/flashtool/flashtool-None-SRC-36.0.14461.347511.tgz_unpacked/project_build_i686/IntelCE/flashtool-36.0.14461.347511/flashtool/driver/intel_ce_flash.c
+index 876118b..25a0186 100644
+--- a/package/flashtool/flashtool-None-SRC-36.0.14461.347511.tgz_unpacked/project_build_i686/IntelCE/flashtool-36.0.14461.347511/flashtool/driver/intel_ce_flash.c
++++ b/package/flashtool/flashtool-None-SRC-36.0.14461.347511.tgz_unpacked/project_build_i686/IntelCE/flashtool-36.0.14461.347511/flashtool/driver/intel_ce_flash.c
+@@ -49,9 +49,19 @@ char *version_string = "#@# intel-ce-flash.ko " VER;
+ //#define INTEL_CE_FLASH_DEBUG
+ 
+ #include "intel_ce_flash.h"
+-#define SECRET_BLK_NUM 2	//we reserved 2 blocks as secret area
++#if 1 //SAMSUNG
++static int SECRET_BLK_NUM = 2;	//This makes SECRET_BLK to move forward. if 0, then SECRET_BLK exists in last.
++static int SECRET_BLK_START_NUM = 0; // This makes SECRET_BLK to move forward. if 0, then SECRET_BLK exists in last.
++#define SECRET_START memory_map[memory_map_count - SECRET_BLK_NUM - SECRET_BLK_START_NUM].start
++#define SECRET_END memory_map[memory_map_count - 1 - SECRET_BLK_START_NUM].end
++static u16 Manufacturer_code = 0x89;    // for SAMSUNG, save Manufacturer code to distinguish different flash,
++static u16 Device_id = 0;           // for SAMSUNG, save Device ID to distinguish different flash,
++#else
++#define SECRET_BLK_NUM 2    //we reserved 2 blocks as secret area
+ #define SECRET_START memory_map[memory_map_count - SECRET_BLK_NUM].start
+ #define SECRET_END memory_map[memory_map_count - 1].end
++#endif
++
+ 
+ #define DOWN_RW_SEM  do{\
+ 		if(down_interruptible(&rw_sem))\
+@@ -191,6 +201,16 @@ static int _flash_probe(void)
+ 			dev_id = FLASH_RD(flashBase, FLASH_OFFSET(0x1));		       
+ 			intel_ce_flash_reset();
+ 			break;
++
++		case INTEL_STD:
++			/* SAMSUNG
++			 It is expected to be returned by ST NOR Flash (M28W320HST)
++			 Since ST NOR Flash is Intel Compatible, chip_type is set P_ID_INTEL_EXT.
++			*/
++			chip_type = P_ID_INTEL_EXT;	
++			printk("Intel Compatible flash found\n"); 
++			break;
++
+ 		default:
+ 			chip_type = ID_NONE;
+ 			printk(KERN_DEBUG "Unknown P_ID: %d\n", intel_ce_cfi_ident.P_ID);
+@@ -460,8 +480,12 @@ int intel_ce_flash_readinfo_p30(intel_ce_flash_info_t * pInfo)
+ 	*flashBase = FLASH_READ_INFO;
+ 	tmp16 = *((u16 *)flashBase);
+ 	DPRINTK("tmp16=0x%x\n", tmp16);
++
++	Manufacturer_code = tmp16; // get Manufacturer code info. SAMSUNG
+ 	
+-	if(0x89 != tmp16)
++	// Intel Manufacturer Code : 89h
++	// ST Manufacturer Code : 20h
++	if((0x89 != tmp16) && (0x20 != tmp16)) // SAMSUNG
+ 	{
+ 		INTEL_CE_PERROR("Manufacturer ID not correct: 0x%x!\n", tmp16);
+ 		intel_ce_flash_reset();
+@@ -469,6 +493,9 @@ int intel_ce_flash_readinfo_p30(intel_ce_flash_info_t * pInfo)
+ 	}
+ 	device_id = *((u16 *)(flashBase + 1));
+ 	DPRINTK("device_id=0x%x\n", device_id);
++
++	Device_id = device_id; // Get Device ID Info. SAMSUNG
++
+ 	switch(device_id)
+ 	{
+ 		case 0x8817:
+@@ -477,6 +504,7 @@ int intel_ce_flash_readinfo_p30(intel_ce_flash_info_t * pInfo)
+ 		case 0x881a:
+ 		case 0x881b:
+ 		case 0x891c:
++		case 0x880a:    // M28W320HST, SAMSUNG, UPC 2nd Board
+ 			break;
+ 		default:
+ 			INTEL_CE_PERROR("Invalid device id: 0x%x\n", device_id);
+@@ -506,6 +534,9 @@ int intel_ce_flash_readinfo_spansion(intel_ce_flash_info_t * pInfo)
+ 	dev_id2 = FLASH_RD(flashBase, FLASH_OFFSET(0xE));
+ 	dev_id3 = FLASH_RD(flashBase, FLASH_OFFSET(0xF));
+ 
++	Manufacturer_code = mfr_id; // SAMSUNG
++	Device_id = dev_id; // SAMSUNG
++
+ 	intel_ce_flash_reset();
+ 	
+        DPRINTK(KERN_INFO "mfr ID: %04x, dev ID: %04x %04x %04x\n",
+@@ -1197,6 +1228,38 @@ static int intel_ce_flash_init(void)
+ 		rev = -EIO;
+ 		goto chrdev_err_out;
+ 	}
++
++#if 1   // SAMSUNG, decide secret block with Manufacturer code & Device id for Project usage
++	switch (Manufacturer_code)
++	{
++		case 0x89:  // Intel
++			SECRET_BLK_NUM = 2; // follow original setting, use 2 SECRET_BLK
++			break;
++		case 0x20:  // ST
++
++			switch(Device_id)
++			{
++				case 0x880a: // // M28W320HST, SAMSUNG, UPC 2nd Board
++					SECRET_BLK_START_NUM = 8; // Use #62 BLOCK (64KB)
++					SECRET_BLK_NUM = 1; // Use  one 64 KB Block
++					/************************
++					  This Flash has 71 Blocks
++					  0 ~ 62 : each 64 KB size
++					  63 ~ 70 : each 8 KB size
++					 *************************/
++					break;
++				default:
++					break;
++			}
++
++			break;
++		default:    // Others
++			SECRET_BLK_NUM = 2; // use 2 SECRET_BLK
++			break;
++	}
++
++#endif
++
+ 	i = *((int *)INTEL_CE_EXP_TIMING_CS0);
+ 	DPRINTK("Timing: 0x%x\n", i);
+ 	if(i & 0x00000001)
+-- 
+1.9.1
+

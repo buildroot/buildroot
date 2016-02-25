@@ -1,0 +1,22 @@
+Index: git/package/config_database/config_database-None-SRC-36.0.14425.347265.tgz_unpacked/project_build_i686/IntelCE/config_database-36.0.14425.347265/common.hcfg
+===================================================================
+--- git.orig/package/config_database/config_database-None-SRC-36.0.14425.347265.tgz_unpacked/project_build_i686/IntelCE/config_database-36.0.14425.347265/common.hcfg
++++ git/package/config_database/config_database-None-SRC-36.0.14425.347265.tgz_unpacked/project_build_i686/IntelCE/config_database-36.0.14425.347265/common.hcfg
+@@ -1232,6 +1232,17 @@ platform
+             DirectFB_Default   { priority =  0 }
+             XPageFlip          { priority =  0 }
+             fcc_io             { priority =  0 } // Used for CE2600 only
++
++            sec_mcu                 { priority = 92 } // OEM specific
++            hal_input_remote        { priority = 92 } // OEM specific
++            hal_input_remote_key    { priority = 92 } // OEM specific
++            hal_rf_remote           { priority = 92 } // OEM specific
++            hal_rf_remote_key       { priority = 92 } // OEM specific
++            sec_tuner_power         { priority = 92 } // OEM specific
++            sec_tuner_events        { priority = 92 } // OEM specific
++            sec_esfilter_writer     { priority = 15 } // OEM specific
++            sec_sectionfilter       { priority = 15 } // OEM specific
++            obe_powermanager        { priority = 10 } // OEM specific
+         }
+     }
+ }

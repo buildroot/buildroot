@@ -1,0 +1,18 @@
+config BR2_PACKAGE_INTELCE_GRAPHICS
+	bool "graphics"
+	default n
+	depends on BR2_PACKAGE_INTELCE_SDK
+	select BR2_PACKAGE_INTELCE_OSAL
+	select BR2_PACKAGE_INTELCE_PAL
+	select BR2_PACKAGE_INTELCE_DISPLAY
+	select BR2_PACKAGE_FLEX
+	select BR2_PACKAGE_HAS_LIBEGL
+	select BR2_PACKAGE_HAS_LIBGLES
+	help
+	  None
+
+config BR2_PACKAGE_PROVIDES_LIBEGL
+	default "intelce-graphics"
+
+config BR2_PACKAGE_PROVIDES_LIBGLES
+	default "intelce-graphics"

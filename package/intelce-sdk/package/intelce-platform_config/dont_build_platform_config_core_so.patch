@@ -1,0 +1,62 @@
+diff --git a/package/platform_config/platform_config-None-SRC-36.0.14495.347773.tgz_unpacked/project_build_i686/IntelCE/platform_config-36.0.14495.347773/Makefile b/package/platform_config/platform_config-None-SRC-36.0.14495.347773.tgz_unpacked/project_build_i686/IntelCE/platform_config-36.0.14495.347773/Makefile
+index 352e201..36e5b61 100644
+--- a/package/platform_config/platform_config-None-SRC-36.0.14495.347773.tgz_unpacked/project_build_i686/IntelCE/platform_config-36.0.14495.347773/Makefile
++++ b/package/platform_config/platform_config-None-SRC-36.0.14495.347773.tgz_unpacked/project_build_i686/IntelCE/platform_config-36.0.14495.347773/Makefile
+@@ -140,8 +140,8 @@ install_dev:
+ 	@cp -v common/apps/platform_config_app $(BUILD_DEST)/bin
+ 	@cp -v common/config_pmrs/config_pmrs $(BUILD_DEST)/bin
+ 	@[ -d "$(BUILD_DEST)/lib" ] || mkdir -pv "$(BUILD_DEST)/lib"
+-	@cp -v core/i686-linux-elf/libplatform_config_core.so $(BUILD_DEST)/lib
+-	@cp -v core/i686-linux-elf/libplatform_config_core.a $(BUILD_DEST)/lib
++#	@cp -v core/i686-linux-elf/libplatform_config_core.so $(BUILD_DEST)/lib
++#	@cp -v core/i686-linux-elf/libplatform_config_core.a $(BUILD_DEST)/lib
+ 	@cp -v common/lib/libplatform_config.a $(BUILD_DEST)/lib
+ 	@cp -v common/lib/libplatform_config.so $(BUILD_DEST)/lib
+ 	@[ -d "$(BUILD_DEST)/include" ] || mkdir -pv "$(BUILD_DEST)/include"
+@@ -159,7 +159,7 @@ install_target:
+ 	@cp -v common/apps/platform_config_app $(FSROOT)/bin
+ 	@cp -v common/config_pmrs/config_pmrs $(FSROOT)/bin
+ 	@[ -d "$(FSROOT)/lib" ] || mkdir -pv "$(FSROOT)/lib"
+-	@cp -v core/i686-linux-elf/libplatform_config_core.so $(FSROOT)/lib
++#	@cp -v core/i686-linux-elf/libplatform_config_core.so $(FSROOT)/lib
+ 	@cp -v common/lib/libplatform_config.so $(FSROOT)/lib
+ 	
+ 
+@@ -210,10 +210,10 @@ uninstall_dev:
+ 	@rm -f $(BUILD_DEST)/lib/modules/mem_layout.ko
+ 	@rm -f $(BUILD_DEST)/bin/platform_config_app
+ 	@rm -f $(BUILD_DEST)/bin/config_pmrs
+-	@rm -f $(BUILD_DEST)/lib/libplatform_config_core.so
++#	@rm -f $(BUILD_DEST)/lib/libplatform_config_core.so
+ 	@rm -f $(BUILD_DEST)/lib/libplatform_config.so
+ 	@rm -f $(BUILD_DEST)/lib/libplatform_config.a
+-	@rm -f $(BUILD_DEST)/lib/libplatform_config_core.a
++#	@rm -f $(BUILD_DEST)/lib/libplatform_config_core.a
+ 	@rm -f $(BUILD_DEST)/include/platform_config.h
+ 	@rm -f $(BUILD_DEST)/include/platform_config_paths.h
+ 	@rm -f $(BUILD_DEST)/include/mem_layout.h
+@@ -225,5 +225,5 @@ uninstall_target:
+ 	@rm -f $(FSROOT)/lib/modules/mem_layout.ko
+ 	@rm -f $(FSROOT)/bin/platform_config_app
+ 	@rm -f $(FSROOT)/bin/config_pmrs
+-	@rm -f $(FSROOT)/lib/libplatform_config_core.so
++#	@rm -f $(FSROOT)/lib/libplatform_config_core.so
+ 	@rm -f $(FSROOT)/lib/libplatform_config.so
+diff --git a/package/platform_config/platform_config-None-SRC-36.0.14495.347773.tgz_unpacked/project_build_i686/IntelCE/platform_config-36.0.14495.347773/core/Makefile b/package/platform_config/platform_config-None-SRC-36.0.14495.347773.tgz_unpacked/project_build_i686/IntelCE/platform_config-36.0.14495.347773/core/Makefile
+index 1b03d87..47f1c63 100644
+--- a/package/platform_config/platform_config-None-SRC-36.0.14495.347773.tgz_unpacked/project_build_i686/IntelCE/platform_config-36.0.14495.347773/core/Makefile
++++ b/package/platform_config/platform_config-None-SRC-36.0.14495.347773.tgz_unpacked/project_build_i686/IntelCE/platform_config-36.0.14495.347773/core/Makefile
+@@ -152,7 +152,13 @@ $(OUT_DIR)/$(SHARE_LIB_NAME): $(OUT_DIR)/$(SHARE_LIB_OBJ_PVT)
+ 	cd $(OUT_DIR);	\
+ 	$(CC) -shared  $(notdir $^) -o $(notdir $@)
+ 
++ifeq ($(TARG_FMT),i686-linux-elf)
++# platform_config_core.so user space library isn't used or required - don't build it.
++all:
++else
+ all: $(OUT_DIR)/$(STATIC_LIB_NAME) $(OUT_DIR)/$(SHARE_LIB_NAME)
++endif
++
+ #-----------------------------------------------------
+ # Rules 
+ #-----------------------------------------------------

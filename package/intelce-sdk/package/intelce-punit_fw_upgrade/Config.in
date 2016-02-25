@@ -1,0 +1,8 @@
+config BR2_PACKAGE_INTELCE_PUNIT_FW_UPGRADE
+bool "punit_fw_upgrade"
+default n
+depends on BR2_PACKAGE_INTELCE_SDK
+select BR2_PACKAGE_INTELCE_IOSF if BR2_PACKAGE_INTELCE_SDK_V36
+select BR2_PACKAGE_INTELCE_PAL
+help
+None

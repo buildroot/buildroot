@@ -1,0 +1,14 @@
+#config BR2_PACKAGE_INTELCE_FAKEROOT
+#	bool "fakeroot"
+#	help
+#	  Run commands in an environment faking root privileges.
+#
+#	  http://joostje.op.het.net/fakeroot/
+
+# dummy for fakeroot-source
+config BR2_HOST_FAKEROOT
+	bool
+    select ! BR2_PACKAGE_INTELCE_TARGETFS
+    select ! BR2_PACKAGE_INTELCE_TARGETFS_GATEWAY
+    default n
+depends on BR2_PACKAGE_INTELCE_SDK

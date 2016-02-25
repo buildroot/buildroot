@@ -1,0 +1,149 @@
+diff --git a/package/platform_config/platform_config-LGPL_BSD-SRC-36.0.14495.347773.tgz_unpacked/project_build_i686/IntelCE/platform_config-36.0.14495.347773/common/lib/platform_config_lib.c b/package/platform_config/platform_config-LGPL_BSD-SRC-36.0.14495.347773.tgz_unpacked/project_build_i686/IntelCE/platform_config-36.0.14495.347773/common/lib/platform_config_lib.c
+index 41ff109..7638667 100644
+--- a/package/platform_config/platform_config-LGPL_BSD-SRC-36.0.14495.347773.tgz_unpacked/project_build_i686/IntelCE/platform_config-36.0.14495.347773/common/lib/platform_config_lib.c
++++ b/package/platform_config/platform_config-LGPL_BSD-SRC-36.0.14495.347773.tgz_unpacked/project_build_i686/IntelCE/platform_config-36.0.14495.347773/common/lib/platform_config_lib.c
+@@ -87,8 +87,8 @@ config_result_t config_get_int( config_ref_t base_ref, const char *name, int *va
+ 
+ 	if ( pc_handle < 0)
+     {
+-//  	OS_DEBUG("platform_config: Not initialized\n");
+-        return CONFIG_ERR_NOT_INITIALIZED;
++        if (config_initialize() != CONFIG_SUCCESS)
++            return CONFIG_ERR_NOT_INITIALIZED;
+     }
+ 
+     // configure the platform_memory_layout based on user request
+@@ -111,8 +111,8 @@ config_result_t config_get_str( config_ref_t base_ref, const char *name, char *s
+ 
+ 	if ( pc_handle < 0)
+     {
+-//  	OS_DEBUG("platform_config: Not initialized\n");
+-        return CONFIG_ERR_NOT_INITIALIZED;
++        if (config_initialize() != CONFIG_SUCCESS)
++            return CONFIG_ERR_NOT_INITIALIZED;
+     }
+ 
+     // configure the platform_memory_layout based on user request
+@@ -136,8 +136,8 @@ config_result_t config_set_int( config_ref_t base_ref, const char *name, int val
+ 
+ 	if ( pc_handle < 0)
+     {
+-//  	OS_DEBUG("platform_config: Not initialized\n");
+-        return CONFIG_ERR_NOT_INITIALIZED;
++        if (config_initialize() != CONFIG_SUCCESS)
++            return CONFIG_ERR_NOT_INITIALIZED;
+     }
+ 
+     // configure the platform_memory_layout based on user request
+@@ -159,8 +159,8 @@ config_result_t config_set_str( config_ref_t base_ref, const char *name, const c
+ {
+ 	if ( pc_handle < 0)
+     {
+-//  	OS_DEBUG("platform_config: Not initialized\n");
+-        return CONFIG_ERR_NOT_INITIALIZED;
++        if (config_initialize() != CONFIG_SUCCESS)
++            return CONFIG_ERR_NOT_INITIALIZED;
+     }
+ 
+     // configure the platform_memory_layout based on user request
+@@ -183,8 +183,8 @@ config_result_t config_node_find( config_ref_t base_ref, const char *name, confi
+ {
+ 	if ( pc_handle < 0)
+     {
+-//  	OS_DEBUG("platform_config: Not initialized\n");
+-        return CONFIG_ERR_NOT_INITIALIZED;
++        if (config_initialize() != CONFIG_SUCCESS)
++            return CONFIG_ERR_NOT_INITIALIZED;
+     }
+ 
+     // configure the platform_memory_layout based on user request
+@@ -207,8 +207,8 @@ config_result_t config_node_first_child( config_ref_t node_ref, config_ref_t *ch
+ 
+ 	if ( pc_handle < 0)
+     {
+-//  	OS_DEBUG("platform_config: Not initialized\n");
+-        return CONFIG_ERR_NOT_INITIALIZED;
++        if (config_initialize() != CONFIG_SUCCESS)
++            return CONFIG_ERR_NOT_INITIALIZED;
+     }
+ 
+     // configure the platform_memory_layout based on user request
+@@ -230,8 +230,8 @@ config_result_t config_node_next_sibling( config_ref_t node_ref, config_ref_t *c
+ 
+ 	if ( pc_handle < 0)
+     {
+-//  	OS_DEBUG("platform_config: Not initialized\n");
+-        return CONFIG_ERR_NOT_INITIALIZED;
++        if (config_initialize() != CONFIG_SUCCESS)
++            return CONFIG_ERR_NOT_INITIALIZED;
+     }
+ 
+     // configure the platform_memory_layout based on user request
+@@ -253,8 +253,8 @@ config_result_t config_node_get_name( config_ref_t node_ref, char *name, size_t
+ 
+ 	if ( pc_handle < 0)
+     {
+-//  	OS_DEBUG("platform_config: Not initialized\n");
+-        return CONFIG_ERR_NOT_INITIALIZED;
++        if (config_initialize() != CONFIG_SUCCESS)
++            return CONFIG_ERR_NOT_INITIALIZED;
+     }
+ 
+     // configure the platform_memory_layout based on user request
+@@ -277,8 +277,8 @@ config_result_t config_node_get_str( config_ref_t node_ref, char *string, size_t
+ 
+ 	if ( pc_handle < 0)
+     {
+-//  	OS_DEBUG("platform_config: Not initialized\n");
+-        return CONFIG_ERR_NOT_INITIALIZED;
++        if (config_initialize() != CONFIG_SUCCESS)
++            return CONFIG_ERR_NOT_INITIALIZED;
+     }
+ 
+     // configure the platform_memory_layout based on user request
+@@ -301,8 +301,8 @@ config_result_t config_node_get_int( config_ref_t node_ref, int *val )
+ 
+ 	if ( pc_handle < 0)
+     {
+-//  	OS_DEBUG("platform_config: Not initialized\n");
+-        return CONFIG_ERR_NOT_INITIALIZED;
++        if (config_initialize() != CONFIG_SUCCESS)
++            return CONFIG_ERR_NOT_INITIALIZED;
+     }
+ 
+     // configure the platform_memory_layout based on user request
+@@ -324,8 +324,8 @@ config_result_t config_node_tree_remove( config_ref_t node_ref )
+ 
+ 	if ( pc_handle < 0)
+     {
+-//  	OS_DEBUG("platform_config: Not initialized\n");
+-        return CONFIG_ERR_NOT_INITIALIZED;
++        if (config_initialize() != CONFIG_SUCCESS)
++            return CONFIG_ERR_NOT_INITIALIZED;
+     }
+ 
+     // configure the platform_memory_layout based on user request
+@@ -346,8 +346,8 @@ config_result_t config_load( config_ref_t base_ref, const char *config_data, siz
+ 
+ 	if ( pc_handle < 0)
+     {
+-//  	OS_DEBUG("platform_config: Not initialized\n");
+-       	return CONFIG_ERR_NOT_INITIALIZED;
++        if (config_initialize() != CONFIG_SUCCESS)
++            return CONFIG_ERR_NOT_INITIALIZED;
+     }
+ 
+     // configure the platform_memory_layout based on user request
+@@ -391,12 +391,3 @@ config_result_t config_initialize( void )
+     return CONFIG_SUCCESS;
+ }
+ 
+-/* Shared code library initialization hacks */
+-__attribute__((constructor)) static void platform_config_usermode_lib_init(void)
+-{
+-    config_initialize();
+-}
+-
+- __attribute__((destructor)) static void platform_config_usermode_lib_deinit(void)
+-{
+-}

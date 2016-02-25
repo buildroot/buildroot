@@ -1,0 +1,35 @@
+LINUX_VERSION_PROBED = `$(MAKE) $(LINUX_MAKE_FLAGS) -C $(LINUX_DIR) --no-print-directory -s kernelrelease 2>/dev/null`
+
+INTELCE_SDK_MAKE_ENV = \
+	BUILD_DEST="$(STAGING_DIR)" \
+	FSROOT="$(TARGET_DIR)" \
+    TARGETDEST="${STAGING_DIR}/binaries" \
+    PATH="$(HOST_DIR)/usr/bin:$(PATH)" \
+    KERNEL_BUILD_DIR="${LINUX_DIR}" \
+    TARGET_STRIP="true" \
+    TARGETAR="$(TARGET_CROSS)ar" \
+    TARGETAS="$(TARGET_CROSS)as" \
+    TARGETCC="$(TARGET_CROSS)gcc --sysroot=$(STAGING_DIR)" \
+    TARGETCXX="$(TARGET_CROSS)g++ --sysroot=$(STAGING_DIR)" \
+    TARGETGCC="$(TARGET_CROSS)gcc --sysroot=$(STAGING_DIR)" \
+    TARGETGXX="$(TARGET_CROSS)g++ --sysroot=$(STAGING_DIR)" \
+    TARGETLD="$(TARGET_CROSS)ld --sysroot=$(STAGING_DIR)" \
+    TARGETNM="$(TARGET_CROSS)nm" \
+    TARGETOBJCOPY="$(TARGET_CROSS)objcopy" \
+    TARGETSTRIP="true" \
+    TARGETADDR2LINE="$(TARGET_CROSS)addr2line" \
+    TARGETCPP="$(TARGET_CROSS)gcc -E  --sysroot=$(STAGING_DIR) -m32 -march=core2 -mtune=core2 -msse3 -mfpmath=sse" \
+    TARGETCXXFILT="$(TARGET_CROSS)c++filt" \
+    TARGETGPROF="$(TARGET_CROSS)gprof" \
+    TARGETOBJDUMP="$(TARGET_CROSS)objdump" \
+    TARGETRANLIB="$(TARGET_CROSS)ranlib" \
+    TARGETREADELF="$(TARGET_CROSS)readelf" \
+    TARGETSIZE="$(TARGET_CROSS)size" \
+    TARGETSTRINGS="$(TARGET_CROSS)strings" \
+    KERNEL_VER="linux-${LINUX_VERSION_PROBED}"
+    
+	
+INTELCE_SDK_MAKE_OPTS = \
+        CROSS_COMPILE="$(TARGET_CROSS)" \
+        KERNEL_BUILD_DIR="$(LINUX_DIR)" \
+        PATH="$(HOST_DIR)/usr/bin:$(PATH)" \

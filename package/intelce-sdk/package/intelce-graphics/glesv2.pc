@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=/lib
+includedir=${prefix}/include
+
+Name: glesv2
+Description: SGX OpenGL ES 2.0 library
+Version: 2.0
+Cflags: -I${includedir}  -I${includedir}/intelce -I${includedir}/intelce/GLES2
+Libs: -lGLESv2 -lEGL -lIMGegl -lsrv_um
+Libs.private: -lm -lpthread -ldl

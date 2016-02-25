@@ -1,0 +1,8 @@
+config BR2_PACKAGE_INTELCE_PLATFORM_CONFIG
+	bool "platform_config"
+	default n
+	depends on BR2_PACKAGE_INTELCE_SDK
+	select BR2_PACKAGE_INTELCE_HTUPLE
+	select BR2_PACKAGE_OPENSSL
+	help
+	  None

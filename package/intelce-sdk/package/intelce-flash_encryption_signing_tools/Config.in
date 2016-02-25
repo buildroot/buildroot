@@ -1,0 +1,7 @@
+config BR2_PACKAGE_INTELCE_FLASH_ENCRYPTION_SIGNING_TOOLS
+	bool "flash_encryption_signing_tools"
+	default n
+	depends on BR2_PACKAGE_INTELCE_SDK
+	select BR2_PACKAGE_OPENSSL
+	help
+	  None
