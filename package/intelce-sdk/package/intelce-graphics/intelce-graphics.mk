@@ -17,8 +17,8 @@ endef
 
 define INTELCE_GRAPHICS_INSTALL_STAGING_CMDS
     $(INTELCE_SDK_MAKE_ENV) $(MAKE) ${INTELCE_SDK_MAKE_OPTS} -C $(@D) install_dev
-    $(INSTALL) -m 644 package/intelce-sdk/package/intelce-graphics/egl.pc $(STAGING_DIR)/usr/lib/pkgconfig/egl.pc
-	$(INSTALL) -m 644 package/intelce-sdk/package/intelce-graphics/glesv2.pc $(STAGING_DIR)/usr/lib/pkgconfig/glesv2.pc    
+    $(INSTALL) -m 644 $(@D)/egl.pc $(STAGING_DIR)/usr/lib/pkgconfig/egl.pc
+	$(INSTALL) -m 644 $(@D)/glesv2.pc $(STAGING_DIR)/usr/lib/pkgconfig/glesv2.pc    
 endef
 
 define INTELCE_GRAPHICS_INSTALL_TARGET_CMDS

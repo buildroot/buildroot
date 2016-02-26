@@ -21,7 +21,7 @@ endef
 
 define INTELCE_DISPLAY_INSTALL_STAGING_CMDS
     $(INTELCE_SDK_MAKE_ENV) $(MAKE) ${INTELCE_SDK_MAKE_OPTS} -C $(@D) install_dev 
-	$(INSTALL) -m 644 package/intelce-sdk/package/intelce-display/gdl.pc $(STAGING_DIR)/usr/lib/pkgconfig/gdl.pc
+	$(INSTALL) -m 644 $(@D)/gdl.pc $(STAGING_DIR)/usr/lib/pkgconfig/gdl.pc
 endef
 
 define INTELCE_DISPLAY_INSTALL_TARGET_CMDS
