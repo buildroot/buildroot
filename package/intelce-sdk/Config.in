@@ -2,6 +2,8 @@ source package/intelce-sdk/intelce-sdk/Config.in
 
 if BR2_PACKAGE_INTELCE_SDK
 
+source "package/intelce-sdk/package/intelce-loaddrivers/Config.in" 
+
 choice
 	default BR2_PACKAGE_INTELCE_SDK_V21
     bool "Intel SDK version"
