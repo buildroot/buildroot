@@ -29,12 +29,24 @@ PULSEAUDIO_DEPENDENCIES = \
 	$(if $(BR2_PACKAGE_AVAHI_DAEMON),avahi) \
 	$(if $(BR2_PACKAGE_DBUS),dbus) \
 	$(if $(BR2_PACKAGE_BLUEZ_UTILS),bluez_utils) \
-	$(if $(BR2_PACKAGE_HAS_UDEV),udev) \
 	$(if $(BR2_PACKAGE_OPENSSL),openssl) \
 	$(if $(BR2_PACKAGE_FFTW),fftw) \
 	$(if $(BR2_PACKAGE_WEBRTC_AUDIO_PROCESSING),webrtc-audio-processing) \
 	$(if $(BR2_PACKAGE_SYSTEMD),systemd)
 
+ifeq ($(BR2_PACKAGE_GDBM),y)
+PULSEAUDIO_CONF_OPTS += --with-database=gdbm
+PULSEAUDIO_DEPENDENCIES += gdbm
+else
+PULSEAUDIO_CONF_OPTS += --with-database=simple
+endif
+
+ifeq ($(BR2_PACKAGE_JACK2),y)
+PULSEAUDIO_CONF_OPTS += --enable-jack
+PULSEAUDIO_DEPENDENCIES += jack2
+else
+PULSEAUDIO_CONF_OPTS += --disable-jack
+endif
 
 ifeq ($(BR2_PACKAGE_ORC),y)
 PULSEAUDIO_DEPENDENCIES += orc
@@ -57,6 +69,20 @@ PULSEAUDIO_DEPENDENCIES += libgtk3
 PULSEAUDIO_CONF_OPTS += --enable-gtk3
 else
 PULSEAUDIO_CONF_OPTS += --disable-gtk3
+endif
+
+ifeq ($(BR2_PACKAGE_LIBSOXR),y)
+PULSEAUDIO_CONF_OPTS += --with-soxr
+PULSEAUDIO_DEPENDENCIES += libsoxr
+else
+PULSEAUDIO_CONF_OPTS += --without-soxr
+endif
+
+ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
+PULSEAUDIO_CONF_OPTS += --enable-libudev
+PULSEAUDIO_DEPENDENCIES += udev
+else
+PULSEAUDIO_CONF_OPTS += --disable-libudev
 endif
 
 ifneq ($(BR2_INSTALL_LIBSTDCPP),y)
