@@ -1,6 +1,23 @@
 config BR2_PACKAGE_GST1_FLUENDO_ISMD
 	bool "gst-fluendo-ismd"
 	depends on BR2_PACKAGE_INTELCE_SDK
+	depends on BR2_PACKAGE_GSTREAMER1
+	depends on BR2_PACKAGE_GST1_PLUGINS_BASE
+	select BR2_PACKAGE_INTELCE_AUDIO
+	select BR2_PACKAGE_INTELCE_BUFMON
+	select BR2_PACKAGE_INTELCE_CLOCK
+	select BR2_PACKAGE_INTELCE_CLOCK_RECOVERY
+	select BR2_PACKAGE_INTELCE_CORE
+	select BR2_PACKAGE_INTELCE_DEMUX
+	select BR2_PACKAGE_INTELCE_DISPLAY
+	select BR2_PACKAGE_INTELCE_MUX
+	select BR2_PACKAGE_INTELCE_SYSTEM_UTILS
+	select BR2_PACKAGE_INTELCE_VIDDEC
+	select BR2_PACKAGE_INTELCE_VIDENC
+	select BR2_PACKAGE_INTELCE_VIDREND
+	select BR2_PACKAGE_INTELCE_VIDPPROC
+	select BR2_PACKAGE_INTELCE_VIDSINK
+	select BR2_PACKAGE_ZLIB
 	help
 		This set of GStreamer elements is made for the Intel CE3100 and CE4100
 		platforms. It provides video decoders, postprocessing and rendering elements
@@ -13,5 +30,7 @@ config BR2_PACKAGE_GST1_FLUENDO_ISMD
 		If you need support or have questions regarding those please contact Fluendo by
 		mail at support@fluendo.com.
 
-comment "gst1-fluendo-ismd requires an Intelce SDK"
+comment "gst1-fluendo-ismd requires an Intelce SDK, GStreamer1 and GStreamer1 plugins base."
 	depends on !BR2_PACKAGE_INTELCE_SDK
+	depends on !BR2_PACKAGE_GSTREAMER1
+	depends on !BR2_PACKAGE_GST1_PLUGINS_BASE

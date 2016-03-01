@@ -34,12 +34,13 @@ GST1_FLUENDO_ISMD_DEPENDENCIES = \
 
 GST1_FLUENDO_ISMD_AUTORECONF = YES
 
-GST1_FLUENDO_ISMD_MAKE_OPTS += -I${STAGING_DIR}/usr/include/intelce
+GST1_FLUENDO_ISMD_MAKE_OPTS += -I${STAGING_DIR}/usr/include/ -I${STAGING_DIR}/include/
 
 GST1_FLUENDO_ISMD_CONF_ENV = \
 	CFLAGS="$(TARGET_CFLAGS) \
-		-I$(STAGING_DIR)/usr/include/intelce \
-		-I$(STAGING_DIR)/usr/include/intelce/linux_user"
+		-I$(STAGING_DIR)/include \
+		-I$(STAGING_DIR)/include/linux_user \
+		-I${STAGING_DIR}/usr/include/"
 
 GST1_FLUENDO_ISMD_CONF_OPTS = --disable-valgrind --disable-transcode --disable-examples
 
