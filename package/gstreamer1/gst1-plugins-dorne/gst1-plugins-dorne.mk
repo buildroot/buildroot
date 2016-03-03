@@ -4,8 +4,10 @@
 #
 ################################################################################
 
-GST1_PLUGINS_DORNE_VERSION = 9445faf4fb87ac98e78e88fc0153b60100948570
-GST1_PLUGINS_DORNE_SITE = $(call github,Metrological,gst-plugins-dorne,$(GST1_PLUGINS_DORNE_VERSION))
+GST1_PLUGINS_DORNE_VERSION = 1f64bca09dcbeda1cf3c5ba04f925a14a9b6e568
+GST1_PLUGINS_DORNE_SITE_METHOD = git
+GST1_PLUGINS_DORNE_SITE = git@github.com:Metrological/gst-plugins-dorne.git
+
 GST1_PLUGINS_DORNE_INSTALL_STAGING = YES
 GST1_PLUGINS_DORNE_LICENSE_FILES = COPYING.LIB
 GST1_PLUGINS_DORNE_LICENSE = LGPLv2+, LGPLv2.1+
