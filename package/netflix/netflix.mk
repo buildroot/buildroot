@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NETFLIX_VERSION = 8de7fd2e2f43041afdb20bb0d32cdf62d913ed71
+NETFLIX_VERSION = 6627e4e60be5fd7b5910f3bb2956219ff44c29fa
 NETFLIX_SITE = git@github.com:Metrological/netflix.git
 NETFLIX_SITE_METHOD = git
 NETFLIX_LICENSE = PROPRIETARY
@@ -89,6 +89,9 @@ endif
 ifeq ($(BR2_PACKAGE_PLAYREADY),y)
 NETFLIX_CONF_OPTS += -DDPI_REFERENCE_DRM=playready
 NETFLIX_DEPENDENCIES += playready
+ifeq ($(BR2_PACKAGE_LIBPROVISION),y)
+NETFLIX_CONF_OPTS += -DNETFLIX_USE_PROVISION=ON
+endif
 else
 NETFLIX_CONF_OPTS += -DDPI_REFERENCE_DRM=none
 endif
