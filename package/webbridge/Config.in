@@ -100,7 +100,9 @@ config BR2_PACKAGE_PLUGIN_BROWSER
 
 config BR2_PACKAGE_PLUGIN_NETFLIX
 	bool "netflix"
-	depends on BR2_PACKAGE_NETFLIX_LIB
+	select BR2_PACKAGE_CPPSDK_PROCESS
+	select BR2_PACKAGE_NETFLIX_LIB
+	depends on BR2_PACKAGE_NETFLIX
 	help
 	  A wrapper around the netflix app to start it as a
 	  webbridge plugin.
@@ -110,6 +112,7 @@ comment "netflix is dependent on the netflix package compiled as library"
 
 config BR2_PACKAGE_PLUGIN_WEBKITBROWSER 
 	bool "webkitbrowser"
+	select BR2_PACKAGE_CPPSDK_PROCESS
 	depends on BR2_PACKAGE_WPE
 	help
 	  A plugin that manages the webkit browser functionality
