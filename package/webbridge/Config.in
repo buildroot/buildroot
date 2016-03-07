@@ -38,6 +38,13 @@ config BR2_PACKAGE_PLUGIN_TRACECONTROL
 	  NOTE: Tracing does NOT replace logging but is a tool for 
 	  developpers to analyse there code. 
 
+config BR2_PACKAGE_PLUGIN_MONITOR
+	bool "monitor"
+	help
+	  A plugin that allows for a monitoring plugins with respect to 
+	  memory usage. Hard limits can be set on the maximum memory usage 
+	  and in case the limits are violated, the plugin can be restarted.
+
 config BR2_PACKAGE_PLUGIN_DICTIONARY
 	bool "dictionary"
 	help
