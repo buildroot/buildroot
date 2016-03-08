@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBPROVISION_VERSION = 8ac49d2b9e661422ff61a75cf330f8ada1107a35
+LIBPROVISION_VERSION = 32aa512e38a574ec69e06d862bc8049b3d719388
 LIBPROVISION_SITE_METHOD = git
 LIBPROVISION_SITE = git@github.com:Metrological/libprovision.git
 LIBPROVISION_LICENSE = PROPRIETARY
