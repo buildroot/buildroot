@@ -101,8 +101,7 @@ config BR2_PACKAGE_PLUGIN_BROWSER
 config BR2_PACKAGE_PLUGIN_NETFLIX
 	bool "netflix"
 	select BR2_PACKAGE_CPPSDK_PROCESS
-	select BR2_PACKAGE_NETFLIX_LIB
-	depends on BR2_PACKAGE_NETFLIX
+	depends on BR2_PACKAGE_NETFLIX_LIB
 	help
 	  A wrapper around the netflix app to start it as a
 	  webbridge plugin.
