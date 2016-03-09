@@ -15,6 +15,9 @@ define INTELCE_8051_SDK_BUILD_CMDS
 endef
 
 define INTELCE_8051_SDK_INSTALL_STAGING_CMDS
+	if [ "x$(BR2_PACKAGE_INTELCE_SDK_V36)" = "xy" ] ; then \
+		$(INSTALL) -m 750 -D $(@D)/include/io8051EventMap.h "${STAGING_DIR}/include/io8051EventMap.h" ; \
+	fi
 endef
 
 define INTELCE_8051_SDK_INSTALL_TARGET_CMDS
