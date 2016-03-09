@@ -4,7 +4,7 @@
 #
 ################################################################################
 ifeq ($(BR2_PACKAGE_INTELCE_SDK_V36),y)
-    INTELCE_SDK_VERSION = eee2f6322651f94fbb7839997870e1868ee71f0d
+    INTELCE_SDK_VERSION = bd4ba2dc4ea47ba8f93ef08c40081aab32830171
 else ifeq ($(BR2_PACKAGE_INTELCE_SDK_V21),y)
     INTELCE_SDK_VERSION = 154bf6aad747fa8782dda9a86ad7c9fd5a4a8a1c
 endif
