@@ -11,6 +11,12 @@ if BR2_PACKAGE_GST1_PLUGINS_UGLY
 
 comment "dependency-less plugins"
 
+config BR2_PACKAGE_GST1_PLUGINS_UGLY_PLUGIN_A52DEC
+	bool "a52 (ac3)"
+	select BR2_PACKAGE_LIBA52
+	help
+	  AC3 decoding based on the a52dec library
+
 config BR2_PACKAGE_GST1_PLUGINS_UGLY_PLUGIN_ASFDEMUX
 	bool "asfdemux"
 	help
