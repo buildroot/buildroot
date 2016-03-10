@@ -1,0 +1,11 @@
+--- a/liba52/configure.incl	2002-01-28 05:36:48.000000000 +0100
++++ b/liba52/configure.incl	2004-06-03 19:50:26.000000000 +0200
+@@ -2,7 +2,7 @@
+ AC_SUBST([LIBA52_LIBS])
+ 
+ dnl avoid -fPIC when possible
+-LIBA52_CFLAGS="$LIBA52_CFLAGS -prefer-non-pic"
++LIBA52_CFLAGS="$LIBA52_CFLAGS -prefer-pic"
+ 
+ AC_ARG_ENABLE([double],
+     [  --enable-double         use double-precision samples])
