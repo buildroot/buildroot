@@ -8,7 +8,7 @@ start() {
 }
 stop() {
 	echo -n "Stopping webbridge: "
-	start-stop-daemon -K -s SIGHUP -q -p /var/run/webbridge.pid
+	start-stop-daemon -K -q -p /var/run/webbridge.pid
 	[ $? == 0 ] && echo "OK" || echo "FAIL"
 	rm -rf /var/run/webbridge.pid
 }
