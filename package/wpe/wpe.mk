@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = ec260b1ab6e603ae55e5ba6bfb289ba138fd95f9
+WPE_VERSION = 80f36625f46e6726030bf68d8f9947ba8856f65b
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -34,7 +34,9 @@ WPE_FLAGS = \
 	-DENABLE_SUBTLE_CRYPTO=ON \
 	-DENABLE_SHADOW_DOM=ON \
 	-DENABLE_FULLSCREEN_API=ON \
-	-DENABLE_NOTIFICATIONS=ON
+	-DENABLE_NOTIFICATIONS=ON \
+	-DENABLE_DATABASE_PROCESS=ON \
+	-DENABLE_INDEXED_DATABASE=ON
 
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 ifeq ($(BR2_PACKAGE_WAYLAND),y)
@@ -160,11 +162,11 @@ WPE_BUILDDIR = $(@D)/build-$(WPE_BUILD_TYPE)
 
 ifeq ($(BR2_PACKAGE_NINJA),y)
 define WPE_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(HOST_DIR)/usr/bin/ninja -C $(WPE_BUILDDIR) $(WPE_EXTRA_OPTIONS) libWPEWebKit.so libWPEWebInspectorResources.so WPE{Web,Network}Process
+	$(TARGET_MAKE_ENV) $(HOST_DIR)/usr/bin/ninja -C $(WPE_BUILDDIR) $(WPE_EXTRA_OPTIONS) libWPEWebKit.so libWPEWebInspectorResources.so WPE{Database,Network,Web}Process
 endef
 
 define WPE_INSTALL_STAGING_CMDS
-	(cp $(WPE_BUILDDIR)/bin/WPE{Network,Web}Process $(STAGING_DIR)/usr/bin/ && \
+	(cp $(WPE_BUILDDIR)/bin/WPE{Database,Network,Web}Process $(STAGING_DIR)/usr/bin/ && \
 	cp -d $(WPE_BUILDDIR)/lib/libWPE* $(STAGING_DIR)/usr/lib/ && \
 	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P $(WPE_BUILDDIR)/Source/JavaScriptCore/cmake_install.cmake > /dev/null && \
 	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P $(WPE_BUILDDIR)/Source/WebKit2/cmake_install.cmake > /dev/null )
