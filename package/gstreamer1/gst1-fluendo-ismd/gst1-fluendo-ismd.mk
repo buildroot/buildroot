@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_FLUENDO_ISMD_VERSION = 3517ede33a9418608686ec2d2c7da4703f077156
+GST1_FLUENDO_ISMD_VERSION = 1d6cdfa2dc0689494fb543fb1abafe7726018ec1
 GST1_FLUENDO_ISMD_SITE_METHOD = git
 GST1_FLUENDO_ISMD_SITE = git@github.com:Metrological/gst-fluendo-ismd.git
 
