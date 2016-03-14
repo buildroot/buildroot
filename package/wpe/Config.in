@@ -37,6 +37,12 @@ config BR2_PACKAGE_WPE_ENABLE_LOGGING
 	help
 	  Enable logging for non debug builds.
 
+config BR2_PACKAGE_WPE_ENABLE_MEDIA_STREAM
+	depends on BR2_PACKAGE_OPENWEBRTC
+	bool "Media Stream"
+	help
+	  Enable Media Stream
+
 choice
 	bool "EME"
 	default BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V1
