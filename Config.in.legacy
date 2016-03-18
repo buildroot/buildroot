@@ -145,6 +145,50 @@ endif
 ###############################################################################
 comment "Legacy options removed in 2016.05"
 
+config BR2_TARGET_UBOOT_CUSTOM_PATCH_DIR
+	bool "uboot custom patch dir removed"
+	select BR2_LEGACY
+	help
+	  The uboot custom patch directory option has been removed. Use
+	  the improved BR2_TARGET_UBOOT_PATCH option instead.
+
+config BR2_PACKAGE_XDRIVER_XF86_INPUT_VOID
+	bool "xf86-input-void removed"
+	select BR2_LEGACY
+	help
+	  The xf86-input-void package has been removed, there's no need
+	  for it in any modern (post-2007) xorg server.
+
+config BR2_KERNEL_HEADERS_3_17
+	bool "kernel headers version 3.17.x are no longer supported"
+	select BR2_KERNEL_HEADERS_3_18
+	select BR2_LEGACY
+	help
+	  Version 3.17.x of the Linux kernel headers have been deprecated
+	  for more than four buildroot releases and are now removed.
+	  As an alternative, version 3.18.x of the headers have been
+	  automatically selected in your configuration.
+
+config BR2_GDB_VERSION_7_7
+	bool "gdb 7.7 has been removed"
+	select BR2_LEGACY
+	help
+	  The 7.7 version of gdb has been removed. Use a newer version
+	  instead.
+
+config BR2_PACKAGE_FOOMATIC_FILTERS
+	bool "foomatic-filters"
+	select BR2_LEGACY
+	help
+	  The foomatic-filters package was removed.
+
+config BR2_PACKAGE_SAMBA
+	bool "samba"
+	select BR2_LEGACY
+	help
+	  The samba package was removed in favour of samba4 since the
+	  3.x series isn't supported by upstream any longer.
+
 config BR2_PACKAGE_KODI_WAVPACK
 	bool "wavpack"
 	select BR2_LEGACY
