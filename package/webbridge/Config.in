@@ -119,6 +119,14 @@ config BR2_PACKAGE_PLUGIN_WEBKITBROWSER
 comment "webkitbrowser requires the package wpe"
 	depends on !BR2_PACKAGE_WPE
 
+config BR2_PACKAGE_PLUGIN_QUEUE_COMMUNICATOR
+	bool "queuecommunicator"
+	select BR2_PACKAGE_CPPSDK_MQC
+	help
+	  A plugin that receives and sends messages into a queue to interact
+          with specific middleware.
+
+
 config BR2_PACKAGE_PLUGIN_DIALSERVER
 	bool "dialserver"
 	help
