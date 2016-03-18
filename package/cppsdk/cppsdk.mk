@@ -63,4 +63,8 @@ ifeq ($(BR2_PACKAGE_CPPSDK_DEVICES),y)
 CPPSDK_CONF_OPTS += -DCPPSDK_DEVICES=ON
 endif
 
+ifeq ($(BR2_PACKAGE_CPPSDK_MQC),y)
+CPPSDK_CONF_OPTS += -DCPPSDK_MQC=ON
+endif
+
 $(eval $(cmake-package))

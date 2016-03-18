@@ -61,6 +61,13 @@ config BR2_PACKAGE_CPPSDK_RPC
 	  Functionality to allow for RPC easy implementation of marshalling
 	  and unmarshalling of data to pass process boundaries.
 
+config BR2_PACKAGE_CPPSDK_MQC
+	bool "mqc"
+	select BR2_PACKAGE_CPPSDK_GENERICS
+	help
+	  Functionality to allow for an easy MessageQueue Communication
+          transport layer in an object oriented design.
+
 config BR2_PACKAGE_CPPSDK_PROCESS
 	bool "process"
 	select BR2_PACKAGE_CPPSDK_GENERICS
