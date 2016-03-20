@@ -16,16 +16,17 @@ endif
 
 PERF_MAKE_FLAGS = \
 	$(LINUX_MAKE_FLAGS) \
+	JOBS=$(PARALLEL_JOBS) \
 	ARCH=$(PERF_ARCH) \
+	DESTDIR=$(TARGET_DIR) \
+	prefix=/usr \
+	WERROR=0 \
 	NO_LIBAUDIT=1 \
 	NO_NEWT=1 \
 	NO_GTK2=1 \
 	NO_LIBPERL=1 \
 	NO_LIBPYTHON=1 \
-	DESTDIR=$(TARGET_DIR) \
-	prefix=/usr \
-	WERROR=0 \
-	ASCIIDOC=
+	NO_LIBBIONIC=1
 
 # We need to pass an argument to ld for setting the endianness when
 # building it for MIPS architecture, otherwise the default one will
@@ -52,14 +53,20 @@ endif
 
 ifeq ($(BR2_PACKAGE_SLANG),y)
 PERF_DEPENDENCIES += slang
+else
+PERF_MAKE_FLAGS += NO_SLANG=1
 endif
 
 ifeq ($(BR2_PACKAGE_LIBUNWIND),y)
 PERF_DEPENDENCIES += libunwind
+else
+PERF_MAKE_FLAGS += NO_LIBUNWIND=1
 endif
 
 ifeq ($(BR2_PACKAGE_NUMACTL),y)
 PERF_DEPENDENCIES += numactl
+else
+PERF_MAKE_FLAGS += NO_LIBNUMA=1
 endif
 
 ifeq ($(BR2_PACKAGE_ELFUTILS),y)
@@ -67,6 +74,32 @@ PERF_DEPENDENCIES += elfutils
 else
 PERF_MAKE_FLAGS += NO_LIBELF=1 NO_DWARF=1
 endif
+
+ifeq ($(BR2_PACKAGE_ZLIB),y)
+PERF_DEPENDENCIES += zlib
+else
+PERF_MAKE_FLAGS += NO_ZLIB=1
+endif
+
+# lzma is provided by xz
+ifeq ($(BR2_PACKAGE_XZ),y)
+PERF_DEPENDENCIES += xz
+else
+PERF_MAKE_FLAGS += NO_LZMA=1
+endif
+
+# We really do not want to build the perf documentation, because it
+# has stringent requirement on the documentation generation tools,
+# like xmlto and asciidoc), which may be lagging behind on some
+# distributions.
+# We name it 'GNUmakefile' so that GNU make will use it instead of
+# the existing 'Makefile'.
+define PERF_DISABLE_DOCUMENTATION
+	if [ -f $(@D)/tools/perf/Documentation/Makefile ]; then \
+		printf "%%:\n\t@:\n" >$(@D)/tools/perf/Documentation/GNUmakefile; \
+	fi
+endef
+LINUX_POST_PATCH_HOOKS += PERF_DISABLE_DOCUMENTATION
 
 # O must be redefined here to overwrite the one used by Buildroot for
 # out of tree build. We build perf in $(@D)/tools/perf/ and not just
