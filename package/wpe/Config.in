@@ -106,6 +106,13 @@ config BR2_PACKAGE_WPE_USE_GSTREAMER_GL
 	help
 	  Use gstreamer-gl video sink for rendering
 
+config BR2_PACKAGE_WPE_USE_FUSION_API
+	bool "Fusion API"
+	depends on BR2_PACKAGE_GST1_PLUGINS_DORNE && BR2_PACKAGE_GSTREAMER1_GIT
+	default n
+	help
+	  Use Fusion IPC API in the Media Player.
+
 choice
 	bool "Punch hole"
 	default BR2_PACKAGE_WPE_USE_PUNCH_HOLE_NONE
