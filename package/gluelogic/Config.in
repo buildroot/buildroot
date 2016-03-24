@@ -1,0 +1,14 @@
+config BR2_PACKAGE_GLUELOGIC
+	bool "gluelogic"
+	help
+      Vendor specific solutions to glue browser and webbridge together. 
+
+if BR2_PACKAGE_GLUELOGIC
+    
+config BR2_PACKAGE_GLUELOGIC_QUEUEPLAYER
+	bool "queueplayer"
+	select BR2_PACKAGE_CPPSDK_MQC
+	help
+      A abstraction layer for controlling a player using a message queue.
+    
+endif
