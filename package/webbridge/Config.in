@@ -132,4 +132,10 @@ config BR2_PACKAGE_PLUGIN_DIALSERVER
 	help
 	  A plugin that implements DIscovery And Launch protocol specification
 
+config BR2_PACKAGE_PLUGIN_SNAPSHOT
+	bool "snapshot"
+	depends on BR2_PACKAGE_RPI_USERLAND
+	help
+	  A plugin that exposes a screenshot API
+
 endif
