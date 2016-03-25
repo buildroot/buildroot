@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ICUDATA_VERSION = 752a18e9591ff01f88f9d5191eb74e004c1a1109
+ICUDATA_VERSION = 414fb7451e956546471757c500ca3ad8d204002b
 ICUDATA_SITE = $(call github,Metrological,icudata,$(ICUDATA_VERSION))
 
 define ICUDATA_EXTRACT
