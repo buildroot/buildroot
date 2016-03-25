@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-GDK_PIXBUF_VERSION_MAJOR = 2.32
-GDK_PIXBUF_VERSION = $(GDK_PIXBUF_VERSION_MAJOR).3
+GDK_PIXBUF_VERSION_MAJOR = 2.34
+GDK_PIXBUF_VERSION = $(GDK_PIXBUF_VERSION_MAJOR).0
 GDK_PIXBUF_SOURCE = gdk-pixbuf-$(GDK_PIXBUF_VERSION).tar.xz
 GDK_PIXBUF_SITE = http://ftp.gnome.org/pub/gnome/sources/gdk-pixbuf/$(GDK_PIXBUF_VERSION_MAJOR)
 GDK_PIXBUF_LICENSE = LGPLv2+
@@ -13,7 +13,7 @@ GDK_PIXBUF_LICENSE_FILES = COPYING
 GDK_PIXBUF_INSTALL_STAGING = YES
 GDK_PIXBUF_DEPENDENCIES = \
 	host-gdk-pixbuf host-libglib2 host-pkgconf \
-	$(if $(BR2_ENABLE_LOCALE),,libiconv)
+	libglib2 $(if $(BR2_ENABLE_LOCALE),,libiconv)
 
 GDK_PIXBUF_CONF_ENV = \
 	ac_cv_path_GLIB_GENMARSHAL=$(LIBGLIB2_HOST_BINARY) \
@@ -51,6 +51,7 @@ endif
 # here after building and installing to target.
 # And since the cache file will contain absolute target directory names
 # we need to sanitize (strip) them.
+ifeq ($(BR2_STATIC_LIBS),)
 define GDK_PIXBUF_UPDATE_CACHE
 	GDK_PIXBUF_MODULEDIR=$(TARGET_DIR)/usr/lib/gdk-pixbuf-2.0/2.10.0/loaders \
 		$(HOST_DIR)/usr/bin/gdk-pixbuf-query-loaders \
@@ -59,6 +60,7 @@ define GDK_PIXBUF_UPDATE_CACHE
 		$(TARGET_DIR)/usr/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
 endef
 GDK_PIXBUF_POST_INSTALL_TARGET_HOOKS += GDK_PIXBUF_UPDATE_CACHE
+endif
 
 # Tests don't build correctly with uClibc
 define GDK_PIXBUF_DISABLE_TESTS
