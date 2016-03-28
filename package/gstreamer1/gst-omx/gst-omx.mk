@@ -30,6 +30,7 @@ GST_OMX_CONF_OPTS = \
 	--with-omx-target=rpi
 GST_OMX_CONF_ENV = \
 	CFLAGS="$(TARGET_CFLAGS) \
+		-D_VIDEOCORE -DRASPBERRY_PI \
 		-I$(STAGING_DIR)/usr/include/IL \
 		-I$(STAGING_DIR)/usr/include/interface/vcos/pthreads \
 		-I$(STAGING_DIR)/usr/include/interface/vmcs_host/linux"
