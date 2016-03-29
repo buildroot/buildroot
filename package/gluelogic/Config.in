@@ -11,4 +11,10 @@ config BR2_PACKAGE_GLUELOGIC_QUEUEPLAYER
 	help
       A abstraction layer for controlling a player using a message queue.
     
+config BR2_PACKAGE_GLUELOGIC_VIRTUAL_KEYBOARD
+	bool "virtualkeyboard"
+	select BR2_PACKAGE_CPPSDK_GENERICS
+	help
+      An abstraction layer for sending keys, prepared for the /dev/input device.
+    
 endif
