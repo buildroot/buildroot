@@ -16,5 +16,11 @@ config BR2_PACKAGE_GLUELOGIC_VIRTUAL_KEYBOARD
 	select BR2_PACKAGE_CPPSDK_GENERICS
 	help
       An abstraction layer for sending keys, prepared for the /dev/input device.
-    
+
+
+config BR2_PACKAGE_GLUELOGIC_KEYBOARDSCANNER
+	bool "keyboardscanner"
+	select BR2_PACKAGE_CPPSDK_MQC
+	help
+      A tool to that reads keystrokes and transform them into keyevent queue messages.
 endif
