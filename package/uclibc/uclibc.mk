@@ -75,18 +75,16 @@ define UCLIBC_ARM_ABI_CONFIG
 	$(call KCONFIG_ENABLE_OPT,CONFIG_ARM_EABI,$(@D)/.config)
 endef
 
-# Thumb build is broken with threads, build in ARM mode
-ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB)$(BR2_TOOLCHAIN_HAS_THREADS),yy)
+# Thumb1 build is broken with threads with old gcc versions (4.7 and
+# 4.8). Since all cores supporting Thumb1 also support ARM, we use ARM
+# code in this case.
+ifeq ($(BR2_GCC_VERSION_4_7_X)$(BR2_GCC_VERSION_4_8_X):$(BR2_ARM_INSTRUCTIONS_THUMB)$(BR2_TOOLCHAIN_HAS_THREADS),y:yy)
 UCLIBC_EXTRA_CFLAGS += -marm
 endif
 
-ifeq ($(BR2_UCLIBC_ARM_BX),y)
-define UCLIBC_ARM_BX_CONFIG
-	$(call KCONFIG_ENABLE_OPT,USE_BX,$(@D)/.config)
-endef
-else
-define UCLIBC_ARM_BX_CONFIG
-	$(call KCONFIG_DISABLE_OPT,USE_BX,$(@D)/.config)
+ifeq ($(BR2_BINFMT_FLAT),y)
+define UCLIBC_ARM_BINFMT_FLAT
+	$(call KCONFIG_DISABLE_OPT,DOPIC,$(@D)/.config)
 endef
 endif
 
@@ -362,7 +360,7 @@ define UCLIBC_KCONFIG_FIXUP_CMDS
 	$(UCLIBC_ARC_TYPE_CONFIG)
 	$(UCLIBC_ARC_PAGE_SIZE_CONFIG)
 	$(UCLIBC_ARM_ABI_CONFIG)
-	$(UCLIBC_ARM_BX_CONFIG)
+	$(UCLIBC_ARM_BINFMT_FLAT)
 	$(UCLIBC_MIPS_ABI_CONFIG)
 	$(UCLIBC_MIPS_ISA_CONFIG)
 	$(UCLIBC_SH_TYPE_CONFIG)
