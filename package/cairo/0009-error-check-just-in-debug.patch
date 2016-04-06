@@ -1,0 +1,21 @@
+diff --git a/src/cairo-gl-private.h b/src/cairo-gl-private.h
+index ab87de9..60b81f8 100644
+--- a/src/cairo-gl-private.h
++++ b/src/cairo-gl-private.h
+@@ -412,12 +412,16 @@ typedef struct _cairo_gl_font {
+ static cairo_always_inline GLenum
+ _cairo_gl_get_error (void)
+ {
++#if (DEBUG_GL)
+     GLenum err = glGetError();
+ 
+     if (unlikely (err))
+         while (glGetError ());
+ 
+     return err;
++#else
++    return 0;
++#endif
+ }
+ 
+ static inline cairo_device_t *
