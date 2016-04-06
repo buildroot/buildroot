@@ -75,7 +75,7 @@ https://www.metrological.com/contact.html
 [mse-url]: http://yt-dash-mse-test.commondatastorage.googleapis.com/unit-tests/2016.html?enablewebm=false
 [eme-image]: https://img.shields.io/badge/EME%20coverage-100%-green.svg
 [eme-url]: http://yt-dash-mse-test.commondatastorage.googleapis.com/unit-tests/2015.html?test_type=encryptedmedia-test&command=run&disable_log=true
-[html5-image]: https://img.shields.io/badge/HTML5%20score-438-blue.svg
+[html5-image]: https://img.shields.io/badge/HTML5%20score-440-blue.svg
 [html5-url]: https://html5test.com/
 [prog-image]: https://img.shields.io/badge/Progressive-100%-green.svg
 [prog-url]: http://yt-dash-mse-test.commondatastorage.googleapis.com/unit-tests/tip.html
