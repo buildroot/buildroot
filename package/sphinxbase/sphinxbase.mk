@@ -9,6 +9,7 @@ SPHINXBASE_SOURCE = sphinxbase-$(SPHINXBASE_VERSION).tar.gz
 SPHINXBASE_SITE = https://sourceforge.net/projects/cmusphinx/files/sphinxbase/5prealpha
 SPHINXBASE_LICENSE = BSD
 SPHINXBASE_LICENSE_FILES = License.txt
+SPHINXBASE_INSTALL_STAGING = YES
 
 ifeq ($(BR2_PACKAGE_ALSA_LIB),y)
 SPHINXBASE_DEPENDENCIES += alsa-lib
@@ -28,5 +29,12 @@ define SPHINXBASE_CONFIGURE_CMDS
         --prefix=/usr  --without-python
 endef
 
-$(eval $(autotools-package))
+define SPHINXBASE_INSTALL_STAGING_CMDS
+        $(MAKE1) -C $(@D) DESTDIR=$(STAGING_DIR) install
+endef
 
+define SPHINXBASE_INSTALL_TARGET_CMDS
+        $(MAKE1) -C $(@D) DESTDIR=$(TARGET_DIR) install
+endef
+
+$(eval $(autotools-package))
