@@ -14,21 +14,59 @@ config BR2_PACKAGE_WEBBRIDGE
 
 if BR2_PACKAGE_WEBBRIDGE
 
-config BR2_PACKAGE_PLUGIN_MINIMIZED
-	bool "minimized"
-	help
-	  If minimized is selected, no UI pages will be copied to the target.
+menu "Options"
 
-config BR2_PACKAGE_PLUGIN_NXRESOURCECENTER
+config BR2_PACKAGE_WEBBRIDGE_PORT
+	string "port"
+	default "80"
+
+config BR2_PACKAGE_WEBBRIDGE_BIND
+	string "bind"
+	default "0.0.0.0"
+
+config BR2_PACKAGE_WEBBRIDGE_IDLE_TIME
+	string "idle-time"
+	default "180"
+
+config BR2_PACKAGE_WEBBRIDGE_PERSISTENT_PATH
+	string "persistent path"
+	default "/root"
+
+config BR2_PACKAGE_WEBBRIDGE_DATA_PATH
+	string "data path"
+	default "/usr/share/webbridge"
+
+config BR2_PACKAGE_WEBBRIDGE_SYSTEM_PATH
+	string "system path"
+	default "/usr/lib/webbridge"
+
+config BR2_PACKAGE_WEBBRIDGE_PROXYSTUB_PATH
+	string "proxystub path"
+	default "/usr/lib/webbridge/proxystubs"
+
+config BR2_PACKAGE_WEBBRIDGE_WEBSERVER_PATH
+	string "webserver path"
+	default "/boot/www"
+
+config BR2_PACKAGE_WEBBRIDGE_WEBSERVER_PORT
+	string "webserver port"
+	default "8080"
+
+config BR2_PACKAGE_WEBBRIDGE_NO_WEBUI
+	bool "no web interface"
+
+endmenu
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_NXRESOURCECENTER
 	bool "nxresourcecenter"
 	depends on BR2_PACKAGE_BCM_REFSW
 	help
 	  Nexus resource center for bcm platfoms.
 
 comment "nxresource centre depends on package bcm-refsw package."
-	depends on !BR2_PACKAGE_PLUGIN_NXRESOURCECENTER
+	depends on !BR2_PACKAGE_WEBBRIDGE_PLUGIN_NXRESOURCECENTER
 
-config BR2_PACKAGE_PLUGIN_TRACECONTROL
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_TRACECONTROL
 	bool "tracecontrol"
 	help
 	  A plugin that exposes the tracing api over the web interface.
@@ -38,28 +76,28 @@ config BR2_PACKAGE_PLUGIN_TRACECONTROL
 	  NOTE: Tracing does NOT replace logging but is a tool for 
 	  developpers to analyse there code. 
 
-config BR2_PACKAGE_PLUGIN_MONITOR
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_MONITOR
 	bool "monitor"
 	help
 	  A plugin that allows for a monitoring plugins with respect to 
 	  memory usage. Hard limits can be set on the maximum memory usage 
 	  and in case the limits are violated, the plugin can be restarted.
 
-config BR2_PACKAGE_PLUGIN_DICTIONARY
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_DICTIONARY
 	bool "dictionary"
 	help
 	  A plugin that allows for a persistent storage of data (key, value)
-          that can be accessed as a system-wide singleton and allows for 
-          notification on change by any instance in any process.
+		  that can be accessed as a system-wide singleton and allows for 
+		  notification on change by any instance in any process.
 
-config BR2_PACKAGE_PLUGIN_BACKOFFICE
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_BACKOFFICE
 	bool "backofffice"
 	select BR2_PACKAGE_CPPSDK_PROFILER
 	help
 	  A plugin that acts as a gateway between the webbridge and a back
-          office system living in the cloud.
+		  office system living in the cloud.
 
-config BR2_PACKAGE_PLUGIN_PROVISIONING
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_PROVISIONING
 	bool "provisioning"
 	depends on BR2_PACKAGE_LIBPROVISION
 	help
@@ -70,12 +108,12 @@ config BR2_PACKAGE_PLUGIN_PROVISIONING
 comment "provisioning needs the package libprovision in external mode."
 	depends on !BR2_PACKAGE_LIBPROVISION
 
-config BR2_PACKAGE_PLUGIN_WEBPROXY
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBPROXY
 	bool "webproxy"
 	help
 	  Provide functionality to proxy WebSockets (initiative) to tcp connections. 
 
-config BR2_PACKAGE_PLUGIN_REMOTECONTROL
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_REMOTECONTROL
 	bool "remotecontrol"
 	help
 	  A remote control implementation that translates keys coming in from a 
@@ -87,18 +125,18 @@ config BR2_PACKAGE_PLUGIN_REMOTECONTROL
 comment "remotecontrol requires the GreenPeak GP501 or GP711 to be selected and userland lib to be build."
 	depends on !BR2_PACKAGE_GREENPEAK || !BR2_PACKAGE_GREENPEAK_USERLANDLIB || (!BR2_PACKAGE_GREENPEAK_GP501 && !BR2_PACKAGE_GREENPEAK_GP711)
 
-config BR2_PACKAGE_PLUGIN_DEVICEINFO
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_DEVICEINFO
 	bool "deviceinfo"
 	help
 	  A plugin displaying information on system resources
 
-config BR2_PACKAGE_PLUGIN_BROWSER
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_BROWSER
 	bool "browser"
 	depends on BR2_PACKAGE_QT5WEBKIT
 	help
 	  A plugin that has browser functionality (QtWebKit)
 
-config BR2_PACKAGE_PLUGIN_NETFLIX
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX
 	bool "netflix"
 	select BR2_PACKAGE_CPPSDK_PROCESS
 	depends on BR2_PACKAGE_NETFLIX_LIB
@@ -109,7 +147,7 @@ config BR2_PACKAGE_PLUGIN_NETFLIX
 comment "netflix is dependent on the netflix package compiled as library"
 	depends on !BR2_PACKAGE_NETFLIX_LIB
 
-config BR2_PACKAGE_PLUGIN_WEBKITBROWSER 
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER
 	bool "webkitbrowser"
 	select BR2_PACKAGE_CPPSDK_PROCESS
 	depends on BR2_PACKAGE_WPE
@@ -119,20 +157,20 @@ config BR2_PACKAGE_PLUGIN_WEBKITBROWSER
 comment "webkitbrowser requires the package wpe"
 	depends on !BR2_PACKAGE_WPE
 
-config BR2_PACKAGE_PLUGIN_QUEUECOMMUNICATOR
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_QUEUECOMMUNICATOR
 	bool "queuecommunicator"
 	select BR2_PACKAGE_CPPSDK_MQC
 	help
 	  A plugin that receives and sends messages into a queue to interact
-          with specific middleware.
+		  with specific middleware.
 
 
-config BR2_PACKAGE_PLUGIN_DIALSERVER
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_DIALSERVER
 	bool "dialserver"
 	help
 	  A plugin that implements DIscovery And Launch protocol specification
 
-config BR2_PACKAGE_PLUGIN_SNAPSHOT
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_SNAPSHOT
 	bool "snapshot"
 	depends on BR2_PACKAGE_RPI_USERLAND
 	help
