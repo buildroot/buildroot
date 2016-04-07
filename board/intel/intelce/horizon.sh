@@ -29,6 +29,8 @@ cp -Rpf "${BOARD_DIR}/horizon/app_start.cfg" "${ROOTFS_DIR}/NDS"
 cp -Rpf "${BOARD_DIR}/horizon/webbridge" "${ROOTFS_DIR}/NDS"
 cp -Rpf "${BOARD_DIR}/horizon/webbridge-stub" "${ROOTFS_DIR}/NDS"
 
+mkdir -p "${ROOTFS_DIR}/boot/www"
+
 tar -cvf "${BINARIES_DIR}/horizon.tar" -C "${ROOTFS_DIR}" .
 
 rm -rf "${BINARIES_DIR}/filter.rootfs"
