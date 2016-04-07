@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_COMMON_VERSION = e97c9bb0122006fda8f5387cea1be452e23944e3
+GST1_COMMON_VERSION = 6f2d2093e84cc0eb99b634fa281822ebb9507285
 GST1_COMMON_SOURCE = common-$(GST1_COMMON_VERSION).tar.xz
 GST1_COMMON_SITE = http://cgit.freedesktop.org/gstreamer/common/snapshot
 BR_NO_CHECK_HASH_FOR += $(GST1_COMMON_SOURCE)
