@@ -8,6 +8,9 @@ ln -sfn $SOURCE/NDS/webbridge-stub /NDS/bin/webbridge
 ln -sfn $SOURCE/etc/playready /etc/playready
 ln -sfn $SOURCE/etc/ssl /etc/ssl
 ln -sfn $SOURCE/etc/fonts /etc/fonts
+ln -sfn $SOURCE/usr/lib/libgenerics.so.1.0 /usr/lib/libgenerics.so.1.0
+ln -sfn $SOURCE/usr/lib/libmqc.so.1.0 /usr/lib/libmqc.so.1.0
+ln -sfn $SOURCE/usr/lib/libtracing.so.1.0 /usr/lib/libtracing.so.1.0
 mkdir -p /usr/share/fonts
 ln -sfn $SOURCE/usr/share/X11 /usr/share/X11
 ln -sfn $SOURCE/usr/share/fonts/ttf-bitstream-vera /usr/share/fonts/ttf-bitstream-vera
