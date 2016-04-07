@@ -43,4 +43,12 @@ else
 FLITE_CONF_OPTS += --with-audio=oss
 endif
 
+define FLITE_INSTALL_STAGING_CMDS
+        $(MAKE1) -C $(@D)/$(FLITE_SUBDIR) DESTDIR=$(STAGING_DIR) install
+        mkdir -p $(STAGING_DIR)/share/flite
+        cp $(@D)/$(FLITE_SUBDIR)/config/default.lv $(STAGING_DIR)/share/flite
+        cp $(@D)/$(FLITE_SUBDIR)/tools/make_voice_list $(STAGING_DIR)/share/flite
+endef
+
+
 $(eval $(autotools-package))
