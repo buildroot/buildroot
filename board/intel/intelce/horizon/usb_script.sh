@@ -2,7 +2,6 @@
 set -x 
 SOURCE=/mnt/usb
 cp $SOURCE/usr/lib/libstdc++.so.6.0.20 /lib/libstdc++.so.6.0.14
-ln -sfn $SOURCE/etc/webbridge /etc/webbridge
 #ln -sfn $SOURCE/NDS/webbridge /NDS/bin/webbridge
 ln -sfn $SOURCE/NDS/webbridge-stub /NDS/bin/webbridge
 ln -sfn $SOURCE/etc/playready /etc/playready
