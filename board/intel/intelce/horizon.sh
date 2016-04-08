@@ -13,7 +13,8 @@ done < "${BOARD_DIR}/horizon.txt"
 
 mkdir -p "${ROOTFS_DIR}"
 
-rsync -av --files-from="${BINARIES_DIR}/filter.rootfs" ${TARGET_DIR} ${ROOTFS_DIR}
+rsync -av --files-from="${BINARIES_DIR}/filter.rootfs" "${TARGET_DIR}" "${ROOTFS_DIR}"
+rsync -av "${TARGET_DIR}/usr/lib/gstreamer-1.0" "${ROOTFS_DIR}/usr/lib"
 rsync -av "${TARGET_DIR}/usr/lib/webbridge" "${ROOTFS_DIR}/usr/lib"
 rsync -av "${TARGET_DIR}/usr/share/X11" "${ROOTFS_DIR}/usr/share"
 rsync -av "${TARGET_DIR}/usr/share/fonts" "${ROOTFS_DIR}/usr/share"
@@ -32,6 +33,10 @@ cp -Rpf "${BOARD_DIR}/horizon/webbridge" "${ROOTFS_DIR}/NDS"
 cp -Rpf "${BOARD_DIR}/horizon/webbridge-stub" "${ROOTFS_DIR}/NDS"
 
 mkdir -p "${ROOTFS_DIR}/www"
+
+rm -rf "${ROOTFS_DIR}/usr/lib/gstreamer-1.0/include"
+rm -rf "${ROOTFS_DIR}/usr/lib/libstdc++.so.6.0.20-gdb.py"
+rm -rf "${ROOTFS_DIR}/etc/ssl/man"
 
 tar -cvf "${BINARIES_DIR}/horizon.tar" -C "${ROOTFS_DIR}" .
 
