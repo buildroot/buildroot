@@ -14,6 +14,7 @@ done < "${BOARD_DIR}/horizon.txt"
 mkdir -p "${ROOTFS_DIR}"
 
 rsync -av --files-from="${BINARIES_DIR}/filter.rootfs" ${TARGET_DIR} ${ROOTFS_DIR}
+rsync -av "${TARGET_DIR}/usr/lib/webbridge" "${ROOTFS_DIR}/usr/lib"
 rsync -av "${TARGET_DIR}/usr/share/fonts" "${ROOTFS_DIR}/usr/share"
 rsync -av "${TARGET_DIR}/usr/share/webbridge" "${ROOTFS_DIR}/usr/share"
 rsync -av "${TARGET_DIR}/etc/playready" "${ROOTFS_DIR}/etc"
