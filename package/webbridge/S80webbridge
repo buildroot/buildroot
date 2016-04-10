@@ -1,7 +1,16 @@
 #!/bin/sh
 
 start() {
+	# Core dumps
+	#echo 1 > /proc/sys/kernel/core_uses_pid
+	#echo 2 > /proc/sys/fs/suid_dumpable
+	#echo "/root/cores/core-pid_%p--process%E" > /proc/sys/kernel/core_pattern
+	#mkdir -p /root/cores
+	#ulimit -c unlimited
+
+	# Gstreamer OMX workaround
 	export GST_GL_WINDOW=dummy
+
 	echo -n "Starting webbridge: "
 	start-stop-daemon -S -q -b -m -p /var/run/webbridge.pid --exec /usr/bin/webbridge -- -b </dev/null >/dev/null 2>&1
 	[ $? == 0 ] && echo "OK" || echo "FAIL"
