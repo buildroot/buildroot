@@ -26,7 +26,7 @@ config BR2_PACKAGE_GLUELOGIC_KEYBOARDSCANNER
 	  A tool to that reads keystrokes and transform them into keyevent queue messages.
 
 menuconfig BR2_PACKAGE_GLUELOGIC_TESTAPPS
-	bool "Tests"
+	bool "tests"
 
 if BR2_PACKAGE_GLUELOGIC_TESTAPPS
 
@@ -47,6 +47,12 @@ config BR2_PACKAGE_GLUELOGIC_TEST_QUEUEPLAYERSTUB
 	select BR2_PACKAGE_GLUELOGIC_QUEUEPLAYER
 	help
 	  Test stub for testing the GStreamer sink Dorne.
+
+config BR2_PACKAGE_GLUELOGIC_VIRTUAL_KEYBOARD_TOOLS
+	bool "virtualkeyboard-tools"
+	select BR2_PACKAGE_GLUELOGIC_VIRTUAL_KEYBOARD
+	help
+	  Virtual keyboard tools.
 
 endif
 
