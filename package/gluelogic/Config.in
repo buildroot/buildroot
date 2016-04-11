@@ -2,26 +2,52 @@ config BR2_PACKAGE_GLUELOGIC
 	bool "gluelogic"
 	select BR2_PACKAGE_CPPSDK
 	help
-      Vendor specific solutions to glue browser and webbridge together. 
+	  Vendor specific solutions to glue browser and webbridge together. 
 
 if BR2_PACKAGE_GLUELOGIC
-    
+	
 config BR2_PACKAGE_GLUELOGIC_QUEUEPLAYER
 	bool "queueplayer"
 	select BR2_PACKAGE_CPPSDK_MQC
 	help
-      A abstraction layer for controlling a player using a message queue.
-    
+	  A abstraction layer for controlling a player using a message queue.
+	
 config BR2_PACKAGE_GLUELOGIC_VIRTUAL_KEYBOARD
 	bool "virtualkeyboard"
 	select BR2_PACKAGE_CPPSDK_GENERICS
 	help
-      An abstraction layer for sending keys, prepared for the /dev/input device.
+	  An abstraction layer for sending keys, prepared for the /dev/input device.
 
 
 config BR2_PACKAGE_GLUELOGIC_KEYBOARDSCANNER
 	bool "keyboardscanner"
 	select BR2_PACKAGE_CPPSDK_MQC
 	help
-      A tool to that reads keystrokes and transform them into keyevent queue messages.
+	  A tool to that reads keystrokes and transform them into keyevent queue messages.
+
+menuconfig BR2_PACKAGE_GLUELOGIC_TESTAPPS
+	bool "Tests"
+
+if BR2_PACKAGE_GLUELOGIC_TESTAPPS
+
+config BR2_PACKAGE_GLUELOGIC_TEST_KEYBOARDSINK
+	bool "keyboard-sink"
+	select BR2_PACKAGE_GLUELOGIC_VIRTUAL_KEYBOARD
+	help
+	  The virtual keyboard test sink.
+
+config BR2_PACKAGE_GLUELOGIC_TEST_KEYBOARDSOURCE
+	bool "keyboard-source"
+	select BR2_PACKAGE_GLUELOGIC_VIRTUAL_KEYBOARD
+	help
+	  The virtual keyboard test source.
+
+config BR2_PACKAGE_GLUELOGIC_TEST_QUEUEPLAYERSTUB
+	bool "queueplayerstub"
+	select BR2_PACKAGE_GLUELOGIC_QUEUEPLAYER
+	help
+	  Test stub for testing the GStreamer sink Dorne.
+
+endif
+
 endif
