@@ -24,6 +24,7 @@ rsync -av "${TARGET_DIR}/usr/share/mime" "${ROOTFS_DIR}/usr/share"
 rsync -av "${TARGET_DIR}/etc/playready" "${ROOTFS_DIR}/etc"
 rsync -av "${TARGET_DIR}/etc/ssl" "${ROOTFS_DIR}/etc"
 rsync -av "${TARGET_DIR}/etc/webbridge" "${ROOTFS_DIR}/etc"
+rsync -av "${TARGET_DIR}/etc/fonts" "${ROOTFS_DIR}/etc"
 
 mkdir -p "${ROOTFS_DIR}/root/Netflix/dpi"
 ln -sfn /usr/share/fonts/netflix "${ROOTFS_DIR}/root/Netflix/fonts" && ln -sfn /etc/playready "${ROOTFS_DIR}/root/Netflix/dpi/playready"
