@@ -4,9 +4,10 @@
 #
 ################################################################################
 
-UPX_VERSION = 3.91
-UPX_SITE = http://upx.sourceforge.net/download
-UPX_SOURCE = upx-$(UPX_VERSION)-src.tar.bz2
+UPX_VERSION = 68db2e569c6
+UPX_SITE = https://www.pysol.org:4443/hg/upx.hg/archive
+UPX_SOURCE = $(UPX_VERSION).tar.gz
+
 UPX_LICENSE = GPLv2+
 UPX_LICENSE_FILES = COPYING
 
