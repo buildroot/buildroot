@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_PLUGINS_DORNE_VERSION = f77d542561ca7d8c868a506d2a9fc7c5ae42b946
+GST1_PLUGINS_DORNE_VERSION = ca77b83ec3d898df8dac259529b97834d45a2106
 GST1_PLUGINS_DORNE_SITE_METHOD = git
 GST1_PLUGINS_DORNE_SITE = git@github.com:Metrological/gst-plugins-dorne.git
 
