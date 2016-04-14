@@ -24,8 +24,8 @@ WPE_DEPENDENCIES = host-flex host-bison host-gperf host-ruby icu pcre
 
 ifeq ($(WPE_BUILD_WEBKIT),y)
 WPE_DEPENDENCIES += libgcrypt libgles libegl cairo freetype fontconfig \
-		    harfbuzz libxml2 libxslt sqlite libsoup jpeg libpng \
-		    webp libinput libxkbcommon xkeyboard-config
+	harfbuzz libxml2 libxslt sqlite libsoup jpeg libpng \
+	webp libinput libxkbcommon xkeyboard-config
 endif
 
 ifeq ($(BR2_PACKAGE_NINJA),y)
@@ -41,7 +41,6 @@ ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
 WPE_EXTRA_FLAGS += \
 	-D__UCLIBC__
 endif
-
 
 ifeq ($(WPE_BUILD_WEBKIT),y)
 WPE_FLAGS = \
@@ -117,8 +116,8 @@ endif
 else
 WPE_BUILD_TYPE = Release
 WPE_EXTRA_FLAGS += \
-	-DCMAKE_C_FLAGS_RELEASE="-O2 -DNDEBUG -Wno-cast-align $(WPE_EXTRA_CFLAGS)" \
-	-DCMAKE_CXX_FLAGS_RELEASE="-O2 -DNDEBUG -Wno-cast-align $(WPE_EXTRA_CFLAGS)"
+	-DCMAKE_C_FLAGS_RELEASE="$(call qstrip,$(TARGET_CFLAGS)) -DNDEBUG -Wno-cast-align $(WPE_EXTRA_CFLAGS)" \
+	-DCMAKE_CXX_FLAGS_RELEASE="$(call qstrip,$(TARGET_CXXFLAGS)) -DNDEBUG -Wno-cast-align $(WPE_EXTRA_CFLAGS)"
 endif
 
 ifeq ($(WPE_BUILD_WEBKIT),y)
@@ -188,7 +187,6 @@ ifeq ($(BR2_PACKAGE_WPE_ONLY_JSC), y)
 WPE_FLAGS += -DENABLE_STATIC_JSC=ON
 endif
 
-
 WPE_CONF_OPTS = \
 	-DPORT=$(WPE_USE_PORT) \
 	-DCMAKE_BUILD_TYPE=$(WPE_BUILD_TYPE) \
@@ -205,7 +203,7 @@ WPE_BUILD_TARGETS += jsc
 endif
 ifeq ($(WPE_BUILD_WEBKIT),y)
 WPE_BUILD_TARGETS += libWPEWebKit.so libWPEWebInspectorResources.so \
-		     WPE{Database,Network,Web}Process
+	WPE{Database,Network,Web}Process
 
 endif
 
@@ -225,10 +223,10 @@ endif
 
 ifeq ($(WPE_BUILD_WEBKIT),y)
 define WPE_INSTALL_STAGING_CMDS_WEBKIT
-      cp $(WPE_BUILDDIR)/bin/WPE{Database,Network,Web}Process $(STAGING_DIR)/usr/bin/ && \
-      cp -d $(WPE_BUILDDIR)/lib/libWPE* $(STAGING_DIR)/usr/lib/ && \
-      DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P $(WPE_BUILDDIR)/Source/JavaScriptCore/cmake_install.cmake > /dev/null && \
-      DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P $(WPE_BUILDDIR)/Source/WebKit2/cmake_install.cmake > /dev/null
+	  cp $(WPE_BUILDDIR)/bin/WPE{Database,Network,Web}Process $(STAGING_DIR)/usr/bin/ && \
+	  cp -d $(WPE_BUILDDIR)/lib/libWPE* $(STAGING_DIR)/usr/lib/ && \
+	  DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P $(WPE_BUILDDIR)/Source/JavaScriptCore/cmake_install.cmake > /dev/null && \
+	  DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P $(WPE_BUILDDIR)/Source/WebKit2/cmake_install.cmake > /dev/null
 endef
 else
 WPE_INSTALL_STAGING_CMDS_WEBKIT = true
@@ -236,11 +234,11 @@ endif
 
 ifeq ($(BR2_PACKAGE_WPE_SELFCOMPRESS),y)
 define SELFCOMPRESSCMD
-        $(HOST_DIR)/usr/bin/upx
+	$(HOST_DIR)/usr/bin/upx
 endef
 else
 define SELFCOMPRESSCMD
-        true
+	true
 endef
 endif
 
@@ -260,10 +258,10 @@ endif
 
 ifeq ($(WPE_BUILD_WEBKIT),y)
 define WPE_INSTALL_TARGET_CMDS_WEBKIT
-      cp $(WPE_BUILDDIR)/bin/WPE{Database,Network,Web}Process $(TARGET_DIR)/usr/bin/ && \
-      cp -d $(WPE_BUILDDIR)/lib/libWPE* $(TARGET_DIR)/usr/lib/ && \
-      $(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.* && \
-      $(SELFCOMPRESSCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.*
+	cp $(WPE_BUILDDIR)/bin/WPE{Database,Network,Web}Process $(TARGET_DIR)/usr/bin/ && \
+	cp -d $(WPE_BUILDDIR)/lib/libWPE* $(TARGET_DIR)/usr/lib/ && \
+	$(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.* && \
+	$(SELFCOMPRESSCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.*
 endef
 else
 WPE_INSTALL_TARGET_CMDS_WEBKIT = true
