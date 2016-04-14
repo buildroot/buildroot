@@ -234,6 +234,16 @@ else
 WPE_INSTALL_STAGING_CMDS_WEBKIT = true
 endif
 
+ifeq ($(BR2_PACKAGE_WPE_SELFCOMPRESS),y)
+define SELFCOMPRESSCMD
+        $(HOST_DIR)/usr/bin/upx
+endef
+else
+define SELFCOMPRESSCMD
+        true
+endef
+endif
+
 define WPE_INSTALL_STAGING_CMDS
 	($(WPE_INSTALL_STAGING_CMDS_JSC) && \
 	$(WPE_INSTALL_STAGING_CMDS_WEBKIT))
@@ -252,7 +262,8 @@ ifeq ($(WPE_BUILD_WEBKIT),y)
 define WPE_INSTALL_TARGET_CMDS_WEBKIT
       cp $(WPE_BUILDDIR)/bin/WPE{Database,Network,Web}Process $(TARGET_DIR)/usr/bin/ && \
       cp -d $(WPE_BUILDDIR)/lib/libWPE* $(TARGET_DIR)/usr/lib/ && \
-      $(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.*
+      $(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.* && \
+      $(SELFCOMPRESSCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.*
 endef
 else
 WPE_INSTALL_TARGET_CMDS_WEBKIT = true

@@ -23,6 +23,7 @@ config BR2_PACKAGE_WPE
 	select BR2_PACKAGE_SQLITE if !BR2_PACKAGE_WPE_ONLY_JSC
 	select BR2_PACKAGE_WEBP if !BR2_PACKAGE_WPE_ONLY_JSC
 	select BR2_PACKAGE_XKEYBOARD_CONFIG if !BR2_PACKAGE_WPE_ONLY_JSC
+	select BR2_PACKAGE_HOST_UPX if BR2_PACKAGE_WPE_SELFCOMPRESS
 	help
 	  Here be dragons.
 
@@ -138,6 +139,12 @@ config BR2_PACKAGE_WPE_USE_PUNCH_HOLE_EXTERNAL
 endchoice
 
 endif
+
+config BR2_PACKAGE_WPE_SELFCOMPRESS
+	bool "Self-compress WPE libraries"
+	default n
+	help
+	  Use UPX to Self-compress WPE libraries in order to save space
 
 endmenu
 
