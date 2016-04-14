@@ -233,6 +233,7 @@ WPE_INSTALL_STAGING_CMDS_WEBKIT = true
 endif
 
 ifeq ($(BR2_PACKAGE_WPE_SELFCOMPRESS),y)
+WPE_DEPENDENCIES += host-upx
 define SELFCOMPRESSCMD
 	$(HOST_DIR)/usr/bin/upx
 endef
