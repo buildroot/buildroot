@@ -147,12 +147,31 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX
 comment "netflix is dependent on the netflix package compiled as library"
 	depends on !BR2_PACKAGE_NETFLIX_LIB
 
-config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER
+menuconfig BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER
 	bool "webkitbrowser"
 	select BR2_PACKAGE_CPPSDK_PROCESS
 	depends on BR2_PACKAGE_WPE
 	help
 	  A plugin that manages the webkit browser functionality
+
+if BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER_MEMORYPROFILE
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER
+	string "memory-profile"
+	default "512m"
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER_MEMORYPRESSURE
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER
+	string "memory-pressure"
+	default "databaseprocess:50m,networkprocess:100m,webprocess:300m,rpcprocess:50m"
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER_MEDIADISKCACHE
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER
+	bool "media-disk-cache"
+	default n
+
+endif
 
 comment "webkitbrowser requires the package wpe"
 	depends on !BR2_PACKAGE_WPE
