@@ -23,4 +23,8 @@ GST1_PLUGINS_DORNE_POST_INSTALL_TARGET_HOOKS += GSTREAMER1_REMOVE_LA_FILES
 
 GST1_PLUGINS_DORNE_DEPENDENCIES = gluelogic gst1-common gstreamer1 gst1-plugins-base
 
+GST1_PLUGINS_DORNE_CONF_ENV = \
+	CFLAGS="$(TARGET_CFLAGS) -Wall -Wextra -Werror -Wno-unused-parameter"
+
+
 $(eval $(autotools-package))
