@@ -22,6 +22,10 @@ ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 CAIRO_CONF_ENV += LIBS="-latomic"
 endif
 
+ifneq ($(BR2_TARGET_LDFLAGS),)
+CAIRO_CONF_ENV += LDFLAGS=""
+endif
+
 CAIRO_CONF_OPTS = \
 	--enable-trace=no \
 	--enable-interpreter=no
