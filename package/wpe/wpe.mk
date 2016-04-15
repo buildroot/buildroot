@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = 1b8c81cc37e4493577af1a1e02015e0f5f5ed3ae
+WPE_VERSION = 417b8bca7130497a3a4657b7802eee58ae7a263c
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -97,7 +97,6 @@ endif
 ifeq ($(BR2_PACKAGE_INTELCE_SDK),y)
 WPE_FLAGS += -DUSE_WPE_BACKEND_INTEL_CE=ON
 endif
-
 endif
 
 ifeq ($(BR2_PACKAGE_WPE_ENABLE_LOGGING),y)
