@@ -1,0 +1,45 @@
+From 8b7c591918013a59af27e91ff46085f9b9c89b60 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Sebastian=20Dr=C3=B6ge?= <sebastian@centricular.com>
+Date: Fri, 15 Apr 2016 19:59:15 +0300
+Subject: [PATCH] scaletempo: S16 uses S32 temporary buffers, float/double
+ their own type
+
+Make sure to allocate not only a S16 buffer for S16 but a twice as big one to
+hold S32.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=765116
+---
+ gst/audiofx/gstscaletempo.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/gst/audiofx/gstscaletempo.c b/gst/audiofx/gstscaletempo.c
+index 217ce4e..5a5fa7f 100644
+--- a/gst/audiofx/gstscaletempo.c
++++ b/gst/audiofx/gstscaletempo.c
+@@ -292,8 +292,11 @@ reinit_buffers (GstScaletempo * st)
+     st->bytes_standing = st->bytes_stride - st->bytes_overlap;
+     st->samples_standing = st->bytes_standing / st->bytes_per_sample;
+     st->buf_overlap = g_realloc (st->buf_overlap, st->bytes_overlap);
++    /* S16 uses gint32 blend table, floats/doubles use their respective type */
+     st->table_blend =
+-        g_realloc (st->table_blend, st->samples_overlap * st->bytes_per_sample);
++        g_realloc (st->table_blend,
++        st->samples_overlap * (st->format ==
++            GST_AUDIO_FORMAT_S16 ? 4 : st->bytes_per_sample));
+     if (st->bytes_overlap > prev_overlap) {
+       memset ((guint8 *) st->buf_overlap + prev_overlap, 0,
+           st->bytes_overlap - prev_overlap);
+@@ -338,8 +341,10 @@ reinit_buffers (GstScaletempo * st)
+   if (st->frames_search < 1) {  /* if no search */
+     st->best_overlap_offset = NULL;
+   } else {
++    /* S16 uses gint32 buffer , floats/doubles use their respective type */
+     guint bytes_pre_corr =
+-        (st->samples_overlap - st->samples_per_frame) * st->bytes_per_sample;
++        (st->samples_overlap - st->samples_per_frame) * (st->format ==
++        GST_AUDIO_FORMAT_S16 ? 4 : st->bytes_per_sample);
+     st->buf_pre_corr =
+         g_realloc (st->buf_pre_corr, bytes_pre_corr + UNROLL_PADDING);
+     st->table_window = g_realloc (st->table_window, bytes_pre_corr);
+-- 
+2.8.0.rc3
