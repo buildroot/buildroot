@@ -22,7 +22,7 @@ NETFLIX_CONF_OPTS = \
 	-DBUILD_COMPILE_RESOURCES=1 \
 	-DBUILD_QA=0 \
 	-DBUILD_SHARED_LIBS=0 \
-	-DGIBBON_SCRIPT_JSC_DYNAMIC=1 \
+	-DGIBBON_SCRIPT_JSC_DYNAMIC=0 \
 	-DGIBBON_SCRIPT_JSC_DEBUG=0 \
 	-DGIBBON_INPUT=devinput \
 	-DNRDP_HAS_IPV6=0 \
@@ -137,7 +137,6 @@ ifeq ($(BR2_PACKAGE_NETFLIX_LIB),y)
 
 define NETFLIX_INSTALL_STAGING_CMDS
 	make -C $(@D)/netflix install
-	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/libJavaScriptCore.so $(STAGING_DIR)/usr/lib
 	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/libnetflix.so $(STAGING_DIR)/usr/lib
 	$(INSTALL) -D package/netflix/netflix.pc $(STAGING_DIR)/usr/lib/pkgconfig/netflix.pc
 	mkdir -p $(STAGING_DIR)/usr/include/netflix
@@ -154,14 +153,12 @@ define NETFLIX_INSTALL_STAGING_CMDS
 endef
 
 define NETFLIX_INSTALL_TARGET_CMDS
-	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/libJavaScriptCore.so $(TARGET_DIR)/usr/lib
 	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/libnetflix.so $(TARGET_DIR)/usr/lib
 endef
 
 else
 
 define NETFLIX_INSTALL_TARGET_CMDS
-	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/libJavaScriptCore.so $(TARGET_DIR)/usr/lib
 	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/netflix $(TARGET_DIR)/usr/bin
 	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/manufss $(TARGET_DIR)/usr/bin
 endef
