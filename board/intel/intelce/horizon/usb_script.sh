@@ -16,4 +16,3 @@ mkdir -p /usr/share/fonts
 ln -sfn $SOURCE/usr/share/mime /usr/share/mime
 ln -sfn $SOURCE/usr/share/X11 /usr/share/X11
 ln -sfn $SOURCE/usr/share/fonts/ttf-bitstream-vera /usr/share/fonts/ttf-bitstream-vera
-ln -sfn $SOURCE/usr/share/fonts/netflix /usr/share/fonts/netflix
