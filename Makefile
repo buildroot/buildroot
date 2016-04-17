@@ -895,9 +895,7 @@ endif
 	rm -rf $(BR2_CONFIG) $(CONFIG_DIR)/.config.old $(CONFIG_DIR)/..config.tmp \
 		$(CONFIG_DIR)/.auto.deps $(BR2_EXTERNAL_FILE)
 
-help: help-internal help-custom
-
-help-internal:
+help:
 	@echo 'Cleaning:'
 	@echo '  clean                  - delete all files created by build'
 	@echo '  distclean              - delete all non-source files (including .config)'
@@ -977,12 +975,6 @@ endif
 	@echo 'For further details, see README, generate the Buildroot manual, or consult'
 	@echo 'it on-line at http://buildroot.org/docs.html'
 	@echo
-
-# This rule does nothing, it is expected to be overloaded by
-# a br2-external tree or a local.mk . However, it must exist,
-# as we reference it in the main help, above. Making the rule
-# .PHONY does not work.
-help-custom:
 
 list-defconfigs:
 	@echo 'Built-in configs:'
