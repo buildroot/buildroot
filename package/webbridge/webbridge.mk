@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WEBBRIDGE_VERSION = b76544aa1de1358fb80aa74c15fbd881511182e8
+WEBBRIDGE_VERSION = 6f91685bb0e104e1f02535b0700746a993d7e686
 WEBBRIDGE_SITE_METHOD = git
 WEBBRIDGE_SITE = git@github.com:Metrological/webbridge.git
 WEBBRIDGE_INSTALL_STAGING = YES
