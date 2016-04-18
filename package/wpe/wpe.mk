@@ -122,6 +122,7 @@ endif
 else
 WPE_BUILD_TYPE = Release
 ifeq ($(BR2_PACKAGE_WPE_DEBUG_SYMBOLS),y)
+WPE_EXTRA_FLAGS += \
 	-DCMAKE_C_FLAGS_RELEASE="$(call qstrip,$(TARGET_CFLAGS)) -g -DNDEBUG -Wno-cast-align $(WPE_EXTRA_CFLAGS)" \
 	-DCMAKE_CXX_FLAGS_RELEASE="$(call qstrip,$(TARGET_CXXFLAGS)) -g -DNDEBUG -Wno-cast-align $(WPE_EXTRA_CFLAGS)"
 else
