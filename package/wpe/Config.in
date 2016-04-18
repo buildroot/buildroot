@@ -31,6 +31,13 @@ if BR2_PACKAGE_WPE
 
 menu "Extra options"
 
+config BR2_PACKAGE_WPE_DEBUG_SYMBOLS
+	bool "debug symbols"
+	depends on !BR2_ENABLE_DEBUG
+	default n
+	help
+	  Build WPE with debug symbols
+
 config BR2_PACKAGE_WPE_JSC
 	bool "build JavaScriptCore interpreter (jsc)"
 	default n
