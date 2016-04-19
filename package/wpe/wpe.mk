@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = 23b3776ba2df9090591c295ce80f2d643467a879
+WPE_VERSION = 8010a1700b382c73113388052792f4d1912c5fa2
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -24,8 +24,7 @@ WPE_DEPENDENCIES = host-flex host-bison host-gperf host-ruby icu pcre
 
 ifeq ($(WPE_BUILD_WEBKIT),y)
 WPE_DEPENDENCIES += libgcrypt libgles libegl cairo freetype fontconfig \
-	harfbuzz libxml2 libxslt sqlite libsoup jpeg libpng \
-	webp libinput libxkbcommon xkeyboard-config
+	harfbuzz libxml2 libxslt sqlite libsoup jpeg libpng libinput
 endif
 
 ifeq ($(BR2_PACKAGE_NINJA),y)
@@ -60,6 +59,16 @@ ifeq ($(BR2_TOOLCHAIN_USES_MUSL),y)
 WPE_FLAGS += -DENABLE_SAMPLING_PROFILER=OFF
 else
 WPE_FLAGS += -DENABLE_SAMPLING_PROFILER=ON
+endif
+
+ifeq ($(BR2_PACKAGE_WEBP),y)
+WPE_DEPENDENCIES += webp
+endif
+
+ifeq ($(BR2_PACKAGE_LIBXKBCOMMON),y)
+WPE_DEPENDENCIES += libxkbcommon xkeyboard-config
+else
+WPE_FLAGS += -DUSE_KEY_INPUT_HANDLING_LINUX_INPUT=ON
 endif
 
 ifeq ($(BR2_PACKAGE_GLUELOGIC_VIRTUAL_KEYBOARD),y)
@@ -99,7 +108,7 @@ WPE_EXTRA_CFLAGS += -DMESA_EGL_NO_X11_HEADERS
 endif
 endif
 ifeq ($(BR2_PACKAGE_HORIZON_SDK),y)
-WPE_FLAGS += -DUSE_WPE_BACKEND_INTEL_CE=ON -DUSE_FUSION_SINK=ON
+WPE_FLAGS += -DUSE_WPE_BACKEND_INTEL_CE=ON -DUSE_FUSION_SINK=ON -DUSE_SYSTEM_MALLOC=ON
 endif
 ifeq ($(BR2_PACKAGE_INTELCE_SDK),y)
 WPE_FLAGS += -DUSE_WPE_BACKEND_INTEL_CE=ON
