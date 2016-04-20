@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-GENIMAGE_CFG="board/minnowboard-max/genimage.cfg"
+GENIMAGE_CFG="board/minnowboard/genimage.cfg"
 GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
 
 rm -rf "${GENIMAGE_TMP}"
