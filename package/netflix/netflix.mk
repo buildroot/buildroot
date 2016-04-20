@@ -8,7 +8,7 @@ NETFLIX_VERSION = f402030f6b52a5c6726bb891174abb7b305ff5c7
 NETFLIX_SITE = git@github.com:Metrological/netflix.git
 NETFLIX_SITE_METHOD = git
 NETFLIX_LICENSE = PROPRIETARY
-NETFLIX_DEPENDENCIES = freetype icu jpeg libpng libmng harfbuzz expat openssl c-ares libcurl graphite2
+NETFLIX_DEPENDENCIES = freetype icu jpeg libpng libmng webp harfbuzz expat openssl c-ares libcurl graphite2
 NETFLIX_INSTALL_TARGET = YES
 NETFLIX_SUBDIR = netflix
 NETFLIX_RESOURCE_LOC = $(call qstrip,${BR2_PACKAGE_NETFLIX_RESOURCE_LOCATION})
@@ -58,12 +58,6 @@ endif
 
 NETFLIX_CONF_ENV += TARGET_CROSS="$(GNU_TARGET_NAME)-"
 NETFLIX_FLAGS = -fPIC
-
-ifeq ($(BR2_PACKAGE_WEBP),y)
-NETFLIX_DEPENDENCIES += webp
-else
-NETFLIX_CONF_OPTS += -DGIBBON_IMAGE_WEBP="no"
-endif
 
 ifeq ($(BR2_PACKAGE_GLUELOGIC_VIRTUAL_KEYBOARD),y)
 NETFLIX_CONF_OPTS += -DUSE_NETFLIX_VIRTUAL_KEYBOARD=1
