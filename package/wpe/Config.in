@@ -114,8 +114,8 @@ config BR2_PACKAGE_WPE_USE_GSTREAMER_GL
 
 config BR2_PACKAGE_WPE_USE_FUSION_API
 	bool "Fusion API"
-	depends on BR2_PACKAGE_GST1_PLUGINS_DORNE && BR2_PACKAGE_GSTREAMER1_GIT
-	default n
+	depends on BR2_PACKAGE_GST1_PLUGINS_DORNE
+	default y if BR2_PACKAGE_HORIZON_SDK
 	help
 	  Use Fusion IPC API in the Media Player.
 
