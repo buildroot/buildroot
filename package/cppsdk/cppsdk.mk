@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CPPSDK_VERSION = a96d3aad3c745e0c8eac34fa0972b87c97fcbb6a
+CPPSDK_VERSION = 114fcfc69969f0b2bb30618794c8c4c1fb57f94d
 CPPSDK_SITE_METHOD = git
 CPPSDK_SITE = git@github.com:Metrological/cppsdk.git
 CPPSDK_INSTALL_STAGING = YES
@@ -33,6 +33,10 @@ ifeq ($(BR2_ENABLE_DEBUG),y)
 CPPSDK_CONF_OPTS += -DCPPSDK_DEBUG=ON
 else ifeq ($(BR2_PACKAGE_CPPSDK_DEBUG),y)
 CPPSDK_CONF_OPTS += -DCPPSDK_DEBUG=ON
+endif
+
+ifeq ($(BR2_PACKAGE_CPPSDK_DEADLOCK_DETECTION),y)
+CPPSDK_CONF_OPTS += -DCPPSDK_DEADLOCK_DETECTION=ON
 endif
 
 ifeq ($(BR2_PACKAGE_CPPSDK_GENERICS),y)
