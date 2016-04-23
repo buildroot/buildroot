@@ -21,6 +21,12 @@ config BR2_PACKAGE_CPPSDK_DEBUG
 	  Build the cppsdk in debug mode. Always usefull to have a
 	  partial enabled debug stack.
 
+config BR2_PACKAGE_CPPSDK_DEADLOCK_DETECTION
+	bool "deadlock-detection"
+	default n
+	help
+	  Adds tooling to eliminate deadlocks.
+
 config BR2_PACKAGE_CPPSDK_GENERICS
 	bool "generics"
 	help
