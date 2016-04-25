@@ -32,7 +32,6 @@ rm -rf $TARGET_DIR/usr/bin/asn1*
 rm -rf $TARGET_DIR/usr/bin/sexp-conv
 rm -rf $TARGET_DIR/usr/bin/pkcs1-conv
 rm -rf $TARGET_DIR/usr/bin/nettle-*
-rm -rf $TARGET_DIR/usr/bin/gst-*
 rm -rf $TARGET_DIR/usr/bin/xmllint
 rm -rf $TARGET_DIR/usr/bin/xmlcatalog
 rm -rf $TARGET_DIR/usr/bin/mpg123
