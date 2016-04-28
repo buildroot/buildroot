@@ -38,6 +38,7 @@ endchoice
 
 config BR2_PACKAGE_NETFLIX_GST_GL
 	bool "gl"
+	depends on BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_GL
 	default n
 
 endmenu
