@@ -30,10 +30,7 @@ mkdir -p "${ROOTFS_DIR}/root/Netflix/dpi"
 ln -sfn /usr/share/fonts/netflix "${ROOTFS_DIR}/root/Netflix/fonts" && ln -sfn /etc/playready "${ROOTFS_DIR}/root/Netflix/dpi/playready"
 
 mkdir -p "${ROOTFS_DIR}/NDS"
-cp -Rpf "${BOARD_DIR}/horizon/usb_script.sh" "${ROOTFS_DIR}/NDS"
-cp -Rpf "${BOARD_DIR}/horizon/app_start.cfg" "${ROOTFS_DIR}/NDS"
 cp -Rpf "${BOARD_DIR}/horizon/webbridge" "${ROOTFS_DIR}/NDS"
-cp -Rpf "${BOARD_DIR}/horizon/webbridge-stub" "${ROOTFS_DIR}/NDS"
 
 mkdir -p "${ROOTFS_DIR}/www"
 

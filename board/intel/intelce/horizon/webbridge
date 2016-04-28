@@ -1,8 +1,26 @@
 #!/bin/sh
-SOURCE=/mnt/usb
+SOURCE=/NDS/metrological
+mv -f $SOURCE/usr/lib/libstdc++.so.6.0.20 /lib/libstdc++.so.6.0.14
+ln -sfn $SOURCE/etc/playready /etc/playready
+ln -sfn $SOURCE/etc/ssl /etc/ssl
+ln -sfn $SOURCE/etc/fonts /etc/fonts
+ln -sfn $SOURCE/usr/lib/gio /usr/lib/gio
+ln -sfn $SOURCE/usr/lib/libgenerics.so.1.0 /usr/lib/libgenerics.so.1.0
+ln -sfn $SOURCE/usr/lib/libmqc.so.1.0 /usr/lib/libmqc.so.1.0
+ln -sfn $SOURCE/usr/lib/libtracing.so.1.0 /usr/lib/libtracing.so.1.0
+mkdir -p /usr/share/fonts
+ln -sfn $SOURCE/usr/share/mime /usr/share/mime
+ln -sfn $SOURCE/usr/share/X11 /usr/share/X11
+ln -sfn $SOURCE/usr/share/fonts/ttf-bitstream-vera /usr/share/fonts/ttf-bitstream-vera
+rm -rf $SOURCE/root
+ln -sfn /mnt/nds/dev_2/part_0/app $SOURCE/root
+mkdir -p $SOURCE/root/Netflix/dpi
+ln -sfn /usr/share/fonts/netflix $SOURCE/root/Netflix/fonts
+ln -sfn /etc/playready $SOURCE/root/Netflix/dpi/playready
 export HOME=$SOURCE/root
-export PATH=$PATH:$SOURCE/usr/bin
+export PATH=$SOURCE/usr/bin
 export GST_PLUGIN_PATH=$SOURCE/usr/lib/gstreamer-1.0
 export GST_PLUGIN_SCANNER=$SOURCE/usr/libexec/gstreamer-1.0/gst-plugin-scanner
 export LD_LIBRARY_PATH=$SOURCE/lib:$SOURCE/usr/lib:$SOURCE/usr/lib/gstreamer-1.0:/lib/:/usr/lib
+export LD_PRELOAD=/NDS/lib/libextClock.so
 $SOURCE/usr/bin/webbridge -c $SOURCE/etc/webbridge/config.json
