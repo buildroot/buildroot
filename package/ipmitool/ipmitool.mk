@@ -15,12 +15,16 @@ IPMITOOL_AUTORECONF = YES
 
 ifeq ($(BR2_PACKAGE_IPMITOOL_LANPLUS),y)
 IPMITOOL_DEPENDENCIES += openssl
+IPMITOOL_CONF_OPTS += --enable-intf-lanplus
 else
 IPMITOOL_CONF_OPTS += --disable-intf-lanplus
 endif
 
-ifeq ($(BR2_PACKAGE_READLINE),y)
-IPMITOOL_DEPENDENCIES += readline
+ifeq ($(BR2_PACKAGE_IPMITOOL_IPMISHELL),y)
+IPMITOOL_DEPENDENCIES += ncurses readline
+IPMITOOL_CONF_OPTS += --enable-ipmishell
+else
+IPMITOOL_CONF_OPTS += --disable-ipmishell
 endif
 
 ifeq ($(BR2_PACKAGE_IPMITOOL_IPMIEVD),)
