@@ -1,5 +1,7 @@
 #!/bin/sh
 SOURCE=/NDS/metrological
+FLASH=/mnt/nds/dev_2/part_0
+SWAP=/mnt/nds/dev_4/part_1
 mv -f $SOURCE/usr/lib/libstdc++.so.6.0.20 /lib/libstdc++.so.6.0.14
 ln -sfn $SOURCE/etc/playready /etc/playready
 ln -sfn $SOURCE/etc/ssl /etc/ssl
@@ -13,14 +15,18 @@ ln -sfn $SOURCE/usr/share/mime /usr/share/mime
 ln -sfn $SOURCE/usr/share/X11 /usr/share/X11
 ln -sfn $SOURCE/usr/share/fonts/ttf-bitstream-vera /usr/share/fonts/ttf-bitstream-vera
 rm -rf $SOURCE/root
-ln -sfn /mnt/nds/dev_2/part_0/app $SOURCE/root
+ln -sfn $FLASH/app $SOURCE/root
 mkdir -p $SOURCE/root/Netflix/dpi
 ln -sfn /usr/share/fonts/netflix $SOURCE/root/Netflix/fonts
 ln -sfn /etc/playready $SOURCE/root/Netflix/dpi/playready
+dd if=/dev/zero of=$SWAP/swapfile bs=1M count=512
+mkswap $SWAP/swapfile
+swapon $SWAP/swapfile
 export HOME=$SOURCE/root
 export PATH=$SOURCE/usr/bin
 export GST_PLUGIN_PATH=$SOURCE/usr/lib/gstreamer-1.0
 export GST_PLUGIN_SCANNER=$SOURCE/usr/libexec/gstreamer-1.0/gst-plugin-scanner
 export LD_LIBRARY_PATH=$SOURCE/lib:$SOURCE/usr/lib:$SOURCE/usr/lib/gstreamer-1.0:/lib/:/usr/lib
-export LD_PRELOAD=/NDS/lib/libextClock.so
+echo "#!/bin/sh" > /NDS/config/start_swap.sh
+#export LD_PRELOAD=/NDS/lib/libextClock.so
 $SOURCE/usr/bin/webbridge -c $SOURCE/etc/webbridge/config.json
