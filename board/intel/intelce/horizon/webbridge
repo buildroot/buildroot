@@ -2,31 +2,56 @@
 SOURCE=/NDS/metrological
 FLASH=/mnt/nds/dev_2/part_0
 SWAP=/mnt/nds/dev_4/part_1
+
+# stdc++
 mv -f $SOURCE/usr/lib/libstdc++.so.6.0.20 /lib/libstdc++.so.6.0.14
+
+# Symlink /etc
 ln -sfn $SOURCE/etc/playready /etc/playready
 ln -sfn $SOURCE/etc/ssl /etc/ssl
 ln -sfn $SOURCE/etc/fonts /etc/fonts
+
+# Symlink /usr/lib
 ln -sfn $SOURCE/usr/lib/gio /usr/lib/gio
-ln -sfn $SOURCE/usr/lib/libgenerics.so.1.0 /usr/lib/libgenerics.so.1.0
-ln -sfn $SOURCE/usr/lib/libmqc.so.1.0 /usr/lib/libmqc.so.1.0
-ln -sfn $SOURCE/usr/lib/libtracing.so.1.0 /usr/lib/libtracing.so.1.0
+
+# Symlink /usr/share
 mkdir -p /usr/share/fonts
 ln -sfn $SOURCE/usr/share/mime /usr/share/mime
 ln -sfn $SOURCE/usr/share/X11 /usr/share/X11
 ln -sfn $SOURCE/usr/share/fonts/ttf-bitstream-vera /usr/share/fonts/ttf-bitstream-vera
+
+# Symlink Flash
 rm -rf $SOURCE/root
 ln -sfn $FLASH/app $SOURCE/root
-mkdir -p $SOURCE/root/Netflix/dpi
-ln -sfn /usr/share/fonts/netflix $SOURCE/root/Netflix/fonts
-ln -sfn /etc/playready $SOURCE/root/Netflix/dpi/playready
-dd if=/dev/zero of=$SWAP/swapfile bs=1M count=512
-mkswap $SWAP/swapfile
+
+# Netflix
+if [ ! -d $SOURCE/root/Netflix ]; then
+	mkdir -p $SOURCE/root/Netflix/dpi
+	ln -sfn /etc/playready $SOURCE/root/Netflix/dpi/playready
+fi
+
+# Swap
+if [ ! -f $SWAP/swapfile ]; then
+	dd if=/dev/zero of=$SWAP/swapfile bs=1M count=512
+	mkswap $SWAP/swapfile
+fi
 swapon $SWAP/swapfile
+
+# Exports
 export HOME=$SOURCE/root
 export PATH=$SOURCE/usr/bin
 export GST_PLUGIN_PATH=$SOURCE/usr/lib/gstreamer-1.0
 export GST_PLUGIN_SCANNER=$SOURCE/usr/libexec/gstreamer-1.0/gst-plugin-scanner
 export LD_LIBRARY_PATH=$SOURCE/lib:$SOURCE/usr/lib:$SOURCE/usr/lib/gstreamer-1.0:/lib/:/usr/lib
+
+# Disable NDS Swap
 echo "#!/bin/sh" > /NDS/config/start_swap.sh
+
+# Sleep
+#sleep 60
+
+# Clock
 #export LD_PRELOAD=/NDS/lib/libextClock.so
+
+# WebBridge
 $SOURCE/usr/bin/webbridge -c $SOURCE/etc/webbridge/config.json

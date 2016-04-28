@@ -1,44 +1,49 @@
 #!/bin/sh
-
 BOARD_DIR="$(dirname $0)"
 ROOTFS_DIR="${BINARIES_DIR}/../rootfs"
+ROOTFS_FILES="${BINARIES_DIR}/rootfs.files"
 STAR="*"
 
-rm -rf ${BINARIES_DIR}/filter.rootfs
+# Clean up target
+rm -rf "${TARGET_DIR}/usr/lib/gstreamer-1.0/include"
+rm -rf "${TARGET_DIR}/usr/lib/libstdc++.so.6.0.20-gdb.py"
+rm -rf "${TARGET_DIR}/etc/ssl/man"
 
-while read line
-do
-	find "${TARGET_DIR}" -name "$line$STAR" -printf "%P\n" >> "${BINARIES_DIR}/filter.rootfs"
-done < "${BOARD_DIR}/horizon.txt"
-
+# Temp rootfs dir
 mkdir -p "${ROOTFS_DIR}"
 
-rsync -av --files-from="${BINARIES_DIR}/filter.rootfs" "${TARGET_DIR}" "${ROOTFS_DIR}"
-rsync -av "${TARGET_DIR}/usr/lib/gstreamer-1.0" "${ROOTFS_DIR}/usr/lib"
-rsync -av "${TARGET_DIR}/usr/lib/gio" "${ROOTFS_DIR}/usr/lib"
-rsync -av "${TARGET_DIR}/usr/lib/webbridge" "${ROOTFS_DIR}/usr/lib"
-rsync -av "${TARGET_DIR}/usr/share/X11" "${ROOTFS_DIR}/usr/share"
-rsync -av "${TARGET_DIR}/usr/share/fonts" "${ROOTFS_DIR}/usr/share"
-rsync -av "${TARGET_DIR}/usr/share/webbridge" "${ROOTFS_DIR}/usr/share"
-rsync -av "${TARGET_DIR}/usr/share/mime" "${ROOTFS_DIR}/usr/share"
-rsync -av "${TARGET_DIR}/etc/playready" "${ROOTFS_DIR}/etc"
-rsync -av "${TARGET_DIR}/etc/ssl" "${ROOTFS_DIR}/etc"
-rsync -av "${TARGET_DIR}/etc/webbridge" "${ROOTFS_DIR}/etc"
-rsync -av "${TARGET_DIR}/etc/fonts" "${ROOTFS_DIR}/etc"
+# Create files list for rsync
+rm -rf "${ROOTFS_FILES}"
+while read line
+do
+	find "${TARGET_DIR}" -name "$line$STAR" -printf "%P\n" >> "${ROOTFS_FILES}"
+done < "${BOARD_DIR}/horizon.txt"
 
-mkdir -p "${ROOTFS_DIR}/root/Netflix/dpi"
-ln -sfn /usr/share/fonts/netflix "${ROOTFS_DIR}/root/Netflix/fonts" && ln -sfn /etc/playready "${ROOTFS_DIR}/root/Netflix/dpi/playready"
+# Append missing folders
+echo "usr/lib/gstreamer-1.0" >> "${ROOTFS_FILES}"
+echo "usr/lib/gio" >> "${ROOTFS_FILES}"
+echo "usr/share/X11" >> "${ROOTFS_FILES}"
+echo "usr/share/mime" >> "${ROOTFS_FILES}"
+echo "etc/playready" >> "${ROOTFS_FILES}"
+echo "etc/ssl" >> "${ROOTFS_FILES}"
+echo "etc/fonts" >> "${ROOTFS_FILES}"
 
+rsync -ar --files-from="${ROOTFS_FILES}" "${TARGET_DIR}" "${ROOTFS_DIR}"
+
+# Default font
+mkdir -p "${ROOTFS_DIR}/usr/share/fonts/ttf-bitstream-vera"
+cp -f "${TARGET_DIR}/usr/share/fonts/ttf-bitstream-vera/Vera.ttf" "${ROOTFS_DIR}/usr/share/fonts/ttf-bitstream-vera/"
+
+# WebBridge startup script
 mkdir -p "${ROOTFS_DIR}/NDS"
-cp -Rpf "${BOARD_DIR}/horizon/webbridge" "${ROOTFS_DIR}/NDS"
+cp -pf "${BOARD_DIR}/horizon/webbridge" "${ROOTFS_DIR}/NDS"
 
+# WebServer path
 mkdir -p "${ROOTFS_DIR}/www"
 
-rm -rf "${ROOTFS_DIR}/usr/lib/gstreamer-1.0/include"
-rm -rf "${ROOTFS_DIR}/usr/lib/libstdc++.so.6.0.20-gdb.py"
-rm -rf "${ROOTFS_DIR}/etc/ssl/man"
-
+# Create tar
 tar -cvf "${BINARIES_DIR}/horizon.tar" -C "${ROOTFS_DIR}" .
 
-rm -rf "${BINARIES_DIR}/filter.rootfs"
+# Cleaning up
+rm -rf "${ROOTFS_FILES}"
 rm -rf "${ROOTFS_DIR}"
