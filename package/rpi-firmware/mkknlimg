@@ -1,8 +1,4 @@
 #!/usr/bin/env perl
-#
-# Originaly from: https://github.com/raspberrypi/tools/blob/master/mkimage/mkknlimg
-# Original cset : f5642106425d430e1f82ee064121a5fd0e05a386
-#
 # ----------------------------------------------------------------------
 # mkknlimg by Phil Elwell for Raspberry Pi
 # based on extract-ikconfig by Dick Streefland
@@ -17,10 +13,11 @@ use strict;
 use warnings;
 use integer;
 
-use constant FLAG_PI   => 1;
-use constant FLAG_DTOK => 2;
-use constant FLAG_DDTK => 4;
-use constant FLAG_283X => 8;
+use constant FLAG_PI   => 0x01;
+use constant FLAG_DTOK => 0x02;
+use constant FLAG_DDTK => 0x04;
+use constant FLAG_270X => 0x08;
+use constant FLAG_283X => 0x10;
 
 my $trailer_magic = 'RPTL';
 
@@ -29,6 +26,7 @@ my $tmpfile2 = "/tmp/mkknlimg_$$.2";
 
 my $dtok = 0;
 my $ddtk = 0;
+my $is_270x = 0;
 my $is_283x = 0;
 
 while (@ARGV && ($ARGV[0] =~ /^-/))
@@ -41,6 +39,10 @@ while (@ARGV && ($ARGV[0] =~ /^-/))
     elsif ($arg eq '--ddtk')
     {
 	$ddtk = 1;
+    }
+    elsif ($arg eq '--270x')
+    {
+	$is_270x = 1;
     }
     elsif ($arg eq '--283x')
     {
@@ -64,12 +66,6 @@ if (! -r $kernel_file)
     usage();
 }
 
-my $wanted_configs =
-{
-	'CONFIG_BCM2708_DT' => FLAG_PI | FLAG_DTOK,
-	'CONFIG_ARCH_BCM2835' => FLAG_PI | FLAG_DTOK | FLAG_283X,
-};
-
 my $wanted_strings =
 {
 	'bcm2708_fb' => FLAG_PI,
@@ -77,7 +73,10 @@ my $wanted_strings =
 	'brcm,bcm2835-sdhost' => FLAG_PI,
 	'brcm,bcm2708-pinctrl' => FLAG_PI | FLAG_DTOK,
 	'brcm,bcm2835-gpio' => FLAG_PI | FLAG_DTOK,
-	'brcm,bcm2835-pm-wdt' => FLAG_PI | FLAG_DTOK | FLAG_283X,
+	'brcm,bcm2708' => FLAG_PI | FLAG_DTOK | FLAG_270X,
+	'brcm,bcm2709' => FLAG_PI | FLAG_DTOK | FLAG_270X,
+	'brcm,bcm2835' => FLAG_PI | FLAG_DTOK | FLAG_283X,
+	'brcm,bcm2836' => FLAG_PI | FLAG_DTOK | FLAG_283X,
 	'of_overlay_apply' => FLAG_DTOK | FLAG_DDTK,
 };
 
@@ -99,7 +98,7 @@ my $append_trailer;
 my $trailer;
 my $kver = '?';
 
-$append_trailer = $dtok;
+$append_trailer = 1;
 
 if ($res)
 {
@@ -109,25 +108,26 @@ if ($res)
 
     if ($flags & FLAG_PI)
     {
-	$append_trailer = 1;
 	$dtok ||= ($flags & FLAG_DTOK) != 0;
+	$is_270x ||= ($flags & FLAG_270X) != 0;
 	$is_283x ||= ($flags & FLAG_283X) != 0;
 	$ddtk ||= ($flags & FLAG_DDTK) != 0;
     }
     else
     {
-	print ("* This doesn't look like a Raspberry Pi kernel. In pass-through mode.\n");
+	print ("* This doesn't look like a Raspberry Pi kernel.\n");
     }
 }
 elsif (!$dtok)
 {
-    print ("* Is this a valid kernel? In pass-through mode.\n");
+    print ("* Is this a valid kernel?\n");
 }
 
 if ($append_trailer)
 {
     printf("DT: %s\n", $dtok ? "y" : "n");
     printf("DDT: %s\n", $ddtk ? "y" : "n");
+    printf("270x: %s\n", $is_270x ? "y" : "n");
     printf("283x: %s\n", $is_283x ? "y" : "n");
 
     my @atoms;
@@ -136,7 +136,9 @@ if ($append_trailer)
     push @atoms, [ 'KVer', $kver ];
     push @atoms, [ 'DTOK', pack('V', $dtok) ];
     push @atoms, [ 'DDTK', pack('V', $ddtk) ];
-    push @atoms, [ '283x', pack('V', $is_283x) ];
+    push @atoms, [ '270X', pack('V', $is_270x) ];
+    push @atoms, [ '283X', pack('V', $is_283x) ];
+    push @atoms, [ '283x', pack('V', $is_283x && !$is_270x) ];
 
     $trailer = pack_trailer(\@atoms);
     $atoms[0]->[1] = pack('V', length($trailer));
@@ -190,7 +192,7 @@ END {
 
 sub usage
 {
-	print ("Usage: mkknlimg [--dtok] [--283x] <vmlinux|zImage|bzImage> <outfile>\n");
+	print ("Usage: mkknlimg [--dtok] [--270x] [--283x] <vmlinux|zImage|bzImage> <outfile>\n");
 	exit(1);
 }
 
@@ -205,8 +207,7 @@ sub try_extract
 	chomp($ver);
 
 	my $res = { 'kver'=>$ver };
-	$res->{'flags'} = strings_to_flags($knl, $wanted_strings) |
-			  configs_to_flags($knl, $tmp, $wanted_configs);
+	$res->{'flags'} = strings_to_flags($knl, $wanted_strings);
 
 	return $res;
 }
@@ -233,7 +234,6 @@ sub try_decompress
 	return undef;
 }
 
-
 sub strings_to_flags
 {
 	my ($knl, $strings) = @_;
@@ -245,42 +245,6 @@ sub strings_to_flags
 	{
 	    chomp($match);
 	    $flags |= $strings->{$match};
-	}
-
-	return $flags;
-}
-
-sub configs_to_flags
-{
-	my ($knl, $tmp, $configs) = @_;
-	my $config_pattern = '^('.join('|', keys(%$configs)).')=(.*)$';
-	my $cf1 = 'IKCFG_ST\037\213\010';
-	my $cf2 = '0123456789';
-	my $flags = 0;
-
-	my $pos = `tr "$cf1\n$cf2" "\n$cf2=" < "$knl" | grep -abo "^$cf2"`;
-	if ($pos)
-	{
-		$pos =~ s/:.*[\r\n]*$//s;
-		$pos += 8;
-		my $err = (system("tail -c+$pos \"$knl\" | zcat > $tmp 2> /dev/null") >> 8);
-		if (($err == 0) || ($err == 2))
-		{
-			if (open(my $fh, '<', $tmp))
-			{
-				while (my $line = <$fh>)
-				{
-					chomp($line);
-					if (($line =~ /$config_pattern/) &&
-					    (($2 eq 'y') || ($2 eq 'm')))
-					{
-					    $flags |= $configs->{$1};
-					}
-				}
-
-				close($fh);
-			}
-		}
 	}
 
 	return $flags;
