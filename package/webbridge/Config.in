@@ -136,13 +136,22 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_BROWSER
 	help
 	  A plugin that has browser functionality (QtWebKit)
 
-config BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX
+menuconfig BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX
 	bool "netflix"
 	select BR2_PACKAGE_CPPSDK_PROCESS
 	depends on BR2_PACKAGE_NETFLIX_LIB
 	help
 	  A wrapper around the netflix app to start it as a
 	  webbridge plugin.
+
+if BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX_AUTOSTART
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX
+	bool "autostart"
+	default n
+
+endif
 
 comment "netflix is dependent on the netflix package compiled as library"
 	depends on !BR2_PACKAGE_NETFLIX_LIB
