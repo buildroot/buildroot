@@ -38,6 +38,10 @@ cp -f "${TARGET_DIR}/usr/share/fonts/ttf-bitstream-vera/Vera.ttf" "${ROOTFS_DIR}
 mkdir -p "${ROOTFS_DIR}/NDS"
 cp -pf "${BOARD_DIR}/horizon/webbridge" "${ROOTFS_DIR}/NDS"
 
+# Add rdate script
+cp -pf "${BOARD_DIR}/horizon/app_start.cfg" "${ROOTFS_DIR}/NDS"
+cp -pf "${BOARD_DIR}/horizon/usb_script.sh" "${ROOTFS_DIR}/NDS"
+
 # WebServer path
 mkdir -p "${ROOTFS_DIR}/www"
 
