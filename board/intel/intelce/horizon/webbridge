@@ -54,4 +54,8 @@ echo "#!/bin/sh" > /NDS/config/start_swap.sh
 #export LD_PRELOAD=/NDS/lib/libextClock.so
 
 # WebBridge
-$SOURCE/usr/bin/webbridge -c $SOURCE/etc/webbridge/config.json
+if [ -f $SOURCE/NDS/webbridge-stub ]; then
+	$SOURCE/NDS/webbridge-stub
+else
+	$SOURCE/usr/bin/webbridge -c $SOURCE/etc/webbridge/config.json
+fi
