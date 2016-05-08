@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BLUEZ5_UTILS_VERSION = 5.37
+BLUEZ5_UTILS_VERSION = 5.39
 BLUEZ5_UTILS_SOURCE = bluez-$(BLUEZ5_UTILS_VERSION).tar.xz
 BLUEZ5_UTILS_SITE = $(BR2_KERNEL_MIRROR)/linux/bluetooth
 BLUEZ5_UTILS_INSTALL_STAGING = YES
@@ -78,5 +78,11 @@ BLUEZ5_UTILS_DEPENDENCIES += systemd
 else
 BLUEZ5_UTILS_CONF_OPTS += --disable-systemd
 endif
+
+define BLUEZ5_UTILS_INSTALL_INIT_SYSTEMD
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/
+	ln -fs ../../../../usr/lib/systemd/system/bluetooth.service \
+		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/bluetooth.service
+endef
 
 $(eval $(autotools-package))

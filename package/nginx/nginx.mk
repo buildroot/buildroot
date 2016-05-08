@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NGINX_VERSION = 1.8.1
+NGINX_VERSION = 1.10.0
 NGINX_SITE = http://nginx.org/download
 NGINX_LICENSE = BSD-2c
 NGINX_LICENSE_FILES = LICENSE
@@ -64,7 +64,8 @@ NGINX_CONF_OPTS += \
 	--http-uwsgi-temp-path=/var/tmp/nginx/uwsgi
 
 NGINX_CONF_OPTS += \
-	$(if $(BR2_PACKAGE_NGINX_FILE_AIO),--with-file-aio)
+	$(if $(BR2_PACKAGE_NGINX_FILE_AIO),--with-file-aio) \
+	$(if $(BR2_PACKAGE_NGINX_THREADS),--with-threads)
 
 ifeq ($(BR2_PACKAGE_PCRE),y)
 NGINX_DEPENDENCIES += pcre
@@ -104,9 +105,9 @@ else
 NGINX_CONF_OPTS += --without-http-cache
 endif
 
-ifeq ($(BR2_PACKAGE_NGINX_HTTP_SPDY_MODULE),y)
+ifeq ($(BR2_PACKAGE_NGINX_HTTP_V2_MODULE),y)
 NGINX_DEPENDENCIES += zlib
-NGINX_CONF_OPTS += --with-http_spdy_module
+NGINX_CONF_OPTS += --with-http_v2_module
 endif
 
 ifeq ($(BR2_PACKAGE_NGINX_HTTP_SSL_MODULE),y)
@@ -193,6 +194,7 @@ endif # BR2_PACKAGE_NGINX_HTTP
 
 # mail modules
 ifeq ($(BR2_PACKAGE_NGINX_MAIL),y)
+NGINX_CONF_OPTS += --with-mail
 
 ifeq ($(BR2_PACKAGE_NGINX_MAIL_SSL_MODULE),y)
 NGINX_DEPENDENCIES += openssl
@@ -205,6 +207,27 @@ NGINX_CONF_OPTS += \
 	$(if $(BR2_PACKAGE_NGINX_MAIL_SMTP_MODULE),,--without-mail_smtp_module)
 
 endif # BR2_PACKAGE_NGINX_MAIL
+
+# stream modules
+ifeq ($(BR2_PACKAGE_NGINX_STREAM),y)
+NGINX_CONF_OPTS += --with-stream
+
+ifeq ($(BR2_PACKAGE_NGINX_STREAM_SSL_MODULE),y)
+NGINX_DEPENDENCIES += openssl
+NGINX_CONF_OPTS += --with-stream_ssl_module
+endif
+
+NGINX_CONF_OPTS += \
+	$(if $(BR2_PACKAGE_NGINX_STREAM_LIMIT_CONN_MODULE),,--without-stream_limit_conn_module) \
+	$(if $(BR2_PACKAGE_NGINX_STREAM_ACCESS_MODULE),,--without-stream_access_module) \
+	$(if $(BR2_PACKAGE_NGINX_STREAM_UPSTREAM_HASH_MODULE),,--without-stream_upstream_hash_module) \
+	$(if $(BR2_PACKAGE_NGINX_STREAM_UPSTREAM_LEAST_CONN_MODULE),,--without-stream_upstream_least_conn_module) \
+	$(if $(BR2_PACKAGE_NGINX_STREAM_UPSTREAM_ZONE_MODULE),,--without-stream_upstream_zone_module)
+
+endif # BR2_PACKAGE_NGINX_STREAM
+
+# Debug logging
+NGINX_CONF_OPTS += $(if $(BR2_PACKAGE_NGINX_DEBUG),--with-debug)
 
 define NGINX_DISABLE_WERROR
 	$(SED) 's/-Werror//g' -i $(@D)/auto/cc/*
