@@ -33,8 +33,8 @@ fi
 # Swap
 if [ ! -f $SWAP/swapfile ]; then
 	dd if=/dev/zero of=$SWAP/swapfile bs=1M count=512
-	mkswap $SWAP/swapfile
 fi
+mkswap $SWAP/swapfile
 swapon $SWAP/swapfile
 
 # Exports
