@@ -1,10 +1,9 @@
 #!/bin/sh
 SOURCE=/NDS/metrological
-FLASH=/mnt/nds/dev_2/part_0
-SWAP=/mnt/nds/dev_4/part_1
+HDD=/mnt/nds/dev_4/part_1
 
 # stdc++
-mv -f $SOURCE/usr/lib/libstdc++.so.6.0.20 /lib/libstdc++.so.6.0.14
+cp -f $SOURCE/usr/lib/libstdc++.so.6.0.20 /lib/libstdc++.so.6.0.14
 
 # Symlink /etc
 ln -sfn $SOURCE/etc/playready /etc/playready
@@ -20,9 +19,10 @@ ln -sfn $SOURCE/usr/share/mime /usr/share/mime
 ln -sfn $SOURCE/usr/share/X11 /usr/share/X11
 ln -sfn $SOURCE/usr/share/fonts/ttf-bitstream-vera /usr/share/fonts/ttf-bitstream-vera
 
-# Symlink Flash
+# Symlink /root
 rm -rf $SOURCE/root
-ln -sfn $FLASH/app $SOURCE/root
+mkdir -p $HDD/app
+ln -sfn $HDD/app $SOURCE/root
 
 # Netflix
 if [ ! -d $SOURCE/root/Netflix ]; then
@@ -31,11 +31,11 @@ if [ ! -d $SOURCE/root/Netflix ]; then
 fi
 
 # Swap
-if [ ! -f $SWAP/swapfile ]; then
-	dd if=/dev/zero of=$SWAP/swapfile bs=1M count=512
+if [ ! -f $HDD/swapfile ]; then
+	dd if=/dev/zero of=$HDD/swapfile bs=1M count=512
 fi
-mkswap $SWAP/swapfile
-swapon $SWAP/swapfile
+mkswap $HDD/swapfile
+swapon $HDD/swapfile
 
 # Exports
 export HOME=$SOURCE/root
