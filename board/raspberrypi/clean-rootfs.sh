@@ -1,5 +1,7 @@
 #!/bin/sh
 
+BOARD_DIR="$(dirname $0)"
+
 rm -rf $TARGET_DIR/usr/bin/fc-cache
 rm -rf $TARGET_DIR/usr/bin/fc-cat
 rm -rf $TARGET_DIR/usr/bin/fc-list
@@ -76,3 +78,8 @@ rm -rf $TARGET_DIR/usr/share/locale
 rm -rf $TARGET_DIR/usr/share/xml
 rm -rf $TARGET_DIR/usr/share/icu
 rm -rf $TARGET_DIR/usr/share/man
+
+if [ -f "$BOARD_DIR/libgstfluac3dec.so" ]; then
+	mkdir -p "$TARGET_DIR/usr/lib/gstreamer-1.0/"
+	cp -pf "$BOARD_DIR/libgstfluac3dec.so" "$TARGET_DIR/usr/lib/gstreamer-1.0/"
+fi
