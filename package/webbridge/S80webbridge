@@ -7,6 +7,10 @@ start() {
 	#echo "/root/cores/core-pid_%p--process%E" > /proc/sys/kernel/core_pattern
 	#mkdir -p /root/cores
 	#ulimit -c unlimited
+	if [ ! -d /root/Netflix ]; then
+		mkdir -p /root/Netflix/dpi
+		ln -sfn /etc/playready /root/Netflix/dpi/playready
+	fi
 	echo -n "Starting webbridge: "
 	start-stop-daemon -S -q -b -m -p /var/run/webbridge.pid --exec /usr/bin/webbridge -- -b </dev/null >/dev/null 2>&1
 	[ $? == 0 ] && echo "OK" || echo "FAIL"
