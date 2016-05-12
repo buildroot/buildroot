@@ -4,10 +4,6 @@ MAXTRIES=20
 SLEEP=1
 SERVERS=$(echo "TIMESERVERS" | tr ' ' "\n")
 
-if [ "x$SERVERS" == "x" ]; then
-	exit;
-fi
-
 sleep $SLEEP
 
 while true;
