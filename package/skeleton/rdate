@@ -1,0 +1,27 @@
+#!/bin/sh
+TRIES=0
+MAXTRIES=20
+SLEEP=1
+SERVERS=$(echo "TIMESERVERS" | tr ' ' "\n")
+
+if [ "x$SERVERS" == "x" ]; then
+	exit;
+fi
+
+sleep $SLEEP
+
+while true;
+do
+	if [ "$TRIES" -gt "$MAXTRIES" ]; then
+		exit
+	fi
+	for SERVER in $SERVERS;
+	do
+		RESULT=$(rdate $SERVER)
+		if [ "x$RESULT" != "x" ]; then
+			exit
+		fi
+		let TRIES+=1
+		sleep $SLEEP
+	done	
+done	

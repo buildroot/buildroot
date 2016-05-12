@@ -124,16 +124,10 @@ SKELETON_TARGET_GENERIC_GETTY_OPTIONS = $(call qstrip,$(BR2_TARGET_GENERIC_GETTY
 
 ifneq ($(SKELETON_TARGET_GENERIC_TIMESERVER),)
 define SYSTEM_TIMESERVER
-	( \
-		echo "#!/bin/sh";                                                        \
-		echo ;                                                                   \
-		echo "sleep 1";                                                          \
-		echo ;                                                                   \
-		echo "if [ \`rdate -s $(SKELETON_TARGET_GENERIC_TIMESERVER)\` ]; then";  \
-		echo "	echo \"rdate: success\"";                                        \
-		echo "fi";                                                               \
-	) > $(TARGET_DIR)/etc/network/if-up.d/rdate
-	chmod +x $(TARGET_DIR)/etc/network/if-up.d/rdate
+	$(INSTALL) -m 0755 -D $(SKELETON_PKGDIR)/rdate \
+		$(TARGET_DIR)/etc/network/if-up.d/rdate
+	$(SED) "s/TIMESERVERS/$(SKELETON_TARGET_GENERIC_TIMESERVER)/" \
+		$(TARGET_DIR)/etc/network/if-up.d/rdate
 endef
 TARGET_FINALIZE_HOOKS += SYSTEM_TIMESERVER
 endif
