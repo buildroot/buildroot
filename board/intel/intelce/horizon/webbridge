@@ -39,7 +39,7 @@ swapon $HDD/swapfile
 
 # Exports
 export HOME=$SOURCE/root
-export PATH=$SOURCE/usr/bin
+export PATH=$SOURCE/usr/bin:/bin:/usr/bin
 export GST_PLUGIN_PATH=$SOURCE/usr/lib/gstreamer-1.0
 export GST_PLUGIN_SCANNER=$SOURCE/usr/libexec/gstreamer-1.0/gst-plugin-scanner
 export LD_LIBRARY_PATH=$SOURCE/lib:$SOURCE/usr/lib:$SOURCE/usr/lib/gstreamer-1.0:/lib/:/usr/lib
@@ -51,11 +51,11 @@ echo "#!/bin/sh" > /NDS/config/start_swap.sh
 #sleep 60
 
 # Clock
-#export LD_PRELOAD=/NDS/lib/libextClock.so
+#export LD_PRELOAD=/NDS/metrological/usr/lib/libextClock.so
 
 # WebBridge
-activeProcess=`/bin/ps | /bin/grep webbridge-stub | /bin/grep -v grep`
-if [ "x$activeProcess" == "x" ]; then                                         
+ACTIVEPROCESS=`ps | grep webbridge-stub | grep -v grep`
+if [ "x$ACTIVEPROCESS" == "x" ]; then
         $SOURCE/NDS/webbridge-stub                                                             
 else
         $SOURCE/usr/bin/webbridge -c $SOURCE/etc/webbridge/config.json
