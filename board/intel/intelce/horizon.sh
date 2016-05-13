@@ -30,6 +30,11 @@ echo "etc/fonts" >> "${ROOTFS_FILES}"
 
 rsync -ar --files-from="${ROOTFS_FILES}" "${TARGET_DIR}" "${ROOTFS_DIR}"
 
+# WebBridge startup script
+if [ -f "${BOARD_DIR}/horizon/libextClock.so" ]; then
+	cp -pf "${BOARD_DIR}/horizon/libextClock.so" "${ROOTFS_DIR}/usr/lib/"
+fi
+
 # Default font
 mkdir -p "${ROOTFS_DIR}/usr/share/fonts/ttf-bitstream-vera"
 cp -f "${TARGET_DIR}/usr/share/fonts/ttf-bitstream-vera/Vera.ttf" "${ROOTFS_DIR}/usr/share/fonts/ttf-bitstream-vera/"
