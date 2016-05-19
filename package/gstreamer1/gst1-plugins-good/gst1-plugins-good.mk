@@ -437,4 +437,12 @@ else
 GST1_PLUGINS_GOOD_CONF_OPTS += --disable-bz2
 endif
 
+define GST1_PLUGINS_GOOD_APPLY_DORNE_PATCHES
+	$(APPLY_PATCHES) $(@D) package/gstreamer1/gst1-plugins-good/dorne *.patch
+endef
+
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_DORNE),y)
+GST1_PLUGINS_GOOD_POST_PATCH_HOOKS += GST1_PLUGINS_GOOD_APPLY_DORNE_PATCHES
+endif
+
 $(eval $(autotools-package))

@@ -1,0 +1,27 @@
+From d91df292c24c6a9f7c25795fa59c2181b4b730d2 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Thu, 21 Apr 2016 10:53:45 +0200
+Subject: [PATCH] aacparse: remove raw stream-format
+
+This forces aacparse to convert streams to non-raw formats when used
+by playbin with an audio decoder/sink.
+---
+ gst/audioparsers/gstaacparse.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gst/audioparsers/gstaacparse.c b/gst/audioparsers/gstaacparse.c
+index 982d242..acf209a 100644
+--- a/gst/audioparsers/gstaacparse.c
++++ b/gst/audioparsers/gstaacparse.c
+@@ -54,7 +54,7 @@ static GstStaticPadTemplate src_template = GST_STATIC_PAD_TEMPLATE ("src",
+     GST_PAD_ALWAYS,
+     GST_STATIC_CAPS ("audio/mpeg, "
+         "framed = (boolean) true, " "mpegversion = (int) { 2, 4 }, "
+-        "stream-format = (string) { raw, adts, adif, loas };"));
++        "stream-format = (string) { adts, adif, loas };"));
+ 
+ static GstStaticPadTemplate sink_template = GST_STATIC_PAD_TEMPLATE ("sink",
+     GST_PAD_SINK,
+-- 
+2.8.0.rc3
+
