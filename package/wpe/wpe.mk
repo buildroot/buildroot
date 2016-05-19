@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = c35114dba47ef3275edd74e6415cb4e16bd2ee0f
+WPE_VERSION = e3cf1bd4c7c2209a32e313c8230f6505e14d8ba7
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -180,6 +180,7 @@ WPE_DEPENDENCIES += dxdrm
 WPE_FLAGS += -DENABLE_DXDRM=ON
 ifeq ($(BR2_PACKAGE_LIBPROVISION),y)
 WPE_FLAGS += -DENABLE_PROVISIONING=ON
+WPE_DEPENDENCIES += libprovision
 endif
 endif
 
