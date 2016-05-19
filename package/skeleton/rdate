@@ -1,4 +1,9 @@
 #!/bin/sh
+
+if [ "$IFACE" = lo ]; then
+	exit
+fi
+
 TRIES=0
 MAXTRIES=20
 SLEEP=1
