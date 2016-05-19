@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = c3d8cf301dc88ddc4b41b29088a728591363d435
+WPE_VERSION = 017edb1987243c578505cda64be2a620dc8c9454
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -155,7 +155,11 @@ WPE_FLAGS += \
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_WAVPARSE),y)
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_DORNE),y)
+WPE_FLAGS += -DENABLE_WEB_AUDIO=OFF
+else
 WPE_FLAGS += -DENABLE_WEB_AUDIO=ON
+endif
 else
 WPE_FLAGS += -DENABLE_WEB_AUDIO=OFF
 endif
