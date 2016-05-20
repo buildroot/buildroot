@@ -66,6 +66,10 @@ WPE is verified and being tested by Metrological on the following devices:
 
 **Note** that other devices may be supported through buildroot. But mileage may vary when it comes down to video playback and graphics performance.
 
+## FAQ
+
+A FAQ is avaibale via the [Wiki tab](https://github.com/Metrological/buildroot-wpe/wiki or via the Wiki tab).
+
 ## Support
 
 Metrological is able to provide support where needed and when needed in different methods of cooperation. For more information please visit:
