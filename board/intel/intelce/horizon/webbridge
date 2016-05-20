@@ -53,6 +53,9 @@ sleep 3
 # Clock
 #export LD_PRELOAD=/NDS/metrological/usr/lib/libextClock.so
 
+
+
+
 # WebBridge
 if [ ! -f $SOURCE/NDS/webbridge-stub ]; then
 	$SOURCE/usr/bin/webbridge -c $SOURCE/etc/webbridge/config.json -b
@@ -61,6 +64,8 @@ else
 	if [ "x$ACTIVEPROCESS" == "x" ]; then
 		$SOURCE/NDS/webbridge-stub
 	else
+		# ulimit for core dump
+		ulimit -c unlimited
 		$SOURCE/usr/bin/webbridge -c $SOURCE/etc/webbridge/config.json
 	fi
 fi
