@@ -68,7 +68,7 @@ WPE is verified and being tested by Metrological on the following devices:
 
 ## FAQ
 
-A FAQ is avaibale via the [Wiki tab](https://github.com/Metrological/buildroot-wpe/wiki or via the Wiki tab).
+A FAQ is avaibale via the [Wiki tab](https://github.com/Metrological/buildroot-wpe/wiki).
 
 ## Support
 
