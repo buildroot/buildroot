@@ -47,16 +47,20 @@ export LD_LIBRARY_PATH=$SOURCE/lib:$SOURCE/usr/lib:$SOURCE/usr/lib/gstreamer-1.0
 # Disable NDS Swap
 echo "#!/bin/sh" > /NDS/config/start_swap.sh
 
-# Sleep
-#sleep 60
+# Sleep for WebBridge cleanup
+sleep 3
 
 # Clock
 #export LD_PRELOAD=/NDS/metrological/usr/lib/libextClock.so
 
 # WebBridge
-ACTIVEPROCESS=`ps | grep webbridge-stub | grep -v grep`
-if [ "x$ACTIVEPROCESS" == "x" ]; then
-        $SOURCE/NDS/webbridge-stub                                                             
+if [ ! -f $SOURCE/NDS/webbridge-stub ]; then
+	$SOURCE/usr/bin/webbridge -c $SOURCE/etc/webbridge/config.json -b
 else
-        $SOURCE/usr/bin/webbridge -c $SOURCE/etc/webbridge/config.json
-fi  
+	ACTIVEPROCESS=`ps | grep webbridge-stub | grep -v grep`
+	if [ "x$ACTIVEPROCESS" == "x" ]; then
+		$SOURCE/NDS/webbridge-stub
+	else
+		$SOURCE/usr/bin/webbridge -c $SOURCE/etc/webbridge/config.json
+	fi
+fi
