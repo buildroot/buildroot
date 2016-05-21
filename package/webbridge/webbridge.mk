@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-WEBBRIDGE_VERSION = d1bc16e695c0d0c1a736eae26d0327ec49d47217
+WEBBRIDGE_VERSION = f793f394467a501bb91838ec6033045cbd77d962
 WEBBRIDGE_SITE_METHOD = git
 WEBBRIDGE_SITE = git@github.com:Metrological/webbridge.git
 WEBBRIDGE_INSTALL_STAGING = YES
 WEBBRIDGE_DEPENDENCIES += cppsdk
 
-WEBBRIDGE_CONF_OPTS += -DWEBBRIDGE_BR_VERSION=$(shell $(GIT) rev-parse --short HEAD)
+WEBBRIDGE_CONF_OPTS += -DWEBBRIDGE_BUILD_HASH=$(shell $(GIT) rev-parse --short HEAD)
 
 ifeq ($(BR2_ENABLE_DEBUG),y)
 WEBBRIDGE_CONF_OPTS += -DWEBBRIDGE_DEBUG=ON
