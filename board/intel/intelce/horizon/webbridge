@@ -1,6 +1,14 @@
 #!/bin/sh
 SOURCE=/NDS/metrological
-HDD=/mnt/nds/dev_4/part_1
+if [ -f /tmp/core_dir ]; then
+	HDD=$(cat /tmp/core_dir|head -n 1)
+	if [ -f /NDS/drivers/open_firewall_port.sh ]; then
+		/NDS/drivers/open_firewall_port.sh tcp 9998
+		/NDS/drivers/open_firewall_port.sh tcp 80
+	fi
+else
+	HDD=/mnt/nds/dev_4/part_1
+fi
 
 # stdc++
 cp -f $SOURCE/usr/lib/libstdc++.so.6.0.20 /lib/libstdc++.so.6.0.14
@@ -37,11 +45,6 @@ fi
 mkswap $HDD/swapfile
 swapon $HDD/swapfile
 
-if [ -f /NDS/drivers/open_firewall_port.sh ]; then
-	/NDS/drivers/open_firewall_port.sh tcp 9998
-	/NDS/drivers/open_firewall_port.sh tcp 80
-fi
-
 # Exports
 export HOME=$SOURCE/root
 export PATH=$SOURCE/usr/bin:/bin:/usr/bin
@@ -57,9 +60,6 @@ sleep 3
 
 # Clock
 #export LD_PRELOAD=/NDS/metrological/usr/lib/libextClock.so
-
-
-
 
 # WebBridge
 if [ ! -f $SOURCE/NDS/webbridge-stub ]; then
