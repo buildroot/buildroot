@@ -37,6 +37,11 @@ fi
 mkswap $HDD/swapfile
 swapon $HDD/swapfile
 
+if [ -f /NDS/drivers/open_firewall_port.sh ]; then
+	/NDS/drivers/open_firewall_port.sh tcp 9998
+	/NDS/drivers/open_firewall_port.sh tcp 80
+fi
+
 # Exports
 export HOME=$SOURCE/root
 export PATH=$SOURCE/usr/bin:/bin:/usr/bin
