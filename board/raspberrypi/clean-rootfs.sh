@@ -83,3 +83,8 @@ if [ -f "$BOARD_DIR/libgstfluac3dec.so" ]; then
 	mkdir -p "$TARGET_DIR/usr/lib/gstreamer-1.0/"
 	cp -pf "$BOARD_DIR/libgstfluac3dec.so" "$TARGET_DIR/usr/lib/gstreamer-1.0/"
 fi
+
+if [ -f "$BOARD_DIR/index.html" ]; then
+	mkdir -p "$TARGET_DIR/www/"
+	cp -pf "$BOARD_DIR/index.html" "$TARGET_DIR/www/"
+fi
