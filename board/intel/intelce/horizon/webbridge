@@ -37,11 +37,11 @@ if [ ! -d $SOURCE/root/Netflix ]; then
 fi
 
 # Swap
-if [ ! -f $HDD/swapfile ]; then
-	dd if=/dev/zero of=$HDD/swapfile bs=1M count=512
-fi
-mkswap $HDD/swapfile
-swapon $HDD/swapfile
+#if [ ! -f $HDD/swapfile ]; then
+#	dd if=/dev/zero of=$HDD/swapfile bs=1M count=512
+#fi
+#mkswap $HDD/swapfile
+#swapon $HDD/swapfile
 
 # Exports
 export HOME=$SOURCE/root
@@ -51,7 +51,7 @@ export GST_PLUGIN_SCANNER=$SOURCE/usr/libexec/gstreamer-1.0/gst-plugin-scanner
 export LD_LIBRARY_PATH=$SOURCE/lib:$SOURCE/usr/lib:$SOURCE/usr/lib/gstreamer-1.0:/lib/:/usr/lib
 
 # Disable NDS Swap
-echo "#!/bin/sh" > /NDS/config/start_swap.sh
+#echo "#!/bin/sh" > /NDS/config/start_swap.sh
 
 # Sleep for WebBridge cleanup
 sleep 3
