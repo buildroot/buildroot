@@ -1,13 +1,11 @@
 #!/bin/sh
 SOURCE=/NDS/metrological
+HDD=/mnt/nds/dev_4/part_1
 if [ -f /tmp/core_dir ]; then
-	HDD=$(cat /tmp/core_dir|head -n 1)
 	if [ -f /NDS/drivers/open_firewall_port.sh ]; then
 		/NDS/drivers/open_firewall_port.sh tcp 9998
 		/NDS/drivers/open_firewall_port.sh tcp 80
 	fi
-else
-	HDD=/mnt/nds/dev_4/part_1
 fi
 
 # stdc++
