@@ -321,7 +321,6 @@ config BR2_TARGET_UBOOT_ZYNQ_IMAGE
 	bool "Generate image for Xilinx Zynq"
 	depends on BR2_arm
 	depends on BR2_TARGET_UBOOT_SPL
-	depends on BR2_TARGET_UBOOT_FORMAT_DTB_IMG
 	help
 	  Generate the BOOT.BIN file from U-Boot's SPL. The image
 	  boots the Xilinx Zynq chip without any FPGA bitstream.
