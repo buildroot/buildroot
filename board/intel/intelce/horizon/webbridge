@@ -1,6 +1,7 @@
 #!/bin/sh
 SOURCE=/NDS/metrological
 HDD=/mnt/nds/dev_4/part_1
+
 if [ -f /tmp/core_dir ]; then
 	if [ -f /NDS/drivers/open_firewall_port.sh ]; then
 		/NDS/drivers/open_firewall_port.sh tcp 9998
@@ -36,22 +37,12 @@ if [ ! -d $SOURCE/root/Netflix ]; then
 	ln -sfn /etc/playready $SOURCE/root/Netflix/dpi/playready
 fi
 
-# Swap
-#if [ ! -f $HDD/swapfile ]; then
-#	dd if=/dev/zero of=$HDD/swapfile bs=1M count=512
-#fi
-#mkswap $HDD/swapfile
-#swapon $HDD/swapfile
-
 # Exports
 export HOME=$SOURCE/root
 export PATH=$SOURCE/usr/bin:/bin:/usr/bin
 export GST_PLUGIN_PATH=$SOURCE/usr/lib/gstreamer-1.0
 export GST_PLUGIN_SCANNER=$SOURCE/usr/libexec/gstreamer-1.0/gst-plugin-scanner
 export LD_LIBRARY_PATH=$SOURCE/lib:$SOURCE/usr/lib:$SOURCE/usr/lib/gstreamer-1.0:/lib/:/usr/lib
-
-# Disable NDS Swap
-#echo "#!/bin/sh" > /NDS/config/start_swap.sh
 
 # Sleep for WebBridge cleanup
 sleep 3
