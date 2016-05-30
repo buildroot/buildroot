@@ -1,0 +1,59 @@
+diff --git a/Plugins/WebKitBrowser/CMakeLists.txt b/Plugins/WebKitBrowser/CMakeLists.txt
+index 8c29033..9d70fac 100644
+--- a/Plugins/WebKitBrowser/CMakeLists.txt
++++ b/Plugins/WebKitBrowser/CMakeLists.txt
+@@ -8,6 +8,7 @@ set(WEBBRIDGE_PLUGIN_WEBKITBROWSER_USERAGENT false CACHE STRING "Mozilla/5.0 (Ma
+ set(WEBBRIDGE_PLUGIN_WEBKITBROWSER_MEMORYPROFILE "512m" CACHE STRING "Memory Profile")
+ set(WEBBRIDGE_PLUGIN_WEBKITBROWSER_MEMORYPRESSURE "databaseprocess:50m,networkprocess:100m,webprocess:300m,rpcprocess:50m" CACHE STRING "Memory Pressure")
+ set(WEBBRIDGE_PLUGIN_WEBKITBROWSER_MEDIADISKCACHE false CACHE STRING "Media Disk Cache")
++set(WEBBRIDGE_PLUGIN_WEBKITBROWSER_DISKCACHE "0" CACHE STRING "Disk Cache")
+ 
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+ 
+@@ -89,6 +90,7 @@ map()
+     kv(memoryprofile ${WEBBRIDGE_PLUGIN_WEBKITBROWSER_MEMORYPROFILE})
+     kv(memorypressure ${WEBBRIDGE_PLUGIN_WEBKITBROWSER_MEMORYPRESSURE})
+     kv(mediadiskcache ${WEBBRIDGE_PLUGIN_WEBKITBROWSER_MEDIADISKCACHE})
++    kv(diskcache ${WEBBRIDGE_PLUGIN_WEBKITBROWSER_DISKCACHE})
+     kv(startsuspended false)
+   end()
+ end()
+diff --git a/Plugins/WebKitBrowser/WebKitImplementation.cpp b/Plugins/WebKitBrowser/WebKitImplementation.cpp
+index 8f725fd..77dc00b 100644
+--- a/Plugins/WebKitBrowser/WebKitImplementation.cpp
++++ b/Plugins/WebKitBrowser/WebKitImplementation.cpp
+@@ -248,6 +248,7 @@ public:
+             MemoryProfile(),
+             MemoryPressure(),
+             MediaDiskCache(false),
++            DiskCache(),
+             StartSuspended(false) {
+             Add(_T("useragent"), &UserAgent);
+             Add(_T("url"), &URL);
+@@ -265,6 +266,7 @@ public:
+             Add(_T("memoryprofile"), &MemoryProfile);
+             Add(_T("memorypressure"), &MemoryPressure);
+             Add(_T("mediadiskcache"), &MediaDiskCache);
++            Add(_T("diskcache"), &DiskCache);
+             Add(_T("startsuspended"), &StartSuspended);
+         }
+         ~Config() {
+@@ -287,6 +289,7 @@ public:
+         Generics::JSON::String MemoryProfile;
+         Generics::JSON::String MemoryPressure;
+         Generics::JSON::Boolean MediaDiskCache;
++        Generics::JSON::String DiskCache;
+         Generics::JSON::Boolean StartSuspended;
+     };
+ 
+@@ -553,6 +556,10 @@ public:
+         if (_config.MemoryProfile.Value().empty() == false)
+             Generics::SystemInfo::Environment(_T("WPE_RAM_SIZE"), _config.MemoryProfile.Value());
+ 
++        // Disk Cache
++        if (_config.DiskCache.Value().empty() == false)
++            Generics::SystemInfo::Environment(_T("WPE_DISK_CACHE_SIZE"), _config.DiskCache.Value());
++
+         // Enable cookie persistent storage
+         if (_config.CookieStorage.Value().empty() == false)
+             Generics::SystemInfo::Environment(_T("WPE_SHELL_COOKIE_STORAGE"), _T("1"));
