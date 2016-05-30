@@ -24,6 +24,10 @@ config BR2_PACKAGE_WEBBRIDGE_BIND
 	string "bind"
 	default "0.0.0.0"
 
+config BR2_PACKAGE_WEBBRIDGE_INTERFACE
+	string "interface"
+	default ""
+
 config BR2_PACKAGE_WEBBRIDGE_IDLE_TIME
 	string "idle-time"
 	default "180"
@@ -43,14 +47,6 @@ config BR2_PACKAGE_WEBBRIDGE_SYSTEM_PATH
 config BR2_PACKAGE_WEBBRIDGE_PROXYSTUB_PATH
 	string "proxystub path"
 	default "/usr/lib/webbridge/proxystubs"
-
-config BR2_PACKAGE_WEBBRIDGE_WEBSERVER_PATH
-	string "webserver path"
-	default "/boot/www"
-
-config BR2_PACKAGE_WEBBRIDGE_WEBSERVER_PORT
-	string "webserver port"
-	default "8080"
 
 config BR2_PACKAGE_WEBBRIDGE_NO_WEBUI
 	bool "no web interface"
@@ -212,6 +208,46 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_DIALSERVER
 	bool "dialserver"
 	help
 	  A plugin that implements DIscovery And Launch protocol specification
+
+menuconfig BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBSERVER
+	bool "webserver"
+	help
+	  A plugin that implements a WebServer with Proxy functionality. Used to serve
+          webpages and proxy web requests.
+
+if BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBSERVER
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBSERVER_AUTOSTART
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBSERVER
+	bool "autostart"
+	default y
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBSERVER_PORT
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBSERVER
+	string "port"
+	default "8080"
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBSERVER_BIND
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBSERVER
+	string "bind"
+	default "0.0.0.0"
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBSERVER_INTERFACE
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBSERVER
+	string "interface"
+	default ""
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBSERVER_IDLE_TIME
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBSERVER
+	string "idle-time"
+	default "180"
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBSERVER_WEBPATH
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBSERVER
+	string "persistent path"
+	default "www"
+
+endif	
 
 config BR2_PACKAGE_WEBBRIDGE_PLUGIN_SNAPSHOT
 	bool "snapshot"
