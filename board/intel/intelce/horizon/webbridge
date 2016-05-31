@@ -6,6 +6,8 @@ if [ -f /tmp/core_dir ]; then
 	if [ -f /NDS/drivers/open_firewall_port.sh ]; then
 		/NDS/drivers/open_firewall_port.sh tcp 9998
 		/NDS/drivers/open_firewall_port.sh tcp 80
+		/NDS/drivers/open_firewall_port.sh tcp 8080
+		/NDS/drivers/open_firewall_port.sh tcp 9080
 	fi
 fi
 
