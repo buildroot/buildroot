@@ -837,6 +837,22 @@ index 4ec230a..d39e099 100644
        ". Now %" G_GSIZE_FORMAT " on adapter", gst_buffer_get_size (buffer),
        gst_adapter_available (stream->adapter));
  
+@@ -2918,7 +2932,14 @@ gst_adaptive_demux_stream_download_loop (GstAdaptiveDemuxStream * stream)
+       GST_DEBUG_OBJECT (stream->pad, "EOS, checking to stop download loop");
+       /* we push the EOS after releasing the object lock */
+       if (gst_adaptive_demux_is_live (demux)) {
+-        if (gst_adaptive_demux_stream_wait_manifest_update (demux, stream)) {
++        GstAdaptiveDemuxClass *demux_class =
++          GST_ADAPTIVE_DEMUX_GET_CLASS (demux);
++
++        /* this might be a fragment download error, refresh the manifest, just in case */
++        if (!demux_class->requires_periodical_playlist_update (demux)) {
++          ret = gst_adaptive_demux_update_manifest (demux);
++          break;
++        } else if (gst_adaptive_demux_stream_wait_manifest_update (demux, stream)) {
+           goto end;
+         }
+         gst_task_stop (stream->download_task);
 diff --git a/gst-libs/gst/adaptivedemux/gstadaptivedemux.h b/gst-libs/gst/adaptivedemux/gstadaptivedemux.h
 index bfc42a0..9bbb56f 100644
 --- a/gst-libs/gst/adaptivedemux/gstadaptivedemux.h
