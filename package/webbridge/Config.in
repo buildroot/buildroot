@@ -191,6 +191,13 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER_MEDIADISKCACHE
 	bool "media-disk-cache"
 	default n
 
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_YOUTUBE
+	bool "youtube"
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER
+	help
+	  A wrapper around the youtube app to start it as a
+	  webbridge plugin.
+
 endif
 
 comment "webkitbrowser requires the package wpe"
