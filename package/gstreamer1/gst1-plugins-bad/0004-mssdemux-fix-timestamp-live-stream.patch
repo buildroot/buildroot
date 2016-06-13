@@ -1,0 +1,44 @@
+diff --git a/ext/smoothstreaming/gstmssdemux.c b/ext/smoothstreaming/gstmssdemux.c
+index cd8f82d..8ed7988 100644
+--- a/ext/smoothstreaming/gstmssdemux.c
++++ b/ext/smoothstreaming/gstmssdemux.c
+@@ -310,6 +310,12 @@ gst_mss_demux_stream_update_fragment_info (GstAdaptiveDemuxStream * stream)
+         gst_mss_stream_get_fragment_gst_timestamp (mssstream->manifest_stream);
+     stream->fragment.duration =
+         gst_mss_stream_get_fragment_gst_duration (mssstream->manifest_stream);
++
++    if (gst_mss_manifest_is_live (mssdemux->manifest)) {
++        if (!mssdemux->first_timestamp)
++            mssdemux->first_timestamp = stream->fragment.timestamp;
++        stream->fragment.timestamp -= mssdemux->first_timestamp;
++    }
+   }
+   g_free (path);
+ 
+diff --git a/ext/smoothstreaming/gstmssdemux.h b/ext/smoothstreaming/gstmssdemux.h
+index f3ea6cf..c8284fc 100644
+--- a/ext/smoothstreaming/gstmssdemux.h
++++ b/ext/smoothstreaming/gstmssdemux.h
+@@ -70,6 +70,8 @@ struct _GstMssDemux {
+   guint n_videos;
+   guint n_audios;
+ 
++  GstClockTime first_timestamp;
++
+   /* properties */
+   guint data_queue_max_size;
+ };
+diff --git a/ext/smoothstreaming/gstmssmanifest.c b/ext/smoothstreaming/gstmssmanifest.c
+index 14db3f1..cff944d 100644
+--- a/ext/smoothstreaming/gstmssmanifest.c
++++ b/ext/smoothstreaming/gstmssmanifest.c
+@@ -1201,6 +1201,9 @@ gst_mss_stream_seek (GstMssStream * stream, gboolean forward,
+   guint64 timescale;
+   GstMssStreamFragment *fragment = NULL;
+ 
++  if (stream->has_live_fragments)
++      return;
++
+   timescale = gst_mss_stream_get_timescale (stream);
+   time = gst_util_uint64_scale_round (time, timescale, GST_SECOND);
+ 
