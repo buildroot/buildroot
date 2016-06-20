@@ -27,6 +27,8 @@ WPE_DEPENDENCIES += libgcrypt libgles libegl cairo freetype fontconfig \
 	harfbuzz libxml2 libxslt sqlite libsoup jpeg libpng libinput
 endif
 
+WPE_EXTRA_FLAGS = -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
 ifeq ($(BR2_PACKAGE_NINJA),y)
 WPE_DEPENDENCIES += host-ninja
 WPE_EXTRA_FLAGS += \
