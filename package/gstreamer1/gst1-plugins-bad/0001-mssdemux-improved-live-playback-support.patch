@@ -1,7 +1,7 @@
-From c3530303930159b1841347dd903d84f27522725d Mon Sep 17 00:00:00 2001
+From a6bd17bb754d7f03dc9911820928564973017d82 Mon Sep 17 00:00:00 2001
 From: Philippe Normand <philn@igalia.com>
 Date: Thu, 10 Sep 2015 16:13:30 +0200
-Subject: [PATCH 1/2] mssdemux: improved live playback support
+Subject: [PATCH] mssdemux: improved live playback support
 
 When a MSS server hosts a live stream the fragments listed in the
 manifest usually don't have accurate timestamps and duration, except
@@ -16,19 +16,19 @@ https://bugzilla.gnome.org/show_bug.cgi?id=755036
  ext/smoothstreaming/gstmssdemux.c             |  61 ++++++
  ext/smoothstreaming/gstmssfragmentparser.c    | 255 ++++++++++++++++++++++++++
  ext/smoothstreaming/gstmssfragmentparser.h    |  84 +++++++++
- ext/smoothstreaming/gstmssmanifest.c          | 151 +++++++++++++--
+ ext/smoothstreaming/gstmssmanifest.c          | 154 ++++++++++++++--
  ext/smoothstreaming/gstmssmanifest.h          |   3 +
- gst-libs/gst/adaptivedemux/gstadaptivedemux.c |  19 +-
+ gst-libs/gst/adaptivedemux/gstadaptivedemux.c |  28 ++-
  gst-libs/gst/adaptivedemux/gstadaptivedemux.h |  14 ++
- 8 files changed, 574 insertions(+), 15 deletions(-)
+ 8 files changed, 585 insertions(+), 16 deletions(-)
  create mode 100644 ext/smoothstreaming/gstmssfragmentparser.c
  create mode 100644 ext/smoothstreaming/gstmssfragmentparser.h
 
 diff --git a/ext/smoothstreaming/Makefile.am b/ext/smoothstreaming/Makefile.am
-index 5f331f3..80965e3 100644
+index 4faf9df..a5e1ad6 100644
 --- a/ext/smoothstreaming/Makefile.am
 +++ b/ext/smoothstreaming/Makefile.am
-@@ -14,8 +14,10 @@ libgstsmoothstreaming_la_LIBADD = \
+@@ -13,8 +13,10 @@ libgstsmoothstreaming_la_LIBADD = \
  libgstsmoothstreaming_la_LDFLAGS = ${GST_PLUGIN_LDFLAGS}
  libgstsmoothstreaming_la_SOURCES = gstsmoothstreaming-plugin.c \
  	gstmssdemux.c \
@@ -40,10 +40,10 @@ index 5f331f3..80965e3 100644
 +	gstmssfragmentparser.h \
  	gstmssmanifest.h
 diff --git a/ext/smoothstreaming/gstmssdemux.c b/ext/smoothstreaming/gstmssdemux.c
-index c6fbd1a..6bf1c1a 100644
+index c975e17..cd8f82d 100644
 --- a/ext/smoothstreaming/gstmssdemux.c
 +++ b/ext/smoothstreaming/gstmssdemux.c
-@@ -134,9 +134,16 @@ gst_mss_demux_stream_update_fragment_info (GstAdaptiveDemuxStream * stream);
+@@ -135,9 +135,16 @@ gst_mss_demux_stream_update_fragment_info (GstAdaptiveDemuxStream * stream);
  static gboolean gst_mss_demux_seek (GstAdaptiveDemux * demux, GstEvent * seek);
  static gint64
  gst_mss_demux_get_manifest_update_interval (GstAdaptiveDemux * demux);
@@ -60,7 +60,7 @@ index c6fbd1a..6bf1c1a 100644
  
  static void
  gst_mss_demux_class_init (GstMssDemuxClass * klass)
-@@ -189,8 +196,13 @@ gst_mss_demux_class_init (GstMssDemuxClass * klass)
+@@ -190,8 +197,13 @@ gst_mss_demux_class_init (GstMssDemuxClass * klass)
        gst_mss_demux_stream_select_bitrate;
    gstadaptivedemux_class->stream_update_fragment_info =
        gst_mss_demux_stream_update_fragment_info;
@@ -74,7 +74,7 @@ index c6fbd1a..6bf1c1a 100644
  
    GST_DEBUG_CATEGORY_INIT (mssdemux_debug, "mssdemux", 0, "mssdemux plugin");
  }
-@@ -635,6 +647,17 @@ gst_mss_demux_get_manifest_update_interval (GstAdaptiveDemux * demux)
+@@ -647,6 +659,17 @@ gst_mss_demux_get_manifest_update_interval (GstAdaptiveDemux * demux)
    return interval;
  }
  
@@ -92,7 +92,7 @@ index c6fbd1a..6bf1c1a 100644
  static GstFlowReturn
  gst_mss_demux_update_manifest_data (GstAdaptiveDemux * demux,
      GstBuffer * buffer)
-@@ -646,3 +669,41 @@ gst_mss_demux_update_manifest_data (GstAdaptiveDemux * demux,
+@@ -658,3 +681,41 @@ gst_mss_demux_update_manifest_data (GstAdaptiveDemux * demux,
    gst_mss_manifest_reload_fragments (mssdemux->manifest, buffer);
    return GST_FLOW_OK;
  }
@@ -486,7 +486,7 @@ index 0000000..6626358
 +
 +#endif /* __GST_MSS_FRAGMENT_PARSER_H__ */
 diff --git a/ext/smoothstreaming/gstmssmanifest.c b/ext/smoothstreaming/gstmssmanifest.c
-index 0d50a20..9778090 100644
+index 02e559c..de47e5e 100644
 --- a/ext/smoothstreaming/gstmssmanifest.c
 +++ b/ext/smoothstreaming/gstmssmanifest.c
 @@ -1,5 +1,7 @@
@@ -718,7 +718,17 @@ index 0d50a20..9778090 100644
    return GST_FLOW_OK;
  }
  
-@@ -1371,3 +1452,47 @@ gst_mss_stream_get_lang (GstMssStream * stream)
+@@ -1120,6 +1201,9 @@ gst_mss_stream_seek (GstMssStream * stream, gboolean forward,
+   guint64 timescale;
+   GstMssStreamFragment *fragment = NULL;
+ 
++  // FIXME: Seek support for live scenario using DVR window.
++  g_return_if_fail(!stream->has_live_fragments);
++
+   timescale = gst_mss_stream_get_timescale (stream);
+   time = gst_util_uint64_scale_round (time, timescale, GST_SECOND);
+ 
+@@ -1401,3 +1485,47 @@ gst_mss_stream_get_lang (GstMssStream * stream)
  {
    return stream->lang;
  }
@@ -767,7 +777,7 @@ index 0d50a20..9778090 100644
 +  }
 +}
 diff --git a/ext/smoothstreaming/gstmssmanifest.h b/ext/smoothstreaming/gstmssmanifest.h
-index 65330b4..45bb464 100644
+index af7419c..039877f 100644
 --- a/ext/smoothstreaming/gstmssmanifest.h
 +++ b/ext/smoothstreaming/gstmssmanifest.h
 @@ -72,5 +72,8 @@ const gchar * gst_mss_stream_get_lang (GstMssStream * stream);
@@ -780,10 +790,10 @@ index 65330b4..45bb464 100644
  G_END_DECLS
  #endif /* __GST_MSS_MANIFEST_H__ */
 diff --git a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
-index 4ec230a..d39e099 100644
+index ba29214..142eaab 100644
 --- a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
 +++ b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
-@@ -269,6 +269,9 @@ gst_adaptive_demux_stream_finish_fragment_default (GstAdaptiveDemux * demux,
+@@ -271,6 +271,9 @@ gst_adaptive_demux_stream_finish_fragment_default (GstAdaptiveDemux * demux,
  static GstFlowReturn
  gst_adaptive_demux_stream_advance_fragment_unlocked (GstAdaptiveDemux * demux,
      GstAdaptiveDemuxStream * stream, GstClockTime duration);
@@ -793,7 +803,7 @@ index 4ec230a..d39e099 100644
  
  
  /* we can't use G_DEFINE_ABSTRACT_TYPE because we need the klass in the _init
-@@ -391,6 +394,9 @@ gst_adaptive_demux_class_init (GstAdaptiveDemuxClass * klass)
+@@ -393,6 +396,9 @@ gst_adaptive_demux_class_init (GstAdaptiveDemuxClass * klass)
    klass->data_received = gst_adaptive_demux_stream_data_received_default;
    klass->finish_fragment = gst_adaptive_demux_stream_finish_fragment_default;
    klass->update_manifest = gst_adaptive_demux_update_manifest_default;
@@ -803,7 +813,7 @@ index 4ec230a..d39e099 100644
  }
  
  static void
-@@ -622,7 +628,9 @@ gst_adaptive_demux_sink_event (GstPad * pad, GstObject * parent,
+@@ -624,7 +630,9 @@ gst_adaptive_demux_sink_event (GstPad * pad, GstObject * parent,
            gst_adaptive_demux_start_tasks (demux);
            if (gst_adaptive_demux_is_live (demux)) {
              /* Task to periodically update the manifest */
@@ -814,7 +824,7 @@ index 4ec230a..d39e099 100644
            }
          } else {
            /* no streams */
-@@ -1861,6 +1869,13 @@ gst_adaptive_demux_stream_data_received_default (GstAdaptiveDemux * demux,
+@@ -1978,6 +1986,13 @@ gst_adaptive_demux_stream_data_received_default (GstAdaptiveDemux * demux,
    return gst_adaptive_demux_stream_push_buffer (stream, buffer);
  }
  
@@ -828,7 +838,7 @@ index 4ec230a..d39e099 100644
  static GstFlowReturn
  _src_chain (GstPad * pad, GstObject * parent, GstBuffer * buffer)
  {
-@@ -1957,7 +1972,7 @@ _src_chain (GstPad * pad, GstObject * parent, GstBuffer * buffer)
+@@ -2074,7 +2089,7 @@ _src_chain (GstPad * pad, GstObject * parent, GstBuffer * buffer)
    stream->download_total_bytes += gst_buffer_get_size (buffer);
  
    gst_adapter_push (stream->adapter, buffer);
@@ -837,7 +847,7 @@ index 4ec230a..d39e099 100644
        ". Now %" G_GSIZE_FORMAT " on adapter", gst_buffer_get_size (buffer),
        gst_adapter_available (stream->adapter));
  
-@@ -2918,7 +2932,14 @@ gst_adaptive_demux_stream_download_loop (GstAdaptiveDemuxStream * stream)
+@@ -2868,7 +2883,14 @@ gst_adaptive_demux_stream_download_loop (GstAdaptiveDemuxStream * stream)
        GST_DEBUG_OBJECT (stream->pad, "EOS, checking to stop download loop");
        /* we push the EOS after releasing the object lock */
        if (gst_adaptive_demux_is_live (demux)) {
@@ -854,10 +864,10 @@ index 4ec230a..d39e099 100644
          }
          gst_task_stop (stream->download_task);
 diff --git a/gst-libs/gst/adaptivedemux/gstadaptivedemux.h b/gst-libs/gst/adaptivedemux/gstadaptivedemux.h
-index bfc42a0..9bbb56f 100644
+index ae2d895..b3110fb 100644
 --- a/gst-libs/gst/adaptivedemux/gstadaptivedemux.h
 +++ b/gst-libs/gst/adaptivedemux/gstadaptivedemux.h
-@@ -420,6 +420,20 @@ struct _GstAdaptiveDemuxClass
+@@ -425,6 +425,20 @@ struct _GstAdaptiveDemuxClass
     * selected period.
     */
    GstClockTime (*get_period_start_time) (GstAdaptiveDemux *demux);
@@ -879,5 +889,5 @@ index bfc42a0..9bbb56f 100644
  
  GType    gst_adaptive_demux_get_type (void);
 -- 
-2.6.1
+2.8.1
 
