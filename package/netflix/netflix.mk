@@ -138,8 +138,8 @@ NETFLIX_CONF_OPTS += -DDPI_REFERENCE_DRM=none
 endif
 
 NETFLIX_CONF_OPTS += \
-	-DCMAKE_C_FLAGS="$(call qstrip,$(TARGET_CFLAGS)) $(NETFLIX_FLAGS)" \
-	-DCMAKE_CXX_FLAGS="$(call qstrip,$(TARGET_CXXFLAGS)) $(NETFLIX_FLAGS)"
+	-DCMAKE_C_FLAGS="$(NETFLIX_FLAGS)" \
+	-DCMAKE_CXX_FLAGS="$(NETFLIX_FLAGS)"
 
 define NETFLIX_FIX_CONFIG_XMLS
 	mkdir -p $(@D)/netflix/src/platform/gibbon/data/etc/conf
