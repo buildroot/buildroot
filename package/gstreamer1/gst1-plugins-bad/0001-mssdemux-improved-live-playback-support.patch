@@ -1,4 +1,4 @@
-From a6bd17bb754d7f03dc9911820928564973017d82 Mon Sep 17 00:00:00 2001
+From 0468fc59e02789846aa0608566a8ac9b01bceb01 Mon Sep 17 00:00:00 2001
 From: Philippe Normand <philn@igalia.com>
 Date: Thu, 10 Sep 2015 16:13:30 +0200
 Subject: [PATCH] mssdemux: improved live playback support
@@ -16,7 +16,7 @@ https://bugzilla.gnome.org/show_bug.cgi?id=755036
  ext/smoothstreaming/gstmssdemux.c             |  61 ++++++
  ext/smoothstreaming/gstmssfragmentparser.c    | 255 ++++++++++++++++++++++++++
  ext/smoothstreaming/gstmssfragmentparser.h    |  84 +++++++++
- ext/smoothstreaming/gstmssmanifest.c          | 154 ++++++++++++++--
+ ext/smoothstreaming/gstmssmanifest.c          | 155 ++++++++++++++--
  ext/smoothstreaming/gstmssmanifest.h          |   3 +
  gst-libs/gst/adaptivedemux/gstadaptivedemux.c |  28 ++-
  gst-libs/gst/adaptivedemux/gstadaptivedemux.h |  14 ++
@@ -486,7 +486,7 @@ index 0000000..6626358
 +
 +#endif /* __GST_MSS_FRAGMENT_PARSER_H__ */
 diff --git a/ext/smoothstreaming/gstmssmanifest.c b/ext/smoothstreaming/gstmssmanifest.c
-index 02e559c..de47e5e 100644
+index 02e559c..55331a9 100644
 --- a/ext/smoothstreaming/gstmssmanifest.c
 +++ b/ext/smoothstreaming/gstmssmanifest.c
 @@ -1,5 +1,7 @@
@@ -718,17 +718,18 @@ index 02e559c..de47e5e 100644
    return GST_FLOW_OK;
  }
  
-@@ -1120,6 +1201,9 @@ gst_mss_stream_seek (GstMssStream * stream, gboolean forward,
+@@ -1120,6 +1201,10 @@ gst_mss_stream_seek (GstMssStream * stream, gboolean forward,
    guint64 timescale;
    GstMssStreamFragment *fragment = NULL;
  
 +  // FIXME: Seek support for live scenario using DVR window.
-+  g_return_if_fail(!stream->has_live_fragments);
++  if (stream->has_live_fragments)
++    return;
 +
    timescale = gst_mss_stream_get_timescale (stream);
    time = gst_util_uint64_scale_round (time, timescale, GST_SECOND);
  
-@@ -1401,3 +1485,47 @@ gst_mss_stream_get_lang (GstMssStream * stream)
+@@ -1401,3 +1486,47 @@ gst_mss_stream_get_lang (GstMssStream * stream)
  {
    return stream->lang;
  }
