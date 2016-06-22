@@ -40,16 +40,16 @@ if [ ! -d $SOURCE/root/Netflix ]; then
 fi
 
 # Disable NDS Swap
-echo "#!/bin/sh" > /NDS/config/start_swap.sh
-echo "#!/bin/sh" > /NDS/config/start_swap_dm-crypt.sh
-echo "#!/bin/sh" > /NDS/config/start_swap_partition_dm-crypt.sh
+#echo "#!/bin/sh" > /NDS/config/start_swap.sh
+#echo "#!/bin/sh" > /NDS/config/start_swap_dm-crypt.sh
+#echo "#!/bin/sh" > /NDS/config/start_swap_partition_dm-crypt.sh
 
 # Enable ML Swap
-if [ ! -f $HDD/swapfile ]; then
-	dd if=/dev/zero of=$HDD/swapfile bs=1M count=512
-fi
-mkswap $HDD/swapfile
-swapon $HDD/swapfile
+#if [ ! -f $HDD/swapfile ]; then
+#	dd if=/dev/zero of=$HDD/swapfile bs=1M count=512
+#fi
+#mkswap $HDD/swapfile
+#swapon $HDD/swapfile
 
 # Exports
 export HOME=$SOURCE/root
@@ -62,7 +62,9 @@ export LD_LIBRARY_PATH=$SOURCE/lib:$SOURCE/usr/lib:$SOURCE/usr/lib/gstreamer-1.0
 sleep 3
 
 # Clock
-#export LD_PRELOAD=/NDS/metrological/usr/lib/libextClock.so
+if [ -f /NDS/lib/libextClock.so ]; then
+	export LD_PRELOAD=/NDS/lib/libextClock.so
+fi
 
 # WebBridge
 if [ ! -f $SOURCE/NDS/webbridge-stub ]; then
