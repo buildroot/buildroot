@@ -1,0 +1,26 @@
+From d92802da4f0fa76edefc9757daaff73ac71dcd21 Mon Sep 17 00:00:00 2001
+From: Miguel Gomez <magomez@igalia.com>
+Date: Mon, 20 Jun 2016 12:22:49 +0200
+Subject: [PATCH] [XMLHttpRequest] Add env variable to control whether
+ responses are cached.
+
+Setting the environment variable WPE_DISABLE_XHR_RESPONSE_CACHING disables the
+memory cache for xhr responses. This is useful to reduce the memory footprint
+when the responses are quite big and cannot be reused.
+---
+ Source/WebCore/xml/XMLHttpRequest.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/WebCore/xml/XMLHttpRequest.cpp b/Source/WebCore/xml/XMLHttpRequest.cpp
+index d665059..a481172 100644
+--- a/Source/WebCore/xml/XMLHttpRequest.cpp
++++ b/Source/WebCore/xml/XMLHttpRequest.cpp
+@@ -718,7 +718,7 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
+     options.contentSecurityPolicyEnforcement = scriptExecutionContext()->shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective;
+     options.initiator = cachedResourceRequestInitiators().xmlhttprequest;
+ 
+-    if (m_responseType == ResponseType::Arraybuffer)
++    if (m_responseType == ResponseType::Arraybuffer || getenv("WPE_DISABLE_XHR_RESPONSE_CACHING"))
+         options.setDataBufferingPolicy(DoNotBufferData);
+ 
+     if (m_timeoutMilliseconds) {

@@ -1,0 +1,39 @@
+From 5b9c464bea98a5c2fa36885d65048aef61a0efd2 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Tue, 21 Jun 2016 11:22:27 +0200
+Subject: [PATCH] [GStreamer] Trigger video resize upon first sample rendering
+
+The natural video size calculation depends on the validity of the
+current sample, so whenever the first sample reached the sink it's a
+good idea to reflect this on the player which will update its natural
+size accordingly.
+
+Fixes an issue where black borders were added on top and bottom of
+fullscreen video.
+---
+ .../graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp         | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp
+index 8550e4a..da0de5d 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp
+@@ -705,11 +705,18 @@ void MediaPlayerPrivateGStreamerBase::repaint()
+ 
+ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
+ {
++    bool triggerResize;
+     {
+         WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
++        triggerResize = !m_sample;
+         m_sample = sample;
+     }
+ 
++    if (triggerResize) {
++        LOG_MEDIA_MESSAGE("First sample reached the sink, triggering video dimensions update");
++        m_player->sizeChanged();
++    }
++
+ #if USE(COORDINATED_GRAPHICS_THREADED)
+ #if USE(GSTREAMER_GL)
+     pushTextureToCompositor();
