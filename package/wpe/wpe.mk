@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = 858b51ed35487a4d524c48fa27e7e89ed1d6adf9
+WPE_VERSION = ec6c987a73218f6219932643aa392bbb09c08762
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -134,12 +134,12 @@ else
 WPE_BUILD_TYPE = Release
 ifeq ($(BR2_PACKAGE_WPE_DEBUG_SYMBOLS),y)
 WPE_EXTRA_FLAGS += \
-	-DCMAKE_C_FLAGS_RELEASE="-O2 -g -DNDEBUG -Wno-cast-align $(WPE_EXTRA_CFLAGS)" \
-	-DCMAKE_CXX_FLAGS_RELEASE="-O2 -g -DNDEBUG -Wno-cast-align $(WPE_EXTRA_CFLAGS)"
+	-DCMAKE_C_FLAGS_RELEASE="$(call qstrip,$(TARGET_CFLAGS)) -g -DNDEBUG -Wno-cast-align $(WPE_EXTRA_CFLAGS)" \
+	-DCMAKE_CXX_FLAGS_RELEASE="$(call qstrip,$(TARGET_CFLAGS)) -g -DNDEBUG -Wno-cast-align $(WPE_EXTRA_CFLAGS)"
 else
 WPE_EXTRA_FLAGS += \
-	-DCMAKE_C_FLAGS_RELEASE="-O2 -DNDEBUG -Wno-cast-align $(WPE_EXTRA_CFLAGS)" \
-	-DCMAKE_CXX_FLAGS_RELEASE="-O2 -DNDEBUG -Wno-cast-align $(WPE_EXTRA_CFLAGS)"
+	-DCMAKE_C_FLAGS_RELEASE="$(call qstrip,$(TARGET_CFLAGS)) -DNDEBUG -Wno-cast-align $(WPE_EXTRA_CFLAGS)" \
+	-DCMAKE_CXX_FLAGS_RELEASE="$(call qstrip,$(TARGET_CFLAGS)) -DNDEBUG -Wno-cast-align $(WPE_EXTRA_CFLAGS)"
 endif
 endif
 
@@ -224,7 +224,7 @@ WPE_BUILD_TARGETS += jsc
 endif
 ifeq ($(WPE_BUILD_WEBKIT),y)
 WPE_BUILD_TARGETS += libWPEWebKit.so libWPEWebInspectorResources.so \
-	WPE{Database,Network,Web}Process
+	WPE{Database,Network,Web}Process libWPE.so libWPE-platform.so
 
 endif
 
