@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = 858b51ed35487a4d524c48fa27e7e89ed1d6adf9
+WPE_VERSION = d47683d159a655bb5ea182bc736b2f81949ac7a0
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -224,7 +224,7 @@ WPE_BUILD_TARGETS += jsc
 endif
 ifeq ($(WPE_BUILD_WEBKIT),y)
 WPE_BUILD_TARGETS += libWPEWebKit.so libWPEWebInspectorResources.so \
-	WPE{Database,Network,Web}Process
+	WPE{Database,Network,Web}Process libWPE.so libWPE-platform.so
 
 endif
 
