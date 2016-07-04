@@ -86,6 +86,11 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_DICTIONARY
 		  that can be accessed as a system-wide singleton and allows for 
 		  notification on change by any instance in any process.
 
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_COMMANDER
+        bool "commander"
+        help
+          A plugin that allows to ingest a sequence of commands to be executed by the webbridge
+
 config BR2_PACKAGE_WEBBRIDGE_PLUGIN_BACKOFFICE
 	bool "backofffice"
 	select BR2_PACKAGE_CPPSDK_PROFILER
