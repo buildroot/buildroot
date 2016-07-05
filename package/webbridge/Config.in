@@ -152,6 +152,11 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX_AUTOSTART
 	bool "autostart"
 	default n
 
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX_MODEL
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX
+	string "model"
+	default ""
+
 endif
 
 comment "netflix is dependent on the netflix package compiled as library"
@@ -221,10 +226,20 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_QUEUECOMMUNICATOR
 		  with specific middleware.
 
 
-config BR2_PACKAGE_WEBBRIDGE_PLUGIN_DIALSERVER
+menuconfig BR2_PACKAGE_WEBBRIDGE_PLUGIN_DIALSERVER
 	bool "dialserver"
 	help
 	  A plugin that implements DIscovery And Launch protocol specification
+
+
+if BR2_PACKAGE_WEBBRIDGE_PLUGIN_DIALSERVER
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_DIALSERVER_NAME
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_DIALSERVER
+	string "name"
+	default "[TV] WebBridge"
+
+endif
 
 menuconfig BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBSERVER
 	bool "webserver"
