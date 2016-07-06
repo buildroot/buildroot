@@ -9,7 +9,7 @@
 BINUTILS_VERSION = $(call qstrip,$(BR2_BINUTILS_VERSION))
 ifeq ($(BINUTILS_VERSION),)
 ifeq ($(BR2_arc),y)
-BINUTILS_VERSION = arc-2015.12
+BINUTILS_VERSION = arc-2016.09-eng005
 else
 BINUTILS_VERSION = 2.25.1
 endif
@@ -25,13 +25,23 @@ BINUTILS_SOURCE ?= binutils-$(BINUTILS_VERSION).tar.bz2
 BINUTILS_EXTRA_CONFIG_OPTIONS = $(call qstrip,$(BR2_BINUTILS_EXTRA_CONFIG_OPTIONS))
 BINUTILS_INSTALL_STAGING = YES
 BINUTILS_DEPENDENCIES = $(if $(BR2_NEEDS_GETTEXT_IF_LOCALE),gettext)
-HOST_BINUTILS_DEPENDENCIES =
 BINUTILS_LICENSE = GPLv3+, libiberty LGPLv2.1+
 BINUTILS_LICENSE_FILES = COPYING3 COPYING.LIB
 
 ifeq ($(BINUTILS_FROM_GIT),y)
-BINUTILS_DEPENDENCIES += host-flex host-bison
-HOST_BINUTILS_DEPENDENCIES += host-flex host-bison
+BINUTILS_DEPENDENCIES += host-flex host-bison host-texinfo
+HOST_BINUTILS_DEPENDENCIES += host-flex host-bison host-texinfo
+endif
+
+# The .info files in the 2.26 tarball have an incorrect timestamp, so
+# binutils tries to re-generate them. In order to avoid the dependency
+# on host-texinfo, we simply update the timestamps.
+ifeq ($(BR2_BINUTILS_VERSION_2_26_X),y)
+define BINUTILS_FIXUP_INFO_TIMESTAMPS
+	find $(@D) -name '*.info' -exec touch {} \;
+endef
+BINUTILS_POST_PATCH_HOOKS += BINUTILS_FIXUP_INFO_TIMESTAMPS
+HOST_BINUTILS_POST_PATCH_HOOKS += BINUTILS_FIXUP_INFO_TIMESTAMPS
 endif
 
 # When binutils sources are fetched from the binutils-gdb repository,

@@ -4,6 +4,7 @@
 #
 ################################################################################
 
+# When updating the version here, also update support/scripts/scancpan
 PERL_VERSION_MAJOR = 22
 PERL_VERSION = 5.$(PERL_VERSION_MAJOR).2
 PERL_SITE = http://www.cpan.org/src/5.0
@@ -54,7 +55,7 @@ PERL_CONF_OPTS = \
 	-Dccflags="$(TARGET_CFLAGS)" \
 	-Dldflags="$(TARGET_LDFLAGS) -lm" \
 	-Dmydomain="" \
-	-Dmyhostname="$(BR2_TARGET_GENERIC_HOSTNAME)" \
+	-Dmyhostname="noname" \
 	-Dmyuname="Buildroot $(BR2_VERSION_FULL)" \
 	-Dosname=linux \
 	-Dosvers=$(LINUX_VERSION) \
@@ -90,10 +91,6 @@ define PERL_INSTALL_TARGET_CMDS
 	$(MAKE1) -C $(@D) DESTDIR="$(TARGET_DIR)" install.perl
 endef
 
-# We never want to have host-berkeleydb or host-gdbm as dependencies
-# of host-perl.
-HOST_PERL_DEPENDENCIES =
-
 HOST_PERL_CONF_OPTS = \
 	-des \
 	-Dprefix="$(HOST_DIR)/usr" \
@@ -114,7 +111,6 @@ endef
 $(eval $(generic-package))
 $(eval $(host-generic-package))
 
-ifeq ($(BR2_PACKAGE_PERL),y)
 define PERL_FINALIZE_TARGET
 	rm -rf $(TARGET_DIR)/usr/lib/perl5/$(PERL_VERSION)/pod
 	rm -rf $(TARGET_DIR)/usr/lib/perl5/$(PERL_VERSION)/$(PERL_ARCHNAME)/CORE
@@ -122,5 +118,4 @@ define PERL_FINALIZE_TARGET
 	find $(TARGET_DIR)/usr/lib/perl5/ -name '*.bs' -print0 | xargs -0 rm -f
 	find $(TARGET_DIR)/usr/lib/perl5/ -name '.packlist' -print0 | xargs -0 rm -f
 endef
-TARGET_FINALIZE_HOOKS += PERL_FINALIZE_TARGET
-endif
+PERL_TARGET_FINALIZE_HOOKS += PERL_FINALIZE_TARGET

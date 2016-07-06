@@ -143,6 +143,89 @@ comment "----------------------------------------------------"
 endif
 
 ###############################################################################
+comment "Legacy options removed in 2016.08"
+
+config BR2_PACKAGE_SYSTEMD_COMPAT
+	bool "systemd compatibility libraries have been removed"
+	help
+	  The systemd option to enable the compatibility libraries has
+	  been removed. Theses libraries have been useless since a few
+	  version, and have been fully dropped from the source since
+	  v230.
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_LIVEADDER
+	bool "gst1-plugins-bad liveadder plugin removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_AUDIOMIXER
+	help
+	  The functionality of the liveadder plugin of the
+	  gst1-plugins-bad package has been merged into audiomixer.
+
+config BR2_PACKAGE_LIBFSLVPUWRAP
+	bool "libfslvpuwrap has been renamed to imx-vpuwrap"
+	select BR2_LEGACY
+	select BR2_PACKAGE_IMX_VPUWRAP
+	help
+	  The libfslvpuwrap has been renamed to match the renamed package.
+
+config BR2_PACKAGE_LIBFSLPARSER
+	bool "libfslparser has been renamed to imx-parser"
+	select BR2_LEGACY
+	select BR2_PACKAGE_IMX_PARSER
+	help
+	  The libfslparser has been renamed to match the renamed package.
+
+config BR2_PACKAGE_LIBFSLCODEC
+	bool "libfslcodec has been renamed to imx-codec"
+	select BR2_LEGACY
+	select BR2_PACKAGE_IMX_CODEC
+	help
+	  The libfslcodec has been renamed to match the renamed package.
+
+config BR2_PACKAGE_UBOOT_TOOLS_MKIMAGE_FIT_SIGNATURE_SUPPORT
+	bool "FIT support in uboot-tools has been refactored"
+	select BR2_LEGACY
+	select BR2_PACKAGE_DTC
+	select BR2_PACKAGE_DTC_PROGRAMS
+	select BR2_PACKAGE_UBOOT_TOOLS_FIT_SUPPORT
+	select BR2_PACKAGE_UBOOT_TOOLS_FIT_SIGNATURE_SUPPORT
+	select BR2_PACKAGE_UBOOT_TOOLS_MKIMAGE
+	help
+	  This option has been removed in favor of a more fine-grained
+	  configuration, which is recommended. Selecting this option
+	  enables FIT and FIT signature support for the target packages.
+	  It will also select the dtc and openssl packages.
+
+config BR2_PTHREADS_OLD
+	bool "linuxthreads (stable/old)"
+	select BR2_LEGACY
+	help
+	  Linuxthreads have been reworked, BR2_PTHREADS_OLD is now
+	  BR2_PTHREADS and the old BR2_PTHREADS - LT.new got removed.
+
+config BR2_BINUTILS_VERSION_2_23_X
+	bool "binutils 2.23 removed"
+	select BR2_LEGACY
+	help
+	  Binutils 2.23 has been removed, using a newer version is
+	  recommended.
+
+config BR2_TOOLCHAIN_BUILDROOT_EGLIBC
+	bool "eglibc support has been removed"
+	select BR2_LEGACY
+	help
+	  The eglibc project no longer exists, as it has been merged
+	  back into the glibc project. Therefore, support for eglibc
+	  has been removed, and glibc should be used instead.
+
+config BR2_GDB_VERSION_7_8
+	bool "gdb 7.8 has been removed"
+	select BR2_LEGACY
+	help
+	  The 7.8 version of gdb has been removed. Use a newer version
+	  instead.
+
+###############################################################################
 comment "Legacy options removed in 2016.05"
 
 config BR2_PACKAGE_OPENVPN_CRYPTO_POLARSSL
@@ -913,11 +996,9 @@ config BR2_PACKAGE_KODI_PVR_ADDONS
 config BR2_BINUTILS_VERSION_2_23_2
 	bool "binutils 2.23 option renamed"
 	select BR2_LEGACY
-	select BR2_BINUTILS_VERSION_2_23_X
 	help
-	  The binutils version option has been renamed to match the
-	  same patchlevel logic used by gcc. The new option is now
-	  BR2_BINUTILS_VERSION_2_23_X.
+	  Binutils 2.23.2 has been removed, using a newer version is
+	  recommended.
 
 config BR2_BINUTILS_VERSION_2_24
 	bool "binutils 2.24 option renamed"

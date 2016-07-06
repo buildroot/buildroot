@@ -311,12 +311,16 @@ use in the comment.
 ** Dependency symbol: +BR2_TOOLCHAIN_USES_GLIBC+,
    +BR2_TOOLCHAIN_USES_MUSL+, +BR2_TOOLCHAIN_USES_UCLIBC+
 ** Comment string: for the C library, a slightly different comment text
-   is used: +foo needs an (e)glibc toolchain+, or `foo needs an (e)glibc
+   is used: +foo needs a glibc toolchain+, or `foo needs a glibc
    toolchain w/ C++`
 
 * C++ support
 ** Dependency symbol: +BR2_INSTALL_LIBSTDCPP+
 ** Comment string: `C++`
+
+* Fortran support
+** Dependency symbol: +BR2_TOOLCHAIN_HAS_FORTRAN+
+** Comment string: `fortran`
 
 * thread support
 ** Dependency symbol: +BR2_TOOLCHAIN_HAS_THREADS+

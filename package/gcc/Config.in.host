@@ -18,7 +18,7 @@ choice
 		depends on BR2_DEPRECATED_SINCE_2016_05
 		# Broken or unsupported architectures
 		depends on !BR2_microblaze && !BR2_aarch64 && !BR2_arc \
-			&& !BR2_powerpc64le && !BR2_nios2
+			&& !BR2_powerpc64le && !BR2_nios2 && !BR2_bfin
 		# Broken or unsupported ARM cores
 		depends on !BR2_cortex_a12 && !BR2_pj4 && !BR2_cortex_a17
 		# Broken or unsupported PPC cores
@@ -37,7 +37,7 @@ choice
 		bool "gcc 4.8.x"
 		# Broken or unsupported architectures
 		depends on !BR2_microblaze && !BR2_arc \
-			&& !BR2_powerpc64le && !BR2_nios2
+			&& !BR2_powerpc64le && !BR2_nios2 && !BR2_bfin
 		# Broken or unsupported ARM cores
 		depends on !BR2_cortex_a12 && !BR2_cortex_a17
 		# Broken or unsupported PPC cores
@@ -61,7 +61,7 @@ choice
 	config BR2_GCC_VERSION_4_9_X
 		bool "gcc 4.9.x"
 		# Broken or unsupported architectures
-		depends on !BR2_arc
+		depends on !BR2_arc && !BR2_bfin
 		# Broken or unsupported ARM cores
 		depends on !BR2_cortex_a17
 		# Unsupported for MIPS R6
@@ -74,7 +74,7 @@ choice
 	config BR2_GCC_VERSION_5_X
 		bool "gcc 5.x"
 		# Broken or unsupported architectures
-		depends on !BR2_arc
+		depends on !BR2_arc && !BR2_bfin
 		select BR2_GCC_NEEDS_MPC
 		select BR2_GCC_SUPPORTS_GRAPHITE
 		select BR2_TOOLCHAIN_GCC_AT_LEAST_5
@@ -89,6 +89,13 @@ choice
 
 endchoice
 
+# Indicates if GCC for architecture supports --with-{arch,cpu,..}  to
+# set default CFLAGS, otherwise values will be used by toolchain
+# wrapper.
+config BR2_GCC_ARCH_HAS_CONFIGURABLE_DEFAULTS
+	bool
+	default y if !BR2_bfin
+
 config BR2_GCC_SUPPORTS_FINEGRAINEDMTUNE
 	bool
 	default y
@@ -98,9 +105,9 @@ config BR2_GCC_VERSION
 	default "4.7.4"     if BR2_GCC_VERSION_4_7_X
 	default "4.8.5"     if BR2_GCC_VERSION_4_8_X
 	default "4.9.3"     if BR2_GCC_VERSION_4_9_X
-	default "5.3.0"     if BR2_GCC_VERSION_5_X
+	default "5.4.0"     if BR2_GCC_VERSION_5_X
 	default "6.1.0" if BR2_GCC_VERSION_6_X
-	default "arc-2015.12" if BR2_GCC_VERSION_4_8_ARC
+	default "arc-2016.09-eng005" if BR2_GCC_VERSION_4_8_ARC
 
 config BR2_EXTRA_GCC_CONFIG_OPTIONS
 	string "Additional gcc options"
@@ -118,8 +125,16 @@ config BR2_TOOLCHAIN_BUILDROOT_CXX
 	  C++ language and you want C++ libraries to be installed on
 	  your target system.
 
+comment "Fortran support needs a toolchain w/ wchar"
+	depends on BR2_TOOLCHAIN_HAS_LIBQUADMATH
+	depends on !BR2_USE_WCHAR # libquadmath
+
 config BR2_TOOLCHAIN_BUILDROOT_FORTRAN
 	bool "Enable Fortran support"
+	# on architecture building libquadmath, wchar is required
+	depends on !BR2_TOOLCHAIN_HAS_LIBQUADMATH || \
+		(BR2_TOOLCHAIN_HAS_LIBQUADMATH && BR2_USE_WCHAR)
+	select BR2_TOOLCHAIN_HAS_FORTRAN
 	help
 	  Enable this option if you want your toolchain to support the
 	  Fortran language and you want Fortran libraries to be
@@ -128,7 +143,7 @@ config BR2_TOOLCHAIN_BUILDROOT_FORTRAN
 config BR2_GCC_ENABLE_TLS
 	bool "Enable compiler tls support" if BR2_TOOLCHAIN_BUILDROOT_UCLIBC
 	default y
-	depends on BR2_PTHREADS_NATIVE || BR2_TOOLCHAIN_BUILDROOT_EGLIBC || BR2_TOOLCHAIN_BUILDROOT_GLIBC
+	depends on BR2_PTHREADS_NATIVE || BR2_TOOLCHAIN_BUILDROOT_GLIBC
 	help
 	  Enable the compiler to generate code for accessing
 	  thread local storage variables
@@ -151,9 +166,7 @@ config BR2_GCC_ENABLE_LIBMUDFLAP
 	# There are architectures, or specific configurations for
 	# which mudflap is not supported.
 	depends on !BR2_ARM_INSTRUCTIONS_THUMB && !BR2_powerpc_SPE
-	depends on !BR2_GCC_VERSION_4_9_X
-	depends on !BR2_GCC_VERSION_5_X
-	depends on !BR2_GCC_VERSION_6_X
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 	help
 	  libmudflap is a gcc library used for the mudflap pointer
 	  debugging functionality. It is only needed if you intend to

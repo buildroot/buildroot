@@ -5,7 +5,7 @@
 ################################################################################
 
 ifeq ($(BR2_PACKAGE_LUA_5_3),y)
-LUA_VERSION = 5.3.2
+LUA_VERSION = 5.3.3
 else
 ifeq ($(BR2_PACKAGE_LUA_5_2),y)
 LUA_VERSION = 5.2.4
@@ -62,9 +62,6 @@ endef
 LUA_POST_PATCH_HOOKS += LUA_32BITS_LUACONF
 endif
 
-# We never want to have host-readline and host-ncurses as dependencies
-# of host-lua.
-HOST_LUA_DEPENDENCIES =
 HOST_LUA_CFLAGS = -Wall -fPIC -DLUA_USE_DLOPEN -DLUA_USE_POSIX
 HOST_LUA_MYLIBS = -ldl
 

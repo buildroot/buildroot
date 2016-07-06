@@ -42,8 +42,7 @@ GST1_PLUGINS_GOOD_CONF_OPTS += \
 	--disable-jack \
 	--disable-libdv \
 	--disable-dv1394 \
-	--disable-shout2 \
-	--disable-taglib
+	--disable-shout2
 
 GST1_PLUGINS_GOOD_DEPENDENCIES = gstreamer1 gst1-plugins-base
 
@@ -333,6 +332,12 @@ ifeq ($(BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_V4L2),y)
 GST1_PLUGINS_GOOD_CONF_OPTS += --enable-gst_v4l2
 else
 GST1_PLUGINS_GOOD_CONF_OPTS += --disable-gst_v4l2
+endif
+
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_V4L2_PROBE),y)
+GST1_PLUGINS_GOOD_CONF_OPTS += --enable-v4l2-probe
+else
+GST1_PLUGINS_GOOD_CONF_OPTS += --disable-v4l2-probe
 endif
 
 ifeq ($(BR2_PACKAGE_XORG7),y)

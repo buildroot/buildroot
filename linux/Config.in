@@ -27,7 +27,7 @@ choice
 	prompt "Kernel version"
 
 config BR2_LINUX_KERNEL_LATEST_VERSION
-	bool "Latest version (4.5.4)"
+	bool "Latest version (4.6.3)"
 
 config BR2_LINUX_KERNEL_CUSTOM_VERSION
 	bool "Custom version"
@@ -110,7 +110,7 @@ config BR2_LINUX_KERNEL_CUSTOM_LOCAL_PATH
 
 config BR2_LINUX_KERNEL_VERSION
 	string
-	default "4.5.4" if BR2_LINUX_KERNEL_LATEST_VERSION
+	default "4.6.3" if BR2_LINUX_KERNEL_LATEST_VERSION
 	default BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE \
 		if BR2_LINUX_KERNEL_CUSTOM_VERSION
 	default "custom" if BR2_LINUX_KERNEL_CUSTOM_TARBALL
@@ -141,6 +141,14 @@ choice
 
 config BR2_LINUX_KERNEL_USE_DEFCONFIG
 	bool "Using an in-tree defconfig file"
+
+config BR2_LINUX_KERNEL_USE_ARCH_DEFAULT_CONFIG
+	bool "Use the architecture default configuration"
+	help
+	  This option will use the default configuration for the
+	  selected architecture. I.e, it is equivalent to running
+	  "make ARCH=<foo> defconfig". This is useful on architectures
+	  that have a single defconfig file, such as ARM64.
 
 config BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG
 	bool "Using a custom (def)config file"

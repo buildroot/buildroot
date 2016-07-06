@@ -310,6 +310,12 @@ information is (assuming the package name is +libfoo+) :
      the package source code. Buildroot copies the contents of the
      source directory into the package's build directory.
 
+* +LIBFOO_GIT_SUBMODULES+, when +LIBFOO_SITE_METHOD=git+, will create
+  an archive with the git submodules in the repository.
+  Note that we try not to use such git submodules when they contain
+  bundled libraries, in which case we prefer to use those libraries
+  from their own package.
+
 * +LIBFOO_STRIP_COMPONENTS+ is the number of leading components
   (directories) that tar must strip from file names on extraction.
   The tarball for most packages has one leading component named
@@ -496,6 +502,12 @@ different steps of the build process.
   will be run only when the relevant init system is installed (i.e. if
   systemd is selected as the init system in the configuration, only
   +LIBFOO_INSTALL_INIT_SYSTEMD+ will be run).
+
+* +LIBFOO_HELP_CMDS+ lists the actions to print the package help, which
+  is included to the main +make help+ output. These commands can print
+  anything in any format.
+  This is seldom used, as packages rarely have custom rules. *Do not use
+  this variable*, unless you really know that you need to print help.
 
 The preferred way to define these variables is:
 

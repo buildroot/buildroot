@@ -1,10 +1,13 @@
 config BR2_PACKAGE_SPHINXBASE
-        bool "sphinxbase"
-        select BR2_PACKAGE_ALSA_LIB
-        help
-          sphnix is a speech recognizer software for English and
-          other languages.
+	bool "sphinxbase"
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	help
+	  CMUSphinx toolkit is a leading speech recognition toolkit
+	  with various tools used to build speech applications. CMU
+	  Sphinx toolkit has a number of packages for different tasks
+	  and applications.
 
-          http://cmusphinx.sourceforge.net/
+	  http://cmusphinx.sourceforge.net/
 
-#endif # BR2_PACKAGE_SPHINXBASE
+comment "sphinxbase needs a toolchain with threads"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS

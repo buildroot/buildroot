@@ -24,6 +24,11 @@
 # You shouldn't need to mess with anything beyond this point...
 #--------------------------------------------------------------
 
+# we want bash as shell
+SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
+	 else if [ -x /bin/bash ]; then echo /bin/bash; \
+	 else echo sh; fi; fi)
+
 # Trick for always running with a fixed umask
 UMASK = 0022
 ifneq ($(shell umask),$(UMASK))
@@ -41,7 +46,7 @@ else # umask
 all:
 
 # Set and export the version string
-export BR2_VERSION := 2016.05
+export BR2_VERSION := 2016.08-git
 
 # Save running make version since it's clobbered by the make package
 RUNNING_MAKE_VERSION := $(MAKE_VERSION)
@@ -208,6 +213,13 @@ ifeq ($(filter $(noconfig_targets),$(MAKECMDGOALS)),)
 -include $(BR2_CONFIG)
 endif
 
+# timezone and locale may affect build output
+ifeq ($(BR2_REPRODUCIBLE),y)
+export TZ=UTC
+export LANG=C
+export LC_ALL=C
+endif
+
 # To put more focus on warnings, be less verbose as default
 # Use 'make V=1' to see the full commands
 ifeq ("$(origin V)", "command line")
@@ -226,11 +238,6 @@ export VERBOSE
 else
   Q = @
 endif
-
-# we want bash as shell
-SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
-	 else if [ -x /bin/bash ]; then echo /bin/bash; \
-	 else echo sh; fi; fi)
 
 # kconfig uses CONFIG_SHELL
 CONFIG_SHELL := $(SHELL)
@@ -410,6 +417,7 @@ endif
 # Scripts in support/ or post-build scripts may need to reference
 # these locations, so export them so it is easier to use
 export BR2_CONFIG
+export BR2_REPRODUCIBLE
 export TARGET_DIR
 export STAGING_DIR
 export HOST_DIR
@@ -701,8 +709,12 @@ legal-info: dirs legal-info-clean legal-info-prepare $(foreach p,$(PACKAGES),$(p
 		cat support/legal-info/README.warnings-header \
 			$(LEGAL_WARNINGS) >>$(LEGAL_REPORT); \
 		cat $(LEGAL_WARNINGS); fi
-	@echo "Legal info produced in $(LEGAL_INFO_DIR)"
 	@rm -f $(LEGAL_WARNINGS)
+	@(cd $(LEGAL_INFO_DIR); \
+		find * -type f -exec sha256sum {} + | LC_ALL=C sort -k2 \
+			>.legal-info.sha256; \
+		mv .legal-info.sha256 legal-info.sha256)
+	@echo "Legal info produced in $(LEGAL_INFO_DIR)"
 
 show-targets:
 	@echo $(PACKAGES) $(TARGETS_ROOTFS)
@@ -937,22 +949,10 @@ help:
 	@echo '  <pkg>-dirclean         - Remove <pkg> build directory'
 	@echo '  <pkg>-reconfigure      - Restart the build from the configure step'
 	@echo '  <pkg>-rebuild          - Restart the build from the build step'
-ifeq ($(BR2_PACKAGE_BUSYBOX),y)
-	@echo '  busybox-menuconfig     - Run BusyBox menuconfig'
-endif
-ifeq ($(BR2_LINUX_KERNEL),y)
-	@echo '  linux-menuconfig       - Run Linux kernel menuconfig'
-	@echo '  linux-savedefconfig    - Run Linux kernel savedefconfig'
-	@echo '  linux-update-defconfig - Save the Linux configuration to the path specified'
-	@echo '                             by BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE'
-endif
-ifeq ($(BR2_TOOLCHAIN_BUILDROOT),y)
-	@echo '  uclibc-menuconfig      - Run uClibc menuconfig'
-endif
-ifeq ($(BR2_TARGET_BAREBOX),y)
-	@echo '  barebox-menuconfig     - Run barebox menuconfig'
-	@echo '  barebox-savedefconfig  - Run barebox savedefconfig'
-endif
+	$(foreach p,$(HELP_PACKAGES), \
+		@echo $(sep) \
+		@echo '$($(p)_NAME):' $(sep) \
+		$($(p)_HELP_CMDS)$(sep))
 	@echo
 	@echo 'Documentation:'
 	@echo '  manual                 - build manual in all formats'

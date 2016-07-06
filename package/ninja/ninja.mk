@@ -1,18 +1,18 @@
 ################################################################################
 #
-# Ninja
+# ninja
 #
 ################################################################################
 
-NINJA_VERSION = 083b6b040681ec3d8ec3cd40f20406b9e6ec8d56
-NINJA_SITE = $(call github,martine,ninja,$(NINJA_VERSION))
-NINJA_DEPENDENCIES = host-python
+NINJA_VERSION = v1.7.1
+NINJA_SITE = $(call github,ninja-build,ninja,$(NINJA_VERSION))
+NINJA_LICENSE = Apache-2.0
+NINJA_LICENSE_FILES = COPYING
 
-define HOST_NINJA_CONFIGURE_CMDS
-endef
+HOST_NINJA_DEPENDENCIES = $(if $(BR2_PACKAGE_PYTHON3),host-python3,host-python)
 
 define HOST_NINJA_BUILD_CMDS
-    (cd $(@D); ./configure.py --bootstrap)
+	(cd $(@D); ./configure.py --bootstrap)
 endef
 
 define HOST_NINJA_INSTALL_CMDS
