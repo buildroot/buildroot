@@ -10,6 +10,7 @@ GST1_COMMON_SITE = http://cgit.freedesktop.org/gstreamer/common/snapshot
 BR_NO_CHECK_HASH_FOR += $(GST1_COMMON_SOURCE)
 
 define GSTREAMER1_COMMON_EXTRACT
+	mkdir -p $(@D)/common
 	$(INFLATE.xz) $(DL_DIR)/$(GST1_COMMON_SOURCE) | \
 		$(TAR) --strip-components=1 -C $(@D)/common $(TAR_OPTIONS) -
 	mkdir -p $(@D)/m4
