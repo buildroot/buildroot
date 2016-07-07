@@ -5,6 +5,9 @@
 ################################################################################
 
 FREETYPE_VERSION = 2.6.4
+ifeq ($(BR2_PACKAGE_NETFLIX),y)
+FREETYPE_VERSION = 2.4.6
+endif
 FREETYPE_SOURCE = freetype-$(FREETYPE_VERSION).tar.bz2
 FREETYPE_SITE = http://downloads.sourceforge.net/project/freetype/freetype2/$(FREETYPE_VERSION)
 FREETYPE_INSTALL_STAGING = YES
@@ -25,8 +28,10 @@ HOST_FREETYPE_CONF_OPTS = --without-zlib --without-bzip2 --without-png
 define FREETYPE_RUN_AUTOGEN
 	cd $(@D) && PATH=$(BR_PATH) ./autogen.sh
 endef
+ifeq ($(BR2_PACKAGE_NETFLIX),)
 FREETYPE_POST_PATCH_HOOKS += FREETYPE_RUN_AUTOGEN
 HOST_FREETYPE_POST_PATCH_HOOKS += FREETYPE_RUN_AUTOGEN
+endif
 FREETYPE_DEPENDENCIES += host-automake host-autoconf host-libtool
 HOST_FREETYPE_DEPENDENCIES += host-automake host-autoconf host-libtool
 
