@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-WESTEROS_SIMPLEBUFFER_VERSION = c5fdad660d46ff963491e759155742092e03e791
+WESTEROS_SIMPLEBUFFER_VERSION = 1edd118cfcb227cc6721c8802afbac7469699d13
 WESTEROS_SIMPLEBUFFER_SITE_METHOD = git
-WESTEROS_SIMPLEBUFFER_SITE = git@github.com:Metrological/westeros.git
+WESTEROS_SIMPLEBUFFER_SITE = git://github.com/rdkcmf/westeros
 WESTEROS_SIMPLEBUFFER_INSTALL_STAGING = YES
 
 WESTEROS_SIMPLEBUFFER_DEPENDENCIES = host-pkgconf host-autoconf wayland
