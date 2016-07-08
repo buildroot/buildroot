@@ -32,7 +32,9 @@ define WESTEROS_DISPMANX_CONFIGURE_CMDS
 endef
 
 define WESTEROS_DISPMANX_BUILD_CMDS
-        $(MAKE) -C $(@D)/$(DISPMANX_SRC) $(WESTEROS_DISPMANX_CXXFLAGS)
+	install -Dm 0644 $(@D)/westeros-render.h ${STAGING_DIR}/usr/include/westeros-render.h
+	install -Dm 0644 $(@D)/rpi/westeros-gl/westeros-gl.h ${STAGING_DIR}/usr/include/westeros-gl.h
+	$(MAKE) -C $(@D)/$(DISPMANX_SRC) $(WESTEROS_DISPMANX_CXXFLAGS)
 endef
 
 define WESTEROS_DISPMANX_INSTALL_STAGING_CMDS
