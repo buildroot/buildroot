@@ -3,17 +3,27 @@
 # greenpeak
 #
 ################################################################################
-GREENPEAK_VERSION = b096a79bd5b3b9b3e70d0ea2f015212fbfc2a5a1
+GREENPEAK_VERSION = 5a8bdae2b16286ca7a3616d143c78c328df234b5
 GREENPEAK_SITE_METHOD = git
 GREENPEAK_SITE = git@github.com:Metrological/greenpeak.git
 GREENPEAK_DEPENDENCIES = linux
 
 GREENPEAK_CHIP = $(call qstrip,$(BR2_PACKAGE_GREENPEAK_TYPE))
 
+ifeq ($(BR2_PACKAGE_RPI_FIRMWARE),y)
+GREENPEAK_DEPENDENCIES += rpi-firmware
+endif
+
 ifeq ($(BR2_PACKAGE_GREENPEAK_USERLANDLIB),y)
 
 GREENPEAK_ARTIFACT = libRf4ce.a
 GREENPEAK_INSTALL_STAGING = YES
+
+ifeq ($(BR2_PACKAGE_RPI_FIRMWARE),y)
+define GREENPEAK_INSTALL_DTS
+	$(INSTALL) -D -m 0644 $(@D)/devicetree/gp501.dtbo $(BINARIES_DIR)/rpi-firmware/overlays/
+endef
+endif
 
 define GREENPEAK_INSTALL_STAGING_CMDS
 	$(INSTALL) -d -m 755 $(STAGING_DIR)/usr/include/greenpeak; 
@@ -26,7 +36,7 @@ endef
 define GREENPEAK_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 package/greenpeak/S40greenpeak $(TARGET_DIR)/etc/init.d
 	$(GREENPEAK_INSTALL_MODULE)
-
+	$(GREENPEAK_INSTALL_DTS)
 endef
 
 else
