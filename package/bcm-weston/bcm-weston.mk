@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BCM_WESTON_VERSION = a9fd90732aacc503019988042d9d1485c6a0b670
+BCM_WESTON_VERSION = 5cea38fbcf3417ba6852350555dcff3f430ec69d
 BCM_WESTON_SITE = git@github.com:Metrological/bcm-refsw.git
 BCM_WESTON_SITE_METHOD = git
 BCM_WESTON_DEPENDENCIES = bcm-refsw libffi host-expat expat libxkbcommon pixman libpng jpeg mtdev udev cairo libinput linux-pam libxml2
@@ -32,10 +32,6 @@ define BCM_WESTON_BUILD_WAYLAND
 		$(MAKE) -C $(@D)/AppLibs/opensource/wayland wayland -f Makefile.buildroot \
 			TARGET_NAME=$(GNU_TARGET_NAME) HOST_NAME=$(GNU_HOST_NAME) \
 			STAGING_DIR=$(STAGING_DIR) TARGET_DIR=$(TARGET_DIR)
-	$(SED) 's:^libdir=.*:libdir='\''$(STAGING_DIR)/usr/lib'\'':' $(STAGING_DIR)/usr/lib/libwayland-client.la
-	$(SED) 's:^libdir=.*:libdir='\''$(STAGING_DIR)/usr/lib'\'':' $(STAGING_DIR)/usr/lib/libwayland-server.la
-	$(SED) 's:^libdir=.*:libdir='\''$(STAGING_DIR)/usr/lib'\'':' $(STAGING_DIR)/usr/lib/libwayland-cursor.la
-	$(SED) 's:/usr/lib/libwayland-client.la:$(STAGING_DIR)/usr/lib/libwayland-client.la:' $(STAGING_DIR)/usr/lib/libwayland-cursor.la
 endef
 
 define BCM_WESTON_BUILD_NSC_PROTOCOL
