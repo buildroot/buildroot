@@ -246,6 +246,23 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_YOUTUBE
 
 endif
 
+menuconfig BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBDRIVER
+	bool "webdriver"
+	select BR2_PACKAGE_CPPSDK_PROCESS
+	depends on BR2_PACKAGE_WEBDRIVER
+	help
+	  A wrapper around the webdriver app to start it as a
+	  webbridge plugin.
+
+if BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBDRIVER
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBDRIVER_AUTOSTART
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBDRIVER
+	bool "autostart"
+	help
+	  WebDriver for WPE WebKit.
+endif
+
 comment "webkitbrowser requires the package wpe"
 	depends on !BR2_PACKAGE_WPE
 

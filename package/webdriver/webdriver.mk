@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-WEBDRIVER_VERSION = e939d7d74388512b1a5f2ec1e52bb5eff026a456
+WEBDRIVER_VERSION = 1f0285ad84f440142a1fde7d070aa8736adebced
 #cbdbdb409aa4e33b910ff8dadd936486e65aa821
 WEBDRIVER_SITE_METHOD = git
 WEBDRIVER_SITE = git@github.com:Metrological/webdriver.git
 WEBDRIVER_INSTALL_STAGING = YES
-WEBDRIVER_DEPENDENCIES = libglib2
+WEBDRIVER_DEPENDENCIES = libglib2 wpe
 GLIB_INC = $(STAGING_DIR)/usr/include/glib-2.0
 GLIB_LIB_INC = $(STAGING_DIR)/usr/lib/glib-2.0/include
 
