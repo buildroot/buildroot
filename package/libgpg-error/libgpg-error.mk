@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBGPG_ERROR_VERSION = 1.23
+LIBGPG_ERROR_VERSION = 1.24
 LIBGPG_ERROR_SITE = ftp://ftp.gnupg.org/gcrypt/libgpg-error
 LIBGPG_ERROR_LICENSE = GPLv2+, LGPLv2.1+
 LIBGPG_ERROR_LICENSE_FILES = COPYING COPYING.LIB
@@ -17,5 +17,7 @@ define LIBGPG_ERROR_FIX_CROSS_COMPILATION
 		lock-obj-pub.$(GNU_TARGET_NAME).h
 endef
 LIBGPG_ERROR_PRE_CONFIGURE_HOOKS += LIBGPG_ERROR_FIX_CROSS_COMPILATION
+
+LIBGPG_ERROR_CONF_OPTS = --disable-tests
 
 $(eval $(autotools-package))

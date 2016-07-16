@@ -5,7 +5,7 @@
 ################################################################################
 
 GNUTLS_VERSION_MAJOR = 3.4
-GNUTLS_VERSION = $(GNUTLS_VERSION_MAJOR).13
+GNUTLS_VERSION = $(GNUTLS_VERSION_MAJOR).14
 ifeq ($(BR2_PACKAGE_PLAYREADY),y)
 GNUTLS_VERSION_MAJOR = 3.3
 GNUTLS_VERSION = $(GNUTLS_VERSION_MAJOR).22
