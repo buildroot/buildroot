@@ -11,6 +11,7 @@ start() {
 		mkdir -p /root/Netflix/dpi
 		ln -sfn /etc/playready /root/Netflix/dpi/playready
 	fi
+	export TZ=$(wget -qO- http://jsonip.metrological.com/ | sed -e 's/^.*"tz":"\([^"]*\)".*$/\1/')
 	echo -n "Starting webbridge: "
 	start-stop-daemon -S -q -b -m -p /var/run/webbridge.pid --exec /usr/bin/webbridge -- -b </dev/null >/dev/null 2>&1
 	[ $? == 0 ] && echo "OK" || echo "FAIL"
