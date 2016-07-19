@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = 5b7a95728b1548ad90454723469984d43d65accc
+WPE_VERSION = 6eb8db19bcff6977173111f5bde1750d59693bec
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -114,7 +114,7 @@ WPE_EXTRA_CFLAGS += -DMESA_EGL_NO_X11_HEADERS
 endif
 endif
 ifeq ($(BR2_PACKAGE_HORIZON_SDK),y)
-WPE_FLAGS += -DUSE_WPE_BACKEND_INTEL_CE=ON -DUSE_SYSTEM_MALLOC=ON
+WPE_FLAGS += -DUSE_WPE_BACKEND_INTEL_CE=ON
 endif
 ifeq ($(BR2_PACKAGE_INTELCE_SDK),y)
 WPE_FLAGS += -DUSE_WPE_BACKEND_INTEL_CE=ON
