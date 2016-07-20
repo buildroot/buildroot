@@ -1,0 +1,26 @@
+diff -ur gstreamer1-1.8.2.orig/libs/gst/base/gstadapter.c gstreamer1-1.8.2/libs/gst/base/gstadapter.c
+--- gstreamer1-1.8.2.orig/libs/gst/base/gstadapter.c    2016-07-20 15:11:37.927290574 +0200
++++ gstreamer1-1.8.2/libs/gst/base/gstadapter.c 2016-07-20 15:12:14.779876077 +0200
+@@ -198,7 +198,10 @@
+ {
+   GstAdapter *adapter = GST_ADAPTER (object);
+ 
+-  g_free (adapter->assembled_data);
++  if (adapter->assembled_size) {
++    g_free (adapter->assembled_data);
++    adapter->assembled_size = NULL;
++  }
+ 
+   GST_CALL_PARENT (G_OBJECT_CLASS, finalize, (object));
+ }
+diff -ur gstreamer1-1.8.2.orig/gst/gststructure.c gstreamer1-1.8.2/gst/gststructure.c
+--- gstreamer1-1.8.2.orig/gst/gststructure.c    2016-07-20 15:11:37.743287650 +0200
++++ gstreamer1-1.8.2/gst/gststructure.c 2016-07-20 16:09:22.750655245 +0200
+@@ -373,6 +373,7 @@
+   guint i, len;
+ 
+   g_return_if_fail (structure != NULL);
++  g_return_if_fail (GST_IS_STRUCTURE (structure));
+   g_return_if_fail (GST_STRUCTURE_REFCOUNT (structure) == NULL);
+ 
+   len = GST_STRUCTURE_FIELDS (structure)->len;
