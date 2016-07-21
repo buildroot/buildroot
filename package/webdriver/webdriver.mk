@@ -4,7 +4,8 @@
 #
 ################################################################################
 
-WEBDRIVER_VERSION = 1f0285ad84f440142a1fde7d070aa8736adebced
+WEBDRIVER_VERSION = 93245821796eb42b00bb3c65730eb9756bf6d057
+#1f0285ad84f440142a1fde7d070aa8736adebced
 #cbdbdb409aa4e33b910ff8dadd936486e65aa821
 WEBDRIVER_SITE_METHOD = git
 WEBDRIVER_SITE = git@github.com:Metrological/webdriver.git
@@ -28,15 +29,14 @@ endef
 define WEBDRIVER_INSTALL_TARGET_CMDS
 	cp $(@D)/out/bin/rpi/release/WebDriver $(TARGET_DIR)/usr/bin 
 	cp $(@D)/out/bin/rpi/release/lib*.so $(TARGET_DIR)/usr/lib
-	mkdir -p $(STAGING_DIR)/usr/include/
-	cp -Rpf $(@D)/src/webdriver_wrapper/*.h $(STAGING_DIR)/usr/include/
+	cp -Rpf $(@D)/web $(TARGET_DIR)/usr/share
 endef
 
 define WEBDRIVER_INSTALL_STAGING_CMDS
-  $(INSTALL) -D package/webdriver/*.pc $(STAGING_DIR)/usr/lib/pkgconfig/
-  cp $(@D)/out/bin/rpi/release/lib*.so $(STAGING_DIR)/usr/lib
-  mkdir -p $(STAGING_DIR)/usr/include/
-  cp -Rpf $(@D)/src/webdriver_wrapper/*.h $(STAGING_DIR)/usr/include/
+	$(INSTALL) -D package/webdriver/*.pc $(STAGING_DIR)/usr/lib/pkgconfig/
+	cp $(@D)/out/bin/rpi/release/lib*.so $(STAGING_DIR)/usr/lib
+	mkdir -p $(STAGING_DIR)/usr/include/
+	cp -Rpf $(@D)/src/webdriver_wrapper/*.h $(STAGING_DIR)/usr/include/
 endef
 
 $(eval $(cmake-package))
