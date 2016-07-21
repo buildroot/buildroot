@@ -11,6 +11,11 @@ config BR2_PACKAGE_GLUELOGIC_QUEUEPLAYER
 	select BR2_PACKAGE_CPPSDK_MQC
 	help
 	  A abstraction layer for controlling a player using a message queue.
+
+config BR2_PACKAGE_GLUELOGIC_QUEUEREADER
+	bool "queuereader"
+	help
+	  Tool for reading out the message-queues.
 	
 config BR2_PACKAGE_GLUELOGIC_VIRTUAL_KEYBOARD
 	bool "virtualkeyboard"
