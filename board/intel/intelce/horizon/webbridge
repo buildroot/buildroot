@@ -75,9 +75,9 @@ else
 		$SOURCE/NDS/webbridge-stub
 	else
 		# ulimit for core dump
-		#mkdir -p $HOME/cores
-		#echo "$HOME/cores/core.%e.%p.%h.%t" > /proc/sys/kernel/core_pattern
-		#ulimit -c unlimited
+		mkdir -p $HOME/cores
+		echo "$HOME/cores/core.%e.%p.%h.%t" > /proc/sys/kernel/core_pattern
+		ulimit -c unlimited
 		$SOURCE/usr/bin/webbridge -c $SOURCE/etc/webbridge/config.json
 	fi
 fi
