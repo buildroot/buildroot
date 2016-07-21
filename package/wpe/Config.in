@@ -105,6 +105,13 @@ config BR2_PACKAGE_WPE_USE_GSTREAMER_GL
 	help
 	  Use gstreamer-gl video sink for rendering
 
+config BR2_PACKAGE_WPE_USE_GSTREAMER_WEBKIT_HTTP_SRC
+	bool "Use WebKit for Media network resources loading"
+	default y if !BR2_PACKAGE_HORIZON_SDK
+	help
+	  Use the WebKit network resource loader to download Media data over HTTP(S)
+
+
 config BR2_PACKAGE_WPE_USE_FUSION_API
 	bool "Fusion API"
 	depends on BR2_PACKAGE_GST1_PLUGINS_DORNE
