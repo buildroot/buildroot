@@ -13,6 +13,11 @@ config BR2_PACKAGE_GREENPEAK_USERLANDLIB
 	  the greenpeak chip in stead of building an application that 
 	  reads keys from an Rf4ce remote and ingest them into the 
 	  linux input system.
+	  
+config BR2_PACKAGE_GREENPEAK_TEST_TOOLS
+	bool "test tools"
+	help
+	  Build a few test tool for greenpeak module.
 
 choice
 	prompt "Greenpeak Type"
