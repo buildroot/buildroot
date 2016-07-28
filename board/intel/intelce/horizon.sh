@@ -37,7 +37,7 @@ cp -f "${TARGET_DIR}/usr/share/fonts/ttf-bitstream-vera/Vera.ttf" "${ROOTFS_DIR}
 # WebBridge startup script
 mkdir -p "${ROOTFS_DIR}/NDS"
 cp -pf "${BOARD_DIR}/horizon/webbridge" "${ROOTFS_DIR}/NDS"
-cp -pf "${BOARD_DIR}/horizon/webbridge-stub" "${ROOTFS_DIR}/NDS"
+#cp -pf "${BOARD_DIR}/horizon/webbridge-stub" "${ROOTFS_DIR}/NDS"
 
 # WebServer path
 mkdir -p "${ROOTFS_DIR}/www"

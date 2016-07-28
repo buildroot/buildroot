@@ -1,18 +1,9 @@
 #!/bin/sh
+
+SCRIPT_NAME="webbridge.sh"
+BUMPER_SCRIPT=/NDS/bumper.sh
 SOURCE=/NDS/metrological
-HDD=/mnt/nds/dev_4/part_1
-
-if [ -f /NDS/config/start_swap_partition_dm-crypt.sh ]; then
-	if [ -f /NDS/drivers/open_firewall_port.sh ]; then
-		/NDS/drivers/open_firewall_port.sh tcp 9998
-		/NDS/drivers/open_firewall_port.sh tcp 80
-		/NDS/drivers/open_firewall_port.sh tcp 8080
-		/NDS/drivers/open_firewall_port.sh tcp 9080
-	fi
-fi
-
-# stdc++
-cp -f $SOURCE/usr/lib/libstdc++.so.6.0.20 /lib/libstdc++.so.6.0.14
+HDD="`cat /tmp/diag`"
 
 # Symlink /etc
 ln -sfn $SOURCE/etc/playready /etc/playready
@@ -39,17 +30,11 @@ if [ ! -d $SOURCE/root/Netflix ]; then
 	ln -sfn /etc/playready $SOURCE/root/Netflix/dpi/playready
 fi
 
-# Disable NDS Swap
-#echo "#!/bin/sh" > /NDS/config/start_swap.sh
-#echo "#!/bin/sh" > /NDS/config/start_swap_dm-crypt.sh
-#echo "#!/bin/sh" > /NDS/config/start_swap_partition_dm-crypt.sh
-
-# Enable ML Swap
-#if [ ! -f $HDD/swapfile ]; then
-#	dd if=/dev/zero of=$HDD/swapfile bs=1M count=512
-#fi
-#mkswap $HDD/swapfile
-#swapon $HDD/swapfile
+# Firewall for non-prod builds
+if [ -f /NDS/drivers/open_firewall_port.sh ]; then
+	/NDS/drivers/open_firewall_port.sh tcp 80
+	/NDS/drivers/open_firewall_port.sh tcp 9998
+fi
 
 # Exports
 export HOME=$SOURCE/root
@@ -58,26 +43,63 @@ export GST_PLUGIN_PATH=$SOURCE/usr/lib/gstreamer-1.0
 export GST_PLUGIN_SCANNER=$SOURCE/usr/libexec/gstreamer-1.0/gst-plugin-scanner
 export LD_LIBRARY_PATH=$SOURCE/lib:$SOURCE/usr/lib:$SOURCE/usr/lib/gstreamer-1.0:/lib/:/usr/lib
 
-# Sleep for WebBridge cleanup
-sleep 3
+LOOP=true
+SLEEP=2
+MAX_TRIES=60
+TIMES_TRIED=0
+
+# Internet
+while $LOOP && [ $TIMES_TRIED -le $MAX_TRIES ]; do
+    export TZ=$(wget -qO- http://jsonip.metrological.com | sed -e 's/^.*"tz":"\([^"]*\)".*$/\1/')
+    ((TIMES_TRIED+=1))
+    if [ "" != "$TZ" ]; then
+		echo "${SCRIPT_NAME}: set timezone: $TZ"
+        LOOP=false
+    else
+        sleep $SLEEP
+    fi
+done
 
 # Clock
 if [ -f /NDS/lib/libextClock.so ]; then
+	# TOT
+	LOOP=true
+	TIMES_TRIED=0
+	while $LOOP && [ $TIMES_TRIED -le $MAX_TRIES ]; do
+	    ((TIMES_TRIED+=1))
+	    if [ `LD_PRELOAD=/NDS/lib/libextClock.so date +"%Y"` -ge "2016" ]; then
+			echo "${SCRIPT_NAME}: TOT found"
+	        LOOP=false
+	    else
+	        sleep $SLEEP
+	    fi
+	done
 	export LD_PRELOAD=/NDS/lib/libextClock.so
 fi
 
+# Bumper
+if [ -f ${BUMPER_SCRIPT} ]; then
+	${BUMPER_SCRIPT} 15 /NDS/config/bumper_ml.cfg &
+fi
+
+# Short sleep
+sleep 3
+
 # WebBridge
 if [ ! -f $SOURCE/NDS/webbridge-stub ]; then
-	$SOURCE/usr/bin/webbridge -c $SOURCE/etc/webbridge/config.json -b
+	echo "${SCRIPT_NAME}: launching 'real' webbridge"
+	$SOURCE/usr/bin/webbridge -c $SOURCE/etc/webbridge/config.json
 else
 	ACTIVEPROCESS=`ps | grep webbridge-stub | grep -v grep`
 	if [ "x$ACTIVEPROCESS" == "x" ]; then
+		echo "${SCRIPT_NAME}: launching 'stub' webbridge"
 		$SOURCE/NDS/webbridge-stub
 	else
 		# ulimit for core dump
 		mkdir -p $HOME/cores
 		echo "$HOME/cores/core.%e.%p.%h.%t" > /proc/sys/kernel/core_pattern
 		ulimit -c unlimited
+		echo "${SCRIPT_NAME}: launching 'dev' webbridge"
 		$SOURCE/usr/bin/webbridge -c $SOURCE/etc/webbridge/config.json
 	fi
 fi
