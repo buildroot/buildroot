@@ -126,6 +126,18 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_REMOTECONTROL
 comment "remotecontrol requires the GreenPeak GP501 or GP711 to be selected and userland lib to be build."
 	depends on !BR2_PACKAGE_GREENPEAK || !BR2_PACKAGE_GREENPEAK_USERLANDLIB || (!BR2_PACKAGE_GREENPEAK_GP501 && !BR2_PACKAGE_GREENPEAK_GP711)
 
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_VOICECONTROL
+	bool "voicecontrol"
+	help
+	  A voice control implementation that captures audio fragments and send them tru a websocket.
+
+	  Current implementations supports:
+	  - GreeenPeak RF4CE chip (501) with RF4CE remotes.
+
+comment "voicecontrol requires the GreenPeak GP501 or GP711 to be selected and userland lib to be build."
+	depends on !BR2_PACKAGE_GREENPEAK || !BR2_PACKAGE_GREENPEAK_USERLANDLIB || (!BR2_PACKAGE_GREENPEAK_GP501 && !BR2_PACKAGE_GREENPEAK_GP711)
+
+
 config BR2_PACKAGE_WEBBRIDGE_PLUGIN_DEVICEINFO
 	bool "deviceinfo"
 	help
