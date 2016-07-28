@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-WEBDRIVER_VERSION = 93245821796eb42b00bb3c65730eb9756bf6d057
-#1f0285ad84f440142a1fde7d070aa8736adebced
-#cbdbdb409aa4e33b910ff8dadd936486e65aa821
+WEBDRIVER_VERSION = 58f0b61c5dfb8a56140fe5822e997494f4cc9a54
+#93245821796eb42b00bb3c65730eb9756bf6d057
 WEBDRIVER_SITE_METHOD = git
 WEBDRIVER_SITE = git@github.com:Metrological/webdriver.git
 WEBDRIVER_INSTALL_STAGING = YES
