@@ -66,26 +66,25 @@ config BR2_PACKAGE_WPE_ENABLE_MEDIA_STREAM
 	help
 	  Enable Media Stream
 
-choice
-	bool "EME"
-	default BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V1
-	help
-	  Choose the EME backend API version.
+menu "Encrypted Media Extensions options (EME)"
 
 config BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V1
-	bool "v1"
+	bool "Encrypted Media Extensions (EME) v1"
+	default y
 	help
-	  Use EME V1 backend.
+	  Use Enable Encrypted Media Extensions (EME) V1 API.
 
 config BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V2
-	bool "v2"
+	bool "Encrypted Media Extensions (EME) v2"
+	default n
 	help
-	  Use EME V2 backend.
+	  Use Enable Encrypted Media Extensions (EME) V2 object oriented API.
 
-endchoice
+if BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V1 || BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V2
 
 choice
   bool "Playready backend"
+  depends on BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V1 || BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V2
   default BR2_PACKAGE_WPE_USE_PLAYREADY
   help
     Choose the Playready backend.
@@ -97,6 +96,10 @@ config BR2_PACKAGE_WPE_USE_PLAYREADY
     Use the Microsoft Playready SDK
 
 endchoice
+
+endif
+
+endmenu
 
 config BR2_PACKAGE_WPE_USE_GSTREAMER_GL
 	bool "gstreamer-gl"
