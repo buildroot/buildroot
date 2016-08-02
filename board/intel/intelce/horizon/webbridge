@@ -78,13 +78,13 @@ if [ -f /NDS/lib/libextClock.so ]; then
 	export LD_PRELOAD=/NDS/lib/libextClock.so
 fi
 
+# Short sleep
+sleep 3
+
 # Bumper
 if [ -f ${BUMPER_SCRIPT} ]; then
 	${BUMPER_SCRIPT} 15 /NDS/config/bumper_ml.cfg &
 fi
-
-# Short sleep
-sleep 3
 
 # WebBridge
 if [ ! -f $SOURCE/NDS/webbridge-stub ]; then
