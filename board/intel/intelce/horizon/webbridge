@@ -58,8 +58,8 @@ if [ ! -f $SOURCE/NDS/webbridge-stub ]; then
 	kill -9 $(ps | grep '/usr/bin/webbridge' | grep -v grep | awk '{print $1}')
 fi
 
-# Short sleep
-sleep 3
+# Sleep
+sleep 30
 
 # Bumper
 if [ -f ${BUMPER_SCRIPT} ]; then
