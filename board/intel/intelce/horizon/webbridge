@@ -78,6 +78,15 @@ if [ -f /NDS/lib/libextClock.so ]; then
 	export LD_PRELOAD=/NDS/lib/libextClock.so
 fi
 
+# Shutdown all our processes in non stub version
+if [ ! -f $SOURCE/NDS/webbridge-stub ]; then
+	killall -9 rpcprocess
+	killall -9 WPEWebProcess
+	killall -9 WPENetworkProcess
+	killall -9 WPEDatabaseProcess
+	kill -9 $(ps | grep '/usr/bin/webbridge' | grep -v grep | awk '{print $1}')
+fi
+
 # Short sleep
 sleep 3
 
