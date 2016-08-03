@@ -44,37 +44,8 @@ export GST_PLUGIN_PATH=$SOURCE/usr/lib/gstreamer-1.0
 export GST_PLUGIN_SCANNER=$SOURCE/usr/libexec/gstreamer-1.0/gst-plugin-scanner
 export LD_LIBRARY_PATH=$SOURCE/lib:$SOURCE/usr/lib:$SOURCE/usr/lib/gstreamer-1.0:/lib/:/usr/lib
 
-LOOP=true
-SLEEP=2
-MAX_TRIES=60
-TIMES_TRIED=0
-
-# Internet
-while $LOOP && [ $TIMES_TRIED -le $MAX_TRIES ]; do
-    export TZ=$(wget -qO- http://jsonip.metrological.com | sed -e 's/^.*"tz":"\([^"]*\)".*$/\1/')
-    ((TIMES_TRIED+=1))
-    if [ "" != "$TZ" ]; then
-		echo "${SCRIPT_NAME}: set timezone: $TZ"
-        LOOP=false
-    else
-        sleep $SLEEP
-    fi
-done
-
 # Clock
 if [ -f /NDS/lib/libextClock.so ]; then
-	# TOT
-	LOOP=true
-	TIMES_TRIED=0
-	while $LOOP && [ $TIMES_TRIED -le $MAX_TRIES ]; do
-	    ((TIMES_TRIED+=1))
-	    if [ `LD_PRELOAD=/NDS/lib/libextClock.so date +"%Y"` -ge "2016" ]; then
-			echo "${SCRIPT_NAME}: TOT found"
-	        LOOP=false
-	    else
-	        sleep $SLEEP
-	    fi
-	done
 	export LD_PRELOAD=/NDS/lib/libextClock.so
 fi
 
