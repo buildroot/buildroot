@@ -98,13 +98,22 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_BACKOFFICE
 	  A plugin that acts as a gateway between the webbridge and a back
 		  office system living in the cloud.
 
-config BR2_PACKAGE_WEBBRIDGE_PLUGIN_PROVISIONING
+menuconfig BR2_PACKAGE_WEBBRIDGE_PLUGIN_PROVISIONING
 	bool "provisioning"
 	depends on BR2_PACKAGE_LIBPROVISION
 	help
 	  A component to allow external provisioning of devices with the 
 	  proper credentials. Currently focused on provisioning from the
 	  Metrological Back Office.
+
+if BR2_PACKAGE_WEBBRIDGE_PLUGIN_PROVISIONING
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_PROVISIONING_AUTOPROVISION
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_PROVISIONING
+	bool "autoprovision"
+	default y
+
+endif
 
 comment "provisioning needs the package libprovision in external mode."
 	depends on !BR2_PACKAGE_LIBPROVISION
