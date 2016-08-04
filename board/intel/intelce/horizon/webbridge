@@ -61,6 +61,9 @@ fi
 # Short sleep
 sleep 3
 
+# Touch time_offset file as workaround for stat function failing
+touch /tmp/time_offset
+
 # Bumper
 if [ -f ${BUMPER_SCRIPT} ]; then
 	${BUMPER_SCRIPT} 15 /NDS/config/bumper_ml.cfg &
