@@ -3,10 +3,10 @@
 # greenpeak
 #
 ################################################################################
-GREENPEAK_VERSION = 915097569d0c85770d0fcff53813b047a7bbc034
+GREENPEAK_VERSION = 63da7153b7d484b877b7b22bec6c5b32fc4c9da9
 GREENPEAK_SITE_METHOD = git
 GREENPEAK_SITE = git@github.com:Metrological/greenpeak.git
-GREENPEAK_DEPENDENCIES = linux
+GREENPEAK_DEPENDENCIES = linux rpi-firmware
 
 GREENPEAK_CHIP = $(call qstrip,$(BR2_PACKAGE_GREENPEAK_TYPE))
 
@@ -29,7 +29,7 @@ define GREENPEAK_INSTALL_STAGING_CMDS
 	$(INSTALL) -D -m 0644 $(@D)/ZRCTarget_GP501_RPi/libRf4ce.a $(STAGING_DIR)/usr/lib/; 
 	$(INSTALL) -D -m 0644 $(@D)/ZRCTarget_GP501_RPi/code/Work/ZRCTarget_GP501_RPi/libZRCTarget_GP501_RPi.a $(STAGING_DIR)/usr/lib/libGP501.a;
 	cp -r $(@D)/ZRCTarget_GP501_RPi/code/BaseComps/v2.4.5.2/comps/* $(STAGING_DIR)/usr/include/greenpeak;
-	cp -r $(@D)/ZRCTarget_GP501_RPi/code/BaseComps/v2.4.5.2/inc/* $(STAGING_DIR)/usr/include/greenpeak; 
+    cp -r $(@D)/ZRCTarget_GP501_RPi/code/BaseComps/v2.4.5.2/inc/* $(STAGING_DIR)/usr/include/greenpeak; 
 endef
 
 define GREENPEAK_INSTALL_TARGET_CMDS
@@ -37,6 +37,7 @@ define GREENPEAK_INSTALL_TARGET_CMDS
 	$(GREENPEAK_INSTALL_MODULE)
 	$(GREENPEAK_INSTALL_DTS)
 	$(GREENPEAK_INSTALL_UEI_REF)
+	$(GREENPEAK_INSTALL_GREENPEAK_RPI_FIRMWARE)
 endef
 
 else
@@ -47,6 +48,7 @@ define GREENPEAK_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/ZRCTarget_GP501_RPi/Work/ZRCTarget_GP501_RPi.elf $(TARGET_DIR)/usr/bin/zrc
 	$(INSTALL) -D -m 0755 package/greenpeak/S40greenpeak $(TARGET_DIR)/etc/init.d
 	$(GREENPEAK_INSTALL_MODULE)
+	$(GREENPEAK_INSTALL_GREENPEAK_RPI_FIRMWARE)
 endef
 endif
 
@@ -67,6 +69,13 @@ define GREENPEAK_INSTALL_MODULE
 	GP_CHIP=$(GREENPEAK_CHIP) $(MAKE) -C $(LINUX_DIR) $(LINUX_MAKE_FLAGS) M=$(@D)/driver modules_install
 endef
 
+ifeq ($(BR2_PACKAGE_GREENPEAK_RPI_FIRMWARE),y)
+define GREENPEAK_INSTALL_GREENPEAK_RPI_FIRMWARE
+	$(INSTALL) -D -m 0644 $(@D)/rpi-firmware/start.elf $(BINARIES_DIR)/gp-rpi-firmware/start.elf
+	$(INSTALL) -D -m 0644 $(@D)/rpi-firmware/fixup.dat $(BINARIES_DIR)/gp-rpi-firmware/fixup.dat
+	$(INSTALL) -D -m 0644 $(@D)/rpi-firmware/config.txt $(BINARIES_DIR)/gp-rpi-firmware/config.txt
+endef
+endif
 
 ifeq ($(BR2_PACKAGE_GREENPEAK_TEST_TOOLS),y)
 define GREENPEAK_BUILD_UEI_REF
@@ -74,7 +83,6 @@ define GREENPEAK_BUILD_UEI_REF
 	COMPILER=buildroot $(TARGET_MAKE_ENV) $(MAKE1) TOOLCHAIN="$(HOST_DIR)/usr" CROSS_COMPILE="$(GNU_TARGET_NAME)-" CFLAGS_COMPILER="$(TARGET_CFLAGS) $(GREENPEAK_EXTRA_CFLAGS)" -C $(@D)/RefTarget_ZRC_MSO_$(GREENPEAK_CHIP)_RPi all
 	COMPILER=buildroot $(TARGET_MAKE_ENV) $(MAKE1) TOOLCHAIN="$(HOST_DIR)/usr" CROSS_COMPILE="$(GNU_TARGET_NAME)-" CFLAGS_COMPILER="$(TARGET_CFLAGS) $(GREENPEAK_EXTRA_CFLAGS)" -C $(@D)/ZRCTarget_$(GREENPEAK_CHIP)_RPi "GP_APPLICATION=1"
 endef
-
 define GREENPEAK_INSTALL_UEI_REF
     $(INSTALL) -D -m 0755 $(@D)/RefTarget_ZRC_MSO_$(GREENPEAK_CHIP)_RPi/Work/RefTarget_ZRC_MSO_GP501_RPi.elf $(TARGET_DIR)/usr/bin
 	$(INSTALL) -D -m 0755 $(@D)/ZRCTarget_GP501_RPi/Work/ZRCTarget_GP501_RPi.elf $(TARGET_DIR)/usr/bin

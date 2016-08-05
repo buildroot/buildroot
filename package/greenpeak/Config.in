@@ -18,6 +18,11 @@ config BR2_PACKAGE_GREENPEAK_TEST_TOOLS
 	bool "test tools"
 	help
 	  Build a few test tool for greenpeak module.
+	  
+config BR2_PACKAGE_GREENPEAK_RPI_FIRMWARE
+	bool "Install GreenPeak RPi firmware"
+	help
+	  Overwrite current firmware with GreenPeak RPi compatible firmware.
 
 choice
 	prompt "Greenpeak Type"
