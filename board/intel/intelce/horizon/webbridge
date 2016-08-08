@@ -3,6 +3,12 @@
 SCRIPT_NAME="webbridge.sh"
 BUMPER_SCRIPT=/NDS/bumper.sh
 SOURCE=/NDS/metrological
+
+# Wait for HDD
+while [ ! -f /tmp/diag ];
+do
+	sleep 1
+done
 HDD="`cat /tmp/diag`"
 
 # Symlink /etc
@@ -37,6 +43,15 @@ if [ -f /NDS/drivers/open_firewall_port.sh ]; then
 	/NDS/drivers/open_firewall_port.sh tcp 9536
 fi
 
+# Shutdown all our processes in non stub version
+if [ ! -f $SOURCE/NDS/webbridge-stub ]; then
+	killall -9 rpcprocess
+	killall -9 WPEWebProcess
+	killall -9 WPENetworkProcess
+	killall -9 WPEDatabaseProcess
+	kill -9 $(ps | grep '/usr/bin/webbridge' | grep -v grep | awk '{print $1}')
+fi
+
 # Exports
 export HOME=$SOURCE/root
 export PATH=$SOURCE/usr/bin:/bin:/usr/bin
@@ -47,15 +62,6 @@ export LD_LIBRARY_PATH=$SOURCE/lib:$SOURCE/usr/lib:$SOURCE/usr/lib/gstreamer-1.0
 # Clock
 if [ -f /NDS/lib/libextClock.so ]; then
 	export LD_PRELOAD=/NDS/lib/libextClock.so
-fi
-
-# Shutdown all our processes in non stub version
-if [ ! -f $SOURCE/NDS/webbridge-stub ]; then
-	killall -9 rpcprocess
-	killall -9 WPEWebProcess
-	killall -9 WPENetworkProcess
-	killall -9 WPEDatabaseProcess
-	kill -9 $(ps | grep '/usr/bin/webbridge' | grep -v grep | awk '{print $1}')
 fi
 
 # Short sleep
