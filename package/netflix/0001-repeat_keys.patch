@@ -1,0 +1,32 @@
+diff --git a/partner/input/devinput/InputManagerDevInput.cpp b/partner/input/devinput/InputManagerDevInput.cpp
+index 3aabed3..383f073 100644
+--- a/partner/input/devinput/InputManagerDevInput.cpp
++++ b/partner/input/devinput/InputManagerDevInput.cpp
+@@ -114,12 +114,14 @@ static void VirtualKeyboardCallback(actiontype type, unsigned int code)
+       case PRESSED:
+          shiftPressed = (key == KeyEvent::GIBBON_KEY_SHIFT ? true : shiftPressed);
+          printf ("Sending key pressed [%d] -> [%d] to Netflix.\n", code, key);
+-   	 GibbonApplication::instance()->sendEvent(new KeyEvent(GibbonEvent::Type_KeyPress, key, keyCodeToString(code, shiftPressed)));
++         GibbonApplication::instance()->sendEvent(new KeyEvent(GibbonEvent::Type_KeyPress, key, keyCodeToString(code, shiftPressed)));
++         GibbonApplication::instance()->getInputManager()->startAutoRepeat(key, keyCodeToString(code, shiftPressed));
+          break;
+       case RELEASED:
++         GibbonApplication::instance()->getInputManager()->endAutoRepeat();
+          shiftPressed = (key == KeyEvent::GIBBON_KEY_SHIFT ? false : shiftPressed);
+          printf ("Sending key released [%d] -> [%d] to Netflix.\n", code, key);
+-   	 GibbonApplication::instance()->sendEvent(new KeyEvent(GibbonEvent::Type_KeyRelease, key, keyCodeToString(code, shiftPressed)));
++         GibbonApplication::instance()->sendEvent(new KeyEvent(GibbonEvent::Type_KeyRelease, key, keyCodeToString(code, shiftPressed)));
+          break;
+       default:
+          return;
+@@ -237,6 +239,10 @@ bool InputManager::handleInput(int fd)
+             }
+             //printf("code %u %s\n", code, keyCodeToString(code, shift).c_str());;
+             GibbonApplication::instance()->sendEvent(new KeyEvent(type, key, keyCodeToString(code, shift)));
++            if (type == InputEvent::Type_KeyPress)
++                GibbonApplication::instance()->getInputManager()->startAutoRepeat(key, keyCodeToString(code, shift));
++            else if (type == InputEvent::Type_KeyRelease)
++                GibbonApplication::instance()->getInputManager()->endAutoRepeat();
+             break; }
+         }
+         ++cur;
