@@ -1,0 +1,158 @@
+From e1c7ce3140d182727bc0949b1a0bd89e0060acfc Mon Sep 17 00:00:00 2001
+From: mzuber <Mark_Zuber@cable.comcast.com>
+Date: Tue, 9 Aug 2016 08:11:01 -0400
+Subject: [PATCH] Fix data starvation issues
+
+There is a design flaw in the decoder loops.  Both loops
+run on the same glib main thread so sleeping blocks
+the whole main glib loop sometimes causing data starvation.
+
+Instead detach from main loop and reattach later so as not to
+block the main glib loop.
+---
+ partner/dpi/gstreamer/ESPlayerGst.cpp | 56 +++++++++++++++++++++++++++--------
+ partner/dpi/gstreamer/ESPlayerGst.h   |  6 ++++
+ 2 files changed, 50 insertions(+), 12 deletions(-)
+
+diff --git a/partner/dpi/gstreamer/ESPlayerGst.cpp b/partner/dpi/gstreamer/ESPlayerGst.cpp
+index dd2f124..18d45e9 100644
+--- a/partner/dpi/gstreamer/ESPlayerGst.cpp
++++ b/partner/dpi/gstreamer/ESPlayerGst.cpp
+@@ -44,7 +44,8 @@ ESPlayerGst::ESPlayerGst() : mInputExhausted(false),
+                              mSrc(NULL),
+                              mPtsOffset(-1),
+                              mResetPtsOffset(true),
+-                             mReadyToPlay(false)
++                             mReadyToPlay(false),
++                             mWaitingToAttach(false)
+ {
+ }
+ 
+@@ -101,19 +102,19 @@ ESPlayerGst::init(const struct StreamPlayerInitData& initData,
+ bool ESPlayerGst::decoderIteration()
+ {
+   if (!mBufferPushAllowed) {  // can't push buffer
+-    Thread::Sleep(WAIT_WHILE_IDLING);
+-    return true;
++    detachAndWaitToAttach(WAIT_WHILE_IDLING.val());
++    return false;
+   }
+ 
+   NFErr err = NFErr_OK;
+   if(errorReported) {
+-    Thread::Sleep(WAIT_WHILE_IDLING);
+-    return true;
++    detachAndWaitToAttach(WAIT_WHILE_IDLING.val());
++    return false;
+   }
+ 
+   if (mEndOfStreamFlag) {
+-    Thread::Sleep(WAIT_WHILE_IDLING);
+-    return true;
++    detachAndWaitToAttach(WAIT_WHILE_IDLING.val());
++    return false;
+   }
+ 
+   Status status;
+@@ -125,12 +126,12 @@ bool ESPlayerGst::decoderIteration()
+     pSampleAttr = NULL;
+     mInputExhausted = true;
+     //  Log::error(TRACE_MEDIAPLAYBACK, "Input exhausted");
+-    Thread::Sleep(WAIT_FOR_VIDEO_DATA);
+-    return true;
++    detachAndWaitToAttach(WAIT_FOR_VIDEO_DATA.val());
++    return false;
+   } else if (status == NO_AVAILABLE_BUFFERS) {  // should never happen
+     pSampleAttr = NULL;
+-    Thread::Sleep(WAIT_FOR_VIDEO_DATA);
+-    return true;
++    detachAndWaitToAttach(WAIT_FOR_VIDEO_DATA.val());
++    return false;
+   } else if (status == END_OF_STREAM) {
+     mEndOfStreamFlag = true;
+     mInputExhausted = true;
+@@ -276,7 +277,7 @@ void ESPlayerGst::attachGstSource()
+   NTRACE(TRACE_MEDIACONTROL, "ESPlayerGst::attachGstSource() called");
+   ScopedMutex cs(mDecoderTaskMutex);
+ 
+-  if (mGstSource)
++  if (mGstSource || mWaitingToAttach)
+     return;
+ 
+   mGstSource = g_idle_source_new();
+@@ -299,6 +300,37 @@ void ESPlayerGst::detachGstSource()
+   }
+ }
+ 
++gboolean ESPlayerGst::gst_wait_timeout(ESPlayerGst* self)
++{
++  self->setWaitingToAttach(false);
++  self->detachGstSource();
++
++  //run like normal again
++  self->attachGstSource();
++
++  return FALSE;
++}
++
++void ESPlayerGst::detachAndWaitToAttach(uint32_t timeToWaitMS)
++{
++  // Decoder callbacks both live in the same main glib thread so
++  // sleeping will block the whole loop, causing data starvation at times
++  // so detach and reattach to main loop after timeToWaitMS
++  setWaitingToAttach(true);
++  detachGstSource();
++
++  {
++    ScopedMutex cs(mDecoderTaskMutex);
++    mGstSource = g_timeout_source_new(timeToWaitMS);
++    g_source_set_callback(mGstSource,
++                        (GSourceFunc)(&ESPlayerGst::gst_wait_timeout),
++                        (gpointer)(this),
++                        NULL);
++    
++    mGstSourceID = g_source_attach(mGstSource, mPlaybackGroup->getMainContext());
++  }
++}
++
+ void ESPlayerGst::gst_bin_need_data    (GstAppSrc *src, guint length, gpointer user_data)
+ {
+   ESPlayerGst *self = (ESPlayerGst *)(user_data);
+diff --git a/partner/dpi/gstreamer/ESPlayerGst.h b/partner/dpi/gstreamer/ESPlayerGst.h
+index 6df7cc3..2114274 100644
+--- a/partner/dpi/gstreamer/ESPlayerGst.h
++++ b/partner/dpi/gstreamer/ESPlayerGst.h
+@@ -70,6 +70,8 @@ class ESPlayerGst :  public ESPlayerNative
+     void attachGstSource();
+     // detach gst source, called by callback vbin_enough_data
+     void detachGstSource();
++    void detachAndWaitToAttach(uint32_t timeToWaitMS);
++
+     // update pts, called by callback gst_sink_pad_cb
+     void updatePts(int64_t currentPts);
+     // feed the decoder, called by idle callback vDecIteration
+@@ -84,6 +86,7 @@ class ESPlayerGst :  public ESPlayerNative
+     bool readyToPlay() const { return mReadyToPlay; };
+ 
+     GstElement* srcElement() const { return mSrc; };
++    void setWaitingToAttach(bool waitingToAttach) {mWaitingToAttach = waitingToAttach;}
+ 
+  private:
+     friend class PlaybackGroupNative;
+@@ -108,6 +111,8 @@ class ESPlayerGst :  public ESPlayerNative
+ 
+     // idle callback
+     static gboolean gst_decode_iteration(ESPlayerGst* self);
++    // wait callback (replace sleeps)
++    static gboolean gst_wait_timeout(ESPlayerGst* self);
+ 
+     // to be deleted
+     virtual void beginFlush(){};
+@@ -126,6 +131,7 @@ class ESPlayerGst :  public ESPlayerNative
+ 
+     GstElement *mSrc;
+     GstCaps    *mAppsrcCaps;
++    bool mWaitingToAttach;
+ };
+ 
+ } // esplayer
