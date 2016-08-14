@@ -44,11 +44,14 @@ fi
 
 # Shutdown all our processes in non stub version
 if [ ! -f $SOURCE/NDS/webbridge-stub ]; then
-	killall -9 rpcprocess
-	killall -9 WPEWebProcess
-	killall -9 WPENetworkProcess
-	killall -9 WPEDatabaseProcess
-	kill -9 $(ps | grep '/usr/bin/webbridge' | grep -v grep | awk '{print $1}')
+	killall -9 rpcprocess 2>/dev/null
+	killall -9 WPEWebProcess 2>/dev/null
+	killall -9 WPENetworkProcess 2>/dev/null
+	killall -9 WPEDatabaseProcess 2>/dev/null
+	WEBBRIDGE=$(ps | grep '/usr/bin/webbridge' | grep -v grep | awk '{print $1}')
+	if [ "$WEBBRIDGE" != "" ]; then
+		kill -9 $WEBBRIDGE
+	fi
 fi
 
 # Exports
