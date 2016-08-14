@@ -17,6 +17,12 @@ ifeq ($(BR2_ROOTFS_SKELETON_CUSTOM),y)
 
 SKELETON_PATH = $(call qstrip,$(BR2_ROOTFS_SKELETON_CUSTOM_PATH))
 
+ifeq ($(BR_BUILDING),y)
+ifeq ($(SKELETON_PATH),)
+$(error No path specified for the custom skeleton)
+endif
+endif
+
 ifeq ($(BR2_ROOTFS_MERGED_USR),y)
 
 # Ensure the user has prepared a merged /usr.
@@ -106,6 +112,10 @@ define SKELETON_INSTALL_STAGING_CMDS
 	ln -snf lib $(STAGING_DIR)/$(SKELETON_LIB_SYMLINK)
 	ln -snf lib $(STAGING_DIR)/usr/$(SKELETON_LIB_SYMLINK)
 endef
+
+# The TARGET_FINALIZE_HOOKS must be sourced only if the users choose to use the
+# default skeleton.
+ifeq ($(BR2_ROOTFS_SKELETON_DEFAULT),y)
 
 SKELETON_TARGET_GENERIC_TIMESERVER = $(call qstrip,$(BR2_TARGET_GENERIC_TIMESERVER))
 SKELETON_TARGET_GENERIC_HOSTNAME = $(call qstrip,$(BR2_TARGET_GENERIC_HOSTNAME))
@@ -198,10 +208,6 @@ define SKELETON_SET_NETWORK
 endef
 
 TARGET_FINALIZE_HOOKS += SKELETON_SET_NETWORK
-
-# The TARGET_FINALIZE_HOOKS must be sourced only if the users choose to use the
-# default skeleton.
-ifeq ($(BR2_ROOTFS_SKELETON_DEFAULT),y)
 
 ifeq ($(BR2_TARGET_ENABLE_ROOT_LOGIN),y)
 ifeq ($(SKELETON_TARGET_GENERIC_ROOT_PASSWD),)

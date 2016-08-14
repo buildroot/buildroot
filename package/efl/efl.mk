@@ -23,20 +23,16 @@ EFL_DEPENDENCIES = host-pkgconf host-efl host-luajit dbus freetype \
 	jpeg luajit udev util-linux zlib
 
 # Configure options:
-# --disable-cxx-bindings: disable C++11 bindings.
 # --disable-lua-old: build elua for the target.
 # --disable-sdl: disable sdl2 support.
-# --disable-systemd: disable systemd support.
 # --disable-xinput22: disable X11 XInput v2.2+ support.
 # --with-opengl=none: disable opengl support.
 EFL_CONF_OPTS = \
 	--with-edje-cc=$(HOST_DIR)/usr/bin/edje_cc \
 	--with-elua=$(HOST_DIR)/usr/bin/elua \
 	--with-eolian-gen=$(HOST_DIR)/usr/bin/eolian_gen \
-	--disable-cxx-bindings \
 	--disable-lua-old \
 	--disable-sdl \
-	--disable-systemd \
 	--disable-xinput22 \
 	--with-opengl=none
 
@@ -45,11 +41,25 @@ ifeq ($(BR2_PACKAGE_EFL_HAS_RECOMMENDED_CONFIG),)
 EFL_CONF_OPTS += --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-abb
 endif
 
+ifeq ($(BR2_PACKAGE_EFL_EOLIAN_CPP),y)
+EFL_CONF_OPTS += --enable-cxx-bindings \
+	--with-eolian-cxx=$(HOST_DIR)/usr/bin/eolian_cxx
+else
+EFL_CONF_OPTS += --disable-cxx-bindings
+endif
+
 ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBMOUNT),y)
 EFL_DEPENDENCIES += util-linux
 EFL_CONF_OPTS += --enable-libmount
 else
 EFL_CONF_OPTS += --disable-libmount
+endif
+
+ifeq ($(BR2_PACKAGE_SYSTEMD),y)
+EFL_CONF_OPTS += --enable-systemd
+EFL_DEPENDENCIES += systemd
+else
+EFL_CONF_OPTS += --disable-systemd
 endif
 
 ifeq ($(BR2_PACKAGE_FONTCONFIG),y)
@@ -216,7 +226,8 @@ $(eval $(autotools-package))
 ################################################################################
 
 # We want to build only some host tools used later in the build.
-# Actually we want: edje_cc, embryo_cc and eet.
+# Actually we want: edje_cc, eet and embryo_cc. eolian_cxx is built only
+# if selected for the target.
 
 # Host dependencies:
 # * host-dbus: for Eldbus
@@ -236,7 +247,6 @@ HOST_EFL_DEPENDENCIES = \
 
 # Configure options:
 # --disable-audio, --disable-multisense remove libsndfile dependency.
-# --disable-cxx-bindings: disable C++11 bindings.
 # --disable-fontconfig: remove dependency on fontconfig.
 # --disable-fribidi: remove dependency on libfribidi.
 # --disable-gstreamer1: remove dependency on gtreamer 1.0.
@@ -251,7 +261,6 @@ HOST_EFL_DEPENDENCIES = \
 #   Yes I really know what I am doing.
 HOST_EFL_CONF_OPTS += \
 	--disable-audio \
-	--disable-cxx-bindings \
 	--disable-fontconfig \
 	--disable-fribidi \
 	--disable-gstreamer1 \
@@ -269,5 +278,14 @@ HOST_EFL_CONF_OPTS += \
 	--with-opengl=none \
 	--with-x11=none \
 	--enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-abb
+
+# Enable Eolian language bindings to provide eolian_cxx tool for the
+# host which is required to build Eolian language bindings for the
+# target.
+ifeq ($(BR2_PACKAGE_EFL_EOLIAN_CPP),y)
+HOST_EFL_CONF_OPTS += --enable-cxx-bindings
+else
+HOST_EFL_CONF_OPTS += --disable-cxx-bindings
+endif
 
 $(eval $(host-autotools-package))

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBCURL_VERSION = 7.49.1
+LIBCURL_VERSION = 7.50.1
 ifeq ($(BR2_PACKAGE_NETFLIX),y)
 LIBCURL_VERSION = 7.32.0
 endif

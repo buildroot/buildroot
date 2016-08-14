@@ -17,6 +17,10 @@ ifeq ($(BR2_PACKAGE_PYTHON3),y)
 I2C_TOOLS_DEPENDENCIES += python3
 endif
 
+ifeq ($(BR2_PACKAGE_BUSYBOX),y)
+I2C_TOOLS_DEPENDENCIES += busybox
+endif
+
 # Build/install steps mirror the distutil python package type in the python package
 # infrastructure
 ifeq ($(BR2_PACKAGE_PYTHON)$(BR2_PACKAGE_PYTHON3),y)
@@ -49,7 +53,7 @@ endef
 define I2C_TOOLS_INSTALL_TARGET_CMDS
 	for i in i2cdump i2cget i2cset i2cdetect; \
 	do \
-		$(INSTALL) -m 755 -D $(@D)/tools/$$i $(TARGET_DIR)/usr/bin/$$i; \
+		$(INSTALL) -m 755 -D $(@D)/tools/$$i $(TARGET_DIR)/usr/sbin/$$i; \
 	done
 	$(I2C_TOOLS_INSTALL_PYSMBUS)
 endef

@@ -6,7 +6,7 @@ comment "Kernel Header Options"
 choice
 	prompt "Kernel Headers"
 	default BR2_KERNEL_HEADERS_AS_KERNEL if BR2_LINUX_KERNEL
-	default BR2_KERNEL_HEADERS_4_6
+	default BR2_KERNEL_HEADERS_4_7
 	help
 	  Select the kernel version to get headers from.
 
@@ -92,6 +92,10 @@ choice
 		bool "Linux 4.6.x kernel headers"
 		select BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_6
 
+	config BR2_KERNEL_HEADERS_4_7
+		bool "Linux 4.7.x kernel headers"
+		select BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_7
+
 	config BR2_KERNEL_HEADERS_VERSION
 		bool "Manually specified Linux version"
 endchoice
@@ -111,6 +115,10 @@ choice
 
 	  This is used to hide/show some packages that have strict
 	  requirements on the version of kernel headers.
+
+config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_4_7
+	bool "4.7.x"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_7
 
 config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_4_6
 	bool "4.6.x"
@@ -230,15 +238,16 @@ config BR2_DEFAULT_KERNEL_HEADERS
 	default "3.2.81"	if BR2_KERNEL_HEADERS_3_2
 	default "3.4.112"	if BR2_KERNEL_HEADERS_3_4
 	default "3.10.102"	if BR2_KERNEL_HEADERS_3_10
-	default "3.12.61"	if BR2_KERNEL_HEADERS_3_12
-	default "3.14.73"	if BR2_KERNEL_HEADERS_3_14
-	default "3.18.37"	if BR2_KERNEL_HEADERS_3_18
+	default "3.12.62"	if BR2_KERNEL_HEADERS_3_12
+	default "3.14.75"	if BR2_KERNEL_HEADERS_3_14
+	default "3.18.39"	if BR2_KERNEL_HEADERS_3_18
 	default "3.19.8"	if BR2_KERNEL_HEADERS_3_19
 	default "4.0.9"		if BR2_KERNEL_HEADERS_4_0
-	default "4.1.28"	if BR2_KERNEL_HEADERS_4_1
+	default "4.1.30"	if BR2_KERNEL_HEADERS_4_1
 	default "4.2.8"		if BR2_KERNEL_HEADERS_4_2
 	default "4.3.6"		if BR2_KERNEL_HEADERS_4_3
-	default "4.4.15"	if BR2_KERNEL_HEADERS_4_4
+	default "4.4.17"	if BR2_KERNEL_HEADERS_4_4
 	default "4.5.7"		if BR2_KERNEL_HEADERS_4_5
-	default "4.6.4"		if BR2_KERNEL_HEADERS_4_6
+	default "4.6.6"		if BR2_KERNEL_HEADERS_4_6
+	default "4.7"		if BR2_KERNEL_HEADERS_4_7
 	default BR2_DEFAULT_KERNEL_VERSION if BR2_KERNEL_HEADERS_VERSION

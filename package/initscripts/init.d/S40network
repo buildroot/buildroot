@@ -86,21 +86,23 @@ mkdir -p /run/network
 
 case "$1" in
   start)
-	echo "Starting network..."
+	printf "Starting network: "
 	if [ ! "x${nfs}" = "x" ] ; then
 		nameservers
 		network_up
 	else
 		/sbin/ifup -a
 	fi
+	[ $? = 0 ] && echo "OK" || echo "FAIL"
 	;;
   stop)
-	printf "Stopping network..."
+	printf "Stopping network: "
 	if [ ! "x${nfs}" = "x" ] ; then
 		network_down
 	else
 		/sbin/ifdown -a
 	fi
+	[ $? = 0 ] && echo "OK" || echo "FAIL"
 	;;
   restart|reload)
 	"$0" stop
