@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GLUELOGIC_VERSION = ae188af5ff457037f2626d04bc82f832b37cfe0b
+GLUELOGIC_VERSION = eee95aa2df6e30fa9b40ffa8205391dd53076d10
 GLUELOGIC_SITE_METHOD = git
 GLUELOGIC_SITE = git@github.com:Metrological/gluelogic.git
 GLUELOGIC_INSTALL_STAGING = YES
