@@ -69,6 +69,9 @@ fi
 # Short sleep
 sleep 3
 
+# Enable over-commit
+echo 1 > /proc/sys/vm/overcommit_memory
+
 # Touch time_offset file as workaround for stat function failing
 touch /tmp/time_offset
 
