@@ -54,6 +54,13 @@ if [ ! -f $SOURCE/NDS/webbridge-stub ]; then
 	fi
 fi
 
+# Netflix EGL and GLESv2 debug
+#ln -sfn /usr/lib/libEGL.so /lib/libEGL.so
+#ln -sfn /usr/lib/libGLESv2.so /lib/libGLESv2.so
+#mkdir -p $HOME/ogltrace
+#export GFX_LOG_FILE=$HOME/ogltrace/ogltrace
+#export NETFLIX_LD_PRELOAD="$SOURCE/NDS/libegl_log.so $SOURCE/NDS/libgl2_log.so"
+
 # Exports
 export HOME=$SOURCE/root
 export PATH=$SOURCE/usr/bin:/bin:/usr/bin
