@@ -38,6 +38,8 @@ cp -f "${TARGET_DIR}/usr/share/fonts/ttf-bitstream-vera/Vera.ttf" "${ROOTFS_DIR}
 mkdir -p "${ROOTFS_DIR}/NDS"
 cp -pf "${BOARD_DIR}/horizon/webbridge" "${ROOTFS_DIR}/NDS"
 #cp -pf "${BOARD_DIR}/horizon/webbridge-stub" "${ROOTFS_DIR}/NDS"
+#cp -pf "${BOARD_DIR}/horizon/libegl_log.so" "${ROOTFS_DIR}/NDS"
+#cp -pf "${BOARD_DIR}/horizon/libgl2_log.so" "${ROOTFS_DIR}/NDS"
 
 # WebServer path
 mkdir -p "${ROOTFS_DIR}/www"
