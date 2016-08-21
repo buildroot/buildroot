@@ -18,16 +18,15 @@ config BR2_LINUX_NEEDS_MODULES
 # Version selection. We provide the choice between:
 #
 #  1. A single fairly recent stable kernel version
-#  2. In case an internal toolchain has been built, the same kernel
-#     version as the kernel headers
-#  3. A custom stable version
-#  4. A custom tarball
+#  2. A custom stable version
+#  3. A custom tarball
+#  4. A set of custom repository locations
 #
 choice
 	prompt "Kernel version"
 
 config BR2_LINUX_KERNEL_LATEST_VERSION
-	bool "Latest version (4.7)"
+	bool "Latest version (4.7.2)"
 
 config BR2_LINUX_KERNEL_CUSTOM_VERSION
 	bool "Custom version"
@@ -110,7 +109,7 @@ config BR2_LINUX_KERNEL_CUSTOM_LOCAL_PATH
 
 config BR2_LINUX_KERNEL_VERSION
 	string
-	default "4.7" if BR2_LINUX_KERNEL_LATEST_VERSION
+	default "4.7.2" if BR2_LINUX_KERNEL_LATEST_VERSION
 	default BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE \
 		if BR2_LINUX_KERNEL_CUSTOM_VERSION
 	default "custom" if BR2_LINUX_KERNEL_CUSTOM_TARBALL
