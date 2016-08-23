@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NETFLIX_VERSION = b6a4f8b6e79d0457d04eb81465382ddd66c152cd
+NETFLIX_VERSION = ea0950438dbb1df2ad17e12be999ee2bc1582540
 NETFLIX_SITE = git@github.com:Metrological/netflix.git
 NETFLIX_SITE_METHOD = git
 NETFLIX_LICENSE = PROPRIETARY
@@ -24,6 +24,7 @@ NETFLIX_CONF_OPTS = \
 	-DGIBBON_SCRIPT_JSC_DYNAMIC=OFF \
 	-DGIBBON_SCRIPT_JSC_DEBUG=OFF \
 	-DGIBBON_INPUT=devinput \
+	-DNRDP_HAS_IPV6=ON \
 	-DNRDP_TOOLS="manufSSgenerator"
 
 ifeq ($(BR2_ENABLE_DEBUG),y)
