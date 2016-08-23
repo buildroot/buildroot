@@ -11,7 +11,7 @@ WIRESHARK_LICENSE = wireshark license
 WIRESHARK_LICENSE_FILES = COPYING
 WIRESHARK_DEPENDENCIES = host-pkgconf libpcap libglib2
 WIRESHARK_CONF_ENV = \
-	ac_cv_path_PCAP_CONFIG=$(STAGING_DIR)/usr/bin/pcap-config
+	PCAP_CONFIG=$(STAGING_DIR)/usr/bin/pcap-config
 
 # patch touching configure.ac
 WIRESHARK_AUTORECONF = YES
@@ -60,7 +60,7 @@ ifeq ($(BR2_PACKAGE_C_ARES),y)
 WIRESHARK_CONF_OPTS += --with-c-ares=$(STAGING_DIR)/usr
 WIRESHARK_DEPENDENCIES += c-ares
 else
-WIREHARK_CONF_OPTS += --without-c-ares
+WIRESHARK_CONF_OPTS += --without-c-ares
 endif
 
 ifeq ($(BR2_PACKAGE_GEOIP),y)
