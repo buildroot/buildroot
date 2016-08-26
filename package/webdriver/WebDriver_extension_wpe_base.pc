@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: chromium_base
+Description: WebDriver_extension_wpe_base
+Requires:
+Version: 4.2.2
+Libs: -L${libdir} -lWebDriver_extension_wpe_base
+Cflags: -I${includedir}
+
