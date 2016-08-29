@@ -8,7 +8,7 @@ WEBDRIVER_VERSION = 531592b5d1af423fdf7c141c4d49c42aba416bfb
 WEBDRIVER_SITE_METHOD = git
 WEBDRIVER_SITE = git@github.com:Metrological/webdriver.git
 WEBDRIVER_INSTALL_STAGING = YES
-WEBDRIVER_DEPENDENCIES = libglib2 wpe json-c jsoncpp
+WEBDRIVER_DEPENDENCIES = libglib2 wpe json-c
 GLIB_INC = $(STAGING_DIR)/usr/include/glib-2.0
 GLIB_LIB_INC = $(STAGING_DIR)/usr/lib/glib-2.0/include
 
