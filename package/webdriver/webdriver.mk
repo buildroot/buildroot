@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WEBDRIVER_VERSION = 0326b904df29bd156d6fa2d7b8a3b93bc66071cd
+WEBDRIVER_VERSION = c67f87e9885386f41ab811cd09b008f14aeaa132
 WEBDRIVER_SITE_METHOD = git
 WEBDRIVER_SITE = git@github.com:Metrological/webdriver.git
 WEBDRIVER_INSTALL_STAGING = YES
@@ -17,6 +17,8 @@ define WEBDRIVER_CONFIGURE_CMDS
 endef
 
 define WEBDRIVER_BUILD_CMDS
+	export WPE_TARGET_DIR="$(TARGET_DIR)";\
+	export WPE_STAGING_DIR="$(STAGING_DIR)";\
 	$(MAKE) CROSS_COMPILE="$(TARGET_CROSS)" \
 	CC="$(TARGET_CC)" CXX="$(TARGET_CXX)" AR="$(TARGET_AR)" \
 	CXXFLAGS="-I$(GLIB_INC) -I$(GLIB_LIB_INC) $(TARGET_CXXFLAGS)" \
@@ -37,4 +39,5 @@ define WEBDRIVER_INSTALL_STAGING_CMDS
 	cp -Rpf $(@D)/src/webdriver_wrapper/*.h $(STAGING_DIR)/usr/include/
 endef
 
-$(eval $(cmake-package))
+$(eval $(generic-package))
+$(eval $(host-generic-package))
