@@ -5,6 +5,9 @@
 ################################################################################
 
 GRAPHITE2_VERSION = 1.3.8
+ifeq ($(BR2_PACKAGE_NETFLIX),y)
+GRAPHITE2_VERSION = 1.2.4
+endif
 GRAPHITE2_SOURCE = graphite2-$(GRAPHITE2_VERSION).tgz
 GRAPHITE2_SITE = http://downloads.sourceforge.net/project/silgraphite/graphite2
 GRAPHITE2_INSTALL_STAGING = YES
