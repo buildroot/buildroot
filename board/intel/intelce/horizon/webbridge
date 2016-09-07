@@ -3,12 +3,47 @@
 SCRIPT_NAME="webbridge.sh"
 SOURCE=/NDS/metrological
 
-# Wait for HDD
-while [ ! -f /tmp/diag ];
+cleanup() {
+	echo "${SCRIPT_NAME}: '$1'"
+	# Shutdown all our processes in non stub version
+	if [ ! -f $SOURCE/NDS/webbridge-stub ]; then
+		killall -9 rpcprocess 2>/dev/null
+		killall -9 WPEWebProcess 2>/dev/null
+		killall -9 WPENetworkProcess 2>/dev/null
+		killall -9 WPEDatabaseProcess 2>/dev/null
+		WEBBRIDGE=$(ps | grep '/usr/bin/webbridge' | grep -v grep | awk '{print $1}')
+		if [ "$WEBBRIDGE" != "" ]; then
+			kill -9 $WEBBRIDGE
+		fi
+	fi
+}
+
+if [ -f /tmp/shutdown ]; then
+	cleanup shutdown
+	exit 0
+fi
+
+# Select Storage type: HDD or Flash
+BUILD_OPT=$(cat /NDS/options_start)
+if [[ "$BUILD_OPT" =~ "plt_samgw"  || "$BUILD_OPT" =~ "plt_ciscogw" ]]; then
+	STORAGE_FILE="/tmp/diag"
+else
+	STORAGE_FILE="/tmp/core_dir"
+fi
+
+# Wait for Storage
+COUNT=0
+while [ ! -f $STORAGE_FILE ];
 do
 	sleep 1
+	COUNT=$((COUNT+1))
 done
-HDD="`cat /tmp/diag`"
+STORAGE_PATH="`cat $STORAGE_FILE`"
+if [ "$COUNT" != "0" ]; then
+	echo "${SCRIPT_NAME}: have waited ${COUNT} seconds for storage path '${STORAGE_PATH}'"
+else
+	echo "${SCRIPT_NAME}: storage path '${STORAGE_PATH}'"
+fi
 
 # Symlink /etc
 ln -sfn $SOURCE/etc/playready /etc/playready
@@ -26,8 +61,8 @@ ln -sfn $SOURCE/usr/share/fonts/ttf-bitstream-vera /usr/share/fonts/ttf-bitstrea
 
 # Symlink /root
 rm -rf $SOURCE/root
-mkdir -p $HDD/app
-ln -sfn $HDD/app $SOURCE/root
+mkdir -p $STORAGE_PATH/app
+ln -sfn $STORAGE_PATH/app $SOURCE/root
 
 # Netflix
 if [ ! -d $SOURCE/root/Netflix ]; then
@@ -43,16 +78,7 @@ if [ -f /NDS/drivers/open_firewall_port.sh ]; then
 fi
 
 # Shutdown all our processes in non stub version
-if [ ! -f $SOURCE/NDS/webbridge-stub ]; then
-	killall -9 rpcprocess 2>/dev/null
-	killall -9 WPEWebProcess 2>/dev/null
-	killall -9 WPENetworkProcess 2>/dev/null
-	killall -9 WPEDatabaseProcess 2>/dev/null
-	WEBBRIDGE=$(ps | grep '/usr/bin/webbridge' | grep -v grep | awk '{print $1}')
-	if [ "$WEBBRIDGE" != "" ]; then
-		kill -9 $WEBBRIDGE
-	fi
-fi
+cleanup restart
 
 # Netflix EGL and GLESv2 debug
 #ln -sfn /usr/lib/libEGL.so /lib/libEGL.so
@@ -77,10 +103,7 @@ fi
 sleep 3
 
 # Enable over-commit
-echo 1 > /proc/sys/vm/overcommit_memory
-
-# Touch time_offset file as workaround for stat function failing
-touch /tmp/time_offset
+#echo 1 > /proc/sys/vm/overcommit_memory
 
 # WebBridge
 if [ ! -f $SOURCE/NDS/webbridge-stub ]; then
