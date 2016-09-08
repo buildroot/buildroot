@@ -4,16 +4,17 @@
 #
 ################################################################################
 
-WEBDRIVER_VERSION = c67f87e9885386f41ab811cd09b008f14aeaa132
+WEBDRIVER_VERSION = 1a2e49268f2d0492df17ed1af5637dfd3dd56c68
 WEBDRIVER_SITE_METHOD = git
 WEBDRIVER_SITE = git@github.com:Metrological/webdriver.git
 WEBDRIVER_INSTALL_STAGING = YES
 WEBDRIVER_DEPENDENCIES = libglib2 wpe json-c libcurl
 GLIB_INC = $(STAGING_DIR)/usr/include/glib-2.0
 GLIB_LIB_INC = $(STAGING_DIR)/usr/lib/glib-2.0/include
+WD_PLATFORM_NAME = wpe
 
 define WEBDRIVER_CONFIGURE_CMDS
-      (cd $(@D);rm -rf out;./build_rpi.sh out rpi release)
+      (cd $(@D);rm -rf out;./build_wpe.sh out release)
 endef
 
 define WEBDRIVER_BUILD_CMDS
@@ -22,19 +23,19 @@ define WEBDRIVER_BUILD_CMDS
 	$(MAKE) CROSS_COMPILE="$(TARGET_CROSS)" \
 	CC="$(TARGET_CC)" CXX="$(TARGET_CXX)" AR="$(TARGET_AR)" \
 	CXXFLAGS="-I$(GLIB_INC) -I$(GLIB_LIB_INC) $(TARGET_CXXFLAGS)" \
-	LDFLAGS="$(TARGET_LDFLAGS)  -L$(STAGING_DIR)/usr/lib -lWPEWebKit -lWPE -lglib-2.0 -ljson-c -lcurl -pthread " -C $(@D)/out/rpi/release/; \
-	cd $(@D);./copy.sh out rpi release;
+	LDFLAGS="$(TARGET_LDFLAGS)  -L$(STAGING_DIR)/usr/lib -lWPEWebKit -lWPE -lglib-2.0 -ljson-c -lcurl -pthread " -C $(@D)/out/$(WD_PLATFORM_NAME)/release/; \
+	cd $(@D);./copy.sh out release;
 endef
 
 define WEBDRIVER_INSTALL_TARGET_CMDS
-	cp $(@D)/out/bin/rpi/release/W* $(TARGET_DIR)/usr/bin
-	cp $(@D)/out/bin/rpi/release/lib*.so $(TARGET_DIR)/usr/lib
+	cp $(@D)/out/bin/$(WD_PLATFORM_NAME)/release/W* $(TARGET_DIR)/usr/bin
+	cp $(@D)/out/bin/$(WD_PLATFORM_NAME)/release/lib*.so $(TARGET_DIR)/usr/lib
 	cp -Rpf $(@D)/web $(TARGET_DIR)/usr/share
 endef
 
 define WEBDRIVER_INSTALL_STAGING_CMDS
 	$(INSTALL) -D package/webdriver/*.pc $(STAGING_DIR)/usr/lib/pkgconfig/
-	cp $(@D)/out/bin/rpi/release/lib*.so $(STAGING_DIR)/usr/lib
+	cp $(@D)/out/bin/$(WD_PLATFORM_NAME)/release/lib*.so $(STAGING_DIR)/usr/lib
 	mkdir -p $(STAGING_DIR)/usr/include/
 	cp -Rpf $(@D)/src/webdriver_wrapper/*.h $(STAGING_DIR)/usr/include/
 endef
