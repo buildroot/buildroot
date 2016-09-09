@@ -1,0 +1,27 @@
+From 36ed98021aab86331e1c01587f1551eff28167b0 Mon Sep 17 00:00:00 2001
+From: Xabier Rodriguez Calvar <calvaris@igalia.com>
+Date: Tue, 6 Sep 2016 09:49:39 +0200
+Subject: [PATCH] qtdemux: offset is irrelevant when no crypto info
+
+Cause later it will try to use the crypto info array to get an index and
+attach on of the positions as buffer's crypto info.
+---
+ gst/isomp4/qtdemux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index f0e821b..73e03a0 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -5320,7 +5320,7 @@ gst_qtdemux_decorate_and_push_buffer (GstQTDemux * qtdemux,
+       gst_pad_push_event (stream->pad, event);
+     }
+ 
+-    if (qtdemux->cenc_aux_info_offset > 0 && info->crypto_info == NULL) {
++    if (info->crypto_info == NULL) {
+       GST_DEBUG_OBJECT (qtdemux, "cenc metadata hasn't been parsed yet");
+       gst_buffer_unref (buf);
+       goto exit;
+-- 
+2.9.3
+
