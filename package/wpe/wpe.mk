@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = 9d4c9c472778d89386fa3533f95f6b8e8c203894
+WPE_VERSION = 5edaf5227a03facafe9898ccc793ae20367fb31d
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
