@@ -1,3 +1,28 @@
+2016.08.1, Released September 21st, 2016
+
+	Fix potential entire root filesystem removal in the external
+	toolchain handling. This would trigger if (and only if) the
+	following conditions are met:
+
+	- The user has selected a "known toolchain profile", such as a
+	  Linaro toolchain, a Sourcery CodeBench toolchain etc. People
+	  using "custom toolchain profile" are not affected.
+
+	- The user has enabled BR2_TOOLCHAIN_EXTERNAL_PREINSTALLED=y
+	  to indicate that the toolchain is already locally available
+	  (as opposed to having Buildroot download and extract the
+	  toolchain)
+
+	- The user has left BR2_TOOLCHAIN_EXTERNAL_PATH empty, because
+	  his toolchain is directly available through the PATH
+	  environment variable. When BR2_TOOLCHAIN_EXTERNAL_PATH is
+	  non-empty, Buildroot will do something silly (remove the
+	  toolchain contents), but that are limited to the toolchain
+	  itself.
+
+	When such conditions are met, Buildroot will run "rm -rf /*"
+	due to TOOLCHAIN_EXTERNAL_INSTALL_DIR being empty.
+
 2016.08, Released Septermber 1st, 2016
 
 	Minor fixes.
