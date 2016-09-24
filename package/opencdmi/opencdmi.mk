@@ -9,9 +9,9 @@ OPENCDMI_SITE_METHOD = git
 OPENCDMI_SITE = https://github.com/fraunhoferfokus/open-content-decryption-module-cdmi.git
 
 OPENCDMI_INSTALL_STAGING = YES
-OPENCDMI_DEPENDENCIES = rpcbind
+OPENCDMI_DEPENDENCIES = rpcbind opencdm
 OPENCDMI_LICENSE = Apache-2.0
-OPENCDMI_LICENSE_FILES = LICENSE 
+OPENCDMI_LICENSE_FILES = LICENSE
 
 define OPENCDMI_BUILD_CMDS
         export OPENCDMI_TARGET_DIR="$(TARGET_DIR)";\
@@ -28,11 +28,3 @@ endef
 
 $(eval $(generic-package))
 $(eval $(host-generic-package))
-
-    
-
-                                         
-                                                                                                        
-                                                                                                        
-                                
-                                  
