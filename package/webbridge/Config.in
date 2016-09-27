@@ -197,6 +197,13 @@ menuconfig BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER
 
 if BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER
 
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBDRIVER
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER
+	bool "webdriver"
+	default n
+        help
+          A driver that allows external control over the webkit browser.
+
 config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER_AUTOSTART
 	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER
 	bool "autostart"
@@ -316,6 +323,12 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBSERVER_WEBPATH
 	default "www"
 
 endif	
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBSHELL
+	bool "webshell"
+	default n
+	help
+	  A plugin that allows WebSocket access to the shell on the box
 
 config BR2_PACKAGE_WEBBRIDGE_PLUGIN_SNAPSHOT
 	bool "snapshot"
