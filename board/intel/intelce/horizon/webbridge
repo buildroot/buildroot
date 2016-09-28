@@ -103,7 +103,7 @@ fi
 sleep 3
 
 # Enable over-commit
-#echo 1 > /proc/sys/vm/overcommit_memory
+echo 1 > /proc/sys/vm/overcommit_memory
 
 # WebBridge
 if [ ! -f $SOURCE/NDS/webbridge-stub ]; then
