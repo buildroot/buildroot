@@ -183,6 +183,16 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX_MODEL
 	string "model"
 	default "Metrological Reference DPI Implementation"
 
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX_KEYREPEATDELAY
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX
+	string "key-repeat-delay"
+	default "500"
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX_KEYREPEATINTERVAL
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX
+	string "key-repeat-interval"
+	default "200"
+
 endif
 
 comment "netflix is dependent on the netflix package compiled as library"
