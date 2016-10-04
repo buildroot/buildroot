@@ -51,6 +51,10 @@ config BR2_PACKAGE_WEBBRIDGE_PROXYSTUB_PATH
 config BR2_PACKAGE_WEBBRIDGE_NO_WEBUI
 	bool "no web interface"
 
+config BR2_PACKAGE_WEBBRIDGE_OOM_ADJUST
+	string "oom-adjust"
+	default ""
+
 endmenu
 
 config BR2_PACKAGE_WEBBRIDGE_PLUGIN_NXRESOURCECENTER
