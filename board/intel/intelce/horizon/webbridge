@@ -28,6 +28,8 @@ BUILD_OPT=$(cat /NDS/options_start)
 if [[ "$BUILD_OPT" =~ "plt_samgw"  || "$BUILD_OPT" =~ "plt_ciscogw" ]]; then
 	STORAGE_FILE="/tmp/diag"
 else
+	# Enable over-commit
+	echo 1 > /proc/sys/vm/overcommit_memory
 	STORAGE_FILE="/tmp/core_dir"
 fi
 
@@ -101,9 +103,6 @@ fi
 
 # Short sleep
 sleep 3
-
-# Enable over-commit
-#echo 1 > /proc/sys/vm/overcommit_memory
 
 # WebBridge
 if [ ! -f $SOURCE/NDS/webbridge-stub ]; then
