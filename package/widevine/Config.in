@@ -3,4 +3,9 @@ config BR2_PACKAGE_WIDEVINE
         help
            Widevine DRM solution provides the capability to license, securely distribute and protect
            playback of content on any consumer device.
-    
+
+if BR2_PACKAGE_WIDEVINE
+#select platform for widevine
+config BR2_PACKAGE_WIDEVINE_SOC_RPI
+        bool "RPi platform"
+endif #BR2_PACKAGE_WIDEVINE
