@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: chromium_base
+Description: chromium_base
+Requires:
+Version: 4.2.2
+Libs: -L${libdir} -lchromium_base
+Cflags: -I${includedir}

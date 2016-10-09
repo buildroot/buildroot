@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: WebDriver_extension_wpe_base
+Description: WebDriver extension library for wpe
+Requires:
+Version: 1.0.0
+Libs: -L${libdir} -lWebDriver_extension_wpe_base
+Cflags: -I${includedir}
+
