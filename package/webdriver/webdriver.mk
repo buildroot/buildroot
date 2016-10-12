@@ -4,17 +4,21 @@
 #
 ################################################################################
 
-WEBDRIVER_VERSION = 9eccd50dc2d7f3974e54ccd404606b4a518c7a23
+WEBDRIVER_VERSION = dd32178e51830b62d0582a3dd97ec5af37db871c
 WEBDRIVER_SITE_METHOD = git
 WEBDRIVER_SITE = git@github.com:Metrological/webdriver.git
 WEBDRIVER_INSTALL_STAGING = YES
-WEBDRIVER_DEPENDENCIES = libglib2 wpe json-c libcurl
+WEBDRIVER_DEPENDENCIES = host-gyp libglib2 wpe json-c libcurl
+
 GLIB_INC = $(STAGING_DIR)/usr/include/glib-2.0
 GLIB_LIB_INC = $(STAGING_DIR)/usr/lib/glib-2.0/include
 WD_PLATFORM_NAME = wpe
 
+export PYTHON=$(HOST_DIR)/usr/bin/python2
+export GYP=$(HOST_DIR)/usr/bin/gyp
+
 define WEBDRIVER_CONFIGURE_CMDS
-      (cd $(@D);rm -rf out;./build_wpe.sh out release)
+      cd $(@D);rm -rf out;./build_wpe.sh out release
 endef
 
 define WEBDRIVER_BUILD_CMDS
