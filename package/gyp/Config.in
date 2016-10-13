@@ -1,0 +1,6 @@
+config BR2_PACKAGE_GYP
+        bool "gyp"
+	select BR2_PACKAGE_PYTHON 
+	select BR2_PACKAGE_PYTHON_SETUPTOOLS 
+        help
+           GYP is a Meta-Build system: a build system that generates other build systems
