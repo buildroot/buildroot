@@ -9,7 +9,8 @@ GYP_SITE_METHOD = git
 GYP_SITE = https://chromium.googlesource.com/external/gyp
 GYP_INSTALL_STAGING = NO
 GYP_SETUP_TYPE = setuptools
-GYP_DEPENDENCIES = host-python host-gyp
+GYP_DEPENDENCIES = host-gyp 
+HOST_GYP_DEPENDENCIES = host-python host-python-setuptools 
 
 define HOST_GYP_CONFIGURE_CMDS
 	(cd $(@D); sudo rm -rf build)
