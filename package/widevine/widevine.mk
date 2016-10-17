@@ -14,8 +14,13 @@ WIDEVINE_LICENSE = BSD
 WIDEVINE_LICENSE_FILES = LICENSE
 
 ifeq ($(BR2_PACKAGE_WIDEVINE_SOC_RPI), y)
-export TARGET_PLATFORM="rpi"; 
+export WV_BOARD=rpi 
 endif #BR2_PACKAGE_WIDEVINE_SOC_RPI
+
+export WV_CC=$(TARGET_CC)
+export WV_CXX=$(TARGET_CXX)
+export WV_AR=$(TARGET_AR)
+       # CC="$(TARGET_CC)" CXX="$(TARGET_CXX)" AR="$(TARGET_AR)" \
 
 define WIDEVINE_CONFIGURE_CMDS
       (cd $(@D);rm -rf out; rm -rf Makefile;\
@@ -27,11 +32,7 @@ endef
 define WIDEVINE_BUILD_CMDS
         export WIDEVINE_TARGET_DIR="$(TARGET_DIR)";\
         export WIDEVINE_STAGING_DIR="$(STAGING_DIR)";\
-        export TARGET_CC="$(TARGET_CC)"; \
-        export TARGET_CXX="$(TARGET_CXX)"; \
-        export TARGET_AR="$(TARGET_AR)"; \
         make CROSS_COMPILE="$(TARGET_CROSS)" \
-        CC="$(TARGET_CC)" CXX="$(TARGET_CXX)" AR="$(TARGET_AR)" \
         CXXFLAGS="$(TARGET_CXXFLAGS)" \
         LDFLAGS="$(TARGET_LDFLAGS)  -L$(STAGING_DIR)/usr/lib" -C $(@D) -f Makefile
 endef
@@ -44,6 +45,10 @@ endef
 define WIDEVINE_INSTALL_STAGING_CMDS
         cp $(@D)/out/arm/Debug/widevine_ce_cdm_unittest $(STAGING_DIR)/usr/bin
         cp $(@D)/out/arm/Debug/lib.target/lib*.so $(STAGING_DIR)/usr/lib/
+        cp $(@D)/cdm/include/*.h $(STAGING_DIR)/usr/include
+        cp $(@D)/core/include/*.h $(STAGING_DIR)/usr/include
+        mkdir -p $(STAGING_DIR)/usr/include/host
+        cp $(@D)/cdm/src/host/rpi/*.h $(STAGING_DIR)/usr/include/host
 endef
 
 $(eval $(generic-package))

@@ -1,9 +1,34 @@
+diff --git a/Makefile b/Makefile
+new file mode 100644
+index 0000000..7fe074c
+--- /dev/null
++++ b/Makefile
+@@ -0,0 +1,19 @@
++PWD = $(shell pwd)
++
++all:
++	$(MAKE) -C $(PWD)/src/browser/wpe/test/ all
++ocdm_lib:
++	$(MAKE) -C $(PWD)/src/browser/wpe/opencdm/ all
++
++
++clean: ocdm_lib_clean cdm_client_clean
++
++ocdm_lib_clean:
++	$(MAKE) -C $(PWD)/src/browser/wpe/opencdm/ clean
++cdm_client_clean:
++	$(MAKE) -C $(PWD)/src/browser/wpe/test/ clean
++
++install: ocdm_lib_install
++
++ocdm_lib_install:
++	$(MAKE) -C $(PWD)/src/browser/wpe/opencdm/ install
 diff --git a/src/browser/wpe/opencdm/Makefile b/src/browser/wpe/opencdm/Makefile
 new file mode 100644
-index 0000000..e64c437
+index 0000000..310e820
 --- /dev/null
 +++ b/src/browser/wpe/opencdm/Makefile
-@@ -0,0 +1,68 @@
+@@ -0,0 +1,77 @@
 + #
 + # Copyright (C) 2016 TATA ELXSI
 + # Copyright (C) 2016 Metrological
@@ -36,23 +61,28 @@ index 0000000..e64c437
 +OCDM_WPE_DIR = $(PWD)/..
 +CFLAGS_L := -fPIC -D_REENTRANT -Wall
 +
-+MODULES   := cdm mediaengine common com/cdm/rpc com/mediaengine/rpc com/common/shmemsem
++MODULES   := cdm mediaengine common com/cdm/rpc com/cdm  com/mediaengine/rpc com/common/shmemsem
 +OCDM_SOURCES_C =  $(wildcard $(OCDM_DIR)/com/common/rpc/*.c)
 +OCDM_SOURCES_CPP = $(wildcard $(OCDM_DIR)/browser/wpe/opencdm/*.cpp)
 +OCDM_SOURCES_CC_DIR   := $(addprefix $(OCDM_DIR)/,$(MODULES))
 +OCDM_SOURCES_CC     := $(foreach sdir,$(OCDM_SOURCES_CC_DIR),$(wildcard $(sdir)/*.cc))
-+
++OCDM_HEADERS = $(wildcard $(OCDM_DIR)/com/common/rpc/*.h)
++OCDM_HEADERS := $(OCDM_HEADERS) $(wildcard $(OCDM_DIR)/browser/wpe/opencdm/*.h)
++OCDM_HEADERS := $(OCDM_HEADERS) $(foreach sdir,$(OCDM_SOURCES_CC_DIR),$(wildcard $(sdir)/*.h))
++OCDM_HEADER_PATH := $(foreach sdir,$(OCDM_SOURCES_CC_DIR),$(addprefix -I,$(sdir)/))
 +
 +OCDM_OBJECTS_C = $(OCDM_SOURCES_C:.c=.o)
 +OCDM_OBJECTS_CC = $(OCDM_SOURCES_CC:.cc=.o)
 +OCDM_OBJECTS_CPP = $(OCDM_SOURCES_CPP:.cpp=.o)
-+OCDM_INCLUDES = -I $(OCDM_DIR)
++OCDM_INCLUDES :=  $(OCDM_HEADER_PATH) \
++	         -I $(OCDM_DIR)/com/common/rpc \
++		 -I $(OCDM_DIR)/browser/wpe/opencdm
 +
 +CXFLAGS := -std=c++11 -g $(OCDM_INCLUDES) -pthread
 +CFLAGS := -g $(OCDM_INCLUDES) -pthread
 +
 +
-+all: ocdm
++all: ocdm install
 +
 +ocdm: $(OCDM_OBJECTS_C)  $(OCDM_OBJECTS_CC)  ${OCDM_OBJECTS_CPP}
 +	@echo "Compiling ..."
@@ -66,39 +96,39 @@ index 0000000..e64c437
 +%.o: %.cpp
 +	$(CXX) $(CXFLAGS) $(CFLAGS_L) -o $@ -c $<
 +
++install:$(OCDM_HEADERS)
++	@mkdir -p $(OCDM_WPE_DIR)/include
++	@cp -r $(OCDM_HEADERS) $(OCDM_WPE_DIR)/include/
 +
 +.PHONY: clean
 +clean:
 +	@echo "Cleaning ..."
 +	@$(RM)  ${OCDM_OBJECTS_C}  ${OCDM_OBJECTS_CC} ${OCDM_OBJECTS_CPP}
 +	@rm -f $(OCDM_WPE_DIR)/lib/libocdm.so
++	@rm -f $(OCDM_WPE_DIR)/include/*
 diff --git a/src/browser/wpe/opencdm/open_cdm.cpp b/src/browser/wpe/opencdm/open_cdm.cpp
 new file mode 100644
-index 0000000..c5906d3
+index 0000000..5c21a6c
 --- /dev/null
 +++ b/src/browser/wpe/opencdm/open_cdm.cpp
-@@ -0,0 +1,154 @@
+@@ -0,0 +1,162 @@
 +
-+#include <mediaengine/open_cdm_mediaengine_factory.h>
-+#include <cdm/open_cdm_platform_factory.h>
-+#include <common/open_cdm_common.h>
-+#include <common/cdm_logging.h>
++#include <open_cdm_mediaengine_factory.h>
++#include <open_cdm_platform_factory.h>
++#include <open_cdm_common.h>
++#include <cdm_logging.h>
 +
 +#include "open_cdm.h"
 +
 +using namespace std;
 +using namespace media;
 +
-+OpenCdm::OpenCdm(const std::string& key_system)
++OpenCdm::OpenCdm()
 +    : media_engine_(NULL),
 +      platform_(NULL)
 +{
 +    CDM_DLOG() << "OpenDecryptor construct: key_system";
 +    platform_ = OpenCdmPlatformInterfaceFactory::Create(this);
-+    m_key_system = key_system;
-+    platform_->MediaKeys(key_system);
-+    CDM_DLOG() << "OpenCdm: created" << "\n";
-+    m_eState = KEY_SESSION_INIT;
 +}
 +
 +OpenCdm::~OpenCdm() {
@@ -114,13 +144,23 @@ index 0000000..c5906d3
 +    }
 +}
 +
++void OpenCdm::SelectKeySystem(const std::string& key_system)
++{
++    m_key_system = key_system;
++    platform_->MediaKeys(key_system);
++    CDM_DLOG() << "OpenCdm: created" << "\n";
++    m_eState = KEY_SESSION_INIT;
++}
 +
-+int OpenCdm::CreateSession(unsigned char *pbInitData, int cbInitData) {
 +
++int OpenCdm::CreateSession(const std::string& mimeType, unsigned char *pbInitData, int cbInitData )
++{
 +    int ret = 1;
++    CDM_DLOG() << " Enter : CreateSession";
++    CDM_DLOG() << " MimeType = " << mimeType;
 +    MediaKeysCreateSessionResponse response = platform_->MediaKeysCreateSession(
-+	                                          "InitDataType::CENC", pbInitData, cbInitData);
-+
++                                          mimeType, pbInitData, cbInitData);
++    CDM_DLOG() << "Contin : CreateSession ";
 +    if (response.platform_response == PLATFORM_CALL_SUCCESS) {
 +        CDM_DLOG() << "New Session created, session_id: " << response.session_id.session_id;
 +        m_session_id = response.session_id;
@@ -145,10 +185,10 @@ index 0000000..c5906d3
 +	m_cond_var.wait(lck);
 +    }
 +
-+    CDM_DLOG() << "Key message should be ready or no need key challenge/message.";
++    CDM_DLOG() << "Key message should be ready or no need key challenge/message."<< "\n" ;
 +
 +    if(m_eState == KEY_SESSION_MESSAGE_RECEIVED) {
-+	//copy internal saved to caller allocated buffer
++
 +	strncpy((char *)challenge, (const char *)m_message.c_str(), m_message.length());
 +	strncpy((char *)licenseURL, (const char *)m_dest_url.c_str(), m_dest_url.length());
 +	*challengeLength = m_message.length();
@@ -159,7 +199,6 @@ index 0000000..c5906d3
 +	*challengeLength = 0;
 +	*licenseURL= 0;
 +    }
-+
 +    return 0;
 +}
 +
@@ -216,14 +255,17 @@ index 0000000..c5906d3
 +			      std::string message,
 +			      std::string destination_url) {
 +
++   message.assign("keymessage"); //TODO  message has to be received from ocdmi
 +    CDM_DLOG() << "OpenCdm::MessageCallback:" << " key message:"
 +	         << message << " URL: " << destination_url;
 +
 +    std::unique_lock<std::mutex> lck(m_mtx);
++    CDM_DLOG() << "OpenCdm::MessageCallback:1" << "\n";
 +    m_message = message;
 +    m_dest_url = destination_url;
 +    m_eState = KEY_SESSION_MESSAGE_RECEIVED;
 +    m_cond_var.notify_all();
++    CDM_DLOG() << "OpenCdm::MessageCallback:2" << "\n";
 +}
 +
 +void OpenCdm::OnKeyStatusUpdateCallback(OpenCdmPlatformSessionId platform_session_id,
@@ -234,7 +276,7 @@ index 0000000..c5906d3
 +}
 diff --git a/src/browser/wpe/opencdm/open_cdm.h b/src/browser/wpe/opencdm/open_cdm.h
 new file mode 100644
-index 0000000..38ac611
+index 0000000..1d64a39
 --- /dev/null
 +++ b/src/browser/wpe/opencdm/open_cdm.h
 @@ -0,0 +1,70 @@
@@ -253,10 +295,10 @@ index 0000000..38ac611
 +#include <thread>
 +
 +#include <stdlib.h>
-+#include <mediaengine/open_cdm_mediaengine.h>
-+#include <cdm/open_cdm_platform.h>
-+#include <common/open_cdm_common.h>
-+#include <cdm/open_cdm_platform_com_callback_receiver.h>
++#include <open_cdm_mediaengine.h>
++#include <open_cdm_platform.h>
++#include <open_cdm_common.h>
++#include <open_cdm_platform_com_callback_receiver.h>
 +
 +using namespace media;
 +
@@ -276,13 +318,13 @@ index 0000000..38ac611
 +    };
 +
 +public:
-+    OpenCdm(const std::string& key_system);
++    OpenCdm();
 +    ~OpenCdm() override;
 +
-+    int CreateSession(unsigned char * , int);
++    int CreateSession(const std::string& ,unsigned char * , int);
 +    int GetKeyMessage(unsigned char *, int *, unsigned char *, int *);
 +    int Update(unsigned char *, int);
-+
++    void SelectKeySystem(const std::string& );
 +    int Decrypt(unsigned char *, uint32_t, unsigned char *, uint32_t);
 +
 +private:
@@ -310,10 +352,10 @@ index 0000000..38ac611
 +#endif
 diff --git a/src/browser/wpe/test/Makefile b/src/browser/wpe/test/Makefile
 new file mode 100644
-index 0000000..9648e8b
+index 0000000..cd4fddf
 --- /dev/null
 +++ b/src/browser/wpe/test/Makefile
-@@ -0,0 +1,49 @@
+@@ -0,0 +1,57 @@
 +#
 + # Copyright (C) 2016 TATA ELXSI
 + # Copyright (C) 2016 Metrological
@@ -340,35 +382,43 @@ index 0000000..9648e8b
 + # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 + # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 + #
++
 +RM := rm  -rf
 +OCDM_CLIENT_DIR =  $(shell pwd)
 +OCDM_ROOT_PATH = $(OCDM_CLIENT_DIR)/../../..
 +OCDM_WPE_ROOT_PATH = $(OCDM_CLIENT_DIR)/..
++
++MODULES   := cdm mediaengine common com/cdm/rpc com/cdm  com/mediaengine/rpc com/common/shmemsem
++OCDM_SOURCES_CC_DIR   := $(addprefix $(OCDM_ROOT_PATH)/,$(MODULES))
++OCDM_HEADER_PATH := $(foreach sdir,$(OCDM_SOURCES_CC_DIR),$(addprefix -I,$(sdir)/))
++
 +LD_FLAGS += -L $(OCDM_WPE_ROOT_PATH)/lib -locdm
 +
 +OCDM_INCLUDES = -I $(OCDM_ROOT_PATH) \
-+                -I $(OCDM_WPE_ROOT_PATH)/opencdm
++                -I $(OCDM_WPE_ROOT_PATH)/opencdm \
++                $(OCDM_HEADER_PATH)
 +
 +CXFLAGS := -std=c++11 -g $(OCDM_INCLUDES) -pthread
 +
 +all: ocdm_client
 +	@echo "Building ocdm client"
 +
-+ocdm_client:  ocdm_client.cpp
++ocdm_client: ocdm_client.cpp
++	$(MAKE) -C $(OCDM_CLIENT_DIR)/../opencdm all
 +	@mkdir -p $(OCDM_WPE_ROOT_PATH)/bin
 +	$(CXX) $< $(CXFLAGS) $(LD_FLAGS) -Wall -o  $(OCDM_WPE_ROOT_PATH)/bin/ocdm_client
 +
 +.PHONY: clean ocdm_client
 +clean:
 +	@echo "Cleaning ocdm client"
-+	@rm -f $(OCDM_ROOT_WPE_PATH)/bin/ocdm_client
++	@rm -f $(OCDM_WPE_ROOT_PATH)/bin/ocdm_client
 +
 diff --git a/src/browser/wpe/test/ocdm_client.cpp b/src/browser/wpe/test/ocdm_client.cpp
 new file mode 100644
-index 0000000..9d84a92
+index 0000000..e82b07a
 --- /dev/null
 +++ b/src/browser/wpe/test/ocdm_client.cpp
-@@ -0,0 +1,160 @@
+@@ -0,0 +1,162 @@
 +
 +#include <open_cdm.h>
 +#include "ocdm_client.h"
@@ -379,12 +429,14 @@ index 0000000..9d84a92
 +static OpenCdm* g_pOpenCdm = NULL;
 +const std::string open_cdm_key_system = "org.chromium.externalclearkey";
 +
-+int ocdmClientCreateSession(void **ocdmDrmStream, unsigned char *pbInitData, int cbInitData)
++int ocdmClient::clientCreateSession(void **ocdmDrmStream, unsigned char *pbInitData, int cbInitData)
 +{
 +
 +    int ret  = 1;
++    const std::string mimeType = "video/mock";
 +    if (g_pOpenCdm == NULL) {
-+        g_pOpenCdm = new OpenCdm(open_cdm_key_system);
++        g_pOpenCdm = new OpenCdm();
++        g_pOpenCdm->SelectKeySystem(open_cdm_key_system);
 +    }
 +
 +    if (g_pOpenCdm != NULL) {
@@ -394,12 +446,12 @@ index 0000000..9d84a92
 +      return ret;
 +    }
 +
-+    ret = g_pOpenCdm->CreateSession(pbInitData, cbInitData);
++    ret = g_pOpenCdm->CreateSession(mimeType,pbInitData, cbInitData);
 +    *ocdmDrmStream = (void *) g_pOpenCdm;
 +    return ret;
 +}
 +
-+int ocdmStreamGetLicenseChallenge(void *ocdmDrmStream, unsigned char *challenge,
++int ocdmClient::streamGetLicenseChallenge(void *ocdmDrmStream, unsigned char *challenge,
 +                                   int *challengeLength, unsigned char *licenseURL, int *urlLength)
 +{
 +    int ret = 1;
@@ -420,13 +472,13 @@ index 0000000..9d84a92
 +    return ret;
 +}
 +
-+int ocdmStreamUpdate(void *ocdmDrmStream, unsigned char *pbResponse, int  cbResponse)
++int ocdmClient::streamUpdate(void *ocdmDrmStream, unsigned char *pbResponse, int  cbResponse)
 +{
 +    int ret = 1;
 +
 +    cout << "ocdmStream_ProcessLicenseResponse() response length:" << cbResponse << endl;
 +    if (g_pOpenCdm == NULL) {
-+        cerr << "mediakeysession is null" << endl;
++        cout << "mediakeysession is null" << endl;
 +        return ret;
 +    }
 +
@@ -437,7 +489,7 @@ index 0000000..9d84a92
 +
 +}
 +
-+int ocdmStreamDecrypt(void *ocdmDrmStream, unsigned char *encryptedData, uint32_t encryptedDataLength,
++int ocdmClient::streamDecrypt(void *ocdmDrmStream, unsigned char *encryptedData, uint32_t encryptedDataLength,
 +                       unsigned char *ivData, uint32_t ivDataLength)
 +{
 +    int ret = 1;
@@ -452,7 +504,7 @@ index 0000000..9d84a92
 +    return 0;
 +}
 +
-+int ocdmStreamCloseStream(void *ocdmDrmStream)
++int ocdmClient::streamCloseStream(void *ocdmDrmStream)
 +{
 +    int ret = 1;
 +
@@ -514,24 +566,24 @@ index 0000000..9d84a92
 +    int challenge_len = 0;
 +    unsigned char test_url[100];
 +    int url_length = 0;
-+
-+    ocdmClientCreateSession(&test_drm, initial_value, 4);
-+    ocdmStreamGetLicenseChallenge(test_drm, test_challenge, &challenge_len, test_url, &url_length);
++    ocdmClient *client =  new ocdmClient();
++    client->clientCreateSession(&test_drm, initial_value, 4);
++    client->streamGetLicenseChallenge(test_drm, test_challenge, &challenge_len, test_url, &url_length);
 +    if(url_length > 0) {
 +	cout << "contact server for license with URL: " << test_url << endl;
 +	//sleep 1 seconds to similate server interaction
 +	usleep(500 * 1000);
-+	ocdmStreamUpdate(test_drm, puc_lic_response, cb_lic_response);
++	client->streamUpdate(test_drm, puc_lic_response, cb_lic_response);
 +    }
 +
-+    ocdmStreamDecrypt(test_drm, encryptedData, 16, iv, 16);
++    client->streamDecrypt(test_drm, encryptedData, 16, iv, 16);
 +    printBytes(cout, "decrypted data dump", encryptedData, 16, true);
-+    ocdmStreamCloseStream(test_drm);
++    client->streamCloseStream(test_drm);
 +    return 0;
 +}
 diff --git a/src/browser/wpe/test/ocdm_client.h b/src/browser/wpe/test/ocdm_client.h
 new file mode 100644
-index 0000000..d712b3e
+index 0000000..82b5b79
 --- /dev/null
 +++ b/src/browser/wpe/test/ocdm_client.h
 @@ -0,0 +1,26 @@
@@ -549,16 +601,16 @@ index 0000000..d712b3e
 +#include <stdlib.h>
 +#include <common/cdm_logging.h>
 +
-+
-+int ocdmClientCreateSession(void  **, unsigned char *, int);
-+
-+int ocdmStreamGetLicenseChallenge(void *, unsigned char *, int *, unsigned char *, int *);
-+
-+int ocdmStreamUpdate(void *, unsigned char *, int);
-+
-+int ocdmStreamDecrypt(void *, unsigned char * , uint32_t , unsigned char *, uint32_t);
-+
-+int ocdmStreamCloseStream(void *);
++class ocdmClient {
++public :
++    ocdmClient(){};
++    ~ocdmClient(){}
++    int clientCreateSession(void  **, unsigned char *, int);
++    int streamGetLicenseChallenge(void *, unsigned char *, int *, unsigned char *, int *);
++    int streamUpdate(void *, unsigned char *, int);
++    int streamDecrypt(void *, unsigned char *, uint32_t, unsigned char *, uint32_t);
++    int streamCloseStream(void *);
++};
 +
 +#endif
 diff --git a/src/cdm/open_cdm_platform.h b/src/cdm/open_cdm_platform.h
@@ -645,7 +697,7 @@ index 7098f05..898c80f 100644
  namespace media {
  
 diff --git a/src/cdm/open_cdm_platform_impl.cc b/src/cdm/open_cdm_platform_impl.cc
-index f6d9a4d..b16f260 100644
+index f6d9a4d..f0a7450 100644
 --- a/src/cdm/open_cdm_platform_impl.cc
 +++ b/src/cdm/open_cdm_platform_impl.cc
 @@ -14,9 +14,9 @@
@@ -656,8 +708,8 @@ index f6d9a4d..b16f260 100644
 -#include "media/cdm/ppapi/external_open_cdm/com/cdm/open_cdm_platform_com_handler_factory.h"
 -#include "media/cdm/ppapi/cdm_logging.h"
 +#include "open_cdm_platform_impl.h"
-+#include <com/cdm/open_cdm_platform_com_handler_factory.h>
-+#include <common/cdm_logging.h>
++#include <open_cdm_platform_com_handler_factory.h>
++#include <cdm_logging.h>
  
  namespace media {
  
@@ -699,7 +751,7 @@ index ec5c923..adf5439 100644
  
    // EME equivalent: media_key_session_.release()
 diff --git a/src/com/cdm/open_cdm_platform_com_handler_factory.h b/src/com/cdm/open_cdm_platform_com_handler_factory.h
-index 26cb155..5f1af85 100644
+index 26cb155..42e3514 100644
 --- a/src/com/cdm/open_cdm_platform_com_handler_factory.h
 +++ b/src/com/cdm/open_cdm_platform_com_handler_factory.h
 @@ -17,9 +17,9 @@
@@ -709,14 +761,14 @@ index 26cb155..5f1af85 100644
 -#include "media/cdm/ppapi/external_open_cdm/cdm/open_cdm_platform_com.h"
 -#include "media/cdm/ppapi/external_open_cdm/cdm/open_cdm_platform_com_callback_receiver.h"
 -#include "media/cdm/ppapi/external_open_cdm/com/cdm/rpc/rpc_cdm_platform_handler.h"
-+#include <cdm/open_cdm_platform_com.h>
-+#include <cdm/open_cdm_platform_com_callback_receiver.h>
-+#include "./rpc/rpc_cdm_platform_handler.h"
++#include <open_cdm_platform_com.h>
++#include <open_cdm_platform_com_callback_receiver.h>
++#include <rpc_cdm_platform_handler.h>
  
  namespace media {
  
 diff --git a/src/com/cdm/rpc/rpc_cdm_platform_handler.cc b/src/com/cdm/rpc/rpc_cdm_platform_handler.cc
-index 18987c2..b57113a 100644
+index 18987c2..653e1b7 100644
 --- a/src/com/cdm/rpc/rpc_cdm_platform_handler.cc
 +++ b/src/com/cdm/rpc/rpc_cdm_platform_handler.cc
 @@ -17,11 +17,11 @@
@@ -726,11 +778,11 @@ index 18987c2..b57113a 100644
 -#include "media/cdm/ppapi/external_open_cdm/com/cdm/rpc/rpc_cdm_platform_handler.h"
 -#include "media/cdm/ppapi/cdm_logging.h"
 +#include "rpc_cdm_platform_handler.h"
-+#include <common/cdm_logging.h>
++#include <cdm_logging.h>
  
  extern "C" {
 -#include "media/cdm/ppapi/external_open_cdm/com/common/rpc/opencdm_xdr.h"
-+#include <com/common/rpc/opencdm_xdr.h>
++#include <opencdm_xdr.h>
  }
  
  typedef struct {
@@ -793,7 +845,7 @@ index 18987c2..b57113a 100644
  
    return response;
 diff --git a/src/com/cdm/rpc/rpc_cdm_platform_handler.h b/src/com/cdm/rpc/rpc_cdm_platform_handler.h
-index f345f7d..a6affe8 100644
+index f345f7d..4d49887 100644
 --- a/src/com/cdm/rpc/rpc_cdm_platform_handler.h
 +++ b/src/com/cdm/rpc/rpc_cdm_platform_handler.h
 @@ -20,10 +20,10 @@
@@ -804,10 +856,10 @@ index f345f7d..a6affe8 100644
 -#include "media/cdm/ppapi/external_open_cdm/cdm/open_cdm_platform_com.h"
 -#include "media/cdm/ppapi/external_open_cdm/cdm/open_cdm_platform_com_callback_receiver.h"
 -#include "media/cdm/ppapi/external_open_cdm/com/common/rpc/opencdm_callback.h"
-+#include <cdm/open_cdm_platform_common.h>
-+#include <cdm/open_cdm_platform_com.h>
-+#include <cdm/open_cdm_platform_com_callback_receiver.h>
-+#include <com/common/rpc/opencdm_callback.h>
++#include <open_cdm_platform_common.h>
++#include <open_cdm_platform_com.h>
++#include <open_cdm_platform_com_callback_receiver.h>
++#include <opencdm_callback.h>
  
  namespace media {
  
@@ -848,7 +900,7 @@ index 0a90407..f9d697b 100644
  /**
   * Allocates a shared memory segment.
 diff --git a/src/com/mediaengine/rpc/rpc_cdm_mediaengine_handler.cc b/src/com/mediaengine/rpc/rpc_cdm_mediaengine_handler.cc
-index e44d532..7e637e2 100644
+index e44d532..e06ef56 100644
 --- a/src/com/mediaengine/rpc/rpc_cdm_mediaengine_handler.cc
 +++ b/src/com/mediaengine/rpc/rpc_cdm_mediaengine_handler.cc
 @@ -15,9 +15,9 @@
@@ -859,13 +911,13 @@ index e44d532..7e637e2 100644
 -#include "media/cdm/ppapi/cdm_logging.h"
 -#include "media/cdm/ppapi/external_open_cdm/com/common/rpc/opencdm_xdr.h"
 +#include "rpc_cdm_mediaengine_handler.h"
-+#include <common/cdm_logging.h>
-+#include <com/common/rpc/opencdm_xdr.h>
++#include <cdm_logging.h>
++#include <opencdm_xdr.h>
  
  namespace media {
  
 diff --git a/src/com/mediaengine/rpc/rpc_cdm_mediaengine_handler.h b/src/com/mediaengine/rpc/rpc_cdm_mediaengine_handler.h
-index 4437e8e..db3ea5f 100644
+index 4437e8e..e722cf3 100644
 --- a/src/com/mediaengine/rpc/rpc_cdm_mediaengine_handler.h
 +++ b/src/com/mediaengine/rpc/rpc_cdm_mediaengine_handler.h
 @@ -20,8 +20,8 @@
@@ -874,8 +926,8 @@ index 4437e8e..db3ea5f 100644
  
 -#include "media/cdm/ppapi/external_open_cdm/com/common/shmemsem/shmemsem_helper.h"
 -#include "media/cdm/ppapi/external_open_cdm/mediaengine/open_cdm_mediaengine_com.h"
-+#include <com/common/shmemsem/shmemsem_helper.h>
-+#include <mediaengine/open_cdm_mediaengine_com.h>
++#include <shmemsem_helper.h>
++#include <open_cdm_mediaengine_com.h>
  
  namespace media {
  
@@ -941,7 +993,7 @@ index a6a8af1..4193e2e 100644
  namespace media {
  
 diff --git a/src/mediaengine/open_cdm_mediaengine_impl.cc b/src/mediaengine/open_cdm_mediaengine_impl.cc
-index 39d9869..9960fb4 100644
+index 39d9869..0fc9ebd 100644
 --- a/src/mediaengine/open_cdm_mediaengine_impl.cc
 +++ b/src/mediaengine/open_cdm_mediaengine_impl.cc
 @@ -14,10 +14,9 @@
@@ -953,8 +1005,8 @@ index 39d9869..9960fb4 100644
 -
 -#include "media/cdm/ppapi/cdm_logging.h"
 +#include "open_cdm_mediaengine_impl.h"
-+#include <com/mediaengine/rpc/rpc_cdm_mediaengine_handler.h>
-+#include <common/cdm_logging.h>
++#include <rpc_cdm_mediaengine_handler.h>
++#include <cdm_logging.h>
  
  namespace media {
  
