@@ -680,7 +680,7 @@ index 041fe10..2bfdbcb 100644
  
  struct OpenCdmPlatformSessionId {
 diff --git a/src/cdm/open_cdm_platform_factory.h b/src/cdm/open_cdm_platform_factory.h
-index 7098f05..898c80f 100644
+index 7098f05..e6f8349 100644
 --- a/src/cdm/open_cdm_platform_factory.h
 +++ b/src/cdm/open_cdm_platform_factory.h
 @@ -17,9 +17,9 @@
@@ -690,9 +690,9 @@ index 7098f05..898c80f 100644
 -#include "media/cdm/ppapi/external_open_cdm/cdm/open_cdm_platform.h"
 -#include "media/cdm/ppapi/external_open_cdm/cdm/open_cdm_platform_impl.h"
 -#include "media/cdm/ppapi/external_open_cdm/cdm/open_cdm_platform_com_callback_receiver.h"
-+#include "./open_cdm_platform.h"
-+#include "./open_cdm_platform_impl.h"
-+#include "./open_cdm_platform_com_callback_receiver.h"
++#include <open_cdm_platform.h>
++#include <open_cdm_platform_impl.h>
++#include <open_cdm_platform_com_callback_receiver.h>
  
  namespace media {
  
@@ -949,7 +949,7 @@ index 0000000..6b59272
 +
 +#endif  // MEDIA_CDM_CDM_LOGGING_H_
 diff --git a/src/mediaengine/open_cdm_mediaengine.h b/src/mediaengine/open_cdm_mediaengine.h
-index f617da1..57c911f 100644
+index f617da1..2178b89 100644
 --- a/src/mediaengine/open_cdm_mediaengine.h
 +++ b/src/mediaengine/open_cdm_mediaengine.h
 @@ -17,7 +17,7 @@
@@ -957,7 +957,7 @@ index f617da1..57c911f 100644
  #define MEDIA_CDM_PPAPI_EXTERNAL_OPEN_CDM_MEDIAENGINE_OPEN_CDM_MEDIAENGINE_H_
  
 -#include "media/cdm/ppapi/external_open_cdm/cdm/open_cdm_platform_common.h"
-+#include "../cdm/open_cdm_platform_common.h"
++#include <open_cdm_platform_common.h>
  
  namespace media {
  
