@@ -23,7 +23,7 @@ endef
 
 define HOST_GYP_INSTALL_CMDS
         $(HOST_MAKE_ENV) PYTHON=$(HOST_DIR)/usr/bin/python2;
-        cd $(@D);sudo $(PYTHON) setup.py install;
+        cd $(@D);$(PYTHON) setup.py install;
 endef
 
 $(eval $(generic-package))
