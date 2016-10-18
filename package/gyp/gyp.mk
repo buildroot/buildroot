@@ -13,7 +13,7 @@ GYP_DEPENDENCIES = host-gyp
 HOST_GYP_DEPENDENCIES = host-python host-python-setuptools 
 
 define HOST_GYP_CONFIGURE_CMDS
-	(cd $(@D); sudo rm -rf build)
+	(cd $(@D); rm -rf build)
 endef
 
 define HOST_GYP_BUILD_CMDS
