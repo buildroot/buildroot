@@ -13,7 +13,7 @@ GYP_DEPENDENCIES = host-gyp
 HOST_GYP_DEPENDENCIES = host-python host-python-setuptools 
 
 define HOST_GYP_CONFIGURE_CMDS
-	(cd $(@D); sudo rm -rf build)
+	(cd $(@D); rm -rf build)
 endef
 
 define HOST_GYP_BUILD_CMDS
@@ -23,7 +23,7 @@ endef
 
 define HOST_GYP_INSTALL_CMDS
         $(HOST_MAKE_ENV) PYTHON=$(HOST_DIR)/usr/bin/python2;
-        cd $(@D);sudo $(PYTHON) setup.py install;
+        cd $(@D);$(PYTHON) setup.py install;
 endef
 
 $(eval $(generic-package))
