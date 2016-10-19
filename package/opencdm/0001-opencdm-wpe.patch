@@ -108,10 +108,10 @@ index 0000000..310e820
 +	@rm -f $(OCDM_WPE_DIR)/include/*
 diff --git a/src/browser/wpe/opencdm/open_cdm.cpp b/src/browser/wpe/opencdm/open_cdm.cpp
 new file mode 100644
-index 0000000..5c21a6c
+index 0000000..f1660dd
 --- /dev/null
 +++ b/src/browser/wpe/opencdm/open_cdm.cpp
-@@ -0,0 +1,162 @@
+@@ -0,0 +1,175 @@
 +
 +#include <open_cdm_mediaengine_factory.h>
 +#include <open_cdm_platform_factory.h>
@@ -234,6 +234,19 @@ index 0000000..5c21a6c
 +    return 0;
 +}
 +
++bool OpenCdm::IsTypeSupported(const  std::string& keySystem,const  std::string& mimeType) {
++
++    MediaKeyTypeResponse ret;
++
++    ret = platform_->IsTypeSupported(keySystem, mimeType);
++    CDM_DLOG() << "IsTypeSupported ";
++
++    if (ret.platform_response ==  PLATFORM_CALL_SUCCESS )
++        return (true);
++    else
++        return (false);
++}
++
 +void OpenCdm::ReadyCallback(OpenCdmPlatformSessionId platform_session_id) {
 +
 +    CDM_DLOG() << "OpenCdm::ReadyCallback";
@@ -276,10 +289,10 @@ index 0000000..5c21a6c
 +}
 diff --git a/src/browser/wpe/opencdm/open_cdm.h b/src/browser/wpe/opencdm/open_cdm.h
 new file mode 100644
-index 0000000..1d64a39
+index 0000000..240e33d
 --- /dev/null
 +++ b/src/browser/wpe/opencdm/open_cdm.h
-@@ -0,0 +1,70 @@
+@@ -0,0 +1,71 @@
 +
 +#ifndef OCDM_WRAPPER_H_
 +#define OCDM_WRAPPER_H_
@@ -325,6 +338,7 @@ index 0000000..1d64a39
 +    int GetKeyMessage(unsigned char *, int *, unsigned char *, int *);
 +    int Update(unsigned char *, int);
 +    void SelectKeySystem(const std::string& );
++    bool IsTypeSupported(const  std::string& keySystem,const  std::string& mimeType);
 +    int Decrypt(unsigned char *, uint32_t, unsigned char *, uint32_t);
 +
 +private:
@@ -614,7 +628,7 @@ index 0000000..82b5b79
 +
 +#endif
 diff --git a/src/cdm/open_cdm_platform.h b/src/cdm/open_cdm_platform.h
-index 0983e74..d09df1f 100644
+index 0983e74..985d67b 100644
 --- a/src/cdm/open_cdm_platform.h
 +++ b/src/cdm/open_cdm_platform.h
 @@ -18,8 +18,8 @@
@@ -628,7 +642,7 @@ index 0983e74..d09df1f 100644
  
  namespace media {
  
-@@ -42,7 +42,7 @@ class OpenCdmPlatform {
+@@ -42,13 +42,16 @@ class OpenCdmPlatform {
  
    // EME equivalent: media_key_session_.update()
    virtual MediaKeySessionUpdateResponse MediaKeySessionUpdate(
@@ -637,6 +651,15 @@ index 0983e74..d09df1f 100644
        uint32_t session_id_len) = 0;
  
    // EME equivalent: media_key_session_.release()
+   virtual MediaKeySessionReleaseResponse MediaKeySessionRelease(
+       char *session_id_val, uint32_t session_id_len) = 0;
+ 
++  //EME equivalent : media_key_.isTypeSupported()
++  virtual MediaKeyTypeResponse IsTypeSupported(const std::string&,
++                                            const std::string&) = 0;
+ 
+   virtual ~OpenCdmPlatform() {
+   }
 diff --git a/src/cdm/open_cdm_platform_com.h b/src/cdm/open_cdm_platform_com.h
 index ef7a6a6..864a370 100644
 --- a/src/cdm/open_cdm_platform_com.h
@@ -655,7 +678,7 @@ index ef7a6a6..864a370 100644
  #include <string>
  
 diff --git a/src/cdm/open_cdm_platform_common.h b/src/cdm/open_cdm_platform_common.h
-index 041fe10..2bfdbcb 100644
+index 041fe10..15ed54b 100644
 --- a/src/cdm/open_cdm_platform_common.h
 +++ b/src/cdm/open_cdm_platform_common.h
 @@ -18,7 +18,10 @@
@@ -679,6 +702,15 @@ index 041fe10..2bfdbcb 100644
  };
  
  struct OpenCdmPlatformSessionId {
+@@ -42,6 +45,8 @@ struct OpenCdmPlatformSessionId {
+ 
+ struct MediaKeysResponse : public PlatformResponse {
+ };
++struct MediaKeyTypeResponse : public PlatformResponse {
++};
+ struct MediaKeysCreateSessionResponse : public PlatformResponse {
+   OpenCdmPlatformSessionId session_id;
+ };
 diff --git a/src/cdm/open_cdm_platform_factory.h b/src/cdm/open_cdm_platform_factory.h
 index 7098f05..e6f8349 100644
 --- a/src/cdm/open_cdm_platform_factory.h
@@ -697,7 +729,7 @@ index 7098f05..e6f8349 100644
  namespace media {
  
 diff --git a/src/cdm/open_cdm_platform_impl.cc b/src/cdm/open_cdm_platform_impl.cc
-index f6d9a4d..f0a7450 100644
+index f6d9a4d..9b56372 100644
 --- a/src/cdm/open_cdm_platform_impl.cc
 +++ b/src/cdm/open_cdm_platform_impl.cc
 @@ -14,9 +14,9 @@
@@ -722,8 +754,23 @@ index f6d9a4d..f0a7450 100644
      uint32_t session_id_len) {
    CDM_DLOG() << "OpenCdmPlatformCdmiImpl::MediaKeySessionUpdate";
    MediaKeySessionUpdateResponse response;
+@@ -79,6 +79,14 @@ MediaKeySessionReleaseResponse OpenCdmPlatformImpl::MediaKeySessionRelease(
+   return response;
+ }
+ 
++MediaKeyTypeResponse OpenCdmPlatformImpl::IsTypeSupported(
++    const std::string& keysystem,const std::string& mimeType) {
++
++    CDM_DLOG() << "OpenCdmPlatformCdmiImpl::IsTypeSupported";
++    MediaKeyTypeResponse response = com_handler_->IsTypeSupported(keysystem,mimeType);
++    return response;
++}
++
+ // OpenCdmComCallbackReceiver inheritance
+ void OpenCdmPlatformImpl::ErrorCallback(
+     OpenCdmPlatformSessionId platform_session_id, uint32_t sys_err,
 diff --git a/src/cdm/open_cdm_platform_impl.h b/src/cdm/open_cdm_platform_impl.h
-index ec5c923..adf5439 100644
+index ec5c923..1ddea47 100644
 --- a/src/cdm/open_cdm_platform_impl.h
 +++ b/src/cdm/open_cdm_platform_impl.h
 @@ -18,10 +18,10 @@
@@ -741,7 +788,7 @@ index ec5c923..adf5439 100644
  
  namespace media {
  
-@@ -45,7 +45,7 @@ class OpenCdmPlatformImpl : public OpenCdmPlatform,
+@@ -45,13 +45,17 @@ class OpenCdmPlatformImpl : public OpenCdmPlatform,
  
    // EME equivalent: media_key_session_.update()
    MediaKeySessionUpdateResponse MediaKeySessionUpdate(
@@ -750,6 +797,16 @@ index ec5c923..adf5439 100644
        uint32_t session_id_len) override;
  
    // EME equivalent: media_key_session_.release()
+   MediaKeySessionReleaseResponse MediaKeySessionRelease(
+       char *session_id_val, uint32_t session_id_len) override;
+ 
++  //EME equivalent : media_key_.isTypeSupported()
++  MediaKeyTypeResponse IsTypeSupported(const std::string&,
++                                            const std::string&) override;
++
+   // OpenCdmComCallbackReceiver inheritance
+   void ErrorCallback(OpenCdmPlatformSessionId platform_session_id,
+                              uint32_t sys_err, std::string err_msg) override;
 diff --git a/src/com/cdm/open_cdm_platform_com_handler_factory.h b/src/com/cdm/open_cdm_platform_com_handler_factory.h
 index 26cb155..42e3514 100644
 --- a/src/com/cdm/open_cdm_platform_com_handler_factory.h
@@ -768,7 +825,7 @@ index 26cb155..42e3514 100644
  namespace media {
  
 diff --git a/src/com/cdm/rpc/rpc_cdm_platform_handler.cc b/src/com/cdm/rpc/rpc_cdm_platform_handler.cc
-index 18987c2..653e1b7 100644
+index 18987c2..d9c67c0 100644
 --- a/src/com/cdm/rpc/rpc_cdm_platform_handler.cc
 +++ b/src/com/cdm/rpc/rpc_cdm_platform_handler.cc
 @@ -17,11 +17,11 @@
@@ -813,7 +870,70 @@ index 18987c2..653e1b7 100644
    switch (rqstp->rq_proc) {
    case NULLPROC:
      (void) svc_sendreply (transp, (xdrproc_t) xdr_void, (char *)NULL);
-@@ -455,7 +458,7 @@ MediaKeysLoadSessionResponse RpcCdmPlatformHandler::MediaKeysLoadSession(
+@@ -352,6 +355,62 @@ MediaKeysResponse RpcCdmPlatformHandler::MediaKeys(std::string key_system) {
+ 
+   return response;
+ }
++  //EME equivalent : media_key_.isTypeSupported()
++MediaKeyTypeResponse RpcCdmPlatformHandler::IsTypeSupported(const std::string& key_system,
++                                            const std::string& mime_type) {
++  CDM_DLOG() << "RpcCdmPlatformHandler:: IsTypeSupported";
++  MediaKeyTypeResponse response;
++
++  // rpc not ready
++  if (com_state == FAULTY) {
++    response.platform_response = PLATFORM_CALL_FAIL;
++    CDM_DLOG() << "RpcCdmPlatformHandler::MediaKeys connection state faulty";
++    return response;
++  }
++
++  if ((rpc_client = clnt_create(rpc_server_host.c_str(), OPEN_CDM,
++                                OPEN_CDM_EME_5,
++                                "tcp")) == NULL) {
++    com_state = FAULTY;
++    clnt_pcreateerror(rpc_server_host.c_str());
++    response.platform_response = PLATFORM_CALL_FAIL;
++    CDM_DLOG() << "RpcCdmPlatformHandler connection to server failed";
++    return response;
++  } else {
++    CDM_DLOG() << "RpcCdmPlatformHandler connected to server";
++  }
++
++  //Pass keysystem
++  rpc_response_generic *rpc_response;
++  rpc_request_is_type_supported rpc_param;
++  rpc_param.key_system.key_system_val = reinterpret_cast<char *>(
++      malloc(key_system.size()));
++  memcpy(rpc_param.key_system.key_system_val, key_system.c_str(),
++         key_system.size());
++  rpc_param.key_system.key_system_len = key_system.size();
++ //pass mimeType
++  rpc_param.mime_type.mime_type_val = reinterpret_cast<char *>(
++      malloc(mime_type.size()));
++  memcpy(rpc_param.mime_type.mime_type_val, mime_type.c_str(),
++         mime_type.size());
++  rpc_param.mime_type.mime_type_len = mime_type.size();
++
++ //rpc call to server
++  if ((rpc_response = rpc_open_cdm_is_type_supported_1(&rpc_param, rpc_client))
++      == NULL) {
++    clnt_perror(rpc_client, rpc_server_host.c_str());
++  }
++
++  if (rpc_response->platform_val == 0) {
++    CDM_DLOG() << "cdm_mediakeys_rpc_1 success\n ";
++    response.platform_response = PLATFORM_CALL_SUCCESS;
++  } else {
++    CDM_DLOG() << "cdm_mediakeys_rpc_1 failed\n ";
++    response.platform_response = PLATFORM_CALL_FAIL;
++  }
++  return response;
++}
++
+ 
+ MediaKeysCreateSessionResponse RpcCdmPlatformHandler::MediaKeysCreateSession(
+     const std::string& init_data_type, const uint8_t* init_data,
+@@ -455,7 +514,7 @@ MediaKeysLoadSessionResponse RpcCdmPlatformHandler::MediaKeysLoadSession(
  }
  
  MediaKeySessionUpdateResponse RpcCdmPlatformHandler::MediaKeySessionUpdate(
@@ -822,7 +942,7 @@ index 18987c2..653e1b7 100644
      uint32_t session_id_len) {
    CDM_DLOG() << "RpcCdmPlatformHandler::MediaKeySessionUpdate";
    MediaKeySessionUpdateResponse response;
-@@ -481,13 +484,14 @@ MediaKeySessionUpdateResponse RpcCdmPlatformHandler::MediaKeySessionUpdate(
+@@ -481,13 +540,14 @@ MediaKeySessionUpdateResponse RpcCdmPlatformHandler::MediaKeySessionUpdate(
        &rpc_param, rpc_client)) == NULL) {
      clnt_perror(rpc_client, rpc_server_host.c_str());
    }
@@ -845,7 +965,7 @@ index 18987c2..653e1b7 100644
  
    return response;
 diff --git a/src/com/cdm/rpc/rpc_cdm_platform_handler.h b/src/com/cdm/rpc/rpc_cdm_platform_handler.h
-index f345f7d..4d49887 100644
+index f345f7d..e69b6a4 100644
 --- a/src/com/cdm/rpc/rpc_cdm_platform_handler.h
 +++ b/src/com/cdm/rpc/rpc_cdm_platform_handler.h
 @@ -20,10 +20,10 @@
@@ -863,7 +983,18 @@ index f345f7d..4d49887 100644
  
  namespace media {
  
-@@ -46,7 +46,7 @@ class RpcCdmPlatformHandler : public OpenCdmPlatformCom {
+@@ -34,7 +34,9 @@ class RpcCdmPlatformHandler : public OpenCdmPlatformCom {
+ 
+   // EME equivalent: new MediaKeys()
+   MediaKeysResponse MediaKeys(std::string key_system) override;
+-
++  //EME equivalent : media_key_.isTypeSupported()
++  MediaKeyTypeResponse IsTypeSupported(const std::string&,
++                                            const std::string&) override;
+   // EME equivalent: media_keys_.createSession()
+   MediaKeysCreateSessionResponse MediaKeysCreateSession(
+       const std::string& init_data_type, const uint8_t* init_data,
+@@ -46,7 +48,7 @@ class RpcCdmPlatformHandler : public OpenCdmPlatformCom {
  
    // EME equivalent: media_key_session_.update()
    MediaKeySessionUpdateResponse MediaKeySessionUpdate(

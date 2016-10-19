@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPENCDMI_VERSION = 0042eed57da939aec0b7b1bdfc79da311b276c3d
+OPENCDMI_VERSION = a5748b2869b7af3b6c147e1465fce117bed0656f
 OPENCDMI_SITE_METHOD = git
 OPENCDMI_SITE = git@github.com:Metrological/open-content-decryption-module-cdmi.git
 
@@ -30,6 +30,7 @@ define OPENCDMI_BUILD_CMDS
 endef
 define OPENCDMI_INSTALL_TARGET_CMDS
         cp $(@D)/cdmiservice $(TARGET_DIR)/usr/bin
+        cp $(@D)/libocdmi.so $(TARGET_DIR)/usr/lib
 endef
 
 $(eval $(generic-package))
