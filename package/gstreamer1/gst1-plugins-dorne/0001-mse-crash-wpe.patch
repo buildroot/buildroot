@@ -1,0 +1,30 @@
+From 4c9021775b3f1f716196dad085e1b85cf97721f2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Fri, 21 Oct 2016 13:02:20 +0200
+Subject: [PATCH] Fixed crash when position is asked before Fusion is fully
+ initialized
+
+This happens at least on the MSE YouTube tests.
+---
+ src/gstdornevideosink.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/src/gstdornevideosink.c b/src/gstdornevideosink.c
+index 38190ea..bfbcd34 100644
+--- a/src/gstdornevideosink.c
++++ b/src/gstdornevideosink.c
+@@ -556,11 +556,12 @@ gst_dorne_video_sink_query (GstElement * element, GstQuery * query)
+   switch (GST_QUERY_TYPE (query)) {
+     case GST_QUERY_POSITION:{
+       GstFormat format;
+-      GstClockTime position;
++      GstClockTime position = GST_CLOCK_TIME_NONE;
+ 
+       gst_query_parse_position (query, &format, NULL);
+       if (format == GST_FORMAT_TIME) {
+-        position = gst_dorne_fusion_get_position (sink->m_fusion);
++        if (sink->m_fusion)
++          position = gst_dorne_fusion_get_position (sink->m_fusion);
+         if (position != GST_CLOCK_TIME_NONE) {
+           gst_query_set_position (query, format, position);
+           gint64 currentPts = GST_CLOCK_TIME_NONE;
