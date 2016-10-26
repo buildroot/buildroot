@@ -1,0 +1,37 @@
+From 7b92474e21bcd4c89d53ba834e4fc288b114217c Mon Sep 17 00:00:00 2001
+From: Wouter Meek <woutermeek@gmail.com>
+Date: Sat, 8 Oct 2016 11:39:50 -0700
+Subject: [PATCH] [QueuePlayer] Also seek if only 1 sink requests a seek
+
+---
+ QueuePlayer/CInterface.cpp | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/QueuePlayer/CInterface.cpp b/QueuePlayer/CInterface.cpp
+index 2e9ced0..d5813e2 100644
+--- a/QueuePlayer/CInterface.cpp
++++ b/QueuePlayer/CInterface.cpp
+@@ -761,6 +761,7 @@ class QueuePlayerWrapper : public Solutions::QueuePlayer::INotifications {
+         counter = 0;
+         printf("SeekCompleted %d \n", _state);
+         Transition(OPERATIONAL);
++        _lastTime = -1;
+         
+     }
+     virtual void SampleNeeded(unsigned int requestId, unsigned int numSamples, unsigned int sampleSegmentOffset,
+@@ -991,13 +992,13 @@ class QueuePlayerWrapper : public Solutions::QueuePlayer::INotifications {
+     {
+         _adminLock.Lock();
+ 
+-        if (_state == OPERATIONAL) {
++        if (_state == OPERATIONAL && _lastTime != Time) {
+ 
+             ASSERT(_lastTime == -1 || fabs(_lastTime - Time) < EPSILON);
+ 
+             _lastTime = Time;
+ 
+-            SinkState(SinkWrapper::PENDING_SEEK, base);
++            SinkState(SinkWrapper::PENDING_SEEK);
+             PendingActions();
+         }
+ 
