@@ -1,0 +1,86 @@
+From f540a8c05ad127248a763b9eacfffa5dfbf0eef2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Fri, 21 Oct 2016 12:52:26 +0200
+Subject: [PATCH] [GStreamer][MSE] Fusion: Use key unit seek instead of
+ accurate seek on Fusion
+
+---
+ .../graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp  | 17 ++++++++++++++---
+ .../graphics/gstreamer/MediaPlayerPrivateGStreamer.h    |  1 +
+ .../gstreamer/MediaPlayerPrivateGStreamerMSE.cpp        |  2 +-
+ 3 files changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+index f515ff1..5c6eb36 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+@@ -413,6 +413,17 @@
+     return result;
+ }
+ 
++GstSeekFlags MediaPlayerPrivateGStreamer::hardwareDependantSeekFlags()
++{
++#if USE(FUSION_SINK)
++    // With Fusion we use a decoder+renderer sink which can't be fed with samples not starting
++    // in a key frame.
++    return static_cast<GstSeekFlags>(GST_SEEK_FLAG_KEY_UNIT | GST_SEEK_FLAG_SNAP_NEAREST);
++#else
++    return GST_SEEK_FLAG_ACCURATE;
++#endif
++}
++
+ void MediaPlayerPrivateGStreamer::readyTimerFired()
+ {
+     changePipelineState(GST_STATE_NULL);
+@@ -602,7 +613,7 @@
+         }
+     } else {
+         // We can seek now.
+-        if (!doSeek(clockTime, m_player->rate(), static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE))) {
++        if (!doSeek(clockTime, m_player->rate(), static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | hardwareDependantSeekFlags()))) {
+             LOG_MEDIA_MESSAGE("[Seek] seeking to %f failed", time);
+             return;
+         }
+@@ -661,7 +672,7 @@
+     }
+ 
+     INFO_MEDIA_MESSAGE("Need to mute audio?: %d", (int) mute);
+-    if (doSeek(currentPosition, m_playbackRate, static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH))) {
++    if (doSeek(currentPosition, m_playbackRate, static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | hardwareDependantSeekFlags()))) {
+         g_object_set(m_pipeline.get(), "mute", mute, nullptr);
+         m_lastPlaybackRate = m_playbackRate;
+     } else {
+@@ -1665,7 +1676,7 @@
+         if (m_seekIsPending) {
+             LOG_MEDIA_MESSAGE("[Seek] committing pending seek to %f", m_seekTime);
+             m_seekIsPending = false;
+-            m_seeking = doSeek(toGstClockTime(m_seekTime), m_player->rate(), static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE));
++            m_seeking = doSeek(toGstClockTime(m_seekTime), m_player->rate(), static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | hardwareDependantSeekFlags()));
+             if (!m_seeking) {
+                 m_cachedPosition = -1;
+                 LOG_MEDIA_MESSAGE("[Seek] seeking to %f failed", m_seekTime);
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h
+index 9a517cd..dad65ae 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h
+@@ -187,6 +187,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateGStreamerBase {
+     GRefPtr<GstElement> m_source;
+     bool m_volumeAndMuteInitialized;
+ 
++    static GstSeekFlags hardwareDependantSeekFlags();
+     void readyTimerFired();
+ 
+     void notifyPlayerOfVideo();
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerMSE.cpp b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerMSE.cpp
+index 4ea8767..bc68f2c 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerMSE.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerMSE.cpp
+@@ -391,7 +391,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek()
+     GstClockTime position = toGstClockTime(m_seekTime);
+     MediaTime seekTime = MediaTime::createWithDouble(m_seekTime);
+     double rate = m_player->rate();
+-    GstSeekFlags seekType = static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE);
++    GstSeekFlags seekType = static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | hardwareDependantSeekFlags());
+ 
+     // Always move to seeking state to report correct 'currentTime' while pending for actual seek to complete.
+     m_seeking = true;
