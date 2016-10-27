@@ -1,0 +1,347 @@
+diff --git a/nexus/platforms/97439/src/nexus_platform_frontend_cable.c b/nexus/platforms/97439/src/nexus_platform_frontend_cable.c
+index 75d490e..a872d09 100644
+--- a/nexus/platforms/97439/src/nexus_platform_frontend_cable.c
++++ b/nexus/platforms/97439/src/nexus_platform_frontend_cable.c
+@@ -70,7 +70,8 @@
+ #include "nexus_frontend_3128.h"
+ #endif
+ 
+-#if NEXUS_USE_7252S_VMS_SFF
++#define NEXUS_PLATFORM_ARRIS_DCX960 1
++#if NEXUS_USE_7252S_VMS_SFF || NEXUS_PLATFORM_ARRIS_DCX960
+ #include "bchp_sun_top_ctrl.h"
+ 
+ static unsigned ltsidCount[NEXUS_MAX_FRONTENDS];
+@@ -104,7 +105,7 @@ NEXUS_Error NEXUS_Platform_InitFrontend(void)
+     NEXUS_DocsisDeviceCapabilities docsisDeviceCaps;
+ #endif
+ 
+-#if NEXUS_USE_7252S_VMS_SFF
++#if NEXUS_USE_7252S_VMS_SFF || NEXUS_PLATFORM_ARRIS_DCX960
+     BREG_Handle hReg;
+     NEXUS_FrontendLTSIDParameters ltsidParams;
+ #endif
+@@ -244,8 +245,12 @@ NEXUS_Error NEXUS_Platform_InitFrontend(void)
+ #elif NEXUS_NUM_FRONTEND_CARD_SLOTS
+         gpioHandle = NEXUS_Gpio_Open(NEXUS_GpioType_eStandard, 82, &tunerGpioSettings);
+ #else
++#if NEXUS_PLATFORM_ARRIS_DCX960
++        gpioHandle = NEXUS_Gpio_Open(NEXUS_GpioType_eStandard,16, &tunerGpioSettings);
++#else
+         gpioHandle = NEXUS_Gpio_Open(NEXUS_GpioType_eStandard, 28, &tunerGpioSettings);
+ #endif
++#endif
+         if (NULL == gpioHandle)
+         {
+           BDBG_ERR(("Unable to open GPIO for tuner %d", i));
+@@ -267,7 +272,7 @@ NEXUS_Error NEXUS_Platform_InitFrontend(void)
+         st3128DeviceOpenSettings.loadAP = true;
+         st3128DeviceOpenSettings.isMtsif = true;
+ 
+-#if NEXUS_USE_7252S_VMS_SFF
++#if NEXUS_USE_7252S_VMS_SFF || NEXUS_PLATFORM_ARRIS_DCX960
+     hReg = g_pCoreHandles->reg;
+ 
+     /* 3128 MTSIF INC/RST on pin 30/31  */
+@@ -307,7 +312,7 @@ NEXUS_Error NEXUS_Platform_InitFrontend(void)
+                 userParams.chipId = 0x3128;
+                 NEXUS_Frontend_SetUserParameters(pConfig->frontend[i], &userParams);
+ 
+-#if NEXUS_USE_7252S_VMS_SFF
++#if NEXUS_USE_7252S_VMS_SFF || NEXUS_PLATFORM_ARRIS_DCX960
+         NEXUS_Frontend_GetLTSID(pConfig->frontend[i], &ltsidParams);
+         ltsidParams.ltsidNum = userParams.param1;
+         ltsidParams.chipId = 0x3128;
+diff --git a/nexus/platforms/97439/src/nexus_platform_pinmux_cable.c b/nexus/platforms/97439/src/nexus_platform_pinmux_cable.c
+index ad12d1e..0d51440 100644
+--- a/nexus/platforms/97439/src/nexus_platform_pinmux_cable.c
++++ b/nexus/platforms/97439/src/nexus_platform_pinmux_cable.c
+@@ -53,6 +53,9 @@
+ #include "bchp_sun_top_ctrl.h"
+ #include "bchp_aon_pin_ctrl.h"
+ 
++#include "nexus_platform_pinmux_dcx960.c"
++
++#if 0 /* Disabled for ARRIS DCX960 */
+ /* Define GOLd_BOARD to setup SHVD UARTS on GOLD BOARD, default is silver board */
+ #define GOLD_BOARD 0
+ 
+@@ -155,3 +158,4 @@ NEXUS_Error NEXUS_Platform_P_InitPinmux(void)
+ 
+     return BERR_SUCCESS;
+ }
++#endif /* Disabled for ARRIS DCX960 */
+diff --git a/nexus/platforms/97439/src/nexus_platform_pinmux_dcx960.c b/nexus/platforms/97439/src/nexus_platform_pinmux_dcx960.c
+new file mode 100644
+index 0000000..627a983
+--- /dev/null
++++ b/nexus/platforms/97439/src/nexus_platform_pinmux_dcx960.c
+@@ -0,0 +1,268 @@
++/***************************************************************************
++*     (c)2004-2014 Broadcom Corporation
++*
++*  This program is the proprietary software of Broadcom Corporation and/or its licensors,
++*  and may only be used, duplicated, modified or distributed pursuant to the terms and
++*  conditions of a separate, written license agreement executed between you and Broadcom
++*  (an "Authorized License").  Except as set forth in an Authorized License, Broadcom grants
++*  no license (express or implied), right to use, or waiver of any kind with respect to the
++*  Software, and Broadcom expressly reserves all rights in and to the Software and all
++*  intellectual property rights therein.  IF YOU HAVE NO AUTHORIZED LICENSE, THEN YOU
++*  HAVE NO RIGHT TO USE THIS SOFTWARE IN ANY WAY, AND SHOULD IMMEDIATELY
++*  NOTIFY BROADCOM AND DISCONTINUE ALL USE OF THE SOFTWARE.
++*
++*  Except as expressly set forth in the Authorized License,
++*
++*  1.     This program, including its structure, sequence and organization, constitutes the valuable trade
++*  secrets of Broadcom, and you shall use all reasonable efforts to protect the confidentiality thereof,
++*  and to use this information only in connection with your use of Broadcom integrated circuit products.
++*
++*  2.     TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE SOFTWARE IS PROVIDED "AS IS"
++*  AND WITH ALL FAULTS AND BROADCOM MAKES NO PROMISES, REPRESENTATIONS OR
++*  WARRANTIES, EITHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE, WITH RESPECT TO
++*  THE SOFTWARE.  BROADCOM SPECIFICALLY DISCLAIMS ANY AND ALL IMPLIED WARRANTIES
++*  OF TITLE, MERCHANTABILITY, NONINFRINGEMENT, FITNESS FOR A PARTICULAR PURPOSE,
++*  LACK OF VIRUSES, ACCURACY OR COMPLETENESS, QUIET ENJOYMENT, QUIET POSSESSION
++*  OR CORRESPONDENCE TO DESCRIPTION. YOU ASSUME THE ENTIRE RISK ARISING OUT OF
++*  USE OR PERFORMANCE OF THE SOFTWARE.
++*
++*  3.     TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL BROADCOM OR ITS
++*  LICENSORS BE LIABLE FOR (i) CONSEQUENTIAL, INCIDENTAL, SPECIAL, INDIRECT, OR
++*  EXEMPLARY DAMAGES WHATSOEVER ARISING OUT OF OR IN ANY WAY RELATING TO YOUR
++*  USE OF OR INABILITY TO USE THE SOFTWARE EVEN IF BROADCOM HAS BEEN ADVISED OF
++*  THE POSSIBILITY OF SUCH DAMAGES; OR (ii) ANY AMOUNT IN EXCESS OF THE AMOUNT
++*  ACTUALLY PAID FOR THE SOFTWARE ITSELF OR U.S. $1, WHICHEVER IS GREATER. THESE
++*  LIMITATIONS SHALL APPLY NOTWITHSTANDING ANY FAILURE OF ESSENTIAL PURPOSE OF
++*  ANY LIMITED REMEDY.
++ *
++ * $brcm_Workfile: nexus_platform_pinmux_ipc1100p4.c $
++ * $brcm_Revision: jh_Mot_MTN1.xx_Unified_2/1 $
++ * $brcm_Date: 10/17/14 11:00a $
++ *
++ * Module Description:
++ *
++ * Revision History:
++ *
++ * $brcm_Log: /Mot_MTN/Brcm_Refsw/Unified/nexus/platforms/97252/src/nexus_platform_pinmux_ipc1100p4.c $
++ * 
++ ***************************************************************************/
++
++#include "nexus_platform.h"
++#include "nexus_platform_priv.h"
++#include "priv/nexus_core.h"
++#include "bchp_sun_top_ctrl.h"
++#include "bchp_aon_pin_ctrl.h"
++
++BDBG_MODULE(nexus_platform_pinmux_dcx960);
++
++#if NEXUS_PLATFORM_ARRIS_DCX960 || 1
++/***************************************************************************
++Summary:
++    Configure pin muxes for the 97445 reference platform
++Description:
++    The core module must be initialized for this to be called
++ ***************************************************************************/
++NEXUS_Error NEXUS_Platform_P_InitPinmux(void)
++{
++	BREG_Handle hReg = g_pCoreHandles->reg;
++	uint32_t reg;
++
++	/* Let the BOLT defaults come through */
++
++/*	pmux -pin gpio_000,gpio_001 -sel gphy_ -n 2 */
++	reg = BREG_Read32(hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_7);
++	reg &=~(
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_7, gpio_000 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_7, gpio_001 )
++		   );
++	reg |=(
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_7, gpio_000, 2 ) |  /* GPHY_LINK */
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_7, gpio_001, 2 )	  /* GPHY_ACTIVITY */
++		   );
++	BREG_Write32 (hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_7, reg);
++ 
++/* pmux -pin gpio_006,gpio_007 -sel uart_ -n 2 # UART1 */
++	reg = BREG_Read32(hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_8);
++	reg &=~(
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_8, gpio_006 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_8, gpio_007 )
++		   );
++	reg |=(
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_8, gpio_006, 2 ) |  /* UART_RXD_1 */
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_8, gpio_007, 2 )	  /* UART_TXD_1 */
++		   );
++	BREG_Write32 (hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_8, reg);
++
++/* pmux -pin gpio_010,gpio_011 -sel uart_ -n 2 # UART2 */
++	reg = BREG_Read32(hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_9);
++	reg &=~(
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_9, gpio_010 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_9, gpio_011 )
++		   );
++	reg |=(
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_9, gpio_010, 2 ) |  /* UART_RXD_2 */
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_9, gpio_011, 2 )	  /* UART_TXD_2 */
++		   );
++	BREG_Write32 (hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_9, reg);
++ 
++/* pmux -pin gpio_018 -sel gpio_ -n 1 #744x_3148_RESET_N
++ pmux -pin gpio_019:gpio_022 -sel mtsif0_ -n 4
++ pmux -pin gpio_024:gpio_029 -sel mtsif0_ -n 6 */
++	reg = BREG_Read32(hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_10);
++	reg &=~(
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_10, gpio_018 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_10, gpio_019 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_10, gpio_020 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_10, gpio_021 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_10, gpio_022 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_10, gpio_024 ) |			
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_10, gpio_025 )			   
++		   );
++	reg |=(
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_10, gpio_019, 1 ) |	/* MTSIF0_CLK */			
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_10, gpio_020, 1 ) |	/* MTSIF0_DATA0 */			  
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_10, gpio_021, 1 ) |	/* MTSIF0_SYNC */			 
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_10, gpio_022, 1 ) |	/* MTSIF0_DATA1 */			  
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_10, gpio_024, 1 ) |	/* MTSIF0_DATA2 */									  
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_10, gpio_025, 1 ) 	 /* MTSIF0_DATA3 */
++			 );
++	BREG_Write32 (hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_10, reg);
++
++    reg = BREG_Read32(hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_PAD_CTRL_7);
++    reg &=~(
++            BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_PAD_CTRL_7, gpio_018_pad_ctrl ) 
++           );
++    reg |=(
++            BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_PAD_CTRL_7, gpio_018_pad_ctrl, 2 )      /* PULLUP */
++            );
++    BREG_Write32 (hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_PAD_CTRL_7, reg);
++
++/* pmux -pin gpio_030,gpio_031 -sel mtsif_ats_ -n 2 */
++	reg = BREG_Read32(hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_11);
++	reg &=~(
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_11, gpio_026 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_11, gpio_027 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_11, gpio_028 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_11, gpio_029 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_11, gpio_030 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_11, gpio_031 ) 
++		   );
++	reg |=(
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_11, gpio_026, 1 ) |	/* MTSIF0_DATA4 */
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_11, gpio_027, 1 ) |	/* MTSIF0_DATA5 */			  
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_11, gpio_028, 1 ) |	/* MTSIF0_DATA6 */			  
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_11, gpio_029, 1 ) |	/* MTSIF0_DATA7 */			  
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_11, gpio_030, 1 ) |	/* MTSIF_ATS_INC */ 		   
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_11, gpio_031, 1 ) 	/* MTSIF_ATS_RST */ 					   
++			 );
++	BREG_Write32 (hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_11, reg);
++
++/* pmux -pin gpio_037:gpio_039 -sel gpio_ -n 3 #SCART */
++	reg = BREG_Read32(hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_12);
++	reg &=~(
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_12, gpio_037 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_12, gpio_038 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_12, gpio_039 )			   
++		   );
++	BREG_Write32 (hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_12, reg);
++
++/* pmux -pin gpio_043,gpio_044 -sel uart_ -n 2 # UART6 */
++	reg = BREG_Read32(hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_13);
++	reg &=~(
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_13, gpio_043 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_13, gpio_044 ) 
++		   );
++	BREG_Write32 (hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_13, reg);
++
++/*pmux -pin gpio_060 -sel gpio_ -n 1 #BCM3148_IRQ_OUT_N
++pmux -pin gpio_063 -sel gpio_ -n 1 #LO_MID_SPLIT_CNTRL
++pmux -pin gpio_064 -sel gpio_ -n 1 #GP_WPS_SW_N */
++	reg = BREG_Read32(hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_15);
++	reg &=~(
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_15, gpio_060 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_15, gpio_063 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_15, gpio_064 )			   
++		   );
++	BREG_Write32 (hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_15, reg);
++ 
++/* pmux -pin gpio_068,gpio_069 -sel uart_ -n 2 # UART7 */
++	reg = BREG_Read32(hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_16);
++	reg &=~(
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_16, gpio_068 ) |
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_16, gpio_069 )			   
++		   );
++	BREG_Write32 (hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_16, reg);
++
++/* pmux -pin gpio_076,gpio_077,gpio_079:gpio_084 -sel sd_card0_ -pull up -n 8 */
++	reg = BREG_Read32(hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_17);
++	reg &=~(
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_17, gpio_076 ) |			   
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_17, gpio_077 ) |			   
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_17, gpio_079 ) |			   
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_17, gpio_080 ) |			   
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_17, gpio_081 ) 			   
++		   );
++	reg |=(
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_17, gpio_076, 1 ) | 	 /* SD_CARD0_CMD */
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_17, gpio_077, 1 ) | 	 /* SD_CARD0_WPROT */
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_17, gpio_079, 1 ) | 	 /* SD_CARD0_CLK */
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_17, gpio_080, 1 ) | 	 /* SD_CARD0_DAT0 */
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_17, gpio_081, 1 ) 	 /* SD_CARD0_DAT1 */
++			 );
++	BREG_Write32 (hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_17, reg);
++ 
++/* pmux -pin gpio_087 -sel PWM_ -n 1 */
++	reg = BREG_Read32(hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_18);
++	reg &=~(
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_18, gpio_082 ) |			
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_18, gpio_083 ) |			  
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_18, gpio_084 ) |			  
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_18, gpio_087 )			  
++		   );
++	reg |=(
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_18, gpio_082, 1 ) |	   /* SD_CARD0_DAT2 */
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_18, gpio_083, 1 ) |		/* SD_CARD0_DAT3 */ 			  
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_18, gpio_084, 1 ) |		/* SD_CARD0_PRES */ 			  
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_18, gpio_087, 2 ) 		/* PWM_0 */ 			  
++			 );
++	BREG_Write32 (hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_18, reg);
++  
++/* pmux -pin gpio_090:gpio_093 -sel gpio_ -n 4 */
++	reg = BREG_Read32(hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_19);
++	reg &=~(
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_19, gpio_090 ) |			
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_19, gpio_091 ) |			  
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_19, gpio_092 ) |			  
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_19, gpio_093 )			  
++		   );
++	BREG_Write32 (hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_19, reg);
++	
++/* pmux -pin gpio_109 -sel gpio_ -n 1 */
++/* pmux -pin sgpio_00,sgpio_01 -sel bsc_m3_ -n 2 */
++	reg = BREG_Read32(hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_21);
++	reg &=~(
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_21, gpio_109 ) |			  
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_21, sgpio_00 ) |			
++			BCHP_MASK(SUN_TOP_CTRL_PIN_MUX_CTRL_21, sgpio_01 ) 						
++		   );
++	reg |=(
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_21, sgpio_00, 1 ) |		/* BSC_M3_SCL */ 			  
++			BCHP_FIELD_DATA(SUN_TOP_CTRL_PIN_MUX_CTRL_21, sgpio_01, 1 ) 		/* BSC_M3_SDA */ 			  
++			 );
++	BREG_Write32 (hReg, BCHP_SUN_TOP_CTRL_PIN_MUX_CTRL_21, reg);
++ 
++/* pmux -pin aon_sgpio_00:aon_sgpio_01 -sel hdmi_tx_bsc_ -n 2 */
++	reg = BREG_Read32(hReg, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_2);
++	reg &=~(
++			BCHP_MASK(AON_PIN_CTRL_PIN_MUX_CTRL_2, aon_sgpio_00 ) | 		   
++			BCHP_MASK(AON_PIN_CTRL_PIN_MUX_CTRL_2, aon_sgpio_01 )			 
++		   );
++	reg |=(
++			BCHP_FIELD_DATA(AON_PIN_CTRL_PIN_MUX_CTRL_2, aon_sgpio_00, 1 ) |	   /* BSC_M0_SCL */
++			BCHP_FIELD_DATA(AON_PIN_CTRL_PIN_MUX_CTRL_2, aon_sgpio_01, 1 )		   /* BSC_M0_SDA */			   
++			 );
++	BREG_Write32 (hReg, BCHP_AON_PIN_CTRL_PIN_MUX_CTRL_2, reg);
++ 
++	return BERR_SUCCESS;
++}
++#endif /* NEXUS_PLATFORM_ARRIS_DCX960 */
