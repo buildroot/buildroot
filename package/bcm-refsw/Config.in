@@ -51,6 +51,13 @@ choice
 
 endchoice
 
+config BR2_PACKAGE_BCM_REFSW_SAGE
+	bool "SAGE v3.x"
+	default n
+	depends on BR2_PACKAGE_BCM_REFSW
+	help
+	  Add SAGE support in Nexus.
+
 config BR2_PACKAGE_PROVIDES_LIBEGL
 	default "bcm-refsw"
 
