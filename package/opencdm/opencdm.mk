@@ -9,7 +9,7 @@ OPENCDM_SITE_METHOD = git
 OPENCDM_SITE = https://github.com/fraunhoferfokus/open-content-decryption-module.git
 
 OPENCDM_INSTALL_STAGING = YES
-PENCDMI_LICENSE = Apache-2.0
+OPENCDMI_LICENSE = Apache-2.0
 OPENCDMI_LICENSE_FILES = LICENSE
 
 #Apply WPE specific patches using opencdm.patch

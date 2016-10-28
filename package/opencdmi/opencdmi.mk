@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPENCDMI_VERSION = 47ef38ec04caeb82f0102f4ec65a65b0b46025a3
+OPENCDMI_VERSION = 01917826101943f2aeb9580a1341acb567564202
 OPENCDMI_SITE_METHOD = git
 OPENCDMI_SITE = git@github.com:Metrological/open-content-decryption-module-cdmi.git
 
@@ -24,6 +24,11 @@ OPENCDMI_SERVICE=$(@D)/cdmiservice
 else
 OPENCDMI_TARGET=ocdmilib
 endif
+
+define OPENCDMI_CONFIGURE_CMDS
+	cd $(@D);find -iname "*.o" | xargs rm -rf; \
+	find -iname "*.a" | xargs rm -rf
+endef
 
 define OPENCDMI_BUILD_CMDS
         export OPENCDMI_TARGET_DIR="$(TARGET_DIR)";\
@@ -48,6 +53,11 @@ define OPENCDMI_INSTALL_TARGET_CMDS
         cp $(@D)/libocdmi.so $(TARGET_DIR)/usr/lib
 endef
 endif
+define OPENCDMI_INSTALL_STAGING_CMDS
+        cp $(@D)/libocdmi.so $(STAGING_DIR)/usr/lib
+	mkdir -p $(STAGING_DIR)/usr/include/opencdmi
+        cp -r $(@D)/rpc/gen/opencdm_xdr_svc.h $(STAGING_DIR)/usr/include/opencdmi
+endef
 
 $(eval $(generic-package))
 $(eval $(host-generic-package))
