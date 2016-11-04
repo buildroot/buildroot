@@ -1,0 +1,41 @@
+diff --git a/src/gstdorneaudiosink.c b/src/gstdorneaudiosink.c
+index 0217f38..765d6e0 100644
+--- a/src/gstdorneaudiosink.c
++++ b/src/gstdorneaudiosink.c
+@@ -88,7 +88,7 @@ G_DEFINE_TYPE (GstDorneAudioSink, gst_dorne_audio_sink, GST_TYPE_BASE_SINK);
+ 
+ static GstStateChangeReturn gst_dorne_audio_sink_change_state (GstElement *
+     element, GstStateChange transition);
+-static GstFlowReturn gst_dorne_audio_sink_preroll (GstBaseSink *, GstBuffer *);
++// static GstFlowReturn gst_dorne_audio_sink_preroll (GstBaseSink *, GstBuffer *);
+ static GstFlowReturn gst_dorne_audio_sink_render (GstBaseSink *, GstBuffer *);
+ 
+ #define ATOI( a )   atoi( (const char*)(a) )
+@@ -208,7 +208,7 @@ gst_dorne_audio_sink_class_init (GstDorneAudioSinkClass * klass)
+       GST_DEBUG_FUNCPTR (gst_dorne_audio_sink_send_event);
+ 
+   basesink_class->event = GST_DEBUG_FUNCPTR (gst_dorne_audio_sink_sink_event);
+-  basesink_class->preroll = GST_DEBUG_FUNCPTR (gst_dorne_audio_sink_preroll);
++  // basesink_class->preroll = GST_DEBUG_FUNCPTR (gst_dorne_audio_sink_preroll);
+   basesink_class->render = GST_DEBUG_FUNCPTR (gst_dorne_audio_sink_render);
+ }
+ 
+@@ -319,12 +319,12 @@ gst_dorne_audio_sink_change_state (GstElement * element,
+   return ret;
+ }
+ 
+-static GstFlowReturn
+-gst_dorne_audio_sink_preroll (GstBaseSink * base_sink, GstBuffer * buf)
+-{
+-  GstDorneAudioSink *sink = GST_DORNEAUDIOSINK (base_sink);
+-  return gst_dorne_fusion_handle_buffer (sink->m_fusion, buf);
+-}
++// static GstFlowReturn
++// gst_dorne_audio_sink_preroll (GstBaseSink * base_sink, GstBuffer * buf)
++// {
++//   GstDorneAudioSink *sink = GST_DORNEAUDIOSINK (base_sink);
++//   return gst_dorne_fusion_handle_buffer (sink->m_fusion, buf);
++// }
+ 
+ static GstFlowReturn
+ gst_dorne_audio_sink_render (GstBaseSink * base_sink, GstBuffer * buf)
