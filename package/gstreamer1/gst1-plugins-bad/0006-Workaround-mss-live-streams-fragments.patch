@@ -1,0 +1,21 @@
+diff --git a/ext/smoothstreaming/gstmssmanifest.c b/ext/smoothstreaming/gstmssmanifest.c
+index 08048f6..caf8dc2 100644
+--- a/ext/smoothstreaming/gstmssmanifest.c
++++ b/ext/smoothstreaming/gstmssmanifest.c
+@@ -1299,9 +1299,14 @@ static void
+ gst_mss_stream_reload_fragments (GstMssStream * stream, xmlNodePtr streamIndex)
+ {
+   xmlNodePtr iter;
+-  guint64 current_gst_time = gst_mss_stream_get_fragment_gst_timestamp (stream);
++  guint64 current_gst_time;
+   GstMssFragmentListBuilder builder;
+ 
++  if (stream->has_live_fragments)
++    return;
++
++  current_gst_time = gst_mss_stream_get_fragment_gst_timestamp (stream);
++
+   gst_mss_fragment_list_builder_init (&builder);
+ 
+   GST_DEBUG ("Current position: %" GST_TIME_FORMAT,
+
