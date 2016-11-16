@@ -3,9 +3,7 @@
 # widevine
 #
 ################################################################################
-
 WIDEVINE_VERSION = ef2a7b905393242810614abc43f32ccf11563bc1
-# 5a2581a1464c610a69351f765d6b1de29d64903d
 WIDEVINE_SITE_METHOD = git
 WIDEVINE_SITE = https://github.com/Metrological/widevine.git
 
@@ -16,6 +14,8 @@ WIDEVINE_LICENSE_FILES = LICENSE
 
 ifeq ($(BR2_PACKAGE_WIDEVINE_SOC_RPI), y)
 export WV_BOARD=rpi 
+else
+export WV_BOARD=dummy
 endif #BR2_PACKAGE_WIDEVINE_SOC_RPI
 
 export WV_CC=$(TARGET_CC)
