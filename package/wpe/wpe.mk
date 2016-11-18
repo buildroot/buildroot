@@ -3,7 +3,7 @@
 # WPE
 #
 ################################################################################
-WPE_VERSION = 622e996fc528212bd0453a076571261d28328d34
+WPE_VERSION = 09c8b71cb2b9689d49b45fad25489a2aca1ce11d
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -186,6 +186,11 @@ endif
 ifeq ($(BR2_PACKAGE_WPE_USE_PLAYREADY),y)
 WPE_DEPENDENCIES += playready
 WPE_FLAGS += -DENABLE_PLAYREADY=ON
+endif
+
+ifeq ($(BR2_PACKAGE_WPE_USE_OPENCDM),y)
+WPE_DEPENDENCIES += opencdm
+WPE_FLAGS += -DENABLE_OCDM=ON
 endif
 
 ifeq ($(BR2_PACKAGE_WPE_ENABLE_MEDIA_STREAM),y)
