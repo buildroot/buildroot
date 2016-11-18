@@ -188,23 +188,21 @@ define BCM_REFSW_BUILD_CMDS
 	$(BCM_REFSW_BUILD_EGLCUBE)
 endef
 
-ifeq ($(BCM_REFSW_PLATFORM_VC),vc5)
-BCM_REFSW_VCX_KHRNPLAT = $(BCM_REFSW_VCX)/driver/libs/khrn/include
-ifeq ($(BR2_PACKAGE_BCM_REFSW_16_2),y) 
-	BCM_REFSW_VCX_KHRN = $(BCM_REFSW_VCX)/driver/libs/khrn/include
+ifeq ($(BCM_REFSW_PLATFORM_VC),vc5) 
+	ifeq ($(BR2_PACKAGE_BCM_REFSW_16_2),y)
+        BCM_REFSW_VCX_KHRN = $(BCM_REFSW_VCX)/driver/libs/khrn/include
+	else
+		BCM_REFSW_VCX_KHRN = $(BCM_REFSW_VCX)/driver/interface/khronos/include
+	endif
 else
 	BCM_REFSW_VCX_KHRN = $(BCM_REFSW_VCX)/driver/interface/khronos/include
-endif
-else
-	BCM_REFSW_VCX_KHRN = $(BCM_REFSW_VCX)/driver/interface/khronos/include
-	BCM_REFSW_VCX_KHRNPLAT = $(BCM_REFSW_VCX_KHRN)
 endif
 
 define BCM_REFSW_INSTALL_KHRONOS
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX_KHRN}/GLES/*.h $(STAGING_DIR)/usr/include/GLES/
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX_KHRN}/GLES2/*.h $(STAGING_DIR)/usr/include/GLES2/
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX_KHRN}/EGL/*.h $(STAGING_DIR)/usr/include/EGL/
-	$(INSTALL) -m 644 -D ${BCM_REFSW_VCX_KHRNPLAT}/KHR/khrplatform.h $(STAGING_DIR)/usr/include/KHR/khrplatform.h;
+	$(INSTALL) -m 644 -D ${BCM_REFSW_VCX_KHRN}/KHR/khrplatform.h $(STAGING_DIR)/usr/include/KHR/khrplatform.h;
 endef
 
 ifeq ($(BR2_PACKAGE_BCM_REFSW_16_2)$(BR2_PACKAGE_BCM_REFSW_SAGE),yy) 
