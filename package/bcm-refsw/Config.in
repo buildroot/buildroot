@@ -49,6 +49,10 @@ choice
 		bool "BCM 7252(S)"
 		depends on !BR2_mipsel && BR2_arm
 
+	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7437
+		bool "BCM 7437"
+		depends on !BR2_mipsel && BR2_arm
+
 endchoice
 
 config BR2_PACKAGE_BCM_REFSW_SAGE
