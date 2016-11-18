@@ -4,11 +4,9 @@
 #
 ################################################################################
 
-#BCM_WESTON_VERSION = 20b571e70ba29fc1a008b08be04ec58a52566d89
-#BCM_WESTON_SITE = git@github.com:Metrological/bcm-weston.git
-#BCM_WESTON_SITE_METHOD = git
-BCM_WESTON_SITE = /space/metro/src/bcm-weston_NEW
-BCM_WESTON_SITE_METHOD = local
+BCM_WESTON_VERSION = 20b571e70ba29fc1a008b08be04ec58a52566d89
+BCM_WESTON_SITE = git@github.com:Metrological/bcm-weston.git
+BCM_WESTON_SITE_METHOD = git
 BCM_WESTON_DEPENDENCIES = bcm-refsw libffi host-expat expat libxkbcommon pixman libpng jpeg mtdev udev cairo libinput linux-pam libxml2
 BCM_WESTON_LICENSE = PROPRIETARY
 BCM_WESTON_INSTALL_STAGING = YES
