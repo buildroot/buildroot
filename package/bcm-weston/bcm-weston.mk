@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BCM_WESTON_VERSION = 20b571e70ba29fc1a008b08be04ec58a52566d89
+BCM_WESTON_VERSION = 8c985e126377e9a799462c632203d1d1922508e9
 BCM_WESTON_SITE = git@github.com:Metrological/bcm-weston.git
 BCM_WESTON_SITE_METHOD = git
 BCM_WESTON_DEPENDENCIES = bcm-refsw libffi host-expat expat libxkbcommon pixman libpng jpeg mtdev udev cairo libinput linux-pam libxml2
@@ -14,7 +14,7 @@ BCM_WESTON_INSTALL_TARGET = YES
 
 BCM_WESTON_CONF_OPTS += $(BCM_REFSW_CONF_OPTS)
 BCM_WESTON_MAKE_ENV += $(BCM_REFSW_MAKE_ENV)
-BCM_WESTON_MAKE_ENV += NXPL_USE_NXCLIENT=y
+#BCM_WESTON_MAKE_ENV += NXPL_USE_NXCLIENT=y
 
 define BCM_WESTON_BUILD_WAYLAND
 	$(HOST_CONFIGURE_OPTS) \
@@ -50,10 +50,10 @@ define BCM_WESTON_BUILD_NXPL_WAYLAND
 	$(TARGET_MAKE_ENV) \
 	$(BCM_WESTON_MAKE_ENV) \
 		$(MAKE) -C $(@D)/AppLibs/broadcom/weston/nxpl-wayland -f Makefile.buildroot
-	#$(INSTALL) -D $(@D)/AppLibs/broadcom/weston/nxpl-wayland/libnxpl-weston.so $(STAGING_DIR)/usr/lib/
-	#$(INSTALL) -D $(@D)/AppLibs/broadcom/weston/nxpl-wayland/libnxpl-weston.so $(TARGET_DIR)/usr/lib/
-	$(INSTALL) -D $(@D)/AppLibs/broadcom/weston/nxpl-wayland/libnxpl-nxclient.so $(STAGING_DIR)/usr/lib/
-	$(INSTALL) -D $(@D)/AppLibs/broadcom/weston/nxpl-wayland/libnxpl-nxclient.so $(TARGET_DIR)/usr/lib/
+	$(INSTALL) -D $(@D)/AppLibs/broadcom/weston/nxpl-wayland/libnxpl-weston.so $(STAGING_DIR)/usr/lib/
+	$(INSTALL) -D $(@D)/AppLibs/broadcom/weston/nxpl-wayland/libnxpl-weston.so $(TARGET_DIR)/usr/lib/
+	#$(INSTALL) -D $(@D)/AppLibs/broadcom/weston/nxpl-wayland/libnxpl-nxclient.so $(STAGING_DIR)/usr/lib/
+	#$(INSTALL) -D $(@D)/AppLibs/broadcom/weston/nxpl-wayland/libnxpl-nxclient.so $(TARGET_DIR)/usr/lib/
 endef
 
 define BCM_WESTON_BUILD_WAYLAND_EGL
@@ -122,7 +122,7 @@ define BCM_WESTON_BUILD_CMDS
 	$(BCM_WESTON_BUILD_WAYLAND_EGL)
 	$(BCM_WESTON_BUILD_WESTON)
 	$(BCM_WESTON_BUILD_NSC_BACKEND)
-	$(BCM_WESTON_BUILD_WAYLAND_NXCLIENT)
+	#$(BCM_WESTON_BUILD_WAYLAND_NXCLIENT)
 	$(BCM_WESTON_BUILD_SETTOP_SHELL)
 endef
 
