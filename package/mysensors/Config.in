@@ -1,0 +1,91 @@
+config BR2_PACKAGE_MYSENSORS
+	bool "mysensors MQTT gateway"
+	help
+	  MySensors is an open source hardware and software community focusing on do-it-yourself home automation and Internet of Things.
+
+if BR2_PACKAGE_MYSENSORS
+
+menu "Options"	
+choice
+	prompt "Radio Module"
+config BR2_PACKAGE_MYSENSORS_TRANSPORT_NRF24
+	bool "Nordic NRF24"
+config BR2_PACKAGE_MYSENSORS_TRANSPORT_RS485
+	bool "RS485"
+config BR2_PACKAGE_MYSENSORS_TRANSPORT_RFM95
+	bool "HopeRF RFM95"
+endchoice
+		
+config BR2_PACKAGE_MYSENSORS_CONFIG_FILE
+string "config file"
+default "/etc/mysensorsgw.dat"	
+
+menuconfig BR2_PACKAGE_MYSENSORS_IRQ
+bool "Use IRQ on new messages"	
+if 	BR2_PACKAGE_MYSENSORS_IRQ	
+	config BR2_PACKAGE_MYSENSORS_IRQ_PIN
+		string "Pin for IRQ"
+		default "15"
+endif
+
+menuconfig BR2_PACKAGE_MYSENSORS_LEDS
+bool "Use indication LEDS"	
+if 	BR2_PACKAGE_MYSENSORS_LEDS
+config BR2_PACKAGE_MYSENSORS_LEDS_ERR_PIN
+	string "Pin for error led"
+	default "12"
+
+config BR2_PACKAGE_MYSENSORS_LEDS_RX_PIN
+	string "Pin for receive data led"
+	default "16"
+	
+config BR2_PACKAGE_MYSENSORS_LEDS_TX_PIN
+	string "Pin for transmit data led"
+	default "18"
+endif
+
+endmenu
+
+choice
+prompt "Gateway Type"
+config BR2_PACKAGE_MYSENSORS_SYSTEM_ETHERNET
+	bool "Network"
+config BR2_PACKAGE_MYSENSORS_SYSTEM_MQTT
+	bool "MQTT client"
+config BR2_PACKAGE_MYSENSORS_SYSTEM_SERIAL
+	bool "Serial"
+endchoice
+
+choice
+prompt "Platform"
+config BR2_PACKAGE_MYSENSORS_SYSTEM_RPI10
+	bool "RaspberryPi 1/0"
+config BR2_PACKAGE_MYSENSORS_SYSTEM_RPI23
+	bool "RaspberryPi 2/3"
+endchoice
+
+if BR2_PACKAGE_MYSENSORS_SYSTEM_MQTT
+menuconfig BR2_PACKAGE_MYSENSORS_TYPE_MQTT
+	bool "MQTT Options"
+	select BR2_PACKAGE_MOSQUITTO
+	  
+if BR2_PACKAGE_MYSENSORS_TYPE_MQTT
+	config BR2_PACKAGE_MYSENSORS_MQTT_IP
+		string "mqtt broker ip"
+		default "127.0.0.1"
+
+	config BR2_PACKAGE_MYSENSORS_MQTT_PUBLISH_TOPIC_PREFIX
+		string "mqtt publish topic prefix"
+		default "mysensors-out"
+
+	config BR2_PACKAGE_MYSENSORS_MQTT_SUBSCRIBE_TOPIC_PREFIX
+		string "mqtt subscribe topic prefix"
+		default "mysensors-in"
+
+	config BR2_PACKAGE_MYSENSORS_MQTT_CLIEN_ID
+		string "mqtt client id"
+		default "mygateway1"
+endif
+endif
+
+endif

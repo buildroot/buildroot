@@ -1,0 +1,44 @@
+#!/bin/sh
+PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin
+DESC="MySensors Gateway"
+NAME=mysgw
+DAEMON=/usr/bin/$NAME
+DAEMON_ARGS="-b"
+PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+start() {
+	printf "Starting ${DESC}: "
+	start-stop-daemon --start --quiet --exec $DAEMON -- $DAEMON_ARGS
+	[ $? = 0 ] && echo "OK" && return 0 || echo "FAIL" && return 1
+}
+stop() {
+	printf "Stopping ${DESC}: "
+	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --name $NAME
+	start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON
+	# Many daemons don't delete their pidfiles when they exit.
+	rm -f $PIDFILE
+    [ $? = 0 ] && echo "OK" || echo "FAIL"
+}
+restart() {
+	stop
+	sleep 2
+	start
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart|reload)
+	restart
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?

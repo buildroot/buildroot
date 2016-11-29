@@ -1,0 +1,63 @@
+################################################################################
+#
+# mysensors
+#
+################################################################################
+
+MYSENSORS_VERSION = ee9ffe0f5230ed4382e53f5912961398c520c200
+MYSENSORS_SITE_METHOD = git
+MYSENSORS_SITE = git@github.com:bramoosterhuis/MySensors.git
+MYSENSORS_INSTALL_STAGING = YES
+MYSENSORS_DEPENDENCIES += mosquitto
+
+MYSENSORS_CONF_OPTS += --no_init_system
+MYSENSORS_CONF_OPTS += --my-config-file=${BR2_PACKAGE_MYSENSORS_CONFIG_FILE}
+
+ifeq ($(BR2_PACKAGE_MYSENSORS_SYSTEM_RPI10),y)
+MYSENSORS_CONF_OPTS += --soc=BCM2835
+MYSENSORS_CONF_OPTS += --platform-type=RPi
+else ifeq ($(BR2_PACKAGE_MYSENSORS_SYSTEM_RPI23),y)
+MYSENSORS_CONF_OPTS += --soc=BCM2836
+MYSENSORS_CONF_OPTS += --platform-type=RPi2
+endif
+
+ifeq ($(BR2_PACKAGE_MYSENSORS_SYSTEM_ETHERNET),y)
+MYSENSORS_CONF_OPTS += --my-gateway=ethernet 
+else ifeq ($(BR2_PACKAGE_MYSENSORS_SYSTEM_MQTT),y)
+MYSENSORS_CONF_OPTS += --my-gateway=mqtt 
+else ifeq ($(BR2_PACKAGE_MYSENSORS_SYSTEM_SERIAL),y)
+MYSENSORS_CONF_OPTS += --my-gateway=serial 
+endif
+
+ifeq ($(BR2_PACKAGE_MYSENSORS_TRANSPORT_NRF24),y)
+MYSENSORS_CONF_OPTS += --my-transport=nrf24
+else ifeq ($(BR2_PACKAGE_MYSENSORS_TRANSPORT_RS485),y)
+MYSENSORS_CONF_OPTS += --my-transport=rs485
+else ifeq ($(BR2_PACKAGE_MYSENSORS_TRANSPORT_RFM95),y)
+MYSENSORS_CONF_OPTS += --my-transport=rfm95
+endif
+
+ifeq ($(BR2_PACKAGE_MYSENSORS_IRQ),y)
+MYSENSORS_CONF_OPTS += --my-rf24-irq-pin=${BR2_PACKAGE_MYSENSORS_IRQ_PIN}
+endif
+
+ifeq ($(BR2_PACKAGE_MYSENSORS_LEDS),y)
+MYSENSORS_CONF_OPTS += --my-leds-err-pin=${BR2_PACKAGE_MYSENSORS_LEDS_ERR_PIN}
+MYSENSORS_CONF_OPTS += --my-leds-rx-pin=${BR2_PACKAGE_MYSENSORS_LEDS_RX_PIN}
+MYSENSORS_CONF_OPTS += --my-leds-tx-pin=${BR2_PACKAGE_MYSENSORS_LEDS_TX_PIN}
+endif
+
+ifeq ($(BR2_PACKAGE_MYSENSORS_SYSTEM_MQTT),y)
+MYSENSORS_CONF_OPTS += --my-controller-ip-address=${BR2_PACKAGE_MYSENSORS_MQTT_IP}
+MYSENSORS_CONF_OPTS += --my-mqtt-publish-topic-prefix=${BR2_PACKAGE_MYSENSORS_MQTT_PUBLISH_TOPIC_PREFIX}
+MYSENSORS_CONF_OPTS += --my-mqtt-subscribe-topic-prefix=${BR2_PACKAGE_MYSENSORS_MQTT_SUBSCRIBE_TOPIC_PREFIX}
+MYSENSORS_CONF_OPTS += --my-mqtt-client-id=${BR2_PACKAGE_MYSENSORS_MQTT_CLIEN_ID}
+endif
+
+define MYSENSORS_INSTALL_EXTRA_SCRIPTS
+  $(INSTALL) -D -m 0755 ${MYSENSORS_PKGDIR}S80mysgw $(TARGET_DIR)/etc/init.d/
+endef
+
+MYSENSORS_POST_INSTALL_TARGET_HOOKS += MYSENSORS_INSTALL_EXTRA_SCRIPTS
+
+$(eval $(autotools-package))
