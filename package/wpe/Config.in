@@ -105,6 +105,25 @@ endchoice
 
 endif
 
+if BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V2
+
+choice
+  bool "OpenCDM backend"
+  depends on BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V2
+  default BR2_PACKAGE_WPE_USE_OPENCDM
+  help
+    Choose the OpenCDM backend.
+
+config BR2_PACKAGE_WPE_USE_OPENCDM
+  bool "OpenCDM sdk"
+  depends on BR2_PACKAGE_OPENCDM
+  help
+    Use the OpenCDM SDK
+
+endchoice
+
+endif
+
 endmenu
 
 config BR2_PACKAGE_WPE_USE_GSTREAMER_GL

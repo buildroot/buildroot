@@ -51,6 +51,7 @@ endef
 else
 define OPENCDMI_INSTALL_TARGET_CMDS
         cp $(@D)/libocdmi.so $(TARGET_DIR)/usr/lib
+        cp $(@D)/cdmiservice $(TARGET_DIR)/usr/bin
 endef
 endif
 define OPENCDMI_INSTALL_STAGING_CMDS
