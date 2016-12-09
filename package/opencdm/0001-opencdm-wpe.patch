@@ -108,10 +108,10 @@ index 0000000..310e820
 +	@rm -f $(OCDM_WPE_DIR)/include/*
 diff --git a/src/browser/wpe/opencdm/open_cdm.cpp b/src/browser/wpe/opencdm/open_cdm.cpp
 new file mode 100644
-index 0000000..f217eeb
+index 0000000..e8e8409
 --- /dev/null
 +++ b/src/browser/wpe/opencdm/open_cdm.cpp
-@@ -0,0 +1,217 @@
+@@ -0,0 +1,218 @@
 +#include <open_cdm_mediaengine_factory.h>
 +#include <open_cdm_platform_factory.h>
 +#include <open_cdm_common.h>
@@ -192,8 +192,8 @@ index 0000000..f217eeb
 +       CDM_DLOG() << "GetKeyMessage >> invoked from opdm :: estate = " << m_eState << "\n";
 +
 +    while (m_eState == KEY_SESSION_WAITING_FOR_MESSAGE) {
-+	CDM_DLOG() << "Waiting for key message!";
-+	m_cond_var.wait(lck);
++        CDM_DLOG() << "Waiting for key message!";
++        m_cond_var.wait(lck);
 +    }
 +
 +    CDM_DLOG() << "Key message should be ready or no need key challenge/message."<< "\n" ;
@@ -211,6 +211,7 @@ index 0000000..f217eeb
 +        m_message.copy( msg, m_message.length() , 0);
 +        char test[m_message.length()];
 +    }
++
 +    if(m_eState == KEY_SESSION_READY) {
 +        *challengeLength = 0;
 +	    *licenseURL= 0;
@@ -240,8 +241,8 @@ index 0000000..f217eeb
 +    return ret;
 +}
 +
-+int OpenCdm::releaseMem(){
-+  return media_engine_->releaseMem();
++int OpenCdm::ReleaseMem(){
++  return media_engine_->ReleaseMem();
 +}
 +
 +int OpenCdm::Decrypt(unsigned char *encryptedData, uint32_t encryptedDataLength,
@@ -331,7 +332,7 @@ index 0000000..f217eeb
 +}
 diff --git a/src/browser/wpe/opencdm/open_cdm.h b/src/browser/wpe/opencdm/open_cdm.h
 new file mode 100644
-index 0000000..77f51e5
+index 0000000..5022056
 --- /dev/null
 +++ b/src/browser/wpe/opencdm/open_cdm.h
 @@ -0,0 +1,73 @@
@@ -383,11 +384,11 @@ index 0000000..77f51e5
 +    void SelectSession(const std::string& );
 +    bool IsTypeSupported(const  std::string& keySystem,const  std::string& mimeType);
 +    int Decrypt(unsigned char *, uint32_t, unsigned char *, uint32_t);
-+    int releaseMem();
++    int ReleaseMem();
 +
 +private:
-+    OpenCdmMediaengine *media_engine_;
-+    OpenCdmPlatform *platform_;
++    OpenCdmMediaengine       *media_engine_;
++    OpenCdmPlatform          *platform_;
 +    OpenCdmPlatformSessionId m_session_id;
 +
 +    std::string m_key_system;
@@ -395,7 +396,7 @@ index 0000000..77f51e5
 +    std::string m_message;
 +    std::string m_dest_url;
 +
-+    std::condition_variable m_cond_var;
++    std::condition_variable  m_cond_var;
 +    volatile InternalSessionState m_eState;
 +
 +    void ReadyCallback(OpenCdmPlatformSessionId platform_session_id) override;
@@ -1397,7 +1398,7 @@ index 0a90407..f9d697b 100644
  /**
   * Allocates a shared memory segment.
 diff --git a/src/com/mediaengine/rpc/rpc_cdm_mediaengine_handler.cc b/src/com/mediaengine/rpc/rpc_cdm_mediaengine_handler.cc
-index e44d532..b1e5982 100644
+index e44d532..50c258f 100644
 --- a/src/com/mediaengine/rpc/rpc_cdm_mediaengine_handler.cc
 +++ b/src/com/mediaengine/rpc/rpc_cdm_mediaengine_handler.cc
 @@ -15,9 +15,9 @@
@@ -1453,7 +1454,7 @@ index e44d532..b1e5982 100644
    if ((rpc_response = rpc_open_cdm_mediaengine_1(&rpc_param, rpcClient))
        == NULL) {
      CDM_DLOG() << "engine session failed: " << rpcServer.c_str();
-@@ -101,23 +100,33 @@ RpcCdmMediaengineHandler::~RpcCdmMediaengineHandler() {
+@@ -101,23 +100,36 @@ RpcCdmMediaengineHandler::~RpcCdmMediaengineHandler() {
    CDM_DLOG() << "RpcCdmMediaengineHandler destruct!";
    // TODO(ska): is shared memory cleaned up correctly?
    // DeleteSemaphoreSet(idXchngSem);
@@ -1462,7 +1463,8 @@ index e44d532..b1e5982 100644
    idXchngShMem = 0;
  }
  
-+int RpcCdmMediaengineHandler::releaseMem(){
++int RpcCdmMediaengineHandler::ReleaseMem() {
++
 +  shMemInfo->idSidShMem = 0;
 +  shMemInfo->idIvShMem = 0;
 +  shMemInfo->idSampleShMem = 0;
@@ -1471,8 +1473,10 @@ index e44d532..b1e5982 100644
 +  shMemInfo->sampleSize = 0;
 +  UnlockSemaphore(idXchngSem, SEM_XCHNG_DECRYPT);
 +  LockSemaphore(idXchngSem, SEM_XCHNG_PULL);
++
 +  return 1;
 +}
++
  DecryptResponse RpcCdmMediaengineHandler::Decrypt(const uint8_t *pbIv,
                                                    uint32_t cbIv,
                                                    const uint8_t *pbData,
@@ -1489,7 +1493,7 @@ index e44d532..b1e5982 100644
    LockSemaphore(idXchngSem, SEM_XCHNG_PUSH);
    CDM_DLOG() << "LOCKed push lock";
  
-@@ -138,6 +147,7 @@ DecryptResponse RpcCdmMediaengineHandler::Decrypt(const uint8_t *pbIv,
+@@ -138,6 +150,7 @@ DecryptResponse RpcCdmMediaengineHandler::Decrypt(const uint8_t *pbIv,
    memcpy(pSampleShMem, pbData, cbData);
    // delete[] pbData;
  
@@ -1497,7 +1501,7 @@ index e44d532..b1e5982 100644
    shMemInfo->idSubsampleDataShMem = 0;
    shMemInfo->subsampleDataSize = 0;
    CDM_DLOG() << "data ready to decrypt";
-@@ -160,7 +170,6 @@ DecryptResponse RpcCdmMediaengineHandler::Decrypt(const uint8_t *pbIv,
+@@ -160,7 +173,6 @@ DecryptResponse RpcCdmMediaengineHandler::Decrypt(const uint8_t *pbIv,
    err = DetachExistingSharedMemory(pSampleShMem);
    CDM_DLOG() << "detached sample shmem " << shMemInfo->idSampleShMem << ": "
               << err;
@@ -1506,7 +1510,7 @@ index e44d532..b1e5982 100644
  }
  
 diff --git a/src/com/mediaengine/rpc/rpc_cdm_mediaengine_handler.h b/src/com/mediaengine/rpc/rpc_cdm_mediaengine_handler.h
-index 4437e8e..3e8ccc7 100644
+index 4437e8e..0bb5dd2 100644
 --- a/src/com/mediaengine/rpc/rpc_cdm_mediaengine_handler.h
 +++ b/src/com/mediaengine/rpc/rpc_cdm_mediaengine_handler.h
 @@ -20,8 +20,8 @@
@@ -1524,7 +1528,7 @@ index 4437e8e..3e8ccc7 100644
    DecryptResponse Decrypt(const uint8_t *pbIv, uint32_t cbIv,
                                    const uint8_t *pbData, uint32_t cbData,
                                    uint8_t *out, uint32_t &out_size) override;
-+  int releaseMem() override;
++  int ReleaseMem() override;
    //TODO (sph): make out const
    ~RpcCdmMediaengineHandler() override;
  
@@ -1546,7 +1550,7 @@ index 0000000..6b59272
 +
 +#endif  // MEDIA_CDM_CDM_LOGGING_H_
 diff --git a/src/mediaengine/open_cdm_mediaengine.h b/src/mediaengine/open_cdm_mediaengine.h
-index f617da1..d7707ff 100644
+index f617da1..594485a 100644
 --- a/src/mediaengine/open_cdm_mediaengine.h
 +++ b/src/mediaengine/open_cdm_mediaengine.h
 @@ -17,7 +17,7 @@
@@ -1563,7 +1567,7 @@ index f617da1..d7707ff 100644
                                    const uint8_t *pbData, uint32_t cbData,
                                    uint8_t *out, uint32_t &out_size) = 0;
 -
-+  virtual int releaseMem() = 0;
++  virtual int ReleaseMem() = 0;
   protected:
    OpenCdmMediaengine(char *session_id_val, uint32_t session_id_len);
    OpenCdmMediaengine() {
@@ -1620,7 +1624,7 @@ index a6a8af1..b8a50de 100644
  }  // namespace media
  
 diff --git a/src/mediaengine/open_cdm_mediaengine_impl.cc b/src/mediaengine/open_cdm_mediaengine_impl.cc
-index 39d9869..67bbe67 100644
+index 39d9869..4c63119 100644
 --- a/src/mediaengine/open_cdm_mediaengine_impl.cc
 +++ b/src/mediaengine/open_cdm_mediaengine_impl.cc
 @@ -14,10 +14,9 @@
@@ -1649,15 +1653,15 @@ index 39d9869..67bbe67 100644
    return response;
  }
  
-+int OpenCdmMediaengineImpl::releaseMem() {
-+  CDM_DLOG() << "OpenCdmMediaengineImpl::releaseMem ";
++int OpenCdmMediaengineImpl::ReleaseMem() {
++  CDM_DLOG() << "OpenCdmMediaengineImpl::ReleaseMem ";
 +  int response;
-+  response = media_engine_com_->releaseMem();
++  response = media_engine_com_->ReleaseMem();
 +  return response;
 +}
  }  // namespace media
 diff --git a/src/mediaengine/open_cdm_mediaengine_impl.h b/src/mediaengine/open_cdm_mediaengine_impl.h
-index 4efc7e0..82a444c 100644
+index 4efc7e0..2d48b7a 100644
 --- a/src/mediaengine/open_cdm_mediaengine_impl.h
 +++ b/src/mediaengine/open_cdm_mediaengine_impl.h
 @@ -17,11 +17,11 @@
@@ -1680,7 +1684,7 @@ index 4efc7e0..82a444c 100644
                                    const uint8_t *pbData, uint32_t cbData,
                                    uint8_t *out, uint32_t &out_size) override;
 -
-+  int releaseMem() override;
++  int ReleaseMem() override;
    ~OpenCdmMediaengineImpl() override;
   private:
    OpenCdmMediaengineCom *media_engine_com_;
