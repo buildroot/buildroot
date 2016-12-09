@@ -1,0 +1,11 @@
+
+config BR2_PACKAGE_LIBGPHOTO2
+	bool "libgphoto2"
+	default n
+	select BR2_PACKAGE_LIBUSB
+	depends on !BR2_COMPILER_PARANOID_UNSAFE_PATH
+	help
+	  libgphoto2 is a library that can be used by applications to access various digital cameras. 
+	  
+comment "libgphoto2 requires the paranoid check to be disabled. (Build options -> Advanced)"
+	depends on BR2_COMPILER_PARANOID_UNSAFE_PATH 
