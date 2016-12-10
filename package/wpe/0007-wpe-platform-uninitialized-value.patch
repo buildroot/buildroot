@@ -1,0 +1,13 @@
+diff --git a/Source/ThirdParty/WPE-platform/src/bcm-nexus/renderer-backend.cpp b/Source/ThirdParty/WPE-platform/src/bcm-nexus/renderer-backend.cpp
+index 08456ce..d06fb51 100644
+--- a/Source/ThirdParty/WPE-platform/src/bcm-nexus/renderer-backend.cpp
++++ b/Source/ThirdParty/WPE-platform/src/bcm-nexus/renderer-backend.cpp
+@@ -109,6 +109,7 @@ struct EGLTarget : public IPC::Client::Handler {
+ 
+ EGLTarget::EGLTarget(struct wpe_renderer_backend_egl_target* target, int hostFd)
+     : target(target)
++    , nativeWindow(nullptr)
+ {
+     ipcClient.initialize(*this, hostFd);
+ }
+ 
