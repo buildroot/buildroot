@@ -150,6 +150,11 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_VOICECONTROL
 comment "voicecontrol requires the GreenPeak GP501 or GP711 to be selected and userland lib to be build."
 	depends on !BR2_PACKAGE_GREENPEAK || !BR2_PACKAGE_GREENPEAK_USERLANDLIB || (!BR2_PACKAGE_GREENPEAK_GP501 && !BR2_PACKAGE_GREENPEAK_GP711)
 
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_IR_REMOTE
+	bool "irremote"
+	help
+	  A remote control implementation that translates keys coming in from a
+	  IR remote into the linux key system.
 
 config BR2_PACKAGE_WEBBRIDGE_PLUGIN_DEVICEINFO
 	bool "deviceinfo"
