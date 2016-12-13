@@ -108,10 +108,10 @@ index 0000000..310e820
 +	@rm -f $(OCDM_WPE_DIR)/include/*
 diff --git a/src/browser/wpe/opencdm/open_cdm.cpp b/src/browser/wpe/opencdm/open_cdm.cpp
 new file mode 100644
-index 0000000..e8e8409
+index 0000000..94bb9b2
 --- /dev/null
 +++ b/src/browser/wpe/opencdm/open_cdm.cpp
-@@ -0,0 +1,218 @@
+@@ -0,0 +1,219 @@
 +#include <open_cdm_mediaengine_factory.h>
 +#include <open_cdm_platform_factory.h>
 +#include <open_cdm_common.h>
@@ -210,6 +210,7 @@ index 0000000..e8e8409
 +        char msg[m_message.length()];
 +        m_message.copy( msg, m_message.length() , 0);
 +        char test[m_message.length()];
++        m_eState = KEY_SESSION_WAITING_FOR_LICENSE;
 +    }
 +
 +    if(m_eState == KEY_SESSION_READY) {
