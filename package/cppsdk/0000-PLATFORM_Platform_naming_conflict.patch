@@ -1,0 +1,183 @@
+From 98ab2e8b961321ccad5efc1f0ecb37b0071fe010 Mon Sep 17 00:00:00 2001
+From: wouterlucas <wouter@wouterlucas.com>
+Date: Sat, 17 Dec 2016 20:29:27 -0800
+Subject: [PATCH] [PLATFORM] Platform naming conflict. renamed PLATFORM in
+ cppsdk to CPPSDK_PLATFORM
+
+Back port from master to stable:
+https://github.com/Metrological/cppsdk/commit/405ec96e3bf861b1f044f6fb82657ae44119e8c0
+https://github.com/Metrological/cppsdk/commit/771b22fc535d42d03044a6ebbcd6481cf3f6d23e
+---
+ generics/Portability.h  |  6 +-----
+ generics/SystemInfo.cpp | 42 +++++++++++++++++++++---------------------
+ 2 files changed, 22 insertions(+), 26 deletions(-)
+
+diff --git a/generics/Portability.h b/generics/Portability.h
+index ee400b7..8813a07 100644
+--- a/generics/Portability.h
++++ b/generics/Portability.h
+@@ -1,13 +1,9 @@
+ #ifndef __PORTABILITY_H
+ #define __PORTABILITY_H
+ 
+-#define PLATFORM(TARGET_PLATFORM) \
++#define CPPSDK_PLATFORM(TARGET_PLATFORM) \
+        (defined PLATFORM_##TARGET_PLATFORM )
+ 
+-#ifndef PLATFORM
+-#error No platform found, please define a proper PLATFORM
+-#endif
+-
+ #ifdef WIN32
+ 
+ // W3 -- warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+diff --git a/generics/SystemInfo.cpp b/generics/SystemInfo.cpp
+index b542afa..c5105d5 100644
+--- a/generics/SystemInfo.cpp
++++ b/generics/SystemInfo.cpp
+@@ -13,16 +13,16 @@
+ #include <sys/sysinfo.h>
+ #endif
+ 
+-#if PLATFORM(INTELCE)
++#if CPPSDK_PLATFORM(INTELCE)
+ #include <osal.h>
+ #include <cinttypes>
+ #define CE31_41XX_SERIAL_NUMBER 0x00000044
+ #define CE31_41XX_DFX_MBAR 0xDF8F0000
+-#elif PLATFORM(RPI)
++#elif CPPSDK_PLATFORM(RPI)
+ #include "Sync.h"
+ #include <cstddef>  // size_t
+ #include "bcm_host.h"
+-#elif PLATFORM(EOS) || PLATFORM(DAWN)
++#elif CPPSDK_PLATFORM(EOS) || CPPSDK_PLATFORM(DAWN)
+ #include <nexus_config.h>
+ #include <nexus_platform.h>
+ #include <bstd.h>
+@@ -36,19 +36,19 @@ namespace Solutions {
+ namespace Generics {
+ #ifdef STUB_HARDWARE
+ static const TCHAR s_SystemPrefix[] = _T("TST");
+-#elif PLATFORM(INTELCE)
++#elif CPPSDK_PLATFORM(INTELCE)
+ static const TCHAR s_SystemPrefix[] = _T("ICE");
+-#elif PLATFORM(RPI)
++#elif CPPSDK_PLATFORM(RPI)
+ static const TCHAR s_SystemPrefix[] = _T("RPI");
+-#elif PLATFORM(EOS)
++#elif CPPSDK_PLATFORM(EOS)
+ static const TCHAR s_SystemPrefix[] = _T("EOS");
+-#elif PLATFORM(DAWN)
++#elif CPPSDK_PLATFORM(DAWN)
+ static const TCHAR s_SystemPrefix[] = _T("DWN");
+-#elif PLATFORM(HORIZON)
++#elif CPPSDK_PLATFORM(HORIZON)
+ static const TCHAR s_SystemPrefix[] = _T("HZN");
+-#elif PLATFORM(WINDOWS) ||  defined(__WIN32__)
++#elif CPPSDK_PLATFORM(WINDOWS) ||  defined(__WIN32__)
+ static const TCHAR s_SystemPrefix[] = _T("WIN");
+-#elif PLATFORM(PC_UNIX)
++#elif CPPSDK_PLATFORM(PC_UNIX)
+ static const TCHAR s_SystemPrefix[] = _T("PCX");
+ #else
+ #error Unknown platform, please define a proper PLATFORM
+@@ -104,7 +104,7 @@ static const TCHAR* RawDeviceId() {
+ 
+ #else
+ 
+-#if PLATFORM(INTELCE)
++#if CPPSDK_PLATFORM(INTELCE)
+ // Use silicon serial for id
+ static const TCHAR* RawDeviceId() {
+     static TCHAR deviceId[(DeviceIdLength + 1) - (sizeof(s_SystemPrefix) - 1)] = {0};
+@@ -125,7 +125,7 @@ static const TCHAR* RawDeviceId() {
+ }
+ #endif
+ 
+-#if   PLATFORM(RPI)
++#if   CPPSDK_PLATFORM(RPI)
+ // Use SOC serial as id
+ static const TCHAR* RawDeviceId() {
+     static TCHAR deviceId[(DeviceIdLength + 1) - (sizeof(s_SystemPrefix) - 1)] = {0};
+@@ -167,7 +167,7 @@ static const TCHAR* RawDeviceId() {
+ }
+ #endif
+ 
+-#if PLATFORM(HORIZON)
++#if CPPSDK_PLATFORM(HORIZON)
+ // Use Nagra ID as id
+ static const TCHAR* RawDeviceId() {
+     const TCHAR* serial = HSL_getStbId()
+@@ -184,7 +184,7 @@ static const TCHAR* RawDeviceId() {
+ }
+ #endif
+ 
+-#if PLATFORM(WINDOWS) ||  defined(__WIN32__)
++#if CPPSDK_PLATFORM(WINDOWS) ||  defined(__WIN32__)
+ // Use part of the system board UUID for id
+ /* FIXME: This is just a brainfart, need to worked out propery
+  *
+@@ -258,7 +258,7 @@ static const TCHAR* RawDeviceId() {
+ 
+ #endif
+ 
+-#if PLATFORM(PC_UNIX)
++#if CPPSDK_PLATFORM(PC_UNIX)
+ // Use part of the system board UUID for id (root)
+ static const TCHAR* RawDeviceId() {
+     static TCHAR deviceId[(DeviceIdLength + 1) - (sizeof(s_SystemPrefix) - 1)] = {0};
+@@ -294,7 +294,7 @@ static const TCHAR* RawDeviceId() {
+ 
+ #define MAX_NXCLIENT_RETRIES 5
+ 
+-#if PLATFORM(EOS) || PLATFORM(DAWN)
++#if CPPSDK_PLATFORM(EOS) || CPPSDK_PLATFORM(DAWN)
+ static const TCHAR* RawDeviceId() {
+     static TCHAR deviceId[(DeviceIdLength + 1) - (sizeof(s_SystemPrefix) - 1)] = { 0 };
+ 
+@@ -386,7 +386,7 @@ static string ConstructHostname () {
+     return (buffer);
+ }
+ 
+-#if PLATFORM(RPI)
++#if CPPSDK_PLATFORM(RPI)
+     // Returns response of request.
+     std::string vcgencmd_request( const char request[] );
+ #endif
+@@ -405,7 +405,7 @@ SystemInfo::SystemInfo() :
+     m_freeram = info.freeram;
+ #endif
+ 
+-#if PLATFORM(RPI)
++#if CPPSDK_PLATFORM(RPI)
+     // Init GPU resources.
+     // We can call it always. If we are not the first it does not do anything (harmful).
+     // Moreover, it takes care of all underlying necessary API init's
+@@ -458,7 +458,7 @@ void SystemInfo::UpdateCpuStats() const {
+ }
+ 
+ void SystemInfo::UpdateTotalGpuRam() {
+-#if PLATFORM(RPI)
++#if CPPSDK_PLATFORM(RPI)
+     if (SystemInfo::m_totalgpuram != 0)
+         return;
+ 
+@@ -494,7 +494,7 @@ void SystemInfo::UpdateTotalGpuRam() {
+ }
+ 
+ void SystemInfo::UpdateFreeGpuRam() {
+-#if PLATFORM(RPI)
++#if CPPSDK_PLATFORM(RPI)
+     static Generics::CriticalSection mutualExclusion;
+ 
+     if (SystemInfo::m_totalgpuram == 0)
+@@ -532,7 +532,7 @@ void SystemInfo::UpdateFreeGpuRam() {
+ #endif
+ }
+ 
+-#if PLATFORM(RPI)
++#if CPPSDK_PLATFORM(RPI)
+ std::string vcgencmd_request( const char request[] ) {
+     // Most VC API calls are guarded but we want to be sure anyway
+     static Generics::CriticalSection mutualExclusion;
