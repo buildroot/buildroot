@@ -1,0 +1,41 @@
+From ad7f886588b31204d8c03529341d21e0a03305ae Mon Sep 17 00:00:00 2001
+From: wouterlucas <wouter@wouterlucas.com>
+Date: Wed, 21 Dec 2016 23:30:28 -0800
+Subject: [PATCH] [wpe-platform][bcm-nexus] Disable CFE splash screen when WPE
+ initializes
+
+---
+ .../WPE-platform/src/bcm-nexus/renderer-backend.cpp         | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/Source/ThirdParty/WPE-platform/src/bcm-nexus/renderer-backend.cpp b/Source/ThirdParty/WPE-platform/src/bcm-nexus/renderer-backend.cpp
+index d06fb51..132df14 100644
+--- a/Source/ThirdParty/WPE-platform/src/bcm-nexus/renderer-backend.cpp
++++ b/Source/ThirdParty/WPE-platform/src/bcm-nexus/renderer-backend.cpp
+@@ -49,6 +49,10 @@ struct Backend {
+ 
+     NXPL_PlatformHandle nxplHandle;
+ 
++    NEXUS_GraphicsSettings graphicsSettings;
++    NEXUS_DisplayHandle display;
++    NEXUS_Error rc;
++
+ #ifdef BACKEND_BCM_NEXUS_NXCLIENT
+     NxClient_AllocResults allocResults;
+ #endif
+@@ -59,6 +63,15 @@ struct Backend {
+ Backend::Backend()
+ {
+     NEXUS_DisplayHandle displayHandle(nullptr);
++
++    // disable splash
++    NEXUS_Display_GetGraphicsSettings(display, &graphicsSettings);
++    if (graphicsSettings.enabled) {
++        graphicsSettings.enabled = false;
++        rc = NEXUS_Display_SetGraphicsSettings(display, &graphicsSettings);
++        BDBG_ASSERT(!rc);
++    }
++
+ #ifdef BACKEND_BCM_NEXUS_NXCLIENT
+     NxClient_AllocSettings allocSettings;
+     NxClient_JoinSettings joinSettings;
