@@ -42,9 +42,9 @@ index 73e03a0..9b9710f 100644
    qtdemux->cenc_aux_sample_count = 0;
    qtdemux->protection_system_ids = NULL;
 +  qtdemux->preferred_protection_system_id = NULL;
-   qtdemux->always_honor_tfdt = FALSE;
    g_queue_init (&qtdemux->protection_event_queue);
    gst_segment_init (&qtdemux->segment, GST_FORMAT_TIME);
+   qtdemux->flowcombiner = gst_flow_combiner_new ();
 @@ -2056,6 +2060,10 @@ gst_qtdemux_reset (GstQTDemux * qtdemux, gboolean hard)
        g_ptr_array_free (qtdemux->protection_system_ids, TRUE);
        qtdemux->protection_system_ids = NULL;
@@ -312,8 +312,8 @@ index 1120c7d..4552287 100644
    guint32 cenc_aux_sample_count;
 +  gchar *preferred_protection_system_id;
  
-   gboolean always_honor_tfdt;
  };
+ 
 -- 
 2.10.2
 
