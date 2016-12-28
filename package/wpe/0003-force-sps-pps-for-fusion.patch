@@ -1,10 +1,19 @@
+From 87a481e92e1dbd63ffd06e3c77ee6e38bfc84a7e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Wed, 28 Dec 2016 11:54:39 +0000
+Subject: [PATCH 3/6] force-sps-pps-for-fusion
+
+---
+ .../platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp   | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
 diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
-index d11a27e..7d72958 100644
+index d58a04f..adad376 100644
 --- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
 +++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
-@@ -1088,6 +1088,14 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
+@@ -1108,6 +1108,14 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
          gst_message_parse_state_changed(message, &currentState, &newState, 0);
-         GST_TRACE("State changed %s --> %s", gst_element_state_get_name(currentState), gst_element_state_get_name(newState));
+         TRACE_MEDIA_MESSAGE("State changed %s --> %s", gst_element_state_get_name(currentState), gst_element_state_get_name(newState));
  
 +#if USE(FUSION_SINK)
 +        if (g_strstr_len(GST_MESSAGE_SRC_NAME(message), 9, "h264parse")) {
@@ -17,4 +26,6 @@ index d11a27e..7d72958 100644
          if (!messageSourceIsPlaybin || m_delayingLoad)
              break;
          updateStates();
+-- 
+1.8.3.2
 

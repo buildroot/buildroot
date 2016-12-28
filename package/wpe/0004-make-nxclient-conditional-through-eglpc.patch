@@ -1,3 +1,13 @@
+From 212a94f4e2f375b66179a65fc52409b207bb9899 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Wed, 28 Dec 2016 11:55:34 +0000
+Subject: [PATCH 4/6] make-nxclient-conditional-through-eglpc
+
+---
+ .../ThirdParty/WPE-platform/src/bcm-nexus/CMakeLists.txt   | 10 ++++++++++
+ .../WPE-platform/src/bcm-nexus/renderer-backend.cpp        | 14 ++++++++++++++
+ 2 files changed, 24 insertions(+)
+
 diff --git a/Source/ThirdParty/WPE-platform/src/bcm-nexus/CMakeLists.txt b/Source/ThirdParty/WPE-platform/src/bcm-nexus/CMakeLists.txt
 index e302131..27cf301 100644
 --- a/Source/ThirdParty/WPE-platform/src/bcm-nexus/CMakeLists.txt
@@ -74,3 +84,6 @@ index 911853c..4b924a1 100644
  }
  
  struct EGLTarget : public IPC::Client::Handler {
+-- 
+1.8.3.2
+
