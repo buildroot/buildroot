@@ -48,7 +48,18 @@
                 if (xhr.readyState == 4) {
                     if (xhr.status == 200) {
                         var deviceInfo = JSON.parse(this.responseText);
-                        document.getElementById('ip').innerHTML = deviceInfo.Addresses.IpAddress;
+                        var ip = 'No IP available';
+                        if (deviceInfo.Addresses && deviceInfo.Addresses.IpAddress)
+                            ip = deviceInfo.Addresses.IpAddress;
+                        else {                            
+                            for (var i in deviceInfo.addresses) {
+                                if (deviceInfo.addresses[i].ip && deviceInfo.addresses[i].ip !== '127.0.0.1') {
+                                    ip = deviceInfo.addresses[i].ip;
+                                    break;
+                                } 
+                            }
+                        }
+                        document.getElementById('ip').innerHTML = ip;
                     }
                     xhr = null;
                 }
