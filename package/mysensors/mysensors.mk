@@ -4,27 +4,25 @@
 #
 ################################################################################
 
-MYSENSORS_VERSION = ee9ffe0f5230ed4382e53f5912961398c520c200
+MYSENSORS_VERSION = 2.1.1
 MYSENSORS_SITE_METHOD = git
-MYSENSORS_SITE = git@github.com:bramoosterhuis/MySensors.git
+MYSENSORS_SITE = git@github.com:mysensors/MySensors.git
 MYSENSORS_INSTALL_STAGING = YES
-MYSENSORS_DEPENDENCIES += mosquitto
 
 MYSENSORS_CONF_OPTS += --no_init_system
 MYSENSORS_CONF_OPTS += --my-config-file=${BR2_PACKAGE_MYSENSORS_CONFIG_FILE}
 
 ifeq ($(BR2_PACKAGE_MYSENSORS_SYSTEM_RPI10),y)
 MYSENSORS_CONF_OPTS += --soc=BCM2835
-MYSENSORS_CONF_OPTS += --platform-type=RPi
 else ifeq ($(BR2_PACKAGE_MYSENSORS_SYSTEM_RPI23),y)
 MYSENSORS_CONF_OPTS += --soc=BCM2836
-MYSENSORS_CONF_OPTS += --platform-type=RPi2
 endif
 
 ifeq ($(BR2_PACKAGE_MYSENSORS_SYSTEM_ETHERNET),y)
 MYSENSORS_CONF_OPTS += --my-gateway=ethernet 
 else ifeq ($(BR2_PACKAGE_MYSENSORS_SYSTEM_MQTT),y)
 MYSENSORS_CONF_OPTS += --my-gateway=mqtt 
+MYSENSORS_DEPENDENCIES += mosquitto
 else ifeq ($(BR2_PACKAGE_MYSENSORS_SYSTEM_SERIAL),y)
 MYSENSORS_CONF_OPTS += --my-gateway=serial 
 endif
