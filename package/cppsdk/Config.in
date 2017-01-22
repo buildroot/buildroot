@@ -92,4 +92,32 @@ config BR2_PACKAGE_CPPSDK_WEBSOCKET
 	  Functionality to handle web communiciation and web socket
 	  communication.
 
+config BR2_PACKAGE_CPPSDK_TESTS
+	bool "tests"
+	default n
+	help
+	  Build test associated with the CPPSDK.
+
+if BR2_PACKAGE_CPPSDK_TESTS
+
+config BR2_PACKAGE_CPPSDK_TESTS_RASPIO
+	bool "raspio"
+        depends on BR2_PACKAGE_RPI_USERLAND && BR2_PACKAGE_CPPSDK_DEVICES
+	help
+	  Tests the GPIO interface in Devices from a C++ sperspective
+
+comment "raspio depends on package devices and needs to be on a raspbberypi."
+        depends on !BR2_PACKAGE_RPI_USERLAND ||! BR2_PACKAGE_CPPSDK_DEVICES
+
+config BR2_PACKAGE_CPPSDK_TESTS_NRF24L01
+	bool "nrf24l01"
+        depends on BR2_PACKAGE_RPI_USERLAND && BR2_PACKAGE_CPPSDK_DEVICES
+	help
+	  Tests the serial wireless communication device nRF24l01 on a Rasberry Pi SPI.
+
+comment "nrf24l01 depends on package devices and needs to be on a raspbberypi."
+        depends on !BR2_PACKAGE_RPI_USERLAND ||! BR2_PACKAGE_CPPSDK_DEVICES
+
+endif
+
 endif
