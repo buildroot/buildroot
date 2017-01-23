@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NETTLE_VERSION = 3.2
+NETTLE_VERSION = 3.3
 ifeq ($(BR2_PACKAGE_PLAYREADY),y)
 NETTLE_VERSION = 2.7.1
 endif
@@ -21,8 +21,6 @@ endif
 # don't include openssl support for (unused) examples as it has problems
 # with static linking
 NETTLE_CONF_OPTS = --disable-openssl
-# For 0002-fix-CVE-2016-6489.patch
-NETTLE_AUTORECONF = YES
 
 # ARM assembly requires v6+ ISA
 ifeq ($(BR2_ARM_CPU_ARMV4)$(BR2_ARM_CPU_ARMV5)$(BR2_ARM_CPU_ARMV7M),y)

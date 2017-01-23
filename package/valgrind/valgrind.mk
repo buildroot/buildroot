@@ -4,22 +4,18 @@
 #
 ################################################################################
 
-VALGRIND_VERSION = 3.11.0
+VALGRIND_VERSION = 3.12.0
 VALGRIND_SITE = http://valgrind.org/downloads
 VALGRIND_SOURCE = valgrind-$(VALGRIND_VERSION).tar.bz2
 VALGRIND_LICENSE = GPLv2 GFDLv1.2
 VALGRIND_LICENSE_FILES = COPYING COPYING.DOCS
-VALGRIND_CONF_OPTS = --disable-ubsan
+VALGRIND_CONF_OPTS = \
+	--disable-ubsan \
+	--without-mpicc
 VALGRIND_INSTALL_STAGING = YES
 
 # patch 0004-Fixes-for-musl-libc.patch touching configure.ac
 VALGRIND_AUTORECONF = YES
-
-ifeq ($(BR2_GCC_ENABLE_TLS),y)
-VALGRIND_CONF_OPTS += --enable-tls
-else
-VALGRIND_CONF_OPTS += --disable-tls
-endif
 
 # When Valgrind detects a 32-bit MIPS architecture, it forcibly adds
 # -march=mips32 to CFLAGS; when it detects a 64-bit MIPS architecture,

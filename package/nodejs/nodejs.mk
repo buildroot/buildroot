@@ -63,6 +63,7 @@ define HOST_NODEJS_CONFIGURE_CMDS
 		--without-dtrace \
 		--without-etw \
 		--shared-zlib \
+		$(if $(BR2_PACKAGE_NODEJS_V8_ARCH_SUPPORTS),--with-intl=none) \
 	)
 endef
 
@@ -90,18 +91,20 @@ else ifeq ($(BR2_mipsel),y)
 NODEJS_CPU = mipsel
 else ifeq ($(BR2_arm),y)
 NODEJS_CPU = arm
+else ifeq ($(BR2_aarch64),y)
+NODEJS_CPU = arm64
 # V8 needs to know what floating point ABI the target is using.
 NODEJS_ARM_FP = $(call qstrip,$(BR2_GCC_TARGET_FLOAT_ABI))
 endif
 
 # MIPS architecture specific options
 ifeq ($(BR2_mips)$(BR2_mipsel),y)
-ifeq ($(BR2_mips_32r6),y)
+ifeq ($(BR2_MIPS_CPU_MIPS32R6),y)
 NODEJS_MIPS_ARCH_VARIANT = r6
 NODEJS_MIPS_FPU_MODE = fp64
-else ifeq ($(BR2_mips_32r2),y)
+else ifeq ($(BR2_MIPS_CPU_MIPS32R2),y)
 NODEJS_MIPS_ARCH_VARIANT = r2
-else ifeq ($(BR2_mips_32),y)
+else ifeq ($(BR2_MIPS_CPU_MIPS32),y)
 NODEJS_MIPS_ARCH_VARIANT = r1
 endif
 endif

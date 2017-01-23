@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SYSTEMD_VERSION = 231
+SYSTEMD_VERSION = 232
 SYSTEMD_SITE = $(call github,systemd,systemd,v$(SYSTEMD_VERSION))
 SYSTEMD_LICENSE = LGPLv2.1+, GPLv2+ (udev), Public Domain (few source files, see README)
 SYSTEMD_LICENSE_FILES = LICENSE.GPL2 LICENSE.LGPL2.1 README
@@ -30,7 +30,6 @@ SYSTEMD_CONF_OPTS += \
 	--enable-blkid \
 	--enable-static=no \
 	--disable-manpages \
-	--disable-selinux \
 	--disable-pam \
 	--disable-ima \
 	--disable-libcryptsetup \
@@ -151,6 +150,13 @@ SYSTEMD_CONF_OPTS += --disable-qrencode
 endif
 else
 SYSTEMD_CONF_OPTS += --disable-microhttpd --disable-qrencode
+endif
+
+ifeq ($(BR2_PACKAGE_LIBSELINUX),y)
+SYSTEMD_DEPENDENCIES += libselinux
+SYSTEMD_CONF_OPTS += --enable-selinux
+else
+SYSTEMD_CONF_OPTS += --disable-selinux
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD_HWDB),y)

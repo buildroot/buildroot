@@ -4,10 +4,9 @@
 #
 ################################################################################
 
-QT5WEBKIT_VERSION = b889f460280ad98c89ede179bd3b9ce9cb02002b
-# Using GitHub since it supports downloading tarballs from random commits.
-# The http://code.qt.io/cgit/qt/qtwebkit.git/ repo doesn't allow to do so.
-QT5WEBKIT_SITE = $(call github,qtproject,qtwebkit,$(QT5WEBKIT_VERSION))
+QT5WEBKIT_VERSION = $(QT5_VERSION)
+QT5WEBKIT_SITE = $(QT5_SNAPSHOTS_SITE)
+QT5WEBKIT_SOURCE = qtwebkit-opensource-src-$(QT5WEBKIT_VERSION).tar.xz
 QT5WEBKIT_DEPENDENCIES = \
 	host-bison host-flex host-gperf host-python host-ruby \
 	qt5base sqlite
@@ -36,21 +35,14 @@ endif
 # QtWebkit's build system uses python, but only supports python2. We work
 # around this by forcing python2 early in the PATH, via a python->python2
 # symlink.
-QT5WEBKIT_ENV = PATH=$(@D)/bin:$(BR_PATH)
+QT5WEBKIT_ENV = PATH=$(@D)/host-bin:$(BR_PATH)
 define QT5WEBKIT_PYTHON2_SYMLINK
-	mkdir -p $(@D)/bin
-	ln -sf $(HOST_DIR)/usr/bin/python2 $(@D)/bin/python
+	mkdir -p $(@D)/host-bin
+	ln -sf $(HOST_DIR)/usr/bin/python2 $(@D)/host-bin/python
 endef
 QT5WEBKIT_PRE_CONFIGURE_HOOKS += QT5WEBKIT_PYTHON2_SYMLINK
 
-# Since we get the source from git, generated header files are not included.
-# qmake detects that header file generation (using the syncqt tool) must be
-# done based on the existence of a .git directory (cfr. the git_build config
-# option which is set in qt_build_paths.prf).
-# So, to make sure that qmake detects that header files must be generated,
-# create an empty .git directory.
 define QT5WEBKIT_CONFIGURE_CMDS
-	mkdir -p $(@D)/.git
 	(cd $(@D); $(TARGET_MAKE_ENV) $(QT5WEBKIT_ENV) $(HOST_DIR)/usr/bin/qmake)
 endef
 

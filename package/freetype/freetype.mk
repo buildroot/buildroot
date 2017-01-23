@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FREETYPE_VERSION = 2.6.5
+FREETYPE_VERSION = 2.7.1
 ifeq ($(BR2_PACKAGE_NETFLIX),y)
 FREETYPE_VERSION = 2.4.6
 endif

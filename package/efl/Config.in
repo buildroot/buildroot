@@ -14,9 +14,9 @@ config BR2_PACKAGE_EFL
 	select BR2_PACKAGE_FREETYPE
 	select BR2_PACKAGE_JPEG # Emile needs libjpeg
 	select BR2_PACKAGE_LIBCURL # Ecore_con_url, runtime dependency
-	select BR2_PACKAGE_LIBXKBCOMMON if BR2_PACKAGE_WAYLAND
 	# https://phab.enlightenment.org/T2728
 	select BR2_PACKAGE_LUAJIT # Lua support broken
+	select BR2_PACKAGE_LZ4
 	select BR2_PACKAGE_UTIL_LINUX
 	# libblkid is part of required tools, see EFL's README.
 	select BR2_PACKAGE_UTIL_LINUX_LIBBLKID
@@ -155,6 +155,70 @@ config BR2_PACKAGE_EFL_X_XLIB
 	select BR2_PACKAGE_XLIB_LIBXTST
 	select BR2_PACKAGE_XPROTO_GLPROTO
 
+config BR2_PACKAGE_EFL_WAYLAND
+	bool "Wayland support"
+	depends on BR2_PACKAGE_WAYLAND
+	depends on BR2_TOOLCHAIN_HAS_THREADS # Evas DRM Engine -> libdrm
+	depends on BR2_PACKAGE_MESA3D_OPENGL_EGL # Evas DRM Engine
+	depends on BR2_PACKAGE_EFL_OPENGLES # OpenGL ES with EGL support only
+	select BR2_PACKAGE_EFL_DRM
+
+comment "Wayland support needs OpenGL ES w/ EGL, threads"
+	depends on BR2_PACKAGE_WAYLAND
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || !BR2_PACKAGE_MESA3D_OPENGL_EGL \
+		|| !BR2_PACKAGE_EFL_OPENGLES
+
+choice
+	bool "OpenGL support"
+	help
+	  libevas can be configured to use HW acceleration with OpenGL or
+	  OpenGL ES.
+
+config BR2_PACKAGE_EFL_OPENGL
+	bool "OpenGL"
+	depends on BR2_PACKAGE_HAS_LIBGL
+	depends on BR2_PACKAGE_XORG7
+	select BR2_PACKAGE_EFL_X_XLIB
+
+comment "OpenGL support needs X11 and an OpenGL provider"
+	depends on !BR2_PACKAGE_HAS_LIBGL || !BR2_PACKAGE_XORG7
+
+config BR2_PACKAGE_EFL_OPENGLES
+	bool "OpenGL ES (w/ EGL)"
+	depends on BR2_PACKAGE_HAS_LIBEGL
+	depends on BR2_PACKAGE_HAS_LIBGLES
+
+comment "OpenGL ES support needs an OpenGL ES w/ EGL provider"
+	depends on !BR2_PACKAGE_HAS_LIBGLES || !BR2_PACKAGE_HAS_LIBEGL
+
+config BR2_PACKAGE_EFL_OPENGL_NONE
+	bool "none"
+
+endchoice # OpenGL support
+
+config BR2_PACKAGE_EFL_ELPUT
+	bool "Elput"
+	select BR2_PACKAGE_LIBINPUT
+	select BR2_PACKAGE_LIBXKBCOMMON
+	help
+	  The elput library is an efl abstraction for the libinput library
+	  which can be used by various other subsystems (ecore_fb,
+	  ecore_drm, etc) to handle interfacing with libinput without
+	  having to duplicate the code in each subsystem.
+
+config BR2_PACKAGE_EFL_DRM
+	bool "Evas DRM Engine"
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libdrm
+	depends on BR2_PACKAGE_MESA3D_OPENGL_EGL # require libgbm from mesa3d
+	select BR2_PACKAGE_EFL_ELPUT
+	select BR2_PACKAGE_LIBDRM
+	select BR2_PACKAGE_LIBXKBCOMMON
+	help
+	  This option enable building support for the Evas DRM Engine.
+
+comment "Evas DRM Engine needs mesa3d w/ EGL support, threads"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || !BR2_PACKAGE_MESA3D_OPENGL_EGL
+
 comment "libevas loaders"
 
 config BR2_PACKAGE_EFL_PNG
@@ -198,6 +262,20 @@ config BR2_PACKAGE_EFL_WEBP
 	select BR2_PACKAGE_WEBP
 	help
 	  This enables the loader code that loads images using WebP.
+
+config BR2_PACKAGE_EFL_LIBRAW
+	bool "libraw loader"
+	select BR2_PACKAGE_LIBRAW
+	help
+	  This option enables the Evas generic Libraw loader
+
+config BR2_PACKAGE_EFL_SVG
+	bool "SVG loader"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # librsvg -> pango -> harfbuzz
+	select BR2_PACKAGE_LIBRSVG
+	select BR2_PACKAGE_CAIRO
+	help
+	  This option enables the Evas generic SVG loader
 
 endif # BR2_PACKAGE_EFL
 

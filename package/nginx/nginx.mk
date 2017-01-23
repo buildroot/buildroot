@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NGINX_VERSION = 1.10.1
+NGINX_VERSION = 1.10.2
 NGINX_SITE = http://nginx.org/download
 NGINX_LICENSE = BSD-2c
 NGINX_LICENSE_FILES = LICENSE
@@ -156,11 +156,6 @@ else
 NGINX_CONF_OPTS += --without-http_gzip_module
 endif
 
-ifeq ($(BR2_PACKAGE_NGINX_NAXSI),y)
-NGINX_DEPENDENCIES += nginx-naxsi
-NGINX_CONF_OPTS += --add-module=$(NGINX_NAXSI_DIR)/naxsi_src
-endif
-
 ifeq ($(BR2_PACKAGE_NGINX_HTTP_REWRITE_MODULE),y)
 NGINX_DEPENDENCIES += pcre
 else
@@ -243,6 +238,16 @@ endif # BR2_PACKAGE_NGINX_STREAM
 ifeq ($(BR2_PACKAGE_NGINX_UPLOAD),y)
 NGINX_CONF_OPTS += $(addprefix --add-module=,$(NGINX_UPLOAD_DIR))
 NGINX_DEPENDENCIES += nginx-upload
+endif
+
+ifeq ($(BR2_PACKAGE_NGINX_DAV_EXT),y)
+NGINX_CONF_OPTS += --add-module=$(NGINX_DAV_EXT_DIR)
+NGINX_DEPENDENCIES += nginx-dav-ext
+endif
+
+ifeq ($(BR2_PACKAGE_NGINX_NAXSI),y)
+NGINX_DEPENDENCIES += nginx-naxsi
+NGINX_CONF_OPTS += --add-module=$(NGINX_NAXSI_DIR)/naxsi_src
 endif
 
 # Debug logging

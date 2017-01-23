@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EFIVAR_VERSION = 0.23
+EFIVAR_VERSION = 30
 EFIVAR_SITE = $(call github,rhinstaller,efivar,$(EFIVAR_VERSION))
 EFIVAR_LICENSE = LGPLv2.1
 EFIVAR_LICENSE_FILES = COPYING
@@ -12,20 +12,14 @@ EFIVAR_DEPENDENCIES = popt
 EFIVAR_INSTALL_STAGING = YES
 
 # BINTARGETS is set to skip efivar-static which requires static popt,
-# and since we depend on glibc, we will never be built in a
-# static-only environment.
+# and since we depend on dynamic libraries, efivar will never be built
+# in a static-only environment.
 # -fPIC is needed at least on MIPS, otherwise fails to build shared
 # -library.
 EFIVAR_MAKE_OPTS = \
 	libdir=/usr/lib \
 	BINTARGETS=efivar \
 	LDFLAGS="$(TARGET_LDFLAGS) -fPIC"
-
-# Explicitly linking with shared libgcc is required on MicroBlaze and
-# Nios II, otherwise it fails due to FDE encoding in static libgcc.
-ifeq ($(BR2_microblaze)$(BR2_nios2),y)
-EFIVAR_MAKE_OPTS += SOFLAGS="-shared -shared-libgcc"
-endif
 
 define EFIVAR_BUILD_CMDS
 	# makeguids is an internal host tool and must be built separately with

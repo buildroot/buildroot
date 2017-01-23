@@ -79,8 +79,9 @@ HOST_GCC_FINAL_CONF_OPTS += --disable-symvers
 endif
 
 # Disable shared libs like libstdc++ if we do static since it confuses linking
+# In that case also disable libcilkrts as there is no static version
 ifeq ($(BR2_STATIC_LIBS),y)
-HOST_GCC_FINAL_CONF_OPTS += --disable-shared
+HOST_GCC_FINAL_CONF_OPTS += --disable-shared --disable-libcilkrts
 else
 HOST_GCC_FINAL_CONF_OPTS += --enable-shared
 endif
@@ -112,22 +113,11 @@ endef
 HOST_GCC_FINAL_POST_INSTALL_HOOKS += HOST_GCC_FINAL_CREATE_CC_SYMLINKS
 
 HOST_GCC_FINAL_TOOLCHAIN_WRAPPER_ARGS += $(HOST_GCC_COMMON_TOOLCHAIN_WRAPPER_ARGS)
-HOST_GCC_FINAL_POST_BUILD_HOOKS += TOOLCHAIN_BUILD_WRAPPER
+HOST_GCC_FINAL_POST_BUILD_HOOKS += TOOLCHAIN_WRAPPER_BUILD
+HOST_GCC_FINAL_POST_INSTALL_HOOKS += TOOLCHAIN_WRAPPER_INSTALL
 # Note: this must be done after CREATE_CC_SYMLINKS, otherwise the
 # -cc symlink to the wrapper is not created.
 HOST_GCC_FINAL_POST_INSTALL_HOOKS += HOST_GCC_INSTALL_WRAPPER_AND_SIMPLE_SYMLINKS
-
-# In gcc 4.7.x, the ARM EABIhf library loader path for glibc was not
-# correct, so we create a symbolic link to make things work
-# properly. glibc installs the library loader as ld-linux-armhf.so.3,
-# but gcc creates binaries that reference ld-linux.so.3.
-ifeq ($(BR2_arm)$(BR2_ARM_EABIHF)$(BR2_GCC_VERSION_4_7_X)$(BR2_TOOLCHAIN_USES_GLIBC),yyyy)
-define HOST_GCC_FINAL_LD_LINUX_LINK
-	ln -sf ld-linux-armhf.so.3 $(TARGET_DIR)/lib/ld-linux.so.3
-	ln -sf ld-linux-armhf.so.3 $(STAGING_DIR)/lib/ld-linux.so.3
-endef
-HOST_GCC_FINAL_POST_INSTALL_HOOKS += HOST_GCC_FINAL_LD_LINUX_LINK
-endif
 
 # coldfire is not working without removing these object files from libgcc.a
 ifeq ($(BR2_m68k_cf),y)

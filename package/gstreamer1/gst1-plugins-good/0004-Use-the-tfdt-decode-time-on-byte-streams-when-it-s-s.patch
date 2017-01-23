@@ -1,8 +1,8 @@
-From 1556043c00eb60d3871b4baa8b029175c16c7097 Mon Sep 17 00:00:00 2001
+From f7f918202a8cf594353bf8a3c5def5887ec4d430 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
 Date: Mon, 24 Oct 2016 16:56:31 +0000
-Subject: [PATCH] Use the tfdt decode time on byte streams when it's
- significantly different than the time in the last sample
+Subject: [PATCH 1/3] qtdemux: Use the tfdt decode time on byte streams when
+ it's significantly different than the time in the last sample
 
 We consider there's a sifnificant difference when it's larger than on second
 or than half the duration of the last processed fragment in case the latter is
@@ -14,7 +14,7 @@ https://bugzilla.gnome.org/show_bug.cgi?id=754230
  1 file changed, 25 insertions(+)
 
 diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
-index db2d361..5430a39 100644
+index 13b3620..c2cafa8 100644
 --- a/gst/isomp4/qtdemux.c
 +++ b/gst/isomp4/qtdemux.c
 @@ -95,6 +95,8 @@
@@ -25,24 +25,24 @@ index db2d361..5430a39 100644
 +
  GST_DEBUG_CATEGORY (qtdemux_debug);
  
- /*typedef struct _QtNode QtNode; */
-@@ -256,6 +258,7 @@ struct _QtDemuxStream
+ typedef struct _QtDemuxSegment QtDemuxSegment;
+@@ -251,6 +253,7 @@ struct _QtDemuxStream
    guint32 n_samples_moof;       /* sample count in a moof */
    guint64 duration_moof;        /* duration in timescale of a moof, used for figure out
                                   * the framerate of fragmented format stream */
 +  guint64 duration_last_moof;
-   guint32 offset_in_sample;
-   guint32 max_buffer_size;
  
-@@ -1828,6 +1831,7 @@ _create_stream (void)
-   stream->protection_scheme_info = NULL;
+   guint32 offset_in_sample;     /* Offset in the current sample, used for
+                                  * streams which have got exceedingly big
+@@ -1845,6 +1848,7 @@ _create_stream (void)
    stream->n_samples_moof = 0;
    stream->duration_moof = 0;
+   stream->alignment = 1;
 +  stream->duration_last_moof = 0;
    g_queue_init (&stream->protection_scheme_event_queue);
    return stream;
  }
-@@ -2315,6 +2319,7 @@ gst_qtdemux_stream_flush_samples_data (GstQTDemux * qtdemux,
+@@ -2377,6 +2381,7 @@ gst_qtdemux_stream_flush_samples_data (GstQTDemux * qtdemux,
  
    stream->n_samples_moof = 0;
    stream->duration_moof = 0;
@@ -50,7 +50,7 @@ index db2d361..5430a39 100644
  }
  
  static void
-@@ -2883,6 +2888,25 @@ qtdemux_parse_trun (GstQTDemux * qtdemux, GstByteReader * trun,
+@@ -3122,6 +3127,25 @@ qtdemux_parse_trun (GstQTDemux * qtdemux, GstByteReader * trun,
            stream->samples[stream->n_samples - 1].timestamp +
            stream->samples[stream->n_samples - 1].duration;
  
@@ -76,7 +76,7 @@ index db2d361..5430a39 100644
        gst_ts = QTSTREAMTIME_TO_GSTTIME (stream, timestamp);
        GST_INFO_OBJECT (qtdemux, "first sample ts %" GST_TIME_FORMAT
            " (extends previous samples)", GST_TIME_ARGS (gst_ts));
-@@ -3544,6 +3568,7 @@ qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
+@@ -3788,6 +3812,7 @@ qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
  
      /* initialise moof sample data */
      stream->n_samples_moof = 0;
@@ -85,5 +85,5 @@ index db2d361..5430a39 100644
  
      /* Track Run node */
 -- 
-2.1.4
+1.8.3.2
 

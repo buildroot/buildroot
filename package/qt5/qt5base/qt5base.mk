@@ -21,7 +21,6 @@ QT5BASE_INSTALL_STAGING = YES
 QT5BASE_CONFIGURE_OPTS += \
 	-optimized-qmake \
 	-no-cups \
-	-no-nis \
 	-no-iconv \
 	-system-zlib \
 	-system-pcre \
@@ -160,6 +159,13 @@ QT5BASE_CONFIGURE_OPTS += -gstreamer 1.0
 QT5BASE_DEPENDENCIES   += gst1-plugins-base
 else
 QT5BASE_CONFIGURE_OPTS += -no-gstreamer
+endif
+
+ifeq ($(BR2_PACKAGE_LIBINPUT),y)
+QT5BASE_CONFIGURE_OPTS += -libinput
+QT5BASE_DEPENDENCIES += libinput
+else
+QT5BASE_CONFIGURE_OPTS += -no-libinput
 endif
 
 # Build the list of libraries to be installed on the target

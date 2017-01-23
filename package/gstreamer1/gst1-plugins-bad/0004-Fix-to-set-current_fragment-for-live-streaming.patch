@@ -1,17 +1,17 @@
-From 1abd7714e2fd47033fc24e064dba969b1f14e726 Mon Sep 17 00:00:00 2001
+From fdffb5d0e74ef902f405895c9a388bca7bc0ce70 Mon Sep 17 00:00:00 2001
 From: Srinivas Kakarla <srinivas.kakarla@valuelabs.com>
 Date: Thu, 14 Jul 2016 17:12:51 +0530
-Subject: [PATCH] Fix to set current_fragment for live streaming.
+Subject: [PATCH 4/6] Fix to set current_fragment for live streaming.
 
 ---
  ext/smoothstreaming/gstmssmanifest.c | 8 +++++++-
  1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/ext/smoothstreaming/gstmssmanifest.c b/ext/smoothstreaming/gstmssmanifest.c
-index 55331a9..8fca8b1 100644
+index d50a51a..532c6c3 100644
 --- a/ext/smoothstreaming/gstmssmanifest.c
 +++ b/ext/smoothstreaming/gstmssmanifest.c
-@@ -1211,6 +1211,11 @@ gst_mss_stream_seek (GstMssStream * stream, gboolean forward,
+@@ -1216,6 +1216,11 @@ gst_mss_stream_seek (GstMssStream * stream, gboolean forward,
    GST_DEBUG ("Stream %s seeking to %" G_GUINT64_FORMAT, stream->url, time);
    for (iter = stream->fragments; iter; iter = g_list_next (iter)) {
      fragment = iter->data;
@@ -23,7 +23,7 @@ index 55331a9..8fca8b1 100644
      if (fragment->time + fragment->repetitions * fragment->duration > time) {
        stream->current_fragment = iter;
        stream->fragment_repetition_index =
-@@ -1314,7 +1319,8 @@ gst_mss_stream_reload_fragments (GstMssStream * stream, xmlNodePtr streamIndex)
+@@ -1319,7 +1324,8 @@ gst_mss_stream_reload_fragments (GstMssStream * stream, xmlNodePtr streamIndex)
    if (builder.fragments) {
      g_list_free_full (stream->fragments, g_free);
      stream->fragments = g_list_reverse (builder.fragments);
@@ -34,5 +34,5 @@ index 55331a9..8fca8b1 100644
       * playback - it might start from the wrong fragment */
      gst_mss_stream_seek (stream, TRUE, 0, current_gst_time, NULL);
 -- 
-1.9.1
+2.7.4
 

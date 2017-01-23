@@ -82,6 +82,7 @@ endef
 HOST_GCC_COMMON_DEPENDENCIES = \
 	host-binutils \
 	host-gmp \
+	host-mpc \
 	host-mpfr \
 	$(if $(BR2_BINFMT_FLAT),host-elf2flt)
 
@@ -93,6 +94,7 @@ HOST_GCC_COMMON_CONF_OPTS = \
 	--disable-libssp \
 	--disable-multilib \
 	--with-gmp=$(HOST_DIR)/usr \
+	--with-mpc=$(HOST_DIR)/usr \
 	--with-mpfr=$(HOST_DIR)/usr \
 	--with-pkgversion="Buildroot $(BR2_VERSION_FULL)" \
 	--with-bugurl="http://bugs.buildroot.net/"
@@ -114,6 +116,11 @@ ifeq ($(BR2_sparc_v8)$(BR2_sparc_leon3),y)
 HOST_GCC_COMMON_CONF_OPTS += --disable-libitm
 endif
 
+# libmpx uses secure_getenv and struct _libc_fpstate not present in musl
+ifeq ($(BR2_TOOLCHAIN_BUILDROOT_MUSL)$(BR2_TOOLCHAIN_GCC_AT_LEAST_6),yy)
+HOST_GCC_COMMON_CONF_OPTS += --disable-libmpx
+endif
+
 # quadmath support requires wchar
 ifeq ($(BR2_USE_WCHAR)$(BR2_TOOLCHAIN_HAS_LIBQUADMATH),yy)
 HOST_GCC_COMMON_CONF_OPTS += --enable-libquadmath
@@ -133,10 +140,13 @@ ifeq ($(BR2_sparc)$(BR2_sparc64),y)
 HOST_GCC_COMMON_CONF_OPTS += --disable-libsanitizer
 endif
 
-ifeq ($(BR2_GCC_ENABLE_TLS),y)
-HOST_GCC_COMMON_CONF_OPTS += --enable-tls
-else
+# TLS support is not needed on uClibc/no-thread and
+# uClibc/linux-threads, otherwise, for all other situations (glibc,
+# musl and uClibc/NPTL), we need it.
+ifeq ($(BR2_TOOLCHAIN_BUILDROOT_UCLIBC)$(BR2_PTHREADS)$(BR2_PTHREADS_NONE),yy)
 HOST_GCC_COMMON_CONF_OPTS += --disable-tls
+else
+HOST_GCC_COMMON_CONF_OPTS += --enable-tls
 endif
 
 ifeq ($(BR2_GCC_ENABLE_LTO),y)
@@ -156,11 +166,6 @@ HOST_GCC_COMMON_CONF_OPTS += \
 	--disable-libatomic
 else
 HOST_GCC_COMMON_CONF_OPTS += --enable-threads
-endif
-
-ifeq ($(BR2_GCC_NEEDS_MPC),y)
-HOST_GCC_COMMON_DEPENDENCIES += host-mpc
-HOST_GCC_COMMON_CONF_OPTS += --with-mpc=$(HOST_DIR)/usr
 endif
 
 ifeq ($(BR2_GCC_ENABLE_GRAPHITE),y)
@@ -229,6 +234,16 @@ ifeq ($(BR2_powerpc_SPE),y)
 HOST_GCC_COMMON_CONF_OPTS += \
 	--enable-e500_double \
 	--with-long-double-128
+endif
+
+# PowerPC64 big endian by default uses the elfv1 ABI, and PowerPC 64
+# little endian by default uses the elfv2 ABI. However, musl has
+# decided to use the elfv2 ABI for both, so we force the elfv2 ABI for
+# Power64 big endian when the selected C library is musl.
+ifeq ($(BR2_TOOLCHAIN_USES_MUSL)$(BR2_powerpc64),yy)
+HOST_GCC_COMMON_CONF_OPTS += \
+	--with-abi=elfv2 \
+	--without-long-double-128
 endif
 
 HOST_GCC_COMMON_TOOLCHAIN_WRAPPER_ARGS += -DBR_CROSS_PATH_SUFFIX='".br_real"'

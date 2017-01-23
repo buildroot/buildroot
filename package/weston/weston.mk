@@ -4,11 +4,13 @@
 #
 ################################################################################
 
-WESTON_VERSION = 1.11.0
+WESTON_VERSION = 1.12.0
 WESTON_SITE = http://wayland.freedesktop.org/releases
 WESTON_SOURCE = weston-$(WESTON_VERSION).tar.xz
 WESTON_LICENSE = MIT
 WESTON_LICENSE_FILES = COPYING
+# configure.ac patched by 0003-configure-search-for-lib-with-clock_getres.patch
+WESTON_AUTORECONF = YES
 
 WESTON_DEPENDENCIES = host-pkgconf wayland wayland-protocols \
 	libxkbcommon pixman libpng jpeg mtdev udev cairo libinput \
@@ -89,15 +91,6 @@ else
 WESTON_CONF_OPTS += --disable-drm-compositor
 endif
 
-ifeq ($(BR2_PACKAGE_WESTON_RPI),y)
-WESTON_DEPENDENCIES += rpi-userland
-WESTON_CONF_OPTS += --enable-rpi-compositor \
-	--disable-resize-optimization \
-	WESTON_NATIVE_BACKEND=rpi-backend.so
-else
-WESTON_CONF_OPTS += --disable-rpi-compositor
-endif # BR2_PACKAGE_WESTON_RPI
-
 ifeq ($(BR2_PACKAGE_WESTON_X11),y)
 WESTON_CONF_OPTS += \
 	--enable-x11-compositor \
@@ -116,7 +109,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_LIBVA),y)
 WESTON_CONF_OPTS += --enable-vaapi-recorder
-WESTON_DEPENDENIES += libva
+WESTON_DEPENDENCIES += libva
 else
 WESTON_CONF_OPTS += --disable-vaapi-recorder
 endif

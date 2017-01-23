@@ -14,18 +14,23 @@ config BR2_HOSTARCH
 	string
 	option env="HOSTARCH"
 
-config BR2_EXTERNAL
+config BR2_BUILD_DIR
 	string
-	option env="BR2_EXTERNAL"
+	option env="BUILD_DIR"
 
 # Hidden config symbols for packages to check system gcc version
 config BR2_HOST_GCC_VERSION
 	string
 	option env="HOST_GCC_VERSION"
 
+config BR2_HOST_GCC_AT_LEAST_4_5
+	bool
+	default y if BR2_HOST_GCC_VERSION = "4 5"
+
 config BR2_HOST_GCC_AT_LEAST_4_6
 	bool
 	default y if BR2_HOST_GCC_VERSION = "4 6"
+	select BR2_HOST_GCC_AT_LEAST_4_5
 
 config BR2_HOST_GCC_AT_LEAST_4_7
 	bool
@@ -77,6 +82,11 @@ config BR2_HOSTARCH_NEEDS_IA32_LIBS
 # binaries with the host compiler, even on 64 bits build machines (e.g
 # bootloaders).
 config BR2_HOSTARCH_NEEDS_IA32_COMPILER
+	bool
+
+# Hidden boolean selected by packages that need the host to have an
+# UTF8 locale.
+config BR2_NEEDS_HOST_UTF8_LOCALE
 	bool
 
 source "arch/Config.in"
@@ -357,40 +367,6 @@ config BR2_CCACHE_USE_BASEDIR
 
 endif
 
-config BR2_DEPRECATED
-	bool "Show options and packages that are deprecated or obsolete"
-	help
-	  This option shows outdated/obsolete versions of packages and
-	  options that are otherwise hidden.
-
-if BR2_DEPRECATED
-
-config BR2_DEPRECATED_SINCE_2015_05
-	bool
-	default y
-
-config BR2_DEPRECATED_SINCE_2015_08
-	bool
-	default y
-
-config BR2_DEPRECATED_SINCE_2015_11
-	bool
-	default y
-
-config BR2_DEPRECATED_SINCE_2016_02
-	bool
-	default y
-
-config BR2_DEPRECATED_SINCE_2016_05
-	bool
-	default y
-
-config BR2_DEPRECATED_SINCE_2016_08
-	bool
-	default y
-
-endif
-
 config BR2_ENABLE_DEBUG
 	bool "build packages with debugging symbols"
 	help
@@ -553,7 +529,11 @@ config BR2_GOOGLE_BREAKPAD_ENABLE
 	bool "Enable google-breakpad support"
 	select BR2_PACKAGE_GOOGLE_BREAKPAD
 	depends on BR2_INSTALL_LIBSTDCPP
-	depends on BR2_TOOLCHAIN_USES_GLIBC
+	depends on BR2_HOST_GCC_AT_LEAST_4_8 # C++11
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # C++11
+	depends on BR2_USE_WCHAR
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on (BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_UCLIBC)
 	depends on BR2_PACKAGE_GOOGLE_BREAKPAD_ARCH_SUPPORTS
 	help
 	  This option will enable the use of google breakpad, a library
@@ -726,8 +706,6 @@ config BR2_COMPILER_PARANOID_UNSAFE_PATH
 	  toolchain (through the toolchain wrapper and binutils patches)
 	  and external toolchain backends (through the toolchain wrapper).
 
-endmenu
-
 config BR2_REPRODUCIBLE
 	bool "Make the build reproducible (experimental)"
 	help
@@ -736,8 +714,16 @@ config BR2_REPRODUCIBLE
 	  this allows to generate exactly identical binaries from one
 	  build to the other, including on different machines.
 
+	  The current implementation is restricted to builds with the
+	  same output directory. Many (absolute) paths are recorded in
+	  intermediary files, and it is very likely that some of these
+	  paths leak into the target rootfs. If you build with the
+	  same O=... path, however, the result is identical.
+
 	  This is labeled as an experimental feature, as not all
 	  packages behave properly to ensure reproducibility.
+
+endmenu
 
 endmenu
 
@@ -757,9 +743,4 @@ source "package/Config.in.host"
 
 source "Config.in.legacy"
 
-menu "User-provided options"
-	depends on BR2_EXTERNAL != "support/dummy-external"
-
-source "$BR2_EXTERNAL/Config.in"
-
-endmenu
+source "$BR2_BUILD_DIR/.br2-external.in"

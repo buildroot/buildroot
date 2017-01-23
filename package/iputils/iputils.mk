@@ -36,6 +36,13 @@ endif
 ifeq ($(BR2_PACKAGE_LIBGCRYPT),y)
 IPUTILS_MAKE_OPTS += USE_GCRYPT=yes
 IPUTILS_DEPENDENCIES += libgcrypt
+# When gettext is enabled (BR2_PACKAGE_GETTEXT=y), and provides libintl
+# (BR2_NEEDS_GETTEXT=y), libgpg-error will link with libintl, and libgpg-error
+# is pulled in by libgcrypt. Since iputils doesn't use libtool, we have to link
+# with libintl explicitly for static linking.
+ifeq ($(BR2_STATIC_LIBS)$(BR2_NEEDS_GETTEXT)$(BR2_PACKAGE_GETTEXT),yyy)
+IPUTILS_MAKE_OPTS += ADDLIB='-lintl'
+endif
 else
 IPUTILS_MAKE_OPTS += USE_GCRYPT=no
 endif
@@ -55,7 +62,7 @@ IPUTILS_MAKE_OPTS += USE_CRYPTO=no
 endif
 
 define IPUTILS_BUILD_CMDS
-	$(MAKE) -C $(@D) $(IPUTILS_MAKE_OPTS)
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) $(IPUTILS_MAKE_OPTS)
 endef
 
 define IPUTILS_INSTALL_TARGET_CMDS

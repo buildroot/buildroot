@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SYSLOG_NG_VERSION = 3.7.2
+SYSLOG_NG_VERSION = 3.7.3
 SYSLOG_NG_SOURCE = syslog-ng-$(SYSLOG_NG_VERSION).tar.gz
 SYSLOG_NG_SITE = https://github.com/balabit/syslog-ng/releases/download/syslog-ng-$(SYSLOG_NG_VERSION)
 SYSLOG_NG_LICENSE = LGPLv2.1+ (syslog-ng core), GPLv2+ (modules)
@@ -67,6 +67,13 @@ endif
 
 ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBUUID),y)
 SYSLOG_NG_DEPENDENCIES += util-linux
+endif
+
+ifeq ($(BR2_PACKAGE_LIBNET),y)
+SYSLOG_NG_DEPENDENCIES += libnet
+SYSLOG_NG_CONF_OPTS += --enable-spoof-source
+else
+SYSLOG_NG_CONF_OPTS += --disable-spoof-source
 endif
 
 ifeq ($(BR2_INIT_SYSTEMD),y)

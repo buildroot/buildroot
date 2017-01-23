@@ -17,9 +17,9 @@
 4TH_CFLAGS = $(TARGET_CFLAGS) -DUNIX -fsigned-char
 
 ifeq ($(BR2_STATIC_LIBS),y)
-4TH_MAKE_ENV = STATIC=1
+4TH_MAKE_ENV = $(TARGET_MAKE_ENV) STATIC=1
 else
-4TH_MAKE_ENV = SHARED=1
+4TH_MAKE_ENV = $(TARGET_MAKE_ENV) SHARED=1
 4TH_CFLAGS += -fPIC
 endif
 
@@ -54,14 +54,14 @@ define 4TH_INSTALL_TARGET_CMDS
 endef
 
 define HOST_4TH_BUILD_CMDS
-	$(MAKE) -C $(@D)/sources all \
+	$(HOST_MAKE_ENV) $(MAKE) -C $(@D)/sources all \
 		CFLAGS="$(HOST_CFLAGS) -DUNIX -fsigned-char"
 endef
 
 define HOST_4TH_INSTALL_CMDS
 	mkdir -p $(HOST_DIR)/usr/bin
 	mkdir -p $(HOST_DIR)/usr/lib
-	$(MAKE) -C $(@D)/sources mostlyinstall \
+	$(HOST_MAKE_ENV) $(MAKE) -C $(@D)/sources mostlyinstall \
 		BINARIES=$(HOST_DIR)/usr/bin \
 		LIBRARIES=$(HOST_DIR)/usr/lib
 endef

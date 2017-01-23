@@ -19,9 +19,9 @@ Although Buildroot only contains one document written in AsciiDoc, there
 is, as for packages, an infrastructure for rendering documents using the
 AsciiDoc syntax.
 
-Also as for packages, the AsciiDoc infrastructure is available from
-xref:outside-br-custom[BR2_EXTERNAL]. This allows documentation for a
-BR2_EXTERNAL tree to match the Buildroot documentation, as it will be
+Also as for packages, the AsciiDoc infrastructure is available from a
+xref:outside-br-custom[br2-external tree]. This allows documentation for
+a br2-external tree to match the Buildroot documentation, as it will be
 rendered to the same formats and use the same layout and theme.
 
 ==== +asciidoc-document+ tutorial
@@ -62,6 +62,11 @@ information is (assuming the document name is +foo+) :
 * +FOO_RESOURCES+, optional, may contain a space-separated list of paths
   to one or more directories containing so-called resources (like CSS or
   images). By default, empty.
+
+* +FOO_DEPENDENCIES+, optional, the list of packages (most probably,
+  host-packages) that must be built before building this document.
+  If a hook of your document needs to access the _Kconfig_ structure,
+  you may add +prepare-kconfig+ to the list of dependencies.
 
 There are also additional hooks (see xref:hooks[] for general information
 on hooks), that a document may set to define extra actions to be done at

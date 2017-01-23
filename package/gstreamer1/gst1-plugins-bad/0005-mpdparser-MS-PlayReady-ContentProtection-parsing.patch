@@ -1,7 +1,23 @@
-diff -ur gst1-plugins-bad-1.8.2/ext/dash/gstdashdemux.c gst1-plugins-bad-1.8.2.patched/ext/dash/gstdashdemux.c
---- gst1-plugins-bad-1.8.2/ext/dash/gstdashdemux.c	2016-03-24 12:36:40.000000000 +0100
-+++ gst1-plugins-bad-1.8.2.patched/ext/dash/gstdashdemux.c	2016-11-08 15:51:38.531995526 +0100
-@@ -653,7 +653,7 @@
+From cbf3d75b3d693e50722534d30a8f51995a419803 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Fri, 4 Nov 2016 09:56:33 +0100
+Subject: [PATCH 5/6] mpdparser: MS PlayReady ContentProtection parsing
+
+The "pro" (PlayReady Object) element contents are now base64-decoded
+and properly stored in Protection events.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=773936
+---
+ ext/dash/gstdashdemux.c |  2 +-
+ ext/dash/gstmpdparser.c | 41 ++++++++++++++++++++++++++++++++++++++++-
+ ext/dash/gstmpdparser.h |  1 +
+ 3 files changed, 42 insertions(+), 2 deletions(-)
+
+diff --git a/ext/dash/gstdashdemux.c b/ext/dash/gstdashdemux.c
+index 271f70f..b10465e 100644
+--- a/ext/dash/gstdashdemux.c
++++ b/ext/dash/gstdashdemux.c
+@@ -745,7 +745,7 @@ gst_dash_demux_send_content_protection_event (gpointer data, gpointer userdata)
    /* RFC 2141 states: The leading "urn:" sequence is case-insensitive */
    schemeIdUri = g_ascii_strdown (cp->schemeIdUri, -1);
    if (g_str_has_prefix (schemeIdUri, "urn:uuid:")) {
@@ -10,10 +26,11 @@ diff -ur gst1-plugins-bad-1.8.2/ext/dash/gstdashdemux.c gst1-plugins-bad-1.8.2.p
      pssi = gst_buffer_new_wrapped (g_memdup (cp->value, pssi_len), pssi_len);
      GST_LOG_OBJECT (stream, "Queuing Protection event on source pad");
      /* RFC 4122 states that the hex part of a UUID is in lower case,
-diff -ur gst1-plugins-bad-1.8.2/ext/dash/gstmpdparser.c gst1-plugins-bad-1.8.2.patched/ext/dash/gstmpdparser.c
---- gst1-plugins-bad-1.8.2/ext/dash/gstmpdparser.c	2016-03-24 12:36:40.000000000 +0100
-+++ gst1-plugins-bad-1.8.2.patched/ext/dash/gstmpdparser.c	2016-11-08 15:48:22.421060654 +0100
-@@ -1298,6 +1298,7 @@
+diff --git a/ext/dash/gstmpdparser.c b/ext/dash/gstmpdparser.c
+index 15d6d98..f0b3ceb 100644
+--- a/ext/dash/gstmpdparser.c
++++ b/ext/dash/gstmpdparser.c
+@@ -1313,6 +1313,7 @@ gst_mpdparser_parse_descriptor_type_node (GList ** list, xmlNode * a_node)
      /* if no value attribute, use XML string representation of the node */
      gst_mpdparser_get_xml_node_as_string (a_node, &new_descriptor->value);
    }
@@ -21,7 +38,7 @@ diff -ur gst1-plugins-bad-1.8.2/ext/dash/gstmpdparser.c gst1-plugins-bad-1.8.2.p
  }
  
  static void
-@@ -1717,6 +1718,44 @@
+@@ -1734,6 +1735,44 @@ error:
  }
  
  static void
@@ -66,7 +83,7 @@ diff -ur gst1-plugins-bad-1.8.2/ext/dash/gstmpdparser.c gst1-plugins-bad-1.8.2.p
  gst_mpdparser_parse_representation_base_type (GstRepresentationBaseType **
      pointer, xmlNode * a_node)
  {
-@@ -1771,7 +1810,7 @@
+@@ -1788,7 +1827,7 @@ gst_mpdparser_parse_representation_base_type (GstRepresentationBaseType **
              (&representation_base->AudioChannelConfiguration, cur_node);
        } else if (xmlStrcmp (cur_node->name,
                (xmlChar *) "ContentProtection") == 0) {
@@ -75,10 +92,11 @@ diff -ur gst1-plugins-bad-1.8.2/ext/dash/gstmpdparser.c gst1-plugins-bad-1.8.2.p
              (&representation_base->ContentProtection, cur_node);
        }
      }
-diff -ur gst1-plugins-bad-1.8.2/ext/dash/gstmpdparser.h gst1-plugins-bad-1.8.2.patched/ext/dash/gstmpdparser.h
---- gst1-plugins-bad-1.8.2/ext/dash/gstmpdparser.h	2016-03-24 12:36:40.000000000 +0100
-+++ gst1-plugins-bad-1.8.2.patched/ext/dash/gstmpdparser.h	2016-11-08 15:37:25.471233147 +0100
-@@ -277,6 +277,7 @@
+diff --git a/ext/dash/gstmpdparser.h b/ext/dash/gstmpdparser.h
+index 85b97ea..738de68 100644
+--- a/ext/dash/gstmpdparser.h
++++ b/ext/dash/gstmpdparser.h
+@@ -277,6 +277,7 @@ struct _GstDescriptorType
  {
    gchar *schemeIdUri;
    gchar *value;
@@ -86,3 +104,6 @@ diff -ur gst1-plugins-bad-1.8.2/ext/dash/gstmpdparser.h gst1-plugins-bad-1.8.2.p
  };
  
  struct _GstContentComponentNode
+-- 
+2.7.4
+

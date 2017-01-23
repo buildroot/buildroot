@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RSYSLOG_VERSION = 8.19.0
+RSYSLOG_VERSION = 8.22.0
 RSYSLOG_SITE = http://rsyslog.com/files/download/rsyslog
 RSYSLOG_LICENSE = GPLv3, LGPLv3, Apache-2.0
 RSYSLOG_LICENSE_FILES = COPYING COPYING.LESSER COPYING.ASL20
@@ -66,11 +66,14 @@ endif
 
 ifeq ($(BR2_INIT_SYSTEMD),y)
 RSYSLOG_CONF_OPTS += \
-	--enable-systemd \
+	--enable-imjournal \
+	--enable-omjournal \
 	--with-systemdsystemunitdir=/usr/lib/systemd/system
 RSYSLOG_DEPENDENCIES += systemd
 else
-RSYSLOG_CONF_OPTS += --disable-systemd
+RSYSLOG_CONF_OPTS += \
+	--disable-imjournal \
+	--disable-omjournal
 endif
 
 define RSYSLOG_INSTALL_INIT_SYSV

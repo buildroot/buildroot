@@ -1,11 +1,11 @@
 if BR2_TOOLCHAIN_BUILDROOT_UCLIBC
 
+comment "uClibc Options"
+
 config BR2_PACKAGE_UCLIBC
 	bool
 	default y
 	select BR2_PACKAGE_LINUX_HEADERS
-
-comment "uClibc Options"
 
 config BR2_UCLIBC_CONFIG
 	string "uClibc configuration file to use?"
@@ -41,6 +41,7 @@ config BR2_TOOLCHAIN_BUILDROOT_LOCALE
 	bool "Enable toolchain locale/i18n support"
 	select BR2_TOOLCHAIN_BUILDROOT_WCHAR
 	select BR2_ENABLE_LOCALE
+	select BR2_NEEDS_HOST_UTF8_LOCALE
 	help
 	  Enable this option if you want your toolchain to support
 	  localization and internationalization.
@@ -95,22 +96,6 @@ config BR2_UCLIBC_INSTALL_UTILS
 	  You can save ~32 KiB in target space by disabling them since
 	  they're normally not needed.
 
-config BR2_UCLIBC_INSTALL_TEST_SUITE
-	bool "Compile and install uClibc tests"
-	help
-	  Enabling this option will compile and install the uClibc test suite.
-	  This is useful if you want to check if the uClibc library is working
-	  for your architecture and/or help developing uClibc.
-
-	  The test suite will be installed into /root/uClibc directory. To run
-	  the test suite enter the /root/uClibc/test directory and type
-	  "sh uclibcng-testrunner.sh".
-
-	  See the /root/uClibc/test/README for additional information.
-
-	  This is not needed at all for normal builds, so you can safely say no
-	  if you do not plan to dig into your C library.
-
 # Mapping from the Buildroot architecture configuration options to the
 # uClibc architecture names.
 config BR2_UCLIBC_TARGET_ARCH
@@ -145,9 +130,9 @@ config BR2_UCLIBC_MIPS_ABI
 config BR2_UCLIBC_MIPS_ISA
 	string
 	depends on BR2_UCLIBC_TARGET_ARCH = "mips"
-	default "MIPS32" if BR2_mips_32
-	default "MIPS32R2" if BR2_mips_32r2
-	default "MIPS64" if BR2_mips_64
+	default "MIPS32" if BR2_MIPS_CPU_MIPS32
+	default "MIPS32R2" if BR2_MIPS_CPU_MIPS32R2
+	default "MIPS64" if BR2_MIPS_CPU_MIPS64
 
 config BR2_UCLIBC_SH_TYPE
 	string

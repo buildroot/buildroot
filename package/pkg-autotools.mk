@@ -59,7 +59,7 @@ endef
 #
 define LIBTOOL_PATCH_HOOK
 	@$(call MESSAGE,"Patching libtool")
-	$(Q)for i in `find $($(PKG)_SRCDIR) -name ltmain.sh`; do \
+	$(Q)for i in `find $($(PKG)_DIR) -name ltmain.sh`; do \
 		ltmain_version=`sed -n '/^[ \t]*VERSION=/{s/^[ \t]*VERSION=//;p;q;}' $$i | \
 		sed -e 's/\([0-9]*\.[0-9]*\).*/\1/' -e 's/\"//'`; \
 		ltmain_patchlevel=`sed -n '/^[ \t]*VERSION=/{s/^[ \t]*VERSION=//;p;q;}' $$i | \
@@ -76,6 +76,15 @@ define LIBTOOL_PATCH_HOOK
 			fi \
 		fi \
 	done
+endef
+
+#
+# Hook to patch common issue with configure on powerpc64{,le} failing
+# to detect shared library support:
+#
+define CONFIGURE_FIX_POWERPC64_HOOK
+	@$(call MESSAGE,"Checking configure (powerpc64/powerpc64le)")
+	support/scripts/fix-configure-powerpc64.sh $($(PKG)_DIR)
 endef
 
 #
@@ -253,6 +262,13 @@ ifneq ($$($(2)_LIBTOOL_PATCH),NO)
 $(2)_POST_PATCH_HOOKS += LIBTOOL_PATCH_HOOK
 endif
 
+endif
+
+# Append a configure hook if building for a powerpc64 (or powerpc64le) arch.
+# Must be added after other pre-configure hooks that might regenerate the
+# configure script and overwrite the changes made here.
+ifneq ($$(filter powerpc64%,$$(if $$(filter target,$(4)),$$(ARCH),$$(HOSTARCH))),)
+$(2)_PRE_CONFIGURE_HOOKS += CONFIGURE_FIX_POWERPC64_HOOK
 endif
 
 #

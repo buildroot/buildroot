@@ -4,29 +4,25 @@
 #
 ################################################################################
 
-GNUTLS_VERSION_MAJOR = 3.4
-GNUTLS_VERSION = $(GNUTLS_VERSION_MAJOR).14
+GNUTLS_VERSION_MAJOR = 3.5
+GNUTLS_VERSION = $(GNUTLS_VERSION_MAJOR).8
 ifeq ($(BR2_PACKAGE_PLAYREADY),y)
 GNUTLS_VERSION_MAJOR = 3.3
 GNUTLS_VERSION = $(GNUTLS_VERSION_MAJOR).22
 endif
 GNUTLS_SOURCE = gnutls-$(GNUTLS_VERSION).tar.xz
 GNUTLS_SITE = ftp://ftp.gnutls.org/gcrypt/gnutls/v$(GNUTLS_VERSION_MAJOR)
-# README says that the core library is under LGPLv2.1+, but a few
-# files in libdane specify LGPLv3+. It seems to be a mistake, and we
-# therefore trust the README file here. A bug was reported upstream at
-# https://gitlab.com/gnutls/gnutls/issues/109.
 GNUTLS_LICENSE = LGPLv2.1+ (core library), GPLv3+ (gnutls-openssl library)
-GNUTLS_LICENSE_FILES = COPYING COPYING.LESSER README
-GNUTLS_DEPENDENCIES = host-pkgconf libtasn1 nettle pcre
+GNUTLS_LICENSE_FILES = doc/COPYING doc/COPYING.LESSER
+GNUTLS_DEPENDENCIES = host-pkgconf libunistring libtasn1 nettle pcre
 GNUTLS_CONF_OPTS = \
 	--disable-doc \
 	--disable-guile \
 	--disable-libdane \
 	--disable-rpath \
 	--enable-local-libopts \
-	--enable-openssl-compatibility \
 	--with-libnettle-prefix=$(STAGING_DIR)/usr \
+	--with-libunistring-prefix=$(STAGING_DIR)/usr \
 	--with-librt-prefix=$(STAGING_DIR) \
 	--without-tpm \
 	$(if $(BR2_PACKAGE_GNUTLS_TOOLS),--enable-tools,--disable-tools)
@@ -36,6 +32,13 @@ GNUTLS_CONF_ENV = gl_cv_socket_ipv6=yes \
 	gt_cv_c_wint_t=$(if $(BR2_USE_WCHAR),yes,no) \
 	gl_cv_func_gettimeofday_clobber=no
 GNUTLS_INSTALL_STAGING = YES
+
+
+ifeq ($(BR2_PACKAGE_PLAYREADY),y)
+GNUTLS_CONF_OPTS += --disable-openssl-compatibility
+else
+GNUTLS_CONF_OPTS += --enable-openssl-compatibility
+endif
 
 # libpthread and libz autodetection poison the linkpath
 GNUTLS_CONF_OPTS += $(if $(BR2_TOOLCHAIN_HAS_THREADS),--with-libpthread-prefix=$(STAGING_DIR)/usr)
