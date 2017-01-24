@@ -20,7 +20,7 @@ WPE_USE_PORT=JSCOnly
 endif
 endif
 
-WPE_DEPENDENCIES = host-flex host-bison host-gperf host-ruby icu pcre
+WPE_DEPENDENCIES = host-bison host-cmake host-flex host-gperf host-ruby icu pcre
 
 ifeq ($(WPE_BUILD_WEBKIT),y)
 WPE_DEPENDENCIES += libgcrypt libgles libegl cairo freetype fontconfig \
