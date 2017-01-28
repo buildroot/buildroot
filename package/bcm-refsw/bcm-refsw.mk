@@ -10,10 +10,77 @@ else ifeq ($(BR2_PACKAGE_BCM_REFSW_16_2),y)
 BCM_REFSW_VERSION = 16.2
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_15_2),y)
 BCM_REFSW_VERSION = 15.2
+else ifeq ($(BR2_PACKAGE_HOMECAST_SDK),y)
+BCM_REFSW_VERSION = CWC
 else
 BCM_REFSW_VERSION = 16.2
 endif
 
+ifeq ($(BR2_PACKAGE_HOMECAST_SDK),y)
+BCM_REFSW_SITE_METHOD = local
+BCM_REFSW_SITE = /opt/toolchain/homecast/bcm-ref
+BCM_REFSW_INSTALL_STAGING = YES
+CWC_REFSW=${BCM_REFSW_DIR}
+# 97428 pointing to 97429
+BCM_REFSW_PLATFORM = 97429
+
+define BCM_REFSW_INSTALL_HEADERS
+	# generated nexus_config.h from nexus-includes.pc
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus_config.h $(STAGING_DIR)/usr/include/refsw/
+	# copied display_nexus.h &default_nexus.h from toolchain
+	$(INSTALL) -m 644 ${CWC_REFSW}/display_nexus.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/default_nexus.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/extensions/security/otpmsp/include/nexus_otpmsp.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/platforms/common/include/nexus_platform.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/core/include/*.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/base/include/public/nexus_base_os.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/base/include/public/nexus_base_types.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/magnum/portinginterface/grc/include/bm2mc_packet.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/platforms/$(BCM_REFSW_PLATFORM)/include/*.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/platforms/common/include/*.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/magnum/basemodules/kni/generic/bkni.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/magnum/basemodules/kni/generic/bkni_multi.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/magnum/basemodules/std/types/linuxkernel/bstd_defs.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/magnum/basemodules/std/bstd.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/magnum/basemodules/std/config/bstd_cfg.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/magnum/basemodules/err/berr.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/magnum/basemodules/dbg/bdbg.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/magnum/commonutils/lst/blst_slist.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/magnum/basemodules/dbg/bdbg_app.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/magnum/basemodules/dbg/bdbg_priv.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/magnum/basemodules/chp/include/common/bchp.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/magnum/basemodules/reg/breg_mem.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/display/include/nexus_display.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/surface/include/nexus_surface.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/surface/include/nexus_surface_init.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/transport/include/nexus_transport_init.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/transport/include/nexus_transport_capabilities.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/display/include/nexus_display_init.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/display/include/nexus_display_types.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/audio/include/ape_raaga/nexus_audio_init.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/audio/include/*.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/video_decoder/include/*.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/i2c/include/nexus_i2c.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/gpio/include/nexus_gpio.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/spi/include/nexus_spi.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/frontend/common/include/*.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/display/include/*.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/rfm/include/*.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/hdmi_output/include/*.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/smartcard/include/nexus_smartcard_init.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/security/include/*.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/graphics2d/include/*.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/surface_compositor/include/*.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/surface/include/nexus_striped_surface.h $(STAGING_DIR)/usr/include/refsw/
+	$(INSTALL) -m 644 ${CWC_REFSW}/nexus/modules/security/usercmd_ext/include/nexus_read_otp_id.h $(STAGING_DIR)/usr/include/refsw/
+endef
+
+define BCM_REFSW_INSTALL_STAGING_CMDS
+	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/refsw
+	$(call BCM_REFSW_INSTALL_HEADERS,$(STAGING_DIR))
+endef
+
+else
 BCM_REFSW_SITE = git@github.com:Metrological/bcm-refsw.git
 BCM_REFSW_SITE_METHOD = git
 BCM_REFSW_DEPENDENCIES = linux host-pkgconf host-flex host-bison host-gperf
@@ -252,4 +319,7 @@ define BCM_REFSW_INSTALL_TARGET_CMDS
 	$(call BCM_REFSW_INSTALL_SAGE_BIN,$(TARGET_DIR))
 endef
 
+endif
+
 $(eval $(generic-package))
+

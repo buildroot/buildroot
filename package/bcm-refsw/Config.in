@@ -26,6 +26,9 @@ choice
 	config BR2_PACKAGE_BCM_REFSW_16_2
 		bool "bcm-refsw 16.2"
 
+	config BR2_PACKAGE_BCM_REFSW_CWC
+		bool "bcm-refsw from cwc"
+
 endchoice
 
 choice
@@ -35,6 +38,10 @@ choice
 
 	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7425
 		bool "BCM 7425 VGW"
+		depends on BR2_mipsel && !BR2_arm
+
+	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7428
+		bool "BCM 7428"
 		depends on BR2_mipsel && !BR2_arm
 
 	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7429
