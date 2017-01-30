@@ -161,6 +161,16 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_DEVICEINFO
 	help
 	  A plugin displaying information on system resources
 
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_LOCATIONSYNC
+	bool "locationsync"
+	help
+	  A plugin to synchronize the device location from an internet source.
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_TIMESYNC
+	bool "timesync"
+	help
+	  A plugin to synchronize the clock time from an internet source.
+
 config BR2_PACKAGE_WEBBRIDGE_PLUGIN_BROWSER
 	bool "browser"
 	depends on BR2_PACKAGE_QT5WEBKIT
