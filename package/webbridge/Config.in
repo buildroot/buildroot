@@ -218,13 +218,21 @@ comment "netflix is dependent on the netflix package compiled as library"
 	depends on !BR2_PACKAGE_NETFLIX_LIB
 
 menuconfig BR2_PACKAGE_WEBBRIDGE_PLUGIN_OPENCDMI
-	bool "opencdmi"
-	depends on BR2_PACKAGE_WPE
-	help
-	  A plugin that controls the open source content decryption module
+        bool "opencdmi"
+        select BR2_PACKAGE_CPPSDK_PROCESS
+        depends on BR2_PACKAGE_OPENCDMI
+        default y
+        help
+          A Plugin to interact with CDM Services.
 
-comment "OpenCDMi is dependent on the opencdmi package compiled as library"
-	depends on !BR2_PACKAGE_WPE 
+if BR2_PACKAGE_WEBBRIDGE_PLUGIN_OPENCDMI
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_OPENCDMI_AUTOSTART
+        depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_OPENCDMI
+        bool "autostart"
+        default y
+
+endif
 
 menuconfig BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER
 	bool "webkitbrowser"
