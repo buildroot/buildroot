@@ -4,8 +4,7 @@
 #
 ################################################################################
 
-OPENCDMI_VERSION = f4685fbb2396ef472d85b46f688876b3846526da
-#OPENCDMI_VERSION = 01917826101943f2aeb9580a1341acb567564202
+OPENCDMI_VERSION = a739feb6111143abdc6e26fa587086bba89ded95
 OPENCDMI_SITE_METHOD = git
 OPENCDMI_SITE = git@github.com:Metrological/open-content-decryption-module-cdmi.git
 
@@ -27,37 +26,37 @@ OPENCDMI_TARGET=ocdmilib
 endif
 
 define OPENCDMI_CONFIGURE_CMDS
-	cd $(@D);find -iname "*.o" | xargs rm -rf; \
-	find -iname "*.a" | xargs rm -rf
+    cd $(@D);find -iname "*.o" | xargs rm -rf; \
+    find -iname "*.a" | xargs rm -rf
 endef
 
 define OPENCDMI_BUILD_CMDS
-        export OPENCDMI_TARGET_DIR="$(TARGET_DIR)";\
-        export OPENCDMI_STAGING_DIR="$(STAGING_DIR)";\
-        export CDMI_MAKE_CONFIG="config_cdmi.mk";\
-        make CROSS_COMPILE="$(TARGET_CROSS)" \
-        CC="$(TARGET_CC)" CXX="$(TARGET_CXX)" AR="$(TARGET_AR)" \
-        CXXFLAGS="$(TARGET_CXXFLAGS) -fPIC" \
-        LDFLAGS="$(TARGET_LDFLAGS)  -L$(STAGING_DIR)/usr/lib  -pthread" -C $(@D) $(OPENCDMI_TARGET)
+    export OPENCDMI_TARGET_DIR="$(TARGET_DIR)";\
+    export OPENCDMI_STAGING_DIR="$(STAGING_DIR)";\
+    export CDMI_MAKE_CONFIG="config_cdmi.mk";\
+    make CROSS_COMPILE="$(TARGET_CROSS)" \
+    CC="$(TARGET_CC)" CXX="$(TARGET_CXX)" AR="$(TARGET_AR)" \
+    CXXFLAGS="$(TARGET_CXXFLAGS) -fPIC" \
+    LDFLAGS="$(TARGET_LDFLAGS)  -L$(STAGING_DIR)/usr/lib  -pthread" -C $(@D) $(OPENCDMI_TARGET)
 endef
 
 ifeq ($(BR2_PACKAGE_OPENCDMI_SERVICE), y)
 define OPENCDMI_INSTALL_TARGET_CMDS
-        cp $(@D)/libocdmi.so $(TARGET_DIR)/usr/lib
-        cp $(@D)/cdmiservice $(TARGET_DIR)/usr/bin
+    cp $(@D)/libocdmi.so $(TARGET_DIR)/usr/lib
+    cp $(@D)/cdmiservice $(TARGET_DIR)/usr/bin
 endef
 define OPENCDMI_INSTALL_INIT_SYSV
-        $(INSTALL) -D -m 0755 package/opencdmi/S85opencdmi $(TARGET_DIR)/etc/init.d/S85opencdmi
+    $(INSTALL) -D -m 0755 package/opencdmi/S85opencdmi $(TARGET_DIR)/etc/init.d/S85opencdmi
 endef
 else
 define OPENCDMI_INSTALL_TARGET_CMDS
-        cp $(@D)/libocdmi.so $(TARGET_DIR)/usr/lib
+    cp $(@D)/libocdmi.so $(TARGET_DIR)/usr/lib
 endef
 endif
 define OPENCDMI_INSTALL_STAGING_CMDS
-        cp $(@D)/libocdmi.so $(STAGING_DIR)/usr/lib
-	mkdir -p $(STAGING_DIR)/usr/include/opencdmi
-        cp -r $(@D)/rpc/gen/opencdm_xdr_svc.h $(STAGING_DIR)/usr/include/opencdmi
+    cp $(@D)/libocdmi.so $(STAGING_DIR)/usr/lib
+    mkdir -p $(STAGING_DIR)/usr/include/opencdmi
+    cp -r $(@D)/rpc/gen/opencdm_xdr_svc.h $(STAGING_DIR)/usr/include/opencdmi
 endef
 
 $(eval $(generic-package))
