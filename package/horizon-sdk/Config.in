@@ -1,9 +1,7 @@
 config BR2_PACKAGE_HORIZON_SDK
 	bool "horizon-sdk"
 	depends on BR2_i386
-	select BR2_PACKAGE_HAS_OPENGL_EGL
-	select BR2_PACKAGE_HAS_OPENGL_ES
-	select BR2_PACKAGE_HAS_OPENVG
+	select BR2_PACKAGE_HAS_LIBEGL
 	select BR2_PACKAGE_HAS_LIBGLES
 	help
 	  Pre-compiled binaries for a platform
@@ -14,9 +12,6 @@ config BR2_PACKAGE_PROVIDES_LIBEGL
 	default "horizon-sdk"
 
 config BR2_PACKAGE_PROVIDES_LIBGLES
-	default "horizon-sdk"
-
-config BR2_PACKAGE_PROVIDES_LIBOPENVG
 	default "horizon-sdk"
 
 endif
