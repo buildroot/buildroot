@@ -5,7 +5,6 @@
 ################################################################################
 
 MARIADB_VERSION = 10.1.21
-MARIADB_SOURCE = mariadb-$(MARIADB_VERSION).tar.gz
 MARIADB_SITE = https://downloads.mariadb.org/interstitial/mariadb-$(MARIADB_VERSION)/source
 MARIADB_LICENSE = GPLv2 (server), GPLv2 with FLOSS exception (GPL client library), LGPLv2 (LGPL client library)
 MARIADB_LICENSE_FILES = README COPYING COPYING.LESSER
@@ -42,6 +41,9 @@ MARIADB_CONF_OPTS += -DWITH_JEMALLOC=no -DWITHOUT_TOKUDB=1
 
 # Make it explicit that we are cross-compiling
 MARIADB_CONF_OPTS += -DCMAKE_CROSSCOMPILING=1
+
+# Explicitly disable dtrace to avoid detection of a host version
+MARIADB_CONF_OPTS += -DENABLE_DTRACE=0
 
 ifeq ($(BR2_PACKAGE_MARIADB_SERVER),y)
 MARIADB_CONF_OPTS += -DWITH_EMBEDDED_SERVER=ON

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GRAPHITE2_VERSION = 1.3.8
+GRAPHITE2_VERSION = 1.3.9
 ifeq ($(BR2_PACKAGE_NETFLIX),y)
 GRAPHITE2_VERSION = 1.2.4
 endif

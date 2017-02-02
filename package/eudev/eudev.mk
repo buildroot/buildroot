@@ -5,7 +5,6 @@
 ################################################################################
 
 EUDEV_VERSION = 3.2.1
-EUDEV_SOURCE = eudev-$(EUDEV_VERSION).tar.gz
 EUDEV_SITE = http://dev.gentoo.org/~blueness/eudev
 EUDEV_LICENSE = GPLv2+ (programs), LGPLv2.1+ (libraries)
 EUDEV_LICENSE_FILES = COPYING
@@ -18,7 +17,6 @@ EUDEV_CONF_OPTS = \
 	--disable-manpages \
 	--sbindir=/sbin \
 	--libexecdir=/lib \
-	--with-firmware-path=/lib/firmware \
 	--disable-introspection \
 	--enable-kmod \
 	--enable-blkid
