@@ -24,7 +24,7 @@ WPE_DEPENDENCIES = host-bison host-cmake host-flex host-gperf host-ruby icu pcre
 
 ifeq ($(WPE_BUILD_WEBKIT),y)
 WPE_DEPENDENCIES += libgcrypt libgles libegl cairo freetype fontconfig \
-	harfbuzz libxml2 libxslt sqlite libsoup jpeg libpng libinput
+	harfbuzz libxml2 libxslt sqlite libsoup jpeg libpng
 endif
 
 WPE_EXTRA_FLAGS = -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
@@ -40,7 +40,11 @@ endif
 
 ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
 WPE_EXTRA_FLAGS += \
-	-D__UCLIBC__
+	-D__UCLIBC__=ON
+endif
+
+ifeq ($(BR2_PACKAGE_LIBINPUT),y)
+WPE_DEPENDENCIES += libinput
 endif
 
 ifeq ($(WPE_BUILD_WEBKIT),y)
