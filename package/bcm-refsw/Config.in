@@ -5,6 +5,7 @@ config BR2_PACKAGE_BCM_REFSW
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_PACKAGE_HAS_LIBEGL
 	select BR2_PACKAGE_HAS_LIBGLES
+        select BR2_PACKAGE_NEXUS_PLATFORM
 	help
 	  bcm-refsw
 
@@ -25,9 +26,6 @@ choice
 
 	config BR2_PACKAGE_BCM_REFSW_16_2
 		bool "bcm-refsw 16.2"
-
-	config BR2_PACKAGE_BCM_REFSW_CWC
-		bool "bcm-refsw from cwc"
 
 endchoice
 
