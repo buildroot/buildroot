@@ -3,9 +3,9 @@ config BR2_PACKAGE_BCM_REFSW
 	depends on BR2_mipsel || BR2_arm
 	depends on BR2_INSTALL_LIBSTDCPP
 	depends on BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_PACKAGE_HAS_NEXUS
 	select BR2_PACKAGE_HAS_LIBEGL
 	select BR2_PACKAGE_HAS_LIBGLES
-        select BR2_PACKAGE_NEXUS_PLATFORM
 	help
 	  bcm-refsw
 
@@ -66,6 +66,9 @@ config BR2_PACKAGE_BCM_REFSW_SAGE
 	depends on BR2_PACKAGE_BCM_REFSW
 	help
 	  Add SAGE support in Nexus.
+
+config BR2_PACKAGE_PROVIDES_NEXUS
+	default "bcm-refsw"
 
 config BR2_PACKAGE_PROVIDES_LIBEGL
 	default "bcm-refsw"
