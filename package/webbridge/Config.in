@@ -76,12 +76,32 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_TRACECONTROL
 	  NOTE: Tracing does NOT replace logging but is a tool for 
 	  developpers to analyse there code. 
 
-config BR2_PACKAGE_WEBBRIDGE_PLUGIN_MONITOR
+
+menuconfig BR2_PACKAGE_WEBBRIDGE_PLUGIN_MONITOR
 	bool "monitor"
 	help
 	  A plugin that allows for a monitoring plugins with respect to 
 	  memory usage. Hard limits can be set on the maximum memory usage 
 	  and in case the limits are violated, the plugin can be restarted.
+
+if BR2_PACKAGE_WEBBRIDGE_PLUGIN_MONITOR
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_MONITOR_WEBKITBROWSER_MEMORYLIMIT
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_MONITOR
+	string "WebKitBrowser memory limit"
+	default 307200
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_MONITOR_YOUTUBE_MEMORYLIMIT
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_MONITOR
+	string "YouTube memory limit"
+	default 307200
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_MONITOR_NETFLIX_MEMORYLIMIT
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_MONITOR
+	string "Netflix memory limit"
+	default 307200
+
+endif
 
 config BR2_PACKAGE_WEBBRIDGE_PLUGIN_DICTIONARY
 	bool "dictionary"
