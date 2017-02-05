@@ -23,6 +23,12 @@ PLAYREADY_CONF_OPTS += \
 PLAYREADY_DEPENDENCIES += libprovision
 endif
 
+ifeq ($(BR2_PACKAGE_GLUELOGIC_PROVISIONING),y)
+PLAYREADY_CONF_OPTS += \
+	-DPLAYREADY_USE_PROVISION=ON
+PLAYREADY_DEPENDENCIES += gluelogic 
+endif
+
 define PLAYREADY_INSTALL_STAGING_PC
 	$(INSTALL) -D package/playready/playready.pc \
 		$(STAGING_DIR)/usr/lib/pkgconfig/playready.pc
