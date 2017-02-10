@@ -23,7 +23,7 @@ endif
 WPE_DEPENDENCIES = host-bison host-cmake host-flex host-gperf host-ruby icu pcre
 
 ifeq ($(WPE_BUILD_WEBKIT),y)
-WPE_DEPENDENCIES += libgcrypt libgles libegl cairo freetype fontconfig \
+WPE_DEPENDENCIES += libwpe libgcrypt libgles libegl cairo freetype fontconfig \
 	harfbuzz libxml2 libxslt sqlite libsoup jpeg libpng
 endif
 
@@ -245,7 +245,7 @@ WPE_BUILD_TARGETS += jsc
 endif
 ifeq ($(WPE_BUILD_WEBKIT),y)
 WPE_BUILD_TARGETS += libWPEWebKit.so libWPEWebInspectorResources.so \
-	WPE{Database,Network,Web}Process libWPE.so libWPE-platform.so
+	WPE{Database,Network,Web}Process libWPE-platform.so
 
 endif
 
