@@ -1,0 +1,9 @@
+# Kylin drivers
+menuconfig BR2_PACKAGE_KYLIN_DRIVERS
+	bool "kylin kernel drivers"
+	help
+	  kylin kernel drivers
+
+if BR2_PACKAGE_KYLIN_DRIVERS
+    source "package/kylin-drivers/kylin-mali/Config.in"
+endif
