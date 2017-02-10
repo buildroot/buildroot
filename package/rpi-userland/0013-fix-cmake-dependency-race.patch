@@ -1,0 +1,78 @@
+From b5392c39d7407a5226c9314bc01ed82877ff0539 Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Sat, 6 Feb 2016 13:12:47 -0800
+Subject: [PATCH 09/12] fix cmake dependency race
+
+Fixes errors like
+
+/a/builder/mnt/build-oe/tmp-glibc/work/raspberrypi2-oe-linux-gnueabi/userland/git-r5/git/interface/vmcs_host/vc_vchi_dispmanx.h:72:66:
+fatal error: interface/vmcs_host/wayland-dispmanx-server-protocol.h: No
+such file or directory
+compilation terminated.
+interface/khronos/CMakeFiles/EGL_static.dir/build.make:773: recipe for
+target 'interface/khronos/CMakeFiles/EGL_static.dir/ext/egl_wayland.c.o'
+failed
+make[2]: ***
+[interface/khronos/CMakeFiles/EGL_static.dir/ext/egl_wayland.c.o] Error 1
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+---
+ interface/vcos/pthreads/CMakeLists.txt | 8 ++++++++
+ interface/vmcs_host/CMakeLists.txt     | 8 --------
+ interface/vmcs_host/vc_vchi_dispmanx.h | 2 +-
+ 3 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/interface/vcos/pthreads/CMakeLists.txt b/interface/vcos/pthreads/CMakeLists.txt
+index 1d81ca3..d6cd415 100644
+--- a/interface/vcos/pthreads/CMakeLists.txt
++++ b/interface/vcos/pthreads/CMakeLists.txt
+@@ -33,6 +33,14 @@ set (SOURCES
+    ../generic/vcos_generic_blockpool.c
+ )
+ 
++if (BUILD_WAYLAND)
++wayland_add_protocol_server(
++    SOURCES
++    ../../../interface/wayland/dispmanx.xml
++    dispmanx
++)
++endif ()
++
+ if (VCOS_PTHREADS_BUILD_SHARED)
+    add_library (vcos SHARED ${SOURCES})
+    target_link_libraries (vcos pthread dl rt)
+diff --git a/interface/vmcs_host/CMakeLists.txt b/interface/vmcs_host/CMakeLists.txt
+index f44d01f..9bcc2c3 100755
+--- a/interface/vmcs_host/CMakeLists.txt
++++ b/interface/vmcs_host/CMakeLists.txt
+@@ -17,14 +17,6 @@ set(VCHOSTIF_SOURCE
+ #            ${VMCS_TARGET}/vmcs_main.c
+ #  vc_vchi_haud.c
+ 
+-if (BUILD_WAYLAND)
+-wayland_add_protocol_server(
+-    VCHOSTIF_SOURCE
+-    ../../interface/wayland/dispmanx.xml
+-    dispmanx
+-)
+-endif ()
+-
+ add_library(vchostif ${VCHOSTIF_SOURCE})
+ 
+ #add_library(bufman            vc_vchi_bufman.c            )
+diff --git a/interface/vmcs_host/vc_vchi_dispmanx.h b/interface/vmcs_host/vc_vchi_dispmanx.h
+index f0bae30..8c44c58 100644
+--- a/interface/vmcs_host/vc_vchi_dispmanx.h
++++ b/interface/vmcs_host/vc_vchi_dispmanx.h
+@@ -69,7 +69,7 @@ typedef struct {
+ #ifdef BUILD_WAYLAND
+ /* XXX: This should be in a private header that can be included from EGL and vc_* */
+ #include <wayland-server.h>
+-#include "interface/vmcs_host/wayland-dispmanx-server-protocol.h"
++#include "interface/vcos/pthreads/wayland-dispmanx-server-protocol.h"
+ struct wl_dispmanx_server_buffer {
+ 	struct wl_resource *resource;
+ 	struct wl_dispmanx *dispmanx;
+-- 
+2.10.2
+

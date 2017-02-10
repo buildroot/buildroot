@@ -1,0 +1,92 @@
+From ee5ebfcf0e030efed17f2a45fbb018a02dd421b3 Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Sat, 2 Apr 2016 10:54:59 -0700
+Subject: [PATCH 12/12] implement buffer wrapping interface for dispmanx
+
+Courtesy: Zan Dobersek
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+---
+ interface/khronos/ext/egl_wayland.c | 42 +++++++++++++++++++++++++++++++++++++
+ interface/wayland/dispmanx.xml      | 10 +++++++++
+ 2 files changed, 52 insertions(+)
+
+diff --git a/interface/khronos/ext/egl_wayland.c b/interface/khronos/ext/egl_wayland.c
+index 5730743..9ef89cd 100644
+--- a/interface/khronos/ext/egl_wayland.c
++++ b/interface/khronos/ext/egl_wayland.c
+@@ -133,8 +133,50 @@ dispmanx_create_buffer(struct wl_client *client, struct wl_resource *resource,
+                                      buffer->handle);
+ }
+ 
++static void
++dispmanx_wrap_buffer(struct wl_client *client, struct wl_resource *resource,
++                     uint32_t id, uint32_t handle, int32_t width, int32_t height,
++                     uint32_t stride, uint32_t buffer_height, uint32_t format)
++{
++   struct wl_dispmanx_server_buffer *buffer;
++   VC_IMAGE_TYPE_T vc_format = get_vc_format(format);
++   uint32_t dummy;
++
++   if(vc_format == VC_IMAGE_MIN) {
++      wl_resource_post_error(resource,
++                             WL_DISPMANX_ERROR_INVALID_FORMAT,
++                             "invalid format");
++      return;
++   }
++
++   buffer = calloc(1, sizeof *buffer);
++   if (buffer == NULL) {
++      wl_resource_post_no_memory(resource);
++      return;
++   }
++
++   buffer->handle = handle;
++   buffer->width = width;
++   buffer->height = height;
++   buffer->format = format;
++
++   buffer->resource = wl_resource_create(resource->client, &wl_buffer_interface,
++                                         1, id);
++   if (!buffer->resource) {
++      wl_resource_post_no_memory(resource);
++      vc_dispmanx_resource_delete(buffer->handle);
++      free(buffer);
++      return;
++   }
++
++   wl_resource_set_implementation(buffer->resource,
++				       (void (**)(void)) &dispmanx_buffer_interface,
++				       buffer, destroy_buffer);
++}
++
+ static const struct wl_dispmanx_interface dispmanx_interface = {
+    dispmanx_create_buffer,
++   dispmanx_wrap_buffer,
+ };
+ 
+ static void
+diff --git a/interface/wayland/dispmanx.xml b/interface/wayland/dispmanx.xml
+index c18626d..11ed1ef 100644
+--- a/interface/wayland/dispmanx.xml
++++ b/interface/wayland/dispmanx.xml
+@@ -118,6 +118,16 @@
+       <arg name="buffer" type="object" interface="wl_buffer"/>
+       <arg name="handle" type="uint"/>
+     </event>
++
++    <request name="wrap_buffer">
++      <arg name="id" type="new_id" interface="wl_buffer"/>
++      <arg name="handle" type="uint"/>
++      <arg name="width" type="int"/>
++      <arg name="height" type="int"/>
++      <arg name="stride" type="uint"/>
++      <arg name="buffer_height" type="uint"/>
++      <arg name="format" type="uint"/>
++    </request>
+   </interface>
+ 
+ </protocol>
+-- 
+2.10.2
+

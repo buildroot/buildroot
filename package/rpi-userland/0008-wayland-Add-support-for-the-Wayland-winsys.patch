@@ -1,0 +1,1889 @@
+From e3d2d0007e1c6c32ab7d9a28f1e399d42b511333 Mon Sep 17 00:00:00 2001
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Date: Tue, 1 Oct 2013 13:19:20 +0200
+Subject: [PATCH 02/12] wayland: Add support for the Wayland winsys
+
+* Adds EGL_WL_bind_wayland_display extension
+* Adds wayland-egl library
+* Adds wl_dispmanx_buffer protocol extension
+
+TODO: Check that platform_get_dimensions() returning swapchain_count == 1 is correct
+
+TODO: Remove the requirement of passing a valid DispmanX element handle to
+the SwapBuffers and CreateSurface RPC calls. This will remove the need to open
+a DispmanX display from the clients.
+
+TODO: wl_dispmanx_server_buffer should probably be defined in a
+private header that can be included from EGL and vc_* instead of in
+vc_vchi_dispmanx.h
+---
+ .gitignore                                         |   2 +
+ CMakeLists.txt                                     |  11 +
+ README.md                                          |   4 +
+ buildme                                            |  10 +-
+ .../linux/apps/raspicam/CMakeLists.txt             |   2 +-
+ interface/khronos/CMakeLists.txt                   |  53 ++++-
+ interface/khronos/common/khrn_client.c             |  15 ++
+ interface/khronos/common/khrn_client.h             |  10 +
+ interface/khronos/common/khrn_client_mangle.h      |   3 +
+ interface/khronos/common/khrn_client_platform.h    |   8 +
+ interface/khronos/common/khrn_client_unmangle.h    |   3 +
+ .../common/linux/khrn_client_platform_linux.c      | 115 ++++++++--
+ interface/khronos/common/linux/khrn_wayland.c      | 215 ++++++++++++++++++
+ .../common/linux/khrn_wayland.h}                   |  46 +---
+ interface/khronos/egl/egl_client.c                 |  92 +++++---
+ interface/khronos/egl/egl_client_get_proc.c        |  11 +
+ interface/khronos/egl/egl_client_surface.c         |  42 +++-
+ interface/khronos/egl/egl_client_surface.h         |  38 +++-
+ interface/khronos/egl/egl_int_impl.h               |   2 +-
+ interface/khronos/ext/egl_wayland.c                | 246 +++++++++++++++++++++
+ interface/khronos/include/EGL/eglext.h             |  23 ++
+ interface/khronos/wayland-egl/wayland-egl-priv.h   |  53 +++++
+ interface/khronos/wayland-egl/wayland-egl.c        |  59 +++++
+ interface/khronos/wayland-egl/wayland-egl.pc.in    |  10 +
+ interface/vmcs_host/CMakeLists.txt                 |  21 +-
+ interface/vmcs_host/vc_dispmanx.h                  |  10 +
+ interface/vmcs_host/vc_vchi_dispmanx.c             |  42 ++++
+ interface/vmcs_host/vc_vchi_dispmanx.h             |  15 ++
+ interface/wayland/dispmanx.xml                     | 123 +++++++++++
+ makefiles/cmake/Wayland.cmake                      |  72 ++++++
+ 30 files changed, 1258 insertions(+), 98 deletions(-)
+ create mode 100644 interface/khronos/common/linux/khrn_wayland.c
+ copy interface/{vmcs_host/vc_vchi_dispmanx.h => khronos/common/linux/khrn_wayland.h} (56%)
+ create mode 100644 interface/khronos/ext/egl_wayland.c
+ create mode 100644 interface/khronos/wayland-egl/wayland-egl-priv.h
+ create mode 100644 interface/khronos/wayland-egl/wayland-egl.c
+ create mode 100644 interface/khronos/wayland-egl/wayland-egl.pc.in
+ create mode 100644 interface/wayland/dispmanx.xml
+ create mode 100644 makefiles/cmake/Wayland.cmake
+
+diff --git a/.gitignore b/.gitignore
+index 4a88665..5da71a9 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -13,3 +13,5 @@ build/
+ *.lai
+ *.la
+ *.a
++
++*~
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 98252c3..d6ae907 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -24,6 +24,17 @@ include(makefiles/cmake/global_settings.cmake)
+ include(makefiles/cmake/arm-linux.cmake)
+ include(makefiles/cmake/vmcs.cmake)
+ 
++if (BUILD_WAYLAND)
++   include(makefiles/cmake/Wayland.cmake)
++
++   # Find Wayland libraries
++   find_package(PkgConfig)
++   pkg_check_modules(WAYLAND_CLIENT wayland-client REQUIRED)
++   pkg_check_modules(WAYLAND_SERVER wayland-server REQUIRED)
++
++   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DBUILD_WAYLAND")
++endif()
++
+ enable_language(ASM)
+ 
+ # Global include paths
+diff --git a/README.md b/README.md
+index 358d2b4..4da4448 100644
+--- a/README.md
++++ b/README.md
+@@ -4,3 +4,7 @@ EGL, mmal, GLESv2, vcos, openmaxil, vchiq_arm, bcm_host, WFC, OpenVG.
+ 
+ Use buildme to build. It requires cmake to be installed and an arm cross compiler. It is set up to use this one:
+ https://github.com/raspberrypi/tools/tree/master/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian
++
++To build support for the Wayland winsys in EGL, execute the buildme script like this:
++
++$ BUILD_WAYLAND=1 ./buildme.
+diff --git a/buildme b/buildme
+index 1061745..d0e6e54 100755
+--- a/buildme
++++ b/buildme
+@@ -8,6 +8,10 @@ fi
+ 
+ BUILDSUBDIR=`echo $BUILDTYPE | tr '[A-Z]' '[a-z]'`;
+ 
++if [ -n "$BUILD_WAYLAND" ]; then
++       WAYLAND_VARS="-DBUILD_WAYLAND=TRUE"
++fi
++
+ if [ "armv6l" = `arch` ] || [ "armv7l" = `arch` ]; then
+ 	# Native compile on the Raspberry Pi
+ 	mkdir -p build/raspberry/$BUILDSUBDIR
+@@ -32,9 +36,13 @@ elif [ "$1" = "--native" ]; then
+ 	make -j 6 $*
+ else
+ 	# Cross compile on a more capable machine
++	if [ -n "$BUILD_WAYLAND" ]; then
++		# Use wayland-scanner from the build platform
++		WAYLAND_VARS+=" -DWAYLAND_SCANNER_EXECUTABLE:FILEPATH=/usr/bin/wayland-scanner"
++	fi
+ 	mkdir -p build/arm-linux/$BUILDSUBDIR
+ 	pushd build/arm-linux/$BUILDSUBDIR
+-	cmake -DCMAKE_TOOLCHAIN_FILE=../../../makefiles/cmake/toolchains/arm-linux-gnueabihf.cmake -DCMAKE_BUILD_TYPE=$BUILDTYPE ../../..
++	cmake -DCMAKE_TOOLCHAIN_FILE=../../../makefiles/cmake/toolchains/arm-linux-gnueabihf.cmake -DCMAKE_BUILD_TYPE=$BUILDTYPE $WAYLAND_VARS ../../..
+ 	make -j 6
+ 
+ 	if [ "$1" != "" ]; then
+diff --git a/host_applications/linux/apps/raspicam/CMakeLists.txt b/host_applications/linux/apps/raspicam/CMakeLists.txt
+index e6aa6b8..69059cb 100644
+--- a/host_applications/linux/apps/raspicam/CMakeLists.txt
++++ b/host_applications/linux/apps/raspicam/CMakeLists.txt
+@@ -28,7 +28,7 @@ add_executable(raspividyuv  ${COMMON_SOURCES} RaspiVidYUV.c)
+ 
+ set (MMAL_LIBS mmal_core mmal_util mmal_vc_client)
+ 
+-target_link_libraries(raspistill ${MMAL_LIBS} vcos bcm_host brcmGLESv2 brcmEGL m)
++target_link_libraries(raspistill ${MMAL_LIBS} vcos bcm_host brcmGLESv2 brcmEGL m ${WAYLAND_SERVER_LIBRARIES} ${WAYLAND_CLIENT_LIBRARIES})
+ target_link_libraries(raspiyuv   ${MMAL_LIBS} vcos bcm_host)
+ target_link_libraries(raspivid   ${MMAL_LIBS} vcos bcm_host)
+ target_link_libraries(raspividyuv   ${MMAL_LIBS} vcos bcm_host)
+diff --git a/interface/khronos/CMakeLists.txt b/interface/khronos/CMakeLists.txt
+index 9ad615b..3d3571a 100644
+--- a/interface/khronos/CMakeLists.txt
++++ b/interface/khronos/CMakeLists.txt
+@@ -6,6 +6,12 @@
+ # have quite a few circular dependencies, and so the only way
+ # to make it work seems to be to have everything static.
+ 
++if (BUILD_WAYLAND)
++include_directories(
++   ${WAYLAND_SERVER_INCLUDE_DIRS}
++)
++endif ()
++
+ set(EGL_SOURCE
+    egl/egl_client_config.c
+    egl/egl_client_context.c
+@@ -55,12 +61,56 @@ set(CLIENT_SOURCE
+    common/khrn_int_hash_asm.s
+    common/khrn_client_cache.c)
+ 
++set(EGL_LIBS
++   khrn_client
++   vchiq_arm
++   vcos
++   bcm_host
++   -lm)
++
++if (BUILD_WAYLAND)
++   set(EGL_SOURCE
++      ${EGL_SOURCE}
++      ext/egl_wayland.c
++      common/linux/khrn_wayland.c)
++
++   set(EGL_LIBS
++      ${EGL_LIBS}
++      wayland-client
++      wayland-server)
++
++   set(WAYLAND_EGL_SOURCE
++      wayland-egl/wayland-egl.c)
++
++   wayland_add_protocol_server(
++       EGL_SOURCE
++       ../../interface/wayland/dispmanx.xml
++       dispmanx
++   )
++
++   wayland_add_protocol_client(
++       EGL_SOURCE
++       ../../interface/wayland/dispmanx.xml
++       dispmanx
++   )
++
++   add_library(wayland-egl ${SHARED} ${WAYLAND_EGL_SOURCE})
++   install(TARGETS wayland-egl DESTINATION lib)
++
++   configure_file ("wayland-egl/wayland-egl.pc.in" "wayland-egl/wayland-egl.pc" @ONLY)
++   install (FILES "${CMAKE_CURRENT_BINARY_DIR}/wayland-egl/wayland-egl.pc"
++            DESTINATION lib/pkgconfig)
++endif ()
++
+ add_library(EGL ${SHARED} ${EGL_SOURCE})
+ add_library(GLESv2 ${SHARED} ${GLES_SOURCE})
+ add_library(OpenVG ${SHARED} ${VG_SOURCE})
+ add_library(WFC ${SHARED} ${WFC_SOURCE})
+ add_library(khrn_client ${CLIENT_SOURCE})
+ 
++set_target_properties(EGL PROPERTIES SOVERSION 1 VERSION 1.0.0)
++set_target_properties(GLESv2 PROPERTIES SOVERSION 2 VERSION 2.0.0)
++
+ # TODO do we need EGL_static and GLESv2_static now that khrn_static exists?
+ add_library(EGL_static STATIC ${EGL_SOURCE})
+ add_library(GLESv2_static STATIC ${GLES_SOURCE})
+@@ -72,8 +122,7 @@ include_directories (../../host_applications/linux/libs/sm )
+ set(VCSM_LIBS vcsm)
+ add_definitions(-DKHRONOS_HAVE_VCSM)
+ endif()
+-
+-target_link_libraries(EGL khrn_client vchiq_arm vcos bcm_host ${VCSM_LIBS} -lm)
++target_link_libraries(EGL ${EGL_LIBS} ${VCSM_LIBS})
+ target_link_libraries(GLESv2 EGL khrn_client vcos)
+ target_link_libraries(WFC EGL)
+ target_link_libraries(OpenVG EGL)
+diff --git a/interface/khronos/common/khrn_client.c b/interface/khronos/common/khrn_client.c
+index ef4babd..d7e798e 100644
+--- a/interface/khronos/common/khrn_client.c
++++ b/interface/khronos/common/khrn_client.c
+@@ -54,6 +54,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #include "applications/vmcs/khronos/khronos_server.h"
+ #endif
+ 
++#ifdef BUILD_WAYLAND
++#include "interface/khronos/common/linux/khrn_wayland.h"
++#endif
++
+ VCOS_LOG_CAT_T khrn_client_log = VCOS_LOG_INIT("khrn_client", VCOS_LOG_WARN);
+ 
+ /*
+@@ -142,6 +146,10 @@ void client_try_unload_server(CLIENT_PROCESS_STATE_T *process)
+ bool client_process_state_init(CLIENT_PROCESS_STATE_T *process)
+ {
+    if (!process->inited) {
++#ifdef BUILD_WAYLAND
++      process->wl_global = NULL;
++#endif
++
+       if (!khrn_pointer_map_init(&process->contexts, 64))
+          return false;
+ 
+@@ -194,6 +202,13 @@ bool client_process_state_init(CLIENT_PROCESS_STATE_T *process)
+       }
+ #endif
+ 
++#ifdef BUILD_WAYLAND
++      struct wl_display *wl_display = khrn_platform_get_wl_display();
++      if (wl_display)
++         if (!init_process_wayland(process))
++            return false;
++#endif
++
+       process->inited = true;
+    }
+ 
+diff --git a/interface/khronos/common/khrn_client.h b/interface/khronos/common/khrn_client.h
+index 804039b..615f7b4 100644
+--- a/interface/khronos/common/khrn_client.h
++++ b/interface/khronos/common/khrn_client.h
+@@ -310,6 +310,16 @@ struct CLIENT_PROCESS_STATE {
+ #ifdef RPC_LIBRARY
+    KHRONOS_SERVER_CONNECTION_T khrn_connection;
+ #endif
++
++#ifdef BUILD_WAYLAND
++   /* Client-side Wayland state */
++   struct wl_registry *wl_registry;
++   struct wl_dispmanx *wl_dispmanx;
++   struct wl_event_queue *wl_queue;
++
++   /* Compositor-side Wayland state */
++   struct wl_global *wl_global;
++#endif
+ };
+ 
+ extern bool client_process_state_init(CLIENT_PROCESS_STATE_T *process);
+diff --git a/interface/khronos/common/khrn_client_mangle.h b/interface/khronos/common/khrn_client_mangle.h
+index b3c04f4..b7b21c5 100644
+--- a/interface/khronos/common/khrn_client_mangle.h
++++ b/interface/khronos/common/khrn_client_mangle.h
+@@ -83,6 +83,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #define eglReleaseGlobalImageBRCM mangled_eglReleaseGlobalImageBRCM
+ #define eglInitGlobalImageBRCM mangled_eglInitGlobalImageBRCM
+ #define eglTermGlobalImageBRCM mangled_eglTermGlobalImageBRCM
++#define eglBindWaylandDisplayWL mangled_eglBindWaylandDisplayWL
++#define eglUnbindWaylandDisplayWL mangled_eglUnbindWaylandDisplayWL
++#define eglQueryWaylandBufferWL mangled_eglQueryWaylandBufferWL
+ 
+ /* OpenGL ES 1.1 and 2.0 functions */
+ 
+diff --git a/interface/khronos/common/khrn_client_platform.h b/interface/khronos/common/khrn_client_platform.h
+index 1c9da3a..715c67e 100644
+--- a/interface/khronos/common/khrn_client_platform.h
++++ b/interface/khronos/common/khrn_client_platform.h
+@@ -48,6 +48,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #include "interface/khronos/common/vcos/khrn_client_platform_filler_vcos.h"
+ #endif
+ 
++#ifdef BUILD_WAYLAND
++#include <wayland-client.h>
++#endif
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+@@ -328,4 +332,8 @@ typedef struct
+ 
+ void *platform_wfc_bounce_thread(void *param);
+ 
++#ifdef BUILD_WAYLAND
++struct wl_display *khrn_platform_get_wl_display();
++#endif
++
+ #endif // KHRN_CLIENT_PLATFORM_H
+diff --git a/interface/khronos/common/khrn_client_unmangle.h b/interface/khronos/common/khrn_client_unmangle.h
+index 4f3ce49..84f6ec0 100644
+--- a/interface/khronos/common/khrn_client_unmangle.h
++++ b/interface/khronos/common/khrn_client_unmangle.h
+@@ -83,6 +83,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #undef eglReleaseGlobalImageBRCM
+ #undef eglInitGlobalImageBRCM
+ #undef eglTermGlobalImageBRCM
++#undef eglBindWaylandDisplayWL
++#undef eglUnbindWaylandDisplayWL
++#undef eglQueryWaylandBufferWL
+ 
+ /* OpenGL ES 1.1 and 2.0 functions */
+ 
+diff --git a/interface/khronos/common/linux/khrn_client_platform_linux.c b/interface/khronos/common/linux/khrn_client_platform_linux.c
+index 710d20f..50d60a6 100644
+--- a/interface/khronos/common/linux/khrn_client_platform_linux.c
++++ b/interface/khronos/common/linux/khrn_client_platform_linux.c
+@@ -37,6 +37,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #include "X11/Xlib.h"
+ #endif
+ 
++#ifdef BUILD_WAYLAND
++#include <wayland-client.h>
++#include "interface/khronos/wayland-egl/wayland-egl-priv.h"
++#endif
++
+ extern VCOS_LOG_CAT_T khrn_client_log;
+ 
+ extern void vc_vchi_khronos_init();
+@@ -464,13 +469,36 @@ EGLDisplay khrn_platform_set_display_id(EGLNativeDisplayType display_id)
+ 	   return EGL_NO_DISPLAY;
+ }
+ #else
++
++#ifdef BUILD_WAYLAND
++static struct wl_display *hacky_display = NULL;
++#endif
++
+ EGLDisplay khrn_platform_set_display_id(EGLNativeDisplayType display_id)
+ {
+    if (display_id == EGL_DEFAULT_DISPLAY)
+       return (EGLDisplay)1;
+-   else
+-      return EGL_NO_DISPLAY;
++   else {
++#ifdef BUILD_WAYLAND
++      void *first_pointer = *(void **) display_id;
++
++      /* wl_display is a wl_proxy, which is a wl_object.
++       * wl_object's first element points to the interfacetype. */
++      if (first_pointer == &wl_display_interface) {
++         hacky_display = (struct wl_display*)display_id;
++         return (EGLDisplay)1;
++      } else
++#endif
++         return EGL_NO_DISPLAY;
++   }
+ }
++
++#ifdef BUILD_WAYLAND
++struct wl_display *khrn_platform_get_wl_display()
++{
++   return hacky_display;
++}
++#endif
+ #endif
+ 
+ #ifdef WANT_X
+@@ -805,22 +833,81 @@ static EGL_DISPMANX_WINDOW_T *check_default(EGLNativeWindowType win)
+ void platform_get_dimensions(EGLDisplay dpy, EGLNativeWindowType win,
+       uint32_t *width, uint32_t *height, uint32_t *swapchain_count)
+ {
+-   EGL_DISPMANX_WINDOW_T *dwin = check_default(win);
+-   vcos_assert(dwin);
+-   vcos_assert(dwin->width < 1<<16); // sanity check
+-   vcos_assert(dwin->height < 1<<16); // sanity check
+-   *width = dwin->width;
+-   *height = dwin->height;
+-   *swapchain_count = 0;
++#ifdef BUILD_WAYLAND
++   if(khrn_platform_get_wl_display()) {
++      struct wl_egl_window *wl_egl_window = (struct wl_egl_window*)win;
++      *width = wl_egl_window->width;
++      *height = wl_egl_window->height;
++      /* This seems to be used for sync'ing with the VC on buffer creation, but
++         we are managing them on the CPU side */
++      *swapchain_count = 1;
++   } else {
++#endif
++      EGL_DISPMANX_WINDOW_T *dwin = check_default(win);
++      vcos_assert(dwin);
++      vcos_assert(dwin->width < 1<<16); // sanity check
++      vcos_assert(dwin->height < 1<<16); // sanity check
++      *width = dwin->width;
++      *height = dwin->height;
++      *swapchain_count = 0;
++#ifdef BUILD_WAYLAND
++   }
++#endif
+ }
+ 
++#ifdef BUILD_WAYLAND
++static DISPMANX_ELEMENT_HANDLE_T create_dummy_element()
++{
++   DISPMANX_DISPLAY_HANDLE_T display = vc_dispmanx_display_open(0);
++   DISPMANX_UPDATE_HANDLE_T update = vc_dispmanx_update_start(0);
++   DISPMANX_ELEMENT_HANDLE_T element;
++   VC_DISPMANX_ALPHA_T alpha = {DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS, 255, 0};
++   VC_RECT_T src_rect;
++   VC_RECT_T dst_rect;
++
++   src_rect.x = 0;
++   src_rect.y = 0;
++   src_rect.width = 1 << 16;
++   src_rect.height = 1 << 16;
++
++   dst_rect.x = 0;
++   dst_rect.y = 0;
++   dst_rect.width = 1;
++   dst_rect.height = 1;
++
++   element = vc_dispmanx_element_add(update, display, 0/*layer*/, &dst_rect,
++                                     0/*src*/, &src_rect,
++                                     DISPMANX_PROTECTION_NONE, &alpha,
++                                     0/*clamp*/, 0/*transform*/);
++
++   vc_dispmanx_update_submit_sync(update);
++
++   vc_dispmanx_display_close(display);
++
++   return element;
++}
++#endif
++
+ uint32_t platform_get_handle(EGLDisplay dpy, EGLNativeWindowType win)
+ {
+-   EGL_DISPMANX_WINDOW_T *dwin = check_default(win);
+-   vcos_assert(dwin);
+-   vcos_assert(dwin->width < 1<<16); // sanity check
+-   vcos_assert(dwin->height < 1<<16); // sanity check
+-   return dwin->element;
++#ifdef BUILD_WAYLAND
++   if(khrn_platform_get_wl_display()) {
++      struct wl_egl_window *wl_egl_window = (struct wl_egl_window*)win;
++
++      if (wl_egl_window->dummy_element == PLATFORM_WIN_NONE)
++         wl_egl_window->dummy_element = create_dummy_element();
++
++      return wl_egl_window->dummy_element;
++   } else {
++#endif
++      EGL_DISPMANX_WINDOW_T *dwin = check_default(win);
++      vcos_assert(dwin);
++      vcos_assert(dwin->width < 1<<16); // sanity check
++      vcos_assert(dwin->height < 1<<16); // sanity check
++      return dwin->element;
++#ifdef BUILD_WAYLAND
++   }
++#endif
+ }
+ 
+ #endif
+diff --git a/interface/khronos/common/linux/khrn_wayland.c b/interface/khronos/common/linux/khrn_wayland.c
+new file mode 100644
+index 0000000..0e1b9e7
+--- /dev/null
++++ b/interface/khronos/common/linux/khrn_wayland.c
+@@ -0,0 +1,215 @@
++/*
++Copyright (c) 2013, Raspberry Pi Foundation
++All rights reserved.
++
++Redistribution and use in source and binary forms, with or without
++modification, are permitted provided that the following conditions are met:
++    * Redistributions of source code must retain the above copyright
++      notice, this list of conditions and the following disclaimer.
++    * Redistributions in binary form must reproduce the above copyright
++      notice, this list of conditions and the following disclaimer in the
++      documentation and/or other materials provided with the distribution.
++    * Neither the name of the copyright holder nor the
++      names of its contributors may be used to endorse or promote products
++      derived from this software without specific prior written permission.
++
++THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
++ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
++DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
++(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
++ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
++SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++*/
++
++#define VCOS_LOG_CATEGORY (&khrn_client_log)
++
++#include "interface/khronos/common/linux/khrn_wayland.h"
++#include "interface/khronos/wayland-dispmanx-client-protocol.h"
++#include "interface/khronos/wayland-egl/wayland-egl-priv.h"
++
++extern VCOS_LOG_CAT_T khrn_client_log;
++
++static void handle_dispmanx_format(void *data, struct wl_dispmanx *dispmanx,
++                                   uint32_t format)
++{
++}
++
++static void handle_dispmanx_allocated(void *data, struct wl_dispmanx *dispmanx,
++                                      struct wl_buffer *wl_buffer,
++                                      uint32_t resource_handle)
++{
++    struct wl_dispmanx_client_buffer *buffer = wl_buffer_get_user_data(wl_buffer);
++
++    buffer->pending_allocation = 0;
++    buffer->resource = resource_handle;
++}
++
++static const struct wl_dispmanx_listener dispmanx_listener = {
++    handle_dispmanx_format,
++    handle_dispmanx_allocated,
++};
++
++static void
++sync_callback(void *data, struct wl_callback *callback, uint32_t serial)
++{
++   int *done = data;
++
++   *done = 1;
++
++   wl_callback_destroy(callback);
++}
++
++static const struct wl_callback_listener sync_listener = {
++   sync_callback
++};
++
++static int
++roundtrip(CLIENT_PROCESS_STATE_T *process)
++{
++   struct wl_display *wl_display = khrn_platform_get_wl_display();
++   struct wl_callback *callback;
++   int done = 0, ret = 0;
++
++   callback = wl_display_sync(wl_display);
++   wl_callback_add_listener(callback, &sync_listener, &done);
++   wl_proxy_set_queue((struct wl_proxy *) callback, process->wl_queue);
++   while (ret != -1 && !done)
++      ret = wl_display_dispatch_queue(wl_display, process->wl_queue);
++
++   if (!done)
++      wl_callback_destroy(callback);
++
++   return ret;
++}
++
++int do_wl_roundtrip()
++{
++   CLIENT_PROCESS_STATE_T *process = CLIENT_GET_PROCESS_STATE();
++   return roundtrip(process);
++}
++
++static void
++registry_handle_global(void *data, struct wl_registry *registry,
++                       uint32_t name, const char *interface, uint32_t version)
++{
++   struct wl_display *wl_display = khrn_platform_get_wl_display();
++   CLIENT_PROCESS_STATE_T *process = (CLIENT_PROCESS_STATE_T *)data;
++
++   if (strcmp(interface, "wl_dispmanx") == 0) {
++      process->wl_dispmanx = wl_registry_bind(registry, name,
++	       &wl_dispmanx_interface, 1);
++
++      wl_proxy_set_queue((struct wl_proxy *) process->wl_dispmanx,
++                         process->wl_queue);
++      wl_dispmanx_add_listener(process->wl_dispmanx, &dispmanx_listener, wl_display);
++      roundtrip(process);
++   }
++}
++
++static void
++registry_handle_global_remove(void *data, struct wl_registry *registry,
++                              uint32_t name)
++{
++}
++
++static const struct wl_registry_listener registry_listener = {
++	registry_handle_global,
++	registry_handle_global_remove
++};
++
++int
++init_process_wayland(CLIENT_PROCESS_STATE_T *process)
++{
++    struct wl_display *wl_display = khrn_platform_get_wl_display();
++
++    process->wl_queue = wl_display_create_queue(wl_display);
++    if (!process->wl_queue) {
++        vcos_log_error("wl_display_create_queue failed\n");
++        return false;
++    }
++    wl_display_dispatch_pending(wl_display);
++
++    process->wl_registry = wl_display_get_registry(wl_display);
++    if (!process->wl_registry) {
++        vcos_log_error("wl_display_get_registry failed\n");
++        return false;
++    }
++
++    wl_proxy_set_queue((struct wl_proxy *) process->wl_registry,
++    process->wl_queue);
++
++    wl_registry_add_listener(process->wl_registry, &registry_listener, process);
++
++    if (roundtrip(process) < 0 || process->wl_dispmanx == NULL) {
++        vcos_log_error("failed to get wl_dispmanx\n");
++        return false;
++    }
++
++    return true;
++}
++
++#ifndef ALIGN_UP
++#define ALIGN_UP(x,y)  ((x + (y)-1) & ~((y)-1))
++#endif
++
++static void handle_buffer_release(void *data, struct wl_buffer *buffer_wl)
++{
++   struct wl_dispmanx_client_buffer *wl_dispmanx_client_buffer = data;
++   wl_dispmanx_client_buffer->in_use = 0;
++}
++
++static const struct wl_buffer_listener buffer_listener = {
++   handle_buffer_release
++};
++
++struct wl_dispmanx_client_buffer *
++allocate_wl_buffer(struct wl_egl_window *window, KHRN_IMAGE_FORMAT_T color)
++{
++   CLIENT_PROCESS_STATE_T *process = CLIENT_GET_PROCESS_STATE();
++   struct wl_dispmanx_client_buffer *wl_dispmanx_client_buffer;
++   struct wl_buffer *wl_buffer;
++   uint32_t stride = ALIGN_UP(window->width * 4, 16);
++   uint32_t buffer_height = ALIGN_UP(window->height, 16);
++   enum wl_dispmanx_format color_format;
++   int ret = 0;
++
++   switch (color) {
++   case ABGR_8888:
++      color_format = WL_DISPMANX_FORMAT_ABGR8888;
++      break;
++   case XBGR_8888:
++      color_format = WL_DISPMANX_FORMAT_XBGR8888;
++      break;
++   case RGB_565:
++      color_format = WL_DISPMANX_FORMAT_RGB565;
++      break;
++   default:
++      vcos_log_error("unknown KHRN_IMAGE_FORMAT_T 0x%x\n", color);
++      return NULL;
++   }
++
++   wl_buffer = wl_dispmanx_create_buffer(process->wl_dispmanx, window->width,
++                                         window->height, stride, buffer_height,
++                                         color_format);
++   if (wl_buffer == NULL)
++      return NULL;
++
++   wl_dispmanx_client_buffer = calloc(1, sizeof(struct wl_dispmanx_client_buffer));
++   wl_dispmanx_client_buffer->wl_buffer = wl_buffer;
++   wl_dispmanx_client_buffer->in_use = 0;
++   wl_dispmanx_client_buffer->pending_allocation = 1;
++   wl_dispmanx_client_buffer->width = window->width;
++   wl_dispmanx_client_buffer->height = window->height;
++
++   wl_proxy_set_queue((struct wl_proxy *) wl_buffer, process->wl_queue);
++   wl_buffer_add_listener(wl_buffer, &buffer_listener, wl_dispmanx_client_buffer);
++
++   while (ret != -1 && wl_dispmanx_client_buffer->pending_allocation)
++      ret = do_wl_roundtrip();
++
++   return wl_dispmanx_client_buffer;
++}
+diff --git a/interface/vmcs_host/vc_vchi_dispmanx.h b/interface/khronos/common/linux/khrn_wayland.h
+similarity index 56%
+copy from interface/vmcs_host/vc_vchi_dispmanx.h
+copy to interface/khronos/common/linux/khrn_wayland.h
+index b723b76..b9bf08c 100644
+--- a/interface/vmcs_host/vc_vchi_dispmanx.h
++++ b/interface/khronos/common/linux/khrn_wayland.h
+@@ -1,5 +1,5 @@
+ /*
+-Copyright (c) 2012, Broadcom Europe Ltd
++Copyright (c) 2013, Raspberry Pi Foundation
+ All rights reserved.
+ 
+ Redistribution and use in source and binary forms, with or without
+@@ -25,45 +25,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ 
+-#ifndef VC_VCHI_DISPMANX_H
+-#define VC_VCHI_DISPMANX_H
++#include "interface/khronos/common/khrn_client.h"
+ 
+-#include "interface/peer/vc_vchi_dispmanx_common.h"
++int init_process_wayland(CLIENT_PROCESS_STATE_T *process);
++int do_wl_roundtrip();
+ 
+-#define VC_NUM_HOST_RESOURCES 64
+-#define DISPMANX_MSGFIFO_SIZE 1024
+-#define DISPMANX_CLIENT_NAME MAKE_FOURCC("DISP")
+-#define DISPMANX_NOTIFY_NAME MAKE_FOURCC("UPDH")
+-
+-//Or with command to indicate we don't need a response
+-#define DISPMANX_NO_REPLY_MASK (1<<31)
+-
+-typedef struct {
+-   char     description[32];
+-   uint32_t width;
+-   uint32_t height;
+-   uint32_t aspect_pixwidth;
+-   uint32_t aspect_pixheight;
+-   uint32_t fieldrate_num;
+-   uint32_t fieldrate_denom;
+-   uint32_t fields_per_frame;
+-   uint32_t transform;        
+-} GET_MODES_DATA_T;
+-
+-typedef struct {
+-   int32_t  response;
+-   uint32_t width;
+-   uint32_t height;
+-   uint32_t transform;
+-   uint32_t input_format;
+-} GET_INFO_DATA_T;
+-
+-//Attributes changes flag mask
+-#define ELEMENT_CHANGE_LAYER          (1<<0)
+-#define ELEMENT_CHANGE_OPACITY        (1<<1)
+-#define ELEMENT_CHANGE_DEST_RECT      (1<<2)
+-#define ELEMENT_CHANGE_SRC_RECT       (1<<3)
+-#define ELEMENT_CHANGE_MASK_RESOURCE  (1<<4)
+-#define ELEMENT_CHANGE_TRANSFORM      (1<<5)
+-
+-#endif
++struct wl_dispmanx_client_buffer *allocate_wl_buffer(struct wl_egl_window *window, KHRN_IMAGE_FORMAT_T color);
+diff --git a/interface/khronos/egl/egl_client.c b/interface/khronos/egl/egl_client.c
+index b8bb374..03fe67b 100644
+--- a/interface/khronos/egl/egl_client.c
++++ b/interface/khronos/egl/egl_client.c
+@@ -153,6 +153,10 @@ by an attribute value"
+ #include <stdlib.h>
+ #include <string.h>
+ 
++#ifdef BUILD_WAYLAND
++#include "interface/khronos/wayland-egl/wayland-egl-priv.h"
++#include "interface/khronos/common/linux/khrn_wayland.h"
++#endif
+ 
+ #include "interface/khronos/egl/egl_client_cr.c"
+ 
+@@ -162,17 +166,6 @@ static void egl_current_release(CLIENT_PROCESS_STATE_T *process, EGL_CURRENT_T *
+ void egl_gl_flush_callback(bool wait);
+ void egl_vg_flush_callback(bool wait);
+ 
+-#include "interface/vmcs_host/vc_dispmanx_types.h"
+-/**HACKHACK - give us the ability to inject a DispmanX 
+- * resource handle into the CreateWindowSurface and 
+- * SwapBuffers calls */ 
+-static DISPMANX_RESOURCE_HANDLE_T next_resource_handle;
+-
+-EGLAPI EGLBoolean EGLAPIENTRY eglSetNextResourceHandle(DISPMANX_RESOURCE_HANDLE_T handle)
+-{
+-   next_resource_handle = handle;
+-}
+-
+ /*
+ TODO: do an RPC call to make sure the Khronos vll is loaded (and that it stays loaded until eglTerminate)
+ Also affects global image (and possibly others?)
+@@ -451,6 +444,9 @@ EGLAPI const char EGLAPIENTRY * eglQueryString(EGLDisplay dpy, EGLint name)
+             "EGL_KHR_fence_sync "
+ #endif
+ #endif
++#if EGL_WL_bind_wayland_display
++            "EGL_WL_bind_wayland_display "
++#endif
+             ;
+          break;
+       case EGL_VENDOR:
+@@ -655,8 +651,7 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreateWindowSurface(EGLDisplay dpy, EGLConfig c
+                                 false,
+                                 EGL_NO_TEXTURE,
+                                 EGL_NO_TEXTURE,
+-                                0, 0,
+-                                next_resource_handle);
++                                0, 0);
+ 
+                if (surface) {
+                   if (khrn_pointer_map_insert(&process->surfaces, process->next_surface, surface)) {
+@@ -901,7 +896,7 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(EGLDisplay dpy, EGLConfig
+                              mipmap_texture,
+                              texture_format,
+                              texture_target,
+-                             0, 0, 0);
++                             0, 0);
+ 
+             if (surface) {
+                if (khrn_pointer_map_insert(&process->surfaces, process->next_surface, surface)) {
+@@ -1043,7 +1038,7 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreatePixmapSurface(EGLDisplay dpy, EGLConfig c
+                                    false,
+                                    EGL_NO_TEXTURE,
+                                    EGL_NO_TEXTURE,
+-                                   pixmap, ((server_handle[0] == 0) && (server_handle[1] == (uint32_t)(-1))) ? NULL : server_handle, 0);
++                                   pixmap, ((server_handle[0] == 0) && (server_handle[1] == (uint32_t)(-1))) ? NULL : server_handle);
+ 
+                      if (surface) {
+                         if (khrn_pointer_map_insert(&process->surfaces, process->next_surface, surface)) {
+@@ -2245,6 +2240,9 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay dpy, EGLSurface surf)
+    CLIENT_THREAD_STATE_T *thread;
+    CLIENT_PROCESS_STATE_T *process;
+    EGLBoolean result;
++#ifdef BUILD_WAYLAND
++   struct wl_display *wl_display = khrn_platform_get_wl_display();
++#endif
+ 
+    vcos_log_trace("eglSwapBuffers start. dpy=%d. surf=%d.", (int)dpy, (int)surf);
+ 
+@@ -2315,18 +2313,58 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay dpy, EGLSurface surf)
+ 
+                vcos_log_trace("eglSwapBuffers server call");
+ 
+-               if (next_resource_handle)
+-               RPC_CALL7(eglIntSwapBuffers_impl,
+-                     thread,
+-                     EGLINTSWAPBUFFERS_ID_V2,
+-                     RPC_UINT(surface->serverbuffer),
+-                     RPC_UINT(surface->width),
+-                     RPC_UINT(surface->height),
+-                     RPC_UINT(surface->internal_handle),
+-                     RPC_UINT(surface->swap_behavior == EGL_BUFFER_PRESERVED ? 1 : 0),
+-                     RPC_UINT(khrn_platform_get_window_position(surface->win)),
+-                     RPC_INT(next_resource_handle));
+-               else
++#ifdef BUILD_WAYLAND
++               if (wl_display) {
++                  struct wl_egl_window *wl_egl_window = surface->wl_egl_window;
++                  struct wl_dispmanx_client_buffer *buffer_temp;
++                  uint32_t configid;
++                  KHRN_IMAGE_FORMAT_T color;
++                  int ret = 0;
++
++                  buffer_temp = surface->front_wl_buffer;
++                  surface->front_wl_buffer = surface->back_wl_buffer;
++                  surface->back_wl_buffer = buffer_temp;
++
++                  configid = egl_config_to_id(surface->config);
++                  color = egl_config_get_color_format(configid);
++
++                  if (surface->back_wl_buffer == NULL)
++                     surface->back_wl_buffer = allocate_wl_buffer(wl_egl_window, color);
++                  else if (surface->back_wl_buffer->width != width ||
++                           surface->back_wl_buffer->height != height) {
++
++                     struct wl_dispmanx_client_buffer *buffer;
++
++                     wl_buffer_destroy(surface->back_wl_buffer->wl_buffer);
++                     free(surface->back_wl_buffer);
++
++                     buffer = allocate_wl_buffer(wl_egl_window, color);
++                     surface->back_wl_buffer = buffer;
++                  }
++
++                  RPC_CALL7(eglIntSwapBuffers_impl,
++                        thread,
++                        EGLINTSWAPBUFFERS_ID_V2,
++                        RPC_UINT(surface->serverbuffer),
++                        RPC_UINT(surface->width),
++                        RPC_UINT(surface->height),
++                        RPC_UINT(surface->internal_handle),
++                        RPC_UINT(surface->swap_behavior == EGL_BUFFER_PRESERVED ? 1 : 0),
++                        RPC_UINT(khrn_platform_get_window_position(surface->win)),
++                        RPC_INT(surface->back_wl_buffer->resource));
++
++                  surface->front_wl_buffer->in_use = 1;
++                  wl_surface_attach(wl_egl_window->wl_surface,
++                                    surface->front_wl_buffer->wl_buffer,
++                                    0, 0);
++                  wl_surface_damage(wl_egl_window->wl_surface, 0, 0,
++                                    surface->width, surface->height);
++                  wl_surface_commit(wl_egl_window->wl_surface);
++
++                  while(ret != -1 && surface->back_wl_buffer->in_use)
++                     ret = wl_display_dispatch_queue(wl_display, process->wl_queue);
++               } else
++#endif
+                RPC_CALL6(eglIntSwapBuffers_impl,
+                      thread,
+                      EGLINTSWAPBUFFERS_ID,
+diff --git a/interface/khronos/egl/egl_client_get_proc.c b/interface/khronos/egl/egl_client_get_proc.c
+index 4cfa9ff..6a715af 100644
+--- a/interface/khronos/egl/egl_client_get_proc.c
++++ b/interface/khronos/egl/egl_client_get_proc.c
+@@ -254,6 +254,17 @@ EGLAPI void EGLAPIENTRY (* eglGetProcAddress(const char *procname))(void)
+       return (void(*)(void))eglQueryGlobalImageBRCM;
+ #endif
+ 
++#ifdef BUILD_WAYLAND
++#if EGL_WL_bind_wayland_display
++   if (!strcmp(procname, "eglBindWaylandDisplayWL"))
++      return (void(*)(void))eglBindWaylandDisplayWL;
++   if (!strcmp(procname, "eglUnbindWaylandDisplayWL"))
++      return (void(*)(void))eglUnbindWaylandDisplayWL;
++   if (!strcmp(procname, "eglQueryWaylandBufferWL"))
++      return (void(*)(void))eglQueryWaylandBufferWL;
++#endif
++#endif
++
+    return (void(*)(void)) NULL;
+ }
+ 
+diff --git a/interface/khronos/egl/egl_client_surface.c b/interface/khronos/egl/egl_client_surface.c
+index 128325e..42350bf 100644
+--- a/interface/khronos/egl/egl_client_surface.c
++++ b/interface/khronos/egl/egl_client_surface.c
+@@ -46,6 +46,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #include "interface/khronos/egl/egl_int_impl.h"
+ #endif
+ 
++#ifdef BUILD_WAYLAND
++#include "interface/khronos/wayland-egl/wayland-egl-priv.h"
++#include "interface/khronos/common/linux/khrn_wayland.h"
++#endif
++
+ #include <stdlib.h>
+ 
+ 
+@@ -314,8 +319,7 @@ EGL_SURFACE_T *egl_surface_create(
+    EGLenum texture_format,
+    EGLenum texture_target,
+    EGLNativePixmapType pixmap,
+-   const uint32_t *pixmap_server_handle,
+-   DISPMANX_RESOURCE_HANDLE_T next_resource_handle)
++   const uint32_t *pixmap_server_handle)
+ {
+    KHRN_IMAGE_FORMAT_T color;
+    KHRN_IMAGE_FORMAT_T depth;
+@@ -326,6 +330,10 @@ EGL_SURFACE_T *egl_surface_create(
+    EGLint   config_depth_bits;
+    EGLint   config_stencil_bits;
+    CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
++#ifdef BUILD_WAYLAND
++   struct wl_display *wl_display = khrn_platform_get_wl_display();
++   DISPMANX_RESOURCE_HANDLE_T resource;
++#endif
+ 
+    EGL_SURFACE_T *surface = egl_surface_pool_alloc();
+ 
+@@ -390,6 +398,18 @@ EGL_SURFACE_T *egl_surface_create(
+ 
+    vcos_assert(color != IMAGE_FORMAT_INVALID);
+ 
++#ifdef BUILD_WAYLAND
++   if (type == WINDOW && wl_display) {
++      surface->wl_egl_window = (struct wl_egl_window*)win;
++      surface->back_wl_buffer = allocate_wl_buffer(
++            surface->wl_egl_window, color);
++      resource = surface->back_wl_buffer->resource;
++   } else {
++      surface->wl_egl_window = NULL;
++      resource = DISPMANX_NO_HANDLE;
++   }
++#endif
++
+ #ifdef KHRONOS_EGL_PLATFORM_OPENWFC
+    // Create stream for this window
+    if(type != PBUFFER)
+@@ -474,7 +494,8 @@ EGL_SURFACE_T *egl_surface_create(
+ #endif
+          uint32_t results[3];
+ 
+-         if (next_resource_handle)
++#ifdef BUILD_WAYLAND
++         if (resource != DISPMANX_NO_HANDLE)
+          RPC_CALL16_OUT_CTRL(eglIntCreateSurface_impl,
+                              thread,
+                              EGLINTCREATESURFACE_ID_V2,
+@@ -492,9 +513,10 @@ EGL_SURFACE_T *egl_surface_create(
+                              RPC_UINT(config_stencil_bits),
+                              RPC_UINT(sem_name),
+                              RPC_UINT(type),
+-                             RPC_INT(next_resource_handle),
++                             RPC_INT(resource),
+                              results);
+          else
++#endif
+          RPC_CALL15_OUT_CTRL(eglIntCreateSurface_impl,
+                              thread,
+                              EGLINTCREATESURFACE_ID,
+@@ -663,6 +685,18 @@ void egl_surface_free(EGL_SURFACE_T *surface)
+    if( surface->type == WINDOW ) {
+       vcos_log_trace("egl_surface_free: calling platform_destroy_winhandle...");
+       platform_destroy_winhandle( surface->win, surface->internal_handle );
++
++#ifdef BUILD_WAYLAND
++      if (surface->back_wl_buffer) {
++         wl_buffer_destroy(surface->back_wl_buffer->wl_buffer);
++         free(surface->back_wl_buffer);
++      }
++
++      if (surface->front_wl_buffer) {
++         wl_buffer_destroy(surface->front_wl_buffer->wl_buffer);
++         free(surface->front_wl_buffer);
++      }
++#endif
+    }
+    /* return value ignored -- read performed to ensure blocking. we want this to
+     * block so clients can safely destroy the surface's window as soon as the
+diff --git a/interface/khronos/egl/egl_client_surface.h b/interface/khronos/egl/egl_client_surface.h
+index b5bf70a..e328b77 100644
+--- a/interface/khronos/egl/egl_client_surface.h
++++ b/interface/khronos/egl/egl_client_surface.h
+@@ -288,6 +288,41 @@ typedef struct {
+       type == PIXMAP
+    */
+    bool server_owned;
++
++#ifdef BUILD_WAYLAND
++   /*
++      wl_egl_window
++
++      Validity:
++      type == WINDOW
++
++      Invariant:
++      wayland EGL window
++   */
++   struct wl_egl_window *wl_egl_window;
++
++   /*
++      front_wl_buffer
++
++      Validity:
++      type == WINDOW
++
++      Invariant:
++      client-side information about the wl_buffer in the front
++   */
++   struct wl_dispmanx_client_buffer *front_wl_buffer;
++
++   /*
++      back_wl_buffer
++
++      Validity:
++      type == WINDOW
++
++      Invariant:
++      client-side information about the wl_buffer in the back
++   */
++   struct wl_dispmanx_client_buffer *back_wl_buffer;
++#endif
+ } EGL_SURFACE_T;
+ 
+ extern bool egl_surface_check_attribs(
+@@ -322,8 +357,7 @@ extern EGL_SURFACE_T *egl_surface_create(
+    EGLenum texture_format,
+    EGLenum texture_target,
+    EGLNativePixmapType pixmap,
+-   const uint32_t *pixmap_server_handle,
+-   DISPMANX_RESOURCE_HANDLE_T next_resource_handle);
++   const uint32_t *pixmap_server_handle);
+ extern EGL_SURFACE_T *egl_surface_from_vg_image(
+    VGImage vg_handle,
+    EGLSurface name,
+diff --git a/interface/khronos/egl/egl_int_impl.h b/interface/khronos/egl/egl_int_impl.h
+index 51b3580..6863a3b 100644
+--- a/interface/khronos/egl/egl_int_impl.h
++++ b/interface/khronos/egl/egl_int_impl.h
+@@ -57,7 +57,7 @@ FN(int, eglIntCreateSurface_impl, (
+    uint32_t sem,
+    uint32_t type,
+    uint32_t *results,
+-   DISPMANX_RESOURCE_HANDLE_T next_resource_handle))
++   DISPMANX_RESOURCE_HANDLE_T resource_handle))
+ 
+ FN(int, eglIntCreatePbufferFromVGImage_impl, (
+    VGImage vg_handle,
+diff --git a/interface/khronos/ext/egl_wayland.c b/interface/khronos/ext/egl_wayland.c
+new file mode 100644
+index 0000000..5730743
+--- /dev/null
++++ b/interface/khronos/ext/egl_wayland.c
+@@ -0,0 +1,246 @@
++/*
++Copyright (c) 2013, Raspberry Pi Foundation
++All rights reserved.
++
++Redistribution and use in source and binary forms, with or without
++modification, are permitted provided that the following conditions are met:
++    * Redistributions of source code must retain the above copyright
++      notice, this list of conditions and the following disclaimer.
++    * Redistributions in binary form must reproduce the above copyright
++      notice, this list of conditions and the following disclaimer in the
++      documentation and/or other materials provided with the distribution.
++    * Neither the name of the copyright holder nor the
++      names of its contributors may be used to endorse or promote products
++      derived from this software without specific prior written permission.
++
++THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
++ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
++DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
++(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
++ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
++SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++*/
++
++#include "interface/khronos/common/khrn_client_mangle.h"
++#include "interface/khronos/common/khrn_client_rpc.h"
++
++#include "interface/khronos/ext/egl_khr_sync_client.h"
++#include "interface/khronos/include/EGL/egl.h"
++#include "interface/khronos/include/EGL/eglext.h"
++
++#include "interface/vmcs_host/vc_vchi_dispmanx.h"
++
++#include <wayland-server.h>
++#include "interface/khronos/wayland-dispmanx-server-protocol.h"
++
++static void
++destroy_buffer(struct wl_resource *resource)
++{
++   struct wl_dispmanx_server_buffer *buffer = wl_resource_get_user_data(resource);
++
++   if(!buffer->in_use)
++      vc_dispmanx_resource_delete(buffer->handle);
++
++   free(buffer);
++}
++
++static void
++buffer_destroy(struct wl_client *client, struct wl_resource *resource)
++{
++   wl_resource_destroy(resource);
++}
++
++static const struct wl_buffer_interface dispmanx_buffer_interface = {
++   buffer_destroy
++};
++
++static VC_IMAGE_TYPE_T
++get_vc_format(enum wl_dispmanx_format format)
++{
++	/* XXX: The app is likely to have been premultiplying in its shaders,
++	 * but the VC scanout hardware on the RPi cannot mix premultiplied alpha
++	 * channel with the element's alpha.
++	 */
++	switch (format) {
++	case WL_DISPMANX_FORMAT_ABGR8888:
++		return VC_IMAGE_RGBA32;
++	case WL_DISPMANX_FORMAT_XBGR8888:
++		return VC_IMAGE_BGRX8888;
++	case WL_DISPMANX_FORMAT_RGB565:
++		return VC_IMAGE_RGB565;
++	default:
++		/* invalid format */
++		return VC_IMAGE_MIN;
++	}
++}
++
++static void
++dispmanx_create_buffer(struct wl_client *client, struct wl_resource *resource,
++                       uint32_t id, int32_t width, int32_t height,
++                       uint32_t stride, uint32_t buffer_height, uint32_t format)
++{
++   struct wl_dispmanx_server_buffer *buffer;
++   VC_IMAGE_TYPE_T vc_format = get_vc_format(format);
++   uint32_t dummy;
++
++   if(vc_format == VC_IMAGE_MIN) {
++      wl_resource_post_error(resource,
++                             WL_DISPMANX_ERROR_INVALID_FORMAT,
++                             "invalid format");
++      return;
++   }
++
++   buffer = calloc(1, sizeof *buffer);
++   if (buffer == NULL) {
++      wl_resource_post_no_memory(resource);
++      return;
++   }
++
++   buffer->handle = vc_dispmanx_resource_create(vc_format,
++                                                width | (stride << 16),
++                                                height | (buffer_height << 16),
++                                                &dummy);
++   if(buffer->handle == DISPMANX_NO_HANDLE) {
++      wl_resource_post_error(resource,
++                             WL_DISPMANX_ERROR_ALLOC_FAILED,
++                             "allocation failed");
++      free(buffer);
++      return;
++   }
++
++   buffer->width = width;
++   buffer->height = height;
++   buffer->format = format;
++
++   buffer->resource = wl_resource_create(resource->client, &wl_buffer_interface,
++                                         1, id);
++   if (!buffer->resource) {
++      wl_resource_post_no_memory(resource);
++      vc_dispmanx_resource_delete(buffer->handle);
++      free(buffer);
++      return;
++   }
++
++   wl_resource_set_implementation(buffer->resource,
++				       (void (**)(void)) &dispmanx_buffer_interface,
++				       buffer, destroy_buffer);
++
++   wl_dispmanx_send_buffer_allocated(resource, buffer->resource,
++                                     buffer->handle);
++}
++
++static const struct wl_dispmanx_interface dispmanx_interface = {
++   dispmanx_create_buffer,
++};
++
++static void
++bind_dispmanx(struct wl_client *client, void *data, uint32_t version, uint32_t id)
++{
++   struct wl_resource *resource;
++
++   resource = wl_resource_create(client, &wl_dispmanx_interface, 1, id);
++   wl_resource_set_implementation(resource, &dispmanx_interface, NULL, NULL);
++
++   wl_resource_post_event(resource, WL_DISPMANX_FORMAT,
++                          WL_DISPMANX_FORMAT_ARGB8888);
++
++   wl_resource_post_event(resource, WL_DISPMANX_FORMAT,
++                          WL_DISPMANX_FORMAT_XRGB8888);
++
++   wl_resource_post_event(resource, WL_DISPMANX_FORMAT,
++                          WL_DISPMANX_FORMAT_ABGR8888);
++
++   wl_resource_post_event(resource, WL_DISPMANX_FORMAT,
++                          WL_DISPMANX_FORMAT_XBGR8888);
++
++   wl_resource_post_event(resource, WL_DISPMANX_FORMAT,
++                          WL_DISPMANX_FORMAT_RGB565);
++}
++
++EGLBoolean EGLAPIENTRY
++eglBindWaylandDisplayWL(EGLDisplay dpy, struct wl_display *display)
++{
++   CLIENT_THREAD_STATE_T *thread;
++   CLIENT_PROCESS_STATE_T *process;
++
++   if (!CLIENT_LOCK_AND_GET_STATES(dpy, &thread, &process))
++      return EGL_FALSE;
++
++   if (process->wl_global != NULL)
++      goto error;
++
++   process->wl_global = wl_global_create(display, &wl_dispmanx_interface, 1,
++                                         NULL, bind_dispmanx);
++   if (process->wl_global == NULL)
++      goto error;
++
++   return EGL_TRUE;
++
++error:
++   CLIENT_UNLOCK();
++   return EGL_FALSE;
++}
++
++EGLBoolean EGLAPIENTRY
++eglUnbindWaylandDisplayWL(EGLDisplay dpy, struct wl_display *display)
++{
++   CLIENT_THREAD_STATE_T *thread;
++   CLIENT_PROCESS_STATE_T *process;
++
++   if (!CLIENT_LOCK_AND_GET_STATES(dpy, &thread, &process))
++      return EGL_FALSE;
++
++   wl_global_destroy(process->wl_global);
++   process->wl_global = NULL;
++
++   CLIENT_UNLOCK();
++
++   return EGL_TRUE;
++}
++
++static int
++get_egl_format(enum wl_dispmanx_format format)
++{
++	switch (format) {
++	case WL_DISPMANX_FORMAT_ABGR8888:
++		return EGL_TEXTURE_RGBA;
++	case WL_DISPMANX_FORMAT_XBGR8888:
++		return EGL_TEXTURE_RGB;
++	case WL_DISPMANX_FORMAT_RGB565:
++		return EGL_TEXTURE_RGB;
++	default:
++		/* invalid format */
++		return EGL_NO_TEXTURE;
++	}
++}
++
++EGLBoolean EGLAPIENTRY
++eglQueryWaylandBufferWL(EGLDisplay dpy, struct wl_resource *_buffer,
++         EGLint attribute, EGLint *value)
++{
++   struct wl_dispmanx_server_buffer *buffer = wl_resource_get_user_data(_buffer);
++
++   if (wl_resource_instance_of(_buffer, &wl_dispmanx_interface,
++                               &dispmanx_buffer_interface))
++      return EGL_FALSE;
++
++   switch (attribute) {
++   case EGL_TEXTURE_FORMAT:
++      *value = get_egl_format(buffer->format);
++      if (*value == EGL_NO_TEXTURE)
++         return EGL_FALSE;
++      return EGL_TRUE;
++   case EGL_WIDTH:
++      *value = buffer->width;
++      return EGL_TRUE;
++   case EGL_HEIGHT:
++      *value = buffer->height;
++      return EGL_TRUE;
++   }
++
++   return EGL_FALSE;
++}
+diff --git a/interface/khronos/include/EGL/eglext.h b/interface/khronos/include/EGL/eglext.h
+index 89a3369..d7e5ba7 100755
+--- a/interface/khronos/include/EGL/eglext.h
++++ b/interface/khronos/include/EGL/eglext.h
+@@ -191,6 +191,29 @@ typedef EGLBoolean (EGLAPIENTRYP PFNEGLGETSYNCATTRIBKHRPROC) (EGLDisplay dpy, EG
+ #endif
+ 
+ 
++#ifndef EGL_WL_bind_wayland_display
++#define EGL_WL_bind_wayland_display 1
++
++#define EGL_WAYLAND_BUFFER_WL		0x31D5 /* eglCreateImageKHR target */
++#define EGL_WAYLAND_PLANE_WL		0x31D6 /* eglCreateImageKHR target */
++#define EGL_TEXTURE_Y_U_V_WL            0x31D7
++#define EGL_TEXTURE_Y_UV_WL             0x31D8
++#define EGL_TEXTURE_Y_XUXV_WL           0x31D9
++
++struct wl_display;
++struct wl_resource;
++#ifdef EGL_EGLEXT_PROTOTYPES
++EGLAPI EGLBoolean EGLAPIENTRY eglBindWaylandDisplayWL(EGLDisplay dpy, struct wl_display *display);
++EGLAPI EGLBoolean EGLAPIENTRY eglUnbindWaylandDisplayWL(EGLDisplay dpy, struct wl_display *display);
++EGLAPI EGLBoolean EGLAPIENTRY eglQueryWaylandBufferWL(EGLDisplay dpy, struct wl_resource *buffer, EGLint attribute, EGLint *value);
++#endif
++typedef EGLBoolean (EGLAPIENTRYP PFNEGLBINDWAYLANDDISPLAYWL) (EGLDisplay dpy, struct wl_display *display);
++typedef EGLBoolean (EGLAPIENTRYP PFNEGLUNBINDWAYLANDDISPLAYWL) (EGLDisplay dpy, struct wl_display *display);
++typedef EGLBoolean (EGLAPIENTRYP PFNEGLQUERYWAYLANDBUFFERWL) (EGLDisplay dpy, struct wl_resource *buffer, EGLint attribute, EGLint *value);
++
++#endif
++
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/interface/khronos/wayland-egl/wayland-egl-priv.h b/interface/khronos/wayland-egl/wayland-egl-priv.h
+new file mode 100644
+index 0000000..8e38d36
+--- /dev/null
++++ b/interface/khronos/wayland-egl/wayland-egl-priv.h
+@@ -0,0 +1,53 @@
++/* Copied from Mesa */
++
++#ifndef _WAYLAND_EGL_PRIV_H
++#define _WAYLAND_EGL_PRIV_H
++
++#ifdef  __cplusplus
++extern "C" {
++#endif
++
++/* GCC visibility */
++#if defined(__GNUC__) && __GNUC__ >= 4
++#define WL_EGL_EXPORT __attribute__ ((visibility("default")))
++#else
++#define WL_EGL_EXPORT
++#endif
++
++#include "interface/vmcs_host/vc_dispmanx.h"
++#include "interface/khronos/egl/egl_client_surface.h"
++
++#include <wayland-client.h>
++
++struct wl_dispmanx_client_buffer {
++	struct wl_buffer *wl_buffer;
++	DISPMANX_RESOURCE_HANDLE_T resource;
++
++	int pending_allocation;
++	int in_use;
++	int width;
++	int height;
++};
++
++struct wl_egl_window {
++	struct wl_surface *wl_surface;
++
++	int width;
++	int height;
++	int dx;
++	int dy;
++
++	int attached_width;
++	int attached_height;
++
++	/* XXX: The VC side seems to expect a valid element handle to be
++	   passed to eglIntCreateSurface_impl and/or eglIntSwapBuffers_impl,
++	   even for host-managed surfaces. */
++	DISPMANX_ELEMENT_HANDLE_T dummy_element;
++};
++
++#ifdef  __cplusplus
++}
++#endif
++
++#endif
+diff --git a/interface/khronos/wayland-egl/wayland-egl.c b/interface/khronos/wayland-egl/wayland-egl.c
+new file mode 100644
+index 0000000..b8f050b
+--- /dev/null
++++ b/interface/khronos/wayland-egl/wayland-egl.c
+@@ -0,0 +1,59 @@
++/* Copied from Mesa */
++
++#include <stdlib.h>
++
++#include <wayland-client.h>
++#include <wayland-egl.h>
++#include "wayland-egl-priv.h"
++
++WL_EGL_EXPORT void
++wl_egl_window_resize(struct wl_egl_window *egl_window,
++		     int width, int height,
++		     int dx, int dy)
++{
++        if (egl_window->width == width &&
++	    egl_window->height == height &&
++	    egl_window->dx == dx &&
++	    egl_window->dy == dy)
++		return;
++
++	egl_window->width = width;
++	egl_window->height = height;
++	egl_window->dx = dx;
++	egl_window->dy = dy;
++}
++
++WL_EGL_EXPORT struct wl_egl_window *
++wl_egl_window_create(struct wl_surface *surface,
++		     int width, int height)
++{
++	struct wl_egl_window *egl_window;
++
++	egl_window = calloc(1, sizeof *egl_window);
++	if (!egl_window)
++		return NULL;
++
++	egl_window->wl_surface = surface;
++	wl_egl_window_resize(egl_window, width, height, 0, 0);
++	egl_window->attached_width  = 0;
++	egl_window->attached_height = 0;
++	egl_window->dummy_element = PLATFORM_WIN_NONE;
++
++	return egl_window;
++}
++
++WL_EGL_EXPORT void
++wl_egl_window_destroy(struct wl_egl_window *egl_window)
++{
++	free(egl_window);
++}
++
++WL_EGL_EXPORT void
++wl_egl_window_get_attached_size(struct wl_egl_window *egl_window,
++				int *width, int *height)
++{
++	if (width)
++		*width = egl_window->attached_width;
++	if (height)
++		*height = egl_window->attached_height;
++}
+diff --git a/interface/khronos/wayland-egl/wayland-egl.pc.in b/interface/khronos/wayland-egl/wayland-egl.pc.in
+new file mode 100644
+index 0000000..8bafc15
+--- /dev/null
++++ b/interface/khronos/wayland-egl/wayland-egl.pc.in
+@@ -0,0 +1,10 @@
++prefix=@CMAKE_INSTALL_PREFIX@
++exec_prefix=${prefix}
++libdir=${exec_prefix}/lib
++includedir=${prefix}/include
++
++Name: wayland-egl
++Description: VideoCore wayland-egl library
++Version: @PROJECT_APIVER@
++Libs: -L${libdir} -lwayland-egl
++Cflags: -I${includedir}
+diff --git a/interface/vmcs_host/CMakeLists.txt b/interface/vmcs_host/CMakeLists.txt
+index 0b3adc9..f44d01f 100755
+--- a/interface/vmcs_host/CMakeLists.txt
++++ b/interface/vmcs_host/CMakeLists.txt
+@@ -9,13 +9,24 @@ add_definitions(-fno-strict-aliasing)
+ 
+ include_directories(${VMCS_TARGET}/vcfiled)
+ 
+-add_library(vchostif
+-            ${VMCS_TARGET}/vcfilesys.c ${VMCS_TARGET}/vcmisc.c
+-            vc_vchi_gencmd.c vc_vchi_filesys.c
+-            vc_vchi_tvservice.c vc_vchi_cecservice.c
+-            vc_vchi_dispmanx.c vc_service_common.c)
++set(VCHOSTIF_SOURCE
++    ${VMCS_TARGET}/vcfilesys.c ${VMCS_TARGET}/vcmisc.c
++    vc_vchi_gencmd.c vc_vchi_filesys.c
++    vc_vchi_tvservice.c vc_vchi_cecservice.c
++    vc_vchi_dispmanx.c vc_service_common.c)
+ #            ${VMCS_TARGET}/vmcs_main.c
+ #  vc_vchi_haud.c
++
++if (BUILD_WAYLAND)
++wayland_add_protocol_server(
++    VCHOSTIF_SOURCE
++    ../../interface/wayland/dispmanx.xml
++    dispmanx
++)
++endif ()
++
++add_library(vchostif ${VCHOSTIF_SOURCE})
++
+ #add_library(bufman            vc_vchi_bufman.c            )
+ 
+ # OpenMAX/IL component service
+diff --git a/interface/vmcs_host/vc_dispmanx.h b/interface/vmcs_host/vc_dispmanx.h
+index 37fdae1..fe3619a 100755
+--- a/interface/vmcs_host/vc_dispmanx.h
++++ b/interface/vmcs_host/vc_dispmanx.h
+@@ -39,6 +39,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
++
++#ifdef BUILD_WAYLAND
++struct wl_resource;
++#endif
++
+ // Same function as above, to aid migration of code.
+ VCHPRE_ int VCHPOST_ vc_dispman_init( void );
+ // Stop the service from being used
+@@ -135,6 +140,11 @@ VCHPRE_ int VCHPOST_ vc_dispmanx_resource_set_palette( DISPMANX_RESOURCE_HANDLE_
+ // Start triggering callbacks synced to vsync
+ VCHPRE_ int VCHPOST_ vc_dispmanx_vsync_callback( DISPMANX_DISPLAY_HANDLE_T display, DISPMANX_CALLBACK_FUNC_T cb_func, void *cb_arg );
+ 
++#ifdef BUILD_WAYLAND
++VCHPRE_ DISPMANX_RESOURCE_HANDLE_T VCHPOST_ vc_dispmanx_get_handle_from_wl_buffer( struct wl_resource *_buffer );
++
++VCHPRE_ void VCHPOST_ vc_dispmanx_set_wl_buffer_in_use( struct wl_resource *_buffer, int in_use );
++#endif
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/interface/vmcs_host/vc_vchi_dispmanx.c b/interface/vmcs_host/vc_vchi_dispmanx.c
+index 133e86d..45f4cff 100755
+--- a/interface/vmcs_host/vc_vchi_dispmanx.c
++++ b/interface/vmcs_host/vc_vchi_dispmanx.c
+@@ -1319,3 +1319,45 @@ static void *dispmanx_notify_func( void *arg ) {
+    }
+    return 0;
+ }
++
++
++#ifdef BUILD_WAYLAND
++/***********************************************************
++ * Name: vc_dispmanx_get_handle_from_wl_buffer
++ *
++ * Arguments:
++ *       struct wl_resource *_buffer
++ *
++ * Description: Return the handle of the resource associated to this Wayland buffer
++ *
++ * Returns: A resource handle
++ *
++ ***********************************************************/
++VCHPRE_ DISPMANX_RESOURCE_HANDLE_T VCHPOST_ vc_dispmanx_get_handle_from_wl_buffer( struct wl_resource *_buffer )
++{
++	struct wl_dispmanx_server_buffer *buffer = (struct wl_dispmanx_server_buffer*)_buffer->data;
++	if (!buffer)
++		return DISPMANX_NO_HANDLE;
++
++	return buffer->handle;
++}
++
++/***********************************************************
++ * Name: vc_dispmanx_set_wl_buffer_in_use
++ *
++ * Arguments:
++ *       struct wl_resource *_buffer
++ *       int in_use
++ *
++ * Description: Mark this Wayland buffer as being in use by the compositor
++ *
++ ***********************************************************/
++VCHPRE_ void VCHPOST_ vc_dispmanx_set_wl_buffer_in_use( struct wl_resource *_buffer, int in_use )
++{
++	struct wl_dispmanx_server_buffer *buffer = (struct wl_dispmanx_server_buffer*)_buffer->data;
++	if (!buffer)
++		return;
++
++	buffer->in_use = in_use;
++}
++#endif
+diff --git a/interface/vmcs_host/vc_vchi_dispmanx.h b/interface/vmcs_host/vc_vchi_dispmanx.h
+index b723b76..f0bae30 100644
+--- a/interface/vmcs_host/vc_vchi_dispmanx.h
++++ b/interface/vmcs_host/vc_vchi_dispmanx.h
+@@ -66,4 +66,19 @@ typedef struct {
+ #define ELEMENT_CHANGE_MASK_RESOURCE  (1<<4)
+ #define ELEMENT_CHANGE_TRANSFORM      (1<<5)
+ 
++#ifdef BUILD_WAYLAND
++/* XXX: This should be in a private header that can be included from EGL and vc_* */
++#include <wayland-server.h>
++#include "interface/vmcs_host/wayland-dispmanx-server-protocol.h"
++struct wl_dispmanx_server_buffer {
++	struct wl_resource *resource;
++	struct wl_dispmanx *dispmanx;
++	enum wl_dispmanx_format format;
++	DISPMANX_RESOURCE_HANDLE_T handle;
++	int32_t width;
++	int32_t height;
++	int in_use;
++};
++#endif
++
+ #endif
+diff --git a/interface/wayland/dispmanx.xml b/interface/wayland/dispmanx.xml
+new file mode 100644
+index 0000000..c18626d
+--- /dev/null
++++ b/interface/wayland/dispmanx.xml
+@@ -0,0 +1,123 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<protocol name="dispmanx">
++
++  <copyright>
++    Copyright © 2008-2011 Kristian Høgsberg
++    Copyright © 2010-2011 Intel Corporation
++    Copyright © 2013 Raspberry Pi Foundation
++
++    Permission to use, copy, modify, distribute, and sell this
++    software and its documentation for any purpose is hereby granted
++    without fee, provided that\n the above copyright notice appear in
++    all copies and that both that copyright notice and this permission
++    notice appear in supporting documentation, and that the name of
++    the copyright holders not be used in advertising or publicity
++    pertaining to distribution of the software without specific,
++    written prior permission.  The copyright holders make no
++    representations about the suitability of this software for any
++    purpose.  It is provided "as is" without express or implied
++    warranty.
++
++    THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS
++    SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
++    FITNESS, IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY
++    SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
++    AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
++    ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
++    THIS SOFTWARE.
++  </copyright>
++
++  <!-- DispManX support. This object is created by the server and published
++       using the display's global event. -->
++  <interface name="wl_dispmanx" version="1">
++    <enum name="error">
++      <entry name="alloc_failed" value="0"/>
++      <entry name="invalid_format" value="1"/>
++    </enum>
++
++    <enum name="format">
++      <!-- The pixel format codes match the #defines in drm_fourcc.h.
++           The formats actually supported by the compositor will be
++           reported by the format event. -->
++      <entry name="c8" value="0x20203843"/>
++      <entry name="rgb332" value="0x38424752"/>
++      <entry name="bgr233" value="0x38524742"/>
++      <entry name="xrgb4444" value="0x32315258"/>
++      <entry name="xbgr4444" value="0x32314258"/>
++      <entry name="rgbx4444" value="0x32315852"/>
++      <entry name="bgrx4444" value="0x32315842"/>
++      <entry name="argb4444" value="0x32315241"/>
++      <entry name="abgr4444" value="0x32314241"/>
++      <entry name="rgba4444" value="0x32314152"/>
++      <entry name="bgra4444" value="0x32314142"/>
++      <entry name="xrgb1555" value="0x35315258"/>
++      <entry name="xbgr1555" value="0x35314258"/>
++      <entry name="rgbx5551" value="0x35315852"/>
++      <entry name="bgrx5551" value="0x35315842"/>
++      <entry name="argb1555" value="0x35315241"/>
++      <entry name="abgr1555" value="0x35314241"/>
++      <entry name="rgba5551" value="0x35314152"/>
++      <entry name="bgra5551" value="0x35314142"/>
++      <entry name="rgb565" value="0x36314752"/>
++      <entry name="bgr565" value="0x36314742"/>
++      <entry name="rgb888" value="0x34324752"/>
++      <entry name="bgr888" value="0x34324742"/>
++      <entry name="xrgb8888" value="0x34325258"/>
++      <entry name="xbgr8888" value="0x34324258"/>
++      <entry name="rgbx8888" value="0x34325852"/>
++      <entry name="bgrx8888" value="0x34325842"/>
++      <entry name="argb8888" value="0x34325241"/>
++      <entry name="abgr8888" value="0x34324241"/>
++      <entry name="rgba8888" value="0x34324152"/>
++      <entry name="bgra8888" value="0x34324142"/>
++      <entry name="xrgb2101010" value="0x30335258"/>
++      <entry name="xbgr2101010" value="0x30334258"/>
++      <entry name="rgbx1010102" value="0x30335852"/>
++      <entry name="bgrx1010102" value="0x30335842"/>
++      <entry name="argb2101010" value="0x30335241"/>
++      <entry name="abgr2101010" value="0x30334241"/>
++      <entry name="rgba1010102" value="0x30334152"/>
++      <entry name="bgra1010102" value="0x30334142"/>
++      <entry name="yuyv" value="0x56595559"/>
++      <entry name="yvyu" value="0x55595659"/>
++      <entry name="uyvy" value="0x59565955"/>
++      <entry name="vyuy" value="0x59555956"/>
++      <entry name="ayuv" value="0x56555941"/>
++      <entry name="nv12" value="0x3231564e"/>
++      <entry name="nv21" value="0x3132564e"/>
++      <entry name="nv16" value="0x3631564e"/>
++      <entry name="nv61" value="0x3136564e"/>
++      <entry name="yuv410" value="0x39565559"/>
++      <entry name="yvu410" value="0x39555659"/>
++      <entry name="yuv411" value="0x31315559"/>
++      <entry name="yvu411" value="0x31315659"/>
++      <entry name="yuv420" value="0x32315559"/>
++      <entry name="yvu420" value="0x32315659"/>
++      <entry name="yuv422" value="0x36315559"/>
++      <entry name="yvu422" value="0x36315659"/>
++      <entry name="yuv444" value="0x34325559"/>
++      <entry name="yvu444" value="0x34325659"/>
++    </enum>
++
++    <event name="format">
++      <arg name="format" type="uint"/>
++    </event>
++
++    <!-- Create a wayland buffer for the DispManX resource. -->
++    <request name="create_buffer">
++      <arg name="id" type="new_id" interface="wl_buffer"/>
++      <arg name="width" type="int"/>
++      <arg name="height" type="int"/>
++      <arg name="stride" type="uint"/>
++      <arg name="buffer_height" type="uint"/>
++      <arg name="format" type="uint"/>
++    </request>
++
++    <event name="buffer_allocated">
++      <arg name="buffer" type="object" interface="wl_buffer"/>
++      <arg name="handle" type="uint"/>
++    </event>
++  </interface>
++
++</protocol>
+diff --git a/makefiles/cmake/Wayland.cmake b/makefiles/cmake/Wayland.cmake
+new file mode 100644
+index 0000000..ad90d30
+--- /dev/null
++++ b/makefiles/cmake/Wayland.cmake
+@@ -0,0 +1,72 @@
++#=============================================================================
++# Copyright (C) 2012-2013 Pier Luigi Fiorini <pierluigi.fiorini@gmail.com>
++# All rights reserved.
++#
++# Redistribution and use in source and binary forms, with or without
++# modification, are permitted provided that the following conditions
++# are met:
++#
++# * Redistributions of source code must retain the above copyright
++#   notice, this list of conditions and the following disclaimer.
++#
++# * Redistributions in binary form must reproduce the above copyright
++#   notice, this list of conditions and the following disclaimer in the
++#   documentation and/or other materials provided with the distribution.
++#
++# * Neither the name of Pier Luigi Fiorini nor the names of his
++#   contributors may be used to endorse or promote products derived
++#   from this software without specific prior written permission.
++#
++# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++#=============================================================================
++
++find_program(WAYLAND_SCANNER_EXECUTABLE NAMES wayland-scanner)
++
++# wayland_add_protocol_client(outfiles inputfile basename)
++function(WAYLAND_ADD_PROTOCOL_CLIENT _sources _protocol _basename)
++    if(NOT WAYLAND_SCANNER_EXECUTABLE)
++        message(FATAL "The wayland-scanner executable has nto been found on your system. You must install it.")
++    endif()
++
++    get_filename_component(_infile ${_protocol} ABSOLUTE)
++    set(_client_header "${CMAKE_CURRENT_BINARY_DIR}/wayland-${_basename}-client-protocol.h")
++    set(_code "${CMAKE_CURRENT_BINARY_DIR}/wayland-${_basename}-protocol.c")
++
++    add_custom_command(OUTPUT "${_client_header}"
++        COMMAND ${WAYLAND_SCANNER_EXECUTABLE} client-header < ${_infile} > ${_client_header}
++        DEPENDS ${_infile} VERBATIM)
++
++    add_custom_command(OUTPUT "${_code}"
++        COMMAND ${WAYLAND_SCANNER_EXECUTABLE} code < ${_infile} > ${_code}
++        DEPENDS ${_infile} VERBATIM)
++
++    list(APPEND ${_sources} "${_client_header}" "${_code}")
++    set(${_sources} ${${_sources}} PARENT_SCOPE)
++endfunction()
++
++# wayland_add_protocol_server(outfiles inputfile basename)
++function(WAYLAND_ADD_PROTOCOL_SERVER _sources _protocol _basename)
++    if(NOT WAYLAND_SCANNER_EXECUTABLE)
++        message(FATAL "The wayland-scanner executable has nto been found on your system. You must install it.")
++    endif()
++
++    get_filename_component(_infile ${_protocol} ABSOLUTE)
++    set(_server_header "${CMAKE_CURRENT_BINARY_DIR}/wayland-${_basename}-server-protocol.h")
++
++    add_custom_command(OUTPUT "${_server_header}"
++        COMMAND ${WAYLAND_SCANNER_EXECUTABLE} server-header < ${_infile} > ${_server_header}
++        DEPENDS ${_infile} VERBATIM)
++
++    list(APPEND ${_sources} "${_server_header}")
++    set(${_sources} ${${_sources}} PARENT_SCOPE)
++endfunction()
+-- 
+2.10.2
+

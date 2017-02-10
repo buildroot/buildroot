@@ -1,0 +1,60 @@
+From 098faed5e7035b51f14700fdf4cf5875aa7af97e Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Tue, 29 Mar 2016 20:38:30 -0700
+Subject: [PATCH 10/12] Fix for framerate with nested composition
+
+frame rate appears irregular and lower than expected when using nested composition.
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+---
+ interface/khronos/egl/egl_client.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/interface/khronos/egl/egl_client.c b/interface/khronos/egl/egl_client.c
+index 03fe67b..13a110c 100644
+--- a/interface/khronos/egl/egl_client.c
++++ b/interface/khronos/egl/egl_client.c
+@@ -2342,6 +2342,9 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay dpy, EGLSurface surf)
+                      surface->back_wl_buffer = buffer;
+                   }
+ 
++                  glFlush();
++                  glFinish();
++
+                   RPC_CALL7(eglIntSwapBuffers_impl,
+                         thread,
+                         EGLINTSWAPBUFFERS_ID_V2,
+@@ -2353,6 +2356,8 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay dpy, EGLSurface surf)
+                         RPC_UINT(khrn_platform_get_window_position(surface->win)),
+                         RPC_INT(surface->back_wl_buffer->resource));
+ 
++                  RPC_FLUSH(thread);
++
+                   surface->front_wl_buffer->in_use = 1;
+                   wl_surface_attach(wl_egl_window->wl_surface,
+                                     surface->front_wl_buffer->wl_buffer,
+@@ -2360,11 +2365,13 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay dpy, EGLSurface surf)
+                   wl_surface_damage(wl_egl_window->wl_surface, 0, 0,
+                                     surface->width, surface->height);
+                   wl_surface_commit(wl_egl_window->wl_surface);
++                  wl_display_flush(wl_display);
+ 
+                   while(ret != -1 && surface->back_wl_buffer->in_use)
+                      ret = wl_display_dispatch_queue(wl_display, process->wl_queue);
+                } else
+ #endif
++               {
+                RPC_CALL6(eglIntSwapBuffers_impl,
+                      thread,
+                      EGLINTSWAPBUFFERS_ID,
+@@ -2376,6 +2383,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay dpy, EGLSurface surf)
+                      RPC_UINT(khrn_platform_get_window_position(surface->win)));
+ 
+                RPC_FLUSH(thread);
++               }
+ 
+ #ifdef ANDROID
+                CLIENT_UNLOCK();
+-- 
+2.10.2
+

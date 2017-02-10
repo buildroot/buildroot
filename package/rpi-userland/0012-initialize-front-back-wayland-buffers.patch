@@ -1,0 +1,34 @@
+From 5b37f53cff07f37b281c25f987b9dbdacc264bf6 Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Sat, 6 Feb 2016 11:11:41 -0800
+Subject: [PATCH 07/12] initialize front back wayland buffers
+
+origins from metrological wayland support
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+---
+ interface/khronos/egl/egl_client_surface.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/interface/khronos/egl/egl_client_surface.c b/interface/khronos/egl/egl_client_surface.c
+index 1f923d9..9a9582c 100644
+--- a/interface/khronos/egl/egl_client_surface.c
++++ b/interface/khronos/egl/egl_client_surface.c
+@@ -401,11 +401,14 @@ EGL_SURFACE_T *egl_surface_create(
+ #ifdef BUILD_WAYLAND
+    if (type == WINDOW && wl_display) {
+       surface->wl_egl_window = (struct wl_egl_window*)win;
++      surface->front_wl_buffer = NULL;
+       surface->back_wl_buffer = allocate_wl_buffer(
+             surface->wl_egl_window, color);
+       resource = surface->back_wl_buffer->resource;
+    } else {
+       surface->wl_egl_window = NULL;
++      surface->front_wl_buffer = NULL;
++      surface->back_wl_buffer = NULL;
+       resource = DISPMANX_NO_HANDLE;
+    }
+ #endif
+-- 
+2.10.2
+

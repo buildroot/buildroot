@@ -1,0 +1,28 @@
+From 718402e1be80ff9fb9863e847e31072ec735a5eb Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Mon, 10 Aug 2015 02:38:27 -0700
+Subject: [PATCH 04/12] wayland-egl: Add bcm_host to dependencies
+
+It uses headers like vcos_platform_types.h but does not
+depend on module which should add the required include paths
+lets add the dependency on bcm_host module which should do it
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+---
+ interface/khronos/wayland-egl/wayland-egl.pc.in | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/interface/khronos/wayland-egl/wayland-egl.pc.in b/interface/khronos/wayland-egl/wayland-egl.pc.in
+index 8bafc15..fd259c9 100644
+--- a/interface/khronos/wayland-egl/wayland-egl.pc.in
++++ b/interface/khronos/wayland-egl/wayland-egl.pc.in
+@@ -6,5 +6,6 @@ includedir=${prefix}/include
+ Name: wayland-egl
+ Description: VideoCore wayland-egl library
+ Version: @PROJECT_APIVER@
++Requires: bcm_host
+ Libs: -L${libdir} -lwayland-egl
+ Cflags: -I${includedir}
+-- 
+2.10.2
+
