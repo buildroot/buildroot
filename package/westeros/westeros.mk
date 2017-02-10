@@ -4,21 +4,37 @@
 #
 ################################################################################
 
-WESTEROS_VERSION = 1edd118cfcb227cc6721c8802afbac7469699d13  
+WESTEROS_VERSION = 7b624bbf3abd31db361b1df26bd1e1aac023ce4f
 WESTEROS_SITE_METHOD = git
 WESTEROS_SITE = git://github.com/rdkcmf/westeros
 WESTEROS_INSTALL_STAGING = YES
+WESTEROS_AUTORECONF = YES
+WESTEROS_AUTORECONF_OPTS = "-Icfg"
 
 WESTEROS_DEPENDENCIES = host-pkgconf host-autoconf wayland \
-	libxkbcommon westeros-simplebuffer westeros-simpleshell westeros-soc 
+	libxkbcommon westeros-simpleshell westeros-simplebuffer westeros-soc
 
 WESTEROS_CONF_OPTS = \
 	--prefix=/usr/ \
 	--enable-app=yes \
 	--enable-test=yes \
 	--enable-rendergl=yes \
-	--enable-sbprotocol=yes \
-	--enable-xdgv4=yes 
+	--enable-sbprotocol=yes
+
+
+ifeq ($(BR2_PACKAGE_WESTEROS_SOC_RPI),y)
+WESTEROS_CONF_OPTS += \
+	--enable-xdgv4=yes
+WESTEROS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -DWESTEROS_PLATFORM_RPI -DWESTEROS_INVERTED_Y -DBUILD_WAYLAND -I${STAGING_DIR}/usr/include/interface/vmcs_host/linux"
+WESTEROS_LDFLAGS += -lEGL -lGLESv2 -lbcm_host
+else ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
+WESTEROS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -DWESTEROS_PLATFORM_EMBEDDED -I${STAGING_DIR}/usr/include/refsw"
+else ifeq ($(BR2_PACKAGE_LIBDRM),y)
+WESTEROS_CONF_OPTS += \
+	--enable-xdgv5=yes
+WESTEROS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -DWESTEROS_PLATFORM_DRM -I${STAGING_DIR}/usr/include/interface/vmcs_host/linux"
+endif # BR2_PACKAGE_WESTEROS_SOC_RPI
+
 
 WESTEROS_MAKE_OPTS = \
 	CC="$(TARGET_CC)" \
@@ -28,30 +44,15 @@ WESTEROS_MAKE_OPTS = \
 	CROSS_COMPILE="$(TARGET_CROSS)" \
 	CONFIG_PREFIX="$(TARGET_DIR)" \
 
+
 define WESTEROS_RUN_AUTOCONF
-	(cd $(@D);  $(HOST_DIR)/usr/bin/libtoolize --force; \
-	$(HOST_DIR)/usr/bin/aclocal; $(HOST_DIR)/usr/bin/autoheader; \
-	$(HOST_DIR)/usr/bin/automake --force-missing --add-missing; \
-	$(HOST_DIR)/usr/bin/autoconf)
+	mkdir -p $(@D)/cfg
 endef
 WESTEROS_PRE_CONFIGURE_HOOKS += WESTEROS_RUN_AUTOCONF
 
-ifeq ($(BR2_PACKAGE_WESTEROS_SOC_RPI),y)
-WESTEROS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -DWESTEROS_PLATFORM_RPI -DWESTEROS_INVERTED_Y -DBUILD_WAYLAND -I${STAGING_DIR}/usr/include/interface/vmcs_host/linux"
-WESTEROS_LDFLAGS += -lEGL -lGLESv2 -lbcm_host
-endif # BR2_PACKAGE_WESTEROS_SOC_RPI
-
-
-define WESTEROS_CONFIGURE_CMDS
-	(cd $(@D); \
-	$(TARGET_CONFIGURE_OPTS) \
-	./configure $(WESTEROS_CONF_OPTS) $(WESTEROS_CONF_ENV) \
-	--target=$(GNU_TARGET_NAME) \
-	--host=$(GNU_TARGET_NAME) \
-	--build=$(GNU_HOST_NAME) )
-endef
 
 define WESTEROS_BUILD_CMDS
+	export WESTEROS_COMPOSITOR_EXTRA_LIBS="-lEGL -lGLESv2 -lbcm_host"
 	SCANNER_TOOL=${HOST_DIR}/usr/bin/wayland-scanner \
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/protocol
 	$(WESTEROS_MAKE_OPTS) \
@@ -67,4 +68,3 @@ define WESTEROS_INSTALL_TARGET_CMDS
 endef
 
 $(eval $(autotools-package))
-$(eval $(host-autotools-package))

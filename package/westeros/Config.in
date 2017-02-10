@@ -18,9 +18,4 @@ if BR2_PACKAGE_WESTEROS
 	source "package/westeros-simpleshell/Config.in"	
 	source "package/westeros-simplebuffer/Config.in"
 	source "package/westeros-soc/Config.in"
-#rpi-userland is an EGL/GLES provider, so we can't select it
-config BR2_PACKAGE_WESTEROS_SOC_RPI
-	bool "RPi compositor"
-	depends on BR2_PACKAGE_RPI_USERLAND
-	select BR2_PACKAGE_WESTEROS_DISPMANX
 endif #BR2_PACKAGE_WESTEROS
