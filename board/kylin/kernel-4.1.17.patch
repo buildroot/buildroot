@@ -1,0 +1,82 @@
+diff --git a/arch/arm64/boot/dts/realtek/rtd-129x-dvfs.dtsi b/arch/arm64/boot/dts/realtek/rtd-129x-dvfs.dtsi
+index 2f1c22f..8bd791d 100644
+--- a/arch/arm64/boot/dts/realtek/rtd-129x-dvfs.dtsi
++++ b/arch/arm64/boot/dts/realtek/rtd-129x-dvfs.dtsi
+@@ -20,18 +20,15 @@
+         >;
+ 
+         frequency-table,rev1 = <
+-            0    0   300000
+-            0    0   400000
+-            0    0   500000
+-            0    2   600000
+-            0    3   700000
+-            0    4   800000
+-            0    5   900000
+-            0    6  1000000
+-            0    8  1100000
+-            2   10  1200000
+-            2   12  1300000
+-            2   13  1400000
++            0    9   300000
++            0    9   400000
++            0    9   500000
++            0    9   600000
++            0    9   700000
++            0    9   800000
++            0    9   900000
++            0    9  1000000
++            0    9  1100000
+         >;
+ 
+     	voltage-table = <
+diff --git a/arch/arm64/boot/dts/realtek/rtd-129x-gpu-dvfs.dtsi b/arch/arm64/boot/dts/realtek/rtd-129x-gpu-dvfs.dtsi
+index ed364c3..7d3477c 100644
+--- a/arch/arm64/boot/dts/realtek/rtd-129x-gpu-dvfs.dtsi
++++ b/arch/arm64/boot/dts/realtek/rtd-129x-gpu-dvfs.dtsi
+@@ -7,19 +7,7 @@
+         compatible = "arm,mali-midgard";
+         operating-points = <
+         /* KHz uV */
+-        620000 1100000
+-        600000 1100000
+-        580000 1075000
+-        560000 1075000
+-        540000 1050000
+         520000 1025000
+-        500000 1000000
+-        460000 1000000
+-        440000 1000000
+-        400000 1000000
+-        380000 975000
+-        340000 975000
+-        300000 900000
+         >;
+     };
+ };
+diff --git a/arch/arm64/boot/dts/realtek/rtd-1295-giraffe-common.dtsi b/arch/arm64/boot/dts/realtek/rtd-1295-giraffe-common.dtsi
+index f3f9509..02f2a1f 100644
+--- a/arch/arm64/boot/dts/realtek/rtd-1295-giraffe-common.dtsi
++++ b/arch/arm64/boot/dts/realtek/rtd-1295-giraffe-common.dtsi
+@@ -119,4 +119,21 @@
+ 		gpio-output-change-activity = /* (0) output low at suspend (1) output high at suspend */
+ 			<1>;/* power led, output high at suspend */
+     };
++   
++    spi_0: spi@9801BD00 {
++        status = "okay";
++    };
++
++    rf4ce {
++        compatible = "Realtek,rtk-rf4ce";
++        gpios =
++            <&rtk_misc_gpio 6 1 1>, /* chip sel, output, default high */
++            <&rtk_iso_gpio 2 1 0>, /* RESETN, output, default low */
++            <&rtk_iso_gpio 3 0 0>, /* INTOUTN, input, default N/A */
++            <&rtk_iso_gpio 4 1 0>; /* WKUP, output, default low */
++        ext_gpio_en = <0>; /* Use external GPIO pin ? 1: yes, 0: no */
++        ext_wkup_pin = <6>; /* external GPIO pin for WKUP: 0~7 */
++        status = "okay";
++    };
++
+ };
