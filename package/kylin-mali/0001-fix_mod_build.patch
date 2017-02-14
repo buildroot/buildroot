@@ -1,0 +1,126 @@
+diff --git a/Makefile b/Makefile
+index 6d8b7c8..871efaf 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,17 +1,28 @@
+-PWD=$(shell pwd)
+-ifndef TOP
+-	TOP = ../..
+-endif
+-include $(TOP)/make.include
++MALI_ARCH?=arm64
++MALI_CROSS_COMPILE?=aarch64-linux-
+ 
+-all: install
++MALI_KDS_ROOT=mali/drivers/base/kds
++MALI_UMP_ROOT=mali/drivers/base/ump/src
++MALI_KBASE_ROOT=mali/drivers/gpu/arm/midgard
++MALI_DMA=mali/drivers/base/dma_buf_test_exporter
++
++all: compile
++
++compile:
++	$(MAKE) -C mali TARGET_KDIR=$(KERNEL_SRC)
++	
++strip: 
++	$(MALI_CROSS_COMPILE)strip $(SOURCE_ROOT_DIR)/mali/drivers/gpu/arm/midgard/mali_kbase.ko --strip-unneeded
++	$(MALI_CROSS_COMPILE)strip $(SOURCE_ROOT_DIR)/mali/drivers/base/ump/src/imports/ion/ump_kernel_import_ion.ko --strip-unneeded
++	$(MALI_CROSS_COMPILE)strip $(SOURCE_ROOT_DIR)/mali/drivers/base/ump/src/ump.ko --strip-unneeded
++	$(MALI_CROSS_COMPILE)strip $(SOURCE_ROOT_DIR)/mali/drivers/base/kds/kds.ko --strip-unneeded
++	
++modules_install: 
++	$(MAKE) -C $(MALI_KDS_ROOT)     KDIR=${KERNEL_SRC} modules_install
++	$(MAKE) -C $(MALI_UMP_ROOT)     KDIR=${KERNEL_SRC} modules_install
++	$(MAKE) -C $(MALI_KBASE_ROOT)   KDIR=${KERNEL_SRC} modules_install
++	$(MAKE) -C $(MALI_DMA)          KDIR=${KERNEL_SRC} modules_install
+ 
+-install:
+-	$(MAKE) -C mali TARGET_KDIR=$(PWD)/$(LINUX_KERNEL_PATH)
+-	$(CROSS_COMPILE)strip $(PWD)/mali/drivers/gpu/arm/midgard/mali_kbase.ko --strip-unneeded
+-	$(CROSS_COMPILE)strip $(PWD)/mali/drivers/base/ump/src/imports/ion/ump_kernel_import_ion.ko --strip-unneeded
+-	$(CROSS_COMPILE)strip $(PWD)/mali/drivers/base/ump/src/ump.ko --strip-unneeded
+-	$(CROSS_COMPILE)strip $(PWD)/mali/drivers/base/kds/kds.ko --strip-unneeded
+ 
+ clean:
+-	$(MAKE) -C mali TARGET_KDIR=$(PWD)/$(LINUX_KERNEL_PATH) clean
++	$(MAKE) -C mali TARGET_KDIR=$(KERNEL_SRC) clean
+diff --git a/mali/Makefile b/mali/Makefile
+index cd77cf1..3b96419 100644
+--- a/mali/Makefile
++++ b/mali/Makefile
+@@ -1,24 +1,28 @@
+ PWD=$(shell pwd)
+ 
+ MALI_ARCH?=arm64
+-MALI_CROSS_COMPILE?=asdk64-linux-
++MALI_CROSS_COMPILE?=aarch64-linux-
+ 
+ MALI_KDS_ROOT=drivers/base/kds
+ MALI_UMP_ROOT=drivers/base/ump/src
+ MALI_KBASE_ROOT=drivers/gpu/arm/midgard
++MALI_DMA=drivers/base/dma_buf_test_exporter
+ 
+ install: build
+ 	@echo $(PWD)/$(MALI_KDS_ROOT)/kds.ko
+ 	@echo $(PWD)/$(MALI_UMP_ROOT)/ump.ko
+ 	@echo $(PWD)/$(MALI_KBASE_ROOT)/mali_kbase.ko
++	@echo $(PWD)/$(MALI_DMA)/dma_buf_test_exporter.ko
+ 
+ build:
+ 	@echo $(TARGET_KDIR)
+ 	$(MAKE) -C $(MALI_KDS_ROOT) 	KDIR=${TARGET_KDIR}
+ 	$(MAKE) -C $(MALI_UMP_ROOT) 	KDIR=${TARGET_KDIR}
+ 	$(MAKE) -C $(MALI_KBASE_ROOT) 	KDIR=${TARGET_KDIR}
++	$(MAKE) -C $(MALI_DMA)		KDIR=${TARGET_KDIR}
+ 
+ clean:
+ 	$(MAKE) -C $(MALI_KDS_ROOT) 	KDIR=${TARGET_KDIR} clean
+ 	$(MAKE) -C $(MALI_UMP_ROOT) 	KDIR=${TARGET_KDIR} clean
+ 	$(MAKE) -C $(MALI_KBASE_ROOT) 	KDIR=${TARGET_KDIR} clean
++	$(MAKE) -C $(MALI_DMA)		KDIR=${TARGET_KDIR} clean
+diff --git a/mali/drivers/base/dma_buf_test_exporter/Makefile b/mali/drivers/base/dma_buf_test_exporter/Makefile
+index 06e3d5c..a015d7b 100755
+--- a/mali/drivers/base/dma_buf_test_exporter/Makefile
++++ b/mali/drivers/base/dma_buf_test_exporter/Makefile
+@@ -28,3 +28,6 @@ all:
+ clean:
+ 	$(MAKE) ARCH=$(ARCH) -C $(KDIR) M=$(CURDIR) clean
+ 
++modules_install:
++	$(MAKE) ARCH=$(ARCH) -C $(KDIR) M=$(CURDIR) EXTRA_CFLAGS="-I$(CURDIR)/../../../include" CONFIG_DMA_SHARED_BUFFER_TEST_EXPORTER=m modules_install
++
+diff --git a/mali/drivers/base/kds/Makefile b/mali/drivers/base/kds/Makefile
+index 364d151..5c156fb 100755
+--- a/mali/drivers/base/kds/Makefile
++++ b/mali/drivers/base/kds/Makefile
+@@ -35,3 +35,5 @@ kds_test:
+ clean:
+ 	$(MAKE) ARCH=$(ARCH) -C $(KDIR) M=$(CURDIR) clean
+ 
++modules_install:
++	$(MAKE) ARCH=$(ARCH) -C $(KDIR) M=$(CURDIR) EXTRA_CFLAGS="-I$(CURDIR)/../../../include" CONFIG_KDS=m modules_install
+diff --git a/mali/drivers/base/ump/src/Makefile b/mali/drivers/base/ump/src/Makefile
+index dea8f87..62cd247 100755
+--- a/mali/drivers/base/ump/src/Makefile
++++ b/mali/drivers/base/ump/src/Makefile
+@@ -79,3 +79,6 @@ kernelrelease:
+ 
+ clean:
+ 	$(MAKE) ARCH=$(ARCH) -C $(KDIR) M=$(CURDIR) clean
++
++modules_install:
++	$(MAKE) ARCH=$(ARCH) -C $(KDIR) M=$(CURDIR) EXTRA_CFLAGS="$(EXTRA_CFLAGS) $(SCONS_CFLAGS)" CONFIG_UMP=m KBUILD_EXTRA_SYMBOLS="$(EXTRA_SYMBOLS)" modules_install
+diff --git a/mali/drivers/gpu/arm/midgard/Makefile b/mali/drivers/gpu/arm/midgard/Makefile
+index 3a1d81d..bfdfc33 100755
+--- a/mali/drivers/gpu/arm/midgard/Makefile
++++ b/mali/drivers/gpu/arm/midgard/Makefile
+@@ -63,5 +63,9 @@ endif
+ all:
+ 	$(MAKE) -C $(KDIR) M=$(CURDIR) EXTRA_CFLAGS="-I$(CURDIR)/../../../../include -I$(CURDIR)/../../../../tests/include $(SCONS_CFLAGS)" $(SCONS_CONFIGS) KBUILD_EXTRA_SYMBOLS="$(EXTRA_SYMBOLS)" modules
+ 
++modules_install:
++	$(MAKE) -C $(KDIR) M=$(CURDIR) EXTRA_CFLAGS="-I$(CURDIR)/../../../../include -I$(CURDIR)/../../../../tests/include $(SCONS_CFLAGS)" $(SCONS_CONFIGS) KBUILD_EXTRA_SYMBOLS="$(EXTRA_SYMBOLS)" modules_install
++
++
+ clean:
+ 	$(MAKE) -C $(KDIR) M=$(CURDIR) clean
