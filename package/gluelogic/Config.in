@@ -6,13 +6,6 @@ config BR2_PACKAGE_GLUELOGIC
 
 if BR2_PACKAGE_GLUELOGIC
 	
-config BR2_PACKAGE_GLUELOGIC_PROVISIONING
-	bool "provisioning"
-	select BR2_PACKAGE_CPPSDK_GENERICS
-	help
-	  A glue layer to link the binairy encryption library and the communications
-          channel to the encrypted provisioning store together.
-
 config BR2_PACKAGE_GLUELOGIC_QUEUEPLAYER
 	bool "queueplayer"
 	select BR2_PACKAGE_CPPSDK_MQC
