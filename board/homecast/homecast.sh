@@ -35,9 +35,9 @@ mkdir -p "${ROOTFS_DIR}/usr/share/fonts/ttf-bitstream-vera"
 cp -f "${TARGET_DIR}/usr/share/fonts/ttf-bitstream-vera/Vera.ttf" "${ROOTFS_DIR}/usr/share/fonts/ttf-bitstream-vera/"
 
 # WebBridge startup script
-mkdir -p "${ROOTFS_DIR}/NDS"
-cp -pf "${BOARD_DIR}/homecast/webbridge" "${ROOTFS_DIR}/NDS"
-#cp -pf "${BOARD_DIR}/homecast/webbridge-stub" "${ROOTFS_DIR}/NDS"
+mkdir -p "${ROOTFS_DIR}/homecast"
+cp -pf "${BOARD_DIR}/homecast/webbridge" "${ROOTFS_DIR}/homecast"
+#cp -pf "${BOARD_DIR}/homecast/webbridge-stub" "${ROOTFS_DIR}/homecast"
 
 # WebServer path
 mkdir -p "${ROOTFS_DIR}/www"

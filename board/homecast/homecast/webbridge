@@ -1,12 +1,12 @@
 #!/bin/sh
 
 SCRIPT_NAME="webbridge.sh"
-SOURCE=/NDS/metrological
+SOURCE=/metrological
 
 cleanup() {
 	echo "${SCRIPT_NAME}: '$1'"
 	# Shutdown all our processes in non stub version
-	if [ ! -f $SOURCE/NDS/webbridge-stub ]; then
+	if [ ! -f $SOURCE/homecast/webbridge-stub ]; then
 		killall -9 rpcprocess 2>/dev/null
 		killall -9 WPEWebProcess 2>/dev/null
 		killall -9 WPENetworkProcess 2>/dev/null
@@ -18,33 +18,15 @@ cleanup() {
 	fi
 }
 
-if [ -f /tmp/shutdown ]; then
-	cleanup shutdown
-	exit 0
-fi
-
-# Select Storage type: HDD or Flash
-BUILD_OPT=$(cat /NDS/options_start)
-if [[ "$BUILD_OPT" =~ "plt_samgw"  || "$BUILD_OPT" =~ "plt_ciscogw" ]]; then
-	STORAGE_FILE="/tmp/diag"
-else
-	# Enable over-commit
-	echo 1 > /proc/sys/vm/overcommit_memory
-	STORAGE_FILE="/tmp/core_dir"
-fi
-
-# Wait for Storage
-COUNT=0
-while [ ! -f $STORAGE_FILE ];
-do
-	sleep 1
-	COUNT=$((COUNT+1))
-done
-STORAGE_PATH="`cat $STORAGE_FILE`"
-if [ "$COUNT" != "0" ]; then
-	echo "${SCRIPT_NAME}: have waited ${COUNT} seconds for storage path '${STORAGE_PATH}'"
-else
-	echo "${SCRIPT_NAME}: storage path '${STORAGE_PATH}'"
+# Start by swapping out the RO SQUASHFS for a NFS R/W file system.
+if [ ! -d $SOURCE ]; then
+	mkdir /tmp/nfsrootfs
+	mkdir /tmp/nfsrootfs/squashfs
+	cd /tmp/nfsrootfs
+	./usr/sbin/root_pivot . squashfs
+	mount none /proc -t proc
+	mount none /sys -t sysfs
+	mount none /dev/pts -t devpts
 fi
 
 # Symlink /etc
@@ -73,21 +55,10 @@ if [ ! -d $SOURCE/root/Netflix ]; then
 fi
 
 # Firewall for non-prod builds
-if [ -f /NDS/drivers/open_firewall_port.sh ]; then
-	/NDS/drivers/open_firewall_port.sh tcp 80
-	/NDS/drivers/open_firewall_port.sh tcp 9998
-	/NDS/drivers/open_firewall_port.sh tcp 9536
-fi
+iptables -I INPUT -i eth0 -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
 
 # Shutdown all our processes in non stub version
 cleanup restart
-
-# Netflix EGL and GLESv2 debug
-#ln -sfn /usr/lib/libEGL.so /lib/libEGL.so
-#ln -sfn /usr/lib/libGLESv2.so /lib/libGLESv2.so
-#mkdir -p $HOME/ogltrace
-#export GFX_LOG_FILE=$HOME/ogltrace/ogltrace
-#export NETFLIX_LD_PRELOAD="$SOURCE/NDS/libegl_log.so $SOURCE/NDS/libgl2_log.so"
 
 # Exports
 export HOME=$SOURCE/root
@@ -96,11 +67,6 @@ export GST_PLUGIN_PATH=$SOURCE/usr/lib/gstreamer-1.0
 export GST_PLUGIN_SCANNER=$SOURCE/usr/libexec/gstreamer-1.0/gst-plugin-scanner
 export LD_LIBRARY_PATH=$SOURCE/lib:$SOURCE/usr/lib:$SOURCE/usr/lib/gstreamer-1.0:/lib/:/usr/lib
 export DISABLE_FRAMERATE_UPDATE=1
-
-# Clock
-if [ -f /NDS/lib/libextClock.so ]; then
-	export LD_PRELOAD=/NDS/lib/libextClock.so
-fi
 
 # Short sleep
 sleep 3
@@ -113,7 +79,7 @@ else
 	ACTIVEPROCESS=`ps | grep webbridge-stub | grep -v grep`
 	if [ "x$ACTIVEPROCESS" == "x" ]; then
 		echo "${SCRIPT_NAME}: launching 'stub' webbridge"
-		$SOURCE/NDS/webbridge-stub
+		$SOURCE/homecast/webbridge-stub
 	else
 		# ulimit for core dump
 		mkdir -p $HOME/cores
