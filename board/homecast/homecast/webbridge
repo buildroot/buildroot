@@ -18,17 +18,6 @@ cleanup() {
 	fi
 }
 
-# Start by swapping out the RO SQUASHFS for a NFS R/W file system.
-if [ ! -d $SOURCE ]; then
-	mkdir /tmp/nfsrootfs
-	mkdir /tmp/nfsrootfs/squashfs
-	cd /tmp/nfsrootfs
-	./usr/sbin/root_pivot . squashfs
-	mount none /proc -t proc
-	mount none /sys -t sysfs
-	mount none /dev/pts -t devpts
-fi
-
 # Symlink /etc
 ln -sfn $SOURCE/etc/playready /etc/playready
 ln -sfn $SOURCE/etc/ssl /etc/ssl
@@ -43,15 +32,10 @@ ln -sfn $SOURCE/usr/share/mime /usr/share/mime
 ln -sfn $SOURCE/usr/share/X11 /usr/share/X11
 ln -sfn $SOURCE/usr/share/fonts/ttf-bitstream-vera /usr/share/fonts/ttf-bitstream-vera
 
-# Symlink /root
-rm -rf $SOURCE/root
-mkdir -p $STORAGE_PATH/app
-ln -sfn $STORAGE_PATH/app $SOURCE/root
-
 # Netflix
-if [ ! -d $SOURCE/root/Netflix ]; then
-	mkdir -p $SOURCE/root/Netflix/dpi
-	ln -sfn /etc/playready $SOURCE/root/Netflix/dpi/playready
+if [ ! -d /root/Netflix ]; then
+	mkdir -p /root/Netflix/dpi
+	ln -sfn /etc/playready /root/Netflix/dpi/playready
 fi
 
 # Firewall for non-prod builds
@@ -61,7 +45,7 @@ iptables -I INPUT -i eth0 -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j 
 cleanup restart
 
 # Exports
-export HOME=$SOURCE/root
+export HOME=/root
 export PATH=$SOURCE/usr/bin:/bin:/usr/bin
 export GST_PLUGIN_PATH=$SOURCE/usr/lib/gstreamer-1.0
 export GST_PLUGIN_SCANNER=$SOURCE/usr/libexec/gstreamer-1.0/gst-plugin-scanner
