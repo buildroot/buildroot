@@ -11,7 +11,7 @@ cleanup() {
 		killall -9 WPEWebProcess 2>/dev/null
 		killall -9 WPENetworkProcess 2>/dev/null
 		killall -9 WPEDatabaseProcess 2>/dev/null
-		WEBBRIDGE=$(ps | grep '/usr/bin/webbridge' | grep -v grep | awk '{print $1}')
+		WEBBRIDGE=$(ps | grep '$SOURCE/usr/bin/webbridge' | grep -v grep | awk '{print $1}')
 		if [ "$WEBBRIDGE" != "" ]; then
 			kill -9 $WEBBRIDGE
 		fi
@@ -20,8 +20,8 @@ cleanup() {
 
 # Symlink /etc
 ln -sfn $SOURCE/etc/playready /etc/playready
-ln -sfn $SOURCE/etc/ssl /etc/ssl
 ln -sfn $SOURCE/etc/fonts /etc/fonts
+ln -sfn $SOURCE/etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
 # Symlink /usr/lib
 ln -sfn $SOURCE/usr/lib/gio /usr/lib/gio
