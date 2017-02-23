@@ -58,17 +58,12 @@ config BR2_PACKAGE_WEBBRIDGE_OOM_ADJUST
 endmenu
 
 menuconfig BR2_PACKAGE_WEBBRIDGE_PLUGIN_RESOURCECENTER
-	bool "Resource Centers"
+	bool "ResourceCenter"
 	help
 	  Select a resource center for the platfom.
 
 if BR2_PACKAGE_WEBBRIDGE_PLUGIN_RESOURCECENTER
-
-config BR2_PACKAGE_WEBBRIDGE_PLUGIN_RESOURCECENTER_NEXUS
-	bool "Nexus"
-	depends on BR2_PACKAGE_BCM_REFSW
-	help
-	  Needed if using a Nexus based platfom.
+    source "package/webbridge/plugins/ResourceCenter/Config.in"
 endif
 
 config BR2_PACKAGE_WEBBRIDGE_PLUGIN_TRACECONTROL
