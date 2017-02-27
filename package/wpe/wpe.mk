@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = b972c292e038f66c617296ef7bb6efb961667b70 
+WPE_VERSION = 33da4322c54b1da5881d06b340670dc590f4fe4a
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -23,7 +23,7 @@ endif
 WPE_DEPENDENCIES = host-bison host-cmake host-flex host-gperf host-ruby icu pcre
 
 ifeq ($(WPE_BUILD_WEBKIT),y)
-WPE_DEPENDENCIES += libgcrypt libgles libegl cairo freetype fontconfig \
+WPE_DEPENDENCIES += libwpe libgcrypt libgles libegl cairo freetype fontconfig \
 	harfbuzz libxml2 libxslt sqlite libsoup jpeg libpng
 endif
 
@@ -245,7 +245,7 @@ WPE_BUILD_TARGETS += jsc
 endif
 ifeq ($(WPE_BUILD_WEBKIT),y)
 WPE_BUILD_TARGETS += libWPEWebKit.so libWPEWebInspectorResources.so \
-	WPE{Database,Network,Web}Process libWPE.so libWPE-platform.so
+	WPE{Database,Network,Web}Process libWPE-platform.so
 
 endif
 
