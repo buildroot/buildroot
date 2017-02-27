@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WESTEROS_VERSION = 7b624bbf3abd31db361b1df26bd1e1aac023ce4f
+WESTEROS_VERSION = 87bc367344f7aab820b74e8fd01f4cf104807ab8
 WESTEROS_SITE_METHOD = git
 WESTEROS_SITE = git://github.com/rdkcmf/westeros
 WESTEROS_INSTALL_STAGING = YES
@@ -22,7 +22,7 @@ WESTEROS_CONF_OPTS = \
 	--enable-sbprotocol=yes
 
 
-ifeq ($(BR2_PACKAGE_WESTEROS_SOC_RPI),y)
+ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 WESTEROS_CONF_OPTS += \
 	--enable-xdgv4=yes
 WESTEROS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -DWESTEROS_PLATFORM_RPI -DWESTEROS_INVERTED_Y -DBUILD_WAYLAND -I${STAGING_DIR}/usr/include/interface/vmcs_host/linux"
@@ -52,7 +52,6 @@ WESTEROS_PRE_CONFIGURE_HOOKS += WESTEROS_RUN_AUTOCONF
 
 
 define WESTEROS_BUILD_CMDS
-	export WESTEROS_COMPOSITOR_EXTRA_LIBS="-lEGL -lGLESv2 -lbcm_host"
 	SCANNER_TOOL=${HOST_DIR}/usr/bin/wayland-scanner \
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/protocol
 	$(WESTEROS_MAKE_OPTS) \

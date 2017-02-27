@@ -1,0 +1,296 @@
+diff --git a/lib/x509/x509.c b/lib/x509/x509.c
+index abac2a8..c89eebc 100644
+--- a/lib/x509/x509.c
++++ b/lib/x509/x509.c
+@@ -52,6 +52,20 @@ static int crt_reinit(gnutls_x509_crt_t crt)
+ 		return result;
+ 	}
+ 
++	gnutls_subject_alt_names_deinit(crt->san);
++	result = gnutls_subject_alt_names_init(&crt->san);
++	if (result < 0) {
++		gnutls_assert();
++		return result;
++	}
++
++	gnutls_subject_alt_names_deinit(crt->ian);
++	result = gnutls_subject_alt_names_init(&crt->ian);
++	if (result < 0) {
++		gnutls_assert();
++		return result;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -67,12 +81,12 @@ static int crt_reinit(gnutls_x509_crt_t crt)
+ int gnutls_x509_crt_init(gnutls_x509_crt_t * cert)
+ {
+ 	gnutls_x509_crt_t tmp;
++	int result;
+ 
+ 	FAIL_IF_LIB_ERROR;
+ 
+ 	tmp =
+ 	    gnutls_calloc(1, sizeof(gnutls_x509_crt_int));
+-	int result;
+ 
+ 	if (!tmp)
+ 		return GNUTLS_E_MEMORY_ERROR;
+@@ -85,6 +99,25 @@ int gnutls_x509_crt_init(gnutls_x509_crt_t * cert)
+ 		return _gnutls_asn2err(result);
+ 	}
+ 
++
++	result = gnutls_subject_alt_names_init(&tmp->san);
++	if (result < 0) {
++		gnutls_assert();
++		asn1_delete_structure(&tmp->cert);
++		gnutls_free(tmp);
++		return result;
++	}
++
++	result = gnutls_subject_alt_names_init(&tmp->ian);
++	if (result < 0) {
++		gnutls_assert();
++		asn1_delete_structure(&tmp->cert);
++		gnutls_free(tmp);
++		gnutls_subject_alt_names_deinit(tmp->san);
++		return result;
++	}
++
++
+ 	/* If you add anything here, be sure to check if it has to be added
+ 	   to gnutls_x509_crt_import as well. */
+ 
+@@ -161,6 +194,8 @@ void gnutls_x509_crt_deinit(gnutls_x509_crt_t cert)
+ 	if (cert->cert)
+ 		asn1_delete_structure(&cert->cert);
+ 	gnutls_free(cert->der.data);
++	gnutls_subject_alt_names_deinit(cert->san);
++	gnutls_subject_alt_names_deinit(cert->ian);
+ 	gnutls_free(cert);
+ }
+ 
+@@ -229,6 +264,41 @@ static int compare_sig_algorithm(gnutls_x509_crt_t cert)
+  	return ret;
+ }
+ 
++static int cache_alt_names(gnutls_x509_crt_t cert)
++{
++	gnutls_datum_t tmpder = {NULL, 0};
++	int ret;
++
++	/* pre-parse subject alt name */
++	ret = _gnutls_x509_crt_get_extension(cert, "2.5.29.17", 0, &tmpder, NULL);
++	if (ret < 0 && ret != GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE) {
++		gnutls_free(tmpder.data);
++		return gnutls_assert_val(ret);
++	}
++
++	if (ret >= 0) {
++		ret = gnutls_x509_ext_import_subject_alt_names(&tmpder, cert->san, 0);
++		gnutls_free(tmpder.data);
++		tmpder.data = NULL;
++		if (ret < 0)
++			return gnutls_assert_val(ret);
++	}
++
++	ret = _gnutls_x509_crt_get_extension(cert, "2.5.29.18", 0, &tmpder, NULL);
++	if (ret < 0 && ret != GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE)
++		return gnutls_assert_val(ret);
++
++	if (ret >= 0) {
++		ret = gnutls_x509_ext_import_subject_alt_names(&tmpder, cert->ian, 0);
++		gnutls_free(tmpder.data);
++		if (ret < 0)
++			return gnutls_assert_val(ret);
++	}
++
++	return 0;
++}
++
++
+ /**
+  * gnutls_x509_crt_import:
+  * @cert: The structure to store the parsed certificate.
+@@ -343,6 +413,12 @@ gnutls_x509_crt_import(gnutls_x509_crt_t cert,
+ 		goto cleanup;
+ 	}
+ 
++	result = cache_alt_names(cert);
++	if (result < 0) {
++		gnutls_assert();
++		goto cleanup;
++	}
++
+ 	/* enforce the rule that only version 3 certificates carry extensions */
+ 	result = gnutls_x509_crt_get_version(cert);
+ 	if (result < 0) {
+@@ -1348,50 +1424,26 @@ cleanup:
+ }
+ 
+ static int
+-get_alt_name(gnutls_x509_crt_t cert, const char *extension_id,
++get_alt_name(gnutls_subject_alt_names_t san,
+ 	     unsigned int seq, uint8_t *alt,
+ 	     size_t * alt_size, unsigned int *alt_type,
+ 	     unsigned int *critical, int othername_oid)
+ {
+ 	int ret;
+-	gnutls_datum_t dnsname = {NULL, 0};
+ 	gnutls_datum_t ooid = {NULL, 0};
+-	gnutls_datum_t res;
+-	gnutls_subject_alt_names_t sans = NULL;
++	gnutls_datum_t oname;
++	gnutls_datum_t virt = {NULL, 0};
+ 	unsigned int type;
+ 
+-	if (cert == NULL) {
++	if (san == NULL) {
+ 		gnutls_assert();
+-		return GNUTLS_E_INVALID_REQUEST;
++		return GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE;
+ 	}
+ 
+ 	if (alt == NULL)
+ 		*alt_size = 0;
+ 
+-	if ((ret =
+-	     _gnutls_x509_crt_get_extension(cert, extension_id, 0,
+-					    &dnsname, critical)) < 0) {
+-		return ret;
+-	}
+-
+-	if (dnsname.size == 0 || dnsname.data == NULL) {
+-		gnutls_assert();
+-		return GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE;
+-	}
+-
+-	ret = gnutls_subject_alt_names_init(&sans);
+-	if (ret < 0) {
+-		gnutls_assert();
+-		goto cleanup;
+-	}
+-
+-	ret = gnutls_x509_ext_import_subject_alt_names(&dnsname, sans, 0);
+-	if (ret < 0) {
+-		gnutls_assert();
+-		goto cleanup;
+-	}
+-
+-	ret = gnutls_subject_alt_names_get(sans, seq, &type, &res, &ooid);
++	ret = gnutls_subject_alt_names_get(san, seq, &type, &oname, &ooid);
+ 	if (ret < 0) {
+ 		gnutls_assert();
+ 		goto cleanup;
+@@ -1399,13 +1451,11 @@ get_alt_name(gnutls_x509_crt_t cert, const char *extension_id,
+ 
+ 	if (othername_oid && type == GNUTLS_SAN_OTHERNAME) {
+ 		unsigned vtype;
+-		gnutls_datum_t virt;
+-		ret = gnutls_x509_othername_to_virtual((char*)ooid.data, &res, &vtype, &virt);
++		ret = gnutls_x509_othername_to_virtual((char*)ooid.data, &oname, &vtype, &virt);
+ 		if (ret >= 0) {
+ 			type = vtype;
+-			gnutls_free(res.data);
+-			res.data = virt.data;
+-			res.size = virt.size;
++			oname.data = virt.data;
++			oname.size = virt.size;
+ 		}
+ 	}
+ 
+@@ -1416,9 +1466,9 @@ get_alt_name(gnutls_x509_crt_t cert, const char *extension_id,
+ 		ret = _gnutls_copy_string(&ooid, alt, alt_size);
+ 	} else {
+ 		if (is_type_printable(type)) {
+-			ret = _gnutls_copy_string(&res, alt, alt_size);
++			ret = _gnutls_copy_string(&oname, alt, alt_size);
+ 		} else {
+-			ret = _gnutls_copy_data(&res, alt, alt_size);
++			ret = _gnutls_copy_data(&oname, alt, alt_size);
+ 		}
+ 	}
+ 
+@@ -1429,9 +1479,7 @@ get_alt_name(gnutls_x509_crt_t cert, const char *extension_id,
+ 
+ 	ret = type;
+ cleanup:
+-	gnutls_free(dnsname.data);
+-	if (sans != NULL)
+-		gnutls_subject_alt_names_deinit(sans);
++	gnutls_free(virt.data);
+ 
+ 	return ret;
+ }
+@@ -1472,7 +1520,7 @@ gnutls_x509_crt_get_subject_alt_name(gnutls_x509_crt_t cert,
+ 				     size_t * san_size,
+ 				     unsigned int *critical)
+ {
+-	return get_alt_name(cert, "2.5.29.17", seq, san, san_size, NULL,
++	return get_alt_name(cert->san, seq, san, san_size, NULL,
+ 			    critical, 0);
+ }
+ 
+@@ -1515,7 +1563,7 @@ gnutls_x509_crt_get_issuer_alt_name(gnutls_x509_crt_t cert,
+ 				    size_t * ian_size,
+ 				    unsigned int *critical)
+ {
+-	return get_alt_name(cert, "2.5.29.18", seq, ian, ian_size, NULL,
++	return get_alt_name(cert->ian, seq, ian, ian_size, NULL,
+ 			    critical, 0);
+ }
+ 
+@@ -1550,7 +1598,7 @@ gnutls_x509_crt_get_subject_alt_name2(gnutls_x509_crt_t cert,
+ 				      unsigned int *san_type,
+ 				      unsigned int *critical)
+ {
+-	return get_alt_name(cert, "2.5.29.17", seq, san, san_size,
++	return get_alt_name(cert->san, seq, san, san_size,
+ 			    san_type, critical, 0);
+ }
+ 
+@@ -1588,7 +1636,7 @@ gnutls_x509_crt_get_issuer_alt_name2(gnutls_x509_crt_t cert,
+ 				     unsigned int *ian_type,
+ 				     unsigned int *critical)
+ {
+-	return get_alt_name(cert, "2.5.29.18", seq, ian, ian_size,
++	return get_alt_name(cert->ian, seq, ian, ian_size,
+ 			    ian_type, critical, 0);
+ }
+ 
+@@ -1627,7 +1675,7 @@ gnutls_x509_crt_get_subject_alt_othername_oid(gnutls_x509_crt_t cert,
+ 					      unsigned int seq,
+ 					      void *oid, size_t * oid_size)
+ {
+-	return get_alt_name(cert, "2.5.29.17", seq, oid, oid_size, NULL,
++	return get_alt_name(cert->san, seq, oid, oid_size, NULL,
+ 			    NULL, 1);
+ }
+ 
+@@ -1668,7 +1716,7 @@ gnutls_x509_crt_get_issuer_alt_othername_oid(gnutls_x509_crt_t cert,
+ 					     unsigned int seq,
+ 					     void *ret, size_t * ret_size)
+ {
+-	return get_alt_name(cert, "2.5.29.18", seq, ret, ret_size, NULL,
++	return get_alt_name(cert->ian, seq, ret, ret_size, NULL,
+ 			    NULL, 1);
+ }
+ 
+diff --git a/lib/x509/x509_int.h b/lib/x509/x509_int.h
+index 803f391..71eec52 100644
+--- a/lib/x509/x509_int.h
++++ b/lib/x509/x509_int.h
+@@ -73,6 +73,11 @@ typedef struct gnutls_x509_crt_int {
+ 	gnutls_datum_t raw_spki;
+ 
+ 	gnutls_datum_t der;
++
++	/* this cached value allows fast access to alt names */
++	gnutls_subject_alt_names_t san;
++	gnutls_subject_alt_names_t ian;
++
+ 	struct pin_info_st pin;
+ } gnutls_x509_crt_int;
+ 

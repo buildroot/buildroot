@@ -57,14 +57,14 @@ config BR2_PACKAGE_WEBBRIDGE_OOM_ADJUST
 
 endmenu
 
-config BR2_PACKAGE_WEBBRIDGE_PLUGIN_NXRESOURCECENTER
-	bool "nxresourcecenter"
-	depends on BR2_PACKAGE_BCM_REFSW
+menuconfig BR2_PACKAGE_WEBBRIDGE_PLUGIN_RESOURCECENTER
+	bool "ResourceCenter"
 	help
-	  Nexus resource center for bcm platfoms.
+	  Select a resource center for the platfom.
 
-comment "nxresource centre depends on package bcm-refsw package."
-	depends on !BR2_PACKAGE_WEBBRIDGE_PLUGIN_NXRESOURCECENTER
+if BR2_PACKAGE_WEBBRIDGE_PLUGIN_RESOURCECENTER
+    source "package/webbridge/plugins/ResourceCenter/Config.in"
+endif
 
 config BR2_PACKAGE_WEBBRIDGE_PLUGIN_TRACECONTROL
 	bool "tracecontrol"
@@ -212,11 +212,6 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX_AUTOSTART
 	bool "autostart"
 	default n
 
-config BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX_STARTSUSPENDED
-	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX
-	bool "startsuspended"
-	default n
-
 config BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX_MODEL
 	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX
 	string "model"
@@ -342,6 +337,46 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_QUEUECOMMUNICATOR
 	  A plugin that receives and sends messages into a queue to interact
 		  with specific middleware.
 
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_SWITCHBOARD
+	bool "switchboard"
+        depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER || BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX || BR2_PACKAGE_WEBBRIDGE_PLUGIN_YOUTUBE
+	help
+	  A plugin that can be configured to activate 1 callsign out of a group of 
+          selected callsigns. Using an external interface a new callsign can be selected. 
+          the currently active callsignin the group will be automatically deactivated.
+
+if BR2_PACKAGE_WEBBRIDGE_PLUGIN_SWITCHBOARD
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_SWITCHBOARD_WEBKITBROWSER
+        depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_WEBKITBROWSER
+        bool "webkitbrowser"
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_SWITCHBOARD_NETFLIX
+        depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_NETFLIX
+        bool "netflix"
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_SWITCHBOARD_YOUTUBE
+        depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_YOUTUBE
+        bool "youtube"
+
+choice
+	prompt "Default"
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_SWITCHBOARD_DEFAULT_WEBKITBROWSER
+	bool "webkitbrowser"
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_SWITCHBOARD_WEBKITBROWSER
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_SWITCHBOARD_DEFAULT_NETFLIX
+	bool "netflix"
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_SWITCHBOARD_NETFLIX
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_SWITCHBOARD_DEFAULT_YOUTUBE
+	bool "youtube"
+	depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_SWITCHBOARD_YOUTUBE
+
+endchoice
+
+endif
 
 menuconfig BR2_PACKAGE_WEBBRIDGE_PLUGIN_DIALSERVER
 	bool "dialserver"
