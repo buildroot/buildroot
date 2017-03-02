@@ -3,9 +3,10 @@
 # widevine
 #
 ################################################################################
+
 WIDEVINE_VERSION = ef2a7b905393242810614abc43f32ccf11563bc1
+WIDEVINE_SITE = git@github.com:Metrological/widevine.git
 WIDEVINE_SITE_METHOD = git
-WIDEVINE_SITE = https://github.com/Metrological/widevine.git
 
 WIDEVINE_INSTALL_STAGING = YES
 WIDEVINE_DEPENDENCIES = host-gyp
