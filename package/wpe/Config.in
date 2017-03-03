@@ -175,6 +175,18 @@ endchoice
 
 endif
 
+config BR2_PACKAGE_WPE_ENABLE_NATIVE_VIDEO
+	bool "Enable native video"
+	default y
+	help
+	  Defines ENABLE_NATIVE_VIDEO=ON
+
+config BR2_PACKAGE_WPE_ENABLE_TEXT_SINK
+	bool "Enable text sink"
+	default y
+	help
+	  Defines ENABLE_TEXT_SINK=ON
+
 config BR2_PACKAGE_WPE_SELFCOMPRESS
 	bool "Self-compress WPE libraries"
 	default n

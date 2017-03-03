@@ -154,6 +154,18 @@ endif
 
 ifeq ($(WPE_BUILD_WEBKIT),y)
 
+ifeq ($(BR2_PACKAGE_WPE_ENABLE_NATIVE_VIDEO),y)
+WPE_FLAGS += -DENABLE_NATIVE_VIDEO=ON
+else
+WPE_FLAGS += -DENABLE_NATIVE_VIDEO=OFF
+endif
+
+ifeq ($(BR2_PACKAGE_WPE_ENABLE_TEXT_SINK),y)
+WPE_FLAGS += -DENABLE_TEXT_SINK=ON
+else
+WPE_FLAGS += -DENABLE_TEXT_SINK=OFF
+endif
+
 ifeq ($(BR2_PACKAGE_GSTREAMER1),y)
 WPE_DEPENDENCIES += gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad
 WPE_FLAGS += \
