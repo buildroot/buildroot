@@ -304,7 +304,8 @@ define WPE_INSTALL_TARGET_CMDS_WEBKIT
 	cp $(WPE_BUILDDIR)/bin/WPE{Database,Network,Web}Process $(TARGET_DIR)/usr/bin/ && \
 	cp -d $(WPE_BUILDDIR)/lib/libWPE* $(TARGET_DIR)/usr/lib/ && \
 	$(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.* && \
-	$(SELFCOMPRESSCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.*
+	$(SELFCOMPRESSCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.* && \
+	ln -sf libWPE-platform.so $(TARGET_DIR)/usr/lib/libWPE-backend.so
 endef
 else
 WPE_INSTALL_TARGET_CMDS_WEBKIT = true
