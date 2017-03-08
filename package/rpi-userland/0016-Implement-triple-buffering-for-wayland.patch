@@ -1,0 +1,85 @@
+From 81f421b051c726bbe180ee5f7d93cf13a3935904 Mon Sep 17 00:00:00 2001
+From: Jeff Wannamaker <jeff_wannamaker@cable.comcast.com>
+Date: Thu, 19 Jan 2017 18:56:07 +0000
+Subject: [PATCH 13/13] Implement triple buffering for wayland
+
+Change from double to triple buffering for wayland.  This enables higher frame rates without tearing artifacts by allowing both the glFinish and the buffer release interlock to operate without pushing the frame period to two vertical intervals
+
+Signed-off-by: Jeff Wannamaker <jeff_wannamaker@cable.comcast.com>
+---
+ interface/khronos/egl/egl_client.c         |  3 ++-
+ interface/khronos/egl/egl_client_surface.c |  8 ++++++++
+ interface/khronos/egl/egl_client_surface.h | 11 +++++++++++
+ 3 files changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/interface/khronos/egl/egl_client.c b/interface/khronos/egl/egl_client.c
+index 13a110c..0380274 100644
+--- a/interface/khronos/egl/egl_client.c
++++ b/interface/khronos/egl/egl_client.c
+@@ -2323,7 +2323,8 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay dpy, EGLSurface surf)
+ 
+                   buffer_temp = surface->front_wl_buffer;
+                   surface->front_wl_buffer = surface->back_wl_buffer;
+-                  surface->back_wl_buffer = buffer_temp;
++                  surface->back_wl_buffer = surface->middle_wl_buffer;
++                  surface->middle_wl_buffer = buffer_temp;
+ 
+                   configid = egl_config_to_id(surface->config);
+                   color = egl_config_get_color_format(configid);
+diff --git a/interface/khronos/egl/egl_client_surface.c b/interface/khronos/egl/egl_client_surface.c
+index 9a9582c..10b3b04 100644
+--- a/interface/khronos/egl/egl_client_surface.c
++++ b/interface/khronos/egl/egl_client_surface.c
+@@ -402,12 +402,14 @@ EGL_SURFACE_T *egl_surface_create(
+    if (type == WINDOW && wl_display) {
+       surface->wl_egl_window = (struct wl_egl_window*)win;
+       surface->front_wl_buffer = NULL;
++      surface->middle_wl_buffer = NULL;
+       surface->back_wl_buffer = allocate_wl_buffer(
+             surface->wl_egl_window, color);
+       resource = surface->back_wl_buffer->resource;
+    } else {
+       surface->wl_egl_window = NULL;
+       surface->front_wl_buffer = NULL;
++      surface->middle_wl_buffer = NULL;
+       surface->back_wl_buffer = NULL;
+       resource = DISPMANX_NO_HANDLE;
+    }
+@@ -696,6 +698,12 @@ void egl_surface_free(EGL_SURFACE_T *surface)
+          surface->back_wl_buffer = 0;
+       }
+ 
++      if (surface->middle_wl_buffer) {
++         wl_buffer_destroy(surface->middle_wl_buffer->wl_buffer);
++         free(surface->middle_wl_buffer);
++         surface->middle_wl_buffer = 0;
++      }
++
+       if (surface->front_wl_buffer) {
+          wl_buffer_destroy(surface->front_wl_buffer->wl_buffer);
+          free(surface->front_wl_buffer);
+diff --git a/interface/khronos/egl/egl_client_surface.h b/interface/khronos/egl/egl_client_surface.h
+index e328b77..58a3184 100644
+--- a/interface/khronos/egl/egl_client_surface.h
++++ b/interface/khronos/egl/egl_client_surface.h
+@@ -313,6 +313,17 @@ typedef struct {
+    struct wl_dispmanx_client_buffer *front_wl_buffer;
+ 
+    /*
++      middle_wl_buffer
++
++      Validity:
++      type == WINDOW
++
++      Invariant:
++      client-side information about the wl_buffer in the middle
++   */
++   struct wl_dispmanx_client_buffer *middle_wl_buffer;
++
++   /*
+       back_wl_buffer
+ 
+       Validity:
+-- 
+2.7.1
+

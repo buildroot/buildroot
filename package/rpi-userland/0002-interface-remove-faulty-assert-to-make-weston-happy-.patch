@@ -1,25 +1,19 @@
-From a126ee5a3235792abb58daffd9d4b3e1012f675b Mon Sep 17 00:00:00 2001
+From 2a6e3d53a75fe44ec6fa3ae64c8ca5664b614979 Mon Sep 17 00:00:00 2001
 From: "Yann E. MORIN" <yann.morin.1998@free.fr>
 Date: Sat, 24 Jan 2015 22:07:19 +0100
-Subject: [PATCH] interface: remove faulty assert() to make weston happy at
- runtime
+Subject: [PATCH 05/12] interface: remove faulty assert() to make weston happy
+ at runtime
 
 This was removed after a discussion on IRC with the weston guys
 ('daniels' on irc.freenode.net/#wayland).
 
-Upstream status: no, will be pushed by weston guys later.
-If not, I'll do it.
-
 Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
-
-[Rebased for rpi-userland-a1b89e91f393c7134b4cdc36431f863bb3333163]
-Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 ---
  interface/vmcs_host/vc_vchi_dispmanx.c | 1 -
  1 file changed, 1 deletion(-)
 
 diff --git a/interface/vmcs_host/vc_vchi_dispmanx.c b/interface/vmcs_host/vc_vchi_dispmanx.c
-index 133e86d..0c7873c 100755
+index 45f4cff..5d0368c 100755
 --- a/interface/vmcs_host/vc_vchi_dispmanx.c
 +++ b/interface/vmcs_host/vc_vchi_dispmanx.c
 @@ -1306,7 +1306,6 @@ static void *dispmanx_notify_func( void *arg ) {
@@ -31,5 +25,4 @@ index 133e86d..0c7873c 100755
              }
           } else {
 -- 
-2.8.1
-
+2.10.2
