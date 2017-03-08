@@ -23,7 +23,7 @@ endif
 WPEWEBKIT_DEPENDENCIES = host-bison host-cmake host-flex host-gperf host-ruby icu pcre
 
 ifeq ($(WPEWEBKIT_BUILD_WEBKIT),y)
-WPEWEBKIT_DEPENDENCIES += libwpe libgcrypt libgles libegl cairo freetype fontconfig \
+WPEWEBKIT_DEPENDENCIES += wpebackend libgcrypt libgles libegl cairo freetype fontconfig \
 	harfbuzz libxml2 libxslt sqlite libsoup jpeg libpng
 endif
 
