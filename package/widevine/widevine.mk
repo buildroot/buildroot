@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WIDEVINE_VERSION = ef2a7b905393242810614abc43f32ccf11563bc1
+WIDEVINE_VERSION = a4998dc60e358c436ef56577f94ac2ae793f09ce
 WIDEVINE_SITE = git@github.com:Metrological/widevine.git
 WIDEVINE_SITE_METHOD = git
 
@@ -22,7 +22,7 @@ endif #BR2_PACKAGE_WIDEVINE_SOC_RPI
 export WV_CC=$(TARGET_CC)
 export WV_CXX=$(TARGET_CXX)
 export WV_AR=$(TARGET_AR)
-       # CC="$(TARGET_CC)" CXX="$(TARGET_CXX)" AR="$(TARGET_AR)" \
+export WV_HOST_CXX_FLAGS = $(HOST_CXXFLAGS)
 
 define WIDEVINE_CONFIGURE_CMDS
       (cd $(@D);rm -rf out; rm -rf Makefile;\
