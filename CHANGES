@@ -1,3 +1,73 @@
+2017.02, Released February 28th, 2017
+
+	Minor fixes, mainly fixing autobuilder issues.
+
+	Don't use cmake 3.7.x from the build host as it is also
+	affected by the RPATH handling issues, and instead build our
+	own if needed.
+
+	Updated/fixed packages: assimp, classpath, genimage, mplayer,
+	mpv, openocd, python-libconfig, qt5base, qt5quickcontrols,
+	vlc, xterm
+
+2017.02-rc3, Released February 26th, 2017
+
+	Fixes all over the tree.
+
+	Cmake reverted to version 3.6.3 to workaround regressions
+	related to RPATH handling.
+
+	Updated/fixed packages: bctoolbox, berkeleydb, binutils,
+	btrfs-progs, classpath, directfb, glibc, gstreamer1,
+	gst1-plugins-{base,good,bad,ugly}, gst1-libav,
+	gst1-rtsp-server, gst1-validate, gst-omx, htop, libcurl,
+	libepoxy, libimxvpuapi, libpcap, libuv, ncurses, openssh,
+	oracle-mysql, poco, python, qt5base, qt5webkit, sslh, synergy,
+	trousers, uclibc-ng-test, util-linux, vlc, xfsprogs
+
+	Issues resolved (http://bugs.buildroot.org):
+
+	#9251: Shared C++ libraries for Microblaze results in Segmentation...
+	#9456: mkusers script bash errors
+	#9506: Collectd 5.7.0 fails to build with libcrypt
+	#9581: VagrantFile provisioning step fails due to issue with grub-pc
+	#9586: usbmount: usbmount slows down the system... to a state of...
+	#9616: CMake host packages cannot provide CONF_ENV
+	#9641: Need raptor package installed in staging
+	#9671: stunnel build error
+
+2017.02-rc2, Released February 20th, 2017
+
+	Fixes all over the tree.
+
+	Support for SOURCE_DATE_EPOCH in the toolchain wrapper for
+	older gcc versions for reproducible builds has been
+	(temporarily) reverted because of licensing compatiblity
+	concerns.
+
+	Defconfigs: SD card generation fix for the Udoo Neo board
+
+	Infrastructure to handle .lz compressed tarballs added, and
+	affected packages updated to use it.
+
+	Updated/fixed packages: bctoolbox, bind, canelloni,
+	cbootimage, ccache, classpath, cups, dbus, ddrescue, directfb,
+	ed, erlang, gcc, gdb, glmark2, gstreamer, gstreamer1, hiredis,
+	kmod, kmsxx, lcdapi, libasplib, libgpiod, libnss, libraw,
+	libv4l, mesa3d-headers, mosquitto, mpd, mpv, musl, ntfs-3g,
+	ocrad, openswan, postgresql, qt5base, qt5quickcontrols, redis,
+	riemann-c-client, samba4, sunxi-mali, tcping, trousers,
+	uclibc, util-linux, vim, wavpack, wget, wiringpi, xfsprogs,
+	xserver_xorg-server
+
+	Issues resolved (http://bugs.buildroot.org):
+
+	#8941: Valgrind fails to build with stack protection turned on
+	#9291: perl: SysV message queues not configured, even if available
+	#9651: libxcb-1.12 built Error
+	#9656: util-linux: schedutils doesn't build on target w/o enabl...
+	#9666: qt5quickcontrols install fails
+
 2017.02-rc1, Released February 11th, 2017
 
 	Fixes all over the tree and new features.

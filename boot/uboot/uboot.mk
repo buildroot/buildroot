@@ -74,6 +74,11 @@ UBOOT_BINS += u-boot-dtb.img
 UBOOT_MAKE_TARGET += u-boot-dtb.img
 endif
 
+ifeq ($(BR2_TARGET_UBOOT_FORMAT_DTB_BIN),y)
+UBOOT_BINS += u-boot-dtb.bin
+UBOOT_MAKE_TARGET += u-boot-dtb.bin
+endif
+
 ifeq ($(BR2_TARGET_UBOOT_FORMAT_IMG),y)
 UBOOT_BINS += u-boot.img
 UBOOT_MAKE_TARGET += u-boot.img
@@ -257,9 +262,17 @@ UBOOT_POST_INSTALL_IMAGES_HOOKS += UBOOT_GENERATE_ZYNQ_IMAGE
 endif
 
 ifeq ($(BR2_TARGET_UBOOT_ALTERA_SOCFPGA_IMAGE_CRC),y)
+ifeq ($(BR2_TARGET_UBOOT_SPL),y)
+UBOOT_CRC_ALTERA_SOCFPGA_INPUT_IMAGES = $(call qstrip,$(BR2_TARGET_UBOOT_SPL_NAME))
+UBOOT_CRC_ALTERA_SOCFPGA_HEADER_VERSION = 0
+else
+UBOOT_CRC_ALTERA_SOCFPGA_INPUT_IMAGES = u-boot-dtb.bin
+UBOOT_CRC_ALTERA_SOCFPGA_HEADER_VERSION = 1
+endif
 define UBOOT_CRC_ALTERA_SOCFPGA_IMAGE
-	$(foreach f,$(call qstrip,$(BR2_TARGET_UBOOT_SPL_NAME)), \
+	$(foreach f,$(UBOOT_CRC_ALTERA_SOCFPGA_INPUT_IMAGES), \
 		$(HOST_DIR)/usr/bin/mkpimage \
+			-v $(UBOOT_CRC_ALTERA_SOCFPGA_HEADER_VERSION) \
 			-o $(BINARIES_DIR)/$(notdir $(call qstrip,$(f))).crc \
 			$(@D)/$(call qstrip,$(f))
 	)
