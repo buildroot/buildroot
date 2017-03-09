@@ -257,7 +257,7 @@ WPEWEBKIT_BUILD_TARGETS += jsc
 endif
 ifeq ($(WPEWEBKIT_BUILD_WEBKIT),y)
 WPEWEBKIT_BUILD_TARGETS += libWPEWebKit.so libWPEWebInspectorResources.so \
-	WPE{Database,Network,Web}Process libWPE-platform.so
+	WPE{Database,Network,Web}Process libWPEBackend-rdk.so
 
 endif
 
@@ -317,7 +317,7 @@ define WPEWEBKIT_INSTALL_TARGET_CMDS_WEBKIT
 	cp -d $(WPEWEBKIT_BUILDDIR)/lib/libWPE* $(TARGET_DIR)/usr/lib/ && \
 	$(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.* && \
 	$(SELFCOMPRESSCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.* && \
-	ln -sf libWPE-platform.so $(TARGET_DIR)/usr/lib/libWPE-backend.so
+	ln -sf libWPEBackend-rdk.so $(TARGET_DIR)/usr/lib/libWPEBackend-default.so
 endef
 else
 WPEWEBKIT_INSTALL_TARGET_CMDS_WEBKIT = true
