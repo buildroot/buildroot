@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEBACKEND_VERSION = a03e258399e4e31aa4861e9d948d13355f447bc6
+WPEBACKEND_VERSION = 5e2a29d2ccc637f7122ba72c1d62ef669b42f05c
 WPEBACKEND_SITE = $(call github,WebPlatformForEmbedded,WPEBackend,$(WPEBACKEND_VERSION))
 
 WPEBACKEND_INSTALL_STAGING = YES
