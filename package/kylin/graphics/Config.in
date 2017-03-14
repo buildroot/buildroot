@@ -1,4 +1,3 @@
-#kylin mali graphics libraies
 config BR2_PACKAGE_KYLIN_GRAPHICS
 	bool "mali graphics libraries"
 	select BR2_PACKAGE_WAYLAND
@@ -8,8 +7,12 @@ config BR2_PACKAGE_KYLIN_GRAPHICS
 	help
          EGL/GLESv2 support for kylin mali videodriver
 
+if BR2_PACKAGE_KYLIN_GRAPHICS
+
 config BR2_PACKAGE_PROVIDES_LIBEGL
 	default "kylin-graphics"
 	
 config BR2_PACKAGE_PROVIDES_LIBGLES
 	default "kylin-graphics"
+
+endif
