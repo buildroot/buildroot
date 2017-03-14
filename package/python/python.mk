@@ -60,8 +60,14 @@ HOST_PYTHON_DEPENDENCIES = host-expat host-zlib
 
 PYTHON_INSTALL_STAGING = YES
 
+ifeq ($(BR2_PACKAGE_GETTEXT),y)
+PYTHON_DEPENDENCIES += gettext
+endif
+
 ifeq ($(BR2_PACKAGE_PYTHON_READLINE),y)
 PYTHON_DEPENDENCIES += readline
+else
+PYTHON_CONF_OPTS += --disable-readline
 endif
 
 ifeq ($(BR2_PACKAGE_PYTHON_CURSES),y)
@@ -125,6 +131,8 @@ endif
 
 ifeq ($(BR2_PACKAGE_PYTHON_HASHLIB),y)
 PYTHON_DEPENDENCIES += openssl
+else
+PYTHON_CONF_OPTS += --disable-hashlib
 endif
 
 ifeq ($(BR2_PACKAGE_PYTHON_OSSAUDIODEV),y)
