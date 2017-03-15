@@ -7,7 +7,7 @@ config BR2_PACKAGE_BCM_REFSW
 	select BR2_PACKAGE_HAS_LIBEGL
 	select BR2_PACKAGE_HAS_LIBGLES
 	help
-	  bcm-refsw
+		bcm-refsw
 
 
 if BR2_PACKAGE_BCM_REFSW
@@ -39,31 +39,35 @@ choice
 
 	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7425
 		bool "BCM 7425 VGW"
-		depends on BR2_mipsel && !BR2_arm
+		depends on BR2_mipsel
 
 	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7428
 		bool "BCM 7428"
-		depends on BR2_mipsel && !BR2_arm
+		depends on BR2_mipsel
 
 	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7429
 		bool "BCM 7429 IPC"
-		depends on BR2_mipsel && !BR2_arm
+		depends on BR2_mipsel
 
 	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7439
 		bool "BCM 7429"
-		depends on !BR2_mipsel && BR2_arm
+		depends on BR2_arm
 
 	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7252
 		bool "BCM 7252(S)"
-		depends on !BR2_mipsel && BR2_arm
+		depends on BR2_arm
 
-        config BR2_PACKAGE_BCM_REFSW_PLATFORM_7271
-                bool "BCM 7271"
-		depends on !BR2_mipsel && BR2_arm
+	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7250
+		bool "BCM 7250"
+		depends on BR2_arm
+
+		config BR2_PACKAGE_BCM_REFSW_PLATFORM_7271
+		bool "BCM 7271"
+		depends on BR2_arm
  
 	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7437
 		bool "BCM 7437"
-		depends on !BR2_mipsel && BR2_arm
+		depends on BR2_arm
 
 	config BR2_PACKAGE_BCM_REFSW_PLATFORM_DCX960
 		bool "Arris DCX960 EPR2/PPR2"
