@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEBACKEND_RDK_VERSION = 4fca7b290a6f2a2fcb6eeefc7af8b9ec4b9a6436
+WPEBACKEND_RDK_VERSION = 92fc38421847aafdb75d73c7566d29ca3c2c3997
 WPEBACKEND_RDK_SITE = $(call github,WebPlatformForEmbedded,WPEBackend-rdk,$(WPEBACKEND_RDK_VERSION))
 
 WPEBACKEND_RDK_INSTALL_STAGING = YES
