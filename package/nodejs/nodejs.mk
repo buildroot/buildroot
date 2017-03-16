@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NODEJS_VERSION = $(call qstrip,$(BR2_PACKAGE_NODEJS_VERSION_STRING))
+NODEJS_VERSION = 7.7.2
 NODEJS_SOURCE = node-v$(NODEJS_VERSION).tar.xz
 NODEJS_SITE = http://nodejs.org/dist/v$(NODEJS_VERSION)
 NODEJS_DEPENDENCIES = host-python host-nodejs zlib \
@@ -27,14 +27,11 @@ else
 NODEJS_CONF_OPTS += --without-ssl
 endif
 
-# 0.10.x does not have icu support
-ifeq ($(findstring 0.10.,$(NODEJS_VERSION)),)
 ifeq ($(BR2_PACKAGE_ICU),y)
 NODEJS_DEPENDENCIES += icu
 NODEJS_CONF_OPTS += --with-intl=system-icu
 else
 NODEJS_CONF_OPTS += --with-intl=none
-endif
 endif
 
 ifneq ($(BR2_PACKAGE_NODEJS_NPM),y)
@@ -63,7 +60,7 @@ define HOST_NODEJS_CONFIGURE_CMDS
 		--without-dtrace \
 		--without-etw \
 		--shared-zlib \
-		$(if $(BR2_PACKAGE_NODEJS_V8_ARCH_SUPPORTS),--with-intl=none) \
+		--with-intl=none \
 	)
 endef
 
@@ -79,6 +76,8 @@ define HOST_NODEJS_INSTALL_CMDS
 		$(MAKE) -C $(@D) install \
 		$(HOST_CONFIGURE_OPTS) \
 		PATH=$(@D)/bin:$(BR_PATH)
+
+	$(INSTALL) -m755 -D $(@D)/out/Release/mkpeephole $(HOST_DIR)/usr/bin/mkpeephole
 endef
 
 ifeq ($(BR2_i386),y)
@@ -126,6 +125,9 @@ define NODEJS_CONFIGURE_CMDS
 		$(if $(NODEJS_MIPS_FPU_MODE),--with-mips-fpu-mode=$(NODEJS_MIPS_FPU_MODE)) \
 		$(NODEJS_CONF_OPTS) \
 	)
+
+	# use host version of mkpeephole
+	sed "s#<(mkpeephole_exec)#$(HOST_DIR)/usr/bin/mkpeephole#g" -i $(@D)/deps/v8/src/v8.gyp
 endef
 
 define NODEJS_BUILD_CMDS
