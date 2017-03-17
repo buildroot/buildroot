@@ -1,0 +1,14 @@
+config BR2_PACKAGE_OHNETGENERATED
+	bool "ohnetgenerated"
+	depends on !BR2_m68k # ohnet
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HAS_THREADS # ohnet
+	select BR2_PACKAGE_OHNET
+	help
+	  Pre-generated proxy and provider files, covering ohMedia and
+	  UPnP:AV services, to clients of ohNet.
+
+	  https://github.com/openhome/ohNetGenerated
+
+comment "ohnetgenerated needs a toolchain w/ C++, threads"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS
