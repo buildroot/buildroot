@@ -39,9 +39,7 @@ else
 $( error "-DCPPSDK_PLATFORM not set")
 endif
 
-ifeq ($(BR2_ENABLE_DEBUG),y)
-CPPSDK_CONF_OPTS += -DCMAKE_BUILD_TYPE=Debug 
-else ifeq ($(BR2_PACKAGE_CPPSDK_DEBUG),y)
+ifeq ($(BR2_PACKAGE_CPPSDK_DEBUG),y)
 CPPSDK_CONF_OPTS += -DCMAKE_BUILD_TYPE=Debug
 endif
 
