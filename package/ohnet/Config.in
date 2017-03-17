@@ -1,0 +1,13 @@
+config BR2_PACKAGE_OHNET
+	bool "ohnet"
+	depends on !BR2_m68k # toolchain issues
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	help
+	  OpenHome Networking (ohNet) is a modern, cross platform UPnP
+	  stack.
+
+	  http://wiki.openhome.org/wiki/OhNet
+
+comment "ohnet needs a toolchain w/ C++, threads"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS

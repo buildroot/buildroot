@@ -1,0 +1,29 @@
+From 5da89bbe47aacdbc13a97babf0e03089b010a307 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?J=C3=B6rg=20Krause?= <joerg.krause@embedded.rocks>
+Date: Tue, 21 Mar 2017 20:34:02 +0100
+Subject: [PATCH 3/3] Remove unsupported install-pkgconf
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Jörg Krause <joerg.krause@embedded.rocks>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index b3c82b06..4881235c 100644
+--- a/Makefile
++++ b/Makefile
+@@ -536,7 +536,7 @@ copy_build_includes:
+ 	$(cp) Os/*.h $(inc_build)/OpenHome
+ 	$(cp) Os/*.inl $(inc_build)/OpenHome
+ 
+-install : install-pkgconf install-libs install-includes
++install : install-libs install-includes
+ 
+ uninstall : uninstall-pkgconf uninstall-libs uninstall-includes
+ 
+-- 
+2.12.0
+
