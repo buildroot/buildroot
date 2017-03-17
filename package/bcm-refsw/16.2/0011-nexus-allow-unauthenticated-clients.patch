@@ -1,0 +1,33 @@
+--- a/nexus/nxclient/server/nxserverlib.h.org	2017-03-17 19:28:32.130108222 +0100
++++ b/nexus/nxclient/server/nxserverlib.h	2017-03-17 19:30:56.325995743 +0100
+@@ -244,6 +244,7 @@
+ /* nxserver_lib.c API */
+ void nxserver_get_default_settings(struct nxserver_settings *settings);
+ nxserver_t nxserverlib_init(const struct nxserver_settings *settings);
++nxserver_t nxserverlib_init_extended(const struct nxserver_settings *settings, const bool authorizedOnly);
+ void nxserverlib_uninit(nxserver_t server);
+ struct b_session *nxserver_get_client_session(nxclient_t client);
+ /* get_singleton is used for nxclient local to use externally opened nxserverlib */
+--- a/nexus/nxclient/server/nxserverlib.c.org	2017-03-17 19:26:42.929215794 +0100
++++ b/nexus/nxclient/server/nxserverlib.c	2017-03-17 19:30:48.222227095 +0100
+@@ -2907,6 +2907,11 @@
+ 
+ nxserver_t nxserverlib_init(const struct nxserver_settings *settings)
+ {
++    return (nxserverlib_init_extended (settings, true));
++}
++
++nxserver_t nxserverlib_init_extended (const struct nxserver_settings *settings, const bool authorizedOnly)
++{
+     NEXUS_PlatformStartServerSettings serverSettings;
+     NEXUS_Error rc;
+     nxserver_t server;
+@@ -2973,7 +2978,7 @@
+     BKNI_ReleaseMutex(server->settings.lock);
+ 
+     NEXUS_Platform_GetDefaultStartServerSettings(&serverSettings);
+-    serverSettings.allowUnauthenticatedClients = false;
++    serverSettings.allowUnauthenticatedClients = !authorizedOnly;
+     rc = NEXUS_Platform_StartServer(&serverSettings);
+     BDBG_ASSERT(!rc);
+ 
