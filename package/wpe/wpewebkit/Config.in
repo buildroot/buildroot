@@ -23,7 +23,6 @@ config BR2_PACKAGE_WPEWEBKIT
 	select BR2_PACKAGE_LIBGCRYPT if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
 	select BR2_PACKAGE_SQLITE if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
 	select BR2_PACKAGE_XKEYBOARD_CONFIG if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC && BR2_PACKAGE_LIBXKBCOMMON
-	select BR2_PACKAGE_HOST_UPX if BR2_PACKAGE_WPEWEBKIT_SELFCOMPRESS
 	help
 	  Here be dragons.
 
@@ -193,12 +192,6 @@ config BR2_PACKAGE_WPEWEBKIT_ENABLE_TEXT_SINK
 	default y
 	help
 	  Defines ENABLE_TEXT_SINK=ON
-
-config BR2_PACKAGE_WPEWEBKIT_SELFCOMPRESS
-	bool "Self-compress WPE libraries"
-	default n
-	help
-	  Use UPX to Self-compress WPE libraries in order to save space
 
 endmenu
 
