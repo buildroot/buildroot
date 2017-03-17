@@ -325,6 +325,9 @@ endif
 
 define WEBBRIDGE_POST_TARGET_INITD
     $(INSTALL) -D -m 0755 package/webbridge/S80webbridge $(TARGET_DIR)/etc/init.d
+    sed \
+		-ie 's#@@WEBBRIDGE_PERSISTENT_PATH@@#$(call qstrip,$(BR2_PACKAGE_WEBBRIDGE_PERSISTENT_PATH))#' \
+		$(TARGET_DIR)/etc/init.d/S80webbridge
 endef
 
 WEBBRIDGE_POST_INSTALL_TARGET_HOOKS += WEBBRIDGE_POST_TARGET_INITD
