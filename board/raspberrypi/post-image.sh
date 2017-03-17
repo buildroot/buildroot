@@ -32,6 +32,18 @@ __EOF__
 esac
 done
 
+AARCH64="$(grep ^BR2_aarch64=y ${BR2_CONFIG})"
+if [ "x${AARCH64}" != "x" ]; then
+	if ! grep -qE '^arm_64bit=1' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+		echo "Adding 'arm_64bit=1' to config.txt."
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Force 64bit
+arm_64bit=1
+__EOF__
+	fi
+fi
+
 INITRAMFS="$(grep ^BR2_TARGET_ROOTFS_INITRAMFS=y ${BR2_CONFIG})"
 ROOTFS_CPIO="$(grep ^BR2_TARGET_ROOTFS_CPIO=y ${BR2_CONFIG})"
 ROOTFS_EXT4="$(grep ^BR2_TARGET_ROOTFS_EXT2_4=y ${BR2_CONFIG})"
