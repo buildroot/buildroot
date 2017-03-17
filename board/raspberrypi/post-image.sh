@@ -29,6 +29,43 @@ hdmi_mode=4
 __EOF__
 	fi
 	;;
+	--overclock-pi012)
+	if ! grep -qE '^arm_freq=' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+		echo "Adding 'overclock=pi012' to config.txt."
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Overclock
+arm_freq=1000
+gpu_freq=500
+sdram_freq=500
+over_voltage=6
+__EOF__
+	fi
+	;;
+	--overclock-pi3)
+	if ! grep -qE '^arm_freq=' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+		echo "Adding 'overclock=pi3' to config.txt."
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Overclock
+arm_freq=1350
+gpu_freq=500
+sdram_freq=500
+over_voltage=5
+__EOF__
+	fi
+	;;
+	--silent)
+	if ! grep -qE '^disable_splash=1' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+		echo "Adding 'silent=1' to config.txt."
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Silent
+disable_splash=1
+boot_delay=0
+__EOF__
+	fi
+	;;
 esac
 done
 
