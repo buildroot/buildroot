@@ -1,0 +1,77 @@
+From d4dcfe3fa8d14ab42a1e0e320aed7c2f03f7c24a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?J=C3=B6rg=20Krause?= <joerg.krause@embedded.rocks>
+Date: Tue, 21 Mar 2017 17:43:47 +0100
+Subject: [PATCH 2/2] Add CMakeLists.txt
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Jörg Krause <joerg.krause@embedded.rocks>
+---
+ CMakeLists.txt | 54 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
+ create mode 100644 CMakeLists.txt
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+new file mode 100644
+index 0000000..d0cf814
+--- /dev/null
++++ b/CMakeLists.txt
+@@ -0,0 +1,54 @@
++cmake_minimum_required(VERSION 2.8)
++
++project(ohTopology CXX)
++
++option(BUILD_SHARED_LIBS "Build jsonrpcpp as a shared library" ON)
++option(BUILD_STATIC_LIBS "Build jsonrpcpp as a static library" ON)
++
++if (NOT BUILD_SHARED_LIBS AND NOT BUILD_STATIC_LIBS)
++    message(FATAL_ERROR "One or both of BUILD_SHARED_LIBS or BUILD_STATIC_LIBS"
++                        "must be set to ON to build")
++endif()
++
++if(NOT DEFINED CMAKE_INSTALL_LIBDIR)
++    SET(CMAKE_INSTALL_LIBDIR lib CACHE PATH "Output directory for libraries")
++endif()
++
++if(NOT DEFINED CMAKE_INSTALL_INCLUDEDIR)
++    SET(CMAKE_INSTALL_INCLUDEDIR include CACHE
++        PATH "Output directory for header files")
++endif()
++
++find_path(OHNET_INCLUDE_DIRS
++	NAMES OpenHome/OhNetTypes.h
++	PATH_SUFFIXES ohNet
++)
++if (OHNET_INCLUDE_DIRS)
++    include_directories(${OHNET_INCLUDE_DIRS})
++    message("INC: ${OHNET_INCLUDE_DIRS}")
++endif ()
++
++find_library(OHNETCORE_LIBRARY libohNetCore.a PATH_SUFFIXES ohNet)
++if (OHNETCORE_LIBRARY)
++endif ()
++
++include_directories(OpenHome/Av)
++set(OHTOPOLOGY_SOURCES OpenHome/Av/CpTopology.cpp
++                       OpenHome/Av/CpTopology1.cpp
++                       OpenHome/Av/CpTopology2.cpp
++                       OpenHome/Av/CpTopology3.cpp
++                       OpenHome/Av/CpTopology4.cpp)
++
++if (BUILD_SHARED_LIBS)
++    add_library(ohtopology SHARED "${OHTOPOLOGY_SOURCES}")
++    install(TARGETS ohtopology LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}")
++endif (BUILD_SHARED_LIBS)
++
++if (BUILD_STATIC_LIBS)
++    add_library(ohtopology-static STATIC "${OHTOPOLOGY_SOURCES}")
++    set_target_properties(ohtopology-static PROPERTIES OUTPUT_NAME ohtopology)
++    install(TARGETS ohtopology-static ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
++endif (BUILD_STATIC_LIBS)
++
++install(FILES OpenHome/Av/CpTopology.h
++    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/OpenHome/Av")
+-- 
+2.12.0
+

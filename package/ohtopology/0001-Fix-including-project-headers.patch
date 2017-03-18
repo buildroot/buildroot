@@ -1,0 +1,161 @@
+From 0e4adad696af4b71b4cf016c4fb76ba9b7a0e658 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?J=C3=B6rg=20Krause?= <joerg.krause@embedded.rocks>
+Date: Tue, 21 Mar 2017 17:43:33 +0100
+Subject: [PATCH 1/2] Fix including project headers
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Jörg Krause <joerg.krause@embedded.rocks>
+---
+ OpenHome/Av/CpTopology.cpp          | 4 ++--
+ OpenHome/Av/CpTopology2.cpp         | 2 +-
+ OpenHome/Av/CpTopology2.h           | 4 ++--
+ OpenHome/Av/CpTopology3.cpp         | 2 +-
+ OpenHome/Av/CpTopology4.cpp         | 2 +-
+ OpenHome/Av/Tests/TestTopology.cpp  | 2 +-
+ OpenHome/Av/Tests/TestTopology1.cpp | 2 +-
+ OpenHome/Av/Tests/TestTopology2.cpp | 2 +-
+ OpenHome/Av/Tests/TestTopology3.cpp | 2 +-
+ OpenHome/Av/Tests/TestTopology4.cpp | 2 +-
+ 10 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/OpenHome/Av/CpTopology.cpp b/OpenHome/Av/CpTopology.cpp
+index 0808734..a404e25 100644
+--- a/OpenHome/Av/CpTopology.cpp
++++ b/OpenHome/Av/CpTopology.cpp
+@@ -1,10 +1,10 @@
+-#include <OpenHome/Av/CpTopology.h>
++#include "CpTopology.h"
+ 
+ #include <OpenHome/Private/Debug.h>
+ #include <OpenHome/Private/Parser.h>
+ #include <OpenHome/Private/Ascii.h>
+ #include <OpenHome/Net/Private/XmlParser.h>
+-#include <OpenHome/Av/Debug.h>
++#include "Debug.h"
+ 
+ #include "CpTopology4.h"
+ 
+diff --git a/OpenHome/Av/CpTopology2.cpp b/OpenHome/Av/CpTopology2.cpp
+index 80864cb..ebd05b0 100644
+--- a/OpenHome/Av/CpTopology2.cpp
++++ b/OpenHome/Av/CpTopology2.cpp
+@@ -4,7 +4,7 @@
+ #include <OpenHome/Private/Parser.h>
+ #include <OpenHome/Private/Ascii.h>
+ #include <OpenHome/Net/Private/XmlParser.h>
+-#include <OpenHome/Av/Debug.h>
++#include "Debug.h"
+ 
+ using namespace OpenHome;
+ using namespace OpenHome::Net;
+diff --git a/OpenHome/Av/CpTopology2.h b/OpenHome/Av/CpTopology2.h
+index fd2def3..5bce672 100644
+--- a/OpenHome/Av/CpTopology2.h
++++ b/OpenHome/Av/CpTopology2.h
+@@ -4,8 +4,8 @@
+ #include <OpenHome/OhNetTypes.h>
+ #include <OpenHome/Private/Fifo.h>
+ #include <OpenHome/Private/Thread.h>
+-#include <Generated/CpAvOpenhomeOrgProduct1.h>
+-#include <Generated/CpAvOpenhomeOrgVolume1.h>
++#include <OpenHome/Net/Core/CpAvOpenhomeOrgProduct1.h>
++#include <OpenHome/Net/Core/CpAvOpenhomeOrgVolume1.h>
+ 
+ #include <vector>
+ 
+diff --git a/OpenHome/Av/CpTopology3.cpp b/OpenHome/Av/CpTopology3.cpp
+index 49f6185..5776f9c 100644
+--- a/OpenHome/Av/CpTopology3.cpp
++++ b/OpenHome/Av/CpTopology3.cpp
+@@ -1,7 +1,7 @@
+ #include "CpTopology3.h"
+ 
+ #include <OpenHome/Private/Debug.h>
+-#include <OpenHome/Av/Debug.h>
++#include "Debug.h"
+ 
+ using namespace OpenHome;
+ using namespace OpenHome::Net;
+diff --git a/OpenHome/Av/CpTopology4.cpp b/OpenHome/Av/CpTopology4.cpp
+index b661ae4..8499afe 100644
+--- a/OpenHome/Av/CpTopology4.cpp
++++ b/OpenHome/Av/CpTopology4.cpp
+@@ -4,7 +4,7 @@
+ #include <OpenHome/Private/Parser.h>
+ #include <OpenHome/Private/Ascii.h>
+ #include <OpenHome/Net/Private/XmlParser.h>
+-#include <OpenHome/Av/Debug.h>
++#include "Debug.h"
+ 
+ using namespace OpenHome;
+ using namespace OpenHome::Net;
+diff --git a/OpenHome/Av/Tests/TestTopology.cpp b/OpenHome/Av/Tests/TestTopology.cpp
+index 6fa7c65..5f8960c 100644
+--- a/OpenHome/Av/Tests/TestTopology.cpp
++++ b/OpenHome/Av/Tests/TestTopology.cpp
+@@ -8,7 +8,7 @@
+ #include <OpenHome/Private/Timer.h>
+ #include <OpenHome/OsWrapper.h>
+ #include "../CpTopology4.h"
+-#include <OpenHome/Av/Debug.h>
++#include "Debug.h"
+ 
+ using namespace OpenHome;
+ using namespace OpenHome::Net;
+diff --git a/OpenHome/Av/Tests/TestTopology1.cpp b/OpenHome/Av/Tests/TestTopology1.cpp
+index 63ff7b2..5630bb2 100644
+--- a/OpenHome/Av/Tests/TestTopology1.cpp
++++ b/OpenHome/Av/Tests/TestTopology1.cpp
+@@ -9,7 +9,7 @@
+ #include <OpenHome/Private/Timer.h>
+ #include <OpenHome/OsWrapper.h>
+ #include "../CpTopology1.h"
+-#include <OpenHome/Av/Debug.h>
++#include "Debug.h"
+ 
+ using namespace OpenHome;
+ using namespace OpenHome::Net;
+diff --git a/OpenHome/Av/Tests/TestTopology2.cpp b/OpenHome/Av/Tests/TestTopology2.cpp
+index 25ea7e4..d3bfd42 100644
+--- a/OpenHome/Av/Tests/TestTopology2.cpp
++++ b/OpenHome/Av/Tests/TestTopology2.cpp
+@@ -9,7 +9,7 @@
+ #include <OpenHome/Private/Timer.h>
+ #include <OpenHome/OsWrapper.h>
+ #include "../CpTopology2.h"
+-#include <OpenHome/Av/Debug.h>
++#include "Debug.h"
+ 
+ using namespace OpenHome;
+ using namespace OpenHome::Net;
+diff --git a/OpenHome/Av/Tests/TestTopology3.cpp b/OpenHome/Av/Tests/TestTopology3.cpp
+index b312443..e291d60 100644
+--- a/OpenHome/Av/Tests/TestTopology3.cpp
++++ b/OpenHome/Av/Tests/TestTopology3.cpp
+@@ -9,7 +9,7 @@
+ #include <OpenHome/Private/Timer.h>
+ #include <OpenHome/OsWrapper.h>
+ #include "../CpTopology3.h"
+-#include <OpenHome/Av/Debug.h>
++#include "Debug.h"
+ 
+ using namespace OpenHome;
+ using namespace OpenHome::Net;
+diff --git a/OpenHome/Av/Tests/TestTopology4.cpp b/OpenHome/Av/Tests/TestTopology4.cpp
+index 6376fad..e56c708 100644
+--- a/OpenHome/Av/Tests/TestTopology4.cpp
++++ b/OpenHome/Av/Tests/TestTopology4.cpp
+@@ -9,7 +9,7 @@
+ #include <OpenHome/Private/Timer.h>
+ #include <OpenHome/OsWrapper.h>
+ #include "../CpTopology4.h"
+-#include <OpenHome/Av/Debug.h>
++#include "Debug.h"
+ 
+ using namespace OpenHome;
+ using namespace OpenHome::Net;
+-- 
+2.12.0
+
