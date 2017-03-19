@@ -1,0 +1,35 @@
+From f39c75c0341523f8ee3d2f4f130b81e3c985fe75 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?J=C3=B6rg=20Krause?= <joerg.krause@embedded.rocks>
+Date: Tue, 21 Mar 2017 13:53:49 +0100
+Subject: [PATCH 2/2] Add static library as build target
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Jörg Krause <joerg.krause@embedded.rocks>
+---
+ Makefile | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 8be2e6b..85a965b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -97,11 +97,13 @@ $(objdir)SoundcardDriver.$(objext) : ohSongcast/Posix/SoundcardDriver.cpp
+ 	$(compiler)SoundcardDriver.$(objext) -c $(cflags) $(includes) ohSongcast/Posix/SoundcardDriver.cpp
+ endif
+ 
+-objects_songcast_dll =$(objects_topology) $(objects_sender) $(objects_songcast) $(objects_driver) $(ohnetdir)$(libprefix)ohNetCore.$(libext)
++objects_songcast_dll =$(objects_topology) $(objects_sender) $(objects_receiver) $(objects_songcast) $(objects_driver) $(ohnetdir)$(libprefix)ohNetCore.$(libext)
+ 
+ $(objdir)$(dllprefix)ohSongcast.$(dllext) : $(objects_topology) $(objects_sender) $(objects_songcast) $(objects_driver)
+ 	$(link_dll) $(linkoutput)$(objdir)$(dllprefix)ohSongcast.$(dllext) $(objects_songcast_dll)
+ 
++$(objdir)$(dllprefix)ohSongcast.$(libext) : $(objects_topology) $(objects_sender) $(objects_receiver) $(objects_songcast) $(objects_driver)
++	$(ar)$(libprefix)ohSongcast.$(libext) $(objects_songcast_dll)
+ 
+ $(objdir)TestSongcast.$(exeext) : $(objdir)$(dllprefix)ohSongcast.$(dllext) ohSongcast/TestSongcast.cpp
+ 	$(compiler)TestSongcast.$(objext) -c $(cflags) $(includes) ohSongcast/TestSongcast.cpp
+-- 
+2.12.0
+
