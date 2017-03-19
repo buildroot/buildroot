@@ -1,0 +1,13 @@
+config BR2_PACKAGE_OHNETMON
+	bool "ohnetmon"
+	depends on !BR2_m68k # ohnet
+	depends on BR2_INSTALL_LIBSTDCPP
+	select BR2_PACKAGE_OHNET
+	select BR2_PACKAGE_HOST_OHDEVTOOLS
+	help
+	  ohNetmon implements the OpenHome NetworkMonitor service.
+
+	  https://github.com/openhome/ohNetmon
+
+comment "ohtopology needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP

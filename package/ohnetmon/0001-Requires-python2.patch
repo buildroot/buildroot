@@ -1,0 +1,45 @@
+From b1092f15aee0a954c435b887259996a9c10ed87e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?J=C3=B6rg=20Krause?= <joerg.krause@embedded.rocks>
+Date: Mon, 20 Mar 2017 12:01:52 +0100
+Subject: [PATCH] Requires python2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Jörg Krause <joerg.krause@embedded.rocks>
+---
+ go      | 4 ++--
+ wscript | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/go b/go
+index a9a5f22..020c196 100755
+--- a/go
++++ b/go
+@@ -1,6 +1,6 @@
+ #!/bin/sh
+ readlinkf() {
+-    python -c 'import os,sys;print os.path.realpath(sys.argv[1])' $1
++    python2 -c 'import os,sys;print os.path.realpath(sys.argv[1])' $1
+ }
+ SCRIPT=`readlinkf $0`
+ PROJECT_ROOT=`dirname $SCRIPT`
+@@ -31,4 +31,4 @@ else
+   export PYTHONPATH=$OHDEVTOOLS_ROOT:$PYTHONPATH
+ fi
+ cd "$PROJECT_ROOT"
+-python -u -m go $@
++python2 -u -m go $@
+diff --git a/wscript b/wscript
+index d2e7675..442fd22 100644
+--- a/wscript
++++ b/wscript
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/usr/bin/python2
+ 
+ import sys
+ import os
+-- 
+2.12.0
+
