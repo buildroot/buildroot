@@ -1,0 +1,27 @@
+config BR2_PACKAGE_SC2MPD
+	bool "sc2mpd"
+	depends on !BR2_m68k # ohnet, toolchain issues
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HAS_THREADS # ohnet
+	select BR2_PACKAGE_ALSA_LIB
+	select BR2_PACKAGE_LIBMICROHTTPD
+	select BR2_PACKAGE_LIBSAMPLERATE
+	select BR2_PACKAGE_OHNET
+	select BR2_PACKAGE_OHNETGENERATED
+	select BR2_PACKAGE_OHSONGCAST
+	help
+	  Gateway forwarding a Linn Songcast audio stream to MPD.
+
+	  sc2mpd is designed to work with upmpdcli, with which it
+	  provides a Songcast Receiver interface usable from any
+	  Songcast Sender such as the Windows or Mac OS X Linn
+	  Songcast applications.
+
+	  The package also contains a reverse gateway, mpd2sc,
+	  forwarding audio played by mpd to a Songcast Sender, mostly
+	  useful for multiroom synchronized play.
+
+	  http://www.lesbonscomptes.com/upmpdcli/sc2mpd.html
+
+comment "sc2mpd needs a toolchain w/ C++, threads"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS
