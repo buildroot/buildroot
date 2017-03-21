@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEWEBKIT_VERSION = ddfdd80097ca6e5e0bef3472818a830bd318096b
+WPEWEBKIT_VERSION = a97f19a9ead6ca8ca91508e7724b747b23375595
 WPEWEBKIT_SITE = $(call github,WebPlatformForEmbedded,WPEWebKit,$(WPEWEBKIT_VERSION))
 
 WPEWEBKIT_INSTALL_STAGING = YES
@@ -159,7 +159,6 @@ endif
 ifeq ($(BR2_PACKAGE_WPEWEBKIT_ONLY_JSC), y)
 WPEWEBKIT_FLAGS += -DENABLE_STATIC_JSC=ON
 endif
-
 
 ifeq ($(BR2_ENABLE_DEBUG),y)
 WPEWEBKIT_EXTRA_FLAGS += \
