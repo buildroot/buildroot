@@ -5,15 +5,15 @@
 ################################################################################
 
 ifeq ($(BR2_PACKAGE_BCM_REFSW_16_1),y)
-BCM_REFSW_VERSION = 16.1
+BCM_REFSW_VERSION = 16.1-2
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_16_2),y)
-BCM_REFSW_VERSION = 16.2
+BCM_REFSW_VERSION = 16.2-2
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_16_3),y)
 BCM_REFSW_VERSION = 16.3
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_15_2),y)
 BCM_REFSW_VERSION = 15.2
 else
-BCM_REFSW_VERSION = 16.2
+BCM_REFSW_VERSION = 16.2-2
 endif
 
 BCM_REFSW_SITE = git@github.com:Metrological/bcm-refsw.git
