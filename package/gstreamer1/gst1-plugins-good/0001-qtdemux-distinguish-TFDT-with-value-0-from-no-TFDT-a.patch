@@ -1,0 +1,53 @@
+From 43510d1b1a1843be4f07d96a303486c30cbcb687 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Wed, 22 Mar 2017 18:18:40 +0000
+Subject: [PATCH] qtdemux: distinguish TFDT with value 0 from no TFDT at all
+
+TFDTs with time 0 are being ignored since commit 1fc3d42f. They're
+mistaken with the case of not having TFDT, but those two cases
+must be distinguished in some way.
+
+This patch passes an extra boolean flag when the TFDT is present.
+This is now the condition being evaluated, instead of checking for
+0 time.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=780410
+---
+ gst/isomp4/qtdemux.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index 8d304bd..87f8f42 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -3039,7 +3039,8 @@ static gboolean
+ qtdemux_parse_trun (GstQTDemux * qtdemux, GstByteReader * trun,
+     QtDemuxStream * stream, guint32 d_sample_duration, guint32 d_sample_size,
+     guint32 d_sample_flags, gint64 moof_offset, gint64 moof_length,
+-    gint64 * base_offset, gint64 * running_offset, gint64 decode_ts)
++    gint64 * base_offset, gint64 * running_offset, gint64 decode_ts,
++    gboolean has_tfdt)
+ {
+   GstClockTime gst_ts = GST_CLOCK_TIME_NONE;
+   guint64 timestamp;
+@@ -3200,7 +3201,7 @@ qtdemux_parse_trun (GstQTDemux * qtdemux, GstByteReader * trun,
+       /* If this is a GST_FORMAT_BYTES stream and there's a significant
+        * difference (1 sec.) between decode_ts and timestamp, prefer the
+        * former */
+-      if (decode_ts != 0 && !qtdemux->upstream_format_is_time
++      if (has_tfdt && !qtdemux->upstream_format_is_time
+           && ABSDIFF (decode_ts, timestamp) >
+           MAX (stream->duration_last_moof / 2,
+               GSTTIME_TO_QTSTREAMTIME (stream, GST_SECOND))) {
+@@ -3919,7 +3920,7 @@ qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
+     while (trun_node) {
+       qtdemux_parse_trun (qtdemux, &trun_data, stream,
+           ds_duration, ds_size, ds_flags, moof_offset, length, &base_offset,
+-          &running_offset, decode_time);
++          &running_offset, decode_time, (tfdt_node != NULL));
+       /* iterate all siblings */
+       trun_node = qtdemux_tree_get_sibling_by_type_full (trun_node, FOURCC_trun,
+           &trun_data);
+-- 
+2.1.4
+
