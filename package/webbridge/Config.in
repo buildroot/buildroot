@@ -161,7 +161,7 @@ if BR2_PACKAGE_WEBBRIDGE_PLUGIN_REMOTECONTROL
 
 config BR2_PACKAGE_WEBBRIDGE_PLUGIN_IRNEXUS
 	bool "BCM Nexus remote control"
-	depends BR2_PACKAGE_BCM_REFSW
+	depends on BR2_PACKAGE_BCM_REFSW
 	help
 		Enable the Nexus IR remote input
 
