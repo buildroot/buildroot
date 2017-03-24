@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEWEBKIT_VERSION = a97f19a9ead6ca8ca91508e7724b747b23375595
+WPEWEBKIT_VERSION = a3019feb3f19eecd37afb7507ccd047a8fa2e186
 WPEWEBKIT_SITE = $(call github,WebPlatformForEmbedded,WPEWebKit,$(WPEWEBKIT_VERSION))
 
 WPEWEBKIT_INSTALL_STAGING = YES
