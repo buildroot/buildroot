@@ -154,7 +154,28 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_REMOTECONTROL
 	  different source into the linux key system. 
 
 	  Current implementations supports:
-	  - GreeenPeak RF4CE chip (510) with RF4CE remotes.
+	  - GreenPeak RF4CE chip (510) with RF4CE remotes.
+	  - IR Remotes
+
+if BR2_PACKAGE_WEBBRIDGE_PLUGIN_REMOTECONTROL
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_IRNEXUS
+	bool "BCM Nexus remote control"
+	depends BR2_PACKAGE_BCM_REFSW
+	help
+		Enable the Nexus IR remote input
+
+if BR2_PACKAGE_WEBBRIDGE_PLUGIN_IRNEXUS
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_IRNEXUS_MODE
+	string "IR mode"
+	default "23"
+	help
+	  Sets the IR Mode to be used with IR Nexus. Every remote has a different mode and key mapping.
+
+endif
+
+endif
 
 comment "remotecontrol requires the GreenPeak GP501 or GP711 to be selected and userland lib to be build."
 	depends on !BR2_PACKAGE_GREENPEAK || !BR2_PACKAGE_GREENPEAK_USERLANDLIB || (!BR2_PACKAGE_GREENPEAK_GP501 && !BR2_PACKAGE_GREENPEAK_GP711)
@@ -170,11 +191,6 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_VOICECONTROL
 comment "voicecontrol requires the GreenPeak GP501 or GP711 to be selected and userland lib to be build."
 	depends on !BR2_PACKAGE_GREENPEAK || !BR2_PACKAGE_GREENPEAK_USERLANDLIB || (!BR2_PACKAGE_GREENPEAK_GP501 && !BR2_PACKAGE_GREENPEAK_GP711)
 
-config BR2_PACKAGE_WEBBRIDGE_PLUGIN_IR_REMOTE
-	bool "irremote"
-	help
-	  A remote control implementation that translates keys coming in from a
-	  IR remote into the linux key system.
 
 config BR2_PACKAGE_WEBBRIDGE_PLUGIN_DEVICEINFO
 	bool "deviceinfo"
