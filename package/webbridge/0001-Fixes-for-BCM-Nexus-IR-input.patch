@@ -1,0 +1,369 @@
+From 2d69fce9f06d93c617eff29326aa4b69ab59909f Mon Sep 17 00:00:00 2001
+From: wouterlucas <wouter@wouterlucas.com>
+Date: Thu, 23 Mar 2017 17:25:24 -0700
+Subject: [PATCH] Fixes for BCM Nexus IR input
+
+Signed-off-by: wouterlucas <wouter@wouterlucas.com>
+---
+ Plugins/RemoteControl/CMakeLists.txt       |  16 ++-
+ Plugins/RemoteControl/IRRemote.cpp         | 150 ++++++++++++++++-------------
+ Plugins/RemoteControl/IRRemote.h           |  25 +++--
+ Plugins/RemoteControl/IRRemoteKeyMap4.json |  41 ++++++++
+ Plugins/RemoteControl/keymap.json          |   1 +
+ 5 files changed, 152 insertions(+), 81 deletions(-)
+ create mode 100644 Plugins/RemoteControl/IRRemoteKeyMap4.json
+
+diff --git a/Plugins/RemoteControl/CMakeLists.txt b/Plugins/RemoteControl/CMakeLists.txt
+index 518313f..162fd68 100644
+--- a/Plugins/RemoteControl/CMakeLists.txt
++++ b/Plugins/RemoteControl/CMakeLists.txt
+@@ -14,6 +14,18 @@ if(WEBBRIDGE_PLUGIN_NXRESOURCECENTER)
+     set (WEBBRDIGE_PLUGIN_REMOTECONTROL_DEFINITIONS -DIR_ENABLED)
+ endif(WEBBRIDGE_PLUGIN_NXRESOURCECENTER)
+ 
++# install keymap
++if(WEBBRIDGE_PLUGIN_REMOTECONTROL_IRNEXUS)
++  message("-- Enabled IR Nexus mode: ${WEBBRIDGE_PLUGIN_REMOTECONTROL_IRMODE}")
++  set (WEBBRIDGE_PLUGIN_REMOTECONTROL_SOURCES ${WEBBRIDGE_PLUGIN_REMOTECONTROL_SOURCES} IRRemote.cpp)
++  if (WEBBRIDGE_PLUGIN_REMOTECONTROL_IRMODE EQUAL "4")
++    install(FILES IRRemoteKeyMap4.json DESTINATION ${CMAKE_INSTALL_PREFIX}/share/webbridge/RemoteControl RENAME keymap.json)
++  else ()
++    # default (works with silver IR remote and webui <-- FIXME)
++    install(FILES kepmap.json DESTINATION ${CMAKE_INSTALL_PREFIX}/share/webbridge/RemoteControl RENAME keymap.json)
++  endif()
++endif()
++
+ if(GREENPEAK_REMOTE)
+     find_package(Greenpeak REQUIRED)
+     include_directories (${GREENPEAK_INCLUDE_DIRS})
+@@ -96,9 +108,7 @@ if(GREENPEAK_REMOTE)
+       -DGP_VERSIONINFO_RACE_VERSION=1,3,2,1
+       -DGP_VERSIONINFO_USER=UNKNOWN@UNKNOWN
+       -DMAIN_FUNCTION_NAME=gpMain
+-)
+-else()
+-    install(FILES keymap.json DESTINATION ${CMAKE_INSTALL_PREFIX}/share/webbridge/RemoteControl)
++    )
+ endif(GREENPEAK_REMOTE) 
+ 
+ add_definitions (${WEBBRDIGE_PLUGIN_REMOTECONTROL_DEFINITIONS})
+diff --git a/Plugins/RemoteControl/IRRemote.cpp b/Plugins/RemoteControl/IRRemote.cpp
+index f75dd30..c3ef658 100644
+--- a/Plugins/RemoteControl/IRRemote.cpp
++++ b/Plugins/RemoteControl/IRRemote.cpp
+@@ -1,8 +1,10 @@
+ #include "IRRemote.h"
+ #include "RemoteAdministrator.h"
+ 
+-#include <refsw/nexus_types.h>
+-#include <refsw/nexus_ir_input.h>
++#include <refsw/nexus_config.h>
++#include <refsw/nexus_platform.h>
++#include <refsw/nxclient.h>
++#include <refsw/nexus_input_client.h>
+ #include <linux/uinput.h>
+ 
+ extern int getIRHandle();
+@@ -10,75 +12,68 @@ extern int getIRHandle();
+ namespace Solutions {
+ 	namespace Plugin {
+ 
+-		static class ObserveNexus {
+-
+-		private:
+-			ObserveNexus(const ObserveNexus&);
+-			ObserveNexus& oeprator= (const ObserveNexus&);
+-
+-		public:
+-			ObserveNexus() {
+-			}
+-			~ObserveNexus() {
+-			}
+-
+-		public:
+-			void StateChange() {
+-				// Oke, we found Nexus up and running... Initialize the IR.
+-
+-				// Oops Nexus is down, Deinitialize the IR.
+-			}
+-
+-		} _observer;
++		NxClient_AllocResults allocResults;
++		NEXUS_InputClientHandle inputClient;
+ 
+ 		static IRRemote* _singleton(Generics::Service<IRRemote>::Create<IRRemote>());
+ 
+-		IRRemote::IRRemote() {
++		IRRemote::IRRemote()
++			: _callback(NULL)
++			, lastKeyMS(200) {
+ 			Remotes::RemoteAdministrator::Instance().Announce(*this);
++
++			Initialize();
+ 		}
+ 
+ 		/* virtual */ IRRemote::~IRRemote() {
+ 			Remotes::RemoteAdministrator::Instance().Revoke(*this);
+ 		}
+ 
+-		void IRRemote::Initialize(int deviceID)
++		void IRRemote::Initialize()
+ 		{
+-			// Get IR handle from NXResourceCentre
+-			_nexusIRHandle = getIRHandle(); //TODO: Do the feasiblity of NEXUS_InputClient_Acquire
+-											// method (examples/multiprocess/input_client.c) and try to avoid
+-											// direct dependency with NXResourceCentre
+-			if (_nexusIRHandle) {
+-				// Register Callback for IR events
+-				NEXUS_IrInputSettings pSettings;
+-				NEXUS_IrInput_GetSettings(static_cast<NEXUS_IrInputHandle>(_nexusIRHandle), &pSettings);
+-				pSettings.dataReady.callback = IRRemote::NexusCallback;
+-				pSettings.dataReady.param = deviceID;
+-				pSettings.dataReady.context = static_cast<NEXUS_IrInputHandle>(_nexusIRHandle);
+-#ifdef __DEBUG__
+-				int nxsRet =
+-#endif
+-				NEXUS_IrInput_SetSettings(static_cast<NEXUS_IrInputHandle>(_nexusIRHandle), &pSettings);
+-
+-				ASSERT(NEXUS_SUCCESS == nxsRet && "NEXUS_IrInput_SetSettings Failed");
++
++			NEXUS_Error rc = NEXUS_SUCCESS;
++			NxClient_AllocSettings allocSettings;
++			NEXUS_InputClientSettings settings;
++
++			rc = NxClient_Join(NULL);
++			ASSERT(rc == NEXUS_SUCCESS);
++
++			NxClient_GetDefaultAllocSettings(&allocSettings);
++			allocSettings.inputClient = 1;
++
++			rc = NxClient_Alloc(&allocSettings, &allocResults);
++			ASSERT(rc == NEXUS_SUCCESS);
++
++			inputClient = NEXUS_InputClient_Acquire(allocResults.inputClient[0].id);
++			if (inputClient) {
++				TRACE_L1("%s: Acquired NEXUS Input Client\n", __FUNCTION__);
++				NEXUS_InputClient_GetSettings(inputClient, &settings);
++				settings.filterMask = 1<<NEXUS_InputRouterDevice_eIrInput;
++
++				settings.codeAvailable.callback = IRRemote::NexusCallback;
++				settings.codeAvailable.param = allocResults.inputClient[0].id;
++				settings.codeAvailable.context = static_cast<NEXUS_InputClientHandle>(inputClient);
++				rc = NEXUS_InputClient_SetSettings(inputClient, &settings);
++				TRACE_L1("%s: NEXUS_InputClient_SetSettings rc=%d\n", __FUNCTION__, rc);
++			} else {
++				TRACE_L1("%s: NEXUS_InputClient_Acquire Failed. inputClient=%p\n", __FUNCTION__, inputClient);
+ 			}
++
++			return;
+ 		}
+ 
+ 		void IRRemote::DeInitialize()
+ 		{
+-			// Deregister Callback for IR events
+-			NEXUS_IrInputSettings pSettings;
+-			NEXUS_IrInput_GetSettings(static_cast<NEXUS_IrInputHandle>(_nexusIRHandle), &pSettings);
+-			pSettings.dataReady.callback = NULL;
+-			pSettings.dataReady.param = 0;
+-			pSettings.dataReady.context = NULL;
+-			NEXUS_IrInput_SetSettings(static_cast<NEXUS_IrInputHandle>(_nexusIRHandle), &pSettings);
+-
+-			// Reset nexus session handle
+-			_nexusIRHandle = 0;
+-		}
+ 
+-		/* virtual */ const TCHAR* IRRemote::Name() const {
+-			return (_T("NexusIR"));
++			NEXUS_InputClientSettings settings;
++			NEXUS_InputClient_GetSettings(inputClient, &settings);
++			settings.codeAvailable.callback = NULL;
++			settings.codeAvailable.param = 0;
++			settings.codeAvailable.context = NULL;
++			NEXUS_InputClient_SetSettings(inputClient, &settings);
++
++			inputClient = NULL;
+ 		}
+ 
+ 		/* virtual */ bool IRRemote::Pairing() {
+@@ -86,11 +81,13 @@ namespace Solutions {
+ 		}
+ 
+ 		/* virtual */ void IRRemote::Callback(Exchange::IKeyHandler* callback) {
++			TRACE_L1("%s: callback=%p _callback=%p \n", __FUNCTION__, callback, _callback);
+ 			ASSERT((callback == nullptr) ^ (_callback == nullptr));
+ 			_callback = callback;
+ 		}
+ 
+ 		/* virtual */ uint32 IRRemote::Error() const {
++			return (_error);
+ 		}
+ 
+ 		/* virtual */ string IRRemote::MetaData() const {
+@@ -99,28 +96,43 @@ namespace Solutions {
+ 
+ 		/* static */ void IRRemote::NexusCallback(void* nexusIRHandle, int deviceID)
+ 		{
+-			_singleton->SendEvent(nexusIRHandle, deviceID)
++			_singleton->SendEvent(nexusIRHandle, deviceID);
+ 		}
+ 
+ 		void IRRemote::SendEvent(const void * const nexusIRHandle, const int deviceID) {
+-			bool overFlow;
+-			size_t numEventsRead = 0;
+-			NEXUS_IrInputEvent irEvent;
++			NEXUS_InputRouterCode inputRouterCode;
++			unsigned num;
++			int rc;
++
++			// always get the key, else the queue fills up and weird things happen
++			rc = NEXUS_InputClient_GetCodes((NEXUS_InputClientHandle)inputClient, &inputRouterCode, 1, &num);
++			int rawCode = inputRouterCode.data.irInput.code;
++			int repeat  = inputRouterCode.data.irInput.repeat;
++			if (rc || !num) {
++				return;
++			}
+ 
+-#ifdef __DEBUG__
+-			int nxsRet =
+-#endif
+-			NEXUS_IrInput_GetEvents(static_cast<NEXUS_IrInputHandle>(nexusIRHandle),
+-					&irEvent, 1, &numEventsRead, &overFlow);
++			// get timestamp and calc diff, avoid sending keys if they come in <200 ms
++			long long ms = getMS();
++			int diff = (lastKeyMS) ? (ms - lastKeyMS) : 200;
+ 
+-			ASSERT(NEXUS_SUCCESS == nxsRet && "NEXUS_IrInput_GetEvents Failed");
++			if ((diff < 150) && (true == repeat)) {
++				TRACE_L1("%s: Ignoring key <150ms diff=%ld", __FUNCTION__, diff);
++				return;
++			}
+ 
+-			// Send Event
+-			if ((1 == numEventsRead) && (true == irEvent.repeat)) {
++			TRACE_L1("%s: sending keycode=%x", __FUNCTION__, rawCode);
++			_callback->KeyEvent(true, rawCode);
++			_callback->KeyEvent(false, rawCode);
++			lastKeyMS = ms;
++		}
+ 
+-				_callback->KeyEvent(true, irEvent.code);
+-				_callback->KeyEvent(false, irEvent.code);
+-			}
++		long long IRRemote::getMS()
++		{
++			struct timeval tp;
++			gettimeofday(&tp, NULL);
++			return ((long long) tp.tv_sec * 1000L + tp.tv_usec / 1000);
+ 		}
++
+ 	}
+ }
+\ No newline at end of file
+diff --git a/Plugins/RemoteControl/IRRemote.h b/Plugins/RemoteControl/IRRemote.h
+index db42291..cc28653 100644
+--- a/Plugins/RemoteControl/IRRemote.h
++++ b/Plugins/RemoteControl/IRRemote.h
+@@ -16,25 +16,32 @@ namespace Solutions {
+ 			IRRemote();
+ 			virtual ~IRRemote();
+ 
+-			// Interface to register with BCM Nexus IR subsystem
+-			// Set event device as user mode event device already open by Remote Control
+-			void Initialize(int eventDescriptor);
++			BEGIN_INTERFACE_MAP(IRRemote)
++			INTERFACE_ENTRY(Exchange::IKeyProducer)
++			END_INTERFACE_MAP
+ 
+-			// Interface to de-register from BCM Nexus IR subsystem
++			void Initialize();
+ 			void DeInitialize();
+ 
+-			virtual const TCHAR* Name() const override;
+-			virtual bool Pairing() override;
+-			virtual void Callback(Exchange::IKeyHandler* callback) override;
+-			virtual uint32 Error() const override;
+-			virtual string MetaData() const override;
++			virtual const TCHAR* Name() const
++			{
++				return (_T("NexusIR"));
++			}
++
++			virtual bool Pairing();
++			virtual void Callback(Exchange::IKeyHandler* callback);
++			virtual uint32 Error() const;
++			virtual string MetaData() const;
+ 
+ 		private:
+ 			static void NexusCallback(void* nexusIRHandle, int deviceID);
+ 			void SendEvent(const void* const nexusIRHandle, const int deviceID);
++			long long getMS();
+ 
+ 		private:
+ 			int _nexusIRHandle;
++			long long lastKeyMS;
++			uint32 _error;
+ 			Exchange::IKeyHandler* _callback;
+ 		};
+ 	}
+diff --git a/Plugins/RemoteControl/IRRemoteKeyMap4.json b/Plugins/RemoteControl/IRRemoteKeyMap4.json
+new file mode 100644
+index 0000000..a1506cf
+--- /dev/null
++++ b/Plugins/RemoteControl/IRRemoteKeyMap4.json
+@@ -0,0 +1,41 @@
++[
++	{ "code": "0xE011", "key": 28,  "char": "[OK]" },
++	{ "code": "0x9034", "key": 103, "char": "[UP]" },
++	{ "code": "0x8035", "key": 108, "char": "[DOWN]" },
++	{ "code": "0x7036", "key": 105, "char": "[LEFT]" },
++	{ "code": "0x6037", "key": 106, "char": "[RIGHT]" },
++	{ "code": "0xd012", "key": 14,  "char": "[DELETE]" },
++	{ "code": "0x0006", "key": 372, "char": "[ZOOM]" },
++	{ "code": "0xD012", "key": 172, "char": "[HOME]" },
++	{ "code": "0x6019", "key": 139, "char": "[MENU]" },
++	{ "code": "0xa051", "key": 174, "char": "[EXIT]" },
++	{ "code": "0x303a", "key": 1,   "char": "[RETURN]"},
++	{ "code": "0x0000", "key": 11,  "char": "0" },
++	{ "code": "0xF001", "key": 2,   "char": "1" },
++	{ "code": "0xE002", "key": 3,   "char": "2" },
++	{ "code": "0xD003", "key": 4,   "char": "3" },
++	{ "code": "0xC004", "key": 5,   "char": "4" },
++	{ "code": "0xB005", "key": 6,   "char": "5" },
++	{ "code": "0xA006", "key": 7,   "char": "6" },
++	{ "code": "0x9007", "key": 8,   "char": "7" },
++	{ "code": "0x8008", "key": 9,   "char": "8" },
++	{ "code": "0x7009", "key": 10,  "char": "9" },
++	{ "code": "0xF609FF00", "key": 402, "char": "[CHANNEL UP]" },
++	{ "code": "0xF20dFF00", "key": 403, "char": "[CHANNEL DOWN]" },
++	{ "code": "0x0032", "key": 226, "char": "[MIC]" },
++	{ "code": "0x0035", "key": 358, "char": "[INFO]" },
++	{ "code": "0x0037", "key": 358, "char": "[VOD]" },
++	{ "code": "0x0038", "key": 138, "char": "[HELP]" },
++	{ "code": "0x5038", "key": 200, "char": "[PLAY]" },
++	{ "code": "0x001F", "key": 201, "char": "[PAUSE]" },
++	{ "code": "0x4039", "key": 166, "char": "[STOP]" },
++	{ "code": "0x0047", "key": 167, "char": "[RECORD]" },
++	{ "code": "0x101E", "key": 168, "char": "[REWIND]" },
++	{ "code": "0x201D", "key": 159, "char": "[FORWARD]" },
++	{ "code": "0x0053", "key": 365, "char": "[GUIDE]" },
++	{ "code": "0x006B", "key": 116, "char": "[POWER]" },
++	{ "code": "0x0071", "key": 399, "char": "[GREEN]" },
++	{ "code": "0x0072", "key": 400, "char": "[YELLOW]" },
++	{ "code": "0x0073", "key": 401, "char": "[BLUE]" },
++	{ "code": "0x0074", "key": 398, "char": "[RED]" }
++]
+diff --git a/Plugins/RemoteControl/keymap.json b/Plugins/RemoteControl/keymap.json
+index 2f33708..c19c3be 100644
+--- a/Plugins/RemoteControl/keymap.json
++++ b/Plugins/RemoteControl/keymap.json
+@@ -56,6 +56,7 @@
+ 	{ "code": "0x8031",   "key":   43  },
+ 	{ "code": "0x8033",   "key":   39  },
+ 	{ "code": "0x8034",   "key":   40  },
++	{ "code": "0x8035",   "key":  108  },
+ 	{ "code": "0x8036",   "key":   51  },
+ 	{ "code": "0x8037",   "key":   52  },
+ 	{ "code": "0x8038",   "key":   53  },
+-- 
+2.7.4
+
