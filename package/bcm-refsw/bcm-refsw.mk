@@ -7,17 +7,18 @@
 ifeq ($(BR2_PACKAGE_BCM_REFSW_16_1),y)
 BCM_REFSW_VERSION = 16.1-2
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_16_2),y)
-BCM_REFSW_VERSION = 16.2-2
+BCM_REFSW_VERSION = 16.2-3
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_16_3),y)
 BCM_REFSW_VERSION = 16.3
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_15_2),y)
 BCM_REFSW_VERSION = 15.2
 else
-BCM_REFSW_VERSION = 16.2-2
+BCM_REFSW_VERSION = 16.2-3
 endif
 
 BCM_REFSW_SITE = git@github.com:Metrological/bcm-refsw.git
 BCM_REFSW_SITE_METHOD = git
+
 BCM_REFSW_DEPENDENCIES = linux host-pkgconf host-flex host-bison host-gperf
 BCM_REFSW_LICENSE = PROPRIETARY
 BCM_REFSW_INSTALL_STAGING = YES
@@ -103,6 +104,12 @@ BCM_REFSW_VCX = $(BCM_REFSW_DIR)/rockford/middleware/${BCM_REFSW_PLATFORM_VC}
 BCM_REFSW_OUTPUT = $(BCM_REFSW_DIR)/obj.${BCM_REFSW_PLATFORM}
 BCM_REFSW_BIN = ${BCM_REFSW_OUTPUT}/nexus/bin
 
+ifneq ($(BR2_PACKAGE_WEBBRIDGE_PLUGIN_IRNEXUS_MODE),)
+BCM_REFSW_IRMODE=$(call qstrip,$(BR2_PACKAGE_WEBBRIDGE_PLUGIN_IRNEXUS_MODE))
+else
+BCM_REFSW_IRMODE=23
+endif
+
 define BCM_REFSW_BUILD_NEXUS
 	$(TARGET_CONFIGURE_OPTS) \
 	$(TARGET_MAKE_ENV) \
@@ -184,7 +191,8 @@ define BCM_REFSW_INSTALL_TARGET_NXSERVER_INIT
 endef
 else
 define BCM_REFSW_INSTALL_TARGET_NXSERVER_INIT
-	$(INSTALL) -D -m 755 package/bcm-refsw/S70nxserver $(TARGET_DIR)/etc/init.d/S70nxserver;
+	$(INSTALL) -D -m 755 package/bcm-refsw/S70nxserver $(TARGET_DIR)/etc/init.d/S70nxserver; \
+	sed -i 's/%IRMODE%/${BCM_REFSW_IRMODE}/g' $(TARGET_DIR)/etc/init.d/S70nxserver;
 endef
 endif
 

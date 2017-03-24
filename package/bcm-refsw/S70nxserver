@@ -3,6 +3,7 @@ export SAGEBIN_PATH=/lib/firmware/
 
 start() {
 	echo -n "Starting nxserver: "
+	export NEXUS_IR_MODE=%IRMODE%
 	start-stop-daemon -S -q -b -m -p /var/run/nxserver.pid --exec /usr/bin/nxserver -- </dev/null >/dev/null 2>&1
 	[ $? == 0 ] && echo "OK" || echo "FAIL"
 }
