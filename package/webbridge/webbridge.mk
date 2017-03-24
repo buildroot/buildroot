@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WEBBRIDGE_VERSION = 6c5906ca76e060ddfe7bd7df592900fcd5f2fb05
+WEBBRIDGE_VERSION = b02cc78c7475620bc1268722bb66e196d2a7ae08
 WEBBRIDGE_SITE_METHOD = git
 WEBBRIDGE_SITE = git@github.com:Metrological/webbridge.git
 WEBBRIDGE_INSTALL_STAGING = YES
@@ -328,9 +328,8 @@ WEBBRIDGE_CONF_OPTS += -DWEBBRIDGE_WEBSERVER_PORT=$(call qstrip,$(BR2_PACKAGE_WE
 endif
 
 define WEBBRIDGE_POST_TARGET_INITD
-    $(INSTALL) -D -m 0755 package/webbridge/S80webbridge $(TARGET_DIR)/etc/init.d
-    sed \
-		-ie 's#@@WEBBRIDGE_PERSISTENT_PATH@@#$(call qstrip,$(BR2_PACKAGE_WEBBRIDGE_PERSISTENT_PATH))#' \
+	$(INSTALL) -D -m 0755 package/webbridge/S80webbridge $(TARGET_DIR)/etc/init.d
+	sed -i 's#@@WEBBRIDGE_PERSISTENT_PATH@@#$(call qstrip,$(BR2_PACKAGE_WEBBRIDGE_PERSISTENT_PATH))#' \
 		$(TARGET_DIR)/etc/init.d/S80webbridge
 endef
 
