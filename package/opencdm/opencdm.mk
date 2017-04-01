@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-OPENCDM_VERSION = 04669dd00977e23c137d5bb9f84c9c5e1af52165
+OPENCDM_VERSION = e63c1f67dd3b20b68592972989dd451f98e432a9
 OPENCDM_SITE_METHOD = git
-OPENCDM_SITE = https://github.com/Metrological/open-content-decryption-module.git
+OPENCDM_SITE = https://github.com/WebPlatformForEmbedded/WPEOpenCDM.git
 
 OPENCDM_INSTALL_STAGING = YES
 OPENCDMI_LICENSE = Apache-2.0
