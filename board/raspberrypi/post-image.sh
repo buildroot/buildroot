@@ -39,6 +39,7 @@ arm_freq=1000
 gpu_freq=500
 sdram_freq=500
 over_voltage=6
+avoid_warnings=1
 __EOF__
 	fi
 	;;
@@ -52,6 +53,7 @@ arm_freq=1350
 gpu_freq=500
 sdram_freq=500
 over_voltage=5
+avoid_warnings=1
 __EOF__
 	fi
 	;;
