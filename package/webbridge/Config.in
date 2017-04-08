@@ -191,7 +191,6 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_VOICECONTROL
 comment "voicecontrol requires the GreenPeak GP501 or GP711 to be selected and userland lib to be build."
 	depends on !BR2_PACKAGE_GREENPEAK || !BR2_PACKAGE_GREENPEAK_USERLANDLIB || (!BR2_PACKAGE_GREENPEAK_GP501 && !BR2_PACKAGE_GREENPEAK_GP711)
 
-
 config BR2_PACKAGE_WEBBRIDGE_PLUGIN_DEVICEINFO
 	bool "deviceinfo"
 	help
@@ -470,5 +469,22 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_SNAPSHOT
 	depends on BR2_PACKAGE_RPI_USERLAND
 	help
 	  A plugin that exposes a screenshot API
+
+endif
+
+menuconfig BR2_PACKAGE_WEBBRIDGE_PLUGIN_WINDOWMANAGER
+        bool "windowmanager"
+        select BR2_PACKAGE_CPPSDK_PROCESS
+        depends on BR2_PACKAGE_WESTEROS
+        default y
+        help
+          A Plugin that launch WindowManager.
+
+if BR2_PACKAGE_WEBBRIDGE_PLUGIN_WINDOWMANAGER
+
+config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WINDOWMANAGER_AUTOSTART
+        depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_WINDOWMANAGER
+        bool "autostart"
+        default y
 
 endif
