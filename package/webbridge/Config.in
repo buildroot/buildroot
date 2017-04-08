@@ -248,19 +248,19 @@ comment "netflix is dependent on the netflix package compiled as library"
 	depends on !BR2_PACKAGE_NETFLIX_LIB
 
 menuconfig BR2_PACKAGE_WEBBRIDGE_PLUGIN_OPENCDMI
-        bool "opencdmi"
-        select BR2_PACKAGE_CPPSDK_PROCESS
-        depends on BR2_PACKAGE_OPENCDMI
-        default y
-        help
-          A Plugin to interact with CDM Services.
+    bool "opencdmi"
+    select BR2_PACKAGE_CPPSDK_PROCESS
+    depends on BR2_PACKAGE_OPENCDMI
+    default y
+    help
+      A Plugin to interact with CDM Services.
 
 if BR2_PACKAGE_WEBBRIDGE_PLUGIN_OPENCDMI
 
 config BR2_PACKAGE_WEBBRIDGE_PLUGIN_OPENCDMI_AUTOSTART
-        depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_OPENCDMI
-        bool "autostart"
-        default y
+    depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_OPENCDMI
+    bool "autostart"
+    default y
 
 endif
 
@@ -470,21 +470,24 @@ config BR2_PACKAGE_WEBBRIDGE_PLUGIN_SNAPSHOT
 	help
 	  A plugin that exposes a screenshot API
 
-endif
-
 menuconfig BR2_PACKAGE_WEBBRIDGE_PLUGIN_WINDOWMANAGER
-        bool "windowmanager"
-        select BR2_PACKAGE_CPPSDK_PROCESS
-        depends on BR2_PACKAGE_WESTEROS
-        default y
-        help
-          A Plugin that launch WindowManager.
+    bool "windowmanager"
+    select BR2_PACKAGE_CPPSDK_PROCESS
+    depends on BR2_PACKAGE_WAYLAND
+    default n
+    help
+      A Plugin that enables the WindowManager.
 
 if BR2_PACKAGE_WEBBRIDGE_PLUGIN_WINDOWMANAGER
 
 config BR2_PACKAGE_WEBBRIDGE_PLUGIN_WINDOWMANAGER_AUTOSTART
-        depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_WINDOWMANAGER
-        bool "autostart"
-        default y
+    depends on BR2_PACKAGE_WEBBRIDGE_PLUGIN_WINDOWMANAGER
+    bool "autostart"
+    default y
+
+endif
+
+comment "window manager needs wayland to be enabled."
+	depends on !BR2_PACKAGE_WAYLAND
 
 endif
