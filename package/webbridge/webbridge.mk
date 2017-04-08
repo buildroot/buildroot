@@ -8,7 +8,7 @@ WEBBRIDGE_VERSION = 88deb5999e98a7a2cf8ff5f1db4c325fbb288726
 WEBBRIDGE_SITE_METHOD = git
 WEBBRIDGE_SITE = git@github.com:Metrological/webbridge.git
 WEBBRIDGE_INSTALL_STAGING = YES
-WEBBRIDGE_DEPENDENCIES += cppsdk westeros
+WEBBRIDGE_DEPENDENCIES += cppsdk
 
 WEBBRIDGE_BUILD_TYPE = 0      # 0 = Production, 1 = Release, 2 = Debug 
 WEBBRIDGE_BUILD_MAJOR = 2
