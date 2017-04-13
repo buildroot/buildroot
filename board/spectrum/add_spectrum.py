@@ -8,24 +8,24 @@ else:
 
 webbridgeFile = webbridgePath + 'config.json'
 
-appStoreObj = {
-   'callsign':'AppStore',
+spectrumObj = {
+   'callsign':'Spectrum',
    'locator':'libwebkitbrowser.so',
    'classname':'WebKitBrowser',
-   'autostart':False,
+   'autostart':True,
    'configuration':{
         'url':'about:blank',
-        'useragent':'Mozilla/5.0 (Macintosh, Intel Mac OS X 10_11_4) AppleWebKit/602.1.28+ (KHTML, like Gecko) Version/9.1 Safari/601.5.17 WPE-Reference',
+        'useragent':'Mozilla/5.0 (Macintosh, Intel Mac OS X 10_11_4) AppleWebKit/602.1.28+ (KHTML, like Gecko) Version/9.1 Safari/601.5.17 WPE-Spectrum',
         'injectedbundle':'libWPEInjectedBundle.so',
         'transparent':True,
         'compositor':'noaa',
-        'inspector':'0.0.0.0:9998',
+        'inspector':'0.0.0.0:9997',
         'fps':True,
         'cursor':False,
         'touch':False,
         'msebuffers':'audio:2m,video:15m,text:1m',
         'memoryprofile':150,
-        'memorypressure':'databaseprocess:30m,networkprocess:50m,webprocess:500m,rpcprocess:50m',
+        'memorypressure':'databaseprocess:30m,networkprocess:50m,webprocess:300m,rpcprocess:50m',
         'mediadiskcache':False,
         'diskcache':'90m',
         'xhrcache':True
@@ -43,12 +43,12 @@ print('Successfully loaded webbridge config.json')
 
 for plugin in data['plugins']:
     #print('Checking ' + plugin['callsign'])
-    if (plugin['callsign'] == 'AppStore'):
-        print('AppStore is already present in config.json')
+    if (plugin['callsign'] == 'Spectrum'):
+        print('Already present in config.json')
         sys.exit()
 
-data['plugins'].insert(-1, appStoreObj)
-print('Successfully inserted appstore plugin into webbridge config.json')
+data['plugins'].insert(-1, spectrumObj)
+print('Successfully inserted plugin into webbridge config.json')
 #print(json.dumps(data, indent=4, separators=(',',':')))
 
 with open(webbridgeFile, 'w') as f:
