@@ -1,0 +1,994 @@
+From 63fa8f73b835c392b988b2c1ce44b70c43eb76f3 Mon Sep 17 00:00:00 2001
+From: Olivier Blin <olivier.blin@softathome.com>
+Date: Thu, 30 Mar 2017 20:21:58 +0200
+Subject: [PATCH 01/12] Remove unused applyColorProfile declaration in
+ WEBPImageDecoder
+
+Definition removed in r197171
+---
+ Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
+index e282b22..6285c5d 100644
+--- a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
++++ b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
+@@ -51,7 +51,6 @@ class WEBPImageDecoder final : public ImageDecoder {
+     WebPIDecoder* m_decoder;
+     bool m_hasAlpha;
+ 
+-    void applyColorProfile(const uint8_t*, size_t, ImageFrame&) { };
+     void clear();
+ };
+ 
+
+From 6c53d6f1be8abcf194b3496256f8bb56d84ac1c9 Mon Sep 17 00:00:00 2001
+From: Olivier Blin <olivier.blin@softathome.com>
+Date: Thu, 2 Mar 2017 05:57:31 +0100
+Subject: [PATCH 02/12] Fix regression in partial decoding of webp images
+
+Backport of Blink commit r148528
+
+WebPFreeDecBuffer() call removed compared to Blink commit, since it
+was incorrect: WebPIDelete() already frees the decoding buffer.
+
+Blink commit b19af83b683a409d2d06affbb10ce9ebe4352cd6 details:
+
+Author: noel@chromium.org <noel@chromium.org@bbb929c8-8fbe-4397-9dbb-9b2b20218538>
+Date: Wed Apr 17 02:55:28 2013 +0000
+
+    Regression(wk r144242): Breaks partial decoding of webp images
+
+    Re-read the frame buffer.getAddr(0,0) address every time through
+    the decode() routine (partial decodes) since its address can
+    change between decode() calls on some platforms.
+
+    No change in behavior so no new tests; covered by exiting tests.
+
+    Note: webkit r144242 is temporarily reverted from Blink. This CL
+    to prepare for its second coming. Props to skal@ for the initial
+    approach to this patch.
+
+    BUG=none
+    TEST=LayoutTests/fast/images/webp* etc
+
+    Review URL: https://codereview.chromium.org/14001004
+
+    git-svn-id: svn://svn.chromium.org/blink/trunk@148528 bbb929c8-8fbe-4397-9dbb-9b2b20218538
+---
+ .../platform/image-decoders/webp/WEBPImageDecoder.cpp        | 12 ++++++++----
+ .../WebCore/platform/image-decoders/webp/WEBPImageDecoder.h  |  1 +
+ 2 files changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
+index 4a38f58..206fa43 100644
+--- a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
++++ b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
+@@ -50,6 +50,7 @@ WEBPImageDecoder::WEBPImageDecoder(AlphaOption alphaOption, GammaAndColorProfile
+     , m_decoder(0)
+     , m_hasAlpha(false)
+ {
++    WebPInitDecBuffer(&m_decoderBuffer);
+ }
+ 
+ WEBPImageDecoder::~WEBPImageDecoder()
+@@ -135,14 +136,17 @@ bool WEBPImageDecoder::decode(bool onlySize)
+         WEBP_CSP_MODE mode = outputMode(m_hasAlpha);
+         if (!m_premultiplyAlpha)
+             mode = outputMode(false);
+-        int rowStride = size().width() * sizeof(RGBA32);
+-        uint8_t* output = reinterpret_cast<uint8_t*>(buffer.backingStore()->pixelAt(0, 0));
+-        int outputSize = size().height() * rowStride;
+-        m_decoder = WebPINewRGB(mode, output, outputSize, rowStride);
++        m_decoderBuffer.colorspace = mode;
++        m_decoderBuffer.u.RGBA.stride = size().width() * sizeof(RGBA32);
++        m_decoderBuffer.u.RGBA.size = m_decoderBuffer.u.RGBA.stride * size().height();
++        m_decoderBuffer.is_external_memory = 1;
++        m_decoder = WebPINewDecoder(&m_decoderBuffer);
+         if (!m_decoder)
+             return setFailed();
+     }
+ 
++    m_decoderBuffer.u.RGBA.rgba = reinterpret_cast<uint8_t*>(buffer.backingStore()->pixelAt(0, 0));
++
+     switch (WebPIUpdate(m_decoder, dataBytes, dataSize)) {
+     case VP8_STATUS_OK:
+         buffer.setDecoding(ImageFrame::Decoding::Complete);
+diff --git a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
+index 6285c5d..ab20e0d 100644
+--- a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
++++ b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
+@@ -49,6 +49,7 @@ class WEBPImageDecoder final : public ImageDecoder {
+     bool decode(bool onlySize);
+ 
+     WebPIDecoder* m_decoder;
++    WebPDecBuffer m_decoderBuffer;
+     bool m_hasAlpha;
+ 
+     void clear();
+
+From 1c8bef826b0de2cd9017f2e95b8e98e6c0b11fe2 Mon Sep 17 00:00:00 2001
+From: Olivier Blin <olivier.blin@softathome.com>
+Date: Thu, 30 Mar 2017 20:31:55 +0200
+Subject: [PATCH 03/12] Bug 113124 - Add animation support for WebP images
+
+Backported from Blink r153187
+
+Still many things to fix:
+- frame DisposalMethod is not handled
+- requiredPreviousFrameIndex is not handled
+- non-animated code path without demux almost removed, check if this is ok
+- clearFrameBufferCache not implemented
+- blending with previous frame not implemented (applyPostProcessing method)
+- TODO: remove support of old WebP versions, check version in distros using WebKitGTK
+
+Also, this requires a newer WebP library built with demux support.
+---
+ .../image-decoders/webp/WEBPImageDecoder.cpp       | 203 +++++++++++++++++++--
+ .../image-decoders/webp/WEBPImageDecoder.h         |  14 +-
+ Source/cmake/FindWebP.cmake                        |  22 ++-
+ 3 files changed, 219 insertions(+), 20 deletions(-)
+
+diff --git a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
+index 206fa43..a21da6c 100644
+--- a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
++++ b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
+@@ -49,12 +49,20 @@ WEBPImageDecoder::WEBPImageDecoder(AlphaOption alphaOption, GammaAndColorProfile
+     : ImageDecoder(alphaOption, gammaAndColorProfileOption)
+     , m_decoder(0)
+     , m_hasAlpha(false)
++    , m_formatFlags(0)
++    , m_demux(0)
++    , m_demuxState(WEBP_DEMUX_PARSING_HEADER)
++    , m_haveAlreadyParsedThisData(false)
++    , m_haveReadAnimationParameters(false)
++    , m_repetitionCount(WebCore::RepetitionCountOnce)
+ {
+     WebPInitDecBuffer(&m_decoderBuffer);
+ }
+ 
+ WEBPImageDecoder::~WEBPImageDecoder()
+ {
++    WebPDemuxDelete(m_demux);
++    m_demux = 0;
+     clear();
+ }
+ 
+@@ -68,32 +76,200 @@ void WEBPImageDecoder::clear()
+ bool WEBPImageDecoder::isSizeAvailable()
+ {
+     if (!ImageDecoder::isSizeAvailable())
+-         decode(true);
++        updateDemuxer();
++    // FIXME: non-animation fallback?
++        //decode(0, nullptr, true);
+ 
+     return ImageDecoder::isSizeAvailable();
+ }
+ 
+-ImageFrame* WEBPImageDecoder::frameBufferAtIndex(size_t index)
++size_t WEBPImageDecoder::frameCount() const
+ {
+-    if (index)
++    if (!const_cast<WEBPImageDecoder*>(this)->updateDemuxer())
+         return 0;
+ 
++    // FIXME: non-animation fallback?
++    /*
+     if (m_frameBufferCache.isEmpty())
+         m_frameBufferCache.resize(1);
++    */
++
++    return m_frameBufferCache.size();
++}
++
++ImageFrame* WEBPImageDecoder::frameBufferAtIndex(size_t index)
++{
++    if (index >= frameCount())
++        return 0;
++
++    ImageFrame& frame = m_frameBufferCache[index];
++    if (frame.isComplete())
++        return &frame;
++
++    if (1 /* RuntimeEnabledFeatures::animatedWebPEnabled() */) {
++        Vector<size_t> framesToDecode;
++        size_t frameToDecode = index;
++        //do {
++            framesToDecode.append(frameToDecode);
++            // see Chromium commit 6e5bde615781b310f8e6f03bc4e81b6a5f993bf2
++            //frameToDecode = m_frameBufferCache[frameToDecode].requiredPreviousFrameIndex();
++        //} while (frameToDecode != notFound && m_frameBufferCache[frameToDecode].status() != ImageFrame::FrameComplete);
++
++        ASSERT(m_demux);
++        for (size_t i = framesToDecode.size(); i > 0; --i) {
++            size_t frameIndex = framesToDecode[i - 1];
++
++            WebPIterator webpFrame;
++            if (!WebPDemuxGetFrame(m_demux, frameIndex + 1, &webpFrame))
++                return 0;
++            decode(frameIndex, &webpFrame, false);
++            WebPDemuxReleaseIterator(&webpFrame);
++
++            // We need more data to continue decoding.
++            if (!m_frameBufferCache[frameIndex].isComplete())
++                break;
++        }
++
++        // It is also a fatal error if all data is received and we have decoded all
++        // frames available but the file is truncated.
++        if (index >= m_frameBufferCache.size() - 1 && isAllDataReceived() && m_demux && m_demuxState != WEBP_DEMUX_DONE)
++            setFailed();
++
++        return &frame;
++     }
+ 
+-    ImageFrame& frame = m_frameBufferCache[0];
+-    if (!frame.isComplete())
+-        decode(false);
++    decode(index, nullptr, false);
+     return &frame;
+ }
+ 
+-bool WEBPImageDecoder::decode(bool onlySize)
++void WEBPImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
++{
++    if (failed())
++        return;
++
++    ImageDecoder::setData(data, allDataReceived);
++
++    if (m_demuxState != WEBP_DEMUX_DONE)
++        m_haveAlreadyParsedThisData = false;
++}
++
++int WEBPImageDecoder::repetitionCount() const
++{
++    return failed() ? WebCore::RepetitionCountOnce : m_repetitionCount;
++}
++
++// FIXME
++//virtual void clearFrameBufferCache(size_t) { } 
++
++bool WEBPImageDecoder::updateDemuxer()
++{
++    if (m_haveAlreadyParsedThisData)
++        return true;
++
++    m_haveAlreadyParsedThisData = true;
++
++    const unsigned webpHeaderSize = 20; // RIFF_HEADER_SIZE + CHUNK_HEADER_SIZE)
++    if (m_data->size() < webpHeaderSize)
++        return false; // Wait for headers so that WebPDemuxPartial doesn't return null.
++
++    WebPDemuxDelete(m_demux);
++    WebPData inputData = { reinterpret_cast<const uint8_t*>(m_data->data()), m_data->size() };
++    m_demux = WebPDemuxPartial(&inputData, &m_demuxState);
++    if (!m_demux)
++        return setFailed();
++
++    if (m_demuxState <= WEBP_DEMUX_PARSING_HEADER)
++        return false; // Not enough data for parsing canvas width/height yet.
++
++    bool hasAnimation = (m_formatFlags & ANIMATION_FLAG);
++    if (!ImageDecoder::isSizeAvailable()) {
++        m_formatFlags = WebPDemuxGetI(m_demux, WEBP_FF_FORMAT_FLAGS);
++        hasAnimation = (m_formatFlags & ANIMATION_FLAG);
++        if (!setSize(IntSize(WebPDemuxGetI(m_demux, WEBP_FF_CANVAS_WIDTH), WebPDemuxGetI(m_demux, WEBP_FF_CANVAS_HEIGHT))))
++            return setFailed();
++    }
++    ASSERT(ImageDecoder::isSizeAvailable());
++    const size_t newFrameCount = WebPDemuxGetI(m_demux, WEBP_FF_FRAME_COUNT);
++    if (hasAnimation && !m_haveReadAnimationParameters && newFrameCount) {
++        // As we have parsed at least one frame (even if partially),
++        // we must already have parsed the animation properties.
++        // This is because ANIM chunk always precedes ANMF chunks.
++        m_repetitionCount = WebPDemuxGetI(m_demux, WEBP_FF_LOOP_COUNT);
++        ASSERT(m_repetitionCount == (m_repetitionCount & 0xffff)); // Loop count is always <= 16 bits.
++        if (!m_repetitionCount)
++            m_repetitionCount = WebCore::RepetitionCountInfinite;
++        m_haveReadAnimationParameters = true;
++    }
++    const size_t oldFrameCount = m_frameBufferCache.size();
++    if (newFrameCount > oldFrameCount) {
++        m_frameBufferCache.resize(newFrameCount);
++        for (size_t i = oldFrameCount; i < newFrameCount; ++i) {
++            // FIXME
++            /*
++            m_frameBufferCache[i].setPremultiplyAlpha(m_premultiplyAlpha);
++            if (!hasAnimation) {
++                ASSERT(!i);
++                m_frameBufferCache[i].setRequiredPreviousFrameIndex(notFound);
++                continue;
++            }
++            */
++            WebPIterator animatedFrame;
++            WebPDemuxGetFrame(m_demux, i + 1, &animatedFrame);
++            ASSERT(animatedFrame.complete == 1);
++            m_frameBufferCache[i].setDuration(animatedFrame.duration);
++            //m_frameBufferCache[i].setDisposalMethod(animatedFrame.dispose_method == WEBP_MUX_DISPOSE_BACKGROUND ? ImageFrame::DisposeOverwriteBgcolor : ImageFrame::DisposeKeep);
++            WebPDemuxReleaseIterator(&animatedFrame);
++            //m_frameBufferCache[i].setRequiredPreviousFrameIndex(findRequiredPreviousFrame(i));
++        }
++    }
++    return true;
++}
++
++bool WEBPImageDecoder::initFrameBuffer(size_t frameIndex, const WebPIterator* webpFrame)
++{
++    ImageFrame& buffer = m_frameBufferCache[frameIndex];
++    if (!buffer.isEmpty()) // Already initialized.
++        return true;
++
++    // This frame doesn't rely on any previous data.
++    if (!buffer.initialize(size(), m_premultiplyAlpha))
++        return setFailed();
++
++    if (webpFrame) {
++        // Initialize the frame rect in our buffer.
++        IntRect frameRect(webpFrame->x_offset, webpFrame->y_offset, webpFrame->width, webpFrame->height);
++
++        // Make sure the frameRect doesn't extend outside the buffer.
++        if (frameRect.maxX() > size().width())
++            frameRect.setWidth(size().width() - webpFrame->x_offset);
++        if (frameRect.maxY() > size().height())
++            frameRect.setHeight(size().height() - webpFrame->y_offset);
++
++        buffer.backingStore()->setFrameRect(frameRect);
++        //m_frameBackgroundHasAlpha = !frameRect.contains(IntRect(IntPoint(), size()));
++    }
++
++    buffer.setDecoding(ImageFrame::Decoding::Partial);
++    // The buffer is transparent outside the decoded area while the image is loading.
++    // The correct value of 'hasAlpha' for the frame will be set when it is fully decoded.
++    buffer.setHasAlpha(true);
++    return true;
++}
++
++bool WEBPImageDecoder::decode(size_t frameIndex, const WebPIterator* webpFrame, bool onlySize)
+ {
+     if (failed())
+         return false;
+ 
+-    const uint8_t* dataBytes = reinterpret_cast<const uint8_t*>(m_data->data());
+-    const size_t dataSize = m_data->size();
++    const uint8_t* dataBytes;
++    size_t dataSize;
++    if (webpFrame) {
++        dataBytes = reinterpret_cast<const uint8_t*>(webpFrame->fragment.bytes);
++        dataSize = webpFrame->fragment.size;
++    } else {
++        dataBytes = reinterpret_cast<const uint8_t*>(m_data->data());
++        dataSize = m_data->size();
++    }
+ 
+     if (!ImageDecoder::isSizeAvailable()) {
+         static const size_t imageHeaderSize = 30;
+@@ -121,15 +297,12 @@ bool WEBPImageDecoder::decode(bool onlySize)
+     if (onlySize)
+         return true;
+ 
+-    ASSERT(!m_frameBufferCache.isEmpty());
+-    ImageFrame& buffer = m_frameBufferCache[0];
++    ASSERT(m_frameBufferCache.size() > frameIndex);
++    ImageFrame& buffer = m_frameBufferCache[frameIndex];
+     ASSERT(!buffer.isComplete());
+ 
+     if (buffer.isEmpty()) {
+-        if (!buffer.initialize(size(), m_premultiplyAlpha))
+-            return setFailed();
+-        buffer.setDecoding(ImageFrame::Decoding::Partial);
+-        buffer.setHasAlpha(m_hasAlpha);
++        initFrameBuffer(frameIndex, webpFrame);
+     }
+ 
+     if (!m_decoder) {
+diff --git a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
+index ab20e0d..b9b0190 100644
+--- a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
++++ b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
+@@ -33,6 +33,7 @@
+ #if USE(WEBP)
+ 
+ #include "webp/decode.h"
++#include "webp/demux.h"
+ 
+ namespace WebCore {
+ 
+@@ -43,15 +44,26 @@ class WEBPImageDecoder final : public ImageDecoder {
+ 
+     String filenameExtension() const override { return "webp"; }
+     bool isSizeAvailable() override;
++    size_t frameCount() const override;
++    void setData(SharedBuffer& data, bool allDataReceived) override;
++    int repetitionCount() const override;
+     ImageFrame* frameBufferAtIndex(size_t index) override;
+ 
+ private:
+-    bool decode(bool onlySize);
++    bool decode(size_t frameIndex, const WebPIterator* webpFrame, bool onlySize);
+ 
+     WebPIDecoder* m_decoder;
+     WebPDecBuffer m_decoderBuffer;
+     bool m_hasAlpha;
++    int m_formatFlags;
++    WebPDemuxer* m_demux;
++    WebPDemuxState m_demuxState;
++    bool m_haveAlreadyParsedThisData;
++    bool m_haveReadAnimationParameters;
++    int m_repetitionCount;
+ 
++    bool updateDemuxer();
++    bool initFrameBuffer(size_t frameIndex, const WebPIterator* webpFrame);
+     void clear();
+ };
+ 
+diff --git a/Source/cmake/FindWebP.cmake b/Source/cmake/FindWebP.cmake
+index 6772352..de6e06c 100644
+--- a/Source/cmake/FindWebP.cmake
++++ b/Source/cmake/FindWebP.cmake
+@@ -33,19 +33,33 @@ find_package(PkgConfig)
+ pkg_check_modules(PC_WEBP QUIET libwebp)
+ 
+ # Look for the header file.
+-find_path(WEBP_INCLUDE_DIRS
++find_path(WEBP_INCLUDE_DIR
+     NAMES webp/decode.h
+     HINTS ${PC_WEBP_INCLUDEDIR} ${PC_WEBP_INCLUDE_DIRS}
+ )
+-mark_as_advanced(WEBP_INCLUDE_DIRS)
++list(APPEND WEBP_INCLUDE_DIRS ${WEBP_INCLUDE_DIR})
++mark_as_advanced(WEBP_INCLUDE_DIRS) # FIXME
+ 
+ # Look for the library.
+ find_library(
+-    WEBP_LIBRARIES
++    WEBP_LIBRARY
+     NAMES webp
+     HINTS ${PC_WEBP_LIBDIR} ${PC_WEBP_LIBRARY_DIRS}
+ )
+-mark_as_advanced(WEBP_LIBRARIES)
++list(APPEND WEBP_LIBRARIES ${WEBP_LIBRARY})
++mark_as_advanced(WEBP_LIBRARIES) # FIXME
++
++find_path(WEBP_DEMUX_INCLUDE_DIR
++  NAMES webp/demux.h
++  HINTS ${PC_WEBP_INCLUDEDIR} ${PC_WEBP_INCLUDE_DIRS}
++)
++list(APPEND WEBP_INCLUDE_DIRS ${WEBP_DEMUX_INCLUDE_DIR})
++
++find_library(WEBP_DEMUX_LIBRARY
++  NAMES webpdemux
++  HINTS ${PC_WEBP_LIBDIR} ${PC_WEBP_LIBRARY_DIRS}
++)
++list(APPEND WEBP_LIBRARIES ${WEBP_DEMUX_LIBRARY})
+ 
+ include(FindPackageHandleStandardArgs)
+ FIND_PACKAGE_HANDLE_STANDARD_ARGS(WEBP DEFAULT_MSG WEBP_INCLUDE_DIRS WEBP_LIBRARIES)
+
+From 925d1b1eca30c5f2149958cb9cad478cc7e343e6 Mon Sep 17 00:00:00 2001
+From: Olivier Blin <olivier.blin@softathome.com>
+Date: Thu, 30 Mar 2017 20:54:02 +0200
+Subject: [PATCH 04/12] Report no repetition count for non-animated WebP images
+
+Link Blink r168759
+---
+ Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
+index a21da6c..3d48b2c 100644
+--- a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
++++ b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
+@@ -185,6 +185,8 @@ bool WEBPImageDecoder::updateDemuxer()
+     if (!ImageDecoder::isSizeAvailable()) {
+         m_formatFlags = WebPDemuxGetI(m_demux, WEBP_FF_FORMAT_FLAGS);
+         hasAnimation = (m_formatFlags & ANIMATION_FLAG);
++        if (!hasAnimation)
++            m_repetitionCount = WebCore::RepetitionCountNone;
+         if (!setSize(IntSize(WebPDemuxGetI(m_demux, WEBP_FF_CANVAS_WIDTH), WebPDemuxGetI(m_demux, WEBP_FF_CANVAS_HEIGHT))))
+             return setFailed();
+     }
+
+From 20a210af41d6308ee328db3f6a914d5be5b1a047 Mon Sep 17 00:00:00 2001
+From: Olivier Blin <olivier.blin@softathome.com>
+Date: Thu, 30 Mar 2017 20:54:38 +0200
+Subject: [PATCH 05/12] Call WEBPImageDecoder setSize when image frame data
+ arrives
+
+Merge Blink commit r188424
+
+See issue Chromium issue 804613003.
+
+This fixes playing dancing_banana2.lossless.webp, by not reporting
+that the size is available before we know the frame count and resize
+the frame buffer cache accordingly.
+
+Otherwise CachedImage::addIncrementalDataBuffer() detects a decoding
+error because the size is known but the image has no frame buffer.
+---
+ .../image-decoders/webp/WEBPImageDecoder.cpp       | 46 +++++++++++-----------
+ .../image-decoders/webp/WEBPImageDecoder.h         |  1 -
+ 2 files changed, 24 insertions(+), 23 deletions(-)
+
+diff --git a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
+index 3d48b2c..926292c 100644
+--- a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
++++ b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
+@@ -53,7 +53,6 @@ WEBPImageDecoder::WEBPImageDecoder(AlphaOption alphaOption, GammaAndColorProfile
+     , m_demux(0)
+     , m_demuxState(WEBP_DEMUX_PARSING_HEADER)
+     , m_haveAlreadyParsedThisData(false)
+-    , m_haveReadAnimationParameters(false)
+     , m_repetitionCount(WebCore::RepetitionCountOnce)
+ {
+     WebPInitDecBuffer(&m_decoderBuffer);
+@@ -168,9 +167,9 @@ bool WEBPImageDecoder::updateDemuxer()
+ 
+     m_haveAlreadyParsedThisData = true;
+ 
+-    const unsigned webpHeaderSize = 20; // RIFF_HEADER_SIZE + CHUNK_HEADER_SIZE)
++    const unsigned webpHeaderSize = 30; // RIFF_HEADER_SIZE + CHUNK_HEADER_SIZE + VP8_FRAME_HEADER_SIZE
+     if (m_data->size() < webpHeaderSize)
+-        return false; // Wait for headers so that WebPDemuxPartial doesn't return null.
++        return false; // Await VP8X header so WebPDemuxPartial succeeds.
+ 
+     WebPDemuxDelete(m_demux);
+     WebPData inputData = { reinterpret_cast<const uint8_t*>(m_data->data()), m_data->size() };
+@@ -178,30 +177,33 @@ bool WEBPImageDecoder::updateDemuxer()
+     if (!m_demux)
+         return setFailed();
+ 
+-    if (m_demuxState <= WEBP_DEMUX_PARSING_HEADER)
+-        return false; // Not enough data for parsing canvas width/height yet.
++    ASSERT(m_demuxState > WEBP_DEMUX_PARSING_HEADER);
++    size_t newFrameCount = WebPDemuxGetI(m_demux, WEBP_FF_FRAME_COUNT);
++    if (!newFrameCount)
++        return false; // Wait until the encoded image frame data arrives.
+ 
+-    bool hasAnimation = (m_formatFlags & ANIMATION_FLAG);
+     if (!ImageDecoder::isSizeAvailable()) {
++        int width = WebPDemuxGetI(m_demux, WEBP_FF_CANVAS_WIDTH);
++        int height = WebPDemuxGetI(m_demux, WEBP_FF_CANVAS_HEIGHT);
++        if (!setSize(IntSize(width, height)))
++            return setFailed();
++
+         m_formatFlags = WebPDemuxGetI(m_demux, WEBP_FF_FORMAT_FLAGS);
+-        hasAnimation = (m_formatFlags & ANIMATION_FLAG);
+-        if (!hasAnimation)
++        if (!(m_formatFlags & ANIMATION_FLAG)) {
+             m_repetitionCount = WebCore::RepetitionCountNone;
+-        if (!setSize(IntSize(WebPDemuxGetI(m_demux, WEBP_FF_CANVAS_WIDTH), WebPDemuxGetI(m_demux, WEBP_FF_CANVAS_HEIGHT))))
+-            return setFailed();
++        } else {
++            // Since we have parsed at least one frame, even if partially,
++            // the global animation (ANIM) properties have been read since
++            // an ANIM chunk must precede the ANMF frame chunks.
++            m_repetitionCount = WebPDemuxGetI(m_demux, WEBP_FF_LOOP_COUNT);
++            ASSERT(m_repetitionCount == (m_repetitionCount & 0xffff)); // Loop count is always <= 16 bits.
++            if (!m_repetitionCount)
++                m_repetitionCount = WebCore::RepetitionCountInfinite;
++        }
+     }
++
+     ASSERT(ImageDecoder::isSizeAvailable());
+-    const size_t newFrameCount = WebPDemuxGetI(m_demux, WEBP_FF_FRAME_COUNT);
+-    if (hasAnimation && !m_haveReadAnimationParameters && newFrameCount) {
+-        // As we have parsed at least one frame (even if partially),
+-        // we must already have parsed the animation properties.
+-        // This is because ANIM chunk always precedes ANMF chunks.
+-        m_repetitionCount = WebPDemuxGetI(m_demux, WEBP_FF_LOOP_COUNT);
+-        ASSERT(m_repetitionCount == (m_repetitionCount & 0xffff)); // Loop count is always <= 16 bits.
+-        if (!m_repetitionCount)
+-            m_repetitionCount = WebCore::RepetitionCountInfinite;
+-        m_haveReadAnimationParameters = true;
+-    }
++
+     const size_t oldFrameCount = m_frameBufferCache.size();
+     if (newFrameCount > oldFrameCount) {
+         m_frameBufferCache.resize(newFrameCount);
+@@ -209,7 +211,7 @@ bool WEBPImageDecoder::updateDemuxer()
+             // FIXME
+             /*
+             m_frameBufferCache[i].setPremultiplyAlpha(m_premultiplyAlpha);
+-            if (!hasAnimation) {
++            if (!m_formatFlags & ANIMATION_FLAG) {
+                 ASSERT(!i);
+                 m_frameBufferCache[i].setRequiredPreviousFrameIndex(notFound);
+                 continue;
+diff --git a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
+index b9b0190..9678b5c 100644
+--- a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
++++ b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
+@@ -59,7 +59,6 @@ class WEBPImageDecoder final : public ImageDecoder {
+     WebPDemuxer* m_demux;
+     WebPDemuxState m_demuxState;
+     bool m_haveAlreadyParsedThisData;
+-    bool m_haveReadAnimationParameters;
+     int m_repetitionCount;
+ 
+     bool updateDemuxer();
+
+From eee091b295e3ea5d5f9e7ab7ba8c4dfc22678bed Mon Sep 17 00:00:00 2001
+From: Olivier Blin <olivier.blin@softathome.com>
+Date: Fri, 7 Apr 2017 16:47:03 +0200
+Subject: [PATCH 08/12] [WebP] Remove m_hasAlpha, like in Chromium
+
+fixup! Bug 113124 - Add animation support for WebP images
+---
+ Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp | 7 +++----
+ Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h   | 2 +-
+ 2 files changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
+index 926292c..1c96862 100644
+--- a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
++++ b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
+@@ -48,7 +48,6 @@ namespace WebCore {
+ WEBPImageDecoder::WEBPImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+     : ImageDecoder(alphaOption, gammaAndColorProfileOption)
+     , m_decoder(0)
+-    , m_hasAlpha(false)
+     , m_formatFlags(0)
+     , m_demux(0)
+     , m_demuxState(WEBP_DEMUX_PARSING_HEADER)
+@@ -286,12 +285,11 @@ bool WEBPImageDecoder::decode(size_t frameIndex, const WebPIterator* webpFrame,
+             return setFailed();
+         width = features.width;
+         height = features.height;
+-        m_hasAlpha = features.has_alpha;
++        m_formatFlags = features.has_alpha ? ALPHA_FLAG : 0;
+ #else
+         // Earlier version won't be able to display WebP files with alpha.
+         if (!WebPGetInfo(dataBytes, dataSize, &width, &height))
+             return setFailed();
+-        m_hasAlpha = false;
+ #endif
+         if (!setSize(IntSize(width, height)))
+             return setFailed();
+@@ -310,7 +308,7 @@ bool WEBPImageDecoder::decode(size_t frameIndex, const WebPIterator* webpFrame,
+     }
+ 
+     if (!m_decoder) {
+-        WEBP_CSP_MODE mode = outputMode(m_hasAlpha);
++        WEBP_CSP_MODE mode = outputMode(m_formatFlags & ALPHA_FLAG);
+         if (!m_premultiplyAlpha)
+             mode = outputMode(false);
+         m_decoderBuffer.colorspace = mode;
+@@ -326,6 +324,7 @@ bool WEBPImageDecoder::decode(size_t frameIndex, const WebPIterator* webpFrame,
+ 
+     switch (WebPIUpdate(m_decoder, dataBytes, dataSize)) {
+     case VP8_STATUS_OK:
++        buffer.setHasAlpha((m_formatFlags & ALPHA_FLAG) /* || m_frameBackgroundHasAlpha */);
+         buffer.setDecoding(ImageFrame::Decoding::Complete);
+         clear();
+         return true;
+diff --git a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
+index 9678b5c..6fc9613 100644
+--- a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
++++ b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
+@@ -54,8 +54,8 @@ class WEBPImageDecoder final : public ImageDecoder {
+ 
+     WebPIDecoder* m_decoder;
+     WebPDecBuffer m_decoderBuffer;
+-    bool m_hasAlpha;
+     int m_formatFlags;
++
+     WebPDemuxer* m_demux;
+     WebPDemuxState m_demuxState;
+     bool m_haveAlreadyParsedThisData;
+
+From f22ea21a4d59b201a7422b10c4ac78d0da03b990 Mon Sep 17 00:00:00 2001
+From: Olivier Blin <olivier.blin@softathome.com>
+Date: Fri, 7 Apr 2017 17:23:56 +0200
+Subject: [PATCH 09/12] [WebP] fix decoding buffer position to use frame x/y
+
+fixup! Bug 113124 - Add animation support for WebP images
+---
+ Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
+index 1c96862..028d186 100644
+--- a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
++++ b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
+@@ -320,7 +320,8 @@ bool WEBPImageDecoder::decode(size_t frameIndex, const WebPIterator* webpFrame,
+             return setFailed();
+     }
+ 
+-    m_decoderBuffer.u.RGBA.rgba = reinterpret_cast<uint8_t*>(buffer.backingStore()->pixelAt(0, 0));
++    ImageBackingStore* backingStore = buffer.backingStore();
++    m_decoderBuffer.u.RGBA.rgba = reinterpret_cast<uint8_t*>(backingStore->pixelAt(backingStore->frameRect().x(), backingStore->frameRect().y()));
+ 
+     switch (WebPIUpdate(m_decoder, dataBytes, dataSize)) {
+     case VP8_STATUS_OK:
+
+From e4bae8404f785cb7b6725e7916dc6e7439786930 Mon Sep 17 00:00:00 2001
+From: Olivier Blin <olivier.blin@softathome.com>
+Date: Fri, 7 Apr 2017 17:24:58 +0200
+Subject: [PATCH 10/12] [WebP] add m_frameBackgroundHasAlpha
+
+fixup! Bug 113124 - Add animation support for WebP images
+---
+ Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp | 6 ++++--
+ Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h   | 1 +
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
+index 028d186..56812bc 100644
+--- a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
++++ b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
+@@ -49,6 +49,7 @@ WEBPImageDecoder::WEBPImageDecoder(AlphaOption alphaOption, GammaAndColorProfile
+     : ImageDecoder(alphaOption, gammaAndColorProfileOption)
+     , m_decoder(0)
+     , m_formatFlags(0)
++    , m_frameBackgroundHasAlpha(false)
+     , m_demux(0)
+     , m_demuxState(WEBP_DEMUX_PARSING_HEADER)
+     , m_haveAlreadyParsedThisData(false)
+@@ -69,6 +70,7 @@ void WEBPImageDecoder::clear()
+     if (m_decoder)
+         WebPIDelete(m_decoder);
+     m_decoder = 0;
++    m_frameBackgroundHasAlpha = false;
+ }
+ 
+ bool WEBPImageDecoder::isSizeAvailable()
+@@ -249,7 +251,7 @@ bool WEBPImageDecoder::initFrameBuffer(size_t frameIndex, const WebPIterator* we
+             frameRect.setHeight(size().height() - webpFrame->y_offset);
+ 
+         buffer.backingStore()->setFrameRect(frameRect);
+-        //m_frameBackgroundHasAlpha = !frameRect.contains(IntRect(IntPoint(), size()));
++        m_frameBackgroundHasAlpha = !frameRect.contains(IntRect(IntPoint(), size()));
+     }
+ 
+     buffer.setDecoding(ImageFrame::Decoding::Partial);
+@@ -325,7 +327,7 @@ bool WEBPImageDecoder::decode(size_t frameIndex, const WebPIterator* webpFrame,
+ 
+     switch (WebPIUpdate(m_decoder, dataBytes, dataSize)) {
+     case VP8_STATUS_OK:
+-        buffer.setHasAlpha((m_formatFlags & ALPHA_FLAG) /* || m_frameBackgroundHasAlpha */);
++        buffer.setHasAlpha((m_formatFlags & ALPHA_FLAG) || m_frameBackgroundHasAlpha);
+         buffer.setDecoding(ImageFrame::Decoding::Complete);
+         clear();
+         return true;
+diff --git a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
+index 6fc9613..703ddaa 100644
+--- a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
++++ b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
+@@ -55,6 +55,7 @@ class WEBPImageDecoder final : public ImageDecoder {
+     WebPIDecoder* m_decoder;
+     WebPDecBuffer m_decoderBuffer;
+     int m_formatFlags;
++    bool m_frameBackgroundHasAlpha;
+ 
+     WebPDemuxer* m_demux;
+     WebPDemuxState m_demuxState;
+
+From 234530fe35decd558fff150f941381ec376a5276 Mon Sep 17 00:00:00 2001
+From: Olivier Blin <olivier.blin@softathome.com>
+Date: Fri, 7 Apr 2017 17:55:58 +0200
+Subject: [PATCH 11/12] [WebP] fail decoding if framebuffer init fails
+
+fixup! Bug 113124 - Add animation support for WebP images
+---
+ Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
+index 56812bc..716aeae 100644
+--- a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
++++ b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
+@@ -306,7 +306,8 @@ bool WEBPImageDecoder::decode(size_t frameIndex, const WebPIterator* webpFrame,
+     ASSERT(!buffer.isComplete());
+ 
+     if (buffer.isEmpty()) {
+-        initFrameBuffer(frameIndex, webpFrame);
++        if (!initFrameBuffer(frameIndex, webpFrame))
++            return setFailed();
+     }
+ 
+     if (!m_decoder) {
+
+From 8a31a64c9251a25bd5650020aba6e9567e698a28 Mon Sep 17 00:00:00 2001
+From: Olivier Blin <olivier.blin@softathome.com>
+Date: Fri, 7 Apr 2017 17:38:39 +0200
+Subject: [PATCH 12/12] [WebP] implement frame disposal methods: restore to
+ background or previous
+
+This allows to copy pixels over the previous frame, while the decoding
+was always on top of an empty buffer previously.
+
+TODO:
+- alpha-blending, currently only alpha 0 or 255 are supported
+- implement requiredPreviousFrameIndex()
+
+fixup! Bug 113124 - Add animation support for WebP images
+---
+ .../image-decoders/webp/WEBPImageDecoder.cpp       | 107 ++++++++++++++++++++-
+ .../image-decoders/webp/WEBPImageDecoder.h         |   2 +
+ 2 files changed, 104 insertions(+), 5 deletions(-)
+
+diff --git a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
+index 716aeae..90fdbbb 100644
+--- a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
++++ b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp
+@@ -54,6 +54,7 @@ WEBPImageDecoder::WEBPImageDecoder(AlphaOption alphaOption, GammaAndColorProfile
+     , m_demuxState(WEBP_DEMUX_PARSING_HEADER)
+     , m_haveAlreadyParsedThisData(false)
+     , m_repetitionCount(WebCore::RepetitionCountOnce)
++    , m_decodedHeight(0)
+ {
+     WebPInitDecBuffer(&m_decoderBuffer);
+ }
+@@ -71,6 +72,7 @@ void WEBPImageDecoder::clear()
+         WebPIDelete(m_decoder);
+     m_decoder = 0;
+     m_frameBackgroundHasAlpha = false;
++    m_decodedHeight = 0;
+ }
+ 
+ bool WEBPImageDecoder::isSizeAvailable()
+@@ -222,7 +224,7 @@ bool WEBPImageDecoder::updateDemuxer()
+             WebPDemuxGetFrame(m_demux, i + 1, &animatedFrame);
+             ASSERT(animatedFrame.complete == 1);
+             m_frameBufferCache[i].setDuration(animatedFrame.duration);
+-            //m_frameBufferCache[i].setDisposalMethod(animatedFrame.dispose_method == WEBP_MUX_DISPOSE_BACKGROUND ? ImageFrame::DisposeOverwriteBgcolor : ImageFrame::DisposeKeep);
++            m_frameBufferCache[i].setDisposalMethod(animatedFrame.dispose_method == WEBP_MUX_DISPOSE_BACKGROUND ? ImageFrame::DisposalMethod::RestoreToBackground : ImageFrame::DisposalMethod::RestoreToPrevious);
+             WebPDemuxReleaseIterator(&animatedFrame);
+             //m_frameBufferCache[i].setRequiredPreviousFrameIndex(findRequiredPreviousFrame(i));
+         }
+@@ -236,10 +238,6 @@ bool WEBPImageDecoder::initFrameBuffer(size_t frameIndex, const WebPIterator* we
+     if (!buffer.isEmpty()) // Already initialized.
+         return true;
+ 
+-    // This frame doesn't rely on any previous data.
+-    if (!buffer.initialize(size(), m_premultiplyAlpha))
+-        return setFailed();
+-
+     if (webpFrame) {
+         // Initialize the frame rect in our buffer.
+         IntRect frameRect(webpFrame->x_offset, webpFrame->y_offset, webpFrame->width, webpFrame->height);
+@@ -250,8 +248,39 @@ bool WEBPImageDecoder::initFrameBuffer(size_t frameIndex, const WebPIterator* we
+         if (frameRect.maxY() > size().height())
+             frameRect.setHeight(size().height() - webpFrame->y_offset);
+ 
++        // FIXME: use this: const size_t requiredPreviousFrameIndex = buffer.requiredPreviousFrameIndex();
++        //if (requiredPreviousFrameIndex == notFound) {
++        if (frameIndex == 0) {
++            // This frame doesn't rely on any previous data.
++            if (!buffer.initialize(size(), m_premultiplyAlpha))
++                return setFailed();
++            m_frameBackgroundHasAlpha = !frameRect.contains(IntRect(IntPoint(), size()));
++        } else {
++            // FIXME: use this: const ImageFrame& prevBuffer = m_frameBufferCache[requiredPreviousFrameIndex];
++            const ImageFrame& prevBuffer = m_frameBufferCache[frameIndex - 1];
++            ASSERT(prevBuffer.status() == ImageFrame::FrameComplete);
++
++            // Preserve the last frame as the starting state for this frame.
++            if (!prevBuffer.backingStore() || !buffer.initialize(*prevBuffer.backingStore()))
++                return setFailed();
++
++            if (prevBuffer.disposalMethod() == ImageFrame::DisposalMethod::RestoreToBackground) {
++                // We want to clear the previous frame to transparent, without
++                // affecting pixels in the image outside of the frame.
++                const IntRect& prevRect = prevBuffer.backingStore()->frameRect();
++                ASSERT(!prevRect.contains(IntRect(IntPoint(), size())));
++                buffer.backingStore()->clearRect(prevRect);
++            }
++
++            m_frameBackgroundHasAlpha = prevBuffer.hasAlpha() || (prevBuffer.disposalMethod() == ImageFrame::DisposalMethod::RestoreToBackground);
++        }
++
+         buffer.backingStore()->setFrameRect(frameRect);
+         m_frameBackgroundHasAlpha = !frameRect.contains(IntRect(IntPoint(), size()));
++    } else {
++        // This frame doesn't rely on any previous data.
++        if (!buffer.initialize(size(), m_premultiplyAlpha))
++            return setFailed();
+     }
+ 
+     buffer.setDecoding(ImageFrame::Decoding::Partial);
+@@ -261,6 +290,72 @@ bool WEBPImageDecoder::initFrameBuffer(size_t frameIndex, const WebPIterator* we
+     return true;
+ }
+ 
++void WEBPImageDecoder::applyPostProcessing(size_t frameIndex)
++{
++    ImageFrame& buffer = m_frameBufferCache[frameIndex];
++    int width;
++    int decodedHeight;
++    if (!WebPIDecGetRGB(m_decoder, &decodedHeight, &width, 0, 0))
++        return; // See also https://bugs.webkit.org/show_bug.cgi?id=74062
++    if (decodedHeight <= 0)
++        return;
++
++    const IntRect& frameRect = buffer.backingStore()->frameRect();
++    ASSERT_WITH_SECURITY_IMPLICATION(width == frameRect.width());
++    ASSERT_WITH_SECURITY_IMPLICATION(decodedHeight <= frameRect.height());
++    const int left = frameRect.x();
++    const int top = frameRect.y();
++
++    // During the decoding of current frame, we may have set some pixels to be transparent (i.e. alpha < 255).
++    // However, the value of each of these pixels should have been determined by blending it against the value
++    // of that pixel in the previous frame. So, we correct these pixels based on disposal method of the previous
++    // frame and the previous frame buffer.
++    // FIXME: This could be avoided if libwebp decoder had an API that used the previous required frame
++    // to do the alpha-blending by itself.
++    if ((m_formatFlags & ANIMATION_FLAG) && frameIndex) {
++        ImageFrame& prevBuffer = m_frameBufferCache[frameIndex - 1];
++        ImageFrame::DisposalMethod prevMethod = prevBuffer.disposalMethod();
++        if (prevMethod == ImageFrame::DisposalMethod::RestoreToPrevious) { // Restore transparent pixels to pixels in previous canvas.
++            ASSERT(prevBuffer.status() == ImageFrame::FrameComplete);
++            for (int y = m_decodedHeight; y < decodedHeight; ++y) {
++                const int canvasY = top + y;
++                for (int x = 0; x < width; ++x) {
++                    const int canvasX = left + x;
++                    RGBA32* pixel = buffer.backingStore()->pixelAt(canvasX, canvasY);
++                    // FIXME: Use alpha-blending when alpha is between 0 and 255.
++                    // Alpha-blending is being implemented in: https://bugs.webkit.org/show_bug.cgi?id=17022
++                    if (!alphaChannel(*pixel)) {
++                        RGBA32 prevPixel = *prevBuffer.backingStore()->pixelAt(canvasX, canvasY);
++                        *pixel = prevPixel;
++                    }
++                }
++            }
++        } else if (prevMethod == ImageFrame::DisposalMethod::RestoreToBackground && frameIndex != 0) {
++            // FIXME: check above should be: buffer.requiredPreviousFrameIndex() != notFound
++            // Note: if the requiredPreviousFrameIndex is |notFound|, there's nothing to do.
++            ASSERT(prevBuffer.status() == ImageFrame::FrameComplete);
++            const IntRect& prevRect = prevBuffer.backingStore()->frameRect();
++            // We need to restore transparent pixels to as they were just after initFrame() call. That is:
++            //   * Transparent if it belongs to prevRect <-- This is a no-op.
++            //   * Pixel in the previous canvas otherwise <-- Need to restore.
++            for (int y = m_decodedHeight; y < decodedHeight; ++y) {
++                const int canvasY = top + y;
++                for (int x = 0; x < width; ++x) {
++                    const int canvasX = left + x;
++                    RGBA32* pixel = buffer.backingStore()->pixelAt(canvasX, canvasY);
++                    // FIXME: Use alpha-blending when alpha is between 0 and 255.
++                    if (!alphaChannel(*pixel) && !prevRect.contains(IntPoint(canvasX, canvasY))) {
++                        RGBA32 prevPixel = *prevBuffer.backingStore()->pixelAt(canvasX, canvasY);
++                        *pixel = prevPixel;
++                    }
++                }
++            }
++        }
++    }
++
++    m_decodedHeight = decodedHeight;
++}
++
+ bool WEBPImageDecoder::decode(size_t frameIndex, const WebPIterator* webpFrame, bool onlySize)
+ {
+     if (failed())
+@@ -328,11 +423,13 @@ bool WEBPImageDecoder::decode(size_t frameIndex, const WebPIterator* webpFrame,
+ 
+     switch (WebPIUpdate(m_decoder, dataBytes, dataSize)) {
+     case VP8_STATUS_OK:
++        applyPostProcessing(frameIndex);
+         buffer.setHasAlpha((m_formatFlags & ALPHA_FLAG) || m_frameBackgroundHasAlpha);
+         buffer.setDecoding(ImageFrame::Decoding::Complete);
+         clear();
+         return true;
+     case VP8_STATUS_SUSPENDED:
++        applyPostProcessing(frameIndex);
+         return false;
+     default:
+         clear();                         
+diff --git a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
+index 703ddaa..f6b155d7 100644
+--- a/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
++++ b/Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h
+@@ -61,9 +61,11 @@ class WEBPImageDecoder final : public ImageDecoder {
+     WebPDemuxState m_demuxState;
+     bool m_haveAlreadyParsedThisData;
+     int m_repetitionCount;
++    int m_decodedHeight;
+ 
+     bool updateDemuxer();
+     bool initFrameBuffer(size_t frameIndex, const WebPIterator* webpFrame);
++    void applyPostProcessing(size_t frameIndex);
+     void clear();
+ };
+ 
