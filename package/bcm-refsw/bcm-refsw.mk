@@ -25,6 +25,9 @@ BCM_REFSW_INSTALL_STAGING = YES
 BCM_REFSW_INSTALL_TARGET = YES
 
 BCM_REFSW_PROVIDES = libegl libgles
+ifeq ($(BR2_PACKAGE_WESTEROS),y)
+	BCM_REFSW_DEPENDENCIES += wayland
+endif
 
 ifeq ($(BR2_arm),y)
 ifeq ($(BR2_PACKAGE_BCM_REFSW_PLATFORM_7437),y)
@@ -170,6 +173,33 @@ define BCM_REFSW_BUILD_EGLCUBE
 endef
 endif
 
+# wayland-egl is needed only for westeros
+ifeq ($(BR2_PACKAGE_WESTEROS),y)
+WAYLAND_EGL_DIR=$(@D)/trellis/display/weston/wayland-egl/
+define BCM_REFSW_BUILD_WAYLAND_EGL
+	$(TARGET_CONFIGURE_OPTS) \
+	$(TARGET_MAKE_ENV) \
+	$(BCM_REFSW_CONF_OPTS) \
+	$(BCM_REFSW_MAKE_ENV) \
+		$(MAKE) -C $(WAYLAND_EGL_DIR) install \
+			CFLAGS="$(TARGET_CFLAGS) -I $(STAGING_DIR)/usr/include/refsw -fPIC -g" \
+			LDFLAGS="$(TARGET_LDFLAGS) -lnxpl -lnexus -lnxclient -lwayland-client" \
+			APPLIBS_TARGET_LIB_DIR=${STAGING_DIR}/usr/lib/
+endef
+
+define BCM_REFSW_INSTALL_STAGING_WAYLAND_EGL
+	$(call BCM_REFSW_BUILD_WAYLAND_EGL,$(TARGET_DIR))
+
+	$(INSTALL) -m 644 $(WAYLAND_EGL_DIR)/wayland-egl.pc $(STAGING_DIR)/usr/lib/pkgconfig/
+	$(INSTALL) -m 644 $(WAYLAND_EGL_DIR)/../include/EGL/eglext_brcm.h $(STAGING_DIR)/usr/include/EGL/
+	# ??? /trellis/display/weston/include/EGL/eglext.h
+endef
+
+define BCM_REFSW_INSTALL_TARGET_WAYLAND_EGL
+	$(INSTALL) -m 644 -D $(WAYLAND_EGL_DIR)/libwayland-egl.so $(TARGET_DIR)/usr/lib
+endef
+endif
+
 define BCM_REFSW_INSTALL_LIBS
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libnexus.so $1/usr/lib/libnexus.so
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libv3ddriver.so $1/usr/lib/libv3ddriver.so
@@ -213,6 +243,7 @@ define BCM_REFSW_BUILD_CMDS
 	$(BCM_REFSW_BUILD_NXCLIENT_EXAMPLES)
 	$(BCM_REFSW_BUILD_VCX)
 	$(BCM_REFSW_BUILD_EGLCUBE)
+#	$(BCM_REFSW_BUILD_WAYLAND_EGL)
 endef
 
 ifeq ($(BCM_REFSW_PLATFORM_VC),vc5) 
@@ -262,6 +293,7 @@ define BCM_REFSW_INSTALL_STAGING_CMDS
 	$(call BCM_REFSW_INSTALL_KHRONOS,$(STAGING_DIR))
 	$(call BCM_REFSW_INSTALL_LIBS,$(STAGING_DIR))
 	$(call BCM_REFSW_INSTALL_STAGING_NXSERVER,$(STAGING_DIR))
+	$(call BCM_REFSW_INSTALL_STAGING_WAYLAND_EGL,$(STAGING_DIR))
 endef
 
 define BCM_REFSW_INSTALL_TARGET_CMDS
@@ -273,6 +305,7 @@ define BCM_REFSW_INSTALL_TARGET_CMDS
 	$(call BCM_REFSW_INSTALL_TARGET_NXSERVER,$(TARGET_DIR))
 	$(call BCM_REFSW_INSTALL_TARGET_EGLCUBE,$(TARGET_DIR))
 	$(call BCM_REFSW_INSTALL_SAGE_BIN,$(TARGET_DIR))
+	$(call BCM_REFSW_INSTALL_TARGET_WAYLAND_EGL,$(TARGET_DIR))
 endef
 
 $(eval $(generic-package))
