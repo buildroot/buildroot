@@ -7,13 +7,13 @@
 ifeq ($(BR2_PACKAGE_BCM_REFSW_16_1),y)
 BCM_REFSW_VERSION = 16.1-2
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_16_2),y)
-BCM_REFSW_VERSION = 3ff267ffc14fd81c73fa88a320d14adc1615560a
+BCM_REFSW_VERSION = 16.2-5
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_16_3),y)
 BCM_REFSW_VERSION = 16.3
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_15_2),y)
 BCM_REFSW_VERSION = 15.2
 else
-BCM_REFSW_VERSION = 3ff267ffc14fd81c73fa88a320d14adc1615560a
+BCM_REFSW_VERSION = 16.2-5
 endif
 
 BCM_REFSW_SITE = git@github.com:Metrological/bcm-refsw.git
@@ -62,9 +62,6 @@ BCM_REFSW_MAKE_ENV += \
 	NEXUS_USE_FRONTEND_DAUGHTER_CARD=y
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_PLATFORM_7429),y)
 BCM_REFSW_PLATFORM = 97429
-BCM_REFSW_PLATFORM_REV = B0
-else ifeq ($(BR2_PACKAGE_BCM_REFSW_PLATFORM_7428),y)
-BCM_REFSW_PLATFORM = 97428
 BCM_REFSW_PLATFORM_REV = B0
 else
 BCM_REFSW_PLATFORM = 97429
@@ -175,28 +172,28 @@ endif
 
 # wayland-egl is needed only for westeros
 ifeq ($(BR2_PACKAGE_WESTEROS),y)
-WAYLAND_EGL_DIR=$(@D)/trellis/display/weston/wayland-egl/
+WAYLAND_EGL_DIR=$(@D)/trellis/display/weston
 define BCM_REFSW_BUILD_WAYLAND_EGL
 	$(TARGET_CONFIGURE_OPTS) \
 	$(TARGET_MAKE_ENV) \
 	$(BCM_REFSW_CONF_OPTS) \
 	$(BCM_REFSW_MAKE_ENV) \
-		$(MAKE) -C $(WAYLAND_EGL_DIR) install \
-			CFLAGS="$(TARGET_CFLAGS) -I $(STAGING_DIR)/usr/include/refsw -fPIC -g" \
-			LDFLAGS="$(TARGET_LDFLAGS) -lnxpl -lnexus -lnxclient -lwayland-client" \
-			APPLIBS_TARGET_LIB_DIR=${STAGING_DIR}/usr/lib/
+		$(MAKE) -C $(WAYLAND_EGL_DIR) wayland-egl \
+	        SCANNER_TOOL=${HOST_DIR}/usr/bin/wayland-scanner \
+			LDFLAGS="$(TARGET_LDFLAGS) -L${BCM_REFSW_BIN} -lnxpl -lnexus -lnxclient -lwayland-client" \
+			APPLIBS_TARGET_LIB_DIR=${BCM_REFSW_BIN} \
+			APPLIBS_TARGET_INC_DIR=${BCM_REFSW_BIN}/include
 endef
 
 define BCM_REFSW_INSTALL_STAGING_WAYLAND_EGL
-	$(call BCM_REFSW_BUILD_WAYLAND_EGL,$(TARGET_DIR))
-
-	$(INSTALL) -m 644 $(WAYLAND_EGL_DIR)/wayland-egl.pc $(STAGING_DIR)/usr/lib/pkgconfig/
-	$(INSTALL) -m 644 $(WAYLAND_EGL_DIR)/../include/EGL/eglext_brcm.h $(STAGING_DIR)/usr/include/EGL/
+	$(INSTALL) -m 644 -D $(WAYLAND_EGL_DIR)/wayland-egl/libwayland-egl.so $(STAGING_DIR)/usr/lib
+	$(INSTALL) -m 644 $(WAYLAND_EGL_DIR)/wayland-egl/wayland-egl.pc $(STAGING_DIR)/usr/lib/pkgconfig/
+	$(INSTALL) -m 644 $(WAYLAND_EGL_DIR)/include/EGL/eglext_brcm.h $(STAGING_DIR)/usr/include/EGL/
 	# ??? /trellis/display/weston/include/EGL/eglext.h
 endef
 
 define BCM_REFSW_INSTALL_TARGET_WAYLAND_EGL
-	$(INSTALL) -m 644 -D $(WAYLAND_EGL_DIR)/libwayland-egl.so $(TARGET_DIR)/usr/lib
+	$(INSTALL) -m 644 -D $(WAYLAND_EGL_DIR)/wayland-egl/libwayland-egl.so $(TARGET_DIR)/usr/lib
 endef
 endif
 
@@ -243,7 +240,7 @@ define BCM_REFSW_BUILD_CMDS
 	$(BCM_REFSW_BUILD_NXCLIENT_EXAMPLES)
 	$(BCM_REFSW_BUILD_VCX)
 	$(BCM_REFSW_BUILD_EGLCUBE)
-#	$(BCM_REFSW_BUILD_WAYLAND_EGL)
+	$(BCM_REFSW_BUILD_WAYLAND_EGL)
 endef
 
 ifeq ($(BCM_REFSW_PLATFORM_VC),vc5) 
