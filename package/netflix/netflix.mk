@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NETFLIX_VERSION = be274ee32cf28ac1e3f497a6f92184d49ec727b9
+NETFLIX_VERSION = 79f893f0708ae79a175fa33e619e1c69eb505d89
 NETFLIX_SITE = git@github.com:Metrological/netflix.git
 NETFLIX_SITE_METHOD = git
 NETFLIX_LICENSE = PROPRIETARY
@@ -90,7 +90,8 @@ NETFLIX_CONF_OPTS += \
 	-DNRDP_SCHEDULER_TYPE=rr \
 	-DGIBBON_TCMALLOC=OFF \
 	-DGIBBON_GRAPHICS=intelce \
-	-DGIBBON_PLATFORM=posix
+	-DGIBBON_PLATFORM=posix \
+	-DDPI_REFERENCE_HAVE_DDPLUS=true
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_DORNE),y)
 NETFLIX_CONF_OPTS += \
 	-DGST_VIDEO_RENDERING=horizon-fusion
