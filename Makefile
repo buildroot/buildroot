@@ -481,6 +481,8 @@ include Makefile.legacy
 include package/Makefile.in
 include support/dependencies/dependencies.mk
 
+PACKAGES += $(DEPENDENCIES_HOST_PREREQ)
+
 include toolchain/*.mk
 include toolchain/*/*.mk
 
