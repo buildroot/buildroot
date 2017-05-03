@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WESTEROS_VERSION = 87bc367344f7aab820b74e8fd01f4cf104807ab8
+WESTEROS_VERSION = 9345a77d2e547c0ea6e625a65d9de76c03948322
 WESTEROS_SITE_METHOD = git
 WESTEROS_SITE = git://github.com/rdkcmf/westeros
 WESTEROS_INSTALL_STAGING = YES
