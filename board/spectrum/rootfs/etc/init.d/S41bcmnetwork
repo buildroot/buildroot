@@ -1,0 +1,47 @@
+#!/bin/sh
+
+start() {
+	echo -n "Starting ECM network: "
+	ip link set dev eth0 up 
+	ifconfig eth0 0.0.0.0 
+	ifconfig bcm0 192.168.100.100 
+	ifconfig bcm0:0 192.168.17.10 
+	ifconfig bcm0:1 192.168.100.10 
+	ip link set dev rg0 up 
+	sleep 2
+	udhcpc -n -i rg0 -s /usr/share/udhcpc/default.script
+	[ $? == 0 ] && echo "OK" || echo "FAIL"
+}
+stop() {
+	echo -n "Stopping ECM network: "
+	ip link set dev rg0 down
+	ifconfig bcm0:1 down
+	ifconfig bcm0:0 down
+	ifconfig bcm0 down
+	ifconfig eth0 down
+	ip link set dev eth0 down
+	[ $? == 0 ] && echo "OK" || echo "FAIL"
+}
+
+restart() {
+	stop
+	sleep 1
+	start
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	restart|reload)
+		restart
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+esac
+
+exit $?
