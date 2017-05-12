@@ -14,7 +14,7 @@ spectrumObj = {
    'classname':'WebKitBrowser',
    'autostart':True,
    'configuration':{
-        'url':'file:///www/index.html',
+        'url':'http://8.19.32.245',
         'useragent':'Mozilla/5.0 (Macintosh, Intel Mac OS X 10_11_4) AppleWebKit/602.1.28+ (KHTML, like Gecko) Version/9.1 Safari/601.5.17 WPE-Spectrum',
         'injectedbundle':'libWPEInjectedBundle.so',
         'transparent':True,
