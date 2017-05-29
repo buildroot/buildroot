@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPELAUNCHER_VERSION = 9c8c85c278687f5cd658dd8e6cdfaaf3f035e8e9
+WPELAUNCHER_VERSION = 734991a2f851899adbdb1be7df7a27ccfe20c7d4
 WPELAUNCHER_SITE = $(call github,WebPlatformForEmbedded,WPEWebKitLauncher,$(WPELAUNCHER_VERSION))
 
 WPELAUNCHER_DEPENDENCIES = wpewebkit
