@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PLAYREADY_VERSION = f79dbf120bc60918cc59d23f3ef6a44e0fb2d568
+PLAYREADY_VERSION = c1b2ff3d0f6a2c23a2f019076c817f81edd454c0
 PLAYREADY_SITE = git@github.com:Metrological/playready.git
 PLAYREADY_SITE_METHOD = git
 PLAYREADY_LICENSE = PROPRIETARY
