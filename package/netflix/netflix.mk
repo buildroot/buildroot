@@ -120,7 +120,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1),y)
 NETFLIX_CONF_OPTS += -DDPI_IMPLEMENTATION=gstreamer
-NETFLIX_DEPENDENCIES += gstreamer1 gst1-plugins-base
+NETFLIX_DEPENDENCIES += gstreamer1 gst1-plugins-base gst1-plugins-bad
 else ifeq ($(BR2_PACKAGE_HAS_LIBOPENMAX),y)
 NETFLIX_CONF_OPTS += \
 	-DDPI_IMPLEMENTATION=reference \
