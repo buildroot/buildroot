@@ -51,7 +51,7 @@ if BR2_PACKAGE_WPEFRAMEWORK
 menu "Modules"
 
 source "package/WPEFramework/WPEFramework-DevTools/Config.in"
-          
+
 config BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
 	bool "VirtualInput"
 	help
@@ -67,6 +67,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_CLOSED_MODULES
 
 if BR2_PACKAGE_WPEFRAMEWORK_CLOSED_MODULES
 
+config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
+	bool "ProvisionProxy"
+        select BR2_PACKAGE_LIBPROVISION
+	help
+	   Allows provisioning of modules from the cloud.
+          
 source "package/WPEFramework/WPEFramework-Provisioning/Config.in"
 source "package/WPEFramework/WPEFramework-DIALServer/Config.in"
 source "package/WPEFramework/WPEFramework-Netflix/Config.in"
