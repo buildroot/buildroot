@@ -1,5 +1,11 @@
 menu "development tools"
 
+config BR2_PACKAGE_WPEFRAMEWORK_DEBUG
+	bool "Debug"
+	help
+	   Allow the WPE Framework to be more verbose. All development traces
+           are turned on.
+ 
 config BR2_PACKAGE_WPEFRAMEWORK_DISABLE_INITD
 	bool "Disable init.d"
 	help

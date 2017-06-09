@@ -47,25 +47,37 @@ config BR2_PACKAGE_WPEFRAMEWORK_OOM_ADJUST
 endmenu
 	  
 if BR2_PACKAGE_WPEFRAMEWORK
-config BR2_PACKAGE_WPEFRAMEWORK_DEBUG
-	bool "Debug"
-	help
-	   Allow the WPE Framework to be more verbose. All development traces
-           are turned on.
-           
+
+menu "Modules"
+
+source "package/WPEFramework/WPEFramework-DevTools/Config.in"
+          
 config BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
 	bool "VirtualInput"
 	help
 	   If the dynamic uinput system can not be used for security reasons, this
            allows for relaying keys to plugins
           
-source "package/WPEFramework/WPEFramework-DevTools/Config.in"
+config BR2_PACKAGE_WPEFRAMEWORK_CLOSED_MODULES
+        bool "Closed"
+        help
+           These are modules that are written for the WPEFramework
+           but are located in provate repositories.  Please contact
+           info@metrological.com for more info
+
+if BR2_PACKAGE_WPEFRAMEWORK_CLOSED_MODULES
+
 source "package/WPEFramework/WPEFramework-Provisioning/Config.in"
 source "package/WPEFramework/WPEFramework-DIALServer/Config.in"
 source "package/WPEFramework/WPEFramework-Netflix/Config.in"
 source "package/WPEFramework/WPEFramework-Compositor/Config.in"
 source "package/WPEFramework/WPEFramework-SwitchBoard/Config.in"
 source "package/WPEFramework/WPEFramework-Dictionary/Config.in"
-source "package/WPEFramework/WPEFramework-Open/Config.in"
+
 endif
 
+source "package/WPEFramework/WPEFramework-Open/Config.in"
+
+endmenu
+
+endif
