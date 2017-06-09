@@ -1,0 +1,23 @@
+menu "development tools"
+
+config BR2_PACKAGE_WPEFRAMEWORK_DISABLE_INITD
+	bool "Disable init.d"
+	help
+		If enabled the init.d script will NOT be installed.
+		
+config BR2_PACKAGE_WPEFRAMEWORK_TEST_CYCLICINSPECTOR
+	bool "CyclicBuffer inspector"
+	help
+		CyclicInspector is a small tool that allows you to inspect the
+		contents of the memory mapped file used by the CyclicBuffer.
+		This can be helpful during a post-mortem of a crashed program or
+		when tracing failed.
+
+
+config BR2_PACKAGE_WPEFRAMEWORK_TEST_LOADER
+	bool "Test loader"
+	help
+		TestLoader is a verification and analyze tool for 
+		WPEFramework software and plugins.
+
+endmenu

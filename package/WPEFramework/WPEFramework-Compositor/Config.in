@@ -1,0 +1,43 @@
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR
+	bool "WPEFramework-Compositor"
+
+	help
+	   WPE Platform Compositor plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR
+
+if BR2_PACKAGE_BCM_REFSW
+choice
+	prompt "Nexus server"
+	default BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SERVICE_EXTERNAL
+	help
+	  Choose this if the system has a allready a resource server running like nxserver.
+	  
+	config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SERVICE_EXTERNAL
+		bool "external" 
+		
+	config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SERVICE_INTERNAL
+		bool "internal"
+endchoice
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_AUTOTRACE
+   bool "Enable Tracing at startup"
+   help 
+     If enabled the compositer plug-in will start tracing 
+     when WPEFramework is started.
+     
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_OUTOFPROCESS
+	bool "Out of process"
+	help
+	  Select this to run this plugin in its own process. 
+     
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_HARDWAREREADY
+	string "Manual overrule of the time it takes to initialisize all hardware (ms)"
+	default 0
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SYSTEM
+	string "Callsign to report information."
+	default Controller
+
+endif

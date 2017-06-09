@@ -1,0 +1,71 @@
+config BR2_PACKAGE_WPEFRAMEWORK
+	bool "WPEFramework"
+	help
+	   Base WPE Framework	  
+	   
+menu "Options"
+
+config BR2_PACKAGE_WPEFRAMEWORK_PORT
+	string "port"
+	default "80"
+
+config BR2_PACKAGE_WPEFRAMEWORK_BIND
+	string "bind"
+	default "0.0.0.0"
+
+config BR2_PACKAGE_WPEFRAMEWORK_INTERFACE
+	string "interface"
+	default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_IDLE_TIME
+	string "idle-time"
+	default "180"
+
+config BR2_PACKAGE_WPEFRAMEWORK_PERSISTENT_PATH
+	string "persistent path"
+	default "/root"
+
+config BR2_PACKAGE_WPEFRAMEWORK_DATA_PATH
+	string "data path"
+	default "/usr/share/WPEFramework"
+
+config BR2_PACKAGE_WPEFRAMEWORK_SYSTEM_PATH
+	string "system path"
+	default "/usr/lib/WPEFramework"
+
+config BR2_PACKAGE_WPEFRAMEWORK_PROXYSTUB_PATH
+	string "proxystub path"
+	default "/usr/lib/WPEFramework/proxystubs"
+
+config BR2_PACKAGE_WPEFRAMEWORK_NO_WEBUI
+	bool "no web interface"
+
+config BR2_PACKAGE_WPEFRAMEWORK_OOM_ADJUST
+	string "oom-adjust"
+	default ""
+
+endmenu
+	  
+if BR2_PACKAGE_WPEFRAMEWORK
+config BR2_PACKAGE_WPEFRAMEWORK_DEBUG
+	bool "Debug"
+	help
+	   Allow the WPE Framework to be more verbose. All development traces
+           are turned on.
+           
+config BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
+	bool "VirtualInput"
+	help
+	   If the dynamic uinput system can not be used for security reasons, this
+           allows for relaying keys to plugins
+          
+source "package/WPEFramework/WPEFramework-DevTools/Config.in"
+source "package/WPEFramework/WPEFramework-Provisioning/Config.in"
+source "package/WPEFramework/WPEFramework-DIALServer/Config.in"
+source "package/WPEFramework/WPEFramework-Netflix/Config.in"
+source "package/WPEFramework/WPEFramework-Compositor/Config.in"
+source "package/WPEFramework/WPEFramework-SwitchBoard/Config.in"
+source "package/WPEFramework/WPEFramework-Dictionary/Config.in"
+source "package/WPEFramework/WPEFramework-Open/Config.in"
+endif
+
