@@ -1,0 +1,22 @@
+connect "/usr/sbin/chat -v -f /etc/ppp/chat -T portalmmm.nl" 
+
+# Serial device to which the modem is connected.
+/dev/ttyUSB2
+
+# Speed of the serial line.
+115200
+
+# Assumes that your IP address is allocated dynamically by the ISP.
+noipdefault
+
+# Try to get the name server addresses from the ISP.
+usepeerdns
+
+# Use this connection as the default route.
+defaultroute
+
+# Makes pppd "dial again" when the connection is lost.
+persist
+
+# Do not ask the remote to authenticate.
+noauth

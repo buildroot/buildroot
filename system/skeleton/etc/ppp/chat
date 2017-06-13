@@ -1,0 +1,39 @@
+# You can use this script unmodified to connect to cellular networks.
+# The APN is specified in the peers file as the argument of the -T command
+# line option of chat(8).
+
+# For details about the AT commands involved please consult the relevant
+# standard: 3GPP TS 27.007 - AT command set for User Equipment (UE).
+# (http://www.3gpp.org/ftp/Specs/html-info/27007.htm)
+
+ABORT		BUSY
+ABORT		VOICE
+ABORT		"NO CARRIER"
+ABORT		"NO DIALTONE"
+ABORT		"NO DIAL TONE"
+ABORT		"NO ANSWER"
+ABORT		"DELAYED"
+
+# cease if the modem is not attached to the network yet
+ABORT		"+CGATT: 0"
+
+""		AT
+TIMEOUT		12
+OK		ATH
+OK		ATE1
+
+# +CPIN provides the SIM card PIN
+""		AT+CPIN=0000
+
+# +CFUN may allow to configure the handset to limit operations to
+# GPRS/EDGE/UMTS/etc to save power, but the arguments are not standard
+# except for 1 which means "full functionality".
+#OK		AT+CFUN=1
+
+OK              ATZ
+OK              "ATQ0 V1 E1 S0=0 &C1 &D2 +FCLASS=0"
+OK		AT+CGDCONT=1,"IP","\T","",0,0
+OK		ATD*99#
+TIMEOUT		22
+CONNECT		""
+
