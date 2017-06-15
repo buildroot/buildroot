@@ -6,13 +6,13 @@
 
 WESTEROS_VERSION = 0b853a6ae0d84cedbe141189d658fae70f8474cc
 WESTEROS_SITE_METHOD = git
-WESTEROS_SITE = git://github.com/rdkcmf/westeros
+WESTEROS_SITE = git://github.com/Metrological/westeros
 WESTEROS_INSTALL_STAGING = YES
 WESTEROS_AUTORECONF = YES
 WESTEROS_AUTORECONF_OPTS = "-Icfg"
 
 WESTEROS_DEPENDENCIES = host-pkgconf host-autoconf wayland \
-	libxkbcommon westeros-simpleshell westeros-simplebuffer westeros-soc
+	libxkbcommon westeros-simpleshell westeros-simplebuffer westeros-soc gstreamer1
 
 WESTEROS_CONF_OPTS = \
 	--prefix=/usr/ \
