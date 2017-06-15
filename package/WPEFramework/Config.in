@@ -1,5 +1,5 @@
 config BR2_PACKAGE_WPEFRAMEWORK
-	bool "WPEFramework"
+	bool "wpeframework"
 	help
 	   Base WPE Framework	  
 	   
@@ -48,7 +48,7 @@ endmenu
 	  
 if BR2_PACKAGE_WPEFRAMEWORK
 
-menu "Modules"
+menu "Plugins"
 
 source "package/WPEFramework/WPEFramework-DevTools/Config.in"
 
@@ -58,15 +58,6 @@ config BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
 	   If the dynamic uinput system can not be used for security reasons, this
            allows for relaying keys to plugins
           
-config BR2_PACKAGE_WPEFRAMEWORK_CLOSED_MODULES
-        bool "Closed"
-        help
-           These are modules that are written for the WPEFramework
-           but are located in provate repositories.  Please contact
-           info@metrological.com for more info
-
-if BR2_PACKAGE_WPEFRAMEWORK_CLOSED_MODULES
-
 config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
 	bool "ProvisionProxy"
         select BR2_PACKAGE_LIBPROVISION
@@ -80,9 +71,7 @@ source "package/WPEFramework/WPEFramework-Compositor/Config.in"
 source "package/WPEFramework/WPEFramework-SwitchBoard/Config.in"
 source "package/WPEFramework/WPEFramework-Dictionary/Config.in"
 
-endif
-
-source "package/WPEFramework/WPEFramework-Open/Config.in"
+source "package/WPEFramework/WPEFramework-Common/Config.in"
 
 endmenu
 
