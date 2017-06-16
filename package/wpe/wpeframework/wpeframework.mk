@@ -1,4 +1,10 @@
-WPEFRAMEWORK_VERSION = 4d911d13c753adea7ed4be5419d9cc49cbe8a5ea
+################################################################################
+#
+# WPEFramework
+#
+################################################################################
+
+WPEFRAMEWORK_VERSION = 237af7088f25bdca2b8a322368d74b11893378c5
 WPEFRAMEWORK_SITE_METHOD = git
 WPEFRAMEWORK_SITE = git@github.com:WebPlatformForEmbedded/WPEFramework.git
 WPEFRAMEWORK_INSTALL_STAGING = YES
@@ -28,7 +34,7 @@ endif
 
 define WPEFRAMEWORK_POST_TARGET_INITD
     mkdir -p $(TARGET_DIR)/etc/init.d
-    $(INSTALL) -D -m 0755 package/WPEFramework/S80WPEFramework $(TARGET_DIR)/etc/init.d
+    $(INSTALL) -D -m 0755 $(WPEFRAMEWORK_PKGDIR)/S80WPEFramework $(TARGET_DIR)/etc/init.d
     mkdir -p $(TARGET_DIR)/etc/WPEFramework
     rm -rf $(TARGET_DIR)/usr/share/WPEFramework/cmake
 endef
@@ -38,5 +44,3 @@ WPEFRAMEWORK_POST_INSTALL_TARGET_HOOKS += WPEFRAMEWORK_POST_TARGET_INITD
 endif
 
 $(eval $(cmake-package))
-
-include package/WPEFramework/*/*.mk

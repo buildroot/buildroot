@@ -3,6 +3,9 @@ config BR2_PACKAGE_WPEFRAMEWORK
 	help
 	   Base WPE Framework	  
 	   
+
+if BR2_PACKAGE_WPEFRAMEWORK
+
 menu "Options"
 
 config BR2_PACKAGE_WPEFRAMEWORK_PORT
@@ -45,12 +48,10 @@ config BR2_PACKAGE_WPEFRAMEWORK_OOM_ADJUST
 	default ""
 
 endmenu
-	  
-if BR2_PACKAGE_WPEFRAMEWORK
 
 menu "Plugins"
 
-source "package/WPEFramework/WPEFramework-DevTools/Config.in"
+source "package/wpe/wpeframework-common/Config.in"
 
 config BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
 	bool "VirtualInput"
@@ -64,14 +65,6 @@ config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
 	help
 	   Allows provisioning of modules from the cloud.
           
-source "package/WPEFramework/WPEFramework-Provisioning/Config.in"
-source "package/WPEFramework/WPEFramework-DIALServer/Config.in"
-source "package/WPEFramework/WPEFramework-Netflix/Config.in"
-source "package/WPEFramework/WPEFramework-Compositor/Config.in"
-source "package/WPEFramework/WPEFramework-SwitchBoard/Config.in"
-source "package/WPEFramework/WPEFramework-Dictionary/Config.in"
-
-source "package/WPEFramework/WPEFramework-Common/Config.in"
 
 endmenu
 
