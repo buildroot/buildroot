@@ -3,3 +3,6 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING
 	depends on BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
 	help
 	   WPE Platform Provisioning plugin
+
+comment "Provisioning is dependent on the provision proxy wpeframework extension"
+    depends on !BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY

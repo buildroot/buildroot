@@ -8,17 +8,22 @@ if BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR
 
 if BR2_PACKAGE_BCM_REFSW
 choice
-	prompt "Nexus server"
-	default BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SERVICE_EXTERNAL
+	bool "Nexus server"
 	help
-	  Choose this if the system has a allready a resource server running like nxserver.
-	  
-	config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SERVICE_EXTERNAL
-		bool "external" 
-		
-	config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SERVICE_INTERNAL
-		bool "internal"
+	  Choose this if the system has a already a resource server running like nxserver.
+
+        config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SERVICE_EXTERNAL
+            bool "External Compositor"
+            help
+                The master compositor is hosted in a different process. WPEFramework will attach to it.
+
+        config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SERVICE_INTERNAL
+            bool "Internal Compositor"
+            help
+                The master compositor is hosted in WPEFramework.
+
 endchoice
+
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_AUTOTRACE
