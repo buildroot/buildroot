@@ -1,8 +1,14 @@
 config BR2_PACKAGE_WPEFRAMEWORK
 	bool "wpeframework"
+	select BR2_PACKAGE_WPEFRAMEWORK_COMMON
 	help
 	   Base WPE Framework	  
 	   
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMMON
+	bool "wpeframework common"
+	help
+		Common plugins for WPE Framework
 
 if BR2_PACKAGE_WPEFRAMEWORK
 
@@ -52,6 +58,11 @@ endmenu
 menu "Plugins"
 
 source "package/wpe/wpeframework-common/Config.in"
+source "package/wpe/wpeframework-devtools/Config.in"
+source "package/wpe/wpeframework-dialserver/Config.in"
+source "package/wpe/wpeframework-netflix/Config.in"
+source "package/wpe/wpeframework-provisioning/Config.in"
+source "package/wpe/wpeframework-switchboard/Config.in"
 
 config BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
 	bool "VirtualInput"
@@ -65,6 +76,8 @@ config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
 	help
 	   Allows provisioning of modules from the cloud.
           
+
+
 
 endmenu
 
