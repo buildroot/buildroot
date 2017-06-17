@@ -1,14 +1,20 @@
+config BR2_PACKAGE_WPEFRAMEWORK_COMMON
+	bool
+
 config BR2_PACKAGE_WPEFRAMEWORK_COMMANDER
+        select BR2_PACKAGE_WPEFRAMEWORK_COMMON
 	bool "Commander"
 	help
 	   Commander Plugin
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
+        select BR2_PACKAGE_WPEFRAMEWORK_COMMON
 	bool "DeviceInfo"
 	help
 	   DeviceInfo Plugin
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC
+        select BR2_PACKAGE_WPEFRAMEWORK_COMMON
 	bool "LocationSync"
 	help
 	   LocationSync Plugin
@@ -21,16 +27,19 @@ config BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC_URI
 endif	   
 
 config BR2_PACKAGE_WPEFRAMEWORK_MONITOR
+        select BR2_PACKAGE_WPEFRAMEWORK_COMMON
         bool "Monitor"
         help
            Monitor Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_TIMESYNC
+        select BR2_PACKAGE_WPEFRAMEWORK_COMMON
 	bool "TimeSync"
 	help
 	   TimeSync Plugin
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL
+        select BR2_PACKAGE_WPEFRAMEWORK_COMMON
 	bool "RemoteControl"
 	help
 	   RemoteControl Plugin
@@ -64,16 +73,19 @@ config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_RF
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_SNAPSHOT
+        select BR2_PACKAGE_WPEFRAMEWORK_COMMON
 	bool "Snapshot"
 	help
 	   Snapshot Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_TRACECONTROL
+        select BR2_PACKAGE_WPEFRAMEWORK_COMMON
 	bool "TraceControl"
 	help
 	   TraceControl Plugin
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+        select BR2_PACKAGE_WPEFRAMEWORK_COMMON
 	bool "WebKitBrowser"
 	depends on BR2_PACKAGE_WPEWEBKIT
 	help
@@ -126,19 +138,21 @@ config BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBPROXY
+        select BR2_PACKAGE_WPEFRAMEWORK_COMMON
 	bool "WebProxy"
 	help
 	   WebProxy Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBSERVER
+        select BR2_PACKAGE_WPEFRAMEWORK_COMMON
         bool "WebServer"
         help
            WebServer Plugin
 
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBSHELL
+        select BR2_PACKAGE_WPEFRAMEWORK_COMMON
 	bool "WebShell"
-
 	help
 	   WebShell Plugin
 
