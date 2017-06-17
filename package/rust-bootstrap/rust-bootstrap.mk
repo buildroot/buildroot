@@ -1,0 +1,27 @@
+################################################################################
+#
+# rust-bootstrap
+#
+################################################################################
+
+RUST_BOOTSTRAP_VERSION = 1.17.0
+RUST_BOOTSTRAP_SITE = https://static.rust-lang.org/dist
+
+RUST_BOOTSTRAP_SOURCE = rustc-$(RUST_BOOTSTRAP_VERSION)-$(RUST_HOST_NAME).tar.gz
+RUST_BOOTSTRAP_LICENSE = Apache-2.0 or MIT
+RUST_BOOTSTRAP_LICENSE_FILES = LICENSE-APACHE LICENSE-MIT
+RUST_BOOTSTRAP_LIBSTD_SOURCE= rust-std-$(RUST_BOOTSTRAP_VERSION)-$(RUST_HOST_NAME).tar.gz
+RUST_BOOTSTRAP_LIBSTD_ROOT = rust-std-$(RUST_BOOTSTRAP_VERSION)-$(RUST_HOST_NAME)/rust-std-$(RUST_HOST_NAME)
+RUST_BOOTSTRAP_EXTRA_DOWNLOADS = $(RUST_BOOTSTRAP_SITE)/$(RUST_BOOTSTRAP_LIBSTD_SOURCE)
+
+define RUST_BOOTSTRAP_LIBSTD_EXTRACT
+	$(call suitable-extractor,$(RUST_BOOTSTRAP_LIBSTD_SOURCE)) \
+		$(DL_DIR)/$(RUST_BOOTSTRAP_LIBSTD_SOURCE) | \
+		$(TAR) --strip-components=2 -C $(@D)/rustc $(TAR_OPTIONS) - \
+			$(RUST_BOOTSTRAP_LIBSTD_ROOT)/lib
+endef
+
+HOST_RUST_BOOTSTRAP_EXTRA_DOWNLOADS = $(RUST_BOOTSTRAP_EXTRA_DOWNLOADS)
+HOST_RUST_BOOTSTRAP_POST_EXTRACT_HOOKS += RUST_BOOTSTRAP_LIBSTD_EXTRACT
+
+$(eval $(host-generic-package))
