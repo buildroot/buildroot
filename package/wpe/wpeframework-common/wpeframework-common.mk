@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_COMMON_VERSION = 3498f723ee2552dc6889d9ad5620f4dd64d07fb2
+WPEFRAMEWORK_COMMON_VERSION = 56667ef4c94118efad0f12957d7b33eaa2ae16c3
 WPEFRAMEWORK_COMMON_SITE_METHOD = git
 WPEFRAMEWORK_COMMON_SITE = git@github.com:WebPlatformForEmbedded/WPEFrameworkPlugins.git
 WPEFRAMEWORK_COMMON_INSTALL_STAGING = YES
