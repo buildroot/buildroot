@@ -143,7 +143,15 @@ comment "----------------------------------------------------"
 endif
 
 ###############################################################################
+
 comment "Legacy options removed in 2017.02"
+
+config BR2_PACKAGE_SPICE_TUNNEL
+	bool "spice network redirection removed"
+	select BR2_LEGACY
+	help
+	  Spice network redirection, aka tunnelling has been removed
+	  upstream.
 
 config BR2_PACKAGE_PERL_DB_FILE
 	bool "perl-db-file removed"

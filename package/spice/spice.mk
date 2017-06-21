@@ -4,21 +4,18 @@
 #
 ################################################################################
 
-SPICE_VERSION = 0.12.4
+SPICE_VERSION = 0.12.5
 SPICE_SOURCE = spice-$(SPICE_VERSION).tar.bz2
 SPICE_SITE = http://www.spice-space.org/download/releases
 SPICE_LICENSE = LGPLv2.1+
 SPICE_LICENSE_FILES = COPYING
 SPICE_INSTALL_STAGING = YES
 SPICE_DEPENDENCIES =        \
-	alsa-lib            \
-	celt051             \
 	jpeg                \
 	libglib2            \
 	openssl             \
 	pixman              \
-	python-pyparsing    \
-	spice-protocol      \
+	spice-protocol
 
 # We disable everything for now, because the dependency tree can become
 # quite deep if we try to enable some features, and I have not tested that.
@@ -27,12 +24,31 @@ SPICE_CONF_OPTS =                 \
 	--disable-smartcard       \
 	--disable-automated-tests \
 	--without-sasl            \
+	--disable-manual
 
 SPICE_DEPENDENCIES += host-pkgconf
 
+ifeq ($(BR2_PACKAGE_CELT051),y)
+SPICE_CONF_OPTS += --enable-celt051
+SPICE_DEPENDENCIES += celt051
+else
+SPICE_CONF_OPTS += --disable-celt051
+endif
+
+# no enable/disable, detected using pkg-config
+ifeq ($(BR2_PACKAGE_OPUS),y)
+SPICE_DEPENDENCIES += opus
+endif
+
 ifeq ($(BR2_PACKAGE_SPICE_CLIENT),y)
 SPICE_CONF_OPTS += --enable-client
-SPICE_DEPENDENCIES += xlib_libXfixes xlib_libXrandr
+SPICE_DEPENDENCIES += \
+	xlib_libXfixes \
+	xlib_libXrandr \
+	xlib_libX11 \
+	xlib_libXext \
+	xlib_libXrender \
+	alsa-lib
 else
 SPICE_CONF_OPTS += --disable-client
 endif
@@ -44,15 +60,16 @@ else
 SPICE_CONF_OPTS += --disable-gui
 endif
 
-ifeq ($(BR2_PACKAGE_SPICE_TUNNEL),y)
-SPICE_CONF_OPTS += --enable-tunnel
-SPICE_DEPENDENCIES += slirp
-else
-SPICE_CONF_OPTS += --disable-tunnel
-endif
+# spice uses a number of source files that are generated with python / pyparsing.
+# The generated files are part of the tarball, so python / pyparsing isn't needed
+# when building from the tarball, but the configure script gets confused and looks
+# for the wrong file name to know if it needs to check for python / pyparsing,
+# so convince it they aren't needed
+define SPICE_NO_PYTHON_PYPARSING
+	touch $(@D)/client/generated_marshallers.cpp
+endef
 
-SPICE_CONF_ENV = PYTHONPATH=$(TARGET_DIR)/usr/lib/python$(PYTHON_VERSION_MAJOR)/site-packages
-SPICE_MAKE_ENV = PYTHONPATH=$(TARGET_DIR)/usr/lib/python$(PYTHON_VERSION_MAJOR)/site-packages
+SPICE_PRE_CONFIGURE_HOOKS += SPICE_NO_PYTHON_PYPARSING
 
 # We need to tweak spice.pc because it /forgets/ (for static linking) that
 # it should link against libz and libjpeg. libz is pkg-config-aware, while
