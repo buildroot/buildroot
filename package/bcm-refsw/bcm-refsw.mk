@@ -5,15 +5,15 @@
 ################################################################################
 
 ifeq ($(BR2_PACKAGE_BCM_REFSW_16_1),y)
-BCM_REFSW_VERSION = 16.1-2
+BCM_REFSW_VERSION = 16.1-3
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_16_2),y)
-BCM_REFSW_VERSION = 16.2-5
+BCM_REFSW_VERSION = 16.2-7
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_16_3),y)
 BCM_REFSW_VERSION = 16.3
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_15_2),y)
 BCM_REFSW_VERSION = 15.2
 else
-BCM_REFSW_VERSION = 16.2-5
+BCM_REFSW_VERSION = 16.2-7
 endif
 
 BCM_REFSW_SITE = git@github.com:Metrological/bcm-refsw.git
@@ -110,7 +110,11 @@ BCM_REFSW_BIN = ${BCM_REFSW_OUTPUT}/nexus/bin
 ifneq ($(BR2_PACKAGE_WEBBRIDGE_PLUGIN_IRNEXUS_MODE),)
 BCM_REFSW_IRMODE=$(call qstrip,$(BR2_PACKAGE_WEBBRIDGE_PLUGIN_IRNEXUS_MODE))
 else
+ifneq ($(BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS_MODE),)
+BCM_REFSW_IRMODE=$(call qstrip,$(BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS_MODE))
+else
 BCM_REFSW_IRMODE=23
+endif
 endif
 
 define BCM_REFSW_BUILD_NEXUS
@@ -228,7 +232,7 @@ endif
 
 define BCM_REFSW_INSTALL_TARGET_NXSERVER
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libnxclient.so $1/usr/lib/libnxclient.so
-	if [ "x$(BR2_PACKAGE_PLUGIN_NXRESOURCECENTER)" = "x" ]; then \
+	if [ "x$(BR2_PACKAGE_PLUGIN_NXRESOURCECENTER)" = "x" and "x$(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR)" = "x" ]; then \
 		$(INSTALL) -m 755 -D $(BCM_REFSW_BIN)/nxserver $1/usr/bin/nxserver; \
 		$(BCM_REFSW_INSTALL_TARGET_NXSERVER_INIT) \
 	fi
