@@ -1,7 +1,7 @@
-From 34acf61b9e3bbb6b97d9851f077740cf03c6074f Mon Sep 17 00:00:00 2001
+From 172d8c37f22733a9cad77e16d30494c3d5aff935 Mon Sep 17 00:00:00 2001
 From: Xabier Rodriguez Calvar <calvaris@igalia.com>
-Date: Fri, 16 Sep 2016 16:08:18 +0200
-Subject: [PATCH 3/3] qtdemux: add context for a preferred protection
+Date: Wed, 21 Jun 2017 17:59:21 +0200
+Subject: [PATCH] qtdemux: add context for a preferred protection
 
 qtdemux selected the first system corresponding to a working GStreamer
 decryptor. With this change, before selecting that decryptor, qtdemux
@@ -9,15 +9,34 @@ will check if it has context (a preferred decryptor id) and if not, it
 will request it.
 
 The request includes track-id, available key system ids for the
-available decryptors and event the events so that the init data is
+available decryptors and even the events so that the init data is
 accessible.
+
+[eocanha@igalia.com: select the preferred protection system even if not available]
+
+Test "4. ClearKeyVideo" in YouTube leanback EME conformance tests 2016 for
+H.264[1] uses a media file[2] with cenc encryption which embeds 'pssh' boxes
+with the init data for the Playready and Widevine encryption systems, but not
+for the ClearKey encryption system (as defined by the EMEv0.1b spec[3] and with
+the encryption system id defined in [4]).
+
+Instead, the ClearKey encryption system is manually selected by the web page
+code (even if not originally detected by qtdemux) and the proper decryption key
+is dispatched to the decryptor, which can then decrypt the video successfully.
+
+[1] http://yt-dash-mse-test.commondatastorage.googleapis.com/unit-tests/2016.html?test_type=encryptedmedia-test&webm=false
+[2] http://yt-dash-mse-test.commondatastorage.googleapis.com/unit-tests/media/car_cenc-20120827-86.mp4
+[3] https://dvcs.w3.org/hg/html-media/raw-file/eme-v0.1b/encrypted-media/encrypted-media.html#simple-decryption-clear-key
+[4] https://www.w3.org/Bugs/Public/show_bug.cgi?id=24027#c2
+
+https://bugzilla.gnome.org/show_bug.cgi?id=770107
 ---
- gst/isomp4/qtdemux.c | 210 +++++++++++++++++++++++++++++++++++++++++++++++++--
- gst/isomp4/qtdemux.h |   2 +-
- 2 files changed, 204 insertions(+), 8 deletions(-)
+ gst/isomp4/qtdemux.c | 207 +++++++++++++++++++++++++++++++++++++++++++++++++--
+ gst/isomp4/qtdemux.h |   1 +
+ 2 files changed, 202 insertions(+), 6 deletions(-)
 
 diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
-index c2cafa8..f669715 100644
+index 960340215..cfd1d6d2b 100644
 --- a/gst/isomp4/qtdemux.c
 +++ b/gst/isomp4/qtdemux.c
 @@ -490,6 +490,8 @@ static GstIndex *gst_qtdemux_get_index (GstElement * element);
@@ -45,7 +64,7 @@ index c2cafa8..f669715 100644
    g_queue_init (&qtdemux->protection_event_queue);
    gst_segment_init (&qtdemux->segment, GST_FORMAT_TIME);
    qtdemux->flowcombiner = gst_flow_combiner_new ();
-@@ -2017,6 +2021,10 @@ gst_qtdemux_reset (GstQTDemux * qtdemux, gboolean hard)
+@@ -2022,6 +2026,10 @@ gst_qtdemux_reset (GstQTDemux * qtdemux, gboolean hard)
        g_ptr_array_free (qtdemux->protection_system_ids, TRUE);
        qtdemux->protection_system_ids = NULL;
      }
@@ -56,7 +75,7 @@ index c2cafa8..f669715 100644
    } else if (qtdemux->mss_mode) {
      gst_flow_combiner_reset (qtdemux->flowcombiner);
      for (n = 0; n < qtdemux->n_streams; n++)
-@@ -2480,6 +2488,29 @@ gst_qtdemux_change_state (GstElement * element, GstStateChange transition)
+@@ -2485,6 +2493,28 @@ gst_qtdemux_change_state (GstElement * element, GstStateChange transition)
  }
  
  static void
@@ -66,19 +85,18 @@ index c2cafa8..f669715 100644
 +
 +  g_return_if_fail (GST_IS_CONTEXT (context));
 +
-+  if (g_strcmp0 (gst_context_get_context_type (context),
-+          "drm-preferred-decryption-system-id") == 0) {
++  if (gst_context_has_context_type (context,
++          "drm-preferred-decryption-system-id")) {
 +    const GstStructure *s;
 +
 +    s = gst_context_get_structure (context);
++    g_free (qtdemux->preferred_protection_system_id);
 +    qtdemux->preferred_protection_system_id =
 +        g_strdup (gst_structure_get_string (s, "decryption-system-id"));
 +    GST_DEBUG_OBJECT (element, "set preferred decryption system to %s",
 +        qtdemux->preferred_protection_system_id);
 +  }
 +
-+  GST_TRACE_OBJECT (element, "chaining set_context to superclass %p or %p",
-+      GST_ELEMENT_GET_CLASS (element), parent_class);
 +  GST_ELEMENT_CLASS (parent_class)->set_context (element, context);
 +}
 +
@@ -86,7 +104,7 @@ index c2cafa8..f669715 100644
  qtdemux_parse_ftyp (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
  {
    /* counts as header data */
-@@ -3667,6 +3698,8 @@ qtdemux_parse_pssh (GstQTDemux * qtdemux, GNode * node)
+@@ -3673,6 +3703,8 @@ qtdemux_parse_pssh (GstQTDemux * qtdemux, GNode * node)
    event = gst_event_new_protection (sysid_string, pssh,
        (parent_box_type == FOURCC_moov) ? "isobmff/moov" : "isobmff/moof");
    for (i = 0; i < qtdemux->n_streams; ++i) {
@@ -95,22 +113,16 @@ index c2cafa8..f669715 100644
      g_queue_push_tail (&qtdemux->streams[i]->protection_scheme_event_queue,
          gst_event_ref (event));
    }
-@@ -5369,7 +5402,13 @@ gst_qtdemux_decorate_and_push_buffer (GstQTDemux * qtdemux,
+@@ -5380,6 +5412,8 @@ gst_qtdemux_decorate_and_push_buffer (GstQTDemux * qtdemux,
      GstEvent *event;
  
      while ((event = g_queue_pop_head (&stream->protection_scheme_event_queue))) {
--      gst_pad_push_event (stream->pad, event);
-+#if (!GST_DISABLE_GST_DEBUG)
-+      const gchar *system_id = NULL;
-+      gst_event_parse_protection (event, &system_id, NULL, NULL);
-+      GST_TRACE_OBJECT (qtdemux, "pushing again protection event for system %s",
-+          system_id);
-+#endif
-+        gst_pad_push_event (stream->pad, event);
++      GST_TRACE_OBJECT (stream->pad, "pushing protection event: %"
++          GST_PTR_FORMAT, event);
+       gst_pad_push_event (stream->pad, event);
      }
  
-     if (info->crypto_info == NULL) {
-@@ -7455,11 +7494,148 @@ qtdemux_do_allocation (GstQTDemux * qtdemux, QtDemuxStream * stream)
+@@ -7473,11 +7507,148 @@ qtdemux_do_allocation (GstQTDemux * qtdemux, QtDemuxStream * stream)
  }
  
  static gboolean
@@ -157,7 +169,7 @@ index c2cafa8..f669715 100644
 +}
 +
 +static void
-+gst_qtdemux_request_protection_context_if_needed (GstQTDemux * qtdemux,
++gst_qtdemux_request_protection_context (GstQTDemux * qtdemux,
 +    QtDemuxStream * stream)
 +{
 +  GstQuery *query;
@@ -175,7 +187,7 @@ index c2cafa8..f669715 100644
 +    return;
 +  }
 +
-+  GST_TRACE_OBJECT (qtdemux, "currently we have detected %u protection systems",
++  GST_TRACE_OBJECT (qtdemux, "detected %u protection systems",
 +      qtdemux->protection_system_ids->len);
 +  g_ptr_array_add (qtdemux->protection_system_ids, NULL);
 +  filtered_sys_ids = gst_protection_filter_systems_by_available_decryptors (
@@ -214,7 +226,7 @@ index c2cafa8..f669715 100644
 +   *  2b) Query upstream as above.
 +   */
 +  query = gst_query_new_context ("drm-preferred-decryption-system-id");
-+  st = (GstStructure *) gst_query_get_structure (query);
++  st = gst_query_writable_structure (query);
 +  gst_structure_set (st, "track-id", G_TYPE_UINT, stream->track_id,
 +      "stream-encryption-systems", G_TYPE_STRV, filtered_sys_ids, NULL);
 +  gst_structure_set_value (st, "stream-encryption-events", &event_list);
@@ -260,7 +272,7 @@ index c2cafa8..f669715 100644
  
    g_return_val_if_fail (qtdemux != NULL, FALSE);
    g_return_val_if_fail (stream != NULL, FALSE);
-@@ -7474,17 +7650,37 @@ gst_qtdemux_configure_protected_caps (GstQTDemux * qtdemux,
+@@ -7492,17 +7663,41 @@ gst_qtdemux_configure_protected_caps (GstQTDemux * qtdemux,
          "cenc protection system information has been found");
      return FALSE;
    }
@@ -269,17 +281,21 @@ index c2cafa8..f669715 100644
 -      qtdemux->protection_system_ids->pdata);
 -  g_ptr_array_remove_index (qtdemux->protection_system_ids,
 -      qtdemux->protection_system_ids->len - 1);
-+  gst_qtdemux_request_protection_context_if_needed (qtdemux, stream);
++
++  gst_qtdemux_request_protection_context (qtdemux, stream);
 +  if (qtdemux->preferred_protection_system_id != NULL) {
-+    guint i;
-+    for (i = 0; i < qtdemux->protection_system_ids->len; i++) {
-+      if (g_strcmp0 (g_ptr_array_index (qtdemux->protection_system_ids, i),
-+              qtdemux->preferred_protection_system_id) == 0) {
-+        const gchar *preferred_system_array[] =
-+            { qtdemux->preferred_protection_system_id, NULL };
-+        selected_system = gst_protection_select_system (preferred_system_array);
-+        break;
-+      }
++    const gchar *preferred_system_array[] =
++        { qtdemux->preferred_protection_system_id, NULL };
++
++    selected_system = gst_protection_select_system (preferred_system_array);
++
++    if (selected_system) {
++      GST_TRACE_OBJECT (qtdemux, "selected preferred system %s",
++          qtdemux->preferred_protection_system_id);
++    } else {
++      GST_WARNING_OBJECT (qtdemux, "could not select preferred system %s "
++          "because there is no available decryptor",
++          qtdemux->preferred_protection_system_id);
 +    }
 +  }
 +
@@ -298,24 +314,23 @@ index c2cafa8..f669715 100644
    }
  
 +  GST_DEBUG_OBJECT (qtdemux, "selected protection system is %s",
-+        selected_system);
++      selected_system);
 +
    s = gst_caps_get_structure (stream->caps, 0);
    if (!gst_structure_has_name (s, "application/x-cenc")) {
      gst_structure_set (s,
 diff --git a/gst/isomp4/qtdemux.h b/gst/isomp4/qtdemux.h
-index 771ddcc..2ecf054 100644
+index 771ddcc5b..ba5f70cb2 100644
 --- a/gst/isomp4/qtdemux.h
 +++ b/gst/isomp4/qtdemux.h
-@@ -154,7 +154,7 @@ struct _GstQTDemux {
+@@ -154,6 +154,7 @@ struct _GstQTDemux {
    guint64 cenc_aux_info_offset;
    guint8 *cenc_aux_info_sizes;
    guint32 cenc_aux_sample_count;
--
 +  gchar *preferred_protection_system_id;
  
+ 
    /*
-    * ALL VARIABLES BELOW ARE ONLY USED IN PUSH-BASED MODE 
 -- 
-1.8.3.2
+2.11.0
 
