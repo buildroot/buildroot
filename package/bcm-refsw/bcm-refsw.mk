@@ -10,6 +10,8 @@ else ifeq ($(BR2_PACKAGE_BCM_REFSW_16_2),y)
 BCM_REFSW_VERSION = 16.2-7
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_16_3),y)
 BCM_REFSW_VERSION = 16.3
+else ifeq ($(BR2_PACKAGE_BCM_REFSW_17_1),y)
+BCM_REFSW_VERSION = 17.1-1
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_15_2),y)
 BCM_REFSW_VERSION = 15.2
 else
@@ -103,7 +105,12 @@ else
 BCM_REFSW_MAKE_ENV += SAGE_SUPPORT=n
 endif
 
+ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 17.1),1)
+BCM_REFSW_VCX = $(BCM_REFSW_DIR)/BSEAV/lib/gpu/${BCM_REFSW_PLATFORM_VC}
+else
 BCM_REFSW_VCX = $(BCM_REFSW_DIR)/rockford/middleware/${BCM_REFSW_PLATFORM_VC}
+endif
+
 BCM_REFSW_OUTPUT = $(BCM_REFSW_DIR)/obj.${BCM_REFSW_PLATFORM}
 BCM_REFSW_BIN = ${BCM_REFSW_OUTPUT}/nexus/bin
 
@@ -176,28 +183,53 @@ endif
 
 # wayland-egl is needed only for westeros
 ifeq ($(BR2_PACKAGE_WESTEROS),y)
-WAYLAND_EGL_DIR=$(@D)/trellis/display/weston
+WAYLAND_EGL_DIR=${BCM_REFSW_VCX}/platform/wayland/
 define BCM_REFSW_BUILD_WAYLAND_EGL
 	$(TARGET_CONFIGURE_OPTS) \
 	$(TARGET_MAKE_ENV) \
 	$(BCM_REFSW_CONF_OPTS) \
 	$(BCM_REFSW_MAKE_ENV) \
-		$(MAKE) -C $(WAYLAND_EGL_DIR) wayland-egl \
-	        SCANNER_TOOL=${HOST_DIR}/usr/bin/wayland-scanner \
-			LDFLAGS="$(TARGET_LDFLAGS) -L${BCM_REFSW_BIN} -lnxpl -lnexus -lnxclient -lwayland-client" \
+		$(MAKE) -C $(WAYLAND_EGL_DIR) -f wayland_nexus_protocol.mk \
+	        WAYLAND_SCANNER=${HOST_DIR}/usr/bin/wayland-scanner \
+			APPLIBS_TARGET_LIB_DIR=${BCM_REFSW_BIN} \
+			APPLIBS_TARGET_INC_DIR=${BCM_REFSW_BIN}/include
+			
+	$(TARGET_CONFIGURE_OPTS) \
+	$(TARGET_MAKE_ENV) \
+	$(BCM_REFSW_CONF_OPTS) \
+	$(BCM_REFSW_MAKE_ENV) \
+		$(MAKE) -C $(WAYLAND_EGL_DIR) -f wayland_egl.mk \
+	        WAYLAND_SCANNER=${HOST_DIR}/usr/bin/wayland-scanner \
+			APPLIBS_TARGET_LIB_DIR=${BCM_REFSW_BIN} \
+			APPLIBS_TARGET_INC_DIR=${BCM_REFSW_BIN}/include
+			
+	$(TARGET_CONFIGURE_OPTS) \
+	$(TARGET_MAKE_ENV) \
+	$(BCM_REFSW_CONF_OPTS) \
+	$(BCM_REFSW_MAKE_ENV) \
+		$(MAKE) -C $(WAYLAND_EGL_DIR) -f platform_wayland_server.mk \
+	        WAYLAND_SCANNER=${HOST_DIR}/usr/bin/wayland-scanner \
+			APPLIBS_TARGET_LIB_DIR=${BCM_REFSW_BIN} \
+			APPLIBS_TARGET_INC_DIR=${BCM_REFSW_BIN}/include
+			
+	$(TARGET_CONFIGURE_OPTS) \
+	$(TARGET_MAKE_ENV) \
+	$(BCM_REFSW_CONF_OPTS) \
+	$(BCM_REFSW_MAKE_ENV) \
+		$(MAKE) -C $(WAYLAND_EGL_DIR) -f platform_wayland_client.mk \
+	        WAYLAND_SCANNER=${HOST_DIR}/usr/bin/wayland-scanner \
 			APPLIBS_TARGET_LIB_DIR=${BCM_REFSW_BIN} \
 			APPLIBS_TARGET_INC_DIR=${BCM_REFSW_BIN}/include
 endef
 
 define BCM_REFSW_INSTALL_STAGING_WAYLAND_EGL
-	$(INSTALL) -m 644 -D $(WAYLAND_EGL_DIR)/wayland-egl/libwayland-egl.so $(STAGING_DIR)/usr/lib
-	$(INSTALL) -m 644 $(WAYLAND_EGL_DIR)/wayland-egl/wayland-egl.pc $(STAGING_DIR)/usr/lib/pkgconfig/
-	$(INSTALL) -m 644 $(WAYLAND_EGL_DIR)/include/EGL/eglext_brcm.h $(STAGING_DIR)/usr/include/EGL/
-	# ??? /trellis/display/weston/include/EGL/eglext.h
+	$(INSTALL) -m 644 -D $(WAYLAND_EGL_DIR)/lib_${BCM_REFSW_PLATFORM}_release/*.so $(STAGING_DIR)/usr/lib
+	$(INSTALL) -m 644 package/bcm-refsw/wayland-egl.pc $(STAGING_DIR)/usr/lib/pkgconfig/
+	$(INSTALL) -m 644 $(WAYLAND_EGL_DIR)/autogen/*.h $(STAGING_DIR)/usr/include/refsw/
 endef
 
 define BCM_REFSW_INSTALL_TARGET_WAYLAND_EGL
-	$(INSTALL) -m 644 -D $(WAYLAND_EGL_DIR)/wayland-egl/libwayland-egl.so $(TARGET_DIR)/usr/lib
+	$(INSTALL) -m 644 -D $(WAYLAND_EGL_DIR)/lib_${BCM_REFSW_PLATFORM}_release/*.so $(TARGET_DIR)/usr/lib
 endef
 endif
 
@@ -232,7 +264,7 @@ endif
 
 define BCM_REFSW_INSTALL_TARGET_NXSERVER
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libnxclient.so $1/usr/lib/libnxclient.so
-	if [ "x$(BR2_PACKAGE_PLUGIN_NXRESOURCECENTER)" = "x" and "x$(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR)" = "x" ]; then \
+	if [ "x$(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR)" = "x" ]; then \
 		$(INSTALL) -m 755 -D $(BCM_REFSW_BIN)/nxserver $1/usr/bin/nxserver; \
 		$(BCM_REFSW_INSTALL_TARGET_NXSERVER_INIT) \
 	fi
@@ -248,7 +280,7 @@ define BCM_REFSW_BUILD_CMDS
 endef
 
 ifeq ($(BCM_REFSW_PLATFORM_VC),vc5) 
-	ifeq ($(BR2_PACKAGE_BCM_REFSW_16_2),y)
+	ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 16.2),1)
         BCM_REFSW_VCX_KHRN = $(BCM_REFSW_VCX)/driver/libs/khrn/include
 	else
 		BCM_REFSW_VCX_KHRN = $(BCM_REFSW_VCX)/driver/interface/khronos/include
@@ -264,7 +296,8 @@ define BCM_REFSW_INSTALL_KHRONOS
 	$(INSTALL) -m 644 -D ${BCM_REFSW_VCX_KHRN}/KHR/khrplatform.h $(STAGING_DIR)/usr/include/KHR/khrplatform.h;
 endef
 
-ifeq ($(BR2_PACKAGE_BCM_REFSW_16_2)$(BR2_PACKAGE_BCM_REFSW_SAGE),yy) 
+
+ifeq ( $(shell expr $(BCM_REFSW_VERSION) \>= 16.2)$(BR2_PACKAGE_BCM_REFSW_SAGE),1y)
 define BCM_REFSW_INSTALL_SAGE_BIN
     $(INSTALL) -m 755 -d $1/lib/firmware/
 	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/sage_bl.bin $1/lib/firmware/
