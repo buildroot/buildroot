@@ -224,6 +224,7 @@ endef
 
 define BCM_REFSW_INSTALL_STAGING_WAYLAND_EGL
 	$(INSTALL) -m 644 -D $(WAYLAND_EGL_DIR)/lib_${BCM_REFSW_PLATFORM}_release/*.so $(STAGING_DIR)/usr/lib
+	$(INSTALL) -m 644 -D $(WAYLAND_EGL_DIR)/lib_${BCM_REFSW_PLATFORM}_release/libbcm_wayland_egl.so $(STAGING_DIR)/usr/lib/libwayland-egl.so
 	$(INSTALL) -m 644 package/bcm-refsw/wayland-egl.pc $(STAGING_DIR)/usr/lib/pkgconfig/
 	$(INSTALL) -m 644 $(WAYLAND_EGL_DIR)/autogen/*.h $(STAGING_DIR)/usr/include/refsw/
 endef
