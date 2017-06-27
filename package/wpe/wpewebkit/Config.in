@@ -74,6 +74,13 @@ config BR2_PACKAGE_WPEWEBKIT_USE_WEB_AUDIO
 	help
 	  Enable Web Audio
 
+config BR2_PACKAGE_WPEWEBKIT_ENABLE_MEDIA_SOURCE
+	depends on BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_ISOMP4
+	bool "Media Source Extensions (MSE)"
+	default y
+	help
+	  Enable Media Source Extensions
+
 menu "Encrypted Media Extensions options (EME)"
 
 config BR2_PACKAGE_WPEWEBKIT_USE_ENCRYPTED_MEDIA_V1
