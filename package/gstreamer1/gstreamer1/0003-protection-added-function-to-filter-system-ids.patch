@@ -1,25 +1,57 @@
-From 7772eb350591682b6a315c8a87a58131f731f1d4 Mon Sep 17 00:00:00 2001
+From 3d47e56f985d6f516211aad2d704a49fc6a6425b Mon Sep 17 00:00:00 2001
 From: Xabier Rodriguez Calvar <calvaris@igalia.com>
-Date: Wed, 19 Oct 2016 16:44:16 +0200
+Date: Wed, 28 Jun 2017 09:54:56 +0200
 Subject: [PATCH] protection: added function to filter system ids
 
 gst_protection_filter_systems_by_available_decryptors takes an array of
 strings and returns a new array of strings filtered by the avaible
 decryptors for them so the ones you get are the ones that you should be
 able to decrypt.
----
- gst/gstprotection.c | 36 ++++++++++++++++++++++++++++++++++++
- gst/gstprotection.h |  2 ++
- 2 files changed, 38 insertions(+)
 
+https://bugzilla.gnome.org/show_bug.cgi?id=770107
+
+[eocanha@igalia.com: applied Tim's review suggestions]
+---
+ docs/gst/gstreamer-sections.txt |  1 +
+ gst/gstprotection.c             | 60 +++++++++++++++++++++++++++++++++++++++++
+ gst/gstprotection.h             |  4 +++
+ win32/common/libgstreamer.def   |  1 +
+ 4 files changed, 66 insertions(+)
+
+diff --git a/docs/gst/gstreamer-sections.txt b/docs/gst/gstreamer-sections.txt
+index 93480cc1b..a32bbf21e 100644
+--- a/docs/gst/gstreamer-sections.txt
++++ b/docs/gst/gstreamer-sections.txt
+@@ -2461,6 +2461,7 @@ GstProtectionMeta
+ gst_buffer_add_protection_meta
+ gst_buffer_get_protection_meta
+ gst_protection_select_system
++gst_protection_filter_systems_by_available_decryptors
+ GST_PROTECTION_SYSTEM_ID_CAPS_FIELD
+ <SUBSECTION Standard>
+ GST_PROTECTION_META_API_TYPE
 diff --git a/gst/gstprotection.c b/gst/gstprotection.c
-index 8ee52ea..2d7e5e0 100644
+index bc9df013a..54f415b9c 100644
 --- a/gst/gstprotection.c
 +++ b/gst/gstprotection.c
-@@ -191,6 +191,42 @@ gst_protection_select_system (const gchar ** system_identifiers)
+@@ -193,6 +193,66 @@ gst_protection_select_system (const gchar ** system_identifiers)
    return retval;
  }
  
++/**
++ * gst_protection_filter_systems_by_available_decryptors:
++ * @system_identifiers: (transfer none): A null terminated array of strings
++ * that contains the UUID values of each protection system that is to be
++ * checked.
++ *
++ * Iterates the supplied list of UUIDs and checks the GstRegistry for
++ * all the decryptors supporting one of the supplied UUIDs.
++ *
++ * Returns: (transfer full): A null terminated array containing all the
++ * @system_identifiers supported by the set of available decryptors.
++ *
++ * Since: 1.14
++ */
 +gchar **
 +gst_protection_filter_systems_by_available_decryptors (const gchar **
 +    system_identifiers)
@@ -33,16 +65,21 @@ index 8ee52ea..2d7e5e0 100644
 +      GST_RANK_MARGINAL);
 +
 +  decryptors_number = g_list_length (decryptors);
++
++  if (decryptors_number == 0) {
++    return NULL;
++  }
++
 +  retval = g_new (gchar *, decryptors_number + 1);
 +
 +  GST_TRACE ("found %u decrytors", decryptors_number);
 +
 +  for (walk = decryptors; walk; walk = g_list_next (walk)) {
 +    GstElementFactory *fact = (GstElementFactory *) walk->data;
-+
 +    const char *found_sys_id =
 +        gst_protection_factory_check (fact, system_identifiers);
-+    GST_TRACE ("factory %s is valid for %s", GST_OBJECT_NAME (fact),
++
++    GST_DEBUG ("factory %s is valid for %s", GST_OBJECT_NAME (fact),
 +        found_sys_id);
 +
 +    if (found_sys_id) {
@@ -50,6 +87,11 @@ index 8ee52ea..2d7e5e0 100644
 +    }
 +  }
 +  retval[i] = NULL;
++
++  if (retval[0] == NULL) {
++    g_free (retval);
++    retval = NULL;
++  }
 +
 +  gst_plugin_feature_list_free (decryptors);
 +
@@ -60,18 +102,31 @@ index 8ee52ea..2d7e5e0 100644
  gst_protection_factory_check (GstElementFactory * fact,
      const gchar ** system_identifiers)
 diff --git a/gst/gstprotection.h b/gst/gstprotection.h
-index f2f54c4..95976c5 100644
+index 39b83c700..b9bcd3f75 100644
 --- a/gst/gstprotection.h
 +++ b/gst/gstprotection.h
-@@ -66,6 +66,8 @@ GstProtectionMeta *gst_buffer_add_protection_meta (GstBuffer * buffer,
-     GstStructure * info);
+@@ -71,5 +71,9 @@ GstProtectionMeta * gst_buffer_add_protection_meta (GstBuffer * buffer,
+ GST_EXPORT
+ const gchar * gst_protection_select_system (const gchar ** system_identifiers);
  
- const gchar *gst_protection_select_system (const gchar ** system_identifiers);
++GST_EXPORT
 +gchar ** gst_protection_filter_systems_by_available_decryptors (
 +    const gchar ** system_identifiers);
- 
++
  G_END_DECLS
  #endif /* __GST_PROTECTION_META_H__ */
+diff --git a/win32/common/libgstreamer.def b/win32/common/libgstreamer.def
+index 510d2151a..9578c4fd5 100644
+--- a/win32/common/libgstreamer.def
++++ b/win32/common/libgstreamer.def
+@@ -1078,6 +1078,7 @@ EXPORTS
+ 	gst_printerrln
+ 	gst_println
+ 	gst_progress_type_get_type
++	gst_protection_filter_systems_by_available_decryptors
+ 	gst_protection_meta_api_get_type
+ 	gst_protection_meta_get_info
+ 	gst_protection_select_system
 -- 
-2.10.2
+2.11.0
 
