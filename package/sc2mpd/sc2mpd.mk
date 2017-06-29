@@ -4,8 +4,9 @@
 #
 ################################################################################
 
-SC2MPD_VERSION = 1.1.1
-SC2MPD_SITE = http://www.lesbonscomptes.com/upmpdcli/downloads
+SC2MPD_VERSION = 7dd8f99f0361d6a65de94ae4df4f75846be977f6
+SC2MPD_SITE = git@github.com:medoc92/sc2mpd.git
+SC2MPD_SITE_METHOD = git
 SC2MPD_LICENSE = GPLv2+
 SC2MPD_LICENSE_FILES = COPYING
 SC2MPD_DEPENDENCIES = alsa-lib libmicrohttpd libsamplerate \
