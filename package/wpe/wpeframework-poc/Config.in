@@ -1,0 +1,8 @@
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_POC
+	bool "Concept plugins"
+	help
+	   WPE Platform plugins to prove a concept.
+
+if BR2_PACKAGE_WPEFRAMEWORK_POC
+source "package/wpe/wpeframework-poc/wpeframework-spotify/Config.in"
+endif

@@ -1,0 +1,10 @@
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_SPOTIFY
+	bool "Spotify"
+	select BR2_PACKAGE_ALSA_LIB
+	help
+	   WPE Platform plugins that supports spotify services.
+            - Spotify connect
+
+if BR2_PACKAGE_WPEFRAMEWORK_SPOTIFY
+# options for the plugin
+endif
