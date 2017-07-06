@@ -1,0 +1,13 @@
+config BR2_PACKAGE_LIBRESPOT
+       bool "librespot"
+       depends on BR2_PACKAGE_HOST_CARGO
+       help
+         librespot is an open source client library for Spotify. 
+         
+         It enables applications to use Spotify's service, without 
+         using the official but closed-source libspotify. Additionally, 
+         it will provide extra features which are not available 
+         in the official library.
+         
+         https://github.com/plietar/librespot
+
