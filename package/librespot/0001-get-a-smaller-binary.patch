@@ -1,0 +1,26 @@
+diff --git a/Cargo.toml b/Cargo.toml
+index 8dbf12a..c60b028 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -9,6 +9,10 @@ keywords = ["spotify"]
+ repository = "https://github.com/plietar/librespot"
+ readme = "README.md"
+ 
++[profile.release]
++lto = true
++panic = 'abort'
++
+ [lib]
+ name = "librespot"
+ path = "src/lib.rs"
+diff --git a/build.rs b/build.rs
+index 131b5ef..df1d8b7 100644
+--- a/build.rs
++++ b/build.rs
+@@ -1,3 +1,6 @@
++#![feature(alloc_system)]
++extern crate alloc_system;
++
+ extern crate vergen;
+ extern crate protobuf_macros;
+ 
