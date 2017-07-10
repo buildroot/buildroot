@@ -1,0 +1,184 @@
+From 20f67f157c2284057328e6391d10e329b088f8d2 Mon Sep 17 00:00:00 2001
+From: Rob Landley <rob@landley.net>
+Date: Thu, 30 Jun 2016 10:39:41 -0500
+Subject: [PATCH] Teach wc to do -cm together. Fix testsuite so TEST_HOST
+ passes too.
+
+---
+ tests/wc.test   | 13 +++++-----
+ toys/posix/wc.c | 73 +++++++++++++++++++++++++++++++--------------------------
+ 2 files changed, 46 insertions(+), 40 deletions(-)
+
+diff --git a/tests/wc.test b/tests/wc.test
+index abb237e..d227b9c 100755
+--- a/tests/wc.test
++++ b/tests/wc.test
+@@ -12,16 +12,14 @@ lines
+ EOF
+ 
+ testing "wc" "wc >/dev/null && echo yes" "yes\n" "" ""
+-testing "empty file" "wc" "0 0 0\n" "" ""
+-testing "standard input" "wc" "1 3 5\n" "" "a b\nc"
++testing "empty file" "wc" "      0       0       0\n" "" ""
++testing "standard input" "wc" "      1       3       5\n" "" "a b\nc"
+ testing "-c" "wc -c file1" "26 file1\n" "" ""
+ testing "-l" "wc -l file1" "4 file1\n" "" ""
+ testing "-w" "wc -w file1" "5 file1\n" "" ""
+-testing "format" "wc file1" "4 5 26 file1\n" "" ""
++NOSPACE=1 testing "format" "wc file1" " 4 5 26 file1\n" "" ""
+ testing "multiple files" "wc input - file1" \
+-        "1 2 3 input\n0 2 3 -\n4 5 26 file1\n5 9 32 total\n" "a\nb" "a b"
+-
+-optional TOYBOX_I18N
++        "      1       2       3 input\n      0       2       3 -\n      4       5      26 file1\n      5       9      32 total\n" "a\nb" "a b"
+ 
+ #Tests for wc -m
+ if printf "%s" "$LANG" | grep -q UTF-8
+@@ -33,13 +31,14 @@ do
+   printf "ü" >> file1
+ done
+ testing "-m" "wc -m file1" "8193 file1\n" "" ""
++testing "-m 2" 'cat "$FILES/utf8/test2.txt" | wc -m' "169\n" "" ""
+ printf " " > file1
+ for i in $(seq 1 8192)
+ do
+   printf "ü" >> file1
+ done
+ testing "-m (invalid chars)" "wc -m file1" "8193 file1\n" "" ""
+-testing "-mlw" "wc -mlw input" "1 2 11 input\n" "hello, 世界!\n" ""
++NOSPACE=1 testing "-mlw" "wc -mlw input" " 1 2 11 input\n" "hello, 世界!\n" ""
+ 
+ else
+ printf "skipping tests for wc -m"
+diff --git a/toys/posix/wc.c b/toys/posix/wc.c
+index e7afc81..a8c3e45 100644
+--- a/toys/posix/wc.c
++++ b/toys/posix/wc.c
+@@ -4,7 +4,7 @@
+  *
+  * See http://opengroup.org/onlinepubs/9699919799/utilities/wc.html
+ 
+-USE_WC(NEWTOY(wc, USE_TOYBOX_I18N("m")"cwl[!cm]", TOYFLAG_USR|TOYFLAG_BIN|TOYFLAG_LOCALE))
++USE_WC(NEWTOY(wc, "mcwl", TOYFLAG_USR|TOYFLAG_BIN|TOYFLAG_LOCALE))
+ 
+ config WC
+   bool "wc"
+@@ -28,68 +28,75 @@ config WC
+ #include "toys.h"
+ 
+ GLOBALS(
+-  unsigned long totals[3];
++  unsigned long totals[4];
+ )
+ 
+ static void show_lengths(unsigned long *lengths, char *name)
+ {
+-  int i, nospace = 1;
+-  for (i=0; i<3; i++) {
+-    if (!toys.optflags || (toys.optflags&(1<<i))) {
+-      xprintf(" %ld"+nospace, lengths[i]);
+-      nospace = 0;
++  int i, space = 7, first = 1;
++
++  for (i = 0; i<4; i++) if (toys.optflags == (1<<i)) space = 0;
++  for (i = 0; i<4; i++) {
++    if (toys.optflags&(1<<i)) {
++      printf(" %*ld"+first, space, lengths[i]);
++      first = 0;
+     }
+     TT.totals[i] += lengths[i];
+   }
+-  if (*toys.optargs) xprintf(" %s", name);
++  if (*toys.optargs) printf(" %s", name);
+   xputc('\n');
+ }
+ 
+ static void do_wc(int fd, char *name)
+ {
+-  int i, len, clen=1, space;
+-  unsigned long word=0, lengths[]={0,0,0};
++  int len = 0, clen = 1, space = 0;
++  unsigned long word = 0, lengths[] = {0,0,0,0};
+ 
++  // Speed up common case: wc -c normalfile is file length.
+   if (toys.optflags == FLAG_c) {
+     struct stat st;
+ 
+     // On Linux, files in /proc often report their size as 0.
+-    if (!fstat(fd, &st) && S_ISREG(st.st_mode) && st.st_size > 0) {
++    if (!fstat(fd, &st) && S_ISREG(st.st_mode) && st.st_size) {
+       lengths[2] = st.st_size;
+       goto show;
+     }
+   }
+ 
+   for (;;) {
+-    len = read(fd, toybuf, sizeof(toybuf));
+-    if (len<0) perror_msg_raw(name);
+-    if (len<1) break;
+-    if (toys.optflags == FLAG_c) {
+-      lengths[2] += len;
+-      continue;
+-    }
+-    for (i=0; i<len; i+=clen) {
+-      wchar_t wchar;
+-
+-      if (CFG_TOYBOX_I18N && (toys.optflags&FLAG_m)) {
+-        clen = mbrtowc(&wchar, toybuf+i, len-i, 0);
+-        if (clen == -1) {
+-          clen = 1;
+-          continue;
++    int pos, done = 0, len2 = read(fd, toybuf+len, sizeof(toybuf)-len);
++
++    if (len2<0) perror_msg_raw(name);
++    else len += len2;
++    if (len2<1) done++;
++
++    for (pos = 0; pos<len; pos++) {
++      if (toybuf[pos]=='\n') lengths[0]++;
++      lengths[2]++;
++      if (toys.optflags&FLAG_m) {
++        // If we've consumed next wide char
++        if (--clen<1) {
++          wchar_t wchar;
++
++          // next wide size, don't count invalid, fetch more data if necessary
++          clen = mbrtowc(&wchar, toybuf+pos, len-pos, 0);
++          if (clen == -1) continue;
++          if (clen == -2 && !done) break;
++
++          lengths[3]++;
++          space = iswspace(wchar);
+         }
+-        if (clen == -2) break;
+-        if (clen == 0) clen=1;
+-        space = iswspace(wchar);
+-      } else space = isspace(toybuf[i]);
++      } else space = isspace(toybuf[pos]);
+ 
+-      if (toybuf[i]==10) lengths[0]++;
+       if (space) word=0;
+       else {
+         if (!word) lengths[1]++;
+         word=1;
+       }
+-      lengths[2]++;
+     }
++    if (done) break;
++    if (pos != len) memmove(toybuf, toybuf+pos, len-pos);
++    len -= pos;
+   }
+ 
+ show:
+@@ -98,7 +105,7 @@ show:
+ 
+ void wc_main(void)
+ {
+-  toys.optflags |= (toys.optflags&8)>>1;
++  if (!toys.optflags) toys.optflags = FLAG_l|FLAG_w|FLAG_c;
+   loopfiles(toys.optargs, do_wc);
+   if (toys.optc>1) show_lengths(TT.totals, "total");
+ }
+-- 
+2.8.0.rc3.226.g39d4020
+

@@ -1,0 +1,14 @@
+Our old toolchain doesn't have utmpx.h, we suck.
+
+--- a/lib/portability.h
++++ b/lib/portability.h
+@@ -218,7 +218,7 @@ ssize_t getline(char **lineptr, size_t *n, FILE *stream);
+ #if CFG_TOYBOX_SHADOW
+ #include <shadow.h>
+ #endif
+-#if CFG_TOYBOX_UTMPX
++#if 0 //CFG_TOYBOX_UTMPX
+ #include <utmpx.h>
+ #else
+ struct utmpx {int ut_type;};
+

@@ -1,0 +1,19 @@
+commit c1f9b4525d76edb21d417c918fe52d706322f1ac
+Author: Marty Faltesek <mfaltesek@google.com>
+Date:   Thu Jul 28 14:02:00 2016 -0400
+
+    Move df from /sbin to /bin
+
+diff --git a/toys/posix/df.c b/toys/posix/df.c
+index 3b6e6d4..618ddbe 100644
+--- a/toys/posix/df.c
++++ b/toys/posix/df.c
+@@ -4,7 +4,7 @@
+  *
+  * See http://opengroup.org/onlinepubs/9699919799/utilities/df.html
+ 
+-USE_DF(NEWTOY(df, "HPkht*a[-HPkh]", TOYFLAG_SBIN))
++USE_DF(NEWTOY(df, "HPkht*a[-HPkh]", TOYFLAG_BIN))
+ 
+ config DF
+   bool "df"
