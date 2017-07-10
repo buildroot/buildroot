@@ -49,7 +49,11 @@ $(2)_IS_VIRTUAL = YES
 ifeq ($(4),target)
 $(2)_DEPENDENCIES += $$(call qstrip,$$(BR2_PACKAGE_PROVIDES_$(2)))
 else
+ifeq ($$(call qstrip,$$(BR2_PACKAGE_PROVIDES_$(2))),)
 $(2)_DEPENDENCIES += host-$$(call qstrip,$$(BR2_PACKAGE_PROVIDES_$(3)))
+else
+$(2)_DEPENDENCIES += $$(call qstrip,$$(BR2_PACKAGE_PROVIDES_$(2)))
+endif
 endif
 
 # Call the generic package infrastructure to generate the necessary
