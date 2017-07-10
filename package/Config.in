@@ -1,6 +1,7 @@
 menu "Target packages"
 
 	source "package/busybox/Config.in"
+    source "package/toybox/Config.in"
 	source "package/skeleton/Config.in"
 
 menu "Audio and video applications"
@@ -346,6 +347,8 @@ comment "X window managers"
 endmenu
 
 menu "Hardware handling"
+    source "package/system-plugin/Config.in"
+
 menu "Firmware"
 	source "package/am33x-cm3/Config.in"
 	source "package/b43-firmware/Config.in"

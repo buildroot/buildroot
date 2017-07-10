@@ -1,0 +1,32 @@
+From 04d3cee1f4979491045a8b615a955734db6bb44e Mon Sep 17 00:00:00 2001
+From: Stephen McGruer <smcgruer@google.com>
+Date: Wed, 7 Jan 2015 19:12:17 -0500
+Subject: [PATCH] Fix buffer-reuse bug in symlink copying
+
+A single global buffer (toybuf) is used for successive pairs of
+readlinkat/symlinkat calls. Since readlinkat doesnt append a null
+character, this caused longer symlink values to stick around and
+corrupt later calls to symlinkat.
+
+Fixed by explicitly adding a null-character.
+---
+ toys/posix/cp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/toys/posix/cp.c b/toys/posix/cp.c
+index c1a438f..2a258df 100644
+--- a/toys/posix/cp.c
++++ b/toys/posix/cp.c
+@@ -199,7 +199,8 @@ int cp_node(struct dirtree *try)
+         // make symlink, or make block/char/fifo/socket
+         if (S_ISLNK(try->st.st_mode)
+             ? (0 < (i = readlinkat(tfd, try->name, toybuf, sizeof(toybuf))) &&
+-               sizeof(toybuf) > i && !symlinkat(toybuf, cfd, catch))
++               sizeof(toybuf) > i && ((toybuf[i] = 0) == 0) &&
++               !symlinkat(toybuf, cfd, catch))
+             : !mknodat(cfd, catch, try->st.st_mode, try->st.st_rdev))
+         {
+           err = 0;
+-- 
+2.2.0.rc0.207.ga3a616c
+
