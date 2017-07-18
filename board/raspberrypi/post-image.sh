@@ -68,6 +68,30 @@ boot_delay=0
 __EOF__
 	fi
 	;;
+	--i2c)
+		echo "Adding 'i2c' functionality to config.txt."
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Enable i2c functionality
+dtparam=i2c_arm=on,i2c_arm_baudrate=400000
+__EOF__
+	;;
+	--spi)
+		echo "Adding 'spi' functionality to config.txt."
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Enable spi functionality
+dtparam=spi=on
+__EOF__
+	;;
+	--1w)
+		echo "Adding '1w' functionality to config.txt."
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Enable 1Wire functionality
+dtoverlay=w1-gpio,gpiopin=7
+__EOF__
+	;;
 esac
 done
 
