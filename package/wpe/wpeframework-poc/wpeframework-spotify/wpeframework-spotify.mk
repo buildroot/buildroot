@@ -3,8 +3,7 @@
 # wpeframework-spotify
 #
 ################################################################################
-
-WPEFRAMEWORK_SPOTIFY_VERSION = e67cd9877cc33db001ab6a322fdac773f30a590f
+WPEFRAMEWORK_SPOTIFY_VERSION = 6f6573647b788f61e57b252e75de6070e0ee476f
 WPEFRAMEWORK_SPOTIFY_SITE_METHOD = git
 WPEFRAMEWORK_SPOTIFY_SITE = git@github.com:Metrological/WPEPluginsPOC.git
 WPEFRAMEWORK_SPOTIFY_INSTALL_STAGING = YES

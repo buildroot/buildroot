@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBRESPOT_VERSION = aa86ebf549d6bb9937dcc3d7a54bd39f9e21defd
+LIBRESPOT_VERSION = 910974e5e2cc1d98b9c3c08b57e33132987cef5d
 LIBRESPOT_SITE = git@github.com:plietar/librespot.git
 LIBRESPOT_SITE_METHOD = git
 LIBRESPOT_LICENSE = MIT
