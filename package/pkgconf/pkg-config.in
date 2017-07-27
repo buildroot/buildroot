@@ -1,2 +1,4 @@
 #!/bin/sh
+BR_ROOT=$(realpath $(dirname $0)/../..)
+
 PKG_CONFIG_LIBDIR=${PKG_CONFIG_LIBDIR:-@PKG_CONFIG_LIBDIR@} PKG_CONFIG_SYSROOT_DIR=${PKG_CONFIG_SYSROOT_DIR:-@STAGING_DIR@} $(dirname $0)/pkgconf @STATIC@ $@

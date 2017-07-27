@@ -14,7 +14,7 @@ which is not right (though it will compile successfully).
  
      element = ElementFactory::create_element (factory, factory);
  
--    ThrowIf (element, "Could not create a '" + factory + "' element");
+-    ThrowIf (!!element, "Could not create a '" + factory + "' element");
 +    ThrowIf (!element, "Could not create a '" + factory + "' element");
      CheckRefCount (element->gobj(), factory, 1);
  

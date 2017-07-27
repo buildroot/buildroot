@@ -16,11 +16,15 @@ define PKGCONF_LINK_PKGCONFIG
 	ln -sf pkgconf $(TARGET_DIR)/usr/bin/pkg-config
 endef
 
+# The package dir search path must be relative. When we deploy the buildroot it
+# still needs to work. $BR_ROOT gets set at runtime by the pkg-config script.
+RELATIVE_STAGING_DIR_TMP=$(subst $(HOST_DIR),\$$BR_ROOT,$(STAGING_DIR))
+RELATIVE_STAGING_DIR=$(subst $(TARGET_DIR),\$$BR_ROOT,$(RELATIVE_STAGING_DIR_TMP))
 define HOST_PKGCONF_INSTALL_WRAPPER
 	$(INSTALL) -m 0755 -D package/pkgconf/pkg-config.in \
 		$(HOST_DIR)/usr/bin/pkg-config
-	$(SED) 's,@PKG_CONFIG_LIBDIR@,$(STAGING_DIR)/usr/lib/pkgconfig:$(STAGING_DIR)/usr/share/pkgconfig,' \
-		-e 's,@STAGING_DIR@,$(STAGING_DIR),' \
+	$(SED) 's,@PKG_CONFIG_LIBDIR@,$(RELATIVE_STAGING_DIR)/usr/lib/pkgconfig:$(RELATIVE_STAGING_DIR)/usr/share/pkgconfig,' \
+		-e 's,@STAGING_DIR@,$(RELATIVE_STAGING_DIR),' \
 		$(HOST_DIR)/usr/bin/pkg-config
 endef
 
