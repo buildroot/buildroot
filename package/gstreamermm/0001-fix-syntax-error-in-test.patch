@@ -1,0 +1,21 @@
+Fix error in unit test, was causing build to fail.
+
+Was a syntax error: Glib::RefPtr<>::operator() is marked explicit.
+Was also a logic error, since it should check for successful creation of
+Gst::Element.
+
+Compare
+https://github.com/GNOME/gstreamermm/commit/c5006faf05bc4b46767d30f42bcb6157836b7540,
+which is not right (though it will compile successfully).
+
+--- a/gstreamer/gstreamermm/check.cc
++++ b/gstreamer/gstreamermm/check.cc
+@@ -54,7 +54,7 @@
+ 
+     element = ElementFactory::create_element (factory, factory);
+ 
+-    ThrowIf (element, "Could not create a '" + factory + "' element");
++    ThrowIf (!element, "Could not create a '" + factory + "' element");
+     CheckRefCount (element->gobj(), factory, 1);
+ 
+     return element;
