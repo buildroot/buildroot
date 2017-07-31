@@ -65,6 +65,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS_MODE
     help
        Sets the IR Mode to be used with IR Nexus. Every remote has a different mode and key mapping.
 
+config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS_CODEMASK
+    string "IR code mask"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
+    help
+       Sets a key code mask if the device generates same code based on trigger bit
+
 config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_RF
     bool "RF (Radio Frequency)"
     help
