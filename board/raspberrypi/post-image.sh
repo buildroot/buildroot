@@ -69,28 +69,44 @@ __EOF__
 	fi
 	;;
 	--i2c)
+	if ! grep -qE '^dtparam=i2c_arm=on' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
 		echo "Adding 'i2c' functionality to config.txt."
 		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
 
 # Enable i2c functionality
 dtparam=i2c_arm=on,i2c_arm_baudrate=400000
 __EOF__
+	fi
 	;;
 	--spi)
+	if ! grep -qE '^dtparam=spi=on' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
 		echo "Adding 'spi' functionality to config.txt."
 		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
 
 # Enable spi functionality
 dtparam=spi=on
 __EOF__
+	fi
 	;;
 	--1w)
+	if ! grep -qE '^dtoverlay=w1-gpio' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
 		echo "Adding '1w' functionality to config.txt."
 		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
 
 # Enable 1Wire functionality
 dtoverlay=w1-gpio,gpiopin=7
 __EOF__
+	fi
+	;;
+	--lirc)
+	if ! grep -qE '^dtoverlay=lirc-rpi' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+		echo "Adding 'lirc' functionality to config.txt."
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Enable 1Wire functionality
+dtoverlay=lirc-rpi,gpio_in_pin=23,gpio_out_pin=22
+__EOF__
+	fi
 	;;
 esac
 done
