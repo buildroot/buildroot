@@ -7,6 +7,8 @@
 DBUS_VERSION = 1.10.16
 DBUS_SITE = http://dbus.freedesktop.org/releases/dbus
 DBUS_LICENSE = AFLv2.1 or GPLv2+ (library, tools), GPLv2+ (tools)
+# 0001-config-loader-expat-Tell-Expat-not-to-defend-against.patch
+DBUS_AUTORECONF = YES
 DBUS_LICENSE_FILES = COPYING
 DBUS_INSTALL_STAGING = YES
 
