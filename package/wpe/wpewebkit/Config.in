@@ -31,12 +31,38 @@ if BR2_PACKAGE_WPEWEBKIT
 
 menu "Extra options"
 
-config BR2_PACKAGE_WPEWEBKIT_DEBUG_SYMBOLS
-	bool "debug symbols"
-	depends on !BR2_ENABLE_DEBUG
-	default n
+choice
+	bool "Debug options"
+	default BR2_PACKAGE_WPEWEBKIT_DEBUG if BR2_ENABLE_DEBUG
+	default BR2_PACKAGE_WPEWEBKIT_RELEASE
 	help
-	  Build WPE with debug symbols
+	  Choose the debug flavor.
+
+if !BR2_ENABLE_DEBUG
+
+config BR2_PACKAGE_WPEWEBKIT_RELEASE
+	bool "release"
+	help
+	  Release mode, no logging, no symbols, no nothing
+
+config BR2_PACKAGE_WPEWEBKIT_RELEASE_WITH_SYMBOLS
+	bool "release with symbols"
+	help
+	  Release mode with symbols
+
+endif
+
+config BR2_PACKAGE_WPEWEBKIT_DEBUG
+	bool "debug"
+	help
+	  Debug build, with symbols and logging
+
+config BR2_PACKAGE_WPEWEBKIT_DEBUG_WITHOUT_JSC_OPTIMIZATIONS
+	bool "debug without JSC optimizations"
+	help
+	  Debug build with no JIT and no FTL
+
+endchoice
 
 config BR2_PACKAGE_WPEWEBKIT_JSC
 	bool "build JavaScriptCore interpreter (jsc)"
@@ -53,12 +79,6 @@ config BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
 	  Only build the jsc binary, not WebKit itself
 
 endif
-
-config BR2_PACKAGE_WPEWEBKIT_ENABLE_LOGGING
-	depends on !BR2_ENABLE_DEBUG
-	bool "logging"
-	help
-	  Enable logging for non debug builds.
 
 if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
 
