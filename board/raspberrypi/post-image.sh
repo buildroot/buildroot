@@ -5,6 +5,8 @@ BOARD_NAME="$(basename ${BOARD_DIR})"
 GENIMAGE_CFG="${BOARD_DIR}/genimage-${BOARD_NAME}.cfg"
 GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
 
+echo "Post-image: processing $@"
+
 for i in "$@"
 do
 case "$i" in
@@ -105,6 +107,16 @@ __EOF__
 
 # Enable 1Wire functionality
 dtoverlay=lirc-rpi,gpio_in_pin=23,gpio_out_pin=22
+__EOF__
+	fi
+	;;
+	--rpi-wifi)
+	if ! grep -qE '^dtoverlay=mmc' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+		echo "Adding 'rpi wifi' functionality to config.txt."
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Enable overlay for wifi functionality
+dtoverlay=sdtweak,overclock_50=80
 __EOF__
 	fi
 	;;

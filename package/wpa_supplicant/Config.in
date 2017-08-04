@@ -59,6 +59,7 @@ config BR2_PACKAGE_WPA_SUPPLICANT_AUTOSCAN
 
 config BR2_PACKAGE_WPA_SUPPLICANT_EAP
 	bool "Enable EAP"
+	select BR2_PACKAGE_OPENSSL
 	help
 	  Enable support for EAP.
 

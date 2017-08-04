@@ -17,6 +17,8 @@ BLUEZ5_UTILS_CONF_OPTS = 	\
 	--enable-library 	\
 	--disable-cups
 
+BLUEZ5_UTILS_DEPENDENCIES += host-python
+
 ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_OBEX),y)
 BLUEZ5_UTILS_CONF_OPTS += --enable-obex
 BLUEZ5_UTILS_DEPENDENCIES += libical

@@ -18,7 +18,7 @@ define DBUS_USERS
 	dbus -1 dbus -1 * /var/run/dbus - dbus DBus messagebus user
 endef
 
-DBUS_DEPENDENCIES = host-pkgconf expat
+DBUS_DEPENDENCIES = host-pkgconf expat host-python
 
 DBUS_CONF_ENV = ac_cv_have_abstract_sockets=yes
 DBUS_CONF_OPTS = \
