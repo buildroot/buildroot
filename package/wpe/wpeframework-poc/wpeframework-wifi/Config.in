@@ -1,0 +1,10 @@
+config BR2_PACKAGE_WPEFRAMEWORK_WIFI
+	select BR2_PACKAGE_WPA_SUPPLICANT
+	select BR2_PACKAGE_READLINE
+	bool "WPE Plugin for Wifi access"
+	help
+          Todo
+
+if BR2_PACKAGE_WPEFRAMEWORK_WIFI
+# options for the plugin
+endif
