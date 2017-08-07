@@ -26,6 +26,7 @@ endif
 GST1_PLUGINS_UGLY_CONF_OPTS = --disable-examples --disable-valgrind
 
 GST1_PLUGINS_UGLY_CONF_OPTS += \
+	CFLAGS="$(GSTREAMER1_EXTRA_COMPILER_OPTIONS)" \
 	--disable-a52dec \
 	--disable-amrnb \
 	--disable-amrwb \

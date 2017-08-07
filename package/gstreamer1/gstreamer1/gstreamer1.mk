@@ -32,7 +32,17 @@ ifeq ($(BR2_aarch64),y)
 GSTREAMER1_CONF_ENV = as_cv_unaligned_access=yes
 endif
 
+GSTREAMER1_EXTRA_COMPILER_OPTIONS =
+ifeq ($(BR2_PACKAGE_GSTREAMER1_SYMBOLS),y)
+GSTREAMER1_EXTRA_COMPILER_OPTIONS += -g
+ifeq ($(BR2_PACKAGE_GSTREAMER1_NO_OPTIMIZATIONS),y)
+GSTREAMER1_EXTRA_COMPILER_OPTIONS += -O0
+endif
+endif
+
+
 GSTREAMER1_CONF_OPTS = \
+	CFLAGS="$(TARGET_CFLAGS) $(GSTREAMER1_EXTRA_COMPILER_OPTIONS)" \
 	--disable-examples \
 	--disable-tests \
 	--disable-failing-tests \

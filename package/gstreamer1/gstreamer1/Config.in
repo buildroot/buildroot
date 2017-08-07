@@ -22,6 +22,22 @@ config BR2_PACKAGE_GSTREAMER1_GIT
 	help
 	  Use git snapshot version of master branch.
 
+config BR2_PACKAGE_GSTREAMER1_SYMBOLS
+	bool "build with symbols"
+	default n
+	help
+	  Compiles some GStreamer related packages with symbols. For now only gstreamer, gst-plugins-base, -good, -bad, -ugly and gst-omx are honoring this.
+
+if BR2_PACKAGE_GSTREAMER1_SYMBOLS
+
+config BR2_PACKAGE_GSTREAMER1_NO_OPTIMIZATIONS
+	bool "build with no optimizations"
+	default y
+	help
+	  Compiles some GStreamer related packages with no optimizations
+
+endif
+
 config BR2_PACKAGE_GSTREAMER1_PARSE
 	bool "enable command-line parser"
 	default y

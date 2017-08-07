@@ -31,6 +31,7 @@ GST1_PLUGINS_BASE_CONF_ENV =
 
 # gio_unix_2_0 is only used for tests
 GST1_PLUGINS_BASE_CONF_OPTS = \
+	CFLAGS="$(TARGET_CFLAGS) $(GSTREAMER1_EXTRA_COMPILER_OPTIONS)" \
 	--disable-examples \
 	--disable-oggtest \
 	--disable-vorbistest \

@@ -33,7 +33,8 @@ GST_OMX_CONF_ENV = \
 		-D_VIDEOCORE -DRASPBERRY_PI \
 		-I$(STAGING_DIR)/usr/include/IL \
 		-I$(STAGING_DIR)/usr/include/interface/vcos/pthreads \
-		-I$(STAGING_DIR)/usr/include/interface/vmcs_host/linux"
+		-I$(STAGING_DIR)/usr/include/interface/vmcs_host/linux \
+                $(GSTREAMER1_EXTRA_COMPILER_OPTIONS)"
 GST_OMX_DEPENDENCIES += gst1-plugins-bad
 endif
 
