@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NETFLIX_VERSION = b5be6ef5d1901632abc4ae723df6602bbcbe3441
+NETFLIX_VERSION = 6a8f2c2d0fcdbd8860666aed087d8907016632d1
 NETFLIX_SITE = git@github.com:Metrological/netflix.git
 NETFLIX_SITE_METHOD = git
 NETFLIX_LICENSE = PROPRIETARY
@@ -145,7 +145,7 @@ NETFLIX_CONF_OPTS += \
 	-DDPI_REFERENCE_AUDIO_DECODER=ffmpeg \
 	-DDPI_REFERENCE_AUDIO_RENDERER=openmax-il \
 	-DDPI_REFERENCE_AUDIO_MIXER=none
-NETFLIX_DEPENDENCIES += ffmpeg openmax
+NETFLIX_DEPENDENCIES += ffmpeg libopenmax
 else
 NETFLIX_CONF_OPTS += -DDPI_IMPLEMENTATION=reference
 endif
