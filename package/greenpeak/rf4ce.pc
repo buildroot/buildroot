@@ -1,0 +1,10 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/greenpeak
+
+Name: rf4ce
+Description: Qorvo SDK rf4ce driver
+Version: 2.4.5.2
+Libs: -L${libdir} -lGP501 -lRf4ce 
+Cflags: -I${includedir} -I${includedir}/compiler/RPi_BCM2708 -I${includedir}/gpAssert/inc -I${includedir}/gpBaseComps/inc -I${includedir}/gpBsp/inc -I${includedir}/gpEncryption/inc -I${includedir}/gpFa/inc -I${includedir}/gpLog/inc -I${includedir}/gpMacCore/inc -I${includedir}/gpMacDispatcher/inc -I${includedir}/gpNvm/inc -I${includedir}/gpPad/inc -I${includedir}/gpPd/inc -I${includedir}/gpPoolMem/inc -I${includedir}/gpRandom/inc -I${includedir}/gpReset/inc -I${includedir}/gpRf4ce/inc -I${includedir}/gpRf4ceBindAuto/inc -I${includedir}/gpRf4ceDispatcher/inc -I${includedir}/gpRf4ceUserControl/inc -I${includedir}/gpRxArbiter/inc -I${includedir}/gpSched/inc -I${includedir}/gpStat/inc -I${includedir}/gpUtils/inc -I${includedir}/gpVersion/inc -I${includedir}/gpWmrk/inc -I${includedir}/gphal/inc -I${includedir}/gphal/k5/inc -I${includedir}/halLinux/user/inc -I${includedir}/halLinux/kernel/GP_Generic_Driver

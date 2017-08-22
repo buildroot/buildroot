@@ -1,6 +1,6 @@
 ################################################################################
 #
-# greenpeak
+# greenpeak rf4ce
 #
 ################################################################################
 GREENPEAK_VERSION = 63da7153b7d484b877b7b22bec6c5b32fc4c9da9
@@ -25,9 +25,10 @@ endef
 endif
 
 define GREENPEAK_INSTALL_STAGING_CMDS
-	$(INSTALL) -d -m 755 $(STAGING_DIR)/usr/include/greenpeak; 
-	$(INSTALL) -D -m 0644 $(@D)/ZRCTarget_GP501_RPi/libRf4ce.a $(STAGING_DIR)/usr/lib/; 
-	$(INSTALL) -D -m 0644 $(@D)/ZRCTarget_GP501_RPi/code/Work/ZRCTarget_GP501_RPi/libZRCTarget_GP501_RPi.a $(STAGING_DIR)/usr/lib/libGP501.a;
+	$(INSTALL) -d -m 755 $(STAGING_DIR)/usr/include/greenpeak
+	$(INSTALL) -D -m 0644 $(@D)/ZRCTarget_GP501_RPi/libRf4ce.a $(STAGING_DIR)/usr/lib/ 
+	$(INSTALL) -D -m 0644 $(@D)/ZRCTarget_GP501_RPi/code/Work/ZRCTarget_GP501_RPi/libZRCTarget_GP501_RPi.a $(STAGING_DIR)/usr/lib/libGP501.a
+	$(INSTALL) -D package/greenpeak/rf4ce.pc $(STAGING_DIR)/usr/lib/pkgconfig/rf4ce.pc
 	cp -r $(@D)/ZRCTarget_GP501_RPi/code/BaseComps/v2.4.5.2/comps/* $(STAGING_DIR)/usr/include/greenpeak;
     cp -r $(@D)/ZRCTarget_GP501_RPi/code/BaseComps/v2.4.5.2/inc/* $(STAGING_DIR)/usr/include/greenpeak; 
 endef
@@ -59,14 +60,18 @@ GREENPEAK_EXTRA_CFLAGS = \
 	-fPIC \
 	-ffreestanding \
 	-DGP_NVM_PATH=/root/gp \
-	-DGP_NVM_FILENAME=/root/gp/gpNvm.dat
+	-DGP_NVM_FILENAME=/root/gp/gpNvm.dat 
+    
+GREENPEAK_EXTRA_MOD_CFLAGS = \
+    -DGP_CHIP=$(GREENPEAK_CHIP) \
+    -I$(@D)/driver/RPi_3_2_27 
 
 define GREENPEAK_BUILD_MODULE
-	GP_CHIP=$(GREENPEAK_CHIP) $(MAKE) -C $(LINUX_DIR) $(LINUX_MAKE_FLAGS) M=$(@D)/driver modules
+	$(GREENPEAK_EXTRA_MOD_CFLAGS) $(MAKE) -C $(LINUX_DIR) $(LINUX_MAKE_FLAGS) M=$(@D)/driver modules
 endef
 
 define GREENPEAK_INSTALL_MODULE
-	GP_CHIP=$(GREENPEAK_CHIP) $(MAKE) -C $(LINUX_DIR) $(LINUX_MAKE_FLAGS) M=$(@D)/driver modules_install
+	$(MAKE) -C $(LINUX_DIR) $(LINUX_MAKE_FLAGS) M=$(@D)/driver modules_install
 endef
 
 ifeq ($(BR2_PACKAGE_GREENPEAK_RPI_FIRMWARE),y)
@@ -77,7 +82,7 @@ define GREENPEAK_INSTALL_GREENPEAK_RPI_FIRMWARE
 endef
 endif
 
-ifeq ($(BR2_PACKAGE_GREENPEAK_TEST_TOOLS),y)
+ifeq ($(BR2_PACKAGE_GREENPEAK_TEST_TOOLS),y)  
 define GREENPEAK_BUILD_UEI_REF
     COMPILER=buildroot $(TARGET_MAKE_ENV) $(MAKE1) TOOLCHAIN="$(HOST_DIR)/usr" CROSS_COMPILE="$(GNU_TARGET_NAME)-" CFLAGS_COMPILER="$(TARGET_CFLAGS) $(GREENPEAK_EXTRA_CFLAGS)" -C $(@D)/testapp all
 	COMPILER=buildroot $(TARGET_MAKE_ENV) $(MAKE1) TOOLCHAIN="$(HOST_DIR)/usr" CROSS_COMPILE="$(GNU_TARGET_NAME)-" CFLAGS_COMPILER="$(TARGET_CFLAGS) $(GREENPEAK_EXTRA_CFLAGS)" -C $(@D)/RefTarget_ZRC_MSO_$(GREENPEAK_CHIP)_RPi all
