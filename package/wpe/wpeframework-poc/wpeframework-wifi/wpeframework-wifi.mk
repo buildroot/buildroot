@@ -3,7 +3,7 @@
 # wpeframework-wifi
 #
 ################################################################################
-WPEFRAMEWORK_WIFI_VERSION = 8d971d45aa23dbbb06cfa938227aba89c7e1ff7a
+WPEFRAMEWORK_WIFI_VERSION = 1150b6899b55836a145348a98a9b0de1c522a517
 WPEFRAMEWORK_WIFI_SITE_METHOD = git
 WPEFRAMEWORK_WIFI_SITE = git@github.com:Metrological/WPEPluginsPOC.git
 WPEFRAMEWORK_WIFI_INSTALL_STAGING = YES
