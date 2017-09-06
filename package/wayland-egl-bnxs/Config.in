@@ -1,0 +1,8 @@
+config BR2_PACKAGE_WAYLAND_EGL_BNXS
+	bool "wayland-egl-bnxs"
+	depends on BR2_PACKAGE_BCM_REFSW
+	select BR2_PACKAGE_WAYLAND
+	select BR2_PACKAGE_WAYLAND_PROTOCOLS
+	help
+
+	  Broadcom wayland EGL for refsw 15.x,16.x
