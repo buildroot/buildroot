@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WESTEROS_VERSION = 703ad8b0e081242a2a9a659b5fc8756f206d6fc2
+WESTEROS_VERSION = 578e580f1e140dee13d226aeb731fc64eea24441
 WESTEROS_SITE_METHOD = git
 WESTEROS_SITE = git://github.com/Metrological/westeros
 WESTEROS_INSTALL_STAGING = YES
@@ -22,24 +22,23 @@ WESTEROS_CONF_OPTS = \
 	--enable-sbprotocol=yes \
 	--enable-xdgv5=yes
 
-
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 	WESTEROS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -DWESTEROS_PLATFORM_RPI -DWESTEROS_INVERTED_Y -DBUILD_WAYLAND -I${STAGING_DIR}/usr/include/interface/vmcs_host/linux"
 	WESTEROS_LDFLAGS += -lEGL -lGLESv2 -lbcm_host
 else ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
-	WESTEROS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -I${STAGING_DIR}/usr/include/refsw"
+	WESTEROS_CONF_ENV += \
+		PKG_CONFIG_SYSROOT_DIR=$(STAGING_DIR) 
+	WESTEROS_CONF_OPTS += \
+		--enable-vc5=yes \
+		CFLAGS="$(TARGET_CFLAGS) -I${STAGING_DIR}/usr/include/refsw/" \
+		CXXFLAGS="$(TARGET_CXXFLAGS) -I${STAGING_DIR}/usr/include/refsw/"
+	WESTEROS_MAKE_OPTS += \
+		PKG_CONFIG_SYSROOT_DIR=$(STAGING_DIR) \
+		$(BCM_REFSW_MAKE_ENV)	
+	WESTEROS_DEPENDENCIES += wayland-egl-bnxs bcm-refsw
 else ifeq ($(BR2_PACKAGE_LIBDRM),y)
 	WESTEROS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -DWESTEROS_PLATFORM_DRM -I${STAGING_DIR}/usr/include/interface/vmcs_host/linux"
 endif # BR2_PACKAGE_WESTEROS_SOC_RPI
-
-
-WESTEROS_MAKE_OPTS = \
-	CC="$(TARGET_CC)" \
-	ARCH=$(KERNEL_ARCH) \
-	PREFIX="$(TARGET_DIR)" \
-	EXTRA_LDFLAGS="$(WESTEROS_LDFLAGS)" \
-	CROSS_COMPILE="$(TARGET_CROSS)" \
-	CONFIG_PREFIX="$(TARGET_DIR)" \
 
 
 define WESTEROS_RUN_AUTOCONF
