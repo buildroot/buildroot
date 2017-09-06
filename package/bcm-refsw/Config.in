@@ -32,6 +32,9 @@ choice
 	
 	config BR2_PACKAGE_BCM_REFSW_17_1
 		bool "bcm-refsw 17.1"
+		
+	config BR2_PACKAGE_BCM_REFSW_17_1_RDK
+		bool "bcm-refsw 17.1 RDK"
 
 	config BR2_PACKAGE_BCM_REFSW_17_2
 		bool "bcm-refsw 17.2"
@@ -67,14 +70,10 @@ choice
 		bool "BCM 7250"
 		depends on BR2_arm
 
-   config BR2_PACKAGE_BCM_REFSW_PLATFORM_72604
-		bool "BCM 72604"
-		depends on BR2_arm
- 
-   config BR2_PACKAGE_BCM_REFSW_PLATFORM_7271
+		config BR2_PACKAGE_BCM_REFSW_PLATFORM_7271
 		bool "BCM 7271"
 		depends on BR2_arm
-
+ 
 	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7437
 		bool "BCM 7437"
 		depends on BR2_arm
