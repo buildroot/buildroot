@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WESTEROS_VERSION = b4eda2d33ecb56774d1c09c6a3a30ccc9975d6ff
+WESTEROS_VERSION = 703ad8b0e081242a2a9a659b5fc8756f206d6fc2
 WESTEROS_SITE_METHOD = git
 WESTEROS_SITE = git://github.com/Metrological/westeros
 WESTEROS_INSTALL_STAGING = YES
