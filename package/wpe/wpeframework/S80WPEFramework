@@ -11,6 +11,7 @@ start() {
 		mkdir -p /root/Netflix/dpi
 		ln -sfn /etc/playready /root/Netflix/dpi/playready
 	fi
+	mount -a
 	export TZ=$(wget -qO- http://jsonip.metrological.com/ | sed -e 's/^.*"tz":"\([^"]*\)".*$/\1/')
     
     # needed for wayland/westeros/weston
