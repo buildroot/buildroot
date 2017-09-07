@@ -8,6 +8,8 @@ ifeq ($(BR2_PACKAGE_BCM_REFSW_16_1),y)
 GST1_BCM_VERSION = 16.1
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_16_2),y)
 GST1_BCM_VERSION = 16.2
+else ifeq ($(BR2_PACKAGE_BCM_REFSW_17_1_RDK),y)
+GST1_BCM_VERSION = 17.1
 else
 GST1_BCM_VERSION = 15.2
 endif
@@ -33,7 +35,8 @@ GST1_BCM_MAKE_OPTS += "\
 		-std=c99 \
 		-I${BCM_REWSW_BIN}/include \
 		-I${BCM_REFSW_DIR}/BSEAV/api/include \
-		-I${BCM_REFSW_DIR}/BSEAV/lib/media/"
+		-I${BCM_REFSW_DIR}/BSEAV/lib/media/ \
+		-I${STAGING_DIR}/usr/include/refsw/"
 
 GST1_BCM_CONF_OPTS = \
 	--enable-gstreamer1  \
