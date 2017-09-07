@@ -13,7 +13,7 @@ BCM_REFSW_VERSION = 16.3
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_17_1),y)
 BCM_REFSW_VERSION = 17.1-1
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_17_1_RDK),y)
-BCM_REFSW_VERSION = 7d94e6ad0a7dc249b2d6af4293a409a2c2f5f385
+BCM_REFSW_VERSION = 17.1-2
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_17_2),y)
 BCM_REFSW_VERSION = 17.2-1
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_15_2),y)
@@ -403,16 +403,9 @@ define BCM_REFSW_INSTALL_KHRONOS
 endef
 
 
-ifeq ( $(shell expr $(BCM_REFSW_VERSION) \>= 16.2)$(BR2_PACKAGE_BCM_REFSW_SAGE),1y)
-define BCM_REFSW_INSTALL_SAGE_BIN
-    $(INSTALL) -m 755 -d $1/lib/firmware/
-	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/sage_bl.bin $1/lib/firmware/
-	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/sage_framework.bin $1/lib/firmware/
-	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/sage_ta_antirollback.bin $1/lib/firmware/
-	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/sage_ta_common_drm.bin $1/lib/firmware/
-	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/sage_ta_hdcp22.bin $1/lib/firmware/
-	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/sage_ta_secure_video.bin $1/lib/firmware/
-	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/sage_ta_utility.bin $1/lib/firmware/
+ifeq ( $(shell expr $(BCM_REFSW_VERSION) \>= 17.1),1)
+define BCM_REFSW_INSTALL_RELEASE_SPECIFIC
+	   $(INSTALL) -m 644 $(BCM_REFSW_OUTPUT)/nexus/bin/nexus_kernel_include/*.h $(STAGING_DIR)/usr/include/refsw/ ; \ 
 endef
 endif
 
@@ -427,6 +420,7 @@ define BCM_REFSW_INSTALL_STAGING_CMDS
 	$(INSTALL) -m 644 package/bcm-refsw/${BCM_REFSW_PLATFORM_VC}/glesv2.pc $(STAGING_DIR)/usr/lib/pkgconfig/
 	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/include/*.h $(STAGING_DIR)/usr/include/refsw/
 	$(INSTALL) -m 644 $(BCM_REFSW_OUTPUT)/nexus/bin/include/*.h $(STAGING_DIR)/usr/include/refsw/
+    $(BCM_REFSW_INSTALL_RELEASE_SPECIFIC)
 	$(INSTALL) -m 644 $(BCM_REFSW_DIR)/nexus/nxclient/server/*.h $(STAGING_DIR)/usr/include/refsw/
 	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/include/platform_app.inc $(STAGING_DIR)/usr/include/
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/platform/nexus/*.h $(STAGING_DIR)/usr/include/refsw/	
