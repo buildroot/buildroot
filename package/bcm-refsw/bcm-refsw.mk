@@ -369,9 +369,9 @@ endef
 endif
 
 define BCM_REFSW_INSTALL_TARGET_NXSERVER
-	$(INSTALL) -D $(BCM_REFSW_BIN)/libnxclient.so $1/usr/lib/libnxclient.so
+	$(INSTALL) -D $(BCM_REFSW_BIN)/libnxclient.so $(1)/usr/lib/libnxclient.so
 	if [ "x$(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR)" = "x" ]; then \
-		$(INSTALL) -m 755 -D $(BCM_REFSW_BIN)/nxserver $1/usr/bin/nxserver; \
+		$(INSTALL) -m 755 -D $(BCM_REFSW_BIN)/nxserver $(1)/usr/bin/nxserver; \
 		$(BCM_REFSW_INSTALL_TARGET_NXSERVER_INIT) \
 	fi
 endef
@@ -402,13 +402,6 @@ define BCM_REFSW_INSTALL_KHRONOS
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX_KHRN}/KHR/*.h $(STAGING_DIR)/usr/include/KHR/
 endef
 
-
-ifeq ( $(shell expr $(BCM_REFSW_VERSION) \>= 17.1),1)
-define BCM_REFSW_INSTALL_RELEASE_SPECIFIC
-	   $(INSTALL) -m 644 $(BCM_REFSW_OUTPUT)/nexus/bin/nexus_kernel_include/*.h $(STAGING_DIR)/usr/include/refsw/ ; \ 
-endef
-endif
-
 define BCM_REFSW_INSTALL_STAGING_CMDS
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/lib/pkgconfig
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/GLES
@@ -420,15 +413,18 @@ define BCM_REFSW_INSTALL_STAGING_CMDS
 	$(INSTALL) -m 644 package/bcm-refsw/${BCM_REFSW_PLATFORM_VC}/glesv2.pc $(STAGING_DIR)/usr/lib/pkgconfig/
 	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/include/*.h $(STAGING_DIR)/usr/include/refsw/
 	$(INSTALL) -m 644 $(BCM_REFSW_OUTPUT)/nexus/bin/include/*.h $(STAGING_DIR)/usr/include/refsw/
-    $(BCM_REFSW_INSTALL_RELEASE_SPECIFIC)
 	$(INSTALL) -m 644 $(BCM_REFSW_DIR)/nexus/nxclient/server/*.h $(STAGING_DIR)/usr/include/refsw/
 	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/include/platform_app.inc $(STAGING_DIR)/usr/include/
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/platform/nexus/*.h $(STAGING_DIR)/usr/include/refsw/	
 	$(INSTALL) -m 644 -D $(BCM_REFSW_BIN)/libnxserver.a $(STAGING_DIR)/usr/lib/libnxserver.a
+if [ $(shell expr $(BCM_REFSW_VERSION) \>= 17.1) = 1 ]; then \
+	$(INSTALL) -m 644 $(BCM_REFSW_OUTPUT)/nexus/bin/nexus_kernel_include/*.h $(STAGING_DIR)/usr/include/refsw ; \
+fi
 	$(call BCM_REFSW_INSTALL_KHRONOS,$(STAGING_DIR))
 	$(call BCM_REFSW_INSTALL_LIBS,$(STAGING_DIR))
 	$(call BCM_REFSW_INSTALL_STAGING_NXSERVER,$(STAGING_DIR))
 	$(call BCM_REFSW_INSTALL_STAGING_WAYLAND_EGL,$(STAGING_DIR))
+	
 endef
 
 define BCM_REFSW_INSTALL_TARGET_CMDS
@@ -437,10 +433,14 @@ define BCM_REFSW_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 755 package/bcm-refsw/S11nexus $(TARGET_DIR)/etc/init.d/S11nexus
 	$(call BCM_REFSW_INSTALL_EXTRA,$(TARGET_DIR))
 	$(call BCM_REFSW_INSTALL_LIBS,$(TARGET_DIR))
+if [ $(shell expr $(BCM_REFSW_VERSION) \>= 17.1) = 1 ]; then \
+	$(INSTALL) -m 644 $(BCM_REFSW_OUTPUT)/nexus/lib/b_os/libb_os.so $(TARGET_DIR)/usr/lib; \
+fi
 	$(call BCM_REFSW_INSTALL_TARGET_NXSERVER,$(TARGET_DIR))
 	$(call BCM_REFSW_INSTALL_TARGET_EGLCUBE,$(TARGET_DIR))
 	$(call BCM_REFSW_INSTALL_SAGE_BIN,$(TARGET_DIR))
 	$(call BCM_REFSW_INSTALL_TARGET_WAYLAND_EGL,$(TARGET_DIR))
+	
 endef
 
 $(eval $(generic-package))
