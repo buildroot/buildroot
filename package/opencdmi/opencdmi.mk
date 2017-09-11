@@ -3,7 +3,8 @@
 # open cdmi
 #
 ################################################################################
-OPENCDMI_VERSION = c3b1dfa024f2e9f8f9f2384449ac9d1e3c324719
+
+OPENCDMI_VERSION = d94dc59473e33840be9156d7286b1c3587ba4bf5
 OPENCDMI_SITE_METHOD = git
 OPENCDMI_SITE = git@github.com:Metrological/open-content-decryption-module-cdmi.git
 
