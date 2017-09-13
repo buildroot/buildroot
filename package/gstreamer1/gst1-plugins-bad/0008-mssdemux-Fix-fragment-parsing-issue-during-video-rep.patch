@@ -1,0 +1,36 @@
+From 253ed5475fed7147954756c2de98580299d967b0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Wed, 13 Sep 2017 10:30:41 +0000
+Subject: [PATCH] mssdemux: Fix fragment parsing issue during video replay
+
+The fragment parser was hardcoded and expected an uuid box, but a different
+one was coming on replayed live videos. This patch allows those boxes and
+simply skips them until an uuid one is found.
+---
+ ext/smoothstreaming/gstmssfragmentparser.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/ext/smoothstreaming/gstmssfragmentparser.c b/ext/smoothstreaming/gstmssfragmentparser.c
+index 01c3b15..7de9947 100644
+--- a/ext/smoothstreaming/gstmssfragmentparser.c
++++ b/ext/smoothstreaming/gstmssfragmentparser.c
+@@ -211,11 +211,13 @@ gst_mss_fragment_parser_add_buffer (GstMssFragmentParser * parser,
+     }
+ 
+     if (fourcc != GST_MSS_FRAGMENT_FOURCC_UUID) {
+-      GST_ERROR ("invalid UUID fourcc");
+-      error = TRUE;
+-      break;
++      GST_TRACE ("%" GST_FOURCC_FORMAT " box, skipping", GST_FOURCC_ARGS(fourcc));
++      gst_byte_reader_skip_unchecked (&reader, size - 8);
++      continue;
+     }
+ 
++    GST_LOG ("uuid box found");
++
+     if (!gst_byte_reader_peek_data (&reader, 16, &uuid)) {
+       GST_ERROR ("not enough data in UUID box");
+       error = TRUE;
+-- 
+1.8.3.2
+
