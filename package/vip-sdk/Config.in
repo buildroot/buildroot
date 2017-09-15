@@ -1,5 +1,5 @@
-config BR2_PACKAGE_KPN_SDK
-	bool "kpn-sdk"
+config BR2_PACKAGE_VIP_SDK
+	bool "vip-sdk"
 	depends on BR2_mipsel
 	select BR2_PACKAGE_HAS_NEXUS
 	select BR2_PACKAGE_HAS_LIBEGL
@@ -7,15 +7,15 @@ config BR2_PACKAGE_KPN_SDK
 	help
 	  Pre-compiled binaries for a platform
 
-if BR2_PACKAGE_KPN_SDK
+if BR2_PACKAGE_VIP_SDK
 
 config BR2_PACKAGE_PROVIDES_NEXUS
-	default "kpn-sdk"
+	default "vip-sdk"
 
 config BR2_PACKAGE_PROVIDES_LIBEGL
-	default "kpn-sdk"
+	default "vip-sdk"
 
 config BR2_PACKAGE_PROVIDES_LIBGLES
-	default "kpn-sdk"
+	default "vip-sdk"
 
 endif
