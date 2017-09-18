@@ -6,6 +6,16 @@
 
 XEN_VERSION = 4.7.3
 XEN_SITE = https://downloads.xenproject.org/release/xen/$(XEN_VERSION)
+XEN_PATCH = \
+	https://xenbits.xenproject.org/xsa/xsa226-4.7.patch \
+	https://xenbits.xenproject.org/xsa/xsa227.patch \
+	https://xenbits.xenproject.org/xsa/xsa228-4.8.patch \
+	https://xenbits.xenproject.org/xsa/xsa230.patch \
+	https://xenbits.xenproject.org/xsa/xsa231-4.7.patch \
+	https://xenbits.xenproject.org/xsa/xsa232.patch \
+	https://xenbits.xenproject.org/xsa/xsa233.patch \
+	https://xenbits.xenproject.org/xsa/xsa234-4.8.patch \
+	https://xenbits.xenproject.org/xsa/xsa235-4.7.patch
 XEN_LICENSE = GPLv2
 XEN_LICENSE_FILES = COPYING
 XEN_DEPENDENCIES = host-python
