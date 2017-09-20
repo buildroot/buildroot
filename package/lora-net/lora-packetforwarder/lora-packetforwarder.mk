@@ -14,11 +14,11 @@ define LORA_PACKETFORWARDER_BUILD_CMDS
 endef
 
 define LORA_PACKETFORWARDER_INSTALL_STAGING_CMDS
-    $(INSTALL) -D -m 0755 $(@D)/poly_pkt_fwd/poly_pkt_fwd $(STAGING_DIR)/usr/bin
+    $(INSTALL) -D -m 0755 $(@D)/poly_pkt_fwd/poly_pkt_fwd $(STAGING_DIR)/usr/bin/poly_pkt_fwd
 endef
 
 define LORA_PACKETFORWARDER_INSTALL_TARGET_CMDS
-    $(INSTALL) -D -m 0755 $(@D)/poly_pkt_fwd/poly_pkt_fwd $(STAGING_DIR)/usr/bin
+    $(INSTALL) -D -m 0755 $(@D)/poly_pkt_fwd/poly_pkt_fwd $(TARGET_DIR)/usr/bin/poly_pkt_fwd
 endef
 
 
