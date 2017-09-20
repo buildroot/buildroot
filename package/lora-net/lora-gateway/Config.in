@@ -1,0 +1,11 @@
+config BR2_PACKAGE_LORA_GATEWAY
+	bool "lora-gateway"
+	select BR2_PACKAGE_LIBUSB
+	select BR2_PACKAGE_LIBMPSSE
+	help
+	  Driver/HAL to build a gateway using a concentrator board based 
+	  on Semtech SX1301 multi-channel modem and SX1257/SX1255 RF 
+	  transceivers.
+
+
+

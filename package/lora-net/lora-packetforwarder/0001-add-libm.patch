@@ -1,0 +1,11 @@
+
+--- a/basic_pkt_fwd/Makefile
++++ b/basic_pkt_fwd/Makefile
+@@ -75,6 +75,6 @@
+ 	$(CC) -c $(CFLAGS) $(VFLAG) -I$(LGW_PATH)/inc $< -o $@
+ 
+ $(APP_NAME): obj/$(APP_NAME).o $(LGW_PATH)/libloragw.a obj/parson.o obj/base64.o
+-	$(CC) -L$(LGW_PATH) $< obj/parson.o obj/base64.o -o $@ $(LIBS)
++	$(CC) -L$(LGW_PATH) $< obj/parson.o obj/base64.o -o $@ $(LIBS) -lm
+ 
+ ### EOF

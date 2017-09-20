@@ -1,0 +1,11 @@
+--- a/libloragw/src/loragw_spi.ftdi.c
++++ b/libloragw/src/loragw_spi.ftdi.c
+@@ -25,6 +25,8 @@
+ #include <stdio.h>		/* printf fprintf */
+ #include <stdlib.h>		/* malloc free */
+ #include <string.h>		/* memcpy */
++
++#include <linux/limits.h>
+ 
+ #include <mpsse.h>
+ 
