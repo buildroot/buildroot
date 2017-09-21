@@ -188,13 +188,19 @@ define BCM_REFSW_BUILD_NXCLIENT_EXAMPLES
 endef
 endif
 
+ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 17.1),1)
+BCM_CUBE_DIR = /BSEAV/lib/gpu/applications/nexus/cube
+else
+BCM_CUBE_DIR = /rockford/applications/khronos/v3d/nexus/cube
+endif
+
 ifeq ($(BR2_PACKAGE_BCM_REFSW_EGLCUBE),y)
 define BCM_REFSW_BUILD_EGLCUBE
 	$(TARGET_CONFIGURE_OPTS) \
 	$(TARGET_MAKE_ENV) \
 	$(BCM_REFSW_CONF_OPTS) \
 	$(BCM_REFSW_MAKE_ENV) \
-		$(MAKE) -C $(@D)/rockford/applications/khronos/v3d/nexus/cube \
+               $(MAKE) -C $(@D)/$(BCM_CUBE_DIR) \
 			LIBDIR=${BCM_REFSW_BIN}
 endef
 endif
