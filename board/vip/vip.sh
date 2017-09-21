@@ -34,6 +34,10 @@ rsync -ar --files-from="${ROOTFS_FILES}" "${TARGET_DIR}" "${ROOTFS_DIR}"
 mkdir -p "${ROOTFS_DIR}/usr/share/fonts/ttf-bitstream-vera"
 cp -f "${TARGET_DIR}/usr/share/fonts/ttf-bitstream-vera/Vera.ttf" "${ROOTFS_DIR}/usr/share/fonts/ttf-bitstream-vera/"
 
+
+# WPEFramework launcher
+cp -pf "${BOARD_DIR}/wpeframework.sh" "${ROOTFS_DIR}"
+
 # WebServer path
 mkdir -p "${ROOTFS_DIR}/www"
 
