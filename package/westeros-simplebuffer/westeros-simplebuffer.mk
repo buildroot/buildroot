@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WESTEROS_SIMPLEBUFFER_VERSION = 578e580f1e140dee13d226aeb731fc64eea24441
+WESTEROS_SIMPLEBUFFER_VERSION = 6fed670094ef307a85876c675fc42a3291fd5175
 WESTEROS_SIMPLEBUFFER_SITE_METHOD = git
 WESTEROS_SIMPLEBUFFER_SITE = git://github.com/Metrological/westeros
 WESTEROS_SIMPLEBUFFER_INSTALL_STAGING = YES
