@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-ZSTD_VERSION = v1.3.0
+ZSTD_VERSION = v1.3.1
 ZSTD_SITE = $(call github,facebook,zstd,$(ZSTD_VERSION))
-ZSTD_LICENSE = BSD-3-Clause
-ZSTD_LICENSE_FILES = LICENSE PATENTS
+ZSTD_LICENSE = BSD-3-Clause, GPL-2.0
+ZSTD_LICENSE_FILES = LICENSE COPYING
 
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
 ZSTD_OPTS += HAVE_THREAD=1
@@ -43,7 +43,7 @@ endef
 
 define ZSTD_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) $(ZSTD_OPTS) \
-		DESTDIR=$(TARGET_DIR) -C $(@D)/programs install
+		DESTDIR=$(TARGET_DIR) PREFIX=/usr -C $(@D)/programs install
 endef
 
 $(eval $(generic-package))

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-POPPLER_VERSION = 0.57.0
+POPPLER_VERSION = 0.59.0
 POPPLER_SOURCE = poppler-$(POPPLER_VERSION).tar.xz
 POPPLER_SITE = http://poppler.freedesktop.org
 POPPLER_DEPENDENCIES = fontconfig host-pkgconf
@@ -66,7 +66,7 @@ else
 POPPLER_CONF_OPTS += --disable-zlib
 endif
 
-ifeq ($(BR2_PACKAGE_POPPLER_LIBCURL),y)
+ifeq ($(BR2_PACKAGE_LIBCURL),y)
 POPPLER_CONF_OPTS += --enable-libcurl
 POPPLER_DEPENDENCIES += libcurl
 else

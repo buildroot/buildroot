@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TVHEADEND_VERSION = 54e63e3f9af8fdc0d23f61f3cda7fa7b246c1732
+TVHEADEND_VERSION = 0d1cd06fb237504123a08de84afc25d73fa14ba8
 TVHEADEND_SITE = $(call github,tvheadend,tvheadend,$(TVHEADEND_VERSION))
 TVHEADEND_LICENSE = GPL-3.0+
 TVHEADEND_LICENSE_FILES = LICENSE.md
@@ -26,11 +26,41 @@ else
 TVHEADEND_CONF_OPTS += --disable-dbus-1
 endif
 
-ifeq ($(BR2_PACKAGE_FFMPEG),y)
-TVHEADEND_DEPENDENCIES += ffmpeg
-TVHEADEND_CONF_OPTS += --enable-libav
+ifeq ($(BR2_PACKAGE_TVHEADEND_TRANSCODING),y)
+TVHEADEND_CONF_OPTS += --enable-libav --enable-libx264
+TVHEADEND_DEPENDENCIES += ffmpeg x264
+ifeq ($(BR2_PACKAGE_LIBVA)$(BR2_PACKAGE_XORG7),yy)
+TVHEADEND_CONF_OPTS += --enable-vaapi
+TVHEADEND_DEPENDENCIES += libva
 else
-TVHEADEND_CONF_OPTS += --disable-libav
+TVHEADEND_CONF_OPTS += --disable-vaapi
+endif
+ifeq ($(BR2_PACKAGE_OPUS),y)
+TVHEADEND_CONF_OPTS += --enable-libopus
+TVHEADEND_DEPENDENCIES += opus
+else
+TVHEADEND_CONF_OPTS += --disable-libopus
+endif
+ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
+TVHEADEND_CONF_OPTS += --enable-omx
+TVHEADEND_DEPENDENCIES += rpi-userland
+else
+TVHEADEND_CONF_OPTS += --disable-omx
+endif
+ifeq ($(BR2_PACKAGE_X265),y)
+TVHEADEND_CONF_OPTS += --enable-libx265
+TVHEADEND_DEPENDENCIES += x265
+else
+TVHEADEND_CONF_OPTS += --disable-libx265
+endif
+else
+TVHEADEND_CONF_OPTS += \
+	--disable-libav \
+	--disable-libopus \
+	--disable-omx \
+	--disable-vaapi \
+	--disable-libx264 \
+	--disable-libx265
 endif
 
 ifeq ($(BR2_PACKAGE_LIBDVBCSA),y)
