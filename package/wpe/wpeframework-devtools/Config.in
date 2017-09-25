@@ -6,11 +6,18 @@ config BR2_PACKAGE_WPEFRAMEWORK_DEBUG
 	   Allow the WPE Framework to be more verbose. All development traces
            are turned on.
  
+config BR2_PACKAGE_WPEFRAMEWORK_INSTALL_HEADERS
+	bool "Install development header"
+	help
+	   Install headers to the target for development.
+ 
 config BR2_PACKAGE_WPEFRAMEWORK_DISABLE_INITD
 	bool "Disable init.d"
 	help
 		If enabled the init.d script will NOT be installed.
 		
+menu "test applications"
+
 config BR2_PACKAGE_WPEFRAMEWORK_TEST_CYCLICINSPECTOR
 	bool "CyclicBuffer inspector"
 	help
@@ -25,5 +32,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_TEST_LOADER
 	help
 		TestLoader is a verification and analyze tool for 
 		WPEFramework software and plugins.
+
+config BR2_PACKAGE_WPEFRAMEWORK_TEST_RPCLINK
+	bool "RPC link test"
+	help
+		RPCLINK test tests the usage of RPC calls to out of process plugins.
+
+endmenu
 
 endmenu
