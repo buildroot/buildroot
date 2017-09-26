@@ -1,8 +1,7 @@
 config BR2_PACKAGE_WPEFRAMEWORK
 	bool "wpeframework"
 	help
-	   Base WPE Framework	  
-	   
+	  WPE Framework
 
 if BR2_PACKAGE_WPEFRAMEWORK
 
@@ -56,20 +55,19 @@ menu "Extensions"
 config BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
 	bool "VirtualInput"
 	help
-	   If the dynamic uinput system can not be used for security reasons, this
-           allows for relaying keys to plugins
+	  If the dynamic uinput system can not be used for security reasons, this
+	  allows for relaying keys to plugins
           
 config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
 	bool "ProvisionProxy"
-        select BR2_PACKAGE_LIBPROVISION
+	select BR2_PACKAGE_LIBPROVISION
 	help
-	   Allows provisioning of modules from the cloud.
+	  Allows provisioning of modules from the cloud.
           
 endmenu
 
 menu "Plugins"
-
-source "package/wpe/wpeframework-common/Config.in"
+source "package/wpe/wpeframework-plugins/Config.in"
 source "package/wpe/wpeframework-compositor/Config.in"
 source "package/wpe/wpeframework-dialserver/Config.in"
 source "package/wpe/wpeframework-netflix/Config.in"
