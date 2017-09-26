@@ -168,3 +168,9 @@ config BR2_PACKAGE_WPEFRAMEWORK_TUNER
 	help
 	  Tuner Plugin
 
+config BR2_PACKAGE_WPEFRAMEWORK_RPCLINK
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "RPC link server"
+    help
+      Plugin adding an RPC server to act as a server itself
+
