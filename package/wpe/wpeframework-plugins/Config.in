@@ -13,6 +13,12 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
 	help
 	  DeviceInfo Plugin
 
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_EGLTEST
+        select BR2_PACKAGE_WPEFRAMEWORK_COMMON
+	bool "EGLTest"
+	help
+	   EGLTest Plugin
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC
         select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
 	bool "LocationSync"
