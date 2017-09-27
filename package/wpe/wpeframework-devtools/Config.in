@@ -6,6 +6,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_DEBUG
 	   Allow the WPE Framework to be more verbose. All development traces
            are turned on.
  
+config BR2_PACKAGE_WPEFRAMEWORK_VERBOSE_BUILD
+	bool "Verbose build"
+	help
+	   Allow the WPE Framework build to be more verbose. This will show build 
+	   settings for all targets built, as well as details for packages found.
+ 
 config BR2_PACKAGE_WPEFRAMEWORK_INSTALL_HEADERS
 	bool "Install development header"
 	help
