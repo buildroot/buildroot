@@ -168,6 +168,14 @@ config BR2_PACKAGE_WPEFRAMEWORK_WEBSHELL
 	help
 	  WebShell Plugin
 
+config BR2_PACKAGE_WPEFRAMEWORK_WIFI
+	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+	select BR2_PACKAGE_WPA_SUPPLICANT
+	select BR2_PACKAGE_READLINE
+	bool "WifiSetup"
+	help
+        WifiSetup Plugin for Wifi access
+
 config BR2_PACKAGE_WPEFRAMEWORK_TUNER
 	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
 	bool "Tuner"
