@@ -25,7 +25,39 @@ ap_scan=1
 __EOF__
 	fi
 	;;
+	--rpi-wifi-ap)
+	if ! grep -qE '^auto wlan0' "${TARGET_DIR}/etc/network/interfaces"; then
+		echo "Adding 'wlan0 network' functionality to /etc/network/interfaces as Access Point."
+		cat << __EOF__ >> "${TARGET_DIR}/etc/network/interfaces"
+
+auto wlan0
+iface wlan0 inet static
+    pre-up wpa_supplicant -Dnl80211 -iwlan0 -c/etc/wpa_supplicant.conf -B
+    down killall wpa_supplicant
+    address 192.168.20.1
+    netmask 255.255.255.0
+__EOF__
+		cat << __EOF__ > "${TARGET_DIR}/etc/wpa_supplicant.conf"
+ctrl_interface=/var/run/wpa_supplicant
+ap_scan=1
+ctrl_interface_group=0
+fast_reauth=1
+update_config=1
+
+network={
+    ssid="WiFiRasp"
+    mode=2
+    frequency=2412
+    key_mgmt=WPA-PSK
+    proto=RSN
+    pairwise=CCMP
+    psk="12345678"
+}
+__EOF__
+	fi
+	;;
 esac
+
 done
 
 # Add a console on tty1

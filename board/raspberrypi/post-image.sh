@@ -110,7 +110,7 @@ dtoverlay=lirc-rpi,gpio_in_pin=23,gpio_out_pin=22
 __EOF__
 	fi
 	;;
-	--rpi-wifi)
+	--rpi-wifi*)
 	if ! grep -qE '^dtoverlay=sdtweak' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
 		echo "Adding 'rpi wifi' functionality to config.txt."
 		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
