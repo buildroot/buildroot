@@ -182,6 +182,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_TUNER
 	help
 	  Tuner Plugin
 
+config BR2_PACKAGE_WPEFRAMEWORK_SICONTROL
+	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+	bool "SI control"
+	help
+	  SI Control Plugin
+
 config BR2_PACKAGE_WPEFRAMEWORK_RPCLINK
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "RPC link server"
