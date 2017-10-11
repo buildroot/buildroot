@@ -10,9 +10,9 @@ WPEFRAMEWORK_UI_CONFIGURE_CMDS = true
 WPEFRAMEWORK_UI_BUILD_CMDS = true
 
 define WPEFRAMEWORK_UI_INSTALL_TARGET_CMDS
+	rm -rf $(TARGET_DIR)/usr/share/WPEFramework/Controller/UI
 	mkdir -p $(TARGET_DIR)/usr/share/WPEFramework/Controller/UI
-	rm -r $(TARGET_DIR)/usr/share/WPEFramework/Controller/UI/*
-	cp -r $(@D)/build/* $(TARGET_DIR)/usr/share/WPEFramework/Controller/UI 
+	cp -r $(@D)/build/* $(TARGET_DIR)/usr/share/WPEFramework/Controller/UI
 endef
 
 $(eval $(generic-package))
