@@ -4,6 +4,8 @@ export ACN=/hdd/acn
 export LD_LIBRARY_PATH=$SOURCE/usr/lib:/lib:/usr/lib:$SOURCE/lib
 export PATH=$PATH:$SOURCE/usr/bin
 
+export GST_PLUGIN_SCANNER=$SOURCE/usr/libexec/gstreamer-1.0/gst-plugin-scanner
+export GST_PLUGIN_SYSTEM_PATH=$SOURCE/usr/lib/gstreamer-1.0
 
 # Currently the root system is read-only. Since we cannot add anything there we bind 
 # existing directories with a copy of the actual system. All the stuff we want to 
@@ -28,8 +30,8 @@ ln -s $SOURCE/etc/WPEFramework $ACN/etc/WPEFramework
 ln -s $SOURCE/usr/lib/gio $ACN/lib/gio
 fi
 
-mount -t ext4 --bind $ACN/share/ /usr/share/
-mount -t ext4 --bind $ACN/etc/ /etc/
-mount -t ext4 --bind $ACN/lib/ /usr/lib/
+grep -q "/usr/share ext4" /proc/mounts && echo "/usr/share is already mounted" || mount -t ext4 --bind $ACN/share/ /usr/share/
+grep -q "/etc ext4" /proc/mounts && echo "/etc is already mounted" || mount -t ext4 --bind $ACN/etc/ /etc/
+grep -q "/usr/lib ext4" /proc/mounts && echo "/usr/lib is already mounted" || mount -t ext4 --bind $ACN/lib/ /usr/lib/
 
 LD_PRELOAD=$SOURCE/lib/libstdc\+\+.so.6.0.20 WPEFramework
