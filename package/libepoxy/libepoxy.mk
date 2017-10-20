@@ -20,6 +20,29 @@ else
 LIBEPOXY_CONF_OPTS += --disable-egl
 endif
 
+ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
+LIBEPOXY_MAKE_OPTS += \
+	CFLAGS='$(TARGET_CFLAGS) \
+            -DGLX_LIB_NAME="libv3ddriver.so" \
+            -DEGL_LIB_NAME="libv3ddriver.so" \
+            -DGLES1_LIB_NAME="libv3ddriver.so" \
+            -DGLES2_LIB_NAME="libv3ddriver.so"'
+else ifeq ($(BR2_PACKAGE_HORIZON_SDK),y)
+LIBEPOXY_CONF_OPTS += \
+	CFLAGS='$(TARGET_CFLAGS) \
+			-DGLX_LIB_NAME="libGLESv2.so" \
+			-DEGL_LIB_NAME="libEGL.so" \
+			-DGLES1_LIB_NAME="libGLESv1_CM.so" \
+			-DGLES2_LIB_NAME="libGLESv2.so"'
+else
+LIBEPOXY_MAKE_OPTS += \
+	CFLAGS='$(TARGET_CFLAGS) \
+            -DGLX_LIB_NAME="libGL.so.1" \
+            -DEGL_LIB_NAME="libEGL.so.1" \
+            -DGLES1_LIB_NAME="libGLESv1_CM.so.1" \
+            -DGLES2_LIB_NAME="libGLESv2.so.2"'
+endif
+
 ifeq ($(BR2_PACKAGE_HAS_LIBGL)$(BR2_PACKAGE_XLIB_LIBX11),yy)
 LIBEPOXY_CONF_OPTS += --enable-glx
 LIBEPOXY_DEPENDENCIES += libgl xlib_libX11

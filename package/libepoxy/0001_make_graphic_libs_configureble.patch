@@ -1,0 +1,37 @@
+Index: libepoxy/src/dispatch_common.c
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- libepoxy/src/dispatch_common.c	(date 1488479218000)
++++ libepoxy/src/dispatch_common.c	(revision )
+@@ -173,12 +173,15 @@
+ 
+ #include "dispatch_common.h"
+ 
++#define xstr(a) str(a)
++#define str(a) #a
++
+ #ifdef __APPLE__
+ #define GLX_LIB "/opt/X11/lib/libGL.1.dylib"
+ #elif defined(ANDROID)
+ #define GLX_LIB "libGLESv2.so"
+ #else
+-#define GLX_LIB "libGL.so.1"
++#define GLX_LIB   xstr(GLX_LIB_NAME)
+ #endif
+ 
+ #ifdef ANDROID
+@@ -190,9 +193,9 @@
+ #define GLES1_LIB "libGLES_CM.dll"
+ #define GLES2_LIB "libGLESv2.dll"
+ #else
+-#define EGL_LIB "libEGL.so.1"
+-#define GLES1_LIB "libGLESv1_CM.so.1"
+-#define GLES2_LIB "libGLESv2.so.2"
++#define EGL_LIB    xstr(EGL_LIB_NAME)
++#define GLES1_LIB  xstr(GLES1_LIB_NAME)
++#define GLES2_LIB  xstr(GLES2_LIB_NAME)
+ #endif
+ 
+ #ifdef __GNUC__
