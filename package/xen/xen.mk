@@ -15,7 +15,9 @@ XEN_PATCH = \
 	https://xenbits.xenproject.org/xsa/xsa232.patch \
 	https://xenbits.xenproject.org/xsa/xsa233.patch \
 	https://xenbits.xenproject.org/xsa/xsa234-4.8.patch \
-	https://xenbits.xenproject.org/xsa/xsa235-4.7.patch
+	https://xenbits.xenproject.org/xsa/xsa235-4.7.patch \
+	https://xenbits.xenproject.org/xsa/xsa245/0001-xen-page_alloc-Cover-memory-unreserved-after-boot-in.patch \
+	https://xenbits.xenproject.org/xsa/xsa245/0002-xen-arm-Correctly-report-the-memory-region-in-the-du.patch
 XEN_LICENSE = GPLv2
 XEN_LICENSE_FILES = COPYING
 XEN_DEPENDENCIES = host-python
