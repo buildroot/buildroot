@@ -1,0 +1,494 @@
+From fa654812e79d2422b41cfff6443e2abcb7737517 Mon Sep 17 00:00:00 2001
+From: Denys Vlasenko <vda.linux@googlemail.com>
+Date: Thu, 5 Jan 2017 11:43:53 +0100
+Subject: [PATCH] unzip: properly use CDF to find compressed files. Closes 9536
+
+function                                             old     new   delta
+unzip_main                                          2437    2350     -87
+
+Signed-off-by: Denys Vlasenko <vda.linux@googlemail.com>
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ archival/unzip.c      | 285 +++++++++++++++++++++++++++++---------------------
+ testsuite/unzip.tests |   6 +-
+ 2 files changed, 168 insertions(+), 123 deletions(-)
+
+diff --git a/archival/unzip.c b/archival/unzip.c
+index c540485ac..edef22f75 100644
+--- a/archival/unzip.c
++++ b/archival/unzip.c
+@@ -16,7 +16,6 @@
+  * TODO
+  * Zip64 + other methods
+  */
+-
+ //config:config UNZIP
+ //config:	bool "unzip"
+ //config:	default y
+@@ -24,8 +23,17 @@
+ //config:	  unzip will list or extract files from a ZIP archive,
+ //config:	  commonly found on DOS/WIN systems. The default behavior
+ //config:	  (with no options) is to extract the archive into the
+-//config:	  current directory. Use the `-d' option to extract to a
+-//config:	  directory of your choice.
++//config:	  current directory.
++//config:
++//config:config FEATURE_UNZIP_CDF
++//config:	bool "Read and use Central Directory data"
++//config:	default y
++//config:	depends on UNZIP
++//config:	help
++//config:	  If you know that you only need to deal with simple
++//config:	  ZIP files without deleted/updated files, SFX archves etc,
++//config:	  you can reduce code size by unselecting this option.
++//config:	  To support less trivial ZIPs, say Y.
+ 
+ //applet:IF_UNZIP(APPLET(unzip, BB_DIR_USR_BIN, BB_SUID_DROP))
+ //kbuild:lib-$(CONFIG_UNZIP) += unzip.o
+@@ -80,30 +88,20 @@ typedef union {
+ 		uint32_t ucmpsize PACKED;       /* 18-21 */
+ 		uint16_t filename_len;          /* 22-23 */
+ 		uint16_t extra_len;             /* 24-25 */
++		/* filename follows (not NUL terminated) */
++		/* extra field follows */
++		/* data follows */
+ 	} formatted PACKED;
+ } zip_header_t; /* PACKED - gcc 4.2.1 doesn't like it (spews warning) */
+ 
+-/* Check the offset of the last element, not the length.  This leniency
+- * allows for poor packing, whereby the overall struct may be too long,
+- * even though the elements are all in the right place.
+- */
+-struct BUG_zip_header_must_be_26_bytes {
+-	char BUG_zip_header_must_be_26_bytes[
+-		offsetof(zip_header_t, formatted.extra_len) + 2
+-			== ZIP_HEADER_LEN ? 1 : -1];
+-};
+-
+-#define FIX_ENDIANNESS_ZIP(zip_header) do { \
+-	(zip_header).formatted.version      = SWAP_LE16((zip_header).formatted.version     ); \
+-	(zip_header).formatted.method       = SWAP_LE16((zip_header).formatted.method      ); \
+-	(zip_header).formatted.modtime      = SWAP_LE16((zip_header).formatted.modtime     ); \
+-	(zip_header).formatted.moddate      = SWAP_LE16((zip_header).formatted.moddate     ); \
++#define FIX_ENDIANNESS_ZIP(zip_header) \
++do { if (BB_BIG_ENDIAN) { \
+ 	(zip_header).formatted.crc32        = SWAP_LE32((zip_header).formatted.crc32       ); \
+ 	(zip_header).formatted.cmpsize      = SWAP_LE32((zip_header).formatted.cmpsize     ); \
+ 	(zip_header).formatted.ucmpsize     = SWAP_LE32((zip_header).formatted.ucmpsize    ); \
+ 	(zip_header).formatted.filename_len = SWAP_LE16((zip_header).formatted.filename_len); \
+ 	(zip_header).formatted.extra_len    = SWAP_LE16((zip_header).formatted.extra_len   ); \
+-} while (0)
++}} while (0)
+ 
+ #define CDF_HEADER_LEN 42
+ 
+@@ -115,8 +113,8 @@ typedef union {
+ 		uint16_t version_needed;        /* 2-3 */
+ 		uint16_t cdf_flags;             /* 4-5 */
+ 		uint16_t method;                /* 6-7 */
+-		uint16_t mtime;                 /* 8-9 */
+-		uint16_t mdate;                 /* 10-11 */
++		uint16_t modtime;               /* 8-9 */
++		uint16_t moddate;               /* 10-11 */
+ 		uint32_t crc32;                 /* 12-15 */
+ 		uint32_t cmpsize;               /* 16-19 */
+ 		uint32_t ucmpsize;              /* 20-23 */
+@@ -127,27 +125,27 @@ typedef union {
+ 		uint16_t internal_file_attributes; /* 32-33 */
+ 		uint32_t external_file_attributes PACKED; /* 34-37 */
+ 		uint32_t relative_offset_of_local_header PACKED; /* 38-41 */
++		/* filename follows (not NUL terminated) */
++		/* extra field follows */
++		/* comment follows */
+ 	} formatted PACKED;
+ } cdf_header_t;
+ 
+-struct BUG_cdf_header_must_be_42_bytes {
+-	char BUG_cdf_header_must_be_42_bytes[
+-		offsetof(cdf_header_t, formatted.relative_offset_of_local_header) + 4
+-			== CDF_HEADER_LEN ? 1 : -1];
+-};
+-
+-#define FIX_ENDIANNESS_CDF(cdf_header) do { \
++#define FIX_ENDIANNESS_CDF(cdf_header) \
++do { if (BB_BIG_ENDIAN) { \
++	(cdf_header).formatted.version_made_by = SWAP_LE16((cdf_header).formatted.version_made_by); \
++	(cdf_header).formatted.version_needed = SWAP_LE16((cdf_header).formatted.version_needed); \
++	(cdf_header).formatted.method       = SWAP_LE16((cdf_header).formatted.method      ); \
++	(cdf_header).formatted.modtime      = SWAP_LE16((cdf_header).formatted.modtime     ); \
++	(cdf_header).formatted.moddate      = SWAP_LE16((cdf_header).formatted.moddate     ); \
+ 	(cdf_header).formatted.crc32        = SWAP_LE32((cdf_header).formatted.crc32       ); \
+ 	(cdf_header).formatted.cmpsize      = SWAP_LE32((cdf_header).formatted.cmpsize     ); \
+ 	(cdf_header).formatted.ucmpsize     = SWAP_LE32((cdf_header).formatted.ucmpsize    ); \
+ 	(cdf_header).formatted.file_name_length = SWAP_LE16((cdf_header).formatted.file_name_length); \
+ 	(cdf_header).formatted.extra_field_length = SWAP_LE16((cdf_header).formatted.extra_field_length); \
+ 	(cdf_header).formatted.file_comment_length = SWAP_LE16((cdf_header).formatted.file_comment_length); \
+-	IF_DESKTOP( \
+-	(cdf_header).formatted.version_made_by = SWAP_LE16((cdf_header).formatted.version_made_by); \
+ 	(cdf_header).formatted.external_file_attributes = SWAP_LE32((cdf_header).formatted.external_file_attributes); \
+-	) \
+-} while (0)
++}} while (0)
+ 
+ #define CDE_HEADER_LEN 16
+ 
+@@ -166,20 +164,38 @@ typedef union {
+ 	} formatted PACKED;
+ } cde_header_t;
+ 
+-struct BUG_cde_header_must_be_16_bytes {
++#define FIX_ENDIANNESS_CDE(cde_header) \
++do { if (BB_BIG_ENDIAN) { \
++	(cde_header).formatted.cdf_offset = SWAP_LE32((cde_header).formatted.cdf_offset); \
++}} while (0)
++
++struct BUG {
++	/* Check the offset of the last element, not the length.  This leniency
++	 * allows for poor packing, whereby the overall struct may be too long,
++	 * even though the elements are all in the right place.
++	 */
++	char BUG_zip_header_must_be_26_bytes[
++		offsetof(zip_header_t, formatted.extra_len) + 2
++			== ZIP_HEADER_LEN ? 1 : -1];
++	char BUG_cdf_header_must_be_42_bytes[
++		offsetof(cdf_header_t, formatted.relative_offset_of_local_header) + 4
++			== CDF_HEADER_LEN ? 1 : -1];
+ 	char BUG_cde_header_must_be_16_bytes[
+ 		sizeof(cde_header_t) == CDE_HEADER_LEN ? 1 : -1];
+ };
+ 
+-#define FIX_ENDIANNESS_CDE(cde_header) do { \
+-	(cde_header).formatted.cdf_offset = SWAP_LE32((cde_header).formatted.cdf_offset); \
+-} while (0)
+ 
+ enum { zip_fd = 3 };
+ 
+ 
+-#if ENABLE_DESKTOP
++/* This value means that we failed to find CDF */
++#define BAD_CDF_OFFSET ((uint32_t)0xffffffff)
++
++#if !ENABLE_FEATURE_UNZIP_CDF
+ 
++# define find_cdf_offset() BAD_CDF_OFFSET
++
++#else
+ /* Seen in the wild:
+  * Self-extracting PRO2K3XP_32.exe contains 19078464 byte zip archive,
+  * where CDE was nearly 48 kbytes before EOF.
+@@ -188,25 +204,26 @@ enum { zip_fd = 3 };
+  * To make extraction work, bumped PEEK_FROM_END from 16k to 64k.
+  */
+ #define PEEK_FROM_END (64*1024)
+-
+-/* This value means that we failed to find CDF */
+-#define BAD_CDF_OFFSET ((uint32_t)0xffffffff)
+-
+ /* NB: does not preserve file position! */
+ static uint32_t find_cdf_offset(void)
+ {
+ 	cde_header_t cde_header;
++	unsigned char *buf;
+ 	unsigned char *p;
+ 	off_t end;
+-	unsigned char *buf = xzalloc(PEEK_FROM_END);
+ 	uint32_t found;
+ 
+-	end = xlseek(zip_fd, 0, SEEK_END);
++	end = lseek(zip_fd, 0, SEEK_END);
++	if (end == (off_t) -1)
++		return BAD_CDF_OFFSET;
++
+ 	end -= PEEK_FROM_END;
+ 	if (end < 0)
+ 		end = 0;
++
+ 	dbg("Looking for cdf_offset starting from 0x%"OFF_FMT"x", end);
+  	xlseek(zip_fd, end, SEEK_SET);
++	buf = xzalloc(PEEK_FROM_END);
+ 	full_read(zip_fd, buf, PEEK_FROM_END);
+ 
+ 	found = BAD_CDF_OFFSET;
+@@ -252,30 +269,36 @@ static uint32_t find_cdf_offset(void)
+ static uint32_t read_next_cdf(uint32_t cdf_offset, cdf_header_t *cdf_ptr)
+ {
+ 	off_t org;
++	uint32_t magic;
+ 
+-	org = xlseek(zip_fd, 0, SEEK_CUR);
++	if (cdf_offset == BAD_CDF_OFFSET)
++		return cdf_offset;
+ 
+-	if (!cdf_offset)
+-		cdf_offset = find_cdf_offset();
+-
+-	if (cdf_offset != BAD_CDF_OFFSET) {
+-		dbg("Reading CDF at 0x%x", (unsigned)cdf_offset);
+-		xlseek(zip_fd, cdf_offset + 4, SEEK_SET);
+-		xread(zip_fd, cdf_ptr->raw, CDF_HEADER_LEN);
+-		FIX_ENDIANNESS_CDF(*cdf_ptr);
+-		dbg("  file_name_length:%u extra_field_length:%u file_comment_length:%u",
+-			(unsigned)cdf_ptr->formatted.file_name_length,
+-			(unsigned)cdf_ptr->formatted.extra_field_length,
+-			(unsigned)cdf_ptr->formatted.file_comment_length
+-		);
+-		cdf_offset += 4 + CDF_HEADER_LEN
+-			+ cdf_ptr->formatted.file_name_length
+-			+ cdf_ptr->formatted.extra_field_length
+-			+ cdf_ptr->formatted.file_comment_length;
++	org = xlseek(zip_fd, 0, SEEK_CUR);
++	dbg("Reading CDF at 0x%x", (unsigned)cdf_offset);
++	xlseek(zip_fd, cdf_offset, SEEK_SET);
++	xread(zip_fd, &magic, 4);
++	/* Central Directory End? */
++	if (magic == ZIP_CDE_MAGIC) {
++		dbg("got ZIP_CDE_MAGIC");
++		return 0; /* EOF */
+ 	}
++	xread(zip_fd, cdf_ptr->raw, CDF_HEADER_LEN);
++	/* Caller doesn't need this: */
++	/* dbg("Returning file position to 0x%"OFF_FMT"x", org); */
++	/* xlseek(zip_fd, org, SEEK_SET); */
++
++	FIX_ENDIANNESS_CDF(*cdf_ptr);
++	dbg("  file_name_length:%u extra_field_length:%u file_comment_length:%u",
++		(unsigned)cdf_ptr->formatted.file_name_length,
++		(unsigned)cdf_ptr->formatted.extra_field_length,
++		(unsigned)cdf_ptr->formatted.file_comment_length
++	);
++	cdf_offset += 4 + CDF_HEADER_LEN
++		+ cdf_ptr->formatted.file_name_length
++		+ cdf_ptr->formatted.extra_field_length
++		+ cdf_ptr->formatted.file_comment_length;
+ 
+-	dbg("Returning file position to 0x%"OFF_FMT"x", org);
+-	xlseek(zip_fd, org, SEEK_SET);
+ 	return cdf_offset;
+ };
+ #endif
+@@ -324,6 +347,7 @@ static void unzip_extract(zip_header_t *zip_header, int dst_fd)
+ 			bb_error_msg("bad length");
+ 		}
+ 	}
++	/* TODO? method 12: bzip2, method 14: LZMA */
+ }
+ 
+ static void my_fgets80(char *buf80)
+@@ -339,15 +363,12 @@ int unzip_main(int argc, char **argv)
+ {
+ 	enum { O_PROMPT, O_NEVER, O_ALWAYS };
+ 
+-	zip_header_t zip_header;
+ 	smallint quiet = 0;
+-	IF_NOT_DESKTOP(const) smallint verbose = 0;
++	IF_NOT_FEATURE_UNZIP_CDF(const) smallint verbose = 0;
+ 	smallint listing = 0;
+ 	smallint overwrite = O_PROMPT;
+ 	smallint x_opt_seen;
+-#if ENABLE_DESKTOP
+ 	uint32_t cdf_offset;
+-#endif
+ 	unsigned long total_usize;
+ 	unsigned long total_size;
+ 	unsigned total_entries;
+@@ -430,7 +451,7 @@ int unzip_main(int argc, char **argv)
+ 			break;
+ 
+ 		case 'v': /* Verbose list */
+-			IF_DESKTOP(verbose++;)
++			IF_FEATURE_UNZIP_CDF(verbose++;)
+ 			listing = 1;
+ 			break;
+ 
+@@ -545,78 +566,102 @@ int unzip_main(int argc, char **argv)
+ 	total_usize = 0;
+ 	total_size = 0;
+ 	total_entries = 0;
+-#if ENABLE_DESKTOP
+-	cdf_offset = 0;
+-#endif
++	cdf_offset = find_cdf_offset();	/* try to seek to the end, find CDE and CDF start */
+ 	while (1) {
+-		uint32_t magic;
++		zip_header_t zip_header;
+ 		mode_t dir_mode = 0777;
+-#if ENABLE_DESKTOP
++#if ENABLE_FEATURE_UNZIP_CDF
+ 		mode_t file_mode = 0666;
+ #endif
+ 
+-		/* Check magic number */
+-		xread(zip_fd, &magic, 4);
+-		/* Central directory? It's at the end, so exit */
+-		if (magic == ZIP_CDF_MAGIC) {
+-			dbg("got ZIP_CDF_MAGIC");
+-			break;
+-		}
+-#if ENABLE_DESKTOP
+-		/* Data descriptor? It was a streaming file, go on */
+-		if (magic == ZIP_DD_MAGIC) {
+-			dbg("got ZIP_DD_MAGIC");
+-			/* skip over duplicate crc32, cmpsize and ucmpsize */
+-			unzip_skip(3 * 4);
+-			continue;
+-		}
+-#endif
+-		if (magic != ZIP_FILEHEADER_MAGIC)
+-			bb_error_msg_and_die("invalid zip magic %08X", (int)magic);
+-		dbg("got ZIP_FILEHEADER_MAGIC");
+-
+-		/* Read the file header */
+-		xread(zip_fd, zip_header.raw, ZIP_HEADER_LEN);
+-		FIX_ENDIANNESS_ZIP(zip_header);
+-		if ((zip_header.formatted.method != 0) && (zip_header.formatted.method != 8)) {
+-			bb_error_msg_and_die("unsupported method %d", zip_header.formatted.method);
+-		}
+-#if !ENABLE_DESKTOP
+-		if (zip_header.formatted.zip_flags & SWAP_LE16(0x0009)) {
+-			bb_error_msg_and_die("zip flags 1 and 8 are not supported");
+-		}
+-#else
+-		if (zip_header.formatted.zip_flags & SWAP_LE16(0x0001)) {
+-			/* 0x0001 - encrypted */
+-			bb_error_msg_and_die("zip flag 1 (encryption) is not supported");
+-		}
++		if (!ENABLE_FEATURE_UNZIP_CDF || cdf_offset == BAD_CDF_OFFSET) {
++			/* Normally happens when input is unseekable.
++			 *
++			 * Valid ZIP file has Central Directory at the end
++			 * with central directory file headers (CDFs).
++			 * After it, there is a Central Directory End structure.
++			 * CDFs identify what files are in the ZIP and where
++			 * they are located. This allows ZIP readers to load
++			 * the list of files without reading the entire ZIP archive.
++			 * ZIP files may be appended to, only files specified in
++			 * the CD are valid. Scanning for local file headers is
++			 * not a correct algorithm.
++			 *
++			 * We try to do the above, and resort to "linear" reading
++			 * of ZIP file only if seek failed or CDE wasn't found.
++			 */
++			uint32_t magic;
+ 
+-		if (cdf_offset != BAD_CDF_OFFSET) {
++			/* Check magic number */
++			xread(zip_fd, &magic, 4);
++			/* Central directory? It's at the end, so exit */
++			if (magic == ZIP_CDF_MAGIC) {
++				dbg("got ZIP_CDF_MAGIC");
++				break;
++			}
++			/* Data descriptor? It was a streaming file, go on */
++			if (magic == ZIP_DD_MAGIC) {
++				dbg("got ZIP_DD_MAGIC");
++				/* skip over duplicate crc32, cmpsize and ucmpsize */
++				unzip_skip(3 * 4);
++				continue;
++			}
++			if (magic != ZIP_FILEHEADER_MAGIC)
++				bb_error_msg_and_die("invalid zip magic %08X", (int)magic);
++			dbg("got ZIP_FILEHEADER_MAGIC");
++
++			xread(zip_fd, zip_header.raw, ZIP_HEADER_LEN);
++			FIX_ENDIANNESS_ZIP(zip_header);
++			if ((zip_header.formatted.method != 0)
++			 && (zip_header.formatted.method != 8)
++			) {
++				/* TODO? method 12: bzip2, method 14: LZMA */
++				bb_error_msg_and_die("unsupported method %d", zip_header.formatted.method);
++			}
++			if (zip_header.formatted.zip_flags & SWAP_LE16(0x0009)) {
++				bb_error_msg_and_die("zip flags 1 and 8 are not supported");
++			}
++		}
++#if ENABLE_FEATURE_UNZIP_CDF
++		else {
++			/* cdf_offset is valid (and we know the file is seekable) */
+ 			cdf_header_t cdf_header;
+ 			cdf_offset = read_next_cdf(cdf_offset, &cdf_header);
+-			/*
+-			 * Note: cdf_offset can become BAD_CDF_OFFSET after the above call.
+-			 */
++			if (cdf_offset == 0) /* EOF? */
++				break;
++# if 0
++			xlseek(zip_fd,
++				SWAP_LE32(cdf_header.formatted.relative_offset_of_local_header) + 4,
++				SEEK_SET);
++			xread(zip_fd, zip_header.raw, ZIP_HEADER_LEN);
++			FIX_ENDIANNESS_ZIP(zip_header);
+ 			if (zip_header.formatted.zip_flags & SWAP_LE16(0x0008)) {
+ 				/* 0x0008 - streaming. [u]cmpsize can be reliably gotten
+-				 * only from Central Directory. See unzip_doc.txt
++				 * only from Central Directory.
+ 				 */
+ 				zip_header.formatted.crc32    = cdf_header.formatted.crc32;
+ 				zip_header.formatted.cmpsize  = cdf_header.formatted.cmpsize;
+ 				zip_header.formatted.ucmpsize = cdf_header.formatted.ucmpsize;
+ 			}
++# else
++			/* CDF has the same data as local header, no need to read the latter */
++			memcpy(&zip_header.formatted.version,
++				&cdf_header.formatted.version_needed, ZIP_HEADER_LEN);
++			xlseek(zip_fd,
++				SWAP_LE32(cdf_header.formatted.relative_offset_of_local_header) + 4 + ZIP_HEADER_LEN,
++				SEEK_SET);
++# endif
+ 			if ((cdf_header.formatted.version_made_by >> 8) == 3) {
+ 				/* This archive is created on Unix */
+ 				dir_mode = file_mode = (cdf_header.formatted.external_file_attributes >> 16);
+ 			}
+ 		}
+-		if (cdf_offset == BAD_CDF_OFFSET
+-		 && (zip_header.formatted.zip_flags & SWAP_LE16(0x0008))
+-		) {
+-			/* If it's a streaming zip, we _require_ CDF */
+-			bb_error_msg_and_die("can't find file table");
+-		}
+ #endif
++
++		if (zip_header.formatted.zip_flags & SWAP_LE16(0x0001)) {
++			/* 0x0001 - encrypted */
++			bb_error_msg_and_die("zip flag 1 (encryption) is not supported");
++		}
+ 		dbg("File cmpsize:0x%x extra_len:0x%x ucmpsize:0x%x",
+ 			(unsigned)zip_header.formatted.cmpsize,
+ 			(unsigned)zip_header.formatted.extra_len,
+@@ -751,7 +796,7 @@ int unzip_main(int argc, char **argv)
+ 			overwrite = O_ALWAYS;
+ 		case 'y': /* Open file and fall into unzip */
+ 			unzip_create_leading_dirs(dst_fn);
+-#if ENABLE_DESKTOP
++#if ENABLE_FEATURE_UNZIP_CDF
+ 			dst_fd = xopen3(dst_fn, O_WRONLY | O_CREAT | O_TRUNC, file_mode);
+ #else
+ 			dst_fd = xopen(dst_fn, O_WRONLY | O_CREAT | O_TRUNC);
+diff --git a/testsuite/unzip.tests b/testsuite/unzip.tests
+index d8738a3bd..d9c45242c 100755
+--- a/testsuite/unzip.tests
++++ b/testsuite/unzip.tests
+@@ -31,11 +31,10 @@ rmdir foo
+ rm foo.zip
+ 
+ # File containing some damaged encrypted stream
++optional FEATURE_UNZIP_CDF
+ testing "unzip (bad archive)" "uudecode; unzip bad.zip 2>&1; echo \$?" \
+ "Archive:  bad.zip
+-  inflating: ]3j½r«IK-%Ix
+-unzip: corrupted data
+-unzip: inflate error
++unzip: short read
+ 1
+ " \
+ "" "\
+@@ -49,6 +48,7 @@ BDYAAAAMAAEADQAAADIADQAAAEEAAAASw73Ct1DKokohPXQiNzA+FAI1HCcW
+ NzITNFBLBQUKAC4JAA04Cw0EOhZQSwUGAQAABAIAAgCZAAAAeQAAAAIALhM=
+ ====
+ "
++SKIP=
+ 
+ rm *
+ 
+-- 
+2.11.0
+

@@ -1,0 +1,50 @@
+From 50504d3a3badb8ab80bd33797abcbb3b7427c267 Mon Sep 17 00:00:00 2001
+From: Cristian Ionescu-Idbohrn <cristian.ionescu-idbohrn@axis.com>
+Date: Thu, 5 Jan 2017 19:07:54 +0100
+Subject: [PATCH] unzip: remove now-pointless lseek which returns current
+ position
+
+archival/unzip.c: In function 'read_next_cdf':
+archival/unzip.c:271:8: warning: variable 'org' set but
+                                 not used [-Wunused-but-set-variable]
+  off_t org;
+        ^~~
+
+Signed-off-by: Cristian Ionescu-Idbohrn <cristian.ionescu-idbohrn@axis.com>
+Signed-off-by: Denys Vlasenko <vda.linux@googlemail.com>
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ archival/unzip.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/archival/unzip.c b/archival/unzip.c
+index f1726439d..98a71c09d 100644
+--- a/archival/unzip.c
++++ b/archival/unzip.c
+@@ -268,13 +268,11 @@ static uint32_t find_cdf_offset(void)
+ 
+ static uint32_t read_next_cdf(uint32_t cdf_offset, cdf_header_t *cdf_ptr)
+ {
+-	off_t org;
+ 	uint32_t magic;
+ 
+ 	if (cdf_offset == BAD_CDF_OFFSET)
+ 		return cdf_offset;
+ 
+-	org = xlseek(zip_fd, 0, SEEK_CUR);
+ 	dbg("Reading CDF at 0x%x", (unsigned)cdf_offset);
+ 	xlseek(zip_fd, cdf_offset, SEEK_SET);
+ 	xread(zip_fd, &magic, 4);
+@@ -284,9 +282,6 @@ static uint32_t read_next_cdf(uint32_t cdf_offset, cdf_header_t *cdf_ptr)
+ 		return 0; /* EOF */
+ 	}
+ 	xread(zip_fd, cdf_ptr->raw, CDF_HEADER_LEN);
+-	/* Caller doesn't need this: */
+-	/* dbg("Returning file position to 0x%"OFF_FMT"x", org); */
+-	/* xlseek(zip_fd, org, SEEK_SET); */
+ 
+ 	FIX_ENDIANNESS_CDF(*cdf_ptr);
+ 	dbg("  file_name_length:%u extra_field_length:%u file_comment_length:%u",
+-- 
+2.11.0
+

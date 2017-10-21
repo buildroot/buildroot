@@ -1,0 +1,87 @@
+From dac762a702d01c8c2d42135795cc9bf23ff324a2 Mon Sep 17 00:00:00 2001
+From: Denys Vlasenko <vda.linux@googlemail.com>
+Date: Wed, 11 Jan 2017 20:16:45 +0100
+Subject: [PATCH] wget: fix for brain-damaged HTTP servers. Closes 9471
+
+write(3, "GET / HTTP/1.1\r\nUser-Agent: Wget\r\nConnection: close\r\n\r\n", 74) = 74
+shutdown(3, SHUT_WR)    = 0
+alarm(900)              = 900
+read(3, "", 1024)       = 0
+write(2, "wget: error getting response\n", 29) = 29
+exit(1)
+
+The peer simply does not return anything. It closes its connection.
+
+Probably it detects wget closing its writing end: shutdown(3, SHUT_WR).
+
+The point it, closing write side of the socket is _valid_ for HTTP.
+wget sent the full request, it won't be sending anything more:
+it will only receive the response, and that's it.
+
+Signed-off-by: Denys Vlasenko <vda.linux@googlemail.com>
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ networking/wget.c | 26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
+
+diff --git a/networking/wget.c b/networking/wget.c
+index b082a0f59..afb09f587 100644
+--- a/networking/wget.c
++++ b/networking/wget.c
+@@ -141,6 +141,8 @@
+ #endif
+ 
+ 
++#define SSL_SUPPORTED (ENABLE_FEATURE_WGET_OPENSSL || ENABLE_FEATURE_WGET_SSL_HELPER)
++
+ struct host_info {
+ 	char *allocated;
+ 	const char *path;
+@@ -151,7 +153,7 @@ struct host_info {
+ };
+ static const char P_FTP[] ALIGN1 = "ftp";
+ static const char P_HTTP[] ALIGN1 = "http";
+-#if ENABLE_FEATURE_WGET_OPENSSL || ENABLE_FEATURE_WGET_SSL_HELPER
++#if SSL_SUPPORTED
+ static const char P_HTTPS[] ALIGN1 = "https";
+ #endif
+ 
+@@ -452,7 +454,7 @@ static void parse_url(const char *src_url, struct host_info *h)
+ 		if (strcmp(url, P_FTP) == 0) {
+ 			h->port = bb_lookup_port(P_FTP, "tcp", 21);
+ 		} else
+-#if ENABLE_FEATURE_WGET_OPENSSL || ENABLE_FEATURE_WGET_SSL_HELPER
++#if SSL_SUPPORTED
+ 		if (strcmp(url, P_HTTPS) == 0) {
+ 			h->port = bb_lookup_port(P_HTTPS, "tcp", 443);
+ 			h->protocol = P_HTTPS;
+@@ -1093,12 +1095,20 @@ static void download_one_url(const char *url)
+ 		}
+ 
+ 		fflush(sfp);
+-		/* If we use SSL helper, keeping our end of the socket open for writing
+-		 * makes our end (i.e. the same fd!) readable (EAGAIN instead of EOF)
+-		 * even after child closes its copy of the fd.
+-		 * This helps:
+-		 */
+-		shutdown(fileno(sfp), SHUT_WR);
++
++/* Tried doing this unconditionally.
++ * Cloudflare and nginx/1.11.5 are shocked to see SHUT_WR on non-HTTPS.
++ */
++#if SSL_SUPPORTED
++		if (target.protocol == P_HTTPS) {
++			/* If we use SSL helper, keeping our end of the socket open for writing
++			 * makes our end (i.e. the same fd!) readable (EAGAIN instead of EOF)
++			 * even after child closes its copy of the fd.
++			 * This helps:
++			 */
++			shutdown(fileno(sfp), SHUT_WR);
++		}
++#endif
+ 
+ 		/*
+ 		 * Retrieve HTTP response line and check for "200" status code.
+-- 
+2.11.0
+

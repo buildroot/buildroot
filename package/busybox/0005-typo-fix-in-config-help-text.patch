@@ -1,0 +1,27 @@
+From f8692dc6a0035788a83821fa18b987d8748f97a7 Mon Sep 17 00:00:00 2001
+From: Denys Vlasenko <vda.linux@googlemail.com>
+Date: Thu, 5 Jan 2017 11:47:28 +0100
+Subject: [PATCH] typo fix in config help text
+
+Signed-off-by: Denys Vlasenko <vda.linux@googlemail.com>
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ archival/unzip.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/archival/unzip.c b/archival/unzip.c
+index edef22f75..f1726439d 100644
+--- a/archival/unzip.c
++++ b/archival/unzip.c
+@@ -31,7 +31,7 @@
+ //config:	depends on UNZIP
+ //config:	help
+ //config:	  If you know that you only need to deal with simple
+-//config:	  ZIP files without deleted/updated files, SFX archves etc,
++//config:	  ZIP files without deleted/updated files, SFX archives etc,
+ //config:	  you can reduce code size by unselecting this option.
+ //config:	  To support less trivial ZIPs, say Y.
+ 
+-- 
+2.11.0
+
