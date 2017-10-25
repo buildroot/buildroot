@@ -33,9 +33,9 @@ diff --git a/src/node.cc b/src/node.cc
 index 57415bba41..ec78339d89 100644
 --- a/src/node.cc
 +++ b/src/node.cc
-@@ -4233,8 +4233,10 @@ void Init(int* argc,
-   if (config_warning_file.empty())
-     SafeGetenv("NODE_REDIRECT_WARNINGS", &config_warning_file);
+@@ -4389,8 +4389,10 @@ void Init(int* argc,
+   V8::SetFlagsFromString(NODE_V8_OPTIONS, sizeof(NODE_V8_OPTIONS) - 1);
+ #endif
  
 +#if HAVE_OPENSSL
    if (openssl_config.empty())
