@@ -26,7 +26,6 @@ GST1_BCM_DEPENDENCIES = gstreamer1 gst1-plugins-base libcurl mpg123
 ifeq ($(BR2_PACKAGE_BCM_REFSW),y)
 GST1_BCM_DEPENDENCIES += bcm-refsw
 else
-ifneq ($(filter y,$(BR2_PACKAGE_VIP_SDK) $(BR2_PACKAGE_HOMECAST_SDK)),)
 BCM_REFSW_MAKE_ENV = \
 	REFSW_DIR="refsw"
 
@@ -36,10 +35,6 @@ NEXUS_CLIENT_LD_LIBRARIES=$(shell cat ${STAGING_DIR}/usr/include/refsw/platform_
 
 CFLAGS = $(TARGET_CFLAGS) ${NEXUS_CFLAGS}
 LDFLAGS = -L${STAGING_DIR}/usr/lib $(NEXUS_LDFLAGS) $(NEXUS_CLIENT_LD_LIBRARIES)
-
-else
-$(error "BCM REFSW source or binaries could not be found! Please, check your configuration")
-endif
 endif
 
 GST1_BCM_AUTORECONF = YES
