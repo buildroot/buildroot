@@ -52,6 +52,11 @@ config BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI_AUTOSTART
     depends on BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
     bool "autostart"
     default y
+      
+config BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI_OOP
+    depends on BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
+    bool "outofprocess"
+    default y 
     
 endif
 
