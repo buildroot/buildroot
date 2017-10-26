@@ -38,6 +38,22 @@ config BR2_PACKAGE_WPEFRAMEWORK_MONITOR
 	bool "Monitor"
 	help
 	  Monitor Plugin
+	  
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
+    bool "opencdmi"
+    depends on BR2_PACKAGE_OPENCDMI
+    default y
+    help
+      A Plugin to interact with CDM Services.
+
+if BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
+
+config BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI_AUTOSTART
+    depends on BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
+    bool "autostart"
+    default y
+    
+endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_TIMESYNC
 	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
