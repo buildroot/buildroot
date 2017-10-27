@@ -1,0 +1,26 @@
+menuconfig BR2_PACKAGE_MARVELL_FIRMWARE
+	bool "Marvell Firmware"
+	select BR2_PACKAGE_HAS_LIBEGL if BR2_PACKAGE_MARVELL_FIRMWARE_GFX
+	select BR2_PACKAGE_HAS_LIBGLES  if BR2_PACKAGE_MARVELL_FIRMWARE_GFX
+	select BR2_PACKAGE_HAS_LIBOPENVG  if BR2_PACKAGE_MARVELL_FIRMWARE_GFX
+	help
+	  Collection of prebuild binaries for Synaptics/Marvell SOC
+
+if BR2_PACKAGE_MARVELL_FIRMWARE
+
+
+config BR2_PACKAGE_PROVIDES_LIBEGL
+	default "marvell-firmware"
+
+config BR2_PACKAGE_PROVIDES_LIBGLES
+	default "marvell-firmware"
+
+config BR2_PACKAGE_PROVIDES_LIBOPENVG
+	default "marvell-firmware"
+
+config BR2_PACKAGE_MARVELL_FIRMWARE_GFX
+    bool "Install per-build graphic libraries"
+    help
+      per-build graphic libraries for Synaptics/Marvell SOC
+
+endif
