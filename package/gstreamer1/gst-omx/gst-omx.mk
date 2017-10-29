@@ -9,7 +9,7 @@ GST_OMX_SOURCE = gst-omx-$(GST_OMX_VERSION).tar.xz
 GST_OMX_SITE = https://gstreamer.freedesktop.org/src/gst-omx
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1_GIT),y)
-GST_OMX_VERSION = 98df98e65b4035792557a76d21897fd953875bca
+GST_OMX_VERSION = 70ad93c2db85c123ac9ddbd051749f7425a90bf5
 GST_OMX_SOURCE = gst-omx-$(GST_OMX_VERSION).tar.xz
 GST_OMX_SITE = http://cgit.freedesktop.org/gstreamer/gst-omx/snapshot
 BR_NO_CHECK_HASH_FOR += $(GST_OMX_SOURCE)
