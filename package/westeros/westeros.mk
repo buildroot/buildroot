@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WESTEROS_VERSION = 6fed670094ef307a85876c675fc42a3291fd5175
+WESTEROS_VERSION = 9633867603dcfb2a5c71af71e7e1abd12f0c2ca3
 WESTEROS_SITE_METHOD = git
 WESTEROS_SITE = git://github.com/Metrological/westeros
 WESTEROS_INSTALL_STAGING = YES
@@ -20,8 +20,9 @@ WESTEROS_CONF_OPTS = \
 	--enable-test=yes \
 	--enable-rendergl=yes \
 	--enable-sbprotocol=yes \
-	--enable-xdgv5=yes
-
+	--enable-xdgv5=yes\
+	--enable-essos=no 
+    
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 	WESTEROS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -DWESTEROS_PLATFORM_RPI -DWESTEROS_INVERTED_Y -DBUILD_WAYLAND -I${STAGING_DIR}/usr/include/interface/vmcs_host/linux"
 	WESTEROS_LDFLAGS += -lEGL -lGLESv2 -lbcm_host
@@ -43,6 +44,7 @@ endif # BR2_PACKAGE_WESTEROS_SOC_RPI
 
 define WESTEROS_RUN_AUTOCONF
 	mkdir -p $(@D)/cfg
+	mkdir -p $(@D)/essos/cfg
 endef
 WESTEROS_PRE_CONFIGURE_HOOKS += WESTEROS_RUN_AUTOCONF
 
