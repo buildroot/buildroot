@@ -184,15 +184,14 @@ utils/scanpypi foo bar -o package
 This will generate packages +python-foo+ and +python-bar+ in the package
 folder if they exist on https://pypi.python.org.
 
-Find the +external python modules+ menu and insert your package inside.
+You also need to manually add the package to the +package/Config.in+ file.
 Keep in mind that the items inside a menu should be in alphabetical order.
 
 Please keep in mind that you'll most likely have to manually check the
 package for any mistakes as there are things that cannot be guessed by
 the generator (e.g.  dependencies on any of the python core modules
 such as BR2_PACKAGE_PYTHON_ZLIB).  Also, please take note that the
-license and license files are guessed and must be checked. You also
-need to manually add the package to the +package/Config.in+ file.
+license and license files are guessed and must be checked. 
 
 If your Buildroot package is not in the official Buildroot tree but in
 a br2-external tree, use the -o flag as follows:
