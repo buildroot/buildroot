@@ -3,7 +3,7 @@
 # wpeframework-spotify
 #
 ################################################################################
-WPEFRAMEWORK_SPOTIFY_VERSION = dc690340ce90d51db5ce78bfbed7a53444f4495e
+WPEFRAMEWORK_SPOTIFY_VERSION = cf5368e41273906b4297af483a5a244e441a4637
 WPEFRAMEWORK_SPOTIFY_SITE_METHOD = git
 WPEFRAMEWORK_SPOTIFY_SITE = git@github.com:WebPlatformForEmbedded/WPEPluginSpotify.git
 WPEFRAMEWORK_SPOTIFY_INSTALL_STAGING = YES
