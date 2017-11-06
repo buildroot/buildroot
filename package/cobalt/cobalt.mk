@@ -2,7 +2,7 @@ COBALT_VERSION = ef837fa448402e2ada2fb3821210cc20d850164b
 COBALT_SITE = https://cobalt.googlesource.com/cobalt
 COBALT_SITE_METHOD = git
 export RASPI_HOME=$(HOST_DIR)/usr
-export PATH := "$(HOST_DIR)/bin:$(HOST_DIR)/usr/bin:$(HOST_DIR)/usr/sbin:$(PATH)"
+export PATH := $(HOST_DIR)/bin:$(HOST_DIR)/usr/bin:$(HOST_DIR)/usr/sbin:$(PATH)
 
 COBALT_DEPENDENCIES = ffmpeg alsa-lib
 
