@@ -6,10 +6,6 @@ export PATH := $(HOST_DIR)/bin:$(HOST_DIR)/usr/bin:$(HOST_DIR)/usr/sbin:$(PATH)
 
 COBALT_DEPENDENCIES = ffmpeg alsa-lib
 
-define COBALT_CONFIGURE_CMDS
-        git clone https://cobalt.googlesource.com/depot_tools $(@D)/depot_tools
-endef
-
 define COBALT_BUILD_CMDS
         $(@D)/src/cobalt/build/gyp_cobalt -C qa raspi-2
         $(RASPI_HOME)/bin/ninja -C $(@D)/src/out/raspi-2_qa cobalt

@@ -1,6 +1,6 @@
-diff -rup cobalt-51c5ef6805d3ede7acaa472abb7da3604a099cba/src/starboard/raspi/shared/gyp_configuration.gypi cobalt-51c5ef6805d3ede7acaa472abb7da3604a099cba-fixed/src/starboard/raspi/shared/gyp_configuration.gypi
---- cobalt-51c5ef6805d3ede7acaa472abb7da3604a099cba/src/starboard/raspi/shared/gyp_configuration.gypi	2017-08-24 02:22:50.000000000 +0530
-+++ cobalt-51c5ef6805d3ede7acaa472abb7da3604a099cba-fixed/src/starboard/raspi/shared/gyp_configuration.gypi	2017-11-02 12:41:15.838811628 +0530
+diff -rup cobalt/src/starboard/raspi/shared/gyp_configuration.gypi cobalt.fixed/src/starboard/raspi/shared/gyp_configuration.gypi
+--- cobalt/src/starboard/raspi/shared/gyp_configuration.gypi	2017-10-05 11:14:25.000000000 +0530
++++ cobalt.fixed/src/starboard/raspi/shared/gyp_configuration.gypi	2017-11-13 14:16:00.003878442 +0530
 @@ -130,6 +130,7 @@
        '-lbcm_host',
        '-lvcos',
@@ -9,9 +9,9 @@ diff -rup cobalt-51c5ef6805d3ede7acaa472abb7da3604a099cba/src/starboard/raspi/sh
      ],
      'conditions': [
        ['cobalt_fastbuild==0', {
-diff -rup cobalt-51c5ef6805d3ede7acaa472abb7da3604a099cba/src/starboard/raspi/shared/gyp_configuration.py cobalt-51c5ef6805d3ede7acaa472abb7da3604a099cba-fixed/src/starboard/raspi/shared/gyp_configuration.py
---- cobalt-51c5ef6805d3ede7acaa472abb7da3604a099cba/src/starboard/raspi/shared/gyp_configuration.py	2017-08-24 02:22:50.000000000 +0530
-+++ cobalt-51c5ef6805d3ede7acaa472abb7da3604a099cba-fixed/src/starboard/raspi/shared/gyp_configuration.py	2017-11-02 12:40:59.486811711 +0530
+diff -rup cobalt/src/starboard/raspi/shared/gyp_configuration.py cobalt.fixed/src/starboard/raspi/shared/gyp_configuration.py
+--- cobalt/src/starboard/raspi/shared/gyp_configuration.py	2017-10-05 11:14:25.000000000 +0530
++++ cobalt.fixed/src/starboard/raspi/shared/gyp_configuration.py	2017-11-13 14:15:17.771878657 +0530
 @@ -38,7 +38,7 @@ class RaspiPlatformConfig(config.starboa
  
    def GetVariables(self, configuration):
@@ -21,7 +21,13 @@ diff -rup cobalt-51c5ef6805d3ede7acaa472abb7da3604a099cba/src/starboard/raspi/sh
      if not os.path.isdir(sysroot):
        logging.critical('RasPi builds require $RASPI_HOME/sysroot '
                         'to be a valid directory.')
-@@ -57,10 +57,10 @@ class RaspiPlatformConfig(config.starboa
+@@ -52,15 +52,15 @@ class RaspiPlatformConfig(config.starboa
+     return variables
+ 
+   def GetEnvironmentVariables(self):
+-    env_variables = gyp_utils.GetHostCompilerEnvironment()
++    env_variables = { }
+     raspi_home = self._GetRasPiHome()
  
      toolchain = os.path.realpath(os.path.join(
          raspi_home,
@@ -35,9 +41,9 @@ diff -rup cobalt-51c5ef6805d3ede7acaa472abb7da3604a099cba/src/starboard/raspi/sh
 +        'CXX': os.path.join(toolchain_bin_dir, 'arm-buildroot-linux-gnueabihf-g++'),
      })
      return env_variables
-diff -rup cobalt-51c5ef6805d3ede7acaa472abb7da3604a099cba/src/starboard/shared/ffmpeg/ffmpeg_audio_decoder.cc cobalt-51c5ef6805d3ede7acaa472abb7da3604a099cba-fixed/src/starboard/shared/ffmpeg/ffmpeg_audio_decoder.cc
---- cobalt-51c5ef6805d3ede7acaa472abb7da3604a099cba/src/starboard/shared/ffmpeg/ffmpeg_audio_decoder.cc	2017-08-24 02:22:50.000000000 +0530
-+++ cobalt-51c5ef6805d3ede7acaa472abb7da3604a099cba-fixed/src/starboard/shared/ffmpeg/ffmpeg_audio_decoder.cc	2017-11-02 12:41:53.878811434 +0530
+diff -rup cobalt/src/starboard/shared/ffmpeg/ffmpeg_audio_decoder.cc cobalt.fixed/src/starboard/shared/ffmpeg/ffmpeg_audio_decoder.cc
+--- cobalt/src/starboard/shared/ffmpeg/ffmpeg_audio_decoder.cc	2017-10-05 11:14:25.000000000 +0530
++++ cobalt.fixed/src/starboard/shared/ffmpeg/ffmpeg_audio_decoder.cc	2017-11-13 14:17:36.211877953 +0530
 @@ -89,7 +89,7 @@ void AudioDecoder::Decode(const scoped_r
    packet.data = const_cast<uint8_t*>(input_buffer->data());
    packet.size = input_buffer->size();
@@ -47,7 +53,7 @@ diff -rup cobalt-51c5ef6805d3ede7acaa472abb7da3604a099cba/src/starboard/shared/f
    int frame_decoded = 0;
    int result =
        avcodec_decode_audio4(codec_context_, av_frame_, &frame_decoded, &packet);
-@@ -247,7 +247,7 @@ void AudioDecoder::InitializeCodec() {
+@@ -245,7 +245,7 @@ void AudioDecoder::InitializeCodec() {
      return;
    }
  
