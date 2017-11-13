@@ -1,0 +1,15 @@
+config BR2_PACKAGE_PEERVPN
+	bool "peervpn"
+	depends on BR2_USE_MMU # fork()
+	depends on BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_ZLIB
+	help
+	  PeerVPN is a software that builds virtual ethernet networks
+	  between multiple computers.
+
+	  A virtual network built by PeerVPN uses a full mesh topology.
+	  All nodes talk directly to each other, there is no need for a
+	  central server. If one node goes down, the rest of the network
+	  is unaffected.
+
+	  https://peervpn.net/
