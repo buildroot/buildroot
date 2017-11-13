@@ -17,7 +17,7 @@ endef
 
 define PEERVPN_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 0755 -D $(@D)/peervpn $(TARGET_DIR)/usr/sbin/peervpn
-	$(INSTALL) -m 0644 $(@D)/peervpn.conf $(TARGET_DIR)/etc/peervpn.conf
+	$(INSTALL) -m 0644 -D $(@D)/peervpn.conf $(TARGET_DIR)/etc/peervpn.conf
 endef
 
 $(eval $(generic-package))
