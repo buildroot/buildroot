@@ -115,29 +115,17 @@ config BR2_PACKAGE_WPEWEBKIT_ENABLE_MEDIA_SOURCE
 
 menu "Encrypted Media Extensions options (EME)"
 
-config BR2_PACKAGE_WPEWEBKIT_USE_ENCRYPTED_MEDIA_V1
-	bool "Encrypted Media Extensions (EME) v1"
-	default y
-	help
-	  Use Enable Encrypted Media Extensions (EME) V1 API.
-
-config BR2_PACKAGE_WPEWEBKIT_USE_ENCRYPTED_MEDIA_V2
-	bool "Encrypted Media Extensions (EME) v2"
-	default n
-	help
-	  Use Enable Encrypted Media Extensions (EME) V2 object oriented API.
-
 config BR2_PACKAGE_WPEWEBKIT_USE_ENCRYPTED_MEDIA_V3
 	bool "Encrypted Media Extensions (EME) v3"
-	default n
+	default y
 	help
 	  Use Enable Encrypted Media Extensions (EME) V3 API.
 
-if BR2_PACKAGE_WPEWEBKIT_USE_ENCRYPTED_MEDIA_V1 || BR2_PACKAGE_WPEWEBKIT_USE_ENCRYPTED_MEDIA_V2 || BR2_PACKAGE_WPEWEBKIT_USE_ENCRYPTED_MEDIA_V3
+if BR2_PACKAGE_WPEWEBKIT_USE_ENCRYPTED_MEDIA_V3
 
 choice
   bool "PlayReady backend"
-  depends on BR2_PACKAGE_WPEWEBKIT_USE_ENCRYPTED_MEDIA_V1 || BR2_PACKAGE_WPEWEBKIT_USE_ENCRYPTED_MEDIA_V2 || BR2_PACKAGE_WPEWEBKIT_USE_ENCRYPTED_MEDIA_V3
+  depends on BR2_PACKAGE_WPEWEBKIT_USE_ENCRYPTED_MEDIA_V3
   default BR2_PACKAGE_WPEWEBKIT_USE_PLAYREADY
   help
     Choose the Playready backend.
