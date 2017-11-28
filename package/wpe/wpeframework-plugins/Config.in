@@ -3,6 +3,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMMANDER
 	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+	default y
 	bool "Commander"
 	help
 	  Commander Plugin
@@ -55,6 +56,7 @@ endif
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
         select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
 	bool "DeviceInfo"
+	default y
 	help
 	  DeviceInfo Plugin
 
@@ -83,9 +85,9 @@ config BR2_PACKAGE_WPEFRAMEWORK_MONITOR
 	bool "Monitor"
 	help
 	  Monitor Plugin
-	  
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
-    bool "opencdmi"
+    bool "OpenCDM"
     depends on BR2_PACKAGE_OPENCDMI
     default y
     help
@@ -105,11 +107,8 @@ config BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI_OOP
     
 endif
 
-config BR2_PACKAGE_WPEFRAMEWORK_TIMESYNC
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "TimeSync"
-	help
-	  TimeSync Plugin
+comment "OpenCDM requires the OpenCDM package to be selected"
+	depends on !BR2_PACKAGE_OPENCDMI
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL
 	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
@@ -156,11 +155,35 @@ config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_DEVUINPUT
 
 endif
 
+config BR2_PACKAGE_WPEFRAMEWORK_RPCLINK
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "RPC link server"
+    help
+      Plugin adding an RPC server to act as a server itself
+
 config BR2_PACKAGE_WPEFRAMEWORK_SNAPSHOT
 	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
 	bool "Snapshot"
 	help
 	  Snapshot Plugin
+
+config BR2_PACKAGE_WPEFRAMEWORK_SICONTROL
+	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+	bool "SI control"
+	help
+	  SI Control Plugin
+
+config BR2_PACKAGE_WPEFRAMEWORK_TIMESYNC
+	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+	bool "TimeSync"
+	help
+	  TimeSync Plugin
+
+config BR2_PACKAGE_WPEFRAMEWORK_TUNER
+	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+	bool "Tuner"
+	help
+	  Tuner Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_TRACECONTROL
 	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
@@ -225,6 +248,9 @@ config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_CLIENTIDENTIFIER
 
 endif
 
+comment "WebKitBrowser depends on WPE WebKit to be selected"
+	depends on !BR2_PACKAGE_WPEWEBKIT
+
 config BR2_PACKAGE_WPEFRAMEWORK_WEBPROXY
 	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
 	bool "WebProxy"
@@ -251,21 +277,4 @@ config BR2_PACKAGE_WPEFRAMEWORK_WIFI
 	help
         WifiSetup Plugin for Wifi access
 
-config BR2_PACKAGE_WPEFRAMEWORK_TUNER
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "Tuner"
-	help
-	  Tuner Plugin
-
-config BR2_PACKAGE_WPEFRAMEWORK_SICONTROL
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "SI control"
-	help
-	  SI Control Plugin
-
-config BR2_PACKAGE_WPEFRAMEWORK_RPCLINK
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-    bool "RPC link server"
-    help
-      Plugin adding an RPC server to act as a server itself
-
+comment "External plugins below"
