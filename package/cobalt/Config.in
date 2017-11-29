@@ -1,5 +1,22 @@
 config BR2_PACKAGE_COBALT
-        bool "cobalt"
+	bool "cobalt"
+        select BR2_PACKAGE_ALSA_LIB
+
+if BR2_PACKAGE_COBALT
+
+choice
+	prompt "Media Playback Framework"
+	help
+	  This option allows to use a specific media playback framework
+
+config BR2_PACKAGE_COBALT_WITH_GSTREAMER
+	bool "cobalt-with-GStreamer"
+
+config BR2_PACKAGE_COBALT_WITH_FFMPEG
+	bool "cobalt-with-FFMPEG"
         select BR2_PACKAGE_FFMPEG
         select BR2_PACKAGE_FFMPEG_AVRESAMPLE
-        select BR2_PACKAGE_ALSA_LIB
+
+endchoice
+
+endif
