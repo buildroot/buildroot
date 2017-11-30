@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEBACKEND_VERSION = 3013faaebab42e7ef7497b3850a2902978eb3d6f
+WPEBACKEND_VERSION = db98fdd3442a1e008acfbd6ebe2ce4c8ae379208
 WPEBACKEND_SITE = $(call github,WebPlatformForEmbedded,WPEBackend,$(WPEBACKEND_VERSION))
 WPEBACKEND_INSTALL_STAGING = YES
 WPEBACKEND_DEPENDENCIES += libegl
