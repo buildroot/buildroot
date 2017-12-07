@@ -74,6 +74,14 @@ config BR2_PACKAGE_WPEWEBKIT_NO_JSC_OPTIMIZATIONS
 	help
 	  Avoid JSC optimizations such as JIT and FTL so that backtraces involving JS can come up cleaner
 
+
+config BR2_PACKAGE_WPEWEBKIT_USE_GOLD_LD
+	bool "use gold linker"
+		default n
+	help
+		If available in the toolchain WPE WebKit will use ld.gold to link objects. To enable 
+		this compile binutils with --enable-gold.
+
 endmenu
 
 config BR2_PACKAGE_WPEWEBKIT_JSC
