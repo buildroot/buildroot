@@ -11,7 +11,7 @@ GST1_BCM_VERSION = 16.2
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_17_1_RDK),y)
 GST1_BCM_VERSION = 17.1
 else
-ifneq ($(filter y,$(BR2_PACKAGE_VIP_SDK) $(BR2_PACKAGE_HOMECAST_SDK)),)
+ifneq ($(filter y,$(BR2_PACKAGE_ACN_SDK) $(BR2_PACKAGE_HOMECAST_SDK)),)
 GST1_BCM_VERSION = 17.1-3
 else
 GST1_BCM_VERSION = 15.2
@@ -27,7 +27,8 @@ ifeq ($(BR2_PACKAGE_BCM_REFSW),y)
 GST1_BCM_DEPENDENCIES += bcm-refsw
 else
 BCM_REFSW_MAKE_ENV = \
-	REFSW_DIR="refsw"
+	REFSW_DIR="refsw" \
+	B_REFSW_CROSS_COMPILE=${BR2_TOOLCHAIN_EXTERNAL_PREFIX}-
 
 NEXUS_CFLAGS=$(shell cat ${STAGING_DIR}/usr/include/refsw/platform_app.inc | grep NEXUS_CFLAGS | cut -d' ' -f3- | awk -F "-std=c89" '{print $$1 $$2}')
 NEXUS_LDFLAGS=$(shell cat ${STAGING_DIR}/usr/include/refsw/platform_app.inc | grep NEXUS_LDFLAGS | cut -d' ' -f3-)
