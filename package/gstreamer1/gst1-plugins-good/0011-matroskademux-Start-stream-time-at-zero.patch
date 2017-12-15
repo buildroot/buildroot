@@ -1,0 +1,28 @@
+From 78afbe5ac21067497536499c1d7439a595b918c6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Alicia=20Boya=20Garc=C3=ADa?= <aboya@igalia.com>
+Date: Wed, 22 Nov 2017 19:25:45 +0100
+Subject: [PATCH 2/2] matroskademux: Start stream time at zero
+
+---
+ gst/matroska/matroska-demux.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/gst/matroska/matroska-demux.c b/gst/matroska/matroska-demux.c
+index 79903d1..00020e5 100644
+--- a/gst/matroska/matroska-demux.c
++++ b/gst/matroska/matroska-demux.c
+@@ -3517,9 +3517,9 @@ gst_matroska_demux_parse_blockgroup_or_simpleblock (GstMatroskaDemux * demux,
+         clace_time = demux->common.segment.position + demux->stream_start_time;
+         segment->position = GST_CLOCK_TIME_NONE;
+       }
+-      segment->start = clace_time;
++      segment->start = 0;
+       segment->stop = GST_CLOCK_TIME_NONE;
+-      segment->time = segment->start - demux->stream_start_time;
++      segment->time = 0;
+       segment->position = segment->start - demux->stream_start_time;
+       GST_DEBUG_OBJECT (demux,
+           "generated segment starting at %" GST_TIME_FORMAT ": %"
+-- 
+1.8.3.2
+
