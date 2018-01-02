@@ -164,11 +164,13 @@ endif
 
 # This removes some unneeded Python scripts and XML target description
 # files that are not useful for a normal usage of the debugger.
+ifneq ($(BR2_PACKAGE_GDB_PYTHON),y)
 define GDB_REMOVE_UNNEEDED_FILES
 	$(RM) -rf $(TARGET_DIR)/usr/share/gdb
 endef
 
 GDB_POST_INSTALL_TARGET_HOOKS += GDB_REMOVE_UNNEEDED_FILES
+endif
 
 # This installs the gdbserver somewhere into the $(HOST_DIR) so that
 # it becomes an integral part of the SDK, if the toolchain generated
