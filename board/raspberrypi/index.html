@@ -53,7 +53,7 @@
                             ip = deviceInfo.Addresses.IpAddress;
                         else {
                             for (var i in deviceInfo.addresses) {
-                                if (deviceInfo.addresses[i].ip && deviceInfo.addresses[i].ip !== '127.0.0.1') {
+                                if (Array.isArray(deviceInfo.addresses[i].ip) && deviceInfo.addresses[i].ip[0] !== '127.0.0.1') {
                                     ip = deviceInfo.addresses[i].ip;
                                     break;
                                 }
