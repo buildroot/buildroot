@@ -60,6 +60,13 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
 	help
 	  DeviceInfo Plugin
 
+config BR2_PACKAGE_WPEFRAMEWORK_DHCPSERVER
+	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+	bool "DHCPServer"
+	help
+	  IPv4 DHCP server functionality. Distribute IPv4 addresses throughout the
+          network.
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_EGLTEST
         select BR2_PACKAGE_WPEFRAMEWORK_COMMON
 	bool "EGLTest"
@@ -86,6 +93,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_MONITOR
 	help
 	  Monitor Plugin
 	  
+config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
+	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+	bool "NetworkControl"
+	help
+	  Control the IP adressing of the interfaces in the system from 
+          WPEFramework (static IPv4/IPv6 or dhcp IPv4)
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
     bool "OpenCDM"
     depends on BR2_PACKAGE_OPENCDMI
