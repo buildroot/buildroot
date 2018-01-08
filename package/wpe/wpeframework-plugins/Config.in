@@ -291,4 +291,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_WIFI
 	help
         WifiSetup Plugin for Wifi access
 
+config BR2_PACKAGE_WPEFRAMEWORK_WIFICONTROL
+	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+	select BR2_PACKAGE_WPA_SUPPLICANT
+        select BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
+	bool "WifiControl"
+	help
+        WifiControl Plugin for Wifi access, linked to Network Control
+
+
 comment "External plugins below"
