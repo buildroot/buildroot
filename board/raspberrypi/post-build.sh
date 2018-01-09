@@ -3,21 +3,7 @@
 set -u
 set -e
 
-persistent_path="/root"
-
 echo "Post-build: processing $@"
-
-# Look for persistent path variable in .config
-BR2_PACKAGE_WPEFRAMEWORK_PERSISTENT_PATH="$(grep ^BR2_PACKAGE_WPEFRAMEWORK_PERSISTENT_PATH= ${BR2_CONFIG})"
-
-if [[ $BR2_PACKAGE_WPEFRAMEWORK_PERSISTENT_PATH == BR2_PACKAGE_WPEFRAMEWORK_PERSISTENT_PATH=* ]]; 
-then
-	# Strip variable name
-	persistent_path=`echo ${BR2_PACKAGE_WPEFRAMEWORK_PERSISTENT_PATH:41}`
-	# Strip quotes
-	persistent_path=`sed -e 's/^"//' -e 's/"$//' <<<"$persistent_path"`
-	echo "Persistent-path: $persistent_path"
-fi
 
 for i in "$@"
 do
@@ -29,10 +15,10 @@ case "$i" in
 
 auto wlan0
 iface wlan0 inet dhcp
-    pre-up wpa_supplicant -Dwext -iwlan0 -c$persistent_path/wpa_supplicant.conf -B
+    pre-up wpa_supplicant -Dwext -iwlan0 -c/etc/wpa_supplicant.conf -B
     down killall wpa_supplicant
 __EOF__
-		cat << __EOF__ > "${TARGET_DIR}/$persistent_path/wpa_supplicant.conf"
+		cat << __EOF__ > "${TARGET_DIR}/etc/wpa_supplicant.conf"
 ctrl_interface=/var/run/wpa_supplicant
 ap_scan=1
 
@@ -46,12 +32,12 @@ __EOF__
 
 auto wlan0
 iface wlan0 inet static
-    pre-up wpa_supplicant -Dnl80211 -iwlan0 -c$persistent_path/wpa_supplicant.conf -B
+    pre-up wpa_supplicant -Dnl80211 -iwlan0 -c/etc/wpa_supplicant.conf -B
     down killall wpa_supplicant
     address 192.168.20.1
     netmask 255.255.255.0
 __EOF__
-		cat << __EOF__ > "${TARGET_DIR}/$persistent_path/wpa_supplicant.conf"
+		cat << __EOF__ > "${TARGET_DIR}/etc/wpa_supplicant.conf"
 ctrl_interface=/var/run/wpa_supplicant
 ap_scan=1
 ctrl_interface_group=0
