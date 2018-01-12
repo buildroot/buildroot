@@ -12,4 +12,7 @@ PYTHON_CRYPTOGRAPHY_LICENSE = Apache-2.0 or BSD-3-Clause
 PYTHON_CRYPTOGRAPHY_LICENSE_FILES = LICENSE LICENSE.APACHE LICENSE.BSD
 PYTHON_CRYPTOGRAPHY_DEPENDENCIES = host-python-cffi openssl
 
+#
+
 $(eval $(python-package))
+$(eval $(host-python-package))
