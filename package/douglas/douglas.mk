@@ -28,6 +28,8 @@ sed -e "s;%PLATFORM_FAMILY_NAME%;$(BR2_PACKAGE_DOUGLAS_PLATFORM_FAMILY_NAME);g" 
     $(@D)/templates/local.config.in  > $(@D)/tools/scripts/configuration/local.config
 endef
 
+
+ifeq ($(BR2_PACKAGE_DOUGLAS),y)
 ifeq ($(BR2_PACKAGE_DOUGLAS_BACKEND_DRM),y)
 DOUGLAS_DEPENDENCIES += libgles libegl playready
 DOUGLAS_BACKEND = mpb-drm
@@ -49,7 +51,7 @@ DOUGLAS_BUILD_TYPE = debug
 else
 $(error No build type specified)
 endif
-
+endif
 
 define GENERATE_BOOST_CONFIG
 sed -e "s;%TARGET_CROSS%;$(notdir $(TARGET_CROSS));g" \
