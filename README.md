@@ -25,7 +25,9 @@ Select a configuration for your embedded device from the `configs/` directory. F
 ```
 make raspberrypi2_wpe_defconfig
 ```
-Buildroot provides you a menuconfig option for the first time. Select additional packages if you require or exit and save the config. 
+Buildroot provides you a menuconfig option for the first time. Select additional packages if you require or exit and save the config.
+
+**Note** that the `_ml` (Metrological) configurations such as `raspberrypi2_wpe_ml_defconfig` should be considered for internal Metrological use only. Unless you have access to the private repositories required, the build will fail.
 
 ### Build
 To build:
