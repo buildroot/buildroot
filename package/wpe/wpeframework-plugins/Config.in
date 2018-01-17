@@ -110,20 +110,18 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
 if BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
 
 config BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI_CLEARKEY
-    depends on BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
     bool "clearkey"
     default y
  
 config BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI_PLAYREADY
-    depends on BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
     depends on BR2_PACKAGE_HAS_PLAYREADY
     bool "playready"
+    default y
 
 comment "PlayReady requires the PlayReady package to be selected"
 	depends on !BR2_PACKAGE_HAS_PLAYREADY
  
 config BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI_WIDEVINE
-    depends on BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
     depends on BR2_PACKAGE_WIDEVINE
     bool "widevive"
 
