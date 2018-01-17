@@ -1,4 +1,8 @@
 config BR2_PACKAGE_PLAYREADY
+	select BR2_PACKAGE_HAS_PLAYREADY
 	bool "playready"
 	help
 	  A playready implementation port from Microsoft.
+
+config BR2_PACKAGE_HAS_PLAYREADY
+	bool
