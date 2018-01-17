@@ -103,6 +103,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
     bool "OpenCDMi"
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_RPCBIND
     default y
     help
       A Plugin to interact with CDM Services.
