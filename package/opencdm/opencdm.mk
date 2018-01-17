@@ -24,8 +24,6 @@ define OPENCDM_BUILD_CMDS
 endef
 
 define OPENCDM_INSTALL_TARGET_CMDS
-    cp $(@D)/src/browser/wpe/bin/ocdm_client $(TARGET_DIR)/usr/bin
-    cp $(@D)/src/browser/wpe/bin/ocdm_decryptor $(TARGET_DIR)/usr/bin
     cp $(@D)/src/browser/wpe/lib/libocdm.so $(TARGET_DIR)/usr/lib
 endef
 define OPENCDM_INSTALL_STAGING_CMDS
