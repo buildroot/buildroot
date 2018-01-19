@@ -91,7 +91,12 @@ endef
 define DOUGLAS_INSTALL_TARGET_CMDS
  $(INSTALL) -d -m 0755 $(TARGET_DIR)/$(BR2_PACKAGE_DOUGLAS_IG_INSTALL_PATH)
  cp -a $(@D)/install/$(BR2_PACKAGE_DOUGLAS_PLATFORM_NAME)/* $(TARGET_DIR)/$(BR2_PACKAGE_DOUGLAS_IG_INSTALL_PATH)
- ln -s $(BR2_PACKAGE_DOUGLAS_IG_INSTALL_PATH)/bin/ignition $(TARGET_DIR)/usr/bin/ignition
+ 
+ if [ ! -h "$(TARGET_DIR)/usr/bin/ignition" ]; then \
+    rm $(TARGET_DIR)/usr/bin/ignition ;\
+    ln -s $(BR2_PACKAGE_DOUGLAS_IG_INSTALL_PATH)/bin/ignition $(TARGET_DIR)/usr/bin/ignition ;\
+ fi
+ 
 endef
 
 define DOUGLAS_INSTALL_STAGING_CMDS
