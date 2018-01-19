@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-DOUGLAS_VERSION = 38659d888a7510f71f5d86405453871d3a088535
+DOUGLAS_VERSION = 653b0654ac921d922799e875538723a30d06abfd
 DOUGLAS_SITE_METHOD = git
 DOUGLAS_SITE = git@github.com:Metrological/douglas.git
 DOUGLAS_INSTALL_STAGING = NO
 DOUGLAS_INSTALL_TARGET = YES
-DOUGLAS_DEPENDENCIES = host-cmake zlib jpeg libcurl 
+DOUGLAS_DEPENDENCIES = host-cmake zlib jpeg libcurl wpeframework
 
 define DOUGLAS_CONFIGURATION
     $(call GENERATE_LOCAL_CONFIG)
@@ -89,8 +89,9 @@ define DOUGLAS_BUILD_CMDS
 endef
 
 define DOUGLAS_INSTALL_TARGET_CMDS
- $(INSTALL) -d -m 0755 $(TARGET_DIR)/root/douglas
+ $(INSTALL) -d -m 0755 $(TARGET_DIR)/$(BR2_PACKAGE_DOUGLAS_IG_INSTALL_PATH)
  cp -a $(@D)/install/$(BR2_PACKAGE_DOUGLAS_PLATFORM_NAME)/* $(TARGET_DIR)/$(BR2_PACKAGE_DOUGLAS_IG_INSTALL_PATH)
+ ln -s $(BR2_PACKAGE_DOUGLAS_IG_INSTALL_PATH)/bin/ignition $(TARGET_DIR)/usr/bin/ignition
 endef
 
 define DOUGLAS_INSTALL_STAGING_CMDS

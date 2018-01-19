@@ -2,6 +2,8 @@ config BR2_PACKAGE_DOUGLAS
     select BR2_PACKAGE_JPEG
 	select BR2_PACKAGE_ZLIB
 	select BR2_PACKAGE_LIBCURL
+	select BR2_PACKAGE_WPEFRAMEWORK
+	select BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
 	bool "douglas"
 	help
 	  Douglas project
@@ -59,15 +61,15 @@ endchoice
 
 config BR2_PACKAGE_DOUGLAS_IG_INSTALL_PATH
 	string "install path"
-	default "/root/douglas"
+	default "/usr/share/ignition"
 
 config BR2_PACKAGE_DOUGLAS_IG_READ_WRITE_PATH
 	string "read/write path"
-	default "/tmp" 
+	default "/root" 
 
 config BR2_PACKAGE_DOUGLAS_IG_TEST_INSTALL_PATH
 	string "test install path"
-	default "/root/douglas/test"
+	default "/usr/share/ignition/test"
 
 config BR2_PACKAGE_DOUGLAS_DTID
 	string "concurrent jobs"
