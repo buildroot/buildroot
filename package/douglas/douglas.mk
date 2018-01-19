@@ -9,12 +9,13 @@ DOUGLAS_SITE_METHOD = git
 DOUGLAS_SITE = git@github.com:Metrological/douglas.git
 DOUGLAS_INSTALL_STAGING = NO
 DOUGLAS_INSTALL_TARGET = YES
-DOUGLAS_DEPENDENCIES = zlib libjpeg libcurl
+DOUGLAS_DEPENDENCIES = host-cmake zlib jpeg libcurl 
 
 define DOUGLAS_CONFIGURATION
     $(call GENERATE_LOCAL_CONFIG)
     $(call DOUGLAS_MAKE, partner-device-code)
     $(call GENERATE_BOOST_CONFIG)
+    $(call GENERATE_BUILD_CONFIG)
 endef
 
 define GENERATE_LOCAL_CONFIG
@@ -29,6 +30,19 @@ sed -e "s;%PLATFORM_FAMILY_NAME%;$(BR2_PACKAGE_DOUGLAS_PLATFORM_FAMILY_NAME);g" 
     $(@D)/templates/local.config.in  > $(@D)/tools/scripts/configuration/local.config
 endef
 
+define GENERATE_BUILD_CONFIG
+sed -e "s;%IG_INSTALL_PATH%;$(BR2_PACKAGE_DOUGLAS_IG_INSTALL_PATH);g" \
+    -e "s;%IG_READ_WRITE_PATH%;$(BR2_PACKAGE_DOUGLAS_IG_READ_WRITE_PATH);g" \
+    -e "s;%IG_TEST_INSTALL_PATH%;$(BR2_PACKAGE_DOUGLAS_IG_TEST_INSTALL_PATH);g" \
+    -e "s;%DTID%;$(BR2_PACKAGE_DOUGLAS_DTID);g" \
+    -e "s;%CPU_BIT_WIDTH_AND_ENDIANNESS%;$(BR2_PACKAGE_DOUGLAS_CPU_BIT_WIDTH_AND_ENDIANNESS);g" \
+    $(@D)/templates/avpk-build.config.in  > $(@D)/$(BR2_PACKAGE_DOUGLAS_PLATFORM_FAMILY_NAME)/common/configuration/avpk-build-$(BR2_PACKAGE_DOUGLAS_PLATFORM_FAMILY_NAME)-${BR2_PACKAGE_DOUGLAS_PLATFORM_NAME}.config
+endef
+
+define GENERATE_BOOST_CONFIG
+ sed -e "s;%TARGET_CROSS%;$(notdir $(TARGET_CROSS));g" \
+    $(@D)/templates/user-config.jam.in  > $(@D)/$(BR2_PACKAGE_DOUGLAS_PLATFORM_FAMILY_NAME)/platform/ignition/com.amazon.ignition.framework.core/internal/platform/$(BR2_PACKAGE_DOUGLAS_PLATFORM_FAMILY_NAME)/boost/user-config.jam
+endef
 
 ifeq ($(BR2_PACKAGE_DOUGLAS),y)
 ifeq ($(BR2_PACKAGE_DOUGLAS_BACKEND_DRM),y)
@@ -54,11 +68,6 @@ else
 endif
 endif
 
-define GENERATE_BOOST_CONFIG
- sed -e "s;%TARGET_CROSS%;$(notdir $(TARGET_CROSS));g" \
-    $(@D)/templates/user-config.jam.in  > $(@D)/$(BR2_PACKAGE_DOUGLAS_PLATFORM_FAMILY_NAME)/platform/ignition/com.amazon.ignition.framework.core/internal/platform/$(BR2_PACKAGE_DOUGLAS_PLATFORM_FAMILY_NAME)/boost/user-config.jam
-endef
-
 define DOUGLAS_APPLY_CUSTOM_PATCHES
  $(call DOUGLAS_MAKE, ignition-repo-code)
  $(call DOUGLAS_MAKE, ruby-repo-code)
@@ -70,6 +79,7 @@ $(MAKE) -C $(@D)/tools/ $1 $2
 endef
 
 define DOUGLAS_BUILD_CMDS
+    $(call GENERATE_LOCAL_CONFIG)
  export PKG_CONFIG_SYSROOT_DIR=$(STAGING_DIR)
  $(call DOUGLAS_MAKE, dpc, BUILD_TYPE=$(DOUGLAS_BUILD_TYPE))
  $(call DOUGLAS_MAKE, dpp, BUILD_TYPE=$(DOUGLAS_BUILD_TYPE))
@@ -80,7 +90,7 @@ endef
 
 define DOUGLAS_INSTALL_TARGET_CMDS
  $(INSTALL) -d -m 0755 $(TARGET_DIR)/root/douglas
- cp -a $(@D)/install/$(BR2_PACKAGE_DOUGLAS_PLATFORM_NAME)/* $(TARGET_DIR)/root/douglas
+ cp -a $(@D)/install/$(BR2_PACKAGE_DOUGLAS_PLATFORM_NAME)/* $(TARGET_DIR)/$(BR2_PACKAGE_DOUGLAS_IG_INSTALL_PATH)
 endef
 
 define DOUGLAS_INSTALL_STAGING_CMDS
