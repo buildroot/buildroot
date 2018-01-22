@@ -54,7 +54,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SYSTEM
 endif
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
-        select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
 	bool "DeviceInfo"
 	default y
 	help
@@ -65,16 +65,16 @@ config BR2_PACKAGE_WPEFRAMEWORK_DHCPSERVER
 	bool "DHCPServer"
 	help
 	  IPv4 DHCP server functionality. Distribute IPv4 addresses throughout the
-          network.
+	  network.
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_EGLTEST
-        select BR2_PACKAGE_WPEFRAMEWORK_COMMON
+	select BR2_PACKAGE_WPEFRAMEWORK_COMMON
 	bool "EGLTest"
 	help
 	   EGLTest Plugin
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC
-        select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
 	bool "LocationSync"
 	help
 	  LocationSync Plugin
@@ -85,20 +85,41 @@ if BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC
 config BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC_URI
 	string "location URI"
 	default "http://ip-api.com/json"
-endif	   
+
+endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_MONITOR
 	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
 	bool "Monitor"
 	help
 	  Monitor Plugin
-	  
+
+if BR2_PACKAGE_WPEFRAMEWORK_MONITOR
+
+config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_WEBKIT
+	depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+	string "webkit-limit"
+	default "614400"
+
+config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_YOUTUBE
+	depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+	string "youtube-limit"
+	default "614400"
+
+config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_NETFLIX
+	depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+	string "netflix-limit"
+	default "307200"
+
+endif
+
+
 config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
 	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
 	bool "NetworkControl"
 	help
 	  Control the IP adressing of the interfaces in the system from 
-          WPEFramework (static IPv4/IPv6 or dhcp IPv4)
+	  WPEFramework (static IPv4/IPv6 or dhcp IPv4)
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
     bool "OpenCDMi"
@@ -302,7 +323,6 @@ config BR2_PACKAGE_WPEFRAMEWORK_WIFICONTROL
 	select BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
 	bool "WifiControl"
 	help
-        WifiControl Plugin for Wifi access, linked to Network Control
-
+	  WifiControl Plugin for Wifi access, linked to Network Control
 
 comment "External plugins below"
