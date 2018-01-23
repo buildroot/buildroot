@@ -9,7 +9,7 @@ DOUGLAS_SITE_METHOD = git
 DOUGLAS_SITE = git@github.com:Metrological/douglas.git
 DOUGLAS_INSTALL_STAGING = NO
 DOUGLAS_INSTALL_TARGET = YES
-DOUGLAS_DEPENDENCIES = host-cmake zlib jpeg libcurl wpeframework
+DOUGLAS_DEPENDENCIES = host-cmake zlib jpeg libcurl
 
 define DOUGLAS_CONFIGURATION
     $(call GENERATE_LOCAL_CONFIG)
