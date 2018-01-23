@@ -36,6 +36,11 @@ config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_RESUME_TIMEOUT
         min. 0 millisecond
         max. 300000 milliseconds
 
+config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_FULLHD
+    depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+    bool "fullhd"
+    default n
+
 endif
 
 comment "netflix is dependent on the netflix package compiled as library"
