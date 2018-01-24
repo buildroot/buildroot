@@ -97,6 +97,13 @@ BCM_REFSW_PLATFORM_VC = v3d
 BCM_REFSW_MAKE_ENV += NEXUS_ENDIAN=BSTD_ENDIAN_BIG
 endif
 
+
+ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_14),y)
+BCM_PMLIB_VERSION = 314
+else
+BCM_PMLIB_VERSION = 26
+endif
+
 BCM_REFSW_CONF_OPTS += \
 	CROSS_COMPILE="${TARGET_CROSS}" \
 	LINUX=${LINUX_DIR} \
@@ -195,6 +202,17 @@ define BCM_REFSW_BUILD_NXCLIENT_EXAMPLES
 endef
 endif
 
+ifeq ($(BR2_PACKAGE_BCM_REFSW_PMLIB),y)
+define BCM_REFSW_BUILD_PMLIB
+    $(TARGET_CONFIGURE_OPTS) \
+    $(TARGET_MAKE_ENV) \
+    $(BCM_REFSW_CONF_OPTS) \
+    $(BCM_REFSW_MAKE_ENV) \
+        $(MAKE) -C $(@D)/BSEAV/lib/pmlib \
+            LIBDIR=${BCM_REFSW_BIN}
+endef
+endif
+
 ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 17.1),1)
 BCM_CUBE_DIR = /BSEAV/lib/gpu/applications/nexus/cube
 else
@@ -211,6 +229,7 @@ define BCM_REFSW_BUILD_EGLCUBE
 			LIBDIR=${BCM_REFSW_BIN}
 endef
 endif
+
 
 # wayland-egl is needed only for westeros
 ifeq ($(BR2_PACKAGE_WESTEROS),y)
@@ -364,6 +383,13 @@ define BCM_REFSW_INSTALL_LIBS
 	cd $1/usr/lib && ln -sf libv3ddriver.so libEGL.so && ln -sf libv3ddriver.so libGLESv2.so
 endef
 
+ifeq ($(BR2_PACKAGE_BCM_REFSW_PMLIB),y)
+define BCM_REFSW_INSTALL_STAGING_PMLIB
+	$(INSTALL) -m 644 -D $(BCM_REFSW_OUTPUT)/BSEAV/lib/pmlib/libpmlib.a $(STAGING_DIR)/usr/lib/libpmlib.a
+	$(INSTALL) -m 644 $(BCM_REFSW_DIR)/BSEAV/lib/pmlib/$(BCM_PMLIB_VERSION)/pmlib.h $(STAGING_DIR)/usr/include/refsw
+endef
+endif
+
 ifeq ($(BCM_REFSW_PLATFORM_VC),vc5)
 define BCM_REFSW_INSTALL_EXTRA
 	$(INSTALL) -D -m 755 package/bcm-refsw/S11wakeup $1/etc/init.d/S11wakeup
@@ -397,6 +423,7 @@ define BCM_REFSW_BUILD_CMDS
 	$(BCM_REFSW_BUILD_NEXUS)
 	$(BCM_REFSW_BUILD_NXSERVER)
 	$(BCM_REFSW_BUILD_NXCLIENT_EXAMPLES)
+	$(BCM_REFSW_BUILD_PMLIB)
 	$(BCM_REFSW_BUILD_VCX)
 	$(BCM_REFSW_BUILD_EGLCUBE)
 	$(BCM_REFSW_BUILD_WAYLAND_EGL)
@@ -441,7 +468,7 @@ fi
 	$(call BCM_REFSW_INSTALL_LIBS,$(STAGING_DIR))
 	$(call BCM_REFSW_INSTALL_STAGING_NXSERVER,$(STAGING_DIR))
 	$(call BCM_REFSW_INSTALL_STAGING_WAYLAND_EGL,$(STAGING_DIR))
-	
+	$(BCM_REFSW_INSTALL_STAGING_PMLIB)
 endef
 
 define BCM_REFSW_INSTALL_TARGET_CMDS
