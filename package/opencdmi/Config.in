@@ -1,14 +1,17 @@
 config BR2_PACKAGE_OPENCDMI
 	bool "OpenCDMi"
+        select BR2_PACKAGE_RPCBIND if !BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI_INTERFACE
+        select BR2_PACKAGE_OPENCDM if !BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI_INTERFACE
 	help
            An open interface for accessing  platform DRM Content Decryption Module (CDM).
             This will be a library to use with any process
-	select BR2_PACKAGE_RPCBIND
-	select BR2_PACKAGE_OPENCDM
-if BR2_PACKAGE_OPENCDMI
+
+if BR2_PACKAGE_OPENCDMI && !BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI_INTERFACE
 	source "package/opencdm/Config.in"
+
 config BR2_PACKAGE_OPENCDMI_SERVICE
 	bool "Service"
+        select BR2_PACKAGE_OPENCDM 
 	help 
 	   Enable service application to get opencdmi functionalities
 endif
