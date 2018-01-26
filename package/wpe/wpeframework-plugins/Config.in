@@ -109,6 +109,15 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
 
 if BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
 
+config BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI_INTERFACE
+    bool "FrameworkRPC"
+    default n
+    help
+      The intial deplyment of OpenCDMi was using the SUNRPC mechanism
+      to communicate with the OpenCDMi server. Enabling this flag will
+      change the SUNRPC communication into the WPEFramework RPC 
+      mechanism
+
 config BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI_CLEARKEY
     depends on BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
     bool "clearkey"
