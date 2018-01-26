@@ -4,12 +4,15 @@
 #
 ################################################################################
 
+ifneq ($(BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI_INTERFACE), y)
+
 OPENCDMI_VERSION = fe53d4303452a24846f88cb0a27859702e91d697
 OPENCDMI_SITE_METHOD = git
 OPENCDMI_SITE = git@github.com:Metrological/open-content-decryption-module-cdmi.git
 
 OPENCDMI_INSTALL_STAGING = YES
 OPENCDMI_DEPENDENCIES = rpcbind opencdm
+
 OPENCDMI_LICENSE = Apache-2.0
 OPENCDMI_LICENSE_FILES = LICENSE
 
@@ -66,3 +69,6 @@ endef
 
 $(eval $(generic-package))
 $(eval $(host-generic-package))
+else
+$(eval $(virtual-package))
+endif
