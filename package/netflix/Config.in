@@ -47,6 +47,11 @@ config BR2_PACKAGE_NETFLIX_GST_GL
 	depends on BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_GL
 	default n
 
+config BR2_PACKAGE_NETFLIX_MARVEL
+	bool "marvel"
+	depends on BR2_PACKAGE_MARVELL_AMPSDK
+	default n
+
 config BR2_PACKAGE_NETFLIX_WESTEROS_SINK
 	bool "westeros-sink"
 	depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR
