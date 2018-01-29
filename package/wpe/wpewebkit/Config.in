@@ -128,6 +128,34 @@ config BR2_PACKAGE_WPEWEBKIT_USE_ENCRYPTED_MEDIA
 	help
 	  Use Enable Encrypted Media Extensions (EME) API.
 
+if BR2_PACKAGE_WPEWEBKIT_USE_ENCRYPTED_MEDIA
+
+choice
+  bool "Content decryption backend"
+  depends on BR2_PACKAGE_WPEWEBKIT_USE_ENCRYPTED_MEDIA
+  default BR2_PACKAGE_WPEWEBKIT_USE_PLAYREADY
+  help
+    Choose the Content Decryption backend.
+
+config BR2_PACKAGE_WPEWEBKIT_USE_PLAYREADY
+  bool "PlayReady"
+  depends on BR2_PACKAGE_PLAYREADY
+  help
+    Use the Microsoft Playready SDK
+
+comment "PlayReady CDM requires playready to be selected"
+	depends on !BR2_PACKAGE_PLAYREADY
+
+config BR2_PACKAGE_WPEWEBKIT_USE_OPENCDM
+  bool "OpenCDM"
+  depends on BR2_PACKAGE_OPENCDMI
+  help
+    Use the OpenCDM SDK
+
+endchoice
+
+endif
+
 config BR2_PACKAGE_WPEWEBKIT_USE_GSTREAMER_GL
 	bool "gstreamer-gl"
 	depends on BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_GL
