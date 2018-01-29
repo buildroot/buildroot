@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WESTEROS_SOC_VERSION = 9633867603dcfb2a5c71af71e7e1abd12f0c2ca3
+WESTEROS_SOC_VERSION = 80f0b6dcc7ea525b4bf9f3af1c361f865f5555af
 WESTEROS_SOC_SITE_METHOD = git
 WESTEROS_SOC_SITE = git://github.com/Metrological/westeros
 WESTEROS_SOC_INSTALL_STAGING = YES

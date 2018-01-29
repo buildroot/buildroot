@@ -31,6 +31,16 @@ hdmi_mode=4
 __EOF__
 	fi
 	;;
+	--tvmode-dvi)
+	if ! grep -qE '^hdmi_drive=2' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+		echo "Adding 'tvmode=dvi' to config.txt."
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Force dvi output
+hdmi_drive=2
+__EOF__
+	fi
+	;;
 	--overclock-pi012)
 	if ! grep -qE '^arm_freq=' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
 		echo "Adding 'overclock=pi012' to config.txt."
@@ -77,6 +87,7 @@ __EOF__
 
 # Enable i2c functionality
 dtparam=i2c_arm=on,i2c_arm_baudrate=400000
+dtparam=i2c1=on,i2c1_baudrate=50000
 __EOF__
 	fi
 	;;

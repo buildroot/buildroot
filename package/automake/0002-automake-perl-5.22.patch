@@ -1,0 +1,15 @@
+Perl 5.22 breaks automake
+
+Patch from: https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=202986
+
+--- a/bin/automake.in	2015-01-05 19:25:55 UTC
++++ b/bin/automake.in
+@@ -3878,7 +3878,7 @@ sub substitute_ac_subst_variables_worker
+ sub substitute_ac_subst_variables
+ {
+   my ($text) = @_;
+-  $text =~ s/\${([^ \t=:+{}]+)}/substitute_ac_subst_variables_worker ($1)/ge;
++  $text =~ s/\$\{([^ \t=:+{}]+)\}/substitute_ac_subst_variables_worker ($1)/ge;
+   return $text;
+ }
+ 

@@ -1,4 +1,10 @@
-WPEFRAMEWORK_UI_VERSION = c092428260fe06f8b4dd3b8ec084ee760da5d4ee
+################################################################################
+#
+# WPEFramework UI
+#
+################################################################################
+
+WPEFRAMEWORK_UI_VERSION = 50c265364ab3a5a41e1fe1c048c03ee177b61e27
 WPEFRAMEWORK_UI_SITE_METHOD = git
 WPEFRAMEWORK_UI_SITE = git@github.com:WebPlatformForEmbedded/WPEFrameworkUI.git
 WPEFRAMEWORK_UI_DEPENDENCIES = wpeframework wpeframework-plugins
