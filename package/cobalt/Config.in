@@ -4,6 +4,13 @@ config BR2_PACKAGE_COBALT
 
 if BR2_PACKAGE_COBALT
 
+config BR2_PACKAGE_COBALT_IMAGE_AS_LIB
+    bool "Create cobalt as .so"
+    default n
+    help
+       This option allows to create cobalt.so,
+       default is cobalt bin
+
 choice
 	prompt "Media Playback Framework"
 	help
@@ -11,11 +18,6 @@ choice
 
 config BR2_PACKAGE_COBALT_WITH_GSTREAMER
 	bool "cobalt-with-GStreamer"
-
-config BR2_PACKAGE_COBALT_WITH_FFMPEG
-	bool "cobalt-with-FFMPEG"
-        select BR2_PACKAGE_FFMPEG
-        select BR2_PACKAGE_FFMPEG_AVRESAMPLE
 
 endchoice
 

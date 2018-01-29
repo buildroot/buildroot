@@ -233,6 +233,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_TUNER
 	help
 	  Tuner Plugin
 
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "Cobalt"
+    help
+      Cobalt Plugin
+
 config BR2_PACKAGE_WPEFRAMEWORK_TRACECONTROL
 	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
 	bool "TraceControl"
