@@ -1,0 +1,77 @@
+config BR2_PACKAGE_AMAZON
+	select BR2_PACKAGE_JPEG
+	select BR2_PACKAGE_ZLIB
+	select BR2_PACKAGE_LIBCURL
+	bool "amazon"
+	help
+	  Amazon project
+
+if BR2_PACKAGE_AMAZON
+menu "Options"
+
+config BR2_PACKAGE_AMAZON_PLATFORM_FAMILY_NAME
+	string "family name"
+	default "rpi-metrological"
+
+config BR2_PACKAGE_AMAZON_PLATFORM_NAME
+	string "platform name"
+	default "rpi-metrological-2018-br"
+
+config BR2_PACKAGE_AMAZON_NUMBER_OF_CONCURRENT_JOBS
+	string "concurrent jobs"
+	default "4"
+
+config BR2_PACKAGE_AMAZON_TAG
+	string "concurrent jobs"
+	default "1.2.0"
+	
+choice
+	prompt "Build type"
+	default BR2_PACKAGE_AMAZON_BUILD_TYPE_RELEASE
+	help
+	  Select the build type to use.
+	  
+	config BR2_PACKAGE_AMAZON_BUILD_TYPE_RELEASE
+		bool "release"
+	config BR2_PACKAGE_AMAZON_BUILD_TYPE_RELEASE_DEBUG
+		bool "release with debug symbols"
+	config BR2_PACKAGE_AMAZON_BUILD_TYPE_DEBUG
+		bool "debug"
+endchoice
+
+choice
+	prompt "Backend"
+	default BR2_PACKAGE_AMAZON_BACKEND_DRM
+	help
+	  Select the backend you wish to use.
+	  
+	config BR2_PACKAGE_AMAZON_BACKEND_DRM
+		bool "with drm"
+	config BR2_PACKAGE_AMAZON_BACKEND_NO_DRM
+		bool "without drm"
+	config BR2_PACKAGE_AMAZON_BACKEND_FAKE
+		bool "fake (for unittests)"
+endchoice
+
+config BR2_PACKAGE_AMAZON_IG_INSTALL_PATH
+	string "install path"
+	default "/usr/share/ignition"
+
+config BR2_PACKAGE_AMAZON_IG_READ_WRITE_PATH
+	string "read/write path"
+	default "/root" 
+
+config BR2_PACKAGE_AMAZON_IG_TEST_INSTALL_PATH
+	string "test install path"
+	default "/usr/share/ignition/test"
+
+config BR2_PACKAGE_AMAZON_DTID
+	string "concurrent jobs"
+	default "A71I8788P1ZV8"
+	
+config BR2_PACKAGE_AMAZON_CPU_BIT_WIDTH_AND_ENDIANNESS
+	string "concurrent jobs"
+	default "LE32"
+	
+endmenu
+endif
