@@ -9,7 +9,7 @@ AMAZON_SITE_METHOD = git
 AMAZON_SITE = git@github.com:Metrological/amazon.git
 AMAZON_INSTALL_STAGING = NO
 AMAZON_INSTALL_TARGET = YES
-AMAZON_DEPENDENCIES = host-cmake zlib jpeg libcurl
+AMAZON_DEPENDENCIES = host-cmake zlib jpeg libcurl libpng
 
 define AMAZON_CONFIGURATION
     $(call GENERATE_LOCAL_CONFIG)
