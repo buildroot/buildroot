@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DOUGLAS_VERSION = 653b0654ac921d922799e875538723a30d06abfd
+DOUGLAS_VERSION = 1c1b085827892a353606cde5c1daa44d4cedc5a5
 DOUGLAS_SITE_METHOD = git
 DOUGLAS_SITE = git@github.com:Metrological/douglas.git
 DOUGLAS_INSTALL_STAGING = NO
@@ -13,7 +13,7 @@ DOUGLAS_DEPENDENCIES = host-cmake zlib jpeg libcurl
 
 define DOUGLAS_CONFIGURATION
     $(call GENERATE_LOCAL_CONFIG)
-    $(call DOUGLAS_MAKE, partner-device-code)
+#   $(call DOUGLAS_MAKE, partner-device-code)
     $(call GENERATE_BOOST_CONFIG)
     $(call GENERATE_BUILD_CONFIG)
 endef
@@ -68,18 +68,17 @@ else
 endif
 endif
 
-define DOUGLAS_APPLY_CUSTOM_PATCHES
- $(call DOUGLAS_MAKE, ignition-repo-code)
- $(call DOUGLAS_MAKE, ruby-repo-code)
- $(APPLY_PATCHES) $(@D) $(@D)/patches \*.patch
-endef
+#define DOUGLAS_APPLY_CUSTOM_PATCHES
+# $(call DOUGLAS_MAKE, ignition-repo-code)
+# $(call DOUGLAS_MAKE, ruby-repo-code)
+# $(APPLY_PATCHES) $(@D) $(@D)/patches \*.patch
+#endef
 
 define DOUGLAS_MAKE
 $(MAKE) -C $(@D)/tools/ $1 $2
 endef
 
 define DOUGLAS_BUILD_CMDS
-    $(call GENERATE_LOCAL_CONFIG)
  export PKG_CONFIG_SYSROOT_DIR=$(STAGING_DIR)
  $(call DOUGLAS_MAKE, dpc, BUILD_TYPE=$(DOUGLAS_BUILD_TYPE))
  $(call DOUGLAS_MAKE, dpp, BUILD_TYPE=$(DOUGLAS_BUILD_TYPE))
@@ -103,6 +102,6 @@ define DOUGLAS_INSTALL_STAGING_CMDS
 endef
 
 DOUGLAS_POST_EXTRACT_HOOKS += DOUGLAS_CONFIGURATION
-DOUGLAS_POST_PATCH_HOOKS += DOUGLAS_APPLY_CUSTOM_PATCHES
+# DOUGLAS_POST_PATCH_HOOKS += DOUGLAS_APPLY_CUSTOM_PATCHES
 
 $(eval $(generic-package))
