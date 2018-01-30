@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DOUGLAS_VERSION = 1c1b085827892a353606cde5c1daa44d4cedc5a5
+DOUGLAS_VERSION = d4f4885181e15e4bd385150669bd239dc6e2acba
 DOUGLAS_SITE_METHOD = git
 DOUGLAS_SITE = git@github.com:Metrological/douglas.git
 DOUGLAS_INSTALL_STAGING = NO
