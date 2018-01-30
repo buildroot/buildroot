@@ -1,8 +1,14 @@
-COBALT_VERSION = 06cbe09f396bfbcac0330c336180150352af2a94
-COBALT_SITE = https://github.com/Metrological/cobalt
+################################################################################
+#
+# COBALT
+#
+################################################################################
+
+COBALT_VERSION = 85f0b51231c6717b94db7526c22872c4b535d076
 COBALT_SITE_METHOD = git
+COBALT_SITE = git@github.com:Metrological/cobalt
 COBALT_INSTALL_STAGING = YES
-COBALT_DEPENDENCIES = host-bison alsa-lib
+COBALT_DEPENDENCIES = alsa-lib gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad host-bison host-ninja
 
 export BUILDROOT_HOME=$(HOST_DIR)/usr
 export PATH := $(HOST_DIR)/bin:$(HOST_DIR)/usr/bin:$(HOST_DIR)/usr/sbin:$(PATH)
