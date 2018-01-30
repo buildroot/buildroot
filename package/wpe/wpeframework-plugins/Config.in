@@ -152,12 +152,6 @@ comment "WideVine requires the WideVine package to be selected"
 
 endif
 
-config BR2_PACKAGE_WPEFRAMEWORK_POWER
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "Power"
-	help
-	  Power Plugin
-
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL
 	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
 	bool "RemoteControl"
