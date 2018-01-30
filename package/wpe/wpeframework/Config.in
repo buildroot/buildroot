@@ -54,7 +54,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
 	help
 	  If the dynamic uinput system can not be used for security reasons, this
 	  allows for relaying keys to plugins
-          
+
+config BR2_PACKAGE_WPEFRAMEWORK_CDM
+	bool "CDM"
+	help
+	  CDM client support compatible with OpenCDM
+
 config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
 	bool "ProvisionProxy"
 	select BR2_PACKAGE_LIBPROVISION

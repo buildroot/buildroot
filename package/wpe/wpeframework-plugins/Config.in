@@ -121,21 +121,21 @@ config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
 	  Control the IP adressing of the interfaces in the system from 
 	  WPEFramework (static IPv4/IPv6 or dhcp IPv4)
 
-menuconfig BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
-    bool "OpenCDMi"
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_CDMI
+    bool "CDMi"
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-    select BR2_PACKAGE_RPCBIND
+    select BR2_PACKAGE_WPEFRAMEWORK_CDM
     default y
     help
-      A Plugin to interact with CDM Services.
+      A CDM server plugin to interact with CDMi plugins.
 
-if BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI
+if BR2_PACKAGE_WPEFRAMEWORK_CDMI
 
-config BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI_CLEARKEY
+config BR2_PACKAGE_WPEFRAMEWORK_CDMI_CLEARKEY
     bool "clearkey"
     default y
  
-config BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI_PLAYREADY
+config BR2_PACKAGE_WPEFRAMEWORK_CDMI_PLAYREADY
     depends on BR2_PACKAGE_HAS_PLAYREADY
     bool "playready"
     default y
@@ -143,7 +143,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI_PLAYREADY
 comment "PlayReady requires the PlayReady package to be selected"
 	depends on !BR2_PACKAGE_HAS_PLAYREADY
  
-config BR2_PACKAGE_WPEFRAMEWORK_OPENCDMI_WIDEVINE
+config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE
     depends on BR2_PACKAGE_WIDEVINE
     bool "widevive"
 

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEWEBKIT_VERSION = 77f2a80973f610b6efeb43ba25bc1e71e26a00cb
+WPEWEBKIT_VERSION = 2cd235c96ce30d438b7af49ebabd097bb92cf7e9
 WPEWEBKIT_SITE = $(call github,WebPlatformForEmbedded,WPEWebKit,$(WPEWEBKIT_VERSION))
 
 WPEWEBKIT_INSTALL_STAGING = YES
@@ -121,8 +121,8 @@ ifeq ($(BR2_PACKAGE_WPEWEBKIT_USE_ENCRYPTED_MEDIA),y)
 WPEWEBKIT_FLAGS += -DENABLE_ENCRYPTED_MEDIA=ON
 endif
 
-ifeq ($(BR2_PACKAGE_OPENCDM),y)
-WPEWEBKIT_DEPENDENCIES += opencdm
+ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_CDM),y)
+WPEWEBKIT_DEPENDENCIES += wpeframework
 WPEWEBKIT_FLAGS += -DENABLE_OPENCDM=ON
 endif
 
