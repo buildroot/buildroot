@@ -11,6 +11,12 @@ if BR2_PACKAGE_GST1_BCM
 
 comment "Broadcom Nexus specific plugins"
 
+config BR2_PACKAGE_GST1_BCM_VP9_SUPPORT
+        bool "VP9 support"
+        default y
+        help
+          If this plugin supports VP9, provide VP9 via typefindelements
+
 config BR2_PACKAGE_GST1_BCM_AUDFILTER
 	bool "audfilter"
 	default y
