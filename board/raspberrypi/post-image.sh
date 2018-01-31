@@ -62,13 +62,9 @@ __EOF__
 
 # Overclock
 arm_freq=1350
+gpu_freq=500
+sdram_freq=500
 over_voltage=5
-gpu_freq=550
-sdram_freq=550
-sdram_schmoo=0x02000020
-over_voltage_sdram_p=6
-over_voltage_sdram_i=4
-over_voltage_sdram_c=4
 avoid_warnings=1
 __EOF__
 	fi
