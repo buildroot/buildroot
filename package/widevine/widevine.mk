@@ -3,7 +3,7 @@
 # widevine
 #
 ################################################################################
-WIDEVINE_VERSION = 315655c6ebf58a696b6dde78b14db7aad527e32f
+WIDEVINE_VERSION = 066c91ad1b7ac69315a0455e93cc242ad83a061c
 WIDEVINE_SITE = git@github.com:Metrological/widevine.git
 WIDEVINE_SITE_METHOD = git
 
@@ -13,7 +13,7 @@ WIDEVINE_LICENSE = BSD
 WIDEVINE_LICENSE_FILES = LICENSE
 
 ifeq ($(BR2_PACKAGE_WIDEVINE_SOC_RPI), y)
-export WV_BOARD=rpi 
+export WV_BOARD=rpi
 else
 export WV_BOARD=dummy
 endif #BR2_PACKAGE_WIDEVINE_SOC_RPI
@@ -24,6 +24,9 @@ export WV_AR=$(TARGET_AR)
 export WV_HOST_CXX_FLAGS = $(HOST_CXXFLAGS)
 export WV_HOST_CC = $(HOSTCC)
 export WV_HOST_CXX = $(HOSTCXX)
+export WV_STAGING = $(STAGING_DIR)
+export WV_STAGING_NATIVE = $(STAGING_DIR)
+export WV_PROTOBUF_CONFIG = source
 
 define WIDEVINE_CONFIGURE_CMDS
       (cd $(@D);rm -rf out; rm -rf Makefile;\
