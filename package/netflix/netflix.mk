@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NETFLIX_VERSION = 3b4e6b033d46f88645087c926eaf63274b529027
+NETFLIX_VERSION = e8274ea30b8690e7cd902368d4f6cddea9015819
 NETFLIX_SITE = git@github.com:Metrological/netflix.git
 NETFLIX_SITE_METHOD = git
 NETFLIX_LICENSE = PROPRIETARY
