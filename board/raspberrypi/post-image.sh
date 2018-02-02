@@ -31,6 +31,17 @@ hdmi_mode=4
 __EOF__
 	fi
 	;;
+    --tvmode-1080)
+    if ! grep -qE '^hdmi_mode=16' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+            echo "Adding 'tvmode=1080' to config.txt."
+            cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Force 1080p
+hdmi_group=1
+hdmi_mode=16
+__EOF__
+    fi
+	;;
 	--tvmode-dvi)
 	if ! grep -qE '^hdmi_drive=2' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
 		echo "Adding 'tvmode=dvi' to config.txt."
