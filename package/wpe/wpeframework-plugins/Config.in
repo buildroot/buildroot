@@ -9,7 +9,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_COMMANDER
 	  Commander Plugin
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR
-    select BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
+	select BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
 	bool "Compositor"
 	help
 	   WPE Platform Compositor plugin
@@ -22,28 +22,28 @@ config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
 
 if BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SERVICE_EXTERNAL
-    bool "External Compositor"
-    help
-        The master compositor is hosted in a different process. WPEFramework will attach to it.
+	bool "External Compositor"
+	help
+		The master compositor is hosted in a different process. WPEFramework will attach to it.
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SERVICE_INTERNAL
-    bool "Internal Compositor"
-    help
-        The master compositor is hosted in WPEFramework.
+	bool "Internal Compositor"
+	help
+		The master compositor is hosted in WPEFramework.
 endif
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_AUTOTRACE
    bool "Enable Tracing at startup"
    help 
-     If enabled the compositer plug-in will start tracing 
-     when WPEFramework is started.
-     
+	 If enabled the compositer plug-in will start tracing 
+	 when WPEFramework is started.
+	 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_OUTOFPROCESS
 	bool "Out of process"
 	help
 	  Select this to run this plugin in its own process. 
-     
+	 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_HARDWAREREADY
 	string "Manual overrule of the time it takes to initialisize all hardware (ms)"
 	default 0
@@ -127,30 +127,30 @@ config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
 	  WPEFramework (static IPv4/IPv6 or dhcp IPv4)
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_CDMI
-    bool "CDMi"
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-    select BR2_PACKAGE_WPEFRAMEWORK_CDM
-    default y
-    help
-      A CDM server plugin to interact with CDMi plugins.
+	bool "CDMi"
+	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+	select BR2_PACKAGE_WPEFRAMEWORK_CDM
+	default y
+	help
+	  A CDM server plugin to interact with CDMi plugins.
 
 if BR2_PACKAGE_WPEFRAMEWORK_CDMI
 
 config BR2_PACKAGE_WPEFRAMEWORK_CDMI_CLEARKEY
-    bool "clearkey"
-    default y
+	bool "clearkey"
+	default y
  
 config BR2_PACKAGE_WPEFRAMEWORK_CDMI_PLAYREADY
-    depends on BR2_PACKAGE_HAS_PLAYREADY
-    bool "playready"
-    default y
+	depends on BR2_PACKAGE_HAS_PLAYREADY
+	bool "playready"
+	default y
 
 comment "PlayReady requires the PlayReady package to be selected"
 	depends on !BR2_PACKAGE_HAS_PLAYREADY
  
 config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE
-    depends on BR2_PACKAGE_WIDEVINE
-    bool "widevive"
+	depends on BR2_PACKAGE_WIDEVINE
+	bool "widevive"
 
 comment "WideVine requires the WideVine package to be selected"
 	depends on !BR2_PACKAGE_WIDEVINE
@@ -166,47 +166,47 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL
 if BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL
 
 config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
-    bool "IR (Infrared)"
-    help
-      Select devices which are based on Infrared (IR) technology
+	bool "IR (Infrared)"
+	help
+	  Select devices which are based on Infrared (IR) technology
 
 config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
-    bool "BCM Nexus IR Remote Control Unit"
-    default false
-    depends on (BR2_PACKAGE_BCM_REFSW || BR2_PACKAGE_HAS_NEXUS) && BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
-    help
-      Enable the Nexus IR remote input
+	bool "BCM Nexus IR Remote Control Unit"
+	default false
+	depends on (BR2_PACKAGE_BCM_REFSW || BR2_PACKAGE_HAS_NEXUS) && BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
+	help
+	  Enable the Nexus IR remote input
 
 config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS_MODE
-    string "IR mode"
-    default "16"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
-    help
-      Sets the IR Mode to be used with IR Nexus. Every remote has a different mode and key mapping.
+	string "IR mode"
+	default "16"
+	depends on BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
+	help
+	  Sets the IR Mode to be used with IR Nexus. Every remote has a different mode and key mapping.
 
 config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS_CODEMASK
-    string "IR code mask"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
-    help
-      Sets a key code mask if the device generates same code based on trigger bit
+	string "IR code mask"
+	depends on BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
+	help
+	  Sets a key code mask if the device generates same code based on trigger bit
 
 config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_RF
-    bool "RF (Radio Frequency)"
-    help
-      Select devices which are based on Radio Frequency (RF) technology
+	bool "RF (Radio Frequency)"
+	help
+	  Select devices which are based on Radio Frequency (RF) technology
 
 config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_DEVUINPUT
-    bool "uinput (linux input system)"
-    help
-      Select devices which are annunced in the linux operating system under /dev/uinput as eventX
+	bool "uinput (linux input system)"
+	help
+	  Select devices which are annunced in the linux operating system under /dev/uinput as eventX
 
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_RPCLINK
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-    bool "RPC link server"
-    help
-      Plugin adding an RPC server to act as a server itself
+	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+	bool "RPC link server"
+	help
+	  Plugin adding an RPC server to act as a server itself
 
 config BR2_PACKAGE_WPEFRAMEWORK_SNAPSHOT
 	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
@@ -248,57 +248,57 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
 if BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_AUTOSTART
-    bool "autostart"
-    default y
+	bool "autostart"
+	default y
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_STARTURL
-    string "start-url"
-    default "about:blank"
+	string "start-url"
+	default "about:blank"
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_USERAGENT
-    string "useragent"
-    default "Mozilla/5.0 (Macintosh, Intel Mac OS X 10_11_4) AppleWebKit/602.1.28+ (KHTML, like Gecko) Version/9.1 Safari/601.5.17"
+	string "useragent"
+	default "Mozilla/5.0 (Macintosh, Intel Mac OS X 10_11_4) AppleWebKit/602.1.28+ (KHTML, like Gecko) Version/9.1 Safari/601.5.17"
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_MEMORYPROFILE
-    string "memory-profile"
-    default "128m"
+	string "memory-profile"
+	default "128m"
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_MEMORYPRESSURE
-    string "memory-pressure"
-    default "databaseprocess:50m,networkprocess:100m,webprocess:300m,rpcprocess:50m"
+	string "memory-pressure"
+	default "databaseprocess:50m,networkprocess:100m,webprocess:300m,rpcprocess:50m"
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_MEDIADISKCACHE
-    bool "media-disk-cache"
-    default n
+	bool "media-disk-cache"
+	default n
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_DISKCACHE
-    string "disk-cache"
-    default "0"
+	string "disk-cache"
+	default "0"
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_XHRCACHE
-    bool "xhr-cache"
-    default false
+	bool "xhr-cache"
+	default false
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_TRANSPARENT
-    bool "transparent"
-    default false
+	bool "transparent"
+	default false
 
 config BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE
 	depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
-    bool "youtube"
-    help
-      A wrapper around the youtube app to start it as a
-      wpeframework plugin.
+	bool "youtube"
+	help
+	  A wrapper around the youtube app to start it as a
+	  wpeframework plugin.
 
 config BR2_PACKAGE_WPEFRAMEWORK_UX
 	depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
-    bool "ux"
-    help
-      A WPEUIFramework non-compositing WebGL enabled tab.
+	bool "ux"
+	help
+	  A WPEUIFramework non-compositing WebGL enabled tab.
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_CLIENTIDENTIFIER
-    string "clientidentifier"
-    default ""
+	string "clientidentifier"
+	default ""
 
 endif
 
