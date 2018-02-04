@@ -102,12 +102,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_WEBKIT
 	default "614400"
 
 config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_YOUTUBE
-	depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+	depends on BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE
 	string "youtube-limit"
 	default "614400"
 
 config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_UX
-	depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+	depends on BR2_PACKAGE_WPEFRAMEWORK_UX
 	string "ux-limit"
 	default "614400"
 
@@ -284,12 +284,14 @@ config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_TRANSPARENT
     default false
 
 config BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE
+	depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
     bool "youtube"
     help
       A wrapper around the youtube app to start it as a
       wpeframework plugin.
 
 config BR2_PACKAGE_WPEFRAMEWORK_UX
+	depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
     bool "ux"
     help
       A WPEUIFramework non-compositing WebGL enabled tab.
