@@ -1,0 +1,45 @@
+From 89b53fafa9904ba7a3df2ad94d01a485eae5366f Mon Sep 17 00:00:00 2001
+From: Guido Trentalancia <guido@trentalancia.net>
+Date: Tue, 6 Jun 2017 00:08:13 +0200
+Subject: [PATCH] fc_sort: avoid compiler warning/error
+
+Fix a "-Werror=implicit-fallthrough" compiler warning/error on
+the switch statement.
+
+This third version (v3) fixes a bug introduced in the first
+version and improves the style over the second version.
+
+Signed-off-by: Guido Trentalancia <guido at trentalancia.com>
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ support/fc_sort.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/support/fc_sort.c b/support/fc_sort.c
+index 5561288a..66cdf39f 100644
+--- a/support/fc_sort.c
++++ b/support/fc_sort.c
+@@ -292,14 +292,16 @@ void fc_fill_data(file_context_node_t *fc_node)
+ 			/* If a escape character is found,
+ 			 *  skip the next character. */
+ 			c++;
++			break;
+ 		default:
+-			/* If no meta character has been found yet,
+-			 *  add one to the stem length. */
+-			if (!fc_node->meta)
+-				fc_node->stem_len++;
+ 			break;
+ 		}
+ 
++		/* If no meta character has been found yet,
++		 * add one to the stem length. */
++		if (!fc_node->meta)
++			fc_node->stem_len++;
++
+ 		fc_node->str_len++;
+ 		c++;
+ 	}
+-- 
+2.11.0
+
