@@ -144,6 +144,16 @@ dtoverlay=lirc-rpi,gpio_in_pin=23,gpio_out_pin=22
 __EOF__
 	fi
 	;;
+	--touchscreen)
+	if ! grep -qE '^dtoverlay=ads7846' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+		echo "Adding 'ads7846' functionality to config.txt."
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Enable ADS7846 Touchscreen
+dtoverlay=ads7846,cs=0,penirq=25,penirq_pull=2,speed=10000,keep_vref_on=0,swapxy=0,pmax=255,xohms=150,xmin=199,xmax=3999,ymin=199,ymax=3999
+__EOF__
+	fi
+	;;
 	--rpi-wifi*)
 	if ! grep -qE '^dtoverlay=sdtweak' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
 		echo "Adding 'rpi wifi' functionality to config.txt."
