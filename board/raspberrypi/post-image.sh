@@ -7,6 +7,18 @@ GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
 
 echo "Post-image: processing $@"
 
+COBALT="$(grep ^BR2_PACKAGE_COBALT=y ${BR2_CONFIG})"
+if [ "x${COBALT}" != "x" ]; then
+	if ! grep -qE '^dtparam=audio=on' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+		echo "Adding 'dtparam=audio=on' to config.txt."
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Enable the onboard ALSA audio
+dtparam=audio=on
+__EOF__
+	fi
+fi
+
 for i in "$@"
 do
 case "$i" in
