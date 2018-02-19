@@ -195,10 +195,16 @@ config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_RF
 	help
 	  Select devices which are based on Radio Frequency (RF) technology
 
-config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_DEVUINPUT
-	bool "uinput (linux input system)"
+config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_DEVINPUT
+	bool "devinput (linux input system)"
 	help
-	  Select devices which are annunced in the linux operating system under /dev/uinput as eventX
+	  Select devices which are annunced in the linux operating system under /dev/input/ as eventX
+
+config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_KEYMAP
+	string "keymap"
+	default ""
+	help
+	  Select a keymap file
 
 endif
 
