@@ -1,0 +1,23 @@
+From 8dfee9f197ab5429b99b0ae79d9717e52fb0afe5 Mon Sep 17 00:00:00 2001
+From: Pierre Wielders <pierre@wielders.net>
+Date: Mon, 19 Feb 2018 22:29:08 +0100
+Subject: [PATCH] [NETWORKCONTROL] In case of a new IP, flush the current
+ information.
+
+---
+ NetworkControl/NetworkControl.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/NetworkControl/NetworkControl.cpp b/NetworkControl/NetworkControl.cpp
+index 174db31..f73a8f7 100644
+--- a/NetworkControl/NetworkControl.cpp
++++ b/NetworkControl/NetworkControl.cpp
+@@ -235,6 +235,8 @@ namespace Plugin {
+ 				Core::AdapterIterator adapter(interfaceName);
+ 
+ 				SetIP(adapter, entry.Address(), entry.Gateway());
++
++				Core::AdapterIterator::Flush();
+ 			}
+ 		}
+ 	}
