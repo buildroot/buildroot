@@ -13,6 +13,7 @@ GZIP_CONF_OPTS = --exec-prefix=/
 GZIP_DEPENDENCIES = $(if $(BR2_PACKAGE_BUSYBOX),busybox)
 GZIP_LICENSE = GPL-3.0+
 GZIP_LICENSE_FILES = COPYING
+GZIP_CPE_ID_VENDOR = gnu
 GZIP_CONF_ENV += gl_cv_func_fflush_stdin=yes
 # configure substitutes $(SHELL) for the shell shebang in scripts like
 # gzexe. Unfortunately, the same $(SHELL) variable will also be used by
