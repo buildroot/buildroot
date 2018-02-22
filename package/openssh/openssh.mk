@@ -8,6 +8,8 @@ OPENSSH_VERSION = 7.6p1
 OPENSSH_SITE = http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable
 OPENSSH_LICENSE = BSD-3-Clause, BSD-2-Clause, Public Domain
 OPENSSH_LICENSE_FILES = LICENCE
+OPENSSH_CPE_ID_VENDOR = openbsd
+
 # Autoreconf needed due to the following patches modifying configure.ac:
 # 0001-configure-ac-detect-mips-abi.patch
 # 0002-configure-ac-properly-set-seccomp-audit-arch-for-mips64.patch
