@@ -204,7 +204,7 @@ elif [ "x${INITRAMFS}" = "x" ] && [ "x${ROOTFS_CPIO}" != "x" ]; then
 	if [ "x${CPIO_XZ}" != "x" ]; then
 		sed -i 's/cpio.gz/cpio.xz/' "${BINARIES_DIR}/rpi-firmware/config.txt"
 	elif [ "x${CPIO_GZIP}" = "x" ]; then
-		sed -i 's/cpio.gz/rootfs.cpio/' "${BINARIES_DIR}/rpi-firmware/config.txt"
+		sed -i 's/cpio.gz/cpio/' "${BINARIES_DIR}/rpi-firmware/config.txt"
 	fi
 fi
 
