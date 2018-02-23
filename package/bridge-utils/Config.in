@@ -5,3 +5,14 @@ config BR2_PACKAGE_BRIDGE_UTILS
 	  to form a larger network.
 
 	  https://git.kernel.org/cgit/linux/kernel/git/shemminger/bridge-utils.git/
+
+if BR2_PACKAGE_BRIDGE_UTILS
+
+config BR2_PACKAGE_BRIDGE_UTILS_HELPER_SCRIPTS
+	bool "Debian's helper scripts for package/ifupdown-scripts"
+	default n
+	help
+	  Installs scripts in /lib/bridge-utils and symlinks in
+	  /etc/network/{if-post-down.d,if-pre-up.d}
+
+endif
