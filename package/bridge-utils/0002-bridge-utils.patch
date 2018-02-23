@@ -1,0 +1,92 @@
+--- bridge-utils-1.5.orig/debian/bridge-utils.sh
++++ bridge-utils-1.5/debian/bridge-utils.sh
+@@ -0,0 +1,89 @@
++#!/bin/sh
++
++bridge_parse_ports()
++{
++  while [ x"${1+set}" = xset ]
++  do
++    # For compatibility: the `all' option.
++    case $1 in
++      all)
++	shift &&
++	set regex eth.\* em.\* 'p[0-9].*' noregex "$@"
++	;;
++    esac
++
++    # Primitive state machine...
++    case $1-`uname -s` in
++      regex-Linux)
++	all_interfaces=`sed -n 's%^[\ ]*\([^:]*\):.*$%\1%p' < /proc/net/dev`
++	shift
++	;;
++      regex-*)
++	echo -n "$0 needs to be ported for your `uname -s` system.  " >&2
++	echo "Trying to continue nevertheless." >&2
++	shift
++	;;
++      noregex-*)
++	all_interfaces=
++	unset all_interfaces
++	shift
++	;;
++    esac
++
++    case ${all_interfaces+regex}-${1+set} in
++      regex-set)
++	# The following interface specification are to be parsed as regular
++	# expressions against all interfaces the system provides.
++	i=`egrep "^$1$" << EOAI
++$all_interfaces
++EOAI
++`
++	shift
++	;;
++      *-set)
++	# Literal interfaces.
++	i=$1
++	shift
++	;;
++      *)
++	# No interface specification is following.
++	i=
++	;;
++    esac
++
++    echo $i
++  done
++}
++
++create_vlan_port()
++{
++# port doesn't yet exist
++if ! grep -q "$port:" /proc/net/dev
++then
++  dev="${port%.*}"
++  # port is a vlan and the device exists?
++  if [ "$port" != "$dev" ] && grep -q "$dev:" /proc/net/dev
++  then
++    if [ -f /proc/sys/net/ipv6/conf/$dev/disable_ipv6 ]
++    then
++      echo 1 > /proc/sys/net/ipv6/conf/$dev/disable_ipv6
++    fi
++    ip link set "$dev" up
++    ip link add link "$dev" name "$port" type vlan id "${port#*.}"
++  fi
++fi
++}
++
++destroy_vlan_port()
++{
++# port exists
++if grep -q "$port:" /proc/net/dev
++then
++  dev="${port%.*}"
++  # port is a vlan
++  if [ "$port" != "$dev" ]
++  then
++    ip link delete "$port"
++  fi
++fi
++}
