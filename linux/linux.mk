@@ -7,6 +7,8 @@
 LINUX_VERSION = $(call qstrip,$(BR2_LINUX_KERNEL_VERSION))
 LINUX_LICENSE = GPL-2.0
 LINUX_LICENSE_FILES = COPYING
+LINUX_CPE_ID_VENDOR = $(LINUX_NAME)
+LINUX_CPE_ID_NAME = $(LINUX_NAME)_kernel
 
 define LINUX_HELP_CMDS
 	@echo '  linux-menuconfig       - Run Linux kernel menuconfig'
