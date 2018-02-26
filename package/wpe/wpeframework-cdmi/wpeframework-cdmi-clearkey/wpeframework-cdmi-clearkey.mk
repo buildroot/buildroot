@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_CDMI_CLEARKEY_VERSION = a3d45ead3c54e2350ea4c7bd5339fcfcab3ed2ed
+WPEFRAMEWORK_CDMI_CLEARKEY_VERSION = 321c3f3d125229e1dfb9f5ab0fe7b5c4b6403bd2
 WPEFRAMEWORK_CDMI_CLEARKEY_SITE_METHOD = git
 WPEFRAMEWORK_CDMI_CLEARKEY_SITE = git@github.com:WebPlatformForEmbedded/DRMClearKey.git
 WPEFRAMEWORK_CDMI_CLEARKEY_INSTALL_STAGING = YES
