@@ -1,0 +1,23 @@
+################################################################################
+#
+# wpeframework-cdmi-playready
+#
+################################################################################
+
+WPEFRAMEWORK_CDMI_PLAYREADY_VERSION = a3d45ead3c54e2350ea4c7bd5339fcfcab3ed2ed
+WPEFRAMEWORK_CDMI_PLAYREADY_SITE_METHOD = git
+WPEFRAMEWORK_CDMI_PLAYREADY_SITE = git@github.com:WebPlatformForEmbedded/DRMPlayReady.git
+WPEFRAMEWORK_CDMI_PLAYREADY_INSTALL_STAGING = YES
+WPEFRAMEWORK_CDMI_PLAYREADY_DEPENDENCIES = wpeframework
+
+WPEFRAMEWORK_CDMI_PLAYREADY_CONF_OPTS += -DWPEFRAMEWORK_PLUGIN_OPENCDMI_AUTOSTART=true
+WPEFRAMEWORK_CDMI_PLAYREADY_CONF_OPTS += -DWPEFRAMEWORK_PLUGIN_OPENCDMI_OOP=true
+
+ifeq ($(BR2_PACKAGE_PLAYREADY),y)
+    WPEFRAMEWORK_PLUGINS_CONF_OPTS += -DPLUGIN_OPENCDMI_PLAYREADY=ON
+else ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
+    WPEFRAMEWORK_PLUGINS_CONF_OPTS += -DPLUGIN_OPENCDMI_PLAYREADY_NEXUS=ON
+endif
+
+$(eval $(cmake-package))
+
