@@ -117,7 +117,6 @@ endef
 # default skeleton.
 ifeq ($(BR2_ROOTFS_SKELETON_DEFAULT),y)
 
-SKELETON_TARGET_GENERIC_TIMESERVER = $(call qstrip,$(BR2_TARGET_GENERIC_TIMESERVER))
 SKELETON_TARGET_GENERIC_HOSTNAME = $(call qstrip,$(BR2_TARGET_GENERIC_HOSTNAME))
 SKELETON_TARGET_GENERIC_ISSUE = $(call qstrip,$(BR2_TARGET_GENERIC_ISSUE))
 SKELETON_TARGET_GENERIC_ROOT_PASSWD = $(call qstrip,$(BR2_TARGET_GENERIC_ROOT_PASSWD))
@@ -128,15 +127,6 @@ SKELETON_TARGET_GENERIC_GETTY_BAUDRATE = $(call qstrip,$(BR2_TARGET_GENERIC_GETT
 SKELETON_TARGET_GENERIC_GETTY_TERM = $(call qstrip,$(BR2_TARGET_GENERIC_GETTY_TERM))
 SKELETON_TARGET_GENERIC_GETTY_OPTIONS = $(call qstrip,$(BR2_TARGET_GENERIC_GETTY_OPTIONS))
 
-ifneq ($(SKELETON_TARGET_GENERIC_TIMESERVER),)
-define SYSTEM_TIMESERVER
-	$(INSTALL) -m 0755 -D $(SKELETON_PKGDIR)/rdate \
-		$(TARGET_DIR)/etc/network/if-up.d/rdate
-	$(SED) "s/TIMESERVERS/$(SKELETON_TARGET_GENERIC_TIMESERVER)/" \
-		$(TARGET_DIR)/etc/network/if-up.d/rdate
-endef
-TARGET_FINALIZE_HOOKS += SYSTEM_TIMESERVER
-endif
 
 ifneq ($(SKELETON_TARGET_GENERIC_HOSTNAME),)
 define SKELETON_SET_HOSTNAME
@@ -176,28 +166,18 @@ endef
 SKELETON_NETWORK_DHCP_IFACE = $(call qstrip,$(BR2_SYSTEM_DHCP))
 
 ifneq ($(SKELETON_NETWORK_DHCP_IFACE),)
-ifeq ($(BR2_PACKAGE_WPA_SUPPLICANT),y)
-SKELETON_IFACE_WPA_SUPPLICANT = \
-	[[ "$(NETWORK_DHCP_IFACE)" == "wlan"* ]] && \
-		echo "	pre-up /etc/network/wlan_check up $(NETWORK_DHCP_IFACE) \"$(BR2_PACKAGE_WPA_SUPPLICANT_OPTIONS)\"" && \
-		echo "	pre-down /etc/network/wlan_check down $(NETWORK_DHCP_IFACE)";
-define SKELETON_INSTALL_WPA_CHECK
-	$(INSTALL) -m 0755 -D $(SKELETON_PKGDIR)/wlan_check \
-		$(TARGET_DIR)/etc/network/wlan_check
-endef
-endif
 define SKELETON_SET_NETWORK_DHCP
 	( \
 		echo ;                                               \
 		echo "auto $(SKELETON_NETWORK_DHCP_IFACE)";                   \
 		echo "iface $(SKELETON_NETWORK_DHCP_IFACE) inet dhcp";        \
 		echo "	pre-up /etc/network/nfs_check";              \
-		$(SKELETON_IFACE_WPA_SUPPLICANT)                              \
 		echo "	wait-delay 15";                              \
 	) >> $(TARGET_DIR)/etc/network/interfaces
 	$(INSTALL) -m 0755 -D $(SKELETON_PKGDIR)/nfs_check \
 		$(TARGET_DIR)/etc/network/nfs_check
-	$(SKELETON_INSTALL_WPA_CHECK)
+	$(INSTALL) -m 0755 -D $(SKELETON_PKGDIR)/wait_iface \
+		$(TARGET_DIR)/etc/network/if-pre-up.d/wait_iface
 endef
 endif
 
@@ -207,7 +187,9 @@ define SKELETON_SET_NETWORK
 	$(SKELETON_SET_NETWORK_DHCP)
 endef
 
+ifeq ($(BR2_TARGET_GENERIC_NETWORK),y)
 TARGET_FINALIZE_HOOKS += SKELETON_SET_NETWORK
+endif
 
 ifeq ($(BR2_TARGET_ENABLE_ROOT_LOGIN),y)
 ifeq ($(SKELETON_TARGET_GENERIC_ROOT_PASSWD),)
