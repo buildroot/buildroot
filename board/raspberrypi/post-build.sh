@@ -5,33 +5,9 @@ set -e
 
 echo "Post-build: processing $@"
 
-for i in "$@"
-do
-case "$i" in
-	--rpi-wifi)
-	if ! grep -qE '^auto wlan0' "${TARGET_DIR}/etc/network/interfaces"; then
-		echo "Adding 'wlan0 network' functionality to /etc/network/interfaces."
-		cat << __EOF__ >> "${TARGET_DIR}/etc/network/interfaces"
-
-auto wlan0
-iface wlan0 inet dhcp
-    pre-up wpa_supplicant -Dnl80211 -iwlan0 -c/etc/wpa_supplicant.conf -B
-    down killall wpa_supplicant
-__EOF__
-		cat << __EOF__ > "${TARGET_DIR}/etc/wpa_supplicant.conf"
-ctrl_interface=/var/run/wpa_supplicant
-ap_scan=1
-
-__EOF__
-	fi
-	;;
-esac
-
-done
-
 # Add a console on tty1
 if [ -e ${TARGET_DIR}/etc/inittab ]; then
-    grep -qE '^tty1::' ${TARGET_DIR}/etc/inittab || \
+	grep -qE '^tty1::' ${TARGET_DIR}/etc/inittab || \
 	sed -i '/GENERIC_SERIAL/a\
 tty1::respawn:/sbin/getty -L  tty1 0 vt100 # HDMI console' ${TARGET_DIR}/etc/inittab
 fi
