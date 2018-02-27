@@ -53,13 +53,11 @@ config BR2_TARGET_GENERIC_CABUNDLE
 	help
 	  Install CA bundle from curl.
 
-config BR2_TARGET_GENERIC_TIMESERVER
-	string "Time Server"
-	default "time.nist.gov time-a.nist.gov time-b.nist.gov time-c.nist.gov utcnist.colorado.edu utcnist2.colorado.edu"
+config BR2_TARGET_GENERIC_NETWORK
+	bool "Set network"
+	default y
 	help
-	  Select a server that can be used to ask the time.
-	  Create an empty setting to prevent a time request from being issued.
-	  Use space seperator to add multiple servers.
+	  Install network scripts and config.
 
 endif
 
