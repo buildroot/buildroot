@@ -9,7 +9,11 @@ AMAZON_SITE_METHOD = git
 AMAZON_SITE = git@github.com:Metrological/amazon.git
 AMAZON_INSTALL_STAGING = NO
 AMAZON_INSTALL_TARGET = YES
-AMAZON_DEPENDENCIES = host-cmake zlib jpeg libcurl libpng
+AMAZON_DEPENDENCIES = host-cmake zlib jpeg libcurl libpng wpeframework
+
+ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
+ AMAZON_DEPENDENCIES += rpi-userland
+endif
 
 define AMAZON_CONFIGURATION
     $(call GENERATE_LOCAL_CONFIG)
@@ -45,10 +49,10 @@ endef
 
 ifeq ($(BR2_PACKAGE_AMAZON),y)
 ifeq ($(BR2_PACKAGE_AMAZON_BACKEND_DRM),y)
- AMAZON_DEPENDENCIES += libgles libegl playready
+ AMAZON_DEPENDENCIES += libgles libegl gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad playready
  AMAZON_BACKEND = mpb-drm
 else ifeq  ($(BR2_PACKAGE_AMAZON_BACKEND_NO_DRM),y)
- AMAZON_DEPENDENCIES += libgles libegl
+ AMAZON_DEPENDENCIES += libgles libegl gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad
  AMAZON_BACKEND = mpb-no-drm
 else ifeq  ($(BR2_PACKAGE_AMAZON_BACKEND_FAKE),y)
  AMAZON_BACKEND = fake-mpb
@@ -100,7 +104,7 @@ endef
 define AMAZON_INSTALL_STAGING_CMDS
 endef
 
-AMAZON_POST_EXTRACT_HOOKS += AMAZON_CONFIGURATION
+AMAZON_PRE_BUILD_HOOKS += AMAZON_CONFIGURATION
 # AMAZON_POST_PATCH_HOOKS += AMAZON_APPLY_CUSTOM_PATCHES
 
 $(eval $(generic-package))
