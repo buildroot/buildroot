@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_VERSION = 4627260736ba26c8b84045afe85d1291842bb90a
+WPEFRAMEWORK_VERSION = 458bfe0cee4a7023b8d1d97aa16d3d22877f94b9
 WPEFRAMEWORK_SITE_METHOD = git
 WPEFRAMEWORK_SITE = git@github.com:WebPlatformForEmbedded/WPEFramework.git
 WPEFRAMEWORK_INSTALL_STAGING = YES
@@ -78,22 +78,29 @@ endif
 WPEFRAMEWORK_CONF_OPTS += -DEXTERN_EVENTS="${WPEFRAMEWORK_EXTERN_EVENTS}"
 
 
+ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL),y)
 define WPEFRAMEWORK_POST_TARGET_INITD
-    mkdir -p $(TARGET_DIR)/etc/init.d
-    $(INSTALL) -D -m 0755 $(WPEFRAMEWORK_PKGDIR)/S80WPEFramework $(TARGET_DIR)/etc/init.d
+	mkdir -p $(TARGET_DIR)/etc/init.d
+	$(INSTALL) -D -m 0755 $(WPEFRAMEWORK_PKGDIR)/S80WPEFramework $(TARGET_DIR)/etc/init.d/S40WPEFramework
 endef
+else
+define WPEFRAMEWORK_POST_TARGET_INITD
+	mkdir -p $(TARGET_DIR)/etc/init.d
+	$(INSTALL) -D -m 0755 $(WPEFRAMEWORK_PKGDIR)/S80WPEFramework $(TARGET_DIR)/etc/init.d
+endef
+endif
 
 define WPEFRAMEWORK_POST_TARGET_REMOVE_STAGING_ARTIFACTS
-    mkdir -p $(TARGET_DIR)/etc/WPEFramework
-    rm -rf $(TARGET_DIR)/usr/share/WPEFramework/cmake
+	mkdir -p $(TARGET_DIR)/etc/WPEFramework
+	rm -rf $(TARGET_DIR)/usr/share/WPEFramework/cmake
 endef
 
 define WPEFRAMEWORK_POST_TARGET_REMOVE_HEADERS
-    rm -rf $(TARGET_DIR)/usr/include/WPEFramework
+	rm -rf $(TARGET_DIR)/usr/include/WPEFramework
 endef
 
 define WPEFRAMEWORK_POST_STAGING_CDM_HEADER
-    ln -sfn $(STAGING_DIR)/usr/include/WPEFramework/interfaces/IDRM.h $(STAGING_DIR)/usr/include/cdmi.h
+	ln -sfn $(STAGING_DIR)/usr/include/WPEFramework/interfaces/IDRM.h $(STAGING_DIR)/usr/include/cdmi.h
 endef
 
 ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_CDM),y)

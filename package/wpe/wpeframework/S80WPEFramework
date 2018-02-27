@@ -7,16 +7,16 @@ start() {
 	#echo "/root/cores/core-pid_%p--process%E" > /proc/sys/kernel/core_pattern
 	#mkdir -p /root/cores
 	#ulimit -c unlimited
+	mount -a
+
 	if [ ! -d /root/Netflix/dpi ]; then
 		mkdir -p /root/Netflix/dpi
 		ln -sfn /etc/playready /root/Netflix/dpi/playready
 	fi
-	mount -a
-	export TZ=$(wget -qO- http://jsonip.metrological.com/ | sed -e 's/^.*"tz":"\([^"]*\)".*$/\1/')
-    
-    # needed for wayland/westeros/weston
-    export XDG_RUNTIME_DIR=/tmp
-    
+	
+	# needed for wayland/westeros/weston
+	export XDG_RUNTIME_DIR=/tmp
+
 	echo -n "Starting WPEFramework: "
 	start-stop-daemon -S -q -b -m -p /var/run/WPEFramework.pid --exec /usr/bin/WPEFramework -- -b </dev/null >/dev/null 2>&1
 	[ $? == 0 ] && echo "OK" || echo "FAIL"
