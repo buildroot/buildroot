@@ -12,6 +12,7 @@ TAR_SITE = $(BR2_GNU_MIRROR)/tar
 TAR_CONF_OPTS = --exec-prefix=/
 TAR_LICENSE = GPL-3.0+
 TAR_LICENSE_FILES = COPYING
+TAR_CPE_ID_VENDOR = gnu
 
 # Prefer full-blown tar over buybox's version
 ifeq ($(BR2_PACKAGE_BUSYBOX),y)
