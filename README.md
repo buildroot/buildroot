@@ -56,7 +56,7 @@ http://<ip of your target machine>:9998/
 
 WPE is verified and being tested by Metrological on the following devices:
 
- - Raspberry Pi zero, 1 and 2
+ - Raspberry Pi zero, 1, 2 and 3
  - Broadcom chipsets (7430/7435) MIPS and (7252/7445) ARM
  - Intel CE (4100/4200)
  - nVidia Jetson TK1
