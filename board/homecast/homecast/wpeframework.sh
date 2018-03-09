@@ -23,7 +23,13 @@ ln -s $SOURCE/usr/share/mime $DESTINATION/share/mime
 ln -s $SOURCE/usr/share/X11 $DESTINATION/share/X11
 ln -s $SOURCE/usr/share/WPEFramework $DESTINATION/share/WPEFramework
 ln -s $SOURCE/usr/share/fonts $DESTINATION/share/fonts
+
+if [-f "$DESTINATION/etc/ssl" ]; then
+cp -rfap $SOURCE/etc/ssl/* $DESTINATION/etc/ssl/
+else
 ln -s $SOURCE/etc/ssl $DESTINATION/etc/ssl
+fi
+
 ln -s $SOURCE/etc/ssl $DESTINATION/lib/ssl
 ln -s $SOURCE/etc/fonts $DESTINATION/etc/fonts
 ln -s $SOURCE/etc/WPEFramework $DESTINATION/etc/WPEFramework
@@ -32,12 +38,12 @@ ln -s /lib/libv3ddriver.so $SOURCE/usr/lib/libEGL.so
 ln -s /lib/libv3ddriver.so $SOURCE/usr/lib/libGLESv2.so 
 fi
 
-grep -q "/usr/share" /proc/mounts && echo "/usr/share is already mounted" || mount --bind $DESTINATION/share/ /usr/share/
-grep -q "/etc" /proc/mounts && echo "/etc is already mounted" || mount --bind $DESTINATION/etc/ /etc/
-grep -q "/usr/lib" /proc/mounts && echo "/usr/lib is already mounted" || mount --bind $DESTINATION/lib/ /usr/lib/
+grep -q "/usr/share" /proc/mounts && echo "/usr/share is already mounted" || mount --bind $DESTINATION/share /usr/share/
+grep -q "/etc" /proc/mounts && echo "/etc is already mounted" || mount --bind $DESTINATION/etc /etc/
+grep -q "/usr/lib" /proc/mounts && echo "/usr/lib is already mounted" || mount --bind $DESTINATION/lib /usr/lib/
 
 cp -rfap $SOURCE/etc/playready/* /etc/playready/
-ln -s $SOURCE/etc/ssl /etc/ssl
+#ln -s $SOURCE/etc/ssl /etc/ssl
 
 if [ ! -d $SOURCE/persistent/Netflix ]; then 
 	mkdir -p $SOURCE/persistent/Netflix/dpi
