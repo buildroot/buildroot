@@ -8,7 +8,7 @@ WEBDRIVER_VERSION = 5668e536fcf054d9b064a2b7f77a47f40d38b442
 WEBDRIVER_SITE_METHOD = git
 WEBDRIVER_SITE = git@github.com:Metrological/webdriver.git
 WEBDRIVER_INSTALL_STAGING = YES
-WEBDRIVER_DEPENDENCIES = host-gyp libglib2 wpe json-c libcurl
+WEBDRIVER_DEPENDENCIES = host-gyp libglib2 wpewebkit json-c libcurl
 
 GLIB_INC = $(STAGING_DIR)/usr/include/glib-2.0
 GLIB_LIB_INC = $(STAGING_DIR)/usr/lib/glib-2.0/include
@@ -27,7 +27,7 @@ define WEBDRIVER_BUILD_CMDS
 	$(MAKE) CROSS_COMPILE="$(TARGET_CROSS)" \
 	CC="$(TARGET_CC)" CXX="$(TARGET_CXX)" AR="$(TARGET_AR)" \
 	CXXFLAGS="-I$(GLIB_INC) -I$(GLIB_LIB_INC) $(TARGET_CXXFLAGS)" \
-	LDFLAGS="$(TARGET_LDFLAGS)  -L$(STAGING_DIR)/usr/lib -lWPEWebKit -lWPE -lglib-2.0 -ljson-c -lcurl -pthread " -C $(@D)/out/$(WD_PLATFORM_NAME)/release/; \
+	LDFLAGS="$(TARGET_LDFLAGS)  -L$(STAGING_DIR)/usr/lib -lWPEWebKit -lglib-2.0 -ljson-c -lcurl -pthread " -C $(@D)/out/$(WD_PLATFORM_NAME)/release/; \
 	cd $(@D);./copy.sh out release;
 endef
 
