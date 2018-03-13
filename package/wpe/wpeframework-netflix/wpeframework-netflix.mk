@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_NETFLIX_VERSION = fd7d117a740c332714c8d65d157bf0719439b837
+WPEFRAMEWORK_NETFLIX_VERSION = fa8d71417ae715255d7c272b87ef2e95aa6c7c0c
 WPEFRAMEWORK_NETFLIX_SITE_METHOD = git
 WPEFRAMEWORK_NETFLIX_SITE = git@github.com:WebPlatformForEmbedded/WPEPluginNetflix.git
 WPEFRAMEWORK_NETFLIX_INSTALL_STAGING = YES
