@@ -182,7 +182,7 @@ div#interfaces {
                 }
                 console.log(data);
                 if (data.callsign === 'WifiControl' && data.state === 'activated' && !joining) {
-                    wifiEl.innerHTML = statusEl.innerHTML = 'Scanning WiFi';
+                    statusEl.innerHTML = 'Scanning WiFi';
                     delay(1000).then(wpe.bind(null, ['PUT', '/WifiControl/Scan']));
                 }
                 if (data.callsign === 'WifiControl' && data.data && data.data.networks && !joining) {
