@@ -1,0 +1,129 @@
+From 5d3f0cf0e8f0377fab6b507b9bf06b2e94572f75 Mon Sep 17 00:00:00 2001
+From: Pierre Wielders <pierre@wielders.net>
+Date: Tue, 13 Mar 2018 13:53:05 +0100
+Subject: [PATCH] [WPEFramework] Segmentation fault resolved, caused by a
+ racecondition.
+
+---
+ Source/WPEFramework/Controller.cpp   |  9 ---------
+ Source/WPEFramework/Controller.h     | 14 ++++++++++++++
+ Source/WPEFramework/PluginServer.cpp | 12 ++++++------
+ Source/ocdm/open_cdm.cpp             |  5 ++++-
+ 4 files changed, 24 insertions(+), 16 deletions(-)
+
+diff --git a/Source/WPEFramework/Controller.cpp b/Source/WPEFramework/Controller.cpp
+index e172441..024f1dc 100644
+--- a/Source/WPEFramework/Controller.cpp
++++ b/Source/WPEFramework/Controller.cpp
+@@ -108,15 +108,6 @@ namespace WPEFramework {
+ 
+ 				_service->EnableWebServer(_T("UI"), EMPTY_STRING);
+ 
+-				// Attach to the SubSystems, we propagate the changes.
+-				PluginHost::ISubSystem* subSystems (_service->SubSystems());
+-
+-				ASSERT (subSystems != nullptr);
+-
+-				if (subSystems != nullptr) {
+-					subSystems->Register(&_systemInfoReport);
+-                                }
+-
+ 				// On succes return a name as a Callsign to be used in the URL, after the "service"prefix
+ 				return (_T(""));
+ 			}
+diff --git a/Source/WPEFramework/Controller.h b/Source/WPEFramework/Controller.h
+index c4c5f39..2069bc6 100644
+--- a/Source/WPEFramework/Controller.h
++++ b/Source/WPEFramework/Controller.h
+@@ -198,6 +198,20 @@ namespace Plugin {
+             ASSERT((_pluginServer == nullptr) ^ (pluginServer == nullptr));
+ 
+             _pluginServer = pluginServer;
++
++            // Attach to the SubSystems, we propagate the changes.
++            PluginHost::ISubSystem* subSystems (_service->SubSystems());
++
++            ASSERT (subSystems != nullptr);
++
++            if (subSystems != nullptr) {
++                if (pluginServer != nullptr) {
++                    subSystems->Register(&_systemInfoReport);
++                }
++                else {
++                    subSystems->Unregister(&_systemInfoReport);
++                }
++            }
+         }
+         inline uint32 Stopped()
+         {
+diff --git a/Source/WPEFramework/PluginServer.cpp b/Source/WPEFramework/PluginServer.cpp
+index 6bdcd6b..1e4044d 100644
+--- a/Source/WPEFramework/PluginServer.cpp
++++ b/Source/WPEFramework/PluginServer.cpp
+@@ -563,14 +563,18 @@ Server::Server(Server::Config& configuration, ISecurity* securityHandler, const
+     // Create input handle
+     _inputHandler.Initialize(configuration.Input.Type.Value(), configuration.Input.Locator.Value());
+ 
+-	// Add the controller as a service to the services.
++    // Initialize static message.
++    Service::Initialize();
++    Channel::Initialize(_config.WebPrefix());
++ 
++    // Add the controller as a service to the services.
+     _controller = _services.Insert(metaDataConfig);
+     _controller->Activate(PluginHost::IShell::STARTUP);
+     _controller->ClassType<Plugin::Controller>()->SetServer(this);
+     _controller->ClassType<Plugin::Controller>()->AddRef();
+     _controllerName = _controller->Callsign();
+ 
+-   // Right we have the shells for all possible services registered, time to activate what is needed :-)
++    // Right we have the shells for all possible services registered, time to activate what is needed :-)
+     ServiceMap::Iterator iterator(_services.Services());
+ 
+     while (iterator.Next() == true) {
+@@ -584,10 +588,6 @@ Server::Server(Server::Config& configuration, ISecurity* securityHandler, const
+             SYSLOG(Startup, (_T("Activation of plugin [%s]:[%s] blocked"), service->ClassName().c_str(), service->Callsign().c_str()));
+         }
+     }
+-
+-    // Initialize static message.
+-    Service::Initialize();
+-    Channel::Initialize(_config.WebPrefix());
+ }
+ 
+ #ifdef __WIN32__
+diff --git a/Source/ocdm/open_cdm.cpp b/Source/ocdm/open_cdm.cpp
+index 4597b59..23cc982 100644
+--- a/Source/ocdm/open_cdm.cpp
++++ b/Source/ocdm/open_cdm.cpp
+@@ -476,11 +476,13 @@ class AccessorOCDM : public OCDM::IAccessorOCDM {
+                     urlLength = _URL.length();
+                 }
+                 memcpy(licenseURL, _URL.c_str(), urlLength);
++                TRACE_L1("Returning a KeyMessage, Length: [%d,%d]", urlLength, challenge.length());
+             }
+             else if ((_state & SESSION_READY) == SESSION_READY) {
+                 challenge.clear();
+                 *licenseURL = '\0';
+                 urlLength = 0;
++                TRACE_L1("Returning a KeyMessage failed. %d", __LINE__);
+             }
+         }
+         int Load (std::string& response) { 
+@@ -580,7 +582,7 @@ class AccessorOCDM : public OCDM::IAccessorOCDM {
+     };
+ 
+ OpenCdm::OpenCdm() : _implementation (AccessorOCDM::Instance()), _session(nullptr), _keySystem() {
+-    TRACE_L1 ("Created an OpenCdm instance: %p", _implementation);
++    TRACE_L1 ("Created an OpenCdm instance: %p", this);
+ }
+ 
+ OpenCdm::OpenCdm(const OpenCdm& copy) : _implementation (AccessorOCDM::Instance()), _session(copy._session), _keySystem(copy._keySystem) {
+@@ -628,6 +630,7 @@ OpenCdm::~OpenCdm() {
+ // Before instantiating the ROOT DRM OBJECT, Check if it is capable of decrypting the requested
+ // asset.
+ bool OpenCdm::IsTypeSupported(const std::string& keySystem, const std::string& mimeType) const {
++    TRACE_L1("Checking for key system %s", keySystem.c_str());
+     return ( (_implementation != nullptr) && 
+              (_implementation->IsTypeSupported(keySystem, mimeType) == 0) ); 
+ }
