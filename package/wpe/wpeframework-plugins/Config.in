@@ -198,6 +198,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_RF
 
 config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_DEVINPUT
 	bool "devinput (linux input system)"
+	depends on BR2_PACKAGE_HAS_UDEV
 	help
 	  Select devices which are annunced in the linux operating system under /dev/input/ as eventX
 
