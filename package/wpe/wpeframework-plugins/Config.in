@@ -166,17 +166,21 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL
 
 if BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL
 
-config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
 	bool "IR (Infrared)"
 	help
 	  Select devices which are based on Infrared (IR) technology
 
-config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
+if BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
 	bool "BCM Nexus IR Remote Control Unit"
 	default false
 	depends on (BR2_PACKAGE_BCM_REFSW || BR2_PACKAGE_HAS_NEXUS) && BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
 	help
 	  Enable the Nexus IR remote input
+
+if BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
 
 config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS_MODE
 	string "IR mode"
@@ -191,16 +195,31 @@ config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS_CODEMASK
 	help
 	  Sets a key code mask if the device generates same code based on trigger bit
 
-config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_RF
-	bool "RF (Radio Frequency)"
+config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS_KEYMAP
+	string "keymap"
+	default ""
 	help
-	  Select devices which are based on Radio Frequency (RF) technology
+	  Select a keymap file
 
-config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_DEVINPUT
+endif
+
+endif
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_DEVINPUT
 	bool "devinput (linux input system)"
 	depends on BR2_PACKAGE_HAS_UDEV
 	help
 	  Select devices which are annunced in the linux operating system under /dev/input/ as eventX
+
+if BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_DEVINPUT
+
+config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_DEVINPUT_KEYMAP
+	string "keymap"
+	default ""
+	help
+	  Select a keymap file
+
+endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_KEYMAP
 	string "keymap"
