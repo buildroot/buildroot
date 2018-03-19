@@ -92,6 +92,16 @@ avoid_warnings=1
 __EOF__
 	fi
 	;;
+	--overclock-avoid)
+	if ! grep -qE '^avoid_warnings=' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+		echo "Adding 'overclock=avoid' to config.txt."
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Overclock
+avoid_warnings=1
+__EOF__
+	fi
+	;;
 	--silent)
 	if ! grep -qE '^disable_splash=1' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
 		echo "Adding 'silent=1' to config.txt."
