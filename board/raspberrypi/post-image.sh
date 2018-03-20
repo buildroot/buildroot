@@ -22,6 +22,16 @@ fi
 for i in "$@"
 do
 case "$i" in
+	--arm64)
+	if ! grep -qE '^arm_64bit=1' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+		echo "Adding 'arm_64bit=1' to config.txt."
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Set to 64bit
+arm_64bit=1
+__EOF__
+	fi
+	;;
 	--add-pi3-miniuart-bt-overlay)
 	if ! grep -qE '^dtoverlay=pi3-miniuart-bt' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
 		echo "Adding 'dtoverlay=pi3-miniuart-bt' to config.txt (fixes ttyAMA0 serial console)."
