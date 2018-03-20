@@ -12,7 +12,7 @@ OPKG_DEPENDENCIES = host-pkgconf libarchive
 OPKG_LICENSE = GPLv2+
 OPKG_LICENSE_FILES = COPYING
 OPKG_INSTALL_STAGING = YES
-OPKG_CONF_OPTS = --disable-curl
+OPKG_CONF_OPTS = --disable-curl --enable-libopkg-api
 OPKG_AUTORECONF = YES
 
 # Ensure directory for lockfile exists
