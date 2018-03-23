@@ -50,6 +50,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_TEST_RPCLINK
 	help
 		RPCLINK test tests the usage of RPC calls to out of process plugins.
 
+config BR2_PACKAGE_WPEFRAMEWORK_EGLTEST
+	select BR2_PACKAGE_WPEFRAMEWORK_COMMON
+	bool "EGLTest"
+	help
+	   EGLTest Plugin
+
+
 endmenu
 
 endmenu
