@@ -1,8 +1,15 @@
-config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING
 	bool "Provisioning"
 	depends on BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
 	help
 	   WPE Platform Provisioning plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING
+
+config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_URI
+	string "provisioning URI"
+	default "provisioning-sdk.metrological.com:80"
+endif
 
 comment "Provisioning is dependent on the provision proxy wpeframework extension"
     depends on !BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
