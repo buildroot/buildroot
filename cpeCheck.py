@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# cover cve patches
+# pep 8
+# move and rename script
 
 import csv
 import urllib
