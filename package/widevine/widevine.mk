@@ -49,8 +49,8 @@ define WIDEVINE_INSTALL_STAGING_CMDS
         cp $(@D)/out/$(WIDEVINE_ARCHITECTURE)/Debug/lib*/lib*.so $(STAGING_DIR)/usr/lib/
         cp $(@D)/cdm/include/*.h $(STAGING_DIR)/usr/include
         cp $(@D)/core/include/*.h $(STAGING_DIR)/usr/include
-        mkdir -p $(STAGING_DIR)/usr/include/host
-        cp $(@D)/cdm/src/host/$(WIDEVINE_ARCHITECTURE)/*.h $(STAGING_DIR)/usr/include/host
+        # mkdir -p $(STAGING_DIR)/usr/include/host
+        # cp $(@D)/cdm/src/host/$(WIDEVINE_ARCHITECTURE)/*.h $(STAGING_DIR)/usr/include/host
 endef
 
 $(eval $(generic-package))
