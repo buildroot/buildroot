@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEWEBKIT_VERSION = 10f97c849c8c4693986060a2ef7ab8316dc74ebb
+WPEWEBKIT_VERSION = d53c2a196eb98efa7e52b24ba49a66dfe3818283
 WPEWEBKIT_SITE = $(call github,WebPlatformForEmbedded,WPEWebKit,$(WPEWEBKIT_VERSION))
 
 WPEWEBKIT_INSTALL_STAGING = YES
@@ -267,7 +267,7 @@ ifeq ($(WPEWEBKIT_BUILD_WEBKIT),y)
 define WPEWEBKIT_INSTALL_TARGET_CMDS_WEBKIT
 	cp $(WPEWEBKIT_BUILDDIR)/bin/WPE{Network,Storage,Web}Process $(TARGET_DIR)/usr/bin/ && \
 	cp -d $(WPEWEBKIT_BUILDDIR)/lib/libWPE* $(TARGET_DIR)/usr/lib/ && \
-	$(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.*
+	$(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.*
 endef
 else
 WPEWEBKIT_INSTALL_TARGET_CMDS_WEBKIT = true
