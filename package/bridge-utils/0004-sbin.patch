@@ -1,0 +1,11 @@
+--- bridge-utils-1.6/debian/ifupdown.sh-orig	2018-02-23 07:00:00.839773351 -0800
++++ bridge-utils-1.6/debian/ifupdown.sh	2018-02-23 07:00:18.801891928 -0800
+@@ -6,7 +6,7 @@
+ # Have a look at /usr/share/doc/bridge-utils/README.Debian if you want
+ # more info about the way on wich a bridge is set up on Debian.
+ 
+-if [ ! -x /sbin/brctl ]
++if [ ! -x /usr/sbin/brctl ]
+ then
+   exit 0
+ fi
