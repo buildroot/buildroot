@@ -8,6 +8,7 @@ LIBSELINUX_VERSION = 2.7
 LIBSELINUX_SITE = https://raw.githubusercontent.com/wiki/SELinuxProject/selinux/files/releases/20170804
 LIBSELINUX_LICENSE = Public Domain
 LIBSELINUX_LICENSE_FILES = LICENSE
+LIBSELINUX_CPE_ID_VENDOR = selinuxproject
 
 LIBSELINUX_DEPENDENCIES = libsepol pcre
 

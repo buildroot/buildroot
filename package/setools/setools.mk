@@ -10,6 +10,7 @@ SETOOLS_DEPENDENCIES = libselinux libsepol python-setuptools host-bison host-fle
 SETOOLS_INSTALL_STAGING = YES
 SETOOLS_LICENSE = GPL-2.0+, LGPL-2.1+
 SETOOLS_LICENSE_FILES = COPYING COPYING.GPL COPYING.LGPL
+SETOOLS_CPE_ID_VENDOR = tresystechnology
 SETOOLS_SETUP_TYPE = setuptools
 HOST_SETOOLS_DEPENDENCIES = host-libselinux host-libsepol host-python-networkx
 

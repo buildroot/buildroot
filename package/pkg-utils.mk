@@ -95,3 +95,11 @@ define legal-license-file # pkgname, pkgname-pkgver, pkgdir, filename, file-full
 	} && \
 	cp $(5) $(LICENSE_FILES_DIR_$(6))/$(2)/$(4)
 endef
+
+#
+# cpe-info helper functions
+#
+
+define cpe-manifest # cpe, cve patched, pkg name, version, url
+	echo '"$(1)","$(2)","$(3)","$(4)","$(5)"' >>$(CPE_MANIFEST_CSV)
+endef

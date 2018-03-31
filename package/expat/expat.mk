@@ -12,6 +12,7 @@ EXPAT_DEPENDENCIES = host-pkgconf
 HOST_EXPAT_DEPENDENCIES = host-pkgconf
 EXPAT_LICENSE = MIT
 EXPAT_LICENSE_FILES = COPYING
+EXPAT_CPE_ID_VENDOR = libexpat
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
