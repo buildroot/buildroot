@@ -67,6 +67,9 @@ define RPI_USERLAND_POST_TARGET_CLEANUP
 	rm -f $(TARGET_DIR)/usr/share/install/vcfiled
 	rmdir --ignore-fail-on-non-empty $(TARGET_DIR)/usr/share/install
 	rm -Rf $(TARGET_DIR)/usr/src
+	ln -sfn libGLESv2.so $(TARGET_DIR)/usr/lib/libGLESv1_CM.so.1.0.0
+	ln -sfn libGLESv1_CM.so.1.0.0 $(TARGET_DIR)/usr/lib/libGLESv1_CM.so.1
+	ln -sfn libGLESv1_CM.so.1 $(TARGET_DIR)/usr/lib/libGLESv1_CM.so
 endef
 RPI_USERLAND_POST_INSTALL_TARGET_HOOKS += RPI_USERLAND_POST_TARGET_CLEANUP
 
