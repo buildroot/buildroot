@@ -32,6 +32,12 @@ if BR2_PACKAGE_WPEWEBKIT
 
 menu "Extra options"
 
+config BR2_PACKAGE_WPEWEBKIT_BUILD_DEVELOPMENT_VERSION
+	bool "Build development version"
+	default n
+	help
+	  Build development version of WPEWebKit
+
 menu "Build type and debug options"
 
 choice

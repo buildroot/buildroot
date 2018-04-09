@@ -4,7 +4,14 @@
 #
 ################################################################################
 
-WPEWEBKIT_VERSION = aa2ff854858d489395cbf2a1d7111b555d971a2c
+# If enabled, choose the development version hash.
+ifeq ($(BR2_PACKAGE_WPEWEBKIT_BUILD_DEVELOPMENT_VERSION),y)
+WPEWEBKIT_VERSION_VALUE = not-yet-determined
+else
+WPEWEBKIT_VERSION_VALUE = aa2ff854858d489395cbf2a1d7111b555d971a2c
+endif
+
+WPEWEBKIT_VERSION = $(WPEWEBKIT_VERSION_VALUE)
 WPEWEBKIT_SITE = $(call github,WebPlatformForEmbedded,WPEWebKit,$(WPEWEBKIT_VERSION))
 
 WPEWEBKIT_INSTALL_STAGING = YES
