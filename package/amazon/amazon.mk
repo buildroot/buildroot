@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-AMAZON_VERSION = 5056183bc1c6d53ba122262a28e86d8ccf3057e4
+AMAZON_VERSION = 7eecfe72d0da03b1dc3a1de4757638bca3a148f4
 AMAZON_SITE_METHOD = git
 AMAZON_SITE = git@github.com:Metrological/amazon.git
 AMAZON_INSTALL_STAGING = NO
@@ -34,6 +34,7 @@ sed -e "s;%PLATFORM_FAMILY_NAME%;$(BR2_PACKAGE_AMAZON_PLATFORM_FAMILY_NAME);g" \
 endef
 
 define GENERATE_BUILD_CONFIG
+mkdir -p $(@D)/$(BR2_PACKAGE_AMAZON_PLATFORM_FAMILY_NAME)/common/configuration
 sed -e "s;%IG_INSTALL_PATH%;$(BR2_PACKAGE_AMAZON_IG_INSTALL_PATH);g" \
     -e "s;%IG_READ_WRITE_PATH%;$(BR2_PACKAGE_AMAZON_IG_READ_WRITE_PATH);g" \
     -e "s;%IG_TEST_INSTALL_PATH%;$(BR2_PACKAGE_AMAZON_IG_TEST_INSTALL_PATH);g" \
@@ -43,6 +44,7 @@ sed -e "s;%IG_INSTALL_PATH%;$(BR2_PACKAGE_AMAZON_IG_INSTALL_PATH);g" \
 endef
 
 define GENERATE_BOOST_CONFIG
+ mkdir -p  $(@D)/$(BR2_PACKAGE_AMAZON_PLATFORM_FAMILY_NAME)/platform/ignition/com.amazon.ignition.framework.core/internal/platform/$(BR2_PACKAGE_AMAZON_PLATFORM_FAMILY_NAME)/boost
  sed -e "s;%TARGET_CROSS%;$(notdir $(TARGET_CROSS));g" \
     $(@D)/templates/user-config.jam.in  > $(@D)/$(BR2_PACKAGE_AMAZON_PLATFORM_FAMILY_NAME)/platform/ignition/com.amazon.ignition.framework.core/internal/platform/$(BR2_PACKAGE_AMAZON_PLATFORM_FAMILY_NAME)/boost/user-config.jam
 endef
@@ -93,6 +95,15 @@ endef
 define AMAZON_INSTALL_TARGET_CMDS
  $(INSTALL) -d -m 0755 $(TARGET_DIR)/$(BR2_PACKAGE_AMAZON_IG_INSTALL_PATH)
  cp -a $(@D)/install/$(BR2_PACKAGE_AMAZON_PLATFORM_NAME)/* $(TARGET_DIR)/$(BR2_PACKAGE_AMAZON_IG_INSTALL_PATH)
+ 
+ if [ ! -h "$(TARGET_DIR)/$(BR2_PACKAGE_AMAZON_IG_INSTALL_PATH)/bin/amazon_player_mediapipeline.so" ]; then \
+    ln -s libamazon_player_mediapipeline.so \
+          $(TARGET_DIR)/$(BR2_PACKAGE_AMAZON_IG_INSTALL_PATH)/bin/amazon_player_mediapipeline.so ;\
+ fi
+ 
+ if [ -f $(@D)/build/ruby/amazon_player_mediapipeline/$(AMAZON_BACKEND)/$(AMAZON_BUILD_TYPE)/Player/test/playback-test/playback-test ] ; then \
+     cp $(@D)/build/ruby/amazon_player_mediapipeline/$(AMAZON_BACKEND)/$(AMAZON_BUILD_TYPE)/Player/test/playback-test/playback-test $(TARGET_DIR)/usr/bin ;\
+ fi
  
  if [ ! -h "$(TARGET_DIR)/usr/bin/ignition" ]; then \
     rm $(TARGET_DIR)/usr/bin/ignition ;\
