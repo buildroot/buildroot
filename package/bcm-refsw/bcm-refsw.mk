@@ -41,7 +41,7 @@ ifeq ($(BR2_PACKAGE_WESTEROS),y)
 	BCM_REFSW_DEPENDENCIES += wayland
 endif
 
-# SOC related info 
+# SOC related info
 include package/bcm-refsw/platforms.inc
 
 ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_14),y)
@@ -238,7 +238,7 @@ define BCM_REFSW_BUILD_CMDS
 	$(BCM_REFSW_BUILD_WAYLAND_EGL)
 endef
 
-ifeq ($(BCM_REFSW_PLATFORM_VC),vc5) 
+ifeq ($(BCM_REFSW_PLATFORM_VC),vc5)
 	ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 16.2),1)
         BCM_REFSW_VCX_KHRN = $(BCM_REFSW_VCX)/driver/libs/khrn/include
 	else
@@ -268,11 +268,9 @@ define BCM_REFSW_INSTALL_STAGING_CMDS
 	$(INSTALL) -m 644 $(BCM_REFSW_OUTPUT)/nexus/bin/include/*.h $(STAGING_DIR)/usr/include/refsw/
 	$(INSTALL) -m 644 $(BCM_REFSW_DIR)/nexus/nxclient/server/*.h $(STAGING_DIR)/usr/include/refsw/
 	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/include/platform_app.inc $(STAGING_DIR)/usr/include/
-	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/platform/nexus/*.h $(STAGING_DIR)/usr/include/refsw/	
+	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/platform/nexus/*.h $(STAGING_DIR)/usr/include/refsw/
 	$(INSTALL) -m 644 -D $(BCM_REFSW_BIN)/libnxserver.a $(STAGING_DIR)/usr/lib/libnxserver.a
-if [ $(shell expr $(BCM_REFSW_VERSION) \>= 17.1)$(shell expr $(BCM_REFSW_VERSION) \<= 17.2) = 11 ]; then \
-	$(INSTALL) -m 644 $(BCM_REFSW_OUTPUT)/nexus/bin/nexus_kernel_include/*.h $(STAGING_DIR)/usr/include/refsw ; \
-fi
+
 	$(call BCM_REFSW_INSTALL_KHRONOS,$(STAGING_DIR))
 	$(call BCM_REFSW_INSTALL_LIBS,$(STAGING_DIR))
 	$(call BCM_REFSW_INSTALL_STAGING_NXSERVER,$(STAGING_DIR))
@@ -286,9 +284,6 @@ define BCM_REFSW_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 755 package/bcm-refsw/S11nexus $(TARGET_DIR)/etc/init.d/S11nexus
 	$(call BCM_REFSW_INSTALL_EXTRA,$(TARGET_DIR))
 	$(call BCM_REFSW_INSTALL_LIBS,$(TARGET_DIR))
-if [ $(shell expr $(BCM_REFSW_VERSION) \>= 17.1)$(shell expr $(BCM_REFSW_VERSION) \<= 17.2) = 11 ]; then \
-	$(INSTALL) -m 644 $(BCM_REFSW_OUTPUT)/nexus/lib/b_os/libb_os.so $(TARGET_DIR)/usr/lib; \
-fi
 	$(call BCM_REFSW_INSTALL_TARGET_NXSERVER,$(TARGET_DIR))
 	$(call BCM_REFSW_INSTALL_TARGET_EGLCUBE,$(TARGET_DIR))
 	$(call BCM_REFSW_INSTALL_SAGE_BIN,$(TARGET_DIR))
