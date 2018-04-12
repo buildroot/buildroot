@@ -6,7 +6,7 @@
 
 # If enabled, choose the development version hash.
 ifeq ($(BR2_PACKAGE_WPEWEBKIT_BUILD_DEVELOPMENT_VERSION),y)
-WPEWEBKIT_VERSION_VALUE = not-yet-determined
+WPEWEBKIT_VERSION_VALUE = 3b46332059235d3ac20efcd67715f4773b50fcba
 else
 WPEWEBKIT_VERSION_VALUE = f2de8d0bbba9f6cf14d3ade0057c6cebfdadec35
 endif
