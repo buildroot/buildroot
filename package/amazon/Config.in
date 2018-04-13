@@ -25,7 +25,7 @@ config BR2_PACKAGE_AMAZON_NUMBER_OF_CONCURRENT_JOBS
 	default "4"
 
 config BR2_PACKAGE_AMAZON_TAG
-	string "concurrent jobs"
+	string "AVPK Version"
 	default "1.2.0"
 	
 choice
@@ -69,12 +69,17 @@ config BR2_PACKAGE_AMAZON_IG_TEST_INSTALL_PATH
 	default "/usr/share/ignition/test"
 
 config BR2_PACKAGE_AMAZON_DTID
-	string "concurrent jobs"
+	string "Device ID"
 	default "A71I8788P1ZV8"
 	
 config BR2_PACKAGE_AMAZON_CPU_BIT_WIDTH_AND_ENDIANNESS
-	string "concurrent jobs"
+	string "SOC endianness"
 	default "LE32"
+
+config BR2_PACKAGE_AMAZON_USE_ORIGINAL_SOURCES
+	bool "Use original sources"
+    help
+	  This will try to clone the Amazon Code from the official Amazon repo's. Make sure you have access. 
 	
 endmenu
 endif

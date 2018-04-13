@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-AMAZON_VERSION = 7eecfe72d0da03b1dc3a1de4757638bca3a148f4
+AMAZON_VERSION = d84fca842dcdf9591a64bffc98f31441e49538a9
 AMAZON_SITE_METHOD = git
 AMAZON_SITE = git@github.com:Metrological/amazon.git
 AMAZON_INSTALL_STAGING = NO
@@ -16,7 +16,6 @@ ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 endif
 
 define AMAZON_CONFIGURATION
-    $(call GENERATE_LOCAL_CONFIG)
 #   $(call AMAZON_MAKE, partner-device-code)
     $(call GENERATE_BOOST_CONFIG)
     $(call GENERATE_BUILD_CONFIG)
@@ -73,17 +72,44 @@ else
 endif
 endif
 
-#define AMAZON_APPLY_CUSTOM_PATCHES
-# $(call AMAZON_MAKE, ignition-repo-code)
-# $(call AMAZON_MAKE, ruby-repo-code)
-# $(APPLY_PATCHES) $(@D) $(@D)/patches \*.patch
-#endef
+define AMAZON_APPLY_CUSTOM_PATCHES
+ $(APPLY_PATCHES) $(@D) $(@D)/patches \*.patch
+endef
+
+ifeq ($(BR2_PACKAGE_AMAZON_USE_ORIGINAL_SOURCES),y)
+define AMAZON_GET_SOURCES
+	rm -rf $(@D)/build
+	rm -rf $(@D)/common
+	rm -rf $(@D)/ignition
+	rm -rf $(@D)/ruby
+	$(call AMAZON_MAKE, ignition-repo-code)
+	$(call AMAZON_MAKE, ruby-repo-code)
+	$(call AMAZON_MAKE, common-repo-code)
+	$(call AMAZON_APPLY_CUSTOM_PATCHES)   
+endef
+endif
+
+define AMAZON_CLEAROUT_FILES
+    if [ _$(BR2_PACKAGE_AMAZON_USE_ORIGINAL_SOURCES) != _y ]; then \
+         echo "#Cleared by buildroot." > $(@D)/tools/scripts/task-handlers/checkout/default-checkout.cmake ;\
+    fi
+    echo "#Cleared by buildroot." > $(@D)/tools/scripts/task-handlers/code/partner-repo-code.cmake
+    echo "#Cleared by buildroot." > $(@D)/tools/scripts/task-handlers/checkout/partner-repo-checkout.cmake
+endef
 
 define AMAZON_MAKE
 $(MAKE) -C $(@D)/tools/ $1 $2
 endef
 
+define AMAZON_CONFIGURE_CMDS
+    $(call GENERATE_LOCAL_CONFIG)
+    $(call GENERATE_BOOST_CONFIG)
+    $(call GENERATE_BUILD_CONFIG)
+    $(call AMAZON_GET_SOURCES) 
+endef
+
 define AMAZON_BUILD_CMDS
+
  export PKG_CONFIG_SYSROOT_DIR=$(STAGING_DIR)
  $(call AMAZON_MAKE, dpc, BUILD_TYPE=$(AMAZON_BUILD_TYPE))
  $(call AMAZON_MAKE, dpp, BUILD_TYPE=$(AMAZON_BUILD_TYPE))
@@ -115,7 +141,6 @@ endef
 define AMAZON_INSTALL_STAGING_CMDS
 endef
 
-AMAZON_PRE_BUILD_HOOKS += AMAZON_CONFIGURATION
-# AMAZON_POST_PATCH_HOOKS += AMAZON_APPLY_CUSTOM_PATCHES
+AMAZON_PRE_BUILD_HOOKS += AMAZON_CLEAROUT_FILES
 
 $(eval $(generic-package))
