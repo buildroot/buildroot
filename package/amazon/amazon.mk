@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-AMAZON_VERSION = d84fca842dcdf9591a64bffc98f31441e49538a9
+AMAZON_VERSION = adda6662b3aeabeab1263f80591830aab6ff1b07
 AMAZON_SITE_METHOD = git
 AMAZON_SITE = git@github.com:Metrological/amazon.git
 AMAZON_INSTALL_STAGING = NO
 AMAZON_INSTALL_TARGET = YES
-AMAZON_DEPENDENCIES = host-cmake zlib jpeg libcurl libpng wpeframework
+AMAZON_DEPENDENCIES = host-cmake zlib jpeg libcurl libpng wpeframework gstreamer1 
 
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
  AMAZON_DEPENDENCIES += rpi-userland
@@ -135,6 +135,8 @@ define AMAZON_INSTALL_TARGET_CMDS
     rm $(TARGET_DIR)/usr/bin/ignition ;\
     ln -s $(BR2_PACKAGE_AMAZON_IG_INSTALL_PATH)/bin/ignition $(TARGET_DIR)/usr/bin/ignition ;\
  fi
+ 
+ $(INSTALL) -D -m 0644 $(@D)/support/libgstfluac3dec.so $(TARGET_DIR)/usr/lib/gstreamer-1.0/
  
 endef
 
