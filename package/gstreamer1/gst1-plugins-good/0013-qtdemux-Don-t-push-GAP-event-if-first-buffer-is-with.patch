@@ -1,0 +1,38 @@
+From 2e45926a96ec5298c6ef29bf912e5e6a06dc3e0e Mon Sep 17 00:00:00 2001
+From: Edward Hervey <edward@centricular.com>
+Date: Wed, 13 Dec 2017 11:35:37 +0100
+Subject: [PATCH] qtdemux: Don't push GAP event if first buffer is within 1s
+
+If we saw empty segments, we previously unconditionally pushed a
+GAP event downstream regardless of the duration of that empty
+segment.
+
+In order to avoid issues with initial negotiation of downstream elements
+(which would negotiate to something before receiving any data due to
+that initial GAP event), check if there's at least a second of difference
+(like we do for other GAP-related checks in qtdemux) before
+deciding to push a GAP event downstream.
+---
+ gst/isomp4/qtdemux.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index b38e88ecf..91a22dc9e 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -5811,8 +5811,10 @@ gst_qtdemux_loop_state_movie (GstQTDemux * qtdemux)
+       GST_TIME_ARGS (dts), GST_TIME_ARGS (pts), GST_TIME_ARGS (duration));
+ 
+   if (G_UNLIKELY (empty)) {
+-    /* empty segment, push a gap and move to the next one */
+-    gst_pad_push_event (stream->pad, gst_event_new_gap (pts, duration));
++    /* empty segment, push a gap if there's more than a second
++     * difference and move to the next one */
++    if ((pts + duration - stream->segment.position) > GST_SECOND)
++      gst_pad_push_event (stream->pad, gst_event_new_gap (pts, duration));
+     stream->segment.position = pts + duration;
+     goto next;
+   }
+-- 
+2.14.3
+
