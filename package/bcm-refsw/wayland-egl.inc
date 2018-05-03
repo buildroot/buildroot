@@ -20,7 +20,7 @@ define BCM_REFSW_BUILD_WAYLAND_EGL
             APPLIBS_TARGET_LIB_DIR=${BCM_REFSW_BIN} \
             APPLIBS_TARGET_INC_DIR=${BCM_REFSW_BIN}/include
 
-if [ $(shell expr $(BCM_REFSW_VERSION) \>= 17.1)$(shell expr $(BCM_REFSW_VERSION) \<= 17.2) = 11 ]; then \
+if [ $(shell expr $(BCM_REFSW_VERSION) \>= 17.1)$(shell expr $(BCM_REFSW_VERSION) \<= 17.3) = 11 ]; then \
     $(TARGET_CONFIGURE_OPTS) \
     $(TARGET_MAKE_ENV) \
     $(BCM_REFSW_CONF_OPTS) \
@@ -31,7 +31,7 @@ if [ $(shell expr $(BCM_REFSW_VERSION) \>= 17.1)$(shell expr $(BCM_REFSW_VERSION
             APPLIBS_TARGET_INC_DIR=${BCM_REFSW_BIN}/include ; \
 fi
 
-if [ $(shell expr $(BCM_REFSW_VERSION) \>= 17.1)$(shell expr $(BCM_REFSW_VERSION) \<= 17.2) = 11 ]; then \
+if [ $(shell expr $(BCM_REFSW_VERSION) \>= 17.1)$(shell expr $(BCM_REFSW_VERSION) \<= 17.3) = 11 ]; then \
     $(TARGET_CONFIGURE_OPTS) \
     $(TARGET_MAKE_ENV) \
     $(BCM_REFSW_CONF_OPTS) \
