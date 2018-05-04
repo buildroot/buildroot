@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WESTEROS_SINK_VERSION = 9633867603dcfb2a5c71af71e7e1abd12f0c2ca3
+WESTEROS_SINK_VERSION = 1edcfb04d139f14a12231cf97d1c37338e97f515
 WESTEROS_SINK_SITE_METHOD = git
 WESTEROS_SINK_SITE = git://github.com/Metrological/westeros
 WESTEROS_SINK_INSTALL_STAGING = YES
@@ -33,7 +33,10 @@ else ifeq ($(BR2_PACKAGE_MARVELL_AMPSDK),y)
 else ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
 	WESTEROS_SINK_SUBDIR = brcm/westeros-sink
 	WESTEROS_SINK_DEPENDENCIES += gstreamer1
-	WESTEROS_SINK_CONF_OPTS += --enable-gstreamer1=yes
+	WESTEROS_SINK_CONF_OPTS += --enable-gstreamer1=yes \
+			CFLAGS="$(TARGET_CFLAGS) -I${STAGING_DIR}/usr/include/refsw -I${STAGING_DIR}/usr/include/refsw/bseav" \
+			CXXFLAGS="$(TARGET_CXXFLAGS) -I${STAGING_DIR}/usr/include/refsw -I${STAGING_DIR}/usr/include/refsw/bseav"
+	WESTEROS_SINK_MAKE_ENV += PKG_CONFIG_SYSROOT_DIR=${STAGING_DIR}
 endif
 
 define WESTEROS_SINK_RUN_AUTOCONF
