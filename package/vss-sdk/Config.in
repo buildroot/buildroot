@@ -1,0 +1,21 @@
+config BR2_PACKAGE_VSS_SDK
+	bool "vss-sdk"
+	depends on BR2_arm
+	select BR2_PACKAGE_HAS_LIBEGL
+	select BR2_PACKAGE_HAS_LIBGLES
+    select BR2_PACKAGE_HAS_NEXUS
+	help
+	  Pre-compiled binaries for a platform
+
+if BR2_PACKAGE_VSS_SDK
+
+config BR2_PACKAGE_PROVIDES_LIBEGL
+	default "vss-sdk"
+
+config BR2_PACKAGE_PROVIDES_LIBGLES
+	default "vss-sdk"
+
+config BR2_PACKAGE_PROVIDES_NEXUS
+	default "vss-sdk"
+
+endif
