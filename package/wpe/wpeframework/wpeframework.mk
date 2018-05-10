@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_VERSION = 4c0bd40baf74455da8e2ad8833ac7a871f953d25
+WPEFRAMEWORK_VERSION = bef59c6855b8e97348bef6ad607a423a77fdf424
 WPEFRAMEWORK_SITE_METHOD = git
 WPEFRAMEWORK_SITE = git@github.com:WebPlatformForEmbedded/WPEFramework.git
 WPEFRAMEWORK_INSTALL_STAGING = YES
