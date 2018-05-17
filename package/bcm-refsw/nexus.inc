@@ -12,7 +12,6 @@ define BCM_REFSW_INSTALL_NEXUS
 	$(INSTALL) -m 644 -D $(BCM_REFSW_BIN)/nexus.ko $(1)/lib/modules/nexus.ko
 	$(INSTALL) -D -m 755 package/bcm-refsw/S11nexus $(1)/etc/init.d/S11nexus
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libnexus.so $(1)/usr/lib/libnexus.so
-	$(INSTALL) -D $(BCM_REFSW_BIN)/libb_os.so $(1)/usr/lib/libb_os.so
 endef
 
 define BCM_REFSW_INSTALL_NEXUS_DEV
@@ -62,3 +61,23 @@ define BCM_REFSW_INSTALL_WAKEUP
 	$(INSTALL) -m 644 -D $(BCM_REFSW_BIN)/wakeup_drv.ko $1/lib/modules/wakeup_drv.ko
 endef
 endif
+
+
+define BCM_REFSW_BUILD_NEXUS_LIBB_OS
+    $(TARGET_CONFIGURE_OPTS) \
+	$(TARGET_MAKE_ENV) \
+	$(BCM_REFSW_CONF_OPTS) \
+	$(BCM_REFSW_MAKE_ENV) \
+		$(MAKE) -C $(@D)/nexus/lib/os all \
+			$(BCM_REFSW_BUILD_ADDITIONS)
+endef
+
+define BCM_REFSW_INSTALL_NEXUS_LIBB_OS
+	$(INSTALL) -D $(BCM_REFSW_BIN)/libb_os.so $(1)/usr/lib/libb_os.so
+endef
+
+define BCM_REFSW_INSTALL_NEXUS_LIBB_OS_DEV
+	$(INSTALL) -m 755 -d $(1)/usr/include/refsw/os
+	$(call BCM_REFSW_INSTALL_NEXUS_LIBB_OS,$(STAGING_DIR))
+	cp -a $(@D)/nexus/lib/os/include/* $(1)/usr/include/refsw/os
+endef
