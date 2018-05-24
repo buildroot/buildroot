@@ -31,6 +31,7 @@ endif
 
 define BCM_REFSW_INSTALL_NXSERVER
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libnxclient.so $(1)/usr/lib/libnxclient.so
+	$(INSTALL) -D $(BCM_REFSW_BIN)/libnxclient_local.so $(1)/usr/lib/libnxclient_local.so
 	if [ "x$(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR)" = "x" ]; then \
 		$(INSTALL) -m 755 -D $(BCM_REFSW_BIN)/nxserver $(1)/usr/bin/nxserver; \
 		$(BCM_REFSW_INSTALL_NXSERVER_INIT) \
