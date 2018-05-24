@@ -1,0 +1,87 @@
+From 8bbfc986086dd74bd512ed481e412b6ffc86ae71 Mon Sep 17 00:00:00 2001
+From: Carlos Garcia Campos <cgarcia@igalia.com>
+Date: Thu, 17 May 2018 08:18:33 +0200
+Subject: [PATCH] soup-cookie-jar: add API to set a limit of cookies in a jar
+
+---
+ libsoup/soup-cookie-jar.c | 25 ++++++++++++++++++++++++-
+ libsoup/soup-cookie-jar.h |  3 +++
+ 2 files changed, 27 insertions(+), 1 deletion(-)
+
+diff --git a/libsoup/soup-cookie-jar.c b/libsoup/soup-cookie-jar.c
+index 2369c8a7..5c1570a3 100644
+--- a/libsoup/soup-cookie-jar.c
++++ b/libsoup/soup-cookie-jar.c
+@@ -50,6 +50,8 @@ typedef struct {
+ 	GHashTable *domains, *serials;
+ 	guint serial;
+ 	SoupCookieJarAcceptPolicy accept_policy;
++	guint64 n_cookies;
++	guint64 limit;
+ } SoupCookieJarPrivate;
+ 
+ static void soup_cookie_jar_session_feature_init (SoupSessionFeatureInterface *feature_interface, gpointer interface_data);
+@@ -234,6 +236,18 @@ soup_cookie_jar_new (void)
+ 	return g_object_new (SOUP_TYPE_COOKIE_JAR, NULL);
+ }
+ 
++void
++soup_cookie_jar_set_limit (SoupCookieJar *jar,
++			   guint64        limit)
++{
++	SoupCookieJarPrivate *priv;
++
++	g_return_if_fail (SOUP_IS_COOKIE_JAR (jar));
++
++	priv = soup_cookie_jar_get_instance_private (jar);
++	priv->limit = limit;
++}
++
+ /**
+  * soup_cookie_jar_save:
+  * @jar: a #SoupCookieJar
+@@ -258,10 +272,13 @@ soup_cookie_jar_changed (SoupCookieJar *jar,
+ {
+ 	SoupCookieJarPrivate *priv = soup_cookie_jar_get_instance_private (jar);
+ 
+-	if (old && old != new)
++	if (old && old != new) {
+ 		g_hash_table_remove (priv->serials, old);
++		priv->n_cookies--;
++	}
+ 	if (new) {
+ 		priv->serial++;
++		priv->n_cookies++;
+ 		g_hash_table_insert (priv->serials, new, GUINT_TO_POINTER (priv->serial));
+ 	}
+ 
+@@ -499,6 +516,12 @@ soup_cookie_jar_add_cookie (SoupCookieJar *jar, SoupCookie *cookie)
+ 		return;
+ 	}
+ 
++	if (priv->limit > 0 && priv->n_cookies + 1 >= priv->limit) {
++		g_warning ("Reached limit of %" G_GUINT64_FORMAT " cookies, not adding the new one for domain '%s'", priv->limit, cookie->domain);
++		soup_cookie_free (cookie);
++		return;
++	}
++
+ 	if (last)
+ 		last->next = g_slist_append (NULL, cookie);
+ 	else {
+diff --git a/libsoup/soup-cookie-jar.h b/libsoup/soup-cookie-jar.h
+index e77f8ab3..48256b16 100644
+--- a/libsoup/soup-cookie-jar.h
++++ b/libsoup/soup-cookie-jar.h
+@@ -52,6 +52,9 @@ GType                     soup_cookie_jar_get_type                    (void);
+ SOUP_AVAILABLE_IN_2_24
+ SoupCookieJar *           soup_cookie_jar_new                         (void);
+ SOUP_AVAILABLE_IN_2_24
++void                      soup_cookie_jar_set_limit                   (SoupCookieJar             *jar,
++								       guint64                    limit);
++SOUP_AVAILABLE_IN_2_24
+ char          *           soup_cookie_jar_get_cookies                 (SoupCookieJar             *jar,
+ 								       SoupURI                   *uri,
+ 								       gboolean                   for_http);
+-- 
+2.17.0
+
