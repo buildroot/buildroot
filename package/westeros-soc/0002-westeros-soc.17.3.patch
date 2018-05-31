@@ -1,0 +1,25 @@
+diff -auNrd git.orig/brcm/westeros-gl/westeros-gl.cpp git/brcm/westeros-gl/westeros-gl.cpp
+--- git.orig/brcm/westeros-gl/westeros-gl.cpp	2017-08-25 14:59:51.970453733 -0400
++++ git/brcm/westeros-gl/westeros-gl.cpp	2017-08-25 14:57:39.706432920 -0400
+@@ -77,9 +77,11 @@
+       }
+       ++ctxCount;
+ 
++#if 0 /*NXPL can only register once, it will be registered in following eglGetDisplay*/
+       NXPL_RegisterNexusDisplayPlatform( &ctx->nxplHandle, 0 );
+       printf("WstGLInit: nxplHandle %x\n", ctx->nxplHandle );
+-      
++#endif
++
+       BKNI_CreateEvent( &ctx->gfxEvent );
+       ctx->gfxEventCreated= true;
+       
+@@ -94,7 +96,7 @@
+          NEXUS_Graphics2D_SetSettings( ctx->gfx, &gfxSettings );
+       }
+ 
+-      if ( !ctx->nxplHandle || !ctx->gfx || !ctx->gfxEventCreated || (NEXUS_SUCCESS != rc) )
++      if ( !ctx->gfx || !ctx->gfxEventCreated || (NEXUS_SUCCESS != rc) )
+       {
+          WstGLTerm( ctx );
+          ctx= 0;

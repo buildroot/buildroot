@@ -1,0 +1,13 @@
+diff --git a/brcm/Makefile.am b/brcm/Makefile.am
+index 2bfc998..99764e7 100644
+--- a/brcm/Makefile.am
++++ b/brcm/Makefile.am
+@@ -46,7 +46,7 @@ libwesteros_gl_la_CXXFLAGS= $(AM_CFLAGS)
+ libwesteros_gl_la_LDFLAGS= \
+    $(AM_LDFLAGS) \
+    -lwayland-egl \
+-   -lnexus
++   $(NEXUSLIBS)
+ 
+ distcleancheck_listfiles = *-libtool
+ 
