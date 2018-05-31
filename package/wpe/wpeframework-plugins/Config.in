@@ -13,44 +13,41 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR
 	bool "Compositor"
 	help
 	   WPE Platform Compositor plugin
-if BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR	   
-if BR2_PACKAGE_BCM_REFSW
-config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
-	bool "Nexus server"
-	help
-	  Choose this if the system has a already a resource server running like nxserver.
 
-if BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
-config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SERVICE_EXTERNAL
-	bool "External Compositor"
+if BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_AUTOSTART
+	bool "Start Automatically"
 	help
-		The master compositor is hosted in a different process. WPEFramework will attach to it.
+	  Select this to start the plugin automatically when starting WPEFramework
 
-config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SERVICE_INTERNAL
-	bool "Internal Compositor"
-	help
-		The master compositor is hosted in WPEFramework.
-endif
-endif
-
-config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_AUTOTRACE
-   bool "Enable Tracing at startup"
-   help 
-	 If enabled the compositer plug-in will start tracing 
-	 when WPEFramework is started.
-	 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_OUTOFPROCESS
 	bool "Out of process"
 	help
-	  Select this to run this plugin in its own process. 
-	 
+	  Select this to run this plugin in its own process.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
+	bool "Nexus server"
+    depends on BR2_PACKAGE_BCM_REFSW
+	help
+	  Include a nxserver with the compositor.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_ALLOW_UNAUTHENTICATED_CLIENTS
+	bool "Allow unauthenticated clients"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
+	default n
+	help
+	  Allow unauthenticated clients on the nxserver.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_GRAPHICS_HEAP_SIZE
+	string "graphics heap (bytes)"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
+	default  100
+	help
+	  The ammount of memory in MB to be configured for the GPU.
+
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_HARDWAREREADY
 	string "Manual overrule of the time it takes to initialisize all hardware (ms)"
 	default 0
-
-config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SYSTEM
-	string "Callsign to report information."
-	default Controller
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
@@ -73,7 +70,7 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC
 	help
 	  LocationSync Plugin
 	  WPE Platform Dictionary plugin
-	   
+
 if BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC
 
 config BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC_URI
@@ -118,7 +115,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
 	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
 	bool "NetworkControl"
 	help
-	  Control the IP adressing of the interfaces in the system from 
+	  Control the IP adressing of the interfaces in the system from
 	  WPEFramework (static IPv4/IPv6 or dhcp IPv4)
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_CDMI
