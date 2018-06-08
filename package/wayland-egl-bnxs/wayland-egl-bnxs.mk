@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WAYLAND_EGL_BNXS_VERSION = b7c878b8d88abc324b6303ac61da44f702533909
+WAYLAND_EGL_BNXS_VERSION = ab76649310f6688670b5c88cfac184735afc4d21
 WAYLAND_EGL_BNXS_SITE_METHOD = git
 WAYLAND_EGL_BNXS_SITE = git@github.com:Metrological/wayland-egl-bnxs.git
 WAYLAND_EGL_BNXS_INSTALL_STAGING = YES
