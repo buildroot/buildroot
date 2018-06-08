@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WESTEROS_VERSION = 319b26391a64a5695568eac5ff9ebf294dafee68
+WESTEROS_VERSION = 8ec4db488273a81720934bebe0ab27ab511cc249
 WESTEROS_SITE_METHOD = git
 WESTEROS_SITE = git://github.com/Metrological/westeros
 WESTEROS_INSTALL_STAGING = YES
@@ -16,8 +16,6 @@ WESTEROS_DEPENDENCIES = host-pkgconf host-autoconf wayland \
 
 WESTEROS_CONF_OPTS = \
 	--prefix=/usr/ \
-	--enable-app=yes \
-	--enable-test=yes \
 	--enable-rendergl=yes \
 	--enable-sbprotocol=yes \
 	--enable-xdgv5=yes\

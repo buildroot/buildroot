@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WESTEROS_SINK_VERSION = 319b26391a64a5695568eac5ff9ebf294dafee68
+WESTEROS_SINK_VERSION = 8ec4db488273a81720934bebe0ab27ab511cc249
 WESTEROS_SINK_SITE_METHOD = git
 WESTEROS_SINK_SITE = git://github.com/Metrological/westeros
 WESTEROS_SINK_INSTALL_STAGING = YES

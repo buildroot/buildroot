@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WESTEROS_SIMPLESHELL_VERSION = 319b26391a64a5695568eac5ff9ebf294dafee68
+WESTEROS_SIMPLESHELL_VERSION = 8ec4db488273a81720934bebe0ab27ab511cc249
 WESTEROS_SIMPLESHELL_SITE_METHOD = git
 WESTEROS_SIMPLESHELL_SITE = git://github.com/Metrological/westeros
 WESTEROS_SIMPLESHELL_INSTALL_STAGING = YES
