@@ -3,6 +3,12 @@ export SOURCE=/mnt/flash/metrological
 export CORES=/opt/cores
 # export GST_DEBUG=3
 
+grep -q "/etc/ssl" /proc/mounts &&
+                echo "/etc/ssl is already mounted" || mount  --bind $SOURCE/etc/ssl/ /etc/ssl/
+                
+grep -q "/usr/lib/gio" /proc/mounts &&
+                echo "/usr/lib/gio is already mounted" || mount --bind $SOURCE/usr/lib/gio /usr/lib/gio
+
 export LD_LIBRARY_PATH=$SOURCE/usr/lib:/lib:/usr/lib:$SOURCE/lib:$SOURCE/usr/lib/wpeframework/plugins:$SOURCE/usr/lib/wpeframework/proxystubs
 export PATH=$SOURCE/usr/bin:$PATH
 export GST_PLUGIN_SCANNER=$SOURCE/usr/libexec/gstreamer-1.0/gst-plugin-scanner
