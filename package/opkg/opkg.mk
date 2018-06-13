@@ -30,6 +30,11 @@ else
 OPKG_CONF_OPTS += --disable-gpg
 endif
 
+ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY),y)
+OPKG_CONF_OPTS += --enable-provision
+OPKG_DEPENDENCIES += wpeframework
+endif
+
 OPKG_POST_INSTALL_TARGET_HOOKS += OPKG_CREATE_LOCKDIR
 
 $(eval $(autotools-package))
