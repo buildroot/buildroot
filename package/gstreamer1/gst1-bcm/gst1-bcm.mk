@@ -16,12 +16,12 @@ else ifeq ($(BR2_PACKAGE_BCM_REFSW_17_1_RDK),y)
 GST1_BCM_VERSION = 17.1
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_17_3_RDK),y)
 GST1_BCM_VERSION = 17.1-7
-else
-ifneq ($(filter y,$(BR2_PACKAGE_ACN_SDK) $(BR2_PACKAGE_HOMECAST_SDK) $(BR2_PACKAGE_VSS_SDK)),)
+else ifneq ($(filter y,$(BR2_PACKAGE_ACN_SDK) $(BR2_PACKAGE_HOMECAST_SDK)),)
 GST1_BCM_VERSION = 17.1-5
+else ifneq ($(filter y,$(BR2_PACKAGE_VSS_SDK)),)
+GST1_BCM_VERSION = dd00f0762b7dfed4e4e657482d085e554201fa48
 else
 GST1_BCM_VERSION = 15.2
-endif
 endif
 
 GST1_BCM_SITE = git@github.com:Metrological/gstreamer-plugins-soc.git
@@ -125,6 +125,17 @@ ifeq ($(BR2_PACKAGE_GST1_BCM_VIDFILTER),y)
 GST1_BCM_CONF_OPTS += --enable-vidfilter
 else
 GST1_BCM_CONF_OPTS += --disable-vidfilter
+endif
+
+# Temporary audio fix for youtube on vss platforms
+ifeq ($(BR2_PACKAGE_VSS_SDK),y)
+GST1_BCM_PKGDIR = "$(TOP_DIR)/package/gstreamer1/gst1-bcm"
+
+define GST1_BCM_APPLY_LOCAL_PATCHES
+ $(APPLY_PATCHES) $(@D) $(GST1_BCM_PKGDIR) 0001_remove_opus_support.patch.conditional;
+endef
+  
+GST1_BCM_POST_PATCH_HOOKS += GST1_BCM_APPLY_LOCAL_PATCHES 
 endif
 
 $(eval $(autotools-package))

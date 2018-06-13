@@ -1,0 +1,33 @@
+Index: gstreamer-plugins-soc/audfilter/src/gst_brcm_aud_filter.c
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- gstreamer-plugins-soc/audfilter/src/gst_brcm_aud_filter.c	(revision dd00f0762b7dfed4e4e657482d085e554201fa48)
++++ gstreamer-plugins-soc/audfilter/src/gst_brcm_aud_filter.c	(date 1528913960000)
+@@ -92,7 +92,6 @@
+         "audio/x-wma; "
+         "audio/x-adpcm; "
+         "audio/x-vorbis; "
+-        "audio/x-opus; "
+       )
+     );
+ #else
+Index: gstreamer-plugins-soc/audiodecode/src/gst_brcm_audio_decoder.c
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- gstreamer-plugins-soc/audiodecode/src/gst_brcm_audio_decoder.c	(revision dd00f0762b7dfed4e4e657482d085e554201fa48)
++++ gstreamer-plugins-soc/audiodecode/src/gst_brcm_audio_decoder.c	(date 1528913960000)
+@@ -145,9 +145,7 @@
+         case baudio_format_wma_pro:         return NEXUS_AudioCodec_eWmaPro;
+         case baudio_format_mp3:             return NEXUS_AudioCodec_eMp3;
+         case baudio_format_vorbis:          return NEXUS_AudioCodec_eVorbis;
+-#if NEXUS_PLATFORM_VERSION_MAJOR >= 15
+-        case baudio_format_opus:            return NEXUS_AudioCodec_eOpus;
+-#endif
++
+ #if (NEXUS_PLATFORM_VERSION_MAJOR>=16 && NEXUS_PLATFORM_VERSION_MINOR >= 4)
+         case baudio_format_ac4:             return NEXUS_AudioCodec_eAc4;
+ #endif
