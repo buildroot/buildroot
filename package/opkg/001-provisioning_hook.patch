@@ -30,7 +30,7 @@
          return opkg_verify_gpg_signature(file, sigfile);
      else if (strcmp(opkg_config->signature_type, "openssl") == 0)
          return opkg_verify_openssl_signature(file, sigfile);
-+    else if (strcmp(opkg_config->signature_type, "provisioned") == 0)
++    else if (strcmp(opkg_config->signature_type, "provision") == 0)
 +        return opkg_verify_and_decrypt_package(file);
  
      opkg_msg(ERROR, "signature_type option '%s' not understood.\n",
@@ -67,17 +67,27 @@
                AC_HELP_STRING([--enable-sha256], [Enable sha256sum check
 --- a/libopkg/Makefile.am	2018-06-13 11:33:25.196265228 +0200
 +++ b/libopkg/Makefile.am	2018-06-13 11:34:26.170288674 +0200
-@@ -38,6 +38,10 @@
+@@ -38,6 +38,11 @@
  opkg_sources += opkg_openssl.c
  opkg_headers += opkg_openssl.h
  endif
 +if HAVE_PROVISION
++AM_CXXFLAGS=-std=c++11
 +opkg_sources += opkg_provision.cpp
 +opkg_headers += opkg_provision.h
 +endif
  if HAVE_GPGME
  opkg_sources += opkg_gpg.c
  opkg_headers += opkg_gpg.h
+@@ -67,7 +72,7 @@
+ endif
+ 
+ libopkg_la_LIBADD = $(LIBARCHIVE_LIBS) \
+-		    $(CURL_LIBS) $(GPGME_LIBS) $(GPGERR_LIBS) $(OPENSSL_LIBS) \
++		    $(CURL_LIBS) $(GPGME_LIBS) $(GPGERR_LIBS) $(OPENSSL_LIBS) $(PROVISION_LIBS) \
+ 		    $(PATHFINDER_LIBS) $(SOLVER_LIBS)
+ 
+ libopkg_la_LDFLAGS = -version-info 1:0:0
 --- a/libopkg/opkg_provision.h	2018-06-13 11:38:34.210246513 +0200
 +++ b/libopkg/opkg_provision.h	2018-06-13 11:47:56.975994355 +0200
 @@ -0,0 +1,29 @@
@@ -112,7 +122,7 @@
 +#endif
 --- a/libopkg/opkg_provision.cpp	2018-06-13 11:38:31.110347034 +0200
 +++ b/libopkg/opkg_provision.cpp	2018-06-13 11:45:52.768023211 +0200
-@@ -0,0 +1,21 @@
+@@ -0,0 +1,57 @@
 +/* vi: set expandtab sw=4 sts=4: */
 +/* opkg_provision.c - the opkg package management system
 +
@@ -129,8 +139,44 @@
 +    General Public License for more details.
 +*/
 +
++#include <WPEFramework/core/core.h>
 +#include <provision/AccesProvision.h>
++#include <openssl/ssl.h>
++#include <openssl/rsa.h>
++#include <openssl/bio.h>
++#include <openssl/err.h>
 +
-+int opkg_verify_and_decrypt_package(const char* /* file */) {
++int opkg_verify_and_decrypt_package(const char* file) {
++
++    int result = -1;     
++    char RSAKeyBuffer[8*1024];
++    int length = GetDRMId("packager", sizeof(RSAKeyBuffer), RSAKeyBuffer);
++
++    if (length > 0) {
++        // Seems like we have a valid RSA KEY, so we can decrypt.
++        WPEFramework::Core::DataElementFile package (file);
++
++        if (package.IsValid() == true) {
++            uint8_t securityHeader[128];
++
++            BIO* keybio = BIO_new_mem_buf(RSAKeyBuffer, -1);
++
++            if (keybio != nullptr) {
++                RSA* rsa = nullptr;
++	        rsa = PEM_read_bio_RSAPrivateKey(keybio, &rsa, nullptr, nullptr);
++
++	        if (rsa == nullptr) {
++                    result = -2;
++                }
++                else {
++                    // Decrypt the first 128 bytes. This is the security header
++                    result = RSA_private_decrypt(128, package.Buffer(), securityHeader, rsa, RSA_PKCS1_PADDING);
++                    if (result > 0) {
++                    }
++                }
++            }
++        }
++    }
++	   
 +    return (-1);
 +}
