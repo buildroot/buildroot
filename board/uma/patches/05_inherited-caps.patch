@@ -1,0 +1,22 @@
+diff -Naur CURRENT/security/commoncap.c PATCHED/security/commoncap.c
+--- CURRENT/security/commoncap.c	2015-04-07 16:33:46.646312000 +0000
++++ PATCHED/security/commoncap.c	2015-04-07 16:33:46.923313824 +0000
+@@ -280,8 +280,7 @@
+  */
+ static inline void bprm_clear_caps(struct linux_binprm *bprm)
+ {
+-	cap_clear(bprm->cred->cap_permitted);
+-	bprm->cap_effective = false;
++  return;
+ }
+ 
+ /**
+@@ -550,8 +549,6 @@
+ 
+ 	if (effective)
+ 		new->cap_effective = new->cap_permitted;
+-	else
+-		cap_clear(new->cap_effective);
+ 	bprm->cap_effective = effective;
+ 
+ 	/*

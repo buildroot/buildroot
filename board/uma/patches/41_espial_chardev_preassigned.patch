@@ -1,0 +1,124 @@
+Copyright (C) Espial Limited 2016-2017 Company Confidential - All Rights Reserved
+
+This patch is mandatory for all Espial projects.
+
+** This patch requires editing for each project to list the device numbers. **
+
+This patch adds the ability to pre-allocate dynamic major device numbers for
+character devices, such that the major device number for any given driver
+becomes predictable, even if it asks for a dynamically-allocated number.
+
+This is critical to avoid assignments changing between builds and when other
+kernel options are modified and when kernel modules are added or removed.
+
+The list of assignments goes in the array in the second file.  You can edit
+the patch directly, provided you remember to adjust the line count at the
+top of the file patch!
+
+This patch should apply cleanly to any kernel from 3.14 onwards (at least)
+
+
+diff -Nbrc a/fs/char_dev.c b/fs/char_dev.c
+*** a/fs/char_dev.c	2015-04-25 05:30:01.000000000 +0100
+--- b/fs/char_dev.c	2017-02-10 15:40:33.039101099 +0000
+***************
+*** 23,28 ****
+--- 23,55 ----
+  #include <linux/tty.h>
+  
+  #include "internal.h"
++ #include "espial_device_assignments.h"
++ 
++ static unsigned int __register_chrdev_find_preassigned(const char *name)
++ {
++ 	int i;
++ 
++    	for (i = 0; i < ARRAY_SIZE(preassigned_majors); i++) {
++ 		if (strcmp(preassigned_majors[i].name, name) == 0) {
++ 			return preassigned_majors[i].major;
++ 		}
++ 	}
++ 
++ 	return 0;
++ }
++ 
++ static int __register_chrdev_reserved_preassigned(unsigned int major)
++ {
++ 	int i;
++ 
++    	for (i = 0; i < ARRAY_SIZE(preassigned_majors); i++) {
++ 		if (preassigned_majors[i].major == major) {
++ 			return 1;
++ 		}
++ 	}
++ 
++ 	return 0;
++ }
+  
+  /*
+   * capabilities for /dev/mem, /dev/kmem and similar directly mappable character
+***************
+*** 105,114 ****
+  
+  	mutex_lock(&chrdevs_lock);
+  
+  	/* temporary */
+  	if (major == 0) {
+  		for (i = ARRAY_SIZE(chrdevs)-1; i > 0; i--) {
+! 			if (chrdevs[i] == NULL)
+  				break;
+  		}
+  
+--- 132,145 ----
+  
+  	mutex_lock(&chrdevs_lock);
+  
++ 	if (major == 0) {
++ 		major = __register_chrdev_find_preassigned(name);
++ 		ret = major;
++ 	}
+  	/* temporary */
+  	if (major == 0) {
+  		for (i = ARRAY_SIZE(chrdevs)-1; i > 0; i--) {
+! 			if (chrdevs[i] == NULL && !__register_chrdev_reserved_preassigned(i))
+  				break;
+  		}
+  
+diff -Nbrc a/fs/espial_device_assignments.h b/fs/espial_device_assignments.h
+*** a/fs/espial_device_assignments.h	1970-01-01 01:00:00.000000000 +0100
+--- b/fs/espial_device_assignments.h	2017-02-10 15:37:16.336498411 +0000
+***************
+*** 0 ****
+--- 1,32 ----
++ /*
++  * Copyright (c) 2016 Espial Limited
++  * All Rights Reserved.
++  *
++  * This program is free software; you can redistribute it and/or
++  * modify it under the terms of the GNU General Public License as
++  * published by the Free Software Foundation.
++  *
++  * This program is distributed in the hope that it would be useful,
++  * but WITHOUT ANY WARRANTY; without even the implied warranty of
++  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++  * GNU General Public License for more details.
++  *
++  * You should have received a copy of the GNU General Public License
++  * along with this program; if not, write the Free Software Foundation,
++  * Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
++  */
++ #ifndef FS_DEVICE_ASSIGNMENTS_H
++ #define FS_DEVICE_ASSIGNMENTS_H 1
++ 
++ static const struct {
++ 	unsigned int major;
++ 	const char *name;
++ } preassigned_majors[] = {
++ 	{ 248, "gpK5" },
++ 	{ 249, "ubi0" },
++ 	{ 250, "systool" },
++ 	{ 251, "brcm_cma" },
++ };
++ 
++ #endif
++ 

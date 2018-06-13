@@ -1,0 +1,34 @@
+commit fda322a1b3b9e8ee231913c500f73c6988b1aff5
+Author: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
+Date:   Fri Aug 29 18:42:30 2014 -0300
+
+    UBI: Dispatch update notification if the volume is updated
+    
+    The UBI_IOCVOLUP ioctl is used to start an update and also to
+    truncate a volume. In the first case, a "volume updated" notification
+    is dispatched when the update is done.
+    
+    This commit adds the "volume updated" notification to be also sent when
+    the volume is truncated. This is required for UBI block and gluebi to get
+    notified about the new volume size.
+    
+    Signed-off-by: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
+    Signed-off-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+    Cc: stable@vger.kernel.org # v3.15+
+
+diff --git a/drivers/mtd/ubi/cdev.c b/drivers/mtd/ubi/cdev.c
+index 7646220..20aeb277 100644
+--- a/drivers/mtd/ubi/cdev.c
++++ b/drivers/mtd/ubi/cdev.c
+@@ -425,8 +425,10 @@ static long vol_cdev_ioctl(struct file *file, unsigned int cmd,
+ 			break;
+ 
+ 		err = ubi_start_update(ubi, vol, bytes);
+-		if (bytes == 0)
++		if (bytes == 0) {
++			ubi_volume_notify(ubi, vol, UBI_VOLUME_UPDATED);
+ 			revoke_exclusive(desc, UBI_READWRITE);
++		}
+ 		break;
+ 	}
+ 

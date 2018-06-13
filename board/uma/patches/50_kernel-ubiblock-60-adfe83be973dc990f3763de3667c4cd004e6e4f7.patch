@@ -1,0 +1,25 @@
+commit adfe83be973dc990f3763de3667c4cd004e6e4f7
+Author: Richard Weinberger <richard@nod.at>
+Date:   Fri Sep 19 11:48:47 2014 +0200
+
+    UBI: Improve comment on work_sem
+    
+    Make clear what work_sem really does.
+    
+    Suggested-by: Artem Bityutskiy <dedekind1@gmail.com>
+    Signed-off-by: Richard Weinberger <richard@nod.at>
+    Signed-off-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+
+diff -Naur CURRENT/drivers/mtd/ubi/ubi.h PATCHED/drivers/mtd/ubi/ubi.h
+--- CURRENT/drivers/mtd/ubi/ubi.h	2017-02-13 08:32:51.247869238 +0000
++++ PATCHED/drivers/mtd/ubi/ubi.h	2017-02-13 08:32:51.296869856 +0000
+@@ -440,7 +440,8 @@
+  *	     @move_to, @move_to_put @erase_pending, @wl_scheduled, @works,
+  *	     @erroneous, and @erroneous_peb_count fields
+  * @move_mutex: serializes eraseblock moves
+- * @work_sem: synchronizes the WL worker with use tasks
++ * @work_sem: used to wait for all the scheduled works to finish and prevent
++ * new works from being submitted
+  * @wl_scheduled: non-zero if the wear-leveling was scheduled
+  * @lookuptbl: a table to quickly find a &struct ubi_wl_entry object for any
+  *             physical eraseblock

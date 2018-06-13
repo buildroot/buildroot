@@ -1,0 +1,48 @@
+commit 3df770725339c41d1cd9be4da4ca0d968119d8ad
+Author: Colin Ian King <colin.king@canonical.com>
+Date:   Wed Aug 20 10:19:38 2014 +0100
+
+    UBI: block: fix dereference on uninitialized dev
+    
+    commit 4df38926f337 ("UBI: block: Avoid disk size integer overflow")
+    introduced a dereference on dev (which is not initialized at that
+    point) when printing a warning message.  Re-order disk_capacity check
+    after the dev is found.
+    
+    Found by cppcheck:
+     [drivers/mtd/ubi/block.c:509]: (error) Uninitialized variable: dev
+    
+    Artem: tweak the error message a bit
+    
+    Signed-off-by: Colin Ian King <colin.king@canonical.com>
+    Acked-by: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
+    Signed-off-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+
+diff -Naur CURRENT/drivers/mtd/ubi/block.c PATCHED/drivers/mtd/ubi/block.c
+--- CURRENT/drivers/mtd/ubi/block.c	2017-02-13 08:32:50.689862193 +0000
++++ PATCHED/drivers/mtd/ubi/block.c	2017-02-13 08:32:50.718862560 +0000
+@@ -502,11 +502,6 @@
+ 	struct ubiblock *dev;
+ 	u64 disk_capacity = ((u64)vi->size * vi->usable_leb_size) >> 9;
+ 
+-	if ((sector_t)disk_capacity != disk_capacity) {
+-		ubi_warn("%s: the volume is too big, cannot resize (%d LEBs)",
+-			 dev->gd->disk_name, vi->size);
+-		return -EFBIG;
+-	}
+ 	/*
+ 	 * Need to lock the device list until we stop using the device,
+ 	 * otherwise the device struct might get released in
+@@ -518,6 +513,12 @@
+ 		mutex_unlock(&devices_mutex);
+ 		return;
+ 	}
++	if ((sector_t)disk_capacity != disk_capacity) {
++		mutex_unlock(&devices_mutex);
++		ubi_warn("%s: the volume is too big (%d LEBs), cannot resize",
++			 dev->gd->disk_name, vi->size);
++		return -EFBIG;
++	}
+ 
+ 	mutex_lock(&dev->dev_mutex);
+ 	set_capacity(dev->gd, disk_capacity);

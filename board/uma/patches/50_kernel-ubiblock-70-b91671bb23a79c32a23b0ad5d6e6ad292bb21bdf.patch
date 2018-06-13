@@ -1,0 +1,29 @@
+commit b91671bb23a79c32a23b0ad5d6e6ad292bb21bdf
+Author: Richard Weinberger <richard@nod.at>
+Date:   Fri Sep 19 17:37:56 2014 +0200
+
+    UBI: Fix livelock in produce_free_peb()
+    
+    The while loop in produce_free_peb() assumes that each work will produce a
+    free PEB. This is not true.
+    If ubi->works_count is 1 and the only scheduled work is the
+    wear_leveling_worker() produce_free_peb() can loop forever in case
+    nobody schedules an erase work.
+    Fix this issue by checking in the while loop whether work is scheduled.
+    
+    Signed-off-by: Richard Weinberger <richard@nod.at>
+    Signed-off-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+
+diff --git a/drivers/mtd/ubi/wl.c b/drivers/mtd/ubi/wl.c
+index 20f4917..32b3c14 100644
+--- a/drivers/mtd/ubi/wl.c
++++ b/drivers/mtd/ubi/wl.c
+@@ -272,7 +272,7 @@ static int produce_free_peb(struct ubi_device *ubi)
+ {
+ 	int err;
+ 
+-	while (!ubi->free.rb_node) {
++	while (!ubi->free.rb_node && ubi->works_count) {
+ 		spin_unlock(&ubi->wl_lock);
+ 
+ 		dbg_wl("do one work synchronously");

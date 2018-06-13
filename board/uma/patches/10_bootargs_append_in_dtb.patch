@@ -1,0 +1,22 @@
+diff -Naur kernel-E077_CADDV_MAINAPP_DEBUG/drivers/of/fdt.c kernel-E077_CADDV_MAINAPP_DEBUG_patched/drivers/of/fdt.c
+--- kernel-E077_CADDV_MAINAPP_DEBUG/drivers/of/fdt.c	2015-04-25 06:30:00.000000000 +0200
++++ kernel-E077_CADDV_MAINAPP_DEBUG_patched/drivers/of/fdt.c	2015-12-11 10:38:32.614352200 +0100
+@@ -937,8 +937,16 @@
+ 
+ 	/* Retrieve command line */
+ 	p = of_get_flat_dt_prop(node, "bootargs", &l);
+-	if (p != NULL && l > 0)
+-		strlcpy(data, p, min((int)l, COMMAND_LINE_SIZE));
++	if (p != NULL && l > 0) {
++		int offset = 0;
++#ifdef CONFIG_CMDLINE
++#ifdef CONFIG_CMDLINE_EXTEND
++		strlcpy(data, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
++		offset = strlcat(data, " ", COMMAND_LINE_SIZE);
++#endif
++#endif
++		strlcpy(data + offset, p, min(l, (unsigned long)(COMMAND_LINE_SIZE - offset)));
++	}
+ 
+ 	/*
+ 	 * CONFIG_CMDLINE is meant to be a default in case nothing else

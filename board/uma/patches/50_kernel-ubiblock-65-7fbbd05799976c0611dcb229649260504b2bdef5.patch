@@ -1,0 +1,27 @@
+commit 7fbbd05799976c0611dcb229649260504b2bdef5
+Author: Dan Carpenter <dan.carpenter@oracle.com>
+Date:   Fri Sep 19 13:56:56 2014 +0300
+
+    UBI: return on error in rename_volumes()
+    
+    I noticed this during a code review.  We are checking that the strlen()
+    of ->name is not less than the ->name_len which the user gave us.  I
+    believe this bug is harmless but clearly we meant to return here instead
+    of setting an error code and then not using it.
+    
+    Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+    Signed-off-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+
+diff --git a/drivers/mtd/ubi/cdev.c b/drivers/mtd/ubi/cdev.c
+index 20aeb277..59de69a 100644
+--- a/drivers/mtd/ubi/cdev.c
++++ b/drivers/mtd/ubi/cdev.c
+@@ -701,7 +701,7 @@ static int rename_volumes(struct ubi_device *ubi,
+ 		req->ents[i].name[req->ents[i].name_len] = '\0';
+ 		n = strlen(req->ents[i].name);
+ 		if (n != req->ents[i].name_len)
+-			err = -EINVAL;
++			return -EINVAL;
+ 	}
+ 
+ 	/* Make sure volume IDs and names are unique */

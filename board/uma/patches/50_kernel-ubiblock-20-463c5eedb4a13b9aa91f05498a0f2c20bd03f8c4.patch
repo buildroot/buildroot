@@ -1,0 +1,58 @@
+commit 463c5eedb4a13b9aa91f05498a0f2c20bd03f8c4
+Author: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
+Date:   Wed Mar 5 11:16:14 2014 -0300
+
+    UBI: make UBI_IOCVOLCRBLK take a parameter for future usage
+    
+    In order to allow a future ioctl parameter, such as a creation flag,
+    we change the UBI_IOCVOLCRBLK so it accepts a struct ubi_blkcreate_req.
+    For the time being the structure is not in use, but fully reserved.
+    
+    This ABI change is still possible and harmless, because the ioctl has just
+    been introduced and there's no userspace program which uses it.
+    
+    Signed-off-by: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
+    Signed-off-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+
+diff --git a/include/uapi/mtd/ubi-user.h b/include/uapi/mtd/ubi-user.h
+index 9c885e2..1927b0d 100644
+--- a/include/uapi/mtd/ubi-user.h
++++ b/include/uapi/mtd/ubi-user.h
+@@ -138,9 +138,12 @@
+  * Block devices on UBI volumes
+  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  *
+- * To create or remove a R/O block device on top of an UBI volume the
+- * %UBI_IOCVOLCRBLK and %UBI_IOCVOLRMBLK ioctl commands should be used,
+- * respectively. These commands take no arguments.
++ * To create a R/O block device on top of an UBI volume the %UBI_IOCVOLCRBLK
++ * should be used. A pointer to a &struct ubi_blkcreate_req object is expected
++ * to be passed, which is not used and reserved for future usage.
++ *
++ * Conversely, to remove a block device the %UBI_IOCVOLRMBLK should be used,
++ * which takes no arguments.
+  */
+ 
+ /*
+@@ -199,7 +202,7 @@
+ #define UBI_IOCSETVOLPROP _IOW(UBI_VOL_IOC_MAGIC, 6, \
+ 			       struct ubi_set_vol_prop_req)
+ /* Create a R/O block device on top of an UBI volume */
+-#define UBI_IOCVOLCRBLK _IO(UBI_VOL_IOC_MAGIC, 7)
++#define UBI_IOCVOLCRBLK _IOW(UBI_VOL_IOC_MAGIC, 7, struct ubi_blkcreate_req)
+ /* Remove the R/O block device */
+ #define UBI_IOCVOLRMBLK _IO(UBI_VOL_IOC_MAGIC, 8)
+ 
+@@ -431,4 +434,12 @@ struct ubi_set_vol_prop_req {
+ 	__u64 value;
+ }  __packed;
+ 
++/**
++ * struct ubi_blkcreate_req - a data structure used in block creation requests.
++ * @padding: reserved for future, not used, has to be zeroed
++ */
++struct ubi_blkcreate_req {
++	__s8  padding[128];
++}  __packed;
++
+ #endif /* __UBI_USER_H__ */

@@ -1,0 +1,50 @@
+commit 0a3d571bb8940a189322cc5f51466bdab044a48b
+Author: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
+Date:   Mon May 5 07:11:53 2014 -0300
+
+    UBI: block: Set disk_capacity out of the mutex
+    
+    There's no need to set the disk capacity with the mutex held, so this
+    commit takes the variable setting out of the mutex. This simplifies
+    the disk capacity fix for very large volumes in a follow up commit.
+    
+    Signed-off-by: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
+    Signed-off-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+
+diff -Naur CURRENT/drivers/mtd/ubi/block.c PATCHED/drivers/mtd/ubi/block.c
+--- CURRENT/drivers/mtd/ubi/block.c	2017-02-13 08:32:50.370858165 +0000
++++ PATCHED/drivers/mtd/ubi/block.c	2017-02-13 08:32:50.399858531 +0000
+@@ -378,7 +378,7 @@
+ {
+ 	struct ubiblock *dev;
+ 	struct gendisk *gd;
+-	int disk_capacity;
++	int disk_capacity = (vi->size * vi->usable_leb_size) >> 9;
+ 	int ret;
+ 
+ 	/* Check that the volume isn't already handled */
+@@ -412,7 +412,6 @@
+ 	gd->first_minor = dev->ubi_num * UBI_MAX_VOLUMES + dev->vol_id;
+ 	gd->private_data = dev;
+ 	sprintf(gd->disk_name, "ubiblock%d_%d", dev->ubi_num, dev->vol_id);
+-	disk_capacity = (vi->size * vi->usable_leb_size) >> 9;
+ 	set_capacity(gd, disk_capacity);
+ 	dev->gd = gd;
+ 
+@@ -499,7 +498,7 @@
+ static void ubiblock_resize(struct ubi_volume_info *vi)
+ {
+ 	struct ubiblock *dev;
+-	int disk_capacity;
++	int disk_capacity = (vi->size * vi->usable_leb_size) >> 9;
+ 
+ 	/*
+ 	 * Need to lock the device list until we stop using the device,
+@@ -514,7 +513,6 @@
+ 	}
+ 
+ 	mutex_lock(&dev->dev_mutex);
+-	disk_capacity = (vi->size * vi->usable_leb_size) >> 9;
+ 	set_capacity(dev->gd, disk_capacity);
+ 	ubi_msg("%s resized to %d LEBs", dev->gd->disk_name, vi->size);
+ 	mutex_unlock(&dev->dev_mutex);

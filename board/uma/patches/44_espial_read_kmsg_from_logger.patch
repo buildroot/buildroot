@@ -1,0 +1,30 @@
+Copyright (C) Espial Limited 2016 Company Confidential - All Rights Reserved
+
+This patch is mandatory for all Espial projects.
+
+This patch changes the security test for opening /dev/kmsg, so unprivileged
+containers possessing CAP_SYSLOG can still open the file.
+
+This patch should apply cleanly to any kernel from 3.14 onwards (at least)
+although it will start failing at the point at which the kernel's security
+code was refactored.  At that point, this patch will have to be reworked.
+
+*** a/kernel/printk/printk.c	2015-03-19 20:07:06.000000000 +0000
+--- b/kernel/printk/printk.c	2016-08-26 14:38:54.991688592 +0100
+*************** static int check_syslog_permissions(int
+*** 386,392 ****
+  		return 0;
+  
+  	if (syslog_action_restricted(type)) {
+! 		if (capable(CAP_SYSLOG))
+  			return 0;
+  		/*
+  		 * For historical reasons, accept CAP_SYS_ADMIN too, with
+--- 386,392 ----
+  		return 0;
+  
+  	if (syslog_action_restricted(type)) {
+! 		if (ns_capable(current_user_ns(), CAP_SYSLOG))
+  			return 0;
+  		/*
+  		 * For historical reasons, accept CAP_SYS_ADMIN too, with

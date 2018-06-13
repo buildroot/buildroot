@@ -1,0 +1,30 @@
+commit 49e236bc4a2639af0e77b3a05460e8367e3187a4
+Author: Richard Weinberger <richard@nod.at>
+Date:   Sun Jul 27 09:35:48 2014 +0200
+
+    UBI: bugfix in ubi_wl_flush()
+    
+    Use the _safe variant because we're iterating over a list where items get
+    deleted and freed.
+    
+    Signed-off-by: Richard Weinberger <richard@nod.at>
+    Signed-off-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+
+diff -Naur CURRENT/drivers/mtd/ubi/wl.c PATCHED/drivers/mtd/ubi/wl.c
+--- CURRENT/drivers/mtd/ubi/wl.c	2017-02-13 08:32:49.714849000 +0000
++++ PATCHED/drivers/mtd/ubi/wl.c	2017-02-13 08:32:50.606861144 +0000
+@@ -1712,12 +1712,12 @@
+ 	       vol_id, lnum, ubi->works_count);
+ 
+ 	while (found) {
+-		struct ubi_work *wrk;
++		struct ubi_work *wrk, *tmp;
+ 		found = 0;
+ 
+ 		down_read(&ubi->work_sem);
+ 		spin_lock(&ubi->wl_lock);
+-		list_for_each_entry(wrk, &ubi->works, list) {
++		list_for_each_entry_safe(wrk, tmp, &ubi->works, list) {
+ 			if ((vol_id == UBI_ALL || wrk->vol_id == vol_id) &&
+ 			    (lnum == UBI_ALL || wrk->lnum == lnum)) {
+ 				list_del(&wrk->list);

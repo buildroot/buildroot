@@ -1,0 +1,24 @@
+Copyright (C) Espial Limited 2015-2016 Company Confidential - All Rights Reserved
+
+This patch is mandatory for all Espial projects.
+
+This patch overrides the minor device number of /dev/ubi_ctrl so that it is
+predictable rather than allocated dynamically.  240 is in the "private use"
+area.  During system boot, there are races with other "misc" device drivers
+leading to this unpredictability, which makes it all but impossible to make
+a static /dev directory without this modification.
+
+This patch should apply cleanly to any kernel from 3.14 onwards (at least)
+
+diff -Naur linux/drivers/mtd/ubi/build.c linux.new/drivers/mtd/ubi/build.c
+--- linux/drivers/mtd/ubi/build.c	2015-04-25 05:30:00.000000000 +0100
++++ linux.new/drivers/mtd/ubi/build.c	2015-10-01 16:37:42.661551526 +0100
+@@ -90,7 +90,7 @@
+ 
+ /* UBI control character device */
+ static struct miscdevice ubi_ctrl_cdev = {
+-	.minor = MISC_DYNAMIC_MINOR,
++	.minor = 240,
+ 	.name = "ubi_ctrl",
+ 	.fops = &ubi_ctrl_cdev_operations,
+ };

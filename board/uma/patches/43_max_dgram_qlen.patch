@@ -1,0 +1,30 @@
+Copyright (C) Espial Limited 2016 Company Confidential - All Rights Reserved
+
+This patch is mandatory for all Espial projects.
+
+This patch changes the default UNIX domain socket datagram queue length so that
+more datagrams can be queued before a blockage occurs.  The sysctl interface is
+only able to change the setting in the initial network namespace.  There is not
+any mechanism for changing this value in other network namespaces.  Hence, this
+change to the default is the only way of solving the problem.
+
+
+*** a/net/unix/af_unix.c	2015-04-25 05:30:02.000000000 +0100
+--- b/net/unix/af_unix.c	2016-04-06 12:06:24.293856504 +0100
+***************
+*** 2415,2421 ****
+  {
+  	int error = -ENOMEM;
+  
+! 	net->unx.sysctl_max_dgram_qlen = 10;
+  	if (unix_sysctl_register(net))
+  		goto out;
+  
+--- 2415,2421 ----
+  {
+  	int error = -ENOMEM;
+  
+! 	net->unx.sysctl_max_dgram_qlen = 20;
+  	if (unix_sysctl_register(net))
+  		goto out;
+  

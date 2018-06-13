@@ -1,0 +1,74 @@
+Copyright (C) Espial Limited 2016 Company Confidential - All Rights Reserved
+
+This patch is mandatory for all Espial projects.
+
+This patch changes the security test for the settimeofday(2) and adjtimex(2)
+system calls, so unprivileged containers possessing CAP_SYS_TIME can set the
+system time.
+
+This patch should apply cleanly to any kernel from 3.14 onwards (at least)
+although it will start failing at the point at which the kernel's security
+code was refactored.  At that point, this patch will have to be reworked.
+
+diff -Naur linux_orig/security/commoncap.c linux/security/commoncap.c
+--- linux_orig/security/commoncap.c	2015-03-19 20:07:07.000000000 +0000
++++ linux/security/commoncap.c	2016-02-19 10:54:42.127518084 +0000
+@@ -118,7 +118,7 @@
+  */
+ int cap_settime(const struct timespec *ts, const struct timezone *tz)
+ {
+-	if (!capable(CAP_SYS_TIME))
++	if (!ns_capable(current_user_ns(), CAP_SYS_TIME))
+ 		return -EPERM;
+ 	return 0;
+ }
+
+diff -Naur linux-secure/kernel/time/ntp.c linux-debug/kernel/time/ntp.c
+--- linux-secure/kernel/time/ntp.c	2016-03-01 17:38:07.150474368 +0000
++++ linux-debug/kernel/time/ntp.c	2016-03-01 17:43:10.946341599 +0000
+@@ -8,6 +8,7 @@
+ #include <linux/capability.h>
+ #include <linux/clocksource.h>
+ #include <linux/workqueue.h>
++#include <linux/security.h>
+ #include <linux/hrtimer.h>
+ #include <linux/jiffies.h>
+ #include <linux/math64.h>
+@@ -611,13 +612,18 @@
+ 		/* singleshot must not be used with any other mode bits */
+ 		if (!(txc->modes & ADJ_OFFSET_SINGLESHOT))
+ 			return -EINVAL;
+-		if (!(txc->modes & ADJ_OFFSET_READONLY) &&
+-		    !capable(CAP_SYS_TIME))
+-			return -EPERM;
++		if (!(txc->modes & ADJ_OFFSET_READONLY)) {
++			int error = security_settime(NULL,NULL);
++			if (error)
++				return error;
++		}
+ 	} else {
+ 		/* In order to modify anything, you gotta be super-user! */
+-		 if (txc->modes && !capable(CAP_SYS_TIME))
+-			return -EPERM;
++		 if (txc->modes) {
++			int error = security_settime(NULL,NULL);
++			if (error)
++				return error;
++		}
+ 		/*
+ 		 * if the quartz is off by more than 10% then
+ 		 * something is VERY wrong!
+@@ -628,8 +634,11 @@
+ 			return -EINVAL;
+ 	}
+ 
+-	if ((txc->modes & ADJ_SETOFFSET) && (!capable(CAP_SYS_TIME)))
+-		return -EPERM;
++	if (txc->modes & ADJ_SETOFFSET) {
++		int error = security_settime(NULL,NULL);
++		if (error)
++			return error;
++	}
+ 
+ 	return 0;
+ }

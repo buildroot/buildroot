@@ -1,0 +1,47 @@
+commit 06d9c2905f745c8b1920a335cbb366ba6b0fc754
+Author: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
+Date:   Fri Aug 29 18:42:29 2014 -0300
+
+    UBI: block: Add support for the UBI_VOLUME_UPDATED notification
+    
+    Static volumes can change its 'used_bytes' when they get updated,
+    and so the block interface must listen to the UBI_VOLUME_UPDATED
+    notification to resize the block device accordingly.
+    
+    Signed-off-by: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
+    Signed-off-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+    Cc: stable@vger.kernel.org # v3.15+
+
+diff -Naur CURRENT/drivers/mtd/ubi/block.c PATCHED/drivers/mtd/ubi/block.c
+--- CURRENT/drivers/mtd/ubi/block.c	2017-02-13 08:32:50.913865022 +0000
++++ PATCHED/drivers/mtd/ubi/block.c	2017-02-13 08:32:50.937865325 +0000
+@@ -522,8 +522,12 @@
+ 	}
+ 
+ 	mutex_lock(&dev->dev_mutex);
+-	set_capacity(dev->gd, disk_capacity);
+-	ubi_msg("%s resized to %lld bytes", dev->gd->disk_name, vi->used_bytes);
++
++	if (get_capacity(dev->gd) != disk_capacity) {
++		set_capacity(dev->gd, disk_capacity);
++		ubi_msg("%s resized to %lld bytes", dev->gd->disk_name,
++			vi->used_bytes);
++	}
+ 	mutex_unlock(&dev->dev_mutex);
+ 	mutex_unlock(&devices_mutex);
+ }
+@@ -546,6 +550,14 @@
+ 	case UBI_VOLUME_RESIZED:
+ 		ubiblock_resize(&nt->vi);
+ 		break;
++	case UBI_VOLUME_UPDATED:
++		/*
++		 * If the volume is static, a content update might mean the
++		 * size (i.e. used_bytes) was also changed.
++		 */
++		if (nt->vi.vol_type == UBI_STATIC_VOLUME)
++			ubiblock_resize(&nt->vi);
++		break;
+ 	default:
+ 		break;
+ 	}

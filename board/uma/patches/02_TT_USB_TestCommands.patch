@@ -1,0 +1,289 @@
+--- kernel/drivers/usb/core/devio.c	2014-10-29 06:26:34.000000000 +0530
++++ kernel/drivers/usb/core/devio.c	2015-01-22 10:40:00.000000000 +0530
+@@ -1542,6 +1542,231 @@
+ 
+ 	return 0;
+ }
++#define CONFIG_PACE_TT_USB_COMMANDS 1
++/* Pace change */
++#if defined(CONFIG_PACE_TT_USB_COMMANDS)
++#define DBGTEST(arg) printk arg
++static int proc_usb_test(struct dev_state *ps, void *arg)
++{
++   struct usb_device *pRootHub = ps->dev;
++   struct usb_device *pDevice;
++   struct usbdevfs_usb_test TestInfo;
++   int port_num;
++   int ret;
++   unsigned int response = 0;
++   char *buf;
++   int index, len;
++   u16 portchange = 0;
++   u16 portstatus = 0;
++   struct usb_port_status *portsts;
++
++   if (!pRootHub)
++   {
++      DBGTEST(("USB_TEST: pRootHub is NULL\n"));
++      return -EINVAL;
++   }
++    DBGTEST(("USB_TEST: pRootHub is valid\n"));
++
++   /* usb_show_device(pRootHub); */
++
++   if (copy_from_user(&TestInfo, (void *)arg, sizeof(TestInfo)))
++      return -EFAULT;
++
++   DBGTEST(("USB_TEST: --> Port %d, action %d, response=%u\n",
++      TestInfo.port_num, TestInfo.action, TestInfo.response));
++
++   port_num = TestInfo.port_num;
++   ret = 0;
++   if (port_num < 0)
++   {
++      pDevice = pRootHub;
++   }
++   else
++   {
++      DBGTEST(("USB_TEST: Hub max children %d",  pRootHub->maxchild));
++      if ((pRootHub->maxchild) && (port_num < USB_MAXCHILDREN))
++      {
++         port_num=1;
++         pDevice=usb_hub_find_child(pRootHub,port_num);
++      }
++      else
++      {
++         DBGTEST(("USB_TEST: max child failed ---------------"));
++         return -EINVAL;
++      }
++   }
++
++   DBGTEST(("USB_TEST: pDevice %d\n", pDevice));
++
++   switch (TestInfo.action)
++   {
++   case TEST_DEVICE_CONNECTED:
++      response = (pDevice)?1:0;
++      DBGTEST(("USB_TEST: The response is %d ret %d", response, ret));
++      break;
++
++   case TEST_POWER_OFF:
++      /*
++      info("USB_TEST: --> Port %d, POWER OFF, response=%u", TestInfo.port_num, TestInfo.response);
++      info("USB_TEST: Hub [0x%08x] max children %d", pRootHub, pRootHub->maxchild);
++      for (index=0; index < pRootHub->maxchild; index++)
++      {
++         info("USB_TEST: Child %d = [0x%08x]",  index, pRootHub->children[index]);
++      }
++      */
++      ret = usb_control_msg(pRootHub, usb_sndctrlpipe(pRootHub, 0),
++               USB_REQ_CLEAR_FEATURE, USB_RT_PORT, USB_PORT_FEAT_POWER,
++               port_num /*+ 1*/, NULL, 0, HZ);
++      if (ret < 0) {
++         printk("HUB_PORT: --> %s (%d) failed (err = %d)", __FUNCTION__, pDevice->devnum, ret);
++      }
++
++      /* disconnect device if any */
++     /* if (pRootHub->children[port_num])
++         usb_disconnect(&pRootHub->children[port_num]);
++      
++        */
++
++      break;
++
++   case TEST_POWER_ON:
++      ret = usb_control_msg (pRootHub, usb_sndctrlpipe(pRootHub, 0),
++               USB_REQ_SET_FEATURE, USB_RT_PORT, USB_PORT_FEAT_POWER,
++               port_num /*+ 1*/, NULL, 0, HZ);
++      if (ret < 0) {
++         printk("HUB_PORT: --> %s (%d) failed (err = %d)", __FUNCTION__, pDevice->devnum, ret);
++      }
++      break;
++
++   case TEST_PORT_STATUS:
++      portsts = kmalloc(sizeof(*portsts), GFP_KERNEL);
++      if (portsts) {
++         ret = usb_control_msg(pRootHub, usb_rcvctrlpipe(pRootHub, 0),
++               USB_REQ_GET_STATUS, USB_DIR_IN | USB_RT_PORT, 0,
++               port_num /*+ 1*/, portsts, sizeof(struct usb_hub_status), HZ);
++         if (ret < 0) {
++            printk("HUB_PORT: --> %s (%d) failed (err = %d)", __FUNCTION__, pRootHub->devnum, ret);
++         }
++         else {
++            portstatus = le16_to_cpu(portsts->wPortStatus);
++            portchange = le16_to_cpu(portsts->wPortChange);
++            DBGTEST(("port %d, portstatus 0x%04x, change 0x%04x", port_num, portstatus, portchange));
++            response = portstatus;
++         }
++         kfree(portsts);
++      }
++      break;
++
++   case TEST_SPEED:
++      if (!pDevice)
++      {
++         response = 3;
++         break;
++      }
++      switch (pDevice->speed)
++      {
++      case USB_SPEED_LOW:
++          response = 0; break;
++      case USB_SPEED_FULL:
++          response = 1; break;
++      case USB_SPEED_HIGH:
++          response = 2;break;
++      case USB_SPEED_SUPER:
++          response = 4; break;
++      default:
++          response = 3; break;
++      }
++      break;
++
++   case TEST_VENDOR_ID:
++      if (pDevice)
++      {
++         response = (pDevice->descriptor.idVendor << 16) | pDevice->descriptor.idProduct;
++      }
++      else
++      {
++         response = 0;
++      }
++      break;
++
++  case TEST_DEVICE_MS:
++      if (!pDevice)
++      {
++         response = 0;
++         break;
++      }
++      if((pDevice->config->interface[0]->altsetting->desc.bInterfaceClass == 8)
++       &&(pDevice->config->interface[0]->altsetting->desc.bInterfaceSubClass == 6))
++         response = 1;
++      else
++         response = 0;
++      break;
++
++   case TEST_STRING_MANUF:
++   case TEST_STRING_PROD:
++   case TEST_STRING_SERNUM:
++      if (!pDevice)
++      {
++         response = 0;
++         break;
++      }
++      if (TestInfo.action == TEST_STRING_MANUF)
++         index = pDevice->descriptor.iManufacturer;
++      else if (TestInfo.action == TEST_STRING_PROD)
++         index = pDevice->descriptor.iProduct;
++      else
++         index = pDevice->descriptor.iSerialNumber;
++
++      if (!index)
++      {
++         response = 0;
++         ret = 0;
++      }
++      else if (!(buf = kmalloc(256, GFP_KERNEL)))
++      {
++         /* failed to allocate buffer */
++         ret = -ENOMEM;
++      }
++      else if ((len = usb_string(pDevice, index, buf, 256)) <= 0)
++      {
++         /* failed to get string */
++         kfree(buf);
++      }
++
++      else
++      {
++         DBGTEST(("KERN_INFO %s\n", buf));
++         if (copy_to_user((void *)TestInfo.pBuf, buf, len))
++         {
++            DBGTEST(("USB_TEST: --> Failed to copy to user"));
++            ret = -EFAULT;
++         }
++         else
++         {
++            response = 1;
++         }
++         kfree(buf);
++      }
++      break;
++
++   default:
++      break;
++
++   } /* End of switch() */
++   TestInfo.response = response;
++   if (copy_to_user((void *)arg, &TestInfo, sizeof(TestInfo)))
++   {
++      DBGTEST(("USB_TEST: --> Failed to copy to user"));
++      ret = -EFAULT;
++   }
++   else
++      ret = 0;
++
++   DBGTEST(("USB_TEST: --> The response is %d return %d\n", TestInfo.response, ret));
++
++   return ret;
++}
++#endif /* #ifdef PACE_TT_USB_COMMANDS */
+ 
+ static int processcompl(struct async *as, void __user * __user *arg)
+ {
+@@ -2058,6 +2283,12 @@
+ 		snoop(&dev->dev, "%s: SETCONFIGURATION\n", __func__);
+ 		ret = proc_setconfig(ps, p);
+ 		break;
++#if defined (CONFIG_PACE_TT_USB_COMMANDS)
++              /* Pace change */
++	case USBDEVFS_TEST:
++	      ret = proc_usb_test(ps, (void *)p);
++	      break;
++#endif /* #ifdef PACE_TT_USB_COMMANDS  */
+ 
+ 	case USBDEVFS_SUBMITURB:
+ 		snoop(&dev->dev, "%s: SUBMITURB\n", __func__);
+
+--- kernel/include/linux/usbdevice_fs.h	2014-10-29 06:26:35.000000000 +0530
++++ kernel/include/linux/usbdevice_fs.h	2015-01-14 15:56:27.000000000 +0530
+@@ -30,6 +30,30 @@
+ 
+ #include <uapi/linux/usbdevice_fs.h>
+ 
++#define CONFIG_PACE_TT_USB_COMMANDS 1
++/* RT210911 Pace change */
++#if defined (CONFIG_PACE_TT_USB_COMMANDS)
++typedef enum {
++   TEST_SPEED = 0,
++   TEST_POWER_OFF,
++   TEST_POWER_ON,
++   TEST_PORT_STATUS,
++   TEST_VENDOR_ID,
++   TEST_DEVICE_MS,
++   TEST_DEVICE_CONNECTED,
++   TEST_STRING_SERNUM,
++   TEST_STRING_PROD,
++   TEST_STRING_MANUF,
++   TEST_LAST
++} usb_test_code;
++
++struct usbdevfs_usb_test {
++   int port_num;
++   usb_test_code action;
++   unsigned int response;
++   char * pBuf;
++};
++#endif
+ #ifdef CONFIG_COMPAT
+ #include <linux/compat.h>
+ 
+@@ -77,4 +101,7 @@
+ 	compat_caddr_t data;
+ };
+ #endif
++#if defined (CONFIG_PACE_TT_USB_COMMANDS)
++   #define USBDEVFS_TEST              _IOWR('U', 26, struct usbdevfs_usb_test)
++#endif //#ifdef TT_USB_SUPPORT
+ #endif /* _LINUX_USBDEVICE_FS_H */

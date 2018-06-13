@@ -1,0 +1,44 @@
+commit 4df38926f337ff4de49a8fb512aa4a55df0c502d
+Author: Richard Weinberger <richard@nod.at>
+Date:   Mon May 5 07:11:54 2014 -0300
+
+    UBI: block: Avoid disk size integer overflow
+    
+    This patch fixes the issue that on very large UBI volumes
+    UBI block does not work correctly.
+    
+    Signed-off-by: Richard Weinberger <richard@nod.at>
+    Signed-off-by: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
+    Signed-off-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+
+diff -Naur CURRENT/drivers/mtd/ubi/block.c PATCHED/drivers/mtd/ubi/block.c
+--- CURRENT/drivers/mtd/ubi/block.c	2017-02-13 08:32:50.475859490 +0000
++++ PATCHED/drivers/mtd/ubi/block.c	2017-02-13 08:32:50.500859806 +0000
+@@ -378,9 +378,11 @@
+ {
+ 	struct ubiblock *dev;
+ 	struct gendisk *gd;
+-	int disk_capacity = (vi->size * vi->usable_leb_size) >> 9;
++	u64 disk_capacity = ((u64)vi->size * vi->usable_leb_size) >> 9;
+ 	int ret;
+ 
++	if ((sector_t)disk_capacity != disk_capacity)
++		return -EFBIG;
+ 	/* Check that the volume isn't already handled */
+ 	mutex_lock(&devices_mutex);
+ 	if (find_dev_nolock(vi->ubi_num, vi->vol_id)) {
+@@ -498,8 +500,13 @@
+ static void ubiblock_resize(struct ubi_volume_info *vi)
+ {
+ 	struct ubiblock *dev;
+-	int disk_capacity = (vi->size * vi->usable_leb_size) >> 9;
++	u64 disk_capacity = ((u64)vi->size * vi->usable_leb_size) >> 9;
+ 
++	if ((sector_t)disk_capacity != disk_capacity) {
++		ubi_warn("%s: the volume is too big, cannot resize (%d LEBs)",
++			 dev->gd->disk_name, vi->size);
++		return -EFBIG;
++	}
+ 	/*
+ 	 * Need to lock the device list until we stop using the device,
+ 	 * otherwise the device struct might get released in

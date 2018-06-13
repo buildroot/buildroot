@@ -1,0 +1,117 @@
+diff -Naur CURRENT/init/initramfs.c PATCHED/init/initramfs.c
+--- CURRENT/init/initramfs.c	2015-04-08 13:35:26.501091000 +0000
++++ PATCHED/init/initramfs.c	2015-04-08 13:35:26.551091994 +0000
+@@ -311,7 +311,7 @@
+ 	clean_path(collected, mode);
+ 	if (S_ISREG(mode)) {
+ 		int ml = maybe_link();
+-		if (ml >= 0) {
++		/*if (ml >= 0)*/ {
+ 			int openflags = O_WRONLY|O_CREAT;
+ 			if (ml != 1)
+ 				openflags |= O_TRUNC;
+diff -Naur CURRENT/scripts/gen_initramfs_list.sh PATCHED/scripts/gen_initramfs_list.sh
+--- CURRENT/scripts/gen_initramfs_list.sh	2015-04-08 13:35:26.501091000 +0000
++++ PATCHED/scripts/gen_initramfs_list.sh	2015-04-08 13:35:26.552091997 +0000
+@@ -11,7 +11,7 @@
+ 
+ # error out on errors
+ set -e
+-
++all_files=()
+ usage() {
+ cat << EOF
+ Usage:
+@@ -97,7 +97,11 @@
+ }
+ 
+ list_parse() {
+-	[ ! -L "$1" ] && echo "$1 \\" || :
++        if [ ! -f $1 ]; then
++	  [ ! -L "$1" ] && echo "$1 \\" || :
++	else
++	  [ ! -L "$1" ] &&  [[ ${x} != *container*rootfs* ]] && echo "$1 \\" || :
++	fi
+ }
+ 
+ # for each file print a line in following format
+@@ -112,6 +116,9 @@
+ 	local uid="$3"
+ 	local gid="$4"
+ 	local ftype=$(filetype "${location}")
++	local rootfs_path=`echo ${ROOTFS_PATH}| sed -e "s#//#/#g" ` 
++	local abshardlinks=""
++	local hardlink=""
+ 	# remap uid/gid to 0 if necessary
+ 	[ "$root_uid" = "squash" ] && uid=0 || [ "$uid" -eq "$root_uid" ] && uid=0
+ 	[ "$root_gid" = "squash" ] && gid=0 || [ "$gid" -eq "$root_gid" ] && gid=0
+@@ -119,10 +126,40 @@
+ 
+ 	[ "${ftype}" = "invalid" ] && return 0
+ 	[ "${location}" = "${srcdir}" ] && return 0
+-
+ 	case "${ftype}" in
+ 		"file")
+-			str="${ftype} ${name} ${location} ${str}"
++			
++			haslink=`find ${location} -type f -links +1`
++			if [[ $haslink ]]; then
++			    abshardlinks=`find $rootfs_path -xdev -samefile $location`
++			    abshardlinks=`echo ${abshardlinks}| sed -e "s#//#/#g" `  
++			    hardlinks=` echo $abshardlinks | sed -e "s#$rootfs_path#/#g"`
++			    found=0
++                            for hardlink  in ${hardlinks[@]}; do
++			      for i in ${all_files[@]}; do
++			         #echo "test "$i" with "$hardlink
++			         if [ "$i" = "$hardlink" ]; then
++				    found=1
++				    break
++				    #echo "found  "$i
++				 fi
++				 if [ $found -eq 1 ]; then break;fi
++			      done   
++			    done
++			    if [ $found -eq 0 ]; then
++			    # this link is not in our list
++			    # we add it	
++			       #echo "Add "$location
++			       #echo "hl:"$hardlinks		    
++			       rela_name=` echo $location | sed -e "s#$rootfs_path#/#g"` 
++			       all_files=("${all_files[@]}" ${rela_name} )
++                               str="${ftype} ${name} ${location}  ${str} ${hardlinks}"
++			    else
++			       str=""   
++			    fi
++		        else
++			   str="${ftype} ${name} ${location}  ${str}"
++			fi
+ 			;;
+ 		"nod")
+ 			local dev=`LC_ALL=C ls -l "${location}"`
+@@ -155,7 +192,7 @@
+ 	printf "by './' so that it won't be interpreted as an option." >&2
+ 	printf "\n" >&2
+ 	usage >&2
+-	exit 1
++//	exit 1
+ }
+ 
+ list_header() {
+@@ -172,7 +209,6 @@
+ 
+ 	srcdir=$(echo "$1" | sed -e 's://*:/:g')
+ 	dirlist=$(find "${srcdir}" -printf "%p %m %U %G\n")
+-
+ 	# If $dirlist is only one line, then the directory is empty
+ 	if [  "$(echo "${dirlist}" | wc -l)" -gt 1 ]; then
+ 		${dep_list}print_mtime "$1"
+@@ -307,7 +343,8 @@
+ 			fi
+ 		fi
+ 		cpio_tfile="$(mktemp ${TMPDIR:-/tmp}/cpiofile.XXXXXX)"
+-		usr/gen_init_cpio $timestamp ${cpio_list} > ${cpio_tfile}
++		sort ${cpio_list} > ${cpio_list}.sorted
++		usr/gen_init_cpio $timestamp ${cpio_list}.sorted > ${cpio_tfile}
+ 	else
+ 		cpio_tfile=${cpio_file}
+ 	fi

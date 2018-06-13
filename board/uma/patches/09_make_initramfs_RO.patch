@@ -1,0 +1,21 @@
+--- ./init/initramfs.c 
++++ ./init/initramfs.c
+584a585
+> 	int error;
+624a626,630
+> #ifdef	CONFIG_BLK_DEV_INITRAMFS_RO
+>  	error = sys_mount("/", "/", NULL, MS_RDONLY | MS_NOSUID | MS_REMOUNT, NULL);
+>  	if (error)
+>  			printk(KERN_EMERG "Initramfs issue with remount on RO\n");
+> #endif	
+--- ./init/Kconfig
++++ ./init/Kconfig
+1233a1234,1241
+> config BLK_DEV_INITRAMFS_RO
+>  	bool "Make Initramfs RO"
+>   default n
+>  	help
+>  	  by default initramfs is RW. We can make it RO.
+>  
+>  	  If unsure say N.
+> 
