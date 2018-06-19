@@ -1,0 +1,21 @@
+config BR2_PACKAGE_UMA_SDK
+	bool "uma-sdk"
+	depends on BR2_arm
+	select BR2_PACKAGE_HAS_NEXUS
+	select BR2_PACKAGE_HAS_LIBEGL
+	select BR2_PACKAGE_HAS_LIBGLES
+	help
+	  Pre-compiled binaries for a platform
+
+if BR2_PACKAGE_UMA_SDK
+
+config BR2_PACKAGE_PROVIDES_NEXUS
+	default "uma-sdk"
+
+config BR2_PACKAGE_PROVIDES_LIBEGL
+	default "uma-sdk"
+
+config BR2_PACKAGE_PROVIDES_LIBGLES
+	default "uma-sdk"
+
+endif

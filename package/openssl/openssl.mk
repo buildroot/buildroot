@@ -5,6 +5,9 @@
 ################################################################################
 
 OPENSSL_VERSION = 1.0.2k
+ifeq ($(BR2_PACKAGE_NETFLIX5),y)
+OPENSSL_VERSION = 1.0.2f
+endif
 OPENSSL_SITE = http://www.openssl.org/source
 OPENSSL_LICENSE = OpenSSL or SSLeay
 OPENSSL_LICENSE_FILES = LICENSE

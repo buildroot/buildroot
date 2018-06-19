@@ -4,6 +4,8 @@ export SAGEBIN_PATH=/lib/firmware/
 start() {
 	echo -n "Starting nxserver: "
 	export NEXUS_IR_MODE=%IRMODE%
+	export B_REFSW_BOXMODE=%BOXMODE%
+	export NEXUS_GRAPHICS_HEAP_SIZE_BYTE=%GRAPHICS_HEAP_SIZE%
 	start-stop-daemon -S -q -b -m -p /var/run/nxserver.pid --exec /usr/bin/nxserver -- </dev/null >/dev/null 2>&1
 	[ $? == 0 ] && echo "OK" || echo "FAIL"
 }

@@ -8,6 +8,9 @@ LIBCURL_VERSION = 7.53.1
 ifeq ($(BR2_PACKAGE_NETFLIX),y)
 LIBCURL_VERSION = 7.32.0
 endif
+ifeq ($(BR2_PACKAGE_NETFLIX5),y)
+LIBCURL_VERSION = 7.53.0
+endif
 LIBCURL_SOURCE = curl-$(LIBCURL_VERSION).tar.bz2
 LIBCURL_SITE = https://curl.haxx.se/download
 LIBCURL_DEPENDENCIES = host-pkgconf \

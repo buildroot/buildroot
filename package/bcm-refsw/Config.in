@@ -106,7 +106,7 @@ endchoice
 config BR2_PACKAGE_BCM_REFSW_SAGE
 	bool "SAGE v3.x"
 	default n
-	depends on BR2_PACKAGE_BCM_REFSW && (BR2_PACKAGE_BCM_REFSW_16_2 || BR2_PACKAGE_BCM_REFSW_16_3)
+	depends on BR2_PACKAGE_BCM_REFSW && (BR2_PACKAGE_BCM_REFSW_16_2 || BR2_PACKAGE_BCM_REFSW_16_3 || BR2_PACKAGE_BCM_REFSW_17_1 || BR2_PACKAGE_BCM_REFSW_17_1_RDK || BR2_PACKAGE_BCM_REFSW_17_2 || BR2_PACKAGE_BCM_REFSW_17_4)
 	help
 	  Add SAGE support in Nexus.
 
@@ -136,5 +136,17 @@ config BR2_PACKAGE_BCM_REFSW_NXCLIENT_EXAMPLES
 	default n
 	help
 	  Build the Nexus client exaples.
+
+config BR2_PACKAGE_BCM_REFSW_GRAPHICS_HEAP_SIZE
+    string "Graphics heap size"
+    depends on BR2_PACKAGE_BCM_REFSW && BR2_PACKAGE_BCM_REFSW_17_4
+    help
+      Custom graphics heap size
+
+config BR2_PACKAGE_BCM_REFSW_BOXMODE
+    string "Memory Box Mode"
+    depends on BR2_PACKAGE_BCM_REFSW
+    help
+      Memory box mode, you can find details from release notes per platform
 
 endif
