@@ -27,20 +27,27 @@ config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_OUTOFPROCESS
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
 	bool "Nexus server"
-    depends on BR2_PACKAGE_BCM_REFSW
+        depends on BR2_PACKAGE_BCM_REFSW
 	help
 	  Include a nxserver with the compositor.
 
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_BOXMODE
+        string "Memory Box Mode"
+        depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
+        help
+          Memory box mode, you can find details from release notes per platform
+
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_ALLOW_UNAUTHENTICATED_CLIENTS
 	bool "Allow unauthenticated clients"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
+        depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
 	default n
 	help
 	  Allow unauthenticated clients on the nxserver.
 
+       
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_GRAPHICS_HEAP_SIZE
-	string "graphics heap (bytes)"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
+	string "graphics heap (MB)"
+        depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
 	default  100
 	help
 	  The ammount of memory in MB to be configured for the GPU.
