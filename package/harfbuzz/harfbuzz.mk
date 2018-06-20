@@ -8,9 +8,9 @@ HARFBUZZ_VERSION = 1.4.4
 ifeq ($(BR2_PACKAGE_NETFLIX),y)
 HARFBUZZ_VERSION = 1.0.1
 endif
-#ifeq ($(BR2_PACKAGE_NETFLIX5),y)
+ifeq ($(BR2_PACKAGE_NETFLIX5),y)
 HARFBUZZ_VERSION = 1.4.2
-#endif
+endif
 HARFBUZZ_SITE = https://www.freedesktop.org/software/harfbuzz/release
 HARFBUZZ_SOURCE = harfbuzz-$(HARFBUZZ_VERSION).tar.bz2
 HARFBUZZ_LICENSE = MIT, ISC (ucdn library)
