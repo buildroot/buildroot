@@ -4,8 +4,13 @@
 #
 ################################################################################
 
+ifeq ($(BR2_PACKAGE_VSS_SDK),y)
+LIBSOUP_VERSION_MAJOR = 2.52
+LIBSOUP_VERSION = $(LIBSOUP_VERSION_MAJOR).2
+else
 LIBSOUP_VERSION_MAJOR = 2.56
 LIBSOUP_VERSION = $(LIBSOUP_VERSION_MAJOR).0
+endif
 LIBSOUP_SOURCE = libsoup-$(LIBSOUP_VERSION).tar.xz
 LIBSOUP_SITE = http://ftp.gnome.org/pub/gnome/sources/libsoup/$(LIBSOUP_VERSION_MAJOR)
 LIBSOUP_LICENSE = LGPLv2+
