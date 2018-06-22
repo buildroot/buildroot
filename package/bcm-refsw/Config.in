@@ -119,6 +119,11 @@ config BR2_PACKAGE_PROVIDES_LIBEGL
 config BR2_PACKAGE_PROVIDES_LIBGLES
 	default "bcm-refsw"
 
+config BR2_PACKAGE_NEXUS_REMOVE_OPUS
+	depends on BR2_PACKAGE_HAS_NEXUS
+	bool "disable opus"
+        default n
+
 config BR2_PACKAGE_BCM_REFSW_EGLCUBE
 	bool "eglcube"
 	default n
