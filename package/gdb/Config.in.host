@@ -79,6 +79,7 @@ endif
 config BR2_PACKAGE_GDB_NEEDS_CXX11
 	bool
 	default y if BR2_GDB_VERSION_8_0
+	default y if BR2_arc
 
 # If cross-gdb is not enabled, the latest working version is chosen.
 config BR2_GDB_VERSION
