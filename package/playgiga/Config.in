@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PLAYGIGA
+    bool "playgiga"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_6
+	select BR2_PACKAGE_LIBCURL
+	select BR2_PACKAGE_OPUS
+
+comment "playgiga client source needs a toolchain gcc >= 6.0"
+
