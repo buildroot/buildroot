@@ -1,4 +1,10 @@
-WPEFRAMEWORK_DIALSERVER_VERSION = 996317ec8abb9fbd9a96e6f0797fdbefd3b0f3bb
+################################################################################
+#
+# wpeframework-dialserver
+#
+################################################################################
+
+WPEFRAMEWORK_DIALSERVER_VERSION = d9766822925b8f2cceafb08b4460826c2ba9d709
 WPEFRAMEWORK_DIALSERVER_SITE_METHOD = git
 WPEFRAMEWORK_DIALSERVER_SITE = git@github.com:WebPlatformForEmbedded/WPEPluginDIAL.git
 WPEFRAMEWORK_DIALSERVER_INSTALL_STAGING = YES
