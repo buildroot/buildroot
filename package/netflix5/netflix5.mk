@@ -4,12 +4,11 @@
 #
 ################################################################################
 
-NETFLIX5_VERSION = 59992602fde52e21c33934010bbffe6348962c78
+NETFLIX5_VERSION = 40024f8efef90c22ca0d7e86256aaec0edd321a4
 NETFLIX5_SITE = git@github.com:Metrological/netflix.git
 NETFLIX5_SITE_METHOD = git
 NETFLIX5_LICENSE = PROPRIETARY
-# TODO: check if all deps are really needed, e.g. decoders once gstreamer sink is selected
-NETFLIX5_DEPENDENCIES = freetype icu jpeg libpng libmng webp harfbuzz expat openssl c-ares libcurl graphite2 libvpx tremor libvorbis libogg nghttp2 ffmpeg wpeframework
+NETFLIX5_DEPENDENCIES = freetype icu jpeg libpng libmng webp harfbuzz expat openssl c-ares libcurl graphite2 nghttp2 wpeframework playready gst1-plugins-base
 NETFLIX5_INSTALL_TARGET = YES
 NETFLIX5_INSTALL_STAGING = YES
 NETFLIX5_SUBDIR = netflix
@@ -20,7 +19,6 @@ NETFLIX_CONF_ENV += TARGET_CROSS="$(GNU_TARGET_NAME)-"
 
 # TODO: disable hardcoded build type, check if all args are really needed.
 NETFLIX5_CONF_OPTS = \
-	-DCMAKE_BUILD_TYPE=Debug \
 	-DBUILD_DPI_DIRECTORY=$(@D)/partner/dpi \
 	-DCMAKE_INSTALL_PREFIX=$(@D)/release \
 	-DCMAKE_OBJCOPY="$(TARGET_CROSS)objcopy" \
@@ -37,7 +35,9 @@ NETFLIX5_CONF_OPTS = \
 	-DDPI_SINK_INTERFACE_IMPLEMENTATION=gstreamer \
 	-DBUILD_DEBUG=OFF -DNRDP_HAS_GIBBON_QA=ON -DNRDP_HAS_MUTEX_STACK=ON -DNRDP_HAS_OBJECTCOUNT=ON \
 	-DBUILD_PRODUCTION=OFF -DNRDP_HAS_QA=ON -DBUILD_SMALL=OFF -DBUILD_SYMBOLS=ON -DNRDP_HAS_TRACING=OFF \
-	-DNRDP_CRASH_REPORTING=breakpad
+	-DNRDP_CRASH_REPORTING=breakpad \
+	-DNRDP_HAS_AUDIOMIXER=OFF \
+	-DDPI_SINK_INTERFACE_OVERRIDE_APPBOOT=ON
 
 ifeq ($(BR2_PACKAGE_NETFLIX5_LIB), y)
 NETFLIX5_CONF_OPTS += -DGIBBON_MODE=shared
@@ -245,10 +245,24 @@ define NETFLIX5_INSTALL_STAGING_CMDS
 	find output/staging/usr/include/netflix/nrdbase/ -name "*.h" -exec sed -i "s/^#include \"\.\.\/\.\.\//#include \"/g" {} \;
 	find output/staging/usr/include/netflix/nrd/ -name "*.h" -exec sed -i "s/^#include \"\.\.\/\.\.\//#include \"/g" {} \;
 	find output/staging/usr/include/netflix/nrdnet/ -name "*.h" -exec sed -i "s/^#include \"\.\.\/\.\.\//#include \"/g" {} \;
+
+	mkdir -p $(TARGET_DIR)/root/Netflix
+	cp -r $(@D)/netflix/src/platform/gibbon/resources/gibbon/fonts $(TARGET_DIR)/root/Netflix
+	cp -r $(@D)/netflix/resources/etc $(TARGET_DIR)/root/Netflix
+	mkdir -p $(TARGET_DIR)/root/Netflix/etc/conf
+	cp -r $(@D)/netflix/src/platform/gibbon/resources/configuration/* $(TARGET_DIR)/root/Netflix/etc/conf
+	cp -r $(@D)/netflix/src/platform/gibbon/resources/gibbon/icu $(TARGET_DIR)/root/Netflix
+	cp -r $(@D)/netflix/src/platform/gibbon/resources $(TARGET_DIR)/root/Netflix
+	cp -r $(@D)/netflix/resources/configuration/* $(TARGET_DIR)/root/Netflix/etc/conf
+	cp $(@D)/partner/graphics/nexus/graphics.xml $(TARGET_DIR)/root/Netflix/etc/conf
+	cp $(@D)/netflix/src/platform/gibbon/resources/gibbon/icu/icudt58l/debug/unames.icu $(TARGET_DIR)/root/Netflix/icu/icudt58l
+	cp $(@D)/netflix/src/platform/gibbon/*.js* $(TARGET_DIR)/root/Netflix/resources/js
+	cp $(@D)/netflix/src/platform/gibbon/resources/default/PartnerBridge.js $(TARGET_DIR)/root/Netflix/resources/js
 endef
 
 define NETFLIX5_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/libnetflix.so $(TARGET_DIR)/usr/lib
+	$(STRIPCMD) $(TARGET_DIR)/usr/lib/libnetflix.so
 endef
 
 else
