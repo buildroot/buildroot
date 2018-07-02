@@ -1,7 +1,8 @@
-From 8bbfc986086dd74bd512ed481e412b6ffc86ae71 Mon Sep 17 00:00:00 2001
+From 19e02587185eb53e37faf16b8d6bfe08955742b5 Mon Sep 17 00:00:00 2001
 From: Carlos Garcia Campos <cgarcia@igalia.com>
 Date: Thu, 17 May 2018 08:18:33 +0200
-Subject: [PATCH] soup-cookie-jar: add API to set a limit of cookies in a jar
+Subject: [PATCH 1/2] soup-cookie-jar: add API to set a limit of cookies in a
+ jar
 
 ---
  libsoup/soup-cookie-jar.c | 25 ++++++++++++++++++++++++-
@@ -9,19 +10,19 @@ Subject: [PATCH] soup-cookie-jar: add API to set a limit of cookies in a jar
  2 files changed, 27 insertions(+), 1 deletion(-)
 
 diff --git a/libsoup/soup-cookie-jar.c b/libsoup/soup-cookie-jar.c
-index 2369c8a7..5c1570a3 100644
+index d12bc85a..a4d14a81 100644
 --- a/libsoup/soup-cookie-jar.c
 +++ b/libsoup/soup-cookie-jar.c
-@@ -50,6 +50,8 @@ typedef struct {
+@@ -55,6 +55,8 @@ typedef struct {
  	GHashTable *domains, *serials;
  	guint serial;
  	SoupCookieJarAcceptPolicy accept_policy;
 +	guint64 n_cookies;
 +	guint64 limit;
  } SoupCookieJarPrivate;
+ #define SOUP_COOKIE_JAR_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), SOUP_TYPE_COOKIE_JAR, SoupCookieJarPrivate))
  
- static void soup_cookie_jar_session_feature_init (SoupSessionFeatureInterface *feature_interface, gpointer interface_data);
-@@ -234,6 +236,18 @@ soup_cookie_jar_new (void)
+@@ -233,6 +235,18 @@ soup_cookie_jar_new (void)
  	return g_object_new (SOUP_TYPE_COOKIE_JAR, NULL);
  }
  
@@ -33,16 +34,16 @@ index 2369c8a7..5c1570a3 100644
 +
 +	g_return_if_fail (SOUP_IS_COOKIE_JAR (jar));
 +
-+	priv = soup_cookie_jar_get_instance_private (jar);
++	priv = SOUP_COOKIE_JAR_GET_PRIVATE (jar);
 +	priv->limit = limit;
 +}
 +
  /**
   * soup_cookie_jar_save:
   * @jar: a #SoupCookieJar
-@@ -258,10 +272,13 @@ soup_cookie_jar_changed (SoupCookieJar *jar,
+@@ -257,10 +271,13 @@ soup_cookie_jar_changed (SoupCookieJar *jar,
  {
- 	SoupCookieJarPrivate *priv = soup_cookie_jar_get_instance_private (jar);
+ 	SoupCookieJarPrivate *priv = SOUP_COOKIE_JAR_GET_PRIVATE (jar);
  
 -	if (old && old != new)
 +	if (old && old != new) {
@@ -55,7 +56,7 @@ index 2369c8a7..5c1570a3 100644
  		g_hash_table_insert (priv->serials, new, GUINT_TO_POINTER (priv->serial));
  	}
  
-@@ -499,6 +516,12 @@ soup_cookie_jar_add_cookie (SoupCookieJar *jar, SoupCookie *cookie)
+@@ -498,6 +515,12 @@ soup_cookie_jar_add_cookie (SoupCookieJar *jar, SoupCookie *cookie)
  		return;
  	}
  
@@ -83,5 +84,5 @@ index e77f8ab3..48256b16 100644
  								       SoupURI                   *uri,
  								       gboolean                   for_http);
 -- 
-2.17.0
+2.18.0
 
