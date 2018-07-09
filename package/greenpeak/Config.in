@@ -1,28 +1,29 @@
 config BR2_PACKAGE_GREENPEAK
 	bool "greenpeak"
-	depends on BR2_arm
 	help
 	  Greenpeak kernel drivers.
 
 if BR2_PACKAGE_GREENPEAK
 
-config BR2_PACKAGE_GREENPEAK_USERLANDLIB
+config BR2_PACKAGE_GREENPEAK_KERNEL_MODULE
+	bool "kernel module"
+	help
+	  Build the kernel module
+
+config BR2_PACKAGE_GREENPEAK_LIB
 	bool "userland library"
 	help
 	  Build a Rf4ce library for use by appplications working with 
 	  the greenpeak chip in stead of building an application that 
 	  reads keys from an Rf4ce remote and ingest them into the 
 	  linux input system.
-	  
-config BR2_PACKAGE_GREENPEAK_TEST_TOOLS
-	bool "test tools"
+      
+config BR2_PACKAGE_GREENPEAK_DEVICE_NODE_PATH
+	string "device node"
+	default /dev/gpK5 if BR2_PACKAGE_GREENPEAK_GP501 || BR2_PACKAGE_GREENPEAK_GP510 || BR2_PACKAGE_GREENPEAK_GP711
+	default /dev/gpK7C if BR2_PACKAGE_GREENPEAK_GP502 || BR2_PACKAGE_GREENPEAK_GP712
 	help
-	  Build a few test tool for greenpeak module.
-	  
-config BR2_PACKAGE_GREENPEAK_RPI_FIRMWARE
-	bool "Install GreenPeak RPi firmware"
-	help
-	  Overwrite current firmware with GreenPeak RPi compatible firmware.
+	  Full path to the greenpeak device node that is on the system.
 
 choice
 	prompt "Greenpeak Type"
@@ -30,17 +31,14 @@ choice
 	help
 	  Select the version of uClibc you wish to use.
 
-	config BR2_PACKAGE_GREENPEAK_GP500
-		bool "GP500"
-
 	config BR2_PACKAGE_GREENPEAK_GP501
 		bool "GP501"
 
+	config BR2_PACKAGE_GREENPEAK_GP502
+		bool "GP502"
+
 	config BR2_PACKAGE_GREENPEAK_GP510
 		bool "GP510"
-
-	config BR2_PACKAGE_GREENPEAK_GP710
-		bool "GP710"
 
 	config BR2_PACKAGE_GREENPEAK_GP711
 		bool "GP711"
@@ -52,10 +50,9 @@ endchoice
 
 config BR2_PACKAGE_GREENPEAK_TYPE
 	string
-	default GP500 if BR2_PACKAGE_GREENPEAK_GP500
 	default GP501 if BR2_PACKAGE_GREENPEAK_GP501
+	default GP502 if BR2_PACKAGE_GREENPEAK_GP502
 	default GP510 if BR2_PACKAGE_GREENPEAK_GP510
-	default GP710 if BR2_PACKAGE_GREENPEAK_GP710
 	default GP711 if BR2_PACKAGE_GREENPEAK_GP711
 	default GP712 if BR2_PACKAGE_GREENPEAK_GP712
 

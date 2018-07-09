@@ -3,56 +3,45 @@
 # greenpeak rf4ce
 #
 ################################################################################
-GREENPEAK_VERSION = 63da7153b7d484b877b7b22bec6c5b32fc4c9da9
+GREENPEAK_CHIP = $(call qstrip,$(BR2_PACKAGE_GREENPEAK_TYPE))
 GREENPEAK_SITE_METHOD = git
 GREENPEAK_SITE = git@github.com:Metrological/greenpeak.git
-GREENPEAK_DEPENDENCIES = linux rpi-firmware
-
-GREENPEAK_CHIP = $(call qstrip,$(BR2_PACKAGE_GREENPEAK_TYPE))
-
-ifeq ($(BR2_PACKAGE_RPI_FIRMWARE),y)
-GREENPEAK_DEPENDENCIES += rpi-firmware
-endif
-
-ifeq ($(BR2_PACKAGE_GREENPEAK_USERLANDLIB),y)
-GREENPEAK_ARTIFACT = libRf4ce.a
+GREENPEAK_DEPENDENCIES = linux
 GREENPEAK_INSTALL_STAGING = YES
+GREENPEAK_REPO_VERSION = 1.0
 
-ifeq ($(BR2_PACKAGE_RPI_FIRMWARE),y)
-define GREENPEAK_INSTALL_DTS
-	$(INSTALL) -D -m 0644 $(@D)/devicetree/gp501.dtbo $(BINARIES_DIR)/rpi-firmware/overlays/
-endef
-endif
-
-define GREENPEAK_INSTALL_STAGING_CMDS
-	$(INSTALL) -d -m 755 $(STAGING_DIR)/usr/include/greenpeak
-	$(INSTALL) -D -m 0644 $(@D)/ZRCTarget_GP501_RPi/libRf4ce.a $(STAGING_DIR)/usr/lib/ 
-	$(INSTALL) -D -m 0644 $(@D)/ZRCTarget_GP501_RPi/code/Work/ZRCTarget_GP501_RPi/libZRCTarget_GP501_RPi.a $(STAGING_DIR)/usr/lib/libGP501.a
-	$(INSTALL) -D package/greenpeak/rf4ce.pc $(STAGING_DIR)/usr/lib/pkgconfig/rf4ce.pc
-	cp -r $(@D)/ZRCTarget_GP501_RPi/code/BaseComps/v2.4.5.2/comps/* $(STAGING_DIR)/usr/include/greenpeak;
-    cp -r $(@D)/ZRCTarget_GP501_RPi/code/BaseComps/v2.4.5.2/inc/* $(STAGING_DIR)/usr/include/greenpeak; 
-endef
-
-define GREENPEAK_INSTALL_TARGET_CMDS
-	$(INSTALL) -D -m 0755 package/greenpeak/S40greenpeak $(TARGET_DIR)/etc/init.d
-	$(GREENPEAK_INSTALL_MODULE)
-	$(GREENPEAK_INSTALL_DTS)
-	$(GREENPEAK_INSTALL_UEI_REF)
-	$(GREENPEAK_INSTALL_GREENPEAK_RPI_FIRMWARE)
-endef
-
+ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
+  GREENPEAK_PLATFORM = brcm
+else ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
+  GREENPEAK_PLATFORM = rpi
 else
+  $(error "Chosen platform is not supported.")
+endif
 
-GREENPEAK_ARTIFACT = "GP_APPLICATION=1"
+ifneq (,$(findstring $(GREENPEAK_CHIP), GP501 GP510 GP711))
+  GREENPEAK_CHIP_REPO = gp501
+else ifneq (,$(findstring $(GREENPEAK_CHIP), GP502 GP712))
+  GREENPEAK_CHIP_REPO = gp712
+else
+  $(error "Chip ${GREENPEAK_CHIP} is not supported.")
+endif
 
-define GREENPEAK_INSTALL_TARGET_CMDS
-	$(INSTALL) -D -m 0755 $(@D)/ZRCTarget_GP501_RPi/Work/ZRCTarget_GP501_RPi.elf $(TARGET_DIR)/usr/bin/zrc
-	$(INSTALL) -D -m 0755 package/greenpeak/S40greenpeak $(TARGET_DIR)/etc/init.d
-	$(GREENPEAK_INSTALL_MODULE)
-	$(GREENPEAK_INSTALL_GREENPEAK_RPI_FIRMWARE)
+GREENPEAK_VERSION = ${GREENPEAK_CHIP_REPO}_${GREENPEAK_PLATFORM}_${ARCH}_${GREENPEAK_REPO_VERSION}
+
+ifeq ($(BR2_PACKAGE_GREENPEAK_KERNEL_MODULE),y)
+GREENPEAK_EXTRA_MOD_CFLAGS = \
+     -D$(GREENPEAK_CHIP) \
+     
+define GREENPEAK_BUILD_MODULE
+	 $(MAKE) -C $(LINUX_DIR) $(LINUX_MAKE_FLAGS) GP_CHIP=$(GREENPEAK_CHIP) EXTRA_CFLAGS="$(GREENPEAK_EXTRA_MOD_CFLAGS)" M=$(@D)/Driver modules
+endef
+
+define GREENPEAK_INSTALL_MODULE
+	$(MAKE) -C $(LINUX_DIR) $(LINUX_MAKE_FLAGS) M=$(@D)/Driver modules_install
 endef
 endif
 
+ifeq ($(BR2_PACKAGE_GREENPEAK_LIB),y)
 GREENPEAK_EXTRA_CFLAGS = \
 	-std=gnu99 \
 	-fomit-frame-pointer \
@@ -60,45 +49,34 @@ GREENPEAK_EXTRA_CFLAGS = \
 	-fPIC \
 	-ffreestanding \
 	-DGP_NVM_PATH=/root/gp \
-	-DGP_NVM_FILENAME=/root/gp/gpNvm.dat 
-    
-GREENPEAK_EXTRA_MOD_CFLAGS = \
-     -D$(GREENPEAK_CHIP) \
-     -I$(@D)/driver/RPi_3_2_27 \
-     
-define GREENPEAK_BUILD_MODULE
-	 $(MAKE) -C $(LINUX_DIR) $(LINUX_MAKE_FLAGS) GP_CHIP=$(GREENPEAK_CHIP) EXTRA_CFLAGS="$(GREENPEAK_EXTRA_MOD_CFLAGS)" M=$(@D)/driver modules
+	-DGP_NVM_FILENAME=/root/gp/gpNvm.dat
+	-DGP_DEVICE_PATH=${BR2_PACKAGE_GREENPEAK_DEVICE_NODE_PATH}
+
+define GREENPEAK_BUILD_LIB
+    $(info "Building RF4CE lib")
+	$(MAKE1) -C $(@D)/Stack clean
+	COMPILER=buildroot $(TARGET_MAKE_ENV) $(MAKE1) TOOLCHAIN="$(HOST_DIR)/usr" CROSS_COMPILE="$(GNU_TARGET_NAME)-" CFLAGS_COMPILER="$(TARGET_CFLAGS) $(GREENPEAK_EXTRA_CFLAGS)" -C $(@D)/Stack archive
 endef
 
-define GREENPEAK_INSTALL_MODULE
-	$(MAKE) -C $(LINUX_DIR) $(LINUX_MAKE_FLAGS) M=$(@D)/driver modules_install
-endef
-
-ifeq ($(BR2_PACKAGE_GREENPEAK_RPI_FIRMWARE),y)
-define GREENPEAK_INSTALL_GREENPEAK_RPI_FIRMWARE
-	$(INSTALL) -D -m 0644 $(@D)/rpi-firmware/start.elf $(BINARIES_DIR)/gp-rpi-firmware/start.elf
-	$(INSTALL) -D -m 0644 $(@D)/rpi-firmware/fixup.dat $(BINARIES_DIR)/gp-rpi-firmware/fixup.dat
-	$(INSTALL) -D -m 0644 $(@D)/rpi-firmware/config.txt $(BINARIES_DIR)/gp-rpi-firmware/config.txt
+define GREENPEAK_INSTALL_LIB_DEV
+    $(INSTALL) -m 755 -d $(1)/usr/include/qorvo
+    cp -a $(@D)/Stack/Work/bin/include/* $(1)/usr/include/qorvo
+    $(INSTALL) -m 750 -D $(@D)/Stack/Work/bin/qorvo-rf4ce.pc $(1)/usr/lib/pkgconfig/rf4ce.pc
+    $(INSTALL) -m 750 -D $(@D)/Stack/Work/bin/*.a $(1)/usr/lib
 endef
 endif
 
-ifeq ($(BR2_PACKAGE_GREENPEAK_TEST_TOOLS),y)  
-define GREENPEAK_BUILD_UEI_REF
-    COMPILER=buildroot $(TARGET_MAKE_ENV) $(MAKE1) TOOLCHAIN="$(HOST_DIR)/usr" CROSS_COMPILE="$(GNU_TARGET_NAME)-" CFLAGS_COMPILER="$(TARGET_CFLAGS) $(GREENPEAK_EXTRA_CFLAGS)" -C $(@D)/testapp all
-	COMPILER=buildroot $(TARGET_MAKE_ENV) $(MAKE1) TOOLCHAIN="$(HOST_DIR)/usr" CROSS_COMPILE="$(GNU_TARGET_NAME)-" CFLAGS_COMPILER="$(TARGET_CFLAGS) $(GREENPEAK_EXTRA_CFLAGS)" -C $(@D)/RefTarget_ZRC_MSO_$(GREENPEAK_CHIP)_RPi all
-	COMPILER=buildroot $(TARGET_MAKE_ENV) $(MAKE1) TOOLCHAIN="$(HOST_DIR)/usr" CROSS_COMPILE="$(GNU_TARGET_NAME)-" CFLAGS_COMPILER="$(TARGET_CFLAGS) $(GREENPEAK_EXTRA_CFLAGS)" -C $(@D)/ZRCTarget_$(GREENPEAK_CHIP)_RPi "GP_APPLICATION=1"
+define GREENPEAK_INSTALL_STAGING_CMDS
+	$(call GREENPEAK_INSTALL_LIB_DEV, $(STAGING_DIR))
 endef
-define GREENPEAK_INSTALL_UEI_REF
-    $(INSTALL) -D -m 0755 $(@D)/RefTarget_ZRC_MSO_$(GREENPEAK_CHIP)_RPi/Work/RefTarget_ZRC_MSO_GP501_RPi.elf $(TARGET_DIR)/usr/bin
-	$(INSTALL) -D -m 0755 $(@D)/ZRCTarget_GP501_RPi/Work/ZRCTarget_GP501_RPi.elf $(TARGET_DIR)/usr/bin
-	$(INSTALL) -D -m 0755 $(@D)/testapp/work/TestKernelDriver_GP501_RPi.elf $(TARGET_DIR)/usr/bin
+
+define GREENPEAK_INSTALL_TARGET_CMDS
+    $(call GREENPEAK_INSTALL_MODULE)
 endef
-endif
 
 define GREENPEAK_BUILD_CMDS
-	COMPILER=buildroot $(TARGET_MAKE_ENV) $(MAKE1) TOOLCHAIN="$(HOST_DIR)/usr" CROSS_COMPILE="$(GNU_TARGET_NAME)-" CFLAGS_COMPILER="$(TARGET_CFLAGS) $(GREENPEAK_EXTRA_CFLAGS)" -C $(@D)/ZRCTarget_$(GREENPEAK_CHIP)_RPi ${GREENPEAK_ARTIFACT}
-	$(GREENPEAK_BUILD_MODULE)
-	$(GREENPEAK_BUILD_UEI_REF)
+    $(call GREENPEAK_BUILD_MODULE)
+    $(call GREENPEAK_BUILD_LIB)
 endef
 
 $(eval $(generic-package))
