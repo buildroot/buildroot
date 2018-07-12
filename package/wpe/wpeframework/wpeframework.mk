@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_VERSION = be047c9e599cde1e859df51d0c690c7c1f78bc06
+WPEFRAMEWORK_VERSION = 9a878ca00ab3edb24973e26f72cdac468a6e5fd2
 WPEFRAMEWORK_SITE = $(call github,WebPlatformForEmbedded,WPEFramework,$(WPEFRAMEWORK_VERSION))
 WPEFRAMEWORK_INSTALL_STAGING = YES
 WPEFRAMEWORK_DEPENDENCIES = zlib
