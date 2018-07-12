@@ -26,9 +26,17 @@ endif
 PLAYGIGA_CONF_OPTS = \
         $(PLAYGIGA_FLAGS)
 
+ifeq ($(BR2_PACKAGE_PLAYGIGA_APP),y)
+PLAYGIGA_CONF_OPTS += -DPLAYGIGA_APP=true
 define PLAYGIGA_INSTALL_IMAGE
 	cp -a $(@D)/$(PLATFORM_DIR)/bin/pgclient $(TARGET_DIR)/usr/bin
 endef
+else
+PLAYGIGA_CONF_OPTS += -DPLAYGIGA_APP=false
+define PLAYGIGA_INSTALL_IMAGE
+        cp -a $(@D)/$(PLATFORM_DIR)/lib/libpgclient.so $(TARGET_DIR)/usr/lib
+endef
+endif
 
 define PLAYGIGA_BUILD_CMDS
 	$(HOST_DIR)/usr/bin/cmake $(@D)/$(PLATFORM_DIR)/CMakeLists.txt \
