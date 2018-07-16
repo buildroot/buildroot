@@ -4,11 +4,9 @@
 #
 ################################################################################
 
-#WPETVPLATFORM_BCM_VERSION = 83cd315a5373730abdeda7e4c06e2bd45ff6390e
-#WPETVPLATFORM_BCM_SITE_METHOD = git
-#WPETVPLATFORM_BCM_SITE = git@github.com:WebPlatformForEmbedded/WPETVPlatformBCM.git
-WPETVPLATFORM_BCM_SITE_METHOD = local
-WPETVPLATFORM_BCM_SITE = /space/metro/br/7425_TV/WPETVPlatformBCM
+WPETVPLATFORM_BCM_VERSION = 83cd315a5373730abdeda7e4c06e2bd45ff6390e
+WPETVPLATFORM_BCM_SITE_METHOD = git
+WPETVPLATFORM_BCM_SITE = git@github.com:WebPlatformForEmbedded/WPETVPlatformBCM.git
 WPETVPLATFORM_BCM_INSTALL_STAGING = YES
 WPETVPLATFORM_BCM_DEPENDENCIES = wpeframework
 
