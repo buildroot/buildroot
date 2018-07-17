@@ -27,7 +27,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_OUTOFPROCESS
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
 	bool "Nexus server"
-        depends on BR2_PACKAGE_BCM_REFSW
+        depends on BR2_PACKAGE_HAS_NEXUS
 	help
 	  Include a nxserver with the compositor.
 
