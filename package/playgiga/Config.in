@@ -4,5 +4,13 @@ config BR2_PACKAGE_PLAYGIGA
 	select BR2_PACKAGE_LIBCURL
 	select BR2_PACKAGE_OPUS
 
-comment "playgiga client source needs a toolchain gcc >= 6.0"
+if BR2_PACKAGE_PLAYGIGA
+config BR2_PACKAGE_PLAYGIGA_APP
+    bool "Create playgiga app"
+    default n
+    help
+       This option allows to create playgiga app,
+       default is playgiga shared library
+endif
 
+comment "playgiga client source needs a toolchain gcc >= 6.0"
