@@ -90,7 +90,7 @@ ifeq ($(BR2_PACKAGE_PLATFORM_RASPBERRY_PI),y)
 WPEFRAMEWORK_PLUGINS_POST_INSTALL_TARGET_HOOKS += WPEFRAMEWORK_COMPOSITOR_POST_TARGET_INITD
 define WPEFRAMEWORK_COMPOSITOR_POST_TARGET_INITD
     mkdir -p $(TARGET_DIR)/etc/init.d
-    $(INSTALL) -D -m 0755 package/wpe/wpeframework-plugins/S90WPEFrameworkBluetooth $(TARGET_DIR)/etc/init.d
+    $(INSTALL) -D -m 0755 package/wpe/wpeframework-plugins/S35WPEFrameworkBluetooth $(TARGET_DIR)/etc/init.d
 endef
 endif
 endif
