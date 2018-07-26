@@ -136,6 +136,33 @@ if BR2_PACKAGE_WPEFRAMEWORK_CDMI
 source "package/wpe/wpeframework-cdmi/Config.in"
 endif
 
+config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
+	bool "Bluetooth"
+	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+	select BR2_PACKAGE_BLUEZ5_UTILS
+	select BR2_PACKAGE_BLUEZ_ALSA
+	default y
+	help
+		A Bluetooth plugin to interact with Bluetooth devices.
+
+if BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
+choice
+	bool "Select Platform"
+	default BR2_PACKAGE_PLATFORM_RASPBERRY_PI
+	help
+		Choose Platform.
+
+menuconfig BR2_PACKAGE_PLATFORM_RASPBERRY_PI
+	bool "Raspberry Pi"
+	help
+		Enable Raspberry Pi Platform.
+
+menuconfig BR2_PACKAGE_PLATFORM_BCMXXXX
+	bool "BCM Platform"
+	help
+		Enable BCM Platform.
+endchoice
+endif
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL
 	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS

@@ -7,8 +7,9 @@ GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
 
 echo "Post-image: processing $@"
 
+BLUETOOTH="$(grep ^BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH=y ${BR2_CONFIG})"
 COBALT="$(grep ^BR2_PACKAGE_COBALT=y ${BR2_CONFIG})"
-if [ "x${COBALT}" != "x" ]; then
+if [ "x${COBALT}" != "x" ] || [ "x${BLUETOOTH}" != "x" ]; then
 	if ! grep -qE '^dtparam=audio=on' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
 		echo "Adding 'dtparam=audio=on' to config.txt."
 		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
@@ -33,13 +34,15 @@ __EOF__
 	fi
 	;;
 	--add-pi3-miniuart-bt-overlay)
-	if ! grep -qE '^dtoverlay=pi3-miniuart-bt' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
-		echo "Adding 'dtoverlay=pi3-miniuart-bt' to config.txt (fixes ttyAMA0 serial console)."
-		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+	if [ "x${BLUETOOTH}" == "x" ]; then
+		if ! grep -qE '^dtoverlay=pi3-miniuart-bt' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+			echo "Adding 'dtoverlay=pi3-miniuart-bt' to config.txt (fixes ttyAMA0 serial console)."
+			cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
 
 # Fixes rpi3 ttyAMA0 serial console
 dtoverlay=pi3-miniuart-bt
 __EOF__
+		fi
 	fi
 	;;
 	--tvmode-720)

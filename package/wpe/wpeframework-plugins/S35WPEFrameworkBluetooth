@@ -1,0 +1,59 @@
+#!/bin/sh
+
+start() {
+    echo -n "Running bluetooth startup script"
+    if [ -f /usr/bin/hciattach ]; then
+        echo -n "Flashing Blutooth firmware"
+        /usr/bin/hciattach /dev/ttyAMA0 bcm43xx 921600 noflow
+        if [ ! -d "/sys/class/bluetooth/hci0" ]; then
+            sleep 3
+            /usr/bin/hciattach /dev/ttyAMA0 bcm43xx 921600 noflow
+            [ $? == 0 ] && echo "OK" || echo "FAIL"
+        else
+            echo "OK"
+        fi
+    fi
+
+    if [ -f /usr/libexec/bluetooth/bluetoothd ]; then
+        echo -n "Starting bluetoothd daemon"
+        /usr/libexec/bluetooth/bluetoothd &
+        [ $? == 0 ] && echo "OK" || echo "FAIL"
+    fi
+
+    if [ -f /usr/bin/bluealsa ]; then
+        echo -n "Starting bluealsa daemon"
+        /usr/bin/bluealsa &
+        [ $? == 0 ] && echo "OK" || echo "FAIL"
+    fi
+}
+stop() {
+	echo -n "Stopping bluetoothd daemon"
+	killall -9 bluetoothd
+	[ $? == 0 ] && echo "OK" || echo "FAIL"
+
+	echo -n "Stopping bluealsa daemon"
+	killall -9 bluealsa
+	[ $? == 0 ] && echo "OK" || echo "FAIL"
+}
+restart() {
+	stop
+	sleep 3
+	start
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	restart|reload)
+		restart
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+esac
+
+exit $?

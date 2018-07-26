@@ -15,7 +15,8 @@ BLUEZ5_UTILS_LICENSE_FILES = COPYING COPYING.LIB
 BLUEZ5_UTILS_CONF_OPTS = 	\
 	--enable-tools 		\
 	--enable-library 	\
-	--disable-cups
+	--disable-cups 	\
+	--enable-deprecated
 
 BLUEZ5_UTILS_DEPENDENCIES += host-python
 
