@@ -1,4 +1,12 @@
 config BR2_PACKAGE_AVN_CLIENT
     bool "avn-client"
 
+if BR2_PACKAGE_AVN_CLIENT
+config BR2_PACKAGE_AVN_CLIENT_APP
+    bool "Create AVN Client App"
+    default n
+    help
+       This option allows to create avn client app,
+       default is avn client library
+endif
 
