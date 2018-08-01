@@ -64,6 +64,14 @@ config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
 	help
 	  DeviceInfo Plugin
 
+config BR2_PACKAGE_WPEFRAMEWORK_DSRESOLUTION
+    depends on BR2_PACKAGE_WPEFRAMEWORK_DUMMYDSHAL
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "DSResolution"
+    default y
+    help
+      DSResolution Plugin
+
 config BR2_PACKAGE_WPEFRAMEWORK_DHCPSERVER
 	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
 	bool "DHCPServer"
