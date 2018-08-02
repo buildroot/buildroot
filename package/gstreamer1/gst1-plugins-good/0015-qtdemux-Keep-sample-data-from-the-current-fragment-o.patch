@@ -1,0 +1,41 @@
+From bfa666506313715af71141c22ba301eec6f059a0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Alicia=20Boya=20Garc=C3=ADa?= <aboya@igalia.com>
+Date: Tue, 31 Jul 2018 12:52:36 +0200
+Subject: [PATCH] qtdemux: Keep sample data from the current fragment only
+ (push mode)
+
+This patch clears the sample table whenever the demuxing of a new
+fragment begins. This avoids increasing memory usage for long videos.
+This behavior was already present when upstream_format_is_time; this
+patch extends it to all push mode operation (e.g. Media Source
+Extensions).
+---
+ gst/isomp4/qtdemux.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index d033f98fd..7bc79388d 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -3889,8 +3889,17 @@ qtdemux_parse_moof (GstQTDemux * qtdemux, const guint8 * buffer, guint length,
+     if (G_UNLIKELY (base_offset < -1))
+       goto lost_offset;
+ 
+-    if (qtdemux->upstream_format_is_time)
++    if (!qtdemux->pullbased) {
++      /* Sample tables can grow enough to be problematic if the system memory
++       * is very low (e.g. embedded devices) and the videos very long
++       * (~8 MiB/hour for 25-30 fps video + typical AAC audio frames).
++       * Fortunately, we can easily discard them for each new fragment when
++       * we know qtdemux will not receive seeks outside of the current fragment.
++       * adaptivedemux honors this assumption.
++       * This optimization is also useful for applications that use qtdemux as
++       * a push-based simple demuxer, like Media Source Extensions. */
+       gst_qtdemux_stream_flush_samples_data (qtdemux, stream);
++    }
+ 
+     /* initialise moof sample data */
+     stream->n_samples_moof = 0;
+-- 
+2.17.0
+
