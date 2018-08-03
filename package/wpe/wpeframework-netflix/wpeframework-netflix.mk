@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_NETFLIX_VERSION = 9735202436138fd1438d47cdd5e17618290990ff
+WPEFRAMEWORK_NETFLIX_VERSION = cf6a61a1985ec34d34b044fceaaa68088512fbdc
 
 ifeq ($(BR2_PACKAGE_NETFLIX5),y)
 # Netflix 5 has a little different API, use "netflix5" branch for now.
-WPEFRAMEWORK_NETFLIX_VERSION = ca237132a3ce7d6be01fbe941fdf9a65bebc2c42
+WPEFRAMEWORK_NETFLIX_VERSION = cf6a61a1985ec34d34b044fceaaa68088512fbdc
 endif
 
 WPEFRAMEWORK_NETFLIX_SITE_METHOD = git
