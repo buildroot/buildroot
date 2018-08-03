@@ -1,0 +1,728 @@
+diff -urN linux.old/drivers/net/ethernet/broadcom/Kconfig linux/drivers/net/ethernet/broadcom/Kconfig
+--- linux.old/drivers/net/ethernet/broadcom/Kconfig	2018-02-14 15:06:22.900096805 +0900
++++ linux/drivers/net/ethernet/broadcom/Kconfig	2018-02-14 15:16:03.640118878 +0900
+@@ -162,4 +162,11 @@
+ 	  Broadcom BCM7xxx Set Top Box family chipset using an internal
+ 	  Ethernet switch.
+ 
++config BCMGENET_TAG
++	tristate "Broadcom Ethernet Tagging support"
++	depends on BRCMSTB && BCMGENET
++	---help---
++	This driver is for the debugging purpose.
++	This is not recommended.
++
+ endif # NET_VENDOR_BROADCOM
+diff -urN linux.old/drivers/net/ethernet/broadcom/genet/Makefile linux/drivers/net/ethernet/broadcom/genet/Makefile
+--- linux.old/drivers/net/ethernet/broadcom/genet/Makefile	2018-02-14 15:06:22.828096803 +0900
++++ linux/drivers/net/ethernet/broadcom/genet/Makefile	2018-02-14 15:15:26.932117483 +0900
+@@ -1,2 +1,3 @@
+ obj-$(CONFIG_BCMGENET) += genet.o
++obj-$(CONFIG_BCMGENET_TAG) += bcmgenet_tag.o
+ genet-objs := bcmgenet.o bcmmii.o bcmgenet_wol.o
+diff -urN linux.old/drivers/net/ethernet/broadcom/genet/bcmgenet.c linux/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+--- linux.old/drivers/net/ethernet/broadcom/genet/bcmgenet.c	2018-02-14 15:06:22.864096804 +0900
++++ linux/drivers/net/ethernet/broadcom/genet/bcmgenet.c	2018-02-14 15:11:23.044108213 +0900
+@@ -48,6 +48,10 @@
+ 
+ #include "bcmgenet.h"
+ 
++#ifdef CONFIG_BCMGENET_TAG
++#include "bcmgenet_tag.h"
++#endif
++
+ /* Maximum number of hardware queues, downsized if needed */
+ #define GENET_MAX_MQ_CNT	4
+ 
+@@ -2186,6 +2190,15 @@
+ 	int ret;
+ 	int i;
+ 
++#ifdef CONFIG_BCMGENET_TAG
++    ret = bcmgenet_tag_fixup(skb, dev);
++    if (!ret)
++    {
++        dev = skb->dev;
++        priv = netdev_priv(dev);
++    }
++#endif
++
+ 	index = skb_get_queue_mapping(skb);
+ 	/* Mapping strategy:
+ 	 * queue_mapping = 0, unclassified, packet xmited through ring16
+@@ -2463,6 +2476,21 @@
+ 		if (dma_flag & DMA_RX_MULT)
+ 			dev->stats.multicast++;
+ 
++#ifdef CONFIG_BCMGENET_TAG
++        if (!strcmp(dev->name, BCMGENET_TAG_PARENT))
++        {
++            int id = bcmgenet_tag_search(skb, dev);
++            if (id >= 0)
++            {
++                struct net_device *alt_dev;
++                alt_dev = bcmgenet_tag_netdev(id);
++                if (alt_dev == NULL)
++                    printk(KERN_INFO "keep original interface " BCMGENET_TAG_PARENT "\n");
++                else
++                    skb->dev = alt_dev;
++            }
++        }
++#endif
+ 		/* Notify kernel */
+ 		napi_gro_receive(&ring->napi, skb);
+ 		netif_dbg(priv, rx_status, dev, "pushed up to kernel\n");
+@@ -4147,6 +4175,24 @@
+ 	if (err)
+ 		goto err;
+ 
++#ifdef CONFIG_BCMGENET_TAG
++    if (!strcmp(dev->name, BCMGENET_TAG_PARENT))
++    {
++        int ret;
++
++        ret = bcmgenet_tag_create(&(pdev->dev), dev);
++        if (ret < 0) {
++            printk(KERN_ERR "%s: can't create bcmgenet tag for %s\n",
++                    __func__, dev->name);
++            return ret;
++        }
++
++#ifdef DEBUG
++        printk(KERN_INFO "%s: bcmgenet %s alias created for %s\n",
++                __func__, dev->name);
++#endif
++    }
++#endif
+ 	return err;
+ 
+ err_clk_disable:
+diff -urN linux.old/drivers/net/ethernet/broadcom/genet/bcmgenet_tag.c linux/drivers/net/ethernet/broadcom/genet/bcmgenet_tag.c
+--- linux.old/drivers/net/ethernet/broadcom/genet/bcmgenet_tag.c	1970-01-01 09:00:00.000000000 +0900
++++ linux/drivers/net/ethernet/broadcom/genet/bcmgenet_tag.c	2018-02-14 15:12:21.776110445 +0900
+@@ -0,0 +1,574 @@
++/*#define DEBUG*/
++
++#include <linux/types.h>
++#include <linux/string.h>
++#include <linux/ctype.h>
++#include <linux/kernel.h>
++#include <linux/export.h>
++#include <linux/bug.h>
++#include <linux/errno.h>
++#include <linux/mii.h>
++#include <linux/ethtool.h>
++#include <linux/netdevice.h>
++#include <linux/inetdevice.h>
++#include <linux/etherdevice.h>
++#include <linux/skbuff.h>
++#include <linux/in.h>
++#include <linux/ip.h>
++#include <linux/ipv6.h>
++#include <linux/phy.h>
++
++struct tag_dev
++{
++    unsigned int tag;
++    unsigned char *name;
++    unsigned char name_assign_type;
++    unsigned char addr[4];
++    struct net_device *dev;
++    bool enable;
++};
++
++struct tag_data
++{
++    unsigned char len_h;
++    unsigned char len_l;
++    unsigned char magic;
++    unsigned char if_num;
++} __attribute((packed));
++
++#define MIN_PACKET_DATA_LEN 60
++#define STB_TAG_LEN (sizeof(struct tag_data))
++#define BRCM_TAG_LEN    0
++
++#define VDEV0_IFNUM    0x0
++#define VDEV1_IFNUM    0x1
++#define VDEV2_IFNUM    0x2
++#define NUM_TAGS       0x03
++#define TAG_MAGIC      0xAA
++
++#define MAX_TAG_DEVS  3
++
++#include "bcmgenet.h"
++#include "bcmgenet_tag.h"
++
++struct tag_priv
++{
++    struct net_device *dev;
++    struct net_device *parent;
++    struct phy_device *phydev;
++};
++
++
++struct tag_dev tag_devs[] = 
++{
++    { VDEV0_IFNUM, "bcm0", NET_NAME_USER, { 192, 168, 17, 10}, NULL, true },
++    { VDEV1_IFNUM, "rgmii_2", NET_NAME_USER, { 0, 0, 0 ,0 }, NULL, false },
++    { VDEV2_IFNUM, "rg0", NET_NAME_USER, { 192, 168, 0, 10}, NULL, true }
++};
++
++#ifdef DEBUG
++static void hex_dump(char *buf, int len)
++{
++    print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE, 
++            16, 1, buf, len, true);
++}
++#endif
++
++void bcmgenet_tag_carrier_on()
++{
++    struct net_device *dev;
++    int id;
++
++    for (id = 0; id < MAX_TAG_DEVS; id++)
++    {
++        dev = tag_devs[id].dev;
++        if (dev != NULL)
++        {
++            netif_carrier_on(tag_devs[id].dev);
++#ifdef DEBUG
++            printk(KERN_INFO "%s is now on\n", dev->name);
++#endif
++        }
++    }
++}
++
++void bcmgenet_tag_carrier_off()
++{
++    struct net_device *dev;
++    int id;
++
++    for (id = 0; id < MAX_TAG_DEVS; id++)
++    {
++        dev = tag_devs[id].dev;
++        if (dev != NULL)
++        {
++            netif_carrier_off(tag_devs[id].dev);
++#ifdef DEBUG
++            printk(KERN_INFO "%s is now off\n", dev->name);
++#endif
++        }
++    }
++}
++
++int bcmgenet_tag_fixup(struct sk_buff *skb, struct net_device *dev) 
++{
++    struct tag_priv *p = netdev_priv(dev);
++    struct net_device *parent = p->parent;
++    struct tag_data *stb_tag;
++    int origin, tailroom, len, pad;
++    int id;
++	int ret;
++
++    for (id = 0; id < MAX_TAG_DEVS; id++)
++        if (skb->dev == tag_devs[id].dev)
++            break;
++
++    if (id == MAX_TAG_DEVS) 
++    {
++#ifdef DEBUG
++        if (!strcmp(dev->name, BCMGENET_TAG_PARENT))
++            printk(KERN_ERR "Cannot find proper netdev for %s\n", dev->name);
++#endif
++        return -1;
++    }
++
++    origin = skb->len;
++#ifdef DEBUG
++    printk(KERN_INFO "original packet length: %d\n", origin);
++#endif
++	
++	
++    if (skb->len < (MIN_PACKET_DATA_LEN - STB_TAG_LEN))
++    {
++        pad = (MIN_PACKET_DATA_LEN - STB_TAG_LEN) - skb->len;
++		tailroom = skb_tailroom(skb);
++        if (tailroom < pad)
++        {
++            int ret = pskb_expand_head(skb, 0, pad - skb_tailroom(skb), GFP_ATOMIC);
++            if (ret < 0)
++            {
++#ifdef DEBUG
++                printk(KERN_ERR "Cannot expand skb\n");
++#endif
++                return ret;
++            }
++        }
++        skb_put(skb, pad);
++#ifdef DEBUG
++    printk(KERN_INFO "1st put packet length: %d\n", skb->len);
++#endif
++	}
++
++    {
++		pad = STB_TAG_LEN;
++		tailroom = skb_tailroom(skb);
++        if (tailroom < pad)
++        {
++            int ret = pskb_expand_head(skb, 0, pad - skb_tailroom(skb), GFP_ATOMIC);
++            if (ret < 0)
++            {
++#ifdef DEBUG
++                printk(KERN_ERR "Cannot expand skb\n");
++#endif
++                return ret;
++            }
++        }		
++        skb_put(skb, pad);
++        len = skb->len - STB_TAG_LEN;
++    }
++	
++#ifdef DEBUG
++    printk(KERN_INFO "put packet length: %d\n", skb->len);
++#endif
++
++    stb_tag = (struct tag_data *)(skb_tail_pointer(skb) - sizeof(struct tag_data));
++    stb_tag->len_h = (unsigned char) (len >> 8);
++    stb_tag->len_l = (unsigned char) (len);
++    stb_tag->magic = (unsigned char) (TAG_MAGIC);
++    stb_tag->if_num = (unsigned char) tag_devs[id].tag;
++
++    skb->dev = parent;
++
++#ifdef DEBUG
++    printk(KERN_INFO "%s: A packet is forwarded from %s to %s\n", __func__, dev->name, skb->dev->name);
++    printk(KERN_INFO "%s: dev=%s, origin=%d, len=%d (pad=%d)\n", 
++            __func__, skb->dev->name, origin, skb->len, pad);
++    hex_dump(skb->data, skb->len);
++#endif
++
++    return 0;
++}
++
++int bcmgenet_tag_search(struct sk_buff *skb, struct net_device *dev)
++{
++    unsigned int f_len;
++    int len = skb->len;
++    int id;
++
++    if (strcmp(dev->name, BCMGENET_TAG_PARENT))
++        return -1;
++
++    f_len = skb->data[len - 2];
++    f_len <<= 8;
++    f_len |= skb->data[len - 1];
++    f_len -= ETH_HLEN;
++
++    id = ((len - f_len) / 2) - 1;
++
++    if (id >= NUM_TAGS)
++        id = VDEV1_IFNUM;
++
++#ifdef DEBUG
++    printk(KERN_INFO "%s: dev=%s, id=%d, len=%d (pad=%d)\n", 
++            __func__, skb->dev->name, id, skb->len, len - f_len);
++    hex_dump(skb->data, skb->len);
++#endif
++
++    skb_trim(skb, f_len);
++
++    return id;
++}
++
++struct net_device* bcmgenet_tag_netdev(int id)
++{
++    if (id < 0 || id > MAX_TAG_DEVS)
++        return NULL;
++
++    return tag_devs[id].dev;
++}
++
++/*
++ * netdev_ops
++ */
++static int bcmgenet_tag_init(struct net_device *dev)
++{
++    struct tag_priv *p = netdev_priv(dev);
++
++    dev->group = p->parent->ifindex;
++
++    return 0;
++}
++
++static int bcmgenet_tag_open(struct net_device *dev)
++{
++    struct tag_priv *p = netdev_priv(dev);
++    struct net_device *parent = p->parent;
++    int err;
++
++    if (!(parent->flags & IFF_UP))
++        return -ENETDOWN;
++
++    if (!ether_addr_equal(dev->dev_addr, parent->dev_addr)) {
++        err = dev_uc_add(parent, dev->dev_addr);
++        if (err < 0)
++            goto out;
++    }
++
++    if (dev->flags & IFF_ALLMULTI) {
++        err = dev_set_allmulti(parent, 1);
++        if (err < 0)
++            goto del_unicast;
++    }
++    if (dev->flags & IFF_PROMISC) {
++        err = dev_set_promiscuity(parent, 1);
++        if (err < 0)
++            goto clear_allmulti;
++    }
++
++    return 0;
++
++clear_allmulti:
++    if (dev->flags & IFF_ALLMULTI)
++        dev_set_allmulti(parent, -1);
++del_unicast:
++    if (!ether_addr_equal(dev->dev_addr, parent->dev_addr))
++        dev_uc_del(parent, dev->dev_addr);
++out:
++    return err;
++}
++
++static int bcmgenet_tag_close(struct net_device *dev)
++{
++    struct tag_priv *p = netdev_priv(dev);
++    struct net_device *parent = p->parent;
++
++    dev_mc_unsync(parent, dev);
++    dev_uc_unsync(parent, dev);
++    if (dev->flags & IFF_ALLMULTI)
++        dev_set_allmulti(parent, -1);
++    if (dev->flags & IFF_PROMISC)
++        dev_set_promiscuity(parent, -1);
++
++    if (!ether_addr_equal(dev->dev_addr, parent->dev_addr))
++        dev_uc_del(parent, dev->dev_addr);
++
++    return 0;
++}
++
++static void bcmgenet_tag_change_rx_flags(struct net_device *dev, int change)
++{
++    struct tag_priv *p = netdev_priv(dev);
++    struct net_device *parent = p->parent;
++
++    if (change & IFF_ALLMULTI)
++        dev_set_allmulti(parent, dev->flags & IFF_ALLMULTI ? 1 : -1);
++    if (change & IFF_PROMISC)
++        dev_set_promiscuity(parent, dev->flags & IFF_PROMISC ? 1 : -1);
++}
++
++static void bcmgenet_tag_set_rx_mode(struct net_device *dev)
++{
++    struct tag_priv *p = netdev_priv(dev);
++    struct net_device *parent = p->parent;
++
++    dev_mc_sync(parent, dev);
++    dev_uc_sync(parent, dev);
++}
++
++static int bcmgenet_tag_set_mac_address(struct net_device *dev, void *a)
++{
++    struct tag_priv *p = netdev_priv(dev);
++    struct net_device *parent = p->parent;
++    struct sockaddr *addr = a;
++    int err;
++
++    if (!is_valid_ether_addr(addr->sa_data))
++        return -EADDRNOTAVAIL;
++
++    if (!(dev->flags & IFF_UP))
++        goto out;
++
++    if (!ether_addr_equal(addr->sa_data, parent->dev_addr)) {
++        err = dev_uc_add(parent, addr->sa_data);
++        if (err < 0)
++            return err;
++    }
++
++    if (!ether_addr_equal(dev->dev_addr, parent->dev_addr))
++        dev_uc_del(parent, dev->dev_addr);
++
++out:
++    ether_addr_copy(dev->dev_addr, addr->sa_data);
++
++    return 0;
++}
++
++static int bcmgenet_tag_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
++{
++    struct tag_priv *p = netdev_priv(dev);
++    struct net_device *parent = p->parent;
++
++    if (parent->phydev != NULL)
++        return phy_mii_ioctl(parent->phydev, ifr, cmd);
++	else{
++		if(dev)
++			printk(KERN_ERR "bcmgenet_tag_ioctl: %s NULL\n" , dev->name);
++		else
++			printk(KERN_ERR "bcmgenet_tag_ioctl: dev is NULL\n");
++	}
++    return -EOPNOTSUPP;
++}
++
++static netdev_tx_t bcmgenet_tag_xmit(struct sk_buff *skb, struct net_device *dev)
++{
++    struct tag_priv *p = netdev_priv(dev);
++    struct net_device *parent = p->parent;
++
++    return parent->netdev_ops->ndo_start_xmit(skb, dev);
++}
++
++static const struct net_device_ops bcmgenet_tag_netdev_ops = {
++        .ndo_init               = bcmgenet_tag_init,
++        .ndo_open               = bcmgenet_tag_open,
++        .ndo_stop               = bcmgenet_tag_close,
++        .ndo_start_xmit         = bcmgenet_tag_xmit,
++        .ndo_change_rx_flags    = bcmgenet_tag_change_rx_flags,
++        .ndo_set_rx_mode        = bcmgenet_tag_set_rx_mode,
++        .ndo_set_mac_address    = bcmgenet_tag_set_mac_address,
++        .ndo_do_ioctl           = bcmgenet_tag_ioctl,
++};
++
++/*
++ * ethtool_ops
++ */
++static int bcmgenet_tag_get_settings(struct net_device *dev, struct ethtool_cmd *cmd)
++{
++    struct tag_priv *p = netdev_priv(dev);
++    int err;
++
++    err = -EOPNOTSUPP;
++    if (p->phydev != NULL) {
++        err = phy_read_status(p->phydev);
++        if (err == 0)
++            err = phy_ethtool_gset(p->phydev, cmd);
++    }
++
++    return err;
++}
++
++static int bcmgenet_tag_set_settings(struct net_device *dev, struct ethtool_cmd *cmd)
++{
++    struct tag_priv *p = netdev_priv(dev);
++
++    if (p->phydev != NULL)
++        return phy_ethtool_sset(p->phydev, cmd);
++
++    return -EOPNOTSUPP;
++}
++
++static void bcmgenet_tag_get_drvinfo(struct net_device *dev,
++        struct ethtool_drvinfo *drvinfo)
++{
++    strlcpy(drvinfo->driver, "bcmgenet_tag", sizeof(drvinfo->driver));
++    strlcpy(drvinfo->version, "0.1", sizeof(drvinfo->version));
++    strlcpy(drvinfo->fw_version, "N/A", sizeof(drvinfo->fw_version));
++    strlcpy(drvinfo->bus_info, "platform", sizeof(drvinfo->bus_info));
++}
++
++static int bcmgenet_tag_nway_reset(struct net_device *dev)
++{
++    struct tag_priv *p = netdev_priv(dev);
++
++    if (p->phydev != NULL)
++        return genphy_restart_aneg(p->phydev);
++
++    return -EOPNOTSUPP;
++}
++
++static u32 bcmgenet_tag_get_link(struct net_device *dev)
++{
++    struct tag_priv *p = netdev_priv(dev);
++
++    if (p->phydev != NULL) {
++        genphy_update_link(p->phydev);
++        return p->phydev->link;
++    }
++
++    return -EOPNOTSUPP;
++}
++
++static void bcmgenet_tag_get_strings(struct net_device *dev,
++        uint32_t stringset, uint8_t *data)
++{
++    struct tag_priv *p = netdev_priv(dev);
++    struct net_device *parent = p->parent;
++
++    if (stringset == ETH_SS_STATS) {
++        int len = ETH_GSTRING_LEN;
++
++        strncpy(data, "tx_packets", len);
++        strncpy(data + len, "tx_bytes", len);
++        strncpy(data + 2 * len, "rx_packets", len);
++        strncpy(data + 3 * len, "rx_bytes", len);
++        if (parent->ethtool_ops->get_strings != NULL)
++            parent->ethtool_ops->get_strings(parent, stringset, data + 4 * len);
++    }
++}
++
++static void bcmgenet_tag_get_ethtool_stats(struct net_device *dev,
++        struct ethtool_stats *stats,
++        uint64_t *data)
++{
++    struct tag_priv *p = netdev_priv(dev);
++    struct net_device *parent = p->parent;
++
++    data[0] = p->dev->stats.tx_packets;
++    data[1] = p->dev->stats.tx_bytes;
++    data[2] = p->dev->stats.rx_packets;
++    data[3] = p->dev->stats.rx_bytes;
++    if (parent->ethtool_ops->get_ethtool_stats != NULL)
++        parent->ethtool_ops->get_ethtool_stats(parent, stats, data + 4);
++}
++
++static int bcmgenet_tag_get_sset_count(struct net_device *dev, int sset)
++{
++    struct tag_priv *p = netdev_priv(dev);
++    struct net_device *parent = p->parent;
++
++    if (sset == ETH_SS_STATS) {
++        int count;
++
++        count = 4;
++        if (parent->ethtool_ops->get_sset_count != NULL)
++            count += parent->ethtool_ops->get_sset_count(parent, sset);
++
++        return count;
++    }
++
++    return -EOPNOTSUPP;
++}
++
++static const struct ethtool_ops bcmgenet_tag_ethtool_ops = {
++    .get_settings           = bcmgenet_tag_get_settings,
++    .set_settings           = bcmgenet_tag_set_settings,
++    .get_drvinfo            = bcmgenet_tag_get_drvinfo,
++    .nway_reset             = bcmgenet_tag_nway_reset,
++    .get_link               = bcmgenet_tag_get_link,
++    .get_strings            = bcmgenet_tag_get_strings,
++    .get_ethtool_stats      = bcmgenet_tag_get_ethtool_stats,
++    .get_sset_count         = bcmgenet_tag_get_sset_count,
++};
++
++static struct net_device *
++bcmgenet_tag_create_netdev(struct device *pdev, struct net_device *parent, char*name, char name_assign_type)
++{
++    struct bcmgenet_priv *pp = netdev_priv(parent);
++    struct net_device *dev;
++    struct tag_priv *p;
++    int ret;
++
++    dev = alloc_netdev(sizeof(struct tag_priv),
++            name, name_assign_type, ether_setup);
++    if (dev == NULL)
++        return NULL;
++
++    dev->features = parent->vlan_features;
++    dev->ethtool_ops = &bcmgenet_tag_ethtool_ops;
++    eth_hw_addr_inherit(dev, parent);
++    dev->tx_queue_len = 0;
++    dev->netdev_ops = &bcmgenet_tag_netdev_ops;
++
++    SET_NETDEV_DEV(dev, pdev);
++    dev->vlan_features = parent->vlan_features;
++
++    p = netdev_priv(dev);
++    p->dev = dev;
++    p->parent = parent;
++    p->phydev = pp->phydev;
++
++    ret = register_netdev(dev);
++    if (ret) {
++        printk(KERN_ERR "%s: error %d registering interface %s\n",
++                parent->name, ret, dev->name);
++        free_netdev(dev);
++        return NULL;
++    }
++
++    netif_carrier_off(dev);
++
++    return dev;
++}
++
++int bcmgenet_tag_create(struct device *pdev, struct net_device *parent)
++{
++    struct net_device *dev;
++    int id;
++    
++    for (id = 0; id < MAX_TAG_DEVS; id++)
++    {
++        if (tag_devs[id].enable)
++        {
++            dev = bcmgenet_tag_create_netdev(pdev, parent, tag_devs[id].name, tag_devs[id].name_assign_type);
++            if (dev == NULL)
++                return -EINVAL;
++
++            tag_devs[id].dev = dev;
++#ifdef DEBUG
++            printk(KERN_INFO "%s: create tag interface %s-%s\n",
++                    __func__, parent->name, dev->name);
++#endif
++        }
++    }
++
++    return 0;
++}
+diff -urN linux.old/drivers/net/ethernet/broadcom/genet/bcmgenet_tag.h linux/drivers/net/ethernet/broadcom/genet/bcmgenet_tag.h
+--- linux.old/drivers/net/ethernet/broadcom/genet/bcmgenet_tag.h	1970-01-01 09:00:00.000000000 +0900
++++ linux/drivers/net/ethernet/broadcom/genet/bcmgenet_tag.h	2018-02-14 15:12:21.792110446 +0900
+@@ -0,0 +1,12 @@
++#ifndef _BCMGENET_TAG_H_
++#define _BCMGENET_TAG_H_
++
++int bcmgenet_tag_create(struct device *pdev, struct net_device *parent);
++int bcmgenet_tag_fixup(struct sk_buff *skb, struct net_device *dev);
++int bcmgenet_tag_search(struct sk_buff *skb, struct net_device *dev);
++void bcmgenet_tag_carrier_on(void);
++void bcmgenet_tag_carrier_off(void);
++struct net_device* bcmgenet_tag_netdev(int id);
++
++#define BCMGENET_TAG_PARENT "eth0"
++#endif
+diff -urN linux.old/drivers/net/ethernet/broadcom/genet/bcmmii.c linux/drivers/net/ethernet/broadcom/genet/bcmmii.c
+--- linux.old/drivers/net/ethernet/broadcom/genet/bcmmii.c	2018-02-14 15:06:22.812096802 +0900
++++ linux/drivers/net/ethernet/broadcom/genet/bcmmii.c	2018-02-14 15:15:01.416116513 +0900
+@@ -26,6 +26,7 @@
+ #include <linux/platform_data/bcmgenet.h>
+ 
+ #include "bcmgenet.h"
++#include "bcmgenet_tag.h"
+ 
+ /* read a value from the MII */
+ static int bcmgenet_mii_read(struct mii_bus *bus, int phy_id, int location)
+@@ -183,6 +184,11 @@
+ 			       CMD_RX_PAUSE_IGNORE | CMD_TX_PAUSE_IGNORE);
+ 		reg |= cmd_bits;
+ 		bcmgenet_umac_writel(priv, reg, UMAC_CMD);
++
++#ifdef CONFIG_BCMGENET_TAG
++		if (!strcmp(dev->name, BCMGENET_TAG_PARENT))
++			bcmgenet_tag_carrier_on();
++#endif
+ 	} else {
+ 		/* done if nothing has changed */
+ 		if (!status_changed)
+@@ -190,6 +196,11 @@
+ 
+ 		/* needed for MoCA fixed PHY to reflect correct link status */
+ 		netif_carrier_off(dev);
++
++#ifdef CONFIG_BCMGENET_TAG
++		if (!strcmp(dev->name, BCMGENET_TAG_PARENT))
++			bcmgenet_tag_carrier_off();
++#endif
+ 	}
+ 
+ 	phy_print_status(phydev);
