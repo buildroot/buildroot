@@ -55,6 +55,60 @@ define BCM_REFSW_BUILD_EGLCUBE
 endef
 endif
 
+ifeq ($(BR2_PACKAGE_BCM_REFSW_SAGE),y)
+
+BCM_NEXUS_SAGE_SRAI_DIR = /BSEAV/lib/security/sage/srai
+BCM_MAGNUM_SAGE_SRAI_DIR = /magnum/syslib/sagelib
+define BCM_REFSW_BUILD_SAGE_SRAI
+    $(TARGET_CONFIGURE_OPTS) \
+    $(TARGET_MAKE_ENV) \
+    $(BCM_REFSW_CONF_OPTS) \
+    $(BCM_REFSW_MAKE_ENV) \
+        $(MAKE) -C $(@D)/$(BCM_NEXUS_SAGE_SRAI_DIR) \
+            LIBDIR=${BCM_REFSW_BIN}
+endef
+BCM_NEXUS_SAGE_UTILITY_DIR = /BSEAV/lib/security/sage/utility
+define BCM_REFSW_BUILD_SAGE_UTILITY
+    $(TARGET_CONFIGURE_OPTS) \
+    $(TARGET_MAKE_ENV) \
+    $(BCM_REFSW_CONF_OPTS) \
+    $(BCM_REFSW_MAKE_ENV) \
+        $(MAKE) -C $(@D)/$(BCM_NEXUS_SAGE_UTILITY_DIR) all \
+            LIBDIR=${BCM_REFSW_BIN}
+endef
+
+BCM_NEXUS_SAGE_EXAMPLE_DIR = /BSEAV/lib/security/sage/utility/examples/heartbeat
+define BCM_REFSW_BUILD_SAGE_EXAMPLE
+    $(TARGET_CONFIGURE_OPTS) \
+    $(TARGET_MAKE_ENV) \
+    $(BCM_REFSW_CONF_OPTS) \
+    $(BCM_REFSW_MAKE_ENV) \
+        $(MAKE) -C $(@D)/$(BCM_NEXUS_SAGE_EXAMPLE_DIR) \
+            LIBDIR=${BCM_REFSW_BIN}
+endef
+
+BCM_NEXUS_SAGE_PRDY30_SVP_DIR = /BSEAV/thirdparty/playready/3.0/examples
+define BCM_REFSW_BUILD_SAGE_PRDY30_SVP
+    $(TARGET_CONFIGURE_OPTS) \
+    $(TARGET_MAKE_ENV) \
+    $(BCM_REFSW_CONF_OPTS) \
+    $(BCM_REFSW_MAKE_ENV) \
+        $(MAKE) -C $(@D)/$(BCM_NEXUS_SAGE_PRDY30_SVP_DIR) target=prdy30_svp all \
+            LIBDIR=${BCM_REFSW_BIN}
+endef
+
+define BCM_REFSW_INSTALL_SAGE_SRAI
+    $(INSTALL) -D $(BCM_REFSW_BIN)/libsrai.so $(1)/usr/lib/libsrai.so
+endef
+
+define BCM_REFSW_INSTALL_SAGE_SRAI_DEV
+    $(call BCM_REFSW_INSTALL_SAGE_SRAI,$(1))
+    $(INSTALL) -m 644 $(@D)/$(BCM_NEXUS_SAGE_SRAI_DIR)/include/*.h $(STAGING_DIR)/usr/include/refsw/
+    $(INSTALL) -m 644 $(@D)/$(BCM_MAGNUM_SAGE_SRAI_DIR)/include/*.h $(STAGING_DIR)/usr/include/refsw/
+endef
+endif
+
+
 ifeq ($(BCM_REFSW_PLATFORM_VC),vc5)
 define BCM_REFSW_INSTALL_WAKEUP
 	$(INSTALL) -D -m 755 package/bcm-refsw/S11wakeup $1/etc/init.d/S11wakeup

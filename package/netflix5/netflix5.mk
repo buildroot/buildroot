@@ -8,7 +8,7 @@ NETFLIX5_VERSION = ea2d825345af5477514f63ff2f54be73ab6fc055
 NETFLIX5_SITE = git@github.com:Metrological/netflix.git
 NETFLIX5_SITE_METHOD = git
 NETFLIX5_LICENSE = PROPRIETARY
-NETFLIX5_DEPENDENCIES = freetype icu jpeg libpng libmng webp harfbuzz expat openssl c-ares libcurl graphite2 nghttp2 wpeframework playready gst1-plugins-base
+NETFLIX5_DEPENDENCIES = freetype icu jpeg libpng libmng webp harfbuzz expat openssl c-ares libcurl graphite2 nghttp2 wpeframework gst1-plugins-base
 NETFLIX5_INSTALL_TARGET = YES
 NETFLIX5_INSTALL_STAGING = YES
 NETFLIX5_SUBDIR = netflix
@@ -17,6 +17,9 @@ NETFLIX5_RESOURCE_LOC = $(call qstrip,${BR2_PACKAGE_NETFLIX5_RESOURCE_LOCATION})
 NETFLIX5_CONF_ENV += TOOLCHAIN_DIRECTORY=$(STAGING_DIR)/usr LD=$(TARGET_CROSS)ld
 NETFLIX_CONF_ENV += TARGET_CROSS="$(GNU_TARGET_NAME)-"
 
+ifeq ($(BR2_PACKAGE_PLAYREADY), y)
+NETFLIX5_DEPENDENCIES += playready
+endif
 # TODO: disable hardcoded build type, check if all args are really needed.
 NETFLIX5_CONF_OPTS = \
 	-DBUILD_DPI_DIRECTORY=$(@D)/partner/dpi \
