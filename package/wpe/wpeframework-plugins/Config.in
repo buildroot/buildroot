@@ -71,6 +71,16 @@ config BR2_PACKAGE_WPEFRAMEWORK_DSRESOLUTION
     help
       DSResolution Plugin
 
+if BR2_PACKAGE_WPEFRAMEWORK_DSRESOLUTION
+
+config BR2_PACKAGE_DSRESOLUTION_WITH_DUMMY_DSHAL
+    bool "Create a Dummy ds-hal Lib"
+    default n
+    help
+       This option allows to create ds-hal.so,
+
+endif
+
 config BR2_PACKAGE_WPEFRAMEWORK_DHCPSERVER
 	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
 	bool "DHCPServer"
