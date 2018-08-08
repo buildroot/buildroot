@@ -53,4 +53,17 @@ config BR2_PACKAGE_GST1_BCM_VIDFILTER
 	help 
 	  Add BRCM libbrcmvidfilter.so
 
+config BR2_PACKAGE_GST1_BCM_ENABLE_SVP
+	bool "enable svp"
+	default n
+	depends on BR2_PACKAGE_BCM_REFSW_SAGE
+	help 
+	  Enable SVP support
+
+config BR2_PACKAGE_GST1_BCM_WPEFRAMEWORK_CDM
+        bool "WPEframework CDM"
+	depends on BR2_PACKAGE_GST1_BCM_ENABLE_SVP && BR2_PACKAGE_WPEFRAMEWORK_CDM
+        default y
+        help
+          Use WPEFramework CDM 
 endif

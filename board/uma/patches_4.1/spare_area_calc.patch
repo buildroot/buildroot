@@ -1,0 +1,26 @@
+diff -Naur a/linux/drivers/mtd/nand/brcmnand/brcmnand.c b/linux/drivers/mtd/nand/brcmnand/brcmnand.c
+--- a/linux/drivers/mtd/nand/brcmnand/brcmnand.c	2018-07-06 09:00:57.611122716 +0100
++++ b/linux/drivers/mtd/nand/brcmnand/brcmnand.c	2018-07-06 08:56:50.815339876 +0100
+@@ -2238,8 +2238,20 @@
+ 				   &oob_sector);
+ 	if (ret) {
+ 		/* Use detected size */
+-		cfg->spare_area_size = mtd->oobsize /
+-					(mtd->writesize >> FC_SHIFT);
++
++        /* Arris workaround, this calculation does not work and results in spare_area_size=56 rather than 27 
++           so just set spare_area_size to the register value.
++        */        
++
++		/*cfg->spare_area_size = mtd->oobsize /
++					(mtd->writesize >> FC_SHIFT);*/
++           u16 acc_control_offs = brcmnand_cs_offset(ctrl, host->cs,
++						  BRCMNAND_CS_ACC_CONTROL);
++
++           tmp = nand_readreg(ctrl, acc_control_offs);
++           tmp &= brcmnand_spare_area_mask(ctrl);
++	    cfg->spare_area_size = tmp;
++
+ 	} else {
+ 		cfg->spare_area_size = oob_sector;
+ 	}

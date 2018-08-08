@@ -48,6 +48,10 @@ ifeq ($(BR2_PACKAGE_GST1_BCM_VP9_SUPPORT),y)
 CFLAGS += -DVP9_SUPPORT
 endif
 
+ifeq ($(BR2_PACKAGE_GST1_BCM_WPEFRAMEWORK_CDM),y)
+GST1_BCM_DEPENDENCIES += wpeframework
+CFLAGS += -DGST_BRCM_WPEFRAMEWORK_CDM
+endif
 GST1_BCM_AUTORECONF = YES
 
 GST1_BCM_CONF_ENV += \
@@ -126,6 +130,9 @@ GST1_BCM_CONF_OPTS += --enable-vidfilter
 else
 GST1_BCM_CONF_OPTS += --disable-vidfilter
 endif
+
+ifeq ($(BR2_PACKAGE_GST1_BCM_ENABLE_SVP),y)
+GST1_BCM_CONF_OPTS += --enable-svp
 
 # Temporary audio fix for youtube on vss platforms
 ifeq ($(BR2_PACKAGE_NEXUS_REMOVE_OPUS),y)

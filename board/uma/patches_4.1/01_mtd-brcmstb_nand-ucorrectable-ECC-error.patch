@@ -1,0 +1,28 @@
+diff -Naur ref/drivers/mtd/nand/nand_base.c mod/drivers/mtd/nand/nand_base.c
+--- ref/drivers/mtd/nand/nand_base.c	2017-01-20 11:36:18.048540137 +0000
++++ mod/drivers/mtd/nand/nand_base.c	2017-01-20 11:38:22.367849844 +0000
+@@ -499,11 +499,11 @@
+ {
+ 	struct nand_chip *chip = mtd->priv;
+ 
+-	if (!chip->bbt)
++/*	if (!chip->bbt) */
+ 		return chip->block_bad(mtd, ofs, getchip);
+ 
+ 	/* Return info from the table */
+-	return nand_isbad_bbt(mtd, ofs, allowbbt);
++/*	return nand_isbad_bbt(mtd, ofs, allowbbt); */
+ }
+ 
+ /**
+@@ -2719,8 +2719,10 @@
+ 					chip->page_shift, 0, allowbbt)) {
+ 			pr_warn("%s: attempt to erase a bad block at page 0x%08x\n",
+ 				    __func__, page);
++/*
+ 			instr->state = MTD_ERASE_FAILED;
+ 			goto erase_exit;
++*/
+ 		}
+ 
+ 		/*

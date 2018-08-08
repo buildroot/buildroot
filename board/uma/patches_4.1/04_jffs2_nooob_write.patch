@@ -1,0 +1,133 @@
+diff -Naur linux/fs/jffs2/fs.c linux.new/fs/jffs2/fs.c
+--- linux/fs/jffs2/fs.c	2014-12-07 10:41:15.000000000 +0100
++++ linux.new/fs/jffs2/fs.c	2015-03-11 12:20:19.093282577 +0100
+@@ -710,6 +710,8 @@
+ 	int ret = 0;
+ 
+ 	if (jffs2_cleanmarker_oob(c)) {
++		if(!jffs2_oob_write_enabled(c))
++			pr_info("JFFS2 doesn't use OOB.\n");
+ 		/* NAND flash... do setup accordingly */
+ 		ret = jffs2_nand_flash_setup(c);
+ 		if (ret)
+diff -Naur linux/fs/jffs2/os-linux.h linux.new/fs/jffs2/os-linux.h
+--- linux/fs/jffs2/os-linux.h	2014-12-07 10:41:15.000000000 +0100
++++ linux.new/fs/jffs2/os-linux.h	2015-03-11 12:20:19.085282544 +0100
+@@ -108,6 +108,7 @@
+ #endif
+ 
+ #define jffs2_cleanmarker_oob(c) (c->mtd->type == MTD_NANDFLASH)
++#define jffs2_oob_write_enabled(c) (c->mtd->flags & MTD_OOB_WRITEABLE)
+ 
+ #define jffs2_wbuf_dirty(c) (!!(c)->wbuf_len)
+ 
+diff -Naur linux/fs/jffs2/wbuf.c linux.new/fs/jffs2/wbuf.c
+--- linux/fs/jffs2/wbuf.c	2015-04-25 10:00:02.000000000 +0530
++++ linux.new/fs/jffs2/wbuf.c	2016-05-20 11:59:27.370298022 +0530
+@@ -1037,6 +1037,9 @@
+ 	int cmlen = min_t(int, c->oobavail, OOB_CM_SIZE);
+ 	struct mtd_oob_ops ops;
+ 
++    if(!jffs2_oob_write_enabled(c))
++    	return 0;
++
+ 	ops.mode = MTD_OPS_AUTO_OOB;
+ 	ops.ooblen = NR_OOB_SCAN_PAGES * c->oobavail;
+ 	ops.oobbuf = c->oobbuf;
+@@ -1079,6 +1082,9 @@
+ 	struct mtd_oob_ops ops;
+ 	int ret, cmlen = min_t(int, c->oobavail, OOB_CM_SIZE);
+ 
++    if(!jffs2_oob_write_enabled(c))
++    	return 0;
++
+ 	ops.mode = MTD_OPS_AUTO_OOB;
+ 	ops.ooblen = cmlen;
+ 	ops.oobbuf = c->oobbuf;
+@@ -1104,6 +1110,9 @@
+ 	struct mtd_oob_ops ops;
+ 	int cmlen = min_t(int, c->oobavail, OOB_CM_SIZE);
+ 
++    if(!jffs2_oob_write_enabled(c))
++	    	return 0;
++
+ 	ops.mode = MTD_OPS_AUTO_OOB;
+ 	ops.ooblen = cmlen;
+ 	ops.oobbuf = (uint8_t *)&oob_cleanmarker;
+@@ -1181,6 +1190,42 @@
+ 		jffs2_dbg(1, "%s()\n", __func__);
+ }
+ 
++static int jffs2_nand_clean_bad_blocks(struct jffs2_sb_info *c)
++{
++	loff_t offs;
++	int good_block_thresold,blocks, good_blocks, bad_blocks; 
++	struct erase_info instr;
++	
++	blocks = good_blocks = bad_blocks = 0;
++	
++	for(offs = 0; offs < c->mtd->size; offs += c->mtd->erasesize )
++	{
++		if (mtd_block_isbad(c->mtd, offs))
++			bad_blocks++;
++		blocks++;
++	}
++	good_blocks = blocks - bad_blocks;
++   good_block_thresold = blocks/4;
++	
++	if(good_blocks < good_block_thresold) 
++	{
++		pr_info("%d good blocks not enough , erasing %d bad blocks\n",good_blocks,bad_blocks);
++		for(offs = 0; offs < c->mtd->size; offs += c->mtd->erasesize )
++		{
++			if (mtd_block_isbad(c->mtd, offs))
++			{
++				memset(&instr, 0, sizeof(instr));
++				instr.mtd = c->mtd;
++				instr.addr = offs;
++				instr.len = c->mtd->erasesize;
++				instr.callback = NULL;
++				mtd_erase(c->mtd, &instr);				
++			}
++		}		
++	}	
++	return 0;	
++}
++
+ int jffs2_nand_flash_setup(struct jffs2_sb_info *c)
+ {
+ 	struct nand_ecclayout *oinfo = c->mtd->ecclayout;
+@@ -1197,6 +1242,8 @@
+ 	}
+ 
+ 	jffs2_dbg(1, "using OOB on NAND\n");
++	
++	jffs2_nand_clean_bad_blocks(c);
+ 
+ 	c->oobavail = oinfo->oobavail;
+
+diff -Naur linux/include/uapi/mtd/mtd-abi.h linux.new/include/uapi/mtd/mtd-abi.h
+--- linux/include/uapi/mtd/mtd-abi.h	2014-12-07 10:41:16.000000000 +0100
++++ linux.new/include/uapi/mtd/mtd-abi.h	2015-03-11 12:20:19.085282544 +0100
+@@ -103,6 +103,7 @@
+ #define MTD_BIT_WRITEABLE	0x800	/* Single bits can be flipped */
+ #define MTD_NO_ERASE		0x1000	/* No erase necessary */
+ #define MTD_POWERUP_LOCK	0x2000	/* Always locked after reset */
++#define MTD_OOB_WRITEABLE	0x4000	/* Use Out-Of-Band area */
+ 
+ /* Some common devices / combinations of capabilities */
+ #define MTD_CAP_ROM		0
+diff -Naur linux/fs/jffs2/erase.c linux.new/fs/jffs2/erase.c
+--- linux/fs/jffs2/erase.c	2015-04-25 10:00:02.000000000 +0530
++++ linux/fs/jffs2/erase.c	2016-05-13 17:59:29.433389720 +0530
+@@ -421,6 +421,10 @@
+ 	ret = 0;
+ fail:
+ 	kfree(ebuf);
++	/* Sumil: buggy driver may return error on reading freshly erased block.
++	 * Therer is no reason to mark block to bad because of the error returned by mtd_read()
++	*/
++	ret = 0;
+ 	return ret;
+ }
+ 
