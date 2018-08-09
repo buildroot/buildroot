@@ -4,7 +4,11 @@
 #
 ################################################################################
 
+ifeq ($(BR2_PACKAGE_RDK_VERSIONING),y)
+ZLIB_VERSION = 1.2.9
+else
 ZLIB_VERSION = 1.2.11
+endif
 ZLIB_SOURCE = zlib-$(ZLIB_VERSION).tar.xz
 ZLIB_SITE = http://www.zlib.net
 ZLIB_LICENSE = zlib license

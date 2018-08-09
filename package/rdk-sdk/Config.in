@@ -1,0 +1,9 @@
+config BR2_PACKAGE_RDK_SDK
+	bool "rdk-sdk"
+	select BR2_PACKAGE_RDK_VERSIONING
+	help
+	  If this flag is enabled, some of the packages will be set to
+          the version as found in the currently supported RDK Yocto.
+
+config BR2_PACKAGE_RDK_VERSIONING
+	bool

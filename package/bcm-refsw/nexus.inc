@@ -33,7 +33,7 @@ define BCM_REFSW_BUILD_PMLIB
 endef
 
 define BCM_REFSW_INSTALL_PMLIB_DEV
-	$(INSTALL) -m 644 -D $(BCM_REFSW_OUTPUT)/BSEAV/lib/pmlib/libpmlib.a $(STAGING_DIR)/usr/lib/libpmlib.a
+	$(INSTALL) -m 644 -D $(BCM_REFSW_OUTPUT)/BSEAV/lib/$(BR2_ARCH)-linux/pmlib/libpmlib.a $(STAGING_DIR)/usr/lib/libpmlib.a
 	$(INSTALL) -m 644 $(BCM_REFSW_DIR)/BSEAV/lib/pmlib/$(BCM_PMLIB_VERSION)/pmlib.h $(STAGING_DIR)/usr/include/refsw
 endef
 endif
