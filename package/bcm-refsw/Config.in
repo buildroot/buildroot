@@ -114,6 +114,13 @@ config BR2_PACKAGE_BCM_REFSW_SAGE
 	help
 	  Add SAGE support in Nexus.
 
+config BR2_PACKAGE_BCM_REFSW_SAGE_PATH
+        string "SAGE Path"
+        default "/usr/bin/"
+        depends on BR2_PACKAGE_BCM_REFSW_SAGE
+	help
+	  Sage binaries path
+
 config BR2_PACKAGE_PROVIDES_NEXUS
 	default "bcm-refsw"
 
@@ -145,12 +152,6 @@ config BR2_PACKAGE_BCM_REFSW_NXCLIENT_EXAMPLES
 	default n
 	help
 	  Build the Nexus client exaples.
-
-config BR2_PACKAGE_BCM_REFSW_GRAPHICS_HEAP_SIZE
-    string "Graphics heap size"
-    depends on BR2_PACKAGE_BCM_REFSW && BR2_PACKAGE_BCM_REFSW_17_4
-    help
-      Custom graphics heap size
 
 config BR2_PACKAGE_BCM_REFSW_BOXMODE
     string "Memory Box Mode"

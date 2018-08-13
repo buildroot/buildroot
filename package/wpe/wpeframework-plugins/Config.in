@@ -44,13 +44,70 @@ config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_ALLOW_UNAUTHENTICATED_CLIENTS
 	help
 	  Allow unauthenticated clients on the nxserver.
 
-       
-config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_GRAPHICS_HEAP_SIZE
-	string "graphics heap (MB)"
+choice
+    prompt "SVP type"
+    default BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SVP_ALL if BR2_PACKAGE_BCM_REFSW_SAGE
+    default BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SVP_NONE if !BR2_PACKAGE_BCM_REFSW_SAGE
+    help
+                Select the SVP type
+
+    config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SVP_NONE
+        bool "None"
+    config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SVP_VIDEO
+        bool "Video"
+    config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SVP_ALL
+        bool "All"
+endchoice
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    bool "Memories"
         depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
-	default  100
-	help
-	  The ammount of memory in MB to be configured for the GPU.
+    default n
+    help
+      Allow memory heap updates
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_GFX
+        string "Graphics Memory"
+        depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+        help
+          Allow update of Graphics memory. The amount of memory in MB to be configured for.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_GFX2
+        string "Secondary Graphics Memory"
+        depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+        help
+          Allow update of Secondary Graphics memory. The amount of memory in MB to be configured for.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_RESTRICTED
+        string "Compressed Restricted Region Memory (Video Secure)"
+        depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+        help
+          Allow update of Compressed Restricted Region Memory (Video Secure) memory. The amount of memory in MB to be configured for.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_MAIN
+        string "Main Memory"
+        depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+        help
+          Allow update of main memory. The amount of memory in MB to be configured for.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_EXPORT
+        string "Export Memory"
+        depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+        help
+          Allow update of Export Region memory. The ammount of memory in MB to be configured for.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_SECUREGFX
+        string "Secure Graphics Memory"
+        depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+        help
+          Allow update of Secure Graphics memory. The amount of memory in MB to be configured for.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_CLIENT
+        string "Client Memory"
+        depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+        depends on BR2_PACKAGE_BCM_REFSW_SAGE
+        help
+          Allow update of Client memory. SAGE must be told which heap the client's will be using. The amount of memory in MB to be configured for.
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_HARDWAREREADY
 	string "Manual overrule of the time it takes to initialisize all hardware (ms)"
