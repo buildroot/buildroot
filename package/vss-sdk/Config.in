@@ -4,6 +4,7 @@ config BR2_PACKAGE_VSS_SDK
 	select BR2_PACKAGE_HAS_LIBEGL
 	select BR2_PACKAGE_HAS_LIBGLES
     select BR2_PACKAGE_HAS_NEXUS
+    select BR2_PACKAGE_HAS_PLAYREADY
     select BR2_PACKAGE_HAS_VP9_DECODER 
 	help
 	  Pre-compiled binaries for a platform
@@ -17,6 +18,9 @@ config BR2_PACKAGE_PROVIDES_LIBGLES
 	default "vss-sdk"
 
 config BR2_PACKAGE_PROVIDES_NEXUS
+	default "vss-sdk"
+
+config BR2_PACKAGE_PROVIDES_PLAYREADY
 	default "vss-sdk"
 
 config BR2_PACKAGE_PROVIDES_VP9_DECODER
