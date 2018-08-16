@@ -107,6 +107,32 @@ choice
 
 endchoice
 
+menu "Codec support"
+config BR2_PACKAGE_BCM_OPUS_DECODER_SUPPORT
+    bool "OPUS decoder"
+	default y
+    select BR2_PACKAGE_HAS_OPUS_DECODER
+    help
+       Enable OPUS for other OPUS depending packages.
+
+if BR2_PACKAGE_BCM_OPUS_DECODER_SUPPORT
+config BR2_PACKAGE_PROVIDES_OPUS_DECODER
+	default "bcm-refsw"
+endif
+
+config BR2_PACKAGE_BCM_VP9_DECODER_SUPPORT
+    bool "VP9 decoder"
+	default y
+    select BR2_PACKAGE_HAS_VP9_DECODER
+    help
+       Enable VP9 for other VP9 depending packages.
+
+if BR2_PACKAGE_BCM_VP9_SUPPORT
+config BR2_PACKAGE_PROVIDES_VP9_DECODER
+	default "bcm-refsw"
+endif
+endmenu
+
 config BR2_PACKAGE_BCM_REFSW_SAGE
 	bool "SAGE v3.x"
 	default n
@@ -130,11 +156,6 @@ config BR2_PACKAGE_PROVIDES_LIBEGL
 
 config BR2_PACKAGE_PROVIDES_LIBGLES
 	default "bcm-refsw"
-
-config BR2_PACKAGE_NEXUS_REMOVE_OPUS
-	depends on BR2_PACKAGE_HAS_NEXUS
-	bool "disable opus"
-        default n
 
 config BR2_PACKAGE_BCM_REFSW_EGLCUBE
 	bool "eglcube"

@@ -135,8 +135,7 @@ ifeq ($(BR2_PACKAGE_GST1_BCM_ENABLE_SVP),y)
 GST1_BCM_CONF_OPTS += --enable-svp
 endif
 
-# Temporary audio fix for youtube on vss platforms
-ifeq ($(BR2_PACKAGE_NEXUS_REMOVE_OPUS),y)
+ifeq ($(BR2_PACKAGE_HAS_OPUS_DECODER),)
 GST1_BCM_PKGDIR = "$(TOP_DIR)/package/gstreamer1/gst1-bcm"
 
 define GST1_BCM_APPLY_LOCAL_PATCHES
