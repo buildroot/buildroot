@@ -85,7 +85,7 @@ GST1_BCM_CONF_OPTS = \
 	--disable-matroska \
 	--disable-mp3swdecode \
 	--disable-mp4demux \
-	--disable-pcmsink \
+	--enable-pcmsink \
 	--disable-pesdemux \
 	--disable-playback \
 	--disable-qtdemux \
