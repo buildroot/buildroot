@@ -1,0 +1,33 @@
+From 29f733ab28651d2d6130918ae8b7cac0c6678ecd Mon Sep 17 00:00:00 2001
+From: Matthew Waters <matthew@centricular.com>
+Date: Fri, 2 Dec 2016 17:51:57 +1100
+Subject: [PATCH 3/5] adaptivedemux: retry download MAX_DOWNLOAD_RETRY_COUNT
+ times before erroring
+
+What we want is to retry downloading the fragment on 4xx/5xx errors
+however returning EOS will cause waiting for a manifest update for live
+(which may be a really long time) or stop everything for non-live.
+
+Change that to only return EOS/ERROR once we've reached the error limit.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=776609
+---
+ gst-libs/gst/adaptivedemux/gstadaptivedemux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
+index baa2685ea..1f4f8013f 100644
+--- a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
++++ b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
+@@ -3113,7 +3113,7 @@ again:
+     }
+ 
+   flushing:
+-    if (++stream->download_error_count <= MAX_DOWNLOAD_ERROR_COUNT) {
++    if (stream->download_error_count >= MAX_DOWNLOAD_ERROR_COUNT) {
+       /* looks like there is no way of knowing when a live stream has ended
+        * Have to assume we are falling behind and cause a manifest reload */
+       GST_DEBUG_OBJECT (stream->pad, "Converting error of live stream to EOS");
+-- 
+2.17.0
+

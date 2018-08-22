@@ -1,0 +1,36 @@
+From dc99f7652391096253fff925487c0f9be813c412 Mon Sep 17 00:00:00 2001
+From: Edward Hervey <edward@centricular.com>
+Date: Fri, 14 Apr 2017 18:16:28 +0200
+Subject: [PATCH 4/5] adaptivedemux: Don't hold locks when pushing FLUSH_START
+
+Some actions (Qos, reconfigure, ...) might take place before we finish pushing out flush_start.
+
+One problem would be that:
+1) The QOS handling in adaptivedemux takes the MANIFEST LOCK
+  That QOS event comes from basesink with its PREROLL_LOCK taken
+2) FLUSH_START is sent from adaptivedemux with the MANIFEST_LOCK taken and the basesink flushing handler needs to take the PREROLL_LOCK
+
+ => deadlock
+
+https://bugzilla.gnome.org/show_bug.cgi?id=781320
+---
+ gst-libs/gst/adaptivedemux/gstadaptivedemux.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
+index 1f4f8013f..ae0a2bb53 100644
+--- a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
++++ b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
+@@ -1404,7 +1404,9 @@ gst_adaptive_demux_handle_seek_event (GstAdaptiveDemux * demux, GstPad * pad,
+     GST_DEBUG_OBJECT (demux, "sending flush start");
+     fevent = gst_event_new_flush_start ();
+     gst_event_set_seqnum (fevent, seqnum);
++    GST_MANIFEST_UNLOCK (demux);
+     gst_adaptive_demux_push_src_event (demux, fevent);
++    GST_MANIFEST_LOCK (demux);
+ 
+     gst_adaptive_demux_stop_tasks (demux);
+   } else if ((rate > 0 && start_type != GST_SEEK_TYPE_NONE) ||
+-- 
+2.17.0
+

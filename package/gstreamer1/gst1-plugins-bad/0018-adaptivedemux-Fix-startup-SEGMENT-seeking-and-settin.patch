@@ -1,0 +1,60 @@
+From a6cefff08613bbadb1e6ad825f30076efaae3274 Mon Sep 17 00:00:00 2001
+From: Seungha Yang <sh.yang@lge.com>
+Date: Thu, 10 Nov 2016 23:07:50 +0900
+Subject: [PATCH] adaptivedemux: Fix startup SEGMENT seeking and setting for
+ live
+
+Because fragment.timestamp is relative value to period_start,
+startup SEGMENT seeking should be pointed to "fragment.timestamp + period_start"
+
+https://bugzilla.gnome.org/show_bug.cgi?id=774196
+---
+ gst-libs/gst/adaptivedemux/gstadaptivedemux.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
+index ae0a2bb..774a68a 100644
+--- a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
++++ b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
+@@ -997,6 +997,8 @@ gst_adaptive_demux_expose_streams (GstAdaptiveDemux * demux,
+     }
+   }
+ 
++  period_start = gst_adaptive_demux_get_period_start_time (demux);
++
+   /* For live streams, the subclass is supposed to seek to the current
+    * fragment and then tell us its timestamp in stream->fragment.timestamp.
+    * We now also have to seek our demuxer segment to reflect this.
+@@ -1005,12 +1007,10 @@ gst_adaptive_demux_expose_streams (GstAdaptiveDemux * demux,
+    */
+   if (first_and_live) {
+     gst_segment_do_seek (&demux->segment, demux->segment.rate, GST_FORMAT_TIME,
+-        GST_SEEK_FLAG_FLUSH, GST_SEEK_TYPE_SET, min_pts, GST_SEEK_TYPE_NONE, -1,
+-        NULL);
++        GST_SEEK_FLAG_FLUSH, GST_SEEK_TYPE_SET, min_pts + period_start,
++        GST_SEEK_TYPE_NONE, -1, NULL);
+   }
+ 
+-  period_start = gst_adaptive_demux_get_period_start_time (demux);
+-
+   for (iter = demux->streams; iter; iter = g_list_next (iter)) {
+     GstAdaptiveDemuxStream *stream = iter->data;
+     GstClockTime offset;
+@@ -1067,7 +1067,13 @@ gst_adaptive_demux_expose_streams (GstAdaptiveDemux * demux,
+      * equivalent.
+      */
+ 
+-    if (demux->segment.start > period_start) {
++    /* If first and live, demuxer did seek to the current position already */
++    if (first_and_live) {
++      stream->segment.start = demux->segment.start - period_start + offset;
++      stream->segment.position = stream->segment.start;
++      stream->segment.time = demux->segment.time;
++      stream->segment.base = demux->segment.base;
++    } else if (demux->segment.start > period_start) {
+       stream->segment.start = demux->segment.start - period_start + offset;
+       stream->segment.position = offset;
+       stream->segment.time = demux->segment.time;
+-- 
+2.17.0
+
