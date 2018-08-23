@@ -1,525 +1,531 @@
 config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool
+    bool
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMMANDER
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	default n
-	bool "Commander"
-	help
-	  Commander Plugin
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    default n
+    bool "Commander"
+    help
+      Commander Plugin
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR
-	select BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
-	bool "Compositor"
-	help
-	   WPE Platform Compositor plugin
+    select BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
+    bool "Compositor"
+    help
+       WPE Platform Compositor plugin
 
 if BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_AUTOSTART
-	bool "Start Automatically"
-	help
-	  Select this to start the plugin automatically when starting WPEFramework
+    bool "Start Automatically"
+    help
+      Select this to start the plugin automatically when starting WPEFramework
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_OUTOFPROCESS
-	bool "Out of process"
-	help
-	  Select this to run this plugin in its own process.
+    bool "Out of process"
+    help
+      Select this to run this plugin in its own process.
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
-	bool "Nexus server"
-	depends on BR2_PACKAGE_HAS_NEXUS
-	help
-	  Include a nxserver with the compositor.
+    bool "Nexus server"
+    depends on BR2_PACKAGE_HAS_NEXUS
+    help
+      Include a nxserver with the compositor.
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_BOXMODE
-	string "Memory Box Mode"
-	depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
-	help
-	  Memory box mode, you can find details from release notes per platform
+    string "Memory Box Mode"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
+    help
+      Memory box mode, you can find details from release notes per platform
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_ALLOW_UNAUTHENTICATED_CLIENTS
-	bool "Allow unauthenticated clients"
-	depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
-	default n
-	help
-	  Allow unauthenticated clients on the nxserver.
+    bool "Allow unauthenticated clients"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
+    default n
+    help
+      Allow unauthenticated clients on the nxserver.
 
 choice
-	prompt "svp type"
-	default BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SVP_ALL if BR2_PACKAGE_BCM_REFSW_SAGE
-	default BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SVP_NONE if !BR2_PACKAGE_BCM_REFSW_SAGE
+    prompt "svp type"
+    default BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SVP_ALL if BR2_PACKAGE_BCM_REFSW_SAGE
+    default BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SVP_NONE if !BR2_PACKAGE_BCM_REFSW_SAGE
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SVP_NONE
-	bool "none"
+    bool "none"
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SVP_VIDEO
-	depends on BR2_PACKAGE_BCM_REFSW_SAGE
-	bool "video"
+    depends on BR2_PACKAGE_BCM_REFSW_SAGE
+    bool "video"
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SVP_ALL
-	depends on BR2_PACKAGE_BCM_REFSW_SAGE
-	bool "all"
+    depends on BR2_PACKAGE_BCM_REFSW_SAGE
+    bool "all"
 
 endchoice
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
-	bool "Memories"
-	depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
-	default n
-	help
-	  Allow memory heap updates
+    bool "Memories"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
+    default n
+    help
+      Allow memory heap updates
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_GFX
-	string "Graphics Memory"
-	depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
-	help
-	  Allow update of Graphics memory. The amount of memory in MB to be configured for.
+    string "Graphics Memory"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    help
+      Allow update of Graphics memory. The amount of memory in MB to be configured for.
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_GFX2
-	string "Secondary Graphics Memory"
-	depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
-	help
-	  Allow update of Secondary Graphics memory. The amount of memory in MB to be configured for.
+    string "Secondary Graphics Memory"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    help
+      Allow update of Secondary Graphics memory. The amount of memory in MB to be configured for.
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_RESTRICTED
-	string "Compressed Restricted Region Memory (Video Secure)"
-	depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
-	help
-	  Allow update of Compressed Restricted Region Memory (Video Secure) memory. The amount of memory in MB to be configured for.
+    string "Compressed Restricted Region Memory (Video Secure)"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    help
+      Allow update of Compressed Restricted Region Memory (Video Secure) memory. The amount of memory in MB to be configured for.
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_MAIN
-	string "Main Memory"
-	depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
-	help
-	  Allow update of main memory. The amount of memory in MB to be configured for.
+    string "Main Memory"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    help
+      Allow update of main memory. The amount of memory in MB to be configured for.
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_EXPORT
-	string "Export Memory"
-	depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
-	help
-	  Allow update of Export Region memory. The ammount of memory in MB to be configured for.
+    string "Export Memory"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    help
+      Allow update of Export Region memory. The ammount of memory in MB to be configured for.
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_SECUREGFX
-	string "Secure Graphics Memory"
-	depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
-	help
-	  Allow update of Secure Graphics memory. The amount of memory in MB to be configured for.
+    string "Secure Graphics Memory"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    help
+      Allow update of Secure Graphics memory. The amount of memory in MB to be configured for.
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_CLIENT
-	string "Client Memory"
-	depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
-	depends on BR2_PACKAGE_BCM_REFSW_SAGE
-	help
-	  Allow update of Client memory. SAGE must be told which heap the client's will be using. The amount of memory in MB to be configured for.
+    string "Client Memory"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    depends on BR2_PACKAGE_BCM_REFSW_SAGE
+    help
+      Allow update of Client memory. SAGE must be told which heap the client's will be using. The amount of memory in MB to be configured for.
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_HARDWAREREADY
-	string "Manual overrule of the time it takes to initialisize all hardware (ms)"
-	default 0
+    string "Manual overrule of the time it takes to initialisize all hardware (ms)"
+    default 0
 
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "DeviceInfo"
-	default y
-	help
-	  DeviceInfo Plugin
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "DeviceInfo"
+    default y
+    help
+      DeviceInfo Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_DHCPSERVER
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "DHCPServer"
-	help
-	  IPv4 DHCP server functionality. Distribute IPv4 addresses throughout the
-	  network.
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "DHCPServer"
+    help
+      IPv4 DHCP server functionality. Distribute IPv4 addresses throughout the
+      network.
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "LocationSync"
-	help
-	  LocationSync Plugin
-	  WPE Platform Dictionary plugin
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "LocationSync"
+    help
+      LocationSync Plugin
+      WPE Platform Dictionary plugin
 
 if BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC
 
 config BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC_URI
-	string "location URI"
-	default "http://ip-api.com/json"
+    string "location URI"
+    default "http://ip-api.com/json"
 
 endif
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_MONITOR
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "Monitor"
-	help
-	  Monitor Plugin
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "Monitor"
+    help
+      Monitor Plugin
 
 if BR2_PACKAGE_WPEFRAMEWORK_MONITOR
 
 config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_WEBKIT
-	depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
-	string "webkit-limit"
-	default "614400"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+    string "webkit-limit"
+    default "614400"
 
 config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_YOUTUBE
-	depends on BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE
-	string "youtube-limit"
-	default "614400"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE
+    string "youtube-limit"
+    default "614400"
 
 config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_UX
-	depends on BR2_PACKAGE_WPEFRAMEWORK_UX
-	string "ux-limit"
-	default "614400"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_UX
+    string "ux-limit"
+    default "614400"
 
 config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_NETFLIX
-	depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
-	string "netflix-limit"
-	default "307200"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+    string "netflix-limit"
+    default "307200"
 
 endif
 
 
 config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "NetworkControl"
-	help
-	  Control the IP adressing of the interfaces in the system from
-	  WPEFramework (static IPv4/IPv6 or dhcp IPv4)
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "NetworkControl"
+    help
+      Control the IP adressing of the interfaces in the system from
+      WPEFramework (static IPv4/IPv6 or dhcp IPv4)
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_CDMI
-	bool "CDMi"
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	select BR2_PACKAGE_WPEFRAMEWORK_CDM
-	default y
-	help
-	 A CDM server plugin to interact with CDMi plugins.
+    bool "CDMi"
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_CDM
+    default y
+    help
+     A CDM server plugin to interact with CDMi plugins.
 
 if BR2_PACKAGE_WPEFRAMEWORK_CDMI
 source "package/wpe/wpeframework-cdmi/Config.in"
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
-	bool "Bluetooth"
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	select BR2_PACKAGE_BLUEZ5_UTILS
-	select BR2_PACKAGE_BLUEZ_ALSA
-	default n
-	help
-	  A Bluetooth plugin to interact with Bluetooth devices.
+    bool "Bluetooth"
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_BLUEZ5_UTILS
+    select BR2_PACKAGE_BLUEZ_ALSA
+    default n
+    help
+      A Bluetooth plugin to interact with Bluetooth devices.
 
 if BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
 
 choice
-	bool "Select Platform"
-	default BR2_PACKAGE_PLATFORM_RASPBERRY_PI
-	help
-	  Choose Platform.
+    bool "Select Platform"
+    default BR2_PACKAGE_PLATFORM_RASPBERRY_PI
+    help
+      Choose Platform.
 
 menuconfig BR2_PACKAGE_PLATFORM_RASPBERRY_PI
-	bool "Raspberry Pi"
-	help
-	  Enable Raspberry Pi Platform.
+    bool "Raspberry Pi"
+    help
+      Enable Raspberry Pi Platform.
 
 menuconfig BR2_PACKAGE_PLATFORM_BCMXXXX
-	bool "BCM Platform"
-	help
-	  Enable BCM Platform.
+    bool "BCM Platform"
+    help
+      Enable BCM Platform.
 
 endchoice
 
 endif
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "RemoteControl"
-	help
-	  RemoteControl Plugin
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "RemoteControl"
+    help
+      RemoteControl Plugin
 
 if BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
-	bool "IR (Infrared)"
-	help
-	  Select devices which are based on Infrared (IR) technology
+    bool "IR (Infrared)"
+    help
+      Select devices which are based on Infrared (IR) technology
 
 if BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
-	bool "BCM Nexus IR Remote Control Unit"
-	default false
-	depends on (BR2_PACKAGE_BCM_REFSW || BR2_PACKAGE_HAS_NEXUS) && BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
-	help
-	  Enable the Nexus IR remote input
+    bool "BCM Nexus IR Remote Control Unit"
+    default false
+    depends on (BR2_PACKAGE_BCM_REFSW || BR2_PACKAGE_HAS_NEXUS) && BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
+    help
+      Enable the Nexus IR remote input
 
 if BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
 
 config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS_MODE
-	string "IR mode"
-	default "16"
-	depends on BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
-	help
-	  Sets the IR Mode to be used with IR Nexus. Every remote has a different mode and key mapping.
+    string "IR mode"
+    default "16"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
+    help
+      Sets the IR Mode to be used with IR Nexus. Every remote has a different mode and key mapping.
 
 config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS_CODEMASK
-	string "IR code mask"
-	depends on BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
-	help
-	  Sets a key code mask if the device generates same code based on trigger bit
+    string "IR code mask"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
+    help
+      Sets a key code mask if the device generates same code based on trigger bit
 
 config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS_KEYMAP
-	string "keymap"
-	default ""
-	help
-	  Select a keymap file
+    string "keymap"
+    default ""
+    help
+      Select a keymap file
 
 endif
 
 endif
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_DEVINPUT
-	bool "devinput (linux input system)"
-	depends on BR2_PACKAGE_HAS_UDEV
-	help
-	  Select devices which are annunced in the linux operating system under /dev/input/ as eventX
+    bool "devinput (linux input system)"
+    depends on BR2_PACKAGE_HAS_UDEV
+    help
+      Select devices which are annunced in the linux operating system under /dev/input/ as eventX
 
 if BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_DEVINPUT
 
 config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_DEVINPUT_KEYMAP
-	string "keymap"
-	default ""
-	help
-	  Select a keymap file
+    string "keymap"
+    default ""
+    help
+      Select a keymap file
 
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_KEYMAP
-	string "keymap"
-	default ""
-	help
-	  Select a keymap file
+    string "keymap"
+    default ""
+    help
+      Select a keymap file
 
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_SNAPSHOT
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "Snapshot"
-	help
-	  Snapshot Plugin
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "Snapshot"
+    help
+      Snapshot Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_SICONTROL
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "SI control"
-	help
-	  SI Control Plugin
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "SI control"
+    help
+      SI Control Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_TIMESYNC
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "TimeSync"
-	help
-	  TimeSync Plugin
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "TimeSync"
+    help
+      TimeSync Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_TUNER
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "Tuner"
-	help
-	  Tuner Plugin
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "Tuner"
+    help
+      Tuner Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_TRACECONTROL
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "TraceControl"
-	help
-	  TraceControl Plugin
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "TraceControl"
+    help
+      TraceControl Plugin
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "WebKitBrowser"
-	depends on BR2_PACKAGE_WPEWEBKIT
-	help
-	  WebKitBrowser Plugin
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "WebKitBrowser"
+    depends on BR2_PACKAGE_WPEWEBKIT
+    help
+      WebKitBrowser Plugin
 
 if BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_AUTOSTART
-	bool "autostart"
-	default y
+    bool "autostart"
+    default y
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_STARTURL
-	string "start-url"
-	default "about:blank"
+    string "start-url"
+    default "about:blank"
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_USERAGENT
-	string "useragent"
-	default "Mozilla/5.0 (Macintosh, Intel Mac OS X 10_11_4) AppleWebKit/602.1.28+ (KHTML, like Gecko) Version/9.1 Safari/601.5.17"
+    string "useragent"
+    default "Mozilla/5.0 (Macintosh, Intel Mac OS X 10_11_4) AppleWebKit/602.1.28+ (KHTML, like Gecko) Version/9.1 Safari/601.5.17"
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_MEMORYPROFILE
-	string "memory-profile"
-	default "128m"
+    string "memory-profile"
+    default "128m"
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_MEMORYPRESSURE
-	string "memory-pressure"
-	default "databaseprocess:50m,networkprocess:100m,webprocess:300m,rpcprocess:50m"
+    string "memory-pressure"
+    default "databaseprocess:50m,networkprocess:100m,webprocess:300m,rpcprocess:50m"
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_MEDIADISKCACHE
-	bool "media-disk-cache"
-	default n
+    bool "media-disk-cache"
+    default n
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_DISKCACHE
-	string "disk-cache"
-	default "0"
+    string "disk-cache"
+    default "0"
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_XHRCACHE
-	bool "xhr-cache"
-	default false
+    bool "xhr-cache"
+    default false
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_TRANSPARENT
-	bool "transparent"
-	default false
+    bool "transparent"
+    default false
 
 config BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE
-	depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
-	bool "youtube"
-	help
-	  A wrapper around the youtube app to start it as a
-	  wpeframework plugin.
+    depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+    bool "youtube"
+    help
+      A wrapper around the youtube app to start it as a
+      wpeframework plugin.
 
 config BR2_PACKAGE_WPEFRAMEWORK_UX
-	depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
-	bool "ux"
-	help
-	  A WPEUIFramework non-compositing WebGL enabled tab.
+    depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+    bool "ux"
+    help
+      A WPEUIFramework non-compositing WebGL enabled tab.
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_CLIENTIDENTIFIER
-	string "clientidentifier"
-	default ""
+    string "clientidentifier"
+    default ""
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_THREADEDPAINTING
-	string "threaded-painting"
-	default ""
+    string "threaded-painting"
+    default ""
 
 endif
 
 comment "WebKitBrowser depends on WPE WebKit to be selected"
-	depends on !BR2_PACKAGE_WPEWEBKIT
+    depends on !BR2_PACKAGE_WPEWEBKIT
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBPROXY
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "WebProxy"
-	help
-	   WebProxy Plugin
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "WebProxy"
+    help
+       WebProxy Plugin
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_WEBSERVER
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "WebServer"
-	help
-	  WebServer Plugin
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "WebServer"
+    help
+      WebServer Plugin
 
 if BR2_PACKAGE_WPEFRAMEWORK_WEBSERVER
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBSERVER_PATH
-	string "path"
-	default "/www"
+    string "path"
+    default "/www"
 
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBSHELL
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	bool "WebShell"
-	help
-	  WebShell Plugin
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "WebShell"
+    help
+      WebShell Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_WIFICONTROL
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	select BR2_PACKAGE_WPA_SUPPLICANT
-	select BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
-	bool "WifiControl"
-	help
-	  WifiControl Plugin for Wifi access, linked to Network Control
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPA_SUPPLICANT
+    select BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
+    bool "WifiControl"
+    help
+      WifiControl Plugin for Wifi access, linked to Network Control
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
-	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-	select BR2_PACKAGE_SQLITE
-	select BR2_PACKAGE_DVB_APPS if BR2_PACKAGE_RPI_FIRMWARE
-	bool "TVControl"
-	help
-	  TVControl Plugin
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_SQLITE
+    select BR2_PACKAGE_DVB_APPS if BR2_PACKAGE_RPI_FIRMWARE
+    bool "TVControl"
+    help
+      TVControl Plugin
 
 if BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
 choice
-	bool "TVPlatform"
-	help
-	  Choose TVPlatform
+    bool "TVPlatform"
+    help
+      Choose TVPlatform
 
 menuconfig BR2_PACKAGE_TVPLATFORM_LINUXTV
-	bool "wpetvplatform-linuxtv"
-	depends on BR2_PACKAGE_DVB_APPS
-	help
-	  Base library for TVPlatform Implementation for LinuxTV.
+    bool "wpetvplatform-linuxtv"
+    depends on BR2_PACKAGE_DVB_APPS
+    help
+      Base library for TVPlatform Implementation for LinuxTV.
 
 source "package/wpe/wpetvplatform-bcm/Config.in"
 
 endchoice
 
 choice
-	bool "DBS Options"
-	default BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL_DVB
-	help
-	  Choose the DBS flavor.
+    bool "DBS Options"
+    default BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL_DVB
+    help
+      Choose the DBS flavor.
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL_DVB
-	bool "DVB"
-	help
-	  Enable DVB DBS
+    bool "DVB"
+    help
+      Enable DVB DBS
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL_ATSC
-	select BR2_PACKAGE_DVB_APPS
-	bool "ATSC"
-	help
-	  Enable ATSC DBS
+    select BR2_PACKAGE_DVB_APPS
+    bool "ATSC"
+    help
+      Enable ATSC DBS
 endchoice
 
 if BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL_DVB
-	config BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL_ENABLE_BOUQUET_PARSING
-	bool "Enable Bouquet Parsing"
-	help
-	  Enable Bouquet Table Parsing
+    config BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL_ENABLE_BOUQUET_PARSING
+    bool "Enable Bouquet Parsing"
+    help
+      Enable Bouquet Table Parsing
 
 config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS_TVCONTROL_COUNTRY_CODE
-	string "Country Code"
-	default "GBR"
-	depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
-	help
-	  Sets the country code like
-	  United Kingdom has 3-character code "GBR", which is coded as:
-	  "0100 0111 0100 0010 0101 0010".
+    string "Country Code"
+    default "GBR"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
+    help
+      Sets the country code like
+      United Kingdom has 3-character code "GBR", which is coded as:
+      "0100 0111 0100 0010 0101 0010".
 
 config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS_TVCONTROL_COUNTRY_REGION_ID
-	string "Country Region ID"
-	default "0"
-	depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
-	help
-	  Sets the country region id like
-	  '0' - no time zone extension used,
-	  '1'- time zone 1 (most easterly region)etc.
+    string "Country Region ID"
+    default "0"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
+    help
+      Sets the country region id like
+      '0' - no time zone extension used,
+      '1'- time zone 1 (most easterly region)etc.
 endif
 
 if BR2_PACKAGE_BCM_REFSW
+config BR2_PACKAGE_WPEFRAMEWORK_HOME_TS
+    string "Home transport stream which carries DVB-SI"
+    default "0"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
+    help
+      Sets the Home trasnsport
 
 config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS_TVCONTROL_TUNE_PARAM
-	string "Tune Param"
-	default "SYMBOL_RATE=6900000"
-	depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
-	help
-	  Sets the Tuner Param, symbol rate.
+    string "Tune Param"
+    default "SYMBOL_RATE=6900000"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
+    help
+      Sets the Tuner Param, symbol rate.
 
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS_TVCONTROL_FREQUENCY_LIST
-	string "Frequency List"
-	default "0"
-	depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
-	help
-	  Sets the Frequency List for scanning in MHz using either ',' as the separator
-	  or '-' to define the range. eg:- 354,362,370 or  354-370
+    string "Frequency List"
+    default "0"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
+    help
+      Sets the Frequency List for scanning in MHz using either ',' as the separator
+      or '-' to define the range. eg:- 354,362,370 or  354-370
 endif
 
 comment "External plugins below"
