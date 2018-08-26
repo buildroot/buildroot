@@ -1,0 +1,40 @@
+#!/bin/sh
+#
+# Turn on/off the Carrier Board Backlight
+#
+#
+# Depends upon the script located at:
+#	/usr/local/bin/sfo-backlight
+#
+
+BLSCRIPT=/usr/local/bin/sfo-backlight
+
+start() {
+	printf "Turning on backlight: "
+	${BLSCRIPT} 50
+	echo "OK"
+}
+
+stop() {
+	printf "Turning off backlight: "
+	${BLSCRIPT} 0
+	echo "OK"
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart|reload)
+	stop
+	start
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?

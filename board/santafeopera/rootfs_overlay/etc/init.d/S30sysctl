@@ -1,0 +1,20 @@
+#!/bin/sh
+
+[ -f /etc/sysctl.conf ] || exit 0
+
+case "$1" in
+    start)
+        echo "Loading sysctl.conf"
+        /sbin/sysctl -p /etc/sysctl.conf
+        ;;
+
+    stop)
+        ;;
+
+    *)
+        echo "Usage: $0 start"
+        exit 1
+        ;;
+esac
+
+exit $?

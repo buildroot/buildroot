@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+# usage: backlight.sh [percent_on]
+#
+#	percent_on is epressed in integers between 0 and 100%
+#	0 will effectivly shut the backlight off, but it is still
+#	enabled with the LED_CTRL pin being high
+#
+# exit codes:
+#	0 - success
+#	1 - failed to find sudo
+#	2 - failed to find PWM
+
+# period has to be < 50k (20KHz) or the inductors on the convert board
+#   will whine about it (literally whine - it's obnoxious)
+DEFAULT_DUTY_CYCLE=50
+PERIOD=10000
+
+
+
+# need to run as sudo
+if [ $UID != 0 ]
+then
+	echo "Usage:  sudo $0 %_backlight_on"
+	exit 1
+fi
+
+# check to see if the overlay has been loaded
+if [ ! -e /sys/class/pwm/pwmchip0 ]
+then
+	echo "Failed to find PWM.  Is the correct overlay loaded from /boot/config.txt or pin setup done post boot?"
+	echo "exiting..."
+	exit 2
+fi
+
+# capture old working directory
+OLD_DIR=`pwd`
+cd /sys/class/pwm/pwmchip0
+
+# turn on the PWM control of backlight
+if [ ! -e pwm0 ]
+then
+	echo 0 > /sys/class/pwm/pwmchip0/export
+fi
+
+# setup pwm
+#  The pwm is setup where a duty cycle of:
+#        0 == 100% on
+#    10000 == 0% on (full off)
+cd pwm0
+echo $PERIOD > period
+DUTY_CYCLE=${1:-$DEFAULT_DUTY_CYCLE}
+DUTY_CYCLE=$(( PERIOD - (DUTY_CYCLE * 100) ))
+echo $DUTY_CYCLE
+echo $DUTY_CYCLE > duty_cycle
+
+# turn the pwm on (it's ok to clobber this bit if it has already been set)
+echo 1 > enable
+
+gpio mode 41 out
+gpio write 41 1
+
+######
+# Educational note, you can also use the RPi.GPIO
+# Python library to control the backlight via the sample
+# code below:
+#  ------ snip here
+#
+# python <<EOF
+#
+# try:
+#
+#     import RPi.GPIO as GPIO
+#     GPIO.setmode(GPIO.BOARD)
+#     GPIO.setup(41, GPIO.OUT, initial=GPIO.HIGH)
+# except Exception as e:
+#     print("Error importing RPi.GPIO!  This is probably because you need superuser privileges.  You can achieve this by using 'sudo' to run your script")
+#     print("Error is: ", e)
+# EOF
+#  ------ snip here
