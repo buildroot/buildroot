@@ -383,7 +383,8 @@ define LINUX_APPEND_DTB
 			else \
 				dtbpath=dts/$${dtb}.dtb ; \
 			fi ; \
-			cat zImage $${dtbpath} > zImage.$${dtb} || exit 1; \
+			dd if=$${dtbpath} of=$${dtbpath}.padded ibs=8 conv=sync;\
+			cat zImage $${dtbpath}.padded > zImage.$${dtb} || exit 1; \
 		done)
 endef
 ifeq ($(BR2_LINUX_KERNEL_APPENDED_UIMAGE),y)
