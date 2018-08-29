@@ -59,7 +59,7 @@ __EOF__
 
 		--console-noblank)
 		if ! grep -qE 'consoleblank=0' "${CFGTXT}"; then
-			echo -n ' consoleblank=0' >> ${CFGTXT}
+			echo -n 'consoleblank=0' >> ${CFGTXT}
 		fi
 		;;
 
