@@ -60,6 +60,10 @@ echo 1 > enable
 gpio mode 41 out
 gpio write 41 1
 
+# and cleanup
+cd $OLD_DIR
+exit 0
+
 ######
 # Educational note, you can also use the RPi.GPIO
 # Python library to control the backlight via the sample

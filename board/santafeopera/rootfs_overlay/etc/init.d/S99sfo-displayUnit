@@ -1,0 +1,44 @@
+#!/bin/sh
+#
+# launch the serf display software
+#
+
+error() {
+	echo "Error encountered in $0: $1: $!" >&2
+	echo "NOT OK"
+    exit 9
+}
+
+start() {
+    /usr/local/bin/launchSerfDisplay.sh &
+
+	echo "OK"
+}
+stop() {
+    killall launchSerfDisplay.sh
+    killall setIp
+    killall SurfDisplay
+
+	echo "OK"
+}
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart|reload)
+	restart
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?
