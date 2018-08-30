@@ -1,0 +1,45 @@
+#!/bin/sh
+#
+# sfo-modules    # Starts i2c-dev and goodix
+#
+
+error() {
+	echo "Error encountered in $0: $1: $!" >&2
+	echo "NOT OK"
+    exit 9
+}
+
+start() {
+
+	modprobe i2c-dev || error 'starting i2c-dev'
+	modprobe goodix || error 'starting goodix'
+
+	echo "OK"
+}
+stop() {
+	modprobe i2c-dev || error 'stopping i2c-dev'
+	modprobe goodix || error 'stopping goodix'
+
+	echo "OK"
+}
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart|reload)
+	restart
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?

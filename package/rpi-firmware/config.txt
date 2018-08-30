@@ -1,20 +1,75 @@
-# Please note that this is only a sample, we recommend you to change it to fit
-# your needs.
-# You should override this file using a post-build script.
+#############################################################
+# Petonic [2018-08-17 FRI 12:39]
+#
+# Customized config.txt that incorprates what we need for
+# BuildRoot to work, along with Scott's changes for the carrier board
+##############################################################
+# References:
 # See http://buildroot.org/manual.html#rootfs-custom
 # and http://elinux.org/RPiconfig for a description of config.txt syntax
 
+# This is the line that is missing from Scott's vanilla
+# Carrier Board CONFIG.TXT.  A BR image Will not boot without it.
+
 kernel=zImage
 
-# To use an external initramfs file
-#initramfs rootfs.cpio.gz
+#############################################################
+## setup PDI display##########################################
+# Use the full 28bit wide DPI (display parallel interface):
+#    24 bit color (8bit R, 8bit, G, 8bit B)
+#    4 control lines- h-sync, v-sync, DE (data enable?), and pixel clock
+dtoverlay=dpi24
 
-# Disable overscan assuming the display supports displaying the full resolution
-# If the text shown on the screen disappears off the edge, comment this out
-disable_overscan=1
+# Enable LCD displays attached to the DPI GPIOs.
+# This is to allow the use of third-party LCD displays using the parallel display interface.
+enable_dpi_lcd=1
 
-# How much memory in MB to assign to the GPU on Pi models having
-# 256, 512 or 1024 MB total memory
-gpu_mem_256=100
-gpu_mem_512=100
-gpu_mem_1024=100
+# ensure that we use the LCD output even if an HDMI cable/monitor is plugged in
+display_default_lcd=1
+
+# rotate the display 180deg - this is handled in the Qt app
+#display_rotate=2
+
+# enable custom CVT (cordinated video timings) configuration
+dpi_group=2
+dpi_mode=87
+
+# bit field used to setup DPI -- see spreadsheet for bit banging
+dpi_output_format=0x070217
+
+# string used to describe CVT configuration -- see speadsheet for value mapping
+hdmi_timings=1280 0 72 10 20 320 0 20 10 70 0 0 0 60 0 34826400 8
+
+# start PWM0 @ GPIO40 for control of the LED backlight
+dtoverlay=pwm,pin=40,func=4
+
+## /end setup PDI display####################################
+#############################################################
+
+#############################################################
+## configure touchscreen#####################################
+
+#dtparam=i2c_arm=on
+dtparam=i2c_vc=on
+dtoverlay=i2c1-bcm2708,sda1_pin=44,scl1_pin=45,pin_func=6
+dtoverlay=goodix,interrupt=43,reset=42
+
+
+## /end configure touchscreen################################
+#############################################################
+
+#############################################################
+## configure console#########################################
+# serial console is configured via dt-blob.bin
+# additional console settings such as disabling blanking are in cmdline.txt
+#############################################################
+
+#############################################################
+## configure SPI interface for ethernet switch###############
+# turn on the SPI functions on alternate pins
+
+dtoverlay=spi-gpio35-39
+dtparam=spi=on
+
+## /end configure SPI interface for ethernet switch##########
+#############################################################
