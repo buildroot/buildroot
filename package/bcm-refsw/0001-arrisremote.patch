@@ -1,0 +1,152 @@
+--- a/magnum/portinginterface/kir/include/bkir.h
++++ b/magnum/portinginterface/kir/include/bkir.h
+@@ -193,6 +193,7 @@ typedef enum
+     BKIR_KirDevice_eSonySejin,          /* Sony Sejin keyboard using UART D */
+     BKIR_KirDevice_eCirNec,             /* Consumer NEC */
+     BKIR_KirDevice_eCirRC6,             /* Consumer RC6 */
++    BKIR_KirDevice_eCirKreaTv,          /* Krea TV protocol*/
+     BKIR_KirDevice_eCirGISat,           /* Consumer GI Satellite */
+     BKIR_KirDevice_eCirCustom,          /* Customer specific type */
+     BKIR_KirDevice_eCirDirectvUhfr,     /* DIRECTV uhfr */
+--- a/magnum/portinginterface/kir/src/bkir.c
++++ b/magnum/portinginterface/kir/src/bkir.c
+@@ -961,6 +961,66 @@ static const CIR_Param rC6Mode6AParam = {
+                 /*      the received data. */
+ };
+ 
++/* CIR configuration parameters for KreaTV */
++static const CIR_Param kreatvParam = {
++  ( 86-1 ),    /* count divisor: */
++    /* divide by 86 for 3.1852 us period or 0.0099095T */
++    { {807,1},
++        {605,1},
++        {202,1},
++        {101,1} }, /* pa[], preamble A pulse sequence */
++    { {807,1},
++        {605,1},
++        {303,1},
++        {0,0} },   /* pb[], preamble B pulse sequence */
++    4,           /* number of entries in pa[] */
++    3,           /* number of entries in pb[] */
++    1,           /* measure preamble pulse: */
++    /*   0 => even counts specifies cycle period */
++    /*   1 => even counts specifies off pulse period */
++    0,           /* if true, pb[] matches a repeat sequence */
++    0,           /* pulse tolerance = value not used */
++    202,         /* bit Period = 643.407 us (PS T0) */
++    0,           /* not used for bi-phase (PS delta T) */
++    0,           /*  - " - (symbol pulse position) */
++    0,           /* - " - (measure spacing for complete cycle) */
++    {0, 1},      /* - " - (data symbol fix-width pulse period) */
++    {0, 1},      /* bit period tolerance value = not applicable, */
++    /* and select code = 12.5% */
++    31-1,        /* no. of symbols for sequence with preamble A */
++    31-1,        /* no. of symbols for sequence with preamble B */
++    1-1,         /* no. of data bits per symbol */
++    1,           /* most/!least significant symbol received first */
++    0,           /* left/!right adjust received data */
++    1,           /* bi-phase/!pulse-spacing coded */
++    0,           /* two symbols per cycle */
++    0,           /* check stop symbol */
++    0,           /* variable length data */
++    40-1,        /* time-out clock divisor: divide by 40 or 127.4074 us */
++    240,         /* frame time-out = 30.58 ms */
++    26,          /* edge time-out = 3.313 ms */
++    20,          /* minimum dead-time after fault = 2.548 ms */
++    {0, 0},      /* stop symbol pulse or cycle period */
++    0,           /* data symbol timeout */
++    0,
++    0,
++    0,
++    0,
++    0,
++    0,
++    0,
++    0,           /* restrictive decoding enabled: 0:false, 1:true */
++    0,
++    0,
++    0,
++    0,
++    0,
++    0,
++    0,
++    0,
++    0 
++};
++
+ #if RCMM_VARIABLE_LENGTH_SUPPORT != 1
+ static const CIR_Param s_RCMMParam = {
+ /*
+@@ -1862,6 +1922,9 @@ BERR_Code BKIR_GetDefaultCirParam (
+         case BKIR_KirDevice_eCirXip:
+             pCirParam = &xipParam;
+             break;
++        case BKIR_KirDevice_eCirKreaTv:
++            pCirParam = &kreatvParam;
++            break;
+         default:
+             retCode = BERR_TRACE(BERR_INVALID_PARAMETER);
+             break;
+@@ -2101,6 +2164,7 @@ BERR_Code BKIR_EnableIrDevice (
+         case BKIR_KirDevice_eCirDirectvUhfr:
+         case BKIR_KirDevice_eCirEchostarUhfr:
+         case BKIR_KirDevice_eCirRC6:
++        case BKIR_KirDevice_eCirKreaTv:
+         case BKIR_KirDevice_eCirRcmmRcu:
+         case BKIR_KirDevice_eCirRstep:
+         case BKIR_KirDevice_eCirXmp2:
+@@ -2135,6 +2199,7 @@ BERR_Code BKIR_EnableIrDevice (
+             if ((device == BKIR_KirDevice_eCirRfUei) ||
+                 (device == BKIR_KirDevice_eCirDirectvUhfr) ||
+                 (device == BKIR_KirDevice_eCirEchostarUhfr) ||
++                (device == BKIR_KirDevice_eCirKreaTv) ||
+                 (device == BKIR_KirDevice_eCirRC6)) {
+                 /* Disable following remote types : */
+                 lval &= ~(  KBD_CMD_TWIRP_ENABLE |
+@@ -2143,6 +2208,7 @@ BERR_Code BKIR_EnableIrDevice (
+                 if ((hChn->customDevice == BKIR_KirDevice_eCirRfUei) ||
+                     (hChn->customDevice == BKIR_KirDevice_eCirDirectvUhfr) ||
+                     (hChn->customDevice == BKIR_KirDevice_eCirEchostarUhfr) ||
++                    (hChn->customDevice == BKIR_KirDevice_eCirKreaTv) ||
+                     (hChn->customDevice == BKIR_KirDevice_eCirRC6))
+                     lval &= ~(  KBD_CMD_TWIRP_ENABLE |
+                                 KBD_CMD_SEJIN_ENABLE |
+@@ -2244,6 +2310,7 @@ BERR_Code BKIR_DisableIrDevice (
+         case BKIR_KirDevice_eCirDirectvUhfr:
+         case BKIR_KirDevice_eCirEchostarUhfr:
+         case BKIR_KirDevice_eCirRC6:
++        case BKIR_KirDevice_eCirKreaTv:
+         case BKIR_KirDevice_eCirRcmmRcu:
+         case BKIR_KirDevice_eCirRstep:
+         case BKIR_KirDevice_eCirXmp2:
+@@ -2789,6 +2856,9 @@ void BKIR_P_ConfigCir (
+         case BKIR_KirDevice_eCirXip:
+             pCirParam = &xipParam;
+             break;
++        case BKIR_KirDevice_eCirKreaTv:
++            pCirParam = &kreatvParam;
++            break;
+         default:
+             return;
+     }
+--- a/nexus/modules/ir_input/include/nexus_ir_input.h
++++ b/nexus/modules/ir_input/include/nexus_ir_input.h
+@@ -90,6 +90,7 @@ typedef enum NEXUS_IrInputMode
+     NEXUS_IrInputMode_eSonySejin,           /* Sony Sejin keyboard using UART D */
+     NEXUS_IrInputMode_eCirNec,              /* Consumer NEC */
+     NEXUS_IrInputMode_eCirRC6,              /* Consumer RC6 */
++    NEXUS_IrInputMode_eCirKreaTv,           /* Consumer Krea TV */
+     NEXUS_IrInputMode_eCirGISat,            /* Consumer GI Satellite */
+     NEXUS_IrInputMode_eCustom,              /* Customer specific type. See NEXUS_IrInput_SetCustomSettings. */
+     NEXUS_IrInputMode_eCirDirectvUhfr,      /* DIRECTV uhfr (In IR mode) */
+--- a/nexus/modules/ir_input/src/nexus_ir_input.c
++++ b/nexus/modules/ir_input/src/nexus_ir_input.c
+@@ -251,6 +251,7 @@ static BERR_Code NEXUS_IrInput_P_DataReady_isr(BKIR_ChannelHandle hChn, void *co
+         case NEXUS_IrInputMode_eSejin56KhzKbd:
+         case NEXUS_IrInputMode_eCirXmp:
+         case NEXUS_IrInputMode_eCirRcmmRcu:
++		case NEXUS_IrInputMode_eCirKreaTv:
+             if (irInput->settings.repeatFilterTime == 0)  /* maintain compatibility with older application code */
+                 irInput->settings.repeatFilterTime = 150; /* that did not over-ride the default timeout */
+             /* no hardware to detect this, so measure time */
+
