@@ -18,3 +18,9 @@ if [ -f "${BOARD_DIR}/index.html" ]; then
 	mkdir -p "${TARGET_DIR}/www/"
 	cp -pf "${BOARD_DIR}/index.html" "${TARGET_DIR}/www/"
 fi
+
+# Copy keymap for OSMC remote
+if [ -f "${BOARD_DIR}/osmc-devinput-remote.json" ]; then
+	mkdir -p "${TARGET_DIR}/usr/share/WPEFramework/RemoteControl/"
+	cp -pf "${BOARD_DIR}/osmc-devinput-remote.json" "${TARGET_DIR}/usr/share/WPEFramework/RemoteControl/devinput-remote.json"
+fi

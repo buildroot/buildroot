@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_UI_VERSION = 7ff4eff4c66d24845efe0ba0bcb2fbc15a61d120
+WPEFRAMEWORK_UI_VERSION = 8b17a00032760d6257b45bdecccf29285896960c
 WPEFRAMEWORK_UI_SITE = $(call github,WebPlatformForEmbedded,WPEFrameworkUI,$(WPEFRAMEWORK_UI_VERSION))
 WPEFRAMEWORK_UI_DEPENDENCIES = wpeframework wpeframework-plugins
 

@@ -32,6 +32,14 @@ config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
     help
       Include a nxserver with the compositor.
 
+if BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_IRMODE
+    string "IR mode"
+    default "16"
+    help
+      Sets the IR Mode to be used with IR Nexus. Every remote has a different mode and key mapping.
+
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_BOXMODE
     string "Memory Box Mode"
     depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
@@ -117,6 +125,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_HARDWAREREADY
     string "Manual overrule of the time it takes to initialisize all hardware (ms)"
     default 0
 
+endif
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
@@ -250,53 +259,20 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
 
 if BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
 
-menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
-    bool "BCM Nexus IR Remote Control Unit"
-    default false
-    depends on (BR2_PACKAGE_BCM_REFSW || BR2_PACKAGE_HAS_NEXUS) && BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
-    help
-      Enable the Nexus IR remote input
-
-if BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
-
-config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS_MODE
-    string "IR mode"
-    default "16"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
-    help
-      Sets the IR Mode to be used with IR Nexus. Every remote has a different mode and key mapping.
-
-config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS_CODEMASK
+config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR_CODEMASK
     string "IR code mask"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IRNEXUS
+    depends on BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
     help
       Sets a key code mask if the device generates same code based on trigger bit
 
 endif
 
-endif
-
-menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_DEVINPUT
+config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_DEVINPUT
     bool "devinput (linux input system)"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
     depends on BR2_PACKAGE_HAS_UDEV
     help
       Select devices which are annunced in the linux operating system under /dev/input/ as eventX
-
-if BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_DEVINPUT
-
-config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_DEVINPUT_KEYMAP
-    string "keymap"
-    default ""
-    help
-      Select a keymap file
-
-endif
-
-config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_KEYMAP
-    string "keymap"
-    default ""
-    help
-      Select a keymap file
 
 endif
 
