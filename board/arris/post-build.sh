@@ -18,3 +18,11 @@ if [ -f "${BOARD_DIR}/arris-ir-remote.json" ]; then
 	mkdir -p "${TARGET_DIR}/usr/share/WPEFramework/RemoteControl/"
 	cp -pf "${BOARD_DIR}/arris-ir-remote.json" "${TARGET_DIR}/usr/share/WPEFramework/RemoteControl/ir-remote.json"
 fi
+
+mkdir -p "${TARGET_DIR}/boot"
+grep -q '^/dev/sda1' "${TARGET_DIR}/etc/fstab" || \
+	echo -e '/dev/sda1 /boot vfat defaults 0 0' >> "${TARGET_DIR}/etc/fstab"
+
+mkdir -p "$(TARGET_DIR)/root"
+grep -q '^/dev/sda2' "${TARGET_DIR}/etc/fstab" || \
+	echo -e '/dev/sda2 /root ext4 defaults 0 0' >> "${TARGET_DIR}/etc/fstab"
