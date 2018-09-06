@@ -181,6 +181,11 @@ config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_YOUTUBE
     string "youtube-limit"
     default "614400"
 
+config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_APPS
+    depends on BR2_PACKAGE_WPEFRAMEWORK_APPS
+    string "apps-limit"
+    default "614400"
+
 config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_UX
     depends on BR2_PACKAGE_WPEFRAMEWORK_UX
     string "ux-limit"
@@ -355,6 +360,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE
     bool "youtube"
     help
       A wrapper around the youtube app to start it as a
+      wpeframework plugin.
+
+config BR2_PACKAGE_WPEFRAMEWORK_APPS
+    depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+    bool "apps"
+    help
+      A webkit instance for apps to start it as a
       wpeframework plugin.
 
 config BR2_PACKAGE_WPEFRAMEWORK_UX
