@@ -194,7 +194,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_UX
 config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_NETFLIX
     depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
     string "netflix-limit"
-    default "307200"
+    default "409600"
 
 endif
 
@@ -226,28 +226,6 @@ config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
     default n
     help
       A Bluetooth plugin to interact with Bluetooth devices.
-
-if BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
-
-choice
-    bool "Select Platform"
-    default BR2_PACKAGE_PLATFORM_RASPBERRY_PI
-    help
-      Choose Platform.
-
-menuconfig BR2_PACKAGE_PLATFORM_RASPBERRY_PI
-    bool "Raspberry Pi"
-    help
-      Enable Raspberry Pi Platform.
-
-menuconfig BR2_PACKAGE_PLATFORM_BCMXXXX
-    bool "BCM Platform"
-    help
-      Enable BCM Platform.
-
-endchoice
-
-endif
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
