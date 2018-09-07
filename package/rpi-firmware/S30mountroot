@@ -1,0 +1,28 @@
+#!/bin/sh
+
+start()
+{
+	while true
+	do
+		if mount | grep /root > /dev/null; then
+			break;
+		else
+			mount -a && sleep 1;
+		fi
+	done
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		;;
+	restart|reload)
+		start
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart|reload}" >&2
+		exit 1
+		;;
+esac
