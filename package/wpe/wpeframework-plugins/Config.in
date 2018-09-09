@@ -347,11 +347,27 @@ config BR2_PACKAGE_WPEFRAMEWORK_APPS
       A webkit instance for apps to start it as a
       wpeframework plugin.
 
+if BR2_PACKAGE_WPEFRAMEWORK_APPS
+
+config BR2_PACKAGE_WPEFRAMEWORK_APPS_AUTOSTART
+    bool "autostart"
+    default y
+
+endif
+
 config BR2_PACKAGE_WPEFRAMEWORK_UX
     depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
     bool "ux"
     help
       A WPEUIFramework non-compositing WebGL enabled tab.
+
+if BR2_PACKAGE_WPEFRAMEWORK_UX
+
+config BR2_PACKAGE_WPEFRAMEWORK_UX_AUTOSTART
+    bool "autostart"
+    default y
+
+endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_CLIENTIDENTIFIER
     string "clientidentifier"
