@@ -23,6 +23,9 @@ ifneq (,$(findstring $(GREENPEAK_CHIP), GP501 GP510 GP711))
   GREENPEAK_CHIP_REPO = gp501
 else ifneq (,$(findstring $(GREENPEAK_CHIP), GP502 GP712))
   GREENPEAK_CHIP_REPO = gp712
+else ifneq (,$(findstring $(GREENPEAK_CHIP), ZD4500ZNO))
+  GREENPEAK_CHIP_REPO = zd4500zno
+  GREENPEAK_CHIP = GP501
 else
   $(error "Chip ${GREENPEAK_CHIP} is not supported.")
 endif
@@ -32,9 +35,28 @@ GREENPEAK_VERSION = ${GREENPEAK_CHIP_REPO}_${GREENPEAK_PLATFORM}_${ARCH}_${GREEN
 
 ifeq ($(BR2_PACKAGE_GREENPEAK_KERNEL_MODULE),y)
 GREENPEAK_EXTRA_MOD_CFLAGS = \
-     -D$(GREENPEAK_CHIP) -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/usr/include/linux -I$(STAGING_DIR)/usr/include/refsw \
-     
+     -D$(GREENPEAK_CHIP) \
+     -I$(STAGING_DIR)/usr/include \
+     -I$(STAGING_DIR)/usr/include/linux \
+     -nodefaultlibs \
+     -Wno-unused-variable \
+     -Wno-incompatible-pointer-types
+
+ifneq (,$(findstring $(GREENPEAK_CHIP), ZD4500ZNO))
+GREENPEAK_EXTRA_MOD_CFLAGS += \
+     -I$(STAGING_DIR)/usr/include/refsw/ \
+     -I$(STAGING_DIR)/usr/include/refsw/linuxkernel/include/ \
+     -DGP_USE_NEXUS_SPI \
+     -I${@D}/Driver/BCM97358Ref \
+
+define GREENPEAK_PREPARE_MODULE
+	$(INSTALL) -m 644 -D $(STAGING_DIR)/usr/include/refsw/linuxkernel/Module.symvers ${@D}/Driver/
+	$(INSTALL) -m 775 -D $(STAGING_DIR)/usr/include/refsw/linuxkernel/libnexus_driver.a ${@D}/Driver/
+endef
+endif
+
 define GREENPEAK_BUILD_MODULE
+	 $(GREENPEAK_PREPARE_MODULE)
 	 $(MAKE) -C $(LINUX_DIR) $(LINUX_MAKE_FLAGS) GP_CHIP=$(GREENPEAK_CHIP) EXTRA_CFLAGS="$(GREENPEAK_EXTRA_MOD_CFLAGS)" M=$(@D)/Driver modules
 endef
 
@@ -51,13 +73,19 @@ GREENPEAK_EXTRA_CFLAGS = \
 	-fPIC \
 	-ffreestanding \
 	-DGP_NVM_PATH=/root/gp \
-	-DGP_NVM_FILENAME=/root/gp/gpNvm.dat
+	-DGP_NVM_FILENAME=/root/gp/gpNvm.dat \
 	-DGP_DEVICE_PATH=${BR2_PACKAGE_GREENPEAK_DEVICE_NODE_PATH}
+
+GREENPEAK_OPTIONS = \
+	TOOLCHAINBIN="$(HOST_DIR)/usr/bin" \
+	TOOLCHAIN="$(HOST_DIR)/usr" \
+	CROSS_COMPILE="$(GNU_TARGET_NAME)-" \
+	CFLAGS_COMPILER="$(TARGET_CFLAGS) $(GREENPEAK_EXTRA_CFLAGS)"
 
 define GREENPEAK_BUILD_LIB
     $(info "Building RF4CE lib")
 	$(MAKE1) -C $(@D)/Stack clean
-	COMPILER=buildroot $(TARGET_MAKE_ENV) $(MAKE1) TOOLCHAIN="$(HOST_DIR)/usr" CROSS_COMPILE="$(GNU_TARGET_NAME)-" CFLAGS_COMPILER="$(TARGET_CFLAGS) $(GREENPEAK_EXTRA_CFLAGS)" -C $(@D)/Stack archive
+	COMPILER=buildroot $(TARGET_MAKE_ENV) $(MAKE1) ${GREENPEAK_OPTIONS} -C $(@D)/Stack archive
 endef
 
 define GREENPEAK_INSTALL_LIB_DEV

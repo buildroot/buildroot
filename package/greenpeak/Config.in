@@ -13,11 +13,11 @@ config BR2_PACKAGE_GREENPEAK_KERNEL_MODULE
 config BR2_PACKAGE_GREENPEAK_LIB
 	bool "userland library"
 	help
-	  Build a Rf4ce library for use by appplications working with 
-	  the greenpeak chip in stead of building an application that 
-	  reads keys from an Rf4ce remote and ingest them into the 
+	  Build a Rf4ce library for use by appplications working with
+	  the greenpeak chip in stead of building an application that
+	  reads keys from an Rf4ce remote and ingest them into the
 	  linux input system.
-      
+
 config BR2_PACKAGE_GREENPEAK_DEVICE_NODE_PATH
 	string "device node"
 	default /dev/gpK5 if BR2_PACKAGE_GREENPEAK_GP501 || BR2_PACKAGE_GREENPEAK_GP510 || BR2_PACKAGE_GREENPEAK_GP711
@@ -46,6 +46,9 @@ choice
 	config BR2_PACKAGE_GREENPEAK_GP712
 		bool "GP712"
 
+    config BR2_PACKAGE_GREENPEAK_ZD4500ZNO
+		bool "ZD4500ZNO"
+
 endchoice
 
 config BR2_PACKAGE_GREENPEAK_TYPE
@@ -55,5 +58,5 @@ config BR2_PACKAGE_GREENPEAK_TYPE
 	default GP510 if BR2_PACKAGE_GREENPEAK_GP510
 	default GP711 if BR2_PACKAGE_GREENPEAK_GP711
 	default GP712 if BR2_PACKAGE_GREENPEAK_GP712
-
+	default ZD4500ZNO if BR2_PACKAGE_GREENPEAK_ZD4500ZNO
 endif
