@@ -333,14 +333,22 @@ config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_TRANSPARENT
     bool "transparent"
     default false
 
-config BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE
     depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
     bool "youtube"
     help
       A wrapper around the youtube app to start it as a
       wpeframework plugin.
 
-config BR2_PACKAGE_WPEFRAMEWORK_APPS
+if BR2_PACKAGE_WPEFRAMEWORK_UX
+
+config BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE_USERAGENT
+    string "useragent"
+    default "Mozilla/5.0 (Macintosh, Intel Mac OS X 10_11_4) AppleWebKit/602.1.28+ (KHTML, like Gecko) Version/9.1 Safari/601.5.17"
+
+endif
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_APPS
     depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
     bool "apps"
     help
@@ -352,9 +360,13 @@ if BR2_PACKAGE_WPEFRAMEWORK_APPS
 config BR2_PACKAGE_WPEFRAMEWORK_APPS_AUTOSTART
     bool "autostart"
 
+config BR2_PACKAGE_WPEFRAMEWORK_APPS_USERAGENT
+    string "useragent"
+    default ""
+
 endif
 
-config BR2_PACKAGE_WPEFRAMEWORK_UX
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_UX
     depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
     bool "ux"
     help
@@ -364,6 +376,10 @@ if BR2_PACKAGE_WPEFRAMEWORK_UX
 
 config BR2_PACKAGE_WPEFRAMEWORK_UX_AUTOSTART
     bool "autostart"
+
+config BR2_PACKAGE_WPEFRAMEWORK_UX_USERAGENT
+    string "useragent"
+    default ""
 
 endif
 
