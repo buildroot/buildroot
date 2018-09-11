@@ -181,4 +181,9 @@ config BR2_PACKAGE_BCM_REFSW_BOXMODE
     help
       Memory box mode, you can find details from release notes per platform
 
+config BR2_PACKAGE_BCM_REFSW_KERNELSPACE_HEADERS
+	bool "Kernelspace headers"
+	default n
+	help
+	  Installs kernelspace nexus headers used to build some kernelmodules like greenpeak.
 endif

@@ -135,3 +135,31 @@ define BCM_REFSW_INSTALL_NEXUS_LIBB_OS_DEV
 	$(call BCM_REFSW_INSTALL_NEXUS_LIBB_OS,$(STAGING_DIR))
 	cp -a $(@D)/nexus/lib/os/include/* $(1)/usr/include/refsw/os
 endef
+
+ifeq ($(BR2_PACKAGE_BCM_REFSW_KERNELSPACE_HEADERS),y)
+define BCM_REFSW_BUILD_NEXUS_KERNEL_HEADERS
+	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/refsw/linuxkernel
+	$(TARGET_CONFIGURE_OPTS) \
+	$(TARGET_MAKE_ENV) \
+	$(BCM_REFSW_CONF_OPTS) \
+	NEXUS_BIN_DIR=$(STAGING_DIR)/usr/include/refsw/linuxkernel \
+	B_REFSW_ARCH=$(ARCH)-linux \
+	PLATFORM=${BCM_REFSW_PLATFORM} \
+	NEXUS_PLATFORM=${BCM_REFSW_PLATFORM} \
+	BCHP_CHIP=${BCM_REFSW_BCHP_CHIP} \
+	BCHP_VER=${BCM_REFSW_PLATFORM_REV} \
+	BCHP_VER_LC=${BCM_REFSW_BCHP_VER_LOWER} \
+	BCHP_KERNEL_VER=${BCM_REFSW_BCHP_CHIP}${BCM_REFSW_BCHP_VER_LOWER} \
+	BCHP_DEFCONFIG=bcm${BCM_REFSW_BCHP_CHIP}${BCM_REFSW_BCHP_VER_LOWER} \
+	BCM_CONFIG=${BCM_REFSW_BCHP_CHIP}${BCM_REFSW_BCHP_VER_LOWER} \
+	B_REFSW_CROSS_COMPILE=${TARGET_CROSS} \
+	OS=linuxkernel \
+	MODE=linuxkernel \
+	B_REFSW_OS=linuxkernel \
+		$(MAKE) -C $(@D)/nexus/build nexus_headers \
+			$(BCM_REFSW_BUILD_ADDITIONS)
+
+	$(INSTALL) -m 644 -D $(BCM_REFSW_BIN)/../core/linuxkernel.$(ARCH)-linux.driver/Module.symvers $(STAGING_DIR)/usr/include/refsw/linuxkernel
+	$(INSTALL) -m 755 -D $(BCM_REFSW_BIN)/../core/linuxkernel.$(ARCH)-linux.driver/libnexus_driver.a  $(STAGING_DIR)/usr/include/refsw/linuxkernel
+endef
+endif
