@@ -383,6 +383,13 @@ config BR2_LINUX_KERNEL_CUSTOM_DTS_PATH
 
 endif
 
+config BR2_LINUX_KERNEL_DTS_OVERLAYS_SUPPORT
+	bool "Build Device Tree Overlays"
+	depends on BR2_LINUX_KERNEL_DTS_SUPPORT
+	help
+	  Build in-tree device tree overlays.
+	  Currently supports Raspberry Pi kernels.
+
 config BR2_LINUX_KERNEL_INSTALL_TARGET
 	bool "Install kernel image to /boot in target"
 	depends on !BR2_TARGET_ROOTFS_INITRAMFS

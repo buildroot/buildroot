@@ -58,8 +58,9 @@ config BR2_PACKAGE_RPI_FIRMWARE_INSTALL_DTBS
 
 config BR2_PACKAGE_RPI_FIRMWARE_INSTALL_DTB_OVERLAYS
 	bool "Install DTB overlays"
-	depends on BR2_PACKAGE_RPI_FIRMWARE_INSTALL_DTBS \
-		|| BR2_LINUX_KERNEL_DTS_SUPPORT
+	depends on (BR2_PACKAGE_RPI_FIRMWARE_INSTALL_DTBS \
+		|| BR2_LINUX_KERNEL_DTS_SUPPORT) && \
+		!BR2_LINUX_KERNEL_DTS_OVERLAYS_SUPPORT
 	default y
 	help
 	  Say 'y' here if you need to load one or more of the DTB overlays,
