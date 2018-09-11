@@ -33,4 +33,12 @@ else
 LIBSOUP_CONF_OPTS += --disable-tls-check
 endif
 
+ifeq ($(BR2_PACKAGE_VSS_SDK),y)
+LIBSOUP_PKGDIR = "$(TOP_DIR)/package/libsoup"
+define LIBSOUP_APPLY_LOCAL_PATCHES
+ $(APPLY_PATCHES) $(@D) "$(LIBSOUP_PKGDIR)" 0003-soup-cookie-jar-add-symbol.patch.conditional
+endef
+LIBSOUP_POST_PATCH_HOOKS += LIBSOUP_APPLY_LOCAL_PATCHES
+endif
+
 $(eval $(autotools-package))
