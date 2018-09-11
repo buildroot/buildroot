@@ -21,8 +21,8 @@ BUILDROOT_FLAGS = .stamp_downloaded \
 
 define VSS_EXCLUDE_PACKAGE
     $(info "Excluding ${${1}_NAME}-${${1}_VERSION} from build, provided by SDK")
-    rm -rf $(TOPDIR)/output/build/${${1}_NAME}-${${1}_VERSION}
-    ln -sf $(@D)/br_flags $(TOPDIR)/output/build/${${1}_NAME}-${${1}_VERSION}
+    rm -rf $(BASE_DIR)/build/${${1}_NAME}-${${1}_VERSION}
+    ln -sf $(@D)/br_flags $(BASE_DIR)/build/${${1}_NAME}-${${1}_VERSION}
 endef
 
 define VSS_WRITE_FLAGS
