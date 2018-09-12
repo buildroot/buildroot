@@ -2,14 +2,21 @@
 
 start()
 {
-	while true
+
+	while [ ! -e /dev/mmcblk0p1 ];
 	do
-		if mount | grep /root > /dev/null; then
-			break;
-		else
-			mount -a && sleep 1;
-		fi
+		sleep 1
 	done
+
+	while [ ! -e /dev/mmcblk0p2 ];
+	do
+		sleep 1
+	done
+
+	# wait a bit for mount
+	sleep 1
+
+	mount -a
 }
 
 case "$1" in
