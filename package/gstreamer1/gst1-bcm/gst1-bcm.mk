@@ -137,12 +137,22 @@ endif
 
 ifeq ($(BR2_PACKAGE_HAS_OPUS_DECODER),)
 GST1_BCM_PKGDIR = "$(TOP_DIR)/package/gstreamer1/gst1-bcm"
+endif
 
-define GST1_BCM_APPLY_LOCAL_PATCHES
- $(APPLY_PATCHES) $(@D) $(GST1_BCM_PKGDIR) 0001_remove_opus_support.patch.conditional;
+ifeq ($(BR2_PACKAGE_VSS_SDK),y)
+# this platform needs to run this gstreamer version parallel
+# to an older version.
+GST1_BCM_CONF_OPTS += \
+	--datadir=/usr/share/gstreamer-wpe \
+	--datarootdir=/usr/share/gstreamer-wpe \
+	--sysconfdir=/etc/gstreamer-wpe \
+	--includedir=/usr/include/gstreamer-wpe \
+	--program-prefix wpe
+define GST1_BCM_APPLY_VSS_FIX
+ package/vss-sdk/gst1/brcm.no_opus.fix.sh ${@D}
+ package/vss-sdk/gst1/brcm.fix.sh ${@D}
 endef
-  
-GST1_BCM_POST_PATCH_HOOKS += GST1_BCM_APPLY_LOCAL_PATCHES 
+GST1_BCM_POST_PATCH_HOOKS += GST1_BCM_APPLY_VSS_FIX
 endif
 
 $(eval $(autotools-package))

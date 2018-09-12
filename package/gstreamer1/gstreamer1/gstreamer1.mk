@@ -66,4 +66,22 @@ ifeq ($(BR2_PACKAGE_GSTREAMER1_GIT),y)
 GSTREAMER1_DEPENDENCIES += gst1-common
 endif
 
+ifeq ($(BR2_PACKAGE_VSS_SDK),y)
+# this platform needs to run this gstreamer version parallel
+# to an older version.
+GSTREAMER1_AUTORECONF = YES
+GSTREAMER1_AUTORECONF_OPTS = -I $(@D)/common/m4
+GSTREAMER1_GETTEXTIZE = YES
+GSTREAMER1_CONF_OPTS += \
+	--datadir=/usr/share/gstreamer-wpe \
+	--datarootdir=/usr/share/gstreamer-wpe \
+	--sysconfdir=/etc/gstreamer-wpe \
+	--includedir=/usr/include/gstreamer-wpe \
+	--program-prefix wpe
+define GSTREAMER1_APPLY_VSS_FIX
+ package/vss-sdk/gst1/gst1.fix.sh ${@D}
+endef
+GSTREAMER1_POST_PATCH_HOOKS += GSTREAMER1_APPLY_VSS_FIX
+endif
+
 $(eval $(autotools-package))

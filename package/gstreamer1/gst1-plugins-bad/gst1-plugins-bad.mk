@@ -862,4 +862,22 @@ endif
 # Use the following command to extract license info for plugins.
 # # find . -name 'plugin-*.xml' | xargs grep license
 
+ifeq ($(BR2_PACKAGE_VSS_SDK),y)
+# this platform needs to run this gstreamer version parallel
+# to an older one.
+GST1_PLUGINS_BAD_AUTORECONF = YES
+GST1_PLUGINS_BAD_AUTORECONF_OPTS = -I $(@D)/common/m4
+GST1_PLUGINS_BAD_GETTEXTIZE = YES
+GST1_PLUGINS_BAD_CONF_OPTS += \
+	--datadir=/usr/share/gstreamer-wpe \
+	--datarootdir=/usr/share/gstreamer-wpe \
+	--sysconfdir=/etc/gstreamer-wpe \
+	--includedir=/usr/include/gstreamer-wpe \
+	--program-prefix wpe
+define GST1_PLUGINS_BAD_APPLY_VSS_FIX
+ package/vss-sdk/gst1/gst1.plugins.fix.sh ${@D}
+endef
+GST1_PLUGINS_BAD_POST_PATCH_HOOKS += GST1_PLUGINS_BAD_APPLY_VSS_FIX
+endif
+
 $(eval $(autotools-package))
