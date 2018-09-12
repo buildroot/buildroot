@@ -9,13 +9,35 @@ start() {
 	#ulimit -c unlimited
 	mount -a
 
+	# make sure netflix has proper mapping
 	if [ ! -d /root/Netflix/dpi ]; then
 		mkdir -p /root/Netflix/dpi
 		ln -sfn /etc/playready /root/Netflix/dpi/playready
 	fi
-	
+
+	# wait a bit
+	sleep 1
+
 	# needed for wayland/westeros/weston
 	export XDG_RUNTIME_DIR=/tmp
+
+	# wait for cpuinfo to come available
+	while [ ! -f /proc/cpuinfo ];
+	do
+		sleep 1
+	done
+
+	export DEF="123"
+
+	# read proxy settings from /boot/proxy
+	if [ -f /boot/proxy ]; then
+		PROXY_IP=`cat /boot/proxy`
+		export http_proxy="http://$PROXY_IP"
+		export HTTP_PROXY="http://$PROXY_IP"
+		export no_proxy="127.0.0.1,localhost,ws.metrological.com,widgets.metrological.com"
+		export NO_PROXY="127.0.0.1,localhost,ws.metrological.com,widgets.metrological.com"
+	fi
+	export
 
 	echo -n "Starting WPEFramework: "
 	start-stop-daemon -S -q -b -m -p /var/run/WPEFramework.pid --exec /usr/bin/WPEFramework -- -b -c /etc/WPEFramework/config.json </dev/null >/dev/null 2>&1
