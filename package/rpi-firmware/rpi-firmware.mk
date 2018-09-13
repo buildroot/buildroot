@@ -74,18 +74,6 @@ endef
 endif
 endif
 
-ifeq ($(BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_4_9),y)
-define RPI_FIRMWARE_INSTALL_IMAGES_CMDS
-	$(INSTALL) -D -m 0644 $(@D)/boot/bootcode.bin $(BINARIES_DIR)/rpi-firmware/bootcode.bin
-	$(INSTALL) -D -m 0644 $(@D)/boot/start$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).elf $(BINARIES_DIR)/rpi-firmware/start.elf
-	$(INSTALL) -D -m 0644 $(@D)/boot/fixup$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).dat $(BINARIES_DIR)/rpi-firmware/fixup.dat
-	$(INSTALL) -D -m 0644 package/rpi-firmware/config-0.txt $(BINARIES_DIR)/rpi-firmware/config.txt
-	$(RPI_FIRMWARE_MOUNT_BOOT)
-	$(RPI_FIRMWARE_MOUNT_ROOT)
-	$(RPI_FIRMWARE_INSTALL_DTB)
-	$(RPI_FIRMWARE_INSTALL_DTB_OVERLAYS)
-endef
-else
 define RPI_FIRMWARE_INSTALL_IMAGES_CMDS
 	$(INSTALL) -D -m 0644 $(@D)/boot/bootcode.bin $(BINARIES_DIR)/rpi-firmware/bootcode.bin
 	$(INSTALL) -D -m 0644 $(@D)/boot/start$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).elf $(BINARIES_DIR)/rpi-firmware/start.elf
@@ -97,6 +85,5 @@ define RPI_FIRMWARE_INSTALL_IMAGES_CMDS
 	$(RPI_FIRMWARE_INSTALL_DTB)
 	$(RPI_FIRMWARE_INSTALL_DTB_OVERLAYS)
 endef
-endif
 
 $(eval $(generic-package))
