@@ -23,6 +23,9 @@ mkdir -p "${TARGET_DIR}/boot"
 grep -q '^/dev/sda1' "${TARGET_DIR}/etc/fstab" || \
 	echo -e '/dev/sda1 /boot vfat defaults 0 0' >> "${TARGET_DIR}/etc/fstab"
 
-mkdir -p "$(TARGET_DIR)/root"
+mkdir -p "${TARGET_DIR}/root"
 grep -q '^/dev/sda2' "${TARGET_DIR}/etc/fstab" || \
 	echo -e '/dev/sda2 /root ext4 defaults 0 0' >> "${TARGET_DIR}/etc/fstab"
+
+install -m 0755 -D board/arris/S30mountroot \
+	${TARGET_DIR}/etc/init.d/S30mountroot
