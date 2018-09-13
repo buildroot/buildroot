@@ -20,19 +20,21 @@ __EOF__
 	fi
 fi
 
-for i in "$@"
-do
-case "$i" in
-	--arm64)
+AARCH64="$(grep ^BR2_aarch64=y ${BR2_CONFIG})"
+if [ "x${AARCH64}" != "x" ]; then
 	if ! grep -qE '^arm_64bit=1' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
 		echo "Adding 'arm_64bit=1' to config.txt."
 		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
 
-# Set to 64bit
+# Force 64bit
 arm_64bit=1
 __EOF__
 	fi
-	;;
+fi
+
+for i in "$@"
+do
+case "$i" in
 	--add-pi3-miniuart-bt-overlay)
 	if [ "x${BLUETOOTH}" = "x" ]; then
 		if ! grep -qE '^dtoverlay=pi3-miniuart-bt' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
@@ -74,58 +76,6 @@ __EOF__
 
 # Force dvi output
 hdmi_drive=2
-__EOF__
-	fi
-	;;
-	--overclock-pi012)
-	if ! grep -qE '^arm_freq=' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
-		echo "Adding 'overclock=pi012' to config.txt."
-		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
-
-# Overclock
-arm_freq=1000
-gpu_freq=500
-sdram_freq=500
-over_voltage=6
-avoid_warnings=1
-__EOF__
-	fi
-	;;
-	--overclock-pi3)
-	if ! grep -qE '^arm_freq=' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
-		echo "Adding 'overclock=pi3' to config.txt."
-		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
-
-# Overclock
-arm_freq=1350
-gpu_freq=500
-sdram_freq=500
-over_voltage=5
-avoid_warnings=1
-__EOF__
-	fi
-	;;
-	--overclock-pi3+)
-	if ! grep -qE '^arm_freq=' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
-		echo "Adding 'overclock=pi3+' to config.txt."
-		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
-
-# Overclock
-arm_freq=1500
-gpu_freq=500
-sdram_freq=560
-over_voltage=5
-avoid_warnings=1
-__EOF__
-	fi
-	;;
-	--overclock-avoid)
-	if ! grep -qE '^avoid_warnings=' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
-		echo "Adding 'overclock=avoid' to config.txt."
-		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
-
-# Overclock
-avoid_warnings=1
 __EOF__
 	fi
 	;;
@@ -207,20 +157,37 @@ __EOF__
 		mv "${BINARIES_DIR}/rpi-firmware/config_.txt" "${BINARIES_DIR}/rpi-firmware/config.txt"
 	fi
 	;;
-esac
-done
-
-AARCH64="$(grep ^BR2_aarch64=y ${BR2_CONFIG})"
-if [ "x${AARCH64}" != "x" ]; then
-	if ! grep -qE '^arm_64bit=1' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
-		echo "Adding 'arm_64bit=1' to config.txt."
+	--overclock*)
+	if ! grep -qE '^arm_freq=' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+		echo "Adding 'overclock' to config.txt."
 		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
 
-# Force 64bit
-arm_64bit=1
+# Overclock
+[pi0]
+[pi0w]
+[pi1]
+[pi2]
+arm_freq=1000
+gpu_freq=500
+sdram_freq=500
+over_voltage=6
+[pi3]
+arm_freq=1350
+gpu_freq=500
+sdram_freq=500
+over_voltage=5
+[pi3+]
+arm_freq=1500
+gpu_freq=500
+sdram_freq=560
+over_voltage=5
+[all]
+avoid_warnings=1
 __EOF__
 	fi
-fi
+	;;
+esac
+done
 
 INITRAMFS="$(grep ^BR2_TARGET_ROOTFS_INITRAMFS=y ${BR2_CONFIG})"
 ROOTFS_CPIO="$(grep ^BR2_TARGET_ROOTFS_CPIO=y ${BR2_CONFIG})"
