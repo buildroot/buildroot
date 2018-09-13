@@ -1,0 +1,58 @@
+diff --git a/src/wpeframework/view-backend.cpp b/src/wpeframework/view-backend.cpp
+index 156f2d2..b48c582 100644
+--- a/src/wpeframework/view-backend.cpp
++++ b/src/wpeframework/view-backend.cpp
+@@ -47,18 +47,29 @@ struct ViewBackend : public IPC::Host::Handler {
+     void ackBufferCommit();
+     void initialize();
+ 
++    static gboolean vsyncCallback(gpointer);
++
+     struct wpe_view_backend* backend;
+     IPC::Host ipcHost;
++    GSource* vsyncSource;
++    bool bufferAckPending { false };
+ };
+ 
+ ViewBackend::ViewBackend(struct wpe_view_backend* backend)
+     : backend(backend)
+ {
+     ipcHost.initialize(*this);
++
++    vsyncSource = g_timeout_source_new(1000 / 60);
++    g_source_set_callback(vsyncSource, static_cast<GSourceFunc>(vsyncCallback), this, nullptr);
++    g_source_set_priority(vsyncSource, G_PRIORITY_HIGH + 30);
++    g_source_set_can_recurse(vsyncSource, TRUE);
++    g_source_attach(vsyncSource, g_main_context_get_thread_default());
+ }
+ 
+ ViewBackend::~ViewBackend()
+ {
++    g_source_destroy(vsyncSource);
+     ipcHost.deinitialize();
+ }
+ 
+@@ -95,7 +106,7 @@ void ViewBackend::handleMessage(char* data, size_t size)
+     }
+     case IPC::BufferCommit::code:
+     {
+-        ackBufferCommit();
++        bufferAckPending = true;
+         break;
+     }
+     default:
+@@ -128,6 +139,14 @@ void ViewBackend::ackBufferCommit()
+     wpe_view_backend_dispatch_frame_displayed(backend);
+ }
+ 
++gboolean ViewBackend::vsyncCallback(gpointer data)
++{
++    auto& backend = *static_cast<ViewBackend*>(data);
++    if (backend.bufferAckPending)
++        backend.ackBufferCommit();
++    backend.bufferAckPending = false;
++}
++
+ } // namespace WPEFramework
+ 
+ extern "C" {
