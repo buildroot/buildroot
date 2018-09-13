@@ -7,6 +7,10 @@ start() {
 	#echo "/root/cores/core-pid_%p--process%E" > /proc/sys/kernel/core_pattern
 	#mkdir -p /root/cores
 	#ulimit -c unlimited
+
+	# wait a bit
+	sleep 3
+
 	mount -a
 
 	# make sure netflix has proper mapping
@@ -14,9 +18,6 @@ start() {
 		mkdir -p /root/Netflix/dpi
 		ln -sfn /etc/playready /root/Netflix/dpi/playready
 	fi
-
-	# wait a bit
-	sleep 1
 
 	# needed for wayland/westeros/weston
 	export XDG_RUNTIME_DIR=/tmp
@@ -27,7 +28,10 @@ start() {
 		sleep 1
 	done
 
-	export DEF="123"
+	# override index.html
+	if [ -f /boot/index.html ]; then
+		cp /boot/index.html /www/
+	fi
 
 	# read proxy settings from /boot/proxy
 	if [ -f /boot/proxy ]; then
@@ -51,7 +55,6 @@ stop() {
 }
 restart() {
 	stop
-	sleep 3
 	start
 }
 
