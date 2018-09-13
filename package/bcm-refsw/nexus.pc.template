@@ -1,0 +1,10 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/refsw
+
+Name: %NAME%
+Description: %DESCRIPTION% 
+Version: %VERSION_MAJOR%.%VERSION_MINOR%
+Libs: %LIBS%
+Cflags: -I${includedir} %INCLUDES% %DEFINES%

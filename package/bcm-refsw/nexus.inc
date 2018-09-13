@@ -163,3 +163,12 @@ define BCM_REFSW_BUILD_NEXUS_KERNEL_HEADERS
 	$(INSTALL) -m 755 -D $(BCM_REFSW_BIN)/../core/linuxkernel.$(ARCH)-linux.driver/libnexus_driver.a  $(STAGING_DIR)/usr/include/refsw/linuxkernel
 endef
 endif
+
+define BCM_REFSW_GENERATE_NEXUS_PC
+  package/bcm-refsw/generate_nexus_pc.sh ${BCM_REFSW_BIN} package/bcm-refsw/nexus.pc.template  ${BCM_REFSW_OUTPUT}
+endef
+
+define BCM_REFSW_INSTALL_NEXUS_PC
+  $(INSTALL) -D $(BCM_REFSW_OUTPUT)/nexus.pc $(1)/usr/lib/pkgconfig/
+  $(INSTALL) -D $(BCM_REFSW_OUTPUT)/nexus-client.pc $(1)/usr/lib/pkgconfig/
+endef
