@@ -34,7 +34,7 @@ div#logo:after {
 div#logo div {
     width: 45%;
     height: 45%;
-} 
+}
 div#logo.animate div {
     opacity: 0;
     animation: fade 3s linear infinite;
@@ -117,7 +117,8 @@ div#interfaces {
     (function (host, lan, wlan) {
         var logoEl = document.getElementById('logo'),
             statusEl = document.getElementById('status'),
-            interfacesEl = document.getElementById('interfaces');
+            interfacesEl = document.getElementById('interfaces'),
+            deviceId;
         function delay(t, v) {
            return new Promise((resolve) => {
                setTimeout(resolve.bind(null, v), t)
@@ -132,7 +133,7 @@ div#interfaces {
                 resolve(interfaces);
             });
         }
-        function wpe(arr) {
+        function xhr(method, url, body) {
             return new Promise((resolve, reject) => {
                 var http = new XMLHttpRequest();
                 http.onreadystatechange = (event) => {
@@ -140,7 +141,7 @@ div#interfaces {
                     if (req.readyState == 4) {
                         if (req.status == 200) {
                             try {
-                                resolve(arr[0] === 'GET' ? JSON.parse(req.responseText) : undefined);
+                                resolve(method === 'GET' ? JSON.parse(req.responseText) : undefined);
                             } catch(err) {
                                 reject(err);
                             }
@@ -150,15 +151,20 @@ div#interfaces {
 
                     }
                 };
-                http.open(arr[0] || 'GET', `http://${host}/Service${arr[1]}`, true);
-                http.send(arr[2]);
+                http.open(method || 'GET', url, true);
+                http.send(body);
             });
+        }
+        function wpe(arr) {
+            return xhr(arr[0], `http://${host}/Service${arr[1]}`, arr[2]);
         }
         function interfaces() {
             return new Promise((resolve, reject) => {
                 wpe(['GET', '/DeviceInfo'])
                     .then((deviceInfo) => {
                         var result = [];
+                        if (deviceInfo.systeminfo.deviceid)
+                            deviceId = deviceInfo.systeminfo.deviceid;
                         if (!deviceInfo.addresses) return resolve(result);
                         for (var i = 0; i < deviceInfo.addresses.length; i++) {
                             if (Array.isArray(deviceInfo.addresses[i].ip) && deviceInfo.addresses[i].ip[0] !== '127.0.0.1')
@@ -166,6 +172,25 @@ div#interfaces {
                         }
                         resolve(result);
                     });
+            });
+        }
+        function configUX() {
+            return xhr('GET', '/config.json');
+        }
+        function loadUX(config) {
+            return new Promise((resolve, reject) => {
+                var id = encodeURIComponent(deviceId);
+                xhr('GET', `${config.ux}${id}`)
+                    .then((result) => {
+                        if (result && result.url)
+                            wpe(['PUT', '/Controller/Activate/UX'])
+                                .then(wpe.bind(null, ['POST', '/UX/URL', `{"url":"${result.url}"}`]))
+                                .then(resolve)
+                                .catch(reject);
+                        else
+                            reject();
+                    })
+                    .catch(reject);
             });
         }
         return new Promise((resolve, reject) => {
@@ -201,6 +226,8 @@ div#interfaces {
                             joining = false;
                         }
                         interfaces().then(log);
+                    } else if (data.data.running) {
+                        statusEl.innerHTML = `Acquiring Network (${data.data.interface})`;
                     } else if (data.data.status === 11) {
                         // Ignore wlan DHCP failure when not in joining progress
                         if (data.data.interface === wlan && !joining) return;
@@ -209,9 +236,24 @@ div#interfaces {
                             .catch(reject);
                     }
                 }
-                if (data.events && data.events.Decryption) {
-                    logoEl.className = '';
-                    statusEl.innerHTML = 'We&#39;re ready!';
+                if (data.callsign === 'UX' && data.data && data.data.url && data.data.loaded) {
+                    delay(5000).then(wpe.bind(null, ['PUT', '/Controller/Deactivate/WebKitBrowser']));
+                }
+                if (data.subsystems && data.subsystems.Internet) {
+                    statusEl.innerHTML = 'We&#39;re connected!';
+                }
+                if (data.subsystems && data.subsystems.Time) {
+                    statusEl.innerHTML = 'Loading UX';
+                    configUX()
+                        .then(loadUX)
+                        .then(() => {
+                            logoEl.className = '';
+                            statusEl.innerHTML = 'We&#39;re ready!';
+                        })
+                        .catch((err) => {
+                            statusEl.innerHTML = 'Something went wrong (' + deviceId + ')';
+                        });
+
                 }
             };
             socket.onopen = () => {
