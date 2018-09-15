@@ -1,0 +1,35 @@
+config BR2_PACKAGE_LIBUWSC
+	bool "libuwsc"
+	select BR2_PACKAGE_LIBEV
+	help
+	  A Lightweight and fully asynchronous WebSocket
+	  client library based on libev.
+
+	  https://github.com/zhaojh329/libuwsc
+
+if BR2_PACKAGE_LIBUWSC
+
+comment "SSL support"
+
+choice
+	prompt "Selected SSL library"
+	default BR2_PACKAGE_LIBUWSC_WOLFSSL
+
+	config BR2_PACKAGE_LIBUWSC_OPENSSL
+		bool "OpenSSL"
+		select BR2_PACKAGE_OPENSSL
+
+	config BR2_PACKAGE_LIBUWSC_WOLFSSL
+		bool "wolfSSL"
+		select BR2_PACKAGE_WOLFSSL
+
+	config BR2_PACKAGE_LIBUWSC_MBEDTLS
+		bool "mbed TLS"
+		select BR2_PACKAGE_MBEDTLS
+
+	config BR2_PACKAGE_LIBUWSC_NOSSL
+		bool "No SSL support"
+
+endchoice
+
+endif
