@@ -10,12 +10,12 @@ UMA_SDK_INSTALL_STAGING = YES
 UMA_SDK_INSTALL_TARGET = YES
 
 define UMA_SDK_INSTALL_STAGING_CMDS
-        cp -Rf $(@D)/nos/player/* $(STAGING_DIR)/
+	cp -Rpf $(@D)/nos/player/usr/include/*.h $(STAGING_DIR)/usr/include/
+	$(INSTALL) -m 0755 -D $(@D)/nos/player/usr/lib/libplayer.so $(STAGING_DIR)/usr/lib/
 endef
 
 define UMA_SDK_INSTALL_TARGET_CMDS
-        cp -Rf $(@D)/nos/player/* $(TARGET_DIR)/
+	$(INSTALL) -m 0755 -D $(@D)/nos/player/usr/lib/libplayer.so $(TARGET_DIR)/usr/lib/
 endef
 
-
-$(eval $(virtual-package))
+$(eval $(generic-package))
