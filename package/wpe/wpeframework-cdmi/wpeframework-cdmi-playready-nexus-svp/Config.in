@@ -1,0 +1,21 @@
+config BR2_PACKAGE_WPEFRAMEWORK_CDMI_PLAYREADY_NEXUS_SVP
+	bool "broadcom svp/sage"
+	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+	select BR2_PACKAGE_WPEFRAMEWORK_CDM
+        select BR2_PACKAGE_HAS_PLAYREADY
+        depends on BR2_PACKAGE_BCM_REFSW || BR2_PACKAGE_HAS_NEXUS
+        depends on BR2_PACKAGE_BCM_REFSW_SAGE
+	default n
+	help
+	  Broadcom Playready SVP SAGE implementation
+
+if BR2_PACKAGE_WPEFRAMEWORK_CDMI_PLAYREADY_NEXUS_SVP
+
+config BR2_PACKAGE_WPEFRAMEWORK_CDMI_PLAYREADY_NEXUS_SVP_ENABLE
+    bool "Use SVP"
+    default y
+    depends on BR2_PACKAGE_BCM_REFSW_SAGE
+    help
+      Use SVP enabled
+
+endif
