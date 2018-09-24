@@ -67,6 +67,17 @@ define BCM_REFSW_BUILD_SAGE_SRAI
         $(MAKE) -C $(@D)/$(BCM_NEXUS_SAGE_SRAI_DIR) \
             LIBDIR=${BCM_REFSW_BIN}
 endef
+
+BCM_NEXUS_SECBUF_DIR = /BSEAV/lib/security/secbuf
+define BCM_REFSW_BUILD_SECBUF
+    $(TARGET_CONFIGURE_OPTS) \
+    $(TARGET_MAKE_ENV) \
+    $(BCM_REFSW_CONF_OPTS) \
+    $(BCM_REFSW_MAKE_ENV) \
+        $(MAKE) -C $(@D)/$(BCM_NEXUS_SECBUF_DIR) \
+            LIBDIR=${BCM_REFSW_BIN}
+endef
+
 BCM_NEXUS_SAGE_UTILITY_DIR = /BSEAV/lib/security/sage/utility
 define BCM_REFSW_BUILD_SAGE_UTILITY
     $(TARGET_CONFIGURE_OPTS) \
@@ -105,6 +116,27 @@ define BCM_REFSW_INSTALL_SAGE_SRAI_DEV
     $(call BCM_REFSW_INSTALL_SAGE_SRAI,$(1))
     $(INSTALL) -m 644 $(@D)/$(BCM_NEXUS_SAGE_SRAI_DIR)/include/*.h $(STAGING_DIR)/usr/include/refsw/
     $(INSTALL) -m 644 $(@D)/$(BCM_MAGNUM_SAGE_SRAI_DIR)/include/*.h $(STAGING_DIR)/usr/include/refsw/
+endef
+
+BCM_NEXUS_PLAYREADY30_DIR = /BSEAV/thirdparty/playready/3.0
+define BCM_REFSW_INSTALL_PLAYREADY30_DEV
+    $(INSTALL) -D $(@D)/$(BCM_NEXUS_PLAYREADY30_DIR)/inc/* $(1)/usr/include/refsw/
+    $(INSTALL) -D $(@D)/$(BCM_NEXUS_PLAYREADY30_DIR)/../http/include/* $(1)/usr/include/refsw/
+    $(INSTALL) -D $(@D)/BSEAV/lib/drmrootfs/drm_data.h $(1)/usr/include/refsw/
+    $(INSTALL) -D $(@D)/$(BCM_NEXUS_PLAYREADY30_DIR)/bin/$(ARCH)-linux/lib/* $(1)/usr/lib/
+endef
+
+define BCM_REFSW_INSTALL_PLAYREADY30
+    $(INSTALL) -D $(@D)/$(BCM_NEXUS_PLAYREADY30_DIR)/bin/$(ARCH)-linux/lib/*.so $(1)/usr/lib/
+endef
+
+define BCM_REFSW_INSTALL_SECBUF
+    $(INSTALL) -D $(BCM_REFSW_BIN)/../../BSEAV/lib/security/secbuf/libb_secbuf.so $(1)/usr/lib/libb_secbuf.so
+endef
+
+define BCM_REFSW_INSTALL_SECBUF_DEV
+    $(call BCM_REFSW_INSTALL_SECBUF,$(1))
+    $(INSTALL) -m 644 $(@D)/$(BCM_NEXUS_SECBUF_DIR)/include/*.h $(STAGING_DIR)/usr/include/refsw/
 endef
 endif
 
