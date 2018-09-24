@@ -60,10 +60,4 @@ config BR2_PACKAGE_GST1_BCM_ENABLE_SVP
 	help 
 	  Enable SVP support
 
-config BR2_PACKAGE_GST1_BCM_WPEFRAMEWORK_CDM
-        bool "WPEframework CDM"
-	depends on BR2_PACKAGE_GST1_BCM_ENABLE_SVP && BR2_PACKAGE_WPEFRAMEWORK_CDM
-        default y
-        help
-          Use WPEFramework CDM 
 endif
