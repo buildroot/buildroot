@@ -148,6 +148,41 @@ config BR2_PACKAGE_BCM_REFSW_SAGE_PATH
 	help
 	  Sage binaries path
 
+config BR2_PACKAGE_BCM_REFSW_SAGE_MANUFACTURING
+        bool "SAGE Manufacturing"
+        default n
+        depends on BR2_PACKAGE_BCM_REFSW_SAGE
+    help
+      Sage manufacturing lib for on-field provisioning
+
+config BR2_PACKAGE_BCM_REFSW_SAGE_EXAMPLES
+        bool "SAGE examples"
+	default n
+        depends on BR2_PACKAGE_BCM_REFSW_SAGE
+        help
+          Sage examples
+
+config BR2_PACKAGE_BCM_REFSW_SAGE_BSECBUF
+        bool "SAGE/SVP b_secbuf library"
+        default n
+        depends on BR2_PACKAGE_BCM_REFSW_SAGE
+        help
+          Sage/SVP secure library for multiprocess environment
+
+config BR2_PACKAGE_BCM_REFSW_SAGE_PLAYREADY_30
+        bool "Playready 3.0 SVP"
+        default n
+        depends on BR2_PACKAGE_BCM_REFSW_SAGE
+        help
+          Playready 3.0 SVP
+
+config BR2_PACKAGE_BCM_REFSW_SAGE_PLAYREADY_30_EXAMPLE
+        bool "Playready 3.0 SVP example"
+        default n
+        depends on BR2_PACKAGE_BCM_REFSW_SAGE
+        help
+          Playready 3.0 SVP example
+
 config BR2_PACKAGE_PROVIDES_NEXUS
 	default "bcm-refsw"
 

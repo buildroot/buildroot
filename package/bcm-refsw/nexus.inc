@@ -68,6 +68,18 @@ define BCM_REFSW_BUILD_SAGE_SRAI
             LIBDIR=${BCM_REFSW_BIN}
 endef
 
+define BCM_REFSW_INSTALL_SAGE_SRAI
+    $(INSTALL) -D $(BCM_REFSW_BIN)/libsrai.so $(1)/usr/lib/libsrai.so
+endef
+
+define BCM_REFSW_INSTALL_SAGE_SRAI_DEV
+    $(call BCM_REFSW_INSTALL_SAGE_SRAI,$(1))
+    $(INSTALL) -m 644 $(@D)/$(BCM_NEXUS_SAGE_SRAI_DIR)/include/*.h $(STAGING_DIR)/usr/include/refsw/
+    $(INSTALL) -m 644 $(@D)/$(BCM_MAGNUM_SAGE_SRAI_DIR)/include/*.h $(STAGING_DIR)/usr/include/refsw/
+endef
+
+ifeq ($(BR2_PACKAGE_BCM_REFSW_SAGE_BSECBUF),y)
+
 BCM_NEXUS_SECBUF_DIR = /BSEAV/lib/security/secbuf
 define BCM_REFSW_BUILD_SECBUF
     $(TARGET_CONFIGURE_OPTS) \
@@ -77,6 +89,31 @@ define BCM_REFSW_BUILD_SECBUF
         $(MAKE) -C $(@D)/$(BCM_NEXUS_SECBUF_DIR) \
             LIBDIR=${BCM_REFSW_BIN}
 endef
+
+define BCM_REFSW_INSTALL_SECBUF
+    $(INSTALL) -D $(BCM_REFSW_OUTPUT)/$(BCM_NEXUS_SECBUF_DIR)/libb_secbuf.so $(1)/usr/lib/libb_secbuf.so
+endef
+
+define BCM_REFSW_INSTALL_SECBUF_DEV
+    $(call BCM_REFSW_INSTALL_SECBUF,$(1))
+    $(INSTALL) -m 644 $(@D)/$(BCM_NEXUS_SECBUF_DIR)/include/*.h $(STAGING_DIR)/usr/include/refsw/
+endef
+
+endif
+
+ifeq ($(BR2_PACKAGE_BCM_REFSW_SAGE_MANUFACTURING),y)
+BCM_NEXUS_SAGE_MANUFACTURING_DIR = /BSEAV/lib/security/sage/manufacturing
+define BCM_REFSW_BUILD_SAGE_MANUFACTURING
+    $(TARGET_CONFIGURE_OPTS) \
+    $(TARGET_MAKE_ENV) \
+    $(BCM_REFSW_CONF_OPTS) \
+    $(BCM_REFSW_MAKE_ENV) \
+        $(MAKE) -C $(@D)/$(BCM_NEXUS_SAGE_MANUFACTURING_DIR)/src all \
+            LIBDIR=${BCM_REFSW_BIN}
+endef
+endif
+
+ifeq ($(BR2_PACKAGE_BCM_REFSW_SAGE_EXAMPLES),y)
 
 BCM_NEXUS_SAGE_UTILITY_DIR = /BSEAV/lib/security/sage/utility
 define BCM_REFSW_BUILD_SAGE_UTILITY
@@ -97,26 +134,9 @@ define BCM_REFSW_BUILD_SAGE_EXAMPLE
         $(MAKE) -C $(@D)/$(BCM_NEXUS_SAGE_EXAMPLE_DIR) \
             LIBDIR=${BCM_REFSW_BIN}
 endef
+endif
 
-BCM_NEXUS_SAGE_PRDY30_SVP_DIR = /BSEAV/thirdparty/playready/3.0/examples
-define BCM_REFSW_BUILD_SAGE_PRDY30_SVP
-    $(TARGET_CONFIGURE_OPTS) \
-    $(TARGET_MAKE_ENV) \
-    $(BCM_REFSW_CONF_OPTS) \
-    $(BCM_REFSW_MAKE_ENV) \
-        $(MAKE) -C $(@D)/$(BCM_NEXUS_SAGE_PRDY30_SVP_DIR) target=prdy30_svp all \
-            LIBDIR=${BCM_REFSW_BIN}
-endef
-
-define BCM_REFSW_INSTALL_SAGE_SRAI
-    $(INSTALL) -D $(BCM_REFSW_BIN)/libsrai.so $(1)/usr/lib/libsrai.so
-endef
-
-define BCM_REFSW_INSTALL_SAGE_SRAI_DEV
-    $(call BCM_REFSW_INSTALL_SAGE_SRAI,$(1))
-    $(INSTALL) -m 644 $(@D)/$(BCM_NEXUS_SAGE_SRAI_DIR)/include/*.h $(STAGING_DIR)/usr/include/refsw/
-    $(INSTALL) -m 644 $(@D)/$(BCM_MAGNUM_SAGE_SRAI_DIR)/include/*.h $(STAGING_DIR)/usr/include/refsw/
-endef
+ifeq ($(BR2_PACKAGE_BCM_REFSW_SAGE_PLAYREADY_30),y)
 
 BCM_NEXUS_PLAYREADY30_DIR = /BSEAV/thirdparty/playready/3.0
 define BCM_REFSW_INSTALL_PLAYREADY30_DEV
@@ -130,14 +150,57 @@ define BCM_REFSW_INSTALL_PLAYREADY30
     $(INSTALL) -D $(@D)/$(BCM_NEXUS_PLAYREADY30_DIR)/bin/$(ARCH)-linux/lib/*.so $(1)/usr/lib/
 endef
 
-define BCM_REFSW_INSTALL_SECBUF
-    $(INSTALL) -D $(BCM_REFSW_BIN)/../../BSEAV/lib/security/secbuf/libb_secbuf.so $(1)/usr/lib/libb_secbuf.so
+BCM_NEXUS_DRMROOTFS_DIR = /BSEAV/lib/drmrootfs
+define BCM_REFSW_BUILD_DRMROOTFS
+    $(TARGET_CONFIGURE_OPTS) \
+    $(TARGET_MAKE_ENV) \
+    $(BCM_REFSW_CONF_OPTS) \
+    $(BCM_REFSW_MAKE_ENV) \
+        $(MAKE) -C $(@D)/$(BCM_NEXUS_DRMROOTFS_DIR) all \
+            LIBDIR=${BCM_REFSW_BIN}
 endef
 
-define BCM_REFSW_INSTALL_SECBUF_DEV
-    $(call BCM_REFSW_INSTALL_SECBUF,$(1))
-    $(INSTALL) -m 644 $(@D)/$(BCM_NEXUS_SECBUF_DIR)/include/*.h $(STAGING_DIR)/usr/include/refsw/
+define BCM_REFSW_INSTALL_DRMROOTFS_DEV
+    $(INSTALL) -D $(@D)/$(BCM_NEXUS_DRMROOTFS_DIR)/drm_data.h $(1)/usr/include/refsw/
+    $(INSTALL) -D $(BCM_REFSW_OUTPUT)/$(BCM_NEXUS_DRMROOTFS_DIR)/libdrmrootfs.so $(1)/usr/lib/libdrmrootfs.so
 endef
+
+define BCM_REFSW_INSTALL_DRMROOTFS
+    $(INSTALL) -D $(BCM_REFSW_OUTPUT)/$(BCM_NEXUS_DRMROOTFS_DIR)/libdrmrootfs.so $(1)/usr/lib/libdrmrootfs.so
+endef
+
+BCM_NEXUS_PRDYHTTP_DIR = /BSEAV/thirdparty/playready/http
+define BCM_REFSW_BUILD_PRDYHTTP
+    $(TARGET_CONFIGURE_OPTS) \
+    $(TARGET_MAKE_ENV) \
+    $(BCM_REFSW_CONF_OPTS) \
+    $(BCM_REFSW_MAKE_ENV) \
+        $(MAKE) -C $(@D)/$(BCM_NEXUS_PRDYHTTP_DIR) all \
+            LIBDIR=${BCM_REFSW_BIN}
+endef
+
+define BCM_REFSW_INSTALL_PRDYHTTP_DEV
+    $(INSTALL) -D $(@D)/$(BCM_NEXUS_PRDYHTTP_DIR)/include/prdy_http.h $(1)/usr/include/refsw/
+    $(INSTALL) -D $(BCM_REFSW_OUTPUT)/$(BCM_NEXUS_PRDYHTTP_DIR)/libprdyhttp.so $(1)/usr/lib/libprdyhttp.so
+endef
+
+define BCM_REFSW_INSTALL_PRDYHTTP
+    $(INSTALL) -D $(BCM_REFSW_OUTPUT)/$(BCM_NEXUS_PRDYHTTP_DIR)/libprdyhttp.so $(1)/usr/lib/libprdyhttp.so
+endef
+
+ifeq ($(BR2_PACKAGE_BCM_REFSW_SAGE_PLAYREADY_30_EXAMPLE),y)
+BCM_NEXUS_SAGE_PRDY30_SVP_DIR = /BSEAV/thirdparty/playready/3.0/examples
+define BCM_REFSW_BUILD_SAGE_PRDY30_SVP
+    $(TARGET_CONFIGURE_OPTS) \
+    $(TARGET_MAKE_ENV) \
+    $(BCM_REFSW_CONF_OPTS) \
+    $(BCM_REFSW_MAKE_ENV) \
+        $(MAKE) -C $(@D)/$(BCM_NEXUS_SAGE_PRDY30_SVP_DIR) target=prdy30_svp all \
+            LIBDIR=${BCM_REFSW_BIN}
+endef
+endif
+endif
+
 endif
 
 
