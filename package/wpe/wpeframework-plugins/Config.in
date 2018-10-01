@@ -215,6 +215,20 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_CDMI
      A CDM server plugin to interact with CDMi plugins.
 
 if BR2_PACKAGE_WPEFRAMEWORK_CDMI
+config BR2_PACKAGE_WPEFRAMEWORK_CDMI_USER
+    string "user"
+    default ""
+    help
+        run OpenCDM as this user, leave empty to use the same as 
+        WPEframework
+
+config BR2_PACKAGE_WPEFRAMEWORK_CDMI_GROUP
+    string "group"
+    default ""
+    help
+        run OpenCDM as this group, leave empty to use the same as 
+        WPEframework
+        
 source "package/wpe/wpeframework-cdmi/Config.in"
 endif
 
@@ -332,6 +346,20 @@ config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_XHRCACHE
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_TRANSPARENT
     bool "transparent"
     default false
+    
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_USER
+    string "user"
+    default ""
+    help
+        run WebKitBrowser as this user, leave empty to use the same as 
+        WPEframework
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_GROUP
+    string "group"
+    default ""
+    help
+        run WebKitBrowser as this group, leave empty to use the same as 
+        WPEframework
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE
     depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
