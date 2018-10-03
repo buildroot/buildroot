@@ -1,0 +1,86 @@
+From f4de91ff5dd2da7df9cbb6e64b5daf6d96af0320 Mon Sep 17 00:00:00 2001
+From: Pierre Wielders <pierre@wielders.net>
+Date: Sun, 16 Sep 2018 11:56:27 +0200
+Subject: [PATCH] [OCDMi] Support the retrieval of the SessionId.
+
+---
+ OpenCDMi/FrameworkRPC.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/OpenCDMi/FrameworkRPC.cpp b/OpenCDMi/FrameworkRPC.cpp
+index 6ac8480..2765292 100644
+--- a/OpenCDMi/FrameworkRPC.cpp
++++ b/OpenCDMi/FrameworkRPC.cpp
+@@ -375,7 +375,7 @@ namespace Plugin {
+                 inline bool HasKeyId(const uint8_t keyId[]) {
+                     return (_cencData.HasKeyId(keyId));
+                 }
+-                const std::string& SessionId() const {
++                virtual std::string SessionId() const override {
+                     return (_sessionId);
+                 }
+ 
+From 1d4393fde2bc31a3ce8293c89b109a5021d6f8d7 Mon Sep 17 00:00:00 2001
+From: Pierre Wielders <pierre@wielders.net>
+Date: Wed, 19 Sep 2018 20:36:06 +0200
+Subject: [PATCH] [IDRM] Extend the OpenCDM(i)nterface towards the DRM on
+ decrypt level with a KeyId.
+
+---
+ OpenCDMi/FrameworkRPC.cpp | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/OpenCDMi/FrameworkRPC.cpp b/OpenCDMi/FrameworkRPC.cpp
+index 2765292..9d1c159 100644
+--- a/OpenCDMi/FrameworkRPC.cpp
++++ b/OpenCDMi/FrameworkRPC.cpp
+@@ -205,6 +205,7 @@ namespace Plugin {
+                             RequestConsume(WPEFramework::Core::infinite);
+ 
+                             if (IsRunning() == true) {
++                                uint8_t keyIdLength = 0;
+                                 int cr = _mediaKeys->Decrypt(
+                                     _sessionKey,
+                                     _sessionKeyLength,
+@@ -215,7 +216,9 @@ namespace Plugin {
+                                     Buffer(),
+                                     BytesWritten(),
+                                     &clearContentSize,
+-                                    &clearContent);
++                                    &clearContent,
++                                    keyIdLength,
++                                    KeyId(keyIdLength));
+ 
+                                 if ((cr == 0) && (clearContentSize != 0)) {
+                                     if (clearContentSize != BytesWritten()) {
+From 24cf5931d1201c1cdc86a7e0b2e6f496945ab2fd Mon Sep 17 00:00:00 2001
+From: pwielders <developper@wielders.net>
+Date: Mon, 24 Sep 2018 21:37:11 +0200
+Subject: [PATCH] Force KeyId to be called before the stack is created.
+
+Maybe the KeyIdLength value is pushed to the stack before the KeyId() method call is issued.
+---
+ OpenCDMi/FrameworkRPC.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/OpenCDMi/FrameworkRPC.cpp b/OpenCDMi/FrameworkRPC.cpp
+index 9d1c159..fbf041b 100644
+--- a/OpenCDMi/FrameworkRPC.cpp
++++ b/OpenCDMi/FrameworkRPC.cpp
+@@ -206,6 +206,7 @@ namespace Plugin {
+ 
+                             if (IsRunning() == true) {
+                                 uint8_t keyIdLength = 0;
++				const uint8_t* keyIdData = KeyId(keyIdLength);
+                                 int cr = _mediaKeys->Decrypt(
+                                     _sessionKey,
+                                     _sessionKeyLength,
+@@ -218,7 +219,7 @@ namespace Plugin {
+                                     &clearContentSize,
+                                     &clearContent,
+                                     keyIdLength,
+-                                    KeyId(keyIdLength));
++                                    keyIdData);
+ 
+                                 if ((cr == 0) && (clearContentSize != 0)) {
+                                     if (clearContentSize != BytesWritten()) {
