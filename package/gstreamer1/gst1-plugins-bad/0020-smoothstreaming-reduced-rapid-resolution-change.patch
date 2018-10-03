@@ -1,0 +1,13 @@
+diff --git a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
+index 7aacec9..b28e745 100644
+--- a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
++++ b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
+@@ -135,7 +135,7 @@ GST_DEBUG_CATEGORY (adaptivedemux_debug);
+ #define DEFAULT_CONNECTION_SPEED 0
+ #define DEFAULT_BITRATE_LIMIT 0.8f
+ #define SRC_QUEUE_MAX_BYTES 20 * 1024 * 1024    /* For safety. Large enough to hold a segment. */
+-#define NUM_LOOKBACK_FRAGMENTS 3
++#define NUM_LOOKBACK_FRAGMENTS 8
+ 
+ #define GST_MANIFEST_GET_LOCK(d) (&(GST_ADAPTIVE_DEMUX_CAST(d)->priv->manifest_lock))
+ #define GST_MANIFEST_LOCK(d) G_STMT_START { \
