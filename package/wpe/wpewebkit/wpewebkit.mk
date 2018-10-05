@@ -303,14 +303,10 @@ ifeq ($(BR2_PACKAGE_VSS_SDK),y)
 WPEWEBKIT_PKGDIR = "$(TOP_DIR)/package/wpe/wpewebkit"
 
 define WPEWEBKIT_APPLY_LOCAL_PATCHES
- $(APPLY_PATCHES) $(@D) $(WPEWEBKIT_PKGDIR) 0003-MSE2018_MSE_Conformance_Test_55_DelayedAACAudio.patch.conditional
- $(APPLY_PATCHES) $(@D) $(WPEWEBKIT_PKGDIR) 0005-YT_Seek_To_Buffered_Position_Fix_For_BRCM.patch.conditional
- $(APPLY_PATCHES) $(@D) $(WPEWEBKIT_PKGDIR) 0006-brcm-force-sink-av-factories.patch.conditional
  # this platform needs to run this gstreamer version parallel
  # to an older version.
  $(APPLY_PATCHES) $(@D) $(WPEWEBKIT_PKGDIR) 9999-link_to_wpe_gstreamer.patch.conditional
 endef
-
 WPEWEBKIT_POST_PATCH_HOOKS += WPEWEBKIT_APPLY_LOCAL_PATCHES
 endif
 
