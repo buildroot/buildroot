@@ -233,8 +233,7 @@ ifeq ($(WPEWEBKIT_BUILD_JSC),y)
 WPEWEBKIT_BUILD_TARGETS += jsc
 endif
 ifeq ($(WPEWEBKIT_BUILD_WEBKIT),y)
-WPEWEBKIT_BUILD_TARGETS += libWPEWebKit.so libWPEWebInspectorResources.so \
-	WPE{Network,Storage,Web}Process WPEWebDriver
+WPEWEBKIT_BUILD_TARGETS += all
 
 endif
 
@@ -283,7 +282,7 @@ define WPEWEBKIT_INSTALL_TARGET_CMDS_WEBKIT
 	cp $(WPEWEBKIT_BUILDDIR)/bin/WPE{Network,Storage,Web}Process $(TARGET_DIR)/usr/bin/ && \
 	cp $(WPEWEBKIT_BUILDDIR)/bin/WPEWebDriver $(TARGET_DIR)/usr/bin/ && \
 	cp -d $(WPEWEBKIT_BUILDDIR)/lib/libWPE* $(TARGET_DIR)/usr/lib/ && \
-	$(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.*
+	$(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit*.so.*
 endef
 else
 WPEWEBKIT_INSTALL_TARGET_CMDS_WEBKIT = true
