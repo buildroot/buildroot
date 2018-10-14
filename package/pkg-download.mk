@@ -144,7 +144,7 @@ endef
 define DOWNLOAD_SCP
 	$(EXTRA_ENV) $(DL_WRAPPER) -b scp \
 		-o $(DL_DIR)/$(2) \
-		-H $(PKGDIR)/$($(PKG)_RAWNAME).hash \
+		-H '$($(PKG)_HASH_FILE)' \
 		$(QUIET) \
 		-- \
 		'$(call stripurischeme,$(call qstrip,$(1)))' \
@@ -175,7 +175,7 @@ endef
 define DOWNLOAD_WGET
 	$(EXTRA_ENV) $(DL_WRAPPER) -b wget \
 		-o $(DL_DIR)/$(2) \
-		-H $(PKGDIR)/$($(PKG)_RAWNAME).hash \
+		-H '$($(PKG)_HASH_FILE)' \
 		$(QUIET) \
 		-- \
 		'$(call qstrip,$(1))' \
@@ -189,7 +189,7 @@ endef
 define DOWNLOAD_LOCALFILES
 	$(EXTRA_ENV) $(DL_WRAPPER) -b cp \
 		-o $(DL_DIR)/$(2) \
-		-H $(PKGDIR)/$($(PKG)_RAWNAME).hash \
+		-H '$($(PKG)_HASH_FILE)' \
 		$(QUIET) \
 		-- \
 		$(call stripurischeme,$(call qstrip,$(1))) \
