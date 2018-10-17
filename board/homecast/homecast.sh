@@ -37,6 +37,17 @@ cp -f "${TARGET_DIR}/usr/share/fonts/ttf-bitstream-vera/Vera.ttf" "${ROOTFS_DIR}
 # move utility lib of brcm plugin to usr/lib
 mv "${ROOTFS_DIR}/usr/lib/gstreamer-1.0/libbrcmgstutil.so" "${ROOTFS_DIR}/usr/lib/"
 
+# add nxclient.so dummy file
+cp -f "${STAGING_DIR}/lib/libnxclient.so" "${ROOTFS_DIR}/lib"
+
+# Copy XKB locales
+mkdir -p "{ROOTFS_DIR}/usr/share/X11"
+cp -r "${STAGING_DIR}/usr/share/X11" "${ROOTFS_DIR}/usr/share/X11"
+
+# Copy keymap for cubiware remote (through web)
+mkdir -p "${TARGET_DIR}/usr/share/WPEFramework/RemoteControl/"
+cp -pf "${BOARD_DIR}/homecast-ir-remote.json" "${TARGET_DIR}/usr/share/WPEFramework/RemoteControl/web-remote.json"
+
 # WPEFramework launcher
 cp -pf "${BOARD_DIR}/homecast/wpeframework.sh" "${ROOTFS_DIR}"
 
