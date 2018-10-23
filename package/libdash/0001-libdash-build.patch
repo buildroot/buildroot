@@ -1,0 +1,13 @@
+diff --git a/libdash/CMakeLists.txt b/libdash/CMakeLists.txt
+index aeae94f..a78ddb5 100644
+--- a/libdash/CMakeLists.txt
++++ b/libdash/CMakeLists.txt
+@@ -11,4 +11,6 @@ include_directories(include)
+ file(GLOB_RECURSE libdash_source *.cpp)
+ 
+ add_library(dash SHARED ${libdash_source})
+-target_link_libraries(dash ${CURL_LIBRARIES} ${ZLIB_LIBRARIES} ${LIBXML2_LIBRARIES})
+\ No newline at end of file
++target_link_libraries(dash ${CURL_LIBRARIES} ${ZLIB_LIBRARIES} ${LIBXML2_LIBRARIES} -pthread)
++install(TARGETS dash DESTINATION lib)
++
