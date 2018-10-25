@@ -3,7 +3,7 @@
 # uma-sdk
 #
 ################################################################################
-UMA_SDK_VERSION = 787f93d172ae7d01dbc5201b1014c20b0133b036
+UMA_SDK_VERSION = df6a1845a43d2333b9767bbe3c13a0bb6fe927c4
 UMA_SDK_SITE = git@github.com:Metrological/SDK_UMA.git
 UMA_SDK_SITE_METHOD = git
 UMA_SDK_INSTALL_STAGING = YES
