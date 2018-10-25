@@ -9,6 +9,6 @@ AAMP_SITE_METHOD = git
 AAMP_SITE = https://github.com/rdkcmf/rdk-aamp
 AAMP_INSTALL_STAGING = YES
 
-AAMP_DEPENDENCIES = libcurl libdash libxml2 cjson aampabr gst1-aamp
+AAMP_DEPENDENCIES = libcurl libdash libxml2 cjson aampabr
 
 $(eval $(cmake-package))
