@@ -1,0 +1,21 @@
+config BR2_PACKAGE_SFF_SDK
+	bool "sff-sdk"
+	depends on BR2_arm
+	select BR2_PACKAGE_HAS_NEXUS
+	select BR2_PACKAGE_HAS_LIBEGL
+	select BR2_PACKAGE_HAS_LIBGLES
+	help
+	  Pre-compiled binaries for a platform
+
+if BR2_PACKAGE_SFF_SDK
+
+config BR2_PACKAGE_PROVIDES_NEXUS
+	default "sff-sdk"
+
+config BR2_PACKAGE_PROVIDES_LIBEGL
+	default "sff-sdk"
+
+config BR2_PACKAGE_PROVIDES_LIBGLES
+	default "sff-sdk"
+
+endif
