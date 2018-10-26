@@ -4,7 +4,12 @@
 #
 ################################################################################
 
-#$(eval $(virtual-package))
+VSS_SDK_VERSION = c1484feb9cedf7ffcd4aeb89b69a20e24596d8d1
+VSS_SDK_SITE = git@github.com:Metrological/SDK_VSS.git
+VSS_SDK_SITE_METHOD = git
+VSS_SDK_LICENSE = PROPRIETARY
+VSS_SDK_INSTALL_STAGING = YES
+VSS_SDK_INSTALL_TARGET = YES
 
 BUILDROOT_FLAGS = .stamp_downloaded \
                   .stamp_extracted \
@@ -106,12 +111,13 @@ define VSS_SDK_BUILD_CMDS
 endef
 
 define VSS_SDK_INSTALL_STAGING_CMDS
-endef
-
-define VSS_SDK_INSTALL_STAGING_CMDS
+    cp -av ${@D}/usr ${STAGING_DIR}
+    cp -av ${@D}/etc ${STAGING_DIR}
 endef
 
 define VSS_SDK_INSTALL_TARGET_CMDS
+    cp -av ${@D}/usr/lib/lib*.so* ${STAGING_DIR}/usr/lib
+    cp -av ${@D}/etc ${TARGET_DIR}
 endef
 
 $(eval $(generic-package))
