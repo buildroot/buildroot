@@ -3,7 +3,7 @@
 # uma-sdk
 #
 ################################################################################
-UMA_SDK_VERSION = df6a1845a43d2333b9767bbe3c13a0bb6fe927c4
+UMA_SDK_VERSION = 2a6e3ce11ddada3919e40a353a8ad7e6db698395
 UMA_SDK_SITE = git@github.com:Metrological/SDK_UMA.git
 UMA_SDK_SITE_METHOD = git
 UMA_SDK_INSTALL_STAGING = YES
@@ -14,10 +14,49 @@ define UMA_SDK_INSTALL_STAGING_CMDS
 	ln -sf $(STAGING_DIR)/usr/include/NOSPlayer/Player.h $(STAGING_DIR)/usr/include/Player.h
 	cp -Rpf $(@D)/usr/lib/Player/* $(STAGING_DIR)/usr/lib/
 	cp -Rpf $(@D)/usr/lib/Nagra/* $(STAGING_DIR)/usr/lib/
+	cp -f $(@D)/qorvo/rf4ce.pc $(STAGING_DIR)/usr/lib/pkgconfig
+	cp -f $(@D)/usr/lib/libGreenPeak.a $(STAGING_DIR)/usr/lib
+	cp -f $(@D)/qorvo/code/Work/libBinShippedRefTarget_ZRC_MSO_GP501_BCM_RDK.a $(STAGING_DIR)/usr/lib
+	cp -r $(@D)/qorvo/code/Applications $(STAGING_DIR)/usr/include/qorvo
+	cp -r $(@D)/qorvo/code/BaseComps $(STAGING_DIR)/usr/include/qorvo
 endef
 
 define UMA_SDK_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 0755 -D $(@D)/usr/lib/Player/* $(TARGET_DIR)/usr/lib/
+	$(INSTALL) -m 0755 -D $(@D)/qorvo/gpK5.ko ${TARGET_DIR}/lib/modules
+endef
+
+define QORVO_BUILD_MODULE
+    CFLAGS = \
+     -DGP501 \
+     -DGP_USE_NEXUS_SPI \
+     -nodefaultlibs \
+     -Wno-unused-variable \
+     -Wno-incompatible-pointer-types \
+     -I$(STAGING_DIR)/usr/include \
+     -I$(STAGING_DIR)/usr/include/linux \
+     -I$(STAGING_DIR)/usr/include/refsw/ \
+     -I$(STAGING_DIR)/usr/include/refsw/linuxkernel/include/ \
+     -I${@D}/Driver/BCM97358Ref \
+	 $(MAKE) -C $(LINUX_DIR) $(LINUX_MAKE_FLAGS) GP_CHIP=$(GREENPEAK_CHIP) EXTRA_CFLAGS="$(GREENPEAK_EXTRA_MOD_CFLAGS)" M=$(@D)/Driver modules
+endef
+
+define QORVO_INSTALL_MODULE
+	$(MAKE) -C $(LINUX_DIR) $(LINUX_MAKE_FLAGS) M=$(@D)/Driver modules_install
+endef
+
+define UMA_SDK_BUILD_CMDS
+	cd $(@D)/qorvo ; \
+	SDKTARGETSYSROOT=${STAGING_DIR} \
+        TOOLCHAIN=${HOST_DIR}/usr \
+        TOOLCHAINBIN=${HOST_DIR}/usr/bin \
+        CROSS_COMPILE="$(GNU_TARGET_NAME)-" \
+	COMPILER=buildroot \
+        INC=-I${STAGING_DIR}/usr/include \
+        APPLIB=$(@D)/usr/lib/libGreenPeak.a \
+        GP_VALIDATION_DISABLE=y \
+        make applib ; \
+	cd -
 endef
 
 $(eval $(generic-package))
