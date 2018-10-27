@@ -17,8 +17,9 @@ define UMA_SDK_INSTALL_STAGING_CMDS
 	cp -f $(@D)/qorvo/rf4ce.pc $(STAGING_DIR)/usr/lib/pkgconfig
 	cp -f $(@D)/usr/lib/libGreenPeak.a $(STAGING_DIR)/usr/lib
 	cp -f $(@D)/qorvo/code/Work/libBinShippedRefTarget_ZRC_MSO_GP501_BCM_RDK.a $(STAGING_DIR)/usr/lib
-	cp -r $(@D)/qorvo/code/Applications $(STAGING_DIR)/usr/include/qorvo
-	cp -r $(@D)/qorvo/code/BaseComps $(STAGING_DIR)/usr/include/qorvo
+	mkdir $(STAGING_DIR)/usr/include/qorvo
+	cp -Rpf $(@D)/qorvo/code/Applications $(STAGING_DIR)/usr/include/qorvo
+	cp -Rpf $(@D)/qorvo/code/BaseComps $(STAGING_DIR)/usr/include/qorvo
 endef
 
 define UMA_SDK_INSTALL_TARGET_CMDS
