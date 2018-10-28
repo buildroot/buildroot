@@ -565,4 +565,27 @@ config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_RTSPCLIENT
     help
       RTSP Client Plugin
 
+config BR2_PACKAGE_WPEFRAMEWORK_POWER
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    default n
+    bool "Power"
+    help
+      Power Control Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_POWER
+
+config BR2_PACKAGE_WPEFRAMEWORK_POWER_AUTOSTART
+    bool "autostart"
+    default y
+
+config BR2_PACKAGE_WPEFRAMEWORK_POWER_GPIOPIN
+    string "gpiopin"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_POWER_GPIOTYPE
+    string "gpiotype"
+    default ""
+
+endif
+
 comment "External plugins below"
