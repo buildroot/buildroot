@@ -17,14 +17,17 @@ define UMA_SDK_INSTALL_STAGING_CMDS
 	cp -f $(@D)/qorvo/rf4ce.pc $(STAGING_DIR)/usr/lib/pkgconfig
 	cp -f $(@D)/usr/lib/libGreenPeak.a $(STAGING_DIR)/usr/lib
 	cp -f $(@D)/qorvo/code/Work/libBinShippedRefTarget_ZRC_MSO_GP501_BCM_RDK.a $(STAGING_DIR)/usr/lib
-	mkdir $(STAGING_DIR)/usr/include/qorvo
+	mkdir -p $(STAGING_DIR)/usr/include/qorvo
 	cp -Rpf $(@D)/qorvo/code/Applications $(STAGING_DIR)/usr/include/qorvo
 	cp -Rpf $(@D)/qorvo/code/BaseComps $(STAGING_DIR)/usr/include/qorvo
 endef
 
 define UMA_SDK_INSTALL_TARGET_CMDS
+	mkdir -p  $(TARGET_DIR)$(BR2_PACKAGE_BCM_REFSW_SAGE_PATH)
+	mkdir -p  $(TARGET_DIR)/lib/modules/misc
 	$(INSTALL) -m 0755 -D $(@D)/usr/lib/Player/* $(TARGET_DIR)/usr/lib/
-	$(INSTALL) -m 0755 -D $(@D)/qorvo/gpK5.ko ${TARGET_DIR}/lib/modules
+	$(INSTALL) -m 0755 -D $(@D)/qorvo/gpK5.ko ${TARGET_DIR}/lib/modules/misc
+	$(INSTALL) -D -m 0644 $(@D)/firmware/sage/* $(TARGET_DIR)/$(BR2_PACKAGE_BCM_REFSW_SAGE_PATH)/
 endef
 
 define QORVO_BUILD_MODULE
