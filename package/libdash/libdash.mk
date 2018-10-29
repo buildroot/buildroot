@@ -27,12 +27,15 @@ define LIBDASH_INSTALL_STAGING_CMDS
    mkdir -p $(STAGING_DIR)/usr/include/libdash/network
    mkdir -p $(STAGING_DIR)/usr/include/libdash/portable
    mkdir -p $(STAGING_DIR)/usr/include/libdash/metrics
+   mkdir -p $(STAGING_DIR)/usr/include/libdash/xml
    $(INSTALL) -D -m 0755 $(@D)/libdash/include/*.h $(STAGING_DIR)/usr/include/libdash/
    $(INSTALL) -D -m 0755 $(@D)/libdash/source/helpers/*.h $(STAGING_DIR)/usr/include/libdash/helpers/
    $(INSTALL) -D -m 0755 $(@D)/libdash/source/mpd/*.h $(STAGING_DIR)/usr/include/libdash/mpd/
    $(INSTALL) -D -m 0755 $(@D)/libdash/source/network/*.h $(STAGING_DIR)/usr/include/libdash/network/
    $(INSTALL) -D -m 0755 $(@D)/libdash/source/portable/*.h $(STAGING_DIR)/usr/include/libdash/portable/
    $(INSTALL) -D -m 0755 $(@D)/libdash/source/metrics/*.h $(STAGING_DIR)/usr/include/libdash/metrics/
+   $(INSTALL) -D -m 0755 $(@D)/libdash/source/xml/*.h $(STAGING_DIR)/usr/include/libdash/xml/
+   $(INSTALL) -D -m 0755 $(@D)/bin/libdash.so $(STAGING_DIR)/usr/lib/
 endef
 
 $(eval $(cmake-package))
