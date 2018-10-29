@@ -26,6 +26,7 @@ else ifneq (,$(findstring $(GREENPEAK_CHIP), GP502 GP712))
 else ifneq (,$(findstring $(GREENPEAK_CHIP), ZD4500ZNO))
   GREENPEAK_CHIP_REPO = zd4500zno
   GREENPEAK_CHIP = GP501
+  GREENPEAK_REPO_VERSION = 1.1
 else
   $(error "Chip ${GREENPEAK_CHIP} is not supported.")
 endif
