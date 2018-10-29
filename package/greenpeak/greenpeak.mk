@@ -42,9 +42,8 @@ GREENPEAK_EXTRA_MOD_CFLAGS = \
      -Wno-unused-variable \
      -Wno-incompatible-pointer-types
 
-ifneq (,$(findstring $(GREENPEAK_CHIP), ZD4500ZNO))
+ifneq (,$(findstring $(GREENPEAK_CHIP_REPO), zd4500zno))
 GREENPEAK_EXTRA_MOD_CFLAGS += \
-     -I$(STAGING_DIR)/usr/include/refsw/ \
      -I$(STAGING_DIR)/usr/include/refsw/linuxkernel/include/ \
      -DGP_USE_NEXUS_SPI \
      -I${@D}/Driver/BCM97358Ref \
