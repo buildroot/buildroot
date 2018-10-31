@@ -1,6 +1,5 @@
 config BR2_PACKAGE_NETFLIX
 	bool "netflix"
-    default y
 	select BR2_PACKAGE_LIBMNG
 	select BR2_PACKAGE_LIBPNG
 	select BR2_PACKAGE_ICU
@@ -22,7 +21,7 @@ menu "Extra options"
 
 choice
 	bool "Application type"
-	default BR2_PACKAGE_NETFLIX_LIB
+	default BR2_PACKAGE_NETFLIX_APP
 	help
 	  Choose application type.
 
