@@ -155,6 +155,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR
 	help
 	  Take custom action on hardware pins that changes state.
 
+config BR2_PACKAGE_WPEFRAMEWORK_FRONTPANEL
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "FrontPanel"
+    default n
+    help
+      FrontPanel Plugin.
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "LocationSync"
