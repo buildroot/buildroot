@@ -9,7 +9,7 @@ DAQ_SITE = https://www.snort.org/downloads/snort
 DAQ_LICENSE = GPL-2.0
 DAQ_LICENSE_FILES = COPYING
 DAQ_INSTALL_STAGING = YES
-DAQ_DEPENDENCIES = host-bison host-flex
+DAQ_DEPENDENCIES = host-bison host-flex libdnet
 
 # package does not build in parallel due to improper make rules
 # related to the generation of the tokdefs.h header file
@@ -17,6 +17,8 @@ DAQ_MAKE = $(MAKE1)
 
 # disable ipq module as libipq is deprecated
 DAQ_CONF_OPTS += --disable-ipq-module
+DAQ_CONF_OPTS += --with-dnet-includes=$(STAGING_DIR)/usr/includ
+DAQ_CONF_OPTS += --with-dnet-libraries=$(STAGING_DIR)/usr/lib
 
 ifeq ($(BR2_PACKAGE_LIBDNET)$(BR2_PACKAGE_LIBNETFILTER_QUEUE),yy)
 DAQ_DEPENDENCIES += libdnet libnetfilter_queue
