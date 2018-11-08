@@ -16,6 +16,7 @@ WIRESHARK_CONF_ENV = \
 
 WIRESHARK_CONF_OPTS = \
 	--without-krb5 \
+	--disable-guides \
 	--enable-static=no \
 	--without-bcg729 \
 	--without-libxml2 \
