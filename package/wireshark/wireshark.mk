@@ -24,7 +24,7 @@ WIRESHARK_CONF_OPTS = \
 	--without-nghttp2 \
 	--without-snappy \
 	--with-libsmi=no \
-	--with-pcap=$(STAGING_DIR)/usr
+	--with-pcap=yes
 
 # wireshark GUI options
 ifeq ($(BR2_PACKAGE_LIBGTK3),y)
