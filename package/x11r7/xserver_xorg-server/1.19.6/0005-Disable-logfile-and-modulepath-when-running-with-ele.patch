@@ -1,0 +1,52 @@
+From 0ff8977a348c316cd9909b890c48d7f5175a5eba Mon Sep 17 00:00:00 2001
+From: Matthieu Herrb <matthieu@herrb.eu>
+Date: Tue, 23 Oct 2018 21:29:08 +0200
+Subject: [PATCH] Disable -logfile and -modulepath when running with elevated
+ privileges
+
+Could cause privilege elevation and/or arbitrary files overwrite, when
+the X server is running with elevated privileges (ie when Xorg is
+installed with the setuid bit set and started by a non-root user).
+
+CVE-2018-14665
+
+Issue reported by Narendra Shinde and Red Hat.
+
+Signed-off-by: Matthieu Herrb <matthieu@herrb.eu>
+Reviewed-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
+Reviewed-by: Adam Jackson <ajax@redhat.com>
+(cherry picked from commit 50c0cf885a6e91c0ea71fb49fa8f1b7c86fe330e)
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ hw/xfree86/common/xf86Init.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/hw/xfree86/common/xf86Init.c b/hw/xfree86/common/xf86Init.c
+index d59c224d5..183158c21 100644
+--- a/hw/xfree86/common/xf86Init.c
++++ b/hw/xfree86/common/xf86Init.c
+@@ -1135,14 +1135,18 @@ ddxProcessArgument(int argc, char **argv, int i)
+     /* First the options that are not allowed with elevated privileges */
+     if (!strcmp(argv[i], "-modulepath")) {
+         CHECK_FOR_REQUIRED_ARGUMENT();
+-        xf86CheckPrivs(argv[i], argv[i + 1]);
++        if (xf86PrivsElevated())
++              FatalError("\nInvalid argument -modulepath "
++                "with elevated privileges\n");
+         xf86ModulePath = argv[i + 1];
+         xf86ModPathFrom = X_CMDLINE;
+         return 2;
+     }
+     if (!strcmp(argv[i], "-logfile")) {
+         CHECK_FOR_REQUIRED_ARGUMENT();
+-        xf86CheckPrivs(argv[i], argv[i + 1]);
++        if (xf86PrivsElevated())
++              FatalError("\nInvalid argument -logfile "
++                "with elevated privileges\n");
+         xf86LogFile = argv[i + 1];
+         xf86LogFileFrom = X_CMDLINE;
+         return 2;
+-- 
+2.11.0
+
