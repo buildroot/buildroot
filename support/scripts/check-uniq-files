@@ -30,6 +30,7 @@ def main():
             pkg, _, file = line.rstrip(b'\n').partition(b',')
             file_to_pkg[file].append(pkg)
 
+    """
     for file in file_to_pkg:
         if len(file_to_pkg[file]) > 1:
             # If possible, try to decode the binary strings with
@@ -42,6 +43,7 @@ def main():
                 # contain non-representable chars
                 sys.stderr.write(warn.format(args.type, file,
                                              file_to_pkg[file]))
+    """
 
 
 if __name__ == "__main__":
