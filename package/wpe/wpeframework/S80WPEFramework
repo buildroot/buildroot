@@ -33,6 +33,11 @@ start() {
 		cp /boot/index.html /www/
 	fi
 
+	# override config.json
+	if [ -f /boot/config.json ]; then
+		cp /boot/config.json /www/
+	fi
+
 	# read proxy settings from /boot/proxy
 	if [ -f /boot/proxy ]; then
 		PROXY_IP=`cat /boot/proxy`
