@@ -69,6 +69,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
 	select BR2_PACKAGE_LIBPROVISION
 	help
 	  Allows provisioning of modules from the cloud.
+
+ config BR2_PACKAGE_WPEFRAMEWORK_BROADCAST
+	bool "Broadcast"
+        default n
+	help
+	  Abstraction on QAM tuner and PSI/SI parser functionality.
           
 endmenu
 

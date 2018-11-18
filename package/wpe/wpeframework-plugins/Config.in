@@ -298,6 +298,67 @@ config BR2_PACKAGE_WPEFRAMEWORK_SICONTROL
     help
       SI Control Plugin
 
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_BROADCAST
+    bool "Streamer"
+    help
+      Multi Frontend support control (playback or record)
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_SI_PARSING
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "SI parsing"
+    help
+      Enable SI parsing from the streamer.
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_TS_SCANNING
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "TS scanning"
+    help
+      Enable transport stream scanning from the home transport stream.
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_TS_SCANNING
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_HOME_TS
+    string "Home transport stream"
+    default "frequency=714\;modulation=64\;symbol=6875000"
+    help
+      Sets the Home transport
+endif
+
+choice
+    bool "DBS Options"
+    default BR2_PACKAGE_WPEFRAMEWORK_STREAMER_DVB
+    help
+      Choose the DBS flavor.
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_DVB
+    bool "DVB"
+    help
+      Enable DVB DBS
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_ATSC
+    bool "ATSC"
+    help
+      Enable ATSC DBS
+endchoice
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_FRONTENDS
+    string "Frontends"
+    default "1"
+    help
+      Sets the number of frontends (tuners) available in the system.
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_DECODERS
+    string "Decoders"
+    default "1"
+    help
+      Sets the number of decoders available in the system.
+
+endif
+
 config BR2_PACKAGE_WPEFRAMEWORK_TIMESYNC
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "TimeSync"
