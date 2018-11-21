@@ -55,7 +55,7 @@ endef
 endif
 
 ifeq ($(BR2_TARGET_ROOTFS_CPIO),y)
-ifeq ($(BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_4_9),y)
+ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_9),y)
 define RPI_FIRMWARE_MOUNT_ROOT
 	mkdir -p $(TARGET_DIR)/root
 	grep -q '^/dev/mmcblk0p2' $(TARGET_DIR)/etc/fstab || \
