@@ -243,17 +243,21 @@ div#interfaces {
                     statusEl.innerHTML = 'We&#39;re connected!';
                 }
                 if (data.subsystems && data.subsystems.Time) {
-                    statusEl.innerHTML = 'Loading UX';
+                    statusEl.innerHTML = 'Internet is up!';
                     configUX()
-                        .then(loadUX)
-                        .then(() => {
-                            logoEl.className = '';
-                            statusEl.innerHTML = 'We&#39;re ready!';
+                        .then((config) => {
+                            statusEl.innerHTML = 'Loading UX';
+                            loadUX(config).then(() => {
+                                logoEl.className = '';
+                                statusEl.innerHTML = 'We&#39;re ready!';
+                            })
+                            .catch((err) => {
+                                statusEl.innerHTML = 'Something went wrong (' + deviceId + ')';
+                            });
                         })
                         .catch((err) => {
-                            statusEl.innerHTML = 'Something went wrong (' + deviceId + ')';
+                                statusEl.innerHTML = 'We&#39;re ready!';
                         });
-
                 }
             };
             socket.onopen = () => {
