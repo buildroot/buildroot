@@ -32,6 +32,7 @@ __EOF__
 	fi
 fi
 
+KERNEL_4_14="$(grep ^BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14=y ${BR2_CONFIG})"
 for i in "$@"
 do
 case "$i" in
@@ -142,19 +143,21 @@ __EOF__
 	fi
 	;;
 	--rpi-wifi*)
-	if ! grep -qE '^dtoverlay=sdtweak' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
-		echo "Adding 'rpi wifi' functionality to config.txt."
-		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+	if [ "x${KERNEL_4_14}" = "x" ]; then
+		if ! grep -qE '^dtoverlay=sdtweak' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+			echo "Adding 'rpi wifi' functionality to config.txt."
+			cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
 
 # Enable overlay for wifi functionality
 dtoverlay=sdtweak,overclock_50=80
 __EOF__
-	fi
-	if grep -qE '^dtoverlay=mmc' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
-		echo "Removing overlay for mmc due to wifi compatibilityin config.txt."
-		cat "${BINARIES_DIR}/rpi-firmware/config.txt" | sed '/^# Enable mmc by default/,+2d' > "${BINARIES_DIR}/rpi-firmware/config_.txt"
-		rm "${BINARIES_DIR}/rpi-firmware/config.txt"
-		mv "${BINARIES_DIR}/rpi-firmware/config_.txt" "${BINARIES_DIR}/rpi-firmware/config.txt"
+		fi
+		if grep -qE '^dtoverlay=mmc' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+			echo "Removing overlay for mmc due to wifi compatibilityin config.txt."
+			cat "${BINARIES_DIR}/rpi-firmware/config.txt" | sed '/^# Enable mmc by default/,+2d' > "${BINARIES_DIR}/rpi-firmware/config_.txt"
+			rm "${BINARIES_DIR}/rpi-firmware/config.txt"
+			mv "${BINARIES_DIR}/rpi-firmware/config_.txt" "${BINARIES_DIR}/rpi-firmware/config.txt"
+		fi
 	fi
 	;;
 	--overclock*)
