@@ -34,16 +34,7 @@ define RPI_FIRMWARE_INSTALL_TARGET_CMDS
 endef
 endif # INSTALL_VCDBG
 
-ifeq ($(BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_4_9),y)
-define RPI_FIRMWARE_MOUNT_BOOT
-	mkdir -p $(TARGET_DIR)/boot
-	grep -q '^/dev/mmcblk0p1' $(TARGET_DIR)/etc/fstab || \
-		echo -e '/dev/mmcblk0p1 /boot vfat defaults 0 0' >> $(TARGET_DIR)/etc/fstab
-endef
-define RPI_FIRMWARE_CMDLINE
-	$(INSTALL) -D -m 0644 package/rpi-firmware/cmdline.txt-0 $(BINARIES_DIR)/rpi-firmware/cmdline.txt
-endef
-else
+ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14),y)
 define RPI_FIRMWARE_MOUNT_BOOT
 	mkdir -p $(TARGET_DIR)/boot
 	grep -q '^/dev/mmcblk1p1' $(TARGET_DIR)/etc/fstab || \
@@ -52,23 +43,32 @@ endef
 define RPI_FIRMWARE_CMDLINE
 	$(INSTALL) -D -m 0644 package/rpi-firmware/cmdline.txt-1 $(BINARIES_DIR)/rpi-firmware/cmdline.txt
 endef
+else
+define RPI_FIRMWARE_MOUNT_BOOT
+	mkdir -p $(TARGET_DIR)/boot
+	grep -q '^/dev/mmcblk0p1' $(TARGET_DIR)/etc/fstab || \
+		echo -e '/dev/mmcblk0p1 /boot vfat defaults 0 0' >> $(TARGET_DIR)/etc/fstab
+endef
+define RPI_FIRMWARE_CMDLINE
+	$(INSTALL) -D -m 0644 package/rpi-firmware/cmdline.txt-0 $(BINARIES_DIR)/rpi-firmware/cmdline.txt
+endef
 endif
 
 ifeq ($(BR2_TARGET_ROOTFS_CPIO),y)
-ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_9),y)
-define RPI_FIRMWARE_MOUNT_ROOT
-	mkdir -p $(TARGET_DIR)/root
-	grep -q '^/dev/mmcblk0p2' $(TARGET_DIR)/etc/fstab || \
-		echo -e '/dev/mmcblk0p2 /root ext4 defaults 0 0' >> $(TARGET_DIR)/etc/fstab
-	$(INSTALL) -m 0755 -D package/rpi-firmware/S30mountroot-0 \
-		$(TARGET_DIR)/etc/init.d/S30mountroot
-endef
-else
+ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14),y)
 define RPI_FIRMWARE_MOUNT_ROOT
 	mkdir -p $(TARGET_DIR)/root
 	grep -q '^/dev/mmcblk1p2' $(TARGET_DIR)/etc/fstab || \
 		echo -e '/dev/mmcblk1p2 /root ext4 defaults 0 0' >> $(TARGET_DIR)/etc/fstab
 	$(INSTALL) -m 0755 -D package/rpi-firmware/S30mountroot-1 \
+		$(TARGET_DIR)/etc/init.d/S30mountroot
+endef
+else
+define RPI_FIRMWARE_MOUNT_ROOT
+	mkdir -p $(TARGET_DIR)/root
+	grep -q '^/dev/mmcblk0p2' $(TARGET_DIR)/etc/fstab || \
+		echo -e '/dev/mmcblk0p2 /root ext4 defaults 0 0' >> $(TARGET_DIR)/etc/fstab
+	$(INSTALL) -m 0755 -D package/rpi-firmware/S30mountroot-0 \
 		$(TARGET_DIR)/etc/init.d/S30mountroot
 endef
 endif
