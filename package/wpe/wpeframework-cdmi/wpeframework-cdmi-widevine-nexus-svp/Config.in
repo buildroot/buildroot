@@ -1,0 +1,11 @@
+config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_NEXUS_SVP
+	bool "widevine broadcom svp/sage"
+	depends on BR2_PACKAGE_BCM_REFSW || BR2_PACKAGE_HAS_NEXUS
+	depends on BR2_PACKAGE_BCM_REFSW_SAGE
+	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+	select BR2_PACKAGE_WPEFRAMEWORK_CDM
+    select BR2_PACKAGE_HAS_WIDEVINE
+	default y
+	help
+	  Broadcom WideVine SVP SAGE implementation
+
