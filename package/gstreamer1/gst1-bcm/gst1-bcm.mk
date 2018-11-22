@@ -4,7 +4,9 @@
 #
 ################################################################################
 
-ifeq ($(BR2_PACKAGE_BCM_REFSW_16_1),y)
+ifeq ($(BR2_PACKAGE_UMA_SDK),y)
+GST1_BCM_VERSION = 17.1-7
+else ifeq ($(BR2_PACKAGE_BCM_REFSW_16_1),y)
 GST1_BCM_VERSION = 16.1
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_16_2),y)
 GST1_BCM_VERSION = 16.2
