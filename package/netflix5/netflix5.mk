@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-NETFLIX5_VERSION = ea2d825345af5477514f63ff2f54be73ab6fc055
+# TODO: only select WPEFramework plugins as dependency if wpeframework graphics backend is selected
+NETFLIX5_VERSION = fd91f1b6905f9024ca04856601132a1d3da91845
 NETFLIX5_SITE = git@github.com:Metrological/netflix.git
 NETFLIX5_SITE_METHOD = git
 NETFLIX5_LICENSE = PROPRIETARY
-NETFLIX5_DEPENDENCIES = freetype icu jpeg libpng libmng webp harfbuzz expat openssl c-ares libcurl graphite2 nghttp2 wpeframework gst1-plugins-base
+NETFLIX5_DEPENDENCIES = freetype icu jpeg libpng libmng webp harfbuzz expat openssl c-ares libcurl graphite2 nghttp2 wpeframework gst1-plugins-base wpeframework-plugins
 NETFLIX5_INSTALL_TARGET = YES
 NETFLIX5_INSTALL_STAGING = YES
 NETFLIX5_SUBDIR = netflix
@@ -20,7 +21,7 @@ NETFLIX_CONF_ENV += TARGET_CROSS="$(GNU_TARGET_NAME)-"
 ifeq ($(BR2_PACKAGE_PLAYREADY), y)
 NETFLIX5_DEPENDENCIES += playready
 endif
-# TODO: disable hardcoded build type, check if all args are really needed.
+# TODO: check if all args are really needed.
 NETFLIX5_CONF_OPTS = \
 	-DBUILD_DPI_DIRECTORY=$(@D)/partner/dpi \
 	-DCMAKE_INSTALL_PREFIX=$(@D)/release \
@@ -104,7 +105,7 @@ NETFLIX5_CONF_OPTS += \
 	-DGIBBON_GRAPHICS=wayland-egl
 else
 NETFLIX5_CONF_OPTS += \
-	-DGIBBON_GRAPHICS=nexus \
+	-DGIBBON_GRAPHICS=wpeframework \
 	-DGST_VIDEO_RENDERING=bcm-nexus
 endif	
 
@@ -257,7 +258,7 @@ define NETFLIX5_INSTALL_STAGING_CMDS
 	cp -r $(@D)/netflix/src/platform/gibbon/resources/gibbon/icu $(TARGET_DIR)/root/Netflix
 	cp -r $(@D)/netflix/src/platform/gibbon/resources $(TARGET_DIR)/root/Netflix
 	cp -r $(@D)/netflix/resources/configuration/* $(TARGET_DIR)/root/Netflix/etc/conf
-	cp $(@D)/partner/graphics/nexus/graphics.xml $(TARGET_DIR)/root/Netflix/etc/conf
+	cp $(@D)/partner/graphics/wpeframework/graphics.xml $(TARGET_DIR)/root/Netflix/etc/conf
 	cp $(@D)/netflix/src/platform/gibbon/resources/gibbon/icu/icudt58l/debug/unames.icu $(TARGET_DIR)/root/Netflix/icu/icudt58l
 	cp $(@D)/netflix/src/platform/gibbon/*.js* $(TARGET_DIR)/root/Netflix/resources/js
 	cp $(@D)/netflix/src/platform/gibbon/resources/default/PartnerBridge.js $(TARGET_DIR)/root/Netflix/resources/js
