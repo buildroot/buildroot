@@ -17,6 +17,13 @@ MOSQUITTO_MAKE_OPTS = \
 	WITH_WRAP=no \
 	WITH_DOCS=no
 
+# uses malloc_usable_size which was only added in uClibc-ng 1.0.29
+ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
+MOSQUITTO_MAKE_OPTS += WITH_MEMORY_TRACKING=no
+else
+MOSQUITTO_MAKE_OPTS += WITH_MEMORY_TRACKING=yes
+endif
+
 # adns uses getaddrinfo_a
 ifeq ($(BR2_TOOLCHAIN_USES_GLIBC),y)
 MOSQUITTO_MAKE_OPTS += WITH_ADNS=yes
