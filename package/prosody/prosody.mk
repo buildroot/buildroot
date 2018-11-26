@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PROSODY_VERSION = 0.9.12
+PROSODY_VERSION = 0.9.14
 PROSODY_SITE = https://prosody.im/downloads/source
 PROSODY_LICENSE = MIT
 PROSODY_LICENSE_FILES = COPYING
