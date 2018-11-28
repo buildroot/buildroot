@@ -70,11 +70,20 @@ config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
 	help
 	  Allows provisioning of modules from the cloud.
 
- config BR2_PACKAGE_WPEFRAMEWORK_BROADCAST
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_BROADCAST
 	bool "Broadcast"
         default n
 	help
 	  Abstraction on QAM tuner and PSI/SI parser functionality.
+
+if BR2_PACKAGE_WPEFRAMEWORK_BROADCAST
+config BR2_PACKAGE_WPEFRAMEWORK_BROADCAST_SI_PARSING
+	bool "SI Parsing"
+        default n
+	help
+	  Enable functionality to automatically parse SI information on the 
+          tuned streams.
+endif
           
 endmenu
 
