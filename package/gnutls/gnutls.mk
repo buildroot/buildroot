@@ -4,17 +4,19 @@
 #
 ################################################################################
 
-GNUTLS_VERSION_MAJOR = 3.5
-GNUTLS_VERSION = $(GNUTLS_VERSION_MAJOR).10
 ifneq ($(filter y,$(BR2_PACKAGE_PLAYREADY)$(BR2_PACKAGE_VIP_SDK)$(BR2_PACKAGE_BCM_REFSW)),)
 GNUTLS_VERSION_MAJOR = 3.3
 GNUTLS_VERSION = $(GNUTLS_VERSION_MAJOR).22
+GNUTLS_DEPENDENCIES = host-pkgconf libtasn1 nettle pcre
+else
+GNUTLS_VERSION_MAJOR = 3.5
+GNUTLS_VERSION = $(GNUTLS_VERSION_MAJOR).10
+GNUTLS_DEPENDENCIES = host-pkgconf libunistring libtasn1 nettle pcre
 endif
 GNUTLS_SOURCE = gnutls-$(GNUTLS_VERSION).tar.xz
 GNUTLS_SITE = ftp://ftp.gnutls.org/gcrypt/gnutls/v$(GNUTLS_VERSION_MAJOR)
 GNUTLS_LICENSE = LGPLv2.1+ (core library), GPLv3+ (gnutls-openssl library)
 GNUTLS_LICENSE_FILES = doc/COPYING doc/COPYING.LESSER
-GNUTLS_DEPENDENCIES = host-pkgconf libunistring libtasn1 nettle pcre
 GNUTLS_CONF_OPTS = \
 	--disable-doc \
 	--disable-guile \
@@ -22,7 +24,6 @@ GNUTLS_CONF_OPTS = \
 	--disable-rpath \
 	--enable-local-libopts \
 	--with-libnettle-prefix=$(STAGING_DIR)/usr \
-	--with-libunistring-prefix=$(STAGING_DIR)/usr \
 	--with-librt-prefix=$(STAGING_DIR) \
 	--without-tpm \
 	$(if $(BR2_PACKAGE_GNUTLS_TOOLS),--enable-tools,--disable-tools)
@@ -37,7 +38,9 @@ GNUTLS_INSTALL_STAGING = YES
 ifneq ($(filter y,$(BR2_PACKAGE_PLAYREADY)$(BR2_PACKAGE_VIP_SDK)$(BR2_PACKAGE_BCM_REFSW)),)
 GNUTLS_CONF_OPTS += --disable-openssl-compatibility
 else
-GNUTLS_CONF_OPTS += --enable-openssl-compatibility
+GNUTLS_CONF_OPTS += \
+	--enable-openssl-compatibility \
+	--with-libunistring-prefix=$(STAGING_DIR)/usr
 endif
 
 # libpthread and libz autodetection poison the linkpath
