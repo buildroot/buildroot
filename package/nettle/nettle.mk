@@ -5,13 +5,13 @@
 ################################################################################
 
 NETTLE_VERSION = 3.3
-ifeq ($(BR2_PACKAGE_PLAYREADY),y)
+ifneq ($(filter y,$(BR2_PACKAGE_PLAYREADY)$(BR2_PACKAGE_VIP_SDK)$(BR2_PACKAGE_BCM_REFSW)),)
 NETTLE_VERSION = 2.7.1
 endif
 NETTLE_SITE = http://www.lysator.liu.se/~nisse/archive
 NETTLE_DEPENDENCIES = gmp
 NETTLE_INSTALL_STAGING = YES
-ifeq ($(BR2_PACKAGE_PLAYREADY),y)
+ifneq ($(filter y,$(BR2_PACKAGE_PLAYREADY)$(BR2_PACKAGE_VIP_SDK)$(BR2_PACKAGE_BCM_REFSW)),)
 NETTLE_LICENSE = LGPLv2+
 NETTLE_LICENSE_FILES = COPYING.LIB
 else
@@ -37,7 +37,7 @@ define NETTLE_DITCH_DEBUGGING_CFLAGS
 	$(SED) '/CFLAGS/ s/ -ggdb3//' $(@D)/configure
 endef
 
-ifeq ($(BR2_PACKAGE_PLAYREADY),y)
+ifneq ($(filter y,$(BR2_PACKAGE_PLAYREADY)$(BR2_PACKAGE_VIP_SDK)$(BR2_PACKAGE_BCM_REFSW)),)
 NETTLE_POST_EXTRACT_HOOKS += NETTLE_DITCH_DEBUGGING_CFLAGS
 endif
 
