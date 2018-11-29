@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ifneq ($(filter y,$(BR2_PACKAGE_PLAYREADY)$(BR2_PACKAGE_VIP_SDK)$(BR2_PACKAGE_BCM_REFSW)),)
+ifneq ($(filter y,$(BR2_PACKAGE_PLAYREADY)$(BR2_PACKAGE_VIP_SDK)$(BR2_PACKAGE_BCM_REFSW)$(BR2_PACKAGE_GST1_BCM)),)
 GNUTLS_VERSION_MAJOR = 3.3
 GNUTLS_VERSION = $(GNUTLS_VERSION_MAJOR).22
 GNUTLS_DEPENDENCIES = host-pkgconf libtasn1 nettle pcre
@@ -35,7 +35,7 @@ GNUTLS_CONF_ENV = gl_cv_socket_ipv6=yes \
 GNUTLS_INSTALL_STAGING = YES
 
 
-ifneq ($(filter y,$(BR2_PACKAGE_PLAYREADY)$(BR2_PACKAGE_VIP_SDK)$(BR2_PACKAGE_BCM_REFSW)),)
+ifneq ($(filter y,$(BR2_PACKAGE_PLAYREADY)$(BR2_PACKAGE_VIP_SDK)$(BR2_PACKAGE_BCM_REFSW)$(BR2_PACKAGE_GST1_BCM)),)
 GNUTLS_CONF_OPTS += --disable-openssl-compatibility
 else
 GNUTLS_CONF_OPTS += \
