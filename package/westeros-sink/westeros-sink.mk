@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-WESTEROS_SINK_VERSION = 8ec4db488273a81720934bebe0ab27ab511cc249
+WESTEROS_SINK_VERSION = e7225b5f6066b65b6e50c5d2515b6ae3f7d7a801
 WESTEROS_SINK_SITE_METHOD = git
-WESTEROS_SINK_SITE = git://github.com/Metrological/westeros
+WESTEROS_SINK_SITE = git://github.com/rdkcmf/westeros
 WESTEROS_SINK_INSTALL_STAGING = YES
 WESTEROS_SINK_AUTORECONF = YES
 WESTEROS_SINK_AUTORECONF_OPTS = "-Icfg"
@@ -41,6 +41,7 @@ endif
 
 define WESTEROS_SINK_RUN_AUTOCONF
 	mkdir -p $(@D)/$(WESTEROS_SINK_SUBDIR)/cfg
+	mkdir -p $(@D)/$(WESTEROS_SINK_SUBDIR)/m4
 endef
 WESTEROS_SINK_PRE_CONFIGURE_HOOKS += WESTEROS_SINK_RUN_AUTOCONF
 

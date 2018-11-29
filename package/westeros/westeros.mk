@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-WESTEROS_VERSION = 8ec4db488273a81720934bebe0ab27ab511cc249
+WESTEROS_VERSION = e7225b5f6066b65b6e50c5d2515b6ae3f7d7a801
 WESTEROS_SITE_METHOD = git
-WESTEROS_SITE = git://github.com/Metrological/westeros
+WESTEROS_SITE = git://github.com/rdkcmf/westeros
 WESTEROS_INSTALL_STAGING = YES
 WESTEROS_AUTORECONF = YES
 WESTEROS_AUTORECONF_OPTS = "-Icfg"
@@ -19,7 +19,8 @@ WESTEROS_CONF_OPTS = \
 	--enable-rendergl=yes \
 	--enable-sbprotocol=yes \
 	--enable-xdgv5=yes\
-	--enable-essos=no 
+	--enable-essos=no \
+	--enable-app
     
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 	WESTEROS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -DWESTEROS_PLATFORM_RPI -DWESTEROS_INVERTED_Y -DBUILD_WAYLAND -I${STAGING_DIR}/usr/include/interface/vmcs_host/linux"

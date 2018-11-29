@@ -1,0 +1,13 @@
+diff --git a/interface/khronos/CMakeLists.txt b/interface/khronos/CMakeLists.txt
+index 9ad615b..03a8d20 100644
+--- a/interface/khronos/CMakeLists.txt
++++ b/interface/khronos/CMakeLists.txt
+@@ -87,7 +87,7 @@ add_library(brcmGLESv2 ${SHARED} ${GLES_SOURCE})
+ add_library(brcmOpenVG ${SHARED} ${VG_SOURCE})
+ add_library(brcmWFC ${SHARED} ${WFC_SOURCE})
+ 
+-target_link_libraries(brcmEGL khrn_client vchiq_arm vcos bcm_host ${VCSM_LIBS} -lm)
++target_link_libraries(brcmEGL khrn_client vchiq_arm vcos bcm_host ${VCSM_LIBS} -lm ${WAYLAND_SERVER_LIBRARIES} ${WAYLAND_CLIENT_LIBRARIES})
+ target_link_libraries(brcmGLESv2 brcmEGL khrn_client vcos)
+ target_link_libraries(brcmWFC brcmEGL)
+ target_link_libraries(brcmOpenVG brcmEGL)
