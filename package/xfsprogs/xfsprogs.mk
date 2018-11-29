@@ -12,7 +12,7 @@ XFSPROGS_LICENSE_FILES = doc/COPYING
 
 XFSPROGS_DEPENDENCIES = util-linux
 
-XFSPROGS_CONF_ENV = ac_cv_header_aio_h=yes ac_cv_lib_rt_lio_listio=yes
+XFSPROGS_CONF_ENV = ac_cv_header_aio_h=yes ac_cv_lib_rt_lio_listio=yes PLATFORM="linux"
 XFSPROGS_CONF_OPTS = \
 	--enable-lib64=no \
 	--enable-gettext=no \
