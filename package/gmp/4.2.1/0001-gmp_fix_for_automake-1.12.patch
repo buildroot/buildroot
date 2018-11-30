@@ -1,0 +1,56 @@
+automake 1.12 has depricated automatic de-ANSI-fication support
+
+this patch avoids these kinds of errors:
+
+| configure.in:2240: error: automatic de-ANSI-fication support has been removed
+| Makefile.am:28: error: automatic de-ANSI-fication support has been removed
+
+Signed-off-by: Nitin A Kamble <nitin.a.kamble@intel.com>
+2012/05/02
+
+
+This patch was removed in f181c6ce8b3 when gmp 4.2.1 was mistakenly
+dropped.
+
+Upstream is not interested in patches for ancient versions.
+
+Upstream-Status: Inappropriate
+Signed-off-by: Jussi Kukkonen <jussi.kukkonen@intel.com>
+
+
+Index: gmp-4.2.1/configure.in
+===================================================================
+--- gmp-4.2.1.orig/configure.in
++++ gmp-4.2.1/configure.in
+@@ -67,7 +67,7 @@ dnl
+ dnl  Note that there's a copy of these options in the top-level Makefile.am,
+ dnl  so update there too if changing anything.
+ dnl
+-AM_INIT_AUTOMAKE([1.8 gnu no-dependencies $(top_builddir)/ansi2knr])
++AM_INIT_AUTOMAKE([1.8 gnu no-dependencies])
+ AM_CONFIG_HEADER(config.h:config.in)
+ AM_MAINTAINER_MODE
+ 
+@@ -2022,9 +2022,6 @@ fi
+ echo "      MPN_PATH=\"$path\""
+ 
+ 
+-# Automake ansi2knr support.
+-AM_C_PROTOTYPES
+-
+ GMP_PROG_AR
+ GMP_PROG_NM
+ 
+Index: gmp-4.2.1/Makefile.am
+===================================================================
+--- gmp-4.2.1.orig/Makefile.am
++++ gmp-4.2.1/Makefile.am
+@@ -27,7 +27,7 @@
+ # Makefiles in subdirectories, but here we must omit it so automake gives
+ # the actual ansi2knr build rule, not "cd $(top_builddir) && make ansi2knr".
+ #
+-AUTOMAKE_OPTIONS = 1.8 gnu no-dependencies ansi2knr
++AUTOMAKE_OPTIONS = 1.8 gnu no-dependencies
+ 
+ 
+ # Libtool -version-info for libgmp.la and libmp.la.  See "Versioning" in the

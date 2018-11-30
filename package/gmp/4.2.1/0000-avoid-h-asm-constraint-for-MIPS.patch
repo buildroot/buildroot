@@ -1,0 +1,57 @@
+From d50686de0406a88ef9112f5252103f799982e84a Mon Sep 17 00:00:00 2001
+From: Andre McCurdy <armccurdy@gmail.com>
+Date: Thu, 4 Feb 2016 14:00:00 -0800
+Subject: [PATCH] avoid h asm constraint for MIPS
+
+The h asm constrain (to extract the high part of a multiplication
+result) has not been recognised since gcc 4.4:
+
+  https://gcc.gnu.org/gcc-4.4/changes.html
+
+Drop the MIPS umul_ppmm() implementations which rely on "=h" and fall
+back to the older implementations (which use explicit mfhi and mflo
+instructions to move the high and low parts of the multiplication
+result into their destinations).
+
+Upstream-Status: Inappropriate [upstream has a different solution]
+
+Signed-off-by: Andre McCurdy <armccurdy@gmail.com>
+---
+ longlong.h | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/longlong.h b/longlong.h
+index b53fbee..0193abb 100644
+--- a/longlong.h
++++ b/longlong.h
+@@ -1011,27 +1011,17 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
+ #endif /* __m88000__ */
+ 
+ #if defined (__mips) && W_TYPE_SIZE == 32
+-#if __GNUC__ > 2 || __GNUC_MINOR__ >= 7
+-#define umul_ppmm(w1, w0, u, v) \
+-  __asm__ ("multu %2,%3" : "=l" (w0), "=h" (w1) : "d" (u), "d" (v))
+-#else
+ #define umul_ppmm(w1, w0, u, v) \
+   __asm__ ("multu %2,%3\n\tmflo %0\n\tmfhi %1"				\
+ 	   : "=d" (w0), "=d" (w1) : "d" (u), "d" (v))
+-#endif
+ #define UMUL_TIME 10
+ #define UDIV_TIME 100
+ #endif /* __mips */
+ 
+ #if (defined (__mips) && __mips >= 3) && W_TYPE_SIZE == 64
+-#if __GNUC__ > 2 || __GNUC_MINOR__ >= 7
+-#define umul_ppmm(w1, w0, u, v) \
+-  __asm__ ("dmultu %2,%3" : "=l" (w0), "=h" (w1) : "d" (u), "d" (v))
+-#else
+ #define umul_ppmm(w1, w0, u, v) \
+   __asm__ ("dmultu %2,%3\n\tmflo %0\n\tmfhi %1"				\
+ 	   : "=d" (w0), "=d" (w1) : "d" (u), "d" (v))
+-#endif
+ #define UMUL_TIME 20
+ #define UDIV_TIME 140
+ #endif /* __mips */
+-- 
+1.9.1
+

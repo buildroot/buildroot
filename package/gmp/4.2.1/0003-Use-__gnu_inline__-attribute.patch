@@ -1,0 +1,36 @@
+From 3cb33502bafd04b8ad4ca3454fab16d5ff313297 Mon Sep 17 00:00:00 2001
+From: Jussi Kukkonen <jussi.kukkonen@intel.com>
+Date: Tue, 22 Sep 2015 13:16:23 +0300
+Subject: [PATCH]  Use __gnu_inline__ attribute
+
+gcc5 uses C11 inline rules. This means the old "extern inline"
+semantics are not available without a special attribute.
+
+See: https://gcc.gnu.org/gcc-5/porting_to.html
+
+Upstream-Status: Inappropriate [Fixed in current versions]
+Signed-off-by: Jussi Kukkonen <jussi.kukkonen@intel.com>
+---
+ gmp-h.in | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/gmp-h.in b/gmp-h.in
+index eed6fe4..361dd1d 100644
+--- a/gmp-h.in
++++ b/gmp-h.in
+@@ -419,8 +419,11 @@ typedef __mpq_struct *mpq_ptr;
+ /* gcc has __inline__ in all modes, including strict ansi.  Give a prototype
+    for an inline too, so as to correctly specify "dllimport" on windows, in
+    case the function is called rather than inlined.  */
++
++/* Use __gnu_inline__ attribute: later gcc uses different "extern inline"
++   behaviour */
+ #ifdef __GNUC__
+-#define __GMP_EXTERN_INLINE      extern __inline__
++#define __GMP_EXTERN_INLINE      extern __inline__ __attribute__ ((__gnu_inline__))
+ #define __GMP_INLINE_PROTOTYPES  1
+ #endif
+ 
+-- 
+2.1.4
+

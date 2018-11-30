@@ -1,0 +1,78 @@
+From d4f3542fabe0797cf2d60afd957585862bd9a29b Mon Sep 17 00:00:00 2001
+From: Andre McCurdy <armccurdy@gmail.com>
+Date: Fri, 25 Aug 2017 16:16:06 -0700
+Subject: [PATCH] prevent calls to mpn_add_nc() if HAVE_NATIVE_mpn_sub_nc is false
+
+When building for aarch64 (ie relying only on generic C code rather
+than asm) libgmp.so contains undefined references to __gmpn_add_nc
+and __gmpn_sub_nc which causes attempts to link with -lgmp to fail:
+
+ | .../usr/lib/libgmp.so: undefined reference to `__gmpn_sub_nc'
+ | .../usr/lib/libgmp.so: undefined reference to `__gmpn_add_nc'
+
+Solution based on a historical patch posted to the gmp mailing list:
+
+  https://gmplib.org/list-archives/gmp-discuss/2006-May/002344.html
+
+Upstream-Status: Inappropriate [Fixed in current versions]
+
+Signed-off-by: Andre McCurdy <armccurdy@gmail.com>
+---
+ mpn/generic/addsub_n.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/mpn/generic/addsub_n.c b/mpn/generic/addsub_n.c
+index 27b2c08..0ff7ca0 100644
+--- a/mpn/generic/addsub_n.c
++++ b/mpn/generic/addsub_n.c
+@@ -58,13 +58,13 @@ mpn_addsub_n (mp_ptr r1p, mp_ptr r2p, mp_srcptr s1p, mp_srcptr s2p, mp_size_t n)
+       for (off = 0; off < n; off += PART_SIZE)
+ 	{
+ 	  this_n = MIN (n - off, PART_SIZE);
+-#if HAVE_NATIVE_mpn_add_nc || !HAVE_NATIVE_mpn_add_n
++#if HAVE_NATIVE_mpn_add_nc
+ 	  acyo = mpn_add_nc (r1p + off, s1p + off, s2p + off, this_n, acyo);
+ #else
+ 	  acyn = mpn_add_n (r1p + off, s1p + off, s2p + off, this_n);
+ 	  acyo = acyn + mpn_add_1 (r1p + off, r1p + off, this_n, acyo);
+ #endif
+-#if HAVE_NATIVE_mpn_sub_nc || !HAVE_NATIVE_mpn_sub_n
++#if HAVE_NATIVE_mpn_sub_nc
+ 	  scyo = mpn_sub_nc (r2p + off, s1p + off, s2p + off, this_n, scyo);
+ #else
+ 	  scyn = mpn_sub_n (r2p + off, s1p + off, s2p + off, this_n);
+@@ -81,13 +81,13 @@ mpn_addsub_n (mp_ptr r1p, mp_ptr r2p, mp_srcptr s1p, mp_srcptr s2p, mp_size_t n)
+       for (off = 0; off < n; off += PART_SIZE)
+ 	{
+ 	  this_n = MIN (n - off, PART_SIZE);
+-#if HAVE_NATIVE_mpn_sub_nc || !HAVE_NATIVE_mpn_sub_n
++#if HAVE_NATIVE_mpn_sub_nc
+ 	  scyo = mpn_sub_nc (r2p + off, s1p + off, s2p + off, this_n, scyo);
+ #else
+ 	  scyn = mpn_sub_n (r2p + off, s1p + off, s2p + off, this_n);
+ 	  scyo = scyn + mpn_sub_1 (r2p + off, r2p + off, this_n, scyo);
+ #endif
+-#if HAVE_NATIVE_mpn_add_nc || !HAVE_NATIVE_mpn_add_n
++#if HAVE_NATIVE_mpn_add_nc
+ 	  acyo = mpn_add_nc (r1p + off, s1p + off, s2p + off, this_n, acyo);
+ #else
+ 	  acyn = mpn_add_n (r1p + off, s1p + off, s2p + off, this_n);
+@@ -105,13 +105,13 @@ mpn_addsub_n (mp_ptr r1p, mp_ptr r2p, mp_srcptr s1p, mp_srcptr s2p, mp_size_t n)
+       for (off = 0; off < n; off += PART_SIZE)
+ 	{
+ 	  this_n = MIN (n - off, PART_SIZE);
+-#if HAVE_NATIVE_mpn_add_nc || !HAVE_NATIVE_mpn_add_n
++#if HAVE_NATIVE_mpn_add_nc
+ 	  acyo = mpn_add_nc (tp, s1p + off, s2p + off, this_n, acyo);
+ #else
+ 	  acyn = mpn_add_n (tp, s1p + off, s2p + off, this_n);
+ 	  acyo = acyn + mpn_add_1 (tp, tp, this_n, acyo);
+ #endif
+-#if HAVE_NATIVE_mpn_sub_nc || !HAVE_NATIVE_mpn_sub_n
++#if HAVE_NATIVE_mpn_sub_nc
+ 	  scyo = mpn_sub_nc (r2p + off, s1p + off, s2p + off, this_n, scyo);
+ #else
+ 	  scyn = mpn_sub_n (r2p + off, s1p + off, s2p + off, this_n);
+-- 
+1.9.1
+
