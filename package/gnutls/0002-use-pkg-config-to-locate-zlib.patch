@@ -1,0 +1,67 @@
+From cee80af1fe93f5b76765afeebfcc3b902768f5d6 Mon Sep 17 00:00:00 2001
+From: Andre McCurdy <armccurdy@gmail.com>
+Date: Tue, 26 May 2015 21:41:24 -0700
+Subject: [PATCH] use pkg-config to locate zlib
+
+AC_LIB_HAVE_LINKFLAGS can sometimes find host libs and is therefore not
+robust when cross-compiling. Remove it for zlib and use PKG_CHECK_MODULES
+instead.
+
+Removing AC_LIB_HAVE_LINKFLAGS for zlib also removes the --with-libz-prefix
+configure option. If zlib support is enabled, then failure to find zlib via
+pkg-config is now treated as a fatal error.
+
+Change based on ChromeOS gnutls 2.12.23 cross-compile fixes patch:
+
+  https://chromium-review.googlesource.com/#/c/271661/
+
+Upstream-Status: Inappropriate [configuration]
+
+Signed-off-by: Andre McCurdy <armccurdy@gmail.com>
+---
+ configure.ac | 24 ++++++++++--------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 1b561d5..0c787dc 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -508,25 +508,21 @@ AC_ARG_WITH(zlib, AS_HELP_STRING([--without-zlib],
+ AC_MSG_CHECKING([whether to include zlib compression support])
+ if test x$ac_zlib != xno; then
+  AC_MSG_RESULT(yes)
+- AC_LIB_HAVE_LINKFLAGS(z,, [#include <zlib.h>], [compress (0, 0, 0, 0);])
+- if test x$ac_cv_libz != xyes; then
+-   AC_MSG_WARN(
+-*** 
+-*** ZLIB was not found. You will not be able to use ZLIB compression.)
+- fi
+ else
+  AC_MSG_RESULT(no)
+ fi
+ 
+-PKG_CHECK_EXISTS(zlib, ZLIB_HAS_PKGCONFIG=y, ZLIB_HAS_PKGCONFIG=n)
+-
+ if test x$ac_zlib != xno; then
+-  if test "$ZLIB_HAS_PKGCONFIG" = "y" ; then
+-    if test "x$GNUTLS_REQUIRES_PRIVATE" = x; then
+-      GNUTLS_REQUIRES_PRIVATE="Requires.private: zlib"
+-    else
+-      GNUTLS_REQUIRES_PRIVATE="$GNUTLS_REQUIRES_PRIVATE, zlib"
+-    fi
++  PKG_CHECK_MODULES(ZLIB, zlib)
++  HAVE_LIBZ=yes
++  AC_DEFINE([HAVE_LIBZ], [1], [zlib is enabled])
++  AC_SUBST(HAVE_LIBZ)
++  LTLIBZ=$ZLIB_LIBS
++  AC_SUBST(LTLIBZ)
++  if test "x$GNUTLS_REQUIRES_PRIVATE" = x; then
++    GNUTLS_REQUIRES_PRIVATE="Requires.private: zlib"
++  else
++    GNUTLS_REQUIRES_PRIVATE="$GNUTLS_REQUIRES_PRIVATE, zlib"
+   fi
+ fi
+ AC_SUBST(GNUTLS_REQUIRES_PRIVATE)
+-- 
+1.9.1
+
