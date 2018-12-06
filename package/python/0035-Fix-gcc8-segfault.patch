@@ -1,0 +1,46 @@
+From e348c8d154cf6342c79d627ebfe89dfe9de23817 Mon Sep 17 00:00:00 2001
+From: "Gregory P. Smith" <greg@krypto.org>
+Date: Mon, 10 Dec 2012 18:05:05 -0800
+Subject: [PATCH] Using 'long double' to force this structure to be worst case
+ aligned is no longer required as of Python 2.5+ when the gc_refs changed from
+ an int (4 bytes) to a Py_ssize_t (8 bytes) as the minimum size is 16 bytes.
+
+The use of a 'long double' triggered a warning by Clang trunk's
+Undefined-Behavior Sanitizer as on many platforms a long double requires
+16-byte alignment but the Python memory allocator only guarantees 8 byte
+alignment.
+
+So our code would allocate and use these structures with technically improper
+alignment.  Though it didn't matter since the 'dummy' field is never used.
+This silences that warning.
+
+Spelunking into code history, the double was added in 2001 to force better
+alignment on some platforms and changed to a long double in 2002 to appease
+Tru64.  That issue should no loner be present since the upgrade from int to
+Py_ssize_t where the minimum structure size increased to 16 (unless anyone
+knows of a platform where ssize_t is 4 bytes?) or 24 bytes depending on if the
+build uses 4 or 8 byte pointers.
+
+We can probably get rid of the double and this union hack all together today.
+That is a slightly more invasive change that can be left for later.
+
+A more correct non-hacky alternative if any alignment issues are still found
+would be to use a compiler specific alignment declaration on the structure and
+determine which value to use at configure time.
+---
+ Include/objimpl.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Include/objimpl.h b/Include/objimpl.h
+index 63465009e3a9..b577be2df3b5 100644
+--- a/Include/objimpl.h
++++ b/Include/objimpl.h
+@@ -251,7 +251,7 @@ typedef union _gc_head {
+         union _gc_head *gc_prev;
+         Py_ssize_t gc_refs;
+     } gc;
+-    long double dummy;  /* force worst-case alignment */
++    double dummy;  /* force worst-case alignment */
+ } PyGC_Head;
+ 
+ extern PyGC_Head *_PyGC_generation0;
