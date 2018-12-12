@@ -1,0 +1,47 @@
+--- a/partner/dpi/reference/drm.cmake
++++ b/partner/dpi/reference/drm.cmake
+@@ -41,7 +41,7 @@
+         add_custom_command(TARGET nrddpi POST_BUILD
+             COMMAND ${CMAKE_COMMAND} -E make_directory ${HAVE_DPI_DIRECTORY}/playready
+             COMMAND ${CMAKE_COMMAND} -E make_directory ${HAVE_DPI_DIRECTORY}/playready/storage
+-            COMMAND ${CMAKE_COMMAND} -E copy_directory ${PLAYREADY_INCLUDE}/etc/playready ${HAVE_DPI_DIRECTORY}/playready
++	    #            COMMAND ${CMAKE_COMMAND} -E copy_directory ${PLAYREADY_INCLUDE}/etc/playready ${HAVE_DPI_DIRECTORY}/playready
+         )
+ 
+     else()
+@@ -80,7 +80,7 @@
+         add_custom_command(TARGET nrddpi POST_BUILD
+             COMMAND ${CMAKE_COMMAND} -E make_directory ${HAVE_DPI_DIRECTORY}/playready
+             COMMAND ${CMAKE_COMMAND} -E make_directory ${HAVE_DPI_DIRECTORY}/playready/storage
+-            COMMAND ${CMAKE_COMMAND} -E copy_directory ${PLAYREADY_INCLUDE}/etc/playready ${HAVE_DPI_DIRECTORY}/playready
++	    #            COMMAND ${CMAKE_COMMAND} -E copy_directory ${PLAYREADY_INCLUDE}/etc/playready ${HAVE_DPI_DIRECTORY}/playready
+         )
+ 
+     #else()
+@@ -124,7 +124,7 @@
+     add_custom_command(TARGET nrddpi POST_BUILD
+         COMMAND ${CMAKE_COMMAND} -E make_directory ${HAVE_DPI_DIRECTORY}/playready
+         COMMAND ${CMAKE_COMMAND} -E make_directory ${HAVE_DPI_DIRECTORY}/playready/storage
+-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${PLAYREADY_INCLUDE}/etc/playready ${HAVE_DPI_DIRECTORY}/playready
++	#        COMMAND ${CMAKE_COMMAND} -E copy_directory ${PLAYREADY_INCLUDE}/etc/playready ${HAVE_DPI_DIRECTORY}/playready
+     )
+ 
+     set(CMAKE_REQUIRED_INCLUDES "${CMAKE_REQUIRED_INCLUDES_SAVED}")
+@@ -165,7 +165,7 @@
+     add_custom_command(TARGET nrddpi POST_BUILD
+         COMMAND ${CMAKE_COMMAND} -E make_directory ${HAVE_DPI_DIRECTORY}/playready
+         COMMAND ${CMAKE_COMMAND} -E make_directory ${HAVE_DPI_DIRECTORY}/playready/storage
+-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${PLAYREADY_INCLUDE}/etc/playready ${HAVE_DPI_DIRECTORY}/playready
++	#        COMMAND ${CMAKE_COMMAND} -E copy_directory ${PLAYREADY_INCLUDE}/etc/playready ${HAVE_DPI_DIRECTORY}/playready
+     )
+ 
+     set(CMAKE_REQUIRED_INCLUDES "${CMAKE_REQUIRED_INCLUDES_SAVED}")
+@@ -201,7 +201,7 @@
+     add_custom_command(TARGET nrddpi POST_BUILD
+         COMMAND ${CMAKE_COMMAND} -E make_directory ${HAVE_DPI_DIRECTORY}/playready
+         COMMAND ${CMAKE_COMMAND} -E make_directory ${HAVE_DPI_DIRECTORY}/playready/storage
+-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${PLAYREADY_INCLUDE}/etc/playready ${HAVE_DPI_DIRECTORY}/playready
++	#        COMMAND ${CMAKE_COMMAND} -E copy_directory ${PLAYREADY_INCLUDE}/etc/playready ${HAVE_DPI_DIRECTORY}/playready
+     )
+ 
+     set(CMAKE_REQUIRED_INCLUDES "${CMAKE_REQUIRED_INCLUDES_SAVED}")

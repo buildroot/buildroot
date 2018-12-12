@@ -246,9 +246,9 @@ define NETFLIX5_INSTALL_STAGING_CMDS
 	cp -Rpf $(@D)/netflix/src/platform/gibbon/text/freetype/*.h $(STAGING_DIR)/usr/include/netflix
 	mkdir -p $(STAGING_DIR)/usr/include/netflix/gibbon
 	cp -Rpf $(@D)/netflix/src/platform/gibbon/include/gibbon/*.h $(STAGING_DIR)/usr/include/netflix/gibbon
-	find output/staging/usr/include/netflix/nrdbase/ -name "*.h" -exec sed -i "s/^#include \"\.\.\/\.\.\//#include \"/g" {} \;
-	find output/staging/usr/include/netflix/nrd/ -name "*.h" -exec sed -i "s/^#include \"\.\.\/\.\.\//#include \"/g" {} \;
-	find output/staging/usr/include/netflix/nrdnet/ -name "*.h" -exec sed -i "s/^#include \"\.\.\/\.\.\//#include \"/g" {} \;
+	find $(STAGING_DIR)/usr/include/netflix/nrdbase/ -name "*.h" -exec sed -i "s/^#include \"\.\.\/\.\.\//#include \"/g" {} \;
+	find $(STAGING_DIR)/usr/include/netflix/nrd/ -name "*.h" -exec sed -i "s/^#include \"\.\.\/\.\.\//#include \"/g" {} \;
+	find $(STAGING_DIR)/usr/include/netflix/nrdnet/ -name "*.h" -exec sed -i "s/^#include \"\.\.\/\.\.\//#include \"/g" {} \;
 
 	mkdir -p $(TARGET_DIR)/root/Netflix
 	cp -r $(@D)/netflix/src/platform/gibbon/resources/gibbon/fonts $(TARGET_DIR)/root/Netflix
