@@ -121,8 +121,22 @@ config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_CLIENT
     help
       Allow update of Client memory. SAGE must be told which heap the client's will be using. The amount of memory in MB to be configured for.
 
+choice
+    prompt "resolution"
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_RESOLUTION_720P
+    bool "720p"
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_RESOLUTION_1080P
+    bool "1080p"
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_RESOLUTION_2160P
+    bool "2160p"
+
+endchoice
+
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_HARDWAREREADY
-    string "Manual overrule of the time it takes to initialisize all hardware (ms)"
+    string "Manual overrule of the time it takes to initialisize all hardware (s)"
     default 0
 
 endif
