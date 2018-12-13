@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_VERSION = 7ed8348b4248068a82a535f3bc6b41cc6cf91937
+WPEFRAMEWORK_VERSION = 04191a9e3898199e38f948b074296db216469e00
 WPEFRAMEWORK_SITE = $(call github,WebPlatformForEmbedded,WPEFramework,$(WPEFRAMEWORK_VERSION))
 WPEFRAMEWORK_INSTALL_STAGING = YES
 WPEFRAMEWORK_DEPENDENCIES = zlib $(call qstrip,$(BR2_PACKAGE_SDK_INSTALL))

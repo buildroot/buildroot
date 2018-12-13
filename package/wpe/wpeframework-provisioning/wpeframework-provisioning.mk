@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_PROVISIONING_VERSION = 43fac8ca8f208ef06ea1a0bda673318be17be5ff
+WPEFRAMEWORK_PROVISIONING_VERSION = 2eef3c5185a405fdc53a4bb731de14b849048ff8
 WPEFRAMEWORK_PROVISIONING_SITE_METHOD = git
 WPEFRAMEWORK_PROVISIONING_SITE = git@github.com:WebPlatformForEmbedded/WPEPluginProvisioning.git
 WPEFRAMEWORK_PROVISIONING_INSTALL_STAGING = YES
