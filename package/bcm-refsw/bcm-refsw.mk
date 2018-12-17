@@ -126,6 +126,7 @@ ifeq ($(BCM_REFSW_PLATFORM_VC),vc5)
 	else
 	BCM_REFSW_VCX_KHRN = $(BCM_REFSW_VCX)/driver/interface/khronos/include
 	endif
+        BCM_REFSW_MAKE_ENV += PYTHON_CMD=pyhton
 else
 	BCM_REFSW_VCX_KHRN = $(BCM_REFSW_VCX)/driver/interface/khronos/include
 endif
