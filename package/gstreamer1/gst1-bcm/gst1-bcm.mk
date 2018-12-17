@@ -18,6 +18,8 @@ else ifeq ($(BR2_PACKAGE_BCM_REFSW_17_1_RDK),y)
 GST1_BCM_VERSION = 17.1
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_17_3_RDK),y)
 GST1_BCM_VERSION = 17.1-7
+else ifeq ($(BR2_PACKAGE_BCM_REFSW_18_2),y)
+GST1_BCM_VERSION = 18.2-rdkv-20180727
 else ifneq ($(filter y,$(BR2_PACKAGE_ACN_SDK)),)
 GST1_BCM_VERSION = 17.1-5
 else ifneq ($(filter y,$(BR2_PACKAGE_HOMECAST_SDK)),)
@@ -91,6 +93,8 @@ GST1_BCM_CONF_OPTS = \
 	--disable-mp3swdecode \
 	--disable-mp4demux \
 	--enable-pcmsink \
+	--disable-pesfilter \
+	--disable-pessink \
 	--disable-pesdemux \
 	--disable-playback \
 	--disable-qtdemux \
