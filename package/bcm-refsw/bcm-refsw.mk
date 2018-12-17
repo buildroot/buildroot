@@ -32,6 +32,8 @@ BCM_REFSW_VERSION = 17.4-uma
 else
 BCM_REFSW_VERSION = 17.4-4
 endif
+else ifeq ($(BR2_PACKAGE_BCM_REFSW_18_2),y)
+BCM_REFSW_VERSION = 18.2
 else
 BCM_REFSW_VERSION = 16.2-7
 endif
@@ -77,8 +79,11 @@ BCM_REFSW_MAKE_ENV += \
 	NEXUS_EXTRA_LDFLAGS="$(TARGET_LDFLAGS)" \
 	VCX=$(BCM_REFSW_PLATFORM_VC) \
 	V3D_EXTRA_CFLAGS="$(TARGET_CFLAGS)" \
-	V3D_EXTRA_LDFLAGS="$(TARGET_LDFLAGS)" \
-	NEXUS_IR_INPUT_EXTENSION_INC="${@D}/nexus/extensions/insert_ir_input/insert_ir_input.inc" \
+	V3D_EXTRA_LDFLAGS="$(TARGET_LDFLAGS)"
+
+ifneq ($(BR2_PACKAGE_BCM_REFSW_18_2),y)
+BCM_REFSW_MAKE_ENV += NEXUS_IR_INPUT_EXTENSION_INC="${@D}/nexus/extensions/insert_ir_input/insert_ir_input.inc"
+endif
 
 ifeq ($(BR2_PACKAGE_BCM_REFSW_15_2),y)
 BCM_REFSW_MAKE_ENV += CLIENT=y
@@ -119,7 +124,7 @@ ifeq ($(BCM_REFSW_PLATFORM_VC),vc5)
 	ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 16.2),1)
         BCM_REFSW_VCX_KHRN = $(BCM_REFSW_VCX)/driver/libs/khrn/include
 	else
-		BCM_REFSW_VCX_KHRN = $(BCM_REFSW_VCX)/driver/interface/khronos/include
+	BCM_REFSW_VCX_KHRN = $(BCM_REFSW_VCX)/driver/interface/khronos/include
 	endif
 else
 	BCM_REFSW_VCX_KHRN = $(BCM_REFSW_VCX)/driver/interface/khronos/include

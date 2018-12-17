@@ -54,6 +54,8 @@ choice
 	config BR2_PACKAGE_BCM_REFSW_17_4
 		bool "bcm-refsw 17.4"
 
+    config BR2_PACKAGE_BCM_REFSW_18_2
+        bool "bcm-refsw 18.2"
 endchoice
 
 choice
@@ -140,7 +142,8 @@ endmenu
 config BR2_PACKAGE_BCM_REFSW_SAGE
 	bool "SAGE v3.x"
 	default n
-	depends on BR2_PACKAGE_BCM_REFSW && (BR2_PACKAGE_BCM_REFSW_16_2 || BR2_PACKAGE_BCM_REFSW_16_3 || BR2_PACKAGE_BCM_REFSW_17_1 || BR2_PACKAGE_BCM_REFSW_17_1_RDK || BR2_PACKAGE_BCM_REFSW_17_2 || BR2_PACKAGE_BCM_REFSW_17_4)
+	depends on BR2_PACKAGE_BCM_REFSW
+	depends on !BR2_PACKAGE_BCM_REFSW_13_1 && !BR2_PACKAGE_BCM_REFSW_13_4 && !BR2_PACKAGE_BCM_REFSW_15_2 && !BR2_PACKAGE_BCM_REFSW_16_1
         select BR2_PACKAGE_SAGE_FIRMWARE
 	help
 	  Add SAGE support in Nexus.

@@ -139,15 +139,26 @@ endif
 ifeq ($(BR2_PACKAGE_BCM_REFSW_SAGE_PLAYREADY_30),y)
 
 BCM_NEXUS_PLAYREADY30_DIR = /BSEAV/thirdparty/playready/3.0
+
+ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 18.1),1)
+ifeq ($(BCM_REFSW_PLATFORM_SECURITY_ZEUS_VERSION),5)
+    BCM_NEXUS_PLAYREADY30_LIBDIR = $(BCM_NEXUS_PLAYREADY30_DIR)/bin/$(ARCH)-linux/Zeus5x/lib
+else
+    BCM_NEXUS_PLAYREADY30_LIBDIR = $(BCM_NEXUS_PLAYREADY30_DIR)/bin/$(ARCH)-linux/Zeus4x/lib
+endif
+else
+    BCM_NEXUS_PLAYREADY30_LIBDIR = $(BCM_NEXUS_PLAYREADY30_DIR)/bin/$(ARCH)-linux/lib
+endif
+
 define BCM_REFSW_INSTALL_PLAYREADY30_DEV
     $(INSTALL) -D $(@D)/$(BCM_NEXUS_PLAYREADY30_DIR)/inc/* $(1)/usr/include/refsw/
     $(INSTALL) -D $(@D)/$(BCM_NEXUS_PLAYREADY30_DIR)/../http/include/* $(1)/usr/include/refsw/
     $(INSTALL) -D $(@D)/BSEAV/lib/drmrootfs/drm_data.h $(1)/usr/include/refsw/
-    $(INSTALL) -D $(@D)/$(BCM_NEXUS_PLAYREADY30_DIR)/bin/$(ARCH)-linux/lib/* $(1)/usr/lib/
+    $(INSTALL) -D $(@D)/$(BCM_NEXUS_PLAYREADY30_LIBDIR)/* $(1)/usr/lib/
 endef
 
 define BCM_REFSW_INSTALL_PLAYREADY30
-    $(INSTALL) -D $(@D)/$(BCM_NEXUS_PLAYREADY30_DIR)/bin/$(ARCH)-linux/lib/*.so $(1)/usr/lib/
+    $(INSTALL) -D $(@D)/$(BCM_NEXUS_PLAYREADY30_LIBDIR)/*.so $(1)/usr/lib/
 endef
 
 BCM_NEXUS_DRMROOTFS_DIR = /BSEAV/lib/drmrootfs
