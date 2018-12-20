@@ -155,6 +155,20 @@ config BR2_PACKAGE_BCM_REFSW_SAGE_PATH
 	help
 	  Sage binaries path
 
+config BR2_PACKAGE_BCM_REFSW_PAK_PATH
+        string "PAK Path"
+        default "/usr/bin/"
+        depends on BR2_PACKAGE_BCM_REFSW_18_2
+	help
+	  PAK binaries path
+
+config BR2_PACKAGE_BCM_REFSW_DRM_PATH
+        string "DRM Path"
+        default "/usr/bin/"
+        depends on BR2_PACKAGE_BCM_REFSW_18_2
+	help
+	  DRM binaries path
+
 config BR2_PACKAGE_BCM_REFSW_SAGE_MANUFACTURING
         bool "SAGE Manufacturing"
         default n
