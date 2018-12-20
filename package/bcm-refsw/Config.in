@@ -199,6 +199,13 @@ config BR2_PACKAGE_PROVIDES_LIBEGL
 config BR2_PACKAGE_PROVIDES_LIBGLES
 	default "bcm-refsw"
 
+config BR2_PACKAGE_BCM_REFSW_V3D_DRM
+	bool "V3D DRM"
+	default n
+	depends on BR2_PACKAGE_BCM_REFSW_18_2
+        help
+          Enable V3D DRM	
+
 config BR2_PACKAGE_BCM_REFSW_EGLCUBE
 	bool "eglcube"
 	default n

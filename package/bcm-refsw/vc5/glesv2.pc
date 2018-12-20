@@ -7,5 +7,5 @@ Name: glesv2
 Description: Broadcom implementation of OpenGL ESv2
 Version: 2.0
 Libs: -L${libdir} -lnexus -lnxpl -lv3ddriver 
-Cflags: -I${includedir} -I${includedir}/refsw -I${includedir}/GLES2 -DBROADCOM_PLATFORM -DVCX=5 -DBSTD_CPU_ENDIAN=BSTD_ENDIAN_LITTLE -I${includedir}/interface/khronos/include -I${includedir}/interface/khronos/include/bcg_abstract -I${includedir}/vcos/include
+Cflags: -I${includedir} -I${includedir}/refsw -I${includedir}/GLES2 @CFLAGS@ -DBROADCOM_PLATFORM -DVCX=5 -DBSTD_CPU_ENDIAN=BSTD_ENDIAN_LITTLE -I${includedir}/interface/khronos/include -I${includedir}/interface/khronos/include/bcg_abstract -I${includedir}/vcos/include
 

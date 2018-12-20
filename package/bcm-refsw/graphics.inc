@@ -21,11 +21,17 @@ define BCM_REFSW_INSTALL_GRAPHICS
 	cd $1/usr/lib && ln -sf libv3ddriver.so libEGL.so && ln -sf libv3ddriver.so libGLESv2.so
 endef
 
+ifneq ($(BR2_PACKAGE_BCM_REFSW_V3D_DRM),y)
+EGL_EXTRA_CFLAGS += -DV3D_DRM_DISABLE
+endif
+
 define BCM_REFSW_INSTALL_GRAPHICS_DEV
 	$(call BCM_REFSW_INSTALL_GRAPHICS,$(STAGING_DIR))
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/lib/pkgconfig
 	$(INSTALL) -m 644 package/bcm-refsw/${BCM_REFSW_PLATFORM_VC}/egl.pc $(STAGING_DIR)/usr/lib/pkgconfig/egl.pc
-	$(INSTALL) -m 644 package/bcm-refsw/${BCM_REFSW_PLATFORM_VC}/glesv2.pc $(STAGING_DIR)/usr/lib/pkgconfig/	
+	$(INSTALL) -m 644 package/bcm-refsw/${BCM_REFSW_PLATFORM_VC}/glesv2.pc $(STAGING_DIR)/usr/lib/pkgconfig/
+	sed -i 's/@CFLAGS@/${EGL_EXTRA_CFLAGS}/g' $(STAGING_DIR)/usr/lib/pkgconfig/egl.pc; \
+	sed -i 's/@CFLAGS@/${EGL_EXTRA_CFLAGS}/g' $(STAGING_DIR)/usr/lib/pkgconfig/glesv2.pc; \
     $(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/GLES
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/GLES2
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/EGL
