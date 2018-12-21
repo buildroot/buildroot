@@ -4,14 +4,13 @@
 #
 ################################################################################
 
-# TODO: only select WPEFramework plugins as dependency if wpeframework graphics backend is selected
-NETFLIX5_VERSION = fd91f1b6905f9024ca04856601132a1d3da91845
+NETFLIX5_VERSION = c4da479ff9aae9cf03400b8c2b402d550d272fc3
+
 NETFLIX5_SITE = git@github.com:Metrological/netflix.git
 NETFLIX5_SITE_METHOD = git
 NETFLIX5_LICENSE = PROPRIETARY
 NETFLIX5_DEPENDENCIES = freetype icu jpeg libpng libmng webp harfbuzz expat openssl c-ares libcurl graphite2 nghttp2 wpeframework gst1-plugins-base wpeframework-plugins
 NETFLIX5_INSTALL_TARGET = YES
-NETFLIX5_INSTALL_STAGING = YES
 NETFLIX5_SUBDIR = netflix
 NETFLIX5_RESOURCE_LOC = $(call qstrip,${BR2_PACKAGE_NETFLIX5_RESOURCE_LOCATION})
 
@@ -40,14 +39,26 @@ NETFLIX5_CONF_OPTS = \
 	-DBUILD_DEBUG=OFF -DNRDP_HAS_GIBBON_QA=ON -DNRDP_HAS_MUTEX_STACK=ON -DNRDP_HAS_OBJECTCOUNT=ON \
 	-DBUILD_PRODUCTION=OFF -DNRDP_HAS_QA=ON -DBUILD_SMALL=OFF -DBUILD_SYMBOLS=ON -DNRDP_HAS_TRACING=OFF \
 	-DNRDP_CRASH_REPORTING=breakpad \
-	-DNRDP_HAS_AUDIOMIXER=OFF \
-	-DDPI_SINK_INTERFACE_OVERRIDE_APPBOOT=ON
+	-DDPI_SINK_INTERFACE_OVERRIDE_APPBOOT=ON \
+	-DGIBBON_GRAPHICS_GL_WSYS=egl
 
-ifeq ($(BR2_PACKAGE_NETFLIX5_LIB), y)
+ifeq ($(BR2_PACKAGE_NETFLIX5_LIB), y)	
+NETFLIX5_INSTALL_STAGING = YES
 NETFLIX5_CONF_OPTS += -DGIBBON_MODE=shared
 NETFLIX5_FLAGS = -O3 -fPIC
 else
 NETFLIX5_CONF_OPTS += -DGIBBON_MODE=executable
+endif
+
+ifeq ($(BR2_PACKAGE_NETFLIX5_AUDIO_MIXER_SOFTWARE), y)
+NETFLIX5_CONF_OPTS += -DNRDP_HAS_AUDIOMIXER=ON \
+                      -DUSE_AUDIOMIXER_GST=ON
+NETFLIX5_DEPENDENCIES += tremor
+else ifeq ($(BR2_PACKAGE_NETFLIX5_AUDIO_MIXER_NEXUS), y)
+NETFLIX5_CONF_OPTS += -DNRDP_HAS_AUDIOMIXER=ON \
+                      -DUSE_AUDIOMIXER_NEXUS=ON
+else
+NETFLIX5_CONF_OPTS += -DNRDP_HAS_AUDIOMIXER=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_WESTEROS)$(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR),yy)
@@ -73,10 +84,11 @@ else ifeq ($(BR2_PACKAGE_NETFLIX5_WESTEROS_SINK),y)
 endif
 
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
-
+NETFLIX5_CONF_OPTS += \
+        -DGIBBON_GST_PLATFORM=rpi #TODO remove it once GIBBON_PLATFORM for rpi is ready
 ifeq ($(BR2_PACKAGE_WESTEROS)$(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR),yy)
 NETFLIX5_CONF_OPTS += \
-	-DGIBBON_GRAPHICS=wpeframework 
+	-DGIBBON_GRAPHICS=wpeframework
 else ifeq ($(BR2_PACKAGE_WESTEROS)$(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR),yn)
 NETFLIX5_CONF_OPTS += \
 	-DGIBBON_GRAPHICS=wayland-egl 
@@ -85,7 +97,7 @@ NETFLIX5_CONF_OPTS += \
 	-DGIBBON_GRAPHICS=rpi-egl
 endif	
 NETFLIX5_CONF_OPTS += \
-	-DGIBBON_PLATFORM=rpi
+#	-DGIBBON_PLATFORM=rpi //Enable once port platform layer
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_GL)$(BR2_PACKAGE_NETFLIX5_WESTEROS_SINK),yn)
 NETFLIX5_CONF_OPTS += \
 	-DGST_VIDEO_RENDERING=gl
@@ -212,8 +224,6 @@ NETFLIX5_CONF_OPTS += \
 	-DCMAKE_C_FLAGS="$(TARGET_CFLAGS) $(NETFLIX5_FLAGS)" \
 	-DCMAKE_CXX_FLAGS="$(TARGET_CXXFLAGS) $(NETFLIX5_FLAGS)"
 
-
-
 define NETFLIX5_FIX_CONFIG_XMLS
 	mkdir -p $(@D)/netflix/src/platform/gibbon/data/etc/conf
 	cp -f $(@D)/netflix/resources/configuration/common.xml $(@D)/netflix/src/platform/gibbon/data/etc/conf/common.xml
@@ -224,10 +234,16 @@ NETFLIX5_POST_EXTRACT_HOOKS += NETFLIX5_FIX_CONFIG_XMLS
 
 ifeq ($(BR2_PACKAGE_NETFLIX5_LIB),y)
 
+ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR),y)
+define NETFLIX5_INSTALL_WPEFRAMEWORK_XML
+	cp $(@D)/partner/graphics/wpeframework/graphics.xml $(TARGET_DIR)/root/Netflix/etc/conf
+endef
+endif
+
 define NETFLIX5_INSTALL_STAGING_CMDS
 	make -C $(@D)/netflix install
 	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/libnetflix.so $(STAGING_DIR)/usr/lib
-	$(INSTALL) -D package/netflix/netflix.pc $(STAGING_DIR)/usr/lib/pkgconfig/netflix.pc
+	$(INSTALL) -D package/netflix5/netflix.pc $(STAGING_DIR)/usr/lib/pkgconfig/netflix.pc
 	mkdir -p $(STAGING_DIR)/usr/include/netflix/src
 	mkdir -p $(STAGING_DIR)/usr/include/netflix/nrdbase
 	mkdir -p $(STAGING_DIR)/usr/include/netflix/nrd
@@ -258,7 +274,8 @@ define NETFLIX5_INSTALL_STAGING_CMDS
 	cp -r $(@D)/netflix/src/platform/gibbon/resources/gibbon/icu $(TARGET_DIR)/root/Netflix
 	cp -r $(@D)/netflix/src/platform/gibbon/resources $(TARGET_DIR)/root/Netflix
 	cp -r $(@D)/netflix/resources/configuration/* $(TARGET_DIR)/root/Netflix/etc/conf
-	cp $(@D)/partner/graphics/wpeframework/graphics.xml $(TARGET_DIR)/root/Netflix/etc/conf
+
+        $(NETFLIX5_INSTALL_WPEFRAMEWORK_XML)
 	cp $(@D)/netflix/src/platform/gibbon/resources/gibbon/icu/icudt58l/debug/unames.icu $(TARGET_DIR)/root/Netflix/icu/icudt58l
 	cp $(@D)/netflix/src/platform/gibbon/*.js* $(TARGET_DIR)/root/Netflix/resources/js
 	cp $(@D)/netflix/src/platform/gibbon/resources/default/PartnerBridge.js $(TARGET_DIR)/root/Netflix/resources/js
@@ -273,7 +290,6 @@ else
 
 define NETFLIX5_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/netflix $(TARGET_DIR)/usr/bin
-	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/manufss $(TARGET_DIR)/usr/bin
 endef
 
 endif
