@@ -16,7 +16,7 @@ endif
 QT5WEBKIT_SOURCE = qtwebkit-opensource-src-$(QT5WEBKIT_VERSION).tar.xz
 QT5WEBKIT_DEPENDENCIES = \
 	host-bison host-flex host-gperf host-python host-ruby \
-	qt5base sqlite
+	leveldb qt5base sqlite
 QT5WEBKIT_INSTALL_STAGING = YES
 
 QT5WEBKIT_LICENSE_FILES = Source/WebCore/LICENSE-LGPL-2 Source/WebCore/LICENSE-LGPL-2.1
@@ -43,6 +43,8 @@ define QT5WEBKIT_PYTHON2_SYMLINK
 	ln -sf $(HOST_DIR)/bin/python2 $(@D)/host-bin/python
 endef
 QT5WEBKIT_PRE_CONFIGURE_HOOKS += QT5WEBKIT_PYTHON2_SYMLINK
+
+QT5WEBKIT_QMAKEFLAGS += WEBKIT_CONFIG+=use_system_leveldb
 
 # The mesa's EGL/eglplatform.h header includes X11 headers unless the flag
 # MESA_EGL_NO_X11_HEADERS is defined. Tell to not include X11 headers if
