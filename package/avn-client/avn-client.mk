@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-AVN_CLIENT_VERSION = 67dfdb99668cca7242cfd2f02b16bab97ec937bd
+AVN_CLIENT_VERSION = a340713b4a5475266fd5d1504f43edb27871b3e8
 AVN_CLIENT_SITE_METHOD = git
 AVN_CLIENT_SITE = git@github.com:Metrological/avn-nanoclient.git
 AVN_CLIENT_INSTALL_STAGING = YES
