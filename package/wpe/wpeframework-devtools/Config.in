@@ -78,6 +78,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_LINUX_ONEWIRE
 	help
 	   Test application for the Core (Netlink/Connector) functionality.
 
+config BR2_PACKAGE_WPEFRAMEWORK_TEST_UNITTESTS
+   select BR2_PACKAGE_GTEST
+	bool "Unit Tests"
+	help
+	   Builds Unit Tests
+
 endmenu
 
 endmenu
