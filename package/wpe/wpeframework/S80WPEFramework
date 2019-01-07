@@ -46,7 +46,6 @@ start() {
 		export no_proxy="127.0.0.1,localhost,ws.metrological.com,widgets.metrological.com"
 		export NO_PROXY="127.0.0.1,localhost,ws.metrological.com,widgets.metrological.com"
 	fi
-	export
 
 	echo -n "Starting WPEFramework: "
 	start-stop-daemon -S -q -b -m -p /var/run/WPEFramework.pid --exec /usr/bin/WPEFramework -- -b -c /etc/WPEFramework/config.json </dev/null >/dev/null 2>&1
