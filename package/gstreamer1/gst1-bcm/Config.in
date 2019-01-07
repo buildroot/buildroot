@@ -1,8 +1,6 @@
 menuconfig BR2_PACKAGE_GST1_BCM
 	bool "gst1-bcm"
 	select BR2_PACKAGE_GST1_PLUGINS_BASE
-	select BR2_PACKAGE_LIBCURL
-	select BR2_PACKAGE_MPG123
 	depends on BR2_PACKAGE_BCM_REFSW || BR2_PACKAGE_ACN_SDK || BR2_PACKAGE_HOMECAST_SDK || BR2_PACKAGE_VSS_SDK
 	help
 	  Broadcom NEXUS GStreamer 1.x plugins
@@ -12,10 +10,11 @@ if BR2_PACKAGE_GST1_BCM
 comment "Broadcom Nexus specific plugins"
 
 config BR2_PACKAGE_GST1_BCM_VP9_SUPPORT
-        bool "VP9 support"
-        default y
-        help
-          If this plugin supports VP9, provide VP9 via typefindelements
+	bool "VP9 support"
+	depends on BR2_PACKAGE_HAS_VP9_DECODER
+	default n
+	help
+	  If this plugin supports VP9, provide VP9 via typefindelements
 
 config BR2_PACKAGE_GST1_BCM_AUDFILTER
 	bool "audfilter"
