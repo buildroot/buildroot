@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BLUEZ_ALSA_VERSION = 88aefeea56b7ea20668796c2c7a8312bf595eef4
+BLUEZ_ALSA_VERSION = 11eb11d1b42eec1ec0956e7ab82864e3a61e422d
 BLUEZ_ALSA_SITE = $(call github,Arkq,bluez-alsa,$(BLUEZ_ALSA_VERSION))
 BLUEZ_ALSA_LICENSE = MIT
 BLUEZ_ALSA_LICENSE_FILES = LICENSE.txt
