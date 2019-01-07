@@ -7,9 +7,10 @@ GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
 
 echo "Post-image: processing $@"
 
-BLUETOOTH="$(grep ^BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH=y ${BR2_CONFIG})"
+BLUETOOTH="$(grep ^BR2_PACKAGE_BLUEZ5_UTILS=y ${BR2_CONFIG})"
+ALSA="$(grep ^BR2_PACKAGE_ALSA_LIB=y ${BR2_CONFIG})"
 COBALT="$(grep ^BR2_PACKAGE_COBALT=y ${BR2_CONFIG})"
-if [ "x${COBALT}" != "x" ] || [ "x${BLUETOOTH}" != "x" ]; then
+if [ "x${COBALT}" != "x" ] || [ "x${ALSA}" != "x" ]; then
 	if ! grep -qE '^dtparam=audio=on' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
 		echo "Adding 'dtparam=audio=on' to config.txt."
 		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
@@ -30,6 +31,10 @@ if [ "x${AARCH64}" != "x" ]; then
 arm_64bit=1
 __EOF__
 	fi
+fi
+
+if [ "x${BLUETOOTH}" != "x" ]; then
+	sed -i 's/ttyAMA0,115200/tty2/g' "${BINARIES_DIR}/rpi-firmware/cmdline.txt"
 fi
 
 KERNEL_4_14="$(grep ^BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14=y ${BR2_CONFIG})"
