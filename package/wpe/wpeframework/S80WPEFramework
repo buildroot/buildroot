@@ -14,7 +14,7 @@ start() {
 	mount -a
 
 	# make sure netflix has proper mapping
-	if [ ! -d /root/Netflix/dpi ]; then
+	if [ -f /etc/WPEFramework/plugins/Netflix.json ] && [ ! -d /root/Netflix/dpi ]; then
 		mkdir -p /root/Netflix/dpi
 		ln -sfn /etc/playready /root/Netflix/dpi/playready
 	fi
