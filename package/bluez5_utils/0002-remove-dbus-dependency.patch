@@ -1,0 +1,191 @@
+diff -Naur a/configure b/configure
+--- a/configure	2018-09-28 06:34:32.966936000 +0000
++++ b/configure	2018-09-28 06:33:25.802936000 +0000
+@@ -13326,134 +13326,6 @@
+ fi
+
+
+-pkg_failed=no
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for DBUS" >&5
+-$as_echo_n "checking for DBUS... " >&6; }
+-
+-if test -n "$DBUS_CFLAGS"; then
+-    pkg_cv_DBUS_CFLAGS="$DBUS_CFLAGS"
+- elif test -n "$PKG_CONFIG"; then
+-    if test -n "$PKG_CONFIG" && \
+-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"dbus-1 >= 1.6\""; } >&5
+-  ($PKG_CONFIG --exists --print-errors "dbus-1 >= 1.6") 2>&5
+-  ac_status=$?
+-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+-  test $ac_status = 0; }; then
+-  pkg_cv_DBUS_CFLAGS=`$PKG_CONFIG --cflags "dbus-1 >= 1.6" 2>/dev/null`
+-		      test "x$?" != "x0" && pkg_failed=yes
+-else
+-  pkg_failed=yes
+-fi
+- else
+-    pkg_failed=untried
+-fi
+-if test -n "$DBUS_LIBS"; then
+-    pkg_cv_DBUS_LIBS="$DBUS_LIBS"
+- elif test -n "$PKG_CONFIG"; then
+-    if test -n "$PKG_CONFIG" && \
+-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"dbus-1 >= 1.6\""; } >&5
+-  ($PKG_CONFIG --exists --print-errors "dbus-1 >= 1.6") 2>&5
+-  ac_status=$?
+-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+-  test $ac_status = 0; }; then
+-  pkg_cv_DBUS_LIBS=`$PKG_CONFIG --libs "dbus-1 >= 1.6" 2>/dev/null`
+-		      test "x$?" != "x0" && pkg_failed=yes
+-else
+-  pkg_failed=yes
+-fi
+- else
+-    pkg_failed=untried
+-fi
+-
+-
+-
+-if test $pkg_failed = yes; then
+-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+-$as_echo "no" >&6; }
+-
+-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+-        _pkg_short_errors_supported=yes
+-else
+-        _pkg_short_errors_supported=no
+-fi
+-        if test $_pkg_short_errors_supported = yes; then
+-	        DBUS_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "dbus-1 >= 1.6" 2>&1`
+-        else
+-	        DBUS_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "dbus-1 >= 1.6" 2>&1`
+-        fi
+-	# Put the nasty error message in config.log where it belongs
+-	echo "$DBUS_PKG_ERRORS" >&5
+-
+-	as_fn_error $? "D-Bus >= 1.6 is required" "$LINENO" 5
+-elif test $pkg_failed = untried; then
+-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+-$as_echo "no" >&6; }
+-	as_fn_error $? "D-Bus >= 1.6 is required" "$LINENO" 5
+-else
+-	DBUS_CFLAGS=$pkg_cv_DBUS_CFLAGS
+-	DBUS_LIBS=$pkg_cv_DBUS_LIBS
+-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+-$as_echo "yes" >&6; }
+-	dummy=yes
+-fi
+-
+-
+-
+-
+-# Check whether --with-dbusconfdir was given.
+-if test "${with_dbusconfdir+set}" = set; then :
+-  withval=$with_dbusconfdir; path_dbusconfdir=${withval}
+-fi
+-
+-if (test -z "${path_dbusconfdir}"); then
+-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking D-Bus configuration directory" >&5
+-$as_echo_n "checking D-Bus configuration directory... " >&6; }
+-	path_dbusconfdir="`$PKG_CONFIG --variable=sysconfdir dbus-1`"
+-	if (test -z "${path_dbusconfdir}"); then
+-		as_fn_error $? "D-Bus configuration directory is required" "$LINENO" 5
+-	fi
+-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${path_dbusconfdir}" >&5
+-$as_echo "${path_dbusconfdir}" >&6; }
+-fi
+-DBUS_CONFDIR=${path_dbusconfdir}
+-
+-
+-
+-# Check whether --with-dbussystembusdir was given.
+-if test "${with_dbussystembusdir+set}" = set; then :
+-  withval=$with_dbussystembusdir; path_dbussystembusdir=${withval}
+-fi
+-
+-if (test -z "${path_dbussystembusdir}"); then
+-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking D-Bus system bus services dir" >&5
+-$as_echo_n "checking D-Bus system bus services dir... " >&6; }
+-	path_dbussystembusdir="`$PKG_CONFIG --variable=system_bus_services_dir dbus-1`"
+-	if (test -z "${path_dbussystembusdir}"); then
+-		as_fn_error $? "D-Bus system bus services directory is required" "$LINENO" 5
+-	fi
+-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${path_dbussystembusdir}" >&5
+-$as_echo "${path_dbussystembusdir}" >&6; }
+-fi
+-DBUS_SYSTEMBUSDIR=${path_dbussystembusdir}
+-
+-
+-
+-# Check whether --with-dbussessionbusdir was given.
+-if test "${with_dbussessionbusdir+set}" = set; then :
+-  withval=$with_dbussessionbusdir; path_dbussessionbusdir=${withval}
+-fi
+-
+-if (test -z "${path_dbussessionbusdir}"); then
+-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking D-Bus session bus services dir" >&5
+-$as_echo_n "checking D-Bus session bus services dir... " >&6; }
+-	path_dbussessionbusdir="`$PKG_CONFIG --variable=session_bus_services_dir dbus-1`"
+-	if (test -z "${path_dbussessionbusdir}"); then
+-		as_fn_error $? "D-Bus session bus services directory is required" "$LINENO" 5
+-	fi
+-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${path_dbussessionbusdir}" >&5
+-$as_echo "${path_dbussessionbusdir}" >&6; }
+-fi
+-DBUS_SESSIONBUSDIR=${path_dbussessionbusdir}
+
+
+ # Check whether --enable-backtrace was given.
+diff -Naur a/Makefile.in b/Makefile.in
+--- a/Makefile.in	2018-09-28 06:32:15.998936000 +0000
++++ b/Makefile.in	2018-09-28 06:32:24.110936000 +0000
+@@ -83,11 +83,10 @@
+ POST_UNINSTALL = :
+ build_triplet = @build@
+ host_triplet = @host@
+-bin_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
+-	$(am__EXEEXT_4)
+-noinst_PROGRAMS = $(am__EXEEXT_5) $(am__EXEEXT_6) $(am__EXEEXT_7) \
++bin_PROGRAMS = $(am__EXEEXT_4)
++#noinst_PROGRAMS = $(am__EXEEXT_5) $(am__EXEEXT_6) $(am__EXEEXT_7) \
+	$(am__EXEEXT_8) $(am__EXEEXT_9) $(am__EXEEXT_13)
+-libexec_PROGRAMS = src/bluetoothd$(EXEEXT) obexd/src/obexd$(EXEEXT)
++#libexec_PROGRAMS = src/bluetoothd$(EXEEXT) obexd/src/obexd$(EXEEXT)
+ @LIBRARY_TRUE@am__append_1 = $(lib_headers)
+ @LIBRARY_TRUE@am__append_2 = lib/libbluetooth.la
+ DIST_COMMON = $(srcdir)/Makefile.plugins $(srcdir)/Makefile.tools \
+@@ -1798,7 +1797,7 @@
+	$(systemduserunit_DATA)
+ am__include_HEADERS_DIST = lib/bluetooth.h lib/hci.h lib/hci_lib.h \
+	lib/sco.h lib/l2cap.h lib/sdp.h lib/sdp_lib.h lib/rfcomm.h \
+-	lib/bnep.h lib/cmtp.h lib/hidp.h
++	lib/bnep.h lib/cmtp.h lib/hidp.h lib/mgmt.h
+ HEADERS = $(include_HEADERS)
+ am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) \
+	$(LISP)config.h.in
+@@ -2167,9 +2166,7 @@
+ AM_MAKEFLAGS = --no-print-directory
+ lib_LTLIBRARIES = $(am__append_2)
+ noinst_LIBRARIES = $(am__append_7)
+-noinst_LTLIBRARIES = lib/libbluetooth-internal.la \
+-	gdbus/libgdbus-internal.la src/libshared-glib.la \
+-	src/libshared-mainloop.la
++noinst_LTLIBRARIES = lib/libbluetooth-internal.la
+ dist_man_MANS = $(am__append_31) $(am__append_34) $(am__append_37)
+ dist_noinst_MANS = $(am__append_53)
+ CLEANFILES = $(builtin_files) src/bluetooth.service \
+@@ -2255,12 +2252,12 @@
+ plugindir = $(libdir)/bluetooth/plugins
+ @MAINTAINER_MODE_FALSE@build_plugindir = $(plugindir)
+ @MAINTAINER_MODE_TRUE@build_plugindir = $(abs_top_srcdir)/plugins/.libs
+-plugin_LTLIBRARIES = $(am__append_24) $(am__append_25) \
++#plugin_LTLIBRARIES = $(am__append_24) $(am__append_25) \
+	$(am__append_47)
+ lib_sources = lib/bluetooth.c lib/hci.c lib/sdp.c
+ lib_headers = lib/bluetooth.h lib/hci.h lib/hci_lib.h \
+		lib/sco.h lib/l2cap.h lib/sdp.h lib/sdp_lib.h \
+-		lib/rfcomm.h lib/bnep.h lib/cmtp.h lib/hidp.h
++		lib/rfcomm.h lib/bnep.h lib/cmtp.h lib/hidp.h lib/mgmt.h
+
+ extra_headers = lib/mgmt.h lib/uuid.h lib/a2mp.h lib/amp.h
+ extra_sources = lib/uuid.c
