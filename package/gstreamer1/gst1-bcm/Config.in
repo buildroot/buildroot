@@ -12,7 +12,7 @@ comment "Broadcom Nexus specific plugins"
 config BR2_PACKAGE_GST1_BCM_VP9_SUPPORT
 	bool "VP9 support"
 	depends on BR2_PACKAGE_HAS_VP9_DECODER
-	default n
+	default y if BR2_PACKAGE_HAS_VP9_DECODER
 	help
 	  If this plugin supports VP9, provide VP9 via typefindelements
 
