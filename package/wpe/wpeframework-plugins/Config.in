@@ -26,13 +26,29 @@ config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_OUTOFPROCESS
     help
       Select this to run this plugin in its own process.
 
-config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
-    bool "Nexus server"
-    depends on BR2_PACKAGE_HAS_NEXUS
-    help
-      Include a nxserver with the compositor.
+choice
+    prompt "resolution"
+    depends on !BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER_EXTERNAL
 
-if BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_RESOLUTION_720P
+    bool "720p"
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_RESOLUTION_1080P
+    bool "1080p"
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_RESOLUTION_2160P
+    bool "2160p"
+
+endchoice
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER_EXTERNAL
+    bool "Nexus server external"
+    depends on BR2_PACKAGE_HAS_NEXUS  && !BR2_PACKAGE_WAYLAND
+    default n
+    help
+      Use an external nxserver with the compositor.
+
+if BR2_PACKAGE_HAS_NEXUS && !BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER_EXTERNAL && !BR2_PACKAGE_WAYLAND
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_IRMODE
     string "IR mode"
@@ -42,13 +58,11 @@ config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_IRMODE
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_BOXMODE
     string "Memory Box Mode"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
     help
       Memory box mode, you can find details from release notes per platform
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_ALLOW_UNAUTHENTICATED_CLIENTS
     bool "Allow unauthenticated clients"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
     default n
     help
       Allow unauthenticated clients on the nxserver.
@@ -73,67 +87,52 @@ endchoice
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
     bool "Memories"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER
     default n
     help
       Allow memory heap updates
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_GFX
     string "Graphics Memory"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
     help
       Allow update of Graphics memory. The amount of memory in MB to be configured for.
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_GFX2
     string "Secondary Graphics Memory"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
     help
       Allow update of Secondary Graphics memory. The amount of memory in MB to be configured for.
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_RESTRICTED
     string "Compressed Restricted Region Memory (Video Secure)"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
     help
       Allow update of Compressed Restricted Region Memory (Video Secure) memory. The amount of memory in MB to be configured for.
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_MAIN
     string "Main Memory"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
     help
       Allow update of main memory. The amount of memory in MB to be configured for.
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_EXPORT
     string "Export Memory"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
     help
       Allow update of Export Region memory. The ammount of memory in MB to be configured for.
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_SECUREGFX
     string "Secure Graphics Memory"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
     help
       Allow update of Secure Graphics memory. The amount of memory in MB to be configured for.
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_CLIENT
     string "Client Memory"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER && BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
     depends on BR2_PACKAGE_BCM_REFSW_SAGE
     help
       Allow update of Client memory. SAGE must be told which heap the client's will be using. The amount of memory in MB to be configured for.
-
-choice
-    prompt "resolution"
-
-menuconfig BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_RESOLUTION_720P
-    bool "720p"
-
-menuconfig BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_RESOLUTION_1080P
-    bool "1080p"
-
-menuconfig BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_RESOLUTION_2160P
-    bool "2160p"
-
-endchoice
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_HARDWAREREADY
     string "Manual overrule of the time it takes to initialisize all hardware (s)"
