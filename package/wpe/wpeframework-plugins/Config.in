@@ -342,6 +342,26 @@ config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_DEVINPUT
     help
       Select devices which are annunced in the linux operating system under /dev/input/ as eventX
 
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_CUSTOM_VIRTUAL
+    bool "Custom virtual device/mapping"
+    default n
+    help
+      Select custom virtual device/mapping
+
+if BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_CUSTOM_VIRTUAL
+
+config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_CUSTOM_VIRTUAL_NAME
+    string "Custom virtual name"
+    help
+      Add custom virtual name
+
+config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_CUSTOM_VIRTUAL_MAP_FILE
+    string "Custom virtual map file"
+    help
+      Add custom virtual map file
+
+endif
+
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_SNAPSHOT
@@ -480,7 +500,15 @@ config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_XHRCACHE
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_TRANSPARENT
     bool "transparent"
     default false
-    
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_WINDOWCLOSE
+       bool "windowclose"
+       default false
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_DISABLE_WEBGL
+       bool "disablewebgl"
+       default false
+
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_USER
     string "user"
     default ""
@@ -552,6 +580,14 @@ config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_CLIENTIDENTIFIER
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_THREADEDPAINTING
     string "threaded-painting"
     default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_LOCALSTORAGE
+	string "HTML5 local storage path"
+	default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_COOKIESTORAGE
+	string "Cookie storage path"
+	default ""
 
 endif
 
