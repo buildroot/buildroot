@@ -29,6 +29,12 @@ Vagrant.configure('2') do |config|
 		end
 	end
 
+  config.vm.provider :libvirt do |v, override|
+    override.vm.box = 'generic/ubuntu1804'
+    v.memory = VM_MEMORY
+    v.cpus = VM_CORES
+  end 
+
 	config.vm.provision 'shell' do |s|
 		s.inline = 'echo Setting up machine name'
 
