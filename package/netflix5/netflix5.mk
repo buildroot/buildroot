@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NETFLIX5_VERSION = 1b012b2f8f9e3335a722ce4a079b3426c752e8c6
+NETFLIX5_VERSION = c084dd6ea2f16b2a1f1711426f40b1e105ef2e2f
 NETFLIX5_SITE = git@github.com:Metrological/netflix.git
 NETFLIX5_SITE_METHOD = git
 NETFLIX5_LICENSE = PROPRIETARY
@@ -51,6 +51,8 @@ else
 NETFLIX5_CONF_OPTS += -DGIBBON_MODE=executable
 endif
 
+ifeq ($(BR2_PACKAGE_NETFLIX5_AUDIO_MIXER), y)
+NETFLIX5_DEPENDENCIES += libogg tremor
 ifeq ($(BR2_PACKAGE_NETFLIX5_AUDIO_MIXER_SOFTWARE), y)
 NETFLIX5_CONF_OPTS += -DNRDP_HAS_AUDIOMIXER=ON \
                       -DUSE_AUDIOMIXER_GST=ON
@@ -58,7 +60,7 @@ else ifeq ($(BR2_PACKAGE_NETFLIX5_AUDIO_MIXER_NEXUS), y)
 NETFLIX5_CONF_OPTS += -DNRDP_HAS_AUDIOMIXER=ON \
                       -DUSE_AUDIOMIXER_NEXUS=ON
 endif
-
+endif
 ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR),y)
 NETFLIX5_CONF_OPTS += -DGIBBON_INPUT=wpeframework
 NETFLIX5_DEPENDENCIES += wpeframework-plugins
@@ -116,7 +118,7 @@ NETFLIX5_CONF_OPTS += \
 	-DGIBBON_GRAPHICS=wpeframework
 else ifeq ($(BR2_PACKAGE_WESTEROS),y)
 NETFLIX5_CONF_OPTS += \
-	-DGIBBON_GRAPHICS=wayland-egl
+	-DGIBBON_GRAPHICS=wayland
 else
 NETFLIX5_CONF_OPTS += \
 	-DGIBBON_GRAPHICS=nexus \
