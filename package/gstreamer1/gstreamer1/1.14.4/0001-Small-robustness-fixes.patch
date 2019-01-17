@@ -1,0 +1,41 @@
+From ab53c1cbbf60966809e26b7440f788dc69948bab Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Mon, 27 Nov 2017 10:57:41 +0000
+Subject: [PATCH] Small robustness fixes
+
+---
+ gst/gststructure.c         | 1 +
+ libs/gst/base/gstadapter.c | 5 ++++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/gst/gststructure.c b/gst/gststructure.c
+index 3b4d5b8d2..d9c48e35f 100644
+--- a/gst/gststructure.c
++++ b/gst/gststructure.c
+@@ -375,6 +375,7 @@ gst_structure_free (GstStructure * structure)
+   guint i, len;
+ 
+   g_return_if_fail (structure != NULL);
++  g_return_if_fail (GST_IS_STRUCTURE (structure));
+   g_return_if_fail (GST_STRUCTURE_REFCOUNT (structure) == NULL);
+ 
+   len = GST_STRUCTURE_FIELDS (structure)->len;
+diff --git a/libs/gst/base/gstadapter.c b/libs/gst/base/gstadapter.c
+index e3dff288f..fbdfb8902 100644
+--- a/libs/gst/base/gstadapter.c
++++ b/libs/gst/base/gstadapter.c
+@@ -225,7 +225,10 @@ gst_adapter_finalize (GObject * object)
+ {
+   GstAdapter *adapter = GST_ADAPTER (object);
+ 
+-  g_free (adapter->assembled_data);
++  if (adapter->assembled_size) {
++    g_free (adapter->assembled_data);
++    adapter->assembled_size = NULL;
++  }
+ 
+   GST_CALL_PARENT (G_OBJECT_CLASS, finalize, (object));
+ }
+-- 
+2.17.0
+

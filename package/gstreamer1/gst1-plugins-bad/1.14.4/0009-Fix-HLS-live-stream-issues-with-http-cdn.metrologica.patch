@@ -1,0 +1,69 @@
+From 0c67a2059012849215aee773a15514c8ce2d8d49 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Fri, 9 Feb 2018 15:03:45 +0000
+Subject: [PATCH 09/11] Fix HLS live stream issues with
+ http://cdn.metrological.com/hls/master.m3u8
+
+This live stream has index{0-3}.ts blocks which repeat forever. The
+first issue is that the fetch of an updated playlist takes too much and
+the playback stalls. This has been fixed by increasing
+GST_M3U8_LIVE_MIN_FRAGMENT_DISTANCE from 3 to 4, which gives more
+buffer at the expense of latency in the stream (it's less realtime).
+
+The second issue was that index0.ts starts with a non-zero Program
+Clock Reference (PCR, the timing used in MPEG TS). When the blocks wrap
+around from index3.ts to index0.ts, the PCR reset code detects a
+non-zero gap and screws the timestamps. This is fixed by correcting the
+out_time, but requires to disable PCR wraparound management, which
+seems a bit fishy.
+
+WARNING: This patch is experimental and can produce regressions!
+---
+ ext/hls/m3u8.h                     | 3 ++-
+ gst/mpegtsdemux/mpegtspacketizer.c | 9 ++++++++-
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/ext/hls/m3u8.h b/ext/hls/m3u8.h
+index 195ec2ab8..736c6741d 100644
+--- a/ext/hls/m3u8.h
++++ b/ext/hls/m3u8.h
+@@ -47,7 +47,8 @@ typedef struct _GstHLSMasterPlaylist GstHLSMasterPlaylist;
+    GST_M3U8_LIVE_MIN_FRAGMENT_DISTANCE fragments. Section 6.3.3
+    "Playing the Playlist file" of the HLS draft states that this
+    value is three fragments */
+-#define GST_M3U8_LIVE_MIN_FRAGMENT_DISTANCE 3
++/* Let's give more buffer and use 4 */
++#define GST_M3U8_LIVE_MIN_FRAGMENT_DISTANCE 4
+ 
+ struct _GstM3U8
+ {
+diff --git a/gst/mpegtsdemux/mpegtspacketizer.c b/gst/mpegtsdemux/mpegtspacketizer.c
+index cc46ebb25..6317bf5db 100644
+--- a/gst/mpegtsdemux/mpegtspacketizer.c
++++ b/gst/mpegtsdemux/mpegtspacketizer.c
+@@ -1333,7 +1333,8 @@ calculate_skew (MpegTSPacketizer2 * packetizer,
+   /* Handle PCR wraparound and resets */
+   if (GST_CLOCK_TIME_IS_VALID (pcr->last_pcrtime) &&
+       gstpcrtime < pcr->last_pcrtime) {
+-    if (pcr->last_pcrtime - gstpcrtime > PCR_GST_MAX_VALUE / 2) {
++    /* DISABLED!!! */
++    if (FALSE && pcr->last_pcrtime - gstpcrtime > PCR_GST_MAX_VALUE / 2) {
+       /* PCR wraparound */
+       GST_DEBUG ("PCR wrap");
+       pcr->pcroffset += PCR_GST_MAX_VALUE;
+@@ -1521,6 +1522,12 @@ no_skew:
+       out_time = 0;
+     } else {
+       out_time += pcr->skew;
++      /* If out_time is reset to 0, keep counting where we were last time.
++       * But this needs PCR wraparound detection to be disabled in order to work consistently */
++      if (out_time == 0) {
++        pcr->base_time += pcr->prev_out_time;
++        out_time = pcr->base_time + send_diff;
++      }
+     }
+     /* check if timestamps are not going backwards, we can only check this if we
+      * have a previous out time and a previous send_diff */
+-- 
+2.17.0
+

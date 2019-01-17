@@ -1,0 +1,158 @@
+From 81930e9eac9d5de63e52e640b4ef37bddb3e31e1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Thu, 22 Nov 2018 12:21:53 +0000
+Subject: [PATCH 11/11] mssdemux: support for live content as vod
+
+Some content providers store live videos (with initial PTS very far away from
+zero) and later serve them as regular video-on-demand content (isLive=false),
+which is expected to start from zero.
+
+This patch detects those contents (non-live, not-zero start) and uses probes
+on the MssDemux src pads to "fix" the PTS by offsetting it back to start from
+zero.
+---
+ ext/smoothstreaming/gstmssdemux.c    | 72 ++++++++++++++++++++++++++++
+ ext/smoothstreaming/gstmssmanifest.c | 24 ++++++++++
+ ext/smoothstreaming/gstmssmanifest.h |  1 +
+ 3 files changed, 97 insertions(+)
+
+diff --git a/ext/smoothstreaming/gstmssdemux.c b/ext/smoothstreaming/gstmssdemux.c
+index afe453e9f..56cfbba54 100644
+--- a/ext/smoothstreaming/gstmssdemux.c
++++ b/ext/smoothstreaming/gstmssdemux.c
+@@ -212,6 +212,76 @@ gst_mss_demux_class_init (GstMssDemuxClass * klass)
+   GST_DEBUG_CATEGORY_INIT (mssdemux_debug, "mssdemux", 0, "mssdemux plugin");
+ }
+ 
++static GstPadProbeReturn live_as_vod_pts_fixer_probe (GstPad *pad,
++    GstPadProbeInfo *info, gpointer user_data)
++{
++    const GstClockTime* live_as_vod_offset = (const GstClockTime*)user_data;
++    GstBuffer* buffer = GST_PAD_PROBE_INFO_BUFFER(info);
++
++    if (G_LIKELY(GST_BUFFER_PTS(buffer) != GST_CLOCK_TIME_NONE))
++        GST_BUFFER_PTS(buffer) -= *live_as_vod_offset;
++
++    return GST_PAD_PROBE_OK;
++}
++
++// This function installs probes to offset PTSs on those non-live streams
++// which don't start from zero (because they're just live streams reconverted
++// to non-live). The offset will adjust the PTSs to start from zero, so the
++// stream behaves as a well formed non-live stream.
++static void setup_live_as_vod_offset (GstElement *element, gpointer user_data)
++{
++    GstAdaptiveDemux *adaptivedemux = GST_ADAPTIVE_DEMUX_CAST (element);
++    GstMssDemux *mssdemux = GST_MSS_DEMUX_CAST (element);
++    GstClockTime stream_start_time, live_as_vod_offset = GST_CLOCK_TIME_NONE;
++    GList* streams;
++    GstIterator* it;
++    GValue item = G_VALUE_INIT;
++
++    GST_DEBUG_OBJECT(element, "No more pads, setting up live-as-VoD offset");
++
++    if (gst_mss_manifest_is_live (mssdemux->manifest)) {
++        GST_DEBUG_OBJECT(element, "Stream is live, doing nothing");
++        return;
++    }
++
++    if (!adaptivedemux->streams) {
++        GST_WARNING_OBJECT (adaptivedemux, "No streams yet");
++        return;
++    }
++
++    for (streams = adaptivedemux->streams; streams; streams = streams->next) {
++      GstMssDemuxStream* mssdemuxstream = (GstMssDemuxStream*)(adaptivedemux->streams->data);
++      stream_start_time = (gst_mss_manifest_is_live (mssdemux->manifest)) ? GST_CLOCK_TIME_NONE :
++          gst_mss_stream_get_first_fragment_gst_timestamp(mssdemuxstream->manifest_stream);
++      if (stream_start_time == 0)
++        stream_start_time = GST_CLOCK_TIME_NONE;
++
++      // This assumes that GST_CLOCK_TIME_NONE is larger than any valid time value
++      if (stream_start_time < live_as_vod_offset)
++          live_as_vod_offset = stream_start_time;
++    }
++
++    if (live_as_vod_offset == GST_CLOCK_TIME_NONE) {
++        GST_DEBUG_OBJECT(element, "All streams start at zero, doing nothing");
++        return;
++    }
++
++    GST_DEBUG_OBJECT (mssdemux, "Minimal offset: %" GST_TIME_FORMAT ", installing probes",
++        GST_TIME_ARGS(live_as_vod_offset));
++
++    it = gst_element_iterate_src_pads(element);
++    while (gst_iterator_next (it, &item) == GST_ITERATOR_OK) {
++      GstPad* pad = GST_PAD(g_value_get_object(&item));
++      GstClockTime* p = g_new (GstClockTime, 1);
++      *p = live_as_vod_offset;
++      GST_DEBUG_OBJECT (pad, "Adding live-as-VoD PTS fixer probe");
++      gst_pad_add_probe(pad, GST_PAD_PROBE_TYPE_BUFFER, live_as_vod_pts_fixer_probe, p, g_free);
++      g_value_reset (&item);
++    }
++    g_value_unset (&item);
++    gst_iterator_free (it);
++}
++
+ static void
+ gst_mss_demux_init (GstMssDemux * mssdemux)
+ {
+@@ -219,6 +289,8 @@ gst_mss_demux_init (GstMssDemux * mssdemux)
+ 
+   gst_adaptive_demux_set_stream_struct_size (GST_ADAPTIVE_DEMUX_CAST (mssdemux),
+       sizeof (GstMssDemuxStream));
++
++  g_signal_connect(GST_ELEMENT(mssdemux), "no-more-pads", G_CALLBACK(setup_live_as_vod_offset), NULL);
+ }
+ 
+ static void
+diff --git a/ext/smoothstreaming/gstmssmanifest.c b/ext/smoothstreaming/gstmssmanifest.c
+index a25951381..35d79837b 100644
+--- a/ext/smoothstreaming/gstmssmanifest.c
++++ b/ext/smoothstreaming/gstmssmanifest.c
+@@ -1272,6 +1272,30 @@ gst_mss_stream_get_fragment_gst_timestamp (GstMssStream * stream)
+       timescale);
+ }
+ 
++guint64 gst_mss_stream_get_first_fragment_gst_timestamp (GstMssStream * stream)
++{
++  guint64 time;
++  guint64 timescale;
++  GstMssStreamFragment *fragment;
++  GList *last;
++
++  g_return_val_if_fail (stream->active, GST_CLOCK_TIME_NONE);
++
++  last = g_list_first (stream->fragments);
++  if (last == NULL)
++    return GST_CLOCK_TIME_NONE;
++
++  fragment = last->data;
++
++  GST_LOG_OBJECT (stream, "fragment #%d, time %" GST_TIME_FORMAT,
++      fragment->number, GST_TIME_ARGS(fragment->time));
++
++  time = fragment->time;
++  timescale = gst_mss_stream_get_timescale (stream);
++  return (GstClockTime) gst_util_uint64_scale_round (time, GST_SECOND,
++      timescale);
++}
++
+ GstClockTime
+ gst_mss_stream_get_fragment_gst_duration (GstMssStream * stream)
+ {
+diff --git a/ext/smoothstreaming/gstmssmanifest.h b/ext/smoothstreaming/gstmssmanifest.h
+index 4e6ad7357..2720ec682 100644
+--- a/ext/smoothstreaming/gstmssmanifest.h
++++ b/ext/smoothstreaming/gstmssmanifest.h
+@@ -72,6 +72,7 @@ GstFlowReturn gst_mss_stream_advance_fragment (GstMssStream * stream);
+ GstFlowReturn gst_mss_stream_regress_fragment (GstMssStream * stream);
+ void gst_mss_stream_seek (GstMssStream * stream, gboolean forward, GstSeekFlags flags, guint64 time, guint64 * final_time);
+ const gchar * gst_mss_stream_get_lang (GstMssStream * stream);
++guint64 gst_mss_stream_get_first_fragment_gst_timestamp (GstMssStream * stream);
+ 
+ const gchar * gst_mss_stream_type_name (GstMssStreamType streamtype);
+ 
+-- 
+2.17.0
+

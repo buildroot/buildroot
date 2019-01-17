@@ -1,0 +1,29 @@
+From f37888e7da9e7c0a47fc2ee20456a2ca9f8e7668 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Tue, 25 Sep 2018 13:53:51 +0000
+Subject: [PATCH 08/11] smoothstreaming: add support for absolute fragment urls
+
+---
+ ext/smoothstreaming/gstmssdemux.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/ext/smoothstreaming/gstmssdemux.c b/ext/smoothstreaming/gstmssdemux.c
+index 6a46eb9ff..e5d8d7f6d 100644
+--- a/ext/smoothstreaming/gstmssdemux.c
++++ b/ext/smoothstreaming/gstmssdemux.c
+@@ -309,7 +309,11 @@ gst_mss_demux_stream_update_fragment_info (GstAdaptiveDemuxStream * stream)
+   ret = gst_mss_stream_get_fragment_url (mssstream->manifest_stream, &path);
+ 
+   if (ret == GST_FLOW_OK) {
+-    stream->fragment.uri = g_strdup_printf ("%s/%s", mssdemux->base_url, path);
++    if (g_str_has_prefix(path, "http")) {
++      stream->fragment.uri = path;
++      path = NULL;
++    } else
++      stream->fragment.uri = g_strdup_printf ("%s/%s", mssdemux->base_url, path);
+     stream->fragment.timestamp =
+         gst_mss_stream_get_fragment_gst_timestamp (mssstream->manifest_stream);
+     stream->fragment.duration =
+-- 
+2.17.0
+

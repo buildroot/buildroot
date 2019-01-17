@@ -1,0 +1,120 @@
+From 6f47b383caf901b878225336369c71a847677609 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Wed, 28 Oct 2015 12:00:09 +0100
+Subject: [PATCH 1/8] souphttpsrc: cookie jar and context query support
+
+Use a volatile Cookie jar to store cookies and handle the context
+query so that session data can be shared with other elements (like
+adaptivedemux).
+
+https://bugzilla.gnome.org/show_bug.cgi?id=726314
+---
+ ext/soup/gstsouphttpsrc.c | 41 +++++++++++++++++++++++++++++++++++++--
+ ext/soup/gstsouphttpsrc.h |  1 +
+ 2 files changed, 40 insertions(+), 2 deletions(-)
+
+diff --git a/ext/soup/gstsouphttpsrc.c b/ext/soup/gstsouphttpsrc.c
+index 6e64a57ae..174f29e31 100644
+--- a/ext/soup/gstsouphttpsrc.c
++++ b/ext/soup/gstsouphttpsrc.c
+@@ -491,6 +491,7 @@ gst_soup_http_src_init (GstSoupHTTPSrc * src)
+   src->session = NULL;
+   src->external_session = NULL;
+   src->forced_external_session = FALSE;
++  src->cookie_jar = NULL;
+   src->msg = NULL;
+   src->timeout = DEFAULT_TIMEOUT;
+   src->log_level = DEFAULT_SOUP_LOG_LEVEL;
+@@ -1028,6 +1029,9 @@ gst_soup_http_src_session_open (GstSoupHTTPSrc * src)
+     GST_DEBUG_OBJECT (src, "Re-using session");
+   }
+ 
++  src->cookie_jar = soup_cookie_jar_new ();
++  soup_session_add_feature (src->session,
++      SOUP_SESSION_FEATURE (src->cookie_jar));
+   return TRUE;
+ }
+ 
+@@ -1043,6 +1047,11 @@ gst_soup_http_src_session_close (GstSoupHTTPSrc * src)
+     src->msg = NULL;
+   }
+ 
++  if (src->cookie_jar) {
++    g_object_unref (src->cookie_jar);
++    src->cookie_jar = NULL;
++  }
++
+   if (src->session) {
+     if (!src->session_is_shared)
+       soup_session_abort (src->session);
+@@ -1495,11 +1504,12 @@ gst_soup_http_src_build_message (GstSoupHTTPSrc * src, const gchar * method)
+   }
+   if (src->cookies) {
+     gchar **cookie;
++    SoupURI *uri = soup_uri_new (src->location);
+ 
+     for (cookie = src->cookies; *cookie != NULL; cookie++) {
+-      soup_message_headers_append (src->msg->request_headers, "Cookie",
+-          *cookie);
++      soup_cookie_jar_set_cookie (src->cookie_jar, uri, *cookie);
+     }
++    soup_uri_free (uri);
+   }
+ 
+   if (!src->compress)
+@@ -2050,6 +2060,12 @@ gst_soup_http_src_query (GstBaseSrc * bsrc, GstQuery * query)
+   gboolean ret;
+   GstSchedulingFlags flags;
+   gint minsize, maxsize, align;
++  GstContext *context;
++  GstStructure *context_structure;
++  char *cookie;
++  const gchar *cookies[2];
++  const gchar *context_type;
++  SoupURI *uri;
+ 
+   switch (GST_QUERY_TYPE (query)) {
+     case GST_QUERY_URI:
+@@ -2061,6 +2077,27 @@ gst_soup_http_src_query (GstBaseSrc * bsrc, GstQuery * query)
+       }
+       ret = TRUE;
+       break;
++    case GST_QUERY_CONTEXT:
++      if (gst_query_parse_context_type (query, &context_type)
++          && !g_strcmp0 (context_type, "http-headers")) {
++        uri = soup_uri_new (src->location);
++        cookie = soup_cookie_jar_get_cookies (src->cookie_jar, uri, TRUE);
++        context = gst_context_new ("http-headers", FALSE);
++        gst_context_make_writable (context);
++        context_structure = gst_context_writable_structure (context);
++        if (cookie != NULL) {
++          cookies[0] = cookie;
++          cookies[1] = NULL;
++          gst_structure_set (context_structure, "cookies", G_TYPE_STRV, cookies,
++              NULL);
++          g_free (cookie);
++        }
++        gst_query_set_context (query, context);
++        soup_uri_free (uri);
++        ret = TRUE;
++        break;
++      }
++
+     default:
+       ret = FALSE;
+       break;
+diff --git a/ext/soup/gstsouphttpsrc.h b/ext/soup/gstsouphttpsrc.h
+index 06851ddfa..cd0397a13 100644
+--- a/ext/soup/gstsouphttpsrc.h
++++ b/ext/soup/gstsouphttpsrc.h
+@@ -63,6 +63,7 @@ struct _GstSoupHTTPSrc {
+   gboolean session_is_shared;
+   SoupSession *external_session; /* Shared via GstContext */
+   gboolean forced_external_session; /* If session was explicitly set from application */
++  SoupCookieJar *cookie_jar;   /* Volatile HTTP cookie storage */
+   SoupMessage *msg;            /* Request message. */
+   gint retry_count;            /* Number of retries since we received data */
+   gint max_retries;            /* Maximum number of retries */
+-- 
+2.17.0
+

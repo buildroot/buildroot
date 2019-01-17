@@ -1,0 +1,34 @@
+From 916b812099ada5fbb765cbf05c31efed01aa2226 Mon Sep 17 00:00:00 2001
+From: wouterlucas <wouter@wouterlucas.com>
+Date: Wed, 2 May 2018 13:08:14 -0700
+Subject: [PATCH 05/11] Add mpegdash live seek fix
+
+---
+ ext/dash/gstmpdparser.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/ext/dash/gstmpdparser.c b/ext/dash/gstmpdparser.c
+index c0bbecdc1..d3e1d9b8b 100644
+--- a/ext/dash/gstmpdparser.c
++++ b/ext/dash/gstmpdparser.c
+@@ -5040,6 +5040,7 @@ gst_mpd_client_get_next_fragment_timestamp (GstMpdClient * client,
+ {
+   GstActiveStream *stream;
+   GstMediaSegment *currentChunk;
++  GstStreamPeriod *stream_period;
+ 
+   GST_DEBUG ("Stream index: %i", stream_idx);
+   stream = g_list_nth_data (client->active_streams, stream_idx);
+@@ -5066,7 +5067,8 @@ gst_mpd_client_get_next_fragment_timestamp (GstMpdClient * client,
+             && stream->segment_index >= segments_count)) {
+       return FALSE;
+     }
+-    *ts = stream->segment_index * duration;
++    stream_period = gst_mpdparser_get_stream_period (client);
++    *ts = stream_period->start + stream->segment_index * duration;
+   }
+ 
+   return TRUE;
+-- 
+2.17.0
+

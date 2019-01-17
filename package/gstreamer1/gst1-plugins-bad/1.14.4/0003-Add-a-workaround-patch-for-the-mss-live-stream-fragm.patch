@@ -1,0 +1,27 @@
+From 7e1eab92c54e716b0d46e3109391364a9cc478a4 Mon Sep 17 00:00:00 2001
+From: Zan Dobersek <zdobersek@igalia.com>
+Date: Thu, 10 Nov 2016 02:17:01 -0800
+Subject: [PATCH 03/11] Add a workaround patch for the mss live stream
+ fragments issue
+
+---
+ ext/smoothstreaming/gstmssmanifest.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/ext/smoothstreaming/gstmssmanifest.c b/ext/smoothstreaming/gstmssmanifest.c
+index a591d2941..cc18d4209 100644
+--- a/ext/smoothstreaming/gstmssmanifest.c
++++ b/ext/smoothstreaming/gstmssmanifest.c
+@@ -1325,6 +1325,9 @@ gst_mss_stream_reload_fragments (GstMssStream * stream, xmlNodePtr streamIndex)
+   guint64 current_gst_time;
+   GstMssFragmentListBuilder builder;
+ 
++  if (stream->has_live_fragments)
++    return;
++
+   current_gst_time = gst_mss_stream_get_fragment_gst_timestamp (stream);
+ 
+   gst_mss_fragment_list_builder_init (&builder);
+-- 
+2.17.0
+

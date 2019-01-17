@@ -1,0 +1,38 @@
+From 4074632c517a0f808ab78f64bf4b1ade24ae3d92 Mon Sep 17 00:00:00 2001
+From: Srinivas Kakarla <srinivas.kakarla@valuelabs.com>
+Date: Thu, 14 Jul 2016 17:12:51 +0530
+Subject: [PATCH 02/11] Fix to set current_fragment for live streaming.
+
+---
+ ext/smoothstreaming/gstmssmanifest.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/ext/smoothstreaming/gstmssmanifest.c b/ext/smoothstreaming/gstmssmanifest.c
+index c855cb387..a591d2941 100644
+--- a/ext/smoothstreaming/gstmssmanifest.c
++++ b/ext/smoothstreaming/gstmssmanifest.c
+@@ -1234,6 +1234,11 @@ gst_mss_stream_seek (GstMssStream * stream, gboolean forward,
+   GST_DEBUG ("Stream %s seeking to %" G_GUINT64_FORMAT, stream->url, time);
+   for (iter = stream->fragments; iter; iter = g_list_next (iter)) {
+     fragment = iter->data;
++    if(stream->has_live_fragments){
++      if (fragment->time + fragment->repetitions * fragment->duration > time)
++        stream->current_fragment = iter;
++      break;
++    }
+     if (fragment->time + fragment->repetitions * fragment->duration > time) {
+       stream->current_fragment = iter;
+       stream->fragment_repetition_index =
+@@ -1339,7 +1344,8 @@ gst_mss_stream_reload_fragments (GstMssStream * stream, xmlNodePtr streamIndex)
+   if (builder.fragments) {
+     g_list_free_full (stream->fragments, g_free);
+     stream->fragments = g_list_reverse (builder.fragments);
+-    stream->current_fragment = stream->fragments;
++    if (!stream->has_live_fragments)
++      stream->current_fragment = stream->fragments;
+     /* TODO Verify how repositioning here works for reverse
+      * playback - it might start from the wrong fragment */
+     gst_mss_stream_seek (stream, TRUE, 0, current_gst_time, NULL);
+-- 
+2.17.0
+

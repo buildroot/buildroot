@@ -1,0 +1,136 @@
+From dc7ab150aa52d617d8e17688ab6910778907ff48 Mon Sep 17 00:00:00 2001
+From: Charlie Turner <chturne@gmail.com>
+Date: Fri, 25 May 2018 14:08:17 +0100
+Subject: [PATCH 7/8] Check if an upstream demuxer provided a default kid.
+
+Smooth streaming demuxers do not send boxes containing metadata about
+the stream. They have to send metadata "out-of-band".
+
+For piff encoded streams, if no box has been found containing a default
+kid for the sample, check if an upstream demuxer has provided one via a
+protection event, and use this as a fallback.
+---
+ gst/isomp4/qtdemux.c | 55 ++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 51 insertions(+), 4 deletions(-)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index 6b586a67d..32cfcb003 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -428,6 +428,9 @@ struct _QtDemuxStream
+   guint32 protection_scheme_type;
+   guint32 protection_scheme_version;
+   gpointer protection_scheme_info;      /* specific to the protection scheme */
++
++  GstBuffer *default_kid;
++
+   GQueue protection_scheme_event_queue;
+ };
+ 
+@@ -1944,6 +1947,7 @@ _create_stream (void)
+   stream->stream_tags = gst_tag_list_new_empty ();
+   gst_tag_list_set_scope (stream->stream_tags, GST_TAG_SCOPE_STREAM);
+   g_queue_init (&stream->protection_scheme_event_queue);
++  stream->default_kid = NULL;
+   return stream;
+ }
+ 
+@@ -2386,6 +2390,32 @@ gst_qtdemux_handle_sink_event (GstPad * sinkpad, GstObject * parent,
+     case GST_EVENT_PROTECTION:
+     {
+       const gchar *system_id = NULL;
++      GstBuffer *default_key_id = NULL;
++      const GstStructure *structure;
++      QtDemuxStream *stream = NULL;
++      GstMapInfo map;
++
++      structure = gst_event_get_structure (event);
++      if (gst_structure_has_field_typed (structure, "key_id", GST_TYPE_BUFFER)) {
++        gst_structure_get (structure, "key_id", GST_TYPE_BUFFER,
++            &default_key_id, NULL);
++        GST_DEBUG_OBJECT (demux,
++            "received a default key id of size %" G_GSIZE_FORMAT,
++            gst_buffer_get_size (default_key_id));
++
++        if (gst_debug_category_get_threshold (GST_CAT_DEFAULT) >=
++            GST_LEVEL_MEMDUMP) {
++          gst_buffer_map (default_key_id, &map, GST_MAP_READ);
++          GST_MEMDUMP_OBJECT (demux, "default key id", (guint8 *) map.data,
++              map.size);
++          gst_buffer_unmap (default_key_id, &map);
++        }
++
++        if (demux->n_streams) {
++          stream = demux->streams[0];
++          stream->default_kid = default_key_id;
++        }
++      }
+ 
+       gst_event_parse_protection (event, &system_id, NULL, NULL);
+       GST_DEBUG_OBJECT (demux, "Received protection event for system ID %s",
+@@ -2542,6 +2572,8 @@ gst_qtdemux_stream_clear (GstQTDemux * qtdemux, QtDemuxStream * stream)
+   g_queue_foreach (&stream->protection_scheme_event_queue,
+       (GFunc) gst_event_unref, NULL);
+   g_queue_clear (&stream->protection_scheme_event_queue);
++  if (stream->default_kid)
++    gst_buffer_unref (stream->default_kid);
+   gst_qtdemux_stream_flush_segments_data (qtdemux, stream);
+   gst_qtdemux_stream_flush_samples_data (qtdemux, stream);
+ }
+@@ -2786,6 +2818,18 @@ qtdemux_parse_piff (GstQTDemux * qtdemux, const guint8 * buffer, gint length,
+   } else if ((flags & 0x000002)) {
+     uses_sub_sample_encryption = TRUE;
+   }
++  // In the case of smooth streaming, we never get moov boxes and their
++  // default encryption metadata. Instead, the demuxer has to parse this
++  // information out of the playready specific payloads and make it availble
++  // somehow to us.
++  if (!gst_structure_has_field (ss_info->default_properties, "kid")) {
++    if (!stream->default_kid) {
++      GST_WARNING_OBJECT (qtdemux, "No available key id for sample");
++    } else {
++      gst_structure_set (ss_info->default_properties, "kid", GST_TYPE_BUFFER,
++          stream->default_kid, NULL);
++    }
++  }
+ 
+   if (!gst_byte_reader_get_uint32_be (&br, &sample_count)) {
+     GST_ERROR_OBJECT (qtdemux, "Error getting box's sample count field");
+@@ -5602,11 +5646,13 @@ gst_qtdemux_decorate_and_push_buffer (GstQTDemux * qtdemux,
+ 
+ 
+     if (info->crypto_info == NULL)
+-      GST_DEBUG_OBJECT (qtdemux, "cenc metadata hasn't been parsed yet, pushing buffer as if it wasn't encrypted");
++      GST_DEBUG_OBJECT (qtdemux,
++          "cenc metadata hasn't been parsed yet, pushing buffer as if it wasn't encrypted");
+     else {
+       /* The end of the crypto_info array matches our n_samples position,
+        * so count backward from there */
+-      index = stream->sample_index - stream->n_samples + info->crypto_info->len;
++      index =
++          stream->sample_index - (stream->n_samples - info->crypto_info->len);
+       if (G_LIKELY (index >= 0 && index < info->crypto_info->len)) {
+         /* steal structure from array */
+         crypto_info = g_ptr_array_index (info->crypto_info, index);
+@@ -5614,7 +5660,8 @@ gst_qtdemux_decorate_and_push_buffer (GstQTDemux * qtdemux,
+         GST_LOG_OBJECT (qtdemux, "attaching cenc metadata [%u/%u]", index,
+             info->crypto_info->len);
+         if (!crypto_info || !gst_buffer_add_protection_meta (buf, crypto_info))
+-          GST_ERROR_OBJECT (qtdemux, "failed to attach cenc metadata to buffer");
++          GST_ERROR_OBJECT (qtdemux,
++              "failed to attach cenc metadata to buffer");
+       } else {
+         GST_INFO_OBJECT (qtdemux, "No crypto info with index %d and sample %d",
+             index, stream->sample_index);
+@@ -9328,7 +9375,7 @@ done:
+ 
+   /* push based does not handle segments, so act accordingly here,
+    * and warn if applicable */
+-  if (!qtdemux->pullbased /* && !allow_pushbased_edts */) {
++  if (!qtdemux->pullbased /* && !allow_pushbased_edts */ ) {
+     GST_WARNING_OBJECT (qtdemux, "streaming; discarding edit list segments");
+     /* remove and use default one below, we stream like it anyway */
+     g_free (stream->segments);
+-- 
+2.17.0
+

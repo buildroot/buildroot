@@ -1,0 +1,78 @@
+From 5b90ba9a6e5c6ac3efd146103e15b60b3ea0e3c1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Wed, 23 May 2018 15:40:30 +0000
+Subject: [PATCH 04/11] mssdemux: Reduce SmoothStreaming latency on live
+ streams
+
+by skipping the fragments affected by dvr_window, minus the ones reserved by
+look_ahead_fragment_count plus some margin. Otherwise, the playback would
+start at the begining of the dvr_window, creating a large latency (typically 1 minute).
+---
+ ext/smoothstreaming/gstmssmanifest.c | 34 ++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+
+diff --git a/ext/smoothstreaming/gstmssmanifest.c b/ext/smoothstreaming/gstmssmanifest.c
+index cc18d4209..93a171cbd 100644
+--- a/ext/smoothstreaming/gstmssmanifest.c
++++ b/ext/smoothstreaming/gstmssmanifest.c
+@@ -249,6 +249,7 @@ _gst_mss_stream_init (GstMssManifest * manifest, GstMssStream * stream,
+ {
+   xmlNodePtr iter;
+   GstMssFragmentListBuilder builder;
++  GstClockTime first_fragment_time, dvr_window;
+ 
+   gst_mss_fragment_list_builder_init (&builder);
+ 
+@@ -269,9 +270,35 @@ _gst_mss_stream_init (GstMssManifest * manifest, GstMssStream * stream,
+   stream->has_live_fragments = manifest->is_live
+       && manifest->look_ahead_fragment_count;
+ 
++  first_fragment_time = dvr_window = GST_CLOCK_TIME_NONE;
++
++  if (stream->has_live_fragments && manifest->dvr_window)
++    dvr_window = manifest->dvr_window * GST_SECOND / DEFAULT_TIMESCALE;
++
+   for (iter = node->children; iter; iter = iter->next) {
+     if (node_has_type (iter, MSS_NODE_STREAM_FRAGMENT)) {
+       gst_mss_fragment_list_builder_add (&builder, iter);
++
++      if (stream->has_live_fragments) {
++        /* Build enough fragments to hold dvr_window minus
++         * look_ahead_fragment_count plus some additional margin
++         */
++        GstClockTime accumulated_time, look_ahead_estimation_time;
++
++        if (first_fragment_time == GST_CLOCK_TIME_NONE && builder.fragments)
++            first_fragment_time = builder.fragment_time_accum;
++        accumulated_time =
++            (builder.fragment_time_accum
++            + ((GstMssStreamFragment*)builder.fragments->data)->duration
++            - first_fragment_time) * GST_SECOND / DEFAULT_TIMESCALE;
++        look_ahead_estimation_time = accumulated_time
++            * (builder.fragment_number + manifest->look_ahead_fragment_count + 7)
++            / builder.fragment_number;
++        if (dvr_window == GST_CLOCK_TIME_NONE
++            || look_ahead_estimation_time >= dvr_window)
++            break;
++      }
++
+     } else if (node_has_type (iter, MSS_NODE_STREAM_QUALITY)) {
+       GstMssStreamQuality *quality = gst_mss_stream_quality_new (iter);
+       stream->qualities = g_list_prepend (stream->qualities, quality);
+@@ -281,6 +308,13 @@ _gst_mss_stream_init (GstMssManifest * manifest, GstMssStream * stream,
+   }
+ 
+   if (stream->has_live_fragments) {
++    /* Skip all fragments except the first one (more recently added) */
++    GList* skipped;
++
++    stream->fragments = builder.fragments;
++    skipped = g_list_remove_link(builder.fragments, builder.fragments);
++    g_list_free_full (skipped, g_free);
++
+     stream->live_adapter = gst_adapter_new ();
+   }
+ 
+-- 
+2.17.0
+

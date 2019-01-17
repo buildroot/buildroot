@@ -1,0 +1,141 @@
+From 7ea6d9b38f94d7116f77250d0eabeed6c0216c20 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Thu, 10 Jan 2019 16:08:38 +0100
+Subject: [PATCH 5/6] Manual revert of 0603e44 omxvideodec/enc: delay
+ allocation after the allocation query
+
+Breaks MSE 2018 novp9 conformance test "{65,85}. AppendH264VideoOffset"
+and causes lots of horrible troubles in general.
+
+This revert also includes some of the changes from
+7f49493 omxvideoenc/dec: fix handling of component enabling failing
+ported to their right place.
+
+This reversion may cause merge conflicts in the future. They're avoidable
+in general if the changes done to the gst_omx_video_enc_handle_frame()
+code block which calls gst_omx_video_enc_enable() are ported to the reverted
+code block in gst_omx_video_enc_set_format().
+---
+ omx/gstomxvideodec.c | 33 +++++++++++++--------------------
+ omx/gstomxvideoenc.c | 33 +++++++++++++--------------------
+ 2 files changed, 26 insertions(+), 40 deletions(-)
+
+diff --git a/omx/gstomxvideodec.c b/omx/gstomxvideodec.c
+index 5323683..8b22c54 100644
+--- a/omx/gstomxvideodec.c
++++ b/omx/gstomxvideodec.c
+@@ -2617,6 +2617,19 @@ gst_omx_video_dec_set_format (GstVideoDecoder * decoder,
+   gst_omx_video_dec_set_latency (self);
+ #endif
+ 
++  if (!gst_omx_video_dec_enable (self, NULL)) {
++    /* Report the OMX error, if any */
++    if (gst_omx_component_get_last_error (self->dec) != OMX_ErrorNone)
++      GST_ELEMENT_ERROR (self, LIBRARY, FAILED, (NULL),
++          ("Failed to enable OMX decoder: %s (0x%08x)",
++              gst_omx_component_get_last_error_string (self->dec),
++              gst_omx_component_get_last_error (self->dec)));
++    else
++      GST_ELEMENT_ERROR (self, LIBRARY, FAILED, (NULL),
++          ("Failed to enable OMX decoder"));
++    return FALSE;
++  }
++
+   self->downstream_flow_ret = GST_FLOW_OK;
+   return TRUE;
+ }
+@@ -2740,11 +2753,6 @@ gst_omx_video_dec_handle_frame (GstVideoDecoder * decoder,
+       return GST_FLOW_OK;
+     }
+ 
+-    if (gst_omx_port_is_flushing (self->dec_out_port) || self->dec_out_port && self->dec_out_port->buffers == NULL) {
+-      if (!gst_omx_video_dec_enable (self, frame->input_buffer))
+-        goto enable_error;
+-    }
+-
+     GST_DEBUG_OBJECT (self, "Starting task");
+     gst_pad_start_task (GST_VIDEO_DECODER_SRC_PAD (self),
+         (GstTaskFunction) gst_omx_video_dec_loop, decoder, NULL);
+@@ -3010,21 +3018,6 @@ map_failed:
+     return GST_FLOW_ERROR;
+   }
+ 
+-enable_error:
+-  {
+-    /* Report the OMX error, if any */
+-    if (gst_omx_component_get_last_error (self->dec) != OMX_ErrorNone)
+-      GST_ELEMENT_ERROR (self, LIBRARY, FAILED, (NULL),
+-          ("Failed to enable OMX decoder: %s (0x%08x)",
+-              gst_omx_component_get_last_error_string (self->dec),
+-              gst_omx_component_get_last_error (self->dec)));
+-    else
+-      GST_ELEMENT_ERROR (self, LIBRARY, FAILED, (NULL),
+-          ("Failed to enable OMX decoder"));
+-    gst_video_codec_frame_unref (frame);
+-    return GST_FLOW_ERROR;
+-  }
+-
+ component_error:
+   {
+     gst_video_codec_frame_unref (frame);
+diff --git a/omx/gstomxvideoenc.c b/omx/gstomxvideoenc.c
+index 2079bba..69ec95d 100644
+--- a/omx/gstomxvideoenc.c
++++ b/omx/gstomxvideoenc.c
+@@ -2231,6 +2231,19 @@ gst_omx_video_enc_set_format (GstVideoEncoder * encoder,
+   gst_omx_video_enc_set_latency (self);
+ #endif
+ 
++  if (!gst_omx_video_enc_enable (self, NULL)) {
++    /* Report the OMX error, if any */
++    if (gst_omx_component_get_last_error (self->enc) != OMX_ErrorNone)
++      GST_ELEMENT_ERROR (self, LIBRARY, FAILED, (NULL),
++          ("Failed to enable OMX encoder: %s (0x%08x)",
++              gst_omx_component_get_last_error_string (self->enc),
++              gst_omx_component_get_last_error (self->enc)));
++    else
++      GST_ELEMENT_ERROR (self, LIBRARY, FAILED, (NULL),
++          ("Failed to enable OMX encoder"));
++    return FALSE;
++  }
++
+   self->downstream_flow_ret = GST_FLOW_OK;
+   return TRUE;
+ }
+@@ -2580,11 +2593,6 @@ gst_omx_video_enc_handle_frame (GstVideoEncoder * encoder,
+   }
+ 
+   if (!self->started) {
+-    if (gst_omx_port_is_flushing (self->enc_out_port)) {
+-      if (!gst_omx_video_enc_enable (self, frame->input_buffer))
+-        goto enable_error;
+-    }
+-
+     GST_DEBUG_OBJECT (self, "Starting task");
+     gst_pad_start_task (GST_VIDEO_ENCODER_SRC_PAD (self),
+         (GstTaskFunction) gst_omx_video_enc_loop, self, NULL);
+@@ -2758,21 +2766,6 @@ flow_error:
+     return self->downstream_flow_ret;
+   }
+ 
+-enable_error:
+-  {
+-    /* Report the OMX error, if any */
+-    if (gst_omx_component_get_last_error (self->enc) != OMX_ErrorNone)
+-      GST_ELEMENT_ERROR (self, LIBRARY, FAILED, (NULL),
+-          ("Failed to enable OMX encoder: %s (0x%08x)",
+-              gst_omx_component_get_last_error_string (self->enc),
+-              gst_omx_component_get_last_error (self->enc)));
+-    else
+-      GST_ELEMENT_ERROR (self, LIBRARY, FAILED, (NULL),
+-          ("Failed to enable OMX encoder"));
+-    gst_video_codec_frame_unref (frame);
+-    return GST_FLOW_ERROR;
+-  }
+-
+ component_error:
+   {
+     GST_ELEMENT_ERROR (self, LIBRARY, FAILED, (NULL),
+-- 
+2.17.0
+

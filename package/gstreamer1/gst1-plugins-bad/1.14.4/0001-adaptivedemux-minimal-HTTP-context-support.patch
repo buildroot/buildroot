@@ -1,0 +1,104 @@
+From e48bd21dd3548a9d970bab4f96fb4adf5e4f953a Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Wed, 28 Oct 2015 11:52:49 +0100
+Subject: [PATCH 01/11] adaptivedemux: minimal HTTP context support
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The uridownloader is now querying the source element for an HTTP
+context, which stores session data (cookies only for now), and reusing
+the data when fetching data over HTTP. Additionally the context is set
+on adaptivedemux, which allows it to also properly use session data
+when downloading fragments.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=726314
+
+Reworked by Enrique Ocaña González <eocanha@igalia.com on May 23 2018
+in the upgrade from GStreamer 1.10.4 to 1.14.1.
+---
+ gst-libs/gst/adaptivedemux/gstadaptivedemux.c | 14 ++++++++++
+ gst-libs/gst/uridownloader/gsturidownloader.c | 28 +++++++++++++++++++
+ 2 files changed, 42 insertions(+)
+
+diff --git a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
+index a0c075b66..22b2d5629 100644
+--- a/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
++++ b/gst-libs/gst/adaptivedemux/gstadaptivedemux.c
+@@ -2955,6 +2955,7 @@ gst_adaptive_demux_stream_update_source (GstAdaptiveDemuxStream * stream,
+     GstPadLinkReturn pad_link_ret;
+     GObjectClass *gobject_class;
+     gchar *internal_name, *bin_name;
++    GstContext* context;
+ 
+     /* Our src consists of a bin containing uri_handler -> queue . The
+      * purpose of the queue is to allow the uri_handler to download an
+@@ -3006,6 +3007,19 @@ gst_adaptive_demux_stream_update_source (GstAdaptiveDemuxStream * stream,
+       }
+     }
+ 
++    context =
++        gst_element_get_context (GST_ELEMENT_CAST (demux), "http-headers");
++    if (context) {
++      const GstStructure *s = gst_context_get_structure (context);
++      const gchar **cookies = NULL;
++      gst_structure_get (s, "cookies", G_TYPE_STRV, &cookies, NULL);
++      if (cookies) {
++        GST_DEBUG_OBJECT (demux, "Passing cookies through");
++        g_object_set (uri_handler, "cookies", cookies, NULL);
++      }
++      gst_context_unref (context);
++    }
++
+     /* Source bin creation */
+     bin_name = g_strdup_printf ("srcbin-%s", GST_PAD_NAME (stream->pad));
+     stream->src = gst_bin_new (bin_name);
+diff --git a/gst-libs/gst/uridownloader/gsturidownloader.c b/gst-libs/gst/uridownloader/gsturidownloader.c
+index 05169818c..0900e4760 100644
+--- a/gst-libs/gst/uridownloader/gsturidownloader.c
++++ b/gst-libs/gst/uridownloader/gsturidownloader.c
+@@ -467,6 +467,8 @@ gst_uri_downloader_set_uri (GstUriDownloader * downloader, const gchar * uri,
+ {
+   GstPad *pad;
+   GObjectClass *gobject_class;
++  GstContext *context = NULL;
++  GstElement *parent = NULL;
+ 
+   if (!gst_uri_is_valid (uri))
+     return FALSE;
+@@ -503,6 +505,32 @@ gst_uri_downloader_set_uri (GstUriDownloader * downloader, const gchar * uri,
+     }
+   }
+ 
++  parent = g_weak_ref_get (&downloader->priv->parent);
++  context = gst_element_get_context (parent, "http-headers");
++  if (!context && parent) {
++    GstQuery *context_query = gst_query_new_context ("http-headers");
++    GstPad *parent_sink_pad =
++        gst_element_get_static_pad (parent, "sink");
++    if (gst_pad_peer_query (parent_sink_pad, context_query)) {
++
++      gst_query_parse_context (context_query, &context);
++      gst_element_set_context (parent, context);
++    }
++    gst_object_unref (parent_sink_pad);
++    gst_query_unref (context_query);
++  }
++
++  if (context) {
++    const GstStructure *s = gst_context_get_structure (context);
++    const gchar **cookies = NULL;
++    gst_structure_get (s, "cookies", G_TYPE_STRV, &cookies, NULL);
++    if (cookies) {
++      GST_DEBUG_OBJECT (downloader, "Passing cookies through");
++      g_object_set (downloader->priv->urisrc, "cookies", cookies, NULL);
++    }
++    gst_context_unref (context);
++  }
++
+   /* add a sync handler for the bus messages to detect errors in the download */
+   gst_element_set_bus (GST_ELEMENT (downloader->priv->urisrc),
+       downloader->priv->bus);
+-- 
+2.17.0
+

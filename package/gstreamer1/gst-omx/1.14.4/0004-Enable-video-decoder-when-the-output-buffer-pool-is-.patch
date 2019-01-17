@@ -1,0 +1,28 @@
+From 52720fca7cec60e5df491faa6fbdd1afa756ce43 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Mon, 17 Dec 2018 16:14:51 +0100
+Subject: [PATCH 4/6] Enable video decoder when the output buffer pool is null
+
+This fixes a "seek never completes" issue. At some point the decoder was
+disabled and drained (no buffers allocated for output) and it was never
+enabled again.
+---
+ omx/gstomxvideodec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/omx/gstomxvideodec.c b/omx/gstomxvideodec.c
+index 4efe1da..5323683 100644
+--- a/omx/gstomxvideodec.c
++++ b/omx/gstomxvideodec.c
+@@ -2740,7 +2740,7 @@ gst_omx_video_dec_handle_frame (GstVideoDecoder * decoder,
+       return GST_FLOW_OK;
+     }
+ 
+-    if (gst_omx_port_is_flushing (self->dec_out_port)) {
++    if (gst_omx_port_is_flushing (self->dec_out_port) || self->dec_out_port && self->dec_out_port->buffers == NULL) {
+       if (!gst_omx_video_dec_enable (self, frame->input_buffer))
+         goto enable_error;
+     }
+-- 
+2.17.0
+

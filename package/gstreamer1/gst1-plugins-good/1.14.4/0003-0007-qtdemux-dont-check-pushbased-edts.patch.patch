@@ -1,0 +1,25 @@
+From 0c32b5ff365eb38ad256663297fb7569be1ef906 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Wed, 22 Nov 2017 17:30:38 +0000
+Subject: [PATCH 3/8] 0007-qtdemux-dont-check-pushbased-edts.patch
+
+---
+ gst/isomp4/qtdemux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index da22463f8..62c4ff073 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -9329,7 +9329,7 @@ done:
+ 
+   /* push based does not handle segments, so act accordingly here,
+    * and warn if applicable */
+-  if (!qtdemux->pullbased && !allow_pushbased_edts) {
++  if (!qtdemux->pullbased /* && !allow_pushbased_edts */) {
+     GST_WARNING_OBJECT (qtdemux, "streaming; discarding edit list segments");
+     /* remove and use default one below, we stream like it anyway */
+     g_free (stream->segments);
+-- 
+2.17.0
+
