@@ -4,7 +4,16 @@
 #
 ################################################################################
 
+GST1_LIBAV_VERSION = 1.14.4
+
+ifeq ($(BR2_PACKAGE_GSTREAMER1_10),y)
 GST1_LIBAV_VERSION = 1.10.4
+endif
+
+ifeq ($(BR2_PACKAGE_GSTREAMER1_14),y)
+GST1_LIBAV_VERSION = 1.14.4
+endif
+
 GST1_LIBAV_SOURCE = gst-libav-$(GST1_LIBAV_VERSION).tar.xz
 GST1_LIBAV_SITE = https://gstreamer.freedesktop.org/src/gst-libav
 GST1_LIBAV_CONF_OPTS = --with-system-libav

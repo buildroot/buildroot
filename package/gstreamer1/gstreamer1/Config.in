@@ -22,6 +22,31 @@ config BR2_PACKAGE_GSTREAMER1_GIT
 	help
 	  Use git snapshot version of master branch.
 
+choice
+        bool "version"
+        default BR2_PACKAGE_GSTREAMER1_10
+
+        help
+          Choose the GStreamer version to be built.
+
+config BR2_PACKAGE_GSTREAMER1_10
+        bool "1.10"
+        help
+          1.10.X (stable)
+
+config BR2_PACKAGE_GSTREAMER1_14
+        bool "1.14"
+        help
+          1.14.X
+
+config BR2_PACKAGE_GSTREAMER1_DEFAULT
+        bool "Default"
+        help
+          Let each gst module choose its own version
+
+endchoice
+
+
 config BR2_PACKAGE_GSTREAMER1_SYMBOLS
 	bool "build with symbols"
 	default n

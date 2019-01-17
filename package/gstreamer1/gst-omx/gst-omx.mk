@@ -4,12 +4,20 @@
 #
 ################################################################################
 
+GST_OMX_VERSION = 1.14.4
+
+ifeq ($(BR2_PACKAGE_GSTREAMER1_10),y)
 GST_OMX_VERSION = 1.10.4
+endif
+
+ifeq ($(BR2_PACKAGE_GSTREAMER1_14),y)
+GST_OMX_VERSION = 1.14.4
+endif
+
 GST_OMX_SOURCE = gst-omx-$(GST_OMX_VERSION).tar.xz
 GST_OMX_SITE = https://gstreamer.freedesktop.org/src/gst-omx
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1_GIT),y)
-GST_OMX_VERSION = 70ad93c2db85c123ac9ddbd051749f7425a90bf5
 GST_OMX_SOURCE = gst-omx-$(GST_OMX_VERSION).tar.xz
 GST_OMX_SITE = http://cgit.freedesktop.org/gstreamer/gst-omx/snapshot
 BR_NO_CHECK_HASH_FOR += $(GST_OMX_SOURCE)

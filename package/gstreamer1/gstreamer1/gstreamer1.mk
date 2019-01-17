@@ -4,7 +4,16 @@
 #
 ################################################################################
 
+GSTREAMER1_VERSION = 1.14.4
+
+ifeq ($(BR2_PACKAGE_GSTREAMER1_10),y)
 GSTREAMER1_VERSION = 1.10.4
+endif
+
+ifeq ($(BR2_PACKAGE_GSTREAMER1_14),y)
+GSTREAMER1_VERSION = 1.14.4
+endif
+
 GSTREAMER1_SOURCE = gstreamer-$(GSTREAMER1_VERSION).tar.xz
 GSTREAMER1_SITE = https://gstreamer.freedesktop.org/src/gstreamer
 GSTREAMER1_INSTALL_STAGING = YES

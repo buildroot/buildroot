@@ -4,7 +4,16 @@
 #
 ################################################################################
 
+GST1_PLUGINS_BAD_VERSION = 1.14.4
+
+ifeq ($(BR2_PACKAGE_GSTREAMER1_10),y)
 GST1_PLUGINS_BAD_VERSION = 1.10.4
+endif
+
+ifeq ($(BR2_PACKAGE_GSTREAMER1_14),y)
+GST1_PLUGINS_BAD_VERSION = 1.14.4
+endif
+
 GST1_PLUGINS_BAD_SOURCE = gst-plugins-bad-$(GST1_PLUGINS_BAD_VERSION).tar.xz
 GST1_PLUGINS_BAD_SITE = https://gstreamer.freedesktop.org/src/gst-plugins-bad
 GST1_PLUGINS_BAD_INSTALL_STAGING = YES
