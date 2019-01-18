@@ -41,6 +41,13 @@ if [ ! -f "${h_file}" ]; then
     exit 0
 fi
 
+case " ${BR_NO_CHECK_HASH_FOR} " in
+*" ${base} "*)
+    # File explicitly has no hash
+    exit 0
+    ;;
+esac
+
 # Check one hash for a file
 # $1: known hash
 # $2: file (full path)
