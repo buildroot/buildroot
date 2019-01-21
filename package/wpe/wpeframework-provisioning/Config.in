@@ -1,6 +1,6 @@
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING
 	bool "Provisioning"
-	depends on BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
+	select BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
 	help
 	   WPE Platform Provisioning plugin
 
