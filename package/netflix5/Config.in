@@ -13,6 +13,7 @@ config BR2_PACKAGE_NETFLIX5
 	select BR2_PACKAGE_LIBCURL
 	select BR2_PACKAGE_GRAPHITE2
 	select BR2_PACKAGE_NGHTTP2
+	select BR2_PACKAGE_TREMOR
 	help
 	  Netflix5
 
@@ -58,13 +59,6 @@ config BR2_PACKAGE_NETFLIX5_WESTEROS_SINK
 	depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR
 	default n
 
-config BR2_PACKAGE_NETFLIX5_AUDIO_MIXER
-        bool "audio-mixer"
-        select BR2_PACKAGE_TREMOR
-        default n
-
-if BR2_PACKAGE_NETFLIX5_AUDIO_MIXER
-
 choice
 	bool "Audio Mixer type"
 	default BR2_PACKAGE_NETFLIX5_AUDIO_MIXER_SOFTWARE
@@ -83,9 +77,6 @@ config BR2_PACKAGE_NETFLIX5_AUDIO_MIXER_NEXUS
 	  Nexus Audio Mixer
 
 endchoice
-
-
-endif
 
 endmenu
 endif
