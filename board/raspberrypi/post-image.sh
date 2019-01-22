@@ -47,6 +47,15 @@ case "$i" in
 dtoverlay=pi3-miniuart-bt
 __EOF__
 		fi
+	else
+		echo "Adding serial console to /dev/ttyS0 to config.txt."
+		sed -i 's/ttyAMA0/ttyS0/g' "${BINARIES_DIR}/rpi-firmware/cmdline.txt"
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Fixes rpi3 ttyS0 serial console
+enable_uart=1
+__EOF__
+ 
 	fi
 	;;
 	--tvmode-720)
