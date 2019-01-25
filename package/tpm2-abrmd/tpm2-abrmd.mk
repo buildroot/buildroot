@@ -15,7 +15,7 @@ TPM2_ABRMD_DEPENDENCIES = dbus libglib2 tpm2-tss host-pkgconf
 # default. Disable that so the BR2_SSP_* / BR2_FORTIFY_SOURCE_* options
 # in the toolchain wrapper and CFLAGS are used instead
 TPM2_ABRMD_CONF_ENV = \
-	ax_cv_check_cflags___fstack_protector_all=no
+	ax_cv_check_cflags___fstack_protector_all=no \
 	ax_cv_check_ccppflags___U_FORTIFY_SOURCE=no \
 	ax_cv_check_ccppflags___D_FORTIFY_SOURCE_2=no
 
