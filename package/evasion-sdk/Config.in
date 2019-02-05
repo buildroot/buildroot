@@ -1,0 +1,25 @@
+config BR2_PACKAGE_EVASION_SDK
+    bool "evasion-sdk"
+    depends on BR2_mipsel
+    select BR2_PACKAGE_HAS_NEXUS
+    select BR2_PACKAGE_HAS_LIBEGL
+    select BR2_PACKAGE_HAS_LIBGLES
+    help
+      Pre-compiled binaries for a platform
+
+if BR2_PACKAGE_EVASION_SDK
+
+config BR2_PACKAGE_PROVIDES_NEXUS
+    default "evasion-sdk"
+
+config BR2_PACKAGE_PROVIDES_LIBEGL
+    default "evasion-sdk"
+
+config BR2_PACKAGE_PROVIDES_LIBGLES
+    default "evasion-sdk"
+
+config BR2_PACKAGE_SDK_INSTALL
+    string 
+    default "evasion-sdk"
+
+endif

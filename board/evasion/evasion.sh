@@ -1,20 +1,52 @@
-SOURCE=/mnt/nfs
-DESTINATION=/usr/metrological
+#!/bin/sh
+BOARD_DIR="$(dirname $0)"
+ROOTFS_DIR="${BINARIES_DIR}/../rootfs"
+ROOTFS_FILES="${BINARIES_DIR}/rootfs.files"
+STAR="*"
 
-mkdir -p $SOURCE
-mkdir -p $DESTINATION/lib
+# Clean up target
+rm -rf "${TARGET_DIR}/usr/lib/gstreamer-1.0/include"
+rm -rf "${TARGET_DIR}/usr/lib/libstdc++.so.6.0.20-gdb.py"
+rm -rf "${TARGET_DIR}/etc/ssl/man"
 
-udhcpc eth0
+# Temp rootfs dir
+mkdir -p "${ROOTFS_DIR}"
 
-mount -t nfs -o nolock 192.168.1.203:/usr/src/nfs/nos $SOURCE
+# Create files list for rsync
+rm -rf "${ROOTFS_FILES}"
+while read line
+do
+	find "${TARGET_DIR}" -name "$line$STAR" -printf "%P\n" >> "${ROOTFS_FILES}"
+done < "${BOARD_DIR}/evasion.txt"
 
-cp $SOURCE/usr/lib/libstdc++.so.6.0.21 $DESTINATION/lib/libstdc++.so.6
-cp -r $SOURCE/etc/WPEFramework /etc/WPEFramework
-cp -r $SOURCE/usr/lib/libWPE* /usr/lib/
-cp -r $SOURCE/usr/lib/wpeframework/ /usr/lib/wpeframework
-cp -r $SOURCE/usr/bin/WPE* /usr/bin
-cp -r $SOURCE/usr/share/WPEFramework /usr/share/WPEFramework
+# Append missing folders
+echo "usr/lib/gstreamer-1.0" >> "${ROOTFS_FILES}"
+echo "usr/lib/gio" >> "${ROOTFS_FILES}"
+echo "usr/share/X11" >> "${ROOTFS_FILES}"
+echo "usr/share/mime" >> "${ROOTFS_FILES}"
+echo "etc/playready" >> "${ROOTFS_FILES}"
+echo "etc/ssl" >> "${ROOTFS_FILES}"
+echo "etc/fonts" >> "${ROOTFS_FILES}"
 
-export LD_LIBRARY_PATH=$DESTINATION/lib:$LD_LIBRARY_PATH
+rsync -ar --files-from="${ROOTFS_FILES}" "${TARGET_DIR}" "${ROOTFS_DIR}"
 
+# Default font
+mkdir -p "${ROOTFS_DIR}/usr/share/fonts/ttf-bitstream-vera"
+cp -f "${TARGET_DIR}/usr/share/fonts/ttf-bitstream-vera/Vera.ttf" "${ROOTFS_DIR}/usr/share/fonts/ttf-bitstream-vera/"
 
+# WebBridge startup script
+#mkdir -p "${ROOTFS_DIR}/NDS"
+#cp -pf "${BOARD_DIR}/horizon/webbridge" "${ROOTFS_DIR}/NDS"
+#cp -pf "${BOARD_DIR}/horizon/webbridge-stub" "${ROOTFS_DIR}/NDS"
+#cp -pf "${BOARD_DIR}/horizon/libegl_log.so" "${ROOTFS_DIR}/NDS"
+#cp -pf "${BOARD_DIR}/horizon/libgl2_log.so" "${ROOTFS_DIR}/NDS"
+
+# WebServer path
+mkdir -p "${ROOTFS_DIR}/www"
+
+# Create tar
+tar -cvf "${BINARIES_DIR}/evasion.tar" -C "${ROOTFS_DIR}" .
+
+# Cleaning up
+rm -rf "${ROOTFS_FILES}"
+rm -rf "${ROOTFS_DIR}"

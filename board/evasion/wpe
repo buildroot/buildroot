@@ -1,0 +1,50 @@
+#!/bin/sh
+
+SCRIPT_NAME="wpe.sh"
+SOURCE=/WPE
+
+cleanup() {
+	echo "${SCRIPT_NAME}: '$1'"
+		killall -9 WPEProcess 2>/dev/null
+		killall -9 WPEFramework 2>/dev/null
+}
+
+# Shutdown all our processes in non stub version
+cleanup restart
+
+# Symlink /etc
+#ln -sfn $SOURCE/etc/playready /etc/playready
+ln -sfn $SOURCE/etc/ssl /etc/ssl
+ln -sfn $SOURCE/etc/fonts /etc/fonts
+
+# Symlink /usr/lib
+ln -sfn $SOURCE/usr/lib/gio /usr/lib/gio
+
+# Symlink /usr/share
+mkdir -p /usr/share/fonts
+#ln -sfn $SOURCE/usr/share/mime /usr/share/mime
+#ln -sfn $SOURCE/usr/share/X11 /usr/share/X11
+ln -sfn $SOURCE/usr/share/fonts/ttf-bitstream-vera /usr/share/fonts/ttf-bitstream-vera
+
+# Exports
+export HOME=$SOURCE/root
+export PATH=$SOURCE/usr/bin:/bin:/usr/bin
+export GST_PLUGIN_PATH=$SOURCE/usr/lib/gstreamer-1.0
+export LD_LIBRARY_PATH=$SOURCE/lib:$SOURCE/usr/lib:$SOURCE/usr/lib/gstreamer-1.0:/lib/:/usr/lib:/mnt/app/refsw/lib
+
+
+	echo -n "Starting WPEFramework: "
+		$SOURCE/usr/bin/WPEFramework -c $SOURCE/etc/WPEFramework/config.json
+
+	[ $? == 0 ] && echo "OK" || echo "FAIL"
+
+stop() {
+	echo -n "Stopping WPEFramework: "
+	start-stop-daemon -K -q -p /var/run/WPEFramework.pid
+	[ $? == 0 ] && echo "OK" || echo "FAIL"
+	rm -rf /var/run/WPEFramework.pid
+}
+restart() {
+	stop
+	start
+}
