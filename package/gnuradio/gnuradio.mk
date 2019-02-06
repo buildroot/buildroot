@@ -24,7 +24,8 @@ endif
 GNURADIO_CONF_OPTS = \
 	-DENABLE_DEFAULT=OFF \
 	-DENABLE_VOLK=ON \
-	-DENABLE_GNURADIO_RUNTIME=ON
+	-DENABLE_GNURADIO_RUNTIME=ON \
+	-DXMLTO_EXECUTABLE=NOTFOUND
 
 # For third-party blocks, the gnuradio libraries are mandatory at
 # compile time.
