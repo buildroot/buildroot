@@ -92,6 +92,11 @@ NETFLIX5_CONF_OPTS += \
 ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR),y)
 NETFLIX5_CONF_OPTS += \
         -DGIBBON_GRAPHICS=wpeframework
+ifeq ($(BR2_PACKAGE_WESTEROS),) # WPEFramework for RPI platform supports only either westeros or rpi, hence set this flag
+                                # to reuse EGL context in WPEFramework-rpi + GST_VIDEO_RENDERING=gl combination to avoid
+                                # memory leak and crash during the suspend/resume
+	NETFLIX5_CONF_OPTS += -DEGL_CONTEXT_REUSE=1
+endif
 else ifeq ($(BR2_PACKAGE_WESTEROS),y)
 NETFLIX5_CONF_OPTS += \
 	-DGIBBON_GRAPHICS=wayland \
