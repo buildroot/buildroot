@@ -22,6 +22,23 @@ if BR2_PACKAGE_NETFLIX5
 menu "Extra options"
 
 choice
+	bool "NETFLIX5 Minor Version"
+	default BR2_PACKAGE_NETFLIX5_1
+	help
+	  Choose NF5 minor version - 5.0 or 5.1, default - 5.1
+
+config BR2_PACKAGE_NETFLIX5_0
+	bool "5.0"
+	help
+	  Netflix5.0
+
+config BR2_PACKAGE_NETFLIX5_1
+        bool "5.1"
+        help
+          Netflix5.1
+endchoice
+
+choice
 	bool "Application type"
 	default BR2_PACKAGE_NETFLIX5_APP
 	help
