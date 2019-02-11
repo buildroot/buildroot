@@ -1,27 +1,5 @@
 menu "development tools"
 
-config BR2_PACKAGE_WPEFRAMEWORK_DEBUG
-	bool "Debug"
-	help
-	   Allow the WPE Framework to be more verbose. All development traces
-           are turned on.
-
-config BR2_PACKAGE_WPEFRAMEWORK_SYMBOLS
-	bool "Build with symbols"
-	help
-	   Allow the WPE Framework to be compiled with symbols for better backtraces.
-
-if BR2_PACKAGE_WPEFRAMEWORK_SYMBOLS
-
-config BR2_PACKAGE_WPEFRAMEWORK_NO_OPTIMIZATIONS
-	bool "Build with no optimizations"
-        default y if BR2_PACKAGE_WPEFRAMEWORK_SYMBOLS
-        default n
-	help
-           Compile with no optimizations.
-
-endif
-
 config BR2_PACKAGE_WPEFRAMEWORK_VERBOSE_BUILD
 	bool "Verbose build"
 	help
