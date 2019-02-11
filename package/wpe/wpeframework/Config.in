@@ -6,6 +6,37 @@ config BR2_PACKAGE_WPEFRAMEWORK
 if BR2_PACKAGE_WPEFRAMEWORK
 
 menu "Options"
+choice BUILD_TYPE
+    prompt "Build type"
+    default BR2_PACKAGE_WPEFRAMEWORK_RELEASE
+    help
+        Select the type of build you want to use.
+
+config BR2_PACKAGE_WPEFRAMEWORK_BUILD_TYPE_DEBUG
+    bool "Debug"
+    help
+       This build type is with: traces, callstacks, symbols, asserts; without: optimizations.
+
+config BR2_PACKAGE_WPEFRAMEWORK_BUILD_TYPE_DEBUG_OPTIMIZED
+    bool "Debug optimized"
+    help
+       This build type is with: traces, callstacks, symbols, asserts.
+
+config BR2_PACKAGE_WPEFRAMEWORK_BUILD_TYPE_RELEASE_WITH_SYMBOLS
+    bool "Release with symbols"
+    help
+       This build type is with: callstacks, symbols; without: asserts, traces.
+
+config BR2_PACKAGE_WPEFRAMEWORK_BUILD_TYPE_RELEASE
+    bool "Release"
+    help
+       This build type is with: callstacks; without: asserts, traces, symbols.
+
+config BR2_PACKAGE_WPEFRAMEWORK_BUILD_TYPE_PRODUCTION
+    bool "Production"
+    help
+       This build type is without: traces, callstacks, symbols, asserts.
+endchoice # BUILD_TYPE
 
 config BR2_PACKAGE_WPEFRAMEWORK_PORT
 	string "port"
@@ -52,7 +83,6 @@ source "package/wpe/wpeframework-devtools/Config.in"
 endmenu
 
 menu "Extensions"
-
 config BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
 	bool "VirtualInput"
 	help
@@ -84,7 +114,6 @@ config BR2_PACKAGE_WPEFRAMEWORK_BROADCAST_SI_PARSING
 	  Enable functionality to automatically parse SI information on the 
           tuned streams.
 endif
-          
 endmenu
 
 menu "Plugins"
