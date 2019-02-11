@@ -1,0 +1,25 @@
+diff --git a/netflix/src/platform/gibbon/decoders/SurfaceDecoderJPEG.cpp b/netflix/src/platform/gibbon/decoders/SurfaceDecoderJPEG.cpp
+index f1be1cd..06a62b3 100644
+--- a/netflix/src/platform/gibbon/decoders/SurfaceDecoderJPEG.cpp
++++ b/netflix/src/platform/gibbon/decoders/SurfaceDecoderJPEG.cpp
+@@ -81,7 +81,8 @@ bool ContextJPEG::decode(const Time &, SurfaceDecoder::DecodeInfo *result)
+                 strides[c] = s / int(heights[c]);
+                 channels[c] = (uint8_t*)malloc(s);
+             }
+-            if(tjDecompressToYUVPlanes(jpeg, data.constData(), data.size(), (unsigned char**)channels, result->info.size.width, (int*)strides, result->info.size.height, flags)) {
++            if (tjDecompressToYUVPlanes(jpeg, const_cast<unsigned char *>(data.constData()), data.size(), (unsigned char **)channels, result->info.size.width, (int *)strides, result->info.size.height, flags))
++            {
+                 const char *error = tjGetErrorStr();
+                 result->variant["error"] = error;
+                 Log::error(TRACE_UI_ENGINE, "JPEG Error[%s]: %s", resource->url().str().c_str(), error);
+@@ -126,8 +127,8 @@ bool ContextJPEG::decode(const Time &, SurfaceDecoder::DecodeInfo *result)
+             default:
+                 assert(false);
+             }
+-            if(tjDecompress2(jpeg, data.constData(), data.size(), result->data.data(), result->info.size.width,
+-                             result->data.bytesPerLine(), result->info.size.height, format, flags))
++            if (tjDecompress2(jpeg, const_cast<unsigned char *>(data.constData()), data.size(), result->data.data(), result->info.size.width,
++                              result->data.bytesPerLine(), result->info.size.height, format, flags))
+                 return false;
+         }
+         result->state = SurfaceDecoder::DecodeInfo::State_DecodeSuccess;
