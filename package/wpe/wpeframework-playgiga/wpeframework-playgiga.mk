@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_PLAYGIGA_VERSION = a2aaa0baca5f9db47d9fcfd3cb4f54c81c874c69
+WPEFRAMEWORK_PLAYGIGA_VERSION = ec38f5164a927d6885361efb4d4e4365906d17b9
 WPEFRAMEWORK_PLAYGIGA_SITE_METHOD = git
 WPEFRAMEWORK_PLAYGIGA_SITE = git@github.com:WebPlatformForEmbedded/WPEPluginPlayGiga.git
 WPEFRAMEWORK_PLAYGIGA_INSTALL_STAGING = YES
