@@ -5,11 +5,11 @@
 ################################################################################
 ifeq ($(BR2_PACKAGE_NETFLIX5),y)
 # Netflix 5 has a little different API, use "netflix5" branch for now.
-WPEFRAMEWORK_NETFLIX_VERSION = 466b72020e9b4f8ef9e6ce679b6bb4038f7d57a3
+WPEFRAMEWORK_NETFLIX_VERSION = 82eb6231d64675f3d3aed26151797ec8f110f974
 WPEFRAMEWORK_NETFLIX_CONF_OPTS += -DNETFLIX_VERSION_5=true
 WPEFRAMEWORK_NETFLIX_DEPENDENCIES = wpeframework netflix5
 else
-WPEFRAMEWORK_NETFLIX_VERSION = 48f6c87ec3401079d6052fab4b8a82cc3a4b274a
+WPEFRAMEWORK_NETFLIX_VERSION = 58b5b78de17b31de3c7b1bf3d619bc46dc68c1e2
 WPEFRAMEWORK_NETFLIX_DEPENDENCIES = wpeframework netflix
 endif
 
