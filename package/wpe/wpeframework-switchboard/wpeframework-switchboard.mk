@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_SWITCHBOARD_VERSION = eee122bdb6a2356d6be04b0a76da9c332d5694ee
+WPEFRAMEWORK_SWITCHBOARD_VERSION = de050705775c691d44efb26fe5bcdba2593e8bac
 WPEFRAMEWORK_SWITCHBOARD_SITE_METHOD = git
 WPEFRAMEWORK_SWITCHBOARD_SITE = git@github.com:Metrological/webbridge.git
 WPEFRAMEWORK_SWITCHBOARD_INSTALL_STAGING = YES
