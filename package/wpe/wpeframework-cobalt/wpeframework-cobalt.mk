@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_COBALT_VERSION = a37e59d63c24d7b2ccac0ab8caa5db9da81b14bb
+WPEFRAMEWORK_COBALT_VERSION = a4ef7804d4a8b56d92c1fac3c17c113d43bb4194
 WPEFRAMEWORK_COBALT_SITE_METHOD = git
 WPEFRAMEWORK_COBALT_SITE = git@github.com:WebPlatformForEmbedded/WPEPluginCobalt.git
 WPEFRAMEWORK_COBALT_INSTALL_STAGING = YES
