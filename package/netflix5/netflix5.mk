@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NETFLIX5_VERSION = 1b012b2f8f9e3335a722ce4a079b3426c752e8c6
+NETFLIX5_VERSION = fb4beab338bebfbc6d7361b78a7a9e5abb1be532
 NETFLIX5_SITE = git@github.com:Metrological/netflix.git
 NETFLIX5_SITE_METHOD = git
 NETFLIX5_LICENSE = PROPRIETARY
@@ -51,6 +51,8 @@ else
 NETFLIX5_CONF_OPTS += -DGIBBON_MODE=executable
 endif
 
+ifeq ($(BR2_PACKAGE_NETFLIX5_AUDIO_MIXER), y)
+NETFLIX5_DEPENDENCIES += libogg tremor
 ifeq ($(BR2_PACKAGE_NETFLIX5_AUDIO_MIXER_SOFTWARE), y)
 NETFLIX5_CONF_OPTS += -DNRDP_HAS_AUDIOMIXER=ON \
                       -DUSE_AUDIOMIXER_GST=ON
@@ -58,7 +60,7 @@ else ifeq ($(BR2_PACKAGE_NETFLIX5_AUDIO_MIXER_NEXUS), y)
 NETFLIX5_CONF_OPTS += -DNRDP_HAS_AUDIOMIXER=ON \
                       -DUSE_AUDIOMIXER_NEXUS=ON
 endif
-
+endif
 ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR),y)
 NETFLIX5_CONF_OPTS += -DGIBBON_INPUT=wpeframework
 NETFLIX5_DEPENDENCIES += wpeframework-plugins
@@ -90,10 +92,15 @@ NETFLIX5_CONF_OPTS += \
 ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR),y)
 NETFLIX5_CONF_OPTS += \
         -DGIBBON_GRAPHICS=wpeframework
+ifeq ($(BR2_PACKAGE_WESTEROS),) # WPEFramework for RPI platform supports only either westeros or rpi, hence set this flag
+                                # to reuse EGL context in WPEFramework-rpi + GST_VIDEO_RENDERING=gl combination to avoid
+                                # memory leak and crash during the suspend/resume
+	NETFLIX5_CONF_OPTS += -DEGL_CONTEXT_REUSE=1
+endif
 else ifeq ($(BR2_PACKAGE_WESTEROS),y)
 NETFLIX5_CONF_OPTS += \
 	-DGIBBON_GRAPHICS=wayland \
-	-DGIBBON_EVENTLOOP=wayland
+	-DGIBBON_EVENTLOOP=virtualinput
 else
 NETFLIX5_CONF_OPTS += \
 	-DGIBBON_GRAPHICS=rpi \
@@ -116,7 +123,7 @@ NETFLIX5_CONF_OPTS += \
 	-DGIBBON_GRAPHICS=wpeframework
 else ifeq ($(BR2_PACKAGE_WESTEROS),y)
 NETFLIX5_CONF_OPTS += \
-	-DGIBBON_GRAPHICS=wayland-egl
+	-DGIBBON_GRAPHICS=wayland
 else
 NETFLIX5_CONF_OPTS += \
 	-DGIBBON_GRAPHICS=nexus \
