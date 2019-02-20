@@ -16,7 +16,7 @@ read_config () {
 parse_platform_app () {
   local  __resultvar=$1
 
-  platform_app=`find $2  -name platform_app.inc`
+  platform_app=`find $2/include  -name platform_app.inc`
   tmp_file="/tmp/"`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1`
 
   while read -r line

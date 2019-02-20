@@ -720,12 +720,18 @@ config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS_TVCONTROL_FREQUENCY_LIST
       or '-' to define the range. eg:- 354,362,370 or  354-370
 endif
 
-config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_RTSPCLIENT
+config BR2_PACKAGE_WPEFRAMEWORK_RTSPCLIENT
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     default n
     bool "RTSPCLIENT"
     help
       RTSP Client Plugin
+config BR2_PACKAGE_WPEFRAMEWORK_DSGCCCLIENT
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    default n
+    bool "DSGCCCLIENT"
+    help
+        DSG-CC (Docsis Set-top Gateway - Client Connect) Client Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_POWER
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
