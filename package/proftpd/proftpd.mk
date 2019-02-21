@@ -21,7 +21,8 @@ PROFTPD_CONF_OPTS = \
 	--disable-facl \
 	--disable-dso \
 	--enable-shadow \
-	--with-gnu-ld
+	--with-gnu-ld \
+	--without-openssl-cmdline
 
 ifeq ($(BR2_PACKAGE_PROFTPD_MOD_REWRITE),y)
 PROFTPD_MODULES += mod_rewrite
