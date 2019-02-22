@@ -443,6 +443,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_SYSTEMCOMMANDS
     help
       SystemCommands Plugin
 
+config BR2_PACKAGE_WPEFRAMEWORK_TESTCONTROLLER
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "TestController"
+    help
+      TestController Plugin
+
 config BR2_PACKAGE_WPEFRAMEWORK_TIMESYNC
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "TimeSync"
