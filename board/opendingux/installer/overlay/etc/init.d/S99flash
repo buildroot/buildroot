@@ -1,0 +1,119 @@
+#!/bin/sh
+
+if [ "$1" != "start" ] ; then exit 0; fi
+
+# Avoid kernel flooding the console
+dmesg -n4
+
+export DIALOGOPTS="--colors --backtitle \"\Zb\Z3OpenDingux Flasher\Zn\""
+echo "screen_color = (RED,RED,ON)" > /tmp/dialog_err.rc
+
+DISCLAIMER="\Zb\Z3IMPORTANT NOTICE\Zn
+
+By using this software, you agree
+that its authors are not liable in
+any way in case of damage to your
+device, your data, or yourself.
+Use it at your own risk.
+
+Do you agree with these terms?"
+
+dialog --defaultno --yesno "$DISCLAIMER" 13 38
+if [ $? -eq 1 ] ; then
+	reboot
+	exit 1
+fi
+
+MODEL=`grep machine /proc/cpuinfo |sed 's/.*: //'`
+[ "$MODEL" = "RS-90" ] && NAND_FLASH=yes
+
+MODELMSG="Found the following device:
+
+Model:   ${MODEL}
+
+Is this correct?"
+
+dialog --defaultno --yesno "$MODELMSG" 9 42
+if [ $? -eq 1 ] ; then
+	reboot
+	exit 1
+fi
+
+case "$MODEL" in
+	"RS-90")
+		;;
+	*)
+		;;
+esac
+
+if [ "$NAND_FLASH" = "yes" ] ; then
+	echo "Formatting NAND..."
+	ubiformat /dev/mtd1 -y
+	ubiattach -m1
+	ubimkvol /dev/ubi0 -s 16MiB -N kernel
+	ubimkvol /dev/ubi0 -s 16MiB -N kernel_bak
+	ubimkvol /dev/ubi0 -m -N rootfs
+	ubiupdatevol /dev/ubi0_2 -t
+
+	mount -t ubifs ubi0:rootfs /boot
+else
+	dialog --defaultno --yesno --yes-label "F2FS" --no-label "EXT4" --defaultno \
+		"What format should be used for the data partition?" 7 38
+	if [ $? -eq 1 ] ; then
+		FORMAT=ext4
+	else
+		FORMAT=f2fs
+	fi
+
+	echo "Creating partitions..."
+	# TODO
+fi
+
+echo "Configuring USB..."
+mkdir /sys/kernel/config/usb_gadget/c1
+mkdir /sys/kernel/config/usb_gadget/c1/strings/0x409
+mkdir /sys/kernel/config/usb_gadget/c1/configs/c.1
+mkdir /sys/kernel/config/usb_gadget/c1/functions/ffs.ffs
+
+echo 0x601a > /sys/kernel/config/usb_gadget/c1/idVendor
+echo 0x4750 > /sys/kernel/config/usb_gadget/c1/idProduct
+echo "Ingenic" > /sys/kernel/config/usb_gadget/c1/strings/0x409/manufacturer
+echo "odbootd" > /sys/kernel/config/usb_gadget/c1/strings/0x409/product
+ln -s /sys/kernel/config/usb_gadget/c1/functions/ffs.ffs /sys/kernel/config/usb_gadget/c1/configs/c.1/ffs.ffs
+
+mkdir /dev/ffs
+mount ffs -t functionfs /dev/ffs
+
+echo "Obtain data files from USB..."
+/usr/sbin/odbootd /dev/ffs /sys/kernel/config/usb_gadget/c1/UDC musb-hdrc.0.auto
+
+echo "Installing bootloader..."
+if [ "$NAND_FLASH" = "yes" ] ; then
+	flash_erase /dev/mtd0 0 1
+	nandwrite -p /dev/mtd0 /boot/ubiboot.bin
+else
+	# TODO
+fi
+
+echo "Installing mininit..."
+mkdir -p /boot/root /boot/dev
+chmod +x /boot/mininit-syspart
+
+echo "Flashing kernel..."
+if [ "$NAND_FLASH" = "yes" ] ; then
+	cat /boot/uzImage.bin /boot/devicetree.dtb > /boot/kernel.img
+	ubiupdatevol /dev/ubi0_0 /boot/kernel.img
+	ubiupdatevol /dev/ubi0_1 /boot/kernel.img
+
+	# Cleanup
+	rm /boot/uzImage.bin
+	rm /boot/kernel.img
+	rm /boot/devicetree.dtb
+else
+	# TODO
+fi
+
+dialog --msgbox 'Installation succeded!\nThe device will reboot now.' 7 28
+
+reboot
+exit 0
