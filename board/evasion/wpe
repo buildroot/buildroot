@@ -13,7 +13,7 @@ cleanup() {
 cleanup restart
 
 # Symlink /etc
-#ln -sfn $SOURCE/etc/playready /etc/playready
+ln -sfn $SOURCE/etc/playready /etc/playready
 ln -sfn $SOURCE/etc/ssl /etc/ssl
 ln -sfn $SOURCE/etc/fonts /etc/fonts
 
@@ -22,15 +22,18 @@ ln -sfn $SOURCE/usr/lib/gio /usr/lib/gio
 
 # Symlink /usr/share
 mkdir -p /usr/share/fonts
-#ln -sfn $SOURCE/usr/share/mime /usr/share/mime
-#ln -sfn $SOURCE/usr/share/X11 /usr/share/X11
+ln -sfn $SOURCE/usr/share/mime /usr/share/mime
+ln -sfn $SOURCE/usr/share/X11 /usr/share/X11
 ln -sfn $SOURCE/usr/share/fonts/ttf-bitstream-vera /usr/share/fonts/ttf-bitstream-vera
 
 # Exports
 export HOME=$SOURCE/root
 export PATH=$SOURCE/usr/bin:/bin:/usr/bin
 export GST_PLUGIN_PATH=$SOURCE/usr/lib/gstreamer-1.0
+export GST_PLUGIN_SCANNER=$SOURCE/usr/libexec/gstreamer-1.0/gst-plugin-scanner
+export GST_PLUGIN_SYSTEM_PATH=$SOURCE/usr/lib/gstreamer-1.0
 export LD_LIBRARY_PATH=$SOURCE/lib:$SOURCE/usr/lib:$SOURCE/usr/lib/gstreamer-1.0:/lib/:/usr/lib:/mnt/app/refsw/lib
+export WPE_NEXUS_FORMAT=1080i
 
 
 	echo -n "Starting WPEFramework: "
