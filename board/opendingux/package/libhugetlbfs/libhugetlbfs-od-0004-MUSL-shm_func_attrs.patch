@@ -1,0 +1,28 @@
+commit d34314455c4d697b127c4796006cadfff300d69e
+Author: Daniel Silsby <dansilsby@gmail.com>
+Date:   Sun Apr 21 21:17:01 2019 -0400
+
+    shm: Remove function attrs for dlsym(),dlerror()
+    
+    MUSL libc compilation fix:
+    
+    These attributes are unnecessary for our purposes.
+    
+    Signed-off-by: Daniel Silsby <dansilsby@gmail.com>
+
+diff --git a/shm.c b/shm.c
+index 1f82cab..04fdef5 100644
+--- a/shm.c
++++ b/shm.c
+@@ -48,9 +48,8 @@
+  * system shmget() may be performed without worry as there is no dynamic
+  * call chain.
+  */
+-extern void *dlsym (void *__restrict __handle, __const char *__restrict __name)
+-		__attribute__((weak)) __THROW __nonnull ((2));
+-extern char *dlerror (void) __attribute__((weak)) __THROW;
++extern void *dlsym(void *, const char *) __attribute__((weak));
++extern char *dlerror(void) __attribute__((weak));
+ 
+ 
+ /* call syscall shmget through the generic syscall mechanism */

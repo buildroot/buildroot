@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if [ -z "$1" ] ; then
+	echo 'Usage: odpasswd <password>'
+	exit 0
+fi
+
+sed -i -r --follow-symlinks -e '/^'"od"':.*/d;' /etc/shadow
+
+E_PASSWD="`mkpasswd -m sha512 $1`"
+
+echo -e "od:${E_PASSWD}:::::::\n" >> /etc/shadow

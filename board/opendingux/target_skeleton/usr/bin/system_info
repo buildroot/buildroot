@@ -1,0 +1,18 @@
+#!/bin/sh
+
+. /etc/os-release
+ROOTFS_VERSION=`echo $VERSION | sed -e 's/.*-g/g/'`
+ROOTFS_DATE=`date -r /etc/os-release '+%a %b %d %Y' `
+
+KERNEL_VERSION=`uname -r`
+KERNEL_DATE=`uname -v |cut -d ' ' -f 3-5,8`
+PROCESSOR=`cat /proc/cpuinfo |head -1 |sed 's/^.*: //' `
+RAM=`cat /proc/meminfo | head -1 |sed 's/^MemTotal: \+//' `
+SWAP=`awk 'BEGIN { getline } { print "\t"$1": "$3" kB" }' /proc/swaps 2>/dev/null`
+[ "$SWAP" ] && SWAP="Swap: $SWAP\n"
+
+echo -e "Kernel version: $KERNEL_VERSION\nCompiled: $KERNEL_DATE\n
+Root FS version: $ROOTFS_VERSION\nCompiled: $ROOTFS_DATE\n
+Processor: $PROCESSOR\nUsable RAM: $RAM\n$SWAP
+Network interfaces:"
+ip -o -4 address list | awk '{if ($2 != "lo") { printf "%7s %s\n", $2, gensub("/.*$", "", "g", $4) ; outlines++ } } END { if (outlines == 0) print " (none)" }'

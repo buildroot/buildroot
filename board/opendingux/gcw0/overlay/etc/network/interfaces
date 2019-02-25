@@ -1,0 +1,17 @@
+# Loopback
+auto lo
+iface lo inet loopback
+
+# Ethernet over USB
+iface usb0 inet static
+	address 10.1.1.2
+	netmask 255.255.255.252
+	post-up /sbin/route add default gw 10.1.1.1 metric 1
+
+# Ethernet for QEMU
+auto eth0
+	iface eth0 inet dhcp
+
+# WiFi interface
+allow-hotplug wlan0
+	iface wlan0 inet manual

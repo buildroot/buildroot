@@ -1,0 +1,9 @@
+#!/bin/sh
+
+[ ${IFACE:0:4} = "wlan" ] || exit 0
+
+/sbin/start-stop-daemon -K -q -p /var/run/ntpd-${IFACE}.pid
+rm -f /var/run/ntpd-${IFACE}.pid
+
+# Synchronize the RTC with the system date
+/sbin/hwclock -w -u

@@ -1,0 +1,24 @@
+commit 071878cce411f394e823a8b1fde48a0624d651ee
+Author: Daniel Silsby <dansilsby@gmail.com>
+Date:   Sun Apr 21 21:16:36 2019 -0400
+
+    morecore: Add stddef.h #include for ptrdiff_t
+    
+    MUSL libc compilation fix:
+    
+    stddef.h needed for ptrdiff_t.
+    
+    Signed-off-by: Daniel Silsby <dansilsby@gmail.com>
+
+diff --git a/morecore.c b/morecore.c
+index 6563bbd..0eef782 100644
+--- a/morecore.c
++++ b/morecore.c
+@@ -19,6 +19,7 @@
+ 
+ #define _GNU_SOURCE
+ 
++#include <stddef.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <malloc.h>

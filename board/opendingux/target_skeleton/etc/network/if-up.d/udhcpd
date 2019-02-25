@@ -1,0 +1,6 @@
+#!/bin/sh
+
+[ "$IFACE" == "usb0" ] || exit 0
+
+/sbin/start-stop-daemon -S -q -b -m -p /run/udhcpd.pid \
+	-x /usr/sbin/udhcpd -- -f -S /etc/udhcpd.conf

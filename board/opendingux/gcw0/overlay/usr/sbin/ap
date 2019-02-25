@@ -1,0 +1,91 @@
+#!/bin/sh
+
+AP_IP=10.1.2.1
+AP_MASK=255.255.255.0
+
+stop_ap() {
+	/usr/bin/env IFACE=wlan0 /etc/network/if-down.d/xinetd
+
+	/sbin/start-stop-daemon -K -q -p /var/run/udhcpd-ap.pid
+	/sbin/start-stop-daemon -K -q -p /var/run/hostapd.pid
+	rm -f /var/run/udhcpd-ap.pid /var/run/hostapd.pid
+	/sbin/ifconfig wlan0 down
+
+	# Explicitely call the "ledblink" script to stop
+	# the LED from blinking.
+	/usr/bin/env IFACE=wlan0 /etc/network/if-post-down.d/ledblink
+
+	/usr/sbin/rfkill block wlan
+}
+
+start_ap() {
+	/usr/sbin/rfkill unblock wlan
+
+	ERR=0
+	for i in 0 1 2 3 4 5 6 7 8 9 ; do
+		/sbin/ifconfig wlan0 inet $AP_IP netmask $AP_MASK 2>/dev/null
+		ERR=$?
+		[ $ERR -eq 0 ] && break
+		sleep 1
+	done
+
+	if [ $ERR -eq 0 ] ; then
+		CONFFILE=/usr/local/etc/hostapd-ap.conf
+		if [ ! -f $CONFFILE ] ; then
+			MAC=`cat /sys/class/net/wlan0/address | sed 's/://g' `
+			echo -e "interface=wlan0\nssid=gcwzero-${MAC}\nwpa=2\nwpa_passphrase=${MAC}\nwpa_key_mgmt=WPA-PSK\nwpa_pairwise=TKIP\nhw_mode=g\nchannel=10" > $CONFFILE
+		fi
+
+		/usr/sbin/hostapd -P /var/run/hostapd.pid -B $CONFFILE > /dev/null
+		ERR=$?
+	fi
+
+	if [ $ERR -ne 0 ] ; then
+		/usr/sbin/rfkill block wlan
+		exit $ERR
+	fi
+
+	# Some network games only broadcast on the default network.
+	/sbin/route add default gw $AP_IP
+
+	/sbin/start-stop-daemon -S -q -b -m -p /var/run/udhcpd-ap.pid \
+		-x /usr/sbin/udhcpd -- -f -S /etc/udhcpd-ap.conf
+
+	/usr/bin/env IFACE=wlan0 /etc/network/if-up.d/xinetd
+
+	# Explicitely call the "ledblink" script; we want to blink
+	# the LED on AP mode too.
+	/usr/bin/env IFACE=wlan0 /etc/network/if-up.d/ledblink
+}
+
+get_status() {
+	if [ -f /var/run/udhcpd-ap.pid -a -f /var/run/hostapd.pid ] ; then
+		kill -0 `cat /var/run/udhcpd-ap.pid` 2>&1 >/dev/null
+		RET1=$?
+		kill -0 `cat /var/run/hostapd.pid` 2>&1 >/dev/null
+		RET2=$?
+
+		if [ $RET1 -eq 0 -a $RET2 -eq 0 ] ; then
+			echo "ap is running"
+			exit 0
+		fi
+	fi
+
+	echo "ap is NOT running"
+	exit 1
+}
+
+case "$1" in
+	--start)
+		start_ap
+		;;
+	--stop)
+		stop_ap
+		;;
+	--status)
+		get_status
+		;;
+	*)
+		echo "Usage: ap [--start|--stop|--status]"
+		;;
+esac

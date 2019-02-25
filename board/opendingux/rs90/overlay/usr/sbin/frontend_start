@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# Restore the framebuffer to a working state
+sudo /usr/sbin/unlockvt > /dev/null
+
+# Reset the console
+/usr/bin/reset
+
+# Disactivate the console on framebuffer
+echo 0 > /sys/devices/virtual/vtconsole/vtcon1/bind
+
+# Reset clock frequency to the default one
+echo 360000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
+
+if [ -x ~/.autostart ] ; then
+	exec ~/.autostart
+else
+	exec /usr/bin/gmenu2x
+fi

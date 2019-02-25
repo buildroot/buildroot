@@ -1,0 +1,24 @@
+commit 865e6e3a31fd39c5021ae5c4cf045a20d45bec01
+Author: Daniel Silsby <dansilsby@gmail.com>
+Date:   Mon Apr 22 05:46:49 2019 -0400
+
+    tests: Include <limits.h> to define PATH_MAX
+    
+    MUSL libc compilation fix:
+    
+    Including <limits.h> fixes compiler error of undefined 'PATH_MAX'.
+    
+    Signed-off-by: Daniel Silsby <dansilsby@gmail.com>
+
+diff --git a/tests/gethugepagesizes.c b/tests/gethugepagesizes.c
+index 9551b38..bd6ef02 100644
+--- a/tests/gethugepagesizes.c
++++ b/tests/gethugepagesizes.c
+@@ -19,6 +19,7 @@
+ 
+ #define _GNU_SOURCE
+ 
++#include <limits.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <unistd.h>

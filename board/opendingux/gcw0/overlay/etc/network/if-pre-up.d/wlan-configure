@@ -1,0 +1,83 @@
+#!/bin/sh
+
+case "$IFACE" in
+	wlan[0-9])
+		;;
+	*)
+		exit 0
+		;;
+esac
+
+# Some default values
+WLAN_DRIVER=wext
+WLAN_ENCRYPTION=none
+
+if [ -z "$CONF_FILE" ] ; then
+	CONF_FILE=/etc/local/network/config-${IFACE}.conf
+fi
+
+[ -f $CONF_FILE ] || exit 1
+. $CONF_FILE
+
+case "$WLAN_ENCRYPTION" in
+	wep)
+		if [ "${WLAN_PASSPHRASE:0:2}" = "s:" ] ; then
+			WLAN_PASSPHRASE="\"${WLAN_PASSPHRASE:2}\""
+		fi
+		echo "network={
+			ssid=\"$WLAN_ESSID\"
+			scan_ssid=1
+			priority=5
+			key_mgmt=NONE
+			wep_key0=$WLAN_PASSPHRASE
+			wep_tx_keyidx=0
+		}" > /tmp/.${IFACE}_config
+		;;
+
+	wpa|wpa2)
+		/usr/sbin/wpa_passphrase \
+			"$WLAN_ESSID" "$WLAN_PASSPHRASE" > /tmp/.${IFACE}_config
+		;;
+
+	none)
+		;;
+
+	*)
+		exit 1
+esac
+
+RET=0
+if [ "$IFACE" = "wlan0" ] ; then
+	/usr/sbin/rfkill unblock wlan
+
+	for i in 0 1 2 3 4 5 6 7 8 9 ; do
+		/sbin/ifconfig wlan0 up 2>/dev/null
+		RET=$?
+		[ $RET -eq 0 ] && break
+		sleep 1
+	done
+else
+	/sbin/ifconfig "$IFACE" up
+	RET=$?
+fi
+
+if [ $RET -eq 0 ] ; then
+	/sbin/iwconfig "$IFACE" mode managed essid "$WLAN_ESSID"
+	RET=$?
+fi
+
+if [ $RET -eq 0 -a "$WLAN_ENCRYPTION" != "none" ] ; then
+	if [ -f "/var/run/wpa_supplicant_${IFACE}.pid" ] ; then
+		/sbin/start-stop-daemon -K -q -p /var/run/wpa_supplicant_${IFACE}.pid
+	fi
+
+	/usr/sbin/wpa_supplicant -B -D "$WLAN_DRIVER" -i "$IFACE" \
+		-c /tmp/.${IFACE}_config -P /var/run/wpa_supplicant_${IFACE}.pid
+	RET=$?
+fi
+
+if [ $RET -ne 0 -a "$IFACE" = "wlan0" ] ; then
+	/usr/sbin/rfkill block wlan
+fi
+
+exit $RET

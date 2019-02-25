@@ -1,0 +1,16 @@
+config BR2_PACKAGE_PWSWD
+	bool "pwswd"
+	select BR2_PACKAGE_LIBINI
+	help
+	  Power Switch Daemon for Dingoo A320/A330 and GCW Zero.
+	  It allows the user to change various system settings such as brightness,
+	  volume, TV-out and more by pressing the power slider plus a button.
+
+	  https://github.com/pcercuei/pwswd
+
+if BR2_PACKAGE_PWSWD
+
+config BR2_PACKAGE_PWSWD_PLATFORM
+	string "Target platform"
+
+endif

@@ -1,0 +1,30 @@
+#!/bin/sh
+
+[ "${IFACE:0:4}" = "wlan" ] || exit 0
+
+USB_ONLINE=`cat '/sys/class/power_supply/usb/online'`
+DC_ONLINE=`cat '/sys/class/power_supply/usb/online'`
+BATTERY_LEVEL=`cat '/sys/class/power_supply/battery/capacity'`
+
+# If the battery level is low, the battery level monitor may have
+# already changed how the LED blinks, so we don't override that
+[ "$USB_ONLINE" -eq 0 \
+	-a "$DC_ONLINE" -eq 0 \
+	-a "$BATTERY_LEVEL" -lt 10 ] && exit 0
+
+HAS_OTHER_INTERFACES=no
+for i in `ls /sys/class/net` ; do
+	[ "${i:0:4}" = "wlan" ] || continue
+	[ "$i" != "$IFACE" ] || continue
+
+	if [ `cat /sys/class/net/$i/operstate` = "up" ] ; then
+		HAS_OTHER_INTERFACES=yes
+		break
+	fi
+done
+
+# Stop blinking only if no other wlan interface is up
+if [ "$HAS_OTHER_INTERFACES" != "yes" ] ; then
+	echo 'none' > /sys/class/leds/power/trigger
+	cat /sys/class/leds/power/max_brightness > /sys/class/leds/power/brightness
+fi

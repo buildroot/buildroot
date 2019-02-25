@@ -1,0 +1,27 @@
+#!/bin/sh
+
+[ -r /usr/local/etc/usb.conf ] && . /usr/local/etc/usb.conf
+[ "$USB_MODE" != mtp ] && DEFAULTNO=--defaultno
+
+/usr/bin/sudo /usr/sbin/usb stop
+
+dialog $DEFAULTNO --yes-label "Mass Storage" --no-label "Ethernet" --yesno "Please select USB mode." 0 0
+if [ $? -eq 0 ] ; then
+	# MTP
+	USB_MODE=mtp
+else
+	# Ethernet over USB
+	[ "$USB_MODE" != "rndis" ] && unset DEFAULTNO
+
+	USB_IP=`sed -n 's/^\s*address \(10.1.1.[0-9]\+\)/\1/p' /etc/network/interfaces`
+
+	dialog $DEFAULTNO --yes-label "ECM" --no-label "RNDIS" --yesno "Please choose the USB protocol.\n* ECM: for Linux, OSX, Windows 10\n* RNDIS: For Windows < 10\n\nIP address will be ${USB_IP}." 0 0
+
+	if [ $? -eq 0 ] ; then
+		USB_MODE=cdc
+	else
+		USB_MODE=rndis
+	fi
+fi
+
+exec /usr/bin/sudo /usr/sbin/usb start $USB_MODE

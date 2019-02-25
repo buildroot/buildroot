@@ -1,0 +1,24 @@
+commit 8d58b5f895bf28fd60322eaf2ead0b5c79160aaf
+Author: Daniel Silsby <dansilsby@gmail.com>
+Date:   Mon Apr 22 05:37:39 2019 -0400
+
+    tests: Include <dirent.h> to get ino_t typedef
+    
+    MUSL libc compilation fix:
+    
+    Including <dirent.h> fixes missing typedef of 'ino_t'.
+    
+    Signed-off-by: Daniel Silsby <dansilsby@gmail.com>
+
+diff --git a/tests/hugetests.h b/tests/hugetests.h
+index 8b1d8d9..cb1ce0b 100644
+--- a/tests/hugetests.h
++++ b/tests/hugetests.h
+@@ -20,6 +20,7 @@
+ #ifndef _HUGETESTS_H
+ #define _HUGETESTS_H
+ 
++#include <dirent.h>
+ #include <errno.h>
+ #include <string.h>
+ 

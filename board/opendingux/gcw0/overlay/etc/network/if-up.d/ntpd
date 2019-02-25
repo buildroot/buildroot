@@ -1,0 +1,9 @@
+#!/bin/sh
+
+[ ${IFACE:0:4} = "wlan" ] || exit 0
+
+CONFFILE=/etc/ntp.conf
+[ -r "/usr/local/etc/ntp.conf" ] && CONFFILE=/usr/local/etc/ntp.conf
+
+/usr/sbin/ntpd -g -c ${CONFFILE} -p /var/run/ntpd-${IFACE}.pid \
+	-I ${IFACE}

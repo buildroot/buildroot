@@ -1,0 +1,7 @@
+SUBSYSTEM!="power_supply", GOTO="usb_end"
+ENV{POWER_SUPPLY_NAME}!="usb-charger", GOTO="usb_end"
+
+ENV{POWER_SUPPLY_ONLINE}=="1", RUN+="/usr/sbin/usb start"
+ENV{POWER_SUPPLY_ONLINE}=="0", RUN+="/usr/sbin/usb stop"
+
+LABEL="usb_end"

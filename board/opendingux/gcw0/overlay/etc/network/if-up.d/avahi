@@ -1,0 +1,5 @@
+#!/bin/sh
+
+[ "$IFACE" != "lo" ] || exit 0
+
+/usr/sbin/avahi-daemon -c || /usr/sbin/avahi-daemon -D

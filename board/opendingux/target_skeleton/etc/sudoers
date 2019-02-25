@@ -1,0 +1,25 @@
+#
+# This file MUST be edited with the 'visudo' command as root.
+#
+# Please consider adding local content in /etc/sudoers.d/ instead of
+# directly modifying this file.
+#
+# See the man page for details on how to write a sudoers file.
+#
+Defaults	env_reset
+Defaults	secure_path="/usr/sbin:/usr/bin"
+Defaults	logfile="/var/log/sudo.log"
+
+# Host alias specification
+
+# User alias specification
+
+# Cmnd alias specification
+
+# User privilege specification
+root    ALL=(ALL:ALL) ALL
+
+# Allow members of group admin to execute any command
+%admin  ALL=(ALL:ALL) ALL
+
+%users  ALL=(root:root) NOPASSWD: /usr/sbin/od-update, /usr/sbin/odpasswd, /usr/sbin/unlockvt, /usr/sbin/usb, /usr/sbin/od-passwd-config

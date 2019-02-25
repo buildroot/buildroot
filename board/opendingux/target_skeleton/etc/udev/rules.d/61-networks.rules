@@ -1,0 +1,2 @@
+SUBSYSTEM=="net", DRIVERS=="?*", KERNEL!="wlan0", ACTION=="add", RUN+="/sbin/ifup %k"
+SUBSYSTEM=="net", DRIVERS=="?*", KERNEL!="wlan0", ACTION=="remove", RUN+="/sbin/ifdown %k"

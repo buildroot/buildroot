@@ -1,0 +1,19 @@
+#!/bin/sh
+
+[ "$IFACE" != "lo" ] || exit 0
+
+HAS_OTHER_INTERFACES=no
+for i in `ls /sys/class/net` ; do
+	[ "$i" != "$IFACE" ] || continue
+	[ "$i" != "lo" ] || continue
+
+	if [ `cat /sys/class/net/$i/operstate` == "up" ] ; then
+		HAS_OTHER_INTERFACES=yes
+		break
+	fi
+done
+
+# Stop xinetd only if no other interface is up
+if [ "$HAS_OTHER_INTERFACES" != "yes" ] ; then
+	start-stop-daemon -K -q -p /run/xinetd.pid
+fi

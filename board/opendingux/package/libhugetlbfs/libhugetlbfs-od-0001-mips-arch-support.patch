@@ -1,0 +1,226 @@
+commit 1ecfd3a83e8308eeabde1fe77d716636df684192
+Author: Daniel Silsby <dansilsby@gmail.com>
+Date:   Sun Apr 21 05:08:36 2019 -0400
+
+    MIPS support.
+    
+    This patch adds support for 32 and 64 bit MIPS.
+    
+    Note that at the time of this commit, 32 bit MIPS huge page support
+    is not yet in upstream Linux, but is being developed and tested.
+    
+    Signed-off-by: Daniel Silsby <dansilsby@gmail.com>
+
+diff --git a/Makefile b/Makefile
+index 51e41f0..3aebbbc 100644
+--- a/Makefile
++++ b/Makefile
+@@ -89,6 +89,18 @@ CC64 = $(CC)
+ TMPLIB64 = lib64
+ CFLAGS += -DNO_ELFLINK
+ else
++ifneq (,$(findstring mips64,$(ARCH)))
++CC64 = $(CC)
++TMPLIB64 = lib64
++ELF64 = elf_mips64
++CUSTOM_LDSCRIPTS = no
++else
++ifneq (,$(findstring mips,$(ARCH)))
++CC32 = $(CC)
++TMPLIB32 = lib
++ELF32 = elf_mips
++CUSTOM_LDSCRIPTS = no
++else
+ ifeq ($(ARCH),sparc64)
+ CC64 = $(CC) -m64
+ TMPLIB64 = lib64
+@@ -123,6 +135,8 @@ endif
+ endif
+ endif
+ endif
++endif
++endif
+ 
+ ifdef CC32
+ OBJDIRS += obj32
+diff --git a/ld.hugetlbfs b/ld.hugetlbfs
+index 388f7b4..f6c8bfc 100755
+--- a/ld.hugetlbfs
++++ b/ld.hugetlbfs
+@@ -109,7 +109,7 @@ elf32ppclinux|elf64ppc)	HPAGE_SIZE=$((16*$MB)) SLICE_SIZE=$((256*$MB)) ;;
+ elf64lppc)		HPAGE_SIZE=$((16*$MB)) SLICE_SIZE=$((256*$MB)) ;;
+ elf_i386|elf_x86_64)	HPAGE_SIZE=$((4*$MB)) SLICE_SIZE=$HPAGE_SIZE ;;
+ elf_s390|elf64_s390)	HPAGE_SIZE=$((1*$MB)) SLICE_SIZE=$HPAGE_SIZE ;;
+-armelf*_linux_eabi|aarch64elf*|aarch64linux*)
++armelf*_linux_eabi|aarch64elf*|aarch64linux*|mips*)
+ 	hpage_kb=$(cat /proc/meminfo  | grep Hugepagesize: | awk '{print $2}')
+ 	HPAGE_SIZE=$((hpage_kb * 1024))
+ 	SLICE_SIZE=$HPAGE_SIZE ;;
+diff --git a/sys-elf_mips.S b/sys-elf_mips.S
+new file mode 100644
+index 0000000..405a21e
+--- /dev/null
++++ b/sys-elf_mips.S
+@@ -0,0 +1,57 @@
++/*
++ * libhugetlbfs - Easy use of Linux hugepages
++ * Copyright (C) 2019 Daniel Silsby
++ *
++ * Based on code from the GNU C Library, Copyright Free Software Foundation, Inc.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public License
++ * as published by the Free Software Foundation; either version 2.1 of
++ * the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
++ */
++
++	.text
++	.globl  direct_syscall
++	.type   direct_syscall,%function
++	.ent    direct_syscall
++direct_syscall:
++	move    $v0, $a0        /* Syscall number is first arg */
++
++	move    $a0, $a1        /* Move the next 3 args up a register */
++	move    $a1, $a2
++	move    $a2, $a3
++
++	/* Load the remaining possible args (up to 7 total) from the stack */
++	lw      $a3, 4*4($sp)
++	lw      $t0, 5*4($sp)
++	lw      $t1, 6*4($sp)
++	lw      $t2, 7*4($sp)
++
++	addiu   $sp, $sp, -32
++	sw      $v0, 7*4($sp)   /* Store syscall number on stack (for restarts) */
++
++	sw      $t0, 4*4($sp)   /* Last 3 syscall args are passed on stack */
++	sw      $t1, 5*4($sp)
++	sw      $t2, 6*4($sp)
++
++	lw      $v0, 7*4($sp)   /* For system call restarts */
++	syscall
++
++	addiu   $sp, $sp, 32
++	jr      $ra             /* Return to caller */
++
++	.end    direct_syscall
++	.size   direct_syscall,.-direct_syscall
++
++#if defined(__linux__) && defined(__ELF__)
++	.section .note.GNU-stack,"",%progbits
++#endif
+diff --git a/sys-elf_mips64.S b/sys-elf_mips64.S
+new file mode 100644
+index 0000000..e6ba1dc
+--- /dev/null
++++ b/sys-elf_mips64.S
+@@ -0,0 +1,50 @@
++/*
++ * libhugetlbfs - Easy use of Linux hugepages
++ * Copyright (C) 2019 Daniel Silsby
++ *
++ * Based on code from the GNU C Library, Copyright Free Software Foundation, Inc.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public License
++ * as published by the Free Software Foundation; either version 2.1 of
++ * the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
++ */
++
++	.text
++	.globl  direct_syscall
++	.type   direct_syscall,%function
++	.ent    direct_syscall
++direct_syscall:
++	daddiu  $sp, $sp, -16
++	move    $v0, $a0        /* Syscall number is first arg */
++	sd      $v0, 0($sp)     /* Store syscall number on stack (for restarts) */
++
++	move    $a0, $a1        /* Move the next seven args up a register */
++	move    $a1, $a2
++	move    $a2, $a3
++	move    $a3, $a4
++	move    $a4, $a5
++	move    $a5, $a6
++	move    $a6, $a7
++
++	ld      $v0, 0($sp)     /* For system call restarts */
++	syscall
++
++	daddiu  $sp, $sp, 16
++	jr      $ra             /* Return to caller.  */
++
++	.end    direct_syscall
++	.size   direct_syscall,.-direct_syscall
++
++#if defined(__linux__) && defined(__ELF__)
++	.section .note.GNU-stack,"",%progbits
++#endif
+diff --git a/tests/icache-hygiene.c b/tests/icache-hygiene.c
+index 0e344d9..8c1b097 100644
+--- a/tests/icache-hygiene.c
++++ b/tests/icache-hygiene.c
+@@ -32,6 +32,7 @@
+ 
+ #define _GNU_SOURCE
+ 
++#include <stdint.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+@@ -100,7 +101,7 @@ static void sig_handler(int signum, siginfo_t *si, void *uc)
+ 		}
+ 		FAIL("SIGILL somewhere unexpected");
+ 	}
+-#elif defined(__i386__) || defined(__x86_64__) || defined(__arm__)
++#elif defined(__i386__) || defined(__x86_64__) || defined(__arm__) || defined(__mips__)
+ 	/* On x86, zero bytes form a valid instruction:
+ 	 *	add %al,(%eax)		(i386)
+ 	 * or	add %al,(%rax)		(x86_64)
+@@ -118,6 +119,9 @@ static void sig_handler(int signum, siginfo_t *si, void *uc)
+ 	 * 	andeq	r0, r0, r0	(ARM state, 4 bytes)
+ 	 * 	movs	r0, r0		(Thumb state, 2 bytes)
+ 	 *
++	 * On 32 and 64 bit MIPS, 4 zero bytes are a NOP:
++	 *	sll	$zero, $zero, 0
++	 *
+ 	 * So, we only expect to run off the end of the huge page and
+ 	 * generate a SIGBUS. */
+ 	if (signum == SIGBUS) {
+@@ -130,12 +134,14 @@ static void sig_handler(int signum, siginfo_t *si, void *uc)
+ 		}
+ 		FAIL("SIGBUS somewhere unexpected");
+ 	}
+-#if defined(__x86_64__) || defined(__i386__)
++#if defined(__x86_64__) || defined(__i386__) || defined(__mips__)
+ 	if (signum == SIGSEGV) {
+-#ifdef __x86_64__
++#if defined(__x86_64__)
+ 		void *pc = (void *)((ucontext_t *)uc)->uc_mcontext.gregs[REG_RIP];
+-#else
++#elif defined(__i386__)
+ 		void *pc = (void *)((ucontext_t *)uc)->uc_mcontext.gregs[REG_EIP];
++#elif defined(__mips__)
++		void *pc = (void *)(uintptr_t)((ucontext_t *)uc)->uc_mcontext.pc;
+ #endif
+ 
+ 		verbose_printf("SIGSEGV at %p, PC=%p (sig_expected=%p)\n",

@@ -1,0 +1,29 @@
+commit 5e3619c2127cedf79d986bf338e3a6c4e8ffa8de
+Author: Daniel Silsby <dansilsby@gmail.com>
+Date:   Mon Apr 22 05:42:40 2019 -0400
+
+    tests: Fix type mismatch in quota stats printf() call
+    
+    MUSL libc compilation fixes:
+    
+    Block counter members of statfs struct should be unsigned and can be
+    64-bit depending on libc options in use. Format as %llu instead of %li
+    to cover all cases and fix compiler warnings.
+    
+    Signed-off-by: Daniel Silsby <dansilsby@gmail.com>
+
+diff --git a/tests/quota.c b/tests/quota.c
+index 4961371..9a16887 100644
+--- a/tests/quota.c
++++ b/tests/quota.c
+@@ -81,8 +81,8 @@ void _verify_stat(int line, long tot, long free, long avail)
+ 	statfs(mountpoint, &s);
+ 
+ 	if (s.f_blocks != tot || s.f_bfree != free || s.f_bavail != avail)
+-		FAIL("Bad quota counters at line %i: total: %li free: %li "
+-		       "avail: %li\n", line, s.f_blocks, s.f_bfree, s.f_bavail);
++		FAIL("Bad quota counters at line %i: total: %llu free: %llu "
++		       "avail: %llu\n", line, s.f_blocks, s.f_bfree, s.f_bavail);
+ }
+ #define verify_stat(t, f, a) _verify_stat(__LINE__, t, f, a)
+ 

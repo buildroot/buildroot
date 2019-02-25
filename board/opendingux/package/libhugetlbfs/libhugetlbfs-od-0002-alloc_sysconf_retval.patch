@@ -1,0 +1,37 @@
+commit b5f6b23e23a370a143afd0d50a480b17973adb20
+Author: Daniel Silsby <dansilsby@gmail.com>
+Date:   Mon Apr 22 05:22:35 2019 -0400
+
+    alloc: Handle sysconf() return vals more carefully
+    
+    Function cachecolor() uses sysconf() to determine size of a cacheline.
+    No effort was given to check for <= 0 return values. When sysconf()
+    returned -1 (error), the coloring computation would be wildly
+    incorrect. If it returned 0, a division-by-zero would occur.
+    
+    Check for each of these possibilities and do no coloring if so.
+    
+    Signed-off-by: Daniel Silsby <dansilsby@gmail.com>
+
+diff --git a/alloc.c b/alloc.c
+index bce9464..cc90ebb 100644
+--- a/alloc.c
++++ b/alloc.c
+@@ -263,8 +263,17 @@ void *cachecolor(void *buf, size_t len, size_t color_bytes)
+ 	if (cacheline_size == 0) {
+ 		cacheline_size = sysconf(_SC_LEVEL2_CACHE_LINESIZE);
+ 		linemod = time(NULL);
++
++		if (cacheline_size <= 0) {
++			cacheline_size = -1;
++			WARNING("Couldn't determine cacheline size, so coloring is disabled.\n");
++		}
+ 	}
+ 
++	/* Do nothing if cacheline size unknown */
++	if (cacheline_size < 0)
++		return buf;
++
+ 	numlines = color_bytes / cacheline_size;
+ 	DEBUG("%d lines of cacheline size %ld due to %zd wastage\n",
+ 		numlines, cacheline_size, color_bytes);

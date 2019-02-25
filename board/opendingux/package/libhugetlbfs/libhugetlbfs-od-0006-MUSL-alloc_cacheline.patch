@@ -1,0 +1,36 @@
+commit 724913674c7f49aa9b9af10cf85458bb3157aada
+Author: Daniel Silsby <dansilsby@gmail.com>
+Date:   Mon Apr 22 05:30:28 2019 -0400
+
+    alloc: Check for _SC_LEVEL2_CACHE_LINESIZE def
+    
+    MUSL libc compilation fix:
+    
+    MUSL does not define this constant, so just post a #warning and disable
+    cache coloring feature for now on a MUSL build.
+    
+    Signed-off-by: Daniel Silsby <dansilsby@gmail.com>
+
+diff --git a/alloc.c b/alloc.c
+index cc90ebb..aabb49d 100644
+--- a/alloc.c
++++ b/alloc.c
+@@ -253,6 +253,10 @@ void free_huge_pages(void *ptr)
+  */
+ void *cachecolor(void *buf, size_t len, size_t color_bytes)
+ {
++#ifndef _SC_LEVEL2_CACHE_LINESIZE
++# warning "_SC_LEVEL2_CACHE_LINESIZE is undefined: cachecolor() will be stub func."
++	return buf;
++#else
+ 	static long cacheline_size = 0;
+ 	static int linemod = 0;
+ 	char *bytebuf = (char *)buf;
+@@ -287,6 +291,7 @@ void *cachecolor(void *buf, size_t len, size_t color_bytes)
+ 	DEBUG("Using line offset %d from start\n", line);
+ 
+ 	return bytebuf;
++#endif /* _SC_LEVEL2_CACHE_LINESIZE */
+ }
+ 
+ /**

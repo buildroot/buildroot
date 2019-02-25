@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Only blink the LED when a wlan interface is enabled
+[ ${IFACE:0:4} = "wlan" ] || exit 0
+
+USB_ONLINE=`cat '/sys/class/power_supply/usb/online'`
+DC_ONLINE=`cat '/sys/class/power_supply/usb/online'`
+BATTERY_LEVEL=`cat '/sys/class/power_supply/battery/capacity'`
+
+# Don't change the blinking mode if the battery level is
+# low, so that the low battery level warning will work
+[ "$USB_ONLINE" -eq 0 \
+	-a "$DC_ONLINE" -eq 0 \
+	-a "$BATTERY_LEVEL" -lt 10 ] && exit 0
+
+echo 'timer' > /sys/class/leds/power/trigger
+echo '100' > /sys/class/leds/power/delay_on
+echo '1400' > /sys/class/leds/power/delay_off

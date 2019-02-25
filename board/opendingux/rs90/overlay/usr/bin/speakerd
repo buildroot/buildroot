@@ -1,0 +1,16 @@
+#!/bin/sh
+
+INPUT_DEV=/dev/input/event1
+AUDIO_CARD=hw:rs90audio
+CONTROL="name='Speaker Switch'"
+
+evtest --query $INPUT_DEV 5 2
+if [ $? -eq 0 ] ; then
+	amixer -q -D $AUDIO_CARD cset "$CONTROL" on
+else
+	amixer -q -D $AUDIO_CARD cset "$CONTROL" off
+fi
+
+evtest $INPUT_DEV \
+	|sed -u -n -e 's/^.*, value \([[:alnum:]]\)$/\1/' -e 's/^0$/on/p' -e 's/^1$/off/p' \
+	|xargs -n1 -t amixer -q -D $AUDIO_CARD cset "$CONTROL"

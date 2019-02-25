@@ -1,0 +1,2 @@
+# Unload the WiFi module
+SUBSYSTEM=="net", ACTION=="remove", KERNEL=="wlan0", RUN+="/sbin/rmmod 8192cu 8188eu"

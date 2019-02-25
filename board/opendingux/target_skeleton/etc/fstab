@@ -1,0 +1,10 @@
+# <file system>	<mount pt>	<type>	<options>	<dump>	<pass>
+proc		/proc		proc	defaults	0	0
+devpts		/dev/pts	devpts	defaults,gid=5,mode=620,ptmxmode=0666	0	0
+tmpfs		/dev/shm	tmpfs	mode=0777	0	0
+tmpfs		/var		tmpfs	mode=1777,nosuid,nodev	0	0
+sysfs		/sys		sysfs	defaults	0	0
+tmpfs		/media		tmpfs	defaults,size=4k,mode=0755	0	0
+tmpfs		/mnt		tmpfs	defaults,size=4k,mode=1777	0	0
+debugfs		/sys/kernel/debug	debugfs	defaults,nofail	0	0
+configfs	/sys/kernel/config	configfs	defaults	0	0

@@ -25,4 +25,4 @@ nice make BR2_EXTERNAL=board/opendingux
 
 # Create packages.
 echo "Creating packages..."
-tar -C/opt --exclude='.fakeroot.*' -jcf opendingux-${CONFIG}-toolchain.`date +'%Y-%m-%d'`.tar.bz2 ${CONFIG}-toolchain
+nice tar -C$(dirname $(realpath /opt/${CONFIG}-toolchain)) --exclude='.fakeroot.*' -jcf opendingux-${CONFIG}-toolchain.`date +'%Y-%m-%d'`.tar.bz2 ${CONFIG}-toolchain

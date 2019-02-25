@@ -1,0 +1,151 @@
+#!/bin/sh
+
+if [ ! -d /sys/kernel/config/usb_gadget ] ; then
+	echo 'configfs not mounted!' >&2
+	exit 1
+fi
+
+usb_disable() {
+	if [ -r /run/umtprd.pid ] ; then
+		start-stop-daemon -K -p /run/umtprd.pid
+		rm /run/umtprd.pid
+	fi
+
+	echo "" > /sys/kernel/config/usb_gadget/mtp/UDC
+}
+
+usb_start() {
+	. /etc/default/configfs
+
+	if [ "$1" ] ; then
+		USB_MODE=$1
+	elif [ -r /usr/local/etc/usb.conf ] ; then
+		. /usr/local/etc/usb.conf
+		[ -z "$USB_MODE" ] && USB_MODE=mtp
+	fi
+
+	cd /sys/kernel/config/usb_gadget
+
+	mkdir mtp \
+		mtp/strings/0x409 \
+		mtp/configs/c.1 \
+		mtp/configs/c.1/strings/0x409 \
+		mtp/functions/ffs.mtp \
+		mtp/functions/geth.net \
+		mtp/functions/rndis.net
+
+	echo ${SERIAL_NUMBER} > mtp/strings/0x409/serialnumber
+	echo ${VENDOR} > mtp/strings/0x409/manufacturer
+	echo ${PRODUCT} > mtp/strings/0x409/product
+
+	echo 0x80 > mtp/configs/c.1/bmAttributes # Bus powered
+	echo 500 > mtp/configs/c.1/MaxPower # 500 mA
+
+	if [ "$USB_MODE" = rndis ] ; then
+		echo 0xef > mtp/bDeviceClass
+		echo 0x02 > mtp/bDeviceSubClass
+		echo 0x01 > mtp/bDeviceProtocol
+
+		echo 1 > mtp/os_desc/use
+		echo 0xcd > mtp/os_desc/b_vendor_code
+		echo MSFT100 > mtp/os_desc/qw_sign
+
+		# Match Windows RNDIS 6.0 driver (works best)
+		echo RNDIS > mtp/functions/rndis.net/os_desc/interface.rndis/compatible_id
+		echo 5162001 > mtp/functions/rndis.net/os_desc/interface.rndis/sub_compatible_id
+
+		echo 0x0525 > mtp/idVendor  # NetChip
+		echo 0xa4a2 > mtp/idProduct # Ethernet/RNDIS Gadget
+		echo rndis > mtp/configs/c.1/strings/0x409/configuration
+
+		ln -s mtp/configs/c.1 mtp/os_desc/
+		ln -s mtp/functions/rndis.net mtp/configs/c.1/rndis.net
+
+	elif [ "$USB_MODE" = mtp ] ; then
+		echo 0x1d6b > mtp/idVendor  # Linux Foundation
+		echo 0x0100 > mtp/idProduct # PTP Gadget
+		echo mtp > mtp/configs/c.1/strings/0x409/configuration
+		ln -s mtp/functions/ffs.mtp mtp/configs/c.1/ffs.mtp
+
+		mkdir /dev/ffs-umtp
+		mount mtp -t functionfs /dev/ffs-umtp
+
+		# Set access rights of ep0 node
+		chown -R root:mtp /dev/ffs-umtp
+		chmod 0550 /dev/ffs-umtp
+		chmod 0660 /dev/ffs-umtp/ep0
+
+		start-stop-daemon -S -c od:users -x /usr/sbin/umtprd \
+			-p /run/umtprd.pid -m -b -N 10
+
+		# Wait for umtprd to settle
+		sleep 1
+
+		# Fixup access rights of newly created EP nodes
+		chown root:mtp /dev/ffs-umtp/ep*
+		chmod 0660 /dev/ffs-umtp/ep*
+	else
+		echo 0x049f > mtp/idVendor
+		echo 0x505a > mtp/idProduct
+		echo cdc > mtp/configs/c.1/strings/0x409/configuration
+		ln -s mtp/functions/geth.net mtp/configs/c.1/geth.net
+	fi
+
+	echo "${UDC_NAME}" > /sys/kernel/config/usb_gadget/mtp/UDC
+	echo "USB_MODE=$(cat mtp/configs/c.1/strings/0x409/configuration)" > /usr/local/etc/usb.conf
+}
+
+usb_stop() {
+	(
+		cd /sys/kernel/config/usb_gadget
+
+		usb_disable
+
+		umount /dev/ffs-umtp
+		rmdir /dev/ffs-umtp
+
+		rm -f mtp/configs/c.1/ffs.mtp \
+			mtp/configs/c.1/geth.net \
+			mtp/configs/c.1/rndis.net
+
+		rmdir mtp/configs/c.1/strings/0x409 \
+			mtp/configs/c.1 \
+			mtp/functions/ffs.mtp \
+			mtp/functions/geth.net \
+			mtp/functions/rndis.net \
+			mtp/strings/0x409 \
+			mtp
+	) >/dev/null 2>&1
+}
+
+usb_get_status() {
+	if [ -d /sys/kernel/config/usb_gadget/mtp ] ; then
+		if [ "`cat /sys/kernel/config/usb_gadget/mtp/UDC`" = "${UDC_NAME}" ] ; then
+			echo "USB is enabled"
+			return 0
+		fi
+	fi
+
+	echo "USB is not enabled"
+	return 1
+}
+
+case "$1" in
+	start)
+		usb_start $2
+		;;
+	stop)
+		usb_stop
+		;;
+	restart)
+		usb_stop
+		usb_start $2
+		;;
+	status)
+		usb_get_status
+		exit $?
+		;;
+	*)
+		echo "Usage: usb [start|stop|restart|status]"
+		;;
+esac

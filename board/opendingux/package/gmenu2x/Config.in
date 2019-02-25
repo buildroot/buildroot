@@ -1,0 +1,27 @@
+config BR2_PACKAGE_GMENU2X
+	bool "gmenu2x"
+	select BR2_PACKAGE_LIBPNG
+	select BR2_PACKAGE_SDL
+	select BR2_PACKAGE_SDL_TTF
+	select BR2_PACKAGE_SDL_GFX
+	select BR2_PACKAGE_DEJAVU
+	help
+	  Application menu for devices with a 320x240 screen and buttons.
+
+	  This is a forked version with cleanups, targeted at the Ben NanoNote
+	  and the Dingoo A320/A330.
+
+	  http://projects.qi-hardware.com/index.php/p/gmenu2x
+
+if BR2_PACKAGE_GMENU2X
+
+config BR2_PACKAGE_GMENU2X_PLATFORM
+	string "Target platform"
+
+config BR2_PACKAGE_GMENU2X_SHOW_CLOCK
+	bool "Show clock"
+
+config BR2_PACKAGE_GMENU2X_CPUFREQ
+	bool "Support CPU frequency control"
+
+endif

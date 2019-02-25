@@ -1,0 +1,26 @@
+KERNEL!="sd[a-z][1-9]|mmcblk[0-9]p[1-9]", GOTO="media_by_label_auto_mount_end"
+ACTION=="add", PROGRAM!="/sbin/blkid -p %N", GOTO="media_by_label_auto_mount_end"
+
+# The system partition is already mounted at /boot
+ACTION=="add", PROGRAM=="/bin/grep 'root=/dev/%k' /proc/cmdline", RESULT!="", GOTO="media_by_label_auto_mount_end"
+ACTION=="add", PROGRAM=="/bin/grep 'boot=/dev/%k' /proc/cmdline", RESULT!="", GOTO="media_by_label_auto_mount_end"
+
+# The partition is already mounted
+ACTION=="add", PROGRAM=="/bin/grep '/dev/%k' /proc/mounts", RESULT!="", GOTO="media_by_label_auto_mount_end"
+
+# Global mount options
+ACTION=="add", ENV{mount_options}="noatime,nodiratime,nodev,nosuid"
+# Filesystem specific options
+ACTION=="add", PROGRAM=="/usr/sbin/blkid_fs %N", RESULT=="vfat", ENV{mount_options}="%E{mount_options},utf8,flush,uid=1000,gid=100"
+
+# Get label
+ACTION=="add", ENV{dir_name}!="?*", PROGRAM=="/usr/sbin/blkid_label %N", ENV{dir_name}="%c"
+# TODO: Remove this
+ACTION=="add", KERNEL=="mmcblk1p1", ENV{dir_name}!="?*", ENV{dir_name}="sdcard"
+ACTION=="add", ENV{dir_name}!="?*", ENV{dir_name}="%k"
+ACTION=="add", ENV{dir_name}=="data", ENV{dir_name}="%k"
+
+ACTION=="add", ENV{dir_name}=="?*", RUN+="/bin/mount -o remount,rw /media", RUN+="/bin/mkdir -p '/media/%E{dir_name}'", RUN+="/bin/mount -o %E{mount_options} /dev/%k '/media/%E{dir_name}'", RUN+="/bin/mount -o remount,ro /media"
+ACTION=="remove", ENV{dir_name}=="?*", RUN+="/bin/umount -l '/media/%E{dir_name}'", RUN+="/bin/mount -o remount,rw /media", RUN+="/bin/rmdir '/media/%E{dir_name}'", RUN+="/bin/mount -o remount,ro /media"
+
+LABEL="media_by_label_auto_mount_end" 
