@@ -25,6 +25,8 @@ mkdir -p /usr/share/fonts
 ln -sfn $SOURCE/usr/share/mime /usr/share/mime
 ln -sfn $SOURCE/usr/share/X11 /usr/share/X11
 ln -sfn $SOURCE/usr/share/fonts/ttf-bitstream-vera /usr/share/fonts/ttf-bitstream-vera
+ln -sfn /mnt/app/refsw/lib/libv3ddriver.so $SOURCE/usr/lib/libGLESv2.so
+ln -sfn /mnt/app/refsw/lib/libv3ddriver.so $SOURCE/usr/lib/libEGL.so
 
 # Exports
 export HOME=$SOURCE/root
