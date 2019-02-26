@@ -6,37 +6,39 @@ config BR2_PACKAGE_WPEFRAMEWORK
 if BR2_PACKAGE_WPEFRAMEWORK
 
 menu "Options"
-choice BUILD_TYPE
+
+choice BR2_PACKAGE_WPEFRAMEWORK_BUILD_TYPE
     prompt "Build type"
-    default BR2_PACKAGE_WPEFRAMEWORK_RELEASE
+    default BR2_PACKAGE_WPEFRAMEWORK_BUILD_TYPE_RELEASE
     help
-        Select the type of build you want to use.
+      Select the type of build you want to use.
 
 config BR2_PACKAGE_WPEFRAMEWORK_BUILD_TYPE_DEBUG
     bool "Debug"
     help
-       This build type is with: traces, callstacks, symbols, asserts; without: optimizations.
+     This build type is with: traces, callstacks, symbols, asserts; without: optimizations.
 
 config BR2_PACKAGE_WPEFRAMEWORK_BUILD_TYPE_DEBUG_OPTIMIZED
     bool "Debug optimized"
     help
-       This build type is with: traces, callstacks, symbols, asserts.
+     This build type is with: traces, callstacks, symbols, asserts.
 
 config BR2_PACKAGE_WPEFRAMEWORK_BUILD_TYPE_RELEASE_WITH_SYMBOLS
     bool "Release with symbols"
     help
-       This build type is with: callstacks, symbols; without: asserts, traces.
+      This build type is with: callstacks, symbols; without: asserts, traces.
 
 config BR2_PACKAGE_WPEFRAMEWORK_BUILD_TYPE_RELEASE
     bool "Release"
     help
-       This build type is with: callstacks; without: asserts, traces, symbols.
+      This build type is with: callstacks; without: asserts, traces, symbols.
 
 config BR2_PACKAGE_WPEFRAMEWORK_BUILD_TYPE_PRODUCTION
     bool "Production"
     help
-       This build type is without: traces, callstacks, symbols, asserts.
-endchoice # BUILD_TYPE
+      This build type is without: traces, callstacks, symbols, asserts.
+
+endchoice
 
 config BR2_PACKAGE_WPEFRAMEWORK_PORT
 	string "port"
