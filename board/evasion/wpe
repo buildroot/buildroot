@@ -39,7 +39,7 @@ export WPE_NEXUS_FORMAT=1080i
 
 
 	echo -n "Starting WPEFramework: "
-		$SOURCE/usr/bin/WPEFramework -c $SOURCE/etc/WPEFramework/config.json
+		$SOURCE/usr/bin/WPEFramework -b -c $SOURCE/etc/WPEFramework/config.json
 
 	[ $? == 0 ] && echo "OK" || echo "FAIL"
 
