@@ -103,5 +103,25 @@ config BR2_PACKAGE_NETFLIX5_AUDIO_MIXER_NEXUS
 endchoice
 endif
 
+choice
+	bool "DRM"
+	default BR2_PACKAGE_NETFLIX5_DRM_PLAYREADY
+	help
+	  Choose DRM Type
+
+config BR2_PACKAGE_NETFLIX5_DRM_PLAYREADY
+	bool "playready"
+	select BR2_PACKAGE_PLAYREADY
+	help
+	  DRM Playready
+
+config BR2_PACKAGE_NETFLIX5_DRM_OCDM
+	bool "ocdm"
+	depends on BR2_PACKAGE_WPEFRAMEWORK_CDMI
+	help
+	  DRM Ocdm
+
+endchoice
+
 endmenu
 endif
