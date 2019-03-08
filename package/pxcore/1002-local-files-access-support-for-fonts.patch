@@ -1,0 +1,73 @@
+From 1287922d5a0f8a4bdd15a5038d866dc00021e35e Mon Sep 17 00:00:00 2001
+From: Damian Wrobel <dwrobel@ertelnet.rybnik.pl>
+Date: Tue, 10 Jul 2018 15:43:23 +0200
+Subject: [PATCH] local files access - support for fonts
+
+---
+ examples/pxScene2d/src/pxFont.cpp | 51 ++++++++++++++++++++++++++-----
+ 1 file changed, 43 insertions(+), 8 deletions(-)
+
+diff --git a/examples/pxScene2d/src/pxFont.cpp b/examples/pxScene2d/src/pxFont.cpp
+index a49ea4b28..d7f1a3856 100644
+--- a/examples/pxScene2d/src/pxFont.cpp
++++ b/examples/pxScene2d/src/pxFont.cpp
+@@ -221,16 +221,51 @@ rtError pxFont::init(const char* n)
+ {
+   mFontMutex.lock();
+   mUrl = n;
+-   
+-  if(FT_New_Face(ft, n, 0, &mFace)) {
+-    mFontMutex.unlock();
+-    return RT_FAIL;
++  rtError loadFontStatus = RT_FAIL;
++
++  if (FT_New_Face(ft, mUrl, 0, &mFace) == 0) {
++    loadFontStatus = RT_OK;
++  }
++
++  if (loadFontStatus != RT_OK) {
++    if ( *((const char*)mUrl) != '/' ) {
++      static struct _node_path {
++          std::string d[10];
++          int         c;
++
++          _node_path() : c(0) {
++              const char *env = ::getenv("NODE_PATH");
++              const char *ptr = env, *last = env;
++              while( ( *ptr++ ) && ( c < 10 ) ) {
++                  if( ( *ptr == 0 ) || ( *ptr == ':' ) ) {
++                      d[c] = std::string( last, ptr );
++                      if( d[c][d[c].size()-1] != '/' )
++                          d[c] += "/";
++                      ++c;
++                      if( *ptr == 0 )
++                          break;
++                      last = ++ptr;
++                  }
++              }
++          }
++      } node_path;
++      for( int i = 0; i < node_path.c; ++i ) {
++          if (FT_New_Face(ft, (node_path.d[i] + (const char*)mUrl).c_str(), 0, &mFace) == 0)
++          {
++              loadFontStatus = RT_OK;
++              break;
++          }
++      }
++    }
+   }
+-  
+-  mInitialized = true;
+-  setPixelSize(defaultPixelSize);
++
++  if(loadFontStatus == RT_OK) {
++    mInitialized = true;
++    setPixelSize(defaultPixelSize);
++  }
++
+   mFontMutex.unlock();
+-  return RT_OK;
++  return loadFontStatus;
+ }
+ // This init is used by async callback to load downloaded font file data
+ rtError pxFont::init(const FT_Byte*  fontData, FT_Long size, const char* n)
