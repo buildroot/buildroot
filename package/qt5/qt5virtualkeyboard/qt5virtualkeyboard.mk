@@ -93,6 +93,12 @@ define QT5VIRTUALKEYBOARD_INSTALL_TARGET_EXAMPLES
 endef
 endif
 
+ifeq ($(BR2_STATIC_LIBS),)
+define QT5VIRTUALKEYBOARD_INSTALL_TARGET_LIBS
+	cp -dpf $(STAGING_DIR)/usr/lib/libQt5VirtualKeyboard*.so.* $(TARGET_DIR)/usr/lib
+endef
+endif # !BR2_STATIC_LIBS
+
 define QT5VIRTUALKEYBOARD_INSTALL_TARGET_CMDS
 	mkdir -p $(TARGET_DIR)/usr/lib/qt/plugins/platforminputcontexts
 	cp -dpfr $(STAGING_DIR)/usr/lib/qt/plugins/platforminputcontexts/libqtvirtualkeyboardplugin.so \
@@ -100,6 +106,7 @@ define QT5VIRTUALKEYBOARD_INSTALL_TARGET_CMDS
 	$(QT5VIRTUALKEYBOARD_INSTALL_TARGET_QML)
 	$(QT5VIRTUALKEYBOARD_INSTALL_TARGET_3RDPARTY_PARTS)
 	$(QT5VIRTUALKEYBOARD_INSTALL_TARGET_EXAMPLES)
+	$(QT5VIRTUALKEYBOARD_INSTALL_TARGET_LIBS)
 endef
 
 $(eval $(generic-package))
