@@ -13,6 +13,17 @@ NETFLIX_INSTALL_TARGET = YES
 NETFLIX_SUBDIR = netflix
 NETFLIX_RESOURCE_LOC = $(call qstrip,${BR2_PACKAGE_NETFLIX_RESOURCE_LOCATION})
 
+# netflix binary package config
+NETFLIX_OPKG_NAME = "netflix"
+NETFLIX_OPKG_VERSION = "1.0.0"
+NETFLIX_OPKG_ARCHITECTURE = "${BR2_ARCH}"
+NETFLIX_OPKG_DEPENDS = ""
+NETFLIX_OPKG_MAINTAINER = "Metrological"
+NETFLIX_OPKG_PRIORITY = "optional"
+NETFLIX_OPKG_SECTION = "graphics"
+NETFLIX_OPKG_SOURCE = ${NETFLIX_SITE}
+NETFLIX_OPKG_DESCRIPTION = "This is a description for the Netflix package"
+
 NETFLIX_CONF_OPTS = \
 	-DBUILD_DPI_DIRECTORY=$(@D)/partner/dpi \
 	-DCMAKE_INSTALL_PREFIX=$(@D)/release \
@@ -235,18 +246,48 @@ define NETFLIX_INSTALL_STAGING_CMDS
 		$(STAGING_DIR)/usr/include/netflix/nrdbase/tr1.h
 endef
 
-define NETFLIX_INSTALL_TARGET_CMDS
+define NETFLIX_INSTALL_TARGET_FILES
+	@# install files
+	$(INSTALL) -d $(TARGET_DIR)/usr/lib
 	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/libnetflix.so $(TARGET_DIR)/usr/lib
-endef
+endef # NETFLIX_INSTALL_TARGET_FILES
 
-else
+ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_CREATE_IPKG_TARGETS),y)
 
+NETFLIX_DEPENDENCIES += ${SIMPLE_OPKG_TOOLS_DEPENDENCIES}
+
+define NETFLIX_INSTALL_TARGET_CMDS
+	@# prepare package metadata
+	$(call SIMPLE_OPKG_TOOLS_INIT,NETFLIX,${@D})
+
+	@# set install target
+	$(call SIMPLE_OPKG_TOOLS_SET_TARGET,NETFLIX,${@D})
+
+	@# install target files
+	$(call NETFLIX_INSTALL_TARGET_FILES)
+
+	@# build package
+	$(call SIMPLE_OPKG_TOOLS_BUILD_PACKAGE,${@D})
+
+	@# install package
+	$(call SIMPLE_OPKG_TOOLS_INSTALL_PACKAGE,${@D}/${NETFLIX_OPKG_NAME}_${NETFLIX_OPKG_VERSION}_${NETFLIX_OPKG_ARCHITECTURE}.ipk)
+
+	@# set previous TARGET_DIR
+	$(call SIMPLE_OPKG_TOOLS_UNSET_TARGET,NETFLIX)
+endef # NETFLIX_INSTALL_TARGET_CMDS
+else # ($(BR2_PACKAGE_WPEFRAMEWORK_CREATE_IPKG_TARGETS),y)
+define NETFLIX_INSTALL_TARGET_CMDS
+	@# install target files
+	$(call NETFLIX_INSTALL_TARGET_FILES)
+endef # NETFLIX_INSTALL_TARGET_CMDS
+endif # ($(BR2_PACKAGE_WPEFRAMEWORK_CREATE_IPKG_TARGETS),y)
+
+else # ($(BR2_PACKAGE_NETFLIX_LIB),y)
 define NETFLIX_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/netflix $(TARGET_DIR)/usr/bin
 	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/manufss $(TARGET_DIR)/usr/bin
-endef
-
-endif
+endef # NETFLIX_INSTALL_TARGET_CMDS
+endif # ($(BR2_PACKAGE_NETFLIX_LIB),y)
 
 define NETFLIX_PREPARE_DPI
 	mkdir -p $(TARGET_DIR)/root/Netflix/dpi
