@@ -27,6 +27,17 @@ WPEWEBKIT_USE_PORT=JSCOnly
 endif
 endif
 
+# wpewebkit binary package config
+WPEWEBKIT_OPKG_NAME = "wpewebkit"
+WPEWEBKIT_OPKG_VERSION = "0.0.20170728"
+WPEWEBKIT_OPKG_ARCHITECTURE = "${BR2_ARCH}"
+WPEWEBKIT_OPKG_DEPENDS = ""
+WPEWEBKIT_OPKG_MAINTAINER = "Metrological"
+WPEWEBKIT_OPKG_PRIORITY = "optional"
+WPEWEBKIT_OPKG_SECTION = "graphics"
+WPEWEBKIT_OPKG_SOURCE = "${WPEWEBKIT_SITE}"
+WPEWEBKIT_OPKG_DESCRIPTION = "This is a description for WPEWebKit package"
+
 WPEWEBKIT_DEPENDENCIES = host-bison host-cmake host-flex host-gperf host-ruby icu pcre
 
 ifeq ($(WPEWEBKIT_BUILD_WEBKIT),y)
@@ -270,6 +281,7 @@ endef
 
 ifeq ($(WPEWEBKIT_BUILD_JSC),y)
 define WPEWEBKIT_INSTALL_TARGET_CMDS_JSC
+	$(INSTALL) -d $(TARGET_DIR)/usr/bin/ && \
 	cp $(WPEWEBKIT_BUILDDIR)/bin/jsc $(TARGET_DIR)/usr/bin/ && \
 	$(STRIPCMD) $(TARGET_DIR)/usr/bin/jsc
 endef
@@ -279,8 +291,10 @@ endif
 
 ifeq ($(WPEWEBKIT_BUILD_WEBKIT),y)
 define WPEWEBKIT_INSTALL_TARGET_CMDS_WEBKIT
+	$(INSTALL) -d $(TARGET_DIR)/usr/bin/ && \
 	cp $(WPEWEBKIT_BUILDDIR)/bin/WPE{Network,Storage,Web}Process $(TARGET_DIR)/usr/bin/ && \
 	cp $(WPEWEBKIT_BUILDDIR)/bin/WPEWebDriver $(TARGET_DIR)/usr/bin/ && \
+	$(INSTALL) -d $(TARGET_DIR)/usr/lib/ && \
 	cp -d $(WPEWEBKIT_BUILDDIR)/lib/libWPE* $(TARGET_DIR)/usr/lib/ && \
 	$(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit*.so.*
 endef
@@ -288,11 +302,36 @@ else
 WPEWEBKIT_INSTALL_TARGET_CMDS_WEBKIT = true
 endif
 
+ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_CREATE_IPKG_TARGETS),y)
+
+WPEWEBKIT_DEPENDENCIES += ${SIMPLE_OPKG_TOOLS_DEPENDENCIES}
+
+define WPEWEBKIT_INSTALL_TARGET_CMDS
+	@# prepare package metadata
+	$(call SIMPLE_OPKG_TOOLS_INIT,WPEWEBKIT,${@D})
+
+	@# set install target
+	$(call SIMPLE_OPKG_TOOLS_SET_TARGET,WPEWEBKIT,${@D})
+
+	@# install target files
+	($(WPEWEBKIT_INSTALL_TARGET_CMDS_JSC) && \
+	$(WPEWEBKIT_INSTALL_TARGET_CMDS_WEBKIT))
+
+	@# build package
+	$(call SIMPLE_OPKG_TOOLS_BUILD_PACKAGE,${@D})
+
+	@# install package
+	$(call SIMPLE_OPKG_TOOLS_INSTALL_PACKAGE,${@D}/${WPEWEBKIT_OPKG_NAME}_${WPEWEBKIT_OPKG_VERSION}_${WPEWEBKIT_OPKG_ARCHITECTURE}.ipk)
+
+	@# set previous TARGET_DIR
+	$(call SIMPLE_OPKG_TOOLS_UNSET_TARGET,WPEWEBKIT)
+endef
+else # ($(BR2_PACKAGE_WPEFRAMEWORK_CREATE_IPKG_TARGETS),y)
 define WPEWEBKIT_INSTALL_TARGET_CMDS
 	($(WPEWEBKIT_INSTALL_TARGET_CMDS_JSC) && \
 	$(WPEWEBKIT_INSTALL_TARGET_CMDS_WEBKIT))
 endef
-
+endif # ($(BR2_PACKAGE_WPEFRAMEWORK_CREATE_IPKG_TARGETS),y)
 endif
 
 RSYNC_VCS_EXCLUSIONS += --exclude LayoutTests --exclude WebKitBuild
