@@ -2,6 +2,7 @@
 
 SCRIPT_NAME="wpe"
 SOURCE=/mnt/app/mlbr
+PERSISTANTPATH=/mnt/flash/mlbr
 
 cleanup() {
 	echo "${SCRIPT_NAME}: '$1'"
@@ -27,6 +28,10 @@ ln -sfn $SOURCE/usr/share/X11 /usr/share/X11
 ln -sfn $SOURCE/usr/share/fonts/ttf-bitstream-vera /usr/share/fonts/ttf-bitstream-vera
 ln -sfn /mnt/app/refsw/lib/libv3ddriver.so $SOURCE/usr/lib/libGLESv2.so
 ln -sfn /mnt/app/refsw/lib/libv3ddriver.so $SOURCE/usr/lib/libEGL.so
+
+# Netflix
+mkdir -p $PERSISTANTPATH/Netflix/dpi
+ln -s /etc/playready/  $PERSISTANTPATH/Netflix/dpi/playready
 
 # Exports
 export HOME=$SOURCE/root
