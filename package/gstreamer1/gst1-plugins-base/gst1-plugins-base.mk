@@ -232,7 +232,7 @@ else
 GST1_PLUGINS_BASE_CONF_OPTS += --disable-vorbis
 endif
 
-ifeq ($(BR2_PACKAGE_VSS_SDK),y)
+ifeq ($(BR2_PACKAGE_VSS_SDK_MOVE_GSTREAMER),y)
 # this platform needs to run this gstreamer version parallel
 # to an older version.
 GST1_PLUGINS_BASE_AUTORECONF = YES

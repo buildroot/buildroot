@@ -298,7 +298,7 @@ endif
 RSYNC_VCS_EXCLUSIONS += --exclude LayoutTests --exclude WebKitBuild
 
 # Temporary fix for vss platforms
-ifeq ($(BR2_PACKAGE_VSS_SDK),y)
+ifeq ($(BR2_PACKAGE_VSS_SDK_MOVE_GSTREAMER),y)
 WPEWEBKIT_PKGDIR = "$(TOP_DIR)/package/wpe/wpewebkit"
 
 define WPEWEBKIT_APPLY_LOCAL_PATCHES

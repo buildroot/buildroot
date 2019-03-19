@@ -75,7 +75,7 @@ ifeq ($(BR2_PACKAGE_GSTREAMER1_GIT),y)
 GSTREAMER1_DEPENDENCIES += gst1-common
 endif
 
-ifeq ($(BR2_PACKAGE_VSS_SDK),y)
+ifeq ($(BR2_PACKAGE_VSS_SDK_MOVE_GSTREAMER),y)
 # this platform needs to run this gstreamer version parallel
 # to an older version.
 GSTREAMER1_AUTORECONF = YES

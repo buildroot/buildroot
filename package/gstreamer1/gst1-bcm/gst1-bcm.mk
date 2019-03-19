@@ -25,7 +25,7 @@ GST1_BCM_VERSION = 17.1-5
 else ifneq ($(filter y,$(BR2_PACKAGE_HOMECAST_SDK)),)
 GST1_BCM_VERSION = 961a36dcd30c91330b8a9503e12ec3ddb30b70b6
 else ifneq ($(filter y,$(BR2_PACKAGE_VSS_SDK)),)
-GST1_BCM_VERSION = 17.1-12
+GST1_BCM_VERSION = 602150ea6d1d616609e006c9b3acde1b68bbcc71
 else ifneq ($(filter y,$(BR2_PACKAGE_EVASION_SDK)),)
 GST1_BCM_VERSION = 18.2-rdkv-20180727
 else
@@ -150,7 +150,7 @@ ifeq ($(BR2_PACKAGE_HAS_OPUS_DECODER),)
 GST1_BCM_PKGDIR = "$(TOP_DIR)/package/gstreamer1/gst1-bcm"
 endif
 
-ifeq ($(BR2_PACKAGE_VSS_SDK),y)
+ifeq ($(BR2_PACKAGE_VSS_SDK_MOVE_GSTREAMER),y)
 # this platform needs to run this gstreamer version parallel
 # to an older version.
 GST1_BCM_CONF_OPTS += \

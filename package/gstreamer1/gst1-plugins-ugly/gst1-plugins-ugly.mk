@@ -145,7 +145,7 @@ endif
 # Use the following command to extract license info for plugins.
 # # find . -name 'plugin-*.xml' | xargs grep license
 
-ifeq ($(BR2_PACKAGE_VSS_SDK),y)
+ifeq ($(BR2_PACKAGE_VSS_SDK_MOVE_GSTREAMER),y)
 # this platform needs to run this gstreamer version parallel
 # to an older version.
 GST1_PLUGINS_UGLY_AUTORECONF = YES

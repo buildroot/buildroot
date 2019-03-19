@@ -460,7 +460,7 @@ ifeq ($(BR2_PACKAGE_GST1_PLUGINS_DORNE),y)
 GST1_PLUGINS_GOOD_POST_PATCH_HOOKS += GST1_PLUGINS_GOOD_APPLY_DORNE_PATCHES
 endif
 
-ifeq ($(BR2_PACKAGE_VSS_SDK),y)
+ifeq ($(BR2_PACKAGE_VSS_SDK_MOVE_GSTREAMER),y)
 # this platform needs to run this gstreamer version parallel
 # to an older version.
 GST1_PLUGINS_GOOD_AUTORECONF = YES
