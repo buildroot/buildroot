@@ -5,11 +5,17 @@ config BR2_PACKAGE_VSS_SDK
 	select BR2_PACKAGE_HAS_LIBGLES
     select BR2_PACKAGE_HAS_NEXUS
     select BR2_PACKAGE_HAS_PLAYREADY
-    select BR2_PACKAGE_HAS_VP9_DECODER 
+    select BR2_PACKAGE_HAS_VP9_DECODER
+    select BR2_PACKAGE_HAS_NEXUS_SAGE
 	help
 	  Pre-compiled binaries for a platform
 
 if BR2_PACKAGE_VSS_SDK
+
+config BR2_PACKAGE_VSS_SDK_MOVE_GSTREAMER
+	bool "move g-streamer"
+	help
+	  Move g-streamer to a other location
 
 config BR2_PACKAGE_PROVIDES_LIBEGL
 	default "vss-sdk"
@@ -26,4 +32,9 @@ config BR2_PACKAGE_PROVIDES_PLAYREADY
 config BR2_PACKAGE_PROVIDES_VP9_DECODER
 	default "vss-sdk"
 
+config BR2_PACKAGE_PROVIDES_OPUS_DECODER
+	default "vss-sdk"
+
+config BR2_PACKAGE_PROVIDES_NEXUS_SAGE
+	default "vss-sdk"
 endif
