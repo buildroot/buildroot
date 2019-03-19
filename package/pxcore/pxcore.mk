@@ -7,10 +7,10 @@ PXCORE_VERSION = 0db82d484abadebadeb3d8253b5a55924bcebaf8
 PXCORE_SITE_METHOD = git
 PXCORE_SITE = git://github.com/pxscene/pxCore
 PXCORE_INSTALL_STAGING = YES
-PXCORE_AUTORECONF = YES
-PXCORE_AUTORECONF_OPTS = "-Icfg"
 
-PXCORE_DEPENDENCIES = openssl freetype westeros util-linux libpng libcurl rtremote pxcore-libnode
+PXCORE_DEPENDENCIES = openssl freetype westeros util-linux libpng libcurl rtremote pxcore-tools pxcore-libnode
+
+export HOSTNAME = "raspberrypi"
 
 PXCORE_CONF_OPTS += \
     -DBUILD_WITH_WAYLAND=ON \
@@ -33,9 +33,22 @@ PXCORE_CONF_OPTS += \
     -DBUILD_OPTIMUS_STATIC_LIB=ON \
     -DSPARK_BACKGROUND_TEXTURE_CREATION=ON \
     -DSPARK_ENABLE_LRU_TEXTURE_EJECTION=OFF \
-    -DHOSTNAME=raspberrypi \
-    -DDISABLE_WAYLAND="TRUE"
+    -DHOSTNAME=raspberrypi
 
+define PXCORE_INSTALL_LIBS
+    $(INSTALL) -m 755 $(@D)/build/egl/libpxCore.so $(1)/usr/lib/
+    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/liboptimus.so $(1)/usr/lib/
+endef
 
-PXCORE_PRE_CONFIGURE_HOOKS += BUILD_DEPENDENCY_LIBNODE
+define PXCORE_INSTALL_STAGING_CMDS
+    make -C $(@D) preinstall
+    $(call PXCORE_INSTALL_LIBS, $(STAGING_DIR))
+endef
+
+define PXCORE_INSTALL_TARGET_CMDS
+    make -C $(@D) preinstall
+    $(call PXCORE_INSTALL_LIBS, $(TARGET_DIR))
+    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/pxscene $(TARGET_DIR)/usr/bin
+endef
+
 $(eval $(cmake-package))

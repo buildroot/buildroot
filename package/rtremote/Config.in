@@ -1,5 +1,6 @@
 config BR2_PACKAGE_RTREMOTE
 	bool "rtRemote"
-	select BR2_PACKAGE_RTCORE
+	select BR2_PACKAGE_PXCORE_TOOLS
+	select BR2_PACKAGE_PXCORE_RTCORE
 	help
 	  rtRemote

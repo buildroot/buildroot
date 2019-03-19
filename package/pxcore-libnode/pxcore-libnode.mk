@@ -12,6 +12,7 @@ PXCORE_LIBNODE_INSTALL_STAGING = YES
 PXCORE_LIBNODE_LICENSE = MIT (core code); MIT, Apache and BSD family licenses (Bundled components)
 PXCORE_LIBNODE_LICENSE_FILES = LICENSE
 PXCORE_LIBNODE_DEPENDENCIES = openssl
+PXCORE_LIBNODE_VER = 6.9.0
 
 PXCORE_LIBNODE_CONF_OPTS = \
         --shared \
@@ -19,7 +20,6 @@ PXCORE_LIBNODE_CONF_OPTS = \
 	--dest-os=linux \
         --shared-openssl \
         --without-intl
-endif
 
 ifeq ($(BR2_i386),y)
 PXCORE_LIBNODE_CPU = ia32
@@ -55,11 +55,10 @@ PXCORE_LIBNODE_PATH = examples/pxScene2d/external/
 
 define PXCORE_LIBNODE_CONFIGURE_CMDS
         cd $(@D)/; \
-        find . -name examples -prune -o -type f;
-# -exec rm -rf {} +; 
-#        find . -name examples -prune -o -type d -exec rm -rf {} +; \
-        mv $(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/* $(@D)/
-        rm -rf examples/
+        find . -name examples -prune -o -type f -exec rm -rf {} +; \
+        find . -name examples -prune -o -type d -exec rm -rf {} +; \
+        mv $(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/* $(@D)/; \
+        rm -rf examples/;
 
 	mkdir -p $(@D)/bin
 	ln -sf $(HOST_DIR)/usr/bin/python2 $(@D)/bin/python

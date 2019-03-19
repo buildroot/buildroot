@@ -1,0 +1,15 @@
+config BR2_PACKAGE_PXCORE_TOOLS
+	bool "pxcore tools"
+
+if BR2_PACKAGE_PXCORE_TOOLS
+config BR2_PACKAGE_PXCORE_RTCORE
+	bool "rtcore"
+	help
+	  rtCore
+
+config BR2_PACKAGE_PXCORE_DUKLUV
+	bool "dukluv"
+	help
+	  dukluv
+
+endif

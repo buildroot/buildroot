@@ -1,0 +1,30 @@
+diff --git a/examples/pxScene2d/src/CMakeLists.txt b/examples/pxScene2d/src/CMakeLists.txt
+index d6d3ddc..11a55f5 100644
+--- a/examples/pxScene2d/src/CMakeLists.txt
++++ b/examples/pxScene2d/src/CMakeLists.txt
+@@ -110,8 +110,8 @@ if (APPLE)
+ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -fpermissive -g -Wall -Wno-attributes -Wall -Wextra")
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -fpermissive -g -Wall -Wno-attributes -Wall -Wextra")
+-    execute_process(COMMAND "hostname" OUTPUT_VARIABLE HOSTNAME)
+-    string(STRIP ${HOSTNAME} HOSTNAME)
++    #execute_process(COMMAND "hostname" OUTPUT_VARIABLE HOSTNAME)
++    #string(STRIP ${HOSTNAME} HOSTNAME)
+     set(PXSCENE_DEFINITIONS ${PXSCENE_DEFINITIONS} -DRT_PLATFORM_LINUX)
+     add_definitions(${COMM_DEPS_DEFINITIONS})
+ 
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 13c92ff..6a0b387 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -62,8 +62,8 @@ if (APPLE)
+ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -g")
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -fPIC -g")
+-    execute_process(COMMAND "hostname" OUTPUT_VARIABLE HOSTNAME)
+-    string(STRIP ${HOSTNAME} HOSTNAME)
++#    execute_process(COMMAND "hostname" OUTPUT_VARIABLE HOSTNAME)
++#    string(STRIP ${HOSTNAME} HOSTNAME)
+ 
+     add_definitions(${COMM_DEPS_DEFINITIONS})
+ 
