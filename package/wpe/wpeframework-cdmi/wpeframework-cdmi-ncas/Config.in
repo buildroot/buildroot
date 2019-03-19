@@ -1,0 +1,8 @@
+config BR2_PACKAGE_WPEFRAMEWORK_CDMI_NCAS
+	bool "ncas"
+	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+	select BR2_PACKAGE_WPEFRAMEWORK_CDM
+	default n
+	help
+	  Downloadable Native CAS
+
