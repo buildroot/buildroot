@@ -3,14 +3,17 @@
 # rtcore
 #
 ################################################################################
-PXCORE_TOOLS_VERSION = cbb16e1c6a4166175aaf178d7e9c15b617d35d7a
+PXCORE_TOOLS_VERSION = 65b261180bd189248bd3c69933fb369109080dcf
 PXCORE_TOOLS_SITE_METHOD = git
 PXCORE_TOOLS_SITE = git://github.com/pxscene/pxCore
 PXCORE_TOOLS_INSTALL_STAGING = YES
 
+export HOSTNAME = "raspberrypi"
+
 PXCORE_TOOLS_CONF_OPTS += \
     -DBUILD_PXCORE_LIBS=OFF \
-    -DBUILD_PXSCENE=OFF
+    -DBUILD_PXSCENE=OFF \
+    -DHOSTNAME=raspberrypi
 
 ifeq ($(BR2_PACKAGE_PXCORE_DUKLUV),y)
 PXCORE_TOOLS_CONF_OPTS += \
@@ -30,7 +33,7 @@ define RTCORE_INSTALL_STAGING_CMDS
     mkdir -p $(STAGING_DIR)/usr/include/unix
     cp -Rpf $(@D)/src/*.h $(STAGING_DIR)/usr/include/
     cp -Rpf $(@D)/src/unix/*.h $(STAGING_DIR)/usr/include/unix
-    $(INSTALL) -m 755 $(@D)/build/glut/librtCore.so $(STAGING_DIR)/usr/lib/
+    $(INSTALL) -m 755 $(@D)/build/egl/librtCore*.so $(STAGING_DIR)/usr/lib/
 endef
 endif
 
@@ -52,7 +55,7 @@ endef
 
 define PXCORE_TOOLS_INSTALL_TARGET_CMDS
     make -C $(@D) preinstall
-    $(INSTALL) -m 755 $(@D)/build/glut/librtCore.so $(TARGET_DIR)/usr/lib/
+    $(INSTALL) -m 755 $(@D)/build/egl/librtCore*.so $(TARGET_DIR)/usr/lib/
 endef
 
 $(eval $(cmake-package))

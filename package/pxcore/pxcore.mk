@@ -4,6 +4,8 @@
 #
 ################################################################################
 PXCORE_VERSION = 0db82d484abadebadeb3d8253b5a55924bcebaf8
+PXCORE_VERSION = cbb16e1c6a4166175aaf178d7e9c15b617d35d7a
+PXCORE_VERSION = 65b261180bd189248bd3c69933fb369109080dcf
 PXCORE_SITE_METHOD = git
 PXCORE_SITE = git://github.com/pxscene/pxCore
 PXCORE_INSTALL_STAGING = YES
@@ -33,7 +35,8 @@ PXCORE_CONF_OPTS += \
     -DBUILD_OPTIMUS_STATIC_LIB=ON \
     -DSPARK_BACKGROUND_TEXTURE_CREATION=ON \
     -DSPARK_ENABLE_LRU_TEXTURE_EJECTION=OFF \
-    -DHOSTNAME=raspberrypi
+    -DHOSTNAME=raspberrypi \
+    -DBUILD_RTCORE_LIBS=OFF
 
 define PXCORE_INSTALL_LIBS
     $(INSTALL) -m 755 $(@D)/build/egl/libpxCore.so $(1)/usr/lib/
@@ -48,7 +51,7 @@ endef
 define PXCORE_INSTALL_TARGET_CMDS
     make -C $(@D) preinstall
     $(call PXCORE_INSTALL_LIBS, $(TARGET_DIR))
-    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/pxscene $(TARGET_DIR)/usr/bin
+    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/Spark $(TARGET_DIR)/usr/bin
 endef
 
 $(eval $(cmake-package))

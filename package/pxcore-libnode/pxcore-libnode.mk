@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PXCORE_LIBNODE_VERSION = 0db82d484abadebadeb3d8253b5a55924bcebaf8
+PXCORE_LIBNODE_VERSION = 65b261180bd189248bd3c69933fb369109080dcf
 PXCORE_LIBNODE_SITE_METHOD = git
 PXCORE_LIBNODE_SITE = git://github.com/pxscene/pxCore
 PXCORE_LIBNODE_DEPENDENCIES = host-python openssl
@@ -59,6 +59,9 @@ define PXCORE_LIBNODE_CONFIGURE_CMDS
         find . -name examples -prune -o -type d -exec rm -rf {} +; \
         mv $(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/* $(@D)/; \
         rm -rf examples/;
+        touch $(@D)/.stamp_downloaded
+        touch $(@D)/.stamp_extracted
+        touch $(@D)/.stamp_patched
 
 	mkdir -p $(@D)/bin
 	ln -sf $(HOST_DIR)/usr/bin/python2 $(@D)/bin/python
