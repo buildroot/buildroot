@@ -16,6 +16,27 @@ config BR2_PACKAGE_VSS_SDK_MOVE_GSTREAMER
 	bool "move g-streamer"
 	help
 	  Move g-streamer to a other location
+	  
+config BR2_PACKAGE_VSS_SDK_INSTALL_INITD
+	bool "initd scripts"
+	help
+	  Install initd scripts for nexus kernelmodules and nxserver
+
+config BR2_PACKAGE_NEXUS_SAGE_PATH
+    string "SAGE Path"
+    default "/usr/bin/"
+    help
+        Sage binaries path
+
+config BR2_PACKAGE_VSS_SDK_NXSERVER_ARGS
+    string "nxserver arguments"
+    default "-ir b -sd off -ms12 -audio_description -hdcp2x_keys /tmp/BCH2 -hdcp1x_keys /proc/device-tree/chosen/cisco,stbplatform/cisco,stbkey/cisco,hdcpbcmcert"
+    help
+        Arguments for the nxserver
+
+config BR2_PACKAGE_SDK_INSTALL
+    string 
+	default "vss-sdk"
 
 config BR2_PACKAGE_PROVIDES_LIBEGL
 	default "vss-sdk"
@@ -37,4 +58,5 @@ config BR2_PACKAGE_PROVIDES_OPUS_DECODER
 
 config BR2_PACKAGE_PROVIDES_NEXUS_SAGE
 	default "vss-sdk"
+
 endif
