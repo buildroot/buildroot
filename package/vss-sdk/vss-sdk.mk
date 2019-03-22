@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-VSS_SDK_VERSION = 6df72498291320411dc7cc90dee2c3105f9461ae
+VSS_SDK_VERSION = 19eae613b2cdc79a14a7fa0361bace23b7086b3c
 VSS_SDK_SITE = git@github.com:Metrological/SDK_VSS.git
 VSS_SDK_SITE_METHOD = git
 VSS_SDK_LICENSE = PROPRIETARY
