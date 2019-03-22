@@ -52,6 +52,20 @@ define PXCORE_INSTALL_TARGET_CMDS
     make -C $(@D) preinstall
     $(call PXCORE_INSTALL_LIBS, $(TARGET_DIR))
     $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/Spark $(TARGET_DIR)/usr/bin
+
+    mkdir -p $(TARGET_DIR)/root/spark
+    cp -ar $(@D)/examples/pxScene2d/src/node_modules $(TARGET_DIR)/root/spark/
+    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/*.js $(TARGET_DIR)/root/spark/
+    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/*.json $(TARGET_DIR)/root/spark/
+    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/*.ttf $(TARGET_DIR)/root/spark/
+    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/sparkpermissions.conf $(TARGET_DIR)/root/spark/
+    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/waylandregistry.conf $(TARGET_DIR)/root/spark/
+    cp -ar $(@D)/examples/pxScene2d/src/rcvrcore $(TARGET_DIR)/root/spark/
+    cp -ar $(@D)/examples/pxScene2d/src/browser $(TARGET_DIR)/root/spark/
+    cp -ar $(@D)/examples/pxScene2d/src/optimus $(TARGET_DIR)/root/spark/
+    cp -ar $(@D)/examples/pxScene2d/src/duk_modules $(TARGET_DIR)/root/spark/
+    cp -ar $(@D)/examples/pxScene2d/src/v8_modules $(TARGET_DIR)/root/spark/
+    cp -ar $(@D)/examples/pxScene2d/src/rasterizer $(TARGET_DIR)/root/spark/
 endef
 
 $(eval $(cmake-package))
