@@ -17,6 +17,10 @@ export HG := $(call qstrip,$(BR2_HG))
 export SCP := $(call qstrip,$(BR2_SCP))
 export LOCALFILES := $(call qstrip,$(BR2_LOCALFILES))
 
+# Version of the format of the archives we generate in the corresponding
+# download backend:
+BR_FMT_VERSION_git = -br1
+
 DL_WRAPPER = support/download/dl-wrapper
 
 # DL_DIR may have been set already from the environment
