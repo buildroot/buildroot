@@ -1,0 +1,39 @@
+diff --git a/examples/pxScene2d/src/CMakeLists.txt b/examples/pxScene2d/src/CMakeLists.txt
+index 2439be8..d9a2cdd 100644
+--- a/examples/pxScene2d/src/CMakeLists.txt
++++ b/examples/pxScene2d/src/CMakeLists.txt
+@@ -158,7 +158,7 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+              ${COMM_DEPS_LIBRARIES}
+              pthread rt dl m)
+ 
+-    set(PXSCENE_APP_LIBRARIES ${PXSCENE_APP_LIBRARIES} pxCore rtCore_s)
++    set(PXSCENE_APP_LIBRARIES ${PXSCENE_APP_LIBRARIES} pxCore rtCore)
+ 
+     if (HOSTNAME STREQUAL "raspberrypi")
+         message("building pxscene for raspberrypi")
+@@ -388,7 +388,7 @@ if (BUILD_WITH_WAYLAND)
+     set(PXWAYLAND_LIB_FILES ${PXWAYLAND_LIB_FILES} pxWayland.cpp)
+     if (BUILD_RTREMOTE_LIBS)
+         set(PXSCENE_DEFINITIONS ${PXSCENE_DEFINITIONS} -DENABLE_PX_WAYLAND_RPC)
+-        set(PXSCENE_APP_LIBRARIES ${PXSCENE_APP_LIBRARIES} rtremote_shared)
++        set(PXSCENE_APP_LIBRARIES ${PXSCENE_APP_LIBRARIES} rtRemote)
+         set(PXSCENE_LINK_DIRECTORIES ${PXSCENE_LINK_DIRECTORIES})
+     endif (BUILD_RTREMOTE_LIBS)
+ else ()
+@@ -587,11 +587,11 @@ endif (PXSCENE_PERMISSIONS_CHECK)
+ 
+ if (PX_LIBRARY_SUPPORT GREATER 0)
+     message("Enabling build support for libraries")
+-    if (PX_LIBRARY_LINK_PXCORE GREATER 0)
+-        if (NOT APPLE)
+-            set(LIBRARY_LINKER_OPTIONS -Wl,--whole-archive ${PXCORE_LIB_LOCATION}/libpxCore.a -Wl,--no-whole-archive)
+-        endif (NOT APPLE)
+-    endif (PX_LIBRARY_LINK_PXCORE GREATER 0)
++    #if (PX_LIBRARY_LINK_PXCORE GREATER 0)
++        #if (NOT APPLE)
++        #    set(LIBRARY_LINKER_OPTIONS -Wl,--whole-archive ${PXCORE_LIB_LOCATION}/libpxCore.a -Wl,--no-whole-archive)
++        #endif (NOT APPLE)
++    #endif (PX_LIBRARY_LINK_PXCORE GREATER 0)
+ 
+     if (BUILD_PXSCENE_STATIC_LIB)
+         message("Enabling build support for pxscene static libraries")
