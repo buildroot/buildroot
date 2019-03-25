@@ -518,7 +518,7 @@ ifndef $(2)_SOURCE
  ifdef $(3)_SOURCE
   $(2)_SOURCE = $$($(3)_SOURCE)
  else ifdef $(2)_VERSION
-  $(2)_SOURCE			?= $$($(2)_BASENAME_RAW).tar.gz
+  $(2)_SOURCE			?= $$($(2)_BASENAME_RAW)$$(call pkg_source_ext,$(2))
  endif
 endif
 

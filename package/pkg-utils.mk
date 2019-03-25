@@ -40,6 +40,11 @@ KCONFIG_DISABLE_OPT = $(call KCONFIG_MUNGE_DOT_CONFIG, $(1), $(SHARP_SIGN) $(1) 
 pkgdir = $(dir $(lastword $(MAKEFILE_LIST)))
 pkgname = $(lastword $(subst /, ,$(pkgdir)))
 
+# Helper to build the extension for a package archive, based on various
+# conditions.
+# $(1): upper-case package name
+pkg_source_ext = .tar.gz
+
 # Define extractors for different archive suffixes
 INFLATE.bz2  = $(BZCAT)
 INFLATE.gz   = $(ZCAT)
