@@ -36,8 +36,8 @@ SPARK_CONF_OPTS += \
     -DSPARK_ENABLE_LRU_TEXTURE_EJECTION=OFF \
     -DHOSTNAME=raspberrypi \
     -DBUILD_RTCORE_LIBS=OFF \
-    -DSUPPORT_DUKTAPE=ON -DBUILD_DUKTAPE=ON
-
+    -DSUPPORT_DUKTAPE=OFF \
+    -DBUILD_DUKTAPE=ON
 
 ifeq ($(BR2_PACKAGE_SPARK_LIB), y)
 
@@ -77,6 +77,12 @@ endef
 ifeq ($(BR2_PACKAGE_SPARK_LIB), y)
 define SPARK_INSTALL_STAGING_CMDS
     $(call SPARK_INSTALL_LIBS, $(STAGING_DIR))
+    mkdir -p $(STAGING_DIR)/usr/include/spark
+    cp -ar $(@D)/src/*.h $(STAGING_DIR)/usr/include/spark/
+    cp -ar $(@D)/examples/pxScene2d/src/*.h $(STAGING_DIR)/usr/include/spark/
+    mkdir -p $(STAGING_DIR)/usr/include/spark/wayland_egl
+    cp -ar $(@D)/src/wayland_egl/*.h $(STAGING_DIR)/usr/include/spark/wayland_egl/
+    $(INSTALL) -D package/spark/Spark.pc $(STAGING_DIR)/usr/lib/pkgconfig/Spark.pc
     $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/libSpark.so $(STAGING_DIR)/usr/lib
 endef
 
