@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_SPARK_VERSION = e722e104bb440bd0e87167285bf8bdc2e8a52e60
+WPEFRAMEWORK_SPARK_VERSION = 140a3d29560b63921eff31bb92e86fac1ddb1d9c
 WPEFRAMEWORK_SPARK_SITE_METHOD = git
 WPEFRAMEWORK_SPARK_SITE = git@github.com:WebPlatformForEmbedded/WPEPluginSpark.git
 WPEFRAMEWORK_SPARK_INSTALL_STAGING = YES

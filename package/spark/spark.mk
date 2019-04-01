@@ -3,11 +3,9 @@
 # spark
 #
 ################################################################################
-SPARK_VERSION = 0db82d484abadebadeb3d8253b5a55924bcebaf8
-SPARK_VERSION = cbb16e1c6a4166175aaf178d7e9c15b617d35d7a
-SPARK_VERSION = 65b261180bd189248bd3c69933fb369109080dcf
+SPARK_VERSION = dac0e9fecc26480a9fa1e53781244c9b9f9aa16c
 SPARK_SITE_METHOD = git
-SPARK_SITE = git://github.com/pxscene/pxCore
+SPARK_SITE = git://github.com/HaseenaSainul/pxCore
 SPARK_INSTALL_STAGING = YES
 
 SPARK_DEPENDENCIES = openssl freetype westeros util-linux libpng libcurl rtremote rtcore pxcore-libnode
@@ -31,7 +29,6 @@ SPARK_CONF_OPTS += \
     -DPREFER_SYSTEM_LIBRARIES=ON \
     -DDISABLE_TURBO_JPEG=ON \
     -DDISABLE_DEBUG_MODE=ON \
-    -DBUILD_OPTIMUS_STATIC_LIB=ON \
     -DSPARK_BACKGROUND_TEXTURE_CREATION=ON \
     -DSPARK_ENABLE_LRU_TEXTURE_EJECTION=OFF \
     -DHOSTNAME=raspberrypi \
@@ -48,6 +45,7 @@ SPARK_CONF_OPTS += \
 else
 
 SPARK_CONF_OPTS += \
+    -DBUILD_OPTIMUS_STATIC_LIB=ON \
     -DBUILD_PXSCENE_APP_WITH_PXSCENE_LIB=ON \
     -DBUILD_RTREMOTE_LIBS=ON
 endif
@@ -55,7 +53,7 @@ endif
 
 define SPARK_INSTALL_LIBS
     $(INSTALL) -m 755 $(@D)/build/egl/libpxCore.so $(1)/usr/lib/
-    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/liboptimus.so $(1)/usr/lib/
+#    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/liboptimus.so $(1)/usr/lib/
 endef
 
 define SPARK_INSTALL_DEPS

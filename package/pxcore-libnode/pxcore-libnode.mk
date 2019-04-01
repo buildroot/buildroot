@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PXCORE_LIBNODE_VERSION = 65b261180bd189248bd3c69933fb369109080dcf
+PXCORE_LIBNODE_VERSION = f8a3e47e4e8e9bb0fcef5ae89e465a15235d8bec
 PXCORE_LIBNODE_SITE_METHOD = git
 PXCORE_LIBNODE_SITE = git://github.com/pxscene/pxCore
 PXCORE_LIBNODE_DEPENDENCIES = host-python openssl
