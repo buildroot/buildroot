@@ -47,6 +47,8 @@ else
 PYTHON_KIVY_ENV += USE_X11=0
 endif
 
+PYTHON_KIVY_ENV += USE_OPENGL_ES2=1
+
 define PYTHON_KIVY_REMOVE_EXAMPLES
 	rm -rf $(TARGET_DIR)/usr/share/kivy-examples
 endef

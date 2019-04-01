@@ -1,9 +1,8 @@
 config BR2_PACKAGE_PYTHON_KIVY
 	bool "python-kivy"
-	depends on BR2_PACKAGE_HAS_LIBGL
 	select BR2_PACKAGE_HOST_PYTHON_CYTHON
 	select BR2_PACKAGE_LIBPNG # runtime
-	select BR2_PACKAGE_MTDEV # runtime
+	select BR2_PACKAGE_MTDEV  # runtime
 	select BR2_PACKAGE_PYTHON_DOCUTILS # runtime
 	select BR2_PACKAGE_PYTHON_PYGMENTS # runtime
 	help
@@ -12,5 +11,5 @@ config BR2_PACKAGE_PYTHON_KIVY
 
 	  http://kivy.org
 
-comment "python-kivy needs an OpenGL provider"
-	depends on !BR2_PACKAGE_HAS_LIBGL
+# comment "python-kivy needs an OpenGL provider"
+	#depends on !BR2_PACKAGE_HAS_LIBGL
