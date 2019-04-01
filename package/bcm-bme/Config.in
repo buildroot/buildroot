@@ -1,7 +1,8 @@
- config BR2_PACKAGE_BCM_BME
+config BR2_PACKAGE_BCM_BME
 	bool "bcm-native-mediaplayer"
 	depends on BR2_PACKAGE_HAS_NEXUS
+	select BR2_PACKAGE_GYP
 	help
 	  bcm-bme
 
- 
+source "package/bcm-bme/bme-amazon-backend/Config.in"

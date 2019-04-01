@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BCM_BME_VERSION = 1c99b11cc71a1aefa742da1c4b7df8a2960268eb
+BCM_BME_VERSION = 48844eae4dac36feb9febcdc721c25ec4d5096e6
 BCM_BME_SITE = git@github.com:Metrological/bcm-bme.git
 BCM_BME_SITE_METHOD = git
 BCM_BME_DEPENDENCIES = gyp host-ninja
@@ -110,6 +110,7 @@ define  BCM_BME_INSTALL_DEV
 	$(call BCM_BME_INSTALL_PC,$(STAGING_DIR))
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/bme
 	$(INSTALL) -m 644 $(@D)/player/include/*.h $(STAGING_DIR)/usr/include/bme/
+	$(INSTALL) -m 644 $(@D)/shared/*.h $(STAGING_DIR)/usr/include/bme/
 endef
 
 define BCM_BME_BUILD_CMDS
@@ -125,3 +126,5 @@ define BCM_BME_INSTALL_TARGET_CMDS
 endef
 
 $(eval $(generic-package))
+
+include package/bcm-bme/bme-amazon-backend/bme-amazon-backend.mk
