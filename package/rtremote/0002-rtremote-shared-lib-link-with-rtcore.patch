@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d3a6680..f067a97 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -74,7 +74,7 @@ if (BUILD_RTREMOTE_LIBS)
+         message("Building rtRemote shared lib")
+         add_library(rtremote_shared SHARED ${RTREMOTE_SOURCE_FILES})
+         set_target_properties(rtremote_shared PROPERTIES OUTPUT_NAME "rtRemote")
+-        target_link_libraries(rtremote_shared ${LIBRARY_LINKER_OPTIONS})
++        target_link_libraries(rtremote_shared ${LIBRARY_LINKER_OPTIONS} -lrtCore)
+     endif (BUILD_RTREMOTE_SHARED_LIB)
+ 
+     if (BUILD_RTREMOTE_STATIC_LIB)
