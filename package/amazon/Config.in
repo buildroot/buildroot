@@ -12,6 +12,10 @@ config BR2_PACKAGE_AMAZON
 if BR2_PACKAGE_AMAZON
 menu "Options"
 
+config BR2_PACKAGE_AMAZON_INCLUDE_IGNITION
+	bool "ignition"
+	default "n"
+
 config BR2_PACKAGE_AMAZON_PLATFORM_FAMILY_NAME
 	string "family name"
 	default "rpi-metrological"

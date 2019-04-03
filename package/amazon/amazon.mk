@@ -7,12 +7,20 @@
 AMAZON_VERSION = adda6662b3aeabeab1263f80591830aab6ff1b07
 AMAZON_SITE_METHOD = git
 AMAZON_SITE = git@github.com:Metrological/amazon.git
-AMAZON_INSTALL_STAGING = NO
+AMAZON_INSTALL_STAGING = YES
 AMAZON_INSTALL_TARGET = YES
 AMAZON_DEPENDENCIES = host-cmake zlib jpeg libcurl libpng wpeframework gstreamer1 
 
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
  AMAZON_DEPENDENCIES += rpi-userland
+endif
+
+ifeq ($(BR2_PACKAGE_BCM_REFSW),y)
+ AMAZON_DEPENDENCIES += bcm-refsw
+endif
+
+ifeq ($(BR2_PACKAGE_BCM_BME),y)
+ AMAZON_DEPENDENCIES += bcm-bme bme-amazon-backend
 endif
 
 define AMAZON_CONFIGURATION
@@ -78,14 +86,14 @@ endef
 
 ifeq ($(BR2_PACKAGE_AMAZON_USE_ORIGINAL_SOURCES),y)
 define AMAZON_GET_SOURCES
-	rm -rf $(@D)/build
-	rm -rf $(@D)/common
-	rm -rf $(@D)/ignition
-	rm -rf $(@D)/ruby
-	$(call AMAZON_MAKE, ignition-repo-code)
-	$(call AMAZON_MAKE, ruby-repo-code)
-	$(call AMAZON_MAKE, common-repo-code)
-	$(call AMAZON_APPLY_CUSTOM_PATCHES)   
+  rm -rf $(@D)/build
+  rm -rf $(@D)/common
+  rm -rf $(@D)/ignition
+  rm -rf $(@D)/ruby
+  $(call AMAZON_MAKE, ignition-repo-code)
+  $(call AMAZON_MAKE, ruby-repo-code)
+  $(call AMAZON_MAKE, common-repo-code)
+  $(call AMAZON_APPLY_CUSTOM_PATCHES)
 endef
 endif
 
@@ -98,7 +106,7 @@ define AMAZON_CLEAROUT_FILES
 endef
 
 define AMAZON_MAKE
-$(MAKE) -C $(@D)/tools/ $1 $2
+  SDK_ROOT=$(STAGING_DIR) $(MAKE) -C $(@D)/tools/ $1 $2
 endef
 
 define AMAZON_CONFIGURE_CMDS
@@ -106,41 +114,103 @@ define AMAZON_CONFIGURE_CMDS
     $(call GENERATE_BOOST_CONFIG)
     $(call GENERATE_BUILD_CONFIG)
     $(call AMAZON_GET_SOURCES) 
+    $(call AMAZON_CLEAN_COMPONENTS)
 endef
 
-define AMAZON_BUILD_CMDS
+define AMAZON_CLEAN_COMPONENTS
+  $(call AMAZON_MAKE, ruby-clean)
+  $(call AMAZON_MAKE, dpc-clean)
+  $(call AMAZON_MAKE, dpp-clean)
+  $(call AMAZON_MAKE, ignition-clean)
+endef
 
- export PKG_CONFIG_SYSROOT_DIR=$(STAGING_DIR)
- $(call AMAZON_MAKE, dpc, BUILD_TYPE=$(AMAZON_BUILD_TYPE))
- $(call AMAZON_MAKE, dpp, BUILD_TYPE=$(AMAZON_BUILD_TYPE))
- $(call AMAZON_MAKE, ignition, BUILD_TYPE=$(AMAZON_BUILD_TYPE))
- $(call AMAZON_MAKE, ignition-device, BUILD_TYPE=$(AMAZON_BUILD_TYPE))
- $(call AMAZON_MAKE, ruby, BACKEND=$(AMAZON_BACKEND) BUILD_TYPE=$(AMAZON_BUILD_TYPE))
+AMAZON_CXX_FLAGS = -std=c++11
+HAWAII_BINDINGS_LIBS = -lcurl
+SDK_INCLUDE_DIRECTORIES = ${STAGING_DIR}/usr/include
+
+ifeq ($(BR2_PACKAGE_BCM_BME),y)
+  HAWAII_BINDINGS_LIBS += -lbroadcom-backend -ldl
+  SDK_INCLUDE_DIRECTORIES += ${STAGING_DIR}/usr/include/bme ${STAGING_DIR}/usr/include/refsw
+endif
+
+################################################################################
+# DCP/DPP
+################################################################################
+define AMAZON_BUILD_DPC_DPP
+  $(call AMAZON_MAKE, dpp, BUILD_TYPE=$(AMAZON_BUILD_TYPE))
+  $(call AMAZON_MAKE, dpc, BUILD_TYPE=$(AMAZON_BUILD_TYPE))
+endef
+
+################################################################################
+# Ruby
+################################################################################
+RUBY_MAKE_OPTIONS=\
+  VERBOSE=OFF \
+  RUBY_USING_IGNITION_CURL=OFF \
+  HAWAII_BINDINGS_LIBS="${HAWAII_BINDINGS_LIBS}" \
+  SDK_INCLUDE_DIRECTORIES="${SDK_INCLUDE_DIRECTORIES}" \
+  SDK_FLAGS="${AMAZON_CXX_FLAGS}"
+
+define AMAZON_BUILD_RUBY
+  $(call AMAZON_BUILD_DPC_DPP)
+  $(call AMAZON_MAKE, ruby, BACKEND=$(AMAZON_BACKEND) BUILD_TYPE=$(AMAZON_BUILD_TYPE) ${RUBY_MAKE_OPTIONS})
+endef
+
+define AMAZON_INSTALL_RUBY
+  $(INSTALL) -v -m 750 -D $(@D)/install/$(BR2_PACKAGE_AMAZON_PLATFORM_NAME)/bin/*.so $(1)/usr/lib
+endef
+
+define AMAZON_INSTALL_RUBY_DEV
+  $(call AMAZON_INSTALL_RUBY, ${STAGING_DIR})
+endef
+
+################################################################################
+# Ignition
+################################################################################
+ifeq ($(BR2_PACKAGE_AMAZON_INCLUDE_IGNITION),y)
+  define AMAZON_BUILD_IGNITION
+    $(call AMAZON_MAKE, ignition, BUILD_TYPE=$(AMAZON_BUILD_TYPE))
+    $(call AMAZON_MAKE, ignition-device, BUILD_TYPE=$(AMAZON_BUILD_TYPE))
+  endef
+
+  define AMAZON_INSTALL_IGNITION
+    $(INSTALL) -v -d -m 0755 $(TARGET_DIR)/$(BR2_PACKAGE_AMAZON_IG_INSTALL_PATH)
+
+    if [ ! -h "$(1)/$(BR2_PACKAGE_AMAZON_IG_INSTALL_PATH)/bin/amazon_player_mediapipeline.so" ]; then \
+      ln -s /usr/lib/libamazon_player_mediapipeline.so \
+          $(1)/$(BR2_PACKAGE_AMAZON_IG_INSTALL_PATH)/bin/amazon_player_mediapipeline.so ;\
+    fi
+    if [ -f $(@D)/build/ruby/amazon_player_mediapipeline/$(AMAZON_BACKEND)/$(AMAZON_BUILD_TYPE)/Player/test/playback-test/playback-test ] ; then \
+       cp $(@D)/build/ruby/amazon_player_mediapipeline/$(AMAZON_BACKEND)/$(AMAZON_BUILD_TYPE)/Player/test/playback-test/playback-test $(1)/usr/bin ;\
+    fi
+    if [ ! -h "$(1)/usr/bin/ignition" ]; then \
+      rm $(1)/usr/bin/ignition ;\
+      ln -s $(BR2_PACKAGE_AMAZON_IG_INSTALL_PATH)/bin/ignition $(1)/usr/bin/ignition ;\
+    fi
+  endef
+
+  define AMAZON_INSTALL_IGNITION_DEV
+    $(call AMAZON_INSTALL_IGNITION, ${STAGING_DIR})
+  endef
+endif
+
+################################################################################
+# Generic buildroot
+################################################################################
+define AMAZON_BUILD_CMDS
+  export PKG_CONFIG_SYSROOT_DIR=$(STAGING_DIR)
+  $(call AMAZON_BUILD_RUBY)
+  $(call AMAZON_BUILD_IGNITION)
 endef
 
 define AMAZON_INSTALL_TARGET_CMDS
- $(INSTALL) -d -m 0755 $(TARGET_DIR)/$(BR2_PACKAGE_AMAZON_IG_INSTALL_PATH)
- cp -a $(@D)/install/$(BR2_PACKAGE_AMAZON_PLATFORM_NAME)/* $(TARGET_DIR)/$(BR2_PACKAGE_AMAZON_IG_INSTALL_PATH)
- 
- if [ ! -h "$(TARGET_DIR)/$(BR2_PACKAGE_AMAZON_IG_INSTALL_PATH)/bin/amazon_player_mediapipeline.so" ]; then \
-    ln -s libamazon_player_mediapipeline.so \
-          $(TARGET_DIR)/$(BR2_PACKAGE_AMAZON_IG_INSTALL_PATH)/bin/amazon_player_mediapipeline.so ;\
- fi
- 
- if [ -f $(@D)/build/ruby/amazon_player_mediapipeline/$(AMAZON_BACKEND)/$(AMAZON_BUILD_TYPE)/Player/test/playback-test/playback-test ] ; then \
-     cp $(@D)/build/ruby/amazon_player_mediapipeline/$(AMAZON_BACKEND)/$(AMAZON_BUILD_TYPE)/Player/test/playback-test/playback-test $(TARGET_DIR)/usr/bin ;\
- fi
- 
- if [ ! -h "$(TARGET_DIR)/usr/bin/ignition" ]; then \
-    rm $(TARGET_DIR)/usr/bin/ignition ;\
-    ln -s $(BR2_PACKAGE_AMAZON_IG_INSTALL_PATH)/bin/ignition $(TARGET_DIR)/usr/bin/ignition ;\
- fi
- 
- $(INSTALL) -D -m 0644 $(@D)/support/libgstfluac3dec.so $(TARGET_DIR)/usr/lib/gstreamer-1.0/
- 
+  $(call AMAZON_INSTALL_RUBY, ${TARGET_DIR})
+  $(call AMAZON_INSTALL_IGNITION, ${TARGET_DIR})
 endef
 
 define AMAZON_INSTALL_STAGING_CMDS
+  $(call AMAZON_INSTALL_RUBY_DEV)
+  $(call AMAZON_INSTALL_IGNITION_DEV)
 endef
 
 AMAZON_PRE_BUILD_HOOKS += AMAZON_CLEAROUT_FILES
