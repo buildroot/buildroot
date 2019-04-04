@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BME_AMAZON_BACKEND_VERSION = 48844eae4dac36feb9febcdc721c25ec4d5096e6
+BME_AMAZON_BACKEND_VERSION = bbc9bb7070a6ad75dd0125cd6916d37c6248c6fd
 BME_AMAZON_BACKEND_SITE = git@github.com:Metrological/bcm-bme.git
 BME_AMAZON_BACKEND_SITE_METHOD = git
 BME_AMAZON_BACKEND_DEPENDENCIES = bcm-bme
