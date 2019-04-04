@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BCM_BME_VERSION = 48844eae4dac36feb9febcdc721c25ec4d5096e6
+BCM_BME_VERSION = bbc9bb7070a6ad75dd0125cd6916d37c6248c6fd
 BCM_BME_SITE = git@github.com:Metrological/bcm-bme.git
 BCM_BME_SITE_METHOD = git
 BCM_BME_DEPENDENCIES = gyp host-ninja
