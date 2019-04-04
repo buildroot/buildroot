@@ -4,7 +4,8 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_SPARK_VERSION = 140a3d29560b63921eff31bb92e86fac1ddb1d9c
+WPEFRAMEWORK_SPARK_VERSION = f45e667328c5c40cbb11742e3145b630d5fede54
+
 WPEFRAMEWORK_SPARK_SITE_METHOD = git
 WPEFRAMEWORK_SPARK_SITE = git@github.com:WebPlatformForEmbedded/WPEPluginSpark.git
 WPEFRAMEWORK_SPARK_INSTALL_STAGING = YES
@@ -20,6 +21,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 WPEFRAMEWORK_SPARK_CONF_OPTS += -DPLATFORM_LINUX=ON
+WPEFRAMEWORK_SPARK_CONF_OPTS += -DPLATFORM_GENERIC_EGL=ON
 endif
 
 $(eval $(cmake-package))
