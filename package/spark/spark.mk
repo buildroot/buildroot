@@ -3,7 +3,7 @@
 # spark
 #
 ################################################################################
-SPARK_VERSION = dac0e9fecc26480a9fa1e53781244c9b9f9aa16c
+SPARK_VERSION = 2cf8a884fa31f263c15ad9ab88127f7ed914e863
 SPARK_SITE_METHOD = git
 SPARK_SITE = git://github.com/HaseenaSainul/pxCore
 SPARK_INSTALL_STAGING = YES
@@ -53,7 +53,6 @@ endif
 
 define SPARK_INSTALL_LIBS
     $(INSTALL) -m 755 $(@D)/build/egl/libpxCore.so $(1)/usr/lib/
-#    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/liboptimus.so $(1)/usr/lib/
 endef
 
 define SPARK_INSTALL_DEPS
@@ -73,13 +72,20 @@ define SPARK_INSTALL_DEPS
 endef
 
 ifeq ($(BR2_PACKAGE_SPARK_LIB), y)
+
+ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
+define SPARK_INSTALL_PX_NATIVE_WINDOW
+    mkdir -p $(STAGING_DIR)/usr/include/spark/gles
+    cp -ar $(@D)/src/gles/*.h $(STAGING_DIR)/usr/include/spark/gles/
+endef
+endif
+
 define SPARK_INSTALL_STAGING_CMDS
     $(call SPARK_INSTALL_LIBS, $(STAGING_DIR))
     mkdir -p $(STAGING_DIR)/usr/include/spark
     cp -ar $(@D)/src/*.h $(STAGING_DIR)/usr/include/spark/
     cp -ar $(@D)/examples/pxScene2d/src/*.h $(STAGING_DIR)/usr/include/spark/
-    mkdir -p $(STAGING_DIR)/usr/include/spark/wayland_egl
-    cp -ar $(@D)/src/wayland_egl/*.h $(STAGING_DIR)/usr/include/spark/wayland_egl/
+    $(SPARK_INSTALL_PX_NATIVE_WINDOW)
     $(INSTALL) -D package/spark/Spark.pc $(STAGING_DIR)/usr/lib/pkgconfig/Spark.pc
     $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/libSpark.so $(STAGING_DIR)/usr/lib
 endef
