@@ -646,6 +646,19 @@ config BR2_PACKAGE_WPEFRAMEWORK_WIFICONTROL
     help
       WifiControl Plugin for Wifi access, linked to Network Control
 
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_SPARK
+    bool "Spark"
+    depends on BR2_PACKAGE_SPARK_LIB
+    help
+        SparkEngine plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_SPARK
+
+config BR2_PACKAGE_WPEFRAMEWORK_SPARK_AUTOSTART
+    bool "autostart"
+    default n
+endif
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     select BR2_PACKAGE_SQLITE
