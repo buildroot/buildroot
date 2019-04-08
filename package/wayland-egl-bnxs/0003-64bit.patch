@@ -1,0 +1,13 @@
+diff --git a/wayland-egl.cpp b/wayland-egl.cpp
+index dae84bc..ce09fdd 100644
+--- a/wayland-egl.cpp
++++ b/wayland-egl.cpp
+@@ -290,7 +290,7 @@ void bnxsReferenceBuffer( void *userData, void *buffer, void *bufferCtx )
+    {
+       wl_proxy_set_queue((struct wl_proxy*)egl_window->bnxs, egl_window->queue);
+       wlBuff= wl_bnxs_create_buffer( egl_window->bnxs, 
+-                                    (uint32_t)buffer, 
++                                    (uintptr_t)buffer, 
+                                     egl_window->width, 
+                                     egl_window->height, 
+                                     egl_window->width*4,

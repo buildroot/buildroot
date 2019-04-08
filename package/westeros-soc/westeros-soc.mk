@@ -32,7 +32,6 @@ else ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
 		PKG_CONFIG_SYSROOT_DIR=$(STAGING_DIR)
 	WESTEROS_SOC_CONF_OPTS += \
         --enable-vc5 \
-        --enable-nxclient_local=yes \
 		CFLAGS="$(TARGET_CFLAGS) -I ${STAGING_DIR}/usr/include/refsw/" \
 		CXXFLAGS="$(TARGET_CXXFLAGS) -I ${STAGING_DIR}/usr/include/refsw/"
 	WESTEROS_SOC_SUBDIR = brcm
