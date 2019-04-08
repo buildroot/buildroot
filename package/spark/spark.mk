@@ -55,20 +55,21 @@ define SPARK_INSTALL_LIBS
     $(INSTALL) -m 755 $(@D)/build/egl/libpxCore.so $(1)/usr/lib/
 endef
 
+SPARK_INSTALL_PATH = usr/share/WPEFramework/Spark
 define SPARK_INSTALL_DEPS
-    mkdir -p $(TARGET_DIR)/root/spark
-    cp -ar $(@D)/examples/pxScene2d/src/node_modules $(TARGET_DIR)/root/spark/
-    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/*.js $(TARGET_DIR)/root/spark/
-    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/*.json $(TARGET_DIR)/root/spark/
-    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/*.ttf $(TARGET_DIR)/root/spark/
-    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/sparkpermissions.conf $(TARGET_DIR)/root/spark/
-    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/waylandregistry.conf $(TARGET_DIR)/root/spark/
-    cp -ar $(@D)/examples/pxScene2d/src/rcvrcore $(TARGET_DIR)/root/spark/
-    cp -ar $(@D)/examples/pxScene2d/src/browser $(TARGET_DIR)/root/spark/
-    cp -ar $(@D)/examples/pxScene2d/src/optimus $(TARGET_DIR)/root/spark/
-    cp -ar $(@D)/examples/pxScene2d/src/duk_modules $(TARGET_DIR)/root/spark/
-    cp -ar $(@D)/examples/pxScene2d/src/v8_modules $(TARGET_DIR)/root/spark/
-    cp -ar $(@D)/examples/pxScene2d/src/rasterizer $(TARGET_DIR)/root/spark/
+    mkdir -p $(TARGET_DIR)/$(SPARK_INSTALL_PATH)
+    cp -ar $(@D)/examples/pxScene2d/src/node_modules $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
+    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/*.js $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
+    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/*.json $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
+    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/*.ttf $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
+    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/sparkpermissions.conf $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
+    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/waylandregistry.conf $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
+    cp -ar $(@D)/examples/pxScene2d/src/rcvrcore $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
+    cp -ar $(@D)/examples/pxScene2d/src/browser $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
+    cp -ar $(@D)/examples/pxScene2d/src/optimus $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
+    cp -ar $(@D)/examples/pxScene2d/src/duk_modules $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
+    cp -ar $(@D)/examples/pxScene2d/src/v8_modules $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
+    cp -ar $(@D)/examples/pxScene2d/src/rasterizer $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
 endef
 
 ifeq ($(BR2_PACKAGE_SPARK_LIB), y)
