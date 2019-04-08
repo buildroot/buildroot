@@ -3,7 +3,7 @@
 # spark
 #
 ################################################################################
-SPARK_VERSION = 2cf8a884fa31f263c15ad9ab88127f7ed914e863
+SPARK_VERSION = dca489d7181b9aa830d08e7ab96f242011ab0c74
 SPARK_SITE_METHOD = git
 SPARK_SITE = git://github.com/HaseenaSainul/pxCore
 SPARK_INSTALL_STAGING = YES
