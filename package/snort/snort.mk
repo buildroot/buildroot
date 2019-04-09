@@ -18,7 +18,9 @@ SNORT_CONF_OPTS = \
 	--with-libpcre-includes=$(STAGING_DIR)/usr/include \
 	--with-libpcre-libraries=$(STAGING_DIR)/usr/lib \
 	--with-libpcap-includes=$(STAGING_DIR)/usr/include/pcap \
-	--disable-static-daq
+	--disable-static-daq \
+	--with-dnet-includes=$(STAGING_DIR)/usr/include \
+	--with-dnet-libraries=$(STAGING_DIR)/usr/lib \
 
 ifeq ($(BR2_PACKAGE_LIBTIRPC),y)
 SNORT_DEPENDENCIES += libtirpc host-pkgconf
@@ -39,5 +41,18 @@ SNORT_CONF_ENV = \
 	CFLAGS="$(TARGET_CFLAGS) $(SNORT_CFLAGS)" \
 	LIBS="$(SNORT_LIBS)" \
 	have_inaddr_none=yes
+
+define SNORT_INSTALL_CONFIG
+	mkdir -p $(TARGET_DIR)/etc/snort
+	$(INSTALL) -D -m 0644 $(@D)/etc/attribute_table.dtd $(TARGET_DIR)/etc/snort
+	$(INSTALL) -D -m 0644 $(@D)/etc/classification.config $(TARGET_DIR)/etc/snort
+	$(INSTALL) -D -m 0644 $(@D)/etc/file_magic.conf $(TARGET_DIR)/etc/snort
+	$(INSTALL) -D -m 0644 $(@D)/etc/gen-msg.map $(TARGET_DIR)/etc/snort
+	$(INSTALL) -D -m 0644 $(@D)/etc/reference.config $(TARGET_DIR)/etc/snort
+	$(INSTALL) -D -m 0644 $(@D)/etc/snort.conf $(TARGET_DIR)/etc/snort
+	$(INSTALL) -D -m 0644 $(@D)/etc/threshold.conf $(TARGET_DIR)/etc/snort
+	$(INSTALL) -D -m 0644 $(@D)/etc/unicode.map $(TARGET_DIR)/etc/snort
+endef
+SNORT_POST_INSTALL_TARGET_HOOKS += SNORT_INSTALL_CONFIG
 
 $(eval $(autotools-package))
