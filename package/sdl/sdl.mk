@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-SDL_VERSION = 1.2.15
-SDL_SOURCE = SDL-$(SDL_VERSION).tar.gz
-SDL_SITE = http://www.libsdl.org/release
+SDL_VERSION = b26f19d10
+SDL_SITE = $(call github,opendingux,SDL,$(SDL_VERSION))
 SDL_LICENSE = LGPL-2.1+
 SDL_LICENSE_FILES = COPYING
 SDL_INSTALL_STAGING = YES
