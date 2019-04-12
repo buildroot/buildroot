@@ -18,24 +18,3 @@ diff -auNrd git.orig/Makefile.am git/Makefile.am
                              $(REFSW_VERSION)/common/memory_nexus.c \
                              $(REFSW_VERSION)/common/hardware_nexus.cpp \
                              $(REFSW_VERSION)/common/autoclif.c \
-diff -auNrd git.orig/wayland-egl.cpp git/wayland-egl.cpp
---- git.orig/wayland-egl.cpp	2018-06-13 15:39:38.763711188 -0400
-+++ git/wayland-egl.cpp	2018-06-13 15:39:21.415666527 -0400
-@@ -1411,7 +1411,7 @@
-       {
-          void *pixmapHandle;
-          NEXUS_SURFACEHANDLE surfaceHandle;
--         BEGL_PixmapInfo pixmapInfo;
-+         BEGL_PixmapInfoEXT pixmapInfo;
- 
-          /*
-           * Create a new Nexus surface/native pixmap pair
-@@ -1423,7 +1423,7 @@
-          #else
-          pixmapInfo.format= BEGL_BufferFormat_eA8B8G8R8;
-          #endif
--         if ( NXPL_CreateCompatiblePixmap(gNxplHandle, &pixmapHandle, &surfaceHandle, &pixmapInfo) )
-+         if ( NXPL_CreateCompatiblePixmapEXT(gNxplHandle, &pixmapHandle, &surfaceHandle, &pixmapInfo) )
-          {
-             bpx->nativePixmap= pixmapHandle;
-             bpx->surface= surfaceHandle;

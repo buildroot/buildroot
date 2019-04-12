@@ -116,26 +116,3 @@ index d2a2e43..11005f5 100755
  AC_CONFIG_FILES([Makefile wayland-egl.pc])
  AC_SUBST(WAYLAND_CFLAGS)
  AC_SUBST(GUPNP_VERSION)
-diff --git a/wayland-egl.cpp b/wayland-egl.cpp
-index dae84bc..823a623 100644
---- a/wayland-egl.cpp
-+++ b/wayland-egl.cpp
-@@ -947,6 +947,18 @@ EGLAPI EGLBoolean eglSwapBuffers( EGLDisplay dpy, EGLSurface surface )
-          bnxsReferenceBuffer( egl_window, egl_window->singleBuffer, egl_window->singleBufferCtx );
-       }
-       result= gRealEGLSwapBuffers( dpy, surface );
-+      if ( egl_window && egl_window->singleBuffer )
-+      {
-+         /* Nothing to do. bnxsReferenceBuffer call commit */
-+      }
-+      else
-+      {
-+         if( egl_window )
-+         {
-+             wl_surface_commit( egl_window->surface );
-+             wl_display_flush( egl_window->display->display );
-+         }
-+      }
-    }
-    
- exit:
