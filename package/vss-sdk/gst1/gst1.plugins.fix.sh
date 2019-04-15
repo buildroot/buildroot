@@ -24,6 +24,7 @@ patch_files () {
         sed -i -e s/gstreamer/wpe-gstreamer/g  pkgconfig/Makefile.in
         sed -i -e s/gstreamer/wpe-gstreamer/g  pkgconfig/Makefile.am
         # This is for the package so it will pickup the correct pc files from sysroot.
+        sed -i -e s/gstreamer-allocators-1.0/wpe-gstreamer-allocators-1.0/g   configure.ac
         sed -i -e s/\ gstreamer/\ wpe-gstreamer/g  common/m4/gst-check.m4
         sed -i -e s/prefix\ gstreamer/prefix\ wpe-gstreamer/g   configure.ac
         # correct plugin install location
