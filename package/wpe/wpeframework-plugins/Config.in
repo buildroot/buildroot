@@ -1,6 +1,40 @@
 config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool
 
+config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
+    bool "Bluetooth"
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_BLUEZ5_UTILS
+    default n
+    help
+      A Bluetooth plugin to interact with Bluetooth devices.
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_CDMI
+    bool "CDMi"
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_CDM
+    default y
+    help
+     A CDM server plugin to interact with CDMi plugins.
+
+if BR2_PACKAGE_WPEFRAMEWORK_CDMI
+config BR2_PACKAGE_WPEFRAMEWORK_CDMI_USER
+    string "user"
+    default ""
+    help
+        run OpenCDM as this user, leave empty to use the same as 
+        WPEframework
+
+config BR2_PACKAGE_WPEFRAMEWORK_CDMI_GROUP
+    string "group"
+    default ""
+    help
+        run OpenCDM as this group, leave empty to use the same as 
+        WPEframework
+        
+source "package/wpe/wpeframework-cdmi/Config.in"
+endif
+
 config BR2_PACKAGE_WPEFRAMEWORK_COMMANDER
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     default n
@@ -178,6 +212,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_DICTIONARY
 	help
 	  Dictionary Plugin.
 
+config BR2_PACKAGE_WPEFRAMEWORK_FRONTPANEL
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "FrontPanel"
+    default n
+    help
+      FrontPanel Plugin.
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR
 	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
 	bool "IOConnector"
@@ -211,14 +252,6 @@ config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PAIRING_CALLSIGN
           What is the name of the key producer tha you want to pair
 endif
 endif
-
-
-config BR2_PACKAGE_WPEFRAMEWORK_FRONTPANEL
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-    bool "FrontPanel"
-    default n
-    help
-      FrontPanel Plugin.
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
@@ -270,7 +303,6 @@ config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_NETFLIX
 
 endif
 
-
 config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "NetworkControl"
@@ -278,39 +310,28 @@ config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
       Control the IP adressing of the interfaces in the system from
       WPEFramework (static IPv4/IPv6 or dhcp IPv4)
 
-menuconfig BR2_PACKAGE_WPEFRAMEWORK_CDMI
-    bool "CDMi"
+config BR2_PACKAGE_WPEFRAMEWORK_POWER
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-    select BR2_PACKAGE_WPEFRAMEWORK_CDM
-    default y
-    help
-     A CDM server plugin to interact with CDMi plugins.
-
-if BR2_PACKAGE_WPEFRAMEWORK_CDMI
-config BR2_PACKAGE_WPEFRAMEWORK_CDMI_USER
-    string "user"
-    default ""
-    help
-        run OpenCDM as this user, leave empty to use the same as 
-        WPEframework
-
-config BR2_PACKAGE_WPEFRAMEWORK_CDMI_GROUP
-    string "group"
-    default ""
-    help
-        run OpenCDM as this group, leave empty to use the same as 
-        WPEframework
-        
-source "package/wpe/wpeframework-cdmi/Config.in"
-endif
-
-config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
-    bool "Bluetooth"
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-    select BR2_PACKAGE_BLUEZ5_UTILS
     default n
+    bool "Power"
     help
-      A Bluetooth plugin to interact with Bluetooth devices.
+      Power Control Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_POWER
+
+config BR2_PACKAGE_WPEFRAMEWORK_POWER_AUTOSTART
+    bool "autostart"
+    default y
+
+config BR2_PACKAGE_WPEFRAMEWORK_POWER_GPIOPIN
+    string "gpiopin"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_POWER_GPIOTYPE
+    string "gpiotype"
+    default ""
+
+endif
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
@@ -362,6 +383,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_CUSTOM_VIRTUAL_MAP_FILE
 endif
 
 endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_RTSPCLIENT
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    default n
+    bool "RTSPCLIENT"
+    help
+      RTSP Client Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_SNAPSHOT
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
@@ -443,6 +471,113 @@ config BR2_PACKAGE_WPEFRAMEWORK_SYSTEMCOMMANDS
     bool "SystemCommands"
     help
       SystemCommands Plugin
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_SPARK
+    bool "Spark"
+    depends on BR2_PACKAGE_SPARK_LIB
+    help
+        SparkEngine plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_SPARK
+
+config BR2_PACKAGE_WPEFRAMEWORK_SPARK_AUTOSTART
+    bool "autostart"
+    default n
+endif
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_SQLITE
+    select BR2_PACKAGE_DVB_APPS if BR2_PACKAGE_RPI_FIRMWARE
+    bool "TVControl"
+    help
+      TVControl Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
+choice
+    bool "TVPlatform"
+    help
+      Choose TVPlatform
+
+menuconfig BR2_PACKAGE_TVPLATFORM_LINUXTV
+    bool "wpetvplatform-linuxtv"
+    depends on BR2_PACKAGE_DVB_APPS
+    help
+      Base library for TVPlatform Implementation for LinuxTV.
+
+source "package/wpe/wpetvplatform-bcm/Config.in"
+
+endchoice
+
+choice
+    bool "DBS Options"
+    default BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL_DVB
+    help
+      Choose the DBS flavor.
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL_DVB
+    bool "DVB"
+    help
+      Enable DVB DBS
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL_ATSC
+    select BR2_PACKAGE_DVB_APPS
+    bool "ATSC"
+    help
+      Enable ATSC DBS
+endchoice
+
+if BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL_DVB
+    config BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL_ENABLE_BOUQUET_PARSING
+    bool "Enable Bouquet Parsing"
+    help
+      Enable Bouquet Table Parsing
+
+config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS_TVCONTROL_COUNTRY_CODE
+    string "Country Code"
+    default "GBR"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
+    help
+      Sets the country code like
+      United Kingdom has 3-character code "GBR", which is coded as:
+      "0100 0111 0100 0010 0101 0010".
+
+config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS_TVCONTROL_COUNTRY_REGION_ID
+    string "Country Region ID"
+    default "0"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
+    help
+      Sets the country region id like
+      '0' - no time zone extension used,
+      '1'- time zone 1 (most easterly region)etc.
+endif
+
+if BR2_PACKAGE_BCM_REFSW
+config BR2_PACKAGE_WPEFRAMEWORK_HOME_TS
+    string "Home transport stream which carries DVB-SI"
+    default "0"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
+    help
+      Sets the Home trasnsport
+
+config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS_TVCONTROL_TUNE_PARAM
+    string "Tune Param"
+    default "SYMBOL_RATE=6900000"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
+    help
+      Sets the Tuner Param, symbol rate.
+
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS_TVCONTROL_FREQUENCY_LIST
+    string "Frequency List"
+    default "0"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
+    help
+      Sets the Frequency List for scanning in MHz using either ',' as the separator
+      or '-' to define the range. eg:- 354,362,370 or  354-370
+endif
+
 
 config BR2_PACKAGE_WPEFRAMEWORK_TESTCONTROLLER
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
@@ -645,141 +780,5 @@ config BR2_PACKAGE_WPEFRAMEWORK_WIFICONTROL
     bool "WifiControl"
     help
       WifiControl Plugin for Wifi access, linked to Network Control
-
-menuconfig BR2_PACKAGE_WPEFRAMEWORK_SPARK
-    bool "Spark"
-    depends on BR2_PACKAGE_SPARK_LIB
-    help
-        SparkEngine plugin
-
-if BR2_PACKAGE_WPEFRAMEWORK_SPARK
-
-config BR2_PACKAGE_WPEFRAMEWORK_SPARK_AUTOSTART
-    bool "autostart"
-    default n
-endif
-
-menuconfig BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-    select BR2_PACKAGE_SQLITE
-    select BR2_PACKAGE_DVB_APPS if BR2_PACKAGE_RPI_FIRMWARE
-    bool "TVControl"
-    help
-      TVControl Plugin
-
-if BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
-choice
-    bool "TVPlatform"
-    help
-      Choose TVPlatform
-
-menuconfig BR2_PACKAGE_TVPLATFORM_LINUXTV
-    bool "wpetvplatform-linuxtv"
-    depends on BR2_PACKAGE_DVB_APPS
-    help
-      Base library for TVPlatform Implementation for LinuxTV.
-
-source "package/wpe/wpetvplatform-bcm/Config.in"
-
-endchoice
-
-choice
-    bool "DBS Options"
-    default BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL_DVB
-    help
-      Choose the DBS flavor.
-
-menuconfig BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL_DVB
-    bool "DVB"
-    help
-      Enable DVB DBS
-
-menuconfig BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL_ATSC
-    select BR2_PACKAGE_DVB_APPS
-    bool "ATSC"
-    help
-      Enable ATSC DBS
-endchoice
-
-if BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL_DVB
-    config BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL_ENABLE_BOUQUET_PARSING
-    bool "Enable Bouquet Parsing"
-    help
-      Enable Bouquet Table Parsing
-
-config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS_TVCONTROL_COUNTRY_CODE
-    string "Country Code"
-    default "GBR"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
-    help
-      Sets the country code like
-      United Kingdom has 3-character code "GBR", which is coded as:
-      "0100 0111 0100 0010 0101 0010".
-
-config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS_TVCONTROL_COUNTRY_REGION_ID
-    string "Country Region ID"
-    default "0"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
-    help
-      Sets the country region id like
-      '0' - no time zone extension used,
-      '1'- time zone 1 (most easterly region)etc.
-endif
-
-if BR2_PACKAGE_BCM_REFSW
-config BR2_PACKAGE_WPEFRAMEWORK_HOME_TS
-    string "Home transport stream which carries DVB-SI"
-    default "0"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
-    help
-      Sets the Home trasnsport
-
-config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS_TVCONTROL_TUNE_PARAM
-    string "Tune Param"
-    default "SYMBOL_RATE=6900000"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
-    help
-      Sets the Tuner Param, symbol rate.
-
-endif
-
-config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS_TVCONTROL_FREQUENCY_LIST
-    string "Frequency List"
-    default "0"
-    depends on BR2_PACKAGE_WPEFRAMEWORK_TVCONTROL
-    help
-      Sets the Frequency List for scanning in MHz using either ',' as the separator
-      or '-' to define the range. eg:- 354,362,370 or  354-370
-endif
-
-config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_RTSPCLIENT
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-    default n
-    bool "RTSPCLIENT"
-    help
-      RTSP Client Plugin
-
-config BR2_PACKAGE_WPEFRAMEWORK_POWER
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-    default n
-    bool "Power"
-    help
-      Power Control Plugin
-
-if BR2_PACKAGE_WPEFRAMEWORK_POWER
-
-config BR2_PACKAGE_WPEFRAMEWORK_POWER_AUTOSTART
-    bool "autostart"
-    default y
-
-config BR2_PACKAGE_WPEFRAMEWORK_POWER_GPIOPIN
-    string "gpiopin"
-    default ""
-
-config BR2_PACKAGE_WPEFRAMEWORK_POWER_GPIOTYPE
-    string "gpiotype"
-    default ""
-
-endif
 
 comment "External plugins below"
