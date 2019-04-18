@@ -33,10 +33,6 @@ __EOF__
 	fi
 fi
 
-if [ "x${BLUETOOTH}" != "x" ]; then
-	sed -i 's/ttyAMA0,115200/tty2/g' "${BINARIES_DIR}/rpi-firmware/cmdline.txt"
-fi
-
 KERNEL_4_14="$(grep ^BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14=y ${BR2_CONFIG})"
 for i in "$@"
 do
