@@ -1,43 +1,8 @@
---- a/libopkg/opkg_verify.c	2018-06-04 08:49:19.457680188 +0200
-+++ b/libopkg/opkg_verify.c	2018-06-13 09:41:11.899234221 +0200
-@@ -53,6 +53,25 @@
- }
- #endif
- 
-+#ifdef HAVE_PROVISION
-+#include "opkg_provision.h"
-+
-+int opkg_verify_and_decrypt_package(const char *file)
-+{
-+    return (opkg_verify_and_decrypt_package(file));
-+}
-+#else
-+/* Validate and Decrypt the package if possible. */
-+int opkg_verify_and_decrypt_package(const char *file)
-+{
-+    (void)file;
-+
-+    opkg_msg(ERROR, "Provisioned package checking and decryption not supported\n");
-+    return -1;
-+}
-+#endif
-+
-+
- int opkg_verify_md5sum(const char *file, const char *md5sum)
- {
-     int r;
-@@ -104,6 +124,8 @@
-         return opkg_verify_gpg_signature(file, sigfile);
-     else if (strcmp(opkg_config->signature_type, "openssl") == 0)
-         return opkg_verify_openssl_signature(file, sigfile);
-+    else if (strcmp(opkg_config->signature_type, "provision") == 0)
-+        return opkg_verify_and_decrypt_package(file);
- 
-     opkg_msg(ERROR, "signature_type option '%s' not understood.\n",
-              opkg_config->signature_type);
---- a/configure.ac	2015-12-02 22:56:43.000000000 +0100
-+++ b/configure.ac	2018-06-13 11:57:16.237697579 +0200
-@@ -10,6 +10,7 @@
+diff --git a/configure.ac b/configure.ac
+index 52e1025..7888b38 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -10,6 +10,7 @@ AC_CONFIG_HEADERS(config.h)
  
  AC_CANONICAL_HOST
  AC_GNU_SOURCE
@@ -45,13 +10,13 @@
  
  # Disable C++/Fortran checks
  define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])
-@@ -74,6 +75,19 @@
+@@ -74,6 +75,18 @@ if test "x$want_curl" = "xyes"; then
  fi
  AM_CONDITIONAL(HAVE_CURL, test "x$want_curl" = "xyes")
  
-+# check for provision 
++# check for provision
 +AC_ARG_ENABLE(provision,
-+              AC_HELP_STRING([--enable-provision], [Enable verification and decryption with provision 
++              AC_HELP_STRING([--enable-provision], [Enable verification and decryption with provision
 +      [[default=no]] ]),
 +    [want_provision="$enableval"], [want_provision="no"])
 +
@@ -61,13 +26,14 @@
 +fi
 +AM_CONDITIONAL(HAVE_PROVISION, test "x$want_provision" = "xyes")
 +
-+
  # check for sha256
  AC_ARG_ENABLE(sha256,
                AC_HELP_STRING([--enable-sha256], [Enable sha256sum check
---- a/libopkg/Makefile.am	2018-06-13 11:33:25.196265228 +0200
-+++ b/libopkg/Makefile.am	2018-06-13 11:34:26.170288674 +0200
-@@ -38,6 +38,11 @@
+diff --git a/libopkg/Makefile.am b/libopkg/Makefile.am
+index 3e62c24..c714bf6 100644
+--- a/libopkg/Makefile.am
++++ b/libopkg/Makefile.am
+@@ -38,6 +38,11 @@ if HAVE_OPENSSL
  opkg_sources += opkg_openssl.c
  opkg_headers += opkg_openssl.h
  endif
@@ -79,7 +45,7 @@
  if HAVE_GPGME
  opkg_sources += opkg_gpg.c
  opkg_headers += opkg_gpg.h
-@@ -67,7 +72,7 @@
+@@ -67,7 +72,7 @@ libopkg_include_HEADERS = $(opkg_headers)
  endif
  
  libopkg_la_LIBADD = $(LIBARCHIVE_LIBS) \
@@ -88,8 +54,280 @@
  		    $(PATHFINDER_LIBS) $(SOLVER_LIBS)
  
  libopkg_la_LDFLAGS = -version-info 1:0:0
---- a/libopkg/opkg_provision.h	2018-06-13 11:38:34.210246513 +0200
-+++ b/libopkg/opkg_provision.h	2018-06-13 11:47:56.975994355 +0200
+diff --git a/libopkg/opkg_install.c b/libopkg/opkg_install.c
+index 975d9c6..d3843bb 100644
+--- a/libopkg/opkg_install.c
++++ b/libopkg/opkg_install.c
+@@ -926,6 +926,17 @@ int opkg_install_pkg(pkg_t * pkg, int from_upgrade)
+             return -1;
+         }
+     }
++#ifdef HAVE_PROVISION
++    /* Weird. opkg_download_pkg() calls pkg_verify() which checks the signature but it seems it's not always called
++     * so make sure it is. */
++    else if (opkg_config->check_pkg_signature) {
++        err = pkg_verify(pkg);
++        if (err) {
++            opkg_msg(ERROR, "Failed to verify %s.\n", pkg->name);
++            return -1;
++        }
++    }
++#endif
+ 
+     if (opkg_config->download_only) {
+ #ifndef HAVE_SOLVER
+diff --git a/libopkg/opkg_provision.cpp b/libopkg/opkg_provision.cpp
+new file mode 100644
+index 0000000..0a33de4
+--- /dev/null
++++ b/libopkg/opkg_provision.cpp
+@@ -0,0 +1,241 @@
++/* vi: set expandtab sw=4 sts=4: */
++/* opkg_provision.c - the opkg package management system
++
++    Copyright (C) 2018 Metrological
++
++    This program is free software; you can redistribute it and/or
++    modify it under the terms of the GNU General Public License as
++    published by the Free Software Foundation; either version 2, or (at
++    your option) any later version.
++
++    This program is distributed in the hope that it will be useful, but
++    WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++    General Public License for more details.
++*/
++
++#include <WPEFramework/core/core.h>
++#include <provision/AccesProvision.h>
++
++#include <openssl/err.h>
++#include <openssl/bio.h>
++#include <openssl/conf.h>
++#include <openssl/rsa.h>
++#include <openssl/ssl.h>
++
++#include <assert.h>
++#include <array>
++#include <cstring>
++
++namespace {
++
++const char kPublicKeyEndMarker[] = "-----BEGIN PUBLIC KEY-----";
++// PEM encoded 512 and 256 bytes long public keys + "-----BEGIN PUBLIC KEY-----" + "-----END PUBLIC KEY-----" twice
++// (i.e. (512 + 64 + 4) / 3 * 4 + (512 + 65) / 64 + (256 + 64 + 4) / 3 * 4 + (256 + 65) / 64 + 24 * 2 + 26* 2 + 4 = 1323)
++// and some extra space for libprovisioning stuff (725)
++constexpr int kBlobSize = 2048;
++constexpr int kHeaderSizeBytes = 512;
++constexpr int kSignatureSizeBytes = 256;
++constexpr int kMetainfoSizeBytes = 256;
++constexpr int kAESSize = (256 / 8);
++constexpr int kAESDecryptDataChunk = 1024;
++
++void openssl_init()
++{
++    static bool init = 0;
++
++    if (!init) {
++        OPENSSL_config(NULL);
++        OpenSSL_add_all_algorithms();
++        ERR_load_crypto_strings();
++        init = true;
++    }
++}
++
++bool verifySignature(RSA* theKey, unsigned char* contentWithSignature, size_t dataSize)
++{
++    bool result = false;
++    EVP_PKEY* key = EVP_PKEY_new();
++    if (key) {
++        if (EVP_PKEY_set1_RSA(key, theKey) > 0) {
++            EVP_PKEY_CTX* ctx = EVP_PKEY_CTX_new(key, nullptr);
++            if (ctx) {
++                if (EVP_PKEY_verify_init(ctx)&&
++                    EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_PSS_PADDING) > 0) {
++                    EVP_MD_CTX* mdCtx = EVP_MD_CTX_create();
++                    if (mdCtx) {
++                        unsigned char* contentWithoutSignature = contentWithSignature + kSignatureSizeBytes;
++                        std::array<unsigned char, kSignatureSizeBytes / 8> digest;
++                        unsigned int digestLen = 0;
++                        if (EVP_DigestInit(mdCtx, EVP_sha256()) > 0 &&
++                            EVP_DigestUpdate(mdCtx, contentWithoutSignature, dataSize - kSignatureSizeBytes) > 0 &&
++                            EVP_DigestFinal(mdCtx, digest.data(), &digestLen) > 0 &&
++                            EVP_PKEY_CTX_set_signature_md(ctx, EVP_sha256()) > 0) {
++                            result = EVP_PKEY_verify(ctx, contentWithSignature, kSignatureSizeBytes,
++                                                     digest.data(), digestLen) == 1;
++                        }
++                        EVP_MD_CTX_destroy(mdCtx);
++                    }
++                }
++                EVP_PKEY_CTX_free(ctx);
++            }
++        }
++        EVP_PKEY_free(key);
++    }
++    return result;
++}
++
++void extractAESKey(const std::array<unsigned char, kMetainfoSizeBytes>& aesHeaderPlain,
++                   std::array<unsigned char, kAESSize>* aesKey)
++{
++    auto iter = aesHeaderPlain.begin();
++
++    // Skip arch...
++    while (*iter) {
++        ++iter;
++    }
++    assert(iter && (std::abs(std::distance(aesHeaderPlain.begin(), iter)) < kMetainfoSizeBytes) &&
++           (kMetainfoSizeBytes - std::abs(std::distance(aesHeaderPlain.begin(), iter)) >=
++           kAESSize));
++    ++iter;
++
++    while (*iter) {
++        ++iter;
++    }
++    assert(iter && (std::abs(std::distance(aesHeaderPlain.begin(), iter)) < kMetainfoSizeBytes) &&
++           (kMetainfoSizeBytes - std::abs(std::distance(aesHeaderPlain.begin(), iter)) >=
++           kAESSize));
++    ++iter;
++    assert(iter && (std::abs(std::distance(aesHeaderPlain.begin(), iter)) < kMetainfoSizeBytes) &&
++           (kMetainfoSizeBytes - std::abs(std::distance(aesHeaderPlain.begin(), iter)) >=
++           kAESSize));
++
++
++    for (int i = 0; i < kAESSize; ++i, ++iter)
++        (*aesKey)[i] = *iter;
++}
++
++bool doAESDecrypt(const unsigned char* data, size_t dataSize, const std::array<unsigned char, kAESSize>& key,
++                  std::vector<unsigned char>* decrypted)
++{
++    bool result = false;
++    EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
++    if (ctx) {
++        EVP_CIPHER_CTX_init(ctx);
++        if (EVP_CipherInit_ex(ctx, EVP_aes_256_cbc(), nullptr, nullptr, nullptr, 0) > 0) {
++            OPENSSL_assert(EVP_CIPHER_CTX_key_length(ctx) == kAESSize);
++            if (EVP_CipherInit_ex(ctx, nullptr, nullptr, key.data(), nullptr, 0) > 0) {
++                std::array<unsigned char, kAESDecryptDataChunk + EVP_MAX_BLOCK_LENGTH> outChunk;
++                int64_t inDataSizeLeft = dataSize;
++                int read = 0;
++                bool status = true;
++                int outChunkLength = 0;
++                while (inDataSizeLeft > 0 && status == true) {
++                    int inLen = std::min(static_cast<int64_t>(kAESDecryptDataChunk), inDataSizeLeft);
++                    if (EVP_CipherUpdate(ctx, outChunk.data(), &outChunkLength, data + read, inLen) > 0) {
++                        inDataSizeLeft -= inLen;
++                        decrypted->insert(decrypted->end(), outChunk.begin(), outChunk.begin() + outChunkLength);
++                        read += inLen;
++                    } else {
++                        status = false;
++                    }
++                }
++
++                if (status == true) {
++                    if (EVP_CipherFinal_ex(ctx, outChunk.data(), &outChunkLength) > 0) {
++                        decrypted->insert(decrypted->end(), outChunk.begin(), outChunk.begin() + outChunkLength);
++                        result = true;
++                    }
++                }
++            }
++        }
++        EVP_CIPHER_CTX_cleanup(ctx);
++        EVP_CIPHER_CTX_free(ctx);
++    }
++
++    return result;
++}
++} // namespace
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++int opkg_verify_and_decrypt_package(const char* file)
++{
++    int result = -1;
++    std::array<char, kBlobSize> blobBuffer;
++    int length = GetDRMId("packager", kBlobSize, blobBuffer.data());
++
++    if (length > 0) {
++        openssl_init();
++
++        // Seems like we have a valid RSA KEYS, so we can decrypt.
++        WPEFramework::Core::DataElementFile package(file, WPEFramework::Core::DataElementFile::WRITABLE |
++                                                          WPEFramework::Core::DataElementFile::READABLE |
++                                                          WPEFramework::Core::DataElementFile::SHAREABLE);
++        unsigned char* dataPtr = package.Buffer();
++        size_t dataSize = package.Size();
++
++        if (package.IsValid() == true) {
++            std::array<unsigned char, kHeaderSizeBytes> securityHeaderClear {0};
++            char* keyEnd = strstr(blobBuffer.data(), kPublicKeyEndMarker);
++            if (keyEnd)
++                keyEnd = strstr(keyEnd + 1, kPublicKeyEndMarker);
++            if (keyEnd) {
++                size_t keyLen = keyEnd - blobBuffer.data();
++                BIO* encryptKeyBio = BIO_new_mem_buf(blobBuffer.data(), keyLen);
++
++                if (encryptKeyBio != nullptr) {
++                    RSA* encryptKey = PEM_read_bio_RSA_PUBKEY(encryptKeyBio, nullptr, nullptr, nullptr);
++                    if (encryptKey != nullptr) {
++                        result = RSA_public_decrypt(kHeaderSizeBytes, dataPtr, securityHeaderClear.data(),
++                                                    encryptKey, RSA_NO_PADDING);
++                        if (result >= 0) {
++                            // Looks like we have a security header in clear. Check signature.
++                            BIO* signingKeyBio = BIO_new_mem_buf(keyEnd, -1);
++                            if (signingKeyBio != nullptr) {
++                                RSA* signingKey = PEM_read_bio_RSA_PUBKEY(signingKeyBio, nullptr, nullptr, nullptr);
++                                if (signingKey != nullptr) {
++                                    // Replace with header in clear.
++                                    std::copy_n(securityHeaderClear.data(), kHeaderSizeBytes, dataPtr);
++                                    if (verifySignature(signingKey, dataPtr, dataSize) == true) {
++                                        std::array<uint8_t, kMetainfoSizeBytes> aesHeaderClear;
++                                        if (RSA_padding_check_PKCS1_OAEP(aesHeaderClear.data(), kMetainfoSizeBytes,
++                                                                         dataPtr + kSignatureSizeBytes, kMetainfoSizeBytes,
++                                                                         kMetainfoSizeBytes, nullptr, 0) > 0) {
++                                            std::array<unsigned char, kAESSize> aesKey;
++                                            extractAESKey(aesHeaderClear, &aesKey);
++                                            dataSize -= kHeaderSizeBytes;
++                                            std::vector<unsigned char> output;
++                                            output.reserve(dataSize);
++                                            if (doAESDecrypt(dataPtr + kHeaderSizeBytes, dataSize, aesKey, &output) == true) {
++                                                std::copy_n(output.data(), output.size(), dataPtr);
++                                                package.Size(output.size());
++                                                package.Sync();
++
++                                                result = 0;
++                                            }
++                                        }
++                                    }
++                                    RSA_free(signingKey);
++                                }
++                                BIO_free(signingKeyBio);
++                            }
++                        }
++                        RSA_free(encryptKey);
++                    }
++                    BIO_free(encryptKeyBio);
++                }
++            }
++        }
++    } else {
++        fprintf(stderr, "No provisioning data! Error: %d\n", length);
++    }
++
++    return result;
++}
++
++#ifdef __cplusplus
++}
++#endif
+diff --git a/libopkg/opkg_provision.h b/libopkg/opkg_provision.h
+new file mode 100644
+index 0000000..89940be
+--- /dev/null
++++ b/libopkg/opkg_provision.h
 @@ -0,0 +1,29 @@
 +/* vi: set expandtab sw=4 sts=4: */
 +/* opkg_provision.h - the opkg package management system
@@ -120,63 +358,74 @@
 +}
 +#endif
 +#endif
---- a/libopkg/opkg_provision.cpp	2018-06-13 11:38:31.110347034 +0200
-+++ b/libopkg/opkg_provision.cpp	2018-06-13 11:45:52.768023211 +0200
-@@ -0,0 +1,57 @@
-+/* vi: set expandtab sw=4 sts=4: */
-+/* opkg_provision.c - the opkg package management system
+diff --git a/libopkg/opkg_verify.c b/libopkg/opkg_verify.c
+index a71591d..9f9ea29 100644
+--- a/libopkg/opkg_verify.c
++++ b/libopkg/opkg_verify.c
+@@ -53,6 +53,20 @@ int opkg_verify_openssl_signature(const char *file, const char *sigfile)
+ }
+ #endif
+ 
++#ifdef HAVE_PROVISION
++#include "opkg_provision.h"
++#else
++/* Validate and Decrypt the package if possible. */
++int opkg_verify_and_decrypt_package(const char *file)
++{
++    (void)file;
 +
-+    Copyright (C) 2018 Metrological
-+
-+    This program is free software; you can redistribute it and/or
-+    modify it under the terms of the GNU General Public License as
-+    published by the Free Software Foundation; either version 2, or (at
-+    your option) any later version.
-+
-+    This program is distributed in the hope that it will be useful, but
-+    WITHOUT ANY WARRANTY; without even the implied warranty of
-+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+    General Public License for more details.
-+*/
-+
-+#include <WPEFramework/core/core.h>
-+#include <provision/AccesProvision.h>
-+#include <openssl/ssl.h>
-+#include <openssl/rsa.h>
-+#include <openssl/bio.h>
-+#include <openssl/err.h>
-+
-+int opkg_verify_and_decrypt_package(const char* file) {
-+
-+    int result = -1;     
-+    char RSAKeyBuffer[8*1024];
-+    int length = GetDRMId("packager", sizeof(RSAKeyBuffer), RSAKeyBuffer);
-+
-+    if (length > 0) {
-+        // Seems like we have a valid RSA KEY, so we can decrypt.
-+        WPEFramework::Core::DataElementFile package (file);
-+
-+        if (package.IsValid() == true) {
-+            uint8_t securityHeader[128];
-+
-+            BIO* keybio = BIO_new_mem_buf(RSAKeyBuffer, -1);
-+
-+            if (keybio != nullptr) {
-+                RSA* rsa = nullptr;
-+	        rsa = PEM_read_bio_RSAPrivateKey(keybio, &rsa, nullptr, nullptr);
-+
-+	        if (rsa == nullptr) {
-+                    result = -2;
-+                }
-+                else {
-+                    // Decrypt the first 128 bytes. This is the security header
-+                    result = RSA_private_decrypt(128, package.Buffer(), securityHeader, rsa, RSA_PKCS1_PADDING);
-+                    if (result > 0) {
-+                    }
-+                }
-+            }
-+        }
-+    }
-+	   
-+    return (-1);
++    opkg_msg(ERROR, "Provisioned package checking and decryption not supported\n");
++    return -1;
 +}
++#endif
++
++
+ int opkg_verify_md5sum(const char *file, const char *md5sum)
+ {
+     int r;
+@@ -104,6 +118,8 @@ int opkg_verify_signature(const char *file, const char *sigfile)
+         return opkg_verify_gpg_signature(file, sigfile);
+     else if (strcmp(opkg_config->signature_type, "openssl") == 0)
+         return opkg_verify_openssl_signature(file, sigfile);
++    else if (strcmp(opkg_config->signature_type, "provision") == 0)
++        return opkg_verify_and_decrypt_package(file);
+ 
+     opkg_msg(ERROR, "signature_type option '%s' not understood.\n",
+              opkg_config->signature_type);
+diff --git a/libopkg/pkg.c b/libopkg/pkg.c
+index b142b99..50402ec 100644
+--- a/libopkg/pkg.c
++++ b/libopkg/pkg.c
+@@ -261,6 +261,18 @@ int pkg_init_from_file(pkg_t * pkg, const char *filename)
+     pkg_init(pkg);
+ 
+     pkg->local_filename = xstrdup(filename);
++#ifdef HAVE_PROVISION
++    if (opkg_config->check_pkg_signature) {
++        err = opkg_verify_signature(pkg->local_filename, NULL);
++        if (err) {
++            opkg_msg(NOTICE, "Removing corrupt package file %s.\n",
++                     pkg->local_filename);
++            unlink(pkg->local_filename);
++            return err;
++        }
++        opkg_config->check_pkg_signature = 0;
++    }
++#endif
+ 
+     tmp = xstrdup(filename);
+     sprintf_alloc(&control_path, "%s/%s.control.XXXXXX", opkg_config->tmp_dir,
+@@ -1417,11 +1429,13 @@ int pkg_verify(pkg_t * pkg)
+     }
+ 
+     if (opkg_config->check_pkg_signature) {
++#if !defined HAVE_PROVISION
+         local_sig_filename = pkg_download_signature(pkg);
+         if (!local_sig_filename) {
+             err = -1;
+             goto fail;
+         }
++#endif
+ 
+         err = opkg_verify_signature(pkg->local_filename, local_sig_filename);
+         if (err)
