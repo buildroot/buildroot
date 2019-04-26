@@ -12,7 +12,7 @@ BCM_BME_LICENSE = PROPRIETARY
 BCM_BME_INSTALL_STAGING = YES
 
 ifeq ($(BR2_PACKAGE_BCM_REFSW),y)
-GST1_BCM_DEPENDENCIES += bcm-refsw
+BCM_BME_DEPENDENCIES += bcm-refsw
 endif
 
 NEXUS_CFLAGS=$(shell cat ${STAGING_DIR}/usr/include/platform_app.inc | grep NEXUS_CFLAGS | cut -d' ' -f3- | awk -F "-std=c89" '{print $$1 $$2}')
@@ -20,7 +20,7 @@ NEXUS_LDFLAGS=$(shell cat ${STAGING_DIR}/usr/include/platform_app.inc | grep NEX
 NEXUS_CLIENT_LD_LIBRARIES=$(shell cat ${STAGING_DIR}/usr/include/platform_app.inc | grep NEXUS_CLIENT_LD_LIBRARIES | cut -d' ' -f4-)
 
 BCM_BME_CFLAGS = $(TARGET_CFLAGS) ${NEXUS_CFLAGS} -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/usr/include/refsw
-BCM_BME_LDFLAGS = $(TARGET_LDFLAGS) -L${STAGING_DIR}/usr/lib $(NEXUS_LDFLAGS) $(NEXUS_CLIENT_LD_LIBRARIES) -lnxclient
+BCM_BME_LDFLAGS = $(TARGET_LDFLAGS) -L${STAGING_DIR}/usr/lib $(NEXUS_LDFLAGS) $BCM_BME_DEPENDENCIES(NEXUS_CLIENT_LD_LIBRARIES) -lnxclient
 
 BCM_BME_CFLAGS_FILTERED = $(filter-out -std=c89 -Wstrict-prototypes -pedantic, $(BCM_BME_CFLAGS))
 
