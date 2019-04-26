@@ -3,12 +3,12 @@
 # spark
 #
 ################################################################################
-SPARK_VERSION = dca489d7181b9aa830d08e7ab96f242011ab0c74
+SPARK_VERSION = c41e786db26ceddc472dd6eb1ab27359de74092d
 SPARK_SITE_METHOD = git
 SPARK_SITE = git://github.com/HaseenaSainul/pxCore
 SPARK_INSTALL_STAGING = YES
 
-SPARK_DEPENDENCIES = openssl freetype westeros util-linux libpng libcurl rtremote rtcore pxcore-libnode
+SPARK_DEPENDENCIES = openssl freetype westeros util-linux libpng libcurl pxcore-libnode
 
 export HOSTNAME = "raspberrypi"
 
@@ -32,7 +32,6 @@ SPARK_CONF_OPTS += \
     -DSPARK_BACKGROUND_TEXTURE_CREATION=ON \
     -DSPARK_ENABLE_LRU_TEXTURE_EJECTION=OFF \
     -DHOSTNAME=raspberrypi \
-    -DBUILD_RTCORE_LIBS=OFF \
     -DSUPPORT_DUKTAPE=OFF \
     -DBUILD_DUKTAPE=ON
 
@@ -50,9 +49,19 @@ SPARK_CONF_OPTS += \
     -DBUILD_RTREMOTE_LIBS=ON
 endif
 
+ifeq ($(BR2_PACKAGE_RTREMOTE), y)
+
+SPARK_DEPENDENCIES += rtremote
+else
+
+SPARK_CONF_OPTS += \
+    -DBUILD_RTCORE_LIBS=ON \
+    -DBUILD_RTCORE_STATIC_LIB=OFF
+endif
 
 define SPARK_INSTALL_LIBS
     $(INSTALL) -m 755 $(@D)/build/egl/libpxCore.so $(1)/usr/lib/
+    $(INSTALL) -m 755 $(@D)/build/egl/librtCore.so $(1)/usr/lib/
 endef
 
 SPARK_INSTALL_PATH = usr/share/WPEFramework/Spark
@@ -83,8 +92,8 @@ endif
 
 define SPARK_INSTALL_STAGING_CMDS
     $(call SPARK_INSTALL_LIBS, $(STAGING_DIR))
+    cp -ar $(@D)/src/*.h $(STAGING_DIR)/usr/include/
     mkdir -p $(STAGING_DIR)/usr/include/spark
-    cp -ar $(@D)/src/*.h $(STAGING_DIR)/usr/include/spark/
     cp -ar $(@D)/examples/pxScene2d/src/*.h $(STAGING_DIR)/usr/include/spark/
     $(SPARK_INSTALL_PX_NATIVE_WINDOW)
     $(INSTALL) -D package/spark/Spark.pc $(STAGING_DIR)/usr/lib/pkgconfig/Spark.pc

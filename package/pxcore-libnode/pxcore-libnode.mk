@@ -53,7 +53,7 @@ PXCORE_LIBNODE_LIB_VER = 48
 PXCORE_LIBNODE_DIRECTORY = libnode-v$(PXCORE_LIBNODE_VER)
 PXCORE_LIBNODE_PATH = examples/pxScene2d/external/
 
-define PXCORE_LIBNODE_CONFIGURE_CMDS
+define PXCORE_LIBNODE_EXTRACT
         cd $(@D)/; \
         find . -name examples -prune -o -type f -exec rm -rf {} +; \
         find . -name examples -prune -o -type d -exec rm -rf {} +; \
@@ -61,8 +61,10 @@ define PXCORE_LIBNODE_CONFIGURE_CMDS
         rm -rf examples/;
         touch $(@D)/.stamp_downloaded
         touch $(@D)/.stamp_extracted
-        touch $(@D)/.stamp_patched
+endef
+PXCORE_LIBNODE_POST_EXTRACT_HOOKS += PXCORE_LIBNODE_EXTRACT
 
+define PXCORE_LIBNODE_CONFIGURE_CMDS
 	mkdir -p $(@D)/bin
 	ln -sf $(HOST_DIR)/usr/bin/python2 $(@D)/bin/python
 
