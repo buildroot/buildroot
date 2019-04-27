@@ -12,7 +12,7 @@ RPM_DEPENDENCIES = host-pkgconf berkeleydb file popt zlib \
 	$(TARGET_NLS_DEPENDENCIES)
 RPM_LICENSE = GPL-2.0 or LGPL-2.0 (library only)
 RPM_LICENSE_FILES = COPYING
-# We're patching Makefile.am
+# Needed to fix an issue with -lintl linking
 RPM_AUTORECONF = YES
 
 RPM_CONF_OPTS = \
