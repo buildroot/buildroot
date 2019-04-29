@@ -3,16 +3,15 @@
 # spark
 #
 ################################################################################
-SPARK_VERSION = c41e786db26ceddc472dd6eb1ab27359de74092d
+SPARK_VERSION = 4580fa4cb35a1f5aa72fdf9d2e09207b2f11d122
 SPARK_SITE_METHOD = git
-SPARK_SITE = git://github.com/HaseenaSainul/pxCore
+SPARK_SITE = git://github.com/pxscene/pxCore
 SPARK_INSTALL_STAGING = YES
 
 SPARK_DEPENDENCIES = openssl freetype westeros util-linux libpng libcurl pxcore-libnode
 
-export HOSTNAME = "raspberrypi"
-
 SPARK_CONF_OPTS += \
+    -DBUILD_SHARED_LIBS=OFF \
     -DBUILD_WITH_WAYLAND=ON \
     -DBUILD_WITH_WESTEROS=ON \
     -DBUILD_WITH_TEXTURE_USAGE_MONITORING=ON \
@@ -24,14 +23,11 @@ SPARK_CONF_OPTS += \
     -DPXCORE_MATRIX_HELPERS=OFF \
     -DBUILD_PXWAYLAND_SHARED_LIB=OFF \
     -DBUILD_PXWAYLAND_STATIC_LIB=OFF \
-    -DPXCORE_ESSOS=ON \
-    -DBUILD_PXSCENE_ESSOS=ON \
     -DPREFER_SYSTEM_LIBRARIES=ON \
     -DDISABLE_TURBO_JPEG=ON \
     -DDISABLE_DEBUG_MODE=ON \
     -DSPARK_BACKGROUND_TEXTURE_CREATION=ON \
     -DSPARK_ENABLE_LRU_TEXTURE_EJECTION=OFF \
-    -DHOSTNAME=raspberrypi \
     -DSUPPORT_DUKTAPE=OFF \
     -DBUILD_DUKTAPE=ON
 
@@ -57,12 +53,12 @@ else
 SPARK_CONF_OPTS += \
     -DBUILD_RTCORE_LIBS=ON \
     -DBUILD_RTCORE_STATIC_LIB=OFF
-endif
 
-define SPARK_INSTALL_LIBS
-    $(INSTALL) -m 755 $(@D)/build/egl/libpxCore.so $(1)/usr/lib/
+define RTCORE_INSTALL_LIBS
     $(INSTALL) -m 755 $(@D)/build/egl/librtCore.so $(1)/usr/lib/
 endef
+
+endif
 
 SPARK_INSTALL_PATH = usr/share/WPEFramework/Spark
 define SPARK_INSTALL_DEPS
@@ -82,16 +78,15 @@ define SPARK_INSTALL_DEPS
 endef
 
 ifeq ($(BR2_PACKAGE_SPARK_LIB), y)
-
-ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
+ifeq ($(BR2_PACKAGE_WESTEROS), y)
 define SPARK_INSTALL_PX_NATIVE_WINDOW
-    mkdir -p $(STAGING_DIR)/usr/include/spark/gles
-    cp -ar $(@D)/src/gles/*.h $(STAGING_DIR)/usr/include/spark/gles/
+    mkdir -p $(STAGING_DIR)/usr/include/spark/wayland_egl
+    cp -ar $(@D)/src/wayland_egl/*.h $(STAGING_DIR)/usr/include/spark/wayland_egl/
 endef
 endif
 
 define SPARK_INSTALL_STAGING_CMDS
-    $(call SPARK_INSTALL_LIBS, $(STAGING_DIR))
+    $(call RTCORE_INSTALL_LIBS, $(STAGING_DIR))
     cp -ar $(@D)/src/*.h $(STAGING_DIR)/usr/include/
     mkdir -p $(STAGING_DIR)/usr/include/spark
     cp -ar $(@D)/examples/pxScene2d/src/*.h $(STAGING_DIR)/usr/include/spark/
@@ -113,7 +108,7 @@ endef
 
 define SPARK_INSTALL_TARGET_CMDS
     $(SPARK_INSTALL_DEPS)
-    $(call SPARK_INSTALL_LIBS, $(TARGET_DIR))
+    $(call RTCORE_INSTALL_LIBS, $(TARGET_DIR))
     $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/Spark $(TARGET_DIR)/usr/bin
 endef
 endif

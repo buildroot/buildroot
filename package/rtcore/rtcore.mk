@@ -3,7 +3,7 @@
 # rtcore
 #
 ################################################################################
-RTCORE_VERSION = 65b261180bd189248bd3c69933fb369109080dcf
+RTCORE_VERSION = 4580fa4cb35a1f5aa72fdf9d2e09207b2f11d122
 RTCORE_SITE_METHOD = git
 RTCORE_SITE = git://github.com/pxscene/pxCore
 RTCORE_INSTALL_STAGING = YES
