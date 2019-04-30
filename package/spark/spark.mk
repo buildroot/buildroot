@@ -57,6 +57,10 @@ SPARK_CONF_OPTS += \
 define RTCORE_INSTALL_LIBS
     $(INSTALL) -m 755 $(@D)/build/egl/librtCore.so $(1)/usr/lib/
 endef
+define RTCORE_INSTALL_INCLUDES
+    mkdir -p $(STAGING_DIR)/usr/include/unix
+    cp -Rpf $(@D)/src/unix/*.h $(STAGING_DIR)/usr/include/unix
+endef
 
 endif
 
@@ -88,6 +92,7 @@ endif
 define SPARK_INSTALL_STAGING_CMDS
     $(call RTCORE_INSTALL_LIBS, $(STAGING_DIR))
     cp -ar $(@D)/src/*.h $(STAGING_DIR)/usr/include/
+    $(RTCORE_INSTALL_INCLUDES)
     mkdir -p $(STAGING_DIR)/usr/include/spark
     cp -ar $(@D)/examples/pxScene2d/src/*.h $(STAGING_DIR)/usr/include/spark/
     $(SPARK_INSTALL_PX_NATIVE_WINDOW)
