@@ -40,6 +40,14 @@ config BR2_PACKAGE_WPEFRAMEWORK_BUILD_TYPE_PRODUCTION
 
 endchoice
 
+config BR2_PACKAGE_WPEFRAMEWORK_CREATE_IPKG_TARGETS
+	bool "create ipkg targets"
+	select BR2_PACKAGE_HOST_OPKG_UTILS
+	depends on BR2_PACKAGE_WPEFRAMEWORK_PACKAGER
+	help
+		Creates from configured targets, a DEBIAN 2.0 (ipk, opk, deb) packages. Configured packages will install theirs
+		staging file, but not target files on the root filesystem
+
 config BR2_PACKAGE_WPEFRAMEWORK_PORT
 	string "port"
 	default "80"
