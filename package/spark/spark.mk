@@ -3,23 +3,19 @@
 # spark
 #
 ################################################################################
-SPARK_VERSION = 4580fa4cb35a1f5aa72fdf9d2e09207b2f11d122
+SPARK_VERSION = df9145826899f8196369bf55fe377c8927aafe24
 SPARK_SITE_METHOD = git
 SPARK_SITE = git://github.com/pxscene/pxCore
 SPARK_INSTALL_STAGING = YES
 
-SPARK_DEPENDENCIES = openssl freetype westeros util-linux libpng libcurl pxcore-libnode
+SPARK_DEPENDENCIES = openssl freetype util-linux libpng libcurl pxcore-libnode
 
 SPARK_CONF_OPTS += \
     -DBUILD_SHARED_LIBS=OFF \
-    -DBUILD_WITH_WAYLAND=ON \
-    -DBUILD_WITH_WESTEROS=ON \
     -DBUILD_WITH_TEXTURE_USAGE_MONITORING=ON \
     -DPXCORE_COMPILE_WARNINGS_AS_ERRORS=OFF \
     -DPXSCENE_COMPILE_WARNINGS_AS_ERRORS=OFF \
     -DCMAKE_SKIP_RPATH=ON \
-    -DPXCORE_WAYLAND_EGL=ON \
-    -DBUILD_PXSCENE_WAYLAND_EGL=ON \
     -DPXCORE_MATRIX_HELPERS=OFF \
     -DBUILD_PXWAYLAND_SHARED_LIB=OFF \
     -DBUILD_PXWAYLAND_STATIC_LIB=OFF \
@@ -30,6 +26,26 @@ SPARK_CONF_OPTS += \
     -DSPARK_ENABLE_LRU_TEXTURE_EJECTION=OFF \
     -DSUPPORT_DUKTAPE=OFF \
     -DBUILD_DUKTAPE=ON
+
+
+ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR), y)
+    SPARK_CONF_OPTS += \
+        -DBUILD_WITH_WPEFRAMEWORK=ON \
+        -DPXCORE_WPEFRAMEWORK=ON
+
+    COMPOSITOR=wpeframework
+    COMPOSITOR_BIN=wpe
+else
+    SPARK_DEPENDENCIES += westeros
+
+    SPARK_CONF_OPTS += \
+        -DBUILD_WITH_WAYLAND=ON \
+        -DBUILD_WITH_WESTEROS=ON \
+        -DPXCORE_WAYLAND_EGL=ON \
+        -DBUILD_PXSCENE_WAYLAND_EGL=ON
+    COMPOSITOR=wayland_egl
+    COMPOSITOR_BIN=egl
+endif
 
 ifeq ($(BR2_PACKAGE_SPARK_LIB), y)
 
@@ -55,7 +71,7 @@ SPARK_CONF_OPTS += \
     -DBUILD_RTCORE_STATIC_LIB=OFF
 
 define RTCORE_INSTALL_LIBS
-    $(INSTALL) -m 755 $(@D)/build/egl/librtCore.so $(1)/usr/lib/
+    $(INSTALL) -m 755 $(@D)/build/$(COMPOSITOR_BIN)/librtCore.so $(1)/usr/lib/
 endef
 define RTCORE_INSTALL_INCLUDES
     mkdir -p $(STAGING_DIR)/usr/include/unix
@@ -82,12 +98,10 @@ define SPARK_INSTALL_DEPS
 endef
 
 ifeq ($(BR2_PACKAGE_SPARK_LIB), y)
-ifeq ($(BR2_PACKAGE_WESTEROS), y)
 define SPARK_INSTALL_PX_NATIVE_WINDOW
-    mkdir -p $(STAGING_DIR)/usr/include/spark/wayland_egl
-    cp -ar $(@D)/src/wayland_egl/*.h $(STAGING_DIR)/usr/include/spark/wayland_egl/
+    mkdir -p $(STAGING_DIR)/usr/include/spark/$(COMPOSITOR)
+    cp -ar $(@D)/src/$(COMPOSITOR)/*.h $(STAGING_DIR)/usr/include/spark/$(COMPOSITOR)
 endef
-endif
 
 define SPARK_INSTALL_STAGING_CMDS
     $(call RTCORE_INSTALL_LIBS, $(STAGING_DIR))
@@ -107,6 +121,7 @@ define SPARK_INSTALL_TARGET_CMDS
 endef
 
 else
+
 define SPARK_INSTALL_STAGING_CMDS
     $(call SPARK_INSTALL_LIBS, $(STAGING_DIR))
 endef
