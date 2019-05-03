@@ -7,5 +7,5 @@ Name: wayland-egl
 Description: EGL Platform-layer for wayland clients
 Version: 1.13.1
 
-Libs: -L${libdir} -lnexus -lnxpl -lv3ddriver
+Libs: -L${libdir} -lnexus -lnxpl -lwayland-egl -lv3ddriver
 Cflags: -I${includedir} -I${includedir}/refsw -DBROADCOM_PLATFORM -DVCX=5 -DBSTD_CPU_ENDIAN=BSTD_ENDIAN_LITTLE -I${includedir}/interface/khronos/include -I${includedir}/interface/khronos/include/bcg_abstract -I${includedir}/vcos/include
