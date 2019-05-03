@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 '''Wrapper for python2 and python3 around compileall to raise exception
 when a python byte code generation failed.
 
@@ -18,10 +17,12 @@ def check_for_errors(comparison):
     If PyCompileError was raised, re-raise it again to abort execution,
     otherwise perform comparison as expected.
     '''
+
     def operator(self, other):
         exc_type, value, traceback = sys.exc_info()
-        if exc_type is not None and issubclass(exc_type,
-                                               py_compile.PyCompileError):
+        if exc_type is not None and issubclass(
+                exc_type, py_compile.PyCompileError
+        ):
             print("Cannot compile %s" % value.file)
             raise value
 
@@ -58,11 +59,15 @@ class ReportProblem(int):
         return not self == other
 
 
-parser = argparse.ArgumentParser(description='Compile Python source files in a directory tree.')
-parser.add_argument("target", metavar='DIRECTORY',
-                    help='Directory to scan')
-parser.add_argument("--force", action='store_true',
-                    help="Force compilation even if alread compiled")
+parser = argparse.ArgumentParser(
+        description='Compile Python source files in a directory tree.'
+)
+parser.add_argument("target", metavar='DIRECTORY', help='Directory to scan')
+parser.add_argument(
+        "--force",
+        action='store_true',
+        help="Force compilation even if alread compiled"
+)
 
 args = parser.parse_args()
 
