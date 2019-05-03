@@ -22,7 +22,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
 ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR)$(BR2_PACKAGE_WESTEROS),yy)
-LIBEPOXY_CONF_ENV += LIBS="-lwayland-egl -lwayland-client  -lv3ddriver"
+#LIBEPOXY_CONF_ENV += LIBS="-lwayland-egl -lwayland-client  -lv3ddriver"
 LIBEPOXY_MAKE_OPTS += \
 	CFLAGS='$(TARGET_CFLAGS) \
             -DGLX_LIB_NAME="libwayland-egl.so" \
