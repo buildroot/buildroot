@@ -1,0 +1,11 @@
+[Unit]
+Description=Backlight on
+DefaultDependencies=false
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/yio-remote/sharp-backlight-init.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=sysinit.target

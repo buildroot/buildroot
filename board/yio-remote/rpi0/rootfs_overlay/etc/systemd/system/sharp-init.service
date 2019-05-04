@@ -1,0 +1,12 @@
+[Unit]
+Description=Sharp init
+DefaultDependencies=false
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/yio-remote/sharp-init
+RemainAfterExit=yes
+Restart=no
+
+[Install]
+WantedBy=sysinit.target

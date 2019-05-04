@@ -1,0 +1,11 @@
+[Unit]
+Description=Remote app
+DefaultDependencies=false
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/yio-remote/app-launch.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=sysinit.target
