@@ -1,0 +1,11 @@
+--- /wiringPi/mcp23017.c
++++ /wiringPi/mcp23017.c
+@@ -176,7 +176,7 @@
+   int fd ;
+   struct wiringPiNodeStruct *node ;
+ 
+-  if ((fd = wiringPiI2CSetup (i2cAddress)) < 0)
++  if ((fd = wiringPiI2CSetupInterface ("/dev/i2c-3",i2cAddress)) < 0)
+     return FALSE ;
+ 
+   wiringPiI2CWriteReg8 (fd, MCP23x17_IOCON, IOCON_INIT) ;
