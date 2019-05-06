@@ -1,0 +1,16 @@
+diff --git a/rpi/westeros-gl/westeros-gl.cpp b/rpi/westeros-gl/westeros-gl.cpp
+index 25ff376..68e30af 100644
+--- a/rpi/westeros-gl/westeros-gl.cpp
++++ b/rpi/westeros-gl/westeros-gl.cpp
+@@ -212,6 +212,11 @@ void WstGLTerm( WstGLCtx *ctx )
+          }
+          bcm_host_deinit();
+       }
++
++      gDispmanDisplay = 0;
++      gDisplayWidth = 0;
++      gDisplayHeight = 0;
++      gDisplayAllSafe = false;
+       free( ctx );
+    }
+ }
