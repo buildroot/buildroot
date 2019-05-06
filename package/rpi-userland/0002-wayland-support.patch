@@ -1301,7 +1301,7 @@ new file mode 100644
 index 0000000..5730743
 --- /dev/null
 +++ b/interface/khronos/ext/egl_wayland.c
-@@ -0,0 +1,246 @@
+@@ -0,0 +1,247 @@
 +/*
 +Copyright (c) 2013, Raspberry Pi Foundation
 +All rights reserved.
@@ -1482,6 +1482,7 @@ index 0000000..5730743
 +   if (process->wl_global == NULL)
 +      goto error;
 +
++   CLIENT_UNLOCK();
 +   return EGL_TRUE;
 +
 +error:
