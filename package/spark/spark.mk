@@ -35,6 +35,11 @@ ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR), y)
 
     COMPOSITOR=wpeframework
     COMPOSITOR_BIN=wpe
+
+    ifeq ($(BR2_PACKAGE_WESTEROS),y)
+        SPARK_CONF_OPTS += \
+            -DWPEFRAMEWORK_COMPOSITOR=bcm-westeros
+    endif
 else
     SPARK_DEPENDENCIES += westeros
 
@@ -116,6 +121,7 @@ endef
 
 define SPARK_INSTALL_TARGET_CMDS
     $(SPARK_INSTALL_DEPS)
+    $(call RTCORE_INSTALL_LIBS, $(TARGET_DIR))
     $(call SPARK_INSTALL_LIBS, $(TARGET_DIR))
     $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/libSpark.so $(TARGET_DIR)/usr/lib
 endef
@@ -123,6 +129,7 @@ endef
 else
 
 define SPARK_INSTALL_STAGING_CMDS
+    $(call RTCORE_INSTALL_LIBS, $(TARGET_DIR))
     $(call SPARK_INSTALL_LIBS, $(STAGING_DIR))
 endef
 

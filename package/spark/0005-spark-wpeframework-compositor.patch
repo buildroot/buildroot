@@ -1,8 +1,8 @@
 diff --git a/examples/pxScene2d/src/CMakeLists.txt b/examples/pxScene2d/src/CMakeLists.txt
-index 4585886..dc343ad 100644
+index 4585886..d053de9 100644
 --- a/examples/pxScene2d/src/CMakeLists.txt
 +++ b/examples/pxScene2d/src/CMakeLists.txt
-@@ -236,6 +236,12 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+@@ -236,6 +236,17 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
          set(PXCORE_INCLUDES $ENV{PXCORE_INCLUDES})
          separate_arguments(PXCORE_INCLUDES)
          include_directories(BEFORE ${PXCORE_INCLUDES})
@@ -11,6 +11,11 @@ index 4585886..dc343ad 100644
 +        set(PX_PLATFORM PX_PLATFORM_WPEFRAMEWORK)
 +        set(PXCORE_LIB_LOCATION ${PXCOREDIR}/build/wpe)
 +        set(PLATFORM_SOURCES egl/pxContextUtils.cpp)
++
++        if (WPEFRAMEWORK_COMPOSITOR STREQUAL "bcm-westeros")
++            set(PXSCENE_LINK_LIBRARIES wayland-egl ${PXSCENE_LINK_LIBRARIES})
++        endif (WPEFRAMEWORK_COMPOSITOR STREQUAL "bcm-westeros")
++
 +        set(PXSCENE_LINK_LIBRARIES ${PXSCENE_LINK_LIBRARIES} compositorclient)
      else ()
          message("building pxscene for glut")
