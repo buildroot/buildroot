@@ -1,0 +1,21 @@
+diff -auNrd git.orig/brcm/westeros-gl/westeros-gl.cpp git/brcm/westeros-gl/westeros-gl.cpp
+--- git.orig/brcm/westeros-gl/westeros-gl.cpp	2018-05-04 17:26:41.516465179 -0400
++++ git/brcm/westeros-gl/westeros-gl.cpp	2018-05-04 15:28:09.100490849 -0400
+@@ -236,7 +236,7 @@
+          
+          if ( !npm->pixmap )
+          {
+-            BEGL_PixmapInfo pixmapInfo;
++            BEGL_PixmapInfoEXT pixmapInfo;
+ 
+             /*
+              * Create a new Nexus surface/native pixmap pair
+@@ -248,7 +248,7 @@
+             #else
+             pixmapInfo.format= BEGL_BufferFormat_eA8B8G8R8;
+             #endif
+-            if ( !NXPL_CreateCompatiblePixmap(ctx->nxplHandle, &npm->pixmap, &npm->surface, &pixmapInfo) )
++            if ( !NXPL_CreateCompatiblePixmapEXT(ctx->nxplHandle, &npm->pixmap, &npm->surface, &pixmapInfo) )
+             {
+                printf("WstGLGetNativePixmap: NXPL_CreateCompatiblePixmap failed\n");
+                free( npm );

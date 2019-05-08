@@ -1,0 +1,24 @@
+diff --git a/wayland-egl.h b/wayland-egl.h
+index 70ddcb0..3d92ab9 100644
+--- a/wayland-egl.h
++++ b/wayland-egl.h
+@@ -24,15 +24,15 @@
+ #ifndef WAYLAND_EGL_H
+ #define WAYLAND_EGL_H
+ 
+-#ifdef  __cplusplus
+-extern "C" {
+-#endif
+-
+ #include <EGL/egl.h>
+ #include <EGL/eglext.h>
+ 
+ #include <wayland-client.h>
+ 
++#ifdef  __cplusplus
++extern "C" {
++#endif
++
+ #define WL_EGL_PLATFORM 1
+ 
+ /*

@@ -1,0 +1,12 @@
+diff -auNrd a/BSEAV/lib/gpu/vc5/platform/common/sched_nexus.c b/BSEAV/lib/gpu/vc5/platform/common/sched_nexus.c
+--- a/BSEAV/lib/gpu/vc5/platform/common/sched_nexus.c	2018-07-17 19:10:39.000000000 -0400
++++ b/BSEAV/lib/gpu/vc5/platform/common/sched_nexus.c	2018-07-18 11:18:08.884430156 -0400
+@@ -12,6 +12,8 @@
+ #include <memory.h>
+ #include <pthread.h>
+
++#include "berr.h"
++
+ #include "bchp.h"
+ #include "bkni.h"
+ #include "bkni_multi.h"

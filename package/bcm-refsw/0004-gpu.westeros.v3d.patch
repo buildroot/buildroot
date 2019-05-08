@@ -1,0 +1,73 @@
+diff -auNrd a/BSEAV/lib/gpu/v3d/platform/nexus/default_nexus.h b/BSEAV/lib/gpu/v3d/platform/nexus/default_nexus.h
+--- a/BSEAV/lib/gpu/v3d/platform/nexus/default_nexus.h	2018-06-12 16:06:37.511532843 -0400
++++ b/BSEAV/lib/gpu/v3d/platform/nexus/default_nexus.h	2018-06-12 16:08:02.395574809 -0400
+@@ -35,6 +35,17 @@
+ 
+ typedef void *NXPL_PlatformHandle;
+ 
++#ifdef USE_WAYLAND_EGL
++typedef void (*WEGLReferenceBuffer)( void *userData, void *buffer, void *bufferCtx );
++typedef void (*WEGLDispatchPending)( void *userData, bool force );
++typedef void (*WEGLUpdateFence)( void *context, void *nativeWindow );
++typedef struct _WEGLNativeWindowListener
++{
++   WEGLReferenceBuffer referenceBuffer;
++   WEGLDispatchPending dispatchPending;
++} WEGLNativeWindowListener;
++#endif
++
+ /* WARNING, deprecated */
+ typedef struct
+ {
+@@ -68,6 +79,11 @@
+    NEXUS_BlendEquation  alphaBlend;
+    NXPL_DisplayType     type;
+    uint32_t             magic;
++   #ifdef USE_WAYLAND_EGL
++   void *userData;
++   WEGLReferenceBuffer referenceBuffer;
++   WEGLDispatchPending dispatchPending;
++   #endif
+ } NXPL_NativeWindowInfoEXT;
+ 
+ /* Register a display for exclusive use. The client application should not use the display until
+@@ -100,6 +116,12 @@
+ NXPL_EXPORT void NXPL_GetDefaultPixmapInfoEXT(BEGL_PixmapInfoEXT *info)
+    __attribute__((deprecated("Use Nexus surface with 3D compatibility flag instead")));
+ 
++#ifdef USE_WAYLAND_EGL
++NXPL_EXPORT void NXPL_AttachNativeWindow( void *nativeWin, void *userData, WEGLNativeWindowListener *listener);
++NXPL_EXPORT void NXPL_ResizeNativeWindow( void *nativeWin, int width, int height, int dx, int dy );
++NXPL_EXPORT void NXPL_ReleaseBuffer( void *nativeWin );
++#endif
++
+ NXPL_EXPORT bool NXPL_CreateCompatiblePixmapEXT(NXPL_PlatformHandle handle, void **pixmapHandle,
+                                                 NEXUS_SurfaceHandle *surface, BEGL_PixmapInfoEXT *info)
+    __attribute__((deprecated("Use Nexus surface with 3D compatibility flag instead")));
+diff -auNrd a/BSEAV/lib/gpu/v3d/platform/nexus/display_nexus.cpp b/BSEAV/lib/gpu/v3d/platform/nexus/display_nexus.cpp
+--- a/BSEAV/lib/gpu/v3d/platform/nexus/display_nexus.cpp	2018-06-12 16:06:37.511532843 -0400
++++ b/BSEAV/lib/gpu/v3d/platform/nexus/display_nexus.cpp	2018-06-12 16:06:26.779510252 -0400
+@@ -421,3 +421,23 @@
+       ret = nw->GetClientID();
+    return ret;
+ }
++
++#ifdef USE_WAYLAND_EGL
++extern "C" void NXPL_AttachNativeWindow( void *nativeWin, void *userData, WEGLNativeWindowListener *listener)
++{
++   auto nw = static_cast<nxpl::NativeWindowInfo*>(nativeWin);
++   //to be implemented
++}
++
++extern "C" void NXPL_ResizeNativeWindow( void *nativeWin, int width, int height, int dx, int dy )
++{
++   auto nw = static_cast<nxpl::NativeWindowInfo*>(nativeWin);
++   //to be implemented
++}
++
++extern "C" void NXPL_ReleaseBuffer( void *nativeWin )
++{
++   auto nw = static_cast<nxpl::NativeWindowInfo*>(nativeWin);
++   //to be implemented
++}
++#endif
