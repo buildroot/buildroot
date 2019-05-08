@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NETFLIX5_VERSION = c1dff37f4d3f87c77f4604d0b2d890e9857e80e1
+NETFLIX5_VERSION = 64fd1a769eab4254fa9af2092854a4bf7cf8f1a0
 NETFLIX5_SITE = git@github.com:Metrological/netflix.git
 NETFLIX5_SITE_METHOD = git
 NETFLIX5_LICENSE = PROPRIETARY
@@ -125,10 +125,6 @@ else ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
 ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR),y)
 NETFLIX5_CONF_OPTS += \
 	-DGIBBON_GRAPHICS=wpeframework
-ifeq ($(BR2_PACKAGE_WESTEROS),y)
-NETFLIX5_CONF_OPTS += \
-        -DWPEFRAMEWORK_COMPOSITOR=bcm-westeros
-endif
 else ifeq ($(BR2_PACKAGE_WESTEROS),y)
 NETFLIX5_CONF_OPTS += \
 	-DGIBBON_GRAPHICS=wayland
