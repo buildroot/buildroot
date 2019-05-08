@@ -1,8 +1,52 @@
+diff --git a/cmake/CommDeps.cmake b/cmake/CommDeps.cmake
+index 79821ef..0b2e8c7 100644
+--- a/cmake/CommDeps.cmake
++++ b/cmake/CommDeps.cmake
+@@ -188,6 +188,25 @@ set(COMM_DEPS_LIBRARY_DIRS ${COMM_DEPS_LIBRARY_DIRS}
+       ${ICU_UC_LIBRARY_DIRS}
+    )
+ 
++if (BUILD_WITH_WPEFRAMEWORK)
++
++set(COMM_DEPS_LIBRARIES ${COMM_DEPS_LIBRARIES}
++           ${ZLIB_LIBRARIES}
++           ${CURL_LIBRARIES}
++           ${JPEG_LIBRARIES}
++     ${TURBO_JPEG_LIBRARIES}
++            ${PNG_LIBRARIES}
++       ${FREETYPE_LIBRARIES}
++         ${CRYPTO_LIBRARIES}
++        ${OPENSSL_LIBRARIES}
++            ${X11_LIBRARIES}
++             ${UV_LIBRARIES}
++       ${ICU_I18N_LIBRARIES}
++         ${ICU_UC_LIBRARIES}
++   )
++
++else ()
++
+ set(COMM_DEPS_LIBRARIES ${COMM_DEPS_LIBRARIES}
+            ${ZLIB_LIBRARIES}
+            ${CURL_LIBRARIES}
+@@ -206,3 +225,4 @@ set(COMM_DEPS_LIBRARIES ${COMM_DEPS_LIBRARIES}
+        ${ICU_I18N_LIBRARIES}
+          ${ICU_UC_LIBRARIES}
+    )
++endif (BUILD_WITH_WPEFRAMEWORK)
 diff --git a/examples/pxScene2d/src/CMakeLists.txt b/examples/pxScene2d/src/CMakeLists.txt
-index 4585886..d053de9 100644
+index 4585886..223be5d 100644
 --- a/examples/pxScene2d/src/CMakeLists.txt
 +++ b/examples/pxScene2d/src/CMakeLists.txt
-@@ -236,6 +236,17 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+@@ -156,7 +156,7 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+                   ${NODE_LIBRARIES}
+                   ${V8_LIBRARIES}
+                   ${DUKE_LIBRARIES}
+-             ${COMM_DEPS_LIBRARIES}
++                  ${COMM_DEPS_LIBRARIES}
+              pthread rt dl m)
+ 
+     set(PXSCENE_APP_LIBRARIES ${PXSCENE_APP_LIBRARIES} pxCore rtCore_s)
+@@ -236,6 +236,13 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
          set(PXCORE_INCLUDES $ENV{PXCORE_INCLUDES})
          separate_arguments(PXCORE_INCLUDES)
          include_directories(BEFORE ${PXCORE_INCLUDES})
@@ -11,10 +55,6 @@ index 4585886..d053de9 100644
 +        set(PX_PLATFORM PX_PLATFORM_WPEFRAMEWORK)
 +        set(PXCORE_LIB_LOCATION ${PXCOREDIR}/build/wpe)
 +        set(PLATFORM_SOURCES egl/pxContextUtils.cpp)
-+
-+        if (WPEFRAMEWORK_COMPOSITOR STREQUAL "bcm-westeros")
-+            set(PXSCENE_LINK_LIBRARIES wayland-egl ${PXSCENE_LINK_LIBRARIES})
-+        endif (WPEFRAMEWORK_COMPOSITOR STREQUAL "bcm-westeros")
 +
 +        set(PXSCENE_LINK_LIBRARIES ${PXSCENE_LINK_LIBRARIES} compositorclient)
      else ()

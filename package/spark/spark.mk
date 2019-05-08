@@ -36,10 +36,6 @@ ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR), y)
     COMPOSITOR=wpeframework
     COMPOSITOR_BIN=wpe
 
-    ifeq ($(BR2_PACKAGE_WESTEROS),y)
-        SPARK_CONF_OPTS += \
-            -DWPEFRAMEWORK_COMPOSITOR=bcm-westeros
-    endif
 else
     SPARK_DEPENDENCIES += westeros
 
