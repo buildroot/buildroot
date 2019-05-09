@@ -3,7 +3,7 @@
 # spark
 #
 ################################################################################
-SPARK_VERSION = df9145826899f8196369bf55fe377c8927aafe24
+SPARK_VERSION = dddd8bf17d3431e6abaf650575587c39605b549d
 SPARK_SITE_METHOD = git
 SPARK_SITE = git://github.com/pxscene/pxCore
 SPARK_INSTALL_STAGING = YES
