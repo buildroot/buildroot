@@ -103,6 +103,15 @@ config BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
 	  If the dynamic uinput system can not be used for security reasons, this
 	  allows for relaying keys to plugins
 
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITORCLIENT
+	bool "CompositorClient"
+        default n
+	help
+	  A graphical/input abstraction. This library is included in micro services that requires user
+          interaction (Graphics/input). The implementation hides all the compositor specific details.
+	  allows for relaying keys to plugins
+
+
 config BR2_PACKAGE_WPEFRAMEWORK_CDM
 	bool "CDM"
 	help
