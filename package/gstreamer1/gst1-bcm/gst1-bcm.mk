@@ -25,7 +25,7 @@ GST1_BCM_VERSION = 17.1-5
 else ifneq ($(filter y,$(BR2_PACKAGE_HOMECAST_SDK)),)
 GST1_BCM_VERSION = 961a36dcd30c91330b8a9503e12ec3ddb30b70b6
 else ifneq ($(filter y,$(BR2_PACKAGE_VSS_SDK)),)
-GST1_BCM_VERSION = 602150ea6d1d616609e006c9b3acde1b68bbcc71
+GST1_BCM_VERSION = 372e39b8c2f04e57eb4e7fb897e7b0b407fea649
 else ifneq ($(filter y,$(BR2_PACKAGE_EVASION_SDK)),)
 GST1_BCM_VERSION = 18.2-rdkv-20180727
 else
@@ -148,6 +148,12 @@ endif
 
 ifeq ($(BR2_PACKAGE_HAS_OPUS_DECODER),)
 GST1_BCM_PKGDIR = "$(TOP_DIR)/package/gstreamer1/gst1-bcm"
+
+define GST1_BCM_INSTALL_SVP_DEV
+    $(INSTALL) -D -m 0644 ${@D}/svpmeta/src/gst_brcm_svp_meta.h $(STAGING_DIR)/usr/include
+endef
+
+GST1_BCM_POST_INSTALL_STAGING_HOOKS += GST1_BCM_INSTALL_SVP_DEV
 endif
 
 ifeq ($(BR2_PACKAGE_VSS_SDK_MOVE_GSTREAMER),y)
