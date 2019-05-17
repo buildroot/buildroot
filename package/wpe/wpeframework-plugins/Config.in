@@ -591,11 +591,21 @@ config BR2_PACKAGE_WPEFRAMEWORK_TESTUTILITY
     help
       TestUtility Plugin
 
-config BR2_PACKAGE_WPEFRAMEWORK_TIMESYNC
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_TIMESYNC
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "TimeSync"
     help
       TimeSync Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_TIMESYNC
+
+config BR2_PACKAGE_WPEFRAMEWORK_TIMESYNC_DEFFERED
+    bool "Deferred"
+    default n
+    help
+      TimeSync will postpone synchonization until requested to do so
+
+endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_TUNER
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
