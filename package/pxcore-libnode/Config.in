@@ -3,3 +3,28 @@ config BR2_PACKAGE_PXCORE_LIBNODE
 	select BR2_PACKAGE_OPENSSL
 	help
 	  nodejs library tuned for pxcore
+
+if BR2_PACKAGE_PXCORE_LIBNODE
+
+  menu "Extra options"
+
+  choice
+          bool "pxCore libnode version"
+          default BR2_PACKAGE_SPACKAGE_PXCORE_LIBNODE_6
+          help
+            Choose application type.
+
+  config BR2_PACKAGE_SPACKAGE_PXCORE_LIBNODE_6
+          bool "pxcore node 6"
+          help
+            Select pxCore libnode 6.x.
+
+  config BR2_PACKAGE_SPACKAGE_PXCORE_LIBNODE_8
+          bool "pxcore node 8"
+          help
+            Select pxCore libnode 8.x.
+
+  endchoice
+
+  endmenu
+endif

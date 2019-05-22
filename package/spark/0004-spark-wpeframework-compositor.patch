@@ -1315,8 +1315,8 @@ index e69de29..5c32a8c 100644
 +{
 +    initializeEgl();
 +
-+    mEglNativeWindow =
-+          static_cast<EGLNativeWindowType*>(wpeDisplay->GetGraphicsSurface()->Native());
++    mEglNativeWindow = wpeDisplay->GetGraphicsSurface()->Native();
++
 +    mEGLSurface =
 +        (EGLSurface)eglCreateWindowSurface(mEGLDisplay,
 +                       mEGLConfig,

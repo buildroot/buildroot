@@ -4,6 +4,7 @@
 #
 ################################################################################
 SPARK_VERSION = dddd8bf17d3431e6abaf650575587c39605b549d
+SPARK_VERSION = 746382b7139bb7de4ebe357d766a4fbac243cab9
 SPARK_SITE_METHOD = git
 SPARK_SITE = git://github.com/pxscene/pxCore
 SPARK_INSTALL_STAGING = YES
@@ -81,6 +82,20 @@ define RTCORE_INSTALL_INCLUDES
 endef
 
 endif
+
+ifeq ($(BR2_PACKAGE_SPACKAGE_PXCORE_LIBNODE_6), y)
+SPARK_CONF_OPTS += -DUSE_NODE_8=OFF
+else
+#Apply pxCore lib node patch to get patched headers localy for NODE 8.15.1 case
+PXCORE_LIBNODE_VER = 8.15.1
+PXCORE_LIBNODE_PATH = examples/pxScene2d/external/
+define PXCORE_LIBNODE_PATCHES
+    cd $(@D); \
+    patch -p1 <$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_mods.patch
+endef
+endif
+
+SPARK_PRE_PATCH_HOOKS = PXCORE_LIBNODE_PATCHES
 
 SPARK_INSTALL_PATH = usr/share/WPEFramework/Spark
 define SPARK_INSTALL_DEPS
