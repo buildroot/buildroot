@@ -3,7 +3,6 @@
 # spark
 #
 ################################################################################
-SPARK_VERSION = dddd8bf17d3431e6abaf650575587c39605b549d
 SPARK_VERSION = 746382b7139bb7de4ebe357d766a4fbac243cab9
 SPARK_SITE_METHOD = git
 SPARK_SITE = git://github.com/pxscene/pxCore
@@ -59,13 +58,12 @@ SPARK_CONF_OPTS += \
 else
 
 SPARK_CONF_OPTS += \
-    -DBUILD_OPTIMUS_STATIC_LIB=ON \
-    -DBUILD_PXSCENE_APP_WITH_PXSCENE_LIB=ON \
-    -DBUILD_RTREMOTE_LIBS=ON
+    -DBUILD_PXSCENE_APP_WITH_PXSCENE_LIB=ON
 endif
 
 ifeq ($(BR2_PACKAGE_RTREMOTE), y)
-
+SPARK_CONF_OPTS += \
+    -DBUILD_OPTIMUS_STATIC_LIB=ON
 SPARK_DEPENDENCIES += rtremote
 else
 
