@@ -17,9 +17,16 @@ WESTEROS_CONF_OPTS = \
 	--prefix=/usr/ \
 	--enable-rendergl=yes \
 	--enable-sbprotocol=yes \
-	--enable-xdgv5=yes\
+	--enable-xdgv5=yes
+
+ifeq ($(BR2_PACKAGE_WESTEROS_ESSOS), y)
+WESTEROS_CONF_OPTS += \
+	--enable-essos=yes
+else
+WESTEROS_CONF_OPTS += \
 	--enable-essos=no
-    
+endif
+
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 	WESTEROS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -DWESTEROS_PLATFORM_RPI -DWESTEROS_INVERTED_Y -DBUILD_WAYLAND -I${STAGING_DIR}/usr/include/interface/vmcs_host/linux"
 	WESTEROS_LDFLAGS += -lEGL -lGLESv2 -lbcm_host
