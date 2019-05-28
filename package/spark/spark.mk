@@ -75,6 +75,8 @@ SPARK_CONF_OPTS += \
     -DBUILD_PXSCENE_APP_WITH_PXSCENE_LIB=ON
 endif
 
+SPARK_CXXFLAGS += " -fno-delete-null-pointer-checks "
+
 ifeq ($(BR2_PACKAGE_RTREMOTE), y)
 SPARK_CONF_OPTS += \
     -DBUILD_OPTIMUS_STATIC_LIB=ON
