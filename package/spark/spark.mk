@@ -75,7 +75,7 @@ SPARK_CONF_OPTS += \
     -DBUILD_PXSCENE_APP_WITH_PXSCENE_LIB=ON
 endif
 
-SPARK_CXXFLAGS += " -fno-delete-null-pointer-checks "
+SPARK_CONF_OPTS += -DCMAKE_CXX_FLAGS="$(TARGET_CXXFLAGS) -fno-delete-null-pointer-checks"
 
 ifeq ($(BR2_PACKAGE_RTREMOTE), y)
 SPARK_CONF_OPTS += \
