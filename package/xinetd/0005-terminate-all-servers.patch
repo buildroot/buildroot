@@ -1,0 +1,24 @@
+diff --git a/xinetd/main.c b/xinetd/main.c
+index 5b3389c..d599cac 100644
+--- a/xinetd/main.c
++++ b/xinetd/main.c
+@@ -296,18 +296,7 @@ void terminate_program(void)
+ 
+    for ( u = 0 ; u < pset_count( SERVICES( ps ) ) ; u++ ) {
+       scp = SVC_CONF( SP(pset_pointer(SERVICES(ps), u)) );
+-
+-      /* Terminate the service if it is:
+-       * 1) internal (if we don't, it'll zombie)
+-       * 2) a redirector (again, if we don't it'll zombie)
+-       * 3) It's RPC (we must deregister it.
+-       */
+-      if( SC_IS_INTERNAL( scp ) )
+-         terminate_servers( SP( pset_pointer( SERVICES( ps ), u ) ) ) ;
+-      if( SC_REDIR_ADDR( scp ) != NULL )
+-         terminate_servers( SP( pset_pointer( SERVICES( ps ), u ) ) ) ;
+-      if( SC_IS_RPC( scp ) )
+-         terminate_servers( SP( pset_pointer( SERVICES( ps ), u ) ) ) ;
++	  terminate_servers( SP( pset_pointer( SERVICES( ps ), u ) ) ) ;
+    }
+    quit_program() ;
+ }
