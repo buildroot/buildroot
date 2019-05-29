@@ -779,7 +779,7 @@ diff --git a/src/wpeframework/pxWPECompositor.h b/src/wpeframework/pxWPEComposit
 index e69de29..6c66713 100644
 --- a/src/wpeframework/pxWPECompositor.h
 +++ b/src/wpeframework/pxWPECompositor.h
-@@ -0,0 +1,334 @@
+@@ -0,0 +1,318 @@
 +/*
 + * Copyright (C) 2019 Metrological
 + * All rights reserved.
@@ -875,24 +875,8 @@ index e69de29..6c66713 100644
 +        struct timeval tv;
 +        gettimeofday(&tv, NULL);
 +        time_t epoch_time = (tv.tv_sec * 1000) + (tv.tv_usec/1000);
++        _display_name = "Spark" + to_string(epoch_time);
 +
-+        const char* callsign(std::getenv("CLIENT_IDENTIFIER"));
-+        if (callsign == nullptr)
-+        {
-+            _display_name = "Spark" + to_string(epoch_time);
-+        }
-+        else
-+        {
-+            const char* delimiter = nullptr;
-+            if ((delimiter = strchr(callsign, ',')) == nullptr)
-+            {
-+                _display_name = callsign;
-+            }
-+            else
-+            {
-+                _display_name = std::string(callsign, (delimiter - callsign));
-+            }
-+        }
 +        Run();
 +    }
 +    void CreateDisplayClient()
