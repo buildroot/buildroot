@@ -1,0 +1,485 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0966275..0e7aaba 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -135,7 +135,11 @@ endif()
+ if(CMAKE_DASH_DRM)
+ 	message("CMAKE_DASH_DRM set")
+ 	if(CMAKE_USE_OPENCDM)
++		set(LIBAAMP_DEFINES "${LIBAAMP_DEFINES} -DUSE_OPENCDM")
+ 		set(LIBAAMP_DRM_SOURCES drm/AampDRMSessionManager.cpp drm/AampDrmSession.cpp drm/opencdmsession.cpp drm/aampdrmsessionfactory.cpp drm/aampoutputprotection.cpp drm/AampDRMutils.cpp)
++	elseif(CMAKE_USE_OPENCDM_ADAPTER)
++		set(LIBAAMP_DEFINES "${LIBAAMP_DEFINES} -DUSE_OPENCDM -DUSE_OPENCDM_ADAPTER")
++		set(LIBAAMP_DRM_SOURCES drm/AampDRMSessionManager.cpp drm/AampDrmSession.cpp drm/opencdmsessionadapter.cpp drm/aampdrmsessionfactory.cpp drm/aampoutputprotection.cpp drm/AampDRMutils.cpp)
+ 	else()
+ 		set(LIBAAMP_DRM_SOURCES drm/AampDRMSessionManager.cpp drm/AampDrmSession.cpp drm/playreadydrmsession.cpp drm/aampdrmsessionfactory.cpp drm/aampoutputprotection.cpp drm/AampDRMutils.cpp)
+ 	endif()
+@@ -170,7 +174,13 @@ if(CMAKE_DASH_DRM)
+ 		endif()
+ 		find_path (STAGING_INCDIR opencdm)
+ 		include_directories(${STAGING_INCDIR}/opencdm)
+-	else()
++	elseif(CMAKE_USE_OPENCDM_ADAPTER)
++		set(LIBAAMP_DEPENDS "${LIBAAMP_DEPENDS} -locdm")
++		find_path (STAGING_INCDIR opencdm)
++		find_path (STAGING_INCDIR gstreamer-1.0)
++		include_directories(${STAGING_INCDIR}/opencdm)
++		include_directories(${STAGING_INCDIR}/gstreamer-1.0)
++	else ()
+ 		if (DEFINED SECAPI_ENGINE_BROADCOM_SAGE)
+ 			set(LIBAAMP_DEFINES "${LIBAAMP_DEFINES} -DUSE_SECAPI_BRCMHW=1")
+ 			if(DEFINED SAGE_SVP)
+diff --git a/drm/aampdrmsessionfactory.cpp b/drm/aampdrmsessionfactory.cpp
+index e3e8d17..6f6a7c9 100644
+--- a/drm/aampdrmsessionfactory.cpp
++++ b/drm/aampdrmsessionfactory.cpp
+@@ -23,7 +23,9 @@
+ */
+ 
+ #include "aampdrmsessionfactory.h"
+-#ifdef USE_OPENCDM
++#if defined(USE_OPENCDM_ADAPTER)
++#include "opencdmsessionadapter.h"
++#elif defined(USE_OPENCDM)
+ #include "opencdmsession.h"
+ #else
+ #include "playreadydrmsession.h"
+diff --git a/drm/opencdmsessionadapter.cpp b/drm/opencdmsessionadapter.cpp
+index e69de29..f55482d 100644
+--- a/drm/opencdmsessionadapter.cpp
++++ b/drm/opencdmsessionadapter.cpp
+@@ -0,0 +1,320 @@
++#include "config.h"
++#include "opencdmsessionadapter.h"
++
++#include <gst/gst.h>
++#include <assert.h>
++#include <iostream>
++#include <sstream>
++#include <string>
++#include <string.h>
++#include <vector>
++#include <sys/utsname.h>
++#include "priv_aamp.h"
++
++#include <sys/time.h>
++#include <gst/gstbuffer.h>
++
++#define USEC_PER_SEC   1000000
++static inline uint64_t GetCurrentTimeStampInUSec()
++{
++	   struct timeval  timeStamp;
++	   uint64_t        retVal = 0;
++
++	   gettimeofday(&timeStamp, NULL);
++
++	   // Convert timestamp to Micro Seconds
++	   retVal = (uint64_t)(((uint64_t)timeStamp.tv_sec * USEC_PER_SEC) + timeStamp.tv_usec);
++
++	   return retVal;
++}
++static inline uint64_t GetCurrentTimeStampInMSec()
++{
++	   return GetCurrentTimeStampInUSec() / 1000;
++}
++
++#define LOG_DECRYPT_STATS 1
++#define DECRYPT_AVG_TIME_THRESHOLD 5.0 //5 milliseconds
++#ifdef LOG_DECRYPT_STATS
++#define MAX_THREADS 10
++#define INTERVAL 120
++
++/**
++ * @struct DecryptStats
++ * @brief Holds decryption profile stats
++ */
++struct DecryptStats
++{
++    uint64_t    nBytesInterval;
++    uint64_t    nTimeInterval;
++    uint64_t    nBytesTotal;
++    uint64_t    nTimeTotal;
++    uint64_t    nCallsTotal;
++    pthread_t   threadID;
++
++};
++#endif // LOG_DECRYPT_STATS
++#define SEC_SIZE size_t
++void LogPerformanceExt(const char* strFunc, uint64_t msStart, uint64_t msEnd, SEC_SIZE nDataSize)
++{
++    bool        bThreshold  = false;
++    uint64_t    delta       = msEnd - msStart;
++    uint32_t    nRateMin    = 1000;     // Bytes/ms
++    uint32_t    nRestart    = 5;
++    uint32_t    nDataMin    = 1000;
++    uint32_t    nTimeMin    = 5; // Can not be < 1 to protect against divide by 0 error
++
++#ifdef LOG_DECRYPT_STATS
++    {
++        static DecryptStats stats[MAX_THREADS] = { 0 };
++        int idx = 0;
++        while(idx < MAX_THREADS) {
++            if(stats[idx].threadID == pthread_self()) {
++                break;
++            }
++            idx++;
++        }
++        if(idx == MAX_THREADS) {
++            // new thread
++            idx = 0;
++            while(idx < MAX_THREADS) {
++                if(stats[idx].threadID == 0) {
++                    // empty slot
++                    stats[idx].threadID = pthread_self();
++                    break;
++                }
++                idx++;
++            }
++        }
++        if(idx == MAX_THREADS) {
++            printf("%s >>>>>>>> All slots allocated!!!, idx = %d, clearing the array.\n", __FUNCTION__, idx);
++            memset(stats, 0, sizeof(DecryptStats) * MAX_THREADS);
++            return;
++        }
++
++        if(nDataSize > 0 ) {
++            stats[idx].nBytesInterval     += (uint64_t)nDataSize;
++            stats[idx].nTimeInterval      += delta;
++            stats[idx].nCallsTotal++;
++
++            if(stats[idx].nCallsTotal % INTERVAL == 0) {
++               stats[idx].nBytesTotal += stats[idx].nBytesInterval;
++               stats[idx].nTimeTotal += stats[idx].nTimeInterval;
++               double avgTime = (double)stats[idx].nTimeTotal/(double)stats[idx].nCallsTotal;
++               if(avgTime >= DECRYPT_AVG_TIME_THRESHOLD) {
++                  logprintf("%s >>>>>>>> Thread ID %X (%d) Avg Time %0.2llf ms, Avg Bytes %llu  calls (%llu) Interval avg time %0.2llf, Interval avg bytes %llu\n",
++                     strFunc, stats[idx].threadID, idx, avgTime, stats[idx].nBytesTotal/stats[idx].nCallsTotal,
++                     stats[idx].nCallsTotal, (double)stats[idx].nTimeInterval/(double)INTERVAL,
++                     stats[idx].nBytesInterval/INTERVAL);
++               }
++               stats[idx].nBytesInterval = 0;
++               stats[idx].nTimeInterval = 0;
++
++            }
++        }
++    }
++#endif //LOG_DECRYPT_STATS
++}
++
++OpenCDMSession::OpenCDMSession(string& keySystem) :
++		AampDrmSession(keySystem),
++		m_eKeyState(KEY_INIT),
++		m_pOpenCDMSystem(NULL),
++		m_pOpenCDMSession(NULL),
++		m_pOutputProtection(NULL)
++{
++	logprintf("OpenCDMSession :: enter \n");
++	pthread_mutex_init(&decryptMutex, NULL);
++
++	initAampDRMSystem();
++
++	// Get output protection pointer
++	m_pOutputProtection = AampOutputProtection::GetAampOutputProcectionInstance();
++	logprintf("OpenCDMSession :: exit \n");
++}
++
++void OpenCDMSession::initAampDRMSystem()
++{
++	logprintf("initAampDRMSystem :: enter \n");
++	pthread_mutex_lock(&decryptMutex);
++	if (m_pOpenCDMSystem == nullptr) {
++		m_pOpenCDMSystem = opencdm_create_system();
++	}
++	pthread_mutex_unlock(&decryptMutex);
++	logprintf("initAampDRMSystem :: exit \n");
++}
++
++OpenCDMSession::~OpenCDMSession()
++{
++	logprintf("[HHH]OCDMSession destructor called! keySystem %s\n", m_keySystem.c_str());
++	clearDecryptContext();
++
++	pthread_mutex_destroy(&decryptMutex);
++
++	if (m_pOpenCDMSession) {
++		opencdm_destruct_session(m_pOpenCDMSession);
++		m_pOpenCDMSession = NULL;
++	}
++
++	if (m_pOpenCDMSystem) {
++		opencdm_destruct_system(m_pOpenCDMSystem);
++		m_pOpenCDMSystem = NULL;
++	}
++
++        if(m_pOutputProtection) {
++                m_pOutputProtection->Release();
++        }
++}
++
++void OpenCDMSession::generateAampDRMSession(const uint8_t *f_pbInitData,
++		uint32_t f_cbInitData)
++{
++	logprintf("generateAampDRMSession :: enter \n");
++
++	pthread_mutex_lock(&decryptMutex);
++
++	memset(&m_OCDMSessionCallbacks, 0, sizeof(m_OCDMSessionCallbacks));
++	m_OCDMSessionCallbacks.process_challenge_callback = [](OpenCDMSession* session, void* userData, const char destUrl[], const uint8_t challenge[], const uint16_t challengeSize) {
++
++		OpenCDMSession* userSession = reinterpret_cast<OpenCDMSession*>(userData);
++		userSession->processOCDMChallenge(destUrl, challenge, challengeSize);
++	};
++
++	m_OCDMSessionCallbacks.key_update_callback = [](OpenCDMSession* session, void* userData, const uint8_t key[], const uint8_t keySize) {
++		OpenCDMSession* userSession = reinterpret_cast<OpenCDMSession*>(userData);
++		userSession->keyUpdatedOCDM(key, keySize);
++	};
++
++	m_OCDMSessionCallbacks.message_callback = [](OpenCDMSession* session, void* userData, const char message[]) {
++	};
++
++	opencdm_construct_session(m_pOpenCDMSystem, m_keySystem.c_str(), LicenseType::Temporary, "video/mp4",
++				  const_cast<unsigned char*>(f_pbInitData), f_cbInitData,
++				  nullptr, 0, //No Custom Data
++				  &m_OCDMSessionCallbacks,
++				  static_cast<void*>(this),
++				  &m_pOpenCDMSession);
++	if (!m_pOpenCDMSession) {
++		logprintf("Could not create session");
++		return;
++	}
++
++	pthread_mutex_unlock(&decryptMutex);
++}
++
++void OpenCDMSession::processOCDMChallenge(const char destUrl[], const uint8_t challenge[], const uint16_t challengeSize) {
++
++	m_challenge.assign(reinterpret_cast<const char *>(challenge), challengeSize);
++	logprintf("processOCDMChallenge challenge = %s\n", m_challenge.c_str());
++
++	m_destUrl.assign(destUrl);
++	logprintf("processOCDMChallenge destUrl = %s\n", m_destUrl.c_str());
++
++	m_challengeReady.signal();
++}
++
++void OpenCDMSession::keyUpdatedOCDM(const uint8_t key[], const uint8_t keySize) {
++	if (m_pOpenCDMSession) {
++		m_keyStatus = opencdm_session_status(m_pOpenCDMSession, nullptr, 0);
++	}
++	m_keyStatusReady.signal();
++}
++
++DrmData * OpenCDMSession::aampGenerateKeyRequest(string& destinationURL)
++{
++	DrmData * result = NULL;
++
++	m_eKeyState = KEY_ERROR;
++	if (m_challengeReady.wait(2000) == true) {
++		if (m_challenge.empty() != true) {
++			std::string delimiter (":Type:");
++			std::string requestType (m_challenge.substr(0, m_challenge.find(delimiter)));
++			if ( (requestType.size() != 0) && (requestType.size() !=  m_challenge.size()) ) {
++				m_challenge.erase(0, m_challenge.find(delimiter) + delimiter.length());
++			}
++
++			result = new DrmData(reinterpret_cast<unsigned char*>(const_cast<char*>(m_challenge.c_str())), m_challenge.length());
++			destinationURL.assign((m_destUrl.c_str()));
++			logprintf("destination url is %s\n", destinationURL.c_str());
++			m_eKeyState = KEY_PENDING;
++		}
++	}
++	return result;
++}
++
++
++int OpenCDMSession::aampDRMProcessKey(DrmData* key)
++{
++	int retValue = -1;
++
++        OpenCDMError status = opencdm_session_update(m_pOpenCDMSession, key->getData(), key->getDataLength());
++	if (status == OpenCDMError::ERROR_NONE) {
++		if (m_keyStatusReady.wait(2000) == true) {
++			logprintf("Key Status updated");
++		}
++
++		if (m_keyStatus == KeyStatus::Usable) {
++			logprintf("processKey: Key Usable!\n");
++			m_eKeyState = KEY_READY;
++			retValue = 0;
++		} else {
++			logprintf("processKey: Update() returned keystatus: %d\n", (int) m_keyStatus);
++			m_eKeyState = KEY_ERROR;
++		}
++	} else {
++	}
++	return retValue;
++}
++
++int OpenCDMSession::decrypt(const uint8_t *f_pbIV, uint32_t f_cbIV, const uint8_t *payloadData, uint32_t payloadDataSize, uint8_t **ppOpaqueData)
++{
++	int retValue = -1;
++
++	if (m_pOpenCDMSession) {
++		uint64_t start_decrypt_time;
++		uint64_t end_decrypt_time;
++
++		*ppOpaqueData = NULL;
++
++		// Verify output protection parameters
++		if(m_pOutputProtection->IsSourceUHD()) {
++			// Source material is UHD
++			if(!m_pOutputProtection->isHDCPConnection2_2()) {
++				// UHD and not HDCP 2.2
++				logprintf("%s : UHD source but not HDCP 2.2. FAILING decrypt\n", __FUNCTION__);
++				return HDCP_AUTHENTICATION_FAILURE;
++			}
++		}
++
++		pthread_mutex_lock(&decryptMutex);
++		start_decrypt_time = GetCurrentTimeStampInMSec();
++		GstBuffer *buffer = gst_buffer_new_wrapped (const_cast<uint8_t*>(payloadData), payloadDataSize);
++		retValue = adapter_session_decrypt(m_pOpenCDMSession, buffer, nullptr, 0, f_pbIV, f_cbIV, nullptr, 0);
++
++		end_decrypt_time = GetCurrentTimeStampInMSec();
++		if (payloadDataSize > 0) {
++			LogPerformanceExt(__FUNCTION__, start_decrypt_time, end_decrypt_time, payloadDataSize);
++		}
++		//gst_buffer_unref(buffer); TODO:recheck
++		pthread_mutex_unlock(&decryptMutex);
++	}
++	return retValue;
++}
++
++KeyState OpenCDMSession::getState()
++{
++	return m_eKeyState;
++}
++
++void OpenCDMSession:: clearDecryptContext()
++{
++	logprintf("[HHH] clearDecryptContext.\n");
++
++	pthread_mutex_lock(&decryptMutex);
++
++	if (m_pOpenCDMSession) {
++		opencdm_session_close(m_pOpenCDMSession);
++	}
++
++	pthread_mutex_unlock(&decryptMutex);
++	m_eKeyState = KEY_INIT;
++}
+diff --git a/drm/opencdmsessionadapter.h b/drm/opencdmsessionadapter.h
+index e69de29..0fef9c4 100644
+--- a/drm/opencdmsessionadapter.h
++++ b/drm/opencdmsessionadapter.h
+@@ -0,0 +1,109 @@
++#ifndef OpenCDMSessionAdapter_h
++#define OpenCDMSessionAdapter_h
++
++
++#include "AampDrmSession.h"
++#include "aampoutputprotection.h"
++#include <open_cdm.h>
++#include <open_cdm_adapter.h>
++
++using namespace std;
++
++/**
++ * @class OpenCDMSession
++ * @brief Open CDM DRM session
++ */
++
++class Event {
++private:
++	bool signalled; //TODO: added to handle the events fired before calling wait, need to recheck
++	pthread_mutex_t lock;
++	pthread_cond_t condition;
++public:
++	Event() : signalled(false), lock(PTHREAD_MUTEX_INITIALIZER), condition(PTHREAD_COND_INITIALIZER) {
++		pthread_cond_init(&condition, NULL);
++		pthread_mutex_init(&lock, NULL);
++	}
++	virtual ~Event() {
++		pthread_cond_destroy(&condition);
++		pthread_mutex_destroy(&lock);
++	}
++
++	inline bool wait(const uint32_t waitTime)
++	{
++		int ret = 0;
++		pthread_mutex_lock(&lock);
++		if (!signalled) {
++			if (waitTime == 0) {
++				ret = pthread_cond_wait(&condition, &lock);
++			} else {
++				struct timespec time;
++				clock_gettime(CLOCK_MONOTONIC, &time);
++
++				time.tv_nsec += ((waitTime % 1000) * 1000 * 1000);
++				time.tv_sec += (waitTime / 1000) + (time.tv_nsec / 1000000000);
++				time.tv_nsec = time.tv_nsec % 1000000000;
++
++				ret = pthread_cond_timedwait(&condition, &lock, &time);
++
++			}
++		}
++
++		signalled = false;
++		pthread_mutex_unlock(&lock);
++
++		return ((ret == 0)? true: false);
++	}
++
++	inline void signal()
++        {
++		pthread_mutex_lock(&lock);
++		signalled = true;
++		pthread_cond_broadcast(&condition);
++	        pthread_mutex_unlock(&lock);
++        }
++};
++
++class OpenCDMSession : public AampDrmSession
++{
++
++private:
++	pthread_mutex_t decryptMutex;
++
++	KeyState m_eKeyState;
++
++	OpenCDMSession* m_pOpenCDMSession;
++	struct OpenCDMAccessor* m_pOpenCDMSystem;
++	OpenCDMSessionCallbacks m_OCDMSessionCallbacks;
++	AampOutputProtection* m_pOutputProtection;
++
++	std::string m_challenge;
++	uint16_t m_challengeSize;
++
++	std::string m_destUrl;
++	KeyStatus m_keyStatus;
++
++	Event m_challengeReady;
++	Event m_keyStatusReady;
++	string m_sessionID;
++public:
++	void processOCDMChallenge(const char destUrl[], const uint8_t challenge[], const uint16_t challengeSize);
++	void keyUpdatedOCDM(const uint8_t key[], const uint8_t keySize);
++
++private:
++	void initAampDRMSystem();
++
++public:
++    OpenCDMSession(string& keySystem);
++	~OpenCDMSession();
++	void generateAampDRMSession(const uint8_t *f_pbInitData,
++			uint32_t f_cbInitData);
++	DrmData * aampGenerateKeyRequest(string& destinationURL);
++	int aampDRMProcessKey(DrmData* key);
++	int decrypt(const uint8_t *f_pbIV, uint32_t f_cbIV,
++			const uint8_t *payloadData, uint32_t payloadDataSize, uint8_t **ppOpaqueData);
++	KeyState getState();
++	void clearDecryptContext();
++};
++
++#endif
