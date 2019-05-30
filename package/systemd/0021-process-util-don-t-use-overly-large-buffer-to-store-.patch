@@ -1,14 +1,15 @@
 From eb1ec489eef8a32918bbfc56a268c9d10464584d Mon Sep 17 00:00:00 2001
 From: Michal Sekletar <msekleta@redhat.com>
 Date: Tue, 22 Jan 2019 14:29:50 +0100
-Subject: [PATCH 2/2] process-util: don't use overly large buffer to store
- process command line
+Subject: [PATCH] process-util: don't use overly large buffer to store process command line
 
 Allocate new string as a return value and free our "scratch pad"
 buffer that is potentially much larger than needed (up to
 _SC_ARG_MAX).
 
 Fixes #11502
+
+Signed-off-by: Jonah Petri <jonah@petri.us>
 ---
  src/basic/process-util.c | 18 ++++++++++++++----
  1 file changed, 14 insertions(+), 4 deletions(-)

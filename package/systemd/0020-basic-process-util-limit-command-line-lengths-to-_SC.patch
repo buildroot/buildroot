@@ -1,8 +1,7 @@
 From 2d5d2e0cc5171c6795d2a485841474345d9e30ab Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Zbigniew=20J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
 Date: Wed, 5 Dec 2018 18:48:23 +0100
-Subject: [PATCH 1/2] basic/process-util: limit command line lengths to
- _SC_ARG_MAX
+Subject: [PATCH] basic/process-util: limit command line lengths to _SC_ARG_MAX
 
 This affects systemd-journald and systemd-coredump.
 
@@ -46,6 +45,8 @@ $ journalctl -o export -n1 'MESSAGE=Something logged' --output-fields=_CMDLINE|w
 2MB might be hard for some clients to use meaningfully, but OTOH, it is
 important to log the full commandline sometimes. For example, when the program
 is crashing, the exact argument list is useful.
+
+Signed-off-by: Jonah Petri <jonah@petri.us>
 ---
  src/basic/process-util.c | 73 +++++++++++++++++-------------------------------
  1 file changed, 25 insertions(+), 48 deletions(-)
