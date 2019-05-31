@@ -435,6 +435,38 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER
 
 if BR2_PACKAGE_WPEFRAMEWORK_STREAMER
 
+choice
+    bool "Streamer Types"
+    default BR2_PACKAGE_WPEFRAMEWORK_STREAMER_VOD
+    help
+      Choose the VOD.
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_VOD
+    bool "VOD"
+    help
+      Enable VOD support
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_QAM
+    bool "QAM"
+    help
+      Enable QAM DBS
+endchoice
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_FRONTENDS
+    string "Frontends"
+    default "1"
+    help
+      Sets the number of frontends (tuners) available in the system.
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_DECODERS
+    string "Decoders"
+    default "1"
+    help
+      Sets the number of decoders available in the system.
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_QAM
+
 config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_SI_PARSING
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "SI parsing"
@@ -472,18 +504,6 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_ATSC
     help
       Enable ATSC DBS
 endchoice
-
-config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_FRONTENDS
-    string "Frontends"
-    default "1"
-    help
-      Sets the number of frontends (tuners) available in the system.
-
-config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_DECODERS
-    string "Decoders"
-    default "1"
-    help
-      Sets the number of decoders available in the system.
 
 endif
 
