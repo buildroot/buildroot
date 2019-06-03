@@ -29,6 +29,48 @@ index 0966275..0e7aaba 100644
  		if (DEFINED SECAPI_ENGINE_BROADCOM_SAGE)
  			set(LIBAAMP_DEFINES "${LIBAAMP_DEFINES} -DUSE_SECAPI_BRCMHW=1")
  			if(DEFINED SAGE_SVP)
+diff --git a/aampgstplayer.cpp b/aampgstplayer.cpp
+index 79d1994..d7e27f8 100644
+--- a/aampgstplayer.cpp
++++ b/aampgstplayer.cpp
+@@ -1199,6 +1199,7 @@ static GstBusSyncReply bus_sync_handler(GstBus * bus, GstMessage * msg, AAMPGstP
+ 			GstStructure* contextStructure = gst_context_writable_structure(context);
+ 			gst_structure_set(contextStructure, "decryption-system-id", G_TYPE_STRING, GetDrmSystemID((DRMSystems)gpGlobalConfig->preferredDrm),  NULL);
+ 			gst_element_set_context(GST_ELEMENT(GST_MESSAGE_SRC(msg)), context);
++			_this->aamp->setCurrentDrm((DRMSystems)gpGlobalConfig->preferredDrm);
+ 		}
+ 
+ 		break;
+diff --git a/drm/AampDRMSessionManager.cpp b/drm/AampDRMSessionManager.cpp
+index ec18362..ed0ca2d 100644
+--- a/drm/AampDRMSessionManager.cpp
++++ b/drm/AampDRMSessionManager.cpp
+@@ -1291,6 +1291,10 @@ AampDrmSession * AampDRMSessionManager::createDrmSession(
+ 		reinterpret_cast<const void*>(keyId),keyIdLen);
+ 		pthread_mutex_unlock(&session_mutex[sessionType]);
+ 		free(keyId);
++#if defined(USE_OPENCDM_ADAPTER)
++		drmSessionContexts[sessionType].drmSession->setKeyId(reinterpret_cast<const char*>(keyId), keyIdLen);
++#endif
++
+ 		return drmSessionContexts[sessionType].drmSession;
+ 	}
+ 	else if (code == KEY_ERROR)
+diff --git a/drm/AampDrmSession.h b/drm/AampDrmSession.h
+index 0940ff3..d77645d 100644
+--- a/drm/AampDrmSession.h
++++ b/drm/AampDrmSession.h
+@@ -149,6 +149,10 @@ public:
+ 	 * @retval DRM system uuid
+ 	 */
+ 	string getKeySystem();
++
++#if defined(USE_OPENCDM_ADAPTER)
++	virtual void setKeyId(const char* keyId, int32_t keyLen) = 0;
++#endif
+ };
+ #endif
+ 
 diff --git a/drm/aampdrmsessionfactory.cpp b/drm/aampdrmsessionfactory.cpp
 index e3e8d17..6f6a7c9 100644
 --- a/drm/aampdrmsessionfactory.cpp
@@ -45,10 +87,10 @@ index e3e8d17..6f6a7c9 100644
  #else
  #include "playreadydrmsession.h"
 diff --git a/drm/opencdmsessionadapter.cpp b/drm/opencdmsessionadapter.cpp
-index e69de29..f55482d 100644
+index e69de29..b8c9bd5 100644
 --- a/drm/opencdmsessionadapter.cpp
 +++ b/drm/opencdmsessionadapter.cpp
-@@ -0,0 +1,320 @@
+@@ -0,0 +1,337 @@
 +#include "config.h"
 +#include "opencdmsessionadapter.h"
 +
@@ -64,7 +106,6 @@ index e69de29..f55482d 100644
 +
 +#include <sys/time.h>
 +#include <gst/gstbuffer.h>
-+
 +#define USEC_PER_SEC   1000000
 +static inline uint64_t GetCurrentTimeStampInUSec()
 +{
@@ -211,9 +252,15 @@ index e69de29..f55482d 100644
 +		m_pOpenCDMSystem = NULL;
 +	}
 +
-+        if(m_pOutputProtection) {
-+                m_pOutputProtection->Release();
-+        }
++	if(m_pOutputProtection) {
++		m_pOutputProtection->Release();
++	}
++
++	if (!m_keyId) {
++		free(m_keyId);
++		m_keyId = nullptr;
++	}
++
 +}
 +
 +void OpenCDMSession::generateAampDRMSession(const uint8_t *f_pbInitData,
@@ -339,7 +386,9 @@ index e69de29..f55482d 100644
 +		pthread_mutex_lock(&decryptMutex);
 +		start_decrypt_time = GetCurrentTimeStampInMSec();
 +		GstBuffer *buffer = gst_buffer_new_wrapped (const_cast<uint8_t*>(payloadData), payloadDataSize);
-+		retValue = adapter_session_decrypt(m_pOpenCDMSession, buffer, nullptr, 0, f_pbIV, f_cbIV, nullptr, 0);
++		GstBuffer *ivBuffer = gst_buffer_new_wrapped (const_cast<uint8_t*>(f_pbIV), f_cbIV);
++		GstBuffer *kidBuffer = gst_buffer_new_wrapped (const_cast<uint8_t*>(m_keyId), m_keyLength);
++		retValue = opencdm_gstreamer_session_decrypt(m_pOpenCDMSession, buffer, nullptr, 0, ivBuffer, kidBuffer, 0);
 +
 +		end_decrypt_time = GetCurrentTimeStampInMSec();
 +		if (payloadDataSize > 0) {
@@ -369,11 +418,21 @@ index e69de29..f55482d 100644
 +	pthread_mutex_unlock(&decryptMutex);
 +	m_eKeyState = KEY_INIT;
 +}
++
++void OpenCDMSession::setKeyId(const char* keyId, int32_t keyLength)
++{
++	if (!m_keyId) {
++		free(m_keyId);
++		m_keyId = (uint8_t *)malloc(keyLength);
++	}
++	memcpy(m_keyId, keyId, keyLength);
++	m_keyLength = keyLength;
++}
 diff --git a/drm/opencdmsessionadapter.h b/drm/opencdmsessionadapter.h
-index e69de29..0fef9c4 100644
+index e69de29..9b9fec4 100644
 --- a/drm/opencdmsessionadapter.h
 +++ b/drm/opencdmsessionadapter.h
-@@ -0,0 +1,109 @@
+@@ -0,0 +1,114 @@
 +#ifndef OpenCDMSessionAdapter_h
 +#define OpenCDMSessionAdapter_h
 +
@@ -462,6 +521,10 @@ index e69de29..0fef9c4 100644
 +	Event m_challengeReady;
 +	Event m_keyStatusReady;
 +	string m_sessionID;
++
++        uint8_t* m_keyId;
++        int32_t m_keyLength;
++
 +public:
 +	void processOCDMChallenge(const char destUrl[], const uint8_t challenge[], const uint16_t challengeSize);
 +	void keyUpdatedOCDM(const uint8_t key[], const uint8_t keySize);
@@ -477,9 +540,22 @@ index e69de29..0fef9c4 100644
 +	DrmData * aampGenerateKeyRequest(string& destinationURL);
 +	int aampDRMProcessKey(DrmData* key);
 +	int decrypt(const uint8_t *f_pbIV, uint32_t f_cbIV,
-+			const uint8_t *payloadData, uint32_t payloadDataSize, uint8_t **ppOpaqueData);
++		    const uint8_t *payloadData, uint32_t payloadDataSize, uint8_t **ppOpaqueData);
 +	KeyState getState();
 +	void clearDecryptContext();
++        void setKeyId(const char* keyId, int32_t keyLength);
 +};
 +
 +#endif
+diff --git a/main_aamp.cpp b/main_aamp.cpp
+index 5e48c10..223415c 100644
+--- a/main_aamp.cpp
++++ b/main_aamp.cpp
+@@ -4682,6 +4682,7 @@ char* PlayerInstanceAAMP::GetCurrentAudioLanguage(void)
+  */
+ const char* PlayerInstanceAAMP::GetCurrentDRM(void)
+ {
++
+ 	DRMSystems currentDRM = aamp->GetCurrentDRM();
+ 	const char *drmName = "";
+ 	switch(currentDRM)
