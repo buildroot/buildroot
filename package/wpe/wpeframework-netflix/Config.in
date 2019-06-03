@@ -1,7 +1,6 @@
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
     bool "Netflix"
     depends on BR2_PACKAGE_NETFLIX_LIB || BR2_PACKAGE_NETFLIX5_LIB
-    select BR2_PACKAGE_GST1_LIBAV if BR2_PACKAGE_NETFLIX5_LIB && BR2_PACKAGE_RPI_FIRMWARE
     help
         WPE Platform Netflix plugin
 

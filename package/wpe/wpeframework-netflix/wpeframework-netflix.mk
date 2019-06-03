@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_NETFLIX_VERSION = c9668a520babcb4ebdf08bf86fc2ba9a038c9525
+WPEFRAMEWORK_NETFLIX_VERSION = bb068f90d54c4738d984d3aec5926488c2a5f5d5
 ifeq ($(BR2_PACKAGE_NETFLIX5),y)
 # Netflix 5 has a little different API, use "netflix5" branch for now.
 WPEFRAMEWORK_NETFLIX_CONF_OPTS += -DNETFLIX_VERSION_5=true
@@ -60,7 +60,6 @@ ifeq ($(BR2_PACKAGE_NETFLIX5),y)
 ifeq  ($(BR2_PACKAGE_RPI_FIRMWARE),y)
 WPEFRAMEWORK_NETFLIX_CONF_OPTS += -DPLUGIN_SPLASH_IMAGE_FORMAT=PNG
 WPEFRAMEWORK_NETFLIX_CONF_OPTS += -DPLUGIN_ENABLE_AUDIO_DOWNMIX=true
-WPEFRAMEWORK_NETFLIX_DEPENDENCIES += gst1-libav
 endif
 endif
 
