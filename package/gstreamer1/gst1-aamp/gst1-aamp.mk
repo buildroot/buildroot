@@ -13,7 +13,7 @@ GST1_AAMP_DEPENDENCIES = gstreamer1 gst1-plugins-base aamp
 ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_CDMI), y)
 GST1_AAMP_CONF_OPTS += \
     -DCMAKE_DASH_DRM=ON \
-    -DCMAKE_USE_OPENCDM=ON
+    -DCMAKE_USE_OPENCDM_ADAPTER=ON
 endif
 
 $(eval $(cmake-package))
