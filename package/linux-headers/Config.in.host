@@ -45,6 +45,14 @@ config BR2_KERNEL_HEADERS_4_19
 	bool "Linux 4.19.x kernel headers"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_19
 
+config BR2_KERNEL_HEADERS_5_0
+	bool "Linux 5.0.x kernel headers"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_0
+
+config BR2_KERNEL_HEADERS_5_1
+	bool "Linux 5.1.x kernel headers"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_1
+
 config BR2_KERNEL_HEADERS_VERSION
 	bool "Manually specified Linux version"
 	help
