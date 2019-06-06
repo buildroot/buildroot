@@ -144,6 +144,10 @@ TOOLCHAIN_EXTERNAL_LIBS += libquadmath.so*
 endif
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HAS_OPENMP),y)
+TOOLCHAIN_EXTERNAL_LIBS += libgomp.so.*
+endif
+
 TOOLCHAIN_EXTERNAL_LIBS += $(call qstrip,$(BR2_TOOLCHAIN_EXTRA_EXTERNAL_LIBS))
 
 
@@ -540,6 +544,9 @@ define $(2)_CONFIGURE_CMDS
 	fi ; \
 	if test "$$(BR2_TOOLCHAIN_HAS_FORTRAN)" = "y" ; then \
 		$$(call check_fortran,$$(TOOLCHAIN_EXTERNAL_FC)) ; \
+	fi ; \
+	if test "$$(BR2_TOOLCHAIN_HAS_OPENMP)" = "y" ; then \
+		$$(call check_openmp,$$(TOOLCHAIN_EXTERNAL_CC)) ; \
 	fi ; \
 	if test "$$(BR2_TOOLCHAIN_EXTERNAL_UCLIBC)" = "y" ; then \
 		$$(call check_uclibc,$$$${SYSROOT_DIR}) ; \

@@ -1,6 +1,6 @@
 # See utils/checkpackagelib/readme.txt before editing this file.
 
-from base import _CheckFunction
+from checkpackagelib.base import _CheckFunction
 
 
 class ConsecutiveEmptyLines(_CheckFunction):
@@ -50,5 +50,19 @@ class TrailingSpace(_CheckFunction):
         line = text.rstrip("\r\n")
         if line != line.rstrip():
             return ["{}:{}: line contains trailing whitespace"
+                    .format(self.filename, lineno),
+                    text]
+
+
+class Utf8Characters(_CheckFunction):
+    def is_ascii(self, s):
+        try:
+            return all(ord(c) < 128 for c in s)
+        except TypeError:
+            return False
+
+    def check_line(self, lineno, text):
+        if not self.is_ascii(text):
+            return ["{}:{}: line contains UTF-8 characters"
                     .format(self.filename, lineno),
                     text]

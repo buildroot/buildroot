@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SAMBA4_VERSION = 4.9.1
+SAMBA4_VERSION = 4.9.8
 SAMBA4_SITE = https://download.samba.org/pub/samba/stable
 SAMBA4_SOURCE = samba-$(SAMBA4_VERSION).tar.gz
 SAMBA4_INSTALL_STAGING = YES
@@ -18,7 +18,7 @@ SAMBA4_DEPENDENCIES = \
 	$(if $(BR2_PACKAGE_READLINE),readline) \
 	$(TARGET_NLS_DEPENDENCIES)
 SAMBA4_CFLAGS = $(TARGET_CFLAGS)
-SAMBA4_LDFLAGS = $(TARGET_LDFLAGS)
+SAMBA4_LDFLAGS = $(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)
 SAMBA4_CONF_ENV = \
 	CFLAGS="$(SAMBA4_CFLAGS)" \
 	LDFLAGS="$(SAMBA4_LDFLAGS)"
@@ -161,13 +161,12 @@ define SAMBA4_INSTALL_INIT_SYSV
 		$(TARGET_DIR)/etc/init.d/S91smb
 endef
 
+ifeq ($(BR2_INIT_SYSTEMD),y)
+SAMBA4_CONF_OPTS += --systemd-install-services
+SAMBA4_DEPENDENCIES += systemd
+endif
+
 define SAMBA4_INSTALL_INIT_SYSTEMD
-	$(INSTALL) -D -m 644 $(@D)/packaging/systemd/nmb.service \
-		$(TARGET_DIR)/usr/lib/systemd/system/nmb.service
-	$(INSTALL) -D -m 644 $(@D)/packaging/systemd/smb.service \
-		$(TARGET_DIR)/usr/lib/systemd/system/smb.service
-	$(INSTALL) -D -m 644 $(@D)/packaging/systemd/winbind.service \
-		$(TARGET_DIR)/usr/lib/systemd/system/winbind.service
 	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
 	ln -sf ../../../../usr/lib/systemd/system/nmb.service \
 		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/nmb.service

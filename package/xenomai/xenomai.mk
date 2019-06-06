@@ -6,7 +6,7 @@
 
 XENOMAI_VERSION = $(call qstrip,$(BR2_PACKAGE_XENOMAI_VERSION))
 ifeq ($(XENOMAI_VERSION),)
-XENOMAI_VERSION = 3.0.6
+XENOMAI_VERSION = 3.0.8
 else
 BR_NO_CHECK_HASH_FOR += $(XENOMAI_SOURCE)
 endif
@@ -23,9 +23,6 @@ XENOMAI_LICENSE_FILES = debian/copyright include/COPYING kernel/cobalt/COPYING \
 	lib/smokey/COPYING lib/trank/COPYING lib/vxworks/COPYING
 
 XENOMAI_DEPENDENCIES = host-pkgconf
-
-# 0002-boilerplate-build-obstack-support-conditionally.patch
-XENOMAI_AUTORECONF = YES
 
 XENOMAI_INSTALL_STAGING = YES
 XENOMAI_INSTALL_TARGET_OPTS = DESTDIR=$(TARGET_DIR) install-user

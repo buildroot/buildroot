@@ -4,12 +4,10 @@
 #
 ################################################################################
 
-BIRD_VERSION = v2.0.2
-BIRD_SITE = $(call github,BIRD,bird,$(BIRD_VERSION))
+BIRD_VERSION = 2.0.4
+BIRD_SITE = ftp://bird.network.cz/pub/bird
 BIRD_LICENSE = GPL-2.0+
 BIRD_LICENSE_FILES = README
-# autoreconf is needed since the package is fetched from github
-BIRD_AUTORECONF = YES
 BIRD_DEPENDENCIES = host-flex host-bison
 
 ifeq ($(BR2_PACKAGE_BIRD_CLIENT),y)
@@ -18,5 +16,21 @@ BIRD_DEPENDENCIES += ncurses readline
 else
 BIRD_CONF_OPTS += --disable-client
 endif
+
+# BUG: RIP is mandatory for now
+BIRD_PROTOCOLS = \
+	rip \
+	$(if $(BR2_PACKAGE_BIRD_BFD),bfd) \
+	$(if $(BR2_PACKAGE_BIRD_BABEL),babel) \
+	$(if $(BR2_PACKAGE_BIRD_BGP),bgp) \
+	$(if $(BR2_PACKAGE_BIRD_MRT),mrt) \
+	$(if $(BR2_PACKAGE_BIRD_OSPF),ospf) \
+	$(if $(BR2_PACKAGE_BIRD_PERF),perf) \
+	$(if $(BR2_PACKAGE_BIRD_PIPE),pipe) \
+	$(if $(BR2_PACKAGE_BIRD_RADV),radv) \
+	$(if $(BR2_PACKAGE_BIRD_RIP),rip) \
+	$(if $(BR2_PACKAGE_BIRD_STATIC),static)
+
+BIRD_CONF_OPTS += --with-protocols=$(subst $(space),$(comma),$(strip $(BIRD_PROTOCOLS)))
 
 $(eval $(autotools-package))

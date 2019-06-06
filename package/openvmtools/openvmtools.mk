@@ -4,13 +4,14 @@
 #
 ################################################################################
 
-OPENVMTOOLS_VERSION = 5a9033ddfa95786d867e4d02bbb9a29bac8fb64f
-OPENVMTOOLS_SITE = $(call github,vmware,open-vm-tools,$(OPENVMTOOLS_VERSION))
-OPENVMTOOLS_SUBDIR = open-vm-tools
+OPENVMTOOLS_VERSION_MAJOR = 10.3.5
+OPENVMTOOLS_VERSION = $(OPENVMTOOLS_VERSION_MAJOR)-10430147
+OPENVMTOOLS_SITE = https://github.com/vmware/open-vm-tools/releases/download/stable-$(OPENVMTOOLS_VERSION_MAJOR)
+OPENVMTOOLS_SOURCE = open-vm-tools-$(OPENVMTOOLS_VERSION).tar.gz
 OPENVMTOOLS_LICENSE = LGPL-2.1
-OPENVMTOOLS_LICENSE_FILES = $(OPENVMTOOLS_SUBDIR)/COPYING
+OPENVMTOOLS_LICENSE_FILES = COPYING
 
-# Autoreconf needed or config/missing will run configure again at buildtime
+# configure.ac is patched
 OPENVMTOOLS_AUTORECONF = YES
 OPENVMTOOLS_CONF_OPTS = --with-dnet \
 	--without-icu --without-x --without-gtk2 \
@@ -44,6 +45,13 @@ OPENVMTOOLS_CONF_OPTS += --with-pam
 OPENVMTOOLS_DEPENDENCIES += linux-pam
 else
 OPENVMTOOLS_CONF_OPTS += --without-pam
+endif
+
+ifeq ($(BR2_PACKAGE_OPENVMTOOLS_RESOLUTIONKMS),y)
+OPENVMTOOLS_CONF_OPTS += --enable-resolutionkms
+OPENVMTOOLS_DEPENDENCIES += libdrm udev
+else
+OPENVMTOOLS_CONF_OPTS += --disable-resolutionkms
 endif
 
 # symlink needed by lib/system/systemLinux.c (or will cry in /var/log/messages)

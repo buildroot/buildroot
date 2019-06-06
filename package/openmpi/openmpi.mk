@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-OPENMPI_VERSION_MAJOR = 1.10
-OPENMPI_VERSION = $(OPENMPI_VERSION_MAJOR).7
+OPENMPI_VERSION_MAJOR = 4.0
+OPENMPI_VERSION = $(OPENMPI_VERSION_MAJOR).0
 OPENMPI_SITE = https://www.open-mpi.org/software/ompi/v$(OPENMPI_VERSION_MAJOR)/downloads
 OPENMPI_SOURCE = openmpi-$(OPENMPI_VERSION).tar.bz2
 OPENMPI_LICENSE = BSD-3-Clause
@@ -37,5 +37,13 @@ OPENMPI_CONF_OPTS += \
 else
 OPENMPI_CONF_OPTS += --enable-mpi-fortran=no
 endif
+
+OPENMPI_CFLAGS = $(TARGET_CFLAGS)
+
+ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_68485),y)
+OPENMPI_CFLAGS += -O0
+endif
+
+OPENMPI_CONF_ENV = CFLAGS="$(OPENMPI_CFLAGS)"
 
 $(eval $(autotools-package))

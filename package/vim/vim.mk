@@ -80,6 +80,13 @@ VIM_POST_INSTALL_TARGET_HOOKS += VIM_REMOVE_DOCS
 endif
 
 HOST_VIM_DEPENDENCIES = host-ncurses
+HOST_VIM_CONF_OPTS = \
+	--with-tlib=ncurses \
+	--enable-gui=no \
+	--without-x \
+	--disable-acl \
+	--disable-gpm \
+	--disable-selinux
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))

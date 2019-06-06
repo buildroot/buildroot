@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SQUID_VERSION = 4.3
+SQUID_VERSION = 4.6
 SQUID_SOURCE = squid-$(SQUID_VERSION).tar.xz
 SQUID_SITE = http://www.squid-cache.org/Versions/v4
 SQUID_LICENSE = GPL-2.0+
@@ -18,7 +18,6 @@ SQUID_CONF_ENV = \
 	ac_cv_func___va_copy=yes \
 	ac_cv_func_strnstr=no \
 	ac_cv_have_squid=yes \
-	ac_cv_libxml2_include="-I$(STAGING_DIR)/usr/include/libxml2" \
 	BUILDCXX="$(HOSTCXX)" \
 	BUILDCXXFLAGS="$(HOST_CXXFLAGS)"
 SQUID_CONF_OPTS = \
@@ -38,13 +37,8 @@ SQUID_CONF_OPTS = \
 	--with-swapdir=/var/cache/squid/ \
 	--with-default-user=squid
 
-# Atomics in Squid use __sync built-ins on 4 and 8 bytes. However, the
-# configure script tests them using AC_TRY_RUN, so we have to give
-# some hints.
-ifeq ($(BR2_TOOLCHAIN_HAS_SYNC_4)$(BR2_TOOLCHAIN_HAS_SYNC_8),yy)
-SQUID_CONF_ENV += squid_cv_gnu_atomics=yes
-else
-SQUID_CONF_ENV += squid_cv_gnu_atomics=no
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+SQUID_CONF_ENV += LIBS=-latomic
 endif
 
 ifeq ($(BR2_PACKAGE_LIBKRB5),y)

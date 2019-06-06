@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PURE_FTPD_VERSION = 1.0.47
+PURE_FTPD_VERSION = 1.0.49
 PURE_FTPD_SITE = https://download.pureftpd.org/pub/pure-ftpd/releases
 PURE_FTPD_SOURCE = pure-ftpd-$(PURE_FTPD_VERSION).tar.bz2
 PURE_FTPD_LICENSE = ISC
@@ -13,8 +13,7 @@ PURE_FTPD_DEPENDENCIES = $(if $(BR2_PACKAGE_LIBICONV),libiconv)
 
 PURE_FTPD_CONF_OPTS = \
 	--with-altlog \
-	--with-puredb \
-	--with-rfc2640
+	--with-puredb
 
 ifeq ($(BR2_PACKAGE_ELFUTILS),y)
 PURE_FTPD_DEPENDENCIES += elfutils
@@ -31,14 +30,33 @@ ifeq ($(BR2_PACKAGE_LIBSODIUM),y)
 PURE_FTPD_DEPENDENCIES += libsodium
 endif
 
+ifeq ($(BR2_PACKAGE_MYSQL),y)
+PURE_FTPD_CONF_OPTS += --with-mysql=$(STAGING_DIR)/usr
+PURE_FTPD_DEPENDENCIES += mysql
+else
+PURE_FTPD_CONF_OPTS += --without-mysql
+endif
+
+ifeq ($(BR2_PACKAGE_OPENLDAP),y)
+PURE_FTPD_CONF_OPTS += --with-ldap
+PURE_FTPD_DEPENDENCIES += openldap
+else
+PURE_FTPD_CONF_OPTS += --without-ldap
+endif
+
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 PURE_FTPD_CONF_OPTS += --with-tls
-PURE_FTPD_DEPENDENCIES += openssl
-ifeq ($(BR2_STATIC_LIBS),y)
-PURE_FTPD_CONF_ENV += LIBS='-lssl -lcrypto -lz'
-endif
+PURE_FTPD_DEPENDENCIES += host-pkgconf openssl
+PURE_FTPD_CONF_ENV += LIBS=`$(PKG_CONFIG_HOST_BINARY) --libs openssl`
 else
 PURE_FTPD_CONF_OPTS += --without-tls
+endif
+
+ifeq ($(BR2_PACKAGE_POSTGRESQL),y)
+PURE_FTPD_CONF_OPTS += --with-pgsql=$(STAGING_DIR)/usr
+PURE_FTPD_DEPENDENCIES += postgresql
+else
+PURE_FTPD_CONF_OPTS += --without-pgsql
 endif
 
 ifeq ($(BR2_TOOLCHAIN_SUPPORTS_PIE),)

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-JQ_VERSION = 1.5
+JQ_VERSION = 1.6
 JQ_SITE = https://github.com/stedolan/jq/releases/download/jq-$(JQ_VERSION)
 JQ_LICENSE = MIT (code), CC-BY-3.0 (documentation)
 JQ_LICENSE_FILES = COPYING
@@ -18,7 +18,14 @@ HOST_JQ_CONF_ENV += CFLAGS="$(HOST_CFLAGS) -std=c99 -D_GNU_SOURCE"
 
 # jq explicitly enables maintainer mode, which we don't need/want
 JQ_CONF_OPTS += --disable-maintainer-mode
-HOST_JQ_CONF_OPTS += --disable-maintainer-mode
+HOST_JQ_CONF_OPTS += --disable-maintainer-mode --without-oniguruma
+
+ifeq ($(BR2_PACKAGE_ONIGURUMA),y)
+JQ_DEPENDENCIES += oniguruma
+JQ_CONF_OPTS += --with-oniguruma
+else
+JQ_CONF_OPTS += --without-oniguruma
+endif
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))

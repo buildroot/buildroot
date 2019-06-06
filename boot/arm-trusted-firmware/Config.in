@@ -1,6 +1,7 @@
 config BR2_TARGET_ARM_TRUSTED_FIRMWARE
 	bool "ARM Trusted Firmware (ATF)"
-	depends on BR2_aarch64 && BR2_TARGET_UBOOT
+	depends on (BR2_ARM_CPU_ARMV8A || BR2_ARM_CPU_ARMV7A) && \
+		   BR2_TARGET_UBOOT
 	help
 	  Enable this option if you want to build the ATF for your ARM
 	  based embedded device.
@@ -15,6 +16,11 @@ choice
 
 config BR2_TARGET_ARM_TRUSTED_FIRMWARE_LATEST_VERSION
 	bool "v1.4"
+
+config BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_VERSION
+	bool "Custom version"
+	help
+	  This option allows to use a specific official versions
 
 config BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_TARBALL
 	bool "Custom tarball"
@@ -31,12 +37,18 @@ config BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_TARBALL_LOCATION
 
 endif
 
+config BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_VERSION_VALUE
+	string "ATF version"
+	depends on BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_VERSION
+
 config BR2_TARGET_ARM_TRUSTED_FIRMWARE_VERSION
 	string
 	default "v1.4"		if BR2_TARGET_ARM_TRUSTED_FIRMWARE_LATEST_VERSION
 	default "custom"	if BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_TARBALL
 	default BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_REPO_VERSION \
 				if BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_GIT
+	default BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_VERSION_VALUE \
+				if BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_VERSION
 
 if BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_GIT
 
@@ -79,6 +91,30 @@ config BR2_TARGET_ARM_TRUSTED_FIRMWARE_BL31_UBOOT
 	  bl31.bin.  This is used for example by the Xilinx version of
 	  U-Boot SPL to load ATF on the ZynqMP SoC.
 
+choice
+	prompt "BL32"
+	default BR2_TARGET_ARM_TRUSTED_FIRMWARE_BL32_DEFAULT
+	help
+	  Select BL32 stage for the trusted firmware
+
+config BR2_TARGET_ARM_TRUSTED_FIRMWARE_BL32_DEFAULT
+	bool "Default"
+	help
+	  With this option selected, ATF will not use any BL32 stage,
+	  unless if one is explicitly chosen using the SPD (for
+	  AArch64) or AARCH32_SP (for AArch32) variables, which can be
+	  passed through
+	  BR2_TARGET_ARM_TRUSTED_FIRMWARE_ADDITIONAL_VARIABLES.
+
+config BR2_TARGET_ARM_TRUSTED_FIRMWARE_BL32_OPTEE
+	bool "OP-TEE OS"
+	depends on BR2_TARGET_OPTEE_OS
+	help
+	  This option allows to embed OP-TEE OS as the BL32 part of
+	  the ARM Trusted Firmware boot sequence.
+
+endchoice
+
 config BR2_TARGET_ARM_TRUSTED_FIRMWARE_UBOOT_AS_BL33
 	bool "Use U-Boot as BL33"
 	depends on BR2_TARGET_UBOOT
@@ -93,5 +129,10 @@ config BR2_TARGET_ARM_TRUSTED_FIRMWARE_ADDITIONAL_VARIABLES
 	help
 	  Additional parameters for the ATF build
 	  E.G. 'DEBUG=1 LOG_LEVEL=20'
+
+config BR2_TARGET_ARM_TRUSTED_FIRMWARE_DEBUG
+	bool "Build in debug mode"
+	help
+	  Enable this option to build ATF with DEBUG=1.
 
 endif

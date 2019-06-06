@@ -17,8 +17,15 @@ BOTAN_CONF_OPTS = \
 	--os=linux \
 	--cc=gcc \
 	--cc-bin="$(TARGET_CXX)" \
+	--ldflags="$(BOTAN_LDFLAGS)" \
 	--prefix=/usr \
 	--without-documentation
+
+BOTAN_LDFLAGS = $(TARGET_LDFLAGS)
+
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+BOTAN_LDFLAGS += -latomic
+endif
 
 ifeq ($(BR2_SHARED_LIBS),y)
 BOTAN_CONF_OPTS += \
@@ -92,11 +99,11 @@ define BOTAN_BUILD_CMDS
 endef
 
 define BOTAN_INSTALL_STAGING_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) DESTDIR="$(STAGING_DIR)/usr" install
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) DESTDIR="$(STAGING_DIR)" install
 endef
 
 define BOTAN_INSTALL_TARGET_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) DESTDIR="$(TARGET_DIR)/usr" install
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) DESTDIR="$(TARGET_DIR)" install
 endef
 
 $(eval $(generic-package))

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BOOST_VERSION = 1.68.0
+BOOST_VERSION = 1.70.0
 BOOST_SOURCE = boost_$(subst .,_,$(BOOST_VERSION)).tar.bz2
 BOOST_SITE = http://downloads.sourceforge.net/project/boost/boost/$(BOOST_VERSION)
 BOOST_INSTALL_STAGING = YES
@@ -16,8 +16,7 @@ HOST_BOOST_FLAGS = --without-icu --with-toolset=gcc \
 	--without-libraries=$(subst $(space),$(comma),atomic chrono context \
 	contract coroutine date_time exception filesystem graph graph_parallel \
 	iostreams locale log math mpi program_options python random regex \
-	serialization signals system test thread timer type_erasure \
-	wave)
+	serialization system test thread timer type_erasure wave)
 
 BOOST_WITHOUT_FLAGS += $(if $(BR2_PACKAGE_BOOST_ATOMIC),,atomic)
 BOOST_WITHOUT_FLAGS += $(if $(BR2_PACKAGE_BOOST_CHRONO),,chrono)
@@ -41,7 +40,6 @@ BOOST_WITHOUT_FLAGS += $(if $(BR2_PACKAGE_BOOST_PYTHON),,python)
 BOOST_WITHOUT_FLAGS += $(if $(BR2_PACKAGE_BOOST_RANDOM),,random)
 BOOST_WITHOUT_FLAGS += $(if $(BR2_PACKAGE_BOOST_REGEX),,regex)
 BOOST_WITHOUT_FLAGS += $(if $(BR2_PACKAGE_BOOST_SERIALIZATION),,serialization)
-BOOST_WITHOUT_FLAGS += $(if $(BR2_PACKAGE_BOOST_SIGNALS),,signals)
 BOOST_WITHOUT_FLAGS += $(if $(BR2_PACKAGE_BOOST_STACKTRACE),,stacktrace)
 BOOST_WITHOUT_FLAGS += $(if $(BR2_PACKAGE_BOOST_SYSTEM),,system)
 BOOST_WITHOUT_FLAGS += $(if $(BR2_PACKAGE_BOOST_TEST),,test)
@@ -78,8 +76,8 @@ BOOST_DEPENDENCIES += python
 endif
 endif
 
-HOST_BOOST_OPTS += toolset=gcc threading=multi variant=release link=shared \
-	runtime-link=shared
+HOST_BOOST_OPTS += --no-cmake-config toolset=gcc threading=multi \
+	variant=release link=shared runtime-link=shared
 
 ifeq ($(BR2_MIPS_OABI32),y)
 BOOST_ABI = o32
@@ -89,7 +87,8 @@ else
 BOOST_ABI = sysv
 endif
 
-BOOST_OPTS += toolset=gcc \
+BOOST_OPTS += --no-cmake-config \
+	     toolset=gcc \
 	     threading=multi \
 	     abi=$(BOOST_ABI) \
 	     variant=$(if $(BR2_ENABLE_DEBUG),debug,release)

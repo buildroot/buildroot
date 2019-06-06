@@ -35,7 +35,7 @@ endef
 
 define FIRMWARE_IMX_INSTALL_IMAGES_CMDS
 	# Create padded versions of lpddr4_pmu_* and generate lpddr4_pmu_train_fw.bin.
-	# lpddr4_pmu_train_fw.bin isneeded when generating imx-boot-imx8mqevk-sd.bin
+	# lpddr4_pmu_train_fw.bin is needed when generating imx8-boot-sd.bin
 	# which is done in post-image script.
 	$(call FIRMWARE_IMX_PREPARE_LPDDR4_FW,1d)
 	$(call FIRMWARE_IMX_PREPARE_LPDDR4_FW,2d)
@@ -44,6 +44,14 @@ define FIRMWARE_IMX_INSTALL_IMAGES_CMDS
 		$(BINARIES_DIR)/lpddr4_pmu_train_fw.bin
 	cp $(@D)/firmware/hdmi/cadence/signed_hdmi_imx8m.bin \
 		$(BINARIES_DIR)/signed_hdmi_imx8m.bin
+endef
+else ifeq ($(BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X),y)
+FIRMWARE_IMX_INSTALL_IMAGES = YES
+define FIRMWARE_IMX_INSTALL_IMAGES_CMDS
+	# SECO firmware is needed when generating imx8-boot-sd.bin which
+	# is done in post-image script.
+	cp $(@D)/firmware/seco/ahab-container.img \
+		$(BINARIES_DIR)/ahab-container.img
 endef
 else
 define FIRMWARE_IMX_INSTALL_TARGET_CMDS

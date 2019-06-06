@@ -40,7 +40,6 @@ endef
 
 define QT5WAYLAND_INSTALL_STAGING_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) install
-	$(QT5_LA_PRL_FILES_FIXUP)
 endef
 
 ifeq ($(BR2_PACKAGE_QT5WAYLAND_COMPOSITOR),y)
@@ -51,6 +50,11 @@ endef
 else
 define QT5WAYLAND_INSTALL_COMPOSITOR
 	cp -dpf $(STAGING_DIR)/usr/lib/libQt5Compositor.so* $(TARGET_DIR)/usr/lib
+endef
+endif
+ifeq ($(BR2_PACKAGE_QT5DECLARATIVE_QUICK),y)
+define QT5WAYLAND_INSTALL_COMPOSITOR_QMLS
+	cp -dpfr $(STAGING_DIR)/usr/qml/QtWayland $(TARGET_DIR)/usr/qml/
 endef
 endif
 endif
@@ -66,6 +70,7 @@ define QT5WAYLAND_INSTALL_TARGET_CMDS
 	cp -dpfr $(STAGING_DIR)/usr/lib/qt/plugins/wayland* $(TARGET_DIR)/usr/lib/qt/plugins
 	cp -dpfr $(STAGING_DIR)/usr/lib/qt/plugins/platforms/libqwayland* $(TARGET_DIR)/usr/lib/qt/plugins/platforms
 	$(QT5WAYLAND_INSTALL_COMPOSITOR)
+	$(QT5WAYLAND_INSTALL_COMPOSITOR_QMLS)
 	$(QT5WAYLAND_INSTALL_TARGET_EXAMPLES)
 endef
 

@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-NETWORK_MANAGER_VERSION_MAJOR = 1.10
-NETWORK_MANAGER_VERSION = $(NETWORK_MANAGER_VERSION_MAJOR).8
+NETWORK_MANAGER_VERSION_MAJOR = 1.18
+NETWORK_MANAGER_VERSION = $(NETWORK_MANAGER_VERSION_MAJOR).0
 NETWORK_MANAGER_SOURCE = NetworkManager-$(NETWORK_MANAGER_VERSION).tar.xz
 NETWORK_MANAGER_SITE = http://ftp.gnome.org/pub/GNOME/sources/NetworkManager/$(NETWORK_MANAGER_VERSION_MAJOR)
 NETWORK_MANAGER_INSTALL_STAGING = YES
@@ -26,11 +26,9 @@ NETWORK_MANAGER_CONF_OPTS = \
 	--disable-tests \
 	--disable-qt \
 	--disable-more-warnings \
-	--without-docs \
 	--with-crypto=gnutls \
 	--with-iptables=/usr/sbin/iptables \
-	--disable-ifupdown \
-	--disable-ifnet
+	--disable-ifupdown
 
 ifeq ($(BR2_PACKAGE_OFONO),y)
 NETWORK_MANAGER_DEPENDENCIES += ofono
@@ -80,11 +78,6 @@ NETWORK_MANAGER_CONF_OPTS += --enable-ovs
 NETWORK_MANAGER_DEPENDENCIES += jansson
 else
 NETWORK_MANAGER_CONF_OPTS += --disable-ovs
-endif
-
-# uClibc by default doesn't have backtrace support, so don't use it
-ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
-NETWORK_MANAGER_CONF_OPTS += --disable-crashtrace
 endif
 
 define NETWORK_MANAGER_INSTALL_INIT_SYSV

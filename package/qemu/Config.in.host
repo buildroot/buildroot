@@ -12,6 +12,7 @@ config BR2_PACKAGE_HOST_QEMU_ARCH_SUPPORTS
 	default y if BR2_powerpc
 	default y if BR2_powerpc64
 	default y if BR2_powerpc64le
+	default y if BR2_riscv
 	default y if BR2_sh
 	default y if BR2_sparc
 	default y if BR2_x86_64
@@ -66,5 +67,11 @@ config BR2_PACKAGE_HOST_QEMU_VDE2
 	  Enables VDE2 support. VDE2 stands for Virtual Distributed
 	  Ethernet and can be used to create virtual switches to
 	  "plug" both physical and virtual machines in them.
+
+config BR2_PACKAGE_HOST_QEMU_VIRTFS
+	bool "Virtual filesystem support"
+	help
+	  Enables support for virtual filesystem in Qemu allowing
+	  shared filesystem between Qemu and its emulated target.
 
 endif

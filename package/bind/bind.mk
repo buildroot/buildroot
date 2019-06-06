@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-BIND_VERSION = 9.11.4-P2
-BIND_SITE = http://ftp.isc.org/isc/bind9/$(BIND_VERSION)
+BIND_VERSION = 9.11.6-P1
+BIND_SITE = https://ftp.isc.org/isc/bind9/$(BIND_VERSION)
 # bind does not support parallel builds.
 BIND_MAKE = $(MAKE1)
 BIND_INSTALL_STAGING = YES
@@ -24,11 +24,11 @@ BIND_CONF_ENV = \
 	BUILD_CC="$(TARGET_CC)" \
 	BUILD_CFLAGS="$(TARGET_CFLAGS)"
 BIND_CONF_OPTS = \
+	$(if $(BR2_TOOLCHAIN_HAS_THREADS),--enable-threads,--disable-threads) \
 	--without-lmdb \
 	--with-libjson=no \
 	--with-randomdev=/dev/urandom \
 	--enable-epoll \
-	--with-libtool \
 	--with-gssapi=no \
 	--enable-filter-aaaa
 
@@ -54,16 +54,13 @@ BIND_CONF_OPTS += --with-libxml2=no
 endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
-BIND_DEPENDENCIES += openssl
-BIND_CONF_ENV += \
-	ac_cv_func_EVP_sha256=yes \
-	ac_cv_func_EVP_sha384=yes \
-	ac_cv_func_EVP_sha512=yes
+BIND_DEPENDENCIES += host-pkgconf openssl
 BIND_CONF_OPTS += \
-	--with-openssl=$(STAGING_DIR)/usr LIBS="-lz" \
+	--with-openssl=$(STAGING_DIR)/usr \
 	--with-ecdsa=yes \
 	--with-eddsa=no \
 	--with-aes=yes
+BIND_CONF_ENV += LIBS=`$(PKG_CONFIG_HOST_BINARY) --libs openssl`
 # GOST cipher support requires openssl extra engines
 ifeq ($(BR2_PACKAGE_OPENSSL_ENGINES),y)
 BIND_CONF_OPTS += --with-gost=yes
@@ -74,8 +71,11 @@ else
 BIND_CONF_OPTS += --with-openssl=no
 endif
 
-# Used by dnssec-checkds and dnssec-coverage
-ifeq ($(BR2_PACKAGE_PYTHON)$(BR2_PACKAGE_PYTHON3),)
+# Used by dnssec-keymgr
+ifeq ($(BR2_PACKAGE_PYTHON_PLY),y)
+BIND_DEPENDENCIES += host-python-ply
+BIND_CONF_OPTS += --with-python=$(HOST_DIR)/usr/bin/python
+else
 BIND_CONF_OPTS += --with-python=no
 endif
 
@@ -83,6 +83,16 @@ ifeq ($(BR2_PACKAGE_READLINE),y)
 BIND_DEPENDENCIES += readline
 else
 BIND_CONF_OPTS += --with-readline=no
+endif
+
+ifeq ($(BR2_STATIC_LIBS),y)
+BIND_CONF_OPTS += \
+	--without-dlopen \
+	--without-libtool
+else
+BIND_CONF_OPTS += \
+	--with-dlopen \
+	--with-libtool
 endif
 
 define BIND_TARGET_REMOVE_SERVER

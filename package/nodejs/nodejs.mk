@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-NODEJS_VERSION = 8.12.0
+NODEJS_VERSION = 10.15.3
 NODEJS_SOURCE = node-v$(NODEJS_VERSION).tar.xz
 NODEJS_SITE = http://nodejs.org/dist/v$(NODEJS_VERSION)
 NODEJS_DEPENDENCIES = host-python host-nodejs c-ares \
-	libhttpparser libuv zlib \
+	libhttpparser libuv zlib nghttp2 \
 	$(call qstrip,$(BR2_PACKAGE_NODEJS_MODULES_ADDITIONAL_DEPS))
-HOST_NODEJS_DEPENDENCIES = host-libopenssl host-python host-zlib
+HOST_NODEJS_DEPENDENCIES = host-libopenssl host-python host-zlib host-patchelf
 NODEJS_LICENSE = MIT (core code); MIT, Apache and BSD family licenses (Bundled components)
 NODEJS_LICENSE_FILES = LICENSE
 
@@ -20,6 +20,7 @@ NODEJS_CONF_OPTS = \
 	--shared-cares \
 	--shared-http-parser \
 	--shared-libuv \
+	--shared-nghttp2 \
 	--without-dtrace \
 	--without-etw \
 	--dest-os=linux
@@ -73,6 +74,8 @@ define HOST_NODEJS_BUILD_CMDS
 		$(HOST_CONFIGURE_OPTS) \
 		NO_LOAD=cctest.target.mk \
 		PATH=$(@D)/bin:$(BR_PATH)
+
+	$(HOST_DIR)/bin/patchelf --set-rpath $(HOST_DIR)/lib $(@D)/out/Release/torque
 endef
 
 define HOST_NODEJS_INSTALL_CMDS
@@ -81,6 +84,8 @@ define HOST_NODEJS_INSTALL_CMDS
 		$(HOST_CONFIGURE_OPTS) \
 		NO_LOAD=cctest.target.mk \
 		PATH=$(@D)/bin:$(BR_PATH)
+
+	$(INSTALL) -m755 -D $(@D)/out/Release/torque $(HOST_DIR)/bin/torque
 endef
 
 ifeq ($(BR2_i386),y)
@@ -111,6 +116,12 @@ NODEJS_MIPS_ARCH_VARIANT = r1
 endif
 endif
 
+NODEJS_LDFLAGS = $(TARGET_LDFLAGS)
+
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+NODEJS_LDFLAGS += -latomic
+endif
+
 define NODEJS_CONFIGURE_CMDS
 	mkdir -p $(@D)/bin
 	ln -sf $(HOST_DIR)/bin/python2 $(@D)/bin/python
@@ -118,6 +129,7 @@ define NODEJS_CONFIGURE_CMDS
 	(cd $(@D); \
 		$(TARGET_CONFIGURE_OPTS) \
 		PATH=$(@D)/bin:$(BR_PATH) \
+		LDFLAGS="$(NODEJS_LDFLAGS)" \
 		LD="$(TARGET_CXX)" \
 		PYTHON=$(HOST_DIR)/bin/python2 \
 		$(HOST_DIR)/bin/python2 ./configure \
@@ -128,6 +140,10 @@ define NODEJS_CONFIGURE_CMDS
 		$(if $(NODEJS_MIPS_FPU_MODE),--with-mips-fpu-mode=$(NODEJS_MIPS_FPU_MODE)) \
 		$(NODEJS_CONF_OPTS) \
 	)
+
+	# use host version of torque
+	sed "s#<(PRODUCT_DIR)/<(EXECUTABLE_PREFIX)torque<(EXECUTABLE_SUFFIX)#$(HOST_DIR)/bin/torque#" \
+		-i $(@D)/deps/v8/gypfiles/v8.gyp
 endef
 
 define NODEJS_BUILD_CMDS
@@ -136,6 +152,7 @@ define NODEJS_BUILD_CMDS
 		$(TARGET_CONFIGURE_OPTS) \
 		NO_LOAD=cctest.target.mk \
 		PATH=$(@D)/bin:$(BR_PATH) \
+		LDFLAGS="$(NODEJS_LDFLAGS)" \
 		LD="$(TARGET_CXX)"
 endef
 
@@ -147,6 +164,7 @@ NODEJS_MODULES_LIST= $(call qstrip,\
 
 # Define NPM for other packages to use
 NPM = $(TARGET_CONFIGURE_OPTS) \
+	LDFLAGS="$(NODEJS_LDFLAGS)" \
 	LD="$(TARGET_CXX)" \
 	npm_config_arch=$(NODEJS_CPU) \
 	npm_config_target_arch=$(NODEJS_CPU) \
@@ -175,6 +193,7 @@ define NODEJS_INSTALL_TARGET_CMDS
 		$(TARGET_CONFIGURE_OPTS) \
 		NO_LOAD=cctest.target.mk \
 		PATH=$(@D)/bin:$(BR_PATH) \
+		LDFLAGS="$(NODEJS_LDFLAGS)" \
 		LD="$(TARGET_CXX)"
 	$(NODEJS_INSTALL_MODULES)
 endef

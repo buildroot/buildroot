@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-PYTHON_LXML_VERSION = 4.2.5
-PYTHON_LXML_SITE = http://lxml.de/files
-PYTHON_LXML_SOURCE = lxml-$(PYTHON_LXML_VERSION).tgz
+PYTHON_LXML_VERSION = 4.3.3
+PYTHON_LXML_SITE = https://files.pythonhosted.org/packages/7d/29/174d70f303016c58bd790c6c86e6e86a9d18239fac314d55a9b7be501943
+PYTHON_LXML_SOURCE = lxml-$(PYTHON_LXML_VERSION).tar.gz
 
 # Not including the GPL, because it is used only for the test scripts.
 PYTHON_LXML_LICENSE = BSD-3-Clause, Others

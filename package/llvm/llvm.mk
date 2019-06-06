@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LLVM_VERSION = 7.0.0
+LLVM_VERSION = 8.0.0
 LLVM_SITE = http://llvm.org/releases/$(LLVM_VERSION)
 LLVM_SOURCE = llvm-$(LLVM_VERSION).src.tar.xz
 LLVM_LICENSE = NCSA
@@ -16,6 +16,13 @@ LLVM_INSTALL_STAGING = YES
 # host-python: Python interpreter 2.7 or newer is required for builds and testing.
 HOST_LLVM_DEPENDENCIES = host-python
 LLVM_DEPENDENCIES = host-llvm
+
+# LLVM >= 9.0 will soon require C++14 support, building llvm 8.x using a
+# toolchain using gcc < 5.1 gives an error but actually still works. Setting
+# this option makes it still build with gcc >= 4.8.
+# https://reviews.llvm.org/D57264
+HOST_LLVM_CONF_OPTS += -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=ON
+LLVM_CONF_OPTS += -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=ON
 
 # Don't build clang libcxx libcxxabi lldb compiler-rt lld polly as llvm subprojects
 # This flag assumes that projects are checked out side-by-side and not nested
@@ -56,6 +63,9 @@ endif
 
 # Use native llvm-tblgen from host-llvm (needed for cross-compilation)
 LLVM_CONF_OPTS += -DLLVM_TABLEGEN=$(HOST_DIR)/bin/llvm-tblgen
+
+# Use native llvm-config from host-llvm (needed for cross-compilation)
+LLVM_CONF_OPTS += -DLLVM_CONFIG_PATH=$(HOST_DIR)/bin/llvm-config
 
 # BUILD_SHARED_LIBS has a misleading name. It is in fact an option for
 # LLVM developers to build all LLVM libraries as separate shared libraries.
