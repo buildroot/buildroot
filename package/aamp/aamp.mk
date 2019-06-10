@@ -9,7 +9,7 @@ AAMP_SITE_METHOD = git
 AAMP_SITE = https://github.com/rdkcmf/rdk-aamp
 AAMP_INSTALL_STAGING = YES
 
-AAMP_DEPENDENCIES = libcurl libdash libxml2 cjson aampabr gstreamer1 gst1-plugins-base wpeframework
+AAMP_DEPENDENCIES = libcurl libdash libxml2 cjson aampabr gst1-plugins-base wpeframework
 
 ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_CDMI), y)
 AAMP_CONF_OPTS += \
