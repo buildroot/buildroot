@@ -135,7 +135,7 @@ index 6172b40..8ce7fc4 100644
 +#if (defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL) || defined(PX_PLATFORM_WPEFRAMEWORK)) && !defined(PXSCENE_DISABLE_PXCONTEXT_EXT)
        if (mAntiAliasing)
        {
-         glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextureId, 0, 2);
+         //glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextureId, 0, 2);
 @@ -586,7 +586,7 @@ private:
    bool mBindTexture;
    bool mAlphaOnly;
@@ -696,17 +696,19 @@ index e69de29..beacc21 100644
 +    select(0, NULL, NULL, NULL, &tv);
 +}
 diff --git a/src/wpeframework/pxWPECompositor.cpp b/src/wpeframework/pxWPECompositor.cpp
-index e69de29..215005f 100644
+index e69de29..73f17f4 100644
 --- a/src/wpeframework/pxWPECompositor.cpp
 +++ b/src/wpeframework/pxWPECompositor.cpp
-@@ -0,0 +1,67 @@
+@@ -0,0 +1,72 @@
 +#include "../pxCore.h"
 +#include "../pxWindow.h"
 +#include "../pxWindowUtil.h"
 +#include "../pxKeycodes.h"
++#include "../../examples/pxScene2d/src/pxContext.h"
 +#include "pxWPECompositor.h"
 +#include "pxWindowNative.h"
 +
++extern pxContext context;
 +using namespace WPEFramework;
 +#define MOD_SHIFT       0x01
 +#define MOD_ALT         0x08
@@ -717,6 +719,8 @@ index e69de29..215005f 100644
 +
 +void Keyboard::Direct(const uint32_t key, const state action)
 +{
++    static pxSharedContextRef sharedContext = context.createSharedContext();
++    sharedContext->makeCurrent(true);
 +    std::vector<pxWindowNative*> windowVector = pxWindow::getNativeWindows();
 +    std::vector<pxWindowNative*>::iterator i;
 +    unsigned long flags = 0;
@@ -736,6 +740,7 @@ index e69de29..215005f 100644
 +            w->onKeyUp(keycodeFromNative(key), flags);
 +        }
 +    }
++    sharedContext->makeCurrent(true);
 +}
 +
 +void Keyboard::Modifiers(uint32_t depressedMods, uint32_t latchedMods, uint32_t lockedMods, uint32_t group)
