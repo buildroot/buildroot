@@ -1,0 +1,70 @@
+diff --git a/examples/pxScene2d/src/pxContextGL.cpp b/examples/pxScene2d/src/pxContextGL.cpp
+index 8ce7fc4..0bad3e9 100644
+--- a/examples/pxScene2d/src/pxContextGL.cpp
++++ b/examples/pxScene2d/src/pxContextGL.cpp
+@@ -121,6 +121,7 @@ extern rtScript script;
+ extern uv_async_t gcTrigger;
+ #endif
+ extern pxContext context;
++rtMutex glContextLock;
+ rtThreadQueue* gUIThreadQueue = new rtThreadQueue();
+ double lastContextGarbageCollectTime = 0;
+ double garbageCollectThrottleInSeconds = CONTEXT_GC_THROTTLE_SECS_DEFAULT;
+@@ -1480,11 +1481,14 @@ public:
+     glUniform1f(mAlphaLoc, alpha);
+     glUniform4fv(mColorLoc, 1, color);
+ 
++    glContextLock.lock();
+     if (texture->bindGLTexture(mTextureLoc) != PX_OK)
+     {
++    glContextLock.unlock();
+       return PX_FAIL;
+     }
+ 
++    glContextLock.unlock();
+     glVertexAttribPointer(mPosLoc, 2, GL_FLOAT, GL_FALSE, 0, pos);
+     glVertexAttribPointer(mUVLoc, 2, GL_FLOAT, GL_FALSE, 0, uv);
+     glEnableVertexAttribArray(mPosLoc);
+@@ -1549,11 +1553,14 @@ public:
+     glUniformMatrix4fv(mMatrixLoc, 1, GL_FALSE, matrix);
+     glUniform1f(mAlphaLoc, alpha);
+ 
++    glContextLock.lock();
+     if (texture->bindGLTexture(mTextureLoc) != PX_OK)
+     {
++    glContextLock.unlock();
+       return PX_FAIL;
+     }
+ 
++    glContextLock.unlock();
+     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
+ 		    (stretchX==pxConstantsStretch::REPEAT)?GL_REPEAT:GL_CLAMP_TO_EDGE);
+     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
+@@ -1630,10 +1637,13 @@ public:
+       glUniform4fv(mColorLoc, 1, defaultColor);
+     }
+ 
++    glContextLock.lock();
+     if (texture->bindGLTexture(mTextureLoc) != PX_OK)
+     {
++    glContextLock.unlock();
+       return PX_FAIL;
+     }
++    glContextLock.unlock();
+ 
+     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
+                     (stretchX==pxConstantsStretch::REPEAT)?GL_REPEAT:GL_CLAMP_TO_EDGE);
+@@ -1710,10 +1720,13 @@ public:
+     glUniform1f(mInvertedLoc, static_cast<GLfloat>((maskOp == pxConstantsMaskOperation::NORMAL) ? 0.0 : 1.0));
+     
+ 
++    glContextLock.lock();
+     if (texture->bindGLTexture(mTextureLoc) != PX_OK)
+     {
++    glContextLock.unlock();
+       return PX_FAIL;
+     }
++    glContextLock.unlock();
+ 
+     if (mask.getPtr() != NULL)
+     {
