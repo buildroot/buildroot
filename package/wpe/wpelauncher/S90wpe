@@ -1,0 +1,46 @@
+#!/bin/sh
+
+WPE_URL_FILE="/boot/wpe.txt"
+
+start() {
+	echo -n "Starting WPE: "
+	if [ -e "$WPE_URL_FILE" ]; then
+		URL=`head -1 $WPE_URL_FILE`
+		if [ -n "$URL" ]; then
+			/usr/bin/wpe --loop $URL &> /dev/null &
+			echo "OK"
+		else
+			echo "NO URL"
+		fi
+	else
+		echo "NO FILE"
+	fi
+}
+
+stop() {
+	echo -n "Stopping WPE: "
+	killall wpe WPELauncher WPEWebProcess WPENetworkProcess &> /dev/null
+	echo "OK"
+}
+
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+	;;
+	restart|reload)
+		restart
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+esac
+
+exit $?

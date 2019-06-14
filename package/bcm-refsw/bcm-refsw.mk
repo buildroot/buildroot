@@ -41,7 +41,7 @@ endif
 BCM_REFSW_SITE = git@github.com:Metrological/bcm-refsw.git
 BCM_REFSW_SITE_METHOD = git
 
-BCM_REFSW_DEPENDENCIES = linux host-pkgconf host-flex host-bison host-gperf
+BCM_REFSW_DEPENDENCIES = linux host-pkgconf host-flex host-bison host-gperf libcurl
 BCM_REFSW_LICENSE = PROPRIETARY
 BCM_REFSW_INSTALL_STAGING = YES
 BCM_REFSW_INSTALL_TARGET = YES
