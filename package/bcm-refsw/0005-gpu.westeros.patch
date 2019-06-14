@@ -1,0 +1,55 @@
+diff -auNrd a/BSEAV/lib/gpu/v3d/platform/nexus/default_nexus.h b/BSEAV/lib/gpu/v3d/platform/nexus/default_nexus.h
+--- a/BSEAV/lib/gpu/v3d/platform/nexus/default_nexus.h	2017-04-17 11:40:22.958902965 -0400
++++ b/BSEAV/lib/gpu/v3d/platform/nexus/default_nexus.h	2017-04-17 12:06:05.251067587 -0400
+@@ -63,11 +63,13 @@
+ 
+ #ifdef USE_WAYLAND_EGL
+ typedef void (*WEGLReferenceBuffer)( void *userData, void *buffer, void *bufferCtx );
++typedef void (*WEGLNewSingleBuffer)( void *userData, void *buffer, void *bufferCtx );
+ typedef void (*WEGLDispatchPending)( void *userData, bool force );
+ typedef void (*WEGLUpdateFence)( void *context, void *nativeWindow );
+ typedef struct _WEGLNativeWindowListener
+ {
+    WEGLReferenceBuffer referenceBuffer;
++   WEGLNewSingleBuffer newSingleBuffer;
+    WEGLDispatchPending dispatchPending;
+ } WEGLNativeWindowListener;
+ #endif
+@@ -100,6 +102,7 @@
+    #ifdef USE_WAYLAND_EGL
+    void *userData;
+    WEGLReferenceBuffer referenceBuffer;
++   WEGLNewSingleBuffer newSingleBuffer;
+    WEGLDispatchPending dispatchPending;
+    #endif
+ } NXPL_NativeWindowInfoEXT;
+diff -auNrd a/BSEAV/lib/gpu/vc5/platform/nexus/default_nexus.h b/BSEAV/lib/gpu/vc5/platform/nexus/default_nexus.h
+--- a/BSEAV/lib/gpu/vc5/platform/nexus/default_nexus.h	2017-04-17 11:40:22.974902935 -0400
++++ b/BSEAV/lib/gpu/vc5/platform/nexus/default_nexus.h	2017-04-17 12:02:34.232855208 -0400
+@@ -54,11 +54,13 @@
+ 
+ #ifdef USE_WAYLAND_EGL
+ typedef void (*WEGLReferenceBuffer)( void *userData, void *buffer, void *bufferCtx );
++typedef void (*WEGLNewSingleBuffer)( void *userData, void *buffer, void *bufferCtx );
+ typedef void (*WEGLDispatchPending)( void *userData, bool force );
+ typedef void (*WEGLUpdateFence)( void *context, void *nativeWindow );
+ typedef struct _WEGLNativeWindowListener
+ {
+    WEGLReferenceBuffer referenceBuffer;
++   WEGLNewSingleBuffer newSingleBuffer;
+    WEGLDispatchPending dispatchPending;
+ } WEGLNativeWindowListener;
+ #endif
+@@ -88,6 +90,12 @@
+    NEXUS_BlendEquation  colorBlend;
+    NEXUS_BlendEquation  alphaBlend;
+    uint32_t             magic;
++   #ifdef USE_WAYLAND_EGL
++   void *userData;
++   WEGLReferenceBuffer referenceBuffer;
++   WEGLNewSingleBuffer newSingleBuffer;
++   WEGLDispatchPending dispatchPending;
++   #endif
+ } NXPL_NativeWindowInfoEXT;
+ 
+ typedef enum NXPL_DisplayType

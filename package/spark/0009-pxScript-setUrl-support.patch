@@ -1,0 +1,104 @@
+diff --git a/examples/pxScene2d/src/pxScene2d.cpp b/examples/pxScene2d/src/pxScene2d.cpp
+index 9b3abba..6d902d3 100755
+--- a/examples/pxScene2d/src/pxScene2d.cpp
++++ b/examples/pxScene2d/src/pxScene2d.cpp
+@@ -442,7 +442,7 @@ pxScene2d::pxScene2d(bool top, pxScriptView* scriptView)
+ #ifdef PX_DIRTY_RECTANGLES
+     mArchive(),mDirtyRect(), mLastFrameDirtyRect(),
+ #endif //PX_DIRTY_RECTANGLES
+-    mDirty(true), mDragging(false), mDragType(pxConstantsDragType::NONE), mDragTarget(NULL), mTestView(NULL), mDisposed(false), mArchiveSet(false)
++    mDirty(true), mDragging(false), mDragType(pxConstantsDragType::NONE), mDragTarget(NULL), mTestView(NULL), mDisposed(false), mArchiveSet(false), mSceneContainer(NULL)
+ #ifdef PXSCENE_SUPPORT_STORAGE
+ , mStorage(NULL)
+ #endif
+@@ -906,6 +906,9 @@ rtError pxScene2d::createFontResource(rtObjectRef p, rtObjectRef& o)
+ rtError pxScene2d::createScene(rtObjectRef p, rtObjectRef& o)
+ {
+   pxSceneContainer* sceneContainer = new pxSceneContainer(this);
++  if (mSceneContainer == NULL) {
++    mSceneContainer = sceneContainer;
++  }
+   o = sceneContainer;
+   o.set(p);
+   o.send("init");
+@@ -2810,6 +2813,11 @@ pxIViewContainer* pxScene2d::viewContainer()
+   return mContainer;
+ }
+ 
++pxSceneContainer* pxScene2d::sceneContainer()
++{
++  return mSceneContainer;
++}
++
+ rtDefineObject(pxViewContainer, pxObject);
+ rtDefineProperty(pxViewContainer, w);
+ rtDefineProperty(pxViewContainer, h);
+@@ -3143,6 +3151,24 @@ void pxScriptView::runScript()
+   #endif //ENABLE_RT_NODE
+ }
+ 
++void pxScriptView::setUrl(rtString url)
++{
++  mUrl = url;
++  rtValue args;
++  args.setString("scene");
++  rtValue scene;
++  pxScriptView::getScene(1, &args, &scene, this);
++  pxScene2d* pxScene = (pxScene2d*)(scene.toObject().getPtr());
++  if (pxScene)
++  {
++    pxSceneContainer* sceneContainer = pxScene->sceneContainer();
++    if (sceneContainer)
++    {
++      sceneContainer->setUrl(url);
++    }
++  }
++}
++
+ 
+ rtError pxScriptView::suspend(const rtValue& v, bool& b)
+ {
+diff --git a/examples/pxScene2d/src/pxScene2d.h b/examples/pxScene2d/src/pxScene2d.h
+index 6962d13..bef10f1 100755
+--- a/examples/pxScene2d/src/pxScene2d.h
++++ b/examples/pxScene2d/src/pxScene2d.h
+@@ -640,6 +640,7 @@ public:
+   }
+ 
+   rtString getUrl() const { return mUrl; }
++  void setUrl(rtString url);
+ 
+ #ifdef ENABLE_PERMISSIONS_CHECK
+   rtError permissions(rtObjectRef& v) const { return mScene.get("permissions", v); }
+@@ -662,7 +663,6 @@ public:
+   rtError textureMemoryUsage(rtValue& v);
+ 
+   rtError screenshot(rtString type, rtValue& returnValue);
+-  
+ protected:
+ 
+ 
+@@ -925,6 +925,7 @@ public:
+        mArchive = NULL;
+     }
+     mArchiveSet = false;
++    mSceneContainer = NULL;
+   }
+ 
+   virtual unsigned long AddRef()
+@@ -1103,6 +1104,7 @@ public:
+ 
+   virtual void setViewContainer(pxIViewContainer* l);
+   pxIViewContainer* viewContainer();
++  pxSceneContainer* sceneContainer();
+   void invalidateRect(pxRect* r);
+ 
+   void getMatrixFromObjectToScene(pxObject* o, pxMatrix4f& m);
+@@ -1289,6 +1291,7 @@ public:
+   bool mDisposed;
+   std::vector<rtFunctionRef> mServiceProviders;
+   bool mArchiveSet;
++  pxSceneContainer* mSceneContainer;
+ #ifdef PXSCENE_SUPPORT_STORAGE
+   mutable rtStorageRef mStorage;
+ #endif

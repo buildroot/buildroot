@@ -21,12 +21,21 @@ LIBEPOXY_CONF_OPTS += --disable-egl
 endif
 
 ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
+ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR)$(BR2_PACKAGE_WESTEROS),yy)
 LIBEPOXY_MAKE_OPTS += \
 	CFLAGS='$(TARGET_CFLAGS) \
+            -DGLX_LIB_NAME="libwayland-egl.so" \
+            -DEGL_LIB_NAME="libwayland-egl.so" \
+            -DGLES1_LIB_NAME="libwayland-egl.so" \
+            -DGLES2_LIB_NAME="libwayland-egl.so"'
+else
+LIBEPOXY_MAKE_OPTS += \
+        CFLAGS='$(TARGET_CFLAGS) \
             -DGLX_LIB_NAME="libv3ddriver.so" \
             -DEGL_LIB_NAME="libv3ddriver.so" \
             -DGLES1_LIB_NAME="libv3ddriver.so" \
             -DGLES2_LIB_NAME="libv3ddriver.so"'
+endif
 else ifeq ($(BR2_PACKAGE_HORIZON_SDK),y)
 LIBEPOXY_CONF_OPTS += \
 	CFLAGS='$(TARGET_CFLAGS) \

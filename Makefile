@@ -377,6 +377,7 @@ unexport RUBYOPT
 
 include package/pkg-utils.mk
 include package/doc-asciidoc.mk
+include package/simple-opkg-tools.mk
 
 ifeq ($(BR2_HAVE_DOT_CONFIG),y)
 

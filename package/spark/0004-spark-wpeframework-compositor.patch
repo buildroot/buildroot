@@ -1,0 +1,1573 @@
+diff --git a/cmake/CommDeps.cmake b/cmake/CommDeps.cmake
+index f69b622..735bad4 100644
+--- a/cmake/CommDeps.cmake
++++ b/cmake/CommDeps.cmake
+@@ -220,6 +220,25 @@ set(COMM_DEPS_LIBRARY_DIRS ${COMM_DEPS_LIBRARY_DIRS}
+       ${SQLITE_LIBRARY_DIRS}
+    )
+ 
++if (BUILD_WITH_WPEFRAMEWORK)
++
++set(COMM_DEPS_LIBRARIES ${COMM_DEPS_LIBRARIES}
++           ${ZLIB_LIBRARIES}
++           ${CURL_LIBRARIES}
++           ${JPEG_LIBRARIES}
++     ${TURBO_JPEG_LIBRARIES}
++            ${PNG_LIBRARIES}
++       ${FREETYPE_LIBRARIES}
++         ${CRYPTO_LIBRARIES}
++        ${OPENSSL_LIBRARIES}
++            ${X11_LIBRARIES}
++             ${UV_LIBRARIES}
++       ${ICU_I18N_LIBRARIES}
++         ${ICU_UC_LIBRARIES}
++   )
++
++else ()
++
+ set(COMM_DEPS_LIBRARIES ${COMM_DEPS_LIBRARIES}
+            ${ZLIB_LIBRARIES}
+            ${CURL_LIBRARIES}
+@@ -239,3 +258,4 @@ set(COMM_DEPS_LIBRARIES ${COMM_DEPS_LIBRARIES}
+          ${ICU_UC_LIBRARIES}
+          ${SQLITE_LIBRARIES}
+    )
++endif (BUILD_WITH_WPEFRAMEWORK)
+diff --git a/examples/pxScene2d/src/CMakeLists.txt b/examples/pxScene2d/src/CMakeLists.txt
+index 7e64e47..97bc8ee 100644
+--- a/examples/pxScene2d/src/CMakeLists.txt
++++ b/examples/pxScene2d/src/CMakeLists.txt
+@@ -171,7 +171,7 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+                   ${NODE_LIBRARIES}
+                   ${V8_LIBRARIES}
+                   ${DUKE_LIBRARIES}
+-             ${COMM_DEPS_LIBRARIES}
++                  ${COMM_DEPS_LIBRARIES}
+              pthread rt dl m)
+ 
+     set(PXSCENE_APP_LIBRARIES ${PXSCENE_APP_LIBRARIES} pxCore rtCore_s)
+@@ -251,6 +251,13 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+         set(PXCORE_INCLUDES $ENV{PXCORE_INCLUDES})
+         separate_arguments(PXCORE_INCLUDES)
+         include_directories(BEFORE ${PXCORE_INCLUDES})
++    elseif (BUILD_WITH_WPEFRAMEWORK)
++        message("building pxscene for wpeframework compositor")
++        set(PX_PLATFORM PX_PLATFORM_WPEFRAMEWORK)
++        set(PXCORE_LIB_LOCATION ${PXCOREDIR}/build/wpe)
++        set(PLATFORM_SOURCES egl/pxContextUtils.cpp)
++
++        set(PXSCENE_LINK_LIBRARIES ${PXSCENE_LINK_LIBRARIES} compositorclient)
+     else ()
+         message("building pxscene for glut")
+         set(PX_PLATFORM PX_PLATFORM_GLUT)
+diff --git a/examples/pxScene2d/src/pxContextDescGL.h b/examples/pxScene2d/src/pxContextDescGL.h
+index be2ca29..a5f7b36 100644
+--- a/examples/pxScene2d/src/pxContextDescGL.h
++++ b/examples/pxScene2d/src/pxContextDescGL.h
+@@ -23,7 +23,7 @@
+ 
+ //#include <stddef.h>
+ 
+-#if defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL)
++#if defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL) || defined(PX_PLATFORM_WPEFRAMEWORK)
+ 
+ #include <GLES2/gl2.h>
+ 
+@@ -34,7 +34,7 @@
+ #include <OpenGL/gl.h>
+ #include <OpenGL/glu.h>
+ #else
+-#if defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL)
++#if defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL) || defined(PX_PLATFORM_WPEFRAMEWORK)
+ #include <GLES2/gl2.h>
+ #include <GLES2/gl2ext.h>
+ #else
+diff --git a/examples/pxScene2d/src/pxContextGL.cpp b/examples/pxScene2d/src/pxContextGL.cpp
+index 6172b40..8ce7fc4 100644
+--- a/examples/pxScene2d/src/pxContextGL.cpp
++++ b/examples/pxScene2d/src/pxContextGL.cpp
+@@ -38,7 +38,7 @@
+ #include <OpenGL/gl.h>
+ #include <OpenGL/glu.h>
+ #else
+-#if defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL)
++#if defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL) || defined(PX_PLATFORM_WPEFRAMEWORK)
+ #include <GLES2/gl2.h>
+ #ifndef GL_GLEXT_PROTOTYPES
+ #define GL_GLEXT_PROTOTYPES
+@@ -53,7 +53,7 @@
+ #include <GL/glut.h>
+ #endif
+ #include <GL/gl.h>
+-#endif //PX_PLATFORM_WAYLAND_EGL
++#endif //PX_PLATFORM_WAYLAND_EGL || defined(PX_PLATFORM_GENERIC_EGL) || defined(PX_PLATFORM_WPEFRAMEWORK)
+ #endif
+ 
+ #include "pxContextUtils.h"
+@@ -130,11 +130,11 @@ enum pxCurrentGLProgram { PROGRAM_UNKNOWN = 0, PROGRAM_SOLID_SHADER,  PROGRAM_A_
+ 
+ pxCurrentGLProgram currentGLProgram = PROGRAM_UNKNOWN;
+ 
+-#if defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL)
++#if defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL) || defined(PX_PLATFORM_WPEFRAMEWORK)
+ extern EGLContext defaultEglContext;
+ extern EGLDisplay defaultEglDisplay;
+ extern EGLSurface defaultEglSurface;
+-#endif //PX_PLATFORM_GENERIC_EGL || PX_PLATFORM_WAYLAND_EGL
++#endif //PX_PLATFORM_GENERIC_EGL || PX_PLATFORM_WAYLAND_EGL || defined(PX_PLATFORM_WPEFRAMEWORK)
+ 
+ // TODO get rid of this global crap
+ 
+@@ -451,7 +451,7 @@ public:
+   {
+     if (mFramebufferId!= 0)
+     {
+-#if (defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL)) && !defined(PXSCENE_DISABLE_PXCONTEXT_EXT)
++#if (defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL) || defined(PX_PLATFORM_WPEFRAMEWORK)) && !defined(PXSCENE_DISABLE_PXCONTEXT_EXT)
+       if (mAntiAliasing)
+       {
+         GLint currentFBO = 0;
+@@ -501,7 +501,7 @@ public:
+       glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                              GL_TEXTURE_2D, mTextureId, 0);
+ 
+-#if (defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL)) && !defined(PXSCENE_DISABLE_PXCONTEXT_EXT)
++#if (defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL) || defined(PX_PLATFORM_WPEFRAMEWORK)) && !defined(PXSCENE_DISABLE_PXCONTEXT_EXT)
+       if (mAntiAliasing)
+       {
+         //glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextureId, 0, 2);
+@@ -586,7 +586,7 @@ private:
+   bool mBindTexture;
+   bool mAlphaOnly;
+ 
+-#if (defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL)) && !defined(PXSCENE_DISABLE_PXCONTEXT_EXT)
++#if (defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL) || defined(PX_PLATFORM_WPEFRAMEWORK)) && !defined(PXSCENE_DISABLE_PXCONTEXT_EXT)
+   bool mAntiAliasing;
+ #endif
+ 
+@@ -2295,12 +2295,12 @@ void pxContext::init()
+ 
+   rtLogInfo("context garbage collect throttle set to %f seconds", garbageCollectThrottleInSeconds);
+ 
+-#if defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL)
++#if defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL) || defined(PX_PLATFORM_WPEFRAMEWORK)
+   defaultEglContext = eglGetCurrentContext();
+   defaultEglDisplay = eglGetCurrentDisplay();
+   defaultEglSurface = eglGetCurrentSurface(EGL_DRAW);
+   rtLogDebug("current context in init: %p", defaultEglContext);
+-#endif //PX_PLATFORM_GENERIC_EGL || PX_PLATFORM_WAYLAND_EGL
++#endif //PX_PLATFORM_GENERIC_EGL || PX_PLATFORM_WAYLAND_EGL || defined(PX_PLATFORM_WPEFRAMEWORK)
+ 
+   std::srand(unsigned (std::time(0)));
+ }
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 52d6ca3..4ec855a 100755
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -136,6 +136,24 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+                 gles/pxEventLoopNative.cpp gles/pxTimerNative.cpp gles/pxClipboardNative.cpp)
+         endif (PXCORE_ESSOS)
+         set(PLATFORM_LINKER_FLAGS)
++
++    elseif (PXCORE_WPEFRAMEWORK)
++        message("Building pxcore for wpe compositor")
++        set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../build/wpe)
++        set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../build/wpe)
++        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../build/wpe)
++        add_definitions(-DENABLE_NODE_V_6_9 -DNODE_PLATFORM=linux -DNODE_WANT_INTERNALS=1 -DV8_DEPRECATION_WARNINGS=1 -DNODE_SHARED_MODE -DNODE_USE_V8_PLATFORM=1 -DNODE_HAVE_I18N_SUPPORT=1 -DNODE_HAVE_SMALL_ICU=1 )
++        add_definitions(-DPX_PLATFORM_WPEFRAMEWORK -DRT_PLATFORM_LINUX -DENABLE_RT_NODE -DENABLE_HTTP_CACHE -DRUNINMAIN)
++        set(PLATFORM_LIBRARIES ${PLATFORM_LIBRARIES} wpeframework)
++        set(PXCORE_FILES wpeframework/pxWPECompositor.cpp wpeframework/pxBufferNative.cpp wpeframework/pxOffscreenNative.cpp wpeframework/pxWindowNative.cpp
++                wpeframework/pxEventLoopNative.cpp wpeframework/pxTimerNative.cpp wpeframework/pxClipboardNative.cpp pxViewWindow.cpp
++                unix/rtMutexNative.cpp unix/rtThreadPoolNative.cpp
++                rtFileCache.cpp rtHttpCache.cpp)
++        set(PLATFORM_LINKER_FLAGS)
++        if (PXCORE_WPEFRAMEWORK_DISPLAY_READ_EVENTS)
++            message("Enabling display read events")
++                add_definitions(-DPXCORE_WPEFRAMEWORK_DISPLAY_READ_EVENTS)
++        endif (PXCORE_WPEFRAMEWORK_DISPLAY_READ_EVENTS)
+     elseif (PXCORE_DFB)
+         message("Building pxcore for dfb ")
+         set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../build/dfb)
+diff --git a/src/pxConfig.h b/src/pxConfig.h
+index 3d70de2..d1757b6 100644
+--- a/src/pxConfig.h
++++ b/src/pxConfig.h
+@@ -34,8 +34,9 @@
+ #elif defined(PX_PLATFORM_GENERIC_EGL)
+ #elif defined(PX_PLATFORM_GENERIC_DFB)
+ #elif defined(PX_PLATFORM_DFB_NON_X11)
++#elif defined(PX_PLATFORM_WPEFRAMEWORK)
+ #else
+-#error "Must define one of PX_PLATFORM_WIN, PX_PLATFORM_MAC, PX_PLATFORM_X11, PX_PLATFORM_GLUT, PX_PLATFORM_WAYLAND, PX_PLATFORM_WAYLAND_EGL, PX_PLATFORM_GENERIC_DFB PX_PLATFORM_DFB_NON_X11"
++#error "Must define one of PX_PLATFORM_WIN, PX_PLATFORM_MAC, PX_PLATFORM_X11, PX_PLATFORM_GLUT, PX_PLATFORM_WAYLAND, PX_PLATFORM_WAYLAND_EGL, PX_PLATFORM_GENERIC_DFB PX_PLATFORM_DFB_NON_X11 PX_PLATFORM_WPEFRAMEWORK"
+ #endif
+ 
+ #ifndef PX_PLATFORM_GENERIC_EGL
+diff --git a/src/pxCore.h b/src/pxCore.h
+index f91cc81..66ea12f 100644
+--- a/src/pxCore.h
++++ b/src/pxCore.h
+@@ -78,6 +78,8 @@ inline t pxAbs(t i)
+ #include "wayland_egl/pxConfigNative.h"
+ #elif defined(PX_PLATFORM_GENERIC_EGL)
+ #include "gles/pxConfigNative.h"
++#elif defined(PX_PLATFORM_WPEFRAMEWORK)
++#include "wpeframework/pxConfigNative.h"
+ #else
+ #error "PX_PLATFORM NOT HANDLED"
+ #endif
+diff --git a/src/wpeframework/pxBufferNative.cpp b/src/wpeframework/pxBufferNative.cpp
+index e69de29..d174a3a 100644
+--- a/src/wpeframework/pxBufferNative.cpp
++++ b/src/wpeframework/pxBufferNative.cpp
+@@ -0,0 +1,40 @@
++/*
++
++pxCore Copyright 2005-2018 John Robinson
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++
++*/
++
++// pxBufferNative.cpp
++
++#include "../pxCore.h"
++#include "pxBufferNative.h"
++#include "../pxRect.h"
++
++#include "../pxOffscreen.h"
++
++
++static void renderPixelsToBuffer(uint32_t *bufferData, unsigned char* pixelData, int width, int height)
++{
++    memcpy(bufferData, pixelData, width*height*4);
++}
++
++void pxBuffer::blit(pxSurfaceNative s, int dstLeft, int dstTop,
++		    int dstWidth, int dstHeight,
++		    int srcLeft, int srcTop)
++{
++    renderPixelsToBuffer(s->pixelData, (unsigned char*)base(), width(), height());
++}
++
++
+diff --git a/src/wpeframework/pxBufferNative.h b/src/wpeframework/pxBufferNative.h
+index e69de29..39e2c08 100644
+--- a/src/wpeframework/pxBufferNative.h
++++ b/src/wpeframework/pxBufferNative.h
+@@ -0,0 +1,37 @@
++/*
++
++pxCore Copyright 2005-2018 John Robinson
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++
++*/
++
++// pxBufferNative.h
++
++#ifndef PX_BUFFER_NATIVE_H
++#define PX_BUFFER_NATIVE_H
++
++#include <stdint.h>
++#include "../pxCore.h"
++
++// Structure used to describe a window surface under X11
++typedef struct
++{
++    uint32_t* pixelData;
++    int windowWidth;
++    int windowHeight;
++} pxSurfaceNativeDesc;
++
++typedef pxSurfaceNativeDesc* pxSurfaceNative;
++
++#endif
+diff --git a/src/wpeframework/pxClipboardNative.cpp b/src/wpeframework/pxClipboardNative.cpp
+index e69de29..bf6a4b5 100644
+--- a/src/wpeframework/pxClipboardNative.cpp
++++ b/src/wpeframework/pxClipboardNative.cpp
+@@ -0,0 +1,48 @@
++/*
++
++pxCore Copyright 2005-2018 John Robinson
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++
++*/
++
++//  pxClipboardNative.cpp
++
++#include <stdio.h>
++
++#include "pxClipboardNative.h"
++
++pxClipboardNative *pxClipboardNative::s_instance;
++
++
++std::string pxClipboardNative::getString(std::string type)
++{
++    printf("pxClipboardNative::getString() - ENTER\n");
++
++    // NSPasteboard*  pasteBoard = [NSPasteboard generalPasteboard];
++    // NSString*        myString = [pasteBoard  stringForType: NSPasteboardTypeString];
++
++    return std::string("(empty)");
++}
++
++void pxClipboardNative::setString(std::string type, std::string clip)
++{
++    printf("pxClipboardNative::setString() - ENTER\n");
++
++    // NSString *stringToWrite = [NSString stringWithUTF8String: clip.c_str()];
++
++    // NSPasteboard*  pasteBoard = [NSPasteboard generalPasteboard];
++
++    // [pasteBoard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
++    // [pasteBoard setString:stringToWrite forType:NSStringPboardType];
++}
+diff --git a/src/wpeframework/pxClipboardNative.h b/src/wpeframework/pxClipboardNative.h
+index e69de29..1dc8fab 100644
+--- a/src/wpeframework/pxClipboardNative.h
++++ b/src/wpeframework/pxClipboardNative.h
+@@ -0,0 +1,50 @@
++/*
++
++pxCore Copyright 2005-2018 John Robinson
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++
++*/
++
++//  pxClipboardNative.h
++
++#ifndef PX_CLIPBOARDNATIVE_H
++#define PX_CLIPBOARDNATIVE_H
++
++#include <string>
++
++class pxClipboardNative
++{
++public:
++    pxClipboardNative()  {};
++    virtual ~pxClipboardNative()  {};
++
++
++    std::string getString(std::string type);
++           void setString(std::string type, std::string clip);
++
++    static pxClipboardNative *instance()
++    {
++        if (!s_instance)
++        {
++            s_instance = new pxClipboardNative();
++        }
++
++        return s_instance;
++    }
++
++private:
++    static pxClipboardNative *s_instance;
++};
++
++#endif // PX_CLIPBOARDNATIVE_H
+diff --git a/src/wpeframework/pxConfigNative.h b/src/wpeframework/pxConfigNative.h
+index e69de29..60ca7ad 100644
+--- a/src/wpeframework/pxConfigNative.h
++++ b/src/wpeframework/pxConfigNative.h
+@@ -0,0 +1,37 @@
++/*
++
++pxCore Copyright 2005-2018 John Robinson
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++
++*/
++
++// pxConfigNative.h
++
++#ifndef PX_CONFIGNATIVE_H
++#define PX_CONFIGNATIVE_H
++
++#define PXCALL
++
++#define PX_LITTLEENDIAN_PIXELS
++#define PX_LITTLEENDIAN_RGBA_PIXELS
++
++#ifndef PX_NATIVE
++#include "pxBufferNative.h"
++#include "pxOffscreenNative.h"
++#include "pxWindowNative.h"
++#include "pxClipboardNative.h"
++#endif
++
++#endif
++
+diff --git a/src/wpeframework/pxEventLoopNative.cpp b/src/wpeframework/pxEventLoopNative.cpp
+index e69de29..31dced7 100644
+--- a/src/wpeframework/pxEventLoopNative.cpp
++++ b/src/wpeframework/pxEventLoopNative.cpp
+@@ -0,0 +1,42 @@
++/*
++
++pxCore Copyright 2005-2018 John Robinson
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++
++*/
++
++// pxEventLoopNative.cpp
++
++#include "../pxEventLoop.h"
++
++#include "../pxOffscreen.h"
++#include "pxWindowNative.h"
++
++
++void pxEventLoop::runOnce()
++{
++  pxWindowNative::runEventLoopOnce();
++}
++
++void pxEventLoop::run()
++{
++    // For now we delegate off to the x11 pxWindowNative class
++    pxWindowNative::runEventLoop();
++}
++
++void pxEventLoop::exit()
++{
++    // For now we delegate off to the x11 pxWindowNative class
++    pxWindowNative::exitEventLoop();
++}
+diff --git a/src/wpeframework/pxOffscreenNative.cpp b/src/wpeframework/pxOffscreenNative.cpp
+index e69de29..166e55f 100644
+--- a/src/wpeframework/pxOffscreenNative.cpp
++++ b/src/wpeframework/pxOffscreenNative.cpp
+@@ -0,0 +1,60 @@
++/*
++
++pxCore Copyright 2005-2018 John Robinson
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++
++*/
++
++// pxOffscreenNative.cpp
++
++#include "../pxOffscreen.h"
++
++#include <stdio.h>
++#include <stdlib.h>
++
++pxError pxOffscreen::init(int width, int height)
++{
++    term();
++
++    pxError e = PX_FAIL;
++
++    data = (char*) new unsigned char[width * height * 4];
++
++    if (data)
++    {
++	setBase(data);
++	setWidth(width);
++	setHeight(height);
++	setStride(width*4);
++	setUpsideDown(false);
++	e = PX_OK;
++    }
++
++    //code
++
++    return e;
++}
++
++pxError pxOffscreen::term()
++{
++    return pxOffscreenNative::term();
++}
++
++pxError pxOffscreenNative::term()
++{
++    delete [] data;
++    data = NULL;
++
++    return PX_OK;
++}
+diff --git a/src/wpeframework/pxOffscreenNative.h b/src/wpeframework/pxOffscreenNative.h
+index e69de29..aad33ce 100644
+--- a/src/wpeframework/pxOffscreenNative.h
++++ b/src/wpeframework/pxOffscreenNative.h
+@@ -0,0 +1,41 @@
++/*
++
++pxCore Copyright 2005-2018 John Robinson
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++
++*/
++
++// pxOffscreenNative.h
++
++#ifndef PX_OFFSCREEN_NATIVE_H
++#define PX_OFFSCREEN_NATIVE_H
++
++#include "../pxCore.h"
++#include "../pxBuffer.h"
++
++class pxOffscreenNative: public pxBuffer
++{
++public:
++    pxOffscreenNative(): data(NULL) {}
++    virtual ~pxOffscreenNative() {}
++
++    pxError term();
++
++    void swizzleTo(rtPixelFmt /*fmt*/) {};
++
++protected:
++    char* data;
++};
++
++#endif
+diff --git a/src/wpeframework/pxTimerNative.cpp b/src/wpeframework/pxTimerNative.cpp
+index e69de29..beacc21 100644
+--- a/src/wpeframework/pxTimerNative.cpp
++++ b/src/wpeframework/pxTimerNative.cpp
+@@ -0,0 +1,78 @@
++/*
++
++pxCore Copyright 2005-2018 John Robinson
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++
++*/
++
++// pxTimerNative.cpp
++
++#include "../pxTimer.h"
++
++#include <stdlib.h>
++
++#define USE_CGT
++
++#ifndef USE_CGT
++#include <sys/time.h>
++#else
++#include <time.h>
++#endif
++
++double  pxSeconds()
++{
++#ifndef USE_CGT
++    timeval tv;
++    gettimeofday(&tv, NULL);
++    return tv.tv_sec + ((double)tv.tv_usec/1000000);
++#else
++    timespec ts;
++    clock_gettime(CLOCK_MONOTONIC, &ts);
++    return ts.tv_sec + ((double)ts.tv_nsec/1000000000);
++#endif
++}
++
++double pxMilliseconds()
++{
++#ifndef USE_CGT
++    timeval tv;
++    gettimeofday(&tv, NULL);
++    return ((double)(tv.tv_sec * 1000) + ((double)tv.tv_usec/1000));
++#else
++    timespec ts;
++    clock_gettime(CLOCK_MONOTONIC, &ts);
++    return ((double)(ts.tv_sec * 1000) + ((double)ts.tv_nsec/1000000));
++#endif
++}
++
++double  pxMicroseconds()
++{
++#ifndef USE_CGT
++    timeval tv;
++    gettimeofday(&tv, NULL);
++    return (tv.tv_sec * 1000000) + tv.tv_usec;
++#else
++    timespec ts;
++    clock_gettime(CLOCK_MONOTONIC, &ts);
++    return ((double)(ts.tv_sec * 1000000) + ((double)ts.tv_nsec/1000));
++#endif
++}
++
++void pxSleepMS(uint32_t msToSleep)
++{
++    timeval tv;
++    tv.tv_sec = 0;
++    tv.tv_usec = 1000 * msToSleep;
++    select(0, NULL, NULL, NULL, &tv);
++}
+diff --git a/src/wpeframework/pxWPECompositor.cpp b/src/wpeframework/pxWPECompositor.cpp
+index e69de29..73f17f4 100644
+--- a/src/wpeframework/pxWPECompositor.cpp
++++ b/src/wpeframework/pxWPECompositor.cpp
+@@ -0,0 +1,72 @@
++#include "../pxCore.h"
++#include "../pxWindow.h"
++#include "../pxWindowUtil.h"
++#include "../pxKeycodes.h"
++#include "../../examples/pxScene2d/src/pxContext.h"
++#include "pxWPECompositor.h"
++#include "pxWindowNative.h"
++
++extern pxContext context;
++using namespace WPEFramework;
++#define MOD_SHIFT       0x01
++#define MOD_ALT         0x08
++#define MOD_CTRL        0x04
++
++static const char* ltxt = "\t\t1234567890-=\t\tqwertyuiop[]\t\tasdfghjkl;'`\t\\zxcvbnm,./\t\t\t ";
++static const char* utxt = "\t\t!@#$%^&*()_+\t\tQWERTYUIOP{}\t\tASDFGHJKL:\"~\t|ZXCVBNM<>?\t\t\t ";
++
++void Keyboard::Direct(const uint32_t key, const state action)
++{
++    static pxSharedContextRef sharedContext = context.createSharedContext();
++    sharedContext->makeCurrent(true);
++    std::vector<pxWindowNative*> windowVector = pxWindow::getNativeWindows();
++    std::vector<pxWindowNative*>::iterator i;
++    unsigned long flags = 0;
++    flags |= mShiftPressed ? PX_MOD_SHIFT:0;
++    flags |= mCtrlPressed ? PX_MOD_CONTROL:0;
++    flags |= mAltPressed ? PX_MOD_ALT:0;
++    for (i = windowVector.begin(); i < windowVector.end(); i++)
++    {
++        pxWindowNative* w = (*i);
++        if (action == pressed)
++        {
++            w->onKeyDown(keycodeFromNative(key),flags);
++            w->onChar(keycodeToAscii(keycodeFromNative(key), flags));
++        }
++        else
++        {
++            w->onKeyUp(keycodeFromNative(key), flags);
++        }
++    }
++    sharedContext->makeCurrent(true);
++}
++
++void Keyboard::Modifiers(uint32_t depressedMods, uint32_t latchedMods, uint32_t lockedMods, uint32_t group)
++{
++    if (depressedMods & MOD_SHIFT)
++    {
++        mShiftPressed = true;
++    }
++    else
++    {
++        mShiftPressed = false;
++    }
++
++    if (depressedMods & MOD_ALT)
++    {
++        mAltPressed = true;
++    }
++    else
++    {
++        mAltPressed = false;
++    }
++
++    if (depressedMods & MOD_CTRL)
++    {
++        mCtrlPressed = true;
++    }
++    else
++    {
++        mCtrlPressed = false;
++    }
++}
+diff --git a/src/wpeframework/pxWPECompositor.h b/src/wpeframework/pxWPECompositor.h
+index e69de29..4ec047a 100644
+--- a/src/wpeframework/pxWPECompositor.h
++++ b/src/wpeframework/pxWPECompositor.h
+@@ -0,0 +1,301 @@
++/*
++ * Copyright (C) 2019 Metrological
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
++ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#ifndef PX_WPE_COMPOSITOR_H
++#define PX_WPE_COMPOSITOR_H
++
++#include <WPEFramework/core/core.h>
++#include <WPEFramework/compositor/Client.h>
++#include <cstdlib>
++#include <sstream>
++
++#include "../pxKeycodes.h"
++
++template <class T>
++inline std::string to_string(const T& t)
++{
++    std::stringstream ss;
++    ss << t;
++    return ss.str();
++}
++
++namespace WPEFramework {
++
++class Keyboard : public WPEFramework::Compositor::IDisplay::IKeyboard
++{
++private:
++    Keyboard(const Keyboard&) = delete;
++    Keyboard& operator=(const Keyboard&) = delete;
++
++public:
++    Keyboard() : mShiftPressed(false), mAltPressed(false), mCtrlPressed(false) {}
++    virtual ~Keyboard() {}
++
++public:
++    virtual void AddRef() const {}
++    virtual uint32_t Release() const { return 0; }
++    virtual void KeyMap(const char* /*information*/, const uint16_t /*size*/) {}
++    virtual void Key(const uint32_t /*key*/,
++            const IKeyboard::state /*action*/, const uint32_t /*time*/) {}
++    virtual void Modifiers(uint32_t depressedMods,
++            uint32_t latchedMods, uint32_t lockedMods, uint32_t group);
++    virtual void Repeat(int32_t /*rate*/, int32_t /*delay*/) {}
++    virtual void Direct(const uint32_t code, const state action);
++
++private:
++    bool mShiftPressed;
++    bool mAltPressed;
++    bool mCtrlPressed;
++};
++
++class Display : public Core::Thread
++{
++
++public:
++    enum DisplayStatus {
++        NotInUse = 0,
++        Attached = 1,
++        Detached = 2
++    };
++
++public:
++    Display(const Display&);
++    Display& operator=(const Display&);
++
++    Display()
++    : _display(nullptr)
++    , _displayStatus(DisplayStatus::Detached)
++    , _graphicsSurface(nullptr)
++    {
++        Run();
++    }
++
++    void CreateDisplayClient()
++    {
++        std::string display_name = WPEFramework::Compositor::IDisplay::SuggestedName();
++        if (display_name.empty()) {
++            struct timeval tv;
++            gettimeofday(&tv, NULL);
++            time_t epoch_time = (tv.tv_sec * 1000) + (tv.tv_usec/1000);
++            display_name = "Spark" + to_string(epoch_time);
++        }
++        _display = WPEFramework::Compositor::IDisplay::Instance(display_name);
++
++        const char* width_str(std::getenv("SCREEN_WIDTH"));
++        uint32_t width = (width_str == nullptr ? 1280 : atoi(width_str));
++        const char* height_str(std::getenv("SCREEN_HEIGHT"));
++        uint32_t height = (height_str == nullptr ? 720 : atoi(height_str));
++
++        _graphicsSurface = _display->Create(display_name, width, height);
++        printf("%s:%s:%d\n", __FILE__, __func__, __LINE__);
++        _graphicsSurface->Keyboard(&_keyboardHandle);
++    }
++
++    ~Display()
++    {
++        Stop();
++        Wait(Thread::BLOCKED | Thread::STOPPED, Core::infinite);
++    };
++
++    static Display* Instance()
++    {
++        static Display myDisplay;
++        myDisplay.AddRef();
++        myDisplay._displayStatus = DisplayStatus::Attached;
++        printf("%s:%s:%d\n", __FILE__, __func__, __LINE__);
++        return (&myDisplay);
++    }
++    void ReleaseDisplayClient()
++    {
++        _displayStatus = DisplayStatus::Detached;
++
++        _display->Release();
++        _graphicsSurface = nullptr;
++    }
++    EGLNativeDisplayType Native()
++    {
++        return _display->Native();
++    }
++    WPEFramework::Compositor::IDisplay::ISurface* GetGraphicsSurface()
++    {
++        return _graphicsSurface;
++    }
++    int FileDescriptor() {
++        return _display->FileDescriptor();
++    }
++    void AddRef() const
++    {
++        if (++_refCount == 1)
++        {
++            const_cast<Display*>(this)->CreateDisplayClient();
++        }
++    }
++    uint32_t Release() const
++    {
++        if (--_refCount == 0)
++        {
++             const_cast<Display*>(this)->ReleaseDisplayClient();
++        }
++        return 0;
++    }
++
++private:
++    virtual uint32_t Worker()
++    {
++       while (IsRunning() == true)
++       {
++           if (_displayStatus == DisplayStatus::Attached)
++           {
++               _display->Process(1);
++           }
++       }
++       return (WPEFramework::Core::infinite);
++    }
++
++private:
++    Keyboard _keyboardHandle;
++    WPEFramework::Compositor::IDisplay* _display;
++    DisplayStatus _displayStatus;
++    WPEFramework::Compositor::IDisplay::ISurface* _graphicsSurface;
++    mutable uint32_t _refCount;
++};
++
++} // namespace WPEFramework
++
++// Key Codes
++#define PX_KEY_NATIVE_ENTER        KEY_ENTER
++#define PX_KEY_NATIVE_BACKSPACE    KEY_BACKSPACE
++#define PX_KEY_NATIVE_TAB          KEY_TAB
++#define PX_KEY_NATIVE_CANCEL       KEY_CANCEL
++#define PX_KEY_NATIVE_CLEAR        KEY_CLEAR
++#define PX_KEY_NATIVE_SHIFT        KEY_RIGHTSHIFT
++#define PX_KEY_NATIVE_SHIFT_LEFT   KEY_LEFTSHIFT
++#define PX_KEY_NATIVE_CONTROL      KEY_RIGHTCTRL
++#define PX_KEY_NATIVE_CONTROL_LEFT KEY_LEFTCTRL
++#define PX_KEY_NATIVE_ALT          KEY_RIGHTALT
++#define PX_KEY_NATIVE_ALT_LEFT     KEY_LEFTALT
++#define PX_KEY_NATIVE_PAUSE        KEY_PAUSE
++#define PX_KEY_NATIVE_CAPSLOCK     KEY_CAPSLOCK
++#define PX_KEY_NATIVE_ESCAPE       KEY_ESC
++#define PX_KEY_NATIVE_SPACE        KEY_SPACE
++#define PX_KEY_NATIVE_PAGEUP       KEY_PAGEUP
++#define PX_KEY_NATIVE_PAGEDOWN     KEY_PAGEDOWN
++#define PX_KEY_NATIVE_END          KEY_END
++#define PX_KEY_NATIVE_HOME         KEY_HOME
++#define PX_KEY_NATIVE_LEFT         KEY_LEFT
++#define PX_KEY_NATIVE_UP           KEY_UP
++#define PX_KEY_NATIVE_RIGHT        KEY_RIGHT
++#define PX_KEY_NATIVE_DOWN         KEY_DOWN
++#define PX_KEY_NATIVE_COMMA        KEY_COMMA
++#define PX_KEY_NATIVE_PERIOD       KEY_DOT
++#define PX_KEY_NATIVE_SLASH        KEY_SLASH
++#define PX_KEY_NATIVE_ZERO         KEY_0
++#define PX_KEY_NATIVE_ONE          KEY_1
++#define PX_KEY_NATIVE_TWO          KEY_2
++#define PX_KEY_NATIVE_THREE        KEY_3
++#define PX_KEY_NATIVE_FOUR         KEY_4
++#define PX_KEY_NATIVE_FIVE         KEY_5
++#define PX_KEY_NATIVE_SIX          KEY_6
++#define PX_KEY_NATIVE_SEVEN        KEY_7
++#define PX_KEY_NATIVE_EIGHT        KEY_8
++#define PX_KEY_NATIVE_NINE         KEY_9
++#define PX_KEY_NATIVE_SEMICOLON    KEY_SEMICOLON
++#define PX_KEY_NATIVE_EQUALS       KEY_EQUAL
++#define PX_KEY_NATIVE_A            KEY_A
++#define PX_KEY_NATIVE_B            KEY_B
++#define PX_KEY_NATIVE_C            KEY_C
++#define PX_KEY_NATIVE_D            KEY_D
++#define PX_KEY_NATIVE_E            KEY_E
++#define PX_KEY_NATIVE_F            KEY_F
++#define PX_KEY_NATIVE_G            KEY_G
++#define PX_KEY_NATIVE_H            KEY_H
++#define PX_KEY_NATIVE_I            KEY_I
++#define PX_KEY_NATIVE_J            KEY_J
++#define PX_KEY_NATIVE_K            KEY_K
++#define PX_KEY_NATIVE_L            KEY_L
++#define PX_KEY_NATIVE_M            KEY_M
++#define PX_KEY_NATIVE_N            KEY_N
++#define PX_KEY_NATIVE_O            KEY_O
++#define PX_KEY_NATIVE_P            KEY_P
++#define PX_KEY_NATIVE_Q            KEY_Q
++#define PX_KEY_NATIVE_R            KEY_R
++#define PX_KEY_NATIVE_S            KEY_S
++#define PX_KEY_NATIVE_T            KEY_T
++#define PX_KEY_NATIVE_U            KEY_U
++#define PX_KEY_NATIVE_V            KEY_V
++#define PX_KEY_NATIVE_W            KEY_W
++#define PX_KEY_NATIVE_X            KEY_X
++#define PX_KEY_NATIVE_Y            KEY_Y
++#define PX_KEY_NATIVE_Z            KEY_Z
++#define PX_KEY_NATIVE_OPENBRACKET  KEY_LEFTBRACE
++#define PX_KEY_NATIVE_BACKSLASH    KEY_BACKSLASH
++#define PX_KEY_NATIVE_CLOSEBRACKET KEY_RIGHTBRACE
++#define PX_KEY_NATIVE_NUMPAD0      KEY_KP0
++#define PX_KEY_NATIVE_NUMPAD1      KEY_KP1
++#define PX_KEY_NATIVE_NUMPAD2      KEY_KP2
++#define PX_KEY_NATIVE_NUMPAD3      KEY_KP3
++#define PX_KEY_NATIVE_NUMPAD4      KEY_KP4
++#define PX_KEY_NATIVE_NUMPAD5      KEY_KP5
++#define PX_KEY_NATIVE_NUMPAD6      KEY_KP6
++#define PX_KEY_NATIVE_NUMPAD7      KEY_KP7
++#define PX_KEY_NATIVE_NUMPAD8      KEY_KP8
++#define PX_KEY_NATIVE_NUMPAD9      KEY_KP9
++#define PX_KEY_NATIVE_MULTIPLY     KEY_KPASTERISK
++#define PX_KEY_NATIVE_ADD          KEY_KPPLUS
++#define PX_KEY_NATIVE_SEPARATOR    4256 //XK_KP_Separator
++#define PX_KEY_NATIVE_SUBTRACT     KEY_MINUS
++#define PX_KEY_NATIVE_DECIMAL      KEY_KPDOT
++#define PX_KEY_NATIVE_DIVIDE       KEY_KPSLASH //todo - check this
++#define PX_KEY_NATIVE_F1           KEY_F1
++#define PX_KEY_NATIVE_F2           KEY_F2
++#define PX_KEY_NATIVE_F3           KEY_F3
++#define PX_KEY_NATIVE_F4           KEY_F4
++#define PX_KEY_NATIVE_F5           KEY_F5
++#define PX_KEY_NATIVE_F6           KEY_F6
++#define PX_KEY_NATIVE_F7           KEY_F7
++#define PX_KEY_NATIVE_F8           KEY_F8
++#define PX_KEY_NATIVE_F9           KEY_F9
++#define PX_KEY_NATIVE_F10          KEY_F10
++#define PX_KEY_NATIVE_F11          KEY_F11
++#define PX_KEY_NATIVE_F12          KEY_F12
++#define PX_KEY_NATIVE_DELETE       KEY_DELETE
++#define PX_KEY_NATIVE_NUMLOCK      KEY_NUMLOCK
++#define PX_KEY_NATIVE_SCROLLLOCK   KEY_SCROLLLOCK
++#define PX_KEY_NATIVE_PRINTSCREEN  KEY_PRINT
++#define PX_KEY_NATIVE_INSERT       KEY_INSERT
++#define PX_KEY_NATIVE_HELP         KEY_HELP
++#define PX_KEY_NATIVE_BACKQUOTE    KEY_GRAVE
++#define PX_KEY_NATIVE_QUOTE        KEY_APOSTROPHE
++#define PX_KEY_NATIVE_PLAYPAUSE    KEY_PLAYPAUSE
++#define PX_KEY_NATIVE_PLAY         KEY_PLAY
++#define PX_KEY_NATIVE_FASTFORWARD  KEY_FASTFORWARD
++#define PX_KEY_NATIVE_REWIND       KEY_REWIND
++#define PX_KEY_NATIVE_KPENTER      KEY_KPENTER
++#define PX_KEY_NATIVE_BACK         KEY_BACK
++#define PX_KEY_NATIVE_MENU         KEY_MENU
++#define PX_KEY_NATIVE_HOMEPAGE     KEY_HOMEPAGE
++
++#endif // PX_WPE_COMPOSITOR_H
+diff --git a/src/wpeframework/pxWindowNative.cpp b/src/wpeframework/pxWindowNative.cpp
+index e69de29..86357ed 100644
+--- a/src/wpeframework/pxWindowNative.cpp
++++ b/src/wpeframework/pxWindowNative.cpp
+@@ -0,0 +1,363 @@
++/*
++
++pxCore Copyright 2005-2018 John Robinson
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++
++*/
++
++// pxWindowNative.cpp
++
++#include "../pxCore.h"
++#include "../pxWindow.h"
++#include "pxWindowNative.h"
++#include "../pxTimer.h"
++#include "../pxWindowUtil.h"
++#include "../pxKeycodes.h"
++#include "../rtLog.h"
++
++#include <stdlib.h>
++#include <string.h>
++#include <assert.h> //todo: remove when done with assert
++#include <unistd.h> //for close()
++#include <fcntl.h> //for files
++#include <unistd.h>
++#include <signal.h>
++#include <poll.h>
++#include <vector>
++
++#define WAYLAND_EGL_BUFFER_SIZE 32
++#define WAYLAND_EGL_BUFFER_OPAQUE 0
++#define WAYLAND_PX_CORE_FPS 30
++
++std::vector<pxWindowNative*> pxWindowNative::mWindowVector;
++
++bool exitFlag = false;
++
++pxWindowNative::pxWindowNative(): mTimerFPS(0), mLastWidth(-1), mLastHeight(-1),
++    mResizeFlag(false), mLastAnimationTime(0.0), mVisible(false), mDirty(true),
++    mEglNativeWindow(NULL), mEGLSurface(NULL)
++{
++}
++
++pxWindowNative::~pxWindowNative()
++{
++    cleanup();
++}
++
++pxError pxWindow::init(int left, int top, int width, int height)
++{
++    mLastWidth = width;
++    mLastHeight = height;
++    mResizeFlag = true;
++    createWindowSurface();
++
++    registerWindow(this);
++    this->onCreate();
++    return PX_OK;
++}
++
++pxError pxWindow::term()
++{
++    return PX_OK;
++}
++
++void pxWindow::invalidateRect(pxRect *r)
++{
++    invalidateRectInternal(r);
++}
++
++// This can be improved by collecting the dirty regions and painting
++// when the event loop goes idle
++void pxWindowNative::invalidateRectInternal(pxRect *r)
++{
++  mDirty = true;
++}
++
++bool pxWindow::visibility()
++{
++    return mVisible;
++}
++
++void pxWindow::setVisibility(bool visible)
++{
++    //todo - hide the window
++    mVisible = visible;
++}
++
++pxError pxWindow::setAnimationFPS(uint32_t fps)
++{
++    mTimerFPS = fps;
++    mLastAnimationTime = pxMilliseconds();
++    return PX_OK;
++}
++
++void pxWindow::setTitle(const char* title)
++{
++    //todo
++}
++
++pxError pxWindow::beginNativeDrawing(pxSurfaceNative& s)
++{
++    //todo
++
++    return PX_OK;
++}
++
++pxError pxWindow::endNativeDrawing(pxSurfaceNative& s)
++{
++    //todo
++
++    return PX_OK;
++}
++
++// pxWindowNative
++
++void pxWindowNative::onAnimationTimerInternal()
++{
++    if (mTimerFPS) onAnimationTimer();
++}
++
++void pxWindowNative::runEventLoopOnce()
++{
++  std::vector<pxWindowNative*> windowVector = pxWindowNative::getNativeWindows();
++  std::vector<pxWindowNative*>::iterator i;
++  for (i = windowVector.begin(); i < windowVector.end(); i++)
++  {
++    pxWindowNative* w = (*i);
++    w->animateAndRender();
++  }
++  usleep(1000); //TODO - find out why pxSleepMS causes a crash on some devices
++}
++
++
++
++void pxWindowNative::runEventLoop()
++{
++    exitFlag = false;
++    std::vector<pxWindowNative*> windowVector = pxWindowNative::getNativeWindows();
++
++    int framerate = WAYLAND_PX_CORE_FPS;
++
++    char const *s = getenv("PXCORE_FRAMERATE");
++    if (s)
++    {
++      int fps = atoi(s);
++      if (fps > 0)
++      {
++        framerate = fps;
++      }
++    }
++
++    rtLogInfo("pxcore framerate: %d", framerate);
++
++    double maxSleepTime = (1000 / framerate) * 1000;
++    rtLogInfo("max sleep time in microseconds: %f", maxSleepTime);
++    while(!exitFlag)
++    {
++        double startMicroseconds = pxMicroseconds();
++        std::vector<pxWindowNative*>::iterator i;
++        for (i = windowVector.begin(); i < windowVector.end(); i++)
++        {
++           pxWindowNative* w = (*i);
++           w->animateAndRender();
++        }
++        double processTime = (int)pxMicroseconds() - (int)startMicroseconds;
++        if (processTime < 0)
++        {
++          processTime = 0;
++        }
++        if (processTime < maxSleepTime)
++        {
++          int sleepTime = (int)maxSleepTime-(int)processTime;
++          usleep(sleepTime);
++        }
++    }
++}
++
++void pxWindowNative::exitEventLoop()
++{
++    exitFlag = true;
++}
++
++bool pxWindowNative::createWindowSurface()
++{
++    initializeEgl();
++
++    mEglNativeWindow = wpeDisplay->GetGraphicsSurface()->Native();
++
++    mEGLSurface =
++        (EGLSurface)eglCreateWindowSurface(mEGLDisplay,
++                       mEGLConfig,
++                       mEglNativeWindow, NULL);
++
++    EGLBoolean ret = eglMakeCurrent(mEGLDisplay, mEGLSurface,
++                 mEGLSurface, mEGLContext);
++
++    assert(ret == EGL_TRUE);
++
++    eglSwapInterval(mEGLDisplay, 0);
++    eglSurfaceAttrib(mEGLDisplay, mEGLSurface, EGL_SWAP_BEHAVIOR, EGL_BUFFER_PRESERVED);
++
++    return true;
++}
++
++void pxWindowNative::cleanup()
++{
++    //begin egl cleanup
++    eglMakeCurrent(mEGLDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE,
++                   EGL_NO_CONTEXT);
++
++    eglDestroySurface(mEGLDisplay, mEGLSurface);
++    mEglNativeWindow = NULL;
++    //end egl stuff
++
++    mEGLSurface = NULL;
++
++    //more egl cleanup
++    eglTerminate(mEGLDisplay);
++    wpeDisplay->Release();
++    wpeDisplay = nullptr;
++
++    eglReleaseThread();
++}
++
++void pxWindowNative::animateAndRender()
++{
++    drawFrame();
++
++    if (mResizeFlag)
++    {
++        mResizeFlag = false;
++        onSize(mLastWidth, mLastHeight);
++        invalidateRectInternal(NULL);
++    }
++
++    onAnimationTimerInternal();
++}
++
++void pxWindowNative::drawFrame()
++{
++    if (!mDirty)
++    {
++      return;
++    }
++
++    pxSurfaceNativeDesc d;
++    d.windowWidth = mLastWidth;
++    d.windowHeight = mLastHeight;
++
++    onDraw(&d);
++    eglSwapBuffers(mEGLDisplay, mEGLSurface);
++    mDirty = false;
++}
++
++//egl methods
++void pxWindowNative::initializeEgl()
++{
++    static const EGLint context_attribs[] = {
++        EGL_CONTEXT_CLIENT_VERSION, 2,
++        EGL_NONE
++    };
++    const char *extensions;
++
++    EGLint config_attribs[] = {
++        EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
++        EGL_RED_SIZE, 1,
++        EGL_GREEN_SIZE, 1,
++        EGL_BLUE_SIZE, 1,
++        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
++        EGL_NONE
++    };
++
++    EGLint major, minor, n, count, i, size;
++    EGLConfig *configs;
++    EGLBoolean ret;
++
++    if (WAYLAND_EGL_BUFFER_SIZE == 16)
++        config_attribs[9] = 0;
++
++    wpeDisplay = WPEFramework::Display::Instance();
++    EGLNativeWindowType *nativewindow =
++    static_cast<EGLNativeWindowType*>(wpeDisplay->GetGraphicsSurface()->Native());
++
++    mEGLDisplay = eglGetDisplay(wpeDisplay->Native());
++    assert(mEGLDisplay);
++
++    ret = eglInitialize(mEGLDisplay, &major, &minor);
++    assert(ret == EGL_TRUE);
++    ret = eglBindAPI(EGL_OPENGL_ES_API);
++    assert(ret == EGL_TRUE);
++
++    if (!eglGetConfigs(mEGLDisplay, NULL, 0, &count) || count < 1)
++        assert(0);
++
++    configs = (EGLConfig *)calloc(count, sizeof *configs);
++    assert(configs);
++
++    ret = eglChooseConfig(mEGLDisplay, config_attribs,
++                  configs, count, &n);
++    assert(ret && n >= 1);
++
++    for (i = 0; i < n; i++) {
++        eglGetConfigAttrib(mEGLDisplay,
++                   configs[i], EGL_BUFFER_SIZE, &size);
++        if (WAYLAND_EGL_BUFFER_SIZE == size) {
++            mEGLConfig = configs[i];
++            break;
++        }
++    }
++    free(configs);
++    if (mEGLConfig == NULL) {
++        fprintf(stderr, "did not find config with buffer size %d\n", WAYLAND_EGL_BUFFER_SIZE);
++        exit(EXIT_FAILURE);
++    }
++
++    mEGLContext = eglCreateContext(mEGLDisplay,
++                        mEGLConfig,
++                        EGL_NO_CONTEXT, context_attribs);
++    assert(mEGLContext);
++
++    mSwapBuffersWithDamage = NULL;
++    extensions = eglQueryString(mEGLDisplay, EGL_EXTENSIONS);
++    if (extensions &&
++        strstr(extensions, "EGL_EXT_swap_buffers_with_damage") &&
++        strstr(extensions, "EGL_EXT_buffer_age"))
++        mSwapBuffersWithDamage =
++            (PFNEGLSWAPBUFFERSWITHDAMAGEEXTPROC)
++            eglGetProcAddress("eglSwapBuffersWithDamageEXT");
++
++    if (mSwapBuffersWithDamage)
++        printf("has EGL_EXT_buffer_age and EGL_EXT_swap_buffers_with_damage\n");
++}
++
++//end egl methods
++
++void pxWindowNative::registerWindow(pxWindowNative* p)
++{
++    mWindowVector.push_back(p);
++}
++
++void pxWindowNative::unregisterWindow(pxWindowNative* p)
++{
++    std::vector<pxWindowNative*>::iterator i;
++
++    for (i = mWindowVector.begin(); i < mWindowVector.end(); i++)
++    {
++        if ((*i) == p)
++        {
++            mWindowVector.erase(i);
++            return;
++        }
++    }
++}
+diff --git a/src/wpeframework/pxWindowNative.h b/src/wpeframework/pxWindowNative.h
+index e69de29..b20389b 100644
+--- a/src/wpeframework/pxWindowNative.h
++++ b/src/wpeframework/pxWindowNative.h
+@@ -0,0 +1,120 @@
++/*
++
++pxCore Copyright 2005-2018 John Robinson
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++
++*/
++
++#ifndef PX_WINDOW_NATIVE_H
++#define PX_WINDOW_NATIVE_H
++
++#include <stdio.h>
++#include <sys/mman.h>
++#include <cstring>
++#include <vector>
++#include <iostream>
++#include <linux/input.h>
++#include <time.h>
++
++#include <GLES2/gl2.h>
++#include <EGL/egl.h>
++#include <EGL/eglext.h>
++#include "pxWPECompositor.h"
++
++#ifndef EGL_EXT_swap_buffers_with_damage
++#define EGL_EXT_swap_buffers_with_damage 1
++typedef EGLBoolean (EGLAPIENTRYP PFNEGLSWAPBUFFERSWITHDAMAGEEXTPROC)(EGLDisplay dpy, EGLSurface surface, EGLint *rects, EGLint n_rects);
++#endif
++
++#ifndef EGL_EXT_buffer_age
++#define EGL_EXT_buffer_age 1
++#define EGL_BUFFER_AGE_EXT			0x313D
++#endif
++
++class pxWindowNative
++{
++public:
++    pxWindowNative();
++    virtual ~pxWindowNative();
++
++    // Contract between pxEventLoopNative and this class
++    static void runEventLoopOnce();
++    static void runEventLoop();
++    static void exitEventLoop();
++
++    static std::vector<pxWindowNative*> getNativeWindows(){return mWindowVector;}
++
++    virtual void onMouseDown(int32_t x, int32_t y, uint32_t flags) =0;
++    virtual void onMouseUp(int32_t x, int32_t y, uint32_t flags) =0;
++
++    virtual void onMouseMove(int32_t x, int32_t y) =0;
++
++    virtual void onMouseLeave() =0;
++
++    virtual void onKeyDown(uint32_t keycode, uint32_t flags) =0;
++    virtual void onKeyUp(uint32_t keycode, uint32_t flags) =0;
++    virtual void onChar(uint32_t c) =0;
++
++    void animateAndRender();
++
++protected:
++    virtual void onCreate() = 0;
++
++    virtual void onCloseRequest() = 0;
++    virtual void onClose() = 0;
++
++    virtual void onSize(int32_t w, int32_t h) = 0;
++
++    virtual void onDraw(pxSurfaceNative surface) = 0;
++
++    virtual void onAnimationTimer() = 0;
++
++    void onAnimationTimerInternal();
++
++    void invalidateRectInternal(pxRect *r);
++    void drawFrame();
++
++    bool createWindowSurface();
++
++    int mTimerFPS;
++    int mLastWidth, mLastHeight;
++    bool mResizeFlag;
++    double mLastAnimationTime;
++    bool mVisible;
++    bool mDirty;
++
++    //egl content
++    void initializeEgl();
++    EGLNativeWindowType *mEglNativeWindow;
++    //end egl content
++
++    static void registerWindow(pxWindowNative* p);
++    static void unregisterWindow(pxWindowNative* p); //call this method somewhere
++    static std::vector<pxWindowNative*> mWindowVector;
++
++private:
++   void cleanup();
++
++    WPEFramework::Display* wpeDisplay;
++
++    // generic egl stuff
++    EGLDisplay mEGLDisplay;
++    EGLSurface mEGLSurface;
++    EGLContext mEGLContext;
++    EGLConfig mEGLConfig;
++
++    PFNEGLSWAPBUFFERSWITHDAMAGEEXTPROC mSwapBuffersWithDamage;
++};
++
++#endif

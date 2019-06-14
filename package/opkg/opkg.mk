@@ -12,7 +12,7 @@ OPKG_DEPENDENCIES = host-pkgconf libarchive
 OPKG_LICENSE = GPLv2+
 OPKG_LICENSE_FILES = COPYING
 OPKG_INSTALL_STAGING = YES
-OPKG_CONF_OPTS = --disable-curl --enable-libopkg-api
+OPKG_CONF_OPTS = --enable-libopkg-api
 OPKG_AUTORECONF = YES
 
 # Ensure directory for lockfile exists
@@ -28,6 +28,12 @@ OPKG_CONF_ENV += \
 OPKG_DEPENDENCIES += libgpgme libgpg-error
 else
 OPKG_CONF_OPTS += --disable-gpg
+endif
+
+ifeq ($(BR2_PACKAGE_OPKG_USE_CURL), y)
+OPKG_DEPENDENCIES += libcurl
+else
+OPKG_CONF_OPTS += --disable-curl
 endif
 
 ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY),y)

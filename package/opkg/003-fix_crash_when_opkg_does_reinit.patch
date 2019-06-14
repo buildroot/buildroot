@@ -1,0 +1,17 @@
+diff --git a/libopkg/opkg.c b/libopkg/opkg.c
+index 581b343..89d7e21 100644
+--- a/libopkg/opkg.c
++++ b/libopkg/opkg.c
+@@ -128,6 +128,12 @@ int opkg_new()
+     int r;
+     saved_conf = *opkg_config;
+ 
++    /* The list should OFC go on, but this is all we care about. */
++    saved_conf.conf_file = xstrdup(opkg_config->conf_file);
++    saved_conf.tmp_dir = xstrdup(opkg_config->tmp_dir);
++    saved_conf.cache_dir = xstrdup(opkg_config->cache_dir);
++    saved_conf.signature_type = xstrdup(opkg_config->signature_type);
++
+     r = opkg_conf_init();
+     if (r != 0)
+         goto err0;

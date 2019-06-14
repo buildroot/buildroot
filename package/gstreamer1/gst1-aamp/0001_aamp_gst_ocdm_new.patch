@@ -1,0 +1,23 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6eb0738..6ee5936 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -99,7 +99,7 @@ if(CMAKE_DASH_DRM)
+ 	if(CMAKE_RDK_VIDEO_BUILD)
+ 		message("CMAKE_RDK_VIDEO_BUILD set")
+ 		set(AAMP_COMMON_DEPENDENCIES "${AAMP_COMMON_DEPENDENCIES} -lIARMBus -lds -lsystemd")
+-	else()
++	elseif(NOT CMAKE_USE_OPENCDM_ADAPTER)
+ 		set(AAMP_COMMON_DEPENDENCIES "${AAMP_COMMON_DEPENDENCIES} -lsystemd")
+ 	endif()
+ 	if(CMAKE_USE_OPENCDM)
+@@ -123,6 +123,9 @@ if(CMAKE_DASH_DRM)
+ 		endif()
+ 		find_path (STAGING_INCDIR opencdm)
+ 		include_directories(${STAGING_INCDIR}/opencdm)
++        elseif(CMAKE_USE_OPENCDM_ADAPTER)
++                set(AAMP_COMMON_DEPENDENCIES "${AAMP_COMMON_DEPENDENCIES}  -locdm")
++		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_OPENCDM")
+ 	else()
+ 		message("CMAKE_USE_OPENCDM not set")
+ 		if (DEFINED SECAPI_ENGINE_BROADCOM_SAGE)
