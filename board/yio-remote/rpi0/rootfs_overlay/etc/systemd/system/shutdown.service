@@ -1,0 +1,11 @@
+[Unit]
+Description=show image on starting shutdown
+DefaultDependencies=no
+Before=halt.target
+
+[Service]
+ExecStart=/usr/bin/yio-remote/shutdown.sh
+Type=oneshot
+
+[Install]
+WantedBy=halt.target poweroff.target

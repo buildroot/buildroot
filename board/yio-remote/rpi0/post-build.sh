@@ -16,7 +16,11 @@ ln -fs ../../../../usr/lib/systemd/system/backlight.service $1/etc/systemd/syste
 
 ln -fs ../../../../usr/lib/systemd/system/sharp-init.service $1/etc/systemd/system/multi-user.target.wants/sharp-init.service
 
-ln -fs ../../../../usr/lib/systemd/system/app.service $1/etc/systemd/system/multi-user.target.wants/app.service
+ln -fs ../../../../usr/lib/systemd/system/app.service $1/etc/systemd/system/sysinit.target.wants/app.service
+
+ln -fs ../../../../usr/lib/systemd/system/shutdown.service $1/etc/systemd/system/halt.target.wants/shutdown.service
+
+ln -fs ../../../../usr/lib/systemd/system/shutdown.service $1/etc/systemd/system/poweroff.target.wants/shutdown.service
 
 
 rm -rf $1/var/log/journal
