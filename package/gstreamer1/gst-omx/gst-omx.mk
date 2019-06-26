@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST_OMX_VERSION = 1.14.4
+GST_OMX_VERSION = 1.16.0
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1_10),y)
 GST_OMX_VERSION = 1.10.4
@@ -12,6 +12,10 @@ endif
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1_14),y)
 GST_OMX_VERSION = 1.14.4
+endif
+
+ifeq ($(BR2_PACKAGE_GSTREAMER1_16),y)
+GST_OMX_VERSION = 1.16.0
 endif
 
 GST_OMX_SOURCE = gst-omx-$(GST_OMX_VERSION).tar.xz

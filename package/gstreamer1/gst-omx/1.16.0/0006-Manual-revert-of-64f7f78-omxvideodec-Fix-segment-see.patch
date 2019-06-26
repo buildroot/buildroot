@@ -1,0 +1,46 @@
+From 65f4dd4f05d5f66c172e7d2c249efe16deb98da0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Thu, 10 Jan 2019 17:37:09 +0100
+Subject: [PATCH 6/7] Manual revert of 64f7f78 omxvideodec: Fix segment seek
+
+Creates "Failed to populate out port 131" warnings when using
+decode + egl_render tunneled ports.
+---
+ omx/gstomxvideodec.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/omx/gstomxvideodec.c b/omx/gstomxvideodec.c
+index 5e1eb8b..bac0410 100644
+--- a/omx/gstomxvideodec.c
++++ b/omx/gstomxvideodec.c
+@@ -2186,6 +2186,7 @@ gst_omx_video_dec_disable (GstOMXVideoDec * self)
+   GST_DEBUG_OBJECT (self, "Need to disable and drain decoder");
+ 
+   gst_omx_video_dec_drain (GST_VIDEO_DECODER (self));
++  gst_omx_video_dec_flush (GST_VIDEO_DECODER (self));
+   gst_omx_port_set_flushing (out_port, 5 * GST_SECOND, TRUE);
+ 
+   if (klass->cdata.hacks & GST_OMX_HACK_NO_COMPONENT_RECONFIGURE) {
+@@ -3078,16 +3079,13 @@ release_error:
+ }
+ 
+ static GstFlowReturn
+-gst_omx_video_dec_drain (GstVideoDecoder * decoder)
++gst_omx_video_dec_finish (GstVideoDecoder * decoder)
+ {
+-  gboolean ret;
+-  ret = gst_omx_video_dec_finish (decoder);
+-  gst_omx_video_dec_flush (decoder);
+-  return ret;
++  return gst_omx_video_dec_drain (decoder);
+ }
+ 
+ static GstFlowReturn
+-gst_omx_video_dec_finish (GstVideoDecoder * decoder)
++gst_omx_video_dec_drain (GstVideoDecoder * decoder)
+ {
+   GstOMXVideoDec *self;
+   GstOMXVideoDecClass *klass;
+-- 
+2.17.1
+

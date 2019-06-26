@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_PLUGINS_BASE_VERSION = 1.14.4
+GST1_PLUGINS_BASE_VERSION = 1.16.0
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1_10),y)
 GST1_PLUGINS_BASE_VERSION = 1.10.4
@@ -12,6 +12,10 @@ endif
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1_14),y)
 GST1_PLUGINS_BASE_VERSION = 1.14.4
+endif
+
+ifeq ($(BR2_PACKAGE_GSTREAMER1_16),y)
+GST1_PLUGINS_BASE_VERSION = 1.16.0
 endif
 
 GST1_PLUGINS_BASE_SOURCE = gst-plugins-base-$(GST1_PLUGINS_BASE_VERSION).tar.xz

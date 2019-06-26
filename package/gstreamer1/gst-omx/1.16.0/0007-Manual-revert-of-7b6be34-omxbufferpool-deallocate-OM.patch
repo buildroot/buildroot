@@ -1,0 +1,60 @@
+From 966db4d75df6b5de9d6dac6b03543fdf65bec592 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Mon, 17 Jun 2019 17:00:56 +0000
+Subject: [PATCH 7/7] Manual revert of 7b6be34 omxbufferpool: deallocate OMX
+ buffers when stopping
+
+Causes crashes when the app (eg: WebKit) still owns EGL buffers after the
+pipeline has been destroyed. When the app releases those buffers and the last
+one is returned to the pool, the pool is stopped and deallocates its buffers.
+This triggers an gst_omx_port_update_port_definition() on port 221 (eglrender
+out port), but the eglrenderer component might have already been destroyed
+because the port has a dangling pointer to it which points to corrupt data.
+
+This commit reverts the "deallocate when stopping" behaviour but keeps the
+rest of the style changes of the original commit in order to avoid future
+conflicts.
+---
+ omx/gstomxbufferpool.c | 3 ---
+ omx/gstomxvideodec.c   | 4 ++--
+ 2 files changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/omx/gstomxbufferpool.c b/omx/gstomxbufferpool.c
+index c662c42..da6419a 100644
+--- a/omx/gstomxbufferpool.c
++++ b/omx/gstomxbufferpool.c
+@@ -296,9 +296,6 @@ gst_omx_buffer_pool_stop (GstBufferPool * bpool)
+   /* Remove any buffers that are there */
+   g_ptr_array_set_size (pool->buffers, 0);
+ 
+-  GST_DEBUG_OBJECT (pool, "deallocate OMX buffers");
+-  gst_omx_port_deallocate_buffers (pool->port);
+-
+   if (pool->caps)
+     gst_caps_unref (pool->caps);
+   pool->caps = NULL;
+diff --git a/omx/gstomxvideodec.c b/omx/gstomxvideodec.c
+index bac0410..23d42dc 100644
+--- a/omx/gstomxvideodec.c
++++ b/omx/gstomxvideodec.c
+@@ -1194,6 +1194,8 @@ done:
+ static gboolean
+ gst_omx_video_dec_deallocate_output_buffers (GstOMXVideoDec * self)
+ {
++  OMX_ERRORTYPE err;
++
+   if (self->out_port_pool) {
+     /* Pool will free buffers when stopping */
+     gst_buffer_pool_set_active (self->out_port_pool, FALSE);
+@@ -1203,8 +1205,6 @@ gst_omx_video_dec_deallocate_output_buffers (GstOMXVideoDec * self)
+     GST_OMX_BUFFER_POOL (self->out_port_pool)->deactivated = TRUE;
+     gst_object_unref (self->out_port_pool);
+     self->out_port_pool = NULL;
+-  } else {
+-    OMX_ERRORTYPE err;
+ 
+ #if defined (USE_OMX_TARGET_RPI) && defined (HAVE_GST_GL)
+     err =
+-- 
+2.17.1
+
