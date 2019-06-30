@@ -183,6 +183,14 @@ config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
     help
       DeviceInfo Plugin
 
+config BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    depends on BR2_PACKAGE_HAS_NEXUS
+    bool "DeviceIdentification"
+    default y
+    help
+      DeviceIdentification Plugin (Nexus OTP)
+
 config BR2_PACKAGE_WPEFRAMEWORK_DSRESOLUTION
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "DSResolution"
