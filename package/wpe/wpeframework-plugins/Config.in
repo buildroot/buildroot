@@ -435,49 +435,142 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER
 
 if BR2_PACKAGE_WPEFRAMEWORK_STREAMER
 
-config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_SI_PARSING
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-    bool "SI parsing"
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_AAMP
+    bool "AAMP"
+    select BR2_PACKAGE_GST1_AAMP
+    default n
     help
-      Enable SI parsing from the streamer.
+      Enable AAMP player
 
-config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_TS_SCANNING
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_AAMP
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_AAMP_FRONTENDS
+    string "Frontends"
+    default "0"
+    help
+      Sets the number of frontends (tuners) supported.
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_AAMP_USE_WESTEROS_SINK
+    bool "Use Westeros Sink"
+    default n
+    help
+      Denotes if Westeros sink shall be used.
+
+endif # BR2_PACKAGE_WPEFRAMEWORK_STREAMER_AAMP
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST
+    bool "Broadcast"
+    default n
+    help
+      Enable broadcast player
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST
+
+choice
+    prompt "Broadcast modus"
+    default BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE
+    bool "Cable"
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_SATELLITE
+    bool "Satellite"
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TERRESTRIAL
+    bool "Terrestrial"
+endchoice
+
+choice
+    prompt "Broadcast standard"
+    default BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_STANDARD_ATSC
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_STANDARD_DVB
+    bool "DVB"
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_STANDARD_ATSC
+    bool "ATSC"
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_STANDARD_ISDB
+    bool "ISDB"
+endchoice
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_STANDARD_DVB
+choice
+    prompt "Broadcast standard annex"
+    default BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE_ANNEX_C
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE_ANNEX_NO_ANNNEX
+    bool "No annex"
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE_ANNEX_A
+    bool "A"
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE_ANNEX_B
+    bool "B"
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE_ANNEX_C
+    bool "C"
+endchoice
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE_FRONTENDS
+    string "Frontends (cable)"
+    default "1"
+    help
+      Sets the number of frontends (tuners) supported.
+
+endif # BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_SATELLITE
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_STANDARD_DVB
+choice
+    prompt "Broadcast standard annex"
+    default BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_SATELLITE_ANNEX_A
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_SATELLITE_ANNEX_NO_ANNNEX
+    bool "No annex"
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_SATELLITE_ANNEX_A
+    bool "A"
+endchoice
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE_FRONTENDS
+    string "Frontends (cable)"
+    default "1"
+    help
+      Sets the number of frontends (tuners) supported.
+
+endif # BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_SATELLITE
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TERRESTRIAL
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_STANDARD_DVB
+choice
+    prompt "Broadcast standard annex"
+    default BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TERRESTRIAL_ANNEX_A
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TERRESTRIAL_ANNEX_NO_ANNNEX
+    bool "No annex"
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TERRESTRIAL_ANNEX_A
+    bool "A"
+endchoice
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TERRESTRIAL_FRONTENDS
+    string "Frontends (terrestrial)"
+    default "1"
+    help
+      Sets the number of frontends (tuners) supported.
+
+endif # BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TERRESTRIAL
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TS_SCANNING
     bool "TS scanning"
     help
       Enable transport stream scanning from the home transport stream.
 
-if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_TS_SCANNING
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TS_SCANNING
 
-config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_HOME_TS
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_HOME_TS
     string "Home transport stream"
     default "frequency=714\;modulation=64\;symbol=6875000"
     help
       Sets the Home transport
-endif
 
-choice
-    bool "DBS Options"
-    default BR2_PACKAGE_WPEFRAMEWORK_STREAMER_DVB
-    help
-      Choose the DBS flavor.
+endif # BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TS_SCANNING
 
-menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_DVB
-    bool "DVB"
-    help
-      Enable DVB DBS
-
-menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_ATSC
-    bool "ATSC"
-    help
-      Enable ATSC DBS
-endchoice
-
-config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_FRONTENDS
-    string "Frontends"
-    default "1"
-    help
-      Sets the number of frontends (tuners) available in the system.
+endif # BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST
 
 config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_DECODERS
     string "Decoders"
@@ -485,7 +578,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_DECODERS
     help
       Sets the number of decoders available in the system.
 
-endif
+endif # BR2_PACKAGE_WPEFRAMEWORK_STREAMER
 
 config BR2_PACKAGE_WPEFRAMEWORK_SYSTEMCOMMANDS
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS

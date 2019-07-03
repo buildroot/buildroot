@@ -6,7 +6,7 @@
 
 LIBDASH_VERSION = f5b5d991af5fe5f285e8040c997b755d3d456b0d
 LIBDASH_SITE_METHOD = git
-LIBDASH_SITE = https://github.com/bitmovin/libdash/libdash
+LIBDASH_SITE = https://github.com/bitmovin/libdash
 LIBDASH_INSTALL_STAGING = YES
 
 LIBDASH_DEPENDENCIES = libcurl libxml2 zlib
