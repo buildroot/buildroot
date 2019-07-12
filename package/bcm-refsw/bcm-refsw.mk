@@ -4,7 +4,9 @@
 #
 ################################################################################
 
-ifeq ($(BR2_PACKAGE_BCM_REFSW_13_1),y)
+ifeq ($(BR2_PACKAGE_BCM_REFSW_CUSTOM_VERSION),y)
+BCM_REFSW_VERSION = $(BR2_PACKAGE_BCM_REFSW_CUSTOM_REPO_VERSION)
+else ifeq ($(BR2_PACKAGE_BCM_REFSW_13_1),y)
 BCM_REFSW_VERSION = 13.1
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_13_4),y)
 BCM_REFSW_VERSION = 13.4-1
@@ -34,6 +36,8 @@ BCM_REFSW_VERSION = 17.4-4
 endif
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_18_2),y)
 BCM_REFSW_VERSION = 18.2
+else ifeq ($(BR2_PACKAGE_BCM_REFSW_19_1),y)
+BCM_REFSW_VERSION = 19.1
 else
 BCM_REFSW_VERSION = 16.2-7
 endif
@@ -82,7 +86,7 @@ BCM_REFSW_MAKE_ENV += \
 	V3D_EXTRA_LDFLAGS="$(TARGET_LDFLAGS)"
 
 ifneq ($(BR2_PACKAGE_BCM_REFSW_18_2),y)
-BCM_REFSW_MAKE_ENV += NEXUS_IR_INPUT_EXTENSION_INC="${@D}/nexus/extensions/insert_ir_input/insert_ir_input.inc"
+# BCM_REFSW_MAKE_ENV += NEXUS_IR_INPUT_EXTENSION_INC="${@D}/nexus/extensions/insert_ir_input/insert_ir_input.inc"
 endif
 
 ifeq ($(BR2_PACKAGE_BCM_REFSW_15_2),y)
