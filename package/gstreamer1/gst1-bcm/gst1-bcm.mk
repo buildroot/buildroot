@@ -20,6 +20,8 @@ else ifeq ($(BR2_PACKAGE_BCM_REFSW_17_3_RDK),y)
 GST1_BCM_VERSION = 17.3-rdkv-20180327
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_18_2),y)
 GST1_BCM_VERSION = 18.2-rdkv-20180727
+else ifeq ($(BR2_PACKAGE_BCM_REFSW_19_1),y)
+GST1_BCM_VERSION = 19.1-rdkv_20190409
 else ifneq ($(filter y,$(BR2_PACKAGE_ACN_SDK)),)
 GST1_BCM_VERSION = 17.1-5
 else ifneq ($(filter y,$(BR2_PACKAGE_HOMECAST_SDK)),)
@@ -152,7 +154,11 @@ ifeq ($(BR2_PACKAGE_HAS_OPUS_DECODER),)
 GST1_BCM_PKGDIR = "$(TOP_DIR)/package/gstreamer1/gst1-bcm"
 
 define GST1_BCM_INSTALL_SVP_DEV
-    $(INSTALL) -D -m 0644 ${@D}/svpmeta/src/gst_brcm_svp_meta.h $(STAGING_DIR)/usr/include
+    if [ -d "${@D}/reference" ] ; then \
+    	$(INSTALL) -D -m 0644 ${@D}/reference/svpmeta/src/gst_brcm_svp_meta.h $(STAGING_DIR)/usr/include ; \
+    else \
+    	$(INSTALL) -D -m 0644 ${@D}/svpmeta/src/gst_brcm_svp_meta.h $(STAGING_DIR)/usr/include ; \
+    fi 
 endef
 
 GST1_BCM_POST_INSTALL_STAGING_HOOKS += GST1_BCM_INSTALL_SVP_DEV
