@@ -38,10 +38,16 @@ define BCM_REFSW_INSTALL_NXSERVER
 	fi
 endef
 
+ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 19.1),1)
+NX_SERVER_ARCHIVE = $(BCM_REFSW_OUTPUT)/nexus/nxclient/$(ARCH)-linux/server/libnxserver.a
+else
+NX_SERVER_ARCHIVE = $(BCM_REFSW_BIN)/libnxserver.a
+endif
+
 define BCM_REFSW_INSTALL_NXSERVER_DEV
 	$(call BCM_REFSW_INSTALL_NXSERVER,$(STAGING_DIR))
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/refsw
-	$(INSTALL) -m 644 -D $(BCM_REFSW_BIN)/libnxserver.a $(STAGING_DIR)/usr/lib/libnxserver.a
+	$(INSTALL) -m 644 -D $(NX_SERVER_ARCHIVE) $(STAGING_DIR)/usr/lib/libnxserver.a
 	$(INSTALL) -m 644 $(BCM_REFSW_DIR)/BSEAV/lib/mpeg2_ts_parse/ts_psi.h $(STAGING_DIR)/usr/include/refsw/
 	$(INSTALL) -m 644 $(BCM_REFSW_DIR)/nexus/nxclient/server/*.h $(STAGING_DIR)/usr/include/refsw/
 	$(INSTALL) -m 644 $(BCM_REFSW_DIR)/nexus/nxclient/include/*.h $(STAGING_DIR)/usr/include/refsw/
