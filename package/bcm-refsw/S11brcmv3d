@@ -3,6 +3,8 @@ start() {
         echo -n "Starting display VC5 GEM driver: "
         insmod /lib/modules/brcmv3d.ko
         [ $? == 0 ] && echo "OK" || echo "FAIL"
+}
+
 stop() {
         echo -n "Stopping display VC5 GEM driver: "
         rmmod /lib/modules/brcmv3d.ko
