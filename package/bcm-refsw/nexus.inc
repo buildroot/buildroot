@@ -56,6 +56,13 @@ endef
 endif
 
 ifeq ($(BR2_PACKAGE_BCM_REFSW_SAGE),y)
+BCM_REFSW_INSTALL_SAGE_BINS_PATH = $(strip $(subst ",,$(BR2_PACKAGE_BCM_REFSW_SAGE_PATH)))
+
+define BCM_REFSW_INSTALL_SAGE_BINS
+    if [ -f $(BCM_REFSW_OUTPUT)/nexus/bin/sage_bl.bin ]; then \
+    	$(INSTALL) -v -m 644 $(BCM_REFSW_OUTPUT)/nexus/bin/*.bin $(1)$(BCM_REFSW_INSTALL_SAGE_BINS_PATH) ; \
+    fi
+endef
 
 BCM_NEXUS_SAGE_SRAI_DIR = /BSEAV/lib/security/sage/srai
 BCM_MAGNUM_SAGE_SRAI_DIR = /magnum/syslib/sagelib

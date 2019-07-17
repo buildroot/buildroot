@@ -196,6 +196,8 @@ define BCM_REFSW_INSTALL_TARGET_CMDS
         $(call BCM_REFSW_INSTALL_PLAYREADY30,       $(TARGET_DIR))
         $(call BCM_REFSW_INSTALL_DRMROOTFS,         $(TARGET_DIR))
         $(call BCM_REFSW_INSTALL_PRDYHTTP,          $(TARGET_DIR))
+        $(call BCM_REFSW_INSTALL_SAGE_BINS,         $(TARGET_DIR))
+
 endef
 
 $(eval $(generic-package))
