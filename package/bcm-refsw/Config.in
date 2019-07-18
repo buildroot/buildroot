@@ -12,6 +12,11 @@ config BR2_PACKAGE_BCM_REFSW
 
 
 if BR2_PACKAGE_BCM_REFSW
+config BR2_PACKAGE_BCM_REFSW_DEBUG
+	bool "Enable debug"
+	help
+        Enable this to use the msg level debug of nexus/magnum
+        modules, see nexus/docs/RefswDebuggingGuide.pdf for usage.
 
 choice
 	prompt "bcm-refsw version"

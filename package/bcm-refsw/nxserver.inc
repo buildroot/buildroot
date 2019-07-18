@@ -16,6 +16,13 @@ define BCM_REFSW_BUILD_NXCLIENT_EXAMPLES
 	$(BCM_REFSW_MAKE_ENV) \
 		$(MAKE) -C $(@D)/nexus/nxclient/examples all \
 			LIBDIR=${BCM_REFSW_BIN}
+
+	$(TARGET_CONFIGURE_OPTS) \
+	$(TARGET_MAKE_ENV) \
+	$(BCM_REFSW_CONF_OPTS) \
+	$(BCM_REFSW_MAKE_ENV) \
+		$(MAKE) -C $(@D)/nexus/nxclient/apps all \
+			LIBDIR=${BCM_REFSW_BIN}
 endef
 endif
 
