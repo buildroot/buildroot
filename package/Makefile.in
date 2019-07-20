@@ -70,6 +70,15 @@ ABI := $(ABI)hf
 endif
 endif
 
+# For C-SKY abiv1 & abiv2
+ifeq ($(BR2_csky),y)
+ifeq ($(BR2_ck610),y)
+ABI = abiv1
+else
+ABI = abiv2
+endif
+endif
+
 # For FSL PowerPC there's SPE
 ifeq ($(BR2_powerpc_SPE),y)
 ABI = spe
@@ -101,10 +110,6 @@ endif
 #
 ifeq ($(BR2_xtensa),y)
 TARGET_ABI += -mlongcalls -mauto-litpools
-endif
-
-ifeq ($(BR2_arc)$(BR2_ARC_ATOMIC_EXT),yy)
-TARGET_ABI += -matomic
 endif
 
 STAGING_SUBDIR = $(GNU_TARGET_NAME)/sysroot

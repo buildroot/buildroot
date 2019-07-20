@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IMX_UUC_VERSION = 79e9798eee9cd972d92ed2b18f170de856d153c9
+IMX_UUC_VERSION = fc48b497fe961d601b4bcced807f562090854ec9
 IMX_UUC_SITE = $(call github,NXPmicro,imx-uuc,$(IMX_UUC_VERSION))
 IMX_UUC_LICENSE = GPL-2.0+
 IMX_UUC_LICENSE_FILES = COPYING
@@ -14,7 +14,7 @@ IMX_UUC_LICENSE_FILES = COPYING
 IMX_UUC_DEPENDENCIES = host-dosfstools
 
 define IMX_UUC_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) CC=$(TARGET_CC)
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) $(TARGET_CONFIGURE_OPTS)
 endef
 
 define IMX_UUC_INSTALL_TARGET_CMDS

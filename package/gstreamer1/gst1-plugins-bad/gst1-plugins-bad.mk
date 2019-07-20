@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_PLUGINS_BAD_VERSION = 1.14.4
+GST1_PLUGINS_BAD_VERSION = 1.16.0
 GST1_PLUGINS_BAD_SOURCE = gst-plugins-bad-$(GST1_PLUGINS_BAD_VERSION).tar.xz
 GST1_PLUGINS_BAD_SITE = https://gstreamer.freedesktop.org/src/gst-plugins-bad
 GST1_PLUGINS_BAD_INSTALL_STAGING = YES
@@ -21,7 +21,6 @@ GST1_PLUGINS_BAD_CONF_OPTS = \
 	--disable-winks \
 	--disable-android_media \
 	--disable-apple_media \
-	--disable-acm \
 	--disable-introspection
 
 # Options which require currently unpackaged libraries
@@ -53,12 +52,13 @@ GST1_PLUGINS_BAD_CONF_OPTS += \
 	--disable-wildmidi \
 	--disable-smoothstreaming \
 	--disable-soundtouch \
-	--disable-spc \
 	--disable-gme \
 	--disable-vdpau \
 	--disable-schro \
 	--disable-spandsp \
-	--disable-gtk3
+	--disable-gtk3 \
+	--disable-iqa \
+	--disable-opencv
 
 GST1_PLUGINS_BAD_DEPENDENCIES = gst1-plugins-base gstreamer1
 
@@ -83,8 +83,8 @@ GST1_PLUGINS_BAD_DEPENDENCIES += orc
 GST1_PLUGINS_BAD_CONF_OPTS += --enable-orc
 endif
 
-ifeq ($(BR2_PACKAGE_BLUEZ_UTILS),y)
-GST1_PLUGINS_BAD_DEPENDENCIES += bluez_utils
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_BLUEZ),y)
+GST1_PLUGINS_BAD_DEPENDENCIES += bluez5_utils
 GST1_PLUGINS_BAD_CONF_OPTS += --enable-bluez
 else
 GST1_PLUGINS_BAD_CONF_OPTS += --disable-bluez
@@ -132,16 +132,16 @@ else
 GST1_PLUGINS_BAD_CONF_OPTS += --disable-audiofxbad
 endif
 
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_AUDIOLATENCY),y)
+GST1_PLUGINS_BAD_CONF_OPTS += --enable-audiolatency
+else
+GST1_PLUGINS_BAD_CONF_OPTS += --disable-audiolatency
+endif
+
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_AUDIOMIXMATRIX),y)
 GST1_PLUGINS_BAD_CONF_OPTS += --enable-audiomixmatrix
 else
 GST1_PLUGINS_BAD_CONF_OPTS += --disable-audiomixmatrix
-endif
-
-ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_COMPOSITOR),y)
-GST1_PLUGINS_BAD_CONF_OPTS += --enable-compositor
-else
-GST1_PLUGINS_BAD_CONF_OPTS += --disable-compositor
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_AUDIOVISUALIZERS),y)
@@ -350,6 +350,12 @@ else
 GST1_PLUGINS_BAD_CONF_OPTS += --disable-pnm
 endif
 
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_PROXY),y)
+GST1_PLUGINS_BAD_CONF_OPTS += --enable-proxy
+else
+GST1_PLUGINS_BAD_CONF_OPTS += --disable-proxy
+endif
+
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_RAWPARSE),y)
 GST1_PLUGINS_BAD_CONF_OPTS += --enable-rawparse
 else
@@ -405,12 +411,6 @@ else
 GST1_PLUGINS_BAD_CONF_OPTS += --disable-subenc
 endif
 
-ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_STEREO),y)
-GST1_PLUGINS_BAD_CONF_OPTS += --enable-stereo
-else
-GST1_PLUGINS_BAD_CONF_OPTS += --disable-stereo
-endif
-
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_TIMECODE),y)
 GST1_PLUGINS_BAD_CONF_OPTS += --enable-timecode
 else
@@ -427,12 +427,6 @@ ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_VIDEOFRAME_AUDIOLEVEL),y)
 GST1_PLUGINS_BAD_CONF_OPTS += --enable-videoframe_audiolevel
 else
 GST1_PLUGINS_BAD_CONF_OPTS += --disable-videoframe_audiolevel
-endif
-
-ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_IQA),y)
-GST1_PLUGINS_BAD_CONF_OPTS += --enable-iqa
-else
-GST1_PLUGINS_BAD_CONF_OPTS += --disable-iqa
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_VIDEOPARSERS),y)
@@ -593,7 +587,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_MPEG2ENC),y)
 GST1_PLUGINS_BAD_CONF_OPTS += --enable-mpeg2enc
-GST1_PLUGINS_BAD_DEPENDENCIES += libmpeg2
+GST1_PLUGINS_BAD_DEPENDENCIES += libmpeg2 mjpegtools
 GST1_PLUGINS_BAD_HAS_GPL_LICENSE = y
 else
 GST1_PLUGINS_BAD_CONF_OPTS += --disable-mpeg2enc
@@ -618,13 +612,6 @@ GST1_PLUGINS_BAD_CONF_OPTS += --enable-openal
 GST1_PLUGINS_BAD_DEPENDENCIES += openal
 else
 GST1_PLUGINS_BAD_CONF_OPTS += --disable-openal
-endif
-
-ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_OPENCV),y)
-GST1_PLUGINS_BAD_CONF_OPTS += --enable-opencv
-GST1_PLUGINS_BAD_DEPENDENCIES += opencv
-else
-GST1_PLUGINS_BAD_CONF_OPTS += --disable-opencv
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_OPENH264),y)
@@ -683,12 +670,6 @@ else
 GST1_PLUGINS_BAD_CONF_OPTS += --disable-srtp
 endif
 
-ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_VCD),y)
-GST1_PLUGINS_BAD_CONF_OPTS += --enable-vcd
-else
-GST1_PLUGINS_BAD_CONF_OPTS += --disable-vcd
-endif
-
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_VOAACENC),y)
 GST1_PLUGINS_BAD_CONF_OPTS += --enable-voaacenc
 GST1_PLUGINS_BAD_DEPENDENCIES += vo-aacenc
@@ -715,6 +696,13 @@ GST1_PLUGINS_BAD_CONF_OPTS += --enable-webrtcdsp
 GST1_PLUGINS_BAD_DEPENDENCIES += webrtc-audio-processing
 else
 GST1_PLUGINS_BAD_CONF_OPTS += --disable-webrtcdsp
+endif
+
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_WPE),y)
+GST1_PLUGINS_BAD_CONF_OPTS += --enable-wpe
+GST1_PLUGINS_BAD_DEPENDENCIES += wpewebkit
+else
+GST1_PLUGINS_BAD_CONF_OPTS += --disable-wpe
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_X265),y)

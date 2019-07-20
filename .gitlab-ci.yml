@@ -176,6 +176,7 @@ freescale_imx6qsabreauto_defconfig: { extends: .defconfig }
 freescale_imx6qsabresd_defconfig: { extends: .defconfig }
 freescale_imx6sxsabresd_defconfig: { extends: .defconfig }
 freescale_imx7dsabresd_defconfig: { extends: .defconfig }
+freescale_imx8mmevk_defconfig: { extends: .defconfig }
 freescale_imx8mqevk_defconfig: { extends: .defconfig }
 freescale_imx8qxpmek_defconfig: { extends: .defconfig }
 freescale_p1025twr_defconfig: { extends: .defconfig }
@@ -196,6 +197,7 @@ imx6ulevk_defconfig: { extends: .defconfig }
 imx6ulpico_defconfig: { extends: .defconfig }
 imx7d-sdb_defconfig: { extends: .defconfig }
 imx7dpico_defconfig: { extends: .defconfig }
+imx8mmpico_defconfig: { extends: .defconfig }
 imx8mpico_defconfig: { extends: .defconfig }
 lego_ev3_defconfig: { extends: .defconfig }
 licheepi_zero_defconfig: { extends: .defconfig }
@@ -235,6 +237,7 @@ orangepi_pc_defconfig: { extends: .defconfig }
 orangepi_pc_plus_defconfig: { extends: .defconfig }
 orangepi_plus_defconfig: { extends: .defconfig }
 orangepi_prime_defconfig: { extends: .defconfig }
+orangepi_r1_defconfig: { extends: .defconfig }
 orangepi_win_defconfig: { extends: .defconfig }
 orangepi_zero_defconfig: { extends: .defconfig }
 orangepi_zero_plus2_defconfig: { extends: .defconfig }
@@ -297,6 +300,7 @@ snps_archs38_hsdk_defconfig: { extends: .defconfig }
 snps_archs38_vdk_defconfig: { extends: .defconfig }
 socrates_cyclone5_defconfig: { extends: .defconfig }
 solidrun_clearfog_defconfig: { extends: .defconfig }
+solidrun_clearfog_gt_8k_defconfig: { extends: .defconfig }
 solidrun_macchiatobin_mainline_defconfig: { extends: .defconfig }
 solidrun_macchiatobin_marvell_defconfig: { extends: .defconfig }
 stm32f429_disco_defconfig: { extends: .defconfig }
@@ -360,7 +364,6 @@ tests.package.test_atop.TestAtop: { extends: .runtime_test }
 tests.package.test_docker_compose.TestDockerCompose: { extends: .runtime_test }
 tests.package.test_dropbear.TestDropbear: { extends: .runtime_test }
 tests.package.test_glxinfo.TestGlxinfo: { extends: .runtime_test }
-tests.package.test_ipython.TestIPythonPy2: { extends: .runtime_test }
 tests.package.test_ipython.TestIPythonPy3: { extends: .runtime_test }
 tests.package.test_lpeg.TestLuaLPeg: { extends: .runtime_test }
 tests.package.test_lpeg.TestLuajitLPeg: { extends: .runtime_test }
@@ -384,6 +387,8 @@ tests.package.test_luasec.TestLuaLuaSec: { extends: .runtime_test }
 tests.package.test_luasec.TestLuajitLuaSec: { extends: .runtime_test }
 tests.package.test_luasocket.TestLuaLuaSocket: { extends: .runtime_test }
 tests.package.test_luasocket.TestLuajitLuaSocket: { extends: .runtime_test }
+tests.package.test_luasyslog.TestLuaLuasyslog: { extends: .runtime_test }
+tests.package.test_luasyslog.TestLuajitLuasyslog: { extends: .runtime_test }
 tests.package.test_openjdk.TestOpenJdk: { extends: .runtime_test }
 tests.package.test_perl.TestPerl: { extends: .runtime_test }
 tests.package.test_perl_class_load.TestPerlClassLoad: { extends: .runtime_test }

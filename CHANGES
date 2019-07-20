@@ -1,3 +1,207 @@
+2019.05.1, Released July 7th, 2019
+
+	Important / security related fixes.
+
+	arch: x86: Fix typo breaking 'core-avx2' variant
+
+	linux: Workaround -Werror related build failure on powerpc,
+	by forcing CONFIG_PPC_DISABLE_WERROR on.
+
+	support/testing: Emulate a machine with 256MB RAM to fix
+	issues with certain tests running out of memory.
+
+	test-pkg: Correct long option handling and clean output dir
+	after a successful build to save disk space.
+
+	Defconfigs: QEMU: use 'rootwait' kernel option to ensure root
+	partition is available before mounting.
+
+	Updated/fixed packages: barebox, busybox, bzip2, davfs2,
+	dialog, docker-cli, docker-engine, exim, expat, faad2,
+	haveged, irssi, libcamera, libcdaudio, libcurl, libglib2,
+	libressl, libsecret, lmbench, meson, monit, php, postgresql,
+	psplash, python-django, qt5base, tvheadend, webkitgtk,
+	xserver_xorg-server, znc
+
+2019.05, released June 2nd, 2019
+
+	Various fixes.
+
+	Toolchain: Ensure pre-built Andes toolchains can only be
+	selected when x86 32bit support is available on the host.
+	Disallow PowerPC SPE ABI for GCC >= 8.x, as it is no longer
+	supported.
+
+	Infra: pkg-config: Use a dedicated timestamp file rather than
+	.config as that gets touched by linux-4.19+, causing repeated
+	builds.
+
+	Add C-SKY support to our config.sub (gnuconfig)
+
+	Updated/fixed packages: dosfstools, botan, brotli, dropbear,
+	flare-engine, gst1-plugins-bad, libhtp, libnss, libopenssl,
+	linuxptp, matchbox-panel, mender, mutt, netsurf,
+	network-manager, opencv3, openjdk, openmpi, php,
+	python-cython, qt5multimedia, qtwayland, qt5webkit-examples,
+	supertux, suricata, tpm2-totp, v4l2loopback, wireshark,
+	wpewebkit
+
+2019.05-rc3, released May 25th, 2019
+
+	Fixes all over the tree.
+
+	check-bin-arch: Ignore /usr/lib/grub, similar to how /lib/grub
+	is ignored.
+
+	check-package: Warn about utf-8 characters in .mk files
+
+	Linux: Default to 5.1.x series
+
+	Updated/fixed packages: assimp, atop, chocolate-doom, cjson,
+	ddrescue, dhcp, ffmpeg, gerbera, glibmm, gpsd, gst-ffmpeg,
+	intel-microcode, jasper, keepalived, kismet, libcpprestsdk,
+	libcurl, libssh2, libupnp18, luarocks, mono-gtksharp3, opus,
+	postgresql, pcsc-lite, python, tslib, webkitgtk,
+	wpebackend-fdo, wpewebkit
+
+2019.05-rc2, released May 15th, 2019
+
+	Fixes all over the tree.
+
+	Updated/fixed packages: bind, bullet, ca-certificates,
+	collectd, cracklib, dhcp, gdb, libinput, libtorrent-rasterbar,
+	linknx, lynx, mono, netsurf, optee-os, postgresql, qt5enginio,
+	qt5multimedia, rpm, samba4, sqlite, strace, uclibc, woff2
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11841: grub-efi.cfg not used when building EFI disk image
+
+2019.05-rc1, Released May 8th, 2019
+
+	Fixes all over the tree and new features.
+
+	Architecture: Andes 32-bit (nds32) support added.
+
+	Only build host-lzip / host-xz when really needed by packages,
+	not just when not available on the build host.
+
+	Toolchain: Glibc bumped to 2.29, musl bumped to 1.1.22,
+	binutils 2.32 added, 2.28/2.29 removed, default changed to
+	2.31.1.
+
+	fs: Set FAKEROOTDONTTRYCHOWN environment variable to not
+	forward {f,l,}chown calls to libc when running under fakeroot
+	to fix issues when building in restricted environments
+	(E.G. user namespace with bubblewrap).
+
+	Linux: Also build default make target to ensure extra files
+	like the gdb scripts enabled by CONFIG_GDB_SCRIPTS are also
+	built. Notice: This may mean that extra host utilities like
+	uboot-mkimage are needed.
+
+	Infrastructure: show-info and <pkg>-show-info make targets
+	added to output package metadata in JSON format for external
+	use.
+
+	pkg-generic: Only tweak .la files needing it to ensure they
+	are not included in subsequent package file lists.
+
+	test-pkg: Generate a basic package config if none is
+	specified.
+
+	Gettext-tiny package added as an lightweight replacement for
+	GNU gettext for situations where NLS support is not needed.
+
+	New defconfigs: Andes AE3XX, Freescale imx8mpico / imx8qxpmek
+	/ T2080 QDS RDB, Licheepi zero, Orangepi R1
+
+	Removed defconfigs: Olimx A20 Olinuxino Lime legacy
+
+	New packages: bats-core, bayer2rgb-neon, brickd, cog, dacapo,
+	enet, gettext-tiny, gli, gst1-plugins-bayer2rgb-neon,
+	imx-sc-firmware, intel-mediadriver, intel-mediasdk, libcamera,
+	libhtp, libp11, libwpe, lua-binaryheap, lua-gd, lua-lunitx,
+	mender-artifact, most, oniguruma, openjdk, openjdk-bin,
+	opensbi, optee-benchmark, optee-client, optee-examples,
+	optee-os, optee-test, paho-mqtt-cpp, python-aioblescan,
+	python-aioconsole, python-aiohttp-cors, python-aiomonitor,
+	python-backcall, python-jedi, python-parso, python-pyjwt,
+	python-terminaltables, suricata, tpm2-totp, uftp,
+	wpebackend-fdo, wpewebkit
+
+	Removed packages: libump, lunit, sunxi-mali
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11716: Typo on website, saying latest release is 2018.2.11
+	#11756: package/syslinux: MBR's don't fit because of binutils..
+	#11761: Building custom kernel 5.1-rc3 or later breaks on objtool
+	#11816: Only selected coreutils binaries are installed
+
+2019.02.4, Released July 10th, 2019
+
+	Important / security related fixes.
+
+	arch: x86: Fix typo breaking 'core-avx2' variant, add Westmere
+	variant.
+
+	linux: Workaround -Werror related build failure on powerpc,
+	by forcing CONFIG_PPC_DISABLE_WERROR on.
+
+	support/testing: Emulate a machine with 256MB RAM to fix
+	issues with certain tests running out of memory.
+
+	test-pkg: Correct long option handling and clean output dir
+	after a successful build to save disk space.
+
+	Ensure custom <pkg>_OVERRIDE_SRCDIR_RSYNC_EXCLUSIONS are
+	passed before the standard exclusions so they are not ignored
+	by rsync when using override-srcdir.
+
+	Defconfigs: QEMU: use 'rootwait' kernel option to ensure root
+	partition is available before mounting.
+
+	Updated/fixed packages: barebox, bzip2, davfs2, dbus, dialog,
+	docker-cli, docker-engine, expat, faad2, ffmpeg, freeswitch,
+	gerbera, haveged, irssi, libcdadio, libgit2, libglib2,
+	libsecret, libvncserver, lmbench, logrotate, mariadb, meson,
+	mongoose, monit, mpd, openblas, php, postgresql, psplash,
+	python, python-django, python3, qt5base, samba4, taglib,
+	tvheadend, vlc, webkitgtk, xserver_xorg-server, znc
+
+2019.02.3, Released June 7th, 2019
+
+	Important / security related fixes.
+
+	Infra: pkg-config: Use a dedicated timestamp file rather than
+	.config as that gets touched by linux-4.19+, causing repeated
+	builds.
+
+	check-bin-arch: Also ignore /usr/lib/grub to support merged
+	/usr setups, similar to how /lib/grub is ignored.
+
+	gnuconfig/config.sub: Add C-SKY architecture support.
+
+	Updated/fixed packages: assimp, atftp, atop, botan, busybox,
+	ca-certificates, chocolate-doom, cjson, coreutils, cracklib,
+	ddrescue, dhcp, docker-cli, docker-containerd, docker-engine,
+	dosfstools, dovecot, dovecot-pigeonhole, dropbear, exim,
+	ffmpeg, flare-engine, gcc, gdb, gerbera, glibmm, go, gpsd,
+	gst-ffmpeg, gst1-plugins-bad, gst1-plugins-base, imagemagick,
+	intel-microcode, jasper, kf5-kcoreaddons, kismet, libcurl,
+	libglib2, libnss, libopenssl, libsigrok, libssh2, libupnp18,
+	linuxptp, luajit, lynx, matchbox-panel, mender,
+	netcat-openbsd, netsurf, nfs-utils, opus, orc, owfs,
+	pcsc-lite, php, popt, postgresql, python, python-cython,
+	python-django, python-ply, qt5enginio, rpm, runc, samba4,
+	sqlite, subversion, supertux, systemd, tslib, uclibc,
+	v4l2loopback, webkitgtk, woff2
+
+	#11816: Only selected coreutils binaries are installed
+	#11841: grub-efi.cfg not used when building EFI disk image
+	#11911: systemd v240 memory leak in systemd-journald
+
 2019.02.2, Released April 29th, 2019
 
 	Important / security related fixes.

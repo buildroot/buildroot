@@ -4,10 +4,11 @@
 #
 ################################################################################
 
-RAUC_VERSION = 1.0
+RAUC_VERSION = 1.1
 RAUC_SITE = https://github.com/rauc/rauc/releases/download/v$(RAUC_VERSION)
 RAUC_SOURCE = rauc-$(RAUC_VERSION).tar.xz
 RAUC_LICENSE = LGPL-2.1
+RAUC_LICENSE_FILES = COPYING
 RAUC_DEPENDENCIES = host-pkgconf openssl libglib2
 
 ifeq ($(BR2_PACKAGE_RAUC_NETWORK),y)
@@ -29,7 +30,12 @@ ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 RAUC_DEPENDENCIES += systemd
 endif
 
-HOST_RAUC_DEPENDENCIES = host-pkgconf host-openssl host-libglib2 host-squashfs
+HOST_RAUC_DEPENDENCIES = \
+	host-pkgconf \
+	host-openssl \
+	host-libglib2 \
+	host-squashfs \
+	$(if $(BR2_PACKAGE_HOST_LIBP11),host-libp11)
 HOST_RAUC_CONF_OPTS += --disable-network --disable-json --disable-service
 
 $(eval $(autotools-package))

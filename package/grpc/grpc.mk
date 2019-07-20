@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-GRPC_VERSION = v1.18.0
-GRPC_SITE = $(call github,grpc,grpc,$(GRPC_VERSION))
+GRPC_VERSION = 1.18.0
+GRPC_SITE = $(call github,grpc,grpc,v$(GRPC_VERSION))
 GRPC_LICENSE = Apache-2.0
 GRPC_LICENSE_FILES = LICENSE
 
@@ -31,6 +31,14 @@ GRPC_CONF_OPTS = \
 # libatomic when available
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 GRPC_CONF_OPTS += -DCMAKE_EXE_LINKER_FLAGS=-latomic
+endif
+
+# Set GPR_DISABLE_WRAPPED_MEMCPY otherwise build will fail on x86_64 with uclibc
+# because grpc tries to link with memcpy@GLIBC_2.2.5
+ifeq ($(BR2_x86_64):$(BR2_TOOLCHAIN_USES_GLIBC),y:)
+GRPC_CONF_OPTS += \
+	-DCMAKE_C_FLAGS="$(TARGET_CFLAGS) -DGPR_DISABLE_WRAPPED_MEMCPY" \
+	-DCMAKE_CXX_FLAGS="$(TARGET_CXXFLAGS) -DGPR_DISABLE_WRAPPED_MEMCPY"
 endif
 
 HOST_GRPC_CONF_OPTS = \

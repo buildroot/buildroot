@@ -144,7 +144,85 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2019.08"
+
+config BR2_PACKAGE_XAPP_MKFONTDIR
+	bool "mkfontdir is now included in xapp_mkfontscale"
+	select BR2_PACKAGE_XAPP_MKFONTSCALE
+	select BR2_LEGACY
+	help
+	  xapp_mkfontscale now includes the mkfontdir script previously
+	  distributed separately for compatibility with older X11
+	  versions.
+
+config BR2_GDB_VERSION_8_0
+	bool "gdb 8.0.x has been removed"
+	select BR2_LEGACY
+	help
+	  The 8.0.x version of gdb has been removed. Use a newer
+	  version instead.
+
+config BR2_KERNEL_HEADERS_4_20
+	bool "kernel headers version 4.20.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 4.20.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+config BR2_KERNEL_HEADERS_5_0
+	bool "kernel headers version 5.0.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 5.0.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
 comment "Legacy options removed in 2019.05"
+
+config BR2_CSKY_DSP
+	bool "C-SKY DSP support removed"
+	select BR2_LEGACY
+	help
+	  C-SKY DSP instruction support for ck810 / ck807 was removed,
+	  as it was no longer supported in C-SKY gcc. Perhaps the VDSP
+	  instructions should be used instead, using the BR2_CSKY_VDSP
+	  option.
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_COMPOSITOR
+	bool "compositor moved to gst1-plugins-base"
+	select BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_COMPOSITOR
+	select BR2_LEGACY
+	help
+	  The gst1-plugins-bad compositor plugin has moved
+	  to gst1-plugins-base.
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_IQA
+	bool "gst-plugins-bad IQA option was removed"
+	select BR2_LEGACY
+	help
+	  The gst1-plugins-bad IQA option was removed.
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_OPENCV
+	bool "gst-plugins-bad opencv option was removed"
+	select BR2_LEGACY
+	help
+	  The gst1-plugins-bad opencv option was removed because
+	  buildroot does not have the opencv_contrib package which
+	  is required for the bgsegm module which gst1-plugins-bad
+	  now requires along with opencv3.
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_STEREO
+	bool "stereo was merged into audiofx in gst1-plugins-good"
+	select BR2_LEGACY
+	select BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_AUDIOFX
+	help
+	  The gst1-plugins-bad stereo plugin has merged with the
+	  gst1-plugins-base audiofx plugin.
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_VCD
+	bool "gst-plugins-bad vcd plugin was removed."
+	select BR2_LEGACY
+	help
+	  The gst1-plugins-bad vcd plugin was removed.
 
 config BR2_PACKAGE_LUNIT
 	bool "lunit package removed"

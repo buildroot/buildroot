@@ -4,8 +4,10 @@
 #
 ################################################################################
 
-COG_VERSION = v0.2.0
-COG_SITE = $(call github,Igalia,cog,$(COG_VERSION))
+COG_VERSION = 0.3.1
+COG_SITE = https://github.com/Igalia/cog/releases/download/v$(COG_VERSION)
+COG_SOURCE = cog-$(COG_VERSION).tar.xz
+COG_INSTALL_STAGING = YES
 COG_DEPENDENCIES = dbus wpewebkit wpebackend-fdo
 COG_LICENSE = MIT
 COG_LICENSE_FILES = COPYING

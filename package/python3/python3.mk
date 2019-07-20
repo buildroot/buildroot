@@ -5,7 +5,7 @@
 ################################################################################
 
 PYTHON3_VERSION_MAJOR = 3.7
-PYTHON3_VERSION = $(PYTHON3_VERSION_MAJOR).3
+PYTHON3_VERSION = $(PYTHON3_VERSION_MAJOR).4
 PYTHON3_SOURCE = Python-$(PYTHON3_VERSION).tar.xz
 PYTHON3_SITE = https://python.org/ftp/python/$(PYTHON3_VERSION)
 PYTHON3_LICENSE = Python-2.0, others
@@ -68,10 +68,6 @@ PYTHON3_DEPENDENCIES += expat
 PYTHON3_CONF_OPTS += --with-expat=system
 else
 PYTHON3_CONF_OPTS += --with-expat=none
-endif
-
-ifeq ($(BR2_PACKAGE_PYTHON3_PYC_ONLY),y)
-PYTHON3_CONF_OPTS += --enable-old-stdlib-cache
 endif
 
 ifeq ($(BR2_PACKAGE_PYTHON3_SQLITE),y)

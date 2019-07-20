@@ -12,7 +12,6 @@ if BR2_PACKAGE_UTIL_LINUX
 config BR2_PACKAGE_UTIL_LINUX_LIBBLKID
 	bool "libblkid"
 	depends on BR2_USE_MMU # fork()
-	select BR2_PACKAGE_UTIL_LINUX_LIBUUID
 	help
 	  Install libblkid.
 
@@ -135,6 +134,11 @@ config BR2_PACKAGE_UTIL_LINUX_FSCK
 	help
 	  Check and repair a linux filesystem
 
+config BR2_PACKAGE_UTIL_LINUX_HARDLINK
+	bool "hardlink"
+	help
+	  Consolidate duplicate files via hardlinks
+
 config BR2_PACKAGE_UTIL_LINUX_HWCLOCK
 	bool "hwclock"
 	help
@@ -213,6 +217,7 @@ config BR2_PACKAGE_UTIL_LINUX_MESG
 
 config BR2_PACKAGE_UTIL_LINUX_MINIX
 	bool "minix"
+	depends on BR2_USE_MMU # fork()
 	help
 	  Minix filesystem support
 

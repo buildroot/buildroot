@@ -75,10 +75,13 @@ endef
 endif # BR2_TARGET_OPTEE_OS_CORE
 
 ifeq ($(BR2_TARGET_OPTEE_OS_SERVICES),y)
-define OPTEE_OS_INSTALL_IMAGES_SERVICES
-	mkdir -p $(TARGET_DIR)/lib/optee_armtz
-	$(INSTALL) -D -m 444 -t $(TARGET_DIR)/lib/optee_armtz \
-		$(@D)/$(OPTEE_OS_BUILDDIR_OUT)/ta/*/*.ta
+define OPTEE_OS_INSTALL_TARGET_CMDS
+	$(if $(wildcard $(@D)/$(OPTEE_OS_BUILDDIR_OUT)/ta/*/*.ta),
+		$(INSTALL) -D -m 444 -t $(TARGET_DIR)/lib/optee_armtz \
+			$(@D)/$(OPTEE_OS_BUILDDIR_OUT)/ta/*/*.ta)
+	$(if $(wildcard $(@D)/$(OPTEE_OS_LOCAL_SDK)/lib/*.ta),
+		$(INSTALL) -D -m 444 -t $(TARGET_DIR)/lib/optee_armtz \
+			$(@D)/$(OPTEE_OS_LOCAL_SDK)/lib/*.ta)
 endef
 endif # BR2_TARGET_OPTEE_OS_SERVICES
 

@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-FREESWITCH_VERSION = 1.8.5
+FREESWITCH_VERSION = 1.8.7
 FREESWITCH_SOURCE = freeswitch-$(FREESWITCH_VERSION).tar.xz
-FREESWITCH_SITE = http://files.freeswitch.org/freeswitch-releases
+FREESWITCH_SITE = https://files.freeswitch.org/freeswitch-releases
 # External modules need headers/libs from staging
 FREESWITCH_INSTALL_STAGING = YES
 FREESWITCH_LICENSE = MPL-1.1, \
@@ -218,6 +218,13 @@ endif
 ifeq ($(BR2_PACKAGE_LIBMEMCACHED),y)
 FREESWITCH_DEPENDENCIES += libmemcached
 FREESWITCH_ENABLED_MODULES += applications/mod_memcache
+endif
+
+ifeq ($(BR2_PACKAGE_LIBOPENH264),y)
+FREESWITCH_LICENSE := $(FREESWITCH_LICENSE), BSD-2-Clause (libopenh264)
+FREESWITCH_LICENSE_FILES += docs/OPENH264_BINARY_LICENSE.txt
+FREESWITCH_DEPENDENCIES += libopenh264
+FREESWITCH_ENABLED_MODULES += codecs/mod_openh264
 endif
 
 ifeq ($(BR2_PACKAGE_LIBPNG),y)

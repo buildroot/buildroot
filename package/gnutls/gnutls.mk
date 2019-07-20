@@ -5,7 +5,7 @@
 ################################################################################
 
 GNUTLS_VERSION_MAJOR = 3.6
-GNUTLS_VERSION = $(GNUTLS_VERSION_MAJOR).7.1
+GNUTLS_VERSION = $(GNUTLS_VERSION_MAJOR).8
 GNUTLS_SOURCE = gnutls-$(GNUTLS_VERSION).tar.xz
 GNUTLS_SITE = https://www.gnupg.org/ftp/gcrypt/gnutls/v$(GNUTLS_VERSION_MAJOR)
 GNUTLS_LICENSE = LGPL-2.1+ (core library), GPL-3.0+ (gnutls-openssl library)
@@ -46,7 +46,7 @@ endif
 
 # Prerequisite for crywrap
 ifeq ($(BR2_PACKAGE_ARGP_STANDALONE),y)
-GNUTLS_CONF_ENV += LIBS="-largp"
+GNUTLS_LIBS += -largp
 GNUTLS_DEPENDENCIES += argp-standalone
 endif
 
@@ -85,5 +85,11 @@ GNUTLS_CONF_OPTS += --with-default-trust-store-pkcs11=pkcs11:model=p11-kit-trust
 else ifeq ($(BR2_PACKAGE_CA_CERTIFICATES),y)
 GNUTLS_CONF_OPTS += --with-default-trust-store-file=/etc/ssl/certs/ca-certificates.crt
 endif
+
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+GNUTLS_LIBS += -latomic
+endif
+
+GNUTLS_CONF_ENV += LIBS="$(GNUTLS_LIBS)"
 
 $(eval $(autotools-package))

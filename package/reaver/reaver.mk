@@ -5,9 +5,9 @@
 ################################################################################
 
 # Older repos for this project will not cross-compile easily
-# while this one works right away
-REAVER_VERSION = v1.6.5
-REAVER_SITE = $(call github,t6x,reaver-wps-fork-t6x,$(REAVER_VERSION))
+# while this one works right away
+REAVER_VERSION = 1.6.5
+REAVER_SITE = $(call github,t6x,reaver-wps-fork-t6x,v$(REAVER_VERSION))
 REAVER_LICENSE = GPL-2.0+
 REAVER_LICENSE_FILES = docs/LICENSE
 
