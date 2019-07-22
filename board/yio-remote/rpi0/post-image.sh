@@ -11,6 +11,7 @@ cp board/yio-remote/${BOARD_NAME}/cmdline.txt ${BINARIES_DIR}/cmdline.txt
 mkdir -p ${BINARIES_DIR}/overlays
 cp board/yio-remote/${BOARD_NAME}/goodix.dtbo ${BINARIES_DIR}/overlays/goodix.dtbo
 cp board/yio-remote/${BOARD_NAME}/sharp.dtbo ${BINARIES_DIR}/overlays/sharp.dtbo
+cp board/yio-remote/${BOARD_NAME}/pi3-miniuart-bt.dtbo ${BINARIES_DIR}/overlays/pi3-miniuart-bt.dtbo
 
 mv ${BINARIES_DIR}/zImage ${BINARIES_DIR}/kernel.img
 
