@@ -331,6 +331,14 @@ config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
       Control the IP adressing of the interfaces in the system from
       WPEFramework (static IPv4/IPv6 or dhcp IPv4)
 
+config BR2_PACKAGE_WPEFRAMEWORK_PACKAGER
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    default n
+    bool "Packager"
+    help
+      Packager Plugin, install packages based upon OPKG.
+
+
 config BR2_PACKAGE_WPEFRAMEWORK_POWER
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     default n
