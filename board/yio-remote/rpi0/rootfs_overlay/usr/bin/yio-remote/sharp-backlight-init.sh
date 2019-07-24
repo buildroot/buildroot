@@ -9,3 +9,5 @@ gpio -g pwm 12 100
 /usr/bin/tvservice -o
 echo none | tee /sys/class/leds/led0/trigger
 echo 1 | tee /sys/class/leds/led0/brightness
+
+hciattach /dev/ttyS0 bcm43xx 921600 noflow -
