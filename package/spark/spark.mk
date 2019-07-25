@@ -3,12 +3,12 @@
 # spark
 #
 ################################################################################
-SPARK_VERSION = f9e9f13c25ea42368eace3746760bf9bc73a0142
+SPARK_VERSION = 94a26ccfbf59dcd7f7f5b144cfe4a797f5446ffb
 SPARK_SITE_METHOD = git
 SPARK_SITE = git://github.com/pxscene/pxCore
 SPARK_INSTALL_STAGING = YES
 
-SPARK_DEPENDENCIES = openssl freetype util-linux libpng libcurl pxcore-libnode ca-certificates
+SPARK_DEPENDENCIES = openssl freetype util-linux libpng libcurl pxcore-libnode giflib ca-certificates
 
 SPARK_CONF_OPTS += \
     -DBUILD_SHARED_LIBS=OFF \
