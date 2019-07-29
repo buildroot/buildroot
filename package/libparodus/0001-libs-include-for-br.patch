@@ -1,0 +1,16 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index b394c66..bb70fc6 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -26,9 +26,9 @@ set_target_properties(${PROJ_PARODUS_LIB}.shared PROPERTIES OUTPUT_NAME ${PROJ_P
+ # Note: This is a partial solution and only covers the case required for the
+ # Yocto build (ie dynamic lib). Other cases may need fixing too.
+ # ----------------------------------------------------------------------------
+-if (BUILD_YOCTO)
++if (BUILD_YOCTO OR BUILD_BR)
+ target_link_libraries(${PROJ_PARODUS_LIB}.shared m cjson nopoll wrp-c wdmp-c trower-base64 nanomsg msgpackc)
+-endif (BUILD_YOCTO)
++endif (BUILD_YOCTO OR BUILD_BR)
+ 
+ install (TARGETS ${PROJ_PARODUS_LIB} DESTINATION lib${LIB_SUFFIX})
+ install (TARGETS ${PROJ_PARODUS_LIB}.shared DESTINATION lib${LIB_SUFFIX})

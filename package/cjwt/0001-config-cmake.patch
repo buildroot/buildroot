@@ -1,0 +1,21 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 22cebf9..398aed6 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -36,14 +36,14 @@ set(LIBRARY_DIR ${INSTALL_DIR}/lib${LIB_SUFFIX})
+ include_directories(${INCLUDE_DIR}
+                     ${INCLUDE_DIR}/cjson
+                     ${INCLUDE_DIR}/trower-base64)
+-include_directories (SYSTEM /usr/include
++include_directories (SYSTEM $(SYSROOT)/usr/include
+ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+                             /usr/local/opt/openssl/include
+ endif()
+ )
+ link_directories ( ${LIBRARY_DIR} )
+ 
+-if (NOT BUILD_YOCTO)
++if (NOT BUILD_YOCTO AND NOT BUILD_BR)
+
+ # base64 external dependency
+ ExternalProject_Add(trower-base64

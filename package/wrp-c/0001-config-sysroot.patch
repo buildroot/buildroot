@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 5e13320..4cbdf69 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -32,7 +32,7 @@ include_directories(${INCLUDE_DIR}
+                     ${INCLUDE_DIR}/trower-base64
+                     ${INCLUDE_DIR}/cimplog)
+ 
+-include_directories (SYSTEM /usr/include)
++include_directories (SYSTEM -I${SYSROOT}/usr/include)
+ link_directories ( ${LIBRARY_DIR})
+                    
+ if (MAIN_PROJ_BUILD) 
