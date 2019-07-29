@@ -1,68 +1,23 @@
 diff --git a/examples/pxScene2d/src/pxScene2d.cpp b/examples/pxScene2d/src/pxScene2d.cpp
-index 9b3abba..021663a 100755
+index 24e106255..ac3f49273 100755
 --- a/examples/pxScene2d/src/pxScene2d.cpp
 +++ b/examples/pxScene2d/src/pxScene2d.cpp
-@@ -103,6 +103,7 @@ extern pxContext      context;
- static int fpsWarningThreshold = 25;
+@@ -156,6 +156,7 @@ void stopProfiling()
  
- rtEmitRef pxScriptView::mEmit = new rtEmit();
-+unsigned int pxScriptView::mIndex = 0;
+ extern int pxObjectCount;
+ bool gApplicationIsClosing = false;
++bool gNewSceneIsTop = true;
  
- 
- #ifdef PXSCENE_SUPPORT_STORAGE
-@@ -3057,6 +3058,7 @@ pxScriptView::pxScriptView(const char* url, const char* /*lang*/, pxIViewContain
-      : mWidth(-1), mHeight(-1), mViewContainer(container), mRefCount(0)
+ bool enableOptimizedUpdateOnStartup()
  {
-   rtLogDebug("pxScriptView::pxScriptView()entering\n");
-+  mIndex++;
-   mUrl = url;
- #ifndef RUNINMAIN // NOTE this ifndef ends after runScript decl, below
-   mReady = new rtPromise();
-@@ -3143,7 +3145,6 @@ void pxScriptView::runScript()
-   #endif //ENABLE_RT_NODE
- }
- 
--
- rtError pxScriptView::suspend(const rtValue& v, bool& b)
- {
-   b = false;
-@@ -3196,9 +3197,7 @@ rtError pxScriptView::getScene(int numArgs, const rtValue* args, rtValue* result
+@@ -3196,9 +3197,8 @@ rtError pxScriptView::getScene(int numArgs, const rtValue* args, rtValue* result
        // JR Todo can specify what scene version/type to create in args
        if (!v->mScene)
        {
 -        static bool top = true;
 -        pxScene2dRef scene = new pxScene2d(top, v);
 -        top = false;
-+        pxScene2dRef scene = new pxScene2d(((mIndex == 1)? true: false), v);
++        pxScene2dRef scene = new pxScene2d(gNewSceneIsTop, v);
++        gNewSceneIsTop = false;
          v->mView = scene;
          v->mScene = scene;
- 
-diff --git a/examples/pxScene2d/src/pxScene2d.h b/examples/pxScene2d/src/pxScene2d.h
-index 6962d13..18c1e76 100755
---- a/examples/pxScene2d/src/pxScene2d.h
-+++ b/examples/pxScene2d/src/pxScene2d.h
-@@ -603,6 +603,8 @@ public:
- 
-     mView = NULL;
-     mScene = NULL;
-+
-+    mIndex--;
-   }
- 
-   virtual unsigned long AddRef() 
-@@ -662,7 +664,6 @@ public:
-   rtError textureMemoryUsage(rtValue& v);
- 
-   rtError screenshot(rtString type, rtValue& returnValue);
--  
- protected:
- 
- 
-@@ -831,6 +832,7 @@ protected:
-   rtString mLang;
- #endif
-   static rtEmitRef mEmit;
-+  static unsigned int mIndex;
- };
- 
- class pxScene2d: public rtObject, public pxIView, public rtIServiceProvider
