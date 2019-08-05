@@ -1,8 +1,8 @@
 diff --git a/cmake/CommDeps.cmake b/cmake/CommDeps.cmake
-index f69b622..735bad4 100644
+index 97a0ecd..4250e95 100644
 --- a/cmake/CommDeps.cmake
 +++ b/cmake/CommDeps.cmake
-@@ -220,6 +220,26 @@ set(COMM_DEPS_LIBRARY_DIRS ${COMM_DEPS_LIBRARY_DIRS}
+@@ -216,6 +216,26 @@ set(COMM_DEPS_LIBRARY_DIRS ${COMM_DEPS_LIBRARY_DIRS}
        ${SQLITE_LIBRARY_DIRS}
     )
  
@@ -29,16 +29,16 @@ index f69b622..735bad4 100644
  set(COMM_DEPS_LIBRARIES ${COMM_DEPS_LIBRARIES}
             ${ZLIB_LIBRARIES}
             ${CURL_LIBRARIES}
-@@ -239,3 +258,4 @@ set(COMM_DEPS_LIBRARIES ${COMM_DEPS_LIBRARIES}
+@@ -235,3 +255,4 @@ set(COMM_DEPS_LIBRARIES ${COMM_DEPS_LIBRARIES}
           ${ICU_UC_LIBRARIES}
           ${SQLITE_LIBRARIES}
     )
 +endif (BUILD_WITH_WPEFRAMEWORK)
 diff --git a/examples/pxScene2d/src/CMakeLists.txt b/examples/pxScene2d/src/CMakeLists.txt
-index 7e64e47..97bc8ee 100644
+index 6e0d534..672946e 100644
 --- a/examples/pxScene2d/src/CMakeLists.txt
 +++ b/examples/pxScene2d/src/CMakeLists.txt
-@@ -171,7 +171,7 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+@@ -177,7 +177,7 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
                    ${NODE_LIBRARIES}
                    ${V8_LIBRARIES}
                    ${DUKE_LIBRARIES}
@@ -47,7 +47,7 @@ index 7e64e47..97bc8ee 100644
               pthread rt dl m)
  
      set(PXSCENE_APP_LIBRARIES ${PXSCENE_APP_LIBRARIES} pxCore rtCore_s)
-@@ -251,6 +251,13 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+@@ -257,6 +257,13 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
          set(PXCORE_INCLUDES $ENV{PXCORE_INCLUDES})
          separate_arguments(PXCORE_INCLUDES)
          include_directories(BEFORE ${PXCORE_INCLUDES})
@@ -84,10 +84,10 @@ index be2ca29..a5f7b36 100644
  #include <GLES2/gl2ext.h>
  #else
 diff --git a/examples/pxScene2d/src/pxContextGL.cpp b/examples/pxScene2d/src/pxContextGL.cpp
-index 6172b40..8ce7fc4 100644
+index e37a6dd..5855b64 100644
 --- a/examples/pxScene2d/src/pxContextGL.cpp
 +++ b/examples/pxScene2d/src/pxContextGL.cpp
-@@ -38,7 +38,7 @@
+@@ -40,7 +40,7 @@
  #include <OpenGL/gl.h>
  #include <OpenGL/glu.h>
  #else
@@ -96,7 +96,7 @@ index 6172b40..8ce7fc4 100644
  #include <GLES2/gl2.h>
  #ifndef GL_GLEXT_PROTOTYPES
  #define GL_GLEXT_PROTOTYPES
-@@ -53,7 +53,7 @@
+@@ -55,7 +55,7 @@
  #include <GL/glut.h>
  #endif
  #include <GL/gl.h>
@@ -105,9 +105,9 @@ index 6172b40..8ce7fc4 100644
  #endif
  
  #include "pxContextUtils.h"
-@@ -130,11 +130,11 @@ enum pxCurrentGLProgram { PROGRAM_UNKNOWN = 0, PROGRAM_SOLID_SHADER,  PROGRAM_A_
+@@ -129,11 +129,11 @@ double garbageCollectThrottleInSeconds = CONTEXT_GC_THROTTLE_SECS_DEFAULT;
  
- pxCurrentGLProgram currentGLProgram = PROGRAM_UNKNOWN;
+ int currentGLProgram = -1;
  
 -#if defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL)
 +#if defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL) || defined(PX_PLATFORM_WPEFRAMEWORK)
@@ -119,7 +119,7 @@ index 6172b40..8ce7fc4 100644
  
  // TODO get rid of this global crap
  
-@@ -451,7 +451,7 @@ public:
+@@ -450,7 +450,7 @@ public:
    {
      if (mFramebufferId!= 0)
      {
@@ -128,7 +128,7 @@ index 6172b40..8ce7fc4 100644
        if (mAntiAliasing)
        {
          GLint currentFBO = 0;
-@@ -501,7 +501,7 @@ public:
+@@ -500,7 +500,7 @@ public:
        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                               GL_TEXTURE_2D, mTextureId, 0);
  
@@ -136,8 +136,8 @@ index 6172b40..8ce7fc4 100644
 +#if (defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL) || defined(PX_PLATFORM_WPEFRAMEWORK)) && !defined(PXSCENE_DISABLE_PXCONTEXT_EXT)
        if (mAntiAliasing)
        {
-         //glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextureId, 0, 2);
-@@ -586,7 +586,7 @@ private:
+         glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextureId, 0, 2);
+@@ -585,7 +585,7 @@ private:
    bool mBindTexture;
    bool mAlphaOnly;
  
@@ -146,7 +146,7 @@ index 6172b40..8ce7fc4 100644
    bool mAntiAliasing;
  #endif
  
-@@ -2295,12 +2295,12 @@ void pxContext::init()
+@@ -2207,12 +2207,12 @@ void pxContext::init()
  
    rtLogInfo("context garbage collect throttle set to %f seconds", garbageCollectThrottleInSeconds);
  
@@ -161,11 +161,24 @@ index 6172b40..8ce7fc4 100644
  
    std::srand(unsigned (std::time(0)));
  }
+diff --git a/examples/pxScene2d/src/pxShaderResource.h b/examples/pxScene2d/src/pxShaderResource.h
+index 49b2bbb..ccb0282 100644
+--- a/examples/pxScene2d/src/pxShaderResource.h
++++ b/examples/pxScene2d/src/pxShaderResource.h
+@@ -34,7 +34,7 @@ pxCore Copyright 2005-2018 John Robinson
+ #include <OpenGL/gl.h>
+ #include <OpenGL/glu.h>
+ #else
+-#if defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL)
++#if defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL) || defined(PX_PLATFORM_WPEFRAMEWORK)
+ #include <GLES2/gl2.h>
+ #ifndef GL_GLEXT_PROTOTYPES
+ #define GL_GLEXT_PROTOTYPES
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 52d6ca3..4ec855a 100755
+index aa4ac63..a9d48a7 100755
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -136,6 +136,24 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+@@ -138,6 +138,24 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
                  gles/pxEventLoopNative.cpp gles/pxTimerNative.cpp gles/pxClipboardNative.cpp)
          endif (PXCORE_ESSOS)
          set(PLATFORM_LINKER_FLAGS)
