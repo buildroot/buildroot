@@ -8,7 +8,7 @@ SPARK_SITE_METHOD = git
 SPARK_SITE = git://github.com/pxscene/pxCore
 SPARK_INSTALL_STAGING = YES
 
-SPARK_DEPENDENCIES = openssl freetype util-linux libpng libcurl pxcore-libnode giflib ca-certificates
+SPARK_DEPENDENCIES = openssl freetype util-linux libpng libcurl pxcore-libnode giflib ca-certificates sqlite
 
 SPARK_CONF_OPTS += \
     -DBUILD_SHARED_LIBS=OFF \
