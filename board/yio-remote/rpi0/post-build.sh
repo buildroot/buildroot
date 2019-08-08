@@ -25,7 +25,7 @@ ln -fs ../../../../usr/lib/systemd/system/app.service $1/etc/systemd/system/sysi
 
 rm -rf $1/var/log/journal
 
-rm -r $1/etc/systemd/system/sysinit.target.wants/systemd-timesyncd.service
+#rm -r $1/etc/systemd/system/sysinit.target.wants/systemd-timesyncd.service
 
-rm -r $1/etc/systemd/system/multi-user.target.wants/dhcpcd.service
+#rm -r $1/etc/systemd/system/multi-user.target.wants/dhcpcd.service
 
