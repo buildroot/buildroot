@@ -1,0 +1,10 @@
+[Unit]
+Description=Updater
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/updater.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
