@@ -797,6 +797,44 @@ endif
 comment "WebKitBrowser depends on WPE WebKit to be selected"
     depends on !BR2_PACKAGE_WPEWEBKIT
 
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_WEBPA
+        bool "WebPA"
+        select BR2_PACKAGE_LIBPARODUS
+        select BR2_PACKAGE_TINYXML
+        select BR2_PACKAGE_PARODUS
+        help
+           WPE Platform AVNClient plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_WEBPA
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_AUTOSTART
+        bool "autostart"
+        default n
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_SERVICE
+        bool "parodus service"
+        default y
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CCSP
+        bool "webpa ccsp client"
+        select BR2_PACKAGE_PARODUS2CCSP
+        default n
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_GENERIC_ADAPTER
+        bool "webpa generic adapter client"
+        default y
+
+if BR2_PACKAGE_WPEFRAMEWORK_WEBPA_GENERIC_ADAPTER
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_WEBPA_PROFILE
+	bool "Profiles"
+
+if BR2_PACKAGE_WPEFRAMEWORK_WEBPA_PROFILE
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_DEVICE_INFO
+        bool "device info"
+	select BR2_PACKAGE_PROCPS_NG
+        default y
+endif
+
+endif
+
+endif
+
 config BR2_PACKAGE_WPEFRAMEWORK_WEBPROXY
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "WebProxy"
