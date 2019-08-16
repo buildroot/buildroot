@@ -1,16 +1,17 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 0e7aaba..5d99608 100644
+index ec868cb..19e22ab 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -62,6 +62,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL Darwin)
+@@ -60,6 +60,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL Darwin)
+     set(AAMP_CLI_LD_FLAGS "${AAMP_CLI_LD_FLAGS} -lgstvideo-1.0")
+     string(STRIP ${AAMP_CLI_LD_FLAGS} AAMP_CLI_LD_FLAGS)
      set(AAMP_OS_SOURCES cocoa_window.mm)
- else()
-     set(LIB_SHARED SHARED)
++else()
 +    set(AAMP_GST_VIDEO "-lgstvideo-1.0")
-     set(USE_MAC_FOR_RANDOM_GEN "-DUSE_MAC_FOR_RANDOM_GEN")
  endif(CMAKE_SYSTEM_NAME STREQUAL Darwin)
  
-@@ -97,7 +98,7 @@ if(CMAKE_USE_RDK_PLUGINS)
+ find_package (Threads REQUIRED)
+@@ -94,7 +96,7 @@ if(CMAKE_USE_RDK_PLUGINS)
  	endif()
  endif()
  
@@ -20,25 +21,22 @@ index 0e7aaba..5d99608 100644
  
  if(CMAKE_QT5WEBKIT_JSBINDINGS)
 diff --git a/aampgstplayer.cpp b/aampgstplayer.cpp
-index d7e27f8..fa2e44c 100644
+index a90dc62..93d02cf 100644
 --- a/aampgstplayer.cpp
 +++ b/aampgstplayer.cpp
-@@ -35,9 +35,9 @@
+@@ -33,6 +33,7 @@
+ #include "priv_aamp.h"
+ #include <pthread.h>
  #include <atomic>
- 
- #ifdef __APPLE__
--#include "gst/video/videooverlay.h"
- #import "cocoa_window.h"
- #endif
 +#include "gst/video/videooverlay.h"
  
  #ifdef AAMP_MPD_DRM
  #include "aampoutputprotection.h"
-@@ -230,6 +230,12 @@ AAMPGstPlayer::~AAMPGstPlayer()
+@@ -218,6 +219,12 @@ AAMPGstPlayer::~AAMPGstPlayer()
  	free(privateContext);
  }
  
-+ void AAMPGstPlayer::SetGLImageRectangle() {
++void AAMPGstPlayer::SetGLImageRectangle() {
 +	int x, y, w, h;
 +	sscanf(privateContext->videoRectangle, "%d,%d,%d,%d", &x, &y, &w, &h);
 +	gst_video_overlay_set_render_rectangle(GST_VIDEO_OVERLAY(privateContext->video_sink), x, y, w, h);
@@ -46,8 +44,8 @@ index d7e27f8..fa2e44c 100644
 +
  /**
   * @brief Analyze stream info from the GstPipeline
-  *
-@@ -670,6 +676,7 @@ bool AAMPGstPlayer_isVideoDecoder(const char* name, AAMPGstPlayer * _this)
+  * @param[in] _this pointer to AAMPGstPlayer instance
+@@ -632,6 +639,7 @@ bool AAMPGstPlayer_isVideoDecoder(const char* name, AAMPGstPlayer * _this)
  bool AAMPGstPlayer_isVideoSink(const char* name, AAMPGstPlayer * _this)
  {
  	return	(!_this->privateContext->using_westerossink && memcmp(name, "brcmvideosink", 13) == 0) || // brcmvideosink0, brcmvideosink1, ...
@@ -55,7 +53,7 @@ index d7e27f8..fa2e44c 100644
  			( _this->privateContext->using_westerossink && memcmp(name, "westerossink", 12) == 0);
  }
  
-@@ -929,18 +936,25 @@ static gboolean bus_message(GstBus * bus, GstMessage * msg, AAMPGstPlayer * _thi
+@@ -894,18 +902,25 @@ static gboolean bus_message(GstBus * bus, GstMessage * msg, AAMPGstPlayer * _thi
  			{
  				if (AAMPGstPlayer_isVideoSink(GST_OBJECT_NAME(msg->src), _this))
  				{ // video scaling patch
@@ -87,7 +85,7 @@ index d7e27f8..fa2e44c 100644
  				}
  				else if (memcmp(GST_OBJECT_NAME(msg->src), "brcmaudiosink", 13) == 0)
  				{
-@@ -2427,7 +2441,15 @@ void AAMPGstPlayer::SetVideoRectangle(int x, int y, int w, int h)
+@@ -2379,7 +2394,14 @@ void AAMPGstPlayer::SetVideoRectangle(int x, int y, int w, int h)
  #ifndef INTELCE
  	else if (privateContext->video_sink)
  	{
@@ -99,21 +97,20 @@ index d7e27f8..fa2e44c 100644
 +		else
 +		{
 +			g_object_set(privateContext->video_sink, "rectangle", privateContext->videoRectangle, NULL);
-+
 +		}
  	}
  #else
  #if defined(INTELCE_USE_VIDRENDSINK)
 diff --git a/aampgstplayer.h b/aampgstplayer.h
-index 46bd14f..6fbb421 100644
+index 9edb841..bd3ce0f 100644
 --- a/aampgstplayer.h
 +++ b/aampgstplayer.h
-@@ -72,6 +72,8 @@ public:
- 	static void InitializeAAMPGstreamerPlugins();
- 	void NotifyEOS();
+@@ -76,6 +76,8 @@ public:
  	void NotifyFirstFrame(MediaType type);
-+	void SetGLImageRectangle();
+ 	void DumpDiagnostics();
+ 	void SignalTrickModeDiscontinuity();
 +
++	void SetGLImageRectangle();
  private:
  	void PauseAndFlush(bool playAfterFlush);
  	void TearDownStream(MediaType mediaType);

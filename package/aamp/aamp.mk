@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-AAMP_VERSION = ab466f717db428dee9cd51feeae659bb4c5a08dc
+AAMP_VERSION = 0910875ac2bd7ce789432bf8ded9a05ac926164c
 AAMP_SITE_METHOD = git
 AAMP_SITE = https://github.com/rdkcmf/rdk-aamp
 AAMP_INSTALL_STAGING = YES
