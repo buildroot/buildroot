@@ -798,32 +798,77 @@ comment "WebKitBrowser depends on WPE WebKit to be selected"
     depends on !BR2_PACKAGE_WPEWEBKIT
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_WEBPA
-        bool "WebPA"
-        select BR2_PACKAGE_LIBPARODUS
-        select BR2_PACKAGE_TINYXML
-        select BR2_PACKAGE_PARODUS
-        help
-           WPE Platform AVNClient plugin
+    bool "WebPA"
+    select BR2_PACKAGE_LIBPARODUS
+    select BR2_PACKAGE_TINYXML
+    select BR2_PACKAGE_PARODUS
+    help
+      WPE Platform WebPA plugin
 
 if BR2_PACKAGE_WPEFRAMEWORK_WEBPA
 config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_AUTOSTART
-        bool "autostart"
-        default n
+    bool "autostart"
+    default n
 config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_SERVICE
-        bool "parodus service"
-        default y
+    bool "parodus service"
+    default y
+
+if BR2_PACKAGE_WPEFRAMEWORK_WEBPA_SERVICE
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_PINGWAITTIME
+    string "Ping Waiting Time"
+    default "60"
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_WEBPAURL
+    string "WebPA Server URL (IP/DNSName and Port)"
+    default "http://192.168.1.1"
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_PARODUSLOCALURL
+    string "Parodus Local URL (IP::PORT)"
+    default "tcp://127.0.0.1:6666"
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_PARTENRID
+    string "Partner ID"
+    default "Metrological"
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_BACKOFFMAX
+    string "Max retry sleep for WebPA connection"
+    default "9"
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CERTPATH
+    string "SSL Certificate Path of Parodus Service"
+    default "/etc/ssl/certs/ca-certificates.crt"
+endif
+
 config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CCSP
         bool "webpa ccsp client"
         select BR2_PACKAGE_PARODUS2CCSP
         default n
+
+if BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CCSP
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CCSPCLIENTURL
+    string "Parodus to CCSP Client URL (IP::PORT)"
+    default "tcp://127.0.0.1:6667"
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CCSP_DATAFILE
+    string "Device properties file for CCSP client"
+    default ""
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CCSP_CONFIGFILE
+    string "Config File for CCSP Client"
+    default "/etc/webpa_cfg.json"
+endif
+
 config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_GENERIC_ADAPTER
         bool "webpa generic adapter client"
         default y
 
 if BR2_PACKAGE_WPEFRAMEWORK_WEBPA_GENERIC_ADAPTER
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_GENERICCLIENTURL
+    string "Parodus to Generic Client URL (IP::PORT)"
+    default "tcp://127.0.0.1:6667"
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_DATAMODELFILE
+    string "Data Model File for Generic Adapter"
+    default "/usr/share/WPEFramework/WebPA/data-model.xml"
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_NOTIFYCONFIGFILE
+    string "Notifier configuration file for Generic Adapter"
+    default "/usr/share/WPEFramework/WebPA/notify_webpa_cfg.json"
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_WEBPA_PROFILE
 	bool "Profiles"
-
 if BR2_PACKAGE_WPEFRAMEWORK_WEBPA_PROFILE
 config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_DEVICE_INFO
         bool "device info"
@@ -831,7 +876,6 @@ config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_DEVICE_INFO
 	select BR2_PACKAGE_PROCPS_NG
         default y
 endif
-
 endif
 
 endif
