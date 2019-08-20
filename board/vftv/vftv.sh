@@ -6,7 +6,7 @@ STAR="*"
 
 # Clean up target
 rm -rf "${TARGET_DIR}/usr/lib/gstreamer-1.0/include"
-rm -rf "${TARGET_DIR}/usr/lib/libstdc++.so.6.0.21-gdb.py"
+rm -rf "${TARGET_DIR}/usr/lib/libstdc++.so.*-gdb.py"
 rm -rf "${TARGET_DIR}/etc/ssl/man"
 
 # Temp rootfs dir
