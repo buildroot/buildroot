@@ -456,6 +456,13 @@ else
 GST1_PLUGINS_GOOD_CONF_OPTS += --disable-bz2
 endif
 
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_UGLY_PLUGIN_MPG123),y)
+GST1_PLUGINS_GOOD_CONF_OPTS += --enable-mpg123
+GST1_PLUGINS_GOOD_DEPENDENCIES += mpg123
+else
+GST1_PLUGINS_GOOD_CONF_OPTS += --disable-mpg123
+endif
+
 define GST1_PLUGINS_GOOD_APPLY_DORNE_PATCHES
 	$(APPLY_PATCHES) $(@D) package/gstreamer1/gst1-plugins-good/dorne *.patch
 endef
