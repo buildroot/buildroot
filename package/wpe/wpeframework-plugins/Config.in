@@ -735,6 +735,30 @@ config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_GROUP
         run WebKitBrowser as this group, leave empty to use the same as
         WPEframework
 
+choice BR2_PACKAGE_WPEFRAMEWORK_BROWSER_RESOLUTION
+    default BR2_PACKAGE_WPEFRAMEWORK_BROWSER_RESOLUTION_720P
+    prompt "resolution"
+    help
+      Select browser output resolution
+
+config BR2_PACKAGE_WPEFRAMEWORK_BROWSER_RESOLUTION_720P
+    bool "720p"
+    help
+      Set the resolution to 720p (HD Ready)
+
+config BR2_PACKAGE_WPEFRAMEWORK_BROWSER_RESOLUTION_1080P
+    bool "1080p"
+    help
+      Set the resolution to 1080p (Full HD)
+
+config BR2_PACKAGE_WPEFRAMEWORK_BROWSER_RESOLUTION_2160P
+    bool "2160p"
+    help
+      Set the resolution to 2160p (4k)
+
+endchoice
+
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE
     depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
     bool "youtube"
