@@ -60,6 +60,84 @@ class AttributesOrder(_CheckFunction):
                     text]
 
 
+class CommentsMenusPackagesOrder(_CheckFunction):
+    menu_of_packages = [""]
+    package = [""]
+    print_package_warning = [True]
+
+    def before(self):
+        self.state = ""
+
+    def get_level(self):
+        return len(self.state.split('-')) - 1
+
+    def check_line(self, lineno, text):
+        # We only want to force sorting for the top-level menus
+        if self.filename not in ["package/Config.in",
+                                 "package/Config.in.host"]:
+            return
+
+        m = re.match(r'^\s*source ".*/([^/]*)/Config.in(.host)?"', text)
+        if text.startswith("comment ") or text.startswith("if ") or \
+           text.startswith("menu "):
+
+            if text.startswith("comment"):
+                if not self.state.endswith("-comment"):
+                    self.state += "-comment"
+
+            elif text.startswith("if") or text.startswith("menu"):
+                if text.startswith("if"):
+                    self.state += "-if"
+
+                elif text.startswith("menu"):
+                    self.state += "-menu"
+
+            level = self.get_level()
+
+            try:
+                self.menu_of_packages[level] = text[:-1]
+                self.package[level] = ""
+                self.print_package_warning[level] = True
+            except IndexError:
+                self.menu_of_packages.append(text[:-1])
+                self.package.append("")
+                self.print_package_warning.append(True)
+
+        elif text.startswith("endif") or text.startswith("endmenu"):
+            if self.state.endswith("comment"):
+                self.state = self.state[:-8]
+
+            if text.startswith("endif"):
+                self.state = self.state[:-3]
+
+            elif text.startswith("endmenu"):
+                self.state = self.state[:-5]
+
+        elif m:
+            level = self.get_level()
+            new_package = m.group(1)
+
+            # We order _ before A, so replace it with .
+            new_package_ord = new_package.replace('_', '.')
+
+            if self.package[level] != "" and \
+               self.print_package_warning[level] and \
+               new_package_ord < self.package[level]:
+                self.print_package_warning[level] = False
+                prefix = "{}:{}: ".format(self.filename, lineno)
+                spaces = " " * len(prefix)
+                return ["{prefix}Packages in: {menu},\n"
+                        "{spaces}are not alphabetically ordered;\n"
+                        "{spaces}correct order: '-', '_', digits, capitals, lowercase;\n"
+                        "{spaces}first incorrect package: {package}"
+                        .format(prefix=prefix, spaces=spaces,
+                                menu=self.menu_of_packages[level],
+                                package=new_package),
+                        text]
+
+            self.package[level] = new_package_ord
+
+
 class HelpText(_CheckFunction):
     HELP_TEXT_FORMAT = re.compile("^\t  .{,62}$")
     URL_ONLY = re.compile("^(http|https|git)://\S*$")

@@ -25,12 +25,11 @@ GST1_PLUGINS_GOOD_CONF_OPTS = \
 # Options which require currently unpackaged libraries
 GST1_PLUGINS_GOOD_CONF_OPTS += \
 	--disable-libdv \
-	--disable-dv1394 \
-	--disable-shout2
+	--disable-dv1394
 
 GST1_PLUGINS_GOOD_DEPENDENCIES = gstreamer1 gst1-plugins-base
 
-ifeq ($(BR2_PACKAGE_JACK2),y)
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_JACK),y)
 GST1_PLUGINS_GOOD_CONF_OPTS += --enable-jack
 GST1_PLUGINS_GOOD_DEPENDENCIES += jack2
 else
@@ -343,6 +342,13 @@ else
 GST1_PLUGINS_GOOD_CONF_OPTS += --disable-qt
 endif
 
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_SHOUT2),y)
+GST1_PLUGINS_GOOD_CONF_OPTS += --enable-shout2
+GST1_PLUGINS_GOOD_DEPENDENCIES += libshout
+else
+GST1_PLUGINS_GOOD_CONF_OPTS += --disable-shout2
+endif
+
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_V4L2),y)
 GST1_PLUGINS_GOOD_CONF_OPTS += --enable-gst_v4l2
 else
@@ -427,6 +433,13 @@ GST1_PLUGINS_GOOD_CONF_OPTS += --enable-taglib
 GST1_PLUGINS_GOOD_DEPENDENCIES += taglib
 else
 GST1_PLUGINS_GOOD_CONF_OPTS += --disable-taglib
+endif
+
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_TWOLAME),y)
+GST1_PLUGINS_GOOD_CONF_OPTS += --enable-twolame
+GST1_PLUGINS_GOOD_DEPENDENCIES += twolame
+else
+GST1_PLUGINS_GOOD_CONF_OPTS += --disable-twolame
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_VPX),y)

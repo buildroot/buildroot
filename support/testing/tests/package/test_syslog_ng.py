@@ -9,12 +9,14 @@ class TestSyslogNg(infra.basetest.BRTest):
         BR2_PACKAGE_BUSYBOX_SHOW_OTHERS=y
         BR2_PACKAGE_SYSLOG_NG=y
         BR2_TARGET_ROOTFS_CPIO=y
-        BR2_TARGET_ROOTFS_TAR is not set
+        # BR2_TARGET_ROOTFS_TAR is not set
         """
 
     def test_run(self):
         cpio_file = os.path.join(self.builddir, "images", "rootfs.cpio")
-        self.emulator.boot(arch="armv5", kernel="builtin", options=["-initrd", cpio_file])
+        self.emulator.boot(arch="armv5",
+                           kernel="builtin",
+                           options=["-initrd", cpio_file])
         self.emulator.login()
 
         cmd = "grep syslog-ng /var/log/messages | grep starting"

@@ -4,9 +4,14 @@
 #
 ################################################################################
 
+ifeq ($(BR2_csky),y)
+QEMU_VERSION = b517e1dc3125a57555d67a8deed9eac7b42288e2
+QEMU_SITE = $(call github,c-sky,qemu,$(QEMU_VERSION))
+else
 QEMU_VERSION = 3.1.0
 QEMU_SOURCE = qemu-$(QEMU_VERSION).tar.xz
 QEMU_SITE = http://download.qemu.org
+endif
 QEMU_LICENSE = GPL-2.0, LGPL-2.1, MIT, BSD-3-Clause, BSD-2-Clause, Others/BSD-1c
 QEMU_LICENSE_FILES = COPYING COPYING.LIB
 # NOTE: there is no top-level license file for non-(L)GPL licenses;
@@ -172,6 +177,7 @@ HOST_QEMU_DEPENDENCIES = host-pkgconf host-zlib host-libglib2 host-pixman
 #       mipsel          mipsel
 #       mips64          mips64
 #       mips64el        mips64el
+#       nios2           nios2
 #       powerpc         ppc
 #       powerpc64       ppc64
 #       powerpc64le     ppc64 (system) / ppc64le (usermode)
@@ -180,8 +186,8 @@ HOST_QEMU_DEPENDENCIES = host-pkgconf host-zlib host-libglib2 host-pixman
 #       sh4eb           sh4eb
 #       sh4a            sh4
 #       sh4aeb          sh4eb
-#       sh64            not supported
 #       sparc           sparc
+#       sparc64         sparc64
 
 HOST_QEMU_ARCH = $(ARCH)
 ifeq ($(HOST_QEMU_ARCH),i486)
@@ -209,6 +215,13 @@ endif
 ifeq ($(HOST_QEMU_ARCH),sh4aeb)
 HOST_QEMU_ARCH = sh4eb
 endif
+ifeq ($(HOST_QEMU_ARCH),csky)
+ifeq ($(BR2_ck610),y)
+HOST_QEMU_ARCH = cskyv1
+else
+HOST_QEMU_ARCH = cskyv2
+endif
+endif
 HOST_QEMU_SYS_ARCH ?= $(HOST_QEMU_ARCH)
 
 ifeq ($(BR2_PACKAGE_HOST_QEMU_SYSTEM_MODE),y)
@@ -228,28 +241,6 @@ ifneq ($(HOST_QEMU_HOST_SYSTEM_TYPE),Linux)
 $(error "qemu-user can only be used on Linux hosts")
 endif
 
-# kernel version as major*256 + minor
-HOST_QEMU_HOST_SYSTEM_VERSION = $(shell uname -r | awk -F. '{ print $$1 * 256 + $$2 }')
-HOST_QEMU_TARGET_SYSTEM_VERSION = $(shell echo $(BR2_TOOLCHAIN_HEADERS_AT_LEAST) | awk -F. '{ print $$1 * 256 + $$2 }')
-HOST_QEMU_COMPARE_VERSION = $(shell test $(HOST_QEMU_HOST_SYSTEM_VERSION) -ge $(HOST_QEMU_TARGET_SYSTEM_VERSION) && echo OK)
-
-#
-# The principle of qemu-user is that it emulates the instructions of
-# the target architecture when running the binary, and then when this
-# binary does a system call, it converts this system call into a
-# system call on the host machine. This mechanism makes an assumption:
-# that the target binary will not do system calls that do not exist on
-# the host. This basically requires that the target binary should be
-# built with kernel headers that are older or the same as the kernel
-# version running on the host machine.
-#
-
-ifeq ($(BR_BUILDING),y)
-ifneq ($(HOST_QEMU_COMPARE_VERSION),OK)
-$(error "Refusing to build qemu-user: target Linux version newer than host's.")
-endif
-endif # BR_BUILDING
-
 else # BR2_PACKAGE_HOST_QEMU_LINUX_USER_MODE
 HOST_QEMU_OPTS += --disable-linux-user
 endif # BR2_PACKAGE_HOST_QEMU_LINUX_USER_MODE
@@ -259,8 +250,11 @@ HOST_QEMU_OPTS += --enable-vde
 HOST_QEMU_DEPENDENCIES += host-vde2
 endif
 
-ifdef ($(BR2_PACKAGE_HOST_QEMU_VIRTFS),y)
+ifeq ($(BR2_PACKAGE_HOST_QEMU_VIRTFS),y)
 HOST_QEMU_OPTS += --enable-virtfs
+HOST_QEMU_DEPENDENCIES += host-libcap
+else
+HOST_QEMU_OPTS += --disable-virtfs
 endif
 
 # Override CPP, as it expects to be able to call it like it'd

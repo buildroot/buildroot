@@ -404,6 +404,12 @@ config BR2_PACKAGE_COLLECTD_PROTOCOLS
 	help
 	  Collects information about the network protocols.
 
+config BR2_PACKAGE_COLLECTD_REDIS
+	bool "redis"
+	select BR2_PACKAGE_HIREDIS
+	help
+	  Connects to one or more instances of Redis.
+
 config BR2_PACKAGE_COLLECTD_SENSORS
 	bool "sensors"
 	select BR2_PACKAGE_LM_SENSORS
@@ -524,6 +530,13 @@ menu "write plugins"
 
 comment "Select at least one for collectd to be useful"
 
+config BR2_PACKAGE_COLLECTD_AMQP
+	bool "amqp"
+	select BR2_PACKAGE_RABBITMQ_C
+	help
+	  Send/receive values via the Advanced Message Queuing Protocol
+	  (AMQP).
+
 config BR2_PACKAGE_COLLECTD_CSV
 	bool "csv"
 	help
@@ -602,6 +615,12 @@ config BR2_PACKAGE_COLLECTD_WRITEPROMETHEUS
 comment "write_prometheus needs a toolchain w/ C++, host gcc >= 4.8"
 	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_HOST_GCC_AT_LEAST_4_8
 	depends on BR2_HOSTARCH = "x86_64" || BR2_HOSTARCH = "x86"
+
+config BR2_PACKAGE_COLLECTD_WRITEREDIS
+	bool "write_redis"
+	select BR2_PACKAGE_HIREDIS
+	help
+	  Sends data to Redis.
 
 config BR2_PACKAGE_COLLECTD_WRITESENSU
 	bool "write_sensu"

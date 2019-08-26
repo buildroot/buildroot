@@ -20,6 +20,13 @@ DAQ_CONF_OPTS += --disable-ipq-module
 DAQ_CONF_OPTS += --with-dnet-includes=$(STAGING_DIR)/usr/includ
 DAQ_CONF_OPTS += --with-dnet-libraries=$(STAGING_DIR)/usr/lib
 
+# Set --with-dnet-{includes,libraries} even if ipq and nfq modules are disabled
+# otherwise daq will call 'dnet-config --cflags' and 'dnet-config --libs' which
+# will result in a build failure if libdnet is installed on host
+DAQ_CONF_OPTS += \
+	--with-dnet-includes=$(STAGING_DIR)/usr/include \
+	--with-dnet-libraries=$(STAGING_DIR)/usr/lib
+
 ifeq ($(BR2_PACKAGE_LIBDNET)$(BR2_PACKAGE_LIBNETFILTER_QUEUE),yy)
 DAQ_DEPENDENCIES += libdnet libnetfilter_queue
 DAQ_CONF_OPTS += --enable-nfq-module

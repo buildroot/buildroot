@@ -23,7 +23,6 @@ import os
 from collections import defaultdict
 import re
 import subprocess
-import sys
 import requests  # URL checking
 import json
 import certifi
@@ -38,6 +37,10 @@ RM_API_STATUS_ERROR = 1
 RM_API_STATUS_FOUND_BY_DISTRO = 2
 RM_API_STATUS_FOUND_BY_PATTERN = 3
 RM_API_STATUS_NOT_FOUND = 4
+
+# Used to make multiple requests to the same host. It is global
+# because it's used by sub-processes.
+http_pool = None
 
 
 class Package:
@@ -222,70 +225,41 @@ def get_pkglist(npackages, package_list):
 
 
 def package_init_make_info():
-    # Licenses
-    o = subprocess.check_output(["make", "BR2_HAVE_DOT_CONFIG=y",
-                                 "-s", "printvars", "VARS=%_LICENSE"])
-    for l in o.splitlines():
-        # Get variable name and value
-        pkgvar, value = l.split("=")
-
-        # If present, strip HOST_ from variable name
-        if pkgvar.startswith("HOST_"):
-            pkgvar = pkgvar[5:]
-
-        # Strip _LICENSE
-        pkgvar = pkgvar[:-8]
-
-        # If value is "unknown", no license details available
-        if value == "unknown":
-            continue
-        Package.all_licenses.append(pkgvar)
-
-    # License files
-    o = subprocess.check_output(["make", "BR2_HAVE_DOT_CONFIG=y",
-                                 "-s", "printvars", "VARS=%_LICENSE_FILES"])
-    for l in o.splitlines():
-        # Get variable name and value
-        pkgvar, value = l.split("=")
-
-        # If present, strip HOST_ from variable name
-        if pkgvar.startswith("HOST_"):
-            pkgvar = pkgvar[5:]
-
-        if pkgvar.endswith("_MANIFEST_LICENSE_FILES"):
-            continue
-
-        # Strip _LICENSE_FILES
-        pkgvar = pkgvar[:-14]
-
-        Package.all_license_files.append(pkgvar)
-
-    # Version
-    o = subprocess.check_output(["make", "BR2_HAVE_DOT_CONFIG=y",
-                                 "-s", "printvars", "VARS=%_VERSION"])
+    # Fetch all variables at once
+    variables = subprocess.check_output(["make", "BR2_HAVE_DOT_CONFIG=y", "-s", "printvars",
+                                         "VARS=%_LICENSE %_LICENSE_FILES %_VERSION"])
+    variable_list = variables.splitlines()
 
     # We process first the host package VERSION, and then the target
     # package VERSION. This means that if a package exists in both
-    # target and host variants, with different version numbers
-    # (unlikely), we'll report the target version number.
-    version_list = o.splitlines()
-    version_list = [x for x in version_list if x.startswith("HOST_")] + \
-                   [x for x in version_list if not x.startswith("HOST_")]
-    for l in version_list:
+    # target and host variants, with different values (eg. version
+    # numbers (unlikely)), we'll report the target one.
+    variable_list = [x[5:] for x in variable_list if x.startswith("HOST_")] + \
+                    [x for x in variable_list if not x.startswith("HOST_")]
+
+    for l in variable_list:
         # Get variable name and value
         pkgvar, value = l.split("=")
 
-        # If present, strip HOST_ from variable name
-        if pkgvar.startswith("HOST_"):
-            pkgvar = pkgvar[5:]
+        # Strip the suffix according to the variable
+        if pkgvar.endswith("_LICENSE"):
+            # If value is "unknown", no license details available
+            if value == "unknown":
+                continue
+            pkgvar = pkgvar[:-8]
+            Package.all_licenses.append(pkgvar)
 
-        if pkgvar.endswith("_DL_VERSION"):
-            continue
+        elif pkgvar.endswith("_LICENSE_FILES"):
+            if pkgvar.endswith("_MANIFEST_LICENSE_FILES"):
+                continue
+            pkgvar = pkgvar[:-14]
+            Package.all_license_files.append(pkgvar)
 
-        # Strip _VERSION
-        pkgvar = pkgvar[:-8]
-
-        Package.all_versions[pkgvar] = value
+        elif pkgvar.endswith("_VERSION"):
+            if pkgvar.endswith("_DL_VERSION"):
+                continue
+            pkgvar = pkgvar[:-8]
+            Package.all_versions[pkgvar] = value
 
 
 def check_url_status_worker(url, url_status):
@@ -346,6 +320,15 @@ def release_monitoring_get_latest_version_by_guess(pool, name):
     return (RM_API_STATUS_NOT_FOUND, None, None)
 
 
+def check_package_latest_version_worker(name):
+    """Wrapper to try both by name then by guess"""
+    print(name)
+    res = release_monitoring_get_latest_version_by_distro(http_pool, name)
+    if res[0] == RM_API_STATUS_NOT_FOUND:
+        res = release_monitoring_get_latest_version_by_guess(http_pool, name)
+    return res
+
+
 def check_package_latest_version(packages):
     """
     Fills in the .latest_version field of all Package objects
@@ -361,18 +344,15 @@ def check_package_latest_version(packages):
     - id: string containing the id of the project corresponding to this
       package, as known by release-monitoring.org
     """
-    pool = HTTPSConnectionPool('release-monitoring.org', port=443,
-                               cert_reqs='CERT_REQUIRED', ca_certs=certifi.where(),
-                               timeout=30)
-    count = 0
-    for pkg in packages:
-        v = release_monitoring_get_latest_version_by_distro(pool, pkg.name)
-        if v[0] == RM_API_STATUS_NOT_FOUND:
-            v = release_monitoring_get_latest_version_by_guess(pool, pkg.name)
-
-        pkg.latest_version = v
-        print("[%d/%d] Package %s" % (count, len(packages), pkg.name))
-        count += 1
+    global http_pool
+    http_pool = HTTPSConnectionPool('release-monitoring.org', port=443,
+                                    cert_reqs='CERT_REQUIRED', ca_certs=certifi.where(),
+                                    timeout=30)
+    worker_pool = Pool(processes=64)
+    results = worker_pool.map(check_package_latest_version_worker, (pkg.name for pkg in packages))
+    for pkg, r in zip(packages, results):
+        pkg.latest_version = r
+    del http_pool
 
 
 def calculate_stats(packages):
@@ -679,43 +659,76 @@ def dump_html_stats(f, stats):
     f.write("</table>\n")
 
 
-def dump_gen_info(f):
+def dump_html_gen_info(f, date, commit):
     # Updated on Mon Feb 19 08:12:08 CET 2018, Git commit aa77030b8f5e41f1c53eb1c1ad664b8c814ba032
-    o = subprocess.check_output(["git", "log", "master", "-n", "1", "--pretty=format:%H"])
-    git_commit = o.splitlines()[0]
-    f.write("<p><i>Updated on %s, git commit %s</i></p>\n" %
-            (str(datetime.datetime.utcnow()), git_commit))
+    f.write("<p><i>Updated on %s, git commit %s</i></p>\n" % (str(date), commit))
 
 
-def dump_html(packages, stats, output):
+def dump_html(packages, stats, date, commit, output):
     with open(output, 'w') as f:
         f.write(html_header)
         dump_html_all_pkgs(f, packages)
         dump_html_stats(f, stats)
-        dump_gen_info(f)
+        dump_html_gen_info(f, date, commit)
         f.write(html_footer)
+
+
+def dump_json(packages, stats, date, commit, output):
+    # Format packages as a dictionnary instead of a list
+    # Exclude local field that does not contains real date
+    excluded_fields = ['url_worker', 'name']
+    pkgs = {
+        pkg.name: {
+            k: v
+            for k, v in pkg.__dict__.items()
+            if k not in excluded_fields
+        } for pkg in packages
+    }
+    # Aggregate infrastructures into a single dict entry
+    statistics = {
+        k: v
+        for k, v in stats.items()
+        if not k.startswith('infra-')
+    }
+    statistics['infra'] = {k[6:]: v for k, v in stats.items() if k.startswith('infra-')}
+    # The actual structure to dump, add commit and date to it
+    final = {'packages': pkgs,
+             'stats': statistics,
+             'commit': commit,
+             'date': str(date)}
+
+    with open(output, 'w') as f:
+        json.dump(final, f, indent=2, separators=(',', ': '))
+        f.write('\n')
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-o', dest='output', action='store', required=True,
+    output = parser.add_argument_group('output', 'Output file(s)')
+    output.add_argument('--html', dest='html', action='store',
                         help='HTML output file')
-    parser.add_argument('-n', dest='npackages', type=int, action='store',
-                        help='Number of packages')
-    parser.add_argument('-p', dest='packages', action='store',
-                        help='List of packages (comma separated)')
-    return parser.parse_args()
+    output.add_argument('--json', dest='json', action='store',
+                        help='JSON output file')
+    packages = parser.add_mutually_exclusive_group()
+    packages.add_argument('-n', dest='npackages', type=int, action='store',
+                          help='Number of packages')
+    packages.add_argument('-p', dest='packages', action='store',
+                          help='List of packages (comma separated)')
+    args = parser.parse_args()
+    if not args.html and not args.json:
+        parser.error('at least one of --html or --json (or both) is required')
+    return args
 
 
 def __main__():
     args = parse_args()
-    if args.npackages and args.packages:
-        print("ERROR: -n and -p are mutually exclusive")
-        sys.exit(1)
     if args.packages:
         package_list = args.packages.split(",")
     else:
         package_list = None
+    date = datetime.datetime.utcnow()
+    commit = subprocess.check_output(['git', 'log', 'master', '-n', '1',
+                                      '--pretty=format:%H']).splitlines()[0]
     print("Build package list ...")
     packages = get_pkglist(args.npackages, package_list)
     print("Getting package make info ...")
@@ -735,8 +748,12 @@ def __main__():
     check_package_latest_version(packages)
     print("Calculate stats")
     stats = calculate_stats(packages)
-    print("Write HTML")
-    dump_html(packages, stats, args.output)
+    if args.html:
+        print("Write HTML")
+        dump_html(packages, stats, date, commit, args.html)
+    if args.json:
+        print("Write JSON")
+        dump_json(packages, stats, date, commit, args.json)
 
 
 __main__()

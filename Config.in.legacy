@@ -144,7 +144,97 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2019.08"
+
+config BR2_PACKAGE_LIBAMCODEC
+	bool "liamcodec package was removed"
+	select BR2_LEGACY
+	help
+	  Support for odroidc2 based systems was removed, making the
+	  libamcodec package useless.
+
+config BR2_PACKAGE_ODROID_SCRIPTS
+	bool "odroid-scripts package was removed"
+	select BR2_LEGACY
+	help
+	  Support for odroidc2 based systems was removed, making the
+	  odroid-scripts package useless.
+
+config BR2_PACKAGE_ODROID_MALI
+	bool "odroid-mali package was removed"
+	select BR2_LEGACY
+	help
+	  Support for odroidc2 based systems was removed, making the
+	  odroid-mali package useless.
+
+config BR2_PACKAGE_KODI_PLATFORM_AML
+	bool "Kodi AMLogic support was removed"
+	select BR2_LEGACY
+	help
+	  Support for AMLogic was removed due to the removal of the
+	  odroidc2 defconfig.
+
+config BR2_GCC_VERSION_6_X
+	bool "gcc 6.x support removed"
+	select BR2_LEGACY
+	help
+	  Support for gcc version 6.x has been removed. The current
+	  default version (8.x or later) has been selected instead.
+
+config BR2_GCC_VERSION_4_9_X
+	bool "gcc 4.9.x support removed"
+	select BR2_LEGACY
+	help
+	  Support for gcc version 4.9.x has been removed. The current
+	  default version (8.x or later) has been selected instead.
+
+config BR2_GDB_VERSION_7_12
+	bool "gdb 7.12.x has been removed"
+	select BR2_LEGACY
+	help
+	  The 7.12.x version of gdb has been removed. Use a newer
+	  version instead.
+
+config BR2_PACKAGE_XAPP_MKFONTDIR
+	bool "mkfontdir is now included in xapp_mkfontscale"
+	select BR2_PACKAGE_XAPP_MKFONTSCALE
+	select BR2_LEGACY
+	help
+	  xapp_mkfontscale now includes the mkfontdir script previously
+	  distributed separately for compatibility with older X11
+	  versions.
+
+config BR2_GDB_VERSION_8_0
+	bool "gdb 8.0.x has been removed"
+	select BR2_LEGACY
+	help
+	  The 8.0.x version of gdb has been removed. Use a newer
+	  version instead.
+
+config BR2_KERNEL_HEADERS_4_20
+	bool "kernel headers version 4.20.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 4.20.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+config BR2_KERNEL_HEADERS_5_0
+	bool "kernel headers version 5.0.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 5.0.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
 comment "Legacy options removed in 2019.05"
+
+config BR2_CSKY_DSP
+	bool "C-SKY DSP support removed"
+	select BR2_LEGACY
+	help
+	  C-SKY DSP instruction support for ck810 / ck807 was removed,
+	  as it was no longer supported in C-SKY gcc. Perhaps the VDSP
+	  instructions should be used instead, using the BR2_CSKY_VDSP
+	  option.
 
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_COMPOSITOR
 	bool "compositor moved to gst1-plugins-base"

@@ -14,9 +14,12 @@ config BR2_HOSTARCH
 	string
 	option env="HOSTARCH"
 
-config BR2_BUILD_DIR
+config BR2_BASE_DIR
 	string
-	option env="BUILD_DIR"
+	option env="BASE_DIR"
+
+# br2-external paths definitions
+source "$BR2_BASE_DIR/.br2-external.in.paths"
 
 # Hidden config symbols for packages to check system gcc version
 config BR2_HOST_GCC_VERSION
@@ -712,6 +715,13 @@ endmenu
 
 comment "Security Hardening Options"
 
+config BR2_PIC_PIE
+	bool "Build code with PIC/PIE"
+	depends on BR2_SHARED_LIBS
+	help
+	  Generate Position-Independent Code (PIC) and link
+	  Position-Independent Executables (PIE).
+
 choice
 	bool "Stack Smashing Protection"
 	default BR2_SSP_ALL if BR2_ENABLE_SSP # legacy
@@ -746,14 +756,14 @@ config BR2_SSP_REGULAR
 
 config BR2_SSP_STRONG
 	bool "-fstack-protector-strong"
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 	help
 	  Like -fstack-protector but includes additional functions to be
 	  protected - those that have local array definitions, or have
 	  references to local frame addresses.
 
-comment "Stack Smashing Protection strong needs a toolchain w/ gcc >= 4.9"
-	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
+	  -fstack-protector-strong officially appeared in gcc 4.9, but
+	  some vendors have backported -fstack-protector-strong to older
+	  versions of gcc.
 
 config BR2_SSP_ALL
 	bool "-fstack-protector-all"
@@ -794,6 +804,7 @@ config BR2_RELRO_PARTIAL
 
 config BR2_RELRO_FULL
 	bool "Full"
+	select BR2_PIC_PIE
 	help
 	  This option includes the partial configuration, but also marks
 	  the GOT as read-only at the cost of initialization time during
@@ -865,4 +876,5 @@ source "package/Config.in.host"
 
 source "Config.in.legacy"
 
-source "$BR2_BUILD_DIR/.br2-external.in"
+# br2-external menus definitions
+source "$BR2_BASE_DIR/.br2-external.in.menus"

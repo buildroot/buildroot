@@ -22,6 +22,10 @@ SNORT_CONF_OPTS = \
 	--with-dnet-includes=$(STAGING_DIR)/usr/include \
 	--with-dnet-libraries=$(STAGING_DIR)/usr/lib \
 
+ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_85180),y)
+SNORT_CFLAGS += -O0
+endif
+
 ifeq ($(BR2_PACKAGE_LIBTIRPC),y)
 SNORT_DEPENDENCIES += libtirpc host-pkgconf
 SNORT_CFLAGS += `$(PKG_CONFIG_HOST_BINARY) --cflags libtirpc`
