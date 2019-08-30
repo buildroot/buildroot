@@ -27,6 +27,8 @@ if [ ! -d $DESTINATION ]; then
 	cp -rfap /etc/* $DESTINATION/etc
 	cp -rfap /usr/lib/* $DESTINATION/lib
 	cp -rfap /usr/bin/* $DESTINATION/bin
+	
+	cp -rfap $SOURCE/usr/bin/* $DESTINATION/bin
 
 	ln -s $SOURCE/usr/share/mime $DESTINATION/share/mime
 	ln -s $SOURCE/usr/share/X11 $DESTINATION/share/X11
@@ -37,6 +39,7 @@ if [ ! -d $DESTINATION ]; then
 	ln -s $SOURCE/etc/fonts $DESTINATION/etc/fonts
 	ln -s $SOURCE/etc/WPEFramework $DESTINATION/etc/WPEFramework
 	ln -s $SOURCE/usr/lib/gio $DESTINATION/lib/gio
+
 fi
 
 grep -q "/usr/share ext4" /proc/mounts && echo "/usr/share is already mounted" || mount -t ext4 --bind $DESTINATION/share/ /usr/share/
