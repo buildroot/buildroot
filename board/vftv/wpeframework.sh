@@ -22,13 +22,11 @@ if [ ! -d $DESTINATION ]; then
 	mkdir -p $DESTINATION/share
 	mkdir -p $DESTINATION/etc
 	mkdir -p $DESTINATION/lib
-	mkdir -p $DESTINATION/bin
+	mkdir -p $DESTINATION/usr/bin
 	cp -rfap /usr/share/* $DESTINATION/share
 	cp -rfap /etc/* $DESTINATION/etc
 	cp -rfap /usr/lib/* $DESTINATION/lib
-	cp -rfap /usr/bin/* $DESTINATION/bin
-	
-	cp -rfap $SOURCE/usr/bin/* $DESTINATION/bin
+	cp -rfap /usr/bin/* $DESTINATION/usr/bin
 
 	ln -s $SOURCE/usr/share/mime $DESTINATION/share/mime
 	ln -s $SOURCE/usr/share/X11 $DESTINATION/share/X11
@@ -39,13 +37,15 @@ if [ ! -d $DESTINATION ]; then
 	ln -s $SOURCE/etc/fonts $DESTINATION/etc/fonts
 	ln -s $SOURCE/etc/WPEFramework $DESTINATION/etc/WPEFramework
 	ln -s $SOURCE/usr/lib/gio $DESTINATION/lib/gio
-
+	ln -s $SOURCE/usr/bin/WPENetworkProcess $DESTINATION/usr/bin/WPENetworkProcess
+	ln -s $SOURCE/usr/bin/WPEWebProcess $DESTINATION/usr/bin/WPEWebProcess
+	ln -s $SOURCE/usr/bin/WPEStorageProcess $DESTINATION/usr/bin/WPEStorageProcess
 fi
 
-grep -q "/usr/share ext4" /proc/mounts && echo "/usr/share is already mounted" || mount -t ext4 --bind $DESTINATION/share/ /usr/share/
-grep -q "/etc ext4" /proc/mounts && echo "/etc is already mounted" || mount -t ext4 --bind $DESTINATION/etc/ /etc/
-grep -q "/usr/lib ext4" /proc/mounts && echo "/usr/lib is already mounted" || mount -t ext4 --bind $DESTINATION/lib/ /usr/lib/
-grep -q "/usr/bin ext4" /proc/mounts && echo "/usr/bin is already mounted" || mount -t ext4 --bind $DESTINATION/bin /usr/bin/
+grep -q "/usr/share ext4" /proc/mounts && echo "/usr/share is already mounted" || mount -t ext4 --bind $DESTINATION/share /usr/share
+grep -q "/etc ext4" /proc/mounts && echo "/etc is already mounted" || mount -t ext4 --bind $DESTINATION/etc /etc
+grep -q "/usr/lib ext4" /proc/mounts && echo "/usr/lib is already mounted" || mount -t ext4 --bind $DESTINATION/lib /usr/lib
+grep -q "/usr/bin ext4" /proc/mounts && echo "/usr/bin is already mounted" || mount -t ext4 --bind $DESTINATION/usr/bin/ /usr/bin
 
 #LD_PRELOAD=$SOURCE/usr/lib/libstdc\+\+.so.6.0.21 WPEFramework
 WPEFramework
