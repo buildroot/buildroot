@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-NMAP_VERSION = 7.70
+NMAP_VERSION = 7.80
 NMAP_SITE = https://nmap.org/dist
 NMAP_SOURCE = nmap-$(NMAP_VERSION).tar.bz2
 NMAP_DEPENDENCIES = liblinear libpcap
-NMAP_CONF_OPTS = --without-liblua --without-zenmap \
+NMAP_CONF_OPTS = --with-liblua=included --without-zenmap \
 	--with-libdnet=included
 NMAP_LICENSE = nmap license
 NMAP_LICENSE_FILES = COPYING
@@ -42,7 +42,7 @@ else
 NMAP_CONF_OPTS += --without-openssl
 endif
 
-NMAP_INSTALL_TARGET_OPTS = DESTDIR=$(TARGET_DIR)
+NMAP_INSTALL_TARGET_OPTS = DESTDIR=$(TARGET_DIR) install-nse
 
 ifeq ($(BR2_PACKAGE_NMAP_NCAT),y)
 NMAP_CONF_OPTS += --with-ncat
