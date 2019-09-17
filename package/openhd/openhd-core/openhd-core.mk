@@ -30,11 +30,11 @@ endef
 
 # When using systemd, make sure the openhd service starts
 define OPENHD_CORE_INSTALL_INIT_SYSTEMD
-	# $(INSTALL) -D -m 644 package/openhd/openhd-core/openhd-start.service \
-	# 	$(TARGET_DIR)/etc/systemd/system/openhd-start.service
-	# $(INSTALL) -d $(TARGET_DIR)/etc/systemd/system/sysinit.target.wants
-	# ln -sf  ../openhd-start.service \
-	# 	 $(TARGET_DIR)/etc/systemd/system/sysinit.target.wants/
+	$(INSTALL) -D -m 644 $(@D)/openhd-start.service \
+		$(TARGET_DIR)/etc/systemd/system/openhd-start.service
+	$(INSTALL) -d $(TARGET_DIR)/etc/systemd/system/sysinit.target.wants
+	ln -sf  ../openhd-start.service \
+		 $(TARGET_DIR)/etc/systemd/system/sysinit.target.wants/
 endef
 
 $(eval $(generic-package))
