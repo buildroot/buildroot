@@ -18,7 +18,10 @@ BR2_LINUX_KERNEL_NEEDS_HOST_OPENSSL=y
 # Kernel config for openhd raspberrypi0w
 BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES="kernelconfigs/raspberrypi0.frag"
 
+# Needed packages
 BR2_PACKAGE_RPI_FIRMWARE=y
+BR2_PACKAGE_WIRINGPI=y
+BR2_PACKAGE_LIBPCAP=y
 
 # Openhd specific packages
 BR2_PACKAGE_OPENHDCORE=y
