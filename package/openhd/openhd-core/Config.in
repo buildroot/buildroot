@@ -1,5 +1,6 @@
 config BR2_PACKAGE_OPENHD_CORE
 	bool "openhd-core"
+	depends on BR2_PACKAGE_WIRINGNP || BR2_PACKAGE_WIRINGPI
 	help
 	  This will install Open.HD core applications
 
