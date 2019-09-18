@@ -47,3 +47,13 @@ BR2_PACKAGE_HOST_GENIMAGE=y
 BR2_PACKAGE_HOST_MTOOLS=y
 BR2_ROOTFS_POST_IMAGE_SCRIPT="support/scripts/genimage.sh"
 BR2_ROOTFS_POST_SCRIPT_ARGS="-c board/friendlyarm/nanopi-neo2/genimage.cfg"
+
+# Systemd for services
+BR2_INIT_SYSTEMD=y
+
+# Needed packages
+BR2_PACKAGE_LIBPCAP=y
+BR2_PACKAGE_WIRINGNP=y
+
+# Openhd specific packages
+BR2_PACKAGE_OPENHD_CORE=y
