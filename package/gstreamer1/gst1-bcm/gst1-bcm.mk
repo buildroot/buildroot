@@ -177,7 +177,7 @@ define GST1_BCM_APPLY_VSS_FIX
  package/vss-sdk/gst1/brcm.no_opus.fix.sh ${@D}
  package/vss-sdk/gst1/brcm.fix.sh ${@D}
 endef
-GST1_BCM_POST_PATCH_HOOKS += GST1_BCM_APPLY_VSS_FIX
+GST1_BCM_PRE_CONFIGURE_HOOKS += GST1_BCM_APPLY_VSS_FIX
 endif
 
 $(eval $(autotools-package))
