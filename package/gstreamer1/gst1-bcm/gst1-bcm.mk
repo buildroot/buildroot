@@ -174,7 +174,6 @@ GST1_BCM_CONF_OPTS += \
 	--includedir=/usr/include/gstreamer-wpe \
 	--program-prefix wpe
 define GST1_BCM_APPLY_VSS_FIX
- package/vss-sdk/gst1/brcm.no_opus.fix.sh ${@D}
  package/vss-sdk/gst1/brcm.fix.sh ${@D}
 endef
 GST1_BCM_POST_PATCH_HOOKS += GST1_BCM_APPLY_VSS_FIX
