@@ -5,11 +5,10 @@ jobs:
     name: Create release-artifacts
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: Run buildroot
-        run: |
-          make nanopi_neo_defconfig
-          make
+      - name: Checkout the repository
+        uses: actions/checkout@master
+      - name: Generate artifacts
+        uses: skx/github-action-build@master
       - name: Upload artifacts
         uses: skx/github-action-publish-binaries@master
         env:
