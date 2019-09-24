@@ -1,0 +1,18 @@
+on: release
+name: Handle Release
+jobs:
+  generate:
+    name: Create release-artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run buildroot
+        run: |
+        make nanopi_neo_defconfig
+        make
+      - name: Upload artifacts
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: '/home/runner/work/buildroot-openhd/buildroot-openhd/output/images/sdcard.img'
