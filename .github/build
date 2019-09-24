@@ -1,2 +1,13 @@
+# Make the nanopi-neo image
 make nanopi_neo_defconfig
 make
+
+# get the current tag
+tag=$(git describe --tags --abbrev=0)
+
+# once done rename the image and zip it
+cd output/images
+mv sdcard.img open-hd-nanopi-${tag}.img
+
+# zip it
+tar -cvzf open-hd-nanopi-${tag}.tar.gz open-hd-nanopi-${tag}.img
