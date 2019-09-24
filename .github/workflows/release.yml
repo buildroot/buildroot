@@ -8,8 +8,8 @@ jobs:
       - uses: actions/checkout@v1
       - name: Run buildroot
         run: |
-        make nanopi_neo_defconfig
-        make
+          make nanopi_neo_defconfig
+          make
       - name: Upload artifacts
         uses: skx/github-action-publish-binaries@master
         env:
