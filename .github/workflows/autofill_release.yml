@@ -1,0 +1,21 @@
+on: 
+  release:
+    types: [created, edited]
+
+    
+name: Autofill Release
+jobs:
+  generate:
+    name: Create release-artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@master
+      - name: Generate artifacts
+        uses: RespawnDespair/github-action-build@master
+      - name: Upload artifacts
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: 'output/images/open-hd-*.tar.gz'
