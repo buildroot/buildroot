@@ -8,7 +8,7 @@ LIBSEMANAGE_VERSION = 2.9
 LIBSEMANAGE_SITE = https://github.com/SELinuxProject/selinux/releases/download/20190315
 LIBSEMANAGE_LICENSE = LGPL-2.1+
 LIBSEMANAGE_LICENSE_FILES = COPYING
-LIBSEMANAGE_DEPENDENCIES = host-bison host-flex audit libselinux ustr bzip2
+LIBSEMANAGE_DEPENDENCIES = host-bison host-flex audit libselinux bzip2
 LIBSEMANAGE_INSTALL_STAGING = YES
 
 LIBSEMANAGE_MAKE_OPTS = $(TARGET_CONFIGURE_OPTS)
@@ -25,8 +25,13 @@ define LIBSEMANAGE_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) $(LIBSEMANAGE_MAKE_OPTS) DESTDIR=$(TARGET_DIR) install
 endef
 
-HOST_LIBSEMANAGE_DEPENDENCIES = host-bison host-audit host-libsepol host-libselinux \
-				host-ustr host-bzip2 host-swig
+HOST_LIBSEMANAGE_DEPENDENCIES = \
+	host-bison \
+	host-audit \
+	host-libsepol \
+	host-libselinux \
+	host-bzip2 \
+	host-swig
 
 HOST_LIBSEMANAGE_MAKE_OPTS += \
 	$(HOST_CONFIGURE_OPTS) \

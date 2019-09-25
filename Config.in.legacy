@@ -146,6 +146,47 @@ endif
 
 comment "Legacy options removed in 2019.11"
 
+config BR2_PACKAGE_DEVMEM2
+	bool "devmem2 package was removed"
+	select BR2_LEGACY
+	help
+	  Use the the Busybox devmem utility, instead, which provides
+	  the same functionality.
+
+config BR2_PACKAGE_USTR
+	bool "ustr package removed"
+	select BR2_LEGACY
+	help
+	  The 'ustr' package was only used by SELinux libsemanage, but
+	  since SELinux 2.7, ustr is no longer used. Therefore, we
+	  removed this package from Buildroot.
+
+config BR2_PACKAGE_KODI_SCREENSAVER_PLANESTATE
+	bool "kodi-screensaver-planestate package was removed"
+	select BR2_LEGACY
+	help
+	  This package is incompatible with Kodi 18.x.
+
+config BR2_PACKAGE_KODI_VISUALISATION_WAVEFORHUE
+	bool "kodi-visualisation-waveforhue package was removed"
+	select BR2_LEGACY
+	help
+	  This package is incompatible with Kodi 18.x.
+
+config BR2_PACKAGE_KODI_AUDIODECODER_OPUS
+	bool "kodi-audiodecoder-opus package was removed"
+	select BR2_LEGACY
+	help
+	  This package is incompatible with Kodi 18.x.
+
+config BR2_PACKAGE_MESA3D_OSMESA
+	bool "mesa OSMesa option renamed"
+	select BR2_PACKAGE_MESA3D_OSMESA_CLASSIC if BR2_PACKAGE_MESA3D_DRI_DRIVER_SWRAST
+	select BR2_LEGACY
+	help
+	  The option was renamed in order to match the naming used
+	  by the meson buildsystem.
+
 config BR2_PACKAGE_HOSTAPD_DRIVER_RTW
 	bool "hostapd rtl871xdrv driver removed"
 	select BR2_LEGACY
