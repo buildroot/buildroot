@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-SNORT_VERSION = 2.9.12
+SNORT_VERSION = 2.9.14.1
 SNORT_SITE = https://www.snort.org/downloads/snort
 SNORT_LICENSE = GPL-2.0
 SNORT_LICENSE_FILES = LICENSE COPYING
 
-SNORT_DEPENDENCIES = libpcap libdnet daq pcre
+SNORT_DEPENDENCIES = libpcap libdnet daq pcre host-pkgconf
 
 # patching configure.in
 SNORT_AUTORECONF = YES
@@ -20,14 +20,14 @@ SNORT_CONF_OPTS = \
 	--with-libpcap-includes=$(STAGING_DIR)/usr/include/pcap \
 	--disable-static-daq \
 	--with-dnet-includes=$(STAGING_DIR)/usr/include \
-	--with-dnet-libraries=$(STAGING_DIR)/usr/lib \
+	--with-dnet-libraries=$(STAGING_DIR)/usr/lib
 
 ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_85180),y)
 SNORT_CFLAGS += -O0
 endif
 
 ifeq ($(BR2_PACKAGE_LIBTIRPC),y)
-SNORT_DEPENDENCIES += libtirpc host-pkgconf
+SNORT_DEPENDENCIES += libtirpc
 SNORT_CFLAGS += `$(PKG_CONFIG_HOST_BINARY) --cflags libtirpc`
 SNORT_LIBS += `$(PKG_CONFIG_HOST_BINARY) --libs libtirpc`
 endif
