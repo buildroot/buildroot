@@ -4,6 +4,9 @@
 #
 ################################################################################
 
+# When making changes to this file, please check if
+# util-linux-libs/util-linux-libs.mk needs to be updated accordingly as well.
+
 UTIL_LINUX_VERSION_MAJOR = 2.35
 UTIL_LINUX_VERSION_MINOR = 2
 UTIL_LINUX_VERSION = $(UTIL_LINUX_VERSION_MAJOR).$(UTIL_LINUX_VERSION_MINOR)
@@ -22,18 +25,15 @@ UTIL_LINUX_LICENSE_FILES = README.licensing \
 	Documentation/licenses/COPYING.LGPL-2.1-or-later
 
 UTIL_LINUX_INSTALL_STAGING = YES
-UTIL_LINUX_DEPENDENCIES = host-pkgconf $(TARGET_NLS_DEPENDENCIES)
+UTIL_LINUX_DEPENDENCIES = \
+	host-pkgconf \
+	$(if $(BR2_PACKAGE_UTIL_LINUX_LIBS),util-linux-libs) \
+	$(TARGET_NLS_DEPENDENCIES)
 UTIL_LINUX_CONF_OPTS += \
 	--disable-rpath \
 	--disable-makeinstall-chown
 
 UTIL_LINUX_LIBS = $(TARGET_NLS_LIBS)
-
-# system depends on util-linux so we enable systemd support
-# (which needs systemd to be installed)
-UTIL_LINUX_CONF_OPTS += \
-	--without-systemd \
-	--with-systemdsystemunitdir=no
 
 HOST_UTIL_LINUX_DEPENDENCIES = host-pkgconf
 
@@ -48,6 +48,20 @@ HOST_UTIL_LINUX_CONF_OPTS = \
 # the same when merged usr is in use.
 ifeq ($(BR2_ROOTFS_MERGED_USR),y)
 UTIL_LINUX_CONF_OPTS += --bindir=/usr/bin --sbindir=/usr/sbin --libdir=/usr/lib
+endif
+
+ifeq ($(BR2_PACKAGE_SYSTEMD),y)
+UTIL_LINUX_CONF_OPTS += --with-systemd --with-systemdsystemunitdir=/usr/lib/systemd/system
+UTIL_LINUX_DEPENDENCIES += systemd
+else
+UTIL_LINUX_CONF_OPTS += --without-systemd --with-systemdsystemunitdir=no
+endif
+
+ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
+UTIL_LINUX_CONF_OPTS += --with-udev
+UTIL_LINUX_DEPENDENCIES += udev
+else
+UTIL_LINUX_CONF_OPTS += --without-udev
 endif
 
 ifeq ($(BR2_PACKAGE_NCURSES),y)
@@ -266,3 +280,7 @@ UTIL_LINUX_POST_INSTALL_TARGET_HOOKS += UTIL_LINUX_GETTY_SYMLINK
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
+
+# Must be included after the autotools-package call, to make sure all variables
+# are available
+include package/util-linux/util-linux-libs/util-linux-libs.mk
