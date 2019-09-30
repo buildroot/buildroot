@@ -1,5 +1,20 @@
-config BR2_PACKAGE_WPEFRAMEWORK_COBALT
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_COBALT
 	bool "Cobalt"
     select BR2_PACKAGE_COBALT
 	help
 	   WPE Platform Cobalt plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_COBALT
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_AUTOSTART
+    bool "Start Automatically"
+    default n
+    help
+      Select this to start the plugin automatically when starting WPEFramework
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_OUTOFPROCESS
+    bool "Out of process"
+    default y
+    help
+      Select this to run this plugin in its own process.
+endif
