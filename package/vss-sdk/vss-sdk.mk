@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-VSS_SDK_VERSION = 0322667c195a932ece656fcbfd4324b5afd16c31
+VSS_SDK_VERSION = 064fd7d42c200ec5ee81038e5d36168e56714b83
 VSS_SDK_SITE = git@github.com:Metrological/SDK_VSS.git
 VSS_SDK_SITE_METHOD = git
 VSS_SDK_LICENSE = PROPRIETARY
@@ -82,6 +82,7 @@ define VSS_EXCLUDE_PACKAGE_LIST
     $(call VSS_EXCLUDE_PACKAGE,LIBOGG)
     $(call VSS_EXCLUDE_PACKAGE,GMP)
     $(call VSS_EXCLUDE_PACKAGE,XUTIL_UTIL_MACROS)
+    $(call VSS_EXCLUDE_PACKAGE,GRAPHITE2)
 endef
 
 define VSS_SDK_BUILD_CMDS
