@@ -122,6 +122,9 @@ define VSS_SDK_INSTALL_TARGET_CMDS_DISABLED
 endef
 
 define VSS_SDK_INSTALL_TARGET_CMDS
+    ln -sf /usr/lib/libprotobuf-lite.so.8.0.0 ${TARGET_DIR}/usr/lib/libprotobuf-lite.so
+    ln -sf /usr/lib/libprotobuf.so.8.0.0 ${TARGET_DIR}/usr/lib/libprotobuf.so
+    ln -sf /usr/lib/libturbojpeg.so.0.1.0 ${TARGET_DIR}/usr/lib/libturbojpeg.so.0
 endef
 
 
