@@ -41,6 +41,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_FULLHD
     bool "fullhd"
     default n
 
+config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_APPBOOTKEY
+    depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+    string "appbootkey"
+    help 
+        "Define a custom appbootkey, if left empty the built in key from Netflix will be used"
+
 endif
 
 comment "netflix is dependent on the netflix package compiled as library"
