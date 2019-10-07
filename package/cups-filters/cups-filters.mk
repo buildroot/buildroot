@@ -4,22 +4,30 @@
 #
 ################################################################################
 
-CUPS_FILTERS_VERSION = 1.23.0
+CUPS_FILTERS_VERSION = 1.25.6
 CUPS_FILTERS_SITE = http://openprinting.org/download/cups-filters
 CUPS_FILTERS_LICENSE = GPL-2.0, GPL-2.0+, GPL-3.0, GPL-3.0+, LGPL-2, LGPL-2.1+, MIT, BSD-4-Clause
 CUPS_FILTERS_LICENSE_FILES = COPYING
-# 0001-Replace-relative-linking-with-absolute-linking.patch
-CUPS_FILTERS_AUTORECONF = YES
 
 CUPS_FILTERS_DEPENDENCIES = cups libglib2 lcms2 qpdf fontconfig freetype jpeg
 
 CUPS_FILTERS_CONF_OPTS = --disable-imagefilters \
 	--disable-mutool \
 	--disable-foomatic \
+	--disable-braille \
 	--with-cups-config=$(STAGING_DIR)/usr/bin/cups-config \
 	--with-sysroot=$(STAGING_DIR) \
 	--with-pdftops=pdftops \
 	--with-jpeg
+
+# 0001-Build-system-add-missing-ln-srf-script.patch adds a ln-srf script
+# for older distributions, but GNU patch < 2.7 does not handle the git
+# patch permission extensions - So ensure it is executable
+define CUPS_FILTERS_MAKE_LN_SRF_EXECUTABLE
+	chmod +x $(@D)/ln-srf
+endef
+
+CUPS_FILTERS_POST_PATCH_HOOKS += CUPS_FILTERS_MAKE_LN_SRF_EXECUTABLE
 
 ifeq ($(BR2_PACKAGE_LIBPNG),y)
 CUPS_FILTERS_CONF_OPTS += --with-png

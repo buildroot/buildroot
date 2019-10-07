@@ -1,3 +1,68 @@
+2019.08.1, released October 3rd, 2019
+
+	Important / security related fixes.
+
+	Defconfigs: AArch64-efi: Fix grub configuration, Beaglebone:
+	Use default console settings
+
+	Dependencies: Ensure host has JSON::PP perl module installed
+	if webkitgtk/wpewebkit packages are enabled as it is needed
+	during their build process.
+
+	Toolchain: Generate check-headers program under BUILD_DIR
+	rather than /tmp to fix issues with distributions mounting
+	/tmp noexec.
+
+	Updated/fixed packages: asterisk, augeas, axel, bind, bwm-ng,
+	cups, cups-filters, docker-cli, docker-engine, docker-proxy,
+	e2fsprogs, eudev, exim, expat, gcc, go, haveged, ifplugd, joe,
+	kf5-extra-cmake-modules, kf5-modemmanager-qt,
+	kf5-networkmanager-qt, libcamera, libcurl, libgcrypt,
+	libglib2, libgpg-error, libnspr, libnss, libopenssl,
+	logrotate, luksmeta, mariadb, mbedtls, mongodb, mosquitto,
+	ncurses, nfs-utils, nghttp2, nodejs, openvmtools, php,
+	protobuf, putty, qemu, samba4, snort, swupdate,
+	systemd-bootchart, thttpd, uclibc, unzip, util-linux,
+	wireshark
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#10806: Allow nfs-utils to use ipv6
+	#11781: mariadb build error
+	#12031: Build of cups-filters fails while linking, apparently due..
+	#12141: eudev package is missing "render" and "kvm" groups
+	#12241: Permission denied while running "make"
+
+2019.08, released September 1st, 2019
+
+	Various fixes.
+
+	Defconfigs: Removed nanopc t4, nanopi m4 and neo4, pine64
+	rockpro64 and raxda rock pi4 as they rely on a ARM32 toolchain
+	on the build host to build ATF. These defconfigs will be added
+	back once a package providing such toolchain is
+	available. Also dropped ts4800 defconfig as it does not build
+	with GCC >= 8.x.
+
+	Updated/fixed packages: libxcb, php, python-numpy, webkitgtk,
+	wpewebkit, xfont_font-util
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12156:	buildroot-2019.08-rc3 does not build for Pi Zero W
+
+2019.08-rc3, released August 28th, 2019
+
+	Fixes all over the tree.
+
+	Updated/fixed packages: clamav, dovecot, dovecot-pigeonhole,
+	gcc, intel-microcode, libmicrohttpd, libmodplug, mpg123,
+	nginx, openldap, python, qemu, samba4, squid, strace, vlc
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11686: fbdev_drv.so: undefined symbol: shadowUpdatePackedWeak,..
+
 2019.08-rc2, released August 20th, 2019
 
 	Fixes all over the tree.
@@ -129,6 +194,80 @@
 	#12046: Can’t login as root user after upgrading to buildroot..
 	#12051: package/dhcp installs libtool wrapper scripts on tar...
 	#12076: Patchelf can link against an incompatible libc++ ver...
+
+2019.05.3, Released October 3rd, 2019
+
+	Important / security related fixes.
+
+	Defconfigs: AArch64-efi: Fix grub configuration, Beaglebone:
+	Use default console settings
+
+	Dependencies: Ensure host has JSON::PP perl module installed
+	if webkitgtk/wpewebkit packages are enabled as it is needed
+	during their build process.
+
+	Toolchain: Generate check-headers program under BUILD_DIR
+	rather than /tmp to fix issues with distributions mounting
+	/tmp noexec.
+
+	Updated/fixed packages: asterisk, augeas, bind, bwm-ng, cups,
+	cups-filters, docker-cli, docker-engine, docker-proxy,
+	e2fsprogs, eudev, exim, expat, gcc, go, haveged, ifplugd,
+	iptables, joe, kf5-extra-cmake-modules, kf5-modemmanager-qt,
+	kf5-networkmanager-qtlibcamera, libcurl, libgcrypt,
+	libgpg-error, libnftl, libnspr, libnss, libopenssl,
+	libtorrent-rasterbar, luksmeta, mariadb, mbedtls, mongodb,
+	mosquitto, ncurses, nfs-utils, nghttp2, nodejs, openvmtools,
+	php, protobuf, putty, qemu, samba4, swupdate,
+	systemd-bootchart, thttpd, uclibc, unzip, util-linux,
+	wireshark
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#10806: Allow nfs-utils to use ipv6
+	#11781: mariadb build error
+	#12031: Build of cups-filters fails while linking, apparently due..
+	#12141: eudev package is missing "render" and "kvm" groups
+	#12241: Permission denied while running "make"
+
+2019.05.2, Released September 3rd, 2019
+
+	Important / security related fixes.
+
+	Filesystems: Pass extra pax options to tar for binary
+	reproducibility.
+
+	Updated/fixed packages: apache, arm-trusted-firmware,
+	asterisk, atk, autofs, batctl, batman-adv, berkeleydb,
+	busybox, bzip2, clamav, cloop, cmake, collectd, connman-gtk,
+	dahdi-linux, dahdi-tools, daq, dehydrated, dhcp, dovecot,
+	dovecot-pigeonhole,, elfutils, evtest, exim, expect, giflib,
+	git, glib-networking, glibc, gnupg2, gnutls, go,
+	gst1-rtsp-server, gtkperf, gupnp-tools, gvfs, imagemagick,
+	imx-uuc, intel-microcode, json-glib, lftp, libbsd, libcurl,
+	libgit2, libgtk2, libgtk3, libmodplug, libnss, libpri,
+	libshout, libss7, libssh2, libvips, libxcb, linux-headers,
+	mdadm, mesa3d, metacity, mpg123, mosquitto, musl, nginx,
+	oniguruma, openblas, opencv3, openjdk, openjdk-bin, openldap,
+	openvmtools, pcmanfm, php, pigpio, postgresql, prboom,
+	proftpd, proj, python, python-django, python-idna,
+	python-numpy, python-urllib3, python3, qemu, qt5, qt5base,
+	qt5enginio, quagga, rygel, squid, subversion, tcpreplay,
+	unzip, vlc, vte, webkitgtk, wireless-regdb, xen,
+	xfont_font-util, xlib_libICE, xlib_libXfont, xlib_libXfont2,
+	yad, zeromq
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11741: pigpio does not build host-pigpio
+	#11876: automount using host mount/umount
+	#11881: Build breaks with lftp package enabled and libexpat1-dev inst..
+	#11921: dahdi fails to build
+	#11961: libpri build failure
+	#12086: (dhcpd-missing-libs) - dhcp shared libraries not installed to..
+	#12096: tcpreplay: build fails if libdumbnet-dev is installed in the..
+	#12106: daq: build fails if libdumbnet-dev is installed in the host
+	#12126: vc4 has neon as hard dependency
 
 2019.05.1, Released July 7th, 2019
 
@@ -271,6 +410,78 @@
 	#11761: Building custom kernel 5.1-rc3 or later breaks on objtool
 	#11816: Only selected coreutils binaries are installed
 
+2019.02.6, Released October 3rd, 2019
+
+	Important / security related fixes.
+
+	Defconfigs: AArch64-efi: Fix grub configuration, Beaglebone:
+	Use default console settings
+
+	Dependencies: Ensure host has JSON::PP perl module installed
+	if webkitgtk/wpewebkit packages are enabled as it is needed
+	during their build process.
+
+	Toolchain: Generate check-headers program under BUILD_DIR
+	rather than /tmp to fix issues with distributions mounting
+	/tmp noexec.
+
+	Updated/fixed packages: asterisk, augeas, bind, bwm-ng, cups,
+	cups-filters, docker-cli, docker-engine, docker-proxy,
+	dropbear, e2fsprogs, eudev, exim, expat, gcc, go, ifplugd,
+	haveged, iptables, joe, kf5-extra-cmake-modules,
+	kf5-modemmanager-qt, kf5-networkmanager-qt, libcurl,
+	libgcrypt, libgpg-error, libnftl, libnspr, libnss, libopenssl,
+	luksmeta, mariadb, mbedtls, mongodb, mosquitto, ncurses,
+	nfs-utils, nghttp2, nodejs, openvmtools, php, protobuf, putty,
+	qemu, qt5base, samba4, swupdate, systemd-bootchart, thttpd,
+	uclibc, unzip, util-linux, wireshark
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#10806: Allow nfs-utils to use ipv6
+	#11781: mariadb build error
+	#12031: Build of cups-filters fails while linking, apparently due..
+	#12141: eudev package is missing "render" and "kvm" groups
+	#12181: dropbear: norootlogin (-w) no longer works when PAM is enabled
+	#12241: Permission denied while running "make"
+
+2019.02.5, Released September 2nd, 2019
+
+	Important / security related fixes.
+
+	Filesystems: Pass extra pax options to tar for binary
+	reproducibility.
+
+	Updated/fixed packages: apache, arm-trusted-firmware,
+	asterisk, atk, autofs, batctl, batman-adv, berkeleydb, brotli,
+	busybox, bzip2, clamav, cloop, cmake, collectd, connman-gtk,
+	cryptopp, dahdi-linux, dahdi-tools, daq, dehydrated, dovecot,
+	dovecot-pigeonhole,, elfutils, evtest, exim, expect, giflib,
+	git, glib-networking, glibc, gnupg2, gnutls, go,
+	gst1-rtsp-server, gtkperf, gupnp-tools, gvfs, imagemagick,
+	imx-uuc, intel-microcode, json-glib, lftp, libbsd, libcurl,
+	libgit2, libgtk3, libmodplug, libnss, libpri, libshout,
+	libss7, libssh2, libvips, libxcb, linux-headers, mdadm,
+	mesa3d, metacity, mpg123, mosquitto, musl, nginx, openblas,
+	opencv3, openldap, openvmtools, pcmanfm, php, pigpio,
+	postgresql, prboom, proftpd, proj, python, python-django,
+	python-idna, python-numpy, python-urllib3, python3, qemu, qt5,
+	qt5base, qt5enginio, quagga, rygel, squid, subversion,
+	tcpreplay, unzip, vlc, vte, webkitgtk, weston, wireless-regdb,
+	xen, xfont_font-util, xlib_libICE, xlib_libXfont,
+	xlib_libXfont2, yad, zeromq
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11741: pigpio does not build host-pigpio
+	#11876: automount using host mount/umount
+	#11881: Build breaks with lftp package enabled and libexpat1-dev inst..
+	#11921: dahdi fails to build
+	#11961: libpri build failure
+	#12096: tcpreplay: build fails if libdumbnet-dev is installed in the..
+	#12106: daq: build fails if libdumbnet-dev is installed in the host
+	#12126: vc4 has neon as hard dependency
+
 2019.02.4, Released July 10th, 2019
 
 	Important / security related fixes.
@@ -329,6 +540,8 @@
 	python-django, python-ply, qt5enginio, rpm, runc, samba4,
 	sqlite, subversion, supertux, systemd, tslib, uclibc,
 	v4l2loopback, webkitgtk, woff2
+
+	Issues resolved (http://bugs.uclibc.org):
 
 	#11816: Only selected coreutils binaries are installed
 	#11841: grub-efi.cfg not used when building EFI disk image

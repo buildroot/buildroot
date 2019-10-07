@@ -4,15 +4,18 @@
 #
 ################################################################################
 
-NETWORK_MANAGER_VERSION_MAJOR = 1.18
+NETWORK_MANAGER_VERSION_MAJOR = 1.20
 NETWORK_MANAGER_VERSION = $(NETWORK_MANAGER_VERSION_MAJOR).2
 NETWORK_MANAGER_SOURCE = NetworkManager-$(NETWORK_MANAGER_VERSION).tar.xz
 NETWORK_MANAGER_SITE = https://download.gnome.org/sources/NetworkManager/$(NETWORK_MANAGER_VERSION_MAJOR)
 NETWORK_MANAGER_INSTALL_STAGING = YES
-NETWORK_MANAGER_DEPENDENCIES = host-pkgconf udev dbus-glib libnl gnutls \
-	libgcrypt wireless_tools util-linux host-intltool readline libndp libgudev
-NETWORK_MANAGER_LICENSE = GPL-2.0+ (app), LGPL-2.0+ (libnm-util)
-NETWORK_MANAGER_LICENSE_FILES = COPYING libnm-util/COPYING
+NETWORK_MANAGER_DEPENDENCIES = host-pkgconf udev gnutls \
+	libgcrypt wireless_tools util-linux host-intltool readline libndp
+# Even though the COPYING file only contains the GPL-2.0 text, many
+# parts of network-manager are under LGPL-2.0. See the "Legal" section
+# of the CONTRIBUTING file for details.
+NETWORK_MANAGER_LICENSE = GPL-2.0+ (app), LGPL-2.0+ (libnm)
+NETWORK_MANAGER_LICENSE_FILES = COPYING CONTRIBUTING
 
 NETWORK_MANAGER_CONF_ENV = \
 	ac_cv_path_LIBGCRYPT_CONFIG=$(STAGING_DIR)/usr/bin/libgcrypt-config \

@@ -92,9 +92,9 @@ all:
 .PHONY: all
 
 # Set and export the version string
-export BR2_VERSION := 2019.08-rc2
+export BR2_VERSION := 2019.11-git
 # Actual time the release is cut (for reproducible builds)
-BR2_VERSION_EPOCH = 1566304000
+BR2_VERSION_EPOCH = 1567371000
 
 # Save running make version since it's clobbered by the make package
 RUNNING_MAKE_VERSION := $(MAKE_VERSION)
@@ -892,7 +892,8 @@ graph-size:
 	$(Q)$(TOPDIR)/support/scripts/size-stats --builddir $(BASE_DIR) \
 		--graph $(GRAPHS_DIR)/graph-size.$(BR_GRAPH_OUT) \
 		--file-size-csv $(GRAPHS_DIR)/file-size-stats.csv \
-		--package-size-csv $(GRAPHS_DIR)/package-size-stats.csv
+		--package-size-csv $(GRAPHS_DIR)/package-size-stats.csv \
+		$(BR2_GRAPH_SIZE_OPTS)
 
 .PHONY: check-dependencies
 check-dependencies:

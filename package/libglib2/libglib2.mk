@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBGLIB2_VERSION_MAJOR = 2.60
-LIBGLIB2_VERSION = $(LIBGLIB2_VERSION_MAJOR).6
+LIBGLIB2_VERSION_MAJOR = 2.62
+LIBGLIB2_VERSION = $(LIBGLIB2_VERSION_MAJOR).0
 LIBGLIB2_SOURCE = glib-$(LIBGLIB2_VERSION).tar.xz
 LIBGLIB2_SITE = http://ftp.gnome.org/pub/gnome/sources/glib/$(LIBGLIB2_VERSION_MAJOR)
 LIBGLIB2_LICENSE = LGPL-2.1+
@@ -28,11 +28,12 @@ HOST_LIBGLIB2_CONF_OPTS = \
 	-Dxattr=false \
 	-Dinternal_pcre=false \
 	-Dinstalled_tests=false \
-	-Dtests=false
+	-Dtests=false \
+	-Doss_fuzz=disabled
 
 LIBGLIB2_DEPENDENCIES = \
 	host-pkgconf host-libglib2 \
-	libffi pcre util-linux zlib $(TARGET_NLS_DEPENDENCIES)
+	libffi pcre zlib $(TARGET_NLS_DEPENDENCIES)
 
 HOST_LIBGLIB2_DEPENDENCIES = \
 	host-gettext \
@@ -49,7 +50,8 @@ HOST_LIBGLIB2_DEPENDENCIES = \
 LIBGLIB2_CONF_OPTS = \
 	-Dinternal_pcre=false \
 	-Dgio_module_dir=/usr/lib/gio/modules \
-	-Dtests=false
+	-Dtests=false \
+	-Doss_fuzz=disabled
 
 ifneq ($(BR2_ENABLE_LOCALE),y)
 LIBGLIB2_DEPENDENCIES += libiconv
@@ -60,7 +62,7 @@ LIBGLIB2_DEPENDENCIES += elfutils
 endif
 
 ifeq ($(BR2_PACKAGE_LIBICONV),y)
-LIBGLIB2_CONF_OPTS += -Diconv=gnu
+LIBGLIB2_CONF_OPTS += -Diconv=external
 LIBGLIB2_DEPENDENCIES += libiconv
 endif
 
@@ -76,6 +78,13 @@ ifneq ($(BR2_PACKAGE_GDB),y)
 define LIBGLIB2_REMOVE_GDB_FILES
 	rm -rf $(TARGET_DIR)/usr/share/glib-2.0/gdb
 endef
+endif
+
+ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBMOUNT),y)
+LIBGLIB2_CONF_OPTS += -Dlibmount=true
+LIBGLIB2_DEPENDENCIES += util-linux
+else
+LIBGLIB2_CONF_OPTS += -Dlibmount=false
 endif
 
 # Purge useless binaries from target

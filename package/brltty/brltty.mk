@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BRLTTY_VERSION = 5.6
+BRLTTY_VERSION = 6.0
 BRLTTY_SOURCE = brltty-$(BRLTTY_VERSION).tar.xz
 BRLTTY_SITE = http://brltty.com/archive
 BRLTTY_INSTALL_STAGING_OPTS = INSTALL_ROOT=$(STAGING_DIR) install
@@ -22,14 +22,14 @@ BRLTTY_CONF_OPTS = \
 	--disable-python-bindings \
 	--disable-tcl-bindings \
 	--disable-x \
+	--without-espeak-ng \
 	--without-midi-package \
 	--without-mikropuhe --without-speechd --without-swift \
-	--without-theta --without-viavoice
+	--without-theta
 
 # Autoreconf is needed because we're patching configure.ac in
-# 0002-Check-for-ioperm-to-make-sure-the-platform-supports-.patch. However,
-# a plain autoreconf doesn't work, because this package is only
-# autoconf-based.
+# 0001-Fix-linking-error-on-mips64el. However, a plain autoreconf doesn't work,
+# because this package is only autoconf-based.
 define BRLTTY_AUTOCONF
 	cd $(BRLTTY_SRCDIR) && $(AUTOCONF)
 endef
@@ -48,6 +48,13 @@ BRLTTY_DEPENDENCIES += espeak
 BRLTTY_CONF_OPTS += --with-espeak=$(TARGET_DIR)/usr
 else
 BRLTTY_CONF_OPTS += --without-espeak
+endif
+
+ifeq ($(BR2_PACKAGE_EXPAT),y)
+BRLTTY_DEPENDENCIES += expat
+BRLTTY_CONF_OPTS += --enable-expat
+else
+BRLTTY_CONF_OPTS += --disable-expat
 endif
 
 ifeq ($(BR2_PACKAGE_FLITE),y)
@@ -69,6 +76,16 @@ BRLTTY_DEPENDENCIES += ncurses
 BRLTTY_CONF_OPTS += --with-curses
 else
 BRLTTY_CONF_OPTS += --without-curses
+endif
+
+ifeq ($(BR2_PACKAGE_PCRE2_32),y)
+BRLTTY_DEPENDENCIES += pcre2
+BRLTTY_CONF_OPTS += --with-rgx-package
+else ifeq ($(BR2_PACKAGE_PCRE_32),y)
+BRLTTY_DEPENDENCIES += pcre
+BRLTTY_CONF_OPTS += --with-rgx-package
+else
+BRLTTY_CONF_OPTS += --without-rgx-package
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)

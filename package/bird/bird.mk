@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BIRD_VERSION = 2.0.4
+BIRD_VERSION = 2.0.6
 BIRD_SITE = ftp://bird.network.cz/pub/bird
 BIRD_LICENSE = GPL-2.0+
 BIRD_LICENSE_FILES = README
@@ -17,9 +17,7 @@ else
 BIRD_CONF_OPTS += --disable-client
 endif
 
-# BUG: RIP is mandatory for now
 BIRD_PROTOCOLS = \
-	rip \
 	$(if $(BR2_PACKAGE_BIRD_BFD),bfd) \
 	$(if $(BR2_PACKAGE_BIRD_BABEL),babel) \
 	$(if $(BR2_PACKAGE_BIRD_BGP),bgp) \
