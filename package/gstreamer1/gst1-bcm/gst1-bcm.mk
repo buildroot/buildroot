@@ -36,7 +36,8 @@ else
 GST1_BCM_VERSION = 15.2
 endif
 
-GST1_BCM_SITE = git@github.com:Metrological/gstreamer-plugins-soc.git
+#GST1_BCM_SITE = git@github.com:Metrological/gstreamer-plugins-soc.git
+GST1_BCM_SITE = git@github.com:Metrological/bcm-gstreamer.git
 GST1_BCM_SITE_METHOD = git
 GST1_BCM_LICENSE = PROPRIETARY
 GST1_BCM_INSTALL_STAGING = YES
