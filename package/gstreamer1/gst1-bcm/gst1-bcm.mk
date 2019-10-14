@@ -4,6 +4,12 @@
 #
 ################################################################################
 
+ifneq ($(filter y,$(BR2_PACKAGE_GST1_BCM_UNIFIED_VERSION)),)
+GST1_BCM_SITE = git@github.com:Metrological/bcm-gstreamer.git
+GST1_BCM_VERSION = 4bd348f3a01fbba830e80ae3b30ac4eccdef1da2
+else
+GST1_BCM_SITE = git@github.com:Metrological/gstreamer-plugins-soc.git
+
 ifeq ($(BR2_PACKAGE_UMA_SDK),y)
 GST1_BCM_VERSION = 17.1-7
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_16_1),y)
@@ -36,8 +42,8 @@ else
 GST1_BCM_VERSION = 15.2
 endif
 
-#GST1_BCM_SITE = git@github.com:Metrological/gstreamer-plugins-soc.git
-GST1_BCM_SITE = git@github.com:Metrological/bcm-gstreamer.git
+endif
+
 GST1_BCM_SITE_METHOD = git
 GST1_BCM_LICENSE = PROPRIETARY
 GST1_BCM_INSTALL_STAGING = YES

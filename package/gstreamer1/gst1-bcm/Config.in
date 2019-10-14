@@ -9,6 +9,12 @@ if BR2_PACKAGE_GST1_BCM
 
 comment "Broadcom Nexus specific plugins"
 
+config BR2_PACKAGE_GST1_BCM_UNIFIED_VERSION
+	bool "unified version"
+	default n
+	help 
+	  Enable the unified version of the plugins
+
 config BR2_PACKAGE_GST1_BCM_VP9_SUPPORT
 	bool "VP9 support"
 	depends on BR2_PACKAGE_HAS_VP9_DECODER
