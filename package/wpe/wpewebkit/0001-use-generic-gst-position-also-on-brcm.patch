@@ -1,0 +1,41 @@
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+index a688bafdd1c..fca6edc927d 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+@@ -426,36 +426,6 @@ MediaTime MediaPlayerPrivateGStreamer::playbackPosition() const
+             return MediaTime::zeroTime();
+         }
+     }
+-#elif PLATFORM(BCM_NEXUS)
+-    // Implement getting pts time from broadcom decoder directly for seek functionality.
+-    // In some cases one stream (audio or video) is shorter than the other and its position doesn't
+-    // increase anymore. We need to query both decoders (if available) and choose the highest position.
+-    GstElement* videoDecoder = nullptr;
+-    GstElement* audioDecoder = nullptr;
+-    GstClockTime videoPosition = GST_CLOCK_TIME_NONE;
+-    GstClockTime audioPosition = GST_CLOCK_TIME_NONE;
+-
+-    findDecoders(m_pipeline.get(), &videoDecoder, &audioDecoder);
+-
+-    GST_TRACE("videoDecoder: %s, audioDecoder: %s", videoDecoder ? GST_ELEMENT_NAME(videoDecoder) : "null", audioDecoder ? GST_ELEMENT_NAME(audioDecoder) : "null");
+-
+-    if (!(videoDecoder || audioDecoder))
+-        return MediaTime::zeroTime();
+-    if (videoDecoder && gst_element_query(videoDecoder, query))
+-        gst_query_parse_position(query, 0, (gint64*)&videoPosition);
+-    if (audioDecoder) {
+-        g_object_set(audioDecoder, "use-audio-position", true, nullptr);
+-        if (gst_element_query(audioDecoder, query))
+-            gst_query_parse_position(query, 0, (gint64*)&audioPosition);
+-    }
+-    if (videoPosition == GST_CLOCK_TIME_NONE)
+-        videoPosition = 0;
+-    if (audioPosition == GST_CLOCK_TIME_NONE)
+-        audioPosition = 0;
+-
+-    GST_TRACE("videoPosition: %" GST_TIME_FORMAT ", audioPosition: %" GST_TIME_FORMAT, GST_TIME_ARGS(videoPosition), GST_TIME_ARGS(audioPosition));
+-
+-    position = max(videoPosition, audioPosition);
+ #else
+     positionElement = m_pipeline.get();
+ #endif
