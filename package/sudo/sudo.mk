@@ -64,4 +64,10 @@ define SUDO_PERMISSIONS
 	/usr/bin/sudo f 4755 0 0 - - - - -
 endef
 
+define SUDO_REMOVE_GARBAGE
+	$(RM) -fv $(TARGET_DIR)/etc/sudoers.dist # Remove stray example file
+	$(RM) -frv $(TARGET_DIR)/etc/sudoers.d # Remove unused configuration directory
+endef
+SUDO_POST_INSTALL_TARGET_HOOKS += SUDO_REMOVE_GARBAGE
+
 $(eval $(autotools-package))
