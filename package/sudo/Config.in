@@ -1,4 +1,4 @@
-config BR2_PACKAGE_SUDO
+menuconfig BR2_PACKAGE_SUDO
 	bool "sudo"
 	# uses fork()
 	depends on BR2_USE_MMU
@@ -9,3 +9,22 @@ config BR2_PACKAGE_SUDO
 	  but still allow people to get their work done.
 
 	  http://www.sudo.ws/sudo/
+
+
+if BR2_PACKAGE_SUDO
+
+config BR2_PACKAGE_SUDO_GROUP
+	bool "add system group 'sudo'"
+	help
+	  Create a convenient system group named 'sudo' for
+	  granting users sudo permissions.
+
+config BR2_PACKAGE_SUDO_GROUP_RULE
+	bool "allow member of group 'sudo' to execute any command."
+	select BR2_PACKAGE_SUDO_GROUP
+	help
+	  Reinserts this rule from the /etc/sudoers configuration file:
+
+	  %sudo ALL=(ALL) ALL
+
+endif

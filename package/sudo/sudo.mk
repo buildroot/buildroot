@@ -64,4 +64,18 @@ define SUDO_PERMISSIONS
 	/usr/bin/sudo f 4755 0 0 - - - - -
 endef
 
+ifeq ($(BR2_PACKAGE_SUDO_GROUP_RULE),y)
+define SUDO_ENABLE_SUDO_GROUP_RULE
+sed -e '/^# \%sudo\tALL=(ALL) ALL/s/^# //' -i $(TARGET_DIR)/etc/sudoers
+endef
+SUDO_POST_INSTALL_TARGET_HOOKS += SUDO_ENABLE_SUDO_GROUP_RULE
+endif
+
+
+ifeq ($(BR2_PACKAGE_SUDO_GROUP),y)
+define SUDO_USERS
+    -               -1   sudo            -1   -             -            -         -
+endef
+endif
+
 $(eval $(autotools-package))
