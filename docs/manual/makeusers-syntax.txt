@@ -20,13 +20,17 @@ Where:
   It can not be +root+, and must be unique. If set to +-+, then just a
   group will be created.
 - +uid+ is the desired UID for the user. It must be unique, and not
-  +0+. If set to +-1+, then a unique UID will be computed by Buildroot
-  in the range [1000...1999]
+  +0+. If set to +-1+, then a unique systen UID will be computed by
+  Buildroot in the range [100...499].  If set to +-2+, then a unique
+  normal UID will be computed by Buildroot in the range [1000...1999]
 - +group+ is the desired name for the user's main group. It can not
   be +root+. If the group does not exist, it will be created.
 - +gid+ is the desired GID for the user's main group. It must be unique,
   and not +0+. If set to +-1+, and the group does not already exist, then
-  a unique GID will be computed by Buildroot in the range [1000..1999]
+  a unique system GID will be computed by Buildroot in the range
+  [100..499].  If set to +-2+, and the group does not already exist,
+  then a unique normal GID will be computed by Buildroot in the range
+  [1000..1999].
 - +password+ is the crypt(3)-encoded password. If prefixed with +!+,
   then login is disabled. If prefixed with +=+, then it is interpreted
   as clear-text, and will be crypt-encoded (using MD5). If prefixed with
@@ -57,16 +61,16 @@ will belong to the user and its main group.
 Examples:
 
 ----
-foo -1 bar -1 !=blabla /home/foo /bin/sh alpha,bravo Foo user
+foo -1 bar -1 !=secret123 /home/foo /bin/sh alpha,bravo Foo user
 ----
 
 This will create this user:
 
 - +username+ (aka login name) is: +foo+
-- +uid+ is computed by Buildroot
+- +uid+ is a system uid computed by Buildroot
 - main +group+ is: +bar+
-- main group +gid+ is computed by Buildroot
-- clear-text +password+ is: +blabla+, will be crypt(3)-encoded, and login is disabled.
+- main group +gid+ is a system uid computed by Buildroot
+- clear-text +password+ is: +secret123+, will be crypt(3)-encoded, and login is disabled.
 - +home+ is: +/home/foo+
 - +shell+ is: +/bin/sh+
 - +foo+ is also a member of +groups+: +alpha+ and +bravo+
