@@ -316,6 +316,11 @@ config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_YOUTUBE
     string "youtube-limit"
     default "614400"
 
+config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_AMAZON
+    depends on BR2_PACKAGE_WPEFRAMEWORK_AMAZON
+    string "amazon-limit"
+    default "614400"
+
 config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_APPS
     depends on BR2_PACKAGE_WPEFRAMEWORK_APPS
     string "apps-limit"
@@ -754,6 +759,44 @@ if BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE
 config BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE_USERAGENT
     string "useragent"
     default "Mozilla/5.0 (Macintosh, Intel Mac OS X 10_11_4) AppleWebKit/602.1.28+ (KHTML, like Gecko) Version/9.1 Safari/601.5.17"
+
+endif
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_AMAZON_TAB
+    depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+    bool "amazon"
+    help
+      A wrapper around the amazon app to start it as a
+      wpeframework plugin.
+
+if BR2_PACKAGE_WPEFRAMEWORK_AMAZON_TAB
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_USERAGENT
+    string "useragent"
+    default "Mozilla/5.0 (Macintosh, Intel Mac OS X 10_11_4) AppleWebKit/602.1.28+ (KHTML, like Gecko) Version/9.1 Safari/601.5.17"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_STARTURL
+    string "start-url"
+    default "about:blank"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_TRANSPARENT
+    bool "transparent"
+    default true
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_USER
+    string "user"
+    default ""
+    help
+        run Amazon as this user, leave empty to use the same as 
+        WPEframework
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_GROUP
+    string "group"
+    default ""
+    help
+        run Amazon as this group, leave empty to use the same as 
+        WPEframework
+
 
 endif
 
