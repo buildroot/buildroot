@@ -55,13 +55,6 @@ define EUDEV_INSTALL_INIT_OPENRC
 	@:
 endef
 
-# Required by default rules for input devices
-define EUDEV_USERS
-	- - input -1 * - - - Input device group
-	- - render -1 * - - - DRI rendering nodes
-	- - kvm -1 * - - - kvm nodes
-endef
-
 HOST_EUDEV_DEPENDENCIES = host-gperf host-pkgconf
 
 HOST_EUDEV_SYSCONFDIR = $(if $(BR2_PACKAGE_SYSTEMD),/usr/lib,/etc)
