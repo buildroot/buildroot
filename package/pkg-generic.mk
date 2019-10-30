@@ -959,6 +959,7 @@ $$($(2)_TARGET_DIRCLEAN):		NAME=$(1)
 # Compute the name of the Kconfig option that correspond to the
 # package being enabled. We handle three cases: the special Linux
 # kernel case, the bootloaders case, and the normal packages case.
+# Virtual packages are handled separately (see below).
 ifeq ($(1),linux)
 $(2)_KCONFIG_VAR = BR2_LINUX_KERNEL
 else ifneq ($$(filter boot/% $$(foreach dir,$$(BR2_EXTERNAL_DIRS),$$(dir)/boot/%),$(pkgdir)),)
@@ -1150,6 +1151,22 @@ endif
 ifneq ($$($(2)_HELP_CMDS),)
 HELP_PACKAGES += $(2)
 endif
+
+# Virtual packages are not built but it's useful to allow them to have
+# permission/device/user tables and target-finalize/rootfs-pre-cmd hooks.
+else ifeq ($$(BR2_PACKAGE_HAS_$(2)),y) # $(2)_KCONFIG_VAR
+
+ifneq ($$($(2)_PERMISSIONS),)
+PACKAGES_PERMISSIONS_TABLE += $$($(2)_PERMISSIONS)$$(sep)
+endif
+ifneq ($$($(2)_DEVICES),)
+PACKAGES_DEVICES_TABLE += $$($(2)_DEVICES)$$(sep)
+endif
+ifneq ($$($(2)_USERS),)
+PACKAGES_USERS += $$($(2)_USERS)$$(sep)
+endif
+TARGET_FINALIZE_HOOKS += $$($(2)_TARGET_FINALIZE_HOOKS)
+ROOTFS_PRE_CMD_HOOKS += $$($(2)_ROOTFS_PRE_CMD_HOOKS)
 
 endif # $(2)_KCONFIG_VAR
 endef # inner-generic-package
