@@ -9,6 +9,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
     help
       A Bluetooth plugin to interact with Bluetooth devices.
 
+config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTHREMOTECONTROL
+    bool "BLE RemoteControl"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
+    default n
+    help
+     A Bluetooth Low Energy HID over GATT remote control
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_CDMI
     bool "CDMi"
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
