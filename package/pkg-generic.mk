@@ -523,8 +523,9 @@ endif
 $(2)_ALL_DOWNLOADS = \
 	$$(if $$($(2)_SOURCE),$$($(2)_SITE_METHOD)+$$($(2)_SITE)/$$($(2)_SOURCE)) \
 	$$(foreach p,$$($(2)_PATCH) $$($(2)_EXTRA_DOWNLOADS),\
-		$$(if $$(findstring ://,$$(p)),$$(p),\
-			$$($(2)_SITE)/$$(p)))
+		$$(call getschemeplusuri,$$(call qstrip,\
+		  $$(if $$(findstring ://,$$(p)),$$(p),\
+			  $$($(2)_SITE)/$$(p))),urlencode))
 
 ifndef $(2)_SITE
  ifdef $(3)_SITE
