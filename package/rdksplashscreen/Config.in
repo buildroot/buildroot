@@ -3,3 +3,15 @@ config BR2_PACKAGE_RDKSPLASHSCREEN
 
 	help
 	   RDK bootup splash screen for devices
+
+if BR2_PACKAGE_RDKSPLASHSCREEN
+
+config BR2_PACKAGE_RDKSPLASHSCREEN_OPERATOR
+	string "operator"
+	default ""
+
+config BR2_PACKAGE_RDKSPLASHSCREEN_URL
+	string "url"
+	default ""
+
+endif
