@@ -15,7 +15,11 @@ RDKSPLASHSCREEN_CONFIGURE_CMDS = true
 RDKSPLASHSCREEN_BUILD_CMDS = true
 
 define RDKSPLASHSCREEN_INSTALL_TARGET_CMDS
-	rm -rf $(TARGET_DIR)/www/*
+	if [ -d $(TARGET_DIR)/www ] ; then \
+		rm -rf $(TARGET_DIR)/www/*;\
+	else                               \
+		mkdir -p $(TARGET_DIR)/www;\
+	fi
 	cp -r $(@D)/* $(TARGET_DIR)/www/
 endef
 
