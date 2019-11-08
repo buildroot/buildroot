@@ -58,7 +58,7 @@ HOST_SYSREPO_CONF_OPTS = \
 	-DCALL_TARGET_BINS_DIRECTLY=OFF \
 	-DBUILD_EXAMPLES=OFF \
 	-DBUILD_CPP_EXAMPLES=OFF \
-	-DREPOSITORY_LOC=$(HOST_DIR)/etc/sysrepo \
+	-DREPOSITORY_LOC=$(TARGET_DIR)/etc/sysrepo \
 	-DSUBSCRIPTIONS_SOCKET_DIR=$(HOST_DIR)/var/run/sysrepo-subscriptions
 
 $(eval $(cmake-package))
