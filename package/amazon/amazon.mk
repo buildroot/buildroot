@@ -63,11 +63,14 @@ ifneq ($(BR2_PACKAGE_HAS_PLAYREADY),y)
  AMAZON_DEPENDENCIES += playready
 endif
  AMAZON_BACKEND = mpb-drm
+ AMAZON_BACKEND_TEST = VideoPlayerMediaPipelineBackendUnitTests
 else ifeq  ($(BR2_PACKAGE_AMAZON_BACKEND_NO_DRM),y)
  AMAZON_DEPENDENCIES += libgles libegl gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad
  AMAZON_BACKEND = mpb-no-drm
+ AMAZON_BACKEND_TEST = VideoPlayerMediaPipelineBackendUnitTests
 else ifeq  ($(BR2_PACKAGE_AMAZON_BACKEND_FAKE),y)
  AMAZON_BACKEND = fake-mpb
+ AMAZON_BACKEND_TEST = VideoPlayerFakeBackendUnitTests
 else
  $(error No backend specified)
 endif
@@ -171,8 +174,9 @@ define AMAZON_INSTALL_TESTS
    $(INSTALL) -v -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/HawaiiBindingsIntegrationTests/HawaiiBindingsIntegrationTests $(1)/usr/bin
    $(INSTALL) -v -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/NetworkUnitTests/NetworkUnitTests $(1)/usr/bin
    $(INSTALL) -v -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/VideoPlayerFrontendUnitTests/VideoPlayerFrontendUnitTests $(1)/usr/bin
-   $(INSTALL) -v -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/VideoPlayerMediaPipelineBackendUnitTests/VideoPlayerMediaPipelineBackendUnitTests $(1)/usr/bin
+   $(INSTALL) -v -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/$(AMAZON_BACKEND_TEST)/$(AMAZON_BACKEND_TEST) $(1)/usr/bin
    $(INSTALL) -v -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/VideoPlayerUnitTests/VideoPlayerUnitTests $(1)/usr/bin
+   $(INSTALL) -v -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/VideoPlayerIntegrationTests/VideoPlayerIntegrationTests $(1)/usr/bin
    $(INSTALL) -v -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/XmlUnitTests/XmlUnitTests $(1)/usr/bin
 endef
 endif
