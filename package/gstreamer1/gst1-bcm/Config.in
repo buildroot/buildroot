@@ -65,4 +65,10 @@ config BR2_PACKAGE_GST1_BCM_ENABLE_SVP
 	help 
 	  Enable SVP support
 
+config BR2_PACKAGE_GST1_BCM_ENABLE_SVP_SECBUF
+	bool "enable svp secbuf"
+	default n
+	depends on BR2_PACKAGE_GST1_BCM_ENABLE_SVP
+	help 
+          Enable SVP Secbuf support
 endif
