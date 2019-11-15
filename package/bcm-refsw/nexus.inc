@@ -12,6 +12,15 @@ define BCM_REFSW_INSTALL_NEXUS
 	$(INSTALL) -m 644 -D $(BCM_REFSW_BIN)/nexus.ko $(1)/lib/modules/nexus.ko
 	$(INSTALL) -D -m 755 package/bcm-refsw/S11nexus $(1)/etc/init.d/S11nexus
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libnexus.so $(1)/usr/lib/libnexus.so
+	if [ -f $(BCM_REFSW_BIN)/wakeup_drv.ko ]; then \
+        $(INSTALL) -D -m 755 package/bcm-refsw/S11wakeup $(1)/etc/init.d/S11wakeup ; \
+        $(INSTALL) -m 644 -D $(BCM_REFSW_BIN)/wakeup_drv.ko $(1)/lib/modules/wakeup_drv.ko ; \
+    fi
+    # VC5 Graphics Execution Manger (GEM) interface
+    if [ -f $(BCM_REFSW_BIN)/brcmv3d.ko ]; then \
+        $(INSTALL) -D -m 755 package/bcm-refsw/S11brcmv3d $(1)/etc/init.d/S11brcmv3d ; \
+        $(INSTALL) -m 644 -D $(BCM_REFSW_BIN)/brcmv3d.ko $(1)/lib/modules/brcmv3d.ko ; \
+    fi
 endef
 
 define BCM_REFSW_INSTALL_NEXUS_DEV
@@ -60,7 +69,7 @@ BCM_REFSW_INSTALL_SAGE_BINS_PATH = $(strip $(subst ",,$(BR2_PACKAGE_BCM_REFSW_SA
 
 define BCM_REFSW_INSTALL_SAGE_BINS
     if [ -f $(BCM_REFSW_OUTPUT)/nexus/bin/sage_bl.bin ]; then \
-    	$(INSTALL) -v -m 644 $(BCM_REFSW_OUTPUT)/nexus/bin/*.bin $(1)$(BCM_REFSW_INSTALL_SAGE_BINS_PATH) ; \
+    	$(INSTALL) -m 644 $(BCM_REFSW_OUTPUT)/nexus/bin/*.bin $(1)$(BCM_REFSW_INSTALL_SAGE_BINS_PATH) ; \
     fi
 endef
 
@@ -219,26 +228,6 @@ endef
 endif
 endif
 
-endif
-
-
-ifeq ($(BCM_REFSW_PLATFORM_VC),vc5)
-ifeq ($(shell expr $(BCM_REFSW_VERSION) \< 19.1),1)
-define BCM_REFSW_INSTALL_WAKEUP
-	$(INSTALL) -D -m 755 package/bcm-refsw/S11wakeup $1/etc/init.d/S11wakeup
-	$(INSTALL) -m 644 -D $(BCM_REFSW_BIN)/wakeup_drv.ko $1/lib/modules/wakeup_drv.ko
-endef
-endif
-endif
-
-# VC5 Graphics Execution Manger (GEM) interface
-ifeq ($(BCM_REFSW_PLATFORM_VC),vc5)
-ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 19.1),1)
-define BCM_REFSW_INSTALL_WAKEUP
-	$(INSTALL) -D -m 755 package/bcm-refsw/S11brcmv3d $1/etc/init.d/S11brcmv3d
-	$(INSTALL) -m 644 -D $(BCM_REFSW_BIN)/brcmv3d.ko $1/lib/modules/brcmv3d.ko
-endef
-endif
 endif
 
 define BCM_REFSW_BUILD_NEXUS_LIBB_OS
