@@ -1,8 +1,17 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 0966275..0e7aaba 100644
+index b61f2fd..ec868cb 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -135,7 +135,11 @@ endif()
+@@ -111,7 +111,7 @@ endif()
+ 
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-multichar -std=c++11 -Wno-non-virtual-dtor -Werror=effc++")
+ 
+-if(CMAKE_IARM_MGR)
++if(CMAKE_RDK_VIDEO_BUILD AND CMAKE_IARM_MGR)
+ 	message("CMAKE_IARM_MGR set")
+ 	set(LIBAAMP_DEFINES "${LIBAAMP_DEFINES} -DIARM_MGR")
+ endif()
+@@ -132,7 +132,11 @@ endif()
  if(CMAKE_DASH_DRM)
  	message("CMAKE_DASH_DRM set")
  	if(CMAKE_USE_OPENCDM)
@@ -14,7 +23,20 @@ index 0966275..0e7aaba 100644
  	else()
  		set(LIBAAMP_DRM_SOURCES drm/AampDRMSessionManager.cpp drm/AampDrmSession.cpp drm/playreadydrmsession.cpp drm/aampdrmsessionfactory.cpp drm/aampoutputprotection.cpp drm/AampDRMutils.cpp)
  	endif()
-@@ -170,7 +174,13 @@ if(CMAKE_DASH_DRM)
+@@ -145,7 +149,11 @@ add_executable(playbintest test/playbintest.cpp)
+ target_link_libraries(playbintest ${PLAYBINTEST_DEPENDS})
+ 
+ if(CMAKE_DASH_DRM)
+-	set(LIBAAMP_DEPENDS "${LIBAAMP_DEPENDS} -lIARMBus -lds -ldshalcli")
++	if(CMAKE_RDK_VIDEO_BUILD)
++		message("CMAKE_RDK_VIDEO_BUILD set")
++		set(LIBAAMP_DEPENDS "${LIBAAMP_DEPENDS} -lIARMBus -lds -ldshalcli")
++		set(LIBAAMP_DEFINES "${LIBAAMP_DEFINES} -DRDK_VIDEO_BUILD=1")
++	endif()
+ 	if(CMAKE_USE_OPENCDM)
+ 		if (DEFINED SECAPI_ENGINE_BROADCOM_SAGE)
+ 			set(LIBAAMP_DEFINES "${LIBAAMP_DEFINES} -DUSE_SECAPI_BRCMHW=1")
+@@ -163,7 +171,13 @@ if(CMAKE_DASH_DRM)
  		endif()
  		find_path (STAGING_INCDIR opencdm)
  		include_directories(${STAGING_INCDIR}/opencdm)
@@ -30,10 +52,10 @@ index 0966275..0e7aaba 100644
  			set(LIBAAMP_DEFINES "${LIBAAMP_DEFINES} -DUSE_SECAPI_BRCMHW=1")
  			if(DEFINED SAGE_SVP)
 diff --git a/aampgstplayer.cpp b/aampgstplayer.cpp
-index 79d1994..d7e27f8 100644
+index c43d063..a90dc62 100644
 --- a/aampgstplayer.cpp
 +++ b/aampgstplayer.cpp
-@@ -1199,6 +1199,7 @@ static GstBusSyncReply bus_sync_handler(GstBus * bus, GstMessage * msg, AAMPGstP
+@@ -1158,6 +1158,7 @@ static GstBusSyncReply bus_sync_handler(GstBus * bus, GstMessage * msg, AAMPGstP
  			GstStructure* contextStructure = gst_context_writable_structure(context);
  			gst_structure_set(contextStructure, "decryption-system-id", G_TYPE_STRING, GetDrmSystemID((DRMSystems)gpGlobalConfig->preferredDrm),  NULL);
  			gst_element_set_context(GST_ELEMENT(GST_MESSAGE_SRC(msg)), context);
@@ -42,10 +64,10 @@ index 79d1994..d7e27f8 100644
  
  		break;
 diff --git a/drm/AampDRMSessionManager.cpp b/drm/AampDRMSessionManager.cpp
-index ec18362..ed0ca2d 100644
+index da58276..9897206 100644
 --- a/drm/AampDRMSessionManager.cpp
 +++ b/drm/AampDRMSessionManager.cpp
-@@ -1291,6 +1291,10 @@ AampDrmSession * AampDRMSessionManager::createDrmSession(
+@@ -1244,6 +1244,10 @@ AampDrmSession * AampDRMSessionManager::createDrmSession(
  		reinterpret_cast<const void*>(keyId),keyIdLen);
  		pthread_mutex_unlock(&session_mutex[sessionType]);
  		free(keyId);
@@ -57,10 +79,10 @@ index ec18362..ed0ca2d 100644
  	}
  	else if (code == KEY_ERROR)
 diff --git a/drm/AampDrmSession.h b/drm/AampDrmSession.h
-index 0940ff3..d77645d 100644
+index 5631b13..fb218f4 100644
 --- a/drm/AampDrmSession.h
 +++ b/drm/AampDrmSession.h
-@@ -149,6 +149,10 @@ public:
+@@ -126,5 +126,9 @@ public:
  	 * @retval DRM system uuid
  	 */
  	string getKeySystem();
@@ -70,9 +92,8 @@ index 0940ff3..d77645d 100644
 +#endif
  };
  #endif
- 
 diff --git a/drm/aampdrmsessionfactory.cpp b/drm/aampdrmsessionfactory.cpp
-index e3e8d17..6f6a7c9 100644
+index e64a747..c548610 100644
 --- a/drm/aampdrmsessionfactory.cpp
 +++ b/drm/aampdrmsessionfactory.cpp
 @@ -23,7 +23,9 @@
@@ -86,11 +107,119 @@ index e3e8d17..6f6a7c9 100644
  #include "opencdmsession.h"
  #else
  #include "playreadydrmsession.h"
+diff --git a/drm/aampoutputprotection.cpp b/drm/aampoutputprotection.cpp
+index b1fc603..d1f6b58 100644
+--- a/drm/aampoutputprotection.cpp
++++ b/drm/aampoutputprotection.cpp
+@@ -62,11 +62,13 @@ AampOutputProtection::AampOutputProtection()
+     // Get initial HDCP status
+     SetHDMIStatus();
+ 
++#ifdef RDK_VIDEO_BUILD
+     // Register IARM callbacks
+     logprintf("%s : registering DSMGR events...\n", __FUNCTION__);
+     IARM_Bus_RegisterEventHandler(IARM_BUS_DSMGR_NAME,IARM_BUS_DSMGR_EVENT_HDMI_HOTPLUG, HDMIEventHandler);
+     IARM_Bus_RegisterEventHandler(IARM_BUS_DSMGR_NAME,IARM_BUS_DSMGR_EVENT_HDCP_STATUS, HDMIEventHandler);
+     IARM_Bus_RegisterEventHandler(IARM_BUS_DSMGR_NAME,IARM_BUS_DSMGR_EVENT_RES_POSTCHANGE, ResolutionHandler);
++#endif // RDK_VIDEO_BUILD
+ }
+ 
+ /**
+@@ -75,12 +77,13 @@ AampOutputProtection::AampOutputProtection()
+ AampOutputProtection::~AampOutputProtection()
+ {
+     DEBUG_FUNC;
+-
++#ifdef RDK_VIDEO_BUILD
+     // Register IARM callbacks
+     logprintf("%s : unregistering DSMGR events...\n", __FUNCTION__);
+     IARM_Bus_RemoveEventHandler(IARM_BUS_DSMGR_NAME,IARM_BUS_DSMGR_EVENT_HDMI_HOTPLUG, HDMIEventHandler);
+     IARM_Bus_RemoveEventHandler(IARM_BUS_DSMGR_NAME,IARM_BUS_DSMGR_EVENT_HDCP_STATUS, HDMIEventHandler);
+     IARM_Bus_RemoveEventHandler(IARM_BUS_DSMGR_NAME,IARM_BUS_DSMGR_EVENT_RES_POSTCHANGE, ResolutionHandler);
++#endif // RDK_VIDEO_BUILD
+ 
+     s_pAampOP = NULL;
+ 
+@@ -197,6 +200,7 @@ bool AampOutputProtection::IsSourceUHD()
+  */
+ void AampOutputProtection::SetHDMIStatus()
+ {
++#ifdef RDK_VIDEO_BUILD
+     bool                    isConnected              = false;
+     bool                    isHDCPCompliant          = false;
+     bool                    isHDCPEnabled            = true;
+@@ -246,6 +250,12 @@ void AampOutputProtection::SetHDMIStatus()
+         m_hdcpCurrentProtocol = dsHDCP_VERSION_1X;
+         logprintf("%s : GetHDCPVersion: Did not detect HDCP version defaulting to 1.4 (%d)\n", __FUNCTION__, m_hdcpCurrentProtocol);
+     }
++#else
++	// No video output on device mark HDCP protection as valid
++	m_hdcpCurrentProtocol = dsHDCP_VERSION_1X;
++	m_isHDCPEnabled = true;
++	return;
++#endif // RDK_VIDEO_BUILD
+ 
+     return;
+ }
+@@ -340,6 +350,7 @@ DRM_RESULT DRM_CALL AampOutputProtection::PR_OP_Callback(const DRM_VOID *f_pvOut
+ #endif
+ 
+ 
++#ifdef RDK_VIDEO_BUILD
+ /**
+  * @brief IARM event handler for HDCP and HDMI hot plug events
+  * @param owner
+@@ -425,6 +436,7 @@ void AampOutputProtection::ResolutionHandler(const char *owner, IARM_EventId_t e
+ 
+     pInstance->Release();
+ }
++#endif // RDK_VIDEO_BUILD
+ 
+ 
+ /**
+diff --git a/drm/aampoutputprotection.h b/drm/aampoutputprotection.h
+index 3ddea5e..2e6aac6 100644
+--- a/drm/aampoutputprotection.h
++++ b/drm/aampoutputprotection.h
+@@ -27,6 +27,7 @@
+ 
+ #include <pthread.h>
+ 
++#ifdef RDK_VIDEO_BUILD
+ // IARM
+ #include "manager.hpp"
+ #include "host.hpp"
+@@ -39,6 +40,13 @@
+ #include "dsMgr.h"
+ #include "dsDisplay.h"
+ #include <iarmUtil.h>
++#else
++#include <stdint.h>
++typedef int dsHdcpProtocolVersion_t;
++#define dsHDCP_VERSION_MAX      30
++#define dsHDCP_VERSION_2X       22
++#define dsHDCP_VERSION_1X       14
++#endif // RDK_VIDEO_BUILD
+ 
+ #include <stdio.h>
+ #include <gst/gst.h>
+@@ -165,9 +173,11 @@ public:
+ 
+     // IARM Callbacks
+ 
++#ifdef RDK_VIDEO_BUILD
+     static void HDMIEventHandler(const char *owner, IARM_EventId_t eventId, void *data, size_t len);
+ 
+     static void ResolutionHandler(const char *owner, IARM_EventId_t eventId, void *data, size_t len);
++#endif // RDK_VIDEO_BUILD
+ 
+     // State functions
+ 
 diff --git a/drm/opencdmsessionadapter.cpp b/drm/opencdmsessionadapter.cpp
-index e69de29..b8c9bd5 100644
+index e69de29..2ab8747 100644
 --- a/drm/opencdmsessionadapter.cpp
 +++ b/drm/opencdmsessionadapter.cpp
-@@ -0,0 +1,337 @@
+@@ -0,0 +1,348 @@
 +#include "config.h"
 +#include "opencdmsessionadapter.h"
 +
@@ -209,13 +338,24 @@ index e69de29..b8c9bd5 100644
 +
 +OpenCDMSession::OpenCDMSession(string& keySystem) :
 +		AampDrmSession(keySystem),
++		m_decryptMutex(),
 +		m_eKeyState(KEY_INIT),
 +		m_pOpenCDMSystem(NULL),
 +		m_pOpenCDMSession(NULL),
-+		m_pOutputProtection(NULL)
++		m_OCDMSessionCallbacks(),
++		m_pOutputProtection(NULL),
++		m_challenge(),
++		m_challengeSize(0),
++		m_destUrl(),
++		m_keyStatus(KeyStatus::Expired),
++		m_challengeReady(),
++		m_keyStatusReady(),
++		m_sessionID(),
++		m_keyId(NULL),
++		m_keyLength(0)
 +{
 +	logprintf("OpenCDMSession :: enter \n");
-+	pthread_mutex_init(&decryptMutex, NULL);
++	pthread_mutex_init(&m_decryptMutex, NULL);
 +
 +	initAampDRMSystem();
 +
@@ -227,11 +367,11 @@ index e69de29..b8c9bd5 100644
 +void OpenCDMSession::initAampDRMSystem()
 +{
 +	logprintf("initAampDRMSystem :: enter \n");
-+	pthread_mutex_lock(&decryptMutex);
++	pthread_mutex_lock(&m_decryptMutex);
 +	if (m_pOpenCDMSystem == nullptr) {
 +		m_pOpenCDMSystem = opencdm_create_system();
 +	}
-+	pthread_mutex_unlock(&decryptMutex);
++	pthread_mutex_unlock(&m_decryptMutex);
 +	logprintf("initAampDRMSystem :: exit \n");
 +}
 +
@@ -240,7 +380,7 @@ index e69de29..b8c9bd5 100644
 +	logprintf("[HHH]OCDMSession destructor called! keySystem %s\n", m_keySystem.c_str());
 +	clearDecryptContext();
 +
-+	pthread_mutex_destroy(&decryptMutex);
++	pthread_mutex_destroy(&m_decryptMutex);
 +
 +	if (m_pOpenCDMSession) {
 +		opencdm_destruct_session(m_pOpenCDMSession);
@@ -268,7 +408,7 @@ index e69de29..b8c9bd5 100644
 +{
 +	logprintf("generateAampDRMSession :: enter \n");
 +
-+	pthread_mutex_lock(&decryptMutex);
++	pthread_mutex_lock(&m_decryptMutex);
 +
 +	memset(&m_OCDMSessionCallbacks, 0, sizeof(m_OCDMSessionCallbacks));
 +	m_OCDMSessionCallbacks.process_challenge_callback = [](OpenCDMSession* session, void* userData, const char destUrl[], const uint8_t challenge[], const uint16_t challengeSize) {
@@ -286,7 +426,7 @@ index e69de29..b8c9bd5 100644
 +	};
 +
 +	opencdm_construct_session(m_pOpenCDMSystem, m_keySystem.c_str(), LicenseType::Temporary, "video/mp4",
-+				  const_cast<unsigned char*>(f_pbInitData), f_cbInitData,
++				  const_cast<uint8_t*>(f_pbInitData), f_cbInitData,
 +				  nullptr, 0, //No Custom Data
 +				  &m_OCDMSessionCallbacks,
 +				  static_cast<void*>(this),
@@ -296,7 +436,7 @@ index e69de29..b8c9bd5 100644
 +		return;
 +	}
 +
-+	pthread_mutex_unlock(&decryptMutex);
++	pthread_mutex_unlock(&m_decryptMutex);
 +}
 +
 +void OpenCDMSession::processOCDMChallenge(const char destUrl[], const uint8_t challenge[], const uint16_t challengeSize) {
@@ -330,7 +470,7 @@ index e69de29..b8c9bd5 100644
 +				m_challenge.erase(0, m_challenge.find(delimiter) + delimiter.length());
 +			}
 +
-+			result = new DrmData(reinterpret_cast<unsigned char*>(const_cast<char*>(m_challenge.c_str())), m_challenge.length());
++			result = new DrmData(reinterpret_cast<uint8_t*>(const_cast<char*>(m_challenge.c_str())), m_challenge.length());
 +			destinationURL.assign((m_destUrl.c_str()));
 +			logprintf("destination url is %s\n", destinationURL.c_str());
 +			m_eKeyState = KEY_PENDING;
@@ -344,7 +484,7 @@ index e69de29..b8c9bd5 100644
 +{
 +	int retValue = -1;
 +
-+        OpenCDMError status = opencdm_session_update(m_pOpenCDMSession, key->getData(), key->getDataLength());
++	OpenCDMError status = opencdm_session_update(m_pOpenCDMSession, key->getData(), key->getDataLength());
 +	if (status == OpenCDMError::ERROR_NONE) {
 +		if (m_keyStatusReady.wait(2000) == true) {
 +			logprintf("Key Status updated");
@@ -358,8 +498,8 @@ index e69de29..b8c9bd5 100644
 +			logprintf("processKey: Update() returned keystatus: %d\n", (int) m_keyStatus);
 +			m_eKeyState = KEY_ERROR;
 +		}
-+	} else {
 +	}
++
 +	return retValue;
 +}
 +
@@ -383,7 +523,7 @@ index e69de29..b8c9bd5 100644
 +			}
 +		}
 +
-+		pthread_mutex_lock(&decryptMutex);
++		pthread_mutex_lock(&m_decryptMutex);
 +		start_decrypt_time = GetCurrentTimeStampInMSec();
 +		GstBuffer *buffer = gst_buffer_new_wrapped (const_cast<uint8_t*>(payloadData), payloadDataSize);
 +		GstBuffer *ivBuffer = gst_buffer_new_wrapped (const_cast<uint8_t*>(f_pbIV), f_cbIV);
@@ -395,7 +535,7 @@ index e69de29..b8c9bd5 100644
 +			LogPerformanceExt(__FUNCTION__, start_decrypt_time, end_decrypt_time, payloadDataSize);
 +		}
 +		//gst_buffer_unref(buffer); TODO:recheck
-+		pthread_mutex_unlock(&decryptMutex);
++		pthread_mutex_unlock(&m_decryptMutex);
 +	}
 +	return retValue;
 +}
@@ -409,13 +549,13 @@ index e69de29..b8c9bd5 100644
 +{
 +	logprintf("[HHH] clearDecryptContext.\n");
 +
-+	pthread_mutex_lock(&decryptMutex);
++	pthread_mutex_lock(&m_decryptMutex);
 +
 +	if (m_pOpenCDMSession) {
 +		opencdm_session_close(m_pOpenCDMSession);
 +	}
 +
-+	pthread_mutex_unlock(&decryptMutex);
++	pthread_mutex_unlock(&m_decryptMutex);
 +	m_eKeyState = KEY_INIT;
 +}
 +
@@ -429,10 +569,10 @@ index e69de29..b8c9bd5 100644
 +	m_keyLength = keyLength;
 +}
 diff --git a/drm/opencdmsessionadapter.h b/drm/opencdmsessionadapter.h
-index e69de29..9b9fec4 100644
+index e69de29..a0e93e3 100644
 --- a/drm/opencdmsessionadapter.h
 +++ b/drm/opencdmsessionadapter.h
-@@ -0,0 +1,114 @@
+@@ -0,0 +1,118 @@
 +#ifndef OpenCDMSessionAdapter_h
 +#define OpenCDMSessionAdapter_h
 +
@@ -491,19 +631,19 @@ index e69de29..9b9fec4 100644
 +	}
 +
 +	inline void signal()
-+        {
++	{
 +		pthread_mutex_lock(&lock);
 +		signalled = true;
 +		pthread_cond_broadcast(&condition);
 +	        pthread_mutex_unlock(&lock);
-+        }
++	}
 +};
 +
 +class OpenCDMSession : public AampDrmSession
 +{
 +
 +private:
-+	pthread_mutex_t decryptMutex;
++	pthread_mutex_t m_decryptMutex;
 +
 +	KeyState m_eKeyState;
 +
@@ -522,8 +662,8 @@ index e69de29..9b9fec4 100644
 +	Event m_keyStatusReady;
 +	string m_sessionID;
 +
-+        uint8_t* m_keyId;
-+        int32_t m_keyLength;
++	uint8_t* m_keyId;
++	int32_t m_keyLength;
 +
 +public:
 +	void processOCDMChallenge(const char destUrl[], const uint8_t challenge[], const uint16_t challengeSize);
@@ -533,29 +673,21 @@ index e69de29..9b9fec4 100644
 +	void initAampDRMSystem();
 +
 +public:
-+    OpenCDMSession(string& keySystem);
++	OpenCDMSession() = delete;
++	OpenCDMSession(const OpenCDMSession&) = delete;
++	OpenCDMSession& operator=(const OpenCDMSession&) = delete;
++
++	OpenCDMSession(string& keySystem);
 +	~OpenCDMSession();
 +	void generateAampDRMSession(const uint8_t *f_pbInitData,
-+			uint32_t f_cbInitData);
++				    uint32_t f_cbInitData);
 +	DrmData * aampGenerateKeyRequest(string& destinationURL);
 +	int aampDRMProcessKey(DrmData* key);
 +	int decrypt(const uint8_t *f_pbIV, uint32_t f_cbIV,
 +		    const uint8_t *payloadData, uint32_t payloadDataSize, uint8_t **ppOpaqueData);
 +	KeyState getState();
 +	void clearDecryptContext();
-+        void setKeyId(const char* keyId, int32_t keyLength);
++	void setKeyId(const char* keyId, int32_t keyLength);
 +};
 +
 +#endif
-diff --git a/main_aamp.cpp b/main_aamp.cpp
-index 5e48c10..223415c 100644
---- a/main_aamp.cpp
-+++ b/main_aamp.cpp
-@@ -4682,6 +4682,7 @@ char* PlayerInstanceAAMP::GetCurrentAudioLanguage(void)
-  */
- const char* PlayerInstanceAAMP::GetCurrentDRM(void)
- {
-+
- 	DRMSystems currentDRM = aamp->GetCurrentDRM();
- 	const char *drmName = "";
- 	switch(currentDRM)
