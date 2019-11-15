@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-COBALT_VERSION = 6791bf3a0168b54a8c3a5abde830b0690ce801fc
+COBALT_VERSION = 9c5b449e90155796a5573e785c9a97189faf023b
 COBALT_SITE_METHOD = git
 COBALT_SITE = git@github.com:Metrological/cobalt
 COBALT_INSTALL_STAGING = YES
@@ -27,6 +27,7 @@ define COBALT_INSTALL_IMAGE
     cp -a $(@D)/src/out/$(COBALT_PLATFORM)_$(COBALT_BUILD_TYPE)/lib/libcobalt.so  $(TARGET_DIR)/usr/lib
 endef
 define COBALT_INSTALL_STAGING_IMAGE
+    mkdir -p $(STAGING_DIR)/usr/include/starboard/
     mkdir -p $(STAGING_DIR)/usr/include/third_party/starboard/wpe/shared
     mkdir -p $(STAGING_DIR)/usr/include/third_party/starboard/wpe/rpi
 
