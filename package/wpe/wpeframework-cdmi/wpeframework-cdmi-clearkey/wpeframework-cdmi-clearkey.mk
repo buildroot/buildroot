@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_CDMI_CLEARKEY_VERSION = 3fb37d8ee90a8af941a6ebeff6309f89ead60fd4
+WPEFRAMEWORK_CDMI_CLEARKEY_VERSION = 19b428487ada158c32d8e0a99c6cbabc52270a5b
 WPEFRAMEWORK_CDMI_CLEARKEY_SITE_METHOD = git
 WPEFRAMEWORK_CDMI_CLEARKEY_SITE = git@github.com:WebPlatformForEmbedded/OCDM-Clearkey.git
 WPEFRAMEWORK_CDMI_CLEARKEY_INSTALL_STAGING = YES

@@ -1,0 +1,104 @@
+From 98fe564e98ec6449341dd8455feb6738dc782b83 Mon Sep 17 00:00:00 2001
+From: Charlie Turner <cturner@igalia.com>
+Date: Thu, 7 Feb 2019 11:58:19 +0000
+Subject: [PATCH] qtdemux: Find mp4a esds atoms in protected streams sample
+ description tables.
+
+This problem was found in Test. 2 of the YouTube 2018 EME
+tests[1]. The code was accidentally not finding an mp4a's esds atom in
+the sample description table when the stream was encrypted. It assumed
+that if the stream is protected, then only an enca atom will be found
+here. What happens with YouTube is they often provide protected
+content with a few seconds of clear content, and then switch to the
+encrypted stream.
+
+The failure case here was an incorrect codec_data field being sent
+into aacparse. The advertisement of stereo audio @ 44.1kHz for the
+mp4a (unprotected) stream was incorrect. As usual, the esds contained
+the real values here which were mono at 22050 Hz.
+
+Here's what the MP4 tree looks like for these types of files,
+demonstrating why the code was making a wrong assumption (or maybe
+YouTube is being unusual),
+
+[ftyp] size=8+16
+...
+[moov] size=8+1571
+...
+  [trak] size=8+559
+...
+          [stsd] size=12+234
+            entry-count = 2
+            [enca] size=8+147
+              channel_count = 2
+              sample_size = 16
+              sample_rate = 44100
+              [esds] size=12+27
+                ...
+            ...
+            [mp4a] size=8+67
+              channel_count = 2
+              sample_size = 16
+              sample_rate = 44100
+              [esds] size=12+27
+                ...
+
+In addition to fixing this, the checks for esds atoms in mp4a and mp4v
+have been made symmetrical. While I haven't seen a test case for video
+with the same problem, it seemed better to make the same checks. This
+also fixes a crash reported from another user[2], they also noted the
+asymmetry with mp4v and mp4a.
+
+[1] https://yt-dash-mse-test.commondatastorage.googleapis.com/unit-tests/2018.html?test_type=encryptedmedia-test
+[2] https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/issues/398
+---
+ gst/isomp4/qtdemux.c | 26 ++++----------------------
+ 1 file changed, 4 insertions(+), 22 deletions(-)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index 5476d0e24..e37876477 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -10852,14 +10852,8 @@ qtdemux_parse_trak (GstQTDemux * qtdemux, GNode * trak)
+       fiel = NULL;
+       /* pick 'the' stsd child */
+       mp4v = qtdemux_tree_get_child_by_index (stsd, stsd_index);
+-      if (!stream->protected) {
+-        if (QTDEMUX_TREE_NODE_FOURCC (mp4v) != fourcc) {
+-          mp4v = NULL;
+-        }
+-      } else {
+-        if (QTDEMUX_TREE_NODE_FOURCC (mp4v) != FOURCC_encv) {
+-          mp4v = NULL;
+-        }
++      if (!stream->protected && QTDEMUX_TREE_NODE_FOURCC (mp4v) != fourcc) {
++        mp4v = NULL;
+       }
+ 
+       if (mp4v) {
+@@ -12043,20 +12037,8 @@ qtdemux_parse_trak (GstQTDemux * qtdemux, GNode * trak)
+       }
+ 
+       mp4a = qtdemux_tree_get_child_by_index (stsd, stsd_index);
+-      if (!stream->protected) {
+-      } else {
+-        if (QTDEMUX_TREE_NODE_FOURCC (mp4v) != FOURCC_encv) {
+-          mp4v = NULL;
+-        }
+-      }
+-      if (stream->protected && fourcc == FOURCC_mp4a) {
+-        if (QTDEMUX_TREE_NODE_FOURCC (mp4a) != FOURCC_enca) {
+-          mp4a = NULL;
+-        }
+-      } else {
+-        if (QTDEMUX_TREE_NODE_FOURCC (mp4a) != FOURCC_mp4a) {
+-          mp4a = NULL;
+-        }
++      if (!stream->protected && QTDEMUX_TREE_NODE_FOURCC (mp4a) != FOURCC_mp4a) {
++        mp4a = NULL;
+       }
+ 
+       wave = NULL;
+-- 
+2.20.1
+

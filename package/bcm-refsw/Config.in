@@ -6,6 +6,7 @@ config BR2_PACKAGE_BCM_REFSW
 	select BR2_PACKAGE_HAS_NEXUS
 	select BR2_PACKAGE_HAS_LIBEGL
 	select BR2_PACKAGE_HAS_LIBGLES
+	select BR2_PACKAGE_LIBCURL
 	help
 		bcm-refsw
 
@@ -17,6 +18,9 @@ choice
 	default BR2_PACKAGE_BCM_REFSW_15_2
 	help
 		Select the version you wish to use
+
+	config BR2_PACKAGE_BCM_REFSW_CUSTOM_VERSION
+        bool "custom version"
 
     config BR2_PACKAGE_BCM_REFSW_13_1
         bool "bcm-refsw 13.1"
@@ -56,7 +60,19 @@ choice
 
     config BR2_PACKAGE_BCM_REFSW_18_2
         bool "bcm-refsw 18.2"
+
+    config BR2_PACKAGE_BCM_REFSW_19_1
+        bool "bcm-refsw 19.1"
 endchoice
+
+if BR2_PACKAGE_BCM_REFSW_CUSTOM_VERSION
+config BR2_PACKAGE_BCM_REFSW_CUSTOM_REPO_VERSION
+	string "Custom repository version"
+	help
+	  Revision to use in the typical format used by Git/Mercurial/Subversion
+	  E.G. a sha id, a tag, branch, ..
+endif
+
 
 choice
 	prompt "hardware platform"
@@ -91,10 +107,14 @@ choice
 		bool "BCM 7250"
 		depends on BR2_arm
 
-   config BR2_PACKAGE_BCM_REFSW_PLATFORM_72604
-		bool "BCM 72604"
+	config BR2_PACKAGE_BCM_REFSW_PLATFORM_72604
+		bool "BCM 72604(A0)"
 		depends on BR2_arm
- 
+
+	config BR2_PACKAGE_BCM_REFSW_PLATFORM_72604_B0
+		bool "BCM 72604(B0)"
+		depends on BR2_arm
+
 	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7271
 		bool "BCM 7271"
 		depends on BR2_arm

@@ -84,6 +84,10 @@ config BR2_PACKAGE_WPEFRAMEWORK_PROXYSTUB_PATH
 	string "proxystub path"
 	default "/usr/lib/wpeframework/proxystubs"
 
+config BR2_PACKAGE_WPEFRAMEWORK_TRACE_SETTINGS
+	string "trace settings"
+	default ""
+
 config BR2_PACKAGE_WPEFRAMEWORK_OOM_ADJUST
 	string "oom-adjust"
 	default ""
@@ -105,12 +109,18 @@ config BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITORCLIENT
 	bool "CompositorClient"
-        default n
+        default y
 	help
 	  A graphical/input abstraction. This library is included in micro services that requires user
           interaction (Graphics/input). The implementation hides all the compositor specific details.
 	  allows for relaying keys to plugins
 
+config BR2_PACKAGE_WPEFRAMEWORK_GSTREAMERCLIENT
+        bool "GstreamerClient"
+        default n
+        help
+          Gstreamer client provides custom APIs to manipulate underneath stream sinks which will be linked with created pipeline.
+          This implementation will vary based on custom platforms and sink backends.
 
 config BR2_PACKAGE_WPEFRAMEWORK_CDM
 	bool "CDM"
@@ -144,10 +154,8 @@ source "package/wpe/wpeframework-plugins/Config.in"
 source "package/wpe/wpeframework-amazon/Config.in"
 source "package/wpe/wpeframework-avnclient/Config.in"
 source "package/wpe/wpeframework-cobalt/Config.in"
-source "package/wpe/wpeframework-dialserver/Config.in"
 source "package/wpe/wpeframework-launcher/Config.in"
 source "package/wpe/wpeframework-netflix/Config.in"
-source "package/wpe/wpeframework-packager/Config.in"
 source "package/wpe/wpeframework-playgiga/Config.in"
 source "package/wpe/wpeframework-provisioning/Config.in"
 source "package/wpe/wpeframework-spotify/Config.in"

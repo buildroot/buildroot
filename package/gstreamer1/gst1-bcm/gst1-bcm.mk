@@ -4,6 +4,12 @@
 #
 ################################################################################
 
+ifneq ($(filter y,$(BR2_PACKAGE_GST1_BCM_UNIFIED_VERSION)),)
+GST1_BCM_SITE = git@github.com:Metrological/bcm-gstreamer.git
+GST1_BCM_VERSION = 17cff8a7ab92dbbac5c30415be52f705929b7953
+else
+GST1_BCM_SITE = git@github.com:Metrological/gstreamer-plugins-soc.git
+
 ifeq ($(BR2_PACKAGE_UMA_SDK),y)
 GST1_BCM_VERSION = 17.1-7
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_16_1),y)
@@ -20,19 +26,24 @@ else ifeq ($(BR2_PACKAGE_BCM_REFSW_17_3_RDK),y)
 GST1_BCM_VERSION = 17.3-rdkv-20180327
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_18_2),y)
 GST1_BCM_VERSION = 18.2-rdkv-20180727
+else ifeq ($(BR2_PACKAGE_BCM_REFSW_19_1),y)
+GST1_BCM_VERSION = 19.1-rdkv_20190409
 else ifneq ($(filter y,$(BR2_PACKAGE_ACN_SDK)),)
 GST1_BCM_VERSION = 17.1-5
 else ifneq ($(filter y,$(BR2_PACKAGE_HOMECAST_SDK)),)
 GST1_BCM_VERSION = 961a36dcd30c91330b8a9503e12ec3ddb30b70b6
 else ifneq ($(filter y,$(BR2_PACKAGE_VSS_SDK)),)
-GST1_BCM_VERSION = 602150ea6d1d616609e006c9b3acde1b68bbcc71
+GST1_BCM_VERSION = f04be4486828700bb921ec557f8d109a44fe02da
 else ifneq ($(filter y,$(BR2_PACKAGE_EVASION_SDK)),)
+GST1_BCM_VERSION = 18.2-rdkv-20180727
+else ifneq ($(filter y,$(BR2_PACKAGE_VFTV_SDK)),)
 GST1_BCM_VERSION = 18.2-rdkv-20180727
 else
 GST1_BCM_VERSION = 15.2
 endif
 
-GST1_BCM_SITE = git@github.com:Metrological/gstreamer-plugins-soc.git
+endif
+
 GST1_BCM_SITE_METHOD = git
 GST1_BCM_LICENSE = PROPRIETARY
 GST1_BCM_INSTALL_STAGING = YES
@@ -66,6 +77,9 @@ GST1_BCM_CONF_ENV += \
 
 ifeq ($(BR2_PACKAGE_GST1_BCM_ENABLE_SVP),y)
 GST1_BCM_CONF_ENV += GST_SVP_SUPPORT=y
+ifeq ($(BR2_PACKAGE_GST1_BCM_ENABLE_SVP_SECBUF),y)
+GST1_BCM_CONF_ENV += GST_SVP_SECBUF_SUPPORT=y
+endif
 endif
 
 GST1_BCM_MAKE_ENV += \
@@ -144,10 +158,23 @@ endif
 
 ifeq ($(BR2_PACKAGE_GST1_BCM_ENABLE_SVP),y)
 GST1_BCM_CONF_OPTS += --enable-svp
+ifeq ($(BR2_PACKAGE_GST1_BCM_ENABLE_SVP_SECBUF),y)
+GST1_BCM_CONF_OPTS += --enable-svp-secbuf
+endif
 endif
 
 ifeq ($(BR2_PACKAGE_HAS_OPUS_DECODER),)
 GST1_BCM_PKGDIR = "$(TOP_DIR)/package/gstreamer1/gst1-bcm"
+
+define GST1_BCM_INSTALL_SVP_DEV
+    if [ -d "${@D}/reference" ] ; then \
+    	$(INSTALL) -D -m 0644 ${@D}/reference/svpmeta/src/gst_brcm_svp_meta.h $(STAGING_DIR)/usr/include ; \
+    else \
+    	$(INSTALL) -D -m 0644 ${@D}/svpmeta/src/gst_brcm_svp_meta.h $(STAGING_DIR)/usr/include ; \
+    fi 
+endef
+
+GST1_BCM_POST_INSTALL_STAGING_HOOKS += GST1_BCM_INSTALL_SVP_DEV
 endif
 
 ifeq ($(BR2_PACKAGE_VSS_SDK_MOVE_GSTREAMER),y)
@@ -160,10 +187,9 @@ GST1_BCM_CONF_OPTS += \
 	--includedir=/usr/include/gstreamer-wpe \
 	--program-prefix wpe
 define GST1_BCM_APPLY_VSS_FIX
- package/vss-sdk/gst1/brcm.no_opus.fix.sh ${@D}
  package/vss-sdk/gst1/brcm.fix.sh ${@D}
 endef
-GST1_BCM_POST_PATCH_HOOKS += GST1_BCM_APPLY_VSS_FIX
+GST1_BCM_PRE_CONFIGURE_HOOKS += GST1_BCM_APPLY_VSS_FIX
 endif
 
 $(eval $(autotools-package))

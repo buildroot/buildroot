@@ -1,0 +1,316 @@
+diff --git a/Makefile.am b/Makefile.am
+index 10b9670..96f9bbc 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -1,4 +1,4 @@
+-SUBDIRS=dbus bus tools test doc
++SUBDIRS=dbus bus tools 
+ 
+ pkgconfigdir = $(libdir)/pkgconfig
+ pkgconfig_DATA = dbus-1.pc
+diff --git a/dbus/Makefile.am b/dbus/Makefile.am
+index bb5ccca..dcf171e 100644
+--- a/dbus/Makefile.am
++++ b/dbus/Makefile.am
+@@ -114,16 +114,18 @@ DBUS_UTIL_arch_sources = 			\
+ endif
+ 
+ if HAVE_LINUX_EPOLL
+-DBUS_UTIL_arch_sources += dbus-socket-set-epoll.c
++DBUS_SHARED_arch_sources += dbus-socket-set-epoll.c
+ endif
+ 
+ dbusinclude_HEADERS=				\
+ 	dbus.h					\
+ 	dbus-address.h				\
+ 	dbus-bus.h				\
++	dbus-ccsp-apis.h			\
+ 	dbus-connection.h			\
+ 	dbus-errors.h				\
+ 	dbus-macros.h				\
++	dbus-mainloop.h				\
+ 	dbus-memory.h				\
+ 	dbus-message.h				\
+ 	dbus-misc.h				\
+@@ -147,6 +149,7 @@ DBUS_LIB_SOURCES=				\
+ 	dbus-auth.c				\
+ 	dbus-auth.h				\
+ 	dbus-bus.c				\
++	dbus-ccsp-apis.c			\
+ 	dbus-connection.c			\
+ 	dbus-connection-internal.h		\
+ 	dbus-credentials.c			\
+@@ -212,6 +215,8 @@ DBUS_SHARED_SOURCES=				\
+ 	dbus-internals.h			\
+ 	dbus-list.c				\
+ 	dbus-list.h				\
++	dbus-mainloop.c				\
++	dbus-mainloop.h				\
+ 	dbus-marshal-basic.c			\
+ 	dbus-marshal-basic.h			\
+ 	dbus-memory.c				\
+@@ -219,6 +224,9 @@ DBUS_SHARED_SOURCES=				\
+ 	dbus-mempool.h				\
+ 	dbus-pipe.c                 \
+ 	dbus-pipe.h                 \
++	dbus-socket-set.h			\
++	dbus-socket-set.c			\
++	dbus-socket-set-poll.c			\
+ 	dbus-string.c				\
+ 	dbus-string.h				\
+ 	dbus-string-private.h			\
+@@ -237,8 +245,6 @@ DBUS_UTIL_SOURCES=				\
+ 	dbus-auth-script.h			\
+ 	dbus-auth-util.c			\
+ 	dbus-credentials-util.c			\
+-	dbus-mainloop.c				\
+-	dbus-mainloop.h				\
+ 	dbus-marshal-byteswap-util.c		\
+ 	dbus-marshal-recursive-util.c		\
+ 	dbus-marshal-validate-util.c		\
+@@ -248,9 +254,6 @@ DBUS_UTIL_SOURCES=				\
+ 	dbus-shell.c				\
+ 	dbus-shell.h				\
+ 	$(DBUS_UTIL_arch_sources)		\
+-	dbus-socket-set.h			\
+-	dbus-socket-set.c			\
+-	dbus-socket-set-poll.c			\
+ 	dbus-spawn.h				\
+ 	dbus-string-util.c			\
+ 	dbus-sysdeps-util.c			\
+diff --git a/dbus/dbus-ccsp-apis.c b/dbus/dbus-ccsp-apis.c
+index e69de29..529080d 100644
+--- a/dbus/dbus-ccsp-apis.c
++++ b/dbus/dbus-ccsp-apis.c
+@@ -0,0 +1,105 @@
++/* -*- mode: C; c-file-style: "gnu"; indent-tabs-mode: nil; -*- */
++/* dbus-ccsp-apis.c
++ *
++ * Copyright (C) 2003  Red Hat, Inc.
++ *
++ * Licensed under the Academic Free License version 2.1
++ * 
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ * 
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
++ *
++ */
++
++#include <dbus/dbus-ccsp-apis.h>
++#include <dbus/dbus-connection-internal.h>
++
++/* From dbus-mainloop */
++DBusLoop* dbus_loop_new(void)
++{
++    return _dbus_loop_new();
++}
++
++DBusLoop* dbus_loop_ref(DBusLoop *loop)
++{
++    return _dbus_loop_ref(loop);
++}
++
++void dbus_loop_unref(DBusLoop *loop) { _dbus_loop_unref(loop); }
++
++dbus_bool_t dbus_loop_add_watch(DBusLoop *loop, DBusWatch *watch)
++{
++    return _dbus_loop_add_watch(loop, watch);
++}
++
++void dbus_loop_remove_watch(DBusLoop *loop, DBusWatch *watch)
++{
++    _dbus_loop_remove_watch(loop, watch);
++}
++
++void dbus_loop_toggle_watch(DBusLoop *loop, DBusWatch *watch)
++{
++    _dbus_loop_toggle_watch(loop, watch);
++}
++
++dbus_bool_t dbus_loop_add_timeout(DBusLoop *loop, DBusTimeout *timeout)
++{
++    return _dbus_loop_add_timeout(loop, timeout);
++}
++
++void dbus_loop_remove_timeout(DBusLoop *loop, DBusTimeout *timeout)
++{
++     _dbus_loop_remove_timeout(loop, timeout);
++}
++
++dbus_bool_t dbus_loop_queue_dispatch(DBusLoop *loop, DBusConnection *connection)
++{
++    return _dbus_loop_queue_dispatch(loop, connection);
++}
++
++void dbus_loop_run(DBusLoop *loop)
++{
++     _dbus_loop_run(loop);
++}
++
++void dbus_loop_quit(DBusLoop *loop)
++{
++     _dbus_loop_quit(loop);
++}
++
++dbus_bool_t dbus_loop_iterate(DBusLoop *loop, dbus_bool_t block)
++{
++    return _dbus_loop_iterate(loop, block);
++}
++
++dbus_bool_t dbus_loop_dispatch(DBusLoop *loop)
++{
++    return _dbus_loop_dispatch(loop);
++}
++
++void dbus_wait_for_memory(void)
++{
++    _dbus_wait_for_memory();
++}
++
++/* From dbus-connection */
++void dbus_connection_lock(DBusConnection *connection)
++{
++    _dbus_connection_lock(connection);
++}
++
++void dbus_connection_unlock(DBusConnection *connection)
++{
++    _dbus_connection_unlock(connection);
++}
++
+diff --git a/dbus/dbus-ccsp-apis.h b/dbus/dbus-ccsp-apis.h
+index e69de29..7bec5c2 100644
+--- a/dbus/dbus-ccsp-apis.h
++++ b/dbus/dbus-ccsp-apis.h
+@@ -0,0 +1,105 @@
++/* -*- mode: C; c-file-style: "gnu"; indent-tabs-mode: nil; -*- */
++/* dbus-ccsp-apis.h
++ *
++ * Copyright (C) 2003  Red Hat, Inc.
++ *
++ * Licensed under the Academic Free License version 2.1
++ * 
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ * 
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
++ *
++ */
++#if !defined (DBUS_INSIDE_DBUS_H) && !defined (DBUS_COMPILATION)
++#error "Only <dbus/dbus.h> can be included directly, this file may disappear or change contents."
++#endif
++
++#ifndef DBUS_CCSP_APIS_H
++#define DBUS_CCSP_APIS_H
++
++#include <dbus/dbus.h>
++#include <stdarg.h>
++
++typedef struct DBusLoop DBusLoop;
++
++DBUS_BEGIN_DECLS
++
++/**
++ * @addtogroup DBusCcspApis
++ * @{
++ */
++
++/* From dbus-mainloop */
++DBUS_EXPORT
++DBusLoop*   dbus_loop_new            (void);
++
++DBUS_EXPORT
++DBusLoop*   dbus_loop_ref            (DBusLoop            *loop);
++
++DBUS_EXPORT
++void        dbus_loop_unref          (DBusLoop            *loop);
++
++DBUS_EXPORT
++dbus_bool_t dbus_loop_add_watch      (DBusLoop            *loop,
++                                      DBusWatch           *watch);
++
++DBUS_EXPORT
++void        dbus_loop_remove_watch   (DBusLoop            *loop,
++                                      DBusWatch           *watch);
++
++DBUS_EXPORT
++void        dbus_loop_toggle_watch   (DBusLoop            *loop,
++                                      DBusWatch           *watch);
++
++DBUS_EXPORT
++dbus_bool_t dbus_loop_add_timeout    (DBusLoop            *loop,
++                                      DBusTimeout         *timeout);
++
++DBUS_EXPORT
++void        dbus_loop_remove_timeout (DBusLoop            *loop,
++                                      DBusTimeout         *timeout);
++
++DBUS_EXPORT
++dbus_bool_t dbus_loop_queue_dispatch (DBusLoop            *loop,
++                                      DBusConnection      *connection);
++
++DBUS_EXPORT
++void        dbus_loop_run            (DBusLoop            *loop);
++
++DBUS_EXPORT
++void        dbus_loop_quit           (DBusLoop            *loop);
++
++DBUS_EXPORT
++dbus_bool_t dbus_loop_iterate        (DBusLoop            *loop,
++                                      dbus_bool_t          block);
++
++DBUS_EXPORT
++dbus_bool_t dbus_loop_dispatch       (DBusLoop            *loop);
++
++DBUS_EXPORT
++void dbus_wait_for_memory(void);
++
++/* From dbus-connection */
++DBUS_EXPORT
++void dbus_connection_lock(DBusConnection *connection);
++
++DBUS_EXPORT
++void dbus_connection_unlock(DBusConnection *connection);
++
++
++/** @} */
++
++DBUS_END_DECLS
++
++#endif /* DBUS_CCSP_APIS_H */
++
+diff --git a/dbus/dbus.h b/dbus/dbus.h
+index 932ceab..949a5d4 100644
+--- a/dbus/dbus.h
++++ b/dbus/dbus.h
+@@ -29,9 +29,11 @@
+ #include <dbus/dbus-arch-deps.h>
+ #include <dbus/dbus-address.h>
+ #include <dbus/dbus-bus.h>
++#include <dbus/dbus-ccsp-apis.h>
+ #include <dbus/dbus-connection.h>
+ #include <dbus/dbus-errors.h>
+ #include <dbus/dbus-macros.h>
++#include <dbus/dbus-mainloop.h>
+ #include <dbus/dbus-message.h>
+ #include <dbus/dbus-misc.h>
+ #include <dbus/dbus-pending-call.h>

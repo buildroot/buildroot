@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PXCORE_LIBNODE_VERSION = 4580fa4cb35a1f5aa72fdf9d2e09207b2f11d122
+PXCORE_LIBNODE_VERSION = 746382b7139bb7de4ebe357d766a4fbac243cab9
 PXCORE_LIBNODE_SITE_METHOD = git
 PXCORE_LIBNODE_SITE = git://github.com/pxscene/pxCore
 PXCORE_LIBNODE_DEPENDENCIES = host-python openssl
@@ -12,8 +12,6 @@ PXCORE_LIBNODE_INSTALL_STAGING = YES
 PXCORE_LIBNODE_LICENSE = MIT (core code); MIT, Apache and BSD family licenses (Bundled components)
 PXCORE_LIBNODE_LICENSE_FILES = LICENSE
 PXCORE_LIBNODE_DEPENDENCIES = openssl
-PXCORE_LIBNODE_VER = 6.9.0
-
 PXCORE_LIBNODE_CONF_OPTS = \
         --shared \
 	--without-snapshot \
@@ -49,7 +47,21 @@ PXCORE_LIBNODE_MIPS_ARCH_VARIANT = r1
 endif
 endif
 
-PXCORE_LIBNODE_LIB_VER = 48
+ifeq ($(BR2_PACKAGE_SPACKAGE_PXCORE_LIBNODE_6), y)
+    PXCORE_LIBNODE_VER = 6.9.0
+    PXCORE_LIBNODE_LIB_VER = 48
+    PXCORE_LIBNODE_GYP_PATH = tools/gyp
+else
+    PXCORE_LIBNODE_VER = 8.15.1
+    PXCORE_LIBNODE_LIB_VER = 57
+    PXCORE_LIBNODE_GYP_PATH = src
+
+define PXCORE_LIBNODE_PATCHE
+    patch -p1 <$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_mods.patch;
+endef
+
+endif
+
 PXCORE_LIBNODE_DIRECTORY = libnode-v$(PXCORE_LIBNODE_VER)
 PXCORE_LIBNODE_PATH = examples/pxScene2d/external/
 
@@ -57,9 +69,10 @@ define PXCORE_LIBNODE_EXTRACT
         cd $(@D)/; \
         find . -name examples -prune -o -type f -exec rm -rf {} +; \
         find . -name examples -prune -o -type d -exec rm -rf {} +; \
+        $(PXCORE_LIBNODE_PATCHE) \
         mv $(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/* $(@D)/; \
-        rm -rf examples/;
-        touch $(@D)/.stamp_downloaded
+        rm -rf examples/; \
+        touch $(@D)/.stamp_downloaded \
         touch $(@D)/.stamp_extracted
 endef
 PXCORE_LIBNODE_POST_EXTRACT_HOOKS += PXCORE_LIBNODE_EXTRACT
@@ -83,7 +96,7 @@ define PXCORE_LIBNODE_CONFIGURE_CMDS
 	)
 
 	# use host version of mkpeephole
-	sed "s#<(mkpeephole_exec)#$(HOST_DIR)/usr/bin/mkpeephole#g" -i $(@D)/deps/v8/tools/gyp/v8.gyp
+	sed "s#<(mkpeephole_exec)#$(HOST_DIR)/usr/bin/mkpeephole#g" -i $(@D)/deps/v8/$(PXCORE_LIBNODE_GYP_PATH)/v8.gyp
 endef
 
 define PXCORE_LIBNODE_BUILD_CMDS
@@ -107,6 +120,7 @@ define PXCORE_LIBNODE_INSTALL_STAGING_CMDS
                 PATH=$(@D)/bin:$(BR_PATH) \
                 LD="$(TARGET_CXX)"
         $(call PXCORE_LIBNODE_INSTALL_SHARED,$(STAGING_DIR))
+        #cp $(@D)/src/node_contextify_mods.h $(STAGING_DIR)/usr/include/
         $(PXCORE_LIBNODE_INSTALL_MODULES)
 endef
 define PXCORE_LIBNODE_INSTALL_TARGET_CMDS

@@ -1,0 +1,23 @@
+diff --git a/examples/pxScene2d/src/pxScene2d.cpp b/examples/pxScene2d/src/pxScene2d.cpp
+index 24e106255..ac3f49273 100755
+--- a/examples/pxScene2d/src/pxScene2d.cpp
++++ b/examples/pxScene2d/src/pxScene2d.cpp
+@@ -156,6 +156,7 @@ void stopProfiling()
+ 
+ extern int pxObjectCount;
+ bool gApplicationIsClosing = false;
++bool gNewSceneIsTop = true;
+ 
+ bool enableOptimizedUpdateOnStartup()
+ {
+@@ -3196,9 +3197,8 @@ rtError pxScriptView::getScene(int numArgs, const rtValue* args, rtValue* result
+       // JR Todo can specify what scene version/type to create in args
+       if (!v->mScene)
+       {
+-        static bool top = true;
+-        pxScene2dRef scene = new pxScene2d(top, v);
+-        top = false;
++        pxScene2dRef scene = new pxScene2d(gNewSceneIsTop, v);
++        gNewSceneIsTop = false;
+         v->mView = scene;
+         v->mScene = scene;

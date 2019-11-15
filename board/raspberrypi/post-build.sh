@@ -13,12 +13,6 @@ if [ -f "${BOARD_DIR}/libgstfluac3dec.so" ]; then
 	cp -pf "${BOARD_DIR}/libgstfluac3dec.so" "${TARGET_DIR}/usr/lib/gstreamer-1.0/"
 fi
 
-# Copy index.html page for boot up
-if [ -f "${BOARD_DIR}/index.html" ]; then
-	mkdir -p "${TARGET_DIR}/www/"
-	cp -pf "${BOARD_DIR}/index.html" "${TARGET_DIR}/www/"
-fi
-
 # Copy config.json to webserver
 if [ -f "${BOARD_DIR}/config.json" ]; then
 	mkdir -p "${TARGET_DIR}/www/"

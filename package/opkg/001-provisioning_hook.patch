@@ -78,10 +78,10 @@ index 975d9c6..d3843bb 100644
  #ifndef HAVE_SOLVER
 diff --git a/libopkg/opkg_provision.cpp b/libopkg/opkg_provision.cpp
 new file mode 100644
-index 0000000..0a33de4
+index 0000000..3baac7b
 --- /dev/null
 +++ b/libopkg/opkg_provision.cpp
-@@ -0,0 +1,241 @@
+@@ -0,0 +1,255 @@
 +/* vi: set expandtab sw=4 sts=4: */
 +/* opkg_provision.c - the opkg package management system
 +
@@ -99,7 +99,7 @@ index 0000000..0a33de4
 +*/
 +
 +#include <WPEFramework/core/core.h>
-+#include <provision/AccesProvision.h>
++#include <provision/AccessProvision.h>
 +
 +#include <openssl/err.h>
 +#include <openssl/bio.h>
@@ -113,11 +113,8 @@ index 0000000..0a33de4
 +
 +namespace {
 +
-+const char kPublicKeyEndMarker[] = "-----BEGIN PUBLIC KEY-----";
-+// PEM encoded 512 and 256 bytes long public keys + "-----BEGIN PUBLIC KEY-----" + "-----END PUBLIC KEY-----" twice
-+// (i.e. (512 + 64 + 4) / 3 * 4 + (512 + 65) / 64 + (256 + 64 + 4) / 3 * 4 + (256 + 65) / 64 + 24 * 2 + 26* 2 + 4 = 1323)
-+// and some extra space for libprovisioning stuff (725)
-+constexpr int kBlobSize = 2048;
++const char kDecryptionKeyEndMarker[] = "-----BEGIN PUBLIC KEY-----"; // beginning of the signing key.
++constexpr int kBlobSize = 8 * 1024;
 +constexpr int kHeaderSizeBytes = 512;
 +constexpr int kSignatureSizeBytes = 256;
 +constexpr int kMetainfoSizeBytes = 256;
@@ -255,25 +252,22 @@ index 0000000..0a33de4
 +        openssl_init();
 +
 +        // Seems like we have a valid RSA KEYS, so we can decrypt.
-+        WPEFramework::Core::DataElementFile package(file, WPEFramework::Core::DataElementFile::WRITABLE |
-+                                                          WPEFramework::Core::DataElementFile::READABLE |
-+                                                          WPEFramework::Core::DataElementFile::SHAREABLE);
++        WPEFramework::Core::DataElementFile package(file, WPEFramework::Core::File::USER_WRITE |
++                                                          WPEFramework::Core::File::USER_READ |
++                                                          WPEFramework::Core::File::SHAREABLE);
 +        unsigned char* dataPtr = package.Buffer();
 +        size_t dataSize = package.Size();
 +
 +        if (package.IsValid() == true) {
 +            std::array<unsigned char, kHeaderSizeBytes> securityHeaderClear {0};
-+            char* keyEnd = strstr(blobBuffer.data(), kPublicKeyEndMarker);
-+            if (keyEnd)
-+                keyEnd = strstr(keyEnd + 1, kPublicKeyEndMarker);
++            char* keyEnd = strstr(blobBuffer.data(), kDecryptionKeyEndMarker);
 +            if (keyEnd) {
 +                size_t keyLen = keyEnd - blobBuffer.data();
 +                BIO* encryptKeyBio = BIO_new_mem_buf(blobBuffer.data(), keyLen);
-+
 +                if (encryptKeyBio != nullptr) {
-+                    RSA* encryptKey = PEM_read_bio_RSA_PUBKEY(encryptKeyBio, nullptr, nullptr, nullptr);
++                    RSA* encryptKey = PEM_read_bio_RSAPrivateKey(encryptKeyBio, nullptr, nullptr, nullptr);
 +                    if (encryptKey != nullptr) {
-+                        result = RSA_public_decrypt(kHeaderSizeBytes, dataPtr, securityHeaderClear.data(),
++                        result = RSA_private_decrypt(kHeaderSizeBytes, dataPtr, securityHeaderClear.data(),
 +                                                    encryptKey, RSA_NO_PADDING);
 +                        if (result >= 0) {
 +                            // Looks like we have a security header in clear. Check signature.
@@ -299,19 +293,39 @@ index 0000000..0a33de4
 +                                                package.Sync();
 +
 +                                                result = 0;
++                                            } else {
++                                                fprintf(stderr, "Decrypt has failed [1]\n");
 +                                            }
++                                        } else {
++                                            fprintf(stderr, "Decrypt has failed [2]\n");
 +                                        }
++                                    } else {
++                                        fprintf(stderr, "Signature verification has failed\n");
 +                                    }
 +                                    RSA_free(signingKey);
++                                } else {
++                                    fprintf(stderr, "Read of the signature verification key has failed\n");
 +                                }
 +                                BIO_free(signingKeyBio);
++                            } else {
++                                fprintf(stderr, "Couldn't allocate BIO (signature)\n");
 +                            }
++                        } else {
++                            fprintf(stderr, "Decrypt has failed with %d\n", result);
 +                        }
 +                        RSA_free(encryptKey);
++                    } else {
++                        fprintf(stderr, "Read of the decryption key has failed\n");
 +                    }
 +                    BIO_free(encryptKeyBio);
++                } else {
++                    fprintf(stderr, "Couldn't allocate BIO (decrypt)\n");
 +                }
++            } else {
++                fprintf(stderr, "Provisioning data seems invalid\n");
 +            }
++        } else {
++            fprintf(stderr, "Failed reading package\n");
 +        }
 +    } else {
 +        fprintf(stderr, "No provisioning data! Error: %d\n", length);
@@ -393,13 +407,13 @@ index a71591d..9f9ea29 100644
      opkg_msg(ERROR, "signature_type option '%s' not understood.\n",
               opkg_config->signature_type);
 diff --git a/libopkg/pkg.c b/libopkg/pkg.c
-index b142b99..50402ec 100644
+index b142b99..bfc061c 100644
 --- a/libopkg/pkg.c
 +++ b/libopkg/pkg.c
-@@ -261,6 +261,18 @@ int pkg_init_from_file(pkg_t * pkg, const char *filename)
-     pkg_init(pkg);
+@@ -262,6 +262,19 @@ int pkg_init_from_file(pkg_t * pkg, const char *filename)
  
      pkg->local_filename = xstrdup(filename);
+ 
 +#ifdef HAVE_PROVISION
 +    if (opkg_config->check_pkg_signature) {
 +        err = opkg_verify_signature(pkg->local_filename, NULL);
@@ -412,10 +426,11 @@ index b142b99..50402ec 100644
 +        opkg_config->check_pkg_signature = 0;
 +    }
 +#endif
- 
++
      tmp = xstrdup(filename);
      sprintf_alloc(&control_path, "%s/%s.control.XXXXXX", opkg_config->tmp_dir,
-@@ -1417,11 +1429,13 @@ int pkg_verify(pkg_t * pkg)
+                   basename(tmp));
+@@ -1417,11 +1430,13 @@ int pkg_verify(pkg_t * pkg)
      }
  
      if (opkg_config->check_pkg_signature) {

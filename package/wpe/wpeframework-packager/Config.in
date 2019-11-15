@@ -1,9 +1,0 @@
-config BR2_PACKAGE_WPEFRAMEWORK_PACKAGER
-	bool "Packager"
-	depends on BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
-        select BR2_PACKAGE_OPKG
-	help
-	   WPE Platform Packager plugin
-
-comment "Packager is dependent on the provision proxy wpeframework extension"
-    depends on !BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY

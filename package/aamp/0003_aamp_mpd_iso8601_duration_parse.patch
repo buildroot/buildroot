@@ -1,0 +1,55 @@
+diff --git a/fragmentcollector_mpd.cpp b/fragmentcollector_mpd.cpp
+index 3b7da29..1f9e14b 100644
+--- a/fragmentcollector_mpd.cpp
++++ b/fragmentcollector_mpd.cpp
+@@ -2006,27 +2006,30 @@ static void ParseISO8601Duration(const char *ptr, uint64_t &durationMs)
+ 	int hour = 0;
+ 	int minute = 0;
+ 	float seconds = 0;
+-	if (ptr[0] == 'P' && ptr[1] == 'T')
++	if (ptr[0] == 'P')
+ 	{
+-		ptr += 2;
+-		const char* temp = strchr(ptr, 'H');
+-		if (temp)
+-		{
+-			sscanf(ptr, "%dH", &hour);
+-			ptr = temp + 1;
+-		}
+-		temp = strchr(ptr, 'M');
+-		if (temp)
+-		{
+-			sscanf(ptr, "%dM", &minute);
+-			ptr = temp + 1;
+-		}
+-		temp = strchr(ptr, 'S');
+-		if (temp)
+-		{
+-			sscanf(ptr, "%fS", &seconds);
+-			ptr = temp + 1;
+-		}
++        const char* temp = strchr(ptr, 'T');
++        if (temp) {
++            ptr = temp + 1;
++            temp = strchr(ptr, 'H');
++            if (temp)
++            {
++                sscanf(ptr, "%dH", &hour);
++                ptr = temp + 1;
++            }
++            temp = strchr(ptr, 'M');
++            if (temp)
++            {
++                sscanf(ptr, "%dM", &minute);
++                ptr = temp + 1;
++            }
++            temp = strchr(ptr, 'S');
++            if (temp)
++            {
++                sscanf(ptr, "%fS", &seconds);
++                ptr = temp + 1;
++            }
++        }
+ 	}
+ 	else
+ 	{

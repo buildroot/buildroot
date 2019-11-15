@@ -27,4 +27,4 @@ echo 3 > /proc/sys/vm/drop_caches
 # Firewall for non-prod builds
 iptables -I INPUT -i eth0 -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
 #iptables -I INPUT -i eth0 -p tcp --dport 9998 -m state --state NEW,ESTABLISHED -j ACCEPT
-LD_PRELOAD=$SOURCE/lib/libstdc\+\+.so.6.0.21:/lib/libnexus.so WPEFramework -c $SOURCE/etc/WPEFramework/config.json
+LD_PRELOAD=$SOURCE/lib/libstdc\+\+.so.6.0.21:/lib/libnexus.so WPEFramework -b -c $SOURCE/etc/WPEFramework/config.json

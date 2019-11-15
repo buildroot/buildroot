@@ -4,7 +4,9 @@
 #
 ################################################################################
 
-ifeq ($(BR2_PACKAGE_BCM_REFSW_13_1),y)
+ifeq ($(BR2_PACKAGE_BCM_REFSW_CUSTOM_VERSION),y)
+BCM_REFSW_VERSION = $(BR2_PACKAGE_BCM_REFSW_CUSTOM_REPO_VERSION)
+else ifeq ($(BR2_PACKAGE_BCM_REFSW_13_1),y)
 BCM_REFSW_VERSION = 13.1
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_13_4),y)
 BCM_REFSW_VERSION = 13.4-1
@@ -34,6 +36,8 @@ BCM_REFSW_VERSION = 17.4-4
 endif
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_18_2),y)
 BCM_REFSW_VERSION = 18.2
+else ifeq ($(BR2_PACKAGE_BCM_REFSW_19_1),y)
+BCM_REFSW_VERSION = 19.1
 else
 BCM_REFSW_VERSION = 16.2-7
 endif
@@ -41,7 +45,7 @@ endif
 BCM_REFSW_SITE = git@github.com:Metrological/bcm-refsw.git
 BCM_REFSW_SITE_METHOD = git
 
-BCM_REFSW_DEPENDENCIES = linux host-pkgconf host-flex host-bison host-gperf
+BCM_REFSW_DEPENDENCIES = linux host-pkgconf host-flex host-bison host-gperf libcurl
 BCM_REFSW_LICENSE = PROPRIETARY
 BCM_REFSW_INSTALL_STAGING = YES
 BCM_REFSW_INSTALL_TARGET = YES
@@ -82,7 +86,7 @@ BCM_REFSW_MAKE_ENV += \
 	V3D_EXTRA_LDFLAGS="$(TARGET_LDFLAGS)"
 
 ifneq ($(BR2_PACKAGE_BCM_REFSW_18_2),y)
-BCM_REFSW_MAKE_ENV += NEXUS_IR_INPUT_EXTENSION_INC="${@D}/nexus/extensions/insert_ir_input/insert_ir_input.inc"
+# BCM_REFSW_MAKE_ENV += NEXUS_IR_INPUT_EXTENSION_INC="${@D}/nexus/extensions/insert_ir_input/insert_ir_input.inc"
 endif
 
 ifeq ($(BR2_PACKAGE_BCM_REFSW_15_2),y)
@@ -192,6 +196,8 @@ define BCM_REFSW_INSTALL_TARGET_CMDS
         $(call BCM_REFSW_INSTALL_PLAYREADY30,       $(TARGET_DIR))
         $(call BCM_REFSW_INSTALL_DRMROOTFS,         $(TARGET_DIR))
         $(call BCM_REFSW_INSTALL_PRDYHTTP,          $(TARGET_DIR))
+        $(call BCM_REFSW_INSTALL_SAGE_BINS,         $(TARGET_DIR))
+
 endef
 
 $(eval $(generic-package))

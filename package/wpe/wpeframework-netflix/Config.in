@@ -1,7 +1,6 @@
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
     bool "Netflix"
     depends on BR2_PACKAGE_NETFLIX_LIB || BR2_PACKAGE_NETFLIX5_LIB
-    select BR2_PACKAGE_GST1_LIBAV if BR2_PACKAGE_NETFLIX5_LIB && BR2_PACKAGE_RPI_FIRMWARE
     help
         WPE Platform Netflix plugin
 
@@ -41,6 +40,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_FULLHD
     depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
     bool "fullhd"
     default n
+
+config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_APPBOOTKEY
+    depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+    string "appbootkey"
+    help 
+        "Define a custom appbootkey, if left empty the built in key from Netflix will be used"
 
 endif
 

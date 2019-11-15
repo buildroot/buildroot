@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_COMMON_VERSION = f0c2dc9aadfa05bb5274c40da750104ecbb88cba
+GST1_COMMON_VERSION = 59cb678164719ff59dcf6c8b93df4617a1075d11
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1_10),y)
 GST1_COMMON_VERSION = ac2f647695e7bd4b433ea108ee1d0e23901797d4
@@ -12,6 +12,10 @@ endif
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1_14),y)
 GST1_COMMON_VERSION = f0c2dc9aadfa05bb5274c40da750104ecbb88cba
+endif
+
+ifeq ($(BR2_PACKAGE_GSTREAMER1_16),y)
+GST1_COMMON_VERSION = 59cb678164719ff59dcf6c8b93df4617a1075d11
 endif
 
 GST1_COMMON_SOURCE = common-$(GST1_COMMON_VERSION).tar.xz

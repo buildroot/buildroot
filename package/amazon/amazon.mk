@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-AMAZON_VERSION = edad2389a62a2bc31b05e1e06d5b2554341f1778
+AMAZON_VERSION = f67706962f328e40ee91d558b74c1ebeaa3274ac
 AMAZON_SITE_METHOD = git
 AMAZON_SITE = git@github.com:Metrological/amazon.git
 AMAZON_INSTALL_STAGING = YES
@@ -58,13 +58,19 @@ endef
 
 ifeq ($(BR2_PACKAGE_AMAZON),y)
 ifeq ($(BR2_PACKAGE_AMAZON_BACKEND_DRM),y)
- AMAZON_DEPENDENCIES += libgles libegl gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad playready
+ AMAZON_DEPENDENCIES += libgles libegl gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad
+ifneq ($(BR2_PACKAGE_HAS_PLAYREADY),y)
+ AMAZON_DEPENDENCIES += playready
+endif
  AMAZON_BACKEND = mpb-drm
+ AMAZON_BACKEND_TEST = VideoPlayerMediaPipelineBackendUnitTests
 else ifeq  ($(BR2_PACKAGE_AMAZON_BACKEND_NO_DRM),y)
  AMAZON_DEPENDENCIES += libgles libegl gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad
  AMAZON_BACKEND = mpb-no-drm
+ AMAZON_BACKEND_TEST = VideoPlayerMediaPipelineBackendUnitTests
 else ifeq  ($(BR2_PACKAGE_AMAZON_BACKEND_FAKE),y)
  AMAZON_BACKEND = fake-mpb
+ AMAZON_BACKEND_TEST = VideoPlayerFakeBackendUnitTests
 else
  $(error No backend specified)
 endif
@@ -134,12 +140,21 @@ ifeq ($(BR2_PACKAGE_ACN_SDK),y)
  AMAZON_CXX_FLAGS += -DUSE_ANCIENT_PTHREAD_LIB=1
 endif
 
+ifeq ($(BR2_PACKAGE_AMAZON_BACKEND_DRM),y)
+ AMAZON_CXX_FLAGS += -DHAVE_PLAYREADY
+endif
+
 ifeq ($(BR2_PACKAGE_BCM_BME),y)
   HAWAII_BINDINGS_LIBS += -lbroadcom-backend -ldl
   AMAZON_CXX_FLAGS += -lbroadcom-backend -ldl
   SDK_INCLUDE_DIRECTORIES += ${STAGING_DIR}/usr/include/bme ${STAGING_DIR}/usr/include/refsw
 endif
 
+ifeq ($(BR2_PACKAGE_AMAZON_BACKEND),y)
+  HAWAII_BINDINGS_LIBS += -lamazon-backend -ldl
+  AMAZON_CXX_FLAGS += -lamazon-backend -ldl
+  SDK_INCLUDE_DIRECTORIES += ${STAGING_DIR}/usr/include/refsw
+endif
 ################################################################################
 # DCP/DPP
 ################################################################################
@@ -148,6 +163,23 @@ define AMAZON_BUILD_DPC_DPP
   $(call AMAZON_MAKE, dpc, BUILD_TYPE=$(AMAZON_BUILD_TYPE))
 endef
 
+ifeq ($(AMAZON_BUILD_TYPE),testing)
+define AMAZON_INSTALL_TESTS
+   $(INSTALL) -v -m 750 -D $(@D)/build/devicepropertiescomponent/$(AMAZON_BUILD_TYPE)/tests/*.tests $(1)/usr/bin
+   $(INSTALL) -v -m 750 -D $(@D)/build/devicepropertiescomponent/$(AMAZON_BUILD_TYPE)/tests/*.so $(1)/usr/lib
+   $(INSTALL) -v -m 750 -D $(@D)/build/devicepropertiesprovider/$(AMAZON_BUILD_TYPE)/tests/*.tests $(1)/usr/bin
+   $(INSTALL) -v -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/CoreUnitTests/CoreUnitTests $(1)/usr/bin
+   $(INSTALL) -v -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/CryptoUnitTests/CryptoUnitTests $(1)/usr/bin
+   $(INSTALL) -v -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/HawaiiUnitTests/HawaiiUnitTests $(1)/usr/bin
+   $(INSTALL) -v -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/HawaiiBindingsIntegrationTests/HawaiiBindingsIntegrationTests $(1)/usr/bin
+   $(INSTALL) -v -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/NetworkUnitTests/NetworkUnitTests $(1)/usr/bin
+   $(INSTALL) -v -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/VideoPlayerFrontendUnitTests/VideoPlayerFrontendUnitTests $(1)/usr/bin
+   $(INSTALL) -v -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/$(AMAZON_BACKEND_TEST)/$(AMAZON_BACKEND_TEST) $(1)/usr/bin
+   $(INSTALL) -v -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/VideoPlayerUnitTests/VideoPlayerUnitTests $(1)/usr/bin
+   $(INSTALL) -v -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/VideoPlayerIntegrationTests/VideoPlayerIntegrationTests $(1)/usr/bin
+   $(INSTALL) -v -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/XmlUnitTests/XmlUnitTests $(1)/usr/bin
+endef
+endif
 ################################################################################
 # Ruby
 ################################################################################
@@ -164,30 +196,30 @@ define AMAZON_BUILD_RUBY
 endef
 
 define AMAZON_INSTALL_RUBY
-  $(INSTALL) -v -d -m 0755 $(1)/usr/lib
   $(INSTALL) -v -m 750 -D $(@D)/install/$(BR2_PACKAGE_AMAZON_PLATFORM_NAME)/bin/*.so $(1)/usr/lib
+  $(INSTALL) -v -m 750 -D $(@D)/build/devicepropertiescomponent/$(AMAZON_BUILD_TYPE)/device-properties/*.so $(1)/usr/lib
 endef
 
 define AMAZON_INSTALL_RUBY_DEV
   $(call AMAZON_INSTALL_RUBY, ${STAGING_DIR})
 
   $(INSTALL) -v -d -m 0755 $(STAGING_DIR)/usr/include/amazon
-  cp -a $(@D)/ruby/amp/libs/Network/Network/include/* $(STAGING_DIR)/usr/include/amazon
-  cp -a $(@D)/ruby/amp/libs/Gfx/Gfx/include/* $(STAGING_DIR)/usr/include/amazon
-  cp -a $(@D)/ruby/amp/libs/Crypto/Crypto/include/* $(STAGING_DIR)/usr/include/amazon
-  cp -a $(@D)/ruby/amp/libs/BareClient/BareClient/include/* $(STAGING_DIR)/usr/include/amazon
-  cp -a $(@D)/ruby/amp/libs/Pad/Pad/include/* $(STAGING_DIR)/usr/include/amazon
-  cp -a $(@D)/ruby/amp/libs/Hawaii/HawaiiBindings/include/* $(STAGING_DIR)/usr/include/amazon
-  cp -a $(@D)/ruby/amp/libs/Hawaii/Hawaii/include/* $(STAGING_DIR)/usr/include/amazon
-  cp -a $(@D)/ruby/amp/libs/Xml/Xml/include/* $(STAGING_DIR)/usr/include/amazon
-  cp -a $(@D)/ruby/amp/libs/VideoPlayer/VideoPlayerBackendCommon/include/* $(STAGING_DIR)/usr/include/amazon
-  cp -a $(@D)/ruby/amp/libs/VideoPlayer/VideoPlayerFakeBackend/include/* $(STAGING_DIR)/usr/include/amazon
-  cp -a $(@D)/ruby/amp/libs/VideoPlayer/VideoPlayerMediaPipelineBackend/include/* $(STAGING_DIR)/usr/include/amazon
-  cp -a $(@D)/ruby/amp/libs/VideoPlayer/VideoPlayerFrontend/include/* $(STAGING_DIR)/usr/include/amazon
-  cp -a $(@D)/ruby/amp/libs/VideoPlayer/VideoPlayerApp/include/* $(STAGING_DIR)/usr/include/amazon
-  cp -a $(@D)/ruby/amp/libs/VideoPlayer/VideoPlayerBackend/include/* $(STAGING_DIR)/usr/include/amazon
-  cp -a $(@D)/ruby/amp/libs/VideoPlayer/VideoPlayer/include/* $(STAGING_DIR)/usr/include/amazon
-  cp -a $(@D)/ruby/amp/libs/Core/Core/include/* $(STAGING_DIR)/usr/include/amazon
+  cp -av $(@D)/ruby/amp/libs/Network/Network/include/* $(STAGING_DIR)/usr/include/amazon
+  cp -av $(@D)/ruby/amp/libs/Gfx/Gfx/include/* $(STAGING_DIR)/usr/include/amazon
+  cp -av $(@D)/ruby/amp/libs/Crypto/Crypto/include/* $(STAGING_DIR)/usr/include/amazon
+  cp -av $(@D)/ruby/amp/libs/BareClient/BareClient/include/* $(STAGING_DIR)/usr/include/amazon
+  cp -av $(@D)/ruby/amp/libs/Pad/Pad/include/* $(STAGING_DIR)/usr/include/amazon
+  cp -av $(@D)/ruby/amp/libs/Hawaii/HawaiiBindings/include/* $(STAGING_DIR)/usr/include/amazon
+  cp -av $(@D)/ruby/amp/libs/Hawaii/Hawaii/include/* $(STAGING_DIR)/usr/include/amazon
+  cp -av $(@D)/ruby/amp/libs/Xml/Xml/include/* $(STAGING_DIR)/usr/include/amazon
+  cp -av $(@D)/ruby/amp/libs/VideoPlayer/VideoPlayerBackendCommon/include/* $(STAGING_DIR)/usr/include/amazon
+  cp -av $(@D)/ruby/amp/libs/VideoPlayer/VideoPlayerFakeBackend/include/* $(STAGING_DIR)/usr/include/amazon
+  cp -av $(@D)/ruby/amp/libs/VideoPlayer/VideoPlayerMediaPipelineBackend/include/* $(STAGING_DIR)/usr/include/amazon
+  cp -av $(@D)/ruby/amp/libs/VideoPlayer/VideoPlayerFrontend/include/* $(STAGING_DIR)/usr/include/amazon
+  cp -av $(@D)/ruby/amp/libs/VideoPlayer/VideoPlayerApp/include/* $(STAGING_DIR)/usr/include/amazon
+  cp -av $(@D)/ruby/amp/libs/VideoPlayer/VideoPlayerBackend/include/* $(STAGING_DIR)/usr/include/amazon
+  cp -av $(@D)/ruby/amp/libs/VideoPlayer/VideoPlayer/include/* $(STAGING_DIR)/usr/include/amazon
+  cp -av $(@D)/ruby/amp/libs/Core/Core/include/* $(STAGING_DIR)/usr/include/amazon
 endef
 
 ################################################################################
@@ -218,27 +250,6 @@ ifeq ($(BR2_PACKAGE_AMAZON_INCLUDE_IGNITION),y)
   define AMAZON_INSTALL_IGNITION_DEV
     $(call AMAZON_INSTALL_IGNITION, ${STAGING_DIR})
   endef
-endif
-
-
-################################################################################
-# Tests
-################################################################################
-ifeq ($(AMAZON_BUILD_TYPE),testing)
-define AMAZON_INSTALL_TESTS
-   $(INSTALL) -d -m 0755 $(1)/usr/bin
-   $(INSTALL) -m 750 -D $(@D)/build/devicepropertiescomponent/$(AMAZON_BUILD_TYPE)/tests/*.tests $(1)/usr/bin
-   $(INSTALL) -m 750 -D $(@D)/build/devicepropertiescomponent/$(AMAZON_BUILD_TYPE)/tests/*.so $(1)/usr/lib
-   $(INSTALL) -m 750 -D $(@D)/build/devicepropertiesprovider/$(AMAZON_BUILD_TYPE)/tests/*.tests $(1)/usr/bin
-   $(INSTALL) -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/CoreUnitTests/CoreUnitTests $(1)/usr/bin
-   $(INSTALL) -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/CryptoUnitTests/CryptoUnitTests $(1)/usr/bin
-   $(INSTALL) -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/HawaiiUnitTests/HawaiiUnitTests $(1)/usr/bin
-   $(INSTALL) -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/NetworkUnitTests/NetworkUnitTests $(1)/usr/bin
-   $(INSTALL) -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/VideoPlayerFrontendUnitTests/VideoPlayerFrontendUnitTests $(1)/usr/bin
-   $(INSTALL) -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/VideoPlayerMediaPipelineBackendUnitTests/VideoPlayerMediaPipelineBackendUnitTests $(1)/usr/bin
-   $(INSTALL) -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/VideoPlayerUnitTests/VideoPlayerUnitTests $(1)/usr/bin
-   $(INSTALL) -m 750 -D $(@D)/build/ruby/ruby-with-${AMAZON_BACKEND}/$(AMAZON_BUILD_TYPE)/XmlUnitTests/XmlUnitTests $(1)/usr/bin
-endef
 endif
 
 ################################################################################

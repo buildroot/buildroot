@@ -1,0 +1,13 @@
+config BR2_PACKAGE_LIBPARODUS
+    bool "libparodus"
+    default n
+    select BR2_PACKAGE_NOPOLL
+    select BR2_PACKAGE_NANOMSG
+    select BR2_PACKAGE_MSGPACK_C
+    select BR2_PACKAGE_UCRESOLV
+    select BR2_PACKAGE_TROWER_BASE64
+    select BR2_PACKAGE_CIMPLOG
+    select BR2_PACKAGE_WRP_C
+    select BR2_PACKAGE_WDMP_C
+    help
+       C implementation of the WebPA client coordinator

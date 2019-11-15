@@ -1,0 +1,51 @@
+diff --git a/source/CMakeLists.txt b/source/CMakeLists.txt
+index bc49341..a74b9f3 100644
+--- a/source/CMakeLists.txt
++++ b/source/CMakeLists.txt
+@@ -31,7 +31,16 @@ else()
+ endif()
+ endif()
+ set(HEADERS app/libpd.h)
++
++if (PARODUS2CCSP_APP)
++
+ add_executable(webpa ${SOURCES} ${HEADERS})
++set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DPARODUS2CCSP_APP ")
++else ()
++
++add_library(webpa SHARED ${SOURCES} ${HEADERS})
++endif (PARODUS2CCSP_APP)
++
+ set(COMMON_LIBS -ldbus-1 -lccsp_common -lwrp-c -lpthread -lwdmp-c -lmsgpackc -ltrower-base64 -lm -lnanomsg -lcjson -lrt -luuid -llibparodus -lcimplog)
+ if (BUILD_YOCTO)
+ set(COMMON_LIBS "${COMMON_LIBS} -llog4c -lrdkloggers")
+@@ -40,4 +49,10 @@ if (FEATURE_SUPPORT_WEBCONFIG)
+ set(COMMON_LIBS "${COMMON_LIBS} -lcurl")
+ endif()
+ target_link_libraries (webpa ${CMAKE_THREAD_LIBS_INIT} ${COMMON_LIBS})
+-install (TARGETS webpa DESTINATION bin)
++
++if (PARODUS2CCSP_APP)
++set (INSTALL_DIR bin)
++else ()
++set (INSTALL_DIR lib)
++endif ()
++install (TARGETS webpa DESTINATION ${INSTALL_DIR})
+diff --git a/source/app/main.c b/source/app/main.c
+index 1e8074f..cf82777 100644
+--- a/source/app/main.c
++++ b/source/app/main.c
+@@ -27,8 +27,13 @@ static void sig_handler(int sig);
+ /*                             External Functions                             */
+ /*----------------------------------------------------------------------------*/
+ 
++#if (PARODUS2CCSP_APP)
+ int main()
+ {
++#else
++int Parodus2CCSPMain()
++{
++#endif
+         int ret = -1;
+ 
+ #ifdef INCLUDE_BREAKPAD

@@ -1,0 +1,22 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 040c80e..6114c71 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -59,7 +59,7 @@ include_directories(
+                      source/WebConfig
+                     )
+ endif (FEATURE_SUPPORT_WEBCONFIG)
+-include_directories (SYSTEM /usr/include)
++include_directories (SYSTEM $(SYSROOT)/usr/include)
+ 
+ # pthread external dependency
+ #-------------------------------------------------------------------------------
+@@ -88,7 +88,7 @@ if (FEATURE_SUPPORT_WEBCONFIG)
+ add_definitions(-DFEATURE_SUPPORT_WEBCONFIG)
+ endif (FEATURE_SUPPORT_WEBCONFIG)
+ 
+-if (NOT BUILD_YOCTO)
++if (NOT BUILD_YOCTO AND NOT BUILD_BR)
+ # cJSON external dependency
+ #-------------------------------------------------------------------------------
+ ExternalProject_Add(cJSON

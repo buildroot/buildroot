@@ -3,12 +3,12 @@
 # spark
 #
 ################################################################################
-SPARK_VERSION = dddd8bf17d3431e6abaf650575587c39605b549d
+SPARK_VERSION = 9bb696d5dd73cb25a9b6999b752d3da975fa54b1
 SPARK_SITE_METHOD = git
 SPARK_SITE = git://github.com/pxscene/pxCore
 SPARK_INSTALL_STAGING = YES
 
-SPARK_DEPENDENCIES = openssl freetype util-linux libpng libcurl pxcore-libnode
+SPARK_DEPENDENCIES = openssl freetype util-linux libpng libcurl pxcore-libnode giflib ca-certificates sqlite
 
 SPARK_CONF_OPTS += \
     -DBUILD_SHARED_LIBS=OFF \
@@ -25,10 +25,12 @@ SPARK_CONF_OPTS += \
     -DSPARK_BACKGROUND_TEXTURE_CREATION=ON \
     -DSPARK_ENABLE_LRU_TEXTURE_EJECTION=OFF \
     -DSUPPORT_DUKTAPE=OFF \
-    -DBUILD_DUKTAPE=ON
+    -DBUILD_DUKTAPE=ON \
+    -DSPARK_ENABLE_OPTIMIZED_UPDATE=ON \
+    -DSPARK_BACKGROUND_TEXTURE_CREATION=OFF
 
 
-ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR), y)
+ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITORCLIENT), y)
     SPARK_CONF_OPTS += \
         -DBUILD_WITH_WPEFRAMEWORK=ON \
         -DPXCORE_WPEFRAMEWORK=ON
@@ -36,6 +38,16 @@ ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR), y)
     COMPOSITOR=wpeframework
     COMPOSITOR_BIN=wpe
     SPARK_DEPENDENCIES += wpeframework
+
+else ifeq ($(BR2_PACKAGE_WESTEROS_ESSOS), y)
+    SPARK_DEPENDENCIES += westeros
+
+    SPARK_CONF_OPTS += \
+        -DPXCORE_ESSOS=ON \
+        -DBUILD_PXSCENE_ESSOS=ON
+
+    COMPOSITOR=essos
+    COMPOSITOR_BIN=egl
 
 else
     SPARK_DEPENDENCIES += westeros
@@ -45,8 +57,10 @@ else
         -DBUILD_WITH_WESTEROS=ON \
         -DPXCORE_WAYLAND_EGL=ON \
         -DBUILD_PXSCENE_WAYLAND_EGL=ON
+
     COMPOSITOR=wayland_egl
     COMPOSITOR_BIN=egl
+
 endif
 
 ifeq ($(BR2_PACKAGE_SPARK_LIB), y)
@@ -58,13 +72,14 @@ SPARK_CONF_OPTS += \
 else
 
 SPARK_CONF_OPTS += \
-    -DBUILD_OPTIMUS_STATIC_LIB=ON \
-    -DBUILD_PXSCENE_APP_WITH_PXSCENE_LIB=ON \
-    -DBUILD_RTREMOTE_LIBS=ON
+    -DBUILD_PXSCENE_APP_WITH_PXSCENE_LIB=ON
 endif
 
-ifeq ($(BR2_PACKAGE_RTREMOTE), y)
+SPARK_CONF_OPTS += -DCMAKE_CXX_FLAGS="$(TARGET_CXXFLAGS) -fno-delete-null-pointer-checks"
 
+ifeq ($(BR2_PACKAGE_RTREMOTE), y)
+SPARK_CONF_OPTS += \
+    -DBUILD_OPTIMUS_STATIC_LIB=ON
 SPARK_DEPENDENCIES += rtremote
 else
 
@@ -81,6 +96,20 @@ define RTCORE_INSTALL_INCLUDES
 endef
 
 endif
+
+ifeq ($(BR2_PACKAGE_SPACKAGE_PXCORE_LIBNODE_6), y)
+SPARK_CONF_OPTS += -DUSE_NODE_8=OFF
+else
+#Apply pxCore lib node patch to get patched headers localy for NODE 8.15.1 case
+PXCORE_LIBNODE_VER = 8.15.1
+PXCORE_LIBNODE_PATH = examples/pxScene2d/external/
+define PXCORE_LIBNODE_PATCHES
+    cd $(@D); \
+    patch -p1 <$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_mods.patch
+endef
+endif
+
+SPARK_PRE_PATCH_HOOKS = PXCORE_LIBNODE_PATCHES
 
 SPARK_INSTALL_PATH = usr/share/WPEFramework/Spark
 define SPARK_INSTALL_DEPS
