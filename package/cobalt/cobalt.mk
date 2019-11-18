@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-COBALT_VERSION = 9c5b449e90155796a5573e785c9a97189faf023b
+COBALT_VERSION = f42565363f360a64d9675b4475fe2ec97f3a76f8
 COBALT_SITE_METHOD = git
 COBALT_SITE = git@github.com:Metrological/cobalt
 COBALT_INSTALL_STAGING = YES
@@ -13,7 +13,22 @@ COBALT_DEPENDENCIES = gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugin
 export BUILDROOT_HOME=$(HOST_DIR)/usr
 export PATH := $(HOST_DIR)/bin:$(HOST_DIR)/usr/bin:$(HOST_DIR)/usr/sbin:$(PATH)
 
+ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
+# TODO: we might also have mips here at some point.
+COBALT_PLATFORM = wpe-brcm-arm
+COBALT_PLATFORM_DIR = brcm/arm
+COBALT_DEPENDENCIES += gst1-bcm
+else
 COBALT_PLATFORM = wpe-rpi
+COBALT_PLATFORM_DIR = rpi
+endif
+
+ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_CDM),y)
+export COBALT_HAS_OCDM=1
+else
+export COBALT_HAS_OCDM=0
+endif
+
 COBALT_BUILD_TYPE = qa
 
 ifeq ($(BR2_PACKAGE_COBALT_IMAGE_AS_LIB), y)
@@ -29,10 +44,10 @@ endef
 define COBALT_INSTALL_STAGING_IMAGE
     mkdir -p $(STAGING_DIR)/usr/include/starboard/
     mkdir -p $(STAGING_DIR)/usr/include/third_party/starboard/wpe/shared
-    mkdir -p $(STAGING_DIR)/usr/include/third_party/starboard/wpe/rpi
+    mkdir -p $(STAGING_DIR)/usr/include/third_party/starboard/wpe/$(COBALT_PLATFORM_DIR)
 
     cp $(@D)/src/starboard/*.h $(STAGING_DIR)/usr/include/starboard/
-    cp $(@D)/src/third_party/starboard/wpe/rpi/*.h  $(STAGING_DIR)/usr/include/third_party/starboard/wpe/rpi
+    cp $(@D)/src/third_party/starboard/wpe/$(COBALT_PLATFORM_DIR)/*.h  $(STAGING_DIR)/usr/include/third_party/starboard/wpe/$(COBALT_PLATFORM_DIR)
     cp $(@D)/src/third_party/starboard/wpe/shared/*.h  $(STAGING_DIR)/usr/include/third_party/starboard/wpe/shared
 
     cp -a $(@D)/src/out/$(COBALT_PLATFORM)_$(COBALT_BUILD_TYPE)/lib/libcobalt.so  $(STAGING_DIR)/usr/lib
