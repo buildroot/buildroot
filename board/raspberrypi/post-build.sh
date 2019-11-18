@@ -30,8 +30,3 @@ if [ -f "${BOARD_DIR}/osmc-devinput-remote.json" ]; then
 	mkdir -p "${TARGET_DIR}/usr/share/WPEFramework/RemoteControl/"
 	cp -pf "${BOARD_DIR}/osmc-devinput-remote.json" "${TARGET_DIR}/usr/share/WPEFramework/RemoteControl/devinput-remote.json"
 fi
-
-if  [ -e "${TARGET_DIR}/etc/WPEFramework/plugins/BluetoothRemoteControl.json" ] && [ -f "${BOARD_DIR}/bluetooth-remote.json" ]; then
-	mkdir -p "${TARGET_DIR}/usr/share/WPEFramework/BluetoothRemoteControl/"
-	cp -pf "${BOARD_DIR}/bluetooth-remote.json" "${TARGET_DIR}/usr/share/WPEFramework/BluetoothRemoteControl/bluetooth-remote.json"
-fi
