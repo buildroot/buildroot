@@ -6,6 +6,13 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING
 
 if BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING
 
+config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_BLOBWRITER
+	bool "BlobWriter"
+	default n
+	help
+	    Plugin to transfor Provisioning Blobs into entries 
+            in a TEE vault.
+
 config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_URI
 	string "provisioning URI"
 	default "provisioning-sdk.metrological.com:80"
