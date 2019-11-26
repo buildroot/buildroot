@@ -1,13 +1,21 @@
 config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool
 
-config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
-    bool "Bluetooth"
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
+    bool "BluetoothControl"
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     select BR2_PACKAGE_BLUEZ5_UTILS
     default n
     help
       A Bluetooth plugin to interact with Bluetooth devices.
+
+if BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
+config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH_AUTOSTART
+    bool "Start Automatically"
+    default y
+    help
+      Select this to start the plugin automatically when starting WPEFramework
+endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTHREMOTECONTROL
     bool "BLE RemoteControl"
