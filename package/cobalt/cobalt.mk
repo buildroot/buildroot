@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-COBALT_VERSION = f83ae3a907628a0c697fc6196e529545c474e5dc
+COBALT_VERSION = c4c978c5fae7c07107c50b5cc4bef89bba833494
 COBALT_SITE_METHOD = git
 COBALT_SITE = git@github.com:Metrological/cobalt
 COBALT_INSTALL_STAGING = YES
@@ -40,5 +40,10 @@ define COBALT_BUILD_CMDS
     $(@D)/src/cobalt/build/gyp_cobalt -C $(COBALT_BUILD_TYPE) $(COBALT_PLATFORM)
     $(BUILDROOT_HOME)/bin/ninja -C $(@D)/src/out/$(COBALT_PLATFORM)_$(COBALT_BUILD_TYPE) cobalt_deploy
 endef
+
+define COBALT_INSTALL_TARGET_CMDS
+    cp -a $(@D)/src/out/$(COBALT_PLATFORM)_$(COBALT_BUILD_TYPE)/content $(TARGET_DIR)/usr/share
+endef
+
 
 $(eval $(generic-package))
