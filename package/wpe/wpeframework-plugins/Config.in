@@ -15,6 +15,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH_AUTOSTART
     default y
     help
       Select this to start the plugin automatically when starting WPEFramework
+
+config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH_PERSISTMAC
+    bool "Persist MAC Address"
+    default n
+    help
+      Maintains the MAC address of the BT adapter after the first startup.
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTHREMOTECONTROL
@@ -214,6 +220,14 @@ config BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION
     default y
     help
       DeviceIdentification Plugin (Nexus OTP)
+
+config BR2_PACKAGE_WPEFRAMEWORK_DISPLAYINFO
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "DisplayInfo"
+    default y
+    help
+      DisplayInfo Plugin
+
 
 config BR2_PACKAGE_WPEFRAMEWORK_DSRESOLUTION
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
