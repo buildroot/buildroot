@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RPI_BT_FIRMWARE_VERSION = a439f892bf549ddfefa9ba7ad1999cc515f233bf
+RPI_BT_FIRMWARE_VERSION = 9edf5584d3ee4ffcd6200dd84252545622539462
 RPI_BT_FIRMWARE_SITE = https://aur.archlinux.org/pi-bluetooth.git
 RPI_BT_FIRMWARE_SITE_METHOD = git
 RPI_BT_FIRMWARE_LICENSE = PROPRIETARY
