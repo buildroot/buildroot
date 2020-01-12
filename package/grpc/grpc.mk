@@ -48,6 +48,14 @@ GRPC_CFLAGS += -O0
 GRPC_CXXFLAGS += -O0
 endif
 
+# Toolchains older than gcc5 will fail to compile with -0s due to:
+# error: failure memory model cannot be stronger than success memory model for
+# '__atomic_compare_exchange', so we use -O2 in these cases
+ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_5):$(BR2_OPTIMIZE_S),:y)
+GRPC_CFLAGS += -O2
+GRPC_CXXFLAGS += -O2
+endif
+
 GRPC_CONF_OPTS += \
 	-DCMAKE_C_FLAGS="$(GRPC_CFLAGS)" \
 	-DCMAKE_CXX_FLAGS="$(GRPC_CXXFLAGS)"
