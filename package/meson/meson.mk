@@ -67,4 +67,10 @@ endef
 
 TARGET_FINALIZE_HOOKS += HOST_MESON_INSTALL_CROSS_CONF
 
+# Avoid interpreter shebang longer than 128 chars
+define HOST_MESON_SET_INTERPRETER
+	$(SED) '1s:.*:#!/usr/bin/env python3:' $(HOST_DIR)/bin/meson
+endef
+HOST_MESON_POST_INSTALL_HOOKS += HOST_MESON_SET_INTERPRETER
+
 $(eval $(host-python-package))
