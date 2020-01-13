@@ -726,6 +726,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_TRACECONTROL
     help
       TraceControl Plugin
 
+config BR2_PACKAGE_WPEFRAMEWORK_VOLUMECONTROL
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "VolumeControl"
+    help
+      VolumeControl Plugin
+
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "WebKitBrowser"
