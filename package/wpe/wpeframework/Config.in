@@ -133,6 +133,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
 	help
 	  Allows provisioning of modules from the cloud.
 
+config BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT_ACCESSOR
+	bool "SecurityAgent"
+	help
+	  Allows external access to the Security Agent, through a C interface.
+
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_BROADCAST
 	bool "Broadcast"
         default n
