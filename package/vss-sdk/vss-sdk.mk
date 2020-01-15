@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-VSS_SDK_VERSION = 064fd7d42c200ec5ee81038e5d36168e56714b83
+VSS_SDK_VERSION = c08d88f55a0d235a0b63b46e8860fc960aebb713
 VSS_SDK_SITE = git@github.com:Metrological/SDK_VSS.git
 VSS_SDK_SITE_METHOD = git
 VSS_SDK_LICENSE = PROPRIETARY
@@ -124,7 +124,7 @@ endef
 define VSS_SDK_INSTALL_TARGET_CMDS
     ln -sf /usr/lib/libprotobuf-lite.so.8.0.0 ${TARGET_DIR}/usr/lib/libprotobuf-lite.so
     ln -sf /usr/lib/libprotobuf.so.8.0.0 ${TARGET_DIR}/usr/lib/libprotobuf.so
-    ln -sf /usr/lib/libturbojpeg.so.0.1.0 ${TARGET_DIR}/usr/lib/libturbojpeg.so.0
+    cp -va ${@D}/usr/lib/libturbojpeg*.so* ${TARGET_DIR}/usr/lib
 endef
 
 
