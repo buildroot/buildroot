@@ -411,6 +411,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_PACKAGER
     help
       Packager Plugin, install packages based upon OPKG.
 
+config BR2_PACKAGE_WPEFRAMEWORK_PLAYERINFO
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "PlayerInfo"
+    default y
+    help
+      PlayerInfo Plugin provide the information about the platform codec supports
+
 
 config BR2_PACKAGE_WPEFRAMEWORK_POWER
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
