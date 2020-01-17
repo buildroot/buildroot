@@ -10,11 +10,76 @@ config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_AUTOSTART
     depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
     bool "autostart"
     default n
+menu "DPI options"
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_MODEL
+      depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+      string "model"
+      default "Metrological Reference DPI Implementation"
 
-config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_MODEL
-    depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
-    string "model"
-    default "Metrological Reference DPI Implementation"
+  menu "Audio codecs"
+
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_DDP2
+  	bool "DDP 2.0"
+  	help
+  	  Enable DDP 2.0
+
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_DDP5_1
+  	bool "DDP 5.1"
+  	help
+  	  Enable DDP 5.1
+
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_DOLBY_ATMOS
+  	bool "Dolby Atmos"
+  	help
+  	  Enable Dolby Atmos support
+
+  endmenu
+
+  menu "Video codecs"
+
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_VIDEO_AVC_HIGH
+  	bool "avc-high"
+  	help
+  	  Enable AVC High support
+
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_VIDEO_HDR10
+  	bool "HDR10"
+  	help
+  	  Enable HDR10 support
+
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_DOLBY_VISION
+  	bool "Dolby Vision"
+  	help
+  	  Enable Dolby Vision support
+
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_HEVC
+  	bool "HEVC"
+  	help
+  	  Enable HEVC support
+
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_VP9_P0
+  	bool "VP9 profile 0"
+  	help
+  	  Enable VP9 profile 0 support
+
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_VP9_P2
+  	bool "VP9 profile 2"
+  	help
+  	  Enable VP9 profile 2 support
+
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_VP9_HDR
+  	bool "VP9 HDR"
+  	help
+  	  Enable VP9 HDR support
+
+  endmenu
+
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_DEFAULT_LAUGUAGE
+  	string "Default lauguage"
+  	default "en"
+  	help
+  	  define the default language
+endmenu
 
 config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_SUSPEND_TIMEOUT
     depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
