@@ -62,6 +62,10 @@ ifeq ($(shell expr $(PERL_VERSION_MAJOR) % 2), 1)
 PERL_CONF_OPTS += -Dusedevel
 endif
 
+ifeq ($(BR2_PACKAGE_PERL_THREADS),y)
+PERL_CONF_OPTS += -Dusethreads
+endif
+
 ifeq ($(BR2_STATIC_LIBS),y)
 PERL_CONF_OPTS += --all-static --no-dynaloader
 endif
