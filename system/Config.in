@@ -533,6 +533,16 @@ config BR2_ROOTFS_OVERLAY
 	  They are copied as-is into the rootfs, excluding files ending
 	  with ~ and .git, .svn and .hg directories.
 
+config BR2_ROOTFS_PRE_BUILD_SCRIPT
+	string "Custom scripts to run before commencing the build"
+	default ""
+	help
+	  Specify a space-separated list of scripts to be run before the
+	  build commences.
+
+	  This gives users the opportunity to do board-specific
+	  preparations before starting the build.
+
 config BR2_ROOTFS_POST_BUILD_SCRIPT
 	string "Custom scripts to run before creating filesystem images"
 	default ""
