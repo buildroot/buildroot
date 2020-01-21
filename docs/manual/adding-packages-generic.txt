@@ -344,6 +344,10 @@ not and can not work as people would expect it should:
   submodules when they contain bundled libraries, in which case we
   prefer to use those libraries from their own package.
 
+* +LIBFOO_GIT_LFS+ should be set to +YES+ if the Git repository uses
+  Git LFS to store large files out of band.  This is only available for
+  packages downloaded with git (i.e. when +LIBFOO_SITE_METHOD=git+).
+
 * +LIBFOO_STRIP_COMPONENTS+ is the number of leading components
   (directories) that tar must strip from file names on extraction.
   The tarball for most packages has one leading component named
