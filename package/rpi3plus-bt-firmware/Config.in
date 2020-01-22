@@ -1,0 +1,8 @@
+config BR2_PACKAGE_RPI3PLUS_BT_FIRMWARE
+	bool "rpi3plus-bt-firmware"
+	depends on BR2_arm || BR2_aarch64
+	help
+	  Raspberry Pi 3+ Broadcom BCM4345C0 Bluetooth module
+	  firmware.
+
+	  https://github.com/RPi-Distro/bluez-firmware
