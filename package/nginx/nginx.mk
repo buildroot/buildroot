@@ -55,11 +55,11 @@ NGINX_CONF_OPTS += \
 	--group=www-data \
 	--error-log-path=/var/log/nginx/error.log \
 	--http-log-path=/var/log/nginx/access.log \
-	--http-client-body-temp-path=/var/tmp/nginx/client-body \
-	--http-proxy-temp-path=/var/tmp/nginx/proxy \
-	--http-fastcgi-temp-path=/var/tmp/nginx/fastcgi \
-	--http-scgi-temp-path=/var/tmp/nginx/scgi \
-	--http-uwsgi-temp-path=/var/tmp/nginx/uwsgi
+	--http-client-body-temp-path=/var/cache/nginx/client-body \
+	--http-proxy-temp-path=/var/cache/nginx/proxy \
+	--http-fastcgi-temp-path=/var/cache/nginx/fastcgi \
+	--http-scgi-temp-path=/var/cache/nginx/scgi \
+	--http-uwsgi-temp-path=/var/cache/nginx/uwsgi
 
 NGINX_CONF_OPTS += \
 	$(if $(BR2_PACKAGE_NGINX_FILE_AIO),--with-file-aio) \
