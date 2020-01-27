@@ -9,6 +9,23 @@ config BR2_PACKAGE_RPI_FIRMWARE
 
 if BR2_PACKAGE_RPI_FIRMWARE
 
+choice 
+	prompt "Rasberrypi version"
+	config BR2_PACKAGE_RPI_VERSION_NONE
+		bool "None"
+	config BR2_PACKAGE_RPI_VERSION_RPIO
+		select BR2_PACKAGE_RPI_BT_FIRMWARE
+		bool "RPI 0"
+	config BR2_PACKAGE_RPI_VERSION_RPI1
+		bool "RPI 1"
+	config BR2_PACKAGE_RPI_VERSION_RPI2
+		bool "RPI 2"
+	config BR2_PACKAGE_RPI_VERSION_RPI3
+		bool "RPI 3"
+	config BR2_PACKAGE_RPI_VERSION_RPI3PLUS
+		bool "RPI 3+"
+endchoice
+
 choice
 	bool "Firmware to boot"
 	default BR2_PACKAGE_RPI_FIRMWARE_DEFAULT
