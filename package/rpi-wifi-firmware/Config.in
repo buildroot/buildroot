@@ -1,5 +1,5 @@
 config BR2_PACKAGE_RPI_WIFI_FIRMWARE
 	bool "rpi-wifi-firmware"
-	depends on BR2_arm || BR2_aarch64
+	depends on BR2_PACKAGE_RPI_FIRMWARE && (BR2_arm || BR2_aarch64)
 	help
 	  This package provides the wifi firmware for the Raspberry Pi
