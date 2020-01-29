@@ -83,4 +83,14 @@ define SHAIRPORT_SYNC_INSTALL_INIT_SYSV
 		$(TARGET_DIR)/etc/init.d/S99shairport-sync
 endef
 
+ifeq ($(BR2_PACKAGE_PULSEAUDIO),y)
+define SHAIRPORT_SYNC_USERS
+	shairport-sync -1 shairport-sync -1 * /var/run/shairport-sync - audio,pulse-access
+enddef
+else
+define SHAIRPORT_SYNC_USERS
+	shairport-sync -1 shairport-sync -1 * /var/run/shairport-sync - audio
+enddef
+endif
+
 $(eval $(autotools-package))
