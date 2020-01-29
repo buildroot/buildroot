@@ -44,14 +44,18 @@ endif # INSTALL_VCDBG
 ifeq ($(BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4),y)
 # bootcode.bin is not used on rpi4, because it has been replaced by boot code in the onboard EEPROM
 define RPI_FIRMWARE_INSTALL_BOOT
-	$(INSTALL) -D -m 0644 $(@D)/boot/start4$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).elf $(BINARIES_DIR)/rpi-firmware/start4.elf
-	$(INSTALL) -D -m 0644 $(@D)/boot/fixup4$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).dat $(BINARIES_DIR)/rpi-firmware/fixup4.dat
+	$(INSTALL) -D -m 0644 $(@D)/boot/start4$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).elf \
+		$(BINARIES_DIR)/rpi-firmware/start4$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).elf
+	$(INSTALL) -D -m 0644 $(@D)/boot/fixup4$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).dat \
+		$(BINARIES_DIR)/rpi-firmware/fixup4$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).dat
 endef
 else
 define RPI_FIRMWARE_INSTALL_BOOT
 	$(INSTALL) -D -m 0644 $(@D)/boot/bootcode.bin $(BINARIES_DIR)/rpi-firmware/bootcode.bin
-	$(INSTALL) -D -m 0644 $(@D)/boot/start$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).elf $(BINARIES_DIR)/rpi-firmware/start.elf
-	$(INSTALL) -D -m 0644 $(@D)/boot/fixup$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).dat $(BINARIES_DIR)/rpi-firmware/fixup.dat
+	$(INSTALL) -D -m 0644 $(@D)/boot/start$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).elf \
+		$(BINARIES_DIR)/rpi-firmware/start$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).elf
+	$(INSTALL) -D -m 0644 $(@D)/boot/fixup$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).dat \
+		$(BINARIES_DIR)/rpi-firmware/fixup$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).dat
 endef
 endif
 
