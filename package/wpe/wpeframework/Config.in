@@ -1,7 +1,7 @@
 config BR2_PACKAGE_WPEFRAMEWORK
-	bool "wpeframework"
-	help
-	  WPE Framework
+    bool "wpeframework"
+    help
+      WPE Framework
 
 if BR2_PACKAGE_WPEFRAMEWORK
 
@@ -41,60 +41,60 @@ config BR2_PACKAGE_WPEFRAMEWORK_BUILD_TYPE_PRODUCTION
 endchoice
 
 config BR2_PACKAGE_WPEFRAMEWORK_CREATE_IPKG_TARGETS
-	bool "create ipkg targets"
-	select BR2_PACKAGE_HOST_OPKG_UTILS
-	depends on BR2_PACKAGE_WPEFRAMEWORK_PACKAGER
-	help
-		Creates from configured targets, a DEBIAN 2.0 (ipk, opk, deb) packages. Configured packages will install theirs
-		staging file, but not target files on the root filesystem
+    bool "create ipkg targets"
+    select BR2_PACKAGE_HOST_OPKG_UTILS
+    depends on BR2_PACKAGE_WPEFRAMEWORK_PACKAGER
+    help
+        Creates from configured targets, a DEBIAN 2.0 (ipk, opk, deb) packages. Configured packages will install theirs
+        staging file, but not target files on the root filesystem
 
 config BR2_PACKAGE_WPEFRAMEWORK_PORT
-	string "port"
-	default "80"
+    string "port"
+    default "80"
 
 config BR2_PACKAGE_WPEFRAMEWORK_BIND
-	string "bind"
-	default "0.0.0.0"
+    string "bind"
+    default "0.0.0.0"
 
 config BR2_PACKAGE_WPEFRAMEWORK_INTERFACE
-	string "interface"
-	default ""
+    string "interface"
+    default ""
 
 config BR2_PACKAGE_WPEFRAMEWORK_IDLE_TIME
-	string "idle-time"
-	default "180"
+    string "idle-time"
+    default "180"
 
 config BR2_PACKAGE_WPEFRAMEWORK_PERSISTENT_PATH
-	string "persistent path"
-	default "/root"
+    string "persistent path"
+    default "/root"
 
 config BR2_PACKAGE_WPEFRAMEWORK_VOLATILE_PATH
-	string "volatile path"
-	default "/tmp"
+    string "volatile path"
+    default "/tmp"
 
 config BR2_PACKAGE_WPEFRAMEWORK_DATA_PATH
-	string "data path"
-	default "/usr/share/WPEFramework"
+    string "data path"
+    default "/usr/share/WPEFramework"
 
 config BR2_PACKAGE_WPEFRAMEWORK_SYSTEM_PATH
-	string "system path"
-	default "/usr/lib/wpeframework/plugins"
+    string "system path"
+    default "/usr/lib/wpeframework/plugins"
 
 config BR2_PACKAGE_WPEFRAMEWORK_PROXYSTUB_PATH
-	string "proxystub path"
-	default "/usr/lib/wpeframework/proxystubs"
+    string "proxystub path"
+    default "/usr/lib/wpeframework/proxystubs"
 
 config BR2_PACKAGE_WPEFRAMEWORK_TRACE_SETTINGS
-	string "trace settings"
-	default ""
+    string "trace settings"
+    default ""
 
 config BR2_PACKAGE_WPEFRAMEWORK_OOM_ADJUST
-	string "oom-adjust"
-	default ""
+    string "oom-adjust"
+    default ""
 
 config BR2_PACKAGE_WPEFRAMEWORK_SYSTEM_PREFIX
-	string "system prefix"
-	default ""
+    string "system prefix"
+    default ""
 
 source "package/wpe/wpeframework-devtools/Config.in"
 
@@ -102,18 +102,18 @@ endmenu
 
 menu "Extensions"
 config BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
-	bool "VirtualInput"
-	help
-	  If the dynamic uinput system can not be used for security reasons, this
-	  allows for relaying keys to plugins
+    bool "VirtualInput"
+    help
+      If the dynamic uinput system can not be used for security reasons, this
+      allows for relaying keys to plugins
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITORCLIENT
-	bool "CompositorClient"
+    bool "CompositorClient"
         default y
-	help
-	  A graphical/input abstraction. This library is included in micro services that requires user
+    help
+      A graphical/input abstraction. This library is included in micro services that requires user
           interaction (Graphics/input). The implementation hides all the compositor specific details.
-	  allows for relaying keys to plugins
+      allows for relaying keys to plugins
 
 config BR2_PACKAGE_WPEFRAMEWORK_GSTREAMERCLIENT
         bool "GstreamerClient"
@@ -123,34 +123,34 @@ config BR2_PACKAGE_WPEFRAMEWORK_GSTREAMERCLIENT
           This implementation will vary based on custom platforms and sink backends.
 
 config BR2_PACKAGE_WPEFRAMEWORK_CDM
-	bool "CDM"
-	help
-	  CDM client support compatible with OpenCDM
+    bool "CDM"
+    help
+      CDM client support compatible with OpenCDM
 
 config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
-	bool "ProvisionProxy"
-	select BR2_PACKAGE_LIBPROVISION
-	help
-	  Allows provisioning of modules from the cloud.
+    bool "ProvisionProxy"
+    select BR2_PACKAGE_LIBPROVISION
+    help
+      Allows provisioning of modules from the cloud.
 
 config BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT_ACCESSOR
-	bool "SecurityAgent"
-	help
-	  Allows external access to the Security Agent, through a C interface.
+    bool "SecurityAgent"
+    help
+      Allows external access to the Security Agent, through a C interface.
 
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_BROADCAST
-	bool "Broadcast"
+    bool "Broadcast"
         default n
-	help
-	  Abstraction on QAM tuner and PSI/SI parser functionality.
+    help
+      Abstraction on QAM tuner and PSI/SI parser functionality.
 
 if BR2_PACKAGE_WPEFRAMEWORK_BROADCAST
 config BR2_PACKAGE_WPEFRAMEWORK_BROADCAST_SI_PARSING
-	bool "SI Parsing"
+    bool "SI Parsing"
         default n
-	help
-	  Enable functionality to automatically parse SI information on the 
+    help
+      Enable functionality to automatically parse SI information on the
           tuned streams.
 endif
 endmenu
@@ -159,6 +159,7 @@ menu "Plugins"
 source "package/wpe/wpeframework-plugins/Config.in"
 source "package/wpe/wpeframework-amazon/Config.in"
 source "package/wpe/wpeframework-avnclient/Config.in"
+source "package/wpe/wpeframework-dsgccclient/Config.in"
 source "package/wpe/wpeframework-launcher/Config.in"
 source "package/wpe/wpeframework-netflix/Config.in"
 source "package/wpe/wpeframework-playgiga/Config.in"
