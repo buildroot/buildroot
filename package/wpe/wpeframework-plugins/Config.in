@@ -442,6 +442,24 @@ config BR2_PACKAGE_WPEFRAMEWORK_POWER_GPIOTYPE
 
 endif
 
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_PROCESSMONITOR
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "ProcessMonitor"
+    help
+      Process Monitor Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_PROCESSMONITOR
+
+config BR2_PACKAGE_WPEFRAMEWORK_PROCESSMONITOR_AUTOSTART
+    bool "autostart"
+    default n
+
+config BR2_PACKAGE_WPEFRAMEWORK_PROCESSMONITOR_EXITTIMEOUT
+    string "exit-timeout"
+    default "2"
+
+endif
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "RemoteControl"
