@@ -1,9 +1,26 @@
-source "package/wpe/wpeframework-cdmi/wpeframework-cdmi-clearkey/Config.in"
-source "package/wpe/wpeframework-cdmi/wpeframework-cdmi-playready/Config.in"
-source "package/wpe/wpeframework-cdmi/wpeframework-cdmi-playready-nexus/Config.in"
-source "package/wpe/wpeframework-cdmi/wpeframework-cdmi-playready-nexus-svp/Config.in"
-source "package/wpe/wpeframework-cdmi/wpeframework-cdmi-playready-vgdrm/Config.in"
-source "package/wpe/wpeframework-cdmi/wpeframework-cdmi-widevine/Config.in"
+
+if (!BR2_PACKAGE_WIDEVINE && ((BR2_PACKAGE_BCM_REFSW || BR2_PACKAGE_HAS_NEXUS) && (BR2_PACKAGE_BCM_REFSW_SAGE || BR2_PACKAGE_PROVIDES_NEXUS_SAGE)))
 source "package/wpe/wpeframework-cdmi/wpeframework-cdmi-widevine-nexus-svp/Config.in"
+endif
+
+if  (BR2_PACKAGE_WIDEVINE || ((!BR2_PACKAGE_BCM_REFSW && !BR2_PACKAGE_HAS_NEXUS) || (!BR2_PACKAGE_BCM_REFSW_SAGE && !BR2_PACKAGE_PROVIDES_NEXUS_SAGE)))
+source "package/wpe/wpeframework-cdmi/wpeframework-cdmi-widevine/Config.in"
+endif
+
+if (!BR2_PACKAGE_PLAYREADY && ((BR2_PACKAGE_BCM_REFSW || BR2_PACKAGE_HAS_NEXUS) && (BR2_PACKAGE_BCM_REFSW_SAGE || BR2_PACKAGE_PROVIDES_NEXUS_SAGE)))
+source "package/wpe/wpeframework-cdmi/wpeframework-cdmi-playready-nexus-svp/Config.in"
+endif
+
+if (BR2_PACKAGE_ACN_SDK || BR2_PACKAGE_EVASION_SDK)
+source "package/wpe/wpeframework-cdmi/wpeframework-cdmi-playready-nexus/Config.in"
+endif
+
+if  ((!BR2_PACKAGE_ACN_SDK && !BR2_PACKAGE_EVASION_SDK) && (BR2_PACKAGE_PLAYREADY || ((!BR2_PACKAGE_BCM_REFSW && !BR2_PACKAGE_HAS_NEXUS) || (!BR2_PACKAGE_BCM_REFSW_SAGE && !BR2_PACKAGE_PROVIDES_NEXUS_SAGE))))
+source "package/wpe/wpeframework-cdmi/wpeframework-cdmi-playready/Config.in"
+endif
+
+
+source "package/wpe/wpeframework-cdmi/wpeframework-cdmi-clearkey/Config.in"
+
 source "package/wpe/wpeframework-cdmi/wpeframework-cdmi-nagra/Config.in"
 source "package/wpe/wpeframework-cdmi/wpeframework-cdmi-ncas/Config.in"
