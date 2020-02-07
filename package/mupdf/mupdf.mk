@@ -4,6 +4,7 @@
 #
 ################################################################################
 
+# python-pymupdf's version must match exactly mupdf's version
 MUPDF_VERSION = 1.16.0
 MUPDF_SOURCE = mupdf-$(MUPDF_VERSION)-source.tar.gz
 MUPDF_SITE = https://mupdf.com/downloads/archive
