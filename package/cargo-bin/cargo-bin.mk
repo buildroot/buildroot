@@ -10,4 +10,10 @@ CARGO_BIN_SOURCE = cargo-$(CARGO_BIN_VERSION)-$(RUSTC_HOST_NAME).tar.xz
 CARGO_BIN_LICENSE = Apache-2.0 or MIT
 CARGO_BIN_LICENSE_FILES = LICENSE-APACHE LICENSE-MIT
 
+ifeq ($(BR2_PACKAGE_HOST_RUST_BIN),y)
+define HOST_CARGO_BIN_INSTALL_CMDS
+	$(@D)/install.sh --prefix=$(HOST_DIR) --disable-ldconfig
+endef
+endif
+
 $(eval $(host-generic-package))
