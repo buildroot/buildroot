@@ -146,6 +146,15 @@ endif
 
 comment "Legacy options removed in 2021.02"
 
+config BR2_PACKAGE_HOST_RCW
+	bool "rcw package was renamed to oriq-rcw"
+	select BR2_PACKAGE_HOST_QORIQ_RCW
+	select BR2_LEGACY
+	help
+	  The rcw package was specific to the QorIQ platform, so it has
+	  been renamed to qoriq-rcw, to leave room for other *-rcw
+	  packages for other platforms.
+
 config BR2_KERNEL_HEADERS_5_8
 	bool "kernel headers version 5.8.x are no longer supported"
 	select BR2_LEGACY
