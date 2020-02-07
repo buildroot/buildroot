@@ -4,14 +4,17 @@
 #
 ################################################################################
 
-COBALT_VERSION = 3fdc0d8ce722a5a430a5df26fbe251dfb4c3ae11
+COBALT_VERSION = 713f50e7cef818e4dae06ceb345c7f8f93e0079b
 COBALT_SITE_METHOD = git
 COBALT_SITE = git@github.com:Metrological/cobalt
 COBALT_INSTALL_STAGING = YES
 COBALT_DEPENDENCIES = gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad host-bison host-ninja wpeframework
 
-export BUILDROOT_HOME=$(HOST_DIR)/usr
+export COBALT_STAGING_DIR=$(STAGING_DIR)
+export COBALT_TOOLCHAIN_PREFIX=$(TARGET_CROSS)
 export COBALT_INSTALL_DIR=$(TARGET_DIR)
+
+export BUILDROOT_HOME=$(HOST_DIR)/usr
 export PATH := $(HOST_DIR)/bin:$(HOST_DIR)/usr/bin:$(HOST_DIR)/usr/sbin:$(PATH)
 
 ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
