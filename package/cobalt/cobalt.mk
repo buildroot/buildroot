@@ -14,7 +14,6 @@ export COBALT_STAGING_DIR=$(STAGING_DIR)
 export COBALT_TOOLCHAIN_PREFIX=$(TARGET_CROSS)
 export COBALT_INSTALL_DIR=$(TARGET_DIR)
 
-export BUILDROOT_HOME=$(HOST_DIR)/usr
 export PATH := $(HOST_DIR)/bin:$(HOST_DIR)/usr/bin:$(HOST_DIR)/usr/sbin:$(PATH)
 
 ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
@@ -41,7 +40,7 @@ endif
 
 define COBALT_BUILD_CMDS
     $(@D)/src/cobalt/build/gyp_cobalt -C $(COBALT_BUILD_TYPE) $(COBALT_PLATFORM)
-    $(BUILDROOT_HOME)/bin/ninja -C $(@D)/src/out/$(COBALT_PLATFORM)_$(COBALT_BUILD_TYPE) cobalt_deploy
+    $(HOST_DIR)/usr/bin/ninja -C $(@D)/src/out/$(COBALT_PLATFORM)_$(COBALT_BUILD_TYPE) cobalt_deploy
 endef
 
 define COBALT_INSTALL_TARGET_CMDS
