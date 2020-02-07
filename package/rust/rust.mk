@@ -48,7 +48,7 @@ define HOST_RUST_CONFIGURE_CMDS
 	( \
 		echo '[build]'; \
 		echo 'target = ["$(RUSTC_TARGET_NAME)"]'; \
-		echo 'cargo = "$(HOST_CARGO_BIN_DIR)/cargo/bin/cargo"'; \
+		echo 'cargo = "$(HOST_RUST_BIN_DIR)/cargo/bin/cargo"'; \
 		echo 'rustc = "$(HOST_RUST_BIN_DIR)/rustc/bin/rustc"'; \
 		echo 'python = "$(HOST_DIR)/bin/python$(HOST_RUST_PYTHON_VERSION)"'; \
 		echo 'submodules = false'; \
