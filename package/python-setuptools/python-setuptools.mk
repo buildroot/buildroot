@@ -10,6 +10,7 @@ PYTHON_SETUPTOOLS_SITE = http://pypi.python.org/packages/source/s/setuptools
 PYTHON_SETUPTOOLS_LICENSE = Python Software Foundation or Zope Public License
 PYTHON_SETUPTOOLS_LICENSE_FILES = PKG-INFO
 PYTHON_SETUPTOOLS_SETUP_TYPE = setuptools
+HOST_PYTHON_SETUPTOOLS_NEEDS_HOST_PYTHON = python2
 
 $(eval $(python-package))
 $(eval $(host-python-package))
