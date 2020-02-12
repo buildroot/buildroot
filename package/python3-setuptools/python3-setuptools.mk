@@ -7,3 +7,4 @@ PYTHON3_SETUPTOOLS_SETUP_TYPE = setuptools
 HOST_PYTHON3_SETUPTOOLS_NEEDS_HOST_PYTHON = python3
 
 $(eval $(host-python-package))
+

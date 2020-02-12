@@ -10,6 +10,5 @@ PYTHON_JSONREF_SITE = https://pypi.python.org/packages/b3/cf/93d4f34d76863d4fb99
 PYTHON_JSONREF_LICENSE = MIT
 PYTHON_JSONREF_LICENSE_FILES = COPYING json/LICENSE
 PYTHON_JSONREF_SETUP_TYPE = setuptools
-PYTHON_JSONREF_DEPENDENCIES = host-python host-python-setuptools
 
 $(eval $(host-python-package))
