@@ -4,14 +4,16 @@
 #
 ################################################################################
 
-COBALT_VERSION = 3fdc0d8ce722a5a430a5df26fbe251dfb4c3ae11
+COBALT_VERSION = c0e5376052e4c99e9e99866198e78fcff61d42f3
 COBALT_SITE_METHOD = git
 COBALT_SITE = git@github.com:Metrological/cobalt
 COBALT_INSTALL_STAGING = YES
 COBALT_DEPENDENCIES = gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad host-bison host-ninja wpeframework
 
-export BUILDROOT_HOME=$(HOST_DIR)/usr
+export COBALT_STAGING_DIR=$(STAGING_DIR)
+export COBALT_TOOLCHAIN_PREFIX=$(TARGET_CROSS)
 export COBALT_INSTALL_DIR=$(TARGET_DIR)
+
 export PATH := $(HOST_DIR)/bin:$(HOST_DIR)/usr/bin:$(HOST_DIR)/usr/sbin:$(PATH)
 
 ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
@@ -38,7 +40,7 @@ endif
 
 define COBALT_BUILD_CMDS
     $(@D)/src/cobalt/build/gyp_cobalt -C $(COBALT_BUILD_TYPE) $(COBALT_PLATFORM)
-    $(BUILDROOT_HOME)/bin/ninja -C $(@D)/src/out/$(COBALT_PLATFORM)_$(COBALT_BUILD_TYPE) cobalt_deploy
+    $(HOST_DIR)/usr/bin/ninja -C $(@D)/src/out/$(COBALT_PLATFORM)_$(COBALT_BUILD_TYPE) cobalt_deploy
 endef
 
 define COBALT_INSTALL_TARGET_CMDS
