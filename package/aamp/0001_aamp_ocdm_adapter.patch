@@ -64,36 +64,27 @@ index c43d063..a90dc62 100644
  
  		break;
 diff --git a/drm/AampDRMSessionManager.cpp b/drm/AampDRMSessionManager.cpp
-index da58276..9897206 100644
+index da58276..68c9ca7 100644
 --- a/drm/AampDRMSessionManager.cpp
 +++ b/drm/AampDRMSessionManager.cpp
-@@ -1244,6 +1244,10 @@ AampDrmSession * AampDRMSessionManager::createDrmSession(
+@@ -917,7 +917,6 @@ AampDrmSession * AampDRMSessionManager::createDrmSession(
+ 		return NULL;
+ 	}
+ 
+-
+ 	drmSessionContexts[sessionType].drmSession->generateAampDRMSession(initDataPtr, dataLength);
+ 	code = drmSessionContexts[sessionType].drmSession->getState();
+ 	if (code != KEY_INIT)
+@@ -1244,6 +1243,7 @@ AampDrmSession * AampDRMSessionManager::createDrmSession(
  		reinterpret_cast<const void*>(keyId),keyIdLen);
  		pthread_mutex_unlock(&session_mutex[sessionType]);
  		free(keyId);
-+#if defined(USE_OPENCDM_ADAPTER)
-+		drmSessionContexts[sessionType].drmSession->setKeyId(reinterpret_cast<const char*>(keyId), keyIdLen);
-+#endif
 +
  		return drmSessionContexts[sessionType].drmSession;
  	}
  	else if (code == KEY_ERROR)
-diff --git a/drm/AampDrmSession.h b/drm/AampDrmSession.h
-index 5631b13..fb218f4 100644
---- a/drm/AampDrmSession.h
-+++ b/drm/AampDrmSession.h
-@@ -126,5 +126,9 @@ public:
- 	 * @retval DRM system uuid
- 	 */
- 	string getKeySystem();
-+
-+#if defined(USE_OPENCDM_ADAPTER)
-+	virtual void setKeyId(const char* keyId, int32_t keyLen) = 0;
-+#endif
- };
- #endif
 diff --git a/drm/aampdrmsessionfactory.cpp b/drm/aampdrmsessionfactory.cpp
-index e64a747..c548610 100644
+index e64a747..b9fe7b6 100644
 --- a/drm/aampdrmsessionfactory.cpp
 +++ b/drm/aampdrmsessionfactory.cpp
 @@ -23,7 +23,9 @@
@@ -107,6 +98,24 @@ index e64a747..c548610 100644
  #include "opencdmsession.h"
  #else
  #include "playreadydrmsession.h"
+@@ -43,7 +45,7 @@ AampDrmSession* AampDrmSessionFactory::GetDrmSession(const char* systemid)
+ 	{
+ #ifdef USE_OPENCDM
+         std::string key_system = PLAYREADY_KEY_SYSTEM_STRING;
+-        drmSession = new OpenCDMSession(key_system);
++        drmSession = new OcdmDrmSession(key_system);
+ #else
+ 		drmSession = new PlayReadyDRMSession();
+ #endif
+@@ -51,7 +53,7 @@ AampDrmSession* AampDrmSessionFactory::GetDrmSession(const char* systemid)
+     {
+ #ifdef USE_OPENCDM
+         std::string key_system = WIDEVINE_KEY_SYSTEM_STRING;
+-        drmSession = new OpenCDMSession(key_system);
++        drmSession = new OcdmDrmSession(key_system);
+ #endif
+     }
+ 	return drmSession;
 diff --git a/drm/aampoutputprotection.cpp b/drm/aampoutputprotection.cpp
 index b1fc603..d1f6b58 100644
 --- a/drm/aampoutputprotection.cpp
@@ -215,11 +224,162 @@ index 3ddea5e..2e6aac6 100644
  
      // State functions
  
+diff --git a/drm/opencdmsession.cpp b/drm/opencdmsession.cpp
+index dd102dc..8b054fe 100644
+--- a/drm/opencdmsession.cpp
++++ b/drm/opencdmsession.cpp
+@@ -148,26 +148,26 @@ struct Rpc_Secbuf_Info {
+ //The following flag is used to use old or new(wpeframework) OpenCDM implementation
+ #define USE_NEW_OPENCDM 1
+ 
+-OpenCDMSession::OpenCDMSession(string& keySystem) :
++OcdmDrmSession::OcdmDrmSession(string& keySystem) :
+ 		AampDrmSession(keySystem),
+-		m_eKeyState(KEY_INIT), 
++		m_eKeyState(KEY_INIT),
+ 		m_pOutputProtection(NULL),
+ 		m_pOpencdm(NULL),
+ 		m_pOpencdmDecrypt(NULL),
+ 		decryptMutex(),
+ 		m_sessionID()
+ {
+-	logprintf("OpenCDMSession :: enter \n");
++	logprintf("OcdmDrmSession :: enter \n");
+ 	pthread_mutex_init(&decryptMutex,NULL);
+ 
+ 	initAampDRMSession();
+ 
+ 	// Get output protection pointer
+ 	m_pOutputProtection = AampOutputProtection::GetAampOutputProcectionInstance();
+-	logprintf("OpenCDMSession :: exit \n");
++	logprintf("OcdmDrmSession :: exit \n");
+ }
+ 
+-void OpenCDMSession::initAampDRMSession()
++void OcdmDrmSession::initAampDRMSession()
+ {
+ 	logprintf("initAampDRMSession :: enter \n");
+ 	if (m_pOpencdm == NULL) {
+@@ -178,7 +178,7 @@ void OpenCDMSession::initAampDRMSession()
+ 	logprintf("initAampDRMSession :: exit \n");
+ }
+ 
+-void OpenCDMSession::generateAampDRMSession(const uint8_t *f_pbInitData,
++void OcdmDrmSession::generateAampDRMSession(const uint8_t *f_pbInitData,
+ 		uint32_t f_cbInitData)
+ {
+ 	logprintf("generateAampDRMSession :: enter \n");
+@@ -190,10 +190,10 @@ void OpenCDMSession::generateAampDRMSession(const uint8_t *f_pbInitData,
+ 	std::string sessionId;
+ 	m_pOpencdm->CreateSession("video/mp4", const_cast<unsigned char*>(f_pbInitData), f_cbInitData, sessionId);
+ 	logprintf("generateAampDRMSession :: sessionId : %s \n", sessionId.c_str());
+-#endif    
++#endif
+ }
+ 
+-OpenCDMSession::~OpenCDMSession()
++OcdmDrmSession::~OcdmDrmSession()
+ {
+ 	logprintf("[HHH]OCDMSession destructor called! keySystem %s\n", m_keySystem.c_str());
+ 	pthread_mutex_destroy(&decryptMutex);
+@@ -224,7 +224,7 @@ OpenCDMSession::~OpenCDMSession()
+ }
+ 
+ 
+-DrmData * OpenCDMSession::aampGenerateKeyRequest(string& destinationURL)
++DrmData * OcdmDrmSession::aampGenerateKeyRequest(string& destinationURL)
+ {
+ 	DrmData * result = NULL;
+ 
+@@ -279,7 +279,7 @@ DrmData * OpenCDMSession::aampGenerateKeyRequest(string& destinationURL)
+ }
+ 
+ 
+-int OpenCDMSession::aampDRMProcessKey(DrmData* key)
++int OcdmDrmSession::aampDRMProcessKey(DrmData* key)
+ {
+ 	int retvalue = -1;
+ 
+@@ -305,7 +305,7 @@ int OpenCDMSession::aampDRMProcessKey(DrmData* key)
+ #endif
+ }
+ 
+-int OpenCDMSession::decrypt(const uint8_t *f_pbIV, uint32_t f_cbIV,
++int OcdmDrmSession::decrypt(const uint8_t *f_pbIV, uint32_t f_cbIV,
+ 		const uint8_t *payloadData, uint32_t payloadDataSize, uint8_t **ppOpaqueData)
+ {
+ #ifdef USE_SAGE_SVP
+@@ -340,6 +340,7 @@ int OpenCDMSession::decrypt(const uint8_t *f_pbIV, uint32_t f_cbIV,
+ 
+ 	pthread_mutex_lock(&decryptMutex);
+ 	start_decrypt_time = GetCurrentTimeStampInMSec();
++
+ #if USE_NEW_OPENCDM
+ 	retvalue = m_pOpencdmDecrypt->Decrypt(const_cast<unsigned char*>(payloadData), payloadDataSize, f_pbIV, f_cbIV);
+ #else
+@@ -363,12 +364,12 @@ int OpenCDMSession::decrypt(const uint8_t *f_pbIV, uint32_t f_cbIV,
+ 
+ }
+ 
+-KeyState OpenCDMSession::getState()
++KeyState OcdmDrmSession::getState()
+ {
+ 	return m_eKeyState;
+ }
+ 
+-void OpenCDMSession:: clearDecryptContext()
++void OcdmDrmSession:: clearDecryptContext()
+ {
+ 	logprintf("[HHH] clearDecryptContext.\n");
+ 
+diff --git a/drm/opencdmsession.h b/drm/opencdmsession.h
+index 03a9b49..603379a 100644
+--- a/drm/opencdmsession.h
++++ b/drm/opencdmsession.h
+@@ -21,8 +21,8 @@
+  *
+  */
+ 
+-#ifndef OpenCDMSession_h
+-#define OpenCDMSession_h
++#ifndef OcdmDrmSession_h
++#define OcdmDrmSession_h
+ 
+ #include "AampDrmSession.h"
+ #include "aampoutputprotection.h"
+@@ -30,10 +30,10 @@
+ using namespace std;
+ 
+ /**
+- * @class OpenCDMSession
++ * @class OcdmDrmSession
+  * @brief Open CDM DRM session
+  */
+-class OpenCDMSession : public AampDrmSession
++class OcdmDrmSession : public AampDrmSession
+ {
+ 
+ private:
+@@ -47,10 +47,10 @@ private:
+ 	void initAampDRMSession();
+ 
+ public:
+-    OpenCDMSession(string& keySystem);
+-	~OpenCDMSession();
+-	OpenCDMSession(const OpenCDMSession&) = delete;
+-	OpenCDMSession& operator=(const OpenCDMSession&) = delete;
++	OcdmDrmSession(string& keySystem);
++	~OcdmDrmSession();
++	OcdmDrmSession(const OcdmDrmSession&) = delete;
++	OcdmDrmSession& operator=(const OcdmDrmSession&) = delete;
+ 	void generateAampDRMSession(const uint8_t *f_pbInitData,
+ 			uint32_t f_cbInitData);
+ 	DrmData * aampGenerateKeyRequest(string& destinationURL);
 diff --git a/drm/opencdmsessionadapter.cpp b/drm/opencdmsessionadapter.cpp
-index e69de29..2ab8747 100644
+index e69de29..151aec4 100644
 --- a/drm/opencdmsessionadapter.cpp
 +++ b/drm/opencdmsessionadapter.cpp
-@@ -0,0 +1,348 @@
+@@ -0,0 +1,349 @@
 +#include "config.h"
 +#include "opencdmsessionadapter.h"
 +
@@ -336,7 +496,7 @@ index e69de29..2ab8747 100644
 +#endif //LOG_DECRYPT_STATS
 +}
 +
-+OpenCDMSession::OpenCDMSession(string& keySystem) :
++OcdmDrmSession::OcdmDrmSession(string& keySystem) :
 +		AampDrmSession(keySystem),
 +		m_decryptMutex(),
 +		m_eKeyState(KEY_INIT),
@@ -352,30 +512,30 @@ index e69de29..2ab8747 100644
 +		m_keyStatusReady(),
 +		m_sessionID(),
 +		m_keyId(NULL),
-+		m_keyLength(0)
++		m_keySize(0)
 +{
-+	logprintf("OpenCDMSession :: enter \n");
++	logprintf("OcdmDrmSession :: enter \n");
 +	pthread_mutex_init(&m_decryptMutex, NULL);
 +
 +	initAampDRMSystem();
 +
 +	// Get output protection pointer
 +	m_pOutputProtection = AampOutputProtection::GetAampOutputProcectionInstance();
-+	logprintf("OpenCDMSession :: exit \n");
++	logprintf("OcdmDrmSession :: exit \n");
 +}
 +
-+void OpenCDMSession::initAampDRMSystem()
++void OcdmDrmSession::initAampDRMSystem()
 +{
 +	logprintf("initAampDRMSystem :: enter \n");
 +	pthread_mutex_lock(&m_decryptMutex);
 +	if (m_pOpenCDMSystem == nullptr) {
-+		m_pOpenCDMSystem = opencdm_create_system();
++		m_pOpenCDMSystem = opencdm_create_system("com.microsoft.playready");
 +	}
 +	pthread_mutex_unlock(&m_decryptMutex);
 +	logprintf("initAampDRMSystem :: exit \n");
 +}
 +
-+OpenCDMSession::~OpenCDMSession()
++OcdmDrmSession::~OcdmDrmSession()
 +{
 +	logprintf("[HHH]OCDMSession destructor called! keySystem %s\n", m_keySystem.c_str());
 +	clearDecryptContext();
@@ -403,7 +563,7 @@ index e69de29..2ab8747 100644
 +
 +}
 +
-+void OpenCDMSession::generateAampDRMSession(const uint8_t *f_pbInitData,
++void OcdmDrmSession::generateAampDRMSession(const uint8_t *f_pbInitData,
 +		uint32_t f_cbInitData)
 +{
 +	logprintf("generateAampDRMSession :: enter \n");
@@ -413,19 +573,19 @@ index e69de29..2ab8747 100644
 +	memset(&m_OCDMSessionCallbacks, 0, sizeof(m_OCDMSessionCallbacks));
 +	m_OCDMSessionCallbacks.process_challenge_callback = [](OpenCDMSession* session, void* userData, const char destUrl[], const uint8_t challenge[], const uint16_t challengeSize) {
 +
-+		OpenCDMSession* userSession = reinterpret_cast<OpenCDMSession*>(userData);
++		OcdmDrmSession* userSession = reinterpret_cast<OcdmDrmSession*>(userData);
 +		userSession->processOCDMChallenge(destUrl, challenge, challengeSize);
 +	};
 +
 +	m_OCDMSessionCallbacks.key_update_callback = [](OpenCDMSession* session, void* userData, const uint8_t key[], const uint8_t keySize) {
-+		OpenCDMSession* userSession = reinterpret_cast<OpenCDMSession*>(userData);
++		OcdmDrmSession* userSession = reinterpret_cast<OcdmDrmSession*>(userData);
 +		userSession->keyUpdatedOCDM(key, keySize);
 +	};
 +
-+	m_OCDMSessionCallbacks.message_callback = [](OpenCDMSession* session, void* userData, const char message[]) {
++	m_OCDMSessionCallbacks.error_message_callback = [](OpenCDMSession* session, void* userData, const char message[]) {
 +	};
 +
-+	opencdm_construct_session(m_pOpenCDMSystem, m_keySystem.c_str(), LicenseType::Temporary, "video/mp4",
++	opencdm_construct_session(m_pOpenCDMSystem, LicenseType::Temporary, "video/mp4",
 +				  const_cast<uint8_t*>(f_pbInitData), f_cbInitData,
 +				  nullptr, 0, //No Custom Data
 +				  &m_OCDMSessionCallbacks,
@@ -439,7 +599,7 @@ index e69de29..2ab8747 100644
 +	pthread_mutex_unlock(&m_decryptMutex);
 +}
 +
-+void OpenCDMSession::processOCDMChallenge(const char destUrl[], const uint8_t challenge[], const uint16_t challengeSize) {
++void OcdmDrmSession::processOCDMChallenge(const char destUrl[], const uint8_t challenge[], const uint16_t challengeSize) {
 +
 +	m_challenge.assign(reinterpret_cast<const char *>(challenge), challengeSize);
 +	logprintf("processOCDMChallenge challenge = %s\n", m_challenge.c_str());
@@ -450,14 +610,15 @@ index e69de29..2ab8747 100644
 +	m_challengeReady.signal();
 +}
 +
-+void OpenCDMSession::keyUpdatedOCDM(const uint8_t key[], const uint8_t keySize) {
++void OcdmDrmSession::keyUpdatedOCDM(const uint8_t key[], const uint8_t keySize) {
 +	if (m_pOpenCDMSession) {
-+		m_keyStatus = opencdm_session_status(m_pOpenCDMSession, nullptr, 0);
++		m_keyStatus = opencdm_session_status(m_pOpenCDMSession, key, keySize);
++                setKeyId(key, keySize);
 +	}
 +	m_keyStatusReady.signal();
 +}
 +
-+DrmData * OpenCDMSession::aampGenerateKeyRequest(string& destinationURL)
++DrmData * OcdmDrmSession::aampGenerateKeyRequest(string& destinationURL)
 +{
 +	DrmData * result = NULL;
 +
@@ -480,7 +641,7 @@ index e69de29..2ab8747 100644
 +}
 +
 +
-+int OpenCDMSession::aampDRMProcessKey(DrmData* key)
++int OcdmDrmSession::aampDRMProcessKey(DrmData* key)
 +{
 +	int retValue = -1;
 +
@@ -503,7 +664,7 @@ index e69de29..2ab8747 100644
 +	return retValue;
 +}
 +
-+int OpenCDMSession::decrypt(const uint8_t *f_pbIV, uint32_t f_cbIV, const uint8_t *payloadData, uint32_t payloadDataSize, uint8_t **ppOpaqueData)
++int OcdmDrmSession::decrypt(const uint8_t *f_pbIV, uint32_t f_cbIV, const uint8_t *payloadData, uint32_t payloadDataSize, uint8_t **ppOpaqueData)
 +{
 +	int retValue = -1;
 +
@@ -527,7 +688,7 @@ index e69de29..2ab8747 100644
 +		start_decrypt_time = GetCurrentTimeStampInMSec();
 +		GstBuffer *buffer = gst_buffer_new_wrapped (const_cast<uint8_t*>(payloadData), payloadDataSize);
 +		GstBuffer *ivBuffer = gst_buffer_new_wrapped (const_cast<uint8_t*>(f_pbIV), f_cbIV);
-+		GstBuffer *kidBuffer = gst_buffer_new_wrapped (const_cast<uint8_t*>(m_keyId), m_keyLength);
++		GstBuffer *kidBuffer = gst_buffer_new_wrapped (const_cast<uint8_t*>(m_keyId), m_keySize);
 +		retValue = opencdm_gstreamer_session_decrypt(m_pOpenCDMSession, buffer, nullptr, 0, ivBuffer, kidBuffer, 0);
 +
 +		end_decrypt_time = GetCurrentTimeStampInMSec();
@@ -540,12 +701,12 @@ index e69de29..2ab8747 100644
 +	return retValue;
 +}
 +
-+KeyState OpenCDMSession::getState()
++KeyState OcdmDrmSession::getState()
 +{
 +	return m_eKeyState;
 +}
 +
-+void OpenCDMSession:: clearDecryptContext()
++void OcdmDrmSession:: clearDecryptContext()
 +{
 +	logprintf("[HHH] clearDecryptContext.\n");
 +
@@ -559,17 +720,17 @@ index e69de29..2ab8747 100644
 +	m_eKeyState = KEY_INIT;
 +}
 +
-+void OpenCDMSession::setKeyId(const char* keyId, int32_t keyLength)
++void OcdmDrmSession::setKeyId(const uint8_t key[], const uint8_t keySize)
 +{
 +	if (!m_keyId) {
 +		free(m_keyId);
-+		m_keyId = (uint8_t *)malloc(keyLength);
++		m_keyId = (uint8_t *)malloc(keySize);
 +	}
-+	memcpy(m_keyId, keyId, keyLength);
-+	m_keyLength = keyLength;
++	memcpy(m_keyId, key, keySize);
++	m_keySize = keySize;
 +}
 diff --git a/drm/opencdmsessionadapter.h b/drm/opencdmsessionadapter.h
-index e69de29..a0e93e3 100644
+index e69de29..02a03cd 100644
 --- a/drm/opencdmsessionadapter.h
 +++ b/drm/opencdmsessionadapter.h
 @@ -0,0 +1,118 @@
@@ -585,7 +746,7 @@ index e69de29..a0e93e3 100644
 +using namespace std;
 +
 +/**
-+ * @class OpenCDMSession
++ * @class OcdmDrmSession
 + * @brief Open CDM DRM session
 + */
 +
@@ -639,7 +800,7 @@ index e69de29..a0e93e3 100644
 +	}
 +};
 +
-+class OpenCDMSession : public AampDrmSession
++class OcdmDrmSession : public AampDrmSession
 +{
 +
 +private:
@@ -648,7 +809,7 @@ index e69de29..a0e93e3 100644
 +	KeyState m_eKeyState;
 +
 +	OpenCDMSession* m_pOpenCDMSession;
-+	struct OpenCDMAccessor* m_pOpenCDMSystem;
++	struct OpenCDMSystem* m_pOpenCDMSystem;
 +	OpenCDMSessionCallbacks m_OCDMSessionCallbacks;
 +	AampOutputProtection* m_pOutputProtection;
 +
@@ -663,7 +824,7 @@ index e69de29..a0e93e3 100644
 +	string m_sessionID;
 +
 +	uint8_t* m_keyId;
-+	int32_t m_keyLength;
++	int8_t m_keySize;
 +
 +public:
 +	void processOCDMChallenge(const char destUrl[], const uint8_t challenge[], const uint16_t challengeSize);
@@ -673,12 +834,12 @@ index e69de29..a0e93e3 100644
 +	void initAampDRMSystem();
 +
 +public:
-+	OpenCDMSession() = delete;
-+	OpenCDMSession(const OpenCDMSession&) = delete;
-+	OpenCDMSession& operator=(const OpenCDMSession&) = delete;
++	OcdmDrmSession() = delete;
++	OcdmDrmSession(const OcdmDrmSession&) = delete;
++	OcdmDrmSession& operator=(const OcdmDrmSession&) = delete;
 +
-+	OpenCDMSession(string& keySystem);
-+	~OpenCDMSession();
++	OcdmDrmSession(string& keySystem);
++	~OcdmDrmSession();
 +	void generateAampDRMSession(const uint8_t *f_pbInitData,
 +				    uint32_t f_cbInitData);
 +	DrmData * aampGenerateKeyRequest(string& destinationURL);
@@ -687,7 +848,7 @@ index e69de29..a0e93e3 100644
 +		    const uint8_t *payloadData, uint32_t payloadDataSize, uint8_t **ppOpaqueData);
 +	KeyState getState();
 +	void clearDecryptContext();
-+	void setKeyId(const char* keyId, int32_t keyLength);
++	void setKeyId(const uint8_t key[], const uint8_t keySize);
 +};
 +
 +#endif
