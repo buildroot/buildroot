@@ -4,8 +4,9 @@
 #
 ################################################################################
 
-CMAKE_VERSION_MAJOR = 3.7
-CMAKE_VERSION = $(CMAKE_VERSION_MAJOR).2
+CMAKE_VERSION_MAJOR = 3.16
+CMAKE_VERSION_PATCH = 4
+CMAKE_VERSION = $(CMAKE_VERSION_MAJOR).$(CMAKE_VERSION_PATCH)
 CMAKE_SITE = https://cmake.org/files/v$(CMAKE_VERSION_MAJOR)
 CMAKE_LICENSE = BSD-3c
 CMAKE_LICENSE_FILES = Copyright.txt
@@ -47,6 +48,7 @@ define HOST_CMAKE_CONFIGURE_CMDS
 			-DCMAKE_CXX_FLAGS="$(HOST_CMAKE_CXXFLAGS)" \
 			-DCMAKE_EXE_LINKER_FLAGS="$(HOST_LDFLAGS)" \
 			-DBUILD_CursesDialog=OFF \
+			-DCMAKE_USE_OPENSSL=OFF \
 	)
 endef
 
