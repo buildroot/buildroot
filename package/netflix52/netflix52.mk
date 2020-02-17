@@ -8,7 +8,7 @@ NETFLIX52_VERSION = 09e3be78db6ccf88cfc43bb6d80027942e93f1eb
 NETFLIX52_SITE = git@github.com:Metrological/netflix.git
 NETFLIX52_SITE_METHOD = git
 NETFLIX52_LICENSE = PROPRIETARY
-NETFLIX52_DEPENDENCIES = freetype icu openjpeg lcms2 jpeg libpng libmng webp harfbuzz expat openssl c-ares nghttp2 libcurl graphite2 gstreamer1 gst1-plugins-base gst1-plugins-bad
+NETFLIX52_DEPENDENCIES = freetype icu openjpeg lcms2 jpeg libpng libmng webp harfbuzz expat openssl c-ares nghttp2 libcurl graphite2 gstreamer1 gst1-plugins-base gst1-plugins-bad tremor
 NETFLIX52_INSTALL_TARGET = YES
 NETFLIX52_SUBDIR = netflix
 NETFLIX52_RESOURCE_LOC = $(call qstrip,${BR2_PACKAGE_NETFLIX52_RESOURCE_LOCATION})
@@ -40,7 +40,8 @@ NETFLIX52_CONF_OPTS = \
 	-DGIBBON_SOFTWARECAPTURE=OFF \
 	-DGIBBON_GRAPHICS_GL_API="gles2" \
 	-DDPI_IMPLEMENTATION=gstreamer \
-	-DJS_MINIFY=OFF
+	-DJS_MINIFY=OFF \
+	-DDPI_DRM=ocdm
 
 # Removed the following from the above because for NF 5.2.2 it requires update of openssl to ver >= 1.1.0
 # which does not work  out of the box and provisioning tools does not seem to be required for us.
@@ -50,15 +51,6 @@ NETFLIX52_CONF_OPTS = \
 ifeq ($(BR2_PACKAGE_NETFLIX52_DISABLE_TOOLS), y)
 NETFLIX52_CONF_OPTS += \
 	-DNRDP_TOOLS=none
-endif
-
-ifeq ($(BR2_PACKAGE_NETFLIX52_DRM_OCDM), y)
-NETFLIX52_CONF_OPTS += \
-	-DDPI_DRM=ocdm
-else ifeq ($(BR2_PACKAGE_NETFLIX52_DRM_PLAYREADY), y)
-NETFLIX52_DEPENDENCIES += playready
-NETFLIX52_CONF_OPTS += \
-        -DDPI_DRM=playready2.5
 endif
 
 ifeq ($(BR2_PACKAGE_NETFLIX52_LIB), y)
