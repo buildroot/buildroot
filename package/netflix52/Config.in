@@ -46,11 +46,6 @@ config BR2_PACKAGE_NETFLIX52_KEYMAP
 	help
 	  Install custom keymap
 
-config BR2_PACKAGE_NETFLIX52_GST_GL
-	bool "gl"
-	depends on BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_GL
-	default y
-
 config BR2_PACKAGE_NETFLIX52_WESTEROS_SINK
 	bool "westeros-sink"
 	depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR
@@ -89,12 +84,6 @@ choice
 	help
 	  Choose DRM Type
 
-config BR2_PACKAGE_NETFLIX52_DRM_PLAYREADY
-	bool "playready"
-	select BR2_PACKAGE_PLAYREADY
-	help
-	  DRM Playready
-
 config BR2_PACKAGE_NETFLIX52_DRM_OCDM
 	bool "ocdm"
 	depends on BR2_PACKAGE_WPEFRAMEWORK_CDMI
@@ -105,6 +94,7 @@ endchoice
 
 config BR2_PACKAGE_NETFLIX52_DISABLE_TOOLS
 	bool "Disable tools"
+	default y
 	help
 	  Do not build tools for netflix
 

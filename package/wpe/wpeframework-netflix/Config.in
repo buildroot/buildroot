@@ -1,6 +1,6 @@
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
     bool "Netflix"
-    depends on BR2_PACKAGE_NETFLIX_LIB || BR2_PACKAGE_NETFLIX5_LIB
+    depends on BR2_PACKAGE_NETFLIX_LIB || BR2_PACKAGE_NETFLIX5_LIB || BR2_PACKAGE_NETFLIX52_LIB
     help
         WPE Platform Netflix plugin
 
@@ -115,4 +115,4 @@ config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_APPBOOTKEY
 endif
 
 comment "netflix is dependent on the netflix package compiled as library"
-    depends on !BR2_PACKAGE_NETFLIX_LIB && !BR2_PACKAGE_NETFLIX5_LIB
+    depends on !BR2_PACKAGE_NETFLIX_LIB && !BR2_PACKAGE_NETFLIX5_LIB && !BR2_PACKAGE_NETFLIX52_LIB

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NETFLIX52_VERSION = 09e3be78db6ccf88cfc43bb6d80027942e93f1eb
+NETFLIX52_VERSION = 1ea6197bff6b73c96c86b9207c54114690ed8ab2
 NETFLIX52_SITE = git@github.com:Metrological/netflix.git
 NETFLIX52_SITE_METHOD = git
 NETFLIX52_LICENSE = PROPRIETARY
@@ -41,12 +41,13 @@ NETFLIX52_CONF_OPTS = \
 	-DGIBBON_GRAPHICS_GL_API="gles2" \
 	-DDPI_IMPLEMENTATION=gstreamer \
 	-DJS_MINIFY=OFF \
-	-DDPI_DRM=ocdm
+	-DDPI_DRM=ocdm \
+	-DNRDP_TOOLS="provisioning" \
+	-DNRDP_HAS_AUDIOMIXER=OFF
 
-# Removed the following from the above because for NF 5.2.2 it requires update of openssl to ver >= 1.1.0
-# which does not work  out of the box and provisioning tools does not seem to be required for us.
-# Note the same may be achieved by changing the option below ((BR2_PACKAGE_NETFLIX52_DISABLE_TOOLS).
-#	-DNRDP_TOOLS="provisioning" \
+# DNRDP_TOOLS="provisioning" above for NF 5.2.2 requires update of openssl to ver >= 1.1.0
+# which does not work out of the box. Since provisioning tools does not seem to be required for us
+# default of BR2_PACKAGE_NETFLIX52_DISABLE_TOOLS is y.
 
 ifeq ($(BR2_PACKAGE_NETFLIX52_DISABLE_TOOLS), y)
 NETFLIX52_CONF_OPTS += \
@@ -79,29 +80,9 @@ NETFLIX52_CONF_OPTS += -DGIBBON_PLATFORM=posix
 NETFLIX52_DEPENDENCIES += wpeframework
 endif
 
-ifeq ($(BR2_PACKAGE_NETFLIX52_GST_GL),y)
-  NETFLIX52_CONF_OPTS += -DGST_VIDEO_RENDERING=gl
-else ifeq ($(BR2_PACKAGE_NETFLIX52_MARVEL),y)
-  NETFLIX52_CONF_OPTS += -DGST_VIDEO_RENDERING=synaptics
-  NETFLIX52_DEPENDENCIES += westeros westeros-sink
-else ifeq ($(BR2_PACKAGE_NETFLIX52_WESTEROS_SINK),y)
+ifeq ($(BR2_PACKAGE_NETFLIX52_WESTEROS_SINK),y)
   NETFLIX52_CONF_OPTS += -DGST_VIDEO_RENDERING=westeros
   NETFLIX52_DEPENDENCIES += westeros westeros-sink
-endif
-
-ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
-ifeq ($(BR2_PACKAGE_WESTEROS),) 
-  # WPEFramework for RPI platform supports only either westeros or rpi, hence set this flag
-  # to reuse EGL context in WPEFramework-rpi + GST_VIDEO_RENDERING=gl combination to avoid
-  # memory leak and crash during the suspend/resume
-
-  NETFLIX52_CONF_OPTS += -DEGL_CONTEXT_REUSE=1
-endif
-endif
-
-ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_GL)$(BR2_PACKAGE_NETFLIX52_WESTEROS_SINK),yn)
-NETFLIX52_CONF_OPTS += \
-	-DGST_VIDEO_RENDERING=gl
 endif
 
 NETFLIX52_DEPENDENCIES += libgles libegl
