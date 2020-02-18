@@ -465,6 +465,10 @@ $(HOST_DIR_SYMLINK): $(BASE_DIR)
 	ln -snf $(HOST_DIR) $(BASE_DIR)/host
 endif
 
+STAGING_DIR_SYMLINK = $(BASE_DIR)/staging
+$(STAGING_DIR_SYMLINK): $(BASE_DIR)
+	ln -snf $(STAGING_DIR) $(STAGING_DIR_SYMLINK)
+
 # Quotes are needed for spaces and all in the original PATH content.
 BR_PATH = "$(HOST_DIR)/bin:$(HOST_DIR)/sbin:$(PATH)"
 
@@ -730,8 +734,7 @@ target-finalize: ROOTFS=
 host-finalize: $(HOST_DIR_SYMLINK)
 
 .PHONY: staging-finalize
-staging-finalize:
-	@ln -snf $(STAGING_DIR) $(BASE_DIR)/staging
+staging-finalize: $(STAGING_DIR_SYMLINK)
 
 .PHONY: target-finalize
 target-finalize: $(PACKAGES) host-finalize
