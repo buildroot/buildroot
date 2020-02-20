@@ -334,6 +334,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PAIRING_CALLSIGN
 endif
 endif
 
+config BR2_PACKAGE_WPEFRAMEWORK_INPUTSWITCH
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "InputSwitch"
+    default n
+    help
+      InputSwitch Plugin.
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "LocationSync"

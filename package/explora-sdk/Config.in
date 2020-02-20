@@ -1,6 +1,7 @@
 config BR2_PACKAGE_EXPLORA_SDK
 	bool "explora-sdk"
 	depends on BR2_arm
+	select BR2_PACKAGE_HAS_NEXUS_SAGE
 	select BR2_PACKAGE_HAS_NEXUS
 	select BR2_PACKAGE_HAS_LIBEGL
 	select BR2_PACKAGE_HAS_LIBGLES
