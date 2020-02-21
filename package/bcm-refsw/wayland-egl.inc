@@ -1,5 +1,6 @@
 WAYLAND_EGL_DIR=${BCM_REFSW_VCX}/platform/wayland/
 define BCM_REFSW_BUILD_WAYLAND_EGL
+if [ $(shell expr $(BCM_REFSW_VERSION) \< 19.1) = 1 ]; then \
     $(TARGET_CONFIGURE_OPTS) \
     $(TARGET_MAKE_ENV) \
     $(BCM_REFSW_CONF_OPTS) \
@@ -8,8 +9,8 @@ define BCM_REFSW_BUILD_WAYLAND_EGL
              WAYLAND_TOP=${STAGING_DIR}/usr \
             WAYLAND_SCANNER=${HOST_DIR}/usr/bin/wayland-scanner \
             APPLIBS_TARGET_LIB_DIR=${BCM_REFSW_BIN} \
-            APPLIBS_TARGET_INC_DIR=${BCM_REFSW_BIN}/include
-
+            APPLIBS_TARGET_INC_DIR=${BCM_REFSW_BIN}/include; \
+    \
     $(TARGET_CONFIGURE_OPTS) \
     $(TARGET_MAKE_ENV) \
     $(BCM_REFSW_CONF_OPTS) \
@@ -18,8 +19,8 @@ define BCM_REFSW_BUILD_WAYLAND_EGL
             WAYLAND_SCANNER=${HOST_DIR}/usr/bin/wayland-scanner \
              WAYLAND_TOP=${STAGING_DIR}/usr \
             APPLIBS_TARGET_LIB_DIR=${BCM_REFSW_BIN} \
-            APPLIBS_TARGET_INC_DIR=${BCM_REFSW_BIN}/include
-
+            APPLIBS_TARGET_INC_DIR=${BCM_REFSW_BIN}/include; \
+fi
 if [ $(shell expr $(BCM_REFSW_VERSION) \>= 17.1)$(shell expr $(BCM_REFSW_VERSION) \<= 17.3) = 11 ]; then \
     $(TARGET_CONFIGURE_OPTS) \
     $(TARGET_MAKE_ENV) \
@@ -42,7 +43,7 @@ if [ $(shell expr $(BCM_REFSW_VERSION) \>= 17.1)$(shell expr $(BCM_REFSW_VERSION
             APPLIBS_TARGET_INC_DIR=${BCM_REFSW_BIN}/include ; \
 fi
 
-if [ $(shell expr $(BCM_REFSW_VERSION) \>= 17.4) = 1 ]; then \
+if [ $(shell expr $(BCM_REFSW_VERSION) \>= 17.4)$(shell expr $(BCM_REFSW_VERSION) \< 19.1) = 11 ]; then \
     $(TARGET_CONFIGURE_OPTS) \
     $(TARGET_MAKE_ENV) \
     $(BCM_REFSW_CONF_OPTS) \
@@ -59,17 +60,12 @@ endef
 ifeq ($(BCM_REFSW_PLATFORM_VC),vc5)
     define BCM_REFSW_INSTALL_STAGING_WAYLAND_EGL_GPU
             $(INSTALL) -d -m 0755 $(STAGING_DIR)/usr/include/interface/khronos/include/
-            $(INSTALL) -d -m 0755 $(STAGING_DIR)/usr/include/interface/khronos/include/bcg_abstract/
+            $(INSTALL) -d -m 0755 $(STAGING_DIR)/usr/include/interface/khronos/include/bcg_abstract
 
             ln -sf ../../../EGL $(STAGING_DIR)/usr/include/interface/khronos/include/
             ln -sf ../../../GLES $(STAGING_DIR)/usr/include/interface/khronos/include/
             ln -sf ../../../GLES2 $(STAGING_DIR)/usr/include/interface/khronos/include/
             ln -sf ../helpers $(STAGING_DIR)/usr/include/interface/khronos/include/
-
-            $(INSTALL) -m 0644 $(@D)/BSEAV/lib/gpu/vc5/platform/nexus/*.h $(STAGING_DIR)/usr/include/interface/khronos/include
-            $(INSTALL) -m 0644 $(@D)/BSEAV/lib/gpu/vc5/driver/libs/khrn/egl/platform/bcg_abstract/*.h $(STAGING_DIR)/usr/include/interface/khronos/include/bcg_abstract
-            $(INSTALL) -m 0644 $(@D)/BSEAV/lib/gpu/vc5/driver/libs/platform/bcg_abstract/*.h $(STAGING_DIR)/usr/include/interface/khronos/include/bcg_abstract
-            $(INSTALL) -m 0644 $(@D)/BSEAV/lib/gpu/vc5/driver/libs/platform/*.h $(STAGING_DIR)/usr/include/interface/khronos/include
 
             $(INSTALL) -d -m 0755 $(STAGING_DIR)/usr/include/vcos
             $(INSTALL) -d -m 0755 $(STAGING_DIR)/usr/include/vcos/include
@@ -90,8 +86,18 @@ ifeq ($(BCM_REFSW_PLATFORM_VC),vc5)
             $(INSTALL) -m 0644 $(@D)/BSEAV/lib/gpu/vc5/driver/libs/util/log/*.h $(STAGING_DIR)/usr/include/libs/util/log
             $(INSTALL) -m 0644 $(@D)/BSEAV/lib/gpu/vc5/driver/libs/core/v3d/*.h $(STAGING_DIR)/usr/include/libs/core/v3d
 
+            $(INSTALL) -m 0644 $(@D)/BSEAV/lib/gpu/vc5/platform/nexus/*.h $(STAGING_DIR)/usr/include/interface/khronos/include
+            $(INSTALL) -m 0644 $(@D)/BSEAV/lib/gpu/vc5/driver/libs/khrn/egl/platform/bcg_abstract/*.h $(STAGING_DIR)/usr/include/interface/khronos/include/bcg_abstract
+            $(INSTALL) -m 0644 $(@D)/BSEAV/lib/gpu/vc5/driver/libs/platform/*.h $(STAGING_DIR)/usr/include/interface/khronos/include
+
+            if [ $(shell expr $(BCM_REFSW_VERSION) \>= 19.1) = 1 ]; then \
+                $(INSTALL) -m 0644 $(@D)/BSEAV/lib/gpu/vc5/driver/libs/platform/stb/*.h $(STAGING_DIR)/usr/include/interface/khronos/include/bcg_abstract; \
+                $(INSTALL) -m 0644 $(@D)/BSEAV/lib/gpu/vc5/driver/libs/platform/stb/gmem_plat.inl $(STAGING_DIR)/usr/include/interface/khronos/include; \
+            else \
+                $(INSTALL) -m 0644 $(@D)/BSEAV/lib/gpu/vc5/driver/libs/platform/bcg_abstract/*.h $(STAGING_DIR)/usr/include/interface/khronos/include/bcg_abstract; \
+                $(INSTALL) -m 0644 $(@D)/BSEAV/lib/gpu/vc5/driver/libs/platform/bcg_abstract/gmem_plat.inl $(STAGING_DIR)/usr/include/interface/khronos/include; \
+            fi
             $(INSTALL) -m 0644 $(@D)/BSEAV/lib/gpu/vc5/driver/libs/platform/gmem.inl $(STAGING_DIR)/usr/include/interface/khronos/include
-            $(INSTALL) -m 0644 $(@D)/BSEAV/lib/gpu/vc5/driver/libs/platform/bcg_abstract/gmem_plat.inl $(STAGING_DIR)/usr/include/interface/khronos/include
 
             #ursr16.2 extra copy
             $(INSTALL) -m 0755 -d $(STAGING_DIR)/usr/include/GLES3
@@ -112,11 +118,6 @@ ifeq ($(BCM_REFSW_PLATFORM_VC),vc5)
             $(INSTALL) -m 0644 $(@D)/BSEAV/lib/gpu/vc5/platform/common/*.h            $(STAGING_DIR)/usr/share/wayland-egl/common
             $(INSTALL) -m 0755 $(@D)/BSEAV/lib/gpu/vc5/platform/common/*.cpp          $(STAGING_DIR)/usr/share/wayland-egl/common
 
-            #if [ -e $(@D)/trellis/display/weston/include/EGL/eglext.h ]; then \
-            #    $(INSTALL) -m 0755 $(@D)/trellis/display/weston/include/EGL/eglext.h        $(STAGING_DIR)/usr/include/EGL; \
-            #    $(INSTALL) -m 0755 $(@D)/trellis/display/weston/include/EGL/eglext_brcm.h   $(STAGING_DIR)/usr/include/EGL; \
-            #fi
-
             if [ -e $(@D)/magnum/basemodules/chp/include/${BCM_REFSW_BCHP_CHIP}/rdb/${BCM_REFSW_BCHP_VER_LOWER}/bchp_common.h ]; then \
                 $(INSTALL) -m 0755 $(@D)/magnum/basemodules/chp/include/${BCM_REFSW_BCHP_CHIP}/rdb/${BCM_REFSW_BCHP_VER_LOWER}/bchp_common.h        $(STAGING_DIR)/usr/include;\
             fi
@@ -126,6 +127,12 @@ ifeq ($(BCM_REFSW_PLATFORM_VC),vc5)
             fi
             if [ -e $(@D)/magnum/basemodules/chp/include/${BCM_REFSW_BCHP_CHIP}/rdb/${BCM_REFSW_BCHP_VER_LOWER}/bchp_m2mc.h ]; then \
                 $(INSTALL) -m 0755 $(@D)/magnum/basemodules/chp/include/${BCM_REFSW_BCHP_CHIP}/rdb/${BCM_REFSW_BCHP_VER_LOWER}/bchp_m2mc.h         $(STAGING_DIR)/usr/include; \
+            fi
+            if [ $(shell expr $(BCM_REFSW_VERSION) \>= 19.1) = 1 ]; then \
+                $(INSTALL) -d -m 0755 $(STAGING_DIR)/usr/include/libs/core/gfx_buffer; \
+                $(INSTALL) -m 0755 $(@D)/BSEAV/lib/gpu/vc5/driver/libs/core/gfx_buffer/*.h $(STAGING_DIR)/usr/include/libs/core/gfx_buffer; \
+                $(INSTALL) -d -m 0755 $(STAGING_DIR)/usr/include/libs/core/lfmt; \
+                $(INSTALL) -m 0755 $(@D)/BSEAV/lib/gpu/vc5/driver/libs/core/lfmt/*.h $(STAGING_DIR)/usr/include/libs/core/lfmt; \
             fi
 endef
 else
@@ -142,7 +149,9 @@ define BCM_REFSW_INSTALL_WAYLAND_EGL_DEV
 	$(call BCM_REFSW_INSTALL_WAYLAND_EGL,  $(STAGING_DIR))
 
     $(INSTALL) -m 644 package/bcm-refsw/${BCM_REFSW_PLATFORM_VC}/wayland-egl.pc $(STAGING_DIR)/usr/lib/pkgconfig/
-    $(INSTALL) -m 644 $(WAYLAND_EGL_DIR)/autogen/*.h $(STAGING_DIR)/usr/include/refsw/
+    if [ $(shell expr $(BCM_REFSW_VERSION) \< 19.1) = 1 ]; then \
+        $(INSTALL) -m 644 $(WAYLAND_EGL_DIR)/autogen/*.h $(STAGING_DIR)/usr/include/refsw/; \
+    fi
 
     $(INSTALL) -d -m 0755 $(STAGING_DIR)/usr/share
     $(INSTALL) -d -m 0755 $(STAGING_DIR)/usr/share/wayland-egl
@@ -172,13 +181,21 @@ define BCM_REFSW_INSTALL_WAYLAND_EGL_DEV
 endef
 
 define BCM_REFSW_INSTALL_WAYLAND_EGL
-    $(INSTALL) -m 644 -D $(WAYLAND_EGL_DIR)/lib_${BCM_REFSW_PLATFORM}_release/*.so $(1)/usr/lib
+    if [ $(shell expr $(BCM_REFSW_VERSION) \< 19.1) = 1 ]; then \
+        $(INSTALL) -m 644 -D $(WAYLAND_EGL_DIR)/lib_${BCM_REFSW_PLATFORM}_release/*.so $(1)/usr/lib; \
+    fi
     if [ $(shell expr $(BCM_REFSW_VERSION) \>= 17.1)$(shell expr $(BCM_REFSW_VERSION) \<= 17.3) = 11 ]; then \
        $(INSTALL) -m 644 -D $(WAYLAND_EGL_DIR)/lib_${BCM_REFSW_PLATFORM}_release/libbcm_wayland_egl.so $(1)/usr/lib/libwayland-egl.so ;\
     fi
     if [ $(shell expr $(BCM_REFSW_VERSION) \>= 18.2) = 1 ]; then \
 	$(INSTALL) -d -m 0755 $(STAGING_DIR)/usr/include/libs/util/gfx_util/; \
         $(INSTALL) -m 0755 $(@D)/BSEAV/lib/gpu/${BCM_REFSW_PLATFORM_VC}/driver/libs/util/gfx_util/*.h $(STAGING_DIR)/usr/include/libs/util/gfx_util/; \
-        $(INSTALL) -m 0755 $(@D)/magnum/portinginterface/${BCM_REFSW_PLATFORM_VC}/include/brcmv3d_drm.h $(STAGING_DIR)/usr/include/; \
+    fi
+    if [ $(shell expr $(BCM_REFSW_VERSION) \>= 19.1) = 1 ]; then \
+        $(INSTALL) -m 0755 $(@D)/BSEAV/linux/driver/brcmv3d/include/uapi/drm/brcmv3d_drm.h $(STAGING_DIR)/usr/include/; \
+    else \
+        if [ $(shell expr $(BCM_REFSW_VERSION) \>= 18.2) = 1 ]; then \
+            $(INSTALL) -m 0755 $(@D)/magnum/portinginterface/${BCM_REFSW_PLATFORM_VC}/include/brcmv3d_drm.h $(STAGING_DIR)/usr/include/; \
+        fi \
     fi
 endef
