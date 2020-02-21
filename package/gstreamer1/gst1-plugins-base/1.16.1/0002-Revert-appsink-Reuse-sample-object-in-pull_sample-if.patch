@@ -1,0 +1,173 @@
+From 3a7e9b548e64212772ab4bfae783434969daa6d7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Fri, 21 Feb 2020 14:51:18 +0000
+Subject: [PATCH] Revert "appsink: Reuse sample object in pull_sample if
+ possible"
+
+This reverts commit d00e0b612dd1a8f9ad15aa78282defc8df21a86a.
+
+This revert solves a GPU memory leak in Netflix5. The last played sample of
+every video was being leaked.
+---
+ gst-libs/gst/app/gstappsink.c  | 29 +++-----------------
+ tests/check/elements/appsink.c | 49 ----------------------------------
+ 2 files changed, 4 insertions(+), 74 deletions(-)
+
+diff --git a/gst-libs/gst/app/gstappsink.c b/gst-libs/gst/app/gstappsink.c
+index cac9821fa..5fe371341 100644
+--- a/gst-libs/gst/app/gstappsink.c
++++ b/gst-libs/gst/app/gstappsink.c
+@@ -107,8 +107,6 @@ struct _GstAppSinkPrivate
+   GstAppSinkCallbacks callbacks;
+   gpointer user_data;
+   GDestroyNotify notify;
+-
+-  GstSample *sample;
+ };
+ 
+ GST_DEBUG_CATEGORY_STATIC (app_sink_debug);
+@@ -460,7 +458,6 @@ gst_app_sink_init (GstAppSink * appsink)
+   g_mutex_init (&priv->mutex);
+   g_cond_init (&priv->cond);
+   priv->queue = gst_queue_array_new (16);
+-  priv->sample = gst_sample_new (NULL, NULL, NULL, NULL);
+ 
+   priv->emit_signals = DEFAULT_PROP_EMIT_SIGNALS;
+   priv->max_buffers = DEFAULT_PROP_MAX_BUFFERS;
+@@ -496,10 +493,6 @@ gst_app_sink_dispose (GObject * obj)
+   gst_buffer_replace (&priv->preroll_buffer, NULL);
+   gst_caps_replace (&priv->preroll_caps, NULL);
+   gst_caps_replace (&priv->last_caps, NULL);
+-  if (priv->sample) {
+-    gst_sample_unref (priv->sample);
+-    priv->sample = NULL;
+-  }
+   g_mutex_unlock (&priv->mutex);
+ 
+   G_OBJECT_CLASS (parent_class)->dispose (obj);
+@@ -650,11 +643,6 @@ gst_app_sink_start (GstBaseSink * psink)
+   priv->started = TRUE;
+   gst_segment_init (&priv->preroll_segment, GST_FORMAT_TIME);
+   gst_segment_init (&priv->last_segment, GST_FORMAT_TIME);
+-  priv->sample = gst_sample_make_writable (priv->sample);
+-  gst_sample_set_buffer (priv->sample, NULL);
+-  gst_sample_set_buffer_list (priv->sample, NULL);
+-  gst_sample_set_caps (priv->sample, NULL);
+-  gst_sample_set_segment (priv->sample, NULL);
+   g_mutex_unlock (&priv->mutex);
+ 
+   return TRUE;
+@@ -841,14 +829,10 @@ dequeue_buffer (GstAppSink * appsink)
+           gst_event_parse_caps (event, &caps);
+           GST_DEBUG_OBJECT (appsink, "activating caps %" GST_PTR_FORMAT, caps);
+           gst_caps_replace (&priv->last_caps, caps);
+-          priv->sample = gst_sample_make_writable (priv->sample);
+-          gst_sample_set_caps (priv->sample, priv->last_caps);
+           break;
+         }
+         case GST_EVENT_SEGMENT:
+           gst_event_copy_segment (event, &priv->last_segment);
+-          priv->sample = gst_sample_make_writable (priv->sample);
+-          gst_sample_set_segment (priv->sample, &priv->last_segment);
+           GST_DEBUG_OBJECT (appsink, "activated segment %" GST_SEGMENT_FORMAT,
+               &priv->last_segment);
+           break;
+@@ -881,7 +865,6 @@ restart:
+   if (G_UNLIKELY (!priv->last_caps &&
+           gst_pad_has_current_caps (GST_BASE_SINK_PAD (psink)))) {
+     priv->last_caps = gst_pad_get_current_caps (GST_BASE_SINK_PAD (psink));
+-    gst_sample_set_caps (priv->sample, priv->last_caps);
+     GST_DEBUG_OBJECT (appsink, "activating pad caps %" GST_PTR_FORMAT,
+         priv->last_caps);
+   }
+@@ -1666,16 +1649,12 @@ gst_app_sink_try_pull_sample (GstAppSink * appsink, GstClockTime timeout)
+   obj = dequeue_buffer (appsink);
+   if (GST_IS_BUFFER (obj)) {
+     GST_DEBUG_OBJECT (appsink, "we have a buffer %p", obj);
+-    priv->sample = gst_sample_make_writable (priv->sample);
+-    gst_sample_set_buffer_list (priv->sample, NULL);
+-    gst_sample_set_buffer (priv->sample, GST_BUFFER_CAST (obj));
+-    sample = gst_sample_ref (priv->sample);
++    sample = gst_sample_new (GST_BUFFER_CAST (obj), priv->last_caps,
++        &priv->last_segment, NULL);
+   } else {
+     GST_DEBUG_OBJECT (appsink, "we have a list %p", obj);
+-    priv->sample = gst_sample_make_writable (priv->sample);
+-    gst_sample_set_buffer (priv->sample, NULL);
+-    gst_sample_set_buffer_list (priv->sample, GST_BUFFER_LIST_CAST (obj));
+-    sample = gst_sample_ref (priv->sample);
++    sample = gst_sample_new (NULL, priv->last_caps, &priv->last_segment, NULL);
++    gst_sample_set_buffer_list (sample, GST_BUFFER_LIST_CAST (obj));
+   }
+   gst_mini_object_unref (obj);
+ 
+diff --git a/tests/check/elements/appsink.c b/tests/check/elements/appsink.c
+index 9acbdcb9b..03adf063a 100644
+--- a/tests/check/elements/appsink.c
++++ b/tests/check/elements/appsink.c
+@@ -666,54 +666,6 @@ GST_START_TEST (test_query_drain)
+ 
+ GST_END_TEST;
+ 
+-GST_START_TEST (test_pull_sample_refcounts)
+-{
+-  GstElement *sink;
+-  GstBuffer *buffer;
+-  GstSample *s1, *s2, *s3;
+-
+-  sink = setup_appsink ();
+-
+-  ASSERT_SET_STATE (sink, GST_STATE_PLAYING, GST_STATE_CHANGE_ASYNC);
+-
+-  buffer = gst_buffer_new_and_alloc (4);
+-  fail_unless (gst_pad_push (mysrcpad, buffer) == GST_FLOW_OK);
+-
+-  s1 = gst_app_sink_pull_sample (GST_APP_SINK (sink));
+-  fail_unless (s1 != NULL);
+-  fail_unless (gst_buffer_get_size (gst_sample_get_buffer (s1)) == 4);
+-  gst_sample_unref (s1);
+-
+-  buffer = gst_buffer_new_and_alloc (6);
+-  fail_unless (gst_pad_push (mysrcpad, buffer) == GST_FLOW_OK);
+-  s2 = gst_app_sink_pull_sample (GST_APP_SINK (sink));
+-  fail_unless (s2 != NULL);
+-  fail_unless (gst_buffer_get_size (gst_sample_get_buffer (s2)) == 6);
+-
+-  /* We unreffed s1, appsink should thus reuse the same sample,
+-   * avoiding an extra allocation */
+-  fail_unless (s1 == s2);
+-
+-  buffer = gst_buffer_new_and_alloc (8);
+-  fail_unless (gst_pad_push (mysrcpad, buffer) == GST_FLOW_OK);
+-  s3 = gst_app_sink_pull_sample (GST_APP_SINK (sink));
+-  fail_unless (s3 != NULL);
+-  fail_unless (gst_buffer_get_size (gst_sample_get_buffer (s2)) == 6);
+-  fail_unless (gst_buffer_get_size (gst_sample_get_buffer (s3)) == 8);
+-
+-
+-  /* We didn't unref s2, appsink should thus have created a new sample */
+-  fail_unless (s2 != s3);
+-
+-  gst_sample_unref (s2);
+-  gst_sample_unref (s3);
+-
+-  ASSERT_SET_STATE (sink, GST_STATE_NULL, GST_STATE_CHANGE_SUCCESS);
+-  cleanup_appsink (sink);
+-}
+-
+-GST_END_TEST;
+-
+ static Suite *
+ appsink_suite (void)
+ {
+@@ -734,7 +686,6 @@ appsink_suite (void)
+   tcase_add_test (tc_chain, test_query_drain);
+   tcase_add_test (tc_chain, test_pull_preroll);
+   tcase_add_test (tc_chain, test_do_not_care_preroll);
+-  tcase_add_test (tc_chain, test_pull_sample_refcounts);
+ 
+   return s;
+ }
+-- 
+2.17.1
+
