@@ -60,6 +60,7 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_COBALT
     bool "Cobalt"
     select BR2_PACKAGE_COBALT
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_HAS_YOUTUBE
     help
         WPE Platform Cobalt plugin
 
@@ -284,6 +285,46 @@ if BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER
 
 config BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_NAME
     string "DIALServer name"
+
+if BR2_PACKAGE_WPEFRAMEWORK_HAS_YOUTUBE
+choice BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_YOUTUBE_MODE
+    prompt "YouTube mode"
+    default BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_YOUTUBE_MODE_PASSIVE
+    help
+      The DIALServer mode for the YouTube plugin
+
+    config BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_YOUTUBE_MODE_PASSIVE
+        bool "passive"
+    config BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_YOUTUBE_MODE_ACTIVE
+        bool "active"
+endchoice
+
+if BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_YOUTUBE_MODE_ACTIVE
+config BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_YOUTUBE_CALLSIGN
+    string "YouTube callsign"
+    default "Cobalt"
+endif
+endif
+
+if BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+choice BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_NETFLIX_MODE
+    prompt "Netflix mode"
+    default BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_NETFLIX_MODE_PASSIVE
+    help
+      The DIALServer mode for the Netflix plugin
+
+    config BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_NETFLIX_MODE_PASSIVE
+        bool "passive"
+    config BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_NETFLIX_MODE_ACTIVE
+        bool "active"
+endchoice
+
+if BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_NETFLIX_MODE_ACTIVE
+config BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_NETFLIX_CALLSIGN
+    string "Netflix callsign"
+    default "Netflix"
+endif
+endif
 
 endif
 
@@ -879,6 +920,7 @@ endchoice
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE
     depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+    select BR2_PACKAGE_WPEFRAMEWORK_HAS_YOUTUBE
     bool "youtube"
     help
       A wrapper around the youtube app to start it as a
@@ -1106,5 +1148,8 @@ config BR2_PACKAGE_WPEFRAMEWORK_WIFICONTROL
     bool "WifiControl"
     help
       WifiControl Plugin for Wifi access, linked to Network Control
+
+config BR2_PACKAGE_WPEFRAMEWORK_HAS_YOUTUBE
+    bool
 
 comment "External plugins below"
