@@ -31,7 +31,7 @@ null::sysinit:/bin/ln -sf /proc/self/fd/2 /dev/stderr
 ::sysinit:/bin/echo -n 1 > /proc/sys/vm/overcommit_memory
 ::sysinit:/bin/echo -n 0 > /proc/sys/vm/mmap_min_addr
 
-tty0::respawn:/usr/bin/sudo -u od /usr/sbin/frontend_start
+tty0::respawn:/usr/bin/nice --5 /usr/bin/sudo -u od /usr/sbin/frontend_start
 
 # Stuff to do before rebooting
 ::shutdown:/etc/init.d/rcK
