@@ -71,4 +71,9 @@ config BR2_PACKAGE_GST1_BCM_ENABLE_SVP_SECBUF
 	depends on BR2_PACKAGE_GST1_BCM_ENABLE_SVP
 	help 
           Enable SVP Secbuf support
+
+config BR2_PACKAGE_GST1_BCM_CREATE_BINARY_ML_DELIVERY
+       bool "Create delivery package"
+       help
+         Create tarball containing the build to be deployed else where.
 endif
