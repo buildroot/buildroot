@@ -3,7 +3,7 @@
 # gmenu2x
 #
 #############################################################
-GMENU2X_VERSION = a58b73e
+GMENU2X_VERSION = bb627c0
 GMENU2X_SITE = $(call github,opendingux,gmenu2x,$(GMENU2X_VERSION))
 GMENU2X_DEPENDENCIES = sdl sdl_ttf sdl_gfx dejavu libpng
 GMENU2X_CONF_OPTS = -DBIND_CONSOLE=ON -DPLATFORM=$(BR2_PACKAGE_GMENU2X_PLATFORM)
