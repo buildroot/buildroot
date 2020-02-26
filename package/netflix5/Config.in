@@ -37,6 +37,34 @@ config BR2_PACKAGE_NETFLIX5_1
         help
           Netflix5.1
 endchoice
+choice
+	bool "Build Type"
+	default BR2_PACKAGE_NETFLIX5_BUILD_RELEASE
+	help
+	  Choose build Type
+	  
+config BR2_PACKAGE_NETFLIX5_BUILD_ML
+	bool "Metrological"
+	help
+	  Build with the original metrological flags
+
+config BR2_PACKAGE_NETFLIX5_BUILD_DEBUG
+	bool "Debug"
+	help
+	  Build a debug build with tracing and symbols
+
+config BR2_PACKAGE_NETFLIX5_BUILD_RELEASE_DEBUG
+	bool "Release Debug"
+	help
+	  Build a debug build with tracing and symbols and production code on (strict SSL/HTTPS).
+
+config BR2_PACKAGE_NETFLIX5_BUILD_RELEASE
+	bool "Release"
+	select BR2_PACKAGE_NETFLIX5_MINIFY_JS
+	help
+	  Build a release build without tracing and symbols (e.g. for binary delivery)
+
+endchoice
 
 choice
 	bool "Application type"
@@ -55,11 +83,6 @@ config BR2_PACKAGE_NETFLIX5_LIB
 	  Create Netflix library.
 
 endchoice
-
-config BR2_PACKAGE_NETFLIX5_KEYMAP
-	string "keymap"
-	help
-	  Install custom keymap
 
 config BR2_PACKAGE_NETFLIX5_GST_GL
 	bool "gl"
@@ -102,7 +125,6 @@ config BR2_PACKAGE_NETFLIX5_AUDIO_MIXER_NEXUS
 
 endchoice
 endif
-
 choice
 	bool "DRM"
 	default BR2_PACKAGE_NETFLIX5_DRM_OCDM
@@ -128,10 +150,16 @@ config BR2_PACKAGE_NETFLIX5_DISABLE_TOOLS
 	help
 	  Do not build tools for netflix
 
+config BR2_PACKAGE_NETFLIX5_MINIFY_JS
+    default y
+	bool "Minify JS"
+	help
+	  minify javascript files like boot.js
+	  
 config BR2_PACKAGE_NETFLIX5_CREATE_BINARY_ML_DELIVERY
 	bool "Create delivery package"
 	help
-	  Create tarball containing the build to be deployed else where. 
+	  Create tarball containing the build to be deployed else where.
 
 endmenu
 endif
