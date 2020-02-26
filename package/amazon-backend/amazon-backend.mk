@@ -4,17 +4,17 @@
 #
 ################################################################################
 
-AMAZON_BACKEND_VERSION = e9c61bc404bc233136f6e77609b429a3bedea8cb
+AMAZON_BACKEND_VERSION = 95c7477d43352345f4000df097093555216f2ddb
 AMAZON_BACKEND_SITE = git@github.com:Metrological/amazon-backend.git
 AMAZON_BACKEND_SITE_METHOD = git
-AMAZON_BACKEND_DEPENDENCIES = 
+AMAZON_BACKEND_DEPENDENCIES =
 AMAZON_BACKEND_LICENSE = PROPRIETARY
 AMAZON_BACKEND_INSTALL_STAGING = YES
 
 AMAZON_BACKEND_DEPENDENCIES += wpeframework
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1),y)
-AMAZON_BACKEND_DEPENDENCIES += gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad 
+AMAZON_BACKEND_DEPENDENCIES += gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad
 endif
 
 ifeq ($(BR2_PACKAGE_BCM_REFSW),y)
@@ -30,4 +30,3 @@ AMAZON_BACKEND_CONF_OPTS += -DAMAZON_GST_LIBRARY_PREFIX="wpe"
 endif
 
 $(eval $(cmake-package))
- 
