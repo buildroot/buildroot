@@ -16,6 +16,41 @@ menu "DPI options"
       string "model"
       default "Metrological Reference DPI Implementation"
 
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_FRIENDLY_NAME
+      depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+      string "friendly name"
+      default "Metrological Netflix Implementation"
+
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_VIDEO_BUFFER_SIZE
+      string "video buffer"
+      default "193986560"
+      help
+          Video buffer capacity in bytes
+
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_AUDIO_BUFFER_SIZE
+      string "audio buffer"
+      default "2621440"
+      help
+          Audio buffer capacity in bytes
+
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_DISK_CACHE_SIZE
+      string "disk cache"
+      default "31457280"
+      help
+          Disk cache capacity in bytes
+
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_SURFACE_CACHE_SIZE
+      string "surface cache"
+      default "36700160"
+      help
+          Surface cache capacity in bytes
+
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_APPBOOTKEY
+      depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+      string "appbootkey"
+      help
+          "Define a custom appbootkey, if left empty the built in key from Netflix will be used"
+
   menu "Audio codecs"
 
   config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_DDP2
