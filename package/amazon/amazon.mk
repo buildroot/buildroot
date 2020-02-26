@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-AMAZON_VERSION = f67706962f328e40ee91d558b74c1ebeaa3274ac
+AMAZON_VERSION = 768b69cb59dbe16718c2c71ca13691d6efa7b228
 AMAZON_SITE_METHOD = git
 AMAZON_SITE = git@github.com:Metrological/amazon.git
 AMAZON_INSTALL_STAGING = YES
 AMAZON_INSTALL_TARGET = YES
-AMAZON_DEPENDENCIES = host-cmake zlib jpeg libcurl libpng wpeframework gstreamer1 
+AMAZON_DEPENDENCIES = host-cmake zlib jpeg libcurl libpng wpeframework gstreamer1
 
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
  AMAZON_DEPENDENCIES += rpi-userland
@@ -121,7 +121,7 @@ define AMAZON_CONFIGURE_CMDS
     $(call GENERATE_LOCAL_CONFIG)
     $(call GENERATE_BOOST_CONFIG)
     $(call GENERATE_BUILD_CONFIG)
-    $(call AMAZON_GET_SOURCES) 
+    $(call AMAZON_GET_SOURCES)
     $(call AMAZON_CLEAN_COMPONENTS)
 endef
 
