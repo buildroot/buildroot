@@ -57,7 +57,8 @@ define PXCORE_LIBNODE_PATCHING
     patch -p1 <$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_mods.patch; \
     patch -p1 <$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_qemu_wrapper.patch; \
     sed -i "s:STAGING:$(STAGING_DIR):g" $(@D)/$(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/v8-qemu-wrapper.sh; \
-    sed -i "s:ARCH:$(PXCORE_LIBNODE_CPU):g" $(@D)/$(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/v8-qemu-wrapper.sh;
+    sed -i "s:ARCH:$(PXCORE_LIBNODE_CPU):g" $(@D)/$(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/v8-qemu-wrapper.sh; \
+    chmod +x $(@D)/$(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/v8-qemu-wrapper.sh;
 endef
 
 define PXCORE_LIBNODE_COPY_PATCH
@@ -98,7 +99,8 @@ define PXCORE_LIBNODE_CONFIGURE_CMDS
 	)
 
 	# use host version of mkpeephole
-	sed "s#<(mkpeephole_exec)#$(HOST_DIR)/usr/bin/mkpeephole#g" -i $(@D)/deps/v8/$(PXCORE_LIBNODE_GYP_PATH)/v8.gyp
+	sed "s#<(mkpeephole_exec)#$(HOST_DIR)/usr/bin/mkpeephole#g" -i $(@D)/deps/v8/gypfiles/v8.gyp
+
 endef
 
 define PXCORE_LIBNODE_BUILD_CMDS

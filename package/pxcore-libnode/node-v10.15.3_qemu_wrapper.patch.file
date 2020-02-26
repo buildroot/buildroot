@@ -23,7 +23,7 @@ index 9367ca6..d680efe 100755
            ],
            'process_outputs_as_sources': 1,
            'action': [
-+            '<(PRODUCT_DIR)/../../../v8-qemu-wrapper.sh',
++            '<(PRODUCT_DIR)/../../v8-qemu-wrapper.sh',
              '>@(_inputs)',
              '>@(mksnapshot_flags)',
            ],
@@ -32,7 +32,7 @@ index 9367ca6..d680efe 100755
              '<(SHARED_INTERMEDIATE_DIR)/torque-generated/builtins-typed-array-from-dsl-gen.h',
            ],
 -          'action': ['<@(_inputs)', '-o', '<(SHARED_INTERMEDIATE_DIR)/torque-generated'],
-+          'action': ['<(PRODUCT_DIR)/../../../v8-qemu-wrapper.sh', '<@(_inputs)', '-o', '<(SHARED_INTERMEDIATE_DIR)/torque-generated'],
++          'action': ['<(PRODUCT_DIR)/../../v8-qemu-wrapper.sh', '<@(_inputs)', '-o', '<(SHARED_INTERMEDIATE_DIR)/torque-generated'],
          },
        ],
      }, # torque
