@@ -1,0 +1,1 @@
+qemu-ARCH -r 3.2.0  -L STAGING -E LD_LIBRARY_PATH=STAGING/usr/lib:STAGING/lib  "$@"

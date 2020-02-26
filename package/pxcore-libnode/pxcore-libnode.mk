@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PXCORE_LIBNODE_VERSION = 746382b7139bb7de4ebe357d766a4fbac243cab9
+PXCORE_LIBNODE_VERSION = 51333037650ecee44191492b541106efa573cc35
 PXCORE_LIBNODE_SITE_METHOD = git
 PXCORE_LIBNODE_SITE = git://github.com/pxscene/pxCore
 PXCORE_LIBNODE_DEPENDENCIES = host-python openssl
@@ -47,29 +47,31 @@ PXCORE_LIBNODE_MIPS_ARCH_VARIANT = r1
 endif
 endif
 
-ifeq ($(BR2_PACKAGE_SPACKAGE_PXCORE_LIBNODE_6), y)
-    PXCORE_LIBNODE_VER = 6.9.0
-    PXCORE_LIBNODE_LIB_VER = 48
-    PXCORE_LIBNODE_GYP_PATH = tools/gyp
-else
-    PXCORE_LIBNODE_VER = 8.15.1
-    PXCORE_LIBNODE_LIB_VER = 57
-    PXCORE_LIBNODE_GYP_PATH = src
-
-define PXCORE_LIBNODE_PATCHE
-    patch -p1 <$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_mods.patch;
-endef
-
-endif
-
+PXCORE_LIBNODE_VER = 10.15.3
+PXCORE_LIBNODE_LIB_VER = 58
+PXCORE_LIBNODE_GYP_PATH = tools/gyp
 PXCORE_LIBNODE_DIRECTORY = libnode-v$(PXCORE_LIBNODE_VER)
 PXCORE_LIBNODE_PATH = examples/pxScene2d/external/
 
+define PXCORE_LIBNODE_PATCHING
+    patch -p1 <$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_mods.patch; \
+    patch -p1 <$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_qemu_wrapper.patch; \
+    sed -i "s:STAGING:$(STAGING_DIR):g" $(@D)/$(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/v8-qemu-wrapper.sh; \
+    sed -i "s:ARCH:$(PXCORE_LIBNODE_CPU):g" $(@D)/$(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/v8-qemu-wrapper.sh;
+endef
+
+define PXCORE_LIBNODE_COPY_PATCH
+    cp package/pxcore-libnode/node-v10.15.3_mods.patch.file $(@D)/$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_mods.patch; \
+    cp package/pxcore-libnode/node-v10.15.3_qemu_wrapper.patch.file $(@D)/$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_qemu_wrapper.patch; \
+    cp package/pxcore-libnode/v8-qemu-wrapper.sh $(@D)/$(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/;
+endef
+
 define PXCORE_LIBNODE_EXTRACT
+        $(PXCORE_LIBNODE_COPY_PATCH) \
         cd $(@D)/; \
         find . -name examples -prune -o -type f -exec rm -rf {} +; \
         find . -name examples -prune -o -type d -exec rm -rf {} +; \
-        $(PXCORE_LIBNODE_PATCHE) \
+        $(PXCORE_LIBNODE_PATCHING) \
         mv $(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/* $(@D)/; \
         rm -rf examples/; \
         touch $(@D)/.stamp_downloaded \

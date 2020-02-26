@@ -1,0 +1,38 @@
+License: Apache-2.0
+
+Date: Oct 16, 2019 11:28 PM
+
+From: f6beeabcc00737fd6b386bd5b19bc53fc44a2b33 Oct 16, 2019 11:28 PM
+
+Subject: [PATCH] DELIA-37507: Spark 1.10.0.1
+
+        updating to Spark 1.10.0.1
+
+Source: COMCAST
+
+Upstream-Status: Pending
+
+Signed-off-by: mfiess200 <michael_fiess@cable.comcast.com>
+---
+
+diff --git a/examples/pxScene2d/external/libnode-v10.15.3/deps/v8/gypfiles/v8.gyp b/examples/pxScene2d/external/libnode-v10.15.3/deps/v8/gypfiles/v8.gyp
+index 9367ca6..d680efe 100755
+--- a/examples/pxScene2d/external/libnode-v10.15.3/deps/v8/gypfiles/v8.gyp
++++ b/examples/pxScene2d/external/libnode-v10.15.3/deps/v8/gypfiles/v8.gyp
+@@ -391,6 +391,7 @@
+           ],
+           'process_outputs_as_sources': 1,
+           'action': [
++            '<(PRODUCT_DIR)/../../../v8-qemu-wrapper.sh',
+             '>@(_inputs)',
+             '>@(mksnapshot_flags)',
+           ],
+@@ -2851,7 +2852,7 @@
+             '<(SHARED_INTERMEDIATE_DIR)/torque-generated/builtins-typed-array-from-dsl-gen.cc',
+             '<(SHARED_INTERMEDIATE_DIR)/torque-generated/builtins-typed-array-from-dsl-gen.h',
+           ],
+-          'action': ['<@(_inputs)', '-o', '<(SHARED_INTERMEDIATE_DIR)/torque-generated'],
++          'action': ['<(PRODUCT_DIR)/../../../v8-qemu-wrapper.sh', '<@(_inputs)', '-o', '<(SHARED_INTERMEDIATE_DIR)/torque-generated'],
+         },
+       ],
+     }, # torque
