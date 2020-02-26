@@ -1,0 +1,36 @@
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY
+	bool "Cryptography"
+	depends on BR2_PACKAGE_WPEFRAMEWORK
+	help
+	   WPE Platform cryptography abstraction
+
+if BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY 
+
+choice WPEFRAMEWORK_CRYPTOGRAPHY_IMP
+	prompt "Implementation"
+	default WPEFRAMEWORK_CRYPTOGRAPHY_IMPL_THUNDER
+	help
+	  Choose implementation type.
+
+config WPEFRAMEWORK_CRYPTOGRAPHY_IMPL_THUNDER
+	bool "Thunder"
+	help
+	  Use Thunder as cryptography backend.
+
+config WPEFRAMEWORK_CRYPTOGRAPHY_IMPL_OPENSSL
+	bool "OpenSSL"
+	help
+	  Use Openssl as cryptography backend.
+
+config WPEFRAMEWORK_CRYPTOGRAPHY_IMPL_NEXUS
+	bool "Nexus"
+	depends on BR2_PACKAGE_HAS_NEXUS
+	help
+	  Use Nexus as cryptography backend.
+
+endchoice 
+
+endif 
+
+comment "Cryptography needs WPEFramework"
+	depends on !BR2_PACKAGE_WPEFRAMEWORK 
