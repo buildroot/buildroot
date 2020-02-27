@@ -11,7 +11,7 @@ PXCORE_LIBNODE_DEPENDENCIES = host-python openssl
 PXCORE_LIBNODE_INSTALL_STAGING = YES
 PXCORE_LIBNODE_LICENSE = MIT (core code); MIT, Apache and BSD family licenses (Bundled components)
 PXCORE_LIBNODE_LICENSE_FILES = LICENSE
-PXCORE_LIBNODE_DEPENDENCIES = openssl
+PXCORE_LIBNODE_DEPENDENCIES = openssl host-qemu
 PXCORE_LIBNODE_CONF_OPTS = \
         --shared \
 	--without-snapshot \
@@ -51,9 +51,10 @@ PXCORE_LIBNODE_VER = 10.15.3
 PXCORE_LIBNODE_LIB_VER = 58
 PXCORE_LIBNODE_GYP_PATH = tools/gyp
 PXCORE_LIBNODE_DIRECTORY = libnode-v$(PXCORE_LIBNODE_VER)
-PXCORE_LIBNODE_PATH = examples/pxScene2d/external/
+PXCORE_LIBNODE_PATH = examples/pxScene2d/external
 
 define PXCORE_LIBNODE_PATCHING
+    echo "Test" ; \
     patch -p1 <$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_mods.patch; \
     patch -p1 <$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_qemu_wrapper.patch; \
     sed -i "s:STAGING:$(STAGING_DIR):g" $(@D)/$(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/v8-qemu-wrapper.sh; \
@@ -62,8 +63,8 @@ define PXCORE_LIBNODE_PATCHING
 endef
 
 define PXCORE_LIBNODE_COPY_PATCH
-    cp package/pxcore-libnode/node-v10.15.3_mods.patch.file $(@D)/$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_mods.patch; \
-    cp package/pxcore-libnode/node-v10.15.3_qemu_wrapper.patch.file $(@D)/$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_qemu_wrapper.patch; \
+    cp package/pxcore-libnode/node-v$(PXCORE_LIBNODE_VER)_mods.patch.file $(@D)/$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_mods.patch; \
+    cp package/pxcore-libnode/node-v$(PXCORE_LIBNODE_VER)_qemu_wrapper.patch.file $(@D)/$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_qemu_wrapper.patch; \
     cp package/pxcore-libnode/v8-qemu-wrapper.sh $(@D)/$(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/;
 endef
 
