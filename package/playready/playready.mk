@@ -33,12 +33,6 @@ define PLAYREADY_INSTALL_STAGING_PC
 endef
 
 define PLAYREADY_INSTALL_TARGET_ETC_PLAYREADY
-	if [ -f package/playready/bgroupcert.dat ]; then \
-		$(INSTALL) -D -m 0644 package/playready/bgroupcert.dat $(TARGET_DIR)/etc/playready/; \
-	fi
-	if [ -f package/playready/zgpriv.dat ]; then \
-		$(INSTALL) -D -m 0644 package/playready/zgpriv.dat $(TARGET_DIR)/etc/playready/; \
-	fi
 	ln -sf /tmp $(TARGET_DIR)/etc/playready/storage
 endef
 
