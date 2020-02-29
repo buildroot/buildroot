@@ -1,0 +1,217 @@
+diff -auNrd git.orig/configure.ac git/configure.ac
+--- git.orig/configure.ac	2018-11-08 17:13:01.393659647 -0500
++++ git/configure.ac	2018-11-08 17:12:26.161582302 -0500
+@@ -123,6 +123,42 @@
+               [echo "refsw17_3 is disabled"])
+ AM_CONDITIONAL([REFSW_17_3], [test x$REFSW_17_3 = xtrue])
+ 
++AC_ARG_ENABLE([refsw18_1],
++              AS_HELP_STRING([--enable-refsw18_1],[enable refsw18_1 (default is no)]),
++              [
++                case "${enableval}" in
++                 yes) REFSW_18_1=true ;;
++                  no) AC_MSG_ERROR([refsw18_1 is disabled]) ;;
++                   *) AC_MSG_ERROR([bad value ${enableval} for --enable-refsw18_1]) ;;
++                esac
++              ],
++              [echo "refsw18_1 is disabled"])
++AM_CONDITIONAL([REFSW_18_1], [test x$REFSW_18_1 = xtrue])
++
++AC_ARG_ENABLE([refsw18_2],
++              AS_HELP_STRING([--enable-refsw18_2],[enable refsw18_2 (default is no)]),
++              [
++                case "${enableval}" in
++                 yes) REFSW_18_2=true ;;
++                  no) AC_MSG_ERROR([refsw18_2 is disabled]) ;;
++                   *) AC_MSG_ERROR([bad value ${enableval} for --enable-refsw18_2]) ;;
++                esac
++              ],
++              [echo "refsw18_2 is disabled"])
++AM_CONDITIONAL([REFSW_18_2], [test x$REFSW_18_2 = xtrue])
++
++AC_ARG_ENABLE([refsw18_3],
++              AS_HELP_STRING([--enable-refsw18_3],[enable refsw18_3 (default is no)]),
++              [
++                case "${enableval}" in
++                 yes) REFSW_18_3=true ;;
++                  no) AC_MSG_ERROR([refsw18_3 is disabled]) ;;
++                   *) AC_MSG_ERROR([bad value ${enableval} for --enable-refsw18_3]) ;;
++                esac
++              ],
++              [echo "refsw18_3 is disabled"])
++AM_CONDITIONAL([REFSW_18_3], [test x$REFSW_18_3 = xtrue])
++
+ AC_ARG_ENABLE([xg1v3_v3d],
+               AS_HELP_STRING([--enable-xg1v3_v3d],[enable xg1v3_v3d (default is no)]),
+               [
+diff -auNrd git.orig/Makefile.am git/Makefile.am
+--- git.orig/Makefile.am	2018-11-08 17:13:01.393659647 -0500
++++ git/Makefile.am	2018-11-08 17:09:29.793196829 -0500
+@@ -149,6 +149,147 @@
+    ROCKFORD_TOP="${REFSW_BASE}-rdk-linux-gnueabi/broadcom-refsw/unified-17.3-r4.2/rockford"
+ endif
+ 
++if REFSW_18_1
++   $(warning generic RDK is using 18.1 Broadcom SDK version)
++   REFSW_VERSION=${PKG_CONFIG_SYSROOT_DIR}/usr/share/wayland-egl
++
++if ENABLE_VC5
++AM_CFLAGS += -DVCX=5
++libwayland_egl_la_SOURCES += \
++                            $(REFSW_VERSION)/nexus/display_nexus.c \
++                            $(REFSW_VERSION)/nexus/default_nexus.c \
++                            $(REFSW_VERSION)/nexus/display_surface.c \
++                            $(REFSW_VERSION)/nexus/display_nexus_multi.c \
++                            $(REFSW_VERSION)/common/display_helpers.c \
++                            $(REFSW_VERSION)/common/memory_convert.c \
++                            $(REFSW_VERSION)/common/memory_drm.c \
++                            $(REFSW_VERSION)/common/memory_nexus.c \
++                            $(REFSW_VERSION)/common/sched_nexus.c \
++                            $(REFSW_VERSION)/common/display_framework.c \
++                            $(REFSW_VERSION)/common/display_interface.c \
++                            $(REFSW_VERSION)/common/event.c \
++                            $(REFSW_VERSION)/common/fence_interface.c \
++                            $(REFSW_VERSION)/common/fence_queue.c \
++                            $(REFSW_VERSION)/common/perf_event.cpp \
++                            $(REFSW_VERSION)/common/queue.c \
++                            $(REFSW_VERSION)/common/ring_buffer.c \
++                            $(REFSW_VERSION)/common/surface_interface.c \
++                            $(REFSW_VERSION)/common/surface_interface_nexus.c \
++                            $(REFSW_VERSION)/common/swapchain.c
++else
++AM_CFLAGS += -DVCX=3
++AM_CFLAGS += \
++           -I${REFSW_VERSION}/nexus \
++           -I${REFSW_VERSION}/nexus/multi
++libwayland_egl_la_SOURCES += \
++                            $(REFSW_VERSION)/nexus/bitmap.cpp \
++                            $(REFSW_VERSION)/nexus/default_nexus.c \
++                            $(REFSW_VERSION)/common/packet_yv12.c \
++                            $(REFSW_VERSION)/common/packet_rgba.c \
++                            $(REFSW_VERSION)/common/perf_event.cpp \
++                            $(REFSW_VERSION)/common/nexus_surface_memory.c \
++                            $(REFSW_VERSION)/common/memory_nexus.c \
++                            $(REFSW_VERSION)/common/hardware_nexus.cpp \
++                            $(REFSW_VERSION)/common/autoclif.c \
++                            $(REFSW_VERSION)/nexus/multi/worker.cpp \
++                            $(REFSW_VERSION)/nexus/multi/windowinfo.cpp
++endif
++endif
++
++
++if REFSW_18_2
++   $(warning generic RDK is using 18.2 Broadcom SDK version)
++   REFSW_VERSION=${PKG_CONFIG_SYSROOT_DIR}/usr/share/wayland-egl
++
++if ENABLE_VC5
++AM_CFLAGS += -DVCX=5
++libwayland_egl_la_SOURCES += \
++                            $(REFSW_VERSION)/nexus/display_nexus.c \
++                            $(REFSW_VERSION)/nexus/default_nexus.c \
++                            $(REFSW_VERSION)/nexus/display_surface.c \
++                            $(REFSW_VERSION)/nexus/display_nexus_multi.c \
++                            $(REFSW_VERSION)/common/display_helpers.c \
++                            $(REFSW_VERSION)/common/memory_convert.c \
++                            $(REFSW_VERSION)/common/memory_drm.c \
++                            $(REFSW_VERSION)/common/memory_nexus.c \
++                            $(REFSW_VERSION)/common/sched_nexus.c \
++                            $(REFSW_VERSION)/common/display_framework.c \
++                            $(REFSW_VERSION)/common/display_interface.c \
++                            $(REFSW_VERSION)/common/event.c \
++                            $(REFSW_VERSION)/common/fence_interface.c \
++                            $(REFSW_VERSION)/common/fence_queue.c \
++                            $(REFSW_VERSION)/common/perf_event.cpp \
++                            $(REFSW_VERSION)/common/queue.c \
++                            $(REFSW_VERSION)/common/ring_buffer.c \
++                            $(REFSW_VERSION)/common/surface_interface.c \
++                            $(REFSW_VERSION)/common/surface_interface_nexus.c \
++                            $(REFSW_VERSION)/common/swapchain.c
++else
++AM_CFLAGS += -DVCX=3
++AM_CFLAGS += \
++           -I${REFSW_VERSION}/nexus \
++           -I${REFSW_VERSION}/nexus/multi
++libwayland_egl_la_SOURCES += \
++                            $(REFSW_VERSION)/nexus/bitmap.cpp \
++                            $(REFSW_VERSION)/nexus/default_nexus.c \
++                            $(REFSW_VERSION)/common/packet_yv12.c \
++                            $(REFSW_VERSION)/common/packet_rgba.c \
++                            $(REFSW_VERSION)/common/perf_event.cpp \
++                            $(REFSW_VERSION)/common/nexus_surface_memory.c \
++                            $(REFSW_VERSION)/common/memory_nexus.c \
++                            $(REFSW_VERSION)/common/hardware_nexus.cpp \
++                            $(REFSW_VERSION)/common/autoclif.c \
++                            $(REFSW_VERSION)/nexus/multi/worker.cpp \
++                            $(REFSW_VERSION)/nexus/multi/windowinfo.cpp
++endif
++endif
++
++if REFSW_18_3
++   $(warning generic RDK is using 18.3 Broadcom SDK version)
++   REFSW_VERSION=${PKG_CONFIG_SYSROOT_DIR}/usr/share/wayland-egl
++
++if ENABLE_VC5
++AM_CFLAGS += -DVCX=5
++libwayland_egl_la_SOURCES += \
++                            $(REFSW_VERSION)/nexus/display_nexus.c \
++                            $(REFSW_VERSION)/nexus/default_nexus.c \
++                            $(REFSW_VERSION)/nexus/display_nexus_multi.c \
++                            $(REFSW_VERSION)/common/display_helpers.c \
++                            $(REFSW_VERSION)/common/memory_convert.c \
++                            $(REFSW_VERSION)/common/memory_drm.c \
++                            $(REFSW_VERSION)/common/memory_nexus.c \
++                            $(REFSW_VERSION)/common/sched_nexus.c \
++                            $(REFSW_VERSION)/common/display_framework.c \
++                            $(REFSW_VERSION)/common/display_interface.c \
++                            $(REFSW_VERSION)/common/event.c \
++                            $(REFSW_VERSION)/common/fence_interface.c \
++                            $(REFSW_VERSION)/common/perf_event.cpp \
++                            $(REFSW_VERSION)/common/queue.c \
++                            $(REFSW_VERSION)/common/ring_buffer.c \
++                            $(REFSW_VERSION)/common/buffer_interface.c \
++                            $(REFSW_VERSION)/common/buffer_interface_nexus.c \
++                            $(REFSW_VERSION)/common/swapchain.c
++else
++AM_CFLAGS += -DVCX=3
++AM_CFLAGS += \
++           -I${REFSW_VERSION}/nexus \
++           -I${REFSW_VERSION}/nexus/multi
++libwayland_egl_la_SOURCES += \
++                            $(REFSW_VERSION)/nexus/bitmap.cpp \
++                            $(REFSW_VERSION)/nexus/default_nexus.c \
++                            $(REFSW_VERSION)/common/packet_yv12.c \
++                            $(REFSW_VERSION)/common/packet_rgba.c \
++                            $(REFSW_VERSION)/common/perf_event.cpp \
++                            $(REFSW_VERSION)/common/nexus_surface_memory.c \
++                            $(REFSW_VERSION)/common/memory_nexus.c \
++                            $(REFSW_VERSION)/common/hardware_nexus.cpp \
++                            $(REFSW_VERSION)/common/autoclif.c \
++                            $(REFSW_VERSION)/nexus/multi/worker.cpp \
++                            $(REFSW_VERSION)/nexus/multi/windowinfo.cpp
++endif
++endif
++
++
+ if REFSW_latest
+    $(warning generic RDK is using latest Broadcom SDK version)
+    REFSW_VERSION=${PKG_CONFIG_SYSROOT_DIR}/usr/share/wayland-egl
+@@ -203,6 +344,9 @@
+ if !REFSW_16_2
+ if !REFSW_17_1
+ if !REFSW_17_3
++if !REFSW_18_1
++if !REFSW_18_2
++if !REFSW_18_3
+    $(warning Unsupported Broadcom SDK version - defaulting to 14.4 but expect wayland-egl-bnxs to be non-functional)
+    REFSW_VERSION=refsw14.4
+    libwayland_egl_la_SOURCES += \
+@@ -212,6 +356,9 @@
+                             $(REFSW_VERSION)/hardware_nexus.c
+    ROCKFORD_TOP="${REFSW_BASE}-rdk-linux/broadcom-refsw/unified-14.4-r0/rockford"
+ endif
++endif
++endif
++endif
+ endif                            
+ endif                            
+ endif

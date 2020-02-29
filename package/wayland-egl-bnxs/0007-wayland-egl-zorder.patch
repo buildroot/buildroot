@@ -1,0 +1,11 @@
+--- git/wayland-egl.cpp	2019-09-20 15:02:21.756694684 -0400
++++ git/wayland-egl.cpp.new	2019-09-20 15:02:01.767167775 -0400
+@@ -1192,7 +1192,7 @@
+          windowInfo.height= height;
+          windowInfo.stretch= true;
+          windowInfo.clientID= 0;
+-         windowInfo.zOrder= 10000000;
++         windowInfo.zOrder= 100;
+       
+          egl_window->nativeWindow= (EGLNativeWindowType)NXPL_CreateNativeWindow( &windowInfo );
+          if ( egl_window->nativeWindow )
