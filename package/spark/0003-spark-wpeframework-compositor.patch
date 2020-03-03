@@ -1,8 +1,8 @@
 diff --git a/cmake/CommDeps.cmake b/cmake/CommDeps.cmake
-index 97a0ecd..4250e95 100644
+index e2ef012e0..d66bad57e 100644
 --- a/cmake/CommDeps.cmake
 +++ b/cmake/CommDeps.cmake
-@@ -216,6 +216,26 @@ set(COMM_DEPS_LIBRARY_DIRS ${COMM_DEPS_LIBRARY_DIRS}
+@@ -251,6 +251,26 @@ set(COMM_DEPS_LIBRARY_DIRS ${COMM_DEPS_LIBRARY_DIRS}
        ${SQLITE_LIBRARY_DIRS}
     )
  
@@ -29,16 +29,16 @@ index 97a0ecd..4250e95 100644
  set(COMM_DEPS_LIBRARIES ${COMM_DEPS_LIBRARIES}
             ${ZLIB_LIBRARIES}
             ${CURL_LIBRARIES}
-@@ -235,3 +255,4 @@ set(COMM_DEPS_LIBRARIES ${COMM_DEPS_LIBRARIES}
+@@ -270,3 +290,4 @@ set(COMM_DEPS_LIBRARIES ${COMM_DEPS_LIBRARIES}
           ${ICU_UC_LIBRARIES}
           ${SQLITE_LIBRARIES}
     )
 +endif (BUILD_WITH_WPEFRAMEWORK)
 diff --git a/examples/pxScene2d/src/CMakeLists.txt b/examples/pxScene2d/src/CMakeLists.txt
-index 6e0d534..672946e 100644
+index 55d6499f3..e64fb1c8e 100644
 --- a/examples/pxScene2d/src/CMakeLists.txt
 +++ b/examples/pxScene2d/src/CMakeLists.txt
-@@ -177,7 +177,7 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+@@ -185,7 +185,7 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
                    ${NODE_LIBRARIES}
                    ${V8_LIBRARIES}
                    ${DUKE_LIBRARIES}
@@ -47,7 +47,7 @@ index 6e0d534..672946e 100644
               pthread rt dl m)
  
      set(PXSCENE_APP_LIBRARIES ${PXSCENE_APP_LIBRARIES} pxCore rtCore_s)
-@@ -257,6 +257,13 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+@@ -265,6 +265,13 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
          set(PXCORE_INCLUDES $ENV{PXCORE_INCLUDES})
          separate_arguments(PXCORE_INCLUDES)
          include_directories(BEFORE ${PXCORE_INCLUDES})
@@ -62,7 +62,7 @@ index 6e0d534..672946e 100644
          message("building pxscene for glut")
          set(PX_PLATFORM PX_PLATFORM_GLUT)
 diff --git a/examples/pxScene2d/src/pxContextDescGL.h b/examples/pxScene2d/src/pxContextDescGL.h
-index be2ca29..a5f7b36 100644
+index be2ca2950..a5f7b367a 100644
 --- a/examples/pxScene2d/src/pxContextDescGL.h
 +++ b/examples/pxScene2d/src/pxContextDescGL.h
 @@ -23,7 +23,7 @@
@@ -84,7 +84,7 @@ index be2ca29..a5f7b36 100644
  #include <GLES2/gl2ext.h>
  #else
 diff --git a/examples/pxScene2d/src/pxContextGL.cpp b/examples/pxScene2d/src/pxContextGL.cpp
-index e37a6dd..5855b64 100644
+index 8891c541d..92a575fce 100644
 --- a/examples/pxScene2d/src/pxContextGL.cpp
 +++ b/examples/pxScene2d/src/pxContextGL.cpp
 @@ -40,7 +40,7 @@
@@ -117,9 +117,9 @@ index e37a6dd..5855b64 100644
 -#endif //PX_PLATFORM_GENERIC_EGL || PX_PLATFORM_WAYLAND_EGL
 +#endif //PX_PLATFORM_GENERIC_EGL || PX_PLATFORM_WAYLAND_EGL || defined(PX_PLATFORM_WPEFRAMEWORK)
  
- // TODO get rid of this global crap
- 
-@@ -450,7 +450,7 @@ public:
+ struct filterXYR
+ {
+@@ -544,7 +544,7 @@ public:
    {
      if (mFramebufferId!= 0)
      {
@@ -128,7 +128,7 @@ index e37a6dd..5855b64 100644
        if (mAntiAliasing)
        {
          GLint currentFBO = 0;
-@@ -500,7 +500,7 @@ public:
+@@ -600,7 +600,7 @@ public:
        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                               GL_TEXTURE_2D, mTextureId, 0);
  
@@ -136,17 +136,17 @@ index e37a6dd..5855b64 100644
 +#if (defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL) || defined(PX_PLATFORM_WPEFRAMEWORK)) && !defined(PXSCENE_DISABLE_PXCONTEXT_EXT)
        if (mAntiAliasing)
        {
-         glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextureId, 0, 2);
-@@ -585,7 +585,7 @@ private:
-   bool mBindTexture;
+         //glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextureId, 0, 2);
+@@ -701,7 +701,7 @@ private:
    bool mAlphaOnly;
+   bool mDepthBuffer;
  
 -#if (defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL)) && !defined(PXSCENE_DISABLE_PXCONTEXT_EXT)
 +#if (defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL) || defined(PX_PLATFORM_WPEFRAMEWORK)) && !defined(PXSCENE_DISABLE_PXCONTEXT_EXT)
    bool mAntiAliasing;
  #endif
- 
-@@ -2207,12 +2207,12 @@ void pxContext::init()
+   GLuint mDepthrenderbuffer;
+@@ -2618,12 +2618,12 @@ void pxContext::init()
  
    rtLogInfo("context garbage collect throttle set to %f seconds", garbageCollectThrottleInSeconds);
  
@@ -162,7 +162,7 @@ index e37a6dd..5855b64 100644
    std::srand(unsigned (std::time(0)));
  }
 diff --git a/examples/pxScene2d/src/pxShaderResource.h b/examples/pxScene2d/src/pxShaderResource.h
-index 49b2bbb..ccb0282 100644
+index 05e7136f6..706355e7f 100644
 --- a/examples/pxScene2d/src/pxShaderResource.h
 +++ b/examples/pxScene2d/src/pxShaderResource.h
 @@ -34,7 +34,7 @@ pxCore Copyright 2005-2018 John Robinson
@@ -174,8 +174,21 @@ index 49b2bbb..ccb0282 100644
  #include <GLES2/gl2.h>
  #ifndef GL_GLEXT_PROTOTYPES
  #define GL_GLEXT_PROTOTYPES
+diff --git a/examples/pxScene2d/src/pxWebGL.h b/examples/pxScene2d/src/pxWebGL.h
+index 47c00a94b..2f7fddd5d 100644
+--- a/examples/pxScene2d/src/pxWebGL.h
++++ b/examples/pxScene2d/src/pxWebGL.h
+@@ -28,7 +28,7 @@
+ #include <GLUT/glut.h>
+ #include <OpenGL/gl.h>
+ #include <OpenGL/glu.h>
+-#elif defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL)
++#elif defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL) || defined(PX_PLATFORM_WPEFRAMEWORK)
+ #include <GLES2/gl2.h>
+ #ifndef GL_GLEXT_PROTOTYPES
+ #define GL_GLEXT_PROTOTYPES
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index aa4ac63..a9d48a7 100755
+index 9ec759cfb..3d8dd9a9a 100755
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -138,6 +138,24 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
@@ -204,7 +217,7 @@ index aa4ac63..a9d48a7 100755
          message("Building pxcore for dfb ")
          set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../build/dfb)
 diff --git a/src/pxConfig.h b/src/pxConfig.h
-index 3d70de2..d1757b6 100644
+index 3d70de289..d1757b602 100644
 --- a/src/pxConfig.h
 +++ b/src/pxConfig.h
 @@ -34,8 +34,9 @@
@@ -219,7 +232,7 @@ index 3d70de2..d1757b6 100644
  
  #ifndef PX_PLATFORM_GENERIC_EGL
 diff --git a/src/pxCore.h b/src/pxCore.h
-index f91cc81..66ea12f 100644
+index f91cc8168..66ea12f5e 100644
 --- a/src/pxCore.h
 +++ b/src/pxCore.h
 @@ -78,6 +78,8 @@ inline t pxAbs(t i)
@@ -232,8 +245,9 @@ index f91cc81..66ea12f 100644
  #error "PX_PLATFORM NOT HANDLED"
  #endif
 diff --git a/src/wpeframework/pxBufferNative.cpp b/src/wpeframework/pxBufferNative.cpp
-index e69de29..d174a3a 100644
---- a/src/wpeframework/pxBufferNative.cpp
+new file mode 100644
+index 000000000..d174a3a8a
+--- /dev/null
 +++ b/src/wpeframework/pxBufferNative.cpp
 @@ -0,0 +1,40 @@
 +/*
@@ -277,8 +291,9 @@ index e69de29..d174a3a 100644
 +
 +
 diff --git a/src/wpeframework/pxBufferNative.h b/src/wpeframework/pxBufferNative.h
-index e69de29..39e2c08 100644
---- a/src/wpeframework/pxBufferNative.h
+new file mode 100644
+index 000000000..39e2c08f3
+--- /dev/null
 +++ b/src/wpeframework/pxBufferNative.h
 @@ -0,0 +1,37 @@
 +/*
@@ -319,8 +334,9 @@ index e69de29..39e2c08 100644
 +
 +#endif
 diff --git a/src/wpeframework/pxClipboardNative.cpp b/src/wpeframework/pxClipboardNative.cpp
-index e69de29..bf6a4b5 100644
---- a/src/wpeframework/pxClipboardNative.cpp
+new file mode 100644
+index 000000000..bf6a4b5e2
+--- /dev/null
 +++ b/src/wpeframework/pxClipboardNative.cpp
 @@ -0,0 +1,48 @@
 +/*
@@ -372,8 +388,9 @@ index e69de29..bf6a4b5 100644
 +    // [pasteBoard setString:stringToWrite forType:NSStringPboardType];
 +}
 diff --git a/src/wpeframework/pxClipboardNative.h b/src/wpeframework/pxClipboardNative.h
-index e69de29..1dc8fab 100644
---- a/src/wpeframework/pxClipboardNative.h
+new file mode 100644
+index 000000000..1dc8fabe3
+--- /dev/null
 +++ b/src/wpeframework/pxClipboardNative.h
 @@ -0,0 +1,50 @@
 +/*
@@ -427,8 +444,9 @@ index e69de29..1dc8fab 100644
 +
 +#endif // PX_CLIPBOARDNATIVE_H
 diff --git a/src/wpeframework/pxConfigNative.h b/src/wpeframework/pxConfigNative.h
-index e69de29..60ca7ad 100644
---- a/src/wpeframework/pxConfigNative.h
+new file mode 100644
+index 000000000..60ca7ad3b
+--- /dev/null
 +++ b/src/wpeframework/pxConfigNative.h
 @@ -0,0 +1,37 @@
 +/*
@@ -469,8 +487,9 @@ index e69de29..60ca7ad 100644
 +#endif
 +
 diff --git a/src/wpeframework/pxEventLoopNative.cpp b/src/wpeframework/pxEventLoopNative.cpp
-index e69de29..31dced7 100644
---- a/src/wpeframework/pxEventLoopNative.cpp
+new file mode 100644
+index 000000000..31dced7ae
+--- /dev/null
 +++ b/src/wpeframework/pxEventLoopNative.cpp
 @@ -0,0 +1,42 @@
 +/*
@@ -516,8 +535,9 @@ index e69de29..31dced7 100644
 +    pxWindowNative::exitEventLoop();
 +}
 diff --git a/src/wpeframework/pxOffscreenNative.cpp b/src/wpeframework/pxOffscreenNative.cpp
-index e69de29..166e55f 100644
---- a/src/wpeframework/pxOffscreenNative.cpp
+new file mode 100644
+index 000000000..166e55fc3
+--- /dev/null
 +++ b/src/wpeframework/pxOffscreenNative.cpp
 @@ -0,0 +1,60 @@
 +/*
@@ -581,8 +601,9 @@ index e69de29..166e55f 100644
 +    return PX_OK;
 +}
 diff --git a/src/wpeframework/pxOffscreenNative.h b/src/wpeframework/pxOffscreenNative.h
-index e69de29..aad33ce 100644
---- a/src/wpeframework/pxOffscreenNative.h
+new file mode 100644
+index 000000000..aad33ce3e
+--- /dev/null
 +++ b/src/wpeframework/pxOffscreenNative.h
 @@ -0,0 +1,41 @@
 +/*
@@ -627,8 +648,9 @@ index e69de29..aad33ce 100644
 +
 +#endif
 diff --git a/src/wpeframework/pxTimerNative.cpp b/src/wpeframework/pxTimerNative.cpp
-index e69de29..beacc21 100644
---- a/src/wpeframework/pxTimerNative.cpp
+new file mode 100644
+index 000000000..beacc2186
+--- /dev/null
 +++ b/src/wpeframework/pxTimerNative.cpp
 @@ -0,0 +1,78 @@
 +/*
@@ -705,13 +727,14 @@ index e69de29..beacc21 100644
 +void pxSleepMS(uint32_t msToSleep)
 +{
 +    timeval tv;
-+    tv.tv_sec = 0;
-+    tv.tv_usec = 1000 * msToSleep;
++    tv.tv_sec = msToSleep / 1000;
++    tv.tv_usec = 1000 * (msToSleep % 1000);
 +    select(0, NULL, NULL, NULL, &tv);
 +}
 diff --git a/src/wpeframework/pxWPECompositor.cpp b/src/wpeframework/pxWPECompositor.cpp
-index e69de29..73f17f4 100644
---- a/src/wpeframework/pxWPECompositor.cpp
+new file mode 100644
+index 000000000..422bdcf5a
+--- /dev/null
 +++ b/src/wpeframework/pxWPECompositor.cpp
 @@ -0,0 +1,72 @@
 +#include "../pxCore.h"
@@ -731,7 +754,7 @@ index e69de29..73f17f4 100644
 +static const char* ltxt = "\t\t1234567890-=\t\tqwertyuiop[]\t\tasdfghjkl;'`\t\\zxcvbnm,./\t\t\t ";
 +static const char* utxt = "\t\t!@#$%^&*()_+\t\tQWERTYUIOP{}\t\tASDFGHJKL:\"~\t|ZXCVBNM<>?\t\t\t ";
 +
-+void Keyboard::Direct(const uint32_t key, const state action)
++void WPEFramework::Spark::Display::Keyboard::Direct(const uint32_t key, const state action)
 +{
 +    static pxSharedContextRef sharedContext = context.createSharedContext();
 +    sharedContext->makeCurrent(true);
@@ -757,7 +780,7 @@ index e69de29..73f17f4 100644
 +    sharedContext->makeCurrent(true);
 +}
 +
-+void Keyboard::Modifiers(uint32_t depressedMods, uint32_t latchedMods, uint32_t lockedMods, uint32_t group)
++void WPEFramework::Spark::Display::Keyboard::Modifiers(uint32_t depressedMods, uint32_t latchedMods, uint32_t lockedMods, uint32_t group)
 +{
 +    if (depressedMods & MOD_SHIFT)
 +    {
@@ -787,10 +810,11 @@ index e69de29..73f17f4 100644
 +    }
 +}
 diff --git a/src/wpeframework/pxWPECompositor.h b/src/wpeframework/pxWPECompositor.h
-index e69de29..4ec047a 100644
---- a/src/wpeframework/pxWPECompositor.h
+new file mode 100644
+index 000000000..b523911c9
+--- /dev/null
 +++ b/src/wpeframework/pxWPECompositor.h
-@@ -0,0 +1,301 @@
+@@ -0,0 +1,295 @@
 +/*
 + * Copyright (C) 2019 Metrological
 + * All rights reserved.
@@ -816,166 +840,162 @@ index e69de29..4ec047a 100644
 + * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 + * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 + */
-+
-+#ifndef PX_WPE_COMPOSITOR_H
-+#define PX_WPE_COMPOSITOR_H
++#pragma once
 +
 +#include <WPEFramework/core/core.h>
 +#include <WPEFramework/compositor/Client.h>
-+#include <cstdlib>
-+#include <sstream>
 +
 +#include "../pxKeycodes.h"
 +
-+template <class T>
-+inline std::string to_string(const T& t)
-+{
-+    std::stringstream ss;
-+    ss << t;
-+    return ss.str();
-+}
-+
 +namespace WPEFramework {
 +
-+class Keyboard : public WPEFramework::Compositor::IDisplay::IKeyboard
-+{
++namespace Spark {
++
++class Display : public Core::Thread {
 +private:
-+    Keyboard(const Keyboard&) = delete;
-+    Keyboard& operator=(const Keyboard&) = delete;
++    class Keyboard : public WPEFramework::Compositor::IDisplay::IKeyboard {
++    public:
++        Keyboard(const Keyboard&) = delete;
++        Keyboard& operator=(const Keyboard&) = delete;
++
++    public:
++        Keyboard()
++            : _refCount(1)
++            , mShiftPressed(false)
++            , mAltPressed(false)
++            , mCtrlPressed(false) {
++        }
++        virtual ~Keyboard()
++        {
++            ASSERT(_refCount == 1);
++        }
 +
 +public:
-+    Keyboard() : mShiftPressed(false), mAltPressed(false), mCtrlPressed(false) {}
-+    virtual ~Keyboard() {}
-+
-+public:
-+    virtual void AddRef() const {}
-+    virtual uint32_t Release() const { return 0; }
-+    virtual void KeyMap(const char* /*information*/, const uint16_t /*size*/) {}
-+    virtual void Key(const uint32_t /*key*/,
-+            const IKeyboard::state /*action*/, const uint32_t /*time*/) {}
-+    virtual void Modifiers(uint32_t depressedMods,
++        // Lifetime management
++         virtual void AddRef() const
++         {
++             Core::InterlockedIncrement(_refCount);
++         }
++         virtual uint32_t Release() const
++         {
++             Core::InterlockedDecrement(_refCount);
++             return _refCount;
++         }
++         virtual void KeyMap(const char* /*information*/, const uint16_t /*size*/) {}
++         virtual void Key(const uint32_t /*key*/,
++         const IKeyboard::state /*action*/, const uint32_t /*time*/) {}
++         virtual void Modifiers(uint32_t depressedMods,
 +            uint32_t latchedMods, uint32_t lockedMods, uint32_t group);
-+    virtual void Repeat(int32_t /*rate*/, int32_t /*delay*/) {}
-+    virtual void Direct(const uint32_t code, const state action);
++         virtual void Repeat(int32_t /*rate*/, int32_t /*delay*/) {}
++         virtual void Direct(const uint32_t code, const state action);
 +
-+private:
-+    bool mShiftPressed;
-+    bool mAltPressed;
-+    bool mCtrlPressed;
-+};
-+
-+class Display : public Core::Thread
-+{
-+
-+public:
-+    enum DisplayStatus {
-+        NotInUse = 0,
-+        Attached = 1,
-+        Detached = 2
++    private:
++        mutable uint32_t _refCount;
++        bool mShiftPressed;
++        bool mAltPressed;
++        bool mCtrlPressed;
 +    };
 +
 +public:
-+    Display(const Display&);
-+    Display& operator=(const Display&);
++    Display(const Display&) = delete;
++    Display& operator=(const Display&) = delete;
 +
 +    Display()
-+    : _display(nullptr)
-+    , _displayStatus(DisplayStatus::Detached)
-+    , _graphicsSurface(nullptr)
++        : _keyboardHandle()
++        , _display(nullptr)
++        , _graphicsSurface(nullptr)
 +    {
-+        Run();
 +    }
-+
-+    void CreateDisplayClient()
-+    {
-+        std::string display_name = WPEFramework::Compositor::IDisplay::SuggestedName();
-+        if (display_name.empty()) {
-+            struct timeval tv;
-+            gettimeofday(&tv, NULL);
-+            time_t epoch_time = (tv.tv_sec * 1000) + (tv.tv_usec/1000);
-+            display_name = "Spark" + to_string(epoch_time);
-+        }
-+        _display = WPEFramework::Compositor::IDisplay::Instance(display_name);
-+
-+        const char* width_str(std::getenv("SCREEN_WIDTH"));
-+        uint32_t width = (width_str == nullptr ? 1280 : atoi(width_str));
-+        const char* height_str(std::getenv("SCREEN_HEIGHT"));
-+        uint32_t height = (height_str == nullptr ? 720 : atoi(height_str));
-+
-+        _graphicsSurface = _display->Create(display_name, width, height);
-+        printf("%s:%s:%d\n", __FILE__, __func__, __LINE__);
-+        _graphicsSurface->Keyboard(&_keyboardHandle);
-+    }
-+
 +    ~Display()
 +    {
 +        Stop();
++        close(_display->FileDescriptor());
 +        Wait(Thread::BLOCKED | Thread::STOPPED, Core::infinite);
-+    };
 +
-+    static Display* Instance()
-+    {
-+        static Display myDisplay;
-+        myDisplay.AddRef();
-+        myDisplay._displayStatus = DisplayStatus::Attached;
-+        printf("%s:%s:%d\n", __FILE__, __func__, __LINE__);
-+        return (&myDisplay);
-+    }
-+    void ReleaseDisplayClient()
-+    {
-+        _displayStatus = DisplayStatus::Detached;
++        if (_graphicsSurface != nullptr) {
++            _graphicsSurface->Keyboard(nullptr);
++            _graphicsSurface->Release();
++        }
 +
-+        _display->Release();
-+        _graphicsSurface = nullptr;
++        if (_display != nullptr) {
++            _display->Release();
++        }
 +    }
++public:
 +    EGLNativeDisplayType Native()
 +    {
-+        return _display->Native();
++        if (_display == nullptr) {
++            _display = WPEFramework::Compositor::IDisplay::Instance(SurfaceName());
++        }
++        return (_display != nullptr ? _display->Native() : nullptr);
 +    }
-+    WPEFramework::Compositor::IDisplay::ISurface* GetGraphicsSurface()
++
++    Compositor::IDisplay::ISurface* GetGraphicsSurface()
 +    {
++        if (_graphicsSurface == nullptr) {
++            string surfaceName(SurfaceName());
++
++            if (_display == nullptr) {
++                _display = WPEFramework::Compositor::IDisplay::Instance(surfaceName);
++            }
++
++            if (_display != nullptr) {
++                const char* width_str(std::getenv("SCREEN_WIDTH"));
++                uint32_t width = (width_str == nullptr ? 1280 : atoi(width_str));
++                const char* height_str(std::getenv("SCREEN_HEIGHT"));
++                uint32_t height = (height_str == nullptr ? 720 : atoi(height_str));
++
++                _graphicsSurface = _display->Create(surfaceName, width, height);
++
++                if (_graphicsSurface != nullptr) {
++                    _graphicsSurface->Keyboard(&_keyboardHandle);
++                    Run();
++                }
++            }
++        }
++
 +        return _graphicsSurface;
-+    }
-+    int FileDescriptor() {
-+        return _display->FileDescriptor();
-+    }
-+    void AddRef() const
-+    {
-+        if (++_refCount == 1)
-+        {
-+            const_cast<Display*>(this)->CreateDisplayClient();
-+        }
-+    }
-+    uint32_t Release() const
-+    {
-+        if (--_refCount == 0)
-+        {
-+             const_cast<Display*>(this)->ReleaseDisplayClient();
-+        }
-+        return 0;
 +    }
 +
 +private:
 +    virtual uint32_t Worker()
 +    {
-+       while (IsRunning() == true)
-+       {
-+           if (_displayStatus == DisplayStatus::Attached)
-+           {
-+               _display->Process(1);
-+           }
++       while ((_display != nullptr) && (IsRunning() == true)) {
++           _display->Process(1);
 +       }
-+       return (WPEFramework::Core::infinite);
++       return (Core::infinite);
++    }
++
++    string SurfaceName() const
++    {
++        string result;
++        const char* callsign(std::getenv("CLIENT_IDENTIFIER"));
++        if (callsign == nullptr) {
++            struct timeval tv;
++            gettimeofday(&tv, NULL);
++            time_t epoch_time = (tv.tv_sec * 1000) + (tv.tv_usec/1000);
++
++            char buffer[128];
++            snprintf(buffer, sizeof(buffer), "Spark_%llu", epoch_time);
++            result = buffer;
++        } else {
++             const char* delimiter = nullptr;
++             if ((delimiter = strchr(callsign, ',')) == nullptr) {
++                 result = callsign;
++             } else {
++                 result = std::string(callsign, (delimiter - callsign));
++             }
++         }
++         return (result);
 +    }
 +
 +private:
 +    Keyboard _keyboardHandle;
 +    WPEFramework::Compositor::IDisplay* _display;
-+    DisplayStatus _displayStatus;
 +    WPEFramework::Compositor::IDisplay::ISurface* _graphicsSurface;
-+    mutable uint32_t _refCount;
 +};
 +
++} // namespace Spark
 +} // namespace WPEFramework
 +
 +// Key Codes
@@ -1090,13 +1110,12 @@ index e69de29..4ec047a 100644
 +#define PX_KEY_NATIVE_BACK         KEY_BACK
 +#define PX_KEY_NATIVE_MENU         KEY_MENU
 +#define PX_KEY_NATIVE_HOMEPAGE     KEY_HOMEPAGE
-+
-+#endif // PX_WPE_COMPOSITOR_H
 diff --git a/src/wpeframework/pxWindowNative.cpp b/src/wpeframework/pxWindowNative.cpp
-index e69de29..86357ed 100644
---- a/src/wpeframework/pxWindowNative.cpp
+new file mode 100644
+index 000000000..fb035b92b
+--- /dev/null
 +++ b/src/wpeframework/pxWindowNative.cpp
-@@ -0,0 +1,363 @@
+@@ -0,0 +1,360 @@
 +/*
 +
 +pxCore Copyright 2005-2018 John Robinson
@@ -1293,7 +1312,7 @@ index e69de29..86357ed 100644
 +{
 +    initializeEgl();
 +
-+    mEglNativeWindow = wpeDisplay->GetGraphicsSurface()->Native();
++    mEglNativeWindow = wpeDisplay.GetGraphicsSurface()->Native();
 +
 +    mEGLSurface =
 +        (EGLSurface)eglCreateWindowSurface(mEGLDisplay,
@@ -1325,8 +1344,6 @@ index e69de29..86357ed 100644
 +
 +    //more egl cleanup
 +    eglTerminate(mEGLDisplay);
-+    wpeDisplay->Release();
-+    wpeDisplay = nullptr;
 +
 +    eglReleaseThread();
 +}
@@ -1386,11 +1403,10 @@ index e69de29..86357ed 100644
 +    if (WAYLAND_EGL_BUFFER_SIZE == 16)
 +        config_attribs[9] = 0;
 +
-+    wpeDisplay = WPEFramework::Display::Instance();
 +    EGLNativeWindowType *nativewindow =
-+    static_cast<EGLNativeWindowType*>(wpeDisplay->GetGraphicsSurface()->Native());
++    static_cast<EGLNativeWindowType*>(wpeDisplay.GetGraphicsSurface()->Native());
 +
-+    mEGLDisplay = eglGetDisplay(wpeDisplay->Native());
++    mEGLDisplay = eglGetDisplay(wpeDisplay.Native());
 +    assert(mEGLDisplay);
 +
 +    ret = eglInitialize(mEGLDisplay, &major, &minor);
@@ -1461,8 +1477,9 @@ index e69de29..86357ed 100644
 +    }
 +}
 diff --git a/src/wpeframework/pxWindowNative.h b/src/wpeframework/pxWindowNative.h
-index e69de29..b20389b 100644
---- a/src/wpeframework/pxWindowNative.h
+new file mode 100644
+index 000000000..c7cad49e9
+--- /dev/null
 +++ b/src/wpeframework/pxWindowNative.h
 @@ -0,0 +1,120 @@
 +/*
@@ -1563,7 +1580,7 @@ index e69de29..b20389b 100644
 +
 +    //egl content
 +    void initializeEgl();
-+    EGLNativeWindowType *mEglNativeWindow;
++    EGLNativeWindowType mEglNativeWindow;
 +    //end egl content
 +
 +    static void registerWindow(pxWindowNative* p);
@@ -1573,7 +1590,7 @@ index e69de29..b20389b 100644
 +private:
 +   void cleanup();
 +
-+    WPEFramework::Display* wpeDisplay;
++    WPEFramework::Spark::Display wpeDisplay;
 +
 +    // generic egl stuff
 +    EGLDisplay mEGLDisplay;
