@@ -155,6 +155,36 @@ config BR2_PACKAGE_WPEFRAMEWORK_BROADCAST_SI_PARSING
 endif
 
 source "package/wpe/wpeframework-cryptography/Config.in"
+
+config BR2_PACKAGE_WPEFRAMEWORK_PROCESSCONTAINERS
+    bool "Process Containers"
+        default n
+    help
+      Enable ability to start a containerized nanoservices
+
+if BR2_PACKAGE_WPEFRAMEWORK_PROCESSCONTAINERS
+
+choice BR2_PACKAGE_WPEFRAMEWORK_PROCESSCONTAINERS_BE
+    prompt "Containers backend"
+    default BR2_PACKAGE_WPEFRAMEWORK_PROCESSCONTAINERS_BE_LXC
+    help
+        Select which container framework to use as a backend
+
+config BR2_PACKAGE_WPEFRAMEWORK_PROCESSCONTAINERS_BE_LXC
+    bool "LXC"
+    select BR2_PACKAGE_LXC
+
+config BR2_PACKAGE_WPEFRAMEWORK_PROCESSCONTAINERS_BE_RUNC
+    bool "RunC"
+    select BR2_PACKAGE_RUNC
+
+config BR2_PACKAGE_WPEFRAMEWORK_PROCESSCONTAINERS_BE_CLIB
+    bool "C Library"
+
+endchoice
+
+endif
+
 endmenu
 
 menu "Plugins"
