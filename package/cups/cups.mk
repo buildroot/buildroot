@@ -23,6 +23,7 @@ CUPS_CONF_OPTS = \
 	--without-perl \
 	--without-java \
 	--without-php \
+	--with-docdir=/usr/share/cups/doc-root \
 	--disable-gssapi \
 	--disable-pam \
 	--libdir=/usr/lib
