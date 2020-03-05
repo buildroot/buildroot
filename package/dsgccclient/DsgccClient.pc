@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/DsgccClient
+
+Name: DsgccClient
+Description: DsgccClient
+Requires:
+Version: 1.0
+Libs: -L${libdir} -lrtCore -lDsgccClient
+Cflags: -I${includedir}
