@@ -1,0 +1,177 @@
+From dc7e0fcced005d7d4fa9dabafa61e544949c0f08 Mon Sep 17 00:00:00 2001
+From: Artur Gebicz <a.gebicz@metrological.com>
+Date: Tue, 16 Jun 2020 10:23:59 +0200
+Subject: [PATCH] Build the SampleApplication as library
+
+---
+ source/SampleApp/CMakeLists.txt                      |  6 ++--
+ source/.../include/SampleApp/SampleApplication.h     |  2 +-
+ source/SampleApp/src/CMakeLists.txt                  | 34 +++++++++++--------
+ source/SampleApp/src/SampleApplication.cpp           |  3 +-
+ source/build/cmake/PrepareInstall.cmake              |  6 ++--
+ 5 files changed, 28 insertions(+), 23 deletions(-)
+
+diff --git a/source/SampleApp/CMakeLists.txt b/source/SampleApp/CMakeLists.txt
+index faad0b38a..6949a179c 100644
+--- a/source/SampleApp/CMakeLists.txt
++++ b/source/SampleApp/CMakeLists.txt
+@@ -1,8 +1,8 @@
+ add_subdirectory("Authorization")
+ 
+-if ((PORTAUDIO AND GSTREAMER_MEDIA_PLAYER) OR (ANDROID_MEDIA_PLAYER AND ANDROID_MICROPHONE))
++if (GSTREAMER_MEDIA_PLAYER)
+     cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+-    project(SampleApp LANGUAGES CXX)
++    project(AVSSampleApp LANGUAGES CXX)
+ 
+     include(../build/BuildDefaults.cmake)
+ 
+@@ -16,5 +16,5 @@ if ((PORTAUDIO AND GSTREAMER_MEDIA_PLAYER) OR (ANDROID_MEDIA_PLAYER AND ANDROID_
+ 
+     add_subdirectory("src")
+ else()
+-    message("To build the sample app, please enable microphone and media player modules.")
++    message("To build the sample app, please enable media player modules.")
+ endif()
+diff --git a/source/SampleApp/include/SampleApp/SampleApplication.h b/source/SampleApp/include/SampleApp/SampleApplication.h
+index 625479ecb..e3a1c78e0 100644
+--- a/source/SampleApp/include/SampleApp/SampleApplication.h
++++ b/source/SampleApp/include/SampleApp/SampleApplication.h
+@@ -131,7 +131,7 @@ public:
+             avsCommon::sdkInterfaces::SpeakerInterface::Type speakerType);
+     };
+ 
+-private:
++protected:
+     /**
+      * Initialize a SampleApplication.
+      *
+diff --git a/source/SampleApp/src/CMakeLists.txt b/source/SampleApp/src/CMakeLists.txt
+index 45e865398..f0eb4f82a 100644
+--- a/source/SampleApp/src/CMakeLists.txt
++++ b/source/SampleApp/src/CMakeLists.txt
+@@ -37,16 +37,17 @@ IF (HAS_EXTERNAL_MEDIA_PLAYER_ADAPTERS)
+     endforeach(myfile)
+ ENDIF()
+ 
+-add_executable(SampleApp ${SampleApp_SOURCES})
++set(TargetName AVSSampleApp)
++add_library(${TargetName} SHARED ${SampleApp_SOURCES})
+ 
+-target_include_directories(SampleApp PUBLIC 
+-    "${SampleApp_SOURCE_DIR}/include"
++target_include_directories(${TargetName} PUBLIC 
++    "${AVSSampleApp_SOURCE_DIR}/include"
+     "${AudioResources_SOURCE_DIR}/include"
+     "${RegistrationManager_SOURCE_DIR}/include"
+     "${ESP_SOURCE_DIR}/include"
+     "${PORTAUDIO_INCLUDE_DIR}")
+ 
+-target_link_libraries(SampleApp
++target_link_libraries(${TargetName}
+     DefaultClient
+     CapabilitiesDelegate
+     CBLAuthDelegate
+@@ -55,40 +56,43 @@ target_link_libraries(SampleApp
+     "${PORTAUDIO_LIB_PATH}")
+ 
+ if (PCC)
+-    target_link_libraries(SampleApp AVSCommon)
++    target_link_libraries(${TargetName} AVSCommon)
+ endif()
+ 
+ if (MCC)
+-    target_link_libraries(SampleApp AVSCommon)
++    target_link_libraries(${TargetName} AVSCommon)
+ endif()
+ 
+ if (ANDROID)
+-    target_include_directories(SampleApp PUBLIC "${AndroidUtilities}/include")
+-    target_link_libraries(SampleApp AndroidUtilities)
++    target_include_directories(${TargetName} PUBLIC "${AndroidUtilities}/include")
++    target_link_libraries(${TargetName} AndroidUtilities)
+     if (ANDROID_MEDIA_PLAYER)
+-        target_include_directories(SampleApp PUBLIC "${AndroidSLESMediaPlayer}/include")
+-        target_link_libraries(SampleApp AndroidSLESMediaPlayer)
++        target_include_directories(${TargetName} PUBLIC "${AndroidSLESMediaPlayer}/include")
++        target_link_libraries(${TargetName} AndroidSLESMediaPlayer)
+     endif()
+ endif()
+ 
+ if (GSTREAMER_MEDIA_PLAYER)
+-    target_include_directories(SampleApp PUBLIC "${MediaPlayer_SOURCE_DIR}/include")
+-    target_link_libraries(SampleApp MediaPlayer)
++    target_include_directories(${TargetName} PUBLIC "${MediaPlayer_SOURCE_DIR}/include")
++    target_link_libraries(${TargetName} MediaPlayer)
+ endif()
+ 
+ if(KWD)
+-    target_link_libraries(SampleApp KeywordDetectorProvider)
++    target_link_libraries(${TargetName} KeywordDetectorProvider)
+ endif()
+ 
+ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+-    target_link_libraries(SampleApp
++    target_link_libraries(${TargetName}
+         "-framework CoreAudio" 
+         "-framework AudioToolbox" 
+         "-framework AudioUnit" 
+         "-framework CoreServices" 
+         "-framework Carbon")
+ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+-    target_link_libraries(SampleApp
++    target_link_libraries(${TargetName}
+       rt m pthread asound atomic)
+ endif()
+ 
++# install target
++asdk_install()
++
+diff --git a/source/SampleApp/src/SampleApplication.cpp b/source/SampleApp/src/SampleApplication.cpp
+index 62574cc8d..2f16f8516 100644
+--- a/source/SampleApp/src/SampleApplication.cpp
++++ b/source/SampleApp/src/SampleApplication.cpp
+@@ -859,7 +859,8 @@ bool SampleApplication::initialize(
+     std::shared_ptr<applicationUtilities::androidUtilities::AndroidSLESMicrophone> micWrapper =
+         m_openSlEngine->createMicrophoneRecorder(sharedDataStream);
+ #else
+-#error "No audio input provided"
++    std::shared_ptr<applicationUtilities::resources::audio::MicrophoneInterface> micWrapper = nullptr;
++    ACSDK_CRITICAL(LX("Missing implemetation for the micWrapper"));
+ #endif
+     if (!micWrapper) {
+         ACSDK_CRITICAL(LX("Failed to create PortAudioMicrophoneWrapper!"));
+diff --git a/source/build/cmake/PrepareInstall.cmake b/source/build/cmake/PrepareInstall.cmake
+index bba980a18..d26f7a10d 100644
+--- a/source/build/cmake/PrepareInstall.cmake
++++ b/source/build/cmake/PrepareInstall.cmake
+@@ -13,7 +13,7 @@ endfunction()
+ function(asdk_install)
+     SET(PKG_CONFIG_LIBS "${PKG_CONFIG_LIBS} -l${PROJECT_NAME}" CACHE INTERNAL "" FORCE)
+     install(TARGETS ${PROJECT_NAME} DESTINATION "${ASDK_LIB_INSTALL_DIR}")
+-    install(DIRECTORY "${PROJECT_SOURCE_DIR}/include" DESTINATION "${ASDK_INCLUDE_INSTALL_DIR}")
++    install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/" DESTINATION "${ASDK_INCLUDE_INSTALL_DIR}/include/AVS/")
+ endfunction()
+ 
+ # Function to install the target with list of include paths
+@@ -21,7 +21,7 @@ function(asdk_install_multiple path_list)
+     SET(PKG_CONFIG_LIBS "${PKG_CONFIG_LIBS} -l${PROJECT_NAME}" CACHE INTERNAL "" FORCE)
+     install(TARGETS ${PROJECT_NAME} DESTINATION "${ASDK_LIB_INSTALL_DIR}")
+     foreach(path IN LISTS path_list)
+-        install(DIRECTORY ${path} DESTINATION "${ASDK_INCLUDE_INSTALL_DIR}")
++        install(DIRECTORY "${path}/" DESTINATION "${ASDK_INCLUDE_INSTALL_DIR}/include/AVS")
+     endforeach()
+ endfunction()
+ 
+@@ -37,7 +37,7 @@ if(BLUETOOTH_BLUEZ)
+ endif()
+ SET(PKG_CONFIG_LIBS         "-L\${libdir}" CACHE INTERNAL "" FORCE)
+ SET(PKG_CONFIG_LIBDIR       "\${prefix}/lib")
+-SET(PKG_CONFIG_INCLUDEDIR   "\${prefix}/include")
++SET(PKG_CONFIG_INCLUDEDIR   "\${prefix}/include/AVS")
+ SET(PKG_CONFIG_CFLAGS       "-I\${includedir}")
+ 
+ # Set library and header files install directory
+-- 
+2.17.1
+
