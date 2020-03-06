@@ -79,6 +79,11 @@ else
 LIBCURL_CONF_OPTS += --without-libssh2
 endif
 
+ifeq ($(BR2_PACKAGE_LIBCURL_ENABLE_HTTP2),y)
+LIBCURL_CONF_OPTS += --with-nghttp2
+LIBCURL_DEPENDENCIES += nghttp2
+endif
+
 define LIBCURL_FIX_DOT_PC
 	printf 'Requires: openssl\n' >>$(@D)/libcurl.pc.in
 endef
