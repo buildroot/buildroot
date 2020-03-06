@@ -1,0 +1,16 @@
+diff --git a/source/modules/Alexa/SmartScreenCapabilityAgents/VisualCharacteristics/src/CMakeLists.txt b/source/modules/Alexa/SmartScreenCapabilityAgents/VisualCharacteristics/src/CMakeLists.txt
+index 659e292..d3c767a 100644
+--- a/source/modules/Alexa/SmartScreenCapabilityAgents/VisualCharacteristics/src/CMakeLists.txt
++++ b/source/modules/Alexa/SmartScreenCapabilityAgents/VisualCharacteristics/src/CMakeLists.txt
+@@ -11,9 +11,6 @@ target_include_directories(VisualCharacteristics
+ 
+ target_link_libraries(VisualCharacteristics "${ASDK_LDFLAGS}" SmartScreenSDKInterfaces)
+ 
+-if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+-    target_link_libraries(VisualCharacteristics "-Wl,-rpath,${ASDK_LIBRARY_DIRS},--disable-new-dtags")
+-endif()
+ 
+ # install target
+-asdk_install()
+\ No newline at end of file
++asdk_install()
