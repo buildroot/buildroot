@@ -1,0 +1,13 @@
+menuconfig BR2_PACKAGE_ALEXA_PRYON_KWD
+    bool "alexa-pryon-kwd"
+    help
+        Pryon Key Word Engine for alexa-device-sdk and alexa-smart-screen
+
+if BR2_PACKAGE_ALEXA_PRYON_KWD
+    config BR2_PACKAGE_ALEXA_PRYON_KWD_PLATFORM
+        string "Pryon platform name"
+        default "rpi3"
+        help
+            Platform binaries to be used
+
+endif
