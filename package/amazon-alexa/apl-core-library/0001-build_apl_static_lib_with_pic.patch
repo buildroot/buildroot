@@ -1,0 +1,12 @@
+diff --git a/aplcore/CMakeLists.txt b/aplcore/CMakeLists.txt
+index 2f1a3c1..fc2bcb1 100644
+--- a/aplcore/CMakeLists.txt
++++ b/aplcore/CMakeLists.txt
+@@ -108,6 +108,7 @@ set_target_properties(apl PROPERTIES
+                       VERSION ${PROJECT_VERSION}
+                       SOVERSION 1
+                       PUBLIC_HEADER include/apl/apl.h)
++set_property(TARGET apl PROPERTY POSITION_INDEPENDENT_CODE ON)
+ 
+ configure_file(apl.pc.in apl.pc @ONLY)
+ target_include_directories(apl PRIVATE include)

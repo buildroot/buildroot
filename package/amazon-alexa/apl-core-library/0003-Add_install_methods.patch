@@ -1,0 +1,21 @@
+diff --git a/aplcore/CMakeLists.txt b/aplcore/CMakeLists.txt
+index fc2bcb1..ed7f0ee 100644
+--- a/aplcore/CMakeLists.txt
++++ b/aplcore/CMakeLists.txt
+@@ -153,4 +153,14 @@ target_link_libraries(
+         # Links the target library to the log library included in the NDK.
+         ${log-lib})
+ 
+-endif(ANDROID)
+\ No newline at end of file
++endif(ANDROID)
++
++install(TARGETS apl
++        ARCHIVE DESTINATION lib)
++install(DIRECTORY include/apl DESTINATION include)
++install(FILES apl.pc DESTINATION lib/pkgconfig)
++
++install(FILES ${YOGA_LIB} DESTINATION lib)
++install(DIRECTORY ${YOGA_INCLUDE}/yoga
++        DESTINATION include
++        FILES_MATCHING PATTERN "*.h")
