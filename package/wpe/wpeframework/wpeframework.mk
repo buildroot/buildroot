@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_VERSION = 6cf39ada500c61f373acc40643aa33d6cfd7a6df
-WPEFRAMEWORK_SITE = $(call github,WebPlatformForEmbedded,WPEFramework,$(WPEFRAMEWORK_VERSION))
+WPEFRAMEWORK_VERSION = 41513819fd43835426323e312ff28f0152d70dd3 
+WPEFRAMEWORK_SITE = $(call github,rdkcentral,Thunder,$(WPEFRAMEWORK_VERSION))
 WPEFRAMEWORK_INSTALL_STAGING = YES
 WPEFRAMEWORK_DEPENDENCIES = zlib $(call qstrip,$(BR2_PACKAGE_SDK_INSTALL)) host-wpeframework-tools
 
