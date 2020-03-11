@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-KMSCUBE_VERSION = db8c6fc0f625e3a3d36731363276c459661d4149
+KMSCUBE_VERSION = 76bb57d539cb43d267e561024c34e031bf351e04
 KMSCUBE_SITE = https://cgit.freedesktop.org/mesa/kmscube/snapshot
 KMSCUBE_LICENSE = MIT
 KMSCUBE_DEPENDENCIES = host-pkgconf mesa3d libdrm
