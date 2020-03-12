@@ -1,0 +1,40 @@
+diff --git a/run.go b/run.go
+index 3eb63de..9121de8 100644
+--- a/run.go
++++ b/run.go
+@@ -5,6 +5,8 @@ package main
+ import (
+ 	"os"
+ 
++	"encoding/json"
++
+ 	"github.com/urfave/cli"
+ )
+ 
+@@ -57,12 +59,26 @@ command(s) that get executed on start, edit the args parameter of the spec. See
+ 			Name:  "no-new-keyring",
+ 			Usage: "do not create a new session keyring for the container.  This will cause the container to inherit the calling processes session key",
+ 		},
++		cli.StringFlag{
++			Name:  "args",
++			Value: "",
++			Usage: "Overwrite args parameter from config.json",
++		},
+ 	},
+ 	Action: func(context *cli.Context) error {
+ 		spec, err := setupSpec(context)
+ 		if err != nil {
+ 			return err
+ 		}
++
++		// Overwrite args with value provided via shell
++		if context.String("args") != "" {
++			var args []string
++			json.Unmarshal([]byte(context.String("args")), &args)
++
++			spec.Process.Args = args
++		}
++
+ 		status, err := startContainer(context, spec, false)
+ 		if err == nil {
+ 			// exit with the container's exit status so any external supervisor is
