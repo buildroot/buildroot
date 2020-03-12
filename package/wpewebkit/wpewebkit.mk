@@ -14,7 +14,7 @@ WPEWEBKIT_LICENSE_FILES = \
 	Source/WebCore/LICENSE-LGPL-2.1
 WPEWEBKIT_DEPENDENCIES = host-gperf host-python host-ruby \
 	harfbuzz cairo icu jpeg libepoxy libgcrypt libgles libsoup libtasn1 \
-	libpng libxslt openjpeg wayland-protocols webp wpebackend-fdo
+	libpng libxslt openjpeg wayland-protocols webp
 
 WPEWEBKIT_CONF_OPTS = \
 	-DPORT=WPE \
