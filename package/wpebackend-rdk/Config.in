@@ -1,0 +1,8 @@
+config BR2_PACKAGE_WPEBACKEND_RDK
+	bool "wpebackend-rdk"
+        depends on BR2_PACKAGE_RPI_USERLAND
+	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_LIBINPUT
+	select BR2_PACKAGE_LIBWPE
+	help
+	  RDK-specific implementations of the WPEBackend interfaces.
