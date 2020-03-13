@@ -1,0 +1,22 @@
+From fed291d9f69d8dc16af2fee15622138dd0db869c Mon Sep 17 00:00:00 2001
+From: pwielders <developper@wielders.net>
+Date: Thu, 12 Mar 2020 16:42:47 +0100
+Subject: [PATCH] In case of RPI4, it becomes 1 64 bit pointer so just be rude
+ and do a C-cast to 0
+
+---
+ src/wpeframework/renderer-backend.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/wpeframework/renderer-backend.cpp b/src/wpeframework/renderer-backend.cpp
+index 9f9a75d..81c844e 100644
+--- a/src/wpeframework/renderer-backend.cpp
++++ b/src/wpeframework/renderer-backend.cpp
+@@ -182,7 +182,7 @@ struct wpe_renderer_backend_egl_offscreen_target_interface wpeframework_renderer
+     // get_native_window
+     [](void* data) -> EGLNativeWindowType
+     {
+-        return nullptr;
++        return (EGLNativeWindowType) 0;
+     },
+ };
