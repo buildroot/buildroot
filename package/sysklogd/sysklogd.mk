@@ -10,6 +10,8 @@ SYSKLOGD_LICENSE = GPL-2.0+
 SYSKLOGD_LICENSE_FILES = COPYING
 # From git
 SYSKLOGD_AUTORECONF = YES
+# install binaries to /sbin
+SYSKLOGD_CONF_OPTS = --exec-prefix=/
 
 define SYSKLOGD_INSTALL_SAMPLE_CONFIG
 	$(INSTALL) -D -m 0644 package/sysklogd/syslog.conf \
