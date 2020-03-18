@@ -607,6 +607,7 @@ config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_WPE
 	bool "wpe"
 	default y
 	depends on BR2_PACKAGE_WPEWEBKIT
+        depends on BR2_PACKAGE_WPEBACKEND_FDO
 	depends on BR2_PACKAGE_GST1_PLUGINS_BASE_HAS_LIB_OPENGL
 
 comment "wpe needs the gst1-plugins-base opengl library and wpewebkit"
