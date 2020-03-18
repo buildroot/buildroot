@@ -19,11 +19,10 @@ comment "wpewebkit needs a toolchain w/ C++, wchar, threads, dynamic library, gc
 		|| !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS \
 		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_7
 
-comment "wpewebkit needs an OpenGL ES w/ EGL-capable Wayland backend"
+comment "wpewebkit needs OpenGL ES and EGL"
 	depends on BR2_PACKAGE_WPEWEBKIT_ARCH_SUPPORTS
 	depends on !BR2_BINFMT_FLAT
-	depends on !BR2_PACKAGE_HAS_LIBGLES || !BR2_PACKAGE_HAS_LIBEGL \
-		|| !BR2_PACKAGE_HAS_LIBEGL_WAYLAND
+	depends on !BR2_PACKAGE_HAS_LIBGLES || !BR2_PACKAGE_HAS_LIBEGL
 
 config BR2_PACKAGE_WPEWEBKIT
 	bool "wpewebkit"
@@ -48,8 +47,6 @@ config BR2_PACKAGE_WPEWEBKIT
 	select BR2_PACKAGE_LIBTASN1
 	select BR2_PACKAGE_LIBXSLT
 	select BR2_PACKAGE_OPENJPEG
-	select BR2_PACKAGE_WAYLAND
-	select BR2_PACKAGE_WAYLAND_PROTOCOLS
 	select BR2_PACKAGE_WEBP
 	select BR2_PACKAGE_WEBP_DEMUX
 	help
