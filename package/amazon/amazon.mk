@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-AMAZON_VERSION = 768b69cb59dbe16718c2c71ca13691d6efa7b228
+AMAZON_VERSION = 09211c3a93442901700b3813919295357de51961
 AMAZON_SITE_METHOD = git
 AMAZON_SITE = git@github.com:Metrological/amazon.git
 AMAZON_INSTALL_STAGING = YES
@@ -155,12 +155,16 @@ ifeq ($(BR2_PACKAGE_AMAZON_BACKEND),y)
   AMAZON_CXX_FLAGS += -lamazon-backend -ldl
   SDK_INCLUDE_DIRECTORIES += ${STAGING_DIR}/usr/include/refsw
 endif
+
+ifeq ($(BR2_PACKAGE_AMAZON_BACKEND_FAKE),y)
+AMAZON_CXX_FLAGS += -lcurl -lssl -lcrypto -ldl
+endif
 ################################################################################
 # DCP/DPP
 ################################################################################
 define AMAZON_BUILD_DPC_DPP
-  $(call AMAZON_MAKE, dpp, BUILD_TYPE=$(AMAZON_BUILD_TYPE))
-  $(call AMAZON_MAKE, dpc, BUILD_TYPE=$(AMAZON_BUILD_TYPE))
+  $(call AMAZON_MAKE, dpp, BACKEND=$(AMAZON_BACKEND) BUILD_TYPE=$(AMAZON_BUILD_TYPE))
+  $(call AMAZON_MAKE, dpc, BACKEND=$(AMAZON_BACKEND) BUILD_TYPE=$(AMAZON_BUILD_TYPE))
 endef
 
 ifeq ($(AMAZON_BUILD_TYPE),testing)
