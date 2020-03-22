@@ -211,9 +211,9 @@ gpu_freq=500
 sdram_freq=500
 over_voltage=5
 [pi3+]
-arm_freq=1500
+arm_freq=1350
 gpu_freq=500
-sdram_freq=560
+sdram_freq=500
 over_voltage=5
 [all]
 avoid_warnings=1
