@@ -36,7 +36,7 @@ ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14),y)
 define RPI_FIRMWARE_MOUNT_BOOT
 	mkdir -p $(TARGET_DIR)/boot
 	grep -q '^/dev/mmcblk1p1' $(TARGET_DIR)/etc/fstab || \
-		echo -e '/dev/mmcblk0p1 /boot vfat defaults 0 0' >> $(TARGET_DIR)/etc/fstab
+		echo -e '/dev/mmcblk1p1 /boot vfat defaults 0 0' >> $(TARGET_DIR)/etc/fstab
 endef
 define RPI_FIRMWARE_CMDLINE
 	$(INSTALL) -D -m 0644 package/rpi-firmware/cmdline.txt-1 $(BINARIES_DIR)/rpi-firmware/cmdline.txt
