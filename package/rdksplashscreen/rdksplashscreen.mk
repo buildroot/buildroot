@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RDKSPLASHSCREEN_VERSION = 47a633ede5cea5f6f4efd3370640de9a68542fb2
+RDKSPLASHSCREEN_VERSION = 74a27537d11fede7cd0fa6b094db580e08796bcd
 RDKSPLASHSCREEN_SITE = $(call github,WebPlatformForEmbedded,RDKSplashScreen,$(RDKSPLASHSCREEN_VERSION))
 RDKSPLASHSCREEN_DEPENDENCIES = wpeframework wpeframework-plugins
 
