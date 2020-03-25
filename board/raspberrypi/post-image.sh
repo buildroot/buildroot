@@ -36,6 +36,36 @@ __EOF__
 		gpu_mem="${arg:2}"
 		sed -e "/^${gpu_mem%=*}=/s,=.*,=${gpu_mem##*=}," -i "${BINARIES_DIR}/rpi-firmware/config.txt"
 		;;
+	        --overclock*)
+	        if ! grep -qE '^arm_freq=' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+		    echo "Adding 'overclock' to config.txt."
+		    cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Overclock
+force_turbo=1
+[pi0]
+[pi0w]
+[pi1]
+[pi2]
+arm_freq=1000
+gpu_freq=500
+sdram_freq=500
+over_voltage=6
+[pi3]
+arm_freq=1350
+gpu_freq=500
+sdram_freq=500
+over_voltage=5
+[pi3+]
+arm_freq=1350
+gpu_freq=500
+sdram_freq=500
+over_voltage=5
+[all]
+avoid_warnings=1
+__EOF__
+	        fi
+		;;
 	esac
 
 done
