@@ -4,8 +4,10 @@
 #
 ################################################################################
 
+ifneq ($(BR2_PACKAGE_WPEWEBKIT_BUILD_CUSTOM_VERSION),"")
+WPEWEBKIT_VERSION_VALUE = $(call qstrip,$(BR2_PACKAGE_WPEWEBKIT_BUILD_CUSTOM_VERSION))
 # If enabled, choose the development version hash.
-ifeq ($(BR2_PACKAGE_WPEWEBKIT_BUILD_DEVELOPMENT_VERSION),y)
+else ifeq ($(BR2_PACKAGE_WPEWEBKIT_BUILD_DEVELOPMENT_VERSION),y)
 WPEWEBKIT_VERSION_VALUE = 1b1cbd3766f7031ed0e68244bd6b7b6699d9ff91 # wpe-2.22
 else
 WPEWEBKIT_VERSION_VALUE = cfa60f95da59dbbc9621ba4142bf4d07f5a5aa86# wpe-2.22
