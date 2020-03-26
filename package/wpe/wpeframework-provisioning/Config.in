@@ -5,13 +5,12 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING
 	   WPE Platform Provisioning plugin
 
 if BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING
-
-config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_BLOBWRITER
-	bool "BlobWriter"
-	default n
-	help
-	    Plugin to transfor Provisioning Blobs into entries 
-            in a TEE vault.
+config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_PROVISIONING_CACHE_PERIODE
+    int "cache period (s)"
+    default 2592000
+    help
+        Define the cache period in seconds.
+        Set to 0 to disable.
 
 config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_URI
 	string "provisioning URI"
@@ -20,8 +19,28 @@ config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_URI
 config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_OPERATOR
 	string "operator"
 	default "metrological"
-
 endif
 
 comment "Provisioning is dependent on the provision proxy wpeframework extension"
     depends on !BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
+
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_BLOBWRITER
+    depends on BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING
+	bool "BlobWriter"
+	default n
+	help
+	    Plugin to transfor Provisioning Blobs into entries.
+            in a TEE vault.
+
+config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_BLOBWRITER_BLOBS
+    depends on BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_BLOBWRITER
+    string "blobs"
+    default ""
+    help
+        Define a string that contains the blobs to be written to files.
+        format: (label:file:always;label:file:always) where 'always' is dump/overwrite file
+        "labelx:/mnt/flash/labelx.bin:true;labely:/mnt/flash/labely.bin:false"
+        
+comment "BlobWriter is dependent on the provisioning plugin"
+    depends on !BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING
