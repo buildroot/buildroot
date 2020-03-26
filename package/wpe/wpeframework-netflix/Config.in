@@ -151,9 +151,14 @@ config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_KEY_REPEAT_DELAY
 config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_APPBOOTKEY
     depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
     string "appbootkey"
-    help 
-        "Define a custom appbootkey, if left empty the built in key from Netflix will be used"
+    help
+        "Define a custom appbootkey, if left empty the built in key from Netflix will be used. Leave empty to use the default key"
 
+config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_DEVICE_KEYS
+    depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+    string "device keys"
+    help 
+        "Define the location where the hareware bound ESN and encryption keys can be found. Leave empty to disable"
 endif
 
 comment "netflix is dependent on the netflix package compiled as library"
