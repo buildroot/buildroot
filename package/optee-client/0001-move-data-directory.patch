@@ -8,17 +8,17 @@
 +set (CFG_TEE_FS_PARENT_PATH "/var/lib/tee" CACHE STRING "Location of TEE filesystem (secure storage)")
  # FIXME: Why do we have if defined(CFG_GP_SOCKETS) && CFG_GP_SOCKETS == 1 in the c-file?
  set (CFG_GP_SOCKETS "1" CACHE STRING "Enable GlobalPlatform Socket API support")
- 
+
 --- optee-client-3.8.0/libteec/CMakeLists.txt.orig	2020-03-27 08:15:35.701066337 -0400
 +++ optee-client-3.8.0/libteec/CMakeLists.txt	2020-03-27 08:14:11.758070584 -0400
 @@ -15,8 +15,8 @@
  ################################################################################
  option (CFG_TEE_BENCHMARK "Build with benchmark support" OFF)
- 
+
 -set (CFG_TEE_CLIENT_LOG_LEVEL "1" CACHE STRING "libteec log level")
 -set (CFG_TEE_CLIENT_LOG_FILE "/data/tee/teec.log" CACHE STRING "Location of libteec log")
-+set (CFG_TEE_CLIENT_LOG_LEVEL "4" CACHE STRING "libteec log level")
++set (CFG_TEE_CLIENT_LOG_LEVEL "1" CACHE STRING "libteec log level")
 +set (CFG_TEE_CLIENT_LOG_FILE "/var/log/teec.log" CACHE STRING "Location of libteec log")
- 
+
  ################################################################################
  # Source files
