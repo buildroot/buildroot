@@ -373,6 +373,21 @@ config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PAIRING_CALLSIGN
         help
           What is the name of the key producer tha you want to pair
 endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_REPORTING_IO
+    bool "reporting button"
+        default n
+        help
+          an input pin that can report pressed in defined intervals
+
+if BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_REPORTING_IO
+config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_REPORTING_PIN
+    string "pin"
+        default "7"
+        help
+          To which pin needs the handler to be associated.
+endif
+
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_INPUTSWITCH
