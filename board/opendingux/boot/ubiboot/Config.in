@@ -1,0 +1,15 @@
+config BR2_TARGET_UBIBOOT
+	bool "UBIBoot"
+	help
+	  UBIBoot is a very small and simple bootloader for
+	  Ingenic JZ47xx based boards, which is able to start
+	  a Linux kernel located on a UBI partition.
+
+if BR2_TARGET_UBIBOOT
+config BR2_TARGET_UBIBOOT_BOARDNAME
+	string "UBIBoot board name"
+	help
+	  One of UBIBoot supported boards to be built.
+	  This will be suffixed with _config to meet UbiBoot
+	  standard naming.
+endif
