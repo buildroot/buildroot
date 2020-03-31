@@ -95,6 +95,27 @@ __EOF__
 		echo "Adding 'silent=1' to config.txt."
 		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
 
+__EOF__
+	fi
+	;;
+	--enable-vc4-256)
+	if ! grep -qE '^dtoverlay=vc4-fkms-v3d' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+		echo "Adding 'dtoverlay=vc4-fkms-v3d,cma-256' to config.txt."
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Enable Eric Anholt's DRM VC4 V3D driver on top of the dispmanx display stack
+dtoverlay=vc4-fkms-v3d,cma-256
+__EOF__
+	fi
+	;;
+	--framebuffer_priority-2)
+	if ! grep -qE '^framebuffer_priority=2' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+		echo "Adding 'framebuffer_priority' to config.txt."
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Force a specific internal display device to be the first Linux framebuffer
+framebuffer_priority=2
+__EOF__
 # Silent
 disable_splash=1
 boot_delay=0
