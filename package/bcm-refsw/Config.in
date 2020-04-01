@@ -174,6 +174,7 @@ config BR2_PACKAGE_BCM_REFSW_SAGE
 	depends on BR2_PACKAGE_BCM_REFSW
 	depends on !BR2_PACKAGE_BCM_REFSW_13_1 && !BR2_PACKAGE_BCM_REFSW_13_4 && !BR2_PACKAGE_BCM_REFSW_15_2 && !BR2_PACKAGE_BCM_REFSW_16_1
         select BR2_PACKAGE_SAGE_FIRMWARE
+        select BR2_PACKAGE_HAS_NEXUS_SAGE
 	help
 	  Add SAGE support in Nexus.
 
@@ -222,6 +223,7 @@ config BR2_PACKAGE_BCM_REFSW_SAGE_BSECBUF
 config BR2_PACKAGE_BCM_REFSW_SAGE_PLAYREADY_30
         bool "Playready 3.0 SVP"
         default n
+        select BR2_PACKAGE_HAS_PLAYREADY
         depends on BR2_PACKAGE_BCM_REFSW_SAGE
         help
           Playready 3.0 SVP

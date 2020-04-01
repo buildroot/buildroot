@@ -1,22 +1,13 @@
 config BR2_PACKAGE_WIDEVINE
+	select BR2_PACKAGE_HAS_WIDEVINE
+	select BR2_PACKAGE_WIDEVINE_SOC_WPE
         bool "Widevine"
         help
            Widevine DRM solution provides the capability to license, securely distribute and protect
            playback of content on any consumer device.
 
-if BR2_PACKAGE_WIDEVINE
-#select platform for widevine
-choice
-	bool "Platform options"
-	help
-	  Select the platform for which you aill be building widevine.
-
-config BR2_PACKAGE_WIDEVINE_SOC_RPI
-        bool "RPi platform"
+config BR2_PACKAGE_HAS_WIDEVINE
+        bool
 
 config BR2_PACKAGE_WIDEVINE_SOC_WPE
-        bool "WPE platform"
-
-endchoice
-
-endif #BR2_PACKAGE_WIDEVINE
+	bool
