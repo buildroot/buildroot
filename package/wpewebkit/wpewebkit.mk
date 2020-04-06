@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-WPEWEBKIT_VERSION = 2.28.0
-WPEWEBKIT_SITE = http://www.wpewebkit.org/releases
-WPEWEBKIT_SOURCE = wpewebkit-$(WPEWEBKIT_VERSION).tar.xz
+WPEWEBKIT_VERSION = 6992e8829671a48f9b0d041a5668361d14691dbd
+WPEWEBKIT_SITE = $(call github,WebPlatformForEmbedded,WPEWebKit,$(WPEWEBKIT_VERSION))
 WPEWEBKIT_INSTALL_STAGING = YES
 WPEWEBKIT_LICENSE = LGPL-2.1+, BSD-2-Clause
 WPEWEBKIT_LICENSE_FILES = \
