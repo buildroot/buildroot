@@ -101,43 +101,6 @@ source "package/wpe/wpeframework-devtools/Config.in"
 endmenu
 
 menu "Extensions"
-config BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
-    bool "VirtualInput"
-    help
-      If the dynamic uinput system can not be used for security reasons, this
-      allows for relaying keys to plugins
-
-config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITORCLIENT
-    bool "CompositorClient"
-        default y
-    help
-      A graphical/input abstraction. This library is included in micro services that requires user
-          interaction (Graphics/input). The implementation hides all the compositor specific details.
-      allows for relaying keys to plugins
-
-config BR2_PACKAGE_WPEFRAMEWORK_GSTREAMERCLIENT
-        bool "GstreamerClient"
-        default n
-        help
-          Gstreamer client provides custom APIs to manipulate underneath stream sinks which will be linked with created pipeline.
-          This implementation will vary based on custom platforms and sink backends.
-
-config BR2_PACKAGE_WPEFRAMEWORK_CDM
-    bool "CDM"
-    help
-      CDM client support compatible with OpenCDM
-
-config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
-    bool "ProvisionProxy"
-    select BR2_PACKAGE_LIBPROVISION
-    help
-      Allows provisioning of modules from the cloud.
-
-config BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT_ACCESSOR
-    bool "SecurityAgent"
-    help
-      Allows external access to the Security Agent, through a C interface.
-
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_BROADCAST
     bool "Broadcast"
@@ -153,6 +116,19 @@ config BR2_PACKAGE_WPEFRAMEWORK_BROADCAST_SI_PARSING
       Enable functionality to automatically parse SI information on the
           tuned streams.
 endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_CDM
+    bool "CDM"
+    help
+      CDM client support compatible with OpenCDM
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITORCLIENT
+    bool "CompositorClient"
+        default y
+    help
+      A graphical/input abstraction. This library is included in micro services that requires user
+          interaction (Graphics/input). The implementation hides all the compositor specific details.
+      allows for relaying keys to plugins
 
 source "package/wpe/wpeframework-cryptography/Config.in"
 
@@ -183,6 +159,30 @@ config BR2_PACKAGE_WPEFRAMEWORK_PROCESSCONTAINERS_BE_RUNC
 endchoice
 
 endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
+    bool "ProvisionProxy"
+    select BR2_PACKAGE_LIBPROVISION
+    help
+      Allows provisioning of modules from the cloud.
+
+config BR2_PACKAGE_WPEFRAMEWORK_SECURE_SOCKET
+    bool "SecureSocket"
+    select BR2_PACKAGE_OPENSSL
+    help
+      Adds a Secure Socket implementation (dependency OpenSSL)
+
+
+config BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT_ACCESSOR
+    bool "SecurityAgent"
+    help
+      Allows external access to the Security Agent, through a C interface.
+
+config BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
+    bool "VirtualInput"
+    help
+      If the dynamic uinput system can not be used for security reasons, this
+      allows for relaying keys to plugins
 
 endmenu
 
