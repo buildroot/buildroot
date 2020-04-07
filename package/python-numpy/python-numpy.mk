@@ -34,6 +34,21 @@ define PYTHON_NUMPY_CONFIGURE_CMDS
 	echo "include_dirs = $(STAGING_DIR)/usr/include" >> $(@D)/site.cfg
 endef
 
+# Fixup the npymath.ini prefix path with actual target staging area where
+# numpy core was built. Without this, target builds using numpy distutils
+# extensions like python-scipy, python-numba cannot find -lnpymath since
+# it uses host libraries (like libnpymath.a).
+# So, the numpy distutils extension packages would explicitly link this
+# config path for their package environment.
+PYTHON_NUMPY_STAGING_DIR = $(STAGING_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages/numpy
+PYTHON_NUMPY_NPY_PKG_CONFIG_PATH=$(PYTHON_NUMPY_STAGING_DIR)/core/lib/npy-pkg-config
+define PYTHON_NUMPY_FIXUP_NPY_PKG_CONFIG_FILES
+	sed -e '/^pkgdir=/d' \
+	    -e '/^prefix=/i pkgdir=$(PYTHON_NUMPY_STAGING_DIR)/core' \
+	    -i $(PYTHON_NUMPY_NPY_PKG_CONFIG_PATH)/npymath.ini
+endef
+PYTHON_NUMPY_POST_INSTALL_STAGING_HOOKS += PYTHON_NUMPY_FIXUP_NPY_PKG_CONFIG_FILES
+
 # Some package may include few headers from NumPy, so let's install it
 # in the staging area.
 PYTHON_NUMPY_INSTALL_STAGING = YES
