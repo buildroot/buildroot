@@ -37,7 +37,7 @@ define BCM_REFSW_BUILD_PMLIB
     $(TARGET_MAKE_ENV) \
     $(BCM_REFSW_CONF_OPTS) \
     $(BCM_REFSW_MAKE_ENV) \
-        $(MAKE) -C $(@D)/BSEAV/lib/pmlib \
+    CFLAGS="${CFLAGS} -fPIC" $(MAKE) -C $(@D)/BSEAV/lib/pmlib \
             LIBDIR=${BCM_REFSW_BIN}
 endef
 
