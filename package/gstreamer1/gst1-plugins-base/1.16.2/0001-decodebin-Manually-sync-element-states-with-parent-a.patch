@@ -1,0 +1,60 @@
+From 9282b2025eed2fa53db9dce7e9160de82d5b9b18 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Thu, 8 Aug 2019 12:13:03 +0000
+Subject: [PATCH 1/3] decodebin: Manually sync element states with parent after
+ unsetting locked_state
+
+When the pads of the new elements are connected in decodebin, the new element
+can remain in PAUSED state while decodebin is already in PLAYING. Decodebin
+isn't responsible anymore to set their children to PLAYING, so nobody will do
+it.
+
+This patch detects that situation and manually synchronizes the state of the
+new element to the same of its parent (decodebin).
+
+This change helps to solve some stalls in HLS videos when combined with
+certain hardware decoders.
+---
+ gst/playback/gstdecodebin2.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/gst/playback/gstdecodebin2.c b/gst/playback/gstdecodebin2.c
+index 38ef3983c..6db239004 100644
+--- a/gst/playback/gstdecodebin2.c
++++ b/gst/playback/gstdecodebin2.c
+@@ -2129,7 +2129,7 @@ connect_pad (GstDecodeBin * dbin, GstElement * src, GstDecodePad * dpad,
+     GstAutoplugSelectResult ret;
+     GstElementFactory *factory;
+     GstDecodeElement *delem;
+-    GstElement *element;
++    GstElement *element, *parent;
+     GstPad *sinkpad;
+     GParamSpec *pspec;
+     gboolean subtitle;
+@@ -2608,6 +2608,23 @@ connect_pad (GstDecodeBin * dbin, GstElement * src, GstDecodePad * dpad,
+     /* Now let the bin handle the state */
+     gst_element_set_locked_state (element, FALSE);
+ 
++    parent = GST_ELEMENT_PARENT(element);
++
++    if (GST_STATE_TARGET(parent) != GST_STATE_TARGET(element)) {
++        GST_DEBUG_OBJECT (element, "Manually syncing %s state %s/%s/%s with "
++            "parent %s state %s/%s/%s because target state it's different "
++            "after having unset element locked_state",
++            GST_ELEMENT_NAME(element),
++            gst_element_state_get_name(GST_STATE(element)),
++            gst_element_state_get_name(GST_STATE_TARGET(element)),
++            gst_element_state_get_name(GST_STATE_PENDING(element)),
++            GST_ELEMENT_NAME(parent),
++            gst_element_state_get_name(GST_STATE(parent)),
++            gst_element_state_get_name(GST_STATE_TARGET(parent)),
++            gst_element_state_get_name(GST_STATE_PENDING(parent)));
++        gst_element_sync_state_with_parent(element);
++    }
++
+     if (subtitle) {
+       SUBTITLE_LOCK (dbin);
+       /* we added the element now, add it to the list of subtitle-encoding
+-- 
+2.17.1
+

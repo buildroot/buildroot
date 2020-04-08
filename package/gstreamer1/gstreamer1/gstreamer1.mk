@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GSTREAMER1_VERSION = 1.16.1
+GSTREAMER1_VERSION = 1.16.2
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1_10),y)
 GSTREAMER1_VERSION = 1.10.4
@@ -15,7 +15,7 @@ GSTREAMER1_VERSION = 1.14.4
 endif
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1_16),y)
-GSTREAMER1_VERSION = 1.16.1
+GSTREAMER1_VERSION = 1.16.2
 endif
 
 GSTREAMER1_SOURCE = gstreamer-$(GSTREAMER1_VERSION).tar.xz

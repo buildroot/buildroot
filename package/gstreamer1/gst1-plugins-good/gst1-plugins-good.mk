@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_PLUGINS_GOOD_VERSION = 1.16.1
+GST1_PLUGINS_GOOD_VERSION = 1.16.2
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1_10),y)
 GST1_PLUGINS_GOOD_VERSION = 1.10.4
@@ -15,7 +15,7 @@ GST1_PLUGINS_GOOD_VERSION = 1.14.4
 endif
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1_16),y)
-GST1_PLUGINS_GOOD_VERSION = 1.16.1
+GST1_PLUGINS_GOOD_VERSION = 1.16.2
 endif
 
 GST1_PLUGINS_GOOD_SOURCE = gst-plugins-good-$(GST1_PLUGINS_GOOD_VERSION).tar.xz
