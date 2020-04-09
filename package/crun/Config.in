@@ -1,0 +1,8 @@
+config BR2_PACKAGE_CRUN
+	bool "crun"
+	select BR2_PACKAGE_YAJL
+	select BR2_PACKAGE_LIBSECCOMP
+	select BR2_PACKAGE_LIBCAP
+	help
+	  this package installs 'crun', which is a
+	  runc reimplementation in C
