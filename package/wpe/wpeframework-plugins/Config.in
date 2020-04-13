@@ -1,0 +1,1180 @@
+config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
+    bool "BluetoothControl"
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_BLUEZ5_UTILS
+    default n
+    help
+      A Bluetooth plugin to interact with Bluetooth devices.
+
+if BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
+config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH_AUTOSTART
+    bool "Start Automatically"
+    default y
+    help
+      Select this to start the plugin automatically when starting WPEFramework
+
+config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH_PERSISTMAC
+    bool "Persist MAC Address"
+    default n
+    help
+      Maintains the MAC address of the BT adapter after the first startup.
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTHREMOTECONTROL
+    bool "BLE RemoteControl"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
+    default n
+    help
+     A Bluetooth Low Energy HID over GATT remote control
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_CDMI
+    bool "CDMi"
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_CDM
+    default y
+    help
+     A CDM server plugin to interact with CDMi plugins.
+
+if BR2_PACKAGE_WPEFRAMEWORK_CDMI
+config BR2_PACKAGE_WPEFRAMEWORK_CDMI_USER
+    string "user"
+    default ""
+    help
+        run OpenCDM as this user, leave empty to use the same as
+        WPEframework
+
+config BR2_PACKAGE_WPEFRAMEWORK_CDMI_GROUP
+    string "group"
+    default ""
+    help
+        run OpenCDM as this group, leave empty to use the same as
+        WPEframework
+
+source "package/wpe/wpeframework-cdmi/Config.in"
+endif
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_COBALT
+    bool "Cobalt"
+    select BR2_PACKAGE_COBALT
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_HAS_YOUTUBE
+    help
+        WPE Platform Cobalt plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_COBALT
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_AUTOSTART
+    bool "Start Automatically"
+    default n
+    help
+      Select this to start the plugin automatically when starting WPEFramework
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_OUTOFPROCESS
+    bool "Out of process"
+    default y
+    help
+      Select this to run this plugin in its own process.
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMMANDER
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    default n
+    bool "Commander"
+    help
+      Commander Plugin
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR
+    select BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
+    select BR2_PACKAGE_WPEFRAMEWORK_COMPOSITORCLIENT
+    bool "Compositor"
+    help
+       WPE Platform Compositor plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_AUTOSTART
+    bool "Start Automatically"
+    default y
+    help
+      Select this to start the plugin automatically when starting WPEFramework
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_OUTOFPROCESS
+    bool "Out of process"
+    help
+      Select this to run this plugin in its own process.
+
+choice BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_RESOLUTION
+    default BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_RESOLUTION_720P
+    prompt "resolution"
+    help
+      Select device output resolution on compositor
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_RESOLUTION_720P
+    bool "720p"
+    help
+      Set the resolution to 720p (HD Ready)
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_RESOLUTION_1080P
+    bool "1080p"
+    help
+      Set the resolution to 1080p (Full HD)
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_RESOLUTION_2160P
+    bool "2160p"
+    help
+      Set the resolution to 2160p (4k)
+
+endchoice
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER_EXTERNAL
+    bool "Nexus server external"
+    depends on BR2_PACKAGE_HAS_NEXUS  && !BR2_PACKAGE_WAYLAND
+    default n
+    help
+      Use an external nxserver with the compositor.
+
+if BR2_PACKAGE_HAS_NEXUS && !BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_NEXUS_SERVER_EXTERNAL
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_IRMODE
+    string "IR mode"
+    default "NEXUS_IrInputMode_eCirNec"
+    help
+      Sets the IR Mode to be used with IR Nexus. Every remote has a different mode and key mapping.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_BOXMODE
+    string "Memory Box Mode"
+    help
+      Memory box mode, you can find details from release notes per platform
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_ALLOW_UNAUTHENTICATED_CLIENTS
+    bool "Allow unauthenticated clients"
+    default n
+    help
+      Allow unauthenticated clients on the nxserver.
+
+choice BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SVP
+    prompt "svp type"
+    default BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SVP_ALL if BR2_PACKAGE_BCM_REFSW_SAGE
+    default BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SVP_NONE if !BR2_PACKAGE_BCM_REFSW_SAGE
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SVP_NONE
+    bool "none"
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SVP_VIDEO
+    depends on BR2_PACKAGE_BCM_REFSW_SAGE
+    bool "video"
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_SVP_ALL
+    depends on BR2_PACKAGE_BCM_REFSW_SAGE
+    bool "all"
+
+endchoice
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    bool "Memories"
+    default n
+    help
+      Allow memory heap updates
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_GFX
+    string "Graphics Memory"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    help
+      Allow update of Graphics memory. The amount of memory in MB to be configured for.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_GFX2
+    string "Secondary Graphics Memory"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    help
+      Allow update of Secondary Graphics memory. The amount of memory in MB to be configured for.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_RESTRICTED
+    string "Compressed Restricted Region Memory (Video Secure)"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    help
+      Allow update of Compressed Restricted Region Memory (Video Secure) memory. The amount of memory in MB to be configured for.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_MAIN
+    string "Main Memory"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    help
+      Allow update of main memory. The amount of memory in MB to be configured for.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_EXPORT
+    string "Export Memory"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    help
+      Allow update of Export Region memory. The ammount of memory in MB to be configured for.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_SECUREGFX
+    string "Secure Graphics Memory"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    help
+      Allow update of Secure Graphics memory. The amount of memory in MB to be configured for.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORY_CLIENT
+    string "Client Memory"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_MEMORIES
+    depends on BR2_PACKAGE_BCM_REFSW_SAGE
+    help
+      Allow update of Client memory. SAGE must be told which heap the client's will be using. The amount of memory in MB to be configured for.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_HARDWAREREADY
+    string "Manual overrule of the time it takes to initialisize all hardware (s)"
+    default 0
+
+endif
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "DeviceInfo"
+    default y
+    help
+      DeviceInfo Plugin
+
+config BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    depends on BR2_PACKAGE_HAS_NEXUS
+    bool "DeviceIdentification"
+    default y
+    help
+      DeviceIdentification Plugin (Nexus OTP)
+
+config BR2_PACKAGE_WPEFRAMEWORK_DISPLAYINFO
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "DisplayInfo"
+    default y
+    help
+      DisplayInfo Plugin
+
+
+config BR2_PACKAGE_WPEFRAMEWORK_DSRESOLUTION
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "DSResolution"
+    default n
+    help
+      DSResolution Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_DSRESOLUTION
+
+config BR2_PACKAGE_DSRESOLUTION_WITH_DUMMY_DSHAL
+    bool "Create a Dummy ds-hal Lib"
+    default n
+    help
+       This option allows to create ds-hal.so,
+
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_DHCPSERVER
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "DHCPServer"
+    help
+      IPv4 DHCP server functionality. Distribute IPv4 addresses throughout the
+      network.
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER
+	bool "DIALServer"
+	help
+	   The DIALServer plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER
+
+config BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_NAME
+    string "DIALServer name"
+
+if BR2_PACKAGE_WPEFRAMEWORK_HAS_YOUTUBE
+choice BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_YOUTUBE_MODE
+    prompt "YouTube mode"
+    default BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_YOUTUBE_MODE_PASSIVE
+    help
+      The DIALServer mode for the YouTube plugin
+
+    config BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_YOUTUBE_MODE_PASSIVE
+        bool "passive"
+    config BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_YOUTUBE_MODE_ACTIVE
+        bool "active"
+endchoice
+
+if BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_YOUTUBE_MODE_ACTIVE
+config BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_YOUTUBE_CALLSIGN
+    string "YouTube callsign"
+    default "Cobalt"
+endif
+endif
+
+if BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+choice BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_NETFLIX_MODE
+    prompt "Netflix mode"
+    default BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_NETFLIX_MODE_PASSIVE
+    help
+      The DIALServer mode for the Netflix plugin
+
+    config BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_NETFLIX_MODE_PASSIVE
+        bool "passive"
+    config BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_NETFLIX_MODE_ACTIVE
+        bool "active"
+endchoice
+
+if BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_NETFLIX_MODE_ACTIVE
+config BR2_PACKAGE_WPEFRAMEWORK_DIALSERVER_NETFLIX_CALLSIGN
+    string "Netflix callsign"
+    default "Netflix"
+endif
+endif
+
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_DICTIONARY
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "Dictionary"
+    help
+      Dictionary Plugin.
+
+config BR2_PACKAGE_WPEFRAMEWORK_FRONTPANEL
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "FrontPanel"
+    default n
+    help
+      FrontPanel Plugin.
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "IOConnector"
+    default n
+    help
+      Take custom action on hardware pins that changes state.
+
+if BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR
+
+config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PAIRING_IO
+    bool "link pairing button"
+        default n
+        help
+          Add a the activation of pairing for a control to a GPIO pin
+
+if BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PAIRING_IO
+config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PAIRING_PIN
+    string "pin"
+        default "162"
+        help
+          To which pin needs the handler to be associated.
+config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PAIRING_CALLSIGN
+    string "callsign"
+        default "RemoteControl"
+        help
+          Which plugin is handling the pairing requests
+ config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PAIRING_PRODUCER
+    string "producer"
+        default "RF4CE"
+        help
+          What is the name of the key producer tha you want to pair
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_REPORTING_IO
+    bool "reporting button"
+        default n
+        help
+          an input pin that can report pressed in defined intervals
+
+if BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_REPORTING_IO
+config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_REPORTING_PIN
+    string "pin"
+        default "7"
+        help
+          To which pin needs the handler to be associated.
+endif
+
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_INPUTSWITCH
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "InputSwitch"
+    default n
+    help
+      InputSwitch Plugin.
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "LocationSync"
+    help
+      LocationSync Plugin
+      WPE Platform Dictionary plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC
+
+config BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC_URI
+    string "location URI"
+    default "http://ip-api.com/json"
+
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_MESSENGER
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    default n
+    bool "Messenger"
+    help
+      Messenger Plugin
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_MONITOR
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "Monitor"
+    help
+      Monitor Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_MONITOR
+
+config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_WEBKIT
+    depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+    string "webkit-limit"
+    default "614400"
+
+config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_YOUTUBE
+    depends on BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE
+    string "youtube-limit"
+    default "614400"
+
+config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_AMAZON
+    depends on BR2_PACKAGE_WPEFRAMEWORK_AMAZON
+    string "amazon-limit"
+    default "614400"
+
+config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_APPS
+    depends on BR2_PACKAGE_WPEFRAMEWORK_APPS
+    string "apps-limit"
+    default "614400"
+
+config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_UX
+    depends on BR2_PACKAGE_WPEFRAMEWORK_UX
+    string "ux-limit"
+    default "614400"
+
+config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_NETFLIX
+    depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+    string "netflix-limit"
+    default "409600"
+
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "NetworkControl"
+    help
+      Control the IP adressing of the interfaces in the system from
+      WPEFramework (static IPv4/IPv6 or dhcp IPv4)
+
+config BR2_PACKAGE_WPEFRAMEWORK_PACKAGER
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_OPKG
+    default n
+    bool "Packager"
+    help
+      Packager Plugin, install packages based upon OPKG.
+
+config BR2_PACKAGE_WPEFRAMEWORK_PLAYERINFO
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "PlayerInfo"
+    default y
+    help
+      PlayerInfo Plugin provide the information about the platform codec supports
+
+
+config BR2_PACKAGE_WPEFRAMEWORK_POWER
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    default n
+    bool "Power"
+    help
+      Power Control Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_POWER
+
+config BR2_PACKAGE_WPEFRAMEWORK_POWER_AUTOSTART
+    bool "autostart"
+    default y
+
+config BR2_PACKAGE_WPEFRAMEWORK_POWER_GPIOPIN
+    string "gpiopin"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_POWER_GPIOTYPE
+    string "gpiotype"
+    default ""
+
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_PLUGINPROCESSCONTAINERS
+    bool "ProcessContainers"
+    default n
+
+if BR2_PACKAGE_WPEFRAMEWORK_PLUGINPROCESSCONTAINERS
+config BR2_PACKAGE_WPEFRAMEWORK_PLUGINPROCESSCONTAINERS_AUTOSTART
+    bool "autostart"
+    default y
+endif
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_PROCESSMONITOR
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "ProcessMonitor"
+    help
+      Process Monitor Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_PROCESSMONITOR
+
+config BR2_PACKAGE_WPEFRAMEWORK_PROCESSMONITOR_AUTOSTART
+    bool "autostart"
+    default n
+
+config BR2_PACKAGE_WPEFRAMEWORK_PROCESSMONITOR_EXITTIMEOUT
+    string "exit-timeout"
+    default "2"
+
+endif
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "RemoteControl"
+    help
+      RemoteControl Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
+    bool "IR (Infrared)"
+    help
+      Select devices which are based on Infrared (IR) technology
+
+if BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
+
+config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR_CODEMASK
+    string "IR code mask"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_IR
+    help
+      Sets a key code mask if the device generates same code based on trigger bit
+
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_DEVINPUT
+    bool "devinput (linux input system)"
+    depends on BR2_PACKAGE_HAS_UDEV
+    help
+      Select devices which are annunced in the linux operating system under /dev/input/ as eventX
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_CUSTOM_VIRTUAL
+    bool "Custom virtual device/mapping"
+    default n
+    help
+      Select custom virtual device/mapping
+
+if BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_CUSTOM_VIRTUAL
+
+config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_CUSTOM_VIRTUAL_NAME
+    string "Custom virtual name"
+    help
+      Add custom virtual name
+
+config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_CUSTOM_VIRTUAL_MAP_FILE
+    string "Custom virtual map file"
+    help
+      Add custom virtual map file
+
+endif
+
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_RTSPCLIENT
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    default n
+    bool "RTSPCLIENT"
+    help
+      RTSP Client Plugin
+
+config BR2_PACKAGE_WPEFRAMEWORK_SNAPSHOT
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_LIBPNG
+    bool "Snapshot"
+    help
+      Snapshot Plugin
+
+config BR2_PACKAGE_WPEFRAMEWORK_SICONTROL
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "SI control"
+    help
+      SI Control Plugin
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_BROADCAST
+    bool "Streamer"
+    default n
+    help
+      Multi Frontend support control (playback or record)
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_AAMP
+    bool "AAMP"
+    select BR2_PACKAGE_GST1_AAMP
+    default n
+    help
+      Enable AAMP player
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_AAMP
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_AAMP_FRONTENDS
+    string "Frontends"
+    default "0"
+    help
+      Sets the number of frontends (tuners) supported.
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_AAMP_USE_WESTEROS_SINK
+    bool "Use Westeros Sink"
+    default n
+    help
+      Denotes if Westeros sink shall be used.
+
+endif # BR2_PACKAGE_WPEFRAMEWORK_STREAMER_AAMP
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST
+    bool "Broadcast"
+    default n
+    help
+      Enable broadcast player
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST
+
+choice BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TYPE
+    prompt "Broadcast modus"
+    default BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE
+    bool "Cable"
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_SATELLITE
+    bool "Satellite"
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TERRESTRIAL
+    bool "Terrestrial"
+endchoice
+
+choice BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_STANDARD
+    prompt "Broadcast standard"
+    default BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_STANDARD_ATSC
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_STANDARD_DVB
+    bool "DVB"
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_STANDARD_ATSC
+    bool "ATSC"
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_STANDARD_ISDB
+    bool "ISDB"
+endchoice
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_STANDARD_CABLE
+choice BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE_ANNEX_CABLE
+    prompt "Broadcast standard annex"
+    default BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE_ANNEX_C
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE_ANNEX_NO_ANNNEX
+    bool "No annex"
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE_ANNEX_A
+    bool "A"
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE_ANNEX_B
+    bool "B"
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE_ANNEX_C
+    bool "C"
+endchoice
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE_FRONTENDS
+    string "Frontends (cable)"
+    default "1"
+    help
+      Sets the number of frontends (tuners) supported.
+
+endif # BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_SATELLITE
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_STANDARD_SATTELITE
+choice BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_SATELLITE_ANNEX_DVB_TYPE
+    prompt "Broadcast standard annex"
+    default BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_SATELLITE_ANNEX_A
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_SATELLITE_ANNEX_NO_ANNNEX
+    bool "No annex"
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_SATELLITE_ANNEX_A
+    bool "A"
+endchoice
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_CABLE_FRONTENDS
+    string "Frontends (cable)"
+    default "1"
+    help
+      Sets the number of frontends (tuners) supported.
+
+endif # BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_SATELLITE
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TERRESTRIAL
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_STANDARD_DVB
+choice BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TERRESTRIAL_TYPE
+    prompt "Broadcast standard annex"
+    default BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TERRESTRIAL_ANNEX_A
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TERRESTRIAL_ANNEX_NO_ANNNEX
+    bool "No annex"
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TERRESTRIAL_ANNEX_A
+    bool "A"
+endchoice
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TERRESTRIAL_FRONTENDS
+    string "Frontends (terrestrial)"
+    default "1"
+    help
+      Sets the number of frontends (tuners) supported.
+
+endif # BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TERRESTRIAL
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TS_SCANNING
+    bool "TS scanning"
+    help
+      Enable transport stream scanning from the home transport stream.
+
+if BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TS_SCANNING
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_HOME_TS
+    string "Home transport stream"
+    default "frequency=714\;modulation=64\;symbol=6875000"
+    help
+      Sets the Home transport
+
+endif # BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST_TS_SCANNING
+
+endif # BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST
+
+config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_DECODERS
+    string "Decoders"
+    default "1"
+    help
+      Sets the number of decoders available in the system.
+
+endif # BR2_PACKAGE_WPEFRAMEWORK_STREAMER
+
+config BR2_PACKAGE_WPEFRAMEWORK_SYSTEMCOMMANDS
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "SystemCommands"
+    help
+      SystemCommands Plugin
+      
+config BR2_PACKAGE_WPEFRAMEWORK_FILETRANSFER
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "FileTransfer"
+    help
+      FileTransfer Plugin
+
+config BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT_ACCESSOR
+    bool "SecurityAgent"
+    help
+        Implementation to validate incoming JSONRPC requests 
+        on executions allowed or not for any plugin in the 
+        system (Reference implementation) 
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_SPARK
+    bool "Spark"
+    depends on BR2_PACKAGE_SPARK_LIB
+    help
+        SparkEngine plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_SPARK
+
+config BR2_PACKAGE_WPEFRAMEWORK_SPARK_AUTOSTART
+    bool "autostart"
+    default n
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_TESTCONTROLLER
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "TestController"
+    help
+      TestController Plugin
+
+config BR2_PACKAGE_WPEFRAMEWORK_TESTUTILITY
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "TestUtility"
+    help
+      TestUtility Plugin
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_TIMESYNC
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "TimeSync"
+    help
+      TimeSync Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_TIMESYNC
+
+config BR2_PACKAGE_WPEFRAMEWORK_TIMESYNC_DEFFERED
+    bool "Deferred"
+    default n
+    help
+      TimeSync will postpone synchonization until requested to do so
+
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_TUNER
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "Tuner"
+    help
+      Tuner Plugin
+
+config BR2_PACKAGE_WPEFRAMEWORK_TRACECONTROL
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "TraceControl"
+    help
+      TraceControl Plugin
+
+config BR2_PACKAGE_WPEFRAMEWORK_VOLUMECONTROL
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "VolumeControl"
+    help
+      VolumeControl Plugin
+
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "WebKitBrowser"
+    depends on BR2_PACKAGE_WPEWEBKIT
+    help
+      WebKitBrowser Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_INJECTEDBUNDLE_INTERFACES
+    bool "injectedbundle"
+    default y
+
+if BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_INJECTEDBUNDLE_INTERFACES
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_AMAZON_HAWAII
+    bool "amazon hawaii interface"
+    default n
+
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_AUTOSTART
+    bool "autostart"
+    default y
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_STARTURL
+    string "start-url"
+    default "about:blank"
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_USERAGENT
+    string "useragent"
+    default "Mozilla/5.0 (Macintosh, Intel Mac OS X 10_11_4) AppleWebKit/602.1.28+ (KHTML, like Gecko) Version/9.1 Safari/601.5.17"
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_MEMORYPROFILE
+    string "memory-profile"
+    default "128m"
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_MEMORYPRESSURE
+    string "memory-pressure"
+    default "databaseprocess:50m,networkprocess:100m,webprocess:300m,rpcprocess:50m"
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_MEDIADISKCACHE
+    bool "media-disk-cache"
+    default n
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_DISKCACHE
+    string "disk-cache"
+    default "0"
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_XHRCACHE
+    bool "xhr-cache"
+    default false
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_TRANSPARENT
+    bool "transparent"
+    default false
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_WINDOWCLOSE
+       bool "windowclose"
+       default false
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_DISABLE_WEBGL
+       bool "disablewebgl"
+       default false
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_USER
+    string "user"
+    default ""
+    help
+        run WebKitBrowser as this user, leave empty to use the same as
+        WPEframework
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_GROUP
+    string "group"
+    default ""
+    help
+        run WebKitBrowser as this group, leave empty to use the same as
+        WPEframework
+
+choice BR2_PACKAGE_WPEFRAMEWORK_BROWSER_RESOLUTION
+    default BR2_PACKAGE_WPEFRAMEWORK_BROWSER_RESOLUTION_720P
+    prompt "resolution"
+    help
+      Select browser output resolution
+
+config BR2_PACKAGE_WPEFRAMEWORK_BROWSER_RESOLUTION_720P
+    bool "720p"
+    help
+      Set the resolution to 720p (HD Ready)
+
+config BR2_PACKAGE_WPEFRAMEWORK_BROWSER_RESOLUTION_1080P
+    bool "1080p"
+    help
+      Set the resolution to 1080p (Full HD)
+
+config BR2_PACKAGE_WPEFRAMEWORK_BROWSER_RESOLUTION_2160P
+    bool "2160p"
+    help
+      Set the resolution to 2160p (4k)
+
+endchoice
+
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE
+    depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+    select BR2_PACKAGE_WPEFRAMEWORK_HAS_YOUTUBE
+    bool "youtube"
+    help
+      A wrapper around the youtube app to start it as a
+      wpeframework plugin.
+
+if BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE
+
+config BR2_PACKAGE_WPEFRAMEWORK_YOUTUBE_USERAGENT
+    string "useragent"
+    default "Mozilla/5.0 (Macintosh, Intel Mac OS X 10_11_4) AppleWebKit/602.1.28+ (KHTML, like Gecko) Version/9.1 Safari/601.5.17"
+
+endif
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_AMAZON_TAB
+    depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+    bool "amazon"
+    help
+      A wrapper around the amazon app to start it as a
+      wpeframework plugin.
+
+if BR2_PACKAGE_WPEFRAMEWORK_AMAZON_TAB
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_USERAGENT
+    string "useragent"
+    default "Mozilla/5.0 (Macintosh, Intel Mac OS X 10_11_4) AppleWebKit/602.1.28+ (KHTML, like Gecko) Version/9.1 Safari/601.5.17"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_STARTURL
+    string "start-url"
+    default "about:blank"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_TRANSPARENT
+    bool "transparent"
+    default true
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_USER
+    string "user"
+    default ""
+    help
+        run Amazon as this user, leave empty to use the same as 
+        WPEframework
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_GROUP
+    string "group"
+    default ""
+    help
+        run Amazon as this group, leave empty to use the same as 
+        WPEframework
+
+
+endif
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_APPS
+    depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+    bool "apps"
+    help
+      A webkit instance for apps to start it as a
+      wpeframework plugin.
+
+if BR2_PACKAGE_WPEFRAMEWORK_APPS
+
+config BR2_PACKAGE_WPEFRAMEWORK_APPS_AUTOSTART
+    bool "autostart"
+
+config BR2_PACKAGE_WPEFRAMEWORK_APPS_USERAGENT
+    string "useragent"
+    default ""
+
+endif
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_UX
+    depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+    bool "ux"
+    help
+      A WPEUIFramework non-compositing WebGL enabled tab.
+
+if BR2_PACKAGE_WPEFRAMEWORK_UX
+
+config BR2_PACKAGE_WPEFRAMEWORK_UX_AUTOSTART
+    bool "autostart"
+
+config BR2_PACKAGE_WPEFRAMEWORK_UX_USERAGENT
+    string "useragent"
+    default ""
+
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_CLIENTIDENTIFIER
+    string "clientidentifier"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_THREADEDPAINTING
+    string "threaded-painting"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_LOCALSTORAGE
+    string "HTML5 local storage path"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_COOKIESTORAGE
+    string "Cookie storage path"
+    default ""
+
+endif
+
+comment "WebKitBrowser depends on WPE WebKit to be selected"
+    depends on !BR2_PACKAGE_WPEWEBKIT
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_WEBPA
+    bool "WebPA"
+    select BR2_PACKAGE_LIBPARODUS
+    select BR2_PACKAGE_TINYXML
+    select BR2_PACKAGE_PARODUS
+    help
+      WPE Platform WebPA plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_WEBPA
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_AUTOSTART
+    bool "autostart"
+    default n
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_SERVICE
+    bool "parodus service"
+    default y
+
+if BR2_PACKAGE_WPEFRAMEWORK_WEBPA_SERVICE
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_PINGWAITTIME
+    string "Ping Waiting Time"
+    default "60"
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_WEBPAURL
+    string "WebPA Server URL (IP/DNSName and Port)"
+    default "http://192.168.1.1"
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_PARODUSLOCALURL
+    string "Parodus Local URL (IP::PORT)"
+    default "tcp://127.0.0.1:6666"
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_PARTENRID
+    string "Partner ID"
+    default "Metrological"
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_BACKOFFMAX
+    string "Max retry sleep for WebPA connection"
+    default "9"
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CERTPATH
+    string "SSL Certificate Path of Parodus Service"
+    default "/etc/ssl/certs/ca-certificates.crt"
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CCSP
+        bool "webpa ccsp client"
+        select BR2_PACKAGE_PARODUS2CCSP
+        default n
+
+if BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CCSP
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CCSPCLIENTURL
+    string "Parodus to CCSP Client URL (IP::PORT)"
+    default "tcp://127.0.0.1:6667"
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CCSP_DATAFILE
+    string "Device properties file for CCSP client"
+    default ""
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CCSP_CONFIGFILE
+    string "Config File for CCSP Client"
+    default "/etc/webpa_cfg.json"
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_GENERIC_ADAPTER
+        bool "webpa generic adapter client"
+        default y
+
+if BR2_PACKAGE_WPEFRAMEWORK_WEBPA_GENERIC_ADAPTER
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_GENERICCLIENTURL
+    string "Parodus to Generic Client URL (IP::PORT)"
+    default "tcp://127.0.0.1:6667"
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_DATAMODELFILE
+    string "Data Model File for Generic Adapter"
+    default "/usr/share/WPEFramework/WebPA/data-model.xml"
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_NOTIFYCONFIGFILE
+    string "Notifier configuration file for Generic Adapter"
+    default "/usr/share/WPEFramework/WebPA/notify_webpa_cfg.json"
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_WEBPA_PROFILE
+	bool "Profiles"
+if BR2_PACKAGE_WPEFRAMEWORK_WEBPA_PROFILE
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_DEVICE_INFO
+        bool "device info"
+	select BR2_PACKAGE_NCURSES
+	select BR2_PACKAGE_PROCPS_NG
+        default y
+endif
+endif
+
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBPROXY
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "WebProxy"
+    help
+       WebProxy Plugin
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_WEBSERVER
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "WebServer"
+    help
+      WebServer Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_WEBSERVER
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBSERVER_PATH
+    string "path"
+    default "/www"
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBSERVER_PORT
+    string "port"
+    default "8080"
+
+endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBSHELL
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "WebShell"
+    help
+      WebShell Plugin
+
+config BR2_PACKAGE_WPEFRAMEWORK_WIFICONTROL
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPA_SUPPLICANT
+    select BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
+    bool "WifiControl"
+    help
+      WifiControl Plugin for Wifi access, linked to Network Control
+
+config BR2_PACKAGE_WPEFRAMEWORK_HAS_YOUTUBE
+    bool
+
+comment "External plugins below"

@@ -1,0 +1,58 @@
+#!/bin/sh
+
+# Enable cookie persistent storage
+export WPE_SHELL_COOKIE_STORAGE=1
+
+# FIXME: gst-gl's dispmanx backend is messing up with our compositor
+# when it creates its initial 16x16px surface.
+export GST_GL_WINDOW=dummy
+
+# Use cairo noaa compositor
+export CAIRO_GL_COMPOSITOR=noaa
+
+# WebInspector
+export WEBKIT_INSPECTOR_SERVER=0.0.0.0:9998
+
+# FPS
+#export WPE_THREADED_COMPOSITOR_FPS=1
+
+# RPI mouse support
+#export WPE_BCMRPI_CURSOR=1
+
+# RPI touch support
+#export WPE_BCMRPI_TOUCH=1
+
+WPE_UPDATE="/usr/bin/wpe-update"
+if [ -e "$WPE_UPDATE" ];
+then
+	WPE_UPDATE_RESULT=$($WPE_UPDATE)
+fi
+
+export TZ=$(wget -qO- http://jsonip.metrological.com/ | sed -e 's/^.*"tz":"\([^"]*\)".*$/\1/')
+
+WPE_CONF_FILE="/boot/wpe.conf"
+WPE_CONFIG=""
+if [ -e "$WPE_CONF_FILE" ];
+then
+	WPE_CONFIG=$(grep -v '^#' $WPE_CONF_FILE | tr -d "\r" | tr "\n" " " | tr -s " ")
+fi
+
+# Core dumps
+#echo 1 > /proc/sys/kernel/core_uses_pid
+#echo 2 > /proc/sys/fs/suid_dumpable
+#echo "/root/cores/core-pid_%p--process%E" > /proc/sys/kernel/core_pattern
+#mkdir -p /root/cores
+#ulimit -c unlimited
+
+# The PREFIX env var can be useful when debugging athol/WPELauncher with gdbserver.
+if [ "$1" = "--loop" ];
+then
+	export HOME=/root
+	mkdir -p $HOME
+	while true;
+	do
+		cd /root && eval "$WPE_CONFIG $PREFIX WPELauncher \"$2\""
+	done
+else
+	cd /root && eval "$WPE_CONFIG $PREFIX WPELauncher \"$1\""
+fi

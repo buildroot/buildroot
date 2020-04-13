@@ -1,0 +1,74 @@
+menu "development tools"
+
+config BR2_PACKAGE_WPEFRAMEWORK_VERBOSE_BUILD
+	bool "Verbose build"
+	help
+	   Allow the WPE Framework build to be more verbose. This will show build 
+	   settings for all targets built, as well as details for packages found.
+ 
+config BR2_PACKAGE_WPEFRAMEWORK_INSTALL_HEADERS
+	bool "Install development header"
+	help
+	   Install headers to the target for development.
+ 
+config BR2_PACKAGE_WPEFRAMEWORK_DISABLE_INITD
+	bool "Disable init.d"
+	help
+		If enabled the init.d script will NOT be installed.
+		
+menu "test applications"
+
+config BR2_PACKAGE_WPEFRAMEWORK_TEST_CYCLICINSPECTOR
+	bool "CyclicBuffer inspector"
+	help
+		CyclicInspector is a small tool that allows you to inspect the
+		contents of the memory mapped file used by the CyclicBuffer.
+		This can be helpful during a post-mortem of a crashed program or
+		when tracing failed.
+
+
+config BR2_PACKAGE_WPEFRAMEWORK_TEST_LOADER
+	bool "Test loader"
+	help
+		TestLoader is a verification and analyze tool for 
+		WPEFramework software and plugins.
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETWORKTEST
+	bool "NetworkTest"
+	help
+		NetworkTest is a verification and analyze tool for 
+		WPEFramework software network functionality.
+
+config BR2_PACKAGE_WPEFRAMEWORK_TEST_RPCLINK
+	bool "RPC link test"
+	help
+		RPCLINK test tests the usage of RPC calls to out of process plugins.
+
+config BR2_PACKAGE_WPEFRAMEWORK_EGLTEST
+	select BR2_PACKAGE_WPEFRAMEWORK_COMMON
+	bool "EGLTest"
+	help
+	   EGLTest Plugin
+
+config BR2_PACKAGE_WPEFRAMEWORK_LINUX_ONEWIRE
+	select BR2_PACKAGE_WPEFRAMEWORK_COMMON
+	bool "Linux1Wire"
+	help
+	   Test application for the Core (Netlink/Connector) functionality.
+
+config BR2_PACKAGE_WPEFRAMEWORK_EXAMPLEJSONRPC
+	select BR2_PACKAGE_WPEFRAMEWORK_COMMON
+	bool "jsonrpc example"
+        default n
+	help
+	   Test application for the JSONRPC functionality.
+
+config BR2_PACKAGE_WPEFRAMEWORK_TEST_UNITTESTS
+   select BR2_PACKAGE_GTEST
+	bool "Unit Tests"
+	help
+	   Builds Unit Tests
+
+endmenu
+
+endmenu
