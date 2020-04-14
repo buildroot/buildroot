@@ -1,4 +1,4 @@
-From 9d14b28d5c5748abd3d073fbf65dd4cb6b50fdec Mon Sep 17 00:00:00 2001
+From 5edb3adc3a5d64113d056da46db634ecc2871e75 Mon Sep 17 00:00:00 2001
 From: Michal Pogoda <michalpogoda@hotmail.com>
 Date: Tue, 17 Mar 2020 16:55:20 +0100
 Subject: [PATCH 1/2] Preparing for library build
@@ -9,7 +9,8 @@ Subject: [PATCH 1/2] Preparing for library build
  libcrun.pc.in           | 11 +++++++++++
  libocispec/Makefile.am  | 13 +++----------
  src/libcrun/container.c |  2 +-
- 5 files changed, 38 insertions(+), 12 deletions(-)
+ src/libcrun/error.c     |  2 +-
+ 6 files changed, 39 insertions(+), 13 deletions(-)
  create mode 100644 libcrun.pc.in
 
 diff --git a/Makefile.am b/Makefile.am
@@ -128,6 +129,19 @@ index 22cb41f..7f7dafc 100644
      }
 -  exit (ret);
 +  _exit (ret);
+ }
+ 
+ int
+diff --git a/src/libcrun/error.c b/src/libcrun/error.c
+index cb49b0d..56ea309 100644
+--- a/src/libcrun/error.c
++++ b/src/libcrun/error.c
+@@ -386,7 +386,7 @@ libcrun_fail_with_error (int errno_, const char *msg, ...)
+   va_start (args_list, msg);
+   write_log (errno_, false, msg, args_list);
+   va_end (args_list);
+-  exit (EXIT_FAILURE);
++  _exit (EXIT_FAILURE);
  }
  
  int
