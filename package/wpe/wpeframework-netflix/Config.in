@@ -21,6 +21,11 @@ menu "DPI options"
       string "friendly name"
       default "Metrological Netflix Implementation"
 
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_VERSION_POSTFIX
+      depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+      string "version postfix"
+      default ""
+
   config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_VIDEO_BUFFER_SIZE
       string "video buffer"
       default "193986560"
