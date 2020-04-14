@@ -22,3 +22,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_CDMI_PLAYREADY_NEXUS_SVP
 
 config BR2_PACKAGE_WPEFRAMEWORK_CDMI_PLAYREADY_VGDRM
 	bool
+
+config BR2_PACKAGE_WPEFRAMEWORK_CDMI_PLAYREADY_SECURE_STOP_METERING_CERTIFICATE
+    depends on BR2_PACKAGE_WPEFRAMEWORK_CDMI_PLAYREADY_NEXUS_SVP
+    string "SecureStop metering certificate"
+    default ""
+    help
+        Set the path where the SecureStop metering certificate can be
+        found on the system. Leave empty to disable.
+
