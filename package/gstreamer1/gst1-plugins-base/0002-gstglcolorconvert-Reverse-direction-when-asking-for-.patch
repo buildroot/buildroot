@@ -1,0 +1,72 @@
+From 1e0ab601b1b31367d36f353b4a795374ffbbc70f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Thu, 2 Apr 2020 11:25:56 +0000
+Subject: [PATCH 3/3] gstglcolorconvert: Reverse direction when asking for peer
+ pad (transformed) supported formats
+
+Otherwise, the formats for the wrong pad are returned.
+
+Full explanation:
+
+A GstGLColorConvert is asked to convert from I420 to RGBA so that things
+can work on Raspberry using OMX. At some point, during caps negotiation,
+https://github.com/GStreamer/gstreamer/blob/1.16.1/libs/gst/base/gstbasetransform.c#L627
+is being called on the colorconvert src (output) pad. Execution goes
+down to
+https://github.com/GStreamer/gstreamer/blob/1.16.1/libs/gst/base/gstbasetransform.c#L650
+and that call (passing GST_PAD_SRC) means "get the caps that the SINK
+pad (peer) should have". Execution goes into these places to answer the
+call:
+
+https://github.com/GStreamer/gstreamer/blob/1.16.1/libs/gst/base/gstbasetransform.c#L458
+https://github.com/GStreamer/gstreamer/blob/1.16.1/libs/gst/base/gstbasetransform.c#L474
+https://github.com/GStreamer/gst-plugins-base/blob/1.16.1/ext/gl/gstglcolorconvertelement.c#L138
+https://github.com/GStreamer/gst-plugins-base/blob/1.16.1/ext/gl/gstglcolorconvertelement.c#L153
+https://github.com/GStreamer/gst-plugins-base/blob/1.16.1/gst-libs/gst/gl/gstglcolorconvert.c#L1071
+https://github.com/GStreamer/gst-plugins-base/blob/1.16.1/gst-libs/gst/gl/gstglcolorconvert.c#L1074
+https://github.com/GStreamer/gst-plugins-base/blob/1.16.1/gst-libs/gst/gl/gstglcolorconvert.c#L1074
+https://github.com/GStreamer/gst-plugins-base/blob/1.16.1/gst-libs/gst/gl/gstglcolorconvert.c#L978 <-- Note that output is true here
+https://github.com/GStreamer/gst-plugins-base/blob/1.16.1/gst-libs/gst/gl/gstglcolorconvert.c#L928
+https://github.com/GStreamer/gst-plugins-base/blob/1.16.1/gst-libs/gst/gl/gstglcolorconvert.c#L940
+
+This last line has an error and should read "output" instead of
+"!output", because we're transforming, so if querying the src (output)
+pad, we're interested here in the formats supported by the sink (input)
+pad. The comment says that the allowed transformations should be either
+RGB-like to RGB-like, or I420-like to RGB-like. So, when we query the
+src pad, I420 should be among the allowed formats on the other side
+(input) of colorconvert.
+
+Here the format is restricted to the initialized values
+https://github.com/GStreamer/gst-plugins-base/blob/1.16.1/gst-libs/gst/gl/gstglcolorconvert.c#L1041
+, but it wasn't on gst 1.14
+https://github.com/GStreamer/gst-plugins-base/blob/1.14.1/gst-libs/gst/gl/gstglcolorconvert.c#L957
+. That's why things worked for me back then. Commit
+https://github.com/GStreamer/gst-plugins-base/commit/3cfff727b19d450898dbe7931c53ea05bc2a9ac3
+was the one introducing the extra restrictions.
+
+See also:
+https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/-/issues/615
+---
+ gst-libs/gst/gl/gstglcolorconvert.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/gst-libs/gst/gl/gstglcolorconvert.c b/gst-libs/gst/gl/gstglcolorconvert.c
+index e73a3e52c..e3db6dd96 100644
+--- a/gst-libs/gst/gl/gstglcolorconvert.c
++++ b/gst-libs/gst/gl/gstglcolorconvert.c
+@@ -975,7 +975,10 @@ gst_gl_color_convert_caps_transform_format_info (GstGLContext * context,
+ 
+   _init_value_string_list (&rgb_formats, "RGBA", "ARGB", "BGRA", "ABGR", "RGBx",
+       "xRGB", "BGRx", "xBGR", "RGB", "BGR", "ARGB64", NULL);
+-  _init_supported_formats (context, output, &supported_formats);
++  /* We're transforming, so if asked for the output pad we have to query the
++   * formats supported by the peer (!output) pad.
++   */
++  _init_supported_formats (context, !output, &supported_formats);
+   gst_value_intersect (&supported_rgb_formats, &rgb_formats,
+       &supported_formats);
+ 
+-- 
+2.17.1
+

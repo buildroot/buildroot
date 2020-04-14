@@ -1,0 +1,14 @@
+config BR2_PACKAGE_COBALT
+    bool "cobalt"
+        select BR2_PACKAGE_WPEFRAMEWORK_COMPOSITORCLIENT
+
+if BR2_PACKAGE_COBALT
+
+config BR2_PACKAGE_COBALT_IMAGE_AS_LIB
+    bool "Create cobalt as .so"
+    default y
+    help
+       This option allows to create cobalt.so,
+       default is cobalt bin
+
+endif
