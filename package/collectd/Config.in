@@ -644,6 +644,12 @@ config BR2_PACKAGE_COLLECTD_WRITEHTTP
 	  Sends values collected to a web-server using HTTP POST and
 	  PUTVAL.
 
+config BR2_PACKAGE_COLLECTD_WRITEINFLUXDBUDP
+	bool "write_influxdb_udp"
+	help
+	  Sends data to an instance of InfluxDB using the "Line
+	  Protocol".
+
 config BR2_PACKAGE_COLLECTD_WRITELOG
 	bool "write_log"
 	help
