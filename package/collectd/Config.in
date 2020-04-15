@@ -131,6 +131,16 @@ config BR2_PACKAGE_COLLECTD_BIND
 	help
 	  Collects BIND DNS statistics.
 
+config BR2_PACKAGE_COLLECTD_CAPABILITIES
+	bool "capabilities"
+	depends on BR2_aarch64 || BR2_i386 || BR2_x86_64 # dmidecode
+	select BR2_PACKAGE_DMIDECODE # runtime
+	select BR2_PACKAGE_JANSSON
+	select BR2_PACKAGE_LIBMICROHTTPD
+	help
+	  Collects selected static platform data using dmidecode and
+	  expose it through micro embedded webserver.
+
 config BR2_PACKAGE_COLLECTD_CEPH
 	bool "ceph"
 	select BR2_PACKAGE_YAJL
