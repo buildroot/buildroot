@@ -88,7 +88,7 @@ main() {
         backend_urlencode="${uri%%+*}"
         backend="${backend_urlencode%|*}"
         case "${backend}" in
-            git|svn|cvs|bzr|file|scp|hg) ;;
+            git|svn|cvs|bzr|file|scp|hg|sftp) ;;
             *) backend="wget" ;;
         esac
         uri=${uri#*+}

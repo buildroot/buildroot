@@ -256,7 +256,7 @@ not and can not work as people would expect it should:
   +scp://[user@]host:filepath+, and that filepath is relative to the
   user's home directory, so you may want to prepend the path with a
   slash for absolute paths:
-  +scp://[user@]host:/absolutepath+. +
+  +scp://[user@]host:/absolutepath+. The same goes for SFTP URLs. +
   If +HOST_LIBFOO_SITE+ is not specified, it defaults to
   +LIBFOO_SITE+.
   Examples: +
@@ -291,6 +291,8 @@ not and can not work as people would expect it should:
      +ftp://+.
   ** +scp+ for downloads of tarballs over SSH with scp. Used by
      default when +LIBFOO_SITE+ begins with +scp://+.
+  ** +sftp+ for downloads of tarballs over SSH with sftp. Used by
+     default when +LIBFOO_SITE+ begins with +sftp://+.
   ** +svn+ for retrieving source code from a Subversion repository.
      Used by default when +LIBFOO_SITE+ begins with +svn://+. When a
      +http://+ Subversion repository URL is specified in
