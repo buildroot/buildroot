@@ -213,6 +213,13 @@ config BR2_PACKAGE_COLLECTD_DNS
 	help
 	  Collects statistics of DNS traffic using libpcap.
 
+config BR2_PACKAGE_COLLECTD_DPDK_TELEMETRY
+	bool "dpdk_telemetry"
+	select BR2_PACKAGE_JANSSON
+	help
+	  Collects DPDK ethernet device metrics via dpdk_telemetry
+	  library.
+
 config BR2_PACKAGE_COLLECTD_DRBD
 	bool "drbd"
 	help

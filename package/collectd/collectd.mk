@@ -66,6 +66,7 @@ COLLECTD_CONF_OPTS += \
 	$(if $(BR2_PACKAGE_COLLECTD_DF),--enable-df,--disable-df) \
 	$(if $(BR2_PACKAGE_COLLECTD_DISK),--enable-disk,--disable-disk) \
 	$(if $(BR2_PACKAGE_COLLECTD_DNS),--enable-dns,--disable-dns) \
+	$(if $(BR2_PACKAGE_COLLECTD_DPDK_TELEMETRY),--enable-dpdk_telemetry,--disable-dpdk_telemetry) \
 	$(if $(BR2_PACKAGE_COLLECTD_DRBD),--enable-drbd,--disable-drbd) \
 	$(if $(BR2_PACKAGE_COLLECTD_EMPTY_COUNTER),--enable-match_empty_counter,--disable-match_empty_counter) \
 	$(if $(BR2_PACKAGE_COLLECTD_ENTROPY),--enable-entropy,--disable-entropy) \
@@ -156,6 +157,7 @@ COLLECTD_DEPENDENCIES = \
 	$(if $(BR2_PACKAGE_COLLECTD_CURL_JSON),libcurl yajl) \
 	$(if $(BR2_PACKAGE_COLLECTD_CURL_XML),libcurl libxml2) \
 	$(if $(BR2_PACKAGE_COLLECTD_DNS),libpcap) \
+	$(if $(BR2_PACKAGE_COLLECTD_DPKD_TELEMETRY),jansson) \
 	$(if $(BR2_PACKAGE_COLLECTD_GPS),gpsd) \
 	$(if $(BR2_PACKAGE_COLLECTD_GRPC),grpc) \
 	$(if $(BR2_PACKAGE_COLLECTD_IPTABLES),iptables) \
@@ -185,6 +187,9 @@ COLLECTD_DEPENDENCIES = \
 # include/library fixups
 ifeq ($(BR2_PACKAGE_GRPC),y)
 COLLECTD_CONF_OPTS += --with-libgrpc++=$(STAGING_DIR)/usr
+endif
+ifeq ($(BR2_PACKAGE_JANSSON),y)
+COLLECTD_CONF_OPTS += --with-libjansson=$(STAGING_DIR)/usr
 endif
 ifeq ($(BR2_PACKAGE_LIBCURL),y)
 COLLECTD_CONF_OPTS += --with-libcurl=$(STAGING_DIR)/usr
