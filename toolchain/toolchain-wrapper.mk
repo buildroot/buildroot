@@ -32,6 +32,9 @@ endif
 ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_7),)
 TOOLCHAIN_WRAPPER_OPTS += -DBR_NEED_SOURCE_DATE_EPOCH
 endif
+ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_6),)
+TOOLCHAIN_WRAPPER_OPTS += -gno-record-gcc-switches
+endif
 endif
 
 # Disable -ftree-loop-distribute-patterns on microblaze to
