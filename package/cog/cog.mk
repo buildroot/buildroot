@@ -8,7 +8,7 @@ COG_VERSION = 0.6.0
 COG_SITE = https://wpewebkit.org/releases
 COG_SOURCE = cog-$(COG_VERSION).tar.xz
 COG_INSTALL_STAGING = YES
-COG_DEPENDENCIES = dbus wpewebkit wpebackend-fdo wayland
+COG_DEPENDENCIES = dbus wpewebkit
 COG_LICENSE = MIT
 COG_LICENSE_FILES = COPYING
 COG_CONF_OPTS = \
@@ -19,7 +19,7 @@ COG_CONF_OPTS = \
 
 ifeq ($(BR2_PACKAGE_COG_PLATFORM_FDO),y)
 COG_CONF_OPTS += -DCOG_PLATFORM_FDO=ON
-COG_DEPENDENCIES += libxkbcommon wayland-protocols
+COG_DEPENDENCIES += libxkbcommon wayland-protocols wpebackend-fdo wayland
 else
 COG_CONF_OPTS += -DCOG_PLATFORM_FDO=OFF
 endif
