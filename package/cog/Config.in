@@ -8,8 +8,6 @@ config BR2_PACKAGE_COG
 	depends on BR2_TOOLCHAIN_HAS_THREADS # dbus
 	depends on BR2_USE_MMU # dbus
 	select BR2_PACKAGE_DBUS
-	select BR2_PACKAGE_WPEBACKEND_FDO
-	select BR2_PACKAGE_WAYLAND
 
 	help
 	  Single "window" launcher for the WebKit WPE port, and
@@ -31,9 +29,10 @@ config BR2_PACKAGE_COG_PROGRAMS_HOME_URI
 
 config BR2_PACKAGE_COG_PLATFORM_FDO
 	bool "FreeDesktop.org backend"
-	default y
+	default n
 	select BR2_PACKAGE_LIBXKBCOMMON
 	select BR2_PACKAGE_WAYLAND_PROTOCOLS
+	select BR2_PACKAGE_WAYLAND
 	help
 	  Enable the FreeDesktop.org backend. Cog will interface with
 	  a compositor over the Wayland protocol.
