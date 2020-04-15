@@ -3,7 +3,7 @@
 # westeros
 #
 ################################################################################
-WESTEROS_VERSION = 347f69632ca0bdf7e6c7b5ff6b9c5e37f6768aed
+WESTEROS_VERSION = 8909f1ad3a72e2e08911b4c060c448a8958015ad
 WESTEROS_SITE_METHOD = git
 WESTEROS_SITE = git://github.com/rdkcmf/westeros
 WESTEROS_INSTALL_STAGING = YES
