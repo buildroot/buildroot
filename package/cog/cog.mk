@@ -31,4 +31,10 @@ else
 COG_CONF_OPTS += -DCOG_PLATFORM_DRM=OFF
 endif
 
+define COG_INSTALL_SETTINGS
+	$(INSTALL) -D -m 0644 package/cog/websettings.txt $(TARGET_DIR)/root
+endef
+
+COG_POST_INSTALL_TARGET_HOOKS += COG_INSTALL_SETTINGS
+
 $(eval $(cmake-package))
