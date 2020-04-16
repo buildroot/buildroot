@@ -19,14 +19,14 @@ COG_CONF_OPTS = \
 
 ifeq ($(BR2_PACKAGE_COG_PLATFORM_FDO),y)
 COG_CONF_OPTS += -DCOG_PLATFORM_FDO=ON
-COG_DEPENDENCIES += libxkbcommon wayland-protocols wpebackend-fdo wayland
+COG_DEPENDENCIES += libxkbcommon wpebackend-fdo wayland wayland-protocols
 else
 COG_CONF_OPTS += -DCOG_PLATFORM_FDO=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_COG_PLATFORM_DRM),y)
 COG_CONF_OPTS += -DCOG_PLATFORM_DRM=ON
-COG_DEPENDENCIES += libdrm libinput
+COG_DEPENDENCIES += libdrm libinput wpebackend-fdo wayland
 else
 COG_CONF_OPTS += -DCOG_PLATFORM_DRM=OFF
 endif
