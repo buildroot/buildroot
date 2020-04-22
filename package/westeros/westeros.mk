@@ -3,12 +3,10 @@
 # westeros
 #
 ################################################################################
-WESTEROS_VERSION = 9f597624c850923bfa51d3a74b33f17ad79b2ecf
+WESTEROS_VERSION = 8909f1ad3a72e2e08911b4c060c448a8958015ad
 WESTEROS_SITE_METHOD = git
 WESTEROS_SITE = git://github.com/rdkcmf/westeros
 WESTEROS_INSTALL_STAGING = YES
-WESTEROS_AUTORECONF = YES
-WESTEROS_AUTORECONF_OPTS = "-Icfg"
 
 WESTEROS_DEPENDENCIES = host-pkgconf host-autoconf wayland \
 	libxkbcommon westeros-simpleshell westeros-simplebuffer westeros-soc gstreamer1
@@ -46,12 +44,10 @@ else ifeq ($(BR2_PACKAGE_LIBDRM),y)
 endif # BR2_PACKAGE_WESTEROS_SOC_RPI
 
 
-define WESTEROS_RUN_AUTOCONF
-	mkdir -p $(@D)/cfg
-	mkdir -p $(@D)/essos/cfg
+define WESTEROS_RUN_AUTORECONF
+        cd $(@D) && $(HOST_DIR)/usr/bin/autoreconf --force --install
 endef
-WESTEROS_PRE_CONFIGURE_HOOKS += WESTEROS_RUN_AUTOCONF
-
+WESTEROS_PRE_CONFIGURE_HOOKS += WESTEROS_RUN_AUTORECONF
 
 define WESTEROS_BUILD_CMDS
 	SCANNER_TOOL=${HOST_DIR}/usr/bin/wayland-scanner \
