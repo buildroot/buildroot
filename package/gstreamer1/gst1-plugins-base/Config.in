@@ -246,6 +246,24 @@ config BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_DISPMANX
 comment "dispmanx needs the egl platform and rpi-userland"
 	depends on !BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_EGL || \
 		!BR2_PACKAGE_RPI_USERLAND
+
+config BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_GBM
+	bool "gbm"
+	default n
+	depends on BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_EGL
+	depends on BR2_PACKAGE_LIBGUDEV
+	depends on BR2_PACKAGE_LIBDRM
+	depends on BR2_PACKAGE_MESA3D_GBM
+	select BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_HAS_WINDOW
+	help
+	  No window system needed! Uses KMS/GBM/DRM directly for
+	  Mesa3D-supported GPUs
+
+comment "GBM needs the egl platform, libdrm and libgudev"
+	depends on !BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_EGL || \
+	!BR2_PACKAGE_LIBGUDEV || !BR2_PACKAGE_MESA3D_GBM || \
+	!BR2_PACKAGE_LIBDRM
+
 endif
 
 comment "opengl needs an OpenGL or OpenGL ES backend"
