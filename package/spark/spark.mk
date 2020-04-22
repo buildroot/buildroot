@@ -3,7 +3,7 @@
 # spark
 #
 ################################################################################
-SPARK_VERSION = 9bb696d5dd73cb25a9b6999b752d3da975fa54b1
+SPARK_VERSION = 51333037650ecee44191492b541106efa573cc35
 SPARK_SITE_METHOD = git
 SPARK_SITE = git://github.com/pxscene/pxCore
 SPARK_INSTALL_STAGING = YES
@@ -29,11 +29,13 @@ SPARK_CONF_OPTS += \
     -DSPARK_ENABLE_OPTIMIZED_UPDATE=ON \
     -DSPARK_BACKGROUND_TEXTURE_CREATION=OFF
 
+PXSCENE_PLATFORM_DEFINES := " -DPNG_APNG_SUPPORTED "
 
 ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITORCLIENT), y)
     SPARK_CONF_OPTS += \
         -DBUILD_WITH_WPEFRAMEWORK=ON \
-        -DPXCORE_WPEFRAMEWORK=ON
+        -DPXCORE_WPEFRAMEWORK=ON \
+        -DPXCORE_ESSOS_SETTINGS_SUPPORT=OFF
 
     COMPOSITOR=wpeframework
     COMPOSITOR_BIN=wpe
@@ -97,20 +99,6 @@ endef
 
 endif
 
-ifeq ($(BR2_PACKAGE_SPACKAGE_PXCORE_LIBNODE_6), y)
-SPARK_CONF_OPTS += -DUSE_NODE_8=OFF
-else
-#Apply pxCore lib node patch to get patched headers localy for NODE 8.15.1 case
-PXCORE_LIBNODE_VER = 8.15.1
-PXCORE_LIBNODE_PATH = examples/pxScene2d/external/
-define PXCORE_LIBNODE_PATCHES
-    cd $(@D); \
-    patch -p1 <$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_mods.patch
-endef
-endif
-
-SPARK_PRE_PATCH_HOOKS = PXCORE_LIBNODE_PATCHES
-
 SPARK_INSTALL_PATH = usr/share/WPEFramework/Spark
 define SPARK_INSTALL_DEPS
     mkdir -p $(TARGET_DIR)/$(SPARK_INSTALL_PATH)
@@ -119,14 +107,16 @@ define SPARK_INSTALL_DEPS
     $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/*.json $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
     $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/*.ttf $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
     $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/sparkpermissions.conf $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
-    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/waylandregistry.conf $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
+    $(SPARK_INSTALL_WAYLAND_CONF)
     cp -ar $(@D)/examples/pxScene2d/src/rcvrcore $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
     cp -ar $(@D)/examples/pxScene2d/src/browser $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
-    cp -ar $(@D)/examples/pxScene2d/src/optimus $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
-    cp -ar $(@D)/examples/pxScene2d/src/duk_modules $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
-    cp -ar $(@D)/examples/pxScene2d/src/v8_modules $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
-    cp -ar $(@D)/examples/pxScene2d/src/rasterizer $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
 endef
+
+ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITORCLIENT), )
+define SPARK_INSTALL_WAYLAND_CONF
+    $(INSTALL) -m 755 $(@D)/examples/pxScene2d/src/waylandregistry.conf $(TARGET_DIR)/$(SPARK_INSTALL_PATH)/
+endef
+endif
 
 ifeq ($(BR2_PACKAGE_SPARK_LIB), y)
 define SPARK_INSTALL_PX_NATIVE_WINDOW

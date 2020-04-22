@@ -4,20 +4,26 @@
 #
 ################################################################################
 
-PXCORE_LIBNODE_VERSION = 746382b7139bb7de4ebe357d766a4fbac243cab9
+PXCORE_LIBNODE_VERSION = 51333037650ecee44191492b541106efa573cc35
 PXCORE_LIBNODE_SITE_METHOD = git
 PXCORE_LIBNODE_SITE = git://github.com/pxscene/pxCore
-PXCORE_LIBNODE_DEPENDENCIES = host-python openssl
+PXCORE_LIBNODE_DEPENDENCIES = host-python openssl host-qemu
 PXCORE_LIBNODE_INSTALL_STAGING = YES
 PXCORE_LIBNODE_LICENSE = MIT (core code); MIT, Apache and BSD family licenses (Bundled components)
 PXCORE_LIBNODE_LICENSE_FILES = LICENSE
-PXCORE_LIBNODE_DEPENDENCIES = openssl
+
 PXCORE_LIBNODE_CONF_OPTS = \
-        --shared \
-	--without-snapshot \
+	--shared \
 	--dest-os=linux \
-        --shared-openssl \
-        --without-intl
+	--with-snapshot \
+	--shared-openssl \
+	--without-intl \
+	--without-inspector
+
+#TARGET_CPPFLAGS += -Os -Wno-deprecated-declarations -Wno-maybe-uninitialized -Wno-address -fno-delete-null-pointer-checks -DPNG_APNG_SUPPORTED -fno-omit-frame-pointer -fno-optimize-sibling-calls
+#TARGET_CXXFLAGS += -fpermissive -fvisibility-inlines-hidden
+#TARGET_CFLAGS :=$(subst -O2,-Os,$(TARGET_CFLAGS))
+#TARGET_FCFLAGS :=$(subst -O2,-Os,$(TARGET_FCFLAGS))
 
 ifeq ($(BR2_i386),y)
 PXCORE_LIBNODE_CPU = ia32
@@ -29,6 +35,7 @@ else ifeq ($(BR2_mipsel),y)
 PXCORE_LIBNODE_CPU = mipsel
 else ifeq ($(BR2_arm),y)
 PXCORE_LIBNODE_CPU = arm
+PXCORE_LIBNODE_CONF_OPTS += --with-arm-float-abi=hard
 else ifeq ($(BR2_aarch64),y)
 PXCORE_LIBNODE_CPU = arm64
 # V8 needs to know what floating point ABI the target is using.
@@ -47,29 +54,36 @@ PXCORE_LIBNODE_MIPS_ARCH_VARIANT = r1
 endif
 endif
 
-ifeq ($(BR2_PACKAGE_SPACKAGE_PXCORE_LIBNODE_6), y)
-    PXCORE_LIBNODE_VER = 6.9.0
-    PXCORE_LIBNODE_LIB_VER = 48
-    PXCORE_LIBNODE_GYP_PATH = tools/gyp
-else
-    PXCORE_LIBNODE_VER = 8.15.1
-    PXCORE_LIBNODE_LIB_VER = 57
-    PXCORE_LIBNODE_GYP_PATH = src
+PXCORE_LIBNODE_VER = 10.15.3
+PXCORE_LIBNODE_LIB_VER = 64
+PXCORE_LIBNODE_GYP_PATH = tools/gyp
+PXCORE_LIBNODE_DIRECTORY = libnode-v$(PXCORE_LIBNODE_VER)
+PXCORE_LIBNODE_PATH = examples/pxScene2d/external
 
-define PXCORE_LIBNODE_PATCHE
-    patch -p1 <$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_mods.patch;
+define PXCORE_LIBNODE_PATCHING
+    echo "Test" ; \
+    patch -p1 <$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_mods.patch; \
+    patch -p1 <$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_qemu_wrapper.patch; \
+    patch -p1 <$(PXCORE_LIBNODE_PATH)/openssl_1.0.2_compatibility.patch; \
+    sed -i "s:KERNEL_VERSION:$(BR2_TOOLCHAIN_HEADERS_AT_LEAST):g" $(@D)/$(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/v8-qemu-wrapper.sh; \
+    sed -i "s:STAGING:$(STAGING_DIR):g" $(@D)/$(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/v8-qemu-wrapper.sh; \
+    sed -i "s:ARCH:$(PXCORE_LIBNODE_CPU):g" $(@D)/$(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/v8-qemu-wrapper.sh; \
+    chmod +x $(@D)/$(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/v8-qemu-wrapper.sh;
 endef
 
-endif
-
-PXCORE_LIBNODE_DIRECTORY = libnode-v$(PXCORE_LIBNODE_VER)
-PXCORE_LIBNODE_PATH = examples/pxScene2d/external/
+define PXCORE_LIBNODE_COPY_PATCH
+    cp package/pxcore-libnode/node-v$(PXCORE_LIBNODE_VER)_mods.patch.file $(@D)/$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_mods.patch; \
+    cp package/pxcore-libnode/node-v$(PXCORE_LIBNODE_VER)_qemu_wrapper.patch.file $(@D)/$(PXCORE_LIBNODE_PATH)/node-v$(PXCORE_LIBNODE_VER)_qemu_wrapper.patch; \
+    cp package/pxcore-libnode/openssl_1.0.2_compatibility.patch.file $(@D)/$(PXCORE_LIBNODE_PATH)/openssl_1.0.2_compatibility.patch \
+    cp package/pxcore-libnode/v8-qemu-wrapper.sh $(@D)/$(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/;
+endef
 
 define PXCORE_LIBNODE_EXTRACT
+        $(PXCORE_LIBNODE_COPY_PATCH) \
         cd $(@D)/; \
         find . -name examples -prune -o -type f -exec rm -rf {} +; \
         find . -name examples -prune -o -type d -exec rm -rf {} +; \
-        $(PXCORE_LIBNODE_PATCHE) \
+        $(PXCORE_LIBNODE_PATCHING) \
         mv $(PXCORE_LIBNODE_PATH)/$(PXCORE_LIBNODE_DIRECTORY)/* $(@D)/; \
         rm -rf examples/; \
         touch $(@D)/.stamp_downloaded \
@@ -78,6 +92,10 @@ endef
 PXCORE_LIBNODE_POST_EXTRACT_HOOKS += PXCORE_LIBNODE_EXTRACT
 
 define PXCORE_LIBNODE_CONFIGURE_CMDS
+        echo CPPFLAGS
+        echo $(TARGET_CPPFLAGS)
+        echo CFLAGS
+        echo $(CFLAGS)
 	mkdir -p $(@D)/bin
 	ln -sf $(HOST_DIR)/usr/bin/python2 $(@D)/bin/python
 
@@ -96,7 +114,8 @@ define PXCORE_LIBNODE_CONFIGURE_CMDS
 	)
 
 	# use host version of mkpeephole
-	sed "s#<(mkpeephole_exec)#$(HOST_DIR)/usr/bin/mkpeephole#g" -i $(@D)/deps/v8/$(PXCORE_LIBNODE_GYP_PATH)/v8.gyp
+	sed "s#<(mkpeephole_exec)#$(HOST_DIR)/usr/bin/mkpeephole#g" -i $(@D)/deps/v8/gypfiles/v8.gyp
+
 endef
 
 define PXCORE_LIBNODE_BUILD_CMDS

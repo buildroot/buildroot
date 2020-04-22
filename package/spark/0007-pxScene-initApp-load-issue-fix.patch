@@ -1,0 +1,16 @@
+diff --git a/examples/pxScene2d/src/pxScene2d.cpp b/examples/pxScene2d/src/pxScene2d.cpp
+index 465523dd2..be3fc2e51 100755
+--- a/examples/pxScene2d/src/pxScene2d.cpp
++++ b/examples/pxScene2d/src/pxScene2d.cpp
+@@ -3304,8 +3304,10 @@ void pxScriptView::runScript()
+       // compile initGL.js
+       if (mSparkGlInitApp.isEmpty())
+       {
++        rtString s = getenv("SPARK_PATH");
++        s.append("initApp.js");
+         rtData initData;
+-        rtError e = rtLoadFile("initApp.js", initData);
++        rtError e = rtLoadFile(s.cString(), initData);
+         if(e != RT_OK)
+         {
+           rtLogError("Failed to load - 'initApp.js' ");

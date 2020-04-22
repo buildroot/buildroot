@@ -1,0 +1,601 @@
+Date: Oct 16, 2019 11:28 PM
+
+From: f6beeabcc00737fd6b386bd5b19bc53fc44a2b33 Oct 16, 2019 11:28 PM
+
+Subject: [PATCH] DELIA-37507: Spark 1.10.0.1
+
+        updating to Spark 1.10.0.1
+
+Source: COMCAST
+
+License: Apache-2.0
+
+Upstream-Status: Pending
+
+Signed-off-by: mfiess200 <michael_fiess@cable.comcast.com>
+---
+
+diff --git a/examples/pxScene2d/external/libnode-v10.15.3/src/node_crypto.cc b/examples/pxScene2d/external/libnode-v10.15.3/src/node_crypto.cc
+index 31dee9947..071fa4d25 100755
+--- a/examples/pxScene2d/external/libnode-v10.15.3/src/node_crypto.cc
++++ b/examples/pxScene2d/external/libnode-v10.15.3/src/node_crypto.cc
+@@ -84,7 +84,9 @@ using v8::String;
+ using v8::Uint32;
+ using v8::Undefined;
+ using v8::Value;
+-
++/* MODIFIED CODE BEGIN */
++#define OPENSSL_NO_OCB
++/* MODIFIED CODE END */
+ #ifdef OPENSSL_NO_OCB
+ # define IS_OCB_MODE(mode) false
+ #else
+@@ -109,6 +111,132 @@ struct OpenSSLBufferDeleter {
+ };
+ using OpenSSLBuffer = std::unique_ptr<char[], OpenSSLBufferDeleter>;
+ 
++/* MODIFIED CODE BEGIN */
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
++static void RSA_get0_key(const RSA* r, const BIGNUM** n, const BIGNUM** e,
++                         const BIGNUM** d) {
++  if (n != nullptr) {
++    *n = r->n;
++  }
++  if (e != nullptr) {
++    *e = r->e;
++  }
++  if (d != nullptr) {
++    *d = r->d;
++  }
++}
++
++static void DH_get0_pqg(const DH* dh, const BIGNUM** p, const BIGNUM** q,
++                        const BIGNUM** g) {
++  if (p != nullptr) {
++    *p = dh->p;
++  }
++  if (q != nullptr) {
++    *q = dh->q;
++  }
++  if (g != nullptr) {
++    *g = dh->g;
++  }
++}
++
++static int DH_set0_pqg(DH* dh, BIGNUM* p, BIGNUM* q, BIGNUM* g) {
++  if ((dh->p == nullptr && p == nullptr) ||
++      (dh->g == nullptr && g == nullptr)) {
++    return 0;
++  }
++
++  if (p != nullptr) {
++    BN_free(dh->p);
++    dh->p = p;
++  }
++  if (q != nullptr) {
++    BN_free(dh->q);
++    dh->q = q;
++  }
++  if (g != nullptr) {
++    BN_free(dh->g);
++    dh->g = g;
++  }
++
++  return 1;
++}
++
++static void DH_get0_key(const DH* dh, const BIGNUM** pub_key,
++                        const BIGNUM** priv_key) {
++  if (pub_key != nullptr) {
++    *pub_key = dh->pub_key;
++  }
++  if (priv_key != nullptr) {
++    *priv_key = dh->priv_key;
++  }
++}
++
++static int DH_set0_key(DH* dh, BIGNUM* pub_key, BIGNUM* priv_key) {
++  if (pub_key != nullptr) {
++    BN_free(dh->pub_key);
++    dh->pub_key = pub_key;
++  }
++  if (priv_key != nullptr) {
++    BN_free(dh->priv_key);
++    dh->priv_key = priv_key;
++  }
++
++  return 1;
++}
++
++static const SSL_METHOD* TLS_method() { return SSLv23_method(); }
++
++static void SSL_SESSION_get0_ticket(const SSL_SESSION* s,
++                                    const unsigned char** tick, size_t* len) {
++  *len = s->tlsext_ticklen;
++  if (tick != nullptr) {
++    *tick = s->tlsext_tick;
++  }
++}
++
++#define SSL_get_tlsext_status_type(ssl) (ssl->tlsext_status_type)
++
++static int X509_STORE_up_ref(X509_STORE* store) {
++  CRYPTO_add(&store->references, 1, CRYPTO_LOCK_X509_STORE);
++  return 1;
++}
++
++static int X509_up_ref(X509* cert) {
++  CRYPTO_add(&cert->references, 1, CRYPTO_LOCK_X509);
++  return 1;
++}
++
++#define EVP_MD_CTX_new EVP_MD_CTX_create
++#define EVP_MD_CTX_free EVP_MD_CTX_destroy
++
++HMAC_CTX* HMAC_CTX_new() {
++  HMAC_CTX* ctx = Malloc<HMAC_CTX>(1);
++  HMAC_CTX_init(ctx);
++  return ctx;
++}
++
++void HMAC_CTX_free(HMAC_CTX* ctx) {
++  if (ctx == nullptr) {
++    return;
++  }
++  HMAC_CTX_cleanup(ctx);
++  free(ctx);
++}
++
++void CRYPTO_clear_free(void *str, size_t num)
++{
++    if (str == NULL)
++        return;
++    if (num)
++        OPENSSL_cleanse(str, num);
++    CRYPTO_free(str);
++}
++
++# define OPENSSL_clear_free(addr, num) \
++        CRYPTO_clear_free(addr, num)
++		
++#endif  // OPENSSL_VERSION_NUMBER < 0x10100000L
++/* MODIFIED CODE END */
+ static const char* const root_certs[] = {
+ #include "node_root_certs.h"  // NOLINT(build/include_order)
+ };
+@@ -125,11 +253,21 @@ template void SSLWrap<TLSWrap>::AddMethods(Environment* env,
+ template void SSLWrap<TLSWrap>::ConfigureSecureContext(SecureContext* sc);
+ template void SSLWrap<TLSWrap>::SetSNIContext(SecureContext* sc);
+ template int SSLWrap<TLSWrap>::SetCACerts(SecureContext* sc);
++/* MODIFIED CODE BEGIN */
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
++template SSL_SESSION* SSLWrap<TLSWrap>::GetSessionCallback(
++    SSL* s,
++    unsigned char* key,
++    int len,
++    int* copy);
++#else
+ template SSL_SESSION* SSLWrap<TLSWrap>::GetSessionCallback(
+     SSL* s,
+     const unsigned char* key,
+     int len,
+     int* copy);
++#endif
++/* MODIFIED CODE END */
+ template int SSLWrap<TLSWrap>::NewSessionCallback(SSL* s,
+                                                   SSL_SESSION* sess);
+ template void SSLWrap<TLSWrap>::OnClientHello(
+@@ -397,7 +535,9 @@ void SecureContext::Init(const FunctionCallbackInfo<Value>& args) {
+ 
+   int min_version = 0;
+   int max_version = 0;
+-  const SSL_METHOD* method = TLS_method();
++// MODIFIED CODE BEGIN
++  const SSL_METHOD* method = SSLv23_method();
++// MODIFIED CODE END
+ 
+   if (args.Length() == 1 && args[0]->IsString()) {
+     const node::Utf8Value sslmethod(env->isolate(), args[0]);
+@@ -421,42 +561,58 @@ void SecureContext::Init(const FunctionCallbackInfo<Value>& args) {
+     } else if (strcmp(*sslmethod, "SSLv23_method") == 0) {
+       // noop
+     } else if (strcmp(*sslmethod, "SSLv23_server_method") == 0) {
+-      method = TLS_server_method();
++// MODIFIED CODE BEGIN
++      method = SSLv23_server_method();
++// MODIFIED CODE END
+     } else if (strcmp(*sslmethod, "SSLv23_client_method") == 0) {
+-      method = TLS_client_method();
++// MODIFIED CODE BEGIN
++      method = SSLv23_client_method();
++// MODIFIED CODE END
+     } else if (strcmp(*sslmethod, "TLSv1_method") == 0) {
+       min_version = TLS1_VERSION;
+       max_version = TLS1_VERSION;
+     } else if (strcmp(*sslmethod, "TLSv1_server_method") == 0) {
+       min_version = TLS1_VERSION;
+       max_version = TLS1_VERSION;
+-      method = TLS_server_method();
++// MODIFIED CODE BEGIN
++      method = SSLv23_server_method();
++// MODIFIED CODE END
+     } else if (strcmp(*sslmethod, "TLSv1_client_method") == 0) {
+       min_version = TLS1_VERSION;
+       max_version = TLS1_VERSION;
+-      method = TLS_client_method();
++// MODIFIED CODE BEGIN
++      method = SSLv23_client_method();
++// MODIFIED CODE END
+     } else if (strcmp(*sslmethod, "TLSv1_1_method") == 0) {
+       min_version = TLS1_1_VERSION;
+       max_version = TLS1_1_VERSION;
+     } else if (strcmp(*sslmethod, "TLSv1_1_server_method") == 0) {
+       min_version = TLS1_1_VERSION;
+       max_version = TLS1_1_VERSION;
+-      method = TLS_server_method();
++// MODIFIED CODE BEGIN
++      method = SSLv23_server_method();
++// MODIFIED CODE END
+     } else if (strcmp(*sslmethod, "TLSv1_1_client_method") == 0) {
+       min_version = TLS1_1_VERSION;
+       max_version = TLS1_1_VERSION;
+-      method = TLS_client_method();
++// MODIFIED CODE BEGIN
++      method = SSLv23_client_method();
++// MODIFIED CODE END
+     } else if (strcmp(*sslmethod, "TLSv1_2_method") == 0) {
+       min_version = TLS1_2_VERSION;
+       max_version = TLS1_2_VERSION;
+     } else if (strcmp(*sslmethod, "TLSv1_2_server_method") == 0) {
+       min_version = TLS1_2_VERSION;
+       max_version = TLS1_2_VERSION;
+-      method = TLS_server_method();
++// MODIFIED CODE BEGIN
++      method = SSLv23_server_method();
++// MODIFIED CODE END
+     } else if (strcmp(*sslmethod, "TLSv1_2_client_method") == 0) {
+       min_version = TLS1_2_VERSION;
+       max_version = TLS1_2_VERSION;
+-      method = TLS_client_method();
++// MODIFIED CODE BEGIN
++      method = SSLv23_client_method();
++// MODIFIED CODE END
+     } else {
+       return env->ThrowError("Unknown method");
+     }
+@@ -482,7 +638,9 @@ void SecureContext::Init(const FunctionCallbackInfo<Value>& args) {
+                                  SSL_SESS_CACHE_SERVER |
+                                  SSL_SESS_CACHE_NO_INTERNAL |
+                                  SSL_SESS_CACHE_NO_AUTO_CLEAR);
+-
++/* MODIFIED CODE BEGIN */
++#if OPENSSL_VERSION_NUMBER >= 0x10100000L
++/* MODIFIED CODE END */
+   SSL_CTX_set_min_proto_version(sc->ctx_.get(), min_version);
+ 
+   if (max_version == 0) {
+@@ -500,6 +658,9 @@ void SecureContext::Init(const FunctionCallbackInfo<Value>& args) {
+     return env->ThrowError("Error generating ticket keys");
+   }
+   SSL_CTX_set_tlsext_ticket_key_cb(sc->ctx_.get(), TicketCompatibilityCallback);
++/* MODIFIED CODE BEGIN */
++#endif
++/* MODIFIED CODE END */
+ }
+ 
+ 
+@@ -1184,10 +1345,21 @@ void SecureContext::GetTicketKeys(const FunctionCallbackInfo<Value>& args) {
+   ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
+ 
+   Local<Object> buff = Buffer::New(wrap->env(), 48).ToLocalChecked();
++/* MODIFIED CODE BEGIN */
++#if OPENSSL_VERSION_NUMBER >= 0x10100000L
++/* MODIFIED CODE END */
+   memcpy(Buffer::Data(buff), wrap->ticket_key_name_, 16);
+   memcpy(Buffer::Data(buff) + 16, wrap->ticket_key_hmac_, 16);
+   memcpy(Buffer::Data(buff) + 32, wrap->ticket_key_aes_, 16);
+-
++/* MODIFIED CODE BEGIN */
++#else
++  if (SSL_CTX_get_tlsext_ticket_keys(wrap->ctx_.get(),
++                                     Buffer::Data(buff),
++                                     Buffer::Length(buff)) != 1) {
++    return wrap->env()->ThrowError("Failed to fetch tls ticket keys");
++  }
++#endif
++/* MODIFIED CODE END */
+   args.GetReturnValue().Set(buff);
+ #endif  // !def(OPENSSL_NO_TLSEXT) && def(SSL_CTX_get_tlsext_ticket_keys)
+ }
+@@ -1209,11 +1381,21 @@ void SecureContext::SetTicketKeys(const FunctionCallbackInfo<Value>& args) {
+     return THROW_ERR_INVALID_ARG_VALUE(
+         env, "Ticket keys length must be 48 bytes");
+   }
+-
++/* MODIFIED CODE BEGIN */
++#if OPENSSL_VERSION_NUMBER >= 0x10100000L
++/* MODIFIED CODE END */
+   memcpy(wrap->ticket_key_name_, Buffer::Data(args[0]), 16);
+   memcpy(wrap->ticket_key_hmac_, Buffer::Data(args[0]) + 16, 16);
+   memcpy(wrap->ticket_key_aes_, Buffer::Data(args[0]) + 32, 16);
+-
++/* MODIFIED CODE BEGIN */
++#else
++  if (SSL_CTX_set_tlsext_ticket_keys(wrap->ctx_.get(),
++                                     Buffer::Data(args[0]),
++                                     Buffer::Length(args[0])) != 1) {
++    return env->ThrowError("Failed to fetch tls ticket keys");
++  }
++#endif
++/* MODIFIED CODE END */
+   args.GetReturnValue().Set(true);
+ #endif  // !def(OPENSSL_NO_TLSEXT) && def(SSL_CTX_get_tlsext_ticket_keys)
+ }
+@@ -1315,7 +1497,9 @@ int SecureContext::TicketKeyCallback(SSL* ssl,
+   return r;
+ }
+ 
+-
++/* MODIFIED CODE BEGIN */
++#if OPENSSL_VERSION_NUMBER >= 0x10100000L
++/* MODIFIED CODE END */
+ int SecureContext::TicketCompatibilityCallback(SSL* ssl,
+                                                unsigned char* name,
+                                                unsigned char* iv,
+@@ -1350,6 +1534,9 @@ int SecureContext::TicketCompatibilityCallback(SSL* ssl,
+   }
+   return 1;
+ }
++/* MODIFIED CODE BEGIN */
++#endif
++/* MODIFIED CODE END */
+ 
+ 
+ void SecureContext::CtxGetter(const FunctionCallbackInfo<Value>& info) {
+@@ -1425,12 +1612,21 @@ void SSLWrap<Base>::ConfigureSecureContext(SecureContext* sc) {
+   SSL_CTX_set_tlsext_status_arg(sc->ctx_.get(), nullptr);
+ }
+ 
+-
++/* MODIFIED CODE BEGIN */
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
++template <class Base>
++SSL_SESSION* SSLWrap<Base>::GetSessionCallback(SSL* s,
++                                               unsigned char* key,
++                                               int len,
++                                               int* copy) {
++#else
+ template <class Base>
+ SSL_SESSION* SSLWrap<Base>::GetSessionCallback(SSL* s,
+                                                const unsigned char* key,
+                                                int len,
+                                                int* copy) {
++#endif
++/* MODIFIED CODE END */
+   Base* w = static_cast<Base*>(SSL_get_app_data(s));
+ 
+   *copy = 0;
+@@ -2088,7 +2284,9 @@ void SSLWrap<Base>::GetEphemeralKeyInfo(
+       case EVP_PKEY_EC:
+       // TODO(shigeki) Change this to EVP_PKEY_X25519 and add EVP_PKEY_X448
+       // after upgrading to 1.1.1.
+-      case NID_X25519:
++      // MODIFIED CODE BEGIN
++      //case NID_X25519:
++      // MODIFIED CODE END
+         {
+           const char* curve_name;
+           if (kid == EVP_PKEY_EC) {
+@@ -2768,10 +2966,12 @@ bool CipherBase::InitAuthenticated(const char* cipher_type, int iv_len,
+   CHECK(IsAuthenticatedMode());
+   MarkPopErrorOnReturn mark_pop_error_on_return;
+ 
++// MODIFIED CODE BEGIN
+   if (!EVP_CIPHER_CTX_ctrl(ctx_.get(),
+-                           EVP_CTRL_AEAD_SET_IVLEN,
++                           EVP_CTRL_GCM_SET_IVLEN,
+                            iv_len,
+                            nullptr)) {
++// MODIFIED CODE END
+     env()->ThrowError("Invalid IV length");
+     return false;
+   }
+@@ -2794,8 +2994,10 @@ bool CipherBase::InitAuthenticated(const char* cipher_type, int iv_len,
+ #endif
+ 
+     // Tell OpenSSL about the desired length.
+-    if (!EVP_CIPHER_CTX_ctrl(ctx_.get(), EVP_CTRL_AEAD_SET_TAG, auth_tag_len,
++// MODIFIED CODE BEGIN
++    if (!EVP_CIPHER_CTX_ctrl(ctx_.get(), EVP_CTRL_GCM_SET_TAG, auth_tag_len,
+                              nullptr)) {
++// MODIFIED CODE END
+       env()->ThrowError("Invalid authentication tag length");
+       return false;
+     }
+@@ -2902,7 +3104,8 @@ void CipherBase::SetAuthTag(const FunctionCallbackInfo<Value>& args) {
+           "Valid GCM tag lengths are 4, 8, 12, 13, 14, 15, 16.", tag_len);
+       ProcessEmitDeprecationWarning(cipher->env(), msg, "DEP0090");
+     }
+-  } else if (mode == EVP_CIPH_OCB_MODE) {
++  }/* MODIFIED CODE BEGIN */
++   /* else if (mode == EVP_CIPH_OCB_MODE) {
+     // At this point, the tag length is already known and must match the
+     // length of the given authentication tag.
+     CHECK(mode == EVP_CIPH_CCM_MODE || IS_OCB_MODE(mode));
+@@ -2912,9 +3115,9 @@ void CipherBase::SetAuthTag(const FunctionCallbackInfo<Value>& args) {
+       snprintf(msg, sizeof(msg),
+           "Invalid authentication tag length: %u", tag_len);
+       return cipher->env()->ThrowError(msg);
+-    }
+-  }
+-
++    } 
++  }*/
++/* MODIFIED CODE END */
+   // Note: we don't use std::min() here to work around a header conflict.
+   cipher->auth_tag_len_ = tag_len;
+   cipher->auth_tag_state_ = kAuthTagKnown;
+@@ -2930,10 +3133,12 @@ void CipherBase::SetAuthTag(const FunctionCallbackInfo<Value>& args) {
+ 
+ bool CipherBase::MaybePassAuthTagToOpenSSL() {
+   if (auth_tag_state_ == kAuthTagKnown) {
++// MODIFIED CODE BEGIN
+     if (!EVP_CIPHER_CTX_ctrl(ctx_.get(),
+-                             EVP_CTRL_AEAD_SET_TAG,
++                             EVP_CTRL_GCM_SET_TAG,
+                              auth_tag_len_,
+                              reinterpret_cast<unsigned char*>(auth_tag_))) {
++// MODIFIED CODE END
+       return false;
+     }
+     auth_tag_state_ = kAuthTagPassedToOpenSSL;
+@@ -3132,9 +3337,11 @@ bool CipherBase::Final(unsigned char** out, int* out_len) {
+         CHECK(mode == EVP_CIPH_GCM_MODE);
+         auth_tag_len_ = sizeof(auth_tag_);
+       }
+-      CHECK_EQ(1, EVP_CIPHER_CTX_ctrl(ctx_.get(), EVP_CTRL_AEAD_GET_TAG,
++// MODIFIED CODE BEGIN
++      CHECK_EQ(1, EVP_CIPHER_CTX_ctrl(ctx_.get(), EVP_CTRL_GCM_GET_TAG,
+                       auth_tag_len_,
+                       reinterpret_cast<unsigned char*>(auth_tag_)));
++// MODIFIED CODE END
+     }
+   }
+ 
+@@ -4122,8 +4329,12 @@ void DiffieHellman::GenerateKeys(const FunctionCallbackInfo<Value>& args) {
+   const int size = BN_num_bytes(pub_key);
+   CHECK_GE(size, 0);
+   char* data = Malloc(size);
++// MODIFIED CODE BEGIN
++/*
+   CHECK_EQ(size,
+            BN_bn2binpad(pub_key, reinterpret_cast<unsigned char*>(data), size));
++*/
++// MODIFIED CODE END
+   args.GetReturnValue().Set(Buffer::New(env, data, size).ToLocalChecked());
+ }
+ 
+@@ -4142,8 +4353,12 @@ void DiffieHellman::GetField(const FunctionCallbackInfo<Value>& args,
+   const int size = BN_num_bytes(num);
+   CHECK_GE(size, 0);
+   char* data = Malloc(size);
++// MODIFIED CODE BEGIN
++/*
+   CHECK_EQ(size,
+            BN_bn2binpad(num, reinterpret_cast<unsigned char*>(data), size));
++*/
++// MODIFIED CODE END
+   args.GetReturnValue().Set(Buffer::New(env, data, size).ToLocalChecked());
+ }
+ 
+@@ -4287,11 +4502,16 @@ void DiffieHellman::SetPrivateKey(const FunctionCallbackInfo<Value>& args) {
+     OPENSSL_VERSION_NUMBER < 0x10100070L
+ // Older versions of OpenSSL 1.1.0 have a DH_set0_key which does not work for
+ // Node. See https://github.com/openssl/openssl/pull/4384.
+-#error "OpenSSL 1.1.0 revisions before 1.1.0g are not supported"
+-#endif
++// MODIFIED CODE BEGIN
++//#error "OpenSSL 1.1.0 revisions before 1.1.0g are not supported"
++#else
++// MODIFIED CODE END
+   SetKey(args,
+          [](DH* dh, BIGNUM* num) { return DH_set0_key(dh, nullptr, num); },
+          "Private key");
++// MODIFIED CODE BEGIN
++#endif
++// MODIFIED CODE END
+ }
+ 
+ 
+@@ -4480,7 +4700,9 @@ void ECDH::GetPrivateKey(const FunctionCallbackInfo<Value>& args) {
+ 
+   const int size = BN_num_bytes(b);
+   unsigned char* out = node::Malloc<unsigned char>(size);
+-  CHECK_EQ(size, BN_bn2binpad(b, out, size));
++// MODIFIED CODE BEGIN
++  //CHECK_EQ(size, BN_bn2binpad(b, out, size));
++// MODIFIED CODE END
+ 
+   Local<Object> buf =
+       Buffer::New(env, reinterpret_cast<char*>(out), size).ToLocalChecked();
+@@ -4736,7 +4958,9 @@ inline void PBKDF2(const FunctionCallbackInfo<Value>& args) {
+   rv.Set(job->ToResult());
+ }
+ 
+-
++// MODIFIED CODE BEGIN
++#define OPENSSL_NO_SCRYPT
++// MODIFIED CODE END
+ #ifndef OPENSSL_NO_SCRYPT
+ struct ScryptJob : public CryptoJob {
+   unsigned char* keybuf_data;
+@@ -4764,6 +4988,9 @@ struct ScryptJob : public CryptoJob {
+       errors.Capture();
+       return false;
+     }
++// MODIFIED CODE BEGIN
++    return false;
++// MODIFIED CODE END
+   }
+ 
+   inline void DoThreadPoolWork() override {
+@@ -5277,8 +5504,13 @@ void GenerateKeyPairEC(const FunctionCallbackInfo<Value>& args) {
+   }
+   CHECK(args[1]->IsUint32());
+   const uint32_t param_encoding = args[1].As<Int32>()->Value();
+-  CHECK(param_encoding == OPENSSL_EC_NAMED_CURVE ||
+-        param_encoding == OPENSSL_EC_EXPLICIT_CURVE);
++// MODIFIED CODE BEGIN
++#if OPENSSL_VERSION_NUMBER >= 0x10100000L
++  CHECK(param_encoding == OPENSSL_EC_NAMED_CURVE || param_encoding == OPENSSL_EC_EXPLICIT_CURVE);
++#else
++  CHECK(param_encoding == OPENSSL_EC_NAMED_CURVE);
++#endif
++// MODIFIED CODE END
+   std::unique_ptr<KeyPairGenerationConfig> config(
+       new ECKeyPairGenerationConfig(curve_nid, param_encoding));
+   GenerateKeyPair(args, 2, std::move(config));
+@@ -5699,7 +5931,11 @@ void Initialize(Local<Object> target,
+   env->SetMethod(target, "generateKeyPairDSA", GenerateKeyPairDSA);
+   env->SetMethod(target, "generateKeyPairEC", GenerateKeyPairEC);
+   NODE_DEFINE_CONSTANT(target, OPENSSL_EC_NAMED_CURVE);
++// MODIFIED CODE BEGIN
++#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+   NODE_DEFINE_CONSTANT(target, OPENSSL_EC_EXPLICIT_CURVE);
++#endif
++// MODIFIED CODE END
+   NODE_DEFINE_CONSTANT(target, PK_ENCODING_PKCS1);
+   NODE_DEFINE_CONSTANT(target, PK_ENCODING_PKCS8);
+   NODE_DEFINE_CONSTANT(target, PK_ENCODING_SPKI);
+diff --git a/examples/pxScene2d/external/libnode-v10.15.3/src/node_crypto.h b/examples/pxScene2d/external/libnode-v10.15.3/src/node_crypto.h
+index ec784ff..cdd5f13 100755
+--- a/examples/pxScene2d/external/libnode-v10.15.3/src/node_crypto.h
++++ b/examples/pxScene2d/external/libnode-v10.15.3/src/node_crypto.h
+@@ -79,7 +79,13 @@ using SSLSessionPointer = DeleteFnPtr<SSL_SESSION, SSL_SESSION_free>;
+ using SSLPointer = DeleteFnPtr<SSL, SSL_free>;
+ using EVPKeyPointer = DeleteFnPtr<EVP_PKEY, EVP_PKEY_free>;
+ using EVPKeyCtxPointer = DeleteFnPtr<EVP_PKEY_CTX, EVP_PKEY_CTX_free>;
++/* MODIFIED CODE BEGIN */
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
++using EVPMDPointer = DeleteFnPtr<EVP_MD_CTX, EVP_MD_CTX_destroy>;
++#else
+ using EVPMDPointer = DeleteFnPtr<EVP_MD_CTX, EVP_MD_CTX_free>;
++#endif
++/* MODIFIED CODE END */
+ using RSAPointer = DeleteFnPtr<RSA, RSA_free>;
+ using BignumPointer = DeleteFnPtr<BIGNUM, BN_free>;
+ using NetscapeSPKIPointer = DeleteFnPtr<NETSCAPE_SPKI, NETSCAPE_SPKI_free>;
+@@ -452,7 +458,13 @@ class Hmac : public BaseObject {
+   }
+ 
+  private:
++/* MODIFIED CODE BEGIN */
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
++DeleteFnPtr<HMAC_CTX, HMAC_CTX_cleanup> ctx_;
++#else
+   DeleteFnPtr<HMAC_CTX, HMAC_CTX_free> ctx_;
++#endif
++/* MODIFIED CODE END */
+ };
+ 
+ class Hash : public BaseObject {

@@ -104,12 +104,12 @@ HOST_QEMU_COMPARE_VERSION = $(shell test $(HOST_QEMU_HOST_SYSTEM_VERSION) -ge $(
 # built with kernel headers that are older or the same as the kernel
 # version running on the host machine.
 #
-
-ifeq ($(BR_BUILDING),y)
-ifneq ($(HOST_QEMU_COMPARE_VERSION),OK)
-$(error "Refusing to build qemu-user: target Linux version newer than host's.")
-endif
-endif # BR_BUILDING
+# Commenting the below blocks to get build on lowet host version as well
+#ifeq ($(BR_BUILDING),y) 
+#ifneq ($(HOST_QEMU_COMPARE_VERSION),OK)
+#$(error "Refusing to build qemu-user: target Linux version newer than host's.")
+#endif
+#endif # BR_BUILDING
 
 else # BR2_PACKAGE_HOST_QEMU_LINUX_USER_MODE
 HOST_QEMU_OPTS += --disable-linux-user
