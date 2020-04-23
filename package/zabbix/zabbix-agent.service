@@ -1,0 +1,17 @@
+[Unit]
+Description=Zabbix Agent Daemon
+After=network.target
+ 
+[Service]
+Type=forking
+ExecStart=/usr/sbin/zabbix_agentd
+ExecReload=/usr/sbin/zabbix_agentd -R config_cache_reload
+RuntimeDirectory=zabbix
+PIDFile=/run/zabbix/zabbix_agentd.pid
+User=zabbix
+Group=zabbix
+WatchdogSec=30s
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
