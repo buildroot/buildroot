@@ -10,7 +10,8 @@ if BR2_PACKAGE_EBTABLES
 
 config BR2_PACKAGE_EBTABLES_UTILS_SAVE
 	bool "ebtables save"
-	depends on BR2_PACKAGE_BASH # runtime
+	select BR2_PACKAGE_BASH # runtime
+	select BR2_PACKAGE_BUSYBOX_SHOW_OTHERS # bash
 	help
 	  Install the ebtables-legacy-save tool
 
