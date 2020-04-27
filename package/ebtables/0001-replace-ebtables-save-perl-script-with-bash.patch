@@ -16,6 +16,10 @@ Upstream:
 https://github.com/openembedded/meta-openembedded/commit/7f723007364ba79de05447671e83d4eefb3097dc
 
 Signed-off-by: Matthew Weber <matthew.weber@rockwellcollins.com>
+[ryanbarnett3@gmail.com:
+ - changed EBTABLES executable to /usr/sbin/ebtables-legacy
+]
+Signed-off-by: Ryan Barnett <ryanbarnett3@gmail.com>
 ---
  ebtables-save.sh | 43 +++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 43 insertions(+)
@@ -29,7 +33,7 @@ index 0000000..2d7fc4e
 @@ -0,0 +1,43 @@
 +#!/bin/bash
 +
-+EBTABLES="/sbin/ebtables"
++EBTABLES="/usr/sbin/ebtables-legacy"
 +
 +[ -x "$EBTABLES" ] || exit 1
 +
