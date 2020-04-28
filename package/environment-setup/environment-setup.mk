@@ -20,6 +20,8 @@ define HOST_ENVIRONMENT_SETUP_INSTALL_CMDS
 		--sysconfdir=/etc \
 		--localstatedir=/var \
 		--program-prefix=\"\n" >> $(ENVIRONMENT_SETUP_FILE)
+	printf "alias configure=\"./configure \$${CONFIGURE_FLAGS}\"\n" \
+		>> $(ENVIRONMENT_SETUP_FILE)
 	$(SED) 's%$(HOST_DIR)%\$$SDK_PATH%g' \
 		-e 's%$(HOST_DIR)/bin/%%g' \
 		-e '/^export "PATH=/c\' \
