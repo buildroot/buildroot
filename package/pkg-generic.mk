@@ -61,7 +61,7 @@ GLOBAL_INSTRUMENTATION_HOOKS += step_time
 # $(2): suffix of file (optional)
 define pkg_size_before
 	cd $(1); \
-	LC_ALL=C find . \( -type f -o -type l \) -printf '%T@:%i:%#m:%y:%s,%p\n' \
+	LC_ALL=C find . -not -path './$(STAGING_SUBDIR)/*' \( -type f -o -type l \) -printf '%T@:%i:%#m:%y:%s,%p\n' \
 		| LC_ALL=C sort > $($(PKG)_DIR)/.files-list$(2).before
 endef
 
@@ -69,7 +69,7 @@ endef
 # $(2): suffix of file (optional)
 define pkg_size_after
 	cd $(1); \
-	LC_ALL=C find . \( -type f -o -type l \) -printf '%T@:%i:%#m:%y:%s,%p\n' \
+	LC_ALL=C find . -not -path './$(STAGING_SUBDIR)/*' \( -type f -o -type l \) -printf '%T@:%i:%#m:%y:%s,%p\n' \
 		| LC_ALL=C sort > $($(PKG)_DIR)/.files-list$(2).after
 	LC_ALL=C comm -13 \
 		$($(PKG)_DIR)/.files-list$(2).before \
