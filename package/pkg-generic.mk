@@ -76,7 +76,7 @@ define step_pkg_size_after
 	LC_ALL=C comm -13 \
 		$($(PKG)_DIR)/.files-list$(3).before \
 		$($(PKG)_DIR)/.files-list$(3).after \
-		| sed -r -e 's/^[^,]+/$(1)/' \
+		| sed -r -e 's/^[^,]+/$($(PKG)_NAME)/' \
 		> $($(PKG)_DIR)/.files-list$(3).txt
 	rm -f $($(PKG)_DIR)/.files-list$(3).before
 	rm -f $($(PKG)_DIR)/.files-list$(3).after
