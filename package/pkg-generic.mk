@@ -59,7 +59,7 @@ GLOBAL_INSTRUMENTATION_HOOKS += step_time
 
 # $(1): base directory to search in
 # $(2): suffix of file (optional)
-define step_pkg_size_before
+define pkg_size_before
 	cd $(1); \
 	LC_ALL=C find . \( -type f -o -type l \) -printf '%T@:%i:%#m:%y:%s,%p\n' \
 		| LC_ALL=C sort > $($(PKG)_DIR)/.files-list$(2).before
@@ -67,7 +67,7 @@ endef
 
 # $(1): base directory to search in
 # $(2): suffix of file (optional)
-define step_pkg_size_after
+define pkg_size_after
 	cd $(1); \
 	LC_ALL=C find . \( -type f -o -type l \) -printf '%T@:%i:%#m:%y:%s,%p\n' \
 		| LC_ALL=C sort > $($(PKG)_DIR)/.files-list$(2).after
@@ -80,34 +80,13 @@ define step_pkg_size_after
 	rm -f $($(PKG)_DIR)/.files-list$(2).after
 endef
 
-define step_pkg_size
-	$(if $(filter start-install-target,$(1)-$(2)),\
-		$(call step_pkg_size_before,$(TARGET_DIR)))
-	$(if $(filter start-install-staging,$(1)-$(2)),\
-		$(call step_pkg_size_before,$(STAGING_DIR),-staging))
-	$(if $(filter start-install-host,$(1)-$(2)),\
-		$(call step_pkg_size_before,$(HOST_DIR),-host))
-
-	$(if $(filter end-install-target,$(1)-$(2)),\
-		$(call step_pkg_size_after,$(TARGET_DIR)))
-	$(if $(filter end-install-staging,$(1)-$(2)),\
-		$(call step_pkg_size_after,$(STAGING_DIR),-staging))
-	$(if $(filter end-install-host,$(1)-$(2)),\
-		$(call step_pkg_size_after,$(HOST_DIR),-host))
-endef
-GLOBAL_INSTRUMENTATION_HOOKS += step_pkg_size
-
-# Relies on step_pkg_size, so must be after
 define check_bin_arch
-	$(if $(filter end-install-target,$(1)-$(2)),\
-		support/scripts/check-bin-arch -p $(3) \
-			-l $($(PKG)_DIR)/.files-list.txt \
-			$(foreach i,$($(PKG)_BIN_ARCH_EXCLUDE),-i "$(i)") \
-			-r $(TARGET_READELF) \
-			-a $(BR2_READELF_ARCH_NAME))
+	support/scripts/check-bin-arch -p $($(PKG)_NAME) \
+		-l $($(PKG)_DIR)/.files-list.txt \
+		$(foreach i,$($(PKG)_BIN_ARCH_EXCLUDE),-i "$(i)") \
+		-r $(TARGET_READELF) \
+		-a $(BR2_READELF_ARCH_NAME)
 endef
-
-GLOBAL_INSTRUMENTATION_HOOKS += check_bin_arch
 
 # This hook checks that host packages that need libraries that we build
 # have a proper DT_RPATH or DT_RUNPATH tag
@@ -253,6 +232,9 @@ $(BUILD_DIR)/%/.stamp_configured:
 	@$(call MESSAGE,"Configuring")
 	$(Q)mkdir -p $(HOST_DIR) $(TARGET_DIR) $(STAGING_DIR) $(BINARIES_DIR)
 	$(call prepare-per-package-directory,$($(PKG)_FINAL_DEPENDENCIES))
+	@$(call pkg_size_before,$(TARGET_DIR))
+	@$(call pkg_size_before,$(STAGING_DIR),-staging)
+	@$(call pkg_size_before,$(HOST_DIR),-host)
 	$(call fixup-libtool-files,$(NAME),$(STAGING_DIR))
 	$(foreach hook,$($(PKG)_PRE_CONFIGURE_HOOKS),$(call $(hook))$(sep))
 	$($(PKG)_CONFIGURE_CMDS)
@@ -374,6 +356,10 @@ $(BUILD_DIR)/%/.stamp_target_installed:
 # Final installation step, completed when all installation steps
 # (host, images, staging, target) have completed
 $(BUILD_DIR)/%/.stamp_installed:
+	@$(call pkg_size_after,$(TARGET_DIR))
+	@$(call pkg_size_after,$(STAGING_DIR),-staging)
+	@$(call pkg_size_after,$(HOST_DIR),-host)
+	@$(call check_bin_arch)
 	$(Q)touch $@
 
 # Remove package sources
