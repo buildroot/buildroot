@@ -1,0 +1,206 @@
+From 966bd2da40f3dc26177e20d08fb3b1d80171c912 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
+Date: Fri, 11 Oct 2019 13:03:37 +0000
+Subject: [PATCH 8/9] Improved video decoder stopping on flushing
+
+Now the waiting for an OMX buffer has a timeout and flushing conditions are
+checked in more places: when the OMX buffer acquisition times out, and on
+port reconfiguration errors.
+
+This solves an issue with HLS seeks happening too soon (before the initial
+video quality change happens). Before, the old video decoding chain was
+properly shut down on seek flushing, but the new video decoding chain (still
+disconnected) stalls when the flush unblocks the allocation query retained by
+decodebin, the query returns as failed (the decoder is disconnected from
+downstream and the query can't succeed), the caps negotiation tries to
+negotiate video/x-raw instead of video/x-raw(memory:GLMemory) buffers (required
+by the video sink) and everything collapses.
+
+With this fix, the flush stops the wait for a new buffer (no stall anymore) in
+the new decoding chain thanks to the timeout. Flushing state is checked before
+considering the allocation query failure as a real failure, and incase the src
+pad was actually flushing the whole streaming task in the src pad is aborted
+(instead of wrongly trying to negotiate raw video). Flushing state is also
+checked when acquiring new input OMX buffers for the decoder, so operations can
+be stopped in an ordered way.
+---
+ omx/gstomx.c         | 48 +++++++++++++++++++++++++++++++++-----------
+ omx/gstomx.h         |  1 +
+ omx/gstomxvideodec.c | 22 ++++++++++++++++++--
+ 3 files changed, 57 insertions(+), 14 deletions(-)
+
+diff --git a/omx/gstomx.c b/omx/gstomx.c
+index 038ce32..b9fb70f 100644
+--- a/omx/gstomx.c
++++ b/omx/gstomx.c
+@@ -2076,12 +2076,20 @@ gst_omx_port_update_port_definition (GstOMXPort * port,
+ GstOMXAcquireBufferReturn
+ gst_omx_port_acquire_buffer (GstOMXPort * port, GstOMXBuffer ** buf,
+     GstOMXWait wait)
++{
++  return gst_omx_port_acquire_buffer_timeout (port, buf,
++    wait == GST_OMX_WAIT ? GST_CLOCK_TIME_NONE : 0);
++}
++
++/* NOTE: Uses comp->lock and comp->messages_lock */
++GstOMXAcquireBufferReturn
++gst_omx_port_acquire_buffer_timeout (GstOMXPort * port, GstOMXBuffer ** buf,
++    gint64 timeout)
+ {
+   GstOMXAcquireBufferReturn ret = GST_OMX_ACQUIRE_BUFFER_ERROR;
+   GstOMXComponent *comp;
+   OMX_ERRORTYPE err;
+   GstOMXBuffer *_buf = NULL;
+-  gint64 timeout = GST_CLOCK_TIME_NONE;
+ 
+   g_return_val_if_fail (port != NULL, GST_OMX_ACQUIRE_BUFFER_ERROR);
+   g_return_val_if_fail (!port->tunneled, GST_OMX_ACQUIRE_BUFFER_ERROR);
+@@ -2098,11 +2106,6 @@ gst_omx_port_acquire_buffer (GstOMXPort * port, GstOMXBuffer ** buf,
+ retry:
+   gst_omx_component_handle_messages (comp);
+ 
+-  /* If we are in the case where we waited for a buffer after EOS,
+-   * make sure we don't do that again */
+-  if (timeout != -1)
+-    timeout = -2;
+-
+   /* Check if the component is in an error state */
+   if ((err = comp->last_error) != OMX_ErrorNone) {
+     GST_ERROR_OBJECT (comp->parent, "Component %s is in error state: %s",
+@@ -2126,12 +2129,24 @@ retry:
+    */
+   if (port->port_def.eDir == OMX_DirInput) {
+     if (comp->pending_reconfigure_outports) {
++      gboolean signaled;
+       gst_omx_component_handle_messages (comp);
+       while (comp->pending_reconfigure_outports &&
+           (err = comp->last_error) == OMX_ErrorNone && !port->flushing) {
+         GST_DEBUG_OBJECT (comp->parent,
+             "Waiting for %s output ports to reconfigure", comp->name);
+-        gst_omx_component_wait_message (comp, GST_CLOCK_TIME_NONE);
++        signaled = gst_omx_component_wait_message (comp, timeout);
++        if (timeout == GST_CLOCK_TIME_NONE || signaled) {
++          goto retry;
++        } else {
++          ret = GST_OMX_ACQUIRE_BUFFER_NO_AVAILABLE;
++
++          GST_DEBUG_OBJECT (comp->parent, "Couldn't acquire buffer from %s port %u after %" G_GINT64_FORMAT
++              " nsec, timeout trying to reconfigure the port (%s)",
++              comp->name, port->index, timeout, signaled ? "signaled" : "not signaled");
++
++          goto timeout;
++        }
+         gst_omx_component_handle_messages (comp);
+       }
+       goto retry;
+@@ -2180,7 +2195,7 @@ retry:
+       goto done;
+     }
+ 
+-    if (comp->hacks & GST_OMX_HACK_SIGNALS_PREMATURE_EOS && timeout != -2) {
++    if (comp->hacks & GST_OMX_HACK_SIGNALS_PREMATURE_EOS && timeout == 0) {
+       timeout = 33 * GST_MSECOND;
+ 
+       GST_DEBUG_OBJECT (comp->parent, "%s output port %u is EOS but waiting "
+@@ -2205,18 +2220,23 @@ retry:
+    * or the port needs to be reconfigured.
+    */
+   if (g_queue_is_empty (&port->pending_buffers)) {
++    gboolean signaled;
++
+     GST_DEBUG_OBJECT (comp->parent, "Queue of %s port %u is empty",
+         comp->name, port->index);
+ 
+-    if (wait == GST_OMX_WAIT) {
+-      gst_omx_component_wait_message (comp,
+-          timeout == -2 ? GST_CLOCK_TIME_NONE : timeout);
++    signaled = gst_omx_component_wait_message (comp, timeout);
+ 
++    if (timeout == GST_CLOCK_TIME_NONE || signaled) {
+       /* And now check everything again and maybe get a buffer */
+       goto retry;
+     } else {
+       ret = GST_OMX_ACQUIRE_BUFFER_NO_AVAILABLE;
+-      goto done;
++
++      GST_DEBUG_OBJECT (comp->parent, "Couldn't acquire buffer from %s port %u after %" G_GINT64_FORMAT " nsec timeout (%s)",
++          comp->name, port->index, timeout, signaled ? "signaled" : "not signaled");
++
++      goto timeout;
+     }
+   }
+ 
+@@ -2238,6 +2258,10 @@ done:
+       ret);
+ 
+   return ret;
++
++timeout:
++  g_mutex_unlock (&comp->lock);
++  return ret;
+ }
+ 
+ /* NOTE: Uses comp->lock and comp->messages_lock */
+diff --git a/omx/gstomx.h b/omx/gstomx.h
+index 4b61343..65c620a 100644
+--- a/omx/gstomx.h
++++ b/omx/gstomx.h
+@@ -450,6 +450,7 @@ OMX_ERRORTYPE     gst_omx_port_get_port_definition (GstOMXPort * port, OMX_PARAM
+ OMX_ERRORTYPE     gst_omx_port_update_port_definition (GstOMXPort *port, OMX_PARAM_PORTDEFINITIONTYPE *port_definition);
+ 
+ GstOMXAcquireBufferReturn gst_omx_port_acquire_buffer (GstOMXPort *port, GstOMXBuffer **buf, GstOMXWait wait);
++GstOMXAcquireBufferReturn gst_omx_port_acquire_buffer_timeout (GstOMXPort *port, GstOMXBuffer **buf, gint64 timeout);
+ OMX_ERRORTYPE     gst_omx_port_release_buffer (GstOMXPort *port, GstOMXBuffer *buf);
+ 
+ OMX_ERRORTYPE     gst_omx_port_set_flushing (GstOMXPort *port, GstClockTime timeout, gboolean flush);
+diff --git a/omx/gstomxvideodec.c b/omx/gstomxvideodec.c
+index 23d42dc..ccf7ba7 100644
+--- a/omx/gstomxvideodec.c
++++ b/omx/gstomxvideodec.c
+@@ -1648,8 +1648,14 @@ gst_omx_video_dec_loop (GstOMXVideoDec * self)
+     if (acq_return == GST_OMX_ACQUIRE_BUFFER_RECONFIGURE) {
+       /* We have the possibility to reconfigure everything now */
+       err = gst_omx_video_dec_reconfigure_output_port (self);
+-      if (err != OMX_ErrorNone)
++      if (err != OMX_ErrorNone) {
++        if (GST_PAD_IS_FLUSHING(GST_VIDEO_DECODER_SRC_PAD(GST_VIDEO_DECODER(self)))) {
++          GST_DEBUG_OBJECT (self, "Src pad is flushing, ignoring reconfigure result and stopping task");
++          goto flushing;
++        }
++
+         goto reconfigure_error;
++      }
+     } else {
+       /* Just update caps */
+       GST_VIDEO_DECODER_STREAM_LOCK (self);
+@@ -2803,7 +2809,7 @@ gst_omx_video_dec_handle_frame (GstVideoDecoder * decoder,
+      * _loop() can't call _finish_frame() and we might block forever
+      * because no input buffers are released */
+     GST_VIDEO_DECODER_STREAM_UNLOCK (self);
+-    acq_ret = gst_omx_port_acquire_buffer (port, &buf, GST_OMX_WAIT);
++    acq_ret = gst_omx_port_acquire_buffer_timeout (port, &buf, 1 * GST_SECOND);
+ 
+     if (acq_ret == GST_OMX_ACQUIRE_BUFFER_ERROR) {
+       GST_VIDEO_DECODER_STREAM_LOCK (self);
+@@ -2868,6 +2874,18 @@ gst_omx_video_dec_handle_frame (GstVideoDecoder * decoder,
+       /* Now get a new buffer and fill it */
+       GST_VIDEO_DECODER_STREAM_LOCK (self);
+       continue;
++    } else if (acq_ret == GST_OMX_ACQUIRE_BUFFER_NO_AVAILABLE) {
++      GST_VIDEO_DECODER_STREAM_LOCK (self);
++      if (self->downstream_flow_ret == GST_FLOW_FLUSHING) {
++        GST_DEBUG_OBJECT (self, "Flushing, not waiting to acquire an OMX input buffer anymore");
++        goto flushing;
++      } else if (self->downstream_flow_ret == GST_FLOW_ERROR) {
++        GST_DEBUG_OBJECT (self, "Flow error, not waiting to acquire an OMX input buffer anymore");
++        goto flow_error;
++      } else {
++        GST_DEBUG_OBJECT (self, "Timeout acquiring OMX input buffer, retrying");
++        continue;
++      }
+     }
+     GST_VIDEO_DECODER_STREAM_LOCK (self);
+ 
+-- 
+2.17.1
+
