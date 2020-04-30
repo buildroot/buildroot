@@ -55,39 +55,6 @@ define step_time
 endef
 GLOBAL_INSTRUMENTATION_HOOKS += step_time
 
-# Hooks to collect statistics about installed files
-
-# $(1): base directory to search in
-# $(2): suffix of file (optional)
-define pkg_size_before
-	cd $(1); \
-	LC_ALL=C find . -not -path './$(STAGING_SUBDIR)/*' \( -type f -o -type l \) -printf '%T@:%i:%#m:%y:%s,%p\n' \
-		| LC_ALL=C sort > $($(PKG)_DIR)/.files-list$(2).before
-endef
-
-# $(1): base directory to search in
-# $(2): suffix of file (optional)
-define pkg_size_after
-	cd $(1); \
-	LC_ALL=C find . -not -path './$(STAGING_SUBDIR)/*' \( -type f -o -type l \) -printf '%T@:%i:%#m:%y:%s,%p\n' \
-		| LC_ALL=C sort > $($(PKG)_DIR)/.files-list$(2).after
-	LC_ALL=C comm -13 \
-		$($(PKG)_DIR)/.files-list$(2).before \
-		$($(PKG)_DIR)/.files-list$(2).after \
-		| sed -r -e 's/^[^,]+/$($(PKG)_NAME)/' \
-		> $($(PKG)_DIR)/.files-list$(2).txt
-	rm -f $($(PKG)_DIR)/.files-list$(2).before
-	rm -f $($(PKG)_DIR)/.files-list$(2).after
-endef
-
-define check_bin_arch
-	support/scripts/check-bin-arch -p $($(PKG)_NAME) \
-		-l $($(PKG)_DIR)/.files-list.txt \
-		$(foreach i,$($(PKG)_BIN_ARCH_EXCLUDE),-i "$(i)") \
-		-r $(TARGET_READELF) \
-		-a $(BR2_READELF_ARCH_NAME)
-endef
-
 # This hook checks that host packages that need libraries that we build
 # have a proper DT_RPATH or DT_RUNPATH tag
 define check_host_rpath
@@ -134,6 +101,39 @@ define fixup-libtool-files
 		$(SED) "s:$(PER_PACKAGE_DIR)/[^/]\+/:$(PER_PACKAGE_DIR)/$(1)/:g"
 endef
 endif
+
+# Functions to collect statistics about installed files
+
+# $(1): base directory to search in
+# $(2): suffix of file (optional)
+define pkg_size_before
+	cd $(1); \
+	LC_ALL=C find . -not -path './$(STAGING_SUBDIR)/*' \( -type f -o -type l \) -printf '%T@:%i:%#m:%y:%s,%p\n' \
+		| LC_ALL=C sort > $($(PKG)_DIR)/.files-list$(2).before
+endef
+
+# $(1): base directory to search in
+# $(2): suffix of file (optional)
+define pkg_size_after
+	cd $(1); \
+	LC_ALL=C find . -not -path './$(STAGING_SUBDIR)/*' \( -type f -o -type l \) -printf '%T@:%i:%#m:%y:%s,%p\n' \
+		| LC_ALL=C sort > $($(PKG)_DIR)/.files-list$(2).after
+	LC_ALL=C comm -13 \
+		$($(PKG)_DIR)/.files-list$(2).before \
+		$($(PKG)_DIR)/.files-list$(2).after \
+		| sed -r -e 's/^[^,]+/$($(PKG)_NAME)/' \
+		> $($(PKG)_DIR)/.files-list$(2).txt
+	rm -f $($(PKG)_DIR)/.files-list$(2).before
+	rm -f $($(PKG)_DIR)/.files-list$(2).after
+endef
+
+define check_bin_arch
+	support/scripts/check-bin-arch -p $($(PKG)_NAME) \
+		-l $($(PKG)_DIR)/.files-list.txt \
+		$(foreach i,$($(PKG)_BIN_ARCH_EXCLUDE),-i "$(i)") \
+		-r $(TARGET_READELF) \
+		-a $(BR2_READELF_ARCH_NAME)
+endef
 
 ################################################################################
 # Implicit targets -- produce a stamp file for each step of a package build
