@@ -45,6 +45,12 @@ config BR2_PACKAGE_WPEWEBKIT_BUILD_CUSTOM_VERSION
 	help
 	  Build a custom version of WPEWebKit
 
+config BR2_PACKAGE_WPEWEBKIT_ALTERNATIVE_EXEC_PATH
+	string "Alternative exec path"
+	default ""
+	help
+	  WPEWebKit alternative exec path
+
 menu "Build type and debug options"
 
 choice
