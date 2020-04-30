@@ -1,12 +1,13 @@
 From 24a352fc99ebde22235b05b18615817ef7f4263c Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Date: Sun, 26 Apr 2020 15:33:39 +0200
-Subject: [PATCH] Use __WORDSIZE to define RADIX_BITS
+Subject: [PATCH] Use LONG_BIT to define RADIX_BITS
 
 This allows to avoid having to support each CPU architecture
 individually.
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: Vincent Fazio <vfazio@gmail.com>
 ---
  src/LibSupport.h | 17 +++--------------
  1 file changed, 3 insertions(+), 14 deletions(-)
@@ -35,7 +36,7 @@ index b2e6a51..f064d20 100644
 -#endif // RADIX_BITS
 +#include <limits.h>
 +
-+#define RADIX_BITS __WORDSIZE
++#define RADIX_BITS LONG_BIT
  
  // These macros use the selected libraries to the proper include files.
  #define LIB_QUOTE(_STRING_) #_STRING_
