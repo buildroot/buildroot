@@ -374,6 +374,11 @@ $(BUILD_DIR)/%/.stamp_target_installed:
 	@$(call step_end,install-target)
 	$(Q)touch $@
 
+# Final installation step, completed when all installation steps
+# (host, images, staging, target) have completed
+$(BUILD_DIR)/%/.stamp_installed:
+	$(Q)touch $@
+
 # Remove package sources
 $(BUILD_DIR)/%/.stamp_dircleaned:
 	$(if $(BR2_PER_PACKAGE_DIRECTORIES),rm -Rf $(PER_PACKAGE_DIR)/$(NAME))
@@ -705,6 +710,7 @@ $(2)_FINAL_RECURSIVE_RDEPENDENCIES = $$(sort \
 	$$($(2)_FINAL_RECURSIVE_RDEPENDENCIES__X))
 
 # define sub-target stamps
+$(2)_TARGET_INSTALL =           $$($(2)_DIR)/.stamp_installed
 $(2)_TARGET_INSTALL_TARGET =	$$($(2)_DIR)/.stamp_target_installed
 $(2)_TARGET_INSTALL_STAGING =	$$($(2)_DIR)/.stamp_staging_installed
 $(2)_TARGET_INSTALL_IMAGES =	$$($(2)_DIR)/.stamp_images_installed
@@ -760,14 +766,23 @@ endif
 
 # human-friendly targets and target sequencing
 $(1):			$(1)-install
+$(1)-install:		$$($(2)_TARGET_INSTALL)
 
 ifeq ($$($(2)_TYPE),host)
-$(1)-install:	        $(1)-install-host
+$$($(2)_TARGET_INSTALL): $$($(2)_TARGET_INSTALL_HOST)
 else
 $(2)_INSTALL_STAGING	?= NO
 $(2)_INSTALL_IMAGES	?= NO
 $(2)_INSTALL_TARGET	?= YES
-$(1)-install:		$(1)-install-staging $(1)-install-target $(1)-install-images
+ifeq ($$($(2)_INSTALL_TARGET),YES)
+$$($(2)_TARGET_INSTALL): $$($(2)_TARGET_INSTALL_TARGET)
+endif
+ifeq ($$($(2)_INSTALL_STAGING),YES)
+$$($(2)_TARGET_INSTALL): $$($(2)_TARGET_INSTALL_STAGING)
+endif
+ifeq ($$($(2)_INSTALL_IMAGES),YES)
+$$($(2)_TARGET_INSTALL): $$($(2)_TARGET_INSTALL_IMAGES)
+endif
 endif
 
 ifeq ($$($(2)_INSTALL_TARGET),YES)
@@ -917,6 +932,7 @@ $(1)-clean-for-reinstall:
 ifneq ($$($(2)_OVERRIDE_SRCDIR),)
 			rm -f $$($(2)_TARGET_RSYNC)
 endif
+			rm -f $$($(2)_TARGET_INSTALL)
 			rm -f $$($(2)_TARGET_INSTALL_STAGING)
 			rm -f $$($(2)_TARGET_INSTALL_TARGET)
 			rm -f $$($(2)_TARGET_INSTALL_IMAGES)
@@ -936,6 +952,7 @@ $(1)-reconfigure:	$(1)-clean-for-reconfigure $(1)
 
 # define the PKG variable for all targets, containing the
 # uppercase package variable prefix
+$$($(2)_TARGET_INSTALL):		PKG=$(2)
 $$($(2)_TARGET_INSTALL_TARGET):		PKG=$(2)
 $$($(2)_TARGET_INSTALL_STAGING):	PKG=$(2)
 $$($(2)_TARGET_INSTALL_IMAGES):		PKG=$(2)
