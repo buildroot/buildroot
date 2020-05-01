@@ -43,6 +43,7 @@ config BR2_PACKAGE_COG_PLATFORM_DRM
 	depends on BR2_PACKAGE_MESA3D_OPENGL_EGL # gbm
 	select BR2_PACKAGE_LIBDRM
 	select BR2_PACKAGE_LIBINPUT
+	select BR2_PACKAGE_WAYLAND
 	help
 	  Enable the DRM platform backend. Cog will interface directly
 	  with video drivers that support kernel mode-setting (KMS)
