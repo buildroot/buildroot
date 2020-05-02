@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QEMU_VERSION = 4.2.0
+QEMU_VERSION = 5.0.0
 QEMU_SOURCE = qemu-$(QEMU_VERSION).tar.xz
 QEMU_SITE = http://download.qemu.org
 QEMU_LICENSE = GPL-2.0, LGPL-2.1, MIT, BSD-3-Clause, BSD-2-Clause, Others/BSD-1c
@@ -131,15 +131,16 @@ define QEMU_CONFIGURE_CMDS
 			--enable-attr \
 			--enable-vhost-net \
 			--disable-bsd-user \
+			--disable-containers \
 			--disable-xen \
 			--disable-vnc \
 			--disable-virtfs \
 			--disable-brlapi \
 			--disable-curses \
 			--disable-curl \
-			--disable-bluez \
 			--disable-vde \
 			--disable-linux-aio \
+			--disable-linux-io-uring \
 			--disable-cap-ng \
 			--disable-docs \
 			--disable-spice \
@@ -264,11 +265,12 @@ HOST_QEMU_OPTS += --enable-vde
 HOST_QEMU_DEPENDENCIES += host-vde2
 endif
 
+# virtfs-proxy-helper is the only user of libcap-ng.
 ifeq ($(BR2_PACKAGE_HOST_QEMU_VIRTFS),y)
-HOST_QEMU_OPTS += --enable-virtfs
-HOST_QEMU_DEPENDENCIES += host-libcap
+HOST_QEMU_OPTS += --enable-virtfs --enable-cap-ng
+HOST_QEMU_DEPENDENCIES += host-libcap-ng
 else
-HOST_QEMU_OPTS += --disable-virtfs
+HOST_QEMU_OPTS += --disable-virtfs --disable-cap-ng
 endif
 
 ifeq ($(BR2_PACKAGE_HOST_QEMU_USB),y)
@@ -293,8 +295,10 @@ define HOST_QEMU_CONFIGURE_CMDS
 		--extra-ldflags="$(HOST_LDFLAGS)" \
 		--python=$(HOST_DIR)/bin/python3 \
 		--disable-bzip2 \
+		--disable-containers \
 		--disable-curl \
 		--disable-libssh \
+		--disable-linux-io-uring \
 		--disable-sdl \
 		--disable-vnc-jpeg \
 		--disable-vnc-png \
