@@ -35,11 +35,15 @@ endif
 ifeq ($(BR2_PACKAGE_ZLIB),y)
 KMOD_DEPENDENCIES += zlib
 KMOD_CONF_OPTS += --with-zlib
+else
+KMOD_CONF_OPTS += --without-zlib
 endif
 
 ifeq ($(BR2_PACKAGE_XZ),y)
 KMOD_DEPENDENCIES += xz
 KMOD_CONF_OPTS += --with-xz
+else
+KMOD_CONF_OPTS += --without-xz
 endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
