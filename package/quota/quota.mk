@@ -9,7 +9,10 @@ QUOTA_SITE = http://downloads.sourceforge.net/project/linuxquota/quota-tools/$(Q
 QUOTA_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES) host-nfs-utils
 QUOTA_LICENSE = GPL-2.0+
 QUOTA_LICENSE_FILES = COPYING
-QUOTA_LIBS = $(TARGET_NLS_LIBS)
+# We're patching configure.ac
+QUOTA_AUTORECONF = YES
+QUOTA_GETTEXTIZE = YES
+QUOTA_CONF_ENV = LIBS="$(TARGET_NLS_LIBS)"
 QUOTA_CONF_OPTS = --disable-pie
 
 ifeq ($(BR2_PACKAGE_DBUS)$(BR2_PACKAGE_LIBNL),yy)
@@ -36,7 +39,5 @@ QUOTA_CONF_OPTS += --enable-ldapmail
 else
 QUOTA_CONF_OPTS += --disable-ldapmail
 endif
-
-QUOTA_CONF_ENV = LIBS="$(QUOTA_LIBS)"
 
 $(eval $(autotools-package))

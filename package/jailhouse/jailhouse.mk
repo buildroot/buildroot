@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-JAILHOUSE_VERSION = 0.10
+JAILHOUSE_VERSION = 0.11
 JAILHOUSE_SITE = $(call github,siemens,jailhouse,v$(JAILHOUSE_VERSION))
 JAILHOUSE_LICENSE = GPL-2.0
 JAILHOUSE_LICENSE_FILES = COPYING
@@ -18,10 +18,16 @@ JAILHOUSE_MAKE_OPTS = \
 	DESTDIR="$(TARGET_DIR)"
 
 ifeq ($(BR2_PACKAGE_JAILHOUSE_HELPER_SCRIPTS),y)
-JAILHOUSE_DEPENDENCIES += host-python-setuptools
-JAILHOUSE_MAKE_OPTS += PYTHON_PIP_USABLE="yes"
+JAILHOUSE_DEPENDENCIES += \
+	host-python-mako \
+	host-python-setuptools
+JAILHOUSE_MAKE_OPTS += \
+	HAS_PYTHON_MAKO="yes" \
+	PYTHON_PIP_USABLE="yes"
 else
-JAILHOUSE_MAKE_OPTS += PYTHON_PIP_USABLE="no"
+JAILHOUSE_MAKE_OPTS += \
+	HAS_PYTHON_MAKO="no" \
+	PYTHON_PIP_USABLE="no"
 endif
 
 define JAILHOUSE_BUILD_CMDS

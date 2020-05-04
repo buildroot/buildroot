@@ -39,14 +39,6 @@ def urlopen_closing(uri):
     return contextlib.closing(_urllib.urlopen(uri))
 
 
-if sys.hexversion >= 0x3000000:
-    def decode_byte_list(bl):
-        return [b.decode() for b in bl]
-else:
-    def decode_byte_list(e):
-        return e
-
-
 class SystemInfo:
     DEFAULT_NEEDED_PROGS = ["make", "git", "gcc", "timeout"]
     DEFAULT_OPTIONAL_PROGS = ["bzr", "java", "javac", "jar", "diffoscope"]
@@ -128,7 +120,7 @@ def get_toolchain_configs(toolchains_csv, buildrootdir):
     with open(toolchains_csv) as r:
         # filter empty lines and comments
         lines = [t for t in r.readlines() if len(t.strip()) > 0 and t[0] != '#']
-        toolchains = decode_byte_list(lines)
+        toolchains = lines
     configs = []
 
     (_, _, _, _, hostarch) = os.uname()
@@ -213,13 +205,6 @@ def fixup_config(sysinfo, configfile):
     BR2_TOOLCHAIN_EXTERNAL_URL = 'BR2_TOOLCHAIN_EXTERNAL_URL="http://autobuild.buildroot.org/toolchains/tarballs/'
 
     if "BR2_NEEDS_HOST_JAVA=y\n" in configlines and not sysinfo.has("java"):
-        return False
-    if "BR2_NEEDS_HOST_JAVAC=y\n" in configlines and not sysinfo.has("javac"):
-        return False
-    if "BR2_NEEDS_HOST_JAR=y\n" in configlines and not sysinfo.has("jar"):
-        return False
-    # python-nfc needs bzr
-    if 'BR2_PACKAGE_PYTHON_NFC=y\n' in configlines and not sysinfo.has("bzr"):
         return False
     # The ctng toolchain is affected by PR58854
     if 'BR2_PACKAGE_LTTNG_TOOLS=y\n' in configlines and \
@@ -349,6 +334,10 @@ def gen_config(args):
     # Allow hosts with old certificates to download over https
     configlines.append("BR2_WGET=\"wget --passive-ftp -nd -t 3 --no-check-certificate\"\n")
 
+    # Per-package folder
+    if randint(0, 15) == 0:
+        configlines.append("BR2_PER_PACKAGE_DIRECTORIES=y\n")
+
     # Amend the configuration with a few things.
     if randint(0, 20) == 0:
         configlines.append("BR2_ENABLE_DEBUG=y\n")
@@ -366,6 +355,22 @@ def gen_config(args):
         configlines.append("BR2_OPTIMIZE_2=y\n")
     if randint(0, 4) == 0:
         configlines.append("BR2_SYSTEM_ENABLE_NLS=y\n")
+    if randint(0, 4) == 0:
+        configlines.append("BR2_PIC_PIE=y\n")
+    if randint(0, 4) == 0:
+        configlines.append("BR2_RELRO_FULL=y\n")
+    elif randint(0, 4) == 0:
+        configlines.append("BR2_RELRO_PARTIAL=y\n")
+    if randint(0, 4) == 0:
+        configlines.append("BR2_SSP_ALL=y\n")
+    elif randint(0, 4) == 0:
+        configlines.append("BR2_SSP_REGULAR=y\n")
+    elif randint(0, 4) == 0:
+        configlines.append("BR2_SSP_STRONG=y\n")
+    if randint(0, 4) == 0:
+        configlines.append("BR2_FORTIFY_SOURCE_2=y\n")
+    elif randint(0, 4) == 0:
+        configlines.append("BR2_FORTIFY_SOURCE_1=y\n")
 
     # Randomly enable BR2_REPRODUCIBLE 10% of times
     # also enable tar filesystem images for testing

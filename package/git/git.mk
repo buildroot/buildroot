@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GIT_VERSION = 2.22.0
+GIT_VERSION = 2.26.2
 GIT_SOURCE = git-$(GIT_VERSION).tar.xz
 GIT_SITE = $(BR2_KERNEL_MIRROR)/software/scm/git
 GIT_LICENSE = GPL-2.0, LGPL-2.1+
@@ -67,7 +67,7 @@ endif
 
 GIT_CFLAGS = $(TARGET_CFLAGS)
 
-ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_85180),y)
+ifneq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_85180)$(BR2_TOOLCHAIN_HAS_GCC_BUG_93847),)
 GIT_CFLAGS += -O0
 endif
 

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBNSS_VERSION = 3.46
+LIBNSS_VERSION = 3.51.1
 LIBNSS_SOURCE = nss-$(LIBNSS_VERSION).tar.gz
 LIBNSS_SITE = https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_$(subst .,_,$(LIBNSS_VERSION))_RTM/src
 LIBNSS_DISTDIR = dist
@@ -37,12 +37,6 @@ endef
 LIBNSS_PRE_CONFIGURE_HOOKS += LIBNSS_DROP_GC_SECTIONS
 endif
 
-ifeq ($(BR2_aarch64_be),y)
-LIBNSS_ARCH = aarch64
-else
-LIBNSS_ARCH = $(ARCH)
-endif
-
 LIBNSS_BUILD_VARS = \
 	MOZILLA_CLIENT=1 \
 	NSPR_INCLUDE_DIR=$(STAGING_DIR)/usr/include/nspr \
@@ -50,17 +44,20 @@ LIBNSS_BUILD_VARS = \
 	NS_USE_GCC=1 \
 	NSS_DISABLE_GTESTS=1 \
 	NSS_USE_SYSTEM_SQLITE=1 \
-	NSS_ENABLE_ECC=1 \
 	NATIVE_CC="$(HOSTCC)" \
 	OS_ARCH="Linux" \
 	OS_RELEASE="2.6" \
-	OS_TEST="$(LIBNSS_ARCH)" \
+	OS_TEST=$(BR2_PACKAGE_LIBNSS_ARCH) \
 	NSS_ENABLE_WERROR=0
 
-# #pragma usage needs gcc >= 4.8
-# See https://bugzilla.mozilla.org/show_bug.cgi?id=1226179
-ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_4_8),)
-LIBNSS_BUILD_VARS += NSS_ENABLE_WERROR=0
+ifeq ($(BR2_POWERPC_CPU_HAS_ALTIVEC),)
+# Disable Altivec if not supported
+LIBNSS_BUILD_VARS += NSS_DISABLE_ALTIVEC=1
+endif
+
+ifeq ($(BR2_ARM_CPU_HAS_NEON),)
+# Disable arm32-neon if neon is not supported
+LIBNSS_BUILD_VARS += NSS_DISABLE_ARM32_NEON=1
 endif
 
 ifeq ($(BR2_ARCH_IS_64),y)
@@ -81,7 +78,7 @@ define LIBNSS_BUILD_CMDS
 		SOURCE_MD_DIR=$(@D)/$(LIBNSS_DISTDIR) \
 		DIST=$(@D)/$(LIBNSS_DISTDIR) \
 		CHECKLOC= \
-		$(LIBNSS_BUILD_VARS) NATIVE_FLAGS="$(HOST_CFLAGS)"
+		$(LIBNSS_BUILD_VARS) NATIVE_FLAGS="$(HOST_CFLAGS) -DLINUX"
 endef
 
 define LIBNSS_INSTALL_STAGING_CMDS
@@ -121,7 +118,6 @@ HOST_LIBNSS_BUILD_VARS = \
 	NSS_USE_SYSTEM_SQLITE=1 \
 	SQLITE_INCLUDE_DIR=$(HOST_DIR)/include \
 	ZLIB_INCLUDE_DIR=$(HOST_DIR)/include \
-	NSS_ENABLE_ECC=1 \
 	NSS_ENABLE_WERROR=0
 
 HOST_LIBNSS_DEPENDENCIES = host-libnspr host-sqlite host-zlib

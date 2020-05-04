@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-SURICATA_VERSION = 4.1.5
+SURICATA_VERSION = 4.1.8
 SURICATA_SITE = https://www.openinfosecfoundation.org/download
 SURICATA_LICENSE = GPL-2.0
 SURICATA_LICENSE_FILES = COPYING LICENSE
-# We're patching configure.ac
+# We're patching python/Makefile.am
 SURICATA_AUTORECONF = YES
 
 SURICATA_DEPENDENCIES = \
@@ -21,8 +21,8 @@ SURICATA_DEPENDENCIES = \
 	libpcap \
 	libyaml \
 	$(if $(BR2_PACKAGE_LZ4),lz4) \
-	$(if $(BR2_PACKAGE_LZMA),lzma) \
-	pcre
+	pcre \
+	$(if $(BR2_PACKAGE_XZ),xz)
 
 SURICATA_CONF_ENV = ac_cv_path_HAVE_SPHINXBUILD=no
 
@@ -132,9 +132,6 @@ endef
 define SURICATA_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 644 package/suricata/suricata.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/suricata.service
-	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
-	ln -sf ../../../../usr/lib/systemd/system/suricata.service \
-		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/suricata.service
 endef
 
 $(eval $(autotools-package))

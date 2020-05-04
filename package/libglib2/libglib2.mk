@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBGLIB2_VERSION_MAJOR = 2.62
-LIBGLIB2_VERSION = $(LIBGLIB2_VERSION_MAJOR).0
+LIBGLIB2_VERSION_MAJOR = 2.64
+LIBGLIB2_VERSION = $(LIBGLIB2_VERSION_MAJOR).2
 LIBGLIB2_SOURCE = glib-$(LIBGLIB2_VERSION).tar.xz
 LIBGLIB2_SITE = http://ftp.gnome.org/pub/gnome/sources/glib/$(LIBGLIB2_VERSION_MAJOR)
 LIBGLIB2_LICENSE = LGPL-2.1+
@@ -28,7 +28,6 @@ HOST_LIBGLIB2_CONF_OPTS = \
 	-Dxattr=false \
 	-Dinternal_pcre=false \
 	-Dinstalled_tests=false \
-	-Dtests=false \
 	-Doss_fuzz=disabled
 
 LIBGLIB2_DEPENDENCIES = \
@@ -50,8 +49,13 @@ HOST_LIBGLIB2_DEPENDENCIES = \
 LIBGLIB2_CONF_OPTS = \
 	-Dinternal_pcre=false \
 	-Dgio_module_dir=/usr/lib/gio/modules \
-	-Dtests=false \
+	-Dinstalled_tests=false \
 	-Doss_fuzz=disabled
+
+LIBGLIB2_MESON_EXTRA_PROPERTIES = \
+	have_c99_vsnprintf=true \
+	have_c99_snprintf=true \
+	have_unix98_printf=true
 
 ifneq ($(BR2_ENABLE_LOCALE),y)
 LIBGLIB2_DEPENDENCIES += libiconv
@@ -81,10 +85,10 @@ endef
 endif
 
 ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBMOUNT),y)
-LIBGLIB2_CONF_OPTS += -Dlibmount=true
+LIBGLIB2_CONF_OPTS += -Dlibmount=enabled
 LIBGLIB2_DEPENDENCIES += util-linux
 else
-LIBGLIB2_CONF_OPTS += -Dlibmount=false
+LIBGLIB2_CONF_OPTS += -Dlibmount=disabled
 endif
 
 # Purge useless binaries from target

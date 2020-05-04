@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_PLUGINS_BASE_VERSION = 1.16.1
+GST1_PLUGINS_BASE_VERSION = 1.16.2
 GST1_PLUGINS_BASE_SOURCE = gst-plugins-base-$(GST1_PLUGINS_BASE_VERSION).tar.xz
 GST1_PLUGINS_BASE_SITE = https://gstreamer.freedesktop.org/src/gst-plugins-base
 GST1_PLUGINS_BASE_INSTALL_STAGING = YES
@@ -17,8 +17,7 @@ GST1_PLUGINS_BASE_CONF_OPTS = \
 	-Dgobject-cast-checks=disabled \
 	-Dglib-asserts=disabled \
 	-Dglib-checks=disabled \
-	-Dgtk_doc=disabled \
-	-Dintrospection=disabled
+	-Dgtk_doc=disabled
 
 # Options which require currently unpackaged libraries
 GST1_PLUGINS_BASE_CONF_OPTS += \
@@ -26,11 +25,25 @@ GST1_PLUGINS_BASE_CONF_OPTS += \
 	-Dlibvisual=disabled \
 	-Diso-codes=disabled
 
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BASE_INSTALL_TOOLS),y)
+GST1_PLUGINS_BASE_CONF_OPTS += -Dtools=enabled
+else
+GST1_PLUGINS_BASE_CONF_OPTS += -Dtools=disabled
+endif
+
 GST1_PLUGINS_BASE_DEPENDENCIES = gstreamer1 $(TARGET_NLS_DEPENDENCIES)
 
 GST1_PLUGINS_BASE_LDFLAGS = $(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)
 
 # These plugins are listed in the order from ./configure --help
+
+ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
+GST1_PLUGINS_BASE_CONF_OPTS += -Dintrospection=enabled
+GST1_PLUGINS_BASE_DEPENDENCIES += gobject-introspection
+else
+GST1_PLUGINS_BASE_CONF_OPTS += -Dintrospection=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_ORC),y)
 GST1_PLUGINS_BASE_DEPENDENCIES += orc
 GST1_PLUGINS_BASE_CONF_OPTS += -Dorc=enabled
@@ -38,17 +51,18 @@ else
 GST1_PLUGINS_BASE_CONF_OPTS += -Dorc=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_HAS_API),y)
+GST1_PLUGINS_BASE_CONF_OPTS += -Dgl=enabled
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_OPENGL),y)
 GST1_PLUGINS_BASE_GL_API_LIST = opengl
-GST1_PLUGINS_BASE_CONF_OPTS += -Dgl=enabled
 GST1_PLUGINS_BASE_DEPENDENCIES += libgl libglu
-else
-GST1_PLUGINS_BASE_CONF_OPTS += -Dgl=disabled
 endif
-
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_GLES2),y)
 GST1_PLUGINS_BASE_GL_API_LIST += gles2
 GST1_PLUGINS_BASE_DEPENDENCIES += libgles
+endif
+else
+GST1_PLUGINS_BASE_CONF_OPTS += -Dgl=disabled
 endif
 GST1_PLUGINS_BASE_CONF_OPTS += -Dgl_api='$(subst $(space),$(comma),$(GST1_PLUGINS_BASE_GL_API_LIST))'
 

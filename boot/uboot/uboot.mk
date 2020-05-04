@@ -8,9 +8,14 @@ UBOOT_VERSION = $(call qstrip,$(BR2_TARGET_UBOOT_VERSION))
 UBOOT_BOARD_NAME = $(call qstrip,$(BR2_TARGET_UBOOT_BOARDNAME))
 
 UBOOT_LICENSE = GPL-2.0+
+ifeq ($(BR2_TARGET_UBOOT_LATEST_VERSION),y)
 UBOOT_LICENSE_FILES = Licenses/gpl-2.0.txt
+endif
 
 UBOOT_INSTALL_IMAGES = YES
+
+# u-boot 2020.01+ needs make 4.0+
+UBOOT_DEPENDENCIES = $(BR2_MAKE_HOST_DEPENDENCY)
 
 ifeq ($(UBOOT_VERSION),custom)
 # Handle custom U-Boot tarballs as specified by the configuration
@@ -83,6 +88,11 @@ endif
 ifeq ($(BR2_TARGET_UBOOT_FORMAT_IMG),y)
 UBOOT_BINS += u-boot.img
 UBOOT_MAKE_TARGET += u-boot.img
+endif
+
+ifeq ($(BR2_TARGET_UBOOT_FORMAT_ITB),y)
+UBOOT_BINS += u-boot.itb
+UBOOT_MAKE_TARGET += u-boot.itb
 endif
 
 ifeq ($(BR2_TARGET_UBOOT_FORMAT_IMX),y)
@@ -202,22 +212,42 @@ define UBOOT_APPLY_LOCAL_PATCHES
 endef
 UBOOT_POST_PATCH_HOOKS += UBOOT_APPLY_LOCAL_PATCHES
 
-# This is equivalent to upstream commit
-# http://git.denx.de/?p=u-boot.git;a=commitdiff;h=e0d20dc1521e74b82dbd69be53a048847798a90a. It
-# fixes a build failure when libfdt-devel is installed system-wide.
-# This only works when scripts/dtc/libfdt exists (E.G. versions containing
-# http://git.denx.de/?p=u-boot.git;a=commitdiff;h=c0e032e0090d6541549b19cc47e06ccd1f302893)
+# Fixup inclusion of libfdt headers, which can fail in older u-boot versions
+# when libfdt-devel is installed system-wide.
+# The core change is equivalent to upstream commit
+# e0d20dc1521e74b82dbd69be53a048847798a90a (first in v2018.03). However, the fixup
+# is complicated by the fact that the underlying u-boot code changed multiple
+# times in history:
+# - The directory scripts/dtc/libfdt only exists since upstream commit
+#   c0e032e0090d6541549b19cc47e06ccd1f302893 (first in v2017.11). For earlier
+#   versions, create a dummy scripts/dtc/libfdt directory with symlinks for the
+#   fdt-related files. This allows to use the same -I<path> option for both
+#   cases.
+# - The variable 'srctree' used to be called 'SRCTREE' before upstream commit
+#   01286329b27b27eaeda045b469d41b1d9fce545a (first in v2014.04).
+# - The original location for libfdt, 'lib/libfdt/', used to be simply
+#   'libfdt' before upstream commit 0de71d507157c4bd4fddcd3a419140d2b986eed2
+#   (first in v2010.06). Make the 'lib' part optional in the substitution to
+#   handle this.
 define UBOOT_FIXUP_LIBFDT_INCLUDE
-	if [ -d $(@D)/scripts/dtc/libfdt ]; then \
-		$(SED) 's%-I$$(srctree)/lib/libfdt%-I$$(srctree)/scripts/dtc/libfdt%' $(@D)/tools/Makefile; \
+	$(Q)if [ ! -d $(@D)/scripts/dtc/libfdt ]; then \
+		mkdir -p $(@D)/scripts/dtc/libfdt; \
+		cd $(@D)/scripts/dtc/libfdt; \
+		ln -s ../../../include/fdt.h .; \
+		ln -s ../../../include/libfdt*.h .; \
+		ln -s ../../../lib/libfdt/libfdt_internal.h .; \
 	fi
+	$(Q)$(SED) \
+		's%-I\ *\$$(srctree)/lib/libfdt%-I$$(srctree)/scripts/dtc/libfdt%; \
+		s%-I\ *\$$(SRCTREE)\(/lib\)\?/libfdt%-I$$(SRCTREE)/scripts/dtc/libfdt%' \
+		$(@D)/tools/Makefile
 endef
 UBOOT_POST_PATCH_HOOKS += UBOOT_FIXUP_LIBFDT_INCLUDE
 
 ifeq ($(BR2_TARGET_UBOOT_BUILD_SYSTEM_LEGACY),y)
 define UBOOT_CONFIGURE_CMDS
 	$(TARGET_CONFIGURE_OPTS) \
-		$(MAKE) -C $(@D) $(UBOOT_MAKE_OPTS) \
+		$(BR2_MAKE) -C $(@D) $(UBOOT_MAKE_OPTS) \
 		$(UBOOT_BOARD_NAME)_config
 endef
 else ifeq ($(BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG),y)
@@ -254,7 +284,7 @@ define UBOOT_BUILD_CMDS
 		cp -f $(UBOOT_CUSTOM_DTS_PATH) $(@D)/arch/$(UBOOT_ARCH)/dts/
 	)
 	$(TARGET_CONFIGURE_OPTS) \
-		$(MAKE) -C $(@D) $(UBOOT_MAKE_OPTS) \
+		$(BR2_MAKE) -C $(@D) $(UBOOT_MAKE_OPTS) \
 		$(UBOOT_MAKE_TARGET)
 	$(if $(BR2_TARGET_UBOOT_FORMAT_SD),
 		$(@D)/tools/mxsboot sd $(@D)/u-boot.sb $(@D)/u-boot.sd)
@@ -272,7 +302,7 @@ define UBOOT_BUILD_OMAP_IFT
 endef
 
 ifneq ($(BR2_TARGET_UBOOT_ENVIMAGE),)
-UBOOT_GENERATE_ENV_FILE=$(call qstrip,$(BR2_TARGET_UBOOT_ENVIMAGE_SOURCE))
+UBOOT_GENERATE_ENV_FILE = $(call qstrip,$(BR2_TARGET_UBOOT_ENVIMAGE_SOURCE))
 define UBOOT_GENERATE_ENV_IMAGE
 	$(if $(UBOOT_GENERATE_ENV_FILE), \
 		cat $(UBOOT_GENERATE_ENV_FILE), \
@@ -317,8 +347,7 @@ UBOOT_ZYNQMP_PMUFW_PATH = $(shell readlink -f $(UBOOT_ZYNQMP_PMUFW))
 endif
 
 define UBOOT_ZYNQMP_KCONFIG_PMUFW
-	$(call KCONFIG_SET_OPT,CONFIG_PMUFW_INIT_FILE,"$(UBOOT_ZYNQMP_PMUFW_PATH)", \
-	       $(@D)/.config)
+	$(call KCONFIG_SET_OPT,CONFIG_PMUFW_INIT_FILE,"$(UBOOT_ZYNQMP_PMUFW_PATH)")
 endef
 
 UBOOT_ZYNQMP_PSU_INIT = $(call qstrip,$(BR2_TARGET_UBOOT_ZYNQMP_PSU_INIT_FILE))
@@ -326,8 +355,7 @@ UBOOT_ZYNQMP_PSU_INIT_PATH = $(shell readlink -f $(UBOOT_ZYNQMP_PSU_INIT))
 
 ifneq ($(UBOOT_ZYNQMP_PSU_INIT),)
 define UBOOT_ZYNQMP_KCONFIG_PSU_INIT
-	$(call KCONFIG_SET_OPT,CONFIG_XILINX_PS_INIT_FILE,"$(UBOOT_ZYNQMP_PSU_INIT_PATH)", \
-		$(@D)/.config)
+	$(call KCONFIG_SET_OPT,CONFIG_XILINX_PS_INIT_FILE,"$(UBOOT_ZYNQMP_PSU_INIT_PATH)")
 endef
 endif
 

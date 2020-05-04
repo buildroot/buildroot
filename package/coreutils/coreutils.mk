@@ -4,15 +4,11 @@
 #
 ################################################################################
 
-COREUTILS_VERSION = 8.30
+COREUTILS_VERSION = 8.32
 COREUTILS_SITE = $(BR2_GNU_MIRROR)/coreutils
 COREUTILS_SOURCE = coreutils-$(COREUTILS_VERSION).tar.xz
 COREUTILS_LICENSE = GPL-3.0+
 COREUTILS_LICENSE_FILES = COPYING
-
-# coreutils-01-fix-for-dummy-man-usage.patch triggers autoreconf on build
-COREUTILS_AUTORECONF = YES
-COREUTILS_GETTEXTIZE = YES
 
 COREUTILS_CONF_OPTS = --disable-rpath --enable-install-program=hostname \
 	$(if $(BR2_TOOLCHAIN_USES_MUSL),--with-included-regex)
@@ -148,4 +144,18 @@ endef
 endif
 COREUTILS_POST_INSTALL_TARGET_HOOKS += COREUTILS_FIX_CHROOT_LOCATION
 
+# Explicitly install ln and realpath, which we *are* insterested in.
+# A lot of other programs still get installed, however, but disabling
+# them does not gain much at build time, and is a loooong list that is
+# difficult to maintain...
+HOST_COREUTILS_CONF_OPTS = \
+	--disable-acl \
+	--disable-libcap \
+	--disable-rpath \
+	--disable-single-binary \
+	--disable-xattr \
+	--without-gmp \
+	--enable-install-program=ln,realpath
+
 $(eval $(autotools-package))
+$(eval $(host-autotools-package))

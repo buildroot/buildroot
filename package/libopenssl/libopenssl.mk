@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBOPENSSL_VERSION = 1.1.1d
+LIBOPENSSL_VERSION = 1.1.1g
 LIBOPENSSL_SITE = https://www.openssl.org/source
 LIBOPENSSL_SOURCE = openssl-$(LIBOPENSSL_VERSION).tar.gz
 LIBOPENSSL_LICENSE = OpenSSL or SSLeay
@@ -12,7 +12,7 @@ LIBOPENSSL_LICENSE_FILES = LICENSE
 LIBOPENSSL_INSTALL_STAGING = YES
 LIBOPENSSL_DEPENDENCIES = zlib
 HOST_LIBOPENSSL_DEPENDENCIES = host-zlib
-LIBOPENSSL_TARGET_ARCH = linux-generic32
+LIBOPENSSL_TARGET_ARCH = $(call qstrip,$(BR2_PACKAGE_LIBOPENSSL_TARGET_ARCH))
 LIBOPENSSL_CFLAGS = $(TARGET_CFLAGS)
 LIBOPENSSL_PROVIDES = openssl
 
@@ -51,35 +51,6 @@ LIBOPENSSL_CFLAGS += -DOPENSSL_NO_ASYNC
 endif
 ifeq ($(BR2_TOOLCHAIN_HAS_UCONTEXT),)
 LIBOPENSSL_CFLAGS += -DOPENSSL_NO_ASYNC
-endif
-
-ifeq ($(BR2_STATIC_LIBS),y)
-# Use "gcc" minimalistic target to disable DSO
-LIBOPENSSL_TARGET_ARCH = gcc
-else
-# Some architectures are optimized in OpenSSL
-# Doesn't work for thumb-only (Cortex-M?)
-ifeq ($(BR2_ARM_CPU_HAS_ARM),y)
-LIBOPENSSL_TARGET_ARCH = linux-armv4
-endif
-ifeq ($(ARCH),aarch64)
-LIBOPENSSL_TARGET_ARCH = linux-aarch64
-endif
-ifeq ($(ARCH),powerpc)
-# 4xx cores seem to have trouble with openssl's ASM optimizations
-ifeq ($(BR2_powerpc_401)$(BR2_powerpc_403)$(BR2_powerpc_405)$(BR2_powerpc_405fp)$(BR2_powerpc_440)$(BR2_powerpc_440fp),)
-LIBOPENSSL_TARGET_ARCH = linux-ppc
-endif
-endif
-ifeq ($(ARCH),powerpc64)
-LIBOPENSSL_TARGET_ARCH = linux-ppc64
-endif
-ifeq ($(ARCH),powerpc64le)
-LIBOPENSSL_TARGET_ARCH = linux-ppc64le
-endif
-ifeq ($(ARCH),x86_64)
-LIBOPENSSL_TARGET_ARCH = linux-x86_64
-endif
 endif
 
 define HOST_LIBOPENSSL_CONFIGURE_CMDS

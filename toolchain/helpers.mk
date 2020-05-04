@@ -119,12 +119,12 @@ copy_toolchain_sysroot = \
 	done ; \
 	for link in $$(find $(STAGING_DIR) -type l); do \
 		target=$$(readlink $${link}) ; \
-		if [ "$${target}" == "$${target\#/}" ] ; then \
+		if [ "$${target}" == "$${target$(SHARP_SIGN)/}" ] ; then \
 			continue ; \
 		fi ; \
-		relpath="$(call relpath_prefix,$${target\#/})" ; \
-		echo "Fixing symlink $${link} from $${target} to $${relpath}$${target\#/}" ; \
-		ln -sf $${relpath}$${target\#/} $${link} ; \
+		relpath="$(call relpath_prefix,$${target$(SHARP_SIGN)/})" ; \
+		echo "Fixing symlink $${link} from $${target} to $${relpath}$${target$(SHARP_SIGN)/}" ; \
+		ln -sf $${relpath}$${target$(SHARP_SIGN)/} $${link} ; \
 	done ; \
 	relpath="$(call relpath_prefix,$${ARCH_LIB_DIR})" ; \
 	if [ "$${relpath}" != "" ]; then \
@@ -161,9 +161,15 @@ copy_toolchain_sysroot = \
 # $1: build directory
 # $2: sysroot directory
 # $3: kernel version string, in the form: X.Y
+# $4: test to do for the latest kernel version, 'strict' or 'loose'
+#     always 'strict' if this is not the latest version.
 #
 check_kernel_headers_version = \
-	support/scripts/check-kernel-headers.sh $(1) $(2) $(3)
+	if ! support/scripts/check-kernel-headers.sh $(1) $(2) $(3) \
+		$(if $(BR2_TOOLCHAIN_HEADERS_LATEST),$(4),strict); \
+	then \
+		exit 1; \
+	fi
 
 #
 # Check the specific gcc version actually matches the version in the
@@ -339,6 +345,24 @@ check_cplusplus = \
 		echo "C++ support is selected but is not available in external toolchain" ; \
 		exit 1 ; \
 	fi
+
+#
+#
+# Check that the external toolchain supports D language
+#
+# $1: cross-gdc path
+#
+check_dlang = \
+	__CROSS_GDC=$(strip $1) ; \
+	__o=$(BUILD_DIR)/.br-toolchain-test-dlang.tmp ; \
+	printf 'import std.stdio;\nvoid main() { writeln("Hello World!"); }\n' | \
+	$${__CROSS_GDC} -x d -o $${__o} - ; \
+	if test $$? -ne 0 ; then \
+		rm -f $${__o}* ; \
+		echo "D language support is selected but is not available in external toolchain" ; \
+		exit 1 ; \
+	fi ; \
+	rm -f $${__o}* \
 
 #
 #

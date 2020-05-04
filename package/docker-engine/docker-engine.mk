@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DOCKER_ENGINE_VERSION = 18.09.9
+DOCKER_ENGINE_VERSION = 19.03.7
 DOCKER_ENGINE_SITE = $(call github,docker,engine,v$(DOCKER_ENGINE_VERSION))
 
 DOCKER_ENGINE_LICENSE = Apache-2.0
@@ -68,9 +68,6 @@ define DOCKER_ENGINE_INSTALL_INIT_SYSTEMD
 		$(TARGET_DIR)/usr/lib/systemd/system/docker.service
 	$(INSTALL) -D -m 0644 $(@D)/contrib/init/systemd/docker.socket \
 		$(TARGET_DIR)/usr/lib/systemd/system/docker.socket
-	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/
-	ln -fs ../../../../usr/lib/systemd/system/docker.service \
-		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/docker.service
 endef
 
 define DOCKER_ENGINE_INSTALL_INIT_SYSV

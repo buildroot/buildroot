@@ -4,12 +4,13 @@
 #
 ################################################################################
 
-POLICYCOREUTILS_VERSION = 2.9
-POLICYCOREUTILS_SITE = https://github.com/SELinuxProject/selinux/releases/download/20190315
+POLICYCOREUTILS_VERSION = 3.0
+POLICYCOREUTILS_SITE = https://github.com/SELinuxProject/selinux/releases/download/20191204
 POLICYCOREUTILS_LICENSE = GPL-2.0
 POLICYCOREUTILS_LICENSE_FILES = COPYING
 
-POLICYCOREUTILS_DEPENDENCIES = libsemanage libcap-ng
+POLICYCOREUTILS_DEPENDENCIES = libsemanage libcap-ng $(TARGET_NLS_DEPENDENCIES)
+POLICYCOREUTILS_MAKE_OPTS = LDLIBS=$(TARGET_NLS_LIBS)
 
 ifeq ($(BR2_PACKAGE_LINUX_PAM),y)
 POLICYCOREUTILS_DEPENDENCIES += linux-pam

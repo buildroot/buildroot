@@ -17,7 +17,8 @@ PULSEAUDIO_CONF_OPTS = \
 	--disable-running-from-build-tree
 
 PULSEAUDIO_DEPENDENCIES = \
-	host-pkgconf libtool libsndfile speex host-intltool \
+	host-pkgconf libtool libsndfile speex \
+	$(TARGET_NLS_DEPENDENCIES) \
 	$(if $(BR2_PACKAGE_LIBGLIB2),libglib2) \
 	$(if $(BR2_PACKAGE_AVAHI_DAEMON),avahi) \
 	$(if $(BR2_PACKAGE_DBUS),dbus) \
@@ -167,9 +168,6 @@ endef
 define PULSEAUDIO_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 644 package/pulseaudio/pulseaudio.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/pulseaudio.service
-	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
-	ln -sf ../../../../usr/lib/systemd/system/pulseaudio.service \
-		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/pulseaudio.service
 endef
 
 endif

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BRLTTY_VERSION = 6.0
+BRLTTY_VERSION = 6.1
 BRLTTY_SOURCE = brltty-$(BRLTTY_VERSION).tar.xz
 BRLTTY_SITE = http://brltty.com/archive
 BRLTTY_INSTALL_STAGING_OPTS = INSTALL_ROOT=$(STAGING_DIR) install
@@ -14,6 +14,9 @@ BRLTTY_LICENSE_FILES = LICENSE-LGPL README
 
 BRLTTY_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES) host-autoconf host-pkgconf \
 	$(if $(BR2_PACKAGE_AT_SPI2_CORE),at-spi2-core)
+
+BRLTTY_CONF_ENV = \
+	PKG_CONFIG_FOR_BUILD=$(HOST_DIR)/bin/pkgconf
 
 BRLTTY_CONF_OPTS = \
 	--disable-java-bindings \
@@ -51,7 +54,8 @@ BRLTTY_CONF_OPTS += --without-espeak
 endif
 
 ifeq ($(BR2_PACKAGE_EXPAT),y)
-BRLTTY_DEPENDENCIES += expat
+# host-expat is needed by tbl2hex's host program
+BRLTTY_DEPENDENCIES += host-expat expat
 BRLTTY_CONF_OPTS += --enable-expat
 else
 BRLTTY_CONF_OPTS += --disable-expat
@@ -120,10 +124,6 @@ endef
 define BRLTTY_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 0644 package/brltty/brltty.service \
 		   $(TARGET_DIR)/usr/lib/systemd/system/brltty.service
-
-	mkdir -p $(TARGET_DIR)/etc/systemd/system/sysinit.target.wants
-	ln -fs  ../../../../usr/lib/systemd/system/brltty.service \
-		$(TARGET_DIR)/etc/systemd/system/sysinit.target.wants/brltty.service
 endef
 
 $(eval $(autotools-package))

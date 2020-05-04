@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-JANUS_GATEWAY_VERSION = 0.7.3
+JANUS_GATEWAY_VERSION = 0.9.2
 JANUS_GATEWAY_SITE = $(call github,meetecho,janus-gateway,v$(JANUS_GATEWAY_VERSION))
-JANUS_GATEWAY_LICENSE = GPL-3.0
+JANUS_GATEWAY_LICENSE = GPL-3.0 with OpenSSL exception
 JANUS_GATEWAY_LICENSE_FILES = COPYING
 
 # ding-libs provides the ini_config library
@@ -16,11 +16,6 @@ JANUS_GATEWAY_DEPENDENCIES = host-pkgconf jansson libnice \
 # Straight out of the repository, no ./configure, and we also patch
 # configure.ac.
 JANUS_GATEWAY_AUTORECONF = YES
-
-define JANUS_GATEWAY_M4
-	mkdir -p $(@D)/m4
-endef
-JANUS_GATEWAY_POST_PATCH_HOOKS += JANUS_GATEWAY_M4
 
 JANUS_GATEWAY_CONF_OPTS = \
 	--disable-data-channels \

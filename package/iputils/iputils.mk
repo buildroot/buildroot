@@ -46,12 +46,22 @@ IPUTILS_DEPENDENCIES += linux-headers
 else
 IPUTILS_CONF_OPTS += -DUSE_CRYPTO=none
 # BUILD_NINFOD=true and USE_CRYPTO=none cannot be combined
-IPUTILS_CONF_OPTS += -DBUILD_NINFOD=false
+IPUTILS_NINFOD = n
+endif
+
+ifeq ($(BR2_PACKAGE_SYSTEMD),y)
+IPUTILS_DEPENDENCIES += systemd
 endif
 
 # ninfod requires <pthread.h>
 ifneq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
+IPUTILS_NINFOD = n
+endif
+
+ifeq ($(IPUTILS_NINFOD),n)
 IPUTILS_CONF_OPTS += -DBUILD_NINFOD=false
+else
+IPUTILS_CONF_OPTS += -DBUILD_NINFOD=true
 endif
 
 ifeq ($(BR2_SYSTEM_ENABLE_NLS),y)
@@ -78,7 +88,7 @@ IPUTILS_POST_INSTALL_TARGET_HOOKS += IPUTILS_MOVE_BINARIES
 
 # upstream requires distros to create symlink
 define IPUTILS_CREATE_PING6_SYMLINK
-	ln -sf $(TARGET_DIR)/bin/ping $(TARGET_DIR)/bin/ping6
+	ln -sf ping $(TARGET_DIR)/bin/ping6
 endef
 IPUTILS_POST_INSTALL_TARGET_HOOKS += IPUTILS_CREATE_PING6_SYMLINK
 

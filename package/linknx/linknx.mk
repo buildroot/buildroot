@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LINKNX_VERSION = 0.0.1.37
+LINKNX_VERSION = 0.0.1.38
 LINKNX_SITE = $(call github,linknx,linknx,$(LINKNX_VERSION))
 LINKNX_LICENSE = GPL-2.0+
 LINKNX_LICENSE_FILES = LICENSE
@@ -17,7 +17,11 @@ LINKNX_CONF_OPTS = \
 	--with-pth=$(STAGING_DIR)/usr \
 	--disable-smtp
 
-LINKNX_DEPENDENCIES = libpthsem \
+# add host-gettext for AM_ICONV macro
+LINKNX_DEPENDENCIES = \
+	host-gettext \
+	host-pkgconf \
+	libpthsem \
 	$(if $(BR2_PACKAGE_ARGP_STANDALONE),argp-standalone) \
 	$(if $(BR2_PACKAGE_LIBICONV),libiconv)
 
@@ -30,7 +34,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_LOG4CPP),y)
 LINKNX_CONF_OPTS += --with-log4cpp
-LINKNX_DEPENDENCIES += host-pkgconf log4cpp
+LINKNX_DEPENDENCIES += log4cpp
 else
 LINKNX_CONF_OPTS += --without-log4cpp
 endif

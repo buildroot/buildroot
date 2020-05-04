@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BIND_VERSION = 9.11.10
+BIND_VERSION = 9.11.13
 BIND_SITE = https://ftp.isc.org/isc/bind9/$(BIND_VERSION)
 # bind does not support parallel builds.
 BIND_MAKE = $(MAKE1)
@@ -111,11 +111,6 @@ endef
 define BIND_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 644 $(BIND_PKGDIR)/named.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/named.service
-
-	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
-
-	ln -sf /usr/lib/systemd/system/named.service \
-		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/named.service
 endef
 else
 BIND_POST_INSTALL_TARGET_HOOKS += BIND_TARGET_REMOVE_SERVER

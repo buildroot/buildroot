@@ -4,10 +4,20 @@
 #
 ################################################################################
 
-OPENJDK_VERSION_MAJOR = 12.0.2
+ifeq ($(BR2_OPENJDK_VERSION_LATEST),y)
+OPENJDK_VERSION_MAJOR = 14.0.1
+OPENJDK_VERSION_MINOR = 7
+OPENJDK_VERSION = $(OPENJDK_VERSION_MAJOR)+$(OPENJDK_VERSION_MINOR)
+OPENJDK_SOURCE = jdk-$(OPENJDK_VERSION).tar.gz
+OPENJDK_SITE = https://hg.openjdk.java.net/jdk-updates/jdk14u/archive
+else
+OPENJDK_VERSION_MAJOR = 11.0.7
 OPENJDK_VERSION_MINOR = 10
 OPENJDK_VERSION = $(OPENJDK_VERSION_MAJOR)+$(OPENJDK_VERSION_MINOR)
-OPENJDK_SITE = $(call github,AdoptOpenJDK,openjdk-jdk12u,jdk-$(OPENJDK_VERSION))
+OPENJDK_SOURCE = jdk-$(OPENJDK_VERSION).tar.gz
+OPENJDK_SITE = https://hg.openjdk.java.net/jdk-updates/jdk11u/archive
+endif
+
 OPENJDK_LICENSE = GPL-2.0+ with exception
 OPENJDK_LICENSE_FILES = LICENSE
 
@@ -45,6 +55,21 @@ OPENJDK_JVM_VARIANT = zero
 OPENJDK_DEPENDENCIES += libffi
 endif
 
+ifeq ($(BR2_PACKAGE_OPENJDK_FULL_JDK),y)
+OPENJDK_VARIANT = jdk
+OPENJDK_MAKE_TARGET = jdk-image
+else
+OPENJDK_VARIANT = jre
+OPENJDK_MAKE_TARGET = legacy-jre-image
+endif
+
+# OpenJDK installs a file named 'modules' in jre/lib, which gets installed as
+# /usr/lib/modules. However, with a merged /usr, this conflicts with the
+# directory named 'modules' installed by the kernel. If OpenJDK gets built
+# after the kernel, this manifests itself with: "cp: cannot overwrite
+# directory '/usr/lib/modules with non-directory."
+OPENJDK_INSTALL_BASE = /usr/lib/jvm
+
 # OpenJDK ignores some variables unless passed via the environment.
 # These variables are PATH, LD, CC, CXX, and CPP.
 # OpenJDK defaults ld to the ld binary but passes -Xlinker and -z as
@@ -69,10 +94,12 @@ OPENJDK_CONF_OPTS = \
 	--enable-unlimited-crypto \
 	--openjdk-target=$(GNU_TARGET_NAME) \
 	--with-boot-jdk=$(HOST_DIR) \
+	--with-stdc++lib=dynamic \
 	--with-debug-level=release \
 	--with-devkit=$(HOST_DIR) \
 	--with-extra-cflags="$(TARGET_CFLAGS)" \
 	--with-extra-cxxflags="$(TARGET_CXXFLAGS)" \
+	--with-extra-ldflags="-Wl,-rpath,$(OPENJDK_INSTALL_BASE)/lib,-rpath,$(OPENJDK_INSTALL_BASE)/lib/$(OPENJDK_JVM_VARIANT)" \
 	--with-giflib=system \
 	--with-jobs=$(PARALLEL_JOBS) \
 	--with-jvm-variants=$(OPENJDK_JVM_VARIANT) \
@@ -83,9 +110,6 @@ OPENJDK_CONF_OPTS = \
 	--with-native-debug-symbols=none \
 	--without-version-pre \
 	--with-sysroot=$(STAGING_DIR) \
-	--with-vendor-name="AdoptOpenJDK" \
-	--with-vendor-url="https://adoptopenjdk.net/" \
-	--with-vendor-version-string="AdoptOpenJDK" \
 	--with-version-build="$(OPENJDK_VERSION_MAJOR)" \
 	--with-version-string="$(OPENJDK_VERSION_MAJOR)"
 
@@ -109,14 +133,25 @@ endef
 # Make -jn is unsupported. Instead, set the "--with-jobs=" configure option,
 # and use $(MAKE1).
 define OPENJDK_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE1) -C $(@D) legacy-jre-image
+	$(TARGET_MAKE_ENV) $(OPENJDK_CONF_ENV) $(MAKE1) -C $(@D) $(OPENJDK_MAKE_TARGET)
 endef
 
 # Calling make install always builds and installs the JDK instead of the JRE,
 # which makes manual installation necessary.
 define OPENJDK_INSTALL_TARGET_CMDS
-	cp -dpfr $(@D)/build/linux-*-release/images/jre/bin/* $(TARGET_DIR)/usr/bin/
-	cp -dpfr $(@D)/build/linux-*-release/images/jre/lib/* $(TARGET_DIR)/usr/lib/
+	mkdir -p $(TARGET_DIR)$(OPENJDK_INSTALL_BASE)
+	cp -dpfr $(@D)/build/linux-*-release/images/$(OPENJDK_VARIANT)/* \
+		$(TARGET_DIR)$(OPENJDK_INSTALL_BASE)/
+	cd $(TARGET_DIR)/usr/bin && ln -snf ../..$(OPENJDK_INSTALL_BASE)/bin/* .
 endef
+
+# Demos and includes are not needed on the target
+ifeq ($(BR2_PACKAGE_OPENJDK_FULL_JDK),y)
+define OPENJDK_REMOVE_UNEEDED_JDK_DIRECTORIES
+	$(RM) -r $(TARGET_DIR)$(OPENJDK_INSTALL_BASE)/include/
+	$(RM) -r $(TARGET_DIR)$(OPENJDK_INSTALL_BASE)/demo/
+endef
+OPENJDK_TARGET_FINALIZE_HOOKS += OPENJDK_REMOVE_UNEEDED_JDK_DIRECTORIES
+endif
 
 $(eval $(generic-package))

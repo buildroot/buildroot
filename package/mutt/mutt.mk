@@ -4,12 +4,14 @@
 #
 ################################################################################
 
-MUTT_VERSION = 1.12.2
+MUTT_VERSION = 1.13.5
 MUTT_SITE = https://bitbucket.org/mutt/mutt/downloads
 MUTT_LICENSE = GPL-2.0+
 MUTT_LICENSE_FILES = GPL
 MUTT_DEPENDENCIES = ncurses
 MUTT_CONF_OPTS = --disable-doc --disable-smtp
+# We're patching configure.ac
+MUTT_AUTORECONF = YES
 
 ifeq ($(BR2_PACKAGE_LIBICONV),y)
 MUTT_DEPENDENCIES += libiconv
@@ -49,6 +51,13 @@ MUTT_CONF_OPTS += --without-ssl
 endif
 else
 MUTT_CONF_OPTS += --without-ssl
+endif
+
+ifeq ($(BR2_PACKAGE_SQLITE),y)
+MUTT_DEPENDENCIES += sqlite
+MUTT_CONF_OPTS += --with-sqlite3
+else
+MUTT_CONF_OPTS += --without-sqlite3
 endif
 
 # Avoid running tests to check for:

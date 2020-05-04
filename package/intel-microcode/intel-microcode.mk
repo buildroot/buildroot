@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-INTEL_MICROCODE_VERSION = 20190618
+INTEL_MICROCODE_VERSION = 20191112
 INTEL_MICROCODE_SITE = $(call github,intel,Intel-Linux-Processor-Microcode-Data-Files,microcode-$(INTEL_MICROCODE_VERSION))
 INTEL_MICROCODE_LICENSE = PROPRIETARY
 INTEL_MICROCODE_LICENSE_FILES = license
@@ -26,5 +26,10 @@ endef
 else
 INTEL_MICROCODE_INSTALL_TARGET = NO
 endif
+
+define INTEL_MICROCODE_LINUX_CONFIG_FIXUPS
+	$(call KCONFIG_ENABLE_OPT,CONFIG_MICROCODE)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_MICROCODE_INTEL)
+endef
 
 $(eval $(generic-package))

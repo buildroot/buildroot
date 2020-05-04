@@ -10,6 +10,7 @@ SYSKLOGD_LICENSE = GPL-2.0+
 SYSKLOGD_LICENSE_FILES = COPYING
 # From git
 SYSKLOGD_AUTORECONF = YES
+SYSKLOGD_CONF_OPTS = --exec-prefix=/
 
 define SYSKLOGD_INSTALL_SAMPLE_CONFIG
 	$(INSTALL) -D -m 0644 package/sysklogd/syslog.conf \
@@ -30,11 +31,6 @@ define SYSKLOGD_INSTALL_INIT_SYSTEMD
 		$(TARGET_DIR)/usr/lib/systemd/system/syslogd.service
 	$(INSTALL) -D -m 644 $(SYSKLOGD_PKGDIR)/klogd.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/klogd.service
-	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
-	ln -sf ../../../../usr/lib/systemd/system/syslogd.service \
-		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/syslogd.service
-	ln -sf ../../../usr/lib/systemd/system/syslogd.service \
-		$(TARGET_DIR)/etc/systemd/system/syslog.service
 endef
 
 $(eval $(autotools-package))

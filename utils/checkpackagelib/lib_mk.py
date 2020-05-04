@@ -126,7 +126,9 @@ class OverriddenVariable(_CheckFunction):
                 self.conditionally_set.append(variable)
                 return
             if self.CONCATENATING.search(text):
-                return
+                return ["{}:{}: immediate assignment to append to variable {}"
+                        .format(self.filename, lineno, variable),
+                        text]
             if self.USUALLY_OVERRIDDEN.search(text):
                 return
             if assignment in self.OVERRIDING_ASSIGNMENTS:
@@ -223,6 +225,7 @@ class TypoInPackageVariable(_CheckFunction):
     ALLOWED = re.compile("|".join([
         "ACLOCAL_DIR",
         "ACLOCAL_HOST_DIR",
+        "ACLOCAL_PATH",
         "BR_CCACHE_INITIAL_SETUP",
         "BR_LIBC",
         "BR_NO_CHECK_HASH_FOR",

@@ -5,7 +5,7 @@
 ################################################################################
 
 LIBSSH_VERSION_MAJOR = 0.9
-LIBSSH_VERSION = $(LIBSSH_VERSION_MAJOR).0
+LIBSSH_VERSION = $(LIBSSH_VERSION_MAJOR).4
 LIBSSH_SOURCE = libssh-$(LIBSSH_VERSION).tar.xz
 LIBSSH_SITE = https://www.libssh.org/files/$(LIBSSH_VERSION_MAJOR)
 LIBSSH_LICENSE = LGPL-2.1
@@ -32,13 +32,13 @@ else
 LIBSSH_CONF_OPTS += -DWITH_ZLIB=OFF
 endif
 
-# Dependency is either on libgcrypt or openssl, guaranteed in Config.in.
-# Favour libgcrypt.
-ifeq ($(BR2_PACKAGE_LIBGCRYPT),y)
+ifeq ($(BR2_PACKAGE_LIBSSH_MBEDTLS),y)
+LIBSSH_CONF_OPTS += -DWITH_MBEDTLS=ON
+LIBSSH_DEPENDENCIES += mbedtls
+else ifeq ($(BR2_PACKAGE_LIBSSH_LIBGCRYPT),y)
 LIBSSH_CONF_OPTS += -DWITH_GCRYPT=ON
 LIBSSH_DEPENDENCIES += libgcrypt
-else
-LIBSSH_CONF_OPTS += -DWITH_GCRYPT=OFF
+else ifeq ($(BR2_PACKAGE_LIBSSH_OPENSSL),y)
 LIBSSH_DEPENDENCIES += openssl
 endif
 

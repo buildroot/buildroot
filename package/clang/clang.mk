@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-# LLVM and Clang should be version bumped together
-CLANG_VERSION = 9.0.0
-CLANG_SITE = http://llvm.org/releases/$(CLANG_VERSION)
-CLANG_SOURCE = cfe-$(CLANG_VERSION).src.tar.xz
+# LLVM, Clang and lld should be version bumped together
+CLANG_VERSION = 9.0.1
+CLANG_SITE = https://github.com/llvm/llvm-project/releases/download/llvmorg-$(CLANG_VERSION)
+CLANG_SOURCE = clang-$(CLANG_VERSION).src.tar.xz
 CLANG_LICENSE = Apache-2.0 with exceptions
 CLANG_LICENSE_FILES = LICENSE.TXT
 CLANG_SUPPORTS_IN_SOURCE_BUILD = NO

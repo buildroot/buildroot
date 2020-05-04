@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-KMOD_VERSION = 26
+KMOD_VERSION = 27
 KMOD_SOURCE = kmod-$(KMOD_VERSION).tar.xz
 KMOD_SITE = $(BR2_KERNEL_MIRROR)/linux/utils/kernel/kmod
 KMOD_INSTALL_STAGING = YES
@@ -50,7 +50,7 @@ endif
 ifeq ($(BR2_PACKAGE_KMOD_TOOLS),y)
 
 # add license info for kmod tools
-KMOD_LICENSE := $(KMOD_LICENSE), GPL-2.0+ (tools)
+KMOD_LICENSE += , GPL-2.0+ (tools)
 KMOD_LICENSE_FILES += COPYING
 
 # /sbin is really /usr/sbin with merged /usr, so adjust relative symlink

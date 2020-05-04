@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ZNC_VERSION = 1.7.5
+ZNC_VERSION = 1.8.0
 ZNC_SITE = http://znc.in/releases/archive
 ZNC_LICENSE = Apache-2.0
 ZNC_LICENSE_FILES = LICENSE
@@ -42,9 +42,12 @@ ifeq ($(BR2_PACKAGE_ICU)$(BR2_PACKAGE_PYTHON3),yy)
 ZNC_DEPENDENCIES += python3 host-swig
 ZNC_CONF_OPTS += \
 	-DWANT_PYTHON=ON \
-	-DWANT_PYTHON_VERSION=python3
+	-DWANT_PYTHON_VERSION=python3 \
+	-DWANT_SWIG=ON
 else
-ZNC_CONF_OPTS += -DWANT_PYTHON=OFF
+ZNC_CONF_OPTS += \
+	-DWANT_PYTHON=OFF \
+	-DWANT_SWIG=OFF
 endif
 
 $(eval $(cmake-package))

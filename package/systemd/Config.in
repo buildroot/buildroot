@@ -16,9 +16,14 @@ config BR2_PACKAGE_SYSTEMD_ARCH_SUPPORTS
 menuconfig BR2_PACKAGE_SYSTEMD
 	bool "systemd"
 	depends on BR2_INIT_SYSTEMD
+	depends on BR2_PACKAGE_SYSTEMD_ARCH_SUPPORTS
+	depends on BR2_USE_MMU
 	depends on !BR2_STATIC_LIBS # kmod
-	depends on BR2_TOOLCHAIN_HAS_THREADS # dbus
-	depends on BR2_USE_MMU # dbus
+	depends on BR2_TOOLCHAIN_USES_GLIBC
+	depends on BR2_TOOLCHAIN_HAS_SSP
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_10
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5
+	depends on BR2_HOST_GCC_AT_LEAST_5 # host-systemd
 	select BR2_PACKAGE_HAS_UDEV
 	select BR2_PACKAGE_DBUS # runtime dependency only
 	select BR2_PACKAGE_LIBCAP
@@ -35,6 +40,7 @@ menuconfig BR2_PACKAGE_SYSTEMD
 	select BR2_PACKAGE_KMOD_TOOLS
 	select BR2_TARGET_TZ_INFO
 	select BR2_NEEDS_HOST_UTF8_LOCALE
+	select BR2_PACKAGE_HOST_SYSTEMD # for systemctl preset-all, during target-finalize
 	help
 	  systemd is a system and service manager for Linux,
 	  compatible with SysV and LSB init scripts. systemd provides
@@ -161,6 +167,16 @@ config BR2_PACKAGE_SYSTEMD_COREDUMP
 
 	  http://www.freedesktop.org/software/systemd/man/systemd-coredump.html
 
+config BR2_PACKAGE_SYSTEMD_PSTORE
+	bool "enable pstore support"
+	default y
+	help
+	  When this features is enabled, additional tools and services
+	  are built to support archiving contents of the persistent
+	  storage filesytem.
+
+	  https://www.freedesktop.org/software/systemd/man/systemd-pstore.html
+
 config BR2_PACKAGE_SYSTEMD_FIRSTBOOT
 	bool "enable firstboot support"
 	help
@@ -176,6 +192,28 @@ config BR2_PACKAGE_SYSTEMD_HIBERNATE
 	  are built to support suspending and resuming the system.
 
 	  http://www.freedesktop.org/software/systemd/man/systemd-sleep.html
+
+config BR2_PACKAGE_SYSTEMD_HOMED
+	bool "enable home daemon"
+	depends on BR2_TOOLCHAIN_HAS_THREADS # cryptsetup -> lvm2
+	depends on BR2_USE_MMU # cryptsetup -> lvm2
+	depends on !BR2_STATIC_LIBS # cryptsetup -> lvm2
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # cryptsetup -> json-c
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12 # fscrypt_key
+	select BR2_PACKAGE_CRYPTSETUP
+	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_UTIL_LINUX_LIBFDISK
+	help
+	  systemd-homed is a system service that may be used to create,
+	  remove, change or inspect home directories.
+
+	  https://www.freedesktop.org/software/systemd/man/systemd-homed.service.html
+
+comment "homed support needs a toolchain w/ threads, dynamic library, kernel headers >= 4.12"
+	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
+		BR2_STATIC_LIBS || BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12
 
 config BR2_PACKAGE_SYSTEMD_HOSTNAMED
 	bool "enable hostname daemon"
@@ -264,7 +302,12 @@ config BR2_PACKAGE_SYSTEMD_NETWORKD
 
 config BR2_PACKAGE_SYSTEMD_POLKIT
 	bool "enable polkit support"
-	depends on BR2_TOOLCHAIN_USES_GLIBC # polkit
+	depends on BR2_HOST_GCC_AT_LEAST_4_9 # polkit
+	depends on BR2_INSTALL_LIBSTDCPP # polkit
+	depends on BR2_PACKAGE_SPIDERMONKEY_ARCH_SUPPORTS # polkit
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # polkit
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # polkit
+	depends on BR2_USE_WCHAR # libglib2
 	select BR2_PACKAGE_POLKIT
 	help
 	  If enabled, systemd is built with polkit support and policy
@@ -274,8 +317,13 @@ config BR2_PACKAGE_SYSTEMD_POLKIT
 
 	  http://wiki.freedesktop.org/www/Software/polkit/
 
-comment "polkit support needs a glibc toolchain"
-	depends on !BR2_TOOLCHAIN_USES_GLIBC
+comment "polkit support needs a toolchain with C++, wchar, NPTL, gcc >= 4.9"
+	depends on BR2_PACKAGE_SPIDERMONKEY_ARCH_SUPPORTS
+	depends on !BR2_INSTALL_LIBSTDCPP || \
+		!BR2_TOOLCHAIN_HAS_THREADS_NPTL || \
+		!BR2_HOST_GCC_AT_LEAST_4_9 || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || \
+		!BR2_USE_WCHAR
 
 config BR2_PACKAGE_SYSTEMD_QUOTACHECK
 	bool "enable quotacheck tools"
@@ -296,6 +344,16 @@ config BR2_PACKAGE_SYSTEMD_RANDOMSEED
 	  increases the amount of available entropy early at boot.
 
 	  http://www.freedesktop.org/software/systemd/man/systemd-random-seed.service.html
+
+config BR2_PACKAGE_SYSTEMD_REPART
+	bool "enable repart support"
+	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_UTIL_LINUX_LIBFDISK
+	help
+	  systemd-repart grows and adds partitions to a partition table,
+	  based on the configuration files described in repart.d.
+
+	  https://www.freedesktop.org/software/systemd/man/systemd-repart.html
 
 config BR2_PACKAGE_SYSTEMD_RESOLVED
 	bool "enable resolve daemon"
@@ -371,6 +429,18 @@ config BR2_PACKAGE_SYSTEMD_TMPFILES
 	  tmpfiles.d(5).
 
 	  http://www.freedesktop.org/software/systemd/man/systemd-tmpfiles.html
+
+config BR2_PACKAGE_SYSTEMD_USERDB
+	bool "enable userdb daemon"
+	help
+	  systemd-userdbd is a system service that multiplexes
+	  user/group lookups to all local services that provide JSON
+	  user/group record definitions to the system. In addition it
+	  synthesizes JSON user/group records from classic UNIX/glibc
+	  NSS user/group records in order to provide full backwards
+	  compatibility.
+
+	  https://www.freedesktop.org/software/systemd/man/systemd-userdbd.service.html
 
 config BR2_PACKAGE_SYSTEMD_VCONSOLE
 	bool "enable vconsole tool"

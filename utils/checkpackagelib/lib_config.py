@@ -61,14 +61,13 @@ class AttributesOrder(_CheckFunction):
 
 
 class CommentsMenusPackagesOrder(_CheckFunction):
-    menu_of_packages = [""]
-    package = [""]
-    print_package_warning = [True]
-
     def before(self):
-        self.state = ""
         self.level = 0
+        self.menu_of_packages = ["The top level menu"]
         self.new_package = ""
+        self.package = [""]
+        self.print_package_warning = [True]
+        self.state = ""
 
     def get_level(self):
         return len(self.state.split('-')) - 1
@@ -89,30 +88,35 @@ class CommentsMenusPackagesOrder(_CheckFunction):
 
     def check_line(self, lineno, text):
         # We only want to force sorting for the top-level menus
-        if self.filename not in ["package/Config.in",
-                                 "package/Config.in.host"]:
+        if self.filename not in ["fs/Config.in",
+                                 "package/Config.in",
+                                 "package/Config.in.host",
+                                 "package/kodi/Config.in"]:
             return
 
         source_line = re.match(r'^\s*source ".*/([^/]*)/Config.in(.host)?"', text)
 
-        if text.startswith("comment ") or text.startswith("if ") or \
-           text.startswith("menu "):
+        if text.startswith("comment "):
+            if not self.state.endswith("-comment"):
+                self.state += "-comment"
 
-            if text.startswith("comment"):
-                if not self.state.endswith("-comment"):
-                    self.state += "-comment"
+            self.initialize_level_elements(text)
 
-            elif text.startswith("if") or text.startswith("menu"):
-                if text.startswith("if"):
-                    self.state += "-if"
+        elif text.startswith("if "):
+            self.state += "-if"
 
-                elif text.startswith("menu"):
-                    self.state += "-menu"
+            self.initialize_level_elements(text)
+
+        elif text.startswith("menu "):
+            if self.state.endswith("-comment"):
+                self.state = self.state[:-8]
+
+            self.state += "-menu"
 
             self.initialize_level_elements(text)
 
         elif text.startswith("endif") or text.startswith("endmenu"):
-            if self.state.endswith("comment"):
+            if self.state.endswith("-comment"):
                 self.state = self.state[:-8]
 
             if text.startswith("endif"):
