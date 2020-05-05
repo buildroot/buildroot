@@ -1,0 +1,12 @@
+diff -ruN ThunderNanoServices.orig/cmake/FindWPEWebKit.cmake ThunderNanoServices/cmake/FindWPEWebKit.cmake
+--- ThunderNanoServices.orig/cmake/FindWPEWebKit.cmake	2020-04-22 14:15:48.000000000 +0530
++++ ThunderNanoServices/cmake/FindWPEWebKit.cmake	2020-05-05 14:37:48.897478600 +0530
+@@ -47,7 +47,7 @@
+     if("${PC_WPE_WEBKIT_VERSION}" STREQUAL "0.0.20170728")
+         set(WPE_WEBKIT_DEPRECATED_API TRUE)
+     endif()
+-    if("${PC_WPE_WEBKIT_VERSION}" STREQUAL "2.28.0")
++    if("${PC_WPE_WEBKIT_VERSION}" STREQUAL "2.28.2")
+         set(WEBKIT_GLIB_API TRUE)
+     endif()
+     find_path(
