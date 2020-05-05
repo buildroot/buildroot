@@ -44,6 +44,8 @@ GLIBC_INSTALL_STAGING = YES
 
 GLIBC_INSTALL_STAGING_OPTS = install_root=$(STAGING_DIR) install
 
+GLIBC_EXTRA_CFLAGS += -Wno-attribute-alias
+
 # Thumb build is broken, build in ARM mode
 ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
 GLIBC_EXTRA_CFLAGS += -marm
