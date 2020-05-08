@@ -8,5 +8,5 @@ chmod 664 /sys/class/graphics/fb0/blank
 chown root:video /sys/devices/virtual/vtconsole/vtcon1/bind
 chmod 664 /sys/devices/virtual/vtconsole/vtcon1/bind
 
-chown root:video /sys/class/backlight/board\:backlight/brightness
-chmod 664 /sys/class/backlight/board\:backlight/brightness
+chown root:video /sys/class/backlight/backlight/brightness
+chmod 664 /sys/class/backlight/backlight/brightness

@@ -8,8 +8,8 @@ chmod 664 /sys/class/graphics/fb0/blank
 chown root:video /sys/devices/virtual/vtconsole/vtcon1/bind
 chmod 664 /sys/devices/virtual/vtconsole/vtcon1/bind
 
-chown root:video /sys/class/backlight/board\:backlight/brightness
-chmod 664 /sys/class/backlight/board\:backlight/brightness
+chown root:video /sys/class/backlight/backlight/brightness
+chmod 664 /sys/class/backlight/backlight/brightness
 
 chown root:cpufreq /sys/devices/system/cpu/cpufreq/policy0/*
 chmod 664 /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed
