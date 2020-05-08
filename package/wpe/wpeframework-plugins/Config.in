@@ -924,14 +924,6 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_INJECTEDBUNDLE_INTERFACES
     bool "injectedbundle"
     default y
 
-if BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_INJECTEDBUNDLE_INTERFACES
-
-config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_AMAZON_HAWAII
-    bool "amazon hawaii interface"
-    default n
-
-endif
-
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_AUTOSTART
     bool "autostart"
     default y
@@ -1033,6 +1025,7 @@ endif
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_AMAZON_TAB
     depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
     bool "amazon"
+    select BR2_PACKAGE_LIBAMAZON
     help
       A wrapper around the amazon app to start it as a
       wpeframework plugin.
