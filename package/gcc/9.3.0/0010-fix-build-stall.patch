@@ -1,0 +1,11 @@
+--- a/gcc/Makefile.in	2019-09-04 10:05:38.483715500 +0300
++++ b/gcc/Makefile.in	2019-04-25 17:32:16.000000000 +0300
+@@ -1961,7 +1961,7 @@
+ # require the selftests to be run by defining their selftest-<LANG> as
+ # s-selftest-<LANG>.  Otherwise, they should define it as empty.
+
+-SELFTEST_TARGETS = @selftest_languages@
++SELFTEST_TARGETS =
+ selftest: $(SELFTEST_TARGETS)
+
+ # Recompile all the language-independent object files.
