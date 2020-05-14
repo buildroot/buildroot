@@ -1,0 +1,13 @@
+--- host-python-pycrypto-2.6.1/lib/Crypto/Random/_UserFriendlyRNG.py.orig	2020-05-14 11:03:19.751343695 -0400
++++ host-python-pycrypto-2.6.1/lib/Crypto/Random/_UserFriendlyRNG.py	2020-05-14 11:05:41.391261512 -0400
+@@ -73,8 +73,8 @@
+         t = time.time()
+         self._time_es.feed(struct.pack("@I", int(2**30 * (t - floor(t)))))
+ 
+-        # Add the fractional part of time.clock()
+-        t = time.clock()
++        # Add the fractional part of time.process_time()
++        t = time.process_time()
+         self._clock_es.feed(struct.pack("@I", int(2**30 * (t - floor(t)))))
+ 
+ 
