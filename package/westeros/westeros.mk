@@ -43,6 +43,12 @@ else ifeq ($(BR2_PACKAGE_LIBDRM),y)
 	WESTEROS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -DWESTEROS_PLATFORM_DRM -I${STAGING_DIR}/usr/include/interface/vmcs_host/linux"
 endif # BR2_PACKAGE_WESTEROS_SOC_RPI
 
+ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
+define WESTEROS_APPLY_BRCM_PATCHES
+        patch -d $(@D)/ -p1 < package/westeros/1080.patch.brcm
+endef
+endif
+WESTEROS_POST_PATCH_HOOKS += WESTEROS_APPLY_BRCM_PATCHES
 
 define WESTEROS_RUN_AUTORECONF
         cd $(@D) && $(HOST_DIR)/usr/bin/autoreconf --force --install
