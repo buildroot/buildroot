@@ -27,6 +27,16 @@ config BR2_PACKAGE_GNUTLS_TOOLS
 	  Install GnuTLS command line tools for various cryptographic
 	  tasks.
 
+config BR2_PACKAGE_GNUTLS_ENABLE_SSL2
+	bool "enable SSLv2"
+	help
+	  Enable SSLv2 protocol.
+
+config BR2_PACKAGE_GNUTLS_ENABLE_GOST
+	bool "enable GOST"
+	help
+	  Enable GOST cipher.
+
 endif
 
 comment "gnutls needs a toolchain w/ wchar, dynamic library"
