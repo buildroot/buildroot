@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2020.11"
 
+config BR2_PACKAGE_TINYHTTPD
+	bool "tinyhttpd package removed"
+	select BR2_LEGACY
+	help
+	  The tinyhttpd package was removed as it is affected by
+	  CVE-2002-1819 and is not maintained anymore (no release since
+	  2001).
+
 config BR2_PACKAGE_XSERVER_XORG_SERVER_AIGLX
 	bool "X.org Enable AIGLX Extension"
 	select BR2_LEGACY
