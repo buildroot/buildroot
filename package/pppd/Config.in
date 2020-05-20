@@ -26,7 +26,7 @@ config BR2_PACKAGE_PPPD_RADIUS
 
 config BR2_PACKAGE_PPPD_OVERWRITE_RESOLV_CONF
 	bool "overwrite /etc/resolv.conf"
-	default y
+	default n
 	help
 	  Overwrite /etc/resolv.conf instead of maintaining the
 	  separate list of nameservers in /etc/ppp/resolv.conf
