@@ -1040,6 +1040,42 @@ config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_STARTURL
     string "start-url"
     default "about:blank"
 
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_CA_DIRECTORY_PATH
+    string "CA certificates Directory path"
+    default "/etc/ssl/certs/"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_CA_BUNDLE_FILENAME
+    string "CA certificates bundle filename"
+    default "ca-certificates.crt"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_MANUFACTURER
+    string "Manufacturer"
+    default "Broadcom"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_MODELNAME
+    string "Modelname"
+    default "2952"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_DEVICELANGUAGE
+    string "Device language"
+    default "en-US"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_DEVICETYPEID
+    string "DTID"
+    default "A71I8788P1ZV8"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_FIRMWARE_VERSION
+    string "Firmware version"
+    default "1.0"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_CHIPSET_NAME
+    string "Chipset name"
+    default "BCM2837"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_ETHERNET_DEVICE
+    string "Ethernet device to use for device id"
+    default "eth0"
+
 config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_TRANSPARENT
     bool "transparent"
     default true
