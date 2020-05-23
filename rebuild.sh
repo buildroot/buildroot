@@ -12,7 +12,7 @@ make od_${CONFIG}_defconfig BR2_EXTERNAL=board/opendingux
 
 # Clear the build location.
 echo "Clearing build location..."
-rm -rf output/host
+rm -rf output/
 
 # Perform the build.
 echo "Starting build..."
