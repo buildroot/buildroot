@@ -32,21 +32,29 @@ define HOST_LZ4_INSTALL_CMDS
 		install -C $(@D)
 endef
 
+ifeq ($(BR2_PACKAGE_LZ4_PROGS),y)
+LZ4_BUILD_TARGETS = lib lz4
+LZ4_INSTALL_OPTS = install -C $(@D)
+else
+LZ4_BUILD_TARGETS = lib
+LZ4_INSTALL_OPTS = install -C $(@D)/lib
+endif
+
 define LZ4_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) $(LZ4_MAKE_OPTS) \
-		-C $(@D) lib
-	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) $(LZ4_MAKE_OPTS) \
-		-C $(@D) lz4
+	$(foreach target,$(LZ4_BUILD_TARGETS),\
+		$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) $(LZ4_MAKE_OPTS) \
+			-C $(@D) $(target)
+	)
 endef
 
 define LZ4_INSTALL_STAGING_CMDS
 	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) DESTDIR=$(STAGING_DIR) \
-		PREFIX=/usr $(LZ4_MAKE_OPTS) install -C $(@D)
+		PREFIX=/usr $(LZ4_MAKE_OPTS) $(LZ4_INSTALL_OPTS)
 endef
 
 define LZ4_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) DESTDIR=$(TARGET_DIR) \
-		PREFIX=/usr $(LZ4_MAKE_OPTS) install -C $(@D)
+		PREFIX=/usr $(LZ4_MAKE_OPTS) $(LZ4_INSTALL_OPTS)
 endef
 
 $(eval $(generic-package))
