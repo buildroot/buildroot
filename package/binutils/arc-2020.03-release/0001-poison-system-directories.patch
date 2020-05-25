@@ -229,13 +229,14 @@ diff --git a/ld/ldlex.h b/ld/ldlex.h
 index 32a7a6409e8..c02b64bf92f 100644
 --- a/ld/ldlex.h
 +++ b/ld/ldlex.h
-@@ -150,6 +150,8 @@ enum option_values
-   OPTION_FORCE_GROUP_ALLOCATION,
-   OPTION_PRINT_MAP_DISCARDED,
+@@ -152,6 +152,8 @@ enum option_values
    OPTION_NO_PRINT_MAP_DISCARDED,
+   OPTION_NON_CONTIGUOUS_REGIONS,
+   OPTION_NON_CONTIGUOUS_REGIONS_WARNINGS,
 +  OPTION_NO_POISON_SYSTEM_DIRECTORIES,
 +  OPTION_ERROR_POISON_SYSTEM_DIRECTORIES,
  };
+
  
  /* The initial parser states.  */
 diff --git a/ld/ldmain.c b/ld/ldmain.c
