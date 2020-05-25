@@ -20,9 +20,11 @@ choice
 
 config BR2_PACKAGE_LUA_5_1
 	bool "Lua 5.1.x"
+	select BR2_PACKAGE_LUAINTERPRETER_ABI_VERSION_5_1
 
 config BR2_PACKAGE_LUA_5_3
 	bool "Lua 5.3.x"
+	select BR2_PACKAGE_LUAINTERPRETER_ABI_VERSION_5_3
 
 endchoice
 
