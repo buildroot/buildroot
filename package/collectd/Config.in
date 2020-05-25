@@ -65,10 +65,13 @@ config BR2_PACKAGE_COLLECTD_LOGSTASH
 
 config BR2_PACKAGE_COLLECTD_LUA
 	bool "lua"
-	select BR2_PACKAGE_LUA
+	depends on BR2_PACKAGE_HAS_LUAINTERPRETER
 	help
 	  Embeds a Lua interpreter into collectd and provides an
 	  interface to collectd's plugin system.
+
+comment "lua support needs a Lua interpreter"
+	depends on !BR2_PACKAGE_HAS_LUAINTERPRETER
 
 config BR2_PACKAGE_COLLECTD_NOTIFY_EMAIL
 	bool "notify_email"
