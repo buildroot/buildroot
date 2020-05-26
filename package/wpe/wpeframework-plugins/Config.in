@@ -708,6 +708,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_AAMP_USE_WESTEROS_SINK
 
 endif # BR2_PACKAGE_WPEFRAMEWORK_STREAMER_AAMP
 
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_CENC
+    select BR2_PACKAGE_GST1_CENCDECRYPT
+    bool "CENC"
+    default n
+    help
+      Gstreamer based player for playback of clear/encrypted content.
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST
     bool "Broadcast"
     default n
