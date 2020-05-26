@@ -1076,6 +1076,10 @@ config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_ETHERNET_DEVICE
     string "Ethernet device to use for device id"
     default "eth0"
 
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_FRAGMENT_CACHE_SIZE
+    string "Fragment Cache size (MB)"
+    default "100"
+
 config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_TRANSPARENT
     bool "transparent"
     default true
@@ -1094,6 +1098,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_GROUP
         run Amazon as this group, leave empty to use the same as 
         WPEframework
 
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_MEMORYPROFILE
+    string "memory-profile"
+    default "128m"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_MEMORYPRESSURE
+    string "memory-pressure"
+    default "databaseprocess:50m,networkprocess:100m,webprocess:300m,rpcprocess:50m"
 
 endif
 
