@@ -1,14 +1,14 @@
 config BR2_PACKAGE_LIBAMAZON
 	bool "libamazon"
-        default n
-	depends on (BR2_mipsel || BR2_arm) && !BR2_PACKAGE_AMAZON 
-        select BR2_PACKAGE_JPEG
-        select BR2_PACKAGE_ZLIB
-        select BR2_PACKAGE_LIBCURL
-        select BR2_PACKAGE_LIBPNG
-        select BR2_PACKAGE_WPEFRAMEWORK
-        select BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
+		default n
+	depends on (BR2_mipsel || BR2_arm) && !BR2_PACKAGE_AMAZON
+	depends on BR2_PACKAGE_WPEFRAMEWORK
+	select BR2_PACKAGE_JPEG
+	select BR2_PACKAGE_ZLIB
+	select BR2_PACKAGE_LIBCURL
+	select BR2_PACKAGE_LIBPNG
+	select BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
 
 	help
-	  This is the binary build package for the amazon application through
-          the injected bundle in the Thunder AppEngine WebKitBrowser
+		This is the binary build package for the amazon application through
+		the injected bundle in the Thunder AppEngine WebKitBrowser
