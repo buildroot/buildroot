@@ -1,0 +1,9 @@
+config BR2_PACKAGE_RASPI2FB
+	bool "raspi2fb"
+	select BR2_PACKAGE_LIBBSD
+	select BR2_PACKAGE_RPI_USERLAND
+	help
+	  Program to copy the Raspberry Pi display
+	  to a secondary framebuffer.
+
+	  https://github.com/AndrewFromMelbourne/raspi2fb

@@ -1,0 +1,11 @@
+--- a/CMakeLists.txt	2020-01-01 00:00:00.000000000 +0000
++++ b/CMakeLists.txt	2020-01-01 00:00:00.000000000 +0000
+@@ -152,7 +152,7 @@
+     configure_file(dbus/policy.conf.in ${COG_DEFAULT_APPID}.conf @ONLY)
+     install(
+         FILES ${CMAKE_CURRENT_BINARY_DIR}/${COG_DEFAULT_APPID}.conf
+-        DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/dbus-1/system.d
++        DESTINATION /etc/dbus-1/system.d
+         COMPONENT "runtime"
+     )
+ 

@@ -1,0 +1,11 @@
+--- a/CMakeLists.txt	2020-01-01 00:00:00.000000000 +0000
++++ b/CMakeLists.txt	2020-01-01 00:00:00.000000000 +0000
+@@ -6,7 +6,7 @@
+ 
+ set(BCM_HOST_INCLUDE_DIRS /opt/vc/include)
+ set(BCM_HOST_LIBRARY_DIRS /opt/vc/lib)
+-set(BCM_HOST_LIBRARIES bcm_host)
++set(BCM_HOST_LIBRARIES bcm_host vchostif)
+ 
+ find_package(PkgConfig)
+ pkg_check_modules(LIBBSD libbsd)
