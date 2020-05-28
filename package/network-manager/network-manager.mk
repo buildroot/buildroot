@@ -32,7 +32,6 @@ NETWORK_MANAGER_CONF_OPTS = \
 	--disable-ifcfg-rh \
 	--without-nm-cloud-setup
 
-
 ifeq ($(BR2_PACKAGE_OFONO),y)
 NETWORK_MANAGER_DEPENDENCIES += ofono
 NETWORK_MANAGER_CONF_OPTS += --with-ofono
