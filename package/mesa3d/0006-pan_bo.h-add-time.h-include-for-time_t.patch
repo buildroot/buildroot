@@ -8,24 +8,26 @@ Content-Transfer-Encoding: 8bit
 
 Fixes:
 
-  ../src/gallium/drivers/panfrost/pan_bo.h:93:9: error: unknown type name ‘time_t’
+  ../src/panfrost/encoder/pan_bo.h:93:9: error: unknown type name ‘time_t’
 
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+[Bernd: rebased on 20.1]
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 ---
- src/gallium/drivers/panfrost/pan_bo.h | 1 +
+ src/panfrost/encoder/pan_bo.h | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/src/gallium/drivers/panfrost/pan_bo.h b/src/gallium/drivers/panfrost/pan_bo.h
+diff --git a/src/panfrost/encoder/pan_bo.h b/src/panfrost/encoder/pan_bo.h
 index 414c356b95c..6dda393095d 100644
---- a/src/gallium/drivers/panfrost/pan_bo.h
-+++ b/src/gallium/drivers/panfrost/pan_bo.h
+--- a/src/panfrost/encoder/pan_bo.h
++++ b/src/panfrost/encoder/pan_bo.h
 @@ -29,6 +29,7 @@
  #include <panfrost-misc.h>
- #include "pipe/p_state.h"
  #include "util/list.h"
+ #include "pan_device.h"
 +#include <time.h>
  
- struct panfrost_screen;
+ /* Flags for allocated memory */
  
 -- 
 2.25.1
