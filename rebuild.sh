@@ -7,12 +7,12 @@ if [ -z "$CONFIG" ] ; then
 	exit 1
 fi
 
-# Use the default config.
-make od_${CONFIG}_defconfig BR2_EXTERNAL=board/opendingux
-
 # Clear the build location.
 echo "Clearing build location..."
 rm -rf output/
+
+# Use the default config.
+make od_${CONFIG}_defconfig BR2_EXTERNAL=board/opendingux
 
 # Perform the build.
 echo "Starting build..."
