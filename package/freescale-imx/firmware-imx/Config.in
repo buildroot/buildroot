@@ -8,3 +8,27 @@ config BR2_PACKAGE_FIRMWARE_IMX
 
 	  This library is provided by Freescale as-is and doesn't have
 	  an upstream.
+
+if BR2_PACKAGE_FREESCALE_IMX_NEED_DDR_FW
+
+choice
+	bool "DDR training binaries"
+	default BR2_PACKAGE_FIRMWARE_DDRFW_LPDDR4
+	help
+	  Choose the DDR training binaries to be used depending on the
+	  kind of memory that is available on the target board (DDR4,
+	  LPDDR4, etc...).
+
+config BR2_PACKAGE_FIRMWARE_DDRFW_LPDDR4
+	bool "lpddr4"
+	help
+	  Use LPDDR4 binaries (i.e.: lpddr4_pmu_train_*.bin)
+
+config BR2_PACKAGE_FIRMWARE_DDRFW_DDR4
+	bool "DDR4"
+	help
+	  Use DDR4 binaries (i.e.: ddr4_*_201810.bin).
+
+endchoice # DDR training FW
+
+endif
