@@ -1,6 +1,10 @@
 config BR2_PACKAGE_EDID_DECODE
 	bool "edid-decode"
+	depends on BR2_INSTALL_LIBSTDCPP
 	help
 	  Decode EDID data in human-readable format.
 
 	  https://git.linuxtv.org/edid-decode.git/
+
+comment "edid-decode needs a toolchain w/ C++"
+	depends on !!BR2_INSTALL_LIBSTDCPP
