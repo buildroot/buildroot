@@ -13,7 +13,9 @@ GLOOX_INSTALL_STAGING = YES
 GLOOX_DEPENDENCIES = mpc
 GLOOX_CONF_OPTS = \
 	--without-libidn \
-	--enable-getaddrinfo
+	--enable-getaddrinfo \
+	--without-examples \
+	--without-tests
 
 GLOOX_CXXFLAGS = $(TARGET_CXXFLAGS)
 ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_85180),y)
