@@ -1,7 +1,6 @@
 #!/bin/sh
 
 export SOURCE=/UserApps/metrological
-#export LD_LIBRARY_PATH=$SOURCE/usr/lib:/lib:/usr/lib:$SOURCE/lib
 export LD_LIBRARY_PATH=$SOURCE/usr/lib:/lib:/usr/lib:$SOURCE/lib:$SOURCE/usr/lib/wpeframework/plugins:$SOURCE/usr/lib/wpeframework/proxystubs
 export PATH=$SOURCE/usr/bin:$PATH
 export GST_PLUGIN_SCANNER=$SOURCE/usr/libexec/gstreamer-1.0/gst-plugin-scanner
@@ -53,6 +52,8 @@ case "$1" in
 		ln -s $SOURCE/usr/lib/gio $DESTINATION/lib/gio
 		ln -s $SOURCE/root/Netflix $DESTINATION/root/Netflix
 		ln -s $SOURCE/root/OCDM $DESTINATION/root/OCDM
+		ln -s /usr/bin/sage/sage_ta_widevine.bin $SOURCE/sage_ta_widevine.bin
+		ln -s /usr/bin/sage/sage_ta_netflix.bin $SOURCE/sage_ta_netflix.bin
 	fi
 
 	export DRMSTORE=/tmp/drmstore
@@ -69,4 +70,3 @@ case "$1" in
 	WPEFramework -c $SOURCE/etc/WPEFramework/config.json
 ;;
 esac
-

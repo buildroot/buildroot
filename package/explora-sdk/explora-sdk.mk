@@ -3,7 +3,7 @@
 # explora-sdk
 #
 ################################################################################
-EXPLORA_SDK_VERSION = 11f96e3cccb4aaca90feb1bfcb67210ede723a14
+EXPLORA_SDK_VERSION = 17601bc9a99225c7d6bd155f55529da163b76338
 EXPLORA_SDK_SITE = git@github.com:Metrological/SDK_Explora.git
 EXPLORA_SDK_SITE_METHOD = git
 EXPLORA_SDK_INSTALL_STAGING = YES
