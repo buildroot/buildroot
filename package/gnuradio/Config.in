@@ -54,6 +54,14 @@ config BR2_PACKAGE_GNURADIO_CTRLPORT
 	help
 	  GNU Radio ctrlport block
 
+config BR2_PACKAGE_GNURADIO_DTV
+	bool "gr-dtv support"
+	select BR2_PACKAGE_GNURADIO_ANALOG
+	select BR2_PACKAGE_GNURADIO_FEC
+	select BR2_PACKAGE_GNURADIO_FILTER
+	help
+	  various digital television standards blocks
+
 config BR2_PACKAGE_GNURADIO_FEC
 	bool "gr-fec support"
 	select BR2_PACKAGE_GNURADIO_BLOCKS
