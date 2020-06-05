@@ -15,10 +15,16 @@ config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE
 config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_NEXUS_SVP
         bool
 
-config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_NEXUS_SVP_DEVICE_CERTIFICATE
-    depends on BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_NEXUS_SVP
+config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_DEVICE_CERTIFICATE
     string "Device certificate"
     default ""
     help
         Set the path where the device certificate can be
         found on the system. Leave empty to disable.h
+
+config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_KEYBOX
+    string "Keybox"
+    default ""
+    help
+        Set the path where the keybox can be found on the
+        system. Leave empty to disable.h
