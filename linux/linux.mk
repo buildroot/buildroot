@@ -381,7 +381,7 @@ define LINUX_INSTALL_DTB
 	$(foreach dtb,$(LINUX_DTBS), \
 		install -D \
 			$(or $(wildcard $(LINUX_ARCH_PATH)/boot/dts/$(dtb)),$(LINUX_ARCH_PATH)/boot/$(dtb)) \
-			$(1)/$(if $(BR2_KERNEL_DTB_KEEP_DIRNAME),$(dtb),$(notdir $(dtb)))
+			$(1)/$(if $(BR2_LINUX_KERNEL_DTB_KEEP_DIRNAME),$(dtb),$(notdir $(dtb)))
 	)
 endef
 endif # BR2_LINUX_KERNEL_APPENDED_DTB
