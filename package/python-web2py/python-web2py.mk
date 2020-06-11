@@ -9,7 +9,7 @@ PYTHON_WEB2PY_SITE = $(call github,web2py,web2py,v$(PYTHON_WEB2PY_VERSION))
 PYTHON_WEB2PY_LICENSE = LGPL-3.0
 PYTHON_WEB2PY_LICENSE_FILES = LICENSE
 PYTHON_WEB2PY_DEPENDENCIES = $(if $(BR2_PACKAGE_PYTHON3),host-python3 python3,host-python python) \
-	host-python-pydal
+	host-python-pydal host-python-yatl
 
 PYTHON_WEB2PY_EXCLUSIONS = \
 	welcome.w2p \
