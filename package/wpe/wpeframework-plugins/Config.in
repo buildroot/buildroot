@@ -508,6 +508,11 @@ config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_YOUTUBE
     string "youtube-limit"
     default "614400"
 
+config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_COBALT
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COBALT
+    string "cobalt-limit"
+    default "614400"
+
 config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_AMAZON
     depends on BR2_PACKAGE_WPEFRAMEWORK_AMAZON
     string "amazon-limit"
