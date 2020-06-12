@@ -12,19 +12,6 @@ WIDEVINE_DEPENDENCIES = host-gyp
 WIDEVINE_LICENSE = BSD
 WIDEVINE_LICENSE_FILES = LICENSE
 
-ifeq ($(BR2_PACKAGE_WIDEVINE_SOC_RPI), y)
-export WV_BOARD = rpi
-WIDEVINE_ARCHITECTURE = arm
-else ifeq ($(BR2_PACKAGE_WIDEVINE_SOC_WPE), y)
-export WV_BOARD = wpe
-WIDEVINE_ARCHITECTURE = wpe
-WIDEVINE_DEPENDENCIES += wpeframework
-else
-export WV_BOARD=dummy
-endif #BR2_PACKAGE_WIDEVINE_SOC_RPI
-
-
-
 export WV_CC=$(TARGET_CC)
 export WV_CXX=$(TARGET_CXX)
 export WV_AR=$(TARGET_AR)
@@ -35,6 +22,16 @@ export WV_STAGING = $(STAGING_DIR)
 export WV_STAGING_NATIVE = $(STAGING_DIR)
 export WV_PROTOBUF_CONFIG = source
 
+ifeq ($(BR2_PACKAGE_WIDEVINE_SOC_RPI), y)
+        export WV_BOARD = rpi
+        WIDEVINE_ARCHITECTURE = arm
+else ifeq ($(BR2_PACKAGE_WIDEVINE_SOC_WPE), y)
+        export WV_BOARD = wpe
+        WIDEVINE_ARCHITECTURE = wpe
+        WIDEVINE_DEPENDENCIES += wpeframework
+else
+        export WV_BOARD=dummy
+endif
 
 ifeq ($(BR2_ENABLE_DEBUG),y)
         WIDEVINE_BUILD_DIR=Debug
@@ -49,7 +46,13 @@ define WIDEVINE_CONFIGURE_CMDS
       (cd $(@D);rm -rf out; rm -rf Makefile;\
        find . -name \*.mk -delete;\
        find . -name \*.pyc -delete;\
-       ./build.py $(WIDEVINE_ARCHITECTURE) $(WIDEVINE_BUILD_TYPE_OPTION))
+       ./build.py $(WIDEVINE_BUILD_TYPE_OPTION) $(WIDEVINE_ARCHITECTURE) )
+endef
+
+define WIDEVINE_INSTALL_STAGING_CMDS
+        $(INSTALL) -D $(@D)/out/$(WIDEVINE_ARCHITECTURE)/$(WIDEVINE_BUILD_DIR)/lib*/lib*.so $(STAGING_DIR)/usr/lib/
+        $(INSTALL) -D $(@D)/cdm/include/*.h $(STAGING_DIR)/usr/include
+        $(INSTALL) -D $(@D)/core/include/*.h $(STAGING_DIR)/usr/include
 endef
 
 ifeq ($(BR2_PACKAGE_WIDEVINE_INSTALL_UT),y)
@@ -58,17 +61,17 @@ define WIDEVINE_UNIT_TEST_INSTALL
 endef
 endif
 
+define WIDEVINE_ARTIFACTS_INSTALL
+        $(INSTALL) -D $(@D)/artifacts/DeviceCertificate.bin $(TARGET_DIR)/$(BR2_PACKAGE_WIDEVINE_DEVICE_CERTIFICATE)
+        $(INSTALL) -D $(@D)/artifacts/testkeybox.bin $(TARGET_DIR)/$(BR2_PACKAGE_WIDEVINE_TEST_KEYBOX)
+endef
+
 define WIDEVINE_INSTALL_TARGET_CMDS
-        $(call WIDEVINE_UNIT_TEST_INSTALL)
         $(INSTALL) -Ds --strip-program=$(TARGET_STRIP) \
                 $(@D)/out/$(WIDEVINE_ARCHITECTURE)/$(WIDEVINE_BUILD_DIR)/lib*/lib*.so \
                 $(TARGET_DIR)/usr/lib/
-endef
-
-define WIDEVINE_INSTALL_STAGING_CMDS
-        $(INSTALL) -D $(@D)/out/$(WIDEVINE_ARCHITECTURE)/$(WIDEVINE_BUILD_DIR)/lib*/lib*.so $(STAGING_DIR)/usr/lib/
-        $(INSTALL) -D $(@D)/cdm/include/*.h $(STAGING_DIR)/usr/include
-        $(INSTALL) -D $(@D)/core/include/*.h $(STAGING_DIR)/usr/include
+        $(call WIDEVINE_UNIT_TEST_INSTALL)
+        $(call WIDEVINE_ARTIFACTS_INSTALL)
 endef
 
 $(eval $(generic-package))
