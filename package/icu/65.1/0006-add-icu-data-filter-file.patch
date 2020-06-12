@@ -1,0 +1,35 @@
+diff -Nura a/source/data/filters.json b/source/data/filters.json
+--- a/source/data/filters.json	1970-01-01 05:30:00.000000000 +0530
++++ b/source/data/filters.json	2020-03-01 00:41:28.112818415 +0530
+@@ -0,0 +1,31 @@
++{
++    "strategy": "additive",
++    "featureFilters": {
++        "brkitr_rules": "include",
++        "brkitr_dictionaries": "include",
++        "brkitr_tree": "include",
++        "coll_tree": "include",
++        "misc": "include",
++        "curr_tree": "include",
++        "lang_tree": "include",
++        "region_tree": "include",
++        "rbnf_tree": "include",
++        "zone_tree": "include",
++        "unit_tree": "include",
++        "cnvalias": "include",
++        "locales_tree": "include",
++        "unames": "include",
++        "ulayout": "include"
++    },
++    "localeFilter": {
++        "filterType": "locale",
++        "includeChildren": false,
++        "whitelist": [
++            "en_US",
++            "en_US_POSIX",
++            "en_001",
++            "en_150",
++            "pt"
++        ]
++    }
++}
