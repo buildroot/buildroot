@@ -144,6 +144,14 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2020.08"
+
+config BR2_PACKAGE_KODI_PERIPHERAL_STEAMCONTROLLER
+	bool "kodi-peripheral-steamcontroller package was removed"
+	select BR2_LEGACY
+	help
+	  This package is broken.
+
 comment "Legacy options removed in 2020.05"
 
 config BR2_PACKAGE_WIRINGPI
