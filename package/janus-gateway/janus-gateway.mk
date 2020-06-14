@@ -112,4 +112,11 @@ else
 JANUS_GATEWAY_CONF_OPTS += --disable-websockets
 endif
 
+ifeq ($(BR2_PACKAGE_SYSTEMD),y)
+JANUS_GATEWAY_DEPENDENCIES += systemd
+JANUS_GATEWAY_CONF_OPTS += --enable-systemd-sockets
+else
+JANUS_GATEWAY_CONF_OPTS += --disable-systemd-sockets
+endif
+
 $(eval $(autotools-package))
