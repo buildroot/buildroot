@@ -1,10 +1,55 @@
 config BR2_PACKAGE_WIDEVINE
 	select BR2_PACKAGE_HAS_WIDEVINE
+    select BR2_PACKAGE_WIDEVINE_ARTIFACTS
 	select BR2_PACKAGE_WIDEVINE_SOC_WPE
         bool "Widevine"
         help
            Widevine DRM solution provides the capability to license, securely distribute and protect
            playback of content on any consumer device.
+
+if BR2_PACKAGE_WIDEVINE
+config BR2_PACKAGE_WIDEVINE_INSTALL_UT
+    bool "Unit tests"
+    help
+     Install a unit test binary "widevine_ce_cdm_unittest" on the target device.
+
+choice BR2_PACKAGE_WIDEVINE_BUILD_TYPE
+    prompt "Build type"
+    default BR2_PACKAGE_WIDEVINE_BUILD_TYPE_RELEASE
+    help
+      Select the type of build you want to use.
+
+config BR2_PACKAGE_WIDEVINE_BUILD_TYPE_DEBUG
+    bool "Debug"
+
+config BR2_PACKAGE_WIDEVINE_BUILD_TYPE_RELEASE
+    bool "Release"
+
+endchoice
+
+config BR2_PACKAGE_WIDEVINE_ARTIFACTS
+    bool "Install artifacts"
+    default false
+    help 
+        Whether to install widevine artifacts - device certificate and test keybox.
+
+if BR2_PACKAGE_WIDEVINE_ARTIFACTS
+
+config BR2_PACKAGE_WIDEVINE_DEVICE_CERTIFICATE
+    string "Path to device certificate"
+    default "/root/OCDM/widevine/DeviceCertificate.bin"
+    help
+        Path to the device certificate file.
+
+config BR2_PACKAGE_WIDEVINE_TEST_KEYBOX
+    string "Path to the test keybox"
+    default "/root/OCDM/widevine/testkeybox.bin"
+    help
+        Path to the keybox file.
+
+endif
+
+endif
 
 config BR2_PACKAGE_HAS_WIDEVINE
         bool
