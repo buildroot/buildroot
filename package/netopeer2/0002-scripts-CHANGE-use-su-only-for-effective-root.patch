@@ -1,0 +1,79 @@
+From 71cc996faa5500b3bfd499ad0c436c8b96629ea7 Mon Sep 17 00:00:00 2001
+From: Michal Vasko <mvasko@cesnet.cz>
+Date: Wed, 10 Jun 2020 15:20:23 +0200
+Subject: [PATCH] scripts CHANGE use su only for effective root
+
+Fixes #645
+
+[patch taken from upstream:
+https://github.com/CESNET/netopeer2/commit/2161b333009c21ffc8501e5127b82e6f0570ca8e]
+Signed-off-by: Heiko Thiery <heiko.thiery@gmail.com>
+---
+ scripts/merge_config.sh  |  8 ++++++--
+ scripts/merge_hostkey.sh | 11 ++++++++---
+ scripts/setup.sh         |  8 ++++++--
+ 3 files changed, 20 insertions(+), 7 deletions(-)
+
+diff --git a/scripts/merge_config.sh b/scripts/merge_config.sh
+index dde0c75..4ad151c 100755
+--- a/scripts/merge_config.sh
++++ b/scripts/merge_config.sh
+@@ -2,8 +2,12 @@
+ 
+ set -e
+ 
+-# avoid problems with sudo path
+-SYSREPOCFG=`su -c "which sysrepocfg" $USER`
++# avoid problems with sudo PATH
++if [ `id -u` -eq 0 ]; then
++    SYSREPOCFG=`su -c 'which sysrepocfg' -l $USER`
++else
++    SYSREPOCFG=`which sysrepocfg`
++fi
+ KS_KEY_NAME=genkey
+ 
+ # check that there is no listen/Call Home configuration yet
+diff --git a/scripts/merge_hostkey.sh b/scripts/merge_hostkey.sh
+index 87947fa..a0677ee 100755
+--- a/scripts/merge_hostkey.sh
++++ b/scripts/merge_hostkey.sh
+@@ -2,9 +2,14 @@
+ 
+ set -e
+ 
+-# avoid problems with sudo path
+-SYSREPOCFG=`su -c "which sysrepocfg" $USER`
+-OPENSSL=`su -c "which openssl" $USER`
++# avoid problems with sudo PATH
++if [ `id -u` -eq 0 ]; then
++    SYSREPOCFG=`su -c 'which sysrepocfg' -l $USER`
++    OPENSSL=`su -c 'which openssl' -l $USER`
++else
++    SYSREPOCFG=`which sysrepocfg`
++    OPENSSL=`which openssl`
++fi
+ 
+ # check that there is no SSH key with this name yet
+ KEYSTORE_KEY=`$SYSREPOCFG -X -x "/ietf-keystore:keystore/asymmetric-keys/asymmetric-key[name='genkey']/name"`
+diff --git a/scripts/setup.sh b/scripts/setup.sh
+index 81abf63..8bf6825 100755
+--- a/scripts/setup.sh
++++ b/scripts/setup.sh
+@@ -6,8 +6,12 @@ if [ -z "$NP2_MODULE_DIR" -o -z "$NP2_MODULE_PERMS" -o -z "$NP2_MODULE_OWNER" -o
+     exit 1
+ fi
+ 
+-# avoid problems with sudo path
+-SYSREPOCTL=`su -c "which sysrepoctl" $USER`
++# avoid problems with sudo PATH
++if [ `id -u` -eq 0 ]; then
++    SYSREPOCTL=`su -c 'which sysrepoctl' -l $USER`
++else
++    SYSREPOCTL=`which sysrepoctl`
++fi
+ MODDIR=${DESTDIR}${NP2_MODULE_DIR}
+ PERMS=${NP2_MODULE_PERMS}
+ OWNER=${NP2_MODULE_OWNER}
+-- 
+2.20.1
+
