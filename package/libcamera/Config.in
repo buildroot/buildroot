@@ -16,6 +16,11 @@ menuconfig BR2_PACKAGE_LIBCAMERA
 
 if BR2_PACKAGE_LIBCAMERA
 
+config BR2_PACKAGE_LIBCAMERA_V4L2
+	bool "libcamera v4l2 compatibility layer"
+	help
+	  libcamera v4l2 compatibility layer
+
 config BR2_PACKAGE_LIBCAMERA_HAS_PIPELINE
 	bool
 
