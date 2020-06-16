@@ -46,4 +46,17 @@ else
 IWD_CONF_OPTS += --disable-systemd-service
 endif
 
+ifeq ($(BR2_PACKAGE_SYSTEMD_RESOLVED),y)
+IWD_RESOLV_SERVICE = systemd
+else
+IWD_RESOLV_SERVICE = resolvconf
+endif
+
+define IWD_INSTALL_CONFIG_FILE
+	$(INSTALL) -D -m 644 package/iwd/main.conf $(TARGET_DIR)/etc/iwd/main.conf
+	$(SED) 's,__RESOLV_SERVICE__,$(IWD_RESOLV_SERVICE),' $(TARGET_DIR)/etc/iwd/main.conf
+endef
+
+IWD_POST_INSTALL_TARGET_HOOKS += IWD_INSTALL_CONFIG_FILE
+
 $(eval $(autotools-package))
