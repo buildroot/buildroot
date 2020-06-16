@@ -1,0 +1,41 @@
+From cec921a680576865847d98552ded2a67efd8eb50 Mon Sep 17 00:00:00 2001
+From: Bartosz Bilas <b.bilas@grinn-global.com>
+Date: Mon, 15 Jun 2020 17:32:26 +0200
+Subject: [PATCH] cmake: fix build without C++
+
+Specify that ttyd is a C project to avoid the
+following build failure if a C++ compiler isn't found.
+
+CMake Error at CMakeLists.txt:3 (project):
+  The CMAKE_CXX_COMPILER:
+
+    /home/bartekk/Projects/buildroots/buildroot-dev/buildroot/output/host/bin/arm-buildroot-linux-uclibcgnueabihf-g++
+
+  is not a full path to an existing compiler tool.
+
+  Tell CMake where to find the compiler by setting either the environment
+  variable "CXX" or the CMake cache entry CMAKE_CXX_COMPILER to the full path
+  to the compiler, or to the compiler name if it is in the PATH.
+
+Signed-off-by: Bartosz Bilas <b.bilas@grinn-global.com>
+---
+ Upstream status: https://github.com/tsl0922/ttyd/pull/382
+
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8061f47..efd76d2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,6 +1,6 @@
+ cmake_minimum_required(VERSION 2.8)
+ 
+-project(ttyd)
++project(ttyd C)
+ set(PROJECT_VERSION "1.6.0")
+ 
+ find_package(Git)
+-- 
+2.27.0
+
