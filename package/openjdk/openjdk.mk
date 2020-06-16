@@ -20,6 +20,7 @@ endif
 
 OPENJDK_LICENSE = GPL-2.0+ with exception
 OPENJDK_LICENSE_FILES = LICENSE
+OPENJDK_INSTALL_STAGING = YES
 
 # OpenJDK requires Alsa, cups, and X11 even for a headless build.
 # host-zip is needed for the zip executable.
@@ -143,6 +144,12 @@ define OPENJDK_INSTALL_TARGET_CMDS
 	cp -dpfr $(@D)/build/linux-*-release/images/$(OPENJDK_VARIANT)/* \
 		$(TARGET_DIR)$(OPENJDK_INSTALL_BASE)/
 	cd $(TARGET_DIR)/usr/bin && ln -snf ../..$(OPENJDK_INSTALL_BASE)/bin/* .
+endef
+
+define OPENJDK_INSTALL_STAGING_CMDS
+	mkdir -p $(STAGING_DIR)/usr/include/jvm
+	cp -dpfr $(@D)/build/linux-*-release/jdk/include/* \
+		$(STAGING_DIR)/usr/include/jvm
 endef
 
 # Demos and includes are not needed on the target
