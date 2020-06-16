@@ -59,4 +59,11 @@ endef
 
 IWD_POST_INSTALL_TARGET_HOOKS += IWD_INSTALL_CONFIG_FILE
 
+define IWD_INSTALL_INIT_SYSV
+	$(INSTALL) -m 0755 -D package/iwd/S40iwd \
+		$(TARGET_DIR)/etc/init.d/S40iwd
+	mkdir -p $(TARGET_DIR)/var/lib/iwd
+	ln -sf /tmp/iwd/hotspot $(TARGET_DIR)/var/lib/iwd/hotspot
+endef
+
 $(eval $(autotools-package))
