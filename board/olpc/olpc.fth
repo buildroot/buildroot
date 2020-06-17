@@ -5,10 +5,11 @@
 
 " /aliases" find-device " last" get-property
 abort" No last alias"
-" /pci/sd@c"          2over substring?  if  " root=/dev/mmcblk0p1 " to boot-file  then
-" /sd/sdhci@d4280000" 2over substring?  if  " root=/dev/mmcblk1p1 " to boot-file  then
-" /pci/usb@"          2over substring?  if  " root=/dev/sda1 "      to boot-file  then
-" /usb@"              2over substring?  if  " root=/dev/sda1 "      to boot-file  then
+" /pci/sd@c"          2over substring?  if  " root=/dev/mmcblk0p1 "                  to boot-file  then
+" /sd/sdhci@d4280000" 2over substring?  if  " root=/dev/mmcblk1p1 "                  to boot-file  then
+" /pci/usb@"          2over substring?  if  " root=/dev/sda1 "                       to boot-file  then
+" /usb@"              2over substring?  if  " root=/dev/sda1 "                       to boot-file  then
+" /pci/nandflash@c"   2over substring?  if  " root=/dev/mtdblock0 rootfstype=jffs2 " to boot-file  then
 2drop
 
 root-device " compatible" get-property dend  if  0 0  then  ( compatible$ )
