@@ -3,7 +3,7 @@
 # widevine
 #
 ################################################################################
-WIDEVINE_VERSION = dc634218bb17fd88a270d48d1b8f9524d984fd59
+WIDEVINE_VERSION = 898f64e4771e5b4d53d3a42c146a1f9520cb0b40
 WIDEVINE_SITE = git@github.com:Metrological/widevine.git
 WIDEVINE_SITE_METHOD = git
 
