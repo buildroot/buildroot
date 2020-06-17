@@ -28,18 +28,6 @@ Then:
   $ make menuconfig           # Customize the build configuration
   $ make                      # Build
 
-Create the bootable media
-=========================
-
-When the build is finished, the resulting image file will be called
-"sdcard.img". It can be written directly to a SD-card or and USB flash stick.
-
-Please double check that you're using the right device (e.g. with "lsblk"
-command). Doing the following will DESTROY ALL DATA that's currently on the
-media.
-
-  # cat output/images/sdcard.img >/dev/<device>
-
 Preparing the machine
 =====================
 
@@ -70,6 +58,18 @@ to update the firmware:
 
   ok flash ext:\q4e00ja.rom   \ Flash the "q4e00ja.rom" from the SD card
   ok flash u:\q4e00ja.rom     \ Flash the "q4e00ja.rom" from USB stick
+
+Create the bootable media
+=========================
+
+When the build is finished, the resulting image file will be called
+"sdcard.img". It can be written directly to a SD-card or and USB flash stick.
+
+Please double check that you're using the right device (e.g. with "lsblk"
+command). Doing the following will DESTROY ALL DATA that's currently on the
+media.
+
+  # cat output/images/sdcard.img >/dev/<device>
 
 Booting the machine
 ===================
