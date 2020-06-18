@@ -383,8 +383,6 @@ class CVE:
                     if not hasattr(cve_affected_version, "version"):
                         print("Cannot parse CVE affected version '%s'" % v["version_value"])
                         continue
-                    print(pkg_version)
-                    print(cve_affected_version)
                     return pkg_version <= cve_affected_version
                 else:
                     print("version_affected: %s" % v['version_affected'])
