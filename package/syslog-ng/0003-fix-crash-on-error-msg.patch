@@ -1,0 +1,34 @@
+--- syslog-ng-3.26.1/modules/afsql/afsql.c.orig	2020-06-18 08:01:17.602459181 -0400
++++ syslog-ng-3.26.1/modules/afsql/afsql.c	2020-06-18 08:01:25.335477855 -0400
+@@ -229,15 +229,22 @@
+ 
+       if (!silent)
+         {
+-          dbi_conn_error(self->dbi_ctx, &dbi_error);
+-          msg_error("Error running SQL query",
+-                    evt_tag_str("type", self->type),
+-                    evt_tag_str("host", self->host),
+-                    evt_tag_str("port", self->port),
+-                    evt_tag_str("user", self->user),
+-                    evt_tag_str("database", self->database),
+-                    evt_tag_str("error", dbi_error),
+-                    evt_tag_str("query", query));
++          if (self->dbi_ctx == NULL)
++            {
++              msg_error("Error running SQL query: Connection Closed");
++            }
++          else
++            {
++              dbi_conn_error(self->dbi_ctx, &dbi_error);
++              msg_error("Error running SQL query",
++                        evt_tag_str("type", self->type),
++                        evt_tag_str("host", self->host),
++                        evt_tag_str("port", self->port),
++                        evt_tag_str("user", self->user),
++                        evt_tag_str("database", self->database),
++                        evt_tag_str("error", dbi_error),
++                        evt_tag_str("query", query));
++            }
+         }
+       return FALSE;
+     }
