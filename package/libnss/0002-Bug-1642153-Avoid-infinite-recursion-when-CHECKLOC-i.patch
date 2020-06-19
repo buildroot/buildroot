@@ -1,0 +1,30 @@
+From b0e9408ea779b37e97e706d037e497d2bf807593 Mon Sep 17 00:00:00 2001
+From: Mike Hommey <mh@glandium.org>
+Date: Wed, 3 Jun 2020 03:04:49 +0000
+Subject: [PATCH] Bug 1642153 - Avoid infinite recursion when CHECKLOC is not
+ set. r=jcj
+
+Differential Revision: https://phabricator.services.mozilla.com/D77596
+
+--HG--
+extra : moz-landing-system : lando
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ nss/cmd/shlibsign/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/nss/cmd/shlibsign/Makefile b/cmd/shlibsign/Makefile
+index 73641d996..a1192055c 100644
+--- a/nss/cmd/shlibsign/Makefile
++++ b/nss/cmd/shlibsign/Makefile
+@@ -96,4 +96,6 @@ else
+ endif
+ 
+ libs: install
++ifdef CHECKLOC
+ 	$(MAKE) $(CHECKLOC)
++endif
+-- 
+2.25.1
+
