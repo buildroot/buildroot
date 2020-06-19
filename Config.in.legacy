@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2020.11"
 
+config BR2_PACKAGE_WESTON_IMX
+	bool "weston-imx package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed, use weston instead.
+
 config BR2_KERNEL_HEADERS_5_7
 	bool "kernel headers version 5.7.x are no longer supported"
 	select BR2_LEGACY
