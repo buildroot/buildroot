@@ -11,7 +11,8 @@ JANUS_GATEWAY_LICENSE_FILES = COPYING
 
 # ding-libs provides the ini_config library
 JANUS_GATEWAY_DEPENDENCIES = host-pkgconf jansson libnice \
-	libsrtp host-gengetopt libglib2 openssl libconfig
+	libsrtp host-gengetopt libglib2 openssl libconfig \
+	$(if $(BR2_PACKAGE_LIBOGG),libogg)
 
 # Straight out of the repository, no ./configure, and we also patch
 # configure.ac.
@@ -72,7 +73,6 @@ JANUS_GATEWAY_CONF_OPTS += --disable-plugin-videoroom
 endif
 
 ifeq ($(BR2_PACKAGE_JANUS_GATEWAY_VOICE_MAIL),y)
-JANUS_GATEWAY_DEPENDENCIES += libogg
 JANUS_GATEWAY_CONF_OPTS += --enable-plugin-voicemail
 else
 JANUS_GATEWAY_CONF_OPTS += --disable-plugin-voicemail
