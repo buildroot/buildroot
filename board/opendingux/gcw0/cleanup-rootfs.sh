@@ -79,3 +79,13 @@ ln -sf mipsel-gcw0-linux-uclibc-cmake ${HOST_DIR}/usr/bin/mipsel-linux-cmake
 echo '#!/bin/sh\n\nexec ccmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_TOOLCHAIN_FILE=`dirname $0`/../share/buildroot/toolchainfile.cmake $*' > ${HOST_DIR}/usr/bin/mipsel-gcw0-linux-uclibc-ccmake
 chmod +x ${HOST_DIR}/usr/bin/mipsel-gcw0-linux-uclibc-ccmake
 ln -sf mipsel-gcw0-linux-uclibc-ccmake ${HOST_DIR}/usr/bin/mipsel-linux-ccmake
+
+# Remove modules installed in target dir
+rm -rf ${TARGET_DIR}/lib/modules/*
+
+# Create modules filesystem
+(
+	cd ${BUILD_DIR}/linux-custom
+	./create_modules_fs.sh
+	mv modules.squashfs ${BINARIES_DIR}/modules.squashfs
+)
