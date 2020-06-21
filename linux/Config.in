@@ -113,13 +113,9 @@ if BR2_LINUX_KERNEL_CUSTOM_GIT || BR2_LINUX_KERNEL_CUSTOM_HG || BR2_LINUX_KERNEL
 
 config BR2_LINUX_KERNEL_CUSTOM_REPO_URL
 	string "URL of custom repository"
-	default BR2_LINUX_KERNEL_CUSTOM_GIT_REPO_URL \
-		if BR2_LINUX_KERNEL_CUSTOM_GIT_REPO_URL != ""  # legacy
 
 config BR2_LINUX_KERNEL_CUSTOM_REPO_VERSION
 	string "Custom repository version"
-	default BR2_LINUX_KERNEL_CUSTOM_GIT_VERSION \
-		if BR2_LINUX_KERNEL_CUSTOM_GIT_VERSION != ""  # legacy
 	help
 	  Revision to use in the typical format used by
 	  Git/Mercurial/Subversion E.G. a sha id, a tag, branch, ..
