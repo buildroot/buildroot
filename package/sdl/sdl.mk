@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SDL_VERSION = b26f19d10
+SDL_VERSION = 00430c940
 SDL_SITE = $(call github,opendingux,SDL,$(SDL_VERSION))
 SDL_LICENSE = LGPL-2.1+
 SDL_LICENSE_FILES = COPYING
