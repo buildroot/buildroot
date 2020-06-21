@@ -20,8 +20,14 @@ rm -f ${TARGET_DIR}/etc/init.d/S49ntp
 # script and stopped in /etc/network/if-post-down.d/avahi
 rm -f ${TARGET_DIR}/etc/init.d/S50avahi
 
-# Remove the useless DRI drivers
-find ${TARGET_DIR}/usr/lib/dri/ ! -name ingenic-drm_dri.so -type f -exec rm -f {} +
+# Cleanup DRI drivers
+(
+	cd ${TARGET_DIR}/usr/lib/dri
+	[ -f ingenic-drm_dri.so ] && mv ingenic-drm_dri.so libgallium_dri.so
+	find . ! -name libgallium_dri.so -type f -exec rm -f {} +
+	ln -s libgallium_dri.so ingenic-drm_dri.so
+	ln -s libgallium_dri.so etnaviv_dri.so
+)
 
 # Remove the parts from udev's hwdb that we don't need
 rm -rf ${TARGET_DIR}/etc/udev/hwdb.d/20-pci-vendor-model.hwdb \
