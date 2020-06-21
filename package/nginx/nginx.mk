@@ -85,7 +85,6 @@ endif
 
 # modules disabled or not activated because of missing dependencies:
 # - google_perftools  (googleperftools)
-# - http_geoip_module (geoip)
 # - http_perl_module  (host-perl)
 # - pcre-jit          (want to rebuild pcre)
 
@@ -132,6 +131,11 @@ endif
 ifeq ($(BR2_PACKAGE_NGINX_HTTP_IMAGE_FILTER_MODULE),y)
 NGINX_DEPENDENCIES += gd jpeg libpng
 NGINX_CONF_OPTS += --with-http_image_filter_module
+endif
+
+ifeq ($(BR2_PACKAGE_NGINX_HTTP_GEOIP_MODULE),y)
+NGINX_DEPENDENCIES += geoip
+NGINX_CONF_OPTS += --with-http_geoip_module
 endif
 
 ifeq ($(BR2_PACKAGE_NGINX_HTTP_GUNZIP_MODULE),y)

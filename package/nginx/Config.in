@@ -75,6 +75,12 @@ config BR2_PACKAGE_NGINX_HTTP_IMAGE_FILTER_MODULE
 	help
 	  Enable ngx_http_image_filter_module
 
+config BR2_PACKAGE_NGINX_HTTP_GEOIP_MODULE
+	bool "ngx_http_geoip_module"
+	select BR2_PACKAGE_GEOIP
+	help
+	  Enable ngx_http_geoip_module
+
 config BR2_PACKAGE_NGINX_HTTP_SUB_MODULE
 	bool "ngx_http_sub_module"
 	help
