@@ -146,6 +146,78 @@ endif
 
 comment "Legacy options removed in 2020.05"
 
+config BR2_PACKAGE_WIRINGPI
+	bool "wiringpi package removed"
+	select BR2_LEGACY
+	help
+	  The author of wiringpi has deprecated the package, and
+	  completely removed the git tree that was serving the
+	  sources, with this message:
+	  Please look for alternatives for wiringPi
+
+config BR2_PACKAGE_PYTHON_PYCRYPTO
+	bool "python-pycrypto package removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed, use python-pycryptodomex
+	  instead.
+
+config BR2_PACKAGE_MTDEV2TUIO
+	bool "mtdev2tuio package removed"
+	select BR2_LEGACY
+	help
+	  The mtdev2tuio package was removed as it breaks the builds
+	  every now and then and is not maintained upstream.
+
+config BR2_PACKAGE_EZXML
+	bool "ezxml package removed"
+	select BR2_LEGACY
+	help
+	  The ezXML package was removed as it is affected by several
+	  CVEs and is not maintained anymore (no release since 2006).
+
+config BR2_PACKAGE_COLLECTD_LVM
+	bool "lvm support in collectd was removed"
+	select BR2_LEGACY
+	help
+	  collectd removed LVM plugin, liblvm2app has been deprecated
+
+config BR2_PACKAGE_PYTHON_PYASN
+	bool "duplicate python-pyasn1 package removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_PYTHON_PYASN1
+	help
+	  This package was a duplicate of python-pyasn1.
+
+config BR2_PACKAGE_PYTHON_PYASN_MODULES
+	bool "duplicate python-pyasn1-modules package removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_PYTHON_PYASN1_MODULES
+	help
+	  This package was a duplicate of python-pyasn1-modules.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_10K_QCA6174
+	bool "duplicate QCA6174 firmware symbol removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_6174
+	help
+	  This config symbol duplicates existing symbol for QCA6174
+	  firmware.
+
+config BR2_PACKAGE_QT5CANVAS3D
+	bool "qt5canvas3d was removed"
+	select BR2_LEGACY
+	help
+	  This Qt5 module was removed by the upstream Qt project since
+	  Qt 5.13, so the corresponding Buildroot package was removed
+	  as well.
+
+config BR2_PACKAGE_KODI_LIBTHEORA
+	bool "libtheora support in Kodi was removed"
+	select BR2_LEGACY
+	help
+	  Kodi does not need libtheora
+
 config BR2_PACKAGE_CEGUI06
 	bool "BR2_PACKAGE_CEGUI06 was renamed"
 	select BR2_PACKAGE_CEGUI

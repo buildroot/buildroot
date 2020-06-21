@@ -1,3 +1,248 @@
+2020.05, released June 1st, 2020
+
+	Various fixes.
+
+	Updated/fixed packages: arm-trusted-firmware, gcc, mp4v2, fmc,
+	fmlib, glib-networking, libusb-compat, linux, qt5webengine,
+	sysrepo, wampcc, xen
+
+2020.05-rc3, released May 29th, 2020
+
+	Fixes all over the tree.
+
+	Infrastructure: Support checking download hashes for packages
+	coming from Subversion.
+
+	Defconfigs: Increase boot partition size to 64MB for Freescale
+	boards to allow space for bigger kernels.
+
+	Updated/fixed packages: audit, bind, dovecot, efl, erlang,
+	ffmpeg, fio, gerbera, gnupg, leveldb, lrzip, ltrace, matio,
+	mesa3d, mp4v2, prosody, qemu, qt5declarative, speexdsp,
+	systemd, tremor, uboot-tools, unbound, wireshark
+
+	Removed packages: wiringpi
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12361: Init system (systemd) kills login on Raspberry Pi Zero
+	#12686: recipe for target 'install_dev' failed (libcrypto.so..)
+
+2020.05-rc2, released May 22nd 2020
+
+	Fixes all over the tree.
+
+	U-Boot: Support building with Python 3.x instead of Python
+	2.x. Since U-Boot 2020.01, various U-Boot build scripts use
+	Python 3.x instead of Python 2.x, so add an option to pull in
+	host-python3 rather than host-python. Also fix a number of
+	defconfigs to use this new option.
+
+	Updated/fixed packages: apparmor, binutils, bison, brltty,
+	c-icap, cegui, checkpolicy, clamav, crda, cvs, docker-cli,
+	docker-engine, domoticz, elf2flt, exfatprogs, fakeroot,
+	ffmpeg, freerdp, gcc, glibc, gnuconfig, irrlicht, kmod,
+	libexif, libpam-tacplus, libssh2, libv4l, libvncserver,
+	localedef, lrzip, mariadb, matchbox, mbuffer, mesa3d,
+	mesa3d-headers, meson, netsniff-ng, openldap, openocd,
+	optee-os, p7zip, paho-mqtt-c, php, piglit, pigz,
+	python-argon2-cffi, python-attrs, python-future,
+	python-markdown, python-pycryptodomex, python-pyqt5, qt5base,
+	rpi-firmware, rustc, squashfs, squid, stella, suricata,
+	systemd, uacme, uclibc, util-linux, vboot-utils
+
+	New packages: python3-pyelftools
+
+	Removed packages: ezxml, mtdev2tuio, python-pycrypto
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#10551: PowerPC SPE and Musl
+	#12256: package tar is outdated (1.29 is 3 years old)
+	#12271: python-iptables runtime dependencies
+	#12321: host-generic-package: PKG_DL_OPTS not used for host package
+	#12391: CMake-based host package fails to include output/host/include
+	#12431: ethernet no detected on nanopi neo 2
+	#12521: RISCV RV32IA selected, RV64GC output
+	#12586: avahi failure
+	#12596: host-e2fsprogs: tune2fs incompatibility on older glibc..
+	#12611: ntp hash is not matching with upstream 4.2.8p13
+	#12626: PHP missing header files within 2020.02
+	#12631: glibc support Power-PC SPE
+	#12656: bison fails to relocate with relocate-sdk.sh
+	#12661: cups problems in buildroot
+	#12686: recipe for target 'install_dev' failed (libcrypto.so:..
+	#12691: host-rust build fails
+	#12761: Buildroot fails when building GCNano binaries for the STM..
+	#12786: Systemd spawns two getty processes when the getty port..
+	#12806: There are multiple issues in buildroot that faults cups..
+	#12826: nodejs-12.16.1: error: 'uv_sleep' was not declared in..
+	#12831: RPI-firmware package: DTB-overlay dependency
+	#12836: libunwind: package does not show up in menuconfig for..
+	#12841: util-linux/sfdisk 2.35.1 fails on sector-size header
+	#12866: should we be disabling bash executable path caching?
+	#12886: GMP built in wrong order (?)
+	#12891: QEMU, libvirt-bin, qemu-kvm Package Support required
+	#12901: GStreamer doesn't build on 2020-05 rc1 with GObject..
+	#12906: qt PrefixPath is wrong on 2020.05-rc1
+	#12921: nodejs-12.16.1: error: overriding 'virtual icu_65::..
+
+2020.05-rc1, released May 7th 2020
+
+	Addition of support for gobject-introspection: both the
+	gobject-introspection package itself, but also introspection
+	support was enabled in a number of other packages.
+
+	Support for Qt 5.6 was dropped as its support was dropped
+	upstream, only one version of Qt is supported at the moment:
+	Qt 5.14.2.
+
+	Addition of support for the apparmor Linux security module, by
+	adding the necessary user-space packages.
+
+	Addition of a qmake package infrastructure, now used by most
+	Qt-related packages.
+
+	The Luarocks package infrastructure has been extended to
+	support build host packages.
+
+	The package infrastructure was improved to allow each package
+	to indicate the Linux kernel configuration options it needs.
+
+	Addition of support for generating filesystem images using the
+	EROFS filesystem.
+
+	The logic that calculates the list of files installed by each
+	package was reworked to be compatible with the top-level
+	parallel build functionality.
+
+	Addition of a package for a pre-compiled ARM32 bare-metal
+	toolchain, which can be used to build ARM32 code in ARM64
+	configurations, such as firmware/bootloader code.
+
+	The Qemu defconfigs are now boot-tested in Qemu as part of the
+	Gitlab continuous integration.
+
+	Toolchain: gcc 9.x bumped to 9.3.0, gcc 8.x bumped to 8.4.0,
+	gdb bumped to 8.3.1.
+
+	New packages: apcupsd, apparmor, arm-gnu-a-toolchain, bearssl,
+	belle-sip, belr, cage, chartjs, erofs-utils, exfatprogs,
+	gobject-introspection, ibm-sw-tpm2, imx-seco, jbig2dec,
+	libapparmor, libiberty, libfuse3, libtextstyle, libudfread,
+	libuhttpd, libuwsc, lua-lyaml, matio, mbuffer, netdata,
+	openfpgaloader, perl-i18n, perl-locale-maketext-lexicon,
+	perl-lwp-protocol-https,
+	perl-mojolicious-plugin-authorization,
+	perl-mojolicious-plugin-cspheader,
+	perl-mojolicious-plugin-i18n,
+	perl-mojolicious-plugin-securityheader, perl-mozilla-ca,
+	perl-path-class, pistache, pkcs11-helper, prelink-cross,
+	python-argon2-cffi, python-canopen, python-cbor2,
+	python-filelock, python-flatbuffers, python-greenlet,
+	python-modbus-tk, python-pyalsa, python-pysftp, python-regex,
+	python-snappy, rtty, tinyproxy, udev-gentoo-scripts, unbound,
+	vuejs, wlroots.
+
+	New defconfigs: freescale_imx6ullevk, freescale_imx8qmmek,
+	nanopi_neo4, nanopi_r1, nitrogen8mm, nitrogen8mn, olpc_xo1,
+	olpc_xo175, roc_rk3399_pc, stm32mp157a_dk1, zynq_qmtech
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#10386: Add an option to put all compiled executables that
+		show up on target/ in staging/ as well
+	#11866: iniramfs file system fails to boot using  Grub on EFI x86_64
+	#12666: Doesn't pick up a custom bash profile
+	#12696: Uboot 2020.01 Problem loading Linux kernel  on Nano PI NEO
+	#12701: [patch] wpa_supplicant must depend on  openssl
+	#12711: host-localedef 2.30-20 fails to compile on  fedora 32 (gcc 10.0.1)
+	#12716: bio.h not found
+	#12726: systemctl preset-all failed for	 ctrl-alt-del.target
+	#12731: rtl8188eu not buildung for banana pi M1	 (glib, systemd, 4.18.12)
+	#12746: "sysdig" package description points to
+		http://sysdig.org, which bounces to malware site
+	#12751: OpenJdk package installation issues on	target
+	#12796: Update OpenSSL to Version 1.1.1g to patch  CVE-2020-1967
+	#12811: bootstrap stuck and no login prompt
+
+2020.02.2, released May 12th, 2020
+
+	Important / security related fixes.
+
+	Musl: Disallow on PPC64 cores without AltiVec support
+	(E.G. e5500).
+
+	fs/cpio: Correctly handle booting with 'console='
+
+	release: Ensure temporary .br2-external.* files are not
+	included in the release tarball
+
+	Defconfigs: Fix various mistyped config options, or config
+	options where the dependencies were no longer met.
+
+	Updated/fixed packages: apache, azure-iot-sdk-c, binutils,
+	boinc, c-ares, cvs, docker-cli, docker-containerd,
+	docker-engine, domoticz, e2fsprogs, efl, evtest, exim, ffmpeg,
+	freerdp, gcc, gflags, glibc, gnuconfig, haproxy, imx-gpu-2d,
+	irrlicht, jpeg kodi-pvr-vuplus, libarchive, libcoap,
+	libfpm-extra, libglib2, libhtp, libid3tag, libinput, libmad,
+	libopenssl, libsepol, libssh, libv4l, libvncserver, libwpe,
+	localedef, mariadb, matchbox, mbedtls, mc, mesa3d-headers,
+	meson, midori, msgpack, netsnmp, nginx, ogre, openjdk,
+	openldap, openvpn, p7zip, paho-mqtt-c, php, polkit, python,
+	python-attrs, python-crossbar, python-dpkt, python-flask,
+	python-future, python-iptables, python-jedi, python-markdown2,
+	python3, qemu, qpdf, qt5, samba4, squashfs, squid, strongswan,
+	suricata, tzdata, util-linux, vlc, wget, webkitgtk,
+	wireguard-linux-compat, wireshark, wpebackend-fdo, wpewebkit,
+	zic
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11866: initramfs file system fails to boot using Grub on EFI x86_64
+	#12271: python-iptables runtime dependencies
+	#12726: systemctl preset-all failed for ctrl-alt-del.target
+	#12751: OpenJdk package installation issues on target
+	#12796: Update OpenSSL to Version 1.1.1g to patch CVE-2020-1967
+	#12811: bootstrap stuck and no login prompt
+	#12841: util-linux/sfdisk 2.35.1 fails on sector-size header
+
+2020.02.1, released April 10th, 2020
+
+	Important / security related fixes.
+
+	core: Also fixup /lib references in libtool .la files, similar
+	to how it is done for /usr/*.
+
+	Various fixes for builds with per-package target/host
+	directories.
+
+	toolchain: Fix kernel headers validation check for external
+	toolchains. Fix make 4.3+ compatibility in external toolchain
+	logic.
+
+	fs/initramfs: fix show-info so it also shows the usual
+	rootfs-related variables.
+
+	Updated/fixed packages: arm-trusted-firmware, barebox-aux,
+	bluez5_utils, bubblewrap, busybox, civetweb, cog, collectd,
+	ffmpeg, gcc, gnutls, gssdp, gvfs, haproxy, hiredis, hostapd,
+	kmscube, kodi-screensaver-rsxs, libical, libinput, libexif,
+	libopenssl, libsndfile, linux, linux-tools, llvm, localedef,
+	mcrypt, mesa3d, meson, monit, nftables, ntp, opencv3,
+	oprofile, php, pinentry, polkit, pure-ftpd, python-pyyaml,
+	qt5, quagga, radvd, rcw, redis, rocksdb, samba4, screen,
+	sdbusplus, swupdate, sysdig, sysklogd, syslinux, syslog-ng,
+	tor, tslib, uacme, util-linux, vala, vlc,
+	wireguard-linux-compat, wireguard-tools, wireshark,
+	wpa_supplicant, xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12711: host-localedef 2.30-20 fails to compile on fedora 32
+	#12746: "sysdig" package description points to http://sysdig.org, ..
+
 2020.02, released March 8th, 2020
 
 	Various fixes.
@@ -153,6 +398,31 @@
 	#12526: host-nodejs 12.14.1: configure fail: AttributeError: ..
 	#12536: Linux-Headers extracting failure
 	#12546: Ninja 1.10 build Error
+
+2019.11.3, released April 10th, 2020
+
+	Important / security related fixes.
+
+	core: Fix compatibility with make 4.3+. Also fixup /lib
+	references in libtool .la files, similar to how it is done for
+	/usr/*.
+
+	toolchain: Fix kernel headers validation check for external
+	toolchains.
+
+	fs/initramfs: fix show-info so it also shows the usual
+	rootfs-related variables.
+
+	Updated/fixed packages: barebox-aux, bluez5_utils, busybox,
+	civetweb, cog, collectd, ffmpeg, gcc, gnutls, gssdp, gvfs, haproxy,
+	hiredis, hostapd, kmscube, libical, libopenssl, libsndfile,
+	linux-tools, llvm, monit, ntp, php, pure-ftpd, radvd, redis,
+	samba4, screen, sysdig, syslinux, syslog-ng, tor, uacme,
+	util-linux, vala, vlc, wpa_supplicant, xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12746: "sysdig" package description points to http://sysdig.org, ..
 
 2019.11.2, released March 16th, 2020
 
@@ -900,6 +1170,27 @@
 	#11756: package/syslinux: MBR's don't fit because of binutils..
 	#11761: Building custom kernel 5.1-rc3 or later breaks on objtool
 	#11816: Only selected coreutils binaries are installed
+
+2019.02.11, released April 9th, 2020
+
+	Important / security related fixes.
+
+	core: Fix compatibility with make 4.3+. Also fixup /lib
+	references in libtool .la files, similar to how it is done for
+	/usr/*.
+
+	toolchain: Fix kernel headers validation check for external
+	toolchains.
+
+	Updated/fixed packages: barebox-aux, bluez5_utils, busybox,
+	civetweb, collectd, ffmpeg, gcc, gnutls, gvfs, haproxy,
+	hiredis, kmscube, libical, libopenssl, libsndfile,
+	linux-tools, ntp, php, pure-ftpd, screen, sysdig, tor,
+	util-linux, vala, vlc, xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12746: "sysdig" package description points to http://sysdig.org, ..
 
 2019.02.10, released March 16th, 2020
 

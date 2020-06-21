@@ -329,6 +329,7 @@ $(BUILD_DIR)/%/.stamp_staging_installed:
 			$(if $(TOOLCHAIN_EXTERNAL_INSTALL_DIR),\
 				-e "s:$(TOOLCHAIN_EXTERNAL_INSTALL_DIR):@TOOLCHAIN_EXTERNAL_INSTALL_DIR@:g") \
 			-e "s:\(['= ]\)/usr:\\1@STAGING_DIR@/usr:g" \
+			-e "s:\(['= ]\)/lib:\\1@STAGING_DIR@/lib:g" \
 			$(if $(TOOLCHAIN_EXTERNAL_INSTALL_DIR),\
 				-e "s:@TOOLCHAIN_EXTERNAL_INSTALL_DIR@:$(TOOLCHAIN_EXTERNAL_INSTALL_DIR):g") \
 			-e "s:@STAGING_DIR@:$(STAGING_DIR):g" \
@@ -576,7 +577,7 @@ ifndef $(2)_DL_OPTS
  endif
 endif
 
-ifneq ($$(filter bzr cvs hg svn,$$($(2)_SITE_METHOD)),)
+ifneq ($$(filter bzr cvs hg,$$($(2)_SITE_METHOD)),)
 BR_NO_CHECK_HASH_FOR += $$($(2)_SOURCE)
 endif
 
@@ -705,10 +706,6 @@ $(2)_FINAL_RECURSIVE_RDEPENDENCIES = $$(sort \
 	) \
 	$$($(2)_FINAL_RECURSIVE_RDEPENDENCIES__X))
 
-$(2)_INSTALL_STAGING		?= NO
-$(2)_INSTALL_IMAGES		?= NO
-$(2)_INSTALL_TARGET		?= YES
-
 # define sub-target stamps
 $(2)_TARGET_INSTALL_TARGET =	$$($(2)_DIR)/.stamp_target_installed
 $(2)_TARGET_INSTALL_STAGING =	$$($(2)_DIR)/.stamp_staging_installed
@@ -769,6 +766,9 @@ $(1):			$(1)-install
 ifeq ($$($(2)_TYPE),host)
 $(1)-install:	        $(1)-install-host
 else
+$(2)_INSTALL_STAGING	?= NO
+$(2)_INSTALL_IMAGES	?= NO
+$(2)_INSTALL_TARGET	?= YES
 $(1)-install:		$(1)-install-staging $(1)-install-target $(1)-install-images
 endif
 
@@ -1082,6 +1082,9 @@ PACKAGES_DEVICES_TABLE += $$($(2)_DEVICES)$$(sep)
 endif
 ifneq ($$($(2)_USERS),)
 PACKAGES_USERS += $$($(2)_USERS)$$(sep)
+endif
+ifneq ($$($(2)_LINUX_CONFIG_FIXUPS),)
+PACKAGES_LINUX_CONFIG_FIXUPS += $$($(2)_LINUX_CONFIG_FIXUPS)$$(sep)
 endif
 TARGET_FINALIZE_HOOKS += $$($(2)_TARGET_FINALIZE_HOOKS)
 ROOTFS_PRE_CMD_HOOKS += $$($(2)_ROOTFS_PRE_CMD_HOOKS)

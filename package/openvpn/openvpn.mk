@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPENVPN_VERSION = 2.4.8
+OPENVPN_VERSION = 2.4.9
 OPENVPN_SOURCE = openvpn-$(OPENVPN_VERSION).tar.xz
 OPENVPN_SITE = http://swupdate.openvpn.net/community/releases
 OPENVPN_DEPENDENCIES = host-pkgconf openssl
@@ -49,6 +49,13 @@ OPENVPN_DEPENDENCIES += linux-pam
 OPENVPN_CONF_OPTS += --enable-plugin-auth-pam
 else
 OPENVPN_CONF_OPTS += --disable-plugin-auth-pam
+endif
+
+ifeq ($(BR2_PACKAGE_PKCS11_HELPER),y)
+OPENVPN_DEPENDENCIES += pkcs11-helper
+OPENVPN_CONF_OPTS += --enable-pkcs11
+else
+OPENVPN_CONF_OPTS += --disable-pkcs11
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)

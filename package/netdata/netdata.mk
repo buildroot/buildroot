@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NETDATA_VERSION = 1.20.0
+NETDATA_VERSION = 1.21.0
 NETDATA_SITE = $(call github,netdata,netdata,v$(NETDATA_VERSION))
 NETDATA_LICENSE = GPL-3.0+
 NETDATA_LICENSE_FILES = LICENSE
@@ -45,6 +45,10 @@ NETDATA_CONF_OPTS += --enable-https
 NETDATA_DEPENDENCIES += openssl
 else
 NETDATA_CONF_OPTS += --disable-https
+endif
+
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+NETDATA_CONF_ENV += LIBS=-latomic
 endif
 
 define NETDATA_INSTALL_INIT_SYSV

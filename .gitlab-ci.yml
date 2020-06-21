@@ -54,6 +54,12 @@ check-package:
                 tail -200 build.log
                 exit 1
             }
+        - |
+            ./support/scripts/boot-qemu-image.py "${DEFCONFIG_NAME}" > >(tee runtime-test.log) 2>&1 || {
+                echo 'Failed runtime test last output'
+                tail -200 runtime-test.log
+                exit 1
+            }
     artifacts:
         when: always
         expire_in: 2 weeks
@@ -64,6 +70,7 @@ check-package:
             - output/build/build-time.log
             - output/build/packages-file-list.txt
             - output/build/*/.config
+            - runtime-test.log
 
 .defconfig:
     extends: .defconfig_base
@@ -219,13 +226,16 @@ mx6sx_udoo_neo_defconfig: { extends: .defconfig }
 mx6udoo_defconfig: { extends: .defconfig }
 nanopi_m1_defconfig: { extends: .defconfig }
 nanopi_m1_plus_defconfig: { extends: .defconfig }
+nanopi_neo4_defconfig: { extends: .defconfig }
 nanopi_neo_defconfig: { extends: .defconfig }
+nanopi_r1_defconfig: { extends: .defconfig }
 nexbox_a95x_defconfig: { extends: .defconfig }
 nitrogen6sx_defconfig: { extends: .defconfig }
 nitrogen6x_defconfig: { extends: .defconfig }
 nitrogen7_defconfig: { extends: .defconfig }
 nitrogen8m_defconfig: { extends: .defconfig }
 nitrogen8mm_defconfig: { extends: .defconfig }
+nitrogen8mn_defconfig: { extends: .defconfig }
 odroidxu4_defconfig: { extends: .defconfig }
 olimex_a10_olinuxino_lime_defconfig: { extends: .defconfig }
 olimex_a13_olinuxino_defconfig: { extends: .defconfig }
@@ -235,6 +245,8 @@ olimex_a20_olinuxino_micro_defconfig: { extends: .defconfig }
 olimex_a33_olinuxino_defconfig: { extends: .defconfig }
 olimex_a64_olinuxino_defconfig: { extends: .defconfig }
 olimex_imx233_olinuxino_defconfig: { extends: .defconfig }
+olpc_xo175_defconfig: { extends: .defconfig }
+olpc_xo1_defconfig: { extends: .defconfig }
 openblocks_a6_defconfig: { extends: .defconfig }
 orangepi_lite2_defconfig: { extends: .defconfig }
 orangepi_lite_defconfig: { extends: .defconfig }
@@ -318,8 +330,7 @@ snps_archs38_vdk_defconfig: { extends: .defconfig }
 socrates_cyclone5_defconfig: { extends: .defconfig }
 solidrun_clearfog_defconfig: { extends: .defconfig }
 solidrun_clearfog_gt_8k_defconfig: { extends: .defconfig }
-solidrun_macchiatobin_mainline_defconfig: { extends: .defconfig }
-solidrun_macchiatobin_marvell_defconfig: { extends: .defconfig }
+solidrun_macchiatobin_defconfig: { extends: .defconfig }
 stm32f429_disco_defconfig: { extends: .defconfig }
 stm32f469_disco_defconfig: { extends: .defconfig }
 stm32mp157a_dk1_defconfig: { extends: .defconfig }
@@ -332,12 +343,17 @@ wandboard_defconfig: { extends: .defconfig }
 warp7_defconfig: { extends: .defconfig }
 warpboard_defconfig: { extends: .defconfig }
 zynq_microzed_defconfig: { extends: .defconfig }
+zynq_qmtech_defconfig: { extends: .defconfig }
 zynq_zc706_defconfig: { extends: .defconfig }
 zynq_zed_defconfig: { extends: .defconfig }
 zynqmp_zcu106_defconfig: { extends: .defconfig }
 tests.boot.test_atf.TestATFAllwinner: { extends: .runtime_test }
 tests.boot.test_atf.TestATFMarvell: { extends: .runtime_test }
 tests.boot.test_atf.TestATFVexpress: { extends: .runtime_test }
+tests.boot.test_syslinux.TestSysLinuxX86EFI: { extends: .runtime_test }
+tests.boot.test_syslinux.TestSysLinuxX86LegacyBios: { extends: .runtime_test }
+tests.boot.test_syslinux.TestSysLinuxX86_64EFI: { extends: .runtime_test }
+tests.boot.test_syslinux.TestSysLinuxX86_64LegacyBios: { extends: .runtime_test }
 tests.core.test_file_capabilities.TestFileCapabilities: { extends: .runtime_test }
 tests.core.test_hardening.TestFortifyConserv: { extends: .runtime_test }
 tests.core.test_hardening.TestFortifyNone: { extends: .runtime_test }
@@ -452,7 +468,6 @@ tests.package.test_python_argh.TestPythonPy2Argh: { extends: .runtime_test }
 tests.package.test_python_argh.TestPythonPy3Argh: { extends: .runtime_test }
 tests.package.test_python_attrs.TestPythonPy2Attrs: { extends: .runtime_test }
 tests.package.test_python_attrs.TestPythonPy3Attrs: { extends: .runtime_test }
-tests.package.test_python_autobahn.TestPythonPy2Autobahn: { extends: .runtime_test }
 tests.package.test_python_autobahn.TestPythonPy3Autobahn: { extends: .runtime_test }
 tests.package.test_python_automat.TestPythonPy2Automat: { extends: .runtime_test }
 tests.package.test_python_automat.TestPythonPy3Automat: { extends: .runtime_test }
@@ -493,7 +508,6 @@ tests.package.test_python_treq.TestPythonPy2Treq: { extends: .runtime_test }
 tests.package.test_python_treq.TestPythonPy3Treq: { extends: .runtime_test }
 tests.package.test_python_twisted.TestPythonPy2Twisted: { extends: .runtime_test }
 tests.package.test_python_twisted.TestPythonPy3Twisted: { extends: .runtime_test }
-tests.package.test_python_txaio.TestPythonPy2Txaio: { extends: .runtime_test }
 tests.package.test_python_txaio.TestPythonPy3Txaio: { extends: .runtime_test }
 tests.package.test_python_txtorcon.TestPythonPy2Txtorcon: { extends: .runtime_test }
 tests.package.test_python_txtorcon.TestPythonPy3Txtorcon: { extends: .runtime_test }
