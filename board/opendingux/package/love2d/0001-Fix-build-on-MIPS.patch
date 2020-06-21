@@ -1,0 +1,83 @@
+From 0bac89e00f90ec1a7bb6be2bf9149d317d01c1b8 Mon Sep 17 00:00:00 2001
+From: Paul Cercueil <paul@crapouillou.net>
+Date: Thu, 19 Dec 2019 11:30:38 +0100
+Subject: [PATCH] Fix build on MIPS
+
+On MIPS toolchains, the 'mips' keyword is a macro defined to 1.
+
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ src/libraries/ddsparse/ddsparse.cpp    | 8 ++++----
+ src/libraries/ddsparse/ddsparse.h      | 2 +-
+ src/modules/graphics/opengl/Canvas.cpp | 4 ++--
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/src/libraries/ddsparse/ddsparse.cpp b/src/libraries/ddsparse/ddsparse.cpp
+index a1455711..0ad98adf 100644
+--- a/src/libraries/ddsparse/ddsparse.cpp
++++ b/src/libraries/ddsparse/ddsparse.cpp
+@@ -555,12 +555,12 @@ size_t Parser::parseImageSize(DXGIFormat fmt, int width, int height) const
+ 	return bytes;
+ }
+ 
+-bool Parser::parseTexData(const uint8_t *data, size_t dataSize, DXGIFormat fmt, int w, int h, int mips)
++bool Parser::parseTexData(const uint8_t *data, size_t dataSize, DXGIFormat fmt, int w, int h, int nb_mips)
+ {
+ 	size_t offset = 0;
+ 	std::vector<Image> newTexData;
+ 
+-	for (int i = 0; i < mips; i++)
++	for (int i = 0; i < nb_mips; i++)
+ 	{
+ 		Image img;
+ 		img.width = w;
+@@ -631,9 +631,9 @@ bool Parser::parseData(const void *data, size_t dataSize)
+ 	int w = header->width;
+ 	int h = header->height;
+ 
+-	int mips = std::max((int) header->mipMapCount, 1);
++	int nb_mips = std::max((int) header->mipMapCount, 1);
+ 
+-	return parseTexData(&readData[offset], dataSize - offset, format, w, h, mips);
++	return parseTexData(&readData[offset], dataSize - offset, format, w, h, nb_mips);
+ }
+ 
+ } // dds
+diff --git a/src/libraries/ddsparse/ddsparse.h b/src/libraries/ddsparse/ddsparse.h
+index fe62d291..9385d4a9 100644
+--- a/src/libraries/ddsparse/ddsparse.h
++++ b/src/libraries/ddsparse/ddsparse.h
+@@ -105,7 +105,7 @@ class Parser
+ private:
+ 
+ 	size_t parseImageSize(dxinfo::DXGIFormat fmt, int width, int height) const;
+-	bool parseTexData(const uint8_t *data, size_t dataSize, dxinfo::DXGIFormat fmt, int w, int h, int mips);
++	bool parseTexData(const uint8_t *data, size_t dataSize, dxinfo::DXGIFormat fmt, int w, int h, int nb_mips);
+ 	bool parseData(const void *data, size_t dataSize);
+ 
+ 	std::vector<Image> texData;
+diff --git a/src/modules/graphics/opengl/Canvas.cpp b/src/modules/graphics/opengl/Canvas.cpp
+index 80f64793..9014487e 100644
+--- a/src/modules/graphics/opengl/Canvas.cpp
++++ b/src/modules/graphics/opengl/Canvas.cpp
+@@ -31,7 +31,7 @@ namespace graphics
+ namespace opengl
+ {
+ 
+-static GLenum createFBO(GLuint &framebuffer, TextureType texType, PixelFormat format, GLuint texture, int layers, int mips)
++static GLenum createFBO(GLuint &framebuffer, TextureType texType, PixelFormat format, GLuint texture, int layers, int nb_mips)
+ {
+ 	// get currently bound fbo to reset to it later
+ 	GLuint current_fbo = gl.getFramebuffer(OpenGL::FRAMEBUFFER_ALL);
+@@ -60,7 +60,7 @@ static GLenum createFBO(GLuint &framebuffer, TextureType texType, PixelFormat fo
+ 		// Make sure all faces and layers of the texture are initialized to
+ 		// transparent black. This is unfortunately probably pretty slow for
+ 		// 2D-array and 3D textures with a lot of layers...
+-		for (int mip = mips - 1; mip >= 0; mip--)
++		for (int mip = nb_mips - 1; mip >= 0; mip--)
+ 		{
+ 			int nlayers = layers;
+ 			if (texType == TEXTURE_VOLUME)
+-- 
+2.27.0
+

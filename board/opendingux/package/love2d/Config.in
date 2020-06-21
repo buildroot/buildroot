@@ -1,0 +1,18 @@
+config BR2_PACKAGE_LOVE2D
+	bool "Love2D"
+	depends on BR2_PACKAGE_HAS_LIBGLES
+	depends on BR2_PACKAGE_LUA_5_1 || BR2_PACKAGE_LUAJIT
+	depends on BR2_INSTALL_LIBSTDCPP # libmodplug, openal
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # openal
+	depends on BR2_PACKAGE_OPENAL_ARCH_SUPPORTS # openal
+	depends on !BR2_STATIC_LIBS # SDL2
+	select BR2_PACKAGE_LIBMODPLUG
+	select BR2_PACKAGE_LIBVORBIS
+	select BR2_PACKAGE_LIBTHEORA
+	select BR2_PACKAGE_SDL2
+	select BR2_PACKAGE_OPENAL
+	select BR2_PACKAGE_FREETYPE
+	help
+	  Framework for making 2D games in Lua
+
+	  https://love2d.org
