@@ -334,6 +334,12 @@ config BR2_PACKAGE_NGINX_STREAM_SSL_MODULE
 	help
 	  Enable ngx_stream_ssl_module
 
+config BR2_PACKAGE_NGINX_STREAM_GEOIP_MODULE
+	bool "ngx_stream_geoip_module"
+	select BR2_PACKAGE_GEOIP
+	help
+	  Enable ngx_stream_geoip_module
+
 config BR2_PACKAGE_NGINX_STREAM_LIMIT_CONN_MODULE
 	bool "ngx_stream_limit_conn_module"
 	default y
