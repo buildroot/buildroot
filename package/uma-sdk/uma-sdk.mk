@@ -14,20 +14,26 @@ define UMA_SDK_INSTALL_STAGING_CMDS
 	ln -sf $(STAGING_DIR)/usr/include/NOSPlayer/Player.h $(STAGING_DIR)/usr/include/Player.h
 	cp -Rpf $(@D)/usr/lib/Player/* $(STAGING_DIR)/usr/lib/
 	cp -Rpf $(@D)/usr/lib/Nagra/* $(STAGING_DIR)/usr/lib/
-	cp -f $(@D)/qorvo/rf4ce.pc $(STAGING_DIR)/usr/lib/pkgconfig
-	cp -f $(@D)/usr/lib/libGreenPeak.a $(STAGING_DIR)/usr/lib
-	cp -f $(@D)/qorvo/code/Work/libBinShippedRefTarget_ZRC_MSO_GP501_BCM_RDK.a $(STAGING_DIR)/usr/lib
-	mkdir -p $(STAGING_DIR)/usr/include/qorvo
-	cp -Rpf $(@D)/qorvo/code/Applications $(STAGING_DIR)/usr/include/qorvo
-	cp -Rpf $(@D)/qorvo/code/BaseComps $(STAGING_DIR)/usr/include/qorvo
+	ifeq($(BR2_PACKAGE_UMA_SDK_V1),y)
+		cp -f $(@D)/7439/qorvo/rf4ce.pc $(STAGING_DIR)/usr/lib/pkgconfig
+		cp -f $(@D)/usr/lib/libGreenPeak.a $(STAGING_DIR)/usr/lib
+		cp -f $(@D)/7439/qorvo/code/Work/libBinShippedRefTarget_ZRC_MSO_GP501_BCM_RDK.a $(STAGING_DIR)/usr/lib
+		mkdir -p $(STAGING_DIR)/usr/include/qorvo
+		cp -Rpf $(@D)/7439/qorvo/code/Applications $(STAGING_DIR)/usr/include/qorvo
+		cp -Rpf $(@D)/7439/qorvo/code/BaseComps $(STAGING_DIR)/usr/include/qorvo
+	endif
 endef
 
 define UMA_SDK_INSTALL_TARGET_CMDS
 	mkdir -p  $(TARGET_DIR)$(BR2_PACKAGE_BCM_REFSW_SAGE_PATH)
 	mkdir -p  $(TARGET_DIR)/lib/modules/misc
 	$(INSTALL) -m 0755 -D $(@D)/usr/lib/Player/* $(TARGET_DIR)/usr/lib/
-	$(INSTALL) -m 0755 -D $(@D)/qorvo/gpK5.ko ${TARGET_DIR}/lib/modules/misc
-	$(INSTALL) -D -m 0644 $(@D)/firmware/sage/* $(TARGET_DIR)/$(BR2_PACKAGE_BCM_REFSW_SAGE_PATH)/
+	ifeq($(BR2_PACKAGE_UMA_SDK_V1),y)
+		$(INSTALL) -m 0755 -D $(@D)/7439/qorvo/gpK5.ko ${TARGET_DIR}/lib/modules/misc
+		$(INSTALL) -D -m 0644 $(@D)/7439/firmware/sage/* $(TARGET_DIR)/$(BR2_PACKAGE_BCM_REFSW_SAGE_PATH)/
+	else
+		$(INSTALL) -D -m 0644 $(@D)/72604/firmware/sage/* $(TARGET_DIR)/$(BR2_PACKAGE_BCM_REFSW_SAGE_PATH)/
+	endif
 endef
 
 define QORVO_BUILD_MODULE
@@ -50,6 +56,7 @@ define QORVO_INSTALL_MODULE
 endef
 
 define UMA_SDK_BUILD_CMDS
+	ifeq($(BR2_PACKAGE_UMA_SDK_V1),y)
 	cd $(@D)/qorvo ; \
 	SDKTARGETSYSROOT=${STAGING_DIR} \
         TOOLCHAIN=${HOST_DIR}/usr \
@@ -61,6 +68,7 @@ define UMA_SDK_BUILD_CMDS
         GP_VALIDATION_DISABLE=y \
         make applib ; \
 	cd -
+	endif
 endef
 
 $(eval $(generic-package))
