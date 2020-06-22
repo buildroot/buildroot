@@ -24,6 +24,47 @@ if BR2_PACKAGE_NETFLIX52
 menu "Extra options"
 
 choice
+	bool "NETFLIX52 Minor Version"
+	default BR2_PACKAGE_NETFLIX5_2
+	help
+	  Choose NF5 minor version - 5.2.2, default - 5.2.2
+
+config BR2_PACKAGE_NETFLIX5_2
+	bool "5.2.2"
+	help
+	  Netflix5.2.2
+
+endchoice
+choice
+	bool "Build Type"
+	default BR2_PACKAGE_NETFLIX52_BUILD_RELEASE
+	help
+	  Choose build Type
+	  
+config BR2_PACKAGE_NETFLIX52_BUILD_ML
+	bool "Metrological"
+	help
+	  Build with the original metrological flags
+
+config BR2_PACKAGE_NETFLIX52_BUILD_DEBUG
+	bool "Debug"
+	help
+	  Build a debug build with tracing and symbols
+
+config BR2_PACKAGE_NETFLIX52_BUILD_RELEASE_DEBUG
+	bool "Release Debug"
+	help
+	  Build a debug build with tracing and symbols and production code on (strict SSL/HTTPS).
+
+config BR2_PACKAGE_NETFLIX52_BUILD_RELEASE
+	bool "Release"
+	select BR2_PACKAGE_NETFLIX52_MINIFY_JS
+	help
+	  Build a release build without tracing and symbols (e.g. for binary delivery)
+
+endchoice
+
+choice
 	bool "Application type"
 	default BR2_PACKAGE_NETFLIX52_LIB
 	help
@@ -77,12 +118,17 @@ config BR2_PACKAGE_NETFLIX52_AUDIO_MIXER_NEXUS
 
 endchoice
 endif
-
 choice
 	bool "DRM"
 	default BR2_PACKAGE_NETFLIX52_DRM_OCDM
 	help
 	  Choose DRM Type
+
+config BR2_PACKAGE_NETFLIX52_DRM_PLAYREADY
+	bool "playready"
+	select BR2_PACKAGE_PLAYREADY
+	help
+	  DRM Playready
 
 config BR2_PACKAGE_NETFLIX52_DRM_OCDM
 	bool "ocdm"
@@ -98,10 +144,16 @@ config BR2_PACKAGE_NETFLIX52_DISABLE_TOOLS
 	help
 	  Do not build tools for netflix
 
+config BR2_PACKAGE_NETFLIX52_MINIFY_JS
+    default y
+	bool "Minify JS"
+	help
+	  minify javascript files like boot.js
+	  
 config BR2_PACKAGE_NETFLIX52_CREATE_BINARY_ML_DELIVERY
 	bool "Create delivery package"
 	help
-	  Create tarball containing the build to be deployed else where. 
+	  Create tarball containing the build to be deployed else where.
 
 endmenu
 endif

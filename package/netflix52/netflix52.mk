@@ -8,50 +8,129 @@ NETFLIX52_VERSION = 0788c9c58a02566bc4f2c13a244e67e69b42f4a2
 NETFLIX52_SITE = git@github.com:Metrological/netflix.git
 NETFLIX52_SITE_METHOD = git
 NETFLIX52_LICENSE = PROPRIETARY
-NETFLIX52_DEPENDENCIES = freetype icu openjpeg lcms2 jpeg libpng libmng webp harfbuzz expat openssl c-ares nghttp2 libcurl graphite2 gstreamer1 gst1-plugins-base gst1-plugins-bad tremor
+NETFLIX52_DEPENDENCIES = freetype icu openjpeg lcms2 jpeg libpng libmng webp harfbuzz expat openssl c-ares nghttp2 libcurl graphite2 tremor
 NETFLIX52_INSTALL_TARGET = YES
 NETFLIX52_SUBDIR = netflix
 NETFLIX52_RESOURCE_LOC = $(call qstrip,${BR2_PACKAGE_NETFLIX52_RESOURCE_LOCATION})
 
 NETFLIX52_CONF_ENV += TOOLCHAIN_DIRECTORY=$(STAGING_DIR)/usr LD=$(TARGET_CROSS)ld
-NETFLIX_CONF_ENV += TARGET_CROSS="$(GNU_TARGET_NAME)-"
+NETFLIX52_CONF_ENV += TARGET_CROSS="$(GNU_TARGET_NAME)-"
 
 NETFLIX52_CONF_OPTS += -DBUILD_REFERENCE=${NETFLIX52_VERSION}
+NETFLIX52_SUPPORTS_IN_SOURCE_BUILD = NO
 
-# TODO: check if all args are really needed.
 NETFLIX52_CONF_OPTS = \
 	-DBUILD_GIBBON_DIRECTORY=$(@D)/partner/gibbon \
-	-DBUILD_DPI_DIRECTORY=$(@D)/partner/dpi \
 	-DCMAKE_INSTALL_PREFIX=$(@D)/release \
-	-DCMAKE_OBJCOPY="$(TARGET_CROSS)objcopy" \
-	-DCMAKE_STRIP="$(TARGET_CROSS)strip" \
-	-DBUILD_COMPILE_RESOURCES=ON \
-	-DBUILD_SYMBOLS=OFF \
-	-DBUILD_SHARED_LIBS=OFF \
-	-DNRDP_HAS_IPV6=ON \
-	-DNRDP_CRASH_REPORTING="off" \
-	-DBUILD_DEBUG=OFF -DNRDP_HAS_GIBBON_QA=ON -DNRDP_HAS_MUTEX_STACK=ON -DNRDP_HAS_OBJECTCOUNT=ON \
-	-DBUILD_PRODUCTION=OFF -DNRDP_HAS_QA=OFF -DBUILD_SMALL=OFF -DBUILD_SYMBOLS=ON -DNRDP_HAS_TRACING=OFF \
-	-DNRDP_CRASH_REPORTING=breakpad \
-	-DGIBBON_GRAPHICS_GL_WSYS=egl \
 	-DNRDP_SYSTEM_PROCESSOR=$(BR2_ARCH) \
 	-DDPI_REFERENCE_DRM_NULL=TRUE \
 	-DNRDP_HAS_SOFTWAREPLAYER=OFF \
 	-DGIBBON_SOFTWARECAPTURE=OFF \
 	-DGIBBON_GRAPHICS_GL_API="gles2" \
-	-DDPI_IMPLEMENTATION=gstreamer \
-	-DJS_MINIFY=OFF \
-	-DDPI_DRM=ocdm \
-	-DNRDP_TOOLS="provisioning" \
-	-DNRDP_HAS_AUDIOMIXER=OFF
+	-DBUILD_DPI_DIRECTORY=$(@D)/partner/dpi \
+	-DCMAKE_OBJCOPY="$(TARGET_CROSS)objcopy" \
+	-DCMAKE_STRIP="$(TARGET_CROSS)strip" \
+	-DBUILD_COMPILE_RESOURCES=OFF \
+	-DBUILD_SHARED_LIBS=OFF \
+	-DNRDP_HAS_IPV6=ON \
+	-DGIBBON_GRAPHICS_GL_WSYS=egl
 
-# DNRDP_TOOLS="provisioning" above for NF 5.2.2 requires update of openssl to ver >= 1.1.0
-# which does not work out of the box. Since provisioning tools does not seem to be required for us
-# default of BR2_PACKAGE_NETFLIX52_DISABLE_TOOLS is y.
+NETFLIX52_CONF_ENV += \
+	NODE="$(HOST_DIR)/usr/bin/node" \
+	NPM="$(HOST_DIR)/usr/bin/npm" \
+	
+ifeq ($(BR2_PACKAGE_NETFLIX52_BUILD_ML),y)
+NETFLIX52_CONF_OPTS += \
+	-DBUILD_COMPILE_RESOURCES=ON \
+	-DNRDP_CRASH_REPORTING=breakpad \
+	-DBUILD_DEBUG=OFF \
+	-DNRDP_HAS_GIBBON_QA=ON \
+	-DNRDP_HAS_MUTEX_STACK=ON \
+	-DNRDP_HAS_OBJECTCOUNT=ON \
+	-DBUILD_PRODUCTION=OFF \
+	-DNRDP_HAS_QA=OFF \
+	-DBUILD_SMALL=OFF \
+	-DBUILD_SYMBOLS=ON \
+	-DNRDP_HAS_TRACING=OFF
+else ifeq ($(BR2_PACKAGE_NETFLIX52_BUILD_DEBUG),y)
+NETFLIX52_CONF_OPTS += \
+	-DBUILD_DEBUG=ON \
+	-DBUILD_SMALL=OFF \
+	-DBUILD_STRIP=OFF \
+	-DBUILD_SYMBOLS=ON \
+	-DBUILD_PRODUCTION=OFF \
+	-DNRDP_HAS_GIBBON_QA=ON \
+	-DNRDP_HAS_MUTEX_STACK=ON \
+	-DNRDP_HAS_OBJECTCOUNT=ON \
+	-DNRDP_HAS_QA=ON \
+	-DNRDP_HAS_TRACING=ON 
+else ifeq ($(BR2_PACKAGE_NETFLIX52_BUILD_RELEASE_DEBUG),y)
+NETFLIX52_CONF_OPTS += \
+	-DBUILD_DEBUG=OFF \
+	-DBUILD_PRODUCTION=ON \
+	-DBUILD_SMALL=OFF \
+	-DBUILD_STRIP=OFF \
+	-DBUILD_SYMBOLS=ON \
+	-DNRDP_HAS_GIBBON_QA=ON \
+	-DNRDP_HAS_MUTEX_STACK=ON \
+	-DNRDP_HAS_OBJECTCOUNT=ON \
+	-DNRDP_HAS_QA=OFF \
+	-DNRDP_HAS_TRACING=ON 
+else ifeq ($(BR2_PACKAGE_NETFLIX52_BUILD_RELEASE),y)
+NETFLIX52_CONF_OPTS += \
+	-DBUILD_DEBUG=OFF \
+	-DBUILD_PRODUCTION=ON \
+	-DBUILD_SMALL=OFF \
+	-DBUILD_STRIP=OFF \
+	-DBUILD_SYMBOLS=OFF \
+	-DNRDP_HAS_GIBBON_QA=OFF \
+	-DNRDP_HAS_MUTEX_STACK=OFF \
+	-DNRDP_HAS_OBJECTCOUNT=ON \
+	-DNRDP_HAS_QA=OFF \
+	-DNRDP_HAS_TRACING=OFF 
+endif
+
+ifeq ($(BR2_PACKAGE_VSS_SDK),y)
+NETFLIX52_CONF_OPTS += \
+	-DUSE_DISPLAY_SETTINGS=1
+endif
+
+ifeq ($(BR2_PACKAGE_NETFLIX52_MINIFY_JS),y)
+NETFLIX52_CONF_OPTS += \
+		-DJS_MINIFY=ON
+NETFLIX52_DEPENDENCIES += \
+		host-nodejs
+		
+define NETFLIX52_INSTALL_NODEJS_MODULES
+	npm_config_build_from_source=true \
+	npm_config_nodedir=$(BUILD_DIR)/host-nodejs-$(NODEJS_VERSION) \
+	npm_config_prefix=$(HOST_DIR)/usr \
+	$(HOST_DIR)/usr/bin/npm  install -g uglify-js@3.0.28 jsdoc
+endef
+
+NETFLIX52_PRE_CONFIGURE_HOOKS += NETFLIX52_INSTALL_NODEJS_MODULES
+endif
 
 ifeq ($(BR2_PACKAGE_NETFLIX52_DISABLE_TOOLS), y)
 NETFLIX52_CONF_OPTS += \
 	-DNRDP_TOOLS=none
+else
+NETFLIX52_CONF_OPTS += \
+	-DNRDP_TOOLS="provisioning"
+endif
+
+NETFLIX52_CONF_OPTS += \
+	-DDPI_IMPLEMENTATION=gstreamer
+
+NETFLIX52_DEPENDENCIES += gstreamer1 gst1-plugins-base gst1-plugins-bad
+
+ifeq ($(BR2_PACKAGE_NETFLIX52_DRM_OCDM), y)
+NETFLIX52_CONF_OPTS += \
+	-DDPI_DRM=ocdm
+else ifeq ($(BR2_PACKAGE_NETFLIX52_DRM_PLAYREADY), y)
+NETFLIX52_DEPENDENCIES += playready
+NETFLIX52_CONF_OPTS += \
+        -DDPI_DRM=playready2.5
 endif
 
 ifeq ($(BR2_PACKAGE_NETFLIX52_LIB), y)
@@ -109,77 +188,78 @@ endef
 
 NETFLIX52_POST_EXTRACT_HOOKS += NETFLIX52_FIX_CONFIG_XMLS
 
+NETFLIX52_BUILD_DIR=$(@D)/netflix/buildroot-build
+NETFLIX52_DATA_DIR=/usr/share/WPEFramework/Netflix
+
 ifeq ($(BR2_PACKAGE_NETFLIX52_LIB),y)
 
 ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_COMPOSITORCLIENT),y)
 define NETFLIX52_INSTALL_WPEFRAMEWORK_XML
-	cp $(@D)/partner/gibbon/graphics/wpeframework/graphics.xml $(TARGET_DIR)/root/Netflix/etc/conf
+	cp $(@D)/partner/gibbon/graphics/wpeframework/graphics.xml $(1)
 endef
 endif
 
+ifeq ($(BR2_PACKAGE_NETFLIX52_BUILD_RELEASE),y)
+define NETFLIX52_INSTALL_NETFLIX_DATA_CONFIGS
+ 	$(INSTALL) -d $(1)$(NETFLIX52_DATA_DIR)/resources
+	cp -a $(NETFLIX52_BUILD_DIR)/src/platform/gibbon/data/etc $(1)$(NETFLIX52_DATA_DIR)
+	cp -a $(NETFLIX52_BUILD_DIR)/src/platform/gibbon/data/fonts $(1)$(NETFLIX52_DATA_DIR)
+	cp -a $(NETFLIX52_BUILD_DIR)/src/platform/gibbon/data/resources/img $(1)$(NETFLIX52_DATA_DIR)/resources
+	cp -a $(NETFLIX52_BUILD_DIR)/src/platform/gibbon/data/resources/js $(1)$(NETFLIX52_DATA_DIR)/resources
+	cp -a $(NETFLIX52_BUILD_DIR)/src/platform/gibbon/data/resources/html $(1)$(NETFLIX52_DATA_DIR)/resources
+
+	$(INSTALL) -d $(1)$(NETFLIX52_DATA_DIR)/etc/conf
+	$(call NETFLIX52_INSTALL_WPEFRAMEWORK_XML, $(1)$(NETFLIX52_DATA_DIR)/etc/conf)
+endef
+endif
+
+define NETFLIX52_INSTALL_TO_TARGET
+	$(INSTALL) -d $(1)/usr/lib
+	$(INSTALL) -m 755 $(NETFLIX52_BUILD_DIR)/src/platform/gibbon/libnetflix.so $(1)/usr/lib
+	$(INSTALL) -m 755 $(NETFLIX52_BUILD_DIR)/src/platform/gibbon/lib/libJavaScriptCore.so $(1)/usr/lib
+
+	$(call NETFLIX52_INSTALL_NETFLIX_DATA_CONFIGS, $(1))
+
+	mkdir -p $(1)/root/Netflix/artifacts
+	cp -r $(@D)/artifacts/MeteringCertificate.bin $(1)/root/Netflix/artifacts
+
+endef
+
 define NETFLIX52_INSTALL_TO_STAGING
-	make -C $(@D)/netflix preinstall
-	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/libnetflix.so $(1)/usr/lib
-	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/lib/libJavaScriptCore.so $(1)/usr/lib/
-	$(INSTALL) -D package/netflix5/netflix.pc $(1)/usr/lib/pkgconfig/netflix.pc
-	mkdir -p $(1)/usr/include/src/base
+	$(call NETFLIX52_INSTALL_TO_TARGET, $(1))
+
+	$(INSTALL) -d $(1)/usr/lib/pkgconfig
+	$(INSTALL) -D package/netflix52/netflix.pc $(1)/usr/lib/pkgconfig/netflix.pc
+
 	mkdir -p $(1)/usr/include/3rdparty/JavaScriptCore/Source/WTF/wtf/nrdp
 	mkdir -p $(1)/usr/include/3rdparty/lz4
 	mkdir -p $(1)/usr/include/3rdparty/utf8
-	mkdir -p $(1)/usr/include/src/nrd
-	mkdir -p $(1)/usr/include/src/net
-	mkdir -p $(1)/usr/include/netflix/src
-	mkdir -p $(1)/usr/include/netflix/nrdbase
-	mkdir -p $(1)/usr/include/netflix/nrd
-	mkdir -p $(1)/usr/include/netflix/nrdnet
-	mkdir -p $(1)/usr/include/netflix/gibbon
-	#cp -Rpf $(@D)/release/include/* $(1)/usr/include/netflix/
-	cp -Rpf $(@D)/netflix/src/base/*.h $(1)/usr/include/src/base/
-	cp -Rpf $(@D)/netflix/src/nrd/* $(1)/usr/include/src/nrd
-	cp -Rpf $(@D)/netflix/src/net/* $(1)/usr/include/src/net
+
 	cp -Rpf $(@D)/netflix/3rdparty/adf/*.h $(1)/usr/include/netflix/
 	cp -Rpf $(@D)/netflix/3rdparty/harfbuzz/src/*.h $(1)/usr/include/netflix/
 	cp -Rpf $(@D)/netflix/3rdparty/utf8/*.h $(1)/usr/include/3rdparty/utf8/
 	cp -Rpf $(@D)/netflix/3rdparty/lz4/lz4.h $(1)/usr/include/3rdparty/lz4/
 	cp -Rpf $(@D)/netflix/3rdparty/JavaScriptCore/Source/WTF/wtf/nrdp/Pool.h $(1)/usr/include/3rdparty/JavaScriptCore/Source/WTF/wtf/nrdp/
 	cp -Rpf $(@D)/netflix/3rdparty/JavaScriptCore/Source/WTF/wtf/nrdp/Maddy.h $(1)/usr/include/3rdparty/JavaScriptCore/Source/WTF/wtf/nrdp/
-	cp -Rpf $(@D)/netflix/include/nrdbase/*.h $(1)/usr/include/netflix/nrdbase/
-	cp -Rpf $(@D)/netflix/include/nrd/*.h $(1)/usr/include/netflix/nrd/
-	cp -Rpf $(@D)/netflix/include/nrdnet/*.h $(1)/usr/include/netflix/nrdnet/
-	cp -Rpf $(@D)/netflix/include/gibbon/*.h $(1)/usr/include/netflix/gibbon/
-	cd $(@D)/netflix/src && find ./base/ -name "*.h" -exec cp --parents {} $(1)/usr/include/netflix/src \;
-	cd $(@D)/netflix/src && find ./nrd/ -name "*.h" -exec cp --parents {} $(1)/usr/include/netflix/src \;
-	cd $(@D)/netflix/src && find ./net/ -name "*.h" -exec cp --parents {} $(1)/usr/include/netflix/src \;
+
+	$(INSTALL) -d $(1)/usr/include/netflix
+	rsync -arL $(NETFLIX52_BUILD_DIR)/include/* $(1)/usr/include/netflix
+
 	cp -Rpf $(@D)/netflix/src/platform/gibbon/*.h $(1)/usr/include/netflix
 	cp -Rpf $(@D)/netflix/src/platform/gibbon/bridge/*.h $(1)/usr/include/netflix
 	cp -Rpf $(@D)/netflix/src/platform/gibbon/text/*.h $(1)/usr/include/netflix
+
+	$(INSTALL) -d $(1)/usr/include/netflix/src
+	cd $(@D)/netflix/src && find ./base/ -name "*.h" -exec cp --parents {} $(1)/usr/include/netflix/src \;
+	cd $(@D)/netflix/src && find ./nrd/ -name "*.h" -exec cp --parents {} $(1)/usr/include/netflix/src \;
+	cd $(@D)/netflix/src && find ./net/ -name "*.h" -exec cp --parents {} $(1)/usr/include/netflix/src \;
+
 	find $(1)/usr/include/netflix/nrdbase/ -name "*.h" -exec sed -i "s/^#include \"\.\.\/\.\.\//#include \"/g" {} \;
 	find $(1)/usr/include/netflix/nrd/ -name "*.h" -exec sed -i "s/^#include \"\.\.\/\.\.\//#include \"/g" {} \;
 	find $(1)/usr/include/netflix/nrdnet/ -name "*.h" -exec sed -i "s/^#include \"\.\.\/\.\.\//#include \"/g" {} \;
 
-        mkdir -p $(1)/usr/include/netflix/3rdparty/utf8/
-        cp -Rpf $(@D)/netflix/3rdparty/utf8/* $(1)/usr/include/netflix/3rdparty/utf8/
-endef
-
-define NETFLIX52_INSTALL_TO_TARGET
-	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/libnetflix.so $(1)/usr/lib
-	$(INSTALL) -m 755 $(@D)/netflix/src/platform/gibbon/lib/libJavaScriptCore.so $(1)/usr/lib/
-	$(STRIPCMD) $(1)/usr/lib/libnetflix.so
-
-	mkdir -p $(1)/root/Netflix
-	cp -r $(@D)/netflix/src/platform/gibbon/resources/gibbon/fonts $(1)/root/Netflix
-	cp -r $(@D)/netflix/resources/etc $(1)/root/Netflix
-	mkdir -p $(1)/root/Netflix/etc/conf
-	cp -r $(@D)/netflix/src/platform/gibbon/resources/configuration/* $(1)/root/Netflix/etc/conf
-	cp -r $(@D)/netflix/src/platform/gibbon/resources $(1)/root/Netflix
-	cp -r $(@D)/netflix/resources/configuration/* $(1)/root/Netflix/etc/conf
-
-	$(NETFLIX52_INSTALL_WPEFRAMEWORK_XML)
-	cp $(@D)/netflix/src/platform/gibbon/resources/js/*.js $(1)/root/Netflix/resources/js
-	cp $(@D)/netflix/src/platform/gibbon/resources/default/PartnerBridge.js $(1)/root/Netflix/resources/js
-
-	mkdir -p $(1)/root/Netflix/artifacts
-	cp -r $(@D)/artifacts/MeteringCertificate.bin $(1)/root/Netflix/artifacts
+	mkdir -p $(1)/usr/include/netflix/3rdparty/utf8/
+	cp -Rpf $(@D)/netflix/3rdparty/utf8/* $(1)/usr/include/netflix/3rdparty/utf8/
 endef
 
 else
