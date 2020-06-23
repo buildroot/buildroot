@@ -364,6 +364,12 @@ config BR2_PACKAGE_NGINX_STREAM_MAP_MODULE
 	help
 	  Enable ngx_stream_map_module
 
+config BR2_PACKAGE_NGINX_STREAM_SPLIT_CLIENTS_MODULE
+	bool "ngx_stream_split_client_module"
+	default y
+	help
+	  Enable ngx_stream_split_clients_module
+
 config BR2_PACKAGE_NGINX_STREAM_RETURN_MODULE
 	bool "ngx_stream_return_module"
 	default y
