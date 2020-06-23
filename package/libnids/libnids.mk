@@ -11,9 +11,18 @@ LIBNIDS_LICENSE_FILES = COPYING
 LIBNIDS_INSTALL_STAGING = YES
 LIBNIDS_DEPENDENCIES = host-pkgconf libpcap
 LIBNIDS_AUTORECONF = YES
-LIBNIDS_CONF_OPTS = \
-	--disable-libglib \
-	--disable-libnet
+LIBNIDS_CONF_OPTS = --disable-libnet
+
+# disable libglib2 if not available
+# The test in configure.in is flawed: passing --enable-libglib would also
+# disable it. Only when neither is passed will the autodetection test be
+# executed.
+ifeq ($(BR2_PACKAGE_LIBGLIB2),y)
+LIBNIDS_DEPENDENCIES += libglib2
+else
+LIBNIDS_CONF_OPTS += --disable-libglib
+endif
+
 # hand-written Makefile.in, not using automake, needs a custom
 # variable for the installation path.
 LIBNIDS_INSTALL_STAGING_OPTS = install_prefix=$(STAGING_DIR) install
