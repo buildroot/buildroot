@@ -38,6 +38,8 @@ else ifeq ($(BR2_PACKAGE_BCM_REFSW_18_2),y)
 BCM_REFSW_VERSION = 18.2
 else ifeq ($(BR2_PACKAGE_BCM_REFSW_19_1),y)
 BCM_REFSW_VERSION = 19.1
+else ifeq ($(BR2_PACKAGE_BCM_REFSW_19_2),y)
+BCM_REFSW_VERSION = 19.2
 else
 BCM_REFSW_VERSION = 16.2-7
 endif
@@ -135,9 +137,14 @@ endif
 endif
 
 ifeq ($(BCM_REFSW_PLATFORM_VC),vc5)
-	ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 16.2),1)
+	ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 19.2),1)
+	# We are using VC5 core >= 19.2
+	BCM_REFSW_VCX_KHRN = $(BCM_REFSW_DIR)/BSEAV/lib/gpu/include
+	else ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 16.2),1)
+	# We are using VC5 core >= 16.2
         BCM_REFSW_VCX_KHRN = $(BCM_REFSW_VCX)/driver/libs/khrn/include
 	else
+	# We are using VC5 core < 16.2
 	BCM_REFSW_VCX_KHRN = $(BCM_REFSW_VCX)/driver/interface/khronos/include
 	endif
         BCM_REFSW_MAKE_ENV += PYTHON_CMD=pyhton

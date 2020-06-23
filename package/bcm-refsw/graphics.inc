@@ -17,6 +17,7 @@ endef
 
 define BCM_REFSW_INSTALL_GRAPHICS
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libv3ddriver.so $1/usr/lib/libv3ddriver.so
+	$(INSTALL) -D $(BCM_REFSW_BIN)/libv3dplatform.so $1/usr/lib/libv3dplatform.so
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libnxpl.so $1/usr/lib/libnxpl.so
 	cd $1/usr/lib && ln -sf libv3ddriver.so libEGL.so && ln -sf libv3ddriver.so libGLESv2.so
 endef
@@ -32,14 +33,14 @@ define BCM_REFSW_INSTALL_GRAPHICS_DEV
 	$(INSTALL) -m 644 package/bcm-refsw/${BCM_REFSW_PLATFORM_VC}/glesv2.pc $(STAGING_DIR)/usr/lib/pkgconfig/
 	sed -i 's/@CFLAGS@/${EGL_EXTRA_CFLAGS}/g' $(STAGING_DIR)/usr/lib/pkgconfig/egl.pc; \
 	sed -i 's/@CFLAGS@/${EGL_EXTRA_CFLAGS}/g' $(STAGING_DIR)/usr/lib/pkgconfig/glesv2.pc; \
-    $(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/GLES
+	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/GLES
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/GLES2
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/EGL
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/KHR
-    $(INSTALL) -m 644 ${BCM_REFSW_VCX_KHRN}/GLES/*.h $(STAGING_DIR)/usr/include/GLES/
+	$(INSTALL) -m 644 ${BCM_REFSW_VCX_KHRN}/GLES/*.h $(STAGING_DIR)/usr/include/GLES/
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX_KHRN}/GLES2/*.h $(STAGING_DIR)/usr/include/GLES2/
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX_KHRN}/EGL/*.h $(STAGING_DIR)/usr/include/EGL/
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX_KHRN}/KHR/*.h $(STAGING_DIR)/usr/include/KHR/
-    $(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/refsw
+	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/refsw
 	$(INSTALL) -m 644 ${BCM_REFSW_VCX}/platform/nexus/*.h $(STAGING_DIR)/usr/include/refsw/
 endef
