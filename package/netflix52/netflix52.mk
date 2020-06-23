@@ -231,6 +231,9 @@ define NETFLIX52_INSTALL_TO_STAGING
 	$(INSTALL) -d $(1)/usr/lib/pkgconfig
 	$(INSTALL) -D package/netflix52/netflix.pc $(1)/usr/lib/pkgconfig/netflix.pc
 
+	$(INSTALL) -d $(1)/usr/include/netflix
+	rsync -arL $(NETFLIX52_BUILD_DIR)/include/* $(1)/usr/include/netflix
+
 	mkdir -p $(1)/usr/include/3rdparty/JavaScriptCore/Source/WTF/wtf/nrdp
 	mkdir -p $(1)/usr/include/3rdparty/lz4
 	mkdir -p $(1)/usr/include/3rdparty/utf8
@@ -241,9 +244,6 @@ define NETFLIX52_INSTALL_TO_STAGING
 	cp -Rpf $(@D)/netflix/3rdparty/lz4/lz4.h $(1)/usr/include/3rdparty/lz4/
 	cp -Rpf $(@D)/netflix/3rdparty/JavaScriptCore/Source/WTF/wtf/nrdp/Pool.h $(1)/usr/include/3rdparty/JavaScriptCore/Source/WTF/wtf/nrdp/
 	cp -Rpf $(@D)/netflix/3rdparty/JavaScriptCore/Source/WTF/wtf/nrdp/Maddy.h $(1)/usr/include/3rdparty/JavaScriptCore/Source/WTF/wtf/nrdp/
-
-	$(INSTALL) -d $(1)/usr/include/netflix
-	rsync -arL $(NETFLIX52_BUILD_DIR)/include/* $(1)/usr/include/netflix
 
 	cp -Rpf $(@D)/netflix/src/platform/gibbon/*.h $(1)/usr/include/netflix
 	cp -Rpf $(@D)/netflix/src/platform/gibbon/bridge/*.h $(1)/usr/include/netflix
