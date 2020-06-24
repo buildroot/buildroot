@@ -17,7 +17,10 @@ endef
 
 define BCM_REFSW_INSTALL_GRAPHICS
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libv3ddriver.so $1/usr/lib/libv3ddriver.so
-	$(INSTALL) -D $(BCM_REFSW_BIN)/libv3dplatform.so $1/usr/lib/libv3dplatform.so
+
+	if [ -f $(BCM_REFSW_BIN)/libv3dplatform.so ]; then \
+		$(INSTALL) -D $(BCM_REFSW_BIN)/libv3dplatform.so $1/usr/lib/libv3dplatform.so ; \
+	fi
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libnxpl.so $1/usr/lib/libnxpl.so
 	cd $1/usr/lib && ln -sf libv3ddriver.so libEGL.so && ln -sf libv3ddriver.so libGLESv2.so
 endef
