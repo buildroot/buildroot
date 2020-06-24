@@ -11,7 +11,18 @@ LIBNIDS_LICENSE_FILES = COPYING
 LIBNIDS_INSTALL_STAGING = YES
 LIBNIDS_DEPENDENCIES = host-pkgconf libpcap
 LIBNIDS_AUTORECONF = YES
-LIBNIDS_CONF_OPTS = --disable-libnet
+
+# disable libnet if not available
+# Tests in configure.in expect --with-libnet=$build_dir
+# not an installation patch like in our context.
+# We use with-libnet=yes to skip the unusual paths tests.
+# But 'LNETLIB' gets left out, so we need to define it ourselves.
+ifeq ($(BR2_PACKAGE_LIBNET),y)
+LIBNIDS_DEPENDENCIES += libnet
+LIBNIDS_CONF_OPTS += --enable-libnet --with-libnet=yes LNETLIB=-lnet
+else
+LIBNIDS_CONF_OPTS += --disable-libnet
+endif
 
 # disable libglib2 if not available
 # The test in configure.in is flawed: passing --enable-libglib would also
