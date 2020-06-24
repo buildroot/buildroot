@@ -251,6 +251,28 @@ endif
 
 endif
 
+ifeq ($(BR2_PACKAGE_BCM_REFSW_SAGE_WIDEVINE),y)
+
+BCM_NEXUS_WIDEVINE_DIR = /BSEAV/lib/security/third_party/widevine/CENC_v15
+
+define BCM_REFSW_BUILD_SAGE_WIDEVINE
+    $(TARGET_CONFIGURE_OPTS) \
+    $(TARGET_MAKE_ENV) \
+    $(BCM_REFSW_CONF_OPTS) \
+    $(BCM_REFSW_MAKE_ENV) \
+        $(MAKE) -C $(@D)/$(BCM_NEXUS_WIDEVINE_DIR) build_wv_bundle \
+            LIBDIR=${BCM_REFSW_BIN}
+endef
+
+
+define BCM_REFSW_INSTALL_WIDEVINE_DEV
+endef
+
+define BCM_REFSW_INSTALL_WIDEVINE
+endef
+
+endif
+
 define BCM_REFSW_BUILD_NEXUS_LIBB_OS
     $(TARGET_CONFIGURE_OPTS) \
 	$(TARGET_MAKE_ENV) \
