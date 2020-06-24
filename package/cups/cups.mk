@@ -22,6 +22,9 @@ CUPS_CONF_OPTS = \
 	--disable-gssapi \
 	--disable-pam \
 	--libdir=/usr/lib \
+	--with-cups-user=lp \
+	--with-cups-group=lp \
+	--with-system-groups="lpadmin sys root" \
 	--without-rcdir
 CUPS_CONFIG_SCRIPTS = cups-config
 CUPS_DEPENDENCIES = \
@@ -75,6 +78,13 @@ endif
 define CUPS_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 0755 package/cups/S81cupsd \
 		$(TARGET_DIR)/etc/init.d/S81cupsd
+endef
+
+# lp user is needed to run cups spooler
+# lpadmin group membership grants administrative privileges
+define CUPS_USERS
+	lp -1 lp -1 * /var/spool/lpd /bin/false - lp
+	- - lpadmin -1 * - - - Printers admin group.
 endef
 
 $(eval $(autotools-package))
