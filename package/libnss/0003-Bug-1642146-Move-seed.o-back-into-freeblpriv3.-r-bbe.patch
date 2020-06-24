@@ -1,0 +1,50 @@
+From 0841ebe3c85bfb12ecf080efb2e28ac18f55ed41 Mon Sep 17 00:00:00 2001
+From: Mike Hommey <mh@glandium.org>
+Date: Mon, 15 Jun 2020 18:12:09 +0000
+Subject: [PATCH] Bug 1642146 - Move seed.o back into freeblpriv3.
+ r=bbeurdouche
+
+Differential Revision: https://phabricator.services.mozilla.com/D77595
+
+--HG--
+extra : moz-landing-system : lando
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ nss/lib/freebl/Makefile    | 4 ----
+ nss/lib/freebl/manifest.mn | 4 ++++
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/nss/lib/freebl/Makefile b/nss/lib/freebl/Makefile
+index 29dc940a3..52d827c6a 100644
+--- a/nss/lib/freebl/Makefile
++++ b/nss/lib/freebl/Makefile
+@@ -545,10 +545,6 @@ ifndef HAVE_INT128_SUPPORT
+     DEFINES += -DKRML_VERIFIED_UINT128
+ endif
+ 
+-ifndef NSS_DISABLE_DEPRECATED_SEED
+-	CSRCS += deprecated/seed.c
+-endif
+-
+ ifndef NSS_DISABLE_CHACHAPOLY
+     ifeq ($(CPU_ARCH),x86_64)
+         ifndef NSS_DISABLE_AVX2
+diff --git a/nss/lib/freebl/manifest.mn b/nss/lib/freebl/manifest.mn
+index 5efb48520..8dd8ddb53 100644
+--- a/nss/lib/freebl/manifest.mn
++++ b/nss/lib/freebl/manifest.mn
+@@ -160,6 +160,10 @@ CSRCS = \
+ 	$(EXTRA_SRCS) \
+ 	$(NULL)
+ 
++ifndef NSS_DISABLE_DEPRECATED_SEED
++	CSRCS += deprecated/seed.c
++endif
++
+ ALL_CSRCS := $(CSRCS)
+ 
+ ALL_HDRS =  \
+-- 
+2.25.1
+
