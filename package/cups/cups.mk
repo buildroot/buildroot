@@ -75,6 +75,15 @@ else
 CUPS_CONF_OPTS += --disable-avahi
 endif
 
+ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
+define CUPS_INSTALL_UDEV_RULES
+	$(INSTALL) -D -m 0644 package/cups/70-usb-printers.rules \
+		$(TARGET_DIR)/lib/udev/rules.d/70-usb-printers.rules
+endef
+
+CUPS_POST_INSTALL_TARGET_HOOKS += CUPS_INSTALL_UDEV_RULES
+endif
+
 define CUPS_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 0755 package/cups/S81cupsd \
 		$(TARGET_DIR)/etc/init.d/S81cupsd
