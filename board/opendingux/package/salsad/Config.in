@@ -1,0 +1,8 @@
+config BR2_PACKAGE_SALSAD
+	bool "salsad"
+	select BR2_PACKAGE_ALSA_LIB
+	help
+	  Small daemon which will toggle between speakers and headphones when
+	  headphones are plugged or unplugged.
+
+	  https://github.com/JohnnyonFlame/salsad
