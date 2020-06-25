@@ -13,10 +13,6 @@ choice
 	help
 	  Select the version of binutils you wish to use.
 
-config BR2_BINUTILS_VERSION_2_31_X
-	bool "binutils 2.31.1"
-	depends on !BR2_csky
-
 config BR2_BINUTILS_VERSION_2_32_X
 	bool "binutils 2.32"
 	depends on !BR2_csky
@@ -49,7 +45,6 @@ config BR2_BINUTILS_VERSION
 	string
 	default "arc-2020.03-release"	if BR2_BINUTILS_VERSION_ARC
 	default "c66d8bbcebfddf713b2b436e1b135e6b125a55a5" if BR2_BINUTILS_VERSION_CSKY
-	default "2.31.1"	if BR2_BINUTILS_VERSION_2_31_X
 	default "2.32"		if BR2_BINUTILS_VERSION_2_32_X
 	default "2.33.1"	if BR2_BINUTILS_VERSION_2_33_X
 	default "2.34"		if BR2_BINUTILS_VERSION_2_34_X
