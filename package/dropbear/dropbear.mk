@@ -56,7 +56,14 @@ endef
 DROPBEAR_POST_EXTRACT_HOOKS += DROPBEAR_SVR_PASSWORD_AUTH
 endif
 
-ifneq ($(BR2_PACKAGE_DROPBEAR_LEGACY_CRYPTO),y)
+ifeq ($(BR2_PACKAGE_DROPBEAR_LEGACY_CRYPTO),y)
+define DROPBEAR_ENABLE_LEGACY_CRYPTO
+	echo '#define DROPBEAR_3DES 1'                  >> $(@D)/localoptions.h
+	echo '#define DROPBEAR_ENABLE_CBC_MODE 1'       >> $(@D)/localoptions.h
+	echo '#define DROPBEAR_SHA1_96_HMAC 1'          >> $(@D)/localoptions.h
+endef
+DROPBEAR_POST_EXTRACT_HOOKS += DROPBEAR_ENABLE_LEGACY_CRYPTO
+else
 define DROPBEAR_DISABLE_LEGACY_CRYPTO
 	echo '#define DROPBEAR_DSS 0'                   >> $(@D)/localoptions.h
 	echo '#define DROPBEAR_DH_GROUP1 0'             >> $(@D)/localoptions.h
