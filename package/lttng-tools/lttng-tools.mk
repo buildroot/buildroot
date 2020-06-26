@@ -13,6 +13,10 @@ LTTNG_TOOLS_LICENSE_FILES = LICENSE $(addprefix LICENSES/,BSD-2-Clause BSD-3-Cla
 LTTNG_TOOLS_CONF_OPTS += --disable-man-pages
 LTTNG_TOOLS_DEPENDENCIES = liburcu libxml2 popt util-linux
 
+ifeq ($(BR2_INIT_SYSTEMD),y)
+LTTNG_TOOLS_CONF_OPTS += --with-lttng-system-rundir=/run/lttng
+endif
+
 ifeq ($(BR2_PACKAGE_LTTNG_LIBUST),y)
 LTTNG_TOOLS_CONF_OPTS += --with-lttng-ust
 LTTNG_TOOLS_DEPENDENCIES += lttng-libust

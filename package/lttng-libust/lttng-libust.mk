@@ -13,6 +13,10 @@ LTTNG_LIBUST_INSTALL_STAGING = YES
 LTTNG_LIBUST_DEPENDENCIES = liburcu util-linux
 LTTNG_LIBUST_CONF_OPTS += --disable-man-pages --disable-examples
 
+ifeq ($(BR2_INIT_SYSTEMD),y)
+LTTNG_LIBUST_CONF_OPTS += --with-lttng-system-rundir=/run/lttng
+endif
+
 ifeq ($(BR2_PACKAGE_PYTHON),y)
 LTTNG_LIBUST_DEPENDENCIES += python
 LTTNG_LIBUST_CONF_OPTS += --enable-python-agent
