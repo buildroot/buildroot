@@ -5,22 +5,51 @@ if [ $# -ne 1 ] ; then
 	exit 1
 fi
 
-$(sed -n 's/^\([\/:a-z0-9]\+\) \/boot \([a-z]\+\).*/export SYSPART=\1\nexport SYSPART_TYPE=\2/p' /proc/mounts)
+$(sed -n 's/.*root=\([[:alnum:]:\/]\+\).*rootfstype=\([[:alpha:]]\+\).*/export SYSPART=\1\nexport SYSPART_TYPE=\2/p' /proc/cmdline)
 
-MODEL=$(sed -n 's/\(.*\)ingenic.*/\1/p' /sys/firmware/devicetree/base/compatible)
-HWVARIANT=$(sed 's/.*hwvariant=\([[:alnum:]_]\+\).*/\1/' /proc/cmdline)
+HWVARIANT_BL=""
+HWVARIANT_DT=""
+
+HWVARIANT_CMDLINE="$(sed -n 's/.*hwvariant=\([[:alnum:]_]\+\).*/\1/p' /proc/cmdline)"
+
+if [ -e /sys/firmware/devicetree/base/compatible ] ; then
+	MODEL=$(sed -n 's/\(.*\)ingenic.*/\1/p' /sys/firmware/devicetree/base/compatible)
+	HWVARIANT=$(cat /sys/firmware/devicetree/base/model)
+else
+	MODEL=gcw,zero
+	HWVARIANT="$HWVARIANT_CMDLINE"
+fi
+
 case "$MODEL" in
 	retromini|ylm,rs90)
+		HWVARIANT_BL="$HWVARIANT_CMDLINE"
+		HWVARIANT_DT="rs90"
 		INSTALL_ON_NAND=Y
 		SYSDEV=/dev/mtd0
 		;;
 	gcw,zero)
-		if [ -z "$HWVARIANT" ] ; then
-			# Only old "Frankenzeros" can have a bootloader so old that
-			# it doesn't pass the 'hwvariant' parameter to the kernel...
-			HWVARIANT="v11_ddr2_256mb"
-		fi
-		unset INSTALL_ON_NAND
+		case "$HWVARIANT" in
+			"GCW Zero"|v20_mddr_512mb)
+				HWVARIANT_BL="v20_mddr_512mb"
+				HWVARIANT_DT="gcw0"
+				;;
+			*)
+				HWVARIANT_BL="v11_ddr2_256mb"
+				HWVARIANT_DT="gcw0_proto"
+				;;
+		esac
+		SYSDEV=$(echo $SYSPART |sed -n 's/\(\/dev\/mmcblk[0-9]\+\)p[0-9]\+/\1/p')
+		;;
+	anbernic,rg350)
+		case "$HWVARIANT" in
+			"Anbernic RG-350")
+				HWVARIANT_DT="rg350"
+				;;
+			"Anbernic RG-350M")
+				HWVARIANT_DT="rg350m"
+				;;
+		esac
+		HWVARIANT_BL="rg350"
 		SYSDEV=$(echo $SYSPART |sed -n 's/\(\/dev\/mmcblk[0-9]\+\)p[0-9]\+/\1/p')
 		;;
 	*)
@@ -33,19 +62,19 @@ MNT=/mnt/_system_update
 [ "$(grep kernel_bak /proc/cmdline)" ] && KERNEL_IS_BACKUP=Y
 [ "$(grep rootfs_bak /proc/cmdline)" ] && ROOTFS_IS_BACKUP=Y
 
-BOOTLD=$1/ubiboot-${HWVARIANT}.bin
+BOOTLD=$1/ubiboot-${HWVARIANT_BL}.bin
 KERNEL=$1/uzImage.bin
 ROOTFS=$1/rootfs.squashfs
 MODULES_FS=$1/modules.squashfs
 MININIT=$1/mininit-syspart
-DEVICETREE=$1/${HWVARIANT}.dtb
+DEVICETREE=$1/${HWVARIANT_DT}.dtb
 
 [ ! -r $DEVICETREE ] && DEVICETREE=/sys/firmware/fdt
 
 
 handle_err() {
-	rm -f $MNT/update_k.bin $MNT/update_r.bin \
-		  $MNT/update_m.bin $MNT/mininit-syspart-new
+	rm -f $MNT/new_uzImage.bin $MNT/new-rootfs.squashfs \
+		  $MNT/new-modules.squashfs $MNT/mininit-syspart-new
 
 	# Umount twice, since we bind-mounted twice
 	umount $MNT
@@ -57,6 +86,20 @@ handle_err() {
 
 mkdir -p $MNT
 
+# If possible, try to run the od-update script from the new rootfs
+if [ -r $ROOTFS -a "$0" != "/tmp/od-update" ] ; then
+	mount -o loop $ROOTFS $MNT
+	if [ -r $MNT/usr/sbin/od-update ] ; then
+		cp $MNT/usr/sbin/od-update /tmp/od-update
+		umount $MNT
+
+		# Run the updated od-update script from the rootfs
+		exec /tmp/od-update $*
+	else
+		umount $MNT
+	fi
+fi
+
 # bind-mount /boot read-write
 mount --bind $MNT $MNT
 # /boot has already been mounted with --make-shared
@@ -66,7 +109,7 @@ mount -o remount,rw $MNT
 
 if [ -r $ROOTFS ] ; then
 	echo "Updating rootfs..."
-	pv -p $ROOTFS > $MNT/update_r.bin
+	pv -p $ROOTFS > $MNT/new-rootfs.squashfs
 	[ $? -ne 0 ] && handle_err 2
 fi
 
@@ -92,7 +135,7 @@ if [ -r $KERNEL ] ; then
 
 		pv -p $KERNEL $DEVICETREE | ubiupdatevol /dev/ubi0_$VOLUME_ID -s $(expr $KERNEL_SIZE + $DTB_SIZE) -
 	else
-		pv -p $KERNEL $DEVICETREE > $MNT/update_k.bin
+		pv -p $KERNEL $DEVICETREE > $MNT/new_uzImage.bin
 	fi
 
 	[ $? -ne 0 ] && handle_err 4
@@ -100,7 +143,7 @@ fi
 
 if [ -r $MODULES_FS ] ; then
 	echo -e "\nInstalling updated modules..."
-	pv -p $MODULES_FS > $MNT/update_m.bin
+	pv -p $MODULES_FS > $MNT/new-modules.squashfs
 	[ $? -ne 0 ] && handle_err 5
 fi
 
@@ -127,7 +170,7 @@ echo 3 > /proc/sys/vm/drop_caches
 
 if [ -r $ROOTFS -a -r ${ROOTFS}.sha1 ] ; then
 	echo -e "\nVerifying rootfs..."
-	ROOTFS_SHA1=$(pv -p $MNT/update_r.bin |sha1sum |cut -d' ' -f1)
+	ROOTFS_SHA1=$(pv -p $MNT/new-rootfs.squashfs |sha1sum |cut -d' ' -f1)
 
 	if [ "$ROOTFS_SHA1" != "$(cat ${ROOTFS}.sha1)" ] ; then
 		handle_err 7
@@ -156,8 +199,8 @@ if [ -r $KERNEL -a -r ${KERNEL}.sha1 ] ; then
 			| pv -p -s $KERNEL_SIZE |sha1sum |cut -d' ' -f1 \
 		)
 	else
-		KERNEL_SHA1=$( ( dd if=$MNT/update_k.bin ibs=$BLOCK_SIZE count=$NB_BLOCKS ; \
-			dd if=$MNT/update_k.bin ibs=1 skip=$(expr $KERNEL_SIZE - $LEFTOVER) count=$LEFTOVER) 2>/dev/null \
+		KERNEL_SHA1=$( ( dd if=$MNT/new_uzImage.bin ibs=$BLOCK_SIZE count=$NB_BLOCKS ; \
+			dd if=$MNT/new_uzImage.bin ibs=1 skip=$(expr $KERNEL_SIZE - $LEFTOVER) count=$LEFTOVER) 2>/dev/null \
 			| pv -p -s $KERNEL_SIZE |sha1sum |cut -d' ' -f1 \
 		)
 	fi
@@ -175,7 +218,7 @@ if [ -r $KERNEL -a -r ${KERNEL}.sha1 ] ; then
 	if [ "$INSTALL_ON_NAND" ] ; then
 		DTB_SHA1=$( ( dd if=/dev/ubi0_$VOLUME_ID ibs=1 skip=$KERNEL_SIZE count=$DTB_SIZE) 2>/dev/null |sha1sum |cut -d' ' -f1 )
 	else
-		DTB_SHA1=$( ( dd if=$MNT/update_k.bin ibs=1 skip=$KERNEL_SIZE count=$DTB_SIZE) 2>/dev/null |sha1sum |cut -d' ' -f1 )
+		DTB_SHA1=$( ( dd if=$MNT/new_uzImage.bin ibs=1 skip=$KERNEL_SIZE count=$DTB_SIZE) 2>/dev/null |sha1sum |cut -d' ' -f1 )
 	fi
 
 	if [ "$DTB_SHA1" != "$DTB_SRC_SHA1" ] ; then
@@ -203,17 +246,26 @@ echo -e "\nCommiting changes..."
 
 mkdir -p $MNT/dev $MNT/root
 
-[ -r $ROOTFS -a "$ROOTFS_IS_BACKUP" ] && mv $MNT/update_r.bin $MNT/rootfs.squashfs
+[ -r $ROOTFS ] && if [ "$ROOTFS_IS_BACKUP" ] ; then
+	 mv $MNT/new-rootfs.squashfs $MNT/rootfs.squashfs
+else
+	 mv $MNT/new-rootfs.squashfs $MNT/update_r.bin
+fi
+[ -r $MODULES_FS ] && if [ "$KERNEL_IS_BACKUP" ] ; then
+	 mv $MNT/new-modules.squashfs $MNT/modules.squashfs
+else
+	 mv $MNT/new-modules.squashfs $MNT/update_m.bin
+fi
 [ -r $MININIT ] && mv $MNT/mininit-syspart-new $MNT/mininit-syspart
 [ -r $KERNEL ] && if [ -z "$KERNEL_IS_BACKUP" ] ; then
 	if [ "$INSTALL_ON_NAND" ] ; then
 		ubirename /dev/ubi0 kernel kernel_bak kernel_bak kernel
 	else
 		cp $MNT/uzImage.bin $MNT/uzImage.bak
-		mv $MNT/update_k.bin $MNT/uzImage.bin
+		mv $MNT/new_uzImage.bin $MNT/uzImage.bin
 	fi
 elif [ -z "$INSTALL_ON_NAND" ] ; then
-	mv $MNT/update_k.bin $MNT/uzImage.bin
+	mv $MNT/new_uzImage.bin $MNT/uzImage.bin
 fi
 
 sync
