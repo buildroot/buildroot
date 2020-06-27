@@ -25,7 +25,12 @@ else
 PYTHON_NUMPY_ENV += BLAS=None LAPACK=None
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HAS_FORTRAN),y)
+PYTHON_NUMPY_BUILD_OPTS = --fcompiler=gnu95
+PYTHON_NUMPY_ENV += F90=$(TARGET_FC)
+else
 PYTHON_NUMPY_BUILD_OPTS = --fcompiler=None
+endif
 
 define PYTHON_NUMPY_CONFIGURE_CMDS
 	-rm -f $(@D)/site.cfg
