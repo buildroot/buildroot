@@ -41,9 +41,9 @@ endif
 
 ifeq ($(BR2_PACKAGE_IPTABLES),y)
 KEEPALIVED_DEPENDENCIES += iptables
-KEEPALIVED_CONF_OPTS += --enable-libiptc
+KEEPALIVED_CONF_OPTS += --enable-iptables
 else
-KEEPALIVED_CONF_OPTS += --disable-libiptc
+KEEPALIVED_CONF_OPTS += --disable-iptables
 endif
 
 ifeq ($(BR2_PACKAGE_LIBNFTNL),y)
