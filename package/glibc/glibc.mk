@@ -131,6 +131,7 @@ define GLIBC_CONFIGURE_CMDS
 		$(if $(BR2_x86_64),--enable-lock-elision) \
 		--with-pkgversion="Buildroot" \
 		--disable-profile \
+		--disable-werror \
 		--without-gd \
 		--enable-obsolete-rpc \
 		--enable-kernel=$(call qstrip,$(BR2_TOOLCHAIN_HEADERS_AT_LEAST)) \
