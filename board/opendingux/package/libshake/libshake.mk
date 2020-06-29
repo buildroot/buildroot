@@ -3,7 +3,7 @@
 # libshake
 #
 #############################################################
-LIBSHAKE_VERSION = 187c24c
+LIBSHAKE_VERSION = 8ca1aaf
 LIBSHAKE_SITE = $(call github,zear,libShake,$(LIBSHAKE_VERSION))
 LIBSHAKE_LICENSE = MIT
 LIBSHAKE_LICENSE_FILES = LICENSE.txt
