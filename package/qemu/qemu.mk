@@ -112,6 +112,13 @@ else
 QEMU_OPTS += --disable-numa
 endif
 
+ifeq ($(BR2_PACKAGE_SPICE),y)
+QEMU_OPTS += --enable-spice
+QEMU_DEPENDENCIES += spice
+else
+QEMU_OPTS += --disable-spice
+endif
+
 # Override CPP, as it expects to be able to call it like it'd
 # call the compiler.
 define QEMU_CONFIGURE_CMDS
@@ -143,7 +150,6 @@ define QEMU_CONFIGURE_CMDS
 			--disable-linux-io-uring \
 			--disable-cap-ng \
 			--disable-docs \
-			--disable-spice \
 			--disable-rbd \
 			--disable-libiscsi \
 			--disable-usb-redir \
