@@ -79,7 +79,7 @@ DROPBEAR_POST_EXTRACT_HOOKS += DROPBEAR_ENABLE_REVERSE_DNS
 endif
 
 ifeq ($(BR2_PACKAGE_DROPBEAR_SMALL),y)
-DROPBEAR_LICENSE +=, Unlicense, WTFPL
+DROPBEAR_LICENSE += , Unlicense, WTFPL
 DROPBEAR_LICENSE_FILES += libtommath/LICENSE libtomcrypt/LICENSE
 DROPBEAR_CONF_OPTS += --disable-zlib --enable-bundled-libtom
 else
