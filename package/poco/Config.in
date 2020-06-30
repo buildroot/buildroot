@@ -90,6 +90,11 @@ config BR2_PACKAGE_POCO_DATA_MYSQL
 	select BR2_PACKAGE_POCO_DATA
 	select BR2_PACKAGE_MYSQL
 
+config BR2_PACKAGE_POCO_JWT
+	bool "jwt"
+	select BR2_PACKAGE_POCO_JSON
+	select BR2_PACKAGE_POCO_CRYPTO
+
 endif # BR2_PACKAGE_POCO
 
 comment "poco needs a toolchain w/ wchar, NPTL, C++, dynamic library, gcc >= 5 w/ C++14"
