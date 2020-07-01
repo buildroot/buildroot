@@ -847,12 +847,19 @@ config BR2_PACKAGE_WPEFRAMEWORK_SYSTEMCOMMANDS
     bool "SystemCommands"
     help
       SystemCommands Plugin
-      
+
 config BR2_PACKAGE_WPEFRAMEWORK_FILETRANSFER
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "FileTransfer"
     help
       FileTransfer Plugin
+
+config BR2_PACKAGE_WPEFRAMEWORK_FIRMWARECONTROL
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_MFR_LIBRARY
+    bool "FirmwareControl"
+    help
+      FirmwareControl Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
