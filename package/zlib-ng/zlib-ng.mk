@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-ZLIB_NG_VERSION = a17fefa147942edbf80ab22a16bcbc2419def12d
-ZLIB_NG_SITE = $(call github,mtl1979,zlib-ng,$(ZLIB_NG_VERSION))
+ZLIB_NG_VERSION = 9609cb56a8f62868ccf264493bc9c3b4d5762fcf
+ZLIB_NG_SITE = $(call github,zlib-ng,zlib-ng,$(ZLIB_NG_VERSION))
 ZLIB_NG_LICENSE = Zlib
 ZLIB_NG_LICENSE_FILES = LICENSE.md
 ZLIB_NG_INSTALL_STAGING = YES
