@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MFR_LIBRARY_VERSION = 01ede7a48f6d296b5a4b7c592e60da718cef4cbf
+MFR_LIBRARY_VERSION = 00fcea84e02bed72bd59d11cd1b26c46adb64615
 MFR_LIBRARY_SITE = git@github.com:Metrological/MFRLibrary.git
 MFR_LIBRARY_SITE_METHOD = git
 MFR_LIBRARY_INSTALL_STAGING = YES
