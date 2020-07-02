@@ -9,7 +9,7 @@ CJWT_SITE_METHOD = git
 CJWT_SITE = git://github.com/Comcast/cjwt.git
 CJWT_INSTALL_STAGING = YES
 
-CJWT_DEPENDENCIES = trower-base64
+CJWT_DEPENDENCIES = trower-base64 openssl
 
 CJWT_CONF_OPTS += \
     -DCMAKE_C_FLAGS="$(TARGET_CFLAGS) $(CJWT_INCLUDE_DIRS)" \
