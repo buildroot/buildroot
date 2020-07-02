@@ -31,9 +31,18 @@ SDL_MIXER_DEPENDENCIES += fluidsynth
 SDL_MIXER_CONF_OPTS += \
 	--enable-music-midi \
 	--enable-music-fluidsynth-midi
-else
+SDL_MIXER_HAS_MIDI = YES
+endif
+
+ifeq ($(BR2_PACKAGE_SDL_MIXER_MIDI_TIMIDITY),y)
 SDL_MIXER_CONF_OPTS += \
-	--disable-music-midi
+	--enable-music-midi \
+	--enable-music-timidity-midi
+SDL_MIXER_HAS_MIDI = YES
+endif
+
+ifneq ($(SDL_MIXER_HAS_MIDI),YES)
+SDL_MIXER_CONF_OPTS += --disable-music-midi
 endif
 
 ifeq ($(BR2_PACKAGE_LIBMAD),y)
