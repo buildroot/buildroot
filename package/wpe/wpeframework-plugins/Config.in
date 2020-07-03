@@ -535,12 +535,122 @@ config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_NETFLIX
 
 endif
 
-config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "NetworkControl"
     help
       Control the IP adressing of the interfaces in the system from
       WPEFramework (static IPv4/IPv6 or dhcp IPv4)
+
+if BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE1
+    bool "Enable Interface1"
+        default y
+        help
+          Configure details for Interface1
+
+if BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE1
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE1_NAME
+    string "Name"
+    default eth0
+    help
+      Set name of the interface1
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE1_MODE
+    string "Mode"
+    default Dynamic
+    help
+      Set mode of the interface (Dynamic or Manual)
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE1_ADDRESS
+    string "IPV4 Address"
+    help
+      Set IPV4 static address
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE1_MASK
+    string "NetMask"
+    help
+      Set Network Mask
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE1_GATEWAY
+    string "Gateway Address"
+    help
+      Set Gateway Address
+endif
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE2
+    bool "Enable Interface2"
+        default y
+        help
+          Configure details for Interface2
+
+if BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE2
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE2_NAME
+    string "Name"
+    default "wlan0"
+    help
+      Set name of the interface1
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE2_MODE
+    string "Mode"
+    default "Dynamic"
+    help
+      Set mode of the interface (Dynamic or Manual)
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE2_ADDRESS
+    string "IPV4 Address"
+    help
+      Set IPV4 static address
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE2_MASK
+    string "NetMask"
+    help
+      Set Network Mask
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE2_GATEWAY
+    string "Gateway Address"
+    help
+      Set Gateway Address
+endif
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE3
+    bool "Enable Interface3"
+        default y
+        help
+          Configure details for Interface3
+
+if BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE3
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE3_NAME
+    string "Name"
+    help
+      Set name of the interface3
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE3_MODE
+    string "Mode"
+    help
+      Set mode of the interface (Dynamic or Manual)
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE3_ADDRESS
+    string "IPV4 Address"
+    help
+      Set IPV4 static address
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE3_MASK
+    string "NetMask"
+    help
+      Set Network Mask
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACE3_GATEWAY
+    string "Gateway Address"
+    help
+      Set Gateway Address
+endif
+
+endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_PACKAGER
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
