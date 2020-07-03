@@ -1,0 +1,94 @@
+diff --git a/source/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/internal/biginteger.h b/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/internal/biginteger.h
+index 9d3e88c99..949cbb1f9 100755
+--- a/source/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/internal/biginteger.h
++++ b/source/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/internal/biginteger.h
+@@ -133,7 +133,7 @@ public:
+         RAPIDJSON_ASSERT(count_ + offset <= kCapacity);
+ 
+         if (interShift == 0) {
+-            std::memmove(&digits_[count_ - 1 + offset], &digits_[count_ - 1], count_ * sizeof(Type));
++            std::memmove(digits_ + offset, digits_, count_ * sizeof(Type));
+             count_ += offset;
+         }
+         else {
+diff --git a/source/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/rapidjson.h b/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/rapidjson.h
+index 053b2ce43..ab925012f 100755
+--- a/source/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/rapidjson.h
++++ b/source/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/rapidjson.h
+@@ -264,16 +264,11 @@
+ /*! \ingroup RAPIDJSON_CONFIG
+     \param x pointer to align
+ 
+-    Some machines require strict data alignment. Currently the default uses 4 bytes
+-    alignment on 32-bit platforms and 8 bytes alignment for 64-bit platforms.
++    Some machines require strict data alignment. The default is 8 bytes.
+     User can customize by defining the RAPIDJSON_ALIGN function macro.
+ */
+ #ifndef RAPIDJSON_ALIGN
+-#if RAPIDJSON_64BIT == 1
+-#define RAPIDJSON_ALIGN(x) (((x) + static_cast<uint64_t>(7u)) & ~static_cast<uint64_t>(7u))
+-#else
+-#define RAPIDJSON_ALIGN(x) (((x) + 3u) & ~3u)
+-#endif
++#define RAPIDJSON_ALIGN(x) (((x) + static_cast<size_t>(7u)) & ~static_cast<size_t>(7u))
+ #endif
+ 
+ ///////////////////////////////////////////////////////////////////////////////
+diff --git a/source/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/schema.h b/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/schema.h
+index b182aa27f..f9695dad8 100755
+--- a/source/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/schema.h
++++ b/source/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/schema.h
+@@ -1017,10 +1017,12 @@ private:
+     template <typename ValueType>
+     RegexType* CreatePattern(const ValueType& value) {
+         if (value.IsString())
++            RegexType *r = static_cast<RegexType*>(allocator_->Malloc(sizeof(RegexType)));
+             try {
+-                return new (allocator_->Malloc(sizeof(RegexType))) RegexType(value.GetString(), std::size_t(value.GetStringLength()), std::regex_constants::ECMAScript);
++                return new (r) RegexType(value.GetString(), std::size_t(value.GetStringLength()), std::regex_constants::ECMAScript);
+             }
+             catch (const std::regex_error&) {
++                AllocatorType::Free(r);
+             }
+         return 0;
+     }
+diff --git a/source/ThirdParty/rapidjson/rapidjson-1.1.0/test/unittest/allocatorstest.cpp b/ThirdParty/rapidjson/rapidjson-1.1.0/test/unittest/allocatorstest.cpp
+index a5958de19..2202c11f6 100755
+--- a/source/ThirdParty/rapidjson/rapidjson-1.1.0/test/unittest/allocatorstest.cpp
++++ b/source/ThirdParty/rapidjson/rapidjson-1.1.0/test/unittest/allocatorstest.cpp
+@@ -63,23 +63,21 @@ TEST(Allocator, MemoryPoolAllocator) {
+ }
+ 
+ TEST(Allocator, Alignment) {
+-#if RAPIDJSON_64BIT == 1
+-    EXPECT_EQ(RAPIDJSON_UINT64_C2(0x00000000, 0x00000000), RAPIDJSON_ALIGN(0));
+-    for (uint64_t i = 1; i < 8; i++) {
+-        EXPECT_EQ(RAPIDJSON_UINT64_C2(0x00000000, 0x00000008), RAPIDJSON_ALIGN(i));
+-        EXPECT_EQ(RAPIDJSON_UINT64_C2(0x00000000, 0x00000010), RAPIDJSON_ALIGN(RAPIDJSON_UINT64_C2(0x00000000, 0x00000008) + i));
+-        EXPECT_EQ(RAPIDJSON_UINT64_C2(0x00000001, 0x00000000), RAPIDJSON_ALIGN(RAPIDJSON_UINT64_C2(0x00000000, 0xFFFFFFF8) + i));
+-        EXPECT_EQ(RAPIDJSON_UINT64_C2(0xFFFFFFFF, 0xFFFFFFF8), RAPIDJSON_ALIGN(RAPIDJSON_UINT64_C2(0xFFFFFFFF, 0xFFFFFFF0) + i));
++    if (sizeof(size_t) >= 8) {
++        EXPECT_EQ(RAPIDJSON_UINT64_C2(0x00000000, 0x00000000), RAPIDJSON_ALIGN(0));
++        for (uint64_t i = 1; i < 8; i++) {
++            EXPECT_EQ(RAPIDJSON_UINT64_C2(0x00000000, 0x00000008), RAPIDJSON_ALIGN(i));
++            EXPECT_EQ(RAPIDJSON_UINT64_C2(0x00000000, 0x00000010), RAPIDJSON_ALIGN(RAPIDJSON_UINT64_C2(0x00000000, 0x00000008) + i));
++            EXPECT_EQ(RAPIDJSON_UINT64_C2(0x00000001, 0x00000000), RAPIDJSON_ALIGN(RAPIDJSON_UINT64_C2(0x00000000, 0xFFFFFFF8) + i));
++            EXPECT_EQ(RAPIDJSON_UINT64_C2(0xFFFFFFFF, 0xFFFFFFF8), RAPIDJSON_ALIGN(RAPIDJSON_UINT64_C2(0xFFFFFFFF, 0xFFFFFFF0) + i));
++        }
+     }
+-#else
++
+     EXPECT_EQ(0u, RAPIDJSON_ALIGN(0u));
+-    for (uint32_t i = 1; i < 4; i++) {
+-        EXPECT_EQ(4u, RAPIDJSON_ALIGN(i));
+-        EXPECT_EQ(8u, RAPIDJSON_ALIGN(4u + i));
+-        EXPECT_EQ(0xFFFFFFF8u, RAPIDJSON_ALIGN(0xFFFFFFF4u + i));
+-        EXPECT_EQ(0xFFFFFFFCu, RAPIDJSON_ALIGN(0xFFFFFFF8u + i));
++    for (uint32_t i = 1; i < 8; i++) {
++        EXPECT_EQ(8u, RAPIDJSON_ALIGN(i));
++        EXPECT_EQ(0xFFFFFFF8u, RAPIDJSON_ALIGN(0xFFFFFFF0u + i));
+     }
+-#endif
+ }
+ 
+ TEST(Allocator, Issue399) {

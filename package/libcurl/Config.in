@@ -18,4 +18,10 @@ config BR2_PACKAGE_LIBCURL_VERBOSE
 	help
 	  Enable verbose text strings
 
+config BR2_PACKAGE_LIBCURL_ENABLE_HTTP2
+	bool "enable HTTP2 support"
+	select BR2_PACKAGE_NGHTTP2
+	help
+		Enable HTTP2 support
+
 endif
