@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-SDL_VERSION = 00430c940
-SDL_SITE = $(call github,opendingux,SDL,$(SDL_VERSION))
+SDL_VERSION = 3da6a28ed
+SDL_SITE = $(call github,OpenDingux,SDL,$(SDL_VERSION))
 SDL_LICENSE = LGPL-2.1+
 SDL_LICENSE_FILES = COPYING
 SDL_INSTALL_STAGING = YES
@@ -36,6 +36,13 @@ SDL_CONF_OPTS += --enable-video-directfb=yes
 SDL_CONF_ENV = ac_cv_path_DIRECTFBCONFIG=$(STAGING_DIR)/usr/bin/directfb-config
 else
 SDL_CONF_OPTS += --enable-video-directfb=no
+endif
+
+ifeq ($(BR2_PACKAGE_SDL_KMSDRM),y)
+SDL_DEPENDENCIES += libdrm
+SDL_CONF_OPTS += --enable-video-kmsdrm=yes
+else
+SDL_CONF_OPTS += --enable-video-kmsdrm=no
 endif
 
 ifeq ($(BR2_PACKAGE_SDL_X11),y)

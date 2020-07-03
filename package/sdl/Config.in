@@ -13,6 +13,12 @@ config BR2_PACKAGE_SDL_FBCON
 	bool "SDL framebuffer console video driver"
 	default y
 
+config BR2_PACKAGE_SDL_KMSDRM
+	bool "SDL KMS/DRM video driver"
+	depends on BR2_PACKAGE_LIBDRM
+	depends on BR2_PACKAGE_HAS_UDEV
+	default y
+
 config BR2_PACKAGE_SDL_DIRECTFB
 	bool "SDL DirectFB video driver"
 	depends on BR2_PACKAGE_DIRECTFB
