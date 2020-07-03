@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_AVS_VERSION = 63d14dd228712553382d7fd44c83c1d730d99949
+WPEFRAMEWORK_AVS_VERSION = 5f4f7f5469d814da0cec048ec77335f923153495
 WPEFRAMEWORK_AVS_SITE_METHOD = git
 WPEFRAMEWORK_AVS_SITE = git@github.com:WebPlatformForEmbedded/WPEPluginAVS.git
 WPEFRAMEWORK_AVS_INSTALL_STAGING = YES
