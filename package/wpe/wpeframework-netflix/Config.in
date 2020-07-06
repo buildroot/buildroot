@@ -146,6 +146,11 @@ config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_FULLHD
     bool "fullhd"
     default n
 
+config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_HIGHRESUI
+    depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+    bool "high resolution (1080p) UI"
+    default n
+
 config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_KEY_REPEAT_DELAY
     depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
     int "key repeat delay"
