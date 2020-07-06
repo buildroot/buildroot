@@ -535,12 +535,22 @@ config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_NETFLIX
 
 endif
 
-config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "NetworkControl"
     help
       Control the IP adressing of the interfaces in the system from
       WPEFramework (static IPv4/IPv6 or dhcp IPv4)
+
+if BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACES
+    string "Network Interfaces Details"
+    default "eth0:Dynamic:::;wlan0:Dynamic:::;"
+    help
+      Set details of network interfaces in the format "Name:Mode:Address:Netmask:Gateway".
+      Example "wlan0:Manual:192.168.55.1:24:192.168.55.1;eth0:Manual:192.168.1.158:24:192.168.1.1;eth1:Dynamic:::;"
+endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_PACKAGER
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
