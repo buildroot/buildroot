@@ -16,7 +16,7 @@ LIBCAMERA_CONF_OPTS = \
 	-Dandroid=false \
 	-Ddocumentation=false \
 	-Dtest=false
-LIBCAMERA_INSTALL_STAGING = yes
+LIBCAMERA_INSTALL_STAGING = YES
 LIBCAMERA_LICENSE = \
 	LGPL-2.1+ (library), \
 	GPL-2.0+ (utils), \
