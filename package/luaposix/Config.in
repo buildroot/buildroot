@@ -5,7 +5,7 @@ config BR2_PACKAGE_LUAPOSIX
 	# doesn't find it.
 	select BR2_PACKAGE_LUA_BIT32 if BR2_PACKAGE_LUA_5_1 || BR2_PACKAGE_LUAJIT # runtime
 	help
-	  This is a POSIX binding for LuaJIT, Lua 5.1, 5.2 and 5.3;
+	  This is a POSIX binding for LuaJIT, Lua 5.1 through 5.4;
 	  like most libraries it simply binds to C APIs on the
 	  underlying system, so it won't work on non-POSIX systems.
 	  However, it does try to detect the level of POSIX conformance
