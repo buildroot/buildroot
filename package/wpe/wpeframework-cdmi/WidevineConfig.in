@@ -31,4 +31,10 @@ config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_KEYBOX
         Set the path where the keybox can be found on the
         system. Leave empty to disable.h
 
+config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_NEW_CENC_INTERFACE
+    bool "New CENC interface"
+    default n
+    help
+        Use the new CENC interfaces.
+
 endif
