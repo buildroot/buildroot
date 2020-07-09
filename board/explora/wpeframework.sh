@@ -9,6 +9,9 @@ export GST_PLUGIN_SYSTEM_PATH=$SOURCE/usr/lib/gstreamer-1.0
 export XKB_CONFIG_ROOT=$SOURCE/usr/share/X11/xkb
 export V3D_DRM_DISABLE=1
 
+#FIXME: Temporary solution for TCP receive buffer size
+sysctl net.core.rmem_max=262144 
+
 case "$1" in
 *)
 	export DESTINATION=/UserApps/explora
