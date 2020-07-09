@@ -388,77 +388,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_REPORTING_PIN
           To which pin needs the handler to be associated.
 endif
 
-config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PIN1_IO
-    bool "pin1 to control"
-        default y
-        help
-          I/O pin details to be configured
-
-if BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PIN1_IO
-config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PIN1_ID
-    string "pin"
-        default "17"
-        help
-          Id of the pin
-config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PIN1_MODE
-    string "mode"
-        default "Output"
-        help
-           Mode of the pin
-config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PIN1_STATE
-    string "activelow"
-        default "false"
-        help
-            logic state of the pin
-endif
-
-config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PIN2_IO
-    bool "pin2 to control"
-        default y
-        help
-          I/O pin details to be configured
-
-if BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PIN2_IO
-config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PIN2_ID
-    string "pin"
-        default "169"
-        help
-          Id of the pin
-config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PIN2_MODE
-    string "mode"
-        default "Output"
-        help
-           Mode of the pin
-config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PIN2_STATE
-    string "activelow"
-        default "true"
-        help
-            logic state of the pin
-endif
-
-config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PIN3_IO
-    bool "pin3 to control"
-        default y
-        help
-          I/O pin details to be configured
-
-if BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PIN3_IO
-config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PIN3_ID
-    string "pin"
-        default "172"
-        help
-          Id of the pin
-config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PIN3_MODE
-    string "mode"
-        default "Output"
-        help
-           Mode of the pin
-config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PIN3_STATE
-    string "activelow"
-        default "true"
-        help
-            logic state of the pin
-endif
+config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PINS
+    string "Pin details"
+    default "169:Output:true;172:Output:false"
+    help
+      Set details of pins in the format "ID:Mode:State".
+      ID: Id of the PIN, Mode: Output/Input, State: activelow or not
+      Example "169:Output:true;172:Output:false"
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_INPUTSWITCH
