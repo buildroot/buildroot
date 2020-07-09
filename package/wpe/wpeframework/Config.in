@@ -137,6 +137,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_GSTREAMERCLIENT
           Gstreamer client provides custom APIs to manipulate underneath stream sinks which will be linked with created pipeline.
           This implementation will vary based on custom platforms and sink backends.
 
+config BR2_PACKAGE_WPEFRAMEWORK_DISPLAYINFO
+    bool "DisplayInfo"
+        default y
+    help
+        A helpful C-interface to easily get information from the DisplayInfo plugin.
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY
     bool "Cryptography"
         default n

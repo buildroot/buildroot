@@ -84,6 +84,10 @@ $(error Missing a compositor implemtation, please provide one or disable PLUGIN_
 endif
 endif
 
+ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_DISPLAYINFO),y)
+WPEFRAMEWORK_CONF_OPTS += -DDISPLAYINFO=ON
+endif
+
 ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_BROADCAST),y)
 WPEFRAMEWORK_CONF_OPTS += -DBROADCAST=ON
 ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_BROADCAST_SI_PARSING),y)
