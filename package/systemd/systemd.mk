@@ -494,6 +494,23 @@ define SYSTEMD_USERS
 	$(SYSTEMD_TIMESYNCD_USER)
 endef
 
+define SYSTEMD_INSTALL_NSSCONFIG_HOOK
+	$(SED) '/^passwd:/ {/systemd/! s/$$/ systemd/}' \
+		-e '/^group:/ {/systemd/! s/$$/ [SUCCESS=merge] systemd/}' \
+		$(if $(BR2_PACKAGE_SYSTEMD_RESOLVED), \
+			-e '/^hosts:/ s/[[:space:]]*mymachines//' \
+			-e '/^hosts:/ {/resolve/! s/files/files resolve [!UNAVAIL=return]/}' ) \
+		$(if $(BR2_PACKAGE_SYSTEMD_MYHOSTNAME), \
+			-e '/^hosts:/ {/myhostname/! s/$$/ myhostname/}' ) \
+		$(if $(BR2_PACKAGE_SYSTEMD_MACHINED), \
+			-e '/^passwd:/ {/mymachines/! s/files/files mymachines/}' \
+			-e '/^group:/ {/mymachines/! s/files/files [SUCCESS=merge] mymachines/}' \
+			-e '/^hosts:/ {/mymachines/! s/files/files mymachines/}' ) \
+		$(TARGET_DIR)/etc/nsswitch.conf
+endef
+
+SYSTEMD_TARGET_FINALIZE_HOOKS += SYSTEMD_INSTALL_NSSCONFIG_HOOK
+
 ifneq ($(call qstrip,$(BR2_TARGET_GENERIC_GETTY_PORT)),)
 # systemd provides multiple units to autospawn getty as neede
 # * getty@.service to start a getty on normal TTY
