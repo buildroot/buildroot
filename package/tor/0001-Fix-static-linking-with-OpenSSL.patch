@@ -38,7 +38,7 @@ diff --git a/configure.ac b/configure.ac
 index 05e1392cf..580befa6b 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -885,7 +885,7 @@ AC_ARG_WITH(ssl-dir,
+@@ -966,7 +966,7 @@ AC_ARG_WITH(ssl-dir,
    ])
  
  AC_MSG_NOTICE([Now, we'll look for OpenSSL >= 1.0.1])
@@ -47,7 +47,7 @@ index 05e1392cf..580befa6b 100644
      [#include <openssl/ssl.h>
       char *getenv(const char *);],
      [struct ssl_cipher_st;
-@@ -919,7 +919,7 @@ dnl Now check for particular openssl functions.
+@@ -998,7 +998,7 @@ dnl Now check for particular openssl functions.
  save_LIBS="$LIBS"
  save_LDFLAGS="$LDFLAGS"
  save_CPPFLAGS="$CPPFLAGS"
@@ -60,7 +60,7 @@ diff --git a/src/test/include.am b/src/test/include.am
 index ecb768957..39a622e88 100644
 --- a/src/test/include.am
 +++ b/src/test/include.am
-@@ -317,8 +317,8 @@ src_test_test_ntor_cl_LDFLAGS = @TOR_LDFLAGS_zlib@ $(TOR_LDFLAGS_CRYPTLIB)
+@@ -378,8 +378,8 @@ src_test_test_ntor_cl_LDFLAGS = @TOR_LDFLAGS_zlib@ $(TOR_LDFLAGS_CRYPTLIB)
  src_test_test_ntor_cl_LDADD = \
  	$(TOR_INTERNAL_LIBS) \
  	$(rust_ldadd) \
@@ -71,7 +71,7 @@ index ecb768957..39a622e88 100644
  	@CURVE25519_LIBS@ @TOR_LZMA_LIBS@
  src_test_test_ntor_cl_AM_CPPFLAGS =	       \
  	$(AM_CPPFLAGS)
-@@ -327,8 +327,8 @@ src_test_test_hs_ntor_cl_SOURCES  = src/test/test_hs_ntor_cl.c
+@@ -388,8 +388,8 @@ src_test_test_hs_ntor_cl_SOURCES  = src/test/test_hs_ntor_cl.c
  src_test_test_hs_ntor_cl_LDFLAGS = @TOR_LDFLAGS_zlib@ $(TOR_LDFLAGS_CRYPTLIB)
  src_test_test_hs_ntor_cl_LDADD = \
  	$(TOR_INTERNAL_LIBS) \
@@ -86,7 +86,7 @@ diff --git a/src/tools/include.am b/src/tools/include.am
 index f7aa7e0d1..4c4e8aa7a 100644
 --- a/src/tools/include.am
 +++ b/src/tools/include.am
-@@ -30,7 +30,7 @@ src_tools_tor_gencert_LDADD = \
+@@ -35,7 +35,7 @@ src_tools_tor_gencert_LDADD = \
  	$(TOR_CRYPTO_LIBS) \
  	$(TOR_UTIL_LIBS) \
  	$(rust_ldadd) \
@@ -95,7 +95,7 @@ index f7aa7e0d1..4c4e8aa7a 100644
  	@TOR_LIB_WS32@ @TOR_LIB_IPHLPAPI@ @TOR_LIB_GDI@ @TOR_LIB_USERENV@ @CURVE25519_LIBS@
  endif
  
-@@ -40,7 +40,7 @@ src_tools_tor_print_ed_signing_cert_LDADD = \
+@@ -45,7 +45,7 @@ src_tools_tor_print_ed_signing_cert_LDADD = \
  	src/trunnel/libor-trunnel.a \
          $(TOR_CRYPTO_LIBS) \
          $(TOR_UTIL_LIBS) \
