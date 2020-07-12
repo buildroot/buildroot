@@ -146,20 +146,6 @@ endif
 
 comment "Legacy options removed in 2020.08"
 
-config BR2_PACKAGE_FIRMWARE_DDRFW_LPDDR4
-	bool "i.MX LPDDR4 option renamed"
-	select BR2_LEGACY
-	help
-	  The option BR2_PACKAGE_FIRMWARE_DDRFW_LPDDR4 was renamed to
-	  BR2_PACKAGE_FIRMWARE_IMX_LPDDR4.
-
-config BR2_PACKAGE_FIRMWARE_DDRFW_DDR4
-	bool "i.MX DDR4 option renamed"
-	select BR2_LEGACY
-	help
-	  The option BR2_PACKAGE_FIRMWARE_DDRFW_DDR4 was renamed to
-	  BR2_PACKAGE_FIRMWARE_IMX_DDR4.
-
 config BR2_BINUTILS_VERSION_2_31_X
 	bool "binutils version 2.31.1 support removed"
 	select BR2_LEGACY
