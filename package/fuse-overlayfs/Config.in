@@ -3,6 +3,7 @@ config BR2_PACKAGE_FUSE_OVERLAYFS
 	depends on BR2_USE_MMU # libfuse3
 	depends on !BR2_STATIC_LIBS # libfuse3
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libfuse3
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_15
 	select BR2_PACKAGE_LIBFUSE3
 	help
 	  FUSE-overlayfs is an implementation of overlay+shiftfs in
@@ -10,6 +11,7 @@ config BR2_PACKAGE_FUSE_OVERLAYFS
 
 	  http://github.com/containers/fuse-overlayfs
 
-comment "fuse-overlayfs needs a toolchain w/ threads, dynamic library"
+comment "fuse-overlayfs needs a toolchain w/ threads, dynamic library, headers >= 3.15"
 	depends on BR2_USE_MMU
-	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_15
