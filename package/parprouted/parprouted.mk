@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PARPROUTED_VERSION = 0.65
+PARPROUTED_VERSION = 0.7
 PARPROUTED_SITE = https://www.hazard.maks.net/parprouted
 PARPROUTED_LICENSE = GPL-2.0
 PARPROUTED_LICENSE_FILES = COPYING
