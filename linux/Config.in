@@ -27,7 +27,7 @@ choice
 	prompt "Kernel version"
 
 config BR2_LINUX_KERNEL_LATEST_VERSION
-	bool "Latest version (5.6)"
+	bool "Latest version (5.7)"
 
 config BR2_LINUX_KERNEL_LATEST_CIP_VERSION
 	bool "Latest CIP SLTS version (4.19.118-cip25)"
@@ -113,13 +113,9 @@ if BR2_LINUX_KERNEL_CUSTOM_GIT || BR2_LINUX_KERNEL_CUSTOM_HG || BR2_LINUX_KERNEL
 
 config BR2_LINUX_KERNEL_CUSTOM_REPO_URL
 	string "URL of custom repository"
-	default BR2_LINUX_KERNEL_CUSTOM_GIT_REPO_URL \
-		if BR2_LINUX_KERNEL_CUSTOM_GIT_REPO_URL != ""  # legacy
 
 config BR2_LINUX_KERNEL_CUSTOM_REPO_VERSION
 	string "Custom repository version"
-	default BR2_LINUX_KERNEL_CUSTOM_GIT_VERSION \
-		if BR2_LINUX_KERNEL_CUSTOM_GIT_VERSION != ""  # legacy
 	help
 	  Revision to use in the typical format used by
 	  Git/Mercurial/Subversion E.G. a sha id, a tag, branch, ..
@@ -128,7 +124,7 @@ endif
 
 config BR2_LINUX_KERNEL_VERSION
 	string
-	default "5.6.15" if BR2_LINUX_KERNEL_LATEST_VERSION
+	default "5.7.1" if BR2_LINUX_KERNEL_LATEST_VERSION
 	default "4.19.118-cip25" if BR2_LINUX_KERNEL_LATEST_CIP_VERSION
 	default "4.19.115-cip24-rt9" if BR2_LINUX_KERNEL_LATEST_CIP_RT_VERSION
 	default BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE \
@@ -406,6 +402,13 @@ config BR2_LINUX_KERNEL_CUSTOM_DTS_PATH
 	  Path to to out-of-tree device tree source files.
 	  You can provide a list of dts paths to copy and
 	  build, separated by spaces.
+
+config BR2_LINUX_KERNEL_DTB_KEEP_DIRNAME
+	bool "Keep the directory name of the Device Tree"
+	help
+	  If enabled, the device tree blobs keep their
+	  directory prefixes when they get copied to the
+	  output image directory or the target directory.
 
 config BR2_LINUX_KERNEL_DTB_OVERLAY_SUPPORT
 	bool "Build Device Tree with overlay support"

@@ -5,7 +5,7 @@
 ################################################################################
 
 # When updating the version, please also update mesa3d-headers
-MESA3D_VERSION = 20.0.7
+MESA3D_VERSION = 20.1.3
 MESA3D_SOURCE = mesa-$(MESA3D_VERSION).tar.xz
 MESA3D_SITE = https://mesa.freedesktop.org/archive
 MESA3D_LICENSE = MIT, SGI, Khronos
@@ -26,6 +26,12 @@ MESA3D_DEPENDENCIES = \
 MESA3D_CONF_OPTS = \
 	-Dgallium-omx=disabled \
 	-Dpower8=false
+
+# Codesourcery ARM 2014.05 fail to link libmesa_dri_drivers.so with --as-needed linker
+# flag due to a linker bug between binutils 2.24 and 2.25 (2.24.51.20140217).
+ifeq ($(BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_ARM),y)
+MESA3D_CONF_OPTS += -Db_asneeded=false
+endif
 
 ifeq ($(BR2_PACKAGE_MESA3D_LLVM),y)
 MESA3D_DEPENDENCIES += host-llvm llvm

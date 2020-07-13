@@ -1,4 +1,4 @@
-From bf4ee955cde7a27a8fd988a7985064f19d2a10fe Mon Sep 17 00:00:00 2001
+From ceccffbee9d674044641dd6a1010715b86eda254 Mon Sep 17 00:00:00 2001
 From: Peter Seiderer <ps.report@gmx.net>
 Date: Tue, 26 May 2020 20:16:44 +0200
 Subject: [PATCH] examples: fix parallel install
@@ -11,6 +11,8 @@ fails with a variation of the following error messages:
 
 Fix it by using OTHER_FILES instead of a seperate qml files install target.
 
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+[Rebased for Qt5.15.0]
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 ---
  .../extending-qml/chapter1-basics/chapter1-basics.pro     | 8 +++-----
@@ -25,10 +27,10 @@ Signed-off-by: Peter Seiderer <ps.report@gmx.net>
  9 files changed, 30 insertions(+), 37 deletions(-)
 
 diff --git a/examples/qml/tutorials/extending-qml/chapter1-basics/chapter1-basics.pro b/examples/qml/tutorials/extending-qml/chapter1-basics/chapter1-basics.pro
-index 9911e024..127d4092 100644
+index 1f777d2e..7c50dc31 100644
 --- a/examples/qml/tutorials/extending-qml/chapter1-basics/chapter1-basics.pro
 +++ b/examples/qml/tutorials/extending-qml/chapter1-basics/chapter1-basics.pro
-@@ -6,10 +6,8 @@ SOURCES += piechart.cpp \
+@@ -12,10 +12,8 @@ SOURCES += piechart.cpp \
  
  RESOURCES += chapter1-basics.qrc
  
@@ -43,10 +45,10 @@ index 9911e024..127d4092 100644
 -INSTALLS += target qml
 +INSTALLS += target
 diff --git a/examples/qml/tutorials/extending-qml/chapter2-methods/chapter2-methods.pro b/examples/qml/tutorials/extending-qml/chapter2-methods/chapter2-methods.pro
-index 7fd850ce..cba5c39b 100644
+index 264f028f..8947b4e0 100644
 --- a/examples/qml/tutorials/extending-qml/chapter2-methods/chapter2-methods.pro
 +++ b/examples/qml/tutorials/extending-qml/chapter2-methods/chapter2-methods.pro
-@@ -6,10 +6,8 @@ SOURCES += piechart.cpp \
+@@ -10,10 +10,8 @@ SOURCES += piechart.cpp \
  
  RESOURCES += chapter2-methods.qrc
  
@@ -61,10 +63,10 @@ index 7fd850ce..cba5c39b 100644
 -INSTALLS += target qml
 +INSTALLS += target
 diff --git a/examples/qml/tutorials/extending-qml/chapter3-bindings/chapter3-bindings.pro b/examples/qml/tutorials/extending-qml/chapter3-bindings/chapter3-bindings.pro
-index 1ae83f71..7d959e3f 100644
+index 152f17ce..ffe632ee 100644
 --- a/examples/qml/tutorials/extending-qml/chapter3-bindings/chapter3-bindings.pro
 +++ b/examples/qml/tutorials/extending-qml/chapter3-bindings/chapter3-bindings.pro
-@@ -6,10 +6,8 @@ SOURCES += piechart.cpp \
+@@ -10,10 +10,8 @@ SOURCES += piechart.cpp \
  
  RESOURCES += chapter3-bindings.qrc
  
@@ -79,10 +81,10 @@ index 1ae83f71..7d959e3f 100644
 -INSTALLS += target qml
 +INSTALLS += target
 diff --git a/examples/qml/tutorials/extending-qml/chapter4-customPropertyTypes/chapter4-customPropertyTypes.pro b/examples/qml/tutorials/extending-qml/chapter4-customPropertyTypes/chapter4-customPropertyTypes.pro
-index 12dfbd62..e17a59be 100644
+index e277f746..29911eae 100644
 --- a/examples/qml/tutorials/extending-qml/chapter4-customPropertyTypes/chapter4-customPropertyTypes.pro
 +++ b/examples/qml/tutorials/extending-qml/chapter4-customPropertyTypes/chapter4-customPropertyTypes.pro
-@@ -8,10 +8,8 @@ SOURCES += piechart.cpp \
+@@ -12,10 +12,8 @@ SOURCES += piechart.cpp \
  
  RESOURCES += chapter4-customPropertyTypes.qrc
  
@@ -97,10 +99,10 @@ index 12dfbd62..e17a59be 100644
 -INSTALLS += target qml
 +INSTALLS += target
 diff --git a/examples/qml/tutorials/extending-qml/chapter5-listproperties/chapter5-listproperties.pro b/examples/qml/tutorials/extending-qml/chapter5-listproperties/chapter5-listproperties.pro
-index 67d1cd35..dd0f11d8 100644
+index edbd3c23..0db640a7 100644
 --- a/examples/qml/tutorials/extending-qml/chapter5-listproperties/chapter5-listproperties.pro
 +++ b/examples/qml/tutorials/extending-qml/chapter5-listproperties/chapter5-listproperties.pro
-@@ -8,10 +8,8 @@ SOURCES += piechart.cpp \
+@@ -12,10 +12,8 @@ SOURCES += piechart.cpp \
  
  RESOURCES += chapter5-listproperties.qrc
  
@@ -166,10 +168,10 @@ index 8be4dbb6..678a6756 100644
  
  CONFIG += install_ok  # Do not cargo-cult this!
 diff --git a/examples/quick/scenegraph/simplematerial/simplematerial.pro b/examples/quick/scenegraph/simplematerial/simplematerial.pro
-index 6ae935f3..23a3b61f 100644
+index 131af459..76a21ab3 100644
 --- a/examples/quick/scenegraph/simplematerial/simplematerial.pro
 +++ b/examples/quick/scenegraph/simplematerial/simplematerial.pro
-@@ -6,7 +6,7 @@ SOURCES += \
+@@ -11,10 +11,10 @@ SOURCES += \
  RESOURCES += simplematerial.qrc
  
  target.path = $$[QT_INSTALL_EXAMPLES]/quick/scenegraph/simplematerial
@@ -180,6 +182,9 @@ index 6ae935f3..23a3b61f 100644
 +OTHER_FILES += main.qml
 +
 +INSTALLS += target
+ 
+ HEADERS += \
+     simplematerialitem.h
 -- 
 2.26.2
 

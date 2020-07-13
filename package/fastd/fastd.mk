@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-FASTD_VERSION = 18
-FASTD_SITE = https://projects.universe-factory.net/attachments/download/86
+FASTD_VERSION = 19
+FASTD_SITE = https://github.com/NeoRaider/fastd/releases/download/v$(FASTD_VERSION)
 FASTD_SOURCE = fastd-$(FASTD_VERSION).tar.xz
 FASTD_LICENSE = BSD-2-Clause
 FASTD_LICENSE_FILES = COPYRIGHT

@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-MRAA_VERSION = 0.9.1
-MRAA_SITE = $(call github,intel-iot-devkit,mraa,v$(MRAA_VERSION))
+MRAA_VERSION = 2.1.0
+MRAA_SITE = $(call github,eclipse,mraa,v$(MRAA_VERSION))
 MRAA_LICENSE = MIT
 MRAA_LICENSE_FILES = COPYING
 MRAA_INSTALL_STAGING = YES
@@ -17,8 +17,7 @@ MRAA_CONF_OPTS += \
 	-DBUILDSWIG=OFF \
 	-DUSBPLAT=OFF \
 	-DFTDI4222=OFF \
-	-DIPK=OFF \
-	-DRPM=OFF \
+	-DJSONPLAT=OFF \
 	-DENABLEEXAMPLES=OFF \
 	-DBUILDTESTS=OFF
 

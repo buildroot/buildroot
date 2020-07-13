@@ -4,7 +4,69 @@ config BR2_PACKAGE_FIRMWARE_IMX
 	help
 	  Firmware blobs for the Freescale i.MX SoCs.
 
-	  It contains blobs for SDMA and VPU.
+	  It contains blobs for SDMA, VPU, HDMI, EDPC, and DDR
+	  training.
 
 	  This library is provided by Freescale as-is and doesn't have
 	  an upstream.
+
+if BR2_PACKAGE_FIRMWARE_IMX
+
+config BR2_PACKAGE_FIRMWARE_IMX_NEEDS_SDMA_FW
+	bool
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX25_3STACK
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX27ADS
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX51
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX53
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX6Q
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX7
+
+config BR2_PACKAGE_FIRMWARE_IMX_NEEDS_VPU_FW
+	bool
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX27ADS
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX51
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX53
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX6Q
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X
+
+config BR2_PACKAGE_FIRMWARE_IMX_NEEDS_HDMI_FW
+	bool
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8M
+
+config BR2_PACKAGE_FIRMWARE_IMX_NEEDS_EPDC_FW
+	bool
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX6Q
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX6S
+
+config BR2_PACKAGE_FIRMWARE_IMX_NEEDS_DDR_FW
+	bool
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8M
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MM
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MN
+
+if BR2_PACKAGE_FIRMWARE_IMX_NEEDS_DDR_FW
+
+choice
+	bool "DDR training binaries"
+	default BR2_PACKAGE_FIRMWARE_IMX_LPDDR4
+	help
+	  Choose the DDR training binaries to be used depending on the
+	  kind of memory that is available on the target board (DDR4,
+	  LPDDR4, etc...).
+
+config BR2_PACKAGE_FIRMWARE_IMX_LPDDR4
+	bool "lpddr4"
+	help
+	  Use LPDDR4 binaries (i.e.: lpddr4_pmu_train_*.bin)
+
+config BR2_PACKAGE_FIRMWARE_IMX_DDR4
+	bool "DDR4"
+	help
+	  Use DDR4 binaries (i.e.: ddr4_*_201810.bin).
+
+endchoice # DDR training FW
+
+endif # BR2_PACKAGE_FIRMWARE_IMX_NEEDS_DDR_FW
+
+endif # BR2_PACKAGE_FIRMWARE_IMX

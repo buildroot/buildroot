@@ -187,6 +187,7 @@ freescale_imx6sxsabresd_defconfig: { extends: .defconfig }
 freescale_imx6ullevk_defconfig: { extends: .defconfig }
 freescale_imx7dsabresd_defconfig: { extends: .defconfig }
 freescale_imx8mmevk_defconfig: { extends: .defconfig }
+freescale_imx8mnevk_defconfig: { extends: .defconfig }
 freescale_imx8mqevk_defconfig: { extends: .defconfig }
 freescale_imx8qmmek_defconfig: { extends: .defconfig }
 freescale_imx8qxpmek_defconfig: { extends: .defconfig }
@@ -318,6 +319,8 @@ raspberrypi_defconfig: { extends: .defconfig }
 riotboard_defconfig: { extends: .defconfig }
 roc_pc_rk3399_defconfig: { extends: .defconfig }
 rock64_defconfig: { extends: .defconfig }
+rock_pi_4_defconfig: { extends: .defconfig }
+rock_pi_n10_defconfig: { extends: .defconfig }
 roseapplepi_defconfig: { extends: .defconfig }
 s6lx9_microboard_defconfig: { extends: .defconfig }
 sheevaplug_defconfig: { extends: .defconfig }
@@ -480,6 +483,8 @@ tests.package.test_python_cbor.TestPythonPy2Cbor: { extends: .runtime_test }
 tests.package.test_python_cbor.TestPythonPy3Cbor: { extends: .runtime_test }
 tests.package.test_python_click.TestPythonPy2Click: { extends: .runtime_test }
 tests.package.test_python_click.TestPythonPy3Click: { extends: .runtime_test }
+tests.package.test_python_colorzero.TestPythonPy2Colorzero: { extends: .runtime_test }
+tests.package.test_python_colorzero.TestPythonPy3Colorzero: { extends: .runtime_test }
 tests.package.test_python_constantly.TestPythonPy2Constantly: { extends: .runtime_test }
 tests.package.test_python_constantly.TestPythonPy3Constantly: { extends: .runtime_test }
 tests.package.test_python_crossbar.TestPythonPy3Crossbar: { extends: .runtime_test }
@@ -489,6 +494,8 @@ tests.package.test_python_django.TestPythonPy3Django: { extends: .runtime_test }
 tests.package.test_python_gitdb2.TestPythonPy2Gitdb2: { extends: .runtime_test }
 tests.package.test_python_gitdb2.TestPythonPy3Gitdb2: { extends: .runtime_test }
 tests.package.test_python_gobject.TestPythonPy3Gobject: { extends: .runtime_test }
+tests.package.test_python_gpiozero.TestPythonPy2Gpiozero: { extends: .runtime_test }
+tests.package.test_python_gpiozero.TestPythonPy3Gpiozero: { extends: .runtime_test }
 tests.package.test_python_incremental.TestPythonPy2Incremental: { extends: .runtime_test }
 tests.package.test_python_incremental.TestPythonPy3Incremental: { extends: .runtime_test }
 tests.package.test_python_passlib.TestPythonPy2Passlib: { extends: .runtime_test }
@@ -513,6 +520,7 @@ tests.package.test_python_txtorcon.TestPythonPy2Txtorcon: { extends: .runtime_te
 tests.package.test_python_txtorcon.TestPythonPy3Txtorcon: { extends: .runtime_test }
 tests.package.test_python_ubjson.TestPythonPy2Ubjson: { extends: .runtime_test }
 tests.package.test_python_ubjson.TestPythonPy3Ubjson: { extends: .runtime_test }
+tests.package.test_redis.TestRedis: { extends: .runtime_test }
 tests.package.test_rings.TestLuaRings: { extends: .runtime_test }
 tests.package.test_rings.TestLuajitRings: { extends: .runtime_test }
 tests.package.test_rust.TestRust: { extends: .runtime_test }

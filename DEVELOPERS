@@ -44,6 +44,9 @@ F:	package/imx-usb-loader/
 F:	package/janus-gateway/
 F:	package/json-for-modern-cpp/
 F:	package/libcpprestsdk/
+F:	package/libcutl/
+F:	package/libodb/
+F:	package/libodb-pgsql/
 F:	package/libressl/
 F:	package/libselinux/
 F:	package/libsemanage/
@@ -52,6 +55,7 @@ F:	package/libtextstyle/
 F:	package/libwebsockets/
 F:	package/mender-grubenv/
 F:	package/nginx-naxsi/
+F:	package/odb/
 F:	package/openjdk/
 F:	package/openjdk-bin/
 F:	package/php/
@@ -294,6 +298,7 @@ F:	board/stmicroelectronics/stm32mp157a-dk1/
 F:	configs/stm32mp157a_dk1_defconfig
 F:	package/python-esptool/
 F:	package/python-pyaes/
+F:	package/ttyd/
 F:	package/qt5/qt5scxml/
 F:	package/qt5/qt5webview/
 
@@ -538,6 +543,7 @@ F:	package/docker-cli/
 F:	package/docker-containerd/
 F:	package/docker-engine/
 F:	package/docker-proxy/
+F:	package/fuse-overlayfs/
 F:	package/go/
 F:	package/mosh/
 F:	package/pkg-golang.mk
@@ -854,6 +860,7 @@ F:	package/libmatroska/
 F:	package/libmpdclient/
 F:	package/libnetfilter_conntrack/
 F:	package/libnetfilter_queue/
+F:	package/libnpupnp/
 F:	package/liboping/
 F:	package/libpfm4/
 F:	package/libraw/
@@ -880,6 +887,7 @@ F:	package/pcmanfm/
 F:	package/python-backcall/
 F:	package/python-jedi/
 F:	package/python-parso/
+F:	package/python-yatl/
 F:	package/rocksdb/
 F:	package/rygel/
 F:	package/safeclib/
@@ -1050,8 +1058,10 @@ F:	package/c-icap-modules/
 F:	package/sdl2/
 
 N:	Guillaume William Brs <guillaume.bressaix@gmail.com>
+F:	package/libnids/
 F:	package/liquid-dsp/
 F:	package/pixiewps/
+F:	package/python-pybind/
 F:	package/reaver/
 
 N:	Guo Ren <ren_guo@c-sky.com>
@@ -1355,6 +1365,7 @@ N:	Joseph Kogut <joseph.kogut@gmail.com>
 F:	package/at-spi2-atk/
 F:	package/at-spi2-core/
 F:	package/clang/
+F:	package/earlyoom/
 F:	package/gconf/
 F:	package/libnss/
 F:	package/lld/
@@ -1422,6 +1433,10 @@ F:	package/easy-rsa/
 
 N:	Justin Maggard <jmaggard@netgear.com>
 F:	package/dtach/
+
+N:	Kamel Bouhara <kamel.bouhara@gmail.com>
+F:	package/libodb-boost/
+F:	package/libodb-mysql/
 
 N:	Karoly Kasza <kaszak@gmail.com>
 F:	package/irqbalance/
@@ -1843,7 +1858,7 @@ N:	Murat Demirten <mdemirten@yh.com.tr>
 F:	package/jpeg-turbo/
 F:	package/libgeotiff/
 
-N:	Mylène Josserand <mylene.josserand@bootlin.com>
+N:	Mylène Josserand <mylene.josserand@collabora.com>
 F:	package/rtl8723bu/
 
 N:	Nathaniel Roach <nroach44@gmail.com>
@@ -1916,6 +1931,9 @@ F:	package/openjpeg/
 
 N:	Olivier Singla <olivier.singla@gmail.com>
 F:	package/shellinabox/
+
+N:	Owen Walpole <owen@walpole.dev>
+F:	package/parprouted/
 
 N:	Parnell Springmeyer <parnell@digitalmentat.com>
 F:	package/scrypt/
@@ -2022,6 +2040,8 @@ F:	package/iwd/
 F:	package/libevdev/
 F:	package/log4cplus/
 F:	package/postgresql/
+F:	package/python-colorzero/
+F:	package/python-gpiozero/
 F:	package/qt5/
 F:	package/quotatool/
 F:	package/racehound/
@@ -2122,6 +2142,9 @@ F:	package/ustream-ssl/
 N:	Refik Tuzakli <tuzakli.refik@gmail.com>
 F:	package/freescale-imx/
 F:	package/paho-mqtt-cpp/
+
+N:	Ramon Fried <rfried.dev@gmail.com>
+F:	package/bitwise/
 
 N:	Raphaël Mélotte <raphael.melotte@essensium.com>
 F:	package/jbig2dec/
@@ -2295,6 +2318,7 @@ N:	Sergio Prado <sergio.prado@e-labworks.com>
 F:	board/toradex/apalis-imx6/
 F:	configs/toradex_apalis_imx6_defconfig
 F:	package/aoetools/
+F:	package/azure-iot-sdk-c/
 F:	package/curlpp/
 F:	package/daq/
 F:	package/libgdiplus/
@@ -2364,6 +2388,10 @@ F:	package/gtest/
 F:	package/libhttpserver/
 F:	package/mtdev/
 
+N:	Stephane Viau <stephane.viau@oss.nxp.com>
+F:	board/freescale/imx8mnevk/
+F:	configs/freescale_imx8mnevk_defconfig
+
 N:	Steve Calfee <stevecalfee@gmail.com>
 F:	package/python-pymysql/
 F:	package/python-pyratemp/
@@ -2387,7 +2415,11 @@ F:	package/powertop/
 
 N:	Suniel Mahesh <sunil@amarulasolutions.com>
 F:	board/firefly/
+F:	board/radxa/rockpi-4
+F:	board/radxa/rockpi-n10
 F:	configs/roc_pc_rk3399_defconfig
+F:	configs/rock_pi_4_defconfig
+F:	configs/rock_pi_n10_defconfig
 F:	package/arm-gnu-a-toolchain/
 
 N:	Sven Haardiek <sven.haardiek@iotec-gmbh.de>
@@ -2521,6 +2553,7 @@ F:	package/python-avro/
 F:	package/redis/
 F:	package/waf/
 F:	support/testing/tests/package/test_crudini.py
+F:	support/testing/tests/package/test_redis.py
 
 N:	Trent Piepho <tpiepho@impinj.com>
 F:	package/libp11/
@@ -2594,6 +2627,9 @@ F:	package/python-pyusb/
 
 N:	Wojciech Niziński <niziak@spox.org>
 F:	package/fwup/
+
+N:	Yair Ben Avraham <yairba@protonmail.com>
+F:	package/gloox/
 
 N:	Yann E. MORIN <yann.morin.1998@free.fr>
 F:	board/friendlyarm/nanopi-neo/

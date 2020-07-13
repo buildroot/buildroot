@@ -5,7 +5,7 @@
 #	sort | sed 's%^\(.*\)$%\t\1 \\%') > package/qt5/qt5webengine/chromium-latest.inc
 QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/base/third_party/cityhash/COPYING \
-	src/3rdparty/chromium/base/third_party/dmg_fp/LICENSE \
+	src/3rdparty/chromium/base/third_party/double_conversion/LICENSE \
 	src/3rdparty/chromium/base/third_party/dynamic_annotations/LICENSE \
 	src/3rdparty/chromium/base/third_party/icu/LICENSE \
 	src/3rdparty/chromium/base/third_party/libevent/LICENSE \
@@ -26,15 +26,20 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/net/third_party/uri_template/LICENSE \
 	src/3rdparty/chromium/ppapi/LICENSE \
 	src/3rdparty/chromium/third_party/abseil-cpp/LICENSE \
-	src/3rdparty/chromium/third_party/accessibility_test_framework/LICENSE \
 	src/3rdparty/chromium/third_party/angle/LICENSE \
 	src/3rdparty/chromium/third_party/angle/src/common/third_party/smhasher/LICENSE \
 	src/3rdparty/chromium/third_party/angle/src/common/third_party/xxhash/LICENSE \
 	src/3rdparty/chromium/third_party/angle/src/third_party/compiler/LICENSE \
 	src/3rdparty/chromium/third_party/angle/src/third_party/libXNVCtrl/LICENSE \
+	src/3rdparty/chromium/third_party/angle/third_party/rapidjson/src/bin/jsonschema/LICENSE \
+	src/3rdparty/chromium/third_party/angle/third_party/rapidjson/src/contrib/natvis/LICENSE \
+	src/3rdparty/chromium/third_party/angle/third_party/rapidjson/src/license.txt \
+	src/3rdparty/chromium/third_party/angle/third_party/vulkan-headers/src/LICENSE.txt \
+	src/3rdparty/chromium/third_party/angle/third_party/vulkan-loader/src/LICENSE.txt \
+	src/3rdparty/chromium/third_party/angle/third_party/vulkan-tools/src/LICENSE.txt \
+	src/3rdparty/chromium/third_party/angle/tools/flex-bison/third_party/m4sugar/LICENSE \
+	src/3rdparty/chromium/third_party/angle/tools/flex-bison/third_party/skeletons/LICENSE \
 	src/3rdparty/chromium/third_party/angle/util/windows/third_party/StackWalker/LICENSE \
-	src/3rdparty/chromium/third_party/apache-mac/LICENSE \
-	src/3rdparty/chromium/third_party/apache-portable-runtime/LICENSE \
 	src/3rdparty/chromium/third_party/apk-patch-size-estimator/LICENSE \
 	src/3rdparty/chromium/third_party/apple_apsl/LICENSE \
 	src/3rdparty/chromium/third_party/arcore-android-sdk-client/LICENSE \
@@ -46,19 +51,8 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/blink/renderer/core/LICENSE-APPLE \
 	src/3rdparty/chromium/third_party/blink/renderer/core/LICENSE-LGPL-2 \
 	src/3rdparty/chromium/third_party/blink/renderer/core/LICENSE-LGPL-2.1 \
-	src/3rdparty/chromium/third_party/blink/renderer/devtools/front_end/audits/lighthouse/LICENSE \
-	src/3rdparty/chromium/third_party/blink/renderer/devtools/front_end/audits_worker/lighthouse/LICENSE \
-	src/3rdparty/chromium/third_party/blink/renderer/devtools/front_end/cm/LICENSE \
-	src/3rdparty/chromium/third_party/blink/renderer/devtools/front_end/cm/LICENSE_python \
-	src/3rdparty/chromium/third_party/blink/renderer/devtools/front_end/cm_modes/LICENSE \
-	src/3rdparty/chromium/third_party/blink/renderer/devtools/front_end/formatter_worker/acorn/LICENSE \
-	src/3rdparty/chromium/third_party/blink/renderer/devtools/front_end/terminal/xterm.js/LICENSE \
-	src/3rdparty/chromium/third_party/blink/renderer/devtools/LICENSE \
-	src/3rdparty/chromium/third_party/blink/renderer/devtools/scripts/closure/COPYING \
 	src/3rdparty/chromium/third_party/blink/renderer/platform/testing/data/third_party/Noto/LICENSE_OFL.txt \
 	src/3rdparty/chromium/third_party/blink/renderer/platform/testing/data/third_party/Roboto/LICENSE.txt \
-	src/3rdparty/chromium/third_party/blink/renderer/platform/wtf/dtoa/COPYING \
-	src/3rdparty/chromium/third_party/blink/renderer/platform/wtf/dtoa/LICENSE \
 	src/3rdparty/chromium/third_party/blink/tools/blinkpy/third_party/wpt/wpt/LICENSE.md \
 	src/3rdparty/chromium/third_party/blink/tools/blinkpy/third_party/wpt/wpt/tools/third_party/enum/enum/LICENSE \
 	src/3rdparty/chromium/third_party/blink/tools/blinkpy/third_party/wpt/wpt/tools/third_party/h2/LICENSE \
@@ -70,7 +64,6 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/boringssl/src/LICENSE \
 	src/3rdparty/chromium/third_party/boringssl/src/third_party/fiat/LICENSE \
 	src/3rdparty/chromium/third_party/boringssl/src/third_party/googletest/LICENSE \
-	src/3rdparty/chromium/third_party/boringssl/src/third_party/sike/LICENSE \
 	src/3rdparty/chromium/third_party/boringssl/src/third_party/wycheproof_testvectors/LICENSE \
 	src/3rdparty/chromium/third_party/bouncycastle/LICENSE \
 	src/3rdparty/chromium/third_party/breakpad/breakpad/LICENSE \
@@ -101,6 +94,8 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/checkstyle/LICENSE.apache20 \
 	src/3rdparty/chromium/third_party/cld_3/LICENSE \
 	src/3rdparty/chromium/third_party/cld_3/src/LICENSE \
+	src/3rdparty/chromium/third_party/closure_compiler/compiler/COPYING \
+	src/3rdparty/chromium/third_party/closure_compiler/LICENSE \
 	src/3rdparty/chromium/third_party/crashpad/crashpad/LICENSE \
 	src/3rdparty/chromium/third_party/crashpad/crashpad/third_party/apple_cf/APPLE_LICENSE \
 	src/3rdparty/chromium/third_party/crashpad/crashpad/third_party/cpp-httplib/cpp-httplib/LICENSE \
@@ -116,137 +111,590 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/dawn/LICENSE \
 	src/3rdparty/chromium/third_party/decklink/LICENSE \
 	src/3rdparty/chromium/third_party/devscripts/COPYING \
-	src/3rdparty/chromium/third_party/devtools-node-modules/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/acorn-jsx/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/acorn/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/ajv/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/ansi-escapes/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/ansi-regex/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/ansi-styles/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/argparse/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/astral-regex/license \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/@babel/code-frame/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/@babel/highlight/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/balanced-match/LICENSE.md \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/brace-expansion/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/callsites/license \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/chalk/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/chardet/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/cli-cursor/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/cli-width/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/color-convert/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/color-name/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/concat-map/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/cross-spawn/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/debug/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/deep-is/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/doctrine/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/doctrine/LICENSE.closure-compiler \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/doctrine/LICENSE.esprima \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/emoji-regex/LICENSE-MIT.txt \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/escape-string-regexp/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/eslint/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/eslint-scope/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/eslint-utils/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/eslint-visitor-keys/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/espree/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/esprima/LICENSE.BSD \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/esquery/license.txt \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/estraverse/LICENSE.BSD \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/esutils/LICENSE.BSD \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/external-editor/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/fast-deep-equal/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/fast-json-stable-stringify/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/fast-levenshtein/LICENSE.md \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/figures/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/file-entry-cache/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/flat-cache/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/flatted/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/fs.realpath/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/functional-red-black-tree/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/globals/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/glob/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/glob-parent/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/glob-parent/node_modules/is-glob/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/has-flag/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/iconv-lite/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/ignore/LICENSE-MIT \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/import-fresh/license \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/inflight/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/inherits/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/inquirer/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/inquirer/node_modules/ansi-regex/license \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/inquirer/node_modules/strip-ansi/license \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/isexe/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/is-extglob/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/is-fullwidth-code-point/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/is-glob/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/is-promise/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/json-schema-traverse/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/json-stable-stringify-without-jsonify/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/js-tokens/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/js-yaml/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/levn/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/lodash/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/mimic-fn/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/minimatch/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/minimist/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/mkdirp/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/ms/license.md \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/mute-stream/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/nice-try/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/once/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/onetime/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/optionator/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/os-tmpdir/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/parent-module/license \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/path-dirname/license \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/path-is-absolute/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/path-key/license \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/prelude-ls/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/progress/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/punycode/LICENSE-MIT.txt \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/regexpp/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/resolve-from/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/restore-cursor/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/rimraf/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/run-async/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/rxjs/_esm2015/LICENSE.txt \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/rxjs/_esm5/LICENSE.txt \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/rxjs/LICENSE.txt \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/rxjs/src/LICENSE.txt \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/safer-buffer/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/semver/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/shebang-command/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/shebang-regex/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/signal-exit/LICENSE.txt \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/slice-ansi/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/sprintf-js/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/string-width/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/strip-ansi/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/strip-json-comments/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/supports-color/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/table/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/table/node_modules/ansi-regex/license \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/table/node_modules/string-width/license \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/table/node_modules/strip-ansi/license \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/text-table/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/through/LICENSE.APACHE2 \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/through/LICENSE.MIT \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/tmp/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/tslib/LICENSE.txt \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/type-check/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/which/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/wordwrap/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/wrappy/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-node-modules/third_party/node_modules/write/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/audits/lighthouse/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/audits_worker/lighthouse/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/cm/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/cm/LICENSE_python \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/cm_modes/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/dagre_layout/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/formatter_worker/acorn/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/sdk/wasm_source_map/LICENSES.deps \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/abbrev/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/accepts/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/acorn-jsx/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/acorn/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/acorn-walk/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ajv/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/amdefine/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ansi-colors/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ansi-escapes/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ansi-regex/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ansi-styles/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ansi-wrap/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/anymatch/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/append-transform/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/argparse/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/array-find-index/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/arr-diff/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/arr-union/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/asap/LICENSE.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/assert/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/assign-symbols/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/astral-regex/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/async/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/async-limiter/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@babel/code-frame/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@babel/generator/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@babel/generator/node_modules/source-map/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@babel/helper-function-name/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@babel/helper-get-function-arity/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@babel/helper-split-export-declaration/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@babel/highlight/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@babel/parser/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@babel/template/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@babel/traverse/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@babel/types/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/balanced-match/LICENSE.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/base64-arraybuffer/LICENSE-MIT \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/base64id/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/base64-js/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/binary-extensions/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/.bin/license-checker \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/blob/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/bluebird/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/body-parser/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/body-parser/node_modules/debug/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/body-parser/node_modules/ms/license.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/brace-expansion/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/braces/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/browserify-aes/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/browserify-cipher/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/browserify-des/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/browserify-rsa/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/browserify-sign/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/browserify-zlib/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/browser-resolve/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/browser-stdout/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/buffer-from/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/buffer/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/buffer-xor/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/builtin-status-codes/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/bytes/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/callsites/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/camelcase-keys/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/camelcase/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/chai/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/chalk/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/chardet/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/check-error/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/chokidar/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/chokidar/node_modules/glob-parent/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/cipher-base/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/cli-cursor/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/cliui/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/cli-width/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/clone/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/code-point-at/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/color-convert/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/color-name/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/colors/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/combine-source-map/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/combine-source-map/node_modules/convert-source-map/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/combine-source-map/node_modules/source-map/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/commander/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/compare-versions/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/component-emitter/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/concat-map/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/concat-stream/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/concat-stream/node_modules/readable-stream/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/concat-stream/node_modules/safe-buffer/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/concat-stream/node_modules/string_decoder/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/connect/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/connect/node_modules/debug/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/connect/node_modules/ms/license.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/content-type/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/convert-source-map/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/convert-source-map/node_modules/safe-buffer/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/cookie/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/core-js/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/core-util-is/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/create-ecdh/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/create-hash/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/create-hmac/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/cross-spawn/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/crypto-browserify/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/currently-unhandled/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/custom-event/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/date-format/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/dateformat/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/debug/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/debuglog/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/decamelize/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/deep-eql/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/deep-is/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/default-require-extensions/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/defaults/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/define-properties/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/depd/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/dezalgo/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/diffie-hellman/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/diff/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/di/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/doctrine/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/doctrine/LICENSE.closure-compiler \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/doctrine/LICENSE.esprima \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/domain-browser/LICENSE.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ee-first/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/emoji-regex/LICENSE-MIT.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/encodeurl/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/end-of-stream/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/engine.io-client/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/engine.io-client/node_modules/debug/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/engine.io-client/node_modules/ms/license.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/engine.io/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/engine.io/node_modules/debug/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/engine.io/node_modules/ms/license.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/engine.io-parser/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ent/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/error-ex/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/es6-object-assign/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/es6-promise/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/es-abstract/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/escape-html/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/escape-string-regexp/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/escodegen/LICENSE.BSD \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/escodegen/node_modules/esprima/LICENSE.BSD \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/eslint/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/eslint-scope/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/eslint-utils/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/eslint-visitor-keys/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/espree/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/esprima/LICENSE.BSD \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/esquery/license.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/es-to-primitive/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/estraverse/LICENSE.BSD \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/esutils/LICENSE.BSD \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/eventemitter3/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/events/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/evp_bytestokey/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/execa/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/extend/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/extend-shallow/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/external-editor/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/extract-zip/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/extract-zip/node_modules/debug/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/extract-zip/node_modules/ms/license.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/fast-deep-equal/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/fast-json-stable-stringify/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/fast-levenshtein/LICENSE.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/fd-slicer/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/figures/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/file-entry-cache/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/fileset/LICENSE-MIT \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/fill-range/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/finalhandler/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/finalhandler/node_modules/debug/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/finalhandler/node_modules/ms/license.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/find-up/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/flat-cache/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/flat/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/flatted/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/follow-redirects/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/follow-redirects/node_modules/debug/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/fsevents/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/fs-extra/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/fs.realpath/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/functional-red-black-tree/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/function-bind/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/get-caller-file/LICENSE.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/get-func-name/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/get-stream/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/globals/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/glob/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/glob-parent/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/glob-parent/node_modules/is-glob/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/graceful-fs/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/handlebars/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/has-binary2/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/has-flag/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/hash-base/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/has/LICENSE-MIT \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/has-symbols/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/he/LICENSE-MIT.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/hosted-git-info/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/http-errors/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/http-errors/node_modules/inherits/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/http-proxy/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/https-browserify/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/https-proxy-agent/node_modules/debug/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/iconv-lite/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ieee754/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ignore/LICENSE-MIT \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/import-fresh/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/indent-string/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/inflight/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/inherits/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/inline-source-map/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/inline-source-map/node_modules/source-map/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/inquirer/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/inquirer/node_modules/ansi-regex/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/inquirer/node_modules/strip-ansi/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/invert-kv/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-arguments/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-arrayish/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/isbinaryfile/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-binary-path/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-buffer/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-callable/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-date-object/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/isexe/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-extendable/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-extglob/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-finite/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-fullwidth-code-point/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-generator-function/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-glob/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-nan/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-number/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/isobject/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-plain-object/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-promise/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-regex/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-stream/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-symbol/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul-api/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul-lib-coverage/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul-lib-hook/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul-lib-instrument/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul-lib-instrument/node_modules/semver/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul-lib-report/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul-lib-report/node_modules/supports-color/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul-lib-source-maps/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul/node_modules/async/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul/node_modules/escodegen/LICENSE.BSD \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul/node_modules/escodegen/LICENSE.source-map \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul/node_modules/esprima/LICENSE.BSD \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul/node_modules/estraverse/LICENSE.BSD \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul/node_modules/glob/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul/node_modules/has-flag/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul/node_modules/source-map/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul/node_modules/supports-color/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul-reports/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-utf8/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/jsesc/LICENSE-MIT.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/jsonfile/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/json-parse-better-errors/LICENSE.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/json-schema-traverse/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/json-stable-stringify-without-jsonify/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/json-stringify-safe/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/js-tokens/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/js-yaml/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/js-yaml/node_modules/esprima/LICENSE.BSD \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-chai/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-chrome-launcher/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-coverage-istanbul-instrumenter/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-coverage-istanbul-reporter/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-coverage/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-coverage/LICENSE-istanbul \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-coverage/node_modules/source-map/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-mocha/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-mocha/node_modules/minimist/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-typescript/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-typescript/node_modules/acorn/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-typescript/node_modules/async/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-typescript/node_modules/source-map/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-typescript/node_modules/tmp/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/lcid/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/levn/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/license-checker/bin/license-checker \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/license-checker/lib/license-files.js \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/license-checker/lib/license.js \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/license-checker/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/license-checker/node_modules/debug/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/license-checker/node_modules/nopt/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/load-json-file/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/load-json-file/node_modules/pify/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/load-json-file/node_modules/strip-bom/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/locate-path/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/locate-path/node_modules/path-exists/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/lodash/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/lodash.memoize/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/log4js/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/log-symbols/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/loud-rejection/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/lru-cache/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/make-dir/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/map-age-cleaner/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/map-obj/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/md5.js/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/media-typer/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mem/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mem/node_modules/mimic-fn/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/meow/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/meow/node_modules/minimist/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mime-db/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mime/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mime-types/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mimic-fn/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/minimalistic-assert/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/minimatch/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/minimist/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mkdirp/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mocha/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mocha/node_modules/ansi-colors/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mocha/node_modules/debug/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mocha/node_modules/diff/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mocha/node_modules/find-up/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mocha/node_modules/glob/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mocha/node_modules/ms/license.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mocha/node_modules/supports-color/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ms/license.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mute-stream/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/negotiator/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/neo-async/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/nice-try/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/nopt/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/normalize-package-data/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/normalize-package-data/node_modules/resolve/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/normalize-path/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/npm-run-path/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/number-is-nan/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/object-assign/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/object.assign/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/object.entries/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/object.getownpropertydescriptors/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/object-inspect/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/object-is/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/object-keys/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/once/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/onetime/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/on-finished/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/optimist/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/optimist/node_modules/wordwrap/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/optionator/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/os-browserify/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/osenv/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/os-homedir/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/os-locale/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/os-tmpdir/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/pad/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/pako/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/parent-module/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/parse-asn1/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/parse-json/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/parseqs/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/parseuri/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/parseurl/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/path-browserify/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/path-dirname/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/path-exists/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/path-is-absolute/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/path-key/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/path-parse/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/path-type/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/path-type/node_modules/pify/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/pathval/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/pbkdf2/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/p-defer/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/pend/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/p-finally/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/picomatch/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/pify/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/pinkie/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/pinkie-promise/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/p-is-promise/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/p-limit/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/p-locate/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/plugin-error/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/prelude-ls/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/process/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/process-nextick-args/license.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/progress/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/pseudomap/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/p-try/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/public-encrypt/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/pump/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/punycode/LICENSE-MIT.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/puppeteer/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/puppeteer/node_modules/ws/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/qs/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/querystring-es3/License.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/querystring/License.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/randombytes/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/randomfill/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/range-parser/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/raw-body/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/readable-stream/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/readdirp/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/readdir-scoped-modules/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/read-installed/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/read-package-json/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/read-pkg/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/read-pkg-up/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/redent/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/regexpp/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/remap-istanbul/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/repeating/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/require-directory/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/require-main-filename/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/requires-port/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/resolve-from/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/resolve/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/restore-cursor/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/rfdc/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/rimraf/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ripemd160/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/rollup/LICENSE.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/run-async/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/rxjs/_esm2015/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/rxjs/_esm5/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/rxjs/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/rxjs/src/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/safe-buffer/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/safer-buffer/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/semver/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/set-blocking/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/setimmediate/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/setprototypeof/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/sha.js/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/shebang-command/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/shebang-regex/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/signal-exit/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/slice-ansi/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/slide/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/socket.io-adapter/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/socket.io-client/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/socket.io-client/node_modules/debug/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/socket.io-client/node_modules/ms/license.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/socket.io/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/socket.io/node_modules/debug/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/socket.io/node_modules/ms/license.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/socket.io-parser/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/socket.io-parser/node_modules/debug/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/socket.io-parser/node_modules/ms/license.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/source-map/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/spdx-compare/LICENSE.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/spdx-correct/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/spdx-expression-parse/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/spdx-ranges/LICENSE.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/spdx-satisfies/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/sprintf-js/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/statuses/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/stream-browserify/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/stream-browserify/node_modules/readable-stream/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/stream-browserify/node_modules/safe-buffer/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/stream-browserify/node_modules/string_decoder/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/stream-http/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/streamroller/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/streamroller/node_modules/debug/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/string_decoder/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/string.prototype.trimleft/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/string.prototype.trimright/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/string-width/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/strip-ansi/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/strip-bom/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/strip-eof/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/strip-indent/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/strip-json-comments/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/supports-color/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/table/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/table/node_modules/ansi-regex/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/table/node_modules/string-width/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/table/node_modules/strip-ansi/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/text-table/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/through2/LICENSE.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/through/LICENSE.APACHE2 \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/through/LICENSE.MIT \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/timers-browserify/LICENSE.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/tmp/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/to-fast-properties/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/toidentifier/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/to-regex-range/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/treeify/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/trim-newlines/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/tslib/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/tty-browserify/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/type-check/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/typedarray/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/type-detect/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/type-is/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@types/chai/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@types/color-name/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/typescript/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@types/estree/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@types/mocha/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@types/node/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/uglify-js/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ultron/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/universalify/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/unpipe/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/url/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/url/node_modules/punycode/LICENSE-MIT.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/useragent/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/util-deprecate/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/util-extend/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/util/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/utils-merge/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/validate-npm-package-license/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/vm-browserify/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/void-elements/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/wcwidth/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/which/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/which-module/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/wide-align/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/wordwrap/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/wrap-ansi/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/wrap-ansi/node_modules/ansi-regex/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/wrap-ansi/node_modules/is-fullwidth-code-point/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/wrap-ansi/node_modules/string-width/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/wrap-ansi/node_modules/strip-ansi/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/wrappy/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/write/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ws/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ws/node_modules/safe-buffer/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/xmlhttprequest-ssl/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/xtend/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/y18n/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yallist/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs/node_modules/ansi-regex/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs/node_modules/ansi-styles/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs/node_modules/camelcase/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs/node_modules/cliui/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs/node_modules/color-convert/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs/node_modules/color-name/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs/node_modules/emoji-regex/LICENSE-MIT.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs/node_modules/find-up/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs/node_modules/is-fullwidth-code-point/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs/node_modules/locate-path/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs/node_modules/path-exists/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs/node_modules/p-locate/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs/node_modules/string-width/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs/node_modules/strip-ansi/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs/node_modules/wrap-ansi/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs/node_modules/yargs-parser/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs-parser/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs-parser/node_modules/camelcase/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs-unparser/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs-unparser/node_modules/camelcase/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs-unparser/node_modules/find-up/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs-unparser/node_modules/get-caller-file/LICENSE.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs-unparser/node_modules/require-main-filename/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs-unparser/node_modules/yargs/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yargs-unparser/node_modules/yargs-parser/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yauzl/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/yeast/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/scripts/closure/COPYING \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/third_party/axe-core/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/third_party/pyjson5/src/LICENSE \
 	src/3rdparty/chromium/third_party/dom_distiller_js/LICENSE \
 	src/3rdparty/chromium/third_party/emoji-segmenter/LICENSE \
 	src/3rdparty/chromium/third_party/emoji-segmenter/src/LICENSE \
-	src/3rdparty/chromium/third_party/errorprone/LICENSE \
 	src/3rdparty/chromium/third_party/espresso/LICENSE \
-	src/3rdparty/chromium/third_party/expat/files/COPYING \
-	src/3rdparty/chromium/third_party/feed/LICENSE \
+	src/3rdparty/chromium/third_party/expat/src/expat/COPYING \
 	src/3rdparty/chromium/third_party/ffmpeg/chromium/scripts/license_texts/full_lgpl.txt \
 	src/3rdparty/chromium/third_party/ffmpeg/chromium/scripts/license_texts/jpeg.txt \
 	src/3rdparty/chromium/third_party/ffmpeg/chromium/scripts/license_texts/mips.txt \
@@ -263,7 +711,6 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/flatbuffers/LICENSE \
 	src/3rdparty/chromium/third_party/flatbuffers/src/dart/LICENSE \
 	src/3rdparty/chromium/third_party/flatbuffers/src/LICENSE.txt \
-	src/3rdparty/chromium/third_party/flot/LICENSE.txt \
 	src/3rdparty/chromium/third_party/fontconfig/LICENSE \
 	src/3rdparty/chromium/third_party/fontconfig/src/COPYING \
 	src/3rdparty/chromium/third_party/freetype/src/docs/LICENSE.TXT \
@@ -318,6 +765,8 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/libaom/source/libaom/third_party/x86inc/LICENSE \
 	src/3rdparty/chromium/third_party/libcxx-pretty-printers/LICENSE \
 	src/3rdparty/chromium/third_party/libevdev/LICENSE \
+	src/3rdparty/chromium/third_party/libgifcodec/LICENSE.md \
+	src/3rdparty/chromium/third_party/libipp/LICENSE \
 	src/3rdparty/chromium/third_party/libjingle_xmpp/LICENSE \
 	src/3rdparty/chromium/third_party/libjpeg/LICENSE \
 	src/3rdparty/chromium/third_party/libjpeg_turbo/LICENSE.md \
@@ -344,6 +793,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/libyuv/LICENSE \
 	src/3rdparty/chromium/third_party/lottie/LICENSE \
 	src/3rdparty/chromium/third_party/lzma_sdk/LICENSE \
+	src/3rdparty/chromium/third_party/mako/LICENSE \
 	src/3rdparty/chromium/third_party/markupsafe/LICENSE \
 	src/3rdparty/chromium/third_party/material_design_icons/LICENSE \
 	src/3rdparty/chromium/third_party/mesa_headers/LICENSE \
@@ -362,7 +812,6 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/netty4/LICENSE \
 	src/3rdparty/chromium/third_party/netty-tcnative/LICENSE \
 	src/3rdparty/chromium/third_party/node/LICENSE \
-	src/3rdparty/chromium/third_party/nvml/LICENSE \
 	src/3rdparty/chromium/third_party/objenesis/LICENSE \
 	src/3rdparty/chromium/third_party/ocmock/License.txt \
 	src/3rdparty/chromium/third_party/one_euro_filter/LICENSE \
@@ -377,6 +826,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/pdfium/third_party/bigint/LICENSE \
 	src/3rdparty/chromium/third_party/pdfium/third_party/libpng16/LICENSE \
 	src/3rdparty/chromium/third_party/pdfium/third_party/pymock/LICENSE.txt \
+	src/3rdparty/chromium/third_party/perfetto/LICENSE \
 	src/3rdparty/chromium/third_party/pexpect/LICENSE \
 	src/3rdparty/chromium/third_party/pffft/LICENSE \
 	src/3rdparty/chromium/third_party/ply/LICENSE \
@@ -385,6 +835,9 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/polymer/v1_0/components-chromium/polymer2/LICENSE.txt \
 	src/3rdparty/chromium/third_party/polymer/v1_0/components-chromium/polymer/LICENSE.txt \
 	src/3rdparty/chromium/third_party/polymer/v3_0/components-chromium/polymer/LICENSE.txt \
+	src/3rdparty/chromium/third_party/private-join-and-compute/src/crypto/LICENSE \
+	src/3rdparty/chromium/third_party/private-join-and-compute/src/LICENSE \
+	src/3rdparty/chromium/third_party/private-join-and-compute/src/util/LICENSE \
 	src/3rdparty/chromium/third_party/proguard/LICENSE \
 	src/3rdparty/chromium/third_party/protobuf/LICENSE \
 	src/3rdparty/chromium/third_party/pycoverage/LICENSE \
@@ -424,24 +877,24 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/skia/modules/pathkit/npm-asmjs/LICENSE \
 	src/3rdparty/chromium/third_party/skia/modules/pathkit/npm-wasm/LICENSE \
 	src/3rdparty/chromium/third_party/skia/third_party/etc1/LICENSE \
-	src/3rdparty/chromium/third_party/skia/third_party/gif/LICENSE \
 	src/3rdparty/chromium/third_party/skia/third_party/skcms/LICENSE \
 	src/3rdparty/chromium/third_party/skia/third_party/vulkanmemoryallocator/include/LICENSE.txt \
 	src/3rdparty/chromium/third_party/skia/third_party/vulkanmemoryallocator/LICENSE \
 	src/3rdparty/chromium/third_party/skia/third_party/wuffs/LICENSE \
 	src/3rdparty/chromium/third_party/smhasher/LICENSE \
 	src/3rdparty/chromium/third_party/snappy/src/COPYING \
+	src/3rdparty/chromium/third_party/spirv-cross/spirv-cross/LICENSE \
 	src/3rdparty/chromium/third_party/spirv-headers/LICENSE \
 	src/3rdparty/chromium/third_party/spirv-headers/src/LICENSE \
 	src/3rdparty/chromium/third_party/SPIRV-Tools/LICENSE \
 	src/3rdparty/chromium/third_party/SPIRV-Tools/src/LICENSE \
+	src/3rdparty/chromium/third_party/SPIRV-Tools/src/utils/vscode/src/lsp/LICENSE \
 	src/3rdparty/chromium/third_party/sqlite4java/LICENSE \
 	src/3rdparty/chromium/third_party/sqlite/LICENSE \
 	src/3rdparty/chromium/third_party/sqlite/patched/autoconf/tea/license.terms \
 	src/3rdparty/chromium/third_party/sqlite/patched/LICENSE.md \
 	src/3rdparty/chromium/third_party/sudden_motion_sensor/LICENSE \
 	src/3rdparty/chromium/third_party/swiftshader/LICENSE.txt \
-	src/3rdparty/chromium/third_party/tcmalloc/gperftools-2.0/vendor/COPYING \
 	src/3rdparty/chromium/third_party/tcmalloc/LICENSE \
 	src/3rdparty/chromium/third_party/tcmalloc/vendor/COPYING \
 	src/3rdparty/chromium/third_party/test_fonts/LICENSE \
@@ -479,10 +932,13 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/webxr_test_pages/webxr-samples/LICENSE.md \
 	src/3rdparty/chromium/third_party/widevine/LICENSE \
 	src/3rdparty/chromium/third_party/woff2/LICENSE \
+	src/3rdparty/chromium/third_party/wuffs/LICENSE \
+	src/3rdparty/chromium/third_party/wuffs/src/LICENSE \
 	src/3rdparty/chromium/third_party/xdg-utils/LICENSE \
 	src/3rdparty/chromium/third_party/xstream/LICENSE \
 	src/3rdparty/chromium/third_party/yasm/source/patched-yasm/COPYING \
 	src/3rdparty/chromium/third_party/zlib/LICENSE \
+	src/3rdparty/chromium/tools/grit/third_party/six/LICENSE \
 	src/3rdparty/chromium/tools/origin_trials/third_party/ed25519/LICENSE \
 	src/3rdparty/chromium/tools/page_cycler/acid3/LICENSE \
 	src/3rdparty/chromium/tools/symsrc/COPYING-pefile \
