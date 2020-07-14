@@ -15,6 +15,10 @@ HAPROXY_MAKE_OPTS = \
 	PREFIX=/usr \
 	TARGET=custom
 
+ifeq ($(BR2_STATIC_LIBS),)
+HAPROXY_MAKE_OPTS += USE_DL=1
+endif
+
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 HAPROXY_LIBS += -latomic
 endif
