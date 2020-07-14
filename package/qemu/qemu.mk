@@ -140,6 +140,13 @@ else
 QEMU_OPTS += --disable-spice
 endif
 
+ifeq ($(BR2_PACKAGE_USBREDIR),y)
+QEMU_OPTS += --enable-usb-redir
+QEMU_DEPENDENCIES += usbredir
+else
+QEMU_OPTS += --disable-usb-redir
+endif
+
 # Override CPP, as it expects to be able to call it like it'd
 # call the compiler.
 define QEMU_CONFIGURE_CMDS
@@ -172,7 +179,6 @@ define QEMU_CONFIGURE_CMDS
 			--disable-docs \
 			--disable-rbd \
 			--disable-libiscsi \
-			--disable-usb-redir \
 			--disable-strip \
 			--disable-sparse \
 			--disable-mpath \
