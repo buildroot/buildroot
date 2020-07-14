@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GPSD_VERSION = 3.19
+GPSD_VERSION = 3.20
 GPSD_SITE = http://download-mirror.savannah.gnu.org/releases/gpsd
 GPSD_LICENSE = BSD-2-Clause
 GPSD_LICENSE_FILES = COPYING
@@ -25,7 +25,6 @@ GPSD_SCONS_OPTS = \
 	strip=no \
 	python=no \
 	qt=no \
-	ntpshm=yes \
 	systemd=$(if $(BR2_INIT_SYSTEMD),yes,no)
 
 ifeq ($(BR2_PACKAGE_NCURSES),y)
@@ -163,9 +162,6 @@ GPSD_SCONS_OPTS += ublox=no
 endif
 
 # Features
-ifneq ($(BR2_PACKAGE_GPSD_PPS),y)
-GPSD_SCONS_OPTS += pps=no
-endif
 ifeq ($(BR2_PACKAGE_GPSD_SQUELCH),y)
 GPSD_SCONS_OPTS += squelch=yes
 endif
