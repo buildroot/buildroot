@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PLAYREADY
 	select BR2_PACKAGE_HAS_PLAYREADY
+	depends on BR2_PACKAGE_WPEFRAMEWORK_CDMI_PLAYREADY
 	bool "playready"
 	help
 	  A playready implementation port from Microsoft.

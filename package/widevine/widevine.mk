@@ -61,10 +61,12 @@ define WIDEVINE_UNIT_TEST_INSTALL
 endef
 endif
 
+ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_OPERATOR), "metrological")
 define WIDEVINE_ARTIFACTS_INSTALL
-        $(INSTALL) -D $(@D)/artifacts/DeviceCertificate.bin $(TARGET_DIR)/$(BR2_PACKAGE_WIDEVINE_DEVICE_CERTIFICATE)
-        $(INSTALL) -D $(@D)/artifacts/testkeybox.bin $(TARGET_DIR)/$(BR2_PACKAGE_WIDEVINE_TEST_KEYBOX)
+        $(INSTALL) -D $(@D)/artifacts/DeviceCertificate.bin $(TARGET_DIR)/$(BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_DEVICE_CERTIFICATE)
+        $(INSTALL) -D $(@D)/artifacts/testkeybox.bin $(TARGET_DIR)/$(BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_KEYBOX)
 endef
+endif
 
 define WIDEVINE_INSTALL_TARGET_CMDS
         $(INSTALL) -Ds --strip-program=$(TARGET_STRIP) \

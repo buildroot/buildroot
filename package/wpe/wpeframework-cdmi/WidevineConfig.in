@@ -1,6 +1,5 @@
 config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_MODULE
 	bool "widevine"
-        depends on (BR2_PACKAGE_WIDEVINE && BR2_PACKAGE_WPEFRAMEWORK_CDMI_SOFTWARE_OVERRIDE) || BR2_PACKAGE_HAS_WIDEVINE
 	select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
 	select BR2_PACKAGE_WPEFRAMEWORK_CDM
         select BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE           if  BR2_PACKAGE_WPEFRAMEWORK_CDMI_SOFTWARE_OVERRIDE
@@ -10,31 +9,43 @@ config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_MODULE
 	  Widevine
 
 config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE
-        bool
+    bool
+    select BR2_PACKAGE_WIDEVINE
 
 config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_NEXUS_SVP
-        bool
+    bool
 
-if BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_MODULE
+choice BR2_PACKAGE_BCM_REFSW_SAGE_WIDEVINE_VERSION
+    prompt "Version"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_NEXUS_SVP
+    default BR2_PACKAGE_BCM_REFSW_SAGE_WIDEVINE_VERSION_14
+
+config BR2_PACKAGE_BCM_REFSW_SAGE_WIDEVINE_VERSION_14
+    bool "14"
+
+config BR2_PACKAGE_BCM_REFSW_SAGE_WIDEVINE_VERSION_15
+    bool "15"
+
+endchoice
 
 config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_DEVICE_CERTIFICATE
     string "Device certificate"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_MODULE
     default ""
     help
-        Set the path where the device certificate can be
-        found on the system. Leave empty to disable.h
+        Widevine device certificate used during the provisioning process.
 
 config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_KEYBOX
     string "Keybox"
     default ""
+    depends on BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE
     help
-        Set the path where the keybox can be found on the
-        system. Leave empty to disable.h
+        Widevine keybox used for signing license acquistion requests, \
+        during software based decryption. 
 
 config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_NEW_CENC_INTERFACE
     bool "New CENC interface"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_MODULE
     default n
     help
         Use the new CENC interfaces.
-
-endif

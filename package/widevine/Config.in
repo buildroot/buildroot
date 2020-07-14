@@ -1,6 +1,6 @@
 config BR2_PACKAGE_WIDEVINE
+    depends on BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE
 	select BR2_PACKAGE_HAS_WIDEVINE
-    select BR2_PACKAGE_WIDEVINE_ARTIFACTS
 	select BR2_PACKAGE_WIDEVINE_SOC_WPE
         bool "Widevine"
         help
@@ -26,28 +26,6 @@ config BR2_PACKAGE_WIDEVINE_BUILD_TYPE_RELEASE
     bool "Release"
 
 endchoice
-
-config BR2_PACKAGE_WIDEVINE_ARTIFACTS
-    bool "Install artifacts"
-    default false
-    help 
-        Whether to install widevine artifacts - device certificate and test keybox.
-
-if BR2_PACKAGE_WIDEVINE_ARTIFACTS
-
-config BR2_PACKAGE_WIDEVINE_DEVICE_CERTIFICATE
-    string "Path to device certificate"
-    default "/root/OCDM/widevine/DeviceCertificate.bin"
-    help
-        Path to the device certificate file.
-
-config BR2_PACKAGE_WIDEVINE_TEST_KEYBOX
-    string "Path to the test keybox"
-    default "/root/OCDM/widevine/testkeybox.bin"
-    help
-        Path to the keybox file.
-
-endif
 
 endif
 
