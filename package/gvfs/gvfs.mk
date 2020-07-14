@@ -25,7 +25,6 @@ GVFS_LDFLAGS = $(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)
 # Most of these are missing library support
 GVFS_CONF_OPTS = \
 	-Dafc=false \
-	-Dfuse=false \
 	-Dgoa=false \
 	-Dgoogle=false \
 	-Dmtp=false \
@@ -83,6 +82,13 @@ GVFS_DEPENDENCIES += libcdio-paranoia libgudev
 GVFS_CONF_OPTS += -Dcdda=true
 else
 GVFS_CONF_OPTS += -Dcdda=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIBFUSE3),y)
+GVFS_DEPENDENCIES += libfuse3
+GVFS_CONF_OPTS += -Dfuse=true
+else
+GVFS_CONF_OPTS += -Dfuse=false
 endif
 
 # AFP support is anon-only without libgcrypt which isn't very useful
