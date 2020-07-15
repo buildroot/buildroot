@@ -251,7 +251,7 @@ endif
 
 endif
 
-ifeq ($(BR2_PACKAGE_BCM_REFSW_SAGE_WIDEVINE),y)
+ifeq ($(BR2_PACKAGE_BCM_REFSW_SAGE_WIDEVINE_VERSION_15),y)
 
 BCM_NEXUS_WIDEVINE_DIR = /BSEAV/lib/security/third_party/widevine/CENC_v15
 

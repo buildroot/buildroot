@@ -237,29 +237,6 @@ config BR2_PACKAGE_BCM_REFSW_SAGE_BSECBUF
         help
           Sage/SVP secure library for multiprocess environment
 
-config BR2_PACKAGE_BCM_REFSW_SAGE_PLAYREADY_30
-        bool "Playready 3.0 SVP"
-        default n
-        select BR2_PACKAGE_HAS_PLAYREADY
-        depends on BR2_PACKAGE_BCM_REFSW_SAGE
-        help
-          Playready 3.0 SVP
-
-config BR2_PACKAGE_BCM_REFSW_SAGE_PLAYREADY_30_EXAMPLE
-        bool "Playready 3.0 SVP example"
-        default n
-        depends on BR2_PACKAGE_BCM_REFSW_SAGE
-        help
-          Playready 3.0 SVP example
-
-config BR2_PACKAGE_BCM_REFSW_SAGE_WIDEVINE
-        bool "Widevine v15 SVP"
-        default n
-        select BR2_PACKAGE_HAS_WIDEVINE
-        depends on BR2_PACKAGE_BCM_REFSW_SAGE
-        help
-          Widevine v15 SVP
-
 config BR2_PACKAGE_PROVIDES_NEXUS
 	default "bcm-refsw"
 
