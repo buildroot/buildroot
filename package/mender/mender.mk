@@ -39,7 +39,7 @@ MENDER_LDFLAGS = -X main.Version=$(MENDER_VERSION)
 
 define MENDER_INSTALL_CONFIG_FILES
 	$(INSTALL) -d -m 755 $(TARGET_DIR)/etc/mender/scripts
-	echo -n "2" > $(TARGET_DIR)/etc/mender/scripts/version
+	echo -n "3" > $(TARGET_DIR)/etc/mender/scripts/version
 
 	$(INSTALL) -D -m 0644 $(MENDER_PKGDIR)/mender.conf \
 		$(TARGET_DIR)/etc/mender/mender.conf
