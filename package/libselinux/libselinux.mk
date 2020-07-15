@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBSELINUX_VERSION = 3.0
-LIBSELINUX_SITE = https://github.com/SELinuxProject/selinux/releases/download/20191204
+LIBSELINUX_VERSION = 3.1
+LIBSELINUX_SITE = https://github.com/SELinuxProject/selinux/releases/download/20200710
 LIBSELINUX_LICENSE = Public Domain
 LIBSELINUX_LICENSE_FILES = LICENSE
 
