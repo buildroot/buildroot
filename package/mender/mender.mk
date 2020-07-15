@@ -40,7 +40,7 @@ MENDER_LDFLAGS = -X main.Version=$(MENDER_VERSION)
 MENDER_UPDATE_MODULES_FILES = \
 	directory \
 	script \
-	single-file
+	single-file \
 	$(if $(BR2_PACKAGE_DOCKER_CLI),docker) \
 	$(if $(BR2_PACKAGE_RPM),rpm)
 
