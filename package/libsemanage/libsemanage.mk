@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBSEMANAGE_VERSION = 3.0
-LIBSEMANAGE_SITE = https://github.com/SELinuxProject/selinux/releases/download/20191204
+LIBSEMANAGE_VERSION = 3.1
+LIBSEMANAGE_SITE = https://github.com/SELinuxProject/selinux/releases/download/20200710
 LIBSEMANAGE_LICENSE = LGPL-2.1+
 LIBSEMANAGE_LICENSE_FILES = COPYING
 LIBSEMANAGE_DEPENDENCIES = host-bison host-flex audit libselinux bzip2
