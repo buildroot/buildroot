@@ -13,14 +13,6 @@ SETOOLS_LICENSE_FILES = COPYING COPYING.GPL COPYING.LGPL
 SETOOLS_SETUP_TYPE = setuptools
 HOST_SETOOLS_DEPENDENCIES = host-python-cython host-libselinux host-libsepol host-python-networkx
 
-ifeq ($(BR2_PACKAGE_PYTHON3),y)
-SETOOLS_PYLIBVER = python$(PYTHON3_VERSION_MAJOR)
-else
-SETOOLS_PYLIBVER = python$(PYTHON_VERSION_MAJOR)
-SETOOLS_DEPENDENCIES += python-enum34
-HOST_SETOOLS_DEPENDENCIES += host-python-enum34
-endif
-
 define SETOOLS_FIX_SETUP
 	# By default, setup.py will look for libsepol.a in the host machines
 	# /usr/lib directory. This needs to be changed to the staging directory.
@@ -43,7 +35,7 @@ HOST_SETOOLS_POST_PATCH_HOOKS += HOST_SETOOLS_FIX_SETUP
 ifeq ($(BR2_PACKAGE_PYTHON_PYQT5),)
 define SETOOLS_REMOVE_QT_SCRIPTS
 	$(RM) $(TARGET_DIR)/usr/bin/apol
-	$(RM) -r $(TARGET_DIR)/lib/$(SETOOLS_PYLIBVER)/site-packages/setoolsgui/
+	$(RM) -r $(TARGET_DIR)/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages/setoolsgui/
 endef
 SETOOLS_POST_INSTALL_TARGET_HOOKS += SETOOLS_REMOVE_QT_SCRIPTS
 endif
