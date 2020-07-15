@@ -8,6 +8,8 @@ CUPS_FILTERS_VERSION = 1.27.5
 CUPS_FILTERS_SITE = http://openprinting.org/download/cups-filters
 CUPS_FILTERS_LICENSE = GPL-2.0, GPL-2.0+, GPL-3.0, GPL-3.0+, LGPL-2, LGPL-2.1+, MIT, BSD-4-Clause
 CUPS_FILTERS_LICENSE_FILES = COPYING
+# We're patching configure.ac
+CUPS_FILTERS_AUTORECONF = YES
 
 CUPS_FILTERS_DEPENDENCIES = cups libglib2 lcms2 qpdf fontconfig freetype jpeg
 
@@ -20,6 +22,7 @@ CUPS_FILTERS_CONF_OPTS = \
 	--with-sysroot=$(STAGING_DIR) \
 	--with-pdftops=pdftops \
 	--with-jpeg \
+	--with-test-font-path=/dev/null \
 	--without-rcdir
 
 ifeq ($(BR2_PACKAGE_LIBPNG),y)

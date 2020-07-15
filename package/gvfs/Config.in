@@ -3,6 +3,7 @@ config BR2_PACKAGE_GVFS
 	depends on BR2_USE_WCHAR # glib2
 	depends on BR2_USE_MMU # dbus, glib2
 	depends on BR2_TOOLCHAIN_HAS_THREADS # dbus, glib2
+	select BR2_PACKAGE_GSETTINGS_DESKTOP_SCHEMAS
 	select BR2_PACKAGE_LIBGLIB2
 	select BR2_PACKAGE_DBUS
 	select BR2_PACKAGE_SHARED_MIME_INFO
