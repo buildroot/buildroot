@@ -37,6 +37,13 @@ MENDER_DEPENDENCIES = xz
 
 MENDER_LDFLAGS = -X main.Version=$(MENDER_VERSION)
 
+MENDER_UPDATE_MODULES_FILES = \
+	directory \
+	script \
+	single-file
+	$(if $(BR2_PACKAGE_DOCKER_CLI),docker) \
+	$(if $(BR2_PACKAGE_RPM),rpm)
+
 define MENDER_INSTALL_CONFIG_FILES
 	$(INSTALL) -d -m 755 $(TARGET_DIR)/etc/mender/scripts
 	echo -n "3" > $(TARGET_DIR)/etc/mender/scripts/version
@@ -61,6 +68,10 @@ define MENDER_INSTALL_CONFIG_FILES
 
 	mkdir -p $(TARGET_DIR)/var/lib
 	ln -snf /var/run/mender $(TARGET_DIR)/var/lib/mender
+	$(foreach f,$(MENDER_UPDATE_MODULES_FILES), \
+		$(INSTALL) -D -m 0755 $(@D)/support/modules/$(notdir $(f)) \
+			$(TARGET_DIR)/usr/share/mender/modules/v3/$(notdir $(f))
+	)
 endef
 
 MENDER_POST_INSTALL_TARGET_HOOKS += MENDER_INSTALL_CONFIG_FILES
