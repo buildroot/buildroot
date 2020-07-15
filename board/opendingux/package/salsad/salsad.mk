@@ -3,7 +3,7 @@
 # salsad
 #
 #############################################################
-SALSAD_VERSION = 151eb07
+SALSAD_VERSION = 9b27a2b
 SALSAD_SITE = $(call github,JohnnyonFlame,salsad,$(SALSAD_VERSION))
 SALSAD_DEPENDENCIES = alsa-lib
 SALSAD_LICENSE = GPLv3
