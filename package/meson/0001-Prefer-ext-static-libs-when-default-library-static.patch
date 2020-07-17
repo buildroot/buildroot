@@ -1,4 +1,4 @@
-From b390f29b9e0170d5bf410f4bef5a697655857633 Mon Sep 17 00:00:00 2001
+From ea85465e608178080c3b4d51af9765a8c7c0dae3 Mon Sep 17 00:00:00 2001
 From: Matt Weber <matthew.weber@rockwellcollins.com>
 Date: Sat, 26 Oct 2019 09:17:29 -0500
 Subject: [PATCH] Prefer ext static libs when --default-library=static
@@ -27,10 +27,10 @@ Signed-off-by: Matthew Weber <matthew.weber@rockwellcollins.com>
  1 file changed, 3 insertions(+)
 
 diff --git a/mesonbuild/compilers/mixins/clike.py b/mesonbuild/compilers/mixins/clike.py
-index 5d50b7d..8f5f1c6 100644
+index 47e97d261..729c98acc 100644
 --- a/mesonbuild/compilers/mixins/clike.py
 +++ b/mesonbuild/compilers/mixins/clike.py
-@@ -857,6 +857,9 @@ class CLikeCompiler:
+@@ -940,6 +940,9 @@ class CLikeCompiler:
          elif env.machines[self.for_machine].is_cygwin():
              shlibext = ['dll', 'dll.a']
              prefixes = ['cyg'] + prefixes
@@ -41,5 +41,5 @@ index 5d50b7d..8f5f1c6 100644
              # Linux/BSDs
              shlibext = ['so']
 -- 
-2.17.1
+2.25.1
 
