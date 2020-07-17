@@ -22,6 +22,8 @@ SYSTEMD_PROVIDES = udev
 
 SYSTEMD_CONF_OPTS += \
 	-Drootlibdir='/usr/lib' \
+	-Dsysvinit-path= \
+	-Dsysvrcnd-path= \
 	-Dblkid=true \
 	-Dman=false \
 	-Dima=false \
