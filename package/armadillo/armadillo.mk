@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ARMADILLO_VERSION = 9.850.1
+ARMADILLO_VERSION = 9.900.2
 ARMADILLO_SOURCE = armadillo-$(ARMADILLO_VERSION).tar.xz
 ARMADILLO_SITE = https://downloads.sourceforge.net/project/arma
 ARMADILLO_DEPENDENCIES = clapack
