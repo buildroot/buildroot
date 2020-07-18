@@ -24,6 +24,7 @@ SYSTEMD_CONF_OPTS += \
 	-Drootlibdir='/usr/lib' \
 	-Dsysvinit-path= \
 	-Dsysvrcnd-path= \
+	-Dutmp=false \
 	-Dblkid=true \
 	-Dman=false \
 	-Dima=false \
