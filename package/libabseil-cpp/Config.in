@@ -1,0 +1,15 @@
+config BR2_PACKAGE_LIBABSEIL_CPP
+	bool "libabseil-cpp"
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	help
+	  Abseil is an open-source collection of C++ library code
+	  designed to augment the C++ standard library. The Abseil
+	  library code is collected from Google's own C++ code base,
+	  has been extensively tested and used in production, and is
+	  the same code we depend on in our daily coding lives.
+
+	  https://github.com/abseil/abseil-cpp
+
+comment "libabseil-cpp needs a toolchain w/ C++, threads"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS
