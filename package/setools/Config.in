@@ -19,10 +19,10 @@ config BR2_PACKAGE_SETOOLS
 
 	  https://github.com/TresysTechnology/setools
 
-comment "setools needs a toolchain w/ threads, C++, wchar, dynamic library"
+comment "setools needs a toolchain w/ threads, wchar, dynamic library"
 	depends on BR2_USE_MMU
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS || \
-		!BR2_USE_WCHAR || !BR2_INSTALL_LIBSTDCPP
+		!BR2_USE_WCHAR
 
 comment "setools needs python3"
 	depends on BR2_USE_MMU
