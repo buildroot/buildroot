@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PISTACHE_VERSION = 73f248acd6db4c53e6604577b7e13fd5e756f96f
+PISTACHE_VERSION = f2f5a50fbfb5b8ef6cf1d3d2a9d442a8270e375d
 PISTACHE_SITE = $(call github,oktal,pistache,$(PISTACHE_VERSION))
 PISTACHE_LICENSE = Apache-2.0
 PISTACHE_LICENSE_FILES = LICENSE
