@@ -10,10 +10,23 @@ MRAA_LICENSE = MIT
 MRAA_LICENSE_FILES = COPYING
 MRAA_INSTALL_STAGING = YES
 
+ifeq ($(BR2_i386),y)
+MRAA_ARCH = i386
+else ifeq ($(BR2_x86_64),y)
+MRAA_ARCH = x86_64
+else ifeq ($(BR2_arm)$(BR2_armeb),y)
+MRAA_ARCH = arm
+else ifeq ($(BR2_aarch64)$(BR2_aarch64_be),y)
+MRAA_ARCH = aarch64
+else ifeq ($(BR2_mips)$(BR2_mipsel)$(BR2_mips64)$(BR2_mips64el),y)
+MRAA_ARCH = mips
+endif
+
 # USBPLAT only makes sense with FTDI4222, which requires the ftd2xx library,
 # which doesn't exist in buildroot
 
 MRAA_CONF_OPTS += \
+	-DBUILDARCH=$(MRAA_ARCH) \
 	-DBUILDSWIG=OFF \
 	-DUSBPLAT=OFF \
 	-DFTDI4222=OFF \
