@@ -190,21 +190,21 @@ class CVE:
         """The set of package names referred by this CVE definition"""
         return set(p['product'] for p in self.each_cpe())
 
-    def affects(self, br_pkg):
+    def affects(self, name, version, cve_ignore_list):
         """
         True if the Buildroot Package object passed as argument is affected
         by this CVE.
         """
-        if br_pkg.is_cve_ignored(self.identifier):
+        if self.identifier in cve_ignore_list:
             return self.CVE_DOESNT_AFFECT
 
-        pkg_version = distutils.version.LooseVersion(br_pkg.current_version)
+        pkg_version = distutils.version.LooseVersion(version)
         if not hasattr(pkg_version, "version"):
-            print("Cannot parse package '%s' version '%s'" % (br_pkg.name, br_pkg.current_version))
+            print("Cannot parse package '%s' version '%s'" % (name, version))
             pkg_version = None
 
         for cpe in self.each_cpe():
-            if cpe['product'] != br_pkg.name:
+            if cpe['product'] != name:
                 continue
             if cpe['v_start'] == '-':
                 return self.CVE_AFFECTS

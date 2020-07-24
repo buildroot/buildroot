@@ -236,11 +236,12 @@ class Package:
                     self.status['pkg-check'] = ("error", "{} warnings".format(self.warnings))
                 return
 
-    def is_cve_ignored(self, cve):
+    @property
+    def ignored_cves(self):
         """
-        Tells if the CVE is ignored by the package
+        Give the list of CVEs ignored by the package
         """
-        return cve in self.all_ignored_cves.get(self.pkgvar(), [])
+        return list(self.all_ignored_cves.get(self.pkgvar(), []))
 
     def set_developers(self, developers):
         """
@@ -536,9 +537,10 @@ def check_package_cves(nvd_path, packages):
 
     for cve in cvecheck.CVE.read_nvd_dir(nvd_path):
         for pkg_name in cve.pkg_names:
-            if pkg_name in packages and cve.affects(packages[pkg_name]) == cve.CVE_AFFECTS:
-                packages[pkg_name].cves.append(cve.identifier)
-
+            if pkg_name in packages:
+                pkg = packages[pkg_name]
+                if cve.affects(pkg.name, pkg.current_version, pkg.ignored_cves) == cve.CVE_AFFECTS :
+                    pkg.cves.append(cve.identifier)
 
 def calculate_stats(packages):
     stats = defaultdict(int)
