@@ -1,0 +1,22 @@
+config BR2_PACKAGE_LIBBLOCKDEV
+	bool "libblockdev"
+	depends on !BR2_STATIC_LIBS # kmod
+	depends on BR2_USE_WCHAR # libglib2
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2
+	depends on BR2_USE_MMU # libglib2
+	depends on BR2_PACKAGE_HAS_UDEV
+	select BR2_PACKAGE_KMOD
+	select BR2_PACKAGE_LIBGLIB2
+	help
+	  libblockdev is a C library supporting GObject introspection
+	  for manipulation of block devices. It has a plugin-based
+	  architecture where each technology (like LVM, Btrfs, MD RAID,
+	  Swap,...) is implemented in a separate plugin, possibly with
+	  multiple implementations.
+
+	  https://github.com/storaged-project/libblockdev/
+
+comment "libblockdev needs udev /dev management and a toolchain w/ wchar, threads, dynamic library"
+	depends on BR2_USE_MMU
+	depends on !BR2_PACKAGE_HAS_UDEV || BR2_STATIC_LIBS || \
+		!BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS
