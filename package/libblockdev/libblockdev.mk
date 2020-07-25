@@ -28,7 +28,6 @@ LIBBLOCKDEV_CONF_OPTS = \
 	--without-python2 \
 	--without-python3 \
 	--without-s390 \
-	--without-swap \
 	--without-tools \
 	--without-vdo
 
@@ -71,6 +70,13 @@ LIBBLOCKDEV_DEPENDENCIES += parted
 LIBBLOCKDEV_CONF_OPTS += --with-part
 else
 LIBBLOCKDEV_CONF_OPTS += --without-part
+endif
+
+ifeq ($(BR2_PACKAGE_LIBBLOCKDEV_SWAP),y)
+LIBBLOCKDEV_DEPENDENCIES += util-linux
+LIBBLOCKDEV_CONF_OPTS += --with-swap
+else
+LIBBLOCKDEV_CONF_OPTS += --without-swap
 endif
 
 $(eval $(autotools-package))
