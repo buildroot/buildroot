@@ -22,7 +22,6 @@ LIBBLOCKDEV_CONF_OPTS = \
 	--without-dmraid \
 	--without-escrow \
 	--without-kbd \
-	--without-loop \
 	--without-lvm \
 	--without-lvm_dbus \
 	--without-mdraid \
@@ -48,6 +47,12 @@ LIBBLOCKDEV_DEPENDENCIES += parted
 LIBBLOCKDEV_CONF_OPTS += --with-fs
 else
 LIBBLOCKDEV_CONF_OPTS += --without-fs
+endif
+
+ifeq ($(BR2_PACKAGE_LIBBLOCKDEV_LOOP),y)
+LIBBLOCKDEV_CONF_OPTS += --with-loop
+else
+LIBBLOCKDEV_CONF_OPTS += --without-loop
 endif
 
 $(eval $(autotools-package))

@@ -33,6 +33,9 @@ config BR2_PACKAGE_LIBBLOCKDEV_FS
 comment "filesystem plugin needs a toolchain w/ locale"
 	depends on !BR2_ENABLE_LOCALE
 
+config BR2_PACKAGE_LIBBLOCKDEV_LOOP
+	bool "loop"
+
 endif
 
 comment "libblockdev needs udev /dev management and a toolchain w/ wchar, threads, dynamic library"
