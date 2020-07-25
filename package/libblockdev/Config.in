@@ -16,6 +16,17 @@ config BR2_PACKAGE_LIBBLOCKDEV
 
 	  https://github.com/storaged-project/libblockdev/
 
+if BR2_PACKAGE_LIBBLOCKDEV
+
+comment "plugins"
+
+config BR2_PACKAGE_LIBBLOCKDEV_CRYPTO
+	bool "crypto"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # cryptsetup -> json-c
+	select BR2_PACKAGE_CRYPTSETUP
+
+endif
+
 comment "libblockdev needs udev /dev management and a toolchain w/ wchar, threads, dynamic library"
 	depends on BR2_USE_MMU
 	depends on !BR2_PACKAGE_HAS_UDEV || BR2_STATIC_LIBS || \

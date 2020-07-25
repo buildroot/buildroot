@@ -18,7 +18,6 @@ LIBBLOCKDEV_CONF_OPTS = \
 	--with-loop \
 	--without-bcache \
 	--without-btrfs \
-	--without-crypto \
 	--without-dm \
 	--without-dmraid \
 	--without-escrow \
@@ -37,5 +36,12 @@ LIBBLOCKDEV_CONF_OPTS = \
 	--without-swap \
 	--without-tools \
 	--without-vdo
+
+ifeq ($(BR2_PACKAGE_LIBBLOCKDEV_CRYPTO),y)
+LIBBLOCKDEV_DEPENDENCIES += cryptsetup
+LIBBLOCKDEV_CONF_OPTS += --with-crypto
+else
+LIBBLOCKDEV_CONF_OPTS += --without-crypto
+endif
 
 $(eval $(autotools-package))
