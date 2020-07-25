@@ -23,7 +23,6 @@ LIBBLOCKDEV_CONF_OPTS = \
 	--without-escrow \
 	--without-kbd \
 	--without-lvm_dbus \
-	--without-mdraid \
 	--without-mpath \
 	--without-nvdimm \
 	--without-part \
@@ -59,6 +58,13 @@ LIBBLOCKDEV_DEPENDENCIES += lvm2 parted
 LIBBLOCKDEV_CONF_OPTS += --with-lvm
 else
 LIBBLOCKDEV_CONF_OPTS += --without-lvm
+endif
+
+ifeq ($(BR2_PACKAGE_LIBBLOCKDEV_MDRAID),y)
+LIBBLOCKDEV_DEPENDENCIES += libbytesize
+LIBBLOCKDEV_CONF_OPTS += --with-mdraid
+else
+LIBBLOCKDEV_CONF_OPTS += --without-mdraid
 endif
 
 $(eval $(autotools-package))

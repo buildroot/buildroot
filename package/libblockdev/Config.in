@@ -45,6 +45,10 @@ config BR2_PACKAGE_LIBBLOCKDEV_LVM2
 comment "lvm2 support needs a toolchain w/ locale"
 	depends on !BR2_ENABLE_LOCALE
 
+config BR2_PACKAGE_LIBBLOCKDEV_MDRAID
+	bool "mdraid"
+	select BR2_PACKAGE_LIBBYTESIZE
+
 endif
 
 comment "libblockdev needs udev /dev management and a toolchain w/ wchar, threads, dynamic library"
