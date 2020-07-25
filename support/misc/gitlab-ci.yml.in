@@ -1,8 +1,5 @@
 # Configuration for Gitlab-CI.
 # Builds appear on https://gitlab.com/buildroot.org/buildroot/pipelines
-# The .gitlab-ci.yml file is generated from .gitlab-ci.yml.in.
-# It needs to be regenerated every time a defconfig is added, using
-# "make .gitlab-ci.yml".
 
 image: buildroot/base:20191027.2027
 
@@ -31,13 +28,6 @@ check-flake8:
         - python -m flake8 --statistics --count --max-line-length=132 $(cat files.processed)
     after_script:
         - wc -l files.processed
-
-check-gitlab-ci.yml:
-    extends: .check_base
-    script:
-        - mv .gitlab-ci.yml .gitlab-ci.yml.orig
-        - make .gitlab-ci.yml
-        - diff -u .gitlab-ci.yml.orig .gitlab-ci.yml
 
 check-package:
     extends: .check_base
