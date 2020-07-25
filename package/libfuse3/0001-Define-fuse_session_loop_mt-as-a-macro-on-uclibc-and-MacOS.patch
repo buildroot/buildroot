@@ -1,0 +1,52 @@
+From 7b3e3899157566875280a8b860eb5ad5c73eadc1 Mon Sep 17 00:00:00 2001
+From: asafkahlon <35964924+asafkahlon@users.noreply.github.com>
+Date: Sun, 9 Aug 2020 14:37:26 +0300
+Subject: [PATCH] Define fuse_session_loop_mt as a macro on uclibc and MacOS
+ (#532)
+
+On uclibc and MacOS we don't use versioned symbols. Hence,
+there's no definition for fuse_session_loop_mt on those cases
+and the linker won't be able to resolve calls to fuse_session_loop_mt()
+
+Signed-off-by: Asaf Kahlon <asafka7@gmail.com>
+[Retrieved from: https://github.com/libfuse/libfuse/pull/532]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[yann.morin.1998@free.fr: update to use upstream commit]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ include/fuse_lowlevel.h | 5 +++++
+ lib/fuse_versionscript  | 1 +
+ 2 files changed, 6 insertions(+)
+
+diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
+index e2b4617..f2ef622 100644
+--- a/include/fuse_lowlevel.h
++++ b/include/fuse_lowlevel.h
+@@ -1982,7 +1982,12 @@ int fuse_session_loop(struct fuse_session *se);
+ int fuse_session_loop_mt_31(struct fuse_session *se, int clone_fd);
+ #define fuse_session_loop_mt(se, clone_fd) fuse_session_loop_mt_31(se, clone_fd)
+ #else
++#if (!defined(__UCLIBC__) && !defined(__APPLE__))
+ int fuse_session_loop_mt(struct fuse_session *se, struct fuse_loop_config *config);
++#else
++int fuse_session_loop_mt_32(struct fuse_session *se, struct fuse_loop_config *config);
++#define fuse_session_loop_mt(se, config) fuse_session_loop_mt_32(se, config)
++#endif
+ #endif
+ 
+ /**
+diff --git a/lib/fuse_versionscript b/lib/fuse_versionscript
+index 235abf4..a06f768 100644
+--- a/lib/fuse_versionscript
++++ b/lib/fuse_versionscript
+@@ -146,6 +146,7 @@ FUSE_3.2 {
+ 	global:
+ 		fuse_session_loop_mt;
+ 		fuse_session_loop_mt_31;
++		fuse_session_loop_mt_32;
+ 		fuse_loop_mt;
+ 		fuse_loop_mt_31;
+ } FUSE_3.1;
+-- 
+2.20.1
+
