@@ -21,7 +21,6 @@ LIBBLOCKDEV_CONF_OPTS = \
 	--without-dm \
 	--without-dmraid \
 	--without-escrow \
-	--without-fs \
 	--without-kbd \
 	--without-loop \
 	--without-lvm \
@@ -42,6 +41,13 @@ LIBBLOCKDEV_DEPENDENCIES += cryptsetup
 LIBBLOCKDEV_CONF_OPTS += --with-crypto
 else
 LIBBLOCKDEV_CONF_OPTS += --without-crypto
+endif
+
+ifeq ($(BR2_PACKAGE_LIBBLOCKDEV_FS),y)
+LIBBLOCKDEV_DEPENDENCIES += parted
+LIBBLOCKDEV_CONF_OPTS += --with-fs
+else
+LIBBLOCKDEV_CONF_OPTS += --without-fs
 endif
 
 $(eval $(autotools-package))
