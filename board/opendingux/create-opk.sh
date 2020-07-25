@@ -1,9 +1,9 @@
 #!/bin/sh
 
-mkdir -p ${BUILD_DIR}/opk
-
 DATE=`date +%F`
 CONFIG=$2
+
+mkdir -p ${BUILD_DIR}/opk/${CONFIG}/
 
 # Write metadata.
 cat > ${BUILD_DIR}/opk/default.${CONFIG}.desktop <<EOF
@@ -20,8 +20,17 @@ EOF
 
 echo "$DATE" > ${BUILD_DIR}/opk/date.txt
 
-FILE_LIST=""
-FILE_LIST_SHA1=""
+# Add symlinks for compatibility with old versions of od-update script
+case "${CONFIG}" in
+	rs90)
+		ln -sf rs90.dtb ${BUILD_DIR}/opk/${CONFIG}/v21.dtb
+		ln -sf rs90.dtb ${BUILD_DIR}/opk/${CONFIG}/v30.dtb
+		;;
+	gcw0)
+		ln -sf gcw0_proto.dtb ${BUILD_DIR}/opk/${CONFIG}/v11_ddr2_256mb.dtb
+		ln -sf gcw0.dtb ${BUILD_DIR}/opk/${CONFIG}/v20_mddr_512mb.dtb
+		;;
+esac
 
 for each in \
 	${BINARIES_DIR}/uzImage.bin \
@@ -32,28 +41,23 @@ for each in \
 	${BINARIES_DIR}/*.dtb
 do
 	if [ -r $each ] ; then
-		each_sha1=${BUILD_DIR}/opk/`basename $each`.sha1
+		each_name=`basename $each`
+		cp -lf $each ${BUILD_DIR}/opk/${CONFIG}/${each_name}
+		each_sha1=${BUILD_DIR}/opk/${CONFIG}/${each_name}.sha1
 		sha1sum $each | cut -d' ' -f1 > $each_sha1
-		FILE_LIST="$FILE_LIST $each"
-		FILE_LIST_SHA1="$FILE_LIST_SHA1 $each_sha1"
 	fi
 done
 
 # Create OPK
 ${HOST_DIR}/usr/bin/mksquashfs \
-	${FILE_LIST} \
-	${FILE_LIST_SHA1} \
-	${BINARIES_DIR}/${CONFIG}-update-${DATE}.opk \
-	-noappend -no-xattrs -all-root
-
-${HOST_DIR}/usr/bin/mksquashfs \
+	${BUILD_DIR}/opk/${CONFIG} \
+	${BUILD_DIR}/opk/date.txt \
+	${BUILD_DIR}/opk/default.${CONFIG}.desktop \
 	board/opendingux/opendingux_icon.png \
 	board/opendingux/opk_update_script.sh \
 	${TARGET_DIR}/usr/sbin/od-update \
-	${BUILD_DIR}/opk/date.txt \
-	${BUILD_DIR}/opk/default.${CONFIG}.desktop \
 	${BINARIES_DIR}/${CONFIG}-update-${DATE}.opk \
-	-root-becomes ${CONFIG} -no-xattrs -all-root -no-progress
+	-noappend -no-xattrs -all-root
 
 echo ""
 echo "---"
