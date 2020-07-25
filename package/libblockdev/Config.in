@@ -36,6 +36,15 @@ comment "filesystem plugin needs a toolchain w/ locale"
 config BR2_PACKAGE_LIBBLOCKDEV_LOOP
 	bool "loop"
 
+config BR2_PACKAGE_LIBBLOCKDEV_LVM2
+	bool "lvm2"
+	depends on BR2_ENABLE_LOCALE # parted
+	select BR2_PACKAGE_PARTED
+	select BR2_PACKAGE_LVM2
+
+comment "lvm2 support needs a toolchain w/ locale"
+	depends on !BR2_ENABLE_LOCALE
+
 endif
 
 comment "libblockdev needs udev /dev management and a toolchain w/ wchar, threads, dynamic library"

@@ -22,7 +22,6 @@ LIBBLOCKDEV_CONF_OPTS = \
 	--without-dmraid \
 	--without-escrow \
 	--without-kbd \
-	--without-lvm \
 	--without-lvm_dbus \
 	--without-mdraid \
 	--without-mpath \
@@ -53,6 +52,13 @@ ifeq ($(BR2_PACKAGE_LIBBLOCKDEV_LOOP),y)
 LIBBLOCKDEV_CONF_OPTS += --with-loop
 else
 LIBBLOCKDEV_CONF_OPTS += --without-loop
+endif
+
+ifeq ($(BR2_PACKAGE_LIBBLOCKDEV_LVM2),y)
+LIBBLOCKDEV_DEPENDENCIES += lvm2 parted
+LIBBLOCKDEV_CONF_OPTS += --with-lvm
+else
+LIBBLOCKDEV_CONF_OPTS += --without-lvm
 endif
 
 $(eval $(autotools-package))
