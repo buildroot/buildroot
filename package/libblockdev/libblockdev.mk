@@ -25,7 +25,6 @@ LIBBLOCKDEV_CONF_OPTS = \
 	--without-lvm_dbus \
 	--without-mpath \
 	--without-nvdimm \
-	--without-part \
 	--without-python2 \
 	--without-python3 \
 	--without-s390 \
@@ -65,6 +64,13 @@ LIBBLOCKDEV_DEPENDENCIES += libbytesize
 LIBBLOCKDEV_CONF_OPTS += --with-mdraid
 else
 LIBBLOCKDEV_CONF_OPTS += --without-mdraid
+endif
+
+ifeq ($(BR2_PACKAGE_LIBBLOCKDEV_PART),y)
+LIBBLOCKDEV_DEPENDENCIES += parted
+LIBBLOCKDEV_CONF_OPTS += --with-part
+else
+LIBBLOCKDEV_CONF_OPTS += --without-part
 endif
 
 $(eval $(autotools-package))
