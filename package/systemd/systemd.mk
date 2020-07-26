@@ -353,12 +353,14 @@ endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD_LOGIND),y)
 SYSTEMD_CONF_OPTS += -Dlogind=true
+SYSTEMD_LOGIND_PERMISSIONS = /var/lib/systemd/linger d 755 0 0 - - - - -
 else
 SYSTEMD_CONF_OPTS += -Dlogind=false
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD_MACHINED),y)
 SYSTEMD_CONF_OPTS += -Dmachined=true -Dnss-mymachines=true
+SYSTEMD_MACHINED_PERMISSIONS = /var/lib/machines d 700 0 0 - - - - -
 else
 SYSTEMD_CONF_OPTS += -Dmachined=false -Dnss-mymachines=false
 endif
@@ -372,6 +374,7 @@ endif
 ifeq ($(BR2_PACKAGE_SYSTEMD_HOMED),y)
 SYSTEMD_CONF_OPTS += -Dhomed=true
 SYSTEMD_DEPENDENCIES += cryptsetup openssl
+SYSTEMD_HOMED_PERMISSIONS = /var/lib/systemd/home d 755 0 0 - - - - -
 else
 SYSTEMD_CONF_OPTS += -Dhomed=false
 endif
@@ -416,12 +419,14 @@ endif
 ifeq ($(BR2_PACKAGE_SYSTEMD_COREDUMP),y)
 SYSTEMD_CONF_OPTS += -Dcoredump=true
 SYSTEMD_COREDUMP_USER = systemd-coredump -1 systemd-coredump -1 * - - - systemd core dump processing
+SYSTEMD_HOMED_PERMISSIONS = /var/lib/systemd/coredump d 755 0 0 - - - - -
 else
 SYSTEMD_CONF_OPTS += -Dcoredump=false
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD_PSTORE),y)
 SYSTEMD_CONF_OPTS += -Dpstore=true
+SYSTEMD_PSTORE_PERMISSIONS = /var/lib/systemd/pstore d 755 0 0 - - - - -
 else
 SYSTEMD_CONF_OPTS += -Dpstore=false
 endif
@@ -502,6 +507,7 @@ endif
 ifeq ($(BR2_PACKAGE_SYSTEMD_TIMESYNCD),y)
 SYSTEMD_CONF_OPTS += -Dtimesyncd=true
 SYSTEMD_TIMESYNCD_USER = systemd-timesync -1 systemd-timesync -1 * - - - systemd Time Synchronization
+SYSTEMD_TIMESYNCD_PERMISSIONS = /var/lib/systemd/timesync d 755 systemd-timesync systemd-timesync - - - - -
 else
 SYSTEMD_CONF_OPTS += -Dtimesyncd=false
 endif
@@ -563,6 +569,19 @@ SYSTEMD_POST_INSTALL_TARGET_HOOKS += \
 
 define SYSTEMD_INSTALL_IMAGES_CMDS
 	$(SYSTEMD_INSTALL_BOOT_FILES)
+endef
+
+define SYSTEMD_PERMISSIONS
+	/var/spool d 755 0 0 - - - - -
+	/var/lib d 755 0 0 - - - - -
+	/var/lib/private d 700 0 0 - - - - -
+	/var/log/private d 700 0 0 - - - - -
+	/var/cache/private d 700 0 0 - - - - -
+	$(SYSTEMD_LOGIND_PERMISSIONS)
+	$(SYSTEMD_MACHINED_PERMISSIONS)
+	$(SYSTEMD_HOMED_PERMISSIONS)
+	$(SYSTEMD_PSTORE_PERMISSIONS)
+	$(SYSTEMD_TIMESYNCD_PERMISSIONS)
 endef
 
 define SYSTEMD_USERS
