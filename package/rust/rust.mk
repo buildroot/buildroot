@@ -65,7 +65,6 @@ define HOST_RUST_CONFIGURE_CMDS
 		echo 'channel = "stable"'; \
 		echo '[target.$(RUSTC_TARGET_NAME)]'; \
 		echo 'cc = "$(TARGET_CROSS)gcc"'; \
-		echo $(HOST_RUST_JEMALLOC_CONF); \
 	) > $(@D)/config.toml
 endef
 
