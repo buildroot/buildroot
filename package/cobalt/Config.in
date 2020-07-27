@@ -11,4 +11,21 @@ config BR2_PACKAGE_COBALT_IMAGE_AS_LIB
        This option allows to create cobalt.so,
        default is cobalt bin
 
+choice BR2_PACKAGE_COBALT_BUILD_TYPE
+    prompt "Build type"
+    default BR2_PACKAGE_COBALT_BUILD_TYPE_QA
+    help
+        Select the type of build.
+
+config BR2_PACKAGE_COBALT_BUILD_TYPE_QA
+    bool "Debug(QA)"
+    help
+        Debug (QA) build type.
+
+config BR2_PACKAGE_COBALT_BUILD_TYPE_GOLD
+    bool "Production(Gold)"
+    help
+        Production (Gold) build type.
+endchoice
+
 endif
