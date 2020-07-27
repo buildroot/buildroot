@@ -28,10 +28,6 @@ config BR2_PACKAGE_LUA_5_3
 
 endchoice
 
-config BR2_PACKAGE_LUAINTERPRETER_ABI_VERSION
-	default "5.1"	if BR2_PACKAGE_LUA_5_1
-	default "5.3"	if BR2_PACKAGE_LUA_5_3
-
 if BR2_PACKAGE_LUA_5_3
 config BR2_PACKAGE_LUA_32BITS
 	bool "Use 32 bit numbers"
