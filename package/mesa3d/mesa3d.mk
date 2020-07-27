@@ -167,9 +167,9 @@ MESA3D_CONF_OPTS += -Dopengl=true
 # we do not need libva support in mesa3d, therefore disable this option
 MESA3D_CONF_OPTS += -Dgallium-va=disabled
 
-# libGL is only provided for a full xorg stack
+# libGL is only provided for a full xorg stack, without libglvnd
 ifeq ($(BR2_PACKAGE_MESA3D_OPENGL_GLX),y)
-MESA3D_PROVIDES += libgl
+MESA3D_PROVIDES += $(if $(BR2_PACKAGE_LIBGLVND),,libgl)
 else
 define MESA3D_REMOVE_OPENGL_HEADERS
 	rm -rf $(STAGING_DIR)/usr/include/GL/
@@ -207,7 +207,7 @@ MESA3D_CONF_OPTS += \
 endif
 
 ifeq ($(BR2_PACKAGE_MESA3D_OPENGL_EGL),y)
-MESA3D_PROVIDES += libegl
+MESA3D_PROVIDES += $(if $(BR2_PACKAGE_LIBGLVND),,libegl)
 MESA3D_CONF_OPTS += \
 	-Degl=enabled
 else
@@ -216,7 +216,7 @@ MESA3D_CONF_OPTS += \
 endif
 
 ifeq ($(BR2_PACKAGE_MESA3D_OPENGL_ES),y)
-MESA3D_PROVIDES += libgles
+MESA3D_PROVIDES += $(if $(BR2_PACKAGE_LIBGLVND),,libgles)
 MESA3D_CONF_OPTS += -Dgles1=enabled -Dgles2=enabled
 else
 MESA3D_CONF_OPTS += -Dgles1=disabled -Dgles2=disabled
@@ -269,6 +269,13 @@ MESA3D_CFLAGS = $(TARGET_CFLAGS)
 # m68k needs 32-bit offsets in switch tables to build
 ifeq ($(BR2_m68k),y)
 MESA3D_CFLAGS += -mlong-jump-table-offsets
+endif
+
+ifeq ($(BR2_PACKAGE_LIBGLVND),y)
+MESA3D_DEPENDENCIES += libglvnd
+MESA3D_CONF_OPTS += -Dglvnd=true
+else
+MESA3D_CONF_OPTS += -Dglvnd=false
 endif
 
 $(eval $(meson-package))
