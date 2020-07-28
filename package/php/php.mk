@@ -333,6 +333,11 @@ PHP_CONF_OPTS += \
 PHP_DEPENDENCIES += jpeg libpng freetype zlib
 endif
 
+ifeq ($(BR2_PACKAGE_PHP_EXT_FFI),y)
+PHP_CONF_OPTS += --with-ffi
+PHP_DEPENDENCIES += libffi
+endif
+
 ifeq ($(BR2_PACKAGE_PHP_SAPI_FPM),y)
 define PHP_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 0755 $(@D)/sapi/fpm/init.d.php-fpm \

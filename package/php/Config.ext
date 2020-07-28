@@ -427,4 +427,14 @@ config BR2_PACKAGE_PHP_EXT_XSL
 	help
 	  XSL transformation support
 
+config BR2_PACKAGE_PHP_EXT_FFI
+	bool "FFI"
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_PACKAGE_LIBFFI
+	help
+	  Foreign Function Interface support
+
+comment "PHP FFI extension needs a toolchain w/ threads"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS
+
 endmenu
