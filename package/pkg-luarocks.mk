@@ -23,6 +23,9 @@ HOST_LUAROCKS_CFLAGS = $(HOST_CFLAGS) -fPIC
 ifeq ($(BR2_PACKAGE_LUA_5_3),y)
 LUAROCKS_CFLAGS += -DLUA_COMPAT_5_2
 HOST_LUAROCKS_CFLAGS += -DLUA_COMPAT_5_2
+else ifeq ($(BR2_PACKAGE_LUA_5_4),y)
+LUAROCKS_CFLAGS += -DLUA_COMPAT_5_3
+HOST_LUAROCKS_CFLAGS += -DLUA_COMPAT_5_3
 endif
 
 ################################################################################
