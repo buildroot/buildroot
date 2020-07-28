@@ -1,0 +1,29 @@
+From 691df98d51955f7f24b34332ad867b6d69093ae0 Mon Sep 17 00:00:00 2001
+From: Alex Kiernan <alex.kiernan@gmail.com>
+Date: Fri, 26 Jun 2020 08:59:24 +0000
+Subject: [PATCH] gnutls: Fetch backend when using proxy
+
+Fixes: 89865c149 ("gnutls: remove the BACKEND define kludge")
+Signed-off-by: Alex Kiernan <alex.kiernan@gmail.com>
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+Upstream status: commit 691df98d51955f7f24b34332ad867b6d69093ae0
+
+ lib/vtls/gtls.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lib/vtls/gtls.c b/lib/vtls/gtls.c
+index 9b4c3659acc5..02d0825e5ac7 100644
+--- a/lib/vtls/gtls.c
++++ b/lib/vtls/gtls.c
+@@ -1382,6 +1382,7 @@ static bool Curl_gtls_data_pending(const struct connectdata *conn,
+     res = TRUE;
+ 
+   connssl = &conn->proxy_ssl[connindex];
++  backend = connssl->backend;
+   if(backend->session &&
+      0 != gnutls_record_check_pending(backend->session))
+     res = TRUE;
+-- 
+2.27.0
+
