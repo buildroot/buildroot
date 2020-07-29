@@ -30,7 +30,11 @@ else
 export COBALT_HAS_OCDM=0
 endif
 
-COBALT_BUILD_TYPE = qa
+ifeq ($(BR2_PACKAGE_COBALT_BUILD_TYPE_QA),y)
+	COBALT_BUILD_TYPE = qa
+else ifeq ($(BR2_PACKAGE_COBALT_BUILD_TYPE_GOLD),y)
+	COBALT_BUILD_TYPE = gold
+endif
 
 ifeq ($(BR2_PACKAGE_COBALT_IMAGE_AS_LIB), y)
 export COBALT_EXECUTABLE_TYPE = shared_library
