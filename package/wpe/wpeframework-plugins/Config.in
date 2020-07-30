@@ -77,6 +77,35 @@ config BR2_PACKAGE_WPEFRAMEWORK_COBALT_OUTOFPROCESS
     default y
     help
       Select this to run this plugin in its own process.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_MANUFACTURER_NAME
+    string "manufacturername"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_CHIPSET_MODEL_NUMBER
+    string "chipsetmodelnumber"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_FIRMWARE_VERSION
+    string "firmwareversion"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_MODEL_NAME
+    string "modelname"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_MODEL_YEAR
+    string "modelyear"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_OPERATOR_NAME
+    string "operatorname"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_FRIENDLY_NAME
+    string "friendlyname"
+    default ""
+
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMMANDER
