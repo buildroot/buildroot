@@ -41,7 +41,8 @@ SYSTEMD_CONF_OPTS += \
 	-Dmount-path=/usr/bin/mount \
 	-Dumount-path=/usr/bin/umount \
 	-Didn=true \
-	-Dnss-systemd=true
+	-Dnss-systemd=true \
+	-Dportabled=false
 
 ifeq ($(BR2_PACKAGE_ACL),y)
 SYSTEMD_DEPENDENCIES += acl
