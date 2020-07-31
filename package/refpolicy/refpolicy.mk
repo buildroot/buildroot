@@ -4,9 +4,6 @@
 #
 ################################################################################
 
-REFPOLICY_VERSION = 2.20200229
-REFPOLICY_SOURCE = refpolicy-$(REFPOLICY_VERSION).tar.bz2
-REFPOLICY_SITE = https://github.com/SELinuxProject/refpolicy/releases/download/RELEASE_2_20200229
 REFPOLICY_LICENSE = GPL-2.0
 REFPOLICY_LICENSE_FILES = COPYING
 REFPOLICY_INSTALL_STAGING = YES
@@ -18,6 +15,17 @@ REFPOLICY_DEPENDENCIES = \
 	host-setools \
 	host-gawk
 
+ifeq ($(BR2_PACKAGE_REFPOLICY_CUSTOM_GIT),y)
+REFPOLICY_VERSION = $(call qstrip,$(BR2_PACKAGE_REFPOLICY_CUSTOM_REPO_VERSION))
+REFPOLICY_SITE = $(call qstrip,$(BR2_PACKAGE_REFPOLICY_CUSTOM_REPO_URL))
+REFPOLICY_SITE_METHOD = git
+BR_NO_CHECK_HASH_FOR += $(REFPOLICY_SOURCE)
+else
+REFPOLICY_VERSION = 2.20200229
+REFPOLICY_SOURCE = refpolicy-$(REFPOLICY_VERSION).tar.bz2
+REFPOLICY_SITE = https://github.com/SELinuxProject/refpolicy/releases/download/RELEASE_2_20200229
+endif
+
 # Cannot use multiple threads to build the reference policy
 REFPOLICY_MAKE = \
 	PYTHON=$(HOST_DIR)/usr/bin/python3 \
@@ -28,6 +36,8 @@ REFPOLICY_MAKE = \
 REFPOLICY_POLICY_VERSION = $(BR2_PACKAGE_LIBSEPOL_POLICY_VERSION)
 REFPOLICY_POLICY_STATE = \
 	$(call qstrip,$(BR2_PACKAGE_REFPOLICY_POLICY_STATE))
+
+ifeq ($(BR2_PACKAGE_REFPOLICY_UPSTREAM_VERSION),y)
 
 # Allow to provide out-of-tree SELinux modules in addition to the ones
 # in the refpolicy.
@@ -78,6 +88,8 @@ define REFPOLICY_CONFIGURE_MODULES
 		$(SED) "/^$(m) =/c\$(m) = base" $(@D)/policy/modules.conf
 	)
 endef
+
+endif # BR2_PACKAGE_REFPOLICY_UPSTREAM_VERSION = y
 
 ifeq ($(BR2_INIT_SYSTEMD),y)
 define REFPOLICY_CONFIGURE_SYSTEMD
