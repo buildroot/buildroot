@@ -25,7 +25,6 @@ SYSTEMD_CONF_OPTS += \
 	-Dsysvinit-path= \
 	-Dsysvrcnd-path= \
 	-Dutmp=false \
-	-Dblkid=true \
 	-Dman=false \
 	-Dima=false \
 	-Dldconfig=false \
@@ -206,6 +205,12 @@ SYSTEMD_DEPENDENCIES += pcre2
 SYSTEMD_CONF_OPTS += -Dpcre2=true
 else
 SYSTEMD_CONF_OPTS += -Dpcre2=false
+endif
+
+ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBBLKID),y)
+SYSTEMD_CONF_OPTS += -Dblkid=true
+else
+SYSTEMD_CONF_OPTS += -Dblkid=false
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD_INITRD),y)
