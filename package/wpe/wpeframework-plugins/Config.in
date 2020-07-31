@@ -39,7 +39,7 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_CDMI
      A CDM server plugin to interact with CDMi plugins.
 
 if BR2_PACKAGE_WPEFRAMEWORK_CDMI
-config BR2_PACKAGE_WPEFRAMEWORK_CDMI_USER
+    config BR2_PACKAGE_WPEFRAMEWORK_CDMI_USER
     string "user"
     default ""
     help
@@ -388,6 +388,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_REPORTING_PIN
           To which pin needs the handler to be associated.
 endif
 
+config BR2_PACKAGE_WPEFRAMEWORK_IOCONNECTOR_PINS
+    string "Pin details"
+    default "169:output:true;172:output:false"
+    help
+      Set details of pins in the format "ID:Mode:State".
+      ID: Id of the PIN, Mode: Output/Input, State: activelow or not
+      Example "169:output:true;172:output:false"
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_INPUTSWITCH
@@ -437,6 +444,11 @@ config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_YOUTUBE
     string "youtube-limit"
     default "614400"
 
+config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_COBALT
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COBALT
+    string "cobalt-limit"
+    default "614400"
+
 config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_AMAZON
     depends on BR2_PACKAGE_WPEFRAMEWORK_AMAZON
     string "amazon-limit"
@@ -459,12 +471,22 @@ config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_NETFLIX
 
 endif
 
-config BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "NetworkControl"
     help
       Control the IP adressing of the interfaces in the system from
       WPEFramework (static IPv4/IPv6 or dhcp IPv4)
+
+if BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACES
+    string "Network Interfaces Details"
+    default "eth0:Dynamic:::;wlan0:Dynamic:::;"
+    help
+      Set details of network interfaces in the format "Name:Mode:Address:Netmask:Gateway".
+      Example "wlan0:Manual:192.168.55.1:24:192.168.55.1;eth0:Manual:192.168.1.158:24:192.168.1.1;eth1:Dynamic:::;"
+endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_PACKAGER
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
@@ -637,6 +659,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_STREAMER_AAMP_USE_WESTEROS_SINK
 
 endif # BR2_PACKAGE_WPEFRAMEWORK_STREAMER_AAMP
 
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_CENC
+    select BR2_PACKAGE_GST1_CENCDECRYPT
+    bool "CENC"
+    default n
+    help
+      Gstreamer based player for playback of clear/encrypted content.
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_STREAMER_BROADCAST
     bool "Broadcast"
     default n
@@ -764,12 +793,19 @@ config BR2_PACKAGE_WPEFRAMEWORK_SYSTEMCOMMANDS
     bool "SystemCommands"
     help
       SystemCommands Plugin
-      
+
 config BR2_PACKAGE_WPEFRAMEWORK_FILETRANSFER
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "FileTransfer"
     help
       FileTransfer Plugin
+
+config BR2_PACKAGE_WPEFRAMEWORK_FIRMWARECONTROL
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_MFR_LIBRARY
+    bool "FirmwareControl"
+    help
+      FirmwareControl Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
@@ -852,14 +888,6 @@ if BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_INJECTEDBUNDLE_INTERFACES
     bool "injectedbundle"
     default y
-
-if BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_INJECTEDBUNDLE_INTERFACES
-
-config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_AMAZON_HAWAII
-    bool "amazon hawaii interface"
-    default n
-
-endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_AUTOSTART
     bool "autostart"
@@ -962,6 +990,7 @@ endif
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_AMAZON_TAB
     depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
     bool "amazon"
+    select BR2_PACKAGE_LIBAMAZON
     help
       A wrapper around the amazon app to start it as a
       wpeframework plugin.
@@ -975,6 +1004,46 @@ config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_USERAGENT
 config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_STARTURL
     string "start-url"
     default "about:blank"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_CA_DIRECTORY_PATH
+    string "CA certificates Directory path"
+    default "/etc/ssl/certs/"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_CA_BUNDLE_FILENAME
+    string "CA certificates bundle filename"
+    default "ca-certificates.crt"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_MANUFACTURER
+    string "Manufacturer"
+    default "Broadcom"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_MODELNAME
+    string "Modelname"
+    default "2952"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_DEVICELANGUAGE
+    string "Device language"
+    default "en-US"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_DEVICETYPEID
+    string "DTID"
+    default "A71I8788P1ZV8"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_FIRMWARE_VERSION
+    string "Firmware version"
+    default "1.0"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_CHIPSET_NAME
+    string "Chipset name"
+    default "BCM2837"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_ETHERNET_DEVICE
+    string "Ethernet device to use for device id"
+    default "eth0"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_FRAGMENT_CACHE_SIZE
+    string "Fragment Cache size (MB)"
+    default "100"
 
 config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_TRANSPARENT
     bool "transparent"
@@ -994,6 +1063,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_GROUP
         run Amazon as this group, leave empty to use the same as 
         WPEframework
 
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_MEMORYPROFILE
+    string "memory-profile"
+    default "128m"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_MEMORYPRESSURE
+    string "memory-pressure"
+    default "databaseprocess:50m,networkprocess:100m,webprocess:300m,rpcprocess:50m"
 
 endif
 

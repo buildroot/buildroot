@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-COBALT_VERSION = 1aa6857406258643982489c775f282ab83137748
+COBALT_VERSION = 478366da58a6130f88205100487b6de3f6df4017
 COBALT_SITE_METHOD = git
 COBALT_SITE = git@github.com:Metrological/cobalt
 COBALT_INSTALL_STAGING = YES
@@ -30,7 +30,11 @@ else
 export COBALT_HAS_OCDM=0
 endif
 
-COBALT_BUILD_TYPE = qa
+ifeq ($(BR2_PACKAGE_COBALT_BUILD_TYPE_QA),y)
+	COBALT_BUILD_TYPE = qa
+else ifeq ($(BR2_PACKAGE_COBALT_BUILD_TYPE_GOLD),y)
+	COBALT_BUILD_TYPE = gold
+endif
 
 ifeq ($(BR2_PACKAGE_COBALT_IMAGE_AS_LIB), y)
 export COBALT_EXECUTABLE_TYPE = shared_library

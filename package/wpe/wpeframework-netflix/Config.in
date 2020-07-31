@@ -21,6 +21,11 @@ menu "DPI options"
       string "friendly name"
       default "Metrological Netflix Implementation"
 
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_VERSION_POSTFIX
+      depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+      string "version postfix"
+      default ""
+
   config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_VIDEO_BUFFER_SIZE
       string "video buffer"
       default "193986560"
@@ -77,7 +82,7 @@ menu "DPI options"
   	help
   	  Enable AVC High support
 
-  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_VIDEO_HDR10
+  config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_HDR10
   	bool "HDR10"
   	help
   	  Enable HDR10 support
@@ -139,6 +144,11 @@ config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_RESUME_TIMEOUT
 config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_FULLHD
     depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
     bool "fullhd"
+    default n
+
+config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_HIGHRESUI
+    depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+    bool "high resolution (1080p) UI"
     default n
 
 config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_KEY_REPEAT_DELAY

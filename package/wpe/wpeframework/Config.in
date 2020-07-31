@@ -130,7 +130,50 @@ config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITORCLIENT
           interaction (Graphics/input). The implementation hides all the compositor specific details.
       allows for relaying keys to plugins
 
-source "package/wpe/wpeframework-cryptography/Config.in"
+config BR2_PACKAGE_WPEFRAMEWORK_GSTREAMERCLIENT
+        bool "GstreamerClient"
+        default n
+        help
+          Gstreamer client provides custom APIs to manipulate underneath stream sinks which will be linked with created pipeline.
+          This implementation will vary based on custom platforms and sink backends.
+
+config BR2_PACKAGE_WPEFRAMEWORK_DISPLAYINFO
+    bool "DisplayInfo"
+        default y
+    help
+        A helpful C-interface to easily get information from the DisplayInfo plugin.
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY
+    bool "Cryptography"
+        default n
+    help
+      Abstraction on generic cryptography functionality.
+
+if BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY
+choice BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY_IMPLEMENTATION
+	prompt "Implementation"
+	default BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY_IMPLEMENTATION_OPENSSL
+	help
+	  Choose implementation
+
+config BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY_IMPLEMENTATION_THUNDER
+	bool "Thunder"
+	help
+	  Use Thunder as cryptography backend.
+
+config BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY_IMPLEMENTATION_OPENSSL
+	bool "OpenSSL"
+	depends on BR2_PACKAGE_OPENSSL
+	help
+	  Use OpenSSL as cryptography backend.
+
+config BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY_IMPLEMENTATION_NEXUS
+	bool "Nexus"
+	depends on BR2_PACKAGE_HAS_NEXUS
+	help
+	  Use Nexus as cryptography backend.
+endchoice
+endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_PROCESSCONTAINERS
     bool "Process Containers"
@@ -154,6 +197,11 @@ config BR2_PACKAGE_WPEFRAMEWORK_PROCESSCONTAINERS_BE_LXC
 config BR2_PACKAGE_WPEFRAMEWORK_PROCESSCONTAINERS_BE_RUNC
     bool "RunC"
     select BR2_PACKAGE_RUNC
+    select BR2_PACKAGE_CGROUPFS_MOUNT
+
+config BR2_PACKAGE_WPEFRAMEWORK_PROCESSCONTAINERS_BE_CRUN
+    bool "CRun"
+    select BR2_PACKAGE_CRUN
     select BR2_PACKAGE_CGROUPFS_MOUNT
 
 endchoice
@@ -189,6 +237,7 @@ endmenu
 menu "Plugins"
 source "package/wpe/wpeframework-plugins/Config.in"
 source "package/wpe/wpeframework-amazon/Config.in"
+source "package/wpe/wpeframework-avs/Config.in"
 source "package/wpe/wpeframework-avnclient/Config.in"
 source "package/wpe/wpeframework-launcher/Config.in"
 source "package/wpe/wpeframework-netflix/Config.in"
