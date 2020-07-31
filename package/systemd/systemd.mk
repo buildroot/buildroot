@@ -213,6 +213,12 @@ else
 SYSTEMD_CONF_OPTS += -Dblkid=false
 endif
 
+ifeq ($(BR2_PACKAGE_UTIL_LINUX_NOLOGIN),y)
+SYSTEMD_CONF_OPTS += -Dnologin-path=/sbin/nologin
+else
+SYSTEMD_CONF_OPTS += -Dnologin-path=/bin/false
+endif
+
 ifeq ($(BR2_PACKAGE_SYSTEMD_INITRD),y)
 SYSTEMD_CONF_OPTS += -Dinitrd=true
 else
