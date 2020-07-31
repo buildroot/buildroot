@@ -54,6 +54,19 @@ config BR2_PACKAGE_REFPOLICY_POLICY_STATE
 	default "enforcing" if BR2_PACKAGE_REFPOLICY_POLICY_STATE_ENFORCING
 	default "disabled" if BR2_PACKAGE_REFPOLICY_POLICY_STATE_DISABLED
 
+config BR2_REFPOLICY_EXTRA_MODULES_DIRS
+	string "Extra modules directories"
+	help
+	  Specify a space-separated list of directories containing
+	  SELinux modules that will be built into the SELinux
+	  policy. The modules will be automatically enabled in the
+	  policy.
+
+	  Each of those directories must contain the SELinux policy
+	  .fc, .if and .te files directly at the top-level, with no
+	  sub-directories. Also, you cannot have several modules with
+	  the same name in different directories.
+
 endif
 
 comment "refpolicy needs a toolchain w/ threads"

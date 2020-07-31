@@ -29,6 +29,13 @@ REFPOLICY_POLICY_VERSION = $(BR2_PACKAGE_LIBSEPOL_POLICY_VERSION)
 REFPOLICY_POLICY_STATE = \
 	$(call qstrip,$(BR2_PACKAGE_REFPOLICY_POLICY_STATE))
 
+# Allow to provide out-of-tree SELinux modules in addition to the ones
+# in the refpolicy.
+REFPOLICY_EXTRA_MODULES_DIRS = $(call qstrip,$(BR2_REFPOLICY_EXTRA_MODULES_DIRS))
+$(foreach dir,$(REFPOLICY_EXTRA_MODULES_DIRS),\
+	$(if $(wildcard $(dir)),,\
+		$(error BR2_REFPOLICY_EXTRA_MODULES_DIRS contains nonexistent directory $(dir))))
+
 REFPOLICY_MODULES = \
 	application \
 	authlogin \
@@ -46,7 +53,21 @@ REFPOLICY_MODULES = \
 	sysnetwork \
 	unconfined \
 	userdomain \
-	$(PACKAGES_SELINUX_MODULES)
+	$(PACKAGES_SELINUX_MODULES) \
+	$(foreach d,$(REFPOLICY_EXTRA_MODULES_DIRS),\
+		$(basename $(notdir $(wildcard $(d)/*.te))))
+
+ifneq ($(REFPOLICY_EXTRA_MODULES_DIRS),)
+define REFPOLICY_COPY_EXTRA_MODULES
+	mkdir -p $(@D)/policy/modules/buildroot
+	rsync -au $(addsuffix /*,$(REFPOLICY_EXTRA_MODULES_DIRS)) \
+		$(@D)/policy/modules/buildroot/
+	if [ ! -f $(@D)/policy/modules/buildroot/metadata.xml ]; then \
+		echo "<summary>Buildroot extra modules</summary>" > \
+			$(@D)/policy/modules/buildroot/metadata.xml; \
+	fi
+endef
+endif
 
 # In the context of a monolithic policy enabling a piece of the policy as
 # 'base' or 'module' is equivalent, so we enable them as 'base'.
@@ -72,6 +93,7 @@ define REFPOLICY_CONFIGURE_CMDS
 endef
 
 define REFPOLICY_BUILD_CMDS
+	$(REFPOLICY_COPY_EXTRA_MODULES)
 	$(REFPOLICY_MAKE) -C $(@D) DESTDIR=$(STAGING_DIR) bare conf
 	$(REFPOLICY_CONFIGURE_MODULES)
 endef
