@@ -67,6 +67,11 @@ config BR2_REFPOLICY_EXTRA_MODULES_DIRS
 	  sub-directories. Also, you cannot have several modules with
 	  the same name in different directories.
 
+config BR2_REFPOLICY_EXTRA_MODULES
+	string "Extra modules to enable"
+	help
+	  List of extra SELinux modules to enable in the refpolicy.
+
 endif
 
 comment "refpolicy needs a toolchain w/ threads"

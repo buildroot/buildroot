@@ -54,6 +54,7 @@ REFPOLICY_MODULES = \
 	unconfined \
 	userdomain \
 	$(PACKAGES_SELINUX_MODULES) \
+	$(call qstrip,$(BR2_REFPOLICY_EXTRA_MODULES)) \
 	$(foreach d,$(REFPOLICY_EXTRA_MODULES_DIRS),\
 		$(basename $(notdir $(wildcard $(d)/*.te))))
 
