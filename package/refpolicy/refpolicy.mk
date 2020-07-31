@@ -29,6 +29,33 @@ REFPOLICY_POLICY_VERSION = $(BR2_PACKAGE_LIBSEPOL_POLICY_VERSION)
 REFPOLICY_POLICY_STATE = \
 	$(call qstrip,$(BR2_PACKAGE_REFPOLICY_POLICY_STATE))
 
+REFPOLICY_MODULES = \
+	application \
+	authlogin \
+	getty \
+	init \
+	libraries \
+	locallogin \
+	logging \
+	miscfiles \
+	modutils \
+	mount \
+	selinuxutil \
+	storage \
+	sysadm \
+	sysnetwork \
+	unconfined \
+	userdomain
+
+# In the context of a monolithic policy enabling a piece of the policy as
+# 'base' or 'module' is equivalent, so we enable them as 'base'.
+define REFPOLICY_CONFIGURE_MODULES
+	$(SED) "s/ = module/ = no/g" $(@D)/policy/modules.conf
+	$(foreach m,$(REFPOLICY_MODULES),
+		$(SED) "/^$(m) =/c\$(m) = base" $(@D)/policy/modules.conf
+	)
+endef
+
 ifeq ($(BR2_INIT_SYSTEMD),y)
 define REFPOLICY_CONFIGURE_SYSTEMD
 	$(SED) "/SYSTEMD/c\SYSTEMD = y" $(@D)/build.conf
@@ -45,6 +72,7 @@ endef
 
 define REFPOLICY_BUILD_CMDS
 	$(REFPOLICY_MAKE) -C $(@D) DESTDIR=$(STAGING_DIR) bare conf
+	$(REFPOLICY_CONFIGURE_MODULES)
 endef
 
 define REFPOLICY_INSTALL_STAGING_CMDS
