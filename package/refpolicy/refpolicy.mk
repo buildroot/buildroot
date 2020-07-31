@@ -45,13 +45,14 @@ REFPOLICY_MODULES = \
 	sysadm \
 	sysnetwork \
 	unconfined \
-	userdomain
+	userdomain \
+	$(PACKAGES_SELINUX_MODULES)
 
 # In the context of a monolithic policy enabling a piece of the policy as
 # 'base' or 'module' is equivalent, so we enable them as 'base'.
 define REFPOLICY_CONFIGURE_MODULES
 	$(SED) "s/ = module/ = no/g" $(@D)/policy/modules.conf
-	$(foreach m,$(REFPOLICY_MODULES),
+	$(foreach m,$(sort $(REFPOLICY_MODULES)),
 		$(SED) "/^$(m) =/c\$(m) = base" $(@D)/policy/modules.conf
 	)
 endef
