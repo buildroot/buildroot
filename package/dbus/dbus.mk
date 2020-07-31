@@ -20,6 +20,8 @@ endef
 
 DBUS_DEPENDENCIES = host-pkgconf expat
 
+DBUS_SELINUX_MODULES = dbus
+
 DBUS_CONF_OPTS = \
 	--with-dbus-user=dbus \
 	--disable-tests \
