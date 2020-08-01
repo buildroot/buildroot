@@ -146,6 +146,24 @@ endif
 
 comment "Legacy options removed in 2020.08"
 
+config BR2_PACKAGE_EFL_GIF
+	bool "efl evas gif loader is mandatory"
+	select BR2_LEGACY
+	help
+	  Since efl 1.23.x, the evas gif loader can't be disabled.
+
+config BR2_PACKAGE_EFL_PNG
+	bool "efl evas png loader is mandatory"
+	select BR2_LEGACY
+	help
+	  Since efl 1.23.x, the evas png loader can't be disabled.
+
+config BR2_PACKAGE_EFL_ELPUT
+	bool "efl elput is enabled by efl drm option"
+	select BR2_LEGACY
+	help
+	  Since efl 1.23.x, the drm option enable the elput library.
+
 config BR2_KERNEL_HEADERS_5_6
 	bool "kernel headers version 5.6.x are no longer supported"
 	select BR2_LEGACY
