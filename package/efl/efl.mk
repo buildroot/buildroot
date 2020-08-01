@@ -28,7 +28,6 @@ EFL_DEPENDENCIES = host-pkgconf host-efl host-luajit dbus freetype \
 # Configure options:
 # elua=true: build elua for the target.
 # sdl=false: disable sdl2 support.
-# xinput22=false: disable X11 XInput v2.2+ support.
 # embedded-lz4=false: use liblz4 from lz4 package.
 # network-backend=none: disable connman networkmanager.
 EFL_CONF_OPTS = \
@@ -43,8 +42,7 @@ EFL_CONF_OPTS = \
 	-Dnetwork-backend=none \
 	-Dpixman=false \
 	-Dsdl=false \
-	-Dvnc-server=false \
-	-Dxinput22=false
+	-Dvnc-server=false
 
 EFL_BINDINGS = luajit
 
@@ -154,7 +152,9 @@ EFL_CONF_OPTS += -Dfb=false
 endif
 
 ifeq ($(BR2_PACKAGE_EFL_X_XLIB),y)
-EFL_CONF_OPTS += -Dx11=true
+EFL_CONF_OPTS += -Dx11=true \
+	-Dxinput2=true \
+	-Dxinput22=true
 
 EFL_DEPENDENCIES += \
 	xlib_libX11 \
