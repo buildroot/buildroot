@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EFL_VERSION = 1.23.2
+EFL_VERSION = 1.24.3
 EFL_SOURCE = efl-$(EFL_VERSION).tar.xz
 EFL_SITE = http://download.enlightenment.org/rel/libs/efl
 EFL_LICENSE = BSD-2-Clause, LGPL-2.1+, GPL-2.0+, FTL, MIT
@@ -35,10 +35,9 @@ EFL_CONF_OPTS = \
 	-Davahi=false \
 	-Dbuild-examples=false \
 	-Dbuild-tests=false \
+	-Ddotnet=false \
 	-Decore-imf-loaders-disabler=ibus,scim,xim \
 	-Delua=true \
-	-Demotion-generic-loaders-disabler=vlc \
-	-Demotion-loaders-disabler=gstreamer,gstreamer1,libvlc,xine \
 	-Dembedded-lz4=false \
 	-Dlua-interpreter=luajit \
 	-Dnetwork-backend=none \
@@ -199,16 +198,15 @@ endif
 
 EFL_DEPENDENCIES += $(if $(BR2_PACKAGE_LIBXKBCOMMON),libxkbcommon)
 
-# Evas loaders are shared by default.
-EFL_CONF_OPTS += -Devas-modules=shared
-
 # json evas loader is disabled by default by upstream.
 # Disable libspectre (ps).
 # Keep all other evas loader enabled or handled below.
 EFL_EVAS_LOADERS_DISABLER = gst json ps
 
 # efl already depends on jpeg.
-ifeq ($(BR2_PACKAGE_EFL_JPEG),)
+ifeq ($(BR2_PACKAGE_EFL_JPEG),y)
+EFL_DEPENDENCIES += openjpeg
+else
 EFL_EVAS_LOADERS_DISABLER += jp2k
 endif
 
@@ -307,14 +305,13 @@ HOST_EFL_CONF_OPTS += \
 	-Dbuild-examples=false \
 	-Dbuild-tests=false \
 	-Dcrypto=openssl \
+	-Ddotnet=false \
 	-Decore-imf-loaders-disabler=ibus,scim,xim \
 	-Dedje-sound-and-video=false \
 	-Deeze=false \
 	-Delogind=false \
 	-Delua=true \
 	-Dembedded-lz4=true \
-	-Demotion-generic-loaders-disabler=vlc \
-	-Demotion-loaders-disabler=gstreamer,gstreamer1,libvlc,xine \
 	-Dfontconfig=false \
 	-Dfribidi=false \
 	-Dglib=true \
