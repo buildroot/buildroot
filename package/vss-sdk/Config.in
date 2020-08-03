@@ -7,11 +7,16 @@ config BR2_PACKAGE_VSS_SDK
 	select BR2_PACKAGE_HAS_PLAYREADY
 	select BR2_PACKAGE_HAS_WIDEVINE
 	select BR2_PACKAGE_HAS_VP9_DECODER
-	select BR2_PACKAGE_HAS_NEXUS_SAGE
 	help
 	  Pre-compiled binaries for a platform
 
 if BR2_PACKAGE_VSS_SDK
+
+config BR2_PACKAGE_VSS_SDK_USE_SAGE
+	bool "use sage"
+	select BR2_PACKAGE_HAS_NEXUS_SAGE
+	help
+	  If the SAGE processor should be used in this build
 
 config BR2_PACKAGE_VSS_SDK_MOVE_GSTREAMER
 	bool "move g-streamer"
