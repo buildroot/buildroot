@@ -1,0 +1,21 @@
+diff --git a/WebKitBrowser/WebKitImplementation.cpp b/WebKitBrowser/WebKitImplementation.cpp
+index 89b3f2b..4ced5a9 100644
+--- a/WebKitBrowser/WebKitImplementation.cpp
++++ b/WebKitBrowser/WebKitImplementation.cpp
+@@ -1772,6 +1772,7 @@ static GSourceFuncs _handlerIntervention =
+             // Turn on/off local storage
+             WKPreferencesSetLocalStorageEnabled(preferences, _localStorageEnabled);
+ 
++#ifdef DISABLE_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT
+             // Media Content Types Requiring Hardware Support
+             if (_config.MediaContentTypesRequiringHardwareSupport.IsSet() == true
+                 && _config.MediaContentTypesRequiringHardwareSupport.Value().empty() == false) {
+@@ -1780,7 +1781,7 @@ static GSourceFuncs _handlerIntervention =
+               WKPreferencesSetMediaContentTypesRequiringHardwareSupport(preferences, contentTypes);
+               WKRelease(contentTypes);
+             }
+-
++#endif
+             WKPageGroupSetPreferences(pageGroup, preferences);
+ 
+             auto pageConfiguration = WKPageConfigurationCreate();
