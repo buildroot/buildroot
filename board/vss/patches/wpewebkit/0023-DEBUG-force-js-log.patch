@@ -1,0 +1,13 @@
+diff --git a/Source/WebKit/UIProcess/API/C/WKPreferences.cpp b/Source/WebKit/UIProcess/API/C/WKPreferences.cpp
+index 1e151d8..e92afec 100644
+--- a/Source/WebKit/UIProcess/API/C/WKPreferences.cpp
++++ b/Source/WebKit/UIProcess/API/C/WKPreferences.cpp
+@@ -1231,7 +1231,7 @@ bool WKPreferencesGetQTKitEnabled(WKPreferencesRef preferencesRef)
+
+ void WKPreferencesSetLogsPageMessagesToSystemConsoleEnabled(WKPreferencesRef preferencesRef, bool enabled)
+ {
+-    toImpl(preferencesRef)->setLogsPageMessagesToSystemConsoleEnabled(enabled);
++    toImpl(preferencesRef)->setLogsPageMessagesToSystemConsoleEnabled(true);
+ }
+
+ bool WKPreferencesGetLogsPageMessagesToSystemConsoleEnabled(WKPreferencesRef preferencesRef)

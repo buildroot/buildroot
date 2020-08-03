@@ -1,0 +1,65 @@
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp
+index f9dfba3..9c8a29d 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp
+@@ -272,6 +272,9 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
+     : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
+     , m_player(player)
+     , m_fpsSink(nullptr)
++#if PLATFORM(BCM_NEXUS)
++    , m_videoBcmSink(nullptr)
++#endif
+     , m_readyState(MediaPlayer::HaveNothing)
+     , m_networkState(MediaPlayer::Empty)
+     , m_isEndReached(false)
+@@ -1274,10 +1277,14 @@ unsigned MediaPlayerPrivateGStreamerBase::decodedFrameCount() const
+         GST_DEBUG("frames decoded: %llu",  decodedFrames);
+     }
+ #if PLATFORM(BCM_NEXUS)
+-    GstElement* videoSink = nullptr;
+-    videoSink = findVideoSink(m_pipeline.get());
+-    if (videoSink) {
+-        g_object_get(videoSink, "frames-rendered", &decodedFrames, nullptr);
++    
++    if (!m_videoBcmSink) {
++        GstElement* videoSink = nullptr;
++        videoSink = findVideoSink(m_pipeline.get());
++        if (videoSink)
++            m_videoBcmSink = videoSink;
++    } else {
++        g_object_get(m_videoBcmSink, "frames-rendered", &decodedFrames, nullptr);
+         GST_DEBUG("frames decoded: %llu",  decodedFrames);
+     }
+ #endif
+@@ -1291,10 +1298,13 @@ unsigned MediaPlayerPrivateGStreamerBase::droppedFrameCount() const
+         g_object_get(m_fpsSink.get(), "frames-dropped", &framesDropped, nullptr);
+ 
+ #if PLATFORM(BCM_NEXUS)
+-    GstElement* videoSink = nullptr;
+-    videoSink = findVideoSink(m_pipeline.get());
+-    if (videoSink) {
+-        g_object_get(videoSink, "frames-dropped", &framesDropped, nullptr);
++    if (!m_videoBcmSink) {
++        GstElement* videoSink = nullptr;
++        videoSink = findVideoSink(m_pipeline.get());
++        if (videoSink)
++            m_videoBcmSink = videoSink;
++    } else {
++        g_object_get(m_videoBcmSink, "frames-dropped", &framesDropped, nullptr);
+         GST_DEBUG("frames dropped: %llu",  framesDropped);
+     }
+ #endif
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h
+index 661ecfa..82f1030 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h
+@@ -240,6 +240,9 @@ protected:
+     GRefPtr<GstElement> m_pipeline;
+     GRefPtr<GstStreamVolume> m_volumeElement;
+     GRefPtr<GstElement> m_videoSink;
++#if PLATFORM(BCM_NEXUS)
++    mutable GstElement *m_videoBcmSink;
++#endif
+     GRefPtr<GstElement> m_fpsSink;
+     MediaPlayer::ReadyState m_readyState;
+     mutable MediaPlayer::NetworkState m_networkState;
