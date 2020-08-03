@@ -20,8 +20,7 @@ SYSDIG_DEPENDENCIES = \
 	luainterpreter \
 	ncurses \
 	openssl \
-	zlib \
-
+	zlib
 
 # sysdig creates the module Makefile from a template, which contains a
 # single place-holder, KBUILD_FLAGS, wich is only replaced with two
