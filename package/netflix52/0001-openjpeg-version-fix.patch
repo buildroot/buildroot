@@ -1,0 +1,12 @@
+diff -ruN netflix52.orig/netflix/src/platform/gibbon/decoders/decoders.cmake netflix52/netflix/src/platform/gibbon/decoders/decoders.cmake
+--- netflix52.orig/netflix/src/platform/gibbon/decoders/decoders.cmake	2020-07-16 17:43:01.000000000 +0530
++++ netflix52/netflix/src/platform/gibbon/decoders/decoders.cmake	2020-08-05 16:39:28.952972950 +0530
+@@ -42,7 +42,7 @@
+ 
+ # -----------------------------------------------------------------------------------------------------------
+ # j2k
+-find_toolchain_library(LIBRARY openjp2 HEADER openjpeg.h DIRECTORY openjpeg-2 VARIABLE J2K)
++find_toolchain_library(LIBRARY openjp2 HEADER openjpeg.h DIRECTORY openjpeg-2.3 VARIABLE J2K)
+ if(GIBBON_IMAGE_J2K STREQUAL AUTO)
+     if(J2K_FOUND)
+         message(STATUS "Found: libopenjeg")
