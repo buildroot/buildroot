@@ -84,6 +84,22 @@ handle_err() {
 	exit $1
 }
 
+cat_file() {
+	if [ -x /usr/bin/pv ] ; then
+		/usr/bin/pv -p $*
+	else
+		cat $*
+	fi
+}
+
+cat_file_size() {
+	if [ -x /usr/bin/pv ] ; then
+		/usr/bin/pv -p -s $1
+	else
+		cat
+	fi
+}
+
 mkdir -p $MNT
 
 # If possible, try to run the od-update script from the new rootfs
@@ -109,13 +125,13 @@ mount -o remount,rw $MNT
 
 if [ -r $ROOTFS ] ; then
 	echo "Updating rootfs..."
-	pv -p $ROOTFS > $MNT/new-rootfs.squashfs
+	cat_file $ROOTFS > $MNT/new-rootfs.squashfs
 	[ $? -ne 0 ] && handle_err 2
 fi
 
 if [ -r $MININIT ] ; then
 	echo -e "\nUpdating mininit..."
-	pv -p $MININIT > $MNT/mininit-syspart-new
+	cat_file $MININIT > $MNT/mininit-syspart-new
 	[ $? -ne 0 ] && handle_err 3
 
 	chmod +x $MNT/mininit-syspart-new
@@ -133,9 +149,9 @@ if [ -r $KERNEL ] ; then
 			VOLUME_ID=$(expr 1 - $VOLUME_ID)
 		fi
 
-		pv -p $KERNEL $DEVICETREE | ubiupdatevol /dev/ubi0_$VOLUME_ID -s $(expr $KERNEL_SIZE + $DTB_SIZE) -
+		cat_file $KERNEL $DEVICETREE | ubiupdatevol /dev/ubi0_$VOLUME_ID -s $(expr $KERNEL_SIZE + $DTB_SIZE) -
 	else
-		pv -p $KERNEL $DEVICETREE > $MNT/new_uzImage.bin
+		cat_file $KERNEL $DEVICETREE > $MNT/new_uzImage.bin
 	fi
 
 	[ $? -ne 0 ] && handle_err 4
@@ -143,7 +159,7 @@ fi
 
 if [ -r $MODULES_FS ] ; then
 	echo -e "\nInstalling updated modules..."
-	pv -p $MODULES_FS > $MNT/new-modules.squashfs
+	cat_file $MODULES_FS > $MNT/new-modules.squashfs
 	[ $? -ne 0 ] && handle_err 5
 fi
 
@@ -154,7 +170,7 @@ if [ -r $BOOTLD ] ; then
 		flash_erase $SYSDEV 0 1 >/dev/null 2>&1
 		[ $? -ne 0 ] && handle_err 6
 
-		pv -p $BOOTLD | nandwrite -q -p $SYSDEV -
+		cat_file $BOOTLD | nandwrite -q -p $SYSDEV -
 	else
 		dd if=$BOOTLD of=$SYSDEV bs=512 seek=1 count=16 conv=notrunc 2>/dev/null
 	fi
@@ -170,7 +186,7 @@ echo 3 > /proc/sys/vm/drop_caches
 
 if [ -r $ROOTFS -a -r ${ROOTFS}.sha1 ] ; then
 	echo -e "\nVerifying rootfs..."
-	ROOTFS_SHA1=$(pv -p $MNT/new-rootfs.squashfs |sha1sum |cut -d' ' -f1)
+	ROOTFS_SHA1=$(cat_file $MNT/new-rootfs.squashfs |sha1sum |cut -d' ' -f1)
 
 	if [ "$ROOTFS_SHA1" != "$(cat ${ROOTFS}.sha1)" ] ; then
 		handle_err 7
@@ -179,7 +195,7 @@ fi
 
 if [ -r $MININIT -a -r ${MININIT}.sha1 ] ; then
 	echo -e "\nVerifying mininit..."
-	MININIT_SHA1=$(pv -p $MNT/mininit-syspart-new |sha1sum |cut -d' ' -f1)
+	MININIT_SHA1=$(cat_file $MNT/mininit-syspart-new |sha1sum |cut -d' ' -f1)
 
 	if [ "$MININIT_SHA1" != "$(cat ${MININIT}.sha1)" ] ; then
 		handle_err 8
@@ -196,12 +212,12 @@ if [ -r $KERNEL -a -r ${KERNEL}.sha1 ] ; then
 	if [ "$INSTALL_ON_NAND" ] ; then
 		KERNEL_SHA1=$( ( dd if=/dev/ubi0_$VOLUME_ID ibs=$BLOCK_SIZE count=$NB_BLOCKS ; \
 			dd if=/dev/ubi0_$VOLUME_ID ibs=1 skip=$(expr $KERNEL_SIZE - $LEFTOVER) count=$LEFTOVER) 2>/dev/null \
-			| pv -p -s $KERNEL_SIZE |sha1sum |cut -d' ' -f1 \
+			| cat_file_size $KERNEL_SIZE |sha1sum |cut -d' ' -f1 \
 		)
 	else
 		KERNEL_SHA1=$( ( dd if=$MNT/new_uzImage.bin ibs=$BLOCK_SIZE count=$NB_BLOCKS ; \
 			dd if=$MNT/new_uzImage.bin ibs=1 skip=$(expr $KERNEL_SIZE - $LEFTOVER) count=$LEFTOVER) 2>/dev/null \
-			| pv -p -s $KERNEL_SIZE |sha1sum |cut -d' ' -f1 \
+			| cat_file_size $KERNEL_SIZE |sha1sum |cut -d' ' -f1 \
 		)
 	fi
 
@@ -232,9 +248,9 @@ if [ -r $BOOTLD -a -r ${BOOTLD}.sha1 ] ; then
 	BOOTLD_SIZE=$(wc -c $BOOTLD |cut -d' ' -f1)
 
 	if [ "$INSTALL_ON_NAND" ] ; then
-		BOOTLD_SHA1=$(nanddump -q -l $BOOTLD_SIZE $SYSDEV |pv -p -s $BOOTLD_SIZE |sha1sum |cut -d' ' -f1)
+		BOOTLD_SHA1=$(nanddump -q -l $BOOTLD_SIZE $SYSDEV | cat_file_size $BOOTLD_SIZE |sha1sum |cut -d' ' -f1)
 	else
-		BOOTLD_SHA1=$(dd if=$SYSDEV ibs=1 skip=512 count=$BOOTLD_SIZE 2>/dev/null |pv -p -s $BOOTLD_SIZE |sha1sum |cut -d' ' -f1)
+		BOOTLD_SHA1=$(dd if=$SYSDEV ibs=1 skip=512 count=$BOOTLD_SIZE 2>/dev/null | cat_file_size $BOOTLD_SIZE |sha1sum |cut -d' ' -f1)
 	fi
 
 	if [ "$BOOTLD_SHA1" != "$(cat ${BOOTLD}.sha1)" ] ; then
