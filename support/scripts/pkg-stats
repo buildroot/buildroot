@@ -498,20 +498,31 @@ def package_init_make_info():
             Package.all_ignored_cves[pkgvar] = value.split()
 
 
-async def check_url_status(session, pkg, retry=True):
+check_url_count = 0
+
+
+async def check_url_status(session, pkg, npkgs, retry=True):
+    global check_url_count
+
     try:
         async with session.get(pkg.url) as resp:
             if resp.status >= 400:
                 pkg.status['url'] = ("error", "invalid {}".format(resp.status))
+                check_url_count += 1
+                print("[%04d/%04d] %s" % (check_url_count, npkgs, pkg.name))
                 return
     except (aiohttp.ClientError, asyncio.TimeoutError):
         if retry:
-            return await check_url_status(session, pkg, retry=False)
+            return await check_url_status(session, pkg, npkgs, retry=False)
         else:
             pkg.status['url'] = ("error", "invalid (err)")
+            check_url_count += 1
+            print("[%04d/%04d] %s" % (check_url_count, npkgs, pkg.name))
             return
 
     pkg.status['url'] = ("ok", "valid")
+    check_url_count += 1
+    print("[%04d/%04d] %s" % (check_url_count, npkgs, pkg.name))
 
 
 async def check_package_urls(packages):
@@ -520,7 +531,7 @@ async def check_package_urls(packages):
     async with aiohttp.ClientSession(connector=connector, trust_env=True) as sess:
         packages = [p for p in packages if p.status['url'][0] == 'ok']
         for pkg in packages:
-            tasks.append(check_url_status(sess, pkg))
+            tasks.append(check_url_status(sess, pkg, len(packages)))
         await asyncio.wait(tasks)
 
 
@@ -592,17 +603,27 @@ async def check_package_get_latest_version_by_guess(session, pkg, retry=True):
             return False
 
 
-async def check_package_latest_version_get(session, pkg):
+check_latest_count = 0
+
+
+async def check_package_latest_version_get(session, pkg, npkgs):
+    global check_latest_count
 
     if await check_package_get_latest_version_by_distro(session, pkg):
+        check_latest_count += 1
+        print("[%04d/%04d] %s" % (check_latest_count, npkgs, pkg.name))
         return
 
     if await check_package_get_latest_version_by_guess(session, pkg):
+        check_latest_count += 1
+        print("[%04d/%04d] %s" % (check_latest_count, npkgs, pkg.name))
         return
 
     check_package_latest_version_set_status(pkg,
                                             RM_API_STATUS_NOT_FOUND,
                                             None, None)
+    check_latest_count += 1
+    print("[%04d/%04d] %s" % (check_latest_count, npkgs, pkg.name))
 
 
 async def check_package_latest_version(packages):
@@ -628,7 +649,7 @@ async def check_package_latest_version(packages):
     async with aiohttp.ClientSession(connector=connector, trust_env=True) as sess:
         packages = [p for p in packages if p.has_valid_infra]
         for pkg in packages:
-            tasks.append(check_package_latest_version_get(sess, pkg))
+            tasks.append(check_package_latest_version_get(sess, pkg, len(packages)))
         await asyncio.wait(tasks)
 
 
