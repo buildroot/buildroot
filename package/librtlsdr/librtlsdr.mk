@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBRTLSDR_VERSION = d794155ba65796a76cd0a436f9709f4601509320
+LIBRTLSDR_VERSION = ed0317e6a58c098874ac58b769cf2e609c18d9a5
 LIBRTLSDR_SITE = $(call github,steve-m,librtlsdr,$(LIBRTLSDR_VERSION))
 LIBRTLSDR_LICENSE = GPL-2.0+
 LIBRTLSDR_LICENSE_FILES = COPYING
