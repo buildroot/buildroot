@@ -13,4 +13,3 @@ PYTHON_DECORATOR_LICENSE_FILES = LICENSE.txt
 PYTHON_DECORATOR_SETUP_TYPE = setuptools
 
 $(eval $(python-package))
-$(eval $(host-python-package))
