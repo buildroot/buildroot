@@ -23,6 +23,9 @@ GHOSTSCRIPT_DEPENDENCIES = \
 	libpng \
 	tiff
 
+# 0002-Bug-702582-CVE-2020-15900-Memory-Corruption-in-Ghostscript-9-52.patch
+GHOSTSCRIPT_IGNORE_CVES += CVE-2020-15900
+
 # Ghostscript includes (old) copies of several libraries, delete them.
 # Inspired by linuxfromscratch:
 # http://www.linuxfromscratch.org/blfs/view/svn/pst/gs.html
