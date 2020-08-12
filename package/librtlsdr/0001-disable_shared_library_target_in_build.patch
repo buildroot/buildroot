@@ -1,4 +1,4 @@
-From c8878472bf84c656979ea1d07e7ed55b0aa2c939 Mon Sep 17 00:00:00 2001
+From 9a1c2587d4ef18e2026811deabd024eb7577d9ce Mon Sep 17 00:00:00 2001
 From: Gwenhael Goavec-Merou <gwenhael.goavec-merou@trabucayre.com>
 Date: Fri, 15 May 2020 16:14:48 +0200
 Subject: [PATCH] disable shared library target in build
@@ -19,12 +19,13 @@ will be install.
 Signed-off-by: Yuvaraj Patil <yuvaraj.patil@wipro.com>
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Signed-off-by: Gwenhael Goavec-Merou <gwenhael.goavec-merou@trabucayre.com>
+Signed-off-by: Titouan Christophe <titouan.christophe@railnova.eu>
 ---
  src/CMakeLists.txt | 30 +++++++++++++++++++++---------
  1 file changed, 21 insertions(+), 9 deletions(-)
 
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 33faee7..d82fc87 100644
+index de93044..13b7b1a 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -18,6 +18,8 @@
@@ -121,9 +122,9 @@ index 33faee7..d82fc87 100644
    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} # .so/.dylib file
    )
 +endif()
- install(TARGETS rtl_sdr rtl_tcp rtl_test rtl_fm rtl_eeprom rtl_adsb rtl_power
+ install(TARGETS rtl_sdr rtl_tcp rtl_test rtl_fm rtl_eeprom rtl_adsb rtl_power rtl_biast
    DESTINATION ${CMAKE_INSTALL_BINDIR}
    )
 -- 
-2.26.2
+2.25.3
 
