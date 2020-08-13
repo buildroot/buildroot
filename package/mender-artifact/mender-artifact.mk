@@ -31,6 +31,14 @@ HOST_MENDER_ARTIFACT_LICENSE_FILES = \
 
 HOST_MENDER_ARTIFACT_DEPENDENCIES = host-xz
 
+# By default, go will attempt to download needed modules before building, which
+# is not desirable. This behavior also causes permission issues when cleaning,
+# as go downloads modules as read-only by default. Because mender-artifact
+# includes the modules in the vendor directory, mod=vendor prevents the package
+# from downloading the go modules during the build process and prevents
+# permission issues when cleaning.
+HOST_MENDER_ARTIFACT_GO_ENV = GOFLAGS="-mod=vendor"
+
 HOST_MENDER_ARTIFACT_LDFLAGS = -X main.Version=$(HOST_MENDER_ARTIFACT_VERSION)
 
 HOST_MENDER_ARTIFACT_BUILD_TARGETS = cli/mender-artifact
