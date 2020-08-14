@@ -180,6 +180,13 @@ else
 MPD_CONF_OPTS += -Dmad=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_MPD_MODPLUG),y)
+MPD_DEPENDENCIES += libmodplug
+MPD_CONF_OPTS += -Dmodplug=enabled
+else
+MPD_CONF_OPTS += -Dmodplug=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_MPD_MPG123),y)
 MPD_DEPENDENCIES += libid3tag mpg123
 MPD_CONF_OPTS += -Dmpg123=enabled

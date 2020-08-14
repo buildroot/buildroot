@@ -140,6 +140,12 @@ config BR2_PACKAGE_MPD_MAD
 	  Enable mad input support.
 	  Select this if you want to play back MP3 files.
 
+config BR2_PACKAGE_MPD_MODPLUG
+	bool "modplug"
+	select BR2_PACKAGE_LIBMODPLUG
+	help
+	  Enable Modplug decoder support.
+
 config BR2_PACKAGE_MPD_MPG123
 	bool "mpg123"
 	select BR2_PACKAGE_LIBID3TAG
