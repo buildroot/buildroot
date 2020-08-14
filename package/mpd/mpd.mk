@@ -200,6 +200,13 @@ else
 MPD_CONF_OPTS += -Dneighbor=false
 endif
 
+ifeq ($(BR2_PACKAGE_MPD_OPENAL),y)
+MPD_DEPENDENCIES += openal
+MPD_CONF_OPTS += -Dopenal=enabled
+else
+MPD_CONF_OPTS += -Dopenal=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_MPD_OPUS),y)
 MPD_DEPENDENCIES += opus libogg
 MPD_CONF_OPTS += -Dopus=enabled
