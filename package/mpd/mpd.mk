@@ -110,6 +110,13 @@ else
 MPD_CONF_OPTS += -Dhttpd=false
 endif
 
+ifeq ($(BR2_PACKAGE_MPD_ID3TAG),y)
+MPD_DEPENDENCIES += libid3tag
+MPD_CONF_OPTS += -Did3tag=enabled
+else
+MPD_CONF_OPTS += -Did3tag=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_MPD_JACK2),y)
 MPD_DEPENDENCIES += jack2
 MPD_CONF_OPTS += -Djack=enabled

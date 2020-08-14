@@ -395,6 +395,14 @@ config BR2_PACKAGE_MPD_UPNP
 	help
 	  Enable MPD UPnP client support.
 
+comment "Tag plugins"
+
+config BR2_PACKAGE_MPD_ID3TAG
+	bool "id3tag"
+	select BR2_PACKAGE_LIBID3TAG
+	help
+	  Enable ID3 support.
+
 endif
 
 comment "mpd needs a toolchain w/ C++, threads, wchar, gcc >= 6"
