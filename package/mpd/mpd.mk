@@ -317,6 +317,13 @@ else
 MPD_CONF_OPTS += -Dwavpack=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_MPD_ZZIP),y)
+MPD_DEPENDENCIES += zziplib
+MPD_CONF_OPTS += -Dzzip=enabled
+else
+MPD_CONF_OPTS += -Dzzip=disabled
+endif
+
 define MPD_INSTALL_EXTRA_FILES
 	$(INSTALL) -m 0644 -D package/mpd/mpd.conf $(TARGET_DIR)/etc/mpd.conf
 endef

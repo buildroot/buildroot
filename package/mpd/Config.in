@@ -34,6 +34,12 @@ config BR2_PACKAGE_MPD_SQLITE
 	  Enable sqlite database support.
 	  If you don't use sqlite it will use an ASCII database.
 
+config BR2_PACKAGE_MPD_ZZIP
+	bool "zzip"
+	select BR2_PACKAGE_ZZIPLIB
+	help
+	  Enable ZIP archive support.
+
 comment "Commercial services"
 
 config BR2_PACKAGE_MPD_QOBUZ
