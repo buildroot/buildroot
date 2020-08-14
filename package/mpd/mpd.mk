@@ -241,6 +241,13 @@ else
 MPD_CONF_OPTS += -Dshout=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_MPD_SIDPLAY),y)
+MPD_DEPENDENCIES += libsidplay2
+MPD_CONF_OPTS += -Dsidplay=enabled
+else
+MPD_CONF_OPTS += -Dsidplay=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_MPD_SOUNDCLOUD),y)
 MPD_DEPENDENCIES += yajl
 MPD_CONF_OPTS += -Dsoundcloud=enabled
