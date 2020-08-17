@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2020.08"
 
+config BR2_GDB_VERSION_8_1
+	bool "gdb 8.1.x has been removed"
+	select BR2_LEGACY
+	help
+	  The 8.1.x version of gdb has been removed. Use a newer
+	  version instead.
+
 config BR2_PACKAGE_EFL_GIF
 	bool "efl evas gif loader is mandatory"
 	select BR2_LEGACY
