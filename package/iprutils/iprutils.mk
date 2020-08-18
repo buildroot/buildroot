@@ -10,5 +10,7 @@ IPRUTILS_SITE = https://downloads.sourceforge.net/project/iprdd/iprutils%20for%2
 IPRUTILS_DEPENDENCIES = ncurses libsysfs pciutils zlib
 IPRUTILS_LICENSE = Common Public License Version 1.0
 IPRUTILS_LICENSE_FILES = LICENSE
+# We"re patching configure.ac
+IPRUTILS_AUTORECONF = YES
 
 $(eval $(autotools-package))
