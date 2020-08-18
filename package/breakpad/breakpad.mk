@@ -13,7 +13,7 @@ define BREAKPAD_SETUP_SOURCE
         if [ ! -d "$(@D)/src/third_party" ]; then \
 		mkdir -p $(@D)/src/third_party; \
         fi; \
-	if [ -d "$(STAGING_DIR)/usr/include/third_party/lss" ] ; then \
+	if [ -d "$(STAGING_DIR)/usr/include/third_party/lss" ] && [ ! -e "$(@D)/src/third_party/lss" ] ; then \
 		ln -s $(STAGING_DIR)/usr/include/third_party/lss $(@D)/src/third_party/lss; \
 	fi
 endef
