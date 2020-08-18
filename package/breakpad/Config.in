@@ -1,0 +1,12 @@
+config BR2_PACKAGE_BREAKPAD
+	bool "breakpad"
+	select BR2_PACKAGE_GYP
+	select BR2_PACKAGE_GTEST
+	select BR2_PACKAGE_PROTOBUF
+	select BR2_PACKAGE_LSS
+	help
+	  Breakpad is a library and tool suite that allows you to distribute
+	  an application to users with compiler-provided debuuging information
+	  removed, record crashes in compact \"minidump\" files, send them back
+	  to your server, and produce C and C++ stack traces from these minidumps.
+	  https://bugs.chromium.org/p/google-breakpad
