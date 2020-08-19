@@ -23,7 +23,7 @@ EFL_LICENSE_FILES = \
 EFL_INSTALL_STAGING = YES
 
 EFL_DEPENDENCIES = host-pkgconf host-efl host-luajit dbus freetype \
-	giflib jpeg libpng luajit lz4 zlib
+	giflib jpeg libpng luajit lz4 zlib $(TARGET_NLS_DEPENDENCIES)
 
 # Configure options:
 # elua=true: build elua for the target.
@@ -45,6 +45,12 @@ EFL_CONF_OPTS = \
 	-Dpixman=false \
 	-Dsdl=false \
 	-Dvnc-server=false
+
+ifeq ($(BR2_SYSTEM_ENABLE_NLS),y)
+EFL_CONF_OPTS += -Dnls=true
+else
+EFL_CONF_OPTS += -Dnls=false
+endif
 
 EFL_BINDINGS = luajit
 
