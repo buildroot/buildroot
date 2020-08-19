@@ -1,0 +1,12 @@
+diff -ruN wpeframework-rdkservices.orig/CMakeLists.txt wpeframework-rdkservices/CMakeLists.txt
+--- wpeframework-rdkservices.orig/CMakeLists.txt	2020-08-18 18:24:13.045349426 +0530
++++ wpeframework-rdkservices/CMakeLists.txt	2020-08-18 18:23:26.896163131 +0530
+@@ -23,7 +23,7 @@
+ # are located in the cmake directory. Include it in the search.
+ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
+ 
+-include(services.cmake)
++# include(services.cmake)
+ 
+ option(PLUGIN_PACKAGER "Include Packager plugin" OFF)
+ option(PLUGIN_DISPLAYSETTINGS "Include DisplaySettings plugin" ON)

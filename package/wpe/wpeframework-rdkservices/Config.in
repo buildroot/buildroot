@@ -1,0 +1,8 @@
+config BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
+    bool
+
+config BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES_DEVICEINFO
+    select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
+    bool "DeviceInfo"
+    help
+      DeviceInfo Plugin
