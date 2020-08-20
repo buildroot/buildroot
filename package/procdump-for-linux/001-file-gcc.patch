@@ -1,0 +1,11 @@
+diff --git a/Makefile b/Makefile
+index b65d23e..5c6cea7 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,5 +1,5 @@
+ ROOT=.
+-CC=gcc
++CC=$(CROSS_COMPILE)gcc
+ CFLAGS ?= -Wall
+ CCFLAGS=$(CFLAGS) -I ./include -pthread -std=gnu99
+ LIBDIR=lib
