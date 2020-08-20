@@ -259,7 +259,7 @@ endif
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     bool "DeviceInfo"
     default y
     help
@@ -456,7 +456,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_MESSENGER
       Messenger Plugin
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_MONITOR
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     bool "Monitor"
     help
       Monitor Plugin
