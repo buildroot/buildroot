@@ -434,7 +434,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_INPUTSWITCH
       InputSwitch Plugin.
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     bool "LocationSync"
     help
       LocationSync Plugin
@@ -893,7 +893,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_TUNER
       Tuner Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_TRACECONTROL
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     bool "TraceControl"
     help
       TraceControl Plugin
