@@ -18,7 +18,9 @@ GSTREAMER1_EDITING_SERVICES_DEPENDENCIES = \
 	$(if $(BR2_PACKAGE_GST1_VALIDATE),gst1-validate) \
 	libxml2
 
-GSTREAMER1_EDITING_SERVICES_CONF_OPTS = --disable-benchmarks
+GSTREAMER1_EDITING_SERVICES_CONF_OPTS = \
+	--disable-benchmarks \
+	--disable-introspection
 
 # examples need GTK2/3 with X11 backend
 ifneq ($(BR2_PACKAGE_LIBGTK2)$(BR2_PACKAGE_LIBGTK3_X11),)
