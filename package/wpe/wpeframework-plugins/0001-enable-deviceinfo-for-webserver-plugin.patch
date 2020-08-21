@@ -1,0 +1,9 @@
+diff -ruN wpeframework-plugins.orig/WebServer/WebServer.config wpeframework-plugins/WebServer/WebServer.config
+--- wpeframework-plugins.orig/WebServer/WebServer.config	2020-08-14 20:41:04.000000000 +0530
++++ wpeframework-plugins/WebServer/WebServer.config	2020-08-21 13:39:46.646260260 +0530
+@@ -1,4 +1,4 @@
+-option(PLUGIN_WEBSERVER_PROXY_DEVICEINFO "Enable proxy for DeviceInfo" ${PLUGIN_DEVICEINFO})
++option(PLUGIN_WEBSERVER_PROXY_DEVICEINFO "Enable proxy for DeviceInfo" ${ENABLE_DEVICE_INFO})
+ option(PLUGIN_WEBSERVER_PROXY_DIALSERVER "Enable proxy for DIALServer" ${PLUGIN_DIALSERVER})
+ 
+ set (autostart true)
