@@ -198,6 +198,9 @@ endif
 ifeq ($(BR2_PACKAGE_LIBCURL),y)
 COLLECTD_CONF_OPTS += --with-libcurl=$(STAGING_DIR)/usr
 endif
+ifeq ($(BR2_PACKAGE_LUAJIT),y)
+COLLECTD_CONF_ENV += LIBLUA_PKG_CONFIG_NAME=luajit
+endif
 ifeq ($(BR2_PACKAGE_MYSQL),y)
 COLLECTD_CONF_OPTS += --with-libmysql=$(STAGING_DIR)/usr
 endif
