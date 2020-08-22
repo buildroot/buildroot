@@ -364,6 +364,17 @@ config BR2_PACKAGE_COLLECTD_NTPD
 	help
 	  Queries an NTP server and extracts parameters.
 
+config BR2_PACKAGE_COLLECTD_NUT
+	bool "nut"
+	depends on BR2_INSTALL_LIBSTDCPP
+	select BR2_PACKAGE_NUT
+	help
+	  The NUT plugin collects uninterruptible power supply (UPS)
+	  statistics using the Network UPS Tools (NUT).
+
+comment "nut needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP
+
 config BR2_PACKAGE_COLLECTD_OLSRD
 	bool "olsrd"
 	help
