@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2020.08"
 
+config BR2_PACKAGE_PHP_EXT_HASH
+	bool "php hash extension is mandatory"
+	select BR2_LEGACY
+	help
+	  Since php 7.4.0, hash extension can't be disabled.
+
 config BR2_PACKAGE_EFL_GIF
 	bool "efl evas gif loader is mandatory"
 	select BR2_LEGACY

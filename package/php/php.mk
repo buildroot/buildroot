@@ -97,7 +97,6 @@ PHP_CONF_OPTS += \
 	$(if $(BR2_PACKAGE_PHP_EXT_SOCKETS),--enable-sockets) \
 	$(if $(BR2_PACKAGE_PHP_EXT_POSIX),--enable-posix) \
 	$(if $(BR2_PACKAGE_PHP_EXT_SESSION),--enable-session) \
-	$(if $(BR2_PACKAGE_PHP_EXT_HASH),--enable-hash) \
 	$(if $(BR2_PACKAGE_PHP_EXT_DOM),--enable-dom) \
 	$(if $(BR2_PACKAGE_PHP_EXT_SIMPLEXML),--enable-simplexml) \
 	$(if $(BR2_PACKAGE_PHP_EXT_SOAP),--enable-soap) \
