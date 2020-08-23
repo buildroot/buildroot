@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# Reset the console
+/usr/bin/reset
+
+# Stop the gravity sensor if it's loaded
+if [ -x /usr/sbin/gsensor ] ; then
+	/usr/sbin/gsensor --stop
+fi
+
+# Check that the screen is available. If not, wait until the
+# user presses START/ENTER in the VT console.
+while /bin/true; do
+	fuser /dev/dri/by-path/platform-13050000.lcd-controller-card >/dev/null
+	[ $? -eq 1 ] && break
+	read
+done
+
+# Reset clock frequency to the default one
+if [ -r /var/tmp/boot_cpu_freq ] ; then
+	cat /var/tmp/boot_cpu_freq > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
+fi
+
+if [ -x ~/.autostart ]; then
+	exec ~/.autostart
+else
+	exec /usr/bin/gmenu2x
+fi

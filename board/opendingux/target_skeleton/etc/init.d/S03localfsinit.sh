@@ -21,3 +21,7 @@ if [ "x$CHOWN_HOME" != "xno" ] ; then
 	echo 'CHOWN_HOME=no' > /usr/local/etc/localfsinit.conf
 	chown -R od:users /usr/local/home /media/data/apps 2>/dev/null
 fi
+
+if [ -r /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq ] ; then
+	cp /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq /var/tmp/boot_cpu_freq
+fi
