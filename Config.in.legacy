@@ -146,6 +146,17 @@ endif
 
 comment "Legacy options removed in 2020.08"
 
+config BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_AMD64
+	bool "toolchain-external-codesourcery-amd64 removed"
+	select BR2_LEGACY
+	help
+	  The CodeSourcery toolchain for AMD64, in version 2016.11 was
+	  dropped, due to it using a too old gcc 6.2.0 compiler which
+	  caused issues compiling a number of recent packages
+	  (e.g. Boost). CodeSourcery has stopped making newer versions
+	  of this toolchain publicly available, so it was not possible
+	  to update it.
+
 config BR2_KERNEL_HEADERS_5_6
 	bool "kernel headers version 5.6.x are no longer supported"
 	select BR2_LEGACY
