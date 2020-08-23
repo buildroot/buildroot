@@ -1,4 +1,4 @@
-From 7c32c58f4ce802d2682038f73bb8c8f850237f89 Mon Sep 17 00:00:00 2001
+From 5aeb25abf13de43b9e497f6509209911dd1386b8 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Date: Sun, 26 Apr 2020 15:33:39 +0200
 Subject: [PATCH] Use LONG_BIT to define RADIX_BITS
@@ -6,14 +6,17 @@ Subject: [PATCH] Use LONG_BIT to define RADIX_BITS
 This allows to avoid having to support each CPU architecture
 individually.
 
-Also, add the necessary defines in the makefile to expose LONG_BIT
+Also, add the necessary defines in the makefile to expose
+LONG_BIT. Adding those defines end up requiring using <sys/select.h>
+as we're now using >= POSIX.1-2001 definitions of fd_set and friends.
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Signed-off-by: Vincent Fazio <vfazio@gmail.com>
 ---
- src/LibSupport.h | 17 +++--------------
- src/makefile     |  2 ++
- 2 files changed, 5 insertions(+), 14 deletions(-)
+ src/LibSupport.h     | 17 +++--------------
+ src/TcpServerPosix.c |  1 +
+ src/makefile         |  2 ++
+ 3 files changed, 6 insertions(+), 14 deletions(-)
 
 diff --git a/src/LibSupport.h b/src/LibSupport.h
 index b2e6a51..0b59d18 100644
@@ -43,8 +46,20 @@ index b2e6a51..0b59d18 100644
  
  // These macros use the selected libraries to the proper include files.
  #define LIB_QUOTE(_STRING_) #_STRING_
+diff --git a/src/TcpServerPosix.c b/src/TcpServerPosix.c
+index 20fcb29..bdac7aa 100644
+--- a/src/TcpServerPosix.c
++++ b/src/TcpServerPosix.c
+@@ -66,6 +66,7 @@
+ 
+ #include <stdio.h>
+ /* FIXME need Posix TCP socket code */
++#include <sys/select.h>
+ #include <unistd.h>
+ #include <sys/types.h>
+ #include <sys/socket.h>
 diff --git a/src/makefile b/src/makefile
-index f124e78..9af1e51 100644
+index f124e78..6ee128e 100644
 --- a/src/makefile
 +++ b/src/makefile
 @@ -46,6 +46,8 @@ CCFLAGS = -Wall  			\
@@ -52,10 +67,10 @@ index f124e78..9af1e51 100644
  	-DTPM_POSIX			\
  	-D_POSIX_			\
 +	-D_DEFAULT_SOURCE		\
-+	-D_XOPEN_SOURCE			\
++	-D_XOPEN_SOURCE=500		\
  	-DTPM_NUVOTON
  
  # add this line for big endian platforms
 -- 
-2.28.0
+2.26.2
 
