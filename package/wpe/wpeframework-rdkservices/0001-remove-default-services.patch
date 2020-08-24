@@ -1,12 +1,12 @@
 diff -ruN wpeframework-rdkservices.orig/CMakeLists.txt wpeframework-rdkservices/CMakeLists.txt
---- wpeframework-rdkservices.orig/CMakeLists.txt	2020-08-18 18:24:13.045349426 +0530
-+++ wpeframework-rdkservices/CMakeLists.txt	2020-08-18 18:23:26.896163131 +0530
-@@ -23,7 +23,7 @@
+--- wpeframework-rdkservices.orig/CMakeLists.txt	2020-08-15 03:41:29.000000000 +0530
++++ wpeframework-rdkservices/CMakeLists.txt	2020-08-24 14:32:44.080496785 +0530
+@@ -23,8 +23,6 @@
  # are located in the cmake directory. Include it in the search.
  list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
  
 -include(services.cmake)
-+# include(services.cmake)
- 
+-
  option(PLUGIN_PACKAGER "Include Packager plugin" OFF)
  option(PLUGIN_DISPLAYSETTINGS "Include DisplaySettings plugin" ON)
+ option(PLUGIN_TTSSETTINGS "Include TTSSettings plugin" OFF)
