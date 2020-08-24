@@ -1,3 +1,47 @@
+2020.08-rc2, released August 24th, 2020
+
+	Fixes all over the tree, including a number of fixes for
+	compilation with GCC-10.
+
+	Toolchain: Disallow building uClibc-ng for RISC-V 64-bit,
+	because of issues with a missing __riscv_flush_icache()
+	implementation.
+
+	Defconfigs: CI20: Use mainline Linux and U-boot. Update
+	Microchip sama5d27_wlsom1_ek_mmc_dev to use bluez5-utils
+	instead of (the removed) legacy bluez-utils
+
+	Updated/fixed packages: 18xx-ti-utils, aircrack-ng, apache,
+	atest, bandwidthd, bellagio, bind, bird, bluez-alsa, boost,
+	c-periphery, capnproto, chrony, collectd, cpio, cvs,
+	dieharder, domoticz, dovecot, dovecot-pigeonhole, drbd-utils,
+	dump1090, efl, elixir, f2fs-tools, feh, fluidsynth, fping,
+	gdbm, gdk-pixbuf, ghostscript, gst1-plugins-bad,
+	gstreamer1-editing-services, htop, ibm-sw-tpm2, ifplugd,
+	iftop, igd2-for-linux, ima-evm-utils, iprutils, iputils,
+	keepalived, kmsxx, libabseil-cpp, libcamera, libcurl,
+	libfuse3, libnss, librtlsdr, libubox, libunwind, live555,
+	lttng-tools, luabitop, mender-artifact, minizip,
+	mjpg-streamer, mpd, mpv, mtd, ncftp, open-lldp, openal,
+	opencv, opencv3, openfpgaloader, optee-os, owfs, php,
+	pistache, prosody, pulseview, python-decorator,
+	python-gunicorn, python-rpi-gpio, python-spidev,
+	python3-decorator, python3-mako, python3-pyselftools, qt5,
+	qt5webengine, rauc, redis, ripgrep, rtl8188eu, rtl8821au,
+	setools, smstools3, supertux, tftpd, tpm2-abrmd,
+	wpa_supplicant, xen, xlib_libX11, xserver_xorg-server
+
+	New packages: python3-cython, python3-pycryptodomex
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12876: nodejs fails to build when host-icu has been built before
+	#13111: python-gunicorn: missing dependency on python-setuptools
+	#12121: wpa_supplicant fails to build without libopenssl enabled
+	#13146: raspberrypi3_defconfig: "Inappropriate ioctl for device"..
+	#13156: package live555 new license
+	#13166: python-rpi-gpio: does not work against aarch64, unint..
+
 2020.08-rc1, released August 6th, 2020
 
 	Toolchain:
