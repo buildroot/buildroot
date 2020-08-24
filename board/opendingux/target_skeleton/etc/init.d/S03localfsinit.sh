@@ -12,6 +12,11 @@ for i in bin etc home lib sbin share; do
 	chown od:users /usr/local/$i
 done
 
+if [ -r /sys/power/state ] ; then
+	chown root:pm /sys/power/state
+	chmod 664 /sys/power/state
+fi
+
 mkdir -p /var/run/sudo /var/tmp /var/log /var/lib
 chmod 777 /var/tmp /var/log
 
