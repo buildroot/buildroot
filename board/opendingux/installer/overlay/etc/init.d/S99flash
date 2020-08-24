@@ -57,7 +57,7 @@ if [ "$NAND_FLASH" = "yes" ] ; then
 
 	mount -t ubifs ubi0:rootfs /boot
 else
-	dialog --defaultno --yesno --yes-label "F2FS" --no-label "EXT4" --defaultno \
+	dialog --defaultno --yes-label "F2FS" --no-label "EXT4" --yesno \
 		"What format should be used for the data partition?" 7 38
 	if [ $? -eq 1 ] ; then
 		FORMAT=ext4
@@ -65,8 +65,35 @@ else
 		FORMAT=f2fs
 	fi
 
-	echo "Creating partitions..."
-	# TODO
+	echo "Formatting SD card..."
+	(
+		echo o # Create empty DOS partition table
+		echo n # Create partition
+		echo p # Primary partition
+		echo 1 # First partition
+		echo # First sector (use default)
+		echo '+400M' # End sector
+
+		echo n # Create partition
+		echo p # Primary partition
+		echo 2 # Second partition
+		echo # First sector (use default)
+		echo # End sector (use max size)
+
+		echo w # Commit changes
+	) | fdisk /dev/mmcblk0 > /dev/null
+
+	partprobe /dev/mmcblk0
+
+	mkfs.fat -F32 -n boot /dev/mmcblk0p1
+
+	if [ "$FORMAT" = "ext4" ] ; then
+		mkfs.ext4 -F -L system /dev/mmcblk0p2
+	else
+		mkfs.f2fs -f -l system /dev/mmcblk0p2
+	fi
+
+	mount -t vfat /dev/mmcblk0p1 /boot
 fi
 
 echo "Configuring USB..."
@@ -92,7 +119,8 @@ if [ "$NAND_FLASH" = "yes" ] ; then
 	flash_erase /dev/mtd0 0 1
 	nandwrite -p /dev/mtd0 /boot/ubiboot.bin
 else
-	# TODO
+	echo -n -e '\x80\x00\x00\x10' | dd of=/dev/mmcblk0 bs=4 count=1 conv=notrunc
+	dd if=/boot/ubiboot.bin of=/dev/mmcblk0 bs=512 seek=1 count=16 conv=notrunc
 fi
 
 echo "Installing mininit..."
@@ -100,19 +128,21 @@ mkdir -p /boot/root /boot/dev
 chmod +x /boot/mininit-syspart
 
 echo "Flashing kernel..."
+cat /boot/uzImage.bin /boot/devicetree.dtb > /boot/kernel.img
+
 if [ "$NAND_FLASH" = "yes" ] ; then
-	cat /boot/uzImage.bin /boot/devicetree.dtb > /boot/kernel.img
 	ubiupdatevol /dev/ubi0_0 /boot/kernel.img
 	ubiupdatevol /dev/ubi0_1 /boot/kernel.img
 
-	# Cleanup
-	rm /boot/uzImage.bin
-	rm /boot/kernel.img
-	rm /boot/devicetree.dtb
+	rm /boot/uzImage.bin /boot/kernel.img
 else
-	# TODO
+	mv /boot/kernel.img /boot/uzImage.bin
 fi
 
+# Cleanup
+rm /boot/devicetree.dtb /boot/ubiboot.bin
+
+sync
 dialog --msgbox 'Installation succeded!\nThe device will reboot now.' 7 28
 
 reboot
