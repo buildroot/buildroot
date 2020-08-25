@@ -17,6 +17,13 @@ ifeq ($(BR2_m68k),y)
 ASSIMP_CXXFLAGS += -mxgot -O0
 endif
 
+# just like m68k coldfire, mips64 also has some limitations on the GOT
+# size for large libraries, which can be overcome by passing
+# -mxgot. Solves "relocation truncated to fit: R_MIPS_CALL16" issues.
+ifeq ($(BR2_mips64)$(BR2_mips64el),y)
+ASSIMP_CXXFLAGS += -mxgot
+endif
+
 # workaround SuperH compiler failure when static linking (i.e -fPIC is
 # not passed) in gcc versions 5.x or older. The -Os optimization level
 # causes a "unable to find a register to spill in class
