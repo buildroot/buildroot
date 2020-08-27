@@ -370,7 +370,9 @@ class CVE:
 
             for v in product['version']['version_data']:
                 if v["version_affected"] == "=":
-                    if br_pkg.current_version == v["version_value"]:
+                    if v["version_value"] == "-":
+                        return CVE_AFFECTS
+                    elif br_pkg.current_version == v["version_value"]:
                         return CVE_AFFECTS
                 elif v["version_affected"] == "<=":
                     pkg_version = distutils.version.LooseVersion(br_pkg.current_version)
