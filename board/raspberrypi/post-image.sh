@@ -58,6 +58,17 @@ hdmi_mode=16
 __EOF__
                 fi
 	        ;;
+	        --silent)
+	        if ! grep -qE '^disable_splash=1' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+	            echo "Adding 'silent=1' to config.txt."
+	            cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Silent
+disable_splash=1
+boot_delay=0
+__EOF__
+	        fi
+	        ;;
 	        --overclock*)
 	        if ! grep -qE '^arm_freq=' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
 		    echo "Adding 'overclock' to config.txt."
@@ -97,6 +108,8 @@ done
 # space. We don't rely on genimage to build the rootfs image, just to insert a
 # pre-built one in the disk image.
 
+if grep "^BR2_TARGET_ROOTFS_EXT2=y$" "${BR2_CONFIG}" &>/dev/null; then 
+
 trap 'rm -rf "${ROOTPATH_TMP}"' EXIT
 ROOTPATH_TMP="$(mktemp -d)"
 
@@ -108,5 +121,6 @@ genimage \
 	--inputpath "${BINARIES_DIR}"  \
 	--outputpath "${BINARIES_DIR}" \
 	--config "${GENIMAGE_CFG}"
+fi
 
 exit $?
