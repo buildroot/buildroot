@@ -383,7 +383,6 @@ class CVE:
                         continue
                     try:
                         affected = pkg_version <= cve_affected_version
-                        break
                     except TypeError:
                         return CVE_UNKNOWN
                     if affected:
