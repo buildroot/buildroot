@@ -225,4 +225,23 @@ elif [ "x${INITRAMFS}" = "x" ] && [ "x${ROOTFS_CPIO}" != "x" ]; then
 	fi
 fi
 
+# Set enable_uart=1 to avoid PI3/3+ booting issue with rootfs embedded kernel image
+for i in "$@"
+do
+case "$i" in
+	--overclock-pi3*)
+	if [ "x${INITRAMFS}" != "x" ]; then
+		if ! grep -qE '^enable_uart=1' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+			echo "Adding 'enable_uart=1' functionality to config.txt."
+			cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Fixes rpi3 ttyS0 serial console
+enable_uart=1
+__EOF__
+		fi
+	fi
+	;;
+esac
+done
+
 exit $?
