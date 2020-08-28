@@ -38,11 +38,6 @@ XSERVER_XORG_SERVER_DEPENDENCIES = \
 	mcookie \
 	host-pkgconf
 
-ifeq ($(BR2_PACKAGE_XSERVER_XORG_SERVER_V_1_20),y)
-# 1.20.8/0007-fix-for-ZDI-11426.patch
-XSERVER_XORG_SERVER_IGNORE_CVES += CVE-2020-14347
-endif
-
 # We force -O2 regardless of the optimization level chosen by the
 # user, as the X.org server is known to trigger some compiler bugs at
 # -Os on several architectures.
