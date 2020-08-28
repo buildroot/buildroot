@@ -15,7 +15,10 @@ usb_disable() {
 }
 
 usb_start() {
-	. /etc/default/configfs
+	SERIAL_NUMBER=00000000
+	VENDOR=OpenDingux
+	PRODUCT=`grep machine /proc/cpuinfo |sed 's/.*: //'`
+	UDC_NAME=`ls -1 /sys/class/udc |head -n1`
 
 	if [ "$1" ] ; then
 		USB_MODE=$1
