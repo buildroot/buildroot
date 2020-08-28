@@ -77,8 +77,8 @@ endef
 MENDER_POST_INSTALL_TARGET_HOOKS += MENDER_INSTALL_CONFIG_FILES
 
 define MENDER_INSTALL_INIT_SYSTEMD
-	$(INSTALL) -D -m 0644 $(MENDER_PKGDIR)/mender.service \
-		$(TARGET_DIR)/usr/lib/systemd/system/mender.service
+	$(INSTALL) -D -m 0644 $(MENDER_PKGDIR)/mender-client.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/mender-client.service
 endef
 
 define MENDER_INSTALL_INIT_SYSV
