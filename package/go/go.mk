@@ -16,6 +16,10 @@ HOST_GO_HOST_CACHE = $(HOST_DIR)/usr/share/host-go-cache
 HOST_GO_ROOT = $(HOST_DIR)/lib/go
 HOST_GO_TARGET_CACHE = $(HOST_DIR)/usr/share/go-cache
 
+HOST_GO_COMMON_ENV = \
+	GO111MODULE=off \
+	GOROOT="$(HOST_GO_ROOT)"
+
 ifeq ($(BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS),y)
 
 ifeq ($(BR2_arm),y)
@@ -46,10 +50,9 @@ endif
 # For the convienience of target packages.
 HOST_GO_TOOLDIR = $(HOST_GO_ROOT)/pkg/tool/linux_$(GO_GOARCH)
 HOST_GO_TARGET_ENV = \
-	GO111MODULE=off \
+	$(HOST_GO_COMMON_ENV) \
 	GOARCH=$(GO_GOARCH) \
 	GOCACHE="$(HOST_GO_TARGET_CACHE)" \
-	GOROOT="$(HOST_GO_ROOT)" \
 	CC="$(TARGET_CC)" \
 	CXX="$(TARGET_CXX)" \
 	GOTOOLDIR="$(HOST_GO_TOOLDIR)"
@@ -79,10 +82,9 @@ endif # BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
 
 # For the convenience of host golang packages
 HOST_GO_HOST_ENV = \
-	GO111MODULE=off \
+	$(HOST_GO_COMMON_ENV) \
 	GOARCH="" \
 	GOCACHE="$(HOST_GO_HOST_CACHE)" \
-	GOROOT="$(HOST_GO_ROOT)" \
 	CC="$(HOST_CCNOCCACHE)" \
 	CXX="$(HOST_CXXNOCCACHE)" \
 	CGO_CFLAGS="$(HOST_CFLAGS)" \
