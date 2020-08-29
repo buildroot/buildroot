@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ "$#" -ne 1 ] ; then
+    echo "Usage: fbsplash <image.png>"
+elif [ -r $1 -a -x /usr/bin/fbv -a -n "`grep splash /proc/cmdline`" ] ; then
+	echo 0 > /sys/class/vtconsole/vtcon1/bind
+	dd if=/dev/zero of=/dev/fb0 > /dev/null 2>&1
+	echo | fbv -a $1
+fi

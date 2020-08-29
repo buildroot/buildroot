@@ -21,6 +21,12 @@ if [ -r /var/tmp/boot_cpu_freq ] ; then
 	cat /var/tmp/boot_cpu_freq > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
 fi
 
+# Restore the loading splash if needed
+if [ `cat /sys/class/vtconsole/vtcon1/bind` -ne 0 -o ! -f /var/tmp/.boot_complete ] ; then
+	touch /var/tmp/.boot_complete
+	fbsplash /usr/share/opendingux/loading.png
+fi
+
 if [ -x ~/.autostart ]; then
 	exec ~/.autostart
 else
