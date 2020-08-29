@@ -16,9 +16,14 @@ HOST_GO_HOST_CACHE = $(HOST_DIR)/usr/share/host-go-cache
 HOST_GO_ROOT = $(HOST_DIR)/lib/go
 HOST_GO_TARGET_CACHE = $(HOST_DIR)/usr/share/go-cache
 
+# We pass an empty GOBIN, otherwise "go install: cannot install
+# cross-compiled binaries when GOBIN is set"
 HOST_GO_COMMON_ENV = \
 	GO111MODULE=off \
-	GOROOT="$(HOST_GO_ROOT)"
+	GOROOT="$(HOST_GO_ROOT)" \
+	PATH=$(BR_PATH) \
+	GOBIN= \
+	CGO_ENABLED=$(HOST_GO_CGO_ENABLED)
 
 ifeq ($(BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS),y)
 

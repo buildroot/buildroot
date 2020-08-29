@@ -23,20 +23,11 @@
 
 GO_BIN = $(HOST_DIR)/bin/go
 
-# We pass an empty GOBIN, otherwise "go install: cannot install
-# cross-compiled binaries when GOBIN is set"
-GO_COMMON_ENV = \
-	PATH=$(BR_PATH) \
-	GOBIN= \
-	CGO_ENABLED=$(HOST_GO_CGO_ENABLED)
-
 GO_TARGET_ENV = \
-	$(HOST_GO_TARGET_ENV) \
-	$(GO_COMMON_ENV)
+	$(HOST_GO_TARGET_ENV)
 
 GO_HOST_ENV = \
-	$(HOST_GO_HOST_ENV) \
-	$(GO_COMMON_ENV)
+	$(HOST_GO_HOST_ENV)
 
 ################################################################################
 # inner-golang-package -- defines how the configuration, compilation and
