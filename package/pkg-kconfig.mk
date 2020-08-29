@@ -28,7 +28,7 @@ define kconfig-package-update-config
 endef
 
 PKG_KCONFIG_COMMON_OPTS = \
-	HOSTCC=$(HOSTCC_NOCCACHE)
+	HOSTCC="$(HOSTCC_NOCCACHE)"
 
 # Macro to save the defconfig file
 # $(1): the name of the package in upper-case letters
