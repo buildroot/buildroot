@@ -23,12 +23,6 @@
 
 GO_BIN = $(HOST_DIR)/bin/go
 
-GO_TARGET_ENV = \
-	$(HOST_GO_TARGET_ENV)
-
-GO_HOST_ENV = \
-	$(HOST_GO_HOST_ENV)
-
 ################################################################################
 # inner-golang-package -- defines how the configuration, compilation and
 # installation of a Go package should be done, implements a few hooks to tune
@@ -102,7 +96,7 @@ endif
 define $(2)_BUILD_CMDS
 	$$(foreach d,$$($(2)_BUILD_TARGETS),\
 		cd $$($(2)_SRC_PATH); \
-		$$(GO_TARGET_ENV) \
+		$$(HOST_GO_TARGET_ENV) \
 			GOPATH="$$(@D)/$$($(2)_WORKSPACE)" \
 			$$($(2)_GO_ENV) \
 			$$(GO_BIN) build -v $$($(2)_BUILD_OPTS) \
@@ -115,7 +109,7 @@ else
 define $(2)_BUILD_CMDS
 	$$(foreach d,$$($(2)_BUILD_TARGETS),\
 		cd $$($(2)_SRC_PATH); \
-		$$(GO_HOST_ENV) \
+		$$(HOST_GO_HOST_ENV) \
 			GOPATH="$$(@D)/$$($(2)_WORKSPACE)" \
 			$$($(2)_GO_ENV) \
 			$$(GO_BIN) build -v $$($(2)_BUILD_OPTS) \
