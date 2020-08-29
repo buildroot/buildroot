@@ -378,7 +378,6 @@ def get_toolchains():
         url = os.path.join(BASE_URL, arch, "available_toolchains")
         page = requests.get(url).text
         fnames = sorted(re.findall(r'<td><a href="(\w[^"]+)"', page))
-        print(fnames)
         # This dict will allow us to keep only the latest version for
         # each toolchain.
         tmp = dict()
