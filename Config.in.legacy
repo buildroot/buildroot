@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2020.11"
 
+config BR2_PACKAGE_AMD_CATALYST
+	bool "amd-catalyst"
+	select BR2_LEGACY
+	help
+	  Current X.org server is incompatible with this driver.
+
 config BR2_PACKAGE_NVIDIA_TEGRA23
 	bool "nvidia-tegra23 package removed"
 	select BR2_LEGACY
