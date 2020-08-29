@@ -12,6 +12,7 @@ GO_LICENSE = BSD-3-Clause
 GO_LICENSE_FILES = LICENSE
 
 HOST_GO_DEPENDENCIES = host-go-bootstrap
+HOST_GO_GOPATH = $(HOST_DIR)/usr/share/go-path
 HOST_GO_HOST_CACHE = $(HOST_DIR)/usr/share/host-go-cache
 HOST_GO_ROOT = $(HOST_DIR)/lib/go
 HOST_GO_TARGET_CACHE = $(HOST_DIR)/usr/share/go-cache
@@ -19,8 +20,11 @@ HOST_GO_TARGET_CACHE = $(HOST_DIR)/usr/share/go-cache
 # We pass an empty GOBIN, otherwise "go install: cannot install
 # cross-compiled binaries when GOBIN is set"
 HOST_GO_COMMON_ENV = \
-	GO111MODULE=off \
+	GO111MODULE=on \
+	GOFLAGS=-mod=vendor \
 	GOROOT="$(HOST_GO_ROOT)" \
+	GOPATH="$(HOST_GO_GOPATH)" \
+	GOPROXY=off \
 	PATH=$(BR_PATH) \
 	GOBIN= \
 	CGO_ENABLED=$(HOST_GO_CGO_ENABLED)
