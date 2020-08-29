@@ -27,6 +27,12 @@ case "$MODEL" in
 		INSTALL_ON_NAND=Y
 		SYSDEV=/dev/mtd0
 		;;
+	ylm,pmp5)
+		HWVARIANT_BL="$HWVARIANT_CMDLINE"
+		HWVARIANT_DT="pmp5"
+		INSTALL_ON_NAND=Y
+		SYSDEV=/dev/mtd0
+		;;
 	gcw,zero)
 		case "$HWVARIANT" in
 			"GCW Zero"|v20_mddr_512mb)
