@@ -77,6 +77,18 @@ else # !BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
 HOST_GO_CGO_ENABLED = 1
 endif # BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
 
+# For the convenience of host golang packages
+HOST_GO_HOST_ENV = \
+	GO111MODULE=off \
+	GOARCH="" \
+	GOCACHE="$(HOST_GO_HOST_CACHE)" \
+	GOROOT="$(HOST_GO_ROOT)" \
+	CC="$(HOST_CCNOCCACHE)" \
+	CXX="$(HOST_CXXNOCCACHE)" \
+	CGO_CFLAGS="$(HOST_CFLAGS)" \
+	CGO_CXXFLAGS="$(HOST_CXXFLAGS)" \
+	CGO_LDFLAGS="$(HOST_LDFLAGS)"
+
 # The go build system is not compatible with ccache, so use
 # HOSTCC_NOCCACHE.  See https://github.com/golang/go/issues/11685.
 HOST_GO_MAKE_ENV = \
