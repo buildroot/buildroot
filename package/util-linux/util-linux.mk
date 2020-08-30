@@ -82,10 +82,6 @@ endif
 UTIL_LINUX_CONF_OPTS += --without-ncursesw --without-ncurses
 endif
 
-ifeq ($(BR2_PACKAGE_LIBCAP_NG),y)
-UTIL_LINUX_DEPENDENCIES += libcap-ng
-endif
-
 # Unfortunately, the util-linux does LIBS="" at the end of its
 # configure script. So we have to pass the proper LIBS value when
 # calling the configure script to make configure tests pass properly,
@@ -105,6 +101,9 @@ define UTIL_LINUX_SELINUX_PAMFILES_TWEAK
 	)
 endef
 endif
+
+# Used by setpriv
+UTIL_LINUX_DEPENDENCIES += $(if $(BR2_PACKAGE_LIBCAP_NG),libcap-ng)
 
 # Used by cramfs utils
 UTIL_LINUX_DEPENDENCIES += $(if $(BR2_PACKAGE_ZLIB),zlib)
