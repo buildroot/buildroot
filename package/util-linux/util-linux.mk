@@ -33,7 +33,7 @@ UTIL_LINUX_CONF_OPTS += \
 	--disable-rpath \
 	--disable-makeinstall-chown
 
-UTIL_LINUX_LIBS = $(TARGET_NLS_LIBS)
+UTIL_LINUX_LINK_LIBS = $(TARGET_NLS_LIBS)
 
 HOST_UTIL_LINUX_DEPENDENCIES = host-pkgconf
 
@@ -90,8 +90,8 @@ endif
 # configure script. So we have to pass the proper LIBS value when
 # calling the configure script to make configure tests pass properly,
 # and then pass it again at build time.
-UTIL_LINUX_CONF_ENV += LIBS="$(UTIL_LINUX_LIBS)"
-UTIL_LINUX_MAKE_OPTS += LIBS="$(UTIL_LINUX_LIBS)"
+UTIL_LINUX_CONF_ENV += LIBS="$(UTIL_LINUX_LINK_LIBS)"
+UTIL_LINUX_MAKE_OPTS += LIBS="$(UTIL_LINUX_LINK_LIBS)"
 
 ifeq ($(BR2_PACKAGE_LIBSELINUX),y)
 UTIL_LINUX_DEPENDENCIES += libselinux
@@ -242,7 +242,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_READLINE),y)
 UTIL_LINUX_CONF_OPTS += --with-readline
-UTIL_LINUX_LIBS += $(if $(BR2_STATIC_LIBS),-lcurses)
+UTIL_LINUX_LINK_LIBS += $(if $(BR2_STATIC_LIBS),-lcurses)
 UTIL_LINUX_DEPENDENCIES += readline
 else
 UTIL_LINUX_CONF_OPTS += --without-readline
