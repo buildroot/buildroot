@@ -80,6 +80,10 @@ WPEFRAMEWORK_DEPENDENCIES += bcm-refsw
 endif
 else ifeq  ($(BR2_PACKAGE_RPI_FIRMWARE),y)
 WPEFRAMEWORK_CONF_OPTS += -DPLUGIN_COMPOSITOR_IMPLEMENTATION=RPI
+ifeq ($(BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4),y)
+WPEFRAMEWORK_CONF_OPTS += -DVC6=ON
+WPEFRAMEWORK_DEPENDENCIES += libdrm mesa3d
+endif
 else
 $(error Missing a compositor implemtation, please provide one or disable PLUGIN_COMPOSITOR)
 endif
