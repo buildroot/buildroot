@@ -62,12 +62,12 @@ endef
 
 define HOST_LIBCAP_BUILD_CMDS
 	$(HOST_MAKE_ENV) $(HOST_CONFIGURE_OPTS) $(MAKE) -C $(@D)\
-		RAISE_SETFCAP=no
+		RAISE_SETFCAP=no GOLANG=no
 endef
 
 define HOST_LIBCAP_INSTALL_CMDS
 	$(HOST_MAKE_ENV) $(MAKE) -C $(@D) prefix=$(HOST_DIR) \
-		RAISE_SETFCAP=no lib=lib install
+		RAISE_SETFCAP=no GOLANG=no lib=lib install
 endef
 
 $(eval $(generic-package))
