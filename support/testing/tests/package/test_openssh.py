@@ -21,7 +21,7 @@ class TestOpensshBase(infra.basetest.BRTest):
         self.emulator.boot(arch="armv5",
                            kernel="builtin",
                            options=["-initrd", img,
-                                    "-nic", "none"])
+                                    "-net", "none"])
         self.emulator.login(self.passwd)
 
         cmd = "netstat -ltn 2>/dev/null | grep 0.0.0.0:22"
