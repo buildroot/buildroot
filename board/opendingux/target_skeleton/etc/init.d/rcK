@@ -1,0 +1,44 @@
+#!/bin/sh
+
+SPLASH=`grep splash /proc/cmdline`
+NB_START_SCRIPTS=`ls -1 /etc/init.d/S??* | wc -l `
+PERCENT_INCR=`expr 100 / $NB_START_SCRIPTS`
+PERCENT=100
+
+if [ -n "$SPLASH" -a -x /usr/bin/psplash ] ; then
+	/usr/sbin/start-stop-daemon -S -b -x /usr/bin/psplash
+fi
+
+# Stop all init scripts in /etc/init.d
+# executing them in reversed numerical order.
+#
+for i in $(ls -r /etc/init.d/S??*) ;do
+
+     # Ignore dangling symlinks (if any).
+     [ ! -f "$i" ] && continue
+
+	 if [ -n "$SPLASH" -a -x /usr/bin/psplash ] ; then
+		 /usr/bin/psplash-write "PROGRESS $PERCENT"
+		 PERCENT=`expr $PERCENT - $PERCENT_INCR`
+	 fi
+
+     case "$i" in
+	*.sh)
+	    # Source shell script for speed.
+	    (
+		trap - INT QUIT TSTP
+		set stop
+		. $i
+	    )
+	    ;;
+	*)
+	    # No sh extension, so fork subprocess.
+	    $i stop
+	    ;;
+    esac
+done
+
+if [ -n "$SPLASH" -a -x /usr/bin/psplash ] ; then
+	/usr/bin/psplash-write "PROGRESS 0"
+	/usr/sbin/start-stop-daemon -K -x /usr/bin/psplash
+fi
