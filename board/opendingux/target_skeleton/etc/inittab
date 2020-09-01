@@ -33,7 +33,7 @@ null::sysinit:/bin/ln -sf /proc/self/fd/2 /dev/stderr
 ::sysinit:/bin/echo -n 0 > /proc/sys/vm/mmap_min_addr
 ::sysinit:/bin/echo '3 4 1 3' > /proc/sys/kernel/printk
 
-tty0::respawn:/usr/bin/nice --5 /usr/bin/sudo -u od /usr/sbin/frontend_start
+tty1::respawn:/usr/bin/nice --5 /usr/bin/sudo -u od /usr/sbin/frontend_start
 
 # Stuff to do before rebooting
 ::shutdown:/etc/init.d/rcK
