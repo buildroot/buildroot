@@ -15,7 +15,7 @@ SYSTEMD_DEPENDENCIES = \
 	host-gperf \
 	kmod \
 	libcap \
-	util-linux \
+	util-linux-libs \
 	$(TARGET_NLS_DEPENDENCIES)
 
 SYSTEMD_PROVIDES = udev
@@ -523,9 +523,6 @@ endef
 
 define SYSTEMD_USERS
 	# udev user groups
-	- - input -1 * - - - Input device group
-	- - render -1 * - - - DRI rendering nodes
-	- - kvm -1 * - - - kvm nodes
 	# systemd user groups
 	- - systemd-journal -1 * - - - Journal
 	$(SYSTEMD_REMOTE_USER)

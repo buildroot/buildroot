@@ -5,9 +5,9 @@
 ################################################################################
 
 # Please keep in sync with package/python-psutil/python-psutil.mk
-PYTHON3_PSUTIL_VERSION = 5.7.0
+PYTHON3_PSUTIL_VERSION = 5.7.2
 PYTHON3_PSUTIL_SOURCE = psutil-$(PYTHON3_PSUTIL_VERSION).tar.gz
-PYTHON3_PSUTIL_SITE = https://files.pythonhosted.org/packages/c4/b8/3512f0e93e0db23a71d82485ba256071ebef99b227351f0f5540f744af41
+PYTHON3_PSUTIL_SITE = https://files.pythonhosted.org/packages/aa/3e/d18f2c04cf2b528e18515999b0c8e698c136db78f62df34eee89cee205f1
 PYTHON3_PSUTIL_SETUP_TYPE = setuptools
 PYTHON3_PSUTIL_LICENSE = BSD-3-Clause
 PYTHON3_PSUTIL_LICENSE_FILES = LICENSE

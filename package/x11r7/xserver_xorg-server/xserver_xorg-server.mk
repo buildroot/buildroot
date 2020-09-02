@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XSERVER_XORG_SERVER_VERSION = $(call qstrip,$(BR2_PACKAGE_XSERVER_XORG_SERVER_VERSION))
+XSERVER_XORG_SERVER_VERSION = 1.20.9
 XSERVER_XORG_SERVER_SOURCE = xorg-server-$(XSERVER_XORG_SERVER_VERSION).tar.bz2
 XSERVER_XORG_SERVER_SITE = https://xorg.freedesktop.org/archive/individual/xserver
 XSERVER_XORG_SERVER_LICENSE = MIT
@@ -127,12 +127,6 @@ else
 XSERVER_XORG_SERVER_CONF_OPTS += --disable-dri --disable-glx
 endif
 
-ifeq ($(BR2_PACKAGE_XSERVER_XORG_SERVER_AIGLX),y)
-XSERVER_XORG_SERVER_CONF_OPTS += --enable-aiglx
-else
-XSERVER_XORG_SERVER_CONF_OPTS += --disable-aiglx
-endif
-
 # Optional packages
 ifeq ($(BR2_PACKAGE_TSLIB),y)
 XSERVER_XORG_SERVER_DEPENDENCIES += tslib
@@ -223,6 +217,11 @@ else
 XSERVER_XORG_SERVER_CONF_OPTS += --with-sha1=libsha1
 XSERVER_XORG_SERVER_DEPENDENCIES += libsha1
 endif
+
+define XSERVER_XORG_SERVER_INSTALL_INIT_SYSTEMD
+	$(INSTALL) -D -m 0644 package/x11r7/xserver_xorg-server/xorg.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/xorg.service
+endef
 
 define XSERVER_XORG_SERVER_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 755 package/x11r7/xserver_xorg-server/S40xorg \

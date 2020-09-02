@@ -26,10 +26,20 @@ GDB_LICENSE_FILES = COPYING COPYING.LIB COPYING3 COPYING3.LIB
 # We only want gdbserver and not the entire debugger.
 ifeq ($(BR2_PACKAGE_GDB_DEBUGGER),)
 GDB_SUBDIR = gdb/gdbserver
-HOST_GDB_SUBDIR = .
 else
 GDB_DEPENDENCIES = ncurses \
 	$(if $(BR2_PACKAGE_LIBICONV),libiconv)
+GDB_SUBDIR = build
+
+# Since gdb 9, in-tree builds for GDB are not allowed anymore,
+# so we create a 'build' subdirectory in the gdb sources, and
+# build from there.
+define GDB_CONFIGURE_SYMLINK
+	mkdir -p $(@D)/$(GDB_SUBDIR)
+	ln -sf ../configure $(@D)/$(GDB_SUBDIR)/configure
+endef
+GDB_PRE_CONFIGURE_HOOKS += GDB_CONFIGURE_SYMLINK
+
 endif
 
 # For the host variant, we really want to build with XML support,
@@ -250,6 +260,17 @@ HOST_GDB_CONF_OPTS += --enable-sim
 else
 HOST_GDB_CONF_OPTS += --disable-sim
 endif
+
+# Since gdb 9, in-tree builds for GDB are not allowed anymore,
+# so we create a 'build' subdirectory in the gdb sources, and
+# build from there.
+HOST_GDB_SUBDIR = build
+
+define HOST_GDB_CONFIGURE_SYMLINK
+	mkdir -p $(@D)/build
+	ln -sf ../configure $(@D)/build/configure
+endef
+HOST_GDB_PRE_CONFIGURE_HOOKS += HOST_GDB_CONFIGURE_SYMLINK
 
 # legacy $arch-linux-gdb symlink
 define HOST_GDB_ADD_SYMLINK

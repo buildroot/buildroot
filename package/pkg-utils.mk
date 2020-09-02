@@ -119,6 +119,11 @@ define _json-info-pkg
 	"reverse_dependencies": [
 		$(call make-comma-list,$(sort $($(1)_RDEPENDENCIES)))
 	]
+	$(if $($(1)_IGNORE_CVES),
+		$(comma) "ignore_cves": [
+			$(call make-comma-list,$(sort $($(1)_IGNORE_CVES)))
+		]
+	)
 endef
 
 define _json-info-pkg-details
