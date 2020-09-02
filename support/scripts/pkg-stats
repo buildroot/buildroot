@@ -25,15 +25,12 @@ import os
 from collections import defaultdict
 import re
 import subprocess
-import requests  # NVD database download
 import json
-import time
 import sys
 
 sys.path.append('utils/')
 from getdeveloperlib import parse_developers  # noqa: E402
-
-import cve as cvecheck
+import cve as cvecheck  # noqa: E402
 
 
 INFRA_RE = re.compile(r"\$\(eval \$\(([a-z-]*)-package\)\)")
@@ -538,8 +535,9 @@ def check_package_cves(nvd_path, packages):
         for pkg_name in cve.pkg_names:
             if pkg_name in packages:
                 pkg = packages[pkg_name]
-                if cve.affects(pkg.name, pkg.current_version, pkg.ignored_cves) == cve.CVE_AFFECTS :
+                if cve.affects(pkg.name, pkg.current_version, pkg.ignored_cves) == cve.CVE_AFFECTS:
                     pkg.cves.append(cve.identifier)
+
 
 def calculate_stats(packages):
     stats = defaultdict(int)
