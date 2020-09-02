@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CUPS_VERSION = 2.3.1
+CUPS_VERSION = 2.3.3
 CUPS_SOURCE = cups-$(CUPS_VERSION)-source.tar.gz
 CUPS_SITE = https://github.com/apple/cups/releases/download/v$(CUPS_VERSION)
 CUPS_LICENSE = Apache-2.0 with GPL-2.0/LGPL-2.0 exception
@@ -21,7 +21,8 @@ CUPS_CONF_OPTS = \
 	--with-docdir=/usr/share/cups/doc-root \
 	--disable-gssapi \
 	--disable-pam \
-	--libdir=/usr/lib
+	--libdir=/usr/lib \
+	--without-rcdir
 CUPS_CONFIG_SCRIPTS = cups-config
 CUPS_DEPENDENCIES = \
 	host-autoconf \
@@ -70,5 +71,10 @@ CUPS_CONF_OPTS += --enable-avahi
 else
 CUPS_CONF_OPTS += --disable-avahi
 endif
+
+define CUPS_INSTALL_INIT_SYSV
+	$(INSTALL) -D -m 0755 package/cups/S81cupsd \
+		$(TARGET_DIR)/etc/init.d/S81cupsd
+endef
 
 $(eval $(autotools-package))

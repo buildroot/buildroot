@@ -14,8 +14,6 @@ FIRMWARE_IMX_REDISTRIBUTE = NO
 
 FIRMWARE_IMX_INSTALL_IMAGES = YES
 
-FIRMWARE_IMX_PLATFORM_LOWER = $(shell echo $(BR2_PACKAGE_FREESCALE_IMX_PLATFORM) | tr A-Z a-z | head -c 5)
-
 define FIRMWARE_IMX_EXTRACT_CMDS
 	$(call FREESCALE_IMX_EXTRACT_HELPER,$(FIRMWARE_IMX_DL_DIR)/$(FIRMWARE_IMX_SOURCE))
 endef
@@ -24,26 +22,29 @@ endef
 # DDR firmware
 #
 
+define FIRMWARE_IMX_PREPARE_DDR_FW
+	$(TARGET_OBJCOPY) -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 \
+		$(FIRMWARE_IMX_DDRFW_DIR)/$(strip $(1)).bin \
+		$(FIRMWARE_IMX_DDRFW_DIR)/$(strip $(1))_pad.bin
+	$(TARGET_OBJCOPY) -I binary -O binary --pad-to 0x4000 --gap-fill=0x0 \
+		$(FIRMWARE_IMX_DDRFW_DIR)/$(strip $(2)).bin \
+		$(FIRMWARE_IMX_DDRFW_DIR)/$(strip $(2))_pad.bin
+	cat $(FIRMWARE_IMX_DDRFW_DIR)/$(strip $(1))_pad.bin \
+		$(FIRMWARE_IMX_DDRFW_DIR)/$(strip $(2))_pad.bin > \
+		$(FIRMWARE_IMX_DDRFW_DIR)/$(strip $(3)).bin
+endef
+
 ifeq ($(BR2_PACKAGE_FIRMWARE_IMX_LPDDR4),y)
 FIRMWARE_IMX_DDRFW_DIR = $(@D)/firmware/ddr/synopsys
-define FIRMWARE_IMX_PREPARE_LPDDR4_FW
-	$(TARGET_OBJCOPY) -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 \
-		$(FIRMWARE_IMX_DDRFW_DIR)/lpddr4_pmu_train_$(1)_imem.bin \
-		$(FIRMWARE_IMX_DDRFW_DIR)/lpddr4_pmu_train_$(1)_imem_pad.bin
-	$(TARGET_OBJCOPY) -I binary -O binary --pad-to 0x4000 --gap-fill=0x0 \
-		$(FIRMWARE_IMX_DDRFW_DIR)/lpddr4_pmu_train_$(1)_dmem.bin \
-		$(FIRMWARE_IMX_DDRFW_DIR)/lpddr4_pmu_train_$(1)_dmem_pad.bin
-	cat $(FIRMWARE_IMX_DDRFW_DIR)/lpddr4_pmu_train_$(1)_imem_pad.bin \
-		$(FIRMWARE_IMX_DDRFW_DIR)/lpddr4_pmu_train_$(1)_dmem_pad.bin > \
-		$(FIRMWARE_IMX_DDRFW_DIR)/lpddr4_pmu_train_$(1)_fw.bin
-endef
 
 define FIRMWARE_IMX_INSTALL_IMAGE_DDR_FW
 	# Create padded versions of lpddr4_pmu_* and generate lpddr4_pmu_train_fw.bin.
 	# lpddr4_pmu_train_fw.bin is needed when generating imx8-boot-sd.bin
 	# which is done in post-image script.
-	$(call FIRMWARE_IMX_PREPARE_LPDDR4_FW,1d)
-	$(call FIRMWARE_IMX_PREPARE_LPDDR4_FW,2d)
+	$(call FIRMWARE_IMX_PREPARE_DDR_FW, \
+		lpddr4_pmu_train_1d_imem,lpddr4_pmu_train_1d_dmem,lpddr4_pmu_train_1d_fw)
+	$(call FIRMWARE_IMX_PREPARE_DDR_FW, \
+		lpddr4_pmu_train_2d_imem,lpddr4_pmu_train_2d_dmem,lpddr4_pmu_train_2d_fw)
 	cat $(FIRMWARE_IMX_DDRFW_DIR)/lpddr4_pmu_train_1d_fw.bin \
 		$(FIRMWARE_IMX_DDRFW_DIR)/lpddr4_pmu_train_2d_fw.bin > \
 		$(BINARIES_DIR)/lpddr4_pmu_train_fw.bin
@@ -53,24 +54,15 @@ endif
 
 ifeq ($(BR2_PACKAGE_FIRMWARE_IMX_DDR4),y)
 FIRMWARE_IMX_DDRFW_DIR = $(@D)/firmware/ddr/synopsys
-define FIRMWARE_IMX_PREPARE_DDR4_FW
-	$(TARGET_OBJCOPY) -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 \
-		$(FIRMWARE_IMX_DDRFW_DIR)/ddr4_imem_$(1)_201810.bin \
-		$(FIRMWARE_IMX_DDRFW_DIR)/ddr4_imem_$(1)_201810_pad.bin
-	$(TARGET_OBJCOPY) -I binary -O binary --pad-to 0x4000 --gap-fill=0x0 \
-		$(FIRMWARE_IMX_DDRFW_DIR)/ddr4_dmem_$(1)_201810.bin \
-		$(FIRMWARE_IMX_DDRFW_DIR)/ddr4_dmem_$(1)_201810_pad.bin
-	cat $(FIRMWARE_IMX_DDRFW_DIR)/ddr4_imem_$(1)_201810_pad.bin \
-		$(FIRMWARE_IMX_DDRFW_DIR)/ddr4_dmem_$(1)_201810_pad.bin > \
-		$(FIRMWARE_IMX_DDRFW_DIR)/ddr4_$(1)_201810_fw.bin
-endef
 
 define FIRMWARE_IMX_INSTALL_IMAGE_DDR_FW
 	# Create padded versions of ddr4_* and generate ddr4_fw.bin.
 	# ddr4_fw.bin is needed when generating imx8-boot-sd.bin
 	# which is done in post-image script.
-	$(call FIRMWARE_IMX_PREPARE_DDR4_FW,1d)
-	$(call FIRMWARE_IMX_PREPARE_DDR4_FW,2d)
+	$(call FIRMWARE_IMX_PREPARE_DDR_FW, \
+		ddr4_imem_1d_201810,ddr4_dmem_1d_201810,ddr4_1d_201810_fw)
+	$(call FIRMWARE_IMX_PREPARE_DDR_FW, \
+		ddr4_imem_2d_201810,ddr4_dmem_2d_201810,ddr4_2d_201810_fw)
 	cat $(FIRMWARE_IMX_DDRFW_DIR)/ddr4_1d_201810_fw.bin \
 		$(FIRMWARE_IMX_DDRFW_DIR)/ddr4_2d_201810_fw.bin > \
 		$(BINARIES_DIR)/ddr4_201810_fw.bin
@@ -106,10 +98,11 @@ endif
 # SDMA firmware
 #
 
-ifeq ($(BR2_PACKAGE_FIRMWARE_IMX_NEEDS_SDMA_FW),y)
+FIRMWARE_IMX_SDMA_FW_NAME = $(call qstrip,$(BR2_PACKAGE_FIRMWARE_IMX_SDMA_FW_NAME))
+ifneq ($(FIRMWARE_IMX_SDMA_FW_NAME),)
 define FIRMWARE_IMX_INSTALL_TARGET_SDMA_FW
 	mkdir -p $(TARGET_DIR)/lib/firmware/imx/sdma
-	cp -r $(@D)/firmware/sdma/sdma-$(FIRMWARE_IMX_PLATFORM_LOWER)*.bin \
+	cp -r $(@D)/firmware/sdma/sdma-$(FIRMWARE_IMX_SDMA_FW_NAME)*.bin \
 	       $(TARGET_DIR)/lib/firmware/imx/sdma/
 endef
 endif
@@ -118,17 +111,11 @@ endif
 # VPU firmware
 #
 
-ifeq ($(BR2_PACKAGE_FIRMWARE_IMX_NEEDS_VPU_FW),y)
-# special case for i.MX8X, which uses the same firmware as i.MX8
-ifeq ($(BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X),y)
-FIRMWARE_IMX_VPU_PLATFORM = imx8
-else
-FIRMWARE_IMX_VPU_PLATFORM = $(FIRMWARE_IMX_PLATFORM_LOWER)
-endif
-
+FIRMWARE_IMX_VPU_FW_NAME = $(call qstrip,$(BR2_PACKAGE_FIRMWARE_IMX_VPU_FW_NAME))
+ifneq ($(FIRMWARE_IMX_VPU_FW_NAME),)
 define FIRMWARE_IMX_INSTALL_TARGET_VPU_FW
 	mkdir -p $(TARGET_DIR)/lib/firmware/imx/vpu
-	cp $(@D)/firmware/vpu/vpu_fw_$(FIRMWARE_IMX_VPU_PLATFORM)*.bin \
+	cp $(@D)/firmware/vpu/vpu_fw_$(FIRMWARE_IMX_VPU_FW_NAME)*.bin \
 		$(TARGET_DIR)/lib/firmware/imx/vpu/
 endef
 endif

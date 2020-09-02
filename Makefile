@@ -92,9 +92,9 @@ all:
 .PHONY: all
 
 # Set and export the version string
-export BR2_VERSION := 2020.08-git
+export BR2_VERSION := 2020.08
 # Actual time the release is cut (for reproducible builds)
-BR2_VERSION_EPOCH = 1591045000
+BR2_VERSION_EPOCH = 1598992000
 
 # Save running make version since it's clobbered by the make package
 RUNNING_MAKE_VERSION := $(MAKE_VERSION)
@@ -113,7 +113,13 @@ DATE := $(shell date +%Y%m%d)
 
 # Compute the full local version string so packages can use it as-is
 # Need to export it, so it can be got from environment in children (eg. mconf)
-export BR2_VERSION_FULL := $(BR2_VERSION)$(shell $(TOPDIR)/support/scripts/setlocalversion)
+
+BR2_LOCALVERSION := $(shell $(TOPDIR)/support/scripts/setlocalversion)
+ifeq ($(BR2_LOCALVERSION),)
+export BR2_VERSION_FULL := $(BR2_VERSION)
+else
+export BR2_VERSION_FULL := $(BR2_LOCALVERSION)
+endif
 
 # List of targets and target patterns for which .config doesn't need to be read in
 noconfig_targets := menuconfig nconfig gconfig xconfig config oldconfig randconfig \
@@ -457,12 +463,12 @@ endif
 
 ifneq ($(HOST_DIR),$(BASE_DIR)/host)
 HOST_DIR_SYMLINK = $(BASE_DIR)/host
-$(HOST_DIR_SYMLINK): $(BASE_DIR)
+$(HOST_DIR_SYMLINK): | $(BASE_DIR)
 	ln -snf $(HOST_DIR) $(HOST_DIR_SYMLINK)
 endif
 
 STAGING_DIR_SYMLINK = $(BASE_DIR)/staging
-$(STAGING_DIR_SYMLINK): $(BASE_DIR)
+$(STAGING_DIR_SYMLINK): | $(BASE_DIR)
 	ln -snf $(STAGING_DIR) $(STAGING_DIR_SYMLINK)
 
 # Quotes are needed for spaces and all in the original PATH content.
@@ -793,9 +799,9 @@ endif
 # counterparts are appropriately setup as symlinks ones to the others.
 ifeq ($(BR2_ROOTFS_MERGED_USR),y)
 
-	@$(foreach d, $(call qstrip,$(BR2_ROOTFS_OVERLAY)), \
-		$(call MESSAGE,"Sanity check in overlay $(d)"); \
-		not_merged_dirs="$$(support/scripts/check-merged-usr.sh $(d))"; \
+	$(foreach d, $(call qstrip,$(BR2_ROOTFS_OVERLAY)), \
+		@$(call MESSAGE,"Sanity check in overlay $(d)")$(sep) \
+		$(Q)not_merged_dirs="$$(support/scripts/check-merged-usr.sh $(d))"; \
 		test -n "$$not_merged_dirs" && { \
 			echo "ERROR: The overlay in $(d) is not" \
 				"using a merged /usr for the following directories:" \
@@ -805,20 +811,20 @@ ifeq ($(BR2_ROOTFS_MERGED_USR),y)
 
 endif # merged /usr
 
-	@$(foreach d, $(call qstrip,$(BR2_ROOTFS_OVERLAY)), \
-		$(call MESSAGE,"Copying overlay $(d)"); \
-		$(call SYSTEM_RSYNC,$(d),$(TARGET_DIR))$(sep))
+	$(foreach d, $(call qstrip,$(BR2_ROOTFS_OVERLAY)), \
+		@$(call MESSAGE,"Copying overlay $(d)")$(sep) \
+		$(Q)$(call SYSTEM_RSYNC,$(d),$(TARGET_DIR))$(sep))
 
-	$(if $(TARGET_DIR_FILES_LISTS), \
+	$(Q)$(if $(TARGET_DIR_FILES_LISTS), \
 		cat $(TARGET_DIR_FILES_LISTS)) > $(BUILD_DIR)/packages-file-list.txt
-	$(if $(HOST_DIR_FILES_LISTS), \
+	$(Q)$(if $(HOST_DIR_FILES_LISTS), \
 		cat $(HOST_DIR_FILES_LISTS)) > $(BUILD_DIR)/packages-file-list-host.txt
-	$(if $(STAGING_DIR_FILES_LISTS), \
+	$(Q)$(if $(STAGING_DIR_FILES_LISTS), \
 		cat $(STAGING_DIR_FILES_LISTS)) > $(BUILD_DIR)/packages-file-list-staging.txt
 
-	@$(foreach s, $(call qstrip,$(BR2_ROOTFS_POST_BUILD_SCRIPT)), \
-		$(call MESSAGE,"Executing post-build script $(s)"); \
-		$(EXTRA_ENV) $(s) $(TARGET_DIR) $(call qstrip,$(BR2_ROOTFS_POST_SCRIPT_ARGS))$(sep))
+	$(foreach s, $(call qstrip,$(BR2_ROOTFS_POST_BUILD_SCRIPT)), \
+		@$(call MESSAGE,"Executing post-build script $(s)")$(sep) \
+		$(Q)$(EXTRA_ENV) $(s) $(TARGET_DIR) $(call qstrip,$(BR2_ROOTFS_POST_SCRIPT_ARGS))$(sep))
 
 	touch $(TARGET_DIR)/usr
 
@@ -1205,10 +1211,6 @@ print-version:
 check-package:
 	find $(TOPDIR) -type f \( -name '*.mk' -o -name '*.hash' -o -name 'Config.*' \) \
 		-exec ./utils/check-package {} +
-
-.PHONY: .gitlab-ci.yml
-.gitlab-ci.yml: .gitlab-ci.yml.in
-	./support/scripts/generate-gitlab-ci-yml $< > $@
 
 include docs/manual/manual.mk
 -include $(foreach dir,$(BR2_EXTERNAL_DIRS),$(sort $(wildcard $(dir)/docs/*/*.mk)))

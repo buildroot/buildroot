@@ -1,3 +1,230 @@
+2020.08, released September 1st, 2020
+
+	Various fixes.
+
+	Updated/fixed packages: am33x-cm3, avahi, bluez-tools,
+	busybox, chocolate-doom, collectd, dhcp, docker-cli, domoticz,
+	gobject-introspection, graphite2, haproxy, ibm-sw-tpm2,
+	imagemagick, libeXosip2, libressl, lxc, mbedtls, menu-cache,
+	mongodb, mosquitto, nvidia-driver, paho-mqtt-c, pixz,
+	postgresql, python-django, rtty, squid, stress-ng, systemd,
+	trousers, uclibc, wireshark, wolfssl, zbar
+
+2020.08-rc3, released August 28th, 2020
+
+	Fixes all over the tree.
+
+	Infrastructure: Ensure RPATH entries that may be needed for
+	dlopen() are not dropped by patchelf.
+
+	Toolchain: Drop old GCC 6 based external Sourcery AMD64
+	toolchain.
+
+	Updated/fixed packages: assimp, davfs2, dillo, glibc,
+	gnuradio, hostapd, ibm-sw-tpm2, ipmitool, json-c, libroxml,
+	linux, mender, netopeer2, openal, openjpeg, python-matplotlib,
+	ripgrep, shadowsocks-libev, trousers, xlib_libX11,
+	xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13141: Target-finalize fail with "depmod: ERROR: Bad version passed"
+
+2020.08-rc2, released August 24th, 2020
+
+	Fixes all over the tree, including a number of fixes for
+	compilation with GCC-10.
+
+	Toolchain: Disallow building uClibc-ng for RISC-V 64-bit,
+	because of issues with a missing __riscv_flush_icache()
+	implementation.
+
+	Defconfigs: CI20: Use mainline Linux and U-boot. Update
+	Microchip sama5d27_wlsom1_ek_mmc_dev to use bluez5-utils
+	instead of (the removed) legacy bluez-utils
+
+	Updated/fixed packages: 18xx-ti-utils, aircrack-ng, apache,
+	atest, bandwidthd, bellagio, bind, bird, bluez-alsa, boost,
+	c-periphery, capnproto, chrony, collectd, cpio, cvs,
+	dieharder, domoticz, dovecot, dovecot-pigeonhole, drbd-utils,
+	dump1090, efl, elixir, f2fs-tools, feh, fluidsynth, fping,
+	gdbm, gdk-pixbuf, ghostscript, gst1-plugins-bad,
+	gstreamer1-editing-services, htop, ibm-sw-tpm2, ifplugd,
+	iftop, igd2-for-linux, ima-evm-utils, iprutils, iputils,
+	keepalived, kmsxx, libabseil-cpp, libcamera, libcurl,
+	libfuse3, libnss, librtlsdr, libubox, libunwind, live555,
+	lttng-tools, luabitop, mender-artifact, minizip,
+	mjpg-streamer, mpd, mpv, mtd, ncftp, open-lldp, openal,
+	opencv, opencv3, openfpgaloader, optee-os, owfs, php,
+	pistache, prosody, pulseview, python-decorator,
+	python-gunicorn, python-rpi-gpio, python-spidev,
+	python3-decorator, python3-mako, python3-pyselftools, qt5,
+	qt5webengine, rauc, redis, ripgrep, rtl8188eu, rtl8821au,
+	setools, smstools3, supertux, tftpd, tpm2-abrmd,
+	wpa_supplicant, xen, xlib_libX11, xserver_xorg-server
+
+	New packages: python3-cython, python3-pycryptodomex
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12876: nodejs fails to build when host-icu has been built before
+	#13111: python-gunicorn: missing dependency on python-setuptools
+	#13121: wpa_supplicant fails to build without libopenssl enabled
+	#13146: raspberrypi3_defconfig: "Inappropriate ioctl for device"..
+	#13156: package live555 new license
+	#13166: python-rpi-gpio: does not work against aarch64, unint..
+
+2020.08-rc1, released August 6th, 2020
+
+	Toolchain:
+
+	- GCC 10.x added, GCC 9.x is the default
+	- binutils 2.34 added, binutils 2.33 is the default, binutils
+          2.31 removed
+	- glibc updated to 2.31
+	- ARC toolchain components updated to 2020.03-release.
+	- Enable uClibc-ng usage for RISC-V 64-bit
+
+	Infrastructure:
+
+	- qmake-package was fixed to be compatible with
+          BR2_PER_PACKAGE_DIRECTORIES
+	- complete rewrite of the Gitlab CI Yaml configuration file,
+          now generated directly by the Gitlab CI pipeline itselfs
+
+	Misc:
+
+	- cargo and cargo-bin packages removed, as cargo is now part
+          of Rust itself
+
+	Filesystem: ubinize configuration files can now use
+	BINARIES_DIR to refer to the $(O)/images directory.
+
+	New packages: bitwise, earlyoom, fuse-overlayfs, gloox,
+	kodi-pvr-octonet, kodi-pvr-zattoo, libabseil-cpp, libcutl,
+	libnids, libnpupnp, libodb, libodb-boost, libodb-mysql,
+	libodb-pgsql, mbpfan, netopeer2, odb, parprouted,
+	python-colorzero, python-gpiozero, python-pybind, python-yatl,
+	python3-decorator, qt5quicktimeline, resiprocate, ttyd,
+	unclutter-xfixes, urandom-scripts,
+
+	New defconfigs: bananapi_m2_zero, freescale_imx8mnevk,
+	globalscale_espressobin, imx6ullevk,
+	microchip_sama5d27_wlsom1_ek, rock_pi_4, rock_pi_n10
+
+	Removed packages: cargo, cargo-bin,
+	kodi-peripheral-steamcontroller
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12941: Python GObject fails to build when using  BR2_PER_PACKAGE_DIRECTORIES
+	#12946: Grub: Decompressor is too big.
+	#12986: Mtools: Error converting to codepage 850
+	#13001: openjdk-bin replaces libfreetype.so from  host-freetype
+	#13011: Incorrect selection of gcc version
+	#13021: Minor code error when building granite-0.4.1
+	#13026: rpi-firmware: must not rename start files
+	#13046: Optimize for fast -Ofast is not compliant
+	#13081: host-e2fsprogs attempts to create udev  rules.d on build host if not exists
+	#13101: BR audit2allow support
+
+2020.05.2, released August 29th, 2020
+
+	Important / security related fixes.
+
+	Infrastructure: Ensure RPATH entries that may be needed for
+	dlopen() are not dropped by patchelf.
+
+	BR_VERSION_FULL/setlocalversion (used by make print-version
+	and /etc/os-release): Properly handle local git tags
+
+	Updated/fixed packages: apache, assimp, at91bootstrap3, bind,
+	boost, busybox, capnproto, cegui, chrony, collectd, cpio,
+	cryptsetup, cups, cvs, dbus, docker-engine, domoticz, dovecot,
+	dovecot-pigeonhole, dropbear, efl, elixir, f2fs-tools, ffmpeg,
+	gd, gdk-pixbuf, ghostscript, glibc, gnuradio, grub2,
+	gst1-plugins-bad, gstreamer1-editing-services, hostapd,
+	ibm-sw-tpm2, iputils, jasper, json-c, libcurl, libressl,
+	libwebsockets, linux, live555, mesa3d, mongodb, mosquitto,
+	mpv, nodejs, opencv, opencv3, openfpgaloader, openjpeg,
+	patchelf, perl, php, postgresql, prosody, python-django,
+	python-gunicorn, python-matplotlib, ripgrep, rtl8188eu,
+	rtl8821au, ruby, shadowsocks-libev, squid, systemd,
+	tpm2-abrmd, tpm2-tools, trousers, uboot, webkitgtk, wireshark,
+	wolfssl, wpa_supplicant, wpewebkit, xen, xlib_libX11,
+	xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12876: nodejs fails to build when host-icu has been built before
+	#13111: python-gunicorn: missing dependency on python-setuptools
+	#13121: wpa_supplicant fails to build without libopenssl enabled
+	#13141: Target-finalize fail with "depmod: ERROR: Bad version passed"
+	#13156: package live555 new license
+
+2020.05.1, released July 25th, 2020
+
+	Important / security related fixes.
+
+	Toolchain:
+	- Make external toolchain version check also work for
+	  toolchains configured with --with-gcc-major-version-only
+
+	- Do not handle SOURCE_DATE_EPOCH in toolchain wrapper if the
+	  compiler supports it, fixing an issue with precompiled
+	  headers
+
+	- Ensure debug libs from external toolchains are not installed
+          into target if debugging is disabled
+
+	Download:
+	- Correct reproducibility issue in handling of git submodules
+	  for older git versions.
+
+	- Fix file locking over NFS
+
+	fs: Ensure cpio archive element order is reproducible
+
+	Br2-external: Fix error reporting for invalid br2-external trees
+
+	Per-package:
+	- Fix an issue with python3 sysconfig data not getting
+	correctly expanded
+
+	- Fix per-package building for packages using the qmake
+          infrastructure
+
+	Updated/fixed packages: a10disp, asterisk, bind, brltty,
+	cdrkit, clamav, cryptodev-linux, dbus, docker-cli,
+	docker-engine, dvb-apps, e2fsprogs, exim, exiv2, freerdp, gdb,
+	gdk-pixbuf, gerbera, gnutls, go, granite, grub2, gssdp,
+	gst1-plugins-good, gst1-plugins-ugly, gupnp, intel-microcode,
+	iproute2, irrlicht, iwd, jq, kodi, libcamera, libcec,
+	libconfuse, libcurl, libevdev, libhttpserver, libmicrohttpd,
+	libnss, libressl, libvncserver, libxml2, libxmlrpc, lxc,
+	mbedtls, mediastreamer, mesa3d, meson, minizip, mongodb,
+	mtools, mutt, nano, network-manager, nghttp2, ngircd, nodejs,
+	ntp, open-plc-utils, open2300, openjdk-bin, openssh,
+	oracle-mysql, paho-mqtt-c, pango, php, poco, prosody, putty,
+	python-greenlet, python-urllib3, python-validators, python3,
+	readline, redis, rpi-firmware, rtl8821au, samba4, sdl2,
+	sqlite, squid, strace, sunxi-mali-mainline-driver, syslog-ng,
+	systemd, tcpreplay, tinydtls, upmpdcli, upx, vlc, webkitgtk,
+	wireguard-linux-compat, wireshark, wpebackend-fdo, wpewebkit,
+	x11vnc, znc, zstd
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12941: Python GObject fails to build when using BR2_PER_PACKAGE_..
+	#12946: Grub: Decompressor is too big.
+	#12986: Mtools: Error converting to codepage 850
+	#13001: openjdk-bin replaces libfreetype.so from host-freetype
+	#13011: Incorrect selection of gcc version
+	#13021: Minor code error when building granite-0.4.1
+	#13026: rpi-firmware: must not rename start files
+	#13031: nodejs: RangeError at new ArrayBuffer()
+	#13046: Optimize for fast -Ofast is not compliant
+
 2020.05, released June 1st, 2020
 
 	Various fixes.
@@ -165,6 +392,97 @@
 	#12751: OpenJdk package installation issues on	target
 	#12796: Update OpenSSL to Version 1.1.1g to patch  CVE-2020-1967
 	#12811: bootstrap stuck and no login prompt
+
+2020.02.5, released August 29th, 2020
+
+	Important / security related fixes.
+
+	Infrastructure: Ensure RPATH entries that may be needed for
+	dlopen() are not dropped by patchelf.
+
+	BR_VERSION_FULL/setlocalversion (used by make print-version
+	and /etc/os-release): Properly handle local git tags
+
+	Updated/fixed packages: apache, at91bootstrap3, bind, boost,
+	busybox, capnproto, chrony, collectd, cpio, cryptsetup, cups,
+	cvs, dbus, docker-engine, domoticz, dovecot,
+	dovecot-pigeonhole, dropbear, efl, elixir, f2fs-tools, ffmpeg,
+	gd, gdk-pixbuf, ghostscript, glibc, grub2, gst1-plugins-bad,
+	hostapd, iputils, jasper, json-c, libcurl, libwebsockets,
+	linux, live555, mesa3d, mosquitto, mpv, nodejs, opencv,
+	opencv3, openjpeg, patchelf, perl, php, postgresql,
+	python-django, python-gunicorn, python-matplotlib, ripgrep,
+	rtl8188eu, rtl8821au, ruby, shadowsocks-libev, squid,
+	tpm2-abrmd, tpm2-tools, trousers, uacme, webkitgtk, wireshark,
+	wolfssl, wpa_supplicant, wpewebkit, xen, xlib_libX11,
+	xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12876: nodejs fails to build when host-icu has been built before
+	#13111: python-gunicorn: missing dependency on python-setuptools
+	#13121: wpa_supplicant fails to build without libopenssl enabled
+	#13141: Target-finalize fail with "depmod: ERROR: Bad version passed"
+	#13156: package live555 new license
+
+2020.02.4, released July 26th, 2020
+
+	Important / security related fixes.
+
+	Toolchain:
+	- Make external toolchain version check also work for
+	  toolchains configured with --with-gcc-major-version-only
+
+	- Do not handle SOURCE_DATE_EPOCH in toolchain wrapper if the
+	  compiler supports it, fixing an issue with precompiled
+	  headers
+
+	- Ensure debug libs from external toolchains are not installed
+          into target if debugging is disabled
+
+	Download:
+	- Correct reproducibility issue in handling of git submodules
+	  for older git versions.
+
+	- Fix file locking over NFS
+
+	fs: Ensure cpio archive element order is reproducible
+
+	Br2-external: Fix error reporting for invalid br2-external trees
+
+	Per-package:
+	- Fix an issue with python3 sysconfig data not getting
+	correctly expanded
+
+	- Fix per-package building for packages using the qmake
+          infrastructure
+
+	Updated/fixed packages: a10disp, asterisk, bind, cdrkit,
+	checkpolicy, clamav, dbus, docker-cli, docker-engine,
+	dvb-apps, e2fsprogs, exim, exiv2, freerdp, gnutls, go, grub2,
+	gssdp, gst1-plugins-good, gst1-plugins-ugly, gupnp,
+	intel-microcode, iproute2, irrlicht, iwd, jq, kodi, libcamera,
+	libconfuse, libcurl, libglib2, libhttpserver, libmicrohttpd,
+	libopenssl, libvncserver, libxml2, libxmlrpc, lxc, mbedtls,
+	mesa3d, meson, mongodb, mtools, mutt, nghttp2, ngircd, nodejs,
+	ntp, open-plc-utils, open2300, openjdk-bin, openssh,
+	oracle-mysql, paho-mqtt-c, pcre, php, poco, prosody, putty,
+	python-twisted, python-urllib3, python-validators, python3,
+	qt5xmlpatterns, redis, rpi-firmware, rtl8821au, samba4, sdl2,
+	sqlite, squid, syslog-ng, systemd, tcpreplay, tinydtls,
+	upmpdcli, upx, vlc, webkitgtk, wireguard-linux-compat,
+	wireshark, wpebackend-fdo, wpewebkit, zstd
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12941: Python GObject fails to build when using BR2_PER_PACKAGE_..
+	#12946: Grub: Decompressor is too big.
+	#12986: Mtools: Error converting to codepage 850
+	#13001: openjdk-bin replaces libfreetype.so from host-freetype
+	#13011: Incorrect selection of gcc version
+	#13026: rpi-firmware: must not rename start files
+	#13031: nodejs: RangeError at new ArrayBuffer()
+	#13046: Optimize for fast -Ofast is not compliant
 
 2020.02.3, released June 3rd, 2020
 

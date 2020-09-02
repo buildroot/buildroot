@@ -1,0 +1,33 @@
+From c6afffafd1e27054ff59b82ffed3a99795814631 Mon Sep 17 00:00:00 2001
+From: Heiko Thiery <heiko.thiery@gmail.com>
+Date: Mon, 8 Jun 2020 09:47:58 +0200
+Subject: [PATCH] build BUGFIX take DESTDIR into account (#649)
+
+When installing yang modules add DESTDIR prefix to the NP2_MODULE_DIR.
+
+Fixes #648
+
+Signed-off-by: Heiko Thiery <heiko.thiery@gmail.com>
+[patch taken from upstream:
+https://github.com/CESNET/netopeer2/commit/726b1384a3f93090ede1143da86c99d5d24d06c5]
+Signed-off-by: Heiko Thiery <heiko.thiery@gmail.com>
+---
+ scripts/setup.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/setup.sh b/scripts/setup.sh
+index 7175bc4..81abf63 100755
+--- a/scripts/setup.sh
++++ b/scripts/setup.sh
+@@ -8,7 +8,7 @@ fi
+ 
+ # avoid problems with sudo path
+ SYSREPOCTL=`su -c "which sysrepoctl" $USER`
+-MODDIR=${NP2_MODULE_DIR}
++MODDIR=${DESTDIR}${NP2_MODULE_DIR}
+ PERMS=${NP2_MODULE_PERMS}
+ OWNER=${NP2_MODULE_OWNER}
+ GROUP=${NP2_MODULE_GROUP}
+-- 
+2.20.1
+

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RUST_VERSION = 1.33.0
+RUST_VERSION = 1.40.0
 RUST_SOURCE = rustc-$(RUST_VERSION)-src.tar.xz
 RUST_SITE = https://static.rust-lang.org/dist
 RUST_LICENSE = Apache-2.0 or MIT
@@ -15,7 +15,6 @@ HOST_RUST_PROVIDES = host-rustc
 HOST_RUST_DEPENDENCIES = \
 	toolchain \
 	host-rust-bin \
-	host-cargo-bin \
 	host-openssl \
 	$(BR2_CMAKE_HOST_DEPENDENCY)
 
@@ -49,21 +48,23 @@ define HOST_RUST_CONFIGURE_CMDS
 	( \
 		echo '[build]'; \
 		echo 'target = ["$(RUSTC_TARGET_NAME)"]'; \
-		echo 'cargo = "$(HOST_CARGO_BIN_DIR)/cargo/bin/cargo"'; \
+		echo 'cargo = "$(HOST_RUST_BIN_DIR)/cargo/bin/cargo"'; \
 		echo 'rustc = "$(HOST_RUST_BIN_DIR)/rustc/bin/rustc"'; \
 		echo 'python = "$(HOST_DIR)/bin/python$(HOST_RUST_PYTHON_VERSION)"'; \
 		echo 'submodules = false'; \
 		echo 'vendor = true'; \
+		echo 'extended = true'; \
+		echo 'tools = ["cargo"]'; \
 		echo 'compiler-docs = false'; \
 		echo 'docs = false'; \
 		echo 'verbose = $(HOST_RUST_VERBOSITY)'; \
 		echo '[install]'; \
 		echo 'prefix = "$(HOST_DIR)"'; \
+		echo 'sysconfdir = "$(HOST_DIR)/etc"'; \
 		echo '[rust]'; \
 		echo 'channel = "stable"'; \
 		echo '[target.$(RUSTC_TARGET_NAME)]'; \
 		echo 'cc = "$(TARGET_CROSS)gcc"'; \
-		echo $(HOST_RUST_JEMALLOC_CONF); \
 	) > $(@D)/config.toml
 endef
 

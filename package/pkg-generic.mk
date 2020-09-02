@@ -55,62 +55,6 @@ define step_time
 endef
 GLOBAL_INSTRUMENTATION_HOOKS += step_time
 
-# Hooks to collect statistics about installed files
-
-# $(1): package name
-# $(2): base directory to search in
-# $(3): suffix of file (optional)
-define step_pkg_size_before
-	cd $(2); \
-	LC_ALL=C find . \( -type f -o -type l \) -printf '%T@:%i:%#m:%y:%s,%p\n' \
-		| LC_ALL=C sort > $($(PKG)_DIR)/.files-list$(3).before
-endef
-
-# $(1): package name
-# $(2): base directory to search in
-# $(3): suffix of file (optional)
-define step_pkg_size_after
-	cd $(2); \
-	LC_ALL=C find . \( -type f -o -type l \) -printf '%T@:%i:%#m:%y:%s,%p\n' \
-		| LC_ALL=C sort > $($(PKG)_DIR)/.files-list$(3).after
-	LC_ALL=C comm -13 \
-		$($(PKG)_DIR)/.files-list$(3).before \
-		$($(PKG)_DIR)/.files-list$(3).after \
-		| sed -r -e 's/^[^,]+/$(1)/' \
-		> $($(PKG)_DIR)/.files-list$(3).txt
-	rm -f $($(PKG)_DIR)/.files-list$(3).before
-	rm -f $($(PKG)_DIR)/.files-list$(3).after
-endef
-
-define step_pkg_size
-	$(if $(filter start-install-target,$(1)-$(2)),\
-		$(call step_pkg_size_before,$(3),$(TARGET_DIR)))
-	$(if $(filter start-install-staging,$(1)-$(2)),\
-		$(call step_pkg_size_before,$(3),$(STAGING_DIR),-staging))
-	$(if $(filter start-install-host,$(1)-$(2)),\
-		$(call step_pkg_size_before,$(3),$(HOST_DIR),-host))
-
-	$(if $(filter end-install-target,$(1)-$(2)),\
-		$(call step_pkg_size_after,$(3),$(TARGET_DIR)))
-	$(if $(filter end-install-staging,$(1)-$(2)),\
-		$(call step_pkg_size_after,$(3),$(STAGING_DIR),-staging))
-	$(if $(filter end-install-host,$(1)-$(2)),\
-		$(call step_pkg_size_after,$(3),$(HOST_DIR),-host))
-endef
-GLOBAL_INSTRUMENTATION_HOOKS += step_pkg_size
-
-# Relies on step_pkg_size, so must be after
-define check_bin_arch
-	$(if $(filter end-install-target,$(1)-$(2)),\
-		support/scripts/check-bin-arch -p $(3) \
-			-l $($(PKG)_DIR)/.files-list.txt \
-			$(foreach i,$($(PKG)_BIN_ARCH_EXCLUDE),-i "$(i)") \
-			-r $(TARGET_READELF) \
-			-a $(BR2_READELF_ARCH_NAME))
-endef
-
-GLOBAL_INSTRUMENTATION_HOOKS += check_bin_arch
-
 # This hook checks that host packages that need libraries that we build
 # have a proper DT_RPATH or DT_RUNPATH tag
 define check_host_rpath
@@ -157,6 +101,39 @@ define fixup-libtool-files
 		$(SED) "s:$(PER_PACKAGE_DIR)/[^/]\+/:$(PER_PACKAGE_DIR)/$(1)/:g"
 endef
 endif
+
+# Functions to collect statistics about installed files
+
+# $(1): base directory to search in
+# $(2): suffix of file (optional)
+define pkg_size_before
+	cd $(1); \
+	LC_ALL=C find . -not -path './$(STAGING_SUBDIR)/*' \( -type f -o -type l \) -printf '%T@:%i:%#m:%y:%s,%p\n' \
+		| LC_ALL=C sort > $($(PKG)_DIR)/.files-list$(2).before
+endef
+
+# $(1): base directory to search in
+# $(2): suffix of file (optional)
+define pkg_size_after
+	cd $(1); \
+	LC_ALL=C find . -not -path './$(STAGING_SUBDIR)/*' \( -type f -o -type l \) -printf '%T@:%i:%#m:%y:%s,%p\n' \
+		| LC_ALL=C sort > $($(PKG)_DIR)/.files-list$(2).after
+	LC_ALL=C comm -13 \
+		$($(PKG)_DIR)/.files-list$(2).before \
+		$($(PKG)_DIR)/.files-list$(2).after \
+		| sed -r -e 's/^[^,]+/$($(PKG)_NAME)/' \
+		> $($(PKG)_DIR)/.files-list$(2).txt
+	rm -f $($(PKG)_DIR)/.files-list$(2).before
+	rm -f $($(PKG)_DIR)/.files-list$(2).after
+endef
+
+define check_bin_arch
+	support/scripts/check-bin-arch -p $($(PKG)_NAME) \
+		-l $($(PKG)_DIR)/.files-list.txt \
+		$(foreach i,$($(PKG)_BIN_ARCH_EXCLUDE),-i "$(i)") \
+		-r $(TARGET_READELF) \
+		-a $(BR2_READELF_ARCH_NAME)
+endef
 
 ################################################################################
 # Implicit targets -- produce a stamp file for each step of a package build
@@ -253,7 +230,11 @@ $(foreach dir,$(call qstrip,$(BR2_GLOBAL_PATCH_DIR)),\
 $(BUILD_DIR)/%/.stamp_configured:
 	@$(call step_start,configure)
 	@$(call MESSAGE,"Configuring")
+	$(Q)mkdir -p $(HOST_DIR) $(TARGET_DIR) $(STAGING_DIR) $(BINARIES_DIR)
 	$(call prepare-per-package-directory,$($(PKG)_FINAL_DEPENDENCIES))
+	@$(call pkg_size_before,$(TARGET_DIR))
+	@$(call pkg_size_before,$(STAGING_DIR),-staging)
+	@$(call pkg_size_before,$(HOST_DIR),-host)
 	$(call fixup-libtool-files,$(NAME),$(STAGING_DIR))
 	$(foreach hook,$($(PKG)_PRE_CONFIGURE_HOOKS),$(call $(hook))$(sep))
 	$($(PKG)_CONFIGURE_CMDS)
@@ -273,7 +254,6 @@ $(BUILD_DIR)/%/.stamp_built::
 
 # Install to host dir
 $(BUILD_DIR)/%/.stamp_host_installed:
-	@mkdir -p $(HOST_DIR)
 	@$(call step_start,install-host)
 	@$(call MESSAGE,"Installing to host directory")
 	$(foreach hook,$($(PKG)_PRE_INSTALL_HOOKS),$(call $(hook))$(sep))
@@ -303,7 +283,6 @@ $(BUILD_DIR)/%/.stamp_host_installed:
 # empty when we use an internal toolchain.
 #
 $(BUILD_DIR)/%/.stamp_staging_installed:
-	@mkdir -p $(STAGING_DIR)
 	@$(call step_start,install-staging)
 	@$(call MESSAGE,"Installing to staging directory")
 	$(foreach hook,$($(PKG)_PRE_INSTALL_STAGING_HOOKS),$(call $(hook))$(sep))
@@ -346,7 +325,6 @@ $(BUILD_DIR)/%/.stamp_staging_installed:
 
 # Install to images dir
 $(BUILD_DIR)/%/.stamp_images_installed:
-	@mkdir -p $(BINARIES_DIR)
 	@$(call step_start,install-image)
 	@$(call MESSAGE,"Installing to images directory")
 	$(foreach hook,$($(PKG)_PRE_INSTALL_IMAGES_HOOKS),$(call $(hook))$(sep))
@@ -357,7 +335,6 @@ $(BUILD_DIR)/%/.stamp_images_installed:
 
 # Install to target dir
 $(BUILD_DIR)/%/.stamp_target_installed:
-	@mkdir -p $(TARGET_DIR)
 	@$(call step_start,install-target)
 	@$(call MESSAGE,"Installing to target")
 	$(foreach hook,$($(PKG)_PRE_INSTALL_TARGET_HOOKS),$(call $(hook))$(sep))
@@ -374,6 +351,15 @@ $(BUILD_DIR)/%/.stamp_target_installed:
 		$(RM) -f $(addprefix $(TARGET_DIR)/usr/bin/,$($(PKG)_CONFIG_SCRIPTS)) ; \
 	fi
 	@$(call step_end,install-target)
+	$(Q)touch $@
+
+# Final installation step, completed when all installation steps
+# (host, images, staging, target) have completed
+$(BUILD_DIR)/%/.stamp_installed:
+	@$(call pkg_size_after,$(TARGET_DIR))
+	@$(call pkg_size_after,$(STAGING_DIR),-staging)
+	@$(call pkg_size_after,$(HOST_DIR),-host)
+	@$(call check_bin_arch)
 	$(Q)touch $@
 
 # Remove package sources
@@ -707,6 +693,7 @@ $(2)_FINAL_RECURSIVE_RDEPENDENCIES = $$(sort \
 	$$($(2)_FINAL_RECURSIVE_RDEPENDENCIES__X))
 
 # define sub-target stamps
+$(2)_TARGET_INSTALL =           $$($(2)_DIR)/.stamp_installed
 $(2)_TARGET_INSTALL_TARGET =	$$($(2)_DIR)/.stamp_target_installed
 $(2)_TARGET_INSTALL_STAGING =	$$($(2)_DIR)/.stamp_staging_installed
 $(2)_TARGET_INSTALL_IMAGES =	$$($(2)_DIR)/.stamp_images_installed
@@ -762,14 +749,23 @@ endif
 
 # human-friendly targets and target sequencing
 $(1):			$(1)-install
+$(1)-install:		$$($(2)_TARGET_INSTALL)
 
 ifeq ($$($(2)_TYPE),host)
-$(1)-install:	        $(1)-install-host
+$$($(2)_TARGET_INSTALL): $$($(2)_TARGET_INSTALL_HOST)
 else
 $(2)_INSTALL_STAGING	?= NO
 $(2)_INSTALL_IMAGES	?= NO
 $(2)_INSTALL_TARGET	?= YES
-$(1)-install:		$(1)-install-staging $(1)-install-target $(1)-install-images
+ifeq ($$($(2)_INSTALL_TARGET),YES)
+$$($(2)_TARGET_INSTALL): $$($(2)_TARGET_INSTALL_TARGET)
+endif
+ifeq ($$($(2)_INSTALL_STAGING),YES)
+$$($(2)_TARGET_INSTALL): $$($(2)_TARGET_INSTALL_STAGING)
+endif
+ifeq ($$($(2)_INSTALL_IMAGES),YES)
+$$($(2)_TARGET_INSTALL): $$($(2)_TARGET_INSTALL_IMAGES)
+endif
 endif
 
 ifeq ($$($(2)_INSTALL_TARGET),YES)
@@ -919,6 +915,7 @@ $(1)-clean-for-reinstall:
 ifneq ($$($(2)_OVERRIDE_SRCDIR),)
 			rm -f $$($(2)_TARGET_RSYNC)
 endif
+			rm -f $$($(2)_TARGET_INSTALL)
 			rm -f $$($(2)_TARGET_INSTALL_STAGING)
 			rm -f $$($(2)_TARGET_INSTALL_TARGET)
 			rm -f $$($(2)_TARGET_INSTALL_IMAGES)
@@ -938,6 +935,7 @@ $(1)-reconfigure:	$(1)-clean-for-reconfigure $(1)
 
 # define the PKG variable for all targets, containing the
 # uppercase package variable prefix
+$$($(2)_TARGET_INSTALL):		PKG=$(2)
 $$($(2)_TARGET_INSTALL_TARGET):		PKG=$(2)
 $$($(2)_TARGET_INSTALL_STAGING):	PKG=$(2)
 $$($(2)_TARGET_INSTALL_IMAGES):		PKG=$(2)

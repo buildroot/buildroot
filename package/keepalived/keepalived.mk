@@ -32,16 +32,16 @@ else
 KEEPALIVED_CONF_OPTS += --disable-libnl
 endif
 
+ifeq ($(BR2_PACKAGE_IPTABLES),y)
+KEEPALIVED_DEPENDENCIES += iptables
+KEEPALIVED_CONF_OPTS += --enable-iptables
+# ipset support only makes sense when iptables support is enabled.
 ifeq ($(BR2_PACKAGE_IPSET),y)
 KEEPALIVED_DEPENDENCIES += ipset
 KEEPALIVED_CONF_OPTS += --enable-libipset
 else
 KEEPALIVED_CONF_OPTS += --disable-libipset
 endif
-
-ifeq ($(BR2_PACKAGE_IPTABLES),y)
-KEEPALIVED_DEPENDENCIES += iptables
-KEEPALIVED_CONF_OPTS += --enable-iptables
 else
 KEEPALIVED_CONF_OPTS += --disable-iptables
 endif

@@ -15,7 +15,8 @@ LIBCAMERA_DEPENDENCIES = \
 LIBCAMERA_CONF_OPTS = \
 	-Dandroid=false \
 	-Ddocumentation=false \
-	-Dtest=false
+	-Dtest=false \
+	-Dwerror=false
 LIBCAMERA_INSTALL_STAGING = YES
 LIBCAMERA_LICENSE = \
 	LGPL-2.1+ (library), \
@@ -35,6 +36,10 @@ LIBCAMERA_LICENSE_FILES = \
 	LICENSES/BSD-3-Clause.txt \
 	LICENSES/CC0-1.0.txt \
 	LICENSES/CC-BY-SA-4.0.txt
+
+ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_7),y)
+LIBCAMERA_CXXFLAGS = -faligned-new
+endif
 
 ifeq ($(BR2_PACKAGE_LIBCAMERA_V4L2),y)
 LIBCAMERA_CONF_OPTS += -Dv4l2=true

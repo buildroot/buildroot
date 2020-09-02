@@ -10,6 +10,8 @@ does not apply on current used version in buildroot.
 [1] https://github.com/Arkq/bluez-alsa/commit/30a23dd7ce9b00c702fa48545f6b03038f9e17c6
 
 Signed-off-by: Heiko Thiery <heiko.thiery@gmail.com>
+[Fabrice: also update src/ofono-iface.h]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  src/bluealsa-dbus.c  | 4 ++++
  src/bluealsa-iface.c | 2 ++
@@ -113,6 +115,26 @@ index cfdbff8..190101e 100644
  /**
   * Structure describing registered D-Bus object. */
  struct dbus_object_data {
+ diff --git a/src/ofono-iface.h b/src/ofono-iface.h
+index d5a6715..d5b9065 100644
+--- a/src/ofono-iface.h
++++ b/src/ofono-iface.h
+@@ -1,6 +1,6 @@
+ /*
+  * BlueALSA - ofono-iface.h
+- * Copyright (c) 2016-2019 Arkadiusz Bokowy
++ * Copyright (c) 2016-2020 Arkadiusz Bokowy
+  *               2018 Thierry Bultel
+  *
+  * This file is a part of bluez-alsa.
+@@ -27,6 +27,6 @@
+ #define OFONO_AUDIO_CODEC_CVSD 0x01
+ #define OFONO_AUDIO_CODEC_MSBC 0x02
+ 
+-const GDBusInterfaceInfo ofono_iface_hf_audio_agent;
++extern const GDBusInterfaceInfo ofono_iface_hf_audio_agent;
+ 
+ #endif
 -- 
 2.20.1
 

@@ -65,11 +65,6 @@ config BR2_PACKAGE_PHP_EXT_ZLIB
 
 comment "Cryptography extensions"
 
-config BR2_PACKAGE_PHP_EXT_HASH
-	bool "hash"
-	help
-	  HASH message digest framework
-
 comment "libargon2 needs a toolchain w/ dynamic library"
 	depends on BR2_USE_MMU
 	depends on BR2_STATIC_LIBS
@@ -136,7 +131,6 @@ endif
 
 config BR2_PACKAGE_PHP_EXT_MYSQLI
 	bool "Mysqli"
-	select BR2_PACKAGE_PHP_EXT_HASH
 	help
 	  MySQL Improved extension support
 
@@ -168,7 +162,6 @@ if BR2_PACKAGE_PHP_EXT_PDO
 
 config BR2_PACKAGE_PHP_EXT_PDO_MYSQL
 	bool "MySQL"
-	select BR2_PACKAGE_PHP_EXT_HASH
 	help
 	  PDO driver for MySQL
 
@@ -426,5 +419,16 @@ config BR2_PACKAGE_PHP_EXT_XSL
 	select BR2_PACKAGE_LIBXSLT
 	help
 	  XSL transformation support
+
+config BR2_PACKAGE_PHP_EXT_FFI
+	bool "FFI"
+	depends on !BR2_STATIC_LIBS
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_PACKAGE_LIBFFI
+	help
+	  Foreign Function Interface support
+
+comment "PHP FFI extension needs a toolchain w/ threads, dynamic library"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
 
 endmenu
