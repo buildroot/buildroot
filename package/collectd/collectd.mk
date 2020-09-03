@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-COLLECTD_VERSION = 5.11.0
+COLLECTD_VERSION = 5.12.0
 COLLECTD_SITE = \
 	https://github.com/collectd/collectd/releases/download/collectd-$(COLLECTD_VERSION)
 COLLECTD_SOURCE = collectd-$(COLLECTD_VERSION).tar.bz2
