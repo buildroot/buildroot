@@ -1,4 +1,4 @@
-From 36ee1f33bceb0c2a7899e28d75c0d05408b561f1 Mon Sep 17 00:00:00 2001
+From 4a950257fa353e27ef1bd753bca4d0279f41bc77 Mon Sep 17 00:00:00 2001
 From: Michal Vasko <mvasko@cesnet.cz>
 Date: Mon, 24 Aug 2020 13:47:40 +0200
 Subject: [PATCH] scripts FEATURE support using current user for SR modules
@@ -7,18 +7,13 @@ Mostly for special cases user/group configuration
 when the user/group cannot be retrieved normally.
 
 Fixes #701
-
-Signed-off-by: Heiko Thiery <heiko.thiery@gmail.com>
-[patch taken from upstream:
-https://github.com/CESNET/netopeer2/commit/12a82701e10651fbdedb1524b27edf3bb2377488]
-Signed-off-by: Heiko Thiery <heiko.thiery@gmail.com>
 ---
  CMakeLists.txt   | 10 +++++-----
  scripts/setup.sh | 23 +++++++++++++++++++----
  2 files changed, 24 insertions(+), 9 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 2d4175e..95e7e61 100755
+index 77aea1f..8fd6b43 100755
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -68,19 +68,19 @@ if(NOT MODULES_OWNER)
@@ -47,7 +42,7 @@ index 2d4175e..95e7e61 100755
  # set prefix for the PID file
  if(NOT PIDFILE_PREFIX)
 diff --git a/scripts/setup.sh b/scripts/setup.sh
-index 7175bc4..b5d1406 100755
+index 9591a49..b7c7ba4 100755
 --- a/scripts/setup.sh
 +++ b/scripts/setup.sh
 @@ -1,7 +1,8 @@
@@ -61,11 +56,11 @@ index 7175bc4..b5d1406 100755
      echo "Required environment variables not defined!"
      exit 1
  fi
-@@ -33,7 +34,14 @@ MODULES=(
+@@ -37,7 +38,14 @@ MODULES=(
  
  # functions
  INSTALL_MODULE() {
--    $SYSREPOCTL -a -i $MODDIR/$1 -s $MODDIR -p $PERMS -o $OWNER -g $GROUP -v2
+-    "$SYSREPOCTL" -a -i $MODDIR/$1 -s "$MODDIR" -p "$PERMS" -o "$OWNER" -g "$GROUP" -v2
 +    CMD="'$SYSREPOCTL' -a -i $MODDIR/$1 -s '$MODDIR' -p '$PERMS' -v2"
 +    if [ ! -z ${OWNER} ]; then
 +        CMD="$CMD -o '$OWNER'"
@@ -77,11 +72,11 @@ index 7175bc4..b5d1406 100755
      local rc=$?
      if [ $rc -ne 0 ]; then
          exit $rc
-@@ -41,7 +49,14 @@ INSTALL_MODULE() {
+@@ -45,7 +53,14 @@ INSTALL_MODULE() {
  }
  
  UPDATE_MODULE() {
--    $SYSREPOCTL -a -U $MODDIR/$1 -s $MODDIR -p $PERMS -o $OWNER -g $GROUP -v2
+-    "$SYSREPOCTL" -a -U $MODDIR/$1 -s "$MODDIR" -p "$PERMS" -o "$OWNER" -g "$GROUP" -v2
 +    CMD="'$SYSREPOCTL' -a -U $MODDIR/$1 -s '$MODDIR' -p '$PERMS' -v2"
 +    if [ ! -z ${OWNER} ]; then
 +        CMD="$CMD -o '$OWNER'"
