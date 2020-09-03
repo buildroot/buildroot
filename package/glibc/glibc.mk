@@ -8,8 +8,10 @@ ifeq ($(BR2_arc),y)
 GLIBC_VERSION =  arc-2020.03-release
 GLIBC_SITE = $(call github,foss-for-synopsys-dwc-arc-processors,glibc,$(GLIBC_VERSION))
 else ifeq ($(BR2_RISCV_32),y)
-GLIBC_VERSION = 06983fe52cfe8e4779035c27e8cc5d2caab31531
-GLIBC_SITE = $(call github,riscv,riscv-glibc,$(GLIBC_VERSION))
+# RISC-V 32-bit (RV32) requires glibc 2.33 or newer
+# Until 2.33 is released, just use master
+GLIBC_VERSION = 2.32.9000-69-gbd394d131c10c9ec22c6424197b79410042eed99
+GLIBC_SITE = $(call github,bminor,glibc,$(GLIBC_VERSION))
 else ifeq ($(BR2_csky),y)
 GLIBC_VERSION = 7630ed2fa60caea98f500e4a7a51b88f9bf1e176
 GLIBC_SITE = $(call github,c-sky,glibc,$(GLIBC_VERSION))
