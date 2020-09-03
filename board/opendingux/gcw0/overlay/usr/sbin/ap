@@ -1,29 +1,28 @@
 #!/bin/sh
 
 AP_IP=10.1.2.1
-AP_MASK=255.255.255.0
+AP_MASK=24
 
 stop_ap() {
 	/usr/bin/env IFACE=wlan0 /etc/network/if-down.d/xinetd
 
-	/sbin/start-stop-daemon -K -q -p /var/run/udhcpd-ap.pid
-	/sbin/start-stop-daemon -K -q -p /var/run/hostapd.pid
+	/usr/sbin/start-stop-daemon -K -q -p /var/run/udhcpd-ap.pid
+	/usr/sbin/start-stop-daemon -K -q -p /var/run/hostapd.pid
 	rm -f /var/run/udhcpd-ap.pid /var/run/hostapd.pid
-	/sbin/ifconfig wlan0 down
+	/usr/sbin/ip link set wlan0 down
 
 	# Explicitely call the "ledblink" script to stop
 	# the LED from blinking.
 	/usr/bin/env IFACE=wlan0 /etc/network/if-post-down.d/ledblink
-
-	/usr/sbin/rfkill block wlan
 }
 
 start_ap() {
-	/usr/sbin/rfkill unblock wlan
-
 	ERR=0
+
+	/usr/sbin/ip link set wlan0 up
+
 	for i in 0 1 2 3 4 5 6 7 8 9 ; do
-		/sbin/ifconfig wlan0 inet $AP_IP netmask $AP_MASK 2>/dev/null
+		/usr/sbin/ip addr add ${AP_IP}/${AP_MASK} dev wlan0 2>/dev/null
 		ERR=$?
 		[ $ERR -eq 0 ] && break
 		sleep 1
@@ -40,15 +39,10 @@ start_ap() {
 		ERR=$?
 	fi
 
-	if [ $ERR -ne 0 ] ; then
-		/usr/sbin/rfkill block wlan
-		exit $ERR
-	fi
-
 	# Some network games only broadcast on the default network.
-	/sbin/route add default gw $AP_IP
+	/usr/sbin/route add default gw $AP_IP
 
-	/sbin/start-stop-daemon -S -q -b -m -p /var/run/udhcpd-ap.pid \
+	/usr/sbin/start-stop-daemon -S -q -b -m -p /var/run/udhcpd-ap.pid \
 		-x /usr/sbin/udhcpd -- -f -S /etc/udhcpd-ap.conf
 
 	/usr/bin/env IFACE=wlan0 /etc/network/if-up.d/xinetd

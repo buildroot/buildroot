@@ -14,8 +14,4 @@ rm -f /var/run/wpa_supplicant_${IFACE}.pid
 /sbin/start-stop-daemon -K -q -p /var/run/udhcpc_${IFACE}.pid
 rm -f /var/run/udhcpc_${IFACE}.pid
 
-/sbin/ifconfig ${IFACE} down
-
-if [ "$IFACE" = "wlan0" ] ; then
-	/usr/sbin/rfkill block wlan
-fi
+ip link set ${IFACE} down

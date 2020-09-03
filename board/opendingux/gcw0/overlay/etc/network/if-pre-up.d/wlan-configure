@@ -9,7 +9,7 @@ case "$IFACE" in
 esac
 
 # Some default values
-WLAN_DRIVER=wext
+WLAN_DRIVER=nl80211
 WLAN_ENCRYPTION=none
 
 if [ -z "$CONF_FILE" ] ; then
@@ -46,38 +46,24 @@ case "$WLAN_ENCRYPTION" in
 		exit 1
 esac
 
-RET=0
-if [ "$IFACE" = "wlan0" ] ; then
-	/usr/sbin/rfkill unblock wlan
+ip link set ${IFACE} up
+[ $? -ne 0 ] && exit 1
 
-	for i in 0 1 2 3 4 5 6 7 8 9 ; do
-		/sbin/ifconfig wlan0 up 2>/dev/null
-		RET=$?
-		[ $RET -eq 0 ] && break
-		sleep 1
-	done
+iw ${IFACE} disconnect
+[ $? -ne 0 ] && exit 1
+
+iw ${IFACE} set type managed
+[ $? -ne 0 ] && exit 1
+
+if [ -f "/var/run/wpa_supplicant_${IFACE}.pid" ] ; then
+	/sbin/start-stop-daemon -K -q -p /var/run/wpa_supplicant_${IFACE}.pid
+fi
+
+if [ "$WLAN_ENCRYPTION" = "none" ] ; then
+	iw ${IFACE} connect ${WLAN_ESSID}
 else
-	/sbin/ifconfig "$IFACE" up
-	RET=$?
-fi
-
-if [ $RET -eq 0 ] ; then
-	/sbin/iwconfig "$IFACE" mode managed essid "$WLAN_ESSID"
-	RET=$?
-fi
-
-if [ $RET -eq 0 -a "$WLAN_ENCRYPTION" != "none" ] ; then
-	if [ -f "/var/run/wpa_supplicant_${IFACE}.pid" ] ; then
-		/sbin/start-stop-daemon -K -q -p /var/run/wpa_supplicant_${IFACE}.pid
-	fi
-
 	/usr/sbin/wpa_supplicant -B -D "$WLAN_DRIVER" -i "$IFACE" \
 		-c /tmp/.${IFACE}_config -P /var/run/wpa_supplicant_${IFACE}.pid
-	RET=$?
 fi
 
-if [ $RET -ne 0 -a "$IFACE" = "wlan0" ] ; then
-	/usr/sbin/rfkill block wlan
-fi
-
-exit $RET
+exit $?

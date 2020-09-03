@@ -12,6 +12,8 @@ for i in bin etc home lib sbin share; do
 	chown od:users /usr/local/$i
 done
 
+[ -d /usr/local/etc/network ] && chown -R od:users /usr/local/etc/network
+
 if [ -r /sys/power/state ] ; then
 	chown root:pm /sys/power/state
 	chmod 664 /sys/power/state
