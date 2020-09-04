@@ -110,15 +110,17 @@ mkdir -p $MNT
 
 # If possible, try to run the od-update script from the new rootfs
 if [ -r $ROOTFS -a "$0" != "/tmp/od-update" ] ; then
-	mount -o loop $ROOTFS $MNT
-	if [ -r $MNT/usr/sbin/od-update ] ; then
-		cp $MNT/usr/sbin/od-update /tmp/od-update
-		umount $MNT
+	mount -o loop $ROOTFS $MNT > /dev/null 2>&1
+	if [ $? -eq 0 ] ; then
+		if [ -r $MNT/usr/sbin/od-update ] ; then
+			cp $MNT/usr/sbin/od-update /tmp/od-update
+			umount $MNT
 
-		# Run the updated od-update script from the rootfs
-		exec /tmp/od-update $*
-	else
-		umount $MNT
+			# Run the updated od-update script from the rootfs
+			exec /tmp/od-update $*
+		else
+			umount $MNT
+		fi
 	fi
 fi
 
