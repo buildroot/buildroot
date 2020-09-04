@@ -1,10 +1,10 @@
 ################################################################################
 #
-# WPEFramework UI
+# RDK Splash Screen
 #
 ################################################################################
 
-RDKSPLASHSCREEN_VERSION = 38d312ebd40b847c6320cbc4d2d8de6824f5d653
+RDKSPLASHSCREEN_VERSION = 7bf07c35cc531cd306c525b554310c48b3558138
 RDKSPLASHSCREEN_SITE = $(call github,rdkcentral,RDKSplashScreen,$(RDKSPLASHSCREEN_VERSION))
 RDKSPLASHSCREEN_DEPENDENCIES = wpeframework wpeframework-plugins
 
