@@ -5,7 +5,7 @@
 ################################################################################
 
 LIBCAMERA_SITE = https://git.linuxtv.org/libcamera.git
-LIBCAMERA_VERSION = 565f95d64ff92e8712e8090988180c343dd3bcb5
+LIBCAMERA_VERSION = e59713c68678f3eb6b6ebe97cabdc88c7042567f
 LIBCAMERA_SITE_METHOD = git
 LIBCAMERA_DEPENDENCIES = \
 	host-openssl \
