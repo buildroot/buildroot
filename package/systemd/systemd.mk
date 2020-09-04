@@ -700,7 +700,8 @@ HOST_SYSTEMD_CONF_OPTS = \
 	-Dkernel-install=false \
 	-Dsystemd-analyze=false \
 	-Dlibcryptsetup=false \
-	-Daudit=false
+	-Daudit=false \
+	-Dzstd=false
 
 HOST_SYSTEMD_DEPENDENCIES = \
 	$(BR2_COREUTILS_HOST_DEPENDENCY) \
