@@ -42,8 +42,9 @@ ifeq ($(BR2_PACKAGE_REFPOLICY_UPSTREAM_VERSION),y)
 # Allow to provide out-of-tree SELinux modules in addition to the ones
 # in the refpolicy.
 REFPOLICY_EXTRA_MODULES_DIRS = \
-	$(call qstrip,$(BR2_REFPOLICY_EXTRA_MODULES_DIRS)) \
-	$(PACKAGES_SELINUX_EXTRA_MODULES_DIRS)
+	$(strip \
+		$(call qstrip,$(BR2_REFPOLICY_EXTRA_MODULES_DIRS)) \
+		$(PACKAGES_SELINUX_EXTRA_MODULES_DIRS))
 $(foreach dir,$(REFPOLICY_EXTRA_MODULES_DIRS),\
 	$(if $(wildcard $(dir)),,\
 		$(error BR2_REFPOLICY_EXTRA_MODULES_DIRS contains nonexistent directory $(dir))))
