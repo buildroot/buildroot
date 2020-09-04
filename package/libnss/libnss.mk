@@ -105,6 +105,8 @@ define LIBNSS_INSTALL_TARGET_CMDS
 		$(@D)/$(LIBNSS_DISTDIR)/lib/*.a
 	$(INSTALL) -D -m 0644 $(TOPDIR)/package/libnss/nss.pc.in \
 		$(TARGET_DIR)/usr/lib/pkgconfig/nss.pc
+	$(INSTALL) -D -m 755 $(@D)/$(LIBNSS_DISTDIR)/bin/certutil \
+		$(TARGET_DIR)/usr/bin/certutil
 	$(SED) 's/@VERSION@/$(LIBNSS_VERSION)/g;' \
 		$(TARGET_DIR)/usr/lib/pkgconfig/nss.pc
 endef
