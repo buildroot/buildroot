@@ -7,6 +7,11 @@ fi
 
 $(sed -n 's/.*root=\([[:alnum:]:\/]\+\).*rootfstype=\([[:alpha:]]\+\).*/export SYSPART=\1\nexport SYSPART_TYPE=\2/p' /proc/cmdline)
 
+# Old OpenDingux firmwares did not pass valid root/rootfstype params.
+# Hardcode here the setting they used.
+[ -z "$SYSPART" ] && export SYSPART=/dev/mmcblk0p1
+[ -z "$SYSPART_TYPE" ] && export SYSPART_TYPE=vfat
+
 HWVARIANT_BL=""
 HWVARIANT_DT=""
 
@@ -285,7 +290,7 @@ fi
 	if [ "$INSTALL_ON_NAND" ] ; then
 		ubirename /dev/ubi0 kernel kernel_bak kernel_bak kernel
 	else
-		cp $MNT/uzImage.bin $MNT/uzImage.bak
+		[ -r $MNT/uzImage.bin ] && cp $MNT/uzImage.bin $MNT/uzImage.bak
 		mv $MNT/new_uzImage.bin $MNT/uzImage.bin
 	fi
 elif [ -z "$INSTALL_ON_NAND" ] ; then
