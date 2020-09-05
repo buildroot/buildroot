@@ -53,6 +53,15 @@ ifeq ($(BR2_PACKAGE_APACHE),y)
 APPARMOR_DEPENDENCIES += apache
 APPARMOR_TOOLS += changehat/mod_apparmor
 APPARMOR_MAKE_OPTS += APXS=$(STAGING_DIR)/usr/bin/apxs
+
+ifeq ($(BR2_PER_PACKAGE_DIRECTORIES),y)
+define APPARMOR_FIXUP_APXS
+	$(SED) "s@$(PER_PACKAGE_DIR)/[^/]\+/@$(PER_PACKAGE_DIR)/apparmor/@g" \
+		$(STAGING_DIR)/usr/bin/apxs \
+		$(STAGING_DIR)/usr/build/config_vars.mk
+endef
+APPARMOR_POST_CONFIGURE_HOOKS += APPARMOR_FIXUP_APXS
+endif
 endif
 
 define APPARMOR_BUILD_CMDS
