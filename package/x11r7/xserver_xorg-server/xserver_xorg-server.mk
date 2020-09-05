@@ -20,6 +20,7 @@ XSERVER_XORG_SERVER_DEPENDENCIES = \
 	xlib_libXdmcp \
 	xlib_libXext \
 	xlib_libXfixes \
+	xlib_libXfont2 \
 	xlib_libXi \
 	xlib_libXrender \
 	xlib_libXres \
@@ -158,14 +159,6 @@ XSERVER_XORG_SERVER_DEPENDENCIES += libunwind
 XSERVER_XORG_SERVER_CONF_OPTS += --enable-libunwind
 else
 XSERVER_XORG_SERVER_CONF_OPTS += --disable-libunwind
-endif
-
-ifeq ($(BR2_PACKAGE_XLIB_LIBXFONT2),y)
-XSERVER_XORG_SERVER_DEPENDENCIES += xlib_libXfont2
-endif
-
-ifeq ($(BR2_PACKAGE_XLIB_LIBXFONT),y)
-XSERVER_XORG_SERVER_DEPENDENCIES += xlib_libXfont
 endif
 
 ifneq ($(BR2_PACKAGE_XLIB_LIBXVMC),y)
