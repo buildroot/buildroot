@@ -13,6 +13,9 @@ GRAPHICSMAGICK_LICENSE_FILES = Copyright.txt
 GRAPHICSMAGICK_INSTALL_STAGING = YES
 GRAPHICSMAGICK_CONFIG_SCRIPTS = GraphicsMagick-config GraphicsMagickWand-config
 
+# 0001-MNG-Fix-small-heap-overwrite-or-assertion.patch
+GRAPHICSMAGICK_IGNORE_CVES += CVE-2020-12672
+
 ifeq ($(BR2_INSTALL_LIBSTDCPP)$(BR2_USE_WCHAR),yy)
 GRAPHICSMAGICK_CONFIG_SCRIPTS += GraphicsMagick++-config
 endif
