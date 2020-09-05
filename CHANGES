@@ -393,6 +393,22 @@
 	#12796: Update OpenSSL to Version 1.1.1g to patch  CVE-2020-1967
 	#12811: bootstrap stuck and no login prompt
 
+2020.02.6, released September 5th, 2020
+
+	Important / security related fixes.
+
+	Fix a 2020.02.5 build regression in busybox when systemd (and
+	not less) are enabled because of missing infrastructure.
+
+	Updated/fixed packages: alsa-utils, avahi, busybox, cups,
+	docker-cli, graphite2, imagemagick, libeXosip2, mbedtls,
+	nvidia-driver, paho-mqtt-c, python-django, systemd, uclibc,
+	usb_modeswitch, wolfssl
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12911: usb_modeswitch installation race condition
+
 2020.02.5, released August 29th, 2020
 
 	Important / security related fixes.
