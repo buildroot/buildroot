@@ -277,8 +277,10 @@ mkdir -p $MNT/dev $MNT/root
 
 [ -r $ROOTFS ] && if [ "$ROOTFS_IS_BACKUP" ] ; then
 	 mv $MNT/new-rootfs.squashfs $MNT/rootfs.squashfs
+	 [ -r $ROOTFS.sha1 ] && cp $ROOTFS.sha1 $MNT/rootfs.squashfs.sha1
 else
 	 mv $MNT/new-rootfs.squashfs $MNT/update_r.bin
+	 [ -r $ROOTFS.sha1 ] && cp $ROOTFS.sha1 $MNT/update_r.bin.sha1
 fi
 [ -r $MODULES_FS ] && if [ "$KERNEL_IS_BACKUP" ] ; then
 	 mv $MNT/new-modules.squashfs $MNT/modules.squashfs
@@ -290,11 +292,19 @@ fi
 	if [ "$INSTALL_ON_NAND" ] ; then
 		ubirename /dev/ubi0 kernel kernel_bak kernel_bak kernel
 	else
-		[ -r $MNT/uzImage.bin ] && cp $MNT/uzImage.bin $MNT/uzImage.bak
+		if [ -r $MNT/uzImage.bin ] ; then
+			cp $MNT/uzImage.bin $MNT/uzImage.bak
+			[ -r $MNT/uzImage.bin.sha1 ] && cp $MNT/uzImage.bin.sha1 $MNT/uzImage.bak.sha1
+		elif [ -r $MNT/vmlinuz.bin ] ; then
+			cp $MNT/vmlinuz.bin $MNT/vmlinuz.bak
+			[ -r $MNT/vmlinuz.bin.sha1 ] && cp $MNT/vmlinuz.bin.sha1 $MNT/vmlinuz.bak.sha1
+		fi
 		mv $MNT/new_uzImage.bin $MNT/uzImage.bin
+		[ -r $KERNEL.sha1 ] && cp $KERNEL.sha1 $MNT/uzImage.bin.sha1
 	fi
 elif [ -z "$INSTALL_ON_NAND" ] ; then
 	mv $MNT/new_uzImage.bin $MNT/uzImage.bin
+	[ -r $KERNEL.sha1 ] && cp $KERNEL.sha1 $MNT/uzImage.bin.sha1
 fi
 
 sync
