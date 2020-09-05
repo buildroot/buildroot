@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2020.11"
 
+config BR2_KERNEL_HEADERS_5_7
+	bool "kernel headers version 5.7.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 5.7.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
 config BR2_PACKAGE_TINYHTTPD
 	bool "tinyhttpd package removed"
 	select BR2_LEGACY
