@@ -1,8 +1,3 @@
-# Configuration for Gitlab-CI.
-# Builds appear on https://gitlab.com/buildroot.org/buildroot/pipelines
-
-image: buildroot/base:20200814.2228
-
 .check_base:
     rules:
         - if: '$CI_COMMIT_REF_NAME =~ /^.*-.*_defconfig$/ || $CI_COMMIT_REF_NAME =~ /^.*-tests\..*$/'

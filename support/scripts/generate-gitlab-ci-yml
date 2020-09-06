@@ -5,7 +5,7 @@ set -o pipefail
 main() {
     local template="${1}"
 
-    cat "${template}"
+    preamble "${template}"
 
     (
         cd configs
@@ -16,6 +16,18 @@ main() {
     ./support/testing/run-tests -l 2>&1 \
     | sed -r -e '/^test_run \((.*)\).*/!d; s//\1: { extends: .runtime_test }/' \
     | LC_ALL=C sort
+}
+
+preamble() {
+    local template="${1}"
+
+    cat - "${template}" <<-_EOF_
+	# This file is generated; do not edit!
+	# Builds appear on https://gitlab.com/buildroot.org/buildroot/pipelines
+
+	image: ${CI_JOB_IMAGE}
+
+_EOF_
 }
 
 main "${@}"
