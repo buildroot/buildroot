@@ -47,9 +47,10 @@ gen_defconfigs() {
     esac
 
     for cfg in "${defconfigs[@]}"; do
-        printf '%s_check: { extends: .defconfig_check }\n' "${cfg}"
         if ${build_defconfigs}; then
             printf '%s: { extends: .defconfig }\n' "${cfg}"
+        else
+            printf '%s_check: { extends: .defconfig_check }\n' "${cfg}"
         fi
     done
 }
