@@ -7,11 +7,7 @@ main() {
 
     preamble "${template}"
 
-    (
-        cd configs
-        LC_ALL=C ls -1 *_defconfig
-    ) \
-    | sed -r -e 's/^(.+)$/\1: { extends: .defconfig }\n\1_check: { extends: .defconfig_check }/'
+    gen_defconfigs
 
     ./support/testing/run-tests -l 2>&1 \
     | sed -r -e '/^test_run \((.*)\).*/!d; s//\1: { extends: .runtime_test }/' \
@@ -28,6 +24,34 @@ preamble() {
 	image: ${CI_JOB_IMAGE}
 
 _EOF_
+}
+
+gen_defconfigs() {
+    local -a defconfigs
+    local build_defconfigs cfg
+
+    defconfigs=( $(cd configs; LC_ALL=C ls -1 *_defconfig) )
+
+    build_defconfigs=false
+    if [ -n "${CI_COMMIT_TAG}" ]; then
+        # For tags, create a pipeline.
+        build_defconfigs=true
+    fi
+    if [ -n "${CI_PIPELINE_TRIGGERED}" ]; then
+        # For pipeline created by using a trigger token.
+        build_defconfigs=true
+    fi
+    case "${CI_COMMIT_REF_NAME}" in
+        # For the branch or tag name named *-defconfigs, create a pipeline.
+        (*-defconfigs) build_defconfigs=true;;
+    esac
+
+    for cfg in "${defconfigs[@]}"; do
+        printf '%s_check: { extends: .defconfig_check }\n' "${cfg}"
+        if ${build_defconfigs}; then
+            printf '%s: { extends: .defconfig }\n' "${cfg}"
+        fi
+    done
 }
 
 main "${@}"
