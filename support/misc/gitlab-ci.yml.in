@@ -82,15 +82,6 @@ check-package:
             - test-output/*.log
             - test-output/*/.config
             - test-output/*/images/*
-
-.runtime_test:
-    extends: .runtime_test_base
     before_script:
         - TEST_CASE_NAME=${CI_JOB_NAME}
 
-one-runtime_test:
-    extends: .runtime_test_base
-    rules:
-        - if: '$CI_COMMIT_REF_NAME =~ /^.*-tests\..*$/'
-    before_script:
-        - TEST_CASE_NAME=$(echo ${CI_COMMIT_REF_NAME} | sed -e 's,^.*-,,g')

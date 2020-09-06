@@ -78,7 +78,13 @@ gen_tests() {
     fi
     case "${CI_COMMIT_REF_NAME}" in
         # For the branch or tag name named *-runtime-tests, create a pipeline.
-        (*-runtime-tests) run_tests=true;;
+        (*-runtime-tests)
+            run_tests=true
+        ;;
+        (*-tests.*)
+            tests=( "${CI_COMMIT_REF_NAME##*-}" )
+            run_tests=true
+        ;;
     esac
 
     if ${run_tests}; then
