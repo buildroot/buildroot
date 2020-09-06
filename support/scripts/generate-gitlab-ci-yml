@@ -42,37 +42,40 @@ gen_basics() {
 
 gen_defconfigs() {
     local -a defconfigs
-    local build_defconfigs cfg
+    local template cfg ext
 
     defconfigs=( $(cd configs; LC_ALL=C ls -1 *_defconfig) )
 
-    build_defconfigs=false
     if [ -n "${CI_COMMIT_TAG}" ]; then
         # For tags, create a pipeline.
-        build_defconfigs=true
+        template=base
     fi
     if [ -n "${CI_PIPELINE_TRIGGERED}" ]; then
         # For pipeline created by using a trigger token.
-        build_defconfigs=true
+        template=base
     fi
     case "${CI_COMMIT_REF_NAME}" in
+        # For master, next, and maintenance branches, only check the defconfigs
+        (master|next|????.??.x)
+            template=check
+            ext=_check
+        ;;
         # For the branch or tag name named *-defconfigs, create a pipeline.
         (*-defconfigs)
-            build_defconfigs=true
+            template=base
         ;;
         (*-*_defconfig)
             defconfigs=( "${CI_COMMIT_REF_NAME##*-}" )
-            build_defconfigs=true
+            template=base
         ;;
     esac
 
-    for cfg in "${defconfigs[@]}"; do
-        if ${build_defconfigs}; then
-            printf '%s: { extends: .defconfig_base }\n' "${cfg}"
-        else
-            printf '%s_check: { extends: .defconfig_check }\n' "${cfg}"
-        fi
-    done
+    if [ -n "${template}" ]; then
+        for cfg in "${defconfigs[@]}"; do
+            printf '%s%s: { extends: .defconfig_%s }\n' \
+                   "${cfg}" "${ext}" "${template}"
+        done
+    fi
 }
 
 gen_tests() {
