@@ -40,7 +40,13 @@ gen_defconfigs() {
     fi
     case "${CI_COMMIT_REF_NAME}" in
         # For the branch or tag name named *-defconfigs, create a pipeline.
-        (*-defconfigs) build_defconfigs=true;;
+        (*-defconfigs)
+            build_defconfigs=true
+        ;;
+        (*-*_defconfig)
+            defconfigs=( "${CI_COMMIT_REF_NAME##*-}" )
+            build_defconfigs=true
+        ;;
     esac
 
     for cfg in "${defconfigs[@]}"; do
