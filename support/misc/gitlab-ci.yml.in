@@ -14,6 +14,8 @@
         - make check-package
 
 .defconfig_check:
+    before_script:
+        - DEFCONFIG_NAME=$(echo ${CI_JOB_NAME} | sed -e 's,_check$,,g')
     script:
         - echo "Configure Buildroot for ${DEFCONFIG_NAME}"
         - make ${DEFCONFIG_NAME}
@@ -23,10 +25,10 @@
         expire_in: 2 weeks
         paths:
             - .config
-    before_script:
-        - DEFCONFIG_NAME=$(echo ${CI_JOB_NAME} | sed -e 's,_check$,,g')
 
 .defconfig_base:
+    before_script:
+        - DEFCONFIG_NAME=${CI_JOB_NAME}
     script:
         - echo "Configure Buildroot for ${DEFCONFIG_NAME}"
         - make ${DEFCONFIG_NAME}
@@ -55,10 +57,10 @@
             - output/build/packages-file-list.txt
             - output/build/*/.config
             - runtime-test.log
-    before_script:
-        - DEFCONFIG_NAME=${CI_JOB_NAME}
 
 .runtime_test_base:
+    before_script:
+        - TEST_CASE_NAME=${CI_JOB_NAME}
     # Keep build directories so the rootfs can be an artifact of the job. The
     # runner will clean up those files for us.
     # Multiply every emulator timeout by 10 to avoid sporadic failures in
@@ -73,6 +75,4 @@
             - test-output/*.log
             - test-output/*/.config
             - test-output/*/images/*
-    before_script:
-        - TEST_CASE_NAME=${CI_JOB_NAME}
 
