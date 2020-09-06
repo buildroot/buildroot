@@ -1,24 +1,15 @@
-.check_base:
-    rules:
-        - if: '$CI_COMMIT_REF_NAME =~ /^.*-.*_defconfig$/ || $CI_COMMIT_REF_NAME =~ /^.*-tests\..*$/'
-          when: never
-        - when: always
-
-check-DEVELOPERS:
-    extends: .check_base
+.check-DEVELOPERS_base:
     # get-developers should print just "No action specified"; if it prints
     # anything else, it's a parse error.
     # The initial ! is removed by YAML so we need to quote it.
     script:
         - "! utils/get-developers | grep -v 'No action specified'"
 
-check-flake8:
-    extends: .check_base
+.check-flake8_base:
     script:
         - make check-flake8
 
-check-package:
-    extends: .check_base
+.check-package_base:
     script:
         - make check-package
 

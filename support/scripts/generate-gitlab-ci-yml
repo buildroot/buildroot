@@ -7,6 +7,7 @@ main() {
 
     preamble "${template}"
 
+    gen_basics
     gen_defconfigs
     gen_tests
 }
@@ -21,6 +22,22 @@ preamble() {
 	image: ${CI_JOB_IMAGE}
 
 _EOF_
+}
+
+gen_basics() {
+    local tst
+
+    # Skip basic tests when explicitly building defconfigs or runtime tests
+    case "${CI_COMMIT_REF_NAME}" in
+        (*-defconfigs)      return;;
+        (*-*_defconfig)     return;;
+        (*-runtime-tests)   return;;
+        (*-tests.*)         return;;
+    esac
+
+    for tst in DEVELOPERS flake8 package; do
+        printf 'check-%s: { extends: .check-%s_base }\n' "${tst}" "${tst}"
+    done
 }
 
 gen_defconfigs() {
@@ -51,7 +68,7 @@ gen_defconfigs() {
 
     for cfg in "${defconfigs[@]}"; do
         if ${build_defconfigs}; then
-            printf '%s: { extends: .defconfig }\n' "${cfg}"
+            printf '%s: { extends: .defconfig_base }\n' "${cfg}"
         else
             printf '%s_check: { extends: .defconfig_check }\n' "${cfg}"
         fi
@@ -88,7 +105,7 @@ gen_tests() {
     esac
 
     if ${run_tests}; then
-        printf '%s: { extends: .runtime_test }\n' "${tests[@]}"
+        printf '%s: { extends: .runtime_test_base }\n' "${tests[@]}"
     fi
 }
 
