@@ -8,10 +8,7 @@ main() {
     preamble "${template}"
 
     gen_defconfigs
-
-    ./support/testing/run-tests -l 2>&1 \
-    | sed -r -e '/^test_run \((.*)\).*/!d; s//\1: { extends: .runtime_test }/' \
-    | LC_ALL=C sort
+    gen_tests
 }
 
 preamble() {
@@ -53,6 +50,34 @@ gen_defconfigs() {
             printf '%s_check: { extends: .defconfig_check }\n' "${cfg}"
         fi
     done
+}
+
+gen_tests() {
+    local -a tests
+    local run_tests tst
+
+    tests=( $(./support/testing/run-tests -l 2>&1 \
+              | sed -r -e '/^test_run \((.*)\).*/!d; s//\1/'\
+              | LC_ALL=C sort)
+          )
+
+    run_tests=false
+    if [ -n "${CI_COMMIT_TAG}" ]; then
+        # For tags, create a pipeline.
+        run_tests=true
+    fi
+    if [ -n "${CI_PIPELINE_TRIGGERED}" ]; then
+        # For pipeline created by using a trigger token.
+        run_tests=true
+    fi
+    case "${CI_COMMIT_REF_NAME}" in
+        # For the branch or tag name named *-runtime-tests, create a pipeline.
+        (*-runtime-tests) run_tests=true;;
+    esac
+
+    if ${run_tests}; then
+        printf '%s: { extends: .runtime_test }\n' "${tests[@]}"
+    fi
 }
 
 main "${@}"
