@@ -1,5 +1,6 @@
 config BR2_PACKAGE_EASYFRAMES
 	bool "easyframes"
+	depends on BR2_USE_MMU # fork()
 	select BR2_PACKAGE_LIBPCAP
 	help
 	  This is a small and simple command-line tool for network
