@@ -38,4 +38,14 @@ define PIGPIO_INSTALL_STAGING_CMDS
 	ln -sf libpigpiod_if2.so.1 $(STAGING_DIR)/usr/lib/libpigpiod_if2.so
 endef
 
+define PIGPIO_INSTALL_INIT_SYSV
+	$(INSTALL) -D -m 755 package/pigpio/S50pigpio \
+		$(TARGET_DIR)/etc/init.d/S50pigpio
+endef
+
+define PIGPIO_INSTALL_INIT_SYSTEMD
+	$(INSTALL) -D -m 644 package/pigpio/pigpio.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/pigpio.service
+endef
+
 $(eval $(generic-package))
