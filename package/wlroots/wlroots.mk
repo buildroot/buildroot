@@ -27,13 +27,6 @@ ifeq ($(BR2_PACKAGE_FFMPEG),y)
 WLROOTS_DEPENDENCIES += ffmpeg
 endif
 
-ifeq ($(BR2_PACKAGE_LIBCAP),y)
-WLROOTS_CONF_OPTS += -Dlibcap=enabled
-WLROOTS_DEPENDENCIES += libcap
-else
-WLROOTS_CONF_OPTS += -Dlibcap=disabled
-endif
-
 ifeq ($(BR2_PACKAGE_LIBPNG),y)
 WLROOTS_DEPENDENCIES += libpng
 endif
