@@ -6,11 +6,13 @@ when a python byte code generation failed.
 Inspired from:
    http://stackoverflow.com/questions/615632/how-to-detect-errors-from-compileall-compile-dir
 '''
+
 from __future__ import print_function
-import sys
-import py_compile
-import compileall
+
 import argparse
+import compileall
+import py_compile
+import sys
 
 
 def check_for_errors(comparison):
