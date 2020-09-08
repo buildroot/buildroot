@@ -58,12 +58,19 @@ class ReportProblem(int):
         return not self == other
 
 
-parser = argparse.ArgumentParser(description='Compile Python source files in a directory tree.')
-parser.add_argument("target", metavar='DIRECTORY',
-                    help='Directory to scan')
-parser.add_argument("--force", action='store_true',
-                    help="Force compilation even if alread compiled")
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("target", metavar="TARGET",
+                        help="Directory to scan")
+    parser.add_argument("--force", action="store_true",
+                        help="Force compilation even if already compiled")
 
-args = parser.parse_args()
+    args = parser.parse_args()
 
-compileall.compile_dir(args.target, force=args.force, quiet=ReportProblem())
+    compileall.compile_dir(args.target, force=args.force, quiet=ReportProblem())
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
