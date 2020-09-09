@@ -14,4 +14,7 @@ rm -f /var/run/wpa_supplicant_${IFACE}.pid
 /sbin/start-stop-daemon -K -q -p /var/run/udhcpc_${IFACE}.pid
 rm -f /var/run/udhcpc_${IFACE}.pid
 
+IPV4_ADDR=$(ip -4 a show wlan0|grep inet|awk '{print $2}')
+[ "$IPV4_ADDR" ] && ip addr del "$IPV4_ADDR" dev ${IFACE}
+
 ip link set ${IFACE} down

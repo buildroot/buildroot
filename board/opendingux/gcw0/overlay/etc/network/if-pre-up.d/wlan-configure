@@ -8,10 +8,6 @@ case "$IFACE" in
 		;;
 esac
 
-# Some default values
-WLAN_DRIVER=nl80211
-WLAN_ENCRYPTION=none
-
 if [ -z "$CONF_FILE" ] ; then
 	CONF_FILE=/etc/local/network/config-${IFACE}.conf
 fi
@@ -62,7 +58,7 @@ fi
 if [ "$WLAN_ENCRYPTION" = "none" ] ; then
 	iw ${IFACE} connect ${WLAN_ESSID}
 else
-	/usr/sbin/wpa_supplicant -B -D "$WLAN_DRIVER" -i "$IFACE" \
+	/usr/sbin/wpa_supplicant -B -D nl80211,wext -i "$IFACE" \
 		-c /tmp/.${IFACE}_config -P /var/run/wpa_supplicant_${IFACE}.pid
 fi
 
