@@ -1,0 +1,27 @@
+From 4deace34cfcc5476b71a9cdc05828f5a48d1cd74 Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Thu, 3 Sep 2020 15:08:24 +0200
+Subject: [PATCH] fix static builds with gcc 10.x
+
+[petr.vorel@gmail.com: backport of upstream commit 4deace34cfcc5476b71a9cdc05828f5a48d1cd74]
+Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
+---
+ Rules.mak | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Rules.mak b/Rules.mak
+index f270b7bee..55e88d462 100644
+--- a/Rules.mak
++++ b/Rules.mak
+@@ -288,7 +288,7 @@ OPTIMIZATION += $(CFLAG_-fstrict-aliasing)
+ 
+ # Why -funsigned-char: I hunted a bug related to incorrect
+ # sign extension of 'char' type for 10 hours straight. Not fun.
+-CPU_CFLAGS-y := -funsigned-char -fno-builtin
++CPU_CFLAGS-y := -funsigned-char -fno-builtin -fcommon
+ 
+ $(eval $(call check-gcc-var,-fno-asm))
+ CPU_CFLAGS-y += $(CFLAG_-fno-asm)
+-- 
+2.27.0.rc0
+
