@@ -30,7 +30,7 @@ def checkLogin(user):
 		fields = getspnam(user)
 	except KeyError:
 		return LOGIN_DISABLED
-	except PermissionError:
+	except OSError:
 		return LOGIN_UNKNOWN
 	if fields.sp_pwd == '':
 		return LOGIN_NOPASSWORD
