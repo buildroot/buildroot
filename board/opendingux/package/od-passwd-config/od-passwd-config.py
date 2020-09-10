@@ -48,7 +48,7 @@ def updateShadowPassword(user, encryptedPassword):
 		fields.extend([''] * (9 - len(fields)))
 		fields[0] = user
 		fields[1] = encryptedPassword
-		fields[2] = str(int(time()) / (24 * 60 * 60))
+		fields[2] = str(int(time() / (24 * 60 * 60)))
 
 	shadowPath = realpath('/etc/shadow')
 	tempPath = shadowPath + '+'
