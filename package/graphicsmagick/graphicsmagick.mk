@@ -27,7 +27,6 @@ GRAPHICSMAGICK_CONF_OPTS = \
 	--without-jbig \
 	--without-perl \
 	--without-trio \
-	--without-webp \
 	--without-wmf \
 	--without-x \
 	--with-gs-font-dir=/usr/share/fonts/gs
@@ -83,6 +82,13 @@ GRAPHICSMAGICK_CONF_OPTS += --with-tiff
 GRAPHICSMAGICK_DEPENDENCIES += tiff
 else
 GRAPHICSMAGICK_CONF_OPTS += --without-tiff
+endif
+
+ifeq ($(BR2_PACKAGE_WEBP_MUX),y)
+GRAPHICSMAGICK_CONF_OPTS += --with-webp
+GRAPHICSMAGICK_DEPENDENCIES += webp
+else
+GRAPHICSMAGICK_CONF_OPTS += --without-webp
 endif
 
 ifeq ($(BR2_PACKAGE_XZ),y)
