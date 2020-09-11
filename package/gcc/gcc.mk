@@ -116,7 +116,7 @@ endif
 ifeq ($(BR2_USE_WCHAR)$(BR2_TOOLCHAIN_HAS_LIBQUADMATH),yy)
 HOST_GCC_COMMON_CONF_OPTS += --enable-libquadmath
 else
-HOST_GCC_COMMON_CONF_OPTS += --disable-libquadmath
+HOST_GCC_COMMON_CONF_OPTS += --disable-libquadmath --disable-libquadmath-support
 endif
 
 # libsanitizer requires wordexp, not in default uClibc config. Also
