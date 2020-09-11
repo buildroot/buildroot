@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GRPC_VERSION = 1.31.0
+GRPC_VERSION = 1.32.0
 GRPC_SITE = $(call github,grpc,grpc,v$(GRPC_VERSION))
 GRPC_LICENSE = Apache-2.0
 GRPC_LICENSE_FILES = LICENSE
@@ -12,7 +12,7 @@ GRPC_LICENSE_FILES = LICENSE
 GRPC_INSTALL_STAGING = YES
 
 # Need to use host grpc_cpp_plugin during cross compilation.
-GRPC_DEPENDENCIES = c-ares host-grpc openssl protobuf re2 zlib libabseil-cpp
+GRPC_DEPENDENCIES = c-ares host-grpc libabseil-cpp openssl protobuf re2 zlib
 HOST_GRPC_DEPENDENCIES = host-c-ares host-libabseil-cpp host-openssl host-protobuf \
 	host-re2 host-zlib
 
@@ -21,13 +21,13 @@ HOST_GRPC_DEPENDENCIES = host-c-ares host-libabseil-cpp host-openssl host-protob
 # which doesn't do this.  These CARES settings trick the gRPC cmake code into
 # not looking for c-ares at all and yet still linking with the library.
 GRPC_CONF_OPTS = \
+	-DgRPC_ABSL_PROVIDER=package \
 	-D_gRPC_CARES_LIBRARIES=cares \
 	-DgRPC_CARES_PROVIDER=none \
 	-DgRPC_PROTOBUF_PROVIDER=package \
 	-DgRPC_RE2_PROVIDER=package \
 	-DgRPC_SSL_PROVIDER=package \
 	-DgRPC_ZLIB_PROVIDER=package \
-	-DgRPC_ABSL_PROVIDER=package \
 	-DgRPC_NATIVE_CPP_PLUGIN=$(HOST_DIR)/bin/grpc_cpp_plugin
 
 # grpc can use __atomic builtins, so we need to link with
@@ -64,13 +64,13 @@ GRPC_CONF_OPTS += \
 	-DCMAKE_CXX_FLAGS="$(GRPC_CXXFLAGS)"
 
 HOST_GRPC_CONF_OPTS = \
+	-DgRPC_ABSL_PROVIDER=package \
 	-D_gRPC_CARES_LIBRARIES=cares \
 	-DgRPC_CARES_PROVIDER=none \
 	-DgRPC_PROTOBUF_PROVIDER=package \
 	-DgRPC_RE2_PROVIDER=package \
 	-DgRPC_SSL_PROVIDER=package \
-	-DgRPC_ZLIB_PROVIDER=package \
-	-DgRPC_ABSL_PROVIDER=package
+	-DgRPC_ZLIB_PROVIDER=package
 
 # With gcc 4.8 (at least on ubuntu) there is a bug in LTO which breaks
 # the linkage of the grpc_cpp_plugin with libprotobuf and pthread. This
