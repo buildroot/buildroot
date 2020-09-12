@@ -51,7 +51,7 @@ HOST_CAIRO_CONF_OPTS = \
 	--disable-ps \
 	--disable-pdf \
 	--enable-png \
-	--disable-script \
+	--enable-script \
 	--disable-svg \
 	--disable-tee \
 	--disable-xml
