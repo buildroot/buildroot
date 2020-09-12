@@ -1,0 +1,39 @@
+From 579f2e089b9502e48222ab85d342128857bf20c3 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 12 Sep 2020 11:38:01 +0200
+Subject: [PATCH] configure.ac: fix cross-compilation
+
+Cross-compilation fails since version 9.53.0 and
+https://git.ghostscript.com/?p=ghostpdl.git;a=commit;h=3ff82b33f24ed54c2d3bb88ec31da7d2f9fd2765
+
+Indeed, when x"$host" != x"$build", a recursive call to configure script
+(for auxiliary tools) is being made. In this call,
+--enable-auxtools_only and --without-libtiff are passed which will
+result in the following build failure because SHARE_LIBTIFF is not set
+and SHARE_LIBJPEG is set to 0:
+
+checking for local lcms2mt library source... configure: error: Mixing local libtiff with shared libjpeg not supported
+configure: error: Recursive call to configure script failed
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://bugs.ghostscript.com/show_bug.cgi?id=702897]
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index d4f56fdea..6ae3c2cc1 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1618,7 +1618,7 @@ case "x$with_system_libtiff" in
+ esac
+ 
+ 
+-if test x"$SHARE_LIBTIFF" != x"$SHARE_LIBJPEG" ; then
++if test x"$SHARE_LIBTIFF" != x"" && test x"$SHARE_LIBTIFF" != x"$SHARE_LIBJPEG" ; then
+     AC_MSG_ERROR([Mixing local libtiff with shared libjpeg not supported])
+ fi
+ 
+-- 
+2.28.0
+
