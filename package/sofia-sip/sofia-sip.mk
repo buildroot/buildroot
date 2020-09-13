@@ -20,10 +20,14 @@ SOFIA_SIP_CONF_OPTS += --without-glib
 endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
-SOFIA_SIP_CONF_OPTS += --with-openssl=pkg-config
+SOFIA_SIP_CONF_OPTS += \
+	--enable-nth \
+	--with-openssl=pkg-config
 SOFIA_SIP_DEPENDENCIES += openssl
 else
-SOFIA_SIP_CONF_OPTS += --without-openssl
+SOFIA_SIP_CONF_OPTS += \
+	--disable-nth \
+	--without-openssl
 endif
 
 ifeq ($(BR2_ENABLE_DEBUG),y)
