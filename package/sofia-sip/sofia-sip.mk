@@ -20,7 +20,7 @@ SOFIA_SIP_CONF_OPTS += --without-glib
 endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
-SOFIA_SIP_CONF_OPTS += --with-openssl
+SOFIA_SIP_CONF_OPTS += --with-openssl=pkg-config
 SOFIA_SIP_DEPENDENCIES += openssl
 else
 SOFIA_SIP_CONF_OPTS += --without-openssl
