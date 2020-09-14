@@ -96,6 +96,10 @@ config BR2_PACKAGE_WPEFRAMEWORK_SYSTEM_PREFIX
     string "system prefix"
     default ""
 
+config BR2_PACKAGE_WPEFRAMEWORK_EXCEPTIONS_ENABLE
+    bool "exceptions on"
+    default n
+
 source "package/wpe/wpeframework-devtools/Config.in"
 
 endmenu
@@ -247,5 +251,7 @@ source "package/wpe/wpeframework-spotify/Config.in"
 source "package/wpe/wpeframework-switchboard/Config.in"
 source "package/wpe/wpeframework-ui/Config.in"
 endmenu
+
+source "package/wpe/wpeframework-rdkservices/Config.in"
 
 endif

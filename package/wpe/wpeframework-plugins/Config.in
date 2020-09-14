@@ -32,7 +32,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTHREMOTECONTROL
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_CDMI
     bool "CDMi"
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     select BR2_PACKAGE_WPEFRAMEWORK_CDM
     default y
     help
@@ -77,6 +77,35 @@ config BR2_PACKAGE_WPEFRAMEWORK_COBALT_OUTOFPROCESS
     default y
     help
       Select this to run this plugin in its own process.
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_MANUFACTURER_NAME
+    string "manufacturername"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_CHIPSET_MODEL_NUMBER
+    string "chipsetmodelnumber"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_FIRMWARE_VERSION
+    string "firmwareversion"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_MODEL_NAME
+    string "modelname"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_MODEL_YEAR
+    string "modelyear"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_OPERATOR_NAME
+    string "operatorname"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_FRIENDLY_NAME
+    string "friendlyname"
+    default ""
+
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMMANDER
@@ -230,14 +259,14 @@ endif
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     bool "DeviceInfo"
     default y
     help
       DeviceInfo Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     depends on BR2_PACKAGE_HAS_NEXUS
     bool "DeviceIdentification"
     default y
@@ -405,7 +434,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_INPUTSWITCH
       InputSwitch Plugin.
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     bool "LocationSync"
     help
       LocationSync Plugin
@@ -420,14 +449,14 @@ config BR2_PACKAGE_WPEFRAMEWORK_LOCATIONSYNC_URI
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_MESSENGER
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     default n
     bool "Messenger"
     help
       Messenger Plugin
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_MONITOR
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     bool "Monitor"
     help
       Monitor Plugin
@@ -489,7 +518,7 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL_INTERFACES
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_PACKAGER
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     select BR2_PACKAGE_OPKG
     default n
     bool "Packager"
@@ -605,6 +634,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_REMOTECONTROL_CUSTOM_VIRTUAL_MAP_FILE
 endif
 
 endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_RESOURCEMONITOR
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    default n
+    bool "ResourceMonitor"
+    help
+      ResourceMonitor Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_RTSPCLIENT
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
@@ -808,7 +844,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_FIRMWARECONTROL
       FirmwareControl Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     select BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT_ACCESSOR
     bool "SecurityAgent"
     help
@@ -864,7 +900,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_TUNER
       Tuner Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_TRACECONTROL
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     bool "TraceControl"
     help
       TraceControl Plugin
