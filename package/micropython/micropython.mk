@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MICROPYTHON_VERSION = 1.12
+MICROPYTHON_VERSION = 1.13
 MICROPYTHON_SITE = $(call github,micropython,micropython,v$(MICROPYTHON_VERSION))
 MICROPYTHON_LICENSE = MIT
 MICROPYTHON_LICENSE_FILES = LICENSE
@@ -40,7 +40,7 @@ define MICROPYTHON_INSTALL_TARGET_CMDS
 		CROSS_COMPILE=$(TARGET_CROSS) \
 		CFLAGS_EXTRA=$(MICROPYTHON_CFLAGS) \
 		DESTDIR=$(TARGET_DIR) \
-		PREFIX=$(TARGET_DIR)/usr \
+		PREFIX=/usr \
 		install
 endef
 
