@@ -67,5 +67,13 @@ HOST_GRPC_CONF_OPTS = \
 	-DgRPC_SSL_PROVIDER=package \
 	-DgRPC_ZLIB_PROVIDER=package
 
+# With gcc 4.8 (at least on ubuntu) there is a bug in LTO which breaks
+# the linkage of the grpc_cpp_plugin with libprotobuf and pthread. This
+# additional flag fixes this.
+ifeq ($(BR2_HOST_GCC_AT_LEAST_4_9),)
+HOST_GRPC_CONF_OPTS += \
+	-DCMAKE_EXE_LINKER_FLAGS="$(HOST_LDFLAGS) -Wl,--no-as-needed"
+endif
+
 $(eval $(cmake-package))
 $(eval $(host-cmake-package))
