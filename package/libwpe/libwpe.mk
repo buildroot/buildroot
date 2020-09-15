@@ -12,11 +12,13 @@ LIBWPE_LICENSE = BSD-2-Clause
 LIBWPE_LICENSE_FILES = COPYING
 LIBWPE_DEPENDENCIES = libegl libxkbcommon
 
+LIBWPE_CFLAGS = $(TARGET_CFLAGS)
+LIBWPE_CXXFLAGS = $(TARGET_CXXFLAGS)
+
 # Workaround for https://github.com/raspberrypi/userland/issues/316
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
-LIBWPE_CONF_OPTS += \
-	-DCMAKE_C_FLAGS='$(TARGET_CFLAGS) -D_GNU_SOURCE' \
-	-DCMAKE_CXX_FLAGS='$(TARGET_CFLAGS) -D_GNU_SOURCE'
+LIBWPE_CFLAGS += -D_GNU_SOURCE
+LIBWPE_CXXFLAGS += -D_GNU_SOURCE
 endif
 
-$(eval $(cmake-package))
+$(eval $(meson-package))
