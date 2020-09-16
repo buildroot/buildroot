@@ -13,9 +13,10 @@ GST1_INTERPIPE_GIT_SUBMODULES = YES
 GST1_INTERPIPE_LICENSE = LGPL-2.1
 GST1_INTERPIPE_LICENSE_FILES = COPYING
 
-# from git source
-GST1_INTERPIPE_AUTORECONF = YES
-
 GST1_INTERPIPE_DEPENDENCIES = host-pkgconf gstreamer1 gst1-plugins-base
 
-$(eval $(autotools-package))
+GST1_INTERPIPE_CONF_OPTS = \
+	-Dtests=disabled \
+	-Denable-gtk-doc=false
+
+$(eval $(meson-package))
