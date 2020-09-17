@@ -8,17 +8,17 @@ ARMBIAN_FIRMWARE_VERSION = 70a08503ac9e765f5d1ccf4fa3e825db0751e53e
 ARMBIAN_FIRMWARE_SITE = https://github.com/armbian/firmware
 ARMBIAN_FIRMWARE_SITE_METHOD = git
 
+# AP6212 WiFi/BT combo firmware
+ifeq ($(BR2_PACKAGE_ARMBIAN_FIRMWARE_AP6212),y)
+ARMBIAN_FIRMWARE_DIRS += ap6212
+endif
+
 # XR819 WiFi firmware
 ifeq ($(BR2_PACKAGE_ARMBIAN_FIRMWARE_XR819),y)
 ARMBIAN_FIRMWARE_FILES += \
 	xr819/boot_xr819.bin \
 	xr819/fw_xr819.bin \
 	xr819/sdd_xr819.bin
-endif
-
-# AP6212 WiFi/BT combo firmware
-ifeq ($(BR2_PACKAGE_ARMBIAN_FIRMWARE_AP6212),y)
-ARMBIAN_FIRMWARE_DIRS += ap6212
 endif
 
 ifneq ($(ARMBIAN_FIRMWARE_FILES),)
