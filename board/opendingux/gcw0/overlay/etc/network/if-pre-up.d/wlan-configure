@@ -1,5 +1,21 @@
 #!/bin/sh
 
+cleanup() {
+	/usr/sbin/start-stop-daemon -K -q -o -p /var/run/udhcpc_${IFACE}.pid
+	rm -f /var/run/udhcpc_${IFACE}.pid
+
+	/sbin/start-stop-daemon -K -q -o -p /var/run/wpa_supplicant_${IFACE}.pid
+	rm -f /var/run/wpa_supplicant_${IFACE}.pid
+
+	iw ${IFACE} disconnect
+
+	ip -4 addr flush dev ${IFACE}
+
+	ip link set ${IFACE} down
+
+	exit $1
+}
+
 case "$IFACE" in
 	wlan[0-9])
 		;;
@@ -39,21 +55,17 @@ case "$WLAN_ENCRYPTION" in
 		;;
 
 	*)
-		exit 1
+		echo "Invalid encryption type: \"$WLAN_ENCRYPTION\""
+		cleanup 1
 esac
 
 ip link set ${IFACE} up
-[ $? -ne 0 ] && exit 1
-
-iw ${IFACE} disconnect
-[ $? -ne 0 ] && exit 1
+ERR=$?
+[ $ERR -ne 0 ] && cleanup $ERR
 
 iw ${IFACE} set type managed
-[ $? -ne 0 ] && exit 1
-
-if [ -f "/var/run/wpa_supplicant_${IFACE}.pid" ] ; then
-	/sbin/start-stop-daemon -K -q -p /var/run/wpa_supplicant_${IFACE}.pid
-fi
+ERR=$?
+[ $ERR -ne 0 ] && cleanup $ERR
 
 if [ "$WLAN_ENCRYPTION" = "none" ] ; then
 	iw ${IFACE} connect ${WLAN_ESSID}
@@ -62,4 +74,14 @@ else
 		-c /tmp/.${IFACE}_config -P /var/run/wpa_supplicant_${IFACE}.pid
 fi
 
-exit $?
+ERR=$?
+[ $ERR -ne 0 ] && cleanup $ERR
+
+WLAN_DHCP_RETRIES=10
+PIDFILE=/var/run/udhcpc_${IFACE}.pid
+
+/sbin/udhcpc -i "$IFACE" -n -R -S -t "$WLAN_DHCP_RETRIES" -p "$PIDFILE"
+ERR=$?
+[ $ERR -ne 0 ] && cleanup $ERR
+
+exit 0
