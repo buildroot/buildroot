@@ -13,6 +13,14 @@ ifeq ($(BR2_PACKAGE_ARMBIAN_FIRMWARE_AP6212),y)
 ARMBIAN_FIRMWARE_DIRS += ap6212
 endif
 
+# AP6256 WiFi/BT combo firmware
+ifeq ($(BR2_PACKAGE_ARMBIAN_FIRMWARE_AP6256),y)
+ARMBIAN_FIRMWARE_FILES += \
+	brcm/BCM4345C5.hcd \
+	brcm/brcmfmac43456-sdio.bin \
+	brcm/brcmfmac43456-sdio.txt
+endif
+
 # XR819 WiFi firmware
 ifeq ($(BR2_PACKAGE_ARMBIAN_FIRMWARE_XR819),y)
 ARMBIAN_FIRMWARE_FILES += \
