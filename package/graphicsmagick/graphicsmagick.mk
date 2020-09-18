@@ -21,7 +21,6 @@ GRAPHICSMAGICK_CONFIG_SCRIPTS += GraphicsMagick++-config
 endif
 
 GRAPHICSMAGICK_CONF_OPTS = \
-	--disable-openmp \
 	--without-dps \
 	--without-fpx \
 	--without-jbig \
@@ -32,6 +31,12 @@ GRAPHICSMAGICK_CONF_OPTS = \
 	--with-gs-font-dir=/usr/share/fonts/gs
 
 GRAPHICSMAGICK_DEPENDENCIES = host-pkgconf
+
+ifeq ($(BR2_TOOLCHAIN_HAS_OPENMP),y)
+GRAPHICSMAGICK_CONF_OPTS += --enable-openmp
+else
+GRAPHICSMAGICK_CONF_OPTS += --disable-openmp
+endif
 
 ifeq ($(BR2_PACKAGE_FREETYPE),y)
 GRAPHICSMAGICK_CONF_OPTS += --with-ttf
