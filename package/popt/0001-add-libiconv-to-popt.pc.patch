@@ -8,12 +8,12 @@ Fixes:
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 
-diff -Naurp popt-1.16-vanilla/popt.pc.in popt-1.16/popt.pc.in
---- popt-1.16-vanilla/popt.pc.in	2018-11-22 20:26:55.735211662 +0100
-+++ popt-1.16/popt.pc.in	2018-11-22 20:34:11.371303724 +0100
+diff -Naurp popt-1.18-vanilla/popt.pc.in popt-1.18/popt.pc.in
+--- popt-1.18-vanilla/popt.pc.in	2020-03-24 10:36:25.000000000 +0100
++++ popt-1.18/popt.pc.in	2020-09-18 21:18:03.112609343 +0200
 @@ -7,4 +7,5 @@ Name: popt
  Version: @VERSION@
  Description: popt library.
- Libs: @POPT_PKGCONFIG_LIBS@
+ Libs: -L${libdir} -lpopt
 +Libs.private: @LTLIBICONV@
  Cflags: -I${includedir}
