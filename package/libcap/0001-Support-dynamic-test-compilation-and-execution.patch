@@ -1,7 +1,7 @@
-From 3613927310c4b46df1d558f6f2c0b1cdf8878dd3 Mon Sep 17 00:00:00 2001
+From 307e7f5744b7c84af4c07091c5310cf4f9514694 Mon Sep 17 00:00:00 2001
 From: "Andrew G. Morgan" <morgan@kernel.org>
 Date: Mon, 7 Sep 2020 12:24:43 -0700
-Subject: [PATCH] Support dynamic test compilation and execution.
+Subject: Support dynamic test compilation and execution.
 
   make DYNAMIC=yes test sudotest
 
@@ -11,7 +11,9 @@ make the above command line work against the uninstalled
 library builds.
 
 Signed-off-by: Andrew G. Morgan <morgan@kernel.org>
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+[Retrieved from:
+https://git.kernel.org/pub/scm/libs/libcap/libcap.git/commit/?id=307e7f5744b7c84af4c07091c5310cf4f9514694]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  Make.Rules          |  2 +-
  go/Makefile         |  6 +++---
@@ -23,7 +25,7 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
  7 files changed, 35 insertions(+), 22 deletions(-)
 
 diff --git a/Make.Rules b/Make.Rules
-index 8440e18..9a77607 100644
+index c62f541..8c3f9b3 100644
 --- a/Make.Rules
 +++ b/Make.Rules
 @@ -69,7 +69,7 @@ WARNINGS=-Wall -Wwrite-strings \
@@ -161,7 +163,7 @@ index fbe98a6..5873317 100755
  if [ $? -eq 0 ]; then
      ./getcap -n ./nsprivileged | fgrep "[rootid=1]"
 diff --git a/tests/Makefile b/tests/Makefile
-index bfedbc2..d85d019 100644
+index 0c86ee8..a555887 100644
 --- a/tests/Makefile
 +++ b/tests/Makefile
 @@ -7,6 +7,12 @@ include ../Make.Rules
@@ -174,7 +176,7 @@ index bfedbc2..d85d019 100644
 +LDFLAGS += --static
 +endif
 +
- all: psx_test psx_test_wrap libcap_psx_test libcap_launch_test
+ all: psx_test libcap_psx_test libcap_launch_test
  
  $(DEPS):
 @@ -19,30 +25,31 @@ sudotest: test run_libcap_launch_test run_libcap_launch_test
@@ -218,5 +220,5 @@ index bfedbc2..d85d019 100644
  	$(CC) $(CFLAGS) $< -o $@ --static
  
 -- 
-2.26.2
+cgit 1.2.3-1.el7
 
