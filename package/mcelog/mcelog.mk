@@ -17,4 +17,9 @@ define MCELOG_INSTALL_TARGET_CMDS
 	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) DESTDIR=$(TARGET_DIR) install
 endef
 
+define MCELOG_INSTALL_INIT_SYSTEMD
+	$(INSTALL) -D -m 0644 $(@D)/mcelog.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/mcelog.service
+endef
+
 $(eval $(generic-package))
