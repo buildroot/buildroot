@@ -239,6 +239,10 @@ NGINX_DEPENDENCIES += geoip
 NGINX_CONF_OPTS += --with-stream_geoip_module
 endif
 
+ifeq ($(BR2_PACKAGE_NGINX_STREAM_SSL_PREREAD_MODULE),y)
+NGINX_CONF_OPTS += --with-stream_ssl_preread_module
+endif
+
 NGINX_CONF_OPTS += \
 	$(if $(BR2_PACKAGE_NGINX_STREAM_LIMIT_CONN_MODULE),,--without-stream_limit_conn_module) \
 	$(if $(BR2_PACKAGE_NGINX_STREAM_ACCESS_MODULE),,--without-stream_access_module) \
