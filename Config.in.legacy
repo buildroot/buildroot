@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2020.11"
 
+config BR2_PACKAGE_GQVIEW
+	bool "gqview package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it is not maintained anymore
+	  (no release since 2006).
+
 config BR2_PACKAGE_WESTON_IMX
 	bool "weston-imx package was removed"
 	select BR2_LEGACY
