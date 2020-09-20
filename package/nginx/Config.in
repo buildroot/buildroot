@@ -290,6 +290,12 @@ config BR2_PACKAGE_NGINX_HTTP_UPSTREAM_KEEPALIVE_MODULE
 	help
 	  Enable ngx_http_upstream_keepalive_module
 
+config BR2_PACKAGE_NGINX_HTTP_UPSTREAM_RANDOM_MODULE
+	bool "ngx_http_upstream_random_module"
+	default y
+	help
+	  Enable ngx_http_upstream_random_module
+
 endif #BR2_PACKAGE_NGINX_HTTP
 
 config BR2_PACKAGE_NGINX_MAIL
@@ -392,6 +398,12 @@ config BR2_PACKAGE_NGINX_STREAM_UPSTREAM_LEAST_CONN_MODULE
 	default y
 	help
 	  Enable ngx_stream_upstream_least_conn_module
+
+config BR2_PACKAGE_NGINX_STREAM_UPSTREAM_RANDOM_MODULE
+	bool "ngx_stream_upstream_random_module"
+	default y
+	help
+	  Enable ngx_stream_upstream_random_module
 
 config BR2_PACKAGE_NGINX_STREAM_UPSTREAM_ZONE_MODULE
 	bool "ngx_stream_upstream_zone_module"
