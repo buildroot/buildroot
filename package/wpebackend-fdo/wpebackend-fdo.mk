@@ -12,4 +12,4 @@ WPEBACKEND_FDO_LICENSE = BSD-2-Clause
 WPEBACKEND_FDO_LICENSE_FILES = COPYING
 WPEBACKEND_FDO_DEPENDENCIES = libepoxy libglib2 libwpe wayland
 
-$(eval $(cmake-package))
+$(eval $(meson-package))
