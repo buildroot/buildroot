@@ -127,6 +127,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_CDM
       CDM client support compatible with OpenCDM
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITORCLIENT
+    select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
     bool "CompositorClient"
         default y
     help
@@ -135,6 +136,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITORCLIENT
       allows for relaying keys to plugins
 
 config BR2_PACKAGE_WPEFRAMEWORK_GSTREAMERCLIENT
+        select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
         bool "GstreamerClient"
         default n
         help
@@ -142,6 +144,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_GSTREAMERCLIENT
           This implementation will vary based on custom platforms and sink backends.
 
 config BR2_PACKAGE_WPEFRAMEWORK_DISPLAYINFO
+    select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
     bool "DisplayInfo"
         default y
     help
@@ -213,6 +216,7 @@ endchoice
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
+    select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
     bool "ProvisionProxy"
     select BR2_PACKAGE_LIBPROVISION
     help
@@ -226,6 +230,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_SECURE_SOCKET
 
 
 config BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT_ACCESSOR
+    select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
     bool "SecurityAgent"
     help
       Allows external access to the Security Agent, through a C interface.
@@ -252,6 +257,8 @@ source "package/wpe/wpeframework-switchboard/Config.in"
 source "package/wpe/wpeframework-ui/Config.in"
 endmenu
 
+source "package/wpe/wpeframework-interfaces/Config.in"
+source "package/wpe/wpeframework-clientlibraries/Config.in"
 source "package/wpe/wpeframework-rdkservices/Config.in"
 
 endif
