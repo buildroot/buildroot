@@ -10,7 +10,7 @@ if [ -e ${TARGET_DIR}/etc/inittab ]; then
 tty1::respawn:/sbin/getty -L  tty1 0 vt100 # HDMI console' ${TARGET_DIR}/etc/inittab
 fi
 
-if grep "^BR2_TARGET_ROOTFS_INITRAMFS=y$" "${BR2_CONFIG}" &>/dev/null; then 
+if grep -q "^BR2_TARGET_ROOTFS_INITRAMFS=y$" "${BR2_CONFIG}"; then
 
 mkdir -p "${TARGET_DIR}/boot"
 grep -q '^/dev/mmcblk0p1' "${TARGET_DIR}/etc/fstab" || \
