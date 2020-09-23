@@ -146,7 +146,7 @@ endif
 
 comment "Legacy options removed in 2020.11"
 
-connfig BR2_PACKAGE_GST1_VALIDATE
+config BR2_PACKAGE_GST1_VALIDATE
 	bool "gst1-validate was moved to gst1-devtools"
 	select BR2_PACKAGE_GST1_DEVTOOLS
 	select BR2_LEGACY
