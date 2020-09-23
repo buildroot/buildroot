@@ -236,6 +236,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT_ACCESSOR
       Allows external access to the Security Agent, through a C interface.
 
 config BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
+    select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
     bool "VirtualInput"
     help
       If the dynamic uinput system can not be used for security reasons, this
