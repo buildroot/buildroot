@@ -14,7 +14,6 @@ CLAMAV_DEPENDENCIES = \
 	host-pkgconf \
 	libcurl \
 	libmspack \
-	libtool \
 	openssl \
 	zlib \
 	$(TARGET_NLS_DEPENDENCIES)
@@ -38,8 +37,6 @@ CLAMAV_CONF_ENV += LIBS="$(CLAMAV_LIBS)"
 
 CLAMAV_CONF_OPTS = \
 	--with-dbdir=/var/lib/clamav \
-	--with-ltdl-include=$(STAGING_DIR)/usr/include \
-	--with-ltdl-lib=$(STAGING_DIR)/usr/lib \
 	--with-libcurl=$(STAGING_DIR)/usr \
 	--with-openssl=$(STAGING_DIR)/usr \
 	--with-system-libmspack=$(STAGING_DIR)/usr \
