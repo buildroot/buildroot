@@ -291,11 +291,6 @@ HOST_GCC_COMMON_CCACHE_HASH_FILES += \
 ifeq ($(BR2_xtensa),y)
 HOST_GCC_COMMON_CCACHE_HASH_FILES += $(ARCH_XTENSA_OVERLAY_TAR)
 endif
-ifeq ($(ARCH),powerpc)
-ifneq ($(BR2_SOFT_FLOAT),)
-HOST_GCC_COMMON_CCACHE_HASH_FILES += package/gcc/$(GCC_VERSION)/1000-powerpc-link-with-math-lib.patch.conditional
-endif
-endif
 
 # _CONF_OPTS contains some references to the absolute path of $(HOST_DIR)
 # and a reference to the Buildroot git revision (BR2_VERSION_FULL),
