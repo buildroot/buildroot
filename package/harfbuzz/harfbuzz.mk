@@ -11,13 +11,11 @@ HARFBUZZ_LICENSE = MIT, ISC (ucdn library)
 HARFBUZZ_LICENSE_FILES = COPYING
 HARFBUZZ_INSTALL_STAGING = YES
 HARFBUZZ_CONF_OPTS = \
-	-Dgobject=disabled \
 	-Dfontconfig=disabled \
 	-Dgdi=disabled \
 	-Ddirectwrite=disabled \
 	-Dcoretext=disabled \
 	-Dtests=disabled \
-	-Dintrospection=disabled \
 	-Ddocs=disabled \
 	-Dbenchmark=disabled \
 	-Dicu_builtin=false \
@@ -59,6 +57,17 @@ HARFBUZZ_DEPENDENCIES += freetype
 HARFBUZZ_CONF_OPTS += -Dfreetype=enabled
 else
 HARFBUZZ_CONF_OPTS += -Dfreetype=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
+HARFBUZZ_DEPENDENCIES += gobject-introspection
+HARFBUZZ_CONF_OPTS += \
+	-Dgobject=enabled \
+	-Dintrospection=enabled
+else
+HARFBUZZ_CONF_OPTS += \
+	-Dgobject=disabled \
+	-Dintrospection=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_GRAPHITE2),y)
