@@ -146,6 +146,24 @@ endif
 
 comment "Legacy options removed in 2020.11"
 
+config BR2_TARGET_UBOOT_BOOT_SCRIPT
+	bool "u-boot script generation was moved"
+	select BR2_LEGACY
+	select BR2_PACKAGE_HOST_UBOOT_TOOLS
+	select BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT
+	help
+	  Migrated U-Boot script generation to uboot-tools
+
+# Note: BR2_TARGET_UBOOT_BOOT_SCRIPT_SOURCE is still referenced from
+# package/uboot-tools/Config.in
+config BR2_TARGET_UBOOT_BOOT_SCRIPT_SOURCE
+	string "The uboot script source string has been renamed"
+	depends on BR2_TARGET_UBOOT_BOOT_SCRIPT
+	help
+	  Migrated U-Boot script generation to uboot-tools.
+	  New option is named
+	  BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT_SOURCE
+
 config BR2_TARGET_UBOOT_ENVIMAGE
 	bool "u-boot env generation was moved"
 	select BR2_LEGACY

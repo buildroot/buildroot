@@ -91,4 +91,21 @@ config BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_REDUNDANT
 
 endif # BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE
 
+config BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT
+	bool "Generate a U-Boot boot script"
+	help
+	  Generate a U-Boot boot script, given a file listing U-Boot
+	  commands to be executed at boot time. The generated boot
+	  script will be called 'boot.scr'.
+
+if BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT
+
+config BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT_SOURCE
+	string "U-Boot boot script source"
+	default BR2_TARGET_UBOOT_BOOT_SCRIPT_SOURCE if BR2_TARGET_UBOOT_BOOT_SCRIPT_SOURCE != "" # legacy
+	help
+	  Source file to generate the U-Boot boot script.
+
+endif # BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT
+
 endif # BR2_PACKAGE_HOST_UBOOT_TOOLS

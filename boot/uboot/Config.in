@@ -533,22 +533,6 @@ config BR2_TARGET_UBOOT_ALTERA_SOCFPGA_IMAGE_CRC
 	  In either case the resulting file will be given a .crc
 	  extension.
 
-config BR2_TARGET_UBOOT_BOOT_SCRIPT
-	bool "Generate a U-Boot boot script"
-	help
-	  Generate a U-Boot boot script, given a file listing U-Boot
-	  commands to be executed at boot time. The generated boot
-	  script will be called 'boot.scr'.
-
-if BR2_TARGET_UBOOT_BOOT_SCRIPT
-
-config BR2_TARGET_UBOOT_BOOT_SCRIPT_SOURCE
-	string "U-Boot boot script source"
-	help
-	  Source file to generate the U-Boot boot script.
-
-endif
-
 if BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG
 
 config BR2_TARGET_UBOOT_CUSTOM_DTS_PATH

@@ -323,10 +323,6 @@ define UBOOT_INSTALL_IMAGES_CMDS
 			cp -dpf $(@D)/$(f) $(BINARIES_DIR)/
 		)
 	)
-	$(if $(BR2_TARGET_UBOOT_BOOT_SCRIPT),
-		$(MKIMAGE) -C none -A $(MKIMAGE_ARCH) -T script \
-			-d $(call qstrip,$(BR2_TARGET_UBOOT_BOOT_SCRIPT_SOURCE)) \
-			$(BINARIES_DIR)/boot.scr)
 endef
 
 ifeq ($(BR2_TARGET_UBOOT_ZYNQMP),y)
@@ -426,15 +422,6 @@ define UBOOT_KCONFIG_FIXUP_CMDS
 	$(UBOOT_ZYNQMP_KCONFIG_PM_CFG)
 	$(UBOOT_ZYNQMP_KCONFIG_PSU_INIT)
 endef
-
-ifeq ($(BR2_TARGET_UBOOT_BOOT_SCRIPT),y)
-ifeq ($(BR_BUILDING),y)
-ifeq ($(call qstrip,$(BR2_TARGET_UBOOT_BOOT_SCRIPT_SOURCE)),)
-$(error Please define a source file for U-Boot boot script (BR2_TARGET_UBOOT_BOOT_SCRIPT_SOURCE setting))
-endif
-endif
-UBOOT_DEPENDENCIES += host-uboot-tools
-endif
 
 ifeq ($(BR2_TARGET_UBOOT)$(BR_BUILDING),yy)
 
