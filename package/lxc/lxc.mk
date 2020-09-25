@@ -50,4 +50,8 @@ else
 LXC_CONF_OPTS += --disable-openssl
 endif
 
+define LXC_USERS
+	lxc -1 lxc -1 * /var/lib/lxcunpriv - -
+endef
+
 $(eval $(autotools-package))

@@ -59,4 +59,8 @@ define SNORT_INSTALL_CONFIG
 endef
 SNORT_POST_INSTALL_TARGET_HOOKS += SNORT_INSTALL_CONFIG
 
+define SNORT_USERS
+	snort -1 snort -1 * - - -
+endef
+
 $(eval $(autotools-package))

@@ -116,4 +116,8 @@ define NTP_INSTALL_INIT_SYSV
 	$(NTP_INSTALL_INIT_SYSV_SNTP)
 endef
 
+define NTP_USERS
+	ntp -1 ntp -1 * - - -
+endef
+
 $(eval $(autotools-package))
