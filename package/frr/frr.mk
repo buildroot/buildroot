@@ -32,6 +32,10 @@ FRR_CONF_OPTS = --with-clippy=$(HOST_DIR)/bin/clippy \
 
 HOST_FRR_CONF_OPTS = --enable-clippy-only
 
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+FRR_CONF_ENV += LIBS=-latomic
+endif
+
 define HOST_FRR_INSTALL_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/lib/clippy $(HOST_DIR)/bin/clippy
 endef
