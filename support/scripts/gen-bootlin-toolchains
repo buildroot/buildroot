@@ -233,14 +233,19 @@ class Toolchain:
         f.write("config %s\n" % self.option_name)
         f.write("\tbool \"%s %s %s %s\"\n" %
                 (self.arch, self.libc, self.variant, self.version))
-        for c in arches[self.arch]['conditions']:
-            f.write("\tdepends on %s\n" % c)
+        depends = []
         selects = []
+
+        for c in arches[self.arch]['conditions']:
+            depends.append(c)
+
         for frag in self.fragment:
             # libc type
             if frag.startswith("BR2_TOOLCHAIN_EXTERNAL_CUSTOM_UCLIBC"):
                 selects.append("BR2_TOOLCHAIN_EXTERNAL_UCLIBC")
             elif frag.startswith("BR2_TOOLCHAIN_EXTERNAL_CUSTOM_GLIBC"):
+                # glibc doesn't support static only configuration
+                depends.append("!BR2_STATIC_LIBS")
                 selects.append("BR2_TOOLCHAIN_EXTERNAL_GLIBC")
                 # all glibc toolchains have RPC support
                 selects.append("BR2_TOOLCHAIN_HAS_NATIVE_RPC")
@@ -302,6 +307,9 @@ class Toolchain:
             # OpenMP
             if frag.startswith("BR2_TOOLCHAIN_EXTERNAL_OPENMP"):
                 selects.append("BR2_TOOLCHAIN_HAS_OPENMP")
+
+        for depend in depends:
+            f.write("\tdepends on %s\n" % depend)
 
         for select in selects:
             f.write("\tselect %s\n" % select)
