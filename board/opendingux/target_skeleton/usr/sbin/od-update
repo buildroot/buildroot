@@ -20,6 +20,13 @@ HWVARIANT_CMDLINE="$(sed -n 's/.*hwvariant=\([[:alnum:]_]\+\).*/\1/p' /proc/cmdl
 if [ -e /sys/firmware/devicetree/base/compatible ] ; then
 	MODEL=$(sed -n 's/\(.*\)ingenic.*/\1/p' /sys/firmware/devicetree/base/compatible)
 	HWVARIANT=$(cat /sys/firmware/devicetree/base/model)
+elif [ "$HWVARIANT_CMDLINE" = "rg350" ] ; then
+	if [ -r /sys/devices/platform/jz-lcd.0/graphics/fb0/modes -a \
+		"$(grep '640x480' /sys/devices/platform/jz-lcd.0/graphics/fb0/modes)" ] ; then
+		MODEL=ylm,rg350m
+	else
+		MODEL=ylm,rg350
+	fi
 else
 	MODEL=gcw,zero
 	HWVARIANT="$HWVARIANT_CMDLINE"
@@ -51,15 +58,8 @@ case "$MODEL" in
 		esac
 		SYSDEV=$(echo $SYSPART |sed -n 's/\(\/dev\/mmcblk[0-9]\+\)p[0-9]\+/\1/p')
 		;;
-	anbernic,rg350)
-		case "$HWVARIANT" in
-			"Anbernic RG-350")
-				HWVARIANT_DT="rg350"
-				;;
-			"Anbernic RG-350M")
-				HWVARIANT_DT="rg350m"
-				;;
-		esac
+	ylm,rg350|ylm,rg350m)
+		HWVARIANT_DT=$(echo $MODEL |cut -d',' -f2)
 		HWVARIANT_BL="rg350"
 		SYSDEV=$(echo $SYSPART |sed -n 's/\(\/dev\/mmcblk[0-9]\+\)p[0-9]\+/\1/p')
 		;;
