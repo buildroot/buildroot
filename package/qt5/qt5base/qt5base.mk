@@ -177,6 +177,7 @@ QT5BASE_DEPENDENCIES   += \
 	xcb-util-wm \
 	xcb-util-image \
 	xcb-util-keysyms \
+	xcb-util-renderutil \
 	xlib_libX11 \
 	libxkbcommon
 ifeq ($(BR2_PACKAGE_QT5BASE_WIDGETS),y)
