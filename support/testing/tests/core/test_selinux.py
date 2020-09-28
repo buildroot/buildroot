@@ -58,3 +58,25 @@ class TestSELinuxCustomGit(TestSELinuxInfra):
 
     def test_run(self):
         pass
+
+class TestSELinuxPackage(TestSELinuxInfra):
+    br2_external = [infra.filepath("tests/core/test_selinux/br2_external")]
+    config = TestSELinuxInfra.config + \
+             """
+             BR2_PACKAGE_SELINUX_TEST=y
+             """
+
+    def test_run(self):
+        TestSELinuxInfra.base_test_run(self)
+
+        out, ret = self.emulator.run("seinfo -t ntpd_t", 15)
+        self.assertEqual(ret, 0)
+        self.assertEqual(out[2].strip(), "ntpd_t")
+
+        out, ret = self.emulator.run("seinfo -t tor_t", 15)
+        self.assertEqual(ret, 0)
+        self.assertEqual(out[2].strip(), "tor_t")
+
+        out, ret = self.emulator.run("seinfo -t buildroot_test_t", 15)
+        self.assertEqual(ret, 0)
+        self.assertEqual(out[2].strip(), "buildroot_test_t")
