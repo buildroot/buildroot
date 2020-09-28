@@ -34,3 +34,16 @@ class TestSELinuxExtraModules(TestSELinuxInfra):
         out, ret = self.emulator.run("seinfo -t tor_t", 15)
         self.assertEqual(ret, 0)
         self.assertEqual(out[2].strip(), "tor_t")
+
+class TestSELinuxExtraModulesDirs(TestSELinuxInfra):
+    config = TestSELinuxInfra.config + \
+             """
+             BR2_REFPOLICY_EXTRA_MODULES_DIRS="{}"
+             """.format(infra.filepath("tests/core/test_selinux/extra_modules"))
+
+    def test_run(self):
+        TestSELinuxInfra.base_test_run(self)
+
+        out, ret = self.emulator.run("seinfo -t buildroot_test_t", 15)
+        self.assertEqual(ret, 0)
+        self.assertEqual(out[2].strip(), "buildroot_test_t")
