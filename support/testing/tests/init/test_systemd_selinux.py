@@ -60,3 +60,15 @@ class TestSELinuxSystemdExt4(TestSELinuxSystemd):
 
     def test_run(self):
         self.run_tests("ext4")
+
+class TestSELinuxSystemdSquashfs(TestSELinuxSystemd):
+    config = TestSELinuxSystemd.config + \
+        """
+        BR2_TARGET_ROOTFS_SQUASHFS=y
+        BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES="{}"
+        """.format(
+            infra.filepath("tests/init/test_systemd_selinux/linux-squashfs.fragment"),
+        )
+
+    def test_run(self):
+        self.run_tests("squashfs")
