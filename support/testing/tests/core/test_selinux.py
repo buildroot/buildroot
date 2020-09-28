@@ -47,3 +47,14 @@ class TestSELinuxExtraModulesDirs(TestSELinuxInfra):
         out, ret = self.emulator.run("seinfo -t buildroot_test_t", 15)
         self.assertEqual(ret, 0)
         self.assertEqual(out[2].strip(), "buildroot_test_t")
+
+class TestSELinuxCustomGit(TestSELinuxInfra):
+    config = TestSELinuxInfra.config + \
+             """
+             BR2_PACKAGE_REFPOLICY_CUSTOM_GIT=y
+             BR2_PACKAGE_REFPOLICY_CUSTOM_REPO_URL="https://github.com/SELinuxProject/refpolicy.git"
+             BR2_PACKAGE_REFPOLICY_CUSTOM_REPO_VERSION="RELEASE_2_20200818"
+             """
+
+    def test_run(self):
+        pass
