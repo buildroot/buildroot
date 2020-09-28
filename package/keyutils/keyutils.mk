@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-KEYUTILS_VERSION = 1.6
-KEYUTILS_SOURCE = keyutils-$(KEYUTILS_VERSION).tar.bz2
-KEYUTILS_SITE = http://people.redhat.com/~dhowells/keyutils
+KEYUTILS_VERSION = 1.6.3
+KEYUTILS_SITE = https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git/snapshot
 KEYUTILS_LICENSE = GPL-2.0+, LGPL-2.1+
 KEYUTILS_LICENSE_FILES = LICENCE.GPL LICENCE.LGPL
 KEYUTILS_INSTALL_STAGING = YES
