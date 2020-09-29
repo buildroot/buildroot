@@ -1,0 +1,18 @@
+--- a/Makefile	2020-09-30 23:03:04.921974206 +0200
++++ b/Makefile	2020-09-30 23:19:23.795260305 +0200
+@@ -186,6 +186,7 @@
+ # If TMPLIB64 is set, then sure we are not resolving LIB32 and LIB64 to the
+ # same place
+ ifdef TMPLIB64
++ifneq ($(BUILDTYPE),NATIVEONLY)
+ 
+ REALLIB32 = $(realpath $(PREFIX)/$(LIB32))
+ REALLIB64 = $(realpath $(PREFIX)/$(LIB64))
+@@ -196,6 +197,7 @@
+ endif
+ 
+ endif
++endif
+ 
+ HEADERDIR = $(PREFIX)/include
+ LIBDIR32 = $(PREFIX)/$(LIB32)
