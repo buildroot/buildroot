@@ -58,7 +58,7 @@ case "$MODEL" in
 		esac
 		SYSDEV=$(echo $SYSPART |sed -n 's/\(\/dev\/mmcblk[0-9]\+\)p[0-9]\+/\1/p')
 		;;
-	ylm,rg350|ylm,rg350m)
+	anbernic,rg350|anbernic,rg350m|ylm,rg350|ylm,rg350m)
 		HWVARIANT_DT=$(echo $MODEL |cut -d',' -f2)
 		HWVARIANT_BL="rg350"
 		SYSDEV=$(echo $SYSPART |sed -n 's/\(\/dev\/mmcblk[0-9]\+\)p[0-9]\+/\1/p')
