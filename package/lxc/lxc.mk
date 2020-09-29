@@ -61,13 +61,17 @@ define LXC_USERS
 	lxc -1 lxc -1 * /var/lib/lxcunpriv - -
 endef
 
-define LXC_LIBFOO_POST_INSTALL_TARGET_COPY_SUBXID
+define LXC_POST_INSTALL_TARGET_COPY_SUBXID
 	$(INSTALL) -m 0644 -D package/lxc/subuid \
 		$(TARGET_DIR)/etc/subuid
 	$(INSTALL) -m 0644 -D package/lxc/subgid \
 		$(TARGET_DIR)/etc/subgid
 endef
 
-LXC_POST_INSTALL_TARGET_HOOKS += LXC_LIBFOO_POST_INSTALL_TARGET_COPY_SUBXID
+LXC_POST_INSTALL_TARGET_HOOKS += LXC_POST_INSTALL_TARGET_COPY_SUBXID
+
+define LXC_PERMISSIONS
+	/usr/libexec/lxc/lxc-user-nic f  4755  root  root   -  -  -  -  -
+endef
 
 $(eval $(autotools-package))
