@@ -30,14 +30,10 @@ endif
 
 $(eval $(autotools-package))
 
-# host-tar is used to create the archives in the VCS download backends and tar
-# 1.30 and forward have changed the archive format. So archives generated with
-# earlier versions are not bit-for-bit reproducible and the hashes would not
-# match. Hence host-tar must be kept at version 1.29.
-HOST_TAR_VERSION = 1.29
 # host-tar: use cpio.gz instead of tar.gz to prevent chicken-egg problem
 # of needing tar to build tar.
-HOST_TAR_SOURCE = tar-$(HOST_TAR_VERSION).cpio.gz
+HOST_TAR_SOURCE = tar-$(TAR_VERSION).cpio.gz
+
 define HOST_TAR_EXTRACT_CMDS
 	mkdir -p $(@D)
 	cd $(@D) && \
