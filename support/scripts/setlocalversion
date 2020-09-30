@@ -48,14 +48,28 @@ if head=`git rev-parse --verify --short HEAD 2>/dev/null`; then
 fi
 
 # Check for mercurial and a mercurial repo.
+# In the git case, 'git describe' will show the latest tag, and unless we are
+# exactly on that tag, the number of commits since then, and last commit id.
+# Mimic something similar in the Mercurial case.
 if hgid=`HGRCPATH= hg id --id --tags 2>/dev/null`; then
 	tag=`printf '%s' "$hgid" | cut -d' ' -f2 --only-delimited`
 
 	# Do we have an untagged version?
 	if [ -z "$tag" -o "$tag" = tip ]; then
+		# current revision is not tagged, determine latest tag
+		latesttag=`HGRCPATH= hg log -r. -T '{latesttag}' 2>/dev/null`
+		# In case there is more than one tag on the latest tagged commit,
+		# 'latesttag' will separate them by colon (:). We'll retain this.
+		# In case there is no tag at all, 'null' will be returned.
+		if [ "$latesttag" = "null" ]; then
+			latesttag=''
+		fi
+
+		# add the commit id
 		id=`printf '%s' "$hgid" | sed 's/[+ ].*//'`
-		printf '%s%s' -hg "$id"
+		printf '%s%s%s' "${latesttag}" -hg "$id"
 	else
+		# current revision is tagged, just print the tag
 		printf ${tag}
 	fi
 
