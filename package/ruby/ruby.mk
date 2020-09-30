@@ -20,15 +20,6 @@ HOST_RUBY_CONF_OPTS = \
 RUBY_LICENSE = Ruby or BSD-2-Clause, BSD-3-Clause, others
 RUBY_LICENSE_FILES = LEGAL COPYING BSDL
 
-RUBY_CFLAGS = $(TARGET_CFLAGS)
-# With some SuperH toolchains (like Sourcery CodeBench 2012.09), ruby fails to
-# build with 'pcrel too far'. This seems to be caused by the -Os option we pass
-# by default. To fix the problem, use standard -O2 optimization instead.
-ifeq ($(BR2_sh),y)
-RUBY_CFLAGS += -O2
-endif
-RUBY_CONF_ENV = CFLAGS="$(RUBY_CFLAGS)"
-
 ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
 # On uClibc, finite, isinf and isnan are not directly implemented as
 # functions.  Instead math.h #define's these to __finite, __isinf and
