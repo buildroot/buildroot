@@ -21,10 +21,14 @@ define 18XX_TI_UTILS_BUILD_CMDS
 		NFSROOT="$(STAGING_DIR)" NLVER=3 $(MAKE) -C $(@D) \
 		CFLAGS="$(TARGET_CFLAGS) $(18XX_TI_UTILS_CFLAGS)" \
 		$(18XX_TI_UTILS_BUILD_TARGET)
+
+	$(HOST_MAKE_ENV) $(MAKE) -C $(@D)/wlconf \
+		$(HOST_CONFIGURE_OPTS)
 endef
 
 define 18XX_TI_UTILS_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 0755 $(@D)/calibrator $(TARGET_DIR)/usr/bin/calibrator
+	$(INSTALL) -m 0755 $(@D)/wlconf/wlconf $(HOST_DIR)/bin/wlconf
 endef
 
 $(eval $(generic-package))

@@ -4,10 +4,10 @@ After=network.target
 
 [Service]
 Type=forking
-PIDFile=/var/run/htpdate
+PIDFile=/run/htpdate.pid
 Environment=HTPDATE_ARGS="-a -s -t https://www.google.com"
 EnvironmentFile=-/etc/default/htpdate
-ExecStart=/usr/bin/htpdate -D -i /var/run/htpdate $HTPDATE_ARGS
+ExecStart=/usr/bin/htpdate -D -i /run/htpdate.pid $HTPDATE_ARGS
 
 [Install]
 WantedBy=multi-user.target

@@ -223,6 +223,13 @@ HOST_GCC_COMMON_CONF_OPTS += \
 	--with-long-double-128
 endif
 
+# Set default to Secure-PLT to prevent run-time
+# generation of PLT stubs (supports RELRO and
+# SELinux non-exemem capabilities)
+ifeq ($(BR2_powerpc),y)
+HOST_GCC_COMMON_CONF_OPTS += --enable-secureplt
+endif
+
 # PowerPC64 big endian by default uses the elfv1 ABI, and PowerPC 64
 # little endian by default uses the elfv2 ABI. However, musl has
 # decided to use the elfv2 ABI for both, so we force the elfv2 ABI for
@@ -237,6 +244,11 @@ endif
 # requires at least gcc 6.2.
 # See sysdeps/powerpc/powerpc64le/configure.ac
 ifeq ($(BR2_TOOLCHAIN_USES_GLIBC)$(BR2_TOOLCHAIN_GCC_AT_LEAST_6)$(BR2_powerpc64le),yyy)
+HOST_GCC_COMMON_CONF_OPTS += \
+	--with-long-double-128
+endif
+
+ifeq ($(BR2_s390x),y)
 HOST_GCC_COMMON_CONF_OPTS += \
 	--with-long-double-128
 endif

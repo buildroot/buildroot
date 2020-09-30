@@ -146,6 +146,29 @@ endif
 
 comment "Legacy options removed in 2020.11"
 
+config BR2_PACKAGE_GST1_VALIDATE
+	bool "gst1-validate was moved to gst1-devtools"
+	select BR2_PACKAGE_GST1_DEVTOOLS
+	select BR2_LEGACY
+	help
+	  This package has been removed, use gst1-devtools instead.
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_YADIF
+	bool "gst1-plugins-bad yadif plugin was removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_DEINTERLACE
+	help
+	  This plugin was removed with gst1-plugins-bad-1.18.0, the
+	  same functionality has moved to gst1-plugins-good
+	  deinterlace plugin (method=yadif).
+
+config BR2_PACKAGE_GQVIEW
+	bool "gqview package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it is not maintained anymore
+	  (no release since 2006).
+
 config BR2_PACKAGE_WESTON_IMX
 	bool "weston-imx package was removed"
 	select BR2_LEGACY

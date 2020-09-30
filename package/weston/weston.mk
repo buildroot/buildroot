@@ -5,7 +5,7 @@
 ################################################################################
 
 WESTON_VERSION = 9.0.0
-WESTON_SITE = http://wayland.freedesktop.org/releases
+WESTON_SITE = https://wayland.freedesktop.org/releases
 WESTON_SOURCE = weston-$(WESTON_VERSION).tar.xz
 WESTON_LICENSE = MIT
 WESTON_LICENSE_FILES = COPYING

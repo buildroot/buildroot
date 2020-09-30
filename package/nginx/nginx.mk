@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NGINX_VERSION = 1.17.9
+NGINX_VERSION = 1.18.0
 NGINX_SITE = http://nginx.org/download
 NGINX_LICENSE = BSD-2-Clause
 NGINX_LICENSE_FILES = LICENSE
@@ -198,6 +198,7 @@ NGINX_CONF_OPTS += \
 	$(if $(BR2_PACKAGE_NGINX_HTTP_BROWSER_MODULE),,--without-http_browser_module) \
 	$(if $(BR2_PACKAGE_NGINX_HTTP_UPSTREAM_IP_HASH_MODULE),,--without-http_upstream_ip_hash_module) \
 	$(if $(BR2_PACKAGE_NGINX_HTTP_UPSTREAM_LEAST_CONN_MODULE),,--without-http_upstream_least_conn_module) \
+	$(if $(BR2_PACKAGE_NGINX_HTTP_UPSTREAM_RANDOM_MODULE),,--without-http_upstream_random_module) \
 	$(if $(BR2_PACKAGE_NGINX_HTTP_UPSTREAM_KEEPALIVE_MODULE),,--without-http_upstream_keepalive_module)
 
 else # !BR2_PACKAGE_NGINX_HTTP
@@ -224,6 +225,10 @@ endif # BR2_PACKAGE_NGINX_MAIL
 ifeq ($(BR2_PACKAGE_NGINX_STREAM),y)
 NGINX_CONF_OPTS += --with-stream
 
+ifeq ($(BR2_PACKAGE_NGINX_STREAM_REALIP_MODULE),y)
+NGINX_CONF_OPTS += --with-stream_realip_module
+endif
+
 ifeq ($(BR2_PACKAGE_NGINX_STREAM_SSL_MODULE),y)
 NGINX_DEPENDENCIES += openssl
 NGINX_CONF_OPTS += --with-stream_ssl_module
@@ -232,6 +237,10 @@ endif
 ifeq ($(BR2_PACKAGE_NGINX_STREAM_GEOIP_MODULE),y)
 NGINX_DEPENDENCIES += geoip
 NGINX_CONF_OPTS += --with-stream_geoip_module
+endif
+
+ifeq ($(BR2_PACKAGE_NGINX_STREAM_SSL_PREREAD_MODULE),y)
+NGINX_CONF_OPTS += --with-stream_ssl_preread_module
 endif
 
 NGINX_CONF_OPTS += \
@@ -243,6 +252,7 @@ NGINX_CONF_OPTS += \
 	$(if $(BR2_PACKAGE_NGINX_STREAM_RETURN_MODULE),,--without-stream_return_module) \
 	$(if $(BR2_PACKAGE_NGINX_STREAM_UPSTREAM_HASH_MODULE),,--without-stream_upstream_hash_module) \
 	$(if $(BR2_PACKAGE_NGINX_STREAM_UPSTREAM_LEAST_CONN_MODULE),,--without-stream_upstream_least_conn_module) \
+	$(if $(BR2_PACKAGE_NGINX_STREAM_UPSTREAM_RANDOM_MODULE),,--without-stream_upstream_random_module) \
 	$(if $(BR2_PACKAGE_NGINX_STREAM_UPSTREAM_ZONE_MODULE),,--without-stream_upstream_zone_module)
 
 endif # BR2_PACKAGE_NGINX_STREAM

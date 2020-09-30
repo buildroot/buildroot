@@ -5,7 +5,7 @@ menuconfig BR2_PACKAGE_GST1_PLUGINS_BAD
 	  A set of plug-ins for GStreamer that may be of poor quality
 	  or lacking some features.
 
-	  http://gstreamer.freedesktop.org/
+	  https://gstreamer.freedesktop.org/
 
 if BR2_PACKAGE_GST1_PLUGINS_BAD
 
@@ -86,6 +86,11 @@ config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DEBUGUTILS
 	help
 	  Collection of elements that may or may not be useful for
 	  debugging
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DVBSUBENC
+	bool "dvdsubenc"
+	help
+	  DVB subpicture encoding support
 
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DVBSUBOVERLAY
 	bool "dvdsuboverlay"
@@ -232,6 +237,21 @@ config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_REMOVESILENCE
 	help
 	  Removes silence from an audio stream
 
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_RIST
+	bool "rist"
+	help
+	  RIST streaming
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_RTMP2
+	bool "rtmp2"
+	help
+	  RTMP sink/source (rtmp2sink, rtmp2src)
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_RTP2
+	bool "rtp"
+	help
+	  RTP (rtpsrc/rtpsink)
+
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_RTMP
 	bool "rtmp"
 	select BR2_PACKAGE_RTMPDUMP
@@ -268,6 +288,11 @@ config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SUBENC
 	help
 	  subtitle encoders
 
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SWITCHBIN
+	bool "switchbin"
+	help
+	  Switching between paths based on input caps
+
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_TIMECODE
 	bool "timecode"
 
@@ -296,11 +321,6 @@ config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_Y4M
 	bool "y4m"
 	help
 	  Demuxes/decodes YUV4MPEG streams
-
-config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_YADIF
-	bool "yadif"
-	help
-	  YADIF deinterlacing filter
 
 comment "plugins with external dependencies"
 
@@ -618,6 +638,13 @@ config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_WPE
 comment "wpe needs the gst1-plugins-base opengl library and wpewebkit"
 	depends on !BR2_PACKAGE_WPEWEBKIT \
 		|| !BR2_PACKAGE_GST1_PLUGINS_BASE_HAS_LIB_OPENGL
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_V4L2CODECS
+	bool "v4l2codecs"
+	depends on BR2_PACKAGE_HAS_UDEV # libgudev
+	select BR2_PACKAGE_LIBGUDEV
+	help
+	  Video4Linux Stateless CODECs support
 
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_X265
 	bool "x265"

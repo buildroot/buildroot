@@ -104,6 +104,15 @@ config BR2_PACKAGE_BLUEZ5_UTILS_TEST
 	help
 	  Build BlueZ 5.x tests
 
+config BR2_PACKAGE_BLUEZ5_UTILS_TOOLS_HID2HCI
+	bool "build hid2hci tool"
+	depends on BR2_PACKAGE_HAS_UDEV
+	help
+	  Build BlueZ 5.x hid2hci tool
+
+comment "hid2hci tool needs udev /dev management"
+	depends on !BR2_PACKAGE_HAS_UDEV
+
 endif
 
 comment "bluez5-utils needs a toolchain w/ wchar, threads, headers >= 3.4, dynamic library"

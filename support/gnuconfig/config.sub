@@ -1735,6 +1735,8 @@ esac
 case $kernel-$os in
 	linux-gnu* | linux-dietlibc* | linux-android* | linux-newlib* | linux-musl* | linux-uclibc* )
 		;;
+	uclinux-uclibc* )
+		;;
 	-dietlibc* | -newlib* | -musl* | -uclibc* )
 		# These are just libc implementations, not actual OSes, and thus
 		# require a kernel.
