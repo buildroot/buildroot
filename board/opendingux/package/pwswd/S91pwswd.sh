@@ -15,7 +15,7 @@ start)
 	echo "Starting power slider daemon..."
 	/usr/bin/env HOME=`cat /etc/passwd |head -1 |cut -d':' -f 6`	\
 		/sbin/start-stop-daemon -S -b -m -p /var/run/pwswd.pid \
-		-c pwswd:pwswd -x /usr/sbin/pwswd -- -e /dev/input/$EVENT
+		-x /usr/sbin/pwswd -- -e /dev/input/$EVENT
 	;;
 stop)
 	echo "Stopping power slider daemon..."
