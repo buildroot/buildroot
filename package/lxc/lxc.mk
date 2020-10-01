@@ -67,11 +67,16 @@ define LXC_POST_INSTALL_TARGET_COPY_SUBXID
 	$(INSTALL) -m 0644 -D package/lxc/subgid \
 		$(TARGET_DIR)/etc/subgid
 endef
-
 LXC_POST_INSTALL_TARGET_HOOKS += LXC_POST_INSTALL_TARGET_COPY_SUBXID
+
+define LXC_POST_INSTALL_MKDIR_HOME
+	mkdir -p $(TARGET_DIR)/var/lib/lxcunpriv
+endef
+LXC_POST_INSTALL_TARGET_HOOKS += LXC_POST_INSTALL_MKDIR_HOME
 
 define LXC_PERMISSIONS
 	/usr/libexec/lxc/lxc-user-nic f  4755  root  root   -  -  -  -  -
+	/var/lib/lxcunpriv d  0755  lxc   lxc    -  -  -  -  -
 endef
 
 $(eval $(autotools-package))
