@@ -37,9 +37,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_LIBPNG),y)
 FREETYPE_DEPENDENCIES += libpng
-FREETYPE_CONF_OPTS += LIBPNG_CFLAGS="`$(STAGING_DIR)/usr/bin/libpng-config --cflags`" \
-	LIBPNG_LDFLAGS="`$(STAGING_DIR)/usr/bin/libpng-config --ldflags`"
-FREETYPE_LIBPNG_LIBS = "`$(STAGING_DIR)/usr/bin/libpng-config --libs`"
+FREETYPE_CONF_OPTS += --with-png
 else
 FREETYPE_CONF_OPTS += --without-png
 endif
@@ -51,15 +49,6 @@ define FREETYPE_FIX_CONFIG_FILE
 		$(STAGING_DIR)/usr/bin/freetype-config
 endef
 FREETYPE_POST_INSTALL_STAGING_HOOKS += FREETYPE_FIX_CONFIG_FILE
-
-# libpng isn't included in freetype-config & freetype2.pc :-/
-define FREETYPE_FIX_CONFIG_FILE_LIBS
-	$(SED) "s,^Libs.private:,& $(FREETYPE_LIBPNG_LIBS)," \
-		$(STAGING_DIR)/usr/lib/pkgconfig/freetype2.pc
-	$(SED) "s,-lfreetype,& $(FREETYPE_LIBPNG_LIBS)," \
-		$(STAGING_DIR)/usr/bin/freetype-config
-endef
-FREETYPE_POST_INSTALL_STAGING_HOOKS += FREETYPE_FIX_CONFIG_FILE_LIBS
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
