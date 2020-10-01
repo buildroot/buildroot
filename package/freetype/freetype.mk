@@ -16,6 +16,7 @@ FREETYPE_CONFIG_SCRIPTS = freetype-config
 
 HOST_FREETYPE_DEPENDENCIES = host-pkgconf
 HOST_FREETYPE_CONF_OPTS = \
+	--without-brotli \
 	--without-bzip2 \
 	--without-harfbuzz \
 	--without-png \
@@ -30,6 +31,13 @@ FREETYPE_DEPENDENCIES += zlib
 FREETYPE_CONF_OPTS += --with-zlib
 else
 FREETYPE_CONF_OPTS += --without-zlib
+endif
+
+ifeq ($(BR2_PACKAGE_BROTLI),y)
+FREETYPE_DEPENDENCIES += brotli
+FREETYPE_CONF_OPTS += --with-brotli
+else
+FREETYPE_CONF_OPTS += --without-brotli
 endif
 
 ifeq ($(BR2_PACKAGE_BZIP2),y)
