@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-RUBY_VERSION_MAJOR = 2.4
-RUBY_VERSION = $(RUBY_VERSION_MAJOR).10
-RUBY_VERSION_EXT = 2.4.0
+RUBY_VERSION_MAJOR = 2.7
+RUBY_VERSION = $(RUBY_VERSION_MAJOR).1
+RUBY_VERSION_EXT = 2.7.0
 RUBY_SITE = http://cache.ruby-lang.org/pub/ruby/$(RUBY_VERSION_MAJOR)
 RUBY_SOURCE = ruby-$(RUBY_VERSION).tar.xz
 RUBY_DEPENDENCIES = host-pkgconf host-ruby
@@ -19,6 +19,8 @@ HOST_RUBY_CONF_OPTS = \
 	--without-gmp
 RUBY_LICENSE = Ruby or BSD-2-Clause, BSD-3-Clause, others
 RUBY_LICENSE_FILES = LEGAL COPYING BSDL
+# 0001-fix-default-coroutine-selection.patch
+RUBY_AUTORECONF = YES
 
 ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
 # On uClibc, finite, isinf and isnan are not directly implemented as
@@ -69,13 +71,6 @@ RUBY_CONF_OPTS += --with-gmp
 else
 RUBY_CONF_OPTS += --without-gmp
 endif
-
-# workaround for amazing build failure, see
-# http://lists.busybox.net/pipermail/buildroot/2014-December/114273.html
-define RUBY_REMOVE_VERCONF_H
-	rm -f $(@D)/verconf.h
-endef
-RUBY_POST_CONFIGURE_HOOKS += RUBY_REMOVE_VERCONF_H
 
 # Remove rubygems and friends, as they need extensions that aren't
 # built and a target compiler.
