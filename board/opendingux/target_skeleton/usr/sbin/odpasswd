@@ -1,12 +1,23 @@
 #!/bin/sh
 
-if [ -z "$1" ] ; then
-	echo 'Usage: odpasswd <password>'
-	exit 0
+if [ -t 0 ] ; then
+	read -sp 'New password: ' R_PASSWD
+
+	if [ -z "$R_PASSWD" ] ; then
+		echo 'Empty password entered, aborting.'
+		exit 1
+	fi
+
+	sed -i -r --follow-symlinks -e '/^'"od"':.*/d;' /etc/shadow
+
+	E_PASSWD="`mkpasswd -m sha512 $R_PASSWD`"
+
+	echo -e "od:${E_PASSWD}:::::::" >> /etc/shadow
+
+	echo 'Password changed.'
+else
+	echo 'stdin is not a tty, aborting.'
+	exit 1
 fi
 
-sed -i -r --follow-symlinks -e '/^'"od"':.*/d;' /etc/shadow
-
-E_PASSWD="`mkpasswd -m sha512 $1`"
-
-echo -e "od:${E_PASSWD}:::::::\n" >> /etc/shadow
+exit 0
