@@ -123,6 +123,16 @@ arches = {
         'conditions': ['BR2_or1k'],
         'prefix': 'or1k',
     },
+    'powerpc-440fp': {
+        # Not sure it could be used by other powerpc variants?
+        'conditions': ['BR2_powerpc', 'BR2_powerpc_440fp'],
+        'prefix': 'powerpc',
+    },
+    'powerpc-e300c3': {
+        # Not sure it could be used by other powerpc variants?
+        'conditions': ['BR2_powerpc', 'BR2_powerpc_e300c3'],
+        'prefix': 'powerpc',
+    },
     'powerpc-e500mc': {
         # Not sure it could be used by other powerpc variants?
         'conditions': ['BR2_powerpc', 'BR2_powerpc_e500mc'],
@@ -130,6 +140,10 @@ arches = {
     },
     'powerpc64-e5500': {
         'conditions': ['BR2_powerpc64', 'BR2_powerpc_e5500'],
+        'prefix': 'powerpc64',
+    },
+    'powerpc64-e6500': {
+        'conditions': ['BR2_powerpc64', 'BR2_powerpc_e6500'],
         'prefix': 'powerpc64',
     },
     'powerpc64-power8': {
