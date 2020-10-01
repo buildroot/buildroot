@@ -22,6 +22,11 @@ ifeq ($(BR2_SHARED_LIBS),y)
 KEYUTILS_MAKE_PARAMS += NO_ARLIB=1
 endif
 
+# Touch cxx.stamp to avoid adding a C++ dependency
+define KEYUTILS_CONFIGURE_CMDS
+	touch $(@D)/cxx.stamp
+endef
+
 define KEYUTILS_BUILD_CMDS
 	$(TARGET_CONFIGURE_OPTS) $(MAKE) $(KEYUTILS_MAKE_PARAMS) -C $(@D)
 endef
