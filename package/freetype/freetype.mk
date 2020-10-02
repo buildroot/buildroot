@@ -14,6 +14,10 @@ FREETYPE_LICENSE_FILES = docs/LICENSE.TXT docs/FTL.TXT docs/GPLv2.TXT
 FREETYPE_DEPENDENCIES = host-pkgconf
 FREETYPE_CONFIG_SCRIPTS = freetype-config
 
+# harfbuzz already depends on freetype so disable harfbuzz in freetype to avoid
+# a circular dependency
+FREETYPE_CONF_OPTS = --without-harfbuzz
+
 HOST_FREETYPE_DEPENDENCIES = host-pkgconf
 HOST_FREETYPE_CONF_OPTS = \
 	--without-brotli \
@@ -45,13 +49,6 @@ FREETYPE_DEPENDENCIES += bzip2
 FREETYPE_CONF_OPTS += --with-bzip2
 else
 FREETYPE_CONF_OPTS += --without-bzip2
-endif
-
-ifeq ($(BR2_PACKAGE_HARFBUZZ),y)
-FREETYPE_DEPENDENCIES += harfbuzz
-FREETYPE_CONF_OPTS += --with-harbuzz
-else
-FREETYPE_CONF_OPTS += --without-harfbuzz
 endif
 
 ifeq ($(BR2_PACKAGE_LIBPNG),y)
