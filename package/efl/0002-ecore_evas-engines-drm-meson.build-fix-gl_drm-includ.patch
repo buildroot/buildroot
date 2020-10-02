@@ -1,4 +1,4 @@
-From 83c62fd6b53bd5d3f46c59362ef4fdac9090fd8d Mon Sep 17 00:00:00 2001
+From 8548b02c487ba7e9d78489c6db58812ee5cfb197 Mon Sep 17 00:00:00 2001
 From: Romain Naour <romain.naour@gmail.com>
 Date: Sat, 1 Aug 2020 01:01:00 +0200
 Subject: [PATCH] ecore_evas/engines/drm/meson.build: fix "gl_drm" include
@@ -20,10 +20,10 @@ Signed-off-by: Romain Naour <romain.naour@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/modules/ecore_evas/engines/drm/meson.build b/src/modules/ecore_evas/engines/drm/meson.build
-index de645f1093..205468750a 100644
+index 0741d7fccd..edda1abd71 100644
 --- a/src/modules/ecore_evas/engines/drm/meson.build
 +++ b/src/modules/ecore_evas/engines/drm/meson.build
-@@ -10,7 +10,7 @@ if get_option('opengl') != 'none'
+@@ -6,7 +6,7 @@ if get_option('opengl') != 'none'
    engine_deps += [gl_deps]
  endif
  
