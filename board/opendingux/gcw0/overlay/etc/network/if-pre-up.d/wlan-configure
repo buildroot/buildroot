@@ -63,9 +63,7 @@ ip link set ${IFACE} up
 ERR=$?
 [ $ERR -ne 0 ] && cleanup $ERR
 
-iw ${IFACE} set type managed
-ERR=$?
-[ $ERR -ne 0 ] && cleanup $ERR
+iw ${IFACE} set type managed 2>/dev/null
 
 if [ "$WLAN_ENCRYPTION" = "none" ] ; then
 	iw ${IFACE} connect ${WLAN_ESSID}
