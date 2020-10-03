@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2020.11"
 
+config BR2_GCC_VERSION_7_X
+	bool "gcc 7.x support removed"
+	select BR2_LEGACY
+	help
+	  Support for gcc version 7.x has been removed. The current
+	  default version (9.x or later) has been selected instead.
+
 config BR2_PACKAGE_GST1_VALIDATE
 	bool "gst1-validate was moved to gst1-devtools"
 	select BR2_PACKAGE_GST1_DEVTOOLS
