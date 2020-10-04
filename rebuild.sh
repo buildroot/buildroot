@@ -18,10 +18,12 @@ make od_${CONFIG}_defconfig BR2_EXTERNAL=board/opendingux O=output/${CONFIG}
 echo "Starting build..."
 nice make sdk BR2_SDK_PREFIX=${CONFIG}-toolchain O=output/${CONFIG}
 
+echo "Recompressing SDK to XZ..."
 ARCHIVE_NAME=opendingux-${CONFIG}-toolchain.`date +'%Y-%m-%d'`
-mv output/${CONFIG}/images/${CONFIG}-toolchain.tar.gz "output/${CONFIG}/images/$ARCHIVE_NAME.tar.gz"
+gzip -d -c output/${CONFIG}/images/${CONFIG}-toolchain.tar.gz | xz -T0 -9 > output/${CONFIG}/images/$ARCHIVE_NAME.tar.xz
+rm output/${CONFIG}/images/${CONFIG}-toolchain.tar.gz
 
 echo "The SDK has been built at:"
-echo "output/${CONFIG}/images/$ARCHIVE_NAME.tar.gz"
+echo "output/${CONFIG}/images/$ARCHIVE_NAME.tar.xz"
 echo
 echo "Remember to run ./relocate-sdk.sh after extracting it to your desired location"
