@@ -26,6 +26,34 @@ config BR2_PACKAGE_KISMET
 
 if BR2_PACKAGE_KISMET
 
+config BR2_PACKAGE_KISMET_PYTHON_TOOLS
+	bool "Install python tools"
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS # protobuf
+	depends on BR2_PACKAGE_PYTHON_NUMPY_ARCH_SUPPORTS # python-numpy
+	depends on BR2_PACKAGE_PYTHON3
+	depends on !BR2_STATIC_LIBS # protobuf
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # protobuf
+	depends on BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL # python-numpy
+	select BR2_PACKAGE_PROTOBUF
+	select BR2_PACKAGE_PYTHON_NUMPY # runtime for RTLAMR and RTLADSB
+	select BR2_PACKAGE_PYTHON_PROTOBUF # runtime
+	select BR2_PACKAGE_PYTHON_SERIAL # runtime for Freaklabs Zigbee
+	select BR2_PACKAGE_PYTHON_SETUPTOOLS
+	help
+	  Enable Python and Python-related tools (RTL_433, RTLAMR,
+	  RTLADSB and Freaklabs Zigbee)
+
+comment "python tools needs python3"
+	depends on !BR2_PACKAGE_PYTHON3
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_PYTHON_NUMPY_ARCH_SUPPORTS
+
+comment "python tools needs a glibc or musl toolchain w/ dynamic library, gcc >= 4.8"
+	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_PYTHON_NUMPY_ARCH_SUPPORTS
+	depends on !(BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL)
+
 config BR2_PACKAGE_KISMET_SERVER
 	bool "Install server"
 	default y

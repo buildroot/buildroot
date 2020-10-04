@@ -17,7 +17,7 @@ KISMET_DEPENDENCIES = \
 	zlib
 KISMET_LICENSE = GPL-2.0+
 KISMET_LICENSE_FILES = LICENSE
-KISMET_CONF_OPTS = --disable-debuglibs --disable-python-tools
+KISMET_CONF_OPTS = --disable-debuglibs
 
 KISMET_CXXFLAGS = $(TARGET_CXXFLAGS)
 
@@ -53,6 +53,15 @@ KISMET_DEPENDENCIES += pcre
 KISMET_CONF_OPTS += --enable-pcre
 else
 KISMET_CONF_OPTS += --disable-pcre
+endif
+
+ifeq ($(BR2_PACKAGE_KISMET_PYTHON_TOOLS),y)
+KISMET_DEPENDENCIES += python3 python-setuptools
+KISMET_CONF_OPTS += \
+	--enable-python-tools \
+	--with-python-interpreter=$(HOST_DIR)/bin/python$(PYTHON3_VERSION_MAJOR)
+else
+KISMET_CONF_OPTS += --disable-python-tools
 endif
 
 KISMET_INSTALL_TARGET_OPTS += \
