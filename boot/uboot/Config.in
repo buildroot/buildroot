@@ -245,46 +245,30 @@ config BR2_TARGET_UBOOT_FORMAT_BIN
 config BR2_TARGET_UBOOT_FORMAT_DTB_BIN
 	bool "u-boot-dtb.bin"
 
-config BR2_TARGET_UBOOT_FORMAT_DTB_IMG
-	bool "u-boot-dtb.img"
-
-config BR2_TARGET_UBOOT_FORMAT_DTB_IMX
-	bool "u-boot-dtb.imx"
-
-config BR2_TARGET_UBOOT_FORMAT_IMG
-	bool "u-boot.img"
-
-config BR2_TARGET_UBOOT_FORMAT_ITB
-	bool "u-boot.itb"
-
-config BR2_TARGET_UBOOT_FORMAT_IMX
-	bool "u-boot.imx"
-
 config BR2_TARGET_UBOOT_FORMAT_NAND_BIN
 	bool "u-boot-nand.bin"
-
-config BR2_TARGET_UBOOT_FORMAT_KWB
-	bool "u-boot.kwb (Marvell)"
-	depends on BR2_arm
 
 config BR2_TARGET_UBOOT_FORMAT_ELF
 	bool "u-boot.elf"
 
-config BR2_TARGET_UBOOT_FORMAT_SB
-	bool "u-boot.sb (Freescale i.MX28)"
+config BR2_TARGET_UBOOT_FORMAT_IMG
+	bool "u-boot.img"
+
+config BR2_TARGET_UBOOT_FORMAT_DTB_IMG
+	bool "u-boot-dtb.img"
+
+config BR2_TARGET_UBOOT_FORMAT_IMX
+	bool "u-boot.imx"
+
+config BR2_TARGET_UBOOT_FORMAT_DTB_IMX
+	bool "u-boot-dtb.imx"
+
+config BR2_TARGET_UBOOT_FORMAT_ITB
+	bool "u-boot.itb"
+
+config BR2_TARGET_UBOOT_FORMAT_KWB
+	bool "u-boot.kwb (Marvell)"
 	depends on BR2_arm
-
-config BR2_TARGET_UBOOT_FORMAT_SD
-	bool "u-boot.sd (Freescale i.MX28)"
-	depends on BR2_arm
-	help
-	  This is Freescale i.MX28 SB format, with a header for booting
-	  from an SD card.
-
-	  U-Boot includes an mxsboot tool to generate this format,
-	  starting from 2011.12.
-
-	  See doc/README.mxs (or doc/README.mx28_common before 2013.07)
 
 config BR2_TARGET_UBOOT_FORMAT_NAND
 	bool "u-boot.nand (Freescale i.MX28)"
@@ -342,6 +326,22 @@ config BR2_TARGET_UBOOT_FORMAT_NAND_ERASE_SIZE
 	  The value provided here is passed to the -e option of mxsboot.
 
 endif
+
+config BR2_TARGET_UBOOT_FORMAT_SB
+	bool "u-boot.sb (Freescale i.MX28)"
+	depends on BR2_arm
+
+config BR2_TARGET_UBOOT_FORMAT_SD
+	bool "u-boot.sd (Freescale i.MX28)"
+	depends on BR2_arm
+	help
+	  This is Freescale i.MX28 SB format, with a header for booting
+	  from an SD card.
+
+	  U-Boot includes an mxsboot tool to generate this format,
+	  starting from 2011.12.
+
+	  See doc/README.mxs (or doc/README.mx28_common before 2013.07)
 
 config BR2_TARGET_UBOOT_FORMAT_CUSTOM
 	bool "Custom (specify below)"
