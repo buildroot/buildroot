@@ -206,6 +206,18 @@ config BR2_TARGET_UBOOT_ENVIMAGE_REDUNDANT
 	help
 	  Migrated U-Boot env generation to uboot-tools
 
+config BR2_PACKAGE_KISMET_CLIENT
+	bool "kismet client support was removed"
+	select BR2_LEGACY
+	help
+	  Kismet client support was removed since version 2019-04-R1.
+
+config BR2_PACKAGE_KISMET_DRONE
+	bool "kismet drone support was removed"
+	select BR2_LEGACY
+	help
+	  Kismet drone support was removed since version 2019-04-R1.
+
 config BR2_GCC_VERSION_7_X
 	bool "gcc 7.x support removed"
 	select BR2_LEGACY
