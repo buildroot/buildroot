@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-18XX_TI_UTILS_VERSION = R8.7_SP3
+18XX_TI_UTILS_VERSION = R8.8
 18XX_TI_UTILS_SITE = git://git.ti.com/wilink8-wlan/18xx-ti-utils
 18XX_TI_UTILS_DEPENDENCIES = libnl
 18XX_TI_UTILS_LICENSE = BSD-3-Clause
