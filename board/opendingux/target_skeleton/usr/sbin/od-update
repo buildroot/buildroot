@@ -24,6 +24,8 @@ elif [ "$HWVARIANT_CMDLINE" = "rg350" ] ; then
 	if [ -r /sys/devices/platform/jz-lcd.0/graphics/fb0/modes -a \
 		"$(grep '640x480' /sys/devices/platform/jz-lcd.0/graphics/fb0/modes)" ] ; then
 		MODEL=ylm,rg350m
+	elif [ -r /etc/os-release -a "$(grep ge757a1a /etc/os-release)" ] ; then
+		MODEL=ylm,rg280m
 	else
 		MODEL=ylm,rg350
 	fi
@@ -58,7 +60,7 @@ case "$MODEL" in
 		esac
 		SYSDEV=$(echo $SYSPART |sed -n 's/\(\/dev\/mmcblk[0-9]\+\)p[0-9]\+/\1/p')
 		;;
-	anbernic,rg350|anbernic,rg350m|ylm,rg350|ylm,rg350m)
+	anbernic,rg350|anbernic,rg350m|ylm,rg350|ylm,rg350m|ylm,rg280m)
 		HWVARIANT_DT=$(echo $MODEL |cut -d',' -f2)
 		HWVARIANT_BL="rg350"
 		SYSDEV=$(echo $SYSPART |sed -n 's/\(\/dev\/mmcblk[0-9]\+\)p[0-9]\+/\1/p')
