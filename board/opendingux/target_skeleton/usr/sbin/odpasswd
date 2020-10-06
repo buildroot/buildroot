@@ -2,9 +2,15 @@
 
 if [ -t 0 ] ; then
 	read -sp 'New password: ' R_PASSWD
+	read -sp 'Repeat password: ' R_PASSWD2
 
 	if [ -z "$R_PASSWD" ] ; then
 		echo 'Empty password entered, aborting.'
+		exit 1
+	fi
+
+	if [ "$R_PASSWD" != "$R_PASSWD2" ] ; then
+		echo "Passwords don't match, aborting."
 		exit 1
 	fi
 
