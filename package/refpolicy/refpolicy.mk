@@ -71,7 +71,6 @@ REFPOLICY_MODULES = \
 	$(foreach d,$(REFPOLICY_EXTRA_MODULES_DIRS),\
 		$(basename $(notdir $(wildcard $(d)/*.te))))
 
-ifneq ($(REFPOLICY_EXTRA_MODULES_DIRS),)
 define REFPOLICY_COPY_EXTRA_MODULES
 	mkdir -p $(@D)/policy/modules/buildroot
 	rsync -au $(addsuffix /*,$(REFPOLICY_EXTRA_MODULES_DIRS)) \
@@ -81,7 +80,6 @@ define REFPOLICY_COPY_EXTRA_MODULES
 			$(@D)/policy/modules/buildroot/metadata.xml; \
 	fi
 endef
-endif
 
 # In the context of a monolithic policy enabling a piece of the policy as
 # 'base' or 'module' is equivalent, so we enable them as 'base'.
@@ -106,7 +104,9 @@ define REFPOLICY_CONFIGURE_CMDS
 	$(SED) "/MONOLITHIC/c\MONOLITHIC = y" $(@D)/build.conf
 	$(SED) "/NAME/c\NAME = targeted" $(@D)/build.conf
 	$(REFPOLICY_CONFIGURE_SYSTEMD)
-	$(REFPOLICY_COPY_EXTRA_MODULES)
+	$(if $(REFPOLICY_EXTRA_MODULES_DIRS), \
+		$(REFPOLICY_COPY_EXTRA_MODULES)
+	)
 	$(REFPOLICY_MAKE) -C $(@D) bare conf
 	$(REFPOLICY_CONFIGURE_MODULES)
 endef
