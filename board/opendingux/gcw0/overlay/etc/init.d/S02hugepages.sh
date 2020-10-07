@@ -1,9 +1,12 @@
 #!/bin/sh
 
+NR_HUGEPAGES=8
+[ -r /etc/default/hugepages ] && . /etc/default/hugepages
+
 [ -z "$1" ] || [ "x$1" = "xstart" ] || exit 0
 
 if [ -d /sys/kernel/mm/hugepages/hugepages-2048kB ] ; then
-	echo 4 > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
+	echo $NR_HUGEPAGES > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
 
 	mkdir /var/huge
 	mount none -t hugetlbfs -o uid=1000,gid=100 /var/huge
