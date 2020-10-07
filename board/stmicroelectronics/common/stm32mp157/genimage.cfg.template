@@ -4,20 +4,19 @@ image sdcard.img {
 	}
 
 	partition fsbl1 {
-		image = "u-boot-spl.stm32"
+		image = "%ATFBIN%"
 	}
 
 	partition fsbl2 {
-		image = "u-boot-spl.stm32"
+		image = "%ATFBIN%"
 	}
 
 	partition ssbl {
-		image = "u-boot.img"
+		image = "u-boot.stm32"
 	}
 
 	partition rootfs {
 		image = "rootfs.ext4"
-		partition-type = 0x83
 		bootable = "yes"
 	}
 }
