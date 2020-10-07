@@ -46,9 +46,7 @@ endif
 # gd with support for png is required for the CGI
 ifeq ($(BR2_PACKAGE_GD)$(BR2_PACKAGE_LIBPNG),yy)
 NUT_DEPENDENCIES += gd libpng
-NUT_CONF_OPTS += \
-	--with-cgi \
-	--with-gdlib-config=$(STAGING_DIR)/usr/bin/gdlib-config
+NUT_CONF_OPTS += --with-cgi
 else
 NUT_CONF_OPTS += --without-cgi
 endif
