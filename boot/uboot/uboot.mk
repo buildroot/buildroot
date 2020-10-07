@@ -121,6 +121,11 @@ UBOOT_MAKE_TARGET += u-boot.sb
 UBOOT_DEPENDENCIES += host-elftosb host-openssl
 endif
 
+ifeq ($(BR2_TARGET_UBOOT_FORMAT_STM32),y)
+UBOOT_BINS += u-boot.stm32
+UBOOT_MAKE_TARGET += u-boot.stm32
+endif
+
 ifeq ($(BR2_TARGET_UBOOT_FORMAT_CUSTOM),y)
 UBOOT_BINS += $(call qstrip,$(BR2_TARGET_UBOOT_FORMAT_CUSTOM_NAME))
 endif
