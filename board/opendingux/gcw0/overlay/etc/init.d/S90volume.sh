@@ -15,7 +15,7 @@ case "$1" in
 		;;
 	stop)
 		echo "Storing sound volume..."
-		echo `/usr/bin/alsa-getvolume default $CONTROL` > $VOLUME_STATEFILE
+		amixer get $CONTROL | sed -n 's/.*Front .*: Playback \([0-9]*\).*$/\1/p' | paste -d "," - - > $VOLUME_STATEFILE
 		;;
 	*)
 		echo "Usage: $0 {start|stop}"
