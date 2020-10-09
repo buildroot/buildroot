@@ -1,4 +1,4 @@
-![Buildroot Logo](images/buildroot.png)
+![Buildroot Logo](docs/website/images/logo_small.png)
 ## Buildroot : 
 ````
 Buildroot is a simple, efficient and easy-to-use tool, 
