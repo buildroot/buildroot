@@ -69,4 +69,8 @@ define CHRONY_INSTALL_INIT_SYSTEMD
 		$(TARGET_DIR)/usr/lib/systemd/system/chrony.service
 endef
 
+define CHRONY_USERS
+	ntp -1 ntp -1 * - - -
+endef
+
 $(eval $(generic-package))
