@@ -34,4 +34,10 @@ else
 UNIXODBC_CONF_OPTS += --disable-readline
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
+UNIXODBC_CONF_OPTS += --enable-threads
+else
+UNIXODBC_CONF_OPTS += --disable-threads
+endif
+
 $(eval $(autotools-package))
