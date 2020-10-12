@@ -92,9 +92,9 @@ all:
 .PHONY: all
 
 # Set and export the version string
-export BR2_VERSION := 2020.05.2
+export BR2_VERSION := 2020.05.3
 # Actual time the release is cut (for reproducible builds)
-BR2_VERSION_EPOCH = 1598724000
+BR2_VERSION_EPOCH = 1602525000
 
 # Save running make version since it's clobbered by the make package
 RUNNING_MAKE_VERSION := $(MAKE_VERSION)
