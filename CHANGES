@@ -1,3 +1,63 @@
+2020.08.1, released October 12th, 2020
+
+	Important / security related fixes.
+
+	Fixes for various compilation issues with GCC 10.x.
+
+	meson: Correct SDK cross-compilation.conf file when
+	per-package builds were used to build SDK.
+
+	systemd: Use /run rather than /var/run for PID files in units.
+
+	Toolchain: use Secure-PLT rather than BSS-PLT for PowerPC 32.
+
+	Fakeroot scripts (BR2_ROOTFS_POST_FAKEROOT_SCRIPT) are now run
+	after all finalization hooks (including pre-rootfs) to ensure
+	they can override any late configuration done by packages.
+
+	support/script/pycompile: Rework logic to ensure .pyc files
+	contain absolute target paths, fixing code inspection at
+	runtime when executed with cwd != '/'.
+
+	support/scripts/setlocalversion: Correct Mercurial output to
+	match behaviour with Git.
+
+	support/scripts/apply-patches.sh: Use patch
+	--no-backup-if-mismatch, so we no longer blindly have to
+	remove *.orig files after patching, fixing issues with
+	packages containing such files.
+
+	fs/jffs2: Now correctly handles xattrs
+
+	Updated/fixed packages: acpica, afboot-stm32, alsa-utils,
+	apparmor, bandwidthd, barebox, bash, bison, brotli,
+	cifs-utils, cups, dhcpcd, dhcpdump, docker-cli, docker-engine,
+	ecryptfs-utils, efl, fail2ban, fbterm, ffmpeg, fontconfig,
+	freetype, gcc, gdb, ghostscript, gnupg2, gnutls, go, gqview,
+	gst1-plugins-base, gst1-plugins-ugly, ipmitool, jbig2dec,
+	kexec, lcdproc, libcamera, libhtp, libnetconf2, libraw,
+	libssh, libxml2, libxml-parser-perl, libzip, linux-headers,
+	live555, localedef, ltp-testsuite, lua, matchbox, memcached,
+	memtester, mesa3d, meson, minidlna, mongodb, mongrel2, motion,
+	mraa, mtd, musepack, neardal, netatalk, netperf, netsniff-ng,
+	nginx, nodejs, nss-pam-ldapd, open-plc-utils, openswan,
+	opentyrian, openvmtools, php, postgresql, python,
+	python-aenum, python-cycler, python-engineio, python-fire,
+	python-pymodbus, python-scapy, python-semver,
+	python-sentry-sdk, python-socketio, python-texttable,
+	python-tinyrpc, python-txtorcon, python3, qt5base, quagga,
+	read-edid, redis, rsh-redone, runc, samba4, socketcand,
+	strace, supertux, suricata, systemd, ti-utils, trinity,
+	uclibc, usb_modeswitch, vlc, vsftpd, wampcc,
+	wayland-protocols, wireguard-linux-compat, wireshark, wlroots,
+	wolfssl, w_scan, xerces, xfsprogs, xdriver-xf86-video-ati,
+	xserver_xorg-server, ympd, zeromq, zlib-ng, zstd
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12911: usb_modeswitch installation race condition
+	#13236: Can't compile linux 5.4.8 (with gcc 10 on host)
+
 2020.08, released September 1st, 2020
 
 	Various fixes.
