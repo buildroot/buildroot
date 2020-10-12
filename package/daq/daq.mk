@@ -4,13 +4,14 @@
 #
 ################################################################################
 
-DAQ_VERSION = 2.0.6
+DAQ_VERSION = 2.0.7
 DAQ_SITE = https://www.snort.org/downloads/snort
 DAQ_LICENSE = GPL-2.0
 DAQ_LICENSE_FILES = COPYING
 DAQ_INSTALL_STAGING = YES
 DAQ_DEPENDENCIES = host-bison host-flex
 # 0002-parallel-grammar.patch
+# 2.0.7 needs autoreconf due to configure being older than configure.ac
 DAQ_AUTORECONF = YES
 
 # disable ipq module as libipq is deprecated
