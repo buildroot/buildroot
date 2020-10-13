@@ -202,7 +202,9 @@ a set of files that define those alternatives:
   will then be listed in the toolchain selection;
 * +provides/jpeg.in+ defines the alternative libjpeg implementations;
 * +provides/openssl.in+ defines the alternative openssl implementations;
-* +provides/skeleton.in+ defines the alternative skeleton implementations.
+* +provides/skeleton.in+ defines the alternative skeleton implementations;
+* +provides/init.in+ defines the alternative init system implementations, this
+  can be used to select a default skeleton for your init.
 
 ===== Free-form content
 
@@ -300,6 +302,13 @@ illustration, of course):
   |     |MY_JPEG_SITE = https://example.net/some/place
   |     |MY_JPEG_PROVIDES = jpeg
   |     |$(eval $(autotools-package))
+  |     `----
+  |
+  |- provides/init.in
+  |     |config BR2_INIT_MINE
+  |     |    bool "my custom init"
+  |     |    select BR2_PACKAGE_MY_INIT
+  |     |    select BR2_PACKAGE_SKELETON_INIT_MINE if BR2_ROOTFS_SKELETON_DEFAULT
   |     `----
   |
   |- provides/skeleton.in
