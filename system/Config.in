@@ -23,6 +23,9 @@ config BR2_ROOTFS_SKELETON_CUSTOM
 	help
 	  Use custom target skeleton.
 
+# skeleton from br2-external trees, if any
+source "$BR2_BASE_DIR/.br2-external.in.skeleton"
+
 endchoice
 
 if BR2_ROOTFS_SKELETON_CUSTOM
