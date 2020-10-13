@@ -149,6 +149,9 @@ config BR2_INIT_NONE
 	  have to provide your own, either with a new package
 	  or with a rootfs-overlay.
 
+# Init systems from br2-external trees, if any
+source "$BR2_BASE_DIR/.br2-external.in.init"
+
 endchoice
 
 choice

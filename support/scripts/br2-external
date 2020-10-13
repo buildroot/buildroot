@@ -162,6 +162,7 @@ do_kconfig() {
         jpeg
         openssl
         skeleton
+        init
     )
 
     for br2 in "${items[@]}"; do
@@ -233,6 +234,14 @@ do_kconfig() {
         else
             printf '# No skeleton from: %s\n\n' "${br2_desc}"
         fi >>"${outputdir}/.br2-external.in.skeleton"
+
+        if [ -f "${br2_ext}/provides/init.in" ]; then
+            printf 'comment "init from: %s"\n' "${br2_desc}"
+            printf 'source "%s/provides/init.in"\n' "${br2_ext}"
+            printf '\n'
+        else
+            printf '# No init from: %s\n\n' "${br2_desc}"
+        fi >>"${outputdir}/.br2-external.in.init"
     done
 
     printf 'endmenu\n' >>"${outputdir}/.br2-external.in.menus"
