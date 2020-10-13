@@ -122,6 +122,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_BROADCAST_SI_PARSING
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_CDM
+    select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
     bool "CDM"
     help
       CDM client support compatible with OpenCDM
@@ -151,6 +152,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_DISPLAYINFO
         A helpful C-interface to easily get information from the DisplayInfo plugin.
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY
+    select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
     bool "Cryptography"
         default n
     help
