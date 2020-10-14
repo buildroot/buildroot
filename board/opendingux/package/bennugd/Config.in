@@ -1,0 +1,14 @@
+config BR2_PACKAGE_BENNUGD
+	bool "bennugd"
+	select BR2_PACKAGE_ZLIB
+	select BR2_PACKAGE_LIBPNG
+	select BR2_PACKAGE_SDL
+	select BR2_PACKAGE_SDL_MIXER
+	select BR2_PACKAGE_OPENSSL
+	help
+	  - Bennu Game Development -
+	  Game development framework.
+	
+	  Used by Streets of Rage Remake v5a and King of Fighters.
+
+	  http://www.bennugd.org

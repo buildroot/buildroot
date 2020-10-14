@@ -1,0 +1,71 @@
+From 10d06f0e04c7c6b6f9fdb4da14296f82f2a3c2c8 Mon Sep 17 00:00:00 2001
+From: Gleb Mazovetskiy <glex.spb@gmail.com>
+Date: Tue, 13 Oct 2020 12:01:19 +0100
+Subject: [PATCH] libdraw: GCC 10 compatibility
+
+The internal libdraw functions must have static linkage
+---
+ modules/libdraw/libdraw.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/modules/libdraw/libdraw.c b/modules/libdraw/libdraw.c
+index 042308b..03724ca 100644
+--- a/modules/libdraw/libdraw.c
++++ b/modules/libdraw/libdraw.c
+@@ -48,7 +48,7 @@ uint32_t drawing_stipple = 0xFFFFFFFF;
+ #define _inline inline
+ #endif
+ 
+-_inline void _HLine8_nostipple( uint8_t * ptr, uint32_t length )
++static _inline void _HLine8_nostipple( uint8_t * ptr, uint32_t length )
+ {
+     if ( pixel_alpha == 255 )
+     {
+@@ -64,7 +64,7 @@ _inline void _HLine8_nostipple( uint8_t * ptr, uint32_t length )
+ 
+ /* --------------------------------------------------------------------------- */
+ 
+-_inline void _HLine8_stipple( uint8_t * ptr, uint32_t length )
++static _inline void _HLine8_stipple( uint8_t * ptr, uint32_t length )
+ {
+     register int n;
+ 
+@@ -88,7 +88,7 @@ _inline void _HLine8_stipple( uint8_t * ptr, uint32_t length )
+ 
+ /* --------------------------------------------------------------------------- */
+ 
+-_inline void _HLine16_nostipple( uint16_t * ptr, uint32_t length )
++static _inline void _HLine16_nostipple( uint16_t * ptr, uint32_t length )
+ {
+     register int n ;
+ 
+@@ -104,7 +104,7 @@ _inline void _HLine16_nostipple( uint16_t * ptr, uint32_t length )
+ 
+ /* --------------------------------------------------------------------------- */
+ 
+-_inline void _HLine16_stipple( uint16_t * ptr, uint32_t length )
++static _inline void _HLine16_stipple( uint16_t * ptr, uint32_t length )
+ {
+     register int n ;
+ 
+@@ -128,7 +128,7 @@ _inline void _HLine16_stipple( uint16_t * ptr, uint32_t length )
+ 
+ /* --------------------------------------------------------------------------- */
+ 
+-_inline void _HLine32_nostipple( uint32_t * ptr, uint32_t length )
++static _inline void _HLine32_nostipple( uint32_t * ptr, uint32_t length )
+ {
+     register int n ;
+ 
+@@ -190,7 +190,7 @@ _inline void _HLine32_nostipple( uint32_t * ptr, uint32_t length )
+ 
+ /* --------------------------------------------------------------------------- */
+ 
+-_inline void _HLine32_stipple( uint32_t * ptr, uint32_t length )
++static _inline void _HLine32_stipple( uint32_t * ptr, uint32_t length )
+ {
+     register int n ;
+ 
+-- 
+2.25.1
+
