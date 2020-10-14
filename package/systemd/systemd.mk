@@ -240,18 +240,13 @@ else
 SYSTEMD_CONF_OPTS += -Danalyze=false
 endif
 
-ifeq ($(BR2_PACKAGE_SYSTEMD_JOURNAL_GATEWAY),y)
-SYSTEMD_DEPENDENCIES += libmicrohttpd
-SYSTEMD_CONF_OPTS += -Dmicrohttpd=true
-else
-SYSTEMD_CONF_OPTS += -Dmicrohttpd=false
-endif
-
 ifeq ($(BR2_PACKAGE_SYSTEMD_JOURNAL_REMOTE),y)
-SYSTEMD_CONF_OPTS += -Dremote=true
+# remote also depends on libcurl, this is already added above.
+SYSTEMD_DEPENDENCIES += libmicrohttpd
+SYSTEMD_CONF_OPTS += -Dremote=true -Dmicrohttpd=true
 SYSTEMD_REMOTE_USER = systemd-journal-remote -1 systemd-journal-remote -1 * - - - systemd Journal Remote
 else
-SYSTEMD_CONF_OPTS += -Dremote=false
+SYSTEMD_CONF_OPTS += -Dremote=false -Dmicrohttpd=false
 endif
 
 ifeq ($(BR2_PACKAGE_LIBQRENCODE),y)

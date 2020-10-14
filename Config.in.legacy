@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2020.11"
 
+config BR2_PACKAGE_SYSTEMD_JOURNAL_GATEWAY
+	bool "systemd-journal-gatewayd now in systemd-journal-remote"
+	select BR2_LEGACY
+	select BR2_PACKAGE_SYSTEMD_JOURNAL_REMOTE
+	help
+	  All system journal remote programs are now enabled using
+	  BR2_PACKAGE_SYSTEMD_JOURNAL_REMOTE.
+
 config BR2_TARGET_UBOOT_BOOT_SCRIPT
 	bool "u-boot script generation was moved"
 	select BR2_LEGACY
