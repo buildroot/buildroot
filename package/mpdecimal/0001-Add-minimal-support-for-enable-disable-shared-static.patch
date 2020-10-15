@@ -37,7 +37,7 @@ index 2c91891..0c44f36 100644
 +endif
 +ifeq ($(BUILD_SHARED),yes)
  	$(INSTALL) -m 755 libmpdec/$(LIBSHARED) $(DESTDIR)$(libdir)
- 	cd $(DESTDIR)$(libdir) && ln -sf $(LIBSHARED) $(LIBSONAME) && ln -sf $(LIBSHARED) libmpdec.so
+ 	cd $(DESTDIR)$(libdir) && ln -sf $(LIBSHARED) $(LIBSONAME) && ln -sf $(LIBSHARED) $(LIBNAME)
 +endif
  	$(INSTALL) -d -m 755 $(DESTDIR)$(docdir)
  	cp -R doc/* $(DESTDIR)$(docdir)
