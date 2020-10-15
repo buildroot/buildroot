@@ -39,7 +39,7 @@ LIBBLOCKDEV_CONF_OPTS += --without-crypto
 endif
 
 ifeq ($(BR2_PACKAGE_LIBBLOCKDEV_FS),y)
-LIBBLOCKDEV_DEPENDENCIES += parted
+LIBBLOCKDEV_DEPENDENCIES += parted util-linux
 LIBBLOCKDEV_CONF_OPTS += --with-fs
 else
 LIBBLOCKDEV_CONF_OPTS += --without-fs
