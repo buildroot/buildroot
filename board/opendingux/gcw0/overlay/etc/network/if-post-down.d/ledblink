@@ -2,22 +2,36 @@
 
 [ "${IFACE:0:4}" = "wlan" ] || exit 0
 
-USB_ONLINE=`cat '/sys/class/power_supply/usb-charger/online'`
-DC_ONLINE=`cat '/sys/class/power_supply/usb-charger/online'`
-BATTERY_LEVEL=`cat '/sys/class/power_supply/jz-battery/voltage_now'`
-BATTERY_MIN=`cat '/sys/class/power_supply/jz-battery/voltage_min_design'`
-BATTERY_MAX=`cat '/sys/class/power_supply/jz-battery/voltage_max_design'`
+DC_CHARGER=/sys/class/power_supply/dc-charger
+USB_CHARGER=/sys/class/power_supply/usb-charger
+BATTERY=/sys/class/power_supply/jz-battery
+LED1=/sys/class/leds/led
+LED2=/sys/class/leds/power
 
+DC_ONLINE=0
+
+if [ -e $DC_CHARGER ]; then
+	DC_ONLINE=`cat $DC_CHARGER/online`
+fi
+
+USB_ONLINE=0
+
+if [ -e $USB_CHARGER ]; then
+	USB_ONLINE=`cat $USB_CHARGER/online`
+fi
+
+BATTERY_LEVEL=`cat $BATTERY/voltage_now`
+BATTERY_MIN=`cat $BATTERY/voltage_min_design`
+BATTERY_MAX=`cat $BATTERY/voltage_max_design`
 BATTERY_LEVEL=$(expr $(expr $BATTERY_LEVEL - $BATTERY_MIN) \* 100 / $(expr $BATTERY_MAX - $BATTERY_MIN))
 
 # If the battery level is low, the battery level monitor may have
 # already changed how the LED blinks, so we don't override that
-[ "$USB_ONLINE" -eq 0 \
-	-a "$DC_ONLINE" -eq 0 \
-	-a "$BATTERY_LEVEL" -lt 10 ] && exit 0
+[ "$USB_ONLINE" -eq 0 -a "$DC_ONLINE" -eq 0 -a "$BATTERY_LEVEL" -lt 10 ] && exit 0
 
 HAS_OTHER_INTERFACES=no
-for i in `ls /sys/class/net` ; do
+
+for i in `ls /sys/class/net`; do
 	[ "${i:0:4}" = "wlan" ] || continue
 	[ "$i" != "$IFACE" ] || continue
 
@@ -27,8 +41,17 @@ for i in `ls /sys/class/net` ; do
 	fi
 done
 
-# Stop blinking only if no other wlan interface is up
-if [ "$HAS_OTHER_INTERFACES" != "yes" ] ; then
-	echo 'none' > /sys/class/leds/led/trigger
-	cat /sys/class/leds/led/max_brightness > /sys/class/leds/led/brightness
+[ "$HAS_OTHER_INTERFACES" = "no" ] || exit 0
+
+LED=
+
+if [ -e $LED1 ]; then
+	LED=$LED1
+elif [ -e $LED2 ]; then
+	LED=$LED2
+fi
+
+if [ -n "$LED" ]; then
+	echo 'none' > $LED/trigger
+	cat $LED/max_brightness > $LED/brightness
 fi

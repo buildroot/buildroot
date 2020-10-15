@@ -1,22 +1,44 @@
 #!/bin/sh
 
-# Only blink the LED when a wlan interface is enabled
 [ ${IFACE:0:4} = "wlan" ] || exit 0
 
-USB_ONLINE=`cat '/sys/class/power_supply/usb-charger/online'`
-DC_ONLINE=`cat '/sys/class/power_supply/dc-charger/online'`
-BATTERY_LEVEL=`cat '/sys/class/power_supply/jz-battery/voltage_now'`
-BATTERY_MIN=`cat '/sys/class/power_supply/jz-battery/voltage_min_design'`
-BATTERY_MAX=`cat '/sys/class/power_supply/jz-battery/voltage_max_design'`
+DC_CHARGER=/sys/class/power_supply/dc-charger
+USB_CHARGER=/sys/class/power_supply/usb-charger
+BATTERY=/sys/class/power_supply/jz-battery
+LED1=/sys/class/leds/led
+LED2=/sys/class/leds/power
 
+DC_ONLINE=0
+
+if [ -e $DC_CHARGER ]; then
+	DC_ONLINE=`cat $DC_CHARGER/online`
+fi
+
+USB_ONLINE=0
+
+if [ -e $USB_CHARGER ]; then
+	USB_ONLINE=`cat $USB_CHARGER/online`
+fi
+
+BATTERY_LEVEL=`cat $BATTERY/voltage_now`
+BATTERY_MIN=`cat $BATTERY/voltage_min_design`
+BATTERY_MAX=`cat $BATTERY/voltage_max_design`
 BATTERY_LEVEL=$(expr $(expr $BATTERY_LEVEL - $BATTERY_MIN) \* 100 / $(expr $BATTERY_MAX - $BATTERY_MIN))
 
 # Don't change the blinking mode if the battery level is
 # low, so that the low battery level warning will work
-[ "$USB_ONLINE" -eq 0 \
-	-a "$DC_ONLINE" -eq 0 \
-	-a "$BATTERY_LEVEL" -lt 10 ] && exit 0
+[ "$USB_ONLINE" -eq 0 -a "$DC_ONLINE" -eq 0 -a "$BATTERY_LEVEL" -lt 10 ] && exit 0
 
-echo 'timer' > /sys/class/leds/led/trigger
-echo '100' > /sys/class/leds/led/delay_on
-echo '1400' > /sys/class/leds/led/delay_off
+LED=
+
+if [ -e $LED1 ]; then
+	LED=$LED1
+elif [ -e $LED2 ]; then
+	LED=$LED2
+fi
+
+if [ -n "$LED" ]; then
+	echo "timer" > $LED/trigger
+	echo "100" > $LED/delay_on
+	echo "1400" > $LED/delay_off
+fi
