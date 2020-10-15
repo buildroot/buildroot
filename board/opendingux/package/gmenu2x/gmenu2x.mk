@@ -3,9 +3,9 @@
 # gmenu2x
 #
 #############################################################
-GMENU2X_VERSION = e5b6398
+GMENU2X_VERSION = 0c21e5d
 GMENU2X_SITE = $(call github,opendingux,gmenu2x,$(GMENU2X_VERSION))
-GMENU2X_DEPENDENCIES = sdl sdl_ttf sdl_gfx dejavu libpng
+GMENU2X_DEPENDENCIES = sdl sdl_ttf sdl_gfx dejavu libpng fonts-droid
 GMENU2X_CONF_OPTS = -DBIND_CONSOLE=ON
 
 ifeq ($(BR2_PACKAGE_GMENU2X_SHOW_CLOCK),y)
