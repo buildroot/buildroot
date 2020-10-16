@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2020.11"
 
+config BR2_PACKAGE_LIBCROCO
+	bool "libcroco package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it is affected by several
+	  security issues such as CVE-2020-12825 which will never be
+	  fixed as libcroco has been archived.
+
 config BR2_PACKAGE_BELLAGIO
 	bool "bellagio package was removed"
 	select BR2_LEGACY
