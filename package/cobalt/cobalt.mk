@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-COBALT_VERSION = df19c3f5968ed36a8909b07dd38b9414bb01ead2
+COBALT_VERSION = a232bffee442824ebec75b540ae3e2ccc5416328
 COBALT_SITE_METHOD = git
 COBALT_SITE = git@github.com:Metrological/cobalt
 COBALT_INSTALL_STAGING = YES
@@ -32,6 +32,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_COBALT_BUILD_TYPE_QA),y)
 	COBALT_BUILD_TYPE = qa
+	COBALT_DEPENDENCIES += host-nodejs
 else ifeq ($(BR2_PACKAGE_COBALT_BUILD_TYPE_GOLD),y)
 	COBALT_BUILD_TYPE = gold
 endif
