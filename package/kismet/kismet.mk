@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-KISMET_VERSION = 2020-09-R3
+KISMET_VERSION = 2020-09-R4
 KISMET_SOURCE = kismet-$(KISMET_VERSION).tar.xz
 KISMET_SITE = http://www.kismetwireless.net/code
 KISMET_DEPENDENCIES = \
