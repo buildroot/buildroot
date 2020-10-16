@@ -22,4 +22,10 @@ MPDECIMAL_CONF_ENV += MACHINE=ansi32
 endif
 endif
 
+ifeq ($(BR2_INSTALL_LIBSTDCPP),y)
+MPDECIMAL_CONF_OPTS += --enable-cxx
+else
+MPDECIMAL_CONF_OPTS += --disable-cxx
+endif
+
 $(eval $(autotools-package))
