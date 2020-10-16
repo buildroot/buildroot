@@ -4,12 +4,15 @@
 #
 ################################################################################
 
-DAQ_VERSION = 2.0.6
+DAQ_VERSION = 2.0.7
 DAQ_SITE = https://www.snort.org/downloads/snort
 DAQ_LICENSE = GPL-2.0
 DAQ_LICENSE_FILES = COPYING
 DAQ_INSTALL_STAGING = YES
 DAQ_DEPENDENCIES = host-bison host-flex libdnet
+# 0002-parallel-grammar.patch
+# 2.0.7 needs autoreconf due to configure being older than configure.ac
+DAQ_AUTORECONF = YES
 
 # package does not build in parallel due to improper make rules
 # related to the generation of the tokdefs.h header file

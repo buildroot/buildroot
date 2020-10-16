@@ -68,6 +68,9 @@ endif
 
 ifeq ($(BR2_PACKAGE_ZLIB),y)
 ORACLE_MYSQL_DEPENDENCIES += zlib
+ORACLE_MYSQL_CONF_OPTS += --with-zlib-dir=$(STAGING_DIR)/usr
+else
+ORACLE_MYSQL_CONF_OPTS += --without-zlib-dir
 endif
 
 ifeq ($(BR2_PACKAGE_ORACLE_MYSQL_SERVER),y)
@@ -99,7 +102,7 @@ ORACLE_MYSQL_CONF_OPTS += --without-debug
 endif
 
 define ORACLE_MYSQL_USERS
-	mysql -1 nogroup -1 * /var/mysql - - MySQL daemon
+	mysql -1 nobody -1 * /var/mysql - - MySQL daemon
 endef
 
 define ORACLE_MYSQL_ADD_FOLDER

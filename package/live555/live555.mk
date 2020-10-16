@@ -4,11 +4,15 @@
 #
 ################################################################################
 
-LIVE555_VERSION = 2019.09.30
+LIVE555_VERSION = 2020.08.19
 LIVE555_SOURCE = live.$(LIVE555_VERSION).tar.gz
 LIVE555_SITE = http://www.live555.com/liveMedia/public
-LIVE555_LICENSE = LGPL-2.1+
-LIVE555_LICENSE_FILES = COPYING
+# There is a COPYING file with the GPL-3.0 license text, but none of
+# the source files appear to be released under GPL-3.0, and the
+# project web site says it's licensed under the LGPL:
+# http://live555.com/liveMedia/faq.html#copyright-and-license
+LIVE555_LICENSE = LGPL-3.0+
+LIVE555_LICENSE_FILES = COPYING.LESSER
 LIVE555_INSTALL_STAGING = YES
 
 LIVE555_CFLAGS = $(TARGET_CFLAGS)
@@ -20,6 +24,17 @@ else
 LIVE555_CONFIG_TARGET = linux-with-shared-libraries
 LIVE555_LIBRARY_LINK = $(TARGET_CC) -o
 LIVE555_CFLAGS += -fPIC
+endif
+
+ifeq ($(BR2_PACKAGE_OPENSSL),y)
+LIVE555_DEPENDENCIES += host-pkgconf openssl
+LIVE555_CONSOLE_LIBS = `$(PKG_CONFIG_HOST_BINARY) --libs openssl`
+# passed to ar for static linking, which gets confused by -L<dir>
+ifneq ($(BR2_STATIC_LIBS),y)
+LIVE555_LIVEMEDIA_LIBS = $(LIVE555_CONSOLE_LIBS)
+endif
+else
+LIVE555_CFLAGS += -DNO_OPENSSL
 endif
 
 ifndef ($(BR2_ENABLE_LOCALE),y)
@@ -37,6 +52,8 @@ define LIVE555_CONFIGURE_CMDS
 	# Must have a whitespace at the end of LIBRARY_LINK, otherwise static link
 	# fails
 	echo 'LIBRARY_LINK = $(LIVE555_LIBRARY_LINK) ' >> $(@D)/config.$(LIVE555_CONFIG_TARGET)
+	echo 'LIBS_FOR_CONSOLE_APPLICATION = $(LIVE555_CONSOLE_LIBS)' >> $(@D)/config.$(LIVE555_CONFIG_TARGET)
+	echo 'LIBS_FOR_LIVEMEDIA_LIB = $(LIVE555_LIVEMEDIA_LIBS)' >> $(@D)/config.$(LIVE555_CONFIG_TARGET)
 	(cd $(@D); ./genMakefiles $(LIVE555_CONFIG_TARGET))
 endef
 

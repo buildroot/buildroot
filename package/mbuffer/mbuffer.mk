@@ -4,15 +4,12 @@
 #
 ################################################################################
 
-MBUFFER_VERSION = 20191016
+MBUFFER_VERSION = 20200505
 MBUFFER_SOURCE = mbuffer-$(MBUFFER_VERSION).tgz
 MBUFFER_SITE = http://www.maier-komor.de/software/mbuffer
 MBUFFER_LICENSE = GPL-3.0+
 MBUFFER_LICENSE_FILES = LICENSE
 MBUFFER_CONF_OPTS = --disable-debug
-MBUFFER_CONF_ENV = CFLAGS="$(TARGET_CFLAGS) -std=c99"
-# We're patching configure.in
-MBUFFER_AUTORECONF = YES
 
 # we don't need tests & co. so we specify a target
 # so that the others don't get built, e.g idev.so

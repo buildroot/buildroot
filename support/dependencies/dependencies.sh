@@ -180,6 +180,12 @@ if test "${missing_progs}" = "yes" ; then
 	exit 1
 fi
 
+# apply-patches.sh needs patch with --no-backup-if-mismatch support (GNU, busybox w/DESKTOP)
+if ! patch --no-backup-if-mismatch </dev/null 2>/dev/null; then
+	echo "Your patch program does not support the --no-backup-if-mismatch option. Install GNU patch"
+	exit 1
+fi
+
 if grep ^BR2_NEEDS_HOST_UTF8_LOCALE=y $BR2_CONFIG > /dev/null; then
 	if ! which locale > /dev/null ; then
 		echo
@@ -237,6 +243,16 @@ if grep -q ^BR2_HOSTARCH_NEEDS_IA32_COMPILER=y $BR2_CONFIG ; then
 		echo "If you're running a Debian/Ubuntu distribution, install the g++-multilib package."
 		echo "For other distributions, refer to their documentation."
 		exit 1
+	fi
+fi
+
+if grep ^BR2_NEEDS_HOST_GCC_PLUGIN_SUPPORT=y $BR2_CONFIG ; then
+	if ! echo "#include <gcc-plugin.h>" | $HOSTCXX_NOCCACHE -I$($HOSTCXX_NOCCACHE -print-file-name=plugin)/include -x c++ -c - -o /dev/null ; then
+		echo
+		echo "Your Buildroot configuration needs a host compiler capable of building gcc plugins."
+		echo "If you're running a Debian/Ubuntu distribution, install gcc-X-plugin-dev package."
+		echo "For other distributions, refer to their documentation."
+		exit 1 ;
 	fi
 fi
 

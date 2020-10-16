@@ -13,6 +13,25 @@ GRUB2_DEPENDENCIES = host-bison host-flex host-grub2
 HOST_GRUB2_DEPENDENCIES = host-bison host-flex
 GRUB2_INSTALL_IMAGES = YES
 
+# 0001-build-Fix-GRUB-i386-pc-build-with-Ubuntu-gcc.patch
+define GRUB2_AVOID_AUTORECONF
+	$(Q)touch $(@D)/Makefile.util.am
+	$(Q)touch $(@D)/Makefile.in
+endef
+GRUB2_POST_PATCH_HOOKS += GRUB2_AVOID_AUTORECONF
+HOST_GRUB2_POST_PATCH_HOOKS += GRUB2_AVOID_AUTORECONF
+
+# 0002-yylex-Make-lexer-fatal-errors-actually-be-fatal.patch
+GRUB2_IGNORE_CVES += CVE-2020-10713
+# 0005-calloc-Use-calloc-at-most-places.patch
+GRUB2_IGNORE_CVES += CVE-2020-14308
+# 0006-malloc-Use-overflow-checking-primitives-where-we-do-.patch
+GRUB2_IGNORE_CVES += CVE-2020-14309 CVE-2020-14310 CVE-2020-14311
+# 0019-script-Avoid-a-use-after-free-when-redefining-a-func.patch
+GRUB2_IGNORE_CVES += CVE-2020-15706
+# 0028-linux-Fix-integer-overflows-in-initrd-size-handling.patch
+GRUB2_IGNORE_CVES += CVE-2020-15707
+
 ifeq ($(BR2_TARGET_GRUB2_INSTALL_TOOLS),y)
 GRUB2_INSTALL_TARGET = YES
 else

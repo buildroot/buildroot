@@ -1,19 +1,21 @@
 config BR2_PACKAGE_EFL
 	bool "efl"
-	 # g++ issue with 4.4.5, tested with g++ 4.7.2
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_7
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # C++11
+	depends on BR2_HOST_GCC_AT_LEAST_4_9 # host-efl
 	depends on BR2_INSTALL_LIBSTDCPP
-	depends on BR2_PACKAGE_LUAJIT_ARCH_SUPPORTS # luajit
 	depends on BR2_TOOLCHAIN_HAS_THREADS # untested without threads
 	depends on BR2_USE_MMU
 	depends on BR2_USE_WCHAR # use wchar_t
 	depends on !BR2_STATIC_LIBS # dlfcn.h
+	# https://phab.enlightenment.org/T2728
+	depends on BR2_PACKAGE_LUAJIT
 	select BR2_PACKAGE_DBUS
 	select BR2_PACKAGE_FREETYPE
+	select BR2_PACKAGE_GIFLIB
 	select BR2_PACKAGE_JPEG # Emile needs libjpeg
 	select BR2_PACKAGE_LIBCURL # Ecore_con_url, runtime dependency
-	# https://phab.enlightenment.org/T2728
-	select BR2_PACKAGE_LUAJIT # Lua support broken
+	select BR2_PACKAGE_LIBPNG
+	select BR2_PACKAGE_OPENSSL if !(BR2_PACKAGE_GNUTLS && BR2_PACKAGE_LIBGCRYPT)
 	select BR2_PACKAGE_LZ4
 	select BR2_PACKAGE_ZLIB
 	help
@@ -24,8 +26,7 @@ config BR2_PACKAGE_EFL
 if BR2_PACKAGE_EFL
 
 config BR2_PACKAGE_EFL_BULLET
-	bool "Enable bullet support (recommended)"
-	default y
+	bool "Enable bullet support"
 	select BR2_PACKAGE_BULLET
 	help
 	  If you have chosen to disable physics support, this disables
@@ -129,8 +130,7 @@ comment "efl's libmount support needs udev /dev management (eeze)"
 
 config BR2_PACKAGE_EFL_HAS_RECOMMENDED_CONFIG
 	bool
-	default y if BR2_PACKAGE_EFL_BULLET && \
-		BR2_PACKAGE_EFL_EEZE && \
+	default y if BR2_PACKAGE_EFL_EEZE && \
 		BR2_PACKAGE_EFL_FONTCONFIG && \
 		BR2_PACKAGE_EFL_GSTREAMER1 && \
 		BR2_PACKAGE_EFL_LIBFRIBIDI && \
@@ -217,31 +217,22 @@ config BR2_PACKAGE_EFL_OPENGL_NONE
 
 endchoice # OpenGL support
 
-config BR2_PACKAGE_EFL_ELPUT
-	bool "Elput"
-	depends on BR2_PACKAGE_EFL_EEZE
-	select BR2_PACKAGE_LIBINPUT
-	select BR2_PACKAGE_LIBXKBCOMMON
-	help
-	  The elput library is an efl abstraction for the libinput
-	  library which can be used by various other subsystems
-	  (ecore_fb, ecore_drm, etc) to handle interfacing with
-	  libinput without having to duplicate the code in each
-	  subsystem.
-
-comment "Elput support needs udev /dev management (eeze)"
-	depends on !BR2_PACKAGE_EFL_EEZE
-
 config BR2_PACKAGE_EFL_DRM
 	bool "Evas DRM Engine"
 	depends on BR2_PACKAGE_EFL_EEZE
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libdrm
 	depends on BR2_PACKAGE_MESA3D_OPENGL_EGL # require libgbm from mesa3d
-	select BR2_PACKAGE_EFL_ELPUT
 	select BR2_PACKAGE_LIBDRM
+	select BR2_PACKAGE_LIBINPUT # For elput
 	select BR2_PACKAGE_LIBXKBCOMMON
 	help
 	  This option enable building support for the Evas DRM Engine.
+
+	  Since efl 1.23.x, the drm option enable the elput library
+	  which is an efl abstraction for the libinput library which
+	  can be used by various other subsystems (ecore_fb, ecore_drm,
+	  etc) to handle interfacing with libinput without having to
+	  duplicate the code in each subsystem.
 
 comment "Evas DRM Engine needs udev /dev management (eeze), mesa3d w/ EGL support, threads"
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || !BR2_PACKAGE_MESA3D_OPENGL_EGL \
@@ -249,25 +240,12 @@ comment "Evas DRM Engine needs udev /dev management (eeze), mesa3d w/ EGL suppor
 
 comment "libevas loaders"
 
-config BR2_PACKAGE_EFL_PNG
-	bool "libevas png loader"
-	select BR2_PACKAGE_LIBPNG
-	help
-	  This enables the loader code that loads png files using
-	  libpng.
-
 config BR2_PACKAGE_EFL_JPEG
 	bool "libevas jpeg loader"
+	select BR2_PACKAGE_OPENJPEG
 	help
 	  This enables the loader code that loads jpeg files using
 	  libjpeg.
-
-config BR2_PACKAGE_EFL_GIF
-	bool "libevas gif loader"
-	select BR2_PACKAGE_GIFLIB
-	help
-	  This enables the loader code that loads gif files using
-	  giflib.
 
 config BR2_PACKAGE_EFL_TIFF
 	bool "libevas tiff loader"
@@ -289,6 +267,7 @@ config BR2_PACKAGE_EFL_LIBRAW
 
 config BR2_PACKAGE_EFL_SVG
 	bool "SVG loader"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # librsvg
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # librsvg -> pango -> harfbuzz
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # librsvg -> pango -> harfbuzz
 	select BR2_PACKAGE_LIBRSVG
@@ -297,14 +276,15 @@ config BR2_PACKAGE_EFL_SVG
 	  This option enables the Evas generic SVG loader
 
 comment "SVG loader needs a toolchain w/ gcc >= 4.8"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
 
 endif # BR2_PACKAGE_EFL
 
-comment "efl needs a toolchain w/ C++, dynamic library, gcc >= 4.7, threads, wchar"
+comment "efl needs a toolchain w/ C++, dynamic library, gcc >= 4.9, host gcc >= 4.9, threads, wchar"
 	depends on !BR2_INSTALL_LIBSTDCPP \
-		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_4_7 \
-		|| BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS || !BR2_USE_WCHAR
-	depends on BR2_PACKAGE_LUAJIT_ARCH_SUPPORTS
+		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 \
+		|| !BR2_HOST_GCC_AT_LEAST_4_9 || BR2_STATIC_LIBS \
+		|| !BR2_TOOLCHAIN_HAS_THREADS || !BR2_USE_WCHAR
 	depends on BR2_USE_MMU

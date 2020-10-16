@@ -1,5 +1,7 @@
 config BR2_PACKAGE_EROFS_UTILS
 	bool "erofs-utils"
+	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_LIBUUID
 	help
 	  Userspace utilities for EROFS filesystem
 

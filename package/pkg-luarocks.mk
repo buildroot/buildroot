@@ -23,6 +23,9 @@ HOST_LUAROCKS_CFLAGS = $(HOST_CFLAGS) -fPIC
 ifeq ($(BR2_PACKAGE_LUA_5_3),y)
 LUAROCKS_CFLAGS += -DLUA_COMPAT_5_2
 HOST_LUAROCKS_CFLAGS += -DLUA_COMPAT_5_2
+else ifeq ($(BR2_PACKAGE_LUA_5_4),y)
+LUAROCKS_CFLAGS += -DLUA_COMPAT_5_3
+HOST_LUAROCKS_CFLAGS += -DLUA_COMPAT_5_3
 endif
 
 ################################################################################
@@ -109,6 +112,7 @@ define $(2)_INSTALL_TARGET_CMDS
 		LUAROCKS_CONFIG=$$(LUAROCKS_CONFIG_FILE) \
 		$$(LUAROCKS_RUN_CMD) make --keep --deps-mode none \
 			--tree "$$(TARGET_DIR)/usr" \
+			DEPS_DIR="$$(STAGING_DIR)/usr" \
 			LUA_INCDIR="$$(STAGING_DIR)/usr/include" \
 			LUA_LIBDIR="$$(STAGING_DIR)/usr/lib" \
 			CC=$$(TARGET_CC) \
@@ -124,6 +128,7 @@ define $(2)_INSTALL_CMDS
 	cd $$($(2)_SRCDIR) && \
 		LUAROCKS_CONFIG=$$(HOST_LUAROCKS_CONFIG_FILE) \
 		$$(LUAROCKS_RUN_CMD) make --keep --deps-mode none \
+			DEPS_DIR="$$(HOST_DIR)" \
 			CFLAGS="$$(HOST_LUAROCKS_CFLAGS)" \
 			LIBFLAG="-shared $$(HOST_LDFLAGS)" \
 			$$($(2)_BUILD_OPTS) $$($(2)_ROCKSPEC)

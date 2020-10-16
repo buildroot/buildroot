@@ -1,0 +1,86 @@
+From 9d5a21f2900e3ffb07c1f163b6ba4e036f6c16a8 Mon Sep 17 00:00:00 2001
+From: Gwenhael Goavec-Merou <gwenhael.goavec-merou@trabucayre.com>
+Date: Thu, 25 Jun 2020 16:46:34 +0200
+Subject: [PATCH] gr-osmosdr: fix build with boost > 1.73.0
+
+boost/detail/endian.hpp has been marked as deprecated since boost 1.69.0.
+This file and boost/predef/detail/endian_compat.h are no more available.
+
+This patch suppress this header in some file, where not needed and move
+to correct header and new constants. It's retrocompatible for at least all boost release > 1.69.0
+
+[Upstream status: http://lists.osmocom.org/pipermail/osmocom-sdr/2020-June/002080.html]
+
+Signed-off-by: Gwenhael Goavec-Merou <gwenhael.goavec-merou@trabucayre.com>
+---
+ lib/airspy/airspy_source_c.cc     | 1 -
+ lib/airspyhf/airspyhf_source_c.cc | 1 -
+ lib/hackrf/hackrf_source_c.cc     | 6 +++---
+ lib/rtl/rtl_source_c.cc           | 1 -
+ 4 files changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/lib/airspy/airspy_source_c.cc b/lib/airspy/airspy_source_c.cc
+index 50150e5..f833588 100644
+--- a/lib/airspy/airspy_source_c.cc
++++ b/lib/airspy/airspy_source_c.cc
+@@ -33,7 +33,6 @@
+ 
+ #include <boost/assign.hpp>
+ #include <boost/format.hpp>
+-#include <boost/detail/endian.hpp>
+ #include <boost/algorithm/string.hpp>
+ #include <boost/thread/thread.hpp>
+ 
+diff --git a/lib/airspyhf/airspyhf_source_c.cc b/lib/airspyhf/airspyhf_source_c.cc
+index 327fe19..b7494a8 100644
+--- a/lib/airspyhf/airspyhf_source_c.cc
++++ b/lib/airspyhf/airspyhf_source_c.cc
+@@ -33,7 +33,6 @@
+ 
+ #include <boost/assign.hpp>
+ #include <boost/format.hpp>
+-#include <boost/detail/endian.hpp>
+ #include <boost/algorithm/string.hpp>
+ #include <boost/thread/thread.hpp>
+ 
+diff --git a/lib/hackrf/hackrf_source_c.cc b/lib/hackrf/hackrf_source_c.cc
+index eea5caa..fc48171 100644
+--- a/lib/hackrf/hackrf_source_c.cc
++++ b/lib/hackrf/hackrf_source_c.cc
+@@ -31,7 +31,7 @@
+ #include <stdexcept>
+ #include <iostream>
+ 
+-#include <boost/detail/endian.hpp>
++#include <boost/predef/other/endian.h>
+ 
+ #include <gnuradio/io_signature.h>
+ 
+@@ -90,10 +90,10 @@ hackrf_source_c::hackrf_source_c (const std::string &args)
+ 
+   // create a lookup table for gr_complex values
+   for (unsigned int i = 0; i <= 0xffff; i++) {
+-#ifdef BOOST_LITTLE_ENDIAN
++#ifdef BOOST_ENDIAN_LITTLE_BYTE
+     _lut.push_back( gr_complex( (float(int8_t(i & 0xff))) * (1.0f/128.0f),
+                                 (float(int8_t(i >> 8))) * (1.0f/128.0f) ) );
+-#else // BOOST_BIG_ENDIAN
++#else // BOOST_ENDIAN_BIG_BYTE
+     _lut.push_back( gr_complex( (float(int8_t(i >> 8))) * (1.0f/128.0f),
+                                 (float(int8_t(i & 0xff))) * (1.0f/128.0f) ) );
+ #endif
+diff --git a/lib/rtl/rtl_source_c.cc b/lib/rtl/rtl_source_c.cc
+index a371464..7f2e648 100644
+--- a/lib/rtl/rtl_source_c.cc
++++ b/lib/rtl/rtl_source_c.cc
+@@ -32,7 +32,6 @@
+ 
+ #include <boost/assign.hpp>
+ #include <boost/format.hpp>
+-#include <boost/detail/endian.hpp>
+ #include <boost/algorithm/string.hpp>
+ 
+ #include <stdexcept>
+-- 
+2.27.0
+

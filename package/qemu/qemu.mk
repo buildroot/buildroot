@@ -4,14 +4,9 @@
 #
 ################################################################################
 
-ifeq ($(BR2_csky),y)
-QEMU_VERSION = b517e1dc3125a57555d67a8deed9eac7b42288e2
-QEMU_SITE = $(call github,c-sky,qemu,$(QEMU_VERSION))
-else
-QEMU_VERSION = 4.2.0
+QEMU_VERSION = 5.1.0
 QEMU_SOURCE = qemu-$(QEMU_VERSION).tar.xz
 QEMU_SITE = http://download.qemu.org
-endif
 QEMU_LICENSE = GPL-2.0, LGPL-2.1, MIT, BSD-3-Clause, BSD-2-Clause, Others/BSD-1c
 QEMU_LICENSE_FILES = COPYING COPYING.LIB
 # NOTE: there is no top-level license file for non-(L)GPL licenses;
@@ -103,6 +98,27 @@ else
 QEMU_OPTS += --disable-libusb
 endif
 
+ifeq ($(BR2_PACKAGE_LIBVNCSERVER),y)
+QEMU_OPTS += \
+	--enable-vnc \
+	--disable-vnc-sasl
+QEMU_DEPENDENCIES += libvncserver
+ifeq ($(BR2_PACKAGE_LIBPNG),y)
+QEMU_OPTS += --enable-vnc-png
+QEMU_DEPENDENCIES += libpng
+else
+QEMU_OPTS += --disable-vnc-png
+endif
+ifeq ($(BR2_PACKAGE_JPEG),y)
+QEMU_OPTS += --enable-vnc-jpeg
+QEMU_DEPENDENCIES += jpeg
+else
+QEMU_OPTS += --disable-vnc-jpeg
+endif
+else
+QEMU_OPTS += --disable-vnc
+endif
+
 ifeq ($(BR2_PACKAGE_NETTLE),y)
 QEMU_OPTS += --enable-nettle
 QEMU_DEPENDENCIES += nettle
@@ -115,6 +131,20 @@ QEMU_OPTS += --enable-numa
 QEMU_DEPENDENCIES += numactl
 else
 QEMU_OPTS += --disable-numa
+endif
+
+ifeq ($(BR2_PACKAGE_SPICE),y)
+QEMU_OPTS += --enable-spice
+QEMU_DEPENDENCIES += spice
+else
+QEMU_OPTS += --disable-spice
+endif
+
+ifeq ($(BR2_PACKAGE_USBREDIR),y)
+QEMU_OPTS += --enable-usb-redir
+QEMU_DEPENDENCIES += usbredir
+else
+QEMU_OPTS += --disable-usb-redir
 endif
 
 # Override CPP, as it expects to be able to call it like it'd
@@ -136,21 +166,19 @@ define QEMU_CONFIGURE_CMDS
 			--enable-attr \
 			--enable-vhost-net \
 			--disable-bsd-user \
+			--disable-containers \
 			--disable-xen \
-			--disable-vnc \
 			--disable-virtfs \
 			--disable-brlapi \
 			--disable-curses \
 			--disable-curl \
-			--disable-bluez \
 			--disable-vde \
 			--disable-linux-aio \
+			--disable-linux-io-uring \
 			--disable-cap-ng \
 			--disable-docs \
-			--disable-spice \
 			--disable-rbd \
 			--disable-libiscsi \
-			--disable-usb-redir \
 			--disable-strip \
 			--disable-sparse \
 			--disable-mpath \
@@ -238,13 +266,6 @@ endif
 ifeq ($(HOST_QEMU_ARCH),sh4aeb)
 HOST_QEMU_ARCH = sh4eb
 endif
-ifeq ($(HOST_QEMU_ARCH),csky)
-ifeq ($(BR2_ck610),y)
-HOST_QEMU_ARCH = cskyv1
-else
-HOST_QEMU_ARCH = cskyv2
-endif
-endif
 HOST_QEMU_SYS_ARCH ?= $(HOST_QEMU_ARCH)
 
 HOST_QEMU_CFLAGS = $(HOST_CFLAGS)
@@ -276,11 +297,12 @@ HOST_QEMU_OPTS += --enable-vde
 HOST_QEMU_DEPENDENCIES += host-vde2
 endif
 
+# virtfs-proxy-helper is the only user of libcap-ng.
 ifeq ($(BR2_PACKAGE_HOST_QEMU_VIRTFS),y)
-HOST_QEMU_OPTS += --enable-virtfs
-HOST_QEMU_DEPENDENCIES += host-libcap
+HOST_QEMU_OPTS += --enable-virtfs --enable-cap-ng
+HOST_QEMU_DEPENDENCIES += host-libcap-ng
 else
-HOST_QEMU_OPTS += --disable-virtfs
+HOST_QEMU_OPTS += --disable-virtfs --disable-cap-ng
 endif
 
 ifeq ($(BR2_PACKAGE_HOST_QEMU_USB),y)
@@ -305,8 +327,10 @@ define HOST_QEMU_CONFIGURE_CMDS
 		--extra-ldflags="$(HOST_LDFLAGS)" \
 		--python=$(HOST_DIR)/bin/python3 \
 		--disable-bzip2 \
+		--disable-containers \
 		--disable-curl \
 		--disable-libssh \
+		--disable-linux-io-uring \
 		--disable-sdl \
 		--disable-vnc-jpeg \
 		--disable-vnc-png \

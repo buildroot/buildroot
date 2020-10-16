@@ -5,13 +5,13 @@
 ################################################################################
 
 ifeq ($(BR2_OPENJDK_VERSION_LATEST),y)
-OPENJDK_VERSION_MAJOR = 14.0.1
-OPENJDK_VERSION_MINOR = 7
+OPENJDK_VERSION_MAJOR = 14.0.2
+OPENJDK_VERSION_MINOR = 12
 OPENJDK_VERSION = $(OPENJDK_VERSION_MAJOR)+$(OPENJDK_VERSION_MINOR)
 OPENJDK_SOURCE = jdk-$(OPENJDK_VERSION).tar.gz
 OPENJDK_SITE = https://hg.openjdk.java.net/jdk-updates/jdk14u/archive
 else
-OPENJDK_VERSION_MAJOR = 11.0.7
+OPENJDK_VERSION_MAJOR = 11.0.8
 OPENJDK_VERSION_MINOR = 10
 OPENJDK_VERSION = $(OPENJDK_VERSION_MAJOR)+$(OPENJDK_VERSION_MINOR)
 OPENJDK_SOURCE = jdk-$(OPENJDK_VERSION).tar.gz
@@ -20,6 +20,7 @@ endif
 
 OPENJDK_LICENSE = GPL-2.0+ with exception
 OPENJDK_LICENSE_FILES = LICENSE
+OPENJDK_INSTALL_STAGING = YES
 
 # OpenJDK requires Alsa, cups, and X11 even for a headless build.
 # host-zip is needed for the zip executable.
@@ -93,7 +94,7 @@ OPENJDK_CONF_OPTS = \
 	--enable-openjdk-only \
 	--enable-unlimited-crypto \
 	--openjdk-target=$(GNU_TARGET_NAME) \
-	--with-boot-jdk=$(HOST_DIR) \
+	--with-boot-jdk=$(HOST_OPENJDK_BIN_ROOT_DIR) \
 	--with-stdc++lib=dynamic \
 	--with-debug-level=release \
 	--with-devkit=$(HOST_DIR) \
@@ -143,6 +144,12 @@ define OPENJDK_INSTALL_TARGET_CMDS
 	cp -dpfr $(@D)/build/linux-*-release/images/$(OPENJDK_VARIANT)/* \
 		$(TARGET_DIR)$(OPENJDK_INSTALL_BASE)/
 	cd $(TARGET_DIR)/usr/bin && ln -snf ../..$(OPENJDK_INSTALL_BASE)/bin/* .
+endef
+
+define OPENJDK_INSTALL_STAGING_CMDS
+	mkdir -p $(STAGING_DIR)/usr/include/jvm
+	cp -dpfr $(@D)/build/linux-*-release/jdk/include/* \
+		$(STAGING_DIR)/usr/include/jvm
 endef
 
 # Demos and includes are not needed on the target

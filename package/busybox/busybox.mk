@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BUSYBOX_VERSION = 1.31.1
+BUSYBOX_VERSION = 1.32.0
 BUSYBOX_SITE = http://www.busybox.net/downloads
 BUSYBOX_SOURCE = busybox-$(BUSYBOX_VERSION).tar.bz2
 BUSYBOX_LICENSE = GPL-2.0
@@ -42,6 +42,7 @@ BUSYBOX_DEPENDENCIES = \
 	$(if $(BR2_PACKAGE_IFENSLAVE),ifenslave) \
 	$(if $(BR2_PACKAGE_IFPLUGD),ifplugd) \
 	$(if $(BR2_PACKAGE_IFUPDOWN),ifupdown) \
+	$(if $(BR2_PACKAGE_IPCALC),ipcalc) \
 	$(if $(BR2_PACKAGE_IPROUTE2),iproute2) \
 	$(if $(BR2_PACKAGE_IPUTILS),iputils) \
 	$(if $(BR2_PACKAGE_KMOD),kmod) \
@@ -67,6 +68,7 @@ BUSYBOX_DEPENDENCIES = \
 	$(if $(BR2_PACKAGE_USBUTILS),usbutils) \
 	$(if $(BR2_PACKAGE_UTIL_LINUX),util-linux) \
 	$(if $(BR2_PACKAGE_VIM),vim) \
+	$(if $(BR2_PACKAGE_WATCHDOG),watchdog) \
 	$(if $(BR2_PACKAGE_WGET),wget) \
 	$(if $(BR2_PACKAGE_WHOIS),whois)
 
@@ -236,6 +238,18 @@ define BUSYBOX_SET_SELINUX
 endef
 endif
 
+# enable relevant options to allow the Busybox less applet to be used
+# as a systemd pager
+ifeq ($(BR2_PACKAGE_SYSTEMD):$(BR2_PACKAGE_LESS),y:)
+define BUSYBOX_SET_LESS_FLAGS
+	$(call KCONFIG_ENABLE_OPT,CONFIG_FEATURE_LESS_DASHCMD)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_FEATURE_LESS_RAW)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_FEATURE_LESS_TRUNCATE)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_FEATURE_LESS_FLAGS)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_FEATURE_LESS_ENV)
+endef
+endif
+
 ifeq ($(BR2_PACKAGE_BUSYBOX_INDIVIDUAL_BINARIES),y)
 define BUSYBOX_SET_INDIVIDUAL_BINARIES
 	$(call KCONFIG_ENABLE_OPT,CONFIG_BUILD_LIBBUSYBOX)
@@ -310,6 +324,7 @@ define BUSYBOX_KCONFIG_FIXUP_CMDS
 	$(BUSYBOX_SET_INIT)
 	$(BUSYBOX_SET_WATCHDOG)
 	$(BUSYBOX_SET_SELINUX)
+	$(BUSYBOX_SET_LESS_FLAGS)
 	$(BUSYBOX_SET_INDIVIDUAL_BINARIES)
 endef
 

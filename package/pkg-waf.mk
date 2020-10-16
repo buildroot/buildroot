@@ -46,7 +46,7 @@ ifeq ($$($(2)_NEEDS_EXTERNAL_WAF),YES)
 $(2)_DEPENDENCIES += host-waf
 $(2)_WAF = $$(HOST_DIR)/bin/waf
 else
-$(2)_WAF = ./waf
+$(2)_WAF ?= ./waf
 endif
 
 $(2)_BUILD_OPTS				?=

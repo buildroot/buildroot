@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-UCLIBC_VERSION = 1.0.32
+UCLIBC_VERSION = 1.0.36
 UCLIBC_SOURCE = uClibc-ng-$(UCLIBC_VERSION).tar.xz
 UCLIBC_SITE = https://downloads.uclibc-ng.org/releases/$(UCLIBC_VERSION)
 UCLIBC_LICENSE = LGPL-2.1+
@@ -31,8 +31,13 @@ endif
 UCLIBC_KCONFIG_FILE = $(UCLIBC_CONFIG_FILE)
 UCLIBC_KCONFIG_FRAGMENT_FILES = $(call qstrip,$(BR2_UCLIBC_CONFIG_FRAGMENT_FILES))
 
+# UCLIBC_MAKE_FLAGS set HOSTCC to the default HOSTCC, which may be
+# wrapped with ccache. However, host-ccache may not already be built
+# and installed when we apply the configuration, so we override that
+# to use the non-ccached host compiler.
 UCLIBC_KCONFIG_OPTS = \
 	$(UCLIBC_MAKE_FLAGS) \
+	HOSTCC="$(HOSTCC_NOCCACHE)" \
 	PREFIX=$(STAGING_DIR) \
 	DEVEL_PREFIX=/usr/ \
 	RUNTIME_PREFIX=$(STAGING_DIR)/

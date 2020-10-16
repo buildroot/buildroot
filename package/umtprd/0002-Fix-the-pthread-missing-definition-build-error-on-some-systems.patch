@@ -1,0 +1,78 @@
+From 2e7aaf0c373a0e3a271f4b374bd98de8a80aefb0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jean-Fran=C3=A7ois=20DEL=20NERO?=
+ <jeanfrancoisdelnero@free.fr>
+Date: Sat, 16 May 2020 09:20:01 +0200
+Subject: [PATCH] Fix the pthread missing definition build error on some
+ systems.
+
+[Retrieved from:
+https://github.com/viveris/uMTP-Responder/commit/2e7aaf0c373a0e3a271f4b374bd98de8a80aefb0]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/fs_handles_db.c                    | 1 +
+ src/mtp_cfg.c                          | 1 +
+ src/mtp_datasets.c                     | 1 +
+ src/mtp_operations/mtp_op_sendobject.c | 1 +
+ src/mtp_properties.c                   | 1 +
+ 5 files changed, 5 insertions(+)
+
+diff --git a/src/fs_handles_db.c b/src/fs_handles_db.c
+index a91268a..178bd90 100644
+--- a/src/fs_handles_db.c
++++ b/src/fs_handles_db.c
+@@ -26,6 +26,7 @@
+ #include "buildconf.h"
+ 
+ #include <inttypes.h>
++#include <pthread.h>
+ #include <unistd.h>
+ #include <fcntl.h>
+ #include <string.h>
+diff --git a/src/mtp_cfg.c b/src/mtp_cfg.c
+index 30f473a..1f2302d 100644
+--- a/src/mtp_cfg.c
++++ b/src/mtp_cfg.c
+@@ -26,6 +26,7 @@
+ #include "buildconf.h"
+ 
+ #include <inttypes.h>
++#include <pthread.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <string.h>
+diff --git a/src/mtp_datasets.c b/src/mtp_datasets.c
+index 95cec68..fbd67e2 100644
+--- a/src/mtp_datasets.c
++++ b/src/mtp_datasets.c
+@@ -26,6 +26,7 @@
+ #include "buildconf.h"
+ 
+ #include <inttypes.h>
++#include <pthread.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <sys/statvfs.h>
+diff --git a/src/mtp_operations/mtp_op_sendobject.c b/src/mtp_operations/mtp_op_sendobject.c
+index 8af2c6b..8e1498c 100644
+--- a/src/mtp_operations/mtp_op_sendobject.c
++++ b/src/mtp_operations/mtp_op_sendobject.c
+@@ -26,6 +26,7 @@
+ #include "buildconf.h"
+ 
+ #include <inttypes.h>
++#include <pthread.h>
+ #include <unistd.h>
+ #include <fcntl.h>
+ #include <pthread.h>
+diff --git a/src/mtp_properties.c b/src/mtp_properties.c
+index 4500cd4..5cf6e2d 100644
+--- a/src/mtp_properties.c
++++ b/src/mtp_properties.c
+@@ -26,6 +26,7 @@
+ #include "buildconf.h"
+ 
+ #include <inttypes.h>
++#include <pthread.h>
+ #include <string.h>
+ #include <stdio.h>
+ #include <sys/types.h>

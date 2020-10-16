@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-EXIM_VERSION = 4.93.0.4
+EXIM_VERSION = 4.94
 EXIM_SOURCE = exim-$(EXIM_VERSION).tar.xz
-EXIM_SITE = https://ftp.exim.org/pub/exim/exim4/fixes
+EXIM_SITE = https://ftp.exim.org/pub/exim/exim4
 EXIM_LICENSE = GPL-2.0+
 EXIM_LICENSE_FILES = LICENCE
 EXIM_DEPENDENCIES = host-berkeleydb host-pcre pcre berkeleydb host-pkgconf
@@ -123,8 +123,8 @@ endif
 define EXIM_BUILD_CMDS
 	$(TARGET_MAKE_ENV) build=br $(MAKE) -C $(@D) makefile
 	$(HOST_MAKE_ENV) $(MAKE) -C $(@D)/build-br macro_predef \
-		CC=$(HOSTCC) \
-		LNCC=$(HOSTCC) \
+		CC="$(HOSTCC)" \
+		LNCC="$(HOSTCC)" \
 		CFLAGS="-std=c99 $(HOST_CFLAGS)" \
 		LFLAGS="-fPIC $(HOST_LDFLAGS)"
 	$(TARGET_MAKE_ENV) build=br $(MAKE) -C $(@D) $(EXIM_STATIC_FLAGS) \

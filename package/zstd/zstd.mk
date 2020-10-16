@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-ZSTD_VERSION = 1.4.3
-ZSTD_SITE = $(call github,facebook,zstd,v$(ZSTD_VERSION))
+ZSTD_VERSION = 1.4.5
+ZSTD_SITE = https://github.com/facebook/zstd/releases/download/v$(ZSTD_VERSION)
 ZSTD_INSTALL_STAGING = YES
 ZSTD_LICENSE = BSD-3-Clause or GPL-2.0
 ZSTD_LICENSE_FILES = LICENSE COPYING
@@ -71,7 +71,7 @@ endef
 # note: no 'HAVE_...' options for host library build only
 define HOST_ZSTD_BUILD_CMDS
 	$(HOST_MAKE_ENV) $(HOST_CONFIGURE_OPTS) $(MAKE) \
-		-C $(@D)/lib
+		-C $(@D)/lib libzstd.a libzstd
 	$(HOST_MAKE_ENV) $(HOST_CONFIGURE_OPTS) $(MAKE) \
 		-C $(@D) zstd
 endef

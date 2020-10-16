@@ -4,11 +4,10 @@
 #
 ################################################################################
 
-NFTABLES_VERSION = 0.9.4
+NFTABLES_VERSION = 0.9.6
 NFTABLES_SOURCE = nftables-$(NFTABLES_VERSION).tar.bz2
 NFTABLES_SITE = https://www.netfilter.org/projects/nftables/files
-NFTABLES_DEPENDENCIES = libmnl libnftnl host-bison host-flex \
-	host-pkgconf $(TARGET_NLS_DEPENDENCIES)
+NFTABLES_DEPENDENCIES = libmnl libnftnl host-pkgconf $(TARGET_NLS_DEPENDENCIES)
 NFTABLES_LICENSE = GPL-2.0
 NFTABLES_LICENSE_FILES = COPYING
 NFTABLES_CONF_OPTS = --disable-man-doc --disable-pdf-doc
@@ -46,5 +45,11 @@ NFTABLES_LIBS += -ljansson -lm
 endif
 
 NFTABLES_CONF_ENV = LIBS="$(NFTABLES_LIBS)"
+
+define NFTABLES_LINUX_CONFIG_FIXUPS
+	$(call KCONFIG_ENABLE_OPT,CONFIG_NETFILTER)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_NF_TABLES)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_NF_TABLES_INET)
+endef
 
 $(eval $(autotools-package))

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SWUPDATE_VERSION = 2019.11
+SWUPDATE_VERSION = 2020.04
 SWUPDATE_SITE = $(call github,sbabic,swupdate,$(SWUPDATE_VERSION))
 SWUPDATE_LICENSE = GPL-2.0+ with OpenSSL exception, LGPL-2.1+, MIT
 SWUPDATE_LICENSE_FILES = Licenses/Exceptions Licenses/gpl-2.0.txt \
@@ -15,7 +15,7 @@ SWUPDATE_LICENSE_FILES = Licenses/Exceptions Licenses/gpl-2.0.txt \
 # TARGET_CC is used for both.
 SWUPDATE_MAKE_ENV = CC="$(TARGET_CC)" LD="$(TARGET_CC)"
 
-# swupdate bundles its own version of mongoose (version 6.11)
+# swupdate bundles its own version of mongoose (version 6.16)
 
 ifeq ($(BR2_PACKAGE_EFIBOOTMGR),y)
 SWUPDATE_DEPENDENCIES += efibootmgr
@@ -114,10 +114,7 @@ ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 SWUPDATE_DEPENDENCIES += systemd
 endif
 
-ifeq ($(BR2_PACKAGE_UBOOT_TOOLS),y)
-SWUPDATE_DEPENDENCIES += uboot-tools
-SWUPDATE_MAKE_ENV += HAVE_LIBUBOOTENV=y
-else ifeq ($(BR2_PACKAGE_LIBUBOOTENV),y)
+ifeq ($(BR2_PACKAGE_LIBUBOOTENV),y)
 SWUPDATE_DEPENDENCIES += libubootenv
 SWUPDATE_MAKE_ENV += HAVE_LIBUBOOTENV=y
 else

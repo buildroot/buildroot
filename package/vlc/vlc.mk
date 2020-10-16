@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-VLC_VERSION = 3.0.10
+VLC_VERSION = 3.0.11
 VLC_SITE = https://get.videolan.org/vlc/$(VLC_VERSION)
 VLC_SOURCE = vlc-$(VLC_VERSION).tar.xz
 VLC_LICENSE = GPL-2.0+, LGPL-2.1+
@@ -440,6 +440,9 @@ endif
 ifeq ($(BR2_PACKAGE_LIVE555),y)
 VLC_CONF_OPTS += --enable-live555
 VLC_DEPENDENCIES += live555
+ifneq ($(BR2_PACKAGE_OPENSSL),y)
+VLC_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -DNO_OPENSSL"
+endif
 else
 VLC_CONF_OPTS += --disable-live555
 endif

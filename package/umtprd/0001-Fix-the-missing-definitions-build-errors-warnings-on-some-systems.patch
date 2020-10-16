@@ -1,0 +1,38 @@
+From b6eccf2160fd16405542249c62a87aff2fbfcd33 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jean-Fran=C3=A7ois=20DEL=20NERO?=
+ <jeanfrancoisdelnero@free.fr>
+Date: Sat, 16 May 2020 09:37:40 +0200
+Subject: [PATCH] Fix the missing definitions build errors/warnings on some
+ systems.
+
+[Retrieved from:
+https://github.com/viveris/uMTP-Responder/commit/b6eccf2160fd16405542249c62a87aff2fbfcd33]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/usb_gadget.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/src/usb_gadget.c b/src/usb_gadget.c
+index 856bb53..9f3896f 100644
+--- a/src/usb_gadget.c
++++ b/src/usb_gadget.c
+@@ -27,7 +27,10 @@
+ 
+ #include "buildconf.h"
+ 
++#include <endian.h>
+ #include <inttypes.h>
++#include <pthread.h>
++#include <sys/time.h>
+ 
+ #include <sys/ioctl.h>
+ 
+@@ -38,7 +41,7 @@
+ #include <unistd.h>
+ #include <string.h>
+ #include <stdio.h>
+-#include <pthread.h>
++
+ #include <signal.h>
+ 
+ #include <errno.h>

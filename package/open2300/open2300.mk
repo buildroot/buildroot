@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-OPEN2300_SITE = http://www.lavrsen.dk/svn/open2300/trunk
-OPEN2300_SITE_METHOD = svn
-OPEN2300_VERSION = 12
+OPEN2300_VERSION = f21982e0b1f8321561e5ad1668307fde97700e1b
+OPEN2300_SITE = $(call github,wezm,open2300,$(OPEN2300_VERSION))
 OPEN2300_LICENSE = GPL-2.0
 OPEN2300_LICENSE_FILES = COPYING
 
@@ -19,12 +18,8 @@ OPEN2300_LDFLAGS = $(TARGET_LDFLAGS)
 ifeq ($(BR2_PACKAGE_MYSQL),y)
 OPEN2300_DEPENDENCIES += mysql
 OPEN2300_BINS += mysql2300 mysqlhistlog2300
-OPEN2300_CFLAGS += -I$(STAGING_DIR)/usr/include/mysql
-OPEN2300_LDFLAGS += -L$(STAGING_DIR)/usr/lib/mysql -lmysqlclient
-ifeq ($(BR2_STATIC_LIBS),y)
-# mysql needs -lz, so we need to specify it for static builds
-OPEN2300_LDFLAGS += -lz
-endif
+OPEN2300_CFLAGS += $(shell $(STAGING_DIR)/usr/bin/mysql_config --cflags)
+OPEN2300_LDFLAGS += $(shell $(STAGING_DIR)/usr/bin/mysql_config --libs)
 endif
 
 define OPEN2300_BUILD_CMDS

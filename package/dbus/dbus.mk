@@ -4,21 +4,23 @@
 #
 ################################################################################
 
-DBUS_VERSION = 1.12.16
+DBUS_VERSION = 1.12.18
 DBUS_SITE = https://dbus.freedesktop.org/releases/dbus
 DBUS_LICENSE = AFL-2.1 or GPL-2.0+ (library, tools), GPL-2.0+ (tools)
 DBUS_LICENSE_FILES = COPYING
 DBUS_INSTALL_STAGING = YES
 
 define DBUS_PERMISSIONS
-	/usr/libexec/dbus-daemon-launch-helper f 4755 0 0 - - - - -
+	/usr/libexec/dbus-daemon-launch-helper f 4750 0 dbus - - - - -
 endef
 
 define DBUS_USERS
-	dbus -1 dbus -1 * /var/run/dbus - dbus DBus messagebus user
+	dbus -1 dbus -1 * /run/dbus - dbus DBus messagebus user
 endef
 
 DBUS_DEPENDENCIES = host-pkgconf expat
+
+DBUS_SELINUX_MODULES = dbus
 
 DBUS_CONF_OPTS = \
 	--with-dbus-user=dbus \
@@ -107,8 +109,8 @@ HOST_DBUS_CONF_OPTS = \
 	--disable-selinux \
 	--disable-xml-docs \
 	--disable-doxygen-docs \
-	--without-x \
-	--with-xml=expat
+	--disable-systemd \
+	--without-x
 
 # dbus for the host
 DBUS_HOST_INTROSPECT = $(HOST_DBUS_DIR)/introspect.xml

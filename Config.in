@@ -80,6 +80,11 @@ config BR2_HOSTARCH_NEEDS_IA32_COMPILER
 config BR2_NEEDS_HOST_UTF8_LOCALE
 	bool
 
+# Hidden boolean selected by packages that need the host to have
+# support for building gcc plugins
+config BR2_NEEDS_HOST_GCC_PLUGIN_SUPPORT
+	bool
+
 source "arch/Config.in"
 
 menu "Build options"
@@ -516,13 +521,14 @@ config BR2_OPTIMIZE_S
 	  This is the default.
 
 config BR2_OPTIMIZE_FAST
-	bool "optimize for fast"
+	bool "optimize for fast (may break packages!)"
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_6
 	help
 	  Optimize for fast. Disregard strict standards
 	  compliance. -Ofast enables all -O3 optimizations. It also
 	  enables optimizations that are not valid for all
-	  standard-compliant programs. It turns on -ffast-math and the
+	  standard-compliant programs, so be careful, as it may break
+	  some packages. It turns on -ffast-math and the
 	  Fortran-specific -fstack-arrays, unless -fmax-stack-var-size
 	  is specified, and -fno-protect-parens.
 
