@@ -1,0 +1,294 @@
+This HOWTO is about making a live CD/DVD from the main system on your hard drive.
+Another approach that will be discussed here is building your live CD/DVD from scratch. This will be done by building a new system using debootstrap. This is use full if you want to build a clean live CD, or if you want to build a minimal rescue cd.
+The live CD is usually created with a filesystem called squashfs. Squashfs is read only compressed filesystem that allow us to squeeze our system into a single CD. Note that your system has to be about 2GB (this might need some trial an error) to produce a compressed image that fits on the CD. Otherwise, you will have to use a DVD.
+Background on live CD/DVD
+``
+Note: This section is a clarification of how live CD works. You don't have to read it. You can skip it if you want.
+A live CD/DVD is basically a normal linux installation just like an ordinary harddrive installation. However, simply copying the harddirve installation over to a CD/DVD is not enough to produce a working system. Why? because there are still minor differences between a live CD/DVD and on ordinary harddrive installation. So in addition to copying our harddirve installation to the CD/DVD we must address those differences as well.
+What are these differences?
+The CD or DVD is read only media. Linux needs to have write access to certain parts of the system to be able to operate properly (like "/dev" "/proc" "/var" "/tmp"). There are a lot of approaches to address this problem. All of which utilize the system RAM. Some of these approaches enable write access only to essential directories and files, and hence, they do not allow the user to modify the system or install new packages while in the live CD. Other approaches, like aufs2 which is what is used in this guide, allows the user to write to any part of the system. This is done by merging part of the RAM with the read-only filesystem of the live CD/DVD and making the look like one filesystem that have read-write access. Aufs2 has to be mounted at boot in a certain manner.
+With the hard drive installation the location of the root filesystem is fixed. So it is passed to the kernel at boot time using the root=/dev/... parameter. With a live CD/DVD, the location of the root device is not fixed as the user might have multiple cdrom drives, these drives can be ide, scsi ... etc. So for the root filesystem to be mounted, there must be a way to identify the root device, and then we have to load the suitable kernel modules (to be able to access the cdrom controller as well as the CD filesystem). All this has to be done even before we have a root filesystem mounted.
+To fit on a CD, the filesystem is usually compressed using squashfs. So we need to autodetect the filesystem type. We also need to have the proper modules for mounting it. These considerations require special preparation at boot time, some of which must be performed even before mounting the actual filesystem. How can we do this? Linux introduced a mechanism that allow for such preparations at boot time before the actual root filesystem is mounted. It is called the initial root filesystem or initramfs. This mechanism is used also in mounting normal hard drive installations, as it adds flexabilty to the boot process.
+initramfs is virtual filesystem. It is a compressed cpio [cpio is an archive format similar to tar] archive that contains a minimal shell, kernel modules necessary for mounting the root filesystem and number of scripts that perform some tasks at boot time. The most important of these scripts is a script called init located at the root of the initramfs.
+``
+How does initramfs work?
+The boot loader loads both the kernel and the initramfs into memory and starts the kernel. The kernel then unpacks the initramfs and mount it as initial root filesystem, and then looks for the init program within the initial filesystem, and once it finds it, it executes it and hand the boot process over to it. This init scirpt is responsible for finding the real root filesystem and mounting it. It is also responsible for any special preparations required at boot time. So any special operations required for booting the system from live media can be coded into the initramfs boot scripts.
+How is initramfs created?
+We do not have to create initramfs manually (although it can be done). There are tools for creating and updating initramfs like the command update-initramfs. Moreover, these tools can include custom scripts into the initramfs if they are placed in a certain preset locations (/usr/share/initramfs/scripts). So all we have to do is dump our custom scripts (which will do all the required preparation for booting the live CD/DVD) into these preset locations, and then create a custom initramfs by running update-initramfs. We don't even have to write these scripts. Why? becuase there are packages that have scripts tailored for booting form live CDs. One of these packages is called casper (this is the package used in this howto). By installing casper into the system, it places the scripts in there proper locations (where they can be spotted by update-initrfamfs). The only thing we need to do after installing casper is running update-initramfs to create an initramfs suitable for live CD/DVD.
+
+The live CD/DVD is going to look like this: =>>
+```
+(CD ROOT) 
+|-------+casper 
+|       |-------filesystem.${FORMAT}     
+|       |-------filesystem.manifest 
+|       |-------filesystem.manifest-desktop 
+|       |-------vmlinuz |       
+|-------initrd.img 
+| 
+|-------+boot 
+|       |--------+grub 
+|       |        
+|       |        |--------grub.cfg
+|       |
+|-------memtest86+ 
+| 
+|--------md5sum.txt 
+
+```
+/casper/filesystem.${FORMAT}: This is the container of the linux filesystem we are going to copy from our harddisk. It is usually a compressed filesystem like squahsfs.
+/casper/filesystem.manifest: This file is optional. You only need it if you decide to include the Ubuntu installer in the CD. The purpose of this file will be explained later.
+/casper/filesystem.manifest-desktop: This file is optional. You only need it if you decide to include the Ubuntu installer in the CD. The purpose of this file will be explained later.
+/casper/vmlinuz: The linux kernel. This is copied form the linux filesystem.
+/casper/initrd.img: the initramfs that contain the customizations necessary for the live CD/DVD.
+/boot/grub/grub.cfg: File containing boot options for the live CD/DVD.
+/boot/memtest86+: Optional file used to test the RAM of the machine form the live CD/DVD.
+/md5sum.txt: Optional file containing checksums for all the files in the CD.
+Outline of the steps
+Prepare Our work environment.
+Copy the Source system to the target directory.
+Chroot into the new system and make some modifications.
+Prepare The CD directory tree.
+Build the CD/DVD
+
+A?Building the live media from scratch with Debootstrap: ??
+
+B?How to Boot the ISO from a flash disk: ??
+
+Conventions used in this HOWTO
+I will use gedit as my default text editor. Replace gedit with your favorite text editor.
+Commands performed within a chroot will be marked by (chroot).
+Optional arguments or steps will be marked as (optional).
+Preparing the environment
+Set some variables
+
+export WORK=~/work
+export CD=~/cd
+export FORMAT=squashfs
+export FS_DIR=casper
+The WORK Directory is where our temporary files and mount point will reside. The CD is the location of the CD tree. FORMAT is the filesystem type. We you are going to use a compressed squashfs. FS_DIR is the location of the actual filesystem image within the cd tree.
+Create the CD and the WORK directory structure:
+
+sudo mkdir -p ${CD}/{${FS_DIR},boot/grub} ${WORK}/rootfs
+Install some packages on your current system:
+
+sudo apt-get update
+
+sudo apt-get install grub2 xorriso squashfs-tools Vbox  (Vbox optional)
+Vbox is (optional). It is only needed for testing the cd before burning it.
+
+Copy your installation into the new filesystem:
+
+sudo rsync -av --one-file-system --exclude=/proc/* --exclude=/dev/* \
+--exclude=/sys/* --exclude=/tmp/* --exclude=/home/* --exclude=/lost+found \
+--exclude=/var/tmp/* --exclude=/boot/grub/* --exclude=/root/* \
+--exclude=/var/mail/* --exclude=/var/spool/* --exclude=/media/* \
+--exclude=/etc/fstab --exclude=/etc/mtab --exclude=/etc/hosts \
+--exclude=/etc/timezone --exclude=/etc/shadow* --exclude=/etc/gshadow* \
+--exclude=/etc/X11/xorg.conf* --exclude=/etc/gdm/custom.conf \
+--exclude=/etc/lightdm/lightdm.conf --exclude=${WORK}/rootfs / ${WORK}/rootfs
+Note: rsync is used instead of cp to take advantage of the --one-file-system and the --exclude options. If you have a separate boot partition you will have to copy it using the following command:
+sudo cp -av /boot/* ${WORK}/rootfs/boot
+(Optional) Copy settings in your home dir:
+If you want to preseve your user account settings which are stored in your home directory, you can copy them to ${WORK}/rootfs/etc/skel/. But first we have to define what files we want to copy. For example I am using xcfe4 as my DE, and it stores all it settings in a directory called .config in my home directory, so I am going to add .config to the variable $CONFIG:
+(optional)
+CONFIG='.config .bashrc'
+Now, Copy the CONFIG files using the following command: (optional)
+cd ~ && for i in $CONFIG
+do
+sudo cp -rpv --parents $i ${WORK}/rootfs/etc/skel   
+done
+Chroot into the new system and modify it
+Chroot into the copied system after mounting proc and dev:
+sudo mount  --bind /dev/ ${WORK}/rootfs/dev
+sudo mount -t proc proc ${WORK}/rootfs/proc
+sudo mount -t sysfs sysfs ${WORK}/rootfs/sys
+sudo mount -o bind /run ${WORK}/rootfs/run
+sudo chroot ${WORK}/rootfs /bin/bash
+N.B: All commands done within a chroot will be marked by (chroot).
+Now you are within chroot environment, type the following command:
+(chroot)
+LANG=
+Install Packages Essential for live CD:
+(chroot)
+apt-get update
+(chroot)
+apt-get install casper lupin-casper
+casper contains the live scripts.
+(Optional) If you want your live cd to have an installer, install the Ubuntu installer: (chroot)
+apt-get install ubiquity ubiquity-frontend-gtk
+Note: People using kde replace the previous command with: (chroot)
+apt-get install ubiquity ubiquity-frontend-kde 
+(Optional Step)Install any packages you want to be in the CD. Some of the following packages are useful in emergency situations:
+sudo apt-get install gparted ms-sys testdisk wipe partimage xfsprogs reiserfsprogs jfsutils ntfs-3g ntfsprogs dosfstools mtools
+gparted: patitioning tool. It is automatically installed as a dependecy of ubiquity.
+testdisk: Partition scanner and disk recovery tool. wipe: Secure file deletion. partimage: backup partitions into a compressed image file (like norton ghost). xfsprogs reiserfsprogs jfsutils: Tools for handling different filesystems. mtools: Tools for manipulating MSDOS files
+Update the initramfs: First update modules.dep:
+(chroot)
+depmod -a $(uname -r)
+(chroot)
+update-initramfs -u -k $(uname -r)
+As already metioned above, the initramfs is reponsible for much of the preparation required at the boot time of the CD/DVD. The updated initramfs now contain the live scirpts installed with casper.
+Remove non system users
+(chroot)
+for i in `cat /etc/passwd | awk -F":" '{print $1}'`
+do
+uid=`cat /etc/passwd | grep "^${i}:" | awk -F":" '{print $3}'`
+[ "$uid" -gt "998" -a  "$uid" -ne "65534"  ] && userdel --force ${i} 2> /dev/null
+done
+Non-system users are users created by you that have user id more than 999.
+N.B: In case a user with uid 999 is present we remove as well because that uid is preserved for the live cd user.
+Clean the system First, clean apt cache
+(chroot)
+apt-get clean
+Clean all the extra log files
+(chroot)
+find /var/log -regex '.*?[0-9].*?' -exec rm -v {} \;
+The remaining log files are going to be zeroed lest the system complain if they are deleted.
+(chroot)
+find /var/log -type f | while read file
+do
+cat /dev/null | tee $file
+done
+(chroot)
+rm /etc/resolv.conf /etc/hostname    ===[??buildroot.io??]
+Exit chroot
+(chroot)
+exit
+Prepare The CD directory tree
+Copy the kernel, the updated initrd and memtest prepared in the chroot:
+export kversion=`cd ${WORK}/rootfs/boot && ls -1 vmlinuz-* | tail -1 | sed 's@vmlinuz-@@'`
+sudo cp -vp ${WORK}/rootfs/boot/vmlinuz-${kversion} ${CD}/${FS_DIR}/vmlinuz
+sudo cp -vp ${WORK}/rootfs/boot/initrd.img-${kversion} ${CD}/${FS_DIR}/initrd.img
+sudo cp -vp ${WORK}/rootfs/boot/memtest86+.bin ${CD}/boot
+2. (optinal)Generate manifest:
+
+Note: This step is only needed if you installed the Ubuntu installer ubiquity. This step generates two files (filesystem.manifest & filesystem.manifest-desktop).
+(optinal)
+sudo chroot ${WORK}/rootfs dpkg-query -W --showformat='${Package} ${Version}\n' | sudo tee ${CD}/${FS_DIR}/filesystem.manifest
+(optinal)
+sudo cp -v ${CD}/${FS_DIR}/filesystem.manifest{,-desktop}
+(optinal)
+REMOVE='ubiquity casper user-setup os-prober libdebian-installer4'
+(optinal)
+for i in $REMOVE
+do
+sudo sed -i "/${i}/d" ${CD}/${FS_DIR}/filesystem.manifest-desktop
+done
+(optinal) These two files are used by the ubiquity installer when installing to harddisk. These two files are just lists of packages. Ubiquity compares these two files and removes packages unique to filesystem.manifest. This way when installing to harddisk, packages like casper which is only useful in a live CD/DVD are removed. These packages that will be removed at install are defined in the variable $REMOVE
+Unmount bind mounted dirs:
+sudo umount ${WORK}/rootfs/proc
+sudo umount ${WORK}/rootfs/sys
+sudo umount ${WORK}/rootfs/dev
+Convert the directory tree into a squashfs:
+sudo mksquashfs ${WORK}/rootfs ${CD}/${FS_DIR}/filesystem.${FORMAT} -noappend
+Note: Make sure the resulting file size can fit into your live media.
+Make filesystem.size
+echo -n $(sudo du -s --block-size=1 ${WORK}/rootfs | tail -1 | awk '{print $1}') | sudo tee ${CD}/${FS_DIR}/filesystem.size
+Calculate MD5
+find ${CD} -type f -print0 | xargs -0 md5sum | sed "s@${CD}@.@" | grep -v md5sum.txt | sudo tee -a ${CD}/md5sum.txt
+Make Grub the bootloader of the CD Make the grub.cfg
+sudo gedit ${CD}/boot/grub/grub.cfg
+Copy the following text into it and save it.
+
+set default="0"
+set timeout=10
+
+## I just like the way Ubuntu looks so... :D
+menuentry "Ubuntu GUI" {
+linux /casper/vmlinuz boot=casper quiet splash
+initrd /casper/initrd.img
+}
+menuentry "Ubuntu in safe mode" {
+linux /casper/vmlinuz boot=casper xforcevesa quiet splash
+initrd /casper/initrd.img
+}
+menuentry "Ubuntu CLI" {
+linux /casper/vmlinuz boot=casper textonly quiet splash
+initrd /casper/initrd.img
+}
+menuentry "Ubuntu GUI persistent mode" {
+linux /casper/vmlinuz boot=casper persistent quiet splash
+initrd /casper/initrd.img
+}
+menuentry "Ubuntu GUI from RAM" {
+linux /casper/vmlinuz boot=casper toram quiet splash
+initrd /casper/initrd.img
+}
+menuentry "Check Disk for Defects" {
+linux /casper/vmlinuz boot=casper integrity-check quiet splash
+initrd /casper/initrd.img
+}
+menuentry "Memory Test" {
+linux16 /boot/memtest86+.bin
+}
+menuentry "Boot from the first hard disk" {
+set root=(hd0)
+chainloader +1
+}
+Build the CD/DVD
+Make the ISO file
+sudo grub-mkrescue -o ~/live-cd.iso ${CD}
+Test the CD Test using Vbox emulator
+Vbox -cdrom ~/live-cd.iso -boot d
+Or use any other virtualization program you like.
+### <<!--- Note: Use virtualbox or to copy the .iso to flash disk and test directly on your pc. ---!>>>
+3. (Optional) Clean our workspace
+[ -d "$WORK" ] && rm -r $WORK $CD
+``
+Note:
+If you are using a custom kernel make sure it has support for the following:
+Support of loopback device.
+Support for squashfs.
+Support for aufs2.
+Support for initramfs.
+There are some extra options I put in the grub menu:
+Start linux form RAM. This option is only possible if your ram is larger than data on the live media. This option can be useful if you are building a minimal command line rescue disc as it would enhance performance to start it from RAM.
+Start in presistent mode. To learn about it more look here.
+Start Linux in Text Mode. This will not start X. The user will be autologged into a virtual terminal (the kind of terminal you get when you press Alt+Ctrl+F1).
+Building the live media form scratch using debootstrap
+Instead of using your current installation to be the basis of you live CD, you can build a custom clean system from scratch using debootstrap, and then use that as the basis of your CD. The modifications you have to make are:
+Skip steps B & C all-together. Instead, do the instructions listed here to build your custom system from scratch using debootstarp
+After finishing the instructions of the guide mentioned above, you resume the steps in this guide, going straight to step D.
+``
+## # --!>>>
+How to Make bootable USB flash: 
+``
+Grub2 has many advantages. One of these is the ability to boot an ISO directly from HDD of a flash. This means that instead of burning the ISO to a CD/DVD you can just copy it to a USB flash disk and boot it from there.
+Another big advantage of Grub2 is that it supports UUIDs and LABELs which are better than device names because they are subject to change especially with flash disks. We need to know the UUID or the LABEL for the partition on which the ISO resides. 
+We also need the device name of the usb flash (it will be used once to install grub to the flash drive). We can know that by issuing the following command which lists all the partition details:
+sudo blkid
+Take note of the flash UUID (or LABEL) and the flash device name ( e.g /dev/sdc not /dev/sdc1) Now mount your flash drive:
+sudo mount -t vfat /dev/by-uuid/<insert uuid here> /mnt
+Install grub to the flash disk:
+sudo grub-install --no-floppy --force --root-directory=/mnt /dev/sdc
+replace the /dev/sdc with the device name of your flash. Note that we are using the device name of the flash itself not the partition in the flash (e.g. /dev/sdc not /dev/sdc1)
+Copy the ISO to the flash drive:
+cp -v ~/live-cd.iso /mnt
+Make the grub menu of the flash disk
+sudo gedit /mnt/boot/grub/grub.cfg
+and add the following entry
+set default="0"
+set timeout=10
+insmod ntfs
+search --no-floppy --fs-uuid <insert the UUID> --set=usb
+set iso_path=/live-cd.iso
+loopback loop (${usb})${iso_path}
+set root=(loop)
+set bootopts="boot=casper iso-scan/filename=${iso_path} noprompt"
+menuentry "Boot ISO from HDD/USB" {
+linux (loop)/casper/vmlinuz $bootopts
+initrd (loop)/casper/initrd.img
+}
+Replace ntfs with the filesystem of your flash disk. e.g ntfs, fat, ...... Replace insert the UUID with the UUID of your flash disk. Note: If you want to use LABEL instead of UUID replace the first line in the entry with
+search --no-floppy -l insert the LABEL --set=usb
+When you start you pc you have to select "boot from usb storage device" from your BIOS boot options.
+Originally posted The Ubuntu Forums (ubuntuforums.org)
+``
+``
+[Mission complete]
+``
+~~~~
+Signed 
+I-Cat
+~~~~
