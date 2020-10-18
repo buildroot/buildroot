@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2020.11"
 
+config BR2_PACKAGE_OPENCV
+	bool "opencv package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed, use opencv3 instead.
+
 config BR2_PACKAGE_LIBCROCO
 	bool "libcroco package was removed"
 	select BR2_LEGACY

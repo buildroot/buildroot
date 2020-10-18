@@ -274,11 +274,6 @@ FREESWITCH_DEPENDENCIES += libsoundtouch
 FREESWITCH_ENABLED_MODULES += applications/mod_soundtouch
 endif
 
-ifeq ($(BR2_PACKAGE_OPENCV),y)
-FREESWITCH_DEPENDENCIES += opencv
-FREESWITCH_ENABLED_MODULES += applications/mod_cv
-endif
-
 ifeq ($(BR2_PACKAGE_OPENCV3),y)
 FREESWITCH_DEPENDENCIES += opencv3
 FREESWITCH_ENABLED_MODULES += applications/mod_cv
