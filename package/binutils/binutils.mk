@@ -93,6 +93,7 @@ HOST_BINUTILS_CONF_OPTS = \
 	--enable-static \
 	--with-sysroot=$(STAGING_DIR) \
 	--enable-poison-system-directories \
+	--without-debuginfod \
 	$(BINUTILS_DISABLE_GDB_CONF_OPTS) \
 	$(BINUTILS_EXTRA_CONFIG_OPTIONS)
 
