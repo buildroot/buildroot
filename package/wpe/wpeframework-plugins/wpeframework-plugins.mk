@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_PLUGINS_VERSION = 10869184523543f67b61c644ac82225363fa99d8
+WPEFRAMEWORK_PLUGINS_VERSION = f0012a1da6ffd0b8af5631298e7a1998ed4cdde3
 WPEFRAMEWORK_PLUGINS_SITE = $(call github,rdkcentral,ThunderNanoServices,$(WPEFRAMEWORK_PLUGINS_VERSION))
 WPEFRAMEWORK_PLUGINS_INSTALL_STAGING = YES
-WPEFRAMEWORK_PLUGINS_DEPENDENCIES = wpeframework libpng
+WPEFRAMEWORK_PLUGINS_DEPENDENCIES = wpeframework wpeframework-interfaces wpeframework-clientlibraries libpng
 
 # wpeframework-netflix binary package config
 WPEFRAMEWORK_PLUGINS_OPKG_NAME = "wpeframework-plugins"

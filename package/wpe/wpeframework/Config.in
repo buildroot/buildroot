@@ -126,11 +126,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_BROADCAST_SI_PARSING
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_CDM
+    select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
     bool "CDM"
     help
       CDM client support compatible with OpenCDM
 
 config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITORCLIENT
+    select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
     bool "CompositorClient"
         default y
     help
@@ -139,6 +141,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITORCLIENT
       allows for relaying keys to plugins
 
 config BR2_PACKAGE_WPEFRAMEWORK_GSTREAMERCLIENT
+        select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
         bool "GstreamerClient"
         default n
         help
@@ -146,12 +149,14 @@ config BR2_PACKAGE_WPEFRAMEWORK_GSTREAMERCLIENT
           This implementation will vary based on custom platforms and sink backends.
 
 config BR2_PACKAGE_WPEFRAMEWORK_DISPLAYINFO
+    select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
     bool "DisplayInfo"
         default y
     help
         A helpful C-interface to easily get information from the DisplayInfo plugin.
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY
+    select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
     bool "Cryptography"
         default n
     help
@@ -217,6 +222,7 @@ endchoice
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
+    select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
     bool "ProvisionProxy"
     select BR2_PACKAGE_LIBPROVISION
     help
@@ -230,11 +236,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_SECURE_SOCKET
 
 
 config BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT_ACCESSOR
+    select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
     bool "SecurityAgent"
     help
       Allows external access to the Security Agent, through a C interface.
 
 config BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
+    select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
     bool "VirtualInput"
     help
       If the dynamic uinput system can not be used for security reasons, this
@@ -256,6 +264,8 @@ source "package/wpe/wpeframework-switchboard/Config.in"
 source "package/wpe/wpeframework-ui/Config.in"
 endmenu
 
+source "package/wpe/wpeframework-interfaces/Config.in"
+source "package/wpe/wpeframework-clientlibraries/Config.in"
 source "package/wpe/wpeframework-rdkservices/Config.in"
 
 endif

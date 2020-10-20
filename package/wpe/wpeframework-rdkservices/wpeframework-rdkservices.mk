@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_RDKSERVICES_VERSION = bdb42929f7010db8bda83f3b2d5ec1b2f59e7afd
+WPEFRAMEWORK_RDKSERVICES_VERSION = 365ffa2779e5fef299e74e5a3db80f4dacbba896
 WPEFRAMEWORK_RDKSERVICES_SITE = $(call github,rdkcentral,rdkservices,$(WPEFRAMEWORK_RDKSERVICES_VERSION))
 WPEFRAMEWORK_RDKSERVICES_INSTALL_STAGING = YES
-WPEFRAMEWORK_RDKSERVICES_DEPENDENCIES = wpeframework
+WPEFRAMEWORK_RDKSERVICES_DEPENDENCIES = wpeframework wpeframework-interfaces wpeframework-clientlibraries 
 
 WPEFRAMEWORK_RDKSERVICES_OPKG_NAME = "wpeframework-rdkservices"
 WPEFRAMEWORK_RDKSERVICES_OPKG_VERSION = "1.0.0"
