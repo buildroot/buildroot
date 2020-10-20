@@ -17,10 +17,11 @@ GST_OMX_CONF_OPTS = \
 	-Dtools=disabled \
 	-Ddoc=disabled
 
+GST_OMX_VARIANT = generic
+
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 GST_OMX_VARIANT = rpi
 GST_OMX_CONF_OPTS += -Dheader_path=$(STAGING_DIR)/usr/include/IL
-GST_OMX_VARIANT = generic
 endif
 
 GST_OMX_CONF_OPTS += -Dtarget=$(GST_OMX_VARIANT)
