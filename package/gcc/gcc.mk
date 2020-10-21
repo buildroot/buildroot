@@ -98,6 +98,12 @@ ifeq ($(BR2_ENABLE_DEBUG),y)
 GCC_COMMON_TARGET_CFLAGS += -Wno-error
 endif
 
+# Make sure libgcc & libstdc++ always get built with -matomic on ARC700
+ifeq ($(GCC_TARGET_CPU):$(BR2_ARC_ATOMIC_EXT),arc700:y)
+GCC_COMMON_TARGET_CFLAGS += -matomic
+GCC_COMMON_TARGET_CXXFLAGS += -matomic
+endif
+
 # Propagate options used for target software building to GCC target libs
 HOST_GCC_COMMON_CONF_ENV += CFLAGS_FOR_TARGET="$(GCC_COMMON_TARGET_CFLAGS)"
 HOST_GCC_COMMON_CONF_ENV += CXXFLAGS_FOR_TARGET="$(GCC_COMMON_TARGET_CXXFLAGS)"
