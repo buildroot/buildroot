@@ -1027,8 +1027,8 @@ savedefconfig: $(BUILD_DIR)/buildroot-config/conf outputmakefile
 	@$(COMMON_CONFIG_ENV) $< \
 		--savedefconfig=$(if $(DEFCONFIG),$(DEFCONFIG),$(CONFIG_DIR)/defconfig) \
 		$(CONFIG_CONFIG_IN)
-	@$(SED) '/BR2_DEFCONFIG=/d' \
-		-e '/BR2_DL_DIR=/d' \
+	@$(SED) '/^BR2_DEFCONFIG=/d' \
+		-e '/^BR2_DL_DIR=/d' \
 		$(if $(DEFCONFIG),$(DEFCONFIG),$(CONFIG_DIR)/defconfig)
 
 .PHONY: defconfig savedefconfig update-defconfig
