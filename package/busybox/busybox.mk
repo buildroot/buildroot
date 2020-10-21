@@ -208,6 +208,13 @@ define BUSYBOX_INSTALL_UDHCPC_SCRIPT
 	fi
 endef
 
+define BUSYBOX_INSTALL_ZCIP_SCRIPT
+	if grep -q CONFIG_ZCIP=y $(@D)/.config; then \
+		$(INSTALL) -m 0755 -D $(@D)/examples/zcip.script \
+			$(TARGET_DIR)/usr/share/zcip/default.script; \
+	fi
+endef
+
 ifeq ($(BR2_INIT_BUSYBOX),y)
 
 define BUSYBOX_SET_INIT
@@ -366,6 +373,7 @@ define BUSYBOX_INSTALL_TARGET_CMDS
 	$(BUSYBOX_INSTALL_INDIVIDUAL_BINARIES)
 	$(BUSYBOX_INSTALL_INITTAB)
 	$(BUSYBOX_INSTALL_UDHCPC_SCRIPT)
+	$(BUSYBOX_INSTALL_ZCIP_SCRIPT)
 	$(BUSYBOX_INSTALL_MDEV_CONF)
 endef
 
