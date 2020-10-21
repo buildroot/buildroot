@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_UI_VERSION = c3a700c62858e08ea88d022b4f508ab28647f80a
+WPEFRAMEWORK_UI_VERSION = 75148aa85f738ccae853595a820c3151b9b57cc8
 WPEFRAMEWORK_UI_SITE = $(call github,rdkcentral,ThunderUI,$(WPEFRAMEWORK_UI_VERSION))
 WPEFRAMEWORK_UI_DEPENDENCIES = wpeframework wpeframework-plugins
 
