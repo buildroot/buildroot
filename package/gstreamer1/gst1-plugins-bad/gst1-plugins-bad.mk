@@ -650,6 +650,13 @@ else
 GST1_PLUGINS_BAD_CONF_OPTS += -Dsbc=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SMOOTHSTREAMING),y)
+GST1_PLUGINS_BAD_CONF_OPTS += -Dsmoothstreaming=enabled
+GST1_PLUGINS_BAD_DEPENDENCIES += libxml2
+else
+GST1_PLUGINS_BAD_CONF_OPTS += -Dsmoothstreaming=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SHM),y)
 GST1_PLUGINS_BAD_CONF_OPTS += -Dshm=enabled
 else

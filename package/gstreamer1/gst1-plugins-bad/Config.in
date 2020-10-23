@@ -543,6 +543,13 @@ config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SBC
 	bool "sbc"
 	select BR2_PACKAGE_SBC
 
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SMOOTHSTREAMING
+        bool "smoothstreaming"
+	default y
+        select BR2_PACKAGE_LIBXML2
+        help
+          MSS demuxer plugin
+
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SHM
 	bool "shm"
 	help
