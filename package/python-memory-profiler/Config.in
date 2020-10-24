@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_MEMORY_PROFILER
+	bool "python-memory-profiler"
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON_PSUTIL # runtime
+	help
+	  A module for monitoring memory usage of a python program.
+
+	  https://github.com/pythonprofilers/memory_profiler
