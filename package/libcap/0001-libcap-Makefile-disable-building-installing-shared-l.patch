@@ -5,6 +5,8 @@ Subject: [PATCH] libcap/Makefile: disable building/installing shared
  library when DYNAMIC is empty
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+[slightly manual modifications that patch still applies for libcap 2.44]
+Signed-off-by: Heiko Thiery <heiko.thiery@gmail.com>
 ---
  libcap/Makefile | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
@@ -26,7 +28,7 @@ index 81b089e..dfd4dea 100644
  test: cap_test
  	./cap_test
  
--install: install-shared install-static
+-install: install-static install-shared
 +install: $(if $(DYNAMIC),install-shared) install-static
  
  install-common: pcs
