@@ -1144,6 +1144,23 @@ config BR2_PACKAGE_WPEFRAMEWORK_UX_USERAGENT
 
 endif
 
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_RESIDENTAPP
+    depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+    bool "residentapp"
+    help
+      A WPEUIFramework non-compositing WebGL enabled tab.
+
+if BR2_PACKAGE_WPEFRAMEWORK_RESIDENTAPP
+
+config BR2_PACKAGE_WPEFRAMEWORK_RESIDENTAPP_AUTOSTART
+    bool "autostart"
+
+config BR2_PACKAGE_WPEFRAMEWORK_RESIDENTAPP_USERAGENT
+    string "useragent"
+    default ""
+
+endif
+
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_CLIENTIDENTIFIER
     string "clientidentifier"
     default ""
