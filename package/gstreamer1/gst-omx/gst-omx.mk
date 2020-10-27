@@ -20,6 +20,7 @@ GST_OMX_CONF_OPTS = \
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 GST_OMX_VARIANT = rpi
 GST_OMX_CONF_OPTS += -Dheader_path=$(STAGING_DIR)/usr/include/IL
+else
 GST_OMX_VARIANT = generic
 endif
 
