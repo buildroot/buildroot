@@ -11,7 +11,7 @@ platform:
 How to build
 ============
 
- $ make stm32mp157a_ev1_defconfig
+ $ make stm32mp157a_ev1_mmc_defconfig
  $ make
 
 How to write the microSD card
