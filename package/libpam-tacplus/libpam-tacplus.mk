@@ -17,4 +17,7 @@ LIBPAM_TACPLUS_INSTALL_STAGING = YES
 LIBPAM_TACPLUS_CONF_ENV = \
 	ax_cv_check_cflags___fstack_protector_all=$(if $(BR2_TOOLCHAIN_HAS_SSP),yes,no)
 
+# 0005-Check-for-failure-of-OpenSSL-RAND_pseudo_bytes.patch
+LIBPAM_TACPLUS_IGNORE_CVES += CVE-2020-27743
+
 $(eval $(autotools-package))
