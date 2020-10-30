@@ -145,11 +145,18 @@ else
 WINE_CONF_OPTS += --without-png
 endif
 
+ifeq ($(BR2_PACKAGE_LIBUSB),y)
+WINE_CONF_OPTS += --with-usb
+WINE_DEPENDENCIES += libusb
+else
+WINE_CONF_OPTS += --without-usb
+endif
+
 ifeq ($(BR2_PACKAGE_LIBV4L),y)
-WINE_CONF_OPTS += --with-v4l
+WINE_CONF_OPTS += --with-v4l2
 WINE_DEPENDENCIES += libv4l
 else
-WINE_CONF_OPTS += --without-v4l
+WINE_CONF_OPTS += --without-v4l2
 endif
 
 ifeq ($(BR2_PACKAGE_LIBXML2),y)
@@ -386,7 +393,8 @@ HOST_WINE_CONF_OPTS += \
 	--without-sane \
 	--without-sdl \
 	--without-tiff \
-	--without-v4l \
+	--without-usb \
+	--without-v4l2 \
 	--without-vkd3d \
 	--without-vulkan \
 	--without-x \
