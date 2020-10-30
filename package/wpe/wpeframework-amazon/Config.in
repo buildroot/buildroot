@@ -1,9 +1,82 @@
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_AMAZON
-	depends on BR2_PACKAGE_AMAZON
+    depends on BR2_PACKAGE_AMAZON_IGNITION 
 	bool "Amazon"
 	help
-	   WPE Platform plugins that supports amazon services.
+	   WPE Platform plugins that supports Amazon prime video service.
 
 if BR2_PACKAGE_WPEFRAMEWORK_AMAZON
 # options for the plugin
+menu "Box Configuration"
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_DTID
+	string "DTID"
+	default "UnknownDTID"
+    help
+        DTID will be provided by amazon, test DTID's can be found in docs on the partner central
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_MODEL
+	string "model name"
+	default "UnknownModel"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_MANUFACTURER
+	string "manufacturer"
+	default "UnknownManufacturer"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_CHIPSET
+	string "chipset"
+	default "UnknownChipset"
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_USER
+	string "user"
+    help
+        The user that amazon prime should use (root is not allowed)
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_GROUP
+	string "group"
+    help
+        The group that amazon prime user should use (root is not allowed)
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_CA_BUNDLE_PATH
+	string "ca bundle path"
+    help
+        Path where ca-certificate.crt is located
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_FRAGMENT_CACHE_SIZE
+	string "Fragment cache size (MB)"
+    help
+        Fragment cache size in MB
+        
+endmenu
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_AUTOSTART
+    depends on BR2_PACKAGE_WPEFRAMEWORK_AMAZON
+    bool "autostart"
+    default n
+
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_INSTALL_PATH_OVERRIDE
+	string "override instalation path in config"
+	default ""
+    help
+        Override the installation path of ignition binaries in the configuration json.
+        leave empty to use path set by amazon-ignition
+        
+config BR2_PACKAGE_WPEFRAMEWORK_AMAZON_LOG_LEVEL
+	string "Default log level"
+	default "ALL:ERROR"
+    help
+        Default log level 
+        
+        '<category>:<level>,<category>:<level>,...'
+        
+        Category values
+        Category values are those listed in the LogCategory enum but WITHOUT the LOG_CAT_ prefix. 
+        Below are a few valid category values for examples 
+        
+        DOWNLOADER | RESOURCE_MANAGER | DISK_STORAGE | ALL
+
+        Level values
+        CRITICAL | ERROR | WARNING | INFO | DEBUG.
+        
+        e.g "DOWNLOADER:INFO,AVPK:DEBUG"
+        
+        INFO and DEBUG only enable if BR2_PACKAGE_AMAZON_IGNITION_DEVELOPER_MODE is set
 endif

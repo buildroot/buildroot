@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-COBALT_VERSION = a232bffee442824ebec75b540ae3e2ccc5416328
+COBALT_VERSION = e28eef8fc6f72a18c67ab1a89efa7738bf0b49f2
 COBALT_SITE_METHOD = git
 COBALT_SITE = git@github.com:Metrological/cobalt
 COBALT_INSTALL_STAGING = YES
-COBALT_DEPENDENCIES = gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad host-bison host-ninja wpeframework
+COBALT_DEPENDENCIES = gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad host-bison host-ninja wpeframework wpeframework-clientlibraries
 
 export COBALT_STAGING_DIR=$(STAGING_DIR)
 export COBALT_TOOLCHAIN_PREFIX=$(TARGET_CROSS)

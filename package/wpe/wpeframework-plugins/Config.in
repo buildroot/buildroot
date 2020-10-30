@@ -78,6 +78,20 @@ config BR2_PACKAGE_WPEFRAMEWORK_COBALT_OUTOFPROCESS
     help
       Select this to run this plugin in its own process.
 
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_USER
+    string "user"
+    default ""
+    help
+        run Cobalt under this user, leave empty to use the same as
+        WPEframework
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_GROUP
+    string "group"
+    default ""
+    help
+        run Cobalt under this group, leave empty to use the same as
+        WPEframework
+
 config BR2_PACKAGE_WPEFRAMEWORK_COBALT_MANUFACTURER_NAME
     string "manufacturername"
     default ""
@@ -1139,6 +1153,23 @@ config BR2_PACKAGE_WPEFRAMEWORK_UX_AUTOSTART
     bool "autostart"
 
 config BR2_PACKAGE_WPEFRAMEWORK_UX_USERAGENT
+    string "useragent"
+    default ""
+
+endif
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_RESIDENTAPP
+    depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+    bool "residentapp"
+    help
+      A WPEUIFramework non-compositing WebGL enabled tab.
+
+if BR2_PACKAGE_WPEFRAMEWORK_RESIDENTAPP
+
+config BR2_PACKAGE_WPEFRAMEWORK_RESIDENTAPP_AUTOSTART
+    bool "autostart"
+
+config BR2_PACKAGE_WPEFRAMEWORK_RESIDENTAPP_USERAGENT
     string "useragent"
     default ""
 
