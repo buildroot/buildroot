@@ -1,0 +1,47 @@
+From b7d757ad79091da12e509a4989f3e8cfc1f55a03 Mon Sep 17 00:00:00 2001
+From: Ondrej Kozina <okozina@redhat.com>
+Date: Tue, 25 Aug 2020 19:32:48 +0200
+Subject: [PATCH 5/6] Avoid needlessly large allocations in LUKS2 validation
+ code.
+
+In case LUKS2 backup segment creates gap in between last regular
+segment and backup segment report invalid metadata imediately. We stop
+on first error so there's no need to allocate large memory on heap
+(we may ran with mlock(MCL_FUTURE) set).
+
+Example:
+- total segments count is 3
+- regular segments have keys "0" and "1"
+- first backup segment has key "42"
+
+(cherry picked from commit 46ee71edcd13e1dad50815ad65c28779aa6f7503)
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ lib/luks2/luks2_json_metadata.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/lib/luks2/luks2_json_metadata.c b/lib/luks2/luks2_json_metadata.c
+index 67a5512d..cd28400c 100644
+--- a/lib/luks2/luks2_json_metadata.c
++++ b/lib/luks2/luks2_json_metadata.c
+@@ -676,10 +676,16 @@ static int hdr_validate_segments(struct crypt_device *cd, json_object *hdr_jobj)
+ 		return 1;
+ 	}
+ 
++	/* avoid needlessly large allocation when first backup segment is invalid */
++	if (first_backup >= count) {
++		log_dbg(cd, "Gap between last regular segment and backup segment at key %d.", first_backup);
++		return 1;
++	}
++
+ 	if (first_backup < 0)
+ 		first_backup = count;
+ 
+-	if (first_backup <= count && (size_t)first_backup < SIZE_MAX / sizeof(*intervals))
++	if ((size_t)first_backup < SIZE_MAX / sizeof(*intervals))
+ 		intervals = malloc(first_backup * sizeof(*intervals));
+ 	else
+ 		intervals = NULL;
+-- 
+2.20.1
+

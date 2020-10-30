@@ -1,0 +1,64 @@
+From 45de1eb6e3d31ac3ece6b02671ddcc9dfab06e76 Mon Sep 17 00:00:00 2001
+From: Ondrej Kozina <okozina@redhat.com>
+Date: Tue, 25 Aug 2020 19:23:21 +0200
+Subject: [PATCH 6/6] Simplify validation code a bit.
+
+Keep it simple. If there's not enough memory we can't validate
+segments. The LUKS2 specification does not recommend to continue
+processing LUKS2 metadata if it can not be properly validated.
+
+(cherry picked from commit 752c9a52798f11d3b765b673ebaa3058eb25316e)
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ lib/luks2/luks2_json_metadata.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
+
+diff --git a/lib/luks2/luks2_json_metadata.c b/lib/luks2/luks2_json_metadata.c
+index cd28400c..66ee0b91 100644
+--- a/lib/luks2/luks2_json_metadata.c
++++ b/lib/luks2/luks2_json_metadata.c
+@@ -594,9 +594,9 @@ static bool validate_segment_intervals(struct crypt_device *cd,
+ static int hdr_validate_segments(struct crypt_device *cd, json_object *hdr_jobj)
+ {
+ 	json_object *jobj_segments, *jobj_digests, *jobj_offset, *jobj_size, *jobj_type, *jobj_flags, *jobj;
+-	struct interval *intervals;
+ 	uint64_t offset, size;
+ 	int i, r, count, first_backup = -1;
++	struct interval *intervals = NULL;
+ 
+ 	if (!json_object_object_get_ex(hdr_jobj, "segments", &jobj_segments)) {
+ 		log_dbg(cd, "Missing segments section.");
+@@ -687,8 +687,11 @@ static int hdr_validate_segments(struct crypt_device *cd, json_object *hdr_jobj)
+ 
+ 	if ((size_t)first_backup < SIZE_MAX / sizeof(*intervals))
+ 		intervals = malloc(first_backup * sizeof(*intervals));
+-	else
+-		intervals = NULL;
++
++	if (!intervals) {
++		log_dbg(cd, "Not enough memory.");
++		return 1;
++	}
+ 
+ 	for (i = 0; i < first_backup; i++) {
+ 		jobj = json_segments_get_segment(jobj_segments, i);
+@@ -697,14 +700,8 @@ static int hdr_validate_segments(struct crypt_device *cd, json_object *hdr_jobj)
+ 			free(intervals);
+ 			return 1;
+ 		}
+-		if (intervals != NULL) {
+-			intervals[i].offset = json_segment_get_offset(jobj, 0);
+-			intervals[i].length = json_segment_get_size(jobj, 0) ?: UINT64_MAX;
+-		}
+-	}
+-	if (intervals == NULL) {
+-		log_dbg(cd, "Not enough memory.");
+-		return 1;
++		intervals[i].offset = json_segment_get_offset(jobj, 0);
++		intervals[i].length = json_segment_get_size(jobj, 0) ?: UINT64_MAX;
+ 	}
+ 
+ 	r = !validate_segment_intervals(cd, first_backup, intervals);
+-- 
+2.20.1
+
