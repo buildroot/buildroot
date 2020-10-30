@@ -32,6 +32,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_COBALT_BUILD_TYPE_QA),y)
 	COBALT_BUILD_TYPE = qa
+	COBALT_DEPENDENCIES += host-nodejs
 else ifeq ($(BR2_PACKAGE_COBALT_BUILD_TYPE_GOLD),y)
 	COBALT_BUILD_TYPE = gold
 endif
