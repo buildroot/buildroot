@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEWEBKIT_VERSION = 96028a41f76616e4f063a0d2e44977c58b06eb49
+WPEWEBKIT_VERSION = 1e2f709fc4086457cf720ed150be79678b3faebc
 WPEWEBKIT_SITE = $(call github,WebPlatformForEmbedded,WPEWebKit,$(WPEWEBKIT_VERSION))
 WPEWEBKIT_INSTALL_STAGING = YES
 WPEWEBKIT_LICENSE = LGPL-2.1+, BSD-2-Clause
@@ -58,11 +58,17 @@ endif
 ifeq ($(BR2_PACKAGE_WPEWEBKIT_MULTIMEDIA),y)
 WPEWEBKIT_CONF_OPTS += \
 	-DENABLE_VIDEO=ON \
+	-DENABLE_MEDIA_SOURCE=ON \
+	-DENABLE_ENCRYPTED_MEDIA=ON \
+	-DENABLE_THUNDER=ON \
 	-DENABLE_WEB_AUDIO=ON
-WPEWEBKIT_DEPENDENCIES += gstreamer1 gst1-libav gst1-plugins-base gst1-plugins-good
+WPEWEBKIT_DEPENDENCIES += gstreamer1 gst1-libav gst1-plugins-base gst1-plugins-good wpeframework
 else
 WPEWEBKIT_CONF_OPTS += \
 	-DENABLE_VIDEO=OFF \
+	-DENABLE_MEDIA_SOURCE=OFF \
+	-DENABLE_ENCRYPTED_MEDIA=OFF \
+	-DENABLE_THUNDER=OFF \
 	-DENABLE_WEB_AUDIO=OFF
 endif
 
