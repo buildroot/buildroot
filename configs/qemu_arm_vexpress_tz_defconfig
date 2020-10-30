@@ -7,6 +7,9 @@ BR2_ARM_FPU_VFPV3D16=y
 BR2_TARGET_GENERIC_GETTY_PORT="ttyAMA0"
 BR2_ROOTFS_POST_BUILD_SCRIPT="board/qemu/arm-vexpress-tz/post-build.sh"
 
+# optee-test needs toolchain C++
+BR2_TOOLCHAIN_BUILDROOT_CXX=y
+
 # Filesystem
 BR2_TARGET_ROOTFS_CPIO=y
 BR2_TARGET_ROOTFS_CPIO_GZIP=y
