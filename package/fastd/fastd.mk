@@ -12,6 +12,9 @@ FASTD_LICENSE_FILES = COPYRIGHT
 FASTD_CONF_OPTS = -DENABLE_LIBSODIUM=ON
 FASTD_DEPENDENCIES = host-bison host-pkgconf libuecc libsodium libcap
 
+# 0002-receive-fix-buffer-leak-when-receiving-invalid-packets.patch
+FASTD_IGNORE_CVES += CVE-2020-27638
+
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 FASTD_CONF_OPTS += -DENABLE_OPENSSL=ON
 FASTD_DEPENDENCIES += openssl
