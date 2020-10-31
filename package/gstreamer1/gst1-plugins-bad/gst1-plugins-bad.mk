@@ -4,14 +4,14 @@
 #
 ################################################################################
 
-GST1_PLUGINS_BAD_VERSION = 1.18.0
+GST1_PLUGINS_BAD_VERSION = 1.18.1
 GST1_PLUGINS_BAD_SOURCE = gst-plugins-bad-$(GST1_PLUGINS_BAD_VERSION).tar.xz
 GST1_PLUGINS_BAD_SITE = https://gstreamer.freedesktop.org/src/gst-plugins-bad
 GST1_PLUGINS_BAD_INSTALL_STAGING = YES
 # Additional plugin licenses will be appended to GST1_PLUGINS_BAD_LICENSE and
 # GST1_PLUGINS_BAD_LICENSE_FILES if enabled.
-GST1_PLUGINS_BAD_LICENSE_FILES = COPYING.LIB
-GST1_PLUGINS_BAD_LICENSE = LGPL-2.0+, LGPL-2.1+
+GST1_PLUGINS_BAD_LICENSE_FILES = COPYING
+GST1_PLUGINS_BAD_LICENSE = LGPL-2.0+
 
 GST1_PLUGINS_BAD_LDFLAGS = $(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)
 
