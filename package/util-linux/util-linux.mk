@@ -188,6 +188,7 @@ HOST_UTIL_LINUX_CONF_OPTS += \
 	--enable-libblkid \
 	--enable-libmount \
 	--enable-libuuid \
+	--without-libmagic \
 	--without-ncurses \
 	--without-ncursesw \
 	--without-tinfo
@@ -255,6 +256,13 @@ UTIL_LINUX_CONF_OPTS += --with-audit
 UTIL_LINUX_DEPENDENCIES += audit
 else
 UTIL_LINUX_CONF_OPTS += --without-audit
+endif
+
+ifeq ($(BR2_PACKAGE_FILE),y)
+UTIL_LINUX_CONF_OPTS += --with-libmagic
+UTIL_LINUX_DEPENDENCIES += file
+else
+UTIL_LINUX_CONF_OPTS += --without-libmagic
 endif
 
 # Install PAM configuration files
