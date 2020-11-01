@@ -86,7 +86,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBMOUNT),y)
 LIBGLIB2_CONF_OPTS += -Dlibmount=enabled
-LIBGLIB2_DEPENDENCIES += util-linux
+LIBGLIB2_DEPENDENCIES += util-linux-libs
 else
 LIBGLIB2_CONF_OPTS += -Dlibmount=disabled
 endif
