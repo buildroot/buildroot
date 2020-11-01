@@ -275,6 +275,26 @@ config BR2_PACKAGE_IPSEC_TOOLS
 	  This package has been removed as it has security issues and
 	  has been abandoned since 2014.
 
+config BR2_PACKAGE_GPSD_FIXED_PORT_SPEED
+	bool "compile with fixed serial port speed"
+	select BR2_LEGACY
+	help
+	  Since gpsd 3.20, GPSD_FIXED_PORT_SPEED is replaced
+	  by runtime option --speed.
+
+config BR2_PACKAGE_GPSD_RECONFIGURE
+	bool "allow gpsd to change device settings"
+	select BR2_LEGACY
+	help
+	  Since gpsd 3.21, GPSD_RECONFIGURE is replaced
+	  by runtime option --passive.
+
+config BR2_PACKAGE_GPSD_CONTROLSEND
+	bool "allow gpsctl/gpsmon to change device settings"
+	select BR2_LEGACY
+	help
+	  Option removed in gpsd 3.21
+
 comment "Legacy options removed in 2020.11"
 
 config BR2_PACKAGE_OPENCV
