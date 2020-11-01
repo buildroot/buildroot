@@ -79,6 +79,17 @@ config BR2_PACKAGE_GPSD_MAX_DEV_VALUE
 config BR2_PACKAGE_GPSD_SQUELCH
 	bool "squelch gpsd_report and gpsd_hexdump to save cpu"
 
+config BR2_PACKAGE_GPSD_PYTHON
+	bool "build Python support and modules"
+	depends on BR2_USE_WCHAR # python
+	select BR2_PACKAGE_PYTHON3 if !BR2_PACKAGE_PYTHON
+	help
+	  Python libraries and tools for the gpsd service daemon
+	  including gpsfake test harness.
+
+comment "GPSD python support not available with toolchain w/o wide characters support"
+	depends on !BR2_USE_WCHAR
+
 comment "Protocols"
 
 config BR2_PACKAGE_GPSD_AIVDM

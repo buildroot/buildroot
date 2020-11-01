@@ -25,7 +25,6 @@ GPSD_SCONS_OPTS = \
 	prefix=/usr \
 	sysroot=$(STAGING_DIR) \
 	strip=no \
-	python=no \
 	qt=no \
 	systemd=$(if $(BR2_INIT_SYSTEMD),yes,no)
 
@@ -187,6 +186,18 @@ GPSD_SCONS_OPTS += max_clients=$(BR2_PACKAGE_GPSD_MAX_CLIENT_VALUE)
 endif
 ifeq ($(BR2_PACKAGE_GPSD_MAX_DEV),y)
 GPSD_SCONS_OPTS += max_devices=$(BR2_PACKAGE_GPSD_MAX_DEV_VALUE)
+endif
+
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
+GPSD_SCONS_OPTS += \
+	python=yes \
+	python_libdir="/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages"
+else ifeq ($(BR2_PACKAGE_PYTHON),y)
+GPSD_SCONS_OPTS += \
+	python=yes \
+	python_libdir="/usr/lib/python$(PYTHON_VERSION_MAJOR)/site-packages"
+else
+GPSD_SCONS_OPTS += python=no
 endif
 
 GPSD_SCONS_ENV += \
