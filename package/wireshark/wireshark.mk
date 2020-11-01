@@ -155,6 +155,13 @@ else
 WIRESHARK_CONF_OPTS += -DBUILD_sdjournal=OFF
 endif
 
+ifeq ($(BR2_PACKAGE_ZSTD),y)
+WIRESHARK_CONF_OPTS += -DENABLE_ZSTD=ON
+WIRESHARK_DEPENDENCIES += zstd
+else
+WIRESHARK_CONF_OPTS += -DENABLE_ZSTD=OFF
+endif
+
 # Disable plugins as some of them (like l16mono) can't be built
 # statically. ENABLE_STATIC=ON actually means "disable shared library"
 # and ENABLE_STATIC=OFF means "enable shared library". So for the
