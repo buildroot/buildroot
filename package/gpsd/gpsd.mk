@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GPSD_VERSION = 3.20
+GPSD_VERSION = 3.21
 GPSD_SITE = http://download-mirror.savannah.gnu.org/releases/gpsd
 GPSD_LICENSE = BSD-2-Clause
 GPSD_LICENSE_FILES = COPYING
@@ -167,12 +167,6 @@ endif
 ifeq ($(BR2_PACKAGE_GPSD_SQUELCH),y)
 GPSD_SCONS_OPTS += squelch=yes
 endif
-ifneq ($(BR2_PACKAGE_GPSD_RECONFIGURE),y)
-GPSD_SCONS_OPTS += reconfigure=no
-endif
-ifneq ($(BR2_PACKAGE_GPSD_CONTROLSEND),y)
-GPSD_SCONS_OPTS += controlsend=no
-endif
 ifneq ($(BR2_PACKAGE_GPSD_OLDSTYLE),y)
 GPSD_SCONS_OPTS += oldstyle=no
 endif
@@ -187,9 +181,6 @@ GPSD_SCONS_OPTS += gpsd_user=$(BR2_PACKAGE_GPSD_USER_VALUE)
 endif
 ifeq ($(BR2_PACKAGE_GPSD_GROUP),y)
 GPSD_SCONS_OPTS += gpsd_group=$(BR2_PACKAGE_GPSD_GROUP_VALUE)
-endif
-ifeq ($(BR2_PACKAGE_GPSD_FIXED_PORT_SPEED),y)
-GPSD_SCONS_OPTS += fixed_port_speed=$(BR2_PACKAGE_GPSD_FIXED_PORT_SPEED_VALUE)
 endif
 ifeq ($(BR2_PACKAGE_GPSD_MAX_CLIENT),y)
 GPSD_SCONS_OPTS += max_clients=$(BR2_PACKAGE_GPSD_MAX_CLIENT_VALUE)
