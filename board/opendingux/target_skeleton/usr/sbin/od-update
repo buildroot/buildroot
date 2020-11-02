@@ -24,7 +24,7 @@ elif [ "$HWVARIANT_CMDLINE" = "rg350" ] ; then
 	if [ -r /sys/devices/platform/jz-lcd.0/graphics/fb0/modes -a \
 		"$(grep '640x480' /sys/devices/platform/jz-lcd.0/graphics/fb0/modes)" ] ; then
 		MODEL=ylm,rg350m
-	elif [ -r /etc/os-release -a "$(grep ge757a1a /etc/os-release)" ] ; then
+	elif [ "$(uname -v)" = "#128 Fri May 29 11:19:07 CST 2020" ] ; then
 		MODEL=ylm,rg280m
 	else
 		MODEL=ylm,rg350
