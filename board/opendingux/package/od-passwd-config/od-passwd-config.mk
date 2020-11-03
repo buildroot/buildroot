@@ -14,7 +14,7 @@ ifeq ($(BR2_PACKAGE_GMENU2X),y)
 OD_PASSWD_CONFIG_DEPENDENCIES += gmenu2x
 define OD_PASSWD_CONFIG_INSTALL_TARGET_GMENU2X
 	$(INSTALL) -m 0644 -D $(@D)/gmenu2x $(TARGET_DIR)/usr/share/gmenu2x/sections/settings/60_passwd
-	$(INSTALL) -m 0644 -D $(@D)/icon.png $(TARGET_DIR)/usr/share/gmenu2x/skins/Default/icons/passwd.png
+	$(INSTALL) -m 0644 -D $(@D)/icon.png $(TARGET_DIR)/usr/share/gmenu2x/skins/320x240/Default/icons/passwd.png
 endef
 OD_PASSWD_CONFIG_POST_INSTALL_TARGET_HOOKS += OD_PASSWD_CONFIG_INSTALL_TARGET_GMENU2X
 endif
