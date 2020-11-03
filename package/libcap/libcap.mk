@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBCAP_VERSION = 2.44
+LIBCAP_VERSION = 2.45
 LIBCAP_SITE = https://www.kernel.org/pub/linux/libs/security/linux-privs/libcap2
 LIBCAP_SOURCE = libcap-$(LIBCAP_VERSION).tar.xz
 LIBCAP_LICENSE = GPL-2.0 or BSD-3-Clause
@@ -19,7 +19,8 @@ LIBCAP_MAKE_FLAGS = \
 	CROSS_COMPILE="$(TARGET_CROSS)" \
 	BUILD_CC="$(HOSTCC)" \
 	BUILD_CFLAGS="$(HOST_CFLAGS)" \
-	DYNAMIC=$(if $(BR2_STATIC_LIBS),,yes)
+	SHARED=$(if $(BR2_STATIC_LIBS),,yes) \
+	PTHREADS=$(if $(BR2_TOOLCHAIN_HAS_THREADS),yes,)
 
 LIBCAP_MAKE_DIRS = libcap
 
