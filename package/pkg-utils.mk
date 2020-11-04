@@ -119,6 +119,9 @@ define _json-info-pkg
 	"reverse_dependencies": [
 		$(call make-comma-list,$(sort $($(1)_RDEPENDENCIES)))
 	]
+	$(if $($(1)_CPE_ID_VALID), \
+		$(comma) "cpe-id": "$($(1)_CPE_ID)" \
+	)
 	$(if $($(1)_IGNORE_CVES),
 		$(comma) "ignore_cves": [
 			$(call make-comma-list,$(sort $($(1)_IGNORE_CVES)))
