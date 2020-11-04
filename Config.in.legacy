@@ -146,6 +146,15 @@ endif
 
 comment "Legacy options removed in 2022.02"
 
+config BR2_PACKAGE_CIVETWEB_WITH_LUA
+	bool "civetweb lua support option removed"
+	select BR2_LEGACY
+	help
+	  Lua support does not depend on a version of Lua bundled
+	  within the Civetweb sources anymore. Lua support is
+	  automatically enabled if an Lua interpreter (lua or luajit)
+	  is enabled in Buildroot.
+
 config BR2_PACKAGE_SUNXI_MALI_MAINLINE_DRIVER
 	bool "sunxi-mali-mainline-driver package was renamed"
 	select BR2_LEGACY
