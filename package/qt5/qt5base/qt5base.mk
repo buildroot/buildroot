@@ -254,6 +254,12 @@ else
 QT5BASE_CONFIGURE_OPTS += -no-journald
 endif
 
+ifeq ($(BR2_PACKAGE_QT5BASE_SYSLOG),y)
+QT5BASE_CONIGURE_OPTS += -syslog
+else
+QT5BASE_CONFIGURE_OPTS += -no-syslog
+endif
+
 ifeq ($(BR2_PACKAGE_IMX_GPU_VIV),y)
 # use vivante backend
 QT5BASE_EGLFS_DEVICE = EGLFS_DEVICE_INTEGRATION = eglfs_viv
