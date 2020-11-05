@@ -333,6 +333,12 @@ def get_pkglist(npackages, package_list):
     return packages
 
 
+def get_config_packages():
+    cmd = ["make", "--no-print-directory", "show-info"]
+    js = json.loads(subprocess.check_output(cmd))
+    return js.keys()
+
+
 def package_init_make_info():
     # Fetch all variables at once
     variables = subprocess.check_output(["make", "BR2_HAVE_DOT_CONFIG=y", "-s", "printvars",
@@ -929,6 +935,8 @@ def parse_args():
     output.add_argument('--json', dest='json', type=resolvepath,
                         help='JSON output file')
     packages = parser.add_mutually_exclusive_group()
+    packages.add_argument('-c', dest='configpackages', action='store_true',
+                          help='Apply to packages enabled in current configuration')
     packages.add_argument('-n', dest='npackages', type=int, action='store',
                           help='Number of packages')
     packages.add_argument('-p', dest='packages', action='store',
@@ -945,6 +953,8 @@ def __main__():
     args = parse_args()
     if args.packages:
         package_list = args.packages.split(",")
+    elif args.configpackages:
+        package_list = get_config_packages()
     else:
         package_list = None
     date = datetime.datetime.utcnow()
