@@ -937,6 +937,14 @@ show-info:
 		) \
 	)
 
+.PHONY: pkg-stats
+pkg-stats:
+	@cd "$(CONFIG_DIR)" ; \
+	$(TOPDIR)/support/scripts/pkg-stats -c \
+		--json $(O)/pkg-stats.json \
+		--html $(O)/pkg-stats.html \
+		--nvd-path $(DL_DIR)/buildroot-nvd
+
 else # ifeq ($(BR2_HAVE_DOT_CONFIG),y)
 
 # Some subdirectories are also package names. To avoid that "make linux"
@@ -1154,6 +1162,7 @@ help:
 	@echo '  external-deps          - list external packages used'
 	@echo '  legal-info             - generate info about license compliance'
 	@echo '  show-info              - generate info about packages, as a JSON blurb'
+	@echo '  pkg-stats              - generate info about packages as JSON and HTML'
 	@echo '  printvars              - dump internal variables selected with VARS=...'
 	@echo
 	@echo '  make V=0|1             - 0 => quiet build (default), 1 => verbose build'
