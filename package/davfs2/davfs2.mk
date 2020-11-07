@@ -19,7 +19,7 @@ DAVFS2_CONF_ENV += \
 	LIBS=$(TARGET_NLS_LIBS)
 
 define DAVFS2_USERS
-        davfs2 -1 davfs2 -1 * - - - davfs user
+	davfs2 -1 davfs2 -1 * - - - davfs user
 endef
 
 $(eval $(autotools-package))
