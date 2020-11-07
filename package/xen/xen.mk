@@ -18,6 +18,7 @@ XEN_ARCH = arm32
 endif
 
 XEN_CONF_OPTS = \
+	--disable-golang \
 	--disable-ocamltools \
 	--with-initddir=/etc/init.d
 
