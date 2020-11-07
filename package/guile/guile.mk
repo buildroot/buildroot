@@ -38,6 +38,11 @@ ifeq ($(BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_ARM)$(BR2_OPTIMIZE_S),yy)
 GUILE_CFLAGS += -O2
 endif
 
+# jit triggers build failures on ARM and gcc < 5
+ifeq ($(BR2_arm):$(BR2_TOOLCHAIN_GCC_AT_LEAST_5),y:)
+GUILE_CONF_OPTS += --disable-jit
+endif
+
 # It can use readline, but on the condition that it was build against
 # ncurses. If both aren't present disable readline support since the
 # host readline/ncurses support can poison the build.
