@@ -1,0 +1,157 @@
+From 0b6c25a9521543fa3394feea8043ae0f53cae991 Mon Sep 17 00:00:00 2001
+From: Xabier Rodriguez Calvar <calvaris@igalia.com>
+Date: Fri, 30 Oct 2020 12:42:46 +0100
+Subject: [PATCH] mssdemux: return initialization data decoded from base64
+
+Initialization data comes encoded in base64 as it is included as text
+in the manifest. We were already decoding it to parse the key id but
+it was returned base64 encoded. It should be returned decoded.
+---
+ ext/smoothstreaming/gstmssdemux.c    | 13 ++++---------
+ ext/smoothstreaming/gstmssmanifest.c | 22 +++++++++++++---------
+ ext/smoothstreaming/gstmssmanifest.h |  2 +-
+ 3 files changed, 18 insertions(+), 19 deletions(-)
+
+diff --git a/ext/smoothstreaming/gstmssdemux.c b/ext/smoothstreaming/gstmssdemux.c
+index 154009808..833c6c6fe 100644
+--- a/ext/smoothstreaming/gstmssdemux.c
++++ b/ext/smoothstreaming/gstmssdemux.c
+@@ -486,7 +486,7 @@ gst_mss_demux_setup_streams (GstAdaptiveDemux * demux)
+   GSList *iter;
+   const gchar *protection_system_id =
+       gst_mss_manifest_get_protection_system_id (mssdemux->manifest);
+-  const gchar *protection_data =
++  GstBuffer *protection_data =
+       gst_mss_manifest_get_protection_data (mssdemux->manifest);
+   gboolean protected = protection_system_id && protection_data;
+   const gchar *selected_system = NULL;
+@@ -564,12 +564,8 @@ gst_mss_demux_setup_streams (GstAdaptiveDemux * demux)
+     }
+ 
+     if (protected) {
+-      GstBuffer *protection_buffer =
+-          gst_buffer_new_wrapped (g_strdup (protection_data),
+-          strlen (protection_data));
+-      GstEvent *event =
+-          gst_event_new_protection (protection_system_id, protection_buffer,
+-          "smooth-streaming");
++      GstEvent *event = gst_event_new_protection (protection_system_id,
++          protection_data, "smooth-streaming");
+ 
+       GstBuffer *key_id = gst_mss_manifest_get_key_id (mssdemux->manifest);
+       if (!gst_buffer_get_size (key_id)) {
+@@ -586,7 +582,6 @@ gst_mss_demux_setup_streams (GstAdaptiveDemux * demux)
+       GST_LOG_OBJECT (stream, "Queuing Protection event on source pad");
+       gst_adaptive_demux_stream_queue_event ((GstAdaptiveDemuxStream *) stream,
+           event);
+-      gst_buffer_unref (protection_buffer);
+     }
+   }
+ 
+@@ -652,7 +647,7 @@ gst_mss_demux_stream_select_bitrate (GstAdaptiveDemuxStream * stream,
+     GstMssDemux *mssdemux = GST_MSS_DEMUX_CAST (stream->demux);
+     const gchar *protection_system_id =
+         gst_mss_manifest_get_protection_system_id (mssdemux->manifest);
+-    const gchar *protection_data =
++    GstBuffer *protection_data =
+         gst_mss_manifest_get_protection_data (mssdemux->manifest);
+     gboolean protected = protection_system_id && protection_data;
+ 
+diff --git a/ext/smoothstreaming/gstmssmanifest.c b/ext/smoothstreaming/gstmssmanifest.c
+index 35d79837b..4c3465c13 100644
+--- a/ext/smoothstreaming/gstmssmanifest.c
++++ b/ext/smoothstreaming/gstmssmanifest.c
+@@ -109,7 +109,7 @@ struct _GstMssManifest
+   guint64 look_ahead_fragment_count;
+ 
+   GString *protection_system_id;
+-  gchar *protection_data;
++  GstBuffer *protection_data;
+ 
+   // FIXME: There can be multiple key ids present in protected manifests.
+   gchar *key_id;
+@@ -342,7 +342,8 @@ _gst_mss_stream_init (GstMssManifest * manifest, GstMssStream * stream,
+ }
+ 
+ static void
+-_gst_mss_parse_protection_data (GstMssManifest * manifest)
++_gst_mss_set_and_parse_protection_data (GstMssManifest * manifest,
++    const gchar * protection_data)
+ {
+   guchar *decoded_protection_data = NULL;
+   gsize decoded_protection_data_len = 0;
+@@ -359,7 +360,9 @@ _gst_mss_parse_protection_data (GstMssManifest * manifest)
+   guchar *start_tag = NULL;
+ 
+   decoded_protection_data =
+-      g_base64_decode (manifest->protection_data, &decoded_protection_data_len);
++      g_base64_decode (protection_data, &decoded_protection_data_len);
++  manifest->protection_data = gst_buffer_new_wrapped (decoded_protection_data,
++      decoded_protection_data_len);
+ 
+   start_tag = decoded_protection_data;
+ 
+@@ -446,8 +449,6 @@ _gst_mss_parse_protection_data (GstMssManifest * manifest)
+   }
+ 
+ beach:
+-  if (decoded_protection_data)
+-    g_free (decoded_protection_data);
+   if (xpath_ctx)
+     xmlXPathFreeContext (xpath_ctx);
+   if (xpath_obj)
+@@ -473,6 +474,7 @@ _gst_mss_parse_protection (GstMssManifest * manifest,
+       gchar *value = (gchar *) system_id_attribute;
+       int id_len = strlen (value);
+       GString *system_id;
++      xmlChar *protection_data;
+ 
+       if (value[0] == '{') {
+         value++;
+@@ -485,8 +487,10 @@ _gst_mss_parse_protection (GstMssManifest * manifest,
+         system_id = g_string_truncate (system_id, id_len - 1);
+ 
+       manifest->protection_system_id = system_id;
+-      manifest->protection_data = (gchar *) xmlNodeGetContent (nodeiter);
+-      _gst_mss_parse_protection_data (manifest);
++      protection_data = xmlNodeGetContent (nodeiter);
++      _gst_mss_set_and_parse_protection_data (manifest,
++          (gchar *) protection_data);
++      xmlFree (protection_data);
+       xmlFree (system_id_attribute);
+       break;
+     }
+@@ -606,7 +610,7 @@ gst_mss_manifest_free (GstMssManifest * manifest)
+ 
+   if (manifest->protection_system_id != NULL)
+     g_string_free (manifest->protection_system_id, TRUE);
+-  xmlFree (manifest->protection_data);
++  gst_buffer_unref (manifest->protection_data);
+ 
+   xmlFreeDoc (manifest->xml);
+   g_free (manifest);
+@@ -620,7 +624,7 @@ gst_mss_manifest_get_protection_system_id (GstMssManifest * manifest)
+   return NULL;
+ }
+ 
+-const gchar *
++GstBuffer *
+ gst_mss_manifest_get_protection_data (GstMssManifest * manifest)
+ {
+   return manifest->protection_data;
+diff --git a/ext/smoothstreaming/gstmssmanifest.h b/ext/smoothstreaming/gstmssmanifest.h
+index 2720ec682..b623181dc 100644
+--- a/ext/smoothstreaming/gstmssmanifest.h
++++ b/ext/smoothstreaming/gstmssmanifest.h
+@@ -54,7 +54,7 @@ gint gst_mss_manifest_get_look_ahead_fragments_count (GstMssManifest * manifest)
+ void gst_mss_manifest_reload_fragments (GstMssManifest * manifest, GstBuffer * data);
+ GstClockTime gst_mss_manifest_get_min_fragment_duration (GstMssManifest * manifest);
+ const gchar * gst_mss_manifest_get_protection_system_id (GstMssManifest * manifest);
+-const gchar * gst_mss_manifest_get_protection_data (GstMssManifest * manifest);
++GstBuffer * gst_mss_manifest_get_protection_data (GstMssManifest * manifest);
+ gboolean gst_mss_manifest_get_live_seek_range (GstMssManifest * manifest, gint64 * start, gint64 * stop);
+ GstBuffer * gst_mss_manifest_get_key_id (GstMssManifest * manifest);
+ 
+-- 
+2.28.0
+

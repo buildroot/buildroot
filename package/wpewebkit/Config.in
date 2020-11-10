@@ -92,13 +92,6 @@ config BR2_PACKAGE_WPEWEBKIT_SYMBOLS
 
 endif
 
-config BR2_PACKAGE_WPEWEBKIT_USE_GOLD_LD
-	bool "use gold linker"
-		default n
-	help
-		If available in the toolchain WPE WebKit will use ld.gold to link objects. To enable 
-		this compile binutils with --enable-gold.
-
 config BR2_PACKAGE_WPEWEBKIT_SANDBOX
 	bool "sandboxing support"
 	depends on BR2_PACKAGE_LIBSECCOMP_ARCH_SUPPORTS # libseccomp
