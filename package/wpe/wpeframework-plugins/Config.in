@@ -539,6 +539,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_PACKAGER
     help
       Packager Plugin, install packages based upon OPKG.
 
+config BR2_PACKAGE_WPEFRAMEWORK_PERFORMANCE_MONITOR
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    default n
+    bool "PerformanceMonitor"
+    help
+      PerformanceMonitor Plugin
+
 config BR2_PACKAGE_WPEFRAMEWORK_PLAYERINFO
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "PlayerInfo"
