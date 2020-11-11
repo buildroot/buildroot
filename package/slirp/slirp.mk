@@ -5,9 +5,10 @@
 ################################################################################
 
 SLIRP_VERSION = 4.3.1
-SLIRP_SOURCE = libslirp-v$(SLIRP_VERSION).tar.bz2
-SLIRP_SITE = \
-	https://gitlab.freedesktop.org/slirp/libslirp/-/archive/v$(SLIRP_VERSION)
+SLIRP_SOURCE = libslirp-$(SLIRP_VERSION).tar.xz
+# Other "official" tarballs don't ship .tarball-version resulting in a build
+# failure: https://gitlab.freedesktop.org/slirp/libslirp/-/issues/24
+SLIRP_SITE = https://elmarco.fedorapeople.org
 SLIRP_LICENSE = BSD-3-Clause
 SLIRP_LICENSE_FILES = COPYRIGHT
 SLIRP_INSTALL_STAGING = YES
