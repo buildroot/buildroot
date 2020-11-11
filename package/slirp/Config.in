@@ -1,5 +1,9 @@
 config BR2_PACKAGE_SLIRP
 	bool "slirp"
+	depends on BR2_USE_MMU # libglib2
+	depends on BR2_USE_WCHAR # libglib2
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2
+	select BR2_PACKAGE_LIBGLIB2
 	help
 	  libslirp is a user-mode networking library used by virtual
 	  machines, containers or various tools.
@@ -18,3 +22,7 @@ config BR2_PACKAGE_SLIRP
 	      around May 2009 which archived it in 2012
 	    - So we switched to
 	      https://gitlab.freedesktop.org/slirp/libslirp
+
+comment "slirp needs a toolchain w/ wchar, threads"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS

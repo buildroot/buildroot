@@ -12,5 +12,6 @@ SLIRP_SITE = https://elmarco.fedorapeople.org
 SLIRP_LICENSE = BSD-3-Clause
 SLIRP_LICENSE_FILES = COPYRIGHT
 SLIRP_INSTALL_STAGING = YES
+SLIRP_DEPENDENCIES = libglib2
 
 $(eval $(meson-package))
