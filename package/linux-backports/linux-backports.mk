@@ -11,6 +11,14 @@ LINUX_BACKPORTS_SITE = $(BR2_KERNEL_MIRROR)/linux/kernel/projects/backports/stab
 LINUX_BACKPORTS_LICENSE = GPL-2.0
 LINUX_BACKPORTS_LICENSE_FILES = COPYING
 
+# flex and bison are needed to generate kconfig parser. We use the
+# same logic as the linux kernel (we add host dependencies only if
+# host does not have them). See linux/linux.mk and
+# support/dependencies/check-host-bison-flex.mk.
+LINUX_BACKPORTS_DEPENDENCIES = \
+	$(BR2_BISON_HOST_DEPENDENCY) \
+	$(BR2_FLEX_HOST_DEPENDENCY)
+
 ifeq ($(BR2_PACKAGE_LINUX_BACKPORTS_USE_DEFCONFIG),y)
 LINUX_BACKPORTS_KCONFIG_FILE = $(LINUX_BACKPORTS_DIR)/defconfigs/$(call qstrip,$(BR2_PACKAGE_LINUX_BACKPORTS_DEFCONFIG))
 else ifeq ($(BR2_PACKAGE_LINUX_BACKPORTS_USE_CUSTOM_CONFIG),y)
@@ -33,6 +41,8 @@ LINUX_BACKPORTS_KCONFIG_OPTS = $(LINUX_BACKPORTS_MAKE_OPTS)
 # LINUX_BACKPORTS_MODULE_MAKE_OPTS is used by the kernel-module infra.
 #
 LINUX_BACKPORTS_MAKE_OPTS = \
+	LEX=flex \
+	YACC=bison \
 	BACKPORT_DIR=$(@D) \
 	KLIB_BUILD=$(LINUX_DIR) \
 	KLIB=$(TARGET_DIR)/lib/modules/$(LINUX_VERSION_PROBED) \
