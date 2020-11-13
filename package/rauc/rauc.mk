@@ -46,7 +46,8 @@ HOST_RAUC_CONF_OPTS += \
 	--disable-network \
 	--disable-json \
 	--disable-service \
-	--without-dbuspolicydir
+	--without-dbuspolicydir \
+	--with-systemdunitdir=no
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
