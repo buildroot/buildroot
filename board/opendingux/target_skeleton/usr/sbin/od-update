@@ -26,6 +26,8 @@ elif [ "$HWVARIANT_CMDLINE" = "rg350" ] ; then
 		MODEL=ylm,rg350m
 	elif [ "$(uname -v)" = "#128 Fri May 29 11:19:07 CST 2020" ] ; then
 		MODEL=ylm,rg280m
+	elif [ "$(uname -v)" = "#171 Tues Jun 30 18:36:05 CST 2020" ] ; then
+		MODEL=ylm,rg280v
 	else
 		MODEL=ylm,rg350
 	fi
@@ -60,7 +62,7 @@ case "$MODEL" in
 		esac
 		SYSDEV=$(echo $SYSPART |sed -n 's/\(\/dev\/mmcblk[0-9]\+\)p[0-9]\+/\1/p')
 		;;
-	anbernic,rg350|anbernic,rg350m|ylm,rg350|ylm,rg350m|ylm,rg280m)
+	anbernic,rg350|anbernic,rg350m|ylm,rg350|ylm,rg350m|ylm,rg280m|ylm,rg280v)
 		HWVARIANT_DT=$(echo $MODEL |cut -d',' -f2)
 		HWVARIANT_BL="rg350"
 		SYSDEV=$(echo $SYSPART |sed -n 's/\(\/dev\/mmcblk[0-9]\+\)p[0-9]\+/\1/p')
