@@ -106,6 +106,34 @@
 	#13236: Can't compile linux 5.4.8 (with gcc 10 on host)
 	#13286: The system hangs in vmware workstation on the line..
 
+2020.08.2, released November 16th, 2020
+
+	Important / security related fixes.
+
+	Toolchain-wrapper: Pass -fno-tree-loop-distribute-patterns to
+	fix kernel build on microblaze with gcc 10.x when
+	optimizations are enabled.
+
+	Updated/fixed packages: apparmor, argp-standalone, asterisk,
+	bandwidthd, binutils, bitcoin, busybox, collectd, cryptsetup,
+	cups-filters, darkhttpd, davfs2, docker-cli,
+	docker-containerd, docker-engine, dovecot-pigeonhole,
+	dvb-apps, elf2flt, fastd, fbset, fbtft, freetype, gcc,
+	ghostscript, grpc, gst1-plugins-bad, jsoncpp,
+	kernel-module-imx-gpu-viv, keepalived, kmscube, libass,
+	libexif, libiqrf, libnetfilter_conntrack, libpam-tacplus,
+	libraw, linux-backports, linux-firmware, lzlib, mp4v2,
+	netsnmp, nginx, numactl, oniguruma, opencv3, openntpd,
+	patchelf, php, pistache, postgresql, python-pyqt5, qemu,
+	qt5base, rauc, redis, samba4, slirp, systemd, tcpdump,
+	tinyproxy, tmux, tor, waf, webkitgtk, wine,
+	wireguard-linux-compat, wireshark, wpewebkit, xen, xorriso,
+	xvisor, zeromq, zxing-cpp
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11931: Bugs in support/scripts/apply-patches.sh
+
 2020.08.1, released October 12th, 2020
 
 	Important / security related fixes.
