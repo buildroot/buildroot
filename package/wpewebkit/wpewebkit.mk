@@ -62,7 +62,7 @@ WPEWEBKIT_CONF_OPTS += \
 	-DENABLE_ENCRYPTED_MEDIA=ON \
 	-DENABLE_THUNDER=ON \
 	-DENABLE_WEB_AUDIO=ON
-WPEWEBKIT_DEPENDENCIES += gstreamer1 gst1-libav gst1-plugins-base gst1-plugins-good wpeframework
+WPEWEBKIT_DEPENDENCIES += gstreamer1 gst1-libav gst1-plugins-base gst1-plugins-good wpeframework-clientlibraries
 else
 WPEWEBKIT_CONF_OPTS += \
 	-DENABLE_VIDEO=OFF \
