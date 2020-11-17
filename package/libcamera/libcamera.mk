@@ -18,7 +18,6 @@ LIBCAMERA_CONF_OPTS = \
 	-Dandroid=disabled \
 	-Ddocumentation=disabled \
 	-Dtest=false \
-	-Dtracing=disabled \
 	-Dwerror=false
 LIBCAMERA_INSTALL_STAGING = YES
 LIBCAMERA_LICENSE = \
@@ -84,6 +83,13 @@ endif
 
 ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
 LIBCAMERA_DEPENDENCIES += udev
+endif
+
+ifeq ($(BR2_PACKAGE_LTTNG_LIBUST),y)
+LIBCAMERA_CONF_OPTS += -Dtracing=enabled
+LIBCAMERA_DEPENDENCIES += lttng-libust
+else
+LIBCAMERA_CONF_OPTS += -Dtracing=disabled
 endif
 
 $(eval $(meson-package))
