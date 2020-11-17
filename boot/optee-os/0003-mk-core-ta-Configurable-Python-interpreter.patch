@@ -32,7 +32,7 @@ index 5c9f16ef..878035c5 100644
  ta-mk-file-export-add-ta_arm32 += COMPILER_ta_arm32 ?= $$(COMPILER)_nl_
 +ta-mk-file-export-add-ta_arm32 += PYTHON3 ?= python3_nl_
  endif
- 
+
  ifneq ($(filter ta_arm64,$(ta-targets)),)
 @@ -275,6 +276,7 @@ ta-mk-file-export-add-ta_arm64 += CROSS_COMPILE64 ?= $$(CROSS_COMPILE)_nl_
  ta-mk-file-export-add-ta_arm64 += CROSS_COMPILE_ta_arm64 ?= $$(CROSS_COMPILE64)_nl_
@@ -40,7 +40,7 @@ index 5c9f16ef..878035c5 100644
  ta-mk-file-export-add-ta_arm64 += COMPILER_ta_arm64 ?= $$(COMPILER)_nl_
 +ta-mk-file-export-add-ta_arm64 += PYTHON3 ?= python3_nl_
  endif
- 
+
  # Set cross compiler prefix for each TA target
 diff --git a/core/arch/arm/kernel/link.mk b/core/arch/arm/kernel/link.mk
 index 1b89b895..69375ad6 100644
@@ -52,15 +52,15 @@ index 1b89b895..69375ad6 100644
  	$(q)$(READELFcore) -S -W $< | \
 -		./scripts/gen_ld_sects.py .text. > $@
 +		$(PYTHON3) ./scripts/gen_ld_sects.py .text. > $@
- 
+
  cleanfiles += $(link-out-dir)/rodata_unpaged.ld.S
  $(link-out-dir)/rodata_unpaged.ld.S: $(link-out-dir)/unpaged.o
  	@$(cmd-echo-silent) '  GEN     $@'
  	$(q)$(READELFcore) -S -W $< | \
 -		./scripts/gen_ld_sects.py .rodata. > $@
 +		$(PYTHON3) ./scripts/gen_ld_sects.py .rodata. > $@
- 
- 
+
+
  cleanfiles += $(link-out-dir)/init_entries.txt
 @@ -92,12 +92,12 @@ cleanfiles += $(link-out-dir)/text_init.ld.S
  $(link-out-dir)/text_init.ld.S: $(link-out-dir)/init.o
@@ -68,36 +68,36 @@ index 1b89b895..69375ad6 100644
  	$(q)$(READELFcore) -S -W $< | \
 -		./scripts/gen_ld_sects.py .text. > $@
 +		$(PYTHON3) ./scripts/gen_ld_sects.py .text. > $@
- 
+
  cleanfiles += $(link-out-dir)/rodata_init.ld.S
  $(link-out-dir)/rodata_init.ld.S: $(link-out-dir)/init.o
  	@$(cmd-echo-silent) '  GEN     $@'
 -	$(q)$(READELFcore) -S -W $< | ./scripts/gen_ld_sects.py .rodata. > $@
 +	$(q)$(READELFcore) -S -W $< | $(PYTHON3) ./scripts/gen_ld_sects.py .rodata. > $@
- 
+
  -include $(link-script-dep)
- 
+
 @@ -176,39 +176,39 @@ cleanfiles += $(link-out-dir)/tee-pager.bin
  $(link-out-dir)/tee-pager.bin: $(link-out-dir)/tee.elf scripts/gen_tee_bin.py
  	@echo Warning: $@ is deprecated
  	@$(cmd-echo-silent) '  GEN     $@'
 -	$(q)scripts/gen_tee_bin.py --input $< --out_tee_pager_bin $@
 +	$(q)$(PYTHON3) scripts/gen_tee_bin.py --input $< --out_tee_pager_bin $@
- 
+
  cleanfiles += $(link-out-dir)/tee-pageable.bin
  $(link-out-dir)/tee-pageable.bin: $(link-out-dir)/tee.elf scripts/gen_tee_bin.py
  	@echo Warning: $@ is deprecated
  	@$(cmd-echo-silent) '  GEN     $@'
 -	$(q)scripts/gen_tee_bin.py --input $< --out_tee_pageable_bin $@
 +	$(q)$(PYTHON3) scripts/gen_tee_bin.py --input $< --out_tee_pageable_bin $@
- 
+
  all: $(link-out-dir)/tee.bin
  cleanfiles += $(link-out-dir)/tee.bin
  $(link-out-dir)/tee.bin: $(link-out-dir)/tee.elf scripts/gen_tee_bin.py
  	@$(cmd-echo-silent) '  GEN     $@'
 -	$(q)scripts/gen_tee_bin.py --input $< --out_tee_bin $@
 +	$(q)$(PYTHON3) scripts/gen_tee_bin.py --input $< --out_tee_bin $@
- 
+
  all: $(link-out-dir)/tee-header_v2.bin
  cleanfiles += $(link-out-dir)/tee-header_v2.bin
  $(link-out-dir)/tee-header_v2.bin: $(link-out-dir)/tee.elf \
@@ -105,14 +105,14 @@ index 1b89b895..69375ad6 100644
  	@$(cmd-echo-silent) '  GEN     $@'
 -	$(q)scripts/gen_tee_bin.py --input $< --out_header_v2 $@
 +	$(q)$(PYTHON3) scripts/gen_tee_bin.py --input $< --out_header_v2 $@
- 
+
  all: $(link-out-dir)/tee-pager_v2.bin
  cleanfiles += $(link-out-dir)/tee-pager_v2.bin
  $(link-out-dir)/tee-pager_v2.bin: $(link-out-dir)/tee.elf scripts/gen_tee_bin.py
  	@$(cmd-echo-silent) '  GEN     $@'
 -	$(q)scripts/gen_tee_bin.py --input $< --out_pager_v2 $@
 +	$(q)$(PYTHON3) scripts/gen_tee_bin.py --input $< --out_pager_v2 $@
- 
+
  all: $(link-out-dir)/tee-pageable_v2.bin
  cleanfiles += $(link-out-dir)/tee-pageable_v2.bin
  $(link-out-dir)/tee-pageable_v2.bin: $(link-out-dir)/tee.elf \
@@ -120,11 +120,11 @@ index 1b89b895..69375ad6 100644
  	@$(cmd-echo-silent) '  GEN     $@'
 -	$(q)scripts/gen_tee_bin.py --input $< --out_pageable_v2 $@
 +	$(q)$(PYTHON3) scripts/gen_tee_bin.py --input $< --out_pageable_v2 $@
- 
+
  all: $(link-out-dir)/tee.symb_sizes
  cleanfiles += $(link-out-dir)/tee.symb_sizes
 @@ -222,5 +222,5 @@ mem_usage: $(link-out-dir)/tee.mem_usage
- 
+
  $(link-out-dir)/tee.mem_usage: $(link-out-dir)/tee.elf
  	@$(cmd-echo-silent) '  GEN     $@'
 -	$(q)./scripts/mem_usage.py $< > $@
@@ -141,7 +141,7 @@ index 03cc6bc7..0959c9a9 100644
 -recipe-ta_pub_key = scripts/pem_to_pub_c.py --prefix ta_pub_key \
 +recipe-ta_pub_key = $(PYTHON3) scripts/pem_to_pub_c.py --prefix ta_pub_key \
  		--key $(TA_SIGN_KEY) --out $(sub-dir-out)/ta_pub_key.c
- 
+
  gensrcs-y += ldelf
  produce-ldelf = ldelf_hex.c
  depends-ldelf = scripts/gen_ldelf_hex.py $(out-dir)/ldelf/ldelf.elf
@@ -149,7 +149,7 @@ index 03cc6bc7..0959c9a9 100644
 +recipe-ldelf = $(PYTHON3) scripts/gen_ldelf_hex.py --input $(out-dir)/ldelf/ldelf.elf \
  			--output $(sub-dir-out)/ldelf_hex.c
  endif
- 
+
 @@ -25,7 +25,7 @@ early-ta-$1-uuid := $(firstword $(subst ., ,$(notdir $1)))
  gensrcs-y += early-ta-$1
  produce-early-ta-$1 = early_ta_$$(early-ta-$1-uuid).c
@@ -184,7 +184,7 @@ index 70732c4d..1fe65576 100644
 @@ -32,6 +32,12 @@ endif
  # Supported values: undefined, 1, 2 and 3. 3 gives more warnings.
  WARNS ?= 3
- 
+
 +# Path to the Python interpreter used by the build system.
 +# This variable is set to the default python3 interpreter in the user's
 +# path. But build environments that require more explicit control can
@@ -193,18 +193,18 @@ index 70732c4d..1fe65576 100644
 +
  # Define DEBUG=1 to compile without optimization (forces -O0)
  # DEBUG=1
- 
+
 diff --git a/mk/lib.mk b/mk/lib.mk
 index 6e890893..3bd422d6 100644
 --- a/mk/lib.mk
 +++ b/mk/lib.mk
 @@ -72,7 +72,7 @@ $(lib-shlibstrippedfile): $(lib-shlibfile)
- 
+
  $(lib-shlibtafile): $(lib-shlibstrippedfile) $(TA_SIGN_KEY)
  	@$(cmd-echo-silent) '  SIGN    $$@'
 -	$$(q)$$(SIGN) --key $(TA_SIGN_KEY) --uuid $(libuuid) --in $$< --out $$@
 +	$$(q)$$(PYTHON3) $$(SIGN) --key $(TA_SIGN_KEY) --uuid $(libuuid) --in $$< --out $$@
- 
+
  $(lib-libuuidln): $(lib-shlibfile)
  	@$(cmd-echo-silent) '  LN      $$@'
 diff --git a/ta/arch/arm/link.mk b/ta/arch/arm/link.mk
@@ -214,11 +214,11 @@ index db7d0b9a..b95c0cba 100644
 @@ -2,7 +2,7 @@ link-script$(sm) = $(ta-dev-kit-dir$(sm))/src/ta.ld.S
  link-script-pp$(sm) = $(link-out-dir$(sm))/ta.lds
  link-script-dep$(sm) = $(link-out-dir$(sm))/.ta.ld.d
- 
+
 -SIGN_ENC ?= $(ta-dev-kit-dir$(sm))/scripts/sign_encrypt.py
 +SIGN_ENC ?= $(PYTHON3) $(ta-dev-kit-dir$(sm))/scripts/sign_encrypt.py
  TA_SIGN_KEY ?= $(ta-dev-kit-dir$(sm))/keys/default_ta.pem
- 
+
  ifeq ($(CFG_ENCRYPT_TA),y)
 diff --git a/ta/arch/arm/link_shlib.mk b/ta/arch/arm/link_shlib.mk
 index ed81e59a..cc177ef0 100644
@@ -231,19 +231,3 @@ index ed81e59a..cc177ef0 100644
 -	$(q)$(SIGN) --key $(TA_SIGN_KEY) --uuid $(shlibuuid) \
 +	$(q)$(PYTHON3) $(SIGN) --key $(TA_SIGN_KEY) --uuid $(shlibuuid) \
  		--in $< --out $@
-diff --git a/ta/ta.mk b/ta/ta.mk
-index 918880f4..59ed87f7 100644
---- a/ta/ta.mk
-+++ b/ta/ta.mk
-@@ -67,7 +67,7 @@ $$(arm32-user-sysregs-out)/$$(arm32-user-sysregs-$(1)-h): \
- 		$(1) scripts/arm32_sysreg.py
- 	@$(cmd-echo-silent) '  GEN     $$@'
- 	$(q)mkdir -p $$(dir $$@)
--	$(q)scripts/arm32_sysreg.py --guard __$$(arm32-user-sysregs-$(1)-h) \
-+	$(q)$(PYTHON3) scripts/arm32_sysreg.py --guard __$$(arm32-user-sysregs-$(1)-h) \
- 		< $$< > $$@
- 
- endef #process-arm32-user-sysreg
--- 
-2.20.1
-
