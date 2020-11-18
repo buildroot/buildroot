@@ -1,0 +1,25 @@
+From b53f9d383c9189a897c44cd88a8fc1b871fdc8a2 Mon Sep 17 00:00:00 2001
+From: Tobias Off <sebastianoff@web.de>
+Date: Thu, 8 Oct 2020 22:37:55 +0200
+Subject: [PATCH] added #include <string> to card.h to follow gcc10 porting
+ guide
+
+[Retrieved (and backported) from:
+https://github.com/tomba/kmsxx/commit/b53f9d383c9189a897c44cd88a8fc1b871fdc8a2]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ kms++/inc/kms++/card.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/kms++/inc/kms++/card.h b/kms++/inc/kms++/card.h
+index 0a7eaaf..f60b184 100644
+--- a/kms++/inc/kms++/card.h
++++ b/kms++/inc/kms++/card.h
+@@ -4,6 +4,7 @@
+ #include <cstdint>
+ #include <vector>
+ #include <map>
++#include <string>
+ 
+ #include "decls.h"
+ #include "pipeline.h"
