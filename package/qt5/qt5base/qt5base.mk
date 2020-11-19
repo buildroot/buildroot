@@ -255,7 +255,7 @@ QT5BASE_CONFIGURE_OPTS += -no-journald
 endif
 
 ifeq ($(BR2_PACKAGE_QT5BASE_SYSLOG),y)
-QT5BASE_CONIGURE_OPTS += -syslog
+QT5BASE_CONFIGURE_OPTS += -syslog
 else
 QT5BASE_CONFIGURE_OPTS += -no-syslog
 endif
