@@ -77,9 +77,8 @@ def __main__():
     if args.files is not None:
         args.files = [os.path.abspath(f) for f in args.files]
         for dev in devs:
-            for devfile in dev.files:
-                commonfiles = [f for f in args.files if f.startswith(devfile)]
-                if commonfiles:
+            for f in args.files:
+                if dev.hasfile(f):
                     print(dev.name)
                     break
 
