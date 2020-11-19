@@ -969,7 +969,7 @@ def __main__():
     print("Build package list ...")
     packages = get_pkglist(args.npackages, package_list)
     print("Getting developers ...")
-    developers = parse_developers(brpath)
+    developers = parse_developers()
     print("Build defconfig list ...")
     defconfigs = get_defconfig_list()
     for d in defconfigs:
