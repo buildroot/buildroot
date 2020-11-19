@@ -32,7 +32,6 @@ brpath = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 sys.path.append(os.path.join(brpath, "utils"))
 from getdeveloperlib import parse_developers  # noqa: E402
-import cve as cvecheck  # noqa: E402
 
 
 INFRA_RE = re.compile(r"\$\(eval \$\(([a-z-]*)-package\)\)")
@@ -950,7 +949,13 @@ def parse_args():
 
 
 def __main__():
+    global cvecheck
+
     args = parse_args()
+
+    if args.nvd_path:
+        import cve as cvecheck
+
     if args.packages:
         package_list = args.packages.split(",")
     elif args.configpackages:
