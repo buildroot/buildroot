@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-MULTIPATH_TOOLS_VERSION = 0.8.4
-MULTIPATH_TOOLS_SITE = $(call github,openSUSE,multipath-tools,$(MULTIPATH_TOOLS_VERSION))
+MULTIPATH_TOOLS_VERSION = 0.8.5
+MULTIPATH_TOOLS_SITE = $(call github,opensvc,multipath-tools,$(MULTIPATH_TOOLS_VERSION))
 MULTIPATH_TOOLS_LICENSE = LGPL-2.0
 MULTIPATH_TOOLS_LICENSE_FILES = COPYING
 MULTIPATH_TOOLS_DEPENDENCIES = lvm2 json-c readline udev liburcu libaio host-pkgconf
