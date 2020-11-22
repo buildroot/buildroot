@@ -7,7 +7,7 @@ chown od:users /media/data/apps /media/data/local/home
 
 mount -o remount,ro /media
 
-for i in bin etc home lib sbin share; do
+for i in bin etc home lib sbin share var; do
 	mkdir -p /usr/local/$i
 	chown od:users /usr/local/$i
 done
@@ -19,8 +19,11 @@ if [ -r /sys/power/state ] ; then
 	chmod 664 /sys/power/state
 fi
 
-mkdir -p /var/run/sudo /var/tmp /var/log /var/lib
+mkdir -p /var/run/sudo /var/tmp /var/log
 chmod 777 /var/tmp /var/log
+
+mkdir -p /usr/local/var/lib
+ln -s /usr/local/var/lib /var/lib
 
 [ -r /usr/local/etc/localfsinit.conf ] && . /usr/local/etc/localfsinit.conf
 
