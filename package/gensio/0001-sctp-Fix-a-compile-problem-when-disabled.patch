@@ -1,0 +1,31 @@
+From 28e869876525479b98d0c473b47b176b98fc27be Mon Sep 17 00:00:00 2001
+From: Corey Minyard <cminyard@mvista.com>
+Date: Sat, 31 Oct 2020 13:32:23 -0500
+Subject: [PATCH] sctp: Fix a compile problem when disabled
+
+Changing the disabled code was missed :(.
+
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[james.hilliard1@gmail.com: backport from upstream commit
+28e869876525479b98d0c473b47b176b98fc27be]
+---
+ lib/gensio_sctp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/gensio_sctp.c b/lib/gensio_sctp.c
+index bd9437f..4278ff8 100644
+--- a/lib/gensio_sctp.c
++++ b/lib/gensio_sctp.c
+@@ -1092,7 +1092,7 @@ str_to_sctp_gensio_accepter(const char *str, const char * const args[],
+ #else
+ 
+ int
+-sctp_gensio_alloc(struct gensio_addr *iai, const char * const args[],
++sctp_gensio_alloc(const struct gensio_addr *iai, const char * const args[],
+ 		  struct gensio_os_funcs *o,
+ 		  gensio_event cb, void *user_data,
+ 		  struct gensio **new_gensio)
+-- 
+2.25.1
+
