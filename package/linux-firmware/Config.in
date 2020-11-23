@@ -380,6 +380,12 @@ endmenu
 
 menu "Ethernet firmware"
 
+config BR2_PACKAGE_LINUX_FIRMWARE_BROADCOM_TIGON3
+	bool "Broadcom NetXtreme/Tigon3"
+	help
+	  Firmware files for Broadcom Tigon3 ethernet cards
+	  (tigon)
+
 config BR2_PACKAGE_LINUX_FIRMWARE_BNX2X
 	bool "Broadcom NetXtremeII"
 	help
