@@ -19,9 +19,9 @@ if [ -z "${QEMU_CMD_LINE}" ]; then
     exit 0
 fi
 
-# Replace output/images path by ${BINARIES_DIR} since the script
-# will be in the same directory as the kernel and the rootfs images.
-QEMU_CMD_LINE="${QEMU_CMD_LINE//output\/images/\${BINARIES_DIR\}}"
+# Remove output/images path since the script will be in
+# the same directory as the kernel and the rootfs images.
+QEMU_CMD_LINE="${QEMU_CMD_LINE//output\/images\//}"
 
 # Remove -serial stdio if present, keep it as default args
 DEFAULT_ARGS="$(sed -r -e '/-serial stdio/!d; s/.*(-serial stdio).*/\1/' <<<"${QEMU_CMD_LINE}")"
@@ -40,7 +40,9 @@ esac
 
 cat <<-_EOF_ > "${START_QEMU_SCRIPT}"
 	#!/bin/sh
+	(
 	BINARIES_DIR="\${0%/*}/"
+	cd \${BINARIES_DIR}
 
 	if [ "\${1}" = "serial-only" ]; then
 	    EXTRA_ARGS='${SERIAL_ARGS}'
@@ -50,6 +52,7 @@ cat <<-_EOF_ > "${START_QEMU_SCRIPT}"
 
 	export PATH="${HOST_DIR}/bin:\${PATH}"
 	exec ${QEMU_CMD_LINE} \${EXTRA_ARGS}
+	)
 _EOF_
 
 chmod +x "${START_QEMU_SCRIPT}"
