@@ -33,7 +33,6 @@ SYSTEMD_CONF_OPTS += \
 	-Dman=false \
 	-Dmount-path=/usr/bin/mount \
 	-Dnss-systemd=true \
-	-Dportabled=false \
 	-Dquotacheck-path=/usr/sbin/quotacheck \
 	-Dquotaon-path=/usr/sbin/quotaon \
 	-Drootlibdir='/usr/lib' \
@@ -415,6 +414,12 @@ SYSTEMD_CONF_OPTS += -Dpolkit=true
 SYSTEMD_DEPENDENCIES += polkit
 else
 SYSTEMD_CONF_OPTS += -Dpolkit=false
+endif
+
+ifeq ($(BR2_PACKAGE_SYSTEMD_PORTABLED),y)
+SYSTEMD_CONF_OPTS += -Dportabled=true
+else
+SYSTEMD_CONF_OPTS += -Dportabled=false
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD_NETWORKD),y)
