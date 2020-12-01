@@ -1,4 +1,4 @@
-From 60b4cd4c703be380aef194d31a1ffc4b42431bde Mon Sep 17 00:00:00 2001
+From c4218f71352ae5e39692e030d9af2c665dbb2eee Mon Sep 17 00:00:00 2001
 From: Peter Seiderer <ps.report@gmx.net>
 Date: Thu, 9 Apr 2020 22:21:36 +0200
 Subject: [PATCH] ell/rtnl: fix compile with older toolchains
@@ -18,6 +18,7 @@ Fixes:
   ell/rtnl.c:120:8: error: 'RTA_PREF' undeclared (first use in this function)
 
 [Upstream: https://lists.ofono.org/hyperkitty/list/ell@lists.01.org/thread/TOJ5XEY7X6WMOMJHX4KWI5LFEOX2QTBQ]
+[Rebased for ell-0.35]
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 ---
  configure.ac | 2 ++
@@ -25,10 +26,10 @@ Signed-off-by: Peter Seiderer <ps.report@gmx.net>
  2 files changed, 8 insertions(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index 0351f89..3be35a4 100644
+index 1e5ead9..bec472d 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -113,6 +113,8 @@ AC_CHECK_LIB(dl, dlopen, dummy=yes,
+@@ -110,6 +110,8 @@ AC_CHECK_FUNC(epoll_create, dummy=yes,
  
  AC_CHECK_HEADERS(linux/types.h linux/if_alg.h)
  
@@ -38,23 +39,24 @@ index 0351f89..3be35a4 100644
  				[enable ell/glib main loop example]),
  					[enable_glib=${enableval}])
 diff --git a/ell/rtnl.c b/ell/rtnl.c
-index dc83937..3493d34 100644
+index c115573..ccfa6fe 100644
 --- a/ell/rtnl.c
 +++ b/ell/rtnl.c
-@@ -25,8 +25,9 @@
+@@ -25,9 +25,10 @@
  #endif
  
  #define _GNU_SOURCE
 -#include <linux/if.h>
 +#include <sys/types.h>
+ #include <linux/icmpv6.h>
  #include <sys/socket.h>
 +#include <linux/if.h>
  #include <arpa/inet.h>
  
  #include "util.h"
-@@ -35,6 +36,10 @@
- #include "rtnl.h"
- #include "private.h"
+@@ -524,6 +525,10 @@ LIB_EXPORT bool l_rtnl_route_set_scope(struct l_rtnl_route *rt, uint8_t scope)
+ 	return true;
+ }
  
 +#if defined HAVE_DECL_RTA_PREF && !HAVE_DECL_RTA_PREF
 +#define RTA_PREF 20
@@ -64,5 +66,5 @@ index dc83937..3493d34 100644
  {
  	struct rtattr *rta = rta_buf;
 -- 
-2.26.0
+2.29.2
 
