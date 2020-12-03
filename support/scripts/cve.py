@@ -144,10 +144,6 @@ class CVE:
                 # Version is defined, this is a '=' match
                 op_start = '='
                 v_start = version
-            elif version == '-':
-                # no version information is available
-                op_start = '='
-                v_start = version
             else:
                 # Parse start version, end version and operators
                 if 'versionStartIncluding' in cpe:
@@ -206,11 +202,8 @@ class CVE:
         for cpe in self.each_cpe():
             if cpe['product'] != name:
                 continue
-            if cpe['v_start'] == '-':
-                return self.CVE_AFFECTS
             if not cpe['v_start'] and not cpe['v_end']:
-                print("No CVE affected version")
-                continue
+                return self.CVE_AFFECTS
             if not pkg_version:
                 continue
 

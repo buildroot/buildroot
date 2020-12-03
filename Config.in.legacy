@@ -144,6 +144,15 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2021.02"
+
+config BR2_PACKAGE_IPSEC_TOOLS
+	bool "ipsec-tools package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it has security issues and
+	  has been abandoned since 2014.
+
 comment "Legacy options removed in 2020.11"
 
 config BR2_PACKAGE_OPENCV
