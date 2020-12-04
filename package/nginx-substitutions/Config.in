@@ -1,0 +1,11 @@
+config BR2_PACKAGE_NGINX_SUBSTITUTIONS
+	bool "nginx-substitutions"
+	depends on BR2_PACKAGE_NGINX_HTTP
+	help
+	  nginx_substitutions_filter is a filter module which can do both regular
+	  expression and fixed string substitutions on response bodies. This
+	  module is quite different from the Nginx's native Substitution Module.
+	  It scans the output chains buffer and matches string line by line, just
+	  like Apache's mod_substitute
+
+	  https://github.com/yaoweibin/ngx_http_substitutions_filter_module
