@@ -12,6 +12,7 @@ QEMU_LICENSE_FILES = COPYING COPYING.LIB
 # NOTE: there is no top-level license file for non-(L)GPL licenses;
 #       the non-(L)GPL license texts are specified in the affected
 #       individual source files.
+QEMU_CPE_ID_VENDOR = $(QEMU_NAME)
 
 #-------------------------------------------------------------
 

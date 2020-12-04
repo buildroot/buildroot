@@ -12,6 +12,7 @@ LIBGCRYPT_SITE = https://gnupg.org/ftp/gcrypt/libgcrypt
 LIBGCRYPT_INSTALL_STAGING = YES
 LIBGCRYPT_DEPENDENCIES = libgpg-error
 LIBGCRYPT_CONFIG_SCRIPTS = libgcrypt-config
+LIBGCRYPT_CPE_ID_VENDOR = gnupg
 
 # Patching acinclude.m4 in 0001
 # Patching configure.ac and Makefile.am in 0002

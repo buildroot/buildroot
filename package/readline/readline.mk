@@ -14,6 +14,7 @@ READLINE_CONF_ENV = bash_cv_func_sigsetjmp=yes \
 READLINE_CONF_OPTS = --disable-install-examples
 READLINE_LICENSE = GPL-3.0+
 READLINE_LICENSE_FILES = COPYING
+READLINE_CPE_ID_VENDOR = gnu
 
 define READLINE_INSTALL_INPUTRC
 	$(INSTALL) -D -m 644 package/readline/inputrc $(TARGET_DIR)/etc/inputrc

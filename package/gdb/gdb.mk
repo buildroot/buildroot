@@ -31,6 +31,7 @@ endif
 
 GDB_LICENSE = GPL-2.0+, LGPL-2.0+, GPL-3.0+, LGPL-3.0+
 GDB_LICENSE_FILES = COPYING COPYING.LIB COPYING3 COPYING3.LIB
+GDB_CPE_ID_VENDOR = gnu
 
 # On gdb < 10, if you want to build only gdbserver, you need to
 # configure only gdb/gdbserver.

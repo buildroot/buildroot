@@ -12,6 +12,8 @@ LINUX_LICENSE_FILES = \
 	LICENSES/preferred/GPL-2.0 \
 	LICENSES/exceptions/Linux-syscall-note
 endif
+LINUX_CPE_ID_VENDOR = $(LINUX_NAME)
+LINUX_CPE_ID_NAME = $(LINUX_NAME)_kernel
 
 define LINUX_HELP_CMDS
 	@echo '  linux-menuconfig       - Run Linux kernel menuconfig'

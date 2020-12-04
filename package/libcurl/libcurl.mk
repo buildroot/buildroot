@@ -12,6 +12,8 @@ LIBCURL_DEPENDENCIES = host-pkgconf \
 	$(if $(BR2_PACKAGE_RTMPDUMP),rtmpdump)
 LIBCURL_LICENSE = curl
 LIBCURL_LICENSE_FILES = COPYING
+LIBCURL_CPE_ID_VENDOR = haxx
+LIBCURL_CPE_ID_NAME = libcurl
 LIBCURL_INSTALL_STAGING = YES
 
 # We disable NTLM support because it uses fork(), which doesn't work

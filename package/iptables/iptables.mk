@@ -12,6 +12,7 @@ IPTABLES_DEPENDENCIES = host-pkgconf \
 	$(if $(BR2_PACKAGE_LIBNETFILTER_CONNTRACK),libnetfilter_conntrack)
 IPTABLES_LICENSE = GPL-2.0
 IPTABLES_LICENSE_FILES = COPYING
+IPTABLES_CPE_ID_VENDOR = netfilter
 IPTABLES_SELINUX_MODULES = iptables
 
 # Building static causes ugly warnings on some plugins
