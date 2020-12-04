@@ -193,4 +193,13 @@ endef
 AVAHI_POST_INSTALL_STAGING_HOOKS += AVAHI_STAGING_INSTALL_LIBDNSSD_LINK
 endif
 
+ifeq ($(BR2_PACKAGE_AVAHI_DEFAULT_SERVICES),)
+define AVAHI_REMOVE_DEFAULT_SERVICES
+	$(foreach service,ssh sftp-ssh, \
+		$(RM) -f $(TARGET_DIR)/etc/avahi/services/$(service).service
+	)
+endef
+AVAHI_POST_INSTALL_TARGET_HOOKS += AVAHI_REMOVE_DEFAULT_SERVICES
+endif
+
 $(eval $(autotools-package))

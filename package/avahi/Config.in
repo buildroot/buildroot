@@ -42,6 +42,13 @@ config BR2_PACKAGE_AVAHI_LIBDNSSD_COMPATIBILITY
 	  Enable the libdns_sd (Bonjour) compatibility library support
 	  for legacy applications.
 
+config BR2_PACKAGE_AVAHI_DEFAULT_SERVICES
+	bool "install default service definitions"
+	depends on BR2_PACKAGE_AVAHI_DAEMON
+	help
+	  Install the SSH/SFTP service definitions included with the
+	  Avahi daemon by default.
+
 endif
 
 comment "avahi needs a toolchain w/ threads"
