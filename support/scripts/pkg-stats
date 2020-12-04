@@ -556,17 +556,28 @@ async def check_package_latest_version(packages):
         await asyncio.wait(tasks)
 
 
+def check_package_cve_affects(cve, cpe_product_pkgs):
+    for product in cve.affected_products:
+        if not product in cpe_product_pkgs:
+            continue
+        for pkg in cpe_product_pkgs[product]:
+            if cve.affects(pkg.name, pkg.current_version, pkg.ignored_cves, pkg.cpeid) == cve.CVE_AFFECTS:
+                pkg.cves.append(cve.identifier)
+
 def check_package_cves(nvd_path, packages):
     if not os.path.isdir(nvd_path):
         os.makedirs(nvd_path)
 
-    for cve in cvecheck.CVE.read_nvd_dir(nvd_path):
-        for pkg_name in cve.pkg_names:
-            if pkg_name in packages:
-                pkg = packages[pkg_name]
-                if cve.affects(pkg.name, pkg.current_version, pkg.ignored_cves) == cve.CVE_AFFECTS:
-                    pkg.cves.append(cve.identifier)
+    cpe_product_pkgs = defaultdict(list)
+    for pkg in packages:
+        if pkg.cpeid:
+            cpe_product = cvecheck.cpe_product(pkg.cpeid)
+            cpe_product_pkgs[cpe_product].append(pkg)
+        else:
+            cpe_product_pkgs[pkg.name].append(pkg)
 
+    for cve in cvecheck.CVE.read_nvd_dir(nvd_path):
+        check_package_cve_affects(cve, cpe_product_pkgs)
 
 def calculate_stats(packages):
     stats = defaultdict(int)
@@ -1054,7 +1065,7 @@ def __main__():
     loop.run_until_complete(check_package_latest_version(packages))
     if args.nvd_path:
         print("Checking packages CVEs")
-        check_package_cves(args.nvd_path, {p.name: p for p in packages})
+        check_package_cves(args.nvd_path, packages)
     print("Calculate stats")
     stats = calculate_stats(packages)
     if args.html:
