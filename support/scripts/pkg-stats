@@ -570,6 +570,10 @@ def check_package_cves(nvd_path, packages):
 
     cpe_product_pkgs = defaultdict(list)
     for pkg in packages:
+        if not pkg.has_valid_infra:
+            continue
+        if not pkg.current_version:
+            continue
         if pkg.cpeid:
             cpe_product = cvecheck.cpe_product(pkg.cpeid)
             cpe_product_pkgs[cpe_product].append(pkg)
