@@ -48,6 +48,14 @@ ZSTD_BUILD_LIBS = libzstd.a libzstd
 ZSTD_INSTALL_LIBS = install-static install-shared
 endif
 
+# The HAVE_THREAD flag is read by the 'programs' makefile but not by  the 'lib'
+# one. Building a multi-threaded binary with a library (which defaults to
+# single-threaded) gives a runtime error when compressing files.
+# The 'lib' makefile provides specific '%-mt' targets for this purpose.
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
+ZSTD_BUILD_LIBS := $(addsuffix -mt,$(ZSTD_BUILD_LIBS))
+endif
+
 define ZSTD_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) $(ZSTD_OPTS) \
 		-C $(@D)/lib $(ZSTD_BUILD_LIBS)
