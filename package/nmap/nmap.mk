@@ -11,7 +11,7 @@ NMAP_DEPENDENCIES = liblinear libpcap
 NMAP_CONF_OPTS = --without-liblua --without-zenmap \
 	--with-libdnet=included
 NMAP_LICENSE = nmap license
-NMAP_LICENSE_FILES = COPYING
+NMAP_LICENSE_FILES = LICENSE
 
 # needed by libpcap
 NMAP_LIBS_FOR_STATIC_LINK += `$(STAGING_DIR)/usr/bin/pcap-config --static --additional-libs`
