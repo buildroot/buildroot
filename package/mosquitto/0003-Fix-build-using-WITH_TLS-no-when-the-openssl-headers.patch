@@ -1,0 +1,47 @@
+From c25229c13a738af3efeb67724c6ca3dcb91971bd Mon Sep 17 00:00:00 2001
+From: "Roger A. Light" <roger@atchoo.org>
+Date: Fri, 4 Dec 2020 23:44:38 +0000
+Subject: [PATCH] Fix build using WITH_TLS=no when the openssl headers aren't
+ available.
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ ChangeLog.txt       |  2 ++
+ src/password_mosq.c | 10 ++++++----
+ 2 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/ChangeLog.txt b/ChangeLog.txt
+index 030ea8c5..868e3e8a 100644
+--- a/ChangeLog.txt
++++ b/ChangeLog.txt
+@@ -1,4 +1,6 @@
++Build:
+ - Fix cjson include paths.
++- Fix build using WITH_TLS=no when the openssl headers aren't available.
+ 
+ 
+ 2.0.0 - 2020-12-03
+diff --git a/src/password_mosq.c b/src/password_mosq.c
+index 73b81976..62e06925 100644
+--- a/src/password_mosq.c
++++ b/src/password_mosq.c
+@@ -19,10 +19,12 @@ Contributors:
+ #include "config.h"
+ 
+ #include <errno.h>
+-#include <openssl/opensslv.h>
+-#include <openssl/evp.h>
+-#include <openssl/rand.h>
+-#include <openssl/buffer.h>
++#ifdef WITH_TLS
++#  include <openssl/opensslv.h>
++#  include <openssl/evp.h>
++#  include <openssl/rand.h>
++#  include <openssl/buffer.h>
++#endif
+ #include <signal.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+-- 
+2.20.1
+

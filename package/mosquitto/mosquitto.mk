@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-MOSQUITTO_VERSION = 1.6.12
+MOSQUITTO_VERSION = 2.0.0
 MOSQUITTO_SITE = https://mosquitto.org/files/source
-MOSQUITTO_LICENSE = EPL-1.0 or EDLv1.0
-MOSQUITTO_LICENSE_FILES = LICENSE.txt epl-v10 edl-v10
+MOSQUITTO_LICENSE = EPL-2.0 or EDLv1.0
+MOSQUITTO_LICENSE_FILES = LICENSE.txt epl-v20 edl-v10
 MOSQUITTO_INSTALL_STAGING = YES
 
 MOSQUITTO_MAKE_OPTS = \
@@ -55,6 +55,13 @@ MOSQUITTO_MAKE_OPTS += \
 	CLIENT_STATIC_LDADD="`$(PKG_CONFIG_HOST_BINARY) --libs openssl`"
 else
 MOSQUITTO_MAKE_OPTS += WITH_TLS=no
+endif
+
+ifeq ($(BR2_PACKAGE_CJSON),y)
+MOSQUITTO_DEPENDENCIES += cjson
+MOSQUITTO_MAKE_OPTS += WITH_CJSON=yes
+else
+MOSQUITTO_MAKE_OPTS += WITH_CJSON=no
 endif
 
 ifeq ($(BR2_PACKAGE_C_ARES),y)
