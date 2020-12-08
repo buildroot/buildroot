@@ -144,6 +144,177 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2020.11"
+
+config BR2_PACKAGE_OPENCV
+	bool "opencv package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed, use opencv3 instead.
+
+config BR2_PACKAGE_LIBCROCO
+	bool "libcroco package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it is affected by several
+	  security issues such as CVE-2020-12825 which will never be
+	  fixed as libcroco has been archived.
+
+config BR2_PACKAGE_BELLAGIO
+	bool "bellagio package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it is not maintained anymore
+	  (no release since 2011).
+
+config BR2_PACKAGE_SYSTEMD_JOURNAL_GATEWAY
+	bool "systemd-journal-gatewayd now in systemd-journal-remote"
+	select BR2_LEGACY
+	select BR2_PACKAGE_SYSTEMD_JOURNAL_REMOTE
+	help
+	  All system journal remote programs are now enabled using
+	  BR2_PACKAGE_SYSTEMD_JOURNAL_REMOTE.
+
+config BR2_TARGET_UBOOT_BOOT_SCRIPT
+	bool "u-boot script generation was moved"
+	select BR2_LEGACY
+	select BR2_PACKAGE_HOST_UBOOT_TOOLS
+	select BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT
+	help
+	  Migrated U-Boot script generation to uboot-tools
+
+# Note: BR2_TARGET_UBOOT_BOOT_SCRIPT_SOURCE is still referenced from
+# package/uboot-tools/Config.in
+config BR2_TARGET_UBOOT_BOOT_SCRIPT_SOURCE
+	string "The uboot script source string has been renamed"
+	depends on BR2_TARGET_UBOOT_BOOT_SCRIPT
+	help
+	  Migrated U-Boot script generation to uboot-tools.
+	  New option is named
+	  BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT_SOURCE
+
+config BR2_TARGET_UBOOT_ENVIMAGE
+	bool "u-boot env generation was moved"
+	select BR2_LEGACY
+	select BR2_PACKAGE_HOST_UBOOT_TOOLS
+	select BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE
+	help
+	  Migrated U-Boot env generation to uboot-tools
+
+# Note: BR2_TARGET_UBOOT_ENVIMAGE_SOURCE is still referenced from
+# package/uboot-tools/Config.in
+config BR2_TARGET_UBOOT_ENVIMAGE_SOURCE
+	string "The uboot env image source string has been renamed"
+	depends on BR2_TARGET_UBOOT_ENVIMAGE
+	help
+	  Migrated U-Boot env generation to uboot-tools.
+	  New option is named
+	  BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SOURCE
+
+# Note: BR2_TARGET_UBOOT_ENVIMAGE_SIZE is still referenced from
+# package/uboot-tools/Config.in
+config BR2_TARGET_UBOOT_ENVIMAGE_SIZE
+	string "The uboot env image size string has been renamed"
+	depends on BR2_TARGET_UBOOT_ENVIMAGE
+	help
+	  Migrated U-Boot env generation to uboot-tools.
+	  New option is named BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SIZE
+
+config BR2_TARGET_UBOOT_ENVIMAGE_REDUNDANT
+	bool "u-boot env generation was moved"
+	depends on BR2_TARGET_UBOOT_ENVIMAGE
+	select BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_REDUNDANT
+	help
+	  Migrated U-Boot env generation to uboot-tools
+
+config BR2_PACKAGE_KISMET_CLIENT
+	bool "kismet client support was removed"
+	select BR2_LEGACY
+	help
+	  Kismet client support was removed since version 2019-04-R1.
+
+config BR2_PACKAGE_KISMET_DRONE
+	bool "kismet drone support was removed"
+	select BR2_LEGACY
+	help
+	  Kismet drone support was removed since version 2019-04-R1.
+
+config BR2_GCC_VERSION_7_X
+	bool "gcc 7.x support removed"
+	select BR2_LEGACY
+	help
+	  Support for gcc version 7.x has been removed. The current
+	  default version (9.x or later) has been selected instead.
+
+config BR2_PACKAGE_GST1_VALIDATE
+	bool "gst1-validate was moved to gst1-devtools"
+	select BR2_PACKAGE_GST1_DEVTOOLS
+	select BR2_LEGACY
+	help
+	  This package has been removed, use gst1-devtools instead.
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_YADIF
+	bool "gst1-plugins-bad yadif plugin was removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_DEINTERLACE
+	help
+	  This plugin was removed with gst1-plugins-bad-1.18.0, the
+	  same functionality has moved to gst1-plugins-good
+	  deinterlace plugin (method=yadif).
+
+config BR2_PACKAGE_GQVIEW
+	bool "gqview package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it is not maintained anymore
+	  (no release since 2006).
+
+config BR2_PACKAGE_WESTON_IMX
+	bool "weston-imx package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed, use weston instead.
+
+config BR2_KERNEL_HEADERS_5_7
+	bool "kernel headers version 5.7.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 5.7.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+config BR2_PACKAGE_TINYHTTPD
+	bool "tinyhttpd package removed"
+	select BR2_LEGACY
+	help
+	  The tinyhttpd package was removed as it is affected by
+	  CVE-2002-1819 and is not maintained anymore (no release since
+	  2001).
+
+config BR2_PACKAGE_XSERVER_XORG_SERVER_AIGLX
+	bool "X.org Enable AIGLX Extension"
+	select BR2_LEGACY
+	help
+	  AIGLX Extension was removed in X.org X server version 1.19.0
+
+config BR2_PACKAGE_AMD_CATALYST
+	bool "amd-catalyst"
+	select BR2_LEGACY
+	help
+	  Current X.org server is incompatible with this driver.
+
+config BR2_PACKAGE_NVIDIA_TEGRA23
+	bool "nvidia-tegra23 package removed"
+	select BR2_LEGACY
+	help
+	  Current X.org server is incompatible with this driver.
+
+config BR2_GDB_VERSION_8_1
+	bool "gdb 8.1.x has been removed"
+	select BR2_LEGACY
+	help
+	  The 8.1.x version of gdb has been removed. Use a newer
+	  version instead.
+
 comment "Legacy options removed in 2020.08"
 
 config BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_AMD64
@@ -1085,13 +1256,6 @@ config BR2_PACKAGE_DOCKER_ENGINE_STATIC_CLIENT
 	  BR2_PACKAGE_DOCKER_ENGINE_STATIC_CLIENT has been renamed to
 	  BR2_PACKAGE_DOCKER_CLI_STATIC, following the package split of
 	  docker-engine and docker-cli.
-
-config BR2_PACKAGE_XSERVER_XORG_SERVER_V_1_19
-	bool "Modular X.org server was updated to version 1.20.0"
-	select BR2_LEGACY
-	select BR2_PACKAGE_XSERVER_XORG_SERVER_V_1_20
-	help
-	  Modular X.org server was updated to version 1.20.0
 
 config BR2_PACKAGE_XPROTO_APPLEWMPROTO
 	bool "xproto-applewmproto package replaced by xorgproto"

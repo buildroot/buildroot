@@ -14,6 +14,12 @@ RSYSLOG_PLUGINS = imdiag imfile impstats imptcp \
 	mmanon mmaudit mmfields mmjsonparse mmpstrucdata mmsequence mmutf8fix \
 	mail omprog omruleset omstdout omuxsock \
 	pmaixforwardedfrom pmciscoios pmcisconames pmlastmsg pmsnare
+
+ifeq ($(BR2_PACKAGE_LIBRELP),y)
+RSYSLOG_DEPENDENCIES += librelp
+RSYSLOG_PLUGINS += relp
+endif
+
 RSYSLOG_CONF_OPTS = --disable-generate-man-pages \
 	$(foreach x,$(call qstrip,$(RSYSLOG_PLUGINS)),--enable-$(x))
 

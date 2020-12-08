@@ -35,11 +35,15 @@ endif
 ifeq ($(BR2_PACKAGE_ZLIB),y)
 KMOD_DEPENDENCIES += zlib
 KMOD_CONF_OPTS += --with-zlib
+else
+KMOD_CONF_OPTS += --without-zlib
 endif
 
 ifeq ($(BR2_PACKAGE_XZ),y)
 KMOD_DEPENDENCIES += xz
 KMOD_CONF_OPTS += --with-xz
+else
+KMOD_CONF_OPTS += --without-xz
 endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
@@ -76,6 +80,20 @@ endef
 KMOD_POST_INSTALL_TARGET_HOOKS += KMOD_INSTALL_TOOLS
 else
 KMOD_CONF_OPTS += --disable-tools
+endif
+
+ifeq ($(BR2_PACKAGE_HOST_KMOD_GZ),y)
+HOST_KMOD_DEPENDENCIES += host-zlib
+HOST_KMOD_CONF_OPTS += --with-zlib
+else
+HOST_KMOD_CONF_OPTS += --without-zlib
+endif
+
+ifeq ($(BR2_PACKAGE_HOST_KMOD_XZ),y)
+HOST_KMOD_DEPENDENCIES += host-xz
+HOST_KMOD_CONF_OPTS += --with-xz
+else
+HOST_KMOD_CONF_OPTS += --without-xz
 endif
 
 # We only install depmod, since that's the only tool used for the

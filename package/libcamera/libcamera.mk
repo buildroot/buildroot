@@ -5,7 +5,7 @@
 ################################################################################
 
 LIBCAMERA_SITE = https://git.linuxtv.org/libcamera.git
-LIBCAMERA_VERSION = 96fab38e02792a109c0d35ca2154e95a7b4c8fcb
+LIBCAMERA_VERSION = e59713c68678f3eb6b6ebe97cabdc88c7042567f
 LIBCAMERA_SITE_METHOD = git
 LIBCAMERA_DEPENDENCIES = \
 	host-openssl \
@@ -66,10 +66,13 @@ LIBCAMERA_DEPENDENCIES += gstreamer1 gst1-plugins-base
 endif
 
 ifeq ($(BR2_PACKAGE_QT5BASE_WIDGETS),y)
+LIBCAMERA_CONF_OPTS += -Dqcam=enabled
 LIBCAMERA_DEPENDENCIES += qt5base
 ifeq ($(BR2_PACKAGE_QT5TOOLS_LINGUIST_TOOLS),y)
 LIBCAMERA_DEPENDENCIES += qt5tools
 endif
+else
+LIBCAMERA_CONF_OPTS += -Dqcam=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_TIFF),y)

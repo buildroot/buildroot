@@ -18,7 +18,8 @@ EUDEV_CONF_OPTS = \
 	--enable-kmod \
 	--enable-blkid
 
-EUDEV_DEPENDENCIES = host-gperf host-pkgconf util-linux kmod
+# eudev requires only the util-linux libraries at build time
+EUDEV_DEPENDENCIES = host-gperf host-pkgconf util-linux-libs kmod
 EUDEV_PROVIDES = udev
 
 ifeq ($(BR2_ROOTFS_MERGED_USR),)
@@ -52,13 +53,6 @@ endef
 # from the udev-gentoo-scripts package.
 define EUDEV_INSTALL_INIT_OPENRC
 	@:
-endef
-
-# Required by default rules for input devices
-define EUDEV_USERS
-	- - input -1 * - - - Input device group
-	- - render -1 * - - - DRI rendering nodes
-	- - kvm -1 * - - - kvm nodes
 endef
 
 HOST_EUDEV_DEPENDENCIES = host-gperf host-pkgconf

@@ -290,6 +290,12 @@ config BR2_PACKAGE_NGINX_HTTP_UPSTREAM_KEEPALIVE_MODULE
 	help
 	  Enable ngx_http_upstream_keepalive_module
 
+config BR2_PACKAGE_NGINX_HTTP_UPSTREAM_RANDOM_MODULE
+	bool "ngx_http_upstream_random_module"
+	default y
+	help
+	  Enable ngx_http_upstream_random_module
+
 endif #BR2_PACKAGE_NGINX_HTTP
 
 config BR2_PACKAGE_NGINX_MAIL
@@ -328,6 +334,11 @@ config BR2_PACKAGE_NGINX_STREAM
 
 if BR2_PACKAGE_NGINX_STREAM
 
+config BR2_PACKAGE_NGINX_STREAM_REALIP_MODULE
+	bool "ngx_stream_realip_module"
+	help
+	  Enable ngx_stream_realip_module
+
 config BR2_PACKAGE_NGINX_STREAM_SSL_MODULE
 	bool "ngx_stream_ssl_module"
 	select BR2_PACKAGE_OPENSSL
@@ -339,6 +350,11 @@ config BR2_PACKAGE_NGINX_STREAM_GEOIP_MODULE
 	select BR2_PACKAGE_GEOIP
 	help
 	  Enable ngx_stream_geoip_module
+
+config BR2_PACKAGE_NGINX_STREAM_SSL_PREREAD_MODULE
+	bool "ngx_stream_ssl_preread_module"
+	help
+	  Enable ngx_stream_ssl_preread_module
 
 config BR2_PACKAGE_NGINX_STREAM_LIMIT_CONN_MODULE
 	bool "ngx_stream_limit_conn_module"
@@ -387,6 +403,12 @@ config BR2_PACKAGE_NGINX_STREAM_UPSTREAM_LEAST_CONN_MODULE
 	default y
 	help
 	  Enable ngx_stream_upstream_least_conn_module
+
+config BR2_PACKAGE_NGINX_STREAM_UPSTREAM_RANDOM_MODULE
+	bool "ngx_stream_upstream_random_module"
+	default y
+	help
+	  Enable ngx_stream_upstream_random_module
 
 config BR2_PACKAGE_NGINX_STREAM_UPSTREAM_ZONE_MODULE
 	bool "ngx_stream_upstream_zone_module"

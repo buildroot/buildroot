@@ -23,10 +23,12 @@ endef
 #
 
 define FIRMWARE_IMX_PREPARE_DDR_FW
-	$(TARGET_OBJCOPY) -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 \
+	$(TARGET_OBJCOPY) -I binary -O binary \
+		--pad-to $(BR2_PACKAGE_FIRMWARE_IMX_IMEM_LEN) --gap-fill=0x0 \
 		$(FIRMWARE_IMX_DDRFW_DIR)/$(strip $(1)).bin \
 		$(FIRMWARE_IMX_DDRFW_DIR)/$(strip $(1))_pad.bin
-	$(TARGET_OBJCOPY) -I binary -O binary --pad-to 0x4000 --gap-fill=0x0 \
+	$(TARGET_OBJCOPY) -I binary -O binary \
+		--pad-to $(BR2_PACKAGE_FIRMWARE_IMX_DMEM_LEN) --gap-fill=0x0 \
 		$(FIRMWARE_IMX_DDRFW_DIR)/$(strip $(2)).bin \
 		$(FIRMWARE_IMX_DDRFW_DIR)/$(strip $(2))_pad.bin
 	cat $(FIRMWARE_IMX_DDRFW_DIR)/$(strip $(1))_pad.bin \

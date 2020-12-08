@@ -26,9 +26,13 @@ config BR2_PACKAGE_LUA_5_3
 	bool "Lua 5.3.x"
 	select BR2_PACKAGE_LUAINTERPRETER_ABI_VERSION_5_3
 
+config BR2_PACKAGE_LUA_5_4
+	bool "Lua 5.4.x"
+	select BR2_PACKAGE_LUAINTERPRETER_ABI_VERSION_5_4
+
 endchoice
 
-if BR2_PACKAGE_LUA_5_3
+if BR2_PACKAGE_LUA_5_3 || BR2_PACKAGE_LUA_5_4
 config BR2_PACKAGE_LUA_32BITS
 	bool "Use 32 bit numbers"
 	default y if !BR2_ARCH_IS_64

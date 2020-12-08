@@ -69,6 +69,18 @@ config BR2_PACKAGE_FIRMWARE_IMX_DDR4
 
 endchoice # DDR training FW
 
+config BR2_PACKAGE_FIRMWARE_IMX_IMEM_LEN
+	hex "(LP)DDR IMEM padding length"
+	default 0x8000
+	help
+	  The IMEM firmware will be padded to this length
+
+config BR2_PACKAGE_FIRMWARE_IMX_DMEM_LEN
+	hex "(LP)DDR DMEM padding length"
+	default 0x4000
+	help
+	  The DMEM firmware will be padded to this length
+
 endif # BR2_PACKAGE_FIRMWARE_IMX_NEEDS_DDR_FW
 
 endif # BR2_PACKAGE_FIRMWARE_IMX

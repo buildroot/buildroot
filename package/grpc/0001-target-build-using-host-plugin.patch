@@ -20,7 +20,7 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index be695c2..45c2fcb 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -10844,6 +10844,18 @@ target_link_libraries(grpc_cli
+@@ -11199,6 +11199,18 @@ target_link_libraries(grpc_cli
  endif()
  if(gRPC_BUILD_CODEGEN AND gRPC_BUILD_GRPC_CPP_PLUGIN)
  
@@ -39,7 +39,7 @@ index be695c2..45c2fcb 100644
  add_executable(grpc_cpp_plugin
    src/compiler/cpp_plugin.cc
  )
-@@ -10877,6 +10889,7 @@ if(gRPC_INSTALL)
+@@ -11233,6 +11245,7 @@ if(gRPC_INSTALL)
      ARCHIVE DESTINATION ${gRPC_INSTALL_LIBDIR}
    )
  endif()

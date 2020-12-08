@@ -1,3 +1,232 @@
+2020.11, released December 2nd, 2020
+
+	Various fixes.
+
+	Updated/fixed packages: bustle, docker-containerd, gnuplot,
+	gst1-plugins-good, jemalloc, kmsxx, libcap, libplist,
+	libuhttpd, libxkbcommon, lynx, mariadb, netsurf, privoxy,
+	s390-tools, setserial, xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13276: libcap builds libcap.pc incorrectly
+
+2020.11-rc3, released November 28th, 2020
+
+	Fixes all over the tree.
+
+	Updated/fixed packages: c-ares, cage, cdrkit,
+	dovecot-pigeonhole, efl, gvfs, harfbuzz, jpeg-turbo,
+	libcamera, libkrb5, libpam-tacplus, libxkbcommon, minidlna,
+	modem-manager, monkey, musl, ncurses, numactl, openntpd,
+	openrc, postgresql, proftpd, python-flask-cors, python-pip,
+	qemu, raptor, redis, slirp, spandsp, thermald, uhd, vsftpd,
+	webkitgtk, wireless-regdb, wlroots, wpewebkit, xen, xinetd,
+	xorriso
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13296: host-libcap failed to build
+	#13331: openrc-0.42.1 compilation failure on gcc-10
+	#13336: thermald-1.9.1 compilation failure with musl 1.2.1
+	#13341: Mistake in /etc/init.d/S70vsftpd
+
+2020.11-rc2, released November 14th, 2020
+
+	Fixes all over the tree.
+
+	cve-checker script dropped. Instead the pkg-stats logic has
+	been extended to be able to only generate stats for the
+	configured packages using 'make pkg-stats'
+
+	Removed defconfigs: rock64
+
+	Updated/fixed packages: apparmor, asterisk, bitcoin, busybox,
+	cups-filters, cryptsetup, davfs2, domoticz, elf2flt, freetype,
+	ghostscript, glmark2, go, gst1-plugins-bad, guile, jsoncpp,
+	libcap, libexif, libnetfilter_conntrack, libpam-tacplus,
+	libsigrokdecode, linux-backports, linux-firmware, mesa3d,
+	modem-manager, mp4v2, oniguruma, openntpd, python3,
+	python-lmdb, python-m2crypto, rauc, s390-tools, slirp,
+	stress-ng, suricata, systemd, tcpdump, tmux, tor, webkitgtk,
+	wireguard-linux-compat, wpewebkit, xen
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13281: Raspberry Pi 2: overlays folder missing in genimage-ra..
+	#13291: BR2_DL_DIR is ignored when creating defconfig
+	#13306: wpewebkit build problem in 2020-11-rc1
+
+2020.11-rc1, released November 4th, 2020
+
+	Fixes all over the tree and new features.
+
+	Architectures: Support for IBM s390x
+
+	Toolchain: use Secure-PLT rather than BSS-PLT for PowerPC
+	32. Binutils 2.35.1 added, now defaulting to 2.34. ARC
+	2020.09-release toolchain. GCC 7.x dropped. RISC-V support for
+	uclibc-ng. Support for Bootlin external toolchains.
+
+	SELinux support improvements: File security contexts are now
+	set when the file systems are created, so there is no need to
+	run restorecon on first boot / read only rootfs is supported.
+	An optimized / stripped refpolicy SELinux policy is now
+	used. Packages can enable additional refpolicy modules using
+	<pkg>_SELINUX_MODULES.
+
+	support/scripts/cve-checker: Utility script to check for known
+	CVEs in just the packages enabled in a Buildroot configuration
+	rather than all packages, by passing the output of 'make
+	show-info' to it.
+
+	Go: Modules handling. The module name must be specified using
+	<pkg>_GOMOD.
+
+	BR2_EXTERNAL: Support for defining skeleton and init system
+	packages in external trees.
+
+	meson: Correct SDK cross-compilation.conf file when
+	per-package builds were used to build SDK.
+
+	systemd: Use /run rather than /var/run for PID files in units.
+
+	Fakeroot scripts (BR2_ROOTFS_POST_FAKEROOT_SCRIPT) are now run
+	after all finalization hooks (including pre-rootfs) to ensure
+	they can override any late configuration done by packages.
+
+	support/script/pycompile: Rework logic to ensure .pyc files
+	contain absolute target paths, fixing code inspection at
+	runtime when executed with cwd != '/'.
+
+	support/scripts/setlocalversion: Correct Mercurial output to
+	match behaviour with Git.
+
+	support/scripts/apply-patches.sh: Use patch
+	--no-backup-if-mismatch, so we no longer blindly have to
+	remove *.orig files after patching, fixing issues with
+	packages containing such files.
+
+	New defconfigs: Acer chromebook elm, Friendlyarm nanopc-t4 and
+	nanopi-m4, Hardkernel odroid-c2, Kontron SMARC-sAL28, NXP
+	imx8mqevk, Orangepi RK3399 and zero+, PCengines APU2, Pine64
+	rockpro64, QEMU s390x, Raxda rockpi-n8,
+
+	New packages: altera-stapl, asn1c, babeltrace2, cukinia,
+	easyframes, environment-setup, frr, graphicsmagick, htpdate,
+	ipcalc, libbacktrace, libblockdev, libbytesize, librelp,
+	libuev, makedumpfile, meson-tools, mg, mrp, multipath-tools,
+	netcalc, odroidc2-firmware, php-xdebug, python-aiofiles,
+	python-ansicolors, python-boto3, python-botocore,
+	python-bsdiff4, python-crayons, python-iniconfig,
+	python-intelhex, python-ipdb, python-jmespath,
+	python-m2crypto, python-opcua-asyncio, python-packaging,
+	python-piexif, python-pluggy, python-pytest,
+	python-s3transfer, python-xmodem, qprint, qt5lottie,
+	qt5remoteobjects, re2, redir, s390-tools, sentry-cli,
+	sentry-native, timescaledb, tinyhttpd, uhd, uredir, watchdog,
+	wayland-utils, weston-imx
+
+	Removed packages: amd-catalyst, bellagio, gqview, libcroco,
+	nvidia-tegra23, opencv
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11811: lsblk (util-linux) should depend on libudev if available
+	#11931: Bugs in support/scripts/apply-patches.sh
+	#12301: systemd-journal-gatewayd: config options broken
+	#12911: usb_modeswitch installation race condition
+	#13236: Can't compile linux 5.4.8 (with gcc 10 on host)
+	#13286: The system hangs in vmware workstation on the line..
+
+2020.08.2, released November 16th, 2020
+
+	Important / security related fixes.
+
+	Toolchain-wrapper: Pass -fno-tree-loop-distribute-patterns to
+	fix kernel build on microblaze with gcc 10.x when
+	optimizations are enabled.
+
+	Updated/fixed packages: apparmor, argp-standalone, asterisk,
+	bandwidthd, binutils, bitcoin, busybox, collectd, cryptsetup,
+	cups-filters, darkhttpd, davfs2, docker-cli,
+	docker-containerd, docker-engine, dovecot-pigeonhole,
+	dvb-apps, elf2flt, fastd, fbset, fbtft, freetype, gcc,
+	ghostscript, grpc, gst1-plugins-bad, jsoncpp,
+	kernel-module-imx-gpu-viv, keepalived, kmscube, libass,
+	libexif, libiqrf, libnetfilter_conntrack, libpam-tacplus,
+	libraw, linux-backports, linux-firmware, lzlib, mp4v2,
+	netsnmp, nginx, numactl, oniguruma, opencv3, openntpd,
+	patchelf, php, pistache, postgresql, python-pyqt5, qemu,
+	qt5base, rauc, redis, samba4, slirp, systemd, tcpdump,
+	tinyproxy, tmux, tor, waf, webkitgtk, wine,
+	wireguard-linux-compat, wireshark, wpewebkit, xen, xorriso,
+	xvisor, zeromq, zxing-cpp
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11931: Bugs in support/scripts/apply-patches.sh
+
+2020.08.1, released October 12th, 2020
+
+	Important / security related fixes.
+
+	Fixes for various compilation issues with GCC 10.x.
+
+	meson: Correct SDK cross-compilation.conf file when
+	per-package builds were used to build SDK.
+
+	systemd: Use /run rather than /var/run for PID files in units.
+
+	Toolchain: use Secure-PLT rather than BSS-PLT for PowerPC 32.
+
+	Fakeroot scripts (BR2_ROOTFS_POST_FAKEROOT_SCRIPT) are now run
+	after all finalization hooks (including pre-rootfs) to ensure
+	they can override any late configuration done by packages.
+
+	support/script/pycompile: Rework logic to ensure .pyc files
+	contain absolute target paths, fixing code inspection at
+	runtime when executed with cwd != '/'.
+
+	support/scripts/setlocalversion: Correct Mercurial output to
+	match behaviour with Git.
+
+	support/scripts/apply-patches.sh: Use patch
+	--no-backup-if-mismatch, so we no longer blindly have to
+	remove *.orig files after patching, fixing issues with
+	packages containing such files.
+
+	fs/jffs2: Now correctly handles xattrs
+
+	Updated/fixed packages: acpica, afboot-stm32, alsa-utils,
+	apparmor, bandwidthd, barebox, bash, bison, brotli,
+	cifs-utils, cups, dhcpcd, dhcpdump, docker-cli, docker-engine,
+	ecryptfs-utils, efl, fail2ban, fbterm, ffmpeg, fontconfig,
+	freetype, gcc, gdb, ghostscript, gnupg2, gnutls, go, gqview,
+	gst1-plugins-base, gst1-plugins-ugly, ipmitool, jbig2dec,
+	kexec, lcdproc, libcamera, libhtp, libnetconf2, libraw,
+	libssh, libxml2, libxml-parser-perl, libzip, linux-headers,
+	live555, localedef, ltp-testsuite, lua, matchbox, memcached,
+	memtester, mesa3d, meson, minidlna, mongodb, mongrel2, motion,
+	mraa, mtd, musepack, neardal, netatalk, netperf, netsniff-ng,
+	nginx, nodejs, nss-pam-ldapd, open-plc-utils, openswan,
+	opentyrian, openvmtools, php, postgresql, python,
+	python-aenum, python-cycler, python-engineio, python-fire,
+	python-pymodbus, python-scapy, python-semver,
+	python-sentry-sdk, python-socketio, python-texttable,
+	python-tinyrpc, python-txtorcon, python3, qt5base, quagga,
+	read-edid, redis, rsh-redone, runc, samba4, socketcand,
+	strace, supertux, suricata, systemd, ti-utils, trinity,
+	uclibc, usb_modeswitch, vlc, vsftpd, wampcc,
+	wayland-protocols, wireguard-linux-compat, wireshark, wlroots,
+	wolfssl, w_scan, xerces, xfsprogs, xdriver-xf86-video-ati,
+	xserver_xorg-server, ympd, zeromq, zlib-ng, zstd
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12911: usb_modeswitch installation race condition
+	#13236: Can't compile linux 5.4.8 (with gcc 10 on host)
+
 2020.08, released September 1st, 2020
 
 	Various fixes.
@@ -127,6 +356,57 @@
 	#13046: Optimize for fast -Ofast is not compliant
 	#13081: host-e2fsprogs attempts to create udev  rules.d on build host if not exists
 	#13101: BR audit2allow support
+
+2020.05.3, released October 12th, 2020
+
+	Important / security related fixes.
+
+	meson: Correct SDK cross-compilation.conf file when
+	per-package builds were used to build SDK.
+
+	systemd: Use /run rather than /var/run for PID files in units.
+
+	Toolchain: use Secure-PLT rather than BSS-PLT for PowerPC 32.
+
+	Fakeroot scripts (BR2_ROOTFS_POST_FAKEROOT_SCRIPT) are now run
+	after all finalization hooks (including pre-rootfs) to ensure
+	they can override any late configuration done by packages.
+
+	support/script/pycompile: Rework logic to ensure .pyc files
+	contain absolute target paths, fixing code inspection at
+	runtime when executed with cwd != '/'.
+
+	support/scripts/setlocalversion: Correct Mercurial output to
+	match behaviour with Git.
+
+	support/scripts/apply-patches.sh: Use patch
+	--no-backup-if-mismatch, so we no longer blindly have to
+	remove *.orig files after patching, fixing issues with
+	packages containing such files.
+
+	Updated/fixed packages: alsa-utils, apparmor, avahi,
+	bandwidthd, barebox, bash, bison, brotli, busybox, cifs-utils,
+	cryptsetup, cups, dhcpcd, dhcpdump, docker-cli, docker-engine,
+	ecryptfs-utils, efl, fail2ban, freetype, gcc, gdb,
+	ghostscript, gnutls, go, graphite2, gst1-plugins-base,
+	gst1-plugins-ugly, imagemagick, ipmitool, jbig2dec, libhtp,
+	libraw, libssh, libxml2, libxml-parser-perl, linux-headers,
+	localedef, lua, mbedtls, memcached, mesa3d, meson, minidlna,
+	mongodb, nginx, nodejs, nss-pam-ldapd, openvmtools,
+	paho-mqtt-c, php, postgresql, python, python-aenum,
+	python-django, python-engineio, python-fire, python-pymodbus,
+	python-scapy, python-semver, python-sentry-sdk,
+	python-socketio, python-texttable, python-tinyrpc,
+	python-txtorcon, python3, qt5base, rsh-redone, runc, samba4,
+	strace, supertux, suricata, systemd, uclibc, usb_modeswitch,
+	vlc, vsftpd, wayland-protocols, wireguard-linux-compat,
+	wireshark, wlroots, wolfssl, xserver_xorg-server, ympd,
+	zeromq, zstd
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12911: usb_modeswitch installation race condition
+	#13251: cryptsetup does not work on branch 2020.02 following..
 
 2020.05.2, released August 29th, 2020
 
@@ -392,6 +672,85 @@
 	#12751: OpenJdk package installation issues on	target
 	#12796: Update OpenSSL to Version 1.1.1g to patch  CVE-2020-1967
 	#12811: bootstrap stuck and no login prompt
+
+2020.02.8, released November 16th, 2020
+
+	Important / security related fixes.
+
+	Updated/fixed packages: angularjs, argp-standalone, asterisk,
+	bandwidthd, bitcoin, busybox, cryptsetup, darkhttpd, davfs2,
+	docker-cli, docker-containerd, docker-engine,
+	dovecot-pigeonhole, fastd, fbset, fbtft, freetype, gcc,
+	ghostscript, gnuradio, grpc, gst1-plugins-bad, jsoncpp,
+	keepalived, libass, libexif, libiqrf, libpam-tacplus, libraw,
+	linux-backports, linux-firmware, lzlib, netsnmp, nginx,
+	oniguruma, opencv3, openntpd, patchelf, php, postgresql,
+	python-pyqt5, qt5base, rauc, redis, samba4, slirp, systemd,
+	tcpdump, tmux, tor, webkitgtk, wireguard-linux-compat,
+	wireshark, wpewebkit, xen, xorriso, zeromq, zxing-cpp
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11931: Bugs in support/scripts/apply-patches.sh
+
+2020.02.7, released October 12th, 2020
+
+	Important / security related fixes.
+
+	meson: Correct SDK cross-compilation.conf file when
+	per-package builds were used to build SDK.
+
+	systemd: Use /run rather than /var/run for PID files in units.
+
+	Toolchain: use Secure-PLT rather than BSS-PLT for PowerPC 32.
+
+	support/script/pycompile: Rework logic to ensure .pyc files
+	contain absolute target paths, fixing code inspection at
+	runtime when executed with cwd != '/'.
+
+	support/scripts/setlocalversion: Correct Mercurial output to
+	match behaviour with Git.
+
+	support/scripts/apply-patches.sh: Use patch
+	--no-backup-if-mismatch, so we no longer blindly have to
+	remove *.orig files after patching, fixing issues with
+	packages containing such files.
+
+	Updated/fixed packages: bandwidthd, barebox, bash, bison,
+	brotli, cifs-utils, cryptsetup, dhcpcd, dhcpdump, docker-cli,
+	docker-engine, ecryptfs-utils, efl, fail2ban, freetype, gcc,
+	gdb, ghostscript, gnutls, go, gst1-plugins-base,
+	gst1-plugins-ugly, ipmitool, libhtp, libraw, libssh, libxml2,
+	libxml-parser-perl, localedef, lua, memcached, mesa3d, meson,
+	minidlna, nginx, nodejs, nss-pam-ldapd, openvmtools, php,
+	postgresql, python, python-aenum, python-autobahn,
+	python-engineio, python-fire, python-pymodbus, python-scapy,
+	python-semver, python-sentry-sdk, python-socketio,
+	python-texttable, python-tinyrpc, python-txtorcon, python3,
+	qt5base, runc, samba4, strace, supertux, suricata, systemd,
+	vlc, wayland-protocols, wireguard-linux-compat, wireshark,
+	xserver_xorg-server, zeromq, zstd
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12911: usb_modeswitch installation race condition
+	#13251: cryptsetup does not work on branch 2020.02 following..
+
+2020.02.6, released September 5th, 2020
+
+	Important / security related fixes.
+
+	Fix a 2020.02.5 build regression in busybox when systemd (and
+	not less) are enabled because of missing infrastructure.
+
+	Updated/fixed packages: alsa-utils, avahi, busybox, cups,
+	docker-cli, graphite2, imagemagick, libeXosip2, mbedtls,
+	nvidia-driver, paho-mqtt-c, python-django, systemd, uclibc,
+	usb_modeswitch, wolfssl
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12911: usb_modeswitch installation race condition
 
 2020.02.5, released August 29th, 2020
 

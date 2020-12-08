@@ -1,40 +1,21 @@
-# Configuration for Gitlab-CI.
-# Builds appear on https://gitlab.com/buildroot.org/buildroot/pipelines
-
-image: buildroot/base:20200814.2228
-
-.check_base:
-    rules:
-        - if: '$CI_COMMIT_REF_NAME =~ /^.*-.*_defconfig$/ || $CI_COMMIT_REF_NAME =~ /^.*-tests\..*$/'
-          when: never
-        - when: always
-
-check-DEVELOPERS:
-    extends: .check_base
+.check-DEVELOPERS_base:
     # get-developers should print just "No action specified"; if it prints
     # anything else, it's a parse error.
     # The initial ! is removed by YAML so we need to quote it.
     script:
         - "! utils/get-developers | grep -v 'No action specified'"
 
-check-flake8:
-    extends: .check_base
-    before_script:
-        # Help flake8 to find the Python files without .py extension.
-        - find * -type f -name '*.py' > files.txt
-        - find * -type f -print0 | xargs -0 file | grep 'Python script' | cut -d':' -f1 >> files.txt
-        - sort -u files.txt | tee files.processed
+.check-flake8_base:
     script:
-        - python3 -m flake8 --statistics --count --max-line-length=132 $(cat files.processed)
-    after_script:
-        - wc -l files.processed
+        - make check-flake8
 
-check-package:
-    extends: .check_base
+.check-package_base:
     script:
         - make check-package
 
 .defconfig_check:
+    before_script:
+        - DEFCONFIG_NAME=$(echo ${CI_JOB_NAME} | sed -e 's,_check$,,g')
     script:
         - echo "Configure Buildroot for ${DEFCONFIG_NAME}"
         - make ${DEFCONFIG_NAME}
@@ -44,10 +25,10 @@ check-package:
         expire_in: 2 weeks
         paths:
             - .config
-    before_script:
-        - DEFCONFIG_NAME=$(echo ${CI_JOB_NAME} | sed -e 's,_check$,,g')
 
 .defconfig_base:
+    before_script:
+        - DEFCONFIG_NAME=${CI_JOB_NAME}
     script:
         - echo "Configure Buildroot for ${DEFCONFIG_NAME}"
         - make ${DEFCONFIG_NAME}
@@ -77,29 +58,9 @@ check-package:
             - output/build/*/.config
             - runtime-test.log
 
-.defconfig:
-    extends: .defconfig_base
-    # Running the defconfigs for every push is too much, so limit to
-    # explicit triggers through the API.
-    rules:
-        # For tags, create a pipeline.
-        - if: '$CI_COMMIT_TAG'
-        # For pipeline created by using a trigger token.
-        - if: '$CI_PIPELINE_TRIGGERED'
-        # For the branch or tag name named *-defconfigs, create a pipeline.
-        - if: '$CI_COMMIT_REF_NAME =~ /^.*-defconfigs$/'
-    before_script:
-        - DEFCONFIG_NAME=${CI_JOB_NAME}
-
-one-defconfig:
-    extends: .defconfig_base
-    rules:
-        # For the branch or tag name named *-*_defconfigs, create a pipeline.
-        - if: '$CI_COMMIT_REF_NAME =~ /^.*-.*_defconfig$/'
-    before_script:
-        - DEFCONFIG_NAME=$(echo ${CI_COMMIT_REF_NAME} | sed -e 's,^.*-,,g')
-
 .runtime_test_base:
+    before_script:
+        - TEST_CASE_NAME=${CI_JOB_NAME}
     # Keep build directories so the rootfs can be an artifact of the job. The
     # runner will clean up those files for us.
     # Multiply every emulator timeout by 10 to avoid sporadic failures in
@@ -115,23 +76,3 @@ one-defconfig:
             - test-output/*/.config
             - test-output/*/images/*
 
-.runtime_test:
-    extends: .runtime_test_base
-    # Running the runtime tests for every push is too much, so limit to
-    # explicit triggers through the API.
-    rules:
-        # For tags, create a pipeline.
-        - if: '$CI_COMMIT_TAG'
-        # For pipeline created by using a trigger token.
-        - if: '$CI_PIPELINE_TRIGGERED'
-        # For the branch or tag name named *-runtime-tests, create a pipeline.
-        - if: '$CI_COMMIT_REF_NAME =~ /^.*-runtime-tests$/'
-    before_script:
-        - TEST_CASE_NAME=${CI_JOB_NAME}
-
-one-runtime_test:
-    extends: .runtime_test_base
-    rules:
-        - if: '$CI_COMMIT_REF_NAME =~ /^.*-tests\..*$/'
-    before_script:
-        - TEST_CASE_NAME=$(echo ${CI_COMMIT_REF_NAME} | sed -e 's,^.*-,,g')

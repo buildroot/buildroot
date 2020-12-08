@@ -17,6 +17,8 @@ WOLFSSL_DEPENDENCIES = host-pkgconf
 # script, so we need autoreconf
 WOLFSSL_AUTORECONF = YES
 
+WOLFSSL_CONF_OPTS = --disable-examples --disable-crypttests
+
 ifeq ($(BR2_PACKAGE_WOLFSSL_ALL),y)
 WOLFSSL_CONF_OPTS += --enable-all
 else

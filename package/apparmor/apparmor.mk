@@ -5,9 +5,9 @@
 ################################################################################
 
 # When updating the version here, please also update the libapparmor package
-APPARMOR_VERSION_MAJOR = 2.13
-APPARMOR_VERSION = $(APPARMOR_VERSION_MAJOR).4
-APPARMOR_SITE = https://launchpad.net/apparmor/$(APPARMOR_VERSION_MAJOR)/$(APPARMOR_VERSION)/+download
+APPARMOR_VERSION_MAJOR = 3.0
+APPARMOR_VERSION = $(APPARMOR_VERSION_MAJOR).0
+APPARMOR_SITE = https://launchpad.net/apparmor/$(APPARMOR_VERSION_MAJOR)/$(APPARMOR_VERSION_MAJOR)/+download
 APPARMOR_DL_SUBDIR = libapparmor
 APPARMOR_LICENSE = GPL-2.0
 APPARMOR_LICENSE_FILES = LICENSE parser/COPYING.GPL
@@ -53,6 +53,15 @@ ifeq ($(BR2_PACKAGE_APACHE),y)
 APPARMOR_DEPENDENCIES += apache
 APPARMOR_TOOLS += changehat/mod_apparmor
 APPARMOR_MAKE_OPTS += APXS=$(STAGING_DIR)/usr/bin/apxs
+
+ifeq ($(BR2_PER_PACKAGE_DIRECTORIES),y)
+define APPARMOR_FIXUP_APXS
+	$(SED) "s@$(PER_PACKAGE_DIR)/[^/]\+/@$(PER_PACKAGE_DIR)/apparmor/@g" \
+		$(STAGING_DIR)/usr/bin/apxs \
+		$(STAGING_DIR)/usr/build/config_vars.mk
+endef
+APPARMOR_POST_CONFIGURE_HOOKS += APPARMOR_FIXUP_APXS
+endif
 endif
 
 define APPARMOR_BUILD_CMDS
@@ -79,7 +88,7 @@ endef
 define APPARMOR_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 0755 $(@D)/parser/apparmor.systemd \
 		$(TARGET_DIR)/lib/apparmor/apparmor.systemd
-	$(INSTALL) -D -m 0755 $(@D)/parser/apparmor.service \
+	$(INSTALL) -D -m 0644 $(@D)/parser/apparmor.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/apparmor.service
 endef
 

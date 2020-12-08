@@ -22,6 +22,9 @@ CUPS_CONF_OPTS = \
 	--disable-gssapi \
 	--disable-pam \
 	--libdir=/usr/lib \
+	--with-cups-user=lp \
+	--with-cups-group=lp \
+	--with-system-groups="lpadmin sys root" \
 	--without-rcdir
 CUPS_CONFIG_SCRIPTS = cups-config
 CUPS_DEPENDENCIES = \
@@ -72,9 +75,25 @@ else
 CUPS_CONF_OPTS += --disable-avahi
 endif
 
+ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
+define CUPS_INSTALL_UDEV_RULES
+	$(INSTALL) -D -m 0644 package/cups/70-usb-printers.rules \
+		$(TARGET_DIR)/lib/udev/rules.d/70-usb-printers.rules
+endef
+
+CUPS_POST_INSTALL_TARGET_HOOKS += CUPS_INSTALL_UDEV_RULES
+endif
+
 define CUPS_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 0755 package/cups/S81cupsd \
 		$(TARGET_DIR)/etc/init.d/S81cupsd
+endef
+
+# lp user is needed to run cups spooler
+# lpadmin group membership grants administrative privileges
+define CUPS_USERS
+	lp -1 lp -1 * /var/spool/lpd /bin/false - lp
+	- - lpadmin -1 * - - - Printers admin group.
 endef
 
 $(eval $(autotools-package))

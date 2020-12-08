@@ -4,14 +4,14 @@
 #
 ################################################################################
 
-DOCKER_ENGINE_VERSION = 19.03.11
-DOCKER_ENGINE_SITE = $(call github,docker,engine,v$(DOCKER_ENGINE_VERSION))
+DOCKER_ENGINE_VERSION = 19.03.13
+DOCKER_ENGINE_SITE = $(call github,moby,moby,v$(DOCKER_ENGINE_VERSION))
 
 DOCKER_ENGINE_LICENSE = Apache-2.0
 DOCKER_ENGINE_LICENSE_FILES = LICENSE
 
 DOCKER_ENGINE_DEPENDENCIES = host-pkgconf
-DOCKER_ENGINE_SRC_SUBDIR = github.com/docker/docker
+DOCKER_ENGINE_GOMOD = github.com/docker/docker
 
 DOCKER_ENGINE_LDFLAGS = \
 	-X main.GitCommit=$(DOCKER_ENGINE_VERSION) \

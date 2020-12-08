@@ -42,6 +42,9 @@ source "toolchain/toolchain-external/toolchain-external-codescape-mti-mips/Confi
 # NIOSII
 source "toolchain/toolchain-external/toolchain-external-codesourcery-niosII/Config.in"
 
+# Bootlin toolchains, available for virtually all architectures
+source "toolchain/toolchain-external/toolchain-external-bootlin/Config.in"
+
 # Kept last, so it remains the non-default choice, unless there isn't
 # any available toolchain profile for the currently selected
 # architecture, but before toolchains from br2-external trees.
@@ -145,6 +148,9 @@ source "toolchain/toolchain-external/toolchain-external-codescape-mti-mips/Confi
 
 # NIOSII
 source "toolchain/toolchain-external/toolchain-external-codesourcery-niosII/Config.in.options"
+
+# Bootlin toolchains
+source "toolchain/toolchain-external/toolchain-external-bootlin/Config.in.options"
 
 # Custom toolchains
 source "toolchain/toolchain-external/toolchain-external-custom/Config.in.options"

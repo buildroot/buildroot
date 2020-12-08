@@ -24,9 +24,10 @@ endif
 
 # USBPLAT only makes sense with FTDI4222, which requires the ftd2xx library,
 # which doesn't exist in buildroot
-
+# Disable C++ as it is used only by FTDI4222 and tests
 MRAA_CONF_OPTS += \
 	-DBUILDARCH=$(MRAA_ARCH) \
+	-DBUILDCPP=OFF \
 	-DBUILDSWIG=OFF \
 	-DUSBPLAT=OFF \
 	-DFTDI4222=OFF \

@@ -113,6 +113,11 @@ config BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_9271
 	help
 	  Firmware files for the Atheros 9271 module
 
+config BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_10K_QCA9377
+	bool "Atheros 10k (QCA9377)"
+	help
+	  Firmware files for the Atheros QCA9377 module
+
 config BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_10K_QCA998X
 	bool "Atheros 10k (QCA998X)"
 	help
@@ -127,6 +132,22 @@ config BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM43XXX
 	bool "Broadcom BRCM bcm43xxx"
 	help
 	  Firmware files for the Broadcom bcm43xxx, SoftMAC and FullMAC.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM4366B1
+	bool "Broadcom 4366b1"
+	help
+	  Firmware file for the Broadcom 4366b1 FullMAC chip.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM4366C0
+	bool "Broadcom 4366c0"
+	help
+	  Firmware file for the Broadcom 4366c0 FullMAC chip.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22260
+	bool "Intel iwlwifi 22260"
+	help
+	  Firmware files for the Intel Wifi 22260 devices supported by
+	  the iwlwifi kernel driver.
 
 config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_3160
 	bool "Intel iwlwifi 3160"
@@ -272,6 +293,11 @@ config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7601U
 	bool "MediaTek MT7601U"
 	help
 	  MediaTek MT7601U
+
+config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7610E
+	bool "MediaTek MT7610E"
+	help
+	  MediaTek MT7610E
 
 config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT76X2E
 	bool "MediaTek MT76x2e"
