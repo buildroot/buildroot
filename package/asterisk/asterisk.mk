@@ -89,7 +89,6 @@ ASTERISK_CONF_OPTS = \
 	--without-timerfd \
 	--without-tinfo \
 	--without-unbound \
-	--without-unixodbc \
 	--without-vpb \
 	--without-x11 \
 	--with-crypt \
@@ -266,6 +265,13 @@ ASTERISK_DEPENDENCIES += zlib
 ASTERISK_CONF_OPTS += --with-z
 else
 ASTERISK_CONF_OPTS += --without-z
+endif
+
+ifeq ($(BR2_PACKAGE_UNIXODBC),y)
+ASTERISK_DEPENDENCIES += unixodbc
+ASTERISK_CONF_OPTS += --with-unixodbc
+else
+ASTERISK_CONF_OPTS += --without-unixodbc
 endif
 
 ASTERISK_DIRS = \
