@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ASTERISK_VERSION = 16.13.0
+ASTERISK_VERSION = 16.14.1
 # Use the github mirror: it's an official mirror maintained by Digium, and
 # provides tarballs, which the main Asterisk git tree (behind Gerrit) does not.
 ASTERISK_SITE = $(call github,asterisk,asterisk,$(ASTERISK_VERSION))
@@ -76,8 +76,6 @@ ASTERISK_CONF_OPTS = \
 	--without-osptk \
 	--without-oss \
 	--without-postgres \
-	--without-pjproject \
-	--without-pjproject-bundled \
 	--without-popt \
 	--without-resample \
 	--without-sdl \
@@ -91,6 +89,8 @@ ASTERISK_CONF_OPTS = \
 	--without-unbound \
 	--without-vpb \
 	--without-x11 \
+	--with-pjproject-bundled \
+	--with-pjproject \
 	--with-crypt \
 	--with-jansson \
 	--with-libcurl \
