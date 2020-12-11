@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ASTERISK_VERSION = 16.14.1
+ASTERISK_VERSION = 18.1.0
 # Use the github mirror: it's an official mirror maintained by Digium, and
 # provides tarballs, which the main Asterisk git tree (behind Gerrit) does not.
 ASTERISK_SITE = $(call github,asterisk,asterisk,$(ASTERISK_VERSION))
@@ -45,8 +45,6 @@ ASTERISK_PRE_CONFIGURE_HOOKS += ASTERISK_COPY_MENUSELECT
 
 ASTERISK_CONF_OPTS = \
 	--disable-xmldoc \
-	--disable-internal-poll \
-	--disable-asteriskssl \
 	--disable-rpath \
 	--without-bfd \
 	--without-cap \
