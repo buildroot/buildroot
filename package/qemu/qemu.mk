@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QEMU_VERSION = 5.1.0
+QEMU_VERSION = 5.2.0
 QEMU_SOURCE = qemu-$(QEMU_VERSION).tar.xz
 QEMU_SITE = http://download.qemu.org
 QEMU_LICENSE = GPL-2.0, LGPL-2.1, MIT, BSD-3-Clause, BSD-2-Clause, Others/BSD-1c
@@ -14,8 +14,12 @@ QEMU_LICENSE_FILES = COPYING COPYING.LIB
 #       individual source files.
 
 #-------------------------------------------------------------
+
+# The build system is now partly based on Meson.
+# However, building is still done with configure and make as in previous versions of QEMU.
+
 # Target-qemu
-QEMU_DEPENDENCIES = host-pkgconf libglib2 zlib pixman host-python3
+QEMU_DEPENDENCIES = host-meson host-pkgconf libglib2 zlib pixman host-python3
 
 # Need the LIBS variable because librt and libm are
 # not automatically pulled. :-(
@@ -163,7 +167,8 @@ define QEMU_CONFIGURE_CMDS
 			--prefix=/usr \
 			--cross-prefix=$(TARGET_CROSS) \
 			--audio-drv-list= \
-			--python=$(HOST_DIR)/bin/python3 \
+			--meson=$(HOST_DIR)/bin/meson \
+			--ninja=$(HOST_DIR)/bin/ninja \
 			--enable-kvm \
 			--enable-attr \
 			--enable-vhost-net \
@@ -194,6 +199,8 @@ define QEMU_CONFIGURE_CMDS
 			--disable-capstone \
 			--disable-git-update \
 			--disable-opengl \
+			--disable-vhost-user-blk-server \
+			--disable-virtiofsd \
 			$(QEMU_OPTS)
 endef
 
@@ -212,7 +219,7 @@ $(eval $(generic-package))
 #-------------------------------------------------------------
 # Host-qemu
 
-HOST_QEMU_DEPENDENCIES = host-pkgconf host-zlib host-libglib2 host-pixman host-python3
+HOST_QEMU_DEPENDENCIES = host-meson host-pkgconf host-zlib host-libglib2 host-pixman host-python3
 
 #       BR ARCH         qemu
 #       -------         ----
@@ -327,13 +334,16 @@ define HOST_QEMU_CONFIGURE_CMDS
 		--host-cc="$(HOSTCC)" \
 		--extra-cflags="$(HOST_QEMU_CFLAGS)" \
 		--extra-ldflags="$(HOST_LDFLAGS)" \
-		--python=$(HOST_DIR)/bin/python3 \
+		--meson=$(HOST_DIR)/bin/meson \
+		--ninja=$(HOST_DIR)/bin/ninja \
 		--disable-bzip2 \
 		--disable-containers \
 		--disable-curl \
 		--disable-libssh \
 		--disable-linux-io-uring \
 		--disable-sdl \
+		--disable-vhost-user-blk-server \
+		--disable-virtiofsd \
 		--disable-vnc-jpeg \
 		--disable-vnc-png \
 		--disable-vnc-sasl \
