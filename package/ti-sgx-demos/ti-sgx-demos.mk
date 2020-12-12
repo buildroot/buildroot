@@ -12,7 +12,7 @@ TI_SGX_DEMOS_LICENSE = Imagination Technologies License Agreement
 TI_SGX_DEMOS_LICENSE_FILES = LegalNotice.txt
 
 define TI_SGX_DEMOS_INSTALL_TARGET_CMDS
-	cp -dpfr $(@D)/targetfs/arm/Examples/Advanced/Wayland/OGLES* \
+	cp -dpfr $(@D)/targetfs/arm/Examples/Advanced/NullWS/OGLES* \
 		$(TARGET_DIR)/usr/bin/
 endef
 
