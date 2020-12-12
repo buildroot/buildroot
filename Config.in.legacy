@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2021.02"
 
+config BR2_PACKAGE_TI_SGX_LIBGBM
+	bool "ti-sgx-libgbm support removed"
+	select BR2_LEGACY
+	help
+	  TI has merged the ti-sgx-libgbm package with the ti-sgx-um
+	  package
+
 config BR2_PACKAGE_IPSEC_TOOLS
 	bool "ipsec-tools package was removed"
 	select BR2_LEGACY
