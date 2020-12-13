@@ -9,7 +9,7 @@ config BR2_PACKAGE_TI_SGX_UM
 	bool "ti-sgx-um"
 	depends on BR2_PACKAGE_TI_SGX_KM
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libdrm
-	depends on BR2_PACKAGE_HAS_UDEV # ti-sgx-libgbm
+	depends on BR2_PACKAGE_HAS_UDEV
 	# pre-built binaries
 	depends on BR2_TOOLCHAIN_USES_GLIBC
 	select BR2_PACKAGE_LIBDRM
