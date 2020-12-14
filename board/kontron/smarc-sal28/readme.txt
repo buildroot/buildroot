@@ -71,10 +71,3 @@ You will see something like this at boot time:
 [    4.563565] GPT:Alternate GPT header not at the end of the disk.
 [    4.569596] GPT:266272 != 7864319
 [    4.572925] GPT: Use GNU Parted to correct GPT errors.
-
-What does not work
-==================
-
-For reasons unknown, the network card doesn't work if you use the original
-vendor bootloader. Board support patches for upstream u-boot are currently
-pending. Stay tuned.
