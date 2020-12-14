@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MONO_VERSION = 6.8.0.96
+MONO_VERSION = 6.12.0.90
 MONO_SITE = http://download.mono-project.com/sources/mono
 MONO_SOURCE = mono-$(MONO_VERSION).tar.xz
 MONO_LICENSE = GPL-2.0 or MIT (compiler, tools), MIT (libs) or commercial
@@ -42,7 +42,8 @@ endif
 
 MONO_DEPENDENCIES += \
 	host-mono \
-	$(if $(BR2_PACKAGE_LIBUNWIND),libunwind)
+	$(if $(BR2_PACKAGE_LIBUNWIND),libunwind) \
+	libatomic_ops
 
 ## Mono managed
 
