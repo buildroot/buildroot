@@ -1,0 +1,38 @@
+From d744db22f3f0b1fa604517e4414c54531d98eb87 Mon Sep 17 00:00:00 2001
+From: Mark Andrews <marka@isc.org>
+Date: Tue, 15 Dec 2020 12:16:37 +1100
+Subject: [PATCH] fix LIB0 for isc-hmac-fixup and named-nzd2nzf
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ bin/tools/Makefile.in | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/bin/tools/Makefile.in b/bin/tools/Makefile.in
+index b12f80a334..6f984f121a 100644
+--- a/bin/tools/Makefile.in
++++ b/bin/tools/Makefile.in
+@@ -87,7 +87,7 @@ nsec3hash@EXEEXT@: nsec3hash.@O@ ${ISCDEPLIBS} ${DNSDEPLIBS}
+ 
+ isc-hmac-fixup@EXEEXT@: isc-hmac-fixup.@O@ ${ISCDEPLIBS}
+ 	export BASEOBJS="isc-hmac-fixup.@O@"; \
+-	export LIBS0="${ISCLIBS}"; \
++	export LIBS0=""; \
+ 	${FINALBUILDCMD}
+ 
+ genrandom@EXEEXT@: genrandom.@O@
+@@ -104,9 +104,9 @@ dnstap-read@EXEEXT@: dnstap-read.@O@ ${ISCDEPLIBS} ${DNSDEPLIBS}
+ 	export LIBS0="${DNSLIBS}"; \
+ 	${FINALBUILDCMD}
+ 
+-named-nzd2nzf@EXEEXT@: named-nzd2nzf.@O@ ${NZDDEPLIBS}
++named-nzd2nzf@EXEEXT@: named-nzd2nzf.@O@ ${ISCDEPLIBS}
+ 	export BASEOBJS="named-nzd2nzf.@O@"; \
+-	export LIBS0="${ISCCFGLIBS} ${ISCCCLIBS} ${BIND9LIBS} ${DNSLIBS}"; \
++	export LIBS0=""; \
+ 	${FINALBUILDCMD}
+ 
+ doc man:: ${MANOBJS}
+-- 
+2.20.1
+

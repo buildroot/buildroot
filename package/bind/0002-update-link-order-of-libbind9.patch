@@ -1,0 +1,26 @@
+From f63b2d8fbd010d60f2a07f4f69b11d7a10c48ae5 Mon Sep 17 00:00:00 2001
+From: Mark Andrews <marka@isc.org>
+Date: Tue, 15 Dec 2020 12:07:03 +1100
+Subject: [PATCH] update link order of libbind9
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ lib/bind9/Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/bind9/Makefile.in b/lib/bind9/Makefile.in
+index 2634451b15..704259dde1 100644
+--- a/lib/bind9/Makefile.in
++++ b/lib/bind9/Makefile.in
+@@ -61,7 +61,7 @@ libbind9.la: ${OBJS} ${ISCCFGDEPLIBS} ${ISCDEPLIBS} ${DNSDEPLIBS}
+ 	${LIBTOOL_MODE_LINK} \
+ 		${CC} ${ALL_CFLAGS} ${LDFLAGS} -o libbind9.la -rpath ${libdir} \
+ 		-version-info ${LIBINTERFACE}:${LIBREVISION}:${LIBAGE} \
+-		${OBJS} ${DNSLIBS} ${ISCCFGLIBS} ${ISCLIBS} @DNS_CRYPTO_LIBS@ \
++		${OBJS} ${ISCCFGLIBS} ${DNSLIBS} ${ISCLIBS} @DNS_CRYPTO_LIBS@ \
+ 		${LIBS}
+ 
+ timestamp: libbind9.@A@
+-- 
+2.20.1
+

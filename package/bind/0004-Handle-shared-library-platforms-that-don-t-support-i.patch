@@ -1,0 +1,30 @@
+From 5cec1ba2fa2f18e9d9e926eab923e0b1b7b8d226 Mon Sep 17 00:00:00 2001
+From: Mark Andrews <marka@isc.org>
+Date: Tue, 15 Dec 2020 19:18:41 +1100
+Subject: [PATCH] Handle shared library platforms that don't support inter
+ library dependancies
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ bin/tools/Makefile.in | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/bin/tools/Makefile.in b/bin/tools/Makefile.in
+index 6f984f121a..d34bac1192 100644
+--- a/bin/tools/Makefile.in
++++ b/bin/tools/Makefile.in
+@@ -94,9 +94,9 @@ genrandom@EXEEXT@: genrandom.@O@
+ 	${LIBTOOL_MODE_LINK} ${PURIFY} ${CC} ${CFLAGS} ${LDFLAGS} \
+ 		-o $@ genrandom.@O@ @GENRANDOMLIB@ ${LIBS}
+ 
+-mdig@EXEEXT@: mdig.@O@ ${ISCDEPLIBS} ${DNSDEPLIBS} ${BIND9DEPLIBS}
++mdig@EXEEXT@: mdig.@O@ ${ISCDEPLIBS} ${DNSDEPLIBS} ${BIND9DEPLIBS} ${ISCCFGDEPLIBS}
+ 	export BASEOBJS="mdig.@O@"; \
+-	export LIBS0="${DNSLIBS} ${BIND9LIBS}"; \
++	export LIBS0="${BIND9LIBS} ${ISCCFGLIBS} ${DNSLIBS}"; \
+ 	${FINALBUILDCMD}
+ 
+ dnstap-read@EXEEXT@: dnstap-read.@O@ ${ISCDEPLIBS} ${DNSDEPLIBS}
+-- 
+2.20.1
+
