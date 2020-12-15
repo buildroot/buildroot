@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2021.02"
 
+config BR2_powerpc_601
+	bool "PowerPC 601 support removed"
+	select BR2_LEGACY
+	help
+	  The support for the PowerPC 601 processors has been removed.
+
 config BR2_PACKAGE_TI_SGX_LIBGBM
 	bool "ti-sgx-libgbm support removed"
 	select BR2_LEGACY
