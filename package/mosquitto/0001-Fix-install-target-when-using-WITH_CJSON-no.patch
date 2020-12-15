@@ -1,0 +1,62 @@
+From f7dc138157ca2252d7ed58b61daad19b63fcfe4c Mon Sep 17 00:00:00 2001
+From: "Roger A. Light" <roger@atchoo.org>
+Date: Fri, 11 Dec 2020 00:02:43 +0000
+Subject: [PATCH] Fix `install` target when using WITH_CJSON=no.
+
+Closes #1938. Thanks to apple3306 and JulianCaruso.
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+[Peter: drop ChangeLog.txt hunk]
+---
+ apps/mosquitto_ctrl/Makefile      | 6 +++++-
+ plugins/dynamic-security/Makefile | 6 +++++-
+ 2 files changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/apps/mosquitto_ctrl/Makefile b/apps/mosquitto_ctrl/Makefile
+index 3a4843bf..d2122abc 100644
+--- a/apps/mosquitto_ctrl/Makefile
++++ b/apps/mosquitto_ctrl/Makefile
+@@ -36,7 +36,7 @@ else
+ TARGET:=
+ endif
+ 
+-all : $(TARGET)
++all : ${TARGET}
+ 
+ mosquitto_ctrl : ${OBJS}
+ 	${CROSS_COMPILE}${CC} ${APP_LDFLAGS} $^ -o $@ $(PASSWD_LDADD) $(LOCAL_LDFLAGS) $(LIBMOSQ) -lcjson -ldl
+@@ -84,8 +84,12 @@ password_mosq.o : ../../src/password_mosq.c ../../src/password_mosq.h
+ 	${CROSS_COMPILE}${CC} $(APP_CPPFLAGS) $(APP_CFLAGS) -c $< -o $@
+ 
+ install : all
++ifeq ($(WITH_TLS),yes)
++ifeq ($(WITH_CJSON),yes)
+ 	$(INSTALL) -d "${DESTDIR}$(prefix)/bin"
+ 	$(INSTALL) ${STRIP_OPTS} mosquitto_ctrl "${DESTDIR}${prefix}/bin/mosquitto_ctrl"
++endif
++endif
+ 
+ uninstall :
+ 	-rm -f "${DESTDIR}${prefix}/bin/mosquitto_ctrl"
+diff --git a/plugins/dynamic-security/Makefile b/plugins/dynamic-security/Makefile
+index 203fbc3e..810a17ba 100644
+--- a/plugins/dynamic-security/Makefile
++++ b/plugins/dynamic-security/Makefile
+@@ -74,9 +74,13 @@ clean:
+ check: test
+ test:
+ 
+-install: ${PLUGIN_NAME}.so
++install: all
++ifeq ($(WITH_CJSON),yes)
++ifeq ($(WITH_TLS),yes)
+ 	$(INSTALL) -d "${DESTDIR}$(prefix)/lib"
+ 	$(INSTALL) ${STRIP_OPTS} ${PLUGIN_NAME}.so "${DESTDIR}${prefix}/lib/${PLUGIN_NAME}.so"
++endif
++endif
+ 
+ uninstall :
+ 	-rm -f "${DESTDIR}${prefix}/lib/${PLUGIN_NAME}.so"
+-- 
+2.20.1
+
