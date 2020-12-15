@@ -79,4 +79,11 @@ define OPENVPN_INSTALL_INIT_SYSV
 		$(TARGET_DIR)/etc/init.d/S60openvpn
 endef
 
+define OPENVPN_INSTALL_INIT_SYSTEMD
+	$(INSTALL) -D -m 0644 $(@D)/distro/systemd/openvpn-client@.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/openvpn-client@.service
+	$(INSTALL) -D -m 0644 $(@D)/distro/systemd/openvpn-server@.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/openvpn-server@.service
+endef
+
 $(eval $(autotools-package))
