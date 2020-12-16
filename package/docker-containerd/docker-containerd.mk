@@ -14,9 +14,14 @@ DOCKER_CONTAINERD_GOMOD = github.com/containerd/containerd
 DOCKER_CONTAINERD_LDFLAGS = \
 	-X $(DOCKER_CONTAINERD_GOMOD)/version.Version=$(DOCKER_CONTAINERD_VERSION)
 
-DOCKER_CONTAINERD_BUILD_TARGETS = cmd/ctr cmd/containerd cmd/containerd-shim
+DOCKER_CONTAINERD_BUILD_TARGETS = \
+	cmd/containerd \
+	cmd/containerd-shim \
+	cmd/containerd-shim-runc-v1 \
+	cmd/containerd-shim-runc-v2 \
+	cmd/ctr
 
-DOCKER_CONTAINERD_INSTALL_BINS = containerd containerd-shim
+DOCKER_CONTAINERD_INSTALL_BINS = $(notdir $(DOCKER_CONTAINERD_BUILD_TARGETS))
 
 ifeq ($(BR2_PACKAGE_LIBAPPARMOR),y)
 DOCKER_CONTAINERD_DEPENDENCIES += libapparmor
@@ -33,13 +38,5 @@ DOCKER_CONTAINERD_DEPENDENCIES += btrfs-progs
 else
 DOCKER_CONTAINERD_TAGS += no_btrfs
 endif
-
-define DOCKER_CONTAINERD_INSTALL_SYMLINKS
-	ln -fs runc $(TARGET_DIR)/usr/bin/docker-runc
-	ln -fs containerd-shim $(TARGET_DIR)/usr/bin/docker-containerd-shim
-	ln -fs containerd $(TARGET_DIR)/usr/bin/docker-containerd
-endef
-
-DOCKER_CONTAINERD_POST_INSTALL_TARGET_HOOKS += DOCKER_CONTAINERD_INSTALL_SYMLINKS
 
 $(eval $(golang-package))
