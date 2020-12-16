@@ -52,14 +52,14 @@ else
 GTEST_CONF_OPTS += -DBUILD_GMOCK=OFF
 endif
 
-define HOST_GTEST_INSTALL_CMDS
+define HOST_GTEST_POST_INSTALL_PYTHON
 	$(INSTALL) -D -m 0755 $(@D)/googlemock/scripts/generator/gmock_gen.py \
 		$(HOST_DIR)/bin/gmock_gen
 	cp -rp $(@D)/googlemock/scripts/generator/cpp \
 		$(HOST_GTEST_GMOCK_PYTHONPATH)
 endef
 
+HOST_GTEST_POST_INSTALL_HOOKS += HOST_GTEST_POST_INSTALL_PYTHON
+
 $(eval $(cmake-package))
-# The host package does not build anything, just installs gmock_gen stuff, so
-# it does not need to be a host-cmake-package.
-$(eval $(host-generic-package))
+$(eval $(host-cmake-package))
