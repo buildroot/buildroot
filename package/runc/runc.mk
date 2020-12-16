@@ -11,7 +11,7 @@ RUNC_LICENSE_FILES = LICENSE
 
 RUNC_WORKSPACE = Godeps/_workspace
 
-RUNC_LDFLAGS = -X main.gitCommit=$(RUNC_VERSION)
+RUNC_LDFLAGS = -X main.version=$(RUNC_VERSION)
 
 RUNC_TAGS = cgo static_build
 
