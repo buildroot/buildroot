@@ -1,0 +1,9 @@
+# Loopback
+auto lo
+iface lo inet loopback
+
+# Ethernet over USB
+iface usb0 inet static
+	address 10.1.1.4
+	netmask 255.255.255.0
+	post-up /sbin/route add default gw 10.1.1.1 metric 1
