@@ -1,0 +1,62 @@
+From 6c938b755682629a26f85e5540f40c0d316130ed Mon Sep 17 00:00:00 2001
+From: Gao Xiang <hsiangkao@aol.com>
+Date: Tue, 8 Dec 2020 18:57:41 +0800
+Subject: erofs-utils: fix multiple definition of `sbi'
+
+As nl6720 reported [1], lib/inode.o (mkfs) and lib/super.o (erofsfuse)
+could be compiled together by some options. Fix it now.
+
+[1] https://lore.kernel.org/r/10789285.Na0ui7I3VY@walnut
+
+Link: https://lore.kernel.org/r/20201208105741.9614-1-hsiangkao@aol.com
+Fixes: 5e35b75ad499 ("erofs-utils: introduce fuse implementation")
+Reported-by: nl6720 <nl6720@gmail.com>
+Reviewed-by: Li Guifu <bluce.lee@aliyun.com>
+Signed-off-by: Gao Xiang <hsiangkao@aol.com>
+---
+ lib/config.c | 1 +
+ lib/inode.c  | 2 --
+ lib/super.c  | 2 --
+ 3 files changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/lib/config.c b/lib/config.c
+index 3155112..3ecd481 100644
+--- a/lib/config.c
++++ b/lib/config.c
+@@ -11,6 +11,7 @@
+ #include "erofs/internal.h"
+ 
+ struct erofs_configure cfg;
++struct erofs_sb_info sbi;
+ 
+ void erofs_init_configure(void)
+ {
+diff --git a/lib/inode.c b/lib/inode.c
+index 3d634fc..0c4839d 100644
+--- a/lib/inode.c
++++ b/lib/inode.c
+@@ -22,8 +22,6 @@
+ #include "erofs/xattr.h"
+ #include "erofs/exclude.h"
+ 
+-struct erofs_sb_info sbi;
+-
+ #define S_SHIFT                 12
+ static unsigned char erofs_ftype_by_mode[S_IFMT >> S_SHIFT] = {
+ 	[S_IFREG >> S_SHIFT]  = EROFS_FT_REG_FILE,
+diff --git a/lib/super.c b/lib/super.c
+index 2d36692..025cefe 100644
+--- a/lib/super.c
++++ b/lib/super.c
+@@ -11,8 +11,6 @@
+ #include "erofs/io.h"
+ #include "erofs/print.h"
+ 
+-struct erofs_sb_info sbi;
+-
+ static bool check_layout_compatibility(struct erofs_sb_info *sbi,
+ 				       struct erofs_super_block *dsb)
+ {
+-- 
+cgit 1.2.3-1.el7
+

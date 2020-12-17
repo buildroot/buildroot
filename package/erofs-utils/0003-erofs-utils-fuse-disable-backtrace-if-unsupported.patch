@@ -1,0 +1,82 @@
+From 833563ffd3126b6e85fc54402c6d68c29a30264c Mon Sep 17 00:00:00 2001
+From: Gao Xiang <hsiangkao@aol.com>
+Date: Thu, 17 Dec 2020 16:59:04 +0800
+Subject: [PATCH] erofs-utils: fuse: disable backtrace if unsupported
+
+backtrace is a GNU extension, enable it conditionally.
+
+Signed-off-by: Gao Xiang <hsiangkao@aol.com>
+---
+ configure.ac | 3 ++-
+ fuse/main.c  | 8 ++++++--
+ 2 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index d5fdfb8a3d17..28926c303c5c 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -96,6 +96,7 @@ AC_ARG_VAR([LZ4_LIBS], [linker flags for lz4])
+ # Checks for header files.
+ AC_CHECK_HEADERS(m4_flatten([
+ 	dirent.h
++	execinfo.h
+ 	fcntl.h
+ 	getopt.h
+ 	inttypes.h
+@@ -147,7 +148,7 @@ AC_CHECK_DECL(lseek64,[AC_DEFINE(HAVE_LSEEK64_PROTOTYPE, 1,
+    #include <unistd.h>])
+ 
+ # Checks for library functions.
+-AC_CHECK_FUNCS([fallocate gettimeofday memset realpath strdup strerror strrchr strtoull])
++AC_CHECK_FUNCS([backtrace fallocate gettimeofday memset realpath strdup strerror strrchr strtoull])
+ 
+ # Configure libuuid
+ AS_IF([test "x$with_uuid" != "xno"], [
+diff --git a/fuse/main.c b/fuse/main.c
+index 1e24efe110c2..c16291272e75 100644
+--- a/fuse/main.c
++++ b/fuse/main.c
+@@ -6,7 +6,6 @@
+  */
+ #include <stdlib.h>
+ #include <string.h>
+-#include <execinfo.h>
+ #include <signal.h>
+ #include <libgen.h>
+ #include <fuse.h>
+@@ -168,6 +167,9 @@ static int optional_opt_func(void *data, const char *arg, int key,
+ 	return 1;
+ }
+ 
++#if defined(HAVE_EXECINFO_H) && defined(HAVE_BACKTRACE)
++#include <execinfo.h>
++
+ static void signal_handle_sigsegv(int signal)
+ {
+ 	void *array[10];
+@@ -187,7 +189,7 @@ static void signal_handle_sigsegv(int signal)
+ 	erofs_dump("========================================\n");
+ 	abort();
+ }
+-
++#endif
+ 
+ int main(int argc, char *argv[])
+ {
+@@ -197,11 +199,13 @@ int main(int argc, char *argv[])
+ 	erofs_init_configure();
+ 	fprintf(stderr, "%s %s\n", basename(argv[0]), cfg.c_version);
+ 
++#if defined(HAVE_EXECINFO_H) && defined(HAVE_BACKTRACE)
+ 	if (signal(SIGSEGV, signal_handle_sigsegv) == SIG_ERR) {
+ 		fprintf(stderr, "failed to initialize signals\n");
+ 		ret = -errno;
+ 		goto err;
+ 	}
++#endif
+ 
+ 	/* parse options */
+ 	ret = fuse_opt_parse(&args, &fusecfg, option_spec, optional_opt_func);
+-- 
+2.24.0
+
