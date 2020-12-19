@@ -1,0 +1,10 @@
+config BR2_PACKAGE_TINIFIER
+	bool "tinifier"
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	help
+	  CLI tool for images compressing
+
+	  This tool uses tinypng.com API endpoint for compressing your
+	  local jpg/png images (it supports parallel jobs).
+
+	  https://github.com/tarampampam/tinifier
