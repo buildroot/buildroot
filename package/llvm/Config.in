@@ -47,6 +47,12 @@ config BR2_PACKAGE_LLVM_RTTI
 
 	  https://llvm.org/docs/HowToSetUpLLVMStyleRTTI.html
 
+config BR2_PACKAGE_LLVM_BPF
+	bool "BPF backend"
+	help
+	  Build BPF target. Select this option if you are going
+	  to install bcc on the target.
+
 endif
 
 comment "llvm needs a toolchain w/ wchar, threads, C++, gcc >= 4.8, dynamic library"
