@@ -6,7 +6,6 @@
 
 P11_KIT_VERSION = 0.23.16.1
 P11_KIT_SITE = https://github.com/p11-glue/p11-kit/releases/download/$(P11_KIT_VERSION)
-P11_KIT_DEPENDENCIES = host-pkgconf libtasn1
 P11_KIT_INSTALL_STAGING = YES
 P11_KIT_CONF_OPTS = --disable-static
 P11_KIT_CONF_ENV = ac_cv_have_decl_program_invocation_short_name=yes \
@@ -25,6 +24,13 @@ P11_KIT_DEPENDENCIES += host-pkgconf libffi
 P11_KIT_CONF_OPTS += --with-libffi
 else
 P11_KIT_CONF_OPTS += --without-libffi
+endif
+
+ifeq ($(BR2_PACKAGE_LIBTASN1),y)
+P11_KIT_DEPENDENCIES += host-pkgconf libtasn1
+P11_KIT_CONF_OPTS += --with-libtasn1
+else
+P11_KIT_CONF_OPTS += --without-libtasn1
 endif
 
 $(eval $(autotools-package))
