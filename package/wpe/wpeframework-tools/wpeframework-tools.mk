@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_TOOLS_VERSION = 2dff35e844acbeb728c95ff0f2ea9ed43fd22db9
+WPEFRAMEWORK_TOOLS_VERSION = 5ce7e2d84bdc4387dd36842e587ca3d4cad2a360
 
 HOST_WPEFRAMEWORK_TOOLS_SITE = $(call github,rdkcentral,Thunder,$(WPEFRAMEWORK_TOOLS_VERSION))
 HOST_WPEFRAMEWORK_TOOLS_INSTALL_STAGING = YES

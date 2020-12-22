@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PLAYREADY
 	select BR2_PACKAGE_HAS_PLAYREADY
+	depends on BR2_PACKAGE_WPEFRAMEWORK_CDMI_PLAYREADY
 	bool "playready"
 	help
 	  A playready implementation port from Microsoft.
@@ -15,3 +16,15 @@ if BR2_PACKAGE_PLAYREADY
 config BR2_PACKAGE_PROVIDES_PLAYREADY
 	default "playready"
 endif
+
+if BR2_PACKAGE_PLAYREADY
+menu "Extra options"
+config BR2_PLAYREADY_HAS_SECURECLOCK
+       depends on BR2_PACKAGE_HAS_PLAYREADY
+       bool "Secure AntiRollback Clock"
+       default y
+       help
+         Enables the Antirollback clock
+endmenu
+endif
+

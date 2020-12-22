@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PLAYREADY_VERSION = 5af745dd2a8312a34081150c8b374684799fc1c9
+PLAYREADY_VERSION = df162216b561f2f7cd8b3f1553541adf2fbd335c
 PLAYREADY_SITE = git@github.com:Metrological/playready.git
 PLAYREADY_SITE_METHOD = git
 PLAYREADY_LICENSE = PROPRIETARY
@@ -25,6 +25,12 @@ else ifeq ($(BR2_PACKAGE_CPPSDK),y)
         PLAYREADY_CONF_OPTS += -DPLAYREADY_USE_PROVISION=ON
         PLAYREADY_DEPENDENCIES += libprovision
     endif
+endif
+
+ifeq ($(BR2_PLAYREADY_HAS_SECURECLOCK), y)
+    PLAYREADY_CONF_OPTS += -DPLAYREADY_SECURE_CLOCK=ON
+else
+    PLAYREADY_CONF_OPTS += -DPLAYREADY_SECURE_CLOCK=OFF
 endif
 
 define PLAYREADY_INSTALL_STAGING_PC

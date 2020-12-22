@@ -66,6 +66,35 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_COBALT
 
 if BR2_PACKAGE_WPEFRAMEWORK_COBALT
 
+choice BR2_PACKAGE_WPEFRAMEWORK_COBALT_RESOLUTION
+    default BR2_PACKAGE_WPEFRAMEWORK_COBALT_RESOLUTION_720P
+    prompt "resolution"
+    help
+      Select cobalt output resolution
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_RESOLUTION_720P
+    bool "720p"
+    help
+      Set the resolution to 720p (HD Ready)
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_RESOLUTION_1080P
+    bool "1080p"
+    help
+      Set the resolution to 1080p (Full HD)
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_RESOLUTION_2160P
+    bool "2160p"
+    help
+      Set the resolution to 2160p (4k)
+
+endchoice
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_SINGLE_PLAYBACKRATE
+    bool "only 1x playback rate"
+    default n
+    help
+      Select this to enable only 1x playback rate.
+
 config BR2_PACKAGE_WPEFRAMEWORK_COBALT_AUTOSTART
     bool "Start Automatically"
     default n
@@ -118,6 +147,14 @@ config BR2_PACKAGE_WPEFRAMEWORK_COBALT_OPERATOR_NAME
 
 config BR2_PACKAGE_WPEFRAMEWORK_COBALT_FRIENDLY_NAME
     string "friendlyname"
+    default ""
+    
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_SCOPE
+    string "scope"
+    default ""
+
+config BR2_PACKAGE_WPEFRAMEWORK_COBALT_SECRET
+    string "secret"
     default ""
 
 endif
@@ -538,6 +575,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_PACKAGER
     bool "Packager"
     help
       Packager Plugin, install packages based upon OPKG.
+
+config BR2_PACKAGE_WPEFRAMEWORK_PERFORMANCE_MONITOR
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    default n
+    bool "PerformanceMonitor"
+    help
+      PerformanceMonitor Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_PLAYERINFO
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
