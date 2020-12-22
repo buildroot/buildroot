@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_VERSION = 2dff35e844acbeb728c95ff0f2ea9ed43fd22db9
+WPEFRAMEWORK_VERSION = 5ce7e2d84bdc4387dd36842e587ca3d4cad2a360
 WPEFRAMEWORK_SITE = $(call github,rdkcentral,Thunder,$(WPEFRAMEWORK_VERSION))
 WPEFRAMEWORK_INSTALL_STAGING = YES
 WPEFRAMEWORK_DEPENDENCIES = zlib $(call qstrip,$(BR2_PACKAGE_SDK_INSTALL)) host-wpeframework-tools
@@ -61,6 +61,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS),y)
 WPEFRAMEWORK_CONF_OPTS += -DBLUETOOTH_SUPPORT=ON -DBLUETOOTH=ON
+WPEFRAMEWORK_DEPENDENCIES += bluez5_utils
 endif
 
 ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH),y)
