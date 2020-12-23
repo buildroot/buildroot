@@ -46,12 +46,23 @@ endif
 ifneq ($(BR2_PACKAGE_MUTT_IMAP)$(BR2_PACKAGE_MUTT_POP3),)
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 MUTT_DEPENDENCIES += openssl
-MUTT_CONF_OPTS += --with-ssl=$(STAGING_DIR)/usr
+MUTT_CONF_OPTS += \
+	--without-gnutls \
+	--with-ssl=$(STAGING_DIR)/usr
+else ifeq ($(BR2_PACKAGE_GNUTLS),y)
+MUTT_DEPENDENCIES += gnutls
+MUTT_CONF_OPTS += \
+	--with-gnutls=$(STAGING_DIR)/usr \
+	--without-ssl
 else
-MUTT_CONF_OPTS += --without-ssl
+MUTT_CONF_OPTS += \
+	--without-gnutls \
+	--without-ssl
 endif
 else
-MUTT_CONF_OPTS += --without-ssl
+MUTT_CONF_OPTS += \
+	--without-gnutls \
+	--without-ssl
 endif
 
 ifeq ($(BR2_PACKAGE_SQLITE),y)
