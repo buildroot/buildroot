@@ -41,7 +41,7 @@ else ifeq ($(BR2_ARM_CPU_ARMV7A),y)
 GO_GOARM = 7
 else ifeq ($(BR2_ARM_CPU_ARMV8A),y)
 # Go doesn't support 32-bit GOARM=8 (https://github.com/golang/go/issues/29373)
-# but can still benefit from amrv7 optimisations
+# but can still benefit from armv7 optimisations
 GO_GOARM = 7
 endif
 else ifeq ($(BR2_aarch64),y)
