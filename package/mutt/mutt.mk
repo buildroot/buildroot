@@ -61,6 +61,13 @@ else
 MUTT_CONF_OPTS += --without-sqlite3
 endif
 
+ifeq ($(BR2_PACKAGE_ZLIB),y)
+MUTT_DEPENDENCIES += zlib
+MUTT_CONF_OPTS += --with-zlib=$(STAGING_DIR)/usr
+else
+MUTT_CONF_OPTS += --without-zlib
+endif
+
 # Avoid running tests to check for:
 #  - target system is *BSD
 #  - C99 conformance (snprintf, vsnprintf)
