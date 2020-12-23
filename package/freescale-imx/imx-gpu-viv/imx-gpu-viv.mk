@@ -18,7 +18,7 @@ IMX_GPU_VIV_LICENSE = NXP Semiconductor Software License Agreement
 IMX_GPU_VIV_LICENSE_FILES = EULA COPYING
 IMX_GPU_VIV_REDISTRIBUTE = NO
 
-IMX_GPU_VIV_PROVIDES = libegl libgles libopenvg
+IMX_GPU_VIV_PROVIDES = libegl libgles libopencl libopenvg
 IMX_GPU_VIV_LIB_TARGET = $(call qstrip,$(BR2_PACKAGE_IMX_GPU_VIV_OUTPUT))
 
 ifeq ($(IMX_GPU_VIV_LIB_TARGET),x11)
