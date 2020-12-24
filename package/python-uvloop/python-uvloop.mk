@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PYTHON_UVLOOP_VERSION = 6ef69a7
+PYTHON_UVLOOP_VERSION = 3810530
 PYTHON_UVLOOP_SITE = $(call github,MagicStack,uvloop,$(PYTHON_UVLOOP_VERSION))
 PYTHON_UVLOOP_SETUP_TYPE = setuptools
 PYTHON_UVLOOP_LICENSE = Apache-2.0, MIT
