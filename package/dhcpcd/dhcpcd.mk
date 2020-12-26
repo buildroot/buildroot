@@ -13,7 +13,8 @@ DHCPCD_LICENSE_FILES = LICENSE
 
 DHCPCD_CONFIG_OPTS = \
 	--libexecdir=/lib/dhcpcd \
-	--os=linux
+	--os=linux \
+	--privsepuser=dhcpcd
 
 ifeq ($(BR2_STATIC_LIBS),y)
 DHCPCD_CONFIG_OPTS += --enable-static
@@ -49,6 +50,10 @@ define DHCPCD_INSTALL_INIT_SYSTEMD
 		$(TARGET_DIR)/usr/lib/systemd/system/dhcpcd.service
 endef
 endif
+
+define DHCPCD_USERS
+	dhcpcd -1 dhcpcd -1 * - - - dhcpcd user
+endef
 
 # NOTE: Even though this package has a configure script, it is not generated
 # using the autotools, so we have to use the generic package infrastructure.
