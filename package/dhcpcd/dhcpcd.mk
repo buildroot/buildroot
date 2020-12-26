@@ -15,6 +15,13 @@ DHCPCD_CONFIG_OPTS = \
 	--libexecdir=/lib/dhcpcd \
 	--os=linux
 
+ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
+DHCPCD_CONFIG_OPTS += --with-udev
+DHCPCD_DEPENDENCIES += udev
+else
+DHCPCD_CONFIG_OPTS += --without-udev
+endif
+
 ifeq ($(BR2_STATIC_LIBS),y)
 DHCPCD_CONFIG_OPTS += --enable-static
 endif
