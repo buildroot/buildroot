@@ -168,6 +168,42 @@
 	#13236: Can't compile linux 5.4.8 (with gcc 10 on host)
 	#13286: The system hangs in vmware workstation on the line..
 
+2020.08.3, released December 27th, 2020
+
+	Important / security related fixes.
+
+	Infrastructure:
+	- cmake: fix host ccache handling for CMake 3.19
+	- meson: Forcibly disable binary stripping for
+	  target builds, enable for host builds
+	- golang: Fix HOST / TARGET directories for per-package builds
+
+	Defconfigs: Beaglebone Qt5: Fix ti-sgx related issues
+
+	Updated/fixed packages: apitrace, arm-trusted-firmware,
+	bustle, c-ares, ca-certificates, cage, cdrkit, cryptopp,
+	dhcpcd, docker-containerd, dtv-scan-tables, flare-engine,
+	ghostscript, gvfs, haproxy, imagemagick, imx-gpu-viv, jasper,
+	jemalloc, jpeg-turbo, libcamera, libcap, libcurl, libglib2,
+	libgpiod, libkrb5, libopenssl, libplist, libressl, libuv,
+	libuvw, lynx, mariadb, mbedtls, minidlna, mongodb, monkey,
+	musl, mutt, ncurses, netsnmp, netsurf, nodejs, opencv3,
+	openldap, openrc, opkg-utils, paho-mqtt-c, php, privoxy,
+	proftpd, python-crc16, python-flask-cors, python-lxml,
+	python-pip, python-pyparsing, python-pyqt5, qemu, qt5base,
+	raptor, rauc, ruby, setserial, shadowsocks-libev, slirp,
+	sqlcipher, thermald, ti-sgx-demos, tinycbor, unbound, vsftpd,
+	wireless-regdb, wireshark, wlroots, x11vnc, xen, xinetd,
+	xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13276: libcap builds libcap.pc incorrectly
+	#13316: beaglebone_qt5_defconfig: PowerVR fails to start
+	#13336: thermald-1.9.1 compilation failure with musl 1.2.1
+	#13341: Mistake in /etc/init.d/S70vsftpd
+	#13416: dhcpcd start warning message: no such user dhcpcd
+
 2020.08.2, released November 16th, 2020
 
 	Important / security related fixes.
