@@ -12,6 +12,11 @@ RUNC_LICENSE_FILES = LICENSE
 RUNC_LDFLAGS = -X main.gitCommit=$(RUNC_VERSION)
 RUNC_TAGS = cgo static_build
 
+ifeq ($(BR2_PACKAGE_LIBAPPARMOR),y)
+RUNC_DEPENDENCIES += libapparmor
+RUNC_TAGS += apparmor
+endif
+
 ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
 RUNC_TAGS += seccomp
 RUNC_DEPENDENCIES += libseccomp host-pkgconf
