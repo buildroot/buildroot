@@ -626,6 +626,16 @@ LINUX_FIRMWARE_FILES += qat_c62x.bin qat_c62x_mmp.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.qat_firmware
 endif
 
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_USB_SERIAL_TI),y)
+LINUX_FIRMWARE_FILES += ti_3410.fw ti_5052.fw \
+	mts_cdma.fw mts_gsm.fw mts_edge.fw mts_mt9234mu.fw mts_mt9234zba.fw \
+	moxa/moxa-1110.fw moxa/moxa-1130.fw moxa/moxa-1131.fw \
+	moxa/moxa-1150.fw moxa/moxa-1151.fw
+# Some firmware's license is in the file WHENCE
+# which is installed unconditionally
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.moxa
+endif
+
 ifneq ($(LINUX_FIRMWARE_FILES),)
 define LINUX_FIRMWARE_INSTALL_FILES
 	cd $(@D) && \
