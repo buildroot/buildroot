@@ -11,6 +11,7 @@ IWD_LICENSE = LGPL-2.1+
 IWD_LICENSE_FILES = COPYING
 # sources from git, no configure script provided
 IWD_AUTORECONF = YES
+IWD_SELINUX_MODULES = networkmanager
 
 IWD_CONF_OPTS = \
 	--disable-manual-pages \
