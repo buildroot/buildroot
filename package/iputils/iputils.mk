@@ -27,6 +27,15 @@ IPUTILS_CONF_OPTS += \
 	-DBUILD_TRACEROUTE6=$(if $(BR2_PACKAGE_IPUTILS_TRACEROUTE6),true,false) \
 	-DBUILD_NINFOD=$(if $(BR2_PACKAGE_IPUTILS_NINFOD),true,false)
 
+# Selectively select the appropriate SELinux refpolicy modules
+IPUTILS_SELINUX_MODULES = \
+	$(if $(BR2_PACKAGE_IPUTILS_ARPING),netutils) \
+	$(if $(BR2_PACKAGE_IPUTILS_PING),netutils) \
+	$(if $(BR2_PACKAGE_IPUTILS_TRACEPATH),netutils) \
+	$(if $(BR2_PACKAGE_IPUTILS_TRACEROUTE6),netutils) \
+	$(if $(BR2_PACKAGE_IPUTILS_RDISC),rdisc) \
+	$(if $(BR2_PACKAGE_IPUTILS_TFTPD),tftp)
+
 #
 # arping
 #
