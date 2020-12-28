@@ -85,16 +85,18 @@ config BR2_mips_p5600
 	select BR2_MIPS_CPU_MIPS32R5
 	select BR2_MIPS_NAN_2008
 config BR2_mips_xburst
-	bool "XBurst"
+	bool "XBurst (JZ4760)"
 	depends on !BR2_ARCH_IS_64
-	select BR2_MIPS_CPU_MIPS32R2
+	select BR2_MIPS_CPU_MIPS32R1
 	help
-	  The Ingenic XBurst is a MIPS32R2 microprocessor. It has a
-	  bug in the FPU that can generate incorrect results in
-	  certain cases. The problem shows up when you have several
-	  fused madd instructions in sequence with dependant
-	  operands. This requires the -mno-fused-madd compiler option
-	  to be used in order to prevent emitting these instructions.
+	  The Ingenic XBurst is a MIPS32R2 microprocessor. The one
+	  present in JZ4760 SoCs has a bug in the FPU that can
+	  generate incorrect results in certain cases. The problem
+	  shows up when you have several fused madd instructions in
+	  sequence with dependant operands. This requires the
+	  -mno-fused-madd compiler option to be used in order to
+	  prevent emitting these instructions. This hardware bug was
+	  fixed in the JZ4760B SoC.
 
 	  See http://www.ingenic.com/en/?xburst.html
 config BR2_mips_64
@@ -240,7 +242,7 @@ config BR2_ENDIAN
 	default "BIG"		if BR2_mips || BR2_mips64
 
 config BR2_GCC_TARGET_ARCH
-	default "mips32"	if BR2_mips_32
+	default "mips32"	if BR2_mips_32 || BR2_mips_xburst
 	default "mips32r2"	if BR2_mips_32r2
 	default "mips32r3"	if BR2_mips_32r3
 	default "mips32r5"	if BR2_mips_32r5
@@ -249,7 +251,6 @@ config BR2_GCC_TARGET_ARCH
 	default "m5101"		if BR2_mips_m5150
 	default "m6201"		if BR2_mips_m6250
 	default "p5600"		if BR2_mips_p5600
-	default "mips32r2"	if BR2_mips_xburst
 	default "mips64"	if BR2_mips_64
 	default "mips64r2"	if BR2_mips_64r2
 	default "mips64r3"	if BR2_mips_64r3
