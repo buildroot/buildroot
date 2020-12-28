@@ -17,6 +17,7 @@ TCPDUMP_CONF_OPTS = \
 	--with-system-libpcap \
 	$(if $(BR2_PACKAGE_TCPDUMP_SMB),--enable-smb,--disable-smb)
 TCPDUMP_DEPENDENCIES = libpcap
+TCPDUMP_SELINUX_MODULES = netutils
 
 # 0001-PPP-When-un-escaping-don-t-allocate-a-too-large-buffer.patch
 TCPDUMP_IGNORE_CVES += CVE-2020-8037
