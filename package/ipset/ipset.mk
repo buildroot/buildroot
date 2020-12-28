@@ -12,5 +12,6 @@ IPSET_CONF_OPTS = --with-kmod=no
 IPSET_LICENSE = GPL-2.0
 IPSET_LICENSE_FILES = COPYING
 IPSET_INSTALL_STAGING = YES
+IPSET_SELINUX_MODULES = iptables
 
 $(eval $(autotools-package))
