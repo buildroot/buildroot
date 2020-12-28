@@ -78,6 +78,9 @@ config BR2_GDB_VERSION_8_3
 config BR2_GDB_VERSION_9_2
 	bool "gdb 9.2.x"
 
+config BR2_GDB_VERSION_10
+	bool "gdb 10.x"
+
 endchoice
 
 endif
@@ -90,4 +93,5 @@ config BR2_GDB_VERSION
 	default "8.2.1"    if BR2_GDB_VERSION_8_2 || !BR2_PACKAGE_HOST_GDB
 	default "8.3.1"    if BR2_GDB_VERSION_8_3
 	default "9.2"      if BR2_GDB_VERSION_9_2
+	default "10.1"	   if BR2_GDB_VERSION_10
 	depends on BR2_PACKAGE_GDB || BR2_PACKAGE_HOST_GDB
