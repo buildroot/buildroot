@@ -1,0 +1,44 @@
+From 93117e58016de6f604e67263b5135adbba032367 Mon Sep 17 00:00:00 2001
+From: Joachim Wiberg <troglobit@gmail.com>
+Date: Sun, 30 Aug 2020 11:41:45 +0200
+Subject: [PATCH] Define _GNU_SOURCE, required for O_CLOEXEC on uClibc
+
+When building sysklogd on a uClibc system we must define _GNU_SOURCE to
+get O_CLOEXEC.
+
+Since _GNU_SOURCE is also required for asprintf() with GLIBC, as used by
+the pidfile() replacement function, we drop it from there and rely on
+AM_CPPFLAGS for all sources.
+
+Signed-off-by: Joachim Wiberg <troglobit@gmail.com>
+Signed-off-by: Andreas Hilse <andreas.hilse@googlemail.com>
+---
+ lib/pidfile.c   | 1 -
+ src/Makefile.am | 2 +-
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/lib/pidfile.c b/lib/pidfile.c
+index a26de73..886a29c 100644
+--- a/lib/pidfile.c
++++ b/lib/pidfile.c
+@@ -31,7 +31,6 @@
+  * POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+-#define _GNU_SOURCE		/* Needed with GLIBC to get asprintf() */
+ #include <sys/stat.h>		/* utimensat() */
+ #include <sys/time.h>		/* utimensat() on *BSD */
+ #include <sys/types.h>
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 9b80a02..1909ada 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -36,7 +36,7 @@ endif
+ AM_CFLAGS             = -W -Wall -Wextra
+ AM_CFLAGS            += -Wno-unused-result -Wno-unused-parameter -fno-strict-aliasing
+ AM_CPPFLAGS           = -DSYSCONFDIR=\"@sysconfdir@\" -DRUNSTATEDIR=\"@runstatedir@\"
+-AM_CPPFLAGS          += -D_BSD_SOURCE -D_DEFAULT_SOURCE
++AM_CPPFLAGS          += -D_BSD_SOURCE -D_DEFAULT_SOURCE -D_GNU_SOURCE
+ 
+ syslogd_SOURCES       = syslogd.c syslogd.h socket.c socket.h syslog.h
+ syslogd_SOURCES      += timer.c timer.h queue.h compat.h

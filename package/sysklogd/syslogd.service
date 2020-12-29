@@ -1,10 +1,9 @@
 [Unit]
 Description=System Logging Service
 Requires=syslog.socket
-Wants=klogd.service
 
 [Service]
-ExecStart=/sbin/syslogd -m 0 -n
+ExecStart=/sbin/syslogd -m 0 -F
 StandardOutput=null
 Restart=on-failure
 

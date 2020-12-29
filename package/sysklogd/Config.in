@@ -1,8 +1,13 @@
 config BR2_PACKAGE_SYSKLOGD
-	bool "syslogd & klogd"
+	bool "sysklogd"
 	depends on BR2_USE_MMU # fork()
 	depends on BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
 	help
-	  System log daemons syslogd and klogd.
+	  The continuation of the original sysklogd package, based on
+	  the original Berkeley syslog daemon. Now with kernel
+	  logging, and log rotation built-in. It can both receive from
+	  and send to remote syslog servers. The v2.x series include
+	  extended support for RFC5424 with an alt. syslogp() API for
+	  clients.
 
 	  https://github.com/troglobit/sysklogd/
