@@ -11,11 +11,7 @@ else
 # Generate version string using:
 #   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master | cut -d '-' -f 2-
 # When updating the version, please also update localedef
-ifeq ($(BR2_arc),y)
-# ARC support in upstream was merged in 2.32 release
-# This can be removed once BR upgrades to 2.32 or later
-GLIBC_VERSION = 2.32-2-g386543bc4495f658dcce6cd4d11e4ba6574a46f5
-else ifeq ($(BR2_RISCV_32),y)
+ifeq ($(BR2_RISCV_32),y)
 # RISC-V 32-bit (RV32) requires glibc 2.33 or newer
 # Until 2.33 is released, just use master
 GLIBC_VERSION = 2.32.9000-69-gbd394d131c10c9ec22c6424197b79410042eed99
