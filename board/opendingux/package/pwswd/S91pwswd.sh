@@ -1,21 +1,11 @@
 #!/bin/sh
 
-for event in `ls -d /sys/class/input/event*` ; do
-	NAME=`basename "$event"`
-	KEY=`cat "$event/device/capabilities/key"`
-	if [ "$KEY" != "0" ] ; then
-		EVENT="$NAME"
-		break
-	fi
-done
-
-
 case "$1" in
 start)
 	echo "Starting power slider daemon..."
 	/usr/bin/env HOME=`cat /etc/passwd |head -1 |cut -d':' -f 6`	\
 		/sbin/start-stop-daemon -S -b -m -p /var/run/pwswd.pid \
-		-x /usr/sbin/pwswd -- -e /dev/input/$EVENT
+		-x /usr/sbin/pwswd -- -e /dev/input/by-path/platform-gpio-keys-event
 	;;
 stop)
 	echo "Stopping power slider daemon..."

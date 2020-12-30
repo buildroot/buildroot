@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PWSWD_VERSION = 2a313a9
+PWSWD_VERSION = 5d00893
 PWSWD_SITE = $(call github,pcercuei,pwswd,$(PWSWD_VERSION))
 PWSWD_DEPENDENCIES = alsa-lib libpng libini
 
