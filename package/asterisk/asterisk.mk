@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ASTERISK_VERSION = 18.1.0
+ASTERISK_VERSION = 18.1.1
 # Use the github mirror: it's an official mirror maintained by Digium, and
 # provides tarballs, which the main Asterisk git tree (behind Gerrit) does not.
 ASTERISK_SITE = $(call github,asterisk,asterisk,$(ASTERISK_VERSION))
@@ -224,7 +224,7 @@ endif # DAHDI
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 ASTERISK_DEPENDENCIES += openssl
-ASTERISK_CONF_OPTS += --with-ssl
+ASTERISK_CONF_OPTS += --with-ssl=$(STAGING_DIR)/usr
 else
 ASTERISK_CONF_OPTS += --without-ssl
 endif
