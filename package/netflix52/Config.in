@@ -89,6 +89,11 @@ config BR2_PACKAGE_NETFLIX52_KEYMAP
 	help
 	  Install custom keymap
 
+config BR2_PACKAGE_NETFLIX52_GST_GL
+        bool "gl"
+        depends on BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_GL
+        default y
+
 config BR2_PACKAGE_NETFLIX52_WESTEROS_SINK
 	bool "westeros-sink"
 	depends on BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR
