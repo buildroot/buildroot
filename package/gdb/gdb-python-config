@@ -21,16 +21,16 @@ fi
 
 case "$2" in
     --includes)
-	echo "-I${STAGING_DIR}/usr/include/python2.7"
-	;;
+        echo "-I${STAGING_DIR}/usr/include/python2.7"
+        ;;
     --ldflags)
-	echo "-lpthread -ldl -lutil -lm -lpython2.7"
-	;;
+        echo "-lpthread -ldl -lutil -lm -lpython2.7"
+        ;;
     --exec-prefix)
-	echo "/usr"
-	;;
+        echo "/usr"
+        ;;
     *)
-	echo "Bad arg $2." >&2
-	exit 1
-	;;
+        echo "Bad arg $2." >&2
+        exit 1
+        ;;
 esac
