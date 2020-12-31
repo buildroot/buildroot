@@ -69,21 +69,9 @@ else
 OPENVPN_CONF_OPTS += --disable-systemd
 endif
 
-define OPENVPN_INSTALL_TARGET_CMDS
-	$(INSTALL) -m 755 $(@D)/src/openvpn/openvpn \
-		$(TARGET_DIR)/usr/sbin/openvpn
-endef
-
 define OPENVPN_INSTALL_INIT_SYSV
 	$(INSTALL) -m 755 -D package/openvpn/S60openvpn \
 		$(TARGET_DIR)/etc/init.d/S60openvpn
-endef
-
-define OPENVPN_INSTALL_INIT_SYSTEMD
-	$(INSTALL) -D -m 0644 $(@D)/distro/systemd/openvpn-client@.service \
-		$(TARGET_DIR)/usr/lib/systemd/system/openvpn-client@.service
-	$(INSTALL) -D -m 0644 $(@D)/distro/systemd/openvpn-server@.service \
-		$(TARGET_DIR)/usr/lib/systemd/system/openvpn-server@.service
 endef
 
 $(eval $(autotools-package))
