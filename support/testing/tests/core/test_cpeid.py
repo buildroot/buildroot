@@ -2,6 +2,7 @@ import infra
 import subprocess
 import json
 
+
 class CpeIdTest(infra.basetest.BRConfigTest):
     config = ""
     br2_external = [infra.filepath("tests/core/cpeid-br2-external")]
