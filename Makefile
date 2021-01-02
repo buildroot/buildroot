@@ -1223,7 +1223,7 @@ check-flake8:
 	| xargs file \
 	| grep 'Python script' \
 	| cut -d':' -f1 \
-	| xargs -- python3 -m flake8 --statistics --max-line-length=132
+	| xargs -- python3 -m flake8 --statistics
 
 check-package:
 	find $(TOPDIR) -type f \( -name '*.mk' -o -name '*.hash' -o -name 'Config.*' \) \
