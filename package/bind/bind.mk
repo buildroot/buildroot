@@ -30,7 +30,8 @@ BIND_CONF_OPTS = \
 	--with-randomdev=/dev/urandom \
 	--enable-epoll \
 	--with-gssapi=no \
-	--enable-filter-aaaa
+	--enable-filter-aaaa \
+	--disable-backtrace
 
 ifeq ($(BR2_PACKAGE_ZLIB),y)
 BIND_CONF_OPTS += --with-zlib=$(STAGING_DIR)/usr
