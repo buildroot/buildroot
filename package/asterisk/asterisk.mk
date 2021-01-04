@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-ASTERISK_VERSION = 18.1.1
+ASTERISK_VERSION = bf98bd0
 # Use the github mirror: it's an official mirror maintained by Digium, and
 # provides tarballs, which the main Asterisk git tree (behind Gerrit) does not.
-ASTERISK_SITE = $(call github,asterisk,asterisk,$(ASTERISK_VERSION))
+ASTERISK_SITE = $(call github,ccxtechnologies,asterisk,$(ASTERISK_VERSION))
 
 ASTERISK_SOUNDS_BASE_URL = http://downloads.asterisk.org/pub/telephony/sounds/releases
 ASTERISK_EXTRA_DOWNLOADS = \
@@ -42,6 +42,14 @@ define ASTERISK_COPY_MENUSELECT
 	cp -a $(HOST_ASTERISK_DIR)/menuselect $(@D)/menuselect
 endef
 ASTERISK_PRE_CONFIGURE_HOOKS += ASTERISK_COPY_MENUSELECT
+
+define ASTERISK_ENABLE_OPEN_SOURCE_OPUS
+	(\
+		cd $(@D);\
+		make menuselect.makeopts;\
+		menuselect/menuselect --enable codec_opus_open_source menuselect.makeopts;\
+	)
+endef
 
 ASTERISK_CONF_OPTS = \
 	--disable-xmldoc \
@@ -180,6 +188,7 @@ endif
 ifeq ($(BR2_PACKAGE_OPUS),y)
 ASTERISK_DEPENDENCIES += opus
 ASTERISK_CONF_OPTS += --with-opus
+ASTERISK_POST_CONFIGURE_HOOKS += ASTERISK_ENABLE_OPEN_SOURCE_OPUS
 else
 ASTERISK_CONF_OPTS += --without-opus
 endif
