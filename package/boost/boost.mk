@@ -12,10 +12,6 @@ BOOST_LICENSE = BSL-1.0
 BOOST_LICENSE_FILES = LICENSE_1_0.txt
 BOOST_CPE_ID_VENDOR = $(BOOST_NAME)
 
-# CVE-2009-3654 is misclassified (by our CVE tracker) as affecting to boost,
-# while in fact it affects Drupal (a module called boost in there).
-BOOST_IGNORE_CVES += CVE-2009-3654
-
 # keep host variant as minimal as possible
 HOST_BOOST_FLAGS = --without-icu --with-toolset=gcc \
 	--without-libraries=$(subst $(space),$(comma),atomic chrono context \
