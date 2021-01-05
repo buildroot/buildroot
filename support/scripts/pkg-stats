@@ -78,7 +78,7 @@ class Package:
     all_license_files = list()
     all_versions = dict()
     all_ignored_cves = dict()
-    all_cpeids = dict ()
+    all_cpeids = dict()
     # This is the list of all possible checks. Add new checks to this list so
     # a tool that post-processeds the json output knows the checks before
     # iterating over the packages.
@@ -401,6 +401,7 @@ def package_init_make_info():
             pkgvar = pkgvar[:-7]
             Package.all_cpeids[pkgvar] = value
 
+
 check_url_count = 0
 
 
@@ -558,11 +559,12 @@ async def check_package_latest_version(packages):
 
 def check_package_cve_affects(cve, cpe_product_pkgs):
     for product in cve.affected_products:
-        if not product in cpe_product_pkgs:
+        if product not in cpe_product_pkgs:
             continue
         for pkg in cpe_product_pkgs[product]:
             if cve.affects(pkg.name, pkg.current_version, pkg.ignored_cves, pkg.cpeid) == cve.CVE_AFFECTS:
                 pkg.cves.append(cve.identifier)
+
 
 def check_package_cves(nvd_path, packages):
     if not os.path.isdir(nvd_path):
@@ -591,6 +593,7 @@ def check_package_cves(nvd_path, packages):
                 pkg.status['cve'] = ("error", "affected by CVEs")
             else:
                 pkg.status['cve'] = ("ok", "not affected by CVEs")
+
 
 def calculate_stats(packages):
     stats = defaultdict(int)
@@ -1048,11 +1051,13 @@ def parse_args():
         parser.error('at least one of --html or --json (or both) is required')
     return args
 
+
 def cpeid_name(pkg):
     try:
         return pkg.cpeid.split(':')[1]
-    except:
+    except Exception:  # cpeid may be None, or improperly formatted
         return ''
+
 
 def __main__():
     args = parse_args()
