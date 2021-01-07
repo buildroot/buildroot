@@ -144,8 +144,8 @@ class Package:
         self.infras = list()
         with open(os.path.join(brpath, self.path), 'r') as f:
             lines = f.readlines()
-            for l in lines:
-                match = INFRA_RE.match(l)
+            for line in lines:
+                match = INFRA_RE.match(line)
                 if not match:
                     continue
                 infra = match.group(1)
