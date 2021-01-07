@@ -1059,13 +1059,6 @@ def parse_args():
     return args
 
 
-def cpeid_name(pkg):
-    try:
-        return pkg.cpeid.split(':')[1]
-    except Exception:  # cpeid may be None, or improperly formatted
-        return ''
-
-
 def __main__():
     global cvecheck
 
