@@ -275,7 +275,13 @@ class Package:
             self.status['developers'] = ("warning", "no developers")
 
     def is_status_ok(self, name):
-        return self.status[name][0] == 'ok'
+        return name in self.status and self.status[name][0] == 'ok'
+
+    def is_status_error(self, name):
+        return name in self.status and self.status[name][0] == 'error'
+
+    def is_status_na(self, name):
+        return name in self.status and self.status[name][0] == 'na'
 
     def __eq__(self, other):
         return self.path == other.path
