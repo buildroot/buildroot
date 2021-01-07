@@ -880,18 +880,20 @@ def dump_html_pkg(f, pkg):
 
     # CVEs
     td_class = ["centered"]
-    if pkg.status['cve'][0] == "ok":
+    if pkg.is_status_ok("cve"):
         td_class.append("cve-ok")
-    elif pkg.status['cve'][0] == "error":
+    elif pkg.is_status_error("cve"):
         td_class.append("cve-nok")
     else:
         td_class.append("cve-unknown")
     f.write("  <td class=\"%s\">\n" % " ".join(td_class))
-    if pkg.status['cve'][0] == "error":
+    if pkg.is_status_error("cve"):
         for cve in pkg.cves:
             f.write("   <a href=\"https://security-tracker.debian.org/tracker/%s\">%s<br/>\n" % (cve, cve))
-    elif pkg.status['cve'][0] == "na":
+    elif pkg.is_status_na("cve"):
         f.write("    %s" % pkg.status['cve'][1])
+    else:
+        f.write("    N/A\n")
     f.write("  </td>\n")
 
     # CPE ID
