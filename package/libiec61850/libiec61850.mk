@@ -12,4 +12,7 @@ LIBIEC61850_LICENSE_FILES = COPYING
 LIBIEC61850_CONF_OPTS = -DBUILD_EXAMPLES=OFF \
 	-DBUILD_PYTHON_BINDINGS=OFF
 
+# 0003-COTP-fixed-possible-heap-buffer-overflow-when-handling-message.patch
+LIBIEC61850_IGNORE_CVES += CVE-2020-15158
+
 $(eval $(cmake-package))
