@@ -4,7 +4,8 @@
 #
 ################################################################################
 
-P11_KIT_VERSION = 0.23.16.1
+P11_KIT_VERSION = 0.23.22
+P11_KIT_SOURCE = p11-kit-$(P11_KIT_VERSION).tar.xz
 P11_KIT_SITE = https://github.com/p11-glue/p11-kit/releases/download/$(P11_KIT_VERSION)
 P11_KIT_INSTALL_STAGING = YES
 P11_KIT_CONF_OPTS = --disable-static
