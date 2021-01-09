@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-READLINE_VERSION = 8.0
+READLINE_VERSION = 8.1
 READLINE_SITE = $(BR2_GNU_MIRROR)/readline
 READLINE_INSTALL_STAGING = YES
 READLINE_DEPENDENCIES = ncurses host-autoconf
