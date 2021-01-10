@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TZDATA_VERSION = 2020a
+TZDATA_VERSION = 2020f
 TZDATA_SOURCE = tzdata$(TZDATA_VERSION).tar.gz
 TZDATA_SITE = https://www.iana.org/time-zones/repository/releases
 TZDATA_STRIP_COMPONENTS = 0
@@ -17,7 +17,7 @@ TZDATA_LICENSE_FILES = LICENSE
 # dependencies
 TZDATA_DEFAULT_ZONELIST = \
 	africa antarctica asia australasia europe northamerica \
-	southamerica pacificnew etcetera backward systemv factory
+	southamerica etcetera backward factory
 
 ifeq ($(call qstrip,$(BR2_TARGET_TZ_ZONELIST)),default)
 TZDATA_ZONELIST = $(TZDATA_DEFAULT_ZONELIST)
