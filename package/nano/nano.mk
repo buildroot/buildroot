@@ -29,6 +29,9 @@ endif
 
 ifeq ($(BR2_PACKAGE_NANO_TINY),y)
 NANO_CONF_OPTS += --enable-tiny
+ifeq ($(BR2_PACKAGE_FILE),y)
+NANO_CONF_OPTS += --enable-color --enable-nanorc
+endif
 define NANO_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 0755 $(@D)/src/nano $(TARGET_DIR)/usr/bin/nano
 endef
