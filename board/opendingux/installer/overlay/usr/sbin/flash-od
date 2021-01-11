@@ -1,7 +1,5 @@
 #!/bin/sh
 
-if [ "$1" != "start" ] ; then exit 0; fi
-
 # Avoid kernel flooding the console
 dmesg -n4
 
@@ -65,21 +63,24 @@ else
 		FORMAT=f2fs
 	fi
 
+	clear
+
 	echo "Formatting SD card..."
 	(
 		echo o # Create empty DOS partition table
 		echo n # Create partition
 		echo p # Primary partition
 		echo 1 # First partition
-		echo # First sector (use default)
-		echo '+400M' # End sector
+		echo 2048 # First sector
+		echo 821247 # End sector
 
 		echo n # Create partition
 		echo p # Primary partition
 		echo 2 # Second partition
-		echo # First sector (use default)
+		echo 821248 # First sector
 		echo # End sector (use max size)
 
+		echo p # Print partitions
 		echo w # Commit changes
 	) | fdisk /dev/mmcblk0 > /dev/null
 
@@ -90,7 +91,7 @@ else
 	if [ "$FORMAT" = "ext4" ] ; then
 		mkfs.ext4 -F -L system /dev/mmcblk0p2
 	else
-		mkfs.f2fs -f -l system /dev/mmcblk0p2
+		mkfs.f2fs -f -l system -O extra_attr,compression /dev/mmcblk0p2
 	fi
 
 	mount -t vfat /dev/mmcblk0p1 /boot
@@ -102,8 +103,17 @@ mkdir /sys/kernel/config/usb_gadget/c1/strings/0x409
 mkdir /sys/kernel/config/usb_gadget/c1/configs/c.1
 mkdir /sys/kernel/config/usb_gadget/c1/functions/ffs.ffs
 
-echo 0x601a > /sys/kernel/config/usb_gadget/c1/idVendor
-echo 0x4750 > /sys/kernel/config/usb_gadget/c1/idProduct
+PID=`grep system /proc/cpuinfo |sed -n 's/.*\([0-9]\{4\}\).*/\1/p'`
+[ "$PID" -eq 4725 ] && PID=4750 # JZ4725B appears as a JZ4750 in USB boot
+
+if [ "$PID" -ge 4770 ] ; then
+	VID=a108
+else
+	VID=601a
+fi
+
+echo 0x${VID} > /sys/kernel/config/usb_gadget/c1/idVendor
+echo 0x${PID} > /sys/kernel/config/usb_gadget/c1/idProduct
 echo "Ingenic" > /sys/kernel/config/usb_gadget/c1/strings/0x409/manufacturer
 echo "odbootd" > /sys/kernel/config/usb_gadget/c1/strings/0x409/product
 ln -s /sys/kernel/config/usb_gadget/c1/functions/ffs.ffs /sys/kernel/config/usb_gadget/c1/configs/c.1/ffs.ffs
@@ -145,5 +155,5 @@ rm /boot/devicetree.dtb /boot/ubiboot.bin
 sync
 dialog --msgbox 'Installation succeded!\nThe device will reboot now.' 7 28
 
-reboot
+reboot -f
 exit 0

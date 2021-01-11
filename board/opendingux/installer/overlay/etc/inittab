@@ -1,0 +1,13 @@
+::sysinit:/bin/mount -t proc proc /proc
+::sysinit:/bin/mkdir -p /dev/pts /dev/shm
+::sysinit:/bin/mount -a
+
+null::sysinit:/bin/ln -sf /proc/self/fd /dev/fd
+null::sysinit:/bin/ln -sf /proc/self/fd/0 /dev/stdin
+null::sysinit:/bin/ln -sf /proc/self/fd/1 /dev/stdout
+null::sysinit:/bin/ln -sf /proc/self/fd/3 /dev/stderr
+
+tty1::wait:/usr/sbin/flash-od
+tty1::once:/sbin/poweroff -f
+
+::shutdown:/bin/umount -a -r
