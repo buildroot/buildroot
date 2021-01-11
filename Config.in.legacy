@@ -162,6 +162,13 @@ config BR2_PACKAGE_HOST_RCW
 	  been renamed to qoriq-rcw, to leave room for other *-rcw
 	  packages for other platforms.
 
+config BR2_KERNEL_HEADERS_5_9
+	bool "kernel headers version 5.9.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 5.9.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
 config BR2_KERNEL_HEADERS_5_8
 	bool "kernel headers version 5.8.x are no longer supported"
 	select BR2_LEGACY
