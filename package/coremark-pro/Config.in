@@ -1,8 +1,13 @@
 config BR2_PACKAGE_COREMARK_PRO
 	bool "coremark-pro"
 	depends on BR2_USE_MMU # perl uses fork()
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_PACKAGE_PERL
 	help
 	  CoreMark-PRO is a comprehensive, advanced processor benchmark.
 
 	  https://www.eembc.org/coremark-pro/
+
+comment "coremark-pro needs a toolchain w/ threads"
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_HAS_THREADS
