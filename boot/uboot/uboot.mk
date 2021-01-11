@@ -163,6 +163,11 @@ UBOOT_MAKE_OPTS += BL31=$(BINARIES_DIR)/bl31.bin
 endif
 endif
 
+ifeq ($(BR2_TARGET_UBOOT_NEEDS_OPENSBI),y)
+UBOOT_DEPENDENCIES += opensbi
+UBOOT_MAKE_OPTS += OPENSBI=$(BINARIES_DIR)/fw_dynamic.bin
+endif
+
 ifeq ($(BR2_TARGET_UBOOT_NEEDS_DTC),y)
 UBOOT_DEPENDENCIES += host-dtc
 endif
