@@ -1,4 +1,4 @@
-config BR2_PACKAGE_WPEWEBKIT_ARCH_SUPPORTS
+config BR2_PACKAGE_WPEWEBKIT_DEVEL_ARCH_SUPPORTS
 	bool
 	# ARM needs BLX, so v5t+, BE completely untested so disabled
 	default y if BR2_arm && !BR2_ARM_CPU_ARMV4
@@ -13,19 +13,20 @@ config BR2_PACKAGE_WPEWEBKIT_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_LIBGPG_ERROR_ARCH_SUPPORTS # libgcrypt
 
 comment "wpewebkit needs a toolchain w/ C++, wchar, threads, dynamic library, gcc >= 7"
-	depends on BR2_PACKAGE_WPEWEBKIT_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_WPEWEBKIT_DEVEL_ARCH_SUPPORTS
 	depends on !BR2_BINFMT_FLAT
 	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_USE_WCHAR \
 		|| !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS \
 		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_7
 
 comment "wpewebkit needs OpenGL ES and EGL"
-	depends on BR2_PACKAGE_WPEWEBKIT_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_WPEWEBKIT_DEVEL_ARCH_SUPPORTS
 	depends on !BR2_BINFMT_FLAT
 	depends on !BR2_PACKAGE_HAS_LIBGLES || !BR2_PACKAGE_HAS_LIBEGL
 
-config BR2_PACKAGE_WPEWEBKIT
+config BR2_PACKAGE_WPEWEBKIT_DEVEL
 	bool "wpewebkit"
+	default y
 	depends on !BR2_STATIC_LIBS # wayland
 	depends on !BR2_BINFMT_FLAT # icu
 	depends on BR2_INSTALL_LIBSTDCPP # harfbuzz, icu
@@ -34,7 +35,9 @@ config BR2_PACKAGE_WPEWEBKIT
 	depends on BR2_USE_WCHAR # icu, libsoup
 	depends on BR2_PACKAGE_HAS_LIBGLES # libepoxy
 	depends on BR2_PACKAGE_HAS_LIBEGL # libepoxy
-	depends on BR2_PACKAGE_WPEWEBKIT_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_WPEWEBKIT_DEVEL_ARCH_SUPPORTS
+	select BR2_PACKAGE_WPEBACKEND
+	select BR2_PACKAGE_WPEBACKEND_RDK
 	select BR2_PACKAGE_CAIRO
 	select BR2_PACKAGE_CAIRO_PNG
 	select BR2_PACKAGE_HARFBUZZ
@@ -56,43 +59,43 @@ config BR2_PACKAGE_WPEWEBKIT
 
 	  https://wpewebkit.org/
 
-if BR2_PACKAGE_WPEWEBKIT
+if BR2_PACKAGE_WPEWEBKIT_DEVEL
 
 choice
 	bool "Debug options"
-	default BR2_PACKAGE_WPEWEBKIT_DEBUG if BR2_ENABLE_DEBUG
-	default BR2_PACKAGE_WPEWEBKIT_RELEASE
+	default BR2_PACKAGE_WPEWEBKIT_DEVEL_DEBUG if BR2_ENABLE_DEBUG
+	default BR2_PACKAGE_WPEWEBKIT_DEVEL_RELEASE
 	help
 	  Choose the debug flavor.
 
 if !BR2_ENABLE_DEBUG
 
-config BR2_PACKAGE_WPEWEBKIT_RELEASE
+config BR2_PACKAGE_WPEWEBKIT_DEVEL_RELEASE
 	bool "release"
 	help
 	  Release build
 
 endif
 
-config BR2_PACKAGE_WPEWEBKIT_DEBUG
+config BR2_PACKAGE_WPEWEBKIT_DEVEL_DEBUG
 	bool "debug"
 	help
 	  Debug build
 
 endchoice
 
-if !BR2_PACKAGE_WPEWEBKIT_DEBUG
+if !BR2_PACKAGE_WPEWEBKIT_DEVEL_DEBUG
 
-config BR2_PACKAGE_WPEWEBKIT_SYMBOLS
+config BR2_PACKAGE_WPEWEBKIT_DEVEL_SYMBOLS
 	bool "add symbols to a release build"
-        default y if BR2_PACKAGE_WPEWEBKIT_DEBUG
+        default y if BR2_PACKAGE_WPEWEBKIT_DEVEL_DEBUG
         default n
 	help
 	  Add symbols to a release build
 
 endif
 
-config BR2_PACKAGE_WPEWEBKIT_SANDBOX
+config BR2_PACKAGE_WPEWEBKIT_DEVEL_SANDBOX
 	bool "sandboxing support"
 	depends on BR2_PACKAGE_LIBSECCOMP_ARCH_SUPPORTS # libseccomp
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_12 # libseccomp
@@ -107,8 +110,9 @@ comment "sandboxing supports needs a toolchain w/ headers >= 3.12"
 	depends on BR2_PACKAGE_LIBSECCOMP_ARCH_SUPPORTS
 	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_12
 
-config BR2_PACKAGE_WPEWEBKIT_MULTIMEDIA
+config BR2_PACKAGE_WPEWEBKIT_DEVEL_MULTIMEDIA
 	bool "multimedia support"
+	default y
 	select BR2_PACKAGE_GSTREAMER1
 	select BR2_PACKAGE_GST1_PLUGINS_BAD
 	select BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_MPEGTSDEMUX
@@ -131,9 +135,9 @@ config BR2_PACKAGE_WPEWEBKIT_MULTIMEDIA
 	  This option pulls in all of the required dependencies
 	  to enable multimedia (video/audio) support.
 
-if BR2_PACKAGE_WPEWEBKIT_MULTIMEDIA
+if BR2_PACKAGE_WPEWEBKIT_DEVEL_MULTIMEDIA
 
-config BR2_PACKAGE_WPEWEBKIT_USE_GSTREAMER_GL
+config BR2_PACKAGE_WPEWEBKIT_DEVEL_USE_GSTREAMER_GL
 	bool "use gstreamer-gl"
 	default y
 	depends on BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_OPENGL || BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_GLES2
@@ -145,23 +149,23 @@ config BR2_PACKAGE_WPEWEBKIT_USE_GSTREAMER_GL
 
 choice
 	bool "Punch hole"
-	default BR2_PACKAGE_WPEWEBKIT_USE_PUNCH_HOLE_GSTREAMER if BR2_PACKAGE_GSTREAMER1 && !BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL
-	default BR2_PACKAGE_WPEWEBKIT_USE_PUNCH_HOLE_NONE
+	default BR2_PACKAGE_WPEWEBKIT_DEVEL_USE_PUNCH_HOLE_GSTREAMER if BR2_PACKAGE_GSTREAMER1 && !BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL
+	default BR2_PACKAGE_WPEWEBKIT_DEVEL_USE_PUNCH_HOLE_NONE
 	help
 	  Choose the holepunch version.
 
-config BR2_PACKAGE_WPEWEBKIT_USE_PUNCH_HOLE_NONE
+config BR2_PACKAGE_WPEWEBKIT_DEVEL_USE_PUNCH_HOLE_NONE
 	bool "none"
 	help
 	  Do not use the punch hole.
 
-config BR2_PACKAGE_WPEWEBKIT_USE_PUNCH_HOLE_GSTREAMER
+config BR2_PACKAGE_WPEWEBKIT_DEVEL_USE_PUNCH_HOLE_GSTREAMER
 	bool "gstreamer"
 	depends on BR2_PACKAGE_GSTREAMER1
 	help
 	  Use Gstreamer.
 
-config BR2_PACKAGE_WPEWEBKIT_USE_PUNCH_HOLE_EXTERNAL
+config BR2_PACKAGE_WPEWEBKIT_DEVEL_USE_PUNCH_HOLE_EXTERNAL
 	bool "external"
 	help
 	  Use an external player.
@@ -170,7 +174,7 @@ endchoice
 
 endif
 
-config BR2_PACKAGE_WPEWEBKIT_WEBDRIVER
+config BR2_PACKAGE_WPEWEBKIT_DEVEL_WEBDRIVER
 	bool "WebDriver support"
 	help
 	  Enable support for WebDriver. This will build and install the
