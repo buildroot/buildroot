@@ -1,8 +1,7 @@
 #!/bin/sh
 # SPDX-License-Identifier: Apache-2.0
 
-workloads="cjpeg-rose7-preset core linear_alg-mid-100x100-sp \
-    loops-all-mid-10k-sp nnet_test parser-125k radix2-big-64k sha-test zip-test"
+workloads="@COREMARK_PRO_MARKS@"
 
 rm -rf /tmp/coremark-pro
 mkdir -p /tmp/coremark-pro
@@ -16,11 +15,11 @@ for contype in single best; do
     for wld in $workloads; do
         [ "$contype" = "single" ] && XCMD="-c1 -w1"
         [ "$contype" = "best" ] && XCMD="-c$(nproc) -w$(nproc)"
-        echo "#Results for verification run started at $(date +%y%j:%H:%M:%S) XCMD=$XCMD" >$wld-$contype-result.log
+        echo "#Results for verification run started at $(date +%x:%X) XCMD=$XCMD" >$wld-$contype-result.log
         echo "Verification run for $wld"
         $wld $XCMD -v1 > $wld.run.log
         LC_ALL=C perl /usr/share/coremark-pro/util/perl/results_parser.pl $wld-$contype-result.log $wld.run.log
-        echo "#Results for performance runs started at $(date +%y%j:%H:%M:%S) XCMD=$XCMD" >>$wld-$contype-result.log
+        echo "#Results for performance runs started at $(date +%x:%X) XCMD=$XCMD" >>$wld-$contype-result.log
         echo "Performance run for $wld"
         for i in 1 2 3; do
             $wld $XCMD -v0 > $wld.run.log
