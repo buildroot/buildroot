@@ -1,0 +1,103 @@
+diff -ruN libsoup.orig/libsoup/soup-cookie-jar.c libsoup/libsoup/soup-cookie-jar.c
+--- libsoup.orig/libsoup/soup-cookie-jar.c	2018-08-09 21:02:38.000000000 +0530
++++ libsoup/libsoup/soup-cookie-jar.c	2021-01-12 00:13:00.018617423 +0530
+@@ -50,8 +50,12 @@
+ 	GHashTable *domains, *serials;
+ 	guint serial;
+ 	SoupCookieJarAcceptPolicy accept_policy;
++	guint64 n_cookies;
++	guint64 limit;
+ } SoupCookieJarPrivate;
+ 
++#define MAX_COOKIE_SIZE 102400 /* 100K */
++
+ static void soup_cookie_jar_session_feature_init (SoupSessionFeatureInterface *feature_interface, gpointer interface_data);
+ 
+ G_DEFINE_TYPE_WITH_CODE (SoupCookieJar, soup_cookie_jar, G_TYPE_OBJECT,
+@@ -234,6 +238,17 @@
+ 	return g_object_new (SOUP_TYPE_COOKIE_JAR, NULL);
+ }
+ 
++void
++soup_cookie_jar_set_limit (SoupCookieJar *jar, guint64 limit)
++{
++	SoupCookieJarPrivate *priv;
++
++	g_return_if_fail (SOUP_IS_COOKIE_JAR (jar));
++
++	priv = soup_cookie_jar_get_instance_private (jar);
++	priv->limit = limit;
++}
++
+ /**
+  * soup_cookie_jar_save:
+  * @jar: a #SoupCookieJar
+@@ -258,10 +273,13 @@
+ {
+ 	SoupCookieJarPrivate *priv = soup_cookie_jar_get_instance_private (jar);
+ 
+-	if (old && old != new)
++	if (old && old != new) {
+ 		g_hash_table_remove (priv->serials, old);
++		priv->n_cookies--;
++	}
+ 	if (new) {
+ 		priv->serial++;
++		priv->n_cookies++;
+ 		g_hash_table_insert (priv->serials, new, GUINT_TO_POINTER (priv->serial));
+ 	}
+ 
+@@ -433,6 +451,15 @@
+ 	return get_cookies (jar, uri, for_http, TRUE);
+ }
+ 
++static unsigned cookie_size (SoupCookie *cookie)
++{
++	/* Consider name, value, domain and path only for the size */
++	return (cookie->name ? strlen(cookie->name) : 0) +
++		(cookie->value ? strlen(cookie->value) : 0) +
++		(cookie->domain ? strlen(cookie->domain) : 0) +
++		(cookie->path ? strlen(cookie->path) : 0);
++}
++
+ /**
+  * soup_cookie_jar_add_cookie:
+  * @jar: a #SoupCookieJar
+@@ -463,6 +490,11 @@
+ 		return;
+ 	}
+ 
++	if (cookie_size (cookie) > MAX_COOKIE_SIZE) {
++		g_warning ("Trying to add a cookie for domain '%s', bigger than maximum allowed size %d, ignoring it", cookie->domain, MAX_COOKIE_SIZE);
++		return;
++	}
++
+ 	priv = soup_cookie_jar_get_instance_private (jar);
+ 	old_cookies = g_hash_table_lookup (priv->domains, cookie->domain);
+ 	for (oc = old_cookies; oc; oc = oc->next) {
+@@ -498,6 +530,12 @@
+ 		soup_cookie_free (cookie);
+ 		return;
+ 	}
++
++	if (priv->limit > 0 && priv->n_cookies + 1 >= priv->limit) {
++		g_warning ("Reached limit of %" G_GUINT64_FORMAT " cookies, not adding the new one for domain '%s'", priv->limit, cookie->domain);
++		soup_cookie_free (cookie);
++		return;
++	}
+ 
+ 	if (last)
+ 		last->next = g_slist_append (NULL, cookie);
+diff -ruN libsoup.orig/libsoup/soup-cookie-jar.h libsoup/libsoup/soup-cookie-jar.h
+--- libsoup.orig/libsoup/soup-cookie-jar.h	2018-08-10 12:58:54.000000000 +0530
++++ libsoup/libsoup/soup-cookie-jar.h	2021-01-11 23:51:29.206013391 +0530
+@@ -52,6 +52,9 @@
+ SOUP_AVAILABLE_IN_2_24
+ SoupCookieJar *           soup_cookie_jar_new                         (void);
+ SOUP_AVAILABLE_IN_2_24
++void                      soup_cookie_jar_set_limit                   (SoupCookieJar             *jar,
++								       guint64                    limit);
++SOUP_AVAILABLE_IN_2_24
+ char          *           soup_cookie_jar_get_cookies                 (SoupCookieJar             *jar,
+ 								       SoupURI                   *uri,
+ 								       gboolean                   for_http);
