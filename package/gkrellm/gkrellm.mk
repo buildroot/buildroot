@@ -36,6 +36,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_GKRELLM_CLIENT),y)
 GKRELLM_DEPENDENCIES += libgtk2 xlib_libSM
+GKRELLM_BUILD_OPTS += X11_LIBS="-lX11 -lSM -lICE"
 GKRELLM_LICENSE += GPL (base64.c), Public Domain (md5.h, md5c.c)
 endif
 
