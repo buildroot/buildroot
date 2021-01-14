@@ -10,7 +10,7 @@ BOOST_SITE = https://dl.bintray.com/boostorg/release/$(BOOST_VERSION)/source
 BOOST_INSTALL_STAGING = YES
 BOOST_LICENSE = BSL-1.0
 BOOST_LICENSE_FILES = LICENSE_1_0.txt
-BOOST_CPE_ID_VENDOR = $(BOOST_NAME)
+BOOST_CPE_ID_VENDOR = boost
 
 # keep host variant as minimal as possible
 HOST_BOOST_FLAGS = --without-icu --with-toolset=gcc \
