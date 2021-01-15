@@ -39,6 +39,9 @@ shift $((OPTIND-1)) # Get rid of our options
 # ). Since nobody sane will put large code bases in CVS, a timeout of
 # 10 minutes should do the trick.
 _cvs() {
+    if [ -z "${quiet}" ]; then
+        printf '%s ' timeout 10m ${CVS} "${@}"; printf '\n'
+    fi
     eval timeout 10m ${CVS} "${@}"
 }
 

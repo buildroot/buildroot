@@ -79,6 +79,9 @@ trap _on_error ERR
 # Caller needs to single-quote its arguments to prevent them from
 # being expanded a second time (in case there are spaces in them)
 _git() {
+    if [ -z "${quiet}" ]; then
+        printf '%s ' GIT_DIR="${git_cache}/.git" ${GIT} "${@}"; printf '\n'
+    fi
     eval GIT_DIR="${git_cache}/.git" ${GIT} "${@}"
 }
 

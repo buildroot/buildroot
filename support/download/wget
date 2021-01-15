@@ -33,6 +33,9 @@ shift $((OPTIND-1)) # Get rid of our options
 # Caller needs to single-quote its arguments to prevent them from
 # being expanded a second time (in case there are spaces in them)
 _wget() {
+    if [ -z "${quiet}" ]; then
+        printf '%s ' ${WGET} "${@}"; printf '\n'
+    fi
     eval ${WGET} "${@}"
 }
 

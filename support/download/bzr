@@ -34,6 +34,9 @@ shift $((OPTIND-1)) # Get rid of our options
 # Caller needs to single-quote its arguments to prevent them from
 # being expanded a second time (in case there are spaces in them)
 _bzr() {
+    if [ -z "${quiet}" ]; then
+        printf '%s ' ${BZR} "${@}"; printf '\n'
+    fi
     eval ${BZR} "${@}"
 }
 

@@ -36,6 +36,9 @@ shift $((OPTIND-1)) # Get rid of our options
 # Caller needs to single-quote its arguments to prevent them from
 # being expanded a second time (in case there are spaces in them)
 _localfiles() {
+    if [ -n "${verbose}" ]; then
+        printf '%s ' ${LOCALFILES} "${@}"; printf '\n'
+    fi
     eval ${LOCALFILES} "${@}"
 }
 
