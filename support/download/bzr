@@ -16,10 +16,10 @@ set -e
 #   BZR      : the bzr command to call
 
 
-verbose=
+quiet=
 while getopts "${BR_BACKEND_DL_GETOPTS}" OPT; do
     case "${OPT}" in
-    q)  verbose=-q;;
+    q)  quiet=-q;;
     o)  output="${OPTARG}";;
     u)  uri="${OPTARG}";;
     c)  cset="${OPTARG}";;
@@ -53,6 +53,6 @@ if [ ${bzr_version} -ge ${bzr_min_version} ]; then
     timestamp_opt="--per-file-timestamps"
 fi
 
-_bzr export ${verbose} --root="'${basename}/'" --format=tgz \
+_bzr export ${quiet} --root="'${basename}/'" --format=tgz \
     ${timestamp_opt} - "${@}" "'${uri}'" -r "'${cset}'" \
     >"${output}"

@@ -14,10 +14,10 @@ set -e
 # Environment:
 #   SCP       : the scp command to call
 
-verbose=
+quiet=
 while getopts "${BR_BACKEND_DL_GETOPTS}" OPT; do
     case "${OPT}" in
-    q)  verbose=-q;;
+    q)  quiet=-q;;
     o)  output="${OPTARG}";;
     f)  filename="${OPTARG}";;
     u)  uri="${OPTARG}";;
@@ -37,4 +37,4 @@ _scp() {
 # Remove any scheme prefix
 uri="${uri##scp://}"
 
-_scp ${verbose} "${@}" "'${uri}/${filename}'" "'${output}'"
+_scp ${quiet} "${@}" "'${uri}/${filename}'" "'${output}'"

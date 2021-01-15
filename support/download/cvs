@@ -16,10 +16,10 @@ set -e
 # Environment:
 #   CVS      : the cvs command to call
 
-verbose=
+quiet=
 while getopts "${BR_BACKEND_DL_GETOPTS}" OPT; do
     case "${OPT}" in
-    q)  verbose=-Q;;
+    q)  quiet=-Q;;
     o)  output="${OPTARG}";;
     u)  uri="${OPTARG#*://}";;
     c)  rev="${OPTARG}";;
@@ -57,7 +57,7 @@ if [[ ! "${uri}" =~ ^: ]]; then
 fi
 
 export TZ=UTC
-_cvs ${verbose} -z3 -d"'${uri}'" \
+_cvs ${quiet} -z3 -d"'${uri}'" \
      co "${@}" -d "'${basename}'" ${select} "'${rev}'" -P "'${rawname}'"
 
 tar czf "${output}" "${basename}"

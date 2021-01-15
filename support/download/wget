@@ -15,10 +15,10 @@ set -e
 # Environment:
 #   WGET     : the wget command to call
 
-verbose=
+quiet=
 while getopts "${BR_BACKEND_DL_GETOPTS}" OPT; do
     case "${OPT}" in
-    q)  verbose=-q;;
+    q)  quiet=-q;;
     o)  output="${OPTARG}";;
     f)  filename="${OPTARG}";;
     u)  url="${OPTARG}";;
@@ -40,4 +40,4 @@ _wget() {
 # mirror
 [ -n "${encode}" ] && filename=${filename//\?/%3F}
 
-_wget ${verbose} "${@}" -O "'${output}'" "'${url}/${filename}'"
+_wget ${quiet} "${@}" -O "'${output}'" "'${url}/${filename}'"

@@ -50,11 +50,11 @@ _on_error() {
     exec "${myname}" "${OPTS[@]}" || exit ${ret}
 }
 
-verbose=
+quiet=
 recurse=0
 while getopts "${BR_BACKEND_DL_GETOPTS}" OPT; do
     case "${OPT}" in
-    q)  verbose=-q; exec >/dev/null;;
+    q)  quiet=-q; exec >/dev/null;;
     r)  recurse=1;;
     o)  output="${OPTARG}";;
     u)  uri="${OPTARG}";;
