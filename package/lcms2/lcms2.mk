@@ -8,6 +8,8 @@ LCMS2_VERSION = 2.11
 LCMS2_SITE = http://downloads.sourceforge.net/project/lcms/lcms/$(LCMS2_VERSION)
 LCMS2_LICENSE = MIT
 LCMS2_LICENSE_FILES = COPYING
+LCMS2_CPE_ID_VENDOR = littlecms
+LCMS2_CPE_ID_NAME = little_cms
 LCMS2_INSTALL_STAGING = YES
 
 ifeq ($(BR2_PACKAGE_JPEG),y)
