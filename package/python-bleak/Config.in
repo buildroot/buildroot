@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_BLEAK
 	bool "python-bleak"
+	depends on BR2_PACKAGE_PYTHON3
 	select BR2_PACKAGE_PYTHON_TXDBUS # runtime
 	help
 	  Bluetooth Low Energy platform Agnostic Klient.
