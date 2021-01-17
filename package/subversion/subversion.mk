@@ -9,6 +9,7 @@ SUBVERSION_SOURCE = subversion-$(SUBVERSION_VERSION).tar.bz2
 SUBVERSION_SITE = https://downloads.apache.org/subversion
 SUBVERSION_LICENSE = Apache-2.0
 SUBVERSION_LICENSE_FILES = LICENSE
+SUBVERSION_CPE_ID_VENDOR = apache
 SUBVERSION_DEPENDENCIES = \
 	host-pkgconf \
 	apr \
