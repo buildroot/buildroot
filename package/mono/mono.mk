@@ -10,6 +10,7 @@ MONO_SOURCE = mono-$(MONO_VERSION).tar.xz
 MONO_LICENSE = GPL-2.0 or MIT (compiler, tools), MIT (libs) or commercial
 MONO_LICENSE_FILES = LICENSE mcs/COPYING \
 	external/Newtonsoft.Json/Tools/7-zip/copying.txt
+MONO_CPE_ID_VENDOR = mono-project
 MONO_INSTALL_STAGING = YES
 
 ## Mono native
