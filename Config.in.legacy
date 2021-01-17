@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2021.02"
 
+config BR2_PACKAGE_LINUX_FIRMWARE_IMX_SDMA
+	bool "imx sdma firmware is provided by firmware-imx"
+	select BR2_LEGACY
+	select BR2_PACKAGE_FIRMWARE_IMX
+	help
+	  linux-firmware provide the same firmware as firmware-imx.
+	  We prefer using firmware-imx as the only provider.
+
 config BR2_GDB_VERSION_8_2
 	bool "gdb 8.2.x has been removed"
 	select BR2_LEGACY
