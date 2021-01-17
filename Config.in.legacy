@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2021.02"
 
+config BR2_PACKAGE_BOA
+	bool "boa package removed"
+	select BR2_LEGACY
+	help
+	  The boa package was removed as it is affected by multiple
+	  CVEs and is not maintained anymore (no release since 2005).
+
 config BR2_PACKAGE_LINUX_FIRMWARE_IMX_SDMA
 	bool "imx sdma firmware is provided by firmware-imx"
 	select BR2_LEGACY
