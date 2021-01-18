@@ -11,7 +11,7 @@ AUDIT_LICENSE_FILES = COPYING COPYING.LIB
 # 0002-Add-substitue-functions-for-strndupa-rawmemchr.patch
 AUDIT_AUTORECONF = YES
 AUDIT_CPE_ID_VENDOR = linux_audit_project
-AUDIT_CPE_ID_NAME = linux_audit
+AUDIT_CPE_ID_PRODUCT = linux_audit
 
 AUDIT_INSTALL_STAGING = YES
 

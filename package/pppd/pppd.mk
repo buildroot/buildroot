@@ -11,7 +11,7 @@ PPPD_LICENSE_FILES = \
 	pppd/tdb.c pppd/plugins/pppoatm/COPYING \
 	pppdump/bsd-comp.c pppd/ccp.c pppd/plugins/passprompt.c
 PPPD_CPE_ID_VENDOR = samba
-PPPD_CPE_ID_NAME = ppp
+PPPD_CPE_ID_PRODUCT = ppp
 
 # 0001-pppd-Fix-bounds-check.patch
 PPPD_IGNORE_CVES += CVE-2020-8597

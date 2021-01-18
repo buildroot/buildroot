@@ -13,7 +13,7 @@ LINUX_LICENSE_FILES = \
 	LICENSES/exceptions/Linux-syscall-note
 endif
 LINUX_CPE_ID_VENDOR = linux
-LINUX_CPE_ID_NAME = linux_kernel
+LINUX_CPE_ID_PRODUCT = linux_kernel
 LINUX_CPE_ID_PREFIX = cpe:2.3:o
 
 define LINUX_HELP_CMDS

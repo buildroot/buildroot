@@ -616,13 +616,13 @@ $(2)_REDIST_SOURCES_DIR = $$(REDIST_SOURCES_DIR_$$(call UPPERCASE,$(4)))/$$($(2)
 
 # If any of the <pkg>_CPE_ID_* variables are set, we assume the CPE ID
 # information is valid for this package.
-ifneq ($$($(2)_CPE_ID_VENDOR)$$($(2)_CPE_ID_NAME)$$($(2)_CPE_ID_VERSION)$$($(2)_CPE_ID_VERSION_MINOR)$$($(2)_CPE_ID_PREFIX),)
+ifneq ($$($(2)_CPE_ID_VENDOR)$$($(2)_CPE_ID_PRODUCT)$$($(2)_CPE_ID_VERSION)$$($(2)_CPE_ID_VERSION_MINOR)$$($(2)_CPE_ID_PREFIX),)
 $(2)_CPE_ID_VALID = YES
 endif
 
 # When we're a host package, make sure to use the variables of the
 # corresponding target package, if any.
-ifneq ($$($(3)_CPE_ID_VENDOR)$$($(3)_CPE_ID_NAME)$$($(3)_CPE_ID_VERSION)$$($(3)_CPE_ID_VERSION_MINOR)$$($(3)_CPE_ID_PREFIX),)
+ifneq ($$($(3)_CPE_ID_VENDOR)$$($(3)_CPE_ID_PRODUCT)$$($(3)_CPE_ID_VERSION)$$($(3)_CPE_ID_VERSION_MINOR)$$($(3)_CPE_ID_PREFIX),)
 $(2)_CPE_ID_VALID = YES
 endif
 
@@ -644,12 +644,12 @@ ifeq ($$($(2)_CPE_ID_VALID),YES)
  endif
  endif
 
- # CPE_ID_NAME
- ifndef $(2)_CPE_ID_NAME
-  ifdef $(3)_CPE_ID_NAME
-   $(2)_CPE_ID_NAME = $$($(3)_CPE_ID_NAME)
+ # CPE_ID_PRODUCT
+ ifndef $(2)_CPE_ID_PRODUCT
+  ifdef $(3)_CPE_ID_PRODUCT
+   $(2)_CPE_ID_PRODUCT = $$($(3)_CPE_ID_PRODUCT)
   else
-   $(2)_CPE_ID_NAME = $$($(2)_RAWNAME)
+   $(2)_CPE_ID_PRODUCT = $$($(2)_RAWNAME)
   endif
  endif
 
@@ -681,7 +681,7 @@ ifeq ($$($(2)_CPE_ID_VALID),YES)
  endif
 
  # Calculate complete CPE ID
- $(2)_CPE_ID = $$($(2)_CPE_ID_PREFIX):$$($(2)_CPE_ID_VENDOR):$$($(2)_CPE_ID_NAME):$$($(2)_CPE_ID_VERSION):$$($(2)_CPE_ID_VERSION_MINOR):*:*:*:*:*:*
+ $(2)_CPE_ID = $$($(2)_CPE_ID_PREFIX):$$($(2)_CPE_ID_VENDOR):$$($(2)_CPE_ID_PRODUCT):$$($(2)_CPE_ID_VERSION):$$($(2)_CPE_ID_VERSION_MINOR):*:*:*:*:*:*
 endif # ifeq ($$($(2)_CPE_ID_VALID),YES)
 
 # When a target package is a toolchain dependency set this variable to
