@@ -149,6 +149,7 @@ comment "Legacy options removed in 2021.02"
 config BR2_PACKAGE_LINUX_FIRMWARE_IMX_SDMA
 	bool "imx sdma firmware is provided by firmware-imx"
 	select BR2_LEGACY
+	select BR2_PACKAGE_FREESCALE_IMX
 	select BR2_PACKAGE_FIRMWARE_IMX
 	help
 	  linux-firmware provide the same firmware as firmware-imx.
