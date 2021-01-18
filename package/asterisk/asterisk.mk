@@ -238,6 +238,13 @@ else
 ASTERISK_CONF_OPTS += --without-ssl
 endif
 
+ifeq ($(BR2_PACKAGE_DOUBANGO_TINYSIGCOMP),y)
+ASTERISK_DEPENDENCIES += doubango-tinysigcomp
+ASTERISK_CONF_OPTS += --with-sigcomp
+else
+ASTERISK_CONF_OPTS += --without-sigcomp
+endif
+
 ifeq ($(BR2_PACKAGE_SPANDSP),y)
 ASTERISK_DEPENDENCIES += spandsp
 ASTERISK_CONF_OPTS += --with-spandsp
