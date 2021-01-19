@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CHARTJS_VERSION = 2.9.3
+CHARTJS_VERSION = 2.9.4
 CHARTJS_SITE = $(call github,chartjs,Chart.js,v$(CHARTJS_VERSION))
 CHARTJS_LICENSE = MIT
 CHARTJS_LICENSE_FILES = LICENSE.md
