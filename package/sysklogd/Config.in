@@ -1,6 +1,7 @@
 config BR2_PACKAGE_SYSKLOGD
 	bool "sysklogd"
 	depends on BR2_USE_MMU # fork()
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
 	help
 	  The continuation of the original sysklogd package, based on
@@ -11,3 +12,8 @@ config BR2_PACKAGE_SYSKLOGD
 	  clients.
 
 	  https://github.com/troglobit/sysklogd/
+
+comment "sysklogd needs a toolchain w/ threads"
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
