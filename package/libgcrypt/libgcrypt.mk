@@ -31,11 +31,4 @@ ifeq ($(BR2_arm),y)
 LIBGCRYPT_CONF_ENV += CFLAGS="$(patsubst -mthumb,,$(TARGET_CFLAGS))"
 endif
 
-# Tests use fork()
-define LIBGCRYPT_DISABLE_TESTS
-	$(SED) 's/ tests//' $(@D)/Makefile.in
-endef
-
-LIBGCRYPT_POST_PATCH_HOOKS += LIBGCRYPT_DISABLE_TESTS
-
 $(eval $(autotools-package))
