@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PLAYREADY4_VERSION = cfdf8629988b1c4c422a6f3065cbf952553eec08
+PLAYREADY4_VERSION = 110bb1b529965d9c859fb295d0eb72b0a75bf1d8
 PLAYREADY4_SITE = git@github.com:Metrological/playready.git
 PLAYREADY4_SITE_METHOD = git
 PLAYREADY4_LICENSE = PROPRIETARY
@@ -74,7 +74,7 @@ define PLAYREADY4_INSTALL_TARGET_CMDS
         $(call PLAYREADY4_INSTALL, ${TARGET_DIR})
 endef
 
-define PLAYREADY_INSTALL_TARGET_ETC_PLAYREADY
+define PLAYREADY4_INSTALL_TARGET_ETC_PLAYREADY
         ln -sf /tmp $(TARGET_DIR)/etc/playready/storage
 endef
 
