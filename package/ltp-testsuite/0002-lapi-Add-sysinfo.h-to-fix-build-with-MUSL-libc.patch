@@ -26,7 +26,16 @@ In file included from ../include/tst_safe_macros.h:15,
 x86_64-buildroot-linux-musl/sysroot/usr/include/sys/sysinfo.h:10:8: note: originally defined here
 
 Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
-[ upstream status: https://patchwork.ozlabs.org/project/ltp/patch/20201001231256.6930-1-petr.vorel@gmail.com/ ]
+
+[ upstream status: https://patchwork.ozlabs.org/project/ltp/patch/20201001231256.6930-1-petr.vorel@gmail.com/
+
+But this patch is not going to get upstreamed because it got fixed in Linux kernel:
+a85cbe6159ff "uapi: move constants from <linux/kernel.h> to <linux/const.h>"
+
+This patch was also backported to stable and LTS versions,
+which we use since buildroot 54584d233b "{linux, linux-headers}: bump
+5.{4, 10}.x 4.{4, 9, 14, 19} series".
+We just wait for all musl based toolchains to be rebuilt. ]
 ---
  include/lapi/sysinfo.h                        | 22 +++++++++++++++++++
  include/tst_safe_macros.h                     |  2 +-
