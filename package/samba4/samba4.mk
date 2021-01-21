@@ -10,6 +10,8 @@ SAMBA4_SOURCE = samba-$(SAMBA4_VERSION).tar.gz
 SAMBA4_INSTALL_STAGING = YES
 SAMBA4_LICENSE = GPL-3.0+
 SAMBA4_LICENSE_FILES = COPYING
+SAMBA4_CPE_ID_VENDOR = samba
+SAMBA4_CPE_ID_NAME = samba
 SAMBA4_DEPENDENCIES = \
 	host-e2fsprogs host-heimdal host-nfs-utils host-python3 \
 	cmocka e2fsprogs gnutls popt zlib \
