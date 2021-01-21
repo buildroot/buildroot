@@ -9,6 +9,8 @@ IWD_SITE = https://git.kernel.org/pub/scm/network/wireless/iwd.git
 IWD_SITE_METHOD = git
 IWD_LICENSE = LGPL-2.1+
 IWD_LICENSE_FILES = COPYING
+IWD_CPE_ID_VENDOR = intel
+IWD_CPE_ID_NAME = inet_wireless_daemon
 # sources from git, no configure script provided
 IWD_AUTORECONF = YES
 IWD_SELINUX_MODULES = networkmanager
