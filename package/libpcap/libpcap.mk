@@ -4,19 +4,20 @@
 #
 ################################################################################
 
-LIBPCAP_VERSION = 1.9.1
-LIBPCAP_SITE = http://www.tcpdump.org/release
+LIBPCAP_VERSION = 1.10.0
+LIBPCAP_SITE = https://www.tcpdump.org/release
 LIBPCAP_LICENSE = BSD-3-Clause
 LIBPCAP_LICENSE_FILES = LICENSE
 LIBPCAP_CPE_ID_VENDOR = tcpdump
 LIBPCAP_INSTALL_STAGING = YES
-LIBPCAP_DEPENDENCIES = host-flex host-bison
+LIBPCAP_DEPENDENCIES = host-flex host-bison host-pkgconf
 
 LIBPCAP_CONF_ENV = \
 	ac_cv_header_linux_wireless_h=yes \
 	CFLAGS="$(LIBPCAP_CFLAGS)"
 LIBPCAP_CFLAGS = $(TARGET_CFLAGS)
-LIBPCAP_CONF_OPTS = --disable-yydebug --with-pcap=linux --without-dag
+LIBPCAP_CONF_OPTS = --disable-yydebug --with-pcap=linux --without-dag \
+	--without-dpdk
 # Disable dbus to break recursive dependencies
 LIBPCAP_CONF_OPTS += --disable-dbus
 LIBPCAP_CONFIG_SCRIPTS = pcap-config
@@ -35,8 +36,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_LIBNL),y)
 LIBPCAP_DEPENDENCIES += libnl
-LIBPCAP_CFLAGS += "-I$(STAGING_DIR)/usr/include/libnl3"
-LIBPCAP_CONF_OPTS += --with-libnl=$(STAGING_DIR)/usr
+LIBPCAP_CONF_OPTS += --with-libnl
 else
 LIBPCAP_CONF_OPTS += --without-libnl
 endif
