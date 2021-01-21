@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-TCPDUMP_VERSION = 4.9.3
-TCPDUMP_SITE = http://www.tcpdump.org/release
+TCPDUMP_VERSION = 4.99.0
+TCPDUMP_SITE = https://www.tcpdump.org/release
 TCPDUMP_LICENSE = BSD-3-Clause
 TCPDUMP_LICENSE_FILES = LICENSE
 TCPDUMP_CPE_ID_VENDOR = tcpdump
@@ -15,17 +15,10 @@ TCPDUMP_CONF_ENV = \
 	PCAP_CONFIG=$(STAGING_DIR)/usr/bin/pcap-config
 TCPDUMP_CONF_OPTS = \
 	--without-crypto \
-	--with-system-libpcap \
+	--disable-local-libpcap \
 	$(if $(BR2_PACKAGE_TCPDUMP_SMB),--enable-smb,--disable-smb)
-TCPDUMP_DEPENDENCIES = libpcap
+TCPDUMP_DEPENDENCIES = libpcap host-pkgconf
 TCPDUMP_SELINUX_MODULES = netutils
-
-# 0001-PPP-When-un-escaping-don-t-allocate-a-too-large-buffer.patch
-TCPDUMP_IGNORE_CVES += CVE-2020-8037
-
-ifeq ($(BR2_STATIC_LIBS),y)
-TCPDUMP_CONF_OPTS += LIBS="`$(STAGING_DIR)/usr/bin/pcap-config --static --additional-libs`"
-endif
 
 # make install installs an unneeded extra copy of the tcpdump binary
 define TCPDUMP_REMOVE_DUPLICATED_BINARY
