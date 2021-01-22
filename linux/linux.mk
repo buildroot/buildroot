@@ -204,6 +204,8 @@ else ifeq ($(BR2_LINUX_KERNEL_SIMPLEIMAGE),y)
 LINUX_IMAGE_NAME = simpleImage.$(firstword $(LINUX_DTS_NAME))
 else ifeq ($(BR2_LINUX_KERNEL_IMAGE),y)
 LINUX_IMAGE_NAME = Image
+else ifeq ($(BR2_LINUX_KERNEL_IMAGEGZ),y)
+LINUX_IMAGE_NAME = Image.gz
 else ifeq ($(BR2_LINUX_KERNEL_LINUX_BIN),y)
 LINUX_IMAGE_NAME = linux.bin
 else ifeq ($(BR2_LINUX_KERNEL_VMLINUX_BIN),y)
