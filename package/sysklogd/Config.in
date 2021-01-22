@@ -15,6 +15,19 @@ config BR2_PACKAGE_SYSKLOGD
 
 if BR2_PACKAGE_SYSKLOGD
 
+config BR2_PACKAGE_SYSKLOGD_REMOTE_DELAY
+	int "Retry delay (sec)"
+	default "180"
+	help
+	  Retry delay (seconds) for sending to remote syslog servers.
+
+	  When set up to forward logs to a remote syslog server, the
+	  network may not always be available. E.g., default interface
+	  down, or no route to the remote server. This setting controls
+	  the back-off time before retrying.
+
+	  Default: 180 seconds
+
 config BR2_PACKAGE_SYSKLOGD_LOGGER
 	bool "logger tool"
 	help

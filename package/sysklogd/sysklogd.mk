@@ -9,7 +9,9 @@ SYSKLOGD_SITE = https://github.com/troglobit/sysklogd/releases/download/v$(SYSKL
 SYSKLOGD_LICENSE = BSD-3-Clause
 SYSKLOGD_LICENSE_FILES = LICENSE
 SYSKLOGD_CPE_ID_VALID = YES
-SYSKLOGD_CONF_OPTS = --exec-prefix=/
+SYSKLOGD_CONF_OPTS = \
+	--exec-prefix=/ \
+	--with-suspend-time=$(BR2_PACKAGE_SYSKLOGD_REMOTE_DELAY)
 
 # Disable/Enable utilities
 ifeq ($(BR2_PACKAGE_SYSKLOGD_LOGGER),y)
