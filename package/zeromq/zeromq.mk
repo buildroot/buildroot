@@ -53,11 +53,31 @@ else
 ZEROMQ_CONF_OPTS += --disable-drafts
 endif
 
+ifeq ($(BR2_PACKAGE_ZEROMQ_WEBSOCKET),y)
+ZEROMQ_CONF_OPTS += --enable-ws
+else
+ZEROMQ_CONF_OPTS += --disable-ws
+endif
+
+ifeq ($(BR2_PACKAGE_GNUTLS),y)
+ZEROMQ_DEPENDENCIES += host-pkgconf gnutls
+ZEROMQ_CONF_OPTS += --with-tls
+else
+ZEROMQ_CONF_OPTS += --without-tls
+endif
+
 ifeq ($(BR2_PACKAGE_LIBBSD),y)
 ZEROMQ_DEPENDENCIES += host-pkgconf libbsd
 ZEROMQ_CONF_OPTS += --enable-libbsd
 else
 ZEROMQ_CONF_OPTS += --disable-libbsd
+endif
+
+ifeq ($(BR2_PACKAGE_LIBNSS),y)
+ZEROMQ_DEPENDENCIES += host-pkgconf libnss
+ZEROMQ_CONF_OPTS += --with-nss
+else
+ZEROMQ_CONF_OPTS += --without-nss
 endif
 
 # ZeroMQ uses libsodium if it's available.
