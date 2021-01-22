@@ -4,13 +4,11 @@
 #
 ################################################################################
 
-SYSKLOGD_VERSION = 2.1.2
-SYSKLOGD_SITE = $(call github,troglobit,sysklogd,v$(SYSKLOGD_VERSION))
+SYSKLOGD_VERSION = 2.2.0
+SYSKLOGD_SITE = https://github.com/troglobit/sysklogd/releases/download/v$(SYSKLOGD_VERSION)
 SYSKLOGD_LICENSE = BSD-3-Clause
 SYSKLOGD_LICENSE_FILES = LICENSE
 SYSKLOGD_CPE_ID_VALID = YES
-# From git
-SYSKLOGD_AUTORECONF = YES
 SYSKLOGD_CONF_OPTS = --exec-prefix=/ --without-logger
 
 define SYSKLOGD_INSTALL_SAMPLE_CONFIG
