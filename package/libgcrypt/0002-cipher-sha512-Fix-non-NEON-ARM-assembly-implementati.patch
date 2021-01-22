@@ -1,0 +1,38 @@
+From 187a67e0cd24c210b3b4a60b09db011d295b9877 Mon Sep 17 00:00:00 2001
+From: David Michael <fedora.dm0@gmail.com>
+Date: Fri, 22 Jan 2021 22:02:06 +0100
+Subject: [PATCH] cipher/sha512: Fix non-NEON ARM assembly implementation
+
+* cipher/sha512.c (do_transform_generic)
+[USE_ARM_ASM]: Switch to the non-NEON assembly implementation.
+
+--
+
+When building for ARM CPUs that don't support NEON, linking fails
+with an "undefined reference to _gcry_sha512_transform_armv7_neon"
+error.  Switching to the non-NEON assembly function corrects this.
+
+[yann.morin.1998@free.fr:
+  - grab from the mailing list: https://lists.gnupg.org/pipermail/gcrypt-devel/2021-January/005059.html
+]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ cipher/sha512.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cipher/sha512.c b/cipher/sha512.c
+index f70cdf42..0f4c304f 100644
+--- a/cipher/sha512.c
++++ b/cipher/sha512.c
+@@ -291,7 +291,7 @@ static unsigned int
+ do_transform_generic (void *context, const unsigned char *data, size_t nblks)
+ {
+   SHA512_CONTEXT *hd = context;
+-  return _gcry_sha512_transform_armv7_neon (&hd->state, data, k, nblks);
++  return _gcry_sha512_transform_arm (&hd->state, data, k, nblks);
+ }
+ #else
+ static unsigned int
+-- 
+2.25.1
+
