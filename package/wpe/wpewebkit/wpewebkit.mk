@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPEWEBKIT_VERSION_VALUE = 57bbecb9421d206f40a3beb45b9d800288a39b1d # wpe-2.22
+WPEWEBKIT_VERSION_VALUE = 083fe48cb1e224cf0adef2271beaf95e5f0ec3f9 # wpe-2.22
 WPEWEBKIT_VERSION = $(WPEWEBKIT_VERSION_VALUE)
 WPEWEBKIT_SITE = $(call github,WebPlatformForEmbedded,WPEWebKit,$(WPEWEBKIT_VERSION))
 
