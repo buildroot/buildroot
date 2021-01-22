@@ -9,7 +9,14 @@ SYSKLOGD_SITE = https://github.com/troglobit/sysklogd/releases/download/v$(SYSKL
 SYSKLOGD_LICENSE = BSD-3-Clause
 SYSKLOGD_LICENSE_FILES = LICENSE
 SYSKLOGD_CPE_ID_VALID = YES
-SYSKLOGD_CONF_OPTS = --exec-prefix=/ --without-logger
+SYSKLOGD_CONF_OPTS = --exec-prefix=/
+
+# Disable/Enable utilities
+ifeq ($(BR2_PACKAGE_SYSKLOGD_LOGGER),y)
+SYSKLOGD_CONF_OPTS += --with-logger
+else
+SYSKLOGD_CONF_OPTS += --without-logger
+endif
 
 define SYSKLOGD_INSTALL_SAMPLE_CONFIG
 	$(INSTALL) -D -m 0644 package/sysklogd/syslog.conf \
