@@ -13,6 +13,11 @@ MROUTED_LICENSE_FILES = LICENSE
 MROUTED_CONFIGURE_OPTS = --enable-rsrr
 MROUTED_CPE_ID_VENDOR = troglobit
 
+define MROUTED_INSTALL_INIT_SYSV
+	$(INSTALL) -m 755 -D package/mrouted/S41mrouted \
+		$(TARGET_DIR)/etc/init.d/S41mrouted
+endef
+
 define MROUTED_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 644 $(@D)/mrouted.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/mrouted.service
