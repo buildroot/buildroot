@@ -8,3 +8,4 @@ LIBINI_SITE = $(call github,pcercuei,libini,$(LIBINI_VERSION))
 LIBINI_INSTALL_STAGING = YES
 
 $(eval $(cmake-package))
+$(eval $(host-cmake-package))
