@@ -18,4 +18,11 @@ define MROUTED_INSTALL_INIT_SYSTEMD
 		$(TARGET_DIR)/usr/lib/systemd/system/mrouted.service
 endef
 
+# We will asume that CONFIG_NET and CONFIG_INET are already
+# set in the kernel configuration provided by the user.
+define MROUTED_LINUX_CONFIG_FIXUPS
+	$(call KCONFIG_ENABLE_OPT,CONFIG_IP_MULTICAST)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_IP_MROUTE)
+endef
+
 $(eval $(autotools-package))
