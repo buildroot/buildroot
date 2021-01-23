@@ -31,9 +31,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_GD)$(BR2_PACKAGE_LIBPNG),yy)
 GNUPLOT_CONF_OPTS += --with-gd
-GNUPLOT_DEPENDENCIES += gd
-GNUPLOT_CONF_ENV += \
-	ac_cv_path_GDLIB_CONFIG=$(STAGING_DIR)/usr/bin/gdlib-config
+GNUPLOT_DEPENDENCIES += host-pkgconf gd
 else
 GNUPLOT_CONF_OPTS += --without-gd
 endif
