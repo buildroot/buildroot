@@ -1,0 +1,62 @@
+From 1226b7f01daa3e03808a0a28b65421ba47b53c91 Mon Sep 17 00:00:00 2001
+From: Xabier Rodriguez Calvar <calvaris@igalia.com>
+Date: Mon, 21 Dec 2020 13:55:58 +0100
+Subject: [PATCH] qtdemux: Allow streams with no specified protection system ID
+
+This is necessary in cases like CMAF where there won't be any events
+passing thru.
+
+Part-of: <https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/-/merge_requests/852>
+---
+ gst/isomp4/qtdemux.c | 27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index e69c195e1..d3c2c62a1 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -8490,10 +8490,19 @@ gst_qtdemux_configure_protected_caps (GstQTDemux * qtdemux,
+         GST_FOURCC_ARGS (stream->protection_scheme_type));
+     return FALSE;
+   }
++
++  s = gst_caps_get_structure (CUR_STREAM (stream)->caps, 0);
++  if (!gst_structure_has_name (s, "application/x-cenc")) {
++    gst_structure_set (s,
++        "original-media-type", G_TYPE_STRING, gst_structure_get_name (s), NULL);
++    gst_structure_set_name (s, "application/x-cenc");
++  }
++
+   if (qtdemux->protection_system_ids == NULL) {
+-    GST_ERROR_OBJECT (qtdemux, "stream is protected using cenc, but no "
+-        "cenc protection system information has been found");
+-    return FALSE;
++    GST_DEBUG_OBJECT (qtdemux, "stream is protected using cenc, but no "
++        "cenc protection system information has been found, not setting a "
++        "protection system UUID");
++    return TRUE;
+   }
+ 
+   gst_qtdemux_request_protection_context (qtdemux, stream);
+@@ -8530,14 +8539,10 @@ gst_qtdemux_configure_protected_caps (GstQTDemux * qtdemux,
+   GST_DEBUG_OBJECT (qtdemux, "selected protection system is %s",
+       selected_system);
+ 
+-  s = gst_caps_get_structure (CUR_STREAM (stream)->caps, 0);
+-  if (!gst_structure_has_name (s, "application/x-cenc")) {
+-    gst_structure_set (s,
+-        "original-media-type", G_TYPE_STRING, gst_structure_get_name (s),
+-        GST_PROTECTION_SYSTEM_ID_CAPS_FIELD, G_TYPE_STRING, selected_system,
+-        NULL);
+-    gst_structure_set_name (s, "application/x-cenc");
+-  }
++  gst_structure_set (s,
++      GST_PROTECTION_SYSTEM_ID_CAPS_FIELD, G_TYPE_STRING, selected_system,
++      NULL);
++
+   return TRUE;
+ }
+ 
+-- 
+2.29.2
+
