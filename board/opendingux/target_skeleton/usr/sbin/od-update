@@ -36,6 +36,9 @@ else
 	HWVARIANT="$HWVARIANT_CMDLINE"
 fi
 
+# Default to SYSDEV=/dev/mmcblk0
+SYSDEV=$(echo $SYSPART |sed -n 's/\(\/dev\/mmcblk[0-9]\+\)p[0-9]\+/\1/p')
+
 case "$MODEL" in
 	retromini|ylm,rs90)
 		HWVARIANT_BL="$HWVARIANT_CMDLINE"
@@ -64,12 +67,10 @@ case "$MODEL" in
 				HWVARIANT_DT="gcw0_proto"
 				;;
 		esac
-		SYSDEV=$(echo $SYSPART |sed -n 's/\(\/dev\/mmcblk[0-9]\+\)p[0-9]\+/\1/p')
 		;;
 	anbernic,rg350|anbernic,rg350m|ylm,rg350|ylm,rg350m|ylm,rg280m|ylm,rg280v)
 		HWVARIANT_DT=$(echo $MODEL |cut -d',' -f2)
 		HWVARIANT_BL="rg350"
-		SYSDEV=$(echo $SYSPART |sed -n 's/\(\/dev\/mmcblk[0-9]\+\)p[0-9]\+/\1/p')
 		;;
 	*)
 		echo "Unknown model $MODEL"
