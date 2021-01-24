@@ -12,4 +12,8 @@ LIBGEOS_LICENSE_FILES = COPYING
 LIBGEOS_INSTALL_STAGING = YES
 LIBGEOS_CONFIG_SCRIPTS = geos-config
 
+ifeq ($(BR2_arm)$(BR2_armeb),y)
+LIBGEOS_CONF_OPTS += -DDISABLE_GEOS_INLINE=ON
+endif
+
 $(eval $(cmake-package))
