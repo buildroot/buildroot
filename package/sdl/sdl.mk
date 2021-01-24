@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SDL_VERSION = 4413f6d18
+SDL_VERSION = 4b033c6d4
 SDL_SITE = $(call github,OpenDingux,SDL,$(SDL_VERSION))
 SDL_LICENSE = LGPL-2.1+
 SDL_LICENSE_FILES = COPYING
