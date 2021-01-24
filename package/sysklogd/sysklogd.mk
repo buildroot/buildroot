@@ -9,8 +9,12 @@ SYSKLOGD_SITE = https://github.com/troglobit/sysklogd/releases/download/v$(SYSKL
 SYSKLOGD_LICENSE = BSD-3-Clause
 SYSKLOGD_LICENSE_FILES = LICENSE
 SYSKLOGD_CPE_ID_VALID = YES
+
+# Busybox install logger in /usr/bin, and syslogd in /sbin, so install in
+# the same locations so that busybox does not install its applets in there.
 SYSKLOGD_CONF_OPTS = \
-	--exec-prefix=/ \
+	--bindir=/usr/bin \
+	--sbindir=/sbin \
 	--with-suspend-time=$(BR2_PACKAGE_SYSKLOGD_REMOTE_DELAY)
 
 # Disable/Enable utilities
