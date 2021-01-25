@@ -378,9 +378,9 @@ else
 VLC_CONF_OPTS += --disable-theora
 endif
 
-ifeq ($(BR2_PACKAGE_LIBUPNP)$(BR2_PACKAGE_LIBUPNP18),y)
+ifeq ($(BR2_PACKAGE_LIBUPNP),y)
 VLC_CONF_OPTS += --enable-upnp
-VLC_DEPENDENCIES += $(if $(BR2_PACKAGE_LIBUPNP),libupnp,libupnp18)
+VLC_DEPENDENCIES += libupnp
 else
 VLC_CONF_OPTS += --disable-upnp
 endif
