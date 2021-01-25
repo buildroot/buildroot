@@ -16,11 +16,6 @@ I2PD_DEPENDENCIES = \
 
 I2PD_CONF_OPTS += -DWITH_GUI=OFF
 
-# Before CMake 3.10, passing THREADS_PTHREAD_ARG=OFF was needed to
-# disable a try_run() call in the FindThreads tests, which caused a
-# build failure when cross-compiling.
-I2PD_CONF_OPTS += -DTHREADS_PTHREAD_ARG=OFF
-
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 I2PD_CONF_OPTS += \
 	-DHAVE_CXX_ATOMICS_WITHOUT_LIB=OFF \
