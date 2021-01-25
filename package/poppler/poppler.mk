@@ -19,9 +19,6 @@ POPPLER_CONF_OPTS = \
 	-DBUILD_CPP_TESTS=OFF \
 	-DENABLE_GTK_DOC=OFF
 
-# cmake older than 3.10 requires this to avoid try_run() in FindThreads
-POPPLER_CONF_OPTS += -DTHREADS_PTHREAD_ARG=OFF
-
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 POPPLER_CONF_OPTS += -DCMAKE_CXX_FLAGS="$(TARGET_CXXFLAGS) -latomic"
 endif
