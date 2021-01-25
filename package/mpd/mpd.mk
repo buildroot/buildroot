@@ -304,7 +304,7 @@ endif
 ifeq ($(BR2_PACKAGE_MPD_UPNP),y)
 MPD_DEPENDENCIES += \
 	expat \
-	$(if $(BR2_PACKAGE_LIBUPNP),libupnp,libupnp18)
+	libupnp
 MPD_CONF_OPTS += -Dupnp=enabled
 else
 MPD_CONF_OPTS += -Dupnp=disabled
