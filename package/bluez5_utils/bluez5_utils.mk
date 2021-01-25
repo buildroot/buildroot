@@ -118,4 +118,8 @@ else
 BLUEZ5_UTILS_CONF_OPTS += --disable-systemd
 endif
 
+define BLUEZ5_UTILS_INSTALL_TARGET_CMDS
+    $(INSTALL) -D -m 0644 $(@D)/lib/mgmt.h $(STAGING_DIR)/usr/include/bluetooth/mgmt.h
+endef
+
 $(eval $(autotools-package))
