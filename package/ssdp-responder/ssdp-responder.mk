@@ -8,7 +8,9 @@ SSDP_RESPONDER_VERSION = 1.8
 SSDP_RESPONDER_SITE = https://github.com/troglobit/ssdp-responder/releases/download/v$(SSDP_RESPONDER_VERSION)
 SSDP_RESPONDER_LICENSE = ISC
 SSDP_RESPONDER_LICENSE_FILES = LICENSE
-SSDP_RESPONDER_CPE_ID_VENDOR = troglobit
+SSDP_RESPONDER_CPE_ID_VENDOR = \
+	simple_service_discovery_protocol_responder_project
+SSDP_RESPONDER_CPE_ID_PRODUCT = simple_service_discovery_protocol_responder
 SSDP_RESPONDER_DEPENDENCIES = host-pkgconf
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
