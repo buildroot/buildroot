@@ -65,12 +65,11 @@ LTP_TESTSUITE_CONF_ENV += \
 	SYSROOT="$(STAGING_DIR)"
 
 # uclibc: bessel support normally not enabled
-ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
-LTP_TESTSUITE_UNSUPPORTED_TEST_CASES = \
+LTP_TESTSUITE_UNSUPPORTED_TEST_CASES_$(BR2_TOOLCHAIN_USES_UCLIBC) += \
 	testcases/misc/math/float/bessel/ \
 	testcases/misc/math/float/float_bessel.c
-else ifeq ($(BR2_TOOLCHAIN_USES_MUSL),y)
-LTP_TESTSUITE_UNSUPPORTED_TEST_CASES = \
+
+LTP_TESTSUITE_UNSUPPORTED_TEST_CASES_$(BR2_TOOLCHAIN_USES_MUSL) += \
 	testcases/kernel/sched/process_stress/process.c \
 	testcases/kernel/syscalls/confstr/confstr01.c \
 	testcases/kernel/syscalls/fmtmsg/fmtmsg01.c \
@@ -79,22 +78,17 @@ LTP_TESTSUITE_UNSUPPORTED_TEST_CASES = \
 	testcases/kernel/syscalls/timer_create/timer_create01.c \
 	testcases/kernel/syscalls/timer_create/timer_create03.c \
 	utils/benchmark/ebizzy-0.3
-endif
+
+# ldd command build system tries to build a shared library unconditionally.
+LTP_TESTSUITE_UNSUPPORTED_TEST_CASES_$(BR2_STATIC_LIBS) += \
+	testcases/commands/ldd
 
 define LTP_TESTSUITE_REMOVE_UNSUPPORTED_TESTCASES
-	$(foreach f,$(LTP_TESTSUITE_UNSUPPORTED_TEST_CASES),
+	$(foreach f,$(LTP_TESTSUITE_UNSUPPORTED_TEST_CASES_y),
 		rm -rf $(@D)/$(f)
 	)
 endef
 
 LTP_TESTSUITE_POST_PATCH_HOOKS += LTP_TESTSUITE_REMOVE_UNSUPPORTED_TESTCASES
-
-# ldd command build system tries to build a shared library unconditionally.
-ifeq ($(BR2_STATIC_LIBS),y)
-define LTP_TESTSUITE_REMOVE_LDD
-	rm -rf $(@D)/testcases/commands/ldd
-endef
-LTP_TESTSUITE_POST_PATCH_HOOKS += LTP_TESTSUITE_REMOVE_LDD
-endif
 
 $(eval $(autotools-package))
