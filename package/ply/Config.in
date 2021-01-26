@@ -9,7 +9,7 @@ config BR2_PACKAGE_PLY
 	bool "ply"
 	depends on BR2_PACKAGE_PLY_ARCH_SUPPORTS
 	depends on BR2_USE_MMU # fork()
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_6 # BPF_FUNC_get_stackid
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14 # BPF_JLT
 	help
 	  ply is a light-weight dynamic tracer for Linux. By means of
 	  using the BPF it can attach probes to the linux kernel
