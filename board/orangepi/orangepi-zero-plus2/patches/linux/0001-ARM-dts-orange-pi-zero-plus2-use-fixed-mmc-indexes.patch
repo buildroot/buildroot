@@ -1,0 +1,33 @@
+From f780fee2dc7d4a7bcfb2297342f7bfec2c0d1c28 Mon Sep 17 00:00:00 2001
+From: Sergey Matyukevich <geomatsi@gmail.com>
+Date: Tue, 26 Jan 2021 23:19:13 +0300
+Subject: [PATCH 1/1] ARM: dts: orange-pi-zero-plus2: use fixed mmc indexes
+
+Driver sunxi-mmc has recently been switched to asynchronous probe.
+As a result, mmc indexes can be shuffled breaking existing setups
+where UUIDs are not used for boot devices. Pin mmc indexes to keep
+running the systems where fixed MMC or eMMC are specified,
+e.g. root=/dev/mmcblk0p2.
+
+Signed-off-by: Sergey Matyukevich <geomatsi@gmail.com>
+---
+ .../arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
+index de19e68eb84e..c4854d3ba524 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
+@@ -13,6 +13,9 @@ / {
+ 
+ 	aliases {
+ 		serial0 = &uart0;
++		mmc0 = &mmc0;
++		mmc1 = &mmc1;
++		mmc2 = &mmc2;
+ 	};
+ 
+ 	chosen {
+-- 
+2.30.0
+
