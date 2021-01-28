@@ -13,9 +13,11 @@ OPEN62541_INSTALL_STAGING = YES
 OPEN62541_LICENSE = MPL-2.0
 OPEN62541_LICENSE_FILES = LICENSE
 
+# Force Release build to remove -Werror.
 # Don't use git describe to get the version number.
 # Disable hardening options to let Buildroot handle it.
 OPEN62541_CONF_OPTS = \
+	-DCMAKE_BUILD_TYPE=Release \
 	-DGIT_EXECUTABLE=NO \
 	-DOPEN62541_VERSION=$(OPEN62541_VERSION) \
 	-DUA_ENABLE_HARDENING=OFF
