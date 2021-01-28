@@ -160,7 +160,7 @@ endif #BR_BUILDING
 define HOST_UBOOT_TOOLS_GENERATE_BOOT_SCRIPT
 	$(@D)/tools/mkimage -C none -A $(MKIMAGE_ARCH) -T script \
 		-d $(call qstrip,$(BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT_SOURCE)) \
-		$(@D)/tools/boot.scr)
+		$(@D)/tools/boot.scr
 endef
 define HOST_UBOOT_TOOLS_INSTALL_BOOT_SCRIPT
 	$(INSTALL) -m 0755 -D $(@D)/tools/boot.scr $(BINARIES_DIR)/boot.scr
