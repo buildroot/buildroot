@@ -522,8 +522,8 @@ LIBFOO_IGNORE_CVES += CVE-2020-54321
    identifier. When not defined the default value is
    +$(LIBFOO_VERSION)+.
 
-** +LIBFOO_CPE_ID_VERSION_MINOR+ specifies the _update_ part of the
-   CPE identifier. When not defined the default value is +*+.
+** +LIBFOO_CPE_ID_UPDATE+ specifies the _update_ part of the CPE
+   identifier. When not defined the default value is +*+.
 --
 +
 If any of those variables is defined, then the generic package
@@ -534,8 +534,8 @@ package infrastructure will define +LIBFOO_CPE_ID+.
 Alternatively, a package can also explicitly set +LIBFOO_CPE_ID_VALID
 = YES+ if the default values for +LIBFOO_CPE_ID_PREFIX+,
 +LIBFOO_CPE_ID_VENDOR+, +LIBFOO_CPE_ID_PRODUCT+,
-+LIBFOO_CPE_ID_VERSION+, +LIBFOO_CPE_ID_VERSION_MINOR+ are all correct
-for this package and don't need to be explicitly overridden.
++LIBFOO_CPE_ID_VERSION+, +LIBFOO_CPE_ID_UPDATE+ are all correct for
+this package and don't need to be explicitly overridden.
 +
 For a host package, if its +LIBFOO_CPE_ID_*+ variables are not
 defined, it inherits the value of those variables from the

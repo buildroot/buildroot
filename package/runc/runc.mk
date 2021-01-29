@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-RUNC_VERSION = $(RUNC_CPE_ID_VERSION)-$(RUNC_CPE_ID_VERSION_MINOR)
+RUNC_VERSION = $(RUNC_CPE_ID_VERSION)-$(RUNC_CPE_ID_UPDATE)
 RUNC_SITE = $(call github,opencontainers,runc,v$(RUNC_VERSION))
 RUNC_LICENSE = Apache-2.0
 RUNC_LICENSE_FILES = LICENSE
 RUNC_CPE_ID_VENDOR = linuxfoundation
 RUNC_CPE_ID_VERSION = 1.0.0
-RUNC_CPE_ID_VERSION_MINOR = rc92
+RUNC_CPE_ID_UPDATE = rc92
 
 RUNC_LDFLAGS = -X main.version=$(RUNC_VERSION)
 RUNC_TAGS = cgo static_build
