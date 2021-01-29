@@ -22,13 +22,6 @@ ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 PINENTRY_CONF_ENV += LIBS=-latomic
 endif
 
-# build with X if available
-ifeq ($(BR2_PACKAGE_XORG7),y)
-PINENTRY_CONF_OPTS += --with-x
-else
-PINENTRY_CONF_OPTS += --without-x
-endif
-
 ifeq ($(BR2_PACKAGE_LIBSECRET),y)
 PINENTRY_CONF_OPTS += --enable-libsecret
 PINENTRY_DEPENDENCIES += libsecret
