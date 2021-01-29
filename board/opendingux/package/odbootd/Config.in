@@ -11,6 +11,6 @@ config BR2_PACKAGE_HOST_ODBOOTD
 config HOST_ODBOOTD_EMBEDDED_KERNEL
 	bool "Embed kernel file"
 	depends on BR2_PACKAGE_HOST_ODBOOTD
-	depends on BR2_LINUX_KERNEL
+	depends on BR2_TARGET_ROOTFS_INITRAMFS
 	help
 	  Set Y to embed the kernel file into odboot-client
