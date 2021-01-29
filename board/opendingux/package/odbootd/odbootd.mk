@@ -17,5 +17,10 @@ ifeq ($(HOST_ODBOOTD_EMBEDDED_KERNEL),y)
 	HOST_ODBOOTD_CONF_OPTS += -DEMBEDDED_INSTALLER=$(BINARIES_DIR)/$(LINUX_IMAGE_NAME)
 endif
 
+define HOST_ODBOOTD_INSTALL_BINARY
+	$(INSTALL) -D -m 0755 $(@D)/odboot-client $(BINARIES_DIR)/odboot-client
+endef
+HOST_ODBOOTD_POST_INSTALL_HOOKS += HOST_ODBOOTD_INSTALL_BINARY
+
 $(eval $(cmake-package))
 $(eval $(host-cmake-package))
