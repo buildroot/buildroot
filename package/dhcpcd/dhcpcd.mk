@@ -16,6 +16,11 @@ DHCPCD_CONFIG_OPTS = \
 	--os=linux \
 	--privsepuser=dhcpcd
 
+# AUDIT_ARCH_NDS32 is only available since kernel >= 5.2
+ifeq ($(BR2_nds32):$(BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_2),y:)
+DHCPCD_CONFIG_OPTS += --disable-privsep
+endif
+
 ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
 DHCPCD_CONFIG_OPTS += --with-udev
 DHCPCD_DEPENDENCIES += udev
