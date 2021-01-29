@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ifeq ($(BR2_PACKAGE_WPEWEBKIT_DEVEL),y)
+ifeq ($(BR2_PACKAGE_WPEWEBKIT2_28),y)
 WPEBACKEND_VERSION = 1.6.0
 WPEBACKEND_SITE = https://wpewebkit.org/releases
 WPEBACKEND_SOURCE = libwpe-$(WPEBACKEND_VERSION).tar.xz
