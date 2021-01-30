@@ -14,13 +14,17 @@ rm -rf output/${CONFIG}
 # Use the default config.
 make od_${CONFIG}_defconfig BR2_EXTERNAL=board/opendingux O=output/${CONFIG}
 
-[ "${CONFIG}" = "installer" ] || SDK_TARGET=sdk
+if [ "${CONFIG}" = "installer" ] ; then
+	TARGET="all host-odbootd"
+else
+	TARGET=sdk
+fi
 
 # Perform the build.
 echo "Starting build..."
-nice make ${SDK_TARGET} BR2_SDK_PREFIX=${CONFIG}-toolchain O=output/${CONFIG}
+nice make ${TARGET} BR2_SDK_PREFIX=${CONFIG}-toolchain O=output/${CONFIG}
 
-if [ "${SDK_TARGET}" ] ; then
+if [ "${TARGET}" = sdk ] ; then
 	echo "Recompressing SDK to XZ..."
 	ARCHIVE_NAME=opendingux-${CONFIG}-toolchain.`date +'%Y-%m-%d'`
 	gzip -d -c output/${CONFIG}/images/${CONFIG}-toolchain.tar.gz | xz -T0 -9 > output/${CONFIG}/images/$ARCHIVE_NAME.tar.xz
