@@ -2,15 +2,3 @@ config BR2_PACKAGE_ODBOOTD
 	bool "odbootd"
 	help
 	  odbootd daemon for odboot-client
-
-config BR2_PACKAGE_HOST_ODBOOTD
-	bool "host odboot-client"
-	help
-	  odboot-client for odbootd daemon
-
-config HOST_ODBOOTD_EMBEDDED_KERNEL
-	bool "Embed kernel file"
-	depends on BR2_PACKAGE_HOST_ODBOOTD
-	depends on BR2_TARGET_ROOTFS_INITRAMFS
-	help
-	  Set Y to embed the kernel file into odboot-client
