@@ -36,6 +36,15 @@ else
 MUTT_CONF_OPTS += --without-idn --without-idn2
 endif
 
+ifeq ($(BR2_PACKAGE_LIBGPGME),y)
+MUTT_DEPENDENCIES += libgpgme
+MUTT_CONF_OPTS += \
+	--enable-gpgme \
+	--with-gpgme-prefix=$(STAGING_DIR)/usr
+else
+MUTT_CONF_OPTS += --disable-gpgme
+endif
+
 ifeq ($(BR2_PACKAGE_MUTT_IMAP),y)
 MUTT_CONF_OPTS += --enable-imap
 else
