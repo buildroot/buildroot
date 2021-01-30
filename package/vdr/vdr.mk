@@ -9,6 +9,7 @@ VDR_SOURCE = vdr-$(VDR_VERSION).tar.bz2
 VDR_SITE = ftp://ftp.tvdr.de/vdr
 VDR_LICENSE = GPL-2.0+
 VDR_LICENSE_FILES = COPYING
+VDR_CPE_ID_VENDOR = tvdr
 VDR_INSTALL_STAGING = YES
 VDR_DEPENDENCIES = \
 	host-pkgconf \
