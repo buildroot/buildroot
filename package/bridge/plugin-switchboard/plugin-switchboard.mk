@@ -1,0 +1,31 @@
+################################################################################
+#
+# Plugin Switchboard
+#
+################################################################################
+PLUGIN_SWITCHBOARD_VERSION = trunk
+PLUGIN_SWITCHBOARD_SITE = git@git.integraal.info:Integraal/plugins
+PLUGIN_SWITCHBOARD_SUBDIR = src/switchboard
+PLUGIN_SWITCHBOARD_SITE_METHOD = git
+PLUGIN_SWITCHBOARD_INSTALL_STAGING = NO
+PLUGIN_SWITCHBOARD_DEPENDENCIES = bridge bridge-contracts
+PLUGIN_SWITCHBOARD_CONF_OPTS = -DBUILD_REFERENCE=${PLUGIN_SWITCHBOARD_VERSION}
+
+ifeq ($(BR2_PACKAGE_BRIDGE_DEBUG),y)
+PLUGIN_SWITCHBOARD_CONF_OPTS += -DCMAKE_BUILD_TYPE=Debug
+endif
+
+ifeq ($(BR2_PACKAGE_PLUGIN_WEBKITBROWSER),y)
+PLUGIN_SWITCHBOARD_CONF_OPTS += -DPLUGIN_WEBKITBROWSER=ON
+endif
+
+ifeq ($(BR2_PACKAGE_PLUGIN_YOUTUBE),y)
+PLUGIN_SWITCHBOARD_CONF_OPTS += -DPLUGIN_WEBKITBROWSER_YOUTUBE=ON
+endif
+
+ifeq ($(BR2_PACKAGE_PLUGIN_NETFLIX),y)
+PLUGIN_SWITCHBOARD_CONF_OPTS += -DPLUGIN_NETFLIX=ON
+endif
+
+$(eval $(cmake-package))
+

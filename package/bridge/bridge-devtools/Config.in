@@ -1,0 +1,70 @@
+menu "development tools"
+
+choice
+        prompt "build type"
+        default BR2_PACKAGE_BRIDGE_DEBUG
+        help
+          Select the type of build used for the bridge components build.
+
+        config BR2_PACKAGE_BRIDGE_DEBUG
+                bool "debug"
+
+        config BR2_PACKAGE_BRIDGE_RELEASE
+                bool "release"
+
+        config BR2_PACKAGE_BRIDGE_PRODUCTION
+                bool "production"
+
+endchoice
+
+config BR2_PACKAGE_BRIDGE_DISABLE_INITD
+	bool "Disable init.d"
+	help
+		If enabled the init.d script will NOT be installed.
+		
+menu "test applications"
+
+config BR2_PACKAGE_BRIDGE_TEST_CYCLICINSPECTOR
+	bool "CyclicBuffer inspector"
+	help
+		CyclicInspector is a small tool that allows you to inspect the
+		contents of the memory mapped file used by the CyclicBuffer.
+		This can be helpful during a post-mortem of a crashed program or
+		when tracing failed.
+
+
+config BR2_PACKAGE_BRIDGE_TEST_LOADER
+	bool "Test loader"
+	help
+		TestLoader is a verification and analyze tool for 
+		WPEFramework software and plugins.
+
+config BR2_PACKAGE_BRIDGE_TEST_RPCLINK
+	bool "RPC link test"
+	help
+		RPCLINK test tests the usage of RPC calls to out of process plugins.
+
+config BR2_PACKAGE_TEST_LINUXONEWIRE
+	bool "OneWire"
+	help
+		Test the netlink implementation for the OneWire Bus, implemented in the base framework.
+
+config BR2_PACKAGE_TEST_LINUXI2C
+	bool "I2C"
+	help
+		Test the I2C C++ wrapper for the I2C Bus, implemented in the base framework.
+
+config BR2_PACKAGE_TEST_LINUXSPI
+	bool "SPI"
+	help
+		Test the SPI C++ wrapper for the SPI Bus, implemented in the base framework.
+
+config BR2_PACKAGE_TEST_RASPIO
+	bool "GPIO"
+	help
+		Test the GPIO C++ wrapper for the IO pins, implemented in the base framework.
+
+
+endmenu
+
+endmenu
