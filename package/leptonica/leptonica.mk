@@ -51,8 +51,15 @@ endif
 ifeq ($(BR2_PACKAGE_WEBP),y)
 LEPTONICA_DEPENDENCIES += webp
 LEPTONICA_CONF_OPTS += --with-libwebp
+ifeq ($(BR2_PACKAGE_WEBP_DEMUX)$(BR2_PACKAGE_WEBP_MUX),yy)
+LEPTONICA_CONF_OPTS += --with-libwebpmux
 else
-LEPTONICA_CONF_OPTS += --without-libwebp
+LEPTONICA_CONF_OPTS += --without-libwebpmux
+endif
+else
+LEPTONICA_CONF_OPTS += \
+	--without-libwebp \
+	--without-libwebpmux
 endif
 
 ifeq ($(BR2_PACKAGE_ZLIB),y)
