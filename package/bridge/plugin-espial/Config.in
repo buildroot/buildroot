@@ -1,0 +1,20 @@
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_ESPIAL
+    bool "Espial"
+    depends on BR2_PACKAGE_ESPIAL_SDK
+    help
+        WPE Platform Espial Browser plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_ESPIAL
+
+config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_ESPIAL_AUTOSTART
+    bool "autostart"
+    default n
+
+config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_ESPIAL_URL
+    string "URL"
+    default "http://www.google.com"
+
+endif
+
+comment "Espial Browser is dependent on the espial-sdk package included"
+    depends on !BR2_PACKAGE_ESPIAL_SDK

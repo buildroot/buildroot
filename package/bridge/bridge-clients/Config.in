@@ -1,0 +1,30 @@
+config BR2_PACKAGE_BRIDGE_CLIENTS
+        bool 
+
+config BR2_PACKAGE_BRIDGE_VIRTUALINPUT
+        bool "VirtualInput"
+        select BR2_PACKAGE_BRIDGE_CLIENTS
+        help
+          If the dynamic uinput system can not be used for security reasons, this
+          allows for relaying keys to plugins
+
+ config BR2_PACKAGE_BRIDGE_COMPOSITORCLIENT
+        bool "CompositorClient"
+        select BR2_PACKAGE_BRIDGE_CLIENTS
+        help
+          This is the Compositor Backend abastrcation layer, client part.
+
+config BR2_PACKAGE_BRIDGE_PROVISIONPROXY
+        bool "ProvisionProxy"
+        select BR2_PACKAGE_LIBPROVISION
+        select BR2_PACKAGE_BRIDGE_CLIENTS
+        help
+          Allows provisioning of modules from the cloud.
+
+config BR2_PACKAGE_BRIDGE_OPENCDM
+        bool "OpenCDM"
+        select BR2_PACKAGE_BRIDGE_CLIENTS
+        help
+          Creates a ocdm compatible library to be used as a plugin to the OpenCDMServer in the bridge.
+
+

@@ -1,0 +1,6 @@
+config BR2_PLUGIN_CDMI_PLAYREADY_NEXUS
+	bool "playready-nexus"
+	depends on BR2_PACKAGE_PLUGIN_OPENCDMSERVER
+	depends on BR2_PACKAGE_BCM_REFSW
+	help
+	  PlayReady (nexus) DRM OpenCDM(i) compatible plugin
