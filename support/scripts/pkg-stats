@@ -32,7 +32,7 @@ brpath = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 sys.path.append(os.path.join(brpath, "utils"))
 from getdeveloperlib import parse_developers  # noqa: E402
-
+from cpedb import CPEDB  # noqa: E402
 
 INFRA_RE = re.compile(r"\$\(eval \$\(([a-z-]*)-package\)\)")
 URL_RE = re.compile(r"\s*https?://\S*\s*$")
@@ -225,7 +225,8 @@ class Package:
 
         if var in self.all_cpeids:
             self.cpeid = self.all_cpeids[var]
-            self.status['cpe'] = ("ok", "verified CPE identifier")
+            # Set a preliminary status, it might be overridden by check_package_cpes()
+            self.status['cpe'] = ("warning", "not checked against CPE dictionnary")
         else:
             self.status['cpe'] = ("error", "no verified CPE identifier")
 
@@ -600,6 +601,18 @@ def check_package_cves(nvd_path, packages):
                 pkg.status['cve'] = ("ok", "not affected by CVEs")
 
 
+def check_package_cpes(nvd_path, packages):
+    cpedb = CPEDB(nvd_path)
+    cpedb.get_xml_dict()
+    for p in packages:
+        if not p.cpeid:
+            continue
+        if cpedb.find(p.cpeid):
+            p.status['cpe'] = ("ok", "verified CPE identifier")
+        else:
+            p.status['cpe'] = ("error", "CPE identifier unknown in CPE database")
+
+
 def calculate_stats(packages):
     stats = defaultdict(int)
     stats['packages'] = len(packages)
@@ -898,19 +911,17 @@ def dump_html_pkg(f, pkg):
 
     # CPE ID
     td_class = ["left"]
-    if pkg.status['cpe'][0] == "ok":
+    if pkg.is_status_ok("cpe"):
         td_class.append("cpe-ok")
-    elif pkg.status['cpe'][0] == "error":
+    elif pkg.is_status_error("cpe"):
         td_class.append("cpe-nok")
     else:
         td_class.append("cpe-unknown")
     f.write("  <td class=\"%s\">\n" % " ".join(td_class))
-    if pkg.status['cpe'][0] == "ok":
+    if pkg.cpeid:
         f.write("  <code>%s</code>\n" % pkg.cpeid)
-    elif pkg.status['cpe'][0] == "error":
-        f.write("  N/A\n")
-    else:
-        f.write("  %s\n" % pkg.status['cpe'][1])
+    if not pkg.is_status_ok("cpe"):
+        f.write("  %s%s\n" % ("<br/>" if pkg.cpeid else "", pkg.status['cpe'][1]))
     f.write("  </td>\n")
 
     f.write(" </tr>\n")
@@ -1106,6 +1117,7 @@ def __main__():
     if args.nvd_path:
         print("Checking packages CVEs")
         check_package_cves(args.nvd_path, packages)
+        check_package_cpes(args.nvd_path, packages)
     print("Calculate stats")
     stats = calculate_stats(packages)
     if args.html:
