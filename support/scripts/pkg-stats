@@ -358,7 +358,7 @@ def get_pkglist(npackages, package_list):
 def get_config_packages():
     cmd = ["make", "--no-print-directory", "show-info"]
     js = json.loads(subprocess.check_output(cmd))
-    return set([v["name"] for _, v in js.items()])
+    return set([v["name"] for v in js.values()])
 
 
 def package_init_make_info():
