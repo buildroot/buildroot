@@ -27,8 +27,7 @@ GRPC_CONF_OPTS = \
 	-DgRPC_PROTOBUF_PROVIDER=package \
 	-DgRPC_RE2_PROVIDER=package \
 	-DgRPC_SSL_PROVIDER=package \
-	-DgRPC_ZLIB_PROVIDER=package \
-	-DgRPC_NATIVE_CPP_PLUGIN=$(HOST_DIR)/bin/grpc_cpp_plugin
+	-DgRPC_ZLIB_PROVIDER=package
 
 # grpc can use __atomic builtins, so we need to link with
 # libatomic when available
