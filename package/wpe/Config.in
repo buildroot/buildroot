@@ -4,19 +4,10 @@ source "package/wpe/wpeframework/Config.in"
 # WPE Framework Generators
 source "package/wpe/wpeframework-tools/Config.in"
 
-config BR2_PACKAGE_WPEWEBKIT_BUILD_DEVEL
-    bool "Build wpewebkit development version"
-
-if BR2_PACKAGE_WPEWEBKIT_BUILD_DEVEL
-source "package/wpe/wpewebkit-devel/Config.in"
-endif
-
-if !BR2_PACKAGE_WPEWEBKIT_BUILD_DEVEL
+# WPE WebKit
 source "package/wpe/wpewebkit/Config.in"
-endif
 
-if BR2_PACKAGE_WPEWEBKIT || BR2_PACKAGE_WPEWEBKIT_DEVEL
+if BR2_PACKAGE_WPEWEBKIT
 source "package/wpe/wpebackend/Config.in"
 source "package/wpe/wpebackend-rdk/Config.in"
 endif
-

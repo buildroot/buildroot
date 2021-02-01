@@ -1,39 +1,80 @@
+config BR2_PACKAGE_WPEWEBKIT_ARCH_SUPPORTS
+	bool
+	# ARM needs BLX, so v5t+, BE completely untested so disabled
+	default y if BR2_arm && !BR2_ARM_CPU_ARMV4
+	default y if BR2_aarch64 || BR2_aarch64_be
+	default y if BR2_i386 || BR2_x86_64
+	# Disabled on MIPS big endian due to sigbus
+	default y if BR2_mipsel || BR2_mips64el
+	# Disabled on PowerPC pending runtime testing
+	# Disabled on SuperH because of segfault
+	depends on BR2_USE_MMU # libglib2
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on BR2_PACKAGE_LIBGPG_ERROR_ARCH_SUPPORTS # libgcrypt
+
+comment "wpewebkit needs a toolchain w/ C++, wchar, threads, dynamic library, gcc >= 7"
+	depends on BR2_PACKAGE_WPEWEBKIT_ARCH_SUPPORTS
+	depends on !BR2_BINFMT_FLAT
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_USE_WCHAR \
+		|| !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS \
+		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_7
+
+comment "wpewebkit needs OpenGL ES and EGL"
+	depends on BR2_PACKAGE_WPEWEBKIT_ARCH_SUPPORTS
+	depends on !BR2_BINFMT_FLAT
+	depends on !BR2_PACKAGE_HAS_LIBGLES || !BR2_PACKAGE_HAS_LIBEGL
+
 config BR2_PACKAGE_WPEWEBKIT
 	bool "wpewebkit"
 	default y
-	select BR2_PACKAGE_WPEBACKEND if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_WPEBACKEND_RDK if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_LIBGLIB2
-	select BR2_PACKAGE_LIBEPOXY if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_CAIRO if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_CAIRO_PNG if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_FREETYPE if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_FONTCONFIG if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_GLIB_NETWORKING if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_GST1_PLUGINS_BASE if BR2_PACKAGE_GSTREAMER1 && !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_GST1_PLUGINS_GOOD if BR2_PACKAGE_GSTREAMER1 && !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_GST1_PLUGINS_BAD if BR2_PACKAGE_GSTREAMER1 && !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_HARFBUZZ if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_ICU if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_JPEG if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_LIBPNG if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_LIBXML2 if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_LIBXSLT if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_LIBSOUP if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_LIBSOUP_SSL if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_LIBINPUT if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC && !BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT && !BR2_PACKAGE_GLUELOGIC_VIRTUAL_KEYBOARD
-	select BR2_PACKAGE_LIBGCRYPT if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_WEBP_DEMUX if BR2_PACKAGE_WEBP
-	select BR2_PACKAGE_SQLITE if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	select BR2_PACKAGE_XKEYBOARD_CONFIG if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC && BR2_PACKAGE_LIBXKBCOMMON
-	help
-	  WPEWebkit browser
+	depends on !BR2_STATIC_LIBS # wayland
+	depends on !BR2_BINFMT_FLAT # icu
+	depends on BR2_INSTALL_LIBSTDCPP # harfbuzz, icu
+	depends on BR2_TOOLCHAIN_HAS_THREADS # wayland, icu, libsoup
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7
+	depends on BR2_USE_WCHAR # icu, libsoup
+	depends on BR2_PACKAGE_HAS_LIBGLES # libepoxy
+	depends on BR2_PACKAGE_HAS_LIBEGL # libepoxy
+	depends on BR2_PACKAGE_WPEWEBKIT_ARCH_SUPPORTS
+	select BR2_PACKAGE_WPEBACKEND
+	select BR2_PACKAGE_WPEBACKEND_RDK
+	select BR2_PACKAGE_LIBEPOXY
+	select BR2_PACKAGE_CAIRO
+	select BR2_PACKAGE_CAIRO_PNG
+	select BR2_PACKAGE_JPEG
+	select BR2_PACKAGE_LIBPNG
+	select BR2_PACKAGE_HARFBUZZ
+	select BR2_PACKAGE_ICU
+	select BR2_PACKAGE_WEBP
+	select BR2_PACKAGE_WEBP_DEMUX
+	select BR2_PACKAGE_LIBSOUP
+	select BR2_PACKAGE_LIBSOUP_SSL
+	select BR2_PACKAGE_LIBGCRYPT
+	select BR2_PACKAGE_LIBXSLT
+	select BR2_PACKAGE_XKEYBOARD_CONFIG
+	select BR2_PACKAGE_OPENJPEG
 
 if BR2_PACKAGE_WPEWEBKIT
 
-menu "Extra options"
+choice
+        bool "version"
+        default BR2_PACKAGE_WPEWEBKIT2_22
+        help
+          Choose the WPEWEBKIT version to be built.
 
-menu "Build type and debug options"
+config BR2_PACKAGE_WPEWEBKIT2_22
+        bool "2.22"
+        help
+          Build WPEWEBKIT 2.22
+
+config BR2_PACKAGE_WPEWEBKIT2_28
+        bool "2.28"
+        help
+          Build WPEWEBKIT 2.28
+
+endchoice
+
+menu "Extra options"
 
 choice
 	bool "Debug options"
@@ -69,45 +110,15 @@ config BR2_PACKAGE_WPEWEBKIT_SYMBOLS
 
 endif
 
-config BR2_PACKAGE_WPEWEBKIT_NO_JSC_OPTIMIZATIONS
-	bool "no JSC optimizations"
-        default n
-	help
-	  Avoid JSC optimizations such as JIT and FTL so that backtraces involving JS can come up cleaner
+if BR2_PACKAGE_WPEWEBKIT2_22
 
-
-config BR2_PACKAGE_WPEWEBKIT_USE_GOLD_LD
-	bool "use gold linker"
-		default n
-	help
-		If available in the toolchain WPE WebKit will use ld.gold to link objects. To enable 
-		this compile binutils with --enable-gold.
-
-endmenu
-
-config BR2_PACKAGE_WPEWEBKIT_JSC
-	bool "build JavaScriptCore interpreter (jsc)"
-	default n
-	help
-	  Build the JavaScriptCore interpreter (jsc)
-
-if BR2_PACKAGE_WPEWEBKIT_JSC
-
-config BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-	bool "Do not build WebKit libraries (only jsc)"
-	default n
-	help
-	  Only build the jsc binary, not WebKit itself
-
-endif
-
-if !BR2_PACKAGE_WPEWEBKIT_ONLY_JSC
-
-config BR2_PACKAGE_WPEWEBKIT_ENABLE_MEDIA_STREAM
-	depends on BR2_PACKAGE_OPENWEBRTC
-	bool "Media Stream"
-	help
-	  Enable Media Stream
+config BR2_PACKAGE_WPEWEBKIT_PREQ
+	bool
+	default y
+	select BR2_PACKAGE_GSTREAMER1
+	select BR2_PACKAGE_GST1_PLUGINS_BASE
+	select BR2_PACKAGE_GST1_PLUGINS_GOOD
+	select BR2_PACKAGE_GST1_PLUGINS_BAD
 
 config BR2_PACKAGE_WPEWEBKIT_USE_WEB_AUDIO
 	bool "Web Audio"
@@ -142,20 +153,68 @@ config BR2_PACKAGE_WPEWEBKIT_USE_GSTREAMER_WEBKIT_HTTP_SRC
 	help
 	  Use the WebKit network resource loader to download Media data over HTTP(S)
 
-
-config BR2_PACKAGE_WPEWEBKIT_USE_FUSION_API
-	bool "Fusion API"
-	depends on BR2_PACKAGE_GST1_PLUGINS_DORNE
-	default y if BR2_PACKAGE_HORIZON_SDK
+config BR2_PACKAGE_WPEWEBKIT_ENABLE_NATIVE_VIDEO
+	bool "Enable native video"
+	default y
 	help
-	  Use Fusion IPC API in the Media Player.
+	  Defines ENABLE_NATIVE_VIDEO=ON
+
+config BR2_PACKAGE_WPEWEBKIT_ENABLE_NATIVE_AUDIO
+	bool "Enable native audio"
+	default n
+	help
+	  Defines ENABLE_NATIVE_AUDIO=ON
+
+config BR2_PACKAGE_WPEWEBKIT_ENABLE_TEXT_SINK
+	bool "Enable text sink"
+	default y
+	help
+	  Defines ENABLE_TEXT_SINK=ON
+
+endif
+
+if BR2_PACKAGE_WPEWEBKIT2_28
+
+config BR2_PACKAGE_WPEWEBKIT_MULTIMEDIA
+	bool "multimedia support"
+	default y
+	select BR2_PACKAGE_GSTREAMER1
+	select BR2_PACKAGE_GST1_PLUGINS_BASE
+	select BR2_PACKAGE_GST1_PLUGINS_GOOD
+	select BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_VPX
+	select BR2_PACKAGE_GST1_LIBAV
+	help
+	  This option pulls in all of the required dependencies
+	  to enable multimedia (video/audio) support.
+
+if BR2_PACKAGE_WPEWEBKIT_MULTIMEDIA
+
+config BR2_PACKAGE_WPEWEBKIT_USE_GSTREAMER_GL
+	bool "use gstreamer-gl"
+	default y
+	depends on BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_OPENGL || BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_GLES2
+	help
+	  Use the GStreamer GL elements for handling video content.
+	  This is recommended as it improves performance of video
+	  playback. In some target configurations incorrect rendering
+	  might be produced, and disabling this option may help.
+
+endif
+
+config BR2_PACKAGE_WPEWEBKIT_WEBDRIVER
+	bool "WebDriver support"
+	help
+	  Enable support for WebDriver. This will build and install the
+	  WebKitWebDriver program in the target.
+
+endif
 
 choice
 	bool "Punch hole"
-	default BR2_PACKAGE_WPEWEBKIT_USE_PUNCH_HOLE_GSTREAMER if BR2_PACKAGE_GSTREAMER1 && !BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_GL
+	default BR2_PACKAGE_WPEWEBKIT_USE_PUNCH_HOLE_GSTREAMER if BR2_PACKAGE_GSTREAMER1 && !BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL
 	default BR2_PACKAGE_WPEWEBKIT_USE_PUNCH_HOLE_NONE
 	help
-	  Choose the EME backend API version.
+	  Choose the holepunch version.
 
 config BR2_PACKAGE_WPEWEBKIT_USE_PUNCH_HOLE_NONE
 	bool "none"
@@ -174,26 +233,6 @@ config BR2_PACKAGE_WPEWEBKIT_USE_PUNCH_HOLE_EXTERNAL
 	  Use an external player.
 
 endchoice
-
-endif
-
-config BR2_PACKAGE_WPEWEBKIT_ENABLE_NATIVE_VIDEO
-	bool "Enable native video"
-	default y
-	help
-	  Defines ENABLE_NATIVE_VIDEO=ON
-
-config BR2_PACKAGE_WPEWEBKIT_ENABLE_NATIVE_AUDIO
-	bool "Enable native audio"
-	default n
-	help
-	  Defines ENABLE_NATIVE_AUDIO=ON
-
-config BR2_PACKAGE_WPEWEBKIT_ENABLE_TEXT_SINK
-	bool "Enable text sink"
-	default y
-	help
-	  Defines ENABLE_TEXT_SINK=ON
 
 endmenu
 
