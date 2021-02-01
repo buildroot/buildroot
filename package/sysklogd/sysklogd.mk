@@ -25,7 +25,7 @@ SYSKLOGD_CONF_OPTS += --without-logger
 endif
 
 define SYSKLOGD_INSTALL_SAMPLE_CONFIG
-	$(INSTALL) -D -m 0644 package/sysklogd/syslog.conf \
+	$(INSTALL) -D -m 0644 $(@D)/syslog.conf \
 		$(TARGET_DIR)/etc/syslog.conf
 endef
 
