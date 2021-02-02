@@ -81,8 +81,8 @@ define $(2)_CONFIGURE_CMDS
 	    package/meson/cross-compilation.conf.in \
 	    > $$($$(PKG)_SRCDIR)/build/cross-compilation.conf
 	PATH=$$(BR_PATH) \
-	CC_FOR_BUILD="$(HOSTCC)" \
-	CXX_FOR_BUILD="$(HOSTCC)" \
+	CC_FOR_BUILD="$$(HOSTCC)" \
+	CXX_FOR_BUILD="$$(HOSTCC)" \
 	$$($$(PKG)_CONF_ENV) \
 	$$(MESON) \
 		--prefix=/usr \
