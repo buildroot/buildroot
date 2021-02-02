@@ -15,8 +15,6 @@ SOX_CPE_ID_PRODUCT = sound_exchange
 
 SOX_CONF_OPTS = \
 	--with-distro="Buildroot" \
-	--without-ffmpeg \
-	--disable-gomp \
 	--disable-stack-protector
 
 ifeq ($(BR2_PACKAGE_ALSA_LIB_PCM),y)
