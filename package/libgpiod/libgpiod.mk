@@ -12,8 +12,11 @@ LIBGPIOD_SITE = https://www.kernel.org/pub/software/libs/libgpiod
 LIBGPIOD_LICENSE = LGPL-2.1+
 LIBGPIOD_LICENSE_FILES = COPYING
 LIBGPIOD_INSTALL_STAGING = YES
-LIBGPIOD_DEPENDENCIES = host-pkgconf
-LIBGPIOD_CONF_OPTS = --disable-tests
+LIBGPIOD_DEPENDENCIES = host-pkgconf host-autoconf-archive
+# We're patching configure.ac
+LIBGPIOD_AUTORECONF = YES
+LIBGPIOD_AUTORECONF_OPTS = --include=$(HOST_DIR)/share/autoconf-archive
+LIBGPIOD_CONF_OPTS = --disable-tests --disable-examples
 
 ifeq ($(BR2_PACKAGE_LIBGPIOD_TOOLS),y)
 LIBGPIOD_CONF_OPTS += --enable-tools
