@@ -13,8 +13,6 @@ SOX_LICENSE_FILES = LICENSE.GPL LICENSE.LGPL
 
 SOX_CONF_OPTS = \
 	--with-distro="Buildroot" \
-	--without-ffmpeg \
-	--disable-gomp \
 	--disable-stack-protector
 
 ifeq ($(BR2_PACKAGE_ALSA_LIB_PCM),y)
