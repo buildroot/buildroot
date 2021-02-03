@@ -4,7 +4,7 @@
 #
 ################################################################################
 PLUGIN_COMMON_VERSION = trunk
-PLUGIN_COMMON_SITE = git@git.integraal.info:Integraal/plugins
+PLUGIN_COMMON_SITE = git@git.integraal.info:Integraal/modules
 PLUGIN_COMMON_SUBDIR = src
 PLUGIN_COMMON_SITE_METHOD = git
 PLUGIN_COMMON_INSTALL_STAGING = NO 
