@@ -193,9 +193,6 @@ COLLECTD_DEPENDENCIES = \
 	$(if $(BR2_PACKAGE_COLLECTD_WRITEREDIS),hiredis)
 
 # include/library fixups
-ifeq ($(BR2_PACKAGE_GRPC),y)
-COLLECTD_CONF_OPTS += --with-libgrpc++=$(STAGING_DIR)/usr
-endif
 ifeq ($(BR2_PACKAGE_JANSSON),y)
 COLLECTD_CONF_OPTS += --with-libjansson=$(STAGING_DIR)/usr
 endif
