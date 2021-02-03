@@ -4,7 +4,7 @@
 #
 ################################################################################
 PLUGIN_DOMOTICA_VERSION = trunk
-PLUGIN_DOMOTICA_SITE = git@git.integraal.info:Integraal/plugins
+PLUGIN_DOMOTICA_SITE = git@git.integraal.info:Integraal/modules
 PLUGIN_DOMOTICA_SUBDIR = src
 PLUGIN_DOMOTICA_SITE_METHOD = git
 PLUGIN_DOMOTICA_INSTALL_STAGING = NO

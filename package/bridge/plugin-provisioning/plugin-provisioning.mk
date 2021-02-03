@@ -4,7 +4,7 @@
 #
 ################################################################################
 PLUGIN_PROVISIONING_VERSION = trunk
-PLUGIN_PROVISIONING_SITE = git@git.integraal.info:Integraal/plugins
+PLUGIN_PROVISIONING_SITE = git@git.integraal.info:Integraal/modules
 PLUGIN_PROVISIONING_SUBDIR = src/provisioning
 PLUGIN_PROVISIONING_SITE_METHOD = git
 PLUGIN_PROVISIONING_INSTALL_STAGING = NO
