@@ -1,0 +1,14 @@
+--- a/CMakeLists.txt	2020-07-03 10:03:06.000000000 +0200
++++ b/CMakeLists.txt	2021-02-03 20:44:00.752514608 +0100
+@@ -50,9 +50,9 @@
+         )
+ 
+ if (USE_VIRTUAL_KEYBOARD)
+-    find_package(WPEFrameworkVirtualInput REQUIRED)
++    find_package(bridgeVirtualInput REQUIRED)
+     list(APPEND WPE_PLATFORM_LIBRARIES
+-        WPEFrameworkVirtualInput::WPEFrameworkVirtualInput
++        bridgeVirtualInput::bridgeVirtualInput
+     )
+     add_definitions(-DKEY_INPUT_HANDLING_VIRTUAL=1)
+ endif()
