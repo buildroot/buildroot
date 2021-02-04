@@ -1,0 +1,74 @@
+From f1386ab496cf754773770b17508afd22fcd7eb13 Mon Sep 17 00:00:00 2001
+From: Xabier Rodriguez Calvar <calvaris@igalia.com>
+Date: Wed, 3 Feb 2021 11:45:29 +0100
+Subject: [PATCH] ocdm: added skeleton for
+ opencdm_system_supports_server_certificate
+
+---
+ Source/ocdm/open_cdm.cpp | 13 +++++++++++++
+ Source/ocdm/open_cdm.h   | 18 ++++++++++++++++++
+ 2 files changed, 31 insertions(+)
+
+diff --git a/Source/ocdm/open_cdm.cpp b/Source/ocdm/open_cdm.cpp
+index 65629d1..b2eb651 100644
+--- a/Source/ocdm/open_cdm.cpp
++++ b/Source/ocdm/open_cdm.cpp
+@@ -197,6 +197,19 @@ struct OpenCDMSession* opencdm_get_system_session(struct OpenCDMSystem* system,
+     return (result);
+ }
+ 
++/**
++ * \brief Gets support server certificate.
++ *
++ * Some DRMs (e.g. WideVine) use a system-wide server certificate. This method
++ * gets if system has support for that certificate.
++ * \param system Instance of \ref OpenCDMAccessor.
++ * \return Non-zero on success, zero on error.
++ */
++EXTERNAL OpenCDMBool opencdm_system_supports_server_certificate(
++    struct OpenCDMSystem* system)
++{
++  return OPENCDM_BOOL_FALSE;
++}
+ 
+ /**
+  * \brief Sets server certificate.
+diff --git a/Source/ocdm/open_cdm.h b/Source/ocdm/open_cdm.h
+index 4acfd6a..2fcfa47 100644
+--- a/Source/ocdm/open_cdm.h
++++ b/Source/ocdm/open_cdm.h
+@@ -144,6 +144,14 @@ typedef enum {
+     ERROR_SERVER_SERVICE_SPECIFIC = 0x8004C604,
+ } OpenCDMError;
+ 
++/**
++ * OpenCDM bool type. 0 is false, 1 is true.
++ */
++typedef enum {
++    OPENCDM_BOOL_FALSE = 0,
++    OPENCDM_BOOL_TRUE = 1
++} OpenCDMBool;
++
+ /**
+  * Registered callbacks with OCDM sessions.
+  */
+@@ -306,6 +314,16 @@ EXTERNAL struct OpenCDMSession* opencdm_get_session(const uint8_t keyId[],
+ EXTERNAL struct OpenCDMSession* opencdm_get_system_session(struct OpenCDMSystem* system, const uint8_t keyId[],
+     const uint8_t length, const uint32_t waitTime);
+ 
++/**
++ * \brief Gets support server certificate.
++ *
++ * Some DRMs (e.g. WideVine) use a system-wide server certificate. This method
++ * gets if system has support for that certificate.
++ * \param system Instance of \ref OpenCDMAccessor.
++ * \return Non-zero on success, zero on error.
++ */
++EXTERNAL OpenCDMBool opencdm_system_supports_server_certificate(
++    struct OpenCDMSystem* system);
+ 
+ /**
+  * \brief Sets server certificate.
+-- 
+2.29.2
+
