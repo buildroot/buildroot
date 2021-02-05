@@ -10,5 +10,7 @@ PYTHON_FLASK_CORS_SITE = https://files.pythonhosted.org/packages/99/fc/cd117ea12
 PYTHON_FLASK_CORS_SETUP_TYPE = setuptools
 PYTHON_FLASK_CORS_LICENSE = MIT
 PYTHON_FLASK_CORS_LICENSE_FILES = LICENSE
+PYTHON_FLASK_CORS_CPE_ID_VENDOR = flask-cors_project
+PYTHON_FLASK_CORS_CPE_ID_PRODUCT = flask-cors
 
 $(eval $(python-package))
