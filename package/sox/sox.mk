@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SOX_VERSION = 7524160b29a476f7e87bc14fddf12d349f9a3c5e 
+SOX_VERSION = 7524160b29a476f7e87bc14fddf12d349f9a3c5e
 SOX_SITE = git://git.code.sf.net/p/sox/code
 SOX_SITE_METHOD = git
 SOX_DEPENDENCIES = host-autoconf-archive host-pkgconf
