@@ -167,8 +167,9 @@ endef
 clean-json = $(strip \
 	$(subst $(comma)},}, $(subst $(comma)$(space)},$(space)}, \
 	$(subst $(comma)],], $(subst $(comma)$(space)],$(space)], \
+	$(subst \,\\, \
 		$(strip $(1)) \
-	)))) \
+	))))) \
 )
 
 ifeq ($(BR2_PER_PACKAGE_DIRECTORIES),y)
