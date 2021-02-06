@@ -14,6 +14,8 @@ HOST_NODEJS_DEPENDENCIES = host-icu host-libopenssl host-python host-zlib
 NODEJS_INSTALL_STAGING = YES
 NODEJS_LICENSE = MIT (core code); MIT, Apache and BSD family licenses (Bundled components)
 NODEJS_LICENSE_FILES = LICENSE
+NODEJS_CPE_ID_VENDOR = nodejs
+NODEJS_CPE_ID_PRODUCT = node.js
 
 NODEJS_CONF_OPTS = \
 	--without-snapshot \
