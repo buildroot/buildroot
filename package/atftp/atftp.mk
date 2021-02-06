@@ -4,12 +4,10 @@
 #
 ################################################################################
 
-ATFTP_VERSION = 0.7.2
+ATFTP_VERSION = 0.7.4
 ATFTP_SITE = http://sourceforge.net/projects/atftp/files
 ATFTP_LICENSE = GPL-2.0+
 ATFTP_LICENSE_FILES = LICENSE
-# 0001-Makefile.am-link-against-libpthread-for-atftp.patch patches Makefile.am
-ATFTP_AUTORECONF = YES
 ATFTP_CONF_OPTS = --disable-libwrap --disable-mtftp
 # For static we need to explicitly link against libpthread
 ATFTP_LIBS = -lpthread
@@ -17,9 +15,6 @@ ATFTP_LIBS = -lpthread
 # https://gcc.gnu.org/gcc-5/porting_to.html.
 ATFTP_CONF_ENV = LIBS="$(ATFTP_LIBS)" \
 	CFLAGS="$(TARGET_CFLAGS) -fgnu89-inline"
-
-# 0004-Fix-for-DoS-issue-CVE-2020-6097.patch
-ATFTP_IGNORE_CVES += CVE-2020-6097
 
 ifeq ($(BR2_PACKAGE_READLINE),y)
 ATFTP_DEPENDENCIES += readline
