@@ -13,7 +13,7 @@ do_clean() {
 main() {
     local o O opts
     local cfg dir pkg random toolchains_csv toolchain all number mode prepare_only
-    local ret nb nb_skip nb_fail nb_legal nb_tc build_dir keep
+    local ret nb nb_skip nb_fail nb_legal nb_show nb_tc build_dir keep
     local -a toolchains
     local pkg_br_name
 
@@ -126,6 +126,7 @@ main() {
     nb_skip=0
     nb_fail=0
     nb_legal=0
+    nb_show=0
     for toolchainconfig in "${toolchains[@]}"; do
         : $((nb++))
         toolchain="$(basename "${toolchainconfig}" .config)"
@@ -137,11 +138,12 @@ main() {
         (1) : $((nb_skip++)); printf "SKIPPED\n";;
         (2) : $((nb_fail++)); printf "FAILED\n";;
         (3) : $((nb_legal++)); printf "FAILED\n";;
+        (4) : $((nb_show++)); printf "FAILED\n";;
         esac
     done
 
-    printf "%d builds, %d skipped, %d build failed, %d legal-info failed\n" \
-        ${nb} ${nb_skip} ${nb_fail} ${nb_legal}
+    printf "%d builds, %d skipped, %d build failed, %d legal-info failed, %d show-info failed\n" \
+        ${nb} ${nb_skip} ${nb_fail} ${nb_legal} ${nb_show}
 
     return $((nb_fail + nb_legal))
 }
@@ -195,6 +197,20 @@ build_one() {
     # sources depending on the configuration (e.g. lua-5.2 vs. lua-5.3)
     if ! make O="${dir}" legal-info >> "${dir}/logfile" 2>&1; then
         return 3
+    fi
+
+    # Validate that we generate proper json as show-info
+    { tput smso; printf '>>> Running show-info\n'; tput rmso; } >> "${dir}/logfile" 2> /dev/null;
+    JQ="$(which jq)"
+    if [ -z "${JQ}" ]; then
+        make O="${dir}" host-jq >> "${dir}/logfile" 2>&1
+        JQ="${dir}/host/bin/jq"
+    fi
+    if ! make O="${dir}" "${pkg:+${pkg}-}show-info" > "${dir}/info.json" 2>> "${dir}/logfile"; then
+        return 4
+    fi
+    if ! "${JQ}" . < "${dir}/info.json" >> "${dir}/logfile" 2>&1; then
+        return 4
     fi
 
     # If we get here, the build was successful. Clean up the build/host
