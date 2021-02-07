@@ -37,4 +37,10 @@ TPM2_PKCS11_CONF_ENV += \
 	ac_cv_prog_tpm2_import=yes \
 	ac_cv_prog_tpm2_changeauth=yes
 
+ifeq ($(BR2_PACKAGE_P11_KIT),y)
+TPM2_PKCS11_DEPENDENCIES += p11-kit
+TPM2_PKCS11_CONF_OPTS += \
+	--with-p11kitconfigdir=/usr/share/p11-kit/modules
+endif
+
 $(eval $(autotools-package))
