@@ -28,6 +28,10 @@ HOST_GDK_PIXBUF_CONF_OPTS = \
 	-Dintrospection=disabled \
 	-Dman=false
 
+ifeq ($(BR2_STATIC_LIBS),y)
+GDK_PIXBUF_CONF_OPTS += -Dbuiltin_loaders=all
+endif
+
 ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
 GDK_PIXBUF_CONF_OPTS += -Dintrospection=enabled
 GDK_PIXBUF_DEPENDENCIES += gobject-introspection
