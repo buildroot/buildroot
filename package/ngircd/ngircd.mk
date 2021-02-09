@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NGIRCD_VERSION = 26
+NGIRCD_VERSION = 26.1
 NGIRCD_SOURCE = ngircd-$(NGIRCD_VERSION).tar.xz
 NGIRCD_SITE = https://arthur.barton.de/pub/ngircd
 NGIRCD_LICENSE = GPL-2.0+
