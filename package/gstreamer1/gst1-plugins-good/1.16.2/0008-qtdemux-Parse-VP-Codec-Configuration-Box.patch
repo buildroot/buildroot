@@ -1,0 +1,189 @@
+From 78aa27db1f341b867255d2b784b17672652d55ac Mon Sep 17 00:00:00 2001
+From: Seungha Yang <seungha.yang@navercorp.com>
+Date: Wed, 19 Feb 2020 20:27:54 +0900
+Subject: [PATCH 8/9] qtdemux: Parse VP Codec Configuration Box
+
+The VP Codec Configuration Box (vpcC) contains vp9 profile and
+colorimetry information. Especially the profile information might
+be useful for downstream to select capable decoder element.
+---
+ gst/isomp4/fourcc.h  |   1 +
+ gst/isomp4/qtdemux.c | 150 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 151 insertions(+)
+
+diff --git a/gst/isomp4/fourcc.h b/gst/isomp4/fourcc.h
+index 6c425e6f9..17d31b217 100644
+--- a/gst/isomp4/fourcc.h
++++ b/gst/isomp4/fourcc.h
+@@ -259,6 +259,7 @@ G_BEGIN_DECLS
+ #define FOURCC_vmhd     GST_MAKE_FOURCC('v','m','h','d')
+ #define FOURCC_vp08     GST_MAKE_FOURCC('v','p','0','8')
+ #define FOURCC_vp09     GST_MAKE_FOURCC('v','p','0','9')
++#define FOURCC_vpcC     GST_MAKE_FOURCC('v','p','c','C')
+ #define FOURCC_xvid     GST_MAKE_FOURCC('x','v','i','d')
+ #define FOURCC_wave     GST_MAKE_FOURCC('w','a','v','e')
+ #define FOURCC_wide     GST_MAKE_FOURCC('w','i','d','e')
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index d3c2c62a1..1437fd46e 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -11707,6 +11707,156 @@ qtdemux_parse_trak (GstQTDemux * qtdemux, GNode * trak)
+ 
+             break;
+           }
++
++            /* TODO: Need to parse vpcC for VP8 codec too.
++             * Note that VPCodecConfigurationBox (vpcC) is defined for
++             * vp08, vp09, and vp10 fourcc. */
++          case FOURCC_vp09:
++          {
++            gint len = QT_UINT32 (stsd_entry_data) - 0x56;
++            const guint8 *vpcc_data = stsd_entry_data + 0x56;
++
++            /* find vpcC */
++            while (len >= 0x8) {
++              gint size;
++
++              if (QT_UINT32 (vpcc_data) <= len)
++                size = QT_UINT32 (vpcc_data) - 0x8;
++              else
++                size = len - 0x8;
++
++              if (size < 1)
++                /* No real data, so break out */
++                break;
++
++              switch (QT_FOURCC (vpcc_data + 0x4)) {
++                case FOURCC_vpcC:
++                {
++                  const gchar *profile_str = NULL;
++                  const gchar *chroma_format_str = NULL;
++                  guint8 profile;
++                  guint8 bitdepth;
++                  guint8 chroma_format;
++                  GstVideoColorimetry cinfo;
++
++                  /* parse, if found */
++                  GST_DEBUG_OBJECT (qtdemux,
++                      "found vp codec_data in stsd of size %d", size);
++
++                  /* the meaning of "size" is length of the atom body, excluding
++                   * atom length and fourcc fields */
++                  if (size < 12)
++                    break;
++
++                  /* Content is:
++                   * 4 bytes: atom length
++                   * 4 bytes: fourcc
++                   * 1 byte: version
++                   * 3 bytes: flags
++                   * 1 byte: profile
++                   * 1 byte: level
++                   * 4 bits: bitDepth
++                   * 3 bits: chromaSubsampling
++                   * 1 bit: videoFullRangeFlag
++                   * 1 byte: colourPrimaries
++                   * 1 byte: transferCharacteristics
++                   * 1 byte: matrixCoefficients
++                   * 2 bytes: codecIntializationDataSize (should be zero for vp8 and vp9)
++                   * rest: codecIntializationData (not used for vp8 and vp9)
++                   */
++
++                  if (vpcc_data[8] != 1) {
++                    GST_WARNING_OBJECT (qtdemux,
++                        "unknown vpcC version %d", vpcc_data[8]);
++                    break;
++                  }
++
++                  profile = vpcc_data[12];
++                  switch (profile) {
++                    case 0:
++                      profile_str = "0";
++                      break;
++                    case 1:
++                      profile_str = "1";
++                      break;
++                    case 2:
++                      profile_str = "2";
++                      break;
++                    case 3:
++                      profile_str = "3";
++                      break;
++                    default:
++                      break;
++                  }
++
++                  if (profile_str) {
++                    gst_caps_set_simple (entry->caps,
++                        "profile", G_TYPE_STRING, profile_str, NULL);
++                  }
++
++                  /* skip level, the VP9 spec v0.6 defines only one level atm,
++                   * but webm spec define various ones. Add level to caps
++                   * if we really need it then */
++
++                  bitdepth = (vpcc_data[14] & 0xf0) >> 4;
++                  if (bitdepth == 8 || bitdepth == 10 || bitdepth == 12) {
++                    gst_caps_set_simple (entry->caps,
++                        "bit-depth-luma", G_TYPE_UINT, bitdepth,
++                        "bit-depth-chroma", G_TYPE_UINT, bitdepth, NULL);
++                  }
++
++                  chroma_format = (vpcc_data[14] & 0xe) >> 1;
++                  switch (chroma_format) {
++                    case 0:
++                    case 1:
++                      chroma_format_str = "4:2:0";
++                      break;
++                    case 2:
++                      chroma_format_str = "4:2:2";
++                      break;
++                    case 3:
++                      chroma_format_str = "4:4:4";
++                      break;
++                    default:
++                      break;
++                  }
++
++                  if (chroma_format_str) {
++                    gst_caps_set_simple (entry->caps,
++                        "chroma-format", G_TYPE_STRING, chroma_format_str,
++                        NULL);
++                  }
++
++                  if ((vpcc_data[14] & 0x1) != 0)
++                    cinfo.range = GST_VIDEO_COLOR_RANGE_0_255;
++                  else
++                    cinfo.range = GST_VIDEO_COLOR_RANGE_16_235;
++                  cinfo.primaries =
++                      gst_video_color_primaries_from_iso (vpcc_data[15]);
++                  cinfo.transfer =
++                      gst_video_color_transfer_from_iso (vpcc_data[16]);
++                  cinfo.matrix =
++                      gst_video_color_matrix_from_iso (vpcc_data[17]);
++
++                  if (cinfo.primaries != GST_VIDEO_COLOR_PRIMARIES_UNKNOWN &&
++                      cinfo.transfer != GST_VIDEO_TRANSFER_UNKNOWN &&
++                      cinfo.matrix != GST_VIDEO_COLOR_MATRIX_UNKNOWN) {
++                    /* set this only if all values are known, otherwise this
++                     * might overwrite valid ones parsed from other color box */
++                    CUR_STREAM (stream)->colorimetry = cinfo;
++                  }
++                  break;
++                }
++                default:
++                  break;
++              }
++
++              len -= size + 8;
++              vpcc_data += size + 8;
++            }
++
++            break;
++          }
+           default:
+             break;
+         }
+-- 
+2.29.2
+
