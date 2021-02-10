@@ -38,7 +38,7 @@ config BR2_PACKAGE_WPA_SUPPLICANT_AP_SUPPORT
 	  set.  This links in parts of hostapd functionality into
 	  wpa_supplicant, making it bigger but dispensing the need for
 	  a separate hostapd binary in some applications hence being
-	  smaller overall.
+	  smaller overall.  It also enables support for Wi-Fi Direct.
 
 config BR2_PACKAGE_WPA_SUPPLICANT_WIFI_DISPLAY
 	bool "Enable Wi-Fi Display"
@@ -63,7 +63,7 @@ config BR2_PACKAGE_WPA_SUPPLICANT_AUTOSCAN
 config BR2_PACKAGE_WPA_SUPPLICANT_EAP
 	bool "Enable EAP"
 	help
-	  Enable support for EAP.
+	  Enable support for EAP, 802.1x/WPA-Enterprise and FILS.
 
 config BR2_PACKAGE_WPA_SUPPLICANT_HOTSPOT
 	bool "Enable HS20"
