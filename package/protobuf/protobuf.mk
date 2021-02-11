@@ -36,5 +36,12 @@ ifeq ($(BR2_PACKAGE_ZLIB),y)
 PROTOBUF_DEPENDENCIES += zlib
 endif
 
+define PROTOBUF_REMOVE_UNNECESSARY_TARGET_FILES
+	rm -rf $(TARGET_DIR)/usr/bin/protoc
+	rm -rf $(TARGET_DIR)/usr/lib/libprotoc.so*
+endef
+
+PROTOBUF_POST_INSTALL_TARGET_HOOKS += PROTOBUF_REMOVE_UNNECESSARY_TARGET_FILES
+
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
