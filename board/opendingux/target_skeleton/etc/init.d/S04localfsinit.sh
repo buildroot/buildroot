@@ -19,6 +19,11 @@ if [ -r /sys/power/state ] ; then
 	chmod 664 /sys/power/state
 fi
 
+if [ -r /sys/class/rtc/rtc0/wakealarm ] ; then
+	chown root:pm /sys/class/rtc/rtc0/wakealarm
+	chmod 664 /sys/class/rtc/rtc0/wakealarm
+fi
+
 mkdir -p /var/run/sudo /var/tmp /var/log
 chmod 777 /var/tmp /var/log
 
