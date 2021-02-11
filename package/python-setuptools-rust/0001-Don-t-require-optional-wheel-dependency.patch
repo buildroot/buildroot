@@ -1,0 +1,40 @@
+From 4de1da1189d8f6d45b71bf036fbba1101ea5ec47 Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Wed, 10 Feb 2021 20:54:37 -0700
+Subject: [PATCH] Don't require optional wheel dependency.
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[Upstream status:
+https://github.com/PyO3/setuptools-rust/pull/111]
+---
+ pyproject.toml | 2 +-
+ setup.cfg      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/pyproject.toml b/pyproject.toml
+index eaf552d..6abb82f 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -1,5 +1,5 @@
+ [build-system]
+-requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.4.3"]
++requires = ["setuptools>=42", "setuptools_scm[toml]>=3.4.3"]
+ build-backend = "setuptools.build_meta"
+ 
+ [tool.setuptools_scm]
+diff --git a/setup.cfg b/setup.cfg
+index c8a8fcd..d92bcde 100644
+--- a/setup.cfg
++++ b/setup.cfg
+@@ -28,7 +28,7 @@ classifiers =
+ packages = setuptools_rust
+ zip_safe = True
+ install_requires = semantic_version>=2.6.0; toml>=0.9.0
+-setup_requires = setuptools>=46.1; wheel; setuptools_scm[toml]>=3.4.3
++setup_requires = setuptools>=46.1; setuptools_scm[toml]>=3.4.3
+ 
+ [options.entry_points]
+ distutils.commands =
+-- 
+2.30.0
+
