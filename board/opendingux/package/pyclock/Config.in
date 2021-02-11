@@ -1,0 +1,12 @@
+config BR2_PACKAGE_PYCLOCK
+	bool "pyclock"
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON_PYGAME
+	select BR2_PACKAGE_PYTHON_PYGAME_FONT
+	select BR2_PACKAGE_PYTHON_PYGAME_MIXER
+	help
+	  Clock application that includes an analog clock, a calendar, a wakeup
+	  alarm and a countdown timer. It can also be used to adjust the current
+	  system time.
+
+	  https://github.com/BouKiCHi/pyCLOCK
