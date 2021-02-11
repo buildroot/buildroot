@@ -100,6 +100,7 @@ class Package:
         self.url_worker = None
         self.cpeid = None
         self.cves = list()
+        self.ignored_cves = list()
         self.latest_version = {'status': RM_API_STATUS_ERROR, 'version': None, 'id': None}
         self.status = {}
 
@@ -253,12 +254,11 @@ class Package:
                     self.status['pkg-check'] = ("error", "{} warnings".format(self.warnings))
                 return
 
-    @property
-    def ignored_cves(self):
+    def set_ignored_cves(self):
         """
         Give the list of CVEs ignored by the package
         """
-        return list(self.all_ignored_cves.get(self.pkgvar(), []))
+        self.ignored_cves = list(self.all_ignored_cves.get(self.pkgvar(), []))
 
     def set_developers(self, developers):
         """
@@ -1107,6 +1107,7 @@ def __main__():
         pkg.set_current_version()
         pkg.set_cpeid()
         pkg.set_url()
+        pkg.set_ignored_cves()
         pkg.set_developers(developers)
     print("Checking URL status")
     loop = asyncio.get_event_loop()
