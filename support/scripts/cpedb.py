@@ -94,22 +94,6 @@ class CPEDB:
         self.all_cpes_no_version = dict()
         self.nvd_path = nvd_path
 
-    def gen_cached_cpedb(self, cpedb, cache_all_cpes, cache_all_cpes_no_version):
-        print("CPE: Unzipping xml manifest...")
-        nist_cpe_file = gzip.GzipFile(fileobj=open(cpedb, 'rb'))
-        print("CPE: Converting xml manifest to dict...")
-        tree = ET.parse(nist_cpe_file)
-        all_cpedb = tree.getroot()
-        self.parse_dict(all_cpedb)
-
-        print("CPE: Caching dictionary")
-        cpes_file = open(cache_all_cpes, 'wb')
-        pickle.dump(self.all_cpes, cpes_file)
-        cpes_file.close()
-        cpes_file = open(cache_all_cpes_no_version, 'wb')
-        pickle.dump(self.all_cpes_no_version, cpes_file)
-        cpes_file.close()
-
     def get_xml_dict(self):
         print("CPE: Setting up NIST dictionary")
         if not os.path.exists(os.path.join(self.nvd_path, "cpe")):
@@ -121,24 +105,12 @@ class CPEDB:
             cpe_dict = requests.get(CPEDB_URL)
             open(cpe_dict_local, "wb").write(cpe_dict.content)
 
-        cache_all_cpes = os.path.join(self.nvd_path, "cpe", "all_cpes.pkl")
-        cache_all_cpes_no_version = os.path.join(self.nvd_path, "cpe", "all_cpes_no_version.pkl")
-
-        if not os.path.exists(cache_all_cpes) or \
-           not os.path.exists(cache_all_cpes_no_version) or \
-           os.stat(cache_all_cpes).st_mtime < os.stat(cpe_dict_local).st_mtime or \
-           os.stat(cache_all_cpes_no_version).st_mtime < os.stat(cpe_dict_local).st_mtime:
-            self.gen_cached_cpedb(cpe_dict_local,
-                                  cache_all_cpes,
-                                  cache_all_cpes_no_version)
-
-        print("CPE: Loading CACHED dictionary")
-        cpe_file = open(cache_all_cpes, 'rb')
-        self.all_cpes = pickle.load(cpe_file)
-        cpe_file.close()
-        cpe_file = open(cache_all_cpes_no_version, 'rb')
-        self.all_cpes_no_version = pickle.load(cpe_file)
-        cpe_file.close()
+        print("CPE: Unzipping xml manifest...")
+        nist_cpe_file = gzip.GzipFile(fileobj=open(cpe_dict_local, 'rb'))
+        print("CPE: Converting xml manifest to dict...")
+        tree = ET.parse(nist_cpe_file)
+        all_cpedb = tree.getroot()
+        self.parse_dict(all_cpedb)
 
     def parse_dict(self, all_cpedb):
         # Cycle through the dict and build two dict to be used for custom
