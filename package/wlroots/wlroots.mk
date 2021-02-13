@@ -15,7 +15,8 @@ WLROOTS_DEPENDENCIES = \
 	host-wayland \
 	libinput \
 	libxkbcommon \
-	mesa3d \
+	libegl \
+	libgles \
 	pixman \
 	udev \
 	wayland \
