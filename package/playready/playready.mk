@@ -18,7 +18,7 @@ PLAYREADY_CONF_OPTS = \
 
 ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY), y)
     PLAYREADY_CONF_OPTS += -DPLAYREADY_USE_PROVISION=ON
-    PLAYREADY_DEPENDENCIES += wpeframework
+    PLAYREADY_DEPENDENCIES += wpeframework-clientlibraries
 else ifeq ($(BR2_PACKAGE_CPPSDK),y)
     # Deprecated support
     ifeq ($(BR2_PACKAGE_LIBPROVISION),y)
