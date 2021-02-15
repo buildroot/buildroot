@@ -94,6 +94,7 @@ config BR2_PACKAGE_WPA_SUPPLICANT_EAP
 
 config BR2_PACKAGE_WPA_SUPPLICANT_HOTSPOT
 	bool "Enable HS20"
+	select BR2_PACKAGE_WPA_SUPPLICANT_EAP
 	help
 	  Enable Hotspot 2.0 and IEEE 802.11u interworking
 	  functionality.
