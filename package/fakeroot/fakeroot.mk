@@ -16,6 +16,7 @@ HOST_FAKEROOT_CONF_ENV = \
 	ac_cv_header_sys_capability_h=no \
 	ac_cv_func_capset=no
 # 0003-Select-TCP-when-lack-of-SYSV-IPC.patch touches configure.ac
+# 0007-configure.ac-fix-__xmknod-at-pointer-argument.patch touches configure.ac
 HOST_FAKEROOT_AUTORECONF = YES
 FAKEROOT_LICENSE = GPL-3.0+
 FAKEROOT_LICENSE_FILES = COPYING
