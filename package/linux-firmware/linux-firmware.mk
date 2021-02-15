@@ -674,10 +674,10 @@ endif
 # sure we canonicalize the pointed-to file, to cover the symlinks of the form
 # a/foo -> ../b/foo  where a/ (the directory where to put the symlink) does
 # not yet exist.
-define LINUX_FIRMWARE_INSTALL_TARGET_CMDS
-	mkdir -p $(TARGET_DIR)/lib/firmware
-	$(TAR) xf $(@D)/br-firmware.tar -C $(TARGET_DIR)/lib/firmware/
-	cd $(TARGET_DIR)/lib/firmware/ ; \
+define LINUX_FIRMWARE_INSTALL_FW
+	mkdir -p $(1)
+	$(TAR) xf $(@D)/br-firmware.tar -C $(1)
+	cd $(1) ; \
 	sed -r -e '/^Link: (.+) -> (.+)$$/!d; s//\1 \2/' $(@D)/WHENCE | \
 	while read f d; do \
 		if test -f $$(readlink -m $$(dirname $$f)/$$d); then \
@@ -685,6 +685,10 @@ define LINUX_FIRMWARE_INSTALL_TARGET_CMDS
 			ln -sf $$d $$f || exit 1; \
 		fi ; \
 	done
+endef
+
+define LINUX_FIRMWARE_INSTALL_TARGET_CMDS
+	$(call LINUX_FIRMWARE_INSTALL_FW, $(TARGET_DIR)/lib/firmware)
 endef
 
 $(eval $(generic-package))
