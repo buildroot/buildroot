@@ -11,8 +11,6 @@ LCMS2_LICENSE_FILES = COPYING
 LCMS2_CPE_ID_VENDOR = littlecms
 LCMS2_CPE_ID_PRODUCT = little_cms
 LCMS2_INSTALL_STAGING = YES
-# We're patching configure.ac
-LCMS2_AUTORECONF = YES
 
 ifeq ($(BR2_PACKAGE_JPEG),y)
 LCMS2_CONF_OPTS += --with-jpeg
@@ -23,7 +21,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_TIFF),y)
 LCMS2_CONF_OPTS += --with-tiff
-LCMS2_DEPENDENCIES += host-pkgconf tiff
+LCMS2_DEPENDENCIES += tiff
 else
 LCMS2_CONF_OPTS += --without-tiff
 endif
