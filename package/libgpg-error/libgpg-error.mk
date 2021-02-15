@@ -15,5 +15,13 @@ LIBGPG_ERROR_CONFIG_SCRIPTS = gpg-error-config
 LIBGPG_ERROR_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES)
 LIBGPG_ERROR_CONF_OPTS = --disable-tests \
 		--host=$(BR2_PACKAGE_LIBGPG_ERROR_SYSCFG)
+# We're patching configure.ac
+LIBGPG_ERROR_AUTORECONF= YES
+
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
+LIBGPG_ERROR_CONF_OPTS += --enable-threads
+else
+LIBGPG_ERROR_CONF_OPTS += --disable-threads
+endif
 
 $(eval $(autotools-package))
