@@ -132,6 +132,7 @@ COLLECTD_CONF_OPTS += \
 	$(if $(BR2_PACKAGE_COLLECTD_SMART),--enable-smart,--disable-smart) \
 	$(if $(BR2_PACKAGE_COLLECTD_SNMP),--enable-snmp,--disable-snmp) \
 	$(if $(BR2_PACKAGE_COLLECTD_SWAP),--enable-swap,--disable-swap) \
+	$(if $(BR2_PACKAGE_COLLECTD_SYNPROXY),--enable-synproxy,--disable-synproxy) \
 	$(if $(BR2_PACKAGE_COLLECTD_SYSLOG),--enable-syslog,--disable-syslog) \
 	$(if $(BR2_PACKAGE_COLLECTD_TABLE),--enable-table,--disable-table) \
 	$(if $(BR2_PACKAGE_COLLECTD_TAIL),--enable-tail,--disable-tail) \
