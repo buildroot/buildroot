@@ -4,7 +4,6 @@ import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element, SubElement
 import gzip
 import os
-import pickle
 import requests
 import time
 from xml.dom import minidom
