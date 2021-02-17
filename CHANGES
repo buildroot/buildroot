@@ -1,3 +1,29 @@
+2021.02-rc2, released February 16th, 2021
+
+	Fixes all over the tree.
+
+	Vulnerability scanning: cpedb.py: Drop CPE XML database
+	caching, as it did not speed up processing much and uses a lot
+	of additional memory.
+	pkg-stats: include information about ignored CVEs in JSON
+	output
+
+	Fakeroot: Fix compatibility issue with glibc 2.33
+
+	Updated/fixed packages: can-utils, collectd, dnsmaqs,
+	docker-cli, docker-engine, ebtables, fakeroot, flashrom,
+	gdk-pixbuf, go, gst1-python, jasper, kodi,
+	kodi-inputstream-adaptive, lcms2, libgeos, libgpg-error,
+	libopenssl, mongoose, mpd, ne10, netopeer2, openblas, orc,
+	perl-gd, ply, postgresql, protobuf, subversion, tcpdump,
+	tzdate, uboot-tools, wireshark, webkitgtk, wpewebkit, xterm
+
+	New packages: perl-extutils-pkgconfig
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11706: binman (U-boot tool) cannot find libfdt "binman: No mod..
+
 2021.02-rc1, released February 9th, 2021
 
 	Fixes all over the tree and new features.
