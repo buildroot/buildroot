@@ -65,6 +65,8 @@ define HOST_RUST_CONFIGURE_CMDS
 		echo 'channel = "stable"'; \
 		echo '[target.$(RUSTC_TARGET_NAME)]'; \
 		echo 'cc = "$(TARGET_CROSS)gcc"'; \
+		echo '[llvm]'; \
+		echo 'ninja = false'; \
 	) > $(@D)/config.toml
 endef
 
