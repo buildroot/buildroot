@@ -101,6 +101,12 @@ config BR2_PACKAGE_WPEWEBKIT_DEBUG
 
 endchoice
 
+config BR2_PACKAGE_WPEWEBKIT_NO_JSC_OPTIMIZATIONS
+        bool "no JSC optimizations"
+        default n
+        help
+          Avoid JSC optimizations such as JIT and FTL so that backtraces involving JS can come up cleaner
+
 if !BR2_PACKAGE_WPEWEBKIT_DEBUG
 
 config BR2_PACKAGE_WPEWEBKIT_SYMBOLS
