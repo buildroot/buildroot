@@ -1,0 +1,68 @@
+config BR2_PACKAGE_PLUGIN_DOMOTICA
+	bool
+
+config BR2_PACKAGE_PLUGIN_BARN
+	bool "Barn"
+	select BR2_PACKAGE_BRIDGE_DEVICES
+        select BR2_PACKAGE_PLUGIN_DOMOTICA
+	help
+	   Hardcoded rules in a plugin for a dedictaed service.
+
+config BR2_PACKAGE_PLUGIN_BUTLER
+	bool "Butler"
+        select BR2_PACKAGE_PLUGIN_DOMOTICA
+	help
+	   Butler plugin
+
+config BR2_PACKAGE_PLUGIN_I2CCONTROL
+	bool "I2CControl"
+	select BR2_PACKAGE_BRIDGE_DEVICES
+        select BR2_PACKAGE_PLUGIN_DOMOTICA
+	help
+	   I2CControl plugin
+
+config BR2_PACKAGE_PLUGIN_IOCONTROL
+	bool "IOControl"
+	select BR2_PACKAGE_BRIDGE_DEVICES
+        select BR2_PACKAGE_PLUGIN_DOMOTICA
+	help
+	   IOControl plugin
+
+config BR2_PACKAGE_PLUGIN_ONEWIRECONTROL
+	bool "OneWireControl"
+	select BR2_PACKAGE_BRIDGE_DEVICES
+        select BR2_PACKAGE_PLUGIN_DOMOTICA
+	help
+	   1-Wire Control plugin
+
+config BR2_PACKAGE_PLUGIN_RADIOCONTROL
+	bool "RadioControl"
+        select BR2_PACKAGE_PLUGIN_DOMOTICA
+	help
+	   RadioControl (NRF24L01) plugin
+
+config BR2_PACKAGE_PLUGIN_SCRIPTENGINE
+	bool "ScriptEngine"
+        select BR2_PACKAGE_PLUGIN_DOMOTICA
+	help
+	   Script Engine plugin
+
+config BR2_PACKAGE_PLUGIN_TEMPCONTROL
+	bool "TempControl"
+	select BR2_PACKAGE_BRIDGE_DEVICES
+        select BR2_PACKAGE_PLUGIN_DOMOTICA
+	help
+	   TempControl plugin
+
+config BR2_PACKAGE_PLUGIN_VIRTUALCONTROL
+	bool "VirtualControl"
+        select BR2_PACKAGE_PLUGIN_DOMOTICA
+	help
+	   VirtualControl plugin
+
+config BR2_PACKAGE_PLUGIN_ZWAVECONTROL
+	bool "ZWaveControl"
+	select BR2_PACKAGE_BRIDGE_ZWAVE
+        select BR2_PACKAGE_PLUGIN_DOMOTICA
+	help
+	   ZWAVE control plugin

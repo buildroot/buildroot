@@ -7,6 +7,8 @@ BOARD_NAME="$(basename ${BOARD_DIR})"
 GENIMAGE_CFG="${BOARD_DIR}/genimage-${BOARD_NAME}.cfg"
 GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
 
+BLUETOOTH=$(eval grep ^BR2_PACKAGE_BLUEZ5_UTILS=y ${BR2_CONFIG} | wc -l)
+
 for arg in "$@"
 do
 	case "${arg}" in
@@ -108,6 +110,80 @@ __EOF__
 # Add VC4 GPU support
 dtoverlay=vc4-fkms-v3d
 __EOF__
+		fi
+		;;
+		--silent)
+		if ! grep -qE '^disable_splash=1' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+			echo "Adding 'silent=1' to config.txt."
+			cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+# Silent
+disable_splash=1
+boot_delay=0
+__EOF__
+		fi
+		;;
+		--i2c)
+		if ! grep -qE '^dtparam=i2c_arm=on' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+			echo "Adding 'i2c' functionality to config.txt."
+			cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+# Enable i2c functionality
+dtparam=i2c_arm=on,i2c_arm_baudrate=400000
+dtparam=i2c1=on,i2c1_baudrate=50000
+__EOF__
+		fi
+		;;
+		--spi)
+		if ! grep -qE '^dtparam=spi=on' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+			echo "Adding 'spi' functionality to config.txt."
+			cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+# Enable spi functionality
+dtparam=spi=on
+__EOF__
+		fi
+		;;
+		--1w)
+		if ! grep -qE '^dtoverlay=w1-gpio' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+			echo "Adding '1w' functionality to config.txt."
+			cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+# Enable 1Wire functionality
+dtoverlay=w1-gpio,gpiopin=25
+__EOF__
+		fi
+		;;
+		--add-pi3-miniuart-bt-overlay)
+		if [ "x${BLUETOOTH}" = "x" ]; then
+			if ! grep -qE '^dtoverlay=pi3-miniuart-bt' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+				echo "Adding 'dtoverlay=pi3-miniuart-bt' to config.txt (fixes ttyAMA0 serial console)."
+				cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+# Fixes rpi3 ttyAMA0 serial console
+dtoverlay=pi3-miniuart-bt
+__EOF__
+			fi
+		else
+			echo "Adding serial console to /dev/ttyS0 to config.txt."
+			sed -i 's/ttyAMA0/ttyS0/g' "${BINARIES_DIR}/rpi-firmware/cmdline.txt"
+			cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+# Fixes rpi3 ttyS0 serial console
+enable_uart=1
+__EOF__
+ 
+		fi
+		;;
+		--rpi-wifi*)
+		if [ "x${KERNEL_4_14}" = "x" ]; then
+			if ! grep -qE '^dtoverlay=sdtweak' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+				echo "Adding 'rpi wifi' functionality to config.txt."
+				cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+# Enable overlay for wifi functionality
+dtoverlay=sdtweak,overclock_50=80
+__EOF__
+			fi
+			if grep -qE '^dtoverlay=mmc' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+				echo "Removing overlay for mmc due to wifi compatibilityin config.txt."
+				cat "${BINARIES_DIR}/rpi-firmware/config.txt" | sed '/^# Enable mmc by default/,+2d' > "${BINARIES_DIR}/rpi-firmware/config_.txt"
+				rm "${BINARIES_DIR}/rpi-firmware/config.txt"
+				mv "${BINARIES_DIR}/rpi-firmware/config_.txt" "${BINARIES_DIR}/rpi-firmware/config.txt"
+			fi
 		fi
 		;;
 	esac
