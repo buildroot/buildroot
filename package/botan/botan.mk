@@ -18,14 +18,11 @@ BOTAN_CONF_OPTS = \
 	--os=linux \
 	--cc=gcc \
 	--cc-bin="$(TARGET_CXX)" \
-	--ldflags="$(BOTAN_LDFLAGS)" \
 	--prefix=/usr \
 	--without-documentation
 
-BOTAN_LDFLAGS = $(TARGET_LDFLAGS)
-
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
-BOTAN_LDFLAGS += -latomic
+BOTAN_CONF_OPTS += --extra-libs=atomic
 endif
 
 ifeq ($(BR2_SHARED_LIBS),y)
