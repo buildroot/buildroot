@@ -88,6 +88,13 @@ else
 IMAGEMAGICK_CONF_OPTS += --without-png
 endif
 
+ifeq ($(BR2_PACKAGE_LIBRAW),y)
+IMAGEMAGICK_CONF_OPTS += --with-raw
+IMAGEMAGICK_DEPENDENCIES += libraw
+else
+IMAGEMAGICK_CONF_OPTS += --without-raw
+endif
+
 ifeq ($(BR2_PACKAGE_LIBRSVG),y)
 IMAGEMAGICK_CONF_OPTS += --with-rsvg
 IMAGEMAGICK_DEPENDENCIES += librsvg
@@ -182,6 +189,7 @@ HOST_IMAGEMAGICK_CONF_OPTS = \
 	--without-openexr \
 	--without-perl \
 	--without-raqm \
+	--without-raw \
 	--without-wmf \
 	--without-x \
 	--without-zip \
