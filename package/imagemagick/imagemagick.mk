@@ -32,9 +32,12 @@ IMAGEMAGICK_CONF_OPTS = \
 	--without-fpx \
 	--without-gslib \
 	--without-gvc \
+	--without-heic \
 	--without-jbig \
+	--without-jxl \
 	--without-lqr \
 	--without-openexr \
+	--without-openjp2 \
 	--without-perl \
 	--without-raqm \
 	--without-wmf \
@@ -184,9 +187,12 @@ HOST_IMAGEMAGICK_CONF_OPTS = \
 	--without-fpx \
 	--without-gslib \
 	--without-gvc \
+	--without-heic \
 	--without-jbig \
+	--without-jxl \
 	--without-lqr \
 	--without-openexr \
+	--without-openjp2 \
 	--without-perl \
 	--without-raqm \
 	--without-raw \
