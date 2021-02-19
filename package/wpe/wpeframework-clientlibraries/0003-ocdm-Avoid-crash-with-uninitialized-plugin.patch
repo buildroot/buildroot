@@ -1,0 +1,40 @@
+From a49804b19a9934e8e3713fe8e7652093b58d30cc Mon Sep 17 00:00:00 2001
+From: Xabier Rodriguez Calvar <calvaris@igalia.com>
+Date: Fri, 12 Feb 2021 15:49:21 +0100
+Subject: [PATCH] ocdm: Avoid crash with uninitialized plugin
+
+---
+ Source/ocdm/open_cdm_impl.h | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/Source/ocdm/open_cdm_impl.h b/Source/ocdm/open_cdm_impl.h
+index 64b9d61..9b216a8 100644
+--- a/Source/ocdm/open_cdm_impl.h
++++ b/Source/ocdm/open_cdm_impl.h
+@@ -80,7 +80,9 @@ protected:
+             ASSERT(_remote != nullptr);
+ 
+             if (_remote == nullptr) {
+-                _client.Release();
++                if (_client.IsValid()) {
++                  _client.Release();
++                }
+             }
+         }
+     }
+@@ -145,7 +147,11 @@ public:
+         // This is first call from WebKit when new session is started
+         // If ProxyStub return error for this call, there will be not next call from WebKit
+         Reconnect();
+-        return (_remote->IsTypeSupported(keySystem, mimeType));
++        bool result = false;
++        if (_remote != nullptr) {
++            result = _remote->IsTypeSupported(keySystem, mimeType);
++        }
++        return result;
+     }
+ 
+     virtual OCDM::OCDM_RESULT Metadata(const std::string& keySystem,
+-- 
+2.30.0
+
