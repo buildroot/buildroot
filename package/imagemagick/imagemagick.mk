@@ -110,6 +110,13 @@ else
 IMAGEMAGICK_CONF_OPTS += --without-zip
 endif
 
+ifeq ($(BR2_PACKAGE_ZSTD),y)
+IMAGEMAGICK_CONF_OPTS += --with-zstd
+IMAGEMAGICK_DEPENDENCIES += zstd
+else
+IMAGEMAGICK_CONF_OPTS += --without-zstd
+endif
+
 ifeq ($(BR2_PACKAGE_PANGO),y)
 IMAGEMAGICK_CONF_OPTS += --with-pango
 IMAGEMAGICK_DEPENDENCIES += pango
@@ -178,6 +185,7 @@ HOST_IMAGEMAGICK_CONF_OPTS = \
 	--without-wmf \
 	--without-x \
 	--without-zip \
+	--without-zstd \
 	--without-bzlib \
 	--without-fftw \
 	--without-lcms \
