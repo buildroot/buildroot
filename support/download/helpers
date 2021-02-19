@@ -8,6 +8,9 @@
 #         find's -path option, and relative to the input directory $1
 #
 # Notes :
+#   - the timestamp is internally rounded to the highest entire second
+#     less than or equal to the timestamp (i.e. any sub-second fractional
+#     part is ignored)
 #   - must not be called with CWD as, or below, the input directory
 #   - some temporary files are created in CWD, and removed at the end
 #
@@ -40,6 +43,9 @@ mk_tar_gz() {
     for glob; do
         find_opts+=( -or -path "./${glob#./}" )
     done
+
+    # Drop sub-second precision to play nice with GNU tar's valid_timespec check
+    date="$(date -d "${date}" -u +%Y-%m-%dT%H:%M:%S+00:00)"
 
     pax_options="delete=atime,delete=ctime,delete=mtime"
     pax_options+=",exthdr.name=%d/PaxHeaders/%f,exthdr.mtime={${date}}"
