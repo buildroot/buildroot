@@ -202,6 +202,7 @@ define QEMU_CONFIGURE_CMDS
 			--disable-opengl \
 			--disable-vhost-user-blk-server \
 			--disable-virtiofsd \
+			--disable-tests \
 			$(QEMU_OPTS)
 endef
 
@@ -348,6 +349,7 @@ define HOST_QEMU_CONFIGURE_CMDS
 		--disable-vnc-jpeg \
 		--disable-vnc-png \
 		--disable-vnc-sasl \
+		--disable-tests \
 		$(HOST_QEMU_OPTS)
 endef
 
