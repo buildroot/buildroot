@@ -3,9 +3,9 @@
 case "$1" in
 start)
 	echo "Starting power slider daemon..."
-	/usr/bin/env HOME=`cat /etc/passwd |head -1 |cut -d':' -f 6`	\
+	/usr/bin/env HOME=`sed -n 's/od:x:1000:100::\(.*\):\/usr\/bin\/sh/\1/p' /etc/passwd` \
 		/sbin/start-stop-daemon -S -b -m -p /var/run/pwswd.pid \
-		-x /usr/sbin/pwswd -- -e /dev/input/by-path/platform-gpio-keys-event
+		-c od:users -x /usr/sbin/pwswd -- -e /dev/input/by-path/platform-gpio-keys-event
 	;;
 stop)
 	echo "Stopping power slider daemon..."
