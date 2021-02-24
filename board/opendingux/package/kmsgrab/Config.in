@@ -1,0 +1,9 @@
+config BR2_PACKAGE_KMSGRAB
+	bool "kmsgrab"
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libdrm
+	select BR2_PACKAGE_LIBDRM
+	select BR2_PACKAGE_LIBPNG
+	help
+	  A simple screenshot tool for DRM/KMS.
+
+	  https://github.com/opendingux/kmsgrab
