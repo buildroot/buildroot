@@ -16,6 +16,12 @@ READLINE_LICENSE = GPL-3.0+
 READLINE_LICENSE_FILES = COPYING
 READLINE_CPE_ID_VENDOR = gnu
 
+ifeq ($(BR2_PACKAGE_READLINE_BRACKETED_PASTE),y)
+READLINE_CONF_OPTS += --enable-bracketed-paste-default
+else
+READLINE_CONF_OPTS += --disable-bracketed-paste-default
+endif
+
 define READLINE_INSTALL_INPUTRC
 	$(INSTALL) -D -m 644 package/readline/inputrc $(TARGET_DIR)/etc/inputrc
 endef
