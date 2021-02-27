@@ -1,3 +1,26 @@
+2021.02-rc3, released February 27th, 2021
+
+	Fixes all over the tree.
+
+	utils/scanpypi: Explicitly use python3 to ensure compatiblity
+	with packages having python3-only code in setup.py
+
+	support/download: Ensure sub-second timestamp precision is
+	dropped when creating a tarball from a (subversion) repo, as
+	that is not representable in the PAX tar format
+
+	Updated/fixed packages: babeltrace2, bind, botan, brltty,
+	cegui, elfutils, fakeroot, imagemagick, intel-mediasdk,
+	irqbalance, libglib2, libselinux, libusb, libuwsc, nodejs,
+	open62541, openldap, ply, python-aiohttp, python-django,
+	python3, qemu, readline, rust, screen, taglib, unbound, xterm
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13516: utils/scanpypi: Failure when parsing diffoscope
+	#13541: 2021.02.rc2: irqbalance: Daemon couldn't be bound to...
+	#13561: Create a new user defining users-table.txt not working..
+
 2021.02-rc2, released February 16th, 2021
 
 	Fixes all over the tree.
