@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-UBIBOOT_VERSION = d2800ca
+UBIBOOT_VERSION = c507940
 UBIBOOT_SITE = $(call github,pcercuei,UBIBoot,$(UBIBOOT_VERSION))
 UBIBOOT_BOARD_NAME = $(call qstrip,$(BR2_PACKAGE_UBIBOOT_BOARDNAME))
 
