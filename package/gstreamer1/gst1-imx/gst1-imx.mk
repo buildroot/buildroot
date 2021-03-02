@@ -101,4 +101,6 @@ else
 GST1_IMX_CONF_OPTS += --disable-imxv4l2videosink
 endif
 
+GST1_IMX_CFLAGS = $(TARGET_CFLAGS) $(GSTREAMER1_EXTRA_COMPILER_OPTIONS)
+
 $(eval $(waf-package))

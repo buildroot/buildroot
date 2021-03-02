@@ -39,4 +39,6 @@ GST1_LIBAV_CONF_OPTS = \
 	--with-system-libav \
 	--with-libav-extra-configure="$(GST1_LIBAV_CONF_EXTRA_OPTS)"
 
+GST1_LIBAV_CFLAGS = $(TARGET_CFLAGS) $(GSTREAMER1_EXTRA_COMPILER_OPTIONS)
+
 $(eval $(autotools-package))

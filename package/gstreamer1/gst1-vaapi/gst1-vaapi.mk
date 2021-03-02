@@ -30,4 +30,6 @@ else
 GST1_VAAPI_CONF_OPTS += --disable-encoders
 endif
 
+GST1_VAAPI_CFLAGS = $(TARGET_CFLAGS) $(GSTREAMER1_EXTRA_COMPILER_OPTIONS)
+
 $(eval $(autotools-package))
