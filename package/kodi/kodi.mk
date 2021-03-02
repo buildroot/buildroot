@@ -6,7 +6,7 @@
 
 # When updating the version, please also update kodi-jsonschemabuilder
 # and kodi-texturepacker
-KODI_VERSION = 18.9-Leia
+KODI_VERSION = 19.0-Matrix
 KODI_SITE = $(call github,xbmc,xbmc,$(KODI_VERSION))
 KODI_LICENSE = GPL-2.0
 KODI_LICENSE_FILES = LICENSE.md
@@ -15,13 +15,12 @@ KODI_INSTALL_STAGING = YES
 # kodi recommends building out-of-source
 KODI_SUPPORTS_IN_SOURCE_BUILD = NO
 KODI_DEPENDENCIES = \
-	expat \
+	ffmpeg \
 	flatbuffers \
 	fmt \
 	fontconfig \
 	freetype \
 	fstrcmp \
-	gnutls \
 	host-flatbuffers \
 	host-gawk \
 	host-gettext \
@@ -35,35 +34,29 @@ KODI_DEPENDENCIES = \
 	libcdio \
 	libcrossguid \
 	libcurl \
+	libdrm \
+	libegl \
 	libfribidi \
 	libplist \
 	lzo \
-	ncurses \
 	openssl \
 	pcre \
-	python \
+	python3 \
 	rapidjson \
+	spdlog \
 	sqlite \
 	taglib \
 	tinyxml \
 	zlib
 
 # taken from tools/depends/target/*/*-VERSION
-KODI_FFMPEG_VERSION = 4.0.4-Leia-18.4
 KODI_LIBDVDCSS_VERSION = 1.4.2-Leia-Beta-5
 KODI_LIBDVDNAV_VERSION = 6.0.0-Leia-Alpha-3
 KODI_LIBDVDREAD_VERSION = 6.0.0-Leia-Alpha-3
 KODI_EXTRA_DOWNLOADS += \
-	$(call github,xbmc,FFmpeg,$(KODI_FFMPEG_VERSION))/kodi-ffmpeg-$(KODI_FFMPEG_VERSION).tar.gz \
 	$(call github,xbmc,libdvdcss,$(KODI_LIBDVDCSS_VERSION))/kodi-libdvdcss-$(KODI_LIBDVDCSS_VERSION).tar.gz \
 	$(call github,xbmc,libdvdnav,$(KODI_LIBDVDNAV_VERSION))/kodi-libdvdnav-$(KODI_LIBDVDNAV_VERSION).tar.gz \
 	$(call github,xbmc,libdvdread,$(KODI_LIBDVDREAD_VERSION))/kodi-libdvdread-$(KODI_LIBDVDREAD_VERSION).tar.gz
-
-define KODI_CPLUFF_AUTOCONF
-	cd $(KODI_SRCDIR)/lib/cpluff && ./autogen.sh
-endef
-KODI_PRE_CONFIGURE_HOOKS += KODI_CPLUFF_AUTOCONF
-KODI_DEPENDENCIES += host-automake host-autoconf host-libtool
 
 KODI_CONF_OPTS += \
 	-DCMAKE_C_FLAGS="$(TARGET_CFLAGS) $(KODI_C_FLAGS)" \
@@ -72,30 +65,56 @@ KODI_CONF_OPTS += \
 	-DENABLE_CCACHE=OFF \
 	-DENABLE_DVDCSS=ON \
 	-DENABLE_INTERNAL_CROSSGUID=OFF \
-	-DENABLE_INTERNAL_FFMPEG=ON \
+	-DWITH_FFMPEG=$(STAGING_DIR)/usr \
 	-DENABLE_INTERNAL_FLATBUFFERS=OFF \
-	-DFFMPEG_URL=$(KODI_DL_DIR)/kodi-ffmpeg-$(KODI_FFMPEG_VERSION).tar.gz \
+	-DFLATBUFFERS_FLATC_EXECUTABLE=$(HOST_DIR)/bin/flatc \
 	-DKODI_DEPENDSBUILD=OFF \
 	-DENABLE_LDGOLD=OFF \
 	-DNATIVEPREFIX=$(HOST_DIR) \
 	-DDEPENDS_PATH=$(STAGING_DIR)/usr \
+	-DENABLE_TESTING=OFF \
 	-DWITH_JSONSCHEMABUILDER=$(HOST_DIR)/bin/JsonSchemaBuilder \
 	-DWITH_TEXTUREPACKER=$(HOST_DIR)/bin/TexturePacker \
 	-DLIBDVDCSS_URL=$(KODI_DL_DIR)/kodi-libdvdcss-$(KODI_LIBDVDCSS_VERSION).tar.gz \
 	-DLIBDVDNAV_URL=$(KODI_DL_DIR)/kodi-libdvdnav-$(KODI_LIBDVDNAV_VERSION).tar.gz \
 	-DLIBDVDREAD_URL=$(KODI_DL_DIR)/kodi-libdvdread-$(KODI_LIBDVDREAD_VERSION).tar.gz
 
+ifeq ($(BR2_PACKAGE_KODI_RENDER_SYSTEM_GL),y)
+KODI_CONF_OPTS += -DAPP_RENDER_SYSTEM=gl
+KODI_DEPENDENCIES += libgl libglu
+else ifeq ($(BR2_PACKAGE_KODI_RENDER_SYSTEM_GLES),y)
+KODI_CONF_OPTS += -DAPP_RENDER_SYSTEM=gles
+KODI_DEPENDENCIES += libgles
+endif
+
+ifeq ($(BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_GBM),y)
+KODI_CORE_PLATFORM_NAME += gbm
+KODI_DEPENDENCIES += libinput libxkbcommon mesa3d
+endif
+
+ifeq ($(BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_WAYLAND),y)
+KODI_CONF_OPTS += \
+	-DPC_WAYLANDPP_SCANNER=$(HOST_DIR)/bin/wayland-scanner \
+	-DPC_WAYLANDPP_SCANNER_FOUND=ON
+KODI_CORE_PLATFORM_NAME += wayland
+KODI_DEPENDENCIES += libxkbcommon waylandpp
+endif
+
+ifeq ($(BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_X11),y)
+KODI_CORE_PLATFORM_NAME += x11
+KODI_DEPENDENCIES += \
+	xlib_libX11 \
+	xlib_libXext \
+	xlib_libXrandr
+endif
+
+KODI_CONF_OPTS += -DCORE_PLATFORM_NAME="$(KODI_CORE_PLATFORM_NAME)"
+
 ifeq ($(BR2_ENABLE_LOCALE),)
 KODI_DEPENDENCIES += libiconv
 endif
 
-ifeq ($(BR2_PACKAGE_KODI_PLATFORM_RBPI),y)
-# These CPU-specific options are only used on rbpi:
-# https://github.com/xbmc/xbmc/blob/Krypton/project/cmake/scripts/rbpi/ArchSetup.cmake#L13
-ifeq ($(BR2_arm1176jzf_s)$(BR2_cortex_a7)$(BR2_cortex_a53),y)
-KODI_CONF_OPTS += -DWITH_CPU="$(GCC_TARGET_CPU)"
-endif
-else ifeq ($(BR2_arceb)$(BR2_arcle),y)
+ifeq ($(BR2_arceb)$(BR2_arcle),y)
 KODI_CONF_OPTS += -DWITH_ARCH=arc -DWITH_CPU=arc
 else ifeq ($(BR2_armeb),y)
 KODI_CONF_OPTS += -DWITH_ARCH=arm -DWITH_CPU=arm
@@ -168,31 +187,8 @@ ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 KODI_CXX_FLAGS += -latomic
 endif
 
-ifeq ($(BR2_PACKAGE_KODI_PLATFORM_RBPI),y)
-KODI_CONF_OPTS += -DCORE_PLATFORM_NAME=rbpi
-KODI_DEPENDENCIES += libinput libxkbcommon rpi-userland
-endif
-
-ifeq ($(BR2_PACKAGE_KODI_PLATFORM_WAYLAND_GL),y)
-KODI_CONF_OPTS += \
-	-DCORE_PLATFORM_NAME=wayland \
-	-DWAYLAND_RENDER_SYSTEM=gl
-KODI_DEPENDENCIES += libegl libgl libglu libxkbcommon waylandpp
-endif
-
-ifeq ($(BR2_PACKAGE_KODI_PLATFORM_WAYLAND_GLES),y)
-KODI_CONF_OPTS += \
-	-DCORE_PLATFORM_NAME=wayland \
-	-DWAYLAND_RENDER_SYSTEM=gles
-KODI_C_FLAGS += `$(PKG_CONFIG_HOST_BINARY) --cflags egl`
-KODI_CXX_FLAGS += `$(PKG_CONFIG_HOST_BINARY) --cflags egl`
-KODI_DEPENDENCIES += libegl libgles libxkbcommon waylandpp
-endif
-
-ifeq ($(BR2_PACKAGE_KODI_PLATFORM_X11_OPENGL),y)
-KODI_CONF_OPTS += -DCORE_PLATFORM_NAME=x11
-KODI_DEPENDENCIES += libegl libglu libgl xlib_libX11 xlib_libXext \
-	xlib_libXrandr libdrm
+ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_5),)
+KODI_C_FLAGS += -std=gnu99
 endif
 
 ifeq ($(BR2_PACKAGE_KODI_MYSQL),y)
@@ -346,6 +342,12 @@ KODI_CONF_OPTS += -DENABLE_PULSEAUDIO=ON
 KODI_DEPENDENCIES += pulseaudio
 else
 KODI_CONF_OPTS += -DENABLE_PULSEAUDIO=OFF
+endif
+
+ifeq ($(BR2_PACKAGE_LIBUDFREAD),y)
+KODI_DEPENDENCIES += libudfread
+else
+KODI_CONF_OPTS += -DENABLE_INTERNAL_UDFREAD=OFF
 endif
 
 # Remove versioncheck addon, updating Kodi is done by building a new
