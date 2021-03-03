@@ -77,9 +77,15 @@ def print_results(result, threshold):
     # list_result is a list of tuples: (name, (flag, size difference))
 
     for entry in sorted(list_result, key=lambda entry: entry[1][1]):
-        if threshold is not None and abs(entry[1][1]) <= threshold:
+        data = dict(
+            name=entry[0],
+            action=entry[1][0],
+            size=entry[1][1],
+        )
+
+        if threshold is not None and abs(data['size']) <= threshold:
             continue
-        print('%12s %7s %s' % (entry[1][1], entry[1][0], entry[0]))
+        print('{size:12d} {action:7s} {name}'.format(**data))
 
 
 # main #########################################################################
