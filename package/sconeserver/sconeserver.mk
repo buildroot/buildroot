@@ -44,11 +44,9 @@ endif
 
 ifeq ($(BR2_PACKAGE_SCONESERVER_HTTP_SCONESITE_IMAGE),y)
 SCONESERVER_DEPENDENCIES += imagemagick
-SCONESERVER_CONF_OPTS += \
-	--with-sconesite-image \
-	--with-Magick++-config="$(STAGING_DIR)/usr/bin/Magick++-config"
+SCONESERVER_CONF_OPTS += --with-image
 else
-SCONESERVER_CONF_OPTS += --without-sconesite-image --with-Magick++-config=no
+SCONESERVER_CONF_OPTS += --without-image
 endif
 
 ifeq ($(BR2_PACKAGE_SCONESERVER_MYSQL),y)
@@ -82,12 +80,6 @@ else
 SCONESERVER_CONF_OPTS += --without-location
 endif
 
-ifeq ($(BR2_PACKAGE_SCONESERVER_LETTUCE),y)
-SCONESERVER_CONF_OPTS += --with-lettuce
-else
-SCONESERVER_CONF_OPTS += --without-lettuce
-endif
-
 ifeq ($(BR2_PACKAGE_SCONESERVER_MATHS),y)
 SCONESERVER_DEPENDENCIES += mpfr
 SCONESERVER_CONF_OPTS += --with-maths
@@ -99,13 +91,6 @@ ifeq ($(BR2_PACKAGE_SCONESERVER_TESTBUILDER),y)
 SCONESERVER_CONF_OPTS += --with-testbuilder
 else
 SCONESERVER_CONF_OPTS += --without-testbuilder
-endif
-
-ifeq ($(BR2_PACKAGE_SCONESERVER_UI),y)
-SCONESERVER_DEPENDENCIES += xlib_libX11
-SCONESERVER_CONF_OPTS += --with-ui
-else
-SCONESERVER_CONF_OPTS += --without-ui
 endif
 
 $(eval $(autotools-package))
