@@ -11,6 +11,7 @@ SDL2_IMAGE_INSTALL_STAGING = YES
 SDL2_IMAGE_LICENSE = Zlib
 SDL2_IMAGE_LICENSE_FILES = COPYING.txt
 SDL2_IMAGE_CPE_ID_VENDOR = libsdl
+SDL2_IMAGE_CPE_ID_PRODUCT = sdl_image
 
 # Unconditionally enable support for image formats that don't require
 # any dependency.
