@@ -9,7 +9,7 @@ LIBJPEG_VERSION = 9d
 # 2021-03, causing hash mismatch. Until there is a new version released,
 # use our cached copy from s.b.o.
 #LIBJPEG_SITE = http://www.ijg.org/files
-LIBJPEG_SITE = http://sources.buildroot.org/libjpeg/
+LIBJPEG_SITE = http://sources.buildroot.org/libjpeg
 LIBJPEG_SOURCE = jpegsrc.v$(LIBJPEG_VERSION).tar.gz
 LIBJPEG_LICENSE = IJG
 LIBJPEG_LICENSE_FILES = README
