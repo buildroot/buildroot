@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HOST_MENDER_ARTIFACT_VERSION = 3.4.0
+HOST_MENDER_ARTIFACT_VERSION = 3.4.1
 HOST_MENDER_ARTIFACT_SITE = $(call github,mendersoftware,mender-artifact,$(HOST_MENDER_ARTIFACT_VERSION))
 HOST_MENDER_ARTIFACT_LICENSE = Apache2.0, BSD-2-Clause, BSD-3-Clause, ISC, MIT
 HOST_MENDER_ARTIFACT_LICENSE_FILES = \
@@ -26,7 +26,8 @@ HOST_MENDER_ARTIFACT_LICENSE_FILES = \
 	vendor/github.com/sirupsen/logrus/LICENSE \
 	vendor/github.com/klauspost/pgzip/LICENSE \
 	vendor/github.com/cpuguy83/go-md2man/v2/LICENSE.md \
-	vendor/github.com/shurcooL/sanitized_anchor_name/LICENSE
+	vendor/github.com/shurcooL/sanitized_anchor_name/LICENSE \
+	vendor/gopkg.in/yaml.v2/LICENSE.libyaml
 
 HOST_MENDER_ARTIFACT_DEPENDENCIES = host-xz
 
