@@ -6,10 +6,11 @@
 
 # When updating the version, please check at runtime if the version in
 # syslog-ng.conf header needs to be updated
-SYSLOG_NG_VERSION = 3.29.1
+SYSLOG_NG_VERSION = 3.30.1
 SYSLOG_NG_SITE = https://github.com/balabit/syslog-ng/releases/download/syslog-ng-$(SYSLOG_NG_VERSION)
 SYSLOG_NG_LICENSE = LGPL-2.1+ (syslog-ng core), GPL-2.0+ (modules)
 SYSLOG_NG_LICENSE_FILES = COPYING GPL.txt LGPL.txt
+SYSLOG_NG_CPE_ID_VENDOR = oneidentity
 SYSLOG_NG_DEPENDENCIES = host-bison host-flex host-pkgconf \
 	libglib2 openssl pcre
 # We're patching configure.ac
@@ -99,10 +100,10 @@ endif
 
 ifeq ($(BR2_PACKAGE_NETSNMP),y)
 SYSLOG_NG_DEPENDENCIES += netsnmp
-SYSLOG_NG_CONF_OPTS += --enable-snmp-dest
+SYSLOG_NG_CONF_OPTS += --enable-afsnmp
 SYSLOG_NG_CONF_OPTS += --with-net-snmp="$(STAGING_DIR)/usr/bin"
 else
-SYSLOG_NG_CONF_OPTS += --disable-snmp-dest
+SYSLOG_NG_CONF_OPTS += --disable-afsnmp
 endif
 
 define SYSLOG_NG_INSTALL_INIT_SYSV
@@ -113,7 +114,7 @@ endef
 # By default syslog-ng installs a .service that requires a config file at
 # /etc/default, so provide one with the default values.
 define SYSLOG_NG_INSTALL_INIT_SYSTEMD
-	mkdir $(TARGET_DIR)/usr/lib/systemd/system/syslog-ng@.service.d
+	mkdir -p $(TARGET_DIR)/usr/lib/systemd/system/syslog-ng@.service.d
 	printf '[Install]\nDefaultInstance=default\n' \
 		>$(TARGET_DIR)/usr/lib/systemd/system/syslog-ng@.service.d/buildroot-default-instance.conf
 endef

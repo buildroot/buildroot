@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBFUSE3_VERSION = 3.10.0
+LIBFUSE3_VERSION = 3.10.2
 LIBFUSE3_SITE = $(call github,libfuse,libfuse,fuse-$(LIBFUSE3_VERSION))
 LIBFUSE3_LICENSE = LGPL-2.1
 LIBFUSE3_LICENSE_FILES = LICENSE
@@ -21,6 +21,10 @@ endef
 
 define LIBFUSE3_PERMISSIONS
 	/usr/bin/fusermount3 f 4755 0 0 - - - - -
+endef
+
+define LIBFUSE3_LINUX_CONFIG_FIXUPS
+	$(call KCONFIG_ENABLE_OPT,CONFIG_FUSE_FS)
 endef
 
 $(eval $(meson-package))

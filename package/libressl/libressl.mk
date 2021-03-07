@@ -4,10 +4,11 @@
 #
 ################################################################################
 
-LIBRESSL_VERSION = 3.2.2
+LIBRESSL_VERSION = 3.2.3
 LIBRESSL_SITE = https://ftp.openbsd.org/pub/OpenBSD/LibreSSL
 LIBRESSL_LICENSE = ISC (new additions), OpenSSL or SSLeay (original OpenSSL code)
 LIBRESSL_LICENSE_FILES = COPYING
+LIBRESSL_CPE_ID_VENDOR = openbsd
 LIBRESSL_INSTALL_STAGING = YES
 
 ifeq ($(BR2_PACKAGE_LIBRESSL_BIN),)

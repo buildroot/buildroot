@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPENCV3_VERSION = 3.4.12
+OPENCV3_VERSION = 3.4.13
 OPENCV3_SITE = $(call github,opencv,opencv,$(OPENCV3_VERSION))
 OPENCV3_INSTALL_STAGING = YES
 OPENCV3_LICENSE = BSD-3-Clause
@@ -46,6 +46,7 @@ endif
 # OpenCV build options
 OPENCV3_CONF_OPTS += \
 	-DBUILD_WITH_STATIC_CRT=OFF \
+	-DENABLE_CCACHE=OFF \
 	-DENABLE_COVERAGE=OFF \
 	-DENABLE_FAST_MATH=ON \
 	-DENABLE_IMPL_COLLECTION=OFF \
@@ -286,7 +287,9 @@ OPENCV3_CONF_OPTS += -DWITH_PNG=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_OPENCV3_WITH_PROTOBUF),y)
+# protobuf needs c++11 (since 3.6.0)
 OPENCV3_CONF_OPTS += \
+	-DENABLE_CXX11=ON \
 	-DPROTOBUF_UPDATE_FILES=ON \
 	-DWITH_PROTOBUF=ON
 OPENCV3_DEPENDENCIES += protobuf

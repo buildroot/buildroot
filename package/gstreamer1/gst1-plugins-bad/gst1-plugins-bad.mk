@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_PLUGINS_BAD_VERSION = 1.18.1
+GST1_PLUGINS_BAD_VERSION = 1.18.3
 GST1_PLUGINS_BAD_SOURCE = gst-plugins-bad-$(GST1_PLUGINS_BAD_VERSION).tar.xz
 GST1_PLUGINS_BAD_SITE = https://gstreamer.freedesktop.org/src/gst-plugins-bad
 GST1_PLUGINS_BAD_INSTALL_STAGING = YES
@@ -689,6 +689,16 @@ GST1_PLUGINS_BAD_CONF_OPTS += -Dsbc=enabled
 GST1_PLUGINS_BAD_DEPENDENCIES += sbc
 else
 GST1_PLUGINS_BAD_CONF_OPTS += -Dsbc=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SCTP),y)
+GST1_PLUGINS_BAD_CONF_OPTS += \
+	-Dsctp=enabled \
+	-Dsctp-internal-usrsctp=enabled
+else
+GST1_PLUGINS_BAD_CONF_OPTS += \
+	-Dsctp=disabled \
+	-Dsctp-internal-usrsctp=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SHM),y)

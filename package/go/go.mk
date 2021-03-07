@@ -4,12 +4,13 @@
 #
 ################################################################################
 
-GO_VERSION = 1.15.5
+GO_VERSION = 1.15.8
 GO_SITE = https://storage.googleapis.com/golang
 GO_SOURCE = go$(GO_VERSION).src.tar.gz
 
 GO_LICENSE = BSD-3-Clause
 GO_LICENSE_FILES = LICENSE
+GO_CPE_ID_VENDOR = golang
 
 HOST_GO_DEPENDENCIES = host-go-bootstrap
 HOST_GO_GOPATH = $(HOST_DIR)/usr/share/go-path
@@ -38,6 +39,10 @@ GO_GOARM = 5
 else ifeq ($(BR2_ARM_CPU_ARMV6),y)
 GO_GOARM = 6
 else ifeq ($(BR2_ARM_CPU_ARMV7A),y)
+GO_GOARM = 7
+else ifeq ($(BR2_ARM_CPU_ARMV8A),y)
+# Go doesn't support 32-bit GOARM=8 (https://github.com/golang/go/issues/29373)
+# but can still benefit from armv7 optimisations
 GO_GOARM = 7
 endif
 else ifeq ($(BR2_aarch64),y)
@@ -99,8 +104,8 @@ HOST_GO_HOST_ENV = \
 	$(HOST_GO_COMMON_ENV) \
 	GOARCH="" \
 	GOCACHE="$(HOST_GO_HOST_CACHE)" \
-	CC="$(HOST_CCNOCCACHE)" \
-	CXX="$(HOST_CXXNOCCACHE)" \
+	CC="$(HOSTCC_NOCCACHE)" \
+	CXX="$(HOSTCXX_NOCCACHE)" \
 	CGO_CFLAGS="$(HOST_CFLAGS)" \
 	CGO_CXXFLAGS="$(HOST_CXXFLAGS)" \
 	CGO_LDFLAGS="$(HOST_LDFLAGS)"

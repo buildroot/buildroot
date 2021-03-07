@@ -44,6 +44,11 @@ config BR2_PACKAGE_LINUX_FIRMWARE_QCOM_ADRENO
 	help
 	  Firmware files for Qualcomm Adreno GPU firmware
 
+config BR2_PACKAGE_LINUX_FIRMWARE_MFC_V8
+	bool "Samsung MFC video encoder/decoder v8 firmware"
+	help
+	  Firmware files for Samsung MFC video encoder/decoder driver v8
+
 endmenu # Video
 
 menu "Bluetooth firmware"
@@ -375,6 +380,12 @@ endmenu
 
 menu "Ethernet firmware"
 
+config BR2_PACKAGE_LINUX_FIRMWARE_BROADCOM_TIGON3
+	bool "Broadcom NetXtreme/Tigon3"
+	help
+	  Firmware files for Broadcom Tigon3 ethernet cards
+	  (tigon)
+
 config BR2_PACKAGE_LINUX_FIRMWARE_BNX2X
 	bool "Broadcom NetXtremeII"
 	help
@@ -448,15 +459,6 @@ config BR2_PACKAGE_LINUX_FIRMWARE_XCx000
 
 endmenu
 
-menu "SoC Firmware"
-
-config BR2_PACKAGE_LINUX_FIRMWARE_IMX_SDMA
-	bool "Freescale i.MX SDMA"
-	help
-	  Firmware files for i.MX SDMA.
-
-endmenu
-
 menu "Fibre Channel Adapter Firmware"
 
 config BR2_PACKAGE_LINUX_FIRMWARE_QLOGIC_2XXX
@@ -482,6 +484,15 @@ config BR2_PACKAGE_LINUX_FIRMWARE_QAT_C62X
 	bool "Support for C62X"
 	help
 	  Firmware files for Intel C62X devices
+
+endmenu
+
+menu "USB to Serial Firmware"
+
+config BR2_PACKAGE_LINUX_FIRMWARE_USB_SERIAL_TI
+	bool "USB TI 3410/5052 Serial Firmware"
+	help
+	  Firmware files for TI 3410/5052
 
 endmenu
 
