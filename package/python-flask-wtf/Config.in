@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_FLASK_WTF
+	bool "python-flask-wtf"
+	select BR2_PACKAGE_PYTHON_FLASK # runtime
+	select BR2_PACKAGE_PYTHON_ITSDANGEROUS # runtime
+	select BR2_PACKAGE_PYTHON_WTFORMS # runtime
+	help
+	  Simple integration of Flask and WTForms.
+
+	  https://github.com/lepture/flask-wtf
