@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-PYTHON3_JINJA2_VERSION = 2.11.2
+PYTHON3_JINJA2_VERSION = 2.11.3
 PYTHON3_JINJA2_SOURCE = Jinja2-$(PYTHON3_JINJA2_VERSION).tar.gz
-PYTHON3_JINJA2_SITE = https://files.pythonhosted.org/packages/64/a7/45e11eebf2f15bf987c3bc11d37dcc838d9dc81250e67e4c5968f6008b6c
+PYTHON3_JINJA2_SITE = https://files.pythonhosted.org/packages/4f/e7/65300e6b32e69768ded990494809106f87da1d436418d5f1367ed3966fd7
 PYTHON3_JINJA2_SETUP_TYPE = setuptools
 PYTHON3_JINJA2_LICENSE = BSD-3-Clause
 PYTHON3_JINJA2_LICENSE_FILES = LICENSE.rst
