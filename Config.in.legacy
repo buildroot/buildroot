@@ -144,6 +144,16 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2021.05"
+
+config BR2_PACKAGE_KODI_SCREENSAVER_CRYSTALMORPH
+	bool "kodi-screensaver-crystalmorph removed"
+	select BR2_LEGACY
+	help
+	  The package received its last updates in 2017, is not part
+	  of the official Kodi github repo and its build is broken
+	  with Kodi 19.x, so it was removed.
+
 comment "Legacy options removed in 2021.02"
 
 config BR2_PACKAGE_MPD_AUDIOFILE

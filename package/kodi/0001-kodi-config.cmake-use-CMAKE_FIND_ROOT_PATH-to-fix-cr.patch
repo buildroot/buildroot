@@ -8,18 +8,21 @@ When cross-compiling, the location at build time of the libraries is
 not the same as the one at run-time. The CMAKE_FIND_ROOT_PATH variable
 is here to handle this difference, so use it in kodi-config.cmake.
 
+Upstream status: Reverted (PR 17616)
+
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 (rebased and simplified for Kodi 17.0-Krypton)
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+(rebased for Kodi 19.0-Matrix)
 ---
- project/cmake/KodiConfig.cmake.in | 4 ++--
+ cmake/KodiConfig.cmake.in | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/project/cmake/KodiConfig.cmake.in b/project/cmake/KodiConfig.cmake.in
-index 76626ec..ffb8e1d 100644
+diff --git a/cmake/KodiConfig.cmake.in b/cmake/KodiConfig.cmake.in
+index a06d889fca9d..ff299807ea44 100644
 --- a/cmake/KodiConfig.cmake.in
 +++ b/cmake/KodiConfig.cmake.in
-@@ -8,7 +8,7 @@ if(NOT @APP_NAME_UC@_PREFIX)
+@@ -9,7 +9,7 @@ if(NOT @APP_NAME_UC@_PREFIX)
    set(@APP_NAME_UC@_PREFIX @APP_PREFIX@)
  endif()
  if(NOT @APP_NAME_UC@_INCLUDE_DIR)
@@ -28,10 +31,10 @@ index 76626ec..ffb8e1d 100644
  endif()
  if(NOT @APP_NAME_UC@_LIB_DIR)
    set(@APP_NAME_UC@_LIB_DIR @APP_LIB_DIR@)
-@@ -20,7 +20,7 @@ endif()
- if(NOT WIN32)
-   set(CMAKE_CXX_FLAGS "$ENV{CXXFLAGS} @CXX11_SWITCH@")
+@@ -18,7 +18,7 @@ if(NOT @APP_NAME_UC@_DATA_DIR)
+   set(@APP_NAME_UC@_DATA_DIR @APP_DATA_DIR@)
  endif()
+ set(APP_RENDER_SYSTEM @APP_RENDER_SYSTEM@)
 -list(APPEND CMAKE_MODULE_PATH @APP_LIB_DIR@ @APP_DATA_DIR@/cmake)
 +list(APPEND CMAKE_MODULE_PATH ${CMAKE_FIND_ROOT_PATH}/@APP_LIB_DIR@ ${CMAKE_FIND_ROOT_PATH}/@APP_DATA_DIR@/cmake)
  

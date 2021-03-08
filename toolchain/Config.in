@@ -154,10 +154,11 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_85862
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90620
 # ICE: in do_output_reload, at reload1.c:7978 on microblaze.
-# It's still not fixed in gcc 9.x
+# This bug no longer exists in gcc 10.x
 config BR2_TOOLCHAIN_HAS_GCC_BUG_90620
 	bool
 	default y if BR2_microblaze
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_10
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93847
 # ICE: compiler error: Segmentation fault on Nios II. This bug
@@ -499,6 +500,10 @@ config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_9
 config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10
 	bool
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_9
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_11
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10
 	select BR2_TOOLCHAIN_HEADERS_LATEST
 
 # This should be selected by the latest version, above, to indicate that
@@ -512,6 +517,7 @@ config BR2_TOOLCHAIN_HEADERS_LATEST
 # stops affecting a value on the first matching default.
 config BR2_TOOLCHAIN_HEADERS_AT_LEAST
 	string
+	default "5.11" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_11
 	default "5.10" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10
 	default "5.9"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_9
 	default "5.8"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_8
