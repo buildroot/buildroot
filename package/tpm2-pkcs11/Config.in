@@ -1,6 +1,5 @@
 config BR2_PACKAGE_TPM2_PKCS11
 	bool "tpm2-pkcs11"
-	depends on BR2_PACKAGE_LIBOPENSSL_ARCH_SUPPORTS # tpm2-tss
 	depends on !BR2_STATIC_LIBS # tpm2-tss
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_PACKAGE_LIBYAML
@@ -13,5 +12,4 @@ config BR2_PACKAGE_TPM2_PKCS11
 	  https://github.com/tpm2-software/tpm2-pkcs11
 
 comment "tpm2-pkcs11 needs a toolchain w/ dynamic library, threads"
-	depends on BR2_PACKAGE_LIBOPENSSL_ARCH_SUPPORTS
 	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS
