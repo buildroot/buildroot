@@ -640,13 +640,11 @@ LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.moxa
 endif
 
 ifneq ($(LINUX_FIRMWARE_FILES)$(LINUX_FIRMWARE_DIRS),)
+
 define LINUX_FIRMWARE_BUILD_CMDS
 	cd $(@D) && \
 	$(TAR) cf br-firmware.tar $(sort $(LINUX_FIRMWARE_FILES) $(LINUX_FIRMWARE_DIRS))
 endef
-endif
-
-ifneq ($(LINUX_FIRMWARE_FILES)$(LINUX_FIRMWARE_DIRS),)
 
 # Most firmware files are under a proprietary license, so no need to
 # repeat it for every selections above. Those firmwares that have more
@@ -661,8 +659,6 @@ LINUX_FIRMWARE_ALL_LICENSE_FILES += WHENCE
 # Some license files may be listed more than once, so we have to remove
 # duplicates
 LINUX_FIRMWARE_LICENSE_FILES = $(sort $(LINUX_FIRMWARE_ALL_LICENSE_FILES))
-
-endif
 
 # Some firmware are distributed as a symlink, for drivers to load them using a
 # defined name other than the real one. Since 9cfefbd7fbda ("Remove duplicate
@@ -687,6 +683,8 @@ define LINUX_FIRMWARE_INSTALL_FW
 		fi ; \
 	done
 endef
+
+endif  # LINUX_FIRMWARE_FILES || LINUX_FIRMWARE_DIRS
 
 define LINUX_FIRMWARE_INSTALL_TARGET_CMDS
 	$(call LINUX_FIRMWARE_INSTALL_FW, $(TARGET_DIR)/lib/firmware)
