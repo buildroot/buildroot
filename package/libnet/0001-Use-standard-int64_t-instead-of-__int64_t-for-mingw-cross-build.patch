@@ -1,0 +1,31 @@
+From a1659e261888bdbed51803132d52d9a6c6803c8a Mon Sep 17 00:00:00 2001
+From: Joachim Nilsson <troglobit@gmail.com>
+Date: Sat, 19 Oct 2019 12:26:26 +0200
+Subject: [PATCH] Use standard int64_t instead of __int64_t for mingw cross
+ build
+
+Signed-off-by: Joachim Nilsson <troglobit@gmail.com>
+[Retrieved from:
+https://github.com/libnet/libnet/commit/a1659e261888bdbed51803132d52d9a6c6803c8a]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ include/libnet/libnet-structures.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/libnet/libnet-structures.h b/include/libnet/libnet-structures.h
+index 6084caa..34fffc6 100644
+--- a/include/libnet/libnet-structures.h
++++ b/include/libnet/libnet-structures.h
+@@ -49,9 +49,9 @@ struct libnet_port_list_chain
+ /* libnet statistics structure */
+ struct libnet_stats
+ {
+-    __int64_t packets_sent;               /* packets sent */
+-    __int64_t packet_errors;              /* packets errors */
+-    __int64_t bytes_written;              /* bytes written */
++    int64_t packets_sent;               /* packets sent */
++    int64_t packet_errors;              /* packets errors */
++    int64_t bytes_written;              /* bytes written */
+ };
+ 
+ 
