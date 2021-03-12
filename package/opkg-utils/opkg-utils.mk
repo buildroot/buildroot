@@ -17,8 +17,14 @@ HOST_OPKG_UTILS_DEPENDENCIES = \
 	host-xz
 
 # Nothing to build; only scripts to install.
+define OPKG_UTILS_INSTALL_CMDS
+	$(MAKE) -C $(@D) PREFIX=$(TARGET_DIR) install-utils
+endef
+
+# Nothing to build; only scripts to install.
 define HOST_OPKG_UTILS_INSTALL_CMDS
 	$(MAKE) -C $(@D) PREFIX=$(HOST_DIR) install-utils
 endef
 
+$(eval $(generic-package))
 $(eval $(host-generic-package))
