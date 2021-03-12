@@ -17,7 +17,7 @@ define HOST_OPKG_UTILS_BUILD_CMDS
 endef
 
 define HOST_OPKG_UTILS_INSTALL_CMDS
-	$(MAKE) -C $(@D) PREFIX=$(HOST_DIR) install
+	$(MAKE) -C $(@D) PREFIX=$(HOST_DIR) install-utils
 endef
 
 $(eval $(host-generic-package))
