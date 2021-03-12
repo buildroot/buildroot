@@ -27,13 +27,7 @@ diff --git a/lib/glob/glob.c b/lib/glob/glob.c
 index eb6277f..c903b15 100644
 --- a/lib/glob/glob.c
 +++ b/lib/glob/glob.c
-@@ -117,12 +117,11 @@ static int mbskipname PARAMS((char *, char *, int));
- #endif
- void udequote_pathname PARAMS((char *));
- #if HANDLE_MULTIBYTE
--void wcdequote_pathname PARAMS((wchar_t *));
-+static void wcdequote_pathname PARAMS((wchar_t *));
- static void wdequote_pathname PARAMS((char *));
+@@ -117,6 +117,5 @@ static int mbskipname PARAMS((char *, char *, int));
  #else
  #  define dequote_pathname udequote_pathname
  #endif
