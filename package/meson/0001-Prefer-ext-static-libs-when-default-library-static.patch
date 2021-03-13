@@ -1,4 +1,4 @@
-From ea85465e608178080c3b4d51af9765a8c7c0dae3 Mon Sep 17 00:00:00 2001
+From cf9ad9b79a924081ce3d1e045bba3544815ea5f8 Mon Sep 17 00:00:00 2001
 From: Matt Weber <matthew.weber@rockwellcollins.com>
 Date: Sat, 26 Oct 2019 09:17:29 -0500
 Subject: [PATCH] Prefer ext static libs when --default-library=static
@@ -22,24 +22,26 @@ http://autobuild.buildroot.net/results/db1740b4777f436324218c52bc7b08e5c21b667d/
 http://autobuild.buildroot.net/results/c17/c17bbb12d9deadd64a441b36e324cfbbe8aba5be/
 
 Signed-off-by: Matthew Weber <matthew.weber@rockwellcollins.com>
+[Updated for 0.57.1 - get_builtin_option() vs. get_option(OptionKey())]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 ---
  mesonbuild/compilers/mixins/clike.py | 3 +++
  1 file changed, 3 insertions(+)
 
 diff --git a/mesonbuild/compilers/mixins/clike.py b/mesonbuild/compilers/mixins/clike.py
-index 47e97d261..729c98acc 100644
+index ad3bfae..4733910 100644
 --- a/mesonbuild/compilers/mixins/clike.py
 +++ b/mesonbuild/compilers/mixins/clike.py
-@@ -940,6 +940,9 @@ class CLikeCompiler:
+@@ -999,6 +999,9 @@ class CLikeCompiler(Compiler):
          elif env.machines[self.for_machine].is_cygwin():
              shlibext = ['dll', 'dll.a']
              prefixes = ['cyg'] + prefixes
-+        elif env.coredata.get_builtin_option('default_library') == 'static':
++        elif env.coredata.get_option(OptionKey('default_library')) == 'static':
 +            # Linux/BSDs
 +            shlibext = ['a']
          else:
              # Linux/BSDs
              shlibext = ['so']
 -- 
-2.25.1
+2.30.1
 
