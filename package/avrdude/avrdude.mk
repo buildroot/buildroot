@@ -13,9 +13,15 @@ AVRDUDE_SUBDIR = avrdude
 # Sources coming from svn, without generated configure and Makefile.in
 # files.
 AVRDUDE_AUTORECONF = YES
-AVRDUDE_CONF_OPTS = --enable-linuxgpio --enable-linuxspi
+AVRDUDE_CONF_OPTS = --enable-linuxgpio
 AVRDUDE_DEPENDENCIES = elfutils libusb libusb-compat ncurses \
 	host-flex host-bison
+
+ifeq ($(BR2_PACKAGE_AVRDUDE_SPI),y)
+AVRDUDE_CONF_OPTS += --enable-linuxspi
+else
+AVRDUDE_CONF_OPTS += --disable-linuxspi
+endif
 
 ifeq ($(BR2_PACKAGE_LIBFTDI1),y)
 AVRDUDE_DEPENDENCIES += libftdi1
