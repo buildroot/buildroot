@@ -13,3 +13,14 @@ config BR2_PACKAGE_CIFS_UTILS
 	  split them off into their own package.
 
 	  http://wiki.samba.org/index.php/LinuxCIFS_utils
+
+if BR2_PACKAGE_CIFS_UTILS
+
+config BR2_PACKAGE_CIFS_UTILS_SMBTOOLS
+	bool "smbtools"
+	select BR2_PACKAGE_PYTHON3 if !BR2_PACKAGE_PYTHON # runtime
+	help
+	  Install the smb tools smbinfo and smb2-quota (python
+	  implementations).
+
+endif
