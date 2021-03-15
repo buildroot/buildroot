@@ -1,0 +1,11 @@
+--- src/third_party/starboard/wpe/shared/media/gst_media_utils.org	2021-03-15 12:35:03.760126372 +0100
++++ src/third_party/starboard/wpe/shared/media/gst_media_utils.cc	2021-03-15 12:35:20.468245482 +0100
+@@ -32,7 +32,7 @@
+   DCHECK(direction != GST_PAD_UNKNOWN);
+   UniqueFeatureList candidates{
+       gst_element_factory_list_filter(elements, caps.get(), direction, false)};
+-  return std::move(candidates);
++  return candidates;
+ }
+ 
+ template <typename C>
