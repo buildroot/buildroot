@@ -30,7 +30,6 @@ RSYSLOG_CONF_OPTS += --disable-elasticsearch \
 	--disable-omhttp \
 	--disable-fmhttp \
 	--disable-imdocker \
-	--disable-impcap \
 	--disable-omhttpfs \
 	--disable-mmkubernetes
 
@@ -58,6 +57,13 @@ RSYSLOG_CONF_ENV += LIBGCRYPT_CONFIG=$(STAGING_DIR)/usr/bin/libgcrypt-config
 RSYSLOG_CONF_OPTS += --enable-libgcrypt
 else
 RSYSLOG_CONF_OPTS += --disable-libgcrypt
+endif
+
+ifeq ($(BR2_PACKAGE_LIBPCAP),y)
+RSYSLOG_DEPENDENCIES += libpcap
+RSYSLOG_CONF_OPTS += --enable-impcap
+else
+RSYSLOG_CONF_OPTS += --disable-impcap
 endif
 
 ifeq ($(BR2_PACKAGE_MYSQL),y)
