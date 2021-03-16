@@ -13,5 +13,6 @@ LIBNET_CONF_OPTS = libnet_cv_have_packet_socket=yes
 LIBNET_LICENSE = BSD-2-Clause, BSD-3-Clause
 LIBNET_LICENSE_FILES = LICENSE
 LIBNET_CPE_ID_VENDOR = libnet_project
+LIBNET_CONFIG_SCRIPTS = libnet-config
 
 $(eval $(autotools-package))
