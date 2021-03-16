@@ -34,5 +34,9 @@ define BATMAN_ADV_CONFIGURE_CMDS
 	$(BATMAN_ADV_MODULE_MAKE_OPTS) $(@D)/gen-compat-autoconf.sh $(@D)/compat-autoconf.h
 endef
 
+define BATMAN_ADV_LINUX_CONFIG_FIXUPS
+	$(call KCONFIG_ENABLE_OPT,CONFIG_LIBCRC32C)
+endef
+
 $(eval $(kernel-module))
 $(eval $(generic-package))
