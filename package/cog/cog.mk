@@ -31,4 +31,10 @@ else
 COG_CONF_OPTS += -DCOG_PLATFORM_DRM=OFF
 endif
 
+ifeq ($(BR2_PACKAGE_COG_USE_SYSTEM_DBUS),y)
+COG_CONF_OPTS += -DCOG_DBUS_SYSTEM_BUS=ON
+else
+COG_CONF_OPTS += -DCOG_DBUS_SYSTEM_BUS=OFF
+endif
+
 $(eval $(cmake-package))

@@ -47,6 +47,11 @@ config BR2_PACKAGE_COG_PLATFORM_DRM
 	  with video drivers that support kernel mode-setting (KMS)
 	  via the DRM user-space API.
 
+config BR2_PACKAGE_COG_USE_SYSTEM_DBUS
+	bool "expose system D-Bus control interface"
+	help
+	  Expose remote control interface on system bus
+
 comment "DRM platform needs mesa3d w/ EGL driver and GBM"
 	depends on !BR2_PACKAGE_MESA3D_OPENGL_EGL
 
