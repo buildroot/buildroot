@@ -1,0 +1,10 @@
+config BR2_PACKAGE_GCWCONNECT
+	bool "gcwconnect"
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON_URLLIB3
+	select BR2_PACKAGE_PYTHON_PYGAME
+	select BR2_PACKAGE_PYTHON_PYGAME_FONT
+	select BR2_PACKAGE_WLAN_SCAN
+	select BR2_PACKAGE_HOST_DOS2UNIX
+	help
+	  Wireless configuration tool for OpenDingux
