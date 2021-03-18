@@ -20,6 +20,8 @@ Signed-off-by: Vicente Olivert Riera <Vincent.Riera@imgtec.com>
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 [Rebased on 0.183]
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+[Fabrice: don't error out if obstack is not found]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  Makefile.am  | 6 +++++-
  configure.ac | 6 ++++++
@@ -60,6 +62,15 @@ index d345495..0dd4b1e 100644
  dnl zlib is mandatory.
  save_LIBS="$LIBS"
  LIBS=
+@@ -579,7 +585,7 @@ saved_LIBS="$LIBS"
+ AC_SEARCH_LIBS([_obstack_free], [obstack])
+ LIBS="$saved_LIBS"
+ case "$ac_cv_search__obstack_free" in
+-        no) AC_MSG_FAILURE([failed to find _obstack_free]) ;;
++        no) obstack_LIBS= ;;
+         -l*) obstack_LIBS="$ac_cv_search__obstack_free" ;;
+         *) obstack_LIBS= ;;
+ esac
 -- 
 2.30.1
 
