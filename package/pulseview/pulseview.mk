@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-PULSEVIEW_VERSION = 0.4.1
+PULSEVIEW_VERSION = 0.4.2
 PULSEVIEW_SITE = http://sigrok.org/download/source/pulseview
 PULSEVIEW_LICENSE = GPL-3.0+
 PULSEVIEW_LICENSE_FILES = COPYING
-PULSEVIEW_DEPENDENCIES = libsigrok qt5base qt5svg boost
+PULSEVIEW_DEPENDENCIES = libsigrok qt5base qt5svg qt5tools boost
 PULSEVIEW_CONF_OPTS = -DDISABLE_WERROR=TRUE
 
 ifeq ($(BR2_PACKAGE_BOOST_TEST),y)
