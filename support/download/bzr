@@ -37,6 +37,10 @@ _bzr() {
     if [ -z "${quiet}" ]; then
         printf '%s ' ${BZR} "${@}"; printf '\n'
     fi
+    _plain_bzr "$@"
+}
+# Note: please keep command below aligned with what is printed above
+_plain_bzr() {
     eval ${BZR} "${@}"
 }
 

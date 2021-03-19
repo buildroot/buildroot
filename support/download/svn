@@ -43,6 +43,10 @@ _svn() {
     if [ -z "${quiet}" ]; then
         printf '%s ' ${SVN} "${@}"; printf '\n'
     fi
+    _plain_svn "$@"
+}
+# Note: please keep command below aligned with what is printed above
+_plain_svn() {
     eval ${SVN} "${@}"
 }
 
@@ -53,7 +57,7 @@ _svn export --ignore-keywords ${quiet} "${@}" "'${uri}@${rev}'" "'${basename}'"
 # UTC timezone), which we can feed as-is to the --mtime option for tar.
 # In case there is a redirection (e.g. http -> https), just keep the
 # last line (svn outputs everything on stdout)
-date="$( _svn info "'${uri}@${rev}'" \
+date="$( _plain_svn info "'${uri}@${rev}'" \
         |sed -r -e '/^Last Changed Date: /!d; s///'
        )"
 

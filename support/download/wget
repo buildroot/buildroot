@@ -36,6 +36,10 @@ _wget() {
     if [ -z "${quiet}" ]; then
         printf '%s ' ${WGET} "${@}"; printf '\n'
     fi
+    _plain_wget "$@"
+}
+# Note: please keep command below aligned with what is printed above
+_plain_wget() {
     eval ${WGET} "${@}"
 }
 

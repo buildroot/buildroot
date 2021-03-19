@@ -34,6 +34,10 @@ _scp() {
     if [ -z "${quiet}" ]; then
         printf '%s ' ${SCP} "${@}"; printf '\n'
     fi
+    _plain_scp "$@"
+}
+# Note: please keep command below aligned with what is printed above
+_plain_scp() {
     eval ${SCP} "${@}"
 }
 

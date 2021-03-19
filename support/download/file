@@ -39,6 +39,10 @@ _localfiles() {
     if [ -n "${verbose}" ]; then
         printf '%s ' ${LOCALFILES} "${@}"; printf '\n'
     fi
+    _plain_localfiles "$@"
+}
+# Note: please keep command below aligned with what is printed above
+_plain_localfiles() {
     eval ${LOCALFILES} "${@}"
 }
 
