@@ -6,12 +6,12 @@
 
 ifeq ($(BR2_PACKAGE_WPEWEBKIT2_22),y)
 WPEWEBKIT_VERSION = 2.22
-WPEWEBKIT_VERSION_VALUE = 083fe48cb1e224cf0adef2271beaf95e5f0ec3f9
+WPEWEBKIT_VERSION_VALUE = fdd0de84bb678cbc781d583ca06e4f9464f5a519
 endif
 
 ifeq ($(BR2_PACKAGE_WPEWEBKIT2_28),y)
 WPEWEBKIT_VERSION = 2.28
-WPEWEBKIT_VERSION_VALUE = f314b8271a4d81b1abe754b70224f4b9a41986e7
+WPEWEBKIT_VERSION_VALUE = 12647a702dbeac26bf482cec4fcfa9a8ef874357
 endif
 
 WPEWEBKIT_SITE = $(call github,WebPlatformForEmbedded,WPEWebKit,$(WPEWEBKIT_VERSION_VALUE))
@@ -129,7 +129,7 @@ WPEWEBKIT_FLAGS += \
 	-DENABLE_THUNDER=ON \
 	-DENABLE_WEB_AUDIO=ON
 WPEWEBKIT_DEPENDENCIES += gstreamer1 gst1-plugins-base \
-	gst1-plugins-good gst1-libav wpeframework-clientlibraries
+	gst1-plugins-good wpeframework-clientlibraries
 else
 WPEWEBKIT_FLAGS += \
 	-DENABLE_VIDEO=OFF \

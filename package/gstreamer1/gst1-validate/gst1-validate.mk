@@ -26,4 +26,6 @@ GST1_VALIDATE_CONF_OPTS = \
 	--disable-introspection \
 	--disable-sphinx-doc
 
+GST1_VALIDATE_CFLAGS = $(TARGET_CFLAGS) $(GSTREAMER1_EXTRA_COMPILER_OPTIONS)
+
 $(eval $(autotools-package))

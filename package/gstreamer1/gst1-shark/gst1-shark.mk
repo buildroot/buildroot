@@ -16,4 +16,6 @@ GST1_SHARK_AUTORECONF = YES
 GST1_SHARK_DEPENDENCIES = host-pkgconf gstreamer1 gst1-plugins-base
 GST1_SHARK_CONF_OPTS = --disable-graphviz
 
+GST1_SHARK_CFLAGS = $(TARGET_CFLAGS) $(GSTREAMER1_EXTRA_COMPILER_OPTIONS)
+
 $(eval $(autotools-package))
