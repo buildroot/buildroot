@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MENDER_VERSION = 2.4.2
+MENDER_VERSION = 2.5.0
 MENDER_SITE = https://github.com/mendersoftware/mender/archive
 MENDER_SOURCE = $(MENDER_VERSION).tar.gz
 MENDER_LICENSE = Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, MIT, OLDAP-2.8
@@ -35,7 +35,7 @@ MENDER_LICENSE_FILES = \
 	vendor/gopkg.in/yaml.v3/LICENSE \
 	vendor/github.com/bmatsuo/lmdb-go/LICENSE.mdb.md
 
-MENDER_DEPENDENCIES = openssl xz
+MENDER_DEPENDENCIES = host-pkgconf openssl xz
 
 MENDER_LDFLAGS = -X github.com/mendersoftware/mender/conf.Version=$(MENDER_VERSION)
 
