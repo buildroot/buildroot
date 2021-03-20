@@ -35,7 +35,7 @@ MENDER_LICENSE_FILES = \
 
 MENDER_DEPENDENCIES = xz
 
-MENDER_LDFLAGS = -X main.Version=$(MENDER_VERSION)
+MENDER_LDFLAGS = -X github.com/mendersoftware/mender/conf.Version=$(MENDER_VERSION)
 
 MENDER_UPDATE_MODULES_FILES = \
 	directory \
