@@ -62,10 +62,10 @@ define MENDER_INSTALL_CONFIG_FILES
 			$(TARGET_DIR)/usr/share/mender/inventory/mender-inventory-$(f)
 	)
 
-	$(INSTALL) -D -m 0755 package/mender/artifact_info \
+	$(INSTALL) -D -m 0755 $(MENDER_PKGDIR)/artifact_info \
 			$(TARGET_DIR)/etc/mender/artifact_info
 
-	$(INSTALL) -D -m 0755 package/mender/device_type \
+	$(INSTALL) -D -m 0755 $(MENDER_PKGDIR)/device_type \
 			$(TARGET_DIR)/etc/mender/device_type
 
 	mkdir -p $(TARGET_DIR)/var/lib
@@ -84,7 +84,7 @@ define MENDER_INSTALL_INIT_SYSTEMD
 endef
 
 define MENDER_INSTALL_INIT_SYSV
-	$(INSTALL) -D -m 755 package/mender/S42mender \
+	$(INSTALL) -D -m 755 $(MENDER_PKGDIR)/S42mender \
 		$(TARGET_DIR)/etc/init.d/S42mender
 endef
 
