@@ -1,0 +1,15 @@
+config BR2_PACKAGE_GL4ES
+	bool "gl4es"
+	depends on BR2_PACKAGE_HAS_LIBGLES
+	depends on !BR2_PACKAGE_MESA3D_OPENGL_GLX
+	select BR2_PACKAGE_HAS_LIBGL
+	help
+	  OpenGL-over-ES compatibility layer.
+
+	  https://github.com/ptitSeb/gl4es
+
+config BR2_PACKAGE_PROVIDES_LIBGL
+	default "gl4es" if BR2_PACKAGE_GL4ES
+
+comment "gl4es requires Mesa3D without GLX"
+	depends on !BR2_PACKAGE_MESA3D || BR2_PACKAGE_MESA3D_OPENGL_GLX
