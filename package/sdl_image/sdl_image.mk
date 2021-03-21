@@ -4,9 +4,12 @@
 #
 ################################################################################
 
-SDL_IMAGE_VERSION = 1.2.12
-SDL_IMAGE_SOURCE = SDL_image-$(SDL_IMAGE_VERSION).tar.gz
-SDL_IMAGE_SITE = http://www.libsdl.org/projects/SDL_image/release
+# The latest officially released version of SDL_image is 1.2.12, released in 2012.
+# Since then, there have been many bugfixes, including security fixes.
+#
+# This commit points to the SDL-1.2 branch from 14 Mar 2021.
+SDL_IMAGE_VERSION = 5d792dde2f764daf15dc48521774a3354330db69
+SDL_IMAGE_SITE = $(call github,libsdl-org,SDL_image,$(SDL_IMAGE_VERSION))
 SDL_IMAGE_INSTALL_STAGING = YES
 SDL_IMAGE_LICENSE = Zlib
 SDL_IMAGE_LICENSE_FILES = COPYING
