@@ -1,0 +1,9 @@
+config BR2_PACKAGE_LIBYXOPE
+    bool "libyxope"
+    depends on BR2_PACKAGE_LIBDRM
+    depends on BR2_PACKAGE_MESA3D_GBM
+    help
+        Library to enable Thunder plugins to use EGL without modification on a PI 4
+
+comment "libyxope requires libgbm and libdrm"
+   depends on !BR2_PACKAGE_MESA3D_GBM || !BR2_PACKAGE_LIBDRM
