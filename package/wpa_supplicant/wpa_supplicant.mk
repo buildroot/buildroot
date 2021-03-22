@@ -21,6 +21,9 @@ WPA_SUPPLICANT_LDFLAGS = $(TARGET_LDFLAGS)
 # 0001-AP-Silently-ignore-management-frame-from-unexpected-.patch
 WPA_SUPPLICANT_IGNORE_CVES += CVE-2019-16275
 
+# 0001-P2P-Fix-a-corner-case-in-peer-addition-based-on-PD-R.patch
+WPA_SUPPLICANT_IGNORE_CVES += CVE-2021-27803
+
 # install the wpa_client library
 WPA_SUPPLICANT_INSTALL_STAGING = YES
 
