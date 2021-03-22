@@ -32,9 +32,7 @@ LIBVIPS_CONF_OPTS = \
 	--without-cfitsio \
 	--without-libwebp \
 	--without-pangoft2 \
-	--without-x \
-	--without-zip \
-	--without-python
+	--without-x
 LIBVIPS_INSTALL_STAGING = YES
 LIBVIPS_DEPENDENCIES = \
 	host-pkgconf expat libglib2 \
