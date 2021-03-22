@@ -74,6 +74,13 @@ config BR2_PACKAGE_WPEWEBKIT2_28
 
 endchoice
 
+if BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4
+config BR2_WPEWEBKIT_PI4_SUPPRORT
+	bool "PI4 support"
+	default y
+	select BR2_PACKAGE_LIBYXOPE if BR2_PACKAGE_HAS_LIBEGL
+endif
+
 menu "Extra options"
 
 choice
