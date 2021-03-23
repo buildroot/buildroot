@@ -1,0 +1,41 @@
+--- a/configure.ac
++++ b/configure.ac
+@@ -37,8 +37,8 @@
+ # Obtain compiler/linker options for depedencies
+ PKG_CHECK_MODULES(DRM, [libdrm >= 2.4.71])
+ PKG_CHECK_MODULES(GBM, gbm >= 13.0)
+-PKG_CHECK_MODULES(EGL, egl)
+-PKG_CHECK_MODULES(GLES2, glesv2)
++PKG_CHECK_MODULES(EGL, epoxy)
++PKG_CHECK_MODULES(GLES2, epoxy)
+ 
+ # Check for gst and enable cube-video conditionally:
+ PKG_CHECK_MODULES(GST, gstreamer-1.0 >= 1.6.0 gstreamer-plugins-base-1.0 >= 1.6.0 gstreamer-app-1.0 >= 1.6.0 gstreamer-allocators-1.0 >= 1.6.0 gstreamer-video-1.0 >= 1.6.0 glib-2.0,
+--- a/common.h
++++ b/common.h
+@@ -25,11 +25,9 @@
+ #define _COMMON_H
+ 
+ #ifndef GL_ES_VERSION_2_0
+-#include <GLES2/gl2.h>
+ #endif
+-#include <GLES2/gl2ext.h>
+-#include <EGL/egl.h>
+-#include <EGL/eglext.h>
++#include <epoxy/egl.h>
++#include <epoxy/gl.h>
+ 
+ #include <gbm.h>
+ #include <drm_fourcc.h>
+--- a/texturator.c
++++ b/texturator.c
+@@ -29,8 +29,7 @@
+ #include <getopt.h>
+ #include <math.h>
+ 
+-#include <GLES3/gl3.h>
+-#include <GLES3/gl3ext.h>
++#include <epoxy/gl.h>
+ 
+ #ifdef HAVE_LIBPNG
+ #include <png.h>
