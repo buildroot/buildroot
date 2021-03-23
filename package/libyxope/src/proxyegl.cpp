@@ -74,6 +74,11 @@ extern "C" {
 
 #ifndef EGL_PLATFORM_GBM_MESA
 #define EGL_PLATFORM_GBM_KHR
+
+#ifndef EGL_VERSION_1_5
+#warning "EGL version 1.5 or EGL version 1.4 with extension support is preferred."
+typedef intptr_t EGLAttrib;
+#endif
 #endif
 
 #include <signal.h>
