@@ -2,6 +2,7 @@ config BR2_PACKAGE_GL4ES
 	bool "gl4es"
 	depends on BR2_PACKAGE_HAS_LIBGLES
 	depends on !BR2_PACKAGE_MESA3D_OPENGL_GLX
+	select BR2_PACKAGE_MESA3D_INSTALL_GL_HEADERS
 	select BR2_PACKAGE_HAS_LIBGL
 	help
 	  OpenGL-over-ES compatibility layer.
