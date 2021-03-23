@@ -431,6 +431,7 @@ config BR2_PACKAGE_MESA3D_OPENGL_GLX
 	depends on BR2_PACKAGE_XORG7
 	select BR2_PACKAGE_HAS_LIBGL
 	select BR2_PACKAGE_MESA3D_NEEDS_X11
+	select BR2_PACKAGE_MESA3D_INSTALL_GL_HEADERS
 	help
 	  Enable GLX graphic acceleration (OpenGL + X11).
 
@@ -454,6 +455,9 @@ config BR2_PACKAGE_MESA3D_OPENGL_ES
 	  embedded systems and represents a subset of the OpenGL API.
 
 endif # BR2_PACKAGE_MESA3D_DRIVER
+
+config BR2_PACKAGE_MESA3D_INSTALL_GL_HEADERS
+	default n
 
 config BR2_PACKAGE_PROVIDES_LIBGL
 	default "mesa3d" if BR2_PACKAGE_MESA3D_OPENGL_GLX

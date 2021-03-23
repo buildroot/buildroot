@@ -165,7 +165,9 @@ MESA3D_CONF_OPTS += -Dgallium-va=disabled
 # libGL is only provided for a full xorg stack
 ifeq ($(BR2_PACKAGE_MESA3D_OPENGL_GLX),y)
 MESA3D_PROVIDES += libgl
-else
+endif
+
+ifneq ($(BR2_PACKAGE_MESA3D_INSTALL_GL_HEADERS),y)
 define MESA3D_REMOVE_OPENGL_HEADERS
 	rm -rf $(STAGING_DIR)/usr/include/GL/
 endef
