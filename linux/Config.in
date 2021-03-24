@@ -329,6 +329,10 @@ config BR2_LINUX_KERNEL_XZ
 config BR2_LINUX_KERNEL_ZSTD
 	bool "zstd compression"
 
+config BR2_LINUX_KERNEL_UNCOMPRESSED
+	bool "uncompressed"
+	depends on BR2_s390x
+
 endchoice
 
 config BR2_LINUX_KERNEL_IMAGE_TARGET_NAME
