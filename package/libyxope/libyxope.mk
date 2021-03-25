@@ -15,18 +15,22 @@ LIBYXOPE_REDISTRIBUTE = YES
 
 LIBYXOPE_DEPENDENCIES = libdrm mesa3d
 
+ifeq ($(BR2_PACKAGE_LIBEPOXY)x,yx)
+LIBYXOPE_DEPENDENCIES += libepoxy
+endif
+
 # The target flags
 LIBYXOPE_CPPFLAGS = $(TARGET_CPPFLAGS)
 LIBYXOPE_CFLAGS = $(TARGET_CFLAGS)
 LIBYXOPE_CXXFLAGS = $(TARGET_CXXFLAGS) -Wall
 LIBYXOPE_LDFLAGS = $(TARGET_LDFLAGS)
 
-override LIBYXOPE_CFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags libdrm)
-override LIBYXOPE_CXXFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags libdrm)
-override LIBYXOPE_LDFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --libs libdrm)
-override LIBYXOPE_CFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags gbm)
-override LIBYXOPE_CXXFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags gbm)
-override LIBYXOPE_LDFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --libs gbm)
+LIBYXOPE_CFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags libdrm)
+LIBYXOPE_CXXFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags libdrm)
+LIBYXOPE_LDFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --libs libdrm)
+LIBYXOPE_CFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags gbm)
+LIBYXOPE_CXXFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags gbm)
+LIBYXOPE_LDFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --libs gbm)
 
 ifeq ($(BR2_ENABLE_DEBUG)x,yx)
     LIBYXOPE_CPPFLAGS += -DDEBUG
