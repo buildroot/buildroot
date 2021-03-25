@@ -7,6 +7,8 @@ Subject: [PATCH] Replace obsolete/deprecated Qt methods
 ae726b70a7ada9a4be5808e00f0c951318479684, one conflict manually
 resolved in pv/util.cpp.]
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+[Fabrice: restore original patch in pv/util.cpp for 0.4.2]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  pv/util.cpp                     | 21 +++++++++++++++++++--
  pv/util.hpp                     | 10 ++++++++++
@@ -25,8 +27,8 @@ index 49b9467c..2a63038d 100644
  	if (sign && !v.is_zero())
 -		ts << forcesign;
 +		ts.setNumberFlags(ts.numberFlags() | QTextStream::ForceSign);
- 	ts << qSetRealNumberPrecision(precision) << (v * multiplier) << ' '
- 		<< prefix << unit;
+ 	ts << qSetRealNumberPrecision(precision) << (v * multiplier);
+ 	ts << ' ' << prefix << unit;
  
 @@ -171,7 +171,7 @@ QString format_value_si(double v, SIPrefix prefix, unsigned precision,
  	QString s;
