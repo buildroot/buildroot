@@ -41,7 +41,7 @@ $(warning warning: LIBS is empty.)
 endif
 
 # At least required
-override CXXFLAGS += --std=c++11 -fPIC
+override CXXFLAGS += --std=c++11 -fPIC -O0
 
 # The input files
 srcdir :=
