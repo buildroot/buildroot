@@ -21,6 +21,27 @@ config BR2_PACKAGE_BRIDGE_DISABLE_INITD
 	bool "Disable init.d"
 	help
 		If enabled the init.d script will NOT be installed.
+
+config BR2_PACKAGE_BRIDGE_WARNING_REPORTING
+    bool "DefensiveWarnings"
+    default n
+    help
+      Add a defensive warning system to the Thunder. It increases the footprint
+      of the Thunder application but it allows for profiling and early warning
+      on misbahving plugins. This feature should be used at least once before
+      creating a production build to get a feeling on the behaviour of new
+      plugins. They should not raise any warnings here !!!
+
+config BR2_PACKAGE_BRIDGE_EXCEPTION_CATCHING
+    bool "ExceptionCatching"
+    default n
+    help
+      Some plugins are developed with Exception handling turned on. If an exception
+      is not caught in the plugin it ends up in the framework. This feature tries
+      to recover from these uncaught execptions. If it happens on a workerpool thread
+      the framework will catch it, report it and continue. If the exception is thrown
+      from a thread not under control of the framework it reports and shutsdown the
+      framework. There is no possibility to recover from it.
 		
 menu "test applications"
 
