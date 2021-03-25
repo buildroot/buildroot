@@ -188,6 +188,34 @@ config BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY_IMPLEMENTATION_NEXUS
 endchoice
 endif
 
+config BR2_PACKAGE_WPEFRAMEWORK_WARNING_REPORTING
+    bool "DefensiveWarnings"
+    default n
+    help
+      Add a defensive warning system to the Thunder. It increases the footprint
+      of the Thunder application but it allows for profiling and early warning
+      on misbahving plugins. This feature should be used at least once before
+      creating a production build to get a feeling on the behaviour of new
+      plugins. They should not raise any warnings here !!!
+
+config BR2_PACKAGE_WPEFRAMEWORK_EXCEPTION_CATCHING
+    bool "ExceptionCatching"
+    default n
+    help
+      Some plugins are developed with Exception handling turned on. If an exception
+      is not caught in the plugin it ends up in the framework. This feature tries 
+      to recover from these uncaught execptions. If it happens on a workerpool thread
+      the framework will catch it, report it and continue. If the exception is thrown
+      from a thread not under control of the framework it reports and shutsdown the
+      framework. There is no possibility to recover from it.
+
+config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
+    select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
+    bool "ProvisionProxy"
+    select BR2_PACKAGE_LIBPROVISION
+    help
+      Allows provisioning of modules from the cloud.
+
 config BR2_PACKAGE_WPEFRAMEWORK_PROCESSCONTAINERS
     bool "Process Containers"
         default n
@@ -220,13 +248,6 @@ config BR2_PACKAGE_WPEFRAMEWORK_PROCESSCONTAINERS_BE_CRUN
 endchoice
 
 endif
-
-config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
-    select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
-    bool "ProvisionProxy"
-    select BR2_PACKAGE_LIBPROVISION
-    help
-      Allows provisioning of modules from the cloud.
 
 config BR2_PACKAGE_WPEFRAMEWORK_SECURE_SOCKET
     bool "SecureSocket"
