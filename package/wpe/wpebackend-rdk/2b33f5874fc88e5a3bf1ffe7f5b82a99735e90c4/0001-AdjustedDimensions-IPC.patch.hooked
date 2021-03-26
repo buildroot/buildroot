@@ -1,0 +1,90 @@
+--- a/src/wpeframework/ipc-buffer.h
++++ b/src/wpeframework/ipc-buffer.h
+@@ -64,6 +64,30 @@ struct FrameComplete {
+ };
+ static_assert(sizeof(FrameComplete) == Message::dataSize, "FrameComplete is of correct size");
+ 
++struct AdjustedDimensions {
++    uint32_t width;
++    uint32_t height;
++    uint8_t padding[24];
++
++    static const uint64_t code = 3;
++
++    static void construct(Message& message, uint32_t width, uint32_t height)
++    {
++        message.messageCode = code;
++
++        AdjustedDimensions& messageData = *reinterpret_cast<AdjustedDimensions*>(std::addressof(message.messageData));
++
++        messageData.width = width;
++        messageData.height = height;
++    }
++
++    static AdjustedDimensions& cast(Message& message)
++    {
++        return *reinterpret_cast<AdjustedDimensions*>(std::addressof(message.messageData));
++    }
++};
++static_assert(sizeof(AdjustedDimensions) == Message::dataSize, "AdjustedDimensions is of incorrect size");
++
+ } // namespace IPC
+ 
+ #endif // wpe_platform_ipc_compositor_client_h
+diff --git a/src/wpeframework/renderer-backend.cpp b/src/wpeframework/renderer-backend.cpp
+index 9f9a75d..3f06acc 100644
+--- a/src/wpeframework/renderer-backend.cpp
++++ b/src/wpeframework/renderer-backend.cpp
+@@ -75,6 +75,32 @@ EGLTarget::EGLTarget(struct wpe_renderer_backend_egl_target* target, int hostFd)
+ void EGLTarget::initialize(struct wpe_view_backend* backend, uint32_t width, uint32_t height)
+ {
+     surface = display.Create(DisplayName(), width, height);
++
++    using width_t = decltype (width);
++    using height_t = decltype (height);
++
++    using s_width_t = decltype (surface->Width());
++    using s_height_t = decltype (surface->Width());
++
++    static_assert(std::is_integral<s_width_t>::value, "Integral type required");
++    static_assert(std::is_integral<s_height_t>::value, "Integral type required");
++
++    static_assert(sizeof(s_width_t) == sizeof(width_t));
++    static_assert(sizeof(s_height_t) == sizeof(height_t));
++
++    s_width_t s_width = surface->Width();
++    s_height_t s_height = surface->Height();
++
++    assert(s_width >= 0 && s_height >= 0);
++
++    if (width != static_cast <width_t>(s_width) || height != static_cast<height_t>(s_height)) {
++        IPC::Message message;
++
++        IPC::AdjustedDimensions::construct(message, surface->Width(), surface->Height());
++
++        ipcClient.sendMessage(IPC::Message::data(message), IPC::Message::size);
++    }
++
+     display.Backend(backend);
+ }
+ 
+diff --git a/src/wpeframework/view-backend.cpp b/src/wpeframework/view-backend.cpp
+index 9fdc60b..3f50991 100644
+--- a/src/wpeframework/view-backend.cpp
++++ b/src/wpeframework/view-backend.cpp
+@@ -144,6 +144,15 @@ void ViewBackend::handleMessage(char* data, size_t size)
+         triggered = true;
+         break;
+     }
++    case IPC::AdjustedDimensions::code:
++    {
++        IPC::AdjustedDimensions dimensions = IPC::AdjustedDimensions::cast(message);
++
++        wpe_view_backend_dispatch_set_size(backend, dimensions.width, dimensions.height);
++
++        fprintf(stdout,"Adjusted (internal buffer) dimensions to %u x %u\n", dimensions.width, dimensions.height);
++        break;
++    }
+     default:
+         fprintf(stderr, "ViewBackend: unhandled message\n");
+     }
