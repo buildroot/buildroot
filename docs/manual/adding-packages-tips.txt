@@ -210,3 +210,33 @@ image::github_hash_mongrel2.png[]
 - On the other hand, if there's is *only* the "Source code" link, then
   it's an automatically generated tarball and you should use the
   'github' helper function.
+
+[[gitlab-download-url]]
+==== How to add a package from Gitlab
+
+In a similar way to the +github+ macro described in
+xref:github-download-url[], Buildroot also provides the +gitlab+ macro
+to download from Gitlab repositories. It can be used to download
+auto-generated tarballs produced by Gitlab, either for specific tags
+or commits:
+
+------------------------
+# Use a tag or a full commit ID
+FOO_VERSION = 1.0
+FOO_SITE = $(call gitlab,<user>,<package>,v$(FOO_VERSION))
+------------------------
+
+By default, it will use a +.tar.gz+ tarball, but Gitlab also provides
++.tar.bz2+ tarballs, so by adding a +<pkg>_SOURCE+ variable, this
++.tar.bz2+ tarball can be used:
+
+------------------------
+# Use a tag or a full commit ID
+FOO_VERSION = 1.0
+FOO_SITE = $(call gitlab,<user>,<package>,v$(FOO_VERSION))
+FOO_SOURCE = foo-$(FOO_VERSION).tar.bz2
+------------------------
+
+If there is a specific tarball uploaded by the upstream developers in
++https://gitlab.com/<project>/releases/+, do not use this macro, but
+rather use directly the link to the tarball.
