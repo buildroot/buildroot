@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TVHEADEND_VERSION = febcf9818d7c37fec8a98d424934edcb3243d5e4
+TVHEADEND_VERSION = dbaa0f850394af8ab845df802f5f781ac0218ec4
 TVHEADEND_SITE = $(call github,tvheadend,tvheadend,$(TVHEADEND_VERSION))
 TVHEADEND_LICENSE = GPL-3.0+
 TVHEADEND_LICENSE_FILES = LICENSE.md
@@ -29,7 +29,7 @@ endif
 ifeq ($(BR2_PACKAGE_TVHEADEND_TRANSCODING),y)
 TVHEADEND_CONF_OPTS += --enable-libav --enable-libx264
 TVHEADEND_DEPENDENCIES += ffmpeg x264
-ifeq ($(BR2_PACKAGE_LIBVA)$(BR2_PACKAGE_XORG7),yy)
+ifeq ($(BR2_PACKAGE_LIBVA),y)
 TVHEADEND_CONF_OPTS += --enable-vaapi
 TVHEADEND_DEPENDENCIES += libva
 else
