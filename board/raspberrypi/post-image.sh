@@ -169,7 +169,6 @@ __EOF__
 			fi
 		fi
 		;;
-		--add-miniuart-bt-overlay)
 		--add-pi3-miniuart-bt-overlay)
                 if [ "x${BLUETOOTH}" = "x" ]; then
                         if ! grep -qE '^dtoverlay=pi3-miniuart-bt' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
