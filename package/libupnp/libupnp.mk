@@ -16,7 +16,9 @@ LIBUPNP_CPE_ID_VENDOR = libupnp_project
 LIBUPNP_DEPENDENCIES = host-pkgconf
 
 # Bind the internal miniserver socket with reuseaddr to allow clean restarts.
-LIBUPNP_CONF_OPTS += --enable-reuseaddr
+LIBUPNP_CONF_OPTS += \
+	--disable-samples \
+	--enable-reuseaddr
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 LIBUPNP_CONF_OPTS += --enable-open-ssl
