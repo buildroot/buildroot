@@ -55,6 +55,13 @@ else
 LIBVIPS_CONF_OPTS += --without-png
 endif
 
+ifeq ($(BR2_PACKAGE_POPPLER),y)
+LIBVIPS_CONF_OPTS += --with-poppler
+LIBVIPS_DEPENDENCIES += poppler
+else
+LIBVIPS_CONF_OPTS += --without-poppler
+endif
+
 ifeq ($(BR2_PACKAGE_TIFF),y)
 LIBVIPS_CONF_OPTS += --with-tiff
 LIBVIPS_DEPENDENCIES += tiff
