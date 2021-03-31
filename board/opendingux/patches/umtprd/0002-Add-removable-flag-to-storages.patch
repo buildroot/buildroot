@@ -1,0 +1,78 @@
+From f2ab68b1c8f83c7ee4c28c686b8007b0e4c89472 Mon Sep 17 00:00:00 2001
+From: Paul Cercueil <paul@crapouillou.net>
+Date: Wed, 31 Mar 2021 17:06:16 +0100
+Subject: [PATCH 2/4] Add "removable" flag to storages
+
+This flag can be used to tell that a storage should be seen as
+removable.
+
+This flag changes the storage type from MTP_STORAGE_FIXED_RAM (0x3)
+to MTP_STORAGE_REMOVABLE_RAM (0x4).
+
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ inc/mtp.h          | 1 +
+ src/mtp_cfg.c      | 5 +++++
+ src/mtp_datasets.c | 8 +++++++-
+ 3 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/inc/mtp.h b/inc/mtp.h
+index 091a694..0ab09df 100644
+--- a/inc/mtp.h
++++ b/inc/mtp.h
+@@ -83,6 +83,7 @@ typedef struct mtp_storage_
+ 	uint32_t flags;
+ }mtp_storage;
+ 
++#define UMTP_STORAGE_REMOVABLE   0x00000004
+ #define UMTP_STORAGE_NOTMOUNTED  0x00000002
+ #define UMTP_STORAGE_READONLY    0x00000001
+ #define UMTP_STORAGE_READWRITE   0x00000000
+diff --git a/src/mtp_cfg.c b/src/mtp_cfg.c
+index af7e8d3..1df7fa1 100644
+--- a/src/mtp_cfg.c
++++ b/src/mtp_cfg.c
+@@ -275,6 +275,11 @@ static int get_storage_params(mtp_ctx * context, char * line,int cmd)
+ 			{
+ 				flags |= UMTP_STORAGE_NOTMOUNTED;
+ 			}
++
++			if(test_flag(options, "removable"))
++			{
++				flags |= UMTP_STORAGE_REMOVABLE;
++			}
+ 		}
+ 
+ 		PRINT_MSG("Add storage %s - Root Path: %s - Flags: 0x%.8X", storagename, storagepath,flags);
+diff --git a/src/mtp_datasets.c b/src/mtp_datasets.c
+index 3a1ab3b..e27d74b 100644
+--- a/src/mtp_datasets.c
++++ b/src/mtp_datasets.c
+@@ -108,6 +108,7 @@ int build_storageinfo_dataset(mtp_ctx * ctx,void * buffer, int maxsize,uint32_t
+ 	uint64_t freespace = 0x4000000000000000U;
+ 	uint64_t totalspace = 0x8000000000000000U;
+ 	uint32_t storage_flags;
++	uint16_t storage_type;
+ 
+ 	ofs = 0;
+ 
+@@ -115,10 +116,15 @@ int build_storageinfo_dataset(mtp_ctx * ctx,void * buffer, int maxsize,uint32_t
+ 	storage_path = mtp_get_storage_root(ctx, storageid);
+ 	storage_flags = mtp_get_storage_flags(ctx, storageid);
+ 
++	if (storage_flags & UMTP_STORAGE_REMOVABLE)
++		storage_type = MTP_STORAGE_REMOVABLE_RAM;
++	else
++		storage_type = MTP_STORAGE_FIXED_RAM;
++
+ 	if(storage_description && storage_path)
+ 	{
+ 		PRINT_DEBUG("Add storageinfo for %s", storage_path);
+-		ofs = poke16(buffer, ofs, maxsize, MTP_STORAGE_FIXED_RAM);                               // Storage Type
++		ofs = poke16(buffer, ofs, maxsize, storage_type);                                        // Storage Type
+ 		ofs = poke16(buffer, ofs, maxsize, MTP_STORAGE_FILESYSTEM_HIERARCHICAL);                 // Filesystem Type
+ 
+ 		// Access Capability
+-- 
+2.30.2
+
