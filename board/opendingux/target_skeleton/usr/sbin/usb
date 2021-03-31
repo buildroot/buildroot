@@ -87,6 +87,13 @@ usb_start() {
 		# Fixup access rights of newly created EP nodes
 		chown root:mtp /dev/ffs-umtp/ep*
 		chmod 0660 /dev/ffs-umtp/ep*
+
+		# Add removable devices
+		for each in /media/* ; do
+			[ $each = /media/data ] && continue
+
+			/usr/sbin/umtprd "-cmd:addstorage:\"$each\" \"$(basename $each)\" rw,removable"
+		done
 	else
 		echo 0x049f > mtp/idVendor
 		echo 0x505a > mtp/idProduct

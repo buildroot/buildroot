@@ -21,7 +21,7 @@ ACTION=="add", KERNEL=="mmcblk1p1", ENV{dir_name}!="?*", ENV{dir_name}="sdcard"
 ACTION=="add", ENV{dir_name}!="?*", ENV{dir_name}="%k"
 ACTION=="add", ENV{dir_name}=="data", ENV{dir_name}="%k"
 
-ACTION=="add", ENV{dir_name}=="?*", RUN+="/bin/mount -o remount,rw /media", RUN+="/bin/mkdir -p '/media/%E{dir_name}'", RUN+="/bin/mount -o %E{mount_options} /dev/%k '/media/%E{dir_name}'", RUN+="/bin/mount -o remount,ro /media"
-ACTION=="remove", ENV{dir_name}=="?*", RUN+="/bin/umount -l '/media/%E{dir_name}'", RUN+="/bin/mount -o remount,rw /media", RUN+="/bin/rmdir '/media/%E{dir_name}'", RUN+="/bin/mount -o remount,ro /media"
+ACTION=="add", ENV{dir_name}=="?*", RUN+="/bin/mount -o remount,rw /media", RUN+="/bin/mkdir -p '/media/%E{dir_name}'", RUN+="/bin/mount -o %E{mount_options} /dev/%k '/media/%E{dir_name}'", RUN+="/bin/mount -o remount,ro /media", RUN+="/usr/sbin/umtprd '-cmd:addstorage:/media/%E{dir_name} %E{dir_name} rw,removable'"
+ACTION=="remove", ENV{dir_name}=="?*", RUN+="/usr/sbin/umtprd '-cmd:rmstorage:%E{dir_name}'", RUN+="/bin/umount -l '/media/%E{dir_name}'", RUN+="/bin/mount -o remount,rw /media", RUN+="/bin/rmdir '/media/%E{dir_name}'", RUN+="/bin/mount -o remount,ro /media"
 
 LABEL="media_by_label_auto_mount_end" 
