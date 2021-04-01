@@ -1,0 +1,30 @@
+From f1a08aefdf80dce7e9f84102128497451da312d0 Mon Sep 17 00:00:00 2001
+From: Paul Cercueil <paul@crapouillou.net>
+Date: Thu, 1 Apr 2021 17:59:13 +0100
+Subject: [PATCH 5/5] Add guard to avoid storage from being added twice
+
+Add guard in mtp_add_storage() to avoid the same storage from being
+added twice.
+
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ src/mtp.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/mtp.c b/src/mtp.c
+index c20637f..fc9a3c9 100644
+--- a/src/mtp.c
++++ b/src/mtp.c
+@@ -647,6 +647,9 @@ uint32_t mtp_add_storage(mtp_ctx * ctx, char * path, char * description, uint32_
+ 
+ 	PRINT_DEBUG("mtp_add_storage : %s", path );
+ 
++	if (mtp_get_storage_id_by_name(ctx, description) != 0xFFFFFFFF)
++		return 0x00000000;
++
+ 	i = 0;
+ 	while(i < MAX_STORAGE_NB)
+ 	{
+-- 
+2.30.2
+
