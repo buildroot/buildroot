@@ -24,8 +24,9 @@ usb_start() {
 		USB_MODE=$1
 	elif [ -r /usr/local/etc/usb.conf ] ; then
 		. /usr/local/etc/usb.conf
-		[ -z "$USB_MODE" ] && USB_MODE=mtp
 	fi
+
+	[ -z "$USB_MODE" ] && USB_MODE=mtp
 
 	cd /sys/kernel/config/usb_gadget
 
