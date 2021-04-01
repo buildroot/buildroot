@@ -38,7 +38,7 @@ MENDER_LICENSE_FILES = \
 	vendor/github.com/mattn/go-isatty/LICENSE \
 	vendor/github.com/bmatsuo/lmdb-go/LICENSE.mdb.md
 
-MENDER_DEPENDENCIES = host-pkgconf openssl xz
+MENDER_DEPENDENCIES = host-pkgconf openssl
 
 MENDER_LDFLAGS = -X github.com/mendersoftware/mender/conf.Version=$(MENDER_VERSION)
 
@@ -80,6 +80,12 @@ define MENDER_INSTALL_CONFIG_FILES
 endef
 
 MENDER_POST_INSTALL_TARGET_HOOKS += MENDER_INSTALL_CONFIG_FILES
+
+ifeq ($(BR2_PACKAGE_XZ),y)
+MENDER_DEPENDENCIES += xz
+else
+MENDER_TAGS += nolzma
+endif
 
 ifeq ($(BR2_PACKAGE_DBUS),y)
 define MENDER_INSTALL_DBUS_AUTHENTICATION_MANAGER_CONF
