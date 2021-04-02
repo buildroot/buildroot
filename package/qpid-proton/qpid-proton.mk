@@ -33,7 +33,13 @@ QPID_PROTON_CONF_OPTS = \
 
 # epoll proactor unconditionally uses pthread and cpp (C++) bindings
 # unconditionally use proactor
-ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),)
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
+ifeq ($(BR2_INSTALL_LIBSTDCPP),y)
+QPID_PROTON_CONF_OPTS += -DBUILD_CPP=ON
+else
+QPID_PROTON_CONF_OPTS += -DBUILD_CPP=OFF
+endif
+else
 QPID_PROTON_CONF_OPTS += \
 	-DBUILD_CPP=OFF \
 	-DPROACTOR=none
