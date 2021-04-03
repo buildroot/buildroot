@@ -63,6 +63,22 @@ TVHEADEND_CONF_OPTS += \
 	--disable-libx265
 endif
 
+ifeq ($(BR2_PACKAGE_TVHEADEND_DESCRAMBLER),y)
+TVHEADEND_CONF_OPTS += \
+	--enable-cardclient \
+	--enable-cwc \
+	--enable-cccam \
+	--enable-capmt \
+	--enable-constcw
+else
+TVHEADEND_CONF_OPTS += \
+	--disable-cardclient \
+	--disable-cwc \
+	--disable-cccam \
+	--disable-capmt \
+	--disable-constcw
+endif
+
 ifeq ($(BR2_PACKAGE_LIBDVBCSA),y)
 TVHEADEND_DEPENDENCIES += libdvbcsa
 TVHEADEND_CONF_OPTS += --enable-tvhcsa
