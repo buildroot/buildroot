@@ -23,7 +23,13 @@ if [ $? -eq 1 ] ; then
 fi
 
 MODEL=`grep machine /proc/cpuinfo |sed 's/.*: //'`
-[ "$MODEL" = "RS-90" ] && NAND_FLASH=yes
+case "$MODEL" in
+	RS-90|RG-99)
+		NAND_FLASH=yes
+		;;
+	*)
+		;;
+esac
 
 MODELMSG="Found the following device:
 
@@ -36,13 +42,6 @@ if [ $? -eq 1 ] ; then
 	reboot
 	exit 1
 fi
-
-case "$MODEL" in
-	"RS-90")
-		;;
-	*)
-		;;
-esac
 
 if [ "$NAND_FLASH" = "yes" ] ; then
 	echo "Formatting NAND..."
