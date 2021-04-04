@@ -28,4 +28,10 @@ ifeq ($(BR2_PACKAGE_LIBXDGMIME),y)
 GMENU2X_DEPENDENCIES += libxdgmime
 endif
 
+define GMENU2X_INSTALL_WRAPPER
+	mv $(TARGET_DIR)/usr/bin/gmenu2x $(TARGET_DIR)/usr/libexec/gmenu2x
+	$(INSTALL) -D -m 0755 board/opendingux/package/gmenu2x/gmenu2x.sh $(TARGET_DIR)/usr/bin/gmenu2x
+endef
+GMENU2X_POST_INSTALL_TARGET_HOOKS += GMENU2X_INSTALL_WRAPPER
+
 $(eval $(cmake-package))
