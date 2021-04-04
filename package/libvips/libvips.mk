@@ -26,7 +26,6 @@ LIBVIPS_CONF_OPTS = \
 	--without-OpenEXR \
 	--without-openslide \
 	--without-cfitsio \
-	--without-libwebp \
 	--without-pangoft2 \
 	--without-x
 LIBVIPS_INSTALL_STAGING = YES
@@ -130,6 +129,13 @@ LIBVIPS_CONF_OPTS += --with-libexif
 LIBVIPS_DEPENDENCIES += libexif
 else
 LIBVIPS_CONF_OPTS += --without-libexif
+endif
+
+ifeq ($(BR2_PACKAGE_WEBP_DEMUX)$(BR2_PACKAGE_WEBP_MUX),yy)
+LIBVIPS_CONF_OPTS += --with-libwebp
+LIBVIPS_DEPENDENCIES += webp
+else
+LIBVIPS_CONF_OPTS += --without-libwebp
 endif
 
 ifeq ($(BR2_PACKAGE_ZLIB),y)
