@@ -96,4 +96,11 @@ else
 LIBVIPS_CONF_OPTS += --without-libexif
 endif
 
+ifeq ($(BR2_PACKAGE_ZLIB),y)
+LIBVIPS_CONF_OPTS += --with-zlib
+LIBVIPS_DEPENDENCIES += zlib
+else
+LIBVIPS_CONF_OPTS += --without-zlib
+endif
+
 $(eval $(autotools-package))
