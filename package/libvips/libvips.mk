@@ -62,6 +62,13 @@ else
 LIBVIPS_CONF_OPTS += --without-png
 endif
 
+ifeq ($(BR2_PACKAGE_LIBRSVG),y)
+LIBVIPS_CONF_OPTS += --with-rsvg
+LIBVIPS_DEPENDENCIES += librsvg
+else
+LIBVIPS_CONF_OPTS += --without-rsvg
+endif
+
 ifeq ($(BR2_PACKAGE_POPPLER),y)
 LIBVIPS_CONF_OPTS += --with-poppler
 LIBVIPS_DEPENDENCIES += poppler
