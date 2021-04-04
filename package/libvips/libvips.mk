@@ -23,7 +23,6 @@ LIBVIPS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) $(LIBVIPS_CXXFLAGS)" \
 LIBVIPS_CONF_OPTS = \
 	--without-dmalloc \
 	--without-gsf \
-	--without-orc \
 	--without-lcms \
 	--without-OpenEXR \
 	--without-openslide \
@@ -84,6 +83,13 @@ LIBVIPS_CONF_OPTS += --with-rsvg
 LIBVIPS_DEPENDENCIES += librsvg
 else
 LIBVIPS_CONF_OPTS += --without-rsvg
+endif
+
+ifeq ($(BR2_PACKAGE_ORC),y)
+LIBVIPS_CONF_OPTS += --with-orc
+LIBVIPS_DEPENDENCIES += orc
+else
+LIBVIPS_CONF_OPTS += --without-orc
 endif
 
 ifeq ($(BR2_PACKAGE_POPPLER),y)
