@@ -23,7 +23,6 @@ LIBVIPS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) $(LIBVIPS_CXXFLAGS)" \
 LIBVIPS_CONF_OPTS = \
 	--without-dmalloc \
 	--without-gsf \
-	--without-lcms \
 	--without-OpenEXR \
 	--without-openslide \
 	--without-matio \
@@ -69,6 +68,13 @@ LIBVIPS_CONF_OPTS += --with-jpeg
 LIBVIPS_DEPENDENCIES += jpeg
 else
 LIBVIPS_CONF_OPTS += --without-jpeg
+endif
+
+ifeq ($(BR2_PACKAGE_LCMS2),y)
+LIBVIPS_CONF_OPTS += --with-lcms
+LIBVIPS_DEPENDENCIES += lcms2
+else
+LIBVIPS_CONF_OPTS += --without-lcms
 endif
 
 ifeq ($(BR2_PACKAGE_LIBPNG),y)
