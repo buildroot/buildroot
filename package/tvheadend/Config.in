@@ -40,6 +40,12 @@ config BR2_PACKAGE_TVHEADEND_SATIP
 	help
 	  Enable SAT>IP support.
 
+config BR2_PACKAGE_TVHEADEND_TIMESHIFT
+	bool "timeshift support"
+	default y
+	help
+	  Enable timeshift support.
+
 config BR2_PACKAGE_TVHEADEND_TRANSCODING
 	bool "transcoding support"
 	depends on BR2_PACKAGE_FFMPEG_ARCH_SUPPORTS
