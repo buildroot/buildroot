@@ -79,6 +79,12 @@ TVHEADEND_CONF_OPTS += \
 	--disable-constcw
 endif
 
+ifeq ($(BR2_PACKAGE_TVHEADEND_IPTV),y)
+TVHEADEND_CONF_OPTS += --enable-iptv
+else
+TVHEADEND_CONF_OPTS += --disable-iptv
+endif
+
 ifeq ($(BR2_PACKAGE_TVHEADEND_SATIP),y)
 TVHEADEND_CONF_OPTS += --enable-satip_client --enable-satip_server
 else
