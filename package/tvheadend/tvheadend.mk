@@ -79,6 +79,12 @@ TVHEADEND_CONF_OPTS += \
 	--disable-constcw
 endif
 
+ifeq ($(BR2_PACKAGE_TVHEADEND_SATIP),y)
+TVHEADEND_CONF_OPTS += --enable-satip_client --enable-satip_server
+else
+TVHEADEND_CONF_OPTS += --disable-satip_client --disable-satip_server
+endif
+
 ifeq ($(BR2_PACKAGE_LIBDVBCSA),y)
 TVHEADEND_DEPENDENCIES += libdvbcsa
 TVHEADEND_CONF_OPTS += --enable-tvhcsa

@@ -34,6 +34,12 @@ config BR2_PACKAGE_TVHEADEND_DESCRAMBLER
 	help
 	  Enable support for various descrambler modules.
 
+config BR2_PACKAGE_TVHEADEND_SATIP
+	bool "SAT>IP support"
+	default y
+	help
+	  Enable SAT>IP support.
+
 config BR2_PACKAGE_TVHEADEND_TRANSCODING
 	bool "transcoding support"
 	depends on BR2_PACKAGE_FFMPEG_ARCH_SUPPORTS
