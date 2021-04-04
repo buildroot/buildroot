@@ -25,7 +25,6 @@ LIBVIPS_CONF_OPTS = \
 	--without-gsf \
 	--without-OpenEXR \
 	--without-openslide \
-	--without-matio \
 	--without-cfitsio \
 	--without-libwebp \
 	--without-pangoft2 \
@@ -89,6 +88,13 @@ LIBVIPS_CONF_OPTS += --with-rsvg
 LIBVIPS_DEPENDENCIES += librsvg
 else
 LIBVIPS_CONF_OPTS += --without-rsvg
+endif
+
+ifeq ($(BR2_PACKAGE_MATIO),y)
+LIBVIPS_CONF_OPTS += --with-matio
+LIBVIPS_DEPENDENCIES += matio
+else
+LIBVIPS_CONF_OPTS += --without-matio
 endif
 
 ifeq ($(BR2_PACKAGE_ORC),y)
