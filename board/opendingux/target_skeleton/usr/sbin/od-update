@@ -39,16 +39,12 @@ fi
 # Default to SYSDEV=/dev/mmcblk0
 SYSDEV=$(echo $SYSPART |sed -n 's/\(\/dev\/mmcblk[0-9]\+\)p[0-9]\+/\1/p')
 
+[ "$MODEL" = "retromini" ] && MODEL=ylm,rs90
+
 case "$MODEL" in
-	retromini|ylm,rs90)
+	ylm,rs90|ylm,pmp5|ylm,rg99)
 		HWVARIANT_BL="$HWVARIANT_CMDLINE"
-		HWVARIANT_DT="rs90"
-		INSTALL_ON_NAND=Y
-		SYSDEV=/dev/mtd0
-		;;
-	ylm,pmp5)
-		HWVARIANT_BL="$HWVARIANT_CMDLINE"
-		HWVARIANT_DT="pmp5"
+		HWVARIANT_DT=$(echo $MODEL |cut -d',' -f2)
 		INSTALL_ON_NAND=Y
 		SYSDEV=/dev/mtd0
 		;;
