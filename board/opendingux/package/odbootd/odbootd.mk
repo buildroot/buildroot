@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ODBOOTD_VERSION = 5599bbf
+ODBOOTD_VERSION = 040aa96
 ODBOOTD_SITE = $(call github,opendingux,odbootd,$(ODBOOTD_VERSION))
 
 ODBOOTD_CONF_OPTS = -DWITH_ODBOOT_CLIENT:BOOL=OFF
