@@ -23,7 +23,6 @@ LIBVIPS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) $(LIBVIPS_CXXFLAGS)" \
 LIBVIPS_CONF_OPTS = \
 	--without-dmalloc \
 	--without-gsf \
-	--without-magick \
 	--without-orc \
 	--without-lcms \
 	--without-OpenEXR \
@@ -50,6 +49,20 @@ LIBVIPS_CONF_OPTS += --enable-introspection
 LIBVIPS_DEPENDENCIES += gobject-introspection
 else
 LIBVIPS_CONF_OPTS += --disable-introspection
+endif
+
+ifeq ($(BR2_PACKAGE_IMAGEMAGICK),y)
+LIBVIPS_CONF_OPTS += \
+	--with-magick \
+	--with-magickpackage=MagickCore
+LIBVIPS_DEPENDENCIES += imagemagick
+else ifeq ($(BR2_PACKAGE_GRAPHICSMAGICK),y)
+LIBVIPS_CONF_OPTS += \
+	--with-magick \
+	--with-magickpackage=GraphicsMagick
+LIBVIPS_DEPENDENCIES += graphicsmagick
+else
+LIBVIPS_CONF_OPTS += --without-magick
 endif
 
 ifeq ($(BR2_PACKAGE_JPEG),y)
