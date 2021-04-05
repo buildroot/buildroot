@@ -9,7 +9,7 @@ case $MODEL in
 		;;
 esac
 
-[ -f ~/.gmenu2x/gmenu2x.conf ] && sed '/^opkPlatforms=".*"$/d' ~/.gmenu2x/gmenu2x.conf
+[ -f ~/.gmenu2x/gmenu2x.conf ] && sed -i '/^opkPlatforms=".*"$/d' ~/.gmenu2x/gmenu2x.conf
 echo "opkPlatforms=\"$PLATFORMS\"" >> ~/.gmenu2x/gmenu2x.conf
 
 exec /usr/libexec/gmenu2x
