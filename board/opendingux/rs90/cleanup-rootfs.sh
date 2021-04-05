@@ -6,15 +6,12 @@ rm -f $1/etc/init.d/S50dropbear
 # No need for udev's HW database
 rm -rf $1/etc/udev/hwdb.d
 
-# We only support 240x160. Remove symlinks, copy real folders,
-# and remove other skins.
+# We only support 240x160 and 320x240 in GMenu2X.
 (
 	cd $1/usr/share/gmenu2x/skins
 
-	rm 240x160/Default/{icons,imgs,sections}
-	mv 320x240/Default/{icons,imgs,sections} 240x160/Default/
 	for each in *x* ; do
-		[ "$each" != "240x160" ] && rm -rf "$each"
+		[ "$each" != "240x160" -a "$each" != "320x240" ] && rm -rf "$each"
 	done
 )
 
