@@ -1,3 +1,39 @@
+2020.02.12, released April 5, 2021
+
+	Important / security related fixes.
+
+	Dependencies: Explicitly detect and bail out if PATH contains
+	spaces or tabs. A number of packages fail to build in such
+	setups, so explicitly inform about this.
+
+	utils/scanpypi: Explicitly use python3 for compatibility with
+	packages using python3 syntax in setup.py
+
+	support/download: Fix tarball generation (from git/svn repos)
+	including symlinks pointing to ./<something>
+
+	Meson: Use correct C++ host compiler (rather than C compiler)
+
+	Updated/fixed packages: asterisk, batman-adv, bind,
+	ca-certificates, docker-containerd, dovecot,
+	dovecot-pigeonhole, diffutils, efivar, git, gnuchess, gnutls,
+	grub2, fakeroot, haserl, imagemagick, irqbalance, jasper,
+	kodi, libebml, libglib2, libjpeg, libopenssl, mariadb,
+	mbedtls, mosquitto, nodejs, nettle, openldap, openssh,
+	opkg-utils, perl, php, privoxy, prosody, protobuf,
+	python-aiohttp, python-django, python-lxml, python-pyyaml,
+	python-rpi-ws281x, python3, redis, sconeserver, screen, sox,
+	sqlcipher, squid, sysvinit, tor, transmission, tzdata, uboot,
+	util-linux, wireshark, wolfssl, wpa_supplicant, zstd
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13516: utils/scanpypi: Failure when parsing diffoscope
+	#13541: 2021.02.rc2: irqbalance: Daemon couldn't be bound to..
+	#13576: Issues compiling buildroot for 5x86
+	#13581: jpegsrc.v9d.tar.gz has changed hash
+	#13616: tar file from git repository generation issue
+
 2020.02.11, released February 17, 2021
 
 	Important / security related fixes.
