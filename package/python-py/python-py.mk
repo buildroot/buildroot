@@ -11,5 +11,7 @@ PYTHON_PY_DEPENDENCIES = host-python-setuptools-scm
 PYTHON_PY_SETUP_TYPE = setuptools
 PYTHON_PY_LICENSE = MIT
 PYTHON_PY_LICENSE_FILES = LICENSE
+PYTHON_PY_CPE_ID_VENDOR = pytest
+PYTHON_PY_CPE_ID_PRODUCT = py
 
 $(eval $(python-package))
