@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_JEDI
 	bool "python-jedi"
+	depends on BR2_PACKAGE_PYTHON3 # python-parso
 	select BR2_PACKAGE_PYTHON_PARSO # runtime
 	help
 	  An autocompletion tool for Python that can be used for text
