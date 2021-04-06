@@ -45,7 +45,7 @@
  void ModeSet::Create()
  {
 -    _fd = FileDescriptor();
-+    _fd = 1;
++    _fd = -1;
 +
 +    std::vector <int> _fds = FileDescriptors ();
 +
