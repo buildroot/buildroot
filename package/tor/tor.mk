@@ -73,9 +73,4 @@ endef
 
 TOR_POST_INSTALL_TARGET_HOOKS += TOR_INSTALL_CONF
 
-define TOR_INSTALL_INIT_SYSTEMD
-	$(INSTALL) -D -m 644 $(@D)/contrib/dist/tor.service \
-		$(TARGET_DIR)/usr/lib/systemd/system/tor.service
-endef
-
 $(eval $(autotools-package))
