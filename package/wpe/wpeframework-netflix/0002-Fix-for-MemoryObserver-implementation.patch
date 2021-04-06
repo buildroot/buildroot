@@ -1,0 +1,12 @@
+diff -ruN wpeframework-netflix.orig/NetflixImplementation.cpp wpeframework-netflix/NetflixImplementation.cpp
+--- wpeframework-netflix.orig/NetflixImplementation.cpp	2021-04-06 22:31:05.689614820 +0530
++++ wpeframework-netflix/NetflixImplementation.cpp	2021-04-06 22:32:14.028180999 +0530
+@@ -1555,7 +1555,7 @@
+             return (IsOperational() ? 1 : 0);
+         }
+ 
+-        virtual const bool IsOperational() const
++        virtual bool IsOperational() const
+         {
+             return _main.IsActive();
+         }
