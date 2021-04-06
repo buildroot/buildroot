@@ -4,27 +4,19 @@
 #
 ################################################################################
 
-IWD_VERSION = 1.12
-IWD_SITE = https://git.kernel.org/pub/scm/network/wireless/iwd.git
-IWD_SITE_METHOD = git
+IWD_VERSION = 1.13
+IWD_SOURCE = iwd-$(IWD_VERSION).tar.xz
+IWD_SITE = $(BR2_KERNEL_MIRROR)/linux/network/wireless
 IWD_LICENSE = LGPL-2.1+
 IWD_LICENSE_FILES = COPYING
 IWD_CPE_ID_VENDOR = intel
 IWD_CPE_ID_PRODUCT = inet_wireless_daemon
-# sources from git, no configure script provided
-IWD_AUTORECONF = YES
 IWD_SELINUX_MODULES = networkmanager
 
 IWD_CONF_OPTS = \
 	--disable-manual-pages \
 	--enable-external-ell
 IWD_DEPENDENCIES = ell
-
-# autoreconf requires an existing build-aux directory
-define IWD_MKDIR_BUILD_AUX
-	mkdir -p $(@D)/build-aux
-endef
-IWD_POST_PATCH_HOOKS += IWD_MKDIR_BUILD_AUX
 
 ifeq ($(BR2_PACKAGE_DBUS),y)
 IWD_CONF_OPTS += --enable-dbus-policy --with-dbus-datadir=/usr/share
