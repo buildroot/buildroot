@@ -1,0 +1,68 @@
+--- a/Source/compositorclient/RPI/ModeSet.cpp
++++ b/Source/compositorclient/RPI/ModeSet.cpp
+@@ -61,10 +61,11 @@
+     }
+ }
+ 
+-static int FileDescriptor()
++static std::vector <int> FileDescriptors ()
+ {
+     int fd = -1;
+     static std::vector<std::string> nodes;
++    std::vector <int> _fds;
+ 
+     if (nodes.size() == 0) {
+         GetNodes(DRM_NODE_PRIMARY, nodes);
+@@ -72,18 +73,21 @@
+ 
+     std::vector<std::string>::iterator index(nodes.begin());
+ 
+-    while ((index != nodes.end()) && (fd == -1)) {
++    for (auto _it = nodes.begin (), _end = nodes.end (); _it != _end; _it++) {
+         // Select the first from the list
+-        if (index->empty() == false)
++        if (_it->empty() == false)
+         {
+             // The node might be priviliged and the call will fail.
+             // Do not close fd with exec functions! No O_CLOEXEC!
+-            fd = open(index->c_str(), O_RDWR); 
++            fd = open(_it->c_str(), O_RDWR); 
++
++            if (fd > -1) {
++                _fds.push_back (fd);
++            }
+         }
+-        index++;
+     }
+ 
+-    return (fd);
++    return (_fds);
+ }
+ 
+ static uint32_t GetConnectors(int fd, uint32_t type)
+@@ -328,9 +332,13 @@
+ 
+ void ModeSet::Create()
+ {
+-    _fd = FileDescriptor();
++    _fd = 1;
++
++    std::vector <int> _fds = FileDescriptors ();
++
++    for (auto _it = _fds.begin (), _end = _fds.end (); _it != _end; _it++) {
++        _fd = *_it;
+ 
+-    if(_fd >= 0) {
+         bool enabled = false;
+         if ( (FindProperDisplay(_fd, _crtc, _encoder, _connector, _fb) == true) && 
+              /* TODO: Changes the original fb which might not be what is intended */
+@@ -349,6 +357,9 @@
+         if (enabled == false) {
+             Destruct();
+         }
++        else {
++            break;
++        }
+     }
+ }
+ 
