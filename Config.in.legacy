@@ -146,6 +146,22 @@ endif
 
 comment "Legacy options removed in 2021.05"
 
+config BR2_PACKAGE_MESA3D_OSMESA_CLASSIC
+	bool "mesa OSMesa (classic) option removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_MESA3D_OSMESA_GALLIUM
+	help
+	  The OSMesa "classic" library option was removed upstream.
+	  Only the Gallium-based implementation remains.
+
+config BR2_PACKAGE_MESA3D_DRI_DRIVER_SWRAST
+	bool "mesa DRI swrast driver removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_SWRAST
+	help
+	  The DRI swrast driver was removed upstream.
+	  Only the Gallium-based implementation remains.
+
 config BR2_PACKAGE_KODI_SCREENSAVER_CRYSTALMORPH
 	bool "kodi-screensaver-crystalmorph removed"
 	select BR2_LEGACY

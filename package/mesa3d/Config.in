@@ -64,7 +64,7 @@ config BR2_PACKAGE_MESA3D_DRI_DRIVER
 	select BR2_PACKAGE_MESA3D_GBM if \
 		!BR2_PACKAGE_MESA3D_OPENGL_GLX && \
 		!BR2_PACKAGE_MESA3D_OPENGL_EGL && \
-		!BR2_PACKAGE_MESA3D_OSMESA_CLASSIC
+		!BR2_PACKAGE_MESA3D_OSMESA_GALLIUM
 	select BR2_PACKAGE_XLIB_LIBXSHMFENCE if \
 		(BR2_PACKAGE_XORG7 && BR2_TOOLCHAIN_HAS_SYNC_4)
 
@@ -242,14 +242,10 @@ config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_SVGA
 
 config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_SWRAST
 	bool "Gallium swrast driver"
-	depends on !BR2_PACKAGE_MESA3D_DRI_DRIVER_SWRAST
 	select BR2_PACKAGE_MESA3D_GALLIUM_DRIVER
 	help
 	  This is a software opengl implementation using the Gallium3D
 	  infrastructure.
-
-comment "Gallium swrast: Only one swrast provider can be built"
-	depends on BR2_PACKAGE_MESA3D_DRI_DRIVER_SWRAST
 
 config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_TEGRA
 	bool "Gallium tegra driver"
@@ -334,13 +330,6 @@ comment "Gallium XvMC state tracker needs X.org and gallium drivers r600 or nouv
 
 comment "DRI drivers"
 
-config BR2_PACKAGE_MESA3D_DRI_DRIVER_SWRAST
-	bool "DRI swrast driver"
-	select BR2_PACKAGE_MESA3D_DRI_DRIVER
-	help
-	  This is a software opengl implementation using the DRI
-	  infrastructure.
-
 config BR2_PACKAGE_MESA3D_DRI_DRIVER_I915
 	bool "DRI i915 driver"
 	depends on BR2_i386 || BR2_x86_64
@@ -405,11 +394,11 @@ comment "intel vulkan depends on X.org and needs a glibc toolchain w/ headers >=
 
 comment "Off-screen Rendering"
 
-config BR2_PACKAGE_MESA3D_OSMESA_CLASSIC
-	bool "OSMesa (classic) library"
+config BR2_PACKAGE_MESA3D_OSMESA_GALLIUM
+	bool "OSMesa (Gallium) library"
+	select BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_SWRAST
 	help
-	  The OSMesa classic API provides functions for
-	  making off-screen renderings.
+	  The OSMesa API provides functions for off-screen rendering.
 
 if BR2_PACKAGE_MESA3D_DRIVER
 
