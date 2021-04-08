@@ -2,6 +2,8 @@ config BR2_PACKAGE_WIDEVINE
     depends on BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE
 	select BR2_PACKAGE_HAS_WIDEVINE
 	select BR2_PACKAGE_WIDEVINE_SOC_WPE
+	select BR2_PACKAGE_PROTOBUF
+	select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
         bool "Widevine"
         help
            Widevine DRM solution provides the capability to license, securely distribute and protect
@@ -12,6 +14,12 @@ config BR2_PACKAGE_WIDEVINE_INSTALL_UT
     bool "Unit tests"
     help
      Install a unit test binary "widevine_ce_cdm_unittest" on the target device.
+
+config BR2_ENABLE_PROVISIONING_APP
+    bool "Provioning App"
+    select BR2_PACKAGE_LIBCURL
+    help
+     Install a widevine provisioning app on the target device.
 
 choice BR2_PACKAGE_WIDEVINE_BUILD_TYPE
     prompt "Build type"
