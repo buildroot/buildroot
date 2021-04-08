@@ -57,6 +57,12 @@ else
 PYTHON3_CONF_OPTS += --disable-lib2to3
 endif
 
+ifeq ($(BR2_PACKAGE_PYTHON3_BERKELEYDB),y)
+PYTHON3_DEPENDENCIES += berkeleydb
+else
+PYTHON3_CONF_OPTS += --disable-berkeleydb
+endif
+
 ifeq ($(BR2_PACKAGE_PYTHON3_READLINE),y)
 PYTHON3_DEPENDENCIES += readline
 else
