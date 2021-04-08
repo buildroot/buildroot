@@ -1,0 +1,889 @@
+From f9f1502cc465bfb38bbaf3c14a81d1f16f8bcbcd Mon Sep 17 00:00:00 2001
+From: Paul Cercueil <paul@crapouillou.net>
+Date: Thu, 8 Apr 2021 17:43:02 +0100
+Subject: [PATCH] KMSDRM: Add a fast 8bpp -> YUV blitter using MXU
+
+This is about 40% faster than the C counterpart.
+
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ configure.in                        |   1 +
+ src/video/kmsdrm/SDL_kmsdrmvideo.c  |  11 +-
+ src/video/kmsdrm/mxu1_as_macros.s.h | 631 ++++++++++++++++++++++++++++
+ src/video/kmsdrm/regdef.h           |  52 +++
+ src/video/kmsdrm/rgb-to-yuv.S       | 132 ++++++
+ 5 files changed, 825 insertions(+), 2 deletions(-)
+ create mode 100644 src/video/kmsdrm/mxu1_as_macros.s.h
+ create mode 100644 src/video/kmsdrm/regdef.h
+ create mode 100644 src/video/kmsdrm/rgb-to-yuv.S
+
+diff --git a/configure.in b/configure.in
+index b26122de1..ec69e17e1 100644
+--- a/configure.in
++++ b/configure.in
+@@ -1420,6 +1420,7 @@ AC_HELP_STRING([--enable-video-kmsdrm], [use kmsdrm video driver [[default=yes]]
+             fi
+             AC_DEFINE(SDL_VIDEO_DRIVER_KMSDRM)
+             SOURCES="$SOURCES $srcdir/src/video/kmsdrm/*.c"
++            SOURCES="$SOURCES $srcdir/src/video/kmsdrm/*.S"
+             EXTRA_CFLAGS="$EXTRA_CFLAGS $LIBDRM_CFLAGS"
+             EXTRA_LDFLAGS="$EXTRA_LDFLAGS $LIBDRM_LIBS"
+             have_video=yes
+diff --git a/src/video/kmsdrm/SDL_kmsdrmvideo.c b/src/video/kmsdrm/SDL_kmsdrmvideo.c
+index bef9f928b..ebcec9b3a 100644
+--- a/src/video/kmsdrm/SDL_kmsdrmvideo.c
++++ b/src/video/kmsdrm/SDL_kmsdrmvideo.c
+@@ -784,8 +784,15 @@ static void KMSDRM_render_yuv(const Uint8 *src, Uint32 *dst_y,
+ 
+ static void KMSDRM_BlitSWBuffer(_THIS, drm_buffer *buf)
+ {
+-	KMSDRM_render_yuv(drm_shadow_buffer, buf->map, drm_yuv_palette,
+-			  this->hidden->w * this->hidden->h);
++	extern void render_yuv(const Uint8 *src, Uint8 *dst,
++			       const Uint32 *palette, unsigned int nb_pixels);
++
++	if (0)
++		KMSDRM_render_yuv(drm_shadow_buffer, buf->map, drm_yuv_palette,
++				  this->hidden->w * this->hidden->h);
++	else
++		render_yuv(drm_shadow_buffer, buf->map, drm_yuv_palette,
++			   this->hidden->w * this->hidden->h);
+ }
+ 
+ static int KMSDRM_FlipHWSurface(_THIS, SDL_Surface *surface)
+diff --git a/src/video/kmsdrm/mxu1_as_macros.s.h b/src/video/kmsdrm/mxu1_as_macros.s.h
+new file mode 100644
+index 000000000..5f6f02b87
+--- /dev/null
++++ b/src/video/kmsdrm/mxu1_as_macros.s.h
+@@ -0,0 +1,631 @@
++# mxu1_as_macros.s.h
++#
++# MIPS Ingenic XBurst MXU1 rev1,2 SIMD helper macros for GNU GAS
++#
++# MIT License
++#
++# Copyright (c) 2019 Daniel Silsby (senquack)
++#                    dansilsby <AT> gmail <DOT> com
++#
++# Permission is hereby granted, free of charge, to any person obtaining a copy
++# of this software and associated documentation files (the "Software"), to deal
++# in the Software without restriction, including without limitation the rights
++# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++# copies of the Software, and to permit persons to whom the Software is
++# furnished to do so, subject to the following conditions:
++#
++# The above copyright notice and this permission notice shall be included in all
++# copies or substantial portions of the Software.
++#
++# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++# SOFTWARE.
++
++################################################################################
++# FOR THE LATEST VERSION:
++# https://github.com/senquack/mxu1_as_macros
++#
++# Version 1.0 - October 16 2019
++#  Initial Public Release
++################################################################################
++
++################################################################################
++#  These macros take the place of the unofficial patched Ingenic binutils, and
++# the syntax there and here is interchangeable. Users of a toolchain that
++# contains that unofficial Ingenic binutils patch should *not* specify '-mmxu'
++# on the compiler/assembler command line when using this header.
++#
++# To use this header:
++#  1.) In a GAS .S or .s assembly file, add following at top of file:
++#      .include "mxu1_as_macros.s.h"
++#  2.) In a GCC C/C++ file using inline asm, add following at top of file:
++#      asm (".include \"mxu1_as_macros.s.h\" \n");
++#
++#  Because of limitations in GAS macro expansion, and the fact that GAS MIPS
++# register names like '$a1' do not evaluate to integer expressions, you cannot
++# use '.equ' to generically define the regs your code uses.
++# You cannot, for instance, do this when using this header:
++#     .equ R_SRCPTR, $a1
++#     lxw  $t0, R_SRCPTR, $t1, 0                # (GIVES MACRO SYNTAX ERROR)
++# What you *can* do instead, is use a C preprocessor #define, which of course
++# requires any standalone ASM code to be in a .S file (not .s):
++#     #define R_SRCPTR $a1
++#     lxw  $t0, R_SRCPTR, $t1, 0                # (WORKS)
++# An alternative for inline ASM in C/C++ is like so:
++#     #define R_SRCPTR "$a1"
++#     asm("lxw  $t0, " R_SRCPTR ", $t1, 0 \n"); # (WORKS)
++################################################################################
++
++
++.ifndef MXU1_AS_MACROS_S_H
++.equiv  MXU1_AS_MACROS_S_H, 1
++
++# Named MIPS GPR specifiers, i.e. $zero..$ra
++.equiv GPR_$zero, 0
++.equiv GPR_$at,   1
++.equiv GPR_$v0,   2
++.equiv GPR_$v1,   3
++.equiv GPR_$a0,   4
++.equiv GPR_$a1,   5
++.equiv GPR_$a2,   6
++.equiv GPR_$a3,   7
++.equiv GPR_$t0,   8
++.equiv GPR_$t1,   9
++.equiv GPR_$t2,   10
++.equiv GPR_$t3,   11
++.equiv GPR_$t4,   12
++.equiv GPR_$t5,   13
++.equiv GPR_$t6,   14
++.equiv GPR_$t7,   15
++.equiv GPR_$s0,   16
++.equiv GPR_$s1,   17
++.equiv GPR_$s2,   18
++.equiv GPR_$s3,   19
++.equiv GPR_$s4,   20
++.equiv GPR_$s5,   21
++.equiv GPR_$s6,   22
++.equiv GPR_$s7,   23
++.equiv GPR_$t8,   24
++.equiv GPR_$t9,   25
++.equiv GPR_$k0,   26
++.equiv GPR_$k1,   27
++.equiv GPR_$gp,   28
++.equiv GPR_$sp,   29
++.equiv GPR_$fp,   30
++#.equiv GPR_$s8,   GPR_$fp
++.equiv GPR_$ra,   31
++
++# Unnamed MIPS GPRs, i.e. $0..$31
++.irp i, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
++  .equiv GPR_$\i, \i
++.endr
++
++# MXU regs xr0..xr16
++# For use with s32i2m,s32m2i MXU<->GPR reg transfer opcodes (can access xr16)
++.irp i, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16
++  .equiv MXU_I2M_M2I_xr\i, \i
++.endr
++
++# MXU regs xr0..xr15
++# For use with all other MXU opcodes (4-bit fields can only access xr0..15)
++.irp i, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
++  .equiv MXU_xr\i, \i
++.endr
++
++# MXU pattern names ptn0..ptn7, 0..7
++.irp i, 0,1,2,3,4,5,6,7
++  .equiv MXU_PTN_ptn\i, \i
++  .equiv MXU_PTN_\i, \i
++.endr
++
++# MXU patterns for 's16mad' opcode (one-channel add)
++.equiv MXU_APTN1_A,     0
++.equiv MXU_APTN1_S,     1
++.equiv MXU_APTN1_0,     0
++.equiv MXU_APTN1_1,     1
++
++# MXU patterns for 's16mad' opcode (one-channel multiply)
++.equiv MXU_MPTN2_HH,    0
++.equiv MXU_MPTN2_LL,    1
++.equiv MXU_MPTN2_HL,    2
++.equiv MXU_MPTN2_LH,    3
++.equiv MXU_MPTN2_0,     0
++.equiv MXU_MPTN2_1,     1
++.equiv MXU_MPTN2_2,     2
++.equiv MXU_MPTN2_3,     3
++
++# MXU patterns for dual-channel add
++.equiv MXU_APTN2_AA,    0
++.equiv MXU_APTN2_AS,    1
++.equiv MXU_APTN2_SA,    2
++.equiv MXU_APTN2_SS,    3
++.equiv MXU_APTN2_0,     0
++.equiv MXU_APTN2_1,     1
++.equiv MXU_APTN2_2,     2
++.equiv MXU_APTN2_3,     3
++
++# MXU patterns for dual-channel multiply
++.equiv MXU_OPTN2_WW,    0
++.equiv MXU_OPTN2_LW,    1
++.equiv MXU_OPTN2_HW,    2
++.equiv MXU_OPTN2_XW,    3
++.equiv MXU_OPTN2_0,     0
++.equiv MXU_OPTN2_1,     1
++.equiv MXU_OPTN2_2,     2
++.equiv MXU_OPTN2_3,     3
++
++
++.macro MXU_CHECK_BOUNDS val:req, lo_bound:req, hi_bound:req
++  .if (\val) < (\lo_bound) || (\val) > (\hi_bound)
++    .error "MXU opcode field out of range [ \lo_bound .. \hi_bound ] : \val"
++  .endif
++.endm
++
++.macro MXU_CHECK_OFFSET val:req, byte_alignment:req, lo_bound:req, hi_bound:req
++  .if (\val) & (\byte_alignment - 1)
++    .error "MXU opcode immediate offset misaligned: \val"
++  .endif
++  .if (\val) < (\lo_bound) || (\val) > (\hi_bound)
++    .error "MXU opcode immediate offset out of range [ \lo_bound .. \hi_bound ] : \val"
++  .endif
++.endm
++
++.macro MXU_CHECK_PATTERN ptn:req, lo_bound:req, hi_bound:req
++  .if (MXU_PTN_\ptn) < (\lo_bound) || (MXU_PTN_\ptn) > (\hi_bound)
++    .error "MXU opcode pattern field out of range [ ptn\lo_bound .. ptn\hi_bound ] : \ptn"
++  .endif
++.endm
++
++
++# XXX: The Ingenic MXU PDF dated June 2, 2017 containing MXU encodings table
++#  shows the wrong encoding for d16mule, and their binutils patch fails to
++#  parse or assemble it right. The opcode as encoded here has been tested to
++#  function correctly.
++#  'X1000_M200_XBurst_ISA_MXU_PM.pdf' is the name of the errant PDF doc.
++#
++.macro d16mul      xra:req, xrb:req, xrc:req, xrd:req, optn2:req
++  .word 0x70000008 | (MXU_OPTN2_\optn2 << 22) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d16mulf     xra:req, xrb:req, xrc:req, optn2:req
++  .word 0x70000009 | (MXU_OPTN2_\optn2 << 22) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d16mule     xra:req, xrb:req, xrc:req, xrd:req, optn2:req
++  .word 0x71000009 | (MXU_OPTN2_\optn2 << 22) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d16mac      xra:req, xrb:req, xrc:req, xrd:req, aptn2:req, optn2:req
++  .word 0x7000000a | (MXU_APTN2_\aptn2 << 24) | (MXU_OPTN2_\optn2 << 22) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d16macf     xra:req, xrb:req, xrc:req, xrd:req, aptn2:req, optn2:req
++  .word 0x7000000b | (MXU_APTN2_\aptn2 << 24) | (MXU_OPTN2_\optn2 << 22) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d16madl     xra:req, xrb:req, xrc:req, xrd:req, aptn2:req, optn2:req
++  .word 0x7000000c | (MXU_APTN2_\aptn2 << 24) | (MXU_OPTN2_\optn2 << 22) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro s16mad      xra:req, xrb:req, xrc:req, xrd:req, aptn1:req, mptn2:req
++  .word 0x7000000d | (MXU_APTN1_\aptn1 << 24) | (MXU_MPTN2_\mptn2 << 22) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q16add      xra:req, xrb:req, xrc:req, xrd:req, aptn2:req, optn2:req
++  .word 0x7000000e | (MXU_APTN2_\aptn2 << 24) | (MXU_OPTN2_\optn2 << 22) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d16mace     xra:req, xrb:req, xrc:req, xrd:req, aptn2:req, optn2:req
++  .word 0x7000000f | (MXU_APTN2_\aptn2 << 24) | (MXU_OPTN2_\optn2 << 22) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++
++
++.macro q8mul       xra:req, xrb:req, xrc:req, xrd:req
++  .word 0x70000038 | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q8mulsu     xra:req, xrb:req, xrc:req, xrd:req
++  .word 0x70800038 | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q8mac       xra:req, xrb:req, xrc:req, xrd:req, aptn2:req
++  .word 0x7000003a | (MXU_APTN2_\aptn2 << 24) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q8macsu     xra:req, xrb:req, xrc:req, xrd:req, aptn2:req
++  .word 0x7080003a | (MXU_APTN2_\aptn2 << 24) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q8madl      xra:req, xrb:req, xrc:req, xrd:req, aptn2:req
++  .word 0x7000003c | (MXU_APTN2_\aptn2 << 24) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++
++
++.macro q8movz      xra:req, xrb:req, xrc:req
++  .word 0x70000039 | (0 << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q8movn      xra:req, xrb:req, xrc:req
++  .word 0x70000039 | (1 << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d16movz     xra:req, xrb:req, xrc:req
++  .word 0x70000039 | (2 << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d16movn     xra:req, xrb:req, xrc:req
++  .word 0x70000039 | (3 << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro s32movz     xra:req, xrb:req, xrc:req
++  .word 0x70000039 | (4 << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro s32movn     xra:req, xrb:req, xrc:req
++  .word 0x70000039 | (5 << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++
++
++.macro q16scop     xra:req, xrb:req, xrc:req, xrd:req
++  .word 0x7000003b | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro s32sfl      xra:req, xrb:req, xrc:req, xrd:req, ptn:req
++  MXU_CHECK_PATTERN \ptn, 0, 3
++  .word 0x7000003d | (MXU_PTN_\ptn << 24) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q8sad       xra:req, xrb:req, xrc:req, xrd:req
++  .word 0x7000003e | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++
++
++.macro d32add      xra:req, xrb:req, xrc:req, xrd:req, aptn2:req
++  .word 0x70000018 | (MXU_APTN2_\aptn2 << 24) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d32addc     xra:req, xrb:req, xrc:req, xrd:req
++  .word 0x70400018 | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d32acc      xra:req, xrb:req, xrc:req, xrd:req, aptn2:req
++  .word 0x70000019 | (MXU_APTN2_\aptn2 << 24) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d32accm     xra:req, xrb:req, xrc:req, xrd:req, aptn2:req
++  .word 0x70400019 | (MXU_APTN2_\aptn2 << 24) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d32asum     xra:req, xrb:req, xrc:req, xrd:req, aptn2:req
++  .word 0x70800019 | (MXU_APTN2_\aptn2 << 24) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q16acc      xra:req, xrb:req, xrc:req, xrd:req, aptn2:req
++  .word 0x7000001b | (MXU_APTN2_\aptn2 << 24) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q16accm     xra:req, xrb:req, xrc:req, xrd:req, aptn2:req
++  .word 0x7040001b | (MXU_APTN2_\aptn2 << 24) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d16asum     xra:req, xrb:req, xrc:req, xrd:req, aptn2:req
++  .word 0x7080001b | (MXU_APTN2_\aptn2 << 24) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q8adde      xra:req, xrb:req, xrc:req, xrd:req, aptn2:req
++  .word 0x7000001c | (MXU_APTN2_\aptn2 << 24) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d8sum       xra:req, xrb:req, xrc:req
++  .word 0x7040001c | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d8sumc      xra:req, xrb:req, xrc:req
++  .word 0x7080001c | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q8acce      xra:req, xrb:req, xrc:req, xrd:req, aptn2:req
++  .word 0x7000001d | (MXU_APTN2_\aptn2 << 24) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++
++
++.macro s32cps      xra:req, xrb:req, xrc:req
++  .word 0x70000007 | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d16cps      xra:req, xrb:req, xrc:req
++  .word 0x70080007 | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q8abd       xra:req, xrb:req, xrc:req
++  .word 0x70100007 | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q16sat      xra:req, xrb:req, xrc:req
++  .word 0x70180007 | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro s32slt      xra:req, xrb:req, xrc:req
++  .word 0x70000006 | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d16slt      xra:req, xrb:req, xrc:req
++  .word 0x70040006 | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d16avg      xra:req, xrb:req, xrc:req
++  .word 0x70080006 | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d16avgr     xra:req, xrb:req, xrc:req
++  .word 0x700c0006 | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q8avg       xra:req, xrb:req, xrc:req
++  .word 0x70100006 | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q8avgr      xra:req, xrb:req, xrc:req
++  .word 0x70140006 | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q8add       xra:req, xrb:req, xrc:req, aptn2:req
++  .word 0x701c0006 | (MXU_APTN2_\aptn2 << 24) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro s32max      xra:req, xrb:req, xrc:req
++  .word 0x70000003 | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro s32min      xra:req, xrb:req, xrc:req
++  .word 0x70040003 | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d16max      xra:req, xrb:req, xrc:req
++  .word 0x70080003 | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d16min      xra:req, xrb:req, xrc:req
++  .word 0x700c0003 | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q8max       xra:req, xrb:req, xrc:req
++  .word 0x70100003 | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q8min       xra:req, xrb:req, xrc:req
++  .word 0x70140003 | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q8slt       xra:req, xrb:req, xrc:req
++  .word 0x70180003 | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q8sltu      xra:req, xrb:req, xrc:req
++  .word 0x701c0003 | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++
++
++.macro d32sll      xra:req, xrb:req, xrc:req, xrd:req, sft4:req
++  MXU_CHECK_BOUNDS \sft4, 0, 15
++  .word 0x70000030 | ((\sft4) << 22) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d32slr      xra:req, xrb:req, xrc:req, xrd:req, sft4:req
++  MXU_CHECK_BOUNDS \sft4, 0, 15
++  .word 0x70000031 | ((\sft4) << 22) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d32sarl     xra:req, xrb:req, xrc:req, sft4:req
++  MXU_CHECK_BOUNDS \sft4, 0, 15
++  .word 0x70000032 | ((\sft4) << 22) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro d32sar      xra:req, xrb:req, xrc:req, xrd:req, sft4:req
++  MXU_CHECK_BOUNDS \sft4, 0, 15
++  .word 0x70000033 | ((\sft4) << 22) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q16sll      xra:req, xrb:req, xrc:req, xrd:req, sft4:req
++  MXU_CHECK_BOUNDS \sft4, 0, 15
++  .word 0x70000034 | ((\sft4) << 22) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q16slr      xra:req, xrb:req, xrc:req, xrd:req, sft4:req
++  MXU_CHECK_BOUNDS \sft4, 0, 15
++  .word 0x70000035 | ((\sft4) << 22) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro q16sar      xra:req, xrb:req, xrc:req, xrd:req, sft4:req
++  MXU_CHECK_BOUNDS \sft4, 0, 15
++  .word 0x70000037 | ((\sft4) << 22) | (MXU_\xrd << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++
++
++.macro d32sllv     xra:req, xrd:req, rs:req
++  .word 0x70000036 | (GPR_\rs << 21) | (0 << 18) | (MXU_\xrd << 14) | (MXU_\xra << 10)
++.endm
++.macro d32slrv     xra:req, xrd:req, rs:req
++  .word 0x70000036 | (GPR_\rs << 21) | (1 << 18) | (MXU_\xrd << 14) | (MXU_\xra << 10)
++.endm
++.macro d32sarv     xra:req, xrd:req, rs:req
++  .word 0x70000036 | (GPR_\rs << 21) | (3 << 18) | (MXU_\xrd << 14) | (MXU_\xra << 10)
++.endm
++.macro q16sllv     xra:req, xrd:req, rs:req
++  .word 0x70000036 | (GPR_\rs << 21) | (4 << 18) | (MXU_\xrd << 14) | (MXU_\xra << 10)
++.endm
++.macro q16slrv     xra:req, xrd:req, rs:req
++  .word 0x70000036 | (GPR_\rs << 21) | (5 << 18) | (MXU_\xrd << 14) | (MXU_\xra << 10)
++.endm
++.macro q16sarv     xra:req, xrd:req, rs:req
++  .word 0x70000036 | (GPR_\rs << 21) | (7 << 18) | (MXU_\xrd << 14) | (MXU_\xra << 10)
++.endm
++
++
++.macro s32madd     xra:req, xrd:req, rs:req, rt:req
++  .word 0x70008000 | (GPR_\rs << 21) | (GPR_\rt << 16) | (MXU_\xrd << 10) | (MXU_\xra << 6)
++.endm
++.macro s32maddu    xra:req, xrd:req, rs:req, rt:req
++  .word 0x70008001 | (GPR_\rs << 21) | (GPR_\rt << 16) | (MXU_\xrd << 10) | (MXU_\xra << 6)
++.endm
++.macro s32msub     xra:req, xrd:req, rs:req, rt:req
++  .word 0x70008004 | (GPR_\rs << 21) | (GPR_\rt << 16) | (MXU_\xrd << 10) | (MXU_\xra << 6)
++.endm
++.macro s32msubu    xra:req, xrd:req, rs:req, rt:req
++  .word 0x70008005 | (GPR_\rs << 21) | (GPR_\rt << 16) | (MXU_\xrd << 10) | (MXU_\xra << 6)
++.endm
++
++
++# Note: Ingenic MXU docs fail to mention that, like 's32madd', 's32msub' , etc,
++#  the HI and LO CPU registers are stained by 's32mul' and 's32mulu'.
++.macro s32mul      xra:req, xrd:req, rs:req, rt:req
++  .word 0x70000026 | (GPR_\rs << 21) | (GPR_\rt << 16) | (MXU_\xrd << 10) | (MXU_\xra << 6)
++.endm
++.macro s32mulu     xra:req, xrd:req, rs:req, rt:req
++  .word 0x70004026 | (GPR_\rs << 21) | (GPR_\rt << 16) | (MXU_\xrd << 10) | (MXU_\xra << 6)
++.endm
++.macro s32extr     xra:req, xrd:req, rs:req, bits5:req
++  MXU_CHECK_BOUNDS \bits5, 1, 31
++  .word 0x70008026 | (GPR_\rs << 21) | ((\bits5) << 16) | (MXU_\xrd << 10) | (MXU_\xra << 6)
++.endm
++.macro s32extrv    xra:req, xrd:req, rs:req, rt:req
++  .word 0x7000c026 | (GPR_\rs << 21) | (GPR_\rt << 16) | (MXU_\xrd << 10) | (MXU_\xra << 6)
++.endm
++
++
++# XXX: The Ingenic MXU PDF dated June 2, 2017 containing MXU encodings table
++#  appears to list this opcode group in the wrong order with regard to the 3-bit
++#  minor field at bit 18. The order we use here instead matches their unofficial
++#  unofficial binutils patch as well as the 'mxu_as' script from CI20 MPlayer.
++#  'X1000_M200_XBurst_ISA_MXU_PM.pdf' is the name of the errant PDF doc.
++#
++.macro d32sarw     xra:req, xrb:req, xrc:req, rs:req
++  .word 0x70000027 | (GPR_\rs << 21) | (0 << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro s32aln      xra:req, xrb:req, xrc:req, rs:req
++  .word 0x70000027 | (GPR_\rs << 21) | (1 << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro s32alni     xra:req, xrb:req, xrc:req, ptn:req
++  MXU_CHECK_PATTERN \ptn, 0, 4
++  .word 0x70000027 | (MXU_PTN_\ptn << 23) | (2 << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro s32lui      xra:req, imm8:req, ptn:req
++  MXU_CHECK_PATTERN \ptn, 0, 7
++  .if (\imm8) < 0
++    MXU_CHECK_BOUNDS \imm8, -128, 127
++  .else
++    MXU_CHECK_BOUNDS \imm8, 0, 255
++  .endif
++  .word 0x70000027 | (MXU_PTN_\ptn << 23) | (3 << 18) | (((\imm8) & 0xff) << 10) | (MXU_\xra << 6)
++.endm
++.macro s32nor      xra:req, xrb:req, xrc:req
++  .word 0x70000027 | (4 << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro s32and      xra:req, xrb:req, xrc:req
++  .word 0x70000027 | (5 << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro s32or       xra:req, xrb:req, xrc:req
++  .word 0x70000027 | (6 << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++.macro s32xor      xra:req, xrb:req, xrc:req
++  .word 0x70000027 | (7 << 18) | (MXU_\xrc << 14) | (MXU_\xrb << 10) | (MXU_\xra << 6)
++.endm
++
++
++.macro s32m2i      xra:req, rt:req
++  .word 0x7000002e | (GPR_\rt << 16) | (MXU_I2M_M2I_\xra << 6)
++.endm
++.macro s32i2m      xra:req, rt:req
++  .word 0x7000002f | (GPR_\rt << 16) | (MXU_I2M_M2I_\xra << 6)
++.endm
++
++
++.macro s32lddv     xra:req, rs:req, rt:req, strd2:req
++  MXU_CHECK_BOUNDS \strd2, 0, 2
++  .word 0x70000012 | (GPR_\rs << 21) | (GPR_\rt << 16) | ((\strd2) << 14) | (MXU_\xra << 6)
++.endm
++.macro s32lddvr    xra:req, rs:req, rt:req, strd2:req
++  MXU_CHECK_BOUNDS \strd2, 0, 2
++  .word 0x70000412 | (GPR_\rs << 21) | (GPR_\rt << 16) | ((\strd2) << 14) | (MXU_\xra << 6)
++.endm
++.macro s32stdv     xra:req, rs:req, rt:req, strd2:req
++  MXU_CHECK_BOUNDS \strd2, 0, 2
++  .word 0x70000013 | (GPR_\rs << 21) | (GPR_\rt << 16) | ((\strd2) << 14) | (MXU_\xra << 6)
++.endm
++.macro s32stdvr    xra:req, rs:req, rt:req, strd2:req
++  MXU_CHECK_BOUNDS \strd2, 0, 2
++  .word 0x70000413 | (GPR_\rs << 21) | (GPR_\rt << 16) | ((\strd2) << 14) | (MXU_\xra << 6)
++.endm
++.macro s32ldiv     xra:req, rs:req, rt:req, strd2:req
++  MXU_CHECK_BOUNDS \strd2, 0, 2
++  .word 0x70000016 | (GPR_\rs << 21) | (GPR_\rt << 16) | ((\strd2) << 14) | (MXU_\xra << 6)
++.endm
++.macro s32ldivr    xra:req, rs:req, rt:req, strd2:req
++  MXU_CHECK_BOUNDS \strd2, 0, 2
++  .word 0x70000416 | (GPR_\rs << 21) | (GPR_\rt << 16) | ((\strd2) << 14) | (MXU_\xra << 6)
++.endm
++.macro s32sdiv     xra:req, rs:req, rt:req, strd2:req
++  MXU_CHECK_BOUNDS \strd2, 0, 2
++  .word 0x70000017 | (GPR_\rs << 21) | (GPR_\rt << 16) | ((\strd2) << 14) | (MXU_\xra << 6)
++.endm
++.macro s32sdivr    xra:req, rs:req, rt:req, strd2:req
++  MXU_CHECK_BOUNDS \strd2, 0, 2
++  .word 0x70000417 | (GPR_\rs << 21) | (GPR_\rt << 16) | ((\strd2) << 14) | (MXU_\xra << 6)
++.endm
++
++
++.macro s32ldd      xra:req, rs:req, imm12:req
++  MXU_CHECK_OFFSET \imm12, 4, -2048, 2047
++  .word 0x70000010 | (GPR_\rs << 21) | (((\imm12) & 0xffc) << 8) | (MXU_\xra << 6)
++.endm
++.macro s32lddr     xra:req, rs:req, imm12:req
++  MXU_CHECK_OFFSET \imm12, 4, -2048, 2047
++  .word 0x70100010 | (GPR_\rs << 21) | (((\imm12) & 0xffc) << 8) | (MXU_\xra << 6)
++.endm
++.macro s32std      xra:req, rs:req, imm12:req
++  MXU_CHECK_OFFSET \imm12, 4, -2048, 2047
++  .word 0x70000011 | (GPR_\rs << 21) | (((\imm12) & 0xffc) << 8) | (MXU_\xra << 6)
++.endm
++.macro s32stdr     xra:req, rs:req, imm12:req
++  MXU_CHECK_OFFSET \imm12, 4, -2048, 2047
++  .word 0x70100011 | (GPR_\rs << 21) | (((\imm12) & 0xffc) << 8) | (MXU_\xra << 6)
++.endm
++.macro s32ldi      xra:req, rs:req, imm12:req
++  MXU_CHECK_OFFSET \imm12, 4, -2048, 2047
++  .word 0x70000014 | (GPR_\rs << 21) | (((\imm12) & 0xffc) << 8) | (MXU_\xra << 6)
++.endm
++.macro s32ldir     xra:req, rs:req, imm12:req
++  MXU_CHECK_OFFSET \imm12, 4, -2048, 2047
++  .word 0x70100014 | (GPR_\rs << 21) | (((\imm12) & 0xffc) << 8) | (MXU_\xra << 6)
++.endm
++.macro s32sdi      xra:req, rs:req, imm12:req
++  MXU_CHECK_OFFSET \imm12, 4, -2048, 2047
++  .word 0x70000015 | (GPR_\rs << 21) | (((\imm12) & 0xffc) << 8) | (MXU_\xra << 6)
++.endm
++.macro s32sdir     xra:req, rs:req, imm12:req
++  MXU_CHECK_OFFSET \imm12, 4, -2048, 2047
++  .word 0x70100015 | (GPR_\rs << 21) | (((\imm12) & 0xffc) << 8) | (MXU_\xra << 6)
++.endm
++
++
++# XXX: The Ingenic binutils patch fails to disassemble certain immediate offsets
++#  for s16 loads/stores, so don't be alarmed if you see oddness there.
++#  It appears to simply be a bug in their disassembler, happily.
++#
++.macro s8ldd       xra:req, rs:req, imm8:req, ptn:req
++  MXU_CHECK_OFFSET  \imm8, 1, -128, 127
++  MXU_CHECK_PATTERN \ptn, 0, 7
++  .word 0x70000022 | (GPR_\rs << 21) | (MXU_PTN_\ptn << 18) | (((\imm8) & 0xff) << 10) | (MXU_\xra << 6)
++.endm
++.macro s8std       xra:req, rs:req, imm8:req, ptn:req
++  MXU_CHECK_OFFSET  \imm8, 1, -128, 127
++  MXU_CHECK_PATTERN \ptn, 0, 3
++  .word 0x70000023 | (GPR_\rs << 21) | (MXU_PTN_\ptn << 18) | (((\imm8) & 0xff) << 10) | (MXU_\xra << 6)
++.endm
++.macro s8ldi       xra:req, rs:req, imm8:req, ptn:req
++  MXU_CHECK_OFFSET  \imm8, 1, -128, 127
++  MXU_CHECK_PATTERN \ptn, 0, 7
++  .word 0x70000024 | (GPR_\rs << 21) | (MXU_PTN_\ptn << 18) | (((\imm8) & 0xff) << 10) | (MXU_\xra << 6)
++.endm
++.macro s8sdi       xra:req, rs:req, imm8:req, ptn:req
++  MXU_CHECK_OFFSET  \imm8, 1, -128, 127
++  MXU_CHECK_PATTERN \ptn, 0, 3
++  .word 0x70000025 | (GPR_\rs << 21) | (MXU_PTN_\ptn << 18) | (((\imm8) & 0xff) << 10) | (MXU_\xra << 6)
++.endm
++.macro s16ldd      xra:req, rs:req, imm10:req, ptn:req
++  MXU_CHECK_OFFSET  \imm10, 2, -512, 511
++  MXU_CHECK_PATTERN \ptn, 0, 3
++  .word 0x7000002a | (GPR_\rs << 21) | (MXU_PTN_\ptn << 19) | (((\imm10) & 0x3fe) << 9) | (MXU_\xra << 6)
++.endm
++.macro s16std      xra:req, rs:req, imm10:req, ptn:req
++  MXU_CHECK_OFFSET  \imm10, 2, -512, 511
++  MXU_CHECK_PATTERN \ptn, 0, 1
++  .word 0x7000002b | (GPR_\rs << 21) | (MXU_PTN_\ptn << 19) | (((\imm10) & 0x3fe) << 9) | (MXU_\xra << 6)
++.endm
++.macro s16ldi      xra:req, rs:req, imm10:req, ptn:req
++  MXU_CHECK_OFFSET  \imm10, 2, -512, 511
++  MXU_CHECK_PATTERN \ptn, 0, 3
++  .word 0x7000002c | (GPR_\rs << 21) | (MXU_PTN_\ptn << 19) | (((\imm10) & 0x3fe) << 9) | (MXU_\xra << 6)
++.endm
++.macro s16sdi      xra:req, rs:req, imm10:req, ptn:req
++  MXU_CHECK_OFFSET \imm10, 2, -512, 511
++  MXU_CHECK_PATTERN \ptn, 0, 1
++  .word 0x7000002d | (GPR_\rs << 21) | (MXU_PTN_\ptn << 19) | (((\imm10) & 0x3fe) << 9) | (MXU_\xra << 6)
++.endm
++
++
++.macro lxw         rd:req, rs:req, rt:req, strd2:req
++  MXU_CHECK_BOUNDS \strd2, 0, 2
++  .word 0x70000028 | (GPR_\rs << 21) | (GPR_\rt << 16) | (GPR_\rd << 11) | ((\strd2) << 9) | (3 << 6)
++.endm
++.macro lxh         rd:req, rs:req, rt:req, strd2:req
++  MXU_CHECK_BOUNDS \strd2, 0, 2
++  .word 0x70000028 | (GPR_\rs << 21) | (GPR_\rt << 16) | (GPR_\rd << 11) | ((\strd2) << 9) | (1 << 6)
++.endm
++.macro lxhu        rd:req, rs:req, rt:req, strd2:req
++  MXU_CHECK_BOUNDS \strd2, 0, 2
++  .word 0x70000028 | (GPR_\rs << 21) | (GPR_\rt << 16) | (GPR_\rd << 11) | ((\strd2) << 9) | (5 << 6)
++.endm
++.macro lxb         rd:req, rs:req, rt:req, strd2:req
++  MXU_CHECK_BOUNDS \strd2, 0, 2
++  .word 0x70000028 | (GPR_\rs << 21) | (GPR_\rt << 16) | (GPR_\rd << 11) | ((\strd2) << 9) | (0 << 6)
++.endm
++.macro lxbu        rd:req, rs:req, rt:req, strd2:req
++  MXU_CHECK_BOUNDS \strd2, 0, 2
++  .word 0x70000028 | (GPR_\rs << 21) | (GPR_\rt << 16) | (GPR_\rd << 11) | ((\strd2) << 9) | (4 << 6)
++.endm
++
++
++.endif # MXU1_AS_MACROS_S_H
++
++# vim:shiftwidth=2:expandtab:syntax=asm
+diff --git a/src/video/kmsdrm/regdef.h b/src/video/kmsdrm/regdef.h
+new file mode 100644
+index 000000000..691d047b6
+--- /dev/null
++++ b/src/video/kmsdrm/regdef.h
+@@ -0,0 +1,52 @@
++/*
++ * include/asm-mips/regdefs.h
++ *
++ * This file is subject to the terms and conditions of the GNU General Public
++ * License.  See the file "COPYING" in the main directory of this archive
++ * for more details.
++ *
++ * Copyright (C) 1994, 1995 by Ralf Baechle
++ */
++
++#ifndef __ASM_MIPS_REGDEF_H
++#define __ASM_MIPS_REGDEF_H
++
++/*
++ * Symbolic register names for 32 bit ABI
++ */
++#define zero    $0      /* wired zero */
++#define AT      $1      /* assembler temp  - uppercase because of ".set at" */
++#define v0      $2      /* return value */
++#define v1      $3
++#define a0      $4      /* argument registers */
++#define a1      $5
++#define a2      $6
++#define a3      $7
++#define t0      $8      /* caller saved */
++#define t1      $9
++#define t2      $10
++#define t3      $11
++#define t4      $12
++#define t5      $13
++#define t6      $14
++#define t7      $15
++#define s0      $16     /* callee saved */
++#define s1      $17
++#define s2      $18
++#define s3      $19
++#define s4      $20
++#define s5      $21
++#define s6      $22
++#define s7      $23
++#define t8      $24     /* caller saved */
++#define t9      $25
++#define jp      $25     /* PIC jump register */
++#define k0      $26     /* kernel scratch */
++#define k1      $27
++#define gp      $28     /* global pointer */
++#define sp      $29     /* stack pointer */
++#define fp      $30     /* frame pointer */
++#define s8	$30	/* same like fp! */
++#define ra      $31     /* return address */
++
++#endif /* __ASM_MIPS_REGDEF_H */
+diff --git a/src/video/kmsdrm/rgb-to-yuv.S b/src/video/kmsdrm/rgb-to-yuv.S
+new file mode 100644
+index 000000000..30ef89cbb
+--- /dev/null
++++ b/src/video/kmsdrm/rgb-to-yuv.S
+@@ -0,0 +1,132 @@
++#include "regdef.h"
++#include "mxu1_as_macros.s.h"
++
++.text
++.set noreorder
++
++# extern void rgb32_to_yuv(const uint32_t *src, const char *dst, unsigned int nb_pixels);
++.global rgb32_to_yuv
++
++# extern void render_yuv(const char *src, const char *dst,
++#                        const uint32_t *palette, unsigned int nb_pixels);
++.global render_yuv
++
++render_yuv:
++	li t0, 1
++	s32i2m xr16, t0
++
++	addiu a0, a0, -4
++	addiu a1, a1, -4
++	add t3, a0, a3
++	add t1, a1, a3
++	sll a3, a3, 1
++	add t2, a1, a3
++	sll a3, a3, 1
++
++1:
++	s32ldi xr9, a0, 4 # xr9: ABCD
++
++	s32sfl xr8, xr0, xr9, xr9, 0 # xr8: 0A0B xr9: 0C0D
++	s32sfl xr1, xr0, xr8, xr2, 0 # xr1: 000A xr3: 000B
++	s32sfl xr3, xr0, xr9, xr4, 0 # xr2: 000C xr4: 000D
++
++	s32m2i xr1, t4
++	s32m2i xr2, t5
++	s32m2i xr3, t6
++	s32m2i xr4, t7
++
++	s32lddv xr1, a2, t4, 2 # xr1: 0EFG
++	s32lddv xr2, a2, t5, 2 # xr2: 0HIJ
++	s32lddv xr3, a2, t6, 2 # xr3: 0KLM
++	s32lddv xr4, a2, t7, 2 # xr4: 0NOP
++
++	# At this point xr1-xr4 each contain a 24-bit YCbCr value.
++
++	s32sfl xr2, xr1, xr2, xr1, 2 # 00FI EHGJ
++	s32sfl xr4, xr3, xr4, xr3, 2 # 00LO KNMP
++	s32sfl xr1, xr1, xr3, xr3, 3 # EHKN GJMP
++	s32sfl xr0, xr2, xr4, xr2, 3 # 0000 FILO
++
++	# Now:
++	# - xr1 (EHKN) contains Y values
++	# - xr2 (FILO) contains Cb values
++	# - xr3 (GJMP) contains Cr values.
++
++	s32sdi xr1, a1, 4
++	s32sdi xr2, t1, 4
++
++	bne a0, t3, 1b
++	  s32sdi xr3, t2, 4
++
++	jr ra
++	  s32i2m xr16, zero
++
++rgb32_to_yuv:
++	addiu a1, a1, -4
++	add t1, a1, a3
++	sll a3, a3, 1
++	add t2, a1, a3
++
++	sll a3, a3, 1
++	add a3, a3, a0
++	addiu a0, a0, -4
++
++1:
++	s32ldi xr1, a0, 4 # ABC
++	s32ldi xr2, a0, 4 # DEF
++	s32ldi xr3, a0, 4 # GHI
++	s32ldi xr4, a0, 4 # JKL
++
++	s32sfl xr2, xr1, xr2, xr1, 2 # 00BE ADCF
++	s32sfl xr4, xr3, xr4, xr3, 2 # 00HK GJIL
++	s32sfl xr1, xr1, xr3, xr3, 3 # ADGJ CFIL
++	s32sfl xr0, xr2, xr4, xr2, 3 # 0000 BEHK
++
++	# xr1 contains the reds
++	# xr2 contains the greens
++	# xr3 contains the blues
++
++	s32lui xr4, 0x4d, 7
++	q8mul xr5, xr1, xr4, xr6
++
++	s32lui xr4, 0x96, 7
++	q8mac xr5, xr2, xr4, xr6, AA
++
++	s32lui xr4, 0x1d, 7
++	q8mac xr5, xr3, xr4, xr6, AA
++
++	q16slr xr5, xr5, xr6, xr6, 8
++	q16sat xr5, xr5, xr6
++	s32sdi xr5, a1, 4 # Y data
++
++	s32lui xr4, 0x80, 7
++	s32sfl xr5, xr4, xr0, xr6, 3
++	q8mac xr5, xr3, xr4, xr6, AA
++
++	s32lui xr4, 0x55, 7
++	q8mac xr5, xr2, xr4, xr6, SS
++
++	s32lui xr4, 0x2b, 7
++	q8mac xr5, xr1, xr4, xr6, SS
++
++	q16slr xr5, xr5, xr6, xr6, 8
++	q16sat xr5, xr5, xr6
++	s32sdi xr5, t1, 4 # Cb data
++
++	s32lui xr4, 0x80, 7
++	s32sfl xr5, xr4, xr0, xr6, 3
++	q8mac xr5, xr3, xr4, xr6, AA
++
++	s32lui xr4, 0x6b, 7
++	q8mac xr5, xr2, xr4, xr6, SS
++
++	s32lui xr4, 0x15, 7
++	q8mac xr5, xr3, xr4, xr6, SS
++
++	q16slr xr5, xr5, xr6, xr6, 8
++	q16sat xr5, xr5, xr6
++	s32sdi xr5, t2, 4 # Cr data
++
++	bne a0,t0,1b
++
++	jr ra
+-- 
+2.30.2
+
