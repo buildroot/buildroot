@@ -1,4 +1,4 @@
-From f9f1502cc465bfb38bbaf3c14a81d1f16f8bcbcd Mon Sep 17 00:00:00 2001
+From 09cfb1e5520e6c924b82324bb568ad4dc5cb77a8 Mon Sep 17 00:00:00 2001
 From: Paul Cercueil <paul@crapouillou.net>
 Date: Thu, 8 Apr 2021 17:43:02 +0100
 Subject: [PATCH] KMSDRM: Add a fast 8bpp -> YUV blitter using MXU
@@ -11,8 +11,8 @@ Signed-off-by: Paul Cercueil <paul@crapouillou.net>
  src/video/kmsdrm/SDL_kmsdrmvideo.c  |  11 +-
  src/video/kmsdrm/mxu1_as_macros.s.h | 631 ++++++++++++++++++++++++++++
  src/video/kmsdrm/regdef.h           |  52 +++
- src/video/kmsdrm/rgb-to-yuv.S       | 132 ++++++
- 5 files changed, 825 insertions(+), 2 deletions(-)
+ src/video/kmsdrm/rgb-to-yuv.S       |  53 +++
+ 5 files changed, 746 insertions(+), 2 deletions(-)
  create mode 100644 src/video/kmsdrm/mxu1_as_macros.s.h
  create mode 100644 src/video/kmsdrm/regdef.h
  create mode 100644 src/video/kmsdrm/rgb-to-yuv.S
@@ -748,20 +748,17 @@ index 000000000..691d047b6
 +#endif /* __ASM_MIPS_REGDEF_H */
 diff --git a/src/video/kmsdrm/rgb-to-yuv.S b/src/video/kmsdrm/rgb-to-yuv.S
 new file mode 100644
-index 000000000..30ef89cbb
+index 000000000..de2eaf97b
 --- /dev/null
 +++ b/src/video/kmsdrm/rgb-to-yuv.S
-@@ -0,0 +1,132 @@
+@@ -0,0 +1,53 @@
 +#include "regdef.h"
 +#include "mxu1_as_macros.s.h"
 +
 +.text
 +.set noreorder
 +
-+# extern void rgb32_to_yuv(const uint32_t *src, const char *dst, unsigned int nb_pixels);
-+.global rgb32_to_yuv
-+
-+# extern void render_yuv(const char *src, const char *dst,
++# extern void render_yuv(const char *src, char *dst,
 +#                        const uint32_t *palette, unsigned int nb_pixels);
 +.global render_yuv
 +
@@ -769,7 +766,6 @@ index 000000000..30ef89cbb
 +	li t0, 1
 +	s32i2m xr16, t0
 +
-+	addiu a0, a0, -4
 +	addiu a1, a1, -4
 +	add t3, a0, a3
 +	add t1, a1, a3
@@ -778,16 +774,11 @@ index 000000000..30ef89cbb
 +	sll a3, a3, 1
 +
 +1:
-+	s32ldi xr9, a0, 4 # xr9: ABCD
-+
-+	s32sfl xr8, xr0, xr9, xr9, 0 # xr8: 0A0B xr9: 0C0D
-+	s32sfl xr1, xr0, xr8, xr2, 0 # xr1: 000A xr3: 000B
-+	s32sfl xr3, xr0, xr9, xr4, 0 # xr2: 000C xr4: 000D
-+
-+	s32m2i xr1, t4
-+	s32m2i xr2, t5
-+	s32m2i xr3, t6
-+	s32m2i xr4, t7
++	lbu t4, 3(a0) # A
++	lbu t5, 2(a0) # B
++	lbu t6, 1(a0) # C
++	lbu t7, 0(a0) # D
++	addiu a0, a0, 4
 +
 +	s32lddv xr1, a2, t4, 2 # xr1: 0EFG
 +	s32lddv xr2, a2, t5, 2 # xr2: 0HIJ
@@ -814,76 +805,6 @@ index 000000000..30ef89cbb
 +
 +	jr ra
 +	  s32i2m xr16, zero
-+
-+rgb32_to_yuv:
-+	addiu a1, a1, -4
-+	add t1, a1, a3
-+	sll a3, a3, 1
-+	add t2, a1, a3
-+
-+	sll a3, a3, 1
-+	add a3, a3, a0
-+	addiu a0, a0, -4
-+
-+1:
-+	s32ldi xr1, a0, 4 # ABC
-+	s32ldi xr2, a0, 4 # DEF
-+	s32ldi xr3, a0, 4 # GHI
-+	s32ldi xr4, a0, 4 # JKL
-+
-+	s32sfl xr2, xr1, xr2, xr1, 2 # 00BE ADCF
-+	s32sfl xr4, xr3, xr4, xr3, 2 # 00HK GJIL
-+	s32sfl xr1, xr1, xr3, xr3, 3 # ADGJ CFIL
-+	s32sfl xr0, xr2, xr4, xr2, 3 # 0000 BEHK
-+
-+	# xr1 contains the reds
-+	# xr2 contains the greens
-+	# xr3 contains the blues
-+
-+	s32lui xr4, 0x4d, 7
-+	q8mul xr5, xr1, xr4, xr6
-+
-+	s32lui xr4, 0x96, 7
-+	q8mac xr5, xr2, xr4, xr6, AA
-+
-+	s32lui xr4, 0x1d, 7
-+	q8mac xr5, xr3, xr4, xr6, AA
-+
-+	q16slr xr5, xr5, xr6, xr6, 8
-+	q16sat xr5, xr5, xr6
-+	s32sdi xr5, a1, 4 # Y data
-+
-+	s32lui xr4, 0x80, 7
-+	s32sfl xr5, xr4, xr0, xr6, 3
-+	q8mac xr5, xr3, xr4, xr6, AA
-+
-+	s32lui xr4, 0x55, 7
-+	q8mac xr5, xr2, xr4, xr6, SS
-+
-+	s32lui xr4, 0x2b, 7
-+	q8mac xr5, xr1, xr4, xr6, SS
-+
-+	q16slr xr5, xr5, xr6, xr6, 8
-+	q16sat xr5, xr5, xr6
-+	s32sdi xr5, t1, 4 # Cb data
-+
-+	s32lui xr4, 0x80, 7
-+	s32sfl xr5, xr4, xr0, xr6, 3
-+	q8mac xr5, xr3, xr4, xr6, AA
-+
-+	s32lui xr4, 0x6b, 7
-+	q8mac xr5, xr2, xr4, xr6, SS
-+
-+	s32lui xr4, 0x15, 7
-+	q8mac xr5, xr3, xr4, xr6, SS
-+
-+	q16slr xr5, xr5, xr6, xr6, 8
-+	q16sat xr5, xr5, xr6
-+	s32sdi xr5, t2, 4 # Cr data
-+
-+	bne a0,t0,1b
-+
-+	jr ra
 -- 
 2.30.2
 
