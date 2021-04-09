@@ -11,6 +11,8 @@ WIDEVINE_LICENSE = BSD
 WIDEVINE_LICENSE_FILES = LICENSE
 WIDEVINE_DEPENDENCIES = protobuf wpeframework-clientlibraries host-python3
 
+WIDEVINE_INSTALL_STAGING = YES
+
 ifeq ($(BR2_i386), y)
         WIDEVINE_TARGET_ARCH = x86
 else ifeq ($(BR2_x86_64), y)
