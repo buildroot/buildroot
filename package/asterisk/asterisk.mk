@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ASTERISK_VERSION = 86afe10
+ASTERISK_VERSION = 1933216
 # Use the github mirror: it's an official mirror maintained by Digium, and
 # provides tarballs, which the main Asterisk git tree (behind Gerrit) does not.
 ASTERISK_SITE = $(call github,ccxtechnologies,asterisk,$(ASTERISK_VERSION))
