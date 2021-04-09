@@ -1,0 +1,11 @@
+--- a/src/egl/drivers/dri2/platform_drm.c
++++ b/src/egl/drivers/dri2/platform_drm.c
+@@ -49,7 +49,7 @@
+    struct gbm_dri_device *device = gbm_dri_device(_surf->gbm);
+    struct gbm_bo *bo;
+ 
+-   if (dri2_surf->current == NULL) {
++   if (dri2_surf == NULL || dri2_surf->current == NULL) {
+       _eglError(EGL_BAD_SURFACE, "no front buffer");
+       return NULL;
+    }
