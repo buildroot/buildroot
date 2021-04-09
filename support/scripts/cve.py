@@ -28,6 +28,12 @@ import operator
 
 try:
     import ijson
+    # backend is a module in < 2.5, a string in >= 2.5
+    if 'python' in getattr(ijson.backend, '__name__', ijson.backend):
+        try:
+            import ijson.backends.yajl2_cffi as ijson
+        except ImportError:
+            sys.stderr.write('Warning: Using slow ijson python backend\n')
 except ImportError:
     sys.stderr.write("You need ijson to parse NVD for CVE check\n")
     exit(1)
