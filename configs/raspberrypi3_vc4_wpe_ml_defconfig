@@ -14,7 +14,7 @@ BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_EUDEV=y
 BR2_TARGET_GENERIC_ROOT_PASSWD="root"
 BR2_ROOTFS_POST_BUILD_SCRIPT="board/raspberrypi3/post-build.sh"
 BR2_ROOTFS_POST_IMAGE_SCRIPT="board/raspberrypi3/post-image.sh"
-BR2_ROOTFS_POST_SCRIPT_ARGS="--rpi-wifi --add-miniuart-bt-overlay --overclock-pi3 --tvmode-720 --gpu_mem_1024=384 --silent"
+BR2_ROOTFS_POST_SCRIPT_ARGS="--rpi-wifi --add-miniuart-bt-overlay --overclock-pi3 --tvmode-720 --gpu_mem_1024=384 --silent --add-vc4-fkms-v3d-overlay"
 BR2_LINUX_KERNEL=y
 BR2_LINUX_KERNEL_CUSTOM_GIT=y
 BR2_LINUX_KERNEL_CUSTOM_REPO_URL="https://github.com/raspberrypi/linux.git"
