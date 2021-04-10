@@ -23,7 +23,6 @@ SDL_MIXER_DEPENDENCIES = sdl
 SDL_MIXER_AUTORECONF = YES
 
 SDL_MIXER_CONF_OPTS = \
-	--without-x \
 	--with-sdl-prefix=$(STAGING_DIR)/usr \
 	--disable-music-mod \
 	--disable-music-mp3 \
