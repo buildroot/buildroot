@@ -229,6 +229,11 @@ class CVE:
         # if we don't have a cpeid, build one based on name and version
         if not cpeid:
             cpeid = "cpe:2.3:*:*:%s:%s:*:*:*:*:*:*:*" % (name, version)
+        # if we have a cpeid, use its version instead of the package
+        # version, as they might be different due to
+        # <pkg>_CPE_ID_VERSION
+        else:
+            pkg_version = distutils.version.LooseVersion(cpe_version(cpeid))
 
         for cpe in self.each_cpe():
             if not cpe_matches(cpe['id'], cpeid):
