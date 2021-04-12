@@ -61,7 +61,7 @@ else
 SANE_BACKENDS_CONF_OPTS += --without-libcurl
 endif
 
-ifeq ($(BR2_PACKAGE_POPPLER)$(BR2_PACKAGE_LIBGLIB2),yy)
+ifeq ($(BR2_PACKAGE_POPPLER)$(BR2_PACKAGE_CAIRO)$(BR2_PACKAGE_LIBGLIB2),yyy)
 SANE_BACKENDS_DEPENDENCIES += poppler libglib2
 SANE_BACKENDS_CONF_OPTS += --with-poppler-glib
 else
