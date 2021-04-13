@@ -1,0 +1,12 @@
+config BR2_PACKAGE_ACE
+	bool "ace"
+	depends on BR2_TOOLCHAIN_USES_GLIBC
+	depends on !BR2_STATIC_LIBS
+	help
+	  The ADAPTIVE Communication Environment (ACE(TM))
+	  An OO Network Programming Toolkit in C++.
+
+	  http://www.dre.vanderbilt.edu/~schmidt/ACE.html
+
+comment "ACE needs a glibc toolchain, dynamic library"
+	depends on !BR2_TOOLCHAIN_USES_GLIBC || BR2_STATIC_LIBS
