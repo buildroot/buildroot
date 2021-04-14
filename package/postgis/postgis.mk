@@ -18,20 +18,14 @@ POSTGIS_DEPENDENCIES = postgresql libgeos proj libxml2
 POSTGIS_CONF_OPTS += \
 	--with-pgconfig=$(STAGING_DIR)/usr/bin/pg_config \
 	--with-geosconfig=$(STAGING_DIR)/usr/bin/geos-config \
-	--with-xml2config=$(STAGING_DIR)/usr/bin/xml2-config
+	--with-xml2config=$(STAGING_DIR)/usr/bin/xml2-config \
+	--without-protobuf
 
 ifeq ($(BR2_PACKAGE_LIBGDAL),y)
 POSTGIS_DEPENDENCIES += libgdal
 POSTGIS_CONF_OPTS += --with-raster
 else
 POSTGIS_CONF_OPTS += --without-raster
-endif
-
-ifeq ($(BR2_PACKAGE_PROTOBUF),y)
-POSTGIS_DEPENDENCIES += protobuf
-POSTGIS_CONF_OPTS += --with-protobuf
-else
-POSTGIS_CONF_OPTS += --without-protobuf
 endif
 
 $(eval $(autotools-package))
