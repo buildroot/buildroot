@@ -89,6 +89,11 @@ RSYSLOG_CONF_OPTS += \
 	--disable-omjournal
 endif
 
+define RSYSLOG_INSTALL_INIT_SYSTEMD
+	$(INSTALL) -m 0755 -D package/rsyslog/rsyslog.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/rsyslog.service
+endef
+
 define RSYSLOG_INSTALL_INIT_SYSV
 	$(INSTALL) -m 0755 -D package/rsyslog/S01rsyslogd \
 		$(TARGET_DIR)/etc/init.d/S01rsyslogd
