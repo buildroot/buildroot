@@ -35,4 +35,8 @@ else
 POSTGIS_CONF_OPTS += --without-json
 endif
 
+ifeq ($(BR2_PACKAGE_PCRE),y)
+POSTGIS_DEPENDENCIES += pcre
+endif
+
 $(eval $(autotools-package))
