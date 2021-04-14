@@ -10,6 +10,7 @@ POSTGIS_SITE = https://download.osgeo.org/postgis/source
 POSTGIS_MAKE = $(MAKE1)
 POSTGIS_LICENSE = GPL-2.0+ (PostGIS), BSD-2-Clause, MIT, Apache-2.0, ISC, BSL-1.0, CC-BY-SA-3.0
 POSTGIS_LICENSE_FILES = LICENSE.TXT
+POSTGIS_CPE_ID_VENDOR = postgis
 # configure.ac is patched so need to run autoreconf
 POSTGIS_AUTORECONF = YES
 
