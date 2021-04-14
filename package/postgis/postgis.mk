@@ -28,4 +28,11 @@ else
 POSTGIS_CONF_OPTS += --without-raster
 endif
 
+ifeq ($(BR2_PACKAGE_JSON_C),y)
+POSTGIS_DEPENDENCIES += json-c
+POSTGIS_CONF_OPTS += --with-json
+else
+POSTGIS_CONF_OPTS += --without-json
+endif
+
 $(eval $(autotools-package))
