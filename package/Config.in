@@ -1407,7 +1407,7 @@ menu "Database"
 	source "package/mongodb/Config.in"
 	source "package/mysql/Config.in"
 	source "package/postgresql/Config.in"
-if BR2_PACKAGE_POSTGRESQL_FULL
+if BR2_PACKAGE_POSTGRESQL
 	source "package/postgis/Config.in"
 endif
 	source "package/redis/Config.in"
