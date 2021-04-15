@@ -146,6 +146,18 @@ endif
 
 comment "Legacy options removed in 2021.05"
 
+config BR2_PACKAGE_XSERVER_XORG_SERVER_KDRIVE_KBD
+	bool "KDrive/TinyX kbd input driver removed"
+	select BR2_LEGACY
+	help
+	  The kbd input driver in KDrive was removed.
+
+config BR2_PACKAGE_XSERVER_XORG_SERVER_KDRIVE_MOUSE
+	bool "KDrive/TinyX mouse input driver removed"
+	select BR2_LEGACY
+	help
+	  The mouse input driver in KDrive was removed.
+
 config BR2_PACKAGE_MESA3D_OSMESA_CLASSIC
 	bool "mesa OSMesa (classic) option removed"
 	select BR2_LEGACY
