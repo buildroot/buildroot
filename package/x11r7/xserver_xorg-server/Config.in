@@ -90,18 +90,6 @@ config BR2_PACKAGE_XSERVER_XORG_SERVER_KDRIVE_EVDEV
 	  Xfbdev -keybd evdev,,device=/dev/input/eventX
 	         -mouse evdev,,device=/dev/input/eventY
 
-config BR2_PACKAGE_XSERVER_XORG_SERVER_KDRIVE_KBD
-	bool "Enable KDrive/TinyX kbd input driver"
-	help
-	  Enable kbd input driver in KDrive. It uses the console
-	  keyboard as input device.
-
-config BR2_PACKAGE_XSERVER_XORG_SERVER_KDRIVE_MOUSE
-	bool "Enable KDrive/TinyX mouse input driver"
-	help
-	  Enable mouse input driver in KDrive. It supports PS/2 mice
-	  and serial port mice.
-
 endif
 
 comment "Optional Servers"
