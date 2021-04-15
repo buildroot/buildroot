@@ -91,8 +91,7 @@ ifeq ($(BR2_PACKAGE_XSERVER_XORG_SERVER_KDRIVE),y)
 XSERVER_XORG_SERVER_CONF_OPTS += \
 	--enable-kdrive \
 	--disable-glx \
-	--disable-dri \
-	--disable-xsdl
+	--disable-dri
 
 else # modular
 XSERVER_XORG_SERVER_CONF_OPTS += --disable-kdrive
