@@ -24,7 +24,12 @@ fi
 # Restore the loading splash if needed
 if [ `cat /sys/class/vtconsole/vtcon1/bind` -ne 0 -o ! -f /var/tmp/.boot_complete ] ; then
 	touch /var/tmp/.boot_complete
-	fbsplash /usr/share/opendingux/loading.png
+
+	if [ -r /usr/local/share/opendingux/loading.png ] ; then
+		fbsplash /usr/local/share/opendingux/loading.png
+	else
+		fbsplash /usr/share/opendingux/loading.png
+	fi
 fi
 
 if [ -x ~/.autostart ]; then
