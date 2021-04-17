@@ -25,8 +25,12 @@ fi
 if [ `cat /sys/class/vtconsole/vtcon1/bind` -ne 0 -o ! -f /var/tmp/.boot_complete ] ; then
 	touch /var/tmp/.boot_complete
 
+	VSIZE=$(cat /sys/class/graphics/fb0/virtual_size)
+
 	if [ -r /usr/local/share/opendingux/loading.png ] ; then
 		fbsplash /usr/local/share/opendingux/loading.png
+	elif [ "$VSIZE" = "240,160" ] ; then
+		fbsplash /usr/share/opendingux/loading-small.png
 	else
 		fbsplash /usr/share/opendingux/loading.png
 	fi
