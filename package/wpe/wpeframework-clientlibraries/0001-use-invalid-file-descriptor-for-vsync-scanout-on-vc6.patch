@@ -1,0 +1,14 @@
+--- a/Source/compositorclient/RPI/Implementation.cpp
++++ b/Source/compositorclient/RPI/Implementation.cpp
+@@ -907,7 +907,11 @@
+ 
+ int Display::FileDescriptor() const
+ {
++#ifndef VC6
+     return (_platform.Descriptor());
++#else
++    return -1;
++#endif
+ }
+ 
+ Compositor::IDisplay::ISurface* Display::SurfaceByName(const std::string& name)

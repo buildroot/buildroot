@@ -93,25 +93,21 @@ __EOF__
 		;;
 		--add-vc4-fkms-v3d-overlay)
 		# Enable VC4 overlay
-		if ! grep -qE '^dtoverlay=' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
-			echo "Adding 'dtoverlay=vc4-fkms-v3d' to config.txt."
-			cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+		echo "Adding 'dtoverlay=vc4-fkms-v3d' to config.txt."
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
 
 # Add VC4 GPU support on top of dispmanx
 dtoverlay=vc4-fkms-v3d
 __EOF__
-	        fi
 		;;
 		--add-vc4-kms-v3d-overlay)
 		# Enable VC4 overlay
-		if ! grep -qE '^dtoverlay=' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
-			echo "Adding 'dtoverlay=vc4-kms-v3d' to config.txt."
-			cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+		echo "Adding 'dtoverlay=vc4-kms-v3d' to config.txt."
+		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
 
 # Add VC4 GPU support
 dtoverlay=vc4-kms-v3d-pi4
 __EOF__
-		fi
 		;;
                 --silent)
                 if ! grep -qE '^disable_splash=1' "${BINARIES_DIR}/rpi-firmware/config.txt"; then

@@ -1,0 +1,75 @@
+From 71138eceb244ebb1b593be0f3d8e35481c9f7e2e Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Mon, 16 Dec 2019 19:49:09 +0100
+Subject: [PATCH] meson: add window system egl
+
+---
+ gst-libs/gst/gl/meson.build | 15 +++++++++++++++
+ meson_options.txt           |  4 ++--
+ 2 files changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/gst-libs/gst/gl/meson.build b/gst-libs/gst/gl/meson.build
+index 0e0ba1b..9d37e2b 100644
+--- a/gst-libs/gst/gl/meson.build
++++ b/gst-libs/gst/gl/meson.build
+@@ -231,6 +231,7 @@ if gl_winsys.contains('auto')
+   need_win_wayland = 'auto'
+   need_win_win32 = 'auto'
+   need_win_cocoa = 'auto'
++  need_win_egl = 'auto'
+   need_win_eagl = 'auto'
+   need_win_dispmanx = 'auto'
+   need_win_viv_fb = 'auto'
+@@ -241,6 +242,7 @@ else
+   need_win_wayland = 'no'
+   need_win_win32 = 'no'
+   need_win_cocoa = 'no'
++  need_win_egl = 'no'
+   need_win_eagl = 'no'
+   need_win_dispmanx = 'no'
+   need_win_viv_fb = 'no'
+@@ -255,6 +257,8 @@ else
+       need_win_win32 = 'yes'
+     elif winsys == 'cocoa'
+       need_win_cocoa = 'yes'
++    elif winsys == 'egl'
++      need_win_egl = 'yes'
+     elif winsys == 'eagl'
+       need_win_eagl = 'yes'
+     elif winsys == 'dispmanx'
+@@ -511,6 +515,17 @@ if need_platform_egl != 'no'
+   endif
+ endif
+ 
++# winsys_egl checks
++if need_win_egl == 'yes'
++  if need_platform_egl == 'no'
++    error('Impossible situation requested: Cannot use Winsys egl without EGL support')
++  elif not egl_dep.found()
++    error ('Could not find EGL libraries for Winsys egl')
++  else
++    enabled_gl_winsys += 'egl'
++  endif
++endif
++
+ # wayland checks
+ wayland_client_dep = unneeded_dep
+ wayland_cursor_dep = unneeded_dep
+diff --git a/meson_options.txt b/meson_options.txt
+index 2983409..61b7a8a 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -12,8 +12,8 @@ option('gl_platform', type : 'array',
+        choices : ['glx', 'egl', 'cgl', 'wgl', 'eagl', 'auto'], value : ['auto'],
+        description : 'A comma separated list of opengl platforms to enable building against')
+ option('gl_winsys', type : 'array',
+-       choices : ['x11', 'wayland', 'win32', 'cocoa', 'dispmanx', 'viv-fb', 'gbm', 'android', 'auto'], value : ['auto'],
+-       description : 'A comma separated list of opengl windows systems to enable building against. Supported values are x11, wayland, win32, cocoa, dispmanx, viv-fb, gbm and android')
++       choices : ['x11', 'wayland', 'win32', 'cocoa', 'dispmanx', 'egl', 'viv-fb', 'gbm', 'android', 'auto'], value : ['auto'],
++       description : 'A comma separated list of opengl windows systems to enable building against. Supported values are x11, wayland, win32, cocoa, dispmanx, egl, viv-fb, gbm and android')
+ option('egl_module_name', type : 'string', value : '',
+        description : 'The file to pass to g_module_open to open the libEGL library (default: libEGL)')
+ option('opengl_module_name', type : 'string', value : '',
+-- 
+2.7.4
+
