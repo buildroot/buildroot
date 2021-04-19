@@ -1006,6 +1006,10 @@ config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_MEMORYPRESSURE
     string "memory-pressure"
     default "databaseprocess:50m,networkprocess:100m,webprocess:300m,rpcprocess:50m"
 
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT
+    string "media-content-types-requiring-hardware-support"
+    default "video/*"
+
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_MEDIADISKCACHE
     bool "media-disk-cache"
     default n
