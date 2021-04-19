@@ -1,0 +1,41 @@
+--- a/Source/compositorclient/RPI/Implementation.cpp
++++ b/Source/compositorclient/RPI/Implementation.cpp
+@@ -33,6 +33,7 @@
+ #endif
+ 
+ #include <algorithm>
++#include <chrono>
+ 
+ #include <core/core.h>
+ #include <com/com.h>
+@@ -896,9 +897,30 @@
+ {
+ }
+ 
++static constexpr std::chrono::milliseconds FRAME_RATE () {
++    return std::chrono::milliseconds (1000/60);
++}
++
+ int Display::Process(const uint32_t)
+ {
++    // Include <chrono>
++    static std::chrono::steady_clock::time_point _last_access_time; // initialised with EPOCH time
++
+     _platform.ScanOut ();
++
++    // Delay the loop
++    auto _current_time = std::chrono::steady_clock::now ();
++
++    auto _duration = std::chrono::duration_cast < std::chrono::milliseconds > (_current_time - _last_access_time);
++
++    if (_duration.count () < FRAME_RATE ().count () ) { 
++        std::this_thread::sleep_for( std::chrono::milliseconds (FRAME_RATE () - _duration) );
++    }
++    else {
++    }
++
++    _last_access_time = _current_time;
++
+     return (0);
+ }
+ 
