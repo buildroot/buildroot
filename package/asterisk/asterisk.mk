@@ -43,6 +43,15 @@ define ASTERISK_COPY_MENUSELECT
 endef
 ASTERISK_PRE_CONFIGURE_HOOKS += ASTERISK_COPY_MENUSELECT
 
+define ASTERISK_DISABLE_BUILD_NATIVE
+	(\
+		cd $(@D);\
+		make menuselect.makeopts;\
+		menuselect/menuselect --disable BUILD_NATIVE menuselect.makeopts;\
+	)
+endef
+ASTERISK_POST_CONFIGURE_HOOKS += ASTERISK_DISABLE_BUILD_NATIVE
+
 define ASTERISK_ENABLE_OPEN_SOURCE_OPUS
 	(\
 		cd $(@D);\
