@@ -11,6 +11,7 @@ PYTHON_CHEETAH_SITE = https://files.pythonhosted.org/packages/4e/72/e6a7d92279e3
 PYTHON_CHEETAH_LICENSE = MIT
 PYTHON_CHEETAH_LICENSE_FILES = LICENSE
 PYTHON_CHEETAH_SETUP_TYPE = setuptools
+HOST_PYTHON_CHEETAH_NEEDS_HOST_PYTHON = python2
 
 $(eval $(python-package))
 $(eval $(host-python-package))
