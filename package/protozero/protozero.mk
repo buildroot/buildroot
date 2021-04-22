@@ -10,8 +10,4 @@ PROTOZERO_LICENSE = BSD-2-Clause, Apache-2.0
 PROTOZERO_LICENSE_FILES = LICENSE.md LICENSE.from_folly
 PROTOZERO_INSTALL_STAGING = YES
 
-ifeq ($(BR2_PACKAGE_PROTOBUF),y)
-PROTOZERO_DEPENDENCIES += protobuf
-endif
-
 $(eval $(cmake-package))
