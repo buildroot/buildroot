@@ -735,6 +735,10 @@ td.cve-unknown {
  background: #ffd870;
 }
 
+td.cve_ignored {
+ background: #ccc;
+}
+
 </style>
 <title>Statistics of Buildroot packages</title>
 </head>
@@ -909,6 +913,15 @@ def dump_html_pkg(f, pkg):
         f.write("    N/A\n")
     f.write("  </td>\n")
 
+    # CVEs Ignored
+    td_class = ["centered"]
+    if pkg.ignored_cves:
+        td_class.append("cve_ignored")
+    f.write("  <td class=\"%s\">\n" % " ".join(td_class))
+    for ignored_cve in pkg.ignored_cves:
+        f.write("    <a href=\"https://security-tracker.debian.org/tracker/%s\">%s<br/>\n" % (ignored_cve, ignored_cve))
+    f.write("  </td>\n")
+
     # CPE ID
     td_class = ["left"]
     if pkg.is_status_ok("cpe"):
@@ -948,6 +961,7 @@ def dump_html_all_pkgs(f, packages):
 <td class=\"centered\">Warnings</td>
 <td class=\"centered\">Upstream URL</td>
 <td class=\"centered\">CVEs</td>
+<td class=\"centered\">CVEs Ignored</td>
 <td class=\"centered\">CPE ID</td>
 </tr>
 """)
