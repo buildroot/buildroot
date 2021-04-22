@@ -921,7 +921,13 @@ def dump_html_pkg(f, pkg):
     if pkg.cpeid:
         f.write("  <code>%s</code>\n" % pkg.cpeid)
     if not pkg.is_status_ok("cpe"):
-        f.write("  %s%s\n" % ("<br/>" if pkg.cpeid else "", pkg.status['cpe'][1]))
+        if pkg.cpeid:
+            f.write("  <br/>%s <a href=\"https://nvd.nist.gov/products/cpe/search/results?namingFormat=2.3&keyword=%s\">(Search)</a>\n" %  # noqa: E501
+                    (pkg.status['cpe'][1], ":".join(pkg.cpeid.split(":")[0:5])))
+        else:
+            f.write("  %s <a href=\"https://nvd.nist.gov/products/cpe/search/results?namingFormat=2.3&keyword=%s\">(Search)</a>\n" %
+                    (pkg.status['cpe'][1], pkg.name))
+
     f.write("  </td>\n")
 
     f.write(" </tr>\n")
