@@ -1,0 +1,31 @@
+From 4e543097e62eb052650433d1d4c9c5996d30f242 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Fri, 23 Apr 2021 23:06:01 +0200
+Subject: [PATCH] arch/arm/mcount-support.c: define EF_ARM_VFP_FLOAT when not
+ available
+
+uClibc-ng <elf.h> doesn't define EF_ARM_VFP_FLOAT, so let's define it.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ arch/arm/mcount-support.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/mcount-support.c b/arch/arm/mcount-support.c
+index 8d23460b..51331740 100644
+--- a/arch/arm/mcount-support.c
++++ b/arch/arm/mcount-support.c
+@@ -3,6 +3,10 @@
+ #include <link.h>
+ #include <elf.h>
+ 
++#ifndef EF_ARM_VFP_FLOAT
++# define EF_ARM_VFP_FLOAT 0x400
++#endif
++
+ #ifndef EF_ARM_ABI_FLOAT_HARD
+ # define EF_ARM_ABI_FLOAT_HARD  EF_ARM_VFP_FLOAT
+ #endif
+-- 
+2.30.2
+
