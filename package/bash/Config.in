@@ -9,3 +9,17 @@ config BR2_PACKAGE_BASH
 	  The standard GNU Bourne again shell.
 
 	  http://tiswww.case.edu/php/chet/bash/bashtop.html
+
+if BR2_PACKAGE_BASH
+
+config BR2_PACKAGE_BASH_LOADABLE_EXAMPLES
+	bool "loadable examples"
+	depends on !BR2_STATIC_LIBS
+	help
+	  This option will enable the installation of the "loadable"
+	  examples, which are dynamically loadable extension providing
+	  additional built-ins commands to bash. There are typically
+	  not needed as they are provided as regular, external
+	  commands.
+
+endif

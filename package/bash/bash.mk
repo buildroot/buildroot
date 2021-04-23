@@ -47,6 +47,19 @@ define BASH_REMOVE_UNUSED_FILES
 endef
 BASH_POST_INSTALL_TARGET_HOOKS += BASH_REMOVE_UNUSED_FILES
 
+ifeq ($(BR2_PACKAGE_BASH_LOADABLE_EXAMPLES),y)
+define BASH_REMOVE_LOADABLE_UNUSED_FILES
+	rm -f $(TARGET_DIR)/usr/lib/bash/Makefile.inc
+	rm -f $(TARGET_DIR)/usr/lib/bash/loadables.h
+endef
+BASH_POST_INSTALL_TARGET_HOOKS += BASH_REMOVE_LOADABLE_UNUSED_FILES
+else
+define BASH_REMOVE_LOADABLE_EXAMPLES
+	rm -rf $(TARGET_DIR)/usr/lib/bash
+endef
+BASH_POST_INSTALL_TARGET_HOOKS += BASH_REMOVE_LOADABLE_EXAMPLES
+endif
+
 # Add /bin/bash to /etc/shells otherwise some login tools like dropbear
 # can reject the user connection. See man shells.
 define BASH_ADD_MKSH_TO_SHELLS
