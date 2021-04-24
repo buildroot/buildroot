@@ -15,6 +15,12 @@ UFTRACE_CONFIGURE_OPTS = \
 	--without-libncurses \
 	--without-capstone
 
+ifeq ($(BR2_i386),y)
+UFTRACE_ARCH = i386
+else
+UFTRACE_ARCH = $(BR2_ARCH)
+endif
+
 # Only --without-<foo> options are supported.
 ifeq ($(BR2_PACKAGE_ELFUTILS),y)
 UFTRACE_DEPENDENCIES += elfutils
@@ -37,7 +43,7 @@ define UFTRACE_CONFIGURE_CMDS
 	(cd $(@D); $(TARGET_CONFIGURE_OPTS) \
 		LDFLAGS="$(UFTRACE_LDFLAGS)" \
 		./configure \
-		--arch=$(BR2_ARCH) \
+		--arch=$(UFTRACE_ARCH) \
 		--prefix=/usr \
 		$(UFTRACE_CONFIGURE_OPTS) \
 		-o $(@D)/.config)
