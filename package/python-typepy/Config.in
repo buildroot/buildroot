@@ -1,10 +1,7 @@
 config BR2_PACKAGE_PYTHON_TYPEPY
 	bool "python-typepy"
-	depends on BR2_PACKAGE_PYTHON3 # python-mbstrdecoder
-	select BR2_PACKAGE_PYTHON_DATEUTIL # runtime
+	depends on BR2_PACKAGE_PYTHON3
 	select BR2_PACKAGE_PYTHON_MBSTRDECODER # runtime
-	select BR2_PACKAGE_PYTHON_PYTZ # runtime
-	select BR2_PACKAGE_PYTHON_SIX # runtime
 	help
 	  A Python library for variable type
 	  checker/validator/converter at a run time.
