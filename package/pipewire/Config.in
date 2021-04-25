@@ -1,10 +1,7 @@
 config BR2_PACKAGE_PIPEWIRE
 	bool "pipewire"
-	depends on BR2_PACKAGE_HAS_UDEV # libudev
-	depends on BR2_TOOLCHAIN_HAS_THREADS # dbus, alsa-lib
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_18
+	depends on BR2_TOOLCHAIN_HAS_THREADS # dbus
 	depends on BR2_USE_MMU # dbus
-	select BR2_PACKAGE_ALSA_LIB
 	select BR2_PACKAGE_DBUS
 	help
 	  PipeWire is a server and user space API to deal with
@@ -29,10 +26,19 @@ comment "pipewire gstreamer support needs a toolchain w/ wchar, threads"
 	depends on BR2_USE_MMU
 	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS
 
+config BR2_PACKAGE_PIPEWIRE_V4L2
+	bool "pipewire v4l2 plugin"
+	depends on BR2_PACKAGE_HAS_UDEV
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_18
+	help
+	  Build v4l2 plugin
+
+comment "pipewire v4l2 support needs udev and a toolchain w/ headers >= 3.18"
+	depends on !BR2_PACKAGE_HAS_UDEV || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_18
+
 endif
 
-comment "pipewire needs udev and a toolchain w/ threads, headers >= 3.18"
+comment "pipewire needs a toolchain w/ threads"
 	depends on BR2_USE_MMU
-	depends on !BR2_PACKAGE_HAS_UDEV || \
-		!BR2_TOOLCHAIN_HAS_THREADS || \
-		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_18
+	depends on !BR2_TOOLCHAIN_HAS_THREADS
