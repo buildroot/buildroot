@@ -1,0 +1,14 @@
+config BR2_PACKAGE_DAQ3
+	bool "daq3"
+	depends on !BR2_PACKAGE_DAQ
+	depends on !BR2_STATIC_LIBS # dlfcn.h
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
+	help
+	  DAQ is a Data Acquisition library for packet I/O from the
+	  Snort project.
+
+	  https://www.snort.org
+
+comment "daq3 needs a toolchain w/ dynamic library, gcc >= 4.9"
+	depends on !BR2_PACKAGE_DAQ
+	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
