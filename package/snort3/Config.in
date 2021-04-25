@@ -1,0 +1,42 @@
+config BR2_PACKAGE_SNORT3
+	bool "snort3"
+	depends on BR2_PACKAGE_LUAJIT_ARCH_SUPPORTS # luajit
+	depends on !(BR2_PACKAGE_DAQ || BR2_PACKAGE_SNORT)
+	depends on BR2_USE_MMU # fork()
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on !BR2_STATIC_LIBS # daq3
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # C++11
+	depends on BR2_TOOLCHAIN_HAS_THREADS # hwloc
+	depends on BR2_USE_WCHAR
+	select BR2_PACKAGE_DAQ3
+	select BR2_PACKAGE_FLEX
+	select BR2_PACKAGE_HWLOC
+	select BR2_PACKAGE_LIBDNET
+	select BR2_PACKAGE_LIBPCAP
+	select BR2_PACKAGE_LUAJIT
+	select BR2_PACKAGE_PCRE
+	select BR2_PACKAGE_LIBTIRPC if !BR2_TOOLCHAIN_HAS_NATIVE_RPC
+	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_ZLIB
+	help
+	  Snort 3 is the next generation Snort IPS (Intrusion
+	  Prevention System).
+
+	  - Support multiple packet processing threads
+	  - Shared configuration and attribute table
+	  - Use a simple, scriptable configuration
+	  - Make key components pluggable
+	  - Autodetect services for portless configuration
+	  - Support sticky buffers in rules
+	  - Autogenerate reference documentation
+	  - Provide better cross platform support
+
+	  https://www.snort.org/snort3
+
+comment "snort3 needs a toolchain w/ C++, wchar, threads, dynamic library, gcc >= 4.9"
+	depends on BR2_PACKAGE_LUAJIT_ARCH_SUPPORTS
+	depends on !(BR2_PACKAGE_DAQ || BR2_PACKAGE_SNORT)
+	depends on BR2_USE_MMU
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_USE_WCHAR || \
+		BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
