@@ -26,6 +26,9 @@ WPA_SUPPLICANT_IGNORE_CVES += CVE-2019-16275
 # 0001-P2P-Fix-a-corner-case-in-peer-addition-based-on-PD-R.patch
 WPA_SUPPLICANT_IGNORE_CVES += CVE-2021-27803
 
+# 0002-ASN.1-Validate-DigestAlgorithmIdentifier-parameters.patch
+WPA_SUPPLICANT_IGNORE_CVES += CVE-2021-30004
+
 # install the wpa_client library
 WPA_SUPPLICANT_INSTALL_STAGING = YES
 
@@ -122,8 +125,6 @@ ifeq ($(BR2_PACKAGE_LIBOPENSSL),y)
 WPA_SUPPLICANT_DEPENDENCIES += host-pkgconf libopenssl
 WPA_SUPPLICANT_LIBS += `$(PKG_CONFIG_HOST_BINARY) --libs openssl`
 WPA_SUPPLICANT_CONFIG_EDITS += 's/\#\(CONFIG_TLS=openssl\)/\1/'
-# Issue only affects the "internal" TLS implementation
-WPA_SUPPLICANT_IGNORE_CVES += CVE-2021-30004
 else
 WPA_SUPPLICANT_CONFIG_DISABLE += CONFIG_EAP_PWD CONFIG_EAP_TEAP
 WPA_SUPPLICANT_CONFIG_EDITS += 's/\#\(CONFIG_TLS=\).*/\1internal/'
