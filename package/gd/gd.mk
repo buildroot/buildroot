@@ -36,7 +36,7 @@ endif
 ifeq ($(BR2_PACKAGE_LIBICONV),y)
 GD_DEPENDENCIES += libiconv
 # not strictly needed for gd, but ensures -liconv ends up in gdlib.pc
-GD_CONF_ENV += LIBS="-liconv"
+GD_CONF_ENV += LIBS_PRIVATES="-liconv"
 endif
 
 ifeq ($(BR2_PACKAGE_JPEG),y)
