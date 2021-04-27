@@ -45,6 +45,6 @@ _plain_hg() {
 
 _hg clone ${quiet} "${@}" --noupdate "'${uri}'" "'${basename}'"
 
-_hg archive ${quiet} --repository "'${basename}'" --type tgz \
+_plain_hg archive ${quiet} --repository "'${basename}'" --type tgz \
             --prefix "'${basename}'" --rev "'${cset}'" \
             - >"${output}"
