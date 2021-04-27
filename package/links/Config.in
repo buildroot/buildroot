@@ -10,11 +10,15 @@ if BR2_PACKAGE_LINKS
 
 config BR2_PACKAGE_LINKS_GRAPHICS
 	bool "use graphics"
-	depends on BR2_PACKAGE_DIRECTFB || BR2_PACKAGE_XORG7
+	depends on BR2_PACKAGE_GPM || BR2_PACKAGE_DIRECTFB || BR2_PACKAGE_XORG7
 	select BR2_PACKAGE_XLIB_LIBXT if BR2_PACKAGE_XORG7
 	select BR2_PACKAGE_LIBPNG
 	help
-	  Enable graphics output for DirectFB or X11.
+	  Enable graphics output for framebuffer, DirectFB or X11.
+	  Framebuffer output requires GPM (console mouse).
 	  Otherwise links will be text-mode only.
+
+comment "links graphics needs GPM, DirectFB or X11"
+	depends on !BR2_PACKAGE_GPM && !BR2_PACKAGE_DIRECTFB && !BR2_PACKAGE_XORG7
 
 endif
