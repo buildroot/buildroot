@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SOLARUS_VERSION = 1.6.4
+SOLARUS_VERSION = 1.6.5
 SOLARUS_SITE = \
 	https://gitlab.com/solarus-games/solarus/-/archive/v$(SOLARUS_VERSION)
 SOLARUS_SOURCE = solarus-v$(SOLARUS_VERSION).tar.bz2
