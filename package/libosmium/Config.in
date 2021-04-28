@@ -1,0 +1,17 @@
+config BR2_PACKAGE_LIBOSMIUM
+	bool "libosmium"
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_7 # C++11
+	depends on BR2_TOOLCHAIN_HAS_THREADS # boost
+	depends on BR2_USE_WCHAR # boost
+	select BR2_PACKAGE_BOOST
+	select BR2_PACKAGE_PROTOZERO
+	help
+	  A fast and flexible C++ library for working with OpenStreetMap
+	  data. Libosmium works on Linux, macOS and Windows.
+
+	  https://osmcode.org/libosmium/
+
+comment "libosmium needs a toolchain w/ C++,  wchar, threads, gcc >= 4.7"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_USE_WCHAR || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_7 || !BR2_TOOLCHAIN_HAS_THREADS
