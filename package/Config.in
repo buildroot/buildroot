@@ -1421,6 +1421,7 @@ menu "Database"
 	source "package/mysql/Config.in"
 	source "package/postgresql/Config.in"
 if BR2_PACKAGE_POSTGRESQL
+	source "package/osm2pgsql/Config.in"
 	source "package/postgis/Config.in"
 endif
 	source "package/redis/Config.in"
