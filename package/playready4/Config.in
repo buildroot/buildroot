@@ -1,7 +1,8 @@
 config BR2_PACKAGE_PLAYREADY4
         select BR2_PACKAGE_HAS_PLAYREADY
+        select BR2_PACKAGE_LIBCURL
         depends on BR2_PACKAGE_WPEFRAMEWORK_CDMI_PLAYREADY
-        bool "playready 4"
+        bool "Playready v4.0"
         help
           A playready v4 implementation port from Microsoft.
 

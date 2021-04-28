@@ -4,14 +4,14 @@
 #
 ################################################################################
 
-PLAYREADY4_VERSION = 17e0356ef6a357d3c20afbd6e125b86e8609e281
+PLAYREADY4_VERSION = 8440356ff33359a9f5b8e2453f51136df7559c32
 PLAYREADY4_SITE = git@github.com:Metrological/playready.git
 PLAYREADY4_SITE_METHOD = git
 PLAYREADY4_LICENSE = PROPRIETARY
 PLAYREADY4_DEPENDENCIES += libcurl
 PLAYREADY4_INSTALL_STAGING = YES
 PLAYREADY4_INSTALL_TARGET = YES
-PLAYREADY4_SUBDIR = "$(@D)/source/linux"
+PLAYREADY4_SUBDIR = "source/linux"
 PLAYREADY4_MAKE=$(MAKE1)
 PLAYREADY_USE_PROVISION = "OFF"
 
@@ -25,7 +25,7 @@ endif
 # Parallel build issues, Use MAKE1 to disable parallel
 define PLAYREADY4_BUILD_CMDS
         ulimit -n 4096; \
-        export PLAYREADY_DIR=$(PLAYREADY4_SUBDIR);\
+	export PLAYREADY_DIR="$(@D)/$(PLAYREADY4_SUBDIR)";\
 	export PLAYREADY_ROOT="$(@D)";\
 	export PLAYREADY_PROFILE="drmprofilelinux.mk";\
 	export LINUX_BUILD="1";\
