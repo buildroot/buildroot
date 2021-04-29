@@ -29,8 +29,13 @@ ifeq ($(IMX_GPU_VIV_LIB_TARGET),x11)
 IMX_GPU_VIV_DEPENDENCIES += xlib_libXdamage xlib_libXext xlib_libXfixes
 endif
 
+# Libraries are linked against libdrm, except framebuffer output on ARM
+ifneq ($(IMX_GPU_VIV_LIB_TARGET)$(BR2_arm),fby)
+IMX_GPU_VIV_DEPENDENCIES += libdrm
+endif
+
 ifeq ($(IMX_GPU_VIV_LIB_TARGET),wayland)
-IMX_GPU_VIV_DEPENDENCIES += libdrm wayland
+IMX_GPU_VIV_DEPENDENCIES += wayland
 endif
 
 define IMX_GPU_VIV_EXTRACT_CMDS
