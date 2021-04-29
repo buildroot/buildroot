@@ -82,4 +82,11 @@ config BR2_TARGET_OPENSBI_LINUX_PAYLOAD
 	help
 	  Build OpenSBI with the Linux kernel as a Payload.
 
+config BR2_TARGET_OPENSBI_UBOOT_PAYLOAD
+	bool "Include U-Boot as OpenSBI Payload"
+	depends on BR2_TARGET_OPENSBI_PLAT != ""
+	depends on BR2_TARGET_UBOOT
+	help
+	  Build OpenSBI with the U-Boot as a Payload.
+
 endif
