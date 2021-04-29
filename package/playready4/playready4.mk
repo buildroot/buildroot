@@ -42,8 +42,10 @@ PLAYREADY4_DATA_DIR=/etc/playready
 
 define PLAYREADY4_INSTALL
         $(INSTALL) -d $(1)/usr/lib
-        $(INSTALL) -D -m 0755 $(@D)/bin/exe/prdy_test.exe $(1)/usr/bin/prdy_test.exe
         $(INSTALL) -D -m 0755 $(@D)/bin/lib/libplayready.so $(1)/usr/lib/libplayready.so
+
+        test -f $(@D)/bin/exe/prdy_test.exe && \
+            $(INSTALL) -D -m 0755 $(@D)/bin/exe/prdy_test.exe $(1)/usr/bin/prdy_test.exe
 
         $(INSTALL) -d $(1)$(PLAYREADY4_DATA_DIR)
 endef
