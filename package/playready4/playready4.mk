@@ -17,7 +17,7 @@ PLAYREADY_USE_PROVISION = "OFF"
 
 ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY), y)
     PLAYREADY_USE_PROVISION = "ON"
-    PLAYREADY_DEPENDENCIES += wpeframework-clientlibraries
+    PLAYREADY4_DEPENDENCIES += wpeframework-clientlibraries
 endif
 
 
