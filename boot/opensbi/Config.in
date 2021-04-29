@@ -13,6 +13,57 @@ config BR2_TARGET_OPENSBI
 	  https://github.com/riscv/opensbi.git
 
 if BR2_TARGET_OPENSBI
+choice
+	prompt "OpenSBI Version"
+	help
+	  Select the specific OpenSBI version you want to use
+
+config BR2_TARGET_OPENSBI_LATEST_VERSION
+	bool "0.8"
+
+config BR2_TARGET_OPENSBI_CUSTOM_VERSION
+	bool "Custom version"
+	help
+	  This option allows to use a specific official versions
+
+config BR2_TARGET_OPENSBI_CUSTOM_TARBALL
+	bool "Custom tarball"
+
+config BR2_TARGET_OPENSBI_CUSTOM_GIT
+	bool "Custom Git repository"
+
+endchoice
+
+config BR2_TARGET_OPENSBI_CUSTOM_VERSION_VALUE
+	string "OpenSBI version"
+	depends on BR2_TARGET_OPENSBI_CUSTOM_VERSION
+
+config BR2_TARGET_OPENSBI_CUSTOM_TARBALL_LOCATION
+	string "URL of custom OpenSBI tarball"
+	depends on BR2_TARGET_OPENSBI_CUSTOM_TARBALL
+
+if BR2_TARGET_OPENSBI_CUSTOM_GIT
+
+config BR2_TARGET_OPENSBI_CUSTOM_REPO_URL
+	string "URL of custom repository"
+
+config BR2_TARGET_OPENSBI_CUSTOM_REPO_VERSION
+	string "Custom repository version"
+	help
+	  Revision to use in the typical format used by Git. E.G. a
+	  sha id, a tag, branch, ..
+
+endif
+
+config BR2_TARGET_OPENSBI_VERSION
+	string
+	default "0.8"	if BR2_TARGET_OPENSBI_LATEST_VERSION
+	default BR2_TARGET_OPENSBI_CUSTOM_VERSION_VALUE \
+		if BR2_TARGET_OPENSBI_CUSTOM_VERSION
+	default "custom"	if BR2_TARGET_OPENSBI_CUSTOM_TARBALL
+	default BR2_TARGET_OPENSBI_CUSTOM_REPO_VERSION \
+		if BR2_TARGET_OPENSBI_CUSTOM_GIT
+
 config BR2_TARGET_OPENSBI_PLAT
 	string "OpenSBI Platform"
 	default ""

@@ -4,12 +4,29 @@
 #
 ################################################################################
 
-OPENSBI_VERSION = 0.8
+OPENSBI_VERSION = $(call qstrip,$(BR2_TARGET_OPENSBI_VERSION))
+
+ifeq ($(OPENSBI_VERSION),custom)
+# Handle custom OpenSBI tarballs as specified by the configuration
+OPENSBI_TARBALL = $(call qstrip,$(BR2_TARGET_OPENSBI_CUSTOM_TARBALL_LOCATION))
+OPENSBI_SITE = $(patsubst %/,%,$(dir $(OPENSBI_TARBALL)))
+OPENSBI_SOURCE = $(notdir $(OPENSBI_TARBALL))
+else ifeq ($(BR2_TARGET_OPENSBI_CUSTOM_GIT),y)
+OPENSBI_SITE = $(call qstrip,$(BR2_TARGET_OPENSBI_CUSTOM_REPO_URL))
+OPENSBI_SITE_METHOD = git
+else
+# Handle official OpenSBI versions
 OPENSBI_SITE = $(call github,riscv,opensbi,v$(OPENSBI_VERSION))
+endif
+
 OPENSBI_LICENSE = BSD-2-Clause
 OPENSBI_LICENSE_FILES = COPYING.BSD
 OPENSBI_INSTALL_TARGET = NO
 OPENSBI_INSTALL_STAGING = YES
+
+ifeq ($(BR2_TARGET_OPENSBI)$(BR2_TARGET_OPENSBI_LATEST_VERSION),y)
+BR_NO_CHECK_HASH_FOR += $(OPENSBI_SOURCE)
+endif
 
 OPENSBI_MAKE_ENV = \
 	CROSS_COMPILE=$(TARGET_CROSS)
