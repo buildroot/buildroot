@@ -20,16 +20,11 @@ IMX_SECO_INSTALL_IMAGES = YES
 
 # SECO firmware is needed when generating imx8-boot-sd.bin which
 # is done in post-image script.
-ifeq ($(BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X),y)
+IMX_SECO_AHAB_CONTAINER_IMAGE = $(call qstrip,$(BR2_PACKAGE_IMX_SECO_AHAB_CONTAINER_IMAGE))
+
 define IMX_SECO_INSTALL_IMAGES_CMDS
-	cp $(@D)/firmware/seco/mx8qxb0-ahab-container.img \
+	cp $(@D)/firmware/seco/$(IMX_SECO_AHAB_CONTAINER_IMAGE) \
 		$(BINARIES_DIR)/ahab-container.img
 endef
-else ifeq ($(BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8),y)
-define IMX_SECO_INSTALL_IMAGES_CMDS
-	cp $(@D)/firmware/seco/mx8qmb0-ahab-container.img \
-		$(BINARIES_DIR)/ahab-container.img
-endef
-endif
 
 $(eval $(generic-package))
