@@ -77,10 +77,10 @@ LIBGLIB2_DEPENDENCIES += libiconv
 endif
 
 ifeq ($(BR2_PACKAGE_LIBSELINUX),y)
-LIBGLIB2_CONF_OPTS += -Dselinux=enabled
+LIBGLIB2_CONF_OPTS += -Dselinux=enabled -Dxattr=true
 LIBGLIB2_DEPENDENCIES += libselinux
 else
-LIBGLIB2_CONF_OPTS += -Dselinux=disabled
+LIBGLIB2_CONF_OPTS += -Dselinux=disabled -Dxattr=false
 endif
 
 # Purge gdb-related files
