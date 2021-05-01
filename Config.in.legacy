@@ -148,6 +148,7 @@ comment "Legacy options removed in 2021.02"
 
 config BR2_PACKAGE_SCONESERVER_HTTP_SCONESITE_IMAGE
 	bool "sconeserver http::sconesite::image removed"
+	select BR2_LEGACY
 	help
 	  Sconeserver cannot be built with ImageMagick - it uses the
 	  "transofrm" function which is removed from public API.
