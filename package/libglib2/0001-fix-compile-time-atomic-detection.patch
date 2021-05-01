@@ -10,19 +10,21 @@ See : https://gitlab.gnome.org/GNOME/glib/issues/1063
 
 Signed-off-by: Brendan Heading <brendanheading@gmail.com>
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
+Refresh for 2.68.1
 ---
- glib/gthread-posix.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ glib/gthread-posix.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/glib/gthread-posix.c b/glib/gthread-posix.c
 index 71a6b7b..d09d029 100644
 --- a/glib/gthread-posix.c
 +++ b/glib/gthread-posix.c
-@@ -73,7 +73,7 @@
+@@ -72,8 +72,7 @@
+ #include <sys/syscall.h>
  #endif
  
- /* clang defines __ATOMIC_SEQ_CST but doesn't support the GCC extension */
--#if defined(HAVE_FUTEX) && defined(__ATOMIC_SEQ_CST) && !defined(__clang__)
+-#if defined(HAVE_FUTEX) && \
+-    (defined(HAVE_STDATOMIC_H) || defined(__ATOMIC_SEQ_CST))
 +#if defined(HAVE_FUTEX) && defined(__ATOMIC_SEQ_CST) && defined(__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4) && !defined(__clang__)
  #define USE_NATIVE_MUTEX
  #endif
