@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2021.05"
 
+config BR2_PACKAGE_IOSTAT
+	bool "iostat removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed, use sysstat instead.
+
 config BR2_PACKAGE_SCONESERVER_HTTP_SCONESITE_IMAGE
 	bool "sconeserver http::sconesite::image removed"
 	select BR2_LEGACY
