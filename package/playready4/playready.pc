@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/playready
+
+Name: playready
+Description: Microsoft Playready
+Requires:
+Version: 4.0
+Libs: -L${libdir} -lplayready
+Cflags: -I${includedir} -I${includedir}/oem/common -I${includedir}/oem/ansi
