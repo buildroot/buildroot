@@ -1,5 +1,5 @@
-config BR2_PACKAGE_DOCKER_CONTAINERD
-	bool "docker-containerd"
+config BR2_PACKAGE_CONTAINERD
+	bool "containerd"
 	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS
 	depends on BR2_TOOLCHAIN_HAS_THREADS
@@ -16,9 +16,9 @@ config BR2_PACKAGE_DOCKER_CONTAINERD
 
 	  https://containerd.io/
 
-if BR2_PACKAGE_DOCKER_CONTAINERD
+if BR2_PACKAGE_CONTAINERD
 
-config BR2_PACKAGE_DOCKER_CONTAINERD_DRIVER_BTRFS
+config BR2_PACKAGE_CONTAINERD_DRIVER_BTRFS
 	bool "btrfs snapshot driver"
 	depends on BR2_USE_MMU # btrfs-progs
 	depends on BR2_TOOLCHAIN_HAS_THREADS # btrfs-progs
@@ -28,7 +28,7 @@ config BR2_PACKAGE_DOCKER_CONTAINERD_DRIVER_BTRFS
 
 endif
 
-comment "docker-containerd needs a glibc or musl toolchain w/ threads"
+comment "containerd needs a glibc or musl toolchain w/ threads"
 	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS
 	depends on BR2_USE_MMU
