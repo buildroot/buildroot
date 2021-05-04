@@ -74,11 +74,30 @@ config BR2_TARGET_OPENSBI_PLAT
 	  the platform specific static library libplatsbi.a and firmware
 	  examples are built.
 
+config BR2_TARGET_OPENSBI_INSTALL_DYNAMIC_IMG
+	bool "Install fw_dynamic image"
+	default y if BR2_TARGET_OPENSBI_PLAT != ""
+	help
+	  This installs the fw_dynamic image.
+
+config BR2_TARGET_OPENSBI_INSTALL_JUMP_IMG
+	bool "Install fw_jump image"
+	default y if BR2_TARGET_OPENSBI_PLAT != ""
+	help
+	  This installs the fw_jump image.
+
+config BR2_TARGET_OPENSBI_INSTALL_PAYLOAD_IMG
+	bool "Install fw_payload image"
+	help
+	  This option enables the installation of the fw_paylaod
+	  image.
+
 config BR2_TARGET_OPENSBI_LINUX_PAYLOAD
 	bool "Include Linux as OpenSBI Payload"
 	depends on BR2_TARGET_OPENSBI_PLAT != ""
 	depends on BR2_LINUX_KERNEL
 	depends on BR2_LINUX_KERNEL_IMAGE
+	select BR2_TARGET_OPENSBI_INSTALL_PAYLOAD_IMG
 	help
 	  Build OpenSBI with the Linux kernel as a Payload.
 
@@ -86,6 +105,7 @@ config BR2_TARGET_OPENSBI_UBOOT_PAYLOAD
 	bool "Include U-Boot as OpenSBI Payload"
 	depends on BR2_TARGET_OPENSBI_PLAT != ""
 	depends on BR2_TARGET_UBOOT
+	select BR2_TARGET_OPENSBI_INSTALL_PAYLOAD_IMG
 	help
 	  Build OpenSBI with the U-Boot as a Payload.
 
