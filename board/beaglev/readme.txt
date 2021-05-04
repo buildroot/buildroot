@@ -17,6 +17,8 @@ Build results
 
 After building, output/images contains:
 
++ bootloader-BEAGLEV-buildroot.bin.out
++ ddrinit-2133-buildroot.bin.out
 + Image
 + fw_payload.bin
 + fw_payload.bin.out
@@ -26,7 +28,11 @@ After building, output/images contains:
 + sdcard.img
 + u-boot.bin
 
-The two important files are:
+The four important files are:
+
+ - bootloader-BEAGLEV-buildroot.bin.out, the first stage bootloader
+
+ - ddrinit-2133-buildroot.bin.out, the DDR initialization firmware
 
  - fw_payload.bin.out, which is the bootloader image, containing
    both OpenSBI and U-Boot.
@@ -51,7 +57,7 @@ Insert your SD card.
 
 Power-up the board using an USB-C cable.
 
-Flashing the bootloader
+Flashing OpenSBI/U-Boot
 =======================
 
 The bootloader pre-flashed on the Beagle-V has a non-working
@@ -86,3 +92,31 @@ fw_payload.bin.out using the Xmodem protocol.
 
 After reflashing is complete, restart the board, it will automatically
 start the system from the SD card, and reach the login prompt.
+
+Flashing low-level bootloaders
+==============================
+
+The BeagleV comes pre-flashed with functional low-level bootloaders
+(called "secondboot" and "ddrinit"). Re-flashing them is not necessary
+to use this Buildroot defconfig. However, for the sake of
+completeness, Buildroot builds and provides those low-level bootloader
+images.
+
+You can flash them as follows:
+
+ - In the same "pre-loader" menu as the one used above, instead of
+   entering 0 or 1, enter the magic "root@s5t" string. This enters the
+   "expert" features.
+
+ - Then, press 0 and send over X-modem the
+   bootloader-BEAGLEV-buildroot.bin.out file.
+
+ - Then, press 1 and send over X-modem the
+   ddrinit-2133-buildroot.bin.out.
+
+Note that the reflashing mechanism itself relies on those low-level
+bootloaders, so if you flash non-working versions, you'll have to go
+through a recovery process. This requires wiring up to a separate
+debug UART, which pins are located near the HDMI connector. See
+https://wiki.seeedstudio.com/BeagleV-Update-bootloader-ddr-init-boot-uboot-Recover-bootloader/
+section "Recover the bootloader" for more details.
