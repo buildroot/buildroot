@@ -728,7 +728,7 @@ comment "PIC/PIE needs a toolchain w/ PIE"
 
 choice
 	bool "Stack Smashing Protection"
-	default BR2_SSP_ALL if BR2_ENABLE_SSP
+	default BR2_SSP_ALL if BR2_ENABLE_SSP # legacy
 	default BR2_SSP_STRONG if BR2_TOOLCHAIN_HAS_SSP_STRONG
 	default BR2_SSP_REGULAR
 	depends on BR2_TOOLCHAIN_HAS_SSP
