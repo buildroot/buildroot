@@ -98,6 +98,13 @@ else
 HOST_KMOD_CONF_OPTS += --without-zlib
 endif
 
+ifeq ($(BR2_PACKAGE_HOST_KMOD_ZSTD),y)
+HOST_KMOD_DEPENDENCIES += host-zstd
+HOST_KMOD_CONF_OPTS += --with-zstd
+else
+HOST_KMOD_CONF_OPTS += --without-zstd
+endif
+
 ifeq ($(BR2_PACKAGE_HOST_KMOD_XZ),y)
 HOST_KMOD_DEPENDENCIES += host-xz
 HOST_KMOD_CONF_OPTS += --with-xz
