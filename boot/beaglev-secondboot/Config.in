@@ -1,0 +1,9 @@
+config BR2_TARGET_BEAGLEV_SECONDBOOT
+	bool "beaglev-secondboot"
+	depends on BR2_riscv
+	depends on BR2_HOSTARCH = "x86_64" # host-riscv64-elf-toolchain
+	help
+	  This package builds the SecondBoot firmware used on the
+	  BeagleV platform.
+
+	  https://github.com/starfive-tech/beagle_secondBoot
