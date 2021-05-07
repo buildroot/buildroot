@@ -29,7 +29,7 @@ diff --git a/contrib/vhost-user-input/main.c b/contrib/vhost-user-input/main.c
 index 6020c6f33a..e688c3e0a9 100644
 --- a/contrib/vhost-user-input/main.c
 +++ b/contrib/vhost-user-input/main.c
-@@ -17,6 +17,11 @@
+@@ -15,6 +15,11 @@
  #include "standard-headers/linux/virtio_input.h"
  #include "qapi/error.h"
  
@@ -41,7 +41,7 @@ index 6020c6f33a..e688c3e0a9 100644
  enum {
      VHOST_USER_INPUT_MAX_QUEUES = 2,
  };
-@@ -115,13 +120,16 @@ vi_evdev_watch(VuDev *dev, int condition, void *data)
+@@ -113,13 +118,16 @@ vi_evdev_watch(VuDev *dev, int condition, void *data)
  static void vi_handle_status(VuInput *vi, virtio_input_event *event)
  {
      struct input_event evdev;

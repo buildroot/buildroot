@@ -13,6 +13,8 @@ Fixes:
 http://autobuild.buildroot.net/results/53f5d8baa994d599b9da013ee643b82353366ec3/build-end.log
 
 Signed-off-by: Romain Naour <romain.naour@gmail.com>
+Signed-off-by: Adam Duskett <aduskett@gmail.com>
+Refresh for 6.0.0
 ---
  configure         | 7 +++++++
  meson.build       | 5 ++++-
@@ -23,15 +25,15 @@ diff --git a/configure b/configure
 index 18c26e0389..7cceae4418 100755
 --- a/configure
 +++ b/configure
-@@ -449,6 +449,7 @@ meson=""
+@@ -460,6 +460,7 @@ meson=""
  ninja=""
  skip_meson=no
- gettext=""
+ gettext="auto"
 +tests="auto"
- 
- bogus_os="no"
- malloc_trim="auto"
-@@ -1525,6 +1526,10 @@ for opt do
+ fuse="auto"
+ fuse_lseek="auto"
+ multiprocess="auto"
+@@ -1549,6 +1550,10 @@ for opt do
    ;;
    --disable-libdaxctl) libdaxctl=no
    ;;
@@ -39,30 +41,30 @@ index 18c26e0389..7cceae4418 100755
 +  ;;
 +  --enable-tests) tests="enabled"
 +  ;;
-   *)
-       echo "ERROR: unknown option $opt"
-       echo "Try '$0 --help' for more information"
-@@ -1850,6 +1855,7 @@ disabled with --disable-FEATURE, default is enabled if available:
+   --enable-fuse) fuse="enabled"
+   ;;
+   --disable-fuse) fuse="disabled"
+@@ -1915,6 +1920,7 @@ disabled with --disable-FEATURE, default is enabled if available
    xkbcommon       xkbcommon support
    rng-none        dummy RNG, avoid using /dev/(u)random and getrandom()
    libdaxctl       libdaxctl support
 +  tests           build tests
- 
- NOTE: The object files are built at the place where configure is launched
- EOF
-@@ -7014,6 +7020,7 @@ NINJA=$ninja $meson setup \
-         -Diconv=$iconv -Dcurses=$curses -Dlibudev=$libudev\
+   fuse            FUSE block device export
+   fuse-lseek      SEEK_HOLE/SEEK_DATA support for FUSE exports
+   multiprocess    Out of process device emulation support
+@@ -6422,6 +6428,7 @@ NINJA=$ninja $meson setup \
+         -Dzstd=$zstd -Dseccomp=$seccomp -Dvirtfs=$virtfs -Dcap_ng=$cap_ng \
+         -Dattr=$attr -Ddefault_devices=$default_devices \
          -Ddocs=$docs -Dsphinx_build=$sphinx_build -Dinstall_blobs=$blobs \
-         -Dvhost_user_blk_server=$vhost_user_blk_server \
 +        -Dtests=$tests \
-         $cross_arg \
-         "$PWD" "$source_path"
- 
+         -Dvhost_user_blk_server=$vhost_user_blk_server -Dmultiprocess=$multiprocess \
+         -Dfuse=$fuse -Dfuse_lseek=$fuse_lseek -Dguest_agent_msi=$guest_agent_msi \
+         $(if test "$default_features" = no; then echo "-Dauto_features=disabled"; fi) \
 diff --git a/meson.build b/meson.build
 index e3386196ba..7f4efdc347 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -1944,7 +1944,10 @@ subdir('scripts')
+@@ -2381,7 +2381,10 @@ subdir('scripts')
  subdir('tools')
  subdir('pc-bios')
  subdir('docs')
@@ -71,22 +73,22 @@ index e3386196ba..7f4efdc347 100644
 +  subdir('tests')
 +endif
 +
- if 'CONFIG_GTK' in config_host
+ if gtk.found()
    subdir('po')
  endif
 diff --git a/meson_options.txt b/meson_options.txt
 index f6f64785fe..81bffbfe87 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
-@@ -66,6 +66,8 @@ option('virtiofsd', type: 'feature', value: 'auto',
-        description: 'build virtiofs daemon (virtiofsd)')
+@@ -111,6 +111,8 @@ option('fuse_lseek', type : 'feature', value : 'auto',
+ 
  option('vhost_user_blk_server', type: 'feature', value: 'auto',
         description: 'build vhost-user-blk server')
 +option('tests', type : 'feature', value : 'auto',
 +       description: 'Tests build support')
- 
- option('capstone', type: 'combo', value: 'auto',
-        choices: ['disabled', 'enabled', 'auto', 'system', 'internal'],
+ option('virtfs', type: 'feature', value: 'auto',
+        description: 'virtio-9p support')
+ option('virtiofsd', type: 'feature', value: 'auto',
 -- 
 2.29.2
 
