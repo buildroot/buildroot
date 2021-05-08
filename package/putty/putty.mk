@@ -4,13 +4,12 @@
 #
 ################################################################################
 
-PUTTY_VERSION = 0.74
+PUTTY_VERSION = 0.75
 PUTTY_SITE = http://the.earth.li/~sgtatham/putty/$(PUTTY_VERSION)
 PUTTY_LICENSE = MIT
 PUTTY_LICENSE_FILES = LICENCE
 PUTTY_CPE_ID_VENDOR = putty
 PUTTY_CONF_OPTS = --disable-gtktest
-PUTTY_CONF_ENV = CFLAGS="$(TARGET_CFLAGS) -Wno-error"
 
 # Windows only, fixed for Windows with 0.75
 PUTTY_IGNORE_CVES += CVE-2021-33500
