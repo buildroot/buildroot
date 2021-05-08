@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2021.05"
 
+config BR2_PACKAGE_MONKEY
+	bool "monkey package removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it has not seen any release
+	  since 2016 and because TLS is broken on master.
+
 config BR2_PACKAGE_DOCKER_CONTAINERD
 	bool "docker-containerd package was renamed to containerd"
 	select BR2_LEGACY
