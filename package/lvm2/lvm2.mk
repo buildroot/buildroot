@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LVM2_VERSION = 2.02.185
+LVM2_VERSION = 2.03.12
 LVM2_SOURCE = LVM2.$(LVM2_VERSION).tgz
 LVM2_SITE = http://sources.redhat.com/pub/lvm2
 LVM2_INSTALL_STAGING = YES
@@ -20,7 +20,7 @@ LVM2_CONF_OPTS += \
 	--enable-cmdlib \
 	--enable-dmeventd \
 	--disable-nls \
-	--disable-symvers
+	--with-symvers=no
 
 LVM2_DEPENDENCIES += host-pkgconf libaio
 
