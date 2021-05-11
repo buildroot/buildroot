@@ -10,7 +10,7 @@ to force disabling it at compile time.
 [Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4114]
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
-[rebased for 20.2.0 & 20.3.0]
+[rebased for 20.2.0, 20.3.0 & 21.1.0]
 ---
  meson_options.txt                    | 7 +++++++
  src/gallium/drivers/vc4/meson.build  | 4 ++--
@@ -67,7 +67,7 @@ index 66767e7f1f8..7446f1c3d0c 100644
  {
 -#ifdef USE_ARM_ASM
 +#ifdef VC4_TILING_LT_NEON
-         if (util_cpu_caps.has_neon) {
+         if (util_get_cpu_caps()->has_neon) {
                  vc4_load_lt_image_neon(dst, dst_stride, src, src_stride,
                                         cpp, box);
 @@ -105,7 +105,7 @@ vc4_store_lt_image(void *dst, uint32_t dst_stride,
@@ -76,7 +76,7 @@ index 66767e7f1f8..7446f1c3d0c 100644
  {
 -#ifdef USE_ARM_ASM
 +#ifdef VC4_TILING_LT_NEON
-         if (util_cpu_caps.has_neon) {
+         if (util_get_cpu_caps()->has_neon) {
                  vc4_store_lt_image_neon(dst, dst_stride, src, src_stride,
                                          cpp, box);
 -- 
