@@ -5,7 +5,7 @@
 ################################################################################
 
 LIBHUGETLBFS_VERSION = 2.21
-LIBHUGETLBFS_SITE = $(call github,libhugetlbfs,libhugetlbfs,$(LIBHUGETLBFS_VERSION))
+LIBHUGETLBFS_SITE = https://github.com/libhugetlbfs/libhugetlbfs/releases/download/$(LIBHUGETLBFS_VERSION)
 LIBHUGETLBFS_INSTALL_STAGING = YES
 LIBHUGETLBFS_DEPENDENCIES += host-libhugetlbfs
 
