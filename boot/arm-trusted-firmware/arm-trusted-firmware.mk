@@ -79,6 +79,15 @@ ARM_TRUSTED_FIRMWARE_MAKE_OPTS += AARCH32_SP=optee
 endif
 endif # BR2_TARGET_ARM_TRUSTED_FIRMWARE_BL32_OPTEE
 
+ifeq ($(BR2_TARGET_ARM_TRUSTED_FIRMWARE_EDK2_AS_BL33),y)
+ARM_TRUSTED_FIRMWARE_DEPENDENCIES += edk2
+# Since the flash device name vary between platforms, we use the variable
+# provided by the EDK2 package for this. Using this variable here is OK
+# as it will expand after all dependencies are resolved, inside _BUILD_CMDS.
+ARM_TRUSTED_FIRMWARE_MAKE_OPTS += \
+	BL33=$(BINARIES_DIR)/$(call qstrip,$(BR2_TARGET_EDK2_FD_NAME).fd)
+endif
+
 ifeq ($(BR2_TARGET_ARM_TRUSTED_FIRMWARE_UBOOT_AS_BL33),y)
 ARM_TRUSTED_FIRMWARE_UBOOT_BIN = $(call qstrip,$(BR2_TARGET_ARM_TRUSTED_FIRMWARE_UBOOT_BL33_IMAGE))
 ARM_TRUSTED_FIRMWARE_MAKE_OPTS += BL33=$(BINARIES_DIR)/$(ARM_TRUSTED_FIRMWARE_UBOOT_BIN)
