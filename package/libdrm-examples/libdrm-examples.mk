@@ -1,0 +1,65 @@
+################################################################################
+#
+# libdrm-examples
+#
+################################################################################
+
+LIBDRM_EXAMPLES_VERSION = 1.0
+LIBDRM_EXAMPLES_SITE=$(TOPDIR)/package/libdrm-examples/src
+LIBDRM_EXAMPLES_SITE_METHOD=local
+
+LIBDRM_EXAMPLES_INSTALL_STAGING = YES
+LIBDRM_EXAMPLES_INSTALL_TARGET = YES
+
+LIBDRM_EXAMPLES_LICENSE_FILE = COPYING 
+LIBDRM_EXAMPLES_REDISTRIBUTE = YES
+
+LIBDRM_EXAMPLES_DEPENDENCIES = libdrm mesa3d
+
+LIBDRM_EXAMPLES_CPPFLAGS = $(TARGET_CPPFLAGS)
+LIBDRM_EXAMPLES_CFLAGS = $(TARGET_CFLAGS)
+LIBDRM_EXAMPLES_CXXFLAGS = $(TARGET_CXXFLAGS) -Wall
+LIBDRM_EXAMPLES_LDFLAGS = $(TARGET_LDFLAGS)
+
+LIBDRM_EXAMPLES_CFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags libdrm)
+LIBDRM_EXAMPLES_CXXFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags libdrm)
+LIBDRM_EXAMPLES_LDFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --libs libdrm)
+LIBDRM_EXAMPLES_CFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags gbm)
+LIBDRM_EXAMPLES_CXXFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags gbm)
+LIBDRM_EXAMPLES_LDFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --libs gbm)
+LIBDRM_EXAMPLES_CFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags egl)
+LIBDRM_EXAMPLES_CXXFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags egl)
+LIBDRM_EXAMPLES_LDFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --libs egl)
+LIBDRM_EXAMPLES_CFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags glesv2)
+LIBDRM_EXAMPLES_CXXFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags glesv2)
+LIBDRM_EXAMPLES_LDFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --libs glesv2)
+
+ifeq ($(BR2_ENABLE_DEBUG)x,yx)
+    LIBDRM_EXAMPLES_CPPFLAGS += -DDEBUG
+else
+    LIBDRM_EXAMPLES_CPPFLAGS += -DNDEBUG
+endif
+
+define LIBDRM_EXAMPLES_CONFIGURE_CMDS
+@echo "Nothing to be done"
+endef
+
+define LIBDRM_EXAMPLES_BUILD_DRM_PRIME
+pushd $(@D); \
+$(MAKE) -f $(@D)/Makefile CC="$(TARGET_CROSS)cc" CXX="$(TARGET_CROSS)c++" CPPFLAGS="$(LIBDRM_EXAMPLES_CPPFLAGS)" CFLAGS="$(LIBDRM_EXAMPLES_CFLAGS)" CXXFLAGS="$(LIBDRM_EXAMPLES_CXXFLAGS)" LDFLAGS="$(LIBDRM_EXAMPLES_LDFLAGS)" drm-prime; \
+popd; 
+endef
+
+define LIBDRM_EXAMPLES_BUILD_CMDS
+$(call LIBDRM_EXAMPLES_BUILD_DRM_PRIME)
+endef
+
+define LIBDRM_EXAMPLES_INSTALL_STAGING_CMDS
+@echo "Nothing to be done"
+endef
+
+define LIBDRM_EXAMPLES_INSTALL_TARGET_CMDS
+[ -f $(@D)/.bin/drm-prime ] && $(INSTALL) -D -m 755 $(@D)/.bin/drm-prime $(TARGET_DIR)/usr/bin/drm-prime
+endef
+
+$(eval $(generic-package))
