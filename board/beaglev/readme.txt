@@ -119,4 +119,6 @@ bootloaders, so if you flash non-working versions, you'll have to go
 through a recovery process. This requires wiring up to a separate
 debug UART, which pins are located near the HDMI connector. See
 https://wiki.seeedstudio.com/BeagleV-Update-bootloader-ddr-init-boot-uboot-Recover-bootloader/
-section "Recover the bootloader" for more details.
+section "Recover the bootloader" for more details. The instructions
+make use of a jh7100-recover tool, which Buildroot has built as part
+of this defconfig: it is available as output/host/bin/jh7100-recover.
