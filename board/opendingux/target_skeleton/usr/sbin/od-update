@@ -34,8 +34,16 @@ elif [ "$HWVARIANT_CMDLINE" = "rg350" ] ; then
 		MODEL=ylm,rg350
 	fi
 else
-	MODEL=gcw,zero
-	HWVARIANT="$HWVARIANT_CMDLINE"
+	case "$HWVARIANT_CMDLINE" in
+		v11_ddr2_256mb|v20_mddr_512mb)
+			MODEL=gcw,zero
+			HWVARIANT="$HWVARIANT_CMDLINE"
+			;;
+		*)
+			echo "Unknown device."
+			exit 1
+			;;
+	esac
 fi
 
 # Default to SYSDEV=/dev/mmcblk0
