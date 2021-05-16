@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2021.05"
 
+config BR2_PACKAGE_LVM2_LVMETAD
+	bool "lvm2 lvmetad removed"
+	select BR2_LEGACY
+	help
+	  The lvm2 lvmetad was removed upstream.
+
 config BR2_PACKAGE_MONKEY
 	bool "monkey package removed"
 	select BR2_LEGACY
