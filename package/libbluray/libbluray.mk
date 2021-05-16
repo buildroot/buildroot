@@ -19,10 +19,6 @@ ifeq ($(BR2_PACKAGE_LIBICONV),y)
 LIBBLURAY_DEPENDENCIES += libiconv
 endif
 
-ifeq ($(BR2_PACKAGE_LIBUDFREAD),y)
-LIBBLURAY_DEPENDENCIES += libudfread
-endif
-
 ifeq ($(BR2_PACKAGE_FREETYPE),y)
 LIBBLURAY_DEPENDENCIES += freetype
 LIBBLURAY_CONF_OPTS += --with-freetype
