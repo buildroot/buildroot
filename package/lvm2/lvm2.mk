@@ -11,6 +11,8 @@ LVM2_INSTALL_STAGING = YES
 LVM2_LICENSE = GPL-2.0, LGPL-2.1
 LVM2_LICENSE_FILES = COPYING COPYING.LIB
 LVM2_CPE_ID_PRODUCT = redhat
+# parallel build issues
+LVM2_MAKE = $(MAKE1)
 
 # Make sure that binaries and libraries are installed with write
 # permissions for the owner. We disable NLS because it's broken, and
