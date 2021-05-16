@@ -229,6 +229,8 @@ LEGAL_MANIFEST_CSV_HOST = $(LEGAL_INFO_DIR)/host-manifest.csv
 LEGAL_WARNINGS = $(LEGAL_INFO_DIR)/.warnings
 LEGAL_REPORT = $(LEGAL_INFO_DIR)/README
 
+CPE_UPDATES_DIR = $(BASE_DIR)/cpe-updates
+
 BR2_CONFIG = $(CONFIG_DIR)/.config
 
 # Pull in the user's configuration file
@@ -947,11 +949,11 @@ pkg-stats:
 
 .PHONY: missing-cpe
 missing-cpe:
-	$(Q)mkdir -p $(O)/cpe-updates
+	$(Q)mkdir -p $(CPE_UPDATES_DIR)
 	$(Q)cd "$(CONFIG_DIR)" ; \
 	$(TOPDIR)/support/scripts/gen-missing-cpe \
 		--nvd-path $(DL_DIR)/buildroot-nvd \
-		--output $(O)/cpe-updates
+		--output $(CPE_UPDATES_DIR)
 
 else # ifeq ($(BR2_HAVE_DOT_CONFIG),y)
 
@@ -1087,7 +1089,7 @@ printvars:
 clean:
 	rm -rf $(BASE_TARGET_DIR) $(BINARIES_DIR) $(HOST_DIR) $(HOST_DIR_SYMLINK) \
 		$(BUILD_DIR) $(BASE_DIR)/staging \
-		$(LEGAL_INFO_DIR) $(GRAPHS_DIR) $(PER_PACKAGE_DIR)
+		$(LEGAL_INFO_DIR) $(GRAPHS_DIR) $(PER_PACKAGE_DIR) $(CPE_UPDATES_DIR)
 
 .PHONY: distclean
 distclean: clean
