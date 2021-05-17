@@ -31,21 +31,6 @@ config BR2_PACKAGE_UDISKS
 
 	  http://www.freedesktop.org/wiki/Software/udisks
 
-if BR2_PACKAGE_UDISKS
-
-config BR2_PACKAGE_UDISKS_LVM2
-	bool "lvm2 support"
-	# The lvm app library can't compile against musl
-	depends on BR2_TOOLCHAIN_USES_GLIBC
-	select BR2_PACKAGE_LVM2_APP_LIBRARY
-	help
-	  Enable LVM2 support
-
-comment "lvm2 support needs a glibc toolchain"
-	depends on !BR2_TOOLCHAIN_USES_GLIBC
-
-endif
-
 comment "udisks needs udev /dev management"
 	depends on BR2_USE_MMU
 	depends on !BR2_PACKAGE_HAS_UDEV

@@ -55,12 +55,6 @@ LVM2_INSTALL_STAGING_OPTS += install
 LVM2_INSTALL_TARGET_OPTS += install
 endif
 
-ifeq ($(BR2_PACKAGE_LVM2_APP_LIBRARY),y)
-LVM2_CONF_OPTS += --enable-applib
-else
-LVM2_CONF_OPTS += --disable-applib
-endif
-
 ifeq ($(BR2_INIT_SYSTEMD),y)
 LVM2_INSTALL_TARGET_OPTS += install_systemd_units install_systemd_generators
 endif
@@ -75,7 +69,6 @@ HOST_LVM2_CONF_OPTS = \
 	--enable-pkgconfig \
 	--disable-cmdlib \
 	--disable-dmeventd \
-	--disable-applib \
 	--disable-fsadm \
 	--disable-readline \
 	--disable-selinux

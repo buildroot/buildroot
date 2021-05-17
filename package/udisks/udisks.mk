@@ -24,10 +24,6 @@ UDISKS_DEPENDENCIES = \
 	sg3_utils \
 	udev
 
-UDISKS_CONF_OPTS = --disable-remote-access --disable-man-pages
-
-ifeq ($(BR2_PACKAGE_UDISKS_LVM2),y)
-UDISKS_CONF_OPTS += --enable-lvm2
-endif
+UDISKS_CONF_OPTS = --disable-remote-access --disable-man-pages --disable-lvm2
 
 $(eval $(autotools-package))
