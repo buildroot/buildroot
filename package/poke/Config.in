@@ -3,7 +3,6 @@ config BR2_PACKAGE_POKE
 	depends on BR2_PACKAGE_LIBATOMIC_OPS_ARCH_SUPPORTS # bdwgc
 	depends on BR2_USE_WCHAR # needs wctomb
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
-	depends on BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL # gnulib
 	select BR2_PACKAGE_BUSYBOX_SHOW_OTHERS # less
 	select BR2_PACKAGE_BDWGC
 	select BR2_PACKAGE_LESS # runtime
@@ -24,7 +23,6 @@ config BR2_PACKAGE_POKE
 
 	  https://www.gnu.org/software/poke/
 
-comment "poke needs a glibc or musl toolchain w/ NPTL, wchar"
+comment "poke needs a toolchain w/ NPTL, wchar"
 	depends on BR2_PACKAGE_LIBATOMIC_OPS_ARCH_SUPPORTS
-	depends on !(BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL) \
-		||!BR2_TOOLCHAIN_HAS_THREADS_NPTL || !BR2_USE_WCHAR
+	depends on !BR2_TOOLCHAIN_HAS_THREADS_NPTL || !BR2_USE_WCHAR
