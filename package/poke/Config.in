@@ -1,0 +1,30 @@
+config BR2_PACKAGE_POKE
+	bool "poke"
+	depends on BR2_PACKAGE_LIBATOMIC_OPS_ARCH_SUPPORTS # bdwgc
+	depends on BR2_USE_WCHAR # needs wctomb
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
+	depends on BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL # gnulib
+	select BR2_PACKAGE_BUSYBOX_SHOW_OTHERS # less
+	select BR2_PACKAGE_BDWGC
+	select BR2_PACKAGE_LESS # runtime
+	select BR2_PACKAGE_READLINE
+	help
+	  GNU poke is a new interactive editor for binary data. Not
+	  limited to editing basic entities such as bits and bytes,
+	  it provides a full-fledged procedural, interactive
+	  programming language designed to describe data structures
+	  and to operate on them. Once a user has defined a structure
+	  for binary data (usually matching some file format) she can
+	  search, inspect, create, shuffle and modify abstract entities
+	  such as ELF relocations, MP3 tags, DWARF expressions,
+	  partition table entries, and so on, with primitives
+	  resembling simple editing of bits and bytes. The program
+	  comes with a library of already written descriptions (or
+	  "pickles" in poke parlance) for many binary formats.
+
+	  https://www.gnu.org/software/poke/
+
+comment "poke needs a glibc or musl toolchain w/ NPTL, wchar"
+	depends on BR2_PACKAGE_LIBATOMIC_OPS_ARCH_SUPPORTS
+	depends on !(BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL) \
+		||!BR2_TOOLCHAIN_HAS_THREADS_NPTL || !BR2_USE_WCHAR
