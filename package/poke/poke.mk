@@ -19,7 +19,13 @@ POKE_DEPENDENCIES = host-flex host-bison host-pkgconf bdwgc readline
 POKE_CONF_OPTS = \
 	--disable-gui \
 	--disable-libnbd \
-	--disable-mi \
 	--with-libreadline-prefix=$(STAGING_DIR)
+
+ifeq ($(BR2_PACKAGE_JSON_C),y)
+POKE_DEPENDENCIES += json-c
+POKE_CONF_OPTS += --enable-mi
+else
+POKE_CONF_OPTS += --disable-mi
+endif
 
 $(eval $(autotools-package))
