@@ -3,21 +3,101 @@ config BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
 	bool
 	default y if BR2_HOSTARCH = "x86_64" || BR2_HOSTARCH = "x86"
 
+# The pre-built Rust standard library is only available for a number
+# of architectures/C libraries combinations, with different levels of
+# support: Tier 1 platforms, Tier 2 platforms with host tools, Tier 2
+# platforms, Tier 3 platforms. Below, we support Tier 1, Tier 2 with
+# host tools and Tier 2 platforms.
+
+# The below entries match Tier 1 platforms as described at
+# https://doc.rust-lang.org/nightly/rustc/platform-support.html.
+config BR2_PACKAGE_HOST_RUSTC_TARGET_TIER1_PLATFORMS
+	bool
+	# aarch64-unknown-linux-gnu
+	default y if BR2_aarch64 && BR2_TOOLCHAIN_USES_GLIBC
+	# i686-unknown-linux-gnu
+	default y if (BR2_i686 || BR2_x86_pentiumpro || BR2_X86_CPU_HAS_MMX) && BR2_TOOLCHAIN_USES_GLIBC
+	# x86_64-unknown-linux-gnu
+	default y if BR2_x86_64 && BR2_TOOLCHAIN_USES_GLIBC
+
+# The below entries match Tier 2 platforms with host tools as
+# described at
+# https://doc.rust-lang.org/nightly/rustc/platform-support.html.
+config BR2_PACKAGE_HOST_RUSTC_TARGET_TIER2_HOST_TOOLS_PLATFORMS
+	bool
+	# aarch64-unknown-linux-musl
+	default y if BR2_aarch64 && BR2_TOOLCHAIN_USES_MUSL
+	# arm-unknown-linux-gnueabi
+	default y if BR2_ARM_CPU_ARMV6 && BR2_ARM_EABI && BR2_TOOLCHAIN_USES_GLIBC
+	# arm-unknown-linux-gnueabihf
+	default y if BR2_ARM_CPU_ARMV6 && BR2_ARM_EABIHF && BR2_TOOLCHAIN_USES_GLIBC
+	# armv7-unknown-linux-gnueabihf
+	default y if BR2_ARM_CPU_ARMV7A && BR2_ARM_EABIHF && BR2_TOOLCHAIN_USES_GLIBC
+	# mips-unknown-linux-gnu
+	default y if BR2_mips && BR2_TOOLCHAIN_USES_GLIBC && !BR2_MIPS_CPU_MIPS32R6
+	# mips64-unknown-linux-gnuabi64
+	default y if BR2_mips64 && BR2_TOOLCHAIN_USES_GLIBC && BR2_MIPS_NABI64 && !BR2_MIPS_CPU_MIPS32R6
+	# mipsel-unknown-linux-gnu
+	default y if BR2_mipsel && BR2_TOOLCHAIN_USES_GLIBC && !BR2_MIPS_CPU_MIPS32R6
+	# mips64el-unknown-linux-gnuabi64
+	default y if BR2_mips64el && BR2_TOOLCHAIN_USES_GLIBC && BR2_MIPS_NABI64 && !BR2_MIPS_CPU_MIPS32R6
+	# powerpc-unknown-linux-gnu
+	default y if BR2_powerpc && BR2_TOOLCHAIN_USES_GLIBC
+	# powerpc64-unknown-linux-gnu
+	default y if BR2_powerpc64 && BR2_TOOLCHAIN_USES_GLIBC
+	# powerpc64le-unknown-linux-gnu
+	default y if BR2_powerpc64le && BR2_TOOLCHAIN_USES_GLIBC
+	# riscv64gc-unknown-linux-gnu
+	# "g" stands for imafd, and we also need "c".
+	default y if BR2_riscv && BR2_RISCV_ISA_RVI && BR2_RISCV_ISA_RVM && \
+			BR2_RISCV_ISA_RVA && BR2_RISCV_ISA_RVF && \
+			BR2_RISCV_ISA_RVD && BR2_RISCV_ISA_RVC && \
+			BR2_TOOLCHAIN_USES_GLIBC
+	# x86_64-unknown-linux-musl
+	default y if BR2_x86_64 && BR2_TOOLCHAIN_USES_MUSL
+
+# The below entries match Tier 2 platforms without host tools as
+# described at
+# https://doc.rust-lang.org/nightly/rustc/platform-support.html.
+config BR2_PACKAGE_HOST_RUSTC_TARGET_TIER2_PLATFORMS
+	bool
+	# arm-unknown-linux-musleabi
+	default y if BR2_ARM_CPU_ARMV6 && BR2_ARM_EABI && BR2_TOOLCHAIN_USES_MUSL
+	# arm-unknown-linux-musleabihf
+	default y if BR2_ARM_CPU_ARMV6 && BR2_ARM_EABIHF && BR2_TOOLCHAIN_USES_MUSL
+	# armv5te-unknown-linux-gnueabi
+	default y if BR2_ARM_CPU_ARMV5 && BR2_ARM_EABI && BR2_TOOLCHAIN_USES_GLIBC
+	# armv5te-unknown-linux-musleabi
+	default y if BR2_ARM_CPU_ARMV5 && BR2_ARM_EABI && BR2_TOOLCHAIN_USES_MUSL
+	# armv7-unknown-linux-gnueabi
+	default y if BR2_ARM_CPU_ARMV7A && BR2_ARM_EABI && BR2_TOOLCHAIN_USES_GLIBC
+	# armv7-unknown-linux-musleabi
+	default y if BR2_ARM_CPU_ARMV7A && BR2_ARM_EABI && BR2_TOOLCHAIN_USES_MUSL
+	# armv7-unknown-linux-musleabihf
+	default y if BR2_ARM_CPU_ARMV7A && BR2_ARM_EABIHF && BR2_TOOLCHAIN_USES_MUSL
+	# i586-unknown-linux-gnu
+	default y if BR2_i586 && BR2_TOOLCHAIN_USES_GLIBC
+	# i586-unknown-linux-musl
+	default y if BR2_i586 && BR2_TOOLCHAIN_USES_MUSL
+	# i686-unknown-linux-musl
+	default y if (BR2_i686 || BR2_x86_pentiumpro || BR2_X86_CPU_HAS_MMX) && BR2_TOOLCHAIN_USES_MUSL
+	# mips-unknown-linux-musl
+	default y if BR2_mips && BR2_TOOLCHAIN_USES_MUSL && !BR2_MIPS_CPU_MIPS32R6
+	# mips64-unknown-linux-muslabi64
+	default y if BR2_mips64 && BR2_TOOLCHAIN_USES_MUSL && BR2_MIPS_NABI64 && !BR2_MIPS_CPU_MIPS32R6
+	# mips64el-unknown-linux-muslabi64
+	default y if BR2_mips64el && BR2_TOOLCHAIN_USES_MUSL && BR2_MIPS_NABI64 && !BR2_MIPS_CPU_MIPS32R6
+	# mipsel-unknown-linux-musl
+	default y if BR2_mipsel && BR2_TOOLCHAIN_USES_MUSL && !BR2_MIPS_CPU_MIPS32R6
+	# sparc64-unknown-linux-gnu
+	default y if BR2_sparc64 && BR2_TOOLCHAIN_USES_GLIBC
+
 # All target rust packages should depend on this option
 config BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
 	bool
-	# The pre-built Rust standard library is only available for the
-	# following architectures/ABIs, and is built against glibc.
-	default y if BR2_i386
-	default y if BR2_x86_64
-	default y if BR2_aarch64
-	default y if BR2_arm && !BR2_ARM_CPU_ARMV4 && !BR2_ARM_CPU_ARMV5 \
-	        && !(BR2_ARM_CPU_ARMV7A && BR2_ARM_EABI)
-	default y if BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le
-	default y if (BR2_mips || BR2_mipsel) && !BR2_MIPS_CPU_MIPS32R6
-	default y if (BR2_mips64 || BR2_mips64el) && !BR2_MIPS_CPU_MIPS64R6 \
-		&& BR2_MIPS_NABI64
-	depends on BR2_TOOLCHAIN_USES_GLIBC
+	default y if BR2_PACKAGE_HOST_RUSTC_TARGET_TIER1_PLATFORMS
+	default y if BR2_PACKAGE_HOST_RUSTC_TARGET_TIER2_HOST_TOOLS_PLATFORMS
+	default y if BR2_PACKAGE_HOST_RUSTC_TARGET_TIER2_PLATFORMS
 	depends on BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
 
 config BR2_PACKAGE_HOST_RUSTC_ARCH
