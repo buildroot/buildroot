@@ -1,0 +1,37 @@
+From 11bf7d5d11424749d549239540e5db06b8754bb5 Mon Sep 17 00:00:00 2001
+From: Kenny Levinsen <kl@kl.wtf>
+Date: Sun, 25 Apr 2021 20:16:19 +0200
+Subject: [PATCH] meson: Support building builtin without seatd
+
+The builtin backend relies on the seatd backend implementation. When
+builtin was enabled without seatd, compilation would fail due to the
+implementation not being included.
+
+Include the implementation if either seatd or builtin is enabled.
+
+Signed-off-by: Adrian Perez de Castro <aperez@igalia.com>
+Upstream-Status: backport [with adaptations]
+---
+ meson.build | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index ff56845..8cb4fc6 100644
+--- a/meson.build
++++ b/meson.build
+@@ -105,8 +105,11 @@ server_files = [
+ 	'seatd/server.c',
+ ]
+ 
+-if get_option('seatd').enabled()
++if get_option('seatd').enabled() or get_option('builtin').enabled()
+ 	private_files += 'libseat/backend/seatd.c'
++endif
++
++if get_option('seatd').enabled()
+ 	add_project_arguments('-DSEATD_ENABLED=1', language: 'c')
+ endif
+ 
+-- 
+2.31.1
+
