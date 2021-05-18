@@ -22,7 +22,7 @@ WLROOTS_DEPENDENCIES = \
 	wayland \
 	wayland-protocols
 
-WLROOTS_CONF_OPTS = -Dexamples=false -Dxcb-errors=disabled -Dlibseat=disabled
+WLROOTS_CONF_OPTS = -Dexamples=false -Dxcb-errors=disabled
 
 ifeq ($(BR2_PACKAGE_FFMPEG),y)
 WLROOTS_DEPENDENCIES += ffmpeg
@@ -44,6 +44,13 @@ WLROOTS_CONF_OPTS += -Dx11-backend=enabled -Dxwayland=enabled
 WLROOTS_DEPENDENCIES += libxcb xcb-util-wm xcb-util-renderutil xlib_libX11
 else
 WLROOTS_CONF_OPTS += -Dx11-backend=disabled -Dxwayland=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_SEATD_LIBSEAT),y)
+WLROOTS_CONF_OPTS += -Dlibseat=enabled
+WLROOTS_DEPENDENCIES += seatd
+else
+WLROOTS_CONF_OPTS += -Dlibseat=disabled
 endif
 
 $(eval $(meson-package))
