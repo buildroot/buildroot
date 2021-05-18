@@ -1,5 +1,5 @@
 config BR2_TARGET_AT91BOOTSTRAP3
-	bool "AT91 Bootstrap 3"
+	bool "AT91 Bootstrap 3+"
 	depends on BR2_arm926t || BR2_cortex_a5 || BR2_cortex_a7
 	help
 	  AT91Bootstrap is a first level bootloader for the Atmel AT91
@@ -16,9 +16,12 @@ if BR2_TARGET_AT91BOOTSTRAP3
 
 choice
 
-	prompt "AT91 Bootstrap 3 version"
+	prompt "AT91 Bootstrap 3+ version"
 
 config BR2_TARGET_AT91BOOTSTRAP3_LATEST_VERSION
+	bool "4.0.0-rc2"
+
+config BR2_TARGET_AT91BOOTSTRAP3_LATEST_VERSION_3X
 	bool "3.9.3"
 
 config BR2_TARGET_AT91BOOTSTRAP3_CUSTOM_GIT
@@ -51,7 +54,8 @@ endif
 
 config BR2_TARGET_AT91BOOTSTRAP3_VERSION
 	string
-	default "v3.9.3" if BR2_TARGET_AT91BOOTSTRAP3_LATEST_VERSION
+	default "v4.0.0-rc2" if BR2_TARGET_AT91BOOTSTRAP3_LATEST_VERSION
+	default "v3.9.3" if BR2_TARGET_AT91BOOTSTRAP3_LATEST_VERSION_3X
 	default BR2_TARGET_AT91BOOTSTRAP3_CUSTOM_REPO_VERSION \
 		if BR2_TARGET_AT91BOOTSTRAP3_CUSTOM_GIT
 	default "custom"	if BR2_TARGET_AT91BOOTSTRAP3_CUSTOM_TARBALL

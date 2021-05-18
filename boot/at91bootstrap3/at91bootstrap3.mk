@@ -20,9 +20,6 @@ AT91BOOTSTRAP3_SITE = $(call github,linux4sam,at91bootstrap,$(AT91BOOTSTRAP3_VER
 endif
 
 AT91BOOTSTRAP3_LICENSE = Atmel License
-ifeq ($(BR2_TARGET_AT91BOOTSTRAP3_LATEST_VERSION),y)
-AT91BOOTSTRAP3_LICENSE_FILES = main.c
-endif
 
 AT91BOOTSTRAP3_CPE_ID_VENDOR = linux4sam
 AT91BOOTSTRAP3_CPE_ID_PRODUCT = at91bootstrap
@@ -48,7 +45,7 @@ define AT91BOOTSTRAP3_BUILD_CMDS
 endef
 
 define AT91BOOTSTRAP3_INSTALL_IMAGES_CMDS
-	cp $(@D)/binaries/*.bin $(BINARIES_DIR)
+	cp $(wildcard $(@D)/build/binaries/*.bin $(@D)/binaries/*.bin) $(BINARIES_DIR)
 endef
 
 ifeq ($(BR2_TARGET_AT91BOOTSTRAP3_USE_DEFCONFIG),y)
