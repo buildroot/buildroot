@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-COG_VERSION = 0.8.1
+COG_VERSION = 0.10.0
 COG_SITE = https://wpewebkit.org/releases
 COG_SOURCE = cog-$(COG_VERSION).tar.xz
 COG_INSTALL_STAGING = YES
