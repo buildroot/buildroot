@@ -1,25 +1,72 @@
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING
 	bool "Provisioning"
+	select BR2_PACKAGE_WPEFRAMEWORK_SECURE_SOCKET
 	select BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
 	help
 	   WPE Platform Provisioning plugin
 
 if BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING
-config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_PROVISIONING_CACHE_PERIODE
-    int "cache period (s)"
-    default 2592000
-    help
-        Define the cache period in seconds.
-        Set to 0 to disable.
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_CLOUD
+    bool "Cloud provisioning"
+    default n
 
-config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_URI
-	string "provisioning URI"
-	default "provisioning-sdk.metrological.com:80"
+if BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_CLOUD
+    config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_PROVISIONING_CACHE_PERIODE
+        int "cache period (s)"
+        default 2592000
+        help
+            Define the cache period in seconds.
+            Set to 0 to disable.
 
-config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_OPERATOR
-	string "operator"
-	default "metrological"
+    config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_URI
+        string "provisioning URI"
+        default "provisioning-sdk.metrological.com:80"
+
+    config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_OPERATOR
+        string "operator"
+        default "metrological"
 endif
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_FILES
+    bool "File provisioning"
+    default n
+
+if BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_FILES
+    config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_VAULT_LOCATION
+        string "vault"
+        default "vault"
+        help
+            Define where the vault json files can be found. The
+            location will be relative to the plugins persitent
+            path.
+
+            Leave empty to skip the json config entry.
+endif
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_WIDEVINE
+    bool "Widevine provisioning"
+    default n
+
+if BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_WIDEVINE
+choice BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_WIDEVINE_LOG_LEVEL
+    prompt "Debug Level"
+    default BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_WIDEVINE_LOG_LEVEL_-1
+config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_WIDEVINE_LOG_LEVEL_-1
+    bool "Silent"
+config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_WIDEVINE_LOG_LEVEL_0
+    bool "Error"
+config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_WIDEVINE_LOG_LEVEL_1
+    bool "Warnings"
+config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_WIDEVINE_LOG_LEVEL_2
+    bool "Info"
+config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_WIDEVINE_LOG_LEVEL_3
+    bool "Debug"
+config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_WIDEVINE_LOG_LEVEL_4
+    bool "Verbose"
+endchoice
+endif
+
+endif # BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING
 
 comment "Provisioning is dependent on the provision proxy wpeframework extension"
     depends on !BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY
@@ -41,6 +88,6 @@ config BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_BLOBWRITER_BLOBS
         Define a string that contains the blobs to be written to files.
         format: (label:file:always;label:file:always) where 'always' is dump/overwrite file
         "labelx:/mnt/flash/labelx.bin:true;labely:/mnt/flash/labely.bin:false"
-        
+
 comment "BlobWriter is dependent on the provisioning plugin"
     depends on !BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING
