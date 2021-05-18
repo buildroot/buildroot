@@ -101,3 +101,11 @@ config BR2_TARGET_AT91BOOTSTRAP3_CUSTOM_CONFIG_FILE
 	  Path to the at91bootstrap3 configuration file
 
 endif # BR2_TARGET_AT91BOOTSTRAP3
+
+config BR2_TARGET_AT91BOOTSTRAP3_NEEDS_PYTHON3
+	bool "needs host-python3"
+	help
+	  Enable this option if the at91bootstrap build process needs
+	  Python 3.x to be available on the host. This is needed in
+	  some at91bootstrap configurations to use NAND/PMECC Python
+	  scripts.
