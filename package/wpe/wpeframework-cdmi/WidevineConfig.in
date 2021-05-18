@@ -34,6 +34,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_DEVICE_CERTIFICATE
     help
         Widevine device certificate used during the provisioning process.
 
+config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_STORAGE_LOCATION
+    string "Storage Location"
+    depends on BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_MODULE
+    default ""
+    help
+        Widevine persistent storage location.
+
 config BR2_PACKAGE_WPEFRAMEWORK_CDMI_WIDEVINE_KEYBOX
     string "Keybox"
     default ""
