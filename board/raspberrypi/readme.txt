@@ -52,6 +52,10 @@ For model CM4 (on IO Board):
 
   $ make raspberrypicm4io_defconfig
 
+or for CM4 (on IO Board - 64 bit):
+
+  $ make raspberrypicm4io_64_defconfig
+
 Build the rootfs
 ----------------
 
