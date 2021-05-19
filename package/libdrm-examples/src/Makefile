@@ -60,20 +60,29 @@ headers := $(wildcard $(srcdir)*.h)
 sources := $(wildcard $(srcdir)*.cpp)
 objects := $(patsubst %cpp,$(objdir)/%o,$(sources))
 
+
+build = $(CXX) -Wl,--verbose $(LDFLAGS) $(objdir)/$(@).o -o $(bindir)/$(@)
+
 rebuild = touch $(sources);
+
 
 # The main target(s)
 all:
-	$(error "Specify drm-prime as target")
+	$(error "Specify drm-prime-simple or drm-prime-tile as target")
 
 #https://www.gnu.org/software/make/manual/make.html#Target_002dspecific
-drm-prime: EXTRA_FLAGS=-DNO_FLAGS
+drm-prime-simple: EXTRA_FLAGS=-DNO_FLAGS
+
+drm-prime-tile: EXTRA_FLAGS=-DNO_FLAGS
 
 # Generate the binaries
-drm-prime: $(objects) | $(bindir)
+drm-prime-simple: $(objects) | $(bindir)
 
-#	$(call rebuild)
-	$(CXX) -Wl,--verbose $(LDFLAGS) $^ -o $(bindir)/$@
+	$(call build)
+
+drm-prime-tile: $(objects) | $(bindir)
+
+	$(call build)
 
 # Create all object files
 $(objdir)/%.o: %.cpp | $(objdir)

@@ -369,8 +369,6 @@ bool Init (struct configuration& settings) {
 
         settings.gbm.dev = (settings.drm.fd != InvalidDRMfd () ? gbm_create_device (settings.drm.fd) : InvalidGBMdev ());
 
-//TODO: flags, pssibly gbm_bo_FD_IMPORT
-
         settings.gbm.surf = (settings.gbm.dev != nullptr ? gbm_surface_create (settings.gbm.dev, Width (), Height (), ColorFormat (), GBM_BO_USE_SCANOUT /* presented on a screen */ | GBM_BO_USE_RENDERING /* used for rendering */) : nullptr );
 
         if (settings.gbm.surf != InvalidGBMsurf ()) {
@@ -447,7 +445,7 @@ bool Init (struct configuration& settings) {
 bool Deinit (struct configuration& settings) {
     bool _ret = true;
 
-    if(eglMakeCurrent (settings.egl.dpy, settings.egl.surf, settings.egl.surf, settings.egl.ctx) != EGL_TRUE) {
+    if (eglMakeCurrent (settings.egl.dpy, settings.egl.surf, settings.egl.surf, settings.egl.ctx) != EGL_TRUE) {
         // Error
         _ret = false;
     }
@@ -684,7 +682,22 @@ ssize_t ReceiveFd (int sock, uint8_t /*const*/ buf [], size_t bufsize, int* fd) 
     return _size;
 }
 
-// Just the renderer
+bool ImportBOFromFD (struct configuration& settings) {
+    bool _ret = false;
+
+    if (settings.gbm.prime != InvalidGBMprime ()) {
+
+        struct gbm_import_fd_data _frame = {settings.gbm.prime /* fd */, Width () /* width */ , Height () /* height */, 7680 /* stride */, ColorFormat () /* format */};
+
+        settings.gbm.bo = gbm_bo_import (settings.gbm.dev, GBM_BO_IMPORT_FD, &_frame, GBM_BO_USE_SCANOUT);
+
+        _ret = settings.gbm.bo != InvalidGBMbo ();
+    }
+
+    return _ret;
+}
+
+// Just the renderer, eg, the client
 void Child (int sock) {
     // It alsmost could not get simpler
     auto BufferColorFill = [] (float degree) -> bool {
@@ -862,14 +875,8 @@ void Parent (int sock, pid_t child) {
                         _settings.gbm.bo = InvalidGBMbo ();
                     }
 
-// TODO: exchange values between KMS and render processes
-                    struct gbm_import_fd_data _frame = {_settings.gbm.prime /* fd */, Width () /* width */ , Height () /* height */, 7680 /* stride */, ColorFormat () /* format */};
-
-                    _settings.gbm.bo = gbm_bo_import (_settings.gbm.dev, GBM_BO_IMPORT_FD, &_frame, GBM_BO_USE_SCANOUT /* | GBM_BO_USE_RENDEING */);
-
-
-                    if (_settings.gbm.bo == InvalidGBMbo ()) {
-                        std::cout << "Error: gbm_bo_import" << std::endl;
+                    if (ImportBOFromFD (_settings) != true) {
+                        std::cout << "Error: scan out impossible" << std::endl;
                     }
                     else {
                         ScanOut (_settings);
