@@ -610,7 +610,7 @@ def check_package_cpes(nvd_path, packages):
         if cpedb.find(p.cpeid):
             p.status['cpe'] = ("ok", "verified CPE identifier")
         else:
-            p.status['cpe'] = ("error", "CPE identifier unknown in CPE database")
+            p.status['cpe'] = ("error", "CPE version unknown in CPE database")
 
 
 def calculate_stats(packages):
