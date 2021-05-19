@@ -43,6 +43,10 @@ For model 4 B:
 
   $ make raspberrypi4_defconfig
 
+or for model 4 B (64 bit):
+
+  $ make raspberrypi4_64_defconfig
+
 Build the rootfs
 ----------------
 
