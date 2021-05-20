@@ -44,7 +44,7 @@ else
         WIDEVINE_BUILD_DIR=Release
 endif
 
-ifeq ($(BR2_ENABLE_PROVISIONING_APP),y)
+ifeq ($(BR2_PACKAGE_WIDEVINE_ENABLE_PROVISIONING_APP),y)
 	WIDEVINE_PROVISIONING_APP = --provisioning_app
 	WIDEVINE_DEPENDENCIES = libcurl openssl
 	
@@ -69,7 +69,7 @@ endef
 define WIDEVINE_INSTALL_STAGING_CMDS
 	$(INSTALL) -d $(STAGING_DIR)/usr/lib/widevine
         $(INSTALL) -D $(@D)/out/wpe/$(WIDEVINE_BUILD_DIR)/*.a $(STAGING_DIR)/usr/lib/widevine
-        
+
 	$(INSTALL) -d $(STAGING_DIR)/usr/include/widevine
         $(INSTALL) -D $(@D)/cdm/include/*.h $(STAGING_DIR)/usr/include/widevine
         $(INSTALL) -D $(@D)/core/include/*.h $(STAGING_DIR)/usr/include/widevine
