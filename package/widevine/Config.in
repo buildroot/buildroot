@@ -4,6 +4,8 @@ config BR2_PACKAGE_WIDEVINE
 	select BR2_PACKAGE_WIDEVINE_SOC_WPE
 	select BR2_PACKAGE_PROTOBUF
 	select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
+	select BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING
+	select BR2_PACKAGE_WPEFRAMEWORK_PROVISIONING_WIDEVINE
         bool "Widevine"
         help
            Widevine DRM solution provides the capability to license, securely distribute and protect
