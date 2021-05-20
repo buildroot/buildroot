@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PLAYREADY4_VERSION = 8440356ff33359a9f5b8e2453f51136df7559c32
+PLAYREADY4_VERSION = f67f8407d058fefbb5d4e4991604bc9d21f57833
 PLAYREADY4_SITE = git@github.com:Metrological/playready.git
 PLAYREADY4_SITE_METHOD = git
 PLAYREADY4_LICENSE = PROPRIETARY
@@ -45,7 +45,7 @@ define PLAYREADY4_INSTALL
         $(INSTALL) -D -m 0755 $(@D)/bin/lib/libplayready.so $(1)/usr/lib/libplayready.so
 
         test -f $(@D)/bin/exe/prdy_test.exe && \
-            $(INSTALL) -D -m 0755 $(@D)/bin/exe/prdy_test.exe $(1)/usr/bin/prdy_test.exe
+            $(INSTALL) -D -m 0755 $(@D)/bin/exe/prdy_test.exe $(1)/usr/bin/prdy_test.exe || true
 
         $(INSTALL) -d $(1)$(PLAYREADY4_DATA_DIR)
 endef
