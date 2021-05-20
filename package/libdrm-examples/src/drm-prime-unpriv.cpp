@@ -41,7 +41,6 @@ There is much room for improvement!
 #include <type_traits>
 #include <atomic>
 #include <array>
-#include <algorithm>
 
 #ifdef __cplusplus
 extern "C" {
@@ -89,6 +88,10 @@ struct configuration {
         EGLSurface surf;
         EGLImageKHR img;
     } egl;
+
+    struct gl {
+        GLuint fbo;
+    } gl;
 };
 
 static constexpr decltype (configuration::drm::fd) InvalidDRMfd () {
@@ -364,6 +367,8 @@ bool Clear (struct configuration& settings) {
     settings.egl.surf = EGL_NO_SURFACE;
     settings.egl.ctx = EGL_NO_CONTEXT;
     settings.egl.img = EGL_NO_IMAGE_KHR;
+
+    settings.gl.fbo = 0;
 
     return _ret;
 }
@@ -874,6 +879,40 @@ auto RenderTile () -> bool {
     return _ret;
 }
 
+bool ImportEGLImageFromBo (struct configuration& settings) {
+    bool _ret = false;
+
+    if (settings.gbm.bo != InvalidGBMbo ()) {
+
+        if (settings.egl.img != EGL_NO_IMAGE_KHR) {
+            static EGLBoolean (* _eglDestroyImageKHR) (EGLDisplay, EGLImageKHR) = reinterpret_cast < EGLBoolean (*) (EGLDisplay, EGLImageKHR) > (eglGetProcAddress ("eglDestroyImageKHR"));
+
+            if (_eglDestroyImageKHR != nullptr) {
+                /*EGLBoolean*/ _eglDestroyImageKHR (settings.egl.dpy, settings.egl.img);
+                settings.egl.img = EGL_NO_IMAGE_KHR;
+            }
+        }
+
+        EGLint _attrs [] = {
+// TODO: let it not depend on global settings
+            EGL_WIDTH, Width (),
+            EGL_HEIGHT, Height (),
+            EGL_NONE
+        };
+
+        static EGLImageKHR (* _eglCreateImageKHR) (EGLDisplay, EGLContext, EGLenum, EGLClientBuffer, EGLint const * ) = reinterpret_cast < EGLImageKHR (*) (EGLDisplay, EGLContext, EGLenum, EGLClientBuffer, EGLint const * ) > (eglGetProcAddress ("eglCreateImageKHR"));
+
+        if (_eglCreateImageKHR != nullptr) {
+            settings.egl.img = _eglCreateImageKHR (settings.egl.dpy, EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR, settings.gbm.bo, _attrs);
+        }
+
+        _ret = settings.egl.img != EGL_NO_IMAGE_KHR;
+
+    }
+
+    return _ret;
+}
+
 bool ImportEGLImageFromFD (struct configuration& settings) {
     bool _ret = false;
 
@@ -906,12 +945,13 @@ bool ImportEGLImageFromFD (struct configuration& settings) {
         }
 
         _ret = settings.egl.img != EGL_NO_IMAGE_KHR;
+
     }
 
     return _ret;
 }
 
-bool RenderEGLImage (struct configuration& settings) {
+bool RenderEGLImage (struct configuration& settings, bool fbo = false) {
     bool _ret = glGetError () == GL_NO_ERROR;
 
     if (_ret != false) {
@@ -925,7 +965,7 @@ bool RenderEGLImage (struct configuration& settings) {
         _ret = glGetError () == GL_NO_ERROR;
     }
 
-    constexpr GLenum _target = GL_TEXTURE_EXTERNAL_OES;
+    GLenum _target = (fbo != true ? GL_TEXTURE_EXTERNAL_OES : GL_TEXTURE_2D);
 
     if (_ret != false) {
         glBindTexture (_target, _tex);
@@ -966,12 +1006,42 @@ bool RenderEGLImage (struct configuration& settings) {
     }
 
     if (_ret != false) {
+       if (fbo != false) {
+            if (settings.gl.fbo > 0) {
+                glDeleteFramebuffers (1, &settings.gl.fbo);
+                _ret = glGetError () == GL_NO_ERROR;
+            }
+
+            if (_ret != false) {
+                glGenFramebuffers(1, &settings.gl.fbo);
+                _ret = glGetError () == GL_NO_ERROR;
+            }
+
+            if (_ret != false) {
+                glBindFramebuffer(GL_FRAMEBUFFER, settings.gl.fbo);
+                _ret = glGetError () == GL_NO_ERROR;
+            }
+
+            if (_ret != false) {
+                glFramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _tex, 0);
+                _ret = glGetError () == GL_NO_ERROR;
+            }
+        }
+    }
+
+    if (_ret != false) {
+// TODO: values actually depends on the underlying item
         glViewport (0, 0, Width (), Height ());
         _ret = glGetError () == GL_NO_ERROR;
     }
 
     if (_ret != false) {
-        _ret = RenderTile ();
+        if (fbo != true) {
+            _ret = RenderTile ();
+        }
+        else {
+            glBindFramebuffer(GL_FRAMEBUFFER, settings.gl.fbo);
+        }
     }
 
     return _ret;
@@ -1012,10 +1082,7 @@ void Child (int sock) {
 
     struct configuration _settings;
 
-    // Not all combinations with the Parent's node might be supported
-//    _settings.drm.path = "/dev/dri/card10";
-    _settings.drm.path = "/dev/dri/card1";
-//    _settings.drm.path = "/dev/dri/renderD128";
+    _settings.drm.path = "/dev/dri/renderD128";
 
 
     if (Init (_settings) != false && _settings.drm.fd != InvalidDRMfd ()) {
@@ -1024,82 +1091,39 @@ void Child (int sock) {
             std::cout << "Error: unable to drop master" << std::endl;
         }
 
-        char key = ' ';
-
         // EGL and GLESv2 use float
         static_assert (std::numeric_limits <uint16_t>::max () <= std::numeric_limits <float>::max ());
         uint16_t _degree = 0;
 
-        while (ReadKey ("Press 'c' to create a buffer to be sent, 'Enter' or 'q' to quit", key) != false && key != 'q') {
+        std::string _message (255, '\0');
+        while (ReceiveFd (sock, reinterpret_cast <uint8_t /*const*/ *> (&_message[0]), sizeof (_message.size ()), &_settings.gbm.prime) > 0) {
 
-            if (key != 'c') {
-                continue;
-            }
+            if (_settings.drm.fd != InvalidDRMfd ()) {
 
-            constexpr uint16_t ROTATION = 360;
-            constexpr uint16_t DELTA = 10;
-
-            _degree = (_degree + DELTA) % ROTATION;
-
-            if (BufferColorFill (_degree) != true || eglSwapBuffers (_settings.egl.dpy, _settings.egl.surf) != EGL_TRUE) {
-                // Error
-                std::cout << "Error: eglSwapBuffers (0x" << std::hex << eglGetError () << ")" << std::endl;
-            }
-            else {
-
-                if (_settings.gbm.bo != InvalidGBMbo ()) {
-                    /* void */ gbm_surface_release_buffer (_settings.gbm.surf, _settings.gbm.bo);
-                    _settings.gbm.bo = InvalidGBMbo ();
-                }
-
-#ifdef _0
-                std::cout << "gbm_surface_has_free_buffers :" << gbm_surface_has_free_buffers (_settings.gbm.surf) << std::endl;
-#endif
-
-                // Only after a swap this API is defined, prepare for a segfault otherwise
-                _settings.gbm.bo = gbm_surface_lock_front_buffer (_settings.gbm.surf);
-
-
-                if (_settings.gbm.bo != InvalidGBMbo ()) {
-                    // Export the GEM object
-
-#ifdef _0
-// TODO: export properties
-                    std::cout << "stride " << gbm_bo_get_stride (_settings.gbm.bo) << std::endl;
-                    std::cout << "height " << gbm_bo_get_height (_settings.gbm.bo) << std::endl;
-                    std::cout << "width " << gbm_bo_get_width (_settings.gbm.bo) << std::endl;
-                    std::cout << "format " << gbm_bo_get_format (_settings.gbm.bo) << std::endl;
-#endif
-
-                    if (_settings.gbm.prime != InvalidGBMprime ()) {
-                        if (close (_settings.gbm.prime) < 0) {
-                            std::cout << "Error: prime cannot be closed (" << strerror (errno) << ")" << std::endl;
-                        }
-                    }
-
-                    _settings.gbm.prime = gbm_bo_get_fd (_settings.gbm.bo);
-
-                    // Exports a dma-buf.
-                    if (_settings.gbm.prime == InvalidGBMprime ()) {
-                        std::cout << "Error: cannot create prime (" << strerror (errno) << ")" << std::endl;
-                    }
-                    else {
-// TODO: uint8_t, vs char
-// last char \0
-                        std::string /*const*/ _message ("FD : "); _message.append (std::to_string (_settings.gbm.prime));
-
-                        // Negative size indicates an error
-                        /* ssize_t */ SendFd (sock, reinterpret_cast <uint8_t /*const*/ *> (&_message [0]), _message.size (), _settings.gbm.prime);
-                    }
-
+                if (ImportEGLImageFromFD (_settings) != true || RenderEGLImage (_settings, true) != true) {
+                    std::cout << "Error: Rendering impossible" << std::endl;
                 }
                 else {
-                    std::cout << "Error: unable to lock font buffer" << std::endl;
+ 
+                    constexpr uint16_t ROTATION = 360;
+                    constexpr uint16_t DELTA = 10;
+
+                    _degree = (_degree + DELTA) % ROTATION;
+
+                    if (BufferColorFill (_degree) != true || eglSwapBuffers (_settings.egl.dpy, _settings.egl.surf) != EGL_TRUE) {
+                        // Error
+                        std::cout << "Error: eglSwapBuffers (0x" << std::hex << eglGetError () << ")" << std::endl;
+                    }
                 }
+
+                if (close (_settings.gbm.prime) < 0) {
+                    std::cout << "Error: prime cannot be closed (" << strerror (errno) << ")" << std::endl;
+                }
+
+                _settings.gbm.prime = InvalidGBMprime ();
             }
 
         }
-
     }
     else {
         // Error
@@ -1124,8 +1148,13 @@ void Parent (int sock, pid_t child) {
             std::cout << "Error: unable to become master" << std::endl;
         }
 
-        while (true) {
-            std::string _message (255, '\0');
+        char key = ' ';
+
+        while (ReadKey ("Press 'c' to create a buffer to be sent, 'Enter' or 'q' to quit", key) != false && key != 'q') {
+
+            if (key != 'c') {
+                continue;
+            }
 
             if (_settings.gbm.prime != InvalidGBMprime ()) {
                 if (close (_settings.gbm.prime) < 0) {
@@ -1135,39 +1164,60 @@ void Parent (int sock, pid_t child) {
                 _settings.gbm.prime = InvalidGBMprime ();
             }
 
-
-// TODO: size uint_8, char, and mmax 
-            ssize_t _size = ReceiveFd (sock, reinterpret_cast <uint8_t /*const*/ *> (&_message[0]), sizeof (_message.size ()), &_settings.gbm.prime);
-
-            if (_size <= 0) {
-                break;
+            if (_settings.gbm.bo != InvalidGBMbo ()) {
+                // Intended to show the full flow of creation and destruction, repeatedly, but it is not releasing memory from the CMA pool as expected
+//                gbm_bo_destroy (_settings.gbm.bo);
+//                _settings.gbm.bo = InvalidGBMbo ();
             }
             else {
-#ifdef _0
-                std::cout << "Message from client : " << _message << " : _prime : " << _settings.gbm.prime << std::endl;
-#endif
+                // So, instead, re-use the buffer
 
-                if (_settings.drm.fd != InvalidDRMfd ()) {
+                _settings.gbm.bo = gbm_bo_create (_settings.gbm.dev, Width (), Height (), ColorFormat (), GBM_BO_USE_RENDERING);
+            }
 
-                    if (ImportEGLImageFromFD (_settings) != true || RenderEGLImage (_settings) != true) {
+            if (_settings.gbm.bo != InvalidGBMbo ()) {
+                _settings.gbm.prime = gbm_bo_get_fd (_settings.gbm.bo);
+            }
+
+            // Exports a dma-buf.
+            if (_settings.gbm.prime == InvalidGBMprime ()) {
+                std::cout << "Error: cannot create prime (" << strerror (errno) << ")" << std::endl;
+            }
+            else {
+                std::string /*const*/ _message ("FD : "); _message.append (std::to_string (_settings.gbm.prime));
+
+                ssize_t _size = SendFd (sock, reinterpret_cast <uint8_t /*const*/ *> (&_message [0]), _message.size (), _settings.gbm.prime);
+
+                if (_size <= 0) {
+                    break;
+                }
+                else {
+
+                    if (_settings.drm.fd == InvalidDRMfd () || ImportEGLImageFromBo (_settings) != true || RenderEGLImage (_settings) != true) {
                         std::cout << "Error: scan out impossible" << std::endl;
                     }
                     else {
 
                         if (eglSwapBuffers (_settings.egl.dpy, _settings.egl.surf) != EGL_FALSE) {
-                            _settings.gbm.bo = gbm_surface_lock_front_buffer (_settings.gbm.surf);
-                        }
 
-                        /* bool */ ScanOut (_settings);
+                            static struct gbm_bo* _bo = nullptr;
 
-                        if (_settings.gbm.bo != InvalidGBMbo ()) {
-                            /* void */ gbm_surface_release_buffer (_settings.gbm.surf, _settings.gbm.bo);
-                            _settings.gbm.bo = InvalidGBMbo ();
+                            _bo = gbm_surface_lock_front_buffer (_settings.gbm.surf);
+
+                            std::swap (_bo, _settings.gbm.bo);
+
+                            /* bool */ ScanOut (_settings);
+
+                            std::swap (_bo, _settings.gbm.bo);
+
+                            /* void */ gbm_surface_release_buffer (_settings.gbm.surf, _bo);
                         }
 
                     }
+
                 }
             }
+
         }
 
     }
