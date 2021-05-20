@@ -15,6 +15,7 @@ sedta and seinfoflow to require python3-networkx
 Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 [Refreshed for 4.3.0]
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
+[Refreshed for 4.4.0]
 ---
  sedta                       | 3 ++-
  seinfoflow                  | 5 +++--
@@ -36,7 +37,7 @@ index 60861ca630a5..0056172a55e5 100755
 +import setools.dta
  
  
- def print_transition(trans):
+ def print_transition(trans: setools.DomainTransition) -> None:
 @@ -114,7 +115,7 @@ else:
  
  try:
@@ -58,7 +59,7 @@ index f10c39de4d8e..fe733bbd0787 100755
  import argparse
  import sys
  import logging
-@@ -101,8 +102,8 @@ elif args.booleans is not None:
+@@ -102,8 +103,8 @@ elif args.booleans is not None:
  try:
      p = setools.SELinuxPolicy(args.policy)
      m = setools.PermissionMap(args.map)
@@ -70,20 +71,20 @@ index f10c39de4d8e..fe733bbd0787 100755
      if args.shortest_path or args.all_paths:
          if args.shortest_path:
 diff --git a/setools/__init__.py b/setools/__init__.py
-index 26fa5aa34a19..9e9058a6bf90 100644
+index d72d343..4d5aaaa 100644
 --- a/setools/__init__.py
 +++ b/setools/__init__.py
-@@ -75,11 +75,11 @@ from .pcideviceconquery import PcideviceconQuery
+@@ -91,11 +91,11 @@ from .pcideviceconquery import PcideviceconQuery
  from .devicetreeconquery import DevicetreeconQuery
  
  # Information Flow Analysis
 -from .infoflow import InfoFlowAnalysis
 +# from .infoflow import InfoFlowAnalysis
- from .permmap import PermissionMap
+ from .permmap import PermissionMap, RuleWeight, Mapping
  
  # Domain Transition Analysis
--from .dta import DomainTransitionAnalysis
-+# from .dta import DomainTransitionAnalysis
+-from .dta import DomainTransitionAnalysis, DomainEntrypoint, DomainTransition
++# from .dta import DomainTransitionAnalysis, DomainEntrypoint, DomainTransition
  
  # Policy difference
  from .diff import PolicyDifference
@@ -91,7 +92,7 @@ diff --git a/setoolsgui/apol/dta.py b/setoolsgui/apol/dta.py
 index 4608b9dbf34e..2cde44c142e9 100644
 --- a/setoolsgui/apol/dta.py
 +++ b/setoolsgui/apol/dta.py
-@@ -23,7 +23,7 @@ from PyQt5.QtCore import pyqtSignal, Qt, QStringListModel, QThread
+@@ -24,7 +24,7 @@ from PyQt5.QtCore import pyqtSignal, Qt, QStringListModel, QThread
  from PyQt5.QtGui import QPalette, QTextCursor
  from PyQt5.QtWidgets import QCompleter, QHeaderView, QMessageBox, QProgressDialog, \
      QTreeWidgetItem
@@ -99,7 +100,7 @@ index 4608b9dbf34e..2cde44c142e9 100644
 +from setools.dta import DomainTransitionAnalysis
  
  from ..logtosignal import LogHandlerToSignal
- from .analysistab import AnalysisTab
+ from .analysistab import AnalysisSection, AnalysisTab
 diff --git a/setoolsgui/apol/infoflow.py b/setoolsgui/apol/infoflow.py
 index 7bca299d23fc..7fee2778f35f 100644
 --- a/setoolsgui/apol/infoflow.py
