@@ -46,13 +46,13 @@ else
 LVM2_CONF_OPTS += --disable-selinux
 endif
 
-ifeq ($(BR2_PACKAGE_LVM2_STANDARD_INSTALL),)
+ifeq ($(BR2_PACKAGE_LVM2_STANDARD_INSTALL),y)
+LVM2_INSTALL_STAGING_OPTS += install
+LVM2_INSTALL_TARGET_OPTS += install
+else
 LVM2_MAKE_OPTS = device-mapper
 LVM2_INSTALL_STAGING_OPTS += install_device-mapper
 LVM2_INSTALL_TARGET_OPTS += install_device-mapper
-else
-LVM2_INSTALL_STAGING_OPTS += install
-LVM2_INSTALL_TARGET_OPTS += install
 endif
 
 ifeq ($(BR2_INIT_SYSTEMD),y)
