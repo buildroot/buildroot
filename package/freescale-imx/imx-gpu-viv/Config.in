@@ -92,8 +92,7 @@ config BR2_PACKAGE_IMX_GPU_VIV_EXAMPLES
 	  Warning: examples take approximately 150 MB of disk space.
 
 comment "imx-gpu-viv-examples need a toolchain w/ C++ support"
-    depends on !BR2_INSTALL_LIBSTDCPP
-
+	depends on !BR2_INSTALL_LIBSTDCPP
 
 config BR2_PACKAGE_IMX_GPU_VIV_GMEM_INFO
 	bool "install gmem_info tool"
