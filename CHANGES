@@ -1,3 +1,38 @@
+2021.05-rc2, released May 22th, 2021
+
+	Fixes all over the tree.
+
+	support/scripts/gen-missing-cpe: A script to query the list of
+	CPE IDs for the packages enabled in the current configuration and:
+
+	- for CPE IDs that do not have any matching entry in the CPE
+	  database, it emits a warning
+
+	- for CPE IDs that do have a matching entry, but not with the same
+	  version, it generates a snippet of XML that can be used to propose
+	  an updated version to NIST.
+
+	CPE meta data has been added for a large number of packages
+
+	Updated/fixed packages: assimp, binutils, bitcoin, bullet,
+	cutelyst, dhcp, dmalloc, docker-engine, ebtables,
+	environment-setup, flatcc, gcc, gd, gerbera, hostapd,
+	imx-gpu-viv, intel-microcode, jquery-validation, libdrm,
+	libgeos, libraw, libtirpc, libxml2, libxslt, live555, lmbench,
+	localedef, lvm2, mender, mender-grubenv, modem-manager, mutt,
+	opensbi, openssh, opentyrian, pipewire, postgis, postgresql,
+	prosody, python-bluezero, python-falcon, redis, rocksdb,
+	rt-tests, runc, vlc, waylandpp, webkitgtk, wireshark,
+	wpa_supplicant, wpewebkit, xlib_libX11, xterm
+
+	New packages: jh71xx-tools
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13781: isc dhcp-server package don't create file /usr/bin/dhcpd
+	#13801: toolchainfile.cmake CMAKE_BUILD_TYPE
+	#13806: Building host-localedef fails on fedora 34/gcc 11
+
 2021.05-rc1, released May 12th, 2021
 
 	Fixes all over the tree and new features.
