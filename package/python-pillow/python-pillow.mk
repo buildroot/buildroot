@@ -28,6 +28,13 @@ else
 PYTHON_PILLOW_BUILD_OPTS += --disable-jpeg
 endif
 
+ifeq ($(BR2_PACKAGE_LCMS2),y)
+PYTHON_PILLOW_DEPENDENCIES += lcms2
+PYTHON_PILLOW_BUILD_OPTS += --enable-lcms
+else
+PYTHON_PILLOW_BUILD_OPTS += --disable-lcms
+endif
+
 ifeq ($(BR2_PACKAGE_OPENJPEG),y)
 PYTHON_PILLOW_DEPENDENCIES += openjpeg
 PYTHON_PILLOW_BUILD_OPTS += --enable-jpeg2000
