@@ -135,7 +135,7 @@ __EOF__
                         cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
 # Enable spi functionality
 dtparam=spi=on
-dtoverlay=spi0-1cs
+dtoverlay=spi0
 __EOF__
 		fi
 		;;
