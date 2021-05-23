@@ -47,6 +47,13 @@ config BR2_PACKAGE_PLUGIN_SCRIPTENGINE
 	help
 	   Script Engine plugin
 
+config BR2_PACKAGE_PLUGIN_SPICONTROL
+	bool "SPIControl"
+	select BR2_PACKAGE_BRIDGE_DEVICES
+        select BR2_PACKAGE_PLUGIN_DOMOTICA
+	help
+	   SPIControl plugin
+
 config BR2_PACKAGE_PLUGIN_TEMPCONTROL
 	bool "TempControl"
 	select BR2_PACKAGE_BRIDGE_DEVICES
@@ -59,6 +66,13 @@ config BR2_PACKAGE_PLUGIN_VIRTUALCONTROL
         select BR2_PACKAGE_PLUGIN_DOMOTICA
 	help
 	   VirtualControl plugin
+
+config BR2_PACKAGE_PLUGIN_ZIGBEECONTROL
+	bool "ZigBeeControl"
+	select BR2_PACKAGE_BRIDGE_ZIGBEE
+        select BR2_PACKAGE_PLUGIN_DOMOTICA
+	help
+	   ZIGBEE control plugin
 
 config BR2_PACKAGE_PLUGIN_ZWAVECONTROL
 	bool "ZWaveControl"
