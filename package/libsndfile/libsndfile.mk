@@ -18,7 +18,13 @@ LIBSNDFILE_IGNORE_CVES += CVE-2018-13419
 LIBSNDFILE_CONF_OPTS = \
 	--disable-sqlite \
 	--disable-alsa \
-	--disable-external-libs \
 	--disable-full-suite
+
+ifeq ($(BR2_PACKAGE_FLAC)$(BR2_PACKAGE_LIBVORBIS)$(BR2_PACKAGE_OPUS),yyy)
+LIBSNDFILE_DEPENDENCIES += flac host-pkgconf libvorbis opus
+LIBSNDFILE_CONF_OPTS += --enable-external-libs
+else
+LIBSNDFILE_CONF_OPTS += --disable-external-libs
+endif
 
 $(eval $(autotools-package))
