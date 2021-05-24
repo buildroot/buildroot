@@ -1,0 +1,22 @@
+config BR2_PACKAGE_XMRIG
+	bool "xmrig"
+	# archs officially supported by upstream
+	depends on BR2_aarch64 || BR2_x86_64 || BR2_i386
+	depends on BR2_USE_MMU # libuv
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libuv
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # libuv
+	# xmrig needs fenv.h which is not provided by uclibc
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC
+	depends on !BR2_STATIC_LIBS # libuv
+	select BR2_PACKAGE_LIBUV
+	help
+	  RandomX, CryptoNight, AstroBWT and Argon2 CPU/GPU miner.
+
+	  https://xmrig.com
+
+comment "xmrig needs a glibc or musl toolchain w/ NPTL, dynamic library"
+	depends on BR2_aarch64 || BR2_x86_64 || BR2_i386
+	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_TOOLCHAIN_HAS_THREADS_NPTL || \
+		BR2_TOOLCHAIN_USES_UCLIBC || BR2_STATIC_LIBS
