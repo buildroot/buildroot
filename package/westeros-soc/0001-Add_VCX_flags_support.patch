@@ -1,0 +1,47 @@
+diff --git a/brcm/Makefile.am b/brcm/Makefile.am
+index 2bfc998..4bebec0 100644
+--- a/brcm/Makefile.am
++++ b/brcm/Makefile.am
+@@ -35,6 +35,16 @@ AM_CFLAGS = -DUSE_WESTEROS $(NEXUS_CFLAGS) $(NXCLIENT_CFLAGS) -I$(ROCKFORD_TOP)/
+ 
+ AM_LDFLAGS = 
+ 
++if ENABLE_VC5
++AM_CFLAGS += \
++    -DVCX=5 \
++    -I${PKG_CONFIG_SYSROOT_DIR}/usr/include/interface/khronos/include \
++    -I${PKG_CONFIG_SYSROOT_DIR}/usr/include/interface/khronos/include/bcg_abstract \
++    -I${PKG_CONFIG_SYSROOT_DIR}/usr/include/vcos/include
++else
++AM_CFLAGS += -DVCX=3
++endif
++
+ lib_LTLIBRARIES = libwesteros_gl.la
+ 
+ libwesteros_gl_la_SOURCES = westeros-gl/westeros-gl.cpp
+diff --git a/brcm/configure.ac b/brcm/configure.ac
+index f18567f..78fa91e 100644
+--- a/brcm/configure.ac
++++ b/brcm/configure.ac
+@@ -60,6 +60,21 @@ PKG_CHECK_MODULES([WAYLAND_SERVER],[wayland-server >= 1.6.0])
+ WAYLANDLIB="-lwayland-client"
+ AC_SUBST(WAYLANDLIB)
+ 
++ENABLE_VC5=" "
++
++AC_ARG_ENABLE([vc5],
++        AS_HELP_STRING([--enable-vc5],[enable vc5 build]),
++        [
++          case "${enableval}" in
++           yes) ENABLE_VC5=true ;;
++           no) ENABLE_VC5=false ;;
++          *) AC_MSG_ERROR([bad value ${enableval} for --enable-vc5 ]) ;;
++           esac
++           ],
++         [echo "vc5 build is enable"])
++AM_CONDITIONAL([ENABLE_VC5], [test x$ENABLE_VC5 = xtrue])
++AC_SUBST(ENABLE_VC5)
++
+ AC_CONFIG_FILES([Makefile])
+ AC_SUBST(WAYLAND_CFLAGS)
+ AC_SUBST(GUPNP_VERSION)

@@ -1,0 +1,11 @@
+diff -Nur org/brcm/westeros-sink/westeros-sink-soc.c new/brcm/westeros-sink/westeros-sink-soc.c
+--- org/brcm/westeros-sink/westeros-sink-soc.c	2018-01-22 11:35:30.879246883 -0500
++++ new/brcm/westeros-sink/westeros-sink-soc.c	2018-01-22 15:59:12.966799192 -0500
+@@ -1545,6 +1545,7 @@
+    if ( sink->videoStarted )
+    {
+       sink->soc.presentationStarted= TRUE;
++      GST_INFO("Video decoder presentation started");
+    }
+ }
+ 

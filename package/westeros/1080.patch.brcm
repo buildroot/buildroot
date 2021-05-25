@@ -1,0 +1,32 @@
+diff -auNrd git.orig/westeros-compositor.cpp git/westeros-compositor.cpp
+--- git.orig/westeros-compositor.cpp	2018-01-10 17:36:38.201233233 -0500
++++ git/westeros-compositor.cpp	2018-01-10 17:35:12.935902269 -0500
+@@ -65,10 +65,10 @@
+ #define MAX_NESTED_NAME_LEN (32)
+ 
+ #define DEFAULT_FRAME_RATE (60)
+-#define DEFAULT_OUTPUT_WIDTH (1280)
+-#define DEFAULT_OUTPUT_HEIGHT (720)
+-#define DEFAULT_NESTED_WIDTH (1280)
+-#define DEFAULT_NESTED_HEIGHT (720)
++#define DEFAULT_OUTPUT_WIDTH (1920)
++#define DEFAULT_OUTPUT_HEIGHT (1080)
++#define DEFAULT_NESTED_WIDTH (1920)
++#define DEFAULT_NESTED_HEIGHT (1080)
+ 
+ #define DEFAULT_KEY_REPEAT_DELAY (1000)
+ #define DEFAULT_KEY_REPEAT_RATE  (5)
+diff -auNrd git.orig/westeros-render.cpp git/westeros-render.cpp
+--- git.orig/westeros-render.cpp	2018-01-10 17:36:43.572423906 -0500
++++ git/westeros-render.cpp	2018-01-10 17:33:14.858984266 -0500
+@@ -27,8 +27,8 @@
+ #include "westeros-nested.h"
+ #include "westeros-render.h"
+ 
+-#define DEFAULT_OUTPUT_WIDTH (1280)
+-#define DEFAULT_OUTPUT_HEIGHT (720)
++#define DEFAULT_OUTPUT_WIDTH (1920)
++#define DEFAULT_OUTPUT_HEIGHT (1080)
+ 
+ #define WESTEROS_UNUSED(x) ((void)(x))
+ 

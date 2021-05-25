@@ -1,0 +1,9 @@
+config BR2_PACKAGE_WESTEROS_SINK
+	bool "westeros-sink"
+	select BR2_PACKAGE_WAYLAND
+	select BR2_PACKAGE_WAYLAND_PROTOCOLS
+	select BR2_PACKAGE_WAYLAND_EGL_BNXS if BR2_PACKAGE_HAS_NEXUS
+	help
+	  http://wayland.freedesktop.org/
+
+

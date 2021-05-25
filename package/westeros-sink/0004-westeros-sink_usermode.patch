@@ -1,0 +1,13 @@
+diff --git a/brcm/westeros-sink/Makefile.am b/brcm/westeros-sink/Makefile.am
+index 3766f42..9d6ef99 100644
+--- a/brcm/westeros-sink/Makefile.am
++++ b/brcm/westeros-sink/Makefile.am
+@@ -48,7 +48,7 @@ libwesteros_sink_la_LDFLAGS= \
+    -lwesteros_simpleshell_client \
+    -lwayland-egl \
+    -lnxclient \
+-   -lnexus
++   $(NEXUSLIBS)
+    
+ distcleancheck_listfiles = *-libtool
+ 
