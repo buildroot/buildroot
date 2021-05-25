@@ -78,21 +78,16 @@ define ZSTD_INSTALL_TARGET_CMDS
 		DESTDIR=$(TARGET_DIR) PREFIX=/usr -C $(@D)/lib $(ZSTD_INSTALL_LIBS)
 endef
 
-# note: only limited 'HAVE_...' options for host library build only
-HOST_ZSTD_OPTS = HAVE_THREAD=1
+HOST_ZSTD_OPTS += PREFIX=$(HOST_DIR)
 
 define HOST_ZSTD_BUILD_CMDS
 	$(HOST_MAKE_ENV) $(HOST_CONFIGURE_OPTS) $(MAKE) $(HOST_ZSTD_OPTS) \
-		-C $(@D)/lib libzstd.a-mt libzstd-mt
-	$(HOST_MAKE_ENV) $(HOST_CONFIGURE_OPTS) $(MAKE) $(HOST_ZSTD_OPTS) \
-		-C $(@D) zstd
+		-C $(@D) zstd-release lib-release
 endef
 
 define HOST_ZSTD_INSTALL_CMDS
 	$(HOST_MAKE_ENV) $(HOST_CONFIGURE_OPTS) $(MAKE) $(HOST_ZSTD_OPTS) \
-		DESTDIR=$(HOST_DIR) PREFIX=/usr -C $(@D)/lib install
-	$(HOST_MAKE_ENV) $(HOST_CONFIGURE_OPTS) $(MAKE) $(HOST_ZSTD_OPTS) \
-		DESTDIR=$(HOST_DIR) PREFIX=/usr -C $(@D)/programs install
+		-C $(@D) install
 endef
 
 $(eval $(generic-package))
