@@ -46,7 +46,7 @@ else
 WLROOTS_CONF_OPTS += -Dx11-backend=disabled -Dxwayland=disabled
 endif
 
-ifeq ($(BR2_PACKAGE_SEATD_LIBSEAT),y)
+ifeq ($(BR2_PACKAGE_SEATD),y)
 WLROOTS_CONF_OPTS += -Dlibseat=enabled
 WLROOTS_DEPENDENCIES += seatd
 else
