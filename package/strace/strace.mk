@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-STRACE_VERSION = 5.11
+STRACE_VERSION = 5.12
 STRACE_SOURCE = strace-$(STRACE_VERSION).tar.xz
 STRACE_SITE = https://strace.io/files/$(STRACE_VERSION)
 STRACE_LICENSE = LGPL-2.1+
