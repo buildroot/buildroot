@@ -30,7 +30,7 @@ def compile_one(host_path, strip_root=None, verbose=False):
         return  # only compile real files
 
     if not re.match(
-            r"^[_A-Za-z][_A-Za-z0-9]*\.py$", os.path.basename(host_path)
+            r"^[_A-Za-z][_A-Za-z0-9-]*\.py$", os.path.basename(host_path)
     ):
         return  # only compile "importable" python modules
 
