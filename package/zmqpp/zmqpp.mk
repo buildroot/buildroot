@@ -19,7 +19,7 @@ ZMQPP_LDFLAGS = $(TARGET_LDFLAGS) -lpthread
 # -ffast-math -finline-functions -fomit-frame-pointer are disabled,
 # so only set CONFIG for the non-affected cases.
 ifneq ($(BR2_or1k):$(BR2_TOOLCHAIN_GCC_AT_LEAST_6),y:)
-ZMQPP_CONFIG = $(if $(BR2_ENABLE_DEBUG),buildroot,release)
+ZMQPP_CONFIG = $(if $(BR2_ENABLE_RUNTIME_DEBUG),buildroot,release)
 endif
 
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
