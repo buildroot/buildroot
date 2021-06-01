@@ -266,7 +266,7 @@ define TOOLCHAIN_CMAKE_INSTALL_FILES
 		-e 's#@@CMAKE_SYSTEM_PROCESSOR@@#$(call qstrip,$(CMAKE_SYSTEM_PROCESSOR))#' \
 		-e 's#@@TOOLCHAIN_HAS_CXX@@#$(if $(BR2_INSTALL_LIBSTDCPP),1,0)#' \
 		-e 's#@@TOOLCHAIN_HAS_FORTRAN@@#$(if $(BR2_TOOLCHAIN_HAS_FORTRAN),1,0)#' \
-		-e 's#@@CMAKE_BUILD_TYPE@@#$(if $(BR2_ENABLE_DEBUG),Debug,Release)#' \
+		-e 's#@@CMAKE_BUILD_TYPE@@#$(if $(BR2_ENABLE_RUNTIME_DEBUG),Debug,Release)#' \
 		$(TOPDIR)/support/misc/toolchainfile.cmake.in \
 		> $(HOST_DIR)/share/buildroot/toolchainfile.cmake
 	$(Q)$(INSTALL) -D -m 0644 support/misc/Buildroot.cmake \
