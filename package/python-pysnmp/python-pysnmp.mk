@@ -11,4 +11,7 @@ PYTHON_PYSNMP_SETUP_TYPE = setuptools
 PYTHON_PYSNMP_LICENSE = BSD-3-Clause
 PYTHON_PYSNMP_LICENSE_FILES = LICENSE.rst
 
+PYTHON_PYSNMP_KEEP_PY_FILES += usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages/pysnmp/smi/mibs/*.py
+PYTHON_PYSNMP_KEEP_PY_FILES += usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages/pysnmp/smi/mibs/instances/*.py
+
 $(eval $(python-package))

@@ -12,5 +12,6 @@ PYTHON_PYSNMP_MIBS_LICENSE = BSD-3-Clause
 PYTHON_PYSNMP_MIBS_LICENSE_FILES = LICENSE.txt
 
 PYTHON_PYSNMP_MIBS_DEPENDENCIES = python-pysnmp
+PYTHON_PYSNMP_MIBS_KEEP_PY_FILES += usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages/pysnmp_mibs/*.py
 
 $(eval $(python-package))
