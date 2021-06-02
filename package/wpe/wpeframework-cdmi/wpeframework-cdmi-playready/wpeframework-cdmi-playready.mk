@@ -5,7 +5,7 @@
 ################################################################################
 
 ifeq ($(BR2_PACKAGE_PLAYREADY4),y)
-WPEFRAMEWORK_CDMI_PLAYREADY_VERSION = b3eec0b3fbeb0e02dbc71c67331c060abb202a65
+WPEFRAMEWORK_CDMI_PLAYREADY_VERSION = 7b14ebbe16717d27737e913c6120f848f6663d30
 else
 WPEFRAMEWORK_CDMI_PLAYREADY_VERSION = 59b3deba0710b9f372fd333fcc7aca2ebed483a6
 endif
