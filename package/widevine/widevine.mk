@@ -3,7 +3,7 @@
 # widevine
 #
 ################################################################################
-WIDEVINE_VERSION = 94e5ea0da4b06a37a5f01bfadf6e0c91fe34d9b9
+WIDEVINE_VERSION = e2543b97063f7475e4a48dcb115033fef0fe6744
 WIDEVINE_SITE = git@github.com:WebPlatformForEmbedded/widevine.git
 WIDEVINE_SITE_METHOD = git
 WIDEVINE_DEPENDENCIES = host-gyp
