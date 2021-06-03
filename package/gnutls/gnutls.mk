@@ -23,6 +23,7 @@ GNUTLS_CONF_OPTS = \
 	--disable-guile \
 	--disable-libdane \
 	--disable-rpath \
+	--disable-tests \
 	--enable-local-libopts \
 	--enable-openssl-compatibility \
 	--with-librt-prefix=$(STAGING_DIR) \
