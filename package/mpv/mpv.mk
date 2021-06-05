@@ -28,6 +28,12 @@ MPV_CONF_OPTS = \
 	--disable-uchardet \
 	--disable-vapoursynth
 
+ifeq ($(BR2_STATIC_LIBS),y)
+MPV_CONF_OPTS += --disable-libmpv-shared --enable-libmpv-static
+else
+MPV_CONF_OPTS += --enable-libmpv-shared --disable-libmpv-static
+endif
+
 # ALSA support requires pcm+mixer
 ifeq ($(BR2_PACKAGE_ALSA_LIB_MIXER)$(BR2_PACKAGE_ALSA_LIB_PCM),yy)
 MPV_CONF_OPTS += --enable-alsa
