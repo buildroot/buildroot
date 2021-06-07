@@ -39,8 +39,4 @@ UDISKS_CONF_OPTS = \
 	--disable-vdo \
 	--disable-zram
 
-ifeq ($(BR2_PACKAGE_UDISKS_LVM2),y)
-UDISKS_CONF_OPTS += --enable-lvm2
-endif
-
 $(eval $(autotools-package))
