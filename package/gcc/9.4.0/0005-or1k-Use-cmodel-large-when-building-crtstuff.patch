@@ -1,4 +1,4 @@
-From b540f7b916ba7cf2059b84c5cc8d08c67ebe9a0b Mon Sep 17 00:00:00 2001
+From d64a757040fe36b0d9dc65d24107c656f66bc8e5 Mon Sep 17 00:00:00 2001
 From: Stafford Horne <shorne@gmail.com>
 Date: Sun, 2 May 2021 06:11:45 +0900
 Subject: [PATCH] or1k: Use cmodel=large when building crtstuff
@@ -29,10 +29,10 @@ Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
  create mode 100644 libgcc/config/or1k/t-crtstuff
 
 diff --git a/libgcc/config.host b/libgcc/config.host
-index 0f15fda3612..0c21d384e6f 100644
+index bdbf77a3e62..bfb45a90630 100644
 --- a/libgcc/config.host
 +++ b/libgcc/config.host
-@@ -1051,12 +1051,12 @@ nios2-*-*)
+@@ -1061,12 +1061,12 @@ nios2-*-*)
  	extra_parts="$extra_parts crti.o crtn.o"
  	;;
  or1k-*-linux*)
@@ -56,5 +56,5 @@ index 00000000000..dcae7f3498e
 +# Compile crtbeginS.o and crtendS.o with -mcmodel=large
 +CRTSTUFF_T_CFLAGS_S += -mcmodel=large
 -- 
-2.25.1
+2.31.1
 

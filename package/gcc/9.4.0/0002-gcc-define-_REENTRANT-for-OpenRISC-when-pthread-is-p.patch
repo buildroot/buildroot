@@ -1,4 +1,4 @@
-From 2aefc4ee703ce3ff70ad25915005cacfbaae0c49 Mon Sep 17 00:00:00 2001
+From f80e9941739fb3973b61fc6a5abddef5ad2faf73 Mon Sep 17 00:00:00 2001
 From: Bernd Kuhls <bernd.kuhls@t-online.de>
 Date: Fri, 27 Mar 2020 21:23:53 +0100
 Subject: [PATCH] gcc: define _REENTRANT for OpenRISC when -pthread is passed
@@ -14,7 +14,7 @@ Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
  1 file changed, 2 insertions(+)
 
 diff --git a/gcc/config/or1k/linux.h b/gcc/config/or1k/linux.h
-index 4b2f7b6e1fd..b00d23ddfa0 100644
+index cbdc781418f..36303af892c 100644
 --- a/gcc/config/or1k/linux.h
 +++ b/gcc/config/or1k/linux.h
 @@ -32,6 +32,8 @@
@@ -27,5 +27,5 @@ index 4b2f7b6e1fd..b00d23ddfa0 100644
  #define LINK_SPEC "%{h*}			\
     %{static:-Bstatic}				\
 -- 
-2.21.0
+2.31.1
 
