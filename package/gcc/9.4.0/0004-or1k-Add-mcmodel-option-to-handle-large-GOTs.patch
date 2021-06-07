@@ -1,4 +1,4 @@
-From 1af3ab7fc3e4f2ae835c976486e8af0762674af3 Mon Sep 17 00:00:00 2001
+From 90b202b59fa2bdb68314a23471b32d3e16602bc8 Mon Sep 17 00:00:00 2001
 From: Stafford Horne <shorne@gmail.com>
 Date: Sun, 2 May 2021 06:11:44 +0900
 Subject: [PATCH] or1k: Add mcmodel option to handle large GOTs
@@ -104,7 +104,7 @@ index fc10fcfabde..df67d72b139 100644
    reloc_type type = RTYPE_DIRECT;
  
 diff --git a/gcc/config/or1k/or1k.h b/gcc/config/or1k/or1k.h
-index 6dda230f217..858f30743b7 100644
+index feee702d89c..dbaf0d0fe4c 100644
 --- a/gcc/config/or1k/or1k.h
 +++ b/gcc/config/or1k/or1k.h
 @@ -21,6 +21,8 @@
@@ -166,10 +166,10 @@ index 7bdbd842dd4..116524c3441 100644
  Target RejectNegative Mask(CMOV)
  Allows generation of binaries which use the l.cmov instruction.  If your target
 diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
-index 0ab6c9c6449..0904b2b5a41 100644
+index 7b5f6e03d9f..683c64417af 100644
 --- a/gcc/doc/invoke.texi
 +++ b/gcc/doc/invoke.texi
-@@ -1030,7 +1030,9 @@ Objective-C and Objective-C++ Dialects}.
+@@ -1032,7 +1032,9 @@ Objective-C and Objective-C++ Dialects}.
  @emph{OpenRISC Options}
  @gccoptlist{-mboard=@var{name}  -mnewlib  -mhard-mul  -mhard-div @gol
  -msoft-mul  -msoft-div @gol
@@ -180,7 +180,7 @@ index 0ab6c9c6449..0904b2b5a41 100644
  
  @emph{PDP-11 Options}
  @gccoptlist{-mfpu  -msoft-float  -mac0  -mno-ac0  -m40  -m45  -m10 @gol
-@@ -27408,6 +27410,15 @@ MWAITX, SHA, CLZERO, AES, PCL_MUL, CX16, MOVBE, MMX, SSE, SSE2, SSE3, SSE4A,
+@@ -27462,6 +27464,15 @@ MWAITX, SHA, CLZERO, AES, PCL_MUL, CX16, MOVBE, MMX, SSE, SSE2, SSE3, SSE4A,
  SSSE3, SSE4.1, SSE4.2, ABM, XSAVEC, XSAVES, CLFLUSHOPT, POPCNT, and 64-bit
  instruction set extensions.)
  
@@ -197,5 +197,5 @@ index 0ab6c9c6449..0904b2b5a41 100644
  @item btver1
  CPUs based on AMD Family 14h cores with x86-64 instruction set support.  (This
 -- 
-2.25.1
+2.31.1
 
