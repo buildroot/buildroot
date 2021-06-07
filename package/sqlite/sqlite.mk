@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-SQLITE_VERSION = 3340100
-SQLITE_CPE_ID_VERSION = 3.34.1
+SQLITE_VERSION = 3350500
+SQLITE_CPE_ID_VERSION = 3.35.5
 SQLITE_SOURCE = sqlite-autoconf-$(SQLITE_VERSION).tar.gz
 SQLITE_SITE = https://www.sqlite.org/2021
 SQLITE_LICENSE = Public domain

@@ -1,0 +1,22 @@
+menuconfig BR2_PACKAGE_SEATD
+	bool "seatd"
+	select BR2_PACKAGE_SEATD_BUILTIN \
+		if !BR2_PACKAGE_SYSTEMD_LOGIND && !BR2_PACKAGE_SEATD_DAEMON
+	help
+	  Seat management daemon and support library.
+
+	  https://git.sr.ht/~kennylevinsen/seatd
+
+if BR2_PACKAGE_SEATD
+
+config BR2_PACKAGE_SEATD_BUILTIN
+	bool "builtin backend"
+	help
+	  Builtin in-process seatd implementation inside libseat.
+
+config BR2_PACKAGE_SEATD_DAEMON
+	bool "seatd daemon"
+	help
+	  Build the seatd daemon and support for it inside libseat.
+
+endif

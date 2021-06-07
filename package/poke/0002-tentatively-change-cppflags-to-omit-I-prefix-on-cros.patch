@@ -1,0 +1,67 @@
+From ac9d057895f1e61f63cbecafcc3e3820fdb10f84 Mon Sep 17 00:00:00 2001
+From: Luca Saiu <positron@gnu.org>
+Date: Fri, 30 Apr 2021 22:42:57 +0200
+Subject: [PATCH] tentatively change --cppflags to omit -I prefix on
+ cross-compilation
+
+The autoconf macros defined from jitter --cppflags get automatically changed, of
+course.
+
+* configure.ac (JITTER_CROSS_COMPILING): New substitution.
+
+* bin/jitter-config.in.m4sh (main loop) <--cppflags>: Introduce conditional on
+the new substitution.
+
+Suggested by Romain Naour, after his difficulties with building GNU poke with
+buildroot.
+
+(cherry picked from commit 428406c7b8d4c20f3472d41ed57c12c1a88ad37e)
+[Romain:
+  patch jitter-config.in instead of jitter-config.in.m4sh since
+  there is an issue while converting the M4sh m4sh script ( .in.m4sh )
+  into a portable shell script ( .in ) ready to be processed by aclocal
+  for @-substitutions.]
+
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+---
+ jitter/bin/jitter-config.in | 10 +++++++---
+ jitter/configure.ac         |  1 +
+ 2 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/jitter/bin/jitter-config.in b/jitter/bin/jitter-config.in
+index 5e124f0..4bc508d 100644
+--- a/jitter/bin/jitter-config.in
++++ b/jitter/bin/jitter-config.in
+@@ -999,10 +999,14 @@ while test "$#" != "0"; do
+         --cppflags)
+             no_option_argument
+             append_to_output cppflags
+-            # Append a -I argument.  This is defined separately from the rest,
+-            # as the installation prefix can be decided very late, at Jitter
++            # Unless cross-compiling, append a -I argument referring the
++            # installation path.  This is defined separately from the rest, as
++            # the installation prefix can be decided very late, at Jitter
+             # installation time.
+-            output="$output -I $includedir";;
++            # (When cross-compiling this would be difficult to do correctly.)
++            if test "x@JITTER_CROSS_COMPILING@" != 'xyes'; then
++              output="$output -I $includedir"
++            fi;;
+         --ldadd)
+             no_option_argument
+             append_to_output ldadd;;
+diff --git a/jitter/configure.ac b/jitter/configure.ac
+index 21d6937..fb12349 100644
+--- a/jitter/configure.ac
++++ b/jitter/configure.ac
+@@ -308,6 +308,7 @@ else
+    AC_MSG_RESULT([yes, cross-compiling from $build to $host .])
+    jitter_cross_compiling=yes
+ fi
++AC_SUBST([JITTER_CROSS_COMPILING], [$jitter_cross_compiling])
+ 
+ # I never test on weird systems not supporting shebangs.
+ AC_SYS_INTERPRETER
+-- 
+2.31.1
+

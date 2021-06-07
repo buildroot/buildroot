@@ -33,6 +33,9 @@ if BR2_PACKAGE_WLROOTS
 config BR2_PACKAGE_WLROOTS_X11
 	bool "X11 backend"
 	depends on BR2_PACKAGE_XORG7
+	select BR2_PACKAGE_LIBXCB
+	select BR2_PACKAGE_XCB_UTIL_RENDERUTIL
+	select BR2_PACKAGE_XCB_UTIL_WM
 	select BR2_PACKAGE_XLIB_LIBX11
 	help
 	  Support Wayland sessions nested inside a X11 window

@@ -40,4 +40,99 @@ config BR2_PACKAGE_LIBOPENSSL_ENGINES
 	help
 	  Install additional encryption engine libraries.
 
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_CHACHA
+	bool "enable CHACHA"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_RC5
+	bool "enable RC5"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_RC2
+	bool "enable RC2"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_RC4
+	bool "enable RC4"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_MD2
+	bool "enable MD2"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_MD4
+	bool "enable MD4"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_MDC2
+	bool "enable MDC2"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_BLAKE2
+	bool "enable BLAKE2"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_IDEA
+	bool "enable IDEA"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_SEED
+	bool "enable SEED"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_DES
+	bool "enable DES"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_RMD160
+	bool "enable RMD160"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_WHIRLPOOL
+	bool "enable WHIRLPOOL"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_BLOWFISH
+	bool "enable BLOWFISH"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_SSL
+	bool "enable SSL"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_SSL2
+	bool "enable SSL2"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_SSL3
+	bool "enable SSL3"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_WEAK_SSL
+	bool "enable WEAK_SSL"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_PSK
+	bool "enable mode PSK"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_CAST
+	bool "enable mode CAST"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_UNSECURE
+	bool "enable unit test, debug, backtrace"
+	default y
+	help
+	  Enable unit-test crypto-mdebug-backtrace
+	  crypto-mdebug autoerrinit mode.
+
+config BR2_PACKAGE_LIBOPENSSL_DYNAMIC_ENGINE
+	bool "enable dynamic engine"
+	default y
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_COMP
+	bool "enable compression"
+	default y
+
 endif # BR2_PACKAGE_LIBOPENSSL

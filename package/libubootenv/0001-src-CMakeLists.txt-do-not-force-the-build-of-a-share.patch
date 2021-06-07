@@ -26,10 +26,10 @@ Signed-off-by: Pierre-Jean Texier <pjtexier@koncepto.io>
  1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index a04dd11..3a2115d 100644
+index 4b71bc5..0b515f4 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -12,17 +12,15 @@ SET(include_HEADERS
+@@ -12,18 +12,16 @@ SET(include_HEADERS
  
  include(GNUInstallDirs) # for the CMAKE_INSTALL_LIBDIR variable
  
@@ -41,8 +41,9 @@ index a04dd11..3a2115d 100644
 -SET_TARGET_PROPERTIES(ubootenv_static PROPERTIES OUTPUT_NAME ubootenv)
  add_executable(fw_printenv fw_printenv.c)
  add_executable(fw_setenv fw_setenv.c)
- target_link_libraries(fw_printenv ubootenv z)
- target_link_libraries(fw_setenv ubootenv z)
+ target_link_libraries(ubootenv z)
+ target_link_libraries(fw_printenv ubootenv)
+ target_link_libraries(fw_setenv ubootenv)
  
 -install (TARGETS ubootenv ubootenv_static DESTINATION ${CMAKE_INSTALL_LIBDIR})
 +install (TARGETS ubootenv DESTINATION ${CMAKE_INSTALL_LIBDIR})
@@ -50,5 +51,5 @@ index a04dd11..3a2115d 100644
  install (TARGETS fw_printenv DESTINATION ${CMAKE_INSTALL_BINDIR})
  install (TARGETS fw_setenv DESTINATION ${CMAKE_INSTALL_BINDIR})
 -- 
-2.25.1
+2.30.2
 

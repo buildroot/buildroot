@@ -136,6 +136,9 @@ endif
 ifeq ($(BR2_OPTIMIZE_FAST),y)
 TARGET_OPTIMIZATION = -Ofast
 endif
+ifeq ($(BR2_ENABLE_DEBUG),)
+TARGET_DEBUGGING = -g0
+endif
 ifeq ($(BR2_DEBUG_1),y)
 TARGET_DEBUGGING = -g1
 endif
@@ -144,6 +147,9 @@ TARGET_DEBUGGING = -g2
 endif
 ifeq ($(BR2_DEBUG_3),y)
 TARGET_DEBUGGING = -g3
+endif
+ifeq ($(BR2_ENABLE_RUNTIME_DEBUG),)
+TARGET_DEBUGGING += -DNDEBUG
 endif
 
 TARGET_LDFLAGS = $(call qstrip,$(BR2_TARGET_LDFLAGS))

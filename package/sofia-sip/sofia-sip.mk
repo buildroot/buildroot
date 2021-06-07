@@ -30,8 +30,4 @@ SOFIA_SIP_CONF_OPTS += \
 	--without-openssl
 endif
 
-ifeq ($(BR2_ENABLE_DEBUG),y)
-SOFIA_SIP_CONF_OPTS += --enable-ndebug
-endif
-
 $(eval $(autotools-package))

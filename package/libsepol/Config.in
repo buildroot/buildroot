@@ -11,6 +11,7 @@ if BR2_PACKAGE_LIBSEPOL
 
 config BR2_PACKAGE_LIBSEPOL_POLICY_VERSION
 	int "Policy version"
+	default 33 if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_8
 	default 32 if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_5
 	default 31 if BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_13
 	default 30 if BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_3
@@ -29,7 +30,8 @@ config BR2_PACKAGE_LIBSEPOL_POLICY_VERSION
 	  >= 3.14 < 4.3    29
 	  >= 4.3 < 4.13    30
 	  >= 4.13 < 5.5    31
-	  >= 5.5           32
+	  >= 5.5 < 5.8     32
+	  >= 5.8           33
 
 endif
 

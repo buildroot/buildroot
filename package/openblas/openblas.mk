@@ -42,10 +42,10 @@ endif
 OPENBLAS_MAKE_OPTS += USE_OPENMP=0
 
 # Static-only/Shared-only toggle
+# Note: static library is always generated so that applications can link
+# statically for size reduction, even if BR2_STATIC_LIBS is not set.
 ifeq ($(BR2_STATIC_LIBS),y)
 OPENBLAS_MAKE_OPTS += NO_SHARED=1
-else ifeq ($(BR2_SHARED_LIBS),y)
-OPENBLAS_MAKE_OPTS += NO_STATIC=1
 endif
 
 # binutils version <= 2.23.2 has a bug

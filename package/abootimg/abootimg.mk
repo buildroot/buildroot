@@ -4,8 +4,9 @@
 #
 ################################################################################
 
-ABOOTIMG_VERSION = 7e127fee6a3981f6b0a50ce9910267cd501e09d4
-ABOOTIMG_SITE = $(call github,ggrandou,abootimg,$(ABOOTIMG_VERSION))
+ABOOTIMG_VERSION = 1ebeb393252ab5aeed62e34bc439b6728444f06e
+ABOOTIMG_SITE = https://gitlab.com/ajs124/abootimg.git
+ABOOTIMG_SITE_METHOD = git
 ABOOTIMG_LICENSE = GPL-2.0+
 ABOOTIMG_LICENSE_FILES = LICENSE
 

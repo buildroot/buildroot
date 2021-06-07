@@ -1,5 +1,5 @@
 config BR2_TARGET_AT91BOOTSTRAP3
-	bool "AT91 Bootstrap 3"
+	bool "AT91 Bootstrap 3+"
 	depends on BR2_arm926t || BR2_cortex_a5 || BR2_cortex_a7
 	help
 	  AT91Bootstrap is a first level bootloader for the Atmel AT91
@@ -16,10 +16,13 @@ if BR2_TARGET_AT91BOOTSTRAP3
 
 choice
 
-	prompt "AT91 Bootstrap 3 version"
+	prompt "AT91 Bootstrap 3+ version"
 
 config BR2_TARGET_AT91BOOTSTRAP3_LATEST_VERSION
-	bool "3.9.3"
+	bool "4.0.0-rc2"
+
+config BR2_TARGET_AT91BOOTSTRAP3_LATEST_VERSION_3X
+	bool "3.10.2"
 
 config BR2_TARGET_AT91BOOTSTRAP3_CUSTOM_GIT
 	bool "Custom Git repository"
@@ -51,7 +54,8 @@ endif
 
 config BR2_TARGET_AT91BOOTSTRAP3_VERSION
 	string
-	default "v3.9.3" if BR2_TARGET_AT91BOOTSTRAP3_LATEST_VERSION
+	default "v4.0.0-rc2" if BR2_TARGET_AT91BOOTSTRAP3_LATEST_VERSION
+	default "v3.10.2" if BR2_TARGET_AT91BOOTSTRAP3_LATEST_VERSION_3X
 	default BR2_TARGET_AT91BOOTSTRAP3_CUSTOM_REPO_VERSION \
 		if BR2_TARGET_AT91BOOTSTRAP3_CUSTOM_GIT
 	default "custom"	if BR2_TARGET_AT91BOOTSTRAP3_CUSTOM_TARBALL
@@ -95,5 +99,13 @@ config BR2_TARGET_AT91BOOTSTRAP3_CUSTOM_CONFIG_FILE
 	depends on BR2_TARGET_AT91BOOTSTRAP3_USE_CUSTOM_CONFIG
 	help
 	  Path to the at91bootstrap3 configuration file
+
+config BR2_TARGET_AT91BOOTSTRAP3_NEEDS_PYTHON3
+	bool "needs host-python3"
+	help
+	  Enable this option if the at91bootstrap build process needs
+	  Python 3.x to be available on the host. This is needed in
+	  some at91bootstrap configurations to use NAND/PMECC Python
+	  scripts.
 
 endif # BR2_TARGET_AT91BOOTSTRAP3

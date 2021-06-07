@@ -95,7 +95,7 @@ ORACLE_MYSQL_CONF_OPTS += \
 
 # Debugging is only available for the server, so no need for
 # this if-block outside of the server if-block
-ifeq ($(BR2_ENABLE_DEBUG),y)
+ifeq ($(BR2_ENABLE_RUNTIME_DEBUG),y)
 ORACLE_MYSQL_CONF_OPTS += --with-debug=full
 else
 ORACLE_MYSQL_CONF_OPTS += --without-debug
