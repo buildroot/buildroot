@@ -3,7 +3,7 @@
 # westeros
 #
 ################################################################################
-WESTEROS_VERSION = 5762b68f3992c30d642ad80d932fa1c29db70924
+WESTEROS_VERSION = a13ce42ba4fbbae371411f63bd7dd65dccf15a0c
 WESTEROS_SITE_METHOD = git
 WESTEROS_SITE = git://github.com/rdkcmf/westeros
 WESTEROS_INSTALL_STAGING = YES
@@ -15,7 +15,9 @@ WESTEROS_CONF_OPTS = \
 	--prefix=/usr/ \
 	--enable-rendergl=yes \
 	--enable-sbprotocol=yes \
-	--enable-xdgv5=yes
+	--enable-xdgv5=yes \
+	--enable-app=yes \
+	--enable-test=yes
 
 ifeq ($(BR2_PACKAGE_WESTEROS_ESSOS), y)
 WESTEROS_CONF_OPTS += \
