@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-AMAZON_IGNITION_VERSION = e72ab40d3eeb885a35170e39d2ba757d653170f3
+AMAZON_IGNITION_VERSION = 5e0e61cffb4cc65e4fc68e51a84a411a9875b5dd
 AMAZON_IGNITION_SITE_METHOD = git
 AMAZON_IGNITION_SITE = git@github.com:Metrological/amazon.git
-AMAZON_IGNITION_DEPENDENCIES = jpeg libpng wpeframework amazon amazon-backend
+AMAZON_IGNITION_DEPENDENCIES = jpeg libpng wpeframework amazon-backend
 # AMAZON_IGNITION_DEPENDENCIES = zlib jpeg libcurl libpng icu wpeframework amazon amazon-backend
 AMAZON_IGNITION_SUPPORTS_IN_SOURCE_BUILD = NO
 AMAZON_IGNITION_INSTALL_STAGING = YES
@@ -43,7 +43,8 @@ AMAZON_IGNITION_CONF_OPTS += \
    -DDISABLE_SAFE_BUILD_ROOT_CHECK=OFF \
    -DUSE_MEDIA_PIPELINE_BACKEND=OFF \
    -DBUILD_AS_SHARED_LIBRARY=ON \
-   -DBUILD_CURL_7_72_0=ON 
+   -DBUILD_CURL_7_72_0=ON \
+   -DDISABLE_SAFE_BUILD_ROOT_CHECK=ON 
 
 ifeq ($(BR2_PACKAGE_AMAZON_IGNITION_BUILD_TESTS),y)
 AMAZON_IGNITION_CONF_OPTS += -DBUILD_SHARED_LIBRARY_LAUNCHER=ON
@@ -136,11 +137,7 @@ define AMAZON_IGNITION_INSTALL_IGNITION
 	
     rsync -av ${AMAZON_IGNITION_BINARY_INSTALL_DIR}/ $(call qstrip,$(1))/$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)
 
-    ln -sf  "../../../lib/libamazon_backend_device.so" "$(call qstrip,$(1))$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib/libamazon_backend_device.so"
     ln -sf "../../../lib/libamazon-backend.so" "$(call qstrip,$(1))$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib/libamazon-backend.so"
-    ln -sf  "../../../lib/libamazon_player_mediapipeline.so" "$(call qstrip,$(1))$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib/libamazon_player_mediapipeline.so"
-    ln -sf  "../../../lib/libamazon_player.so" "$(call qstrip,$(1))$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib/libamazon_player.so"
-    ln -sf  "../../../lib/libamazon_playready.so" "$(call qstrip,$(1))$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib/libamazon_playready.so"
 endef
 
 define AMAZON_IGNITION_INSTALL_IGNITION_DEV

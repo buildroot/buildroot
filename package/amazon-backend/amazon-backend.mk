@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-AMAZON_BACKEND_VERSION = 4babcc88d96b10f6944b3f36f9417b342b25a788
+AMAZON_BACKEND_VERSION = b41d654dafb0bbe6d4d715d6faea626365ad11b3
 AMAZON_BACKEND_SITE = git@github.com:Metrological/amazon-backend.git
 AMAZON_BACKEND_SITE_METHOD = git
 AMAZON_BACKEND_DEPENDENCIES = wpeframework wpeframework-clientlibraries
@@ -26,5 +26,7 @@ endif
 ifeq  ($(BR2_PACKAGE_VSS_SDK),y)
 AMAZON_BACKEND_CONF_OPTS += -DAMAZON_GST_LIBRARY_PREFIX="wpe"
 endif
+
+AMAZON_BACKEND_CONF_OPTS += -DDISABLE_OUTPUT_STATUS_CHECK=ON
 
 $(eval $(cmake-package))

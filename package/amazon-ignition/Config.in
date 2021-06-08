@@ -38,6 +38,10 @@ config BR2_PACKAGE_AMAZON_IGNITION_DEVELOPER_MODE
 	help
         Enable this to use info and debug traces
 
+config BR2_PACKAGE_AMAZON_IGNITION_BUILD_RUBY
+       bool "Build RUBY Player"
+       default "y"
+
 config BR2_PACKAGE_AMAZON_IGNITION_BUILD_TESTS
 	bool "include tests"
 	select BR2_PACKAGE_AMAZON_IGNITION_DEVELOPER_MODE
