@@ -140,6 +140,7 @@ config BR2_PACKAGE_MTD_UBIFORMAT
 config BR2_PACKAGE_MTD_UBIHEALTHD
 	bool "ubihealthd"
 	default y
+	depends on BR2_PACKAGE_MTD_UBIFS_UTILS
 
 config BR2_PACKAGE_MTD_UBIMKVOL
 	bool "ubimkvol"
