@@ -19,7 +19,10 @@ LIBSOUP_DEPENDENCIES = \
 	libglib2 \
 	libpsl \
 	libxml2 \
-	sqlite
+	sqlite \
+	$(TARGET_NLS_DEPENDENCIES)
+
+LIBSOUP_LDFLAGS = $(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)
 
 LIBSOUP_CONF_OPTS = \
 	-Dgssapi=disabled \
