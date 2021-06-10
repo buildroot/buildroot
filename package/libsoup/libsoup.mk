@@ -30,6 +30,7 @@ LIBSOUP_CONF_OPTS = \
 	-Dntlm=disabled \
 	-Dsysprof=disabled \
 	-Dtests=false \
+	-Dtls_check=false \
 	-Dvapi=disabled
 
 ifeq ($(BR2_PACKAGE_BROTLI),y)
@@ -50,12 +51,6 @@ ifeq ($(BR2_PACKAGE_LIBSOUP_GNOME),y)
 LIBSOUP_CONF_OPTS += -Dgnome=true
 else
 LIBSOUP_CONF_OPTS += -Dgnome=false
-endif
-
-ifeq ($(BR2_PACKAGE_LIBSOUP_SSL),y)
-LIBSOUP_DEPENDENCIES += glib-networking
-else
-LIBSOUP_CONF_OPTS += -Dtls_check=false
 endif
 
 $(eval $(meson-package))
