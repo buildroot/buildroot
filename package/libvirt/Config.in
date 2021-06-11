@@ -1,0 +1,39 @@
+config BR2_PACKAGE_LIBVIRT_ARCH_SUPPORTS
+	bool
+	default y if BR2_aarch64
+	default y if BR2_i386
+	default y if BR2_x86_64
+	depends on BR2_USE_MMU # fork()
+
+comment "libvirt needs udev /dev management, a toolchain w/ threads, dynamic library, kernel headers >= 3.12"
+	depends on BR2_PACKAGE_LIBVIRT_ARCH_SUPPORTS
+	depends on !BR2_PACKAGE_HAS_UDEV || BR2_STATIC_LIBS || !BR2_USE_MMU || \
+		!BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_12
+
+config BR2_PACKAGE_LIBVIRT
+	bool "libvirt"
+	depends on BR2_PACKAGE_LIBVIRT_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_HAS_UDEV
+	depends on !BR2_STATIC_LIBS
+	depends on BR2_USE_WCHAR
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_USE_WCHAR
+	select BR2_PACKAGE_GNUTLS
+	# configure: You must install the pciaccess module to build with udev
+	select BR2_PACKAGE_LIBPCIACCESS
+	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_LIBTIRPC
+	select BR2_PACKAGE_LIBXML2
+	select BR2_PACKAGE_ZLIB
+	# run-time dependencies
+	select BR2_PACKAGE_CGROUPFS_MOUNT if !BR2_INIT_SYSTEMD
+	help
+	  Libvirt is collection of software that provides a convenient
+	  way to manage virtual machines and other virtualization
+	  functionality, such as storage and network interface
+	  management. These software pieces include an API library, a
+	  daemon (libvirtd), and a command line utility (virsh).
+
+	  https://libvirt.org/
+
