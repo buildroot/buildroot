@@ -1,0 +1,71 @@
+From cd1a44bac413e8a6bc2572720153cc5e703762e1 Mon Sep 17 00:00:00 2001
+From: Amitay Isaacs <amitay@ozlabs.org>
+Date: Fri, 11 Jun 2021 15:27:29 +1000
+Subject: [PATCH] build: Fix build with -DNDEBUG
+
+Signed-off-by: Amitay Isaacs <amitay@ozlabs.org>
+[Retrieved from:
+https://github.com/open-power/pdbg/commit/cd1a44bac413e8a6bc2572720153cc5e703762e1]
+---
+ libpdbg/cfam.c   | 6 +++++-
+ libpdbg/device.c | 9 ++++++---
+ 2 files changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/libpdbg/cfam.c b/libpdbg/cfam.c
+index ffe69296e..976ce5a6d 100644
+--- a/libpdbg/cfam.c
++++ b/libpdbg/cfam.c
+@@ -17,6 +17,7 @@
+  */
+ #include <unistd.h>
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <inttypes.h>
+ 
+ #include "hwunit.h"
+@@ -320,7 +321,10 @@ static int cfam_hmfsi_probe(struct pdbg_target *target)
+ 	int rc;
+ 
+ 	/* Enable the port in the upstream control register */
+-	assert(!(pdbg_target_u32_property(target, "port", &port)));
++	if (pdbg_target_u32_property(target, "port", &port)) {
++		PR_ERROR("Attribute port not defined for %s\n", pdbg_target_path(target));
++		abort();
++	}
+ 	fsi_read(fsi_parent, 0x3404, &value);
+ 	value |= 1 << (31 - port);
+ 	if ((rc = fsi_write(fsi_parent, 0x3404, value))) {
+diff --git a/libpdbg/device.c b/libpdbg/device.c
+index 502ca38ab..ab821d387 100644
+--- a/libpdbg/device.c
++++ b/libpdbg/device.c
+@@ -417,7 +417,7 @@ static const void *dt_require_property(struct pdbg_target *node,
+ 
+ 		prerror("DT: Missing required property %s/%s\n",
+ 			path, name);
+-		assert(false);
++		abort();
+ 	}
+ 	if (wanted_len >= 0 && len != wanted_len) {
+ 		const char *path = dt_get_path(node);
+@@ -426,7 +426,7 @@ static const void *dt_require_property(struct pdbg_target *node,
+ 			path, name);
+ 		prerror("DT: Expected len: %d got len: %zu\n",
+ 			wanted_len, len);
+-		assert(false);
++		abort();
+ 	}
+ 
+ 	if (prop_len) {
+@@ -604,7 +604,10 @@ uint64_t pdbg_target_address(struct pdbg_target *target, uint64_t *out_size)
+ 
+ 	p = dt_require_property(target, "reg", -1, &len);
+ 	n = (na + ns) * sizeof(u32);
+-	assert(n <= len);
++	if (n > len) {
++		PR_ERROR("Invalid reg value for %s\n", pdbg_target_path(target));
++		abort();
++	}
+ 	if (out_size)
+ 		*out_size = dt_get_number(p + na * sizeof(u32), ns);
+ 	return dt_get_number(p, na);

@@ -1,0 +1,78 @@
+From 9b4276d33c8637ca912911e720d6c760812a769b Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 9 Jun 2021 21:15:31 +0200
+Subject: [PATCH] build: Fix build with -DNDEBUG
+
+Fix the following build failures with -DNDEBUG:
+
+libpdbg/adu.c: In function 'blog2':
+libpdbg/adu.c:112:1: error: control reaches end of non-void function [-Werror=return-type]
+  112 | }
+      | ^
+  CC       libpdbg/libpdbg_la-chip.lo
+  CC       libpdbg/libpdbg_la-cronus.lo
+libpdbg/cfam.c: In function 'cfam_hmfsi_probe':
+libpdbg/cfam.c:325:13: error: 'port' is used uninitialized in this function [-Werror=uninitialized]
+  325 |  value |= 1 << (31 - port);
+      |           ~~^~~~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/9d90ede1ff7425cbb25b95aed3bf8d27ced865a4
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Reviewed-by: Amitay Isaacs <amitay@ozlabs.org>
+[Retrieved from:
+https://github.com/open-power/pdbg/commit/9b4276d33c8637ca912911e720d6c760812a769b]
+---
+ libpdbg/adu.c    | 3 ++-
+ libpdbg/device.c | 2 +-
+ src/mem.c        | 2 +-
+ 3 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/libpdbg/adu.c b/libpdbg/adu.c
+index 6358e7a3f..7ee15c350 100644
+--- a/libpdbg/adu.c
++++ b/libpdbg/adu.c
+@@ -15,6 +15,7 @@
+  */
+ #include <stdio.h>
+ #include <stdint.h>
++#include <stdlib.h>
+ #include <string.h>
+ #include <inttypes.h>
+ 
+@@ -107,7 +108,7 @@ uint8_t blog2(uint8_t x)
+ 	case 64:
+ 		return 6;
+ 	default:
+-		assert(0);
++		abort();
+ 	}
+ }
+ 
+diff --git a/libpdbg/device.c b/libpdbg/device.c
+index 8884baa45..502ca38ab 100644
+--- a/libpdbg/device.c
++++ b/libpdbg/device.c
+@@ -501,7 +501,7 @@ static enum pdbg_target_status str_to_status(const char *status)
+ 	else if (!strcmp(status, "unknown"))
+ 		return PDBG_TARGET_UNKNOWN;
+ 	else
+-		assert(0);
++		abort();
+ }
+ 
+ static int dt_expand_node(struct pdbg_target *node, void *fdt, int fdt_node)
+diff --git a/src/mem.c b/src/mem.c
+index 99a673f36..878ac029a 100644
+--- a/src/mem.c
++++ b/src/mem.c
+@@ -166,7 +166,7 @@ OPTCMD_DEFINE_CMD_WITH_FLAGS(getmemio, getmemio, (ADDRESS, DATA, BLOCK_SIZE),
+ static int _putmem(const char *mem_prefix, uint64_t addr, uint8_t block_size, bool ci)
+ {
+ 	uint8_t *buf;
+-	size_t buflen;
++	size_t buflen = 0;
+ 	int rc, count = 0;
+ 	struct pdbg_target *target;
+ 
