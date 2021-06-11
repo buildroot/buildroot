@@ -25,7 +25,6 @@ LIBVIRT_CONF_OPTS = \
 	-Ddriver_interface=enabled \
 	-Ddriver_libxl=disabled \
 	-Ddriver_lxc=disabled \
-	-Ddriver_network=disabled \
 	-Ddriver_openvz=disabled \
 	-Ddriver_qemu=disabled \
 	-Ddriver_remote=enabled \
@@ -39,19 +38,14 @@ LIBVIRT_CONF_OPTS = \
 	-Dglusterfs=disabled \
 	-Dhost_validate=enabled \
 	-Dinit_script=$(if $(BR2_INIT_SYSTEMD),systemd,none) \
-	-Dlibssh=disabled \
-	-Dlibvirtd=disabled \
 	-Dlogin_shell=disabled \
 	-Dnetcf=disabled \
-	-Dnss=disabled \
 	-Dnumad=disabled \
 	-Dopenwsman=disabled \
 	-Dpciaccess=enabled \
 	-Dpm_utils=disabled \
 	-Dsanlock=disabled \
-	-Dsasl=disabled \
 	-Dsecdriver_apparmor=disabled \
-	-Dssh2=disabled \
 	-Dstorage_iscsi=disabled \
 	-Dstorage_iscsi_direct=disabled \
 	-Dstorage_mpath=disabled \
@@ -166,6 +160,45 @@ else
 LIBVIRT_CONF_OPTS += -Dyajl=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_LIBVIRT_DAEMON),y)
+# Network is used by daemon, only
+LIBVIRT_CONF_OPTS += -Dlibvirtd=enabled -Ddriver_network=enabled
+
+ifeq ($(BR2_PACKAGE_LIBSSH),y)
+LIBVIRT_CONF_OPTS += -Dlibssh=enabled
+LIBVIRT_DEPENDENCIES += libssh
+else
+LIBVIRT_CONF_OPTS += -Dlibssh=disabled
+endif
+
+# Can't build nss plugin without network
+ifeq ($(BR2_PACKAGE_LIBNSS),y)
+LIBVIRT_CONF_OPTS += -Dnss=enabled
+LIBVIRT_DEPENDENCIES += libnss
+else
+LIBVIRT_CONF_OPTS += -Dnss=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_LIBGSASL),y)
+LIBVIRT_CONF_OPTS += -Dsasl=enabled
+LIBVIRT_DEPENDENCIES += libgsasl
+else
+LIBVIRT_CONF_OPTS += -Dsasl=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_LIBSSH2),y)
+LIBVIRT_CONF_OPTS += -Dssh2=enabled
+LIBVIRT_DEPENDENCIES += libssh2
+else
+LIBVIRT_CONF_OPTS += -Dssh2=disabled
+endif
+
+else # BR2_PACKAGE_LIBVIRT_DAEMON
+
+LIBVIRT_CONF_OPTS += -Dlibvirtd=disabled -Ddriver_network=disabled
+
+endif
+
 define LIBVIRT_INSTALL_UDEV_RULES
 	$(INSTALL) -D -m 644 package/libvirt/90-kvm.rules \
 		$(TARGET_DIR)/etc/udev/rules.d/90-kvm.rules
@@ -209,5 +242,12 @@ define LIBVIRT_CREATE_SYMLINKS
 endef
 
 LIBVIRT_PRE_INSTALL_TARGET_HOOKS += LIBVIRT_CREATE_SYMLINKS
+
+ifeq ($(BR2_PACKAGE_LIBVIRT_DAEMON),y)
+define LIBVIRT_INSTALL_INIT_SYSV
+	$(INSTALL) -D -m 0755 package/libvirt/S91virtlogd $(TARGET_DIR)/etc/init.d/S91virtlogd
+	$(INSTALL) -D -m 0755 package/libvirt/S92libvirtd $(TARGET_DIR)/etc/init.d/S92libvirtd
+endef
+endif
 
 $(eval $(meson-package))

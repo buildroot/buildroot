@@ -37,3 +37,23 @@ config BR2_PACKAGE_LIBVIRT
 
 	  https://libvirt.org/
 
+
+if BR2_PACKAGE_LIBVIRT
+
+config BR2_PACKAGE_LIBVIRT_DAEMON
+	bool "libvirtd"
+	default y
+	select BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
+	select BR2_PACKAGE_DNSMASQ
+	select BR2_PACKAGE_EBTABLES
+	select BR2_PACKAGE_IPTABLES
+	select BR2_PACKAGE_IPROUTE2
+	# These are required because there is no way to unequivocally select a modern netcat
+	select BR2_PACKAGE_NMAP      if !BR2_PACKAGE_NETCAT_OPENBSD
+	select BR2_PACKAGE_NMAP_NCAT if !BR2_PACKAGE_NETCAT_OPENBSD
+	select BR2_PACKAGE_RADVD
+	help
+	  Build the libvirt daemon (libvirtd) otherwise build only the
+	  utility programs.
+
+endif
