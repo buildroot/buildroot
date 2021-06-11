@@ -56,4 +56,32 @@ config BR2_PACKAGE_LIBVIRT_DAEMON
 	  Build the libvirt daemon (libvirtd) otherwise build only the
 	  utility programs.
 
+# Stateful drivers are useful only when building the daemon.
+if BR2_PACKAGE_LIBVIRT_DAEMON
+
+config BR2_PACKAGE_LIBVIRT_QEMU
+	bool "qemu"
+	depends on BR2_PACKAGE_LIBSECCOMP_ARCH_SUPPORTS # libseccomp
+	depends on BR2_PACKAGE_QEMU_ARCH_SUPPORTS_TARGET
+	select BR2_PACKAGE_HWDATA         # libpciaccess
+	select BR2_PACKAGE_HWDATA_PCI_IDS # libpciaccess
+	select BR2_PACKAGE_LIBSECCOMP
+	select BR2_PACKAGE_QEMU
+	select BR2_PACKAGE_QEMU_SYSTEM if BR2_PACKAGE_QEMU_CUSTOM_TARGETS = ""
+	select BR2_PACKAGE_YAJL
+	help
+	  QEMU/KVM support
+
+config BR2_PACKAGE_LIBVIRT_LXC
+	bool "lxc"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_7 # lxc
+	select BR2_PACKAGE_LXC
+	help
+	  Linux Container support
+
+comment "lxc needs a toolchain w/ gcc >= 4.7"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_7
+
+endif
+
 endif
