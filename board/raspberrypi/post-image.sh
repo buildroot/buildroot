@@ -137,18 +137,35 @@ __EOF__
 dtparam=spi=on
 dtoverlay=spi0
 __EOF__
-                fi
-                ;;
-                --1w)
-                if ! grep -qE '^dtoverlay=w1-gpio' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
-                        echo "Adding '1w' functionality to config.txt."
-                        cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+		fi
+		;;
+		--1w)
+		if ! grep -qE '^dtoverlay=w1-gpio' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+			echo "Adding '1w' functionality to config.txt."
+			cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
 # Enable 1Wire functionality
 dtoverlay=w1-gpio,gpiopin=25
 __EOF__
-                fi
-                ;;
-		--add-miniuart-bt-overlay)
+		fi
+		;;
+		--rpi-wifi*)
+		if [ "x${KERNEL_4_14}" = "x" ]; then
+			if ! grep -qE '^dtoverlay=sdtweak' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+				echo "Adding 'rpi wifi' functionality to config.txt."
+				cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+# Enable overlay for wifi functionality
+dtoverlay=sdtweak,overclock_50=80
+__EOF__
+			fi
+			if grep -qE '^dtoverlay=mmc' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+				echo "Removing overlay for mmc due to wifi compatibilityin config.txt."
+				cat "${BINARIES_DIR}/rpi-firmware/config.txt" | sed '/^# Enable mmc by default/,+2d' > "${BINARIES_DIR}/rpi-firmware/config_.txt"
+				rm "${BINARIES_DIR}/rpi-firmware/config.txt"
+				mv "${BINARIES_DIR}/rpi-firmware/config_.txt" "${BINARIES_DIR}/rpi-firmware/config.txt"
+			fi
+		fi
+		;;
+		--add-pi3-miniuart-bt-overlay)
                 if [ "x${BLUETOOTH}" = "x" ]; then
                         if ! grep -qE '^dtoverlay=pi3-miniuart-bt' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
                                 echo "Adding 'dtoverlay=pi3-miniuart-bt' to config.txt (fixes ttyAMA0 serial console)."
