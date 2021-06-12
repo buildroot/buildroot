@@ -54,20 +54,24 @@ config BR2_PACKAGE_MESA3D_OPENCL
 	select BR2_PACKAGE_LIBCLC
 	select BR2_PACKAGE_HAS_LIBOPENCL
 
-# inform the .mk file of gallium, dri or vulkan driver selection
+# inform the .mk file of gallium, dri, dri3 or vulkan driver selection
+config BR2_PACKAGE_MESA3D_DRI3
+	bool
+	select BR2_PACKAGE_XLIB_LIBXSHMFENCE
+
 config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER
 	bool
 	select BR2_PACKAGE_MESA3D_DRIVER
 
 config BR2_PACKAGE_MESA3D_DRI_DRIVER
 	bool
+	select BR2_PACKAGE_MESA3D_DRI3 if \
+		(BR2_PACKAGE_XORG7 && BR2_TOOLCHAIN_HAS_SYNC_4 && \
+			!BR2_RISCV_32)
 	select BR2_PACKAGE_MESA3D_DRIVER
 	select BR2_PACKAGE_MESA3D_GBM if \
 		!BR2_PACKAGE_MESA3D_OPENGL_GLX && \
 		!BR2_PACKAGE_MESA3D_OPENGL_EGL
-	select BR2_PACKAGE_XLIB_LIBXSHMFENCE if \
-		(BR2_PACKAGE_XORG7 && BR2_TOOLCHAIN_HAS_SYNC_4 && \
-			!BR2_RISCV_32)
 
 config BR2_PACKAGE_MESA3D_VULKAN_DRIVER
 	bool
@@ -367,9 +371,9 @@ config BR2_PACKAGE_MESA3D_VULKAN_DRIVER_INTEL
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17 # memfd.h
 	depends on BR2_TOOLCHAIN_USES_GLIBC # ifunc, static_assert
 	depends on BR2_PACKAGE_XORG7 # xorgproto
+	select BR2_PACKAGE_MESA3D_DRI3
 	select BR2_PACKAGE_MESA3D_VULKAN_DRIVER
 	select BR2_PACKAGE_XORGPROTO
-	select BR2_PACKAGE_XLIB_LIBXSHMFENCE
 	help
 	  Vulkan driver for Intel hardware from Ivy Bridge onward.
 
