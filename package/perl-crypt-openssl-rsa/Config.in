@@ -3,6 +3,7 @@ config BR2_PACKAGE_PERL_CRYPT_OPENSSL_RSA
 	depends on !BR2_STATIC_LIBS
 	select BR2_PACKAGE_OPENSSL
 	select BR2_PACKAGE_PERL_CRYPT_OPENSSL_RANDOM # runtime
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_RMD160 if BR2_PACKAGE_LIBOPENSSL
 	help
 	  RSA encoding and decoding, using the openSSL libraries.
 
