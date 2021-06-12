@@ -13,7 +13,8 @@ SEATD_INSTALL_STAGING = YES
 
 SEATD_CONF_OPTS += \
 	-Dman-pages=disabled \
-	-Dexamples=disabled
+	-Dexamples=disabled \
+	-Dwerror=false
 
 ifeq ($(BR2_PACKAGE_SYSTEMD_LOGIND),y)
 SEATD_CONF_OPTS += -Dlogind=enabled
