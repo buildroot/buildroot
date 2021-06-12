@@ -31,6 +31,10 @@ choice
 	  Set to the gcc version that is used by your external
 	  toolchain.
 
+config BR2_TOOLCHAIN_EXTERNAL_GCC_11
+	bool "11.x"
+	select BR2_TOOLCHAIN_GCC_AT_LEAST_11
+
 config BR2_TOOLCHAIN_EXTERNAL_GCC_10
 	bool "10.x"
 	select BR2_TOOLCHAIN_GCC_AT_LEAST_10
