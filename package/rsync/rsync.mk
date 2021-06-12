@@ -20,6 +20,9 @@ RSYNC_CONF_OPTS = \
 	--disable-lz4 \
 	--disable-asm
 
+# 0001-rsync-ssl-Verify-the-hostname-in-the-certificate-when-using-openssl.patch
+RSYNC_IGNORE_CVES += CVE-2020-14387
+
 ifeq ($(BR2_PACKAGE_ACL),y)
 RSYNC_DEPENDENCIES += acl
 else
