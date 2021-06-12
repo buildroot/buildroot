@@ -729,6 +729,8 @@ comment "Security Hardening Options"
 config BR2_PIC_PIE_ARCH_SUPPORTS
 	bool
 	default y
+	# Microblaze glibc toolchains don't work with PIC/PIE enabled
+	depends on !BR2_microblaze
 	# Nios2 toolchains produce non working binaries with -fPIC
 	depends on !BR2_nios2
 
