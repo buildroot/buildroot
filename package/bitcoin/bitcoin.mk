@@ -13,6 +13,12 @@ BITCOIN_CPE_ID_VENDOR = bitcoin
 BITCOIN_CPE_ID_PRODUCT = bitcoin_core
 BITCOIN_DEPENDENCIES = host-pkgconf boost libevent
 BITCOIN_MAKE_ENV = BITCOIN_GENBUILD_NO_GIT=1
+# Bitcoin is using assert(...) extensively with the assumption of it
+# never being a noop at runtime. So we cannot build with NDEBUG.
+BITCOIN_CONF_ENV = \
+	CPPFLAGS="$(TARGET_CPPFLAGS) -UNDEBUG" \
+	CFLAGS="$(TARGET_CFLAGS) -UNDEBUG" \
+	CXXFLAGS="$(TARGET_CXXFLAGS) -UNDEBUG"
 BITCOIN_CONF_OPTS = \
 	--disable-bench \
 	--disable-wallet \
