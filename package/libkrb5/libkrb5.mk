@@ -41,6 +41,21 @@ else
 LIBKRB5_CONF_OPTS += --without-ldap
 endif
 
+ifeq ($(BR2_PACKAGE_OPENSSL),y)
+LIBKRB5_CONF_OPTS += \
+	--enable-pkinit \
+	--with-crypto-impl=openssl \
+	--with-spake-openssl \
+	--with-tls-impl=openssl
+LIBKRB5_DEPENDENCIES += openssl
+else
+LIBKRB5_CONF_OPTS += \
+	--disable-pkinit \
+	--with-crypto-impl=builtin \
+	--without-spake-openssl \
+	--without-tls-impl
+endif
+
 ifeq ($(BR2_PACKAGE_LIBEDIT),y)
 LIBKRB5_CONF_OPTS += --with-libedit
 LIBKRB5_DEPENDENCIES += host-pkgconf libedit
