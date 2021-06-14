@@ -109,4 +109,12 @@ config BR2_TARGET_OPENSBI_UBOOT_PAYLOAD
 	help
 	  Build OpenSBI with the U-Boot as a Payload.
 
+config BR2_TARGET_OPENSBI_DTB_PAYLOAD
+	bool "Include DTB in OpenSBI Payload"
+	depends on BR2_TARGET_OPENSBI_PLAT != ""
+	depends on BR2_TARGET_UBOOT
+	select BR2_TARGET_OPENSBI_INSTALL_PAYLOAD_IMG
+	help
+	  Build OpenSBI with the U-Boot DTB as a Payload.
+
 endif
