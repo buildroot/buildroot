@@ -31,7 +31,7 @@ BR2_TARGET_ROOTFS_TAR=y
 BR2_TARGET_GENERIC_ROOT_PASSWD="root"
 BR2_ROOTFS_POST_BUILD_SCRIPT="board/raspberrypi4/post-build.sh"
 BR2_ROOTFS_POST_IMAGE_SCRIPT="board/raspberrypi4/post-image.sh"
-BR2_ROOTFS_POST_SCRIPT_ARGS="--rpi-wifi --tvmode-720 --gpu_mem_1024=384 --add-vc4-fkms-v3d-overlay --silent"
+BR2_ROOTFS_POST_SCRIPT_ARGS="--rpi-wifi --tvmode-720 --gpu_mem_1024=384 --add-vc4-fkms-v3d-overlay --silent --add-dtparam-audio"
 BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_EUDEV=y
 
 BR2_PACKAGE_HOST_DOSFSTOOLS=y

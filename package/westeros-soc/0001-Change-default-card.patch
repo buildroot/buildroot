@@ -1,0 +1,12 @@
+diff -ruN westeros.orig/drm/westeros-gl/westeros-gl.c westeros/drm/westeros-gl/westeros-gl.c
+--- westeros.orig/drm/westeros-gl/westeros-gl.c	2021-06-04 21:14:52.000000000 +0530
++++ westeros/drm/westeros-gl/westeros-gl.c	2021-06-15 17:43:35.947397519 +0530
+@@ -65,7 +65,7 @@
+ #define TRACE3(...)                 INT_TRACE3(__VA_ARGS__, "")
+ #define FRAME(...)                  INT_FRAME(__VA_ARGS__, "")
+ 
+-#define DEFAULT_CARD "/dev/dri/card0"
++#define DEFAULT_CARD "/dev/dri/card1"
+ #ifdef WESTEROS_PLATFORM_QEMUX86
+ #define DEFAULT_MODE_WIDTH (1280)
+ #define DEFAULT_MODE_HEIGHT (1024)
