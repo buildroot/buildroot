@@ -109,4 +109,14 @@ config BR2_TARGET_OPENSBI_UBOOT_PAYLOAD
 	help
 	  Build OpenSBI with the U-Boot as a Payload.
 
+config BR2_TARGET_OPENSBI_FW_FDT_PATH
+	bool "Include U-Boot DTB in OpenSBI Payload"
+	depends on BR2_TARGET_OPENSBI_UBOOT_PAYLOAD
+	select BR2_TARGET_UBOOT_FORMAT_DTB
+	help
+	  Build OpenSBI with FW_FDT_PATH set to
+	  $(BINARIES_DIR)/u-boot.dtb. Note that CONFIG_OF_SEPARATE
+	  must be set in the U-Boot configuration for this file to be
+	  produced.
+
 endif
