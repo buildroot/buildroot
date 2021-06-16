@@ -45,11 +45,6 @@ else
 SPICE_CONF_OPTS += --disable-opus
 endif
 
-# no enable/disable, detected using pkg-config
-ifeq ($(BR2_PACKAGE_OPUS),y)
-SPICE_DEPENDENCIES += opus
-endif
-
 # We need to tweak spice.pc because it /forgets/ (for static linking) that
 # it should link against libz and libjpeg. libz is pkg-config-aware, while
 # libjpeg isn't, hence the two-line tweak
