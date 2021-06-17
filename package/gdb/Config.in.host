@@ -4,7 +4,6 @@ config BR2_PACKAGE_HOST_GDB_ARCH_SUPPORTS
 	depends on !((BR2_arm || BR2_armeb) && BR2_BINFMT_FLAT)
 	depends on !BR2_microblaze
 	depends on !BR2_or1k
-	depends on !BR2_riscv
 	depends on !BR2_nds32
 
 comment "Host GDB Options"
@@ -70,9 +69,13 @@ choice
 
 config BR2_GDB_VERSION_8_3
 	bool "gdb 8.3.x"
+	# gdbserver support missing
+	depends on !BR2_riscv
 
 config BR2_GDB_VERSION_9_2
 	bool "gdb 9.2.x"
+	# gdbserver support missing
+	depends on !BR2_riscv
 
 config BR2_GDB_VERSION_10
 	bool "gdb 10.x"
@@ -87,6 +90,6 @@ config BR2_GDB_VERSION
 	default "arc-2020.09-release-gdb" if BR2_arc
 	default "4ecb98fbc2f94dbe01b69384afbc515107de73df" if BR2_csky
 	default "8.3.1"    if BR2_GDB_VERSION_8_3
-	default "9.2"      if BR2_GDB_VERSION_9_2 || !BR2_PACKAGE_HOST_GDB
-	default "10.1"	   if BR2_GDB_VERSION_10
+	default "9.2"      if BR2_GDB_VERSION_9_2 || (!BR2_PACKAGE_HOST_GDB && !BR2_riscv)
+	default "10.1"	   if BR2_GDB_VERSION_10 || (!BR2_PACKAGE_HOST_GDB && BR2_riscv)
 	depends on BR2_PACKAGE_GDB || BR2_PACKAGE_HOST_GDB
