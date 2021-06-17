@@ -68,25 +68,13 @@ rebuild = touch $(sources);
 
 # The main target(s)
 all:
-	$(error "Specify drm-prime-simple, drm-prime-tile or drm-prime-unpriv as target")
+	$(error "Specify drm-prime-multi as target")
 
 #https://www.gnu.org/software/make/manual/make.html#Target_002dspecific
-drm-prime-simple: EXTRA_FLAGS=-DNO_FLAGS
-
-drm-prime-tile: EXTRA_FLAGS=-DNO_FLAGS
-
-drm-prime-unpriv: EXTRA_FLAGS=-DNO_FLAGS
+drm-prime-multi: EXTRA_FLAGS=-DNO_FLAGS
 
 # Generate the binaries
-drm-prime-simple: $(objects) | $(bindir)
-
-	$(call build)
-
-drm-prime-tile: $(objects) | $(bindir)
-
-	$(call build)
-
-drm-prime-unpriv: $(objects) | $(bindir)
+drm-prime-multi: $(objects) | $(bindir)
 
 	$(call build)
 
