@@ -59,4 +59,8 @@ define USBGUARD_INSTALL_INIT_SYSV
 		$(TARGET_DIR)/etc/init.d/S20usbguard
 endef
 
+define USBGUARD_PERMISSIONS
+	/etc/usbguard/rules.conf f 0600 0 0 - - - - -
+endef
+
 $(eval $(autotools-package))
