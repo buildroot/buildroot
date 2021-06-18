@@ -50,8 +50,13 @@ endif
 ifeq ($(BR2_PACKAGE_MESA3D_OPENGL_EGL),y)
 MPV_CONF_OPTS += --enable-gbm
 MPV_DEPENDENCIES += mesa3d
+ifeq ($(BR2_PACKAGE_LIBDRM),y)
+MPV_CONF_OPTS += --enable-egl-drm
 else
-MPV_CONF_OPTS += --disable-gbm
+MPV_CONF_OPTS += --disable-egl-drm
+endif
+else
+MPV_CONF_OPTS += --disable-gbm --disable-egl-drm
 endif
 
 # jack support
