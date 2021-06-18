@@ -140,6 +140,9 @@ endif
 ifeq ($(BR2_PACKAGE_HAS_LIBGL),y)
 MPV_CONF_OPTS += --enable-gl
 MPV_DEPENDENCIES += libgl
+else ifeq ($(BR2_PACKAGE_HAS_LIBGLES),y)
+MPV_CONF_OPTS += --enable-gl
+MPV_DEPENDENCIES += libgles
 else
 MPV_CONF_OPTS += --disable-gl
 endif
