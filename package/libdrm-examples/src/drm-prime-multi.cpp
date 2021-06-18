@@ -602,6 +602,9 @@ class RenderClient : public Base {
         bool Init ();
         bool Deinit ();
 
+        bool CreateRemoteBuffer ();
+        bool DestroyRemoteBuffer ();
+
         bool ShareBuffer ();
 
         bool Render () override;
@@ -644,6 +647,10 @@ class Compositor: public Base {
         bool DestroySharedBuffer ();
 
         bool ShareBuffer ();
+
+        bool AwaitRequestCreateSharingBuffer ();
+        bool AwaitRequestCompleteSharingBuffer ();
+
         bool Render () override;
 };
 
@@ -731,7 +738,7 @@ bool Base::ShareBuffer (bool mode) {
         _ret = Receive (_msg, _prime._fd);
 
         if (_ret != false) {
-            size_t _id_p = _msg.find (_width_tag);
+            size_t _id_p = _msg.find (_id_tag);
             size_t _width_p = _msg.find (_width_tag);
             size_t _height_p = _msg.find (_height_tag);
             size_t _stride_p = _msg.find (_stride_tag);
@@ -1027,6 +1034,9 @@ bool Base::Receive (std::string & msg, DRM::GBM::fd_t & fd) {
             if (_size < 0) {
                 // Error
                 std::cout << "Error: read (" << strerror (errno) << ")" << std::endl;
+            }
+            else {
+                _valid = true;
             }
 
         }
@@ -1647,7 +1657,6 @@ bool EGL::Deinit () {
 }
 
 bool EGL::ImportBuffer (DRM::GBM::buf_t const & buf) {
-// TODO:
     bool _ret = false;
 
     if (buf != DRM::GBM::InvalidBuf ()) {
@@ -1928,6 +1937,8 @@ bool GLES::Clear () {
 
     _fbo = InvalidFbo ();
 
+    _tex = InvalidTex ();
+
     _offset = GLES::InitialOffset ();
 
     const_cast <remove_const <valid_t>::type &> (_valid) = false;
@@ -2150,9 +2161,8 @@ bool RenderClient::Run () {
 
         // Breaks on error like a disconnected communication channel
         while (_ret != false) {
-            _ret = ShareBuffer () != false && Render () != false;
+            _ret = CreateRemoteBuffer () != false && ShareBuffer () != false && Render () != false && DestroyRemoteBuffer () != false;
 
-// TODO: communicate value via communication channels
             if (_ret != false) {
                 std::string const _id_s = std::to_string (_id);
                 std::cout << "Client [" << _id_s << "] completed rendering frame." << std::endl;
@@ -2174,6 +2184,8 @@ bool RenderClient::Run () {
                     std::cout << "Error: RenderClient [" << std::to_string (_id) << "] is unable to complete time out of : " << std::to_string (_timeout.tv_nsec) << " [nsec]. Remaining time [nsec] : " << std::to_string (_remaining.tv_nsec) << std::endl;
                 }
 #endif
+
+// TODO: signal completion
             }
         }
 
@@ -2186,8 +2198,32 @@ bool RenderClient::Run () {
     return _ret;
 }
 
+bool RenderClient::CreateRemoteBuffer () {
+    bool _ret = true;
+
+// TODO: communicate over channel
+
+    std::cout << "RenderClient [" << std::to_string (_id) << "] has requested to create a remote buffer" << std::endl;
+
+    return _ret;
+}
+
+bool RenderClient::DestroyRemoteBuffer () {
+    bool _ret = true;
+
+// TODO: communicate over channel
+
+    std::cout << "RenderClient [" << std::to_string (_id) << "] has requested to destroy a remote buffer" << std::endl;
+
+    return _ret;
+}
+
 bool RenderClient::ShareBuffer () {
     bool _ret = Base::ShareBuffer (_priv);
+
+    if (_ret != false) {
+        std::cout << "RenderClient [" << std::to_string (_id) << "] has received access to the remote buffer" << std::endl;
+    }
 
     return _ret;
 }
@@ -2241,17 +2277,10 @@ bool Compositor::Run () {
     bool _ret = Status ();
 
     if ( _ret != false) {
-        char key = ' ';
 
-// TODO: the client should request a buffer
-        while (ReadKey ("Press 'c' to create a buffer to be sent, 'Enter' or 'q' to quit", key) != false && key != 'q') {
+        while (AwaitRequestCreateSharingBuffer () != false) {
 
-            if (key != 'c') {
-                continue;
-            }
-
-// TODO : sync via communication channel, ie, the client should signal it is complete
-            _ret = CreateSharedBuffer () != false && ShareBuffer () != false && ReadKey ("Press a key once the client (s) complete", key) != false && Render () != false;
+            _ret = CreateSharedBuffer () != false && ShareBuffer () != false && AwaitRequestCompleteSharingBuffer () != false  && Render () != false /* && DestroySharedBuffer () */;
 
             if (_ret != true) {
                 std::cout << "Error: cannot render a shared buffer" << std::endl;
@@ -2290,6 +2319,57 @@ bool Compositor::DestroySharedBuffer () {
     return _ret;
 }
 
+bool Compositor::AwaitRequestCreateSharingBuffer () {
+    bool _ret = false;
+
+// TODO: communicate over channel
+
+    char _key = '\0';
+
+    while (ReadKey ("Press 'c' to create a shared buffer after a client has requested one, 'Enter' or 'q' to quit", _key) != false && _key != 'q') {
+        switch (_key) {
+            case 'c'    :   {
+                                _ret = true;
+                                break;
+                            }
+            default     :   {
+                                continue;
+                            }
+        }
+
+        break;
+    }
+
+    return _ret;
+}
+
+bool Compositor::AwaitRequestCompleteSharingBuffer () {
+    bool _ret = false;
+
+// TODO: communicate over channel
+
+    char _key = '\0';
+
+    while (ReadKey ("Enter the number (id) of the client that has requested and received the shared buffer, 'Enter' or 'q' to quit", _key) != false && _key != 'q') {
+        switch (_key) {
+// TODO: match number of (maximum) clients
+            case '1'    :   {
+                                _ret = _gles.UpdateOffset (GLES::offset_t (0.25f, 0.25f, 0.0f));
+                                break;
+                            }
+            case '2'    :   {
+                                _ret = _gles.UpdateOffset (GLES::offset_t (-0.25f, -0.25f, 0.0f));
+                                break;
+                            }
+            default     : continue;
+        }
+
+        break;
+    }
+
+    return _ret;
+}
+
 bool Compositor::ShareBuffer () {
     bool _ret = false;
 
@@ -2301,8 +2381,7 @@ bool Compositor::ShareBuffer () {
 bool Compositor::Render () {
     bool _ret = false;
 
-// TODO: the offset is client based in multi client setup
-    _ret = _gles.UpdateOffset (GLES::InitialOffset ()) != false && _gles.RenderEGLImage (_egl.Image ()) != false && _egl.Render () != false && _drm.ScanOut () != false;
+    _ret = /* _gles.UpdateOffset (GLES::InitialOffset ()) != false && */ _gles.RenderEGLImage (_egl.Image ()) != false && _egl.Render () != false && _drm.ScanOut () != false;
 
     return _ret;
 }
@@ -2334,7 +2413,7 @@ main_ret_t main (int argc, char* argv []) {
         constexpr unsigned int TIMEOUT = 1;
 #endif
 
-// TODO: no control which client takes the buffer so some form of synchronization / identification is required
+// TODO: link with the additional communication bewteen compositor and clients, currently, just abstracted away in Await* and *RemoteBuffer functions
     constexpr uint8_t _max_childs = 2;
 
     uint8_t _num_childs = 1;
