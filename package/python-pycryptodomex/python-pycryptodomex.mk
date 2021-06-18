@@ -15,5 +15,11 @@ PYTHON_PYCRYPTODOMEX_LICENSE = \
 	OCB patent license (OCB mode)
 PYTHON_PYCRYPTODOMEX_LICENSE_FILES = LICENSE.rst Doc/LEGAL/COPYRIGHT.pycrypto
 
+define PYTHON_PYCRYPTODOMEX_DELETE_SELFTEST
+	rm -fr $(TARGET_DIR)/usr/lib/python3.9/site-packages/Cryptodome/SelfTest
+endef
+
+PYTHON_PYCRYPTODOMEX_POST_INSTALL_TARGET_HOOKS += PYTHON_PYCRYPTODOMEX_DELETE_SELFTEST
+
 $(eval $(python-package))
 $(eval $(host-python-package))
