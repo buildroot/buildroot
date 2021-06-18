@@ -1,0 +1,17 @@
+diff --git a/priv_aamp.cpp b/priv_aamp.cpp
+index aa589a87..c987d45a 100644
+--- a/priv_aamp.cpp
++++ b/priv_aamp.cpp
+@@ -7053,10 +7053,10 @@ void PrivateInstanceAAMP::SetState(PrivAAMPState state)
+ 		return;
+ 	}
+ 
+-	if (0 == aamp_GetSourceID())
++/*	if (0 == aamp_GetSourceID())
+ 	{
+ 		sentSync = false;
+-	}
++	}*/
+ 
+ 	if ( (state == eSTATE_PLAYING || state == eSTATE_BUFFERING || state == eSTATE_PAUSED)
+ 		 && mState == eSTATE_SEEKING && (mEventListener || mEventListeners[0] || mEventListeners[AAMP_EVENT_SEEKED]))
