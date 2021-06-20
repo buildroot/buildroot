@@ -1,0 +1,47 @@
+From 2c00ad36cd6808423821fc32a072a7f16e8509e5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Alexander=20F=C3=A6r=C3=B8y?= <ahf@torproject.org>
+Date: Thu, 10 Jun 2021 20:04:13 +0000
+Subject: [PATCH] Fix compilation on systems with older compilers.
+
+This patch fixes a build error with GCC 7.x which doesn't seem to accept
+const int's as constants in macro initialization.
+
+See: tpo/core/tor#40410
+
+Downloaded from upstream commit
+https://gitlab.torproject.org/tpo/core/tor/-/commit/2c00ad36cd6808423821fc32a072a7f16e8509e5
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ changes/ticket40410               | 4 ++++
+ src/feature/dirclient/dirclient.c | 3 +--
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+ create mode 100644 changes/ticket40410
+
+diff --git a/changes/ticket40410 b/changes/ticket40410
+new file mode 100644
+index 0000000000..90d6f4be63
+--- /dev/null
++++ b/changes/ticket40410
+@@ -0,0 +1,4 @@
++  o Minor bugfixes (compilation):
++    - Fix a compilation error when trying to build Tor with a compiler that
++      does not support expanding statitically initialized const values in
++      macro's. Fixes bug 40410; bugfix on 0.4.6.5.
+diff --git a/src/feature/dirclient/dirclient.c b/src/feature/dirclient/dirclient.c
+index 79ec518c25..fd677d33fe 100644
+--- a/src/feature/dirclient/dirclient.c
++++ b/src/feature/dirclient/dirclient.c
+@@ -1873,8 +1873,7 @@ dir_client_decompress_response_body(char **bodyp, size_t *bodylenp,
+   /* If we're pretty sure that we have a compressed directory, and
+    * we didn't manage to uncompress it, then warn and bail. */
+   if (!plausible && !new_body) {
+-    const int LOG_INTERVAL = 3600;
+-    static ratelim_t warning_limit = RATELIM_INIT(LOG_INTERVAL);
++    static ratelim_t warning_limit = RATELIM_INIT(60 * 60);
+     log_fn_ratelim(&warning_limit, LOG_WARN, LD_HTTP,
+            "Unable to decompress HTTP body (tried %s%s%s, on %s).",
+            description1,
+-- 
+GitLab
+
