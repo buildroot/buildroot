@@ -238,24 +238,6 @@ config BR2_PACKAGE_KODI_LIBUSB
 	help
 	  Enable libusb support.
 
-config BR2_PACKAGE_KODI_LIBVA
-	bool "va"
-	depends on \
-		BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_GBM || \
-		BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_WAYLAND || \
-		(BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_X11 && \
-			BR2_PACKAGE_KODI_RENDER_SYSTEM_GL)
-	select BR2_PACKAGE_LIBVA
-	help
-	  Enable libva support.
-
-comment "libva support needs platform 'gbm', 'Wayland' or 'X11/OpenGL'"
-	depends on \
-		!BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_GBM && \
-		!BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_WAYLAND && \
-		(!BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_X11 || \
-			!BR2_PACKAGE_KODI_RENDER_SYSTEM_GL)
-
 config BR2_PACKAGE_KODI_LIBVDPAU
 	bool "vdpau"
 	depends on BR2_PACKAGE_KODI_PLATFORM_X11 && \
