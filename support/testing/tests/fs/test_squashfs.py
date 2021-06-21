@@ -1,5 +1,4 @@
 import os
-import subprocess
 
 import infra.basetest
 
@@ -22,7 +21,7 @@ class TestSquashfs(infra.basetest.BRTest):
         self.assertEqual(out[3], "Compression lz4")
 
         img = os.path.join(self.builddir, "images", "rootfs.squashfs")
-        subprocess.call(["truncate", "-s", "%1M", img])
+        infra.img_round_power2(img)
 
         self.emulator.boot(arch="armv7",
                            kernel="builtin",
