@@ -36,7 +36,12 @@ else ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
 	WESTEROS_SOC_SUBDIR = brcm
     WESTEROS_SOC_DEPENDENCIES += wayland-egl-bnxs bcm-refsw
 else ifeq ($(BR2_PACKAGE_LIBDRM),y)
-	WESTEROS_SOC_CONF_OPTS += CFLAGS="$(TARGET_CFLAGS) -I $(STAGING_DIR)/usr/include/libdrm"
+ifeq ($(BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4),y)
+	WESTEROS_DRM_CARD=/dev/dri/card1
+else
+	WESTEROS_DRM_CARD=/dev/dri/card0
+endif
+	WESTEROS_SOC_CONF_OPTS += CFLAGS="$(TARGET_CFLAGS) -DDEFAULT_CARD=\\\"$(WESTEROS_DRM_CARD)\\\" -I $(STAGING_DIR)/usr/include/libdrm"
 	WESTEROS_SOC_SUBDIR = drm
 	WESTEROS_SOC_DEPENDENCIES += libdrm
 endif

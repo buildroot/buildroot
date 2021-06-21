@@ -15,9 +15,11 @@ WESTEROS_CONF_OPTS = \
 	--prefix=/usr/ \
 	--enable-rendergl=yes \
 	--enable-sbprotocol=yes \
+	--enable-ldbprotocol=yes \
 	--enable-xdgv5=yes \
 	--enable-app=yes \
-	--enable-test=yes
+	--enable-test=yes \
+	--enable-player=yes
 
 ifeq ($(BR2_PACKAGE_WESTEROS_ESSOS), y)
 WESTEROS_CONF_OPTS += \
@@ -42,7 +44,8 @@ else ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
 		$(BCM_REFSW_MAKE_ENV)	
 	WESTEROS_DEPENDENCIES += wayland-egl-bnxs bcm-refsw
 else ifeq ($(BR2_PACKAGE_LIBDRM),y)
-	WESTEROS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -DWESTEROS_PLATFORM_DRM -I${STAGING_DIR}/usr/include/interface/vmcs_host/linux"
+	WESTEROS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -DWESTEROS_PLATFORM_DRM"
+	WESTEROS_CONF_ENV += LDFLAGS="-L$(@D)/.libs -lEGL -lGLESv2"
 endif # BR2_PACKAGE_WESTEROS_SOC_RPI
 
 ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
@@ -60,6 +63,8 @@ WESTEROS_PRE_CONFIGURE_HOOKS += WESTEROS_RUN_AUTORECONF
 define WESTEROS_BUILD_CMDS
 	SCANNER_TOOL=${HOST_DIR}/usr/bin/wayland-scanner \
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/protocol
+	SCANNER_TOOL=${HOST_DIR}/usr/bin/wayland-scanner \
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/linux-dmabuf/protocol
 	$(WESTEROS_MAKE_OPTS) \
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) $(WESTEROS_LDFLAGS)
 endef
