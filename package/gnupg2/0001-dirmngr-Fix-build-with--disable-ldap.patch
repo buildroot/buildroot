@@ -1,0 +1,43 @@
+From c6900f5723b4edc899aaea267ed599b5ad724142 Mon Sep 17 00:00:00 2001
+From: NIIBE Yutaka <gniibe@fsij.org>
+Date: Fri, 11 Jun 2021 10:30:02 +0900
+Subject: [PATCH] dirmngr: Fix build with --disable-ldap.
+
+* dirmngr/dirmngr.c (parse_rereadable_options) [USE_LDAP]:
+Conditionalize.
+
+--
+
+Reported-by: Phil Pennock
+Signed-off-by: NIIBE Yutaka <gniibe@fsij.org>
+(cherry picked from commit c8b2162c0e7eb42b74811b7ed225fa0f56be4083)
+[Retrieved from:
+https://git.gnupg.org/cgi-bin/gitweb.cgi?p=gnupg.git;a=commit;h=c6900f5723b4edc899aaea267ed599b5ad724142]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ dirmngr/dirmngr.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/dirmngr/dirmngr.c b/dirmngr/dirmngr.c
+index 915e0e601..330983f3f 100644
+--- a/dirmngr/dirmngr.c
++++ b/dirmngr/dirmngr.c
+@@ -770,6 +770,7 @@ parse_rereadable_options (gpgrt_argparse_t *pargs, int reread)
+     case oRecursiveResolver: enable_recursive_resolver (1); break;
+ 
+     case oLDAPServer:
++#if USE_LDAP
+       {
+         ldap_server_t server;
+         char *p;
+@@ -791,6 +792,7 @@ parse_rereadable_options (gpgrt_argparse_t *pargs, int reread)
+             opt.ldapservers = server;
+           }
+       }
++#endif
+       break;
+ 
+     case oKeyServer:
+-- 
+2.11.0
+
