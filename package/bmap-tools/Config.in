@@ -1,0 +1,44 @@
+config BR2_PACKAGE_BMAP_TOOLS
+	bool "bmap-tools"
+	depends on BR2_PACKAGE_PYTHON3 || BR2_PACKAGE_PYTHON
+	select BR2_PACKAGE_PYTHON3_PYEXPAT if BR2_PACKAGE_PYTHON3 # runtime
+	select BR2_PACKAGE_PYTHON_PYEXPAT if BR2_PACKAGE_PYTHON # runtime
+	select BR2_PACKAGE_PYTHON_SETUPTOOLS # runtime, pkg_resources
+	select BR2_PACKAGE_PYTHON_SIX # runtime
+	help
+	  Tool to flash image files to block devices using the block map
+	  bmaptool is a generic tool for creating the block map (bmap)
+	  for a file, and copying files using the block map. The idea is
+	  that large file containing unused blocks, like raw system
+	  image files, can be copied or flashed a lot faster with
+	  bmaptool than with traditional tools like "dd" or "cp".
+
+	  Relevant optional dependencies:
+
+	  - Busybox compiled with CONFIG_BZIP2, or BR2_PACKAGE_BZIP2,
+	    to support bz2 compressed images
+
+	  - BR2_PACKAGE_PIGZ for optimized gzip decompression
+
+	  - Busybox compiled with CONFIG_LZOP, or BR2_PACKAGE_LZOP, to
+	    support lzo compressed images.
+
+	  - BR2_PACKAGE_ZIP to support zip compressed images
+
+	  - BR2_PACKAGE_LZ4 to support lz4 compressed images
+
+	  - BR2_PACKAGE_ZSTD to support zstd compressed images
+
+	  - Busybox compiled CONFIG_FEATURE_SEAMLESS_* or
+	    BR2_PACKAGE_TAR to support tar compressed images
+
+	  - BR2_PACKAGE_OPENSSH to retrieve images over SSH.
+
+	  - BR2_PACKAGE_SSHPASS to retrieve images over SSH if
+	    password authentication is used.
+
+	  Image signature verification is not supported as
+	  python-gpgme is not available. Optimized bzip2 decompression
+	  is not supported as pbzip2 is not available.
+
+	  https://github.com/intel/bmap-tools
