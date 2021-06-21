@@ -43,6 +43,7 @@ class TestExt2(infra.basetest.BRTest):
         BR2_TARGET_ROOTFS_EXT2=y
         BR2_TARGET_ROOTFS_EXT2_2r0=y
         BR2_TARGET_ROOTFS_EXT2_LABEL="foobaz"
+        BR2_TARGET_ROOTFS_EXT2_SIZE="16384"
         # BR2_TARGET_ROOTFS_TAR is not set
         """
 
@@ -62,6 +63,7 @@ class TestExt2r1(infra.basetest.BRTest):
         BR2_TARGET_ROOTFS_EXT2=y
         BR2_TARGET_ROOTFS_EXT2_2r1=y
         BR2_TARGET_ROOTFS_EXT2_LABEL="foobar"
+        BR2_TARGET_ROOTFS_EXT2_SIZE="16384"
         # BR2_TARGET_ROOTFS_TAR is not set
         """
 
@@ -81,6 +83,7 @@ class TestExt3(infra.basetest.BRTest):
         """
         BR2_TARGET_ROOTFS_EXT2=y
         BR2_TARGET_ROOTFS_EXT2_3=y
+        BR2_TARGET_ROOTFS_EXT2_SIZE="16384"
         # BR2_TARGET_ROOTFS_TAR is not set
         """
 
