@@ -1,5 +1,6 @@
 import os
 import infra
+import subprocess
 
 from infra.basetest import BRTest
 
@@ -59,3 +60,34 @@ class TestPy3BmapTools(TestBmapTools):
         """
         BR2_PACKAGE_PYTHON3=y
         """
+
+
+class TestHostBmapTools(BRTest):
+    config = infra.basetest.BASIC_TOOLCHAIN_CONFIG + \
+        """
+        BR2_PACKAGE_HOST_BMAP_TOOLS=y
+        # BR2_TARGET_ROOTFS_TAR is not set
+        BR2_TARGET_ROOTFS_EXT2=y
+        """
+
+    def test_run(self):
+        bmap_x = os.path.join(self.b.builddir, "host", "bin", "bmaptool")
+        src_f = os.path.join(self.b.builddir, "images", "rootfs.ext2")
+        dst_f = os.path.join(self.b.builddir, "images", "rootfs.ext2.copy")
+        map_f = os.path.join(self.b.builddir, "images", "rootfs.ext2.bmap")
+
+        ret = subprocess.call([bmap_x, "create", "-o", map_f, src_f],
+                              stdout=self.b.logfile,
+                              stderr=self.b.logfile)
+        self.assertEqual(ret, 0)
+
+        ret = subprocess.call([bmap_x, "copy", src_f, dst_f],
+                              stdout=self.b.logfile,
+                              stderr=self.b.logfile)
+        self.assertEqual(ret, 0)
+
+        with open(src_f, 'rb') as f:
+            src = f.read()
+        with open(dst_f, 'rb') as f:
+            dst = f.read()
+        self.assertEqual(src, dst)
