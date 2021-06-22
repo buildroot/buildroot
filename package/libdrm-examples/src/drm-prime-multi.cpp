@@ -372,6 +372,10 @@ class DRM {
 };
 
 class EGL {
+    public :
+
+        static constexpr uint8_t _max_images = 2;
+
     private :
 
         DRM::GBM /*const*/ & _gbm;
@@ -381,13 +385,17 @@ class EGL {
         EGLContext _ctx;
         EGLSurface _surf;
 
+        // Multiple are allowed, possible one for every client
         struct img {
             EGLImageKHR _khr;
             EGLint _width;
             EGLint _height;
 
+//            static constexpr width_t InvalidWidth () { return DRM::GBM::InvalidWidth (); }
+//            static constexpr height_t InvalidHeight () { return DRM::GBM::InvalidHeight (); }
+
             bool operator != (struct img const & rhs) const { return _khr != rhs._khr /*|| _width != rhs._width || _height != rhs._height */;}
-        } _img;
+        }; std::array <struct img, _max_images> _img;
 
         bool const _valid;
 
@@ -397,7 +405,10 @@ class EGL {
         using cfg_t = decltype (_cfg);
         using ctx_t = decltype (_ctx);
         using surf_t = decltype (_surf);
-        using img_t = decltype (_img);
+        using img_t = img;
+
+        using width_t = decltype (img::_width);
+        using height_t = decltype (img::_height);
 
         using valid_t = decltype (_valid);
 
@@ -418,17 +429,20 @@ class EGL {
 //        static_assert (is_same < DRM::GBM::width_t, width_t >::value != false);
 //        static_assert (is_same < EGLint, width_t >::value != false);
 
-        static constexpr img_t InvalidImage () { return { EGL_NO_IMAGE_KHR, DRM::GBM::InvalidWidth (), DRM::GBM::InvalidHeight ()}; }
+// TODO:: narrowing, range
+        static constexpr img_t InvalidImage () { return { EGL_NO_IMAGE_KHR, static_cast <width_t> (DRM::GBM::InvalidWidth ()), static_cast <height_t> (DRM::GBM::InvalidHeight ())}; }
 
 //        static_assert (is_same <DRM::GBM::valid_t, valid_t>::value != false);
         valid_t Status () const { return _gbm.Status () && _valid; }
 
-        img_t const & Image () const { return _img; };
+        img_t const & Image (decltype (_max_images) index = 0) const { return _img [index]; };
 
-        bool ImportBuffer (DRM::GBM::prime_t const & prime);
-        bool ImportBuffer (DRM::GBM::buf_t const & buf);
+        bool ImportBuffer (DRM::GBM::prime_t const & prime, decltype (_max_images) index = 0);
+        bool ImportBuffer (DRM::GBM::buf_t const & buf, decltype (_max_images) index = 0);
 
         bool Render ();
+
+        static constexpr uint8_t _max_textures = EGL::_max_images;
 
     private :
 
@@ -444,11 +458,14 @@ class GLES {
         // x, y, z
         static constexpr uint8_t VerticeDimensions = 3;
 
+        static constexpr decltype (EGL::_max_images) _max_textures = EGL::_max_images;
+
     private:
 
         GLenum const _tgt;
         GLuint _fbo;
-        GLuint _tex;
+// TODO: possibly same number as number of EGL images
+        std::array <GLuint, _max_textures> _tex;
 
         struct offset {
             using coordinate_t =  float;
@@ -467,7 +484,7 @@ class GLES {
 
         using tgt_t = decltype (_tgt);
         using fbo_t = decltype (_fbo);
-        using tex_t = decltype (_tex);
+        using tex_t = GLuint;
 
         using offset_t = decltype (_offset);
 
@@ -481,7 +498,7 @@ class GLES {
 
         GLES () = delete;
 // TODO limit options to GL_TEXTURE_EXTERNAL_OES and GL_TEXTURE_2D
-       explicit  GLES (tgt_t tgt) : _tgt {tgt}, _fbo {InvalidFbo ()}, _tex {InvalidTex ()}, _valid {Init ()} {}
+       explicit GLES (tgt_t tgt) : _tgt {tgt}, _fbo {InvalidFbo ()}, _valid {Init ()} {}
         ~GLES () { /* bool */ Deinit (); };
 
 //        static constexpr fgt_t InvalidTgt () {...}
@@ -491,7 +508,7 @@ class GLES {
         valid_t Status () const { return _valid; }
 
         bool RenderTile ();
-        bool RenderEGLImage (EGL::img_t const  & img);
+        bool RenderEGLImage (EGL::img_t const  & img,decltype (_max_textures) index = 0);
         bool BufferColorFill (bool red = true, bool green = true, bool blue = true);
 
         // Valus used at render stages of different objects
@@ -621,6 +638,8 @@ class Compositor: public Base {
 
     public :
 
+        static constexpr uint8_t _max_renderclients = 2;
+
         using priv_t = decltype (_priv);
         using valid_t = decltype (_valid);
 
@@ -723,7 +742,7 @@ bool Base::ShareBuffer (bool mode) {
                 _msg.replace ((_id_count + _width_count + _height_count) + _id_s.size () + _width_s.size () + _height_s.size (), _stride_count, _stride_tag);
                 _msg.replace ((_id_count + _width_count + _height_count + _stride_count) + _id_s.size () + _width_s.size () + _height_s.size (), _stride_s.size (), _stride_s.c_str ());
 
-                _ret = Send (_msg, _prime._fd) && _egl.ImportBuffer (_prime._buf);
+                _ret = Send (_msg, _prime._fd);
             }
             else {
                 // Error
@@ -1656,10 +1675,14 @@ bool EGL::Deinit () {
     return _ret;
 }
 
-bool EGL::ImportBuffer (DRM::GBM::buf_t const & buf) {
+bool EGL::ImportBuffer (DRM::GBM::buf_t const & buf, decltype (_max_images) index) {
     bool _ret = false;
 
+    if (index < _max_images) {
+
     if (buf != DRM::GBM::InvalidBuf ()) {
+
+        using img_t = struct img &; img_t _img = EGL::_img [index];
 
         if (_img != EGL::InvalidImage ()) {
             static EGLBoolean (* _eglDestroyImageKHR) (EGLDisplay, EGLImageKHR) = reinterpret_cast < EGLBoolean (*) (EGLDisplay, EGLImageKHR) > (eglGetProcAddress ("eglDestroyImageKHR"));
@@ -1695,16 +1718,22 @@ bool EGL::ImportBuffer (DRM::GBM::buf_t const & buf) {
 
     }
 
+    }
+
     return _ret;
 }
 
-bool EGL::ImportBuffer (DRM::GBM::prime_t const & prime) {
+bool EGL::ImportBuffer (DRM::GBM::prime_t const & prime, decltype (_max_images) index) {
     bool _ret = false;
+
+    if (index < _max_images) {
 
 // TODO invalid dimension and color formats
 
     // Destruction also done via ImportPrime
     if (prime != DRM::GBM::InvalidPrime () /*&& DestroyPrime () */){
+
+        using img_t = struct img &; img_t _img = EGL::_img [index];
 
         if (_img != EGL::InvalidImage ()) {
             static EGLBoolean (* _eglDestroyImageKHR) (EGLDisplay, EGLImageKHR) = reinterpret_cast < EGLBoolean (*) (EGLDisplay, EGLImageKHR) > (eglGetProcAddress ("eglDestroyImageKHR"));
@@ -1736,9 +1765,13 @@ bool EGL::ImportBuffer (DRM::GBM::prime_t const & prime) {
 
         if (_eglCreateImageKHR != nullptr) {
             _img._khr = _eglCreateImageKHR (_dpy, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, 0, _attrs);
+            _img._width = prime._width;
+            _img._height = prime._height;
         }
 
         _ret = _img != EGL::InvalidImage () && _gbm.ImportPrime (prime) != false;
+    }
+
     }
 
     return _ret;
@@ -1760,7 +1793,10 @@ bool EGL::Clear () {
 //    _cfg = EGL_NO_CONFIG
     _surf = InvalidSurface ();
     _ctx = InvalidContext ();;
-    _img = InvalidImage ();;
+
+    for (size_t _index = 0; _index < _max_images; _index++) {
+        EGL::_img [_index] = InvalidImage ();
+    }
 
     const_cast <remove_const <valid_t>::type &> (_valid) = false;
 
@@ -1783,11 +1819,6 @@ bool GLES::Deinit () {
 
 bool GLES::RenderTile () {
     bool _ret = glGetError () == GL_NO_ERROR;
-
-    if (_ret != false) {
-        glClear (GL_COLOR_BUFFER_BIT);
-        _ret = glGetError () == GL_NO_ERROR;
-    }
 
     if (_ret != false) {
         _ret = SetupProgram ();
@@ -1830,11 +1861,13 @@ bool GLES::RenderTile () {
     return _ret;
 }
 
-bool GLES::RenderEGLImage (EGL::img_t const  & img) {
+bool GLES::RenderEGLImage (EGL::img_t const  & img, decltype (_max_textures) index) {
     bool _ret = glGetError () == GL_NO_ERROR && img != EGL::InvalidImage ();
 
 // TODO: add check ?
 //    fbo = _tgt != GL_TEXTURE_EXTERNAL_OES;
+
+    if (index < _max_textures) {
 
     if (_ret != false) {
         glActiveTexture (GL_TEXTURE0);
@@ -1842,21 +1875,21 @@ bool GLES::RenderEGLImage (EGL::img_t const  & img) {
     }
 
     if (_ret != false) {
-        if (_tex != InvalidTex ()) {
-            glDeleteTextures (1, &_tex);
+        if (_tex [index] != InvalidTex ()) {
+            glDeleteTextures (1, &_tex [index]);
             _ret = glGetError () == GL_NO_ERROR;
         }
 
-        _tex = InvalidTex ();
+        _tex [index] = InvalidTex ();
 
         if (_ret != false) {
-            glGenTextures (1, &_tex); 
+            glGenTextures (1, &_tex [index]); 
             _ret = glGetError () == GL_NO_ERROR;
         }
     }
 
     if (_ret != false) {
-        glBindTexture (_tgt, _tex);
+        glBindTexture (_tgt, _tex [index]);
         _ret = glGetError () == GL_NO_ERROR;
     }
 
@@ -1911,7 +1944,7 @@ bool GLES::RenderEGLImage (EGL::img_t const  & img) {
             }
 
             if (_ret != false) {
-                glFramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _tgt, _tex, 0 /* level */);
+                glFramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _tgt, _tex [index], 0 /* level */);
                 _ret = glGetError () == GL_NO_ERROR;
             }
         }
@@ -1929,6 +1962,8 @@ bool GLES::RenderEGLImage (EGL::img_t const  & img) {
         }
     }
 
+    }
+
     return _ret;
 }
 
@@ -1937,7 +1972,9 @@ bool GLES::Clear () {
 
     _fbo = InvalidFbo ();
 
-    _tex = InvalidTex ();
+    for (size_t _index = 0; _index < _max_textures; _index++) {
+        _tex [_index] = InvalidTex ();
+    }
 
     _offset = GLES::InitialOffset ();
 
@@ -2095,10 +2132,7 @@ bool GLES::SetupProgram () {
     };
 
 
-    glClearColor (0.0f, 1.0f, 0.0f, 0.5f);
-
     bool _ret = glGetError () == GL_NO_ERROR;
-
 
     constexpr char const _vtx_src [] =
         "#version 100                               \n"
@@ -2128,6 +2162,16 @@ bool GLES::SetupProgram () {
 
 // TODO: inefficient on every call, reuse compiled program
     _ret = ShadersToProgram(_vtxShader, _fragShader);
+
+    if (_ret != false) {
+        glEnable (GL_BLEND);
+        _ret = glGetError () == GL_NO_ERROR;
+    }
+
+    if (_ret != false) {
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        _ret = glGetError () == GL_NO_ERROR;
+    }
 
     // Color on error
     if (_ret != true) {
@@ -2242,7 +2286,9 @@ bool RenderClient::Render () {
         default : _red = true;  _green = true;  _blue = true;   break;
     }
 
-    bool _ret = _gles.RenderEGLImage (_egl.Image ()) != false  && _gles.BufferColorFill (_red, _green, _blue) && _egl.Render () != false;
+    constexpr decltype (EGL::_max_images) _index = 0;
+
+    bool _ret = _gles.RenderEGLImage (_egl.Image (_index)) != false  && _gles.BufferColorFill (_red, _green, _blue) && _egl.Render () != false;
 
     return _ret;
 }
@@ -2350,22 +2396,37 @@ bool Compositor::AwaitRequestCompleteSharingBuffer () {
 
     char _key = '\0';
 
+    remove_const <decltype (EGL::_max_images) >::type _index = 0;
+
     while (ReadKey ("Enter the number (id) of the client that has requested and received the shared buffer, 'Enter' or 'q' to quit", _key) != false && _key != 'q') {
         switch (_key) {
-// TODO: match number of (maximum) clients
-            case '1'    :   {
-                                _ret = _gles.UpdateOffset (GLES::offset_t (0.25f, 0.25f, 0.0f));
-                                break;
-                            }
-            case '2'    :   {
-                                _ret = _gles.UpdateOffset (GLES::offset_t (-0.25f, -0.25f, 0.0f));
-                                break;
-                            }
-            default     : continue;
+           case '0'                        :   /* minimum */
+                                                {
+                                                    continue;
+                                                }
+            case '1'                        :   {
+                                                    _index = 0;
+                                                    break;
+                                                }
+            case '2'                        :   {
+                                                    _index = 1;
+                                                    break;
+                                                }
+            case '0' + EGL::_max_images + 1 :   /* maximum */
+            default                         :   /* somewhere between minimum and maximum but not defined */
+                                                {
+                                                    continue;
+                                                }
         }
 
         break;
     }
+
+    DRM::GBM & _gbm = _drm.Get ();
+
+    DRM::GBM::prime_t _prime = _gbm.Prime ();
+
+    _ret =_egl.ImportBuffer (_prime._buf, _index);
 
     return _ret;
 }
@@ -2381,7 +2442,33 @@ bool Compositor::ShareBuffer () {
 bool Compositor::Render () {
     bool _ret = false;
 
-    _ret = /* _gles.UpdateOffset (GLES::InitialOffset ()) != false && */ _gles.RenderEGLImage (_egl.Image ()) != false && _egl.Render () != false && _drm.ScanOut () != false;
+    for (remove_const <decltype (EGL::_max_images)>::type _index = 0; _index < EGL::_max_images; _index++) {
+
+        switch (_index) {
+            case 0      :   {
+                                _ret = _gles.UpdateOffset (GLES::offset_t (0.25f, 0.25f, 0.0f));
+                                break;
+                            }
+            case 1      :   {
+                                _ret = _gles.UpdateOffset (GLES::offset_t (-0.25f, -0.25f, 0.0f));
+                                break;
+                            }
+            default     :   /* Error */
+                            {
+                                _ret = false;
+                            }
+        }
+
+        // One image might be invalid
+        _ret = _gles.RenderEGLImage (_egl.Image (_index)) || _ret;
+
+        if (_ret != true) {
+
+            break;
+        }
+    }
+
+    _ret = _ret != false && _egl.Render () != false && _drm.ScanOut () != false;
 
     return _ret;
 }
@@ -2414,7 +2501,7 @@ main_ret_t main (int argc, char* argv []) {
 #endif
 
 // TODO: link with the additional communication bewteen compositor and clients, currently, just abstracted away in Await* and *RemoteBuffer functions
-    constexpr uint8_t _max_childs = 2;
+    constexpr decltype (Compositor::_max_renderclients) _max_childs = Compositor::_max_renderclients;
 
     uint8_t _num_childs = 1;
 
