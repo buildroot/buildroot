@@ -24,6 +24,8 @@ USBGUARD_DEPENDENCIES += libopenssl
 endif
 
 ifeq ($(BR2_PACKAGE_LIBGCRYPT),y)
+USBGUARD_CONF_ENV += \
+	ac_cv_path_LIBGCRYPT_CONFIG=$(STAGING_DIR)/usr/bin/libgcrypt-config
 USBGUARD_CONF_OPTS += --with-crypto-library=gcrypt
 USBGUARD_DEPENDENCIES += libgcrypt
 endif
