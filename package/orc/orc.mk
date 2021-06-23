@@ -19,5 +19,12 @@ ORC_CONF_OPTS = \
 	-Dtests=disabled \
 	-Dtools=disabled
 
+HOST_ORC_CONF_OPTS = \
+	-Dbenchmarks=disabled \
+	-Dexamples=disabled \
+	-Dgtk_doc=disabled \
+	-Dorc-test=disabled \
+	-Dtests=disabled
+
 $(eval $(meson-package))
 $(eval $(host-meson-package))
