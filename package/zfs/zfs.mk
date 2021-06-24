@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ZFS_VERSION = 2.0.4
+ZFS_VERSION = 2.0.5
 ZFS_SITE = https://github.com/openzfs/zfs/releases/download/zfs-$(ZFS_VERSION)
 ZFS_LICENSE = CDDL
 ZFS_LICENSE_FILES = LICENSE COPYRIGHT
