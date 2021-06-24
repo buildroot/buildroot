@@ -198,7 +198,7 @@ define QEMU_CONFIGURE_CMDS
 			--disable-vhost-crypto \
 			--disable-libxml2 \
 			--disable-capstone \
-			--disable-git-update \
+			--with-git-submodules=ignore \
 			--disable-opengl \
 			--disable-vhost-user-blk-server \
 			--disable-virtiofsd \
