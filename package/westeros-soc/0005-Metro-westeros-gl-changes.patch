@@ -1,0 +1,27 @@
+diff -ruN westeros-soc.orig/drm/westeros-gl/westeros-gl.c westeros-soc/drm/westeros-gl/westeros-gl.c
+--- westeros-soc.orig/drm/westeros-gl/westeros-gl.c	2021-06-04 21:14:52.000000000 +0530
++++ westeros-soc/drm/westeros-gl/westeros-gl.c	2021-06-24 15:42:12.565757151 +0530
+@@ -65,7 +65,7 @@
+ #define TRACE3(...)                 INT_TRACE3(__VA_ARGS__, "")
+ #define FRAME(...)                  INT_FRAME(__VA_ARGS__, "")
+ 
+-#define DEFAULT_CARD "/dev/dri/card0"
++// #define DEFAULT_CARD "/dev/dri/card0"
+ #ifdef WESTEROS_PLATFORM_QEMUX86
+ #define DEFAULT_MODE_WIDTH (1280)
+ #define DEFAULT_MODE_HEIGHT (1024)
+@@ -3627,10 +3627,12 @@
+                drmver->desc_len, drmver->desc );
+ 
+          len= strlen( drmver->name );
+-         if ( (len == 5) && !strncmp( drmver->name, "meson", len ) )
++         if ( ((len == 5) && !strncmp( drmver->name, "meson", len )) ||
++              ((len == 3) && !strncmp( drmver->name, "vc4", len )) )
+          {
+             #ifdef USE_REFRESH_LOCK
+-            if ( getenv("WESTEROS_GL_USE_REFRESH_LOCK") )
++            // if ( getenv("WESTEROS_GL_USE_REFRESH_LOCK") )
++            if (true)
+             {
+                g_useRefreshLock= true;
+ 
