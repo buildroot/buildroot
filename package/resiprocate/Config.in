@@ -9,6 +9,7 @@ config BR2_PACKAGE_RESIPROCATE
 	depends on BR2_USE_WCHAR
 	depends on BR2_USE_MMU # fork()
 	select BR2_PACKAGE_C_ARES
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_DES if BR2_PACKAGE_LIBOPENSSL
 	help
 	  reSIProcate is a framework that aims to fully implement the
 	  SIP protocol in first class C++. It is intended for use in
