@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBVA_VERSION = 2.11.0
+LIBVA_VERSION = 2.12.0
 LIBVA_SOURCE = libva-$(LIBVA_VERSION).tar.bz2
 LIBVA_SITE = https://github.com/intel/libva/releases/download/$(LIBVA_VERSION)
 LIBVA_LICENSE = MIT
