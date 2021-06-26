@@ -32,5 +32,4 @@ class TestSquashfs(infra.basetest.BRTest):
         self.emulator.login()
 
         cmd = "mount | grep '/dev/root on / type squashfs'"
-        _, exit_code = self.emulator.run(cmd)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk(cmd)

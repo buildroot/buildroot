@@ -33,23 +33,19 @@ class TestOpkg(infra.basetest.BRTest):
         # and prerm scripting provided in the package archive.
 
         cmd = "opkg install example-snmpd-package_1.0_arm.ipk"
-        _, exit_code = self.emulator.run(cmd)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk(cmd)
 
         cmd = "opkg list-installed | grep example-snmpd-package"
-        _, exit_code = self.emulator.run(cmd)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk(cmd)
 
         # Check that postinst script ran to start the services
         cmd = "ps aux | grep [s]nmpd"
-        _, exit_code = self.emulator.run(cmd)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk(cmd)
 
         # If successful, the prerm script ran to stop the service prior to
         # the removal of the service scripting and files
         cmd = "opkg remove example-snmpd-package"
-        _, exit_code = self.emulator.run(cmd)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk(cmd)
 
         # Verify after package removal that the services is not
         # running, but let's give it some time to really stop

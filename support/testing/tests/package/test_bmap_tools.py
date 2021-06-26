@@ -42,8 +42,7 @@ class TestBmapTools(BRTest):
     def test_run(self):
         self.login()
         cmd = "/root/{}".format(os.path.basename(self.sample_script))
-        _, exit_code = self.emulator.run(cmd, timeout=20)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk(cmd, timeout=20)
 
 
 class TestPy2BmapTools(TestBmapTools):

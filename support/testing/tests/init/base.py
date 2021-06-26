@@ -39,10 +39,8 @@ class InitSystemBase(infra.basetest.BRTest):
 
     def check_init(self, path):
         cmd = "cmp /proc/1/exe {}".format(path)
-        _, exit_code = self.emulator.run(cmd)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk(cmd)
 
     def check_network(self, interface, exitCode=0):
         cmd = "ip addr show {} |grep inet".format(interface)
-        _, exit_code = self.emulator.run(cmd)
-        self.assertEqual(exit_code, exitCode)
+        self.assertRunOk(cmd)
