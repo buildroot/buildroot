@@ -4,6 +4,7 @@ choice
 	prompt "GCC compiler Version"
 	default BR2_GCC_VERSION_ARC if BR2_arc
 	default BR2_GCC_VERSION_CSKY if BR2_csky
+	default BR2_GCC_VERSION_POWERPC_SPE if BR2_powerpc_SPE
 	default BR2_GCC_VERSION_10_X
 	help
 	  Select the version of gcc you wish to use.
@@ -20,11 +21,11 @@ config BR2_GCC_VERSION_CSKY
 	depends on BR2_csky
 	select BR2_TOOLCHAIN_GCC_AT_LEAST_6
 
-config BR2_GCC_VERSION_8_X
-	bool "gcc 8.x"
-	depends on !BR2_ARCH_NEEDS_GCC_AT_LEAST_9
-	# Broken or unsupported architectures
-	depends on !BR2_or1k
+config BR2_GCC_VERSION_POWERPC_SPE
+	bool "gcc powerpc spe"
+	# powerpc spe support has been deprecated since gcc 8.x.
+	# https://gcc.gnu.org/ml/gcc/2018-04/msg00102.html
+	depends on BR2_powerpc_SPE
 	select BR2_TOOLCHAIN_GCC_AT_LEAST_8
 
 config BR2_GCC_VERSION_9_X
@@ -88,7 +89,7 @@ config BR2_GCC_SUPPORTS_DLANG
 
 config BR2_GCC_VERSION
 	string
-	default "8.4.0"     if BR2_GCC_VERSION_8_X
+	default "8.4.0"     if BR2_GCC_VERSION_POWERPC_SPE
 	default "9.4.0"     if BR2_GCC_VERSION_9_X
 	default "10.3.0"    if BR2_GCC_VERSION_10_X
 	default "11.1.0"    if BR2_GCC_VERSION_11_X
