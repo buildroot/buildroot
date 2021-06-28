@@ -70,11 +70,17 @@ define WESTEROS_BUILD_CMDS
 endef
 
 define WESTEROS_INSTALL_STAGING_CMDS
-	$(MAKE1) -C $(@D) DESTDIR=$(STAGING_DIR) install
+	cp -a $(@D)/.libs/*.so* $(STAGING_DIR)/usr/lib/
+	cp -a $(@D)/*.pc $(STAGING_DIR)/usr/lib/pkgconfig/
+	cp -a $(@D)/*.h $(STAGING_DIR)/usr/include
+	cp -a $(@D)/protocol/*.h $(STAGING_DIR)/usr/include
+	cp -a $(@D)/essos/.libs/*.so* $(STAGING_DIR)/usr/lib/
+	cp -a $(@D)/essos/essos*.h $(STAGING_DIR)/usr/include
 endef
 
 define WESTEROS_INSTALL_TARGET_CMDS
-	$(MAKE1) -C $(@D) DESTDIR=$(TARGET_DIR) install
+	cp -a $(@D)/.libs/*.so* $(TARGET_DIR)/usr/lib/
+	cp -a $(@D)/essos/.libs/*.so* $(TARGET_DIR)/usr/lib/
 endef
 
 $(eval $(autotools-package))
