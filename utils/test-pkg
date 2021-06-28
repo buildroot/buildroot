@@ -161,6 +161,10 @@ build_one() {
     # done in the same locale.
     comm -23 <(sort "${cfg}") <(sort "${dir}/.config") >"${dir}/missing.config"
     if [ -s "${dir}/missing.config" ]; then
+        if [ ${keep} -ne 1 ]; then
+            # Invalid configuration, drop it
+            rm -f "${dir}/.config"
+        fi
         return 1
     fi
     # Remove file, it's empty anyway.
