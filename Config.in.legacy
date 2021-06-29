@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2021.05"
 
+config BR2_PACKAGE_PHP_EXT_XMLRPC
+	bool "PHP XMLRPC extension removed"
+	select BR2_LEGACY
+	help
+	  The XMLRPC php extension was removed.
+	  See: https://wiki.php.net/rfc/unbundle_xmlprc
+
 config BR2_PACKAGE_UDISKS_LVM2
 	bool "udisks lvm2 support removed"
 	select BR2_LEGACY

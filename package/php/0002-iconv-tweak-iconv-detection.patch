@@ -14,60 +14,26 @@ Signed-off-by: Gustavo Zacarias <gustavo@zacarias.com.ar>
 [Gustavo: convert to nice m4 instead of patching configure]
 [Gustavo: update for 5.6.10]
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
-[aduskett@gmail.com: Update for 7.3.0]
+[aduskett@gmail.com: Update for 8.0.7]
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 [Bernd: rebased for 7.4.10 & 7.4.13]
 ---
- build/php.m4        |  2 +-
- ext/iconv/config.m4 | 22 ----------------------
- 2 files changed, 1 insertion(+), 23 deletions(-)
+ build/php.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/build/php.m4 b/build/php.m4
 index 9586c490..8b3d47ed 100644
 --- a/build/php.m4
 +++ b/build/php.m4
-@@ -1973,7 +1973,7 @@ AC_DEFUN([PHP_SETUP_ICONV], [
+@@ -1937,7 +1937,7 @@ AC_DEFUN([PHP_SETUP_ICONV], [
    dnl Check external libs for iconv funcs.
    if test "$found_iconv" = "no"; then
  
 -    for i in $PHP_ICONV /usr/local /usr; do
 +    for i in $PHP_ICONV; do
-       if test -r $i/include/giconv.h; then
-         AC_DEFINE(HAVE_GICONV_H, 1, [ ])
+       if test -r $i/include/gnu-libiconv/iconv.h; then
          ICONV_DIR=$i
-diff --git a/ext/iconv/config.m4 b/ext/iconv/config.m4
-index fe9b47aa..70599694 100644
---- a/ext/iconv/config.m4
-+++ b/ext/iconv/config.m4
-@@ -13,28 +13,6 @@ if test "$PHP_ICONV" != "no"; then
-   ])
- 
-   if test "$iconv_avail" != "no"; then
--    if test -z "$ICONV_DIR"; then
--      for i in /usr/local /usr; do
--        if test -f "$i/include/iconv.h" || test -f "$i/include/giconv.h"; then
--          PHP_ICONV_PREFIX="$i"
--          break
--        fi
--      done
--      if test -z "$PHP_ICONV_PREFIX"; then
--        PHP_ICONV_PREFIX="/usr"
--      fi
--    else
--      PHP_ICONV_PREFIX="$ICONV_DIR"
--    fi
--
--    CFLAGS="-I$PHP_ICONV_PREFIX/include $CFLAGS"
--    LDFLAGS="-L$PHP_ICONV_PREFIX/$PHP_LIBDIR $LDFLAGS"
--
--    if test -r "$PHP_ICONV_PREFIX/include/giconv.h"; then
--      PHP_ICONV_H_PATH="$PHP_ICONV_PREFIX/include/giconv.h"
--    else
--      PHP_ICONV_H_PATH="$PHP_ICONV_PREFIX/include/iconv.h"
--	fi
- 
-     AC_MSG_CHECKING([if iconv is glibc's])
-     AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <gnu/libc-version.h>]], [[gnu_get_libc_version();]])],[
+         ICONV_INCLUDE_DIR=$i/include/gnu-libiconv
 -- 
-2.7.4
+2.31.1
 
