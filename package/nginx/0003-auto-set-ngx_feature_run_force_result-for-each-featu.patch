@@ -15,14 +15,16 @@ Signed-off-by: Samuel Martin <s.martin49@gmail.com>
 Refresh for 1.8.0.
 
 Signed-off-by: Danomi Manchego <danomimanchego123@gmail.com>
+[rebased against v1.20.1]
+Signed-off-by: Adam Duskett <Aduskett@gmail.com>
 ---
  auto/cc/conf            | 3 +++
  auto/cc/name            | 1 +
  auto/lib/libatomic/conf | 1 +
  auto/os/darwin          | 3 +++
  auto/os/linux           | 4 ++++
- auto/unix               | 8 ++++++++
- 6 files changed, 20 insertions(+)
+ auto/unix               | 7 +++++++
+ 6 files changed, 19 insertions(+)
 
 diff --git a/auto/cc/conf b/auto/cc/conf
 index afbca62b..ad42c800 100644
@@ -116,7 +118,7 @@ index 2c8a9bb8..eb4513ee 100644
  ngx_feature_incs="#include <sys/epoll.h>"
  ngx_feature_path=
  ngx_feature_libs=
-@@ -111,6 +112,7 @@ CC_AUX_FLAGS="$cc_aux_flags -D_GNU_SOURCE"
+@@ -136,6 +137,7 @@ CC_AUX_FLAGS="$cc_aux_flags -D_GNU_SOURCE"
  ngx_feature="sendfile()"
  ngx_feature_name="NGX_HAVE_SENDFILE"
  ngx_feature_run=yes
@@ -124,7 +126,7 @@ index 2c8a9bb8..eb4513ee 100644
  ngx_feature_incs="#include <sys/sendfile.h>
                    #include <errno.h>"
  ngx_feature_path=
-@@ -132,6 +134,7 @@ CC_AUX_FLAGS="$cc_aux_flags -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64"
+@@ -157,6 +159,7 @@ CC_AUX_FLAGS="$cc_aux_flags -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64"
  ngx_feature="sendfile64()"
  ngx_feature_name="NGX_HAVE_SENDFILE64"
  ngx_feature_run=yes
@@ -132,7 +134,7 @@ index 2c8a9bb8..eb4513ee 100644
  ngx_feature_incs="#include <sys/sendfile.h>
                    #include <errno.h>"
  ngx_feature_path=
-@@ -150,6 +153,7 @@ ngx_include="sys/prctl.h"; . auto/include
+@@ -175,6 +178,7 @@ ngx_include="sys/prctl.h"; . auto/include
  ngx_feature="prctl(PR_SET_DUMPABLE)"
  ngx_feature_name="NGX_HAVE_PR_SET_DUMPABLE"
  ngx_feature_run=yes
@@ -152,15 +154,15 @@ index 43d3b25a..3da00537 100644
          ngx_feature_incs="#include <sys/event.h>
                            #include <sys/time.h>"
          ngx_feature_path=
-@@ -730,6 +731,7 @@ ngx_feature_test="char buf[1]; struct iovec vec[1]; ssize_t n;
- ngx_feature="sys_nerr"
- ngx_feature_name="NGX_SYS_NERR"
- ngx_feature_run=value
-+ngx_feature_run_force_result="$ngx_force_sys_nerr"
- ngx_feature_incs='#include <errno.h>
-                   #include <stdio.h>'
- ngx_feature_path=
-@@ -744,6 +746,7 @@ if [ $ngx_found = no ]; then
+@@ -722,6 +723,7 @@ if [ $ngx_found = no ]; then
+     ngx_feature="sys_nerr"
+     ngx_feature_name="NGX_SYS_NERR"
+     ngx_feature_run=value
++    ngx_feature_run_force_result="$ngx_force_sys_nerr"
+     ngx_feature_incs='#include <errno.h>
+                       #include <stdio.h>'
+     ngx_feature_path=
+@@ -737,6 +739,7 @@ if [ $ngx_found = no ]; then
      ngx_feature="_sys_nerr"
      ngx_feature_name="NGX_SYS_NERR"
      ngx_feature_run=value
@@ -168,15 +170,7 @@ index 43d3b25a..3da00537 100644
      ngx_feature_incs='#include <errno.h>
                        #include <stdio.h>'
      ngx_feature_path=
-@@ -759,6 +762,7 @@ if [ $ngx_found = no ]; then
-     ngx_feature='maximum errno'
-     ngx_feature_name=NGX_SYS_NERR
-     ngx_feature_run=value
-+    ngx_feature_run_force_result="$ngx_force_sys_nerr"
-     ngx_feature_incs='#include <errno.h>
-                       #include <string.h>
-                       #include <stdio.h>'
-@@ -841,6 +845,7 @@ ngx_feature_test="void *p; p = memalign(4096, 4096);
+@@ -806,6 +809,7 @@ ngx_feature_test="void *p; p = memalign(4096, 4096);
  ngx_feature="mmap(MAP_ANON|MAP_SHARED)"
  ngx_feature_name="NGX_HAVE_MAP_ANON"
  ngx_feature_run=yes
@@ -184,7 +178,7 @@ index 43d3b25a..3da00537 100644
  ngx_feature_incs="#include <sys/mman.h>"
  ngx_feature_path=
  ngx_feature_libs=
-@@ -854,6 +859,7 @@ ngx_feature_test="void *p;
+@@ -819,6 +823,7 @@ ngx_feature_test="void *p;
  ngx_feature='mmap("/dev/zero", MAP_SHARED)'
  ngx_feature_name="NGX_HAVE_MAP_DEVZERO"
  ngx_feature_run=yes
@@ -192,7 +186,7 @@ index 43d3b25a..3da00537 100644
  ngx_feature_incs="#include <sys/mman.h>
                    #include <sys/stat.h>
                    #include <fcntl.h>"
-@@ -869,6 +875,7 @@ ngx_feature_test='void *p; int  fd;
+@@ -834,6 +839,7 @@ ngx_feature_test='void *p; int  fd;
  ngx_feature="System V shared memory"
  ngx_feature_name="NGX_HAVE_SYSVSHM"
  ngx_feature_run=yes
@@ -200,7 +194,7 @@ index 43d3b25a..3da00537 100644
  ngx_feature_incs="#include <sys/ipc.h>
                    #include <sys/shm.h>"
  ngx_feature_path=
-@@ -883,6 +890,7 @@ ngx_feature_test="int  id;
+@@ -848,6 +854,7 @@ ngx_feature_test="int  id;
  ngx_feature="POSIX semaphores"
  ngx_feature_name="NGX_HAVE_POSIX_SEM"
  ngx_feature_run=yes
