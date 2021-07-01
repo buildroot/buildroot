@@ -144,6 +144,15 @@ config BR2_PACKAGE_OPENOCD_ARMEW
 	  Enable building support for the Olimex ARM-JTAG-EW
 	  Programmer (default is auto)
 
+config BR2_PACKAGE_OPENOCD_XDS110
+	bool "TI XDS110 Debug Probe"
+	depends on BR2_USE_WCHAR
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libusb
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
+	select BR2_PACKAGE_LIBUSB
+	help
+	  Enable building support for the TI XDS110 Debug Probe.
+
 config BR2_PACKAGE_OPENOCD_PARPORT
 	bool "pc parallel port driver"
 	help
@@ -232,5 +241,9 @@ config BR2_PACKAGE_OPENOCD_SYSFS
 comment "many openocd adapters needs a toolchain w/ threads, gcc >= 4.9"
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
+
+comment "xds110 adapter support needs toolchain w/ wchar"
+	depends on !BR2_USE_WCHAR
+	depends on BR2_TOOLCHAIN_HAS_THREADS && BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 
 endif # BR2_PACKAGE_OPENOCD
