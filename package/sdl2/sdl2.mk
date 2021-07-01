@@ -24,13 +24,15 @@ SDL2_CONF_OPTS += \
 
 # We are using autotools build system for sdl2, so the sdl2-config.cmake
 # include path are not resolved like for sdl2-config script.
-# Remove sdl2-config.cmake file and avoid unsafe include path if this
-# file is used by a cmake based package.
+# Change the absolute /usr path to resolve relatively to the sdl2-config.cmake location.
 # https://bugzilla.libsdl.org/show_bug.cgi?id=4597
-define SDL2_REMOVE_SDL2_CONFIG_CMAKE
-	rm -rf $(STAGING_DIR)/usr/lib/cmake/SDL2
+define SDL2_FIX_SDL2_CONFIG_CMAKE
+	$(SED) '2iget_filename_component(PACKAGE_PREFIX_DIR "$${CMAKE_CURRENT_LIST_DIR}/../../../" ABSOLUTE)\n' \
+		$(STAGING_DIR)/usr/lib/cmake/SDL2/sdl2-config.cmake
+	$(SED) 's%"/usr"%$${PACKAGE_PREFIX_DIR}%' \
+		$(STAGING_DIR)/usr/lib/cmake/SDL2/sdl2-config.cmake
 endef
-SDL2_POST_INSTALL_STAGING_HOOKS += SDL2_REMOVE_SDL2_CONFIG_CMAKE
+SDL2_POST_INSTALL_STAGING_HOOKS += SDL2_FIX_SDL2_CONFIG_CMAKE
 
 # We must enable static build to get compilation successful.
 SDL2_CONF_OPTS += --enable-static
