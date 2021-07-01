@@ -12,12 +12,6 @@ ZSTD_LICENSE_FILES = LICENSE COPYING
 ZSTD_CPE_ID_VENDOR = facebook
 ZSTD_CPE_ID_PRODUCT = zstandard
 
-ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
-ZSTD_OPTS += HAVE_THREAD=1
-else
-ZSTD_OPTS += HAVE_THREAD=0
-endif
-
 ifeq ($(BR2_PACKAGE_ZLIB),y)
 ZSTD_DEPENDENCIES += zlib
 ZSTD_OPTS += HAVE_ZLIB=1
@@ -43,19 +37,24 @@ ifeq ($(BR2_STATIC_LIBS),y)
 ZSTD_BUILD_LIBS = libzstd.a
 ZSTD_INSTALL_LIBS = install-static
 else ifeq ($(BR2_SHARED_LIBS),y)
-ZSTD_BUILD_LIBS = libzstd
+ZSTD_BUILD_LIBS = lib
 ZSTD_INSTALL_LIBS = install-shared
 else
-ZSTD_BUILD_LIBS = libzstd.a libzstd
+ZSTD_BUILD_LIBS = lib
 ZSTD_INSTALL_LIBS = install-static install-shared
 endif
 
 # The HAVE_THREAD flag is read by the 'programs' makefile but not by  the 'lib'
-# one. Building a multi-threaded binary with a library (which defaults to
-# single-threaded) gives a runtime error when compressing files.
-# The 'lib' makefile provides specific '%-mt' targets for this purpose.
+# one. Building a multi-threaded binary with a static library (which defaults
+# to single-threaded) gives a runtime error when compressing files.
+# The 'lib' makefile provides specific '%-mt' and '%-nomt' targets for this
+# purpose.
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
+ZSTD_OPTS += HAVE_THREAD=1
 ZSTD_BUILD_LIBS := $(addsuffix -mt,$(ZSTD_BUILD_LIBS))
+else
+ZSTD_OPTS += HAVE_THREAD=0
+ZSTD_BUILD_LIBS := $(addsuffix -nomt,$(ZSTD_BUILD_LIBS))
 endif
 
 define ZSTD_BUILD_CMDS
