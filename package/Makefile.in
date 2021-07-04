@@ -148,9 +148,6 @@ endif
 ifeq ($(BR2_DEBUG_3),y)
 TARGET_DEBUGGING = -g3
 endif
-ifeq ($(BR2_ENABLE_RUNTIME_DEBUG),)
-TARGET_DEBUGGING += -DNDEBUG
-endif
 
 TARGET_LDFLAGS = $(call qstrip,$(BR2_TARGET_LDFLAGS))
 
