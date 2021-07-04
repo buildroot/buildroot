@@ -128,7 +128,7 @@ if [ "$NAND_FLASH" = "yes" ] ; then
 	flash_erase /dev/mtd0 0 1
 	nandwrite -p /dev/mtd0 /boot/ubiboot.bin
 else
-	echo -n -e '\x80\x00\x00\x10' | dd of=/dev/mmcblk0 bs=4 count=1 conv=notrunc
+	echo -n -e '\x80\x00\x00\x10\x00\x00\x00\x00' | dd of=/dev/mmcblk0 bs=8 count=1 conv=notrunc
 	dd if=/boot/ubiboot.bin of=/dev/mmcblk0 bs=512 seek=1 count=16 conv=notrunc
 fi
 
