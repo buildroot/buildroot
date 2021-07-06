@@ -97,6 +97,8 @@ define PKG_PYTHON_FIXUP_SYSCONFIGDATA
 	find $(HOST_DIR)/lib/python* $(STAGING_DIR)/usr/lib/python* \
 		-name "_sysconfigdata*.py" | xargs --no-run-if-empty \
 		$(SED) "s:$(PER_PACKAGE_DIR)/[^/]\+/:$(PER_PACKAGE_DIR)/$($(PKG)_NAME)/:g"
+	find $(HOST_DIR)/lib/python* $(STAGING_DIR)/usr/lib/python* \
+		-name "_sysconfigdata*.pyc" -delete
 endef
 endif
 
