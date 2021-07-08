@@ -1,7 +1,7 @@
 config BR2_PACKAGE_PYTHON_BCRYPT
 	bool "python-bcrypt"
+	depends on BR2_PACKAGE_PYTHON3
 	select BR2_PACKAGE_PYTHON_CFFI # runtime
-	select BR2_PACKAGE_PYTHON_SIX # runtime
 	help
 	  Modern password hashing for your software and your servers.
 
