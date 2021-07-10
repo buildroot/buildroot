@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QPID_PROTON_VERSION = 0.33.0
+QPID_PROTON_VERSION = 0.35.0
 QPID_PROTON_SITE = \
 	https://downloads.apache.org/qpid/proton/$(QPID_PROTON_VERSION)
 QPID_PROTON_LICENSE = Apache-2.0
@@ -13,7 +13,7 @@ QPID_PROTON_CPE_ID_VENDOR = apache
 QPID_PROTON_CPE_ID_PRODUCT = qpid_proton
 QPID_PROTON_INSTALL_STAGING = YES
 QPID_PROTON_DEPENDENCIES = \
-	host-python \
+	host-python3 \
 	util-linux \
 	$(if $(BR2_PACKAGE_LIBUV),libuv) \
 	$(if $(BR2_PACKAGE_OPENSSL),openssl)
@@ -29,7 +29,7 @@ QPID_PROTON_CONF_OPTS = \
 	-DENABLE_FUZZ_TESTING=OFF \
 	-DENABLE_VALGRIND=OFF \
 	-DENABLE_WARNING_ERROR=OFF \
-	-DPYTHON_EXECUTABLE=$(HOST_DIR)/bin/python2
+	-DPYTHON_EXECUTABLE=$(HOST_DIR)/bin/python3
 
 # epoll proactor unconditionally uses pthread and cpp (C++) bindings
 # unconditionally use proactor
