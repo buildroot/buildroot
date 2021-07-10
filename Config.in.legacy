@@ -154,6 +154,13 @@ config BR2_PACKAGE_KODI_LIBVA
 	  the kodi-specific dependencies limiting libva support to non-
 	  OPENGLES platforms were removed including this option.
 
+config BR2_PACKAGE_PYTHON_COHERENCE
+	bool "python-coherence package removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it can't be built anymore due
+	  to python-twisted being now incompatible with python 2.
+
 config BR2_PACKAGE_PHP_EXT_XMLRPC
 	bool "PHP XMLRPC extension removed"
 	select BR2_LEGACY
