@@ -17,18 +17,12 @@ RPCBIND_DEPENDENCIES += libtirpc host-pkgconf
 RPCBIND_CONF_OPTS += --with-rpcuser=root
 
 ifeq ($(BR2_INIT_SYSTEMD),y)
-RPCBIND_CONF_OPTS += --with-systemdsystemunitdir=/usr/lib/systemd/system
+RPCBIND_CONF_OPTS += --enable-warmstarts \
+	--with-systemdsystemunitdir=/usr/lib/systemd/system
 RPCBIND_DEPENDENCIES += systemd
 else
 RPCBIND_CONF_OPTS += --with-systemdsystemunitdir=no
 endif
-
-define RPCBIND_INSTALL_INIT_SYSTEMD
-	$(INSTALL) -m 0644 -D package/rpcbind/rpcbind.service \
-		$(TARGET_DIR)/usr/lib/systemd/system/rpcbind.service
-	$(INSTALL) -m 0644 -D package/rpcbind/rpcbind.socket \
-		$(TARGET_DIR)/usr/lib/systemd/system/rpcbind.socket
-endef
 
 define RPCBIND_INSTALL_INIT_SYSV
 	$(INSTALL) -m 0755 -D package/rpcbind/S30rpcbind \
