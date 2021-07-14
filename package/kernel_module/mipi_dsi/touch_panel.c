@@ -46,6 +46,41 @@ static int goodix_ts_read_input_report(struct i2c_mipi_dsi *md, u8 *data)
 	return -ENOMSG;
 }
 
+//TODO
+//need more work for it's compatibility
+static void x_y_rotate(int *x, int *y)
+{
+        int temp_x,temp_y;
+        int temp;
+
+        if(*x < 0 || *y < 0) {
+		printk(KERN_ERR"%s<%d> parameter error\n", __func__, __LINE__);
+                return ;
+	}
+        //1 move rectangle center to (0,0)
+        temp_x = *x - TP_DEFAULT_WIDTH/2;
+        temp_y = *y - TP_DEFAULT_HEIGHT/2;
+
+        //2 rotate the point anti-clockwise for 90 degree
+        temp = temp_x;
+        temp_x = temp_y;
+        temp_y = temp;
+
+        temp_x *= (-1);
+        temp_y *= 1;
+
+        //3 zoom
+        temp_x = temp_x * TP_DEFAULT_WIDTH / TP_DEFAULT_HEIGHT;
+        temp_y = temp_y * TP_DEFAULT_HEIGHT / TP_DEFAULT_WIDTH;
+
+        //4 move rectangle center back to (TP_DEFAULT_WIDTH/2, TP_DEFAULT_HEIGHT/2)
+        temp_x += TP_DEFAULT_WIDTH/2;
+        temp_y += TP_DEFAULT_HEIGHT/2;
+
+        *x = temp_x;
+        *y = temp_y;
+}
+
 static void goodix_ts_report_touch_8b(struct i2c_mipi_dsi *md, u8 *coor_data)
 {
 	struct input_dev *input_dev = md->input;
@@ -61,6 +96,8 @@ static void goodix_ts_report_touch_8b(struct i2c_mipi_dsi *md, u8 *coor_data)
 	input_y = coor_data[3];
 	input_y <<= 8;
 	input_y += coor_data[2];
+
+	x_y_rotate(&input_x, &input_y);
 
 	input_mt_slot(input_dev, id);
 	input_mt_report_slot_state(input_dev, MT_TOOL_FINGER, true);
