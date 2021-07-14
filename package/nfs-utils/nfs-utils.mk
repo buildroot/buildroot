@@ -19,7 +19,6 @@ NFS_UTILS_CONF_OPTS = \
 	--disable-nfsv4 \
 	--disable-nfsv41 \
 	--disable-gss \
-	--disable-uuid \
 	--enable-tirpc \
 	--enable-ipv6 \
 	--without-tcp-wrappers \
@@ -51,6 +50,13 @@ NFS_UTILS_CONF_OPTS += --enable-caps
 NFS_UTILS_DEPENDENCIES += libcap
 else
 NFS_UTILS_CONF_OPTS += --disable-caps
+endif
+
+ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBBLKID)$(BR2_PACKAGE_UTIL_LINUX_LIBUUID),yy)
+NFS_UTILS_CONF_OPTS += --enable-uuid
+NFS_UTILS_DEPENDENCIES += util-linux
+else
+NFS_UTILS_CONF_OPTS += --disable-uuid
 endif
 
 define NFS_UTILS_INSTALL_FIXUP
