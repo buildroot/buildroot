@@ -1,0 +1,35 @@
+#!/bin/sh
+
+start()
+{
+
+	while [ ! -e /dev/sda1 ];
+	do
+		sleep 1
+	done
+
+	while [ ! -e /dev/sda2 ];
+	do
+		sleep 1
+	done
+
+	# wait a bit for mount
+	sleep 1
+
+	mount -a
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		;;
+	restart|reload)
+		start
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart|reload}" >&2
+		exit 1
+		;;
+esac

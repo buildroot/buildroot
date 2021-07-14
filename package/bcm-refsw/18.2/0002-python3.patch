@@ -1,0 +1,11 @@
+--- a/BSEAV/lib/gpu/vc5/driver/libs/util/dglenum/dglenum_gen.py
++++ b/BSEAV/lib/gpu/vc5/driver/libs/util/dglenum/dglenum_gen.py
+@@ -37,7 +37,7 @@
+ static DGLENUM_NAME_VALUE_T glenums[] = {
+ ''')
+ 
+-for (name,value) in glenums.iteritems():
++for (name,value) in glenums.items():
+    fout.write('   {{ "{}", {} }},\n'.format(name,value))
+ 
+ fout.write('};\n')

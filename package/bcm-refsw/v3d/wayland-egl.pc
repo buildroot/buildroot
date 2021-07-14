@@ -1,0 +1,11 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: wayland-egl
+Description: EGL Platform-layer for wayland clients
+Version: 1.13.1
+
+Libs: -L${libdir} -lnexus -lnxclient -lnxpl -lbcm_wayland_egl
+Cflags: -I${includedir} -I${includedir}/refsw

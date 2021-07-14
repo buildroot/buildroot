@@ -1,0 +1,30 @@
+#
+# A convenient place to add config options, nothing more.
+#
+
+# CPU Core family selection
+
+# CONFIG_BCM7145A0 is not set
+CONFIG_BCM74371A0=y
+# CONFIG_BCM7145 is not set
+CONFIG_BCM74371=y
+# Not sure if that below GENET part is needed by all 7439 family
+# Will save below to separate file for specified platform, if not.
+CONFIG_BRCM_GENET_V4=y
+CONFIG_BRCM_GENET_VERSION=4
+
+# CONFIG_LEGACY_PTYS is not set
+
+#
+# Debug Lockups and Hangs
+#
+CONFIG_LOCKUP_DETECTOR=y
+# CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC is not set
+CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC_VALUE=0
+# CONFIG_DETECT_HUNG_TASK is not set
+# CONFIG_PANIC_ON_OOPS is not set
+CONFIG_PANIC_ON_OOPS_VALUE=0
+CONFIG_PANIC_TIMEOUT=0
+CONFIG_SCHED_DEBUG=y
+# CONFIG_SCHEDSTATS is not set
+# CONFIG_TIMER_STATS is not set
