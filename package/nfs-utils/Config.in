@@ -14,6 +14,16 @@ config BR2_PACKAGE_NFS_UTILS
 
 if BR2_PACKAGE_NFS_UTILS
 
+config BR2_PACKAGE_NFS_UTILS_NFSV4
+	bool "NFSv4/NFSv4.1"
+	depends on !BR2_STATIC_LIBS # keyutils, lvm2
+	select BR2_PACKAGE_KEYUTILS
+	select BR2_PACKAGE_LIBEVENT
+	select BR2_PACKAGE_LVM2
+	select BR2_PACKAGE_SQLITE
+	help
+	  Enable NFSv4/NFSv4.1 support
+
 config BR2_PACKAGE_NFS_UTILS_RPCDEBUG
 	bool "rpcdebug"
 	help
