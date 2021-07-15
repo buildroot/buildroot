@@ -12,7 +12,6 @@ class TestUbootOpensslPkgConfig(infra.basetest.BRTest):
         BR2_TARGET_UBOOT=y
         BR2_TARGET_UBOOT_BOARD_DEFCONFIG="efi-x86_payload64"
         BR2_TARGET_UBOOT_NEEDS_OPENSSL=y
-        BR2_PACKAGE_HOST_PKGCONF=y
         """
 
     def test_run(self):
