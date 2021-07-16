@@ -28,9 +28,13 @@ grep -q "^dtoverlay=i2c3,pins_4_5$" $CFG_PATH || echo "dtoverlay=i2c3,pins_4_5" 
 grep -q "^gpio=13=pu$" $CFG_PATH || echo "gpio=13=pu" >> $CFG_PATH
 grep -q "^dtoverlay=reTerminal$" $CFG_PATH || echo "dtoverlay=reTerminal" >> $CFG_PATH
 
+#create dir /boot/
+if [ ! -d "${TARGET_DIR}/boot/" ]; then
+	mkdir ${TARGET_DIR}/boot/
+fi
+
 #modify the /etc/fstab
 FSTAB_PATH=${TARGET_DIR}/etc/fstab
-mkdir ${TARGET_DIR}/boot/
 grep -q "^/dev/mmcblk0p1          /boot           vfat    defaults        0       0$" $FSTAB_PATH \
 	|| echo "/dev/mmcblk0p1          /boot           vfat    defaults        0       0" >> \
 	$FSTAB_PATH
