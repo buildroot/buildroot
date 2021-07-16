@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WESTEROS_SOC_VERSION = a13ce42ba4fbbae371411f63bd7dd65dccf15a0c
+WESTEROS_SOC_VERSION = 23a65d1fa48f6d82d51c3cb6cd08bf403f95187d
 WESTEROS_SOC_SITE_METHOD = git
 WESTEROS_SOC_SITE = git://github.com/rdkcmf/westeros
 WESTEROS_SOC_INSTALL_STAGING = YES
