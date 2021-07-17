@@ -318,6 +318,15 @@ config BR2_PACKAGE_SYSTEMD_NETWORKD
 
 	  http://www.freedesktop.org/software/systemd/man/systemd-networkd.html
 
+config BR2_PACKAGE_SYSTEMD_OOMD
+	bool "enable out-of-memory killer"
+	help
+	  systemd-oomd is a system service that uses cgroups-v2 and
+	  pressure stall information (PSI) to monitor and take action
+	  on processes before an OOM occurs in kernel space.
+
+	  https://www.freedesktop.org/software/systemd/man/systemd-oomd.html
+
 config BR2_PACKAGE_SYSTEMD_POLKIT
 	bool "enable polkit support"
 	depends on BR2_HOST_GCC_AT_LEAST_4_9 # polkit
@@ -423,6 +432,23 @@ config BR2_PACKAGE_SYSTEMD_SMACK_SUPPORT
 
 	  When this feature is enabled, Systemd mounts smackfs and
 	  manages security labels for sockets.
+
+config BR2_PACKAGE_SYSTEMD_SYSEXT
+	bool "enable sysext support"
+	help
+	  systemd-sysext activates/deactivates system extension
+	  images.
+
+	  System extension images may – dynamically at runtime —
+	  extend the /usr/ and /opt/ directory hierarchies with
+	  additional files.
+
+	  This is particularly useful on immutable system images where
+	  a /usr/ and/or /opt/ hierarchy residing on a read-only file
+	  system shall be extended temporarily at runtime without
+	  making any persistent modifications.
+
+	  https://www.freedesktop.org/software/systemd/man/systemd-sysext.html
 
 config BR2_PACKAGE_SYSTEMD_SYSUSERS
 	bool "enable sysusers support"
