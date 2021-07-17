@@ -15,6 +15,9 @@ AVAHI_INSTALL_STAGING = YES
 # part of the Debian packaging and not part of upstream avahi
 AVAHI_IGNORE_CVES += CVE-2021-26720
 
+# 0001-Fix-NULL-pointer-crashes-from-175.patch
+AVAHI_IGNORE_CVES += CVE-2021-36217
+
 AVAHI_CONF_ENV = \
 	avahi_cv_sys_cxx_works=yes \
 	DATADIRNAME=share
