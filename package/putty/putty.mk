@@ -11,6 +11,9 @@ PUTTY_LICENSE_FILES = LICENCE
 PUTTY_CPE_ID_VENDOR = putty
 PUTTY_CONF_OPTS = --disable-gtktest
 
+# 0002-New-option-to-reject-trivial-success-of-userauth.patch
+PUTTY_IGNORE_CVES += CVE-2021-36367
+
 ifeq ($(BR2_PACKAGE_LIBGTK2),y)
 PUTTY_CONF_OPTS += --with-gtk=2
 PUTTY_DEPENDENCIES += libgtk2
