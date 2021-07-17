@@ -23,7 +23,10 @@ NFS_UTILS_CONF_OPTS = \
 	--with-statedir=/run/nfs \
 	--with-rpcgen=$(HOST_DIR)/bin/rpcgen
 
+HOST_NFS_UTILS_DEPENDENCIES = host-pkgconf host-libtirpc
+
 HOST_NFS_UTILS_CONF_OPTS = \
+	--enable-tirpc \
 	--disable-nfsv4 \
 	--disable-nfsv41 \
 	--disable-gss \
@@ -32,10 +35,9 @@ HOST_NFS_UTILS_CONF_OPTS = \
 	--without-tcp-wrappers \
 	--with-statedir=/run/nfs \
 	--disable-caps \
-	--disable-tirpc \
 	--without-systemd \
-	--with-rpcgen=internal
-HOST_NFS_UTILS_DEPENDENCIES = host-pkgconf host-libtirpc
+	--with-rpcgen=internal \
+	--with-tirpcinclude=$(HOST_DIR)/include/tirpc
 
 NFS_UTILS_TARGETS_$(BR2_PACKAGE_NFS_UTILS_RPCDEBUG) += usr/sbin/rpcdebug
 NFS_UTILS_TARGETS_$(BR2_PACKAGE_NFS_UTILS_RPC_LOCKD) += usr/sbin/rpc.lockd
