@@ -1,0 +1,10 @@
+config BR2_PACKAGE_QT5QUICKDESIGNER
+	bool "qt5quickdesigner"
+	depends on BR2_PACKAGE_QT5_JSCORE_AVAILABLE # qt5declarative
+	select BR2_PACKAGE_QT5DECLARATIVE
+	select BR2_PACKAGE_QT5DECLARATIVE_QUICK
+	help
+	  The Qt Quick Studio Components module provides sets of 
+	  components and effects enhanced for creating animated UIs
+
+	  https://doc.qt.io/qtdesignstudio/qtquickdesigner-components-overview.html
