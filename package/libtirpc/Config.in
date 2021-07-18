@@ -7,5 +7,13 @@ config BR2_PACKAGE_LIBTIRPC
 
 	  http://sourceforge.net/projects/libtirpc/
 
+config BR2_PACKAGE_LIBTIRPC_GSS
+	bool "gss"
+	depends on BR2_USE_MMU # libkrb5
+	depends on BR2_PACKAGE_LIBTIRPC
+	select BR2_PACKAGE_LIBKRB5
+	help
+	  Enable GSSAPI support
+
 comment "libtirpc needs a toolchain w/ threads"
 	depends on !BR2_TOOLCHAIN_HAS_THREADS

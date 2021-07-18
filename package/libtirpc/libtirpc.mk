@@ -16,7 +16,13 @@ LIBTIRPC_INSTALL_STAGING = YES
 # getrpcby{number,name} are only provided if 'GQ' is defined
 LIBTIRPC_CONF_ENV = CFLAGS="$(TARGET_CFLAGS) -DGQ"
 
-LIBTIRPC_CONF_OPTS = --disable-gssapi
+ifeq ($(BR2_PACKAGE_LIBTIRPC_GSS),y)
+LIBTIRPC_CONF_ENV += KRB5_CONFIG=$(STAGING_DIR)/usr/bin/krb5-config
+LIBTIRPC_CONF_OPTS += --enable-gssapi
+LIBTIRPC_DEPENDENCIES += libkrb5
+else
+LIBTIRPC_CONF_OPTS += --disable-gssapi
+endif
 HOST_LIBTIRPC_CONF_OPTS = --disable-gssapi
 
 $(eval $(autotools-package))
