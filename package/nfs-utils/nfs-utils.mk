@@ -16,7 +16,6 @@ NFS_UTILS_AUTORECONF = YES
 NFS_UTILS_CONF_ENV = knfsd_cv_bsd_signals=no
 
 NFS_UTILS_CONF_OPTS = \
-	--disable-gss \
 	--enable-tirpc \
 	--enable-ipv6 \
 	--without-tcp-wrappers \
@@ -50,6 +49,16 @@ NFS_UTILS_CONF_OPTS += --enable-nfsv4 --enable-nfsv41
 NFS_UTILS_DEPENDENCIES += keyutils libevent lvm2 sqlite
 else
 NFS_UTILS_CONF_OPTS += --disable-nfsv4 --disable-nfsv41
+endif
+
+ifeq ($(BR2_PACKAGE_NFS_UTILS_GSS),y)
+NFS_UTILS_CONF_OPTS += \
+	--enable-gss \
+	--enable-svcgss \
+	--with-krb5=$(STAGING_DIR)/usr
+NFS_UTILS_DEPENDENCIES += libkrb5
+else
+NFS_UTILS_CONF_OPTS += --disable-gss --disable-svcgss
 endif
 
 ifeq ($(BR2_PACKAGE_LIBCAP),y)
