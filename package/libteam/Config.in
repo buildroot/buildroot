@@ -1,0 +1,31 @@
+config BR2_PACKAGE_LIBTEAM
+	bool "libteam"
+	depends on BR2_USE_MMU # fork()
+	depends on !BR2_STATIC_LIBS # libnl-tools
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libnl
+	select BR2_PACKAGE_JANSSON
+	select BR2_PACKAGE_LIBDAEMON
+	select BR2_PACKAGE_LIBNL
+	select BR2_PACKAGE_LIBNL_TOOLS
+	help
+	  The purpose of the Team driver is to provide a mechanism to
+	  team multiple NICs (ports) into one logical one (teamdev) at
+	  L2 layer. The process is called "channel bonding", "Ethernet
+	  bonding", "channel teaming", "link aggregation", etc.
+
+	  Team tries to provide similar functionality as the bonding
+	  driver, however architecturally it is quite different. Team is
+	  modular, userspace driven, very lean and efficient, and it
+	  does have some distinct advantages over bonding. The way Team
+	  is configured differs dramatically from the way bonding is.
+
+	  If building the kernel with Buildroot, basic team support is
+	  automatically enabled, but you will still need to enable the
+	  modes you need, e.g. activebackup or loadbalance (e.g. with a
+	  config fragment or a custom config).
+
+	  https://github.com/jpirko/libteam
+
+comment "libteam needs MMU and a toolchain w/ dynamic library and threads"
+	depends on BR2_USE_MMU
+	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS
