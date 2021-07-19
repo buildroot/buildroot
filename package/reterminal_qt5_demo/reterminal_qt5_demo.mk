@@ -9,6 +9,7 @@ define RETERMINAL_QT5_DEMO_INSTALL_TARGET_CMDS
 	mkdir -p $(TARGET_DIR)/root/Seeed_Python_ReTerminalQt5Examples/
 	cp -rf $(@D)/* $(TARGET_DIR)/root/Seeed_Python_ReTerminalQt5Examples/
 	cp -r $(@D)/fonts $(TARGET_DIR)/usr/lib/
+	rm  $(@D)/.files-list.*
 endef
 
 $(eval $(generic-package))
