@@ -59,6 +59,12 @@ else
 SYSTEMD_CONF_OPTS += -Dacl=false
 endif
 
+ifeq ($(BR2_PACKAGE_LESS),y)
+SYSTEMD_CONF_OPTS += -Durlify=true
+else
+SYSTEMD_CONF_OPTS += -Durlify=false
+endif
+
 ifeq ($(BR2_PACKAGE_LIBAPPARMOR),y)
 SYSTEMD_DEPENDENCIES += libapparmor
 SYSTEMD_CONF_OPTS += -Dapparmor=true
