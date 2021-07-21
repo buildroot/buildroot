@@ -19,6 +19,13 @@ else
 BIRD_CONF_OPTS += --disable-client
 endif
 
+ifeq ($(BR2_PACKAGE_LIBSSH),y)
+BIRD_CONF_OPTS += --enable-libssh
+BIRD_DEPENDENCIES += libssh
+else
+BIRD_CONF_OPTS += --disable-libssh
+endif
+
 BIRD_PROTOCOLS = \
 	$(if $(BR2_PACKAGE_BIRD_BFD),bfd) \
 	$(if $(BR2_PACKAGE_BIRD_BABEL),babel) \
@@ -29,6 +36,7 @@ BIRD_PROTOCOLS = \
 	$(if $(BR2_PACKAGE_BIRD_PIPE),pipe) \
 	$(if $(BR2_PACKAGE_BIRD_RADV),radv) \
 	$(if $(BR2_PACKAGE_BIRD_RIP),rip) \
+	$(if $(BR2_PACKAGE_BIRD_RPKI),rpki) \
 	$(if $(BR2_PACKAGE_BIRD_STATIC),static)
 
 BIRD_CONF_OPTS += --with-protocols=$(subst $(space),$(comma),$(strip $(BIRD_PROTOCOLS)))
