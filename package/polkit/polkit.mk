@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-POLKIT_VERSION = 0.116
-POLKIT_SITE = http://www.freedesktop.org/software/polkit/releases
+POLKIT_VERSION = 0.119
+POLKIT_SITE = $(call github,aduskett,polkit-duktape,v$(POLKIT_VERSION))
 POLKIT_LICENSE = GPL-2.0
 POLKIT_LICENSE_FILES = COPYING
 POLKIT_CPE_ID_VENDOR = polkit_project
@@ -13,11 +13,10 @@ POLKIT_AUTORECONF = YES
 POLKIT_INSTALL_STAGING = YES
 
 POLKIT_DEPENDENCIES = \
-	libglib2 host-intltool expat spidermonkey $(TARGET_NLS_DEPENDENCIES)
+	duktape libglib2 host-intltool expat $(TARGET_NLS_DEPENDENCIES)
 
-# spidermonkey needs C++11
 POLKIT_CONF_ENV = \
-	CXXFLAGS="$(TARGET_CXXFLAGS) -std=c++11" \
+	CXXFLAGS="$(TARGET_CXXFLAGS)" \
 	LIBS=$(TARGET_NLS_LIBS)
 
 POLKIT_CONF_OPTS = \
@@ -25,7 +24,8 @@ POLKIT_CONF_OPTS = \
 	--disable-man-pages \
 	--disable-examples \
 	--disable-libelogind \
-	--disable-libsystemd-login
+	--disable-libsystemd-login \
+	--with-duktape
 
 ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
 POLKIT_CONF_OPTS += --enable-introspection
