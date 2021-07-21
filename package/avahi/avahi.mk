@@ -9,6 +9,7 @@ AVAHI_SITE = https://github.com/lathiat/avahi/releases/download/v$(AVAHI_VERSION
 AVAHI_LICENSE = LGPL-2.1+
 AVAHI_LICENSE_FILES = LICENSE
 AVAHI_CPE_ID_VENDOR = avahi
+AVAHI_SELINUX_MODULES = avahi
 AVAHI_INSTALL_STAGING = YES
 
 # CVE-2021-26720 is an issue in avahi-daemon-check-dns.sh, which is
