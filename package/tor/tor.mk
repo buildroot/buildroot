@@ -9,6 +9,7 @@ TOR_SITE = https://dist.torproject.org
 TOR_LICENSE = BSD-3-Clause
 TOR_LICENSE_FILES = LICENSE
 TOR_CPE_ID_VENDOR = torproject
+TOR_SELINUX_MODULES = tor
 TOR_DEPENDENCIES = libevent openssl zlib
 TOR_AUTORECONF = YES
 
