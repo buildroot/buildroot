@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2021.08"
 
+config BR2_PACKAGE_SPIDERMONKEY
+	bool "spidermonkey package removed"
+	select BR2_LEGACY
+	help
+	  The spidermonkey package was removed. The only package that
+	  depended on spidermonkey was polkit. The spidermonkey
+	  dependency is replaced with duktape.
+
 config BR2_PACKAGE_KODI_LIBVA
 	bool "kodi option to add libva support removed"
 	select BR2_LEGACY
