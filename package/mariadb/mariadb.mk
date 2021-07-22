@@ -135,5 +135,13 @@ endef
 
 MARIADB_POST_INSTALL_TARGET_HOOKS += MARIADB_POST_INSTALL
 
+# overwrite cross-compiled mariadb_config executable by an native one
+define MARIADB_POST_STAGING_INSTALL
+	$(HOSTCC) -I$(@D)/libmariadb/include \
+		-o $(STAGING_DIR)/usr/bin/mariadb_config \
+		$(@D)/libmariadb/mariadb_config/mariadb_config.c
+endef
+MARIADB_POST_INSTALL_STAGING_HOOKS += MARIADB_POST_STAGING_INSTALL
+
 $(eval $(cmake-package))
 $(eval $(host-cmake-package))
