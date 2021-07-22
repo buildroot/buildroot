@@ -1,0 +1,151 @@
+From 5ff5603d342d14b5a4ebcf44739dfa3b3774094c Mon Sep 17 00:00:00 2001
+From: Baozhu Zuo <zuobaozhu@gmail.com>
+Date: Thu, 22 Jul 2021 19:00:36 +0800
+Subject: [PATCH] add drm and input methed
+
+---
+ Makefile      |  5 +++--
+ lv_drv_conf.h | 13 +++++++------
+ main.c        | 32 +++++++++++++++++++++++++++-----
+ 3 files changed, 37 insertions(+), 13 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 93df9e7..08f31b0 100644
+--- a/Makefile
++++ b/Makefile
+@@ -4,8 +4,8 @@
+ CC ?= gcc
+ LVGL_DIR_NAME ?= lvgl
+ LVGL_DIR ?= ${shell pwd}
+-CFLAGS ?= -O3 -g0 -I$(LVGL_DIR)/ -Wall -Wshadow -Wundef -Wmissing-prototypes -Wno-discarded-qualifiers -Wall -Wextra -Wno-unused-function -Wno-error=strict-prototypes -Wpointer-arith -fno-strict-aliasing -Wno-error=cpp -Wuninitialized -Wmaybe-uninitialized -Wno-unused-parameter -Wno-missing-field-initializers -Wtype-limits -Wsizeof-pointer-memaccess -Wno-format-nonliteral -Wno-cast-qual -Wunreachable-code -Wno-switch-default -Wreturn-type -Wmultichar -Wformat-security -Wno-ignored-qualifiers -Wno-error=pedantic -Wno-sign-compare -Wno-error=missing-prototypes -Wdouble-promotion -Wclobbered -Wdeprecated -Wempty-body -Wtype-limits -Wshift-negative-value -Wstack-usage=2048 -Wno-unused-value -Wno-unused-parameter -Wno-missing-field-initializers -Wuninitialized -Wmaybe-uninitialized -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wtype-limits -Wsizeof-pointer-memaccess -Wno-format-nonliteral -Wpointer-arith -Wno-cast-qual -Wmissing-prototypes -Wunreachable-code -Wno-switch-default -Wreturn-type -Wmultichar -Wno-discarded-qualifiers -Wformat-security -Wno-ignored-qualifiers -Wno-sign-compare
+-LDFLAGS ?= -lm
++CFLAGS ?= -O3 -g0 -I$(LVGL_DIR)/  -I$(STAGING_DIR)/usr/include/libdrm -Wall -Wshadow -Wundef -Wmissing-prototypes -Wno-discarded-qualifiers -Wall -Wextra -Wno-unused-function -Wno-error=strict-prototypes -Wpointer-arith -fno-strict-aliasing -Wno-error=cpp -Wuninitialized -Wmaybe-uninitialized -Wno-unused-parameter -Wno-missing-field-initializers -Wtype-limits -Wsizeof-pointer-memaccess -Wno-format-nonliteral -Wno-cast-qual -Wunreachable-code -Wno-switch-default -Wreturn-type -Wmultichar -Wformat-security -Wno-ignored-qualifiers -Wno-error=pedantic -Wno-sign-compare -Wno-error=missing-prototypes -Wdouble-promotion -Wclobbered -Wdeprecated -Wempty-body -Wtype-limits -Wshift-negative-value -Wstack-usage=2048 -Wno-unused-value -Wno-unused-parameter -Wno-missing-field-initializers -Wuninitialized -Wmaybe-uninitialized -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wtype-limits -Wsizeof-pointer-memaccess -Wno-format-nonliteral -Wpointer-arith -Wno-cast-qual -Wmissing-prototypes -Wunreachable-code -Wno-switch-default -Wreturn-type -Wmultichar -Wno-discarded-qualifiers -Wformat-security -Wno-ignored-qualifiers -Wno-sign-compare
++LDFLAGS ?= -lm -ldrm -linput
+ BIN = demo
+ 
+ 
+@@ -40,3 +40,4 @@ default: $(AOBJS) $(COBJS) $(MAINOBJ)
+ clean: 
+ 	rm -f $(BIN) $(AOBJS) $(COBJS) $(MAINOBJ)
+ 
++
+diff --git a/lv_drv_conf.h b/lv_drv_conf.h
+index 5d5fa1d..cbad0b3 100644
+--- a/lv_drv_conf.h
++++ b/lv_drv_conf.h
+@@ -272,7 +272,7 @@
+  *  Linux frame buffer device (/dev/fbx)
+  *-----------------------------------------*/
+ #ifndef USE_FBDEV
+-#  define USE_FBDEV           1
++#  define USE_FBDEV           0
+ #endif
+ 
+ #if USE_FBDEV
+@@ -294,11 +294,11 @@
+  *  DRM/KMS device (/dev/dri/cardX)
+  *-----------------------------------------*/
+ #ifndef USE_DRM
+-#  define USE_DRM           0
++#  define USE_DRM           1
+ #endif
+ 
+ #if USE_DRM
+-#  define DRM_CARD          "/dev/dri/card0"
++#  define DRM_CARD          "/dev/dri/card1"
+ #  define DRM_CONNECTOR_ID  -1	/* -1 for the first connected one */
+ #endif
+ 
+@@ -375,11 +375,11 @@
+  * Touchscreen as libinput interface (for Linux based systems)
+  *------------------------------------------------*/
+ #ifndef USE_LIBINPUT
+-#  define USE_LIBINPUT           0
++#  define USE_LIBINPUT           1
+ #endif
+ 
+ #if USE_LIBINPUT
+-#  define LIBINPUT_NAME   "/dev/input/event0"        /*You can use the "evtest" Linux tool to get the list of devices and test them*/
++#  define LIBINPUT_NAME   "/dev/input/event2"        /*You can use the "evtest" Linux tool to get the list of devices and test them*/
+ #endif  /*USE_LIBINPUT*/
+ 
+ /*-------------------------------------------------
+@@ -394,7 +394,7 @@
+ #endif
+ 
+ #if USE_EVDEV || USE_BSD_EVDEV
+-#  define EVDEV_NAME   "/dev/input/event0"        /*You can use the "evtest" Linux tool to get the list of devices and test them*/
++#  define EVDEV_NAME   "/dev/input/event2"        /*You can use the "evtest" Linux tool to get the list of devices and test them*/
+ #  define EVDEV_SWAP_AXES         0               /*Swap the x and y axes of the touchscreen*/
+ 
+ #  define EVDEV_CALIBRATE         0               /*Scale and offset the touchscreen coordinates by using maximum and minimum values for each axis*/
+@@ -421,3 +421,4 @@
+ #endif  /*LV_DRV_CONF_H*/
+ 
+ #endif /*End of "Content enable"*/
++
+diff --git a/main.c b/main.c
+index ec63165..0fd2f93 100644
+--- a/main.c
++++ b/main.c
+@@ -1,5 +1,6 @@
+ #include "lvgl/lvgl.h"
+-#include "lv_drivers/display/fbdev.h"
++#include "lv_drivers/display/drm.h"
++#include "lv_drivers/indev/libinput_drv.h"
+ #include "lv_demos/lv_demo.h"
+ #include <unistd.h>
+ #include <pthread.h>
+@@ -14,7 +15,9 @@ int main(void)
+     lv_init();
+ 
+     /*Linux frame buffer device init*/
+-    fbdev_init();
++    drm_init();
++
++    libinput_init();
+ 
+     /*A small buffer for LittlevGL to draw the screen's content*/
+     static lv_color_t buf[DISP_BUF_SIZE];
+@@ -26,12 +29,30 @@ int main(void)
+     /*Initialize and register a display driver*/
+     static lv_disp_drv_t disp_drv;
+     lv_disp_drv_init(&disp_drv);
++
++    uint32_t dpi = 0;
++
++
++
+     disp_drv.draw_buf   = &disp_buf;
+-    disp_drv.flush_cb   = fbdev_flush;
+-    disp_drv.hor_res    = 800;
+-    disp_drv.ver_res    = 480;
++    disp_drv.flush_cb   = drm_flush;
++    disp_drv.wait_cb    = drm_wait_vsync;
++    disp_drv.hor_res    = 720;
++    disp_drv.ver_res    = 1280;
++    // disp_drv.sw_rotate    = 1;
++    // disp_drv.rotated    = LV_DISP_ROT_90;
+     lv_disp_drv_register(&disp_drv);
+ 
++    
++    /*Initialize and register an input device*/
++    static lv_indev_drv_t indev_drv;
++    lv_indev_drv_init(&indev_drv);          /*Basic initialization*/
++    indev_drv.type = LV_INDEV_TYPE_POINTER;
++    indev_drv.read_cb = libinput_read;         /*This function will be called periodically (by the library) to get the mouse position and state*/
++    lv_indev_drv_register(&indev_drv);
++
++
++
+     /*Create a Demo*/
+     lv_demo_widgets();
+ 
+@@ -62,3 +83,4 @@ uint32_t custom_tick_get(void)
+     uint32_t time_ms = now_ms - start_ms;
+     return time_ms;
+ }
++
+-- 
+2.25.1
+

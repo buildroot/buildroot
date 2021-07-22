@@ -1,0 +1,18 @@
+config BR2_PACKAGE_LVGL_DRM_DEMO
+	bool "lvgl on linux drm"
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on !BR2_STATIC_LIBS
+	help
+	  LVGL provides everything you need to create embedded GUI with easy-to-use graphical elements, beautiful visual effects and low memory footprint. 
+
+	  LVGL configured to work with /dev/fb0 on Linux.
+
+	  https://github.com/lvgl/lvgl/
+
+
+
+comment "lvgl needs a toolchain w/ C++, threads, dynamic library"
+	depends on BR2_arm
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS || \
+		BR2_STATIC_LIBS

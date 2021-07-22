@@ -1,0 +1,26 @@
+From 725eec5c72875b9b42342e8565c673c2bab1ec69 Mon Sep 17 00:00:00 2001
+From: Baozhu Zuo <zuobaozhu@gmail.com>
+Date: Wed, 21 Jul 2021 08:28:06 +0800
+Subject: [PATCH] modify src gui configure json file
+
+---
+ src/gui/configure.json | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/gui/configure.json b/src/gui/configure.json
+index c8c4864e..ec257524 100644
+--- a/src/gui/configure.json
++++ b/src/gui/configure.json
+@@ -862,7 +862,8 @@
+             "type": "compile",
+             "test": {
+                 "include": [ "EGL/egl.h", "bcm_host.h" ],
+-                "main": "vc_dispmanx_display_open(0);"
++                "main": "vc_dispmanx_display_open(0);",
++		"qmake": [ "QMAKE_LFLAGS += -Wl,--copy-dt-needed-entries", "QMAKE_CXXFLAGS += -Wl,--copy-dt-needed-entries"  ]
+             },
+             "use": "egl bcm_host"
+         },
+-- 
+2.25.1
+

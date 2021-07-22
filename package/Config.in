@@ -8,6 +8,7 @@ menu "Target packages"
 	source "package/skeleton-init-openrc/Config.in"
 	source "package/skeleton-init-systemd/Config.in"
 	source "package/skeleton-init-sysv/Config.in"
+	source "package/reterminal_qt5_demo/Config.in"
 
 menu "Audio and video applications"
 	source "package/alsa-utils/Config.in"
@@ -310,6 +311,7 @@ comment "Graphic applications"
 	source "package/rrdtool/Config.in"
 	source "package/stellarium/Config.in"
 	source "package/tesseract-ocr/Config.in"
+	source "package/lvgl_drm_demo/Config.in"
 
 comment "Graphic libraries"
 	source "package/cegui/Config.in"
@@ -593,6 +595,7 @@ endmenu
 	source "package/wipe/Config.in"
 	source "package/xorriso/Config.in"
 	source "package/xr819-xradio/Config.in"
+	source "package/kernel_module/Config.in"
 endmenu
 
 menu "Interpreter languages and scripting"
@@ -1274,6 +1277,7 @@ menu "External python modules"
 	source "package/python-zc-lockfile/Config.in"
 	source "package/python-zeroconf/Config.in"
 	source "package/python-zope-interface/Config.in"
+	source "package/python-evdev/Config.in"
 endmenu
 endif
 	source "package/quickjs/Config.in"
