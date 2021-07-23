@@ -14,9 +14,6 @@ LIBMBIM_INSTALL_STAGING = YES
 
 LIBMBIM_DEPENDENCIES = libglib2
 
-# we don't want -Werror
-LIBMBIM_CONF_OPTS = --enable-more-warnings=no
-
 # if libgudev available, request udev support
 ifeq ($(BR2_PACKAGE_LIBGUDEV),y)
 LIBMBIM_DEPENDENCIES += libgudev
