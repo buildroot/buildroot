@@ -1,17 +1,23 @@
-[PATCH]: fix getloadavg.c compilation, revert to 3.1.10 version
+From 4eda31cea9fb3c77fe2748a65960f24ffb42f9ff Mon Sep 17 00:00:00 2001
+From: Peter Korsgaard <jacmet@sunsite.dk>
+Date: Fri, 23 Jul 2021 16:51:17 +0200
+Subject: [PATCH] getloadavg: fix getloadavg.c compilation, revert to 3.1.10
+ version
 
 getloadavg.c shipped with 3.1.13 doesn't compile because it references
 headers not shipped. Fix it by simply reverting to the 3.1.10 version.
 
 Signed-off-by: Peter Korsgaard <jacmet@sunsite.dk>
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+[Giulio: convert patch to git format]
 ---
- getloadavg.c |    7 ++++---
+ getloadavg.c | 7 ++++---
  1 file changed, 4 insertions(+), 3 deletions(-)
 
-Index: at-3.1.13/getloadavg.c
-===================================================================
---- at-3.1.13.orig/getloadavg.c
-+++ at-3.1.13/getloadavg.c
+diff --git a/getloadavg.c b/getloadavg.c
+index cf5869f..23d18eb 100644
+--- a/getloadavg.c
++++ b/getloadavg.c
 @@ -66,11 +66,12 @@ Boston, MA  02110-1301  USA */
  
  /* This should always be first.  */
@@ -28,3 +34,6 @@ Index: at-3.1.13/getloadavg.c
  
  #ifndef HAVE_GETLOADAVG
  
+-- 
+2.25.1
+

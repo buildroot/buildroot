@@ -1,21 +1,25 @@
-[PATCH]: Makefile.in: fix make install for non-root, don't strip
+From 2dd7c3c5b590a3115568175acc888f8e36919d71 Mon Sep 17 00:00:00 2001
+From: Peter Korsgaard <jacmet@sunsite.dk>
+Date: Fri, 23 Jul 2021 16:47:56 +0200
+Subject: [PATCH] Makefile.in: fix make install for non-root, don't strip
 
 Buildroot will ensure all files are owned by root and stripped anyway
 (if needed) before the rootfs is created.
 
-[Vincent: tweak the patch for the new version]
-
 Signed-off-by: Peter Korsgaard <jacmet@sunsite.dk>
 Signed-off-by: Vicente Olivert Riera <Vincent.Riera@imgtec.com>
+[Vincent: tweak the patch for the new version]
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+[Giulio: convert patch to git format]
 ---
  Makefile.in | 43 +++++++++++++++++++++----------------------
  1 file changed, 21 insertions(+), 22 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index 1f699d9..f313f9b 100644
+index 61e7b1d..9f89b1f 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -95,41 +95,40 @@ atrun: atrun.in
+@@ -97,41 +97,40 @@ atrun: atrun.in
  	$(CC) -c $(CFLAGS) $(DEFS) $*.c
  
  install: all
@@ -79,5 +83,5 @@ index 1f699d9..f313f9b 100644
  
  dist: checkin $(DIST) $(LIST) Filelist.asc
 -- 
-2.4.10
+2.25.1
 

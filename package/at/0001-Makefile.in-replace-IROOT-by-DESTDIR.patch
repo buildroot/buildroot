@@ -1,25 +1,26 @@
-From 195d30e2e01fe2f91ed3bdaeec3982aa66b309dd Mon Sep 17 00:00:00 2001
+From d2bdcff4748f4c1961118b9467bab302b403ef9f Mon Sep 17 00:00:00 2001
 From: Marc Kleine-Budde <mkl@pengutronix.de>
 Date: Tue, 1 Dec 2009 20:57:45 +0100
-Subject: [PATCH 5/5] Makefile.in: replace IROOT by DESTDIR
+Subject: [PATCH] Makefile.in: replace IROOT by DESTDIR
 
 This patch replaces IROOT by DESTDIR, which is the autotools standard
 variable. For backwards compatibilty IROOT overwrites the DESTDIR.
 
-[Vincent: tweak the patch for the new version]
-
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Vicente Olivert Riera <Vincent.Riera@imgtec.com>
+[Vincent: tweak the patch for the new version]
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+[Giulio: convert patch to git format]
 ---
- Makefile.in | 68 ++++++++++++++++++++++++++++++++-----------------------------
+ Makefile.in | 68 ++++++++++++++++++++++++++++-------------------------
  1 file changed, 36 insertions(+), 32 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index 06544f9..1f699d9 100644
+index 4c11913..61e7b1d 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -17,6 +17,10 @@ atdocdir	= $(docdir)/at
- etcdir		= @ETCDIR@
+@@ -18,6 +18,10 @@ etcdir		= @ETCDIR@
+ atjobdir	= @ATJBD@
  systemdsystemunitdir = @systemdsystemunitdir@
  
 +ifdef IROOT
@@ -29,7 +30,7 @@ index 06544f9..1f699d9 100644
  DAEMON_USERNAME	= @DAEMON_USERNAME@
  DAEMON_GROUPNAME= @DAEMON_GROUPNAME@
  LOADAVG_MX	= @LOADAVG_MX@
-@@ -91,41 +95,41 @@ atrun: atrun.in
+@@ -93,41 +97,41 @@ atrun: atrun.in
  	$(CC) -c $(CFLAGS) $(DEFS) $*.c
  
  install: all
@@ -104,5 +105,5 @@ index 06544f9..1f699d9 100644
  
  dist: checkin $(DIST) $(LIST) Filelist.asc
 -- 
-2.4.10
+2.25.1
 
