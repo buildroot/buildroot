@@ -85,10 +85,34 @@ $(2)_KCONFIG_OPTS ?=
 $(2)_KCONFIG_FIXUP_CMDS ?=
 $(2)_KCONFIG_FRAGMENT_FILES ?=
 $(2)_KCONFIG_DOTCONFIG ?= .config
+$(2)_KCONFIG_SUPPORTS_DEFCONFIG ?= YES
 
 # Register the kconfig dependencies as regular dependencies, so that
 # they are also accounted for in the generated graphs.
 $(2)_DEPENDENCIES += $$($(2)_KCONFIG_DEPENDENCIES)
+
+# Generate the kconfig-related help: one entry for each editor.
+# Additionally, if the package is *not* using an in-tree defconfig
+# name, an entry for updating the package configuration file.
+ifndef $(2)_HELP_CMDS
+define $(2)_HELP_CMDS
+	$$(foreach editor, $$($(2)_KCONFIG_EDITORS), \
+		@printf '  %-22s - Run %s %s\n' $(1)-$$(editor) $(1) $$(editor)
+	)
+	$$(if $$($(2)_KCONFIG_DEFCONFIG),,\
+		$$(if $$(filter YES,$$($(2)_KCONFIG_SUPPORTS_DEFCONFIG)),\
+			@printf '  %-22s - Save the %s configuration as a defconfig file\n' \
+				$(1)-update-defconfig $(1)
+			@printf '  %-22s     to %s\n' '' $$($(2)_KCONFIG_FILE)
+			@printf '  %-22s     (or override with %s_KCONFIG_FILE)\n' '' $(2)
+		)
+		@printf '  %-22s - Save the %s configuration as a full .config file\n' \
+			$(1)-update-config $(1)
+		@printf '  %-22s     to %s\n' '' $$($(2)_KCONFIG_FILE)
+		@printf '  %-22s     (or override with %s_KCONFIG_FILE)\n' '' $(2)
+	)
+endef
+endif
 
 # Call the generic package infrastructure to generate the necessary
 # make targets.
