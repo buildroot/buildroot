@@ -1,13 +1,23 @@
+config BR2_PACKAGE_LAPACK_ARCH_SUPPORTS
+	bool
+	default y
+	# _fpu_control is used on PowerPC, but not available with
+	# uClibc or musl
+	depends on !BR2_powerpc || BR2_TOOLCHAIN_USES_GLIBC
+
+comment "lapack/blas needs a glibc toolchain"
+	depends on BR2_powerpc
+	depends on !BR2_TOOLCHAIN_USES_GLIBC
+
 comment "lapack/blas needs a toolchain w/ fortran"
-	depends on !(BR2_powerpc && BR2_TOOLCHAIN_USES_UCLIBC)
+	depends on BR2_PACKAGE_LAPACK_ARCH_SUPPORTS
 	depends on !BR2_TOOLCHAIN_HAS_FORTRAN
 
 config BR2_PACKAGE_LAPACK
 	bool "lapack/blas"
+	depends on BR2_PACKAGE_LAPACK_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_HAS_FORTRAN
 	depends on !BR2_PACKAGE_CLAPACK
-	# _fpu_control is used on PowerPC, but not available with uClibc
-	depends on !(BR2_powerpc && BR2_TOOLCHAIN_USES_UCLIBC)
 	help
 	  LAPACK and BLAS FORTRAN implementation. This package
 	  installs two libraries: libblas and liblapack.
