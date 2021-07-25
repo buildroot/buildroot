@@ -17,7 +17,6 @@ config BR2_PACKAGE_LAPACK
 	bool "lapack/blas"
 	depends on BR2_PACKAGE_LAPACK_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_HAS_FORTRAN
-	depends on !BR2_PACKAGE_CLAPACK
 	help
 	  LAPACK and BLAS FORTRAN implementation. This package
 	  installs two libraries: libblas and liblapack.

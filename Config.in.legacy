@@ -146,6 +146,15 @@ endif
 
 comment "Legacy options removed in 2021.08"
 
+config BR2_PACKAGE_CLAPACK
+	bool "cblas/clapack package removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_LAPACK if BR2_PACKAGE_LAPACK_ARCH_SUPPORTS && BR2_TOOLCHAIN_HAS_FORTRAN
+	help
+	  The clapack package was removed. LAPACK no longer generates a
+	  C version. Use lapack instead. This does require a Fortran
+	  compiler however.
+
 config BR2_PACKAGE_SPIDERMONKEY
 	bool "spidermonkey package removed"
 	select BR2_LEGACY
