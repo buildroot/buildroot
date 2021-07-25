@@ -26,6 +26,9 @@ config BR2_PACKAGE_NFS_UTILS_NFSV4
 	help
 	  Enable NFSv4/NFSv4.1 support
 
+comment "NFSv4/NFSv4.1 support needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
+
 config BR2_PACKAGE_NFS_UTILS_GSS
 	bool "gss"
 	depends on BR2_PACKAGE_NFS_UTILS_NFSV4
