@@ -10,6 +10,7 @@ CUPS_SITE = https://github.com/OpenPrinting/cups/releases/download/v$(CUPS_VERSI
 CUPS_LICENSE = Apache-2.0 with GPL-2.0/LGPL-2.0 exception
 CUPS_LICENSE_FILES = LICENSE NOTICE
 CUPS_CPE_ID_VENDOR = cups
+CUPS_SELINUX_MODULES = cups
 CUPS_INSTALL_STAGING = YES
 
 # Using autoconf, not autoheader, so we cannot use AUTORECONF = YES.
