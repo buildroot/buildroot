@@ -726,11 +726,16 @@ endmenu
 
 comment "Security Hardening Options"
 
-config BR2_PIC_PIE
-	bool "Build code with PIC/PIE"
+config BR2_PIC_PIE_ARCH_SUPPORTS
+	bool
 	default y
 	# Nios2 toolchains produce non working binaries with -fPIC
 	depends on !BR2_nios2
+
+config BR2_PIC_PIE
+	bool "Build code with PIC/PIE"
+	default y
+	depends on BR2_PIC_PIE_ARCH_SUPPORTS
 	depends on BR2_SHARED_LIBS
 	depends on BR2_TOOLCHAIN_SUPPORTS_PIE
 	help
@@ -738,7 +743,7 @@ config BR2_PIC_PIE
 	  Position-Independent Executables (PIE).
 
 comment "PIC/PIE needs a toolchain w/ PIE"
-	depends on !BR2_nios2
+	depends on BR2_PIC_PIE_ARCH_SUPPORTS
 	depends on BR2_SHARED_LIBS
 	depends on !BR2_TOOLCHAIN_SUPPORTS_PIE
 
@@ -829,7 +834,7 @@ config BR2_RELRO_PARTIAL
 
 config BR2_RELRO_FULL
 	bool "Full"
-	depends on !BR2_nios2 # BR2_PIC_PIE
+	depends on BR2_PIC_PIE_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_SUPPORTS_PIE
 	select BR2_PIC_PIE
 	help
@@ -838,7 +843,7 @@ config BR2_RELRO_FULL
 	  program loading, i.e every time an executable is started.
 
 comment "RELRO Full needs a toolchain w/ PIE"
-	depends on !BR2_nios2
+	depends on BR2_PIC_PIE_ARCH_SUPPORTS
 	depends on !BR2_TOOLCHAIN_SUPPORTS_PIE
 
 endchoice
