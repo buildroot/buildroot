@@ -9,6 +9,7 @@ GPM_SOURCE = gpm-$(GPM_VERSION).tar.lzma
 GPM_SITE = http://www.nico.schottelius.org/software/gpm/archives
 GPM_LICENSE = GPL-2.0+
 GPM_LICENSE_FILES = COPYING
+GPM_SELINUX_MODULES = gpm
 GPM_INSTALL_STAGING = YES
 GPM_DEPENDENCIES = host-bison
 
