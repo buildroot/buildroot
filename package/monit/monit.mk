@@ -9,6 +9,7 @@ MONIT_SITE = http://mmonit.com/monit/dist
 MONIT_LICENSE = AGPL-3.0 with OpenSSL exception
 MONIT_LICENSE_FILES = COPYING
 MONIT_CPE_ID_VENDOR = mmonit
+MONIT_SELINUX_MODULES = monit
 #
 # Touching Makefile.am:
 MONIT_AUTORECONF = YES
