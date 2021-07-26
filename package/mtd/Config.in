@@ -54,6 +54,9 @@ config BR2_PACKAGE_MTD_FLASH_OTP_LOCK
 config BR2_PACKAGE_MTD_FLASH_OTP_WRITE
 	bool "flash_otp_write"
 
+config BR2_PACKAGE_MTD_FLASH_OTP_ERASE
+	bool "flash_otp_erase"
+
 config BR2_PACKAGE_MTD_FLASH_UNLOCK
 	bool "flash_unlock"
 	default y
@@ -94,6 +97,9 @@ config BR2_PACKAGE_MTD_NANDTEST
 config BR2_PACKAGE_MTD_NANDWRITE
 	bool "nandwrite"
 	default y
+
+config BR2_PACKAGE_MTD_NANDFLIPBITS
+	bool "nandflipbits"
 
 config BR2_PACKAGE_MTD_NFTLDUMP
 	bool "nftldump"
