@@ -37,6 +37,12 @@ config BR2_PACKAGE_BLUEZ5_UTILS_CLIENT
 	help
 	  Build the command line client "bluetoothctl".
 
+config BR2_PACKAGE_BLUEZ5_UTILS_MONITOR
+	bool "build monitor utility"
+	default y
+	help
+	  Build monitor utility btmon.
+
 config BR2_PACKAGE_BLUEZ5_UTILS_DEPRECATED
 	bool "install deprecated tools"
 	depends on BR2_PACKAGE_BLUEZ5_UTILS_CLIENT
@@ -52,10 +58,34 @@ config BR2_PACKAGE_BLUEZ5_UTILS_EXPERIMENTAL
 	  "Nokia OBEX PC Suite tool". So, only if OBEX support is
 	  enabled this option has an effect.
 
+config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_A2DP
+	bool "build a2dp plugin"
+	default y
+	help
+	  Build plugin for A2DP (audio) profiles.
+
+config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_AVRCP
+	bool "build avrcp plugin"
+	default y
+	help
+	  Build plugin for AVRCP (audio) profiles.
+
 config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HEALTH
 	bool "build health plugin"
 	help
 	  Build plugin for health profiles.
+
+config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HID
+	bool "build hid plugin"
+	default y
+	help
+	  Build plugin for HID (input) profiles.
+
+config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HOG
+	bool "build hog plugin"
+	default y
+	help
+	  Build plugin for HoG (input) profiles.
 
 config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_MESH
 	bool "build mesh plugin"
@@ -75,6 +105,12 @@ config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_MIDI
 	select BR2_PACKAGE_ALSA_LIB_SEQ
 	help
 	  Build MIDI support via ALSA sequencer.
+
+config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_NETWORK
+	bool "build network plugin"
+	default y
+	help
+	  Build plugin for PANU, NAP, GN profiles.
 
 config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_NFC
 	bool "build nfc plugin"
