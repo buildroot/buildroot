@@ -40,6 +40,12 @@ else
 BLUEZ5_UTILS_CONF_OPTS += --disable-client
 endif
 
+ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_MONITOR),y)
+BLUEZ5_UTILS_CONF_OPTS += --enable-monitor
+else
+BLUEZ5_UTILS_CONF_OPTS += --disable-monitor
+endif
+
 # experimental plugins
 ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_EXPERIMENTAL),y)
 BLUEZ5_UTILS_CONF_OPTS += --enable-experimental
@@ -47,11 +53,39 @@ else
 BLUEZ5_UTILS_CONF_OPTS += --disable-experimental
 endif
 
+# enable a2dp plugin
+ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_A2DP),y)
+BLUEZ5_UTILS_CONF_OPTS += --enable-a2dp
+else
+BLUEZ5_UTILS_CONF_OPTS += --disable-a2dp
+endif
+
+#enable avrcp plugin
+ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_AVRCP),y)
+BLUEZ5_UTILS_CONF_OPTS += --enable-avrcp
+else
+BLUEZ5_UTILS_CONF_OPTS += --disable-avrcp
+endif
+
 # enable health plugin
 ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HEALTH),y)
 BLUEZ5_UTILS_CONF_OPTS += --enable-health
 else
 BLUEZ5_UTILS_CONF_OPTS += --disable-health
+endif
+
+# enable hid plugin
+ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HID),y)
+BLUEZ5_UTILS_CONF_OPTS += --enable-hid
+else
+BLUEZ5_UTILS_CONF_OPTS += --disable-hid
+endif
+
+# enable hog plugin
+ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HOG),y)
+BLUEZ5_UTILS_CONF_OPTS += --enable-hog
+else
+BLUEZ5_UTILS_CONF_OPTS += --disable-hog
 endif
 
 # enable mesh profile
@@ -68,6 +102,13 @@ BLUEZ5_UTILS_CONF_OPTS += --enable-midi
 BLUEZ5_UTILS_DEPENDENCIES += alsa-lib
 else
 BLUEZ5_UTILS_CONF_OPTS += --disable-midi
+endif
+
+# enable network plugin
+ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_NETWORK),y)
+BLUEZ5_UTILS_CONF_OPTS += --enable-network
+else
+BLUEZ5_UTILS_CONF_OPTS += --disable-network
 endif
 
 # enable nfc plugin
