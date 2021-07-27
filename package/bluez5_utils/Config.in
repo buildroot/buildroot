@@ -58,17 +58,11 @@ config BR2_PACKAGE_BLUEZ5_UTILS_EXPERIMENTAL
 	  "Nokia OBEX PC Suite tool". So, only if OBEX support is
 	  enabled this option has an effect.
 
-config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_A2DP
-	bool "build a2dp plugin"
+config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_AUDIO
+	bool "build audio plugins (a2dp and avrcp)"
 	default y
 	help
-	  Build plugin for A2DP (audio) profiles.
-
-config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_AVRCP
-	bool "build avrcp plugin"
-	default y
-	help
-	  Build plugin for AVRCP (audio) profiles.
+	  Build plugins for audio profiles (for A2DP and AVRCP).
 
 config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HEALTH
 	bool "build health plugin"
