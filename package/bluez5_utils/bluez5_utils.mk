@@ -53,18 +53,11 @@ else
 BLUEZ5_UTILS_CONF_OPTS += --disable-experimental
 endif
 
-# enable a2dp plugin
-ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_A2DP),y)
-BLUEZ5_UTILS_CONF_OPTS += --enable-a2dp
+# enable audio plugins (a2dp and avrcp)
+ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_AUDIO),y)
+BLUEZ5_UTILS_CONF_OPTS += --enable-a2dp --enable-avrcp
 else
-BLUEZ5_UTILS_CONF_OPTS += --disable-a2dp
-endif
-
-#enable avrcp plugin
-ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_AVRCP),y)
-BLUEZ5_UTILS_CONF_OPTS += --enable-avrcp
-else
-BLUEZ5_UTILS_CONF_OPTS += --disable-avrcp
+BLUEZ5_UTILS_CONF_OPTS += --disable-a2dp --disable-avrcp
 endif
 
 # enable health plugin
