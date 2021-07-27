@@ -6,7 +6,7 @@ config BR2_PACKAGE_SNORT3
 	depends on BR2_INSTALL_LIBSTDCPP
 	depends on !BR2_STATIC_LIBS # daq3
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # C++11
-	depends on BR2_TOOLCHAIN_HAS_THREADS # hwloc
+	depends on BR2_TOOLCHAIN_HAS_THREADS # daq3, hwloc
 	depends on BR2_USE_WCHAR
 	select BR2_PACKAGE_DAQ3
 	select BR2_PACKAGE_FLEX
