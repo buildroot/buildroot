@@ -3,7 +3,7 @@
 # wpeframework
 #
 ################################################################################
-WPEFRAMEWORK_VERSION = df89bc8ba79d8a3b492a5070d999e678964c5a07
+WPEFRAMEWORK_VERSION = R3.2
 WPEFRAMEWORK_SITE = $(call github,rdkcentral,Thunder,$(WPEFRAMEWORK_VERSION))
 WPEFRAMEWORK_INSTALL_STAGING = YES
 WPEFRAMEWORK_DEPENDENCIES = zlib $(call qstrip,$(BR2_PACKAGE_SDK_INSTALL)) host-wpeframework-tools
@@ -182,14 +182,6 @@ endef
 define WPEFRAMEWORK_POST_TARGET_REMOVE_HEADERS
 	rm -rf $(TARGET_DIR)/usr/include/WPEFramework
 endef
-
-define WPEFRAMEWORK_POST_STAGING_CDM_HEADER
-	ln -sfn $(STAGING_DIR)/usr/include/WPEFramework/interfaces/IDRM.h $(STAGING_DIR)/usr/include/cdmi.h
-endef
-
-ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_CDM),y)
-WPEFRAMEWORK_POST_INSTALL_STAGING_HOOKS += WPEFRAMEWORK_POST_STAGING_CDM_HEADER
-endif
 
 ifneq ($(BR2_PACKAGE_WPEFRAMEWORK_DISABLE_INITD),y)
 WPEFRAMEWORK_POST_INSTALL_TARGET_HOOKS += WPEFRAMEWORK_POST_TARGET_INITD
