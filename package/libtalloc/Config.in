@@ -8,3 +8,7 @@ config BR2_PACKAGE_LIBTALLOC
 	  used in Samba.
 
 	  https://talloc.samba.org/talloc/doc/html/index.html
+
+comment "libtalloc needs a toolchain w/ dynamic library"
+	depends on BR2_USE_MMU
+	depends on BR2_STATIC_LIBS
