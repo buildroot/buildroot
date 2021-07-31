@@ -1,0 +1,35 @@
+From 2f9ee6079b20fb5d3884472825a40c5c65550fa2 Mon Sep 17 00:00:00 2001
+From: Nick Hainke <vincent@systemli.org>
+Date: Sun, 30 May 2021 19:13:48 +0200
+Subject: [PATCH] pud: adapt gpsdclient.c to new gpsd 3.21
+
+As mentioned:
+"Move gps_data_t->status to gps_fix_t.status for better fix merging"
+https://gitlab.com/gpsd/gpsd/-/commit/29991d6ffeb41ecfc8297db68bb68be0128c8514
+
+Signed-off-by: Nick Hainke <vincent@systemli.org>
+Upstream: 79a28cdb4083b66c5d3a5f9c0d70dbdc86c0420c
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ lib/pud/src/gpsdclient.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/lib/pud/src/gpsdclient.c b/lib/pud/src/gpsdclient.c
+index 2a7a26ee..a2a9cee0 100644
+--- a/lib/pud/src/gpsdclient.c
++++ b/lib/pud/src/gpsdclient.c
+@@ -370,7 +370,11 @@ void nmeaInfoFromGpsd(struct gps_data_t *gpsdata, NmeaInfo *info, struct GpsdCon
+           );
+ 
+   gpsdata->set &= ~STATUS_SET; /* always valid */
++  #if GPSD_API_MAJOR_VERSION >= 10
++  if (gpsdata->fix.status == STATUS_NO_FIX) {
++  #else
+   if (gpsdata->status == STATUS_NO_FIX) {
++  #endif
+     nmeaInfoClear(info);
+     nmeaTimeSet(&info->utc, &info->present, NULL);
+     return;
+-- 
+2.31.1
+
