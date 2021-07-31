@@ -129,6 +129,8 @@ config BR2_PACKAGE_KODI_BLUEZ
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_4 # bluez5_utils
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # bluez5_utils
 	select BR2_PACKAGE_BLUEZ5_UTILS
+	select BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_AUDIO
+	select BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HID
 	help
 	    Enable bluetooth support
 
