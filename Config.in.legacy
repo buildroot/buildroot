@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2021.08"
 
+config BR2_BINUTILS_VERSION_2_34_X
+	bool "binutils 2.34 has been removed"
+	select BR2_LEGACY
+	help
+	  binutils 2.34 has been removed, use a newer version.
+
 config BR2_PACKAGE_LIBSOIL
 	bool "libsoil package removed"
 	select BR2_LEGACY
