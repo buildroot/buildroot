@@ -43,13 +43,23 @@ config BR2_PACKAGE_BLUEZ5_UTILS_MONITOR
 	help
 	  Build monitor utility btmon.
 
+config BR2_PACKAGE_BLUEZ5_UTILS_TOOLS
+	bool "build tools"
+	help
+	  Build tools like bluemoon, btattach, hex2hcd, l2test,
+	  l2ping, mpris-proxy, rctest.
+
 config BR2_PACKAGE_BLUEZ5_UTILS_DEPRECATED
 	bool "install deprecated tools"
-	depends on BR2_PACKAGE_BLUEZ5_UTILS_CLIENT
+	depends on BR2_PACKAGE_BLUEZ5_UTILS_CLIENT || BR2_PACKAGE_BLUEZ5_UTILS_TOOLS
 	help
-	  Build deprecated tools. These currently include:
+	  Build deprecated tools.
+
+	  When "build tools" is selected these tools are installed:
 	  hciattach, hciconfig, hcitool, hcidump, rfcomm, sdptool,
-	  ciptool, gatttool.
+	  ciptool.
+
+	  When CLI client is enabled "gatttool" is installed.
 
 config BR2_PACKAGE_BLUEZ5_UTILS_EXPERIMENTAL
 	bool "build experimental tools"
