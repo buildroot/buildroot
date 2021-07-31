@@ -38,6 +38,13 @@ config BR2_BINUTILS_VERSION_2_36_X
 	# https://github.com/uclinux-dev/elf2flt/issues/12
 	depends on !BR2_BINFMT_FLAT
 
+config BR2_BINUTILS_VERSION_2_37_X
+	bool "binutils 2.37"
+	depends on !BR2_csky
+	# https://github.com/uclinux-dev/elf2flt/pull/16
+	# https://github.com/uclinux-dev/elf2flt/issues/12
+	depends on !BR2_BINFMT_FLAT
+
 config BR2_BINUTILS_VERSION_ARC
 	bool "binutils arc (2.34.50)"
 	depends on BR2_arc
@@ -56,6 +63,7 @@ config BR2_BINUTILS_VERSION
 	default "2.34"		if BR2_BINUTILS_VERSION_2_34_X
 	default "2.35.2"	if BR2_BINUTILS_VERSION_2_35_X
 	default "2.36.1"	if BR2_BINUTILS_VERSION_2_36_X
+	default "2.37"		if BR2_BINUTILS_VERSION_2_37_X
 
 config BR2_BINUTILS_ENABLE_LTO
 	bool
