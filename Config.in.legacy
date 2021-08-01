@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2021.08"
 
+config BR2_PACKAGE_LIBSOIL
+	bool "libsoil package removed"
+	select BR2_LEGACY
+	help
+	  The libsoil package was removed. All packages needing
+	  libsoil removed the dependency.
+
 config BR2_PACKAGE_CLAPACK
 	bool "cblas/clapack package removed"
 	select BR2_LEGACY
