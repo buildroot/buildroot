@@ -11,6 +11,7 @@ TFTPD_LICENSE = BSD-4-Clause
 TFTPD_LICENSE_FILES = tftpd/tftpd.c
 TFTPD_CPE_ID_VENDOR = tftpd-hpa_project
 TFTPD_CPE_ID_PRODUCT = tftpd-hpa
+TFTPD_SELINUX_MODULES = tftp
 # From git
 TFTPD_AUTORECONF = YES
 
