@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-VDR_VERSION = 2.4.6
-VDR_SOURCE = vdr-$(VDR_VERSION).tar.bz2
-VDR_SITE = ftp://ftp.tvdr.de/vdr
+VDR_VERSION = 2.5.6
+VDR_SITE = $(call github,vdr-projects,vdr,$(VDR_VERSION))
 VDR_LICENSE = GPL-2.0+
 VDR_LICENSE_FILES = COPYING
 VDR_CPE_ID_VENDOR = tvdr
