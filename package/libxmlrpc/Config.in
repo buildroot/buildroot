@@ -14,8 +14,12 @@ if BR2_PACKAGE_LIBXMLRPC
 
 config BR2_PACKAGE_LIBXMLRPC_TOOLS_XMLRPC
 	bool "install cli tool"
+	depends on !BR2_STATIC_LIBS
 	help
 	  Command line tool xmlrpc.
+
+comment "cli tool needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
 
 endif # BR2_PACKAGE_LIBXMLRPC
 
