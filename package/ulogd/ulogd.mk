@@ -13,6 +13,7 @@ ULOGD_DEPENDENCIES = host-pkgconf \
 	libnfnetlink
 ULOGD_LICENSE = GPL-2.0
 ULOGD_LICENSE_FILES = COPYING
+ULOGD_SELINUX_MODULES = ulogd
 
 # DB backends need threads
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
