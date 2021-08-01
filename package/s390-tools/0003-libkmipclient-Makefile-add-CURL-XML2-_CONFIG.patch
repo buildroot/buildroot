@@ -1,0 +1,71 @@
+From 49cd01dc97740b299119f32c822ccfd989ea7ec9 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 1 Aug 2021 21:50:21 +0200
+Subject: [PATCH] libkmipclient/Makefile: add {CURL,XML2}_CONFIG
+
+Add CURL_CONFIG and XML2_CONFIG to allow the user to configure the
+binaries used in check-dep-libkmipclient
+
+This will allow the user to avoid the following build failures raised
+since version 2.17.0 and
+https://github.com/ibm-s390-linux/s390-tools/commit/56fecf1832c3ebc4626ddf5c598762833c362d5e:
+
+/bin/sh: 1: curl-config: not found
+Error: libcurl is not built with the OpenSSL backend
+make[2]: *** [Makefile:54: check-dep-libekmfweb] Error 1
+
+Fixes:
+ - http://autobuild.buildroot.org/results/cfb46d7547c22f0a23aca2286dc5a1d2c20aadfc
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/ibm-s390-linux/s390-tools/pull/121]
+---
+ libkmipclient/Makefile | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/libkmipclient/Makefile b/libkmipclient/Makefile
+index 36efecb..addd096 100644
+--- a/libkmipclient/Makefile
++++ b/libkmipclient/Makefile
+@@ -50,6 +50,9 @@ detect-openssl-version.dep:
+ 	echo "}" >> $(TMPFILE)
+ 	mv $(TMPFILE) $@
+ 
++CURL_CONFIG ?= curl-config
++XML2_CONFIG ?= xml2-config
++
+ check-dep-libkmipclient: detect-openssl-version.dep
+ 	$(call check_dep, \
+ 		"libkmipclient", \
+@@ -67,14 +70,14 @@ check-dep-libkmipclient: detect-openssl-version.dep
+ 		"libxml/tree.h", \
+ 		"libxml2-devel", \
+ 		"HAVE_LIBXML2=0", \
+-		`xml2-config --cflags` `xml2-config --libs`)
++		`$(XML2_CONFIG) --cflags` `$(XML2_CONFIG) --libs`)
+ 	$(call check_dep, \
+ 		"libkmipclient", \
+ 		"curl/curl.h", \
+ 		"libcurl-devel", \
+ 		"HAVE_LIBCURL=0" \
+-		`curl-config --cflags` `curl-config --libs`)
+-	curl-config --ssl-backends | grep OpenSSL >/dev/null 2>&1 || { echo "Error: libcurl is not built with the OpenSSL backend"; exit 1; }
++		`$(CURL_CONFIG) --cflags` `$(CURL_CONFIG) --libs`)
++	$(CURL_CONFIG) --ssl-backends | grep OpenSSL >/dev/null 2>&1 || { echo "Error: libcurl is not built with the OpenSSL backend"; exit 1; }
+ 	touch check-dep-libkmipclient
+ 
+ skip-libkmipclient-openssl:
+@@ -104,8 +107,8 @@ tls.o: check-dep-libkmipclient tls.c kmip.h utils.h $(rootdir)include/kmipclient
+ names.o: check-dep-libkmipclient names.c names.h utils.h $(rootdir)include/kmipclient/kmipclient.h
+ utils.o: check-dep-libkmipclient utils.c names.h utils.h $(rootdir)include/kmipclient/kmipclient.h
+ 
+-libkmipclient.so.$(VERSION): ALL_CFLAGS += -fPIC `xml2-config --cflags` `curl-config --cflags`
+-libkmipclient.so.$(VERSION): LDLIBS = -ljson-c -lcrypto -lssl `xml2-config --libs` `curl-config --libs`
++libkmipclient.so.$(VERSION): ALL_CFLAGS += -fPIC `$(XML2_CONFIG) --cflags` `$(CURL_CONFIG) --cflags`
++libkmipclient.so.$(VERSION): LDLIBS = -ljson-c -lcrypto -lssl `$(XML2_CONFIG) --libs` `$(CURL_CONFIG) --libs`
+ libkmipclient.so.$(VERSION): ALL_LDFLAGS += -shared -Wl,--version-script=libkmipclient.map \
+ 	-Wl,-z,defs,-Bsymbolic -Wl,-soname,libkmipclient.so.$(VERM)
+ libkmipclient.so.$(VERSION): kmip.o request.o response.o attribute.o key.o ttlv.o json.o \
+-- 
+2.30.2
+
