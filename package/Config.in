@@ -1639,6 +1639,10 @@ endif
 	source "package/openlayers/Config.in"
 	source "package/popperjs/Config.in"
 	source "package/vuejs/Config.in"
+if BR2_PACKAGE_VUEJS
+comment "External Vue.js plugins"
+	source "package/vuejs-router/Config.in"
+endif
 endmenu
 
 menu "JSON/XML"
