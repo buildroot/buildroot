@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2021.08"
 
+config BR2_PACKAGE_PHP_EXT_MCRYPT
+	bool "PHP mcrypt extension removed"
+	select BR2_LEGACY
+	help
+	  mcrypt has been removed from php since version 7.2.0.
+
 config BR2_BINUTILS_VERSION_2_34_X
 	bool "binutils 2.34 has been removed"
 	select BR2_LEGACY
