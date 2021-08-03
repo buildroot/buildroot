@@ -1,3 +1,60 @@
+2021.08-rc8, to be released
+
+	Numerous package updates.
+
+	Toolchain:
+
+        - add support for gcc 11.x, gcc 10.x is now the default, gcc
+	  9.x updated to 9.4.0, removed gcc 8.x support except for
+	  PowerPC SPE
+
+	- add support for binutils 2.37, binutils 2.36.x is now the
+          default, binutils 2.34 removed.
+
+	- glibc updated to 2.33
+
+        - gdb enabled on NIOS II, gdbserver enabled on RISC-V.
+
+	Bootloaders/firmware: support for building the EDK II UEFI
+	firmware, support for building AT91Bootstrap 4.x.
+
+	New BR2_ENABLE_RUNTIME_DEBUG option, that controls whether
+	packages should be compiled with runtime debugging
+	information (which is different than debugging symbols).
+
+	Many features of the bluez5_utils package have been made
+	optional, and default to disabled. Users of bluez5_utils are
+	encouraged to review their configuration.
+
+	Many packages (over 70) updated to enable the appropriate
+	SELinux refpolicy module when SELinux support is enabled.
+
+	Many packages updated to select the appropriate OpenSSL
+	features after many OpenSSL ciphers/features have been made
+	optional.
+
+	New defconfigs: kontron_pitx_imx8m, microchip_sama5d2_icp,
+	qemu_aarch64_sbsa, raspberrypicm4io, raspberrypicm4io_64,
+	terasic_de10nano_cyclone5, uevm5432.
+
+	New packages: alsa-plugins, apg, bmap-tools, daq3, edk2,
+	edk2-platforms, gumbo-parser, libbpf, libosmium, libpsl,
+	libqb, libtalloc, libvirt, lua-linux, lua-zlib, mupdf,
+	opencv4, osm2pgsql, poke, python-augeas, python-dbus-next,
+	python-pymupdf, rtl_433, rtl8812au-aircrack-ng, seatd, snort3,
+	system-config-printer, usbguard, xml-security-c, xmrig.
+
+	Removed packages: clapack, libsoil.
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13326: regarding dtc error in buildroot source code
+	#13661: host-python2 build fails on aarch64
+	#13836: package build failure when target install set to no on
+	        pkg-generic pkg types
+	#13846: BR2_PACKAGE_LVM2_STANDARD_INSTALL should be default to
+	        y as before
+
 2021.05, released June 6th, 2021
 
 	Various fixes.
