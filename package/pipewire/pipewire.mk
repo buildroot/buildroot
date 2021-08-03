@@ -95,9 +95,9 @@ else
 PIPEWIRE_CONF_OPTS += -Dv4l2=disabled
 endif
 
-ifeq ($(BR2_PACKAGE_LIBCAMERA)$(BR2_PACKAGE_HAS_UDEV),yy)
+ifeq ($(BR2_PACKAGE_LIBCAMERA)$(BR2_PACKAGE_LIBDRM)$(BR2_PACKAGE_HAS_UDEV),yyy)
 PIPEWIRE_CONF_OPTS += -Dlibcamera=enabled
-PIPEWIRE_DEPENDENCIES += libcamera
+PIPEWIRE_DEPENDENCIES += libcamera libdrm
 else
 PIPEWIRE_CONF_OPTS += -Dlibcamera=disabled
 endif
