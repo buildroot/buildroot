@@ -10,8 +10,12 @@ config BR2_PACKAGE_PHP_EXT_FILEINFO
 	help
 	  File Information support
 
+comment "OPcache needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
+
 config BR2_PACKAGE_PHP_EXT_OPCACHE
 	bool "OPcache"
+	depends on !BR2_STATIC_LIBS
 	help
 	  Enable the Zend OPcache accelerator.
 
