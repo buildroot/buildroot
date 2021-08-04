@@ -20,6 +20,7 @@ RPM_DEPENDENCIES = \
 RPM_LICENSE = GPL-2.0 or LGPL-2.0 (library only)
 RPM_LICENSE_FILES = COPYING
 RPM_CPE_ID_VENDOR = rpm
+RPM_SELINUX_MODULES = rpm
 
 # Don't set --{dis,en}-openmp as upstream wants to abort the build if
 # --enable-openmp is provided and OpenMP is < 4.5:
