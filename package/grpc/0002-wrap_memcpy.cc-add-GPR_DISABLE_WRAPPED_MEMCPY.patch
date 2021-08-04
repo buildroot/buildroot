@@ -20,12 +20,12 @@ diff --git a/src/core/lib/gpr/wrap_memcpy.cc b/src/core/lib/gpr/wrap_memcpy.cc
 index 9b8608e056..38b76acf95 100644
 --- a/src/core/lib/gpr/wrap_memcpy.cc
 +++ b/src/core/lib/gpr/wrap_memcpy.cc
-@@ -28,7 +28,7 @@
- 
+@@ -29,7 +29,7 @@
  extern "C" {
  #ifdef __linux__
--#if defined(__x86_64__) && !defined(GPR_MUSL_LIBC_COMPAT)
-+#if defined(__x86_64__) && !defined(GPR_MUSL_LIBC_COMPAT) && !defined(GPR_DISABLE_WRAPPED_MEMCPY)
+ #if defined(__x86_64__) && !defined(GPR_MUSL_LIBC_COMPAT) && \
+-    !defined(__ANDROID__)
++    !defined(__ANDROID__) && !defined(GPR_DISABLE_WRAPPED_MEMCPY)
  __asm__(".symver memcpy,memcpy@GLIBC_2.2.5");
  void* __wrap_memcpy(void* destination, const void* source, size_t num) {
    return memcpy(destination, source, num);
