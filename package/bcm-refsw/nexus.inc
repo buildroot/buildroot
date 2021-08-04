@@ -328,3 +328,18 @@ define BCM_REFSW_INSTALL_NEXUS_PC
   $(INSTALL) -D $(BCM_REFSW_OUTPUT)/nexus.pc $(1)/usr/lib/pkgconfig/
   $(INSTALL) -D $(BCM_REFSW_OUTPUT)/nexus-client.pc $(1)/usr/lib/pkgconfig/
 endef
+
+ifeq ($(BR2_PACKAGE_BCM_REFSW_BP3),y)
+define BCM_REFSW_BUILD_BP3
+    $(TARGET_CONFIGURE_OPTS) \
+    $(TARGET_MAKE_ENV) \
+    $(BCM_REFSW_CONF_OPTS) \
+    $(BCM_REFSW_MAKE_ENV) \
+        $(MAKE) -C $(@D)/BSEAV/tools/bp3 install
+endef
+define BCM_REFSW_INSTALL_BP3
+    $(INSTALL) -m 750 -D $(BCM_REFSW_BIN)/bp3 $(1)/usr/bin
+    $(INSTALL) -m 644 -D $(BCM_REFSW_BIN)/libbp3_host.so $(1)/usr/lib
+    $(INSTALL) -m 644 -D $(BCM_REFSW_BIN)/libcjson.so $(1)/usr/lib
+endef
+endif
