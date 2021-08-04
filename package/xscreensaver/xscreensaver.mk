@@ -11,6 +11,7 @@ XSCREENSAVER_SITE = https://www.jwz.org/xscreensaver
 XSCREENSAVER_LICENSE = MIT-like, GPL-2.0+
 XSCREENSAVER_LICENSE_FILES = hacks/screenhack.h hacks/glx/chessmodels.h
 XSCREENSAVER_CPE_ID_VENDOR = xscreensaver_project
+XSCREENSAVER_SELINUX_MODULES = xscreensaver
 
 XSCREENSAVER_DEPENDENCIES = \
 	gdk-pixbuf \
