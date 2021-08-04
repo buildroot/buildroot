@@ -31,8 +31,8 @@ OPENZWAVE_MAKE_OPTS = \
 	pkgconfigdir=/usr/lib/pkgconfig \
 	sysconfdir=/etc/openzwave \
 	DOXYGEN= \
-	DEBUG_CFLAGS="-fPIC" \
-	RELEASE_CFLAGS="-fPIC" \
+	DEBUG_CFLAGS="-fPIC -std=c++11" \
+	RELEASE_CFLAGS="-fPIC -std=c++11" \
 	USE_BI_TXML=0
 
 ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
