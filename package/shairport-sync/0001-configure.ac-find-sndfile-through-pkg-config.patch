@@ -1,0 +1,43 @@
+From 900b1827c55cc6020b3242640075174c2e6b12a5 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 4 Aug 2021 22:16:40 +0200
+Subject: [PATCH] configure.ac: find sndfile through pkg-config
+
+Find sndfile through pkg-config to retrieve sndfile dependencies such as
+flac and avoid the following static build failure:
+
+/tmp/instance-3/output-1/host/lib/gcc/xtensa-buildroot-linux-uclibc/10.3.0/../../../../xtensa-buildroot-linux-uclibc/bin/ld: /tmp/instance-3/output-1/host/bin/../xtensa-buildroot-linux-uclibc/sysroot/usr/lib/libsndfile.a(libsndfile_la-flac.o): in function `flac_byterate':
+flac.c:(.text+0xfc): undefined reference to `FLAC__StreamDecoderErrorStatusString'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/92ed30a6855ca11800b779718822bcba4a69c9a3
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/mikebrady/shairport-sync/pull/1263]
+---
+ configure.ac | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index f77087c5..9b982c51 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -304,7 +304,14 @@ AC_ARG_WITH(convolution, [AS_HELP_STRING([--with-convolution],[choose audio DSP
+ if test "x$with_convolution" = "xyes" ; then
+   AM_INIT_AUTOMAKE([subdir-objects])
+   AC_DEFINE([CONFIG_CONVOLUTION], 1, [Include audio DSP convolution support.])
+-  AC_CHECK_LIB([sndfile], [sf_open], , AC_MSG_ERROR(Convolution support requires the sndfile library -- libsndfile1-dev suggested!))
++  if  test "x${with_pkg_config}" = xyes ; then
++    PKG_CHECK_MODULES(
++      [sndfile], [sndfile],
++      [CFLAGS="${sndfile_CFLAGS} ${CFLAGS}"
++      LIBS="${sndfile_LIBS} ${LIBS}"], AC_MSG_ERROR(Convolution support requires the sndfile library -- libsndfile1-dev suggested!))
++  else
++    AC_CHECK_LIB([sndfile], [sf_open], , AC_MSG_ERROR(Convolution support requires the sndfile library -- libsndfile1-dev suggested!))
++  fi
+ fi
+ AM_CONDITIONAL([USE_CONVOLUTION], [test "x$with_convolution" = "xyes"])
+ 
+-- 
+2.30.2
+
