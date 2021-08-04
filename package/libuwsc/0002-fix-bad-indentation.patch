@@ -1,0 +1,27 @@
+From 8cb416140741a596235b8acc46b2b119b13ebfab Mon Sep 17 00:00:00 2001
+From: Rosen Penev <rosenp@gmail.com>
+Date: Tue, 6 Jul 2021 21:01:52 -0700
+Subject: [PATCH] fix bad indentation
+
+Fixes error with GCC11.
+
+[Retrieved from:
+https://github.com/zhaojh329/libuwsc/commit/8cb416140741a596235b8acc46b2b119b13ebfab]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/lua/uwsc_lua.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/lua/uwsc_lua.c b/src/lua/uwsc_lua.c
+index de6932e..84689fe 100644
+--- a/src/lua/uwsc_lua.c
++++ b/src/lua/uwsc_lua.c
+@@ -178,7 +178,7 @@ static int uwsc_lua_on(lua_State *L)
+     else
+         luaL_argcheck(L, false, 2, "available event name: open message error close");
+ 
+-	return 0;
++    return 0;
+ }
+ 
+ static int __uwsc_lua_send(lua_State *L, int op)
