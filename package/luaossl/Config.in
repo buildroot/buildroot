@@ -2,6 +2,7 @@ config BR2_PACKAGE_LUAOSSL
 	bool "luaossl"
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_DES if BR2_PACKAGE_LIBOPENSSL
 	help
 	  luaossl is a comprehensive binding to OpenSSL for Lua 5.1,
 	  5.2, and later.

@@ -19,21 +19,17 @@ USBGUARD_CONF_OPTS = \
 
 USBGUARD_DEPENDENCIES += libqb protobuf
 
-ifeq ($(BR2_PACKAGE_LIBOPENSSL),y)
+ifeq ($(BR2_PACKAGE_LIBSODIUM),y)
+USBGUARD_CONF_OPTS += --with-crypto-library=sodium
+USBGUARD_DEPENDENCIES += libsodium
+else ifeq ($(BR2_PACKAGE_LIBOPENSSL),y)
 USBGUARD_CONF_OPTS += --with-crypto-library=openssl
 USBGUARD_DEPENDENCIES += libopenssl
-endif
-
-ifeq ($(BR2_PACKAGE_LIBGCRYPT),y)
+else ifeq ($(BR2_PACKAGE_LIBGCRYPT),y)
 USBGUARD_CONF_ENV += \
 	ac_cv_path_LIBGCRYPT_CONFIG=$(STAGING_DIR)/usr/bin/libgcrypt-config
 USBGUARD_CONF_OPTS += --with-crypto-library=gcrypt
 USBGUARD_DEPENDENCIES += libgcrypt
-endif
-
-ifeq ($(BR2_PACKAGE_LIBSODIUM),y)
-USBGUARD_CONF_OPTS += --with-crypto-library=sodium
-USBGUARD_DEPENDENCIES += libsodium
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)

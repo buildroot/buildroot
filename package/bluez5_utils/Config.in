@@ -143,6 +143,7 @@ config BR2_PACKAGE_BLUEZ5_UTILS_TOOLS_HID2HCI
 	bool "build hid2hci tool"
 	depends on BR2_PACKAGE_HAS_UDEV
 	select BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HID # runtime
+	select BR2_PACKAGE_BLUEZ5_UTILS_TOOLS
 	help
 	  Build hid2hci tool
 

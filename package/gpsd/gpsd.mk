@@ -16,6 +16,7 @@ GPSD_DEPENDENCIES = host-python3 host-scons host-pkgconf
 
 GPSD_LDFLAGS = $(TARGET_LDFLAGS)
 GPSD_CFLAGS = $(TARGET_CFLAGS)
+GPSD_CXXFLAGS = $(TARGET_CXXFLAGS)
 
 GPSD_SCONS_ENV = $(TARGET_CONFIGURE_OPTS)
 
@@ -46,6 +47,7 @@ endif
 
 ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_68485),y)
 GPSD_CFLAGS += -O0
+GPSD_CXXFLAGS += -O0
 endif
 
 # If libusb is available build it before so the package can use it
@@ -203,7 +205,8 @@ endif
 GPSD_SCONS_ENV += \
 	LDFLAGS="$(GPSD_LDFLAGS)" \
 	CFLAGS="$(GPSD_CFLAGS)" \
-	CCFLAGS="$(GPSD_CFLAGS)"
+	CCFLAGS="$(GPSD_CFLAGS)" \
+	CXXFLAGS="$(GPSD_CXXFLAGS)"
 
 define GPSD_BUILD_CMDS
 	(cd $(@D); \

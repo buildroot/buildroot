@@ -1,0 +1,39 @@
+From 0080d0a64da274207bc341491f87863952bb6e3b Mon Sep 17 00:00:00 2001
+From: Joel Stanley <joel@jms.id.au>
+Date: Tue, 3 Aug 2021 17:28:17 +0930
+Subject: [PATCH] template: Fix alignment
+
+The assembler complains about unaliged data:
+
+ ./template.S: Assembler messages:
+ ./template.S:21: Error: misaligned data
+
+If the included data is not an aligned size, the the symbols following
+will be unaligned.
+
+We lost the alignment directive in commit 5f3deee1289e ("template: new
+libfdt requires 8-byte aligned fdt"), so add it back as it was before
+that commit.
+
+Reported by the buildroot autobuilder.
+
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+ template.S | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/template.S b/template.S
+index ecf9bba0656d..df8c064d6bc0 100644
+--- a/template.S
++++ b/template.S
+@@ -17,6 +17,7 @@
+ SYM_START(SYMBOL_PREFIX):
+ .incbin FILENAME
+ SYM_END(SYMBOL_PREFIX):
++.align 4
+ SYM_SIZE(SYMBOL_PREFIX):
+ 	.long	SYM_END(SYMBOL_PREFIX) - SYM_START(SYMBOL_PREFIX)
+ .globl SYM_START(SYMBOL_PREFIX)
+-- 
+2.32.0
+

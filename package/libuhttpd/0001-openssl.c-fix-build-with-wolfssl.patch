@@ -1,0 +1,47 @@
+From e5c5ed1c64cfc715729c9bfbfdcc4be225f344ff Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 4 Aug 2021 11:32:39 +0200
+Subject: [PATCH] openssl.c: fix build with wolfssl
+
+Fix the following build failure with wolfssl:
+
+/tmp/instance-4/output-1/build/libuhttpd-3.12.1/src/ssl/openssl.c: In function 'ssl_context_new':
+/tmp/instance-4/output-1/build/libuhttpd-3.12.1/src/ssl/openssl.c:174:33: error: 'tls13_ciphersuites' undeclared (first use in this function)
+  174 |     SSL_CTX_set_ciphersuites(c, tls13_ciphersuites);
+      |                                 ^~~~~~~~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/d0fb629b40b05ad828775894fabed878692bb222
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/zhaojh329/ssl/pull/1]
+---
+ openssl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/openssl.c b/openssl.c
+index 8f3d8b7..c42638c 100644
+--- a/src/ssl/openssl.c
++++ b/src/ssl/openssl.c
+@@ -71,14 +71,14 @@
+                 "TLS13-AES256-GCM-SHA384:"		\
+                 ecdhe_aead_ciphers
+ #else
+-# define tls13_ciphersuites	"TLS_CHACHA20_POLY1305_SHA256:"		\
+-                "TLS_AES_128_GCM_SHA256:"		\
+-                "TLS_AES_256_GCM_SHA384"
+-
+ # define top_ciphers							\
+                 ecdhe_aead_ciphers
+ #endif
+ 
++# define tls13_ciphersuites	"TLS_CHACHA20_POLY1305_SHA256:"		\
++                "TLS_AES_128_GCM_SHA256:"		\
++                "TLS_AES_256_GCM_SHA384"
++
+ #define ecdhe_aead_ciphers						\
+                 "ECDHE-ECDSA-CHACHA20-POLY1305:"	\
+                 "ECDHE-ECDSA-AES128-GCM-SHA256:"	\
+-- 
+2.30.2
+

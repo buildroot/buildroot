@@ -22,8 +22,11 @@ MUPDF_DEPENDENCIES = \
 	xlib_libX11 \
 	zlib
 
-# 0001-Bug-703366-Fix-double-free-of-object-during-linearization.patch
+# 0002-Bug-703366-Fix-double-free-of-object-during-linearization.patch
 MUPDF_IGNORE_CVES += CVE-2021-3407
+
+# 0003-Bug-703791-Stay-within-hash-table-max-key-size-in-cached-color-converter.patch
+MUPDF_IGNORE_CVES += CVE-2021-37220
 
 # The pkg-config name for gumbo-parser is `gumbo`.
 MUPDF_PKG_CONFIG_PACKAGES = \
