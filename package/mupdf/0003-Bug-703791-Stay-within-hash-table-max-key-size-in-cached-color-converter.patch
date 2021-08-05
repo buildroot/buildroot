@@ -1,0 +1,119 @@
+From f5712c9949d026e4b891b25837edd2edc166151f Mon Sep 17 00:00:00 2001
+From: Tor Andersson <tor.andersson@artifex.com>
+Date: Tue, 20 Apr 2021 14:46:48 +0200
+Subject: [PATCH] Bug 703791: Stay within hash table max key size in cached
+ color converter.
+
+[Retrieved from:
+http://git.ghostscript.com/?p=mupdf.git;h=f5712c9949d026e4b891b25837edd2edc166151f]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ include/mupdf/fitz/hash.h |  2 ++
+ source/fitz/colorspace.c  | 40 ++++++++++++++++++++++++---------------
+ source/fitz/hash.c        |  7 +++----
+ 3 files changed, 30 insertions(+), 19 deletions(-)
+
+diff --git a/include/mupdf/fitz/hash.h b/include/mupdf/fitz/hash.h
+index e92eb0458..feb37a5e4 100644
+--- a/include/mupdf/fitz/hash.h
++++ b/include/mupdf/fitz/hash.h
+@@ -5,6 +5,8 @@
+ #include "mupdf/fitz/context.h"
+ #include "mupdf/fitz/output.h"
+ 
++#define FZ_HASH_TABLE_KEY_LENGTH 48
++
+ /**
+ 	Generic hash-table with fixed-length keys.
+ 
+diff --git a/source/fitz/colorspace.c b/source/fitz/colorspace.c
+index af454caf1..f4db9d3d2 100644
+--- a/source/fitz/colorspace.c
++++ b/source/fitz/colorspace.c
+@@ -1025,23 +1025,30 @@ typedef struct fz_cached_color_converter
+ static void fz_cached_color_convert(fz_context *ctx, fz_color_converter *cc_, const float *ss, float *ds)
+ {
+ 	fz_cached_color_converter *cc = cc_->opaque;
+-	float *val = fz_hash_find(ctx, cc->hash, ss);
+-	int n = cc->base.ds->n * sizeof(float);
+-
+-	if (val)
++	if (cc->hash)
+ 	{
+-		memcpy(ds, val, n);
+-		return;
+-	}
++		float *val = fz_hash_find(ctx, cc->hash, ss);
++		int n = cc->base.ds->n * sizeof(float);
+ 
+-	cc->base.convert(ctx, &cc->base, ss, ds);
++		if (val)
++		{
++			memcpy(ds, val, n);
++			return;
++		}
+ 
+-	val = Memento_label(fz_malloc_array(ctx, cc->base.ds->n, float), "cached_color_convert");
+-	memcpy(val, ds, n);
+-	fz_try(ctx)
+-		fz_hash_insert(ctx, cc->hash, ss, val);
+-	fz_catch(ctx)
+-		fz_free(ctx, val);
++		cc->base.convert(ctx, &cc->base, ss, ds);
++
++		val = Memento_label(fz_malloc_array(ctx, cc->base.ds->n, float), "cached_color_convert");
++		memcpy(val, ds, n);
++		fz_try(ctx)
++			fz_hash_insert(ctx, cc->hash, ss, val);
++		fz_catch(ctx)
++			fz_free(ctx, val);
++	}
++	else
++	{
++		cc->base.convert(ctx, &cc->base, ss, ds);
++	}
+ }
+ 
+ void fz_init_cached_color_converter(fz_context *ctx, fz_color_converter *cc, fz_colorspace *ss, fz_colorspace *ds, fz_colorspace *is, fz_color_params params)
+@@ -1060,7 +1067,10 @@ void fz_init_cached_color_converter(fz_context *ctx, fz_color_converter *cc, fz_
+ 	fz_try(ctx)
+ 	{
+ 		fz_find_color_converter(ctx, &cached->base, ss, ds, is, params);
+-		cached->hash = fz_new_hash_table(ctx, 256, n * sizeof(float), -1, fz_free);
++		if (n * sizeof(float) <= FZ_HASH_TABLE_KEY_LENGTH)
++			cached->hash = fz_new_hash_table(ctx, 256, n * sizeof(float), -1, fz_free);
++		else
++			fz_warn(ctx, "colorspace has too many components to be cached");
+ 	}
+ 	fz_catch(ctx)
+ 	{
+diff --git a/source/fitz/hash.c b/source/fitz/hash.c
+index 882b886c9..287d43f03 100644
+--- a/source/fitz/hash.c
++++ b/source/fitz/hash.c
+@@ -11,11 +11,9 @@
+ 	and removed frequently.
+ */
+ 
+-enum { MAX_KEY_LEN = 48 };
+-
+ typedef struct
+ {
+-	unsigned char key[MAX_KEY_LEN];
++	unsigned char key[FZ_HASH_TABLE_KEY_LENGTH];
+ 	void *val;
+ } fz_hash_entry;
+ 
+@@ -50,7 +48,8 @@ fz_new_hash_table(fz_context *ctx, int initialsize, int keylen, int lock, fz_has
+ {
+ 	fz_hash_table *table;
+ 
+-	assert(keylen <= MAX_KEY_LEN);
++	if (keylen > FZ_HASH_TABLE_KEY_LENGTH)
++		fz_throw(ctx, FZ_ERROR_GENERIC, "hash table key length too large");
+ 
+ 	table = fz_malloc_struct(ctx, fz_hash_table);
+ 	table->keylen = keylen;
+-- 
+2.17.1
+
