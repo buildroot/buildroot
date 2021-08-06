@@ -1,0 +1,10 @@
+config BR2_PACKAGE_RWMEM
+	bool "rwmem"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5
+	depends on BR2_INSTALL_LIBSTDCPP
+	select BR2_PACKAGE_FMT
+	select BR2_PACKAGE_INIH
+	help
+	  Simple program to read/write from/to any location in memory.
+
+	  https://github.com/tomba/rwmem
