@@ -1,7 +1,7 @@
-From 49cd01dc97740b299119f32c822ccfd989ea7ec9 Mon Sep 17 00:00:00 2001
+From c2c310e93a5af148d37323f8d873e5656dea8b64 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Sun, 1 Aug 2021 21:50:21 +0200
-Subject: [PATCH] libkmipclient/Makefile: add {CURL,XML2}_CONFIG
+Subject: [PATCH] Makefile: add {CURL,XML2}_CONFIG
 
 Add CURL_CONFIG and XML2_CONFIG to allow the user to configure the
 binaries used in check-dep-libkmipclient
@@ -20,11 +20,47 @@ Fixes:
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 [Upstream status: https://github.com/ibm-s390-linux/s390-tools/pull/121]
 ---
+ libekmfweb/Makefile    | 10 ++++++----
  libkmipclient/Makefile | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ 2 files changed, 14 insertions(+), 9 deletions(-)
 
+diff --git a/libekmfweb/Makefile b/libekmfweb/Makefile
+index 8e12fb56..1c776996 100644
+--- a/libekmfweb/Makefile
++++ b/libekmfweb/Makefile
+@@ -47,6 +47,8 @@ detect-openssl-version.dep:
+ 	echo "}" >> $(TMPFILE)
+ 	mv $(TMPFILE) $@
+ 
++CURL_CONFIG ?= curl-config
++
+ check-dep-libekmfweb: detect-openssl-version.dep
+ 	$(call check_dep, \
+ 		"libekmfweb", \
+@@ -64,8 +66,8 @@ check-dep-libekmfweb: detect-openssl-version.dep
+ 		"curl/curl.h", \
+ 		"libcurl-devel", \
+ 		"HAVE_LIBCURL=0" \
+-		`curl-config --cflags` `curl-config --libs`)
+-	curl-config --ssl-backends | grep OpenSSL >/dev/null 2>&1 || { echo "Error: libcurl is not built with the OpenSSL backend"; exit 1; }
++		`$(CURL_CONFIG) --cflags` `$(CURL_CONFIG) --libs`)
++	$(CURL_CONFIG) --ssl-backends | grep OpenSSL >/dev/null 2>&1 || { echo "Error: libcurl is not built with the OpenSSL backend"; exit 1; }
+ 	touch check-dep-libekmfweb
+ 
+ skip-libekmfweb-openssl:
+@@ -83,8 +85,8 @@ ekmfweb.o: check-dep-libekmfweb ekmfweb.c utilities.h cca.h $(rootdir)include/ek
+ utilities.o: check-dep-libekmfweb utilities.c utilities.h $(rootdir)include/ekmfweb/ekmfweb.h
+ cca.o: check-dep-libekmfweb cca.c cca.h utilities.h $(rootdir)include/ekmfweb/ekmfweb.h
+ 
+-libekmfweb.so.$(VERSION): ALL_CFLAGS += -fPIC `curl-config --cflags`
+-libekmfweb.so.$(VERSION): LDLIBS = -ljson-c -lcrypto -lssl `curl-config --libs` -ldl
++libekmfweb.so.$(VERSION): ALL_CFLAGS += -fPIC `$(CURL_CONFIG) --cflags`
++libekmfweb.so.$(VERSION): LDLIBS = -ljson-c -lcrypto -lssl `$(CURL_CONFIG) --libs` -ldl
+ libekmfweb.so.$(VERSION): ALL_LDFLAGS += -shared -Wl,--version-script=libekmfweb.map \
+ 	-Wl,-z,defs,-Bsymbolic -Wl,-soname,libekmfweb.so.$(VERM)
+ libekmfweb.so.$(VERSION): ekmfweb.o utilities.o cca.o $(libs)
 diff --git a/libkmipclient/Makefile b/libkmipclient/Makefile
-index 36efecb..addd096 100644
+index 36efecb4..addd0965 100644
 --- a/libkmipclient/Makefile
 +++ b/libkmipclient/Makefile
 @@ -50,6 +50,9 @@ detect-openssl-version.dep:
@@ -66,6 +102,3 @@ index 36efecb..addd096 100644
  libkmipclient.so.$(VERSION): ALL_LDFLAGS += -shared -Wl,--version-script=libkmipclient.map \
  	-Wl,-z,defs,-Bsymbolic -Wl,-soname,libkmipclient.so.$(VERM)
  libkmipclient.so.$(VERSION): kmip.o request.o response.o attribute.o key.o ttlv.o json.o \
--- 
-2.30.2
-
