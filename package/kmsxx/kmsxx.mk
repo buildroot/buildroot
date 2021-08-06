@@ -17,12 +17,6 @@ KMSXX_CONF_OPTS = \
 	-Duse-system-fmt=true \
 	-Duse-system-pybind11=true
 
-ifeq ($(BR2_STATIC_LIBS),y)
-KMSXX_CONF_OPTS += -Dstatic-libc=true
-else
-KMSXX_CONF_OPTS += -Dstatic-libc=false
-endif
-
 ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_85180),y)
 KMSXX_CXXFLAGS += $(TARGET_CXXFLAGS) -O0
 endif
