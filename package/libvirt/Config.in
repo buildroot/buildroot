@@ -14,6 +14,8 @@ comment "libvirt needs udev /dev management, a toolchain w/ threads, dynamic lib
 config BR2_PACKAGE_LIBVIRT
 	bool "libvirt"
 	depends on BR2_PACKAGE_LIBVIRT_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_12
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_11 || !BR2_aarch64
 	depends on BR2_PACKAGE_HAS_UDEV
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_USE_WCHAR
