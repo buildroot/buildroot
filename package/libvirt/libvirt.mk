@@ -10,8 +10,18 @@ LIBVIRT_SOURCE = libvirt-$(LIBVIRT_VERSION).tar.xz
 LIBVIRT_LICENSE = LGPL-2.1+
 LIBVIRT_LICENSE_FILES = COPYING
 LIBVIRT_CPE_ID_VENDOR = redhat
-LIBVIRT_DEPENDENCIES = host-nfs-utils host-pkgconf host-python-docutils \
-	gnutls libglib2 libpciaccess libtirpc libxml2 udev zlib
+LIBVIRT_DEPENDENCIES = \
+	host-libxslt \
+	host-nfs-utils \
+	host-pkgconf \
+	host-python-docutils \
+	gnutls \
+	libglib2 \
+	libpciaccess \
+	libtirpc \
+	libxml2 \
+	udev \
+	zlib
 
 LIBVIRT_CONF_ENV += \
 	CFLAGS="$(TARGET_CFLAGS) `$(PKG_CONFIG_HOST_BINARY) --cflags libtirpc`" \
