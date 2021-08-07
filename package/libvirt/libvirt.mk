@@ -53,6 +53,13 @@ LIBVIRT_CONF_OPTS = \
 	-Dudev=enabled \
 	-Dwireshark_dissector=disabled
 
+# warning_level should only drive the level of warnings during the
+# compilation of C code. However, libvirt misuses that to also
+# enable SSP when warning_level == 2
+# Force warning_level=1 to disable SSP, and let our toolchain wrapper
+# handle it.
+LIBVIRT_CONF_OPTS += -Dwarning_level=1
+
 ifeq ($(BR2_PACKAGE_ATTR),y)
 LIBVIRT_CONF_OPTS += -Dattr=enabled
 LIBVIRT_DEPENDENCIES += attr
