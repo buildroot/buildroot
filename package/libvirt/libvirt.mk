@@ -187,8 +187,8 @@ else
 LIBVIRT_CONF_OPTS += -Dlibssh=disabled
 endif
 
-# Can't build nss plugin without network
-ifeq ($(BR2_PACKAGE_LIBNSS),y)
+# Can't build nss plugin without network or yajl
+ifeq ($(BR2_PACKAGE_LIBNSS)$(BR2_PACKAGE_YAJL),yy)
 LIBVIRT_CONF_OPTS += -Dnss=enabled
 LIBVIRT_DEPENDENCIES += libnss
 else
