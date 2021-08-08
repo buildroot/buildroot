@@ -116,12 +116,12 @@ define GOBJECT_INTROSPECTION_INSTALL_WRAPPERS
 
 	# Gobject-introspection installs Makefile.introspection in
 	# $(STAGING_DIR)/usr/share which is needed for autotools-based programs to
-	# build .gir and .typelib files. Unfortuantly, gobject-introspection-1.0.pc
+	# build .gir and .typelib files. Unfortunately, gobject-introspection-1.0.pc
 	# uses $(prefix)/share as the directory, which
 	# causes the host /usr/share being used instead of $(STAGING_DIR)/usr/share.
-	# Change datarootdir to $(libdir)/../share which will prefix $(STAGING_DIR)
+	# Change datadir to $(libdir)/../share which will prefix $(STAGING_DIR)
 	# to the correct location.
-	$(SED) "s%datarootdir=.*%datarootdir=\$${libdir}/../share%g" \
+	$(SED) "s%datadir=.*%datadir=\$${libdir}/../share%g" \
 		$(STAGING_DIR)/usr/lib/pkgconfig/gobject-introspection-1.0.pc
 
 	# By default, girdir and typelibdir use datadir and libdir as their prefix,
