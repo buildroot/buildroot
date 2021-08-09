@@ -121,7 +121,7 @@ define GOBJECT_INTROSPECTION_INSTALL_WRAPPERS
 	# causes the host /usr/share being used instead of $(STAGING_DIR)/usr/share.
 	# Change datadir to $(libdir)/../share which will prefix $(STAGING_DIR)
 	# to the correct location.
-	$(SED) "s%datadir=.*%datadir=\$${libdir}/../share%g" \
+	$(SED) "s%^datadir=.*%datadir=\$${libdir}/../share%g" \
 		$(STAGING_DIR)/usr/lib/pkgconfig/gobject-introspection-1.0.pc
 
 	# By default, girdir and typelibdir use datadir and libdir as their prefix,
