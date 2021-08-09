@@ -90,6 +90,19 @@ else
 QEMU_OPTS += --disable-tools
 endif
 
+ifeq ($(BR2_PACKAGE_LIBFUSE3),y)
+QEMU_OPTS += --enable-fuse
+QEMU_DEPENDENCIES += libfuse3
+# musl does not support SEEK_HOLE/SEEK_DATA
+ifeq ($(BR2_TOOLCHAIN_USES_MUSL),y)
+QEMU_OPTS += --disable-fuse-lseek
+else
+QEMU_OPTS += --enable-fuse-lseek
+endif
+else
+QEMU_OPTS += --disable-fuse --disable-fuse-lseek
+endif
+
 ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
 QEMU_OPTS += --enable-seccomp
 QEMU_DEPENDENCIES += libseccomp
