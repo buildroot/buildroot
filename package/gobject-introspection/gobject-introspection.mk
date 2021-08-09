@@ -127,11 +127,11 @@ define GOBJECT_INTROSPECTION_INSTALL_WRAPPERS
 	# By default, girdir and typelibdir use datadir and libdir as their prefix,
 	# of which pkg-config appends the sysroot directory. This results in files
 	# being installed in $(STAGING_DIR)/$(STAGING_DIR)/path/to/files.
-	# Changing the prefix to exec_prefix prevents this error.
-	$(SED) "s%girdir=.*%girdir=\$${exec_prefix}/share/gir-1.0%g" \
+	# Changing the prefix to prefix prevents this error.
+	$(SED) "s%girdir=.*%girdir=\$${prefix}/share/gir-1.0%g" \
 		$(STAGING_DIR)/usr/lib/pkgconfig/gobject-introspection-1.0.pc
 
-	$(SED) "s%typelibdir=.*%typelibdir=\$${exec_prefix}/lib/girepository-1.0%g" \
+	$(SED) "s%typelibdir=.*%typelibdir=\$${prefix}/lib/girepository-1.0%g" \
 		$(STAGING_DIR)/usr/lib/pkgconfig/gobject-introspection-1.0.pc
 endef
 GOBJECT_INTROSPECTION_POST_INSTALL_STAGING_HOOKS += GOBJECT_INTROSPECTION_INSTALL_WRAPPERS
