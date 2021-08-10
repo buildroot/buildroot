@@ -1,0 +1,54 @@
+From 5e4cb613d9bb287e9f54da86f99a51d0338b1faa Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 10 Aug 2021 10:36:53 +0200
+Subject: [PATCH] sconex/Descriptor.cpp: fix build with gcc 11
+
+Fix the following build failure with gcc 11:
+
+In file included from ../sconex/sconex.h:229,
+                 from ../sconex/Descriptor.h:63,
+                 from Descriptor.cpp:22:
+Descriptor.cpp: In member function 'void scx::Descriptor::add_stream(scx::Stream*)':
+Descriptor.cpp:150:22: error: ordered comparison of pointer with integer zero ('scx::Stream*' and 'int')
+  150 |   DEBUG_ASSERT(stream>=0,"add_stream() Invalid stream");
+      |                ~~~~~~^~~
+      |                                 ^~~~
+Descriptor.cpp: In member function 'bool scx::Descriptor::remove_stream(scx::Stream*)':
+Descriptor.cpp:204:22: error: ordered comparison of pointer with integer zero ('scx::Stream*' and 'int')
+  204 |   DEBUG_ASSERT(stream>=0,"remove_stream() Invalid stream");
+      |                ~~~~~~^~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/ccc9562e83fd2bd312d21b3124be42dfe4b7e850
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/sconemad/sconeserver/pull/4]
+---
+ sconex/Descriptor.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sconex/Descriptor.cpp b/sconex/Descriptor.cpp
+index 590adba..4adfd86 100644
+--- a/sconex/Descriptor.cpp
++++ b/sconex/Descriptor.cpp
+@@ -147,7 +147,7 @@ bool Descriptor::dup(int d)
+ //=============================================================================
+ void Descriptor::add_stream(Stream* stream)
+ {
+-  DEBUG_ASSERT(stream>=0,"add_stream() Invalid stream");
++  DEBUG_ASSERT(stream!=0,"add_stream() Invalid stream");
+ 
+   m_streams.push_back(stream);
+   stream->set_endpoint(this);
+@@ -201,7 +201,7 @@ void Descriptor::add_stream_after(Stream* stream,const Stream* after)
+ //=============================================================================
+ bool Descriptor::remove_stream(Stream* stream)
+ {
+-  DEBUG_ASSERT(stream>=0,"remove_stream() Invalid stream");
++  DEBUG_ASSERT(stream!=0,"remove_stream() Invalid stream");
+ 
+   std::list<Stream*>::iterator it = m_streams.begin();
+   while (it != m_streams.end()) {
+-- 
+2.30.2
+
