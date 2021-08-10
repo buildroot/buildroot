@@ -1,0 +1,51 @@
+From 0315cef04a5a8a953072691faa48af9acb6009bd Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 10 Aug 2021 13:39:58 +0200
+Subject: [PATCH] include/flatbuffers/base.h: fix build on musl
+
+Build of applications using flatbuffers such as snort3 are broken on
+musl since version 1.11.0 and
+https://github.com/google/flatbuffers/commit/5f32f948102e65eaeea461b44f3b43f96c7a7a5a
+because strtoll_l (and strtoull_l) are not available on musl.
+flatbuffers checks for the availability of strtoull_l in CMakeLists.txt
+so flatbuffers builds successfully but for applications using
+flatbuffers, the result of this check is not available and
+FLATBUFFERS_LOCALE_INDEPENDENT is set to 1 resulting in the following
+build failure:
+
+In file included from /tmp/instance-0/output-1/host/x86_64-buildroot-linux-musl/sysroot/usr/include/flatbuffers/flexbuffers.h:24,
+                 from /tmp/instance-0/output-1/host/x86_64-buildroot-linux-musl/sysroot/usr/include/flatbuffers/idl.h:26,
+                 from /tmp/instance-0/output-1/build/snort3-3.1.6.0/src/network_inspectors/perf_monitor/fbs_formatter.cc:29:
+/tmp/instance-0/output-1/host/x86_64-buildroot-linux-musl/sysroot/usr/include/flatbuffers/util.h: In function 'void flatbuffers::strtoval_impl(int64_t*, const char*, char**, int)':
+/tmp/instance-0/output-1/host/x86_64-buildroot-linux-musl/sysroot/usr/include/flatbuffers/util.h:258:12: error: 'strtoll_l' was not declared in this scope; did you mean 'strcoll_l'?
+  258 |     *val = __strtoll_impl(str, endptr, base);
+      |            ^~~~~~~~~~~~~~
+
+Fix this failure by checking if __GNUC__ is defined before setting
+FLATBUFFERS_LOCALE_INDEPENDENT to 1.
+
+Fixes:
+ - http://autobuild.buildroot.org/results/68045b83e94f8caa337b1af7ed5f493ac1a55c47
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/google/flatbuffers/pull/6773]
+---
+ include/flatbuffers/base.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/flatbuffers/base.h b/include/flatbuffers/base.h
+index de7898dc..101c7598 100644
+--- a/include/flatbuffers/base.h
++++ b/include/flatbuffers/base.h
+@@ -266,7 +266,7 @@ namespace flatbuffers {
+ #ifndef FLATBUFFERS_LOCALE_INDEPENDENT
+   // Enable locale independent functions {strtof_l, strtod_l,strtoll_l, strtoull_l}.
+   #if ((defined(_MSC_VER) && _MSC_VER >= 1800)            || \
+-       (defined(_XOPEN_VERSION) && (_XOPEN_VERSION>=700)) && (!defined(__ANDROID_API__) || (defined(__ANDROID_API__) && (__ANDROID_API__>=21))))
++       (defined(__GLIBC__) && defined(_XOPEN_VERSION) && (_XOPEN_VERSION>=700)) && (!defined(__ANDROID_API__) || (defined(__ANDROID_API__) && (__ANDROID_API__>=21))))
+     #define FLATBUFFERS_LOCALE_INDEPENDENT 1
+   #else
+     #define FLATBUFFERS_LOCALE_INDEPENDENT 0
+-- 
+2.30.2
+
