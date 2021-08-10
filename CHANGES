@@ -55,6 +55,58 @@
 	#13846: BR2_PACKAGE_LVM2_STANDARD_INSTALL should be default to
 	        y as before
 
+2021.05.1, released August 10, 2021
+
+	Important / security related fixes.
+
+	Toolchain: Disable PIC/PIE for Microblaze (like for NIOS II)
+	as it is not currently working.
+
+	binutils: fix linker assert failure on OpenRisc, or1k build
+	issue with gcc < 5
+
+	gdb: Enable on NIOS II
+
+	utils/scanpypi: Various improvements
+
+	Defconfigs: stm32f469_disco: Fix kernel boot issue, Microchip
+	sam9x60ek mmc_dev: Add missing toolchain/system options
+
+	Updated/fixed packages: arm-trusted-firmware, apache, audit,
+	avahi, bind, binutils, bird, bluez5_utils, boinc, busybox,
+	chrony, clamav, connman, cryptsetup, dnsmasq, docker-cli,
+	docker-engine, dovecot, dovecot-pigeonhole, e2fsprogs, exiv2,
+	fail2ban, fb-test-app, feh, fetchmail, ffmpeg, flac, fluxbox,
+	gawk, gcc, gcr, gdb, gdk-pixbuf, gesftpserver, glibc, go,
+	gptfdisk, gqrx, granite, grub2, guile, hdparm, heirloom-mailx,
+	htop, ibrcommon, ibrdtn, ibrdtn-tools, ibrdtnd,
+	intel-microcode, iodine, irqbalance, keepalived, kexec-tools,
+	libass, libconfig, libcurl, libfreeimage, libfuse3, libgcrypt,
+	libgudev, libhtp, libinput, libjson, libgtk3, libkrb5,
+	libloki, libmodsecurity, libndp, libnetfilter-log,
+	libnfnetlink, libnice, libodb, libodb-boost, libodb-mysql,
+	libodb-pgsql, libpcap, libqmi, libqrtr-glib, libressl,
+	librsvg, libtasn1, libtirpc, libuci, libxmlrpc,
+	linux-firmware, linuxptp, lrzsz, lvm2, mariadb, mesa3d,
+	mbedtls, monit, mono, mosquitto, mpd, mpg123, mpv, nbd,
+	netsnmp, nettle, nmap, nodejs, ntp, openntpd, openpgm,
+	openswan, pango, pcre2, perl-crypt-openssl-rsa, php, pixman,
+	postgresql, proxychains-ng, putty, python,
+	python-dataproperty, python-django, python-pysftp,
+	python-urllib3, python3, qpdf, redis, ripgrep, rsync, ruby,
+	samba4, sane-backends, slirp, spice, squid, suricata, tcpdump,
+	tftpd, thrift, tor, tpm2-tools, trinity, uboot, uboot-tools,
+	uclibc, vlc, wireless-regdb, wireshark, wolfssl,
+	xapp_fonttosfnt, xlib_libX11, xlib_libxshmfence,
+	xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13586: grub failure with BR2_OPTIMIZE_3
+	#13661: host-python2 build fails on aarch64
+	#13836: package build failure when target install set to no..
+	#13846: BR2_PACKAGE_LVM2_STANDARD_INSTALL should be default to..
+
 2021.05, released June 6th, 2021
 
 	Various fixes.
