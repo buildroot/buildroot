@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CAGE_VERSION = 0.1.3
+CAGE_VERSION = 0.1.4
 CAGE_SITE = https://github.com/Hjdskes/cage/releases/download/v$(CAGE_VERSION)
 CAGE_LICENSE = MIT
 CAGE_LICENSE_FILES = LICENSE
