@@ -18,7 +18,7 @@ PERL_NET_SSH2_CONF_OPTS += \
 	inc="$(STAGING_DIR)/usr/include"
 
 ifeq ($(BR2_PACKAGE_LIBSSH2_LIBGCRYPT),y)
-PERL_NET_SSH2_CONF_OPTS += gcrypt
+PERL_NET_SSH2_CONF_OPTS += crypto_backend=gcrypt
 endif
 
 $(eval $(perl-package))
