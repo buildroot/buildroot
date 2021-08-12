@@ -7,6 +7,17 @@ BOARD_NAME="$(basename ${BOARD_DIR})"
 GENIMAGE_CFG="${BOARD_DIR}/genimage-${BOARD_NAME}.cfg"
 GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
 
+if [ ! "x${BLUETOOTH}" = "x" ]; then
+   if ! grep -qE '^enable_uart=1' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+      echo "Adding serial console to /dev/ttyS0 to config.txt."
+      sed -i 's/ttyAMA0/ttyS0/g' "${BINARIES_DIR}/rpi-firmware/cmdline.txt"
+      cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+# Fixes rpi3 ttyS0 serial console
+enable_uart=1
+__EOF__
+   fi
+fi
+
 for arg in "$@"
 do
 	case "${arg}" in
@@ -157,14 +168,6 @@ __EOF__
 dtoverlay=pi3-miniuart-bt
 __EOF__
                         fi
-                else
-                        echo "Adding serial console to /dev/ttyS0 to config.txt."
-                        sed -i 's/ttyAMA0/ttyS0/g' "${BINARIES_DIR}/rpi-firmware/cmdline.txt"
-                        cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
-# Fixes rpi3 ttyS0 serial console
-enable_uart=1
-__EOF__
-
                 fi
                 ;;
                 --rpi-wifi*)
