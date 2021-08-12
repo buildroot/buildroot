@@ -1,0 +1,79 @@
+menuconfig BR2_PACKAGE_GST1_BCM
+	bool "gst1-bcm"
+	select BR2_PACKAGE_GST1_PLUGINS_BASE
+	depends on BR2_PACKAGE_BCM_REFSW || BR2_PACKAGE_ACN_SDK || BR2_PACKAGE_HOMECAST_SDK || BR2_PACKAGE_VSS_SDK || BR2_PACKAGE_HAS_NEXUS
+	help
+	  Broadcom NEXUS GStreamer 1.x plugins
+
+if BR2_PACKAGE_GST1_BCM
+
+comment "Broadcom Nexus specific plugins"
+
+config BR2_PACKAGE_GST1_BCM_UNIFIED_VERSION
+	bool "unified version"
+	default y
+	help 
+	  Enable the unified version of the plugins
+
+config BR2_PACKAGE_GST1_BCM_VP9_SUPPORT
+	bool "VP9 support"
+	depends on BR2_PACKAGE_HAS_VP9_DECODER
+	default y if BR2_PACKAGE_HAS_VP9_DECODER
+	help
+	  If this plugin supports VP9, provide VP9 via typefindelements
+
+config BR2_PACKAGE_GST1_BCM_AUDFILTER
+	bool "audfilter"
+	default y
+	help 
+	  Add BRCM libbrcmaudiofilter.so    
+
+config BR2_PACKAGE_GST1_BCM_AUDIODECODE
+	bool "audiodecode"
+	default y
+	help 
+	  Add BRCM libbrcmaudiodecoder.so
+
+config BR2_PACKAGE_GST1_BCM_AUDIOSINK  
+	bool "audiosink"
+	default y
+	help 
+	  Add BRCM libbrcmaudiosink.so
+
+config BR2_PACKAGE_GST1_BCM_VIDEODECODE
+	bool "videodecode"
+	default y
+	help 
+	  Add BRCM libbrcmvideodecoder.so
+   
+config BR2_PACKAGE_GST1_BCM_VIDEOSINK     
+	bool "videosink"
+	default y
+	help 
+	  Add BRCM libbrcmvideosink.so
+  
+config BR2_PACKAGE_GST1_BCM_VIDFILTER      
+	bool "vidfilter"
+	default y
+	help 
+	  Add BRCM libbrcmvidfilter.so
+
+config BR2_PACKAGE_GST1_BCM_ENABLE_SVP
+	bool "enable svp"
+	default n
+	depends on BR2_PACKAGE_HAS_NEXUS_SAGE
+	help 
+	  Enable SVP support
+
+config BR2_PACKAGE_GST1_BCM_ENABLE_SVP_SECBUF
+	bool "enable svp secbuf"
+	default n
+	depends on BR2_PACKAGE_GST1_BCM_ENABLE_SVP
+	help 
+          Enable SVP Secbuf support
+
+config BR2_PACKAGE_GST1_BCM_CREATE_BINARY_ML_DELIVERY
+       bool "Create delivery package"
+       help
+         Create tarball containing the build to be deployed else where.
+endif

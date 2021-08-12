@@ -1,0 +1,291 @@
+config BR2_PACKAGE_BCM_REFSW
+	bool "bcm-refsw"
+	depends on BR2_mipsel || BR2_arm
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_PACKAGE_HAS_NEXUS
+	select BR2_PACKAGE_HAS_LIBEGL
+	select BR2_PACKAGE_HAS_LIBGLES
+	select BR2_PACKAGE_LIBCURL
+	help
+		bcm-refsw
+
+
+if BR2_PACKAGE_BCM_REFSW
+config BR2_PACKAGE_BCM_REFSW_DEBUG
+	bool "Enable debug"
+	help
+        Enable this to use the msg level debug of nexus/magnum
+        modules, see nexus/docs/RefswDebuggingGuide.pdf for usage.
+
+choice
+	prompt "bcm-refsw version"
+	default BR2_PACKAGE_BCM_REFSW_15_2
+	help
+		Select the version you wish to use
+
+	config BR2_PACKAGE_BCM_REFSW_CUSTOM_VERSION
+        bool "custom version"
+
+    config BR2_PACKAGE_BCM_REFSW_13_1
+        bool "bcm-refsw 13.1"
+
+    config BR2_PACKAGE_BCM_REFSW_13_4
+        bool "bcm-refsw 13.4"
+
+	config BR2_PACKAGE_BCM_REFSW_15_2
+		bool "bcm-refsw 15.2"
+
+	config BR2_PACKAGE_BCM_REFSW_16_1
+		bool "bcm-refsw 16.1"
+
+	config BR2_PACKAGE_BCM_REFSW_16_2
+		bool "bcm-refsw 16.2"
+
+	config BR2_PACKAGE_BCM_REFSW_16_3
+		bool "bcm-refsw 16.3"
+	
+	config BR2_PACKAGE_BCM_REFSW_17_1
+		bool "bcm-refsw 17.1"
+		
+	config BR2_PACKAGE_BCM_REFSW_17_1_RDK
+		bool "bcm-refsw 17.1 RDK"
+
+	config BR2_PACKAGE_BCM_REFSW_17_2
+		bool "bcm-refsw 17.2"
+
+	config BR2_PACKAGE_BCM_REFSW_17_3
+		bool "bcm-refsw 17.3"
+
+	config BR2_PACKAGE_BCM_REFSW_17_3_RDK
+		bool "bcm-refsw 17.3 RDK"
+
+	config BR2_PACKAGE_BCM_REFSW_17_4
+		bool "bcm-refsw 17.4"
+
+    config BR2_PACKAGE_BCM_REFSW_18_2
+        bool "bcm-refsw 18.2"
+
+    config BR2_PACKAGE_BCM_REFSW_19_1
+        bool "bcm-refsw 19.1"
+
+    config BR2_PACKAGE_BCM_REFSW_19_2
+        bool "bcm-refsw 19.2"
+endchoice
+
+if BR2_PACKAGE_BCM_REFSW_CUSTOM_VERSION
+config BR2_PACKAGE_BCM_REFSW_CUSTOM_REPO_VERSION
+	string "Custom repository version"
+	help
+	  Revision to use in the typical format used by Git/Mercurial/Subversion
+	  E.G. a sha id, a tag, branch, ..
+endif
+
+
+choice
+	prompt "hardware platform"
+	default BR2_PACKAGE_BCM_REFSW_PLATFORM_7425 if BR2_mipsel
+	default BR2_PACKAGE_BCM_REFSW_PLATFORM_7252 if BR2_arm
+
+	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7425
+		bool "BCM 7425 VGW"
+		depends on BR2_mipsel
+
+	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7428
+		bool "BCM 7428"
+		depends on BR2_mipsel
+
+	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7429
+		bool "BCM 7429 IPC"
+		depends on BR2_mipsel
+
+	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7241
+		bool "BCM 7241 DCSFBTSFF"
+		depends on BR2_mipsel
+
+	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7439
+		bool "BCM 7439"
+		depends on BR2_arm
+
+	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7252
+		bool "BCM 7252(S)"
+		depends on BR2_arm
+
+	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7250
+		bool "BCM 7250"
+		depends on BR2_arm
+
+	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7268_B0
+		bool "BCM 7268(B0) / BCM 7267(B0)"
+		depends on BR2_arm
+
+	config BR2_PACKAGE_BCM_REFSW_PLATFORM_72604
+		bool "BCM 72604(A0)"
+		depends on BR2_arm
+
+	config BR2_PACKAGE_BCM_REFSW_PLATFORM_72604_B0
+		bool "BCM 72604(B0)"
+		depends on BR2_arm
+
+	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7271
+		bool "BCM 7271"
+		depends on BR2_arm
+ 
+	config BR2_PACKAGE_BCM_REFSW_PLATFORM_7437
+		bool "BCM 7437"
+		depends on BR2_arm
+        
+    config BR2_PACKAGE_BCM_REFSW_PLATFORM_UMAR5
+		bool "UMA r5"
+		depends on BR2_arm
+
+	config BR2_PACKAGE_BCM_REFSW_PLATFORM_DCX960
+		bool "Arris DCX960 EPR2/PPR2"
+		depends on !BR2_mipsel && BR2_arm
+
+endchoice
+
+menu "Codec support"
+config BR2_PACKAGE_BCM_OPUS_DECODER_SUPPORT
+    bool "OPUS decoder"
+	default y
+    select BR2_PACKAGE_HAS_OPUS_DECODER
+    help
+       Enable OPUS for other OPUS depending packages.
+
+if BR2_PACKAGE_BCM_OPUS_DECODER_SUPPORT
+config BR2_PACKAGE_PROVIDES_OPUS_DECODER
+	default "bcm-refsw"
+endif
+
+config BR2_PACKAGE_BCM_VP9_DECODER_SUPPORT
+    bool "VP9 decoder"
+	default y
+    select BR2_PACKAGE_HAS_VP9_DECODER
+    help
+       Enable VP9 for other VP9 depending packages.
+
+if BR2_PACKAGE_BCM_VP9_SUPPORT
+config BR2_PACKAGE_PROVIDES_VP9_DECODER
+	default "bcm-refsw"
+endif
+endmenu
+
+config BR2_PACKAGE_BCM_REFSW_SAGE
+	bool "SAGE v3.x"
+	default n
+	depends on BR2_PACKAGE_BCM_REFSW
+	depends on !BR2_PACKAGE_BCM_REFSW_13_1 && !BR2_PACKAGE_BCM_REFSW_13_4 && !BR2_PACKAGE_BCM_REFSW_15_2 && !BR2_PACKAGE_BCM_REFSW_16_1
+        select BR2_PACKAGE_SAGE_FIRMWARE
+        select BR2_PACKAGE_HAS_NEXUS_SAGE
+	help
+	  Add SAGE support in Nexus.
+
+config BR2_PACKAGE_BCM_REFSW_SAGE_PATH
+        string "SAGE Path"
+        default "/usr/bin/"
+        depends on BR2_PACKAGE_BCM_REFSW_SAGE
+	help
+	  Sage binaries path
+
+config BR2_PACKAGE_BCM_REFSW_PAK_PATH
+        string "PAK Path"
+        default "/usr/bin/"
+        depends on BR2_PACKAGE_BCM_REFSW_18_2 || BR2_PACKAGE_BCM_REFSW_19_1 || BR2_PACKAGE_BCM_REFSW_19_2
+	help
+	  PAK binaries path
+
+config BR2_PACKAGE_BCM_REFSW_DRM_PATH
+        string "DRM Path"
+        default "/usr/bin/"
+        depends on BR2_PACKAGE_BCM_REFSW_18_2 || BR2_PACKAGE_BCM_REFSW_19_1 || BR2_PACKAGE_BCM_REFSW_19_2
+	help
+	  DRM binaries path
+
+config BR2_PACKAGE_BCM_REFSW_HDCP1XBIN_PATH
+        string "HDCP 1.x bin"
+        default ""
+        depends on BR2_PACKAGE_BCM_REFSW_18_2 || BR2_PACKAGE_BCM_REFSW_19_1 || BR2_PACKAGE_BCM_REFSW_19_2
+	help
+	  A file locator for the HDCP1.X key
+
+config BR2_PACKAGE_BCM_REFSW_HDCP2XBIN_PATH
+        string "HDCP 2.x bin"
+        default ""
+        depends on BR2_PACKAGE_BCM_REFSW_18_2 || BR2_PACKAGE_BCM_REFSW_19_1 || BR2_PACKAGE_BCM_REFSW_19_2
+	help
+	  A file locator for the HDCP2.X key
+
+config BR2_PACKAGE_BCM_REFSW_SAGE_MANUFACTURING
+        bool "SAGE Manufacturing"
+        default n
+        depends on BR2_PACKAGE_BCM_REFSW_SAGE
+    help
+      Sage manufacturing lib for on-field provisioning
+
+config BR2_PACKAGE_BCM_REFSW_SAGE_EXAMPLES
+        bool "SAGE examples"
+	default n
+        depends on BR2_PACKAGE_BCM_REFSW_SAGE
+        help
+          Sage examples
+
+config BR2_PACKAGE_BCM_REFSW_SAGE_BSECBUF
+        bool "SAGE/SVP b_secbuf library"
+        default n
+        depends on BR2_PACKAGE_BCM_REFSW_SAGE
+        help
+          Sage/SVP secure library for multiprocess environment
+
+config BR2_PACKAGE_PROVIDES_NEXUS
+	default "bcm-refsw"
+
+config BR2_PACKAGE_PROVIDES_LIBEGL
+	default "bcm-refsw"
+
+config BR2_PACKAGE_PROVIDES_LIBGLES
+	default "bcm-refsw"
+
+config BR2_PACKAGE_BCM_REFSW_V3D_DRM
+	bool "V3D DRM"
+	default n
+	depends on BR2_PACKAGE_BCM_REFSW_18_2
+        help
+          Enable V3D DRM	
+
+config BR2_PACKAGE_BCM_REFSW_EGLCUBE
+	bool "eglcube"
+	default n
+	help
+	  Build the EGL cube example, just for test and fun.
+
+config BR2_PACKAGE_BCM_REFSW_PMLIB
+	bool "pmlib"
+	default n
+	help
+	  Build the Power Manager library.
+
+config BR2_PACKAGE_BCM_REFSW_NXCLIENT_EXAMPLES
+	bool "nxclient-examples"
+	default n
+	help
+	  Build the Nexus client exaples.
+
+config BR2_PACKAGE_BCM_REFSW_BOXMODE
+    string "Memory Box Mode"
+    depends on BR2_PACKAGE_BCM_REFSW
+    help
+      Memory box mode, you can find details from release notes per platform
+
+config BR2_PACKAGE_BCM_REFSW_KERNELSPACE_HEADERS
+	bool "Kernelspace headers"
+	default n
+	help
+	  Installs kernelspace nexus headers used to build some kernelmodules like greenpeak.
+
+config BR2_PACKAGE_BCM_REFSW_BP3
+    bool "bp3tool"
+    default n
+    help
+        BP3 tool
+endif

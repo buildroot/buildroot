@@ -1,0 +1,10 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: egl
+Description: Broadcom implementation of EGL
+Version: 1
+Libs: -L${libdir} -lrt -lnexus  -lnxclient -lnxpl -lv3ddriver
+Cflags: -I${includedir} -I${includedir}/refsw @CFLAGS@ -DBROADCOM_PLATFORM -DVCX=5 -DBSTD_CPU_ENDIAN=BSTD_ENDIAN_LITTLE -I${includedir}/interface/khronos/include -I${includedir}/interface/khronos/include/bcg_abstract -I${includedir}/vcos/include
