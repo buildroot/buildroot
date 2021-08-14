@@ -190,6 +190,13 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_101952
 	bool
 	default y if BR2_sh4
 
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101915
+# ICE: in extract_insn, at recog.c:2294 on microblaze.
+# This bug still exists in gcc = 11.1.0
+config BR2_TOOLCHAIN_HAS_GCC_BUG_101915
+	bool
+	default y if BR2_microblaze
+
 config BR2_TOOLCHAIN_HAS_NATIVE_RPC
 	bool
 
