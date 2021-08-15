@@ -93,3 +93,12 @@ config BR2_GDB_VERSION
 	default "9.2"      if BR2_GDB_VERSION_9_2 || (!BR2_PACKAGE_HOST_GDB && !BR2_riscv)
 	default "10.2"	   if BR2_GDB_VERSION_10 || (!BR2_PACKAGE_HOST_GDB && BR2_riscv)
 	depends on BR2_PACKAGE_GDB || BR2_PACKAGE_HOST_GDB
+
+# recent gdb versions (>= 10) have gdbserver moved at the top-level,
+# which requires a different build logic.
+config BR2_PACKAGE_GDB_TOPLEVEL
+	bool
+	default y if BR2_arc
+	default y if BR2_GDB_VERSION_10
+	default y if !BR2_PACKAGE_HOST_GDB && BR2_riscv
+	depends on BR2_PACKAGE_GDB || BR2_PACKAGE_HOST_GDB
