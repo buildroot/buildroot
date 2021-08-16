@@ -90,5 +90,9 @@ else
 HARFBUZZ_CONF_OPTS += -Dicu=disabled
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),)
+HARFBUZZ_CXXFLAGS += $(TARGET_CXXFLAGS) -DHB_NO_MT
+endif
+
 $(eval $(meson-package))
 $(eval $(host-meson-package))
