@@ -1,0 +1,30 @@
+name: Seeed reTerminal buildroot
+on:
+  workflow_dispatch:
+
+env:
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout Buildroot sources
+        run: git clone --depth=1 -b master https://github.com/Seeed-Studio/seeed-linux-buildroot.git
+        
+      - name: Configure Buildroot
+        run: make reTerminal_64_defconfig
+
+      - name: Build
+        run: make
+
+      - name: Pack
+        run: |
+            echo "PACKAGE=${{ github.workspace }}/output/images/sdcard.img" >> $GITHUB_ENV
+
+      - name: Upload package
+        uses: actions/upload-artifact@master
+        with:
+          name: buildroot deploy
+          path: ${{env.PACKAGE}}
