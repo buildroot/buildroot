@@ -13,9 +13,9 @@ jobs:
       - name: Initialization environment
         run: |
           sudo -E apt-get -qq update
-          sudo -E apt-get install which sed make binutils build-essential gcc g++ bash patch \
-          gzip bzip2 perl tar cpio unzip rsync file bc wget python ncurses5 bazaar cvs git \
-          mercurial scp subversion
+          sudo -E apt-get install sed make binutils build-essential gcc g++ bash patch \
+          gzip bzip2 perl tar cpio unzip rsync file bc wget python cvs git \
+          mercurial subversion
           
       - name: Checkout Buildroot sources
         run: git clone --depth=1 -b master https://github.com/Seeed-Studio/seeed-linux-buildroot.git
