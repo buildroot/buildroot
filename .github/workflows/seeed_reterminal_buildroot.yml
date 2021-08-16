@@ -26,7 +26,9 @@ jobs:
           make reTerminal_64_defconfig
 
       - name: Build
-        run: make
+        run: |
+          cd ${{ github.workspace }}/seeed-linux-buildroot/
+          make
 
       - name: Pack
         run: |
