@@ -10,11 +10,20 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
+      - name: Initialization environment
+        run: |
+          sudo -E apt-get -qq update
+          sudo -E apt-get install which sed make binutils build-essential gcc g++ bash patch \
+          gzip bzip2 perl tar cpio unzip rsync file bc wget python ncurses5 bazaar cvs git \
+          mercurial scp subversion
+          
       - name: Checkout Buildroot sources
         run: git clone --depth=1 -b master https://github.com/Seeed-Studio/seeed-linux-buildroot.git
         
       - name: Configure Buildroot
-        run: make reTerminal_64_defconfig
+        run: |
+          cd ${{ github.workspace }}/seeed-linux-buildroot/
+          make reTerminal_64_defconfig
 
       - name: Build
         run: make
