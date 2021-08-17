@@ -10,17 +10,18 @@ ARTIFACTS_URL = "http://autobuild.buildroot.net/artefacts/"
 BASE_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../.."))
 
 
+def log_file_path(builddir, stage, logtofile=True):
+    """Return path to log file"""
+    return "{}-{}.log".format(builddir, stage) if logtofile else None
+
+
 def open_log_file(builddir, stage, logtofile=True):
     """
     Open a file for logging and return its handler.
     If logtofile is True, returns sys.stdout. Otherwise opens a file
     with a suitable name in the build directory.
     """
-    if logtofile:
-        fhandle = open("{}-{}.log".format(builddir, stage), 'a+')
-    else:
-        fhandle = sys.stdout
-    return fhandle
+    return open(log_file_path(builddir, stage, logtofile), 'a+') if logtofile else sys.stdout
 
 
 def basepath(relpath=""):
