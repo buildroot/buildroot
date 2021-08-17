@@ -32,7 +32,9 @@ jobs:
 
       - name: Pack
         run: |
-          echo "PACKAGE=${{ github.workspace }}/seeed-linux-buildroot/output/images/sdcard.img" >> $GITHUB_ENV
+          cd ${{ github.workspace }}/seeed-linux-buildroot/output/images/
+          tar -zcvf buildroot-image.tar.gz sdcard.img
+          echo "PACKAGE=${{ github.workspace }}/seeed-linux-buildroot/output/images/buildroot-image.tar.gz" >> $GITHUB_ENV
 
       - name: Upload package
         uses: actions/upload-artifact@master
