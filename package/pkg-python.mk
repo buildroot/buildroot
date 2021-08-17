@@ -108,7 +108,9 @@ define PKG_PYTHON_FIXUP_SYSCONFIGDATA
 		\(    -path '$(HOST_DIR)/lib/python*' \
 		   -o -path '$(STAGING_DIR)/usr/lib/python*' \
 		\) \
-		-name "_sysconfigdata*.py" -print0 \
+		\(    \( -name "_sysconfigdata*.pyc" -delete \) \
+		   -o \( -name "_sysconfigdata*.py" -print0 \) \
+		\) \
 	| xargs -0 --no-run-if-empty \
 		$(SED) 's:$(PER_PACKAGE_DIR)/[^/]\+/:$(PER_PACKAGE_DIR)/$($(PKG)_NAME)/:g'
 endef
