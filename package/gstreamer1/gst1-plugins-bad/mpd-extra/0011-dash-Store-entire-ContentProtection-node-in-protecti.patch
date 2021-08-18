@@ -1,0 +1,76 @@
+From 9ab7d685a56f41c73ef511294a331c027867a617 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Mon, 12 Jul 2021 12:08:20 +0100
+Subject: [PATCH] dash: Store entire ContentProtection node in protection event
+ data
+
+Some manifests use the ContentProtection node to store additional information
+such as the license server url. Our MPD parser used to process the
+ContentProtection node, extracting Playready PSSH boxes. However for other DRM
+systems, only the `value` attribute was passed down to the protection event, so
+for example, Widevine data was not parsed at all and "Widevine" was passed to
+the event, which is not very useful for decryptors that require a PSSH init
+data.
+
+Parsing should now be done by decryptors which will receive the entire
+ContentProtection XML node as a string. This gives more "freedom" to the
+decryptor which can then detect and parse custom nodes as well.
+
+Part-of: <https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/-/merge_requests/2400>
+Signed-off-by: Xabier Rodriguez Calvar <calvaris@igalia.com>
+---
+ ext/dash/gstmpdparser.c | 38 +++++++++-----------------------------
+ 1 file changed, 9 insertions(+), 29 deletions(-)
+
+diff --git a/ext/dash/gstmpdparser.c b/ext/dash/gstmpdparser.c
+index 6535cae52..a876b3f45 100644
+--- a/ext/dash/gstmpdparser.c
++++ b/ext/dash/gstmpdparser.c
+@@ -1783,35 +1783,15 @@ error:
+ static void
+ gst_mpdparser_parse_content_protection_node (GList ** list, xmlNode * a_node)
+ {
+-  gchar *value = NULL;
+-  if (gst_mpdparser_get_xml_prop_string (a_node, "value", &value)) {
+-    if (!g_strcmp0 (value, "MSPR 2.0")) {
+-      xmlNode *cur_node;
+-      for (cur_node = a_node->children; cur_node; cur_node = cur_node->next) {
+-        if (cur_node->type == XML_ELEMENT_NODE) {
+-          if (xmlStrcmp (cur_node->name, (xmlChar *) "pro") == 0) {
+-            GstDescriptorType *new_descriptor;
+-            new_descriptor = g_slice_new0 (GstDescriptorType);
+-            *list = g_list_append (*list, new_descriptor);
+-
+-            gst_mpdparser_get_xml_prop_string_stripped (a_node, "schemeIdUri",
+-                &new_descriptor->schemeIdUri);
+-
+-            gst_mpdparser_get_xml_node_content (cur_node,
+-                &new_descriptor->value);
+-            goto beach;
+-          }
+-        }
+-      }
+-    } else {
+-      gst_mpdparser_parse_descriptor_type_node (list, a_node);
+-    }
+-  } else {
+-    gst_mpdparser_parse_descriptor_type_node (list, a_node);
+-  }
+-beach:
+-  if (value)
+-    g_free (value);
++  GstDescriptorType *new_descriptor;
++
++  new_descriptor = g_slice_new0 (GstDescriptorType);
++  *list = g_list_append (*list, new_descriptor);
++
++  GST_LOG ("attributes of %s node:", a_node->name);
++  gst_mpdparser_get_xml_prop_string_stripped (a_node, "schemeIdUri",
++      &new_descriptor->schemeIdUri);
++  gst_mpdparser_get_xml_node_as_string (a_node, &new_descriptor->value);
+ }
+ 
+ static void
+-- 
+2.30.2
+

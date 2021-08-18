@@ -744,6 +744,13 @@ ifeq ($(GST1_PLUGINS_BAD_HAS_UNKNOWN_LICENSE),y)
 GST1_PLUGINS_BAD_LICENSE += , UNKNOWN
 endif
 
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DASH_MPD_NO_INIT_DATA_XML_PARSING),y)
+define GST1_PLUGINS_BAD_APPLY_MPD_EXTRA_PATCHES_POST_HOOK
+	cd $(@D) && patch -p1 < ../../../package/gstreamer1/gst1-plugins-bad/mpd-extra/0011-dash-Store-entire-ContentProtection-node-in-protecti.patch
+endef
+GST1_PLUGINS_BAD_POST_PATCH_HOOKS += GST1_PLUGINS_BAD_APPLY_MPD_EXTRA_PATCHES_POST_HOOK
+endif
+
 # Use the following command to extract license info for plugins.
 # # find . -name 'plugin-*.xml' | xargs grep license
 

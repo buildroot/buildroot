@@ -344,6 +344,15 @@ config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DASH
 	help
 	  DASH demuxer plugin
 
+if BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DASH
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DASH_MPD_NO_INIT_DATA_XML_PARSING
+	bool "mpd no init data xml parsing"
+	default n
+	help
+	  No XML parsing will be done on MPD manifests
+endif
+
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DECKLINK
 	bool "decklink"
 	depends on BR2_INSTALL_LIBSTDCPP
