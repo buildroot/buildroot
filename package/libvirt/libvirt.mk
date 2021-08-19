@@ -21,7 +21,10 @@ LIBVIRT_DEPENDENCIES = \
 	libtirpc \
 	libxml2 \
 	udev \
-	zlib
+	zlib \
+	$(TARGET_NLS_DEPENDENCIES)
+
+LIBVIRT_LDFLAGS = $(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)
 
 LIBVIRT_CONF_ENV += \
 	CFLAGS="$(TARGET_CFLAGS) `$(PKG_CONFIG_HOST_BINARY) --cflags libtirpc`" \
@@ -49,6 +52,7 @@ LIBVIRT_CONF_OPTS = \
 	-Dinit_script=$(if $(BR2_INIT_SYSTEMD),systemd,none) \
 	-Dlogin_shell=disabled \
 	-Dnetcf=disabled \
+	-Dnls=$(if $(BR2_SYSTEM_ENABLE_NLS),enabled,disabled) \
 	-Dnumad=disabled \
 	-Dopenwsman=disabled \
 	-Dpciaccess=enabled \
