@@ -96,6 +96,12 @@ NVIDIA_DRIVER_LIBS += \
 	nvidia_drv.so:xorg/modules/drivers/ \
 	libglx.so.$(NVIDIA_DRIVER_VERSION):xorg/modules/extensions/
 
+# libglx needs a symlink according to the driver README. It has no SONAME
+define NVIDIA_DRIVER_SYMLINK_LIBGLX
+	ln -sf libglx.so.$(NVIDIA_DRIVER_VERSION) \
+		$(TARGET_DIR)/usr/lib/xorg/modules/extensions/libglx.so
+endef
+
 endif # X drivers
 
 ifeq ($(BR2_PACKAGE_NVIDIA_DRIVER_CUDA),y)
@@ -185,12 +191,6 @@ endef
 define NVIDIA_DRIVER_INSTALL_STAGING_CMDS
 	$(call NVIDIA_DRIVER_INSTALL_LIBS,$(STAGING_DIR))
 	$(NVIDIA_DRIVER_INSTALL_GL_DEV)
-endef
-
-# libglx needs a symlink according to the driver README. It has no SONAME
-define NVIDIA_DRIVER_SYMLINK_LIBGLX
-	ln -sf libglx.so.$(NVIDIA_DRIVER_VERSION) \
-		$(TARGET_DIR)/usr/lib/xorg/modules/extensions/libglx.so
 endef
 
 # For target, install libraries and X.org modules
