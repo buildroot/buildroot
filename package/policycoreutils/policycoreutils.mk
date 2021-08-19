@@ -43,7 +43,7 @@ POLICYCOREUTILS_MAKE_OPTS += \
 POLICYCOREUTILS_MAKE_DIRS = \
 	load_policy newrole run_init \
 	secon semodule sestatus setfiles \
-	setsebool
+	setsebool scripts
 
 # We need to pass DESTDIR at build time because it's used by
 # policycoreutils build system to find headers and libraries.
