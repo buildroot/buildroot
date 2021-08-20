@@ -41,11 +41,13 @@ else
 POLKIT_CONF_OPTS += --with-authfw=shadow
 endif
 
-# polkit.its is needed for gvfs and must be installed in $(HOST_DIR)
+# polkit.{its,loc} are needed for gvfs and must be installed in $(HOST_DIR)
 # and not $(STAGING_DIR)
 define POLKIT_INSTALL_ITS
 	$(INSTALL) -D -m 644 $(@D)/data/polkit.its \
-		$(HOST_DIR)/share/gettext/its
+		$(HOST_DIR)/share/gettext/its/polkit.its
+	$(INSTALL) -D -m 644 $(@D)/data/polkit.loc \
+		$(HOST_DIR)/share/gettext/its/polkit.loc
 endef
 POLKIT_POST_INSTALL_TARGET_HOOKS += POLKIT_INSTALL_ITS
 
