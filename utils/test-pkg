@@ -12,13 +12,13 @@ do_clean() {
 
 main() {
     local o O opts
-    local cfg dir pkg random toolchains_csv toolchain all number mode
+    local cfg dir pkg random toolchains_csv toolchain all number mode prepare_only
     local ret nb nb_skip nb_fail nb_legal nb_tc build_dir keep
     local -a toolchains
     local pkg_br_name
 
     o='hakc:d:n:p:r:t:'
-    O='help,all,keep,config-snippet:,build-dir:,number:,package:,random:,toolchains-csv:'
+    O='help,all,keep,prepare-only,config-snippet:,build-dir:,number:,package:,random:,toolchains-csv:'
     opts="$(getopt -n "${my_name}" -o "${o}" -l "${O}" -- "${@}")"
     eval set -- "${opts}"
 
@@ -27,6 +27,7 @@ main() {
     keep=0
     number=0
     mode=0
+    prepare_only=0
     toolchains_csv="${TOOLCHAINS_CSV}"
     while [ ${#} -gt 0 ]; do
         case "${1}" in
@@ -38,6 +39,9 @@ main() {
             ;;
         (-k|--keep)
             keep=1; shift 1
+            ;;
+        (--prepare-only)
+            prepare_only=1; shift 1
             ;;
         (-c|--config-snippet)
             cfg="${2}"; shift 2
@@ -127,7 +131,7 @@ main() {
         toolchain="$(basename "${toolchainconfig}" .config)"
         build_dir="${dir}/${toolchain}"
         printf "%40s [%*d/%d]: " "${toolchain}" ${#nb_tc} ${nb} ${nb_tc}
-        build_one "${build_dir}" "${toolchainconfig}" "${cfg}" "${pkg}" && ret=0 || ret=${?}
+        build_one "${build_dir}" "${toolchainconfig}" "${cfg}" "${pkg}" "${prepare_only}" && ret=0 || ret=${?}
         case ${ret} in
         (0) printf "OK\n";;
         (1) : $((nb_skip++)); printf "SKIPPED\n";;
@@ -147,6 +151,7 @@ build_one() {
     local toolchainconfig="${2}"
     local cfg="${3}"
     local pkg="${4}"
+    local prepare_only="${5}"
 
     mkdir -p "${dir}"
 
@@ -169,6 +174,11 @@ build_one() {
     fi
     # Remove file, it's empty anyway.
     rm -f "${dir}/missing.config"
+
+    # Defer building the job to the caller (e.g. a gitlab pipeline)
+    if [ ${prepare_only} -eq 1 ]; then
+        return 0
+    fi
 
     if [ -n "${pkg}" ]; then
         if ! make O="${dir}" "${pkg}-dirclean" >> "${dir}/logfile" 2>&1; then
@@ -256,6 +266,10 @@ Options:
         Keep the build directories even if the build succeeds.
         Note: the logfile and configuration is always retained, even without
         this option.
+
+    --prepare-only
+        Only prepare the .config files, but do not build them. Output the
+        list of build directories to stdout, and the status on stderr.
 
 Example:
 
