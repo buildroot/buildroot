@@ -1,4 +1,4 @@
-From ec4ebe89a7636da63ccff349d0f0c9f38ac3e3e1 Mon Sep 17 00:00:00 2001
+From 85412262460f6ba9f6e2cf8da74fc1904c54c854 Mon Sep 17 00:00:00 2001
 From: Matt Weber <matthew.weber@rockwellcollins.com>
 Date: Thu, 6 Feb 2020 14:36:21 -0600
 Subject: [PATCH] relax dependency on GCC to 4.8 and binutils to 2.24
@@ -29,10 +29,10 @@ Signed-off-by: Matthew Weber <matthew.weber@rockwellcollins.com>
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/configure b/configure
-index 1dc3af60b4..e3ee4e9fd7 100755
+index 9619c10991..0c481d2339 100755
 --- a/configure
 +++ b/configure
-@@ -4587,7 +4587,7 @@ $as_echo_n "checking version of $AS... " >&6; }
+@@ -4651,7 +4651,7 @@ $as_echo_n "checking version of $AS... " >&6; }
    ac_prog_version=`$AS --version 2>&1 | sed -n 's/^.*GNU assembler.* \([0-9]*\.[0-9.]*\).*$/\1/p'`
    case $ac_prog_version in
      '') ac_prog_version="v. ?.??, bad"; ac_verc_fail=yes;;
@@ -41,7 +41,7 @@ index 1dc3af60b4..e3ee4e9fd7 100755
         ac_prog_version="$ac_prog_version, ok"; ac_verc_fail=no;;
      *) ac_prog_version="$ac_prog_version, bad"; ac_verc_fail=yes;;
  
-@@ -4717,7 +4717,7 @@ $as_echo_n "checking version of $LD... " >&6; }
+@@ -4781,7 +4781,7 @@ $as_echo_n "checking version of $LD... " >&6; }
    ac_prog_version=`$LD --version 2>&1 | sed -n 's/^.*GNU ld.* \([0-9][0-9]*\.[0-9.]*\).*$/\1/p'`
    case $ac_prog_version in
      '') ac_prog_version="v. ?.??, bad"; ac_verc_fail=yes;;
@@ -50,7 +50,7 @@ index 1dc3af60b4..e3ee4e9fd7 100755
         ac_prog_version="$ac_prog_version, ok"; ac_verc_fail=no;;
      *) ac_prog_version="$ac_prog_version, bad"; ac_verc_fail=yes;;
  
-@@ -5126,7 +5126,7 @@ int
+@@ -5189,7 +5189,7 @@ int
  main ()
  {
  
@@ -60,5 +60,4 @@ index 1dc3af60b4..e3ee4e9fd7 100755
  #endif
    ;
 -- 
-2.31.1
-
+2.33.0
