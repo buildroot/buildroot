@@ -21,15 +21,17 @@ if [ -e /sys/firmware/devicetree/base/compatible ] ; then
 	MODEL=$(sed -n 's/\(.*\)ingenic.*/\1/p' /sys/firmware/devicetree/base/compatible)
 	HWVARIANT=$(cat /sys/firmware/devicetree/base/model)
 elif [ "$HWVARIANT_CMDLINE" = "rg350" ] ; then
-	if [ -r /sys/devices/platform/jz-lcd.0/graphics/fb0/modes -a \
-		"$(grep '640x480' /sys/devices/platform/jz-lcd.0/graphics/fb0/modes)" ] ; then
-		MODEL=ylm,rg350m
+	if [ "$(uname -v)" = "#227 Tue Jul 20 11:36:58 CST 2021" ] ; then
+		MODEL=ylm,rg300x
 	elif [ "$(uname -v)" = "#128 Fri May 29 11:19:07 CST 2020" ] ; then
 		MODEL=ylm,rg280m
 	elif [ "$(uname -v)" = "#171 Tue Jun 30 18:36:05 CST 2020" ] ; then
 		MODEL=ylm,rg280v
 	elif [ "$(uname -v)" = "#2 Sat Mar 28 16:19:20 CST 2020" ] ; then
 		MODEL=wolsen,playgo
+	elif [ -r /sys/devices/platform/jz-lcd.0/graphics/fb0/modes -a \
+		"$(grep '640x480' /sys/devices/platform/jz-lcd.0/graphics/fb0/modes)" ] ; then
+		MODEL=ylm,rg350m
 	else
 		MODEL=ylm,rg350
 	fi
@@ -74,7 +76,7 @@ case "$MODEL" in
 				;;
 		esac
 		;;
-	anbernic,rg350|anbernic,rg350m|ylm,rg350|ylm,rg350m|ylm,rg280m|ylm,rg280v|wolsen,playgo)
+	anbernic,rg350|anbernic,rg350m|ylm,rg350|ylm,rg350m|ylm,rg280m|ylm,rg280v|ylm,rg300x|wolsen,playgo)
 		HWVARIANT_DT=$(echo $MODEL |cut -d',' -f2)
 		HWVARIANT_BL="rg350"
 		;;
