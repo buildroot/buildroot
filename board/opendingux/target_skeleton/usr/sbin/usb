@@ -5,6 +5,11 @@ if [ ! -d /sys/kernel/config/usb_gadget ] ; then
 	exit 1
 fi
 
+SERIAL_NUMBER=00000000
+VENDOR=OpenDingux
+PRODUCT=`grep machine /proc/cpuinfo |sed 's/.*: //'`
+UDC_NAME=`ls -1 /sys/class/udc |head -n1`
+
 usb_disable() {
 	if [ -r /run/umtprd.pid ] ; then
 		start-stop-daemon -K -p /run/umtprd.pid
@@ -15,11 +20,6 @@ usb_disable() {
 }
 
 usb_start() {
-	SERIAL_NUMBER=00000000
-	VENDOR=OpenDingux
-	PRODUCT=`grep machine /proc/cpuinfo |sed 's/.*: //'`
-	UDC_NAME=`ls -1 /sys/class/udc |head -n1`
-
 	if [ "$1" ] ; then
 		USB_MODE=$1
 	elif [ -r /usr/local/etc/usb.conf ] ; then
