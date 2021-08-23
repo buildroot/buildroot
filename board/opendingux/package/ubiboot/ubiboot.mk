@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-UBIBOOT_VERSION = 7dae686
+UBIBOOT_VERSION = c129267
 UBIBOOT_SITE = $(call github,pcercuei,UBIBoot,$(UBIBOOT_VERSION))
 UBIBOOT_BOARD_NAME = $(call qstrip,$(BR2_PACKAGE_UBIBOOT_BOARDNAME))
 
