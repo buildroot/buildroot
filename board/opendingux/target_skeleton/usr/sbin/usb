@@ -35,7 +35,7 @@ usb_start() {
 		mtp/configs/c.1 \
 		mtp/configs/c.1/strings/0x409 \
 		mtp/functions/ffs.mtp \
-		mtp/functions/geth.net \
+		mtp/functions/ecm.net \
 		mtp/functions/rndis.net
 
 	echo ${SERIAL_NUMBER} > mtp/strings/0x409/serialnumber
@@ -99,7 +99,7 @@ usb_start() {
 		echo 0x049f > mtp/idVendor
 		echo 0x505a > mtp/idProduct
 		echo cdc > mtp/configs/c.1/strings/0x409/configuration
-		ln -s mtp/functions/geth.net mtp/configs/c.1/geth.net
+		ln -s mtp/functions/ecm.net mtp/configs/c.1/ecm.net
 	fi
 
 	echo "${UDC_NAME}" > /sys/kernel/config/usb_gadget/mtp/UDC
@@ -116,13 +116,13 @@ usb_stop() {
 		rmdir /dev/ffs-umtp
 
 		rm -f mtp/configs/c.1/ffs.mtp \
-			mtp/configs/c.1/geth.net \
+			mtp/configs/c.1/ecm.net \
 			mtp/configs/c.1/rndis.net
 
 		rmdir mtp/configs/c.1/strings/0x409 \
 			mtp/configs/c.1 \
 			mtp/functions/ffs.mtp \
-			mtp/functions/geth.net \
+			mtp/functions/ecm.net \
 			mtp/functions/rndis.net \
 			mtp/strings/0x409 \
 			mtp
