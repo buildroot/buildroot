@@ -42,4 +42,5 @@ class InitSystemBase(infra.basetest.BRTest):
 
     def check_network(self, interface, exitCode=0):
         cmd = "ip addr show {} |grep inet".format(interface)
-        self.assertRunOk(cmd)
+        _, exit_code = self.emulator.run(cmd)
+        self.assertEqual(exit_code, exitCode)
