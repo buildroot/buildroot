@@ -1,0 +1,88 @@
+From 777bea4aef588c8d7592e20f4b66194f0185b68b Mon Sep 17 00:00:00 2001
+From: bigbearishappy <953308023@qq.com>
+Date: Wed, 25 Aug 2021 11:48:02 +0000
+Subject: [PATCH] fix the TP point rotation of reTerminal
+
+---
+ lvgl/src/core/lv_indev.c | 55 ++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 45 insertions(+), 10 deletions(-)
+
+diff --git a/lvgl/src/core/lv_indev.c b/lvgl/src/core/lv_indev.c
+index 2e16b8e5f..3c7dff7e6 100644
+--- a/lvgl/src/core/lv_indev.c
++++ b/lvgl/src/core/lv_indev.c
+@@ -325,26 +325,61 @@ lv_obj_t * lv_indev_search_obj(lv_obj_t * obj, lv_point_t * point)
+  */
+ static void indev_pointer_proc(lv_indev_t * i, lv_indev_data_t * data)
+ {
++    lv_coord_t temp_x, temp_y, tmp;
+     lv_disp_t *disp = i->driver->disp;
+     /*Save the raw points so they can be used again in _lv_indev_read*/
+     i->proc.types.pointer.last_raw_point.x = data->point.x;
+     i->proc.types.pointer.last_raw_point.y = data->point.y;
+ 
+-    if(disp->driver->rotated == LV_DISP_ROT_180 || disp->driver->rotated == LV_DISP_ROT_270) {
+-        data->point.x = disp->driver->hor_res - data->point.x - 1;
+-        data->point.y = disp->driver->ver_res - data->point.y - 1;
+-    }
+-    if(disp->driver->rotated == LV_DISP_ROT_90 || disp->driver->rotated == LV_DISP_ROT_270) {
+-        lv_coord_t tmp = data->point.y;
+-        data->point.y = data->point.x;
+-        data->point.x = disp->driver->ver_res - tmp - 1;
++    if(disp->driver->rotated == LV_DISP_ROT_90) {
++    	temp_x = data->point.x - disp->driver->ver_res / 2;
++    	temp_y = data->point.y - disp->driver->hor_res / 2;
++		
++    	tmp = temp_x;
++	temp_x  = temp_y;
++	temp_y  = tmp;
++	
++	temp_x *= (-1);
++	temp_y *= (1);
++
++	temp_x = temp_x * disp->driver->ver_res / disp->driver->hor_res;
++	temp_y = temp_y * disp->driver->hor_res / disp->driver->ver_res;
++
++    	data->point.x = temp_x + disp->driver->ver_res / 2;
++    	data->point.y = temp_y + disp->driver->hor_res / 2;
++
++    }else if (disp->driver->rotated == LV_DISP_ROT_180) {
++    	temp_x = data->point.x - disp->driver->hor_res / 2;
++    	temp_y = data->point.y - disp->driver->ver_res / 2;
++	
++	temp_x *= (-1);
++	temp_y *= (-1);
++
++    	data->point.x = temp_x + disp->driver->hor_res / 2;
++    	data->point.y = temp_y + disp->driver->ver_res / 2;
++    }else if (disp->driver->rotated == LV_DISP_ROT_270) {
++    	temp_x = data->point.x - disp->driver->ver_res / 2;
++    	temp_y = data->point.y - disp->driver->hor_res / 2;
++
++    	lv_coord_t tmp = temp_x;
++	temp_x  = temp_y;
++	temp_y  = tmp;
++
++	temp_x *= (1);
++	temp_y *= (-1);
++
++	temp_x = temp_x * disp->driver->ver_res / disp->driver->hor_res;
++	temp_y = temp_y * disp->driver->hor_res / disp->driver->ver_res;
++
++    	data->point.x = temp_x + disp->driver->ver_res / 2;
++    	data->point.y = temp_y + disp->driver->hor_res / 2;
+     }
+ 
+     /*Simple sanity check*/
+     if(data->point.x < 0) LV_LOG_WARN("X is %d which is smaller than zero", data->point.x);
+-    if(data->point.x >= lv_disp_get_hor_res(i->driver->disp)) LV_LOG_WARN("X is %d which is greater than hor. res", data->point.x);
++    if(data->point.x > lv_disp_get_hor_res(i->driver->disp)) LV_LOG_WARN("X is %d which is greater than hor. res", data->point.x);
+     if(data->point.y < 0) LV_LOG_WARN("Y is %d which is smaller than zero", data->point.y);
+-    if(data->point.y >= lv_disp_get_ver_res(i->driver->disp)) LV_LOG_WARN("Y is %d which is greater than hor. res", data->point.y);
++    if(data->point.y > lv_disp_get_ver_res(i->driver->disp)) LV_LOG_WARN("Y is %d which is greater than hor. res", data->point.y);
+ 
+     /*Move the cursor if set and moved*/
+     if(i->cursor != NULL &&
+-- 
+2.25.1
+
