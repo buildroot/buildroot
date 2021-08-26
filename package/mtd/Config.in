@@ -147,6 +147,7 @@ config BR2_PACKAGE_MTD_UBIHEALTHD
 	bool "ubihealthd"
 	default y
 	depends on BR2_PACKAGE_MTD_UBIFS_UTILS
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17 # getrandom()
 
 config BR2_PACKAGE_MTD_UBIMKVOL
 	bool "ubimkvol"
