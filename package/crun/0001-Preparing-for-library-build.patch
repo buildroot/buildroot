@@ -1,0 +1,150 @@
+From 5edb3adc3a5d64113d056da46db634ecc2871e75 Mon Sep 17 00:00:00 2001
+From: Michal Pogoda <michalpogoda@hotmail.com>
+Date: Tue, 17 Mar 2020 16:55:20 +0100
+Subject: [PATCH 1/2] Preparing for library build
+
+---
+ Makefile.am             | 19 +++++++++++++++++++
+ configure.ac            |  5 ++++-
+ libcrun.pc.in           | 11 +++++++++++
+ libocispec/Makefile.am  | 13 +++----------
+ src/libcrun/container.c |  2 +-
+ src/libcrun/error.c     |  2 +-
+ 6 files changed, 39 insertions(+), 13 deletions(-)
+ create mode 100644 libcrun.pc.in
+
+diff --git a/Makefile.am b/Makefile.am
+index 8f96a4f..5e86199 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -38,6 +38,25 @@ libcrun_la_SOURCES = src/libcrun/utils.c \
+ libcrun_la_CFLAGS = -I $(abs_top_builddir)/libocispec/src -I $(abs_top_srcdir)/libocispec/src
+ libcrun_la_LIBADD = libocispec/libocispec.la
+ 
++pkginclude_HEADERS = src/libcrun/container.h \
++		     config.h \
++		     src/libcrun/error.h \
++		     src/libcrun/status.h \
++		     src/libcrun/utils.h \
++		     libocispec/src/runtime_spec_schema_config_schema.h \
++		     libocispec/src/runtime_spec_schema_config_linux.h \
++		     libocispec/src/runtime_spec_schema_config_solaris.h \
++		     libocispec/src/runtime_spec_schema_config_windows.h \
++		     libocispec/src/runtime_spec_schema_config_vm.h \
++		     libocispec/src/runtime_spec_schema_defs.h \
++		     libocispec/src/runtime_spec_schema_defs_linux.h \
++		     libocispec/src/runtime_spec_schema_defs_windows.h \
++		     libocispec/src/runtime_spec_schema_defs_vm.h \
++		     libocispec/src/json_common.h
++
++pkgconfigdir = @pkgconfigdir@
++pkgconfig_DATA = libcrun.pc
++
+ if PYTHON_BINDINGS
+ pyexec_LTLIBRARIES = python_crun.la
+ python_crun_la_SOURCES = python/crun_python.c
+diff --git a/configure.ac b/configure.ac
+index ea6ed11..cab11ec 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -123,7 +123,10 @@ AC_SEARCH_LIBS([argp_parse], [argp], [], [AC_MSG_ERROR([*** argp functions not f
+ AM_CONDITIONAL([PYTHON_BINDINGS], [test "x$with_python_bindings" = "xyes"])
+ AM_CONDITIONAL([CRIU_SUPPORT], [test "x$have_criu" = "xyes"])
+ 
+-AC_CONFIG_FILES([Makefile rpm/crun.spec])
++PKG_INSTALLDIR
++AC_SUBST(pkgconfigdir)
++
++AC_CONFIG_FILES([Makefile rpm/crun.spec libcrun.pc])
+ 
+ AC_CONFIG_SUBDIRS([libocispec])
+ AC_OUTPUT
+diff --git a/libcrun.pc.in b/libcrun.pc.in
+new file mode 100644
+index 0000000..54ee2eb
+--- /dev/null
++++ b/libcrun.pc.in
+@@ -0,0 +1,11 @@
++prefix=@prefix@
++exec_prefix=@exec_prefix@
++libdir=@libdir@
++includedir=@includedir@
++
++Name: LibCRun
++Description: Library for running the OCI containers
++Version: 0.1.13
++Requires: libseccomp libcap yajl
++Cflags: -I${includedir}/crun -I${includedir}
++Libs: -L${libdir} -lseccomp -lcap -lyajl -lcrun 
+\ No newline at end of file
+diff --git a/libocispec/Makefile.am b/libocispec/Makefile.am
+index 65bed45..53a8b32 100644
+--- a/libocispec/Makefile.am
++++ b/libocispec/Makefile.am
+@@ -4,8 +4,7 @@ AM_CFLAGS = $(WARN_CFLAGS) -I$(top_srcdir)/src -I$(top_builddir)/src
+ 
+ GITIGNOREFILES = build-aux/ gtk-doc.make config.h.in aclocal.m4
+ 
+-noinst_LTLIBRARIES = libocispec.la
+-noinst_LIBRARIES = libocispec.a
++lib_LTLIBRARIES = libocispec.la
+ 
+ SOURCE_FILES = src/json_common.c \
+ 	src/image_spec_schema_config_schema.c \
+@@ -25,9 +24,8 @@ SOURCE_FILES = src/json_common.c \
+ 	src/runtime_spec_schema_defs_vm.c \
+ 	src/runtime_spec_schema_defs_windows.c \
+ 	src/runtime_spec_schema_state_schema.c \
+-	src/image_manifest_items_image_manifest_items_schema.c \
+-	src/json_common.c
+-
++	src/image_manifest_items_image_manifest_items_schema.c 
++	
+ HEADER_FILES = $(SOURCE_FILES:.c=.h)
+ 
+ src/json_common.h src/json_common.c:
+@@ -61,15 +59,10 @@ BUILT_SOURCES = $(HEADER_FILES) $(SOURCE_FILES)
+ libocispec_la_SOURCES = $(SOURCE_FILES) \
+ 	src/read-file.c
+ 
+-libocispec_a_SOURCES =
+-
+ CLEANFILES += $(HEADER_FILES) $(SOURCE_FILES)
+ 
+ TESTS_LDADD = libocispec.la $(SELINUX_LIBS) $(YAJL_LIBS)
+ 
+-libocispec.a: libocispec.la
+-	$(LIBTOOL) --mode=link $(GCC) libocispec.la -o libocispec.a
+-
+ tests_test_1_SOURCES = tests/test-1.c
+ tests_test_1_LDADD = $(TESTS_LDADD)
+ 
+diff --git a/src/libcrun/container.c b/src/libcrun/container.c
+index 22cb41f..7f7dafc 100644
+--- a/src/libcrun/container.c
++++ b/src/libcrun/container.c
+@@ -1778,7 +1778,7 @@ libcrun_container_run (libcrun_context_t *context, libcrun_container_t *containe
+       crun_set_output_handler (log_write_to_stderr, NULL, false);
+       libcrun_fail_with_error ((*err)->status, "%s", (*err)->msg);
+     }
+-  exit (ret);
++  _exit (ret);
+ }
+ 
+ int
+diff --git a/src/libcrun/error.c b/src/libcrun/error.c
+index cb49b0d..56ea309 100644
+--- a/src/libcrun/error.c
++++ b/src/libcrun/error.c
+@@ -386,7 +386,7 @@ libcrun_fail_with_error (int errno_, const char *msg, ...)
+   va_start (args_list, msg);
+   write_log (errno_, false, msg, args_list);
+   va_end (args_list);
+-  exit (EXIT_FAILURE);
++  _exit (EXIT_FAILURE);
+ }
+ 
+ int
+-- 
+2.20.1
+
