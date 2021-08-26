@@ -18,4 +18,5 @@ config BR2_PACKAGE_PYTHON_TREQ
 	  https://github.com/twisted/treq
 
 comment "python-treq needs a toolchain w/ C++"
+	depends on BR2_PACKAGE_PYTHON3
 	depends on !BR2_INSTALL_LIBSTDCPP

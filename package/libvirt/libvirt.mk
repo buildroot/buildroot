@@ -10,8 +10,21 @@ LIBVIRT_SOURCE = libvirt-$(LIBVIRT_VERSION).tar.xz
 LIBVIRT_LICENSE = LGPL-2.1+
 LIBVIRT_LICENSE_FILES = COPYING
 LIBVIRT_CPE_ID_VENDOR = redhat
-LIBVIRT_DEPENDENCIES = host-nfs-utils host-pkgconf host-python-docutils \
-	gnutls libglib2 libpciaccess libtirpc libxml2 udev zlib
+LIBVIRT_DEPENDENCIES = \
+	host-libxslt \
+	host-nfs-utils \
+	host-pkgconf \
+	host-python-docutils \
+	gnutls \
+	libglib2 \
+	libpciaccess \
+	libtirpc \
+	libxml2 \
+	udev \
+	zlib \
+	$(TARGET_NLS_DEPENDENCIES)
+
+LIBVIRT_LDFLAGS = $(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)
 
 LIBVIRT_CONF_ENV += \
 	CFLAGS="$(TARGET_CFLAGS) `$(PKG_CONFIG_HOST_BINARY) --cflags libtirpc`" \
@@ -39,6 +52,7 @@ LIBVIRT_CONF_OPTS = \
 	-Dinit_script=$(if $(BR2_INIT_SYSTEMD),systemd,none) \
 	-Dlogin_shell=disabled \
 	-Dnetcf=disabled \
+	-Dnls=$(if $(BR2_SYSTEM_ENABLE_NLS),enabled,disabled) \
 	-Dnumad=disabled \
 	-Dopenwsman=disabled \
 	-Dpciaccess=enabled \
@@ -52,6 +66,13 @@ LIBVIRT_CONF_OPTS = \
 	-Dtest_coverage=false \
 	-Dudev=enabled \
 	-Dwireshark_dissector=disabled
+
+# warning_level should only drive the level of warnings during the
+# compilation of C code. However, libvirt misuses that to also
+# enable SSP when warning_level == 2
+# Force warning_level=1 to disable SSP, and let our toolchain wrapper
+# handle it.
+LIBVIRT_CONF_OPTS += -Dwarning_level=1
 
 ifeq ($(BR2_PACKAGE_ATTR),y)
 LIBVIRT_CONF_OPTS += -Dattr=enabled
@@ -170,8 +191,8 @@ else
 LIBVIRT_CONF_OPTS += -Dlibssh=disabled
 endif
 
-# Can't build nss plugin without network
-ifeq ($(BR2_PACKAGE_LIBNSS),y)
+# Can't build nss plugin without network or yajl
+ifeq ($(BR2_PACKAGE_LIBNSS)$(BR2_PACKAGE_YAJL),yy)
 LIBVIRT_CONF_OPTS += -Dnss=enabled
 LIBVIRT_DEPENDENCIES += libnss
 else

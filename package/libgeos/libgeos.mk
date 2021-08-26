@@ -23,6 +23,10 @@ ifeq ($(BR2_arm)$(BR2_armeb),y)
 LIBGEOS_CONF_OPTS += -DDISABLE_GEOS_INLINE=ON
 endif
 
+ifeq ($(BR2_or1k),y)
+LIBGEOS_CXXFLAGS += -mcmodel=large
+endif
+
 LIBGEOS_CONF_OPTS += -DCMAKE_CXX_FLAGS="$(LIBGEOS_CXXFLAGS)"
 
 $(eval $(cmake-package))

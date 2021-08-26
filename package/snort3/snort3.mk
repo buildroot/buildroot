@@ -54,4 +54,9 @@ else
 SNORT3_CONF_OPTS += -DHAVE_LZMA=OFF
 endif
 
+# Uses __atomic_load_8
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+SNORT3_CONF_OPTS += -DCMAKE_EXE_LINKER_FLAGS=-latomic
+endif
+
 $(eval $(cmake-package))

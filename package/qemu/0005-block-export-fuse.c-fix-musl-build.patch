@@ -1,0 +1,46 @@
+From 4d5280c066eb46a31556044fb52c2618928b0019 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 9 Aug 2021 10:04:07 +0200
+Subject: [PATCH] block/export/fuse.c: fix musl build
+
+Fix the following build failure on musl raised since version 6.0.0 and
+https://gitlab.com/qemu-project/qemu/-/commit/4ca37a96a75aafe7a37ba51ab1912b09b7190a6b
+because musl does not define FALLOC_FL_ZERO_RANGE:
+
+../block/export/fuse.c: In function 'fuse_fallocate':
+../block/export/fuse.c:563:23: error: 'FALLOC_FL_ZERO_RANGE' undeclared (first use in this function)
+  563 |     } else if (mode & FALLOC_FL_ZERO_RANGE) {
+      |                       ^~~~~~~~~~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/b96e3d364fd1f8bbfb18904a742e73327d308f64
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: sent to qemu-devel@nongnu.org]
+---
+ block/export/fuse.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/block/export/fuse.c b/block/export/fuse.c
+index ada9e263eb..07e31129a6 100644
+--- a/block/export/fuse.c
++++ b/block/export/fuse.c
+@@ -635,6 +635,7 @@ static void fuse_fallocate(fuse_req_t req, fuse_ino_t inode, int mode,
+             offset += size;
+             length -= size;
+         } while (ret == 0 && length > 0);
++#ifdef FALLOC_FL_ZERO_RANGE
+     } else if (mode & FALLOC_FL_ZERO_RANGE) {
+         if (!(mode & FALLOC_FL_KEEP_SIZE) && offset + length > blk_len) {
+             /* No need for zeroes, we are going to write them ourselves */
+@@ -654,6 +655,7 @@ static void fuse_fallocate(fuse_req_t req, fuse_ino_t inode, int mode,
+             offset += size;
+             length -= size;
+         } while (ret == 0 && length > 0);
++#endif
+     } else if (!mode) {
+         /* We can only fallocate at the EOF with a truncate */
+         if (offset < blk_len) {
+-- 
+2.30.2
+

@@ -5,7 +5,7 @@ Subject: [PATCH] include appropriate header files for std::numeric_limits
 
 Fixes #80.
 
-[Retrieved from:
+[Retrieved (and updated to remove ChangeLog update) from:
 https://github.com/Matroska-Org/libebml/commit/f0bfd53647961e799a43d918c46cf3b6bff89806]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
@@ -14,18 +14,6 @@ Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
  src/EbmlUnicodeString.cpp | 1 +
  3 files changed, 6 insertions(+)
 
-diff --git a/ChangeLog b/ChangeLog
-index 034cf86..e4b13a9 100644
---- a/ChangeLog
-+++ b/ChangeLog
-@@ -1,3 +1,7 @@
-+2021-02-27  Moritz Bunkus  <mo@bunkus.online>
-+
-+        * Fix compilation with g++ 11. Fixes #80.
-+
- 2021-02-21 Steve Lhomme <slhomme@matroska.org>
- 
-         * Remove Coremake project files
 diff --git a/src/EbmlString.cpp b/src/EbmlString.cpp
 index 27e55fd..4c05fcf 100644
 --- a/src/EbmlString.cpp

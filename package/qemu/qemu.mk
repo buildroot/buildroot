@@ -56,6 +56,12 @@ endif
 
 endif
 
+ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
+QEMU_OPTS += --disable-vhost-user
+else
+QEMU_OPTS += --enable-vhost-user
+endif
+
 ifeq ($(BR2_PACKAGE_QEMU_SLIRP),y)
 QEMU_OPTS += --enable-slirp=system
 QEMU_DEPENDENCIES += slirp
@@ -82,6 +88,19 @@ ifeq ($(BR2_PACKAGE_QEMU_TOOLS),y)
 QEMU_OPTS += --enable-tools
 else
 QEMU_OPTS += --disable-tools
+endif
+
+ifeq ($(BR2_PACKAGE_LIBFUSE3),y)
+QEMU_OPTS += --enable-fuse
+QEMU_DEPENDENCIES += libfuse3
+# musl does not support SEEK_HOLE/SEEK_DATA
+ifeq ($(BR2_TOOLCHAIN_USES_MUSL),y)
+QEMU_OPTS += --disable-fuse-lseek
+else
+QEMU_OPTS += --enable-fuse-lseek
+endif
+else
+QEMU_OPTS += --disable-fuse --disable-fuse-lseek
 endif
 
 ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
