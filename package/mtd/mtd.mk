@@ -40,6 +40,12 @@ else
 MTD_CONF_OPTS += --without-ubifs
 endif
 
+ifeq ($(BR2_PACKAGE_MTD_UBIHEALTHD),y)
+MTD_CONF_OPTS += --enable-ubihealthd
+else
+MTD_CONF_OPTS += --disable-ubihealthd
+endif
+
 ifeq ($(BR2_PACKAGE_MTD_TESTS),y)
 MTD_CONF_OPTS += --enable-tests --enable-install-tests
 else
