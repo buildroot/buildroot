@@ -25,6 +25,13 @@ else
 SYSLOG_NG_CONF_OPTS += --disable-geoip
 endif
 
+ifeq ($(BR2_PACKAGE_LIBDBI),y)
+SYSLOG_NG_DEPENDENCIES += libdbi
+SYSLOG_NG_CONF_OPTS += --enable-sql
+else
+SYSLOG_NG_CONF_OPTS += --disable-sql
+endif
+
 ifeq ($(BR2_PACKAGE_LIBCAP),y)
 SYSLOG_NG_DEPENDENCIES += libcap
 SYSLOG_NG_CONF_OPTS += --enable-linux-caps
