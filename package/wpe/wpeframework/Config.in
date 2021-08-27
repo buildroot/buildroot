@@ -140,6 +140,19 @@ config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITORCLIENT
           interaction (Graphics/input). The implementation hides all the compositor specific details.
       allows for relaying keys to plugins
 
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTHAUDIOSINK
+    select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
+    bool "BluetoothAudioSink"
+        default n
+    help
+      C-interface towards BluetoothAudioSink plugin for controlling the Bluetooth sink and supplying audio data samples
+
+if BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTHAUDIOSINK
+config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTHAUDIOSINK_EXAMPLEPLAYER
+    bool "Example .wav player"
+    default y
+endif
+
 config BR2_PACKAGE_WPEFRAMEWORK_GSTREAMERCLIENT
         select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
         bool "GstreamerClient"
