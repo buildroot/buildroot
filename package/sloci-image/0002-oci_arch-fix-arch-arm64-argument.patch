@@ -1,0 +1,39 @@
+From 67b16c65cdf0f654275802d6d12451a81a4d2796 Mon Sep 17 00:00:00 2001
+From: "Arnout Vandecappelle (Essensium/Mind)" <arnout@mind.be>
+Date: Sat, 11 Sep 2021 14:37:20 +0200
+Subject: [PATCH] oci_arch: fix "--arch arm64" argument
+
+The --arch argument presumably should take the appropriate GOARCH-type
+string. The oci_arch() function does some conversion on it, which is
+needed because without --arch the architecture is taken from "uname -m",
+which yields something different than a GOARCH-type string.
+
+However, oci_arch() converts arm* into arm, which is wrong for arm64.
+Since arm64 is a proper GOARCH-type string, it shouldn't be converted at
+all.
+
+Upate the case statement to convert arm64 to arm64 (i.e., do nothing).
+Since the arm64 match comes before arm*, it takes precedence.
+
+Signed-off-by: Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>
+Upstream: https://github.com/jirutka/sloci-image/pull/4
+---
+ sloci-image | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sloci-image b/sloci-image
+index 7f3c775..6844023 100755
+--- a/sloci-image
++++ b/sloci-image
+@@ -214,7 +214,7 @@ oci_arch() {
+ 	case "$1" in
+ 		x86_64) echo amd64;;
+ 		x86) echo 386;;
+-		aarch64) echo arm64;;
++		aarch64|arm64) echo arm64;;
+ 		arm*) echo arm;;
+ 		*) echo "$1";;
+ 	esac
+-- 
+2.31.1
+
