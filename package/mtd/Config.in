@@ -148,6 +148,9 @@ config BR2_PACKAGE_MTD_UBIHEALTHD
 	default y
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17 # getrandom()
 
+comment "ubihealthd needs a toolchain w/ headers >= 3.17"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17
+
 config BR2_PACKAGE_MTD_UBIMKVOL
 	bool "ubimkvol"
 	default y
