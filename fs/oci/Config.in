@@ -1,0 +1,89 @@
+config BR2_TARGET_ROOTFS_OCI
+	bool "oci image"
+	help
+	  Build an OCI (Open Container Initiative) image.
+
+	  By default, the image is generated in a directory called
+	  rootfs-oci:
+
+	  $ cd output/images
+	  $ ls rootfs-oci/
+	  blobs  index.json  oci-layout
+
+	  You can push the image to a registry. Example using skopeo:
+
+	  $ skopeo copy --dest-creds <user>:<pass> \
+	           oci:rootfs-oci:<tag> docker://<user>/<image>[:tag]
+
+	  And pull/run it with docker:
+
+	  $ docker run -it <user>/<image>[:tag]
+
+if BR2_TARGET_ROOTFS_OCI
+
+config BR2_TARGET_ROOTFS_OCI_AUTHOR
+	string "author name and/or email address"
+	default "Buildroot"
+	help
+	  Name and/or email address of the person which created the
+	  image.
+
+config BR2_TARGET_ROOTFS_OCI_TAG
+	string "image tag"
+	default "latest"
+	help
+	  Tag to be used in the container image. If empty, 'latest' will
+	  be used by default.
+
+config BR2_TARGET_ROOTFS_OCI_ENTRYPOINT
+	string "entrypoint"
+	default "sh"
+	help
+	  Command to execute when the container starts.
+
+config BR2_TARGET_ROOTFS_OCI_ENTRYPOINT_ARGS
+	string "entrypoint arguments"
+	help
+	  Default arguments to the entrypoint of the container.
+
+config BR2_TARGET_ROOTFS_OCI_WORKDIR
+	string "working directory"
+	help
+	  Working directory of the entrypoint process in the
+	  container.
+
+config BR2_TARGET_ROOTFS_OCI_UID
+	string "username or UID"
+	default "0"
+	help
+	  The username or UID of user the process run as.
+
+config BR2_TARGET_ROOTFS_OCI_ENV_VARS
+	string "environment variables"
+	help
+	  Default environment variables for the container.
+	  Space-separated list of variable=value assignments.
+
+config BR2_TARGET_ROOTFS_OCI_PORTS
+	string "ports"
+	help
+	  Default set of ports to expose from a container running
+	  this image as a space-separted list of ports in the following
+	  format:
+
+	  <port>/tcp, <port>/udp, <port> (same as <port>/tcp).
+
+config BR2_TARGET_ROOTFS_OCI_LABELS
+	string "labels"
+	help
+	  Metadata in the format KEY=VALUE for the container compliant
+	  with OCI annotation rules. If KEY starts with a dot, it will
+	  be prefixed with "org.opencontainers.image"
+	  (e.g. .url -> org.opencontainers.image.url).
+
+config BR2_TARGET_ROOTFS_OCI_ARCHIVE
+	bool "pack oci image into a tar archive"
+	help
+	  Select whether the image should be packed into a TAR archive.
+
+endif
