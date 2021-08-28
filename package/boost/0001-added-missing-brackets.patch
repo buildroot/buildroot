@@ -1,0 +1,29 @@
+From 1be0e4a2d8db15a405f64a6f65507b87c1be7e1a Mon Sep 17 00:00:00 2001
+From: tkoecker <tkoecker@gmx.net>
+Date: Fri, 21 May 2021 16:31:11 +0200
+Subject: [PATCH] added missing brackets (#118)
+
+[Retrieved from:
+https://github.com/boostorg/predef/commit/1be0e4a2d8db15a405f64a6f65507b87c1be7e1a]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ include/boost/predef/architecture/sparc.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/boost/predef/architecture/sparc.h b/boost/predef/architecture/sparc.h
+index d7b94f0..d01605e 100644
+--- a/boost/predef/architecture/sparc.h
++++ b//boost/predef/architecture/sparc.h
+@@ -34,10 +34,10 @@ Distributed under the Boost Software License, Version 1.0.
+ 
+ #if defined(__sparc__) || defined(__sparc)
+ #   undef BOOST_ARCH_SPARC
+-#   if !defined(BOOST_ARCH_SPARC) && (defined(__sparcv9) || defined(__sparc_v9__)
++#   if !defined(BOOST_ARCH_SPARC) && (defined(__sparcv9) || defined(__sparc_v9__))
+ #       define BOOST_ARCH_SPARC BOOST_VERSION_NUMBER(9,0,0)
+ #   endif
+-#   if !defined(BOOST_ARCH_SPARC) && (defined(__sparcv8) || defined(__sparc_v8__)
++#   if !defined(BOOST_ARCH_SPARC) && (defined(__sparcv8) || defined(__sparc_v8__))
+ #       define BOOST_ARCH_SPARC BOOST_VERSION_NUMBER(8,0,0)
+ #   endif
+ #   if !defined(BOOST_ARCH_SPARC)
