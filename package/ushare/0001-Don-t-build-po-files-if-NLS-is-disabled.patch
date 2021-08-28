@@ -1,4 +1,4 @@
-From 977171781f5d49e61b46c0241fb67cbb7d666498 Mon Sep 17 00:00:00 2001
+From c9f5783bb2df4a19c6281daeda30e8ab905d2ca3 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Sun, 22 Aug 2021 10:44:48 +0200
 Subject: [PATCH] Don't build po files if NLS is disabled
@@ -7,8 +7,8 @@ Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 [Upstream status: https://github.com/ddugovic/uShare/pull/12]
 ---
  Makefile  | 7 +++++--
- configure | 1 +
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ configure | 3 +++
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile b/Makefile
 index ebd8f91..6686cfd 100644
@@ -31,10 +31,19 @@ index ebd8f91..6686cfd 100644
  	for subdir in $(SUBDIRS); do \
  	  $(MAKE) -C $$subdir $@; \
 diff --git a/configure b/configure
-index 4a3efe0..162a776 100755
+index 4a3efe0..f48806a 100755
 --- a/configure
 +++ b/configure
-@@ -723,6 +723,7 @@ append_config "LDFLAGS=$LDFLAGS"
+@@ -414,6 +414,8 @@ for opt do
+   ;;
+   --with-libdlna-dir=*) libdlnadir="$optval";
+   ;;
++  --enable-nls) nls="yes"
++  ;;
+   --disable-nls) nls="no"
+   ;;
+   --enable-dlna) dlna="yes"
+@@ -723,6 +725,7 @@ append_config "LDFLAGS=$LDFLAGS"
  append_config "INSTALL=$INSTALL"
  
  append_config "DEBUG=$debug"
