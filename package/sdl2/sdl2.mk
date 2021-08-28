@@ -22,14 +22,6 @@ SDL2_CONF_OPTS += \
 	--disable-pulseaudio \
 	--disable-video-wayland
 
-# We're patching configure.ac but autoreconf breaks the build
-# The script only uses autoconf, not automake or libtool
-SDL2_DEPENDENCIES += host-autoconf
-define SDL2_RUN_AUTOGEN
-	cd $(@D) && PATH=$(BR_PATH) ./autogen.sh
-endef
-SDL2_PRE_CONFIGURE_HOOKS += SDL2_RUN_AUTOGEN
-
 # We are using autotools build system for sdl2, so the sdl2-config.cmake
 # include path are not resolved like for sdl2-config script.
 # Change the absolute /usr path to resolve relatively to the sdl2-config.cmake location.
