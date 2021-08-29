@@ -248,6 +248,12 @@ define SWUPDATE_INSTALL_INIT_SYSTEMD
 	$(SWUPDATE_INSTALL_COMMON)
 	$(INSTALL) -D -m 644 package/swupdate/swupdate.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/swupdate.service
+	$(INSTALL) -D -m 644 package/swupdate/swupdate.socket \
+		$(TARGET_DIR)/usr/lib/systemd/system/swupdate.socket
+	$(INSTALL) -D -m 644 package/swupdate/swupdate-usb@.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/swupdate-usb@.service
+	$(INSTALL) -D -m 644 package/swupdate/swupdate-progress.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/swupdate-progress.service
 	$(INSTALL) -D -m 644 package/swupdate/tmpfiles-swupdate.conf \
 		$(TARGET_DIR)/usr/lib/tmpfiles.d/tmpfiles-swupdate.conf
 endef
@@ -255,6 +261,8 @@ define SWUPDATE_INSTALL_INIT_SYSV
 	$(SWUPDATE_INSTALL_COMMON)
 	$(INSTALL) -D -m 755 package/swupdate/S80swupdate \
 		$(TARGET_DIR)/etc/init.d/S80swupdate
+	$(INSTALL) -D -m 644 package/swupdate/90-start-progress \
+		$(TARGET_DIR)/usr/lib/swupdate/conf.d/90-start-progress
 endef
 
 $(eval $(kconfig-package))
