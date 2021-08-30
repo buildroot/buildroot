@@ -24,4 +24,10 @@ define SMCROUTE_INSTALL_INIT_SYSV
 		$(TARGET_DIR)/etc/init.d/S41smcroute
 endef
 
+define SMCROUTE_PRUNE_COMPAT_SCRIPT
+	rm -f $(TARGET_DIR)/usr/sbin/smcroute
+endef
+
+SMCROUTE_POST_INSTALL_TARGET_HOOKS += SMCROUTE_PRUNE_COMPAT_SCRIPT
+
 $(eval $(autotools-package))
