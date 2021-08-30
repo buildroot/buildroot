@@ -19,4 +19,9 @@ else
 SMCROUTE_CONF_OPTS += --without-libcap
 endif
 
+define SMCROUTE_INSTALL_INIT_SYSV
+	$(INSTALL) -m 755 -D package/smcroute/S41smcroute \
+		$(TARGET_DIR)/etc/init.d/S41smcroute
+endef
+
 $(eval $(autotools-package))
