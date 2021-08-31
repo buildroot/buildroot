@@ -77,6 +77,14 @@ else
 RUBY_CONF_OPTS += --without-gmp
 endif
 
+RUBY_CFLAGS = $(TARGET_CFLAGS)
+
+ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_83143),y)
+RUBY_CFLAGS += -freorder-blocks-algorithm=simple
+endif
+
+RUBY_CONF_OPTS += CFLAGS="$(RUBY_CFLAGS)"
+
 # Remove rubygems and friends, as they need extensions that aren't
 # built and a target compiler.
 RUBY_EXTENSIONS_REMOVE = rake* rdoc* rubygems*
