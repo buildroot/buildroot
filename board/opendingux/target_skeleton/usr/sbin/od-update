@@ -35,6 +35,8 @@ elif [ "$HWVARIANT_CMDLINE" = "rg350" ] ; then
 	else
 		MODEL=ylm,rg350
 	fi
+elif [ "$(uname -v)" = "#35 Thu Sep 26 23:15:49 CST 2019" ] ; then
+	MODEL=wolsen,pocketgo2
 else
 	case "$HWVARIANT_CMDLINE" in
 		v11_ddr2_256mb|v20_mddr_512mb)
@@ -79,6 +81,10 @@ case "$MODEL" in
 	wolsen,playgo|wolsen,pocketgo2v2)
 		HWVARIANT_DT="pocketgo2v2"
 		HWVARIANT_BL="rg350"
+		;;
+	wolsen,pocketgo2)
+		HWVARIANT_DT=$(echo $MODEL |cut -d',' -f2)
+		HWVARIANT_BL="v20_mddr_512mb"
 		;;
 	anbernic,rg350|anbernic,rg350m|ylm,rg350|ylm,rg350m|ylm,rg280m|ylm,rg280v|ylm,rg300x)
 		HWVARIANT_DT=$(echo $MODEL |cut -d',' -f2)
