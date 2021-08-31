@@ -1,0 +1,602 @@
+Date: Aug 20 10:26:00 2018
+
+From: d734c58666dd47cfb70ed6344634f5e919ddffad Jul 12 15:36:05 2019
+
+Subject: [PATCH] XRE-13937: Support the EventStream and Event in libdash
+
+	Added the support of EventStream and Event in libdash
+
+Source: COMCAST
+
+License: LGPL-2.1-or-later
+
+Upstream-Status: Pending
+
+Signed-off-by: Vinod Damodaran <vinod_damodaran@comcast.com>
+---
+
+diff --git a/libdash/include/IEvent.h b/libdash/include/IEvent.h
+new file mode 100644
+index 0000000..4483951
+--- /dev/null
++++ b/libdash/include/IEvent.h
+@@ -0,0 +1,51 @@
++/**
++ *  @class      dash::mpd::IEvent
++ *  @brief      This interface is needed for accessing the attributes and elements of the <b><tt>Event</tt></b> element
++ *              as specified in <em>ISO/IEC 23009-1, Part 1, 2014</em>, section 5.10.2, table 24
++ *  @details    Each EventStream consists of one or more Events.
++ *              <b><tt>Event</tt></b> elements are contained in a <b><tt>EventStream</tt></b> element.\n\n
++ *
++ */
++
++#ifndef IEVENTS_H_
++#define IEVENTS_H_
++
++#include "config.h"
++
++#include "IMPDElement.h"
++
++namespace dash
++{
++    namespace mpd
++    {
++        class IEvent : public virtual IMPDElement
++        {
++            public:
++                virtual ~IEvent(){}
++
++                /**
++                 *  Returns an integer that specifies the presentation time of the Event.\n
++                 *  The value of the presentation time in seconds is the division of the value of this attribute and the value of the \c \@timescale attribute.\n
++                 *  If not present, the value of the presentation time is 0.
++                 *  @return     an unsigned integer
++                 */
++                virtual const uint64_t                    GetPresentationTime   ()  const = 0;
++
++                /**
++                 *  Returns an integer that specifies the duration of the Event.\n
++                 *  The value of the duration in seconds is the division of the value of this attribute and the value of the \c \@timescale attribute.\n
++                 *  If not present, the value of the duration is unknown.
++                 *  @return     an unsigned integer
++                 */
++                virtual const uint32_t                    GetDuration           ()  const = 0;
++
++                /**
++                 *  Returns an integer that specifies the identifier of the Event.\n
++                 *  @return     an unsigned integer
++                 */
++                virtual const uint32_t                    GetId                 ()  const = 0;
++        };
++    }
++}
++
++#endif /* IEVENTS_H_ */
+diff --git a/libdash/include/IEventStream.h b/libdash/include/IEventStream.h
+new file mode 100644
+index 0000000..95f69a6
+--- /dev/null
++++ b/libdash/include/IEventStream.h
+@@ -0,0 +1,78 @@
++/**
++ *  @class      dash::mpd::IEventStream
++ *  @brief      This interface is needed for accessing the attributes and elements of the <b><tt>EventStream</tt></b> element
++ *              as specified in <em>ISO/IEC 23009-1, Part 1, 2014</em>, section 5.10, table 24
++ *  @details    Each Period consists of one or more EventStreams. An Adaptation Set is described by an <b><tt>EventStream</tt></b> element.
++ *              <b><tt>EventStream</tt></b> elements are contained in a <b><tt>Period</tt></b> element.\n\n
++ *              An EventStream contains one or more Events.
++ *  @see        dash::mpd::IDescriptor dash::mpd::IEvent
++ *              dash::mpd::IMPDElement
++ *
++ */
++
++#ifndef IEVENTSTREAM_H_
++#define IEVENTSTREAM_H_
++
++#include "config.h"
++
++#include "IMPDElement.h"
++#include "IEvent.h"
++
++namespace dash
++{
++    namespace mpd
++    {
++        class IEventStream : public virtual IMPDElement
++        {
++            public:
++                virtual ~IEventStream(){}
++
++                /**
++                 *  Returns a reference to a vector of pointers to dash::mpd::IEvent objects that specify the timed events appears in an EventStream.\n
++                 *  For more details refer to the description in section 5.10.2 of <em>ISO/IEC 23009-1, Part 1, 2014</em>.
++                 *  @return     a reference to a vector of pointers to dash::mpd::IEvent objects
++                 */
++                virtual const std::vector<IEvent *>&    GetEvents          ()  const = 0;
++
++
++                /**
++                 *  Returns a reference to a string that specifies a reference to external <tt><b>EventStream</b></tt> element.
++                 *  @return     a reference to a string
++                 */
++                virtual const std::string&              GetXlinkHref       ()  const = 0;
++
++                /**
++                 *  Returns a reference to a string that specifies the processing instructions, which can be either \c \"onLoad\" or \c \"onRequest\".
++                 *  @return     a reference to a string
++                 */
++                virtual const std::string&              GetXlinkActuate    ()  const = 0;
++
++                /**
++                 *  Returns a reference to a string that specifies a URI to identify the scheme. \n
++                 *  The semantics of this element are specific to the scheme specified by this attribute.
++                 *  The \c \@schemeIdUri may be a URN or URL. When a URL is used, it should also contain a month-date in the form
++                 *  mmyyyy; the assignment of the URL must have been authorized by the owner of the domain name in that URL on
++                 *  or very close to that date, to avoid problems when domain names change ownership.
++                 *  @return     a reference to a string
++                 */
++                virtual const std::string&              GetSchemeIdUri     () const = 0;
++
++                /**
++                 *  Returns a reference to a string that specifies the value for the descriptor element. \n
++                 *  The value space and semantics must be defined by the owners of the scheme identified in the \c \@schemeIdUri attribute.
++                 *  @return     a reference to a string
++                 */
++                virtual const std::string&              GetValue           () const = 0;
++
++                /**
++                 *  Returns an integer representing a timescale that specifies the timescale in units per seconds
++                 *  to be used for the derivation of different real-time duration values in the Segment Information.\n
++                 *  \b NOTE:  This may be any frequency but typically is the media clock frequency of one of the media streams (or a positive integer multiple thereof).
++                 *  @return     an unsigned integer
++                 */
++                virtual const uint32_t                  GetTimescale       () const = 0;
++        };
++    }
++}
++
++#endif /* IEVENTSTREAM_H_ */
+diff --git a/libdash/include/IPeriod.h b/libdash/include/IPeriod.h
+index 10ec924..4421a44 100644
+--- a/libdash/include/IPeriod.h
++++ b/libdash/include/IPeriod.h
+@@ -51,6 +51,7 @@
+ #include "ISegmentTemplate.h"
+ #include "IAdaptationSet.h"
+ #include "ISubset.h"
++#include "IEventStream.h"
+ 
+ namespace dash
+ {
+@@ -107,6 +108,12 @@ namespace dash
+                  */
+                 virtual const std::vector<ISubset *>&           GetSubsets              ()  const = 0;
+ 
++                /**
++                 *  Returns a reference to a vector of pointers to dash::mpd::IEventStream objects that specify EventStreams.\n
++                 *  For more details see section 5.10.2. of <em>ISO/IEC 23009-1, Part 1, 2014</em>.
++                 *  @return     a reference to a vector of pointers to dash::mpd::IEventStream objects
++                 */
++                virtual const std::vector<IEventStream *>&      GetEventStreams         ()  const = 0;
+                 /**
+                  *  Returns a reference to a string that specifies a reference to an external <tt><b>Period</b></tt> element.
+                  *  @return     a reference to a string
+@@ -153,4 +160,4 @@ namespace dash
+     }
+ }
+ 
+-#endif /* IPERIOD_H_ */
+\ No newline at end of file
++#endif /* IPERIOD_H_ */
+diff --git a/libdash/source/mpd/Event.cpp b/libdash/source/mpd/Event.cpp
+new file mode 100644
+index 0000000..d8b2e16
+--- /dev/null
++++ b/libdash/source/mpd/Event.cpp
+@@ -0,0 +1,49 @@
++/*
++ * Event.cpp
++ *****************************************************************************
++
++ *****************************************************************************/
++
++#include <cstdlib>
++#include "Event.h"
++
++using namespace dash::mpd;
++
++Event::Event    () :
++                    presentationTime(0),
++                    duration(0),
++                    id (0)
++{
++}
++Event::~Event   ()
++{
++}
++
++
++const uint64_t                    Event::GetPresentationTime   () const
++{
++	return this->presentationTime;
++}
++void                              Event::SetPresentationTime   (uint64_t presentationTime)
++{
++	this->presentationTime =  presentationTime;
++}
++
++const uint32_t                    Event::GetDuration           () const
++{
++	return this->duration;
++}
++void                              Event::SetDuration           (uint32_t duration)
++{
++	this->duration = duration;
++}
++
++const uint32_t                    Event::GetId                 () const
++{
++	return  this->id;
++}
++void                              Event::SetId                 (uint32_t id)
++{
++	this->id = id;
++}
++
+diff --git a/libdash/source/mpd/Event.h b/libdash/source/mpd/Event.h
+new file mode 100644
+index 0000000..402dd1c
+--- /dev/null
++++ b/libdash/source/mpd/Event.h
+@@ -0,0 +1,42 @@
++/*
++ * Event.h
++ *****************************************************************************
++
++ *****************************************************************************/
++
++#ifndef EVENT_H_
++#define EVENT_H_
++
++#include "config.h"
++
++#include "IEvent.h"
++#include "AbstractMPDElement.h"
++
++namespace dash
++{
++    namespace mpd
++    {
++        class Event : public IEvent, public AbstractMPDElement
++        {
++            public:
++                Event           ();
++                virtual ~Event  ();
++
++                const uint64_t                    GetPresentationTime   ()  const;
++                const uint32_t                    GetDuration           ()  const;
++                const uint32_t                    GetId                 ()  const;
++
++                void                              SetPresentationTime   (uint64_t presentationTime);
++                void                              SetDuration           (uint32_t duration);
++                void                              SetId                 (uint32_t id);
++
++            private:
++                uint64_t presentationTime;
++				uint32_t duration;
++                uint32_t id;
++
++        };
++    }
++}
++
++#endif /* EVENT_H_ */
+diff --git a/libdash/source/mpd/EventStream.cpp b/libdash/source/mpd/EventStream.cpp
+new file mode 100644
+index 0000000..ebddbc1
+--- /dev/null
++++ b/libdash/source/mpd/EventStream.cpp
+@@ -0,0 +1,78 @@
++/*
++ * EventStream.cpp
++ *****************************************************************************
++
++ *****************************************************************************/
++
++#include "EventStream.h"
++#include <cstdlib>
++
++using namespace dash::mpd;
++
++EventStream::EventStream    () :
++                    xlinkHref(""),
++                    xlinkActuate("onRequest"),
++                    schemeIdUri (""),
++                    value       (""),
++                    timescale(1)
++{
++}
++EventStream::~EventStream   ()
++{
++    for(size_t i = 0; i < this->events.size(); i++)
++        delete(this->events.at(i));
++}
++
++const std::vector<IEvent *>&    EventStream::GetEvents      ()  const
++{
++    return (std::vector<IEvent *> &) this->events;
++}
++void                            EventStream::AddEvent       (IEvent *event)
++{
++    this->events.push_back(event);
++}
++
++const std::string&              EventStream::GetXlinkHref   ()  const
++{
++    return this->xlinkHref;
++}
++void                            EventStream::SetXlinkHref   (const std::string& xlinkHref)
++{
++    this->xlinkHref = xlinkHref;
++}
++
++const std::string&              EventStream::GetXlinkActuate()  const
++{
++    return this->xlinkActuate;
++}
++void                            EventStream::SetXlinkActuate(const std::string& xlinkActuate)
++{
++    this->xlinkActuate = xlinkActuate;
++}
++
++const std::string&              EventStream::GetSchemeIdUri ()  const
++{
++    return this->schemeIdUri;
++}
++void                            EventStream::SetSchemeIdUri (const std::string& schemeIdUri)
++{
++    this->schemeIdUri = schemeIdUri;
++}
++
++const std::string&              EventStream::GetValue       ()  const
++{
++    return this->value;
++}
++void                            EventStream::SetValue       (const std::string& value)
++{
++    this->value = value;
++}
++
++const uint32_t                        EventStream::GetTimescale   ()  const
++{
++    return this->timescale;
++}
++void                            EventStream::SetTimescale   (uint32_t timescale)
++{
++    this->timescale = timescale;
++}
+diff --git a/libdash/source/mpd/EventStream.h b/libdash/source/mpd/EventStream.h
+new file mode 100644
+index 0000000..ff218e2
+--- /dev/null
++++ b/libdash/source/mpd/EventStream.h
+@@ -0,0 +1,50 @@
++/*
++ * EventStream.h
++ *****************************************************************************
++
++ *****************************************************************************/
++
++#ifndef EVENTSTREAM_H_
++#define EVENTSTREAM_H_
++
++#include "config.h"
++
++#include "IEventStream.h"
++#include "AbstractMPDElement.h"
++
++namespace dash
++{
++    namespace mpd
++    {
++        class EventStream : public IEventStream, public AbstractMPDElement
++        {
++            public:
++                EventStream           ();
++                virtual ~EventStream  ();
++
++                const std::vector<IEvent *>&    GetEvents       ()  const;
++                const std::string&              GetXlinkHref    ()  const;
++                const std::string&              GetXlinkActuate ()  const;
++                const std::string&              GetSchemeIdUri  ()  const;
++                const std::string&              GetValue        ()  const;
++                const uint32_t                  GetTimescale    ()  const;
++
++                void    AddEvent                (IEvent *event);
++                void    SetXlinkHref            (const std::string& xlinkHref);
++                void    SetXlinkActuate         (const std::string& xlinkActuate);
++                void    SetSchemeIdUri          (const std::string& schemeIdUri);
++                void    SetValue                (const std::string& value);
++                void    SetTimescale            (uint32_t timescale);
++
++            private:
++                std::vector<IEvent *>  events;
++                std::string            xlinkHref;
++                std::string            xlinkActuate;
++                std::string            schemeIdUri;
++                std::string            value;
++                uint32_t               timescale;
++        };
++    }
++}
++
++#endif /* EVENTSTREAM_H_ */
+diff --git a/libdash/source/mpd/Period.cpp b/libdash/source/mpd/Period.cpp
+index 291677e..7c108f0 100644
+--- a/libdash/source/mpd/Period.cpp
++++ b/libdash/source/mpd/Period.cpp
+@@ -33,6 +33,8 @@ Period::~Period ()
+         delete(this->adaptationSets.at(i));
+     for(size_t i = 0; i < this->subsets.size(); i++)
+         delete(this->subsets.at(i));
++    for(size_t i = 0; i < this->eventStreams.size(); i++)
++        delete(this->eventStreams.at(i));
+     delete(segmentBase);
+     delete(segmentList);
+     delete(segmentTemplate);
+@@ -87,6 +89,15 @@ void                                Period::AddSubset               (Subset *sub
+ {
+     this->subsets.push_back(subset);
+ }
++const std::vector<IEventStream *>&  Period::GetEventStreams   ()  const
++{
++    return (std::vector<IEventStream *> &) this->eventStreams;
++}
++void                                Period::AddEventStream   (EventStream *eventStream)
++{
++    this->eventStreams.push_back(eventStream);
++}
++
+ const std::string&                  Period::GetXlinkHref            ()  const
+ {
+     return this->xlinkHref;
+diff --git a/libdash/source/mpd/Period.h b/libdash/source/mpd/Period.h
+index 9e97f0c..38aa69a 100644
+--- a/libdash/source/mpd/Period.h
++++ b/libdash/source/mpd/Period.h
+@@ -22,6 +22,7 @@
+ #include "SegmentList.h"
+ #include "SegmentTemplate.h"
+ #include "AbstractMPDElement.h"
++#include "EventStream.h"
+ 
+ namespace dash
+ {
+@@ -39,6 +40,7 @@ namespace dash
+                 ISegmentTemplate*                       GetSegmentTemplate      ()  const;
+                 const std::vector<IAdaptationSet *>&    GetAdaptationSets       ()  const;
+                 const std::vector<ISubset *>&           GetSubsets              ()  const;
++                const std::vector<IEventStream *>&      GetEventStreams          ()  const;
+                 const std::string&                      GetXlinkHref            ()  const;
+                 const std::string&                      GetXlinkActuate         ()  const;
+                 const std::string&                      GetId                   ()  const;
+@@ -52,6 +54,7 @@ namespace dash
+                 void    SetSegmentTemplate          (SegmentTemplate *segmentTemplate);
+                 void    AddAdaptationSet            (AdaptationSet *AdaptationSet);
+                 void    AddSubset                   (Subset *subset);
++                void    AddEventStream              (EventStream *eventStream);
+                 void    SetXlinkHref                (const std::string& xlinkHref);
+                 void    SetXlinkActuate             (const std::string& xlinkActuate);
+                 void    SetId                       (const std::string& id);
+@@ -66,6 +69,7 @@ namespace dash
+                 SegmentTemplate                 *segmentTemplate;
+                 std::vector<AdaptationSet *>    adaptationSets;
+                 std::vector<Subset *>           subsets;
++                std::vector<EventStream *>      eventStreams;
+                 std::string                     xlinkHref;
+                 std::string                     xlinkActuate;
+                 std::string                     id;
+diff --git a/libdash/source/xml/Node.cpp b/libdash/source/xml/Node.cpp
+index 7e63a0f..dc76c09 100644
+--- a/libdash/source/xml/Node.cpp
++++ b/libdash/source/xml/Node.cpp
+@@ -584,6 +584,65 @@ dash::mpd::Subset*                          Node::ToSubset              ()  cons
+     subset->AddRawAttributes(this->attributes);
+     return subset;
+ }
++dash::mpd::EventStream*                    Node::ToEventStream              ()  const
++{
++    dash::mpd::EventStream *eventStream = new dash::mpd::EventStream();
++    std::vector<Node *> subNodes = this->GetSubNodes();
++
++    if (this->HasAttribute("xlink:href"))
++    {
++        eventStream->SetXlinkHref(this->GetAttributeValue("xlink:href"));
++    }
++    if (this->HasAttribute("xlink:actuate"))
++    {
++        eventStream->SetXlinkActuate(this->GetAttributeValue("xlink:actuate"));
++    }
++    if (this->HasAttribute("schemeIdUri"))
++    {
++        eventStream->SetSchemeIdUri(this->GetAttributeValue("schemeIdUri"));
++    }
++    if (this->HasAttribute("value"))
++    {
++        eventStream->SetValue(this->GetAttributeValue("value"));
++    }
++    if (this->HasAttribute("timescale"))
++    {
++        eventStream->SetTimescale(strtoul(this->GetAttributeValue("timescale").c_str(), NULL, 10));
++    }
++
++    for(size_t i = 0; i < subNodes.size(); i++)
++    {
++        if (subNodes.at(i)->GetName() == "Event")
++        {
++            eventStream->AddEvent(subNodes.at(i)->ToEvent());
++        }
++    }
++    return eventStream;
++}
++dash::mpd::Event*                    Node::ToEvent              ()  const
++{
++    dash::mpd::Event *event = new dash::mpd::Event();
++    std::vector<Node *> subNodes = this->GetSubNodes();
++
++    if (this->HasAttribute("presentationTime"))
++    {
++        event->SetPresentationTime(strtoull(this->GetAttributeValue("presentationTime").c_str(), NULL, 10));
++    }
++    if (this->HasAttribute("duration"))
++    {
++        event->SetDuration(strtoul(this->GetAttributeValue("duration").c_str(), NULL, 10));
++    }
++    if (this->HasAttribute("id"))
++    {
++        event->SetId(strtoul(this->GetAttributeValue("id").c_str(), NULL, 10));
++    }
++
++    for(size_t i = 0; i < subNodes.size(); i++)
++    {
++        event->AddAdditionalSubNode((xml::INode *) new Node(*(subNodes.at(i))));
++    }
++    return event;
++}
+ dash::mpd::Period*                          Node::ToPeriod              ()  const
+ {
+     dash::mpd::Period *period = new dash::mpd::Period();
+@@ -646,6 +705,11 @@ dash::mpd::Period*                          Node::ToPeriod              ()  cons
+             period->SetSegmentTemplate(subNodes.at(i)->ToSegmentTemplate());
+             continue;
+         }
++        if (subNodes.at(i)->GetName() == "EventStream")
++        {
++            period->AddEventStream(subNodes.at(i)->ToEventStream());
++            continue;
++        }
+         period->AddAdditionalSubNode((xml::INode *) new Node(*(subNodes.at(i))));
+     }    
+ 
+diff --git a/libdash/source/xml/Node.h b/libdash/source/xml/Node.h
+index 552d83e..9b607d9 100644
+--- a/libdash/source/xml/Node.h
++++ b/libdash/source/xml/Node.h
+@@ -35,6 +35,8 @@
+ #include "../mpd/SegmentURL.h"
+ #include "../mpd/SubRepresentation.h"
+ #include "../mpd/Subset.h"
++#include "../mpd/EventStream.h"
++#include "../mpd/Event.h"
+ #include "../mpd/URLType.h"
+ #include "IHTTPTransaction.h"
+ 
+@@ -89,6 +91,8 @@ namespace dash
+                 dash::mpd::SegmentURL*                      ToSegmentURL            ()  const;
+                 dash::mpd::SubRepresentation*               ToSubRepresentation     ()  const;
+                 dash::mpd::Subset*                          ToSubset                ()  const;
++                dash::mpd::EventStream*                     ToEventStream           ()  const;
++                dash::mpd::Event*                           ToEvent                 ()  const;
+                 dash::mpd::URLType*                         ToURLType               (dash::metrics::HTTPTransactionType transActType)  const;
+ 
+                 std::vector<Node *>                 subNodes;

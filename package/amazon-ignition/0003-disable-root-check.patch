@@ -1,0 +1,15 @@
+--- a/thunder/amp-thunder/libs/Hawaii/HawaiiBindings/src/hawaii/bindings/PosixBindings.cpp	2021-02-08 19:26:57.000000000 +0530
++++ b/thunder/amp-thunder/libs/Hawaii/HawaiiBindings/src/hawaii/bindings/PosixBindings.cpp	2021-06-09 14:19:45.824472091 +0530
+@@ -159,10 +159,11 @@ extern "C"
+ 		 * as ROOT on linux systems. This fails the initialisation of Bindings 
+ 		 * if the user id of the calling process is 0.
+ 		 */
++#if 0 //Disable the ROOT userid check 		
+ 		uid_t userId = getuid();
+ 		core::Log::write( core::Log::kInfo, "Initialising Bindings with User Id: %d\n", userId );
+ 		AMP_VALIDATE( userId != 0, ::error::kError_InvalidUserPermissions );
+-
++#endif
+ 		if ( !posixBindings )
+ 		{
+ 			posixBindings = new hawaii::bindings::PosixBindings();

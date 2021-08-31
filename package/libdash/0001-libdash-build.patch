@@ -1,0 +1,30 @@
+Date: Dec 01 12:53:59 2017
+
+From: 2acbcd5987db000184aa1aaa2a35f0ccc610dd74 Dec 01 12:53:59 2017
+
+Subject: [PATCH] XRE-12414 - [AAMP] Address OSS/Licensing Issues
+
+	Add libdash recipe.
+
+Source: COMCAST
+
+License: LGPL-2.1-or-later
+
+Upstream-Status: Pending
+
+Signed-off-by: Christo Joseph <Christo_Joseph@comcast.com>
+---
+
+diff --git a/libdash/CMakeLists.txt b/libdash/CMakeLists.txt
+index aeae94f..a78ddb5 100644
+--- a/libdash/CMakeLists.txt
++++ b/libdash/CMakeLists.txt
+@@ -11,4 +11,6 @@ include_directories(include)
+ file(GLOB_RECURSE libdash_source *.cpp)
+ 
+ add_library(dash SHARED ${libdash_source})
+-target_link_libraries(dash ${CURL_LIBRARIES} ${ZLIB_LIBRARIES} ${LIBXML2_LIBRARIES})
+\ No newline at end of file
++target_link_libraries(dash ${CURL_LIBRARIES} ${ZLIB_LIBRARIES} ${LIBXML2_LIBRARIES} -pthread)
++install(TARGETS dash DESTINATION lib)
++

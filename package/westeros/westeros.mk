@@ -3,7 +3,7 @@
 # westeros
 #
 ################################################################################
-WESTEROS_VERSION = a13ce42ba4fbbae371411f63bd7dd65dccf15a0c
+WESTEROS_VERSION = 23a65d1fa48f6d82d51c3cb6cd08bf403f95187d
 WESTEROS_SITE_METHOD = git
 WESTEROS_SITE = git://github.com/rdkcmf/westeros
 WESTEROS_INSTALL_STAGING = YES
@@ -15,9 +15,11 @@ WESTEROS_CONF_OPTS = \
 	--prefix=/usr/ \
 	--enable-rendergl=yes \
 	--enable-sbprotocol=yes \
+	--enable-ldbprotocol=yes \
 	--enable-xdgv5=yes \
 	--enable-app=yes \
-	--enable-test=yes
+	--enable-test=yes \
+	--enable-player=yes
 
 ifeq ($(BR2_PACKAGE_WESTEROS_ESSOS), y)
 WESTEROS_CONF_OPTS += \
@@ -42,7 +44,8 @@ else ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
 		$(BCM_REFSW_MAKE_ENV)	
 	WESTEROS_DEPENDENCIES += wayland-egl-bnxs bcm-refsw
 else ifeq ($(BR2_PACKAGE_LIBDRM),y)
-	WESTEROS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -DWESTEROS_PLATFORM_DRM -I${STAGING_DIR}/usr/include/interface/vmcs_host/linux"
+	WESTEROS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -DWESTEROS_PLATFORM_DRM"
+	WESTEROS_CONF_ENV += LDFLAGS="-L$(@D)/.libs -lEGL -lGLESv2"
 endif # BR2_PACKAGE_WESTEROS_SOC_RPI
 
 ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
@@ -60,16 +63,24 @@ WESTEROS_PRE_CONFIGURE_HOOKS += WESTEROS_RUN_AUTORECONF
 define WESTEROS_BUILD_CMDS
 	SCANNER_TOOL=${HOST_DIR}/usr/bin/wayland-scanner \
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/protocol
+	SCANNER_TOOL=${HOST_DIR}/usr/bin/wayland-scanner \
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/linux-dmabuf/protocol
 	$(WESTEROS_MAKE_OPTS) \
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) $(WESTEROS_LDFLAGS)
 endef
 
 define WESTEROS_INSTALL_STAGING_CMDS
-	$(MAKE1) -C $(@D) DESTDIR=$(STAGING_DIR) install
+	cp -a $(@D)/.libs/*.so* $(STAGING_DIR)/usr/lib/
+	cp -a $(@D)/*.pc $(STAGING_DIR)/usr/lib/pkgconfig/
+	cp -a $(@D)/*.h $(STAGING_DIR)/usr/include
+	cp -a $(@D)/protocol/*.h $(STAGING_DIR)/usr/include
+	cp -a $(@D)/essos/.libs/*.so* $(STAGING_DIR)/usr/lib/
+	cp -a $(@D)/essos/essos*.h $(STAGING_DIR)/usr/include
 endef
 
 define WESTEROS_INSTALL_TARGET_CMDS
-	$(MAKE1) -C $(@D) DESTDIR=$(TARGET_DIR) install
+	cp -a $(@D)/.libs/*.so* $(TARGET_DIR)/usr/lib/
+	cp -a $(@D)/essos/.libs/*.so* $(TARGET_DIR)/usr/lib/
 endef
 
 $(eval $(autotools-package))

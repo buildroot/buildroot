@@ -1,0 +1,55 @@
+config BR2_PACKAGE_AMAZON_IGNITION
+	select BR2_PACKAGE_JPEG
+	select BR2_PACKAGE_ZLIB
+	select BR2_PACKAGE_LIBCURL
+	select BR2_PACKAGE_LIBPNG
+	select BR2_PACKAGE_WPEFRAMEWORK
+	select BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
+        select BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY
+	bool "amazon-ignition"
+	help
+	  Amazon project
+
+if BR2_PACKAGE_AMAZON_IGNITION
+menu "Options"
+
+choice
+	prompt "Build type"
+	default BR2_PACKAGE_AMAZON_IGNITION_BUILD_TYPE_RELEASE
+	help
+	  Select the build type to use.
+	  
+	config BR2_PACKAGE_AMAZON_IGNITION_BUILD_TYPE_RELEASE
+		bool "release"
+	config BR2_PACKAGE_AMAZON_IGNITION_BUILD_TYPE_RELEASE_DEBUG
+		bool "release with debug symbols"
+	config BR2_PACKAGE_AMAZON_IGNITION_BUILD_TYPE_DEBUG
+		bool "debug"
+	config BR2_PACKAGE_AMAZON_IGNITION_BUILD_TYPE_TESTING
+		bool "testing"
+endchoice
+
+config BR2_PACKAGE_AMAZON_IGNITION_BUILD_SHARED_LIBRARY_LAUNCHER
+	bool "shared library launcher"
+	default "n"
+
+config BR2_PACKAGE_AMAZON_IGNITION_DEVELOPER_MODE
+	bool "developer mode"
+	default "n"
+	help
+        Enable this to use info and debug traces
+
+config BR2_PACKAGE_AMAZON_IGNITION_BUILD_RUBY
+       bool "Build RUBY Player"
+       default "y"
+
+config BR2_PACKAGE_AMAZON_IGNITION_BUILD_TESTS
+	bool "include tests"
+	select BR2_PACKAGE_AMAZON_IGNITION_DEVELOPER_MODE
+	default "n"
+	
+config BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH
+	string "install path"
+	default "/usr/share/ignition/"
+endmenu
+endif

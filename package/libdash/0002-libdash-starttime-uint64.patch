@@ -1,0 +1,109 @@
+Date: Jan 03 00:10:42 2018
+
+From: 71e34c1ee3f1822841872b5d41a740a5da97f548 Jan 03 00:12:39 2018
+
+Subject: [PATCH] XRE-12541 : DASH linear freeze with long long timeline values
+
+	Libdash was using strtoul for parsing timeline
+	This invalid timevalues when the timeline values were greater than 4294967296
+	which resulted in Linear channel freeze.
+	Changed libdash to parse and return uint64 instead of uint32.
+
+Source: COMCAST
+
+License: LGPL-2.1-or-later
+
+Upstream-Status: Pending
+
+Signed-off-by: Akhil Babu <Akhil_Babu2@comcast.com>
+---
+
+diff --git a/libdash/include/ITimeline.h b/libdash/include/ITimeline.h
+index e1f8e95..b2ac965 100644
+--- a/libdash/include/ITimeline.h
++++ b/libdash/include/ITimeline.h
+@@ -43,7 +43,7 @@ namespace dash
+                  *  \em StartTime corresponds to the \c \@t attribute.
+                  *  @return     an unsigned integer
+                  */
+-                virtual uint32_t    GetStartTime    ()  const = 0;
++                virtual uint64_t    GetStartTime    ()  const = 0;
+ 
+                 /**
+                  *  Returns the integer that specifies the Segment duration, in units of the value of the \c \@timescale. \n\n
+@@ -63,4 +63,4 @@ namespace dash
+     }
+ }
+ 
+-#endif /* ITIMELINE_H_ */
+\ No newline at end of file
++#endif /* ITIMELINE_H_ */
+diff --git a/libdash/source/mpd/Timeline.cpp b/libdash/source/mpd/Timeline.cpp
+index 624c658..155a78a 100644
+--- a/libdash/source/mpd/Timeline.cpp
++++ b/libdash/source/mpd/Timeline.cpp
+@@ -23,11 +23,11 @@ Timeline::~Timeline   ()
+ {
+ }
+ 
+-uint32_t    Timeline::GetStartTime     ()  const
++uint64_t    Timeline::GetStartTime     ()  const
+ {
+     return this->startTime;
+ }
+-void        Timeline::SetStartTime     (uint32_t startTime) 
++void        Timeline::SetStartTime     (uint64_t startTime)
+ {
+     this->startTime = startTime;
+ }
+@@ -46,4 +46,4 @@ uint32_t    Timeline::GetRepeatCount   ()  const
+ void        Timeline::SetRepeatCount   (uint32_t repeatCount)
+ {
+     this->repeatCount = repeatCount;
+-}
+\ No newline at end of file
++}
+diff --git a/libdash/source/mpd/Timeline.h b/libdash/source/mpd/Timeline.h
+index 3caa331..b0fb440 100644
+--- a/libdash/source/mpd/Timeline.h
++++ b/libdash/source/mpd/Timeline.h
+@@ -27,16 +27,16 @@ namespace dash
+                 Timeline             ();
+                 virtual ~Timeline    ();
+ 
+-                uint32_t    GetStartTime    ()  const;
++                uint64_t    GetStartTime    ()  const;
+                 uint32_t    GetDuration     ()  const;
+                 uint32_t    GetRepeatCount  ()  const;
+ 
+-                void    SetStartTime    (uint32_t startTime);
++                void    SetStartTime    (uint64_t startTime);
+                 void    SetDuration     (uint32_t duration);
+                 void    SetRepeatCount  (uint32_t repeatCount);
+ 
+             private:
+-                uint32_t    startTime;
++                uint64_t    startTime;
+                 uint32_t    duration;
+                 uint32_t    repeatCount;
+         };
+diff --git a/libdash/source/xml/Node.cpp b/libdash/source/xml/Node.cpp
+index 9164332..bc9e9bd 100644
+--- a/libdash/source/xml/Node.cpp
++++ b/libdash/source/xml/Node.cpp
+@@ -209,7 +209,7 @@ dash::mpd::Timeline*                        Node::ToTimeline            ()  cons
+ 
+     if (this->HasAttribute("t"))
+     {
+-        timeline->SetStartTime(strtoul(this->GetAttributeValue("t").c_str(), NULL, 10));
++        timeline->SetStartTime(strtoull(this->GetAttributeValue("t").c_str(), NULL, 10));
+     }
+     if (this->HasAttribute("d"))
+     {
+@@ -1022,4 +1022,4 @@ void                                        Node::SetCommonValuesForMSeg(dash::m
+         }
+     }
+ 
+-}
+\ No newline at end of file
++}

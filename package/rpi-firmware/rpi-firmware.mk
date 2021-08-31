@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ifneq ($(BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4),y)
+ifneq ($(BR2_PACKAGE_LIBDRM),y)
 RPI_FIRMWARE_VERSION = 01ecfd2ba2b7cf3a2f4aa75ada895ee4a3e729f5
 else
 RPI_FIRMWARE_VERSION = d016a6eb01c8c7326a89cb42809fed2a21525de5

@@ -1,0 +1,92 @@
+diff -auNrd a/BSEAV/lib/gpu/vc5/platform/nexus/default_nexus.h b/BSEAV/lib/gpu/vc5/platform/nexus/default_nexus.h
+--- a/BSEAV/lib/gpu/vc5/platform/nexus/default_nexus.h	2018-06-12 16:02:39.735042007 -0400
++++ b/BSEAV/lib/gpu/vc5/platform/nexus/default_nexus.h	2018-06-12 16:04:12.486221929 -0400
+@@ -48,6 +48,17 @@
+ 
+ typedef void *NXPL_PlatformHandle;
+ 
++#ifdef USE_WAYLAND_EGL
++typedef void (*WEGLReferenceBuffer)( void *userData, void *buffer, void *bufferCtx );
++typedef void (*WEGLDispatchPending)( void *userData, bool force );
++typedef void (*WEGLUpdateFence)( void *context, void *nativeWindow );
++typedef struct _WEGLNativeWindowListener
++{
++   WEGLReferenceBuffer referenceBuffer;
++   WEGLDispatchPending dispatchPending;
++} WEGLNativeWindowListener;
++#endif
++
+ /* WARNING, deprecated */
+ typedef struct
+ {
+@@ -117,6 +128,12 @@
+ /* Generate a default BEGL_PixmapInfoEXT */
+ NXPL_EXPORT void NXPL_GetDefaultPixmapInfoEXT(struct BEGL_PixmapInfoEXT *info);
+ 
++#ifdef USE_WAYLAND_EGL
++NXPL_EXPORT void NXPL_AttachNativeWindow( void *nativeWin, void *userData, WEGLNativeWindowListener *listener);
++NXPL_EXPORT void NXPL_ResizeNativeWindow( void *nativeWin, int width, int height, int dx, int dy );
++NXPL_EXPORT void NXPL_ReleaseBuffer( void *nativeWin );
++#endif
++
+ NXPL_EXPORT bool NXPL_CreateCompatiblePixmapEXT(NXPL_PlatformHandle handle, void **pixmapHandle,
+                                                 NEXUS_SURFACEHANDLE *surface, struct BEGL_PixmapInfoEXT *info)
+    __attribute__((deprecated("Use Nexus surface with 3D compatibility flag instead")));
+diff -auNrd a/BSEAV/lib/gpu/vc5/platform/nexus/display_nexus.c b/BSEAV/lib/gpu/vc5/platform/nexus/display_nexus.c
+--- a/BSEAV/lib/gpu/vc5/platform/nexus/display_nexus.c	2018-06-12 16:02:39.735042007 -0400
++++ b/BSEAV/lib/gpu/vc5/platform/nexus/display_nexus.c	2018-06-12 16:02:52.243067245 -0400
+@@ -759,3 +759,34 @@
+    if (nexusSurface)
+          NEXUS_Surface_Destroy(nexusSurface);
+ }
++
++#ifdef USE_WAYLAND_EGL
++void NXPL_AttachNativeWindow( void *nativeWin, void *userData, WEGLNativeWindowListener *listener)
++{
++   NXPL_NativeWindow *nw = (NXPL_NativeWindow*)nativeWin;
++   nw->userData= userData;
++   nw->referenceBuffer= listener->referenceBuffer;
++   nw->dispatchPending= listener->dispatchPending;
++}
++
++void NXPL_ResizeNativeWindow( void *nativeWin, int width, int height, int dx, int dy )
++{
++   NXPL_NativeWindow *nw = (NXPL_NativeWindow*)nativeWin;
++   nw->windowInfo.x += dx;
++   nw->windowInfo.y += dy;
++   nw->windowInfo.width = width;
++   nw->windowInfo.height = height;
++}
++
++void NXPL_ReleaseBuffer( void *nativeWin )
++{
++   NXPL_NativeWindow *nw = (NXPL_NativeWindow*)nativeWin;
++
++   //sem_post(&nw->numBuffers);   
++
++   if ( nw->updateFence )
++   {
++      nw->updateFence( nw->fenceContext, nw );
++   }
++}
++#endif
+diff -auNrd a/BSEAV/lib/gpu/vc5/platform/nexus/private_nexus.h b/BSEAV/lib/gpu/vc5/platform/nexus/private_nexus.h
+--- a/BSEAV/lib/gpu/vc5/platform/nexus/private_nexus.h	2018-06-12 16:02:39.735042007 -0400
++++ b/BSEAV/lib/gpu/vc5/platform/nexus/private_nexus.h	2018-06-12 16:02:52.243067245 -0400
+@@ -45,6 +45,16 @@
+ #endif
+ #endif /* NXPL_PLATFORM_EXCLUSIVE */
+ 
++#ifdef USE_WAYLAND_EGL
++   void                       *userData;
++   WEGLReferenceBuffer        referenceBuffer;
++   WEGLDispatchPending        dispatchPending;
++   WEGLUpdateFence            updateFence;
++   void                       *fenceContext;
++   unsigned long long         lastFrameTime;
++   pthread_mutex_t            mutex;
++#endif
++
+ } NXPL_NativeWindow;
+ 
+ typedef struct

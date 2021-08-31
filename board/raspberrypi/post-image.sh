@@ -93,12 +93,14 @@ __EOF__
 		;;
 		--add-vc4-fkms-v3d-overlay)
 		# Enable VC4 overlay
-		echo "Adding 'dtoverlay=vc4-fkms-v3d' to config.txt."
-		cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+		if ! grep -qE '^dtoverlay=vc4-fkms-v3d' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+			echo "Adding 'dtoverlay=vc4-fkms-v3d' to config.txt."
+			cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
 
-# Add VC4 GPU support on top of dispmanx
+# Add VC4 GPU support
 dtoverlay=vc4-fkms-v3d
 __EOF__
+		fi
 		;;
 		--add-vc4-kms-v3d-overlay)
 		# Enable VC4 overlay
@@ -201,6 +203,16 @@ __EOF__
                         fi
                 fi
                 ;;
+		--add-dtparam-audio)
+		if ! grep -qE '^dtparam=audio=on' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+			echo "Adding 'dtparam=audio=on' to config.txt."
+			cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+
+# Enable onboard ALSA audio
+dtparam=audio=on
+__EOF__
+		fi
+		;;
 	esac
 
 done

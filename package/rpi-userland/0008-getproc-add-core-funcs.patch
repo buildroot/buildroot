@@ -1,0 +1,125 @@
+--- a/interface/khronos/egl/egl_client_get_proc.c	2020-01-14 23:03:59.000000000 +0530
++++ b/interface/khronos/egl/egl_client_get_proc.c	2021-06-08 15:39:22.943341684 +0530
+@@ -70,13 +70,119 @@ extern "C" {
+ 
+ EGLAPI void EGLAPIENTRY (* eglGetProcAddress(const char *procname))(void)
+ {
+-/* Don't mangle the rest */
+-#include "interface/khronos/common/khrn_client_unmangle.h"
+-#include "interface/khronos/include/EGL/eglext.h"
+ 
+    /* TODO: any other functions we need to return here?    */
+    if(!procname) return (void(*)(void)) NULL;
+ 
++   if (!strcmp(procname, "glViewport"))
++      return (void(*)(void))glViewport;
++   if (!strcmp(procname, "glGetString"))
++      return (void(*)(void))glGetString;
++   if (!strcmp(procname, "glClear")) 
++      return (void(*)(void))glClear;
++   if (!strcmp(procname, "glClearColor")) 
++      return (void(*)(void))glClearColor;
++   if (!strcmp(procname, "glGetError")) 
++      return (void(*)(void))glGetError;
++   if (!strcmp(procname, "glCreateShader")) 
++      return (void(*)(void))glCreateShader;
++   if (!strcmp(procname, "glDeleteShader")) 
++      return (void(*)(void))glDeleteShader;
++   if (!strcmp(procname, "glShaderSource")) 
++      return (void(*)(void))glShaderSource;
++   if (!strcmp(procname, "glCompileShader")) 
++      return (void(*)(void))glCompileShader;
++   if (!strcmp(procname, "glGetShaderiv")) 
++      return (void(*)(void))glGetShaderiv;
++   if (!strcmp(procname, "glGetShaderInfoLog")) 
++      return (void(*)(void))glGetShaderInfoLog;
++   if (!strcmp(procname, "glCreateProgram")) 
++      return (void(*)(void))glCreateProgram;
++   if (!strcmp(procname, "glAttachShader")) 
++      return (void(*)(void))glAttachShader;
++   if (!strcmp(procname, "glDetachShader")) 
++      return (void(*)(void))glDetachShader;
++   if (!strcmp(procname, "glLinkProgram")) 
++      return (void(*)(void))glLinkProgram;
++   if (!strcmp(procname, "glUseProgram")) 
++      return (void(*)(void))glUseProgram;
++   if (!strcmp(procname, "glDeleteProgram")) 
++      return (void(*)(void))glDeleteProgram;
++   if (!strcmp(procname, "glGenTextures")) 
++      return (void(*)(void))glGenTextures;
++   if (!strcmp(procname, "glUniform1i")) 
++      return (void(*)(void))glUniform1i;
++   if (!strcmp(procname, "glUniform1f")) 
++      return (void(*)(void))glUniform1f;
++   if (!strcmp(procname, "glUniform2f")) 
++      return (void(*)(void))glUniform2f;
++   if (!strcmp(procname, "glUniform4f")) 
++      return (void(*)(void))glUniform4f;
++   if (!strcmp(procname, "glUniform4fv")) 
++      return (void(*)(void))glUniform4fv;
++   if (!strcmp(procname, "glTexImage2D")) 
++      return (void(*)(void))glTexImage2D;
++   if (!strcmp(procname, "glTexSubImage2D")) 
++      return (void(*)(void))glTexSubImage2D;
++   if (!strcmp(procname, "glBindTexture")) 
++      return (void(*)(void))glBindTexture;
++   if (!strcmp(procname, "glTexParameteri")) 
++      return (void(*)(void))glTexParameteri;
++   if (!strcmp(procname, "glPixelStorei")) 
++      return (void(*)(void))glPixelStorei;
++   if (!strcmp(procname, "glDeleteTextures")) 
++      return (void(*)(void))glDeleteTextures;
++   if (!strcmp(procname, "glBindFramebuffer")) 
++      return (void(*)(void))glBindFramebuffer;
++   if (!strcmp(procname, "glFramebufferTexture2D")) 
++      return (void(*)(void))glFramebufferTexture2D;
++   if (!strcmp(procname, "glGenFramebuffers")) 
++      return (void(*)(void))glGenFramebuffers;
++   if (!strcmp(procname, "glGenBuffers")) 
++      return (void(*)(void))glGenBuffers;
++   if (!strcmp(procname, "glDeleteFramebuffers")) 
++      return (void(*)(void))glDeleteFramebuffers;
++   if (!strcmp(procname, "glCheckFramebufferStatus")) 
++      return (void(*)(void))glCheckFramebufferStatus;
++   if (!strcmp(procname, "glBindBuffer")) 
++      return (void(*)(void))glBindBuffer;
++   if (!strcmp(procname, "glGetBooleanv")) 
++      return (void(*)(void))glGetBooleanv;
++   if (!strcmp(procname, "glGetIntegerv")) 
++      return (void(*)(void))glGetIntegerv;
++   if (!strcmp(procname, "glDisable")) 
++      return (void(*)(void))glDisable;
++   if (!strcmp(procname, "glEnable")) 
++      return (void(*)(void))glEnable;
++   if (!strcmp(procname, "glDeleteBuffers")) 
++      return (void(*)(void))glDeleteBuffers ;
++   if (!strcmp(procname, "glScissor")) 
++      return (void(*)(void))glScissor;
++   if (!strcmp(procname, "glEnableVertexAttribArray")) 
++      return (void(*)(void))glEnableVertexAttribArray;
++   if (!strcmp(procname, "glVertexAttribPointer")) 
++      return (void(*)(void))glVertexAttribPointer;
++   if (!strcmp(procname, "glBufferData")) 
++      return (void(*)(void))glBufferData ;
++   if (!strcmp(procname, "glGetAttribLocation")) 
++      return (void(*)(void))glGetAttribLocation;
++   if (!strcmp(procname, "glGetUniformLocation")) 
++      return (void(*)(void))glGetUniformLocation;
++   if (!strcmp(procname, "glBlendFunc")) 
++      return (void(*)(void))glBlendFunc;
++   if (!strcmp(procname, "glBlendFuncSeparate")) 
++      return (void(*)(void))glBlendFuncSeparate;
++   if (!strcmp(procname, "glDrawArrays")) 
++      return (void(*)(void))glDrawArrays;
++   if (!strcmp(procname, "glReadPixels")) 
++      return (void(*)(void))glReadPixels;
++   if (!strcmp(procname, "glFlush")) 
++      return (void(*)(void))glFlush;
++   
++/* Don't mangle the rest */
++#include "interface/khronos/common/khrn_client_unmangle.h"
++#include "interface/khronos/include/EGL/eglext.h"
++
+ #if EGL_KHR_image
+    if (!strcmp(procname, "eglCreateImageKHR"))
+       return (void(*)(void))eglCreateImageKHR;

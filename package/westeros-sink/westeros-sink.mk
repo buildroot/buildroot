@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WESTEROS_SINK_VERSION = a13ce42ba4fbbae371411f63bd7dd65dccf15a0c
+WESTEROS_SINK_VERSION = 23a65d1fa48f6d82d51c3cb6cd08bf403f95187d
 WESTEROS_SINK_SITE_METHOD = git
 WESTEROS_SINK_SITE = git://github.com/rdkcmf/westeros
 WESTEROS_SINK_INSTALL_STAGING = YES
@@ -37,6 +37,11 @@ else ifeq ($(BR2_PACKAGE_HAS_NEXUS),y)
 			CFLAGS="$(TARGET_CFLAGS) -I${STAGING_DIR}/usr/include/refsw -I${STAGING_DIR}/usr/include/refsw/bseav" \
 			CXXFLAGS="$(TARGET_CXXFLAGS) -I${STAGING_DIR}/usr/include/refsw -I${STAGING_DIR}/usr/include/refsw/bseav"
 	WESTEROS_SINK_MAKE_ENV += PKG_CONFIG_SYSROOT_DIR=${STAGING_DIR}
+else ifeq ($(BR2_PACKAGE_LIBDRM),y)
+	WESTEROS_SINK_SUBDIR = v4l2/westeros-sink
+	WESTEROS_SINK_DEPENDENCIES += gstreamer1
+	WESTEROS_SINK_CONF_OPTS += --enable-gstreamer1=yes CFLAGS="$(TARGET_CFLAGS) -x c++"
+	export STAGING_INCDIR=${STAGING_DIR}/usr/include
 endif
 
 define WESTEROS_SINK_RUN_AUTOCONF

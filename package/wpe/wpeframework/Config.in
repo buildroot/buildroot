@@ -269,6 +269,10 @@ config BR2_PACKAGE_WPEFRAMEWORK_VIRTUALINPUT
       If the dynamic uinput system can not be used for security reasons, this
       allows for relaying keys to plugins
 
+config BR2_PACKAGE_WPEFRAMEWORK_INSTALL_INITD_DEPRECATED
+    bool "Init.d script from package config (deprecated)"
+    help
+      Install thunder config file from buildroot package config folder"
 endmenu
 
 menu "Plugins"

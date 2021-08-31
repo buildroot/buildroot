@@ -1,0 +1,11 @@
+diff -ruN netflix52.orig/partner/gibbon/graphics/wpeframework/gibbon_graphics.cmake netflix52/partner/gibbon/graphics/wpeframework/gibbon_graphics.cmake
+--- netflix52.orig/partner/gibbon/graphics/wpeframework/gibbon_graphics.cmake	2021-06-07 16:57:41.000000000 +0530
++++ netflix52/partner/gibbon/graphics/wpeframework/gibbon_graphics.cmake	2021-07-06 01:52:51.161273709 +0530
+@@ -63,6 +63,7 @@
+ #endif()
+ if(GIBBON_GRAPHICS_GL_WSYS STREQUAL "egl")
+     message("    + Using GL WSYS: ${GIBBON_GRAPHICS_GL_WSYS}")
++    add_definitions(-DEGL_NO_X11)
+ else()
+     message(FATAL_ERROR "Unknown GL WSYS: ${GIBBON_GRAPHICS_GL_WSYS}")
+ endif()

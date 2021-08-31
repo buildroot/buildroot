@@ -1,0 +1,98 @@
+Date: Aug 20 10:26:00 2018
+
+From: 4241bead9abc64a7ad7538d92dfcc1efad689b95 Aug 20 10:26:00 2018
+
+Subject: [PATCH] XRE-13378 - [libdash] Support presentationTimeOffset more than 32 bit long.
+	
+	Change presentationTimeOffset to uint64_t and use strtoll instead of strtol.
+
+Source: COMCAST
+
+License: LGPL-2.1-or-later
+
+Upstream-Status: Pending
+
+Signed-off-by: Christo Joseph <Christo_Joseph@comcast.com>
+---
+
+Index: libdash/libdash/source/mpd/SegmentBase.h
+===================================================================
+--- libdash.orig/libdash/source/mpd/SegmentBase.h
++++ libdash/libdash/source/mpd/SegmentBase.h
+@@ -31,14 +31,14 @@ namespace dash
+                 const IURLType*     GetInitialization           ()  const;
+                 const IURLType*     GetRepresentationIndex      ()  const;
+                 uint32_t            GetTimescale                ()  const;
+-                uint32_t            GetPresentationTimeOffset   ()  const;
++                uint64_t            GetPresentationTimeOffset   ()  const;
+                 const std::string&  GetIndexRange               ()  const;
+                 bool                HasIndexRangeExact          ()  const;
+ 
+                 void    SetInitialization           (URLType *initialization);
+                 void    SetRepresentationIndex      (URLType *representationIndex);
+                 void    SetTimescale                (uint32_t timescale);
+-                void    SetPresentationTimeOffset   (uint32_t presentationTimeOffset);
++                void    SetPresentationTimeOffset   (uint64_t presentationTimeOffset);
+                 void    SetIndexRange               (const std::string& indexRange);
+                 void    SetIndexRangeExact          (bool indexRangeExact);
+ 
+@@ -46,7 +46,7 @@ namespace dash
+                 URLType     *initialization;
+                 URLType     *representationIndex;
+                 uint32_t    timescale;
+-                uint32_t    presentationTimeOffset;
++                uint64_t    presentationTimeOffset;
+                 std::string indexRange;
+                 bool        indexRangeExact;
+         };
+Index: libdash/libdash/include/ISegmentBase.h
+===================================================================
+--- libdash.orig/libdash/include/ISegmentBase.h
++++ libdash/libdash/include/ISegmentBase.h
+@@ -63,7 +63,7 @@ namespace dash
+                  *  If not present on any level, the value of the presentation time offset is 0. 
+                  *  @return     an unsigned integer
+                  */
+-                virtual uint32_t            GetPresentationTimeOffset   ()  const = 0;
++                virtual uint64_t            GetPresentationTimeOffset   ()  const = 0;
+ 
+                 /**
+                  *  Returns a string that specifies the byte range that contains the Segment Index in all Media Segments of the Representation.\n
+@@ -83,4 +83,4 @@ namespace dash
+     }
+ }
+ 
+-#endif /* ISEGMENTBASE_H_ */
+\ No newline at end of file
++#endif /* ISEGMENTBASE_H_ */
+Index: libdash/libdash/source/mpd/SegmentBase.cpp
+===================================================================
+--- libdash.orig/libdash/source/mpd/SegmentBase.cpp
++++ libdash/libdash/source/mpd/SegmentBase.cpp
+@@ -52,11 +52,11 @@ void                SegmentBase::SetTime
+ {
+     this->timescale = timescale;
+ }
+-uint32_t            SegmentBase::GetPresentationTimeOffset  ()  const
++uint64_t            SegmentBase::GetPresentationTimeOffset  ()  const
+ {
+     return this->presentationTimeOffset;
+ }
+-void                SegmentBase::SetPresentationTimeOffset  (uint32_t presentationTimeOffset)
++void                SegmentBase::SetPresentationTimeOffset  (uint64_t presentationTimeOffset)
+ {
+     this->presentationTimeOffset = presentationTimeOffset;
+ }
+Index: libdash/libdash/source/xml/Node.cpp
+===================================================================
+--- libdash.orig/libdash/source/xml/Node.cpp
++++ libdash/libdash/source/xml/Node.cpp
+@@ -968,7 +968,7 @@ void
+     }
+     if (this->HasAttribute("presentationTimeOffset"))
+     {
+-        object.SetPresentationTimeOffset(strtoul(this->GetAttributeValue("presentationTimeOffset").c_str(), NULL, 10));
++        object.SetPresentationTimeOffset(strtoull(this->GetAttributeValue("presentationTimeOffset").c_str(), NULL, 10));
+     }
+     if (this->HasAttribute("indexRange"))
+     {

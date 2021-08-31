@@ -145,6 +145,7 @@ config BR2_PACKAGE_WPEWEBKIT_ENABLE_MEDIA_SOURCE
 config BR2_PACKAGE_WPEWEBKIT_USE_ENCRYPTED_MEDIA
 	bool "Encrypted Media Extensions (EME)"
 	default y
+        depends on !BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DASH_MPD_NO_INIT_DATA_XML_PARSING
 	help
 	  Use Enable Encrypted Media Extensions (EME) API.
 

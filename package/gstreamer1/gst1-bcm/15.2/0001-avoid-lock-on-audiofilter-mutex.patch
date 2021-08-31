@@ -1,0 +1,127 @@
+diff --git a/audfilter/src/gst_brcm_aud_filter.c b/audfilter/src/gst_brcm_aud_filter.c
+index 556cbd6..bfc00a9 100755
+--- a/audfilter/src/gst_brcm_aud_filter.c
++++ b/audfilter/src/gst_brcm_aud_filter.c
+@@ -975,73 +975,66 @@ static gboolean gst_brcm_aud_filter_sink_set_caps(GstPad *pad, GstCaps *caps) {
+ 
+     BDBG_MSG(("Sink Pad Set Caps %s", caps_str));
+ 
+-    if( gst_brcm_aud_filter_parse_caps(filter, caps) == TRUE)
+-    {
+-    structure = gst_caps_get_structure(caps,0);
+-    mime = gst_structure_get_name(structure);
+-    BDBG_MSG(("%s: Mime %s",__FUNCTION__,mime));
++    if( gst_brcm_aud_filter_parse_caps(filter, caps) == TRUE) {
++        structure = gst_caps_get_structure(caps,0);
++        mime = gst_structure_get_name(structure);
++        BDBG_MSG(("%s: Mime %s",__FUNCTION__,mime));
+ 
+-    if(!(strcmp("audio/mpeg", mime))) {
+-        const gchar *format_val = gst_value_serialize(gst_structure_get_value(structure, "stream-format"));
++        if(!(strcmp("audio/mpeg", mime))) {
++            const gchar *format_val = gst_value_serialize(gst_structure_get_value(structure, "stream-format"));
+ 
+ #ifndef STATIC_PADS
+-        BDBG_MSG(("****************************************************************************"));
+-        filter->audio_codec = baudio_format_aac;
+-        create_dynamic_pads(filter);
+-        BDBG_MSG(("****************************************************************************"));
+-#endif
+-#ifdef USE_GST1
+-        GstCaps *caps_audio = gst_caps_new_empty_simple("audio/x-brcm-raaga");
+-        GstEvent *caps_event = gst_event_new_caps(caps_audio);
+-        gst_pad_push_event(filter->src_pad, caps_event);
+-        gst_caps_unref(caps_audio);
++            BDBG_MSG(("****************************************************************************"));
++            filter->audio_codec = baudio_format_aac;
++            create_dynamic_pads(filter);
++            BDBG_MSG(("****************************************************************************"));
+ #endif
+-    
+-        mpeg_ver_gval = gst_structure_get_value(structure, "mpegversion");
+-        if (mpeg_ver_gval != NULL) {
+-            mpeg_ver = g_value_get_int(mpeg_ver_gval);
+-        }
++            mpeg_ver_gval = gst_structure_get_value(structure, "mpegversion");
++            if (mpeg_ver_gval != NULL) {
++                mpeg_ver = g_value_get_int(mpeg_ver_gval);
++            }
+ 
+-        cdata = gst_structure_get_value(structure,"codec_data");	    
+-        if ((cdata != NULL) && (mpeg_ver == 4)){
+-            filter->audio_codec = baudio_format_aac;
+-            codec_data = gst_value_serialize(cdata);
+-            buf_size = gst_brcm_p_aac_header((void *)codec_data, (void *)buf_config);
++            cdata = gst_structure_get_value(structure,"codec_data");
++            if ((cdata != NULL) && (mpeg_ver == 4)){
++                filter->audio_codec = baudio_format_aac;
++                codec_data = gst_value_serialize(cdata);
++                buf_size = gst_brcm_p_aac_header((void *)codec_data, (void *)buf_config);
+ 
+-            if((filter->codec_data_size !=0) && (filter->codec_data !=NULL)) {
+-                g_free (filter->codec_data);
+-                filter->codec_data = NULL;
+-                filter->codec_data_size =0;
+-            }
+-            filter->codec_data = g_malloc(buf_size);
+-            if (filter->codec_data != NULL) {
+-                filter->codec_data_size = buf_size;
+-                memcpy (filter->codec_data, buf_config, buf_size);
++                if((filter->codec_data_size !=0) && (filter->codec_data !=NULL)) {
++                    g_free (filter->codec_data);
++                    filter->codec_data = NULL;
++                    filter->codec_data_size =0;
++                }
++                filter->codec_data = g_malloc(buf_size);
++                if (filter->codec_data != NULL) {
++                    filter->codec_data_size = buf_size;
++                    memcpy (filter->codec_data, buf_config, buf_size);
++                }
++            } else if ((mpeg_ver == 2) && format_val && g_strrstr(format_val, "adts")) {
++                filter->audio_codec =  baudio_format_aac; 
++            } else if ((mpeg_ver == 1) || (mpeg_ver == 2)){
++                const GValue *layer_val = gst_structure_get_value(structure, "layer");
++                int layer = 3; /* Default to MP3 */
++                if (layer_val != NULL)
++                    layer = g_value_get_int(layer_val);
++                filter->audio_codec = (layer == 3) ? baudio_format_mp3 : baudio_format_mpeg;
+             }
+-        }
+-        else if ((mpeg_ver == 2) && format_val && g_strrstr(format_val, "adts")) {
+-            filter->audio_codec =  baudio_format_aac; 
+-        } 
+-        else if ((mpeg_ver == 1) || (mpeg_ver == 2)){
+-            const GValue *layer_val = gst_structure_get_value(structure, "layer");
+-            int layer = 3; /* Default to MP3 */
+-            if (layer_val != NULL)
+-                layer = g_value_get_int(layer_val);
+-
+-            filter->audio_codec = (layer == 3) ? baudio_format_mp3 : baudio_format_mpeg;
+-        }
+-  }
+-           
+-          else {
+ 
+-      
++#ifdef USE_GST1
++            BRCM_G_MUTEX_UNLOCK(filter->mutex);
++            GstCaps *caps_audio = gst_caps_new_empty_simple("audio/x-brcm-raaga");
++            GstEvent *caps_event = gst_event_new_caps(caps_audio);
++            gst_pad_push_event(filter->src_pad, caps_event);
++            gst_caps_unref(caps_audio);
++            BRCM_G_MUTEX_LOCK(filter->mutex);
++#endif
++
++        } else {
+ #ifndef STATIC_PADS
+         create_dynamic_pads(filter);    
+ #endif
+-  } 
+-
+-  }
+-
++        }
++    }
+          
+     BRCM_G_MUTEX_UNLOCK(filter->mutex);
+ #ifndef USE_GST1
