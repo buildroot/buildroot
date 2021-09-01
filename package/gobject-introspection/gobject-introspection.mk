@@ -133,6 +133,12 @@ define GOBJECT_INTROSPECTION_INSTALL_WRAPPERS
 
 	$(SED) "s%typelibdir=.*%typelibdir=\$${prefix}/lib/girepository-1.0%g" \
 		$(STAGING_DIR)/usr/lib/pkgconfig/gobject-introspection-1.0.pc
+
+	# Set includedir to $(STAGING_DIR)/usr/share/gir-1.0 instead of . or
+	# g-ir-compiler won't find .gir files resulting in a build failure for
+	# autotools-based based programs
+	$(SED) "s%includedir=.%includedir=$(STAGING_DIR)/usr/share/gir-1.0%g" \
+		$(STAGING_DIR)/usr/share/gobject-introspection-1.0/Makefile.introspection
 endef
 GOBJECT_INTROSPECTION_POST_INSTALL_STAGING_HOOKS += GOBJECT_INTROSPECTION_INSTALL_WRAPPERS
 
