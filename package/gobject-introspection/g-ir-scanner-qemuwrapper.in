@@ -8,6 +8,7 @@ GOI_LIBRARY_PATH="${GIR_EXTRA_LIBS_PATH:+${GIR_EXTRA_LIBS_PATH}:}.libs:$(dirname
 # which may then get deleted (or their dependencies) and potentially segfault
 GIO_MODULE_DIR="$(dirname "$0")/../lib/gio/modules-dummy" \
 @QEMU_USER@ -r @TOOLCHAIN_HEADERS_VERSION@ \
+    @QEMU_USERMODE_ARGS@ \
     -L "$(dirname "$0")/../../" \
     -E LD_LIBRARY_PATH="${GOI_LIBRARY_PATH}" \
     "$@"
