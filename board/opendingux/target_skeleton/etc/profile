@@ -1,6 +1,7 @@
 export PAGER='/bin/less'
 export EDITOR='/bin/nano'
 export PATH=/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+export MODEL="$(sed -n 's/\(.*\)ingenic.*/\1/p' /sys/firmware/devicetree/base/compatible)"
 
 if [ "$PS1" ]; then
 	if [ "`id -u`" -eq 0 ]; then
