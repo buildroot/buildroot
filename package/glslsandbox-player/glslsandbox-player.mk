@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GLSLSANDBOX_PLAYER_VERSION = 2019.08.23
+GLSLSANDBOX_PLAYER_VERSION = 2021.08.24
 GLSLSANDBOX_PLAYER_SITE = $(call github,jolivain,glslsandbox-player,v$(GLSLSANDBOX_PLAYER_VERSION))
 GLSLSANDBOX_PLAYER_AUTORECONF = YES
 GLSLSANDBOX_PLAYER_DEPENDENCIES = libegl libgles host-pkgconf
