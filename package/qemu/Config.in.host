@@ -73,6 +73,10 @@ config BR2_PACKAGE_HOST_QEMU_LINUX_USER_MODE
 	  the running host kernel, you may run into invalid system
 	  calls, which may yield surprising effects.
 
+config BR2_PACKAGE_HOST_QEMU_USER_MODE_ARGS
+	string
+	default "-cpu Nehalem,check=false" if BR2_x86_corei7
+
 config BR2_PACKAGE_HOST_QEMU_VDE2
 	bool "VDE2 support"
 	help
