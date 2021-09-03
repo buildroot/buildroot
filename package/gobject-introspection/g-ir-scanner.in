@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # These environment variables are empty by default, and as such ccompiler.py
 # defaults to either using the system tools (CC, CXX, and CPP) or leaving
@@ -15,8 +15,8 @@ export LDFLAGS="${LDFLAGS:-@TARGET_LDFLAGS@}"
 
 export GI_SCANNER_DISABLE_CACHE=1
 
-${HOST_DIR}/bin/g-ir-scanner \
---lib-dirs-envvar=GIR_EXTRA_LIBS_PATH \
---use-binary-wrapper=$(dirname $0)/g-ir-scanner-qemuwrapper \
---use-ldd-wrapper=$(dirname $0)/g-ir-scanner-lddwrapper \
---add-include-path=$(dirname $0)/../share/gir-1.0 "$@"
+"${HOST_DIR}"/bin/g-ir-scanner \
+    --lib-dirs-envvar=GIR_EXTRA_LIBS_PATH \
+    --use-binary-wrapper="$(dirname "$0")"/g-ir-scanner-qemuwrapper \
+    --use-ldd-wrapper="$(dirname "$0")"/g-ir-scanner-lddwrapper \
+    --add-include-path="$(dirname "$0")"/../share/gir-1.0 "$@"
