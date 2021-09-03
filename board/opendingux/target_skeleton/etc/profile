@@ -1,9 +1,6 @@
 export PAGER='/bin/less'
 export EDITOR='/bin/nano'
-
 export PATH=/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
-
-for each in $(cat /etc/environment) ; do export $each; done
 
 if [ "$PS1" ]; then
 	if [ "`id -u`" -eq 0 ]; then
@@ -13,6 +10,10 @@ if [ "$PS1" ]; then
 	fi
 fi
 
+set -o allexport
+
+. /etc/environment
+
 # Source configuration files from /etc/profile.d
 for i in /etc/profile.d/*.sh ; do
 	if [ -r "$i" ]; then
@@ -20,3 +21,4 @@ for i in /etc/profile.d/*.sh ; do
 	fi
 done
 unset i
+set +o allexport
