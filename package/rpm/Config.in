@@ -19,3 +19,18 @@ config BR2_PACKAGE_RPM
 	  The RPM Package Manager (RPM).
 
 	  http://www.rpm.org/
+
+if BR2_PACKAGE_RPM
+
+comment "rpm2archive support needs a toolchain w/ wchar"
+	depends on !BR2_USE_WCHAR
+
+config BR2_PACKAGE_RPM_RPM2ARCHIVE
+	bool "rpm2archive command"
+	default y
+	depends on BR2_USE_WCHAR
+	select BR2_PACKAGE_LIBARCHIVE
+	help
+	  Enable rpm2archive
+
+endif

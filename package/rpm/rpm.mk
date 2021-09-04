@@ -73,13 +73,6 @@ else
 RPM_CONF_OPTS += --without-libintl-prefix
 endif
 
-ifeq ($(BR2_PACKAGE_LIBARCHIVE),y)
-RPM_DEPENDENCIES += libarchive
-RPM_CONF_OPTS += --with-archive
-else
-RPM_CONF_OPTS += --without-archive
-endif
-
 ifeq ($(BR2_PACKAGE_LIBSELINUX),y)
 RPM_DEPENDENCIES += libselinux
 RPM_CONF_OPTS += --with-selinux
@@ -99,6 +92,13 @@ RPM_DEPENDENCIES += zstd
 RPM_CONF_OPTS += --enable-zstd
 else
 RPM_CONF_OPTS += --disable-zstd
+endif
+
+ifeq ($(BR2_PACKAGE_RPM_RPM2ARCHIVE),y)
+RPM_DEPENDENCIES += libarchive
+RPM_CONF_OPTS += --with-archive
+else
+RPM_CONF_OPTS += --without-archive
 endif
 
 # ac_cv_prog_cc_c99: RPM uses non-standard GCC extensions (ex. `asm`).
