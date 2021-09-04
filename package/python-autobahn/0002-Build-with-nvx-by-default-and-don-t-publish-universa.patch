@@ -1,0 +1,60 @@
+From 1e3162bab59cbc2f7cf8b9ef6cadf55ee273c1d8 Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Thu, 22 Jul 2021 06:56:51 -0600
+Subject: [PATCH] Build with nvx by default and don't publish universal wheel.
+ (#1493)
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[james.hilliard1@gmail.com: backport from upstream commit
+a35f22eeaafca7568f1deb35c4a1b82ae78f77d4]
+---
+ Makefile                       | 8 ++++----
+ autobahn/nvx/_utf8validator.py | 7 ++++++-
+ setup.py                       | 7 +------
+ 3 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/autobahn/nvx/_utf8validator.py b/autobahn/nvx/_utf8validator.py
+index e72fc872..34393356 100644
+--- a/autobahn/nvx/_utf8validator.py
++++ b/autobahn/nvx/_utf8validator.py
+@@ -44,13 +44,18 @@ ffi.cdef("""
+     int nvx_utf8vld_get_impl(void* utf8vld);
+ """)
+ 
++optional = True
++if 'AUTOBAHN_USE_NVX' in os.environ and os.environ['AUTOBAHN_USE_NVX'] in ['1', 'true']:
++    optional = False
++
+ with open(os.path.join(os.path.dirname(__file__), '_utf8validator.c')) as fd:
+     c_source = fd.read()
+     ffi.set_source(
+         "_nvx_utf8validator",
+         c_source,
+         libraries=[],
+-        extra_compile_args=['-std=c99', '-Wall', '-Wno-strict-prototypes', '-O3', '-march=native']
++        extra_compile_args=['-std=c99', '-Wall', '-Wno-strict-prototypes', '-O3', '-march=native'],
++        optional=optional
+     )
+ 
+ 
+diff --git a/setup.py b/setup.py
+index f27006da..4889a39e 100644
+--- a/setup.py
++++ b/setup.py
+@@ -110,12 +110,7 @@ extras_require_nvx = [
+ 
+ # cffi based extension modules to build, currently only NVX
+ cffi_modules = []
+-if 'AUTOBAHN_USE_NVX' in os.environ:
+-    # FIXME: building this extension will make the wheel
+-    # produced no longer universal (as in "autobahn-18.4.1-py2.py3-none-any.whl").
+-    # on the other hand, I don't know how to selectively include this
+-    # based on the install flavor the user has chosen (eg pip install autobahn[nvx]
+-    # should make the following be included)
++if 'AUTOBAHN_USE_NVX' not in os.environ or os.environ['AUTOBAHN_USE_NVX'] not in ['0', 'false']:
+     cffi_modules.append('autobahn/nvx/_utf8validator.py:ffi')
+ 
+ extras_require_xbr = [
+-- 
+2.25.1
+

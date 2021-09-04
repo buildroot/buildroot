@@ -6,6 +6,7 @@ config BR2_PACKAGE_SUPERTUX
 	depends on BR2_PACKAGE_XORG7 # libglew, SDL2 OpenGL (GLX)
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_6 # C++14
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # openal
+	depends on BR2_TOOLCHAIN_SUPPORTS_ALWAYS_LOCKFREE_ATOMIC_INTS # boost-filesystem
 	depends on BR2_USE_MMU # SDL2 OpenGL (GLX)
 	depends on !BR2_STATIC_LIBS # SDL2
 	depends on BR2_USE_WCHAR # Boost
@@ -36,6 +37,7 @@ comment "supertux needs OpenGL and a toolchain w/ C++, gcc >= 6, NPTL, dynamic l
 	depends on BR2_PACKAGE_OPENAL_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_XORG7
 	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_SUPPORTS_ALWAYS_LOCKFREE_ATOMIC_INTS
 	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_PACKAGE_HAS_LIBGL || \
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_6 || !BR2_TOOLCHAIN_HAS_THREADS_NPTL || \
 		BR2_STATIC_LIBS || !BR2_USE_WCHAR

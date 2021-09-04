@@ -1,0 +1,33 @@
+From bfb066419f288764edbade1e27e93a5dda59a5f4 Mon Sep 17 00:00:00 2001
+From: Aleksander Morgado <aleksander@aleksander.es>
+Date: Fri, 6 Aug 2021 10:32:22 +0200
+Subject: [PATCH] build,meson: fix introspection option
+
+Using -Dintrospection=false would actually not disable it. There is no
+longer an "auto" option for the introspection support, it will be
+either enabled or disabled depending on what the user asks
+for (default enabled).
+
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ meson.build | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index b25bca57..d28e5601 100644
+--- a/meson.build
++++ b/meson.build
+@@ -218,7 +218,10 @@ version_conf.set10('QMI_QRTR_SUPPORTED', enable_qrtr)
+ version_conf.set10('QMI_RMNET_SUPPORTED', enable_rmnet)
+
+ # introspection support
+-enable_gir = dependency('gobject-introspection-1.0', version: '>= 0.9.6', required: get_option('introspection')).found()
++enable_gir = get_option('introspection')
++if enable_gir
++  dependency('gobject-introspection-1.0', version: '>= 0.9.6')
++endif
+
+ random_number = qmi_minor_version + meson.version().split('.').get(1).to_int()
+
+--
+2.17.0

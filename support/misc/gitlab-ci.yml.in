@@ -26,20 +26,24 @@
         paths:
             - .config
 
+.run_make: &run_make
+    |
+      make O=${OUTPUT_DIR} > >(tee build.log |grep '>>>') 2>&1 || {
+          echo 'Failed build last output'
+          tail -200 build.log
+          exit 1
+      }
+
 .defconfig_base:
     before_script:
         - DEFCONFIG_NAME=${CI_JOB_NAME}
+        - OUTPUT_DIR=output
     script:
         - echo "Configure Buildroot for ${DEFCONFIG_NAME}"
         - make ${DEFCONFIG_NAME}
         - ./support/scripts/check-dotconfig.py .config ./configs/${DEFCONFIG_NAME}
         - echo 'Build buildroot'
-        - |
-            make > >(tee build.log |grep '>>>') 2>&1 || {
-                echo 'Failed build last output'
-                tail -200 build.log
-                exit 1
-            }
+        - *run_make
         - |
             ./support/scripts/boot-qemu-image.py "${DEFCONFIG_NAME}" > >(tee runtime-test.log) 2>&1 || {
                 echo 'Failed runtime test last output'
@@ -76,3 +80,25 @@
             - test-output/*/.config
             - test-output/*/images/*
 
+.test_pkg:
+    stage: build
+    before_script:
+        - OUTPUT_DIR=${CI_JOB_NAME}
+    script:
+        - echo "Configure Buildroot for ${OUTPUT_DIR}"
+        - make O=${OUTPUT_DIR} syncconfig
+        - make O=${OUTPUT_DIR} savedefconfig
+        - echo 'Build buildroot'
+        - *run_make
+    needs:
+        - pipeline: $PARENT_PIPELINE_ID
+          job: generate-gitlab-ci-yml
+    artifacts:
+        when: always
+        expire_in: 2 weeks
+        paths:
+            - build.log
+            - br-test-pkg/*/.config
+            - br-test-pkg/*/defconfig
+            - br-test-pkg/*/build/build-time.log
+            - br-test-pkg/*/build/packages-file-list*.txt

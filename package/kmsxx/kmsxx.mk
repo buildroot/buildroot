@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-KMSXX_VERSION = 548905611c130ea9d31929a0caf7a198d8bac462
+KMSXX_VERSION = 824bbb1f4cd062d66b457faca50f904b34dfd96c
 KMSXX_SITE = $(call github,tomba,kmsxx,$(KMSXX_VERSION))
 KMSXX_LICENSE = MPL-2.0
 KMSXX_LICENSE_FILES = LICENSE
@@ -14,14 +14,7 @@ KMSXX_CONF_OPTS = \
 	-Dkmscube=false \
 	-Dpykms=disabled \
 	-Domap=disabled \
-	-Duse-system-fmt=true \
-	-Duse-system-pybind11=true
-
-ifeq ($(BR2_STATIC_LIBS),y)
-KMSXX_CONF_OPTS += -Dstatic-libc=true
-else
-KMSXX_CONF_OPTS += -Dstatic-libc=false
-endif
+	-Dsystem-pybind11=enabled
 
 ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_85180),y)
 KMSXX_CXXFLAGS += $(TARGET_CXXFLAGS) -O0

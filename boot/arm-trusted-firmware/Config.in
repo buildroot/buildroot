@@ -68,6 +68,15 @@ config BR2_TARGET_ARM_TRUSTED_FIRMWARE_PLATFORM
 	help
 	  Target plaform to build for.
 
+config BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_DTS_PATH
+	string "Device Tree Source file paths"
+	help
+	  Space-separated list of paths to device tree source files
+	  that will be copied to fdts/ before starting the build.
+
+	  To use this device tree source file, the ATF configuration
+	  file must refer to it.
+
 config BR2_TARGET_ARM_TRUSTED_FIRMWARE_FIP
 	bool "Build FIP image"
 	help

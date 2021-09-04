@@ -4,10 +4,11 @@
 #
 ################################################################################
 
-VUEJS_VERSION = 3.0.5
+VUEJS_VERSION = 3.1.5
 VUEJS_SOURCE = vue-$(VUEJS_VERSION).tgz
 VUEJS_SITE = https://registry.npmjs.org/vue/-
 VUEJS_LICENSE = MIT
+VUEJS_LICENSE_FILES = LICENSE
 
 # Install .min.js as .js
 define VUEJS_INSTALL_TARGET_CMDS

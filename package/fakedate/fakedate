@@ -19,15 +19,13 @@
 #
 
 DATE_BIN=false
-# Do not call `date' directly since it will produce an infinite recursion.
-# Instead, find path of true `date' binary.
-for P in `echo $PATH | tr ':' ' '`; do
-    if [ -x "$P/date" ]; then
-        if ! [ "$P/date" -ef "$0" ]; then
-            DATE_BIN="$P/date"
-            break;
-        fi
+# Do not call any 'date' before us in the PATH, or that would create
+# an infinite recursion.
+for date in $(which -a date |tac); do
+    if [ "${date}" -ef "$0" ]; then
+        break
     fi
+    DATE_BIN="${date}"
 done
 
 if [ -n "$SOURCE_DATE_EPOCH" ]; then

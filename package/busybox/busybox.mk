@@ -332,6 +332,12 @@ define BUSYBOX_INSTALL_TELNET_SCRIPT
 			$(TARGET_DIR)/etc/init.d/S50telnet ; \
 	fi
 endef
+define BUSYBOX_INSTALL_TELNET_SERVICE
+	if grep -q CONFIG_FEATURE_TELNETD_STANDALONE=y $(@D)/.config; then \
+		$(INSTALL) -D -m 0644 package/busybox/telnetd.service \
+			$(TARGET_DIR)/usr/lib/systemd/system/telnetd.service ; \
+	fi
+endef
 
 # Add /bin/{a,hu}sh to /etc/shells otherwise some login tools like dropbear
 # can reject the user connection. See man shells.
@@ -382,6 +388,10 @@ define BUSYBOX_INSTALL_INIT_OPENRC
 	$(BUSYBOX_INSTALL_LOGGING_SCRIPT)
 	$(BUSYBOX_INSTALL_WATCHDOG_SCRIPT)
 	$(BUSYBOX_INSTALL_TELNET_SCRIPT)
+endef
+
+define BUSYBOX_INSTALL_INIT_SYSTEMD
+	$(BUSYBOX_INSTALL_TELNET_SERVICE)
 endef
 
 define BUSYBOX_INSTALL_INIT_SYSV
