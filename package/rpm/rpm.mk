@@ -38,6 +38,13 @@ else
 RPM_CONF_OPTS += --without-acl
 endif
 
+ifeq ($(BR2_PACKAGE_AUDIT),y)
+RPM_DEPENDENCIES += audit
+RPM_CONF_OPTS += --with-audit
+else
+RPM_CONF_OPTS += --without-audit
+endif
+
 ifeq ($(BR2_PACKAGE_DBUS),y)
 RPM_DEPENDENCIES += dbus
 RPM_CONF_OPTS += --enable-plugins
