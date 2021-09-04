@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-RPM_VERSION_MAJOR = 4.16
-RPM_VERSION = $(RPM_VERSION_MAJOR).1.3
+RPM_VERSION_MAJOR = 4.17
+RPM_VERSION = $(RPM_VERSION_MAJOR).0
 RPM_SOURCE = rpm-$(RPM_VERSION).tar.bz2
 RPM_SITE = http://ftp.rpm.org/releases/rpm-$(RPM_VERSION_MAJOR).x
 RPM_DEPENDENCIES = \
@@ -13,6 +13,7 @@ RPM_DEPENDENCIES = \
 	$(if $(BR2_PACKAGE_BZIP2),bzip2) \
 	$(if $(BR2_PACKAGE_ELFUTILS),elfutils) \
 	file \
+	lua \
 	popt \
 	$(if $(BR2_PACKAGE_XZ),xz) \
 	zlib \
@@ -28,23 +29,13 @@ RPM_SELINUX_MODULES = rpm
 RPM_CONF_OPTS = \
 	--disable-python \
 	--disable-rpath \
-	--with-external-db \
-	--with-gnu-ld \
-	--without-hackingdocs \
-	--without-lua
+	--with-gnu-ld
 
 ifeq ($(BR2_PACKAGE_ACL),y)
 RPM_DEPENDENCIES += acl
 RPM_CONF_OPTS += --with-acl
 else
 RPM_CONF_OPTS += --without-acl
-endif
-
-ifeq ($(BR2_PACKAGE_BERKELEYDB),y)
-RPM_DEPENDENCIES += berkeleydb
-RPM_CONF_OPTS += --enable-bdb
-else
-RPM_CONF_OPTS += --disable-bdb
 endif
 
 ifeq ($(BR2_PACKAGE_DBUS),y)
@@ -64,14 +55,6 @@ endif
 ifeq ($(BR2_PACKAGE_LIBGCRYPT),y)
 RPM_DEPENDENCIES += libgcrypt
 RPM_CONF_OPTS += --with-crypto=libgcrypt
-else ifeq ($(BR2_PACKAGE_LIBNSS),y)
-RPM_DEPENDENCIES += libnss
-RPM_CONF_OPTS += --with-crypto=nss
-RPM_CFLAGS += -I$(STAGING_DIR)/usr/include/nss -I$(STAGING_DIR)/usr/include/nspr
-else ifeq ($(BR2_PACKAGE_BEECRYPT),y)
-RPM_DEPENDENCIES += beecrypt
-RPM_CONF_OPTS += --with-crypto=beecrypt
-RPM_CFLAGS += -I$(STAGING_DIR)/usr/include/beecrypt
 else
 RPM_DEPENDENCIES += openssl
 RPM_CONF_OPTS += --with-crypto=openssl
