@@ -113,8 +113,8 @@ class TestExt4(infra.basetest.BRTest):
         out = dumpe2fs_run(self.builddir, "rootfs.ext4")
         self.assertEqual(dumpe2fs_getprop(out, REVISION_PROP), "1 (dynamic)")
         self.assertEqual(dumpe2fs_getprop(out, BLOCKCNT_PROP), "16384")
-        # Yes there are 8 more inodes than requested
-        self.assertEqual(dumpe2fs_getprop(out, INODECNT_PROP), "3008")
+        # Yes there are 8 fewer inodes than requested
+        self.assertEqual(dumpe2fs_getprop(out, INODECNT_PROP), "2992")
         self.assertEqual(dumpe2fs_getprop(out, RESBLKCNT_PROP), "1638")
         self.assertIn("has_journal", dumpe2fs_getprop(out, FEATURES_PROP))
         self.assertIn("extent", dumpe2fs_getprop(out, FEATURES_PROP))
