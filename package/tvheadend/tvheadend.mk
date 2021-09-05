@@ -154,7 +154,7 @@ define TVHEADEND_CONFIGURE_CMDS
 			--arch="$(ARCH)" \
 			--cpu="$(GCC_TARGET_CPU)" \
 			--nowerror \
-			--python="$(HOST_DIR)/bin/python" \
+			--python="$(HOST_DIR)/bin/python3" \
 			--enable-dvbscan \
 			--enable-bundle \
 			--enable-pngquant \
