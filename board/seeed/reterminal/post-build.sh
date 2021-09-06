@@ -10,9 +10,6 @@ if [ -e ${TARGET_DIR}/etc/inittab ]; then
 tty1::respawn:/sbin/getty -L  tty1 0 vt100 # HDMI console' ${TARGET_DIR}/etc/inittab
 fi
 
-#copy the dtoverlay file
-cp ${BUILD_DIR}/linux-custom/arch/arm/boot/dts/overlays/reTerminal.dtbo ${BINARIES_DIR}/rpi-firmware/overlays/
-
 #modify the config.txt
 CFG_PATH=${BINARIES_DIR}/rpi-firmware/config.txt
 grep -q "^dtparam=i2c_arm=on$" $CFG_PATH || echo "dtparam=i2c_arm=on" >> $CFG_PATH
@@ -26,7 +23,7 @@ grep -q "^ignore_lcd=1$" $CFG_PATH || echo "ignore_lcd=1" >> $CFG_PATH
 grep -q "^dtoverlay=vc4-kms-v3d-pi4$" $CFG_PATH || echo "dtoverlay=vc4-kms-v3d-pi4" >> $CFG_PATH
 grep -q "^dtoverlay=i2c3,pins_4_5$" $CFG_PATH || echo "dtoverlay=i2c3,pins_4_5" >> $CFG_PATH
 grep -q "^gpio=13=pu$" $CFG_PATH || echo "gpio=13=pu" >> $CFG_PATH
-grep -q "^dtoverlay=reTerminal$" $CFG_PATH || echo "dtoverlay=reTerminal" >> $CFG_PATH
+grep -q "^dtoverlay=reTerminal,tp_rotate=1$" $CFG_PATH || echo "dtoverlay=reTerminal,tp_rotate=1" >> $CFG_PATH
 grep -q "^dtoverlay=miniuart-bt$" $CFG_PATH || echo "dtoverlay=miniuart-bt" >> $CFG_PATH
 
 #create dir /boot/
