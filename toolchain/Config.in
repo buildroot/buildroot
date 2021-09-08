@@ -186,13 +186,6 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_101737
 	bool
 	default y if BR2_sh4
 
-# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101952
-# ICE: on SH4: unaligned opcodes detected in executable segment.
-# This bug still exists in gcc = 11.1.0
-config BR2_TOOLCHAIN_HAS_GCC_BUG_101952
-	bool
-	default y if BR2_sh4
-
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101915
 # ICE: in extract_insn, at recog.c:2294 on microblaze.
 # This bug still exists in gcc = 11.1.0
@@ -204,6 +197,13 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_101915
 # ICE: on SH4: Segmentation fault signal terminated program cc1.
 # This bug still exists in gcc = 11.1.0
 config BR2_TOOLCHAIN_HAS_GCC_BUG_101916
+	bool
+	default y if BR2_sh4
+
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101952
+# ICE: on SH4: unaligned opcodes detected in executable segment.
+# This bug still exists in gcc = 11.1.0
+config BR2_TOOLCHAIN_HAS_GCC_BUG_101952
 	bool
 	default y if BR2_sh4
 
