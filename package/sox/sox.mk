@@ -10,6 +10,7 @@ SOX_SITE_METHOD = git
 SOX_DEPENDENCIES = host-autoconf-archive host-pkgconf
 SOX_LICENSE = GPL-2.0+ (sox binary), LGPL-2.1+ (libraries)
 SOX_LICENSE_FILES = LICENSE.GPL LICENSE.LGPL
+SOX_INSTALL_STAGING = YES
 SOX_CPE_ID_VENDOR = sound_exchange_project
 SOX_CPE_ID_PRODUCT = sound_exchange
 # From git and we're patching configure.ac
