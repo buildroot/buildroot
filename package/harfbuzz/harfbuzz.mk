@@ -94,5 +94,9 @@ ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),)
 HARFBUZZ_CXXFLAGS += $(TARGET_CXXFLAGS) -DHB_NO_MT
 endif
 
+ifeq ($(BR2_GCC_VERSION_ARC),y)
+HARFBUZZ_CXXFLAGS += -O0
+endif
+
 $(eval $(meson-package))
 $(eval $(host-meson-package))
