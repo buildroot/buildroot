@@ -27,16 +27,16 @@ index 6d03912..2c42b3e 100644
  @WITH_GCOV_TRUE@@WITH_PCRE_CPP_TRUE@am__append_25 = $(GCOV_CXXFLAGS)
  @WITH_GCOV_TRUE@@WITH_PCRE_CPP_TRUE@am__append_26 = $(GCOV_LIBS)
  @WITH_GCOV_TRUE@@WITH_PCRE_CPP_TRUE@am__append_27 = $(GCOV_LIBS)
-@@ -362,9 +356,6 @@ libpcreposix_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
- @WITH_PCRE8_TRUE@am__EXEEXT_1 = pcregrep$(EXEEXT)
+@@ -190,9 +184,6 @@ libpcreposix_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+ 	"$(DESTDIR)$(includedir)"
  @WITH_REBUILD_CHARTABLES_TRUE@am__EXEEXT_2 = dftables$(EXEEXT)
  @WITH_JIT_TRUE@am__EXEEXT_3 = pcre_jit_test$(EXEEXT)
 -@WITH_PCRE_CPP_TRUE@am__EXEEXT_4 = pcrecpp_unittest$(EXEEXT) \
 -@WITH_PCRE_CPP_TRUE@	pcre_scanner_unittest$(EXEEXT) \
 -@WITH_PCRE_CPP_TRUE@	pcre_stringpiece_unittest$(EXEEXT)
  PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
- am__dftables_SOURCES_DIST = dftables.c
- @WITH_REBUILD_CHARTABLES_TRUE@am_dftables_OBJECTS =  \
+ am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+ am__vpath_adj = case $$p in \
 -- 
 2.7.3
 
