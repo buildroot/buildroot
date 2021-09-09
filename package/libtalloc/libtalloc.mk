@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-LIBTALLOC_VERSION = 2.3.1
+LIBTALLOC_VERSION = 2.3.3
 LIBTALLOC_SOURCE = talloc-$(LIBTALLOC_VERSION).tar.gz
 LIBTALLOC_SITE = https://www.samba.org/ftp/talloc
-LIBTALLOC_LICENSE = LGPL-3.0+, GPL-3.0+
-LIBTALLOC_LICENSE_FILES = talloc.h pytalloc.h
+LIBTALLOC_LICENSE = LGPL-3.0+
+LIBTALLOC_LICENSE_FILES = talloc.h
 LIBTALLOC_INSTALL_STAGING = YES
 
 # --with-libiconv= is unconditionally passed, even if libiconv is not
