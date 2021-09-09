@@ -49,10 +49,16 @@ PIPEWIRE_CONF_OPTS += -Dgstreamer=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
-PIPEWIRE_CONF_OPTS += -Dsystemd=enabled
+PIPEWIRE_CONF_OPTS += \
+	-Dsystemd=enabled \
+	-Dsystemd-system-service=enabled \
+	-Dsystemd-user-service=enabled
 PIPEWIRE_DEPENDENCIES += systemd
 else
-PIPEWIRE_CONF_OPTS += -Dsystemd=disabled
+PIPEWIRE_CONF_OPTS += \
+	-Dsystemd=disabled \
+	-Dsystemd-system-service=disabled \
+	-Dsystemd-user-service=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_ALSA_LIB),y)
@@ -149,5 +155,9 @@ PIPEWIRE_DEPENDENCIES += webrtc-audio-processing
 else
 PIPEWIRE_CONF_OPTS += -Decho-cancel-webrtc=disabled
 endif
+
+define PIPEWIRE_USERS
+	pipewire -1 pipewire -1 * - - - PipeWire System Daemon
+endef
 
 $(eval $(meson-package))
