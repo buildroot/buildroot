@@ -25,6 +25,8 @@ grep -q "^dtoverlay=i2c3,pins_4_5$" $CFG_PATH || echo "dtoverlay=i2c3,pins_4_5" 
 grep -q "^gpio=13=pu$" $CFG_PATH || echo "gpio=13=pu" >> $CFG_PATH
 grep -q "^dtoverlay=reTerminal,tp_rotate=1$" $CFG_PATH || echo "dtoverlay=reTerminal,tp_rotate=1" >> $CFG_PATH
 grep -q "^dtoverlay=miniuart-bt$" $CFG_PATH || echo "dtoverlay=miniuart-bt" >> $CFG_PATH
+grep -q "^start_x=1$" $CFG_PATH || echo "start_x=1" >> $CFG_PATH
+grep -q "^gpu_mem=128" $CFG_PATH || echo "gpu_mem=128" >> $CFG_PATH
 
 #create dir /boot/
 if [ ! -d "${TARGET_DIR}/boot/" ]; then
