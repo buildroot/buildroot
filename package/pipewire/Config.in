@@ -14,6 +14,11 @@ config BR2_PACKAGE_PIPEWIRE
 
 if BR2_PACKAGE_PIPEWIRE
 
+config BR2_PACKAGE_PIPEWIRE_EXAMPLES
+	bool "pipewire examples"
+	help
+	  Build pipewire examples
+
 config BR2_PACKAGE_PIPEWIRE_GSTREAMER
 	bool "pipewire gstreamer plugins"
 	depends on BR2_USE_WCHAR # libglib2

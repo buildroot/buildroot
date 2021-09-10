@@ -14,7 +14,6 @@ PIPEWIRE_DEPENDENCIES = host-pkgconf dbus $(TARGET_NLS_DEPENDENCIES)
 
 PIPEWIRE_CONF_OPTS += \
 	-Ddocs=disabled \
-	-Dexamples=disabled \
 	-Dman=disabled \
 	-Dtests=disabled \
 	-Dspa-plugins=enabled \
@@ -34,6 +33,12 @@ PIPEWIRE_CONF_OPTS += -Dudev=enabled
 PIPEWIRE_DEPENDENCIES += udev
 else
 PIPEWIRE_CONF_OPTS += -Dudev=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_PIPEWIRE_EXAMPLES),y)
+PIPEWIRE_CONF_OPTS += -Dexamples=enabled
+else
+PIPEWIRE_CONF_OPTS += -Dexamples=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_PIPEWIRE_GSTREAMER),y)
