@@ -58,14 +58,6 @@ config BR2_KERNEL_HEADERS_5_10
 	bool "Linux 5.10.x kernel headers"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10
 
-config BR2_KERNEL_HEADERS_5_11
-	bool "Linux 5.11.x kernel headers"
-	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_11
-
-config BR2_KERNEL_HEADERS_5_12
-	bool "Linux 5.12.x kernel headers"
-	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_12
-
 config BR2_KERNEL_HEADERS_5_13
 	bool "Linux 5.13.x kernel headers"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_13
@@ -384,8 +376,6 @@ config BR2_DEFAULT_KERNEL_HEADERS
 	default "4.19.202"	if BR2_KERNEL_HEADERS_4_19
 	default "5.4.139"	if BR2_KERNEL_HEADERS_5_4
 	default "5.10.57"	if BR2_KERNEL_HEADERS_5_10
-	default "5.11.22"	if BR2_KERNEL_HEADERS_5_11
-	default "5.12.19"	if BR2_KERNEL_HEADERS_5_12
 	default "5.13.9"	if BR2_KERNEL_HEADERS_5_13
 	default "5.14"		if BR2_KERNEL_HEADERS_5_14
 	default BR2_DEFAULT_KERNEL_VERSION if BR2_KERNEL_HEADERS_VERSION
