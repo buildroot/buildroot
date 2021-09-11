@@ -238,30 +238,30 @@ endif
 define SWUPDATE_INSTALL_COMMON
 	mkdir -p $(TARGET_DIR)/etc/swupdate/conf.d \
 		$(TARGET_DIR)/usr/lib/swupdate/conf.d
-	$(INSTALL) -D -m 755 package/swupdate/swupdate.sh \
+	$(INSTALL) -D -m 755 $(SWUPDATE_PKGDIR)/swupdate.sh \
 		$(TARGET_DIR)/usr/lib/swupdate/swupdate.sh
 	$(if $(BR2_PACKAGE_SWUPDATE_WEBSERVER), \
-		$(INSTALL) -D -m 644 package/swupdate/10-mongoose-args \
+		$(INSTALL) -D -m 644 $(SWUPDATE_PKGDIR)/10-mongoose-args \
 			$(TARGET_DIR)/usr/lib/swupdate/conf.d/10-mongoose-args)
 endef
 define SWUPDATE_INSTALL_INIT_SYSTEMD
 	$(SWUPDATE_INSTALL_COMMON)
-	$(INSTALL) -D -m 644 package/swupdate/swupdate.service \
+	$(INSTALL) -D -m 644 $(SWUPDATE_PKGDIR)/swupdate.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/swupdate.service
-	$(INSTALL) -D -m 644 package/swupdate/swupdate.socket \
+	$(INSTALL) -D -m 644 $(SWUPDATE_PKGDIR)/swupdate.socket \
 		$(TARGET_DIR)/usr/lib/systemd/system/swupdate.socket
-	$(INSTALL) -D -m 644 package/swupdate/swupdate-usb@.service \
+	$(INSTALL) -D -m 644 $(SWUPDATE_PKGDIR)/swupdate-usb@.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/swupdate-usb@.service
-	$(INSTALL) -D -m 644 package/swupdate/swupdate-progress.service \
+	$(INSTALL) -D -m 644 $(SWUPDATE_PKGDIR)/swupdate-progress.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/swupdate-progress.service
-	$(INSTALL) -D -m 644 package/swupdate/tmpfiles-swupdate.conf \
+	$(INSTALL) -D -m 644 $(SWUPDATE_PKGDIR)/tmpfiles-swupdate.conf \
 		$(TARGET_DIR)/usr/lib/tmpfiles.d/tmpfiles-swupdate.conf
 endef
 define SWUPDATE_INSTALL_INIT_SYSV
 	$(SWUPDATE_INSTALL_COMMON)
-	$(INSTALL) -D -m 755 package/swupdate/S80swupdate \
+	$(INSTALL) -D -m 755 $(SWUPDATE_PKGDIR)/S80swupdate \
 		$(TARGET_DIR)/etc/init.d/S80swupdate
-	$(INSTALL) -D -m 644 package/swupdate/90-start-progress \
+	$(INSTALL) -D -m 644 $(SWUPDATE_PKGDIR)/90-start-progress \
 		$(TARGET_DIR)/usr/lib/swupdate/conf.d/90-start-progress
 endef
 
