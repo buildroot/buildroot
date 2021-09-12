@@ -1,0 +1,145 @@
+From 7d482f6ebc356e6ec455ccb5f51a23971bf6ce5b Mon Sep 17 00:00:00 2001
+From: jzmaddock <john@johnmaddock.co.uk>
+Date: Wed, 1 Sep 2021 20:31:53 +0100
+Subject: [PATCH] Make no atomics a soft failure in bernoulli_details.hpp.
+ Include an "escape macro" so thread safety can be disabled if certain
+ bernoulli features are to be used in a no-atomics environment. Fixes
+ https://github.com/boostorg/math/issues/673.
+
+---
+ .../detail/bernoulli_details.hpp                 | 10 +++++++---
+ libs/math/test/Jamfile.v2                        |  3 +++
+ test/compile_test/bernoulli_no_atomic_d.cpp      | 14 ++++++++++++++
+ test/compile_test/bernoulli_no_atomic_fail.cpp   | 15 +++++++++++++++
+ test/compile_test/bernoulli_no_atomic_mp.cpp     | 16 ++++++++++++++++
+ 5 files changed, 55 insertions(+), 3 deletions(-)
+ create mode 100644 test/compile_test/bernoulli_no_atomic_d.cpp
+ create mode 100644 test/compile_test/bernoulli_no_atomic_fail.cpp
+ create mode 100644 test/compile_test/bernoulli_no_atomic_mp.cpp
+
+diff --git a/boost/math/special_functions/detail/bernoulli_details.hpp b/boost/math/special_functions/detail/bernoulli_details.hpp
+index cf35545264..8519b7c89c 100644
+--- a/boost/math/special_functions/detail/bernoulli_details.hpp
++++ b/boost/math/special_functions/detail/bernoulli_details.hpp
+@@ -360,7 +360,7 @@ class bernoulli_numbers_cache
+          return out;
+       }
+ 
+-      #ifndef BOOST_HAS_THREADS
++      #if !defined(BOOST_HAS_THREADS) || defined(BOOST_MATH_BERNOULLI_UNTHREADED)
+       //
+       // Single threaded code, very simple:
+       //
+@@ -382,6 +382,8 @@ class bernoulli_numbers_cache
+          *out = (i >= m_overflow_limit) ? policies::raise_overflow_error<T>("boost::math::bernoulli_b2n<%1%>(std::size_t)", 0, T(i), pol) : bn[i];
+          ++out;
+       }
++      #elif defined(BOOST_MATH_NO_ATOMIC_INT)
++      static_assert(sizeof(T) == 1, "Unsupported configuration: your platform appears to have no atomic integers.  If you are happy with thread-unsafe code, then you may define BOOST_MATH_BERNOULLI_UNTHREADED to suppress this error.");
+       #else
+       //
+       // Double-checked locking pattern, lets us access cached already cached values
+@@ -464,7 +466,7 @@ class bernoulli_numbers_cache
+          return out;
+       }
+ 
+-      #ifndef BOOST_HAS_THREADS
++      #if !defined(BOOST_HAS_THREADS) || defined(BOOST_MATH_BERNOULLI_UNTHREADED)
+       //
+       // Single threaded code, very simple:
+       //
+@@ -494,6 +496,8 @@ class bernoulli_numbers_cache
+          }
+          ++out;
+       }
++      #elif defined(BOOST_MATH_NO_ATOMIC_INT)
++      static_assert(sizeof(T) == 1, "Unsupported configuration: your platform appears to have no atomic integers.  If you are happy with thread-unsafe code, then you may define BOOST_MATH_BERNOULLI_UNTHREADED to suppress this error.");
+       #else
+       //
+       // Double-checked locking pattern, lets us access cached already cached values
+@@ -555,7 +559,7 @@ class bernoulli_numbers_cache
+    // The value at which we know overflow has already occurred for the Bn:
+    std::size_t m_overflow_limit;
+ 
+-   #ifdef BOOST_HAS_THREADS
++   #if defined(BOOST_HAS_THREADS) && !defined(BOOST_MATH_NO_ATOMIC_INT)
+    std::mutex m_mutex;
+    atomic_counter_type m_counter, m_current_precision;
+    #else
+diff --git a/libs/math/test/Jamfile.v2 b/libs/math/test/Jamfile.v2
+index 52fb87f5e5..3ac63f9279 100644
+--- a/libs/math/test/Jamfile.v2
++++ b/libs/math/test/Jamfile.v2
+@@ -1137,6 +1137,9 @@ test-suite misc :
+ 
+ #   [ run __temporary_test.cpp test_instances//test_instances : : : <test-info>always_show_run_output <pch>off ]
+    [ compile test_no_long_double_policy.cpp ]
++   [ compile compile_test/bernoulli_no_atomic_d.cpp ]
++   [ compile compile_test/bernoulli_no_atomic_mp.cpp ]
++   [ compile-fail compile_test/bernoulli_no_atomic_fail.cpp ]
+ ;
+ 
+ test-suite interpolators :
+diff --git a/test/compile_test/bernoulli_no_atomic_d.cpp b/test/compile_test/bernoulli_no_atomic_d.cpp
+new file mode 100644
+index 0000000000..61926f7e1f
+--- /dev/null
++++ b/test/compile_test/bernoulli_no_atomic_d.cpp
+@@ -0,0 +1,14 @@
++//  (C) Copyright John Maddock 2021.
++//  Use, modification and distribution are subject to the
++//  Boost Software License, Version 1.0. (See accompanying file
++//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
++
++#define BOOST_MATH_NO_ATOMIC_INT
++
++#include <boost/math/special_functions/bernoulli.hpp>
++#include "test_compile_result.hpp"
++
++void compile_and_link_test()
++{
++   check_result<double>(boost::math::bernoulli_b2n<double>(4));
++}
+diff --git a/test/compile_test/bernoulli_no_atomic_fail.cpp b/test/compile_test/bernoulli_no_atomic_fail.cpp
+new file mode 100644
+index 0000000000..bbd7152412
+--- /dev/null
++++ b/test/compile_test/bernoulli_no_atomic_fail.cpp
+@@ -0,0 +1,15 @@
++//  (C) Copyright John Maddock 2021.
++//  Use, modification and distribution are subject to the
++//  Boost Software License, Version 1.0. (See accompanying file
++//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
++
++#define BOOST_MATH_NO_ATOMIC_INT
++
++#include <boost/math/special_functions/bernoulli.hpp>
++#include <boost/multiprecision/cpp_bin_float.hpp>
++#include "test_compile_result.hpp"
++
++void compile_and_link_test()
++{
++   check_result<boost::multiprecision::cpp_bin_float_50>(boost::math::bernoulli_b2n<boost::multiprecision::cpp_bin_float_50>(4));
++}
+diff --git a/test/compile_test/bernoulli_no_atomic_mp.cpp b/test/compile_test/bernoulli_no_atomic_mp.cpp
+new file mode 100644
+index 0000000000..8d5a6e78e6
+--- /dev/null
++++ b/test/compile_test/bernoulli_no_atomic_mp.cpp
+@@ -0,0 +1,16 @@
++//  (C) Copyright John Maddock 2021.
++//  Use, modification and distribution are subject to the
++//  Boost Software License, Version 1.0. (See accompanying file
++//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
++
++#define BOOST_MATH_NO_ATOMIC_INT
++#define BOOST_MATH_BERNOULLI_UNTHREADED
++
++#include <boost/math/special_functions/bernoulli.hpp>
++#include <boost/multiprecision/cpp_bin_float.hpp>
++#include "test_compile_result.hpp"
++
++void compile_and_link_test()
++{
++   check_result<boost::multiprecision::cpp_bin_float_50>(boost::math::bernoulli_b2n<boost::multiprecision::cpp_bin_float_50>(4));
++}
