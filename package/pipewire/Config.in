@@ -19,6 +19,12 @@ config BR2_PACKAGE_PIPEWIRE_EXAMPLES
 	help
 	  Build pipewire examples
 
+config BR2_PACKAGE_PIPEWIRE_MEDIA_SESSION
+	bool "pipewire media-session"
+	depends on BR2_PACKAGE_PIPEWIRE_EXAMPLES
+	help
+	  Build pipewire media-session support
+
 config BR2_PACKAGE_PIPEWIRE_GSTREAMER
 	bool "pipewire gstreamer plugins"
 	depends on BR2_USE_WCHAR # libglib2

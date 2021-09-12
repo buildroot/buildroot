@@ -156,6 +156,12 @@ else
 PIPEWIRE_CONF_OPTS += -Decho-cancel-webrtc=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_PIPEWIRE_MEDIA_SESSION),y)
+PIPEWIRE_SESSION_MANAGERS_LIST = media-session
+endif
+
+PIPEWIRE_CONF_OPTS += -Dsession-managers='$(subst $(space),$(comma),$(PIPEWIRE_SESSION_MANAGERS_LIST))'
+
 define PIPEWIRE_USERS
 	pipewire -1 pipewire -1 * - - - PipeWire System Daemon
 endef
