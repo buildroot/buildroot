@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TRACE_CMD_VERSION = trace-cmd-v2.9.1
+TRACE_CMD_VERSION = trace-cmd-v2.9.5
 TRACE_CMD_SITE = https://git.kernel.org/pub/scm/utils/trace-cmd/trace-cmd.git
 TRACE_CMD_SITE_METHOD = git
 TRACE_CMD_LICENSE = GPL-2.0, LGPL-2.1
