@@ -245,8 +245,9 @@ config BR2_TARGET_UBOOT_NEEDS_IMX_FIRMWARE
 	depends on BR2_PACKAGE_FIRMWARE_IMX_NEEDS_DDR_FW || \
 		BR2_PACKAGE_FIRMWARE_IMX_NEEDS_HDMI_FW
 	help
-	  Some i.MX8 platforms (such as i.MX8 M, i.MX 8M Mini, i.MX 8M Nano)
-	  encapsulate NXP specific firmware (DDR, HDMI) inside U-Boot.
+	  Some i.MX8 platforms (such as i.MX8 M, i.MX 8M Mini, i.MX 8M
+	  Nano) encapsulate NXP specific firmware (DDR, HDMI) inside
+	  U-Boot.
 	  This option makes sure that the i.MX firmwares are copied into
 	  the U-Boot source directory.
 
