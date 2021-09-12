@@ -6,6 +6,11 @@ Subject: [PATCH] Make no atomics a soft failure in bernoulli_details.hpp.
  bernoulli features are to be used in a no-atomics environment. Fixes
  https://github.com/boostorg/math/issues/673.
 
+[buildroot@heine.tech:
+  - backport from boostorg/math 7d482f6ebc356e6ec455ccb5f51a23971bf6ce5b
+  - alter path to match boost release
+]
+Signed-off-by: Michael Nosthoff <buildroot@heine.tech>
 ---
  .../detail/bernoulli_details.hpp                 | 10 +++++++---
  libs/math/test/Jamfile.v2                        |  3 +++

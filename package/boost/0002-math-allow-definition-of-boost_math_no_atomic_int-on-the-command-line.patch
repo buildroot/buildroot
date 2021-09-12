@@ -4,6 +4,11 @@ Date: Wed, 1 Sep 2021 18:54:54 +0100
 Subject: [PATCH] Allow definition of BOOST_MATH_NO_ATOMIC_INT on the command
  line. Allows us to test/emulate platforms with no atomic integers.
 
+[buildroot@heine.tech:
+  - backport from boostorg/math 32bd6197353f6ea8e5bef01f09e25c944141acfc
+  - alter path to match boost release
+]
+Signed-off-by: Michael Nosthoff <buildroot@heine.tech>
 ---
  boost/math/tools/atomic.hpp | 10 +++++-----
  1 file changed, 5 insertions(+), 5 deletions(-)
