@@ -1,0 +1,52 @@
+From 0bb5785a68a2799db003364770be3764af9b9034 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 12 Sep 2021 13:55:49 +0200
+Subject: [PATCH] profiles/audio/media.c: rename pause
+
+Rename pause to media_player_pause to avoid the following build failure:
+
+profiles/audio/media.c:1284:13: error: conflicting types for 'pause'
+ 1284 | static bool pause(void *user_data)
+      |             ^~~~~
+In file included from /tmp/instance-0/output-1/per-package/bluez5_utils/host/s390x-buildroot-linux-gnu/sysroot/usr/include/bits/sigstksz.h:24,
+                 from /tmp/instance-0/output-1/per-package/bluez5_utils/host/s390x-buildroot-linux-gnu/sysroot/usr/include/signal.h:328,
+                 from /tmp/instance-0/output-1/per-package/bluez5_utils/host/bin/../s390x-buildroot-linux-gnu/sysroot/usr/include/glib-2.0/glib/gbacktrace.h:36,
+                 from /tmp/instance-0/output-1/per-package/bluez5_utils/host/bin/../s390x-buildroot-linux-gnu/sysroot/usr/include/glib-2.0/glib.h:34,
+                 from profiles/audio/media.c:21:
+/tmp/instance-0/output-1/per-package/bluez5_utils/host/s390x-buildroot-linux-gnu/sysroot/usr/include/unistd.h:489:12: note: previous declaration of 'pause' was here
+  489 | extern int pause (void);
+      |            ^~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/c4fbface34be8815838fd7201621d7a8fddd32c5
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ profiles/audio/media.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/profiles/audio/media.c b/profiles/audio/media.c
+index 267722542..f93b74e67 100644
+--- a/profiles/audio/media.c
++++ b/profiles/audio/media.c
+@@ -1281,7 +1281,7 @@ static bool stop(void *user_data)
+ 	return media_player_send(mp, "Stop");
+ }
+ 
+-static bool pause(void *user_data)
++static bool media_player_pause(void *user_data)
+ {
+ 	struct media_player *mp = user_data;
+ 
+@@ -1331,7 +1331,7 @@ static struct avrcp_player_cb player_cb = {
+ 	.set_volume = set_volume,
+ 	.play = play,
+ 	.stop = stop,
+-	.pause = pause,
++	.pause = media_player_pause,
+ 	.next = next,
+ 	.previous = previous,
+ };
+-- 
+2.33.0
+
