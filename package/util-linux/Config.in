@@ -291,8 +291,12 @@ config BR2_PACKAGE_UTIL_LINUX_PIVOT_ROOT
 
 config BR2_PACKAGE_UTIL_LINUX_RAW
 	bool "raw"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_14
 	help
 	  Build a linux raw character device
+
+comment "raw needs a toolchain w/ headers < 5.14"
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_14
 
 config BR2_PACKAGE_UTIL_LINUX_RENAME
 	bool "rename"
