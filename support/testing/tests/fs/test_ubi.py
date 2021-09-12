@@ -13,12 +13,11 @@ class TestUbi(infra.basetest.BRTest):
         BR2_TARGET_ROOTFS_UBI=y
         BR2_TARGET_ROOTFS_UBI_PEBSIZE=0x40000
         BR2_TARGET_ROOTFS_UBI_SUBSIZE=1
-        """
+        BR2_TARGET_ROOTFS_UBI_USE_CUSTOM_CONFIG=y
+        BR2_TARGET_ROOTFS_UBI_CUSTOM_CONFIG_FILE="{}"
+        """.format(
+              infra.filepath("tests/fs/test_ubi/ubinize_qemu_pflash_cfi01.cfg"))
 
-    # TODO: if you boot Qemu twice on the same UBI image, it fails to
-    # attach the image the second time, with "ubi0 error:
-    # ubi_read_volume_table: the layout volume was not found".
-    # To be investigated.
     def test_run(self):
         img = os.path.join(self.builddir, "images", "rootfs.ubi")
         out = infra.run_cmd_on_host(self.builddir, ["file", img])
