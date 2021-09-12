@@ -1,0 +1,28 @@
+From f82238299d3c4cd23ca60cfc0cf4271f5c860873 Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@gmail.com>
+Date: Wed, 25 Aug 2021 21:55:53 +0200
+Subject: [PATCH] tests/fp: disable fp-bench build by default
+
+Fixes:
+https://lists.nongnu.org/archive/html/qemu-devel/2021-03/msg00947.html
+
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+---
+ tests/fp/meson.build | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tests/fp/meson.build b/tests/fp/meson.build
+index 07e2cdc8d2..c96460b7f1 100644
+--- a/tests/fp/meson.build
++++ b/tests/fp/meson.build
+@@ -631,6 +631,7 @@ fpbench = executable(
+   dependencies: [qemuutil],
+   include_directories: [sfinc, include_directories(tfdir)],
+   c_args: fpcflags,
++  build_by_default: false,
+ )
+ 
+ fptestlog2 = executable(
+-- 
+2.31.1
+

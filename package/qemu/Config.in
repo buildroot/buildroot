@@ -5,14 +5,16 @@ config BR2_PACKAGE_QEMU_ARCH_SUPPORTS_TARGET
 		|| BR2_x86_64 || BR2_arm \
 		|| BR2_powerpc64 || BR2_powerpc64le
 
-comment "QEMU requires a toolchain with wchar, threads"
+comment "QEMU requires a toolchain with wchar, threads, gcc >= 7"
 	depends on BR2_PACKAGE_QEMU_ARCH_SUPPORTS_TARGET
 	depends on BR2_USE_MMU
-	depends on !(BR2_TOOLCHAIN_HAS_THREADS && BR2_USE_WCHAR)
+	depends on !(BR2_TOOLCHAIN_HAS_THREADS && BR2_USE_WCHAR) || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_7
 
 config BR2_PACKAGE_QEMU
 	bool "QEMU"
 	depends on BR2_PACKAGE_QEMU_ARCH_SUPPORTS_TARGET
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_USE_WCHAR # gettext
 	depends on BR2_USE_MMU # fork()
