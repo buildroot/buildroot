@@ -25,7 +25,7 @@ class TestUbi(infra.basetest.BRTest):
         out = out.splitlines()
         self.assertIn("UBI image, version 1", out[0])
 
-        subprocess.call(["truncate", "-s 128M", img])
+        subprocess.call(["truncate", "-s 64M", img])
 
         self.emulator.boot(arch="armv7",
                            kernel="builtin",
