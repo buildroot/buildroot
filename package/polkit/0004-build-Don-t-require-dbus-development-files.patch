@@ -1,0 +1,42 @@
+From 4bb2157adae620c8b07caf5a24b177d1f90f2fbb Mon Sep 17 00:00:00 2001
+From: Simon McVittie <smcv@debian.org>
+Date: Thu, 3 Jun 2021 18:57:00 +0100
+Subject: [PATCH] build: Don't require dbus development files
+
+We don't actually need libdbus, only the dbus-daemon's installation
+directory for system services, which in practice is always going to be
+/usr/share/dbus-1/system-services.
+
+Signed-off-by: Simon McVittie <smcv@debian.org>
+
+[Retrieved (and slightly updated for duktape fork) from:
+https://gitlab.freedesktop.org/polkit/polkit/-/commit/4bb2157adae620c8b07caf5a24b177d1f90f2fbb]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ meson.build | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 03a7683..539ec7a 100644
+--- a/meson.build
++++ b/meson.build
+@@ -135,9 +135,14 @@ assert(cc.has_function('XML_ParserCreate', dependencies: expat_dep), 'Can\'t fin
+   js_dep = dependency('mozjs-78')
+ endif
+ 
+-dbus_dep = dependency('dbus-1')
++dbus_dep = dependency('dbus-1', required: false)
+ dbus_policydir = pk_prefix / pk_datadir / 'dbus-1/system.d'
+-dbus_system_bus_services_dir = dbus_dep.get_pkgconfig_variable('system_bus_services_dir', define_variable: ['datadir', pk_prefix / pk_datadir])
++if dbus_dep.found()
++  dbus_system_bus_services_dir = dbus_dep.get_pkgconfig_variable('system_bus_services_dir', define_variable: ['datadir', pk_prefix / pk_datadir])
++else
++  # libdbus development files not installed, assume a standard layout
++  dbus_system_bus_services_dir = pk_prefix / pk_datadir / 'dbus-1' / 'system-services'
++endif
+ 
+ # check OS
+ host_system = host_machine.system()
+-- 
+GitLab
+

@@ -1,0 +1,35 @@
+From 9fa097f4dde92a0c1675400228b4cb965ed3e123 Mon Sep 17 00:00:00 2001
+From: Simon McVittie <smcv@debian.org>
+Date: Thu, 3 Jun 2021 18:55:29 +0100
+Subject: [PATCH] build: Remove redundant computation of dbus data directory
+
+We were asking pkg-config "if I define ${datadir} to pk_prefix/pk_datadir,
+what would ${datadir} be?" but the answer is obviously always going to be
+pk_prefix/pk_datadir.
+
+Signed-off-by: Simon McVittie <smcv@debian.org>
+
+[Retrieved (and slightly updated for duktape fork) from:
+https://gitlab.freedesktop.org/polkit/polkit/-/commit/9fa097f4dde92a0c1675400228b4cb965ed3e123]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ meson.build | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 6a6799e..03a7683 100644
+--- a/meson.build
++++ b/meson.build
+@@ -136,8 +136,7 @@ assert(cc.has_function('XML_ParserCreate', dependencies: expat_dep), 'Can\'t fin
+ endif
+ 
+ dbus_dep = dependency('dbus-1')
+-dbus_confdir = dbus_dep.get_pkgconfig_variable('datadir', define_variable: ['datadir', pk_prefix / pk_datadir])   #changed from sysconfdir with respect to commit#8eada3836465838
+-dbus_policydir = dbus_confdir / 'dbus-1/system.d'
++dbus_policydir = pk_prefix / pk_datadir / 'dbus-1/system.d'
+ dbus_system_bus_services_dir = dbus_dep.get_pkgconfig_variable('system_bus_services_dir', define_variable: ['datadir', pk_prefix / pk_datadir])
+ 
+ # check OS
+-- 
+GitLab
+
