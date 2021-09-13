@@ -130,7 +130,23 @@ ASTERISK_CONF_OPTS += --without-spandsp
 
 ASTERISK_CONF_ENV = \
 	ac_cv_file_bridges_bridge_softmix_include_hrirs_h=true \
-	ac_cv_path_CONFIG_LIBXML2=$(STAGING_DIR)/usr/bin/xml2-config
+	ac_cv_path_CONFIG_LIBXML2=$(STAGING_DIR)/usr/bin/xml2-config \
+
+ASTERISK_MAKE_ENV += PJPROJECT_CONFIGURE_OPTS="--target=$(GNU_TARGET_NAME) \
+		--host=$(GNU_TARGET_NAME) \
+		--build=$(GNU_HOST_NAME) \
+		--prefix=/usr \
+		--exec-prefix=/usr \
+		--sysconfdir=/etc \
+		--localstatedir=/var \
+		--program-prefix="" \
+		--disable-gtk-doc \
+		--disable-gtk-doc-html \
+		--disable-doc \
+		--disable-docs \
+		--disable-documentation \
+		--with-xmlto=no \
+		--with-fop=no"
 
 # Uses __atomic_fetch_add_4
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
