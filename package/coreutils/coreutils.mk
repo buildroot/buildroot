@@ -9,6 +9,13 @@ COREUTILS_SITE = $(BR2_GNU_MIRROR)/coreutils
 COREUTILS_SOURCE = coreutils-$(COREUTILS_VERSION).tar.xz
 COREUTILS_LICENSE = GPL-3.0+
 COREUTILS_LICENSE_FILES = COPYING
+COREUTILS_CPE_ID_VENDOR = gnu
+# Only when including SUSE coreutils-i18n.patch
+COREUTILS_IGNORE_CVES = CVE-2013-0221
+COREUTILS_IGNORE_CVES += CVE-2013-0222
+COREUTILS_IGNORE_CVES += CVE-2013-0223
+# We're patching m4/pthread-cond.m4
+COREUTILS_AUTORECONF = YES
 
 COREUTILS_CONF_OPTS = --disable-rpath --enable-install-program=hostname \
 	$(if $(BR2_TOOLCHAIN_USES_MUSL),--with-included-regex)
@@ -147,7 +154,8 @@ COREUTILS_POST_INSTALL_TARGET_HOOKS += COREUTILS_FIX_CHROOT_LOCATION
 # Explicitly install ln and realpath, which we *are* insterested in.
 # A lot of other programs still get installed, however, but disabling
 # them does not gain much at build time, and is a loooong list that is
-# difficult to maintain...
+# difficult to maintain... Just avoid overwriting fakedate when creating
+# a reproducible build
 HOST_COREUTILS_CONF_OPTS = \
 	--disable-acl \
 	--disable-libcap \
@@ -155,7 +163,8 @@ HOST_COREUTILS_CONF_OPTS = \
 	--disable-single-binary \
 	--disable-xattr \
 	--without-gmp \
-	--enable-install-program=ln,realpath
+	--enable-install-program=ln,realpath \
+	--enable-no-install-program=date
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))

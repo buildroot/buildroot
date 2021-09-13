@@ -1,0 +1,12 @@
+config BR2_PACKAGE_LIBPSL
+	bool "libpsl"
+	depends on BR2_USE_WCHAR # libunistring, icu
+	select BR2_PACKAGE_LIBIDN2 if !BR2_PACKAGE_ICU && !BR2_PACKAGE_LIBIDN
+	select BR2_PACKAGE_LIBUNISTRING if !BR2_PACKAGE_ICU
+	help
+	  C library to handle the Public Suffix List of TLDs.
+
+	  https://github.com/rockdaboot/libpsl
+
+comment "libpsl needs a toolchain w/ wchar"
+	depends on !BR2_USE_WCHAR

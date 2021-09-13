@@ -4,13 +4,15 @@
 #
 ################################################################################
 
-DROPBEAR_VERSION = 2020.80
+DROPBEAR_VERSION = 2020.81
 DROPBEAR_SITE = https://matt.ucc.asn.au/dropbear/releases
 DROPBEAR_SOURCE = dropbear-$(DROPBEAR_VERSION).tar.bz2
 DROPBEAR_LICENSE = MIT, BSD-2-Clause, Public domain
 DROPBEAR_LICENSE_FILES = LICENSE
 DROPBEAR_TARGET_BINS = dropbearkey dropbearconvert scp
 DROPBEAR_PROGRAMS = dropbear $(DROPBEAR_TARGET_BINS)
+DROPBEAR_CPE_ID_VENDOR = dropbear_ssh_project
+DROPBEAR_CPE_ID_PRODUCT = dropbear_ssh
 
 # Disable hardening flags added by dropbear configure.ac, and let
 # Buildroot add them when the relevant options are enabled. This

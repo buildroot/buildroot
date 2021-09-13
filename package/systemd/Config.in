@@ -233,7 +233,7 @@ comment "homed support needs a toolchain w/ threads, dynamic library, kernel hea
 	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
-		BR2_STATIC_LIBS || BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12
+		BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12
 
 config BR2_PACKAGE_SYSTEMD_HOSTNAMED
 	bool "enable hostname daemon"
@@ -318,13 +318,19 @@ config BR2_PACKAGE_SYSTEMD_NETWORKD
 
 	  http://www.freedesktop.org/software/systemd/man/systemd-networkd.html
 
+config BR2_PACKAGE_SYSTEMD_OOMD
+	bool "enable out-of-memory killer"
+	help
+	  systemd-oomd is a system service that uses cgroups-v2 and
+	  pressure stall information (PSI) to monitor and take action
+	  on processes before an OOM occurs in kernel space.
+
+	  https://www.freedesktop.org/software/systemd/man/systemd-oomd.html
+
 config BR2_PACKAGE_SYSTEMD_POLKIT
 	bool "enable polkit support"
-	depends on BR2_HOST_GCC_AT_LEAST_4_9 # polkit
-	depends on BR2_INSTALL_LIBSTDCPP # polkit
-	depends on BR2_PACKAGE_SPIDERMONKEY_ARCH_SUPPORTS # polkit
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # polkit
-	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # polkit
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 # polkit -> c++17
+	depends on BR2_TOOLCHAIN_HAS_THREADS # polkit
 	depends on BR2_USE_WCHAR # libglib2
 	select BR2_PACKAGE_POLKIT
 	help
@@ -335,13 +341,27 @@ config BR2_PACKAGE_SYSTEMD_POLKIT
 
 	  http://wiki.freedesktop.org/www/Software/polkit/
 
-comment "polkit support needs a toolchain with C++, wchar, NPTL, gcc >= 4.9"
-	depends on BR2_PACKAGE_SPIDERMONKEY_ARCH_SUPPORTS
-	depends on !BR2_INSTALL_LIBSTDCPP || \
-		!BR2_TOOLCHAIN_HAS_THREADS_NPTL || \
-		!BR2_HOST_GCC_AT_LEAST_4_9 || \
-		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || \
-		!BR2_USE_WCHAR
+comment "polkit support needs a toolchain with threads, wchar, gcc >= 7"
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_GCC_AT_LEAST_7 || \
+		!BR2_TOOLCHAIN_HAS_THREADS
+
+config BR2_PACKAGE_SYSTEMD_PORTABLED
+	bool "enable portable services"
+	help
+	  Portable services are systemd services that can be dynamically
+	  attached and detached from the system.
+
+	  These services must come with their own root directory which
+	  they are bound to through an automatically generated drop-in.
+
+	  They also have restrictions applied by the host system in the
+	  form of profiles.
+
+	  This functionality is provided by the system service
+	  systemd-portabled along with the corresponding CLI
+	  portablectl.
+
+	  https://systemd.io/PORTABLE_SERVICES/
 
 config BR2_PACKAGE_SYSTEMD_QUOTACHECK
 	bool "enable quotacheck tools"
@@ -405,6 +425,23 @@ config BR2_PACKAGE_SYSTEMD_SMACK_SUPPORT
 
 	  When this feature is enabled, Systemd mounts smackfs and
 	  manages security labels for sockets.
+
+config BR2_PACKAGE_SYSTEMD_SYSEXT
+	bool "enable sysext support"
+	help
+	  systemd-sysext activates/deactivates system extension
+	  images.
+
+	  System extension images may – dynamically at runtime —
+	  extend the /usr/ and /opt/ directory hierarchies with
+	  additional files.
+
+	  This is particularly useful on immutable system images where
+	  a /usr/ and/or /opt/ hierarchy residing on a read-only file
+	  system shall be extended temporarily at runtime without
+	  making any persistent modifications.
+
+	  https://www.freedesktop.org/software/systemd/man/systemd-sysext.html
 
 config BR2_PACKAGE_SYSTEMD_SYSUSERS
 	bool "enable sysusers support"

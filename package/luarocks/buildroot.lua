@@ -380,8 +380,8 @@ function buildroot.command(args)
    if #licenses == 0 then
       for i = 1, #files do
          local v = files[i]
-         if v:match('^doc/LICENSE')
-            or v:match('^doc/license')
+         if v:match('^docs?/LICENSE')
+            or v:match('^docs?/license')
             or v:match('^doc/us/license') then
             licenses[#licenses+1] = v
             digest[v], err = get_digest(v)

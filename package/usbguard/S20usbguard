@@ -1,0 +1,37 @@
+#!/bin/sh
+#
+# Start psplash
+#
+
+PIDFILE=/var/run/$NAME.pid
+
+start() {
+    printf "Starting usbguard daemon: "
+    test -d /var/log/usbguard || mkdir -p /var/log/usbguard
+    start-stop-daemon -b -S -q -m -p $PIDFILE --exec /usr/sbin/usbguard-daemon -- -f -s -c /etc/usbguard/usbguard-daemon.conf
+    [ $? = 0 ] && echo "OK" || echo "FAIL"
+}
+
+stop() {
+    printf "Stopping usbguard daemon: "
+    start-stop-daemon -K -q -p $PIDFILE
+    [ $? = 0 ] && echo "OK" || echo "FAIL"
+}
+
+case "$1" in
+    start)
+	start
+	;;
+    stop)
+	stop
+	;;
+    restart|reload)
+	stop
+	start
+	;;
+    *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?

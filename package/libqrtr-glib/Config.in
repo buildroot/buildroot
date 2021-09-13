@@ -1,0 +1,17 @@
+config BR2_PACKAGE_LIBQRTR_GLIB
+	bool "libqrtr-glib"
+	depends on BR2_USE_WCHAR # glib2
+	depends on BR2_TOOLCHAIN_HAS_THREADS # glib2
+	depends on BR2_USE_MMU # glib2
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_15 # da7653f0faab
+	select BR2_PACKAGE_LIBGLIB2
+	help
+	  Qualcomm IPC Router protocol helper library.
+	  Optional dependency for libqmi >= 1.28.0.
+
+	  https://www.freedesktop.org/software/libqmi/libqrtr-glib/latest/
+
+comment "libqrtr-glib needs a toolchain w/ wchar, threads, headers >= 4.15"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_15

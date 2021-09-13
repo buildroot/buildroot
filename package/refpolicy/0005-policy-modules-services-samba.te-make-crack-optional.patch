@@ -1,0 +1,82 @@
+From 7c58f2508efc115dea03e18e1fa611ebf81f6ee6 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 4 Aug 2021 11:12:01 +0200
+Subject: [PATCH] policy/modules/services/samba.te: make crack optional
+
+Make crack optional to avoid the following build failure:
+
+ Compiling targeted policy.31
+ env LD_LIBRARY_PATH="/tmp/instance-5/output-1/host/lib:/tmp/instance-5/output-1/host/usr/lib" /tmp/instance-5/output-1/host/usr/bin/checkpolicy -c 31 -U deny -S -O -E policy.conf -o policy.31
+ policy/modules/services/samba.te:399:ERROR 'type crack_db_t is not within scope' at token ';' on line 360232:
+ 	allow smbd_t crack_db_t:dir { getattr search open };
+ #line 399
+ checkpolicy:  error(s) encountered while parsing configuration
+
+Fixes:
+ - http://autobuild.buildroot.org/results/ab7098948d1920e42fa587e07f0513f23ba7fc74
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ policy/modules/services/samba.te | 32 ++++++++++++++++++--------------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
+
+diff --git a/policy/modules/services/samba.te b/policy/modules/services/samba.te
+index 9d4665ae6..6c37625a9 100644
+--- a/policy/modules/services/samba.te
++++ b/policy/modules/services/samba.te
+@@ -396,8 +396,6 @@ userdom_signal_all_users(smbd_t)
+ userdom_home_filetrans_user_home_dir(smbd_t)
+ userdom_user_home_dir_filetrans_user_home_content(smbd_t, { dir file lnk_file sock_file fifo_file })
+ 
+-usermanage_read_crack_db(smbd_t)
+-
+ ifdef(`hide_broken_symptoms',`
+ 	files_dontaudit_getattr_default_dirs(smbd_t)
+ 	files_dontaudit_getattr_boot_dirs(smbd_t)
+@@ -413,18 +411,6 @@ tunable_policy(`samba_create_home_dirs',`
+ 	userdom_create_user_home_dirs(smbd_t)
+ ')
+ 
+-tunable_policy(`samba_domain_controller',`
+-	gen_require(`
+-		class passwd passwd;
+-	')
+-
+-	usermanage_domtrans_passwd(smbd_t)
+-	usermanage_kill_passwd(smbd_t)
+-	usermanage_domtrans_useradd(smbd_t)
+-	usermanage_domtrans_groupadd(smbd_t)
+-	allow smbd_t self:passwd passwd;
+-')
+-
+ tunable_policy(`samba_enable_home_dirs',`
+ 	userdom_manage_user_home_content_dirs(smbd_t)
+ 	userdom_manage_user_home_content_files(smbd_t)
+@@ -505,6 +491,24 @@ optional_policy(`
+ 	seutil_sigchld_newrole(smbd_t)
+ ')
+ 
++optional_policy(`
++	usermanage_read_crack_db(smbd_t)
++')
++
++optional_policy(`
++	tunable_policy(`samba_domain_controller',`
++		gen_require(`
++			class passwd passwd;
++		')
++
++		usermanage_domtrans_passwd(smbd_t)
++		usermanage_kill_passwd(smbd_t)
++		usermanage_domtrans_useradd(smbd_t)
++		usermanage_domtrans_groupadd(smbd_t)
++		allow smbd_t self:passwd passwd;
++	')
++')
++
+ ########################################
+ #
+ # Nmbd Local policy
+-- 
+2.30.2
+

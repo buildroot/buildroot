@@ -10,7 +10,6 @@ class TestPerllibwwwperl(TestPerlBase):
         File-Listing
         HTML-Parser   XS
         HTTP-Cookies
-        HTTP-Daemon
         HTTP-Date
         HTTP-Message
         HTTP-Negotiate
@@ -38,5 +37,4 @@ class TestPerllibwwwperl(TestPerlBase):
         self.module_test("LWP::Authen::Digest")
         self.module_test("HTML::Parser")
         self.module_test("HTTP::Message")
-        self.module_test("HTTP::Daemon")
         self.module_test("WWW::RobotRules")

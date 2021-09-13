@@ -5,9 +5,9 @@
 ################################################################################
 
 ifeq ($(BR2_aarch64),y)
-IMX_GPU_VIV_VERSION = 6.4.0.p2.4-aarch64
+IMX_GPU_VIV_VERSION = 6.4.3.p1.2-aarch64
 else
-IMX_GPU_VIV_VERSION = 6.4.0.p2.4-aarch32
+IMX_GPU_VIV_VERSION = 6.4.3.p1.2-aarch32
 endif
 IMX_GPU_VIV_SITE = $(FREESCALE_IMX_SITE)
 IMX_GPU_VIV_SOURCE = imx-gpu-viv-$(IMX_GPU_VIV_VERSION).bin
@@ -18,7 +18,7 @@ IMX_GPU_VIV_LICENSE = NXP Semiconductor Software License Agreement
 IMX_GPU_VIV_LICENSE_FILES = EULA COPYING
 IMX_GPU_VIV_REDISTRIBUTE = NO
 
-IMX_GPU_VIV_PROVIDES = libegl libgles libopenvg
+IMX_GPU_VIV_PROVIDES = libegl libgles libopencl libopenvg
 IMX_GPU_VIV_LIB_TARGET = $(call qstrip,$(BR2_PACKAGE_IMX_GPU_VIV_OUTPUT))
 
 ifeq ($(IMX_GPU_VIV_LIB_TARGET),x11)
@@ -29,73 +29,48 @@ ifeq ($(IMX_GPU_VIV_LIB_TARGET),x11)
 IMX_GPU_VIV_DEPENDENCIES += xlib_libXdamage xlib_libXext xlib_libXfixes
 endif
 
-ifeq ($(IMX_GPU_VIV_LIB_TARGET),wl)
-IMX_GPU_VIV_DEPENDENCIES += libdrm wayland
+# Libraries are linked against libdrm, except framebuffer output on ARM
+ifneq ($(IMX_GPU_VIV_LIB_TARGET)$(BR2_arm),fby)
+IMX_GPU_VIV_DEPENDENCIES += libdrm
+endif
+
+ifeq ($(IMX_GPU_VIV_LIB_TARGET),wayland)
+IMX_GPU_VIV_DEPENDENCIES += wayland
 endif
 
 define IMX_GPU_VIV_EXTRACT_CMDS
 	$(call FREESCALE_IMX_EXTRACT_HELPER,$(IMX_GPU_VIV_DL_DIR)/$(IMX_GPU_VIV_SOURCE))
 endef
 
-# Instead of building, we fix up the inconsistencies that exist
-# in the upstream archive here.
-# Make sure these commands are idempotent.
-define IMX_GPU_VIV_BUILD_CMDS
-	$(SED) 's/defined(LINUX)/defined(__linux__)/g' $(@D)/gpu-core/usr/include/*/*.h
-	$(if $(BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_X11)$(BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_WL),
-		ln -sf libGL-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libGL.so
-		ln -sf libGL-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libGL.so.1
-		ln -sf libGL-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libGL.so.1.2
-		ln -sf libGL-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libGL.so.1.2.0
-	)
-	ln -sf libEGL-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libEGL.so
-	ln -sf libEGL-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libEGL.so.1
-	ln -sf libEGL-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libEGL.so.1.0
-	ln -sf libGLESv2-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libGLESv2.so
-	ln -sf libGLESv2-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libGLESv2.so.2
-	ln -sf libGLESv2-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libGLESv2.so.2.0.0
-	ln -sf libGAL-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libGAL.so
-	ln -sf libVDK-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libVDK.so
-endef
-
-ifeq ($(IMX_GPU_VIV_LIB_TARGET),fb)
-define IMX_GPU_VIV_FIXUP_FB_HEADERS
-	$(SED) '39i\
-		#if !defined(EGL_API_X11) && !defined(EGL_API_DFB) && !defined(EGL_API_FB) \n\
-		#define EGL_API_FB \n\
-		#endif' $(STAGING_DIR)/usr/include/EGL/eglplatform.h
-endef
-endif
-
 ifeq ($(IMX_GPU_VIV_LIB_TARGET),fb)
 define IMX_GPU_VIV_FIXUP_PKGCONFIG
 	ln -sf egl_linuxfb.pc $(@D)/gpu-core/usr/lib/pkgconfig/egl.pc
 endef
-endif
-
-ifeq ($(IMX_GPU_VIV_LIB_TARGET),wl)
+else ifeq ($(IMX_GPU_VIV_LIB_TARGET),wayland)
 define IMX_GPU_VIV_FIXUP_PKGCONFIG
 	ln -sf egl_wayland.pc $(@D)/gpu-core/usr/lib/pkgconfig/egl.pc
 endef
-endif
-
-ifeq ($(IMX_GPU_VIV_LIB_TARGET),x11)
+else ifeq ($(IMX_GPU_VIV_LIB_TARGET),x11)
 define IMX_GPU_VIV_FIXUP_PKGCONFIG
-	for lib in egl gbm glesv1_cm glesv2 vg; do \
-		ln -sf $${lib}_x11.pc $(@D)/gpu-core/usr/lib/pkgconfig/$${lib}.pc || exit 1; \
-	done
+	$(foreach lib,egl gbm glesv1_cm glesv2 vg, \
+		ln -sf $(lib)_x11.pc $(@D)/gpu-core/usr/lib/pkgconfig/$(lib).pc
+	)
 endef
 endif
 
+# Instead of building, we fix up the inconsistencies that exist
+# in the upstream archive here. We also remove unused backend files.
+# Make sure these commands are idempotent.
+define IMX_GPU_VIV_BUILD_CMDS
+	cp -dpfr $(@D)/gpu-core/usr/lib/$(IMX_GPU_VIV_LIB_TARGET)/* $(@D)/gpu-core/usr/lib/
+	$(foreach backend,fb x11 wayland, \
+		$(RM) -r $(@D)/gpu-core/usr/lib/$(backend)
+	)
+	$(IMX_GPU_VIV_FIXUP_PKGCONFIG)
+endef
+
 define IMX_GPU_VIV_INSTALL_STAGING_CMDS
 	cp -r $(@D)/gpu-core/usr/* $(STAGING_DIR)/usr
-	$(IMX_GPU_VIV_FIXUP_FB_HEADERS)
-	$(IMX_GPU_VIV_FIXUP_PKGCONFIG)
-	for lib in egl gbm glesv1_cm glesv2 vg; do \
-		$(INSTALL) -m 0644 -D \
-			$(@D)/gpu-core/usr/lib/pkgconfig/$${lib}.pc \
-			$(STAGING_DIR)/usr/lib/pkgconfig/$${lib}.pc; \
-	done
 endef
 
 ifeq ($(BR2_PACKAGE_IMX_GPU_VIV_EXAMPLES),y)
@@ -111,21 +86,11 @@ define IMX_GPU_VIV_INSTALL_GMEM_INFO
 endef
 endif
 
-# On the target, remove the unused libraries.
-# Note that this is _required_, else ldconfig may create symlinks
-# to the wrong library
 define IMX_GPU_VIV_INSTALL_TARGET_CMDS
 	$(IMX_GPU_VIV_INSTALL_EXAMPLES)
 	$(IMX_GPU_VIV_INSTALL_GMEM_INFO)
 	cp -a $(@D)/gpu-core/usr/lib $(TARGET_DIR)/usr
-	for lib in EGL GAL GLESv2 VDK; do \
-		for f in $(TARGET_DIR)/usr/lib/lib$${lib}-*.so; do \
-			case $$f in \
-				*-$(IMX_GPU_VIV_LIB_TARGET).so) : ;; \
-				*) $(RM) $$f ;; \
-			esac; \
-		done; \
-	done
+	$(INSTALL) -D -m 0644 $(@D)/gpu-core/etc/Vivante.icd $(TARGET_DIR)/etc/OpenCL/vendors/Vivante.icd
 endef
 
 $(eval $(generic-package))

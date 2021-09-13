@@ -1,0 +1,46 @@
+#! /bin/sh
+
+DAEMON="seatd"
+DAEMON_EXE="/usr/bin/${DAEMON}"
+PIDFILE="/run/${DAEMON}.pid"
+
+start() {
+	printf 'Starting %s: ' "${DAEMON}"
+	start-stop-daemon -S -x "${DAEMON_EXE}" -p "${PIDFILE}" -m -b -- -g video
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo OK
+	else
+		echo FAIL
+	fi
+	return "$status"
+}
+
+stop() {
+	printf 'Stopping %s: ' "${DAEMON}"
+	start-stop-daemon -K -x "${DAEMON_EXE}" -p "${PIDFILE}"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo OK
+	else
+		echo FAIL
+	fi
+	return "$status"
+}
+
+restart() {
+	stop
+	sleep 1
+	start
+}
+
+case "${1}" in
+	start|stop|restart)
+		"${1}";;
+	reload)
+		restart;;
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+		;;
+esac

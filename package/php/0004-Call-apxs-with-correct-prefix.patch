@@ -7,7 +7,7 @@ php uses apache's apxs script from staging directory to install libphp
 dynamic library and update /etc/apache2/httpd.conf in the staging and target
 directories. Here is the full command line:
 "apxs -S LIBEXECDIR='$(INSTALL_ROOT)/usr/modules'
- -S SYSCONFDIR='$(INSTALL_ROOT)/etc/apache2' -i -a -n php7"
+ -S SYSCONFDIR='$(INSTALL_ROOT)/etc/apache2' -i -a -n php"
 This does not work for target directory as apxs sets the full path of the
 library and not the relative one. Indeed, apxs is smart enough to substitute
 away the prefix specified in $(STAGING_DIR)/usr/build/config_vars.mk so
@@ -16,7 +16,7 @@ To fix this, add -S PREFIX='$(INSTALL_ROOT)/usr' to apxs call in configure
 
 Signed-off-by: Fabrice Fontaine <fabrice.fontaine@orange.com>
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
-[aduskett@gmail.com: Update for 7.3.0]
+[aduskett@gmail.com: Update for 8.0.7]
 ---
  sapi/apache2handler/config.m4 | 3 +++
  1 file changed, 3 insertions(+)
@@ -35,7 +35,7 @@ index 55c16179..68ce66c0 100644
      INSTALL_IT="\$(mkinstalldirs) '$APXS_LIBEXECDIR' && \
                   $APXS -S LIBEXECDIR='$APXS_LIBEXECDIR' \
 +                       -S PREFIX='$APXS_PREFIX' \
-                        -i -n php7"
+                        -i -n php"
    else
      APXS_SYSCONFDIR='$(INSTALL_ROOT)'`$APXS -q SYSCONFDIR`
 @@ -74,6 +76,7 @@ if test "$PHP_APXS2" != "no"; then
@@ -43,7 +43,7 @@ index 55c16179..68ce66c0 100644
                   $APXS -S LIBEXECDIR='$APXS_LIBEXECDIR' \
                         -S SYSCONFDIR='$APXS_SYSCONFDIR' \
 +                       -S PREFIX='$APXS_PREFIX' \
-                        -i -a -n php7"
+                        -i -a -n php"
    fi
  
 -- 

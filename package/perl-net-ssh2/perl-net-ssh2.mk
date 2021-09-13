@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-PERL_NET_SSH2_VERSION = 0.71
+PERL_NET_SSH2_VERSION = 0.72
 PERL_NET_SSH2_SOURCE = Net-SSH2-$(PERL_NET_SSH2_VERSION).tar.gz
-PERL_NET_SSH2_SITE = $(BR2_CPAN_MIRROR)/authors/id/R/RK/RKITOVER
+PERL_NET_SSH2_SITE = $(BR2_CPAN_MIRROR)/authors/id/S/SA/SALVA
 PERL_NET_SSH2_LICENSE = Artistic or GPL-1.0+
 PERL_NET_SSH2_LICENSE_FILES = README.pod
 PERL_NET_SSH2_DEPENDENCIES = libssh2 zlib
@@ -18,7 +18,7 @@ PERL_NET_SSH2_CONF_OPTS += \
 	inc="$(STAGING_DIR)/usr/include"
 
 ifeq ($(BR2_PACKAGE_LIBSSH2_LIBGCRYPT),y)
-PERL_NET_SSH2_CONF_OPTS += gcrypt
+PERL_NET_SSH2_CONF_OPTS += crypto_backend=gcrypt
 endif
 
 $(eval $(perl-package))

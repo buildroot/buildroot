@@ -73,6 +73,10 @@ config BR2_PACKAGE_HOST_QEMU_LINUX_USER_MODE
 	  the running host kernel, you may run into invalid system
 	  calls, which may yield surprising effects.
 
+config BR2_PACKAGE_HOST_QEMU_USER_MODE_ARGS
+	string
+	default "-cpu Nehalem,check=false" if BR2_x86_corei7
+
 config BR2_PACKAGE_HOST_QEMU_VDE2
 	bool "VDE2 support"
 	help
@@ -82,13 +86,18 @@ config BR2_PACKAGE_HOST_QEMU_VDE2
 
 config BR2_PACKAGE_HOST_QEMU_VIRTFS
 	bool "Virtual filesystem support"
+	depends on BR2_PACKAGE_HOST_QEMU_SYSTEM_MODE
 	help
 	  Enables support for virtual filesystem in Qemu allowing
 	  shared filesystem between Qemu and its emulated target.
 
 config BR2_PACKAGE_HOST_QEMU_USB
 	bool "USB passthrough support"
+	depends on BR2_HOST_GCC_AT_LEAST_4_9 # host-libusb
 	help
 	  Enables USB passthrough support from guest to host.
+
+comment "USB passthrough support needs a toolchain w/ host gcc >= 4.9"
+	depends on !BR2_HOST_GCC_AT_LEAST_4_9
 
 endif

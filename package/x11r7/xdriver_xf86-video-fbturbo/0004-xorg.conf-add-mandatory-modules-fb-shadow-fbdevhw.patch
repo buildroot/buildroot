@@ -1,0 +1,53 @@
+From 04d1f756ac1204b8d5be1757499ac3a239bd93e1 Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Wed, 2 Jun 2021 21:42:56 +0200
+Subject: [PATCH] xorg.conf: add mandatory modules (fb, shadow, fbdevhw)
+
+Xorg does not implement real dynamic linking and requires that its
+modules get loaded so add mandatory modules:
+
+- fbdevhw, fixes:
+  [   303.906] (II) LoadModule: "fbturbo"
+  [   303.906] (II) Loading /usr/lib/xorg/modules/drivers/fbturbo_drv.so
+  [   303.907] (EE) Failed to load /usr/lib/xorg/modules/drivers/fbturbo_drv.so: /usr/lib/xorg/modules/drivers/fbturbo_drv.so: undefined symbol: fbdevHWSave
+  [   303.907] (EE) Failed to load module "fbturbo" (loader failed, 0)
+  [   303.907] (EE) No drivers available.
+
+- shadow, fixes:
+  [   426.403] (II) LoadModule: "fbturbo"
+  [   426.404] (II) Loading /usr/lib/xorg/modules/drivers/fbturbo_drv.so
+  [   426.404] (EE) Failed to load /usr/lib/xorg/modules/drivers/fbturbo_drv.so: /usr/lib/xorg/modules/drivers/fbturbo_drv.so: undefined symbol: shadowRemove
+  [   426.404] (EE) Failed to load module "fbturbo" (loader failed, 0)
+  [   426.404] (EE) No drivers available.
+
+- fb, fixes:
+  [   471.912] (II) LoadModule: "shadow"
+  [   471.913] (II) Loading /usr/lib/xorg/modules/libshadow.so
+  [   471.913] (EE) Failed to load /usr/lib/xorg/modules/libshadow.so: /usr/lib/xorg/modules/libshadow.so: undefined symbol: fbGetScreenPrivateKey
+  [   471.913] (EE) Failed to load module "shadow" (loader failed, 0)
+
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ xorg.conf | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/xorg.conf b/xorg.conf
+index 6217d11..fda62e3 100644
+--- a/xorg.conf
++++ b/xorg.conf
+@@ -8,6 +8,12 @@
+ # Run "man fbturbo" to get additional information about the extra
+ # configuration options for tuning the driver.
+ 
++Section "Module"
++   Load "fb"
++   Load "shadow"
++   Load "fbdevhw"
++EndSection
++
+ Section "Device"
+         Identifier      "Allwinner A10/A13 FBDEV"
+         Driver          "fbturbo"
+-- 
+2.31.1
+

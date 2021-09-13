@@ -1,0 +1,165 @@
+From 2c767bb260a25b415e8c9c4b3ea37280b2127cec Mon Sep 17 00:00:00 2001
+From: japm48 <japm48@users.noreply.github.com>
+Date: Fri, 10 Apr 2020 23:35:30 +0200
+Subject: [PATCH] boost: remove deprecated math/common_factor.hpp
+
+Remove deprecation warning and prefer using std::{lcm,gcd} to Boost.
+Fixes #2712.
+
+[Retrieved from:
+https://github.com/gnuradio/gnuradio/commit/2c767bb260a25b415e8c9c4b3ea37280b2127cec]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ .../include/gnuradio/CMakeLists.txt           |  1 +
+ .../include/gnuradio/integer_math.h           | 35 +++++++++++++++++++
+ gnuradio-runtime/lib/buffer.cc                | 19 ++--------
+ gr-digital/lib/symbol_sync_cc_impl.cc         |  4 +--
+ gr-digital/lib/symbol_sync_ff_impl.cc         |  4 +--
+ 5 files changed, 43 insertions(+), 20 deletions(-)
+ create mode 100644 gnuradio-runtime/include/gnuradio/integer_math.h
+
+diff --git a/gnuradio-runtime/include/gnuradio/CMakeLists.txt b/gnuradio-runtime/include/gnuradio/CMakeLists.txt
+index 8d718e87b5b..056af5d6f48 100644
+--- a/gnuradio-runtime/include/gnuradio/CMakeLists.txt
++++ b/gnuradio-runtime/include/gnuradio/CMakeLists.txt
+@@ -31,6 +31,7 @@ install(FILES
+   gr_complex.h
+   hier_block2.h
+   high_res_timer.h
++  integer_math.h
+   io_signature.h
+   logger.h
+   math.h
+diff --git a/gnuradio-runtime/include/gnuradio/integer_math.h b/gnuradio-runtime/include/gnuradio/integer_math.h
+new file mode 100644
+index 00000000000..15141049fa4
+--- /dev/null
++++ b/gnuradio-runtime/include/gnuradio/integer_math.h
+@@ -0,0 +1,35 @@
++/* -*- c++ -*- */
++/*
++ * Copyright 2020 Free Software Foundation, Inc.
++ *
++ * This file is part of GNU Radio
++ *
++ * SPDX-License-Identifier: GPL-3.0-or-later
++ *
++ */
++#ifndef INCLUDED_GR_INTEGER_MATH_H
++#define INCLUDED_GR_INTEGER_MATH_H
++
++#if (__cplusplus >= 201703L)
++
++// Prefer C++17 goodness.
++#include <numeric>
++#define GR_GCD std::gcd
++#define GR_LCM std::lcm
++
++#elif (BOOST_VERSION >= 105800)
++
++// Fallback: newer boost API (introduced in Boost 1.58.0).
++#include <boost/integer/common_factor_rt.hpp>
++#define GR_GCD boost::integer::gcd
++#define GR_LCM boost::integer::lcm
++
++#else
++
++// Last resort: old deprecated boost API.
++#include <boost/math/common_factor_rt.hpp>
++#define GR_GCD boost::math::gcd
++#define GR_LCM boost::math::lcm
++
++#endif /* __cplusplus >= 201703L */
++#endif /* INCLUDED_GR_INTEGER_MATH_H */
+diff --git a/gnuradio-runtime/lib/buffer.cc b/gnuradio-runtime/lib/buffer.cc
+index 720c72c4ee8..46d704542b1 100644
+--- a/gnuradio-runtime/lib/buffer.cc
++++ b/gnuradio-runtime/lib/buffer.cc
+@@ -13,22 +13,13 @@
+ #endif
+ #include "vmcircbuf.h"
+ #include <gnuradio/buffer.h>
++#include <gnuradio/integer_math.h>
+ #include <gnuradio/math.h>
+ #include <assert.h>
+ #include <algorithm>
+ #include <iostream>
+ #include <stdexcept>
+ 
+-// the following header is deprecated as of Boost 1.66.0, and the
+-// other API was introduced in Boost 1.58.0. Since we still support
+-// Boost back to 1.54.0, use the older API if pre-1.5.80 and otherwise
+-// use the newer API.
+-#if (BOOST_VERSION < 105800)
+-#include <boost/math/common_factor_rt.hpp>
+-#else
+-#include <boost/integer/common_factor_rt.hpp>
+-#endif
+-
+ namespace gr {
+ 
+ static long s_buffer_count = 0; // counts for debugging storage mgmt
+@@ -68,13 +59,9 @@ static long s_buffer_reader_count = 0;
+  *
+  *     type_size * nitems == k * page_size
+  */
+-static long minimum_buffer_items(long type_size, long page_size)
++static inline long minimum_buffer_items(long type_size, long page_size)
+ {
+-#if (BOOST_VERSION < 105800)
+-    return page_size / boost::math::gcd(type_size, page_size);
+-#else
+-    return page_size / boost::integer::gcd(type_size, page_size);
+-#endif
++    return page_size / GR_GCD(type_size, page_size);
+ }
+ 
+ 
+diff --git a/gr-digital/lib/symbol_sync_cc_impl.cc b/gr-digital/lib/symbol_sync_cc_impl.cc
+index 55f85e7c6a7..55f162dc727 100644
+--- a/gr-digital/lib/symbol_sync_cc_impl.cc
++++ b/gr-digital/lib/symbol_sync_cc_impl.cc
+@@ -13,9 +13,9 @@
+ #endif
+ 
+ #include "symbol_sync_cc_impl.h"
++#include <gnuradio/integer_math.h>
+ #include <gnuradio/io_signature.h>
+ #include <gnuradio/math.h>
+-#include <boost/math/common_factor.hpp>
+ #include <stdexcept>
+ 
+ namespace gr {
+@@ -95,7 +95,7 @@ symbol_sync_cc_impl::symbol_sync_cc_impl(enum ted_type detector_type,
+         throw std::runtime_error("unable to create interpolating_resampler_ccf");
+ 
+     // Block Internal Clocks
+-    d_interps_per_symbol_n = boost::math::lcm(d_ted->inputs_per_symbol(), d_osps_n);
++    d_interps_per_symbol_n = GR_LCM(d_ted->inputs_per_symbol(), d_osps_n);
+     d_interps_per_ted_input_n = d_interps_per_symbol_n / d_ted->inputs_per_symbol();
+     d_interps_per_output_sample_n = d_interps_per_symbol_n / d_osps_n;
+ 
+diff --git a/gr-digital/lib/symbol_sync_ff_impl.cc b/gr-digital/lib/symbol_sync_ff_impl.cc
+index d0ec32ab192..1172c1b4f8a 100644
+--- a/gr-digital/lib/symbol_sync_ff_impl.cc
++++ b/gr-digital/lib/symbol_sync_ff_impl.cc
+@@ -13,9 +13,9 @@
+ #endif
+ 
+ #include "symbol_sync_ff_impl.h"
++#include <gnuradio/integer_math.h>
+ #include <gnuradio/io_signature.h>
+ #include <gnuradio/math.h>
+-#include <boost/math/common_factor.hpp>
+ #include <stdexcept>
+ 
+ namespace gr {
+@@ -97,7 +97,7 @@ symbol_sync_ff_impl::symbol_sync_ff_impl(enum ted_type detector_type,
+         throw std::runtime_error("unable to create interpolating_resampler_fff");
+ 
+     // Block Internal Clocks
+-    d_interps_per_symbol_n = boost::math::lcm(d_ted->inputs_per_symbol(), d_osps_n);
++    d_interps_per_symbol_n = GR_LCM(d_ted->inputs_per_symbol(), d_osps_n);
+     d_interps_per_ted_input_n = d_interps_per_symbol_n / d_ted->inputs_per_symbol();
+     d_interps_per_output_sample_n = d_interps_per_symbol_n / d_osps_n;
+ 

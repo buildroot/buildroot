@@ -1,0 +1,35 @@
+From 9a785396a7940ec541cf4793f9c9f92548c99d4c Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 10 Jul 2021 22:38:03 +0200
+Subject: [PATCH] ecore_fb: fix build with tslib
+
+Build with tslib is broken since version 1.25.0 and
+https://git.enlightenment.org/core/efl.git/commit/?id=8e3606698eb439eecd7302a885504365aca7e564:
+
+/data/buildroot-autobuilder/instance-0/output-1/host/opt/ext-toolchain/bin/../lib/gcc/powerpc-buildroot-linux-uclibc/9.3.0/../../../../powerpc-buildroot-linux-uclibc/bin/ld: src/lib/ecore_fb/libecore_fb.so.1.25.1.p/ecore_fb_ts.c.o: in function `_ecore_fb_ts_fd_handler':
+ecore_fb_ts.c:(.text+0x4c): undefined reference to `ts_read_raw'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/fa111306b95316eed54771550474dae804fa261e
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/lib/ecore_fb/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/lib/ecore_fb/meson.build b/src/lib/ecore_fb/meson.build
+index 6d50e0f146..7c7f6786c3 100644
+--- a/src/lib/ecore_fb/meson.build
++++ b/src/lib/ecore_fb/meson.build
+@@ -22,7 +22,7 @@ ecore_fb_src = files([
+ ecore_fb_lib = library('ecore_fb',
+     ecore_fb_src, pub_eo_file_target,
+     c_args : package_c_args,
+-    dependencies: ecore_fb_pub_deps + ecore_fb_deps,
++    dependencies: ecore_fb_pub_deps + ecore_fb_deps + ecore_fb_ext_deps,
+     include_directories : config_dir,
+     install: true,
+     version : meson.project_version()
+-- 
+2.30.2
+

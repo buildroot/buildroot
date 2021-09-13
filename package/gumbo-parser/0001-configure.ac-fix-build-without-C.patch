@@ -1,0 +1,63 @@
+From 968975107af5f4382e3e9410a635e32c14cea75f Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 21 Jul 2021 23:47:26 +0200
+Subject: [PATCH] configure.ac: fix build without C++
+
+Fix the following build failure raised on toolchains without C++:
+
+checking whether the C++ compiler works... no
+configure: error: in `/home/buildroot/autobuild/run/instance-0/output-1/build/gumbo-parser-0.10.1':
+configure: error: C++ compiler cannot create executables
+
+Fixes:
+ - http://autobuild.buildroot.org/results/a32b5d3b959433fd5c3543661c37f80d27fbd010
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/google/gumbo-parser/pull/426]
+---
+ Makefile.am  | 2 ++
+ configure.ac | 6 +++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index cb62459..5bebd92 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -105,7 +105,9 @@ gumbo_test_DEPENDENCIES += check-local
+ gumbo_test_LDADD += gtest/lib/libgtest.la gtest/lib/libgtest_main.la
+ endif
+ 
++if HAVE_EXAMPLES
+ noinst_PROGRAMS = clean_text find_links get_title positions_of_class benchmark serialize prettyprint
++endif
+ LDADD = libgumbo.la
+ AM_CPPFLAGS = -I"$(srcdir)/src"
+ 
+diff --git a/configure.ac b/configure.ac
+index 32dc9b9..172a36b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -9,8 +9,8 @@ AC_CONFIG_SRCDIR([src/parser.c])
+ AC_CONFIG_FILES([Makefile gumbo.pc])
+ 
+ # Checks for programs.
+-AC_PROG_CXX
+ AC_PROG_CC_C99
++AC_PROG_CXX
+ 
+ # Checks for libraries.
+ 
+@@ -27,6 +27,10 @@ AC_CHECK_LIB([gtest_main],
+              AM_CONDITIONAL(HAVE_SHARED_LIBGTEST, [true]),
+              AM_CONDITIONAL(HAVE_SHARED_LIBGTEST, [false]))
+ 
++AC_ARG_ENABLE([examples],
++              AS_HELP_STRING([--disable-examples], [Disable examples]))
++AM_CONDITIONAL([HAVE_EXAMPLES], [test "x$enable_examples" != "xno"])
++
+ # Init Automake & libtool
+ AM_INIT_AUTOMAKE([foreign subdir-objects])
+ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+-- 
+2.30.2
+

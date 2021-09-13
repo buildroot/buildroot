@@ -1,0 +1,28 @@
+From 1528980ee15e9589a7e27ec6d12a33cd8aab57b4 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd.kuhls@t-online.de>
+Date: Tue, 8 Jun 2021 07:51:40 +0200
+Subject: [PATCH] Drop hardening-related flags
+
+These will be set by Buildroot depending on toolchain capabilities and
+global Buildroot options.
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ Source/GmmLib/Linux.cmake | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/Source/GmmLib/Linux.cmake b/Source/GmmLib/Linux.cmake
+index 1a09bc4..b28fc1b 100644
+--- a/Source/GmmLib/Linux.cmake
++++ b/Source/GmmLib/Linux.cmake
+@@ -62,7 +62,6 @@ SET (GMMLIB_COMPILER_FLAGS_COMMON
+     -DUSE_SSE3
+     -DUSE_SSSE3
+     # Other common flags
+-    -fstack-protector
+     -fdata-sections
+     -ffunction-sections
+     -fmessage-length=0
+-- 
+2.29.2
+

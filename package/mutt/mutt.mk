@@ -4,12 +4,17 @@
 #
 ################################################################################
 
-MUTT_VERSION = 1.14.7
+MUTT_VERSION = 2.1.1
 MUTT_SITE = https://bitbucket.org/mutt/mutt/downloads
 MUTT_LICENSE = GPL-2.0+
 MUTT_LICENSE_FILES = GPL
+MUTT_CPE_ID_VENDOR = mutt
 MUTT_DEPENDENCIES = ncurses
 MUTT_CONF_OPTS = --disable-doc --disable-smtp
+
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+MUTT_CONF_ENV += LIBS=-latomic
+endif
 
 ifeq ($(BR2_PACKAGE_LIBICONV),y)
 MUTT_DEPENDENCIES += libiconv
@@ -27,6 +32,15 @@ else
 MUTT_CONF_OPTS += --without-idn --without-idn2
 endif
 
+ifeq ($(BR2_PACKAGE_LIBGPGME),y)
+MUTT_DEPENDENCIES += libgpgme
+MUTT_CONF_OPTS += \
+	--enable-gpgme \
+	--with-gpgme-prefix=$(STAGING_DIR)/usr
+else
+MUTT_CONF_OPTS += --disable-gpgme
+endif
+
 ifeq ($(BR2_PACKAGE_MUTT_IMAP),y)
 MUTT_CONF_OPTS += --enable-imap
 else
@@ -40,15 +54,26 @@ MUTT_CONF_OPTS += --disable-pop
 endif
 
 # SSL support is only used by imap or pop3 module
-ifneq ($(BR2_PACKAGET_MUTT_IMAP)$(BR2_PACKAGE_MUTT_POP3),)
+ifneq ($(BR2_PACKAGE_MUTT_IMAP)$(BR2_PACKAGE_MUTT_POP3),)
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 MUTT_DEPENDENCIES += openssl
-MUTT_CONF_OPTS += --with-ssl=$(STAGING_DIR)/usr
+MUTT_CONF_OPTS += \
+	--without-gnutls \
+	--with-ssl=$(STAGING_DIR)/usr
+else ifeq ($(BR2_PACKAGE_GNUTLS),y)
+MUTT_DEPENDENCIES += gnutls
+MUTT_CONF_OPTS += \
+	--with-gnutls=$(STAGING_DIR)/usr \
+	--without-ssl
 else
-MUTT_CONF_OPTS += --without-ssl
+MUTT_CONF_OPTS += \
+	--without-gnutls \
+	--without-ssl
 endif
 else
-MUTT_CONF_OPTS += --without-ssl
+MUTT_CONF_OPTS += \
+	--without-gnutls \
+	--without-ssl
 endif
 
 ifeq ($(BR2_PACKAGE_SQLITE),y)
@@ -56,6 +81,13 @@ MUTT_DEPENDENCIES += sqlite
 MUTT_CONF_OPTS += --with-sqlite3
 else
 MUTT_CONF_OPTS += --without-sqlite3
+endif
+
+ifeq ($(BR2_PACKAGE_ZLIB),y)
+MUTT_DEPENDENCIES += zlib
+MUTT_CONF_OPTS += --with-zlib=$(STAGING_DIR)/usr
+else
+MUTT_CONF_OPTS += --without-zlib
 endif
 
 # Avoid running tests to check for:

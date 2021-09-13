@@ -1,0 +1,49 @@
+From 727e882d77804f687179df49d96a01b10a0cf56a Mon Sep 17 00:00:00 2001
+From: Alexander Egorenkov <egorenar@linux.ibm.com>
+Date: Mon, 19 Jul 2021 12:10:19 +0200
+Subject: [PATCH] cpumf/lshwc: Fix compile errors due to use of
+ non-standard __BITS_PER_LONG
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Use LONG_BIT provided by C standard in <limits.h>.
+
+Fixes the following compile errors with buildroot:
+lshwc.c: In function ‘parse_cpulist’:
+lshwc.c:295:15: error: ‘__BITS_PER_LONG’ undeclared (first use in this function)
+  295 |    no_a = i % __BITS_PER_LONG;
+      |               ^~~~~~~~~~~~~~~
+
+Fixes: 27a562da ("cpumf/lshwc: Program to extract complete counter sets")
+Signed-off-by: Alexander Egorenkov <egorenar@linux.ibm.com>
+---
+ cpumf/lshwc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/cpumf/lshwc.c b/cpumf/lshwc.c
+index c7755123..13f63c4d 100644
+--- a/cpumf/lshwc.c
++++ b/cpumf/lshwc.c
+@@ -17,6 +17,7 @@
+ #include <err.h>
+ #include <errno.h>
+ #include <fcntl.h>
++#include <limits.h>
+ #include <linux/limits.h>
+ #include <stdarg.h>
+ #include <stdbool.h>
+@@ -292,8 +293,8 @@ static void parse_cpulist(char *parm, struct s390_hwctr_start *start)
+ 	/* Convert the CPU list to a bitmask for kernel cpumask_t */
+ 	for (i = 0, no_b = 0; i < max_possible_cpus; ++i) {
+ 		if (check[i].cpu_req) {
+-			no_a = i % __BITS_PER_LONG;
+-			no_b = i / __BITS_PER_LONG;
++			no_a = i % LONG_BIT;
++			no_b = i / LONG_BIT;
+ 			words[no_b] |= 1ULL << no_a;
+ 		}
+ 	}
+-- 
+2.31.1
+

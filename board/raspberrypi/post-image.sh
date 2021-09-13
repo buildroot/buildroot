@@ -16,7 +16,7 @@ do
 			cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
 
 # fixes rpi (3B, 3B+, 3A+, 4B and Zero W) ttyAMA0 serial console
-dtoverlay=miniuart-bt
+dtoverlay=miniuart-bt,krnbt=on
 __EOF__
 		fi
 		;;

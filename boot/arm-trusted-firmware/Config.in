@@ -1,7 +1,7 @@
 config BR2_TARGET_ARM_TRUSTED_FIRMWARE
 	bool "ARM Trusted Firmware (ATF)"
 	depends on (BR2_ARM_CPU_ARMV8A || BR2_ARM_CPU_ARMV7A) && \
-		   BR2_TARGET_UBOOT
+		   (BR2_TARGET_UBOOT || BR2_TARGET_EDK2)
 	help
 	  Enable this option if you want to build the ATF for your ARM
 	  based embedded device.
@@ -15,7 +15,7 @@ choice
 	  Select the specific ATF version you want to use
 
 config BR2_TARGET_ARM_TRUSTED_FIRMWARE_LATEST_VERSION
-	bool "v2.2"
+	bool "v2.5"
 
 config BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_VERSION
 	bool "Custom version"
@@ -43,7 +43,7 @@ config BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_VERSION_VALUE
 
 config BR2_TARGET_ARM_TRUSTED_FIRMWARE_VERSION
 	string
-	default "v2.2"		if BR2_TARGET_ARM_TRUSTED_FIRMWARE_LATEST_VERSION
+	default "v2.5"		if BR2_TARGET_ARM_TRUSTED_FIRMWARE_LATEST_VERSION
 	default "custom"	if BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_TARBALL
 	default BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_REPO_VERSION \
 				if BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_GIT
@@ -67,6 +67,15 @@ config BR2_TARGET_ARM_TRUSTED_FIRMWARE_PLATFORM
 	string "ATF platform"
 	help
 	  Target plaform to build for.
+
+config BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_DTS_PATH
+	string "Device Tree Source file paths"
+	help
+	  Space-separated list of paths to device tree source files
+	  that will be copied to fdts/ before starting the build.
+
+	  To use this device tree source file, the ATF configuration
+	  file must refer to it.
 
 config BR2_TARGET_ARM_TRUSTED_FIRMWARE_FIP
 	bool "Build FIP image"
@@ -135,6 +144,19 @@ config BR2_TARGET_ARM_TRUSTED_FIRMWARE_UBOOT_BL33_IMAGE
 
 endif
 
+config BR2_TARGET_ARM_TRUSTED_FIRMWARE_EDK2_AS_BL33
+	bool "Use EDK2 as BL33"
+	depends on BR2_TARGET_EDK2
+	help
+	  This option allows to embed EDK2 as the BL33 part of
+	  the ARM Trusted Firmware. It ensures that the EDK2 package
+	  gets built before ATF, and that the appropriate BL33
+	  variable pointing to the EDK2 is passed when building ATF.
+
+	  Do not choose this option if you intend to build ATF and EDK2
+	  for the 'qemu_sbsa' platform. In this case, due to the EDK2
+	  build system, the dependency between ATF and EDK is reversed.
+
 config BR2_TARGET_ARM_TRUSTED_FIRMWARE_ADDITIONAL_TARGETS
 	string "Additional ATF make targets"
 	help
@@ -174,5 +196,29 @@ config BR2_TARGET_ARM_TRUSTED_FIRMWARE_NEEDS_ARM32_TOOLCHAIN
 	help
 	  Select this option if your ATF board configuration requires
 	  an ARM32 bare metal toolchain to be available.
+
+config BR2_TARGET_ARM_TRUSTED_FIRMWARE_SSP
+	bool "Build with SSP"
+	default y
+	depends on BR2_TOOLCHAIN_HAS_SSP
+	depends on !BR2_SSP_NONE
+	help
+	  Say 'y' here if you want to build ATF with SSP.
+
+	  Your board must have SSP support in ATF: it must have an
+	  implementation for plat_get_stack_protector_canary().
+
+	  If you say 'y', the SSP level will be the level selected
+	  by the global SSP setting.
+
+config BR2_TARGET_ARM_TRUSTED_FIRMWARE_SSP_LEVEL
+	string
+	# While newer versions of TF-A support "none" as
+	# ENABLE_STACK_PROTECTOR value, older versions (e.g 2.0) only
+	# supported "0" to disable SSP.
+	default "0"    	  if !BR2_TARGET_ARM_TRUSTED_FIRMWARE_SSP
+	default "default" if BR2_SSP_REGULAR
+	default "strong"  if BR2_SSP_STRONG
+	default "all"     if BR2_SSP_ALL
 
 endif

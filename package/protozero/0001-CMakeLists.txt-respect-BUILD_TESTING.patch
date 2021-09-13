@@ -1,0 +1,47 @@
+From 03daae49c8fa94513b508bd12f1597e8e5e086f2 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 17 Apr 2021 13:06:44 +0200
+Subject: [PATCH] CMakeLists.txt: respect BUILD_TESTING
+
+Don't build tests if the standard cmake BUILD_TESTING variable is set to
+OFF.
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/mapbox/protozero/pull/105]
+---
+ CMakeLists.txt | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f9702d6..7a40212 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -23,6 +23,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+ 
+ #-----------------------------------------------------------------------------
+ 
++option(BUILD_TESTING "Build tests" ON)
+ option(WERROR "Add -Werror flag to build (turns warnings into errors)" ON)
+ 
+ if(MSVC)
+@@ -134,13 +135,13 @@ install(DIRECTORY include/protozero DESTINATION include)
+ 
+ #-----------------------------------------------------------------------------
+ 
+-enable_testing()
+-
+ add_subdirectory(doc)
+ 
+ add_subdirectory(tools)
+ 
+-add_subdirectory(test)
+-
++if(BUILD_TESTING)
++    enable_testing()
++    add_subdirectory(test)
++endif()
+ 
+ #-----------------------------------------------------------------------------
+-- 
+2.30.2
+

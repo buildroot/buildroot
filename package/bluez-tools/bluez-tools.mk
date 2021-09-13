@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BLUEZ_TOOLS_VERSION = 97efd293491ad7ec96a655665339908f2478b3d1
+BLUEZ_TOOLS_VERSION = f65321736475429316f07ee94ec0deac8e46ec4a
 BLUEZ_TOOLS_SITE = $(call github,khvzak,bluez-tools,$(BLUEZ_TOOLS_VERSION))
 
 # sources fetched from github, no configure script)

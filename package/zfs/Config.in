@@ -1,0 +1,32 @@
+comment "zfs needs a Linux kernel to be built"
+	depends on !BR2_LINUX_KERNEL
+
+comment "zfs needs udev /dev management"
+	depends on BR2_LINUX_KERNEL
+	depends on !BR2_PACKAGE_HAS_UDEV
+
+config BR2_PACKAGE_ZFS
+	bool "zfs"
+	depends on BR2_LINUX_KERNEL
+	depends on BR2_PACKAGE_HAS_UDEV
+	depends on BR2_USE_MMU  # util-linux (libblkid)
+	depends on BR2_TOOLCHAIN_HAS_THREADS  # libtirpc
+	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_LIBBLKID
+	select BR2_PACKAGE_UTIL_LINUX_LIBUUID
+	select BR2_PACKAGE_LIBTIRPC if !BR2_TOOLCHAIN_HAS_NATIVE_RPC
+	select BR2_PACKAGE_LIBAIO
+	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_ZLIB
+	help
+	  OpenZFS on Linux and FreeBSD
+
+	  OpenZFS is an advanced file system and volume manager which
+	  was originally developed for Solaris and is now maintained by
+	  the OpenZFS community. This repository contains the code for
+	  running OpenZFS on Linux and FreeBSD.
+
+	  This package builds the kernel modules and userland utils
+	  required to operates with ZFS volumes.
+
+	  http://zfsonlinux.org/

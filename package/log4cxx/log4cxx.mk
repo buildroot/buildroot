@@ -22,4 +22,11 @@ LOG4CXX_CONF_OPTS = \
 
 LOG4CXX_DEPENDENCIES = apr apr-util
 
+ifeq ($(BR2_PACKAGE_LIBESMTP),y)
+LOG4CXX_DEPENDENCIES += libesmtp
+LOG4CXX_CONF_OPTS += --with-SMTP=libesmtp
+else
+LOG4CXX_CONF_OPTS += --without-SMTP
+endif
+
 $(eval $(autotools-package))

@@ -4,12 +4,15 @@
 #
 ################################################################################
 
-BITCOIN_VERSION = 0.19.0.1
+BITCOIN_VERSION = 0.21.1
 BITCOIN_SITE = https://bitcoincore.org/bin/bitcoin-core-$(BITCOIN_VERSION)
 BITCOIN_AUTORECONF = YES
 BITCOIN_LICENSE = MIT
 BITCOIN_LICENSE_FILES = COPYING
-BITCOIN_DEPENDENCIES = host-pkgconf boost openssl libevent
+BITCOIN_CPE_ID_VENDOR = bitcoin
+BITCOIN_CPE_ID_PRODUCT = bitcoin_core
+BITCOIN_DEPENDENCIES = host-pkgconf boost libevent
+BITCOIN_MAKE_ENV = BITCOIN_GENBUILD_NO_GIT=1
 BITCOIN_CONF_OPTS = \
 	--disable-bench \
 	--disable-wallet \

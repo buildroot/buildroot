@@ -4,17 +4,16 @@
 #
 ################################################################################
 
-LIBMODSECURITY_VERSION = 3.0.4
+LIBMODSECURITY_VERSION = 3.0.5
 LIBMODSECURITY_SOURCE = modsecurity-v$(LIBMODSECURITY_VERSION).tar.gz
 LIBMODSECURITY_SITE = https://github.com/SpiderLabs/ModSecurity/releases/download/v$(LIBMODSECURITY_VERSION)
 LIBMODSECURITY_INSTALL_STAGING = YES
 LIBMODSECURITY_LICENSE = Apache-2.0
 LIBMODSECURITY_LICENSE_FILES = LICENSE
-# 0002-test-for-uClinux-in-configure-script.patch
+LIBMODSECURITY_CPE_ID_VENDOR = trustwave
+LIBMODSECURITY_CPE_ID_PRODUCT = modsecurity
+# We're patching build/libmaxmind.m4
 LIBMODSECURITY_AUTORECONF = YES
-# libinjection uses AC_CHECK_FILE, not available in cross-compile
-LIBMODSECURITY_CONF_ENV = \
-	ac_cv_file_others_libinjection_src_libinjection_html5_c=yes
 
 LIBMODSECURITY_DEPENDENCIES = pcre
 LIBMODSECURITY_CONF_OPTS = \
@@ -52,5 +51,15 @@ LIBMODSECURITY_CONF_OPTS += --with-maxmind
 else
 LIBMODSECURITY_CONF_OPTS += --without-maxmind
 endif
+
+LIBMODSECURITY_CXXFLAGS = $(TARGET_CXXFLAGS)
+
+# m68k_cf can't use -fPIC that libmodsecurity forces to use, so we need
+# to disable it to avoid a build failure.
+ifeq ($(BR2_m68k_cf),y)
+LIBMODSECURITY_CXXFLAGS += -fno-PIC
+endif
+
+LIBMODSECURITY_CONF_OPTS += CXXFLAGS="$(LIBMODSECURITY_CXXFLAGS)"
 
 $(eval $(autotools-package))

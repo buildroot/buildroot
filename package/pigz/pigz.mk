@@ -4,12 +4,13 @@
 #
 ################################################################################
 
-PIGZ_VERSION = 2.4
+PIGZ_VERSION = 2.6
 PIGZ_SITE = $(call github,madler,pigz,v$(PIGZ_VERSION))
 PIGZ_DEPENDENCIES = zlib
 HOST_PIGZ_DEPENDENCIES = host-zlib
 PIGZ_LICENSE = Zlib
 PIGZ_LICENSE_FILES = README
+PIGZ_CPE_ID_VENDOR = zlib
 
 define PIGZ_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)

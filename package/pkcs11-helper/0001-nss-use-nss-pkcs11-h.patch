@@ -1,0 +1,62 @@
+From d159a5c59c80552c3e8ea75d9bcf29b3a8e8289d Mon Sep 17 00:00:00 2001
+From: Alon Bar-Lev <alon.barlev@gmail.com>
+Date: Fri, 30 Jul 2021 20:06:36 +0300
+Subject: [PATCH] nss: use nss pkcs11.h
+
+make nss happy with its own extensions and non-standard behavior.
+[Retrieved (and updated to remove ChangeLog update) from:
+https://github.com/OpenSC/pkcs11-helper/pull/39]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ ChangeLog                 |  1 +
+ lib/_pkcs11h-crypto-nss.c | 14 ++++++++++----
+ lib/common.h              |  7 +++++++
+ 3 files changed, 18 insertions(+), 4 deletions(-)
+
+diff --git a/lib/_pkcs11h-crypto-nss.c b/lib/_pkcs11h-crypto-nss.c
+index 4b70e826..f57f9e6b 100644
+--- a/lib/_pkcs11h-crypto-nss.c
++++ b/lib/_pkcs11h-crypto-nss.c
+@@ -48,15 +48,21 @@
+  * POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+-#include "common.h"
+-
+-#include "_pkcs11h-crypto.h"
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
+ 
+ #if defined(ENABLE_PKCS11H_ENGINE_NSS)
+-#define _PKCS11T_H_ /* required so no conflict with ours */
+ #include <nss.h>
+ #include <cert.h>
+ 
++/* Use PKCS#11 of nss to avoid conflicts and make nss happy with its own extensions */
++#define PKCS11_H 1
++
++#include "common.h"
++
++#include "_pkcs11h-crypto.h"
++
+ static
+ int
+ __pkcs11h_crypto_nss_initialize (
+diff --git a/lib/common.h b/lib/common.h
+index 61a958af..2499e9c5 100644
+--- a/lib/common.h
++++ b/lib/common.h
+@@ -72,5 +72,12 @@
+ 
+ #define _PKCS11H_ASSERT		assert
+ 
++#ifndef FALSE
++#define FALSE 0
++#endif
++#ifndef TRUE
++#define TRUE 1
++#endif
++
+ #endif
+ 

@@ -10,6 +10,7 @@ PYTHON_SOURCE = Python-$(PYTHON_VERSION).tar.xz
 PYTHON_SITE = https://python.org/ftp/python/$(PYTHON_VERSION)
 PYTHON_LICENSE = Python-2.0, others
 PYTHON_LICENSE_FILES = LICENSE
+PYTHON_CPE_ID_VENDOR = python
 PYTHON_LIBTOOL_PATCH = NO
 
 # Python needs itself to be built, so in order to cross-compile
@@ -23,6 +24,7 @@ HOST_PYTHON_CONF_OPTS += \
 	--disable-sqlite3 \
 	--disable-tk \
 	--with-expat=system \
+	--with-system-ffi \
 	--disable-curses \
 	--disable-codecs-cjk \
 	--disable-nis \
@@ -55,7 +57,7 @@ HOST_PYTHON_MAKE = $(MAKE1)
 
 PYTHON_DEPENDENCIES = host-python libffi $(TARGET_NLS_DEPENDENCIES)
 
-HOST_PYTHON_DEPENDENCIES = host-expat host-zlib
+HOST_PYTHON_DEPENDENCIES = host-expat host-libffi host-zlib
 
 ifeq ($(BR2_PACKAGE_HOST_PYTHON_SSL),y)
 HOST_PYTHON_DEPENDENCIES += host-openssl

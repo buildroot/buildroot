@@ -4,13 +4,14 @@
 #
 ################################################################################
 
-BUBBLEWRAP_VERSION = 0.4.1
+BUBBLEWRAP_VERSION = 0.5.0
 BUBBLEWRAP_SITE = https://github.com/containers/bubblewrap/releases/download/v$(BUBBLEWRAP_VERSION)
 BUBBLEWRAP_SOURCE = bubblewrap-$(BUBBLEWRAP_VERSION).tar.xz
 BUBBLEWRAP_DEPENDENCIES = host-pkgconf libcap
 
 BUBBLEWRAP_LICENSE = LGPL-2.0+
 BUBBLEWRAP_LICENSE_FILES = COPYING
+BUBBLEWRAP_CPE_ID_VENDOR = projectatomic
 
 BUBBLEWRAP_CONF_OPTS = \
 	--enable-require-userns=no \

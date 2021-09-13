@@ -1,6 +1,7 @@
 config BR2_PACKAGE_LIBUHTTPD
 	bool "libuhttpd"
 	select BR2_PACKAGE_LIBEV
+	select BR2_PACKAGE_WOLFSSL_ALL if BR2_PACKAGE_WOLFSSL
 	help
 	  A lightweight and fully asynchronous HTTP server
 	  library based on libev

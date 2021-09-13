@@ -4,15 +4,14 @@
 #
 ################################################################################
 
-HOST_MENDER_ARTIFACT_VERSION = 3.4.0
+HOST_MENDER_ARTIFACT_VERSION = 3.5.1
 HOST_MENDER_ARTIFACT_SITE = $(call github,mendersoftware,mender-artifact,$(HOST_MENDER_ARTIFACT_VERSION))
 HOST_MENDER_ARTIFACT_LICENSE = Apache2.0, BSD-2-Clause, BSD-3-Clause, ISC, MIT
 HOST_MENDER_ARTIFACT_LICENSE_FILES = \
 	LICENSE \
 	LIC_FILES_CHKSUM.sha256 \
-	vendor/github.com/mendersoftware/mendertesting/LICENSE \
 	vendor/github.com/minio/sha256-simd/LICENSE \
-	vendor/gopkg.in/yaml.v2/LICENSE \
+	vendor/github.com/mendersoftware/progressbar/LICENSE \
 	vendor/github.com/pkg/errors/LICENSE \
 	vendor/github.com/pmezard/go-difflib/LICENSE \
 	vendor/golang.org/x/sys/LICENSE \
@@ -26,7 +25,9 @@ HOST_MENDER_ARTIFACT_LICENSE_FILES = \
 	vendor/github.com/sirupsen/logrus/LICENSE \
 	vendor/github.com/klauspost/pgzip/LICENSE \
 	vendor/github.com/cpuguy83/go-md2man/v2/LICENSE.md \
-	vendor/github.com/shurcooL/sanitized_anchor_name/LICENSE
+	vendor/github.com/shurcooL/sanitized_anchor_name/LICENSE \
+	vendor/gopkg.in/yaml.v3/LICENSE \
+	vendor/github.com/mattn/go-isatty/LICENSE
 
 HOST_MENDER_ARTIFACT_DEPENDENCIES = host-xz
 

@@ -1,0 +1,66 @@
+From 383d787d1b77f165da68495cb0363220b66935a4 Mon Sep 17 00:00:00 2001
+From: Steve Dickson <steved@redhat.com>
+Date: Tue, 27 Jul 2021 21:12:17 -0400
+Subject: [PATCH] nfsdcltrack: Use uint64_t instead of time_t
+
+With recent commits (4f2a5b64,5a53426c) that fixed
+compile errors on x86_64 machines, caused similar
+errors on i686 machines.
+
+The variable type that was being used was a time_t,
+which changes size between architects, which
+caused the compile error.
+
+Changing the variable to uint64_t fixed the issue.
+
+Signed-off-by: Steve Dickson <steved@redhat.com>
+Upstream: http://git.linux-nfs.org/?p=steved/nfs-utils.git;a=commit;h=383d787d1b77f165da68495cb0363220b66935a4
+Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
+---
+ utils/nfsdcltrack/nfsdcltrack.c | 2 +-
+ utils/nfsdcltrack/sqlite.c      | 2 +-
+ utils/nfsdcltrack/sqlite.h      | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/utils/nfsdcltrack/nfsdcltrack.c b/utils/nfsdcltrack/nfsdcltrack.c
+index 0b37c094..7c1c4bcc 100644
+--- a/utils/nfsdcltrack/nfsdcltrack.c
++++ b/utils/nfsdcltrack/nfsdcltrack.c
+@@ -508,7 +508,7 @@ cltrack_gracedone(const char *timestr)
+ {
+ 	int ret;
+ 	char *tail;
+-	time_t gracetime;
++	uint64_t gracetime;
+ 
+ 
+ 	ret = sqlite_prepare_dbh(storagedir);
+diff --git a/utils/nfsdcltrack/sqlite.c b/utils/nfsdcltrack/sqlite.c
+index cea4a411..cf0c6a45 100644
+--- a/utils/nfsdcltrack/sqlite.c
++++ b/utils/nfsdcltrack/sqlite.c
+@@ -540,7 +540,7 @@ out_err:
+  * remove any client records that were not reclaimed since grace_start.
+  */
+ int
+-sqlite_remove_unreclaimed(time_t grace_start)
++sqlite_remove_unreclaimed(uint64_t grace_start)
+ {
+ 	int ret;
+ 	char *err = NULL;
+diff --git a/utils/nfsdcltrack/sqlite.h b/utils/nfsdcltrack/sqlite.h
+index 06e7c044..ba8cdfa8 100644
+--- a/utils/nfsdcltrack/sqlite.h
++++ b/utils/nfsdcltrack/sqlite.h
+@@ -26,7 +26,7 @@ int sqlite_insert_client(const unsigned char *clname, const size_t namelen,
+ int sqlite_remove_client(const unsigned char *clname, const size_t namelen);
+ int sqlite_check_client(const unsigned char *clname, const size_t namelen,
+ 				const bool has_session);
+-int sqlite_remove_unreclaimed(const time_t grace_start);
++int sqlite_remove_unreclaimed(const uint64_t grace_start);
+ int sqlite_query_reclaiming(const time_t grace_start);
+ 
+ #endif /* _SQLITE_H */
+-- 
+2.32.0
+

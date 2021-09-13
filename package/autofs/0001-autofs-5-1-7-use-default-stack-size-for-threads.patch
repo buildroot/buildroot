@@ -1,0 +1,124 @@
+From 91edcc55c681dac41d2213b498ec6450aee22d9f Mon Sep 17 00:00:00 2001
+From: Ian Kent <raven@themaw.net>
+Date: Mon, 26 Jul 2021 13:18:38 +0800
+Subject: autofs-5.1.7 - use default stack size for threads
+
+autofs uses PTHREAD_STACK_MIN to set the stack size for threads it
+creates.
+
+In two cases it is used to reduce the stack size for long running
+service threads while it's used to allocate a larger stack for worker
+threads that can have larger memory requirements.
+
+In recent glibc releases PTHREAD_STACK_MIN is no longer a constant
+which can lead to unexpectedly different stack sizes on different
+architectures and the autofs assumption it's a constant causes a
+compile failure.
+
+The need to alter the stack size was due to observed stack overflow
+which was thought to be due the thread stack being too small for autofs
+and glibc alloca(3) usage.
+
+Quite a bit of that alloca(3) usage has been eliminated from autofs now,
+particularly those that might be allocating largish amounts of storage,
+and there has been a lot of change in glibc too so using the thread
+default stack should be ok.
+
+Signed-off-by: Ian Kent <raven@themaw.net>
+
+[Retrieved (and updated to drop CHANGELOG update) from:
+https://git.kernel.org/pub/scm/linux/storage/autofs/autofs.git/commit/?id=91edcc55c681dac41d2213b498ec6450aee22d9f]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ CHANGELOG          |  1 +
+ daemon/automount.c | 29 -----------------------------
+ daemon/state.c     |  6 +-----
+ lib/alarm.c        |  6 +-----
+ 4 files changed, 3 insertions(+), 39 deletions(-)
+
+diff --git a/daemon/automount.c b/daemon/automount.c
+index 23235a7..d743235 100644
+--- a/daemon/automount.c
++++ b/daemon/automount.c
+@@ -84,7 +84,6 @@ static size_t kpkt_len;
+ /* Attributes for creating detached and joinable threads */
+ pthread_attr_t th_attr;
+ pthread_attr_t th_attr_detached;
+-size_t detached_thread_stack_size = PTHREAD_STACK_MIN * 144;
+ 
+ struct master_readmap_cond mrc = {
+ 	PTHREAD_MUTEX_INITIALIZER, PTHREAD_COND_INITIALIZER, 0, NULL, 0, 0, 0, 0};
+@@ -2620,34 +2619,6 @@ int main(int argc, char *argv[])
+ 		exit(1);
+ 	}
+ 
+-#ifdef _POSIX_THREAD_ATTR_STACKSIZE
+-	if (pthread_attr_setstacksize(
+-			&th_attr_detached, detached_thread_stack_size)) {
+-		logerr("%s: failed to set stack size thread attribute!",
+-		       program);
+-		if (start_pipefd[1] != -1) {
+-			res = write(start_pipefd[1], pst_stat, sizeof(*pst_stat));
+-			close(start_pipefd[1]);
+-		}
+-		release_flag_file();
+-		macro_free_global_table();
+-		exit(1);
+-	}
+-#endif
+-
+-	if (pthread_attr_getstacksize(
+-			&th_attr_detached, &detached_thread_stack_size)) {
+-		logerr("%s: failed to get detached thread stack size!",
+-		       program);
+-		if (start_pipefd[1] != -1) {
+-			res = write(start_pipefd[1], pst_stat, sizeof(*pst_stat));
+-			close(start_pipefd[1]);
+-		}
+-		release_flag_file();
+-		macro_free_global_table();
+-		exit(1);
+-	}
+-
+ 	info(logging, "Starting automounter version %s, master map %s",
+ 		version, master_list->name);
+ 	info(logging, "using kernel protocol version %d.%02d",
+diff --git a/daemon/state.c b/daemon/state.c
+index 5156bb2..5df0561 100644
+--- a/daemon/state.c
++++ b/daemon/state.c
+@@ -1177,12 +1177,8 @@ int st_start_handler(void)
+ 	status = pthread_attr_init(pattrs);
+ 	if (status)
+ 		pattrs = NULL;
+-	else {
++	else
+ 		pthread_attr_setdetachstate(pattrs, PTHREAD_CREATE_DETACHED);
+-#ifdef _POSIX_THREAD_ATTR_STACKSIZE
+-		pthread_attr_setstacksize(pattrs, PTHREAD_STACK_MIN*4);
+-#endif
+-	}
+ 
+ 	status = pthread_create(&thid, pattrs, st_queue_handler, NULL);
+ 
+diff --git a/lib/alarm.c b/lib/alarm.c
+index f27e13c..1631a9b 100755
+--- a/lib/alarm.c
++++ b/lib/alarm.c
+@@ -270,12 +270,8 @@ int alarm_start_handler(void)
+ 	status = pthread_attr_init(pattrs);
+ 	if (status)
+ 		pattrs = NULL;
+-	else {
++	else
+ 		pthread_attr_setdetachstate(pattrs, PTHREAD_CREATE_DETACHED);
+-#ifdef _POSIX_THREAD_ATTR_STACKSIZE
+-		pthread_attr_setstacksize(pattrs, PTHREAD_STACK_MIN*4);
+-#endif
+-	}
+ 
+ 	status = pthread_condattr_init(&condattrs);
+ 	if (status)
+-- 
+cgit 1.2.3-1.el7
+

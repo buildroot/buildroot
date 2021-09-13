@@ -4,16 +4,14 @@
 #
 ################################################################################
 
-LIBCGROUP_VERSION = 0.41
+LIBCGROUP_VERSION = 0.42.2
 LIBCGROUP_SOURCE = libcgroup-$(LIBCGROUP_VERSION).tar.bz2
-LIBCGROUP_SITE = http://downloads.sourceforge.net/project/libcg/libcgroup/v$(LIBCGROUP_VERSION)
+LIBCGROUP_SITE = https://github.com/libcgroup/libcgroup/releases/download/v$(LIBCGROUP_VERSION)
 LIBCGROUP_LICENSE = LGPL-2.1
 LIBCGROUP_LICENSE_FILES = COPYING
+LIBCGROUP_CPE_ID_VENDOR = libcgroup_project
 LIBCGROUP_DEPENDENCIES = host-bison host-flex
 LIBCGROUP_INSTALL_STAGING = YES
-
-# 0001-cgrulesengd-remove-umask-0.patch
-LIBCGROUP_IGNORE_CVES += CVE-2018-14348
 
 # Undefining _FILE_OFFSET_BITS here because of a "bug" with glibc fts.h
 # large file support. See https://bugzilla.redhat.com/show_bug.cgi?id=574992

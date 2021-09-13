@@ -4,12 +4,13 @@
 #
 ################################################################################
 
-WOLFSSL_VERSION = 4.5.0-stable
+WOLFSSL_VERSION = 4.8.1-stable
 WOLFSSL_SITE = $(call github,wolfSSL,wolfssl,v$(WOLFSSL_VERSION))
 WOLFSSL_INSTALL_STAGING = YES
 
 WOLFSSL_LICENSE = GPL-2.0+
 WOLFSSL_LICENSE_FILES = COPYING LICENSING
+WOLFSSL_CPE_ID_VENDOR = wolfssl
 
 WOLFSSL_DEPENDENCIES = host-pkgconf
 

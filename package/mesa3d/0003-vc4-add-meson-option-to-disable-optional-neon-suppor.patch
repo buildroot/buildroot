@@ -9,6 +9,8 @@ to force disabling it at compile time.
 
 [Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4114]
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[rebased for 20.2.0, 20.3.0 & 21.1.0]
 ---
  meson_options.txt                    | 7 +++++++
  src/gallium/drivers/vc4/meson.build  | 4 ++--
@@ -19,9 +21,9 @@ diff --git a/meson_options.txt b/meson_options.txt
 index a39596a6f19..0f6b6c62b55 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
-@@ -117,6 +117,13 @@ option(
-   choices : ['auto', 'true', 'false'],
-   description : 'enable gallium va state tracker.',
+@@ -123,6 +123,13 @@ option(
+   choices : ['auto', 'true', 'false', 'enabled', 'disabled'],
+   description : 'enable gallium va frontend.',
  )
 +option(
 +  'gallium-vc4-neon',
@@ -65,7 +67,7 @@ index 66767e7f1f8..7446f1c3d0c 100644
  {
 -#ifdef USE_ARM_ASM
 +#ifdef VC4_TILING_LT_NEON
-         if (util_cpu_caps.has_neon) {
+         if (util_get_cpu_caps()->has_neon) {
                  vc4_load_lt_image_neon(dst, dst_stride, src, src_stride,
                                         cpp, box);
 @@ -105,7 +105,7 @@ vc4_store_lt_image(void *dst, uint32_t dst_stride,
@@ -74,7 +76,7 @@ index 66767e7f1f8..7446f1c3d0c 100644
  {
 -#ifdef USE_ARM_ASM
 +#ifdef VC4_TILING_LT_NEON
-         if (util_cpu_caps.has_neon) {
+         if (util_get_cpu_caps()->has_neon) {
                  vc4_store_lt_image_neon(dst, dst_stride, src, src_stride,
                                          cpp, box);
 -- 

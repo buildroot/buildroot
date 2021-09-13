@@ -1,0 +1,44 @@
+From 0941e560850d54160c24778fa66b605714fd5012 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 9 Aug 2021 21:18:50 +0200
+Subject: [PATCH] src/mongo/db/exec/plan_stats.h: fix build with gcc
+ 11
+
+Fix the following build failure with gcc 11:
+
+In file included from src/mongo/db/query/plan_cache.h:36,
+                 from src/mongo/db/catalog/collection_info_cache.h:33,
+                 from src/mongo/db/catalog/collection.h:42,
+                 from src/mongo/db/exec/requires_collection_stage.h:32,
+                 from src/mongo/db/exec/delete.h:32,
+                 from src/mongo/db/query/internal_plans.h:33,
+                 from src/mongo/db/query/internal_plans.cpp:32:
+src/mongo/db/exec/plan_stats.h:214:10: error: 'optional' in namespace 'std' does not name a template type
+  214 |     std::optional<std::string> replanReason;
+      |          ^~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/8c0875fa413923504515a83d8b679366418c2444
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: already fixed by
+https://github.com/mongodb/mongo/commit/e78b2bf6eaa0c43bd76dbb841add167b443d2bb0]
+---
+ src/mongo/db/exec/plan_stats.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/mongo/db/exec/plan_stats.h b/src/mongo/db/exec/plan_stats.h
+index 43053e27be..813e4edc9e 100644
+--- a/src/mongo/db/exec/plan_stats.h
++++ b/src/mongo/db/exec/plan_stats.h
+@@ -31,6 +31,7 @@
+ 
+ #include <cstdint>
+ #include <cstdlib>
++#include <optional>
+ #include <string>
+ #include <vector>
+ 
+-- 
+2.30.2
+

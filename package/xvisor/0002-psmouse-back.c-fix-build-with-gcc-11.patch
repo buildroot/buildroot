@@ -1,0 +1,114 @@
+From 0e07e82121697d99470a147eadad9a708889c4df Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 2 Sep 2021 18:13:03 +0200
+Subject: [PATCH] psmouse-back.c: fix build with gcc 11
+
+Fix the following build failures with gcc 11 by defining inline
+functions as static:
+
+/home/buildroot/autobuild/instance-3/output-1/host/lib/gcc/arm-buildroot-linux-gnueabihf/11.1.0/../../../../arm-buildroot-linux-gnueabihf/bin/ld: /home/buildroot/autobuild/instance-3/output-1/build/xvisor-0.3.0/build/drivers/drivers.o: in function `psmouse_extensions':
+/home/buildroot/autobuild/instance-3/output-1/build/xvisor-0.3.0/drivers/input/mouse/psmouse-base.c:783: undefined reference to `lifebook_detect'
+/home/buildroot/autobuild/instance-3/output-1/host/lib/gcc/arm-buildroot-linux-gnueabihf/11.1.0/../../../../arm-buildroot-linux-gnueabihf/bin/ld: /home/buildroot/autobuild/instance-3/output-1/build/xvisor-0.3.0/drivers/input/mouse/psmouse-base.c:783: undefined reference to `alps_detect'
+/home/buildroot/autobuild/instance-3/output-1/host/lib/gcc/arm-buildroot-linux-gnueabihf/11.1.0/../../../../arm-buildroot-linux-gnueabihf/bin/ld: /home/buildroot/autobuild/instance-3/output-1/build/xvisor-0.3.0/drivers/input/mouse/psmouse-base.c:783: undefined reference to `ps2pp_init'
+/home/buildroot/autobuild/instance-3/output-1/host/lib/gcc/arm-buildroot-linux-gnueabihf/11.1.0/../../../../arm-buildroot-linux-gnueabihf/bin/ld: /home/buildroot/autobuild/instance-3/output-1/build/xvisor-0.3.0/drivers/input/mouse/psmouse-base.c:783: undefined reference to `trackpoint_detect'
+/home/buildroot/autobuild/instance-3/output-1/host/lib/gcc/arm-buildroot-linux-gnueabihf/11.1.0/../../../../arm-buildroot-linux-gnueabihf/bin/ld: /home/buildroot/autobuild/instance-3/output-1/build/xvisor-0.3.0/drivers/input/mouse/psmouse-base.c:783: undefined reference to `fsp_detect'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/69062b9c80567d135edd48890165e69881cf7295
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ drivers/input/mouse/alps.h       | 4 ++--
+ drivers/input/mouse/lifebook.h   | 6 +++---
+ drivers/input/mouse/logips2pp.h  | 2 +-
+ drivers/input/mouse/sentelic.h   | 4 ++--
+ drivers/input/mouse/trackpoint.h | 2 +-
+ 5 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/input/mouse/alps.h b/drivers/input/mouse/alps.h
+index ae1ac354..acc1e89e 100644
+--- a/drivers/input/mouse/alps.h
++++ b/drivers/input/mouse/alps.h
+@@ -51,11 +51,11 @@ struct alps_data {
+ int alps_detect(struct psmouse *psmouse, bool set_properties);
+ int alps_init(struct psmouse *psmouse);
+ #else
+-inline int alps_detect(struct psmouse *psmouse, bool set_properties)
++static inline int alps_detect(struct psmouse *psmouse, bool set_properties)
+ {
+ 	return -ENOSYS;
+ }
+-inline int alps_init(struct psmouse *psmouse)
++static inline int alps_init(struct psmouse *psmouse)
+ {
+ 	return -ENOSYS;
+ }
+diff --git a/drivers/input/mouse/lifebook.h b/drivers/input/mouse/lifebook.h
+index 4c4326c6..0baf02a7 100644
+--- a/drivers/input/mouse/lifebook.h
++++ b/drivers/input/mouse/lifebook.h
+@@ -16,14 +16,14 @@ void lifebook_module_init(void);
+ int lifebook_detect(struct psmouse *psmouse, bool set_properties);
+ int lifebook_init(struct psmouse *psmouse);
+ #else
+-inline void lifebook_module_init(void)
++static inline void lifebook_module_init(void)
+ {
+ }
+-inline int lifebook_detect(struct psmouse *psmouse, bool set_properties)
++static inline int lifebook_detect(struct psmouse *psmouse, bool set_properties)
+ {
+ 	return -ENOSYS;
+ }
+-inline int lifebook_init(struct psmouse *psmouse)
++static inline int lifebook_init(struct psmouse *psmouse)
+ {
+ 	return -ENOSYS;
+ }
+diff --git a/drivers/input/mouse/logips2pp.h b/drivers/input/mouse/logips2pp.h
+index 0c186f02..439e9c58 100644
+--- a/drivers/input/mouse/logips2pp.h
++++ b/drivers/input/mouse/logips2pp.h
+@@ -14,7 +14,7 @@
+ #ifdef CONFIG_MOUSE_PS2_LOGIPS2PP
+ int ps2pp_init(struct psmouse *psmouse, bool set_properties);
+ #else
+-inline int ps2pp_init(struct psmouse *psmouse, bool set_properties)
++static inline int ps2pp_init(struct psmouse *psmouse, bool set_properties)
+ {
+ 	return -ENOSYS;
+ }
+diff --git a/drivers/input/mouse/sentelic.h b/drivers/input/mouse/sentelic.h
+index aa697ece..42df9e3b 100644
+--- a/drivers/input/mouse/sentelic.h
++++ b/drivers/input/mouse/sentelic.h
+@@ -123,11 +123,11 @@ struct fsp_data {
+ extern int fsp_detect(struct psmouse *psmouse, bool set_properties);
+ extern int fsp_init(struct psmouse *psmouse);
+ #else
+-inline int fsp_detect(struct psmouse *psmouse, bool set_properties)
++static inline int fsp_detect(struct psmouse *psmouse, bool set_properties)
+ {
+ 	return -ENOSYS;
+ }
+-inline int fsp_init(struct psmouse *psmouse)
++static inline int fsp_init(struct psmouse *psmouse)
+ {
+ 	return -ENOSYS;
+ }
+diff --git a/drivers/input/mouse/trackpoint.h b/drivers/input/mouse/trackpoint.h
+index e558a709..f14e59c0 100644
+--- a/drivers/input/mouse/trackpoint.h
++++ b/drivers/input/mouse/trackpoint.h
+@@ -145,7 +145,7 @@ struct trackpoint_data
+ #ifdef CONFIG_MOUSE_PS2_TRACKPOINT
+ int trackpoint_detect(struct psmouse *psmouse, bool set_properties);
+ #else
+-inline int trackpoint_detect(struct psmouse *psmouse, bool set_properties)
++static inline int trackpoint_detect(struct psmouse *psmouse, bool set_properties)
+ {
+ 	return -ENOSYS;
+ }
+-- 
+2.32.0
+

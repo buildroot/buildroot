@@ -1,0 +1,30 @@
+config BR2_PACKAGE_USBGUARD
+	bool "usbguard"
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS # protobuf
+	depends on BR2_INSTALL_LIBSTDCPP # protobuf
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libqb, protobuf
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # protobuf
+	depends on !BR2_STATIC_LIBS # libqb, protobuf
+	depends on !BR2_TOOLCHAIN_USES_MUSL
+	depends on !BR2_TOOLCHAIN_HAS_GCC_BUG_64735 # std::future
+	select BR2_PACKAGE_PROTOBUF
+	select BR2_PACKAGE_LIBQB
+	select BR2_PACKAGE_LIBSODIUM if !BR2_PACKAGE_LIBGCRYPT && !BR2_PACKAGE_LIBOPENSSL
+	help
+	  The USBGuard software framework
+
+	  Install a custom accept/deny list in /etc/usbguard/rules.conf
+	  (e.g. using an overlay). This file can be generated on the
+	  target using "usbguard generate-policy".
+
+	  https://usbguard.github.io/
+
+comment "usbguard needs a glibc or uClibc toolchain w/ C++, threads, dynamic library, gcc >= 4.8"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS \
+		|| BR2_STATIC_LIBS || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 \
+		|| BR2_TOOLCHAIN_USES_MUSL
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
+
+comment "usbguard needs a toolchain not affected by GCC bug 64735"
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_HAS_GCC_BUG_64735

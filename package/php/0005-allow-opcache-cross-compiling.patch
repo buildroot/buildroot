@@ -1,0 +1,37 @@
+From 9bb316c41a69935ee2072626467241889594bed4 Mon Sep 17 00:00:00 2001
+From: Adam Duskett <aduskett@gmail.com>
+Date: Mon, 28 Jun 2021 11:12:36 -0700
+Subject: [PATCH] allow opcache cross-compiling
+
+Remove the check at the end of ext/opcache/config.m4 that prevents opcache from
+being enabled in a cross-compiled environment. We pass the following as a
+CFLAGS when opcache is enabled:
+  -DHAVE_SHM_IPC
+  -DHAVE_SHM_MMAP_ANON
+  -DHAVE_SHM_MMAP_ZERO
+  -DHAVE_SHM_MMAP_POSIX
+  -DHAVE_SHM_MMAP_FILE
+
+Signed-off-by: Adam Duskett <aduskett@gmail.com>
+---
+ ext/opcache/config.m4 | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/ext/opcache/config.m4 b/ext/opcache/config.m4
+index 5492fd92..10c150ff 100644
+--- a/ext/opcache/config.m4
++++ b/ext/opcache/config.m4
+@@ -339,10 +339,6 @@ int main() {
+   PHP_ADD_BUILD_DIR([$ext_builddir/Optimizer], 1)
+   PHP_ADD_EXTENSION_DEP(opcache, pcre)
+ 
+-  if test "$have_shm_ipc" != "yes" && test "$have_shm_mmap_posix" != "yes" && test "$have_shm_mmap_anon" != "yes"; then
+-    AC_MSG_ERROR([No supported shared memory caching support was found when configuring opcache. Check config.log for any errors or missing dependencies.])
+-  fi
+-
+   if test "$PHP_OPCACHE_JIT" = "yes"; then
+     PHP_ADD_BUILD_DIR([$ext_builddir/jit], 1)
+     PHP_ADD_MAKEFILE_FRAGMENT($ext_srcdir/jit/Makefile.frag)
+-- 
+2.31.1
+

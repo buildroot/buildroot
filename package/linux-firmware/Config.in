@@ -44,6 +44,11 @@ config BR2_PACKAGE_LINUX_FIRMWARE_QCOM_ADRENO
 	help
 	  Firmware files for Qualcomm Adreno GPU firmware
 
+config BR2_PACKAGE_LINUX_FIRMWARE_MFC_V8
+	bool "Samsung MFC video encoder/decoder v8 firmware"
+	help
+	  Firmware files for Samsung MFC video encoder/decoder driver v8
+
 endmenu # Video
 
 menu "Bluetooth firmware"
@@ -73,6 +78,16 @@ config BR2_PACKAGE_LINUX_FIRMWARE_AR3012_USB
 	bool "Qualcomm Atheros 3012 (USB)"
 	help
 	  Firmware files for Atheros bluetooth chipset AR3012 on USB.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_RTL_87XX_BT
+	bool "Realtek 87xx Bluetooth"
+	help
+	  Realtek 8723a/8723b/8723bs/8723d/8723ds/8761a
+
+config BR2_PACKAGE_LINUX_FIRMWARE_RTL_88XX_BT
+	bool "Realtek 88xx Bluetooth"
+	help
+	  Realtek 8821a/8821c/8822b/8822cs/8822cu/8852au
 
 config BR2_PACKAGE_LINUX_FIRMWARE_TI_CC2560
 	bool "TI CC2560"
@@ -113,6 +128,11 @@ config BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_9271
 	help
 	  Firmware files for the Atheros 9271 module
 
+config BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_10K_QCA9377
+	bool "Atheros 10k (QCA9377)"
+	help
+	  Firmware files for the Atheros QCA9377 module
+
 config BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_10K_QCA998X
 	bool "Atheros 10k (QCA998X)"
 	help
@@ -127,6 +147,16 @@ config BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM43XXX
 	bool "Broadcom BRCM bcm43xxx"
 	help
 	  Firmware files for the Broadcom bcm43xxx, SoftMAC and FullMAC.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM4366B1
+	bool "Broadcom 4366b1"
+	help
+	  Firmware file for the Broadcom 4366b1 FullMAC chip.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM4366C0
+	bool "Broadcom 4366c0"
+	help
+	  Firmware file for the Broadcom 4366c0 FullMAC chip.
 
 config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22260
 	bool "Intel iwlwifi 22260"
@@ -274,10 +304,27 @@ config BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_PCIE8897
 	help
 	  Firmware files for the Marvell Wifi-Ex 8897 module on PCI-E.
 
+config BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_PCIEUART8997
+	bool "Marvell Wifi-Ex 8997 PCI-E/UART"
+	help
+	  Firmware files for the Marvell Wifi-Ex 8997 module on
+	  PCI-E/UART.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_PCIEUSB8997
+	bool "Marvell Wifi-Ex 8997 PCI-E/USB"
+	help
+	  Firmware files for the Marvell Wifi-Ex 8997 module on
+	  PCI-E/USB.
+
 config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7601U
 	bool "MediaTek MT7601U"
 	help
 	  MediaTek MT7601U
+
+config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7610E
+	bool "MediaTek MT7610E"
+	help
+	  MediaTek MT7610E
 
 config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT76X2E
 	bool "MediaTek MT76x2e"
@@ -355,6 +402,12 @@ endmenu
 
 menu "Ethernet firmware"
 
+config BR2_PACKAGE_LINUX_FIRMWARE_BROADCOM_TIGON3
+	bool "Broadcom NetXtreme/Tigon3"
+	help
+	  Firmware files for Broadcom Tigon3 ethernet cards
+	  (tigon)
+
 config BR2_PACKAGE_LINUX_FIRMWARE_BNX2X
 	bool "Broadcom NetXtremeII"
 	help
@@ -428,15 +481,6 @@ config BR2_PACKAGE_LINUX_FIRMWARE_XCx000
 
 endmenu
 
-menu "SoC Firmware"
-
-config BR2_PACKAGE_LINUX_FIRMWARE_IMX_SDMA
-	bool "Freescale i.MX SDMA"
-	help
-	  Firmware files for i.MX SDMA.
-
-endmenu
-
 menu "Fibre Channel Adapter Firmware"
 
 config BR2_PACKAGE_LINUX_FIRMWARE_QLOGIC_2XXX
@@ -462,6 +506,25 @@ config BR2_PACKAGE_LINUX_FIRMWARE_QAT_C62X
 	bool "Support for C62X"
 	help
 	  Firmware files for Intel C62X devices
+
+endmenu
+
+menu "USB to Serial Firmware"
+
+config BR2_PACKAGE_LINUX_FIRMWARE_USB_SERIAL_TI
+	bool "USB TI 3410/5052 Serial Firmware"
+	help
+	  Firmware files for TI 3410/5052
+
+endmenu
+
+menu "V4L Firmware"
+
+config BR2_PACKAGE_LINUX_FIRMWARE_CX231XX
+	bool "Conexant Cx23100/101/102 USB broadcast A/V decoder"
+	help
+	  Firmware files for Conexant Cx23100/101/102 USB broadcast
+	  A/V decoder needed by the Linux CX231XX driver.
 
 endmenu
 

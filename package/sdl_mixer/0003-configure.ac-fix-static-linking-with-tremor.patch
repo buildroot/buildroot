@@ -1,0 +1,24 @@
+From 02e247a0b820753977315786087b969f3b2c53da Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 10 Apr 2021 11:50:17 +0200
+Subject: [PATCH] configure.ac: fix linking with tremor
+
+backported from: https://github.com/libsdl-org/SDL_mixer/pull/312
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index c8dbcdb..93d5db0 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -453,7 +453,7 @@ if test x$enable_music_ogg = xyes; then
+                 echo "-- dynamic libvorbisidec -> $ogg_lib"
+                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
+             else
+-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisidec -lvorbis"
++                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisidec"
+             fi
+         else
+             AC_MSG_WARN([*** Unable to find Ogg Vorbis Tremor library (http://www.xiph.org/)])

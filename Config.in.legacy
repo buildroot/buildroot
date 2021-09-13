@@ -144,7 +144,342 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2021.11"
+
+config BR2_PACKAGE_GNURADIO_PAGER
+	bool "gnuradio gr-flex support removed"
+	select BR2_LEGACY
+	help
+	  gr-flex has been removed from gnuradio since version 3.8.0.0.
+
+config BR2_KERNEL_HEADERS_5_11
+	bool "kernel headers version 5.11.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 5.11.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+config BR2_KERNEL_HEADERS_5_12
+	bool "kernel headers version 5.12.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 5.12.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+comment "Legacy options removed in 2021.08"
+
+config BR2_PACKAGE_LIBMCRYPT
+	bool "libmcrypt package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as "the last update to libmcrypt
+	  was in 2007, despite years of unmerged patches. These facts
+	  have led security experts to declare mcrypt abandonware and
+	  discourage its use in new development" (extract from
+	  https://en.wikipedia.org/wiki/Mcrypt).
+
+config BR2_PACKAGE_MCRYPT
+	bool "mcrypt package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as "the last update to libmcrypt
+	  was in 2007, despite years of unmerged patches. These facts
+	  have led security experts to declare mcrypt abandonware and
+	  discourage its use in new development" (extract from
+	  https://en.wikipedia.org/wiki/Mcrypt).
+
+config BR2_PACKAGE_PHP_EXT_MCRYPT
+	bool "PHP mcrypt extension removed"
+	select BR2_LEGACY
+	help
+	  mcrypt has been removed from php since version 7.2.0.
+
+config BR2_BINUTILS_VERSION_2_34_X
+	bool "binutils 2.34 has been removed"
+	select BR2_LEGACY
+	help
+	  binutils 2.34 has been removed, use a newer version.
+
+config BR2_PACKAGE_LIBSOIL
+	bool "libsoil package removed"
+	select BR2_LEGACY
+	help
+	  The libsoil package was removed. All packages needing
+	  libsoil removed the dependency.
+
+config BR2_PACKAGE_CLAPACK
+	bool "cblas/clapack package removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_LAPACK if BR2_PACKAGE_LAPACK_ARCH_SUPPORTS && BR2_TOOLCHAIN_HAS_FORTRAN
+	help
+	  The clapack package was removed. LAPACK no longer generates a
+	  C version. Use lapack instead. This does require a Fortran
+	  compiler however.
+
+config BR2_PACKAGE_SPIDERMONKEY
+	bool "spidermonkey package removed"
+	select BR2_LEGACY
+	help
+	  The spidermonkey package was removed. The only package that
+	  depended on spidermonkey was polkit. The spidermonkey
+	  dependency is replaced with duktape.
+
+config BR2_PACKAGE_KODI_LIBVA
+	bool "kodi option to add libva support removed"
+	select BR2_LEGACY
+	help
+	  Kodi still has support for libva if the package is enabled but
+	  the kodi-specific dependencies limiting libva support to non-
+	  OPENGLES platforms were removed including this option.
+
+config BR2_PACKAGE_PYTHON_COHERENCE
+	bool "python-coherence package removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it can't be built anymore due
+	  to python-twisted being now incompatible with python 2.
+
+config BR2_PACKAGE_PHP_EXT_XMLRPC
+	bool "PHP XMLRPC extension removed"
+	select BR2_LEGACY
+	help
+	  The XMLRPC php extension was removed.
+	  See: https://wiki.php.net/rfc/unbundle_xmlprc
+
+config BR2_GCC_VERSION_8_X
+	bool "gcc 8.x support removed"
+	select BR2_LEGACY
+	help
+	  Support for gcc version 8.x has been removed. The current
+	  default version (10.x or later) has been selected instead.
+
+comment "Legacy options removed in 2021.05"
+
+config BR2_PACKAGE_UDISKS_LVM2
+	bool "udisks lvm2 support removed"
+	select BR2_LEGACY
+	help
+	  The lvm2 support was removed because udisks < 2.7.0 still
+	  depends on lvm2 application library, which was removed
+	  in lvm2.
+
+config BR2_PACKAGE_LVM2_APP_LIBRARY
+	bool "lvm2 application library removed"
+	select BR2_LEGACY
+	help
+	  The lvm2 application library was removed upstream.
+
+config BR2_PACKAGE_LVM2_LVMETAD
+	bool "lvm2 lvmetad removed"
+	select BR2_LEGACY
+	help
+	  The lvm2 lvmetad was removed upstream.
+
+config BR2_PACKAGE_MONKEY
+	bool "monkey package removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it has not seen any release
+	  since 2016 and because TLS is broken on master.
+
+config BR2_PACKAGE_DOCKER_CONTAINERD
+	bool "docker-containerd package was renamed to containerd"
+	select BR2_LEGACY
+	select BR2_PACKAGE_CONTAINERD
+	help
+	  The containerd project is now independent from Docker.
+	  The package was renamed to containerd accordingly.
+
+config BR2_PACKAGE_IOSTAT
+	bool "iostat package removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed, use sysstat instead.
+
+config BR2_PACKAGE_SCONESERVER_HTTP_SCONESITE_IMAGE
+	bool "sconeserver http::sconesite::image removed"
+	select BR2_LEGACY
+	help
+	  Sconeserver cannot be built with ImageMagick - it uses the
+	  "transofrm" function which is removed from public API.
+
+config BR2_PACKAGE_XSERVER_XORG_SERVER_KDRIVE_EVDEV
+	bool "KDrive/TinyX evdev input driver removed"
+	select BR2_LEGACY
+	help
+	  The evdev input driver in KDrive was removed.
+
+config BR2_PACKAGE_XSERVER_XORG_SERVER_KDRIVE_KBD
+	bool "KDrive/TinyX kbd input driver removed"
+	select BR2_LEGACY
+	help
+	  The kbd input driver in KDrive was removed.
+
+config BR2_PACKAGE_XSERVER_XORG_SERVER_KDRIVE_MOUSE
+	bool "KDrive/TinyX mouse input driver removed"
+	select BR2_LEGACY
+	help
+	  The mouse input driver in KDrive was removed.
+
+config BR2_PACKAGE_MESA3D_OSMESA_CLASSIC
+	bool "mesa OSMesa (classic) option removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_MESA3D_OSMESA_GALLIUM
+	help
+	  The OSMesa "classic" library option was removed upstream.
+	  Only the Gallium-based implementation remains.
+
+config BR2_PACKAGE_MESA3D_DRI_DRIVER_SWRAST
+	bool "mesa DRI swrast driver removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_SWRAST
+	help
+	  The DRI swrast driver was removed upstream.
+	  Only the Gallium-based implementation remains.
+
+config BR2_PACKAGE_KODI_SCREENSAVER_CRYSTALMORPH
+	bool "kodi-screensaver-crystalmorph removed"
+	select BR2_LEGACY
+	help
+	  The package received its last updates in 2017, is not part
+	  of the official Kodi github repo and its build is broken
+	  with Kodi 19.x, so it was removed.
+
+comment "Legacy options removed in 2021.02"
+
+config BR2_PACKAGE_MPD_AUDIOFILE
+	bool "mpd audiofile support removed"
+	select BR2_LEGACY
+	help
+	  The audiofile support was removed from mpd as audiofile is
+	  affected by multiple CVEs and is not maintained anymore (no
+	  release since 2013).
+
+config BR2_PACKAGE_AUDIOFILE
+	bool "audiofile package removed"
+	select BR2_LEGACY
+	help
+	  The audiofile package was removed as it is affected by
+	  multiple CVEs and is not maintained anymore (no release since
+	  2013).
+
+config BR2_BINUTILS_VERSION_2_33_X
+	bool "binutils 2.33.x has been removed"
+	select BR2_LEGACY
+	help
+	  binutils 2.33.x has been removed, use a newer version.
+
+config BR2_PACKAGE_LIBUPNP18
+	bool "libupnp18 package removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_LIBUPNP
+	help
+	  Version 1.8.x of libupnp (i.e. libupnp18) has been removed
+	  because it will never be fixed against CallStranger a.k.a.
+	  CVE-2020-12695. The libupnp package (which has been updated to
+	  version 1.14.x) has been selected instead.
+
+config BR2_PACKAGE_BOA
+	bool "boa package removed"
+	select BR2_LEGACY
+	help
+	  The boa package was removed as it is affected by multiple
+	  CVEs and is not maintained anymore (no release since 2005).
+
+config BR2_PACKAGE_LINUX_FIRMWARE_IMX_SDMA
+	bool "imx sdma firmware is provided by firmware-imx"
+	select BR2_LEGACY
+	select BR2_PACKAGE_FREESCALE_IMX
+	select BR2_PACKAGE_FIRMWARE_IMX
+	help
+	  linux-firmware provide the same firmware as firmware-imx.
+	  We prefer using firmware-imx as the only provider.
+
+config BR2_GDB_VERSION_8_2
+	bool "gdb 8.2.x has been removed"
+	select BR2_LEGACY
+	help
+	  gdb 8.2 support has been removed, you can use a newer
+	  version such as 8.3 or more recent.
+
+config BR2_PACKAGE_HOST_RCW
+	bool "rcw package was renamed to qoriq-rcw"
+	select BR2_PACKAGE_HOST_QORIQ_RCW
+	select BR2_LEGACY
+	help
+	  The rcw package was specific to the QorIQ platform, so it has
+	  been renamed to qoriq-rcw, to leave room for other *-rcw
+	  packages for other platforms.
+
+config BR2_KERNEL_HEADERS_5_9
+	bool "kernel headers version 5.9.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 5.9.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+config BR2_KERNEL_HEADERS_5_8
+	bool "kernel headers version 5.8.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 5.8.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+config BR2_powerpc_601
+	bool "PowerPC 601 support removed"
+	select BR2_LEGACY
+	help
+	  The support for the PowerPC 601 processors has been removed.
+
+config BR2_PACKAGE_TI_SGX_LIBGBM
+	bool "ti-sgx-libgbm support removed"
+	select BR2_LEGACY
+	help
+	  TI has merged the ti-sgx-libgbm package with the ti-sgx-um
+	  package
+
+config BR2_PACKAGE_IPSEC_TOOLS
+	bool "ipsec-tools package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it has security issues and
+	  has been abandoned since 2014.
+
 comment "Legacy options removed in 2020.11"
+
+config BR2_PACKAGE_GPSD_FIXED_PORT_SPEED
+	bool "compile with fixed serial port speed"
+	select BR2_LEGACY
+	help
+	  Since gpsd 3.20, GPSD_FIXED_PORT_SPEED is replaced
+	  by runtime option --speed.
+
+config BR2_PACKAGE_GPSD_RECONFIGURE
+	bool "allow gpsd to change device settings"
+	select BR2_LEGACY
+	help
+	  Since gpsd 3.21, GPSD_RECONFIGURE is replaced
+	  by runtime option --passive.
+
+config BR2_PACKAGE_GPSD_CONTROLSEND
+	bool "allow gpsctl/gpsmon to change device settings"
+	select BR2_LEGACY
+	help
+	  Option removed in gpsd 3.21
+
+config BR2_PACKAGE_OPENCV
+	bool "opencv package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed, use opencv3 instead.
+
+config BR2_PACKAGE_LIBCROCO
+	bool "libcroco package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it is affected by several
+	  security issues such as CVE-2020-12825 which will never be
+	  fixed as libcroco has been archived.
 
 config BR2_PACKAGE_BELLAGIO
 	bool "bellagio package was removed"

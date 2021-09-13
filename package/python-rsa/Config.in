@@ -1,0 +1,11 @@
+config BR2_PACKAGE_PYTHON_RSA
+	bool "python-rsa"
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON_PYASN1 # runtime
+	help
+	  Python-RSA is a pure-Python RSA implementation. It supports
+	  encryption and decryption, signing and verifying signatures,
+	  and key generation according to PKCS\#1 version 1.5. It can
+	  be used as a Python library as well as on the command line.
+
+	  https://stuvel.eu/rsa

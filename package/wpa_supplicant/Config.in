@@ -1,6 +1,8 @@
-config BR2_PACKAGE_WPA_SUPPLICANT
+menuconfig BR2_PACKAGE_WPA_SUPPLICANT
 	bool "wpa_supplicant"
 	depends on BR2_USE_MMU # fork()
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_DES if BR2_PACKAGE_LIBOPENSSL
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_MD4 if BR2_PACKAGE_LIBOPENSSL
 	help
 	  WPA supplicant for secure wireless networks
 
@@ -29,6 +31,33 @@ config BR2_PACKAGE_WPA_SUPPLICANT_NL80211
 comment "nl80211 support needs a toolchain w/ threads"
 	depends on !BR2_TOOLCHAIN_HAS_THREADS
 
+config BR2_PACKAGE_WPA_SUPPLICANT_WEXT
+	bool "Enable wext (deprecated)"
+	default y if !BR2_TOOLCHAIN_HAS_THREADS
+	help
+	  Enable support for wext.  This is the historic wireless API
+	  for Linux, which is now deprecated and in maintenance-only in
+	  the kernel.  It may still be required by out-of-tree drivers.
+
+config BR2_PACKAGE_WPA_SUPPLICANT_WIRED
+	bool "Enable wired support"
+	select BR2_PACKAGE_WPA_SUPPLICANT_EAP
+	help
+	  Include the "wired" driver, so the internal IEEE 802.1x
+	  supplicant can be used with Ethernet.  This also enables
+	  support for MACSEC.
+
+comment "wpa_supplicant will be useless without at least one driver"
+	depends on !BR2_PACKAGE_WPA_SUPPLICANT_NL80211 && \
+		!BR2_PACKAGE_WPA_SUPPLICANT_WEXT && \
+		!BR2_PACKAGE_WPA_SUPPLICANT_WIRED
+
+config BR2_PACKAGE_WPA_SUPPLICANT_IBSS_RSN
+	bool "Enable IBSS RSN"
+	depends on BR2_PACKAGE_WPA_SUPPLICANT_NL80211
+	help
+	  Enable support for RSN/WPA2 in Ad-Hoc mode.
+
 config BR2_PACKAGE_WPA_SUPPLICANT_AP_SUPPORT
 	bool "Enable AP mode"
 	depends on BR2_PACKAGE_WPA_SUPPLICANT_NL80211
@@ -38,7 +67,7 @@ config BR2_PACKAGE_WPA_SUPPLICANT_AP_SUPPORT
 	  set.  This links in parts of hostapd functionality into
 	  wpa_supplicant, making it bigger but dispensing the need for
 	  a separate hostapd binary in some applications hence being
-	  smaller overall.
+	  smaller overall.  It also enables support for Wi-Fi Direct.
 
 config BR2_PACKAGE_WPA_SUPPLICANT_WIFI_DISPLAY
 	bool "Enable Wi-Fi Display"
@@ -63,10 +92,11 @@ config BR2_PACKAGE_WPA_SUPPLICANT_AUTOSCAN
 config BR2_PACKAGE_WPA_SUPPLICANT_EAP
 	bool "Enable EAP"
 	help
-	  Enable support for EAP.
+	  Enable support for EAP, 802.1x/WPA-Enterprise and FILS.
 
 config BR2_PACKAGE_WPA_SUPPLICANT_HOTSPOT
 	bool "Enable HS20"
+	select BR2_PACKAGE_WPA_SUPPLICANT_EAP
 	help
 	  Enable Hotspot 2.0 and IEEE 802.11u interworking
 	  functionality.
@@ -90,6 +120,7 @@ config BR2_PACKAGE_WPA_SUPPLICANT_WPA3
 
 config BR2_PACKAGE_WPA_SUPPLICANT_CLI
 	bool "Install wpa_cli binary"
+	select BR2_PACKAGE_WPA_SUPPLICANT_CTRL_IFACE
 	help
 	  Install wpa_cli command line utility
 
@@ -107,6 +138,11 @@ config BR2_PACKAGE_WPA_SUPPLICANT_PASSPHRASE
 	help
 	  Install wpa_passphrase command line utility.
 
+config BR2_PACKAGE_WPA_SUPPLICANT_CTRL_IFACE
+	bool "Enable the Unix-socket control interface"
+	help
+	  Enable support for the Unix-socket-based API.
+
 config BR2_PACKAGE_WPA_SUPPLICANT_DBUS
 	bool "Enable support for the DBus control interface"
 	depends on BR2_TOOLCHAIN_HAS_THREADS # dbus
@@ -121,6 +157,6 @@ config BR2_PACKAGE_WPA_SUPPLICANT_DBUS_INTROSPECTION
 	bool "Introspection support"
 	depends on BR2_PACKAGE_WPA_SUPPLICANT_DBUS
 	help
-	  Add introspection support for new DBus control interface.
+	  Add introspection support for the DBus control interface.
 
 endif

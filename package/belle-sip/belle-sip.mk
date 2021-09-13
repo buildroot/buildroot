@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-BELLE_SIP_VERSION = 4.3.1
+BELLE_SIP_VERSION = 4.4.8
 BELLE_SIP_SITE = \
 	https://gitlab.linphone.org/BC/public/belle-sip/-/archive/$(BELLE_SIP_VERSION)
 BELLE_SIP_LICENSE = GPL-3.0+
 BELLE_SIP_LICENSE_FILES = LICENSE.txt
+BELLE_SIP_CPE_ID_VENDOR = linphone
 BELLE_SIP_INSTALL_STAGING = YES
 BELLE_SIP_DEPENDENCIES = \
 	bctoolbox \
@@ -31,5 +32,13 @@ BELLE_SIP_CONF_OPTS += -DENABLE_SHARED=ON -DENABLE_STATIC=ON
 else ifeq ($(BR2_SHARED_LIBS),y)
 BELLE_SIP_CONF_OPTS += -DENABLE_SHARED=ON -DENABLE_STATIC=OFF
 endif
+
+BELLE_SIP_CFLAGS = $(TARGET_CFLAGS)
+
+ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_99140),y)
+BELLE_SIP_CFLAGS += -O0
+endif
+
+BELLE_SIP_CONF_OPTS += -DCMAKE_C_FLAGS="$(BELLE_SIP_CFLAGS)"
 
 $(eval $(cmake-package))

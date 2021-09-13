@@ -8,11 +8,13 @@ SYSTEMD_VERSION = 246.6.ccx3
 SYSTEMD_SITE = $(call github,ccxtechnologies,systemd,v$(SYSTEMD_VERSION))
 SYSTEMD_LICENSE = LGPL-2.1+, GPL-2.0+ (udev), Public Domain (few source files, see README), BSD-3-Clause (tools/chromiumos)
 SYSTEMD_LICENSE_FILES = LICENSE.GPL2 LICENSE.LGPL2.1 README tools/chromiumos/LICENSE
+SYSTEMD_CPE_ID_VENDOR = freedesktop
 SYSTEMD_INSTALL_STAGING = YES
 SYSTEMD_DEPENDENCIES = \
 	$(BR2_COREUTILS_HOST_DEPENDENCY) \
 	$(if $(BR2_PACKAGE_BASH_COMPLETION),bash-completion) \
 	host-gperf \
+	host-python3-jinja2 \
 	kmod \
 	libcap \
 	util-linux-libs \
@@ -23,34 +25,44 @@ SYSTEMD_SELINUX_MODULES = systemd udev
 SYSTEMD_PROVIDES = udev
 
 SYSTEMD_CONF_OPTS += \
-	-Drootlibdir='/usr/lib' \
-	-Dsysvinit-path= \
-	-Dsysvrcnd-path= \
-	-Dutmp=false \
-	-Dman=false \
-	-Dima=false \
-	-Dldconfig=false \
 	-Ddefault-hierarchy=hybrid \
-	-Dtests=false \
+	-Didn=true \
+	-Dima=false \
+	-Dkexec-path=/usr/sbin/kexec \
+	-Dkmod-path=/usr/bin/kmod \
+	-Dldconfig=false \
+	-Dloadkeys-path=/usr/bin/loadkeys \
+	-Dman=false \
+	-Dmount-path=/usr/bin/mount \
+	-Dmode=release \
+	-Dnss-systemd=true \
+	-Dquotacheck-path=/usr/sbin/quotacheck \
+	-Dquotaon-path=/usr/sbin/quotaon \
+	-Drootlibdir='/usr/lib' \
+	-Dsetfont-path=/usr/bin/setfont \
 	-Dsplit-bin=true \
 	-Dsplit-usr=false \
-	-Dsystem-uid-max=999 \
-	-Dsystem-gid-max=999 \
-	-Dtelinit-path=$(TARGET_DIR)/sbin/telinit \
-	-Dkmod-path=/usr/bin/kmod \
-	-Dkexec-path=/usr/sbin/kexec \
 	-Dsulogin-path=/usr/sbin/sulogin \
-	-Dmount-path=/usr/bin/mount \
+	-Dsystem-gid-max=999 \
+	-Dsystem-uid-max=999 \
+	-Dsysvinit-path= \
+	-Dsysvrcnd-path= \
+	-Dtelinit-path= \
+	-Dtests=false \
 	-Dumount-path=/usr/bin/umount \
-	-Didn=true \
-	-Dnss-systemd=true \
-	-Dportabled=false
+	-Dutmp=false
 
 ifeq ($(BR2_PACKAGE_ACL),y)
 SYSTEMD_DEPENDENCIES += acl
 SYSTEMD_CONF_OPTS += -Dacl=true
 else
 SYSTEMD_CONF_OPTS += -Dacl=false
+endif
+
+ifeq ($(BR2_PACKAGE_LESS),y)
+SYSTEMD_CONF_OPTS += -Durlify=true
+else
+SYSTEMD_CONF_OPTS += -Durlify=false
 endif
 
 ifeq ($(BR2_PACKAGE_LIBAPPARMOR),y)
@@ -406,11 +418,29 @@ else
 SYSTEMD_CONF_OPTS += -Dpstore=false
 endif
 
+ifeq ($(BR2_PACKAGE_SYSTEMD_OOMD),y)
+SYSTEMD_CONF_OPTS += -Doomd=true
+else
+SYSTEMD_CONF_OPTS += -Doomd=false
+endif
+
 ifeq ($(BR2_PACKAGE_SYSTEMD_POLKIT),y)
 SYSTEMD_CONF_OPTS += -Dpolkit=true
 SYSTEMD_DEPENDENCIES += polkit
 else
 SYSTEMD_CONF_OPTS += -Dpolkit=false
+endif
+
+ifeq ($(BR2_PACKAGE_SYSTEMD_PORTABLED),y)
+SYSTEMD_CONF_OPTS += -Dportabled=true
+else
+SYSTEMD_CONF_OPTS += -Dportabled=false
+endif
+
+ifeq ($(BR2_PACKAGE_SYSTEMD_SYSEXT),y)
+SYSTEMD_CONF_OPTS += -Dsysext=true
+else
+SYSTEMD_CONF_OPTS += -Dsysext=false
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD_NETWORKD),y)
@@ -512,8 +542,7 @@ endef
 
 SYSTEMD_POST_INSTALL_TARGET_HOOKS += \
 	SYSTEMD_INSTALL_INIT_HOOK \
-	SYSTEMD_INSTALL_MACHINEID_HOOK \
-	SYSTEMD_INSTALL_RESOLVCONF_HOOK
+	SYSTEMD_INSTALL_MACHINEID_HOOK
 
 define SYSTEMD_INSTALL_IMAGES_CMDS
 	$(SYSTEMD_INSTALL_BOOT_FILES)
@@ -533,6 +562,8 @@ endef
 define SYSTEMD_INSTALL_NSSCONFIG_HOOK
 	$(SED) '/^passwd:/ {/systemd/! s/$$/ systemd/}' \
 		-e '/^group:/ {/systemd/! s/$$/ [SUCCESS=merge] systemd/}' \
+		-e '/^shadow:/ {/systemd/! s/$$/ systemd/}' \
+		-e '/^gshadow:/ {/systemd/! s/$$/ systemd/}' \
 		$(if $(BR2_PACKAGE_SYSTEMD_RESOLVED), \
 			-e '/^hosts:/ s/[[:space:]]*mymachines//' \
 			-e '/^hosts:/ {/resolve/! s/files/files resolve [!UNAVAIL=return]/}' ) \
@@ -545,7 +576,9 @@ define SYSTEMD_INSTALL_NSSCONFIG_HOOK
 		$(TARGET_DIR)/etc/nsswitch.conf
 endef
 
-SYSTEMD_TARGET_FINALIZE_HOOKS += SYSTEMD_INSTALL_NSSCONFIG_HOOK
+SYSTEMD_TARGET_FINALIZE_HOOKS += \
+	SYSTEMD_INSTALL_NSSCONFIG_HOOK \
+	SYSTEMD_INSTALL_RESOLVCONF_HOOK
 
 ifneq ($(call qstrip,$(BR2_TARGET_GENERIC_GETTY_PORT)),)
 # systemd provides multiple units to autospawn getty as neede
@@ -572,7 +605,7 @@ ifneq ($(call qstrip,$(BR2_TARGET_GENERIC_GETTY_PORT)),)
 # * enable serial-getty@xxx for other $BR2_TARGET_GENERIC_TTY_PATH
 # * rewrite baudrates if a baudrate is provided
 define SYSTEMD_INSTALL_SERVICE_TTY
-	mkdir $(TARGET_DIR)/usr/lib/systemd/system/getty@.service.d; \
+	mkdir -p $(TARGET_DIR)/usr/lib/systemd/system/getty@.service.d; \
 	printf '[Install]\nDefaultInstance=\n' \
 		>$(TARGET_DIR)/usr/lib/systemd/system/getty@.service.d/buildroot-console.conf; \
 	if [ $(BR2_TARGET_GENERIC_GETTY_PORT) = "console" ]; \
@@ -584,7 +617,7 @@ define SYSTEMD_INSTALL_SERVICE_TTY
 			$(call qstrip,$(BR2_TARGET_GENERIC_GETTY_PORT)) \
 			>$(TARGET_DIR)/usr/lib/systemd/system/getty@.service.d/buildroot-console.conf; \
 	else \
-		mkdir $(TARGET_DIR)/usr/lib/systemd/system/serial-getty@.service.d;\
+		mkdir -p $(TARGET_DIR)/usr/lib/systemd/system/serial-getty@.service.d;\
 		printf '[Install]\nDefaultInstance=%s\n' \
 			$(call qstrip,$(BR2_TARGET_GENERIC_GETTY_PORT)) \
 			>$(TARGET_DIR)/usr/lib/systemd/system/serial-getty@.service.d/buildroot-console.conf;\
@@ -640,6 +673,7 @@ HOST_SYSTEMD_CONF_OPTS = \
 	--libdir=lib \
 	--sysconfdir=/etc \
 	--localstatedir=/var \
+	-Dmode=release \
 	-Dutmp=false \
 	-Dhibernate=false \
 	-Dldconfig=false \
@@ -651,11 +685,13 @@ HOST_SYSTEMD_CONF_OPTS = \
 	-Drepart=false \
 	-Dcoredump=false \
 	-Dpstore=false \
+	-Doomd=false \
 	-Dlogind=false \
 	-Dhostnamed=false \
 	-Dlocaled=false \
 	-Dmachined=false \
 	-Dportabled=false \
+	-Dsysext=false \
 	-Duserdb=false \
 	-Dhomed=false \
 	-Dnetworkd=false \
@@ -705,7 +741,8 @@ HOST_SYSTEMD_DEPENDENCIES = \
 	host-util-linux \
 	host-patchelf \
 	host-libcap \
-	host-gperf
+	host-gperf \
+	host-python3-jinja2
 
 HOST_SYSTEMD_NINJA_ENV = DESTDIR=$(HOST_DIR)
 

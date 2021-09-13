@@ -1,8 +1,9 @@
 config BR2_PACKAGE_PYTHON_MWCLIENT
 	bool "python-mwclient"
+	depends on BR2_PACKAGE_PYTHON3 # python-requests-oauthlib -> python-requests -> python-idna
 	select BR2_PACKAGE_PYTHON_REQUESTS_OAUTHLIB # runtime
 	select BR2_PACKAGE_PYTHON_SIX # runtime
 	help
-	  MediaWiki API client.
+	  Python client library to interface with the MediaWiki API
 
-	  https://github.com/btongminh/mwclient
+	  https://github.com/mwclient/mwclient

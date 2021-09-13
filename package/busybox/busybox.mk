@@ -4,15 +4,12 @@
 #
 ################################################################################
 
-BUSYBOX_VERSION = 1.32.0
-BUSYBOX_SITE = http://www.busybox.net/downloads
+BUSYBOX_VERSION = 1.33.1
+BUSYBOX_SITE = https://www.busybox.net/downloads
 BUSYBOX_SOURCE = busybox-$(BUSYBOX_VERSION).tar.bz2
-BUSYBOX_LICENSE = GPL-2.0
-BUSYBOX_LICENSE_FILES = LICENSE
-
-define BUSYBOX_HELP_CMDS
-	@echo '  busybox-menuconfig     - Run BusyBox menuconfig'
-endef
+BUSYBOX_LICENSE = GPL-2.0, bzip2-1.0.4
+BUSYBOX_LICENSE_FILES = LICENSE archival/libarchive/bz/LICENSE
+BUSYBOX_CPE_ID_VENDOR = busybox
 
 BUSYBOX_CFLAGS = \
 	$(TARGET_CFLAGS)
@@ -106,6 +103,7 @@ ifndef BUSYBOX_CONFIG_FILE
 BUSYBOX_CONFIG_FILE = $(call qstrip,$(BR2_PACKAGE_BUSYBOX_CONFIG))
 endif
 
+BUSYBOX_KCONFIG_SUPPORTS_DEFCONFIG = NO
 BUSYBOX_KCONFIG_FILE = $(BUSYBOX_CONFIG_FILE)
 BUSYBOX_KCONFIG_FRAGMENT_FILES = $(call qstrip,$(BR2_PACKAGE_BUSYBOX_CONFIG_FRAGMENT_FILES))
 BUSYBOX_KCONFIG_EDITORS = menuconfig xconfig gconfig
@@ -208,6 +206,13 @@ define BUSYBOX_INSTALL_UDHCPC_SCRIPT
 	fi
 endef
 
+define BUSYBOX_INSTALL_ZCIP_SCRIPT
+	if grep -q CONFIG_ZCIP=y $(@D)/.config; then \
+		$(INSTALL) -m 0755 -D $(@D)/examples/zcip.script \
+			$(TARGET_DIR)/usr/share/zcip/default.script; \
+	fi
+endef
+
 ifeq ($(BR2_INIT_BUSYBOX),y)
 
 define BUSYBOX_SET_INIT
@@ -300,6 +305,12 @@ define BUSYBOX_INSTALL_TELNET_SCRIPT
 			$(TARGET_DIR)/etc/init.d/S50telnet ; \
 	fi
 endef
+define BUSYBOX_INSTALL_TELNET_SERVICE
+	if grep -q CONFIG_FEATURE_TELNETD_STANDALONE=y $(@D)/.config; then \
+		$(INSTALL) -D -m 0644 package/busybox/telnetd.service \
+			$(TARGET_DIR)/usr/lib/systemd/system/telnetd.service ; \
+	fi
+endef
 
 # Add /bin/{a,hu}sh to /etc/shells otherwise some login tools like dropbear
 # can reject the user connection. See man shells.
@@ -339,6 +350,7 @@ define BUSYBOX_INSTALL_TARGET_CMDS
 	$(BUSYBOX_INSTALL_INDIVIDUAL_BINARIES)
 	$(BUSYBOX_INSTALL_INITTAB)
 	$(BUSYBOX_INSTALL_UDHCPC_SCRIPT)
+	$(BUSYBOX_INSTALL_ZCIP_SCRIPT)
 	$(BUSYBOX_INSTALL_MDEV_CONF)
 endef
 
@@ -349,6 +361,10 @@ define BUSYBOX_INSTALL_INIT_OPENRC
 	$(BUSYBOX_INSTALL_LOGGING_SCRIPT)
 	$(BUSYBOX_INSTALL_WATCHDOG_SCRIPT)
 	$(BUSYBOX_INSTALL_TELNET_SCRIPT)
+endef
+
+define BUSYBOX_INSTALL_INIT_SYSTEMD
+	$(BUSYBOX_INSTALL_TELNET_SERVICE)
 endef
 
 define BUSYBOX_INSTALL_INIT_SYSV

@@ -1,0 +1,48 @@
+From 14eb2cae4fca95609ae4efde2444fd0a5ddfca04 Mon Sep 17 00:00:00 2001
+From: Petr Vorel <petr.vorel () gmail ! com>
+Date: Thu, 22 Jul 2021 16:15:45 +0000
+Subject: [PATCH] nfsdcltrack/nfsdcltrack.c: Fix printf format
+
+nfsdcltrack.c: In function 'cltrack_gracedone':
+nfsdcltrack.c:528:47: error: format '%ld' expects argument of type 'long int', but argument 4 has type 'time_t' {aka 'long long int'} [-Werror=format=]
+  528 |  xlog(D_GENERAL, "%s: grace done. gracetime=%ld", __func__, gracetime);
+      |                                             ~~^             ~~~~~~~~~
+      |                                               |             |
+      |                                               long int      time_t {aka long long int}
+      |                                             %lld
+
+Found in Buildroot riscv32 build.
+
+Link: http://autobuild.buildroot.net/results/9bc1d43a588338b7395af7bc97535ee16a6ea2d9/build-end.log
+
+Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
+Upstream: http://git.linux-nfs.org/?p=steved/nfs-utils.git;a=commit;h=5a53426c0f4e84f6644c11e4f01015597d3bb82c
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ utils/nfsdcltrack/nfsdcltrack.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/utils/nfsdcltrack/nfsdcltrack.c b/utils/nfsdcltrack/nfsdcltrack.c
+index e926f1c0..0b37c094 100644
+--- a/utils/nfsdcltrack/nfsdcltrack.c
++++ b/utils/nfsdcltrack/nfsdcltrack.c
+@@ -33,6 +33,7 @@
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ #include <fcntl.h>
++#include <inttypes.h>
+ #include <unistd.h>
+ #include <libgen.h>
+ #include <sys/inotify.h>
+@@ -525,7 +526,7 @@ cltrack_gracedone(const char *timestr)
+ 	if (*tail)
+ 		return -EINVAL;
+ 
+-	xlog(D_GENERAL, "%s: grace done. gracetime=%ld", __func__, gracetime);
++	xlog(D_GENERAL, "%s: grace done. gracetime=%"PRIu64, __func__, gracetime);
+ 
+ 	ret = sqlite_remove_unreclaimed(gracetime);
+ 
+-- 
+2.25.1
+

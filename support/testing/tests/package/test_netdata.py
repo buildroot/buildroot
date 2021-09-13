@@ -19,5 +19,4 @@ class TestNetdata(infra.basetest.BRTest):
         self.emulator.login()
 
         cmd = "wget localhost:19999 -O - | grep '<title>netdata dashboard</title>'"
-        _, exit_code = self.emulator.run(cmd)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk(cmd)

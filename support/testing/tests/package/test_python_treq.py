@@ -12,15 +12,6 @@ class TestPythonTreq(TestPythonPackageBase):
         self.assertEqual(exit_code, 0)
 
 
-class TestPythonPy2Treq(TestPythonTreq):
-    __test__ = True
-    config = TestPythonTreq.config + \
-        """
-        BR2_PACKAGE_PYTHON=y
-        BR2_PACKAGE_PYTHON_TREQ=y
-        """
-
-
 class TestPythonPy3Treq(TestPythonTreq):
     __test__ = True
     config = TestPythonTreq.config + \

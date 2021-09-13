@@ -12,9 +12,6 @@ ifeq ($(BR2_arc),y)
 GDB_SITE = $(call github,foss-for-synopsys-dwc-arc-processors,binutils-gdb,$(GDB_VERSION))
 GDB_SOURCE = gdb-$(GDB_VERSION).tar.gz
 GDB_FROM_GIT = y
-# recent gdb versions (>= 10) have gdbserver moved at the top-level,
-# which requires a different build logic.
-GDB_GDBSERVER_TOPLEVEL = y
 endif
 
 ifeq ($(BR2_csky),y)
@@ -25,10 +22,11 @@ endif
 
 GDB_LICENSE = GPL-2.0+, LGPL-2.0+, GPL-3.0+, LGPL-3.0+
 GDB_LICENSE_FILES = COPYING COPYING.LIB COPYING3 COPYING3.LIB
+GDB_CPE_ID_VENDOR = gnu
 
 # On gdb < 10, if you want to build only gdbserver, you need to
 # configure only gdb/gdbserver.
-ifeq ($(BR2_PACKAGE_GDB_DEBUGGER)$(GDB_GDBSERVER_TOPLEVEL),)
+ifeq ($(BR2_PACKAGE_GDB_DEBUGGER)$(BR2_PACKAGE_GDB_TOPLEVEL),)
 GDB_SUBDIR = gdb/gdbserver
 
 # When we want to build the full gdb, or for very recent versions of
@@ -188,8 +186,18 @@ GDB_CONF_OPTS += --disable-tui
 endif
 
 ifeq ($(BR2_PACKAGE_GDB_PYTHON),y)
-GDB_CONF_OPTS += --with-python=$(TOPDIR)/package/gdb/gdb-python-config
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
+# CONF_ENV: for top-level configure; MAKE_ENV: for sub-projects' configure.
+GDB_CONF_ENV += BR_PYTHON_VERSION=$(PYTHON3_VERSION_MAJOR)
+GDB_MAKE_ENV += BR_PYTHON_VERSION=$(PYTHON3_VERSION_MAJOR)
+GDB_DEPENDENCIES += python3
+else
+# CONF_ENV: for top-level configure; MAKE_ENV: for sub-projects' configure.
+GDB_CONF_ENV += BR_PYTHON_VERSION=$(PYTHON_VERSION_MAJOR)
+GDB_MAKE_ENV += BR_PYTHON_VERSION=$(PYTHON_VERSION_MAJOR)
 GDB_DEPENDENCIES += python
+endif
+GDB_CONF_OPTS += --with-python=$(TOPDIR)/package/gdb/gdb-python-config
 else
 GDB_CONF_OPTS += --without-python
 endif

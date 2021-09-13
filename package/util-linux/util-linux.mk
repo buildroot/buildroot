@@ -8,7 +8,7 @@
 # util-linux-libs/util-linux-libs.mk needs to be updated accordingly as well.
 
 UTIL_LINUX_VERSION_MAJOR = 2.36
-UTIL_LINUX_VERSION = $(UTIL_LINUX_VERSION_MAJOR)
+UTIL_LINUX_VERSION = $(UTIL_LINUX_VERSION_MAJOR).2
 UTIL_LINUX_SOURCE = util-linux-$(UTIL_LINUX_VERSION).tar.xz
 UTIL_LINUX_SITE = $(BR2_KERNEL_MIRROR)/linux/utils/util-linux/v$(UTIL_LINUX_VERSION_MAJOR)
 
@@ -23,6 +23,7 @@ UTIL_LINUX_LICENSE_FILES = README.licensing \
 	Documentation/licenses/COPYING.ISC \
 	Documentation/licenses/COPYING.LGPL-2.1-or-later
 
+UTIL_LINUX_CPE_ID_VENDOR = kernel
 UTIL_LINUX_INSTALL_STAGING = YES
 UTIL_LINUX_DEPENDENCIES = \
 	host-pkgconf \
@@ -188,6 +189,7 @@ HOST_UTIL_LINUX_CONF_OPTS += \
 	--enable-libblkid \
 	--enable-libmount \
 	--enable-libuuid \
+	--without-libmagic \
 	--without-ncurses \
 	--without-ncursesw \
 	--without-tinfo
@@ -209,6 +211,7 @@ HOST_UTIL_LINUX_CONF_OPTS += \
 	--disable-nsenter \
 	--disable-pg \
 	--disable-rfkill \
+	--disable-runuser \
 	--disable-schedutils \
 	--disable-setpriv \
 	--disable-setterm \
@@ -255,6 +258,13 @@ UTIL_LINUX_CONF_OPTS += --with-audit
 UTIL_LINUX_DEPENDENCIES += audit
 else
 UTIL_LINUX_CONF_OPTS += --without-audit
+endif
+
+ifeq ($(BR2_PACKAGE_FILE),y)
+UTIL_LINUX_CONF_OPTS += --with-libmagic
+UTIL_LINUX_DEPENDENCIES += file
+else
+UTIL_LINUX_CONF_OPTS += --without-libmagic
 endif
 
 # Install PAM configuration files

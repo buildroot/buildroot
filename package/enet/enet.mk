@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ENET_VERSION = 1.3.14
+ENET_VERSION = 1.3.17
 ENET_SITE = http://enet.bespin.org/download
 ENET_LICENSE = MIT
 ENET_LICENSE_FILES = LICENSE

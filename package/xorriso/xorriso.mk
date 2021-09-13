@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XORRISO_VERSION = 1.5.0
+XORRISO_VERSION = 1.5.2
 XORRISO_SITE = $(BR2_GNU_MIRROR)/xorriso
 XORRISO_LICENSE = GPL-3.0+
 XORRISO_LICENSE_FILES = COPYING COPYRIGHT
@@ -14,7 +14,7 @@ XORRISO_LICENSE_FILES = COPYING COPYRIGHT
 HOST_XORRISO_CONF_OPTS = \
 	--disable-xattr-h-pref-attr \
 	--disable-zlib \
-	--disable-bzip2 \
+	--disable-libbz2 \
 	--disable-libcdio \
 	--disable-libreadline \
 	--disable-libedit \

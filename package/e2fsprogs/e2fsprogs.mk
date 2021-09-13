@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-E2FSPROGS_VERSION = 1.45.6
+E2FSPROGS_VERSION = 1.46.4
 E2FSPROGS_SOURCE = e2fsprogs-$(E2FSPROGS_VERSION).tar.xz
 E2FSPROGS_SITE = $(BR2_KERNEL_MIRROR)/linux/kernel/people/tytso/e2fsprogs/v$(E2FSPROGS_VERSION)
 E2FSPROGS_LICENSE = GPL-2.0, MIT-like with advertising clause (libss and libet)
 E2FSPROGS_LICENSE_FILES = NOTICE lib/ss/mit-sipb-copyright.h lib/et/internal.h
+E2FSPROGS_CPE_ID_VENDOR = e2fsprogs_project
 E2FSPROGS_INSTALL_STAGING = YES
 
 # Use libblkid and libuuid from util-linux for host and target packages.
@@ -26,6 +27,7 @@ HOST_E2FSPROGS_CONF_OPTS = \
 	--disable-defrag \
 	--disable-e2initrd-helper \
 	--disable-fuse2fs \
+	--disable-fsck \
 	--disable-libblkid \
 	--disable-libuuid \
 	--disable-testio-debug \
@@ -72,6 +74,16 @@ HOST_E2FSPROGS_CONF_ENV += ac_cv_path_LDCONFIG=true
 E2FSPROGS_INSTALL_STAGING_OPTS = \
 	DESTDIR=$(STAGING_DIR) \
 	install-libs
+
+# e2scrub has no associated --enable/disable option
+ifneq ($(BR2_PACKAGE_E2FSPROGS_E2SCRUB),y)
+E2FSPROGS_MAKE_OPTS += E2SCRUB_DIR=
+endif
+
+E2FSPROGS_INSTALL_TARGET_OPTS = \
+	$(E2FSPROGS_MAKE_OPTS) \
+	DESTDIR=$(TARGET_DIR) \
+	install
 
 # Package does not build in parallel due to improper make rules
 define HOST_E2FSPROGS_INSTALL_CMDS

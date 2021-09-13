@@ -9,6 +9,9 @@ ACPID_SOURCE = acpid-$(ACPID_VERSION).tar.xz
 ACPID_SITE = http://downloads.sourceforge.net/project/acpid2
 ACPID_LICENSE = GPL-2.0+
 ACPID_LICENSE_FILES = COPYING
+ACPID_CPE_ID_VENDOR = tedfelix
+ACPID_CPE_ID_PRODUCT = acpid2
+ACPID_SELINUX_MODULES = acpi
 
 define ACPID_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 0644 package/acpid/acpid.service \

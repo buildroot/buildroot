@@ -4,14 +4,16 @@
 #
 ################################################################################
 
-NMAP_VERSION = 7.80
+NMAP_VERSION = 7.91
 NMAP_SITE = https://nmap.org/dist
 NMAP_SOURCE = nmap-$(NMAP_VERSION).tar.bz2
 NMAP_DEPENDENCIES = liblinear libpcap
 NMAP_CONF_OPTS = --with-liblua=included --without-zenmap \
 	--with-libdnet=included
 NMAP_LICENSE = nmap license
-NMAP_LICENSE_FILES = COPYING
+NMAP_LICENSE_FILES = LICENSE
+NMAP_CPE_ID_VENDOR = nmap
+NMAP_SELINUX_MODULES = netutils
 
 # needed by libpcap
 NMAP_LIBS_FOR_STATIC_LINK += `$(STAGING_DIR)/usr/bin/pcap-config --static --additional-libs`

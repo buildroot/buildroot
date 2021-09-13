@@ -1,20 +1,38 @@
 comment "armadillo needs a toolchain w/ C++"
+	depends on BR2_PACKAGE_OPENBLAS_ARCH_SUPPORTS
 	depends on !BR2_INSTALL_LIBSTDCPP
-	depends on !BR2_powerpc
-	depends on !BR2_m68k_cf
 
-comment "armadillo needs a glibc toolchain w/ C++"
-	depends on BR2_powerpc
-	depends on !BR2_INSTALL_LIBSTDCPP || BR2_TOOLCHAIN_USES_UCLIBC
+comment "armadillo needs a toolchain w/ fortran, C++"
+	depends on !BR2_PACKAGE_OPENBLAS_ARCH_SUPPORTS # otherwise, see comment above
+	depends on BR2_PACKAGE_LAPACK_ARCH_SUPPORTS
+	depends on !BR2_TOOLCHAIN_HAS_FORTRAN || !BR2_INSTALL_LIBSTDCPP
 
 config BR2_PACKAGE_ARMADILLO
 	bool "armadillo"
+	depends on BR2_PACKAGE_OPENBLAS_ARCH_SUPPORTS || \
+		(BR2_PACKAGE_LAPACK_ARCH_SUPPORTS && BR2_TOOLCHAIN_HAS_FORTRAN)
 	depends on BR2_INSTALL_LIBSTDCPP
-	depends on !BR2_powerpc || BR2_TOOLCHAIN_USES_GLIBC # clapack
-	depends on !BR2_m68k_cf # clapack
-	select BR2_PACKAGE_CLAPACK
 	help
 	  Armadillo: An Open Source C++ Linear Algebra Library for
 	  Fast Prototyping and Computationally Intensive Experiments.
 
 	  http://arma.sourceforge.net/
+
+if BR2_PACKAGE_ARMADILLO
+
+choice
+	prompt "BLAS implementation"
+
+config BR2_PACKAGE_ARMADILLO_OPENBLAS
+	bool "openblas"
+	depends on BR2_PACKAGE_OPENBLAS_ARCH_SUPPORTS
+	select BR2_PACKAGE_OPENBLAS
+
+config BR2_PACKAGE_ARMADILLO_LAPACK
+	bool "lapack"
+	depends on BR2_PACKAGE_LAPACK_ARCH_SUPPORTS && BR2_TOOLCHAIN_HAS_FORTRAN
+	select BR2_PACKAGE_LAPACK
+
+endchoice
+
+endif

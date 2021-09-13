@@ -27,7 +27,6 @@ class TestInitSystemNone(InitSystemBase):
         self.assertEqual(exit_code, 0)
         self.assertEqual(out[0], "1")
 
-        _, exit_code = self.emulator.run("mount -t proc none /proc")
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk("mount -t proc none /proc")
 
         self.check_init("/bin/sh")

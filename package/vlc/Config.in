@@ -1,5 +1,6 @@
 config BR2_PACKAGE_VLC
 	bool "vlc"
+	depends on !BR2_RISCV_32
 	depends on BR2_USE_MMU # fork()
 	depends on BR2_INSTALL_LIBSTDCPP
 	depends on !BR2_STATIC_LIBS
@@ -8,7 +9,6 @@ config BR2_PACKAGE_VLC
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_7
 	select BR2_PACKAGE_LIBVORBIS if BR2_PACKAGE_OPUS
-	select BR2_PACKAGE_VLC_OPENCV_BACKEND if BR2_PACKAGE_OPENCV
 	select BR2_PACKAGE_VLC_OPENCV3_BACKEND if BR2_PACKAGE_OPENCV3
 	select BR2_PACKAGE_ZLIB if BR2_PACKAGE_TAGLIB
 	help
@@ -18,17 +18,13 @@ config BR2_PACKAGE_VLC
 
 	  http://www.videolan.org/vlc/
 
-config BR2_PACKAGE_VLC_OPENCV_BACKEND
-	bool
-	select BR2_PACKAGE_OPENCV_LIB_IMGPROC
-	select BR2_PACKAGE_OPENCV_LIB_OBJDETECT
-
 config BR2_PACKAGE_VLC_OPENCV3_BACKEND
 	bool
 	select BR2_PACKAGE_OPENCV3_LIB_IMGPROC
 	select BR2_PACKAGE_OPENCV3_LIB_OBJDETECT
 
 comment "vlc needs a toolchain w/ C++, dynamic library, wchar, threads, gcc >= 4.9, headers >= 3.7"
+	depends on !BR2_RISCV_32
 	depends on BR2_USE_MMU
 	depends on !BR2_INSTALL_LIBSTDCPP || BR2_STATIC_LIBS \
 		|| !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS \

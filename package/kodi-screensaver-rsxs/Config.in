@@ -1,17 +1,13 @@
 config BR2_PACKAGE_KODI_SCREENSAVER_RSXS
 	bool "kodi-screensaver-rsxs"
-	depends on BR2_PACKAGE_HAS_LIBGL # libglu
+	depends on BR2_PACKAGE_KODI_RENDER_SYSTEM_GL
 	select BR2_PACKAGE_BZIP2
 	select BR2_PACKAGE_GLI
 	select BR2_PACKAGE_GLM
-	select BR2_PACKAGE_JPEG
-	select BR2_PACKAGE_LIBPNG
-	select BR2_PACKAGE_LIBTOOL
-	select BR2_PACKAGE_TIFF
 	help
 	  RSXS screensaver add-ons for Kodi
 
 	  https://github.com/xbmc/screensavers.rsxs
 
-comment "kodi-screensaver-rsxs needs an OpenGL backend"
-	depends on !BR2_PACKAGE_HAS_LIBGL
+comment "kodi-screensaver-rsxs needs OpenGL as Kodi render system"
+	depends on !BR2_PACKAGE_KODI_RENDER_SYSTEM_GL

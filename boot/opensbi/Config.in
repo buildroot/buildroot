@@ -13,6 +13,57 @@ config BR2_TARGET_OPENSBI
 	  https://github.com/riscv/opensbi.git
 
 if BR2_TARGET_OPENSBI
+choice
+	prompt "OpenSBI Version"
+	help
+	  Select the specific OpenSBI version you want to use
+
+config BR2_TARGET_OPENSBI_LATEST_VERSION
+	bool "0.9"
+
+config BR2_TARGET_OPENSBI_CUSTOM_VERSION
+	bool "Custom version"
+	help
+	  This option allows to use a specific official versions
+
+config BR2_TARGET_OPENSBI_CUSTOM_TARBALL
+	bool "Custom tarball"
+
+config BR2_TARGET_OPENSBI_CUSTOM_GIT
+	bool "Custom Git repository"
+
+endchoice
+
+config BR2_TARGET_OPENSBI_CUSTOM_VERSION_VALUE
+	string "OpenSBI version"
+	depends on BR2_TARGET_OPENSBI_CUSTOM_VERSION
+
+config BR2_TARGET_OPENSBI_CUSTOM_TARBALL_LOCATION
+	string "URL of custom OpenSBI tarball"
+	depends on BR2_TARGET_OPENSBI_CUSTOM_TARBALL
+
+if BR2_TARGET_OPENSBI_CUSTOM_GIT
+
+config BR2_TARGET_OPENSBI_CUSTOM_REPO_URL
+	string "URL of custom repository"
+
+config BR2_TARGET_OPENSBI_CUSTOM_REPO_VERSION
+	string "Custom repository version"
+	help
+	  Revision to use in the typical format used by Git. E.G. a
+	  sha id, a tag, branch, ..
+
+endif
+
+config BR2_TARGET_OPENSBI_VERSION
+	string
+	default "0.9"	if BR2_TARGET_OPENSBI_LATEST_VERSION
+	default BR2_TARGET_OPENSBI_CUSTOM_VERSION_VALUE \
+		if BR2_TARGET_OPENSBI_CUSTOM_VERSION
+	default "custom"	if BR2_TARGET_OPENSBI_CUSTOM_TARBALL
+	default BR2_TARGET_OPENSBI_CUSTOM_REPO_VERSION \
+		if BR2_TARGET_OPENSBI_CUSTOM_GIT
+
 config BR2_TARGET_OPENSBI_PLAT
 	string "OpenSBI Platform"
 	default ""
@@ -23,12 +74,49 @@ config BR2_TARGET_OPENSBI_PLAT
 	  the platform specific static library libplatsbi.a and firmware
 	  examples are built.
 
+config BR2_TARGET_OPENSBI_INSTALL_DYNAMIC_IMG
+	bool "Install fw_dynamic image"
+	default y if BR2_TARGET_OPENSBI_PLAT != ""
+	help
+	  This installs the fw_dynamic image.
+
+config BR2_TARGET_OPENSBI_INSTALL_JUMP_IMG
+	bool "Install fw_jump image"
+	default y if BR2_TARGET_OPENSBI_PLAT != ""
+	help
+	  This installs the fw_jump image.
+
+config BR2_TARGET_OPENSBI_INSTALL_PAYLOAD_IMG
+	bool "Install fw_payload image"
+	help
+	  This option enables the installation of the fw_paylaod
+	  image.
+
 config BR2_TARGET_OPENSBI_LINUX_PAYLOAD
 	bool "Include Linux as OpenSBI Payload"
 	depends on BR2_TARGET_OPENSBI_PLAT != ""
 	depends on BR2_LINUX_KERNEL
 	depends on BR2_LINUX_KERNEL_IMAGE
+	select BR2_TARGET_OPENSBI_INSTALL_PAYLOAD_IMG
 	help
 	  Build OpenSBI with the Linux kernel as a Payload.
+
+config BR2_TARGET_OPENSBI_UBOOT_PAYLOAD
+	bool "Include U-Boot as OpenSBI Payload"
+	depends on BR2_TARGET_OPENSBI_PLAT != ""
+	depends on BR2_TARGET_UBOOT
+	select BR2_TARGET_OPENSBI_INSTALL_PAYLOAD_IMG
+	help
+	  Build OpenSBI with the U-Boot as a Payload.
+
+config BR2_TARGET_OPENSBI_FW_FDT_PATH
+	bool "Include U-Boot DTB in OpenSBI Payload"
+	depends on BR2_TARGET_OPENSBI_UBOOT_PAYLOAD
+	select BR2_TARGET_UBOOT_FORMAT_DTB
+	help
+	  Build OpenSBI with FW_FDT_PATH set to
+	  $(BINARIES_DIR)/u-boot.dtb. Note that CONFIG_OF_SEPARATE
+	  must be set in the U-Boot configuration for this file to be
+	  produced.
 
 endif

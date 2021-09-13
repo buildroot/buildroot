@@ -4,13 +4,14 @@
 #
 ################################################################################
 
-MSMTP_VERSION = 1.8.11
+MSMTP_VERSION = 1.8.14
 MSMTP_SITE = https://marlam.de/msmtp/releases
 MSMTP_SOURCE = msmtp-$(MSMTP_VERSION).tar.xz
 MSMTP_DEPENDENCIES = host-pkgconf
 MSMTP_CONF_OPTS = --disable-gai-idn
 MSMTP_LICENSE = GPL-3.0+
 MSMTP_LICENSE_FILES = COPYING
+MSMTP_CPE_ID_VENDOR = marlam
 
 # msmtpd needs fork
 ifeq ($(BR2_USE_MMU),y)

@@ -1,0 +1,12 @@
+config BR2_PACKAGE_LOG4QT
+	bool "log4qt"
+	depends on BR2_PACKAGE_QT5
+	help
+	  Log4Qt is a C++ port of the Apache Software Foundation
+	  Log4j package using the Qt Framework. It is intended to be
+	  used by open source and commercial Qt projects.
+
+	  https://github.com/MEONMedical/Log4Qt
+
+comment "log4qt needs qt5"
+	depends on !BR2_PACKAGE_QT5

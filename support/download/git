@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# NOTE: if the output of this backend has to change (e.g. we change what gets
+# included in the archive (e.g. LFS), or we change the format of the archive
+# (e.g. tar options, compression ratio or method)), we MUST update the format
+# version in the variable BR_FMT_VERSION_git, in package/pkg-download.mk.
+
 # We want to catch any unexpected failure, and exit immediately
 set -E
 
@@ -15,6 +20,8 @@ set -E
 #
 # Environment:
 #   GIT      : the git command to call
+
+. "${0%/*}/helpers"
 
 # Save our path and options in case we need to call ourselves again
 myname="${0}"
@@ -43,11 +50,11 @@ _on_error() {
     exec "${myname}" "${OPTS[@]}" || exit ${ret}
 }
 
-verbose=
+quiet=
 recurse=0
 while getopts "${BR_BACKEND_DL_GETOPTS}" OPT; do
     case "${OPT}" in
-    q)  verbose=-q; exec >/dev/null;;
+    q)  quiet=-q; exec >/dev/null;;
     r)  recurse=1;;
     o)  output="${OPTARG}";;
     u)  uri="${OPTARG}";;
@@ -72,6 +79,13 @@ trap _on_error ERR
 # Caller needs to single-quote its arguments to prevent them from
 # being expanded a second time (in case there are spaces in them)
 _git() {
+    if [ -z "${quiet}" ]; then
+        printf '%s ' GIT_DIR="${git_cache}/.git" ${GIT} "${@}"; printf '\n'
+    fi
+    _plain_git "$@"
+}
+# Note: please keep command below aligned with what is printed above
+_plain_git() {
     eval GIT_DIR="${git_cache}/.git" ${GIT} "${@}"
 }
 
@@ -105,7 +119,7 @@ _EOF_
 _git init .
 
 # Ensure the repo has an origin (in case a previous run was killed).
-if ! _git remote |grep -q -E '^origin$'; then
+if ! _plain_git remote |grep -q -E '^origin$'; then
     _git remote add origin "'${uri}'"
 fi
 
@@ -170,8 +184,8 @@ _git checkout -f -q "'${cset}'"
 _git clean -ffdx
 
 # Get date of commit to generate a reproducible archive.
-# %cD is RFC2822, so it's fully qualified, with TZ and all.
-date="$( _git log -1 --pretty=format:%cD )"
+# %ci is ISO 8601, so it's fully qualified, with TZ and all.
+date="$( _plain_git log -1 --pretty=format:%ci )"
 
 # There might be submodules, so fetch them.
 if [ ${recurse} -eq 1 ]; then
@@ -184,31 +198,19 @@ if [ ${recurse} -eq 1 ]; then
     # versions. However, we can't do that if git is too old and uses
     # full repositories for submodules.
     cmd='printf "%s\n" "${path}/"'
-    for module_dir in $( _git submodule --quiet foreach "'${cmd}'" ); do
+    for module_dir in $( _plain_git submodule --quiet foreach "'${cmd}'" ); do
         [ -f "${module_dir}/.git" ] || continue
         relative_dir="$( sed -r -e 's,/+,/,g; s,[^/]+/,../,g' <<<"${module_dir}" )"
         sed -r -i -e "s:^gitdir\: $(pwd)/:gitdir\: "${relative_dir}":" "${module_dir}/.git"
     done
 fi
 
-# Generate the archive, sort with the C locale so that it is reproducible.
+popd >/dev/null
+
+# Generate the archive.
 # We do not want the .git dir; we keep other .git files, in case they are the
 # only files in their directory.
 # The .git dir would generate non reproducible tarballs as it depends on
 # the state of the remote server. It also would generate large tarballs
 # (gigabytes for some linux trees) when a full clone took place.
-find . -not -type d \
-       -and -not -path "./.git/*" >"${output}.list"
-LC_ALL=C sort <"${output}.list" >"${output}.list.sorted"
-
-# Create GNU-format tarballs, since that's the format of the tarballs on
-# sources.buildroot.org and used in the *.hash files
-tar cf - --transform="s#^\./#${basename}/#" \
-         --numeric-owner --owner=0 --group=0 --mtime="${date}" --format=gnu \
-         -T "${output}.list.sorted" >"${output}.tar"
-gzip -6 -n <"${output}.tar" >"${output}"
-
-rm -f "${output}.list"
-rm -f "${output}.list.sorted"
-
-popd >/dev/null
+mk_tar_gz "${git_cache}" "${basename}" "${date}" "${output}" ".git/*"

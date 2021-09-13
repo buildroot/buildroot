@@ -23,7 +23,7 @@ _EOF_
 
 gen_tests() {
     local -a basics defconfigs runtimes
-    local do_basics do_defconfigs do_runtime
+    local do_basics do_defconfigs do_runtime do_testpkg
     local defconfigs_ext cfg tst
 
     basics=( DEVELOPERS flake8 package )
@@ -77,9 +77,30 @@ gen_tests() {
         esac
     fi
 
+    # Retrieve defconfig for test-pkg from the git commit message (if any)
+    if grep -q -E '^test-pkg config:$' <<<"${CI_COMMIT_DESCRIPTION}"; then
+        sed -r -n -e '/^test-pkg config:$/{:a;n;p;ba;}' \
+            <<<"${CI_COMMIT_DESCRIPTION}" \
+            >defconfig.frag
+        if [ ! -s defconfig.frag ]; then
+            printf "Empty configuration fragment.\n" >&2; exit 1
+        fi
+        # Use --all since we expect the user having already pre-tested the
+        # new package with the default subset of toolchains.
+        ./utils/test-pkg \
+            --all --prepare-only \
+            --config-snippet defconfig.frag \
+            --build-dir br-test-pkg >&2
+        do_testpkg=( $(ls -1 br-test-pkg/*/.config 2>/dev/null |xargs -r dirname ) )
+        if [ "${#do_testpkg[@]}" -eq 0 ]; then
+            printf "Configuration fragment enables no test.\n" >&2; exit 1
+        fi
+    fi
+
     # If nothing else, at least do the basics to generate a valid pipeline
     if [    -z "${do_defconfigs}" \
          -a -z "${do_runtime}" \
+         -a -z "${do_testpkg}" \
        ]
     then
         do_basics=true
@@ -100,6 +121,10 @@ gen_tests() {
 
     if ${do_runtime:-false}; then
         printf '%s: { extends: .runtime_test_base }\n' "${runtimes[@]}"
+    fi
+
+    if [ -n "${do_testpkg}" ]; then
+        printf '%s: { extends: .test_pkg }\n' "${do_testpkg[@]}"
     fi
 }
 

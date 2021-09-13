@@ -24,9 +24,7 @@ class TestDropbear(infra.basetest.BRTest):
                                     "-net", "user"])
         self.emulator.login(self.passwd)
         cmd = "netstat -ltn 2>/dev/null | grep 0.0.0.0:22"
-        _, exit_code = self.emulator.run(cmd)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk(cmd)
 
         cmd = "sshpass -p {} ssh -y localhost /bin/true".format(self.passwd)
-        _, exit_code = self.emulator.run(cmd)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk(cmd)

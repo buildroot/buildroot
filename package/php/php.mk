@@ -4,20 +4,22 @@
 #
 ################################################################################
 
-PHP_VERSION = 7.4.11
-PHP_SITE = http://www.php.net/distributions
+PHP_VERSION = 8.0.10
+PHP_SITE = https://www.php.net/distributions
 PHP_SOURCE = php-$(PHP_VERSION).tar.xz
 PHP_INSTALL_STAGING = YES
 PHP_INSTALL_STAGING_OPTS = INSTALL_ROOT=$(STAGING_DIR) install
 PHP_INSTALL_TARGET_OPTS = INSTALL_ROOT=$(TARGET_DIR) install
-PHP_DEPENDENCIES = host-pkgconf
+PHP_DEPENDENCIES = host-pkgconf pcre2
 PHP_LICENSE = PHP-3.01
 PHP_LICENSE_FILES = LICENSE
+PHP_CPE_ID_VENDOR = php
 PHP_CONF_OPTS = \
 	--mandir=/usr/share/man \
 	--infodir=/usr/share/info \
 	--with-config-file-scan-dir=/etc/php.d \
 	--disable-all \
+	--with-external-pcre \
 	--without-pear \
 	--with-config-file-path=/etc \
 	--disable-phpdbg \
@@ -60,7 +62,7 @@ PHP_CXXFLAGS = $(TARGET_CXXFLAGS)
 # The OPcache extension isn't cross-compile friendly
 # Throw some defines here to avoid patching heavily
 ifeq ($(BR2_PACKAGE_PHP_EXT_OPCACHE),y)
-PHP_CONF_OPTS += --enable-opcache
+PHP_CONF_OPTS += --enable-opcache --disable-opcache-jit
 PHP_CONF_ENV += ac_cv_func_mprotect=yes
 PHP_CFLAGS += \
 	-DHAVE_SHM_IPC \
@@ -88,7 +90,7 @@ PHP_CONF_OPTS += --with-apxs2=$(STAGING_DIR)/usr/bin/apxs
 
 # Enable thread safety option if Apache MPM is event or worker
 ifeq ($(BR2_PACKAGE_APACHE_MPM_EVENT)$(BR2_PACKAGE_APACHE_MPM_WORKER),y)
-PHP_CONF_OPTS += --enable-maintainer-zts
+PHP_CONF_OPTS += --enable-zts
 endif
 endif
 
@@ -105,7 +107,6 @@ PHP_CONF_OPTS += \
 	$(if $(BR2_PACKAGE_PHP_EXT_XMLWRITER),--enable-xmlwriter) \
 	$(if $(BR2_PACKAGE_PHP_EXT_EXIF),--enable-exif) \
 	$(if $(BR2_PACKAGE_PHP_EXT_FTP),--enable-ftp) \
-	$(if $(BR2_PACKAGE_PHP_EXT_JSON),--enable-json) \
 	$(if $(BR2_PACKAGE_PHP_EXT_TOKENIZER),--enable-tokenizer) \
 	$(if $(BR2_PACKAGE_PHP_EXT_PCNTL),--enable-pcntl) \
 	$(if $(BR2_PACKAGE_PHP_EXT_SHMOP),--enable-shmop) \
@@ -135,11 +136,6 @@ PHP_CONF_OPTS += --enable-mbstring
 PHP_DEPENDENCIES += oniguruma
 endif
 
-ifeq ($(BR2_PACKAGE_PHP_EXT_MCRYPT),y)
-PHP_CONF_OPTS += --with-mcrypt=$(STAGING_DIR)/usr
-PHP_DEPENDENCIES += libmcrypt
-endif
-
 ifeq ($(BR2_PACKAGE_PHP_EXT_OPENSSL),y)
 PHP_CONF_OPTS += --with-openssl=$(STAGING_DIR)/usr
 PHP_DEPENDENCIES += openssl
@@ -157,13 +153,6 @@ endif
 ifeq ($(BR2_PACKAGE_PHP_EXT_WDDX),y)
 PHP_CONF_OPTS += --enable-wddx --with-libexpat-dir=$(STAGING_DIR)/usr
 PHP_DEPENDENCIES += expat
-endif
-
-ifeq ($(BR2_PACKAGE_PHP_EXT_XMLRPC),y)
-PHP_CONF_OPTS += \
-	--with-xmlrpc \
-	$(if $(BR2_PACKAGE_LIBICONV),--with-iconv-dir=$(STAGING_DIR)/usr)
-PHP_DEPENDENCIES += $(if $(BR2_PACKAGE_LIBICONV),libiconv)
 endif
 
 ifeq ($(BR2_PACKAGE_PHP_EXT_ZIP),y)
@@ -258,32 +247,12 @@ define PHP_DISABLE_VALGRIND
 endef
 PHP_POST_CONFIGURE_HOOKS += PHP_DISABLE_VALGRIND
 
-### Use external PCRE if it's available
-ifeq ($(BR2_PACKAGE_PCRE2),y)
-PHP_CONF_OPTS += --with-pcre-regex=$(STAGING_DIR)/usr
-PHP_DEPENDENCIES += pcre2
-
 ifeq ($(BR2_PACKAGE_PCRE2_JIT),y)
 PHP_CONF_OPTS += --with-pcre-jit=yes
 PHP_CONF_ENV += ac_cv_have_pcre2_jit=yes
 else
 PHP_CONF_OPTS += --with-pcre-jit=no
 PHP_CONF_ENV += ac_cv_have_pcre2_jit=no
-endif
-
-else
-# The bundled pcre library is not configurable through ./configure options,
-# and by default is configured to be thread-safe, so it wants pthreads. So
-# we must explicitly tell it when we don't have threads.
-ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),)
-PHP_CFLAGS += -DSLJIT_SINGLE_THREADED=1
-endif
-# check ext/pcre/pcrelib/sljit/sljitConfigInternal.h for supported archs
-ifeq ($(BR2_i386)$(BR2_x86_64)$(BR2_arm)$(BR2_armeb)$(BR2_aarch64)$(BR2_mips)$(BR2_mipsel)$(BR2_mips64)$(BR2_mips64el)$(BR2_powerpc)$(BR2_sparc),y)
-PHP_CONF_OPTS += --with-pcre-jit
-else
-PHP_CONF_OPTS += --without-pcre-jit
-endif
 endif
 
 ifeq ($(BR2_PACKAGE_PHP_EXT_CURL),y)

@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-RUBY_VERSION_MAJOR = 2.7
+RUBY_VERSION_MAJOR = 3.0
 RUBY_VERSION = $(RUBY_VERSION_MAJOR).2
-RUBY_VERSION_EXT = 2.7.0
+RUBY_VERSION_EXT = 3.0.0
 RUBY_SITE = http://cache.ruby-lang.org/pub/ruby/$(RUBY_VERSION_MAJOR)
 RUBY_SOURCE = ruby-$(RUBY_VERSION).tar.xz
 RUBY_DEPENDENCIES = host-pkgconf host-ruby
@@ -19,8 +19,13 @@ HOST_RUBY_CONF_OPTS = \
 	--without-gmp
 RUBY_LICENSE = Ruby or BSD-2-Clause, BSD-3-Clause, others
 RUBY_LICENSE_FILES = LEGAL COPYING BSDL
+RUBY_CPE_ID_VENDOR = ruby-lang
 # 0001-fix-default-coroutine-selection.patch
 RUBY_AUTORECONF = YES
+
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+RUBY_CONF_ENV += LIBS=-latomic
+endif
 
 ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
 # On uClibc, finite, isinf and isnan are not directly implemented as
@@ -71,6 +76,14 @@ RUBY_CONF_OPTS += --with-gmp
 else
 RUBY_CONF_OPTS += --without-gmp
 endif
+
+RUBY_CFLAGS = $(TARGET_CFLAGS)
+
+ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_83143),y)
+RUBY_CFLAGS += -freorder-blocks-algorithm=simple
+endif
+
+RUBY_CONF_OPTS += CFLAGS="$(RUBY_CFLAGS)"
 
 # Remove rubygems and friends, as they need extensions that aren't
 # built and a target compiler.

@@ -5,13 +5,13 @@
 ################################################################################
 
 ifeq ($(BR2_PACKAGE_LUA_5_4),y)
-LUA_VERSION = 5.4.1
+LUA_VERSION = 5.4.3
 else ifeq ($(BR2_PACKAGE_LUA_5_3),y)
 LUA_VERSION = 5.3.6
 else
 LUA_VERSION = 5.1.5
 endif
-LUA_SITE = http://www.lua.org/ftp
+LUA_SITE = https://www.lua.org/ftp
 LUA_INSTALL_STAGING = YES
 LUA_LICENSE = MIT
 ifeq ($(BR2_PACKAGE_LUA_5_3)$(BR2_PACKAGE_LUA_5_4),y)
@@ -19,6 +19,7 @@ LUA_LICENSE_FILES = doc/readme.html
 else
 LUA_LICENSE_FILES = COPYRIGHT
 endif
+LUA_CPE_ID_VENDOR = lua
 
 LUA_PROVIDES = luainterpreter
 

@@ -22,8 +22,8 @@ index 14cdbc4..d75c51f 100644
 +++ b/libfakeroot.c
 @@ -1352,6 +1352,54 @@ int renameat(int olddir_fd, const char *oldpath,
  #endif /* HAVE_FSTATAT */
-
-
+ 
+ 
 +#if defined(__GLIBC__) && __GLIBC_PREREQ(2,33)
 +/* Glibc 2.33 exports symbols for these functions in the shared lib */
 +  int lstat(const char *file_name, struct stat *statbuf) {
@@ -75,6 +75,6 @@ index 14cdbc4..d75c51f 100644
  #ifdef FAKEROOT_FAKENET
  pid_t fork(void)
  {
---
+-- 
 2.30.1
 

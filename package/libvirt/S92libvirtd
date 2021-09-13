@@ -1,0 +1,132 @@
+#!/bin/sh
+
+DAEMON="libvirtd"
+EXECFILE="/usr/sbin/$DAEMON"
+PIDFILE="/var/run/$DAEMON.pid"
+
+LIBVIRTD_ARGS=""
+
+# shellcheck source=/dev/null
+[ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
+
+trap 'rm -f "$TMP_MODULE_LIST" "$TMP_PIDFILE_LIST"' EXIT
+
+is_alive() {
+	[ -e "$1" ] \
+	&& exe="/proc/$(cat "$1" 2>/dev/null)/exe" \
+	&& [ -s "$exe" ] \
+	&& [ "$(readlink -f "$exe")" = "$2" ]
+}
+
+load_modules() {
+	printf 'Loading kernel modules: '
+	kver="$(uname -r)"
+	TMP_MODULE_LIST="$(mktemp -q)" || {
+		echo 'FAIL creating temporary modules list'
+		exit 1
+	}
+	[ -d "/lib/modules/$kver/kernel/drivers/net" ] && \
+		find "/lib/modules/$kver/kernel/drivers/net" \
+		-name "tun.ko*" >> "$TMP_MODULE_LIST"
+	[ -d "/lib/modules/$kver/kernel/drivers/vhost" ] && \
+		find "/lib/modules/$kver/kernel/drivers/vhost" \
+		-name "vhost?net.ko*" >> "$TMP_MODULE_LIST"
+	[ -d "/lib/modules/$kver/kernel/drivers/net" ] && \
+		find "/lib/modules/$kver/kernel/drivers/vfio" \
+		-name "*.ko*" >> "$TMP_MODULE_LIST"
+	while read -r f; do
+		m="$(basename "${f%.ko*}")"
+		if modprobe -q "$m"; then
+			printf '%s ' "$m"
+		else
+			echo "FAIL on $m"
+			exit 1
+		fi
+	done < "$TMP_MODULE_LIST"
+	echo "OK"
+}
+
+#
+# If libvirtd dies it leves behind one stale dnsmasq per virtual network that
+# must be killed before starting libvirtd again.
+#
+rm_stale_dnsmasq() {
+	[ -d /var/run/libvirt/network ] || return 0
+	TMP_PIDFILE_LIST="$(mktemp -q)" || {
+		echo "Could not create temporary pidfile list"
+		exit 1
+	}
+	find /var/run/libvirt/network -name '*.pid' > "$TMP_PIDFILE_LIST"
+	while read -r pidfile; do
+		if is_alive "$pidfile" /usr/sbin/dnsmasq; then
+			start-stop-daemon -K -q -p "$pidfile" -x /usr/sbin/dnsmasq
+			status=$?
+			if [ "$status" -ne 0 ]; then
+				echo "Could not stop stale dnsmasq daemons"
+				exit 1
+			fi
+			rm -f "$pidfile"
+		fi
+	done < "$TMP_PIDFILE_LIST"
+}
+
+start() {
+	if is_alive "$PIDFILE" "$EXECFILE"; then
+		# libvirtd is already running. Leave it alone.
+		printf 'Starting %s: FAIL\n' "$DAEMON"
+		return 1
+	fi
+	rm_stale_dnsmasq
+	load_modules
+	printf 'Starting %s: ' "$DAEMON"
+	# shellcheck disable=SC2086 # we need the word splitting
+	start-stop-daemon -S -q -p "$PIDFILE" -x "$EXECFILE" \
+		-- -d $LIBVIRTD_ARGS
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+stop() {
+	printf 'Stopping %s: ' "$DAEMON"
+	start-stop-daemon -K -q -p "$PIDFILE" -x "$EXECFILE"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		rm_stale_dnsmasq
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+restart() {
+	stop
+	sleep 1
+	start
+}
+
+# On receipt of SIGHUP libvirtd will reload its configuration.
+reload() {
+	printf 'Reloading %s: ' "$DAEMON"
+	start-stop-daemon -K -s HUP -q -p "$PIDFILE" -x "$EXECFILE"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+case "$1" in
+	start|stop|restart|reload)
+		"$1";;
+	*)
+		echo "Usage: $0 {start|stop|restart|reload}"
+		exit 1
+esac

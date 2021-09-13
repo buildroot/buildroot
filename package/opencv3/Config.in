@@ -5,7 +5,6 @@ menuconfig BR2_PACKAGE_OPENCV3
 	depends on BR2_INSTALL_LIBSTDCPP
 	depends on BR2_USE_WCHAR
 	depends on !BR2_STATIC_LIBS # include dlfcn.h
-	depends on !BR2_PACKAGE_OPENCV
 	select BR2_PACKAGE_ZLIB
 	help
 	  OpenCV (Open Source Computer Vision) is a library of
@@ -312,6 +311,14 @@ config BR2_PACKAGE_OPENCV3_WITH_V4L
 
 	  If the package libv4l is enabled, its support is
 	  automatically enabled.
+
+config BR2_PACKAGE_OPENCV3_WITH_WEBP
+	bool "webp support"
+	select BR2_PACKAGE_WEBP
+	help
+	  Enable WebP support.
+
+	  Use shared libwebp from the target system.
 
 comment "Install options"
 

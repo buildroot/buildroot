@@ -1,0 +1,56 @@
+From fe5f3a86d07e378baeeddc1dfecd0686d83aa42f Mon Sep 17 00:00:00 2001
+From: Yauheni Saldatsenka <eugentoo@gmail.com>
+Date: Sat, 14 Aug 2021 18:54:51 +0300
+Subject: [PATCH] stm32f469-i: Update kernel start address
+
+As of GNU/Linux v5.12 kernel device tree binary grows above 0x08008000
+and overwrites kernel binary
+Therefore this commit moves kernel to the next flash bank
+
+Signed-off-by: Yauheni Saldatsenka <eugentoo@gmail.com>
+---
+ stm32f469i-disco.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/stm32f469i-disco.c b/stm32f469i-disco.c
+index 2da1f4b..46fc06a 100644
+--- a/stm32f469i-disco.c
++++ b/stm32f469i-disco.c
+@@ -6,6 +6,7 @@
+ #include "gpio.h"
+ #include "mpu.h"
+ 
++#define KERNEL_ADDR     0x08010000
+ #define CONFIG_HSE_HZ	8000000
+ #define CONFIG_PLL_M	8
+ #define CONFIG_PLL_N	360
+@@ -85,7 +86,7 @@ static void fmc_wait_busy(void)
+ 
+ void start_kernel(void)
+ {
+-	void (*kernel)(uint32_t reserved, uint32_t mach, uint32_t dt) = (void (*)(uint32_t, uint32_t, uint32_t))(0x08008000 | 1);
++	void (*kernel)(uint32_t reserved, uint32_t mach, uint32_t dt) = (void (*)(uint32_t, uint32_t, uint32_t))(KERNEL_ADDR | 1);
+ 
+ 	kernel(0, ~0UL, 0x08004000);
+ }
+@@ -102,7 +103,7 @@ int main(void)
+ 	volatile uint32_t *SYSCFG_MEMRMP = (void *)(SYSCFG_BASE + 0x00);
+ 	int i;
+ 
+-	mpu_config(0x0);
++	mpu_config(0xc0000000);
+ 
+ 	if (*FLASH_CR & FLASH_CR_LOCK) {
+ 		*FLASH_KEYR = 0x45670123;
+@@ -195,8 +196,6 @@ int main(void)
+ 	usart_setup(usart_base, 45000000);
+ 	usart_putch(usart_base, '.');
+ 
+-	*SYSCFG_MEMRMP = 0x4;
+-
+ 	start_kernel();
+ 
+ 	return 0;
+-- 
+2.32.0
+

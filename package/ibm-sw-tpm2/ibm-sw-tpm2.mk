@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IBM_SW_TPM2_VERSION = 1563
+IBM_SW_TPM2_VERSION = 1661
 IBM_SW_TPM2_SOURCE = ibmtpm$(IBM_SW_TPM2_VERSION).tar.gz
 IBM_SW_TPM2_SITE = https://sourceforge.net/projects/ibmswtpm2/files
 IBM_SW_TPM2_LICENSE = BSD-3-Clause

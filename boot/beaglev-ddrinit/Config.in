@@ -1,0 +1,9 @@
+config BR2_TARGET_BEAGLEV_DDRINIT
+	bool "beaglev-ddrinit"
+	depends on BR2_riscv
+	depends on BR2_HOSTARCH = "x86_64" # host-riscv64-elf-toolchain
+	help
+	  This package builds the DDRinit firmware used on the BeagleV
+	  platform.
+
+	  https://github.com/starfive-tech/beagle_ddrinit

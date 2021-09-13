@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-USHARE_VERSION = 1.1a
-USHARE_SOURCE = ushare-$(USHARE_VERSION).tar.bz2
-USHARE_SITE = http://ushare.geexbox.org/releases
+USHARE_VERSION = 2.1
+USHARE_SITE = $(call github,ddugovic,uShare,v$(USHARE_VERSION))
 USHARE_DEPENDENCIES = host-pkgconf libupnp $(TARGET_NLS_DEPENDENCIES)
 USHARE_LICENSE = GPL-2.0+
 USHARE_LICENSE_FILES = COPYING
@@ -19,7 +18,12 @@ USHARE_CONF_OPTS = \
 	--sysconfdir=/etc \
 	--disable-strip
 
-ifeq ($(BR2_SYSTEM_ENABLE_NLS),)
+USHARE_MAKE_OPTS = LDFLAGS="$(TARGET_LDFLAGS) $(USHARE_LDFLAGS)"
+
+ifeq ($(BR2_SYSTEM_ENABLE_NLS),y)
+USHARE_CONF_OPTS += --enable-nls
+USHARE_MAKE_OPTS += GMSGFMT="$(HOST_DIR)/bin/msgfmt"
+else
 USHARE_CONF_OPTS += --disable-nls
 endif
 
@@ -32,7 +36,7 @@ define USHARE_CONFIGURE_CMDS
 endef
 
 define USHARE_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) LDFLAGS="$(TARGET_LDFLAGS) $(USHARE_LDFLAGS)" -C $(@D)
+	$(TARGET_MAKE_ENV) $(MAKE) $(USHARE_MAKE_OPTS) -C $(@D)
 endef
 
 define USHARE_INSTALL_TARGET_CMDS

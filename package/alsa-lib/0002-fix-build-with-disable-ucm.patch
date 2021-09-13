@@ -1,0 +1,43 @@
+From 3fbaea3ff390d4c09adbf5d6ae62fb7b5f3f24f5 Mon Sep 17 00:00:00 2001
+From: Jaroslav Kysela <perex@perex.cz>
+Date: Mon, 28 Jun 2021 12:08:53 +0200
+Subject: [PATCH] fix build with --disable-ucm
+
+Link: https://mailman.alsa-project.org/pipermail/alsa-devel/2021-June/186729.html
+Reported-by: Michael Forney <mforney@mforney.org>
+Signed-off-by: Jaroslav Kysela <perex@perex.cz>
+Upstream: f4f29d42be8b8ad60ea4c5697374adad4bfe6868
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ include/local.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/include/local.h b/include/local.h
+index 4e7d88a0..7cfcec53 100644
+--- a/include/local.h
++++ b/include/local.h
+@@ -374,6 +374,8 @@ int _snd_config_load_with_include(snd_config_t *config, snd_input_t *in,
+ void *INTERNAL(snd_dlopen)(const char *name, int mode, char *errbuf, size_t errbuflen);
+ #endif
+ 
++#ifdef BUILD_UCM
++
+ const char *uc_mgr_alibcfg_by_device(snd_config_t **config, const char *name);
+ 
+ static inline int _snd_is_ucm_device(const char *name)
+@@ -381,4 +383,12 @@ static inline int _snd_is_ucm_device(const char *name)
+ 	return name && name[0] == '_' && name[1] == 'u' && name[2] == 'c' && name[3] == 'm';
+ }
+ 
++#else
++
++static inline const char *uc_mgr_alibcfg_by_device(snd_config_t **config, const char *name) { return NULL; }
++static inline int _snd_is_ucm_device(const char *name) { return 0; }
++
++
++#endif
++
+ #endif
+-- 
+2.31.1
+

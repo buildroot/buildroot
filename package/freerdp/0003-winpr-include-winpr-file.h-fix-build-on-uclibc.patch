@@ -1,0 +1,39 @@
+From 21036304f909eae9f7506f48703ba1c74724342b Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 31 Jul 2021 09:49:27 +0200
+Subject: [PATCH] winpr/include/winpr/file.h: fix build on uclibc
+
+Include stdio.h to fix the following build failure with uclibc raised
+since version 2.4.0 and
+https://github.com/FreeRDP/FreeRDP/commit/eb6777ea69b022c9e43a1576a2192a1cb807b1e6:
+
+In file included from /tmp/instance-0/output-1/build/freerdp-2.4.0/winpr/libwinpr/utils/lodepng/lodepng.c:30:
+/tmp/instance-0/output-1/build/freerdp-2.4.0/winpr/include/winpr/file.h:524:11: error: unknown type name 'FILE'
+ WINPR_API FILE* winpr_fopen(const char* path, const char* mode);
+           ^~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/31e770a330158035e24b7b952bec0030138482b7
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/FreeRDP/FreeRDP/pull/7205]
+---
+ winpr/include/winpr/file.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/winpr/include/winpr/file.h b/winpr/include/winpr/file.h
+index 48a29f9f5..79c9b392c 100644
+--- a/winpr/include/winpr/file.h
++++ b/winpr/include/winpr/file.h
+@@ -30,6 +30,8 @@
+ 
+ #ifndef _WIN32
+ 
++#include <stdio.h>
++
+ #ifndef MAX_PATH
+ #define MAX_PATH 260
+ #endif
+-- 
+2.30.2
+

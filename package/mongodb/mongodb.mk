@@ -4,12 +4,15 @@
 #
 ################################################################################
 
-MONGODB_VERSION = 4.2.10
+MONGODB_VERSION = 4.2.11
 MONGODB_SITE = https://fastdl.mongodb.org/src
 MONGODB_SOURCE = mongodb-src-r$(MONGODB_VERSION).tar.gz
 
 MONGODB_LICENSE = Apache-2.0 (drivers), SSPL (database)
 MONGODB_LICENSE_FILES = APACHE-2.0.txt LICENSE-Community.txt
+
+MONGODB_CPE_ID_VENDOR = mongodb
+MONGODB_SELINUX_MODULES = mongodb
 
 MONGODB_DEPENDENCIES = \
 	boost \

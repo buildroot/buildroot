@@ -1,0 +1,47 @@
+From 5c4ddfc88f0a7f10a5e9edddbdbe8e8ef1f9945e Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 10 Jun 2021 07:38:02 +0200
+Subject: [PATCH] libselinux/utils/getseuser.c: fix build with gcc 4.8
+
+Fix the following build failure with gcc 4.8 which is raised since
+version 3.2 and
+https://github.com/SELinuxProject/selinux/commit/156dd0de5cad31e7d437c64e11a8aef027f0a691
+
+getseuser.c:53:2: error: 'for' loop initial declarations are only allowed in C99 mode
+  for (int i = 0; i < n; i++)
+  ^
+
+Fixes:
+ - http://autobuild.buildroot.org/results/37eb0952a763256fbf6ef3c668f6c95fbdf2dd35
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/SELinuxProject/selinux/pull/289]
+---
+ libselinux/utils/getseuser.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/utils/getseuser.c b/utils/getseuser.c
+index ce1b7b27..34f2e887 100644
+--- a/utils/getseuser.c
++++ b/utils/getseuser.c
+@@ -9,7 +9,7 @@ int main(int argc, char **argv)
+ {
+ 	char *seuser = NULL, *level = NULL;
+ 	char **contextlist;
+-	int rc, n;
++	int rc, n, i;
+ 
+ 	if (argc != 3) {
+ 		fprintf(stderr, "usage:  %s linuxuser fromcon\n", argv[0]);
+@@ -50,7 +50,7 @@ int main(int argc, char **argv)
+ 	if (n == 0)
+ 		printf("no valid context found\n");
+ 
+-	for (int i = 0; i < n; i++)
++	for (i = 0; i < n; i++)
+ 		printf("Context %d\t%s\n", i, contextlist[i]);
+ 
+ 	freeconary(contextlist);
+-- 
+2.30.2
+

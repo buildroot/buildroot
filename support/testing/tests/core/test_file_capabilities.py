@@ -1,5 +1,4 @@
 import os
-import subprocess
 
 import infra.basetest
 
@@ -28,7 +27,7 @@ class TestFileCapabilities(infra.basetest.BRTest):
 
     def test_run(self):
         img = os.path.join(self.builddir, "images", "rootfs.squashfs")
-        subprocess.call(["truncate", "-s", "%1M", img])
+        infra.img_round_power2(img)
 
         self.emulator.boot(arch="armv7",
                            kernel=os.path.join(self.builddir, "images", "zImage"),
@@ -44,4 +43,4 @@ class TestFileCapabilities(infra.basetest.BRTest):
         self.assertIn("cap_kill", output[0])
         self.assertIn("cap_sys_nice", output[0])
         self.assertIn("cap_sys_time", output[0])
-        self.assertIn("+eip", output[0])
+        self.assertIn("=eip", output[0])

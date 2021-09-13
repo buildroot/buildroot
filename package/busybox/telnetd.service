@@ -1,0 +1,10 @@
+[Unit]
+Description=Telnetd Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/telnetd -F
+
+[Install]
+WantedBy=multi-user.target

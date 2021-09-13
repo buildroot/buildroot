@@ -1,0 +1,28 @@
+From a67393c353e0f25b142910a817be5a7754d436c3 Mon Sep 17 00:00:00 2001
+From: Ambareesh Balaji <ambareeshbalaji@gmail.com>
+Date: Sat, 5 Dec 2020 20:49:55 -0500
+Subject: [PATCH] pipewire: fix null deref in 0.3 API
+
+Signed-off-by: Ambareesh Balaji <ambareeshbalaji@gmail.com>
+[Retrieved from:
+https://gitlab.freedesktop.org/wayland/weston/-/commit/a67393c353e0f25b142910a817be5a7754d436c3]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ pipewire/pipewire-plugin.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/pipewire/pipewire-plugin.c b/pipewire/pipewire-plugin.c
+index ca5cbfec1..55705acfc 100644
+--- a/pipewire/pipewire-plugin.c
++++ b/pipewire/pipewire-plugin.c
+@@ -856,6 +856,7 @@ weston_pipewire_init(struct weston_pipewire *pipewire)
+ 
+ #if PW_CHECK_VERSION(0, 2, 90)
+ 	pipewire->context = pw_context_new(pipewire->loop, NULL, 0);
++	pipewire->core = pw_context_connect(pipewire->context, NULL, 0);
+ #else
+ 	pipewire->core = pw_core_new(pipewire->loop, NULL);
+ 	pipewire->t = pw_core_get_type(pipewire->core);
+-- 
+GitLab
+

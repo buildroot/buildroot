@@ -20,6 +20,13 @@
 #
 ################################################################################
 
+#
+# Hook to sync Qt headers
+#
+define QT_HEADERS_SYNC_HOOK
+	$(Q)cd $($(PKG)_BUILDDIR) && $(HOST_DIR)/bin/syncqt.pl -version $(QT5_VERSION)
+endef
+
 ################################################################################
 # inner-qmake-package -- defines how the configuration, compilation and
 # installation of a qmake package should be done, implements a few hooks
@@ -44,13 +51,19 @@ ifneq ($(1),qt5base)
 $(2)_DEPENDENCIES 		+= qt5base
 endif
 
+ifeq ($$($(2)_SYNC_QT_HEADERS),YES)
+$(2)_DEPENDENCIES 		+= host-perl
+$(2)_PRE_CONFIGURE_HOOKS        += QT_HEADERS_SYNC_HOOK
+endif
+
+$(2)_POST_PREPARE_HOOKS += QT5_QT_CONF_FIXUP
+
 #
 # Configure step. Only define it if not already defined by the package
 # .mk file.
 #
 ifndef $(2)_CONFIGURE_CMDS
 define $(2)_CONFIGURE_CMDS
-	$$(QT5_QT_CONF_FIXUP)
 	cd $$($(2)_BUILDDIR) && \
 	$$(TARGET_MAKE_ENV) $$($(2)_CONF_ENV) $$(QT5_QMAKE) $$($(2)_CONF_OPTS)
 endef

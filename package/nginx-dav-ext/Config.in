@@ -1,7 +1,7 @@
 config BR2_PACKAGE_NGINX_DAV_EXT
 	bool "nginx-dav-ext"
 	depends on BR2_PACKAGE_NGINX_HTTP_DAV_MODULE
-	select BR2_PACKAGE_EXPAT
+	select BR2_PACKAGE_LIBXSLT
 	help
 	  NGINX WebDAV missing commands support (PROPFIND & OPTIONS).
 

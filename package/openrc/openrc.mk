@@ -4,10 +4,11 @@
 #
 ################################################################################
 
-OPENRC_VERSION = 0.42.1
+OPENRC_VERSION = 0.43.3
 OPENRC_SITE = $(call github,OpenRC,openrc,$(OPENRC_VERSION))
 OPENRC_LICENSE = BSD-2-Clause
 OPENRC_LICENSE_FILES = LICENSE
+OPENRC_CPE_ID_VENDOR = openrc_project
 
 OPENRC_DEPENDENCIES = ncurses
 

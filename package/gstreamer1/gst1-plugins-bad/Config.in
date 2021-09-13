@@ -88,12 +88,12 @@ config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DEBUGUTILS
 	  debugging
 
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DVBSUBENC
-	bool "dvdsubenc"
+	bool "dvbsubenc"
 	help
 	  DVB subpicture encoding support
 
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DVBSUBOVERLAY
-	bool "dvdsuboverlay"
+	bool "dvbsuboverlay"
 	help
 	  DVB subtitle renderer plugin
 
@@ -326,7 +326,15 @@ comment "plugins with external dependencies"
 
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_ASSRENDER
 	bool "assrender"
+	depends on BR2_INSTALL_LIBSTDCPP # libass -> harfbuzz
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libass -> harfbuzz
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # libass -> harfbuzz
 	select BR2_PACKAGE_LIBASS
+
+comment "assrender plugin needs a toolchain w/ C++, gcc => 4.8"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_INSTALL_LIBSTDCPP || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
 
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_BLUEZ
 	bool "bluez"
@@ -337,6 +345,7 @@ config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_BLUEZ
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_4 # bluez5_utils
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # bluez5_utils
 	select BR2_PACKAGE_BLUEZ5_UTILS
+	select BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_AUDIO # runtime
 	help
 	  Bluetooth audio A2DP/AVDTP sink, AVDTP source plugin
 
@@ -568,6 +577,10 @@ comment "rsvg plugin needs a toolchain w/ C++, gcc >= 4.8"
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SBC
 	bool "sbc"
 	select BR2_PACKAGE_SBC
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SCTP
+	bool "sctp"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # __sync_*_4 intrinsics
 
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SHM
 	bool "shm"

@@ -1,0 +1,10 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: duktape
+Description: Embeddable Javascript engine
+Version: @VERSION@
+Libs: -L${libdir} -lduktape
+Cflags: -I${includedir}/

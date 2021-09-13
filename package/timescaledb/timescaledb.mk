@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TIMESCALEDB_VERSION = 1.7.4
+TIMESCALEDB_VERSION = 2.4.0
 TIMESCALEDB_SITE = $(call github,timescale,timescaledb,$(TIMESCALEDB_VERSION))
 TIMESCALEDB_LICENSE = Apache-2.0
 TIMESCALEDB_LICENSE_FILES = LICENSE
@@ -16,7 +16,9 @@ TIMESCALEDB_DEPENDENCIES = postgresql
 # pg_config replacement doesn't implement --cppflags --cflags
 # --ldflags and --libs.
 TIMESCALEDB_CONF_OPTS = \
+	-DTAP_CHECKS=OFF \
 	-DREGRESS_CHECKS=OFF \
+	-DWARNINGS_AS_ERRORS=OFF \
 	-DPG_PKGLIBDIR=lib/postgresql \
 	-DPG_SHAREDIR=share/postgresql \
 	-DPG_BINDIR=bin \

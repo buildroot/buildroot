@@ -4,18 +4,14 @@
 #
 ################################################################################
 
-# There's no tarball releases of slirp, so we use the git repo
-# Also, there's no tag, so we use a random SHA1 (master's HEAD
-# of today)
-SLIRP_VERSION = 8c2da74c1385242f20799fec8c04f8378edc6550
-SLIRP_SITE = git://anongit.freedesktop.org/spice/slirp
-SLIRP_LICENSE = BSD-4-Clause, BSD-2-Clause
-# Note: The license file 'COPYRIGHT' is missing from the sources,
-# although some files refer to it.
+SLIRP_VERSION = 4.6.1
+SLIRP_SOURCE = libslirp-$(SLIRP_VERSION).tar.xz
+SLIRP_SITE = https://gitlab.freedesktop.org/slirp/libslirp/uploads/83b199ea6fcdfc0c243dfde8546ee4c9
+SLIRP_LICENSE = BSD-3-Clause
+SLIRP_LICENSE_FILES = COPYRIGHT
+SLIRP_CPE_ID_VENDOR = libslirp_project
+SLIRP_CPE_ID_PRODUCT = libslirp
 SLIRP_INSTALL_STAGING = YES
+SLIRP_DEPENDENCIES = libglib2
 
-# As we're using the git tree, there's no ./configure,
-# so we need to autoreconf.
-SLIRP_AUTORECONF = YES
-
-$(eval $(autotools-package))
+$(eval $(meson-package))

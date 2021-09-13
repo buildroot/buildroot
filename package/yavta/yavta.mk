@@ -4,17 +4,11 @@
 #
 ################################################################################
 
-YAVTA_VERSION = 82ff2efdb9787737b9f21b6f4759f077c827b238
-YAVTA_SITE = git://git.ideasonboard.org/yavta.git
+YAVTA_VERSION = 583bedefc2a247d2cfd32d1b4a0abbe3e2015c70
+YAVTA_SITE = https://git.ideasonboard.org/git/yavta.git
+YAVTA_SITE_METHOD = git
 YAVTA_LICENSE = GPL-2.0+
 YAVTA_LICENSE_FILES = COPYING.GPL
+YAVTA_CONF_OPTS = -Dwerror=false
 
-define YAVTA_BUILD_CMDS
-	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)
-endef
-
-define YAVTA_INSTALL_TARGET_CMDS
-	$(INSTALL) -m 0755 -D $(@D)/yavta $(TARGET_DIR)/usr/bin/yavta
-endef
-
-$(eval $(generic-package))
+$(eval $(meson-package))

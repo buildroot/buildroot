@@ -4,10 +4,11 @@
 #
 ################################################################################
 
-LIBSELINUX_VERSION = 3.1
-LIBSELINUX_SITE = https://github.com/SELinuxProject/selinux/releases/download/20200710
+LIBSELINUX_VERSION = 3.2
+LIBSELINUX_SITE = https://github.com/SELinuxProject/selinux/releases/download/$(LIBSELINUX_VERSION)
 LIBSELINUX_LICENSE = Public Domain
 LIBSELINUX_LICENSE_FILES = LICENSE
+LIBSELINUX_CPE_ID_VENDOR = selinuxproject
 
 LIBSELINUX_DEPENDENCIES = $(BR2_COREUTILS_HOST_DEPENDENCY) libsepol pcre
 

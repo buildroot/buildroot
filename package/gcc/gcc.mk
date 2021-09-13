@@ -98,6 +98,12 @@ ifeq ($(BR2_ENABLE_DEBUG),y)
 GCC_COMMON_TARGET_CFLAGS += -Wno-error
 endif
 
+# Make sure libgcc & libstdc++ always get built with -matomic on ARC700
+ifeq ($(GCC_TARGET_CPU):$(BR2_ARC_ATOMIC_EXT),arc700:y)
+GCC_COMMON_TARGET_CFLAGS += -matomic
+GCC_COMMON_TARGET_CXXFLAGS += -matomic
+endif
+
 # Propagate options used for target software building to GCC target libs
 HOST_GCC_COMMON_CONF_ENV += CFLAGS_FOR_TARGET="$(GCC_COMMON_TARGET_CFLAGS)"
 HOST_GCC_COMMON_CONF_ENV += CXXFLAGS_FOR_TARGET="$(GCC_COMMON_TARGET_CXXFLAGS)"
@@ -116,7 +122,7 @@ endif
 ifeq ($(BR2_USE_WCHAR)$(BR2_TOOLCHAIN_HAS_LIBQUADMATH),yy)
 HOST_GCC_COMMON_CONF_OPTS += --enable-libquadmath
 else
-HOST_GCC_COMMON_CONF_OPTS += --disable-libquadmath
+HOST_GCC_COMMON_CONF_OPTS += --disable-libquadmath --disable-libquadmath-support
 endif
 
 # libsanitizer requires wordexp, not in default uClibc config. Also
@@ -217,6 +223,7 @@ endif
 # Enable proper double/long double for SPE ABI
 ifeq ($(BR2_powerpc_SPE),y)
 HOST_GCC_COMMON_CONF_OPTS += \
+	--enable-obsolete \
 	--enable-e500_double \
 	--with-long-double-128
 endif
@@ -224,7 +231,7 @@ endif
 # Set default to Secure-PLT to prevent run-time
 # generation of PLT stubs (supports RELRO and
 # SELinux non-exemem capabilities)
-ifeq ($(BR2_powerpc),y)
+ifeq ($(BR2_powerpc)$(BR2_powerpc64),y)
 HOST_GCC_COMMON_CONF_OPTS += --enable-secureplt
 endif
 

@@ -9,13 +9,13 @@
 BINUTILS_VERSION = $(call qstrip,$(BR2_BINUTILS_VERSION))
 ifeq ($(BINUTILS_VERSION),)
 ifeq ($(BR2_arc),y)
-BINUTILS_VERSION = arc-2020.03-release
+BINUTILS_VERSION = arc-2020.09-release
 else
-BINUTILS_VERSION = 2.34
+BINUTILS_VERSION = 2.36.1
 endif
 endif # BINUTILS_VERSION
 
-ifeq ($(BINUTILS_VERSION),arc-2020.03-release)
+ifeq ($(BINUTILS_VERSION),arc-2020.09-release)
 BINUTILS_SITE = $(call github,foss-for-synopsys-dwc-arc-processors,binutils-gdb,$(BINUTILS_VERSION))
 BINUTILS_SOURCE = binutils-gdb-$(BINUTILS_VERSION).tar.gz
 BINUTILS_FROM_GIT = y
@@ -35,6 +35,7 @@ BINUTILS_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES)
 BINUTILS_MAKE_OPTS = LIBS=$(TARGET_NLS_LIBS)
 BINUTILS_LICENSE = GPL-3.0+, libiberty LGPL-2.1+
 BINUTILS_LICENSE_FILES = COPYING3 COPYING.LIB
+BINUTILS_CPE_ID_VENDOR = gnu
 
 ifeq ($(BINUTILS_FROM_GIT),y)
 BINUTILS_DEPENDENCIES += host-flex host-bison
@@ -93,6 +94,7 @@ HOST_BINUTILS_CONF_OPTS = \
 	--enable-static \
 	--with-sysroot=$(STAGING_DIR) \
 	--enable-poison-system-directories \
+	--without-debuginfod \
 	$(BINUTILS_DISABLE_GDB_CONF_OPTS) \
 	$(BINUTILS_EXTRA_CONFIG_OPTIONS)
 

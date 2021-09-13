@@ -83,4 +83,7 @@ UTIL_LINUX_LIBS_CONF_OPTS += --without-readline
 # No libs use audit
 UTIL_LINUX_LIBS_CONF_OPTS += --without-audit
 
+# No libs use libmagic
+UTIL_LINUX_LIBS_CONF_OPTS += --without-libmagic
+
 $(eval $(autotools-package))

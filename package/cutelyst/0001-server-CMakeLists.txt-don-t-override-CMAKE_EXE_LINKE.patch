@@ -1,0 +1,31 @@
+From c347aeb43775109cbc2824b99cb10b1b3440c191 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 17 May 2021 21:27:11 +0200
+Subject: [PATCH] server/CMakeLists.txt: don't override CMAKE_EXE_LINKER_FLAGS
+
+Don't override CMAKE_EXE_LINKER_FLAGS as this could break the build if
+CMAKE_EXE_LINKER_FLAGS is already set by the user (for example to pass
+-latomic)
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/cutelyst/cutelyst/pull/312]
+---
+ wsgi/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/server/CMakeLists.txt b/server/CMakeLists.txt
+index ec5689f7..1ed56859 100644
+--- a/wsgi/CMakeLists.txt
++++ b/wsgi/CMakeLists.txt
+@@ -95,7 +95,7 @@ install(TARGETS Cutelyst${PROJECT_VERSION_MAJOR}Qt${QT_VERSION_MAJOR}Server
+     cxx_generalized_initializers
+ )
+ if (JEMALLOC_FOUND)
+-    set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} " -Wl,--no-as-needed")
++    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed")
+     target_link_libraries(cutelyst-wsgi2 PRIVATE ${JEMALLOC_LIBRARIES})
+ endif()
+ 
+-- 
+2.30.2
+

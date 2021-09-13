@@ -1,5 +1,4 @@
 import os
-import subprocess
 
 import infra.basetest
 
@@ -8,8 +7,7 @@ class TestSquashfs(infra.basetest.BRTest):
     config = infra.basetest.BASIC_TOOLCHAIN_CONFIG + \
         """
         BR2_TARGET_ROOTFS_SQUASHFS=y
-        # BR2_TARGET_ROOTFS_SQUASHFS4_GZIP is not set
-        BR2_TARGET_ROOTFS_SQUASHFS4_LZ4=y
+        BR2_TARGET_ROOTFS_SQUASHFS4_LZO=y
         # BR2_TARGET_ROOTFS_TAR is not set
         """
 
@@ -19,10 +17,10 @@ class TestSquashfs(infra.basetest.BRTest):
         out = out.splitlines()
         self.assertEqual(out[0],
                          "Found a valid SQUASHFS 4:0 superblock on images/rootfs.squashfs.")
-        self.assertEqual(out[3], "Compression lz4")
+        self.assertEqual(out[3], "Compression lzo")
 
         img = os.path.join(self.builddir, "images", "rootfs.squashfs")
-        subprocess.call(["truncate", "-s", "%1M", img])
+        infra.img_round_power2(img)
 
         self.emulator.boot(arch="armv7",
                            kernel="builtin",
@@ -32,5 +30,4 @@ class TestSquashfs(infra.basetest.BRTest):
         self.emulator.login()
 
         cmd = "mount | grep '/dev/root on / type squashfs'"
-        _, exit_code = self.emulator.run(cmd)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk(cmd)

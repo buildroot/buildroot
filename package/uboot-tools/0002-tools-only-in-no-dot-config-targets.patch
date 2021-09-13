@@ -20,6 +20,8 @@ http://ftp.de.debian.org/debian/pool/main/u/u-boot/u-boot_2014.10+dfsg1-2.1.debi
 Signed-off-by: Jörg Krause <joerg.krause@embedded.rocks>
 [fabio: adapt it to 2016.09]
 Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+[Fabrice: adapt it to 2021.04]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  Makefile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -32,8 +34,8 @@ index 6aa08964ff..fcec83d183 100644
  
  no-dot-config-targets := clean clobber mrproper distclean \
  			 help %docs check% coccicheck \
--			 ubootversion backup tests check qcheck
-+			 ubootversion backup tests tools-only check qcheck
+-			 ubootversion backup tests check qcheck tcheck
++			 ubootversion backup tests tools-only check qcheck tcheck
  
  config-targets := 0
  mixed-targets  := 0

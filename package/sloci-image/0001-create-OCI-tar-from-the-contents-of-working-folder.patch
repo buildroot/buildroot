@@ -1,0 +1,37 @@
+From 66c73c2ba3057634f19f37d3cfbbe752638c9f9f Mon Sep 17 00:00:00 2001
+From: Matthew Weber <matthew.weber@collins.com>
+Date: Fri, 27 Aug 2021 12:24:19 -0500
+Subject: [PATCH] create OCI tar from the contents of working folder
+
+When testing with containerd, it was found that the tarfile
+created with sloci can't import because the contents are inside
+a folder.  Looking around online, it seems that the an oci tar
+should container the blob/index.json/oci-layout in the . of the
+tarfile.
+
+Upstream: https://github.com/jirutka/sloci-image/pull/3
+
+Refs:
+https://snyk.io/blog/container-image-formats/
+https://github.com/opencontainers/image-spec/blob/main/image-layout.md
+
+Signed-off-by: Matthew Weber <matthew.weber@collins.com>
+---
+ sloci-image | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sloci-image b/sloci-image
+index 90dba26..7f3c775 100755
+--- a/sloci-image
++++ b/sloci-image
+@@ -425,6 +425,6 @@ if [ "$OUT_TYPE" = tar ]; then
+ 	file_name="$IMAGE_NAME-$CFG_REF_NAME-$CFG_ARCH"
+ 	file_name="$file_name${CFG_ARCH_VARIANT:+"-$CFG_ARCH_VARIANT"}-$CFG_OS.oci-image"
+ 
+-	tar ${DEBUG:+-v} -cf "$file_name.tar" "$IMAGE_NAME"
++	tar ${DEBUG:+-v} -cf "$file_name.tar" -C "$IMAGE_NAME" .
+ 	rm -Rf "$IMAGE_NAME"
+ fi
+-- 
+2.17.1
+

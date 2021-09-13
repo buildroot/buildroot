@@ -4,13 +4,16 @@
 #
 ################################################################################
 
-DOCKER_CLI_VERSION = 19.03.12
+DOCKER_CLI_VERSION = 20.10.7
 DOCKER_CLI_SITE = $(call github,docker,cli,v$(DOCKER_CLI_VERSION))
 
 DOCKER_CLI_LICENSE = Apache-2.0
 DOCKER_CLI_LICENSE_FILES = LICENSE
 
 DOCKER_CLI_DEPENDENCIES = host-pkgconf
+
+DOCKER_CLI_CPE_ID_VENDOR = docker
+DOCKER_CLI_CPE_ID_PRODUCT = docker
 
 DOCKER_CLI_TAGS = autogen
 DOCKER_CLI_BUILD_TARGETS = cmd/docker

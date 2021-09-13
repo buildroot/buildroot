@@ -1,0 +1,55 @@
+From 49e3ffcbe267691dfbf24c91417aa296e7412146 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 29 Aug 2021 21:15:57 +0200
+Subject: [PATCH] configure.ac: also search libcrypt through pkg-config
+
+libxcrypt provides a libcrypt.pc file so use it if available as this
+will allow to retrieve the library path (e.g.
+-L/home/buildroot/output/host//riscv64-buildroot-linux-musl/sysroot/usr/lib)
+which is useful when cross-compiling and will avoid the following build
+failure on buildroot:
+
+/home/buildroot/autobuild/run/instance-3/output-1/host/opt/ext-toolchain/bin/../lib/gcc/riscv64-buildroot-linux-musl/10.2.0/../../../../riscv64-buildroot-linux-musl/bin/ld: .libs/passverify.o: in function `.L30':
+passverify.c:(.text+0x368): undefined reference to `crypt_checksalt'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/20b14e222b35c2d1269960075832b784ba81aa1a
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/linux-pam/linux-pam/commit/49e3ffcbe267691dfbf24c91417aa296e7412146]
+---
+ configure.ac | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index d464884c..c06bc7dd 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -363,8 +363,14 @@ AC_CHECK_HEADERS(crypt.h)
+ 
+ BACKUP_LIBS=$LIBS
+ LIBCRYPT=""
+-AC_SEARCH_LIBS([crypt_gensalt_rn],[crypt])
+-case "$ac_cv_search_crypt_gensalt_rn" in
++PKG_CHECK_MODULES([CRYPT], [libcrypt], [
++  CFLAGS="$CFLAGS $CRYPT_CFLAGS"
++  CPPFLAGS="$CPPFLAGS $CRYPT_CFLAGS"
++  LIBS="$LIBS $CRYPT_LIBS"
++  LIBCRYPT="$CRYPT_LIBS"
++], [
++  AC_SEARCH_LIBS([crypt_gensalt_rn],[crypt])
++  case "$ac_cv_search_crypt_gensalt_rn" in
+ 	-l*) LIBCRYPT="$ac_cv_search_crypt_gensalt_rn" ;;
+ 	no) AC_SEARCH_LIBS([crypt_r],[crypt])
+ 		case "$ac_cv_search_crypt_r" in
+@@ -374,7 +380,8 @@ case "$ac_cv_search_crypt_gensalt_rn" in
+ 			-l*) LIBCRYPT="$ac_cv_search_crypt" ;;
+ 		esac ;;
+ 	esac ;;
+-esac
++  esac
++])
+ AC_CHECK_FUNCS([crypt_r])
+ LIBS=$BACKUP_LIBS
+ AC_SUBST(LIBCRYPT)

@@ -4,11 +4,14 @@
 #
 ################################################################################
 
-RNG_TOOLS_VERSION = 6.10
+RNG_TOOLS_VERSION = 6.12
 RNG_TOOLS_SITE = $(call github,nhorman,$(RNG_TOOLS_NAME),v$(RNG_TOOLS_VERSION))
 RNG_TOOLS_LICENSE = GPL-2.0
 RNG_TOOLS_LICENSE_FILES = COPYING
-RNG_TOOLS_DEPENDENCIES = libsysfs jitterentropy-library host-pkgconf openssl
+RNG_TOOLS_CPE_ID_VENDOR = rng-tools_project
+RNG_TOOLS_SELINUX_MODULES = rngd
+
+RNG_TOOLS_DEPENDENCIES = host-pkgconf openssl
 # From git
 RNG_TOOLS_AUTORECONF = YES
 
@@ -26,6 +29,13 @@ RNG_TOOLS_DEPENDENCIES += librtlsdr
 RNG_TOOLS_CONF_OPTS += --with-rtlsdr
 else
 RNG_TOOLS_CONF_OPTS += --without-rtlsdr
+endif
+
+ifeq ($(BR2_PACKAGE_RNG_TOOLS_JITTERENTROPY_LIBRARY),y)
+RNG_TOOLS_DEPENDENCIES += jitterentropy-library
+RNG_TOOLS_CONF_OPTS += --enable-jitterentropy
+else
+RNG_TOOLS_CONF_OPTS += --disable-jitterentropy
 endif
 
 ifeq ($(BR2_PACKAGE_RNG_TOOLS_NISTBEACON),y)

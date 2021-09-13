@@ -4,13 +4,15 @@
 #
 ################################################################################
 
-MPV_VERSION = 0.32.0
+MPV_VERSION = 0.33.1
 MPV_SITE = $(call github,mpv-player,mpv,v$(MPV_VERSION))
 MPV_DEPENDENCIES = \
-	host-pkgconf ffmpeg zlib \
+	host-pkgconf ffmpeg libass zlib \
 	$(if $(BR2_PACKAGE_LIBICONV),libiconv)
 MPV_LICENSE = GPL-2.0+
 MPV_LICENSE_FILES = LICENSE.GPL
+MPV_CPE_ID_VENDOR = mpv
+MPV_INSTALL_STAGING = YES
 
 MPV_NEEDS_EXTERNAL_WAF = YES
 
@@ -23,10 +25,19 @@ MPV_CONF_OPTS = \
 	--disable-coreaudio \
 	--disable-cuda-hwaccel \
 	--disable-opensles \
-	--disable-rsound \
 	--disable-rubberband \
 	--disable-uchardet \
 	--disable-vapoursynth
+
+ifeq ($(BR2_REPRODUCIBLE),y)
+MPV_CONF_OPTS += --disable-build-date
+endif
+
+ifeq ($(BR2_STATIC_LIBS),y)
+MPV_CONF_OPTS += --disable-libmpv-shared --enable-libmpv-static
+else
+MPV_CONF_OPTS += --enable-libmpv-shared --disable-libmpv-static
+endif
 
 # ALSA support requires pcm+mixer
 ifeq ($(BR2_PACKAGE_ALSA_LIB_MIXER)$(BR2_PACKAGE_ALSA_LIB_PCM),yy)
@@ -36,12 +47,16 @@ else
 MPV_CONF_OPTS += --disable-alsa
 endif
 
-# GBM support is provided by mesa3d when EGL=y
-ifeq ($(BR2_PACKAGE_MESA3D_OPENGL_EGL),y)
+ifeq ($(BR2_PACKAGE_MESA3D_GBM),y)
 MPV_CONF_OPTS += --enable-gbm
 MPV_DEPENDENCIES += mesa3d
+ifeq ($(BR2_PACKAGE_LIBDRM),y)
+MPV_CONF_OPTS += --enable-egl-drm
 else
-MPV_CONF_OPTS += --disable-gbm
+MPV_CONF_OPTS += --disable-egl-drm
+endif
+else
+MPV_CONF_OPTS += --disable-gbm --disable-egl-drm
 endif
 
 # jack support
@@ -75,14 +90,6 @@ MPV_CONF_OPTS += --enable-libarchive
 MPV_DEPENDENCIES += libarchive
 else
 MPV_CONF_OPTS += --disable-libarchive
-endif
-
-# libass subtitle support
-ifeq ($(BR2_PACKAGE_LIBASS),y)
-MPV_CONF_OPTS += --enable-libass
-MPV_DEPENDENCIES += libass
-else
-MPV_CONF_OPTS += --disable-libass
 endif
 
 # bluray support
@@ -138,6 +145,12 @@ endif
 ifeq ($(BR2_PACKAGE_HAS_LIBGL),y)
 MPV_CONF_OPTS += --enable-gl
 MPV_DEPENDENCIES += libgl
+else ifeq ($(BR2_PACKAGE_HAS_LIBGLES),y)
+MPV_CONF_OPTS += --enable-gl
+MPV_DEPENDENCIES += libgles
+else ifeq ($(BR2_PACKAGE_HAS_LIBEGL),y)
+MPV_CONF_OPTS += --enable-gl
+MPV_DEPENDENCIES += libegl
 else
 MPV_CONF_OPTS += --disable-gl
 endif
@@ -148,14 +161,6 @@ MPV_CONF_OPTS += --enable-pulse
 MPV_DEPENDENCIES += pulseaudio
 else
 MPV_CONF_OPTS += --disable-pulse
-endif
-
-# samba support
-ifeq ($(BR2_PACKAGE_SAMBA4),y)
-MPV_CONF_OPTS += --enable-libsmbclient
-MPV_DEPENDENCIES += samba4
-else
-MPV_CONF_OPTS += --disable-libsmbclient
 endif
 
 # SDL support
@@ -176,17 +181,16 @@ MPV_CONF_OPTS += --disable-rpi
 endif
 
 # va-api support
-# This requires one or more of the egl-drm, wayland, x11 backends
-# For now we support wayland and x11
-ifeq ($(BR2_PACKAGE_LIBVA),y)
-ifneq ($(BR2_PACKAGE_WAYLAND)$(BR2_PACKAGE_XORG7),)
+ifeq ($(BR2_PACKAGE_LIBVA)$(BR2_PACKAGE_MPV_SUPPORTS_VAAPI),yy)
 MPV_CONF_OPTS += --enable-vaapi
 MPV_DEPENDENCIES += libva
+ifeq ($(BR2_PACKAGE_LIBDRM)$(BR2_PACKAGE_MESA3D_GBM),yy)
+MPV_CONF_OPTS += --enable-vaapi-drm
 else
-MPV_CONF_OPTS += --disable-vaapi
+MPV_CONF_OPTS += --disable-vaapi-drm
 endif
 else
-MPV_CONF_OPTS += --disable-vaapi
+MPV_CONF_OPTS += --disable-vaapi --disable-vaapi-drm
 endif
 
 # wayland support

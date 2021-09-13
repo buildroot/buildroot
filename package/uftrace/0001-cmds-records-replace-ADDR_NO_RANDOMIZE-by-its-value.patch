@@ -1,0 +1,33 @@
+From dc0a75b1679debbc3712b262e5127e90961f92db Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Fri, 23 Apr 2021 22:57:56 +0200
+Subject: [PATCH] cmds/records: replace ADDR_NO_RANDOMIZE by its value
+
+uClibc-ng lacks the definition of ADDR_NO_RANDOMIZE, causing a build
+failure. A patch was submitted to upstream uClibc-ng to address this
+issue, but in the mean time, use an hardcoded value.
+
+Using a #ifdef ... #endif test doesn't work as this value is defined
+through an enum in glibc.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ cmds/record.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cmds/record.c b/cmds/record.c
+index e750f053..fc4eaed4 100644
+--- a/cmds/record.c
++++ b/cmds/record.c
+@@ -2110,7 +2110,7 @@ int do_child_exec(int ready, struct opts *opts,
+ 
+ 	if (opts->no_randomize_addr) {
+ 		/* disable ASLR (Address Space Layout Randomization) */
+-		if (personality(ADDR_NO_RANDOMIZE) < 0)
++		if (personality(0x0040000 /* ADDR_NO_RANDOMIZE */) < 0)
+ 			pr_dbg("disabling ASLR failed\n");
+ 	}
+ 
+-- 
+2.30.2
+

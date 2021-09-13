@@ -10,8 +10,12 @@ config BR2_PACKAGE_PHP_EXT_FILEINFO
 	help
 	  File Information support
 
+comment "OPcache needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
+
 config BR2_PACKAGE_PHP_EXT_OPCACHE
 	bool "OPcache"
+	depends on !BR2_STATIC_LIBS
 	help
 	  Enable the Zend OPcache accelerator.
 
@@ -83,15 +87,13 @@ config BR2_PACKAGE_PHP_EXT_LIBSODIUM
 	help
 	  libsodium support
 
-config BR2_PACKAGE_PHP_EXT_MCRYPT
-	bool "mcrypt"
-	select BR2_PACKAGE_LIBMCRYPT
-	help
-	  mcrypt support
-
 config BR2_PACKAGE_PHP_EXT_OPENSSL
 	bool "openssl"
 	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_DES if BR2_PACKAGE_LIBOPENSSL
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_MD4 if BR2_PACKAGE_LIBOPENSSL
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_RC4 if BR2_PACKAGE_LIBOPENSSL
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_RMD160 if BR2_PACKAGE_LIBOPENSSL
 	help
 	  openssl support
 
@@ -270,11 +272,6 @@ config BR2_PACKAGE_PHP_EXT_GMP
 
 comment "Other basic extensions"
 
-config BR2_PACKAGE_PHP_EXT_JSON
-	bool "JSON"
-	help
-	  JavaScript Object Serialization support
-
 config BR2_PACKAGE_PHP_EXT_TOKENIZER
 	bool "Tokenizer"
 	help
@@ -359,13 +356,6 @@ config BR2_PACKAGE_PHP_EXT_SOAP
 	select BR2_PACKAGE_PHP_EXT_LIBXML2
 	help
 	  SOAP support
-
-config BR2_PACKAGE_PHP_EXT_XMLRPC
-	bool "XML-RPC"
-	select BR2_PACKAGE_PHP_EXT_LIBXML2
-	select BR2_PACKAGE_LIBICONV if !BR2_ENABLE_LOCALE
-	help
-	  XML-RPC support
 
 comment "XML manipulation"
 

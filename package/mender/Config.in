@@ -3,14 +3,36 @@ config BR2_PACKAGE_MENDER
 	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS
 	depends on BR2_TOOLCHAIN_HAS_THREADS
-	select BR2_PACKAGE_XZ
-	select BR2_PACKAGE_UBOOT_TOOLS if BR2_TARGET_UBOOT # runtime
-	select BR2_PACKAGE_UBOOT_TOOLS_FWPRINTENV if BR2_TARGET_UBOOT # runtime
+	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_MD4 if BR2_PACKAGE_LIBOPENSSL
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_RMD160 if BR2_PACKAGE_LIBOPENSSL
 	help
 	  Mender is an open source over-the-air (OTA) software updater
 	  for embedded Linux devices. Mender comprises a client
 	  running at the embedded device, as well as a server that
 	  manages deployments across many devices.
+
+	  Notes:
+	  For systems using uboot as the bootloader:
+	    - uboot must have the mender uboot patches applied.
+	    - uboot-tools must be selected.
+	    - fw_printenv must be functional on the device.
+	  The Mender Uboot patches are at:
+	  https://github.com/mendersoftware/meta-mender/
+
+	  For more information on Manual U-Boot integration, see:
+	  https://docs.mender.io/2.6/system-updates-yocto-project/board-integration/bootloader-support/u-boot/manual-u-boot-integration
+
+	  For systems using Grub2 as the bootloader:
+	    - Mender depends on the mender-grubenv package.
+	    - The mender-grubenv package provides a fw_printenv script,
+	      which is not compatible with the uboot-tools fw_printenv
+	      script.
+
+	  The mender project recommends using uboot to load Grub2 as a
+	  secondary bootloader whenever possible. Using Grub2 as a
+	  secondary bootloader prevents users from porting the patches
+	  for uboot to each new device.
 
 	  https://github.com/mendersoftware/mender
 

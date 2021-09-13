@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBGLU_VERSION = 9.0.1
+LIBGLU_VERSION = 9.0.2
 LIBGLU_SITE = https://mesa.freedesktop.org/archive/glu
 LIBGLU_SOURCE = glu-$(LIBGLU_VERSION).tar.xz
 LIBGLU_LICENSE = SGI-B-2.0

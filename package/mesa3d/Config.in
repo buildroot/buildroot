@@ -4,8 +4,8 @@ menuconfig BR2_PACKAGE_MESA3D
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_TOOLCHAIN_HAS_SYNC_1
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
-	select BR2_PACKAGE_LIBDRM
 	select BR2_PACKAGE_EXPAT
+	select BR2_PACKAGE_LIBDRM
 	select BR2_PACKAGE_WAYLAND_PROTOCOLS if BR2_PACKAGE_WAYLAND
 	select BR2_PACKAGE_ZLIB
 	help
@@ -63,10 +63,10 @@ config BR2_PACKAGE_MESA3D_DRI_DRIVER
 	select BR2_PACKAGE_MESA3D_DRIVER
 	select BR2_PACKAGE_MESA3D_GBM if \
 		!BR2_PACKAGE_MESA3D_OPENGL_GLX && \
-		!BR2_PACKAGE_MESA3D_OPENGL_EGL && \
-		!BR2_PACKAGE_MESA3D_OSMESA_CLASSIC
+		!BR2_PACKAGE_MESA3D_OPENGL_EGL
 	select BR2_PACKAGE_XLIB_LIBXSHMFENCE if \
-		(BR2_PACKAGE_XORG7 && BR2_TOOLCHAIN_HAS_SYNC_4)
+		(BR2_PACKAGE_XORG7 && BR2_TOOLCHAIN_HAS_SYNC_4 && \
+			!BR2_RISCV_32)
 
 config BR2_PACKAGE_MESA3D_VULKAN_DRIVER
 	bool
@@ -79,11 +79,6 @@ config BR2_PACKAGE_MESA3D_DRIVER
 # Quote from mesa3d meson.build: "XA state tracker requires at least
 # one of the following gallium drivers: nouveau, freedreno, i915, svga.
 config BR2_PACKAGE_MESA3D_NEEDS_XA
-	bool
-
-# Quote from mesa3d meson.build: "kmsro driver requires one or more
-# renderonly drivers (vc4, etnaviv, freedreno)".
-config BR2_PACKAGE_MESA3D_GALLIUM_KMSRO
 	bool
 
 # OpenGL GLX and Gallium VDPAU both needs X11
@@ -105,7 +100,6 @@ config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_ETNAVIV
 	bool "Gallium Etnaviv driver"
 	select BR2_PACKAGE_MESA3D_GALLIUM_DRIVER
 	select BR2_PACKAGE_LIBDRM_ETNAVIV
-	select BR2_PACKAGE_MESA3D_GALLIUM_KMSRO
 	help
 	  Mesa driver for Vivante GPUs.
 
@@ -119,7 +113,6 @@ config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_FREEDRENO
 	# for arm/aarch64.
 	select BR2_PACKAGE_MESA3D_GALLIUM_DRIVER
 	select BR2_PACKAGE_LIBDRM_FREEDRENO
-	select BR2_PACKAGE_MESA3D_GALLIUM_KMSRO
 	help
 	  Mesa driver for Freedreno GPUs.
 
@@ -143,20 +136,9 @@ config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_IRIS
 	help
 	  Mesa driver for iris-based Intel GPUs.
 
-config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_KMSRO
-	bool "Gallium KMSRO driver"
-	depends on BR2_PACKAGE_MESA3D_GALLIUM_KMSRO
-	help
-	  Support various sorts of KMS displays with the
-	  renderonly layer used to attach a GPU.
-
-comment "Gallium KMSRO needs one or more renderonly drivers"
-	depends on !BR2_PACKAGE_MESA3D_GALLIUM_KMSRO
-
 config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_LIMA
 	bool "Gallium lima driver"
 	select BR2_PACKAGE_MESA3D_GALLIUM_DRIVER
-	select BR2_PACKAGE_MESA3D_GALLIUM_KMSRO
 	help
 	  Mesa driver for ARM Mali Utgard GPUs.
 
@@ -172,7 +154,6 @@ config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_NOUVEAU
 config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_PANFROST
 	bool "Gallium panfrost driver"
 	select BR2_PACKAGE_MESA3D_GALLIUM_DRIVER
-	select BR2_PACKAGE_MESA3D_GALLIUM_KMSRO
 	help
 	  Mesa driver for ARM Mali Midgard and Bifrost GPUs.
 
@@ -242,14 +223,10 @@ config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_SVGA
 
 config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_SWRAST
 	bool "Gallium swrast driver"
-	depends on !BR2_PACKAGE_MESA3D_DRI_DRIVER_SWRAST
 	select BR2_PACKAGE_MESA3D_GALLIUM_DRIVER
 	help
 	  This is a software opengl implementation using the Gallium3D
 	  infrastructure.
-
-comment "Gallium swrast: Only one swrast provider can be built"
-	depends on BR2_PACKAGE_MESA3D_DRI_DRIVER_SWRAST
 
 config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_TEGRA
 	bool "Gallium tegra driver"
@@ -264,11 +241,10 @@ config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_V3D
 	bool "Gallium v3d driver"
 	depends on (BR2_arm && BR2_ARM_CPU_HAS_NEON) || BR2_aarch64
 	select BR2_PACKAGE_MESA3D_GALLIUM_DRIVER
-	select BR2_PACKAGE_MESA3D_GALLIUM_KMSRO
 	select BR2_PACKAGE_LIBDRM_VC4
 	select BR2_PACKAGE_MESA3D_OPENGL_EGL
 	help
-	  Driver for Broadcom VC6 (rpi4) GPUs (needs kmsro and vc4).
+	  Driver for Broadcom VC6 (rpi4) GPUs (needs vc4).
 
 	  It requires a kernel 4.18+ with DRM V3D support enabled:
 
@@ -279,7 +255,6 @@ config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_VC4
 	bool "Gallium vc4 driver"
 	depends on BR2_arm || BR2_aarch64
 	select BR2_PACKAGE_MESA3D_GALLIUM_DRIVER
-	select BR2_PACKAGE_MESA3D_GALLIUM_KMSRO
 	select BR2_PACKAGE_LIBDRM_VC4
 	select BR2_PACKAGE_MESA3D_OPENGL_EGL
 	help
@@ -333,13 +308,6 @@ comment "Gallium XvMC state tracker needs X.org and gallium drivers r600 or nouv
 		|| BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_R600)
 
 comment "DRI drivers"
-
-config BR2_PACKAGE_MESA3D_DRI_DRIVER_SWRAST
-	bool "DRI swrast driver"
-	select BR2_PACKAGE_MESA3D_DRI_DRIVER
-	help
-	  This is a software opengl implementation using the DRI
-	  infrastructure.
 
 config BR2_PACKAGE_MESA3D_DRI_DRIVER_I915
 	bool "DRI i915 driver"
@@ -405,11 +373,11 @@ comment "intel vulkan depends on X.org and needs a glibc toolchain w/ headers >=
 
 comment "Off-screen Rendering"
 
-config BR2_PACKAGE_MESA3D_OSMESA_CLASSIC
-	bool "OSMesa (classic) library"
+config BR2_PACKAGE_MESA3D_OSMESA_GALLIUM
+	bool "OSMesa (Gallium) library"
+	select BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_SWRAST
 	help
-	  The OSMesa classic API provides functions for
-	  making off-screen renderings.
+	  The OSMesa API provides functions for off-screen rendering.
 
 if BR2_PACKAGE_MESA3D_DRIVER
 

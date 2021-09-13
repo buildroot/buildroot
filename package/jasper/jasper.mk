@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-JASPER_VERSION = 2.0.22
+JASPER_VERSION = 2.0.28
 JASPER_SITE = $(call github,jasper-software,jasper,version-$(JASPER_VERSION))
 JASPER_INSTALL_STAGING = YES
 JASPER_LICENSE = JasPer-2.0
 JASPER_LICENSE_FILES = LICENSE
+JASPER_CPE_ID_VENDOR = jasper_project
 JASPER_SUPPORTS_IN_SOURCE_BUILD = NO
 JASPER_CONF_OPTS = \
 	-DCMAKE_DISABLE_FIND_PACKAGE_DOXYGEN=TRUE \

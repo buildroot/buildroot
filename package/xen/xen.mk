@@ -4,10 +4,12 @@
 #
 ################################################################################
 
-XEN_VERSION = 4.14.0
+XEN_VERSION = 4.14.2
 XEN_SITE = https://downloads.xenproject.org/release/xen/$(XEN_VERSION)
 XEN_LICENSE = GPL-2.0
 XEN_LICENSE_FILES = COPYING
+XEN_CPE_ID_VENDOR = xen
+XEN_CPE_ID_PREFIX = cpe:2.3:o
 XEN_DEPENDENCIES = host-acpica host-python3
 
 # Calculate XEN_ARCH
@@ -18,6 +20,7 @@ XEN_ARCH = arm32
 endif
 
 XEN_CONF_OPTS = \
+	--disable-golang \
 	--disable-ocamltools \
 	--with-initddir=/etc/init.d
 
@@ -40,7 +43,8 @@ XEN_CONF_OPTS += --disable-xen
 endif
 
 ifeq ($(BR2_PACKAGE_XEN_TOOLS),y)
-XEN_DEPENDENCIES += dtc libaio libglib2 ncurses openssl pixman util-linux yajl
+XEN_DEPENDENCIES += \
+	dtc libaio libglib2 ncurses openssl pixman slirp util-linux yajl
 ifeq ($(BR2_PACKAGE_ARGP_STANDALONE),y)
 XEN_DEPENDENCIES += argp-standalone
 endif

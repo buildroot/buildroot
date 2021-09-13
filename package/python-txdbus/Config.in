@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_TXDBUS
 	bool "python-txdbus"
+	depends on BR2_PACKAGE_PYTHON3 # python-twisted -> python-cryptography -> python-idna
 	select BR2_PACKAGE_PYTHON_TWISTED # runtime
 	select BR2_PACKAGE_PYTHON_SIX # runtime
 	help

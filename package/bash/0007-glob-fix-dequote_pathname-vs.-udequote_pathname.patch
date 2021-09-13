@@ -1,0 +1,40 @@
+From a60ab1e5e88863acf9b0e9bcaa7919bbf093da05 Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Thu, 11 Mar 2021 20:55:52 +0100
+Subject: [PATCH] glob: fix dequote_pathname vs. udequote_pathname
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes:
+
+  glob.c:123:28: error: static declaration of ‘udequote_pathname’ follows non-static declaration
+    123 | #  define dequote_pathname udequote_pathname
+        |                            ^~~~~~~~~~~~~~~~~
+  glob.c:125:13: note: in expansion of macro ‘dequote_pathname’
+    125 | static void dequote_pathname PARAMS((char *));
+        |             ^~~~~~~~~~~~~~~~
+  glob.c:118:6: note: previous declaration of ‘udequote_pathname’ was here
+    118 | void udequote_pathname PARAMS((char *));
+        |      ^~~~~~~~~~~~~~~~~
+
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ lib/glob/glob.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/lib/glob/glob.c b/lib/glob/glob.c
+index eb6277f..c903b15 100644
+--- a/lib/glob/glob.c
++++ b/lib/glob/glob.c
+@@ -117,6 +117,5 @@ static int mbskipname PARAMS((char *, char *, int));
+ #else
+ #  define dequote_pathname udequote_pathname
+ #endif
+-static void dequote_pathname PARAMS((char *));
+ static int glob_testdir PARAMS((char *, int));
+ static char **glob_dir_to_array PARAMS((char *, char **, int));
+ 
+-- 
+2.30.1
+

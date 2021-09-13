@@ -14,15 +14,6 @@ class TestPythonGpiozero(TestPythonPackageBase):
         self.assertRunOk(cmd)
 
 
-class TestPythonPy2Gpiozero(TestPythonGpiozero):
-    __test__ = True
-    config = TestPythonPackageBase.config + \
-        """
-        BR2_PACKAGE_PYTHON=y
-        BR2_PACKAGE_PYTHON_GPIOZERO=y
-        """
-
-
 class TestPythonPy3Gpiozero(TestPythonGpiozero):
     __test__ = True
     config = TestPythonGpiozero.config + \
