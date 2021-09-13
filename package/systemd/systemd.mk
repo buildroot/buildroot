@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-SYSTEMD_VERSION = 246.6.ccx3
-SYSTEMD_SITE = $(call github,ccxtechnologies,systemd,v$(SYSTEMD_VERSION))
+SYSTEMD_VERSION = 98418a3
+SYSTEMD_SITE = $(call github,ccxtechnologies,systemd,$(SYSTEMD_VERSION))
 SYSTEMD_LICENSE = LGPL-2.1+, GPL-2.0+ (udev), Public Domain (few source files, see README), BSD-3-Clause (tools/chromiumos)
 SYSTEMD_LICENSE_FILES = LICENSE.GPL2 LICENSE.LGPL2.1 README tools/chromiumos/LICENSE
 SYSTEMD_CPE_ID_VENDOR = freedesktop
@@ -649,7 +649,6 @@ SYSTEMD_ROOTFS_PRE_CMD_HOOKS += SYSTEMD_PRESET_ALL
 
 SYSTEMD_CONF_ENV = $(HOST_UTF8_LOCALE_ENV)
 SYSTEMD_NINJA_ENV = $(HOST_UTF8_LOCALE_ENV)
-SYSTEMD_NINJA_OPTS += -j1
 
 define SYSTEMD_LINUX_CONFIG_FIXUPS
 	$(call KCONFIG_ENABLE_OPT,CONFIG_CGROUPS)
