@@ -1,0 +1,85 @@
+config BR2_PACKAGE_BRIDGE
+	bool "bridge"
+	help
+	  Framework to build the functionality to realize a plugin structure for 
+          rapid and easy development of REST-full API modules that realize simple
+          interconnection between JavScript world and the Embedded platform.
+
+if BR2_PACKAGE_BRIDGE
+
+source "package/bridge/bridge-ui/Config.in"
+
+config 	BR2_PACKAGE_BRIDGE_DEVICES
+	bool "devices"
+	select BR2_PACKAGE_LIBUSB
+	help 
+          Devices contains several hardware abstractions for IC found out there.
+
+config BR2_PACKAGE_BRIDGE_ZWAVE
+	bool "zwave"
+	help 
+          Implementation of the ZWave protocol over a SerialAPI
+
+config BR2_PACKAGE_BRIDGE_ZIGBEE
+	bool "zigbee"
+	help 
+          Implementation of the ZigBee(RC,LL,HA) protocol over a SerialAPI
+	
+menu "Options"
+
+config BR2_PACKAGE_BRIDGE_PORT
+	string "port"
+	default "80"
+
+config BR2_PACKAGE_BRIDGE_BIND
+	string "bind"
+	default "0.0.0.0"
+
+config BR2_PACKAGE_BRIDGE_INTERFACE
+	string "interface"
+	default ""
+
+config BR2_PACKAGE_BRIDGE_IDLE_TIME
+	string "idle-time"
+	default "180"
+
+config BR2_PACKAGE_BRIDGE_PERSISTENT_PATH
+	string "persistent path"
+	default "/root"
+
+config BR2_PACKAGE_BRIDGE_DATA_PATH
+	string "data path"
+	default "/usr/share/bridge"
+
+config BR2_PACKAGE_BRIDGE_SYSTEM_PATH
+	string "system path"
+	default "/usr/lib/bridge/plugins"
+
+config BR2_PACKAGE_BRIDGE_PROXYSTUB_PATH
+	string "proxystub path"
+	default "/usr/lib/bridge/proxystubs"
+
+config BR2_PACKAGE_BRIDGE_OOM_ADJUST
+	string "oom-adjust"
+	default ""
+
+source "package/bridge/bridge-devtools/Config.in"
+
+endmenu
+
+menu "Extensions"
+
+source "package/bridge/bridge-clients/Config.in"
+
+endmenu
+
+menu "Plugins"
+source "package/bridge/plugin-common/Config.in"
+source "package/bridge/plugin-domotica/Config.in"
+source "package/bridge/plugin-netflix/Config.in"
+source "package/bridge/plugin-provisioning/Config.in"
+source "package/bridge/plugin-switchboard/Config.in"
+source "package/bridge/plugin-spotify/Config.in"
+endmenu
+
+endif
