@@ -9,7 +9,12 @@ XAPP_XEYES_SOURCE = xeyes-$(XAPP_XEYES_VERSION).tar.bz2
 XAPP_XEYES_SITE = https://xorg.freedesktop.org/archive/individual/app
 XAPP_XEYES_LICENSE = MIT
 XAPP_XEYES_LICENSE_FILES = COPYING
-XAPP_XEYES_DEPENDENCIES = xlib_libX11 xlib_libXext xlib_libXmu xlib_libXt
+XAPP_XEYES_DEPENDENCIES = \
+	xlib_libX11 \
+	xlib_libXext \
+	xlib_libXi \
+	xlib_libXmu \
+	xlib_libXt
 
 ifeq ($(BR2_PACKAGE_XLIB_LIBXRENDER),y)
 XAPP_XEYES_DEPENDENCIES += xlib_libXrender
