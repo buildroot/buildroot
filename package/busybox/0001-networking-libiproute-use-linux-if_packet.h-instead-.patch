@@ -1,4 +1,4 @@
-From d4fec31889ad660a58dab633c511221feb66e817 Mon Sep 17 00:00:00 2001
+From 60da1d0763224698008d847eb8ad8d4d8c6f54ff Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Sat, 5 Oct 2013 15:55:06 +0200
 Subject: [PATCH] networking/libiproute: use <linux/if_packet.h> instead of
@@ -14,10 +14,15 @@ This commit fixes the build of iplink with the musl C library.
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 [Gustavo: update for busybox 1.22.0]
+Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
+---
+ networking/libiproute/iplink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff -Nura busybox-1.22.0.orig/networking/libiproute/iplink.c busybox-1.22.0/networking/libiproute/iplink.c
---- busybox-1.22.0.orig/networking/libiproute/iplink.c	2014-01-01 09:42:40.301137882 -0300
-+++ busybox-1.22.0/networking/libiproute/iplink.c	2014-01-01 09:43:01.282827700 -0300
+diff --git a/networking/libiproute/iplink.c b/networking/libiproute/iplink.c
+index 1a1064bdc..a4c3ad307 100644
+--- a/networking/libiproute/iplink.c
++++ b/networking/libiproute/iplink.c
 @@ -7,7 +7,7 @@
   */
  #include <net/if.h>
@@ -25,5 +30,8 @@ diff -Nura busybox-1.22.0.orig/networking/libiproute/iplink.c busybox-1.22.0/net
 -#include <netpacket/packet.h>
 +#include <linux/if_packet.h>
  #include <netinet/if_ether.h>
- 
+
  #include <linux/if_vlan.h>
+--
+2.33.0
+
