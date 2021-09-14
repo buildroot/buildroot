@@ -66,8 +66,12 @@ case "$MODEL" in
 		HWVARIANT_BL="lepus"
 		HWVARIANT_DT=$(echo $MODEL |cut -d',' -f2)
 		;;
-	qishenglong,gopher2b)
+	qishenglong,gopher2)
 		HWVARIANT_BL="gopher2"
+		HWVARIANT_DT="gopher2"
+		;;
+	qishenglong,gopher2b)
+		HWVARIANT_BL="gopher2b"
 		HWVARIANT_DT="gopher2b"
 		;;
 	gcw,zero)
