@@ -57,4 +57,10 @@ define IPTABLES_LINUX_CONFIG_FIXUPS
 	$(call KCONFIG_ENABLE_OPT,CONFIG_NETFILTER_XTABLES)
 endef
 
+define IPTABLES_INSTALL_INIT_SYSV
+	$(INSTALL) -m 0755 -D package/iptables/S35iptables \
+		$(TARGET_DIR)/etc/init.d/S35iptables
+	touch $(TARGET_DIR)/etc/iptables.conf
+endef
+
 $(eval $(autotools-package))
