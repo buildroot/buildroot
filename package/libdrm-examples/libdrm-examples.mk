@@ -40,6 +40,10 @@ else
     LIBDRM_EXAMPLES_CPPFLAGS += -DNDEBUG
 endif
 
+ifeq ($(BR2_PACKAGE_LIBDRM_EXAMPLES_QUIRKS)x,yx)
+    LIBDRM_EXAMPLES_CPPFLAGS += -D_QUIRKS
+endif
+
 define LIBDRM_EXAMPLES_CONFIGURE_CMDS
 @echo "Nothing to be done"
 endef
