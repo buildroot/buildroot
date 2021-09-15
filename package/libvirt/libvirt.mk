@@ -134,6 +134,13 @@ else
 LIBVIRT_CONF_OPTS += -Dlibiscsi=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_LIBNL),y)
+LIBVIRT_CONF_OPTS += -Dlibnl=enabled
+LIBVIRT_DEPENDENCIES += libnl
+else
+LIBVIRT_CONF_OPTS += -Dlibnl=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_LIBPCAP),y)
 LIBVIRT_CONF_OPTS += -Dlibpcap=enabled
 LIBVIRT_DEPENDENCIES += libpcap
