@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBVIRT_VERSION = 7.4.0
+LIBVIRT_VERSION = 7.7.0
 LIBVIRT_SITE = https://libvirt.org/sources
 LIBVIRT_SOURCE = libvirt-$(LIBVIRT_VERSION).tar.xz
 LIBVIRT_LICENSE = LGPL-2.1+
@@ -35,6 +35,7 @@ LIBVIRT_CONF_OPTS = \
 	-Dapparmor=disabled \
 	-Ddocs=disabled \
 	-Ddriver_bhyve=disabled \
+	-Ddriver_ch=disabled \
 	-Ddriver_esx=disabled \
 	-Ddriver_hyperv=disabled \
 	-Ddriver_interface=enabled \
