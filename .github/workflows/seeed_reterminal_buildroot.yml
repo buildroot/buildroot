@@ -1,6 +1,8 @@
 name: Seeed reTerminal buildroot
 on:
   workflow_dispatch:
+  schedule:
+    - cron: 0 0 * * 1,2,3,4,5
 
 env:
   TZ: Asia/Shanghai
