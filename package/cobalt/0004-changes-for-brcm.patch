@@ -1,13 +1,15 @@
 diff -ruN cobalt.orig/src/third_party/starboard/wpe/brcm/arm/gyp_configuration.gypi cobalt/src/third_party/starboard/wpe/brcm/arm/gyp_configuration.gypi
---- cobalt.orig/src/third_party/starboard/wpe/brcm/arm/gyp_configuration.gypi	2021-05-27 17:36:48.000000000 +0530
-+++ cobalt/src/third_party/starboard/wpe/brcm/arm/gyp_configuration.gypi	2021-07-28 00:24:54.604927098 +0530
-@@ -65,6 +65,9 @@
+--- cobalt.orig/src/third_party/starboard/wpe/brcm/arm/gyp_configuration.gypi	2021-09-21 23:20:25.942997866 +0530
++++ cobalt/src/third_party/starboard/wpe/brcm/arm/gyp_configuration.gypi	2021-09-21 23:31:30.555285073 +0530
+@@ -65,6 +65,11 @@
        # matters: Wall implies Wunused-parameter and Wno-unused-parameter
        # has no effect if specified before Wall.
        '-Wno-unused-parameter',
 +      '-Wno-expansion-to-defined',
 +      '-Wimplicit-fallthrough=0',
 +      '-Wno-ignored-qualifiers',      
++      '-Wno-error=class-memaccess',
++      '-Wno-error=deprecated-copy',
  
        # For some reason Thumb build is broken
        '-marm',
