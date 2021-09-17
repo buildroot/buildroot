@@ -66,14 +66,13 @@ __EOF__
 		    cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
 
 # Overclock
-force_turbo=1
 [pi0]
 [pi0w]
 [pi1]
 [pi2]
 arm_freq=1000
-gpu_freq=500
-sdram_freq=500
+core_freq=400
+sdram_freq=450
 over_voltage=6
 [pi3]
 arm_freq=1350
