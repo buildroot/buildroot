@@ -6,6 +6,8 @@ NR_HUGEPAGES=8
 [ -z "$1" ] || [ "x$1" = "xstart" ] || exit 0
 
 if [ -d /sys/kernel/mm/hugepages/hugepages-2048kB ] ; then
+	psplash_write "Configuring huge pages..."
+
 	echo $NR_HUGEPAGES > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
 
 	mkdir /var/huge

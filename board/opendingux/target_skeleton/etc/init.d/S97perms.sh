@@ -2,6 +2,8 @@
 
 [ -z "$1" ] || [ "x$1" = "xstart" ] || exit 0
 
+psplash_write "Setup permissions..."
+
 chown root:video /sys/class/graphics/fb0/blank
 chmod 664 /sys/class/graphics/fb0/blank
 

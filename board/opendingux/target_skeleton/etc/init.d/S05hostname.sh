@@ -13,4 +13,6 @@ case "$MODEL" in
 		;;
 esac
 
+psplash_write "Setting hostname to $NAME..."
+
 /bin/hostname "$NAME"

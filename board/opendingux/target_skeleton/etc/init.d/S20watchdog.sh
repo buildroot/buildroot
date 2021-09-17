@@ -3,7 +3,7 @@
 case "$1" in
 
 	start)
-		echo "Starting watchdog..."
+		psplash_write "Starting watchdog..."
 
 		# Defaults.
 		. /etc/watchdog.conf
@@ -18,7 +18,7 @@ case "$1" in
 		;;
 
 	stop)
-		echo "Stopping watchdog..."
+		psplash_write "Stopping watchdog..."
 
 		/usr/sbin/start-stop-daemon -K -p /run/watchdog.pid
 		;;

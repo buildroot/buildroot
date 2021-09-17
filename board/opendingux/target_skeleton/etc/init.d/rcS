@@ -9,6 +9,14 @@ if [ -n "$SPLASH" -a -x /usr/bin/psplash ] ; then
 	/usr/sbin/start-stop-daemon -S -b -x /usr/bin/psplash
 fi
 
+psplash_write() {
+	echo "$*"
+
+	if [ -n "$SPLASH" -a -x /usr/bin/psplash ] ; then
+		/usr/bin/psplash-write "MSG $*"
+	fi
+}
+
 # Start all init scripts in /etc/init.d
 # executing them in numerical order.
 #

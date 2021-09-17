@@ -13,6 +13,8 @@ case "$BOOT_PARTITION" in
 		DATA_PARTITION=${BOOT_PARTITION::-1}$(expr ${BOOT_PARTITION: -1} \+ 1)
 		DATA_FS=$(blkid_fs $DATA_PARTITION)
 
+		psplash_write "Mounting $DATA_PARTITION..."
+
 		# Modprobe the module needed for the filesystem if needed.
 		if [ -z "$(grep "$DATA_FS" /proc/filesystems)" ] ; then
 			modprobe "$DATA_FS"
@@ -27,6 +29,9 @@ case "$BOOT_PARTITION" in
 		# Booting with a merged system / data partition.
 		# Create a read-write mountpoint of the partition to
 		# /media/data.
+
+		psplash_write "Mounting /media/data..."
+
 		mount --bind /media/data /media/data
 		mount --make-shared /boot
 		mount --make-slave /media/data

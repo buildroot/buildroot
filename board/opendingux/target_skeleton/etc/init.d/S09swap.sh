@@ -10,6 +10,8 @@ SWAPPINESS=20
 
 [ $SWAP_PERCENT_MEM -gt 0 ] || exit 0
 
+psplash_write "Setup swap..."
+
 SWAP_FILE_MB=$(expr $(sed -n 's/MemTotal: \+\([[:digit:]]\+\).*/\1/p' /proc/meminfo) \* ${SWAP_PERCENT_MEM} / 102400)
 SWAP_FILE=$(zramctl -a lzo -s ${SWAP_FILE_MB}M -f)
 

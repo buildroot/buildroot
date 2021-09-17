@@ -9,13 +9,15 @@ STATEFILE=/usr/local/etc/brightness.state
 
 case "$1" in
 	start)
-		echo "Loading brightness setting..."
+		psplash_write "Loading brightness setting..."
+
 		if [ -r $STATEFILE ]; then
 			cat $STATEFILE > $SYSFSFILE
 		fi
 		;;
 	stop)
-		echo "Storing brightness setting..."
+		psplash_write "Storing brightness setting..."
+
 		cp $SYSFSFILE $STATEFILE
 		;;
 	*)

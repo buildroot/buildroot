@@ -2,6 +2,8 @@
 
 [ -z "$1" ] || [ "x$1" = "xstart" ] || exit 0
 
+psplash_write "Initializing filesystem..."
+
 mkdir -p /media/data/apps /media/data/local/home
 chown od:users /media/data/apps /media/data/local/home
 

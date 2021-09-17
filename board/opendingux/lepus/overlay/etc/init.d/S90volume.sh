@@ -8,13 +8,13 @@ CONTROL=PCM
 
 case "$1" in
 	start)
-		echo "Loading sound volume..."
+		psplash_write "Loading sound volume..."
 		if [ -f $VOLUME_STATEFILE ]; then
 			/usr/bin/amixer set $CONTROL `cat $VOLUME_STATEFILE`
 		fi
 		;;
 	stop)
-		echo "Storing sound volume..."
+		psplash_write "Storing sound volume..."
 		amixer get $CONTROL | sed -n 's/.*Front .*: Playback \([0-9]*\).*$/\1/p' | paste -d "," - - > $VOLUME_STATEFILE
 		;;
 	*)
