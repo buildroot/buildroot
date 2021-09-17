@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_REQUESTS_TOOLBELT
 	bool "python-requests-toolbelt"
+	depends on BR2_PACKAGE_PYTHON3 # python-requests -> python-idna
 	select BR2_PACKAGE_PYTHON_REQUESTS # runtime
 	help
 	  A utility belt for advanced users of python-requests.

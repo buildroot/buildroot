@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-S390_TOOLS_VERSION = 2.16.0
+S390_TOOLS_VERSION = 2.17.0
 S390_TOOLS_SITE = $(call github,ibm-s390-linux,s390-tools,v$(S390_TOOLS_VERSION))
 S390_TOOLS_LICENSE = MIT
 S390_TOOLS_LICENSE_FILES = LICENSE
@@ -19,6 +19,7 @@ S390_TOOLS_MAKE_OPTS = \
 ifeq ($(BR2_PACKAGE_LIBCURL),y)
 S390_TOOLS_DEPENDENCIES += libcurl
 S390_TOOLS_MAKE_OPTS += \
+	CURL_CONFIG=$(STAGING_DIR)/usr/bin/curl-config \
 	HAVE_CURL=1 \
 	HAVE_LIBCURL=1
 else
@@ -53,6 +54,15 @@ S390_TOOLS_DEPENDENCIES += libglib2
 S390_TOOLS_MAKE_OPTS += HAVE_GLIB2=1
 else
 S390_TOOLS_MAKE_OPTS += HAVE_GLIB2=0
+endif
+
+ifeq ($(BR2_PACKAGE_LIBXML2),y)
+S390_TOOLS_DEPENDENCIES += libxml2
+S390_TOOLS_MAKE_OPTS += \
+	HAVE_LIBXML2=1 \
+	XML2_CONFIG=$(STAGING_DIR)/usr/bin/xml2-config
+else
+S390_TOOLS_MAKE_OPTS += HAVE_LIBXML2=0
 endif
 
 ifeq ($(BR2_PACKAGE_NCURSES),y)

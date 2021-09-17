@@ -33,9 +33,7 @@ class TestAtop(infra.basetest.BRTest):
         self.emulator.login()
 
         cmd = "atop -V | grep '^Version'"
-        _, exit_code = self.emulator.run(cmd)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk(cmd)
 
         cmd = "atop -a 1 2 | grep '% *atop *$'"
-        _, exit_code = self.emulator.run(cmd)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk(cmd)

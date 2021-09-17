@@ -1,0 +1,29 @@
+From 2907dcd628242eb29920321fb3a744915d11888f Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 26 Jul 2021 08:29:21 +0200
+Subject: [PATCH] config: use pkg-config
+
+Change to using pkg-config to find the path to modsecurity and its
+dependencies.
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ config | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/config b/config
+index c6e7467..e20190f 100644
+--- a/config
++++ b/config
+@@ -50,7 +50,7 @@ END
+ else
+     # auto-discovery
+     ngx_feature="ModSecurity library"
+-    ngx_feature_libs="-lmodsecurity"
++    ngx_feature_libs="$(${PKG_CONFIG:=pkg-config} --libs modsecurity)"
+ 
+     . auto/feature
+ 
+-- 
+2.30.2
+

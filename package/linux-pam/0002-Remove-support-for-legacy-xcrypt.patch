@@ -1,0 +1,149 @@
+From 530c9f9e2d746e1d168c6b17863debda7664ac7c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Bj=C3=B6rn=20Esser?= <besser82@fedoraproject.org>
+Date: Fri, 28 Feb 2020 15:47:52 +0100
+Subject: [PATCH] Remove support for legacy xcrypt
+
+Since many distributions are shipping a version of libxcrypt >= 4.0.0
+as a replacement for glibc's libcrypt now, older versions of xcrypt,
+which could be installed in parallel, are not relevant anymore.
+
+* configure.ac (AC_CHECK_HEADERS): Remove xcrypt.h.
+(AC_SEARCH_LIBS): Remove xcrypt.
+(AC_CHECK_FUNCS): Remove crypt_gensalt_r.
+(AC_DEFINE): Remove HAVE_LIBXCRYPT.
+* modules/pam_pwhistory/opasswd.c [HAVE_LIBXCRYPT]: Remove.
+* modules/pam_unix/bigcrypt.c [HAVE_LIBXCRYPT]: Likewise.
+* modules/pam_userdb/pam_userdb.c [HAVE_LIBXCRYPT]: Likewise.
+* modules/pam_unix/passverify.c [HAVE_LIBXCRYPT]: Likewise.
+(create_password_hash) [HAVE_LIBXCRYPT]: Likewise.
+
+[Retrieved from:
+https://github.com/linux-pam/linux-pam/commit/530c9f9e2d746e1d168c6b17863debda7664ac7c]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ configure.ac                    | 12 +++---------
+ modules/pam_pwhistory/opasswd.c |  4 +---
+ modules/pam_unix/bigcrypt.c     |  4 +---
+ modules/pam_unix/passverify.c   | 24 +++++-------------------
+ modules/pam_userdb/pam_userdb.c |  4 +---
+ 5 files changed, 11 insertions(+), 37 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 8e5d0ff7c..100565552 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -359,23 +359,17 @@ else
+ fi
+ AC_SUBST(LIBAUDIT)
+ 
+-AC_CHECK_HEADERS(xcrypt.h crypt.h)
+-AS_IF([test "x$ac_cv_header_xcrypt_h" = "xyes"],
+-  [crypt_libs="xcrypt crypt"],
+-  [crypt_libs="crypt"])
++AC_CHECK_HEADERS(crypt.h)
+ 
+ BACKUP_LIBS=$LIBS
+-AC_SEARCH_LIBS([crypt],[$crypt_libs])
++AC_SEARCH_LIBS([crypt],[crypt])
+ case "$ac_cv_search_crypt" in
+ 	-l*) LIBCRYPT="$ac_cv_search_crypt" ;;
+ 	*) LIBCRYPT="" ;;
+ esac
+-AC_CHECK_FUNCS(crypt_r crypt_gensalt_r)
++AC_CHECK_FUNCS([crypt_r])
+ LIBS=$BACKUP_LIBS
+ AC_SUBST(LIBCRYPT)
+-if test "$LIBCRYPT" = "-lxcrypt" && test "$ac_cv_header_xcrypt_h" = "yes" ; then
+-	AC_DEFINE([HAVE_LIBXCRYPT], 1, [Define to 1 if xcrypt support should be compiled in.])
+-fi
+ 
+ AC_ARG_WITH([randomdev], AS_HELP_STRING([--with-randomdev=(<path>|yes|no)],[use specified random device instead of /dev/urandom or 'no' to disable]), opt_randomdev=$withval)
+ if test "$opt_randomdev" = yes || test -z "$opt_randomdev"; then
+diff --git a/modules/pam_pwhistory/opasswd.c b/modules/pam_pwhistory/opasswd.c
+index 40296d590..a6cd3d2a3 100644
+--- a/modules/pam_pwhistory/opasswd.c
++++ b/modules/pam_pwhistory/opasswd.c
+@@ -54,9 +54,7 @@
+ #endif
+ #include <sys/stat.h>
+ 
+-#if defined HAVE_LIBXCRYPT
+-#include <xcrypt.h>
+-#elif defined (HAVE_CRYPT_H)
++#ifdef HAVE_CRYPT_H
+ #include <crypt.h>
+ #endif
+ 
+diff --git a/modules/pam_unix/bigcrypt.c b/modules/pam_unix/bigcrypt.c
+index 31be2f7b0..d8d61a4b0 100644
+--- a/modules/pam_unix/bigcrypt.c
++++ b/modules/pam_unix/bigcrypt.c
+@@ -29,9 +29,7 @@
+ #include <string.h>
+ #include <stdlib.h>
+ #include <security/_pam_macros.h>
+-#ifdef HAVE_LIBXCRYPT
+-#include <xcrypt.h>
+-#elif defined(HAVE_CRYPT_H)
++#ifdef HAVE_CRYPT_H
+ #include <crypt.h>
+ #endif
+ 
+diff --git a/modules/pam_unix/passverify.c b/modules/pam_unix/passverify.c
+index 5a19ed856..e833402c1 100644
+--- a/modules/pam_unix/passverify.c
++++ b/modules/pam_unix/passverify.c
+@@ -19,9 +19,7 @@
+ #include <sys/time.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+-#ifdef HAVE_LIBXCRYPT
+-#include <xcrypt.h>
+-#elif defined(HAVE_CRYPT_H)
++#ifdef HAVE_CRYPT_H
+ #include <crypt.h>
+ #endif
+ 
+@@ -467,23 +465,11 @@ PAMH_ARG_DECL(char * create_password_hash,
+ 	 */
+ 	sp = crypt_gensalt_rn(algoid, rounds, NULL, 0, salt, sizeof(salt));
+ #else
+-#ifdef HAVE_CRYPT_GENSALT_R
+-	if (on(UNIX_BLOWFISH_PASS, ctrl)) {
+-		char entropy[17];
+-		crypt_make_salt(entropy, sizeof(entropy) - 1);
+-		sp = crypt_gensalt_r (algoid, rounds,
+-				      entropy, sizeof(entropy),
+-				      salt, sizeof(salt));
+-	} else {
+-#endif
+-		sp = stpcpy(salt, algoid);
+-		if (on(UNIX_ALGO_ROUNDS, ctrl)) {
+-			sp += snprintf(sp, sizeof(salt) - (16 + 1 + (sp - salt)), "rounds=%u$", rounds);
+-		}
+-		crypt_make_salt(sp, 16);
+-#ifdef HAVE_CRYPT_GENSALT_R
++	sp = stpcpy(salt, algoid);
++	if (on(UNIX_ALGO_ROUNDS, ctrl)) {
++		sp += snprintf(sp, sizeof(salt) - (16 + 1 + (sp - salt)), "rounds=%u$", rounds);
+ 	}
+-#endif
++	crypt_make_salt(sp, 16);
+ #endif /* CRYPT_GENSALT_IMPLEMENTS_AUTO_ENTROPY */
+ #ifdef HAVE_CRYPT_R
+ 	sp = NULL;
+diff --git a/modules/pam_userdb/pam_userdb.c b/modules/pam_userdb/pam_userdb.c
+index d59801bfd..f467ea4c8 100644
+--- a/modules/pam_userdb/pam_userdb.c
++++ b/modules/pam_userdb/pam_userdb.c
+@@ -17,9 +17,7 @@
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #include <errno.h>
+-#ifdef HAVE_LIBXCRYPT
+-#include <xcrypt.h>
+-#elif defined(HAVE_CRYPT_H)
++#ifdef HAVE_CRYPT_H
+ #include <crypt.h>
+ #endif
+ 

@@ -1,0 +1,58 @@
+From ed643f0b4ac587204a5243451cda181ee1405d62 Mon Sep 17 00:00:00 2001
+From: =?utf8?q?Stefan=20Br=C3=BCns?= <stefan.bruens@rwth-aachen.de>
+Date: Wed, 28 Apr 2021 02:14:47 +0200
+Subject: [PATCH] Fix broken build due to C++ template behind C linkage
+
+glib/gatomic.h since 2.68 includes type_traits, which causes a compilation
+error:
+In file included from /usr/include/glib-2.0/glib/gatomic.h:31,
+                 from /usr/include/glib-2.0/glib/gthread.h:32,
+                 from /usr/include/glib-2.0/glib/gasyncqueue.h:32,
+                 from /usr/include/glib-2.0/glib.h:32,
+                 from /usr/include/libsigrokdecode/libsigrokdecode.h:25,
+                 from /home/abuild/rpmbuild/BUILD/pulseview-0.4.2/pv/data/decode/annotation.cpp:21:
+/usr/include/c++/10/type_traits:2308:3: error: template with C linkage
+2308 |   template<typename _CTp, typename _Rp>
+
+As libsigrokdecode.h declares extern C linkage itself where necessary,
+remove it from pulseviews include statements from the last two occasions.
+
+[Retrieved from:
+https://sigrok.org/gitweb/?p=pulseview.git;a=commit;h=ed643f0b4ac587204a5243451cda181ee1405d62]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ pv/data/decode/annotation.cpp  | 2 --
+ pv/views/trace/decodetrace.cpp | 2 --
+ 2 files changed, 4 deletions(-)
+
+diff --git a/pv/data/decode/annotation.cpp b/pv/data/decode/annotation.cpp
+index 7f233478..f8a5c47b 100644
+--- a/pv/data/decode/annotation.cpp
++++ b/pv/data/decode/annotation.cpp
+@@ -17,9 +17,7 @@
+  * along with this program; if not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+-extern "C" {
+ #include <libsigrokdecode/libsigrokdecode.h>
+-}
+ 
+ #include <cassert>
+ #include <vector>
+diff --git a/pv/views/trace/decodetrace.cpp b/pv/views/trace/decodetrace.cpp
+index 409f1d28..888064d0 100644
+--- a/pv/views/trace/decodetrace.cpp
++++ b/pv/views/trace/decodetrace.cpp
+@@ -17,9 +17,7 @@
+  * along with this program; if not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+-extern "C" {
+ #include <libsigrokdecode/libsigrokdecode.h>
+-}
+ 
+ #include <limits>
+ #include <mutex>
+-- 
+2.24.0.rc2
+

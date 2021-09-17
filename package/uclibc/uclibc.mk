@@ -13,10 +13,6 @@ UCLIBC_INSTALL_STAGING = YES
 UCLIBC_CPE_ID_VENDOR = uclibc-ng_project
 UCLIBC_CPE_ID_PRODUCT = uclibc-ng
 
-define UCLIBC_HELP_CMDS
-	@echo '  uclibc-menuconfig      - Run uClibc menuconfig'
-endef
-
 # uclibc is part of the toolchain so disable the toolchain dependency
 UCLIBC_ADD_TOOLCHAIN_DEPENDENCY = NO
 
@@ -30,6 +26,7 @@ ifndef UCLIBC_CONFIG_FILE
 UCLIBC_CONFIG_FILE = $(call qstrip,$(BR2_UCLIBC_CONFIG))
 endif
 
+UCLIBC_KCONFIG_EDITORS = menuconfig nconfig
 UCLIBC_KCONFIG_FILE = $(UCLIBC_CONFIG_FILE)
 UCLIBC_KCONFIG_FRAGMENT_FILES = $(call qstrip,$(BR2_UCLIBC_CONFIG_FRAGMENT_FILES))
 

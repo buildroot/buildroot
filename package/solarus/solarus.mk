@@ -16,13 +16,20 @@ SOLARUS_LICENSE_FILES = license.txt
 # Install libsolarus.so
 SOLARUS_INSTALL_STAGING = YES
 
-SOLARUS_DEPENDENCIES = glm libgl libmodplug libogg libvorbis openal physfs \
+SOLARUS_DEPENDENCIES = glm libmodplug libogg libvorbis openal physfs \
 	sdl2 sdl2_image sdl2_ttf
 
 # Disable launcher GUI (requires Qt5)
 SOLARUS_CONF_OPTS = \
 	-DSOLARUS_GUI=OFF \
 	-DSOLARUS_TESTS=OFF
+
+ifeq ($(BR2_PACKAGE_HAS_LIBGL),y)
+SOLARUS_DEPENDENCIES += libgl
+else
+SOLARUS_CONF_OPTS += -DSOLARUS_GL_ES=ON
+SOLARUS_DEPENDENCIES += libgles
+endif
 
 ifeq ($(BR2_PACKAGE_LUAJIT),y)
 SOLARUS_CONF_OPTS += -DSOLARUS_USE_LUAJIT=ON

@@ -1,0 +1,38 @@
+From 8ccf9f625d00138d86fb7d70f3efd58a8fb4d7ff Mon Sep 17 00:00:00 2001
+From: Yauheni Saldatsenka <eugentoo@gmail.com>
+Date: Mon, 23 Aug 2021 02:54:22 +0300
+Subject: [PATCH] Use default dram address without remapping
+
+Signed-off-by: Yauheni Saldatsenka <eugentoo@gmail.com>
+---
+ arch/arm/boot/dts/stm32f469-disco.dts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/stm32f469-disco.dts b/arch/arm/boot/dts/stm32f469-disco.dts
+index 2e1b3bbbe4b5..06845614a19a 100644
+--- a/arch/arm/boot/dts/stm32f469-disco.dts
++++ b/arch/arm/boot/dts/stm32f469-disco.dts
+@@ -60,9 +60,9 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory@00000000 {
++	memory@c0000000 {
+ 		device_type = "memory";
+-		reg = <0x00000000 0x1000000>;
++		reg = <0xc0000000 0x1000000>;
+ 	};
+ 
+ 	aliases {
+@@ -84,7 +84,7 @@ vdd_dsi: vdd-dsi {
+ 	};
+ 
+ 	soc {
+-		dma-ranges = <0xc0000000 0x0 0x10000000>;
++		dma-ranges = <0xc0000000 0xc0000000 0x10000000>;
+ 	};
+ 
+ 	leds {
+-- 
+2.32.0
+

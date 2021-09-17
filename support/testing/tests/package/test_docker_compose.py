@@ -16,7 +16,7 @@ class TestDockerCompose(infra.basetest.BRTest):
         BR2_ROOTFS_POST_SCRIPT_ARGS="{}"
         BR2_LINUX_KERNEL=y
         BR2_LINUX_KERNEL_CUSTOM_VERSION=y
-        BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="4.19"
+        BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="4.19.204"
         BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG=y
         BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE="{}"
         BR2_PACKAGE_CA_CERTIFICATES=y
@@ -37,8 +37,7 @@ class TestDockerCompose(infra.basetest.BRTest):
 
     def docker_test(self):
         # will download container if not available, which may take some time
-        _, exit_code = self.emulator.run('docker run --rm -p 8888:8888 busybox:latest /bin/true', 120)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk('docker run --rm -p 8888:8888 busybox:latest /bin/true', 120)
 
     def docker_compose_test(self):
         # will download container if not available, which may take some time

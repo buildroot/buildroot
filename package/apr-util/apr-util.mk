@@ -18,13 +18,17 @@ APR_UTIL_CONF_OPTS = \
 APR_UTIL_CONFIG_SCRIPTS = apu-1-config
 
 ifeq ($(BR2_PER_PACKAGE_DIRECTORIES),y)
-define APR_UTIL_FIX_RULES_MK_LIBTOOL
-	$(SED) 's,$(PER_PACKAGE_DIR)/apr/,$(PER_PACKAGE_DIR)/apr-util/,g' \
-		$(@D)/build/rules.mk
+define APR_UTIL_FIX_LIBTOOL
 	$(SED) 's,$(PER_PACKAGE_DIR)/apr/,$(PER_PACKAGE_DIR)/apr-util/,g' \
 		$(STAGING_DIR)/usr/build-1/libtool
 endef
-APR_UTIL_POST_CONFIGURE_HOOKS += APR_UTIL_FIX_RULES_MK_LIBTOOL
+APR_UTIL_POST_PREPARE_HOOKS += APR_UTIL_FIX_LIBTOOL
+
+define APR_UTIL_FIX_RULES_MK
+	$(SED) 's,$(PER_PACKAGE_DIR)/apr/,$(PER_PACKAGE_DIR)/apr-util/,g' \
+		$(@D)/build/rules.mk
+endef
+APR_UTIL_POST_CONFIGURE_HOOKS += APR_UTIL_FIX_RULES_MK
 endif
 
 # When iconv is available, then use it to provide charset conversion

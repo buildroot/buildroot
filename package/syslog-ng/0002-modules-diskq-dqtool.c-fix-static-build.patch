@@ -1,0 +1,33 @@
+From 04c8fe720d09bd6e53c4bcea9ad72ff131925ce6 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 23 Jul 2021 18:41:29 +0200
+Subject: [PATCH] modules/diskq/dqtool.c: fix static build
+
+Fix the following static build failure:
+
+/data/buildroot-autobuilder/instance-0/output-1/host/opt/ext-toolchain/bin/../lib/gcc/riscv64-buildroot-linux-musl/10.2.0/../../../../riscv64-buildroot-linux-musl/bin/ld: ./lib/.libs/libsyslog-ng.a(lib_libsyslog_ng_la-messages.o):(.sbss+0x2c): multiple definition of `verbose_flag'; modules/diskq/dqtool.o:(.sbss+0x4): first defined here
+/data/buildroot-autobuilder/instance-0/output-1/host/opt/ext-toolchain/bin/../lib/gcc/riscv64-buildroot-linux-musl/10.2.0/../../../../riscv64-buildroot-linux-musl/bin/ld: ./lib/.libs/libsyslog-ng.a(lib_libsyslog_ng_la-messages.o):(.sbss+0x30): multiple definition of `debug_flag'; modules/diskq/dqtool.o:(.sbss+0x8): first defined here
+
+Fixes:
+ - http://autobuild.buildroot.org/results/ccd0a954f6e0676db67026f8b8c89823f3e5c510
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/syslog-ng/syslog-ng/commit/04c8fe720d09bd6e53c4bcea9ad72ff131925ce6]
+---
+ modules/diskq/dqtool.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/modules/diskq/dqtool.c b/modules/diskq/dqtool.c
+index 6105f2ec68..50be452453 100644
+--- a/modules/diskq/dqtool.c
++++ b/modules/diskq/dqtool.c
+@@ -49,8 +49,6 @@ gchar *persist_file_path;
+ gchar *assign_persist_name;
+ gboolean relocate_all;
+ gboolean display_version;
+-gboolean debug_flag;
+-gboolean verbose_flag;
+ gboolean assign_help;
+ 
+ static GOptionEntry cat_options[] =

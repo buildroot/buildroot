@@ -26,7 +26,7 @@ diff --git a/meson.build b/meson.build
 index bf3925db..6d263d48 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -281,13 +281,15 @@ endif
+@@ -281,7 +281,9 @@ endif
  # threads
  thread_dep = null_dep
  if host_machine.system() != 'windows'
@@ -37,13 +37,6 @@ index bf3925db..6d263d48 100644
  
    if thread_dep.found()
      conf.set('HAVE_PTHREAD', 1)
-   else
-     check_headers += ['sched.h']
--    check_funcs += ['sched_yield', {'link_with': 'rt'}]
-+    check_funcs += [['sched_yield', {'link_with': 'rt'}]]
-   endif
- endif
- 
 -- 
 2.29.2
 

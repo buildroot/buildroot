@@ -12,7 +12,7 @@ TVHEADEND_DEPENDENCIES = \
 	host-gettext \
 	host-pkgconf \
 	host-pngquant \
-	$(if $(BR2_PACKAGE_PYTHON3),host-python3,host-python) \
+	host-python3 \
 	openssl
 
 ifeq ($(BR2_PACKAGE_AVAHI),y)
@@ -154,7 +154,7 @@ define TVHEADEND_CONFIGURE_CMDS
 			--arch="$(ARCH)" \
 			--cpu="$(GCC_TARGET_CPU)" \
 			--nowerror \
-			--python="$(HOST_DIR)/bin/python" \
+			--python="$(HOST_DIR)/bin/python3" \
 			--enable-dvbscan \
 			--enable-bundle \
 			--enable-pngquant \

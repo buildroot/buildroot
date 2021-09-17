@@ -1,0 +1,131 @@
+From 68c2a4d7a5d9b46f65121958fdb12d5270bfd1b6 Mon Sep 17 00:00:00 2001
+From: Jonathan Stites <mail@jonstites.com>
+Date: Wed, 6 May 2020 12:55:35 +0000
+Subject: [PATCH] puts jemalloc allocator behind a cargo feature flag
+
+Retrieved from: https://github.com/BurntSushi/ripgrep/pull/1569
+
+Moves jemalloc behind a feature for musl builds, where it is not
+supported by the upstream project, so ripgrep will fail to build.
+
+Signed-off-by: Sam Voss <sam.voss@gmail.com>
+---
+ .github/workflows/ci.yml      | 6 ++++++
+ .github/workflows/release.yml | 8 +++++++-
+ Cargo.toml                    | 8 +++++++-
+ README.md                     | 9 +++++++++
+ crates/core/main.rs           | 8 ++++++--
+ 5 files changed, 35 insertions(+), 4 deletions(-)
+
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index ab154ec..aa567d9 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -149,6 +149,12 @@ jobs:
+       if: matrix.target != ''
+       run: ${{ env.CARGO }} test --verbose --workspace ${{ env.TARGET_FLAGS }}
+ 
++    - name: Run tests with jemalloc (Musl)
++      # We only use the jemalloc allocator when building with musl.
++      # The system allocator is good enough for other platforms.
++      if: matrix.os == 'nightly-musl'
++      run: ${{ env.CARGO }} test --verbose --all --features jemalloc ${{ env.TARGET_FLAGS }}
++
+     - name: Test for existence of build artifacts (Windows)
+       if: matrix.os == 'windows-2019'
+       shell: bash
+diff --git a/.github/workflows/release.yml b/.github/workflows/release.yml
+index 7cfb6a4..ad6b82d 100644
+--- a/.github/workflows/release.yml
++++ b/.github/workflows/release.yml
+@@ -133,7 +133,13 @@ jobs:
+         echo "target flag is: ${{ env.TARGET_FLAGS }}"
+         echo "target dir is: ${{ env.TARGET_DIR }}"
+ 
+-    - name: Build release binary
++    - name: Build release binary (linux)
++      if: matrix.build == 'linux'
++      # Use jemalloc allocator for much better performance over the musl default allocator
++      run: ${{ env.CARGO }} build --verbose --release --features "pcre2 jemalloc" ${{ env.TARGET_FLAGS }}
++
++    - name: Build release binary (non-linux)
++      if: matrix.build != 'linux'
+       run: ${{ env.CARGO }} build --verbose --release --features pcre2 ${{ env.TARGET_FLAGS }}
+ 
+     - name: Strip release binary (linux and macos)
+diff --git a/Cargo.toml b/Cargo.toml
+index fb78fcb..0d34b1e 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -56,8 +56,9 @@ version = "2.33.0"
+ default-features = false
+ features = ["suggestions"]
+ 
+-[target.'cfg(all(target_env = "musl", target_pointer_width = "64"))'.dependencies.jemallocator]
++[dependencies.jemallocator]
+ version = "0.3.0"
++optional = true
+ 
+ [build-dependencies]
+ lazy_static = "1.1.0"
+@@ -75,6 +76,11 @@ walkdir = "2"
+ [features]
+ simd-accel = ["grep/simd-accel"]
+ pcre2 = ["grep/pcre2"]
++# The jemalloc allocator is used for improved
++# performance on x86 musl builds.
++# Cargo does not yet support platform-specific features
++# https://github.com/rust-lang/cargo/issues/1197
++jemalloc = ["jemallocator"]
+ 
+ [profile.release]
+ debug = 1
+diff --git a/README.md b/README.md
+index 46938bc..9917b29 100644
+--- a/README.md
++++ b/README.md
+@@ -406,6 +406,15 @@ build a static executable with MUSL and with PCRE2, then you will need to have
+ `musl-gcc` installed, which might be in a separate package from the actual
+ MUSL library, depending on your Linux distribution.
+ 
++When building with the MUSL target on Linux, it is recommended to use the
++jemalloc allocator for performance:
++
++```
++$ rustup target add x86_64-unknown-linux-musl
++$ cargo build --release --target x86_64-unknown-linux-musl --features jemalloc
++```
++
++
+ 
+ ### Running tests
+ 
+diff --git a/crates/core/main.rs b/crates/core/main.rs
+index 47385de..c9dae5a 100644
+--- a/crates/core/main.rs
++++ b/crates/core/main.rs
+@@ -31,7 +31,7 @@ mod subject;
+ // have the fastest version of everything. Its goal is to be small and amenable
+ // to static compilation.) Even though ripgrep isn't particularly allocation
+ // heavy, musl's allocator appears to slow down ripgrep quite a bit. Therefore,
+-// when building with musl, we use jemalloc.
++// we expose a feature for using jemalloc when building with musl.
+ //
+ // We don't unconditionally use jemalloc because it can be nice to use the
+ // system's default allocator by default. Moreover, jemalloc seems to increase
+@@ -39,7 +39,11 @@ mod subject;
+ //
+ // Moreover, we only do this on 64-bit systems since jemalloc doesn't support
+ // i686.
+-#[cfg(all(target_env = "musl", target_pointer_width = "64"))]
++#[cfg(all(
++    target_env = "musl",
++    target_pointer_width = "64",
++    feature = "jemalloc"
++))]
+ #[global_allocator]
+ static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
+ 
+-- 
+2.32.0
+

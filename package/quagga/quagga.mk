@@ -11,6 +11,7 @@ QUAGGA_DEPENDENCIES = host-gawk host-pkgconf
 QUAGGA_LICENSE = GPL-2.0+
 QUAGGA_LICENSE_FILES = COPYING
 QUAGGA_CPE_ID_VENDOR = quagga
+QUAGGA_SELINUX_MODULES = zebra
 
 # We need to override the sysconf and localstate directories so that
 # quagga can create files as the quagga user without extra

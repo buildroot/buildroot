@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HARFBUZZ_VERSION = 2.7.4
+HARFBUZZ_VERSION = 2.9.1
 HARFBUZZ_SITE = https://github.com/harfbuzz/harfbuzz/releases/download/$(HARFBUZZ_VERSION)
 HARFBUZZ_SOURCE = harfbuzz-$(HARFBUZZ_VERSION).tar.xz
 HARFBUZZ_LICENSE = MIT, ISC (ucdn library)
@@ -12,7 +12,6 @@ HARFBUZZ_LICENSE_FILES = COPYING
 HARFBUZZ_CPE_ID_VENDOR = harfbuzz_project
 HARFBUZZ_INSTALL_STAGING = YES
 HARFBUZZ_CONF_OPTS = \
-	-Dfontconfig=disabled \
 	-Dgdi=disabled \
 	-Ddirectwrite=disabled \
 	-Dcoretext=disabled \
@@ -31,7 +30,6 @@ HOST_HARFBUZZ_CONF_OPTS = \
 	-Dglib=enabled \
 	-Dgobject=disabled \
 	-Dcairo=disabled \
-	-Dfontconfig=disabled \
 	-Dicu=disabled \
 	-Dgraphite=disabled \
 	-Dfreetype=enabled \
@@ -90,6 +88,14 @@ HARFBUZZ_DEPENDENCIES += icu
 HARFBUZZ_CONF_OPTS += -Dicu=enabled
 else
 HARFBUZZ_CONF_OPTS += -Dicu=disabled
+endif
+
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),)
+HARFBUZZ_CXXFLAGS += $(TARGET_CXXFLAGS) -DHB_NO_MT
+endif
+
+ifeq ($(BR2_GCC_VERSION_ARC),y)
+HARFBUZZ_CXXFLAGS += -O0
 endif
 
 $(eval $(meson-package))

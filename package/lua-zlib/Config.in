@@ -1,0 +1,10 @@
+config BR2_PACKAGE_LUA_ZLIB
+	bool "lua-zlib"
+	select BR2_PACKAGE_ZLIB
+	help
+	  Simple streaming interface to zlib for Lua.
+	  Consists of two functions: inflate and deflate.
+	  Both functions return "stream functions" (takes a buffer
+	  of input and returns a buffer of output).
+
+	  https://github.com/brimworks/lua-zlib

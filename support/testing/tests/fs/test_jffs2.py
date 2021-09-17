@@ -41,5 +41,4 @@ class TestJffs2(infra.basetest.BRTest):
                            options=["-drive", "file={},if=pflash".format(img)])
         self.emulator.login()
         cmd = "mount | grep '/dev/root on / type jffs2'"
-        _, exit_code = self.emulator.run(cmd)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk(cmd)

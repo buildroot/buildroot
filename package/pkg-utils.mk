@@ -156,6 +156,10 @@ define _json-info-pkg-details
 endef
 
 define _json-info-fs
+	"image_name": $(if $($(1)_FINAL_IMAGE_NAME), \
+				"$($(1)_FINAL_IMAGE_NAME)", \
+				null \
+			),
 	"dependencies": [
 		$(call make-comma-list,$(sort $($(1)_DEPENDENCIES)))
 	]

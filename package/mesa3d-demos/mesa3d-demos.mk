@@ -43,7 +43,7 @@ else
 MESA3D_DEMOS_CONF_OPTS += --disable-vg
 endif
 
-ifeq ($(BR2_PACKAGE_MESA3D_OPENGL_EGL),y)
+ifeq ($(BR2_PACKAGE_MESA3D_GBM),y)
 MESA3D_DEMOS_DEPENDENCIES += mesa3d
 MESA3D_DEMOS_CONF_OPTS += --enable-gbm
 else

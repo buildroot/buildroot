@@ -29,7 +29,7 @@ index bb24757c..a53c9f2c 100644
            ua_architecture_append_to_library(m)
 -          #TODO - Error on first make run if pthread is included conditional?
 -          ua_architecture_append_to_library(pthread)
-           if(UA_ENABLE_MULTITHREADING OR UA_BUILD_UNIT_TESTS)
+           if(UA_MULTITHREADING OR UA_BUILD_UNIT_TESTS)
              ua_architecture_append_to_library(pthread)
            endif()
 -- 

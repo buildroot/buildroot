@@ -1,0 +1,12 @@
+config BR2_PACKAGE_HOST_BMAP_TOOLS
+	bool "host bmap-tools"
+	select BR2_PACKAGE_HOST_PYTHON_SIX # runtime
+	help
+	  Tool to flash image files to block devices using the block map
+	  bmaptool is a generic tool for creating the block map (bmap)
+	  for a file, and copying files using the block map. The idea is
+	  that large file containing unused blocks, like raw system
+	  image files, can be copied or flashed a lot faster with
+	  bmaptool than with traditional tools like "dd" or "cp".
+
+	  https://github.com/intel/bmap-tools

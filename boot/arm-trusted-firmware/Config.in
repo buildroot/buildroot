@@ -68,6 +68,15 @@ config BR2_TARGET_ARM_TRUSTED_FIRMWARE_PLATFORM
 	help
 	  Target plaform to build for.
 
+config BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_DTS_PATH
+	string "Device Tree Source file paths"
+	help
+	  Space-separated list of paths to device tree source files
+	  that will be copied to fdts/ before starting the build.
+
+	  To use this device tree source file, the ATF configuration
+	  file must refer to it.
+
 config BR2_TARGET_ARM_TRUSTED_FIRMWARE_FIP
 	bool "Build FIP image"
 	help
@@ -187,5 +196,29 @@ config BR2_TARGET_ARM_TRUSTED_FIRMWARE_NEEDS_ARM32_TOOLCHAIN
 	help
 	  Select this option if your ATF board configuration requires
 	  an ARM32 bare metal toolchain to be available.
+
+config BR2_TARGET_ARM_TRUSTED_FIRMWARE_SSP
+	bool "Build with SSP"
+	default y
+	depends on BR2_TOOLCHAIN_HAS_SSP
+	depends on !BR2_SSP_NONE
+	help
+	  Say 'y' here if you want to build ATF with SSP.
+
+	  Your board must have SSP support in ATF: it must have an
+	  implementation for plat_get_stack_protector_canary().
+
+	  If you say 'y', the SSP level will be the level selected
+	  by the global SSP setting.
+
+config BR2_TARGET_ARM_TRUSTED_FIRMWARE_SSP_LEVEL
+	string
+	# While newer versions of TF-A support "none" as
+	# ENABLE_STACK_PROTECTOR value, older versions (e.g 2.0) only
+	# supported "0" to disable SSP.
+	default "0"    	  if !BR2_TARGET_ARM_TRUSTED_FIRMWARE_SSP
+	default "default" if BR2_SSP_REGULAR
+	default "strong"  if BR2_SSP_STRONG
+	default "all"     if BR2_SSP_ALL
 
 endif

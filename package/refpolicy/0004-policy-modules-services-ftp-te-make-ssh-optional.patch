@@ -1,0 +1,44 @@
+From f26d4bc1b2a7b781c67891cb3bf4579c6582d630 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 30 Jul 2021 22:40:20 +0200
+Subject: [PATCH] policy/modules/services/ftp.te: make ssh optional
+
+Make ssh optional to avoid the following build failure:
+
+ Compiling targeted policy.30
+ env LD_LIBRARY_PATH="/home/fabrice/buildroot/output/host/lib:/home/fabrice/buildroot/output/host/usr/lib" /home/fabrice/buildroot/output/host/usr/bin/checkpolicy -c 30 -U deny -S -O -E policy.conf -o policy.30
+ policy/modules/services/ftp.te:484:ERROR 'type ssh_home_t is not within scope' at token ';' on line 92051:
+ 	allow sftpd_t ssh_home_t:dir { open read getattr lock search ioctl add_name remove_name write };
+ #line 484
+ checkpolicy:  error(s) encountered while parsing configuration
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ policy/modules/services/ftp.te | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/policy/modules/services/ftp.te b/policy/modules/services/ftp.te
+index 0d84da71cf..5686b22581 100644
+--- a/policy/modules/services/ftp.te
++++ b/policy/modules/services/ftp.te
+@@ -481,10 +481,6 @@ tunable_policy(`sftpd_full_access',`
+ 	files_manage_non_auth_files(sftpd_t)
+ ')
+ 
+-tunable_policy(`sftpd_write_ssh_home',`
+-	ssh_manage_home_files(sftpd_t)
+-')
+-
+ tunable_policy(`use_samba_home_dirs',`
+ 	fs_list_cifs(sftpd_t)
+ 	fs_read_cifs_files(sftpd_t)
+@@ -496,3 +492,9 @@ tunable_policy(`use_nfs_home_dirs',`
+ 	fs_read_nfs_files(sftpd_t)
+ 	fs_read_nfs_symlinks(ftpd_t)
+ ')
++
++optional_policy(`
++	tunable_policy(`sftpd_write_ssh_home',`
++		ssh_manage_home_files(sftpd_t)
++	')
++')

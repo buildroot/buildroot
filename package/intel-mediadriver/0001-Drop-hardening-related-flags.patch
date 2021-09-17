@@ -17,27 +17,27 @@ diff --git a/cmrtlib/linux/CMakeLists.txt b/cmrtlib/linux/CMakeLists.txt
 index 44ce4f08..b462fbea 100644
 --- a/cmrtlib/linux/CMakeLists.txt
 +++ b/cmrtlib/linux/CMakeLists.txt
-@@ -26,11 +26,11 @@ set(LIBRARY_OUTPUT_PATH    ${MDF_OPTION__OUTPUT_DIR})
+@@ -32,11 +32,11 @@
+ endif()
  
  # Set up compile options that will be used for the Linux build
- if(CMAKE_COMPILER_IS_GNUCC)
--    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1 -std=c++11 -fPIC -fpermissive -fstack-protector-all -Werror")
--    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-strict-aliasing -D_FORTIFY_SOURCE=2")
-+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1 -std=c++11 -fPIC -fpermissive -Werror")
-+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-strict-aliasing ")
-     set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG -D__DEBUG -O0")
--    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse4.1 -std=c++11 -fPIC -fpermissive -fstack-protector-all -Werror")
--    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -fno-strict-aliasing -D_FORTIFY_SOURCE=2")
-+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse4.1 -std=c++11 -fPIC -fpermissive -Werror")
-+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -fno-strict-aliasing")
-     set(CMAKE_C_FLAGS_DEBUG   "${CMAKE_C_FLAGS_DEBUG} -D_DEBUG -D__DEBUG -O0")
+-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPP_STANDARD_OPTION} -fPIC -fpermissive -fstack-protector-all -Werror")
+-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-strict-aliasing -D_FORTIFY_SOURCE=2")
++set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPP_STANDARD_OPTION} -fPIC -fpermissive -Werror")
++set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-strict-aliasing")
+ set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG -D__DEBUG -O0")
+-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CPP_STANDARD_OPTION} -fPIC -fpermissive -fstack-protector-all -Werror")
+-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -fno-strict-aliasing -D_FORTIFY_SOURCE=2")
++set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CPP_STANDARD_OPTION} -fPIC -fpermissive -Werror")
++set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -fno-strict-aliasing")
+ set(CMAKE_C_FLAGS_DEBUG   "${CMAKE_C_FLAGS_DEBUG} -D_DEBUG -D__DEBUG -O0")
  
-     set(GCC_SECURE_LINK_FLAGS "-z relro -z now")
+ set(GCC_SECURE_LINK_FLAGS "-z relro -z now")
 diff --git a/media_driver/cmake/linux/media_compile_flags_linux.cmake b/media_driver/cmake/linux/media_compile_flags_linux.cmake
 index 9e85fdb2..c45ce11b 100755
 --- a/media_driver/cmake/linux/media_compile_flags_linux.cmake
 +++ b/media_driver/cmake/linux/media_compile_flags_linux.cmake
-@@ -64,7 +64,6 @@ set(MEDIA_COMPILER_FLAGS_COMMON
+@@ -47,7 +47,6 @@ set(MEDIA_COMPILER_FLAGS_COMMON
      # Other common flags
      -fmessage-length=0
      -fvisibility=hidden
@@ -45,11 +45,19 @@ index 9e85fdb2..c45ce11b 100755
      -fdata-sections
      -ffunction-sections
      -Wl,--gc-sections
+@@ -119,7 +118,6 @@
+     set(MEDIA_COMPILER_FLAGS_RELEASE
+         ${MEDIA_COMPILER_FLAGS_RELEASE}
+         -O2
+-        -D_FORTIFY_SOURCE=2
+         -fno-omit-frame-pointer
+     )
+ endif()
 diff --git a/media_driver/media_top_cmake.cmake b/media_driver/media_top_cmake.cmake
 index 3491db1e..b30fa04a 100755
 --- a/media_driver/media_top_cmake.cmake
 +++ b/media_driver/media_top_cmake.cmake
-@@ -88,7 +88,7 @@ if(MEDIA_BUILD_FATAL_WARNINGS)
+@@ -105,7 +105,7 @@ if(MEDIA_BUILD_FATAL_WARNINGS)
      set_target_properties(${LIB_NAME_OBJ} PROPERTIES COMPILE_FLAGS "-Werror")
  endif()
  

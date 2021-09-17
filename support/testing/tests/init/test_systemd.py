@@ -29,8 +29,7 @@ class InitSystemSystemdBase(InitSystemBase):
         self.assertEqual(len(output), 0)
 
         # Test we can reach the DBus daemon
-        _, exit_code = self.emulator.run("busctl --no-pager")
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk("busctl --no-pager")
 
         # Test we can read at least one line from the journal
         output, _ = self.emulator.run("journalctl --no-pager --lines 1 --quiet")

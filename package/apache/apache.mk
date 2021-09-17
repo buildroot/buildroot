@@ -11,6 +11,7 @@ APACHE_LICENSE = Apache-2.0
 APACHE_LICENSE_FILES = LICENSE
 APACHE_CPE_ID_VENDOR = apache
 APACHE_CPE_ID_PRODUCT = http_server
+APACHE_SELINUX_MODULES = apache
 # Needed for mod_php
 APACHE_INSTALL_STAGING = YES
 # We have a patch touching configure.in and Makefile.in,
@@ -23,7 +24,7 @@ define APACHE_FIXUP_APR_LIBTOOL
 	$(SED) "s@$(PER_PACKAGE_DIR)/[^/]\+/@$(PER_PACKAGE_DIR)/apache/@g" \
 		$(STAGING_DIR)/usr/build-1/libtool
 endef
-APACHE_POST_CONFIGURE_HOOKS += APACHE_FIXUP_APR_LIBTOOL
+APACHE_POST_PREPARE_HOOKS += APACHE_FIXUP_APR_LIBTOOL
 endif
 
 APACHE_CONF_ENV= \

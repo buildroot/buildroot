@@ -1,0 +1,39 @@
+From 81b491e60affd67f4ec2feccbee1cdf98dc57b81 Mon Sep 17 00:00:00 2001
+From: Emil Mikulic <emikulic@gmail.com>
+Date: Sun, 21 Mar 2021 15:03:14 +1100
+Subject: [PATCH] Declare vars outside of for() loop for -std=c90.
+
+Fixes #2.
+
+[Retrieved from:
+https://github.com/emikulic/darkhttpd/commit/81b491e60affd67f4ec2feccbee1cdf98dc57b81]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ darkhttpd.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/darkhttpd.c b/darkhttpd.c
+index 219a8a3..268628a 100644
+--- a/darkhttpd.c
++++ b/darkhttpd.c
+@@ -966,8 +966,9 @@ static char *base64_encode(char *str) {
+     char *encoded_data = malloc(output_length+1);
+     if (encoded_data == NULL) return NULL;
+ 
+-    for (int i = 0, j = 0; i < input_length;) {
+-
++    int i;
++    int j;
++    for (i = 0, j = 0; i < input_length;) {
+         uint32_t octet_a = i < input_length ? (unsigned char)str[i++] : 0;
+         uint32_t octet_b = i < input_length ? (unsigned char)str[i++] : 0;
+         uint32_t octet_c = i < input_length ? (unsigned char)str[i++] : 0;
+@@ -981,7 +982,7 @@ static char *base64_encode(char *str) {
+     }
+ 
+     const int mod_table[] = {0, 2, 1};
+-    for (int i = 0; i < mod_table[input_length % 3]; i++)
++    for (i = 0; i < mod_table[input_length % 3]; i++)
+         encoded_data[output_length - 1 - i] = '=';
+     encoded_data[output_length] = '\0';
+ 

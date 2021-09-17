@@ -1,0 +1,48 @@
+From 6dcfb6715de75677165221ee5bd8d4db6e4a01a7 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 31 Jul 2021 10:58:42 +0200
+Subject: [PATCH] policy/modules/services/ifplugd.te: make netutils
+ optional
+
+Make netutils optional to avoid the following build failure:
+
+ Compiling targeted policy.30
+ env LD_LIBRARY_PATH="/tmp/instance-3/output-1/host/lib:/tmp/instance-3/output-1/host/usr/lib" /tmp/instance-3/output-1/host/usr/bin/checkpolicy -c 30 -U deny -S -O -E policy.conf -o policy.30
+ policy/modules/services/ifplugd.te:62:ERROR 'type netutils_exec_t is not within scope' at token ';' on line 73694:
+ #line 62
+ 	allow ifplugd_t netutils_exec_t:file { getattr open map read execute ioctl };
+ checkpolicy:  error(s) encountered while parsing configuration
+
+Fixes:
+ - http://autobuild.buildroot.org/results/1e27f5b193d40dfb7c73fbe15d1bef91cb92c27d
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: not sent yet]
+---
+ policy/modules/services/ifplugd.te | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/policy/modules/services/ifplugd.te b/policy/modules/services/ifplugd.te
+index f49b147f7..550eecca4 100644
+--- a/policy/modules/services/ifplugd.te
++++ b/policy/modules/services/ifplugd.te
+@@ -59,8 +59,6 @@ logging_send_syslog_msg(ifplugd_t)
+ 
+ miscfiles_read_localization(ifplugd_t)
+ 
+-netutils_domtrans(ifplugd_t)
+-
+ sysnet_domtrans_ifconfig(ifplugd_t)
+ sysnet_domtrans_dhcpc(ifplugd_t)
+ sysnet_delete_dhcpc_runtime_files(ifplugd_t)
+@@ -70,3 +68,7 @@ sysnet_signal_dhcpc(ifplugd_t)
+ optional_policy(`
+ 	consoletype_exec(ifplugd_t)
+ ')
++
++optional_policy(`
++	netutils_domtrans(ifplugd_t)
++')
+-- 
+2.30.2
+

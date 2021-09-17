@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FMT_VERSION = 7.1.3
+FMT_VERSION = 8.0.1
 FMT_SITE = https://github.com/fmtlib/fmt/releases/download/$(FMT_VERSION)
 FMT_SOURCE = fmt-$(FMT_VERSION).zip
 FMT_LICENSE = MIT with exception

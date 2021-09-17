@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BOOST_VERSION = 1.75.0
+BOOST_VERSION = 1.77.0
 BOOST_SOURCE = boost_$(subst .,_,$(BOOST_VERSION)).tar.bz2
 BOOST_SITE = https://boostorg.jfrog.io/artifactory/main/release/$(BOOST_VERSION)/source
 BOOST_INSTALL_STAGING = YES

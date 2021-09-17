@@ -144,6 +144,115 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2021.11"
+
+config BR2_PACKAGE_GNURADIO_PAGER
+	bool "gnuradio gr-flex support removed"
+	select BR2_LEGACY
+	help
+	  gr-flex has been removed from gnuradio since version 3.8.0.0.
+
+config BR2_KERNEL_HEADERS_5_11
+	bool "kernel headers version 5.11.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 5.11.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+config BR2_KERNEL_HEADERS_5_12
+	bool "kernel headers version 5.12.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 5.12.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+comment "Legacy options removed in 2021.08"
+
+config BR2_PACKAGE_LIBMCRYPT
+	bool "libmcrypt package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as "the last update to libmcrypt
+	  was in 2007, despite years of unmerged patches. These facts
+	  have led security experts to declare mcrypt abandonware and
+	  discourage its use in new development" (extract from
+	  https://en.wikipedia.org/wiki/Mcrypt).
+
+config BR2_PACKAGE_MCRYPT
+	bool "mcrypt package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as "the last update to libmcrypt
+	  was in 2007, despite years of unmerged patches. These facts
+	  have led security experts to declare mcrypt abandonware and
+	  discourage its use in new development" (extract from
+	  https://en.wikipedia.org/wiki/Mcrypt).
+
+config BR2_PACKAGE_PHP_EXT_MCRYPT
+	bool "PHP mcrypt extension removed"
+	select BR2_LEGACY
+	help
+	  mcrypt has been removed from php since version 7.2.0.
+
+config BR2_BINUTILS_VERSION_2_34_X
+	bool "binutils 2.34 has been removed"
+	select BR2_LEGACY
+	help
+	  binutils 2.34 has been removed, use a newer version.
+
+config BR2_PACKAGE_LIBSOIL
+	bool "libsoil package removed"
+	select BR2_LEGACY
+	help
+	  The libsoil package was removed. All packages needing
+	  libsoil removed the dependency.
+
+config BR2_PACKAGE_CLAPACK
+	bool "cblas/clapack package removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_LAPACK if BR2_PACKAGE_LAPACK_ARCH_SUPPORTS && BR2_TOOLCHAIN_HAS_FORTRAN
+	help
+	  The clapack package was removed. LAPACK no longer generates a
+	  C version. Use lapack instead. This does require a Fortran
+	  compiler however.
+
+config BR2_PACKAGE_SPIDERMONKEY
+	bool "spidermonkey package removed"
+	select BR2_LEGACY
+	help
+	  The spidermonkey package was removed. The only package that
+	  depended on spidermonkey was polkit. The spidermonkey
+	  dependency is replaced with duktape.
+
+config BR2_PACKAGE_KODI_LIBVA
+	bool "kodi option to add libva support removed"
+	select BR2_LEGACY
+	help
+	  Kodi still has support for libva if the package is enabled but
+	  the kodi-specific dependencies limiting libva support to non-
+	  OPENGLES platforms were removed including this option.
+
+config BR2_PACKAGE_PYTHON_COHERENCE
+	bool "python-coherence package removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it can't be built anymore due
+	  to python-twisted being now incompatible with python 2.
+
+config BR2_PACKAGE_PHP_EXT_XMLRPC
+	bool "PHP XMLRPC extension removed"
+	select BR2_LEGACY
+	help
+	  The XMLRPC php extension was removed.
+	  See: https://wiki.php.net/rfc/unbundle_xmlprc
+
+config BR2_GCC_VERSION_8_X
+	bool "gcc 8.x support removed"
+	select BR2_LEGACY
+	help
+	  Support for gcc version 8.x has been removed. The current
+	  default version (10.x or later) has been selected instead.
+
 comment "Legacy options removed in 2021.05"
 
 config BR2_PACKAGE_UDISKS_LVM2
@@ -337,6 +446,26 @@ config BR2_PACKAGE_IPSEC_TOOLS
 	  has been abandoned since 2014.
 
 comment "Legacy options removed in 2020.11"
+
+config BR2_PACKAGE_GPSD_FIXED_PORT_SPEED
+	bool "compile with fixed serial port speed"
+	select BR2_LEGACY
+	help
+	  Since gpsd 3.20, GPSD_FIXED_PORT_SPEED is replaced
+	  by runtime option --speed.
+
+config BR2_PACKAGE_GPSD_RECONFIGURE
+	bool "allow gpsd to change device settings"
+	select BR2_LEGACY
+	help
+	  Since gpsd 3.21, GPSD_RECONFIGURE is replaced
+	  by runtime option --passive.
+
+config BR2_PACKAGE_GPSD_CONTROLSEND
+	bool "allow gpsctl/gpsmon to change device settings"
+	select BR2_LEGACY
+	help
+	  Option removed in gpsd 3.21
 
 config BR2_PACKAGE_OPENCV
 	bool "opencv package was removed"

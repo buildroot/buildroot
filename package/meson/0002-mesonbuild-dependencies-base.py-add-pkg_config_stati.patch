@@ -1,4 +1,4 @@
-From 885af6ab2e02cca6bd190b8b29a355fdb6516936 Mon Sep 17 00:00:00 2001
+From 3d6a2db2270346236dd6247e0648ea0c949ba468 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Sat, 15 Feb 2020 15:13:59 +0100
 Subject: [PATCH] mesonbuild/dependencies/base.py: add pkg_config_static
@@ -21,23 +21,23 @@ Signed-off-by: Romain Naour <romain.naour@gmail.com>
 [Rebased on 0.57.1]
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 ---
- mesonbuild/dependencies/base.py | 3 ++-
+ mesonbuild/dependencies/pkgconfig.py | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/mesonbuild/dependencies/base.py b/mesonbuild/dependencies/base.py
-index cd77b4b..08675e6 100644
---- a/mesonbuild/dependencies/base.py
-+++ b/mesonbuild/dependencies/base.py
-@@ -883,7 +883,8 @@ class PkgConfigDependency(ExternalDependency):
+diff --git a/mesonbuild/dependencies/pkgconfig.py b/mesonbuild/dependencies/pkgconfig.py
+index 1e8d9132e..d902ba215 100644
+--- a/mesonbuild/dependencies/pkgconfig.py
++++ b/mesonbuild/dependencies/pkgconfig.py
+@@ -338,7 +338,8 @@ class PkgConfigDependency(ExternalDependency):
          env = None
          libcmd = ['--libs']
  
 -        if self.static:
 +        if self.static or \
-+           (self.env.properties[self.for_machine].get('pkg_config_static', None) == 'true'):
++            (self.env.properties[self.for_machine].get('pkg_config_static', None) == 'true'):
              libcmd.append('--static')
  
          libcmd.append(self.name)
 -- 
-2.30.1
+2.25.1
 

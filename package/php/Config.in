@@ -4,6 +4,7 @@ config BR2_PACKAGE_PHP
 	# message like "ld.real: section .junk LMA [...,...] overlaps
 	# section .text LMA [...,...]"
 	depends on !BR2_BINFMT_FLAT
+	depends on BR2_USE_WCHAR
 	select BR2_PACKAGE_PHP_SAPI_CGI if \
 	       !BR2_PACKAGE_PHP_SAPI_APACHE && \
 	       !BR2_PACKAGE_PHP_SAPI_CLI && \
@@ -49,3 +50,7 @@ config BR2_PACKAGE_PHP_SAPI_FPM
 source "package/php/Config.ext"
 
 endif
+
+comment "php needs a toolchain w/ wchar"
+	depends on !BR2_BINFMT_FLAT
+	depends on !BR2_USE_WCHAR

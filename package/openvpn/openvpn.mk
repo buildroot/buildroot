@@ -4,13 +4,14 @@
 #
 ################################################################################
 
-OPENVPN_VERSION = 2.5.2
+OPENVPN_VERSION = 2.5.3
 OPENVPN_SOURCE = openvpn-$(OPENVPN_VERSION).tar.xz
 OPENVPN_SITE = http://swupdate.openvpn.net/community/releases
 OPENVPN_DEPENDENCIES = host-pkgconf
 OPENVPN_LICENSE = GPL-2.0
 OPENVPN_LICENSE_FILES = COPYRIGHT.GPL
 OPENVPN_CPE_ID_VENDOR = openvpn
+OPENVPN_SELINUX_MODULES = openvpn
 OPENVPN_CONF_OPTS = \
 	--disable-unit-tests \
 	$(if $(BR2_STATIC_LIBS),--disable-plugins)

@@ -1,0 +1,32 @@
+From 7ab34000c672adca90388a8fcb1f70a7d391d35c Mon Sep 17 00:00:00 2001
+From: David Michael <fedora.dm0@gmail.com>
+Date: Thu, 3 Jun 2021 16:18:57 -0400
+Subject: [PATCH] erofs-utils: manpage: only install erofsfuse.1 with the
+ command
+
+Link: https://lore.kernel.org/r/87lf7q3dn2.fsf@gmail.com
+Reviewed-by: Gao Xiang <xiang@kernel.org>
+Signed-off-by: David Michael <fedora.dm0@gmail.com>
+Signed-off-by: Gao Xiang <xiang@kernel.org>
+---
+ man/Makefile.am | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/man/Makefile.am b/man/Makefile.am
+index ffcf6f81c255..0df947b6fbf7 100644
+--- a/man/Makefile.am
++++ b/man/Makefile.am
+@@ -1,5 +1,9 @@
+ # SPDX-License-Identifier: GPL-2.0+
+ # Makefile.am
+ 
+-dist_man_MANS = mkfs.erofs.1 erofsfuse.1
++dist_man_MANS = mkfs.erofs.1
+ 
++EXTRA_DIST = erofsfuse.1
++if ENABLE_FUSE
++man_MANS = erofsfuse.1
++endif
+-- 
+2.20.1
+

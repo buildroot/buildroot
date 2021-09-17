@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GNURADIO_VERSION = 3.8.1.0
+GNURADIO_VERSION = 3.8.2.0
 GNURADIO_SITE = https://github.com/gnuradio/gnuradio/releases/download/v$(GNURADIO_VERSION)
 GNURADIO_LICENSE = GPL-3.0+
 GNURADIO_LICENSE_FILES = COPYING
@@ -128,12 +128,6 @@ GNURADIO_CONF_OPTS += -DGR_PYTHON_RELATIVE=ON \
 	-DGR_PYTHON_DIR=lib/python$(GNURADIO_PYVER)/site-packages
 else
 GNURADIO_CONF_OPTS += -DENABLE_PYTHON=OFF
-endif
-
-ifeq ($(BR2_PACKAGE_GNURADIO_PAGER),y)
-GNURADIO_CONF_OPTS += -DENABLE_GR_PAGER=ON
-else
-GNURADIO_CONF_OPTS += -DENABLE_GR_PAGER=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_GNURADIO_QTGUI),y)

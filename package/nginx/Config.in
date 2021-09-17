@@ -339,6 +339,12 @@ config BR2_PACKAGE_NGINX_STREAM_REALIP_MODULE
 	help
 	  Enable ngx_stream_realip_module
 
+config BR2_PACKAGE_NGINX_STREAM_SET_MODULE
+	bool "ngx_stream_set_module"
+	default y
+	help
+	  Enable ngx_stream_set_module
+
 config BR2_PACKAGE_NGINX_STREAM_SSL_MODULE
 	bool "ngx_stream_ssl_module"
 	select BR2_PACKAGE_OPENSSL

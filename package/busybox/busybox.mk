@@ -4,19 +4,12 @@
 #
 ################################################################################
 
-BUSYBOX_VERSION = 1.33.0
+BUSYBOX_VERSION = 1.33.1
 BUSYBOX_SITE = https://www.busybox.net/downloads
 BUSYBOX_SOURCE = busybox-$(BUSYBOX_VERSION).tar.bz2
 BUSYBOX_LICENSE = GPL-2.0, bzip2-1.0.4
 BUSYBOX_LICENSE_FILES = LICENSE archival/libarchive/bz/LICENSE
 BUSYBOX_CPE_ID_VENDOR = busybox
-
-# 0004-decompress_gunzip-Fix-DoS-if-gzip-is-corrupt.patch
-BUSYBOX_IGNORE_CVES += CVE-2021-28831
-
-define BUSYBOX_HELP_CMDS
-	@echo '  busybox-menuconfig     - Run BusyBox menuconfig'
-endef
 
 BUSYBOX_CFLAGS = \
 	$(TARGET_CFLAGS)
@@ -110,6 +103,7 @@ ifndef BUSYBOX_CONFIG_FILE
 BUSYBOX_CONFIG_FILE = $(call qstrip,$(BR2_PACKAGE_BUSYBOX_CONFIG))
 endif
 
+BUSYBOX_KCONFIG_SUPPORTS_DEFCONFIG = NO
 BUSYBOX_KCONFIG_FILE = $(BUSYBOX_CONFIG_FILE)
 BUSYBOX_KCONFIG_FRAGMENT_FILES = $(call qstrip,$(BR2_PACKAGE_BUSYBOX_CONFIG_FRAGMENT_FILES))
 BUSYBOX_KCONFIG_EDITORS = menuconfig xconfig gconfig
@@ -338,6 +332,12 @@ define BUSYBOX_INSTALL_TELNET_SCRIPT
 			$(TARGET_DIR)/etc/init.d/S50telnet ; \
 	fi
 endef
+define BUSYBOX_INSTALL_TELNET_SERVICE
+	if grep -q CONFIG_FEATURE_TELNETD_STANDALONE=y $(@D)/.config; then \
+		$(INSTALL) -D -m 0644 package/busybox/telnetd.service \
+			$(TARGET_DIR)/usr/lib/systemd/system/telnetd.service ; \
+	fi
+endef
 
 # Add /bin/{a,hu}sh to /etc/shells otherwise some login tools like dropbear
 # can reject the user connection. See man shells.
@@ -388,6 +388,10 @@ define BUSYBOX_INSTALL_INIT_OPENRC
 	$(BUSYBOX_INSTALL_LOGGING_SCRIPT)
 	$(BUSYBOX_INSTALL_WATCHDOG_SCRIPT)
 	$(BUSYBOX_INSTALL_TELNET_SCRIPT)
+endef
+
+define BUSYBOX_INSTALL_INIT_SYSTEMD
+	$(BUSYBOX_INSTALL_TELNET_SERVICE)
 endef
 
 define BUSYBOX_INSTALL_INIT_SYSV

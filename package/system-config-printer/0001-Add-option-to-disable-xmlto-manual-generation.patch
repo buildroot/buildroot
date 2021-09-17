@@ -1,0 +1,73 @@
+From 731c8d7e1f9edb527785d61f74031a5e5846554b Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Sun, 25 Jul 2021 16:30:59 -0600
+Subject: [PATCH] Add option to disable xmlto manual generation.
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[james.hilliard1@gmail.com: backport from upstream commit
+95e0b461f5a46c74b00287aca65732ea2fc9d69b]
+---
+ Makefile.am  | 7 ++++++-
+ configure.ac | 5 +++++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 843ba30d..7facab94 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -209,9 +209,11 @@ else
+ systemd_CLEANFILES=
+ endif
+ 
++if XMLTO
+ man_MANS=					\
+ 	man/system-config-printer.1		\
+ 	man/system-config-printer-applet.1
++endif
+ 
+ dbus_DATA =					\
+ 	dbus/com.redhat.NewPrinterNotification.conf		\
+@@ -274,7 +276,6 @@ EXTRA_DIST=\
+ 	$(bin_SCRIPTS) \
+ 	setup.py \
+ 	$(EXPORT_MODULES) \
+-	man/system-config-printer.xml \
+ 	$(dbus_DATA) \
+ 	$(dbusinterfaces_DATA) \
+ 	$(dbusservices_DATA) \
+@@ -297,12 +298,16 @@ EXTRA_DIST=\
+ 	test_PhysicalDevice.py \
+ 	$(appdata_in_files)
+ 
++if XMLTO
++EXTRA_DIST+=man/system-config-printer.xml
++
+ # The man pages are generated from DocBook XML.
+ .stamp-man-pages-built: $(top_srcdir)/man/system-config-printer.xml
+ 	xmlto man -o man $<
+ 	touch .stamp-man-pages-built
+ 
+ $(man_MANS): .stamp-man-pages-built
++endif
+ 
+ html:	$(EXPORT_MODULES) $(EXPORT_MODULES_GEN)
+ 	rm -rf html
+diff --git a/configure.ac b/configure.ac
+index 811f897a..a2a66889 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -75,6 +75,11 @@ if test "x$with_systemdsystemunitdir" != xno; then
+ fi
+ AM_CONDITIONAL(HAVE_SYSTEMD, [test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != xno ])
+ 
++AC_ARG_WITH(xmlto,
++        [AC_HELP_STRING([--with-xmlto],
++                [Enable xmlto manual generation @<:@default=yes@:>@])])
++AM_CONDITIONAL([XMLTO], [test x$with_xmlto != xno])
++
+ ALL_LINGUAS="ar as ast bg bn_IN bn br bs ca cs cy da de el en_GB es et fa fi fr fur gu he hi hr hu id is it ja kn ko lt lv mai ml mr ms nb nds nl nn oc or pa pl pt_BR pt ro ru si sk sl sr@latin sr sv ta te th tr uk vi zh_CN zh_TW"
+ AC_CONFIG_FILES([
+ Makefile
+-- 
+2.25.1
+

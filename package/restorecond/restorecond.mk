@@ -27,8 +27,8 @@ define RESTORECOND_BUILD_CMDS
 endef
 
 define RESTORECOND_INSTALL_INIT_SYSV
-	$(INSTALL) -m 0755 -D $(@D)/restorecond.init \
-		$(TARGET_DIR)/etc/init.d/S20restorecond
+	$(INSTALL) -m 0755 -D package/restorecond/S02restorecond \
+		$(TARGET_DIR)/etc/init.d/S02restorecond
 endef
 
 define RESTORECOND_INSTALL_INIT_SYSTEMD

@@ -1,0 +1,6 @@
+config BR2_PACKAGE_POLKIT_RULES_TEST
+	bool "polkit rules test"
+	depends on BR2_PACKAGE_POLKIT
+	help
+	  Simple test to ensure polkit is loading and enforcing rules
+	  correctly.

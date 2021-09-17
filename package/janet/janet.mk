@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-JANET_VERSION = 1.15.4
+JANET_VERSION = 1.16.1
 JANET_SITE = $(call github,janet-lang,janet,v$(JANET_VERSION))
 JANET_LICENSE = MIT
 JANET_LICENSE_FILES = LICENSE

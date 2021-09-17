@@ -1,0 +1,58 @@
+From 145e16008e7479ea58278e55f71d6dfcd4db714b Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Fri, 18 Jun 2021 19:51:45 +0200
+Subject: [PATCH] backend/microtek: fix uclibc compile (include stdarg.h for
+ va_list/va_start/va_end)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes:
+
+  microtek.c: In function ‘MDBG_INIT’:
+  microtek.c:163:3: error: unknown type name ‘va_list’
+    163 |   va_list ap;
+        |   ^~~~~~~
+  microtek.c:78:1: note: ‘va_list’ is defined in header ‘<stdarg.h>’; did you forget to ‘#include <stdarg.h>’?
+     77 | #include "microtek.h"
+    +++ |+#include <stdarg.h>
+     78 |
+  microtek.c:164:3: warning: implicit declaration of function ‘va_start’; did you mean ‘sane_start’? [-Wimplicit-function-declaration]
+    164 |   va_start(ap, format);
+        |   ^~~~~~~~
+        |   sane_start
+  microtek.c:165:54: warning: passing argument 4 of ‘vsnprintf’ makes pointer from integer without a cast [-Wint-conversion]
+    165 |   vsnprintf(_mdebug_string, MAX_MDBG_LENGTH, format, ap);
+        |                                                      ^~
+        |                                                      |
+        |                                                      int
+  In file included from ../include/sane/sanei_config.h:50,
+                   from microtek.c:70:
+  .../host/x86_64-buildroot-linux-uclibc/sysroot/usr/include/stdio.h:359:57: note: expected ‘__va_list_tag *’ but argument is of type ‘int’
+    359 |         const char *__restrict __format, __gnuc_va_list __arg)
+        |                                          ~~~~~~~~~~~~~~~^~~~~
+  microtek.c:166:3: warning: implicit declaration of function ‘va_end’ [-Wimplicit-function-declaration]
+    166 |   va_end(ap);
+        |   ^~~~~~
+
+[Upstream: https://gitlab.com/sane-project/backends/-/merge_requests/638]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ backend/microtek.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/backend/microtek.c b/backend/microtek.c
+index 200a69c1a..63560179c 100644
+--- a/backend/microtek.c
++++ b/backend/microtek.c
+@@ -57,6 +57,7 @@
+ 
+ #include "../include/sane/config.h"
+ 
++#include <stdarg.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <unistd.h>
+-- 
+2.31.1
+

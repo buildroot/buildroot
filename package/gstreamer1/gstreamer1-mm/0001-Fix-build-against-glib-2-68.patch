@@ -1,0 +1,44 @@
+From 0c0b5f8cef3b1f0a06f56c34340e210e0f23d1b0 Mon Sep 17 00:00:00 2001
+From: Dominique Leuenberger <dimstar@opensuse.org>
+Date: Tue, 13 Jul 2021 10:32:30 +0000
+Subject: [PATCH] Fix build against glib 2.68
+
+volatile has been misused in the past
+
+[Retrieved from:
+https://gitlab.gnome.org/GNOME/gstreamermm/-/merge_requests/4]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ gstreamer/gstreamermm/register.h                    | 2 +-
+ tests/integration/test-integration-seekonstartup.cc | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/gstreamer/gstreamermm/register.h b/gstreamer/gstreamermm/register.h
+index db66d172..a7ab3a63 100644
+--- a/gstreamer/gstreamermm/register.h
++++ b/gstreamer/gstreamermm/register.h
+@@ -110,7 +110,7 @@ register_mm_type(const gchar * type_name)
+     /* The typedef for GType may be gulong or gsize, depending on the
+      * system and whether the compiler is c++ or not. The g_once_init_*
+      * functions always take a gsize * though ... */
+-    static volatile gsize gonce_data = 0;
++    static gsize gonce_data = 0;
+     if (g_once_init_enter (&gonce_data)) {
+         GTypeInfo info;
+ 
+diff --git a/tests/integration/test-integration-seekonstartup.cc b/tests/integration/test-integration-seekonstartup.cc
+index 247ac499..cd43a125 100644
+--- a/tests/integration/test-integration-seekonstartup.cc
++++ b/tests/integration/test-integration-seekonstartup.cc
+@@ -18,7 +18,7 @@ RefPtr<Glib::MainLoop> mainloop;
+ RefPtr<Bus> bus;
+ RefPtr<Pipeline> pipeline;
+ RefPtr<Pad> sink_pad;
+-static volatile gint counter;
++static gint counter;
+ bool prerolled = false;
+ gboolean was_check = 0;
+ 
+-- 
+GitLab
+

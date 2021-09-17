@@ -1,0 +1,56 @@
+From 82becbadd5918ed7ad3c2b651ce479084b5feb2a Mon Sep 17 00:00:00 2001
+From: Etienne Carriere <etienne.carriere@linaro.org>
+Date: Mon, 10 May 2021 15:58:41 +0200
+Subject: core: zlib: fix build warning when _LFS64_LARGEFILE is not defined
+
+In zlib, _LFS64_LARGEFILE is expected to be a boolean directive, either
+1 (true) or 0 (false). Depending on toolchain version and directives
+build may produces warnings (as shown below with gcc 9.3) when the macro
+is not defined hence this change to default it to value 0 (false).
+
+core/lib/zlib/zutil.h:196:39: warning: "_LFS64_LARGEFILE" is not defined, evaluates to 0 [-Wundef]
+  196 |     (!defined(_LARGEFILE64_SOURCE) || _LFS64_LARGEFILE-0 == 0)
+      |                                       ^~~~~~~~~~~~~~~~
+In file included from core/lib/zlib/adler32.c:9:
+core/lib/zlib/zutil.h:196:39: warning: "_LFS64_LARGEFILE" is not defined, evaluates to 0 [-Wundef]
+  196 |     (!defined(_LARGEFILE64_SOURCE) || _LFS64_LARGEFILE-0 == 0)
+      |                                       ^~~~~~~~~~~~~~~~
+  CC      out/core/lib/zlib/zutil.o
+In file included from core/lib/zlib/inftrees.c:7:
+core/lib/zlib/zutil.h:196:39: warning: "_LFS64_LARGEFILE" is not defined, evaluates to 0 [-Wundef]
+  196 |     (!defined(_LARGEFILE64_SOURCE) || _LFS64_LARGEFILE-0 == 0)
+      |                                       ^~~~~~~~~~~~~~~~
+In file included from core/lib/zlib/inflate.c:84:
+core/lib/zlib/zutil.h:196:39: warning: "_LFS64_LARGEFILE" is not defined, evaluates to 0 [-Wundef]
+  196 |     (!defined(_LARGEFILE64_SOURCE) || _LFS64_LARGEFILE-0 == 0)
+      |                                       ^~~~~~~~~~~~~~~~
+In file included from core/lib/zlib/zutil.c:9:
+core/lib/zlib/zutil.h:196:39: warning: "_LFS64_LARGEFILE" is not defined, evaluates to 0 [-Wundef]
+  196 |     (!defined(_LARGEFILE64_SOURCE) || _LFS64_LARGEFILE-0 == 0)
+      |                                       ^~~~~~~~~~~~~~~~
+
+Signed-off-by: Etienne Carriere <etienne.carriere@linaro.org>
+Reviewed-by: Jens Wiklander <jens.wiklander@linaro.org>
+---
+ core/lib/zlib/zconf.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/core/lib/zlib/zconf.h b/core/lib/zlib/zconf.h
+index 0bca18be..a7d13741 100644
+--- a/core/lib/zlib/zconf.h
++++ b/core/lib/zlib/zconf.h
+@@ -487,6 +487,11 @@ typedef uLong FAR uLongf;
+ #  endif
+ #endif
+ 
++/* Other places expect _LFS64_LARGEFILE to be defined with a valid value */
++#ifndef _LFS64_LARGEFILE
++#define _LFS64_LARGEFILE	0
++#endif
++
+ #if defined(_LFS64_LARGEFILE) && _LFS64_LARGEFILE-0
+ #  define Z_LFS64
+ #endif
+-- 
+2.17.1
+
