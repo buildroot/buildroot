@@ -5,7 +5,7 @@
 ################################################################################
 
 LIBXKBCOMMON_VERSION = 1.3.1
-LIBXKBCOMMON_SITE = http://xkbcommon.org/download
+LIBXKBCOMMON_SITE = https://xkbcommon.org/download
 LIBXKBCOMMON_SOURCE = libxkbcommon-$(LIBXKBCOMMON_VERSION).tar.xz
 LIBXKBCOMMON_LICENSE = MIT/X11
 LIBXKBCOMMON_LICENSE_FILES = LICENSE
