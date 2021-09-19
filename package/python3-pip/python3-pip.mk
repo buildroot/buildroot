@@ -5,9 +5,9 @@
 ################################################################################
 
 # Please keep in sync with package/python-pip/python-pip.mk
-PYTHON3_PIP_VERSION = 20.0.2
+PYTHON3_PIP_VERSION = 21.2.4
 PYTHON3_PIP_SOURCE = pip-$(PYTHON_PIP_VERSION).tar.gz
-PYTHON3_PIP_SITE = https://files.pythonhosted.org/packages/8e/76/66066b7bc71817238924c7e4b448abdb17eb0c92d645769c223f9ace478f
+PYTHON3_PIP_SITE = https://files.pythonhosted.org/packages/52/e1/06c018197d8151383f66ebf6979d951995cf495629fc54149491f5d157d0
 PYTHON3_PIP_SETUP_TYPE = setuptools
 PYTHON3_PIP_LICENSE = MIT
 PYTHON3_PIP_LICENSE_FILES = LICENSE.txt
