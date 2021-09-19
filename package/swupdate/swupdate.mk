@@ -252,6 +252,9 @@ define SWUPDATE_INSTALL_INIT_SYSTEMD
 		$(TARGET_DIR)/usr/lib/systemd/system/swupdate.socket
 	$(INSTALL) -D -m 644 $(SWUPDATE_PKGDIR)/swupdate-usb@.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/swupdate-usb@.service
+	$(if $(BR2_PACKAGE_SWUPDATE_USB), \
+		$(INSTALL) -D -m 644 $(SWUPDATE_PKGDIR)/swupdate-usb.rules \
+			$(TARGET_DIR)/lib/udev/rules.d/swupdate-usb.rules)
 	$(INSTALL) -D -m 644 $(SWUPDATE_PKGDIR)/swupdate-progress.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/swupdate-progress.service
 	$(INSTALL) -D -m 644 $(SWUPDATE_PKGDIR)/tmpfiles-swupdate.conf \
