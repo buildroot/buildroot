@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBINPUT_VERSION = 1.18.1
+LIBINPUT_VERSION = 1.19.0
 LIBINPUT_SOURCE = libinput-$(LIBINPUT_VERSION).tar.xz
 LIBINPUT_SITE = http://www.freedesktop.org/software/libinput
 LIBINPUT_DEPENDENCIES = host-pkgconf libevdev mtdev udev
@@ -17,6 +17,15 @@ LIBINPUT_CONF_OPTS = -Dtests=false -Dlibwacom=false -Ddocumentation=false
 ifeq ($(BR2_PACKAGE_LIBGTK3),y)
 LIBINPUT_CONF_OPTS += -Ddebug-gui=true
 LIBINPUT_DEPENDENCIES += libgtk3
+ifeq ($(BR2_PACKAGE_WAYLAND),y)
+LIBINPUT_DEPENDENCIES += wayland
+endif
+ifeq ($(BR2_PACKAGE_WAYLAND_PROTOCOLS),y)
+LIBINPUT_DEPENDENCIES += wayland-protocols
+endif
+ifeq ($(BR2_PACKAGE_XLIB_LIBX11),y)
+LIBINPUT_DEPENDENCIES += libx11
+endif
 else
 LIBINPUT_CONF_OPTS += -Ddebug-gui=false
 endif

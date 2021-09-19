@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBVIRT_VERSION = 7.4.0
+LIBVIRT_VERSION = 7.7.0
 LIBVIRT_SITE = https://libvirt.org/sources
 LIBVIRT_SOURCE = libvirt-$(LIBVIRT_VERSION).tar.xz
 LIBVIRT_LICENSE = LGPL-2.1+
@@ -33,7 +33,9 @@ LIBVIRT_CONF_ENV += \
 LIBVIRT_CONF_OPTS = \
 	-Drpath=disabled \
 	-Dapparmor=disabled \
+	-Ddocs=disabled \
 	-Ddriver_bhyve=disabled \
+	-Ddriver_ch=disabled \
 	-Ddriver_esx=disabled \
 	-Ddriver_hyperv=disabled \
 	-Ddriver_interface=enabled \
@@ -41,10 +43,12 @@ LIBVIRT_CONF_OPTS = \
 	-Ddriver_openvz=disabled \
 	-Ddriver_remote=enabled \
 	-Ddriver_secrets=enabled \
+	-Ddriver_test=disabled \
 	-Ddriver_vbox=disabled \
 	-Ddriver_vmware=disabled \
 	-Ddriver_vz=disabled \
 	-Ddtrace=disabled \
+	-Dexpensive_tests=disabled \
 	-Dfirewalld=disabled \
 	-Dfirewalld_zone=disabled \
 	-Dglusterfs=disabled \
@@ -64,6 +68,7 @@ LIBVIRT_CONF_OPTS = \
 	-Dstorage_mpath=disabled \
 	-Dsysctl_config=enabled \
 	-Dtest_coverage=false \
+	-Dtests=disabled \
 	-Dudev=enabled \
 	-Dwireshark_dissector=disabled
 
@@ -128,6 +133,13 @@ LIBVIRT_CONF_OPTS += -Dlibiscsi=enabled
 LIBVIRT_DEPENDENCIES += libiscsi
 else
 LIBVIRT_CONF_OPTS += -Dlibiscsi=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_LIBNL),y)
+LIBVIRT_CONF_OPTS += -Dlibnl=enabled
+LIBVIRT_DEPENDENCIES += libnl
+else
+LIBVIRT_CONF_OPTS += -Dlibnl=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBPCAP),y)
