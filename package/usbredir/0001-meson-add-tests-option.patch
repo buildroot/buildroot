@@ -1,0 +1,46 @@
+From 8490a7ac101d4ee0a78c44b252d3b7a6c2508c74 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 21 Aug 2021 11:55:48 +0200
+Subject: [PATCH] meson: add tests option
+
+Add tests option to allow the user to disable them
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://gitlab.freedesktop.org/spice/usbredir/-/commit/8490a7ac101d4ee0a78c44b252d3b7a6c2508c74]
+---
+ meson.build       | 4 +++-
+ meson_options.txt | 5 +++++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 6e773a7..a6d21b8 100644
+--- a/meson.build
++++ b/meson.build
+@@ -106,7 +106,9 @@ if host_machine.system() != 'windows'
+         subdir('fuzzing')
+     endif
+ endif
+-subdir('tests')
++if get_option('tests').enabled()
++    subdir('tests')
++endif
+ subdir('data')
+ 
+ summary(summary_info, bool_yn: true)
+diff --git a/meson_options.txt b/meson_options.txt
+index b35732b..63e8c85 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -21,3 +21,8 @@ option('tools',
+     type : 'feature',
+     value : 'enabled',
+     description : 'Build usbredir\'s tools such as usbredirect')
++
++option('tests',
++    type : 'feature',
++    value : 'enabled',
++    description : 'Build usbredir\'s tests such as filter')
+-- 
+GitLab
+
