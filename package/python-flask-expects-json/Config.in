@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_FLASK_EXPECTS_JSON
+	bool "python-flask-expects-json"
+	select BR2_PACKAGE_PYTHON_FLASK # runtime
+	select BR2_PACKAGE_PYTHON_JSONSCHEMA # runtime
+	help
+	  Decorator for REST endpoints in flask. Validate JSON request
+	  data.
+
+	  https://github.com/fischerfredl/flask-expects-json
