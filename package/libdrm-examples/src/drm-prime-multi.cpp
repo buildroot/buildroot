@@ -285,8 +285,8 @@ class DRM {
                 static constexpr width_t InvalidWidth () { return 0; }
                 static constexpr height_t InvalidHeight () { return 0; }
                 static constexpr stride_t InvalidStride () { return 0; }
-                static constexpr stride_t InvalidFrmt () { return DRM::InvalidFrmt (); }
-                static constexpr stride_t InvalidModifier () { return DRM::InvalidModifier (); }
+                static constexpr frmt_t InvalidFrmt () { return DRM::InvalidFrmt (); }
+                static constexpr modifier_t InvalidModifier () { return DRM::InvalidModifier (); }
 
                 valid_t const Status () const { return _valid; }
 
