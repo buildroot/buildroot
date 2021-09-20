@@ -16,6 +16,9 @@ endef
 
 define XIONE_SDK_INSTALL_TARGET_CMDS
 	cp -pf $(@D)/mali/lib/*.so $(STAGING_DIR)/usr/lib/
+	cp -pf $(@D)/mali/lib/*.so $(STAGING_DIR)/usr/lib/
+	cp -pf $(@D)/verity/* board/xione
+	cp -pf $(@D)/image/* board/xione
 endef
 
 define QORVO_BUILD_MODULE
