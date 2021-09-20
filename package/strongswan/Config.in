@@ -57,6 +57,9 @@ config BR2_PACKAGE_STRONGSWAN_CURL
 	bool "Enable CURL fetcher plugin to fetch files via libcurl"
 	select BR2_PACKAGE_LIBCURL
 
+config BR2_PACKAGE_STRONGSWAN_MD4
+	bool "Enable MD4 hash algorithm"
+
 config BR2_PACKAGE_STRONGSWAN_CHARON
 	bool "Enable the IKEv1/IKEv2 keying daemon charon"
 	default y
@@ -125,6 +128,7 @@ config BR2_PACKAGE_STRONGSWAN_EAP_GTC
 config BR2_PACKAGE_STRONGSWAN_EAP_MSCHAPV2
 	bool "Enable EAP-MSCHAPv2"
 	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+	select BR2_PACKAGE_STRONGSWAN_MD4
 
 config BR2_PACKAGE_STRONGSWAN_EAP_PEAP
 	bool "Enable EAP-PEAP"
