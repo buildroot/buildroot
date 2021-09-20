@@ -14,6 +14,21 @@ define XIONE_SDK_INSTALL_STAGING_CMDS
 	cp -Rpf $(@D)/mali/lib/* $(STAGING_DIR)/usr/lib/
 endef
 
+define XIONE_SDK_DEVICES
+        /dev/console c  622  0  0  5  1  0  0  -
+        /dev/ptmx    c  622  0  0  5  2  0  0  -
+        /dev/tty     c  622  0  0  5  0  0  0  -
+        /dev/tty0    c  622  0  0  4  0  0  0  -
+        /dev/tty1    c  622  0  0  4  0  0  0  -
+        /dev/tty2    c  622  0  0  4  0  0  0  -
+        /dev/ttyS0   c  622  0  0  5  3  0  0  -
+        /dev/random  c  622  0  0  1  8  0  0  -
+        /dev/random  c  622  0  0  1  9  0  0  -
+endef
+
+define XIONE_SDK_PERMISSIONS
+endef
+
 define XIONE_SDK_INSTALL_TARGET_CMDS
 	cp -pf $(@D)/mali/lib/*.so $(STAGING_DIR)/usr/lib/
 	cp -pf $(@D)/mali/lib/*.so $(STAGING_DIR)/usr/lib/
