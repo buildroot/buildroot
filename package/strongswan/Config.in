@@ -76,37 +76,79 @@ config BR2_PACKAGE_STRONGSWAN_TNCCS_DYNAMIC
 config BR2_PACKAGE_STRONGSWAN_SYSTIME_FIX
 	bool "Enable systime-fix plugin"
 
-config BR2_PACKAGE_STRONGSWAN_EAP
-	bool "Enable EAP protocols"
-	select BR2_PACKAGE_GMP
-	help
-	  Enable various EAP protocols:
-	    - mschapv2
-	    - tls
-	    - ttls
-	    - peap
-	    - sim
-	    - sim-file
-	    - aka
-	    - aka-3gpp2
-	    - simaka-sql
-	    - simaka-pseudonym
-	    - simaka-reauth
-	    - identity
-	    - md5
-	    - gtc
-	    - tnc
-	    - dynamic
-	    - radius
+config BR2_PACKAGE_STRONGSWAN_EAP_SIM
+	bool "Enable EAP-SIM"
+	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
 
-if BR2_PACKAGE_STRONGSWAN_EAP
+config BR2_PACKAGE_STRONGSWAN_EAP_SIM_FILE
+	bool "Enable EAP-SIM file backend"
+	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
 
 config BR2_PACKAGE_STRONGSWAN_EAP_SIM_PCSC
 	bool "Enable EAP-SIM smart card backend"
 	depends on !BR2_STATIC_LIBS # pcsc-lite
 	select BR2_PACKAGE_PCSC_LITE
 
-endif
+config BR2_PACKAGE_STRONGSWAN_EAP_AKA
+	bool "Enable EAP-AKA"
+	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+
+config BR2_PACKAGE_STRONGSWAN_EAP_AKA_3GPP2
+	bool "Enable EAP-AKA 3GPP2 algorithms"
+	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+	select BR2_PACKAGE_GMP
+
+config BR2_PACKAGE_STRONGSWAN_EAP_SIMAKA_SQL
+	bool "Enable EAP-SIM/AKA backend based on a triplet/quintuplet SQL database"
+	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+
+config BR2_PACKAGE_STRONGSWAN_EAP_SIMAKA_PSEUDONYM
+	bool "Enable EAP-SIM/AKA pseudonym storage"
+	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+
+config BR2_PACKAGE_STRONGSWAN_EAP_SIMAKA_REAUTH
+	bool "Enable EAP-SIM/AKA reauthentication data storage"
+	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+
+config BR2_PACKAGE_STRONGSWAN_EAP_IDENTITY
+	bool "Enable EAP-Identity"
+	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+
+config BR2_PACKAGE_STRONGSWAN_EAP_MD5
+	bool "Enable EAP-MD5"
+	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+
+config BR2_PACKAGE_STRONGSWAN_EAP_GTC
+	bool "Enable EAP-GDC"
+	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+
+config BR2_PACKAGE_STRONGSWAN_EAP_MSCHAPV2
+	bool "Enable EAP-MSCHAPv2"
+	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+
+config BR2_PACKAGE_STRONGSWAN_EAP_PEAP
+	bool "Enable EAP-PEAP"
+	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+
+config BR2_PACKAGE_STRONGSWAN_EAP_RADIUS
+	bool "Enable EAP-RADIUS"
+	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+
+config BR2_PACKAGE_STRONGSWAN_EAP_TLS
+	bool "Enable EAP-TLS"
+	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+
+config BR2_PACKAGE_STRONGSWAN_EAP_TTLS
+	bool "Enable EAP-TTLS"
+	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+
+config BR2_PACKAGE_STRONGSWAN_EAP_DYNAMIC
+	bool "Enable EAP-DYNAMIC"
+	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+
+config BR2_PACKAGE_STRONGSWAN_EAP_TNC
+	bool "Enable EAP-TNC"
+	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
 
 config BR2_PACKAGE_STRONGSWAN_UNITY
 	bool "Enables Cisco Unity extension plugin"

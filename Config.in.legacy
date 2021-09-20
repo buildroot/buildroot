@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2021.11"
 
+config BR2_PACKAGE_STRONGSWAN_EAP
+	bool "strongswan EAP plugins now individually selectable"
+	select BR2_LEGACY
+	help
+	  The various EAP plugins are now individually selectable.
+
 config BR2_PACKAGE_GNURADIO_PAGER
 	bool "gnuradio gr-flex support removed"
 	select BR2_LEGACY
