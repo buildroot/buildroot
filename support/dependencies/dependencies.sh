@@ -65,8 +65,6 @@ check_prog_host()
 	fi
 }
 
-# Verify that which is installed
-check_prog_host "which"
 # Verify that sed is installed
 check_prog_host "sed"
 
