@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """A simple test that uses python-gobject to find the path of sh."""
 from gi.repository import GLib
 
