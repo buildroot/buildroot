@@ -11,63 +11,53 @@ config BR2_PACKAGE_RPI_FIRMWARE
 
 if BR2_PACKAGE_RPI_FIRMWARE
 
-choice
-	bool "rpi variant"
+config BR2_PACKAGE_RPI_FIRMWARE_BOOTCODE_BIN
+	bool "rpi 0/1/2/3 bootcode.bin"
 	help
-	  The Raspberry Pi 4 introduced a slightly different naming
-	  convention and set of boot files. This option controls which
-	  format to use.
+	  The bootcode.bin for versions Zero/1/2/3 (not needed on rpi4,
+	  because it has been replaced by boot code in the onboard
+	  EEPROM).
 
 config BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI
-	bool "rpi 0/1/2/3"
+	bool "rpi 0/1/2/3 (default)"
 	help
-	  The default set of files, for versions pre-4
+	  The default set of files for versions Zero/1/2/3.
+
+config BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI_X
+	bool "rpi 0/1/2/3 (extended)"
+	help
+	  The extended set of files for versions Zero/1/2/3 (additional
+	  GPU features, eg. more audio/video codecs).
+
+config BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI_CD
+	bool "rpi 0/1/2/3 (cut-down)"
+	help
+	  The cut-down set of files for versions Zero/1/2/3 (only
+	  features required to boot a Linux kernel).
 
 config BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4
-	bool "rpi 4"
+	bool "rpi 4 (default)"
 	help
-	  The Raspberry Pi 4 files
-endchoice
+	  The default set of files for versions 4 (standard GPU
+	  features).
 
-choice
-	bool "Firmware to boot"
-	default BR2_PACKAGE_RPI_FIRMWARE_DEFAULT
+config BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4_X
+	bool "rpi 4 (extended)"
 	help
-	  There are three different firmware files:
-	    - the default firmware, that enables standard GPU
-	      features;
-	    - the extended firmware, that enables additional GPU
-	      features (eg. more audio/video codecs);
-	    - the cut-down firmware, for emergency situations, with
-	      only features required to boot a Linux kernel.
+	  The extended set of files for versions 4 (additional GPU
+	  features, eg. more audio/video codecs).
 
-config BR2_PACKAGE_RPI_FIRMWARE_DEFAULT
-	bool "default"
+config BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4_CD
+	bool "rpi 4 (cut-down)"
 	help
-	  The default firmware, that enables standard GPU features.
+	  The cut-down set of files for versions 4 (only features
+	  required to boot a Linux kernel).
 
-config BR2_PACKAGE_RPI_FIRMWARE_X
-	bool "extended ('x', more codecs)"
+config BR2_PACKAGE_RPI_FIRMWARE_CONFIG_FILE
+	string "Path to a file stored as boot/config.txt"
 	help
-	  The extended firmware, that enables additional GPU features
-	  (eg. more audio/video codecs).
-
-config BR2_PACKAGE_RPI_FIRMWARE_CD
-	bool "cut-down ('cd', emergency)"
-	help
-	  The cut-down firmware, for emergency situations, with only
-	  features required to boot a Linux kernel.
-
-endchoice
-
-config BR2_PACKAGE_RPI_FIRMWARE_BOOT
-	string
-	default ""      if BR2_PACKAGE_RPI_FIRMWARE_DEFAULT && BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI
-	default "4"     if BR2_PACKAGE_RPI_FIRMWARE_DEFAULT && BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4
-	default "_x"    if BR2_PACKAGE_RPI_FIRMWARE_X && BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI
-	default "4x"    if BR2_PACKAGE_RPI_FIRMWARE_X && BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4
-	default "_cd"   if BR2_PACKAGE_RPI_FIRMWARE_CD && BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI
-	default "4cd"   if BR2_PACKAGE_RPI_FIRMWARE_CD && BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4
+	  Path to a file stored as config.txt in the boot partiton
+	  of the generated SD card image.
 
 config BR2_PACKAGE_RPI_FIRMWARE_INSTALL_DTBS
 	bool "Install Device Tree Blobs (DTBs)"
