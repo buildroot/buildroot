@@ -35,6 +35,11 @@ config BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI_CD
 	  The cut-down set of files for versions Zero/1/2/3 (only
 	  features required to boot a Linux kernel).
 
+config BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI_DB
+	bool "rpi 0/1/2/3 (debug)"
+	help
+	  The debug set of files for versions Zero/1/2/3.
+
 config BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4
 	bool "rpi 4 (default)"
 	help
@@ -52,6 +57,11 @@ config BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4_CD
 	help
 	  The cut-down set of files for versions 4 (only features
 	  required to boot a Linux kernel).
+
+config BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4_DB
+	bool "rpi 4 (debug)"
+	help
+	  The debug set of files for versions 4.
 
 config BR2_PACKAGE_RPI_FIRMWARE_CONFIG_FILE
 	string "Path to a file stored as boot/config.txt"
