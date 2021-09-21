@@ -2,9 +2,9 @@
 
 candidate="$1"
 
-tar=`which $candidate`
+tar=`command -v $candidate`
 if [ ! -x "$tar" ]; then
-	tar=`which tar`
+	tar=`command -v tar`
 	if [ ! -x "$tar" ]; then
 		# echo nothing: no suitable tar found
 		exit 1

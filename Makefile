@@ -284,12 +284,12 @@ HOSTAS := as
 endif
 ifndef HOSTCC
 HOSTCC := gcc
-HOSTCC := $(shell which $(HOSTCC) || type -p $(HOSTCC) || echo gcc)
+HOSTCC := $(shell command -v $(HOSTCC) || type -p $(HOSTCC) || echo gcc)
 endif
 HOSTCC_NOCCACHE := $(HOSTCC)
 ifndef HOSTCXX
 HOSTCXX := g++
-HOSTCXX := $(shell which $(HOSTCXX) || type -p $(HOSTCXX) || echo g++)
+HOSTCXX := $(shell command -v $(HOSTCXX) || type -p $(HOSTCXX) || echo g++)
 endif
 HOSTCXX_NOCCACHE := $(HOSTCXX)
 ifndef HOSTCPP
@@ -310,15 +310,15 @@ endif
 ifndef HOSTRANLIB
 HOSTRANLIB := ranlib
 endif
-HOSTAR := $(shell which $(HOSTAR) || type -p $(HOSTAR) || echo ar)
-HOSTAS := $(shell which $(HOSTAS) || type -p $(HOSTAS) || echo as)
-HOSTCPP := $(shell which $(HOSTCPP) || type -p $(HOSTCPP) || echo cpp)
-HOSTLD := $(shell which $(HOSTLD) || type -p $(HOSTLD) || echo ld)
-HOSTLN := $(shell which $(HOSTLN) || type -p $(HOSTLN) || echo ln)
-HOSTNM := $(shell which $(HOSTNM) || type -p $(HOSTNM) || echo nm)
-HOSTOBJCOPY := $(shell which $(HOSTOBJCOPY) || type -p $(HOSTOBJCOPY) || echo objcopy)
-HOSTRANLIB := $(shell which $(HOSTRANLIB) || type -p $(HOSTRANLIB) || echo ranlib)
-SED := $(shell which sed || type -p sed) -i -e
+HOSTAR := $(shell command -v $(HOSTAR) || type -p $(HOSTAR) || echo ar)
+HOSTAS := $(shell command -v $(HOSTAS) || type -p $(HOSTAS) || echo as)
+HOSTCPP := $(shell command -v $(HOSTCPP) || type -p $(HOSTCPP) || echo cpp)
+HOSTLD := $(shell command -v $(HOSTLD) || type -p $(HOSTLD) || echo ld)
+HOSTLN := $(shell command -v $(HOSTLN) || type -p $(HOSTLN) || echo ln)
+HOSTNM := $(shell command -v $(HOSTNM) || type -p $(HOSTNM) || echo nm)
+HOSTOBJCOPY := $(shell command -v $(HOSTOBJCOPY) || type -p $(HOSTOBJCOPY) || echo objcopy)
+HOSTRANLIB := $(shell command -v $(HOSTRANLIB) || type -p $(HOSTRANLIB) || echo ranlib)
+SED := $(shell command -v sed || type -p sed) -i -e
 
 export HOSTAR HOSTAS HOSTCC HOSTCXX HOSTLD
 export HOSTCC_NOCCACHE HOSTCXX_NOCCACHE
