@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-CRYPTODEV_LINUX_VERSION = LSDK-20.04
-CRYPTODEV_LINUX_SITE = $(call github,ccxtechnologies,cryptodev-linux-layerscape,$(CRYPTODEV_LINUX_VERSION))
+CRYPTODEV_LINUX_SITE = $(TOPDIR)/../thirdparty/layerscape-cryptodev
+CRYPTODEV_LINUX_SITE_METHOD = local
 CRYPTODEV_LINUX_INSTALL_STAGING = YES
 CRYPTODEV_LINUX_LICENSE = GPL-2.0+
 CRYPTODEV_LINUX_LICENSE_FILES = COPYING
