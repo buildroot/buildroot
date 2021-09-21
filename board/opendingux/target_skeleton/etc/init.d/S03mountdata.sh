@@ -20,6 +20,9 @@ if [ -b "$DATA_PARTITION" ] ; then
 		modprobe "$DATA_FS"
 	fi
 
+	# Verify the filesystem for errors
+	fsck -p $DATA_PARTITION
+
 	mount $DATA_PARTITION -t $DATA_FS -o nosuid,nodev /media/data
 
 elif [ "$BOOT_PARTITION" ] ; then
