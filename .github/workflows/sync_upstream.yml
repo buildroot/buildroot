@@ -46,11 +46,14 @@ jobs:
           cd ${{ github.workspace }} 
           ls -lh
           cd ${{ github.workspace }}/configs/
+          LOCAL_VERSION=`grep BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION reTerminal_64_defconfig`
           REMOTE_VERSION=`grep BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION raspberrypi4_64_defconfig`
-          sed -i '/BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION/d' reTerminal_64_defconfig
-          echo "$REMOTE_VERSION" >> reTerminal_64_defconfig
-          git add reTerminal_64_defconfig
-          git commit -m "sync kernel version with upstream" -a
+          if [ "$LOCAL_VERSION" != "$REMOTE_VERSION"];then
+            sed -i '/BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION/d' reTerminal_64_defconfig
+            echo "$REMOTE_VERSION" >> reTerminal_64_defconfig
+            git add reTerminal_64_defconfig
+            git commit -m "sync kernel version with upstream" -a
+          fi
 
       - name: 
         uses: ad-m/github-push-action@master
