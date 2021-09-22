@@ -6,7 +6,7 @@ BOARD_DIR="$(dirname $0)"
 BOARD_NAME="$(basename ${BOARD_DIR})"
 GENIMAGE_CFG="${BOARD_DIR}/genimage-${BOARD_NAME}.cfg"
 GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
-BLUETOOTH=$(eval grep ^BR2_PACKAGE_BRIDGE_BLUETOOTH=y ${BR2_CONFIG} | wc -l)
+BLUETOOTH=$(eval grep ^BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH=y ${BR2_CONFIG} | wc -l)
 
 for arg in "$@"
 do
@@ -136,20 +136,20 @@ __EOF__
                         cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
 # Enable spi functionality
 dtparam=spi=on
-dtoverlay=spi0
+dtoverlay=spi0-1cs
 __EOF__
-		            fi
-		            ;;
-		            --1w)
-		            if ! grep -qE '^dtoverlay=w1-gpio' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
-			                  echo "Adding '1w' functionality to config.txt."
-			                  cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
+                fi
+                ;;
+                --1w)
+                if ! grep -qE '^dtoverlay=w1-gpio' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
+                        echo "Adding '1w' functionality to config.txt."
+                        cat << __EOF__ >> "${BINARIES_DIR}/rpi-firmware/config.txt"
 # Enable 1Wire functionality
 dtoverlay=w1-gpio,gpiopin=25
 __EOF__
                 fi
                 ;;
-		            --add-miniuart-bt-overlay)
+		--add-miniuart-bt-overlay)
                 if [ "x${BLUETOOTH}" = "x0" ]; then
                         if ! grep -qE '^dtoverlay=pi3-miniuart-bt' "${BINARIES_DIR}/rpi-firmware/config.txt"; then
                                 echo "Adding 'dtoverlay=pi3-miniuart-bt' to config.txt (fixes ttyAMA0 serial console)."

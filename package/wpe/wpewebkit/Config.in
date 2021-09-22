@@ -53,8 +53,6 @@ config BR2_PACKAGE_WPEWEBKIT
 	select BR2_PACKAGE_LIBXSLT
 	select BR2_PACKAGE_XKEYBOARD_CONFIG
 	select BR2_PACKAGE_OPENJPEG
-	help
-	  WPEWebkit browser
 
 if BR2_PACKAGE_WPEWEBKIT
 
@@ -100,12 +98,6 @@ config BR2_PACKAGE_WPEWEBKIT_DEBUG
 	  Debug build
 
 endchoice
-
-config BR2_PACKAGE_WPEWEBKIT_NO_JSC_OPTIMIZATIONS
-        bool "no JSC optimizations"
-        default n
-        help
-          Avoid JSC optimizations such as JIT and FTL so that backtraces involving JS can come up cleaner
 
 if !BR2_PACKAGE_WPEWEBKIT_DEBUG
 
