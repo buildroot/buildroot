@@ -14,8 +14,6 @@ env:
 
 # This runs every sunday on 0000 UTC
 on:
-  # Or on push, if for mirror it runs on workflow setup and changes
-  push:
   schedule:
     - cron: '0 0 * * 0'
   # Allows manual workflow run (must in default branch to work)
@@ -34,3 +32,28 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           merge_args: ${{ env.MERGE_ARGS }}
           push_args: ${{ env.PUSH_ARGS }}
+
+      - name: checkout repo
+        uses: actions/checkout@main
+
+      - name: init commit env
+        run: |
+          git config --global user.name "commit bot"
+          git config --global user.email 953308023@qq.com
+
+      - name: Check and update the kernel version
+        run: |
+          cd ${{ github.workspace }} 
+          ls -lh
+          cd ${{ github.workspace }}/configs/
+          REMOTE_VERSION=`grep BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION raspberrypi4_64_defconfig`
+          sed -i '/BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION/d' reTerminal_64_defconfig
+          echo "$REMOTE_VERSION" >> reTerminal_64_defconfig
+          git add reTerminal_64_defconfig
+          git commit -m "sync kernel version with upstream" -a
+
+      - name: 
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: "master"
