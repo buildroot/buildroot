@@ -12,6 +12,9 @@ LIBSNDFILE_LICENSE = LGPL-2.1+
 LIBSNDFILE_LICENSE_FILES = COPYING
 LIBSNDFILE_CPE_ID_VENDOR = libsndfile_project
 
+# 0001-ms_adpcm-Fix-and-extend-size-checks.patch
+LIBSNDFILE_IGNORE_CVES += CVE-2021-3246
+
 # disputed, https://github.com/erikd/libsndfile/issues/398
 LIBSNDFILE_IGNORE_CVES += CVE-2018-13419
 
