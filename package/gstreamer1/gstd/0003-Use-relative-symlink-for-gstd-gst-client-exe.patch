@@ -1,0 +1,38 @@
+From a670beca8dcc76171dcfe3f10970d76c6f0439be Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Tue, 14 Sep 2021 02:49:10 -0600
+Subject: [PATCH] Use relative symlink for gstd/gst-client exe.
+
+This should fix the symlink path when cross compiling.
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[Upstream status:
+https://github.com/RidgeRun/gstd-1.x/pull/249]
+---
+ gst_client/gst_client_symbolic_link.sh | 2 +-
+ gstd/gstd_symbolic_link.sh             | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/gst_client/gst_client_symbolic_link.sh b/gst_client/gst_client_symbolic_link.sh
+index d8d7617..b87dd12 100755
+--- a/gst_client/gst_client_symbolic_link.sh
++++ b/gst_client/gst_client_symbolic_link.sh
+@@ -4,4 +4,4 @@
+ # $1: target
+ # $2: link name
+ rm -f ${DESTDIR}${MESON_INSTALL_PREFIX}/$2
+-ln -s ${DESTDIR}${MESON_INSTALL_PREFIX}/$1 ${DESTDIR}${MESON_INSTALL_PREFIX}/$2
++ln -s --relative ${DESTDIR}${MESON_INSTALL_PREFIX}/$1 ${DESTDIR}${MESON_INSTALL_PREFIX}/$2
+diff --git a/gstd/gstd_symbolic_link.sh b/gstd/gstd_symbolic_link.sh
+index d8d7617..b87dd12 100755
+--- a/gstd/gstd_symbolic_link.sh
++++ b/gstd/gstd_symbolic_link.sh
+@@ -4,4 +4,4 @@
+ # $1: target
+ # $2: link name
+ rm -f ${DESTDIR}${MESON_INSTALL_PREFIX}/$2
+-ln -s ${DESTDIR}${MESON_INSTALL_PREFIX}/$1 ${DESTDIR}${MESON_INSTALL_PREFIX}/$2
++ln -s --relative ${DESTDIR}${MESON_INSTALL_PREFIX}/$1 ${DESTDIR}${MESON_INSTALL_PREFIX}/$2
+-- 
+2.25.1
+

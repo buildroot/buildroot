@@ -1,0 +1,42 @@
+From 80e97bd00bf6263845aa98b411507baba28be67e Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 19 Sep 2021 11:01:00 +0200
+Subject: [PATCH] meson.build: wayland-scanner is only needed for tests
+
+wayland-scanner is only needed for tests so don't require it if tests
+are disabled
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://gitlab.freedesktop.org/wayland/wayland-protocols/-/commit/80e97bd00bf6263845aa98b411507baba28be67e]
+---
+ meson.build       | 2 --
+ tests/meson.build | 1 +
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 94b49e7..15dbc37 100644
+--- a/meson.build
++++ b/meson.build
+@@ -8,8 +8,6 @@ wayland_protocols_version = meson.project_version()
+ 
+ fs = import('fs')
+ 
+-dep_scanner = dependency('wayland-scanner', native: true)
+-
+ stable_protocols = [
+ 	'presentation-time',
+ 	'viewporter',
+diff --git a/tests/meson.build b/tests/meson.build
+index 66337e7..74824ae 100644
+--- a/tests/meson.build
++++ b/tests/meson.build
+@@ -1,4 +1,5 @@
+ prog_scan_sh = find_program('scan.sh')
++dep_scanner = dependency('wayland-scanner', native: true)
+ prog_scanner = find_program(dep_scanner.get_pkgconfig_variable('wayland_scanner'))
+ 
+ libwayland = [
+-- 
+GitLab
+
