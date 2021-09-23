@@ -32,8 +32,6 @@ GUMMIBOOT_CONF_OPTS = \
 define GUMMIBOOT_INSTALL_IMAGES_CMDS
 	$(INSTALL) -D -m 0644 $(@D)/gummiboot$(GUMMIBOOT_IMGARCH).efi \
 		$(BINARIES_DIR)/efi-part/EFI/BOOT/boot$(GUMMIBOOT_IMGARCH).efi
-	echo "boot$(GUMMIBOOT_IMGARCH).efi" > \
-		$(BINARIES_DIR)/efi-part/startup.nsh
 	$(INSTALL) -D -m 0644 boot/gummiboot/loader.conf \
 		$(BINARIES_DIR)/efi-part/loader/loader.conf
 	$(INSTALL) -D -m 0644 boot/gummiboot/buildroot.conf \

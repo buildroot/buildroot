@@ -168,13 +168,5 @@ define GRUB2_INSTALL_IMAGES_CMDS
 	$(GRUB2_IMAGE_INSTALL_ELTORITO)
 endef
 
-ifeq ($(GRUB2_PLATFORM),efi)
-define GRUB2_EFI_STARTUP_NSH
-	echo $(notdir $(GRUB2_IMAGE)) > \
-		$(BINARIES_DIR)/efi-part/startup.nsh
-endef
-GRUB2_POST_INSTALL_IMAGES_HOOKS += GRUB2_EFI_STARTUP_NSH
-endif
-
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
