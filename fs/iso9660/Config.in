@@ -27,6 +27,10 @@ choice
 config BR2_TARGET_ROOTFS_ISO9660_GRUB2
 	bool "grub2"
 	depends on BR2_TARGET_GRUB2
+	select BR2_TARGET_ROOTFS_ISO9660_BIOS_BOOTLOADER \
+		if BR2_TARGET_GRUB2_I386_PC
+	select BR2_TARGET_ROOTFS_ISO9660_EFI_BOOTLOADER \
+		if (BR2_TARGET_GRUB2_I386_EFI || BR2_TARGET_GRUB2_X86_64_EFI)
 	help
 	  Use Grub 2 as the bootloader for the ISO9660 image. Make
 	  sure to enable the 'iso9660' module in
@@ -39,21 +43,15 @@ config BR2_TARGET_ROOTFS_ISO9660_GRUB2
 config BR2_TARGET_ROOTFS_ISO9660_ISOLINUX
 	bool "isolinux"
 	depends on BR2_TARGET_SYSLINUX_ISOLINUX
+	select BR2_TARGET_ROOTFS_ISO9660_BIOS_BOOTLOADER
 
 endchoice
-
-choice
-	prompt "Boot payload"
 
 config BR2_TARGET_ROOTFS_ISO9660_BIOS_BOOTLOADER
-	bool "legacy bios"
-	depends on BR2_TARGET_GRUB2_I386_PC || BR2_TARGET_ROOTFS_ISO9660_ISOLINUX
+	bool
 
 config BR2_TARGET_ROOTFS_ISO9660_EFI_BOOTLOADER
-	bool "UEFI"
-	depends on BR2_TARGET_GRUB2_I386_EFI || BR2_TARGET_GRUB2_X86_64_EFI
-
-endchoice
+	bool
 
 config BR2_TARGET_ROOTFS_ISO9660_BOOT_MENU
 	string "Boot menu config file"
