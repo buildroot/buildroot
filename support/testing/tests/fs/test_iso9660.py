@@ -25,9 +25,13 @@ BASIC_CONFIG = \
     """.format(infra.filepath("conf/minimal-x86-qemu-kernel.config"))
 
 
-def test_mount_internal_external(emulator, builddir, internal=True):
+def test_mount_internal_external(emulator, builddir, internal=True, efi=False):
     img = os.path.join(builddir, "images", "rootfs.iso9660")
-    emulator.boot(arch="i386", options=["-cdrom", img])
+    if efi:
+        efi_img = os.path.join(builddir, "images", "OVMF.fd")
+        emulator.boot(arch="i386", options=["-cdrom", img, "-bios", efi_img])
+    else:
+        emulator.boot(arch="i386", options=["-cdrom", img])
     emulator.login()
 
     if internal:
@@ -106,6 +110,69 @@ class TestIso9660Grub2Internal(infra.basetest.BRTest):
 
         exit_code = test_touch_file(self.emulator)
         self.assertEqual(exit_code, 0)
+
+
+class TestIso9660Grub2EFI(infra.basetest.BRTest):
+    config = BASIC_CONFIG + \
+        """
+        BR2_TARGET_ROOTFS_ISO9660=y
+        BR2_TARGET_ROOTFS_ISO9660_INITRD=y
+        BR2_TARGET_GRUB2=y
+        BR2_TARGET_GRUB2_I386_EFI=y
+        BR2_TARGET_GRUB2_BUILTIN_MODULES_EFI="boot linux ext2 fat part_msdos part_gpt normal iso9660"
+        BR2_TARGET_GRUB2_BUILTIN_CONFIG_EFI="{}"
+        BR2_TARGET_ROOTFS_ISO9660_BOOT_MENU="{}"
+        BR2_TARGET_EDK2=y
+        """.format(infra.filepath("conf/grub2-efi.cfg"),
+                   infra.filepath("conf/grub2.cfg"))
+
+    def test_run(self):
+        exit_code = test_mount_internal_external(self.emulator,
+                                                 self.builddir, internal=True,
+                                                 efi=True)
+        self.assertEqual(exit_code, 0)
+
+        exit_code = test_touch_file(self.emulator)
+        self.assertEqual(exit_code, 0)
+
+
+class TestIso9660Grub2Hybrid(infra.basetest.BRTest):
+    config = BASIC_CONFIG + \
+        """
+        BR2_TARGET_ROOTFS_ISO9660=y
+        BR2_TARGET_ROOTFS_ISO9660_INITRD=y
+        BR2_TARGET_GRUB2=y
+        BR2_TARGET_GRUB2_I386_PC=y
+        BR2_TARGET_GRUB2_I386_EFI=y
+        BR2_TARGET_GRUB2_BOOT_PARTITION="cd"
+        BR2_TARGET_GRUB2_BUILTIN_MODULES_PC="boot linux ext2 fat squash4 part_msdos part_gpt normal iso9660 biosdisk"
+        BR2_TARGET_GRUB2_BUILTIN_CONFIG_PC=""
+        BR2_TARGET_GRUB2_BUILTIN_MODULES_EFI="boot linux ext2 fat squash4 part_msdos part_gpt normal iso9660 efi_gop"
+        BR2_TARGET_GRUB2_BUILTIN_CONFIG_EFI="{}"
+        BR2_TARGET_ROOTFS_ISO9660_BOOT_MENU="{}"
+        BR2_TARGET_EDK2=y
+        """.format(infra.filepath("conf/grub2-efi.cfg"),
+                   infra.filepath("conf/grub2.cfg"))
+
+    def test_run(self):
+        exit_code = test_mount_internal_external(self.emulator,
+                                                 self.builddir, internal=True,
+                                                 efi=False)
+        self.assertEqual(exit_code, 0)
+
+        exit_code = test_touch_file(self.emulator)
+        self.assertEqual(exit_code, 0)
+
+        self.emulator.stop()
+
+        exit_code = test_mount_internal_external(self.emulator,
+                                                 self.builddir, internal=True,
+                                                 efi=True)
+        self.assertEqual(exit_code, 0)
+
+        exit_code = test_touch_file(self.emulator)
+        self.assertEqual(exit_code, 0)
+
 
 #
 # Syslinux
