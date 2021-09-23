@@ -2,8 +2,7 @@ config BR2_TARGET_ROOTFS_ISO9660
 	bool "iso image"
 	depends on (BR2_i386 || BR2_x86_64)
 	depends on BR2_LINUX_KERNEL
-	depends on BR2_TARGET_GRUB2_I386_PC || \
-		BR2_TARGET_SYSLINUX_ISOLINUX
+	depends on BR2_TARGET_GRUB2 || BR2_TARGET_SYSLINUX_ISOLINUX
 	select BR2_LINUX_KERNEL_INSTALL_TARGET \
 	       if (!BR2_TARGET_ROOTFS_ISO9660_INITRD && !BR2_TARGET_ROOTFS_INITRAMFS)
 	help
@@ -27,16 +26,32 @@ choice
 
 config BR2_TARGET_ROOTFS_ISO9660_GRUB2
 	bool "grub2"
-	depends on BR2_TARGET_GRUB2_I386_PC
+	depends on BR2_TARGET_GRUB2
 	help
 	  Use Grub 2 as the bootloader for the ISO9660 image. Make
 	  sure to enable the 'iso9660' module in
-	  BR2_TARGET_GRUB2_BUILTIN_MODULES and to use 'cd' as the boot
-	  partition in BR2_TARGET_GRUB2_BOOT_PARTITION=.
+	  BR2_TARGET_GRUB2_BUILTIN_MODULES_PC or
+	  BR2_TARGET_GRUB2_BUILTIN_MODULES_EFI. Use 'cd' as the boot
+	  partition in BR2_TARGET_GRUB2_BOOT_PARTITION= for GRUB on BIOS
+	  or 'set root=(cd0)' in the configuration file passed to
+	  BR2_TARGET_GRUB2_BUILTIN_CONFIG_EFI for GRUB on EFI.
 
 config BR2_TARGET_ROOTFS_ISO9660_ISOLINUX
 	bool "isolinux"
 	depends on BR2_TARGET_SYSLINUX_ISOLINUX
+
+endchoice
+
+choice
+	prompt "Boot payload"
+
+config BR2_TARGET_ROOTFS_ISO9660_BIOS_BOOTLOADER
+	bool "legacy bios"
+	depends on BR2_TARGET_GRUB2_I386_PC || BR2_TARGET_ROOTFS_ISO9660_ISOLINUX
+
+config BR2_TARGET_ROOTFS_ISO9660_EFI_BOOTLOADER
+	bool "UEFI"
+	depends on BR2_TARGET_GRUB2_I386_EFI || BR2_TARGET_GRUB2_X86_64_EFI
 
 endchoice
 
@@ -83,7 +98,7 @@ config BR2_TARGET_ROOTFS_ISO9660_HYBRID
 
 endif
 
-comment "iso image needs a Linux kernel and either grub2 i386-pc or isolinux to be built"
+comment "iso image needs a Linux kernel and either grub2 or isolinux to be built"
 	depends on BR2_i386 || BR2_x86_64
 	depends on !BR2_LINUX_KERNEL || \
-		!(BR2_TARGET_GRUB2_I386_PC || BR2_TARGET_SYSLINUX_ISOLINUX)
+		!(BR2_TARGET_GRUB2 || BR2_TARGET_SYSLINUX_ISOLINUX)
