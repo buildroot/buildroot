@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_PACKAGING
 	bool "python-packaging"
+	depends on BR2_PACKAGE_PYTHON3
 	select BR2_PACKAGE_PYTHON_PYPARSING # runtime
 	help
 	  Core utilities for Python packages.
