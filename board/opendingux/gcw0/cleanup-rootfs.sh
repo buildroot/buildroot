@@ -70,15 +70,5 @@ for i in ${TARGET_DIR}/usr/lib/mono/4.5/* ${TARGET_DIR}/usr/lib/mono/gac/* ; do
 	esac
 done
 
-# Create cmake helpers
-echo -e '#!/bin/sh\n\nexec cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_TOOLCHAIN_FILE=`dirname $0`/../share/buildroot/toolchainfile.cmake $*' > ${HOST_DIR}/usr/bin/mipsel-gcw0-linux-uclibc-cmake
-chmod +x ${HOST_DIR}/usr/bin/mipsel-gcw0-linux-uclibc-cmake
-ln -sf mipsel-gcw0-linux-uclibc-cmake ${HOST_DIR}/usr/bin/mipsel-linux-cmake
-
-# Create ccmake helpers
-echo -e '#!/bin/sh\n\nexec ccmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_TOOLCHAIN_FILE=`dirname $0`/../share/buildroot/toolchainfile.cmake $*' > ${HOST_DIR}/usr/bin/mipsel-gcw0-linux-uclibc-ccmake
-chmod +x ${HOST_DIR}/usr/bin/mipsel-gcw0-linux-uclibc-ccmake
-ln -sf mipsel-gcw0-linux-uclibc-ccmake ${HOST_DIR}/usr/bin/mipsel-linux-ccmake
-
 # Remove modules installed in target dir
 rm -rf ${TARGET_DIR}/lib/modules/*
