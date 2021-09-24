@@ -69,11 +69,11 @@ define XIONE_SDK_INSTALL_PREBUILD_MALI_DEV
 endef
 
 define XIONE_SDK_INSTALL_PREBUILD_MFR_LIB
-    cp -Rpf $(@D)/prebuilds/mfrlib/* $(1)/usr/lib/
+    cp -Rpf $(@D)/prebuilds/mfrlib/* $(1)
 endef
 
 define XIONE_SDK_INSTALL_PREBUILD_XSIGN_LIB
-    cp -Rpf $(@D)/prebuilds/xsign/* $(1)/usr/lib/
+    cp -Rpf $(@D)/prebuilds/xsign/* $(1)
 endef
 
 define XIONE_SDK_INSTALL_PREBUILD_MALI_DRIVER
