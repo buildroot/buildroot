@@ -24,6 +24,7 @@ define XIONE_SDK_INSTALL_PREBUILD_RTK_TEE
     cp -Rpf $(@D)/prebuilds/rtk-tee/usr/lib $(1)/usr
     cp -Rpf $(@D)/prebuilds/rtk-tee/tas $(1)
     ln -sf ../tas $(1)/lib/teetz
+    $(INSTALL) -D -m 0755 $(@D)/init/rtk-tee $(1)/etc/init.d/S34rtk-tee
 endef
 
 define XIONE_SDK_INSTALL_PREBUILD_RTK_TEE_DEV
@@ -46,11 +47,16 @@ endef
 define XIONE_SDK_INSTALL_PREBUILD_HDMISERVICE
     cp -Rpf $(@D)/prebuilds/hdmiservice/usr/lib $(1)/usr
     cp -Rpf $(@D)/prebuilds/hdmiservice/usr/bin $(1)/usr
+    $(INSTALL) -D -m 0755 $(@D)/init/hdmiservice $(1)/etc/init.d/S35hdmiservice
 endef
 
 define XIONE_SDK_INSTALL_PREBUILD_HDMISERVICE_DEV
     $(call XIONE_SDK_INSTALL_PREBUILD_HDMISERVICE,$(1))
     cp -Rpf $(@D)/prebuilds/hdmiservice/usr/include $(1)/usr
+endef
+
+define XIONE_SDK_INSTALL_PREBUILD_RTK_GENERIC
+    cp -Rpf $(@D)/prebuilds/rtk-generic/* $(1)
 endef
 
 define XIONE_SDK_INSTALL_PREBUILD_MALI_LIB
@@ -80,10 +86,12 @@ endef
 
 define XIONE_SDK_INSTALL_PREBUILD_RF4CE_DRIVER
     cp -Rpf $(@D)/prebuilds/qorvo-mod-rf4ce/* $(1)
+    $(INSTALL) -D -m 0755 $(@D)/init/rf4cedriver $(1)/etc/init.d/S36rf4cedriver
 endef
 
 define XIONE_SDK_INSTALL_PREBUILD_WIFI_DRIVER
     cp -Rpf $(@D)/prebuilds/qca6390-mod-wifi/* $(1)
+    $(INSTALL) -D -m 0755 $(@D)/init/wifidriver $(1)/etc/init.d/S33wifidriver
 endef
 
 define XIONE_SDK_INSTALL_STAGING_CMDS
@@ -98,7 +106,6 @@ define XIONE_SDK_INSTALL_STAGING_CMDS
     $(call XIONE_SDK_INSTALL_PREBUILD_XSIGN_LIB,$(STAGING_DIR))
     $(call XIONE_SDK_INSTALL_PREBUILD_RTK_TEE_DEV,$(STAGING_DIR))
     $(call XIONE_SDK_INSTALL_PREBUILD_HDMISERVICE_DEV,$(STAGING_DIR))
-    
 endef
 
 define XIONE_SDK_INSTALL_TARGET_CMDS
@@ -114,8 +121,7 @@ define XIONE_SDK_INSTALL_TARGET_CMDS
     $(call XIONE_SDK_INSTALL_PREBUILD_RTK_TEE,$(TARGET_DIR))
     $(call XIONE_SDK_INSTALL_PREBUILD_HDMISERVICE,$(TARGET_DIR))
 
-    
-    
+    $(call XIONE_SDK_INSTALL_PREBUILD_RTK_GENERIC ,$(TARGET_DIR))
 endef
 
 define QORVO_BUILD_MODULE
