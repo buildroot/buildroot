@@ -107,6 +107,11 @@ config BR2_PACKAGE_WPEWEBKIT_MULTIMEDIA
 
 if BR2_PACKAGE_WPEWEBKIT_MULTIMEDIA
 
+config BR2_PACKAGE_WPEWEBKIT_MEDIA_STREAM
+	bool "media-stream support"
+	help
+	  This option enables media-stream support.
+
 config BR2_PACKAGE_WPEWEBKIT_USE_GSTREAMER_GL
 	bool "use gstreamer-gl"
 	default y
