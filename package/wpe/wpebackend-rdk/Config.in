@@ -4,10 +4,10 @@ config BR2_PACKAGE_WPEBACKEND_RDK
 	help
 	  RDK-specific implementations of the WPEBackend interfaces.
 
-config BR2_PACKAGE_WPEBACKEND_RDK_VC4_QUIRKS
-    bool "VC4 quirks"
-    depends on BR2_PACKAGE_WPEBACKEND_RDK && BR2_PACKAGE_LIBDRM_VC4 && BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_VC4
+config BR2_PACKAGE_WPEBACKEND_RDK_ADDITIONAL_PATCHES
+    bool "wpebackend-rdk additional patches"
+    depends on BR2_PACKAGE_WPEBACKEND_RDK
     default n
 
-comment "WPEBackend VC4 quirks requires vc4, Gallium VC4 driver and wpebackend-rdk"
-   depends on !BR2_PACKAGE_WPEBACKEND_RDK || !BR2_PACKAGE_LIBDRM_VC4 || !BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_VC4
+comment "WPEBackend additional patches requires wpebackend-rdk"
+   depends on !BR2_PACKAGE_WPEBACKEND_RDK

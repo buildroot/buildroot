@@ -100,10 +100,10 @@ endif
 
 endif
 
-ifeq ($(BR2_PACKAGE_WPEBACKEND_RDK_VC4_QUIRKS)x,yx)
-WPEBACKEND_RDK_POST_PATCH_HOOKS += WPEBACKEND_RDK_VC4_QUIRKS_PATCHES
-define WPEBACKEND_RDK_VC4_QUIRKS_PATCHES
-	patch -d $(@D)/ -p1 < package/wpe/wpebackend-rdk//0001-trigger-pre-post-hooks.patch.vc4
+ifeq ($(BR2_PACKAGE_WPEBACKEND_RDK_ADDITIONAL_PATCHES)x,yx)
+WPEBACKEND_RDK_POST_PATCH_HOOKS += WPEBACKEND_RDK_PATCHES
+define WPEBACKEND_RDK_PATCHES
+	patch -d $(@D)/ -p1 < package/wpe/wpebackend-rdk/0001-restore-communication-loop.patch.additional
 endef
 endif
 
