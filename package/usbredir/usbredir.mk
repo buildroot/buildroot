@@ -13,6 +13,7 @@ USBREDIR_INSTALL_STAGING = YES
 USBREDIR_DEPENDENCIES = host-pkgconf libusb
 USBREDIR_CONF_OPTS = \
 	-Dgit_werror=disabled \
+	-Dstack_protector=disabled \
 	-Dtests=disabled \
 	-Dtools=disabled
 

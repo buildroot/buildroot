@@ -1,0 +1,60 @@
+From 54cf1897ef3aa4d0a35b5f4eb1f5c6928b033af5 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 24 Sep 2021 17:24:43 +0200
+Subject: [PATCH] meson: add stack_protector option
+
+Add stack_protector option to allow the user to disable it as some
+embedded toolchains don't support it which will result in the following
+build failure:
+
+/home/giuliobenetti/autobuild/run/instance-3/output-1/host/opt/ext-toolchain/bin/../lib/gcc/sparc-buildroot-linux-uclibc/9.3.0/../../../../sparc-buildroot-linux-uclibc/bin/ld: usbredirparser/libusbredirparser.so.1.1.0.p/usbredirparser.c.o: in function `va_log':
+usbredirparser.c:(.text+0x1c4): undefined reference to `__stack_chk_guard'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/40de5443e98157ad50c6841ea70a835cd5ad4fe9
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:
+https://gitlab.freedesktop.org/spice/usbredir/-/merge_requests/53]
+---
+ meson.build       | 6 +++++-
+ meson_options.txt | 5 +++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index a6d21b8..4350f53 100644
+--- a/meson.build
++++ b/meson.build
+@@ -17,8 +17,12 @@ cc_flags = [
+ if host_machine.system() != 'windows'
+     cc_flags += [
+ 	'-Wp,-D_FORTIFY_SOURCE=2',
+-	'-fstack-protector',
+     ]
++    if get_option('stack_protector').enabled()
++        cc_flags += [
++	    '-fstack-protector',
++        ]
++    endif
+ endif
+ 
+ # Check if we are building from .git
+diff --git a/meson_options.txt b/meson_options.txt
+index 63e8c85..34dd392 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -17,6 +17,11 @@ option('fuzzing-install-dir',
+     type : 'string',
+     description : 'Installation directory for fuzzing binaries')
+ 
++option('stack_protector',
++    type : 'feature',
++    value : 'enabled',
++    description : 'Build usbredir\'s with stack-protector')
++
+ option('tools',
+     type : 'feature',
+     value : 'enabled',
+-- 
+2.33.0
+
