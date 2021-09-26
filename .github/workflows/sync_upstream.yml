@@ -45,6 +45,7 @@ jobs:
         run: |
           cd ${{ github.workspace }} 
           ls -lh
+          git pull origin master
           cd ${{ github.workspace }}/configs/
           LOCAL_VERSION=`grep BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION reTerminal_64_defconfig`
           REMOTE_VERSION=`grep BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION raspberrypi4_64_defconfig`
