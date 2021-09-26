@@ -1,0 +1,54 @@
+From 67394d078c2e1438293b25d08cf408b0b0d55755 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 22 Sep 2021 23:55:59 +0200
+Subject: [PATCH] policy/modules/services/wireguard.te: make iptables optional
+
+Make iptables optional to avoid the following build failure raised since
+version 2.20210908 and
+https://github.com/SELinuxProject/refpolicy/commit/7f1a7b1cacd5d211077ce62fbb4e91890e65c820:
+
+ Compiling targeted policy.33
+ env LD_LIBRARY_PATH="/tmp/instance-0/output-1/host/lib:/tmp/instance-0/output-1/host/usr/lib" /tmp/instance-0/output-1/host/usr/bin/checkpolicy -c 33 -U deny -S -O -E policy.conf -o policy.33
+ policy/modules/services/wireguard.te:66:ERROR 'type iptables_exec_t is not within scope' at token ';' on line 591892:
+ #line 66
+	allow wireguard_t iptables_exec_t:file { getattr open map read execute ioctl };
+ checkpolicy:  error(s) encountered while parsing configuration
+ make[1]: *** [Rules.monolithic:79: policy.33] Error 1
+
+Fixes:
+ - http://autobuild.buildroot.org/results/a4223accc6adb70b06fd4e74ca4f28484446b6fa
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/SELinuxProject/refpolicy/pull/408]
+---
+ policy/modules/services/wireguard.te | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/policy/modules/services/wireguard.te b/policy/modules/services/wireguard.te
+index 7241f65e6..33fd3c55d 100644
+--- a/policy/modules/services/wireguard.te
++++ b/policy/modules/services/wireguard.te
+@@ -61,10 +61,6 @@ corecmd_exec_shell(wireguard_t)
+ 
+ domain_use_interactive_fds(wireguard_t)
+ 
+-# wg-quick can be configured to run iptables and other networking
+-# config tools when bringing up/down the wg interfaces
+-iptables_domtrans(wireguard_t)
+-
+ # wg-quick tries to read /proc/filesystem when running "stat" and "mv" commands
+ kernel_dontaudit_read_system_state(wireguard_t)
+ kernel_dontaudit_search_kernel_sysctl(wireguard_t)
+@@ -75,3 +71,9 @@ miscfiles_read_localization(wireguard_t)
+ sysnet_run_ifconfig(wireguard_t, wireguard_roles)
+ 
+ userdom_use_user_terminals(wireguard_t)
++
++# wg-quick can be configured to run iptables and other networking
++# config tools when bringing up/down the wg interfaces
++optional_policy(`
++	iptables_domtrans(wireguard_t)
++')
+-- 
+2.33.0
+

@@ -1,12 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Byte compile all .py files from provided directories. This script is an
 alternative implementation of compileall.compile_dir written with
 cross-compilation in mind.
 """
-
-from __future__ import print_function
 
 import argparse
 import os

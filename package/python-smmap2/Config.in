@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_SMMAP2
 	bool "python-smmap2"
+	depends on BR2_PACKAGE_PYTHON3
 	help
 	  Smmap wraps an interface around mmap and tracks the mapped
 	  files as well as the amount of clients who use it. If the

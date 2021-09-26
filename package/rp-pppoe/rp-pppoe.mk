@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RP_PPPOE_VERSION = 3.14
+RP_PPPOE_VERSION = 3.15
 RP_PPPOE_SITE = https://dianne.skoll.ca/projects/rp-pppoe/download
 RP_PPPOE_LICENSE = GPL-2.0
 RP_PPPOE_LICENSE_FILES = doc/LICENSE
