@@ -1,0 +1,34 @@
+From 18ff80a9c169fb969b75e2143d9f1f234b71a730 Mon Sep 17 00:00:00 2001
+From: Craig Andrews <candrews@integralblue.com>
+Date: Thu, 24 Jun 2021 20:41:11 -0400
+Subject: [PATCH] [utils] include fmt/xchar.h
+
+fmt 8 moved wchar/custom char overloads to xchar.h, so for fmt 8 compatibility, xchar.h must be included
+
+See https://github.com/fmtlib/fmt/commit/76ee490468212f8705a1421b4c88f8f814b2d351
+
+Downloaded from upstream commit
+https://github.com/xbmc/xbmc/commit/18ff80a9c169fb969b75e2143d9f1f234b71a730
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ xbmc/utils/StringUtils.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/xbmc/utils/StringUtils.h b/xbmc/utils/StringUtils.h
+index ca6f82953d..2dc5c3f03a 100644
+--- a/xbmc/utils/StringUtils.h
++++ b/xbmc/utils/StringUtils.h
+@@ -36,6 +36,9 @@
+ #if FMT_VERSION >= 40000
+ #include <fmt/printf.h>
+ #endif
++#if FMT_VERSION >= 80000
++#include <fmt/xchar.h>
++#endif
+ 
+ #include "XBDateTime.h"
+ #include "utils/params_check_macros.h"
+-- 
+2.30.2
+
