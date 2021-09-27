@@ -1,7 +1,7 @@
 config BR2_PACKAGE_PYTHON_INFLECTION
 	bool "python-inflection"
-	select BR2_PACKAGE_PYTHON_UNICODEDATA if BR2_PACKAGE_PYTHON
-	select BR2_PACKAGE_PYTHON3_UNICODEDATA if BR2_PACKAGE_PYTHON3
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON3_UNICODEDATA
 	help
 	  A string transformation library that singularizes and
 	  pluralizes English words, and transforms strings from
