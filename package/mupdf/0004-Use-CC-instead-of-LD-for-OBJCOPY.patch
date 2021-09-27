@@ -1,0 +1,43 @@
+From da4b98447573daf77829811e95e3772e8a296934 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Rapha=C3=ABl=20M=C3=A9lotte?= <raphael.melotte@mind.be>
+Date: Thu, 2 Sep 2021 20:17:26 +0200
+Subject: [PATCH] Use CC instead of LD for OBJCOPY
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When cross-compiling for mips targets using Buildroot, using LD for
+partial linking fails in the following way:
+/tmp/instance-1/output-1/host/opt/ext-toolchain/bin/../lib/gcc/mips64el-buildroot-linux-uclibc/8.4.0/../../../../mips64el-buildroot-linux-uclibc/bin/ld: build/release/libmupdf.a(Dingbats.cff.o): ABI is incompatible with that of the selected emulation
+/tmp/instance-1/output-1/host/opt/ext-toolchain/bin/../lib/gcc/mips64el-buildroot-linux-uclibc/8.4.0/../../../../mips64el-buildroot-linux-uclibc/bin/ld: failed to merge target specific data of file build/release/libmupdf.a(Dingbats.cff.o)
+
+To fix it, use CC instead of LD for partial linking.
+
+'nostdlib' has to be added, or it will try to use GCC libraries for
+partial linking and fail with 'cannot find -lgcc_s'.
+
+Fixes:
+- http://autobuild.buildroot.net/results/156fe9ee5f6dccdc98990f6c5de5562383bc2b74
+
+Signed-off-by: Raphaël Mélotte <raphael.melotte@mind.be>
+[Upstream status: https://bugs.ghostscript.com/show_bug.cgi?id=704442]
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index b0fb617e2..0a8795e0e 100644
+--- a/Makefile
++++ b/Makefile
+@@ -64,7 +64,7 @@ endif
+ LINK_CMD = $(QUIET_LINK) $(MKTGTDIR) ; $(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
+ TAGS_CMD = $(QUIET_TAGS) ctags -R --c-kinds=+p
+ WINDRES_CMD = $(QUIET_WINDRES) $(MKTGTDIR) ; $(WINDRES) $< $@
+-OBJCOPY_CMD = $(QUIET_OBJCOPY) $(MKTGTDIR) ; $(LD) -r -b binary -z noexecstack -o $@ $<
++OBJCOPY_CMD = $(QUIET_OBJCOPY) $(MKTGTDIR) ; $(CC) -Wl,-r -Wl,-b -Wl,binary -Wl,-z -Wl,noexecstack -nostdlib -o $@ $<
+ 
+ # --- Rules ---
+ 
+-- 
+2.33.0
+
