@@ -14,9 +14,6 @@ SDL2_CPE_ID_PRODUCT = simple_directmedia_layer
 SDL2_INSTALL_STAGING = YES
 SDL2_CONFIG_SCRIPTS = sdl2-config
 
-SDL2_VERSION=db2ad6f
-SDL2_SITE=$(call github,libsdl-org,sdl,$(SDL2_VERSION))
-
 SDL2_CONF_OPTS += \
 	--disable-rpath \
 	--disable-arts \
