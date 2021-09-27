@@ -11,7 +11,7 @@ shift
 for candidate; do
 
     # Try to locate the candidate. Discard it if not located.
-    cmake=`which "${candidate}" 2>/dev/null`
+    cmake=`command -v "${candidate}" 2>/dev/null`
     [ -n "${cmake}" ] || continue
 
     # Extract version X.Y from versions in the form X.Y or X.Y.Z

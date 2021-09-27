@@ -4,7 +4,7 @@ endif
 ifndef HOSTMAKE
 HOSTMAKE = $(MAKE)
 endif
-HOSTMAKE := $(shell which $(HOSTMAKE) || type -p $(HOSTMAKE) || echo make)
+HOSTMAKE := $(shell command -v $(HOSTMAKE) || type -p $(HOSTMAKE) || echo make)
 
 # If BR2_JLEVEL is 0, scale the maximum concurrency with the number of
 # CPUs. An additional job is used in order to keep processors busy
@@ -222,8 +222,8 @@ else
 TARGET_STRIP = /bin/true
 STRIPCMD = $(TARGET_STRIP)
 endif
-INSTALL := $(shell which install || type -p install)
-UNZIP := $(shell which unzip || type -p unzip) -q
+INSTALL := $(shell command -v install || type -p install)
+UNZIP := $(shell command -v unzip || type -p unzip) -q
 
 APPLY_PATCHES = PATH=$(HOST_DIR)/bin:$$PATH support/scripts/apply-patches.sh $(if $(QUIET),-s)
 
@@ -237,7 +237,7 @@ HOST_LDFLAGS  += -L$(HOST_DIR)/lib -Wl,-rpath,$(HOST_DIR)/lib
 # the path to the system perl, before a host-perl built by Buildroot
 # might get installed into $(HOST_DIR)/bin and therefore appears
 # in our PATH. This system perl will be used as INTLTOOL_PERL.
-export PERL=$(shell which perl)
+export PERL=$(shell command -v perl)
 
 # host-intltool needs libxml-parser-perl, which Buildroot installs in
 # $(HOST_DIR)/lib/perl, so we must make sure that the system perl

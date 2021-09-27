@@ -1,0 +1,105 @@
+From dc187b5597779b14d0de4087db4aa54752a15d07 Mon Sep 17 00:00:00 2001
+From: Michael Dickens <michael.dickens@ettus.com>
+Date: Fri, 2 Jul 2021 16:43:41 -0400
+Subject: [PATCH] core: remove boost::math in favor of std cmath
+
+YA Boost removal!!!
+
+Justification
+---
+const int if_freq_sign = boost::math::sign(fe_conn.get_if_freq());
+_dsp_freq_offset = if_freq * (-if_freq_sign);
+// boost::math::sign : 1 if x > 0, -1 if x < 0, and 0 if x is zero.
+// ==> if if_freq_sign > 0 then * by -1 else +1 (effectively)
+
+// std::signbit : true if arg is negative, false otherwise
+// ==> need 'not' of input argument to invert for same result as prior algorithm
+double fe_if_freq = fe_conn.get_if_freq();
+if (!std::signbit(fe_if_freq)) {
+  if_freq *= -1.0;
+}
+---
+The above should result in the same algorithm except possibly
+if fe_if_freq is exactly 0.0 in which case the results might be
+off by the sign (+0.0 versus -0.0).
+
+[Retrieved from:
+https://github.com/EttusResearch/uhd/commit/dc187b5597779b14d0de4087db4aa54752a15d07]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ host/lib/usrp/cores/rx_dsp_core_3000.cpp      | 15 ++++++++-------
+ host/lib/usrp/cores/rx_frontend_core_3000.cpp | 14 ++++++++------
+ 2 files changed, 16 insertions(+), 13 deletions(-)
+
+diff --git a/host/lib/usrp/cores/rx_dsp_core_3000.cpp b/host/lib/usrp/cores/rx_dsp_core_3000.cpp
+index 879748fa2..1c15180ae 100644
+--- a/host/lib/usrp/cores/rx_dsp_core_3000.cpp
++++ b/host/lib/usrp/cores/rx_dsp_core_3000.cpp
+@@ -8,7 +8,6 @@
+ #include <uhd/exception.hpp>
+ #include <uhd/types/dict.hpp>
+ #include <uhd/utils/log.hpp>
+-#include <uhd/utils/math.hpp>
+ #include <uhd/utils/safe_call.hpp>
+ #include <uhdlib/usrp/cores/dsp_core_utils.hpp>
+ #include <uhdlib/usrp/cores/rx_dsp_core_3000.hpp>
+@@ -81,19 +80,21 @@ class rx_dsp_core_3000_impl : public rx_dsp_core_3000
+         _iface->poke32(REG_DSP_RX_MUX, reg_val);
+ 
+         if (fe_conn.get_sampling_mode() == uhd::usrp::fe_connection_t::HETERODYNE) {
+-            // 1. Remember the sign of the IF frequency.
+-            //   It will be discarded in the next step
+-            int if_freq_sign = boost::math::sign(fe_conn.get_if_freq());
++            // 1. Remember the IF frequency
++            const double fe_if_freq = fe_conn.get_if_freq();
+             // 2. Map IF frequency to the range [0, _tick_rate)
+-            double if_freq = std::abs(std::fmod(fe_conn.get_if_freq(), _tick_rate));
+-            // 3. Map IF frequency to the range [-_tick_rate/2, _tick_rate/2)
++            double if_freq = std::abs(std::fmod(fe_if_freq, _tick_rate));
++            // 3. Map IF frequency to the range [-_tick_rate/2, _tick_rate/2]
+             //   This is the aliased frequency
+             if (if_freq > (_tick_rate / 2.0)) {
+                 if_freq -= _tick_rate;
+             }
+             // 4. Set DSP offset to spin the signal in the opposite
+             //   direction as the aliased frequency
+-            _dsp_freq_offset = if_freq * (-if_freq_sign);
++            if (!std::signbit(fe_if_freq)) {
++                if_freq *= -1.0;
++            }
++            _dsp_freq_offset = if_freq;
+         } else {
+             _dsp_freq_offset = 0.0;
+         }
+diff --git a/host/lib/usrp/cores/rx_frontend_core_3000.cpp b/host/lib/usrp/cores/rx_frontend_core_3000.cpp
+index eef25f27d..b9d908534 100644
+--- a/host/lib/usrp/cores/rx_frontend_core_3000.cpp
++++ b/host/lib/usrp/cores/rx_frontend_core_3000.cpp
+@@ -119,19 +119,21 @@ class rx_frontend_core_3000_impl : public rx_frontend_core_3000
+ 
+         UHD_ASSERT_THROW(_adc_rate != 0.0)
+         if (fe_conn.get_sampling_mode() == fe_connection_t::HETERODYNE) {
+-            // 1. Remember the sign of the IF frequency.
+-            //   It will be discarded in the next step
+-            const int if_freq_sign = boost::math::sign(fe_conn.get_if_freq());
++            // 1. Remember the IF frequency
++            const double fe_if_freq = fe_conn.get_if_freq();
+             // 2. Map IF frequency to the range [0, _adc_rate)
+-            double if_freq = std::abs(std::fmod(fe_conn.get_if_freq(), _adc_rate));
+-            // 3. Map IF frequency to the range [-_adc_rate/2, _adc_rate/2)
++            double if_freq = std::abs(std::fmod(fe_if_freq, _adc_rate));
++            // 3. Map IF frequency to the range [-_adc_rate/2, _adc_rate/2]
+             //   This is the aliased frequency
+             if (if_freq > (_adc_rate / 2.0)) {
+                 if_freq -= _adc_rate;
+             }
+             // 4. Set DSP offset to spin the signal in the opposite
+             //   direction as the aliased frequency
+-            const double cordic_freq = if_freq * (-if_freq_sign);
++            if (!std::signbit(fe_if_freq)) {
++                if_freq *= -1.0;
++            }
++            const double cordic_freq = if_freq;
+             UHD_ASSERT_THROW(uhd::math::fp_compare::fp_compare_epsilon<double>(4.0)
+                              == std::abs(_adc_rate / cordic_freq));
+ 

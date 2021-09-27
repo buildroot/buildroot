@@ -1,0 +1,29 @@
+From fb23e136f88a94aa497e8eb4369bb06435c2aaf8 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd.kuhls@t-online.de>
+Date: Sun, 26 Sep 2021 15:59:29 +0200
+Subject: [PATCH] impSurface.h: fix build with gcc11
+
+lib/Implicit/impSurface.h:44:9: error: 'size_t' does not name a type
+   44 |         size_t vertex_data_size;
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+Upstream status: https://github.com/xbmc/screensavers.rsxs/pull/52
+---
+ lib/Implicit/impSurface.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lib/Implicit/impSurface.h b/lib/Implicit/impSurface.h
+index 388701aa..3319820e 100644
+--- a/lib/Implicit/impSurface.h
++++ b/lib/Implicit/impSurface.h
+@@ -21,6 +21,7 @@
+ #ifndef IMPSURFACE_H
+ #define IMPSURFACE_H
+ 
++#include <cstddef>
+ #include <functional>
+ 
+ #ifdef WIN32
+-- 
+2.30.2
+

@@ -14,7 +14,7 @@ shift
 # a more recent version.
 
 for candidate in "${@}" ; do
-	python3=`which $candidate 2>/dev/null`
+	python3=`command -v $candidate 2>/dev/null`
 	if [ ! -x "$python3" ]; then
 		continue
 	fi

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ZBAR_VERSION = 0.23.1
+ZBAR_VERSION = 0.23.90
 ZBAR_SOURCE = zbar-$(ZBAR_VERSION).tar.bz2
 ZBAR_SITE = https://www.linuxtv.org/downloads/zbar
 ZBAR_LICENSE = LGPL-2.1+
@@ -21,7 +21,6 @@ ZBAR_CONF_OPTS = \
 	--without-qt \
 	--without-qt5 \
 	--without-gtk \
-	--without-python \
 	--without-x \
 	--without-java
 
@@ -30,6 +29,13 @@ ZBAR_DEPENDENCIES += dbus
 ZBAR_CONF_OPTS += --with-dbus
 else
 ZBAR_CONF_OPTS += --without-dbus
+endif
+
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
+ZBAR_DEPENDENCIES += host-python3 python3
+ZBAR_CONF_OPTS += --with-python=python3
+else
+ZBAR_CONF_OPTS += --with-python=no
 endif
 
 $(eval $(autotools-package))

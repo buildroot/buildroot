@@ -1,0 +1,34 @@
+From 4a332d01186b09a9d46390b845024d914d9149cb Mon Sep 17 00:00:00 2001
+From: Michel Alexandre Salim <michel@michel-slm.name>
+Date: Sun, 21 Mar 2021 13:17:00 -0700
+Subject: [PATCH] Fix for non-constant SIGSTKSZ
+
+On glibc > 2.33, `SIGSTKSZ` might not be constant (in which case
+it expands to a call to `sysconf` which returns a `long int`); see
+http://sourceware-org.1504.n7.nabble.com/PATCH-sysconf-Add-SC-MINSIGSTKSZ-SC-SIGSTKSZ-BZ-20305-td650948.html
+
+Cast the two arguments to `max` to `unsigned`, which is the type of the variable
+we're storing the result in anyway, so that it works both with the old-style constant
+`SIGSTKSZ` and the new configurable one.
+
+Signed-off-by: Michel Alexandre Salim <michel@michel-slm.name>
+Change-Id: I3d87048561a87c6b9fcdbb14b3d53dd45b0a00f0
+
+[Retrieved from:
+https://chromium-review.googlesource.com/c/breakpad/breakpad/+/2776379]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+
+diff --git a/src/client/linux/handler/exception_handler.cc b/src/client/linux/handler/exception_handler.cc
+index ca353c4..3788829 100644
+--- a/src/client/linux/handler/exception_handler.cc
++++ b/src/client/linux/handler/exception_handler.cc
+@@ -138,7 +138,7 @@
+   // SIGSTKSZ may be too small to prevent the signal handlers from overrunning
+   // the alternative stack. Ensure that the size of the alternative stack is
+   // large enough.
+-  static const unsigned kSigStackSize = std::max(16384, SIGSTKSZ);
++  static const unsigned kSigStackSize = std::max((unsigned) 16384, (unsigned) SIGSTKSZ);
+ 
+   // Only set an alternative stack if there isn't already one, or if the current
+   // one is too small.
