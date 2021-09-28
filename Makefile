@@ -286,12 +286,16 @@ ifndef HOSTCC
 HOSTCC := gcc
 HOSTCC := $(shell which $(HOSTCC) || type -p $(HOSTCC) || echo gcc)
 endif
+ifndef HOSTCC_NOCCACHE
 HOSTCC_NOCCACHE := $(HOSTCC)
+endif
 ifndef HOSTCXX
 HOSTCXX := g++
 HOSTCXX := $(shell which $(HOSTCXX) || type -p $(HOSTCXX) || echo g++)
 endif
+ifndef HOSTCXX_NOCCACHE
 HOSTCXX_NOCCACHE := $(HOSTCXX)
+endif
 ifndef HOSTCPP
 HOSTCPP := cpp
 endif
