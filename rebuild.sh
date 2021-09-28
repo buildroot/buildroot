@@ -14,6 +14,9 @@ rm -rf output/${CONFIG}
 # Use the default config.
 make od_${CONFIG}_defconfig BR2_EXTERNAL=board/opendingux O=output/${CONFIG}
 
+echo "Copy .config to target"
+mkdir output/${CONFIG}/host && cp output/${CONFIG}/.config output/${CONFIG}/host/
+
 if [ "${CONFIG}" = "installer" ] ; then
 	TARGET="all host-odbootd"
 else
