@@ -9,7 +9,7 @@ PIDFILE="/var/run/$NAME.pid"
 
 cmd()
 {
-    start-stop-daemon -q -p "$PIDFILE" "$@"
+    start-stop-daemon -q -p "$PIDFILE" -x "/usr/sbin/$DAEMON" "$@"
     status=$?
     if [ $status -eq 0 ]; then
 	echo "OK"
@@ -23,7 +23,7 @@ case "$1" in
     start)
 	printf 'Starting %s: ' "$DAEMON"
 	# shellcheck disable=SC2086 # we need the word splitting
-	cmd -S -x "/usr/sbin/$DAEMON" -- $SMCROUTED_ARGS
+	cmd -S -- $SMCROUTED_ARGS
 	;;
 
     stop)
