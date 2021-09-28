@@ -216,7 +216,7 @@ $(BUILD_DIR)/%/.stamp_extracted:
 	$(Q)mkdir -p $(@D)
 	$($(PKG)_EXTRACT_CMDS)
 # some packages have messed up permissions inside
-	$(Q)chmod -R +rw $(@D)
+	$(Q)chmod -R +rw $(@D) || :
 	$(foreach hook,$($(PKG)_POST_EXTRACT_HOOKS),$(call $(hook))$(sep))
 	@$(call step_end,extract)
 	$(Q)touch $@
