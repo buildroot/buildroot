@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-COBALT_VERSION = 6b2b7b07b6b0cc6d870f8bd0b4b3cc684f635dfb
+COBALT_VERSION = a92b34d6e6b8de04c49a3265de9b9c6d805b2790
 COBALT_SITE_METHOD = git
 COBALT_SITE = git@github.com:Metrological/cobalt
 COBALT_INSTALL_STAGING = YES
@@ -31,8 +31,7 @@ export COBALT_HAS_OCDM=0
 endif
 
 ifeq ($(BR2_PACKAGE_WPEFRAMEWORK_PROVISIONPROXY),y)
-# TODO: There is an issue in linking provisionproxy in cobalt 22
-export COBALT_HAS_PROVISION=0
+export COBALT_HAS_PROVISION=1
 else
 export COBALT_HAS_PROVISION=0
 endif
