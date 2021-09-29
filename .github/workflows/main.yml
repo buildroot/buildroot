@@ -76,6 +76,8 @@ jobs:
         echo "BR2_TOOLCHAIN_EXTERNAL_PATH=\"$(pwd)/rs90-toolchain\"" >> configs/od_installer_defconfig
         echo "BR2_TOOLCHAIN_EXTERNAL_PREINSTALLED=y" >> configs/od_installer_defconfig
         echo "BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=n" >> configs/od_installer_defconfig
+        sed -i "s/BR2_TOOLCHAIN_EXTERNAL_HEADERS_.*=y/BR2_TOOLCHAIN_EXTERNAL_HEADERS_$(sed -n 's/BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_\(.*\)=y/\1/p' $(pwd)/rs90-toolchain/.config)=y/" configs/od_installer_defconfig
+        sed -i "s/BR2_TOOLCHAIN_EXTERNAL_GCC_.*=y/BR2_TOOLCHAIN_EXTERNAL_GCC_$(sed -n 's/BR2_GCC_VERSION_\(.*\)_X=y/\1/p' $(pwd)/rs90-toolchain/.config)=y/" configs/od_installer_defconfig
     - name: build
       run: ./rebuild.sh
       env:
