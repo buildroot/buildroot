@@ -1,0 +1,46 @@
+From 0276d5c239c41b3a63f738a5dc47fd56ac389cf0 Mon Sep 17 00:00:00 2001
+From: Ganael Laplanche <ganael.laplanche@martymac.org>
+Date: Thu, 20 Aug 2020 12:29:05 +0200
+Subject: [PATCH] Fix build with LibreSSL (following commit 537f37898)
+
+Upstream status: https://github.com/lavv17/lftp/commit/0276d5c239c41b3a63f738a5dc47fd56ac389cf0
+Signed-off-by: Artem Panfilov <artemp@synopsys.com>
+Signed-off-by: Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>
+---
+ src/lftp_ssl.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/lftp_ssl.cc b/src/lftp_ssl.cc
+index 14a3b9d4..968d3fb2 100644
+--- a/src/lftp_ssl.cc
++++ b/src/lftp_ssl.cc
+@@ -34,7 +34,7 @@
+ #include "misc.h"
+ #include "network.h"
+ #include "buffer.h"
+-#if OPENSSL_VERSION_NUMBER < 0x10100000L
++#if OPENSSL_VERSION_NUMBER < 0x10100000L || LIBRESSL_VERSION_NUMBER
+ #define X509_STORE_CTX_get_by_subject X509_STORE_get_by_subject
+ #endif
+ extern "C" {
+@@ -840,7 +840,7 @@ lftp_ssl_openssl_instance::lftp_ssl_openssl_instance()
+    ssl_ctx=SSL_CTX_new();
+    X509_set_default_verify_paths(ssl_ctx->cert);
+ #else
+-#if OPENSSL_VERSION_NUMBER < 0x10100000L
++#if OPENSSL_VERSION_NUMBER < 0x10100000L || LIBRESSL_VERSION_NUMBER
+    SSLeay_add_ssl_algorithms();
+ #endif
+    ssl_ctx=SSL_CTX_new(SSLv23_client_method());
+@@ -1080,7 +1080,7 @@ void lftp_ssl_openssl::copy_sid(const lftp_ssl_openssl *o)
+ 
+ const char *lftp_ssl_openssl::strerror()
+ {
+-#if OPENSSL_VERSION_NUMBER < 0x10100000L
++#if OPENSSL_VERSION_NUMBER < 0x10100000L || LIBRESSL_VERSION_NUMBER
+    SSL_load_error_strings();
+ #endif
+    int error=ERR_get_error();
+-- 
+2.25.1
+
