@@ -1,0 +1,23 @@
+config BR2_PACKAGE_SIPROXD
+	bool "siproxd"
+	depends on BR2_USE_MMU # fork()
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_PACKAGE_LIBOSIP2
+	select BR2_PACKAGE_LIBTOOL
+	select BR2_PACKAGE_SQLITE
+	help
+	  Siproxd is a proxy/masquerading daemon for SIP (Session
+	  Initiation Protocol), which is used in IP telephony. It
+	  handles registrations of SIP clients on a private IP network
+	  and performs rewriting of the SIP message bodies to make SIP
+	  connections work via a masquerading firewall (NAT). It allows
+	  SIP software clients (like kphone, linphone) or SIP hardware
+	  clients (Voice over IP phones which are SIP-compatible, such
+	  as those from Cisco, Grandstream or Snom) to work behind an IP
+	  masquerading firewall or NAT router.
+
+	  http://siproxd.sourceforge.net/
+
+comment "siproxd needs a toolchain w/ threads"
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_HAS_THREADS

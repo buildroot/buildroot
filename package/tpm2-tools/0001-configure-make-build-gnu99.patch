@@ -1,0 +1,30 @@
+From 521c3cc506b18c5c84d86e1e90d1daee39849b0c Mon Sep 17 00:00:00 2001
+From: William Roberts <william.c.roberts@intel.com>
+Date: Mon, 8 Feb 2021 11:57:28 -0600
+Subject: [PATCH] configure: make build gnu99
+
+Signed-off-by: William Roberts <william.c.roberts@intel.com>
+
+[Retrieved from:
+https://github.com/tpm2-software/tpm2-tools/commit/521c3cc506b18c5c84d86e1e90d1daee39849b0c
+and updated to set gnu99 instead of c99 as done by
+https://github.com/tpm2-software/tpm2-tools/commit/5d0267428e96989afce406d096994ec5091ee107]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ configure.ac | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/configure.ac b/configure.ac
+index dc15b5595..25039a0d9 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -287,6 +287,9 @@ AC_DEFUN([add_c_flag], [
+ # -D_GNU_SOURCE is required for execvpe() in options.c
+ add_c_flag([-D_GNU_SOURCE], [AC_MSG_ERROR([Cannot enable -D_GNU_SOURCE])])
+ 
++# Enable gnu99 mode, since we use some of these features.
++add_c_flag([-std=gnu99], [AC_MSG_ERROR([Cannot enable -std=gnu99])])
++
+ # Best attempt compiler options that are on newer versions of GCC that
+ # we can't widely enforce without killing other peoples builds.
+ # Works with gcc only. Needs to be disabled on BSD and clang

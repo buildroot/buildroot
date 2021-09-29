@@ -31,6 +31,9 @@ Here is the list of targeted platforms per defconfig:
   - Nitrogen8MNano
   - Nitrogen8MNano_SOM
 
+- nitrogen8mp_defconfig
+  - Nitrogen8MPlus_SOM
+
 To install, simply copy the image to your storage (SD, eMMC, USB):
 
 $ sudo dd if=output/images/sdcard.img of=/dev/sdX

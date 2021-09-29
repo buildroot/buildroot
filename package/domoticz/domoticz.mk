@@ -4,13 +4,17 @@
 #
 ################################################################################
 
-DOMOTICZ_VERSION = 2020.1
-DOMOTICZ_SITE = $(call github,domoticz,domoticz,$(DOMOTICZ_VERSION))
+DOMOTICZ_VERSION = 2021.1
+DOMOTICZ_SITE = https://github.com/domoticz/domoticz
+DOMOTICZ_SITE_METHOD = git
+DOMOTICZ_GIT_SUBMODULES = YES
 DOMOTICZ_LICENSE = GPL-3.0
 DOMOTICZ_LICENSE_FILES = License.txt
 DOMOTICZ_CPE_ID_VENDOR = domoticz
 DOMOTICZ_DEPENDENCIES = \
 	boost \
+	cereal \
+	fmt \
 	host-pkgconf \
 	jsoncpp \
 	libcurl \
@@ -30,10 +34,10 @@ DOMOTICZ_CONF_OPTS += \
 	-DUSE_OPENSSL_STATIC=OFF
 
 # Do not use any built-in libraries which are enabled by default for
-# jsoncpp, lua, sqlite and mqtt
+# jsoncpp, fmt, sqlite and mqtt
 DOMOTICZ_CONF_OPTS += \
 	-DUSE_BUILTIN_JSONCPP=OFF \
-	-DUSE_BUILTIN_LUA=OFF \
+	-DUSE_BUILTIN_LIBFMT=OFF \
 	-DUSE_BUILTIN_SQLITE=OFF \
 	-DUSE_BUILTIN_MQTT=OFF
 

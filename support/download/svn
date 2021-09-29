@@ -22,10 +22,10 @@ set -e
 
 . "${0%/*}/helpers"
 
-verbose=
+quiet=
 while getopts "${BR_BACKEND_DL_GETOPTS}" OPT; do
     case "${OPT}" in
-    q)  verbose=-q;;
+    q)  quiet=-q;;
     o)  output="${OPTARG}";;
     u)  uri="${OPTARG}";;
     c)  rev="${OPTARG}";;
@@ -40,17 +40,26 @@ shift $((OPTIND-1)) # Get rid of our options
 # Caller needs to single-quote its arguments to prevent them from
 # being expanded a second time (in case there are spaces in them)
 _svn() {
+    if [ -z "${quiet}" ]; then
+        printf '%s ' ${SVN} "${@}"; printf '\n'
+    fi
+    _plain_svn "$@"
+}
+# Note: please keep command below aligned with what is printed above
+_plain_svn() {
     eval ${SVN} "${@}"
 }
 
-_svn export ${verbose} "${@}" "'${uri}@${rev}'" "'${basename}'"
+_svn export --ignore-keywords ${quiet} "${@}" "'${uri}@${rev}'" "'${basename}'"
 
 # Get the date of the revision, to generate reproducible archives.
 # The output format is YYYY-MM-DDTHH:MM:SS.mmmuuuZ (i.e. always in the
 # UTC timezone), which we can feed as-is to the --mtime option for tar.
 # In case there is a redirection (e.g. http -> https), just keep the
 # last line (svn outputs everything on stdout)
-date="$( _svn info --show-item last-changed-date "'${uri}@${rev}'" |tail -n 1 )"
+date="$( _plain_svn info "'${uri}@${rev}'" \
+        |sed -r -e '/^Last Changed Date: /!d; s///'
+       )"
 
 # Generate the archive.
 # We did a 'svn export' above, so it's not a working copy (there is no .svn

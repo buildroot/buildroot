@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-GOBJECT_INTROSPECTION_VERSION_MAJOR = 1.64
-GOBJECT_INTROSPECTION_VERSION = $(GOBJECT_INTROSPECTION_VERSION_MAJOR).1
+GOBJECT_INTROSPECTION_VERSION_MAJOR = 1.68
+GOBJECT_INTROSPECTION_VERSION = $(GOBJECT_INTROSPECTION_VERSION_MAJOR).0
 GOBJECT_INTROSPECTION_SITE = http://ftp.gnome.org/pub/GNOME/sources/gobject-introspection/$(GOBJECT_INTROSPECTION_VERSION_MAJOR)
 GOBJECT_INTROSPECTION_SOURCE = gobject-introspection-$(GOBJECT_INTROSPECTION_VERSION).tar.xz
 GOBJECT_INTROSPECTION_INSTALL_STAGING = YES
@@ -43,7 +43,7 @@ HOST_GOBJECT_INTROSPECTION_NINJA_ENV += \
 # Use the host gi-scanner to prevent the scanner from generating incorrect
 # elf classes.
 GOBJECT_INTROSPECTION_CONF_OPTS = \
-	-Dgi_cross_use_host_gi=true \
+	-Dgi_cross_use_prebuilt_gi=true \
 	-Dgi_cross_binary_wrapper="$(STAGING_DIR)/usr/bin/g-ir-scanner-qemuwrapper" \
 	-Dgi_cross_ldd_wrapper="$(STAGING_DIR)/usr/bin/g-ir-scanner-lddwrapper" \
 	-Dbuild_introspection_data=true \
@@ -64,8 +64,8 @@ HOST_GOBJECT_INTROSPECTION_CONF_ENV = \
 	GI_SCANNER_DISABLE_CACHE=1
 
 # Make sure g-ir-tool-template uses the host python.
-define GOBJECT_INTROSPECTION_FIX_TOOLTEMPLATE_PYTHON_PATH
-	$(SED) '1s%#!.*%#!$(HOST_DIR)/bin/python%' $(@D)/tools/g-ir-tool-template.in
+define GOBJECT_INTROSPECTION_FIX_TOOLS_PYTHON_PATH
+	$(SED) '1s%#!.*%#!$(HOST_DIR)/bin/python3%' $(@D)/tools/g-ir-tool-template.in
 endef
 HOST_GOBJECT_INTROSPECTION_PRE_CONFIGURE_HOOKS += GOBJECT_INTROSPECTION_FIX_TOOLTEMPLATE_PYTHON_PATH
 
@@ -75,7 +75,7 @@ HOST_GOBJECT_INTROSPECTION_PRE_CONFIGURE_HOOKS += GOBJECT_INTROSPECTION_FIX_TOOL
 # - Create a safe modules directory which does not exist so we don't load random things
 #   which may then get deleted (or their dependencies) and potentially segfault
 define GOBJECT_INTROSPECTION_INSTALL_PRE_WRAPPERS
-	$(SED) '1s%#!.*%#!$(HOST_DIR)/bin/python%' $(@D)/tools/g-ir-tool-template.in
+	$(SED) '1s%#!.*%#!$(HOST_DIR)/bin/python3%' $(@D)/tools/g-ir-tool-template.in
 
 	$(INSTALL) -D -m 755 $(GOBJECT_INTROSPECTION_PKGDIR)/g-ir-scanner-lddwrapper.in \
 		$(STAGING_DIR)/usr/bin/g-ir-scanner-lddwrapper
@@ -116,22 +116,22 @@ define GOBJECT_INTROSPECTION_INSTALL_WRAPPERS
 
 	# Gobject-introspection installs Makefile.introspection in
 	# $(STAGING_DIR)/usr/share which is needed for autotools-based programs to
-	# build .gir and .typelib files. Unfortuantly, gobject-introspection-1.0.pc
+	# build .gir and .typelib files. Unfortunately, gobject-introspection-1.0.pc
 	# uses $(prefix)/share as the directory, which
 	# causes the host /usr/share being used instead of $(STAGING_DIR)/usr/share.
-	# Change datarootdir to $(libdir)/../share which will prefix $(STAGING_DIR)
+	# Change datadir to $(libdir)/../share which will prefix $(STAGING_DIR)
 	# to the correct location.
-	$(SED) "s%datarootdir=.*%datarootdir=\$${libdir}/../share%g" \
+	$(SED) "s%^datadir=.*%datadir=\$${libdir}/../share%g" \
 		$(STAGING_DIR)/usr/lib/pkgconfig/gobject-introspection-1.0.pc
 
 	# By default, girdir and typelibdir use datadir and libdir as their prefix,
 	# of which pkg-config appends the sysroot directory. This results in files
 	# being installed in $(STAGING_DIR)/$(STAGING_DIR)/path/to/files.
-	# Changing the prefix to exec_prefix prevents this error.
-	$(SED) "s%girdir=.*%girdir=\$${exec_prefix}/share/gir-1.0%g" \
+	# Changing the prefix to prefix prevents this error.
+	$(SED) "s%girdir=.*%girdir=\$${prefix}/share/gir-1.0%g" \
 		$(STAGING_DIR)/usr/lib/pkgconfig/gobject-introspection-1.0.pc
 
-	$(SED) "s%typelibdir=.*%typelibdir=\$${exec_prefix}/lib/girepository-1.0%g" \
+	$(SED) "s%typelibdir=.*%typelibdir=\$${prefix}/lib/girepository-1.0%g" \
 		$(STAGING_DIR)/usr/lib/pkgconfig/gobject-introspection-1.0.pc
 endef
 GOBJECT_INTROSPECTION_POST_INSTALL_STAGING_HOOKS += GOBJECT_INTROSPECTION_INSTALL_WRAPPERS

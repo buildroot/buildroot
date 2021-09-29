@@ -1,0 +1,28 @@
+From 9c4d9d826a6f40f199c526afd5ec168d5d088591 Mon Sep 17 00:00:00 2001
+From: Martin Braun <martin.braun@ettus.com>
+Date: Fri, 29 Jan 2021 12:23:50 +0100
+Subject: [PATCH] lib: Fix missing includes in rpc.hpp
+
+[Retrieved from:
+https://github.com/EttusResearch/uhd/commit/9c4d9d826a6f40f199c526afd5ec168d5d088591]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ host/lib/include/uhdlib/utils/rpc.hpp | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/host/lib/include/uhdlib/utils/rpc.hpp b/host/lib/include/uhdlib/utils/rpc.hpp
+index e87a2ee324..ca89c10547 100644
+--- a/host/lib/include/uhdlib/utils/rpc.hpp
++++ b/host/lib/include/uhdlib/utils/rpc.hpp
+@@ -12,7 +12,11 @@
+ #include <rpc/client.h>
+ #include <rpc/rpc_error.h>
+ #include <boost/format.hpp>
++#include <chrono>
+ #include <memory>
++#include <mutex>
++#include <string>
++#include <thread>
+ 
+ namespace {
+ 

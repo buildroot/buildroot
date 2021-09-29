@@ -4,12 +4,13 @@
 #
 ################################################################################
 
-GIT_VERSION = 2.30.0
+GIT_VERSION = 2.31.1
 GIT_SOURCE = git-$(GIT_VERSION).tar.xz
 GIT_SITE = $(BR2_KERNEL_MIRROR)/software/scm/git
 GIT_LICENSE = GPL-2.0, LGPL-2.1+
 GIT_LICENSE_FILES = COPYING LGPL-2.1
 GIT_CPE_ID_VENDOR = git-scm
+GIT_SELINUX_MODULES = apache git
 GIT_DEPENDENCIES = zlib $(TARGET_NLS_DEPENDENCIES)
 # We're patching configure.ac
 GIT_AUTORECONF = YES
@@ -25,12 +26,8 @@ endif
 ifeq ($(BR2_PACKAGE_PCRE2),y)
 GIT_DEPENDENCIES += pcre2
 GIT_CONF_OPTS += --with-libpcre2
-else ifeq ($(BR2_PACKAGE_PCRE),y)
-GIT_DEPENDENCIES += pcre
-GIT_CONF_OPTS += --with-libpcre1
-GIT_MAKE_OPTS += NO_LIBPCRE1_JIT=1
 else
-GIT_CONF_OPTS += --without-libpcre
+GIT_CONF_OPTS += --without-libpcre2
 endif
 
 ifeq ($(BR2_PACKAGE_LIBCURL),y)

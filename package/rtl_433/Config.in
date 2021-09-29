@@ -1,0 +1,16 @@
+config BR2_PACKAGE_RTL_433
+	bool "rtl_433"
+	depends on BR2_USE_MMU # fork()
+	depends on !BR2_STATIC_LIBS
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_PSK if BR2_PACKAGE_LIBOPENSSL
+	help
+	  rtl_433 (despite the name) is a generic data receiver, mainly
+	  for the 433.92 MHz, 868 MHz (SRD), 315 MHz, 345 MHz, and 915
+	  MHz ISM bands.
+
+	  https://github.com/merbanan/rtl_433
+
+comment "rtl_433 needs a toolchain w/ dynamic library, threads"
+	depends on BR2_USE_MMU
+	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS

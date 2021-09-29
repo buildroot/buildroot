@@ -1,0 +1,34 @@
+From ff1f9d7c9bc163de3117383b7cea9cd99585462a Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 31 Jul 2021 23:42:35 +0200
+Subject: [PATCH] src/libmbim-glib/meson.build: fix static build
+
+Replace shared_library by library to fix static build failure with
+toolchains that don't support dynamic library
+
+Fixes:
+ - http://autobuild.buildroot.org/results/8553211d87a2c41d8b47b51bbb193736fce49714
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:
+https://gitlab.freedesktop.org/mobile-broadband/libmbim/-/merge_requests/83]
+---
+ src/libmbim-glib/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/libmbim-glib/meson.build b/src/libmbim-glib/meson.build
+index e3337db..5de3564 100644
+--- a/src/libmbim-glib/meson.build
++++ b/src/libmbim-glib/meson.build
+@@ -76,7 +76,7 @@ version_header = configure_file(
+ 
+ symbol_map = join_paths(meson.current_source_dir(), 'symbol.map')
+ 
+-libmbim_glib = shared_library(
++libmbim_glib = library(
+   libname,
+   version: mbim_glib_version,
+   sources: version_header,
+-- 
+2.30.2
+

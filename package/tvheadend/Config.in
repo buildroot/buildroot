@@ -3,7 +3,7 @@ comment "tvheadend needs a toolchain w/ NPTL, headers >= 3.2, dynamic library"
 		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_2 || BR2_STATIC_LIBS
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 
-config BR2_PACKAGE_TVHEADEND
+menuconfig BR2_PACKAGE_TVHEADEND
 	bool "tvheadend"
 	depends on !BR2_STATIC_LIBS # dladdr()
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
@@ -12,6 +12,7 @@ config BR2_PACKAGE_TVHEADEND
 	select BR2_PACKAGE_DTV_SCAN_TABLES
 	select BR2_PACKAGE_LIBICONV if !BR2_ENABLE_LOCALE
 	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_DES if BR2_PACKAGE_LIBOPENSSL
 	help
 
 	  Tvheadend is a TV streaming server for Linux supporting
@@ -27,6 +28,36 @@ config BR2_PACKAGE_TVHEADEND
 	          Avahi, D-Bus, libdaemon
 
 if BR2_PACKAGE_TVHEADEND
+
+config BR2_PACKAGE_TVHEADEND_DESCRAMBLER
+	bool "descrambler support"
+	default y
+	help
+	  Enable support for various descrambler modules.
+
+config BR2_PACKAGE_TVHEADEND_IPTV
+	bool "IPTV support"
+	default y
+	help
+	  Enable IPTV support.
+
+	  Note that some IPTV streams will need to be piped through
+	  ffmpeg (the commandline tool), so you may have to enable it
+	  with:
+	    BR2_PACKAGE_FFMPEG=y
+	    BR2_PACKAGE_FFMPEG_FFMPEG=y
+
+config BR2_PACKAGE_TVHEADEND_SATIP
+	bool "SAT>IP support"
+	default y
+	help
+	  Enable SAT>IP support.
+
+config BR2_PACKAGE_TVHEADEND_TIMESHIFT
+	bool "timeshift support"
+	default y
+	help
+	  Enable timeshift support.
 
 config BR2_PACKAGE_TVHEADEND_TRANSCODING
 	bool "transcoding support"

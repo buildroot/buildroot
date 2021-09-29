@@ -1,0 +1,31 @@
+From 845c18c1288b7a96592901baadb198f96dd71c46 Mon Sep 17 00:00:00 2001
+From: fidomax <adobegitler@gmail.com>
+Date: Tue, 26 Jan 2021 09:49:19 +0300
+Subject: [PATCH] Disable forced static linking of liblwgeom
+
+In case of shared libs build fails:
+ld: cannot find -lgeos_c
+ld: attempted static link of dynamic object `/usr/lib/libproj.so'
+
+Signed-off-by: Maxim Kochetkov <fido_max@inbox.ru>
+Fetch from: https://github.com/postgis/postgis/commit/98070faad220e12fcaed9a583a70a37c510b7c6b.patch
+---
+ loader/Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/loader/Makefile.in b/loader/Makefile.in
+index 9aebfe07f..9a0c90d3a 100644
+--- a/loader/Makefile.in
++++ b/loader/Makefile.in
+@@ -44,7 +44,7 @@ ICONV_CFLAGS=@ICONV_CFLAGS@
+ 
+ # liblwgeom
+ LIBLWGEOM=../liblwgeom/liblwgeom.la
+-LDFLAGS += -static $(LIBLWGEOM)
++LDFLAGS += $(LIBLWGEOM)
+ 
+ # GTK includes and libraries
+ GTK_CFLAGS = @GTK_CFLAGS@ @IGE_MAC_CFLAGS@
+-- 
+2.30.0
+

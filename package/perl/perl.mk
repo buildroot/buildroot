@@ -11,6 +11,7 @@ PERL_SITE = https://www.cpan.org/src/5.0
 PERL_SOURCE = perl-$(PERL_VERSION).tar.xz
 PERL_LICENSE = Artistic or GPL-1.0+
 PERL_LICENSE_FILES = Artistic Copying README
+PERL_CPE_ID_VENDOR = perl
 PERL_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES)
 PERL_INSTALL_STAGING = YES
 
@@ -79,7 +80,7 @@ endif
 define PERL_CONFIGURE_CMDS
 	(cd $(@D); $(TARGET_MAKE_ENV) HOSTCC='$(HOSTCC_NOCCACHE)' \
 		./configure $(PERL_CONF_OPTS))
-	$(SED) 's/UNKNOWN-/Buildroot $(BR2_VERSION_FULL) /' $(@D)/patchlevel.h
+	$(SED) 's/UNKNOWN-/Buildroot $(subst /,\/,$(BR2_VERSION_FULL)) /' $(@D)/patchlevel.h
 endef
 
 define PERL_BUILD_CMDS

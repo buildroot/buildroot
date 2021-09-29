@@ -19,20 +19,16 @@ class TestTmux(infra.basetest.BRTest):
         self.emulator.login()
 
         cmd = "tmux -V"
-        _, exit_code = self.emulator.run(cmd)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk(cmd)
 
         cmd = "tmux -C </dev/null"
-        _, exit_code = self.emulator.run(cmd)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk(cmd)
 
         cmd = "tmux split"
-        _, exit_code = self.emulator.run(cmd)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk(cmd)
 
         cmd = "tmux new-window"
-        _, exit_code = self.emulator.run(cmd)
-        self.assertEqual(exit_code, 0)
+        self.assertRunOk(cmd)
 
         cmd = "tmux list-windows"
         output, exit_code = self.emulator.run(cmd)

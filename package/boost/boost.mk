@@ -6,7 +6,7 @@
 
 BOOST_VERSION = 1.75.0
 BOOST_SOURCE = boost_$(subst .,_,$(BOOST_VERSION)).tar.bz2
-BOOST_SITE = https://dl.bintray.com/boostorg/release/$(BOOST_VERSION)/source
+BOOST_SITE = https://boostorg.jfrog.io/artifactory/main/release/$(BOOST_VERSION)/source
 BOOST_INSTALL_STAGING = YES
 BOOST_LICENSE = BSL-1.0
 BOOST_LICENSE_FILES = LICENSE_1_0.txt
@@ -95,7 +95,7 @@ BOOST_OPTS += --no-cmake-config \
 	     toolset=gcc \
 	     threading=multi \
 	     abi=$(BOOST_ABI) \
-	     variant=$(if $(BR2_ENABLE_DEBUG),debug,release)
+	     variant=$(if $(BR2_ENABLE_RUNTIME_DEBUG),debug,release)
 
 ifeq ($(BR2_sparc64),y)
 BOOST_OPTS += architecture=sparc instruction-set=ultrasparc

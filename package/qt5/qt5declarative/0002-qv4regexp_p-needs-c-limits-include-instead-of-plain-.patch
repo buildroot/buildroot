@@ -1,0 +1,41 @@
+From bfd3d907f48aba870be00cd251f0b63d34985be2 Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Thu, 22 Jul 2021 23:02:29 +0200
+Subject: [PATCH] qv4regexp_p: needs c++ limits include (instead of plain c
+ limit.h)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes gcc-11 compile:
+
+  In file included from jsruntime/qv4regexp_p.h:62,
+                   from jsruntime/qv4regexp.cpp:40:
+  ../3rdparty/masm/yarr/Yarr.h:46:44: error: ‘numeric_limits’ is not a member of ‘std’
+     46 | static const unsigned offsetNoMatch = std::numeric_limits<unsigned>::max();
+        |                                            ^~~~~~~~~~~~~~
+  ../3rdparty/masm/yarr/Yarr.h:46:59: error: expected primary-expression before ‘unsigned’
+     46 | static const unsigned offsetNoMatch = std::numeric_limits<unsigned>::max();
+        |                                                           ^~~~~~~~
+
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ src/qml/jsruntime/qv4regexp_p.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/qml/jsruntime/qv4regexp_p.h b/src/qml/jsruntime/qv4regexp_p.h
+index 6afb10ea95..c64f3d3c38 100644
+--- a/src/qml/jsruntime/qv4regexp_p.h
++++ b/src/qml/jsruntime/qv4regexp_p.h
+@@ -57,7 +57,7 @@
+ #include <wtf/FastAllocBase.h>
+ #include <wtf/BumpPointerAllocator.h>
+ 
+-#include <limits.h>
++#include <limits>
+ 
+ #include <yarr/Yarr.h>
+ #include <yarr/YarrInterpreter.h>
+-- 
+2.32.0
+

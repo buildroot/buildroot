@@ -21,15 +21,6 @@ class TestPythonTwisted(TestPythonPackageBase):
         self.assertEqual(exit_code, 0)
 
 
-class TestPythonPy2Twisted(TestPythonTwisted):
-    __test__ = True
-    config = TestPythonTwisted.config + \
-        """
-        BR2_PACKAGE_PYTHON=y
-        BR2_PACKAGE_PYTHON_TWISTED=y
-        """
-
-
 class TestPythonPy3Twisted(TestPythonTwisted):
     __test__ = True
     config = TestPythonTwisted.config + \

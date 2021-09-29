@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MENDER_GRUBENV_VERSION = 1.3.0
+MENDER_GRUBENV_VERSION = f39c2c7ec7c9c24aae0108a9b04a0e6e61a3e96b
 MENDER_GRUBENV_SITE = $(call github,mendersoftware,grub-mender-grubenv,$(MENDER_GRUBENV_VERSION))
 MENDER_GRUBENV_LICENSE = Apache-2.0
 MENDER_GRUBENV_LICENSE_FILES = LICENSE
@@ -30,7 +30,7 @@ MENDER_GRUBENV_DEFINES = \
 
 # These grub modules must be built in for the grub scripts to work properly.
 # Without them, the system will not boot.
-MENDER_GRUBENV_MANDATORY_MODULES=loadenv hashsum echo halt gcry_sha256 test
+MENDER_GRUBENV_MANDATORY_MODULES=loadenv hashsum echo halt gcry_sha256 test regexp
 MENDER_GRUBENV_MODULES_MISSING = \
 	$(filter-out $(call qstrip,$(BR2_TARGET_GRUB2_BUILTIN_MODULES)),\
 		$(MENDER_GRUBENV_MANDATORY_MODULES))
@@ -55,11 +55,20 @@ define MENDER_GRUBENV_INSTALL_TARGET_CMDS
 endef
 
 # Overwrite the default grub2 config files with the ones in this package.
+ifeq ($(BR2_TARGET_GRUB2_I386_PC)$(BR2_TARGET_GRUB2_ARM_UBOOT),y)
+define MENDER_GRUBENV_INSTALL_IMAGES_CMDS
+	mkdir -p $(BINARIES_DIR)/boot-part/grub
+	cp -dpfr $(TARGET_DIR)/boot/grub/grub.cfg \
+		$(TARGET_DIR)/boot/grub/mender_grubenv* \
+		$(BINARIES_DIR)/boot-part/grub
+endef
+else
 define MENDER_GRUBENV_INSTALL_IMAGES_CMDS
 	mkdir -p $(BINARIES_DIR)/efi-part/EFI/BOOT
 	cp -dpfr $(TARGET_DIR)/boot/EFI/BOOT/grub.cfg \
 		$(TARGET_DIR)/boot/EFI/BOOT/mender_grubenv* \
 		$(BINARIES_DIR)/efi-part/EFI/BOOT
 endef
+endif
 
 $(eval $(generic-package))

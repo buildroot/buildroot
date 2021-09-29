@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PIGPIO_VERSION = 78
+PIGPIO_VERSION = 79
 PIGPIO_SITE = $(call github,joan2937,pigpio,v$(PIGPIO_VERSION))
 PIGPIO_LICENSE = Unlicense
 PIGPIO_LICENSE_FILES = UNLICENCE

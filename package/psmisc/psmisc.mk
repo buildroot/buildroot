@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PSMISC_VERSION = 23.2
+PSMISC_VERSION = 23.4
 PSMISC_SITE = http://downloads.sourceforge.net/project/psmisc/psmisc
 PSMISC_SOURCE = psmisc-$(PSMISC_VERSION).tar.xz
 PSMISC_LICENSE = GPL-2.0+

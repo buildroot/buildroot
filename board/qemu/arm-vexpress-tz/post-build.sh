@@ -3,8 +3,7 @@
 set -u
 set -e
 
-# Rename boot images for the dear TF-A
-ln -sf u-boot.bin ${BINARIES_DIR}/bl33.bin
-ln -sf tee-header_v2.bin ${BINARIES_DIR}/bl32.bin
-ln -sf tee-pager_v2.bin ${BINARIES_DIR}/bl32_extra1.bin
-ln -sf tee-pageable_v2.bin ${BINARIES_DIR}/bl32_extra2.bin
+# Create flash.bin TF-A FIP image from bl1.bin and fip.bin
+cd "$BINARIES_DIR"
+dd if=bl1.bin of=flash.bin bs=4096
+dd if=fip.bin of=flash.bin seek=64 bs=4096 conv=notrunc

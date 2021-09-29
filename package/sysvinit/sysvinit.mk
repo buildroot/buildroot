@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-SYSVINIT_VERSION = 2.98
+SYSVINIT_VERSION = 2.99
 SYSVINIT_SOURCE = sysvinit-$(SYSVINIT_VERSION).tar.xz
 SYSVINIT_SITE = http://download.savannah.nongnu.org/releases/sysvinit
 SYSVINIT_LICENSE = GPL-2.0+
 SYSVINIT_LICENSE_FILES = COPYING
+SYSVINIT_CPE_ID_VENDOR = sysvinit_project
 
 SYSVINIT_MAKE_OPTS = SYSROOT=$(STAGING_DIR)
 

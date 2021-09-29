@@ -16,10 +16,10 @@ set -e
 #   BZR      : the bzr command to call
 
 
-verbose=
+quiet=
 while getopts "${BR_BACKEND_DL_GETOPTS}" OPT; do
     case "${OPT}" in
-    q)  verbose=-q;;
+    q)  quiet=-q;;
     o)  output="${OPTARG}";;
     u)  uri="${OPTARG}";;
     c)  cset="${OPTARG}";;
@@ -34,6 +34,13 @@ shift $((OPTIND-1)) # Get rid of our options
 # Caller needs to single-quote its arguments to prevent them from
 # being expanded a second time (in case there are spaces in them)
 _bzr() {
+    if [ -z "${quiet}" ]; then
+        printf '%s ' ${BZR} "${@}"; printf '\n'
+    fi
+    _plain_bzr "$@"
+}
+# Note: please keep command below aligned with what is printed above
+_plain_bzr() {
     eval ${BZR} "${@}"
 }
 
@@ -53,6 +60,6 @@ if [ ${bzr_version} -ge ${bzr_min_version} ]; then
     timestamp_opt="--per-file-timestamps"
 fi
 
-_bzr export ${verbose} --root="'${basename}/'" --format=tgz \
+_bzr export ${quiet} --root="'${basename}/'" --format=tgz \
     ${timestamp_opt} - "${@}" "'${uri}'" -r "'${cset}'" \
     >"${output}"

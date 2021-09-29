@@ -7,6 +7,8 @@ This allows the environment to decide whether SSP should be used or
 not, for example to support toolchains that don't have SSP support.
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+[Bernd: rebased for 21.2.3]
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 ---
  api/mfx_dispatch/linux/CMakeLists.txt | 2 +-
  builder/FindPackages.cmake            | 4 ++--
@@ -16,7 +18,7 @@ diff --git a/api/mfx_dispatch/linux/CMakeLists.txt b/api/mfx_dispatch/linux/CMak
 index 15a4bd9a..4415f840 100644
 --- a/api/mfx_dispatch/linux/CMakeLists.txt
 +++ b/api/mfx_dispatch/linux/CMakeLists.txt
-@@ -100,7 +100,7 @@ target_link_libraries(mfx dl)
+@@ -101,7 +101,7 @@ target_link_libraries(mfx dl)
  get_api_version(MFX_VERSION_MAJOR MFX_VERSION_MINOR)
  
  set_target_properties( mfx PROPERTIES LINK_FLAGS
@@ -38,7 +40,7 @@ index 7e36ae2d..5b8b9b9d 100644
  #  message( STATUS "Libva located at: ${PKG_LIBVA_LIBRARY_DIRS}" )
  
    if( ARGV1 MATCHES hw AND Linux )
-@@ -448,7 +448,7 @@ function(configure_dependencies target dependencies variant)
+@@ -445,7 +445,7 @@ function(configure_dependencies target dependencies variant)
    endforeach()
  
    set(SCOPE_CFLAGS ${SCOPE_CFLAGS} PARENT_SCOPE)

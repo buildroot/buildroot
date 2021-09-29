@@ -4,7 +4,8 @@
 #
 ################################################################################
 
-ATTR_VERSION = 2.4.48
+ATTR_VERSION = 2.5.1
+ATTR_SOURCE = attr-$(ATTR_VERSION).tar.xz
 ATTR_SITE = http://download.savannah.gnu.org/releases/attr
 ATTR_LICENSE = GPL-2.0+ (programs), LGPL-2.1+ (libraries)
 ATTR_LICENSE_FILES = doc/COPYING doc/COPYING.LGPL

@@ -18,7 +18,12 @@ USHARE_CONF_OPTS = \
 	--sysconfdir=/etc \
 	--disable-strip
 
-ifeq ($(BR2_SYSTEM_ENABLE_NLS),)
+USHARE_MAKE_OPTS = LDFLAGS="$(TARGET_LDFLAGS) $(USHARE_LDFLAGS)"
+
+ifeq ($(BR2_SYSTEM_ENABLE_NLS),y)
+USHARE_CONF_OPTS += --enable-nls
+USHARE_MAKE_OPTS += GMSGFMT="$(HOST_DIR)/bin/msgfmt"
+else
 USHARE_CONF_OPTS += --disable-nls
 endif
 
@@ -31,7 +36,7 @@ define USHARE_CONFIGURE_CMDS
 endef
 
 define USHARE_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) LDFLAGS="$(TARGET_LDFLAGS) $(USHARE_LDFLAGS)" -C $(@D)
+	$(TARGET_MAKE_ENV) $(MAKE) $(USHARE_MAKE_OPTS) -C $(@D)
 endef
 
 define USHARE_INSTALL_TARGET_CMDS

@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-DAEMON_VERSION = 0.7
+DAEMON_VERSION = 0.8
 DAEMON_SITE = http://libslack.org/daemon/download
 DAEMON_LICENSE = GPL-2.0+
-DAEMON_LICENSE_FILES = LICENSE
+DAEMON_LICENSE_FILES = LICENSE COPYING
 
 define DAEMON_CONFIGURE_CMDS
 	(cd $(@D); ./configure)

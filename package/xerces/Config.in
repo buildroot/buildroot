@@ -1,6 +1,7 @@
 config BR2_PACKAGE_XERCES
 	bool "xerces-c++"
 	depends on BR2_INSTALL_LIBSTDCPP
+	depends on !BR2_STATIC_LIBS
 	depends on BR2_USE_WCHAR
 	help
 	  Xerces-C++ is a validating XML parser written in portable C++.
@@ -17,5 +18,6 @@ config BR2_PACKAGE_XERCES_ENABLE_NETWORK
 
 endif
 
-comment "xerces-c++ needs a toolchain w/ C++, wchar"
-	depends on !(BR2_INSTALL_LIBSTDCPP && BR2_USE_WCHAR)
+comment "xerces-c++ needs a toolchain w/ C++, dynamic library, wchar"
+	depends on !BR2_INSTALL_LIBSTDCPP || BR2_STATIC_LIBS || \
+		!BR2_USE_WCHAR

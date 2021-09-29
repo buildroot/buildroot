@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GD_VERSION = 2.3.0
+GD_VERSION = 2.3.2
 GD_SOURCE = libgd-$(GD_VERSION).tar.xz
 GD_SITE = https://github.com/libgd/libgd/releases/download/gd-$(GD_VERSION)
 GD_INSTALL_STAGING = YES
@@ -14,6 +14,9 @@ GD_CPE_ID_VENDOR = libgd
 GD_CPE_ID_PRODUCT = libgd
 GD_CONF_OPTS = --without-x --disable-rpath --disable-werror
 GD_DEPENDENCIES = host-pkgconf
+
+# 0001-fix-read-out-of-bands-in-reading-tga-header-file.patch
+GD_IGNORE_CVES += CVE-2021-38115
 
 # gd forgets to link utilities with -pthread even though it uses
 # pthreads, causing linking errors with static linking
@@ -36,7 +39,7 @@ endif
 ifeq ($(BR2_PACKAGE_LIBICONV),y)
 GD_DEPENDENCIES += libiconv
 # not strictly needed for gd, but ensures -liconv ends up in gdlib.pc
-GD_CONF_ENV += LIBS="-liconv"
+GD_CONF_ENV += LIBS_PRIVATES="-liconv"
 endif
 
 ifeq ($(BR2_PACKAGE_JPEG),y)

@@ -4,10 +4,11 @@
 #
 ################################################################################
 
-QUICKJS_VERSION = 2020-11-08
+QUICKJS_VERSION = 2021-03-27
 QUICKJS_SOURCE = quickjs-$(QUICKJS_VERSION).tar.xz
 QUICKJS_SITE = https://bellard.org/quickjs
 QUICKJS_LICENSE = MIT
+QUICKJS_LICENSE_FILES = LICENSE
 QUICKJS_INSTALL_STAGING = YES
 
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)

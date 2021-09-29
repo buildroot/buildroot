@@ -1,0 +1,33 @@
+From d747c4753484aa9b90a094d6bf7ec45e5acfb623 Mon Sep 17 00:00:00 2001
+From: Naor Livne <naorlivne@gmail.com>
+Date: Wed, 7 Jul 2021 16:25:20 +0300
+Subject: [PATCH] Allow idna 3.x to be installed on Python 3.x
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Co-authored-by: Mickaël Schoentgen <contact@tiger-222.fr>
+Co-authored-by: Seth Michael Larson <sethmichaellarson@gmail.com>
+(cherry picked from commit 33cf965f7271ab4978ed551754db37865c4085db)
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+---
+ setup.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/setup.py b/setup.py
+index 7ba4b2a2..83d78665 100755
+--- a/setup.py
++++ b/setup.py
+@@ -43,7 +43,8 @@ packages = ['requests']
+ 
+ requires = [
+     'chardet>=3.0.2,<5',
+-    'idna>=2.5,<3',
++    'idna>=2.5,<3; python_version < "3"',
++    'idna>=2.5,<4; python_version >= "3"',
+     'urllib3>=1.21.1,<1.27',
+     'certifi>=2017.4.17'
+ 
+-- 
+2.31.1
+

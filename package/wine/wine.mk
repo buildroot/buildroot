@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-WINE_VERSION = 5.12
+WINE_VERSION = 6.0
 WINE_SOURCE = wine-$(WINE_VERSION).tar.xz
-WINE_SITE = https://dl.winehq.org/wine/source/5.x
+WINE_SITE = https://dl.winehq.org/wine/source/6.0
 WINE_LICENSE = LGPL-2.1+
 WINE_LICENSE_FILES = COPYING.LIB LICENSE
 WINE_CPE_ID_VENDOR = winehq
@@ -26,6 +26,7 @@ WINE_CONF_OPTS = \
 	--without-gphoto \
 	--without-gsm \
 	--without-hal \
+	--without-mingw \
 	--without-opencl \
 	--without-oss \
 	--without-vkd3d \
@@ -118,13 +119,6 @@ else
 WINE_CONF_OPTS += --without-opengl
 endif
 
-ifeq ($(BR2_PACKAGE_LIBGLU),y)
-WINE_CONF_OPTS += --with-glu
-WINE_DEPENDENCIES += libglu
-else
-WINE_CONF_OPTS += --without-glu
-endif
-
 ifeq ($(BR2_PACKAGE_LIBKRB5),y)
 WINE_CONF_OPTS += --with-krb5
 WINE_DEPENDENCIES += libkrb5
@@ -183,13 +177,6 @@ else
 WINE_CONF_OPTS += --without-mpg123
 endif
 
-ifeq ($(BR2_PACKAGE_NCURSES),y)
-WINE_CONF_OPTS += --with-curses
-WINE_DEPENDENCIES += ncurses
-else
-WINE_CONF_OPTS += --without-curses
-endif
-
 ifeq ($(BR2_PACKAGE_OPENAL),y)
 WINE_CONF_OPTS += --with-openal
 WINE_DEPENDENCIES += openal
@@ -204,7 +191,7 @@ else
 WINE_CONF_OPTS += --without-ldap
 endif
 
-ifeq ($(BR2_PACKAGE_MESA3D_OSMESA_CLASSIC),y)
+ifeq ($(BR2_PACKAGE_MESA3D_OSMESA_GALLIUM),y)
 WINE_CONF_OPTS += --with-osmesa
 WINE_DEPENDENCIES += mesa3d
 else
@@ -317,13 +304,6 @@ else
 WINE_CONF_OPTS += --without-xxf86vm
 endif
 
-ifeq ($(BR2_PACKAGE_ZLIB),y)
-WINE_CONF_OPTS += --with-zlib
-WINE_DEPENDENCIES += zlib
-else
-WINE_CONF_OPTS += --without-zlib
-endif
-
 # host-gettext is essential for .po file support in host-wine wrc
 ifeq ($(BR2_SYSTEM_ENABLE_NLS),y)
 HOST_WINE_DEPENDENCIES += host-gettext
@@ -339,15 +319,19 @@ endif
 
 # Wine only needs the host tools to be built, so cut-down the
 # build time by building just what we need.
+HOST_WINE_TOOLS = \
+	tools \
+	tools/sfnt2fon \
+	tools/widl \
+	tools/winebuild \
+	tools/winegcc \
+	tools/wmc \
+	tools/wrc
+
 define HOST_WINE_BUILD_CMDS
-	$(HOST_MAKE_ENV) $(MAKE) -C $(@D) \
-	  tools \
-	  tools/sfnt2fon \
-	  tools/widl \
-	  tools/winebuild \
-	  tools/winegcc \
-	  tools/wmc \
-	  tools/wrc
+	$(foreach t, $(HOST_WINE_TOOLS),
+		$(HOST_MAKE_ENV) $(MAKE) -C $(@D)/$(t)
+	)
 endef
 
 # Wine only needs its host variant to be built, not that it is
@@ -368,11 +352,9 @@ HOST_WINE_CONF_OPTS += \
 	--without-coreaudio \
 	--without-faudio \
 	--without-cups \
-	--without-curses \
 	--without-dbus \
 	--without-fontconfig \
 	--without-gphoto \
-	--without-glu \
 	--without-gnutls \
 	--without-gsm \
 	--without-gssapi \
@@ -381,6 +363,7 @@ HOST_WINE_CONF_OPTS += \
 	--without-jpeg \
 	--without-krb5 \
 	--without-ldap \
+	--without-mingw \
 	--without-mpg123 \
 	--without-netapi \
 	--without-openal \
@@ -410,8 +393,7 @@ HOST_WINE_CONF_OPTS += \
 	--without-xshape \
 	--without-xshm \
 	--without-xslt \
-	--without-xxf86vm \
-	--without-zlib
+	--without-xxf86vm
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))

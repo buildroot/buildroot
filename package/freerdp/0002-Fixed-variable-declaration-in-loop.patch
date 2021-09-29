@@ -1,0 +1,34 @@
+From 4f8a48d96e472e43a5f856c449f61669792ce9fa Mon Sep 17 00:00:00 2001
+From: akallabeth <akallabeth@posteo.net>
+Date: Tue, 22 Sep 2020 07:43:56 +0200
+Subject: [PATCH] Fixed variable declaration in loop
+
+[Retrieved from:
+https://github.com/FreeRDP/FreeRDP/commit/4f8a48d96e472e43a5f856c449f61669792ce9fa]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ client/X11/xf_graphics.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/client/X11/xf_graphics.c b/client/X11/xf_graphics.c
+index bf71b563c3..c50726c8e4 100644
+--- a/client/X11/xf_graphics.c
++++ b/client/X11/xf_graphics.c
+@@ -240,7 +240,7 @@ static BOOL _xf_Pointer_GetCursorForCurrentScale(rdpContext* context, const rdpP
+ 	double xscale;
+ 	double yscale;
+ 	size_t size;
+-	int cursorIndex = -1;
++	int cursorIndex = -1, i;
+ 
+ 	if (!context || !pointer || !context->gdi)
+ 		return FALSE;
+@@ -255,7 +255,7 @@ static BOOL _xf_Pointer_GetCursorForCurrentScale(rdpContext* context, const rdpP
+ 	xTargetSize = pointer->width * xscale;
+ 	yTargetSize = pointer->height * yscale;
+ 
+-	for (int i = 0; i < xpointer->nCursors; i++)
++	for (i = 0; i < xpointer->nCursors; i++)
+ 	{
+ 		if (xpointer->cursorWidths[i] == xTargetSize && xpointer->cursorHeights[i] == yTargetSize)
+ 		{

@@ -1,3 +1,9 @@
+config BR2_PACKAGE_MPV_SUPPORTS_VAAPI
+	bool
+	default y if BR2_PACKAGE_LIBDRM && BR2_PACKAGE_MESA3D_OPENGL_EGL
+	default y if BR2_PACKAGE_WAYLAND
+	default y if BR2_PACKAGE_XORG7
+
 config BR2_PACKAGE_MPV
 	bool "mpv"
 	depends on BR2_INSTALL_LIBSTDCPP # libass

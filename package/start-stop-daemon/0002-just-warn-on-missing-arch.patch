@@ -1,19 +1,33 @@
+From 7b20d3f012013edd4e3bb48541bd2bda10dac186 Mon Sep 17 00:00:00 2001
+From: Baruch Siach <baruch@tkos.co.il>
+Date: Sun, 21 Mar 2021 18:03:28 +0100
+Subject: [PATCH] just warn on missing arch
+
 Just warn on missing arch
 
 Some architectures are not listed in dpkg list (e.g. mips64el, xtensa, sh4a).
 Don't break the build for that.
 
 Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+[Rebased on 1.20.7.1]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 ---
-diff -Nuar dpkg-1.16.15-orig/m4/dpkg-arch.m4 dpkg-1.16.15/m4/dpkg-arch.m4
---- dpkg-1.16.15-orig/m4/dpkg-arch.m4	2014-05-30 02:47:25.000000000 +0300
-+++ dpkg-1.16.15/m4/dpkg-arch.m4	2015-01-16 06:55:19.701596362 +0200
-@@ -57,7 +57,7 @@
- AC_MSG_CHECKING([dpkg architecture name])
- _DPKG_ARCHITECTURE([DEB_HOST_ARCH], [dpkg_arch])
- if test "x$dpkg_arch" = "x"; then
--	AC_MSG_ERROR([cannot determine host dpkg architecture])
-+	AC_MSG_WARN([cannot determine host dpkg architecture])
- else
- 	AC_MSG_RESULT([$dpkg_arch])
- fi
+ m4/dpkg-arch.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/m4/dpkg-arch.m4 b/m4/dpkg-arch.m4
+index 71044c9..1394531 100644
+--- a/m4/dpkg-arch.m4
++++ b/m4/dpkg-arch.m4
+@@ -58,7 +58,7 @@ AC_DEFUN([DPKG_ARCHITECTURE], [
+   AC_MSG_CHECKING([dpkg architecture name])
+   _DPKG_ARCHITECTURE([DEB_HOST_ARCH], [dpkg_arch])
+   AS_IF([test "x$dpkg_arch" = "x"], [
+-    AC_MSG_ERROR([cannot determine host dpkg architecture])
++    AC_MSG_WARN([cannot determine host dpkg architecture])
+   ], [
+     AC_MSG_RESULT([$dpkg_arch])
+   ])
+-- 
+2.30.2
+

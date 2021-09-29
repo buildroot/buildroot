@@ -1,0 +1,37 @@
+From 21b0a5bc50e15e9af7edb3edad9fac0bf03f7028 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 30 Jul 2021 23:11:38 +0200
+Subject: [PATCH] policy/modules/services/cvs.te: make inetd optional
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: not sent yet]
+---
+ policy/modules/services/cvs.te | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/policy/modules/services/cvs.te b/policy/modules/services/cvs.te
+index f2f60556c..61589228f 100644
+--- a/policy/modules/services/cvs.te
++++ b/policy/modules/services/cvs.te
+@@ -15,7 +15,6 @@ gen_tunable(allow_cvs_read_shadow, false)
+ 
+ type cvs_t;
+ type cvs_exec_t;
+-inetd_tcp_service_domain(cvs_t, cvs_exec_t)
+ init_daemon_domain(cvs_t, cvs_exec_t)
+ application_executable_file(cvs_exec_t)
+ 
+@@ -98,6 +97,10 @@ tunable_policy(`allow_cvs_read_shadow',`
+ 	auth_tunable_read_shadow(cvs_t)
+ ')
+ 
++optional_policy(`
++	inetd_tcp_service_domain(cvs_t, cvs_exec_t)
++')
++
+ optional_policy(`
+ 	kerberos_read_config(cvs_t)
+ 	kerberos_read_keytab(cvs_t)
+-- 
+2.30.2
+

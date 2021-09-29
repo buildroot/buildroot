@@ -1,0 +1,59 @@
+From 7dafc52dda96fa68f39058b10eec3d822fd5ea9d Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Fri, 18 Jun 2021 19:56:56 +0200
+Subject: [PATCH] backend/sm3600-scanutil: fix uclibc compile (include stdarg.h
+ for va_list/va_start/va_end)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes:
+
+  sm3600-scanutil.c: In function ‘debug_printf’:
+  sm3600-scanutil.c:69:3: error: unknown type name ‘va_list’
+     69 |   va_list ap;
+        |   ^~~~~~~
+  sm3600-scanutil.c:48:1: note: ‘va_list’ is defined in header ‘<stdarg.h>’; did you forget to ‘#include <stdarg.h>’?
+     47 | #include "sm3600-scantool.h"
+    +++ |+#include <stdarg.h>
+     48 |
+  sm3600-scanutil.c:75:3: warning: implicit declaration of function ‘va_start’; did you mean ‘sane_start’? [-Wimplicit-function-declaration]
+     75 |   va_start(ap,szFormat);
+        |   ^~~~~~~~
+        |   sane_start
+  sm3600-scanutil.c:76:28: warning: passing argument 3 of ‘vfprintf’ makes pointer from integer without a cast [-Wint-conversion]
+     76 |   vfprintf(stderr,szFormat,ap);
+        |                            ^~
+        |                            |
+        |                            int
+  In file included from ../include/sane/sanei_config.h:50,
+                   from sm3600.c:70:
+  .../host/x86_64-buildroot-linux-uclibc/sysroot/usr/include/stdio.h:339:23: note: expected ‘__va_list_tag *’ but argument is of type ‘int’
+    339 |        __gnuc_va_list __arg);
+        |        ~~~~~~~~~~~~~~~^~~~~
+  In file included from sm3600.c:94:
+  sm3600-scanutil.c:77:3: warning: implicit declaration of function ‘va_end’ [-Wimplicit-function-declaration]
+     77 |   va_end(ap);
+        |   ^~~~~~
+
+[Upstream: https://gitlab.com/sane-project/backends/-/merge_requests/638]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ backend/sm3600-scanutil.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/backend/sm3600-scanutil.c b/backend/sm3600-scanutil.c
+index 6fe67ed0c..616bf3f4c 100644
+--- a/backend/sm3600-scanutil.c
++++ b/backend/sm3600-scanutil.c
+@@ -43,6 +43,7 @@ Userspace scan tool for the Microtek 3600 scanner
+ 
+ ====================================================================== */
+ 
++#include <stdarg.h>
+ #include <unistd.h>
+ #include "sm3600-scantool.h"
+ 
+-- 
+2.31.1
+

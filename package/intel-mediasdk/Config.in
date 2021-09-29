@@ -6,7 +6,6 @@ config BR2_PACKAGE_INTEL_MEDIASDK
 	depends on BR2_TOOLCHAIN_HAS_SYNC_1 # intel-mediadriver
 	depends on BR2_TOOLCHAIN_HAS_THREADS # intel-mediadriver
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # intel-mediadriver
-	depends on BR2_PACKAGE_XORG7  # intel-mediadriver
 	select BR2_PACKAGE_INTEL_MEDIADRIVER
 	select BR2_PACKAGE_LIBDRM_INTEL
 	help
@@ -20,10 +19,6 @@ config BR2_PACKAGE_INTEL_MEDIASDK
 	  Deinterlace, Denoise, Resize, Rotate, Composition
 
 	  http://mediasdk.intel.com/
-
-comment "intel-mediasdk needs X.org"
-	depends on BR2_x86_64 && BR2_TOOLCHAIN_HAS_SYNC_1
-	depends on !BR2_PACKAGE_XORG7
 
 comment "intel-mediasdk needs a toolchain w/ dynamic library, C++, NPTL"
 	depends on BR2_x86_64 && BR2_TOOLCHAIN_HAS_SYNC_1

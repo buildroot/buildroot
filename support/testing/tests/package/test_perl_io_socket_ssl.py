@@ -6,6 +6,7 @@ class TestPerlIOSocketSSL(TestPerlBase):
     package:
         IO-Socket-SSL
     direct dependencies:
+        Mozilla-CA
         Net-SSLeay   XS
     """
 

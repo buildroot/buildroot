@@ -31,6 +31,19 @@ config BR2_PACKAGE_E2FSPROGS_E2IMAGE
 	help
 	  Save critical ext2/ext3/ext4 filesystem metadata to a file
 
+config BR2_PACKAGE_E2FSPROGS_E2SCRUB
+	bool "e2scrub"
+	depends on BR2_PACKAGE_BASH  # runtime
+	depends on BR2_PACKAGE_COREUTILS  # runtime
+	depends on BR2_PACKAGE_LVM2  # runtime
+	depends on BR2_PACKAGE_UTIL_LINUX  # runtime
+	help
+	  Check the contents of a mounted ext[234] filesystem
+
+comment "e2scrub needs bash, coreutils, lvm2, and util-linux"
+	depends on !BR2_PACKAGE_BASH || !BR2_PACKAGE_COREUTILS \
+		|| !BR2_PACKAGE_LVM2 || !BR2_PACKAGE_UTIL_LINUX
+
 config BR2_PACKAGE_E2FSPROGS_E4DEFRAG
 	bool "e4defrag"
 	depends on !BR2_nios2 # fallocate not implemented

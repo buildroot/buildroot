@@ -4,9 +4,10 @@
 #
 ################################################################################
 
-LINUX_FIRMWARE_VERSION = 20201022
-LINUX_FIRMWARE_SITE = http://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
-LINUX_FIRMWARE_SITE_METHOD = git
+LINUX_FIRMWARE_VERSION = 20210511
+LINUX_FIRMWARE_SOURCE = linux-firmware-$(LINUX_FIRMWARE_VERSION).tar.xz
+LINUX_FIRMWARE_SITE = $(BR2_KERNEL_MIRROR)/linux/kernel/firmware
+LINUX_FIRMWARE_INSTALL_IMAGES = YES
 
 LINUX_FIRMWARE_CPE_ID_VENDOR = kernel
 
@@ -62,6 +63,27 @@ endif
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_6174A_BT),y)
 LINUX_FIRMWARE_FILES += qca/rampatch_usb_00000302.bin qca/nvm_usb_00000302.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENSE.qcom
+endif
+
+# Realtek 87xx Bluetooth
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_RTL_87XX_BT),y)
+LINUX_FIRMWARE_FILES += \
+	rtl_bt/rtl8723a_fw.bin rtl_bt/rtl8723b_fw.bin \
+	rtl_bt/rtl8723bs_config-OBDA8723.bin \
+	rtl_bt/rtl8723bs_fw.bin rtl_bt/rtl8723d_config.bin \
+	rtl_bt/rtl8723d_fw.bin rtl_bt/rtl8761a_fw.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.rtlwifi_firmware.txt
+endif
+
+# Realtek 88xx Bluetooth
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_RTL_88XX_BT),y)
+LINUX_FIRMWARE_FILES += \
+	rtl_bt/rtl8812ae_fw.bin rtl_bt/rtl8821a_fw.bin \
+	rtl_bt/rtl8821c_config.bin rtl_bt/rtl8821c_fw.bin \
+	rtl_bt/rtl8822b_config.bin rtl_bt/rtl8822b_fw.bin \
+	rtl_bt/rtl8822cs_config.bin rtl_bt/rtl8822cs_fw.bin \
+	rtl_bt/rtl8822cu_config.bin rtl_bt/rtl8822cu_fw.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.rtlwifi_firmware.txt
 endif
 
 # rt2501/rt61
@@ -293,6 +315,18 @@ endif
 # pcie8897
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_PCIE8897),y)
 LINUX_FIRMWARE_FILES += mrvl/pcie8897_uapsta.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.Marvell
+endif
+
+# pcieuart8997
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_PCIEUART8997),y)
+LINUX_FIRMWARE_FILES += mrvl/pcieuart8997_combo_v4.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.Marvell
+endif
+
+# pcieusb8997
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_PCIEUSB8997),y)
+LINUX_FIRMWARE_FILES += mrvl/pcieusb8997_combo_v4.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.Marvell
 endif
 
@@ -556,26 +590,45 @@ endif
 # brcm43xx
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM43XX),y)
 LINUX_FIRMWARE_FILES += \
-	brcm/bcm43xx-0.fw brcm/bcm43xx_hdr-0.fw \
-	brcm/bcm4329-fullmac-4.bin brcm/brcmfmac4329-sdio.bin \
-	brcm/brcmfmac4330-sdio.bin brcm/brcmfmac4334-sdio.bin \
-	brcm/brcmfmac4335-sdio.bin brcm/brcmfmac4339-sdio.bin \
-	brcm/brcmfmac4350-pcie.bin brcm/brcmfmac4354-sdio.bin \
-	brcm/brcmfmac4356-pcie.bin brcm/brcmfmac4371-pcie.bin
+	brcm/bcm4329-fullmac-4.bin \
+	brcm/brcmfmac4329-sdio.bin \
+	brcm/brcmfmac4330-sdio.bin \
+	brcm/brcmfmac4334-sdio.bin \
+	brcm/brcmfmac4335-sdio.bin \
+	brcm/brcmfmac4350c2-pcie.bin \
+	brcm/brcmfmac4350-pcie.bin \
+	brcm/brcmfmac4358-pcie.bin \
+	brcm/brcmfmac4371-pcie.bin \
+	brcm/brcmfmac4373.bin \
+	brcm/brcmfmac4330-sdio.Prowise-PT301.txt \
+	brcm/brcmfmac4356-pcie.gpd-win-pocket.txt \
+	brcm/brcmfmac4356-sdio.vamrs,rock960.txt
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.broadcom_bcm43xx
 endif
 
 # brcm43xxx
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM43XXX),y)
 LINUX_FIRMWARE_FILES += \
-	brcm/brcmfmac43143.bin brcm/brcmfmac43143-sdio.bin \
-	brcm/brcmfmac43236b.bin brcm/brcmfmac43241b0-sdio.bin \
-	brcm/brcmfmac43241b4-sdio.bin brcm/brcmfmac43241b5-sdio.bin \
-	brcm/brcmfmac43242a.bin brcm/brcmfmac43340-sdio.bin \
-	brcm/brcmfmac43362-sdio.bin brcm/brcmfmac43430-sdio.bin \
-	brcm/brcmfmac43430a0-sdio.bin brcm/brcmfmac43455-sdio.bin \
-	brcm/brcmfmac43569.bin brcm/brcmfmac43570-pcie.bin \
-	brcm/brcmfmac43602-pcie.ap.bin brcm/brcmfmac43602-pcie.bin \
+	brcm/brcmfmac43143.bin \
+	brcm/brcmfmac43143-sdio.bin \
+	brcm/brcmfmac43236b.bin \
+	brcm/brcmfmac43241b0-sdio.bin \
+	brcm/brcmfmac43241b4-sdio.bin \
+	brcm/brcmfmac43241b5-sdio.bin \
+	brcm/brcmfmac43242a.bin \
+	brcm/brcmfmac43430a0-sdio.bin \
+	brcm/brcmfmac43569.bin \
+	brcm/brcmfmac43602-pcie.ap.bin \
+	brcm/brcmfmac43602-pcie.bin \
+	brcm/brcmfmac43340-sdio.meegopad-t08.txt \
+	brcm/brcmfmac43340-sdio.pov-tab-p1006w-data.txt \
+	brcm/brcmfmac43340-sdio.predia-basic.txt \
+	brcm/brcmfmac43362-sdio.cubietech,cubietruck.txt \
+	brcm/brcmfmac43430a0-sdio.ilife-S806.txt \
+	brcm/brcmfmac43430a0-sdio.jumper-ezpad-mini3.txt \
+	brcm/brcmfmac43430-sdio.AP6212.txt \
+	brcm/brcmfmac43430-sdio.Hampoo-D2D3_Vi8A1.txt \
+	brcm/brcmfmac43430-sdio.MUR1DX.txt \
 	brcm/brcmfmac43430-sdio.raspberrypi,3-model-b.txt \
 	brcm/brcmfmac43455-sdio.raspberrypi,3-model-b-plus.txt \
 	brcm/brcmfmac43455-sdio.raspberrypi,4-model-b.txt
@@ -584,15 +637,13 @@ endif
 
 # brcm4366b1
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM4366B1),y)
-LINUX_FIRMWARE_FILES += \
-	brcm/brcmfmac4366b-pcie.bin brcm/brcmfmac4366b-pcie.bin
+LINUX_FIRMWARE_FILES += brcm/brcmfmac4366b-pcie.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.broadcom_bcm43xx
 endif
 
 # brcm4366c0
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM4366C0),y)
-LINUX_FIRMWARE_FILES += \
-	brcm/brcmfmac4366c-pcie.bin brcm/brcmfmac4366c-pcie.bin
+LINUX_FIRMWARE_FILES += brcm/brcmfmac4366c-pcie.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.broadcom_bcm43xx
 endif
 
@@ -638,26 +689,18 @@ LINUX_FIRMWARE_FILES += ti_3410.fw ti_5052.fw \
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.moxa
 endif
 
-ifneq ($(LINUX_FIRMWARE_FILES),)
-define LINUX_FIRMWARE_INSTALL_FILES
-	cd $(@D) && \
-		$(TAR) cf install.tar $(sort $(LINUX_FIRMWARE_FILES)) && \
-		$(TAR) xf install.tar -C $(TARGET_DIR)/lib/firmware
-endef
-endif
-
-ifneq ($(LINUX_FIRMWARE_DIRS),)
-# We need to rm-rf the destination directory to avoid copying
-# into it in itself, should we re-install the package.
-define LINUX_FIRMWARE_INSTALL_DIRS
-	$(foreach d,$(LINUX_FIRMWARE_DIRS), \
-		rm -rf $(TARGET_DIR)/lib/firmware/$(d); \
-		mkdir -p $(dir $(TARGET_DIR)/lib/firmware/$(d)); \
-		cp -a $(@D)/$(d) $(TARGET_DIR)/lib/firmware/$(d)$(sep))
-endef
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_CX231XX),y)
+LINUX_FIRMWARE_FILES += v4l-cx231xx-avcore-01.fw
+# No license file; the license is in the file WHENCE
+# which is installed unconditionally
 endif
 
 ifneq ($(LINUX_FIRMWARE_FILES)$(LINUX_FIRMWARE_DIRS),)
+
+define LINUX_FIRMWARE_BUILD_CMDS
+	cd $(@D) && \
+	$(TAR) cf br-firmware.tar $(sort $(LINUX_FIRMWARE_FILES) $(LINUX_FIRMWARE_DIRS))
+endef
 
 # Most firmware files are under a proprietary license, so no need to
 # repeat it for every selections above. Those firmwares that have more
@@ -673,8 +716,6 @@ LINUX_FIRMWARE_ALL_LICENSE_FILES += WHENCE
 # duplicates
 LINUX_FIRMWARE_LICENSE_FILES = $(sort $(LINUX_FIRMWARE_ALL_LICENSE_FILES))
 
-endif
-
 # Some firmware are distributed as a symlink, for drivers to load them using a
 # defined name other than the real one. Since 9cfefbd7fbda ("Remove duplicate
 # symlinks") those symlink aren't distributed in linux-firmware but are created
@@ -686,22 +727,27 @@ endif
 # sure we canonicalize the pointed-to file, to cover the symlinks of the form
 # a/foo -> ../b/foo  where a/ (the directory where to put the symlink) does
 # not yet exist.
-define LINUX_FIRMWARE_CREATE_SYMLINKS
-	cd $(TARGET_DIR)/lib/firmware/ ; \
+define LINUX_FIRMWARE_INSTALL_FW
+	mkdir -p $(1)
+	$(TAR) xf $(@D)/br-firmware.tar -C $(1)
+	cd $(1) ; \
 	sed -r -e '/^Link: (.+) -> (.+)$$/!d; s//\1 \2/' $(@D)/WHENCE | \
 	while read f d; do \
-		if test -f $$(readlink -m $$(dirname $$f)/$$d); then \
-			mkdir -p $$(dirname $$f) || exit 1; \
-			ln -sf $$d $$f || exit 1; \
+		if test -f $$(readlink -m $$(dirname "$$f")/$$d); then \
+			mkdir -p $$(dirname "$$f") || exit 1; \
+			ln -sf $$d "$$f" || exit 1; \
 		fi ; \
 	done
 endef
 
+endif  # LINUX_FIRMWARE_FILES || LINUX_FIRMWARE_DIRS
+
 define LINUX_FIRMWARE_INSTALL_TARGET_CMDS
-	mkdir -p $(TARGET_DIR)/lib/firmware
-	$(LINUX_FIRMWARE_INSTALL_FILES)
-	$(LINUX_FIRMWARE_INSTALL_DIRS)
-	$(LINUX_FIRMWARE_CREATE_SYMLINKS)
+	$(call LINUX_FIRMWARE_INSTALL_FW, $(TARGET_DIR)/lib/firmware)
+endef
+
+define LINUX_FIRMWARE_INSTALL_IMAGES_CMDS
+	$(call LINUX_FIRMWARE_INSTALL_FW, $(BINARIES_DIR))
 endef
 
 $(eval $(generic-package))

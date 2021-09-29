@@ -54,16 +54,16 @@ class Emulator(object):
 
                 if arch == "armv7":
                     kernel = infra.download(self.downloaddir,
-                                            "kernel-vexpress")
+                                            "kernel-vexpress-5.10.7")
                     dtb = infra.download(self.downloaddir,
-                                         "vexpress-v2p-ca9.dtb")
+                                         "vexpress-v2p-ca9-5.10.7.dtb")
                     qemu_cmd += ["-dtb", dtb]
                     qemu_cmd += ["-M", "vexpress-a9"]
                 elif arch == "armv5":
                     kernel = infra.download(self.downloaddir,
-                                            "kernel-versatile-4.19")
+                                            "kernel-versatile-5.10.7")
                     dtb = infra.download(self.downloaddir,
-                                         "versatile-pb-4.19.dtb")
+                                         "versatile-pb-5.10.7.dtb")
                     qemu_cmd += ["-dtb", dtb]
                     qemu_cmd += ["-M", "versatilepb"]
                     qemu_cmd += ["-device", "virtio-rng-pci"]

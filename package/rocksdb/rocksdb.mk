@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ROCKSDB_VERSION = 6.13.3
+ROCKSDB_VERSION = 6.20.3
 ROCKSDB_SITE = $(call github,facebook,rocksdb,v$(ROCKSDB_VERSION))
 ROCKSDB_LICENSE = GPL-2.0 or Apache-2.0
 ROCKSDB_LICENSE_FILES = COPYING LICENSE.Apache LICENSE.leveldb README.md

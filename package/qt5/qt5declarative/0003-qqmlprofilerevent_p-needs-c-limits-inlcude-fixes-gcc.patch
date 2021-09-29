@@ -1,0 +1,45 @@
+From cc8d62f556c065d28a52e4b784b5d22f2cca3001 Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Thu, 22 Jul 2021 23:13:43 +0200
+Subject: [PATCH] qqmlprofilerevent_p: needs c++ limits inlcude (fixes gcc-11
+ compile)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes:
+
+  In file included from qqmlprofilertypedevent_p.h:43,
+                   from qqmlprofilertypedevent.cpp:40:
+  qqmlprofilerevent_p.h: In member function ‘void QQmlProfilerEvent::assignNumbers(const Container&)’:
+  qqmlprofilerevent_p.h:314:65: error: ‘numeric_limits’ is not a member of ‘std’
+    314 |                     static_cast<quint16>(numbers.size()) : std::numeric_limits<quint16>::max();
+        |                                                                 ^~~~~~~~~~~~~~
+  qqmlprofilerevent_p.h:314:87: error: expected primary-expression before ‘>’ token
+    314 |                     static_cast<quint16>(numbers.size()) : std::numeric_limits<quint16>::max();
+        |                                                                                       ^
+  qqmlprofilerevent_p.h:314:90: error: ‘::max’ has not been declared; did you mean ‘std::max’?
+    314 |                     static_cast<quint16>(numbers.size()) : std::numeric_limits<quint16>::max();
+        |                                                                                          ^~~
+        |                                                                                          std::max
+
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ src/qmldebug/qqmlprofilerevent_p.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/qmldebug/qqmlprofilerevent_p.h b/src/qmldebug/qqmlprofilerevent_p.h
+index a7e37d1964..01b2f58f16 100644
+--- a/src/qmldebug/qqmlprofilerevent_p.h
++++ b/src/qmldebug/qqmlprofilerevent_p.h
+@@ -48,6 +48,7 @@
+ #include <QtCore/qmetatype.h>
+ 
+ #include <initializer_list>
++#include <limits>
+ #include <type_traits>
+ 
+ //
+-- 
+2.32.0
+

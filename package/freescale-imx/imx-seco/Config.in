@@ -7,3 +7,47 @@ config BR2_PACKAGE_IMX_SECO
 
 	  This library is provided by Freescale as-is and doesn't have
 	  an upstream.
+
+if BR2_PACKAGE_IMX_SECO
+
+choice
+	prompt "i.MX Seco Firmware Release"
+	default BR2_PACKAGE_IMX_SECO_MX8QMB0 if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8
+	default BR2_PACKAGE_IMX_SECO_MX8QXC0 if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X
+	help
+	  Select the appropriate ahab container image to install
+	  to match the iMX asics revision.
+
+	  Note - mismatches result in a failure to boot
+
+config BR2_PACKAGE_IMX_SECO_MX8DXLA0
+	bool "imx-seco-mx8dxla0"
+	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8
+
+config BR2_PACKAGE_IMX_SECO_MX8DXLA1
+	bool "imx-seco-mx8dxla1"
+	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8
+
+config BR2_PACKAGE_IMX_SECO_MX8QMB0
+	bool "imx-seco-mx8qmb0"
+	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8
+
+config BR2_PACKAGE_IMX_SECO_MX8QXB0
+	bool "imx-seco-mx8qxb0"
+	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X
+
+config BR2_PACKAGE_IMX_SECO_MX8QXC0
+	bool "imx-seco-mx8qxc0"
+	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X
+
+endchoice
+
+config BR2_PACKAGE_IMX_SECO_AHAB_CONTAINER_IMAGE
+	string
+	default "mx8dxla0-ahab-container.img" if BR2_PACKAGE_IMX_SECO_MX8DXLA0
+	default "mx8dxla1-ahab-container.img" if BR2_PACKAGE_IMX_SECO_MX8DXLA1
+	default "mx8qmb0-ahab-container.img" if BR2_PACKAGE_IMX_SECO_MX8QMB0
+	default "mx8qxb0-ahab-container.img" if BR2_PACKAGE_IMX_SECO_MX8QXB0
+	default "mx8qxc0-ahab-container.img" if BR2_PACKAGE_IMX_SECO_MX8QXC0
+
+endif

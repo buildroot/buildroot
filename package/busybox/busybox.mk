@@ -4,16 +4,12 @@
 #
 ################################################################################
 
-BUSYBOX_VERSION = 1.33.0
+BUSYBOX_VERSION = 1.33.1
 BUSYBOX_SITE = https://www.busybox.net/downloads
 BUSYBOX_SOURCE = busybox-$(BUSYBOX_VERSION).tar.bz2
 BUSYBOX_LICENSE = GPL-2.0, bzip2-1.0.4
 BUSYBOX_LICENSE_FILES = LICENSE archival/libarchive/bz/LICENSE
 BUSYBOX_CPE_ID_VENDOR = busybox
-
-define BUSYBOX_HELP_CMDS
-	@echo '  busybox-menuconfig     - Run BusyBox menuconfig'
-endef
 
 BUSYBOX_CFLAGS = \
 	$(TARGET_CFLAGS)
@@ -107,6 +103,7 @@ ifndef BUSYBOX_CONFIG_FILE
 BUSYBOX_CONFIG_FILE = $(call qstrip,$(BR2_PACKAGE_BUSYBOX_CONFIG))
 endif
 
+BUSYBOX_KCONFIG_SUPPORTS_DEFCONFIG = NO
 BUSYBOX_KCONFIG_FILE = $(BUSYBOX_CONFIG_FILE)
 BUSYBOX_KCONFIG_FRAGMENT_FILES = $(call qstrip,$(BR2_PACKAGE_BUSYBOX_CONFIG_FRAGMENT_FILES))
 BUSYBOX_KCONFIG_EDITORS = menuconfig xconfig gconfig

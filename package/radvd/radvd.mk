@@ -14,6 +14,7 @@ RADVD_CONF_ENV = \
 	ac_cv_header_linux_if_arp_h=no
 RADVD_LICENSE = BSD-4-Clause-like
 RADVD_LICENSE_FILES = COPYRIGHT
+RADVD_SELINUX_MODULES = radvd
 
 ifeq ($(BR2_TOOLCHAIN_HAS_SSP),y)
 RADVD_CONF_OPTS += --with-stack-protector

@@ -1,0 +1,47 @@
+From fe1307512fb8892b5ceb3d884c793af8dbd4c16a Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 15 Jun 2021 07:13:56 +0200
+Subject: [PATCH] configure.ac: fix build with libxcrypt and uclibc-ng
+
+Fix the following build failure with libxcrypt and uclibc-ng:
+
+ld: unix_chkpwd-passverify.o: in function `verify_pwd_hash':
+passverify.c:(.text+0xab4): undefined reference to `crypt_checksalt'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/65d68b7c9c7de1c7cb0f941ff9982f93a49a56f8
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/linux-pam/linux-pam/commit/fe1307512fb8892b5ceb3d884c793af8dbd4c16a]
+---
+ configure.ac | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 7a4b2e86..e9c57345 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -362,10 +362,18 @@ AC_SUBST(LIBAUDIT)
+ AC_CHECK_HEADERS(crypt.h)
+ 
+ BACKUP_LIBS=$LIBS
+-AC_SEARCH_LIBS([crypt],[crypt])
+-case "$ac_cv_search_crypt" in
+-	-l*) LIBCRYPT="$ac_cv_search_crypt" ;;
+-	*) LIBCRYPT="" ;;
++LIBCRYPT=""
++AC_SEARCH_LIBS([crypt_gensalt_rn],[crypt])
++case "$ac_cv_search_crypt_gensalt_rn" in
++	-l*) LIBCRYPT="$ac_cv_search_crypt_gensalt_rn" ;;
++	no) AC_SEARCH_LIBS([crypt_r],[crypt])
++		case "$ac_cv_search_crypt_r" in
++		-l*) LIBCRYPT="$ac_cv_search_crypt_r" ;;
++		no ) AC_SEARCH_LIBS([crypt],[crypt])
++		case "$ac_cv_search_crypt" in
++			-l*) LIBCRYPT="$ac_cv_search_crypt" ;;
++		esac ;;
++	esac ;;
+ esac
+ AC_CHECK_FUNCS([crypt_r])
+ LIBS=$BACKUP_LIBS

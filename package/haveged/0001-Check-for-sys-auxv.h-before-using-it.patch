@@ -1,0 +1,60 @@
+From 676abde95bab10e1d26e91682772514010143343 Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Sun, 21 Mar 2021 17:00:08 +0100
+Subject: [PATCH] Check for sys/auxv.h before using it.
+
+- fixes uclibc-ng compile (does not provide sys/auxv.h header file)
+
+Fixes:
+
+  haveged.c:22:10: fatal error: sys/auxv.h: No such file or directory
+     22 | #include <sys/auxv.h>
+        |          ^~~~~~~~~~~~
+
+[Upstream: https://github.com/jirka-h/haveged/pull/59]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ configure.ac  | 1 +
+ src/haveged.c | 4 ++++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/configure.ac b/configure.ac
+index c172a10..a0263f5 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -125,6 +125,7 @@ AC_CHECK_HEADERS(stdio.h)
+ AC_CHECK_HEADERS(stdlib.h)
+ AC_CHECK_HEADERS(string.h)
+ AC_CHECK_HEADERS(sys/ioctl.h)
++AC_CHECK_HEADERS(sys/auxv.h)
+ AC_CHECK_HEADERS(sys/mman.h)
+ AC_CHECK_HEADERS(sys/types.h)
+ AC_CHECK_HEADERS(sys/socket.h)
+diff --git a/src/haveged.c b/src/haveged.c
+index b9cb77b..dad3072 100644
+--- a/src/haveged.c
++++ b/src/haveged.c
+@@ -19,7 +19,9 @@
+  ** along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ #include "config.h"
++#if defined(HAVE_SYS_AUXV_H)
+ #include <sys/auxv.h>
++#endif
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <getopt.h>
+@@ -135,8 +137,10 @@ int main(int argc, char **argv)
+ {
+    volatile char *path = strdup(argv[0]);
+    volatile char *arg0 = argv[0];
++#if defined(HAVE_SYS_AUXV_H)
+    if (path[0] != '/')
+       path = (char*)getauxval(AT_EXECFN);
++#endif
+    static const char* cmds[] = {
+       "b", "buffer",      "1", SETTINGR("Buffer size [KW], default: ",COLLECT_BUFSIZE),
+       "d", "data",        "1", SETTINGR("Data cache size [KB], with fallback to: ", GENERIC_DCACHE ),
+-- 
+2.30.2
+

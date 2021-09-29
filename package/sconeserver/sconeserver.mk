@@ -10,11 +10,20 @@ SCONESERVER_LICENSE = GPL-2.0+
 SCONESERVER_LICENSE_FILES = COPYING
 # fetching from Git, we need to generate the configure script
 SCONESERVER_AUTORECONF = YES
-SCONESERVER_DEPENDENCIES = host-pkgconf pcre zlib
+SCONESERVER_DEPENDENCIES = \
+	host-pkgconf \
+	$(if $(BR2_PACKAGE_PCRE),pcre) \
+	zlib
+# disable image as it fails to build with ImageMagick
 # disable markdown module because its git submodule cmark
 # https://github.com/sconemad/sconeserver/tree/master/markdown
 # has no cross-compile support provided by the sconeserver build system
-SCONESERVER_CONF_OPTS += --with-ip --with-local --with-ip6 --without-markdown
+SCONESERVER_CONF_OPTS += \
+	--with-ip \
+	--with-local \
+	--with-ip6 \
+	--without-image \
+	--without-markdown
 
 # Sconeserver configure script fails to find the libxml2 headers.
 ifeq ($(BR2_PACKAGE_LIBXML2),y)
@@ -40,15 +49,6 @@ SCONESERVER_DEPENDENCIES += libxml2
 SCONESERVER_CONF_OPTS += --with-sconesite
 else
 SCONESERVER_CONF_OPTS += --without-sconesite
-endif
-
-ifeq ($(BR2_PACKAGE_SCONESERVER_HTTP_SCONESITE_IMAGE),y)
-SCONESERVER_DEPENDENCIES += imagemagick
-SCONESERVER_CONF_OPTS += \
-	--with-sconesite-image \
-	--with-Magick++-config="$(STAGING_DIR)/usr/bin/Magick++-config"
-else
-SCONESERVER_CONF_OPTS += --without-sconesite-image --with-Magick++-config=no
 endif
 
 ifeq ($(BR2_PACKAGE_SCONESERVER_MYSQL),y)
@@ -82,12 +82,6 @@ else
 SCONESERVER_CONF_OPTS += --without-location
 endif
 
-ifeq ($(BR2_PACKAGE_SCONESERVER_LETTUCE),y)
-SCONESERVER_CONF_OPTS += --with-lettuce
-else
-SCONESERVER_CONF_OPTS += --without-lettuce
-endif
-
 ifeq ($(BR2_PACKAGE_SCONESERVER_MATHS),y)
 SCONESERVER_DEPENDENCIES += mpfr
 SCONESERVER_CONF_OPTS += --with-maths
@@ -99,13 +93,6 @@ ifeq ($(BR2_PACKAGE_SCONESERVER_TESTBUILDER),y)
 SCONESERVER_CONF_OPTS += --with-testbuilder
 else
 SCONESERVER_CONF_OPTS += --without-testbuilder
-endif
-
-ifeq ($(BR2_PACKAGE_SCONESERVER_UI),y)
-SCONESERVER_DEPENDENCIES += xlib_libX11
-SCONESERVER_CONF_OPTS += --with-ui
-else
-SCONESERVER_CONF_OPTS += --without-ui
 endif
 
 $(eval $(autotools-package))

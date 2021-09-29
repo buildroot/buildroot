@@ -5,6 +5,7 @@ config BR2_PACKAGE_LIBVNCSERVER
 	depends on !BR2_nios2
 	depends on !BR2_STATIC_LIBS
 	select BR2_PACKAGE_LZO
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_DES if BR2_PACKAGE_LIBOPENSSL
 	help
 	  libvncserver is a VNC server/client library.
 

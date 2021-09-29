@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FFMPEG_VERSION = 4.3.1
+FFMPEG_VERSION = 4.4
 FFMPEG_SOURCE = ffmpeg-$(FFMPEG_VERSION).tar.xz
 FFMPEG_SITE = http://ffmpeg.org/releases
 FFMPEG_INSTALL_STAGING = YES
@@ -366,13 +366,6 @@ FFMPEG_CONF_OPTS += --enable-libtheora
 FFMPEG_DEPENDENCIES += libtheora
 else
 FFMPEG_CONF_OPTS += --disable-libtheora
-endif
-
-ifeq ($(BR2_PACKAGE_WAVPACK),y)
-FFMPEG_CONF_OPTS += --enable-libwavpack
-FFMPEG_DEPENDENCIES += wavpack
-else
-FFMPEG_CONF_OPTS += --disable-libwavpack
 endif
 
 ifeq ($(BR2_PACKAGE_LIBICONV),y)

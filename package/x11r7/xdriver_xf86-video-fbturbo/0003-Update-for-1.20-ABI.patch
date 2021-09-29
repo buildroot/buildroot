@@ -1,0 +1,30 @@
+From 5112829fe3f9f4776276800a175bf460061f83b1 Mon Sep 17 00:00:00 2001
+From: Adam Jackson <ajax@redhat.com>
+Date: Wed, 30 May 2018 12:31:04 -0400
+Subject: [PATCH] Update for 1.20 ABI
+
+Signed-off-by: Adam Jackson <ajax@redhat.com>
+[Upstream https://gitlab.freedesktop.org/xorg/driver/xf86-video-fbdev/-/commit/67525c485f3b32ce0c9bff250d905852f75dfc1c
+ ported to xf86-video-fbturbo]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ src/fbdev.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/fbdev.c b/src/fbdev.c
+index 81bd1fb..489a231 100644
+--- a/src/fbdev.c
++++ b/src/fbdev.c
+@@ -1036,7 +1036,9 @@ FBDevScreenInit(SCREEN_INIT_ARGS_DECL)
+ 	  xf86DrvMsg(pScrn->scrnIndex, X_INFO, "display rotated; disabling DGA\n");
+ 	  xf86DrvMsg(pScrn->scrnIndex, X_INFO, "using driver rotation; disabling "
+ 			                "XRandR\n");
++#if GET_ABI_MAJOR(ABI_VIDEODRV_VERSION) < 24
+ 	  xf86DisableRandR();
++#endif
+ 	  if (pScrn->bitsPerPixel == 24)
+ 	    xf86DrvMsg(pScrn->scrnIndex, X_WARNING, "rotation might be broken at 24 "
+                                              "bits per pixel\n");
+-- 
+2.31.1
+

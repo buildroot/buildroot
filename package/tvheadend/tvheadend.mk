@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TVHEADEND_VERSION = febcf9818d7c37fec8a98d424934edcb3243d5e4
+TVHEADEND_VERSION = dbaa0f850394af8ab845df802f5f781ac0218ec4
 TVHEADEND_SITE = $(call github,tvheadend,tvheadend,$(TVHEADEND_VERSION))
 TVHEADEND_LICENSE = GPL-3.0+
 TVHEADEND_LICENSE_FILES = LICENSE.md
@@ -29,7 +29,7 @@ endif
 ifeq ($(BR2_PACKAGE_TVHEADEND_TRANSCODING),y)
 TVHEADEND_CONF_OPTS += --enable-libav --enable-libx264
 TVHEADEND_DEPENDENCIES += ffmpeg x264
-ifeq ($(BR2_PACKAGE_LIBVA)$(BR2_PACKAGE_XORG7),yy)
+ifeq ($(BR2_PACKAGE_LIBVA),y)
 TVHEADEND_CONF_OPTS += --enable-vaapi
 TVHEADEND_DEPENDENCIES += libva
 else
@@ -61,6 +61,40 @@ TVHEADEND_CONF_OPTS += \
 	--disable-vaapi \
 	--disable-libx264 \
 	--disable-libx265
+endif
+
+ifeq ($(BR2_PACKAGE_TVHEADEND_DESCRAMBLER),y)
+TVHEADEND_CONF_OPTS += \
+	--enable-cardclient \
+	--enable-cwc \
+	--enable-cccam \
+	--enable-capmt \
+	--enable-constcw
+else
+TVHEADEND_CONF_OPTS += \
+	--disable-cardclient \
+	--disable-cwc \
+	--disable-cccam \
+	--disable-capmt \
+	--disable-constcw
+endif
+
+ifeq ($(BR2_PACKAGE_TVHEADEND_IPTV),y)
+TVHEADEND_CONF_OPTS += --enable-iptv
+else
+TVHEADEND_CONF_OPTS += --disable-iptv
+endif
+
+ifeq ($(BR2_PACKAGE_TVHEADEND_SATIP),y)
+TVHEADEND_CONF_OPTS += --enable-satip_client --enable-satip_server
+else
+TVHEADEND_CONF_OPTS += --disable-satip_client --disable-satip_server
+endif
+
+ifeq ($(BR2_PACKAGE_TVHEADEND_TIMESHIFT),y)
+TVHEADEND_CONF_OPTS += --enable-timeshift
+else
+TVHEADEND_CONF_OPTS += --disable-timeshift
 endif
 
 ifeq ($(BR2_PACKAGE_LIBDVBCSA),y)

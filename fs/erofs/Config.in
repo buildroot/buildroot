@@ -11,4 +11,14 @@ config BR2_TARGET_ROOTFS_EROFS_LZ4HC
 	help
 	  Use lz4 high-compression to compress data in the filesystem.
 
+config BR2_TARGET_ROOTFS_EROFS_PCLUSTERSIZE
+	int "pcluster size"
+	default 0
+	help
+	  Specify the maximum size of physical cluster in bytes, as a
+	  multiple of 4KiB, for the big pcluster feature in order to
+	  get much better compression ratios (thus better sequential
+	  read performance for common storage devices), which has been
+	  introduced since Linux 5.13.
+
 endif # BR2_TARGET_ROOTFS_EROFS

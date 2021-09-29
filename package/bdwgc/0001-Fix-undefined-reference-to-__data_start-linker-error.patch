@@ -1,0 +1,33 @@
+From 301ef15aefa6764466c374d07efb511b1c3862cc Mon Sep 17 00:00:00 2001
+From: Nikita Ermakov <coffe92@gmail.com>
+Date: Wed, 20 May 2020 17:57:17 +0300
+Subject: [PATCH] Fix 'undefined reference to __data_start' linker error on
+ RISC-V
+
+Issue #294 (bdwgc).
+
+* include/private/gcconfig.h [RISCV && LINUX] (__data_start): Add
+attribute(weak).
+
+(cherry picked from commit 538562ad01b181f4cc3913da1ac06a77945cd9b9)
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+---
+ include/private/gcconfig.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/private/gcconfig.h b/include/private/gcconfig.h
+index d9d45da1..d6cefa6f 100644
+--- a/include/private/gcconfig.h
++++ b/include/private/gcconfig.h
+@@ -2943,7 +2943,7 @@ EXTERN_C_BEGIN
+ #   define ALIGNMENT (CPP_WORDSZ/8)
+ #   ifdef LINUX
+ #     define OS_TYPE "LINUX"
+-      extern int __data_start[];
++      extern int __data_start[] __attribute__((__weak__));
+ #     define DATASTART ((ptr_t)__data_start)
+ #     define LINUX_STACKBOTTOM
+ #     define DYNAMIC_LOADING
+-- 
+2.30.2
+

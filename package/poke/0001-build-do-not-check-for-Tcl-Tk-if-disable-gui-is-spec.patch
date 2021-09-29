@@ -1,0 +1,43 @@
+From cef3fc90f02ef4fc49515745194bac3d81a2265b Mon Sep 17 00:00:00 2001
+From: "Jose E. Marchesi" <jose.marchesi@oracle.com>
+Date: Fri, 30 Apr 2021 13:17:05 +0200
+Subject: [PATCH] build: do not check for Tcl/Tk if --disable-gui is specified
+
+2021-04-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* configure.ac: Do not check for tcl/tk if --disable-gui is
+	specified at configure time.
+
+(cherry picked from commit 280a5e154287e43c0a40d9530a9cc658a7367a9c)
+[Romain: remove Changelog entry]
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+---
+ configure.ac | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index c7205513..c2f0760a 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -214,12 +214,15 @@ fi
+ dnl The GUI is optional, and depends on the availability of Tcl and
+ dnl Tk.
+ 
+-POKE_TCLTK
+-
+ AC_ARG_ENABLE([gui],
+               AS_HELP_STRING([--enable-gui],
+                              [Enable the GUI (default is YES)]),
+-              [gui_enabled=$enableval], [gui_enabled=$has_tcltk])
++              [gui_enabled=$enableval], [gui_enabled=yes])
++
++if test "x$gui_enabled" = "xyes"; then
++ POKE_TCLTK
++ gui_enabled=$has_tcltk
++fi
+ 
+ AM_CONDITIONAL([GUI], [test "x$gui_enabled" = "xyes"])
+ 
+-- 
+2.30.2
+

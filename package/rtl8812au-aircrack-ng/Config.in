@@ -1,0 +1,10 @@
+comment "rtl8812au-aircrack-ng needs a Linux kernel to be built"
+	depends on !BR2_LINUX_KERNEL
+
+config BR2_PACKAGE_RTL8812AU_AIRCRACK_NG
+	bool "rtl8812au-aircrack-ng"
+	depends on BR2_LINUX_KERNEL
+	help
+	  rtl8812au wifi driver (aircrack-ng repository)
+
+	  https://github.com/aircrack-ng/rtl8812au

@@ -112,3 +112,15 @@ def get_elf_prog_interpreter(builddir, prefix, fpath):
             continue
         return m.group(1)
     return None
+
+
+def img_round_power2(img):
+    """
+    Rounds up the size of an image file to the next power of 2
+    """
+    sz = os.stat(img).st_size
+    pow2 = 1
+    while pow2 < sz:
+        pow2 = pow2 << 1
+    with open(img, 'ab') as f:
+        f.truncate(pow2)

@@ -3,6 +3,7 @@ config BR2_PACKAGE_QT5BASE
 	select BR2_PACKAGE_ZLIB
 	select BR2_PACKAGE_PCRE2
 	select BR2_PACKAGE_PCRE2_16
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_PSK if BR2_PACKAGE_LIBOPENSSL
 	help
 	  Qt is a cross-platform application and UI framework for
 	  developers using C++.

@@ -4,16 +4,19 @@
 #
 ################################################################################
 
-GPSD_VERSION = 3.20
+GPSD_VERSION = 3.21
 GPSD_SITE = http://download-mirror.savannah.gnu.org/releases/gpsd
 GPSD_LICENSE = BSD-2-Clause
 GPSD_LICENSE_FILES = COPYING
+GPSD_CPE_ID_VENDOR = gpsd_project
+GPSD_SELINUX_MODULES = gpsd
 GPSD_INSTALL_STAGING = YES
 
 GPSD_DEPENDENCIES = host-python3 host-scons host-pkgconf
 
 GPSD_LDFLAGS = $(TARGET_LDFLAGS)
 GPSD_CFLAGS = $(TARGET_CFLAGS)
+GPSD_CXXFLAGS = $(TARGET_CXXFLAGS)
 
 GPSD_SCONS_ENV = $(TARGET_CONFIGURE_OPTS)
 
@@ -23,7 +26,6 @@ GPSD_SCONS_OPTS = \
 	prefix=/usr \
 	sysroot=$(STAGING_DIR) \
 	strip=no \
-	python=no \
 	qt=no \
 	systemd=$(if $(BR2_INIT_SYSTEMD),yes,no)
 
@@ -45,6 +47,7 @@ endif
 
 ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_68485),y)
 GPSD_CFLAGS += -O0
+GPSD_CXXFLAGS += -O0
 endif
 
 # If libusb is available build it before so the package can use it
@@ -165,12 +168,6 @@ endif
 ifeq ($(BR2_PACKAGE_GPSD_SQUELCH),y)
 GPSD_SCONS_OPTS += squelch=yes
 endif
-ifneq ($(BR2_PACKAGE_GPSD_RECONFIGURE),y)
-GPSD_SCONS_OPTS += reconfigure=no
-endif
-ifneq ($(BR2_PACKAGE_GPSD_CONTROLSEND),y)
-GPSD_SCONS_OPTS += controlsend=no
-endif
 ifneq ($(BR2_PACKAGE_GPSD_OLDSTYLE),y)
 GPSD_SCONS_OPTS += oldstyle=no
 endif
@@ -186,9 +183,6 @@ endif
 ifeq ($(BR2_PACKAGE_GPSD_GROUP),y)
 GPSD_SCONS_OPTS += gpsd_group=$(BR2_PACKAGE_GPSD_GROUP_VALUE)
 endif
-ifeq ($(BR2_PACKAGE_GPSD_FIXED_PORT_SPEED),y)
-GPSD_SCONS_OPTS += fixed_port_speed=$(BR2_PACKAGE_GPSD_FIXED_PORT_SPEED_VALUE)
-endif
 ifeq ($(BR2_PACKAGE_GPSD_MAX_CLIENT),y)
 GPSD_SCONS_OPTS += max_clients=$(BR2_PACKAGE_GPSD_MAX_CLIENT_VALUE)
 endif
@@ -196,10 +190,23 @@ ifeq ($(BR2_PACKAGE_GPSD_MAX_DEV),y)
 GPSD_SCONS_OPTS += max_devices=$(BR2_PACKAGE_GPSD_MAX_DEV_VALUE)
 endif
 
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
+GPSD_SCONS_OPTS += \
+	python=yes \
+	python_libdir="/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages"
+else ifeq ($(BR2_PACKAGE_PYTHON),y)
+GPSD_SCONS_OPTS += \
+	python=yes \
+	python_libdir="/usr/lib/python$(PYTHON_VERSION_MAJOR)/site-packages"
+else
+GPSD_SCONS_OPTS += python=no
+endif
+
 GPSD_SCONS_ENV += \
 	LDFLAGS="$(GPSD_LDFLAGS)" \
 	CFLAGS="$(GPSD_CFLAGS)" \
-	CCFLAGS="$(GPSD_CFLAGS)"
+	CCFLAGS="$(GPSD_CFLAGS)" \
+	CXXFLAGS="$(GPSD_CXXFLAGS)"
 
 define GPSD_BUILD_CMDS
 	(cd $(@D); \

@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-RUBY_VERSION_MAJOR = 2.7
+RUBY_VERSION_MAJOR = 3.0
 RUBY_VERSION = $(RUBY_VERSION_MAJOR).2
-RUBY_VERSION_EXT = 2.7.0
+RUBY_VERSION_EXT = 3.0.0
 RUBY_SITE = http://cache.ruby-lang.org/pub/ruby/$(RUBY_VERSION_MAJOR)
 RUBY_SOURCE = ruby-$(RUBY_VERSION).tar.xz
 RUBY_DEPENDENCIES = host-pkgconf host-ruby
@@ -22,6 +22,10 @@ RUBY_LICENSE_FILES = LEGAL COPYING BSDL
 RUBY_CPE_ID_VENDOR = ruby-lang
 # 0001-fix-default-coroutine-selection.patch
 RUBY_AUTORECONF = YES
+
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+RUBY_CONF_ENV += LIBS=-latomic
+endif
 
 ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
 # On uClibc, finite, isinf and isnan are not directly implemented as

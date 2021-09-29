@@ -1,0 +1,48 @@
+From 1ae5ff981ae0484383c4733c56b72e56a3a37584 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 14 Aug 2021 10:43:13 +0200
+Subject: [PATCH] glib/poppler-private.h: fix build with gcc 11
+
+Fix the following build failure with gcc 11:
+
+In file included from /tmp/instance-0/output-1/host/arm-buildroot-linux-gnueabihf/sysroot/usr/include/glib-2.0/glib/gthread.h:32,
+                 from /tmp/instance-0/output-1/host/arm-buildroot-linux-gnueabihf/sysroot/usr/include/glib-2.0/glib/gasyncqueue.h:32,
+                 from /tmp/instance-0/output-1/host/arm-buildroot-linux-gnueabihf/sysroot/usr/include/glib-2.0/glib.h:32,
+                 from /tmp/instance-0/output-1/host/arm-buildroot-linux-gnueabihf/sysroot/usr/include/glib-2.0/gobject/gbinding.h:28,
+                 from /tmp/instance-0/output-1/host/arm-buildroot-linux-gnueabihf/sysroot/usr/include/glib-2.0/glib-object.h:22,
+                 from /tmp/instance-0/output-1/build/poppler-0.84.0/glib/poppler.h:22,
+                 from /tmp/instance-0/output-1/build/poppler-0.84.0/glib/poppler-action.cc:19:
+/tmp/instance-0/output-1/build/poppler-0.84.0/glib/poppler-action.cc: In function 'GType poppler_dest_get_type()':
+/tmp/instance-0/output-1/build/poppler-0.84.0/glib/poppler-private.h:155:13: error: argument 2 of '__atomic_load' must not be a pointer to a 'volatile' type
+  155 |         if (g_once_init_enter (&g_define_type_id__volatile)) {                        \
+      |             ^~~~~~~~~~~~~~~~~
+/tmp/instance-0/output-1/build/poppler-0.84.0/glib/poppler-action.cc:28:1: note: in expansion of macro 'POPPLER_DEFINE_BOXED_TYPE'
+   28 | POPPLER_DEFINE_BOXED_TYPE (PopplerDest, poppler_dest, poppler_dest_copy, poppler_dest_free)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/dfcaac6487aaeb10412c3fe72a23135f8a70fefe
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: not needed because of
+https://gitlab.freedesktop.org/poppler/poppler/-/commit/47de887d7658cfd68df44b3acf710971054f957b]
+---
+ glib/poppler-private.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/glib/poppler-private.h b/glib/poppler-private.h
+index 86b587fd..ff15eab0 100644
+--- a/glib/poppler-private.h
++++ b/glib/poppler-private.h
+@@ -152,7 +152,7 @@ gboolean _poppler_convert_pdf_date_to_gtime (const GooString *date,
+ GType                                                                                 \
+ type_name##_get_type (void)                                                           \
+ {                                                                                     \
+-        static volatile gsize g_define_type_id__volatile = 0;                         \
++        static gsize g_define_type_id__volatile = 0;                                  \
+ 	if (g_once_init_enter (&g_define_type_id__volatile)) {                        \
+ 	        GType g_define_type_id =                                              \
+ 		    g_boxed_type_register_static (g_intern_static_string (#TypeName), \
+-- 
+2.30.2
+

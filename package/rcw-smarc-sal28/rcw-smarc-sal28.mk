@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RCW_SMARC_SAL28_VERSION = 10
+RCW_SMARC_SAL28_VERSION = 11
 RCW_SMARC_SAL28_SITE = $(call github,kontron,rcw-smarc-sal28,v$(RCW_SMARC_SAL28_VERSION))
 RCW_SMARC_SAL28_LICENSE = BSD-2-Clause
 RCW_SMARC_SAL28_LICENSE_FILES = COPYING

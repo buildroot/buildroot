@@ -1,0 +1,33 @@
+config BR2_PACKAGE_LIBBPF_ARCH_SUPPORTS
+	bool
+	# see src/bpf.c
+	default y if BR2_arc
+	default y if BR2_aarch64 || BR2_aarch64_be
+	default y if BR2_i386 || BR2_x86_64
+	default y if BR2_sparc || BR2_sparc64
+	default y if BR2_s390x
+
+config BR2_PACKAGE_LIBBPF
+	bool "libbpf"
+	depends on BR2_PACKAGE_LIBBPF_ARCH_SUPPORTS
+	depends on BR2_USE_WCHAR # elfutils
+	depends on !BR2_STATIC_LIBS # elfutils
+	depends on BR2_TOOLCHAIN_HAS_THREADS # elfutils
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_13
+	depends on BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_GLIBC # elfutils
+	select BR2_PACKAGE_ELFUTILS
+	select BR2_PACKAGE_ZLIB
+	help
+	  libbpf library.
+	  A mirror of bpf-next linux tree bpf-next/tools/lib/bpf
+	  directory plus its supporting header files. The version
+	  of the package reflects the version of ABI.
+
+	  https://github.com/libbpf/libbpf
+
+comment "libbpf needs a uClibc or glibc toolchain w/ wchar, dynamic library, threads, headers >= 4.13"
+	depends on BR2_PACKAGE_LIBBPF_ARCH_SUPPORTS
+	depends on !BR2_USE_WCHAR || BR2_STATIC_LIBS \
+		|| !BR2_TOOLCHAIN_HAS_THREADS \
+		|| !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_13 \
+		|| !(BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_GLIBC)

@@ -1,0 +1,108 @@
+config BR2_TARGET_EDK2
+	bool "EDK2"
+	depends on BR2_x86_64 || BR2_aarch64
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5
+	select BR2_PACKAGE_EDK2_PLATFORMS
+	help
+	  EDK II is a modern, feature-rich, cross-platform firmware
+	  development environment for the UEFI and PI specifications.
+
+	  https://github.com/tianocore/tianocore.github.io/wiki/EDK-II
+
+if BR2_TARGET_EDK2
+
+choice
+	prompt "Platform"
+	default BR2_TARGET_EDK2_PLATFORM_OVMF_X64 if BR2_x86_64
+	default BR2_TARGET_EDK2_PLATFORM_ARM_VIRT_QEMU if BR2_aarch64
+
+config BR2_TARGET_EDK2_PLATFORM_OVMF_X64
+	bool "x86-64"
+	depends on BR2_x86_64
+	help
+	  Platform configuration for a generic x86-64 target.
+	  This platform will boot from flash address 0x0.
+	  It should therefore be used as the first bootloader.
+
+config BR2_TARGET_EDK2_PLATFORM_ARM_VIRT_QEMU
+	bool "ARM Virt Qemu (flash)"
+	depends on BR2_aarch64
+	help
+	  Platform configuration for QEMU targeting the Virt machine.
+	  This platform will only boot from flash address 0x0.
+	  It should therefore be used as the first bootloader.
+
+config BR2_TARGET_EDK2_PLATFORM_ARM_VIRT_QEMU_KERNEL
+	bool "ARM Virt Qemu (kernel)"
+	depends on BR2_aarch64
+	help
+	  Platform configuration for QEMU targeting the Virt machine.
+	  This platform can boot from either flash address 0x0 or via
+	  the Linux boot protocol. It can therefore be loaded by a
+	  previous bootloader like ARM Trusted Firmware or OP-TEE.
+
+config BR2_TARGET_EDK2_PLATFORM_ARM_SGI575
+	bool "ARM SGI-575"
+	depends on BR2_aarch64
+	help
+	  Platform configuration for ARM SGI-575 on ARM's
+	  Fixed Virtual Platform (FVP).
+
+config BR2_TARGET_EDK2_PLATFORM_ARM_VEXPRESS_FVP_AARCH64
+	bool "ARM VExpress FVP Aarch64"
+	depends on BR2_aarch64
+	help
+	  Platform configuration for ARM Versatile Express targeting
+	  the Aarch64 Fixed Virtual Platform (FVP).
+
+config BR2_TARGET_EDK2_PLATFORM_SOCIONEXT_DEVELOPERBOX
+	bool "Socionext DeveloperBox"
+	depends on BR2_aarch64
+	depends on BR2_TARGET_ARM_TRUSTED_FIRMWARE
+	depends on !BR2_TARGET_ARM_TRUSTED_FIRMWARE_EDK2_AS_BL33
+	select BR2_PACKAGE_HOST_DTC
+	select BR2_TARGET_ARM_TRUSTED_FIRMWARE_FIP
+	help
+	  Platform configuration for Socionext SynQuacer DeveloperBox
+	  (SC2A11).
+
+comment "Socionext DeveloperBox depends on ATF not using EDK2 as BL33"
+	depends on BR2_TARGET_ARM_TRUSTED_FIRMWARE_EDK2_AS_BL33
+
+config BR2_TARGET_EDK2_PLATFORM_SOLIDRUN_ARMADA80X0MCBIN
+	bool "SolidRun MacchiatoBin"
+	depends on BR2_aarch64
+	depends on BR2_TARGET_ARM_TRUSTED_FIRMWARE
+	select BR2_PACKAGE_HOST_DTC
+	select BR2_TARGET_ARM_TRUSTED_FIRMWARE_FIP
+	help
+	  Platform configuration for the SolidRun MacchiatoBin.
+
+config BR2_TARGET_EDK2_PLATFORM_QEMU_SBSA
+	bool "QEMU SBSA"
+	depends on BR2_aarch64
+	depends on BR2_TARGET_ARM_TRUSTED_FIRMWARE
+	depends on !BR2_TARGET_ARM_TRUSTED_FIRMWARE_EDK2_AS_BL33
+	help
+	  Platform configuration for QEMU targeting the SBSA reference
+	  machine.
+
+comment "QEMU SBSA depends on ATF not using EDK2 as BL33"
+	depends on BR2_TARGET_ARM_TRUSTED_FIRMWARE_EDK2_AS_BL33
+
+endchoice
+
+config BR2_TARGET_EDK2_FD_NAME
+	string
+	default "OVMF" if BR2_TARGET_EDK2_PLATFORM_OVMF_X64
+	default "QEMU_EFI" if BR2_TARGET_EDK2_PLATFORM_ARM_VIRT_QEMU
+	default "QEMU_EFI" if BR2_TARGET_EDK2_PLATFORM_ARM_VIRT_QEMU_KERNEL
+	default "BL33_AP_UEFI" if BR2_TARGET_EDK2_PLATFORM_ARM_SGI575
+	default "FVP_AARCH64_EFI" if BR2_TARGET_EDK2_PLATFORM_ARM_VEXPRESS_FVP_AARCH64
+	default "FVP_AARCH64_EFI" if BR2_TARGET_EDK2_PLATFORM_SOCIONEXT_DEVELOPERBOX
+	default "ARMADA_EFI" if BR2_TARGET_EDK2_PLATFORM_SOLIDRUN_ARMADA80X0MCBIN
+
+endif
+
+comment "EDK2 needs a toolchain w/ gcc >= 5"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_5

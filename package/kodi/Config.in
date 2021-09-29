@@ -5,103 +5,98 @@ config BR2_PACKAGE_KODI_ARCH_SUPPORTS
 	depends on !(BR2_i386 && !BR2_X86_CPU_HAS_SSE)
 	depends on BR2_USE_MMU # libcdio, and others
 
-comment "kodi needs python w/ .py modules, a uClibc or glibc toolchain w/ C++, threads, wchar, dynamic library, gcc >= 4.8"
+comment "kodi needs python3 w/ .py modules, a uClibc or glibc toolchain w/ C++, threads, wchar, dynamic library, gcc >= 4.9"
 	depends on BR2_PACKAGE_KODI_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS \
 		|| !BR2_USE_WCHAR || BR2_STATIC_LIBS \
-		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 \
+		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 \
 		|| BR2_TOOLCHAIN_USES_MUSL \
-		|| !BR2_PACKAGE_PYTHON \
-		|| BR2_PACKAGE_PYTHON_PYC_ONLY
+		|| !BR2_PACKAGE_PYTHON3 \
+		|| BR2_PACKAGE_PYTHON3_PYC_ONLY
 
 config BR2_PACKAGE_KODI_PLATFORM_SUPPORTS
 	bool
 
-config BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_RBPI
+config BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_GBM
 	bool
 	default y
-	# List of valid CPUs can be found here:
-	# https://github.com/xbmc/xbmc/blob/Krypton/project/cmake/scripts/rbpi/ArchSetup.cmake#L12
-	depends on BR2_arm1176jzf_s || BR2_cortex_a7 || BR2_cortex_a53
-	depends on BR2_PACKAGE_RPI_USERLAND
+	depends on BR2_PACKAGE_HAS_LIBGL || BR2_PACKAGE_HAS_LIBGLES
+	depends on BR2_PACKAGE_MESA3D_GBM
 	depends on BR2_PACKAGE_HAS_UDEV # libinput
 	select BR2_PACKAGE_KODI_PLATFORM_SUPPORTS
+	select BR2_PACKAGE_LIBINPUT
+	select BR2_PACKAGE_LIBXKBCOMMON
 
-config BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_WAYLAND_GL
+config BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_WAYLAND
 	bool
 	default y
-	depends on BR2_PACKAGE_HAS_LIBGL
+	depends on BR2_PACKAGE_HAS_LIBGL || BR2_PACKAGE_HAS_LIBGLES
 	depends on BR2_PACKAGE_HAS_LIBEGL_WAYLAND # waylandpp
 	depends on BR2_HOST_GCC_AT_LEAST_4_9 # waylandpp
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # waylandpp
+	depends on BR2_INSTALL_LIBSTDCPP # waylandpp
 	depends on BR2_PACKAGE_WAYLAND # waylandpp
 	select BR2_PACKAGE_KODI_PLATFORM_SUPPORTS
+	select BR2_PACKAGE_LIBXKBCOMMON
+	select BR2_PACKAGE_WAYLANDPP
 
-config BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_WAYLAND_GLES
+config BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_X11
 	bool
 	default y
-	depends on BR2_PACKAGE_HAS_LIBGLES
-	depends on BR2_PACKAGE_HAS_LIBEGL_WAYLAND # waylandpp
-	depends on BR2_HOST_GCC_AT_LEAST_4_9 # waylandpp
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # waylandpp
-	depends on BR2_PACKAGE_WAYLAND # waylandpp
-	select BR2_PACKAGE_KODI_PLATFORM_SUPPORTS
-
-config BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_X11_OPENGL
-	bool
-	default y
-	depends on BR2_PACKAGE_HAS_LIBEGL
-	depends on BR2_PACKAGE_HAS_LIBGL
+	depends on BR2_PACKAGE_HAS_LIBGL || BR2_PACKAGE_HAS_LIBGLES
 	depends on BR2_PACKAGE_XORG7
 	select BR2_PACKAGE_KODI_PLATFORM_SUPPORTS
+	select BR2_PACKAGE_XLIB_LIBXRANDR
 
-comment "kodi needs an OpenGL EGL backend with OpenGL support"
+comment "kodi needs an OpenGL EGL backend with OpenGL or GLES support"
 	depends on !BR2_PACKAGE_KODI_PLATFORM_SUPPORTS
 
 menuconfig BR2_PACKAGE_KODI
 	bool "kodi"
 	depends on BR2_INSTALL_LIBSTDCPP
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libass -> harfbuzz
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # C++14
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on !BR2_TOOLCHAIN_USES_MUSL
 	depends on BR2_USE_WCHAR
-	depends on !BR2_STATIC_LIBS # gnutls, python and others
+	depends on !BR2_STATIC_LIBS # gnutls, python3 and others
+	depends on BR2_PACKAGE_HAS_LIBEGL
 	depends on BR2_PACKAGE_KODI_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_KODI_PLATFORM_SUPPORTS
-	depends on BR2_PACKAGE_PYTHON
-	depends on !BR2_PACKAGE_PYTHON_PYC_ONLY
+	depends on BR2_PACKAGE_PYTHON3
+	depends on !BR2_PACKAGE_PYTHON3_PYC_ONLY
 	select BR2_NEEDS_HOST_JAVA
-	select BR2_PACKAGE_EXPAT
+	select BR2_PACKAGE_FFMPEG
+	select BR2_PACKAGE_FFMPEG_GPL
+	select BR2_PACKAGE_FFMPEG_POSTPROC
+	select BR2_PACKAGE_FFMPEG_SWSCALE
 	select BR2_PACKAGE_FLATBUFFERS
 	select BR2_PACKAGE_FMT
-	select BR2_PACKAGE_FONTCONFIG
+	select BR2_PACKAGE_FONTCONFIG # needed for libass
 	select BR2_PACKAGE_FREETYPE
 	select BR2_PACKAGE_FSTRCMP
-	select BR2_PACKAGE_GNUTLS
 	select BR2_PACKAGE_LIBASS
 	select BR2_PACKAGE_LIBCDIO
 	select BR2_PACKAGE_LIBCROSSGUID
 	select BR2_PACKAGE_LIBCURL
+	select BR2_PACKAGE_LIBDRM
 	select BR2_PACKAGE_LIBFRIBIDI
 	select BR2_PACKAGE_LIBICONV if !BR2_ENABLE_LOCALE
 	select BR2_PACKAGE_LIBICONV_EXTRA_ENCODINGS if !BR2_ENABLE_LOCALE
 	select BR2_PACKAGE_LIBPLIST
 	select BR2_PACKAGE_LZO
-	select BR2_PACKAGE_NCURSES
 	select BR2_PACKAGE_OPENSSL
 	select BR2_PACKAGE_PCRE
 	select BR2_PACKAGE_PCRE_UCP
-	select BR2_PACKAGE_PYTHON_2TO3
-	select BR2_PACKAGE_PYTHON_BSDDB
-	select BR2_PACKAGE_PYTHON_CURSES
-	select BR2_PACKAGE_PYTHON_PYEXPAT
-	select BR2_PACKAGE_PYTHON_SQLITE
-	select BR2_PACKAGE_PYTHON_SSL
-	select BR2_PACKAGE_PYTHON_UNICODEDATA
-	select BR2_PACKAGE_PYTHON_ZLIB
+	select BR2_PACKAGE_PYTHON3_2TO3
+	select BR2_PACKAGE_PYTHON3_PYEXPAT
+	select BR2_PACKAGE_PYTHON3_SQLITE
+	select BR2_PACKAGE_PYTHON3_SSL
+	select BR2_PACKAGE_PYTHON3_UNICODEDATA
+	select BR2_PACKAGE_PYTHON3_ZLIB
 	select BR2_PACKAGE_RAPIDJSON
+	select BR2_PACKAGE_SPDLOG
 	select BR2_PACKAGE_SQLITE
 	select BR2_PACKAGE_TAGLIB
 	select BR2_PACKAGE_TINYXML
@@ -114,8 +109,6 @@ menuconfig BR2_PACKAGE_KODI
 	  http://kodi.tv
 
 if BR2_PACKAGE_KODI
-
-source "package/kodi-platform/Config.in"
 
 config BR2_PACKAGE_KODI_ALSA_LIB
 	bool "alsa"
@@ -136,6 +129,8 @@ config BR2_PACKAGE_KODI_BLUEZ
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_4 # bluez5_utils
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # bluez5_utils
 	select BR2_PACKAGE_BLUEZ5_UTILS
+	select BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_AUDIO
+	select BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HID
 	help
 	    Enable bluetooth support
 
@@ -196,34 +191,17 @@ config BR2_PACKAGE_KODI_MYSQL
 	  Enable MySQL support
 
 choice
-	prompt "platform"
-	default BR2_PACKAGE_KODI_PLATFORM_X11_OPENGL
+	prompt "render system"
+	default BR2_PACKAGE_KODI_RENDER_SYSTEM_GL
 
-config BR2_PACKAGE_KODI_PLATFORM_RBPI
-	bool "Raspberry Pi"
-	depends on BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_RBPI
-	select BR2_PACKAGE_LIBINPUT
-	select BR2_PACKAGE_LIBXKBCOMMON
-
-config BR2_PACKAGE_KODI_PLATFORM_WAYLAND_GL
-	bool "Wayland/OpenGL"
-	depends on BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_WAYLAND_GL
+config BR2_PACKAGE_KODI_RENDER_SYSTEM_GL
+	bool "OpenGL"
+	depends on BR2_PACKAGE_HAS_LIBGL
 	select BR2_PACKAGE_LIBGLU
-	select BR2_PACKAGE_LIBXKBCOMMON
-	select BR2_PACKAGE_WAYLANDPP
 
-config BR2_PACKAGE_KODI_PLATFORM_WAYLAND_GLES
-	bool "Wayland/GLES"
-	depends on BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_WAYLAND_GLES
-	select BR2_PACKAGE_LIBXKBCOMMON
-	select BR2_PACKAGE_WAYLANDPP
-
-config BR2_PACKAGE_KODI_PLATFORM_X11_OPENGL
-	bool "X11/OpenGL"
-	depends on BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_X11_OPENGL
-	select BR2_PACKAGE_LIBDRM
-	select BR2_PACKAGE_LIBGLU
-	select BR2_PACKAGE_XLIB_LIBXRANDR
+config BR2_PACKAGE_KODI_RENDER_SYSTEM_GLES
+	bool "GLES"
+	depends on BR2_PACKAGE_HAS_LIBGLES
 
 endchoice
 
@@ -257,40 +235,22 @@ config BR2_PACKAGE_KODI_LIBUSB
 	# https://github.com/xbmc/xbmc/blob/Jarvis/configure.ac#L1554
 	# "if libudev is available, we don't need libusb"
 	depends on !BR2_PACKAGE_HAS_UDEV
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
 	select BR2_PACKAGE_LIBUSB
 	select BR2_PACKAGE_LIBUSB_COMPAT
 	help
 	  Enable libusb support.
 
-comment "usb support needs a toolchain w/ gcc >= 4.9"
-	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
-
-config BR2_PACKAGE_KODI_LIBVA
-	bool "va"
-	depends on \
-		BR2_PACKAGE_KODI_PLATFORM_WAYLAND_GL || \
-		BR2_PACKAGE_KODI_PLATFORM_WAYLAND_GLES || \
-		BR2_PACKAGE_KODI_PLATFORM_X11_OPENGL
-	select BR2_PACKAGE_LIBVA
-	help
-	  Enable libva support.
-
-comment "libva support needs platform 'Wayland' or 'X11/OpenGL'"
-	depends on \
-		!BR2_PACKAGE_KODI_PLATFORM_WAYLAND_GL && \
-		!BR2_PACKAGE_KODI_PLATFORM_WAYLAND_GLES && \
-		!BR2_PACKAGE_KODI_PLATFORM_X11_OPENGL
-
 config BR2_PACKAGE_KODI_LIBVDPAU
 	bool "vdpau"
-	depends on BR2_PACKAGE_KODI_PLATFORM_X11_OPENGL
+	depends on BR2_PACKAGE_KODI_PLATFORM_X11 && \
+		BR2_PACKAGE_KODI_RENDER_SYSTEM_GL
 	select BR2_PACKAGE_LIBVDPAU
 	help
 	  Enable libvdpau support.
 
 comment "libvdpau support needs platform 'X11/OpenGL'"
-	depends on !BR2_PACKAGE_KODI_PLATFORM_X11_OPENGL
+	depends on !BR2_PACKAGE_KODI_PLATFORM_SUPPORTS_X11 || \
+		!BR2_PACKAGE_KODI_RENDER_SYSTEM_GL
 
 config BR2_PACKAGE_KODI_UPNP
 	bool "upnp"
@@ -326,6 +286,7 @@ endmenu
 
 menu "Inputstream addons"
 	source "package/kodi-inputstream-adaptive/Config.in"
+	source "package/kodi-inputstream-ffmpegdirect/Config.in"
 	source "package/kodi-inputstream-rtmp/Config.in"
 endmenu
 
@@ -356,7 +317,6 @@ menu "Screensavers"
 	source "package/kodi-screensaver-asterwave/Config.in"
 	source "package/kodi-screensaver-biogenesis/Config.in"
 	source "package/kodi-screensaver-cpblobs/Config.in"
-	source "package/kodi-screensaver-crystalmorph/Config.in"
 	source "package/kodi-screensaver-greynetic/Config.in"
 	source "package/kodi-screensaver-matrixtrails/Config.in"
 	source "package/kodi-screensaver-pingpong/Config.in"
@@ -370,6 +330,7 @@ menu "Skins"
 endmenu
 
 menu "Virtual file systems"
+	source "package/kodi-vfs-libarchive/Config.in"
 	source "package/kodi-vfs-rar/Config.in"
 	source "package/kodi-vfs-sftp/Config.in"
 endmenu
@@ -377,6 +338,7 @@ endmenu
 menu "Visualisations"
 	source "package/kodi-visualisation-fishbmc/Config.in"
 	source "package/kodi-visualisation-goom/Config.in"
+	source "package/kodi-visualisation-matrix/Config.in"
 	source "package/kodi-visualisation-shadertoy/Config.in"
 	source "package/kodi-visualisation-spectrum/Config.in"
 	source "package/kodi-visualisation-starburst/Config.in"

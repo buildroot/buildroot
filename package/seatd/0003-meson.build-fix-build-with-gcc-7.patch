@@ -1,0 +1,48 @@
+From 0b32c33978fbe8772df6d185c9b9d646c442dc5d Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 8 Aug 2021 19:00:35 +0200
+Subject: [PATCH] meson.build: fix build with gcc < 7
+
+Test if -Wimplicit-fallthrough is available before using it as it has
+been added only since gcc 7.1 and
+https://github.com/gcc-mirror/gcc/commit/81fea426da8c4687bb32e6894dc26f00ae211822
+and so it will raise the following build failure with gcc < 7:
+
+arm-none-linux-gnueabi-gcc: error: unrecognized command line option '-Wimplicit-fallthrough'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/0ee6816a7cceebdafd07612677a594bdf68e0790
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/kennylevinsen/seatd/pull/1]
+---
+ meson.build | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 1131b4b..c366a59 100644
+--- a/meson.build
++++ b/meson.build
+@@ -31,7 +31,6 @@ add_project_arguments(
+ 		'-Wold-style-definition', # nop
+ 		'-Wpointer-arith',
+ 		'-Wstrict-prototypes',
+-		'-Wimplicit-fallthrough',
+ 		'-Wmissing-prototypes',
+ 		'-Wno-unknown-warning-option',
+ 		'-Wno-unused-command-line-argument',
+@@ -45,6 +44,11 @@ add_project_arguments(
+ 	language: 'c',
+ )
+ 
++cc = meson.get_compiler('c')
++if cc.has_argument('-Wimplicit-fallthrough')
++	add_project_arguments('-Wimplicit-fallthrough' , language : 'c')
++endif
++
+ if ['debugoptimized', 'release', 'minsize'].contains(get_option('buildtype'))
+ 	add_project_arguments('-D_FORTIFY_SOURCE=2', language: 'c')
+ endif
+-- 
+2.30.2
+

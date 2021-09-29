@@ -8,6 +8,9 @@ GERBERA_ARGS="-c /etc/gerbera/config.xml -l /var/log/gerbera.log"
 # shellcheck source=/dev/null
 [ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
 
+# (Re)create home directory
+mkdir -p /var/lib/$DAEMON
+
 start() {
 	printf 'Starting %s: ' "$DAEMON"
 	# shellcheck disable=SC2086 # we need the word splitting

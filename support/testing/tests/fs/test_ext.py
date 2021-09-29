@@ -31,7 +31,7 @@ def boot_img_and_check_fs_type(emulator, builddir, fs_type):
                   kernel="builtin",
                   kernel_cmdline=["root=/dev/mmcblk0",
                                   "rootfstype={}".format(fs_type)],
-                  options=["-drive", "file={},if=sd".format(img)])
+                  options=["-drive", "file={},if=sd,format=raw".format(img)])
     emulator.login()
     _, exit_code = emulator.run(CHECK_FS_TYPE_CMD.format(fs_type))
     return exit_code
@@ -43,6 +43,7 @@ class TestExt2(infra.basetest.BRTest):
         BR2_TARGET_ROOTFS_EXT2=y
         BR2_TARGET_ROOTFS_EXT2_2r0=y
         BR2_TARGET_ROOTFS_EXT2_LABEL="foobaz"
+        BR2_TARGET_ROOTFS_EXT2_SIZE="16384"
         # BR2_TARGET_ROOTFS_TAR is not set
         """
 
@@ -62,6 +63,7 @@ class TestExt2r1(infra.basetest.BRTest):
         BR2_TARGET_ROOTFS_EXT2=y
         BR2_TARGET_ROOTFS_EXT2_2r1=y
         BR2_TARGET_ROOTFS_EXT2_LABEL="foobar"
+        BR2_TARGET_ROOTFS_EXT2_SIZE="16384"
         # BR2_TARGET_ROOTFS_TAR is not set
         """
 
@@ -81,6 +83,7 @@ class TestExt3(infra.basetest.BRTest):
         """
         BR2_TARGET_ROOTFS_EXT2=y
         BR2_TARGET_ROOTFS_EXT2_3=y
+        BR2_TARGET_ROOTFS_EXT2_SIZE="16384"
         # BR2_TARGET_ROOTFS_TAR is not set
         """
 

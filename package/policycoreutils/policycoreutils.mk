@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-POLICYCOREUTILS_VERSION = 3.1
-POLICYCOREUTILS_SITE = https://github.com/SELinuxProject/selinux/releases/download/20200710
+POLICYCOREUTILS_VERSION = 3.2
+POLICYCOREUTILS_SITE = https://github.com/SELinuxProject/selinux/releases/download/$(POLICYCOREUTILS_VERSION)
 POLICYCOREUTILS_LICENSE = GPL-2.0
 POLICYCOREUTILS_LICENSE_FILES = COPYING
 POLICYCOREUTILS_CPE_ID_VENDOR = selinuxproject
@@ -24,7 +24,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_AUDIT),y)
 POLICYCOREUTILS_DEPENDENCIES += audit
-POLICYCOREUTILS_MAKE_OPTS += AUDIT_LOG_PRIV=y
+POLICYCOREUTILS_MAKE_OPTS += AUDIT_LOG_PRIV=y USE_AUDIT=y
 endif
 
 # Enable LSPP_PRIV if both audit and linux pam are enabled

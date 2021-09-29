@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ZYRE_VERSION = 2.0.0
+ZYRE_VERSION = 2.0.1
 ZYRE_SITE = $(call github,zeromq,zyre,v$(ZYRE_VERSION))
 ZYRE_LICENSE = MPL-2.0
 ZYRE_LICENSE_FILES = LICENSE

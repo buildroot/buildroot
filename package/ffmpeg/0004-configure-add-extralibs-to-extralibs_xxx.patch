@@ -1,0 +1,47 @@
+From 0c288853630b7b4e004774c39945d4a804afcfa8 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 6 Aug 2021 09:17:20 +0200
+Subject: [PATCH] configure: add extralibs to extralibs_xxx
+
+Add extralibs to extralibs_xxx (e.g. extralibs_avformat) to allow
+applications such as motion to retrieve ffmpeg dependencies such as
+-latomic through pkg-config
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: not upstreamable]
+---
+ configure | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/configure b/configure
+index 0bb3a7cf2b..3bda99e415 100755
+--- a/configure
++++ b/configure
+@@ -7602,15 +7602,15 @@ rpath=$(enabled rpath && echo "-Wl,-rpath,\${libdir}")
+ source_path=${source_path}
+ LIBPREF=${LIBPREF}
+ LIBSUF=${LIBSUF}
+-extralibs_avutil="$avutil_extralibs"
+-extralibs_avcodec="$avcodec_extralibs"
+-extralibs_avformat="$avformat_extralibs"
+-extralibs_avdevice="$avdevice_extralibs"
+-extralibs_avfilter="$avfilter_extralibs"
+-extralibs_avresample="$avresample_extralibs"
+-extralibs_postproc="$postproc_extralibs"
+-extralibs_swscale="$swscale_extralibs"
+-extralibs_swresample="$swresample_extralibs"
++extralibs_avutil="$avutil_extralibs $extralibs"
++extralibs_avcodec="$avcodec_extralibs $extralibs"
++extralibs_avformat="$avformat_extralibs $extralibs"
++extralibs_avdevice="$avdevice_extralibs $extralibs"
++extralibs_avfilter="$avfilter_extralibs $extralibs"
++extralibs_avresample="$avresample_extralibs $extralibs"
++extralibs_postproc="$postproc_extralibs $extralibs"
++extralibs_swscale="$swscale_extralibs $extralibs"
++extralibs_swresample="$swresample_extralibs $extralibs"
+ EOF
+ 
+ for lib in $LIBRARY_LIST; do
+-- 
+2.30.2
+

@@ -16,5 +16,4 @@ class TestPythonPy3PytestAsyncio(TestPythonPackageBase):
     def run_sample_scripts(self):
         for script in self.sample_scripts:
             cmd = self.interpreter + " -m pytest " + os.path.basename(script)
-            _, exit_code = self.emulator.run(cmd, timeout=self.timeout)
-            self.assertEqual(exit_code, 0)
+            self.assertRunOk(cmd, timeout=self.timeout)

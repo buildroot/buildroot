@@ -4,11 +4,20 @@
 #
 ################################################################################
 
-SWUPDATE_VERSION = 2020.04
+SWUPDATE_VERSION = 2021.04
 SWUPDATE_SITE = $(call github,sbabic,swupdate,$(SWUPDATE_VERSION))
-SWUPDATE_LICENSE = GPL-2.0+ with OpenSSL exception, LGPL-2.1+, MIT
-SWUPDATE_LICENSE_FILES = Licenses/Exceptions Licenses/gpl-2.0.txt \
-	Licenses/lgpl-2.1.txt Licenses/mit.txt
+SWUPDATE_LICENSE = GPL-2.0, GPL-2.0+ with OpenSSL exception, LGPL-2.1+, MIT, ISC, BSD-1-Clause, BSD-2-Clause, BSD-3-Clause, CC0-1.0, CC-BY-ND-4.0
+SWUPDATE_LICENSE_FILES = LICENSES/BSD-1-Clause.txt \
+	LICENSES/BSD-2-Clause.txt \
+	LICENSES/BSD-3-Clause.txt \
+	LICENSES/CC0-1.0.txt \
+	LICENSES/CC-BY-ND-4.0.txt \
+	LICENSES/GPL-2.0-only.txt \
+	LICENSES/GPL-2.0-or-later.txt \
+	LICENSES/ISC.txt \
+	LICENSES/LGPL-2.1-or-later.txt \
+	LICENSES/LicenseRef-OpenSSL-Exception.txt \
+	LICENSES/MIT.txt
 
 # swupdate uses $CROSS-cc instead of $CROSS-gcc, which is not
 # available in all external toolchains, and use CC for linking. Ensure
@@ -16,6 +25,10 @@ SWUPDATE_LICENSE_FILES = Licenses/Exceptions Licenses/gpl-2.0.txt \
 SWUPDATE_MAKE_ENV = CC="$(TARGET_CC)" LD="$(TARGET_CC)"
 
 # swupdate bundles its own version of mongoose (version 6.16)
+
+ifeq ($(BR2_PACKAGE_E2FSPROGS),y)
+SWUPDATE_DEPENDENCIES += e2fsprogs
+endif
 
 ifeq ($(BR2_PACKAGE_EFIBOOTMGR),y)
 SWUPDATE_DEPENDENCIES += efibootmgr
@@ -36,6 +49,13 @@ SWUPDATE_DEPENDENCIES += libarchive
 SWUPDATE_MAKE_ENV += HAVE_LIBARCHIVE=y
 else
 SWUPDATE_MAKE_ENV += HAVE_LIBARCHIVE=n
+endif
+
+ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBBLKID),y)
+SWUPDATE_DEPENDENCIES += util-linux
+SWUPDATE_MAKE_ENV += HAVE_LIBBLKID=y
+else
+SWUPDATE_MAKE_ENV += HAVE_LIBBLKID=n
 endif
 
 ifeq ($(BR2_PACKAGE_LIBCONFIG),y)
@@ -73,7 +93,7 @@ else
 SWUPDATE_MAKE_ENV += HAVE_LIBWEBSOCKETS=n
 endif
 
-ifeq ($(BR2_PACKAGE_HAS_LUAINTERPRETER):$(BR2_STATIC_LIBS),y:)
+ifeq ($(BR2_PACKAGE_HAS_LUAINTERPRETER),y)
 SWUPDATE_DEPENDENCIES += luainterpreter host-pkgconf
 # defines the base name for the pkg-config file ("lua" or "luajit")
 define SWUPDATE_SET_LUA_VERSION
@@ -110,6 +130,13 @@ SWUPDATE_MAKE_ENV += HAVE_MBEDTLS=n
 endif
 endif
 
+ifeq ($(BR2_PACKAGE_P11_KIT),y)
+SWUPDATE_DEPENDENCIES += p11-kit
+SWUPDATE_MAKE_ENV += HAVE_P11KIT=y
+else
+SWUPDATE_MAKE_ENV += HAVE_P11KIT=n
+endif
+
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 SWUPDATE_DEPENDENCIES += systemd
 endif
@@ -119,6 +146,13 @@ SWUPDATE_DEPENDENCIES += libubootenv
 SWUPDATE_MAKE_ENV += HAVE_LIBUBOOTENV=y
 else
 SWUPDATE_MAKE_ENV += HAVE_LIBUBOOTENV=n
+endif
+
+ifeq ($(BR2_PACKAGE_WOLFSSL),y)
+SWUPDATE_DEPENDENCIES += wolfssl
+SWUPDATE_MAKE_ENV += HAVE_WOLFSSL=y
+else
+SWUPDATE_MAKE_ENV += HAVE_WOLFSSL=n
 endif
 
 ifeq ($(BR2_PACKAGE_ZEROMQ),y)
@@ -151,19 +185,12 @@ SWUPDATE_BUILD_CONFIG = $(@D)/.config
 SWUPDATE_KCONFIG_FILE = $(call qstrip,$(BR2_PACKAGE_SWUPDATE_CONFIG))
 SWUPDATE_KCONFIG_EDITORS = menuconfig xconfig gconfig nconfig
 
-ifeq ($(BR2_STATIC_LIBS),y)
-define SWUPDATE_PREFER_STATIC
-	$(call KCONFIG_ENABLE_OPT,CONFIG_STATIC)
-endef
-endif
-
 SWUPDATE_MAKE_OPTS = \
 	CROSS_COMPILE="$(TARGET_CROSS)" \
 	CONFIG_EXTRA_CFLAGS="$(TARGET_CFLAGS)" \
 	CONFIG_EXTRA_LDFLAGS="$(TARGET_LDFLAGS)"
 
 define SWUPDATE_KCONFIG_FIXUP_CMDS
-	$(SWUPDATE_PREFER_STATIC)
 	$(SWUPDATE_SET_LUA_VERSION)
 endef
 

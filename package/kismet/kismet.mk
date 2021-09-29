@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-KISMET_VERSION = 2020-12-R3
+KISMET_VERSION = 2021-06-R1
 KISMET_SOURCE = kismet-$(KISMET_VERSION).tar.xz
 KISMET_SITE = http://www.kismetwireless.net/code
 KISMET_DEPENDENCIES = \
@@ -17,6 +17,8 @@ KISMET_DEPENDENCIES = \
 	zlib
 KISMET_LICENSE = GPL-2.0+
 KISMET_LICENSE_FILES = LICENSE
+KISMET_SELINUX_MODULES = kismet
+
 KISMET_CONF_OPTS = --disable-debuglibs
 
 KISMET_CXXFLAGS = $(TARGET_CXXFLAGS)

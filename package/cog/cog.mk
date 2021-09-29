@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-COG_VERSION = 0.8.0
+COG_VERSION = 0.10.0
 COG_SITE = https://wpewebkit.org/releases
 COG_SOURCE = cog-$(COG_VERSION).tar.xz
 COG_INSTALL_STAGING = YES
@@ -29,6 +29,12 @@ COG_CONF_OPTS += -DCOG_PLATFORM_DRM=ON
 COG_DEPENDENCIES += libdrm libinput
 else
 COG_CONF_OPTS += -DCOG_PLATFORM_DRM=OFF
+endif
+
+ifeq ($(BR2_PACKAGE_COG_USE_SYSTEM_DBUS),y)
+COG_CONF_OPTS += -DCOG_DBUS_SYSTEM_BUS=ON
+else
+COG_CONF_OPTS += -DCOG_DBUS_SYSTEM_BUS=OFF
 endif
 
 $(eval $(cmake-package))

@@ -1,0 +1,135 @@
+From cf6d54b333a3495244ab7bf4939b933fa9fc2108 Mon Sep 17 00:00:00 2001
+From: Alexander Egorenkov <egorenar@linux.ibm.com>
+Date: Mon, 19 Jul 2021 11:49:31 +0200
+Subject: [PATCH] cpumf/lshwc: Fix compile errors due to use of
+ non-standard 32/64 bit types
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Use standard 32- and 64-bit C types.
+
+Fixes the following compile errors with buildroot:
+In file included from lshwc.c:41:
+lshwc.h:61:2: error: unknown type name ‘__u64’
+   61 |  __u64 version;   /* Version of interface */
+      |  ^~~~~
+lshwc.h:62:2: error: unknown type name ‘__u64’
+   62 |  __u64 data_bytes;  /* # of bytes required */
+      |  ^~~~~
+lshwc.h:63:2: error: unknown type name ‘__u64’
+   63 |  __u64 cpumask_len;  /* Length of CPU mask in bytes */
+      |  ^~~~~
+lshwc.h:64:2: error: unknown type name ‘__u64’
+   64 |  __u64 *cpumask;   /* Pointer to CPU mask */
+      |  ^~~~~
+lshwc.h:65:2: error: unknown type name ‘__u64’
+   65 |  __u64 counter_sets;  /* Bit mask of counter set to get */
+      |  ^~~~~
+lshwc.h:69:2: error: unknown type name ‘__u32’
+   69 |  __u32 set;   /* Counter set number */
+      |  ^~~~~
+
+Fixes: 27a562da ("cpumf/lshwc: Program to extract complete counter sets")
+Signed-off-by: Alexander Egorenkov <egorenar@linux.ibm.com>
+---
+ cpumf/lshwc.c | 10 +++++-----
+ cpumf/lshwc.h | 23 ++++++++++++-----------
+ 2 files changed, 17 insertions(+), 16 deletions(-)
+
+diff --git a/cpumf/lshwc.c b/cpumf/lshwc.c
+index 39c9fbe2..c7755123 100644
+--- a/cpumf/lshwc.c
++++ b/cpumf/lshwc.c
+@@ -240,7 +240,7 @@ static char *show_ctrset(unsigned long set)
+ /* Parse CPU list and counter sets */
+ static void parse_cpulist(char *parm, struct s390_hwctr_start *start)
+ {
+-	__u64 *words = start->cpumask;
++	uint64_t *words = start->cpumask;
+ 	unsigned long i, no_a, no_b;
+ 	char *cp, *tokens[16];		/* Used to parse command line params */
+ 	char cpubuf[256];
+@@ -300,7 +300,7 @@ static void parse_cpulist(char *parm, struct s390_hwctr_start *start)
+ 	/* no_b is highest used index, swap array */
+ 	start->cpumask_len = (no_b + 1) * 8;
+ 	for (no_a = 0; no_a < no_b; ++no_a, --no_b) {
+-		__u64 tmp =  words[no_a];
++		uint64_t tmp =  words[no_a];
+ 
+ 		words[no_a] = words[no_b];
+ 		words[no_b] = tmp;
+@@ -525,7 +525,7 @@ static int test_read(struct s390_hwctr_read *read)
+ 			}
+ 			/* Iterate over all counters in each set */
+ 			for (unsigned int k = 0; k < sp->no_cnts; ++k) {
+-				__u64 value;
++				uint64_t value;
+ 				void *addr = base + offset;
+ 				size_t idx = ctrset_offset(sp->set) + k;
+ 
+@@ -608,8 +608,8 @@ static int do_it(char *s)
+ 	int rc;
+ 
+ 	memset(&start, 0, sizeof(start));
+-	rc = max_possible_cpus / sizeof(__u64);
+-	start.cpumask = alloca(max_possible_cpus / sizeof(__u64));
++	rc = max_possible_cpus / sizeof(uint64_t);
++	start.cpumask = alloca(max_possible_cpus / sizeof(uint64_t));
+ 	memset(start.cpumask, 0, rc);
+ 	parse_cpulist(s, &start);
+ 	errno = 0;
+diff --git a/cpumf/lshwc.h b/cpumf/lshwc.h
+index d8044dc7..2f6c51b8 100644
+--- a/cpumf/lshwc.h
++++ b/cpumf/lshwc.h
+@@ -13,6 +13,7 @@
+ #ifndef LSHWC_H
+ #define LSHWC_H
+ 
++#include <stdint.h>
+ #include <sys/ioctl.h>
+ 
+ enum {
+@@ -58,27 +59,27 @@ enum {
+  */
+ 
+ struct s390_hwctr_start {		/* Set CPUs to operate on */
+-	__u64 version;			/* Version of interface */
+-	__u64 data_bytes;		/* # of bytes required */
+-	__u64 cpumask_len;		/* Length of CPU mask in bytes */
+-	__u64 *cpumask;			/* Pointer to CPU mask */
+-	__u64 counter_sets;		/* Bit mask of counter set to get */
++	uint64_t version;		/* Version of interface */
++	uint64_t data_bytes;		/* # of bytes required */
++	uint64_t cpumask_len;		/* Length of CPU mask in bytes */
++	uint64_t *cpumask;		/* Pointer to CPU mask */
++	uint64_t counter_sets;		/* Bit mask of counter set to get */
+ };
+ 
+ struct s390_hwctr_setdata {		/* Counter set data */
+-	__u32 set;			/* Counter set number */
+-	__u32 no_cnts;			/* # of counters stored in cv[] */
+-	__u64 cv[0];			/* Counter values (variable length) */
++	uint32_t set;			/* Counter set number */
++	uint32_t no_cnts;		/* # of counters stored in cv[] */
++	uint64_t cv[0];			/* Counter values (variable length) */
+ };
+ 
+ struct s390_hwctr_cpudata {		/* Counter set data per CPU */
+-	__u32 cpu_nr;			/* Counter set number */
+-	__u32 no_sets;			/* # of counters sets in data[] */
++	uint32_t cpu_nr;		/* Counter set number */
++	uint32_t no_sets;		/* # of counters sets in data[] */
+ 	struct s390_hwctr_setdata data[0];
+ };
+ 
+ struct s390_hwctr_read {		/* Structure to get all ctr sets */
+-	__u64 no_cpus;			/* Total # of CPUs data taken from */
++	uint64_t no_cpus;		/* Total # of CPUs data taken from */
+ 	struct s390_hwctr_cpudata data[0];
+ };
+ 
+-- 
+2.31.1
+

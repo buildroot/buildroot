@@ -231,7 +231,7 @@ endif
 # Set default to Secure-PLT to prevent run-time
 # generation of PLT stubs (supports RELRO and
 # SELinux non-exemem capabilities)
-ifeq ($(BR2_powerpc),y)
+ifeq ($(BR2_powerpc)$(BR2_powerpc64),y)
 HOST_GCC_COMMON_CONF_OPTS += --enable-secureplt
 endif
 

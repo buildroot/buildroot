@@ -1,0 +1,40 @@
+From ab1dd9332c379164925aee755a013dbd8839501b Mon Sep 17 00:00:00 2001
+From: Fabio Estevam <festevam@gmail.com>
+Date: Mon, 19 Jul 2021 16:48:07 -0300
+Subject: [PATCH 2/2] mx6cuboxi: Fix the console variable
+
+Do not pass the console baudrate to the 'console' variable
+to avoid the baudrate being passed twice when using extlinux.conf:
+
+cat /proc/cmdline
+root=PARTUUID=00000000-01 rootwait rw console=ttymxc0,115200,115200
+
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
+---
+ include/configs/mx6cuboxi.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/include/configs/mx6cuboxi.h b/include/configs/mx6cuboxi.h
+index 1a06f29b8c17..9e5083b0d876 100644
+--- a/include/configs/mx6cuboxi.h
++++ b/include/configs/mx6cuboxi.h
+@@ -38,7 +38,6 @@
+ /* Command definition */
+ 
+ #define CONFIG_MXC_UART_BASE	UART1_BASE
+-#define CONSOLE_DEV	"ttymxc0"
+ 
+ #ifndef CONFIG_SPL_BUILD
+ #define CONFIG_EXTRA_ENV_SETTINGS \
+@@ -54,7 +53,7 @@
+ 	"ramdiskaddr=0x13000000\0" \
+ 	"initrd_high=0xffffffff\0" \
+ 	"ip_dyn=yes\0" \
+-	"console=" CONSOLE_DEV ",115200\0" \
++	"console=ttymxc0\0" \
+ 	"bootm_size=0x10000000\0" \
+ 	"mmcdev=" __stringify(CONFIG_SYS_MMC_ENV_DEV) "\0" \
+ 	"finduuid=part uuid mmc 1:1 uuid\0" \
+-- 
+2.25.1
+

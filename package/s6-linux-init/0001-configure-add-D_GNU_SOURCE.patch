@@ -1,0 +1,40 @@
+From dadb157df58e79c7f560cacae80ea51953606fca Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 11 Apr 2021 11:02:20 +0200
+Subject: [PATCH] configure: add -D_GNU_SOURCE
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This will fix the following build failure with uclibc-ng which is raised
+since version 1.0.6.1 and
+https://github.com/skarnet/s6-linux-init/commit/355a75e08bbc8af8af97576bad07471dd1b431d8:
+
+src/shutdown/s6-linux-init-shutdownd.c: In function ‘main’:
+src/shutdown/s6-linux-init-shutdownd.c:294:24: error: ‘F_DUPFD_CLOEXEC’ undeclared (first use in this function); did you mean ‘FD_CLOEXEC’?
+  294 |       fd[0] = fcntl(1, F_DUPFD_CLOEXEC, 0) ;
+      |                        ^~~~~~~~~~~~~~~
+      |                        FD_CLOEXEC
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/skarnet/s6-linux-init/pull/3]
+---
+ configure | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure b/configure
+index 47db5b2..90fbb3b 100755
+--- a/configure
++++ b/configure
+@@ -138,7 +138,7 @@ getmacrostring () {
+ # Actual script
+ 
+ CC_AUTO=
+-CPPFLAGS_AUTO="-D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700 -iquote src/include-local -Isrc/include"
++CPPFLAGS_AUTO="-D_GNU_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700 -iquote src/include-local -Isrc/include"
+ CPPFLAGS_POST="$CPPFLAGS"
+ CPPFLAGS=
+ CFLAGS_AUTO="-pipe -Wall"
+-- 
+2.30.2
+

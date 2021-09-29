@@ -1,25 +1,26 @@
-From 195d30e2e01fe2f91ed3bdaeec3982aa66b309dd Mon Sep 17 00:00:00 2001
+From cbfd3296d7d0742d9e35b01ec9e433afe2c36c63 Mon Sep 17 00:00:00 2001
 From: Marc Kleine-Budde <mkl@pengutronix.de>
 Date: Tue, 1 Dec 2009 20:57:45 +0100
-Subject: [PATCH 5/5] Makefile.in: replace IROOT by DESTDIR
+Subject: [PATCH] Makefile.in: replace IROOT by DESTDIR
 
 This patch replaces IROOT by DESTDIR, which is the autotools standard
 variable. For backwards compatibilty IROOT overwrites the DESTDIR.
 
-[Vincent: tweak the patch for the new version]
-
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Vicente Olivert Riera <Vincent.Riera@imgtec.com>
+[Vincent: tweak the patch for the new version]
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+[Giulio: convert patch to git format and rebase to version 3.2.2]
 ---
- Makefile.in | 68 ++++++++++++++++++++++++++++++++-----------------------------
- 1 file changed, 36 insertions(+), 32 deletions(-)
+ Makefile.in | 72 ++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 38 insertions(+), 34 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index 06544f9..1f699d9 100644
+index 3e8303c..a7197f2 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -17,6 +17,10 @@ atdocdir	= $(docdir)/at
- etcdir		= @ETCDIR@
+@@ -20,6 +20,10 @@ etcdir		= @ETCDIR@
+ atjobdir	= @ATJBD@
  systemdsystemunitdir = @systemdsystemunitdir@
  
 +ifdef IROOT
@@ -29,13 +30,14 @@ index 06544f9..1f699d9 100644
  DAEMON_USERNAME	= @DAEMON_USERNAME@
  DAEMON_GROUPNAME= @DAEMON_GROUPNAME@
  LOADAVG_MX	= @LOADAVG_MX@
-@@ -91,41 +95,41 @@ atrun: atrun.in
+@@ -95,43 +99,43 @@ atrun: atrun.in
  	$(CC) -c $(CFLAGS) $(DEFS) $*.c
  
  install: all
 -	$(INSTALL) -g root -o root -m 755 -d $(IROOT)$(etcdir)
 -	$(INSTALL) -g root -o root -m 755 -d $(IROOT)$(bindir)
 -	$(INSTALL) -g root -o root -m 755 -d $(IROOT)$(sbindir)
+-	$(INSTALL) -g root -o root -m 755 -d $(IROOT)$(atdatadir)
 -	$(INSTALL) -g root -o root -m 755 -d $(IROOT)$(docdir)
 -	$(INSTALL) -g root -o root -m 755 -d $(IROOT)$(atdocdir)
 -	$(INSTALL) -g $(DAEMON_GROUPNAME) -o $(DAEMON_USERNAME) -m 755 -d $(IROOT)$(ATSPOOL_DIR) $(IROOT)$(ATJOB_DIR)
@@ -48,6 +50,7 @@ index 06544f9..1f699d9 100644
 -	$(LN_S) -f at $(IROOT)$(bindir)/atq
 -	$(LN_S) -f at $(IROOT)$(bindir)/atrm
 -	$(INSTALL) -g root -o root -m 755 batch $(IROOT)$(bindir)
+-	$(INSTALL) -g root -o root -m 755 batch-job $(IROOT)$(atdatadir)
 -	$(INSTALL) -d -o root -g root -m 755 $(IROOT)$(man1dir)
 -	$(INSTALL) -d -o root -g root -m 755 $(IROOT)$(man5dir)
 -	$(INSTALL) -d -o root -g root -m 755 $(IROOT)$(man8dir)
@@ -59,6 +62,7 @@ index 06544f9..1f699d9 100644
 +	$(INSTALL) -g root -o root -m 755 -d $(DESTDIR)$(etcdir)
 +	$(INSTALL) -g root -o root -m 755 -d $(DESTDIR)$(bindir)
 +	$(INSTALL) -g root -o root -m 755 -d $(DESTDIR)$(sbindir)
++	$(INSTALL) -g root -o root -m 755 -d $(DESTDIR)$(atdatadir)
 +	$(INSTALL) -g root -o root -m 755 -d $(DESTDIR)$(docdir)
 +	$(INSTALL) -g root -o root -m 755 -d $(DESTDIR)$(atdocdir)
 +	$(INSTALL) -g $(DAEMON_GROUPNAME) -o $(DAEMON_USERNAME) -m 755 -d $(DESTDIR)$(ATSPOOL_DIR) $(DESTDIR)$(ATJOB_DIR)
@@ -71,6 +75,7 @@ index 06544f9..1f699d9 100644
 +	$(LN_S) -f at $(DESTDIR)$(bindir)/atq
 +	$(LN_S) -f at $(DESTDIR)$(bindir)/atrm
 +	$(INSTALL) -g root -o root -m 755 batch $(DESTDIR)$(bindir)
++	$(INSTALL) -g root -o root -m 755 batch-job $(DESTDIR)$(atdatadir)
 +	$(INSTALL) -d -o root -g root -m 755 $(DESTDIR)$(man1dir)
 +	$(INSTALL) -d -o root -g root -m 755 $(DESTDIR)$(man5dir)
 +	$(INSTALL) -d -o root -g root -m 755 $(DESTDIR)$(man8dir)
@@ -104,5 +109,5 @@ index 06544f9..1f699d9 100644
  
  dist: checkin $(DIST) $(LIST) Filelist.asc
 -- 
-2.4.10
+2.25.1
 

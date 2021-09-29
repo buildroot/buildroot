@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BRICKD_VERSION = ev3dev-stretch/1.2.1
+BRICKD_VERSION = v1.2.2
 BRICKD_SITE = https://github.com/ev3dev/brickd
 BRICKD_SITE_METHOD = git
 BRICKD_GIT_SUBMODULES = YES

@@ -15,10 +15,10 @@ set -e
 # Environment:
 #   HG       : the hg command to call
 
-verbose=
+quiet=
 while getopts "${BR_BACKEND_DL_GETOPTS}" OPT; do
     case "${OPT}" in
-    q)  verbose=-q;;
+    q)  quiet=-q;;
     o)  output="${OPTARG}";;
     u)  uri="${OPTARG}";;
     c)  cset="${OPTARG}";;
@@ -33,11 +33,18 @@ shift $((OPTIND-1)) # Get rid of our options
 # Caller needs to single-quote its arguments to prevent them from
 # being expanded a second time (in case there are spaces in them)
 _hg() {
+    if [ -z "${quiet}" ]; then
+        printf '%s ' ${HG} "${@}"; printf '\n'
+    fi
+    _plain_hg "$@"
+}
+# Note: please keep command below aligned with what is printed above
+_plain_hg() {
     eval ${HG} "${@}"
 }
 
-_hg clone ${verbose} "${@}" --noupdate "'${uri}'" "'${basename}'"
+_hg clone ${quiet} "${@}" --noupdate "'${uri}'" "'${basename}'"
 
-_hg archive ${verbose} --repository "'${basename}'" --type tgz \
+_plain_hg archive ${quiet} --repository "'${basename}'" --type tgz \
             --prefix "'${basename}'" --rev "'${cset}'" \
             - >"${output}"

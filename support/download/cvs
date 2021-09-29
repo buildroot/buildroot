@@ -16,10 +16,10 @@ set -e
 # Environment:
 #   CVS      : the cvs command to call
 
-verbose=
+quiet=
 while getopts "${BR_BACKEND_DL_GETOPTS}" OPT; do
     case "${OPT}" in
-    q)  verbose=-Q;;
+    q)  quiet=-Q;;
     o)  output="${OPTARG}";;
     u)  uri="${OPTARG#*://}";;
     c)  rev="${OPTARG}";;
@@ -39,6 +39,13 @@ shift $((OPTIND-1)) # Get rid of our options
 # ). Since nobody sane will put large code bases in CVS, a timeout of
 # 10 minutes should do the trick.
 _cvs() {
+    if [ -z "${quiet}" ]; then
+        printf '%s ' timeout 10m ${CVS} "${@}"; printf '\n'
+    fi
+    _plain_cvs "$@"
+}
+# Note: please keep command below aligned with what is printed above
+_plain_cvs() {
     eval timeout 10m ${CVS} "${@}"
 }
 
@@ -57,7 +64,7 @@ if [[ ! "${uri}" =~ ^: ]]; then
 fi
 
 export TZ=UTC
-_cvs ${verbose} -z3 -d"'${uri}'" \
+_cvs ${quiet} -z3 -d"'${uri}'" \
      co "${@}" -d "'${basename}'" ${select} "'${rev}'" -P "'${rawname}'"
 
 tar czf "${output}" "${basename}"

@@ -12,6 +12,8 @@ reasons. However uucp does not exist on buildroot by default, and
 it makes more sense that 'daemon' group should own this directory.
 
 Signed-off-by: Michał Łyszczek <michal.lyszczek@bofc.pl>
+[Fabrice: update for 0.43.3]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  sh/init.sh.Linux.in | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -21,9 +23,9 @@ index 222bbd3b..7f1a88db 100644
 --- a/sh/init.sh.Linux.in
 +++ b/sh/init.sh.Linux.in
 @@ -85,7 +85,7 @@ fi
+ fi
  
- [ -x /sbin/restorecon ] && /sbin/restorecon -rF /run
- checkpath -d $RC_SVCDIR
+ checkpath -d "$RC_SVCDIR"
 -checkpath -d -m 0775 -o root:uucp /run/lock
 +checkpath -d -m 0775 -o root:daemon /run/lock
  
