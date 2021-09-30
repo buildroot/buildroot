@@ -4,10 +4,8 @@
 #
 ################################################################################
 
-ASTERISK_VERSION = 5dc4565
-# Use the github mirror: it's an official mirror maintained by Digium, and
-# provides tarballs, which the main Asterisk git tree (behind Gerrit) does not.
-ASTERISK_SITE = $(call github,ccxtechnologies,asterisk,$(ASTERISK_VERSION))
+ASTERISK_SITE = $(TOPDIR)/../thirdparty/asterisk
+ASTERISK_SITE_METHOD = local
 
 ASTERISK_SOUNDS_BASE_URL = http://downloads.asterisk.org/pub/telephony/sounds/releases
 ASTERISK_EXTRA_DOWNLOADS = \
