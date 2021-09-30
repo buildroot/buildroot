@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_PYMYSQL
 	bool "python-pymysql"
+	depends on BR2_PACKAGE_PYTHON3
 	help
 	  PyMySQL is a pure-Python MySQL client library. It follows
 	  the DB-API 2.0.
