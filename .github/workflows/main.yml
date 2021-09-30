@@ -3,7 +3,7 @@ name: OpenDingux_buildroot
 on:
   push:
     branches:
-      - opendingux
+      - test-ci
   pull_request:
     branches:
       - opendingux
@@ -46,50 +46,27 @@ jobs:
         name: update-${{ matrix.target }}
         path: |
           output/${{ matrix.target }}/images/*.opk
-
-  build-installer:
-    name: Build installer
-    runs-on: ubuntu-20.04
-    needs: build
-    container:
-      image: ghcr.io/opendingux/retro-toolchain/buildroot
-
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        submodules: 'true'
-    - uses: actions/download-artifact@v2
-      with:
-        name: toolchain-rs90
-    - name: Decompress RS90 toolchain
-      run: tar xf opendingux-rs90-*tar.xz
-    - name: Blocked invisible-mirror.net workaround
-      run: echo "1.1.1.1 invisible-mirror.net" | tee -a /etc/hosts
-    - name: Cache downloads
-      id: cache-downloads
-      uses: actions/cache@v2
-      with:
-        path: dl
-        key: downloads
-    - name: set external toolchain path
+    - name: Build installer
+      if: ${{ matrix.target == 'rs90' }}
       run: |
-        echo "BR2_TOOLCHAIN_EXTERNAL_PATH=\"$(pwd)/rs90-toolchain\"" >> configs/od_installer_defconfig
+        echo "BR2_TOOLCHAIN_EXTERNAL_PATH=\"$(pwd)/output/rs90/host\"" >> configs/od_installer_defconfig
         echo "BR2_TOOLCHAIN_EXTERNAL_PREINSTALLED=y" >> configs/od_installer_defconfig
         echo "BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=n" >> configs/od_installer_defconfig
-        sed -i "s/BR2_TOOLCHAIN_EXTERNAL_HEADERS_.*=y/BR2_TOOLCHAIN_EXTERNAL_HEADERS_$(sed -n 's/BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_\(.*\)=y/\1/p' $(pwd)/rs90-toolchain/.config)=y/" configs/od_installer_defconfig
-        sed -i "s/BR2_TOOLCHAIN_EXTERNAL_GCC_.*=y/BR2_TOOLCHAIN_EXTERNAL_GCC_$(sed -n 's/BR2_GCC_VERSION_\(.*\)_X=y/\1/p' $(pwd)/rs90-toolchain/.config)=y/" configs/od_installer_defconfig
-    - name: build
-      run: ./rebuild.sh
+        sed -i "s/BR2_TOOLCHAIN_EXTERNAL_HEADERS_.*=y/BR2_TOOLCHAIN_EXTERNAL_HEADERS_$(sed -n 's/BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_\(.*\)=y/\1/p' output/rs90/.config)=y/" configs/od_installer_defconfig
+        sed -i "s/BR2_TOOLCHAIN_EXTERNAL_GCC_.*=y/BR2_TOOLCHAIN_EXTERNAL_GCC_$(sed -n 's/BR2_GCC_VERSION_\(.*\)_X=y/\1/p' output/rs90/.config)=y/" configs/od_installer_defconfig
+        ./rebuild.sh
       env:
         CONFIG: installer
         BR2_JLEVEL: 0
         FORCE_UNSAFE_CONFIGURE: 1
     - uses: actions/upload-artifact@v2
+      if: ${{ matrix.target == 'rs90' }}
       with:
         name: odboot-client-linux
         path: |
           output/installer/images/odboot-client
     - uses: actions/upload-artifact@v2
+      if: ${{ matrix.target == 'rs90' }}
       with:
         name: vmlinuz
         path: |
@@ -98,7 +75,7 @@ jobs:
   build-win:
     name: Build odbootd (Windows)
     runs-on: windows-2019
-    needs: build-installer
+    needs: build
     defaults:
       run:
         shell: msys2 {0}
