@@ -1,0 +1,60 @@
+From 9e357fb4fc00ab9c303e314b85b9ae3836141f81 Mon Sep 17 00:00:00 2001
+From: Petr Vorel <petr.vorel@gmail.com>
+Date: Wed, 29 Sep 2021 19:56:29 +0200
+Subject: [PATCH] lapi/if_addr.h: Define IFA_FLAGS
+
+and use it in icmp_rate_limit01.c.
+
+This fixes error on toolchains with very old kernel headers, e.g.
+Buildroot sourcery-arm:
+
+icmp_rate_limit01.c:82:3: error: 'IFA_F_NOPREFIXROUTE' undeclared (first use in this function)
+   IFA_F_NOPREFIXROUTE);
+
+Fixed because IFA_F_NOPREFIXROUTE was added in 3.14 and the oldest
+system we still support is Cent0S 7 with 3.10 kernel.
+
+NOTE: Cent0S 7 is obviously heavily patched thus it contains
+IFA_F_NOPREFIXROUTE and therefore CI build didn't catch this error.
+
+Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
+[ upstream status: https://lore.kernel.org/ltp/20210930183058.5240-4-petr.vorel@gmail.com/T/#u ]
+---
+ include/lapi/if_addr.h            | 3 +++
+ testcases/cve/icmp_rate_limit01.c | 3 ++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/include/lapi/if_addr.h b/include/lapi/if_addr.h
+index 4e50a0a4e..0f7e44784 100644
+--- a/include/lapi/if_addr.h
++++ b/include/lapi/if_addr.h
+@@ -12,5 +12,8 @@
+ # define IFA_FLAGS 8
+ #endif
+ 
++#ifndef IFA_F_NOPREFIXROUTE
++# define IFA_F_NOPREFIXROUTE	0x200
++#endif
+ 
+ #endif /* LAPI_IF_ADDR_H__ */
+diff --git a/testcases/cve/icmp_rate_limit01.c b/testcases/cve/icmp_rate_limit01.c
+index b3a237b30..3ada32675 100644
+--- a/testcases/cve/icmp_rate_limit01.c
++++ b/testcases/cve/icmp_rate_limit01.c
+@@ -27,11 +27,12 @@
+ #include <sys/socket.h>
+ #include <netinet/in.h>
+ #include <arpa/inet.h>
+-#include <linux/if_addr.h>
+ #include <linux/errqueue.h>
+ 
+ #include <sched.h>
+ #include <limits.h>
++
++#include "lapi/if_addr.h"
+ #include "tst_test.h"
+ #include "tst_netdevice.h"
+ 
+-- 
+2.33.0
+

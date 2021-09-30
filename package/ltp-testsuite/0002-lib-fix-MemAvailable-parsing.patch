@@ -1,0 +1,36 @@
+From 29a096fe2bd356f419bd8a8404d5b652c996b92f Mon Sep 17 00:00:00 2001
+From: Ralph Siemsen <ralph.siemsen@linaro.org>
+Date: Mon, 27 Sep 2021 22:18:50 -0400
+Subject: [PATCH] lib: fix MemAvailable parsing
+
+The amount of available memory was not being returned correctly, which
+resulted in tests being executed when they should have been skipped.
+
+Fixes: 8759f4 ("lib: adjust the tmpfs size according to .dev_min_size and MemAvailable")
+Signed-off-by: Ralph Siemsen <ralph.siemsen@linaro.org>
+Signed-off-by: Li Wang <liwang@redhat.com>
+Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
+[ upstream status: e42149e28 ("lib: fix MemAvailable parsing") ]
+---
+ lib/tst_memutils.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/lib/tst_memutils.c b/lib/tst_memutils.c
+index ae1cad29b..a46de78f5 100644
+--- a/lib/tst_memutils.c
++++ b/lib/tst_memutils.c
+@@ -65,9 +65,9 @@ void tst_pollute_memory(size_t maxsize, int fillchar)
+ 
+ long long tst_available_mem(void)
+ {
+-	long long mem_available;
++	unsigned long long mem_available = 0;
+ 
+-	if (FILE_LINES_SCANF("/proc/meminfo", "MemAvailable: %ld",
++	if (FILE_LINES_SCANF("/proc/meminfo", "MemAvailable: %llu",
+ 		&mem_available)) {
+ 		mem_available = SAFE_READ_MEMINFO("MemFree:")
+ 			+ SAFE_READ_MEMINFO("Cached:");
+-- 
+2.33.0
+
