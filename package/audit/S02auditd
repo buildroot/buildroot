@@ -20,7 +20,7 @@ start(){
 	# the directory with SELinux permissions if possible
 	command -v selabel_lookup >/dev/null 2>&1
 	if [ $? = 0 ]; then
-		mkdir -p /var/log/audit -Z `selabel_lookup -b file -k /var/log/audit`
+		mkdir -p /var/log/audit -Z `selabel_lookup -b file -k /var/log/audit | cut -d ' ' -f 3`
 	else
 		mkdir -p /var/log/audit
 	fi
