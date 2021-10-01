@@ -2,7 +2,7 @@
 
 candidate="$1" # ignored
 
-gzip="$(command -v gzip)"
+gzip="$(which gzip)"
 if [ ! -x "${gzip}" ]; then
     # echo nothing: no suitable gzip found
     exit 1
