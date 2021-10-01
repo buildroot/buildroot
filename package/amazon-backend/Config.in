@@ -1,6 +1,8 @@
  config BR2_PACKAGE_AMAZON_BACKEND
 	bool "amazon backend"
 	select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
+	select BR2_PACKAGE_GST1_PLUGINS_BAD
+	select BR2_PACKAGE_GST1_PLUGINS_GOOD
 	help
 	  amazon backend for bme player
  

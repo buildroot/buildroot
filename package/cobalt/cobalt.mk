@@ -8,7 +8,7 @@ COBALT_VERSION = a92b34d6e6b8de04c49a3265de9b9c6d805b2790
 COBALT_SITE_METHOD = git
 COBALT_SITE = git@github.com:Metrological/cobalt
 COBALT_INSTALL_STAGING = YES
-COBALT_DEPENDENCIES = gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad host-bison host-ninja wpeframework-clientlibraries
+COBALT_DEPENDENCIES = gst1-plugins-good gst1-plugins-bad host-bison host-ninja wpeframework-clientlibraries
 
 export COBALT_STAGING_DIR=$(STAGING_DIR)
 export COBALT_TOOLCHAIN_PREFIX=$(TARGET_CROSS)
