@@ -3,7 +3,7 @@
 # wpeframework-rdkservices
 #
 ################################################################################
-WPEFRAMEWORK_RDKSERVICES_VERSION = 429dea8124310df9b7ca12436cd8a4e2521c607c
+WPEFRAMEWORK_RDKSERVICES_VERSION = 01cf2faa3561ec0c8aad9f8032cc7a941da2cb62
 WPEFRAMEWORK_RDKSERVICES_SITE_METHOD = git
 WPEFRAMEWORK_RDKSERVICES_SITE = git@github.com:WebPlatformForEmbedded/ThunderNanoServicesRDK.git
 WPEFRAMEWORK_RDKSERVICES_INSTALL_STAGING = YES
