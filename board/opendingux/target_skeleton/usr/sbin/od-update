@@ -62,7 +62,7 @@ case "$MODEL" in
 		INSTALL_ON_NAND=Y
 		SYSDEV=/dev/mtd0
 		;;
-	ylm,rs97|ylm,rg300|wolsen,ldkv|wolsen,ldkh)
+	ylm,rs97|ylm,rg300|wolsen,ldkv|wolsen,ldkh|ylm,papk3s)
 		HWVARIANT_BL="lepus"
 		HWVARIANT_DT=$(echo $MODEL |cut -d',' -f2)
 		;;
