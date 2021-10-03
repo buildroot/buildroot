@@ -171,7 +171,7 @@ endif
 PIPEWIRE_CONF_OPTS += -Dsession-managers='$(subst $(space),$(comma),$(PIPEWIRE_SESSION_MANAGERS_LIST))'
 
 define PIPEWIRE_USERS
-	pipewire -1 pipewire -1 * - - - PipeWire System Daemon
+	pipewire -1 pipewire -1 * - - audio,video PipeWire System Daemon
 endef
 
 $(eval $(meson-package))
