@@ -10,6 +10,13 @@ config BR2_TARGET_GRUB2
 	bool "grub2"
 	depends on BR2_TARGET_GRUB2_ARCH_SUPPORTS
 	depends on BR2_USE_WCHAR
+	select BR2_TARGET_GRUB2_I386_PC if \
+		!BR2_TARGET_GRUB2_HAS_PTF && \
+		(BR2_i386 || BR2_x86_64)
+	select BR2_TARGET_GRUB2_ARM_UBOOT if \
+		!BR2_TARGET_GRUB2_HAS_PTF && \
+		BR2_arm
+	select BR2_TARGET_GRUB2_ARM64_EFI if BR2_aarch64
 	help
 	  GNU GRUB is a Multiboot boot loader. It was derived from
 	  GRUB, the GRand Unified Bootloader, which was originally
@@ -27,8 +34,8 @@ config BR2_TARGET_GRUB2
 
 if BR2_TARGET_GRUB2
 
-choice
-	prompt "Platform"
+config BR2_TARGET_GRUB2_HAS_PTF
+	bool
 
 config BR2_TARGET_GRUB2_I386_PC
 	bool "i386-pc"
@@ -40,6 +47,7 @@ config BR2_TARGET_GRUB2_I386_PC
 config BR2_TARGET_GRUB2_I386_EFI
 	bool "i386-efi"
 	depends on BR2_i386 || BR2_x86_64
+	select BR2_TARGET_GRUB2_HAS_PTF
 	help
 	  Select this option if the platform you're targetting has a
 	  32 bits EFI BIOS. Note that some x86-64 platforms use a 32
@@ -48,6 +56,7 @@ config BR2_TARGET_GRUB2_I386_EFI
 config BR2_TARGET_GRUB2_X86_64_EFI
 	bool "x86-64-efi"
 	depends on BR2_x86_64
+	select BR2_TARGET_GRUB2_HAS_PTF
 	help
 	  Select this option if the platform you're targetting has a
 	  64 bits EFI BIOS.
@@ -63,6 +72,7 @@ config BR2_TARGET_GRUB2_ARM_UBOOT
 config BR2_TARGET_GRUB2_ARM_EFI
 	bool "arm-efi"
 	depends on BR2_arm
+	select BR2_TARGET_GRUB2_HAS_PTF
 	help
 	  Select this option if the platform you're targetting is an
 	  ARM platform and you want to boot Grub 2 as an EFI
@@ -76,9 +86,9 @@ config BR2_TARGET_GRUB2_ARM64_EFI
 	  Aarch64 platform and you want to boot Grub 2 as an EFI
 	  application.
 
-endchoice
-
 if BR2_TARGET_GRUB2_I386_PC || BR2_TARGET_GRUB2_ARM_UBOOT
+
+comment "Options for the x86 legacy BIOS or ARM U-Boot support"
 
 config BR2_TARGET_GRUB2_BOOT_PARTITION
 	string "boot partition"
@@ -89,24 +99,43 @@ config BR2_TARGET_GRUB2_BOOT_PARTITION
 	  first disk if using a legacy partition table, or 'hd0,gpt1'
 	  if using GPT partition table.
 
-endif # BR2_TARGET_GRUB2_I386_PC || BR2_TARGET_GRUB2_ARM_UBOOT
-
-config BR2_TARGET_GRUB2_BUILTIN_MODULES
+config BR2_TARGET_GRUB2_BUILTIN_MODULES_PC
 	string "builtin modules"
+	default BR2_TARGET_GRUB2_BUILTIN_MODULES if BR2_TARGET_GRUB2_BUILTIN_MODULES != "" # legacy
 	default "boot linux ext2 fat squash4 part_msdos part_gpt normal biosdisk" if BR2_TARGET_GRUB2_I386_PC
-	default "boot linux ext2 fat squash4 part_msdos part_gpt normal efi_gop" \
-		if BR2_TARGET_GRUB2_I386_EFI || BR2_TARGET_GRUB2_X86_64_EFI || \
-		   BR2_TARGET_GRUB2_ARM_EFI  || BR2_TARGET_GRUB2_ARM64_EFI
 	default "linux ext2 fat part_msdos normal" if BR2_TARGET_GRUB2_ARM_UBOOT
 
-config BR2_TARGET_GRUB2_BUILTIN_CONFIG
+config BR2_TARGET_GRUB2_BUILTIN_CONFIG_PC
 	string "builtin config"
+	default BR2_TARGET_GRUB2_BUILTIN_CONFIG if BR2_TARGET_GRUB2_BUILTIN_CONFIG != "" # legacy
 	help
 	  Path to a Grub 2 configuration file that will be embedded
 	  into the Grub image itself. This allows to set the root
 	  device and other configuration parameters, but however menu
 	  entries cannot be described in this embedded configuration.
 
+endif # BR2_TARGET_GRUB2_I386_PC || BR2_TARGET_GRUB2_ARM_UBOOT
+
+if BR2_TARGET_GRUB2_I386_EFI || BR2_TARGET_GRUB2_X86_64_EFI || \
+	BR2_TARGET_GRUB2_ARM_EFI  || BR2_TARGET_GRUB2_ARM64_EFI
+
+comment "Options for the EFI BIOS or ARM EFI support"
+
+config BR2_TARGET_GRUB2_BUILTIN_MODULES_EFI
+	string "builtin modules"
+	default BR2_TARGET_GRUB2_BUILTIN_MODULES if BR2_TARGET_GRUB2_BUILTIN_MODULES != "" # legacy
+	default "boot linux ext2 fat squash4 part_msdos part_gpt normal efi_gop"
+
+config BR2_TARGET_GRUB2_BUILTIN_CONFIG_EFI
+	string "builtin config"
+	default BR2_TARGET_GRUB2_BUILTIN_CONFIG if BR2_TARGET_GRUB2_BUILTIN_CONFIG != "" # legacy
+	help
+	  Path to a Grub 2 configuration file that will be embedded
+	  into the Grub image itself. This allows to set the root
+	  device and other configuration parameters, but however menu
+	  entries cannot be described in this embedded configuration.
+
+endif
 config BR2_TARGET_GRUB2_INSTALL_TOOLS
 	bool "install tools"
 	help

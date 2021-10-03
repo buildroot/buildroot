@@ -8,17 +8,19 @@ their latest releases based on gcc-4.8.2, then only blacklist gcc 4.8.0
 and 4.8.1.
 
 Signed-off-by: Samuel Martin <s.martin49@gmail.com>
+[Fabrice: update for 0.13.0]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  urcu/compiler.h | 9 ++++++++-
  1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/include/urcu/compiler.h b/include/urcu/compiler.h
+diff --git a/include/urcu/arch/arm.h b/include/urcu/arch/arm.h
 index 1e30903..56115f1 100644
---- a/include/urcu/compiler.h
-+++ b/include/urcu/compiler.h
+--- a/include/urcu/arch/arm.h
++++ b/include/urcu/arch/arm.h
 @@ -118,10 +118,17 @@
- 				+ __GNUC_PATCHLEVEL__)
-
+  */
+ 
  /*
 + * Official gcc releases from 4.8.0 to 4.8.2 have the following bug,
 + * however, many arm toolchain providers have the included the fix for
@@ -29,12 +31,12 @@ index 1e30903..56115f1 100644
 + *
   * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=58854
   */
- # ifdef __ARMEL__
--#  if URCU_GCC_VERSION >= 40800 && URCU_GCC_VERSION <= 40802
-+#  if URCU_GCC_VERSION >= 40800 && URCU_GCC_VERSION <= 40801
- #   error Your gcc version produces clobbered frame accesses
- #  endif
+ #ifdef URCU_GCC_VERSION
+-# if URCU_GCC_VERSION >= 40800 && URCU_GCC_VERSION <= 40802
++# if URCU_GCC_VERSION >= 40800 && URCU_GCC_VERSION <= 40801
+ #  error Your gcc version produces clobbered frame accesses
  # endif
+ #endif
 --
 1.9.0
 

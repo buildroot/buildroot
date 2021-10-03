@@ -58,13 +58,15 @@ fi
 check_prog_host()
 {
 	prog="$1"
-	if ! command -v $prog > /dev/null ; then
+	if ! which $prog > /dev/null ; then
 		echo >&2
 		echo "You must install '$prog' on your build machine" >&2
 		exit 1
 	fi
 }
 
+# Verify that which is installed
+check_prog_host "which"
 # Verify that sed is installed
 check_prog_host "sed"
 
@@ -73,7 +75,7 @@ check_prog_host "sed"
 check_prog_host "/usr/bin/file"
 
 # Check make
-MAKE=$(command -v make 2> /dev/null)
+MAKE=$(which make 2> /dev/null)
 if [ -z "$MAKE" ] ; then
 	echo
 	echo "You must install 'make' on your build machine";
@@ -94,9 +96,9 @@ if [ $MAKE_MAJOR -lt 3 ] || [ $MAKE_MAJOR -eq 3 -a $MAKE_MINOR -lt 81 ] ; then
 fi;
 
 # Check host gcc
-COMPILER=$(command -v $HOSTCC_NOCCACHE 2> /dev/null)
+COMPILER=$(which $HOSTCC_NOCCACHE 2> /dev/null)
 if [ -z "$COMPILER" ] ; then
-	COMPILER=$(command -v cc 2> /dev/null)
+	COMPILER=$(which cc 2> /dev/null)
 fi;
 if [ -z "$COMPILER" ] ; then
 	echo
@@ -120,9 +122,9 @@ if [ $COMPILER_MAJOR -lt 4 -o $COMPILER_MAJOR -eq 4 -a $COMPILER_MINOR -lt 8 ] ;
 fi;
 
 # check for host CXX
-CXXCOMPILER=$(command -v $HOSTCXX_NOCCACHE 2> /dev/null)
+CXXCOMPILER=$(which $HOSTCXX_NOCCACHE 2> /dev/null)
 if [ -z "$CXXCOMPILER" ] ; then
-	CXXCOMPILER=$(command -v c++ 2> /dev/null)
+	CXXCOMPILER=$(which c++ 2> /dev/null)
 fi
 
 if [ -z "$CXXCOMPILER" ] ; then
@@ -162,7 +164,7 @@ fi
 # Check that a few mandatory programs are installed
 missing_progs="no"
 for prog in perl tar wget cpio unzip rsync bc ${DL_TOOLS} ; do
-	if ! command -v $prog > /dev/null ; then
+	if ! which $prog > /dev/null ; then
 		echo "You must install '$prog' on your build machine";
 		missing_progs="yes"
 		if test $prog = "svn" ; then
@@ -196,7 +198,7 @@ if [ "${PATCH_MAJOR}" -lt 2 ] || [ "${PATCH_MAJOR}" -eq 2 -a "${PATCH_MINOR}" -l
 fi
 
 if grep ^BR2_NEEDS_HOST_UTF8_LOCALE=y $BR2_CONFIG > /dev/null; then
-	if ! command -v locale > /dev/null ; then
+	if ! which locale > /dev/null ; then
 		echo
 		echo "You need locale support on your build machine to build a toolchain supporting locales"
 		exit 1 ;

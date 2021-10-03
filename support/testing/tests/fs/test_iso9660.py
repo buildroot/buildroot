@@ -54,7 +54,7 @@ class TestIso9660Grub2External(infra.basetest.BRTest):
         # BR2_TARGET_ROOTFS_ISO9660_INITRD is not set
         BR2_TARGET_GRUB2=y
         BR2_TARGET_GRUB2_BOOT_PARTITION="cd"
-        BR2_TARGET_GRUB2_BUILTIN_MODULES="boot linux ext2 fat part_msdos part_gpt normal biosdisk iso9660"
+        BR2_TARGET_GRUB2_BUILTIN_MODULES_PC="boot linux ext2 fat part_msdos part_gpt normal biosdisk iso9660"
         BR2_TARGET_ROOTFS_ISO9660_BOOT_MENU="{}"
         """.format(infra.filepath("conf/grub2.cfg"))
 
@@ -75,7 +75,7 @@ class TestIso9660Grub2ExternalCompress(infra.basetest.BRTest):
         BR2_TARGET_ROOTFS_ISO9660_TRANSPARENT_COMPRESSION=y
         BR2_TARGET_GRUB2=y
         BR2_TARGET_GRUB2_BOOT_PARTITION="cd"
-        BR2_TARGET_GRUB2_BUILTIN_MODULES="boot linux ext2 fat part_msdos part_gpt normal biosdisk iso9660"
+        BR2_TARGET_GRUB2_BUILTIN_MODULES_PC="boot linux ext2 fat part_msdos part_gpt normal biosdisk iso9660"
         BR2_TARGET_ROOTFS_ISO9660_BOOT_MENU="{}"
         """.format(infra.filepath("conf/grub2.cfg"))
 
@@ -95,7 +95,7 @@ class TestIso9660Grub2Internal(infra.basetest.BRTest):
         BR2_TARGET_ROOTFS_ISO9660_INITRD=y
         BR2_TARGET_GRUB2=y
         BR2_TARGET_GRUB2_BOOT_PARTITION="cd"
-        BR2_TARGET_GRUB2_BUILTIN_MODULES="boot linux ext2 fat part_msdos part_gpt normal biosdisk iso9660"
+        BR2_TARGET_GRUB2_BUILTIN_MODULES_PC="boot linux ext2 fat part_msdos part_gpt normal biosdisk iso9660"
         BR2_TARGET_ROOTFS_ISO9660_BOOT_MENU="{}"
         """.format(infra.filepath("conf/grub2.cfg"))
 

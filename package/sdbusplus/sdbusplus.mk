@@ -10,7 +10,7 @@ SDBUSPLUS_DEPENDENCIES = host-autoconf-archive host-pkgconf systemd
 HOST_SDBUSPLUS_DEPENDENCIES = \
 	host-autoconf-archive \
 	host-pkgconf \
-	$(if $(BR2_PACKAGE_PYTHON3),host-python3,host-python) \
+	host-python3 \
 	host-python-inflection \
 	host-python-mako \
 	host-python-pyyaml

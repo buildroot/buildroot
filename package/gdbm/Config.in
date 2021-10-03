@@ -1,5 +1,6 @@
 config BR2_PACKAGE_GDBM
 	bool "gdbm"
+	depends on BR2_USE_MMU # fork()
 	help
 	  GNU dbm is a set of database routines that use extensible
 	  hashing. It works similar to the standard UNIX dbm routines.
