@@ -13,6 +13,13 @@ HTOP_CONF_ENV = HTOP_NCURSES_CONFIG_SCRIPT=$(STAGING_DIR)/usr/bin/$(NCURSES_CONF
 HTOP_LICENSE = GPL-2.0
 HTOP_LICENSE_FILES = COPYING
 
+ifeq ($(BR2_PACKAGE_HWLOC),y)
+HTOP_CONF_OPTS += --enable-hwloc
+HTOP_DEPENDENCIES += hwloc
+else
+HTOP_CONF_OPTS += --disable-hwloc
+endif
+
 ifeq ($(BR2_PACKAGE_LIBCAP),y)
 HTOP_CONF_OPTS += --enable-capabilities
 HTOP_DEPENDENCIES += libcap
