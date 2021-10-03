@@ -19,7 +19,9 @@ HWVARIANT_CMDLINE="$(sed -n 's/.*hwvariant=\([[:alnum:]_]\+\).*/\1/p' /proc/cmdl
 
 if [ -e /sys/firmware/devicetree/base/compatible ] ; then
 	MODEL=$(sed -n 's/\(.*\)ingenic.*/\1/p' /sys/firmware/devicetree/base/compatible)
-	HWVARIANT=$(cat /sys/firmware/devicetree/base/model)
+	if [ -e /sys/firmware/devicetree/base/model ] ; then
+		HWVARIANT=$(cat /sys/firmware/devicetree/base/model)
+	fi
 elif [ "$HWVARIANT_CMDLINE" = "rg350" ] ; then
 	if [ "$(uname -v)" = "#227 Tue Jul 20 11:36:58 CST 2021" ] ; then
 		MODEL=ylm,rg300x
