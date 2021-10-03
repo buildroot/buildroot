@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2021.11"
 
+config BR2_BINUTILS_VERSION_CSKY
+	bool "binutils csky version removed"
+	select BR2_LEGACY
+	help
+	  Support for binutils csky version has been removed.
+
 config BR2_GCC_VERSION_CSKY
 	bool "gcc csky version removed"
 	select BR2_LEGACY
