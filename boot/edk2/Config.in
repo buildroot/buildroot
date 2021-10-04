@@ -25,7 +25,7 @@ choice
 
 config BR2_TARGET_EDK2_PLATFORM_OVMF_I386
 	bool "i386"
-	depends on BR2_i386
+	depends on BR2_i386 || BR2_x86_64
 	help
 	  Platform configuration for a generic i386 target.
 	  This platform will boot from flash address 0x0.
