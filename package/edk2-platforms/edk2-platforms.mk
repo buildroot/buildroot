@@ -15,8 +15,8 @@ EDK2_PLATFORMS_INSTALL_STAGING = YES
 # There is nothing to build for edk2-platforms. All we need to do is to copy
 # all description files to staging, for other packages to build with.
 define EDK2_PLATFORMS_INSTALL_STAGING_CMDS
-	rm -rf $(STAGING_DIR)/usr/share/edk2-platforms
-	cp -rf $(@D) $(STAGING_DIR)/usr/share/edk2-platforms
+	mkdir -p $(STAGING_DIR)/usr/share/edk2-platforms
+	cp -rf $(@D)/*/ $(STAGING_DIR)/usr/share/edk2-platforms/
 endef
 
 $(eval $(generic-package))
