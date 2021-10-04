@@ -283,6 +283,21 @@ config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_HARDWAREREADY
     default 0
 
 endif
+if BR2_PACKAGE_WESTON
+    config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_WESTON_TTY_LIST
+    string "Weston tty ids"
+    default "1;2;3;4"
+    help
+       Set ids tty can be used with weston drm backend
+
+    config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_WESTON_OUTPUT_CONFIGS
+    string "Weston Output Config Details"
+    default "HDMI-A-1,1280x720@60.0 16:9,normal;"
+    help
+      Set details of weston output configs in the format "Name,Mode,Trandform".
+      Example "HDMI-A-1,1280x720@60.0 16:9,normal;"
+
+endif
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO

@@ -1,0 +1,337 @@
+diff -urN gst-plugins-bad-1.16.1/ext/wayland/gstwaylandsink.c gst-plugins-bad-1.16.1-mod/ext/wayland/gstwaylandsink.c
+--- gst-plugins-bad-1.16.1/ext/wayland/gstwaylandsink.c	2021-07-28 08:25:03.936860644 -0700
++++ gst-plugins-bad-1.16.1-mod/ext/wayland/gstwaylandsink.c	2021-09-10 09:13:43.535674904 -0700
+@@ -62,7 +62,9 @@
+ {
+   PROP_0,
+   PROP_DISPLAY,
+-  PROP_FULLSCREEN
++  PROP_FULLSCREEN,
++  PROP_WINDOW_NAME,
++  PROP_WINDOW_SET
+ };
+ 
+ GST_DEBUG_CATEGORY (gstwayland_debug);
+@@ -208,6 +210,17 @@
+       g_param_spec_boolean ("fullscreen", "Fullscreen",
+           "Whether the surface should be made fullscreen ", FALSE,
+           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
++
++  g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_WINDOW_SET,
++       g_param_spec_string ("rectangle", "rectangle",
++           "Window Set Format: x,y,width,height",
++           NULL, G_PARAM_WRITABLE));
++
++  g_object_class_install_property (gobject_class, PROP_WINDOW_NAME,
++      g_param_spec_string ("window", "Wayland surface name", "Video"
++          "Surface name to be configured",
++          NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
++
+ }
+ 
+ static void
+@@ -269,6 +282,38 @@
+       gst_wayland_sink_set_fullscreen (sink, g_value_get_boolean (value));
+       GST_OBJECT_UNLOCK (sink);
+       break;
++    case PROP_WINDOW_NAME:
++      GST_OBJECT_LOCK (sink);
++      sink->window_name = g_value_dup_string (value);
++      GST_OBJECT_UNLOCK (sink);
++      break;
++    case PROP_WINDOW_SET:
++    {
++      const gchar *str= g_value_get_string(value);
++      gchar **parts= g_strsplit(str, ",", 4);
++
++      if ( !parts[0] || !parts[1] || !parts[2] || !parts[3] ) {
++        GST_ERROR( "Bad window properties string" );
++      } else {
++        int nx, ny, nw, nh;
++        nx= atoi( parts[0] );
++        ny= atoi( parts[1] );
++        nw= atoi( parts[2] );
++        nh= atoi( parts[3] );
++        if ((nx != sink->window_rect.X) ||
++            (ny != sink->window_rect.Y) ||
++            (nw != sink->window_rect.W) ||
++            (nh != sink->window_rect.H)) {
++          sink->window_rect.X= nx;
++          sink->window_rect.Y= ny;
++          sink->window_rect.W= nw;
++          sink->window_rect.H= nh;
++          if (sink->window)
++            gst_wl_window_set_render_rectangle(sink->window, nx, ny, nw, nh);
++        }
++      }
++      break;
++    }
+     default:
+       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+       break;
+@@ -292,6 +337,7 @@
+     gst_object_unref (sink->pool);
+ 
+   g_free (sink->display_name);
++  g_free (sink->window_name);
+ 
+   g_mutex_clear (&sink->display_lock);
+   g_mutex_clear (&sink->render_lock);
+@@ -394,12 +440,16 @@
+     case GST_STATE_CHANGE_PAUSED_TO_READY:
+       gst_buffer_replace (&sink->last_buffer, NULL);
+       if (sink->window) {
++#if 0
+         if (gst_wl_window_is_toplevel (sink->window)) {
+           g_clear_object (&sink->window);
+         } else {
+           /* remove buffer from surface, show nothing */
+           gst_wl_window_render (sink->window, NULL, NULL);
+         }
++#else
++        g_clear_object (&sink->window);
++#endif
+       }
+       break;
+     case GST_STATE_CHANGE_READY_TO_NULL:
+@@ -696,8 +746,8 @@
+ 
+     if (!sink->window) {
+       /* if we were not provided a window, create one ourselves */
+-      sink->window = gst_wl_window_new_toplevel (sink->display,
+-          &sink->video_info, sink->fullscreen, &sink->render_lock);
++      sink->window = gst_wl_window_new_toplevel (sink->display, sink->window_name,
++          &sink->video_info, sink->fullscreen, &sink->render_lock, sink->window_rect);
+       g_signal_connect_object (sink->window, "closed",
+           G_CALLBACK (on_window_closed), sink, 0);
+     }
+@@ -1042,7 +1092,7 @@
+ 
+   gst_wl_shm_allocator_register ();
+ 
+-  return gst_element_register (plugin, "waylandsink", GST_RANK_MARGINAL,
++  return gst_element_register (plugin, "waylandsink", GST_RANK_PRIMARY,
+       GST_TYPE_WAYLAND_SINK);
+ }
+ 
+diff -urN gst-plugins-bad-1.16.1/ext/wayland/gstwaylandsink.h gst-plugins-bad-1.16.1-mod/ext/wayland/gstwaylandsink.h
+--- gst-plugins-bad-1.16.1/ext/wayland/gstwaylandsink.h	2019-04-19 02:16:36.000000000 -0700
++++ gst-plugins-bad-1.16.1-mod/ext/wayland/gstwaylandsink.h	2021-09-10 09:09:05.914055919 -0700
+@@ -61,7 +61,9 @@
+   gboolean video_info_changed;
+   GstVideoInfo video_info;
+   gboolean fullscreen;
++  GstWindowRect window_rect;
+ 
++  gchar *window_name;
+   gchar *display_name;
+ 
+   gboolean redraw_pending;
+diff -urN gst-plugins-bad-1.16.1/ext/wayland/wldisplay.c gst-plugins-bad-1.16.1-mod/ext/wayland/wldisplay.c
+--- gst-plugins-bad-1.16.1/ext/wayland/wldisplay.c	2019-04-19 02:16:36.000000000 -0700
++++ gst-plugins-bad-1.16.1-mod/ext/wayland/wldisplay.c	2021-09-10 09:09:05.914055919 -0700
+@@ -61,6 +61,12 @@
+   if (self->thread)
+     g_thread_join (self->thread);
+ 
++  wl_display_roundtrip_queue (self->display, self->queue);
++
++  if (self->queue) {
++    wl_event_queue_destroy (self->queue);
++  }
++
+   /* to avoid buffers being unregistered from another thread
+    * at the same time, take their ownership */
+   g_mutex_lock (&self->buffers_mutex);
+@@ -108,9 +114,6 @@
+   if (self->display_wrapper)
+     wl_proxy_wrapper_destroy (self->display_wrapper);
+ 
+-  if (self->queue)
+-    wl_event_queue_destroy (self->queue);
+-
+   if (self->own_display) {
+     wl_display_flush (self->display);
+     wl_display_disconnect (self->display);
+@@ -264,6 +267,7 @@
+     }
+     if (wl_display_read_events (self->display) == -1)
+       goto error;
++
+     wl_display_dispatch_queue_pending (self->display, self->queue);
+   }
+ 
+@@ -357,7 +361,6 @@
+     g_warning ("Could not bind to either wl_shell, xdg_wm_base or "
+         "zwp_fullscreen_shell, video display may not work properly.");
+   }
+-
+   self->thread = g_thread_try_new ("GstWlDisplay", gst_wl_display_thread_run,
+       self, &err);
+   if (err) {
+diff -urN gst-plugins-bad-1.16.1/ext/wayland/wlwindow.c gst-plugins-bad-1.16.1-mod/ext/wayland/wlwindow.c
+--- gst-plugins-bad-1.16.1/ext/wayland/wlwindow.c	2021-08-06 08:02:22.821151406 -0700
++++ gst-plugins-bad-1.16.1-mod/ext/wayland/wlwindow.c	2021-09-10 09:12:46.818853117 -0700
+@@ -203,8 +203,11 @@
+   window->video_surface_wrapper =
+       wl_proxy_create_wrapper (window->video_surface);
+ 
+-  wl_proxy_set_queue ((struct wl_proxy *) window->area_surface_wrapper,
+-      display->queue);
++  if (window->display->own_display) {
++    wl_proxy_set_queue ((struct wl_proxy *) window->area_surface_wrapper,
++          display->queue);
++  }
++
+   wl_proxy_set_queue ((struct wl_proxy *) window->video_surface_wrapper,
+       display->queue);
+ 
+@@ -215,8 +218,14 @@
+   wl_subsurface_set_desync (window->video_subsurface);
+ 
+   if (display->viewporter) {
+-    window->area_viewport = wp_viewporter_get_viewport (display->viewporter,
+-        window->area_surface);
++    if (window->display->own_display) {
++      window->area_viewport = wp_viewporter_get_viewport (display->viewporter,
++      window->area_surface);
++    } else
++    {
++      window->area_viewport = NULL;
++      wl_subsurface_place_below(window->video_subsurface, window->area_surface);
++    }
+     window->video_viewport = wp_viewporter_get_viewport (display->viewporter,
+         window->video_surface);
+   }
+@@ -249,8 +258,8 @@
+ }
+ 
+ GstWlWindow *
+-gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
+-    gboolean fullscreen, GMutex * render_lock)
++gst_wl_window_new_toplevel (GstWlDisplay * display, const gchar * name, const GstVideoInfo * info,
++    gboolean fullscreen, GMutex * render_lock, GstWindowRect window_rect)
+ {
+   GstWlWindow *window;
+   gint width;
+@@ -281,6 +290,9 @@
+         &xdg_toplevel_listener, window);
+ 
+     gst_wl_window_ensure_fullscreen (window, fullscreen);
++    if (name) {
++      xdg_toplevel_set_title(window->xdg_toplevel, name);
++    }
+ 
+     /* Finally, commit the xdg_surface state as toplevel */
+     window->configured = FALSE;
+@@ -322,7 +334,11 @@
+   /* set the initial size to be the same as the reported video size */
+   width =
+       gst_util_uint64_scale_int_round (info->width, info->par_n, info->par_d);
+-  gst_wl_window_set_render_rectangle (window, 0, 0, width, info->height);
++  if (window_rect.W || window_rect.H) {
++      gst_wl_window_set_render_rectangle (window, 0, 0, window_rect.W, window_rect.H);
++  } else {
++      gst_wl_window_set_render_rectangle (window, 0, 0, width, info->height);
++  }
+ 
+   return window;
+ 
+@@ -344,6 +360,11 @@
+       window->area_surface, parent);
+   wl_subsurface_set_desync (window->area_subsurface);
+ 
++  wl_surface_commit (parent);
++
++  wl_subsurface_place_below(window->area_subsurface, parent);
++  wl_surface_commit (parent);
++
+   return window;
+ }
+ 
+@@ -403,12 +424,13 @@
+ 
+   if (gst_wl_window_is_toplevel (window)) {
+     struct wl_region *region;
+-
++#if 1
+     region = wl_compositor_create_region (window->display->compositor);
+     wl_region_add (region, 0, 0, window->render_rectangle.w,
+         window->render_rectangle.h);
+     wl_surface_set_input_region (window->area_surface, region);
+     wl_region_destroy (region);
++#endif    
+   }
+ 
+   /* this is saved for use in wl_surface_damage */
+@@ -448,7 +470,8 @@
+ 
+     wl_subsurface_set_sync (window->video_subsurface);
+     gst_wl_window_resize_video_surface (window, FALSE);
+-    gst_wl_window_set_opaque (window, info);
++    if (window->display->own_display)
++      gst_wl_window_set_opaque (window, info);
+   }
+ 
+   if (G_LIKELY (buffer))
+@@ -535,12 +558,14 @@
+   window->render_rectangle.h = h;
+ 
+   /* position the area inside the parent - needs a parent commit to apply */
+-  if (window->area_subsurface)
++  if (window->area_subsurface) {
+     wl_subsurface_set_position (window->area_subsurface, x, y);
++  }
+ 
+   /* change the size of the area */
+-  if (window->area_viewport)
++  if (window->area_viewport) {
+     wp_viewport_set_destination (window->area_viewport, w, h);
++  }
+ 
+   gst_wl_window_update_borders (window);
+ 
+diff -urN gst-plugins-bad-1.16.1/ext/wayland/wlwindow.h gst-plugins-bad-1.16.1-mod/ext/wayland/wlwindow.h
+--- gst-plugins-bad-1.16.1/ext/wayland/wlwindow.h	2019-04-19 02:16:36.000000000 -0700
++++ gst-plugins-bad-1.16.1-mod/ext/wayland/wlwindow.h	2021-09-10 09:09:05.914055919 -0700
+@@ -36,6 +36,15 @@
+ 
+ typedef struct _GstWlWindow GstWlWindow;
+ typedef struct _GstWlWindowClass GstWlWindowClass;
++typedef struct _GstWindowRect GstWindowRect;
++
++struct _GstWindowRect
++{
++  gint X;
++  gint Y;
++  gint W;
++  gint H;
++};
+ 
+ struct _GstWlWindow
+ {
+@@ -83,8 +92,9 @@
+ 
+ void gst_wl_window_ensure_fullscreen (GstWlWindow * window,
+         gboolean fullscreen);
+-GstWlWindow *gst_wl_window_new_toplevel (GstWlDisplay * display,
+-        const GstVideoInfo * info, gboolean fullscreen, GMutex * render_lock);
++GstWlWindow *gst_wl_window_new_toplevel (GstWlDisplay * display, const gchar * name,
++        const GstVideoInfo * info, gboolean fullscreen, GMutex * render_lock, GstWindowRect window_rect);
++
+ GstWlWindow *gst_wl_window_new_in_surface (GstWlDisplay * display,
+         struct wl_surface * parent, GMutex * render_lock);
+ 
+diff -urN gst-plugins-bad-1.16.1/gst-libs/gst/wayland/meson.build gst-plugins-bad-1.16.1-mod/gst-libs/gst/wayland/meson.build
+--- gst-plugins-bad-1.16.1/gst-libs/gst/wayland/meson.build	2019-04-19 02:16:36.000000000 -0700
++++ gst-plugins-bad-1.16.1-mod/gst-libs/gst/wayland/meson.build	2021-08-08 23:24:36.584196795 -0700
+@@ -21,4 +21,9 @@
+   gstwayland_dep = declare_dependency(link_with : gstwayland,
+     include_directories : [libsinc],
+     dependencies : [gst_dep, gstvideo_dep])
++
++  gstwayland_headers = [
++  'wayland.h',
++  ]
++  install_headers(gstwayland_headers, subdir : 'gstreamer-' + api_version + '/gst/wayland/')
+ endif

@@ -1,0 +1,21 @@
+diff --git a/src/cobalt/browser/memory_tracker/tool.cc b/src/cobalt/browser/memory_tracker/tool.cc
+index d262e2f79..b7d11add4 100644
+--- a/src/cobalt/browser/memory_tracker/tool.cc
++++ b/src/cobalt/browser/memory_tracker/tool.cc
+@@ -302,6 +302,7 @@ std::unique_ptr<Tool> CreateMemoryTrackerTool(const std::string& command_arg) {
+       kMallocLogger);
+ 
+   SwitchMap switch_map;
++#if 0
+   switch_map[ParseToolName(startup_tool.tool_name)] = startup_tool;
+   switch_map[ParseToolName(continuous_printer_tool.tool_name)] =
+       continuous_printer_tool;
+@@ -318,7 +319,7 @@ std::unique_ptr<Tool> CreateMemoryTrackerTool(const std::string& command_arg) {
+   switch_map[ParseToolName(malloc_logger_tool.tool_name)] = malloc_logger_tool;
+ 
+   switch_map[ParseToolName(malloc_stats_tool.tool_name)] = malloc_stats_tool;
+-
++#endif
+   std::string tool_name = ParseToolName(command_arg);
+   std::string tool_arg = ParseToolArg(command_arg);
+   std::string filename = ParseFileName(command_arg);
