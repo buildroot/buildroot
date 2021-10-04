@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-WPEFRAMEWORK_CDMI_WIDEVINE_NEXUS_SVP_VERSION = 88ee2c16e82c6b826e492aa918e25f68e8a61bfb
+WPEFRAMEWORK_CDMI_WIDEVINE_NEXUS_SVP_VERSION = edb64da5bdf765ab5d6db67e84a746e7b1e40fe2
 WPEFRAMEWORK_CDMI_WIDEVINE_NEXUS_SVP_SITE_METHOD = git
-WPEFRAMEWORK_CDMI_WIDEVINE_NEXUS_SVP_SITE = https://code.rdkcentral.com/r/soc/broadcom/components/rdkcentral/OCDM-Widevine-Nexus-SVP
+WPEFRAMEWORK_CDMI_WIDEVINE_NEXUS_SVP_SITE = git@github.com:WebPlatformForEmbedded/OCDM-Widevine-Nexus-SVP.git
 WPEFRAMEWORK_CDMI_WIDEVINE_NEXUS_SVP_INSTALL_STAGING = NO
 WPEFRAMEWORK_CDMI_WIDEVINE_NEXUS_SVP_DEPENDENCIES = wpeframework-clientlibraries
 
