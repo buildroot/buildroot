@@ -1,0 +1,13 @@
+--- samba4-4.14.7/lib/replace/replace.h.orig	2021-10-04 08:48:18.347640059 -0400
++++ samba4-4.14.7/lib/replace/replace.h	2021-10-04 08:48:30.277190907 -0400
+@@ -655,10 +655,6 @@
+ #include <limits.h>
+ #endif
+ 
+-#ifdef HAVE_SYS_PARAM_H
+-#include <sys/param.h>
+-#endif
+-
+ /* The extra casts work around common compiler bugs.  */
+ #define _TYPE_SIGNED(t) (! ((t) 0 < (t) -1))
+ /* The outer cast is needed to work around a bug in Cray C 5.0.3.0.
