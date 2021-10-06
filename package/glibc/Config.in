@@ -29,7 +29,6 @@ config BR2_PACKAGE_GLIBC_ARCH_SUPPORTS
 config BR2_PACKAGE_GLIBC_SUPPORTS
 	bool
 	default y if BR2_PACKAGE_GLIBC_ARCH_SUPPORTS
-	depends on !BR2_STATIC_LIBS
 	# Make sure to keep these dependencies in sync with the
 	# Config.in comments in
 	# toolchain/toolchain-buildroot/Config.in

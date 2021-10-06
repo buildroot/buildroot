@@ -326,8 +326,6 @@ class Toolchain:
                 # glibc needs mmu support
                 if "BR2_USE_MMU" not in depends:
                     depends.append("BR2_USE_MMU")
-                # glibc doesn't support static only configuration
-                depends.append("!BR2_STATIC_LIBS")
                 selects.append("BR2_TOOLCHAIN_EXTERNAL_GLIBC")
             elif frag.startswith("BR2_TOOLCHAIN_EXTERNAL_CUSTOM_MUSL"):
                 # musl needs mmu support
@@ -501,8 +499,6 @@ def gen_config_in_options(toolchains, fpath):
         f.write("\tbool\n")
         for arch, details in arches.items():
             conditions = details['conditions'].copy()
-            if set([t.libc for t in toolchains if t.arch == arch]) == set(['glibc']):
-                conditions.append("!BR2_STATIC_LIBS")
             f.write("\tdefault y if %s\n" % " && ".join(conditions))
         f.write("\n")
 
