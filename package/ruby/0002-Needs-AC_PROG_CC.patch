@@ -1,0 +1,28 @@
+From 912a8dcfc5369d840dcd6bf0f88ee0bac7d902d6 Mon Sep 17 00:00:00 2001
+From: Nobuyoshi Nakada <nobu@ruby-lang.org>
+Date: Thu, 30 Sep 2021 18:24:37 +0900
+Subject: [PATCH] Needs `AC_PROG_CC`
+
+Although `AC_PROG_CC_C99` has been obsolete, `AC_PROG_CC` is not
+and the latter is necessary not to make C++ compiler mandatory.
+
+[Retrieved from:
+https://github.com/ruby/ruby/commit/912a8dcfc5369d840dcd6bf0f88ee0bac7d902d6]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index b24a8f59b0d2..c7059ee1ecf4 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -218,7 +218,7 @@ rb_test_CXXFLAGS=${CXXFLAGS+yes}
+ # BSD's ports and MacPorts prefix GNU binutils with 'g'
+ 
+ dnl Seems necessarily in order to add -std=gnu99 option for gcc 4.9.
+-m4_version_prereq([2.70], [], [AC_PROG_CC_C99])
++m4_version_prereq([2.70], [AC_PROG_CC], [AC_PROG_CC_C99])
+ 
+ AC_PROG_CXX
+ AC_PROG_CPP
