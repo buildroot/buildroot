@@ -87,6 +87,8 @@ config BR2_NEEDS_HOST_GCC_PLUGIN_SUPPORT
 
 source "arch/Config.in"
 
+source "toolchain/Config.in"
+
 menu "Build options"
 
 menu "Commands"
@@ -933,8 +935,6 @@ comment "Fortify Source needs a glibc toolchain and optimization"
 	depends on BR2_FORTIFY_SOURCE_ARCH_SUPPORTS
 	depends on (!BR2_TOOLCHAIN_USES_GLIBC || BR2_OPTIMIZE_0)
 endmenu
-
-source "toolchain/Config.in"
 
 source "system/Config.in"
 
