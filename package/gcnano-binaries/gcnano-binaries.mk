@@ -20,7 +20,7 @@ GCNANO_BINARIES_DEPENDENCIES = linux wayland libdrm
 
 GCNANO_BINARIES_INSTALL_STAGING = YES
 
-GCNANO_BINARIES_PROVIDES = libegl libgles
+GCNANO_BINARIES_PROVIDES = libegl libgles libgbm
 
 # The Github repository doesn't contain the source code as-is: it
 # contains a tarball with the kernel driver source code, and a
