@@ -14,7 +14,15 @@ BOINC_CPE_ID_VENDOR = rom_walton
 BOINC_SELINUX_MODULES = boinc
 BOINC_DEPENDENCIES = host-pkgconf libcurl openssl
 BOINC_AUTORECONF = YES
-BOINC_CONF_ENV = ac_cv_path__libcurl_config=$(STAGING_DIR)/usr/bin/curl-config
+# The ac_cv_c_undeclared_builtin_options value is to help
+# AC_CHECK_DECLS realize that it doesn't need any particular compiler
+# option to get an error when building a program that uses undeclared
+# symbols. Otherwise, AC_CHECK_DECLS is confused by the configure
+# script unconditionally passing -mavx, which only exists on x86, and
+# therefore causes a failure on all other architectures.
+BOINC_CONF_ENV = \
+	ac_cv_c_undeclared_builtin_options='none needed' \
+	ac_cv_path__libcurl_config=$(STAGING_DIR)/usr/bin/curl-config
 BOINC_CONF_OPTS = \
 	--disable-apps \
 	--disable-boinczip \
