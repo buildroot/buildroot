@@ -512,7 +512,7 @@ async def check_package_get_latest_version_by_guess(session, pkg, retry=True):
 
             if len(projects) > 0:
                 check_package_latest_version_set_status(pkg,
-                                                        RM_API_STATUS_FOUND_BY_DISTRO,
+                                                        RM_API_STATUS_FOUND_BY_PATTERN,
                                                         projects[0]['version'],
                                                         projects[0]['id'])
                 return True
