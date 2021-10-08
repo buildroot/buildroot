@@ -496,13 +496,13 @@ async def check_package_get_latest_version_by_guess(session, pkg, retry=True):
 
             data = await resp.json()
             # filter projects that have the right name and a version defined
-            projects = [p for p in data['projects'] if p['name'] == pkg.name and 'version' in p]
+            projects = [p for p in data['projects'] if p['name'] == pkg.name and 'stable_versions' in p]
             projects.sort(key=lambda x: x['id'])
 
             if len(projects) > 0:
                 check_package_latest_version_set_status(pkg,
                                                         RM_API_STATUS_FOUND_BY_PATTERN,
-                                                        projects[0]['version'],
+                                                        projects[0]['stable_versions'][0],
                                                         projects[0]['id'])
                 return True
 
