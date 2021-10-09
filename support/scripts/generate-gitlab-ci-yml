@@ -71,7 +71,11 @@ gen_tests() {
             do_runtime=true
             ;;
           (*-tests.*)
-            runtimes=( "${CI_COMMIT_REF_NAME##*-}" )
+            runtimes=( $(./support/testing/run-tests -l 2>&1 \
+                         | sed -r -e '/^test_run \((.*)\).*/!d; s//\1/' \
+                         | LC_ALL=C sort \
+                         | grep "^${CI_COMMIT_REF_NAME##*-}")
+                     )
             do_runtime=true
             ;;
         esac
