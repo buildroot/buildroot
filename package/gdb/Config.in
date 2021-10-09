@@ -54,6 +54,7 @@ config BR2_PACKAGE_GDB_DEBUGGER
 	depends on BR2_USE_WCHAR
 	depends on !BR2_sh
 	depends on !BR2_csky
+	select BR2_PACKAGE_GMP if BR2_GDB_VERSION_11
 	select BR2_PACKAGE_NCURSES
 
 comment "full gdb on target needs a toolchain w/ wchar"
