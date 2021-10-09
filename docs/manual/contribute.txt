@@ -677,9 +677,23 @@ string you choose to identify this specific job being created.
  $ git push gitlab HEAD:<name>-runtime-tests
 ---------------------
 
-* to trigger one test case job, a specific branch naming string is used that
-includes the full test case name.
+* to trigger one or several test case jobs, a specific branch naming
+string is used that includes either the full test case name, or the
+beginning of a series of tests to run:
 
 ---------------------
  $ git push gitlab HEAD:<name>-<test case name>
+---------------------
+
+Example to run one test:
+
+---------------------
+ $ git push gitlab HEAD:foo-tests.init.test_busybox.TestInitSystemBusyboxRo
+---------------------
+
+Examples to run several tests part of the same group:
+
+---------------------
+ $ git push gitlab HEAD:foo-tests.init.test_busybox
+ $ git push gitlab HEAD:foo-tests.init
 ---------------------
