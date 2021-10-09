@@ -61,7 +61,7 @@ config BR2_PACKAGE_HOST_GDB_SIM
 
 choice
 	prompt "GDB debugger Version"
-	default BR2_GDB_VERSION_9_2
+	default BR2_GDB_VERSION_10
 	depends on !BR2_arc
 	depends on !BR2_csky
 	help
@@ -93,8 +93,8 @@ config BR2_GDB_VERSION
 	default "arc-2020.09-release-gdb" if BR2_arc
 	default "4ecb98fbc2f94dbe01b69384afbc515107de73df" if BR2_csky
 	default "8.3.1"    if BR2_GDB_VERSION_8_3
-	default "9.2"      if BR2_GDB_VERSION_9_2 || (!BR2_PACKAGE_HOST_GDB && !BR2_riscv)
-	default "10.2"	   if BR2_GDB_VERSION_10 || (!BR2_PACKAGE_HOST_GDB && BR2_riscv)
+	default "9.2"      if BR2_GDB_VERSION_9_2
+	default "10.2"	   if BR2_GDB_VERSION_10 || !BR2_PACKAGE_HOST_GDB
 	default "11.1"     if BR2_GDB_VERSION_11
 	depends on BR2_PACKAGE_GDB || BR2_PACKAGE_HOST_GDB
 
@@ -105,5 +105,5 @@ config BR2_PACKAGE_GDB_TOPLEVEL
 	default y if BR2_arc
 	default y if BR2_GDB_VERSION_10
 	default y if BR2_GDB_VERSION_11
-	default y if !BR2_PACKAGE_HOST_GDB && BR2_riscv
+	default y if !BR2_PACKAGE_HOST_GDB
 	depends on BR2_PACKAGE_GDB || BR2_PACKAGE_HOST_GDB
