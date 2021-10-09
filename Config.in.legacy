@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2021.11"
 
+config BR2_GDB_VERSION_8_3
+	bool "gdb version 8.3.x removed"
+	select BR2_LEGACY
+	help
+	  gdb 8.3.x has been removed, use a newer version instead.
+
 config BR2_PACKAGE_PYTHON_MELD3
 	bool "python-meld3 package removed"
 	select BR2_LEGACY
