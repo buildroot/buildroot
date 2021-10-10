@@ -1,0 +1,37 @@
+From 881709d1e4d1bba5bf8ca365bc058f338bd72dc2 Mon Sep 17 00:00:00 2001
+From: Petr Vorel <petr.vorel@gmail.com>
+Date: Wed, 29 Sep 2021 19:38:42 +0200
+Subject: [PATCH] lapi/rtnetlink.h: Fix include guards
+
+Fixes: 5fea0638a ("lapi: Add missing IFA_FLAGS")
+
+Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
+[ upstream status: a2a212cf8 ("lapi/rtnetlink.h: Fix include guards") ]
+---
+ include/lapi/rtnetlink.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/lapi/rtnetlink.h b/include/lapi/rtnetlink.h
+index 8a1b5385b..04e9ad51a 100644
+--- a/include/lapi/rtnetlink.h
++++ b/include/lapi/rtnetlink.h
+@@ -1,8 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ /* Copyright (c) 2021 Petr Vorel <petr.vorel@gmail.com> */
+ 
+-#ifndef LAPI_IF_ADDR_H__
+-# define LAPI_IF_ADDR_H__
++#ifndef LAPI_RTNETLINK_H__
++# define LAPI_RTNETLINK_H__
+ 
+ #include <linux/rtnetlink.h>
+ 
+@@ -10,4 +10,4 @@
+ # define IFA_FLAGS 8
+ #endif
+ 
+-#endif	/* LAPI_IF_ADDR_H__ */
++#endif	/* LAPI_RTNETLINK_H__ */
+-- 
+2.33.0
+

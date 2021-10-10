@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2021.11"
 
+config BR2_PACKAGE_PYTHON_MELD3
+	bool "python-meld3 package removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it is unmaintained since
+	  April 2020.
+
 config BR2_PACKAGE_STRONGSWAN_EAP
 	bool "strongswan EAP plugins now individually selectable"
 	select BR2_LEGACY

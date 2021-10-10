@@ -14,7 +14,9 @@ EDK2_DEPENDENCIES = edk2-platforms host-python3 host-acpica host-util-linux
 EDK2_INSTALL_TARGET = NO
 EDK2_INSTALL_IMAGES = YES
 
-ifeq ($(BR2_x86_64),y)
+ifeq ($(BR2_i386),y)
+EDK2_ARCH = IA32
+else ifeq ($(BR2_x86_64),y)
 EDK2_ARCH = X64
 else ifeq ($(BR2_aarch64),y)
 EDK2_ARCH = AARCH64
@@ -55,7 +57,13 @@ EDK2_GIT_SUBMODULES = YES
 EDK2_BUILD_PACKAGES = $(@D)/Build/Buildroot
 EDK2_PACKAGES_PATH = $(@D):$(EDK2_BUILD_PACKAGES):$(STAGING_DIR)/usr/share/edk2-platforms
 
-ifeq ($(BR2_TARGET_EDK2_PLATFORM_OVMF_X64),y)
+ifeq ($(BR2_TARGET_EDK2_PLATFORM_OVMF_I386),y)
+EDK2_DEPENDENCIES += host-nasm
+EDK2_PACKAGE_NAME = OvmfPkg
+EDK2_PLATFORM_NAME = OvmfPkgIa32
+EDK2_BUILD_DIR = OvmfIa32
+
+else ifeq ($(BR2_TARGET_EDK2_PLATFORM_OVMF_X64),y)
 EDK2_DEPENDENCIES += host-nasm
 EDK2_PACKAGE_NAME = OvmfPkg
 EDK2_PLATFORM_NAME = OvmfPkgX64

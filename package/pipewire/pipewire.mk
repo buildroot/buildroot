@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PIPEWIRE_VERSION = 0.3.35
+PIPEWIRE_VERSION = 0.3.38
 PIPEWIRE_SOURCE = pipewire-$(PIPEWIRE_VERSION).tar.bz2
 PIPEWIRE_SITE = https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/$(PIPEWIRE_VERSION)
 PIPEWIRE_LICENSE = MIT, LGPL-2.1+ (libspa-alsa), GPL-2.0 (libjackserver)
@@ -101,6 +101,10 @@ else
 PIPEWIRE_CONF_OPTS += -Dffmpeg=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_NCURSES_WCHAR),y)
+PIPEWIRE_DEPENDENCIES += ncurses
+endif
+
 ifeq ($(BR2_PACKAGE_PIPEWIRE_V4L2),y)
 PIPEWIRE_CONF_OPTS += -Dv4l2=enabled
 else
@@ -142,6 +146,10 @@ else
 PIPEWIRE_CONF_OPTS += -Dlibpulse=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_READLINE),y)
+PIPEWIRE_DEPENDENCIES += readline
+endif
+
 ifeq ($(BR2_PACKAGE_SDL2),y)
 PIPEWIRE_DEPENDENCIES += sdl2
 PIPEWIRE_CONF_OPTS += -Dsdl2=enabled
@@ -163,7 +171,7 @@ endif
 PIPEWIRE_CONF_OPTS += -Dsession-managers='$(subst $(space),$(comma),$(PIPEWIRE_SESSION_MANAGERS_LIST))'
 
 define PIPEWIRE_USERS
-	pipewire -1 pipewire -1 * - - - PipeWire System Daemon
+	pipewire -1 pipewire -1 * - - audio,video PipeWire System Daemon
 endef
 
 $(eval $(meson-package))

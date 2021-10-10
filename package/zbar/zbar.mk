@@ -34,6 +34,7 @@ endif
 ifeq ($(BR2_PACKAGE_PYTHON3),y)
 ZBAR_DEPENDENCIES += host-python3 python3
 ZBAR_CONF_OPTS += --with-python=python3
+ZBAR_CONF_ENV += PYTHON_CONFIG="$(STAGING_DIR)/usr/bin/python3-config"
 else
 ZBAR_CONF_OPTS += --with-python=no
 endif

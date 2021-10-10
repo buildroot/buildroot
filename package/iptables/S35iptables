@@ -6,7 +6,7 @@ IPTABLES_ARGS=""
 
 start() {
 	printf 'Starting %s: ' "$DAEMON"
-	iptables-restore < /etc/iptables.conf
+	iptables-restore /etc/iptables.conf
 	status=$?
 	if [ "$status" -eq 0 ]; then
 		echo "OK"
@@ -36,7 +36,7 @@ restart() {
 
 save() {
 	printf 'Saving %s: ' "$DAEMON"
-	iptables-save > /etc/iptables.conf
+	iptables-save -f /etc/iptables.conf
 	status=$?
 	if [ "$status" -eq 0 ]; then
 		echo "OK"
@@ -53,6 +53,6 @@ case "$1" in
 		# Restart, since there is no true "reload" feature.
 		restart;;
 	*)
-		echo "Usage: $0 {start|stop|restart|reload}"
+		echo "Usage: $0 {start|stop|restart|save|reload}"
 		exit 1
 esac

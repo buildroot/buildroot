@@ -1,0 +1,58 @@
+From b13440627bd4a9f060a33d400a47a40daa2bc12e Mon Sep 17 00:00:00 2001
+From: Petr Vorel <petr.vorel@gmail.com>
+Date: Wed, 29 Sep 2021 19:37:19 +0200
+Subject: [PATCH] lapi: Create if_addr.h and reuse it in rtnetlink.h
+
+There will be fix in next commit for missing IFA_F_NOPREFIXROUTE which
+requires creating lapi/if_addr.h. Thus move IFA_FLAGS to lapi/if_addr.h,
+as it belongs there and reuse lapi/if_addr.h in lapi/rtnetlink.h just
+like <linux/rtnetlink.h> includes <linux/if_addr.h>.
+
+Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
+[ upstream status: https://lore.kernel.org/ltp/20210930183058.5240-3-petr.vorel@gmail.com/T/#u ]
+---
+ include/lapi/if_addr.h   | 16 ++++++++++++++++
+ include/lapi/rtnetlink.h |  5 +----
+ 2 files changed, 17 insertions(+), 4 deletions(-)
+ create mode 100644 include/lapi/if_addr.h
+
+diff --git a/include/lapi/if_addr.h b/include/lapi/if_addr.h
+new file mode 100644
+index 000000000..4e50a0a4e
+--- /dev/null
++++ b/include/lapi/if_addr.h
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright (c) 2021 Petr Vorel <petr.vorel@gmail.com>
++ */
++
++#ifndef LAPI_IF_ADDR_H__
++#define LAPI_IF_ADDR_H__
++
++#include <linux/if_addr.h>
++
++#ifndef IFA_FLAGS
++# define IFA_FLAGS 8
++#endif
++
++
++#endif /* LAPI_IF_ADDR_H__ */
+diff --git a/include/lapi/rtnetlink.h b/include/lapi/rtnetlink.h
+index 04e9ad51a..089bf1a0d 100644
+--- a/include/lapi/rtnetlink.h
++++ b/include/lapi/rtnetlink.h
+@@ -5,9 +5,6 @@
+ # define LAPI_RTNETLINK_H__
+ 
+ #include <linux/rtnetlink.h>
+-
+-#ifndef IFA_FLAGS
+-# define IFA_FLAGS 8
+-#endif
++#include "lapi/if_addr.h"
+ 
+ #endif	/* LAPI_RTNETLINK_H__ */
+-- 
+2.33.0
+

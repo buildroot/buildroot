@@ -1,0 +1,32 @@
+From 42bd5ba7c2665c5bf95ba102a8115c4cf01d31d7 Mon Sep 17 00:00:00 2001
+From: Andrew Zaborowski <andrew.zaborowski@intel.com>
+Date: Thu, 16 Sep 2021 01:58:29 +0200
+Subject: netconfig: Remove usage of in6_addr.__in6_u
+
+in6_addr.__in6_u.__u6_addr8 is glibc-specific and named differently in
+the headers shipped with musl libc for example.  The POSIX compliant and
+universal way of accessing it is in6_addr.s6_addr.
+
+[Retrieved from:
+https://git.kernel.org/pub/scm/network/wireless/iwd.git/commit/?id=42bd5ba7c2665c5bf95ba102a8115c4cf01d31d7]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/netconfig.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/netconfig.c b/src/netconfig.c
+index ce95db0b..421270c9 100644
+--- a/src/netconfig.c
++++ b/src/netconfig.c
+@@ -171,7 +171,7 @@ static inline char *netconfig_ipv6_to_string(const uint8_t *addr)
+ 	struct in6_addr in6_addr;
+ 	char *addr_str = l_malloc(INET6_ADDRSTRLEN);
+ 
+-	memcpy(in6_addr.__in6_u.__u6_addr8, addr, 16);
++	memcpy(in6_addr.s6_addr, addr, 16);
+ 
+ 	if (L_WARN_ON(unlikely(!inet_ntop(AF_INET6, &in6_addr, addr_str,
+ 						INET6_ADDRSTRLEN)))) {
+-- 
+cgit 1.2.3-1.el7
+

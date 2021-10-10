@@ -21,4 +21,10 @@ ifeq ($(BR2_PACKAGE_LIBESMTP),y)
 LOG4CXX_DEPENDENCIES += libesmtp
 endif
 
+ifeq ($(BR2_USE_WCHAR),y)
+LOG4CXX_CONF_OPTS += -DLOG4CXX_WCHAR_T=ON
+else
+LOG4CXX_CONF_OPTS += -DLOG4CXX_WCHAR_T=OFF
+endif
+
 $(eval $(cmake-package))

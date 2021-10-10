@@ -647,10 +647,16 @@ config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_WPE
 	default y
 	depends on BR2_PACKAGE_WPEWEBKIT
 	depends on BR2_PACKAGE_GST1_PLUGINS_BASE_HAS_LIB_OPENGL
+	depends on !BR2_PACKAGE_WPEWEBKIT_MEDIA_STREAM
 
 comment "wpe needs the gst1-plugins-base opengl library and wpewebkit"
 	depends on !BR2_PACKAGE_WPEWEBKIT \
 		|| !BR2_PACKAGE_GST1_PLUGINS_BASE_HAS_LIB_OPENGL
+
+comment "wpe is incompatible w/ wpewebkit media-stream support"
+	depends on BR2_PACKAGE_WPEWEBKIT
+	depends on BR2_PACKAGE_GST1_PLUGINS_BASE_HAS_LIB_OPENGL
+	depends on BR2_PACKAGE_WPEWEBKIT_MEDIA_STREAM
 
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_V4L2CODECS
 	bool "v4l2codecs"
