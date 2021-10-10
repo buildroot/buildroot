@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NCDU_VERSION = 1.15.1
+NCDU_VERSION = 1.16
 NCDU_SITE = http://dev.yorhel.nl/download
 
 NCDU_DEPENDENCIES = ncurses
