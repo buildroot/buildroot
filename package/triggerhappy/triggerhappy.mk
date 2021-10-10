@@ -4,8 +4,9 @@
 #
 ################################################################################
 
-TRIGGERHAPPY_VERSION = b822888066129350e51ad79f1cf307fa38dae4f7
-TRIGGERHAPPY_SITE = $(call github,wertarbyte,triggerhappy,$(TRIGGERHAPPY_VERSION))
+TRIGGERHAPPY_VERSION = 0.5.0
+TRIGGERHAPPY_SITE = \
+	$(call github,wertarbyte,triggerhappy,release/$(TRIGGERHAPPY_VERSION))
 TRIGGERHAPPY_LICENSE = GPL-3.0+
 TRIGGERHAPPY_LICENSE_FILES = COPYING
 TRIGGERHAPPY_DEPENDENCIES = host-pkgconf
