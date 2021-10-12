@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_PYNDIFF
+	bool "python-pyndiff"
+	select BR2_PACKAGE_PYTHON_XMLJSON # runtime
+	select BR2_PACKAGE_PYTHON_SETUPTOOLS # runtime
+	help
+	  Generate human-readable ndiff output when comparing 2 Nmap
+	  XML scan files.
+
+	  https://github.com/rackerlabs/pyndiff
