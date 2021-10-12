@@ -47,11 +47,9 @@ APPARMOR_INCLUDES=
 else
 define APPARMOR_INCLUDES
 	mkdir -p $(TARGET_DIR)/etc/apparmor.d
-	cp -a $(@D)/profiles/apparmor.d/abi/* -t $(TARGET_DIR)/etc/apparmor.d
-	mkdir -p $(TARGET_DIR)/etc/apparmor.d/abstractions
-	cp -a $(@D)/profiles/apparmor.d/abstractions/* -t $(TARGET_DIR)/etc/apparmor.d
-	mkdir -p $(TARGET_DIR)/etc/apparmor.d/tunables
-	cp -a $(@D)/profiles/apparmor.d/tunables/* -t $(TARGET_DIR)/etc/apparmor.d
+	cp -a $(@D)/profiles/apparmor.d/abi $(TARGET_DIR)/etc/apparmor.d
+	cp -a $(@D)/profiles/apparmor.d/abstractions $(TARGET_DIR)/etc/apparmor.d
+	cp -a $(@D)/profiles/apparmor.d/tunables $(TARGET_DIR)/etc/apparmor.d
 endef
 endif
 
