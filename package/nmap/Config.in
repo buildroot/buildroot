@@ -6,7 +6,7 @@ config BR2_PACKAGE_NMAP
 	select BR2_PACKAGE_LIBLINEAR
 	select BR2_PACKAGE_LIBPCAP
 	select BR2_PACKAGE_NMAP_NMAP \
-	       if !BR2_PACKAGE_NMAP_NCAT && !BR2_PACKAGE_NMAP_NPING && !BR2_PACKAGE_NMAP_NDIFF
+	       if !BR2_PACKAGE_NMAP_NCAT && !BR2_PACKAGE_NMAP_NPING
 	help
 	  Nmap ("Network Mapper") is a free and open source (license)
 	  utility for network discovery and security auditing.
@@ -31,16 +31,6 @@ comment "a symlink from ncat to 'nc' will be installed"
 	depends on BR2_PACKAGE_NMAP_NCAT
 	depends on !BR2_PACKAGE_NETCAT
 	depends on !BR2_PACKAGE_NETCAT_OPENBSD
-
-config BR2_PACKAGE_NMAP_NDIFF
-	bool "install ndiff"
-	# ndiff only works with python2.x
-	depends on BR2_PACKAGE_PYTHON
-	help
-	  This option installs the 'ndiff' tool.
-
-comment "ndiff needs Python 2.x"
-	depends on !BR2_PACKAGE_PYTHON
 
 config BR2_PACKAGE_NMAP_NMAP
 	bool "install nmap"
