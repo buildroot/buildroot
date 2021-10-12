@@ -43,6 +43,16 @@ endif # BR2_PACKAGE_APPARMOR_UTILS
 
 ifeq ($(BR2_PACKAGE_APPARMOR_PROFILES),y)
 APPARMOR_TOOLS += profiles
+APPARMOR_INCLUDES=
+else
+define APPARMOR_INCLUDES
+	mkdir -p $(TARGET_DIR)/etc/apparmor.d
+	cp -a $(@D)/profiles/apparmor.d/abi/* -t $(TARGET_DIR)/etc/apparmor.d
+	mkdir -p $(TARGET_DIR)/etc/apparmor.d/abstractions
+	cp -a $(@D)/profiles/apparmor.d/abstractions/* -t $(TARGET_DIR)/etc/apparmor.d
+	mkdir -p $(TARGET_DIR)/etc/apparmor.d/tunables
+	cp -a $(@D)/profiles/apparmor.d/tunables/* -t $(TARGET_DIR)/etc/apparmor.d
+endef
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_PAM),y)
@@ -78,6 +88,7 @@ define APPARMOR_INSTALL_TARGET_CMDS
 		$(MAKE) -C $(@D)/$(tool) $(APPARMOR_MAKE_OPTS) \
 			DESTDIR=$(TARGET_DIR) install
 	)
+	$(APPARMOR_INCLUDES)
 endef
 
 # Despite its name, apparmor.systemd is a sysv-init compatible startup script
