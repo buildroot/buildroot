@@ -158,6 +158,13 @@ config BR2_GCC_VERSION_CSKY
 	help
 	  Support for gcc csky version has been removed.
 
+config BR2_PACKAGE_CANFESTIVAL
+	bool "canfestival package removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it is unmaintained since
+	  November 2017.
+
 config BR2_GDB_VERSION_8_3
 	bool "gdb version 8.3.x removed"
 	select BR2_LEGACY
