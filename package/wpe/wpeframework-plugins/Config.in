@@ -300,12 +300,36 @@ if BR2_PACKAGE_WESTON
 endif
 endif
 
-config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
     select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     bool "DeviceInfo"
     default y
     help
       DeviceInfo Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
+
+config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO_MODELNAME
+    string "modelname"
+    default "WPEFramework"
+
+config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO_MODELYEAR
+    string "modelyear"
+    default "2021"
+
+config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO_FRIENDLYNAME
+    string "friendlyname"
+    default "WPE"
+
+config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO_SYSTEMINTEGRATORNAME
+    string "systemintegratorname"
+    default "Metrological"
+
+config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO_PLATFORMNAME
+    string "platformname"
+    default "Linux"
+
+endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION
     select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
