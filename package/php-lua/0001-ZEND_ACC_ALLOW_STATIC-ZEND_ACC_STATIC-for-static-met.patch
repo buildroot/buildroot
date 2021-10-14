@@ -1,0 +1,28 @@
+From fd775cedbb97b56f0d1b098a41519f4477f450c7 Mon Sep 17 00:00:00 2001
+From: cdosoftei <ciprian.dosoftei@gmail.com>
+Date: Mon, 10 Aug 2020 15:37:52 -0400
+Subject: [PATCH] ZEND_ACC_ALLOW_STATIC -> ZEND_ACC_STATIC for static method
+
+[Hervé: Taken from https://github.com/laruence/php-lua/pull/47 to fix
+PHP8 compatibility.]
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+---
+ lua.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lua.c b/lua.c
+index b05f4ef..f2648ac 100755
+--- a/lua.c
++++ b/lua.c
+@@ -822,7 +822,7 @@ zend_function_entry lua_class_methods[] = {
+ 	PHP_ME(lua, include,			arginfo_lua_include, 	ZEND_ACC_PUBLIC)
+ 	PHP_ME(lua, call,				arginfo_lua_call,  		ZEND_ACC_PUBLIC)
+ 	PHP_ME(lua, assign,				arginfo_lua_assign,		ZEND_ACC_PUBLIC)
+-	PHP_ME(lua, getVersion,			NULL, 					ZEND_ACC_PUBLIC|ZEND_ACC_ALLOW_STATIC)
++	PHP_ME(lua, getVersion,			NULL, 					ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+ 	PHP_ME(lua, registerCallback,	arginfo_lua_register, 	ZEND_ACC_PUBLIC)
+ 	PHP_MALIAS(lua, __call, call, 	arginfo_lua_call,		ZEND_ACC_PUBLIC)
+ 	PHP_FE_END
+-- 
+2.31.1
+
