@@ -29,6 +29,18 @@ LIBAPPARMOR_CONF_OPTS = \
 
 ifeq ($(BR2_PACKAGE_PYTHON3),y)
 LIBAPPARMOR_DEPENDENCIES += host-python3 host-swig python3
+
+LIBAPPARMOR_MAKE_OPTS += PYTHON_DISTUTILS_OPTS=\
+	PATH=$(BR_PATH) \
+	$(TARGET_CONFIGURE_OPTS) \
+	LDSHARED="$(TARGET_CROSS)gcc -shared" \
+	PYTHONPATH="$(if $(BR2_PACKAGE_PYTHON3),$(PYTHON3_PATH),$(PYTHON_PATH))" \
+	PYTHONNOUSERSITE=1 \
+	_PYTHON_SYSCONFIGDATA_NAME="$(PKG_PYTHON_SYSCONFIGDATA_NAME)" \
+	_python_sysroot=$(STAGING_DIR) \
+	_python_prefix=/usr \
+	_python_exec_prefix=/usr
+
 LIBAPPARMOR_CONF_OPTS += \
 	--with-python \
 	PYTHON=$(HOST_DIR)/usr/bin/python3 \
