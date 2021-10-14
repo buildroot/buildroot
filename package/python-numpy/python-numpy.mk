@@ -4,15 +4,17 @@
 #
 ################################################################################
 
-PYTHON_NUMPY_VERSION = 1.18.2
+PYTHON_NUMPY_VERSION = 1.21.2
 PYTHON_NUMPY_SOURCE = numpy-$(PYTHON_NUMPY_VERSION).tar.gz
 PYTHON_NUMPY_SITE = https://github.com/numpy/numpy/releases/download/v$(PYTHON_NUMPY_VERSION)
-PYTHON_NUMPY_LICENSE = BSD-3-Clause, BSD-2-Clause, PSF, Apache-2.0, MIT, Zlib
-PYTHON_NUMPY_LICENSE_FILES = LICENSE.txt doc/sphinxext/LICENSE.txt \
-			doc/scipy-sphinx-theme/LICENSE.txt \
-			numpy/linalg/lapack_lite/LICENSE.txt \
-			tools/npy_tempita/license.txt \
-			numpy/core/src/multiarray/dragon4.c
+PYTHON_NUMPY_LICENSE = BSD-3-Clause, MIT, Zlib
+PYTHON_NUMPY_LICENSE_FILES = \
+	LICENSE.txt \
+	numpy/core/src/multiarray/dragon4.c \
+	numpy/core/include/numpy/libdivide/LICENSE.txt \
+	numpy/linalg/lapack_lite/LICENSE.txt \
+	tools/npy_tempita/license.txt
+
 PYTHON_NUMPY_SETUP_TYPE = setuptools
 PYTHON_NUMPY_DEPENDENCIES = host-python-cython
 HOST_PYTHON_NUMPY_DEPENDENCIES = host-python-cython
