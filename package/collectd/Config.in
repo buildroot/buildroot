@@ -214,10 +214,14 @@ config BR2_PACKAGE_COLLECTD_CURL_XML
 
 config BR2_PACKAGE_COLLECTD_DBI
 	bool "dbi"
+	depends on !BR2_STATIC_LIBS
 	select BR2_PACKAGE_LIBDBI
 	help
 	  Executes SQL statements on various databases and
 	  interprets the returned data.
+
+comment "dbi support needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
 
 config BR2_PACKAGE_COLLECTD_DF
 	bool "df"
