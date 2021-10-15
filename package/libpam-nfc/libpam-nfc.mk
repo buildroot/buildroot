@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBPAM_NFC_VERSION = bb762e0e649195110e015ffb605c4375e927c437
+LIBPAM_NFC_VERSION = 64a8b30ba2cfd634342ded8c096c7cfc5c8fa22a
 LIBPAM_NFC_SITE = $(call github,nfc-tools,pam_nfc,$(LIBPAM_NFC_VERSION))
 LIBPAM_NFC_LICENSE = GPL-2.0
 LIBPAM_NFC_LICENSE_FILES = COPYING
