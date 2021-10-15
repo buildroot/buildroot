@@ -26,4 +26,14 @@ config BR2_PACKAGE_SUNXI_MALI_MAINLINE_DRIVER
 	  enabled:
 	  - CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM
 
+	  The following kernel command line options must be passed:
+
+	  - drm_kms_helper.drm_leak_fbdev_smem = 1
+	    since drm_kms_helper.drm_leak_fbdev_smem is set to 0 by
+	    default
+
+	  - drm_kms_helper.drm_fbdev_overalloc >= 200
+	    since the driver requires at least double buffering and
+	    fails to work with the default value(100).
+
 	  https://github.com/mripard/sunxi-mali/blob/master/README.md
