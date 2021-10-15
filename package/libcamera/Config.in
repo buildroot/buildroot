@@ -34,12 +34,14 @@ config BR2_PACKAGE_LIBCAMERA_HAS_PIPELINE
 
 config BR2_PACKAGE_LIBCAMERA_PIPELINE_IPU3
 	bool "ipu3 pipeline"
+	depends on BR2_i386 || BR2_x86_64
 	select BR2_PACKAGE_LIBCAMERA_HAS_PIPELINE
 	help
 	  Pipeline for Intel IPU3.
 
 config BR2_PACKAGE_LIBCAMERA_PIPELINE_RASPBERRYPI
 	bool "raspberrypi pipeline"
+	depends on BR2_arm || BR2_aarch64
 	depends on BR2_USE_WCHAR # boost (already enforced for gnutls)
 	select BR2_PACKAGE_BOOST
 	select BR2_PACKAGE_LIBCAMERA_HAS_PIPELINE
@@ -48,6 +50,7 @@ config BR2_PACKAGE_LIBCAMERA_PIPELINE_RASPBERRYPI
 
 config BR2_PACKAGE_LIBCAMERA_PIPELINE_RKISP1
 	bool "rkisp1 pipeline"
+	depends on BR2_arm || BR2_aarch64
 	select BR2_PACKAGE_LIBCAMERA_HAS_PIPELINE
 	help
 	  Pipeline for Rockchip ISP1.
