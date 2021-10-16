@@ -1,0 +1,15 @@
+config BR2_PACKAGE_UQMI
+	bool "uqmi"
+	depends on !BR2_STATIC_LIBS # libubox
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # json-c
+	select BR2_PACKAGE_JSON_C
+	select BR2_PACKAGE_LIBUBOX
+	help
+	  This command line tool originates from the OpenWrt project
+	  to configure LTE modem in QMI mode for WAN connection.
+
+	  https://git.openwrt.org/project/uqmi.git
+
+comment "uqmi needs a toolchain w/ dynamic library"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on BR2_STATIC_LIBS
