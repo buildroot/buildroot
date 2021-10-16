@@ -1,0 +1,82 @@
+From 7535d990645d867a6e491d16cd2548ea7e54958e Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 5 Apr 2021 16:21:32 +0200
+Subject: [PATCH] Makefile.in: fix cross-compilation
+
+- Use DESTDIR to install each files instead of prepending prefix with it
+  as this will result in dotlockfile being wrongly install in $(bindir)
+- Use -f when creating symlink to avoid an error if link already exists
+- Do not install files with root group as this will break
+  cross-compilation
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/miquels/liblockfile/pull/11]
+---
+ Makefile.in | 36 ++++++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index 9c74b35..5ce8153 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -10,7 +10,7 @@ CFLAGS		= @CFLAGS@ -I.
+ LDFLAGS		= @LDFLAGS@
+ CC		= @CC@
+ 
+-prefix		= $(DESTDIR)@prefix@
++prefix		= @prefix@
+ exec_prefix	= @exec_prefix@
+ bindir		= @bindir@
+ libdir		= @libdir@
+@@ -60,34 +60,34 @@ dlockfile.o:	lockfile.c
+ 			-c lockfile.c -o dlockfile.o
+ 
+ install_static:	static install_common
+-		install -d -m 755 -g root -p $(libdir)
+-		install -m 644 liblockfile.a $(libdir)
++		install -d -m 755 -p $(DESTDIR)$(libdir)
++		install -m 644 liblockfile.a $(DESTDIR)$(libdir)
+ 
+ install_shared:	shared install_static install_common
+-		install -d -m 755 -g root -p $(libdir)
++		install -d -m 755 -p $(DESTDIR)$(libdir)
+ 		install -m 755 liblockfile.so \
+-			$(libdir)/liblockfile.so.$(SOVER)
+-		ln -s liblockfile.so.$(SOVER) $(libdir)/liblockfile.so.$(MAJOR)
+-		ln -s liblockfile.so.$(SOVER) $(libdir)/liblockfile.so
++			$(DESTDIR)$(libdir)/liblockfile.so.$(SOVER)
++		ln -sf liblockfile.so.$(SOVER) $(DESTDIR)$(libdir)/liblockfile.so.$(MAJOR)
++		ln -sf liblockfile.so.$(SOVER) $(DESTDIR)$(libdir)/liblockfile.so
+ 		if test "$(DESTDIR)" = ""; then @LDCONFIG@; fi
+ 
+ install_common:
+-		install -d -m 755 -g root -p $(includedir)
+-		install -d -m 755 -g root -p $(bindir)
+-		install -d -m 755 -g root -p $(mandir)/man1
+-		install -d -m 755 -g root -p $(mandir)/man3
+-		install -m 644 lockfile.h maillock.h $(includedir)
++		install -d -m 755 -p $(DESTDIR)$(includedir)
++		install -d -m 755 -p $(DESTDIR)$(bindir)
++		install -d -m 755 -p $(DESTDIR)$(mandir)/man1
++		install -d -m 755 -p $(DESTDIR)$(mandir)/man3
++		install -m 644 lockfile.h maillock.h $(DESTDIR)$(includedir)
+ 		if [ "$(MAILGROUP)" != "" ]; then\
+-		  install -g $(MAILGROUP) -m 2755 dotlockfile $(bindir);\
++		  install -g $(MAILGROUP) -m 2755 dotlockfile $(DESTDIR)$(bindir);\
+ 		else \
+-		  install -g root -m 755 dotlockfile $(bindir); \
++		  install -m 755 dotlockfile $(DESTDIR)$(bindir); \
+ 		fi
+-		install -m 644 *.1 $(mandir)/man1
+-		install -m 644 *.3 $(mandir)/man3
++		install -m 644 *.1 $(DESTDIR)$(mandir)/man1
++		install -m 644 *.3 $(DESTDIR)$(mandir)/man3
+ 
+ install_nfslib:	nfslib
+-		install -d -m 755 -g root -p $(nfslockdir)
+-		install -m 755 nfslock.so.$(NFSVER) $(nfslockdir)
++		install -d -m 755 -p $(DESTDIR)$(nfslockdir)
++		install -m 755 nfslock.so.$(NFSVER) $(DESTDIR)$(nfslockdir)
+ 		if test "$(DESTDIR)" = ""; then @LDCONFIG@; fi
+ 
+ test:		test-stamp
