@@ -29,3 +29,17 @@ ready to be dumped on a SD card. Launch the following command as root:
 
 For details about the medium image layout and its content, see the
 definition in board/stmicroelectronics/stm32f469-disco/genimage.cfg.
+
+Framebuffer
+-----------
+After Linux boots, /dev/fb0 will be accessible. You can control the
+brightness of the display after enabling the framebuffer by running the
+following commands:
+
+   # echo 0 0 > /sys/class/graphics/fb0/pan
+   # echo 255 >/sys/class/backlight/40016c00.dsi.0/brightness
+
+The brightness ranges from 0 to 255, as you can see running the
+command:
+
+   # cat /sys/class/backlight/40016c00.dsi.0/max_brightness
