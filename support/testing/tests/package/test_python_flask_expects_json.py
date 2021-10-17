@@ -17,11 +17,11 @@ class TestPythonPy3FlaskExpectsJson(TestPythonPackageBase):
     timeout = 60
 
     def try_json(self, payload, expects):
-        cmd = """curl -s -o /dev/null -w "%%{http_code}\\n" -X POST """
+        cmd = """curl -s -o /dev/null -w "%{http_code}\\n" -X POST """
         cmd += """-H "Content-Type: application/json" -d '%s' http://127.0.0.1:5000""" % payload
         output, exit_code = self.emulator.run(cmd, timeout=self.timeout)
         self.assertEqual(exit_code, 0)
-        self.assertEqual(output[-1], str(expects))
+        self.assertEqual(output[0], str(expects))
 
     def test_run(self):
         self.login()

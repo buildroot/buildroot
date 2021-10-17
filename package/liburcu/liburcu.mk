@@ -12,4 +12,8 @@ LIBURCU_LICENSE_FILES = lgpl-2.1.txt lgpl-relicensing.txt gpl-2.0.txt LICENSE
 
 LIBURCU_INSTALL_STAGING = YES
 
+# ac_cv_prog_cc_c99 is required for BR2_USE_WCHAR=n because the C99 test
+# provided by autoconf relies on wchar_t.
+LIBURCU_CONF_ENV = ac_cv_prog_cc_c99=-std=gnu99
+
 $(eval $(autotools-package))

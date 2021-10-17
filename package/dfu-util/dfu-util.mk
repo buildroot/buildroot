@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-DFU_UTIL_VERSION = 0.10
+DFU_UTIL_VERSION = 0.11
 DFU_UTIL_SITE = http://dfu-util.sourceforge.net/releases
-DFU_UTIL_LICENSE = GPL-2.0+
+DFU_UTIL_LICENSE = GPL-2.0+, LGPL-3.0
 DFU_UTIL_LICENSE_FILES = COPYING
 
 DFU_UTIL_DEPENDENCIES = libusb

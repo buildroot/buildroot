@@ -18,6 +18,16 @@ else
 PSPLASH_CONF_OPTS += --without-systemd
 endif
 
+PSPLASH_IMAGE = $(call qstrip,$(BR2_PACKAGE_PSPLASH_IMAGE))
+
+ifneq ($(PSPLASH_IMAGE),)
+define PSPLASH_COPY_IMAGE
+	cp $(PSPLASH_IMAGE) $(@D)/base-images/psplash-poky.png
+endef
+
+PSPLASH_POST_EXTRACT_HOOKS += PSPLASH_COPY_IMAGE
+endif
+
 define PSPLASH_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 644 package/psplash/psplash-start.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/psplash-start.service

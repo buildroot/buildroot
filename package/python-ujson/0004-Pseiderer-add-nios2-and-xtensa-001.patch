@@ -1,0 +1,95 @@
+From a54561be5588ac9b16d3c20760b9b554168bb8aa Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <pseiderer@users.noreply.github.com>
+Date: Thu, 31 Oct 2019 21:26:27 +0100
+Subject: [PATCH] Pseiderer/add nios2 and xtensa 001 (#119)
+
+* double-conversion: enable for nios2
+
+Nios2 supports double conversion, tested using qemu:
+
+./main || echo "correct"
+correct
+uname -a
+Linux buildroot 4.19.16 #4 Sat Aug 3 14:46:48 CEST 2019 nios2 GNU/Linux
+
+Solves build error
+
+In file included from double-conversion.h:42:0,
+                 from number_decimalquantity.cpp:19:
+double-conversion-utils.h:119:2: error: #error Target architecture was not detected as supported by Double-Conversion.
+ #error Target architecture was not detected as supported by Double-Conversion.
+
+detected by buildroot autobuilders:
+http://autobuild.buildroot.net/results/91e/91eaec34708d91f8a05af189243be0b7cabce31b/
+
+Patch sent upstream: https://github.com/unicode-org/icu/pull/725
+Bug report: https://unicode-org.atlassian.net/browse/ICU-20751
+
+[Bernd: Fixed path]
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Added Changelog entry]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+
+* double-conversion: enable for xtensa
+
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+
+[Retrieved (dand backported) from:
+https://github.com/google/double-conversion/commit/a54561be5588ac9b16d3c20760b9b554168bb8aa]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+Note:
+
+Double-conversion tested with:
+
+        $ cat div.c
+double Div_double(double x, double y) { return x / y; }
+
+        $ cat main.c
+double Div_double(double x, double y);
+
+int main(int argc, char** argv) {
+  double result = Div_double(89255.0, 1e22);
+  if (result == 89255e-22) {
+    printf("correct result %e\n", result);
+    return 1;
+  } else {
+    printf("wrong result %e\n", result);
+    return 0;
+  }
+}
+
+Tested for xtensa (using qemu_xtensa_lx60_defconfig plus BR2_PACKAGE_HOST_QEMU_LINUX_USER_MODE):
+
+        $ ./host/bin/xtensa-buildroot-linux-uclibc-gcc -c div.c
+        $ ./host/bin/xtensa-buildroot-linux-uclibc-gcc -c main.c
+        $ ./host/bin/xtensa-buildroot-linux-uclibc-gcc -o main main.o div.o
+
+        $ ./host/bin/qemu-xtensa -L staging main
+correct result 8.925500e-18
+---
+ Changelog                 | 4 ++++
+ double-conversion/utils.h | 3 ++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/deps/double-conversion/double-conversion/utils.h b/deps/double-conversion/double-conversion/utils.h
+index 221467f..98ec28b 100644
+--- a/deps/double-conversion/double-conversion/utils.h
++++ b/deps/double-conversion/double-conversion/utils.h
+@@ -94,6 +94,7 @@ int main(int argc, char** argv) {
+     defined(__ARMEL__) || defined(__avr32__) || defined(_M_ARM) || defined(_M_ARM64) || \
+     defined(__hppa__) || defined(__ia64__) || \
+     defined(__mips__) || \
++    defined(__nios2__) || \
+     defined(__powerpc__) || defined(__ppc__) || defined(__ppc64__) || \
+     defined(_POWER) || defined(_ARCH_PPC) || defined(_ARCH_PPC64) || \
+     defined(__sparc__) || defined(__sparc) || defined(__s390__) || \
+@@ -102,7 +103,7 @@ int main(int argc, char** argv) {
+     defined(__AARCH64EL__) || defined(__aarch64__) || defined(__AARCH64EB__) || \
+     defined(__riscv) || defined(__e2k__) || \
+     defined(__or1k__) || defined(__arc__) || \
+-    defined(__microblaze__)
++    defined(__microblaze__) || defined(__XTENSA__)
+ #define DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS 1
+ #elif defined(__mc68000__)
+ #undef DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS

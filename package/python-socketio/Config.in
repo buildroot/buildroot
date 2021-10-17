@@ -1,6 +1,7 @@
 config BR2_PACKAGE_PYTHON_SOCKETIO
 	bool "python-socketio"
-	select BR2_PACKAGE_PYTHON_SIX # runtime
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON_BIDICT # runtime
 	select BR2_PACKAGE_PYTHON_ENGINEIO # runtime
 	help
 	  Socket.IO server.

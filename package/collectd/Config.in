@@ -212,6 +212,13 @@ config BR2_PACKAGE_COLLECTD_CURL_XML
 	help
 	  Reads files using libcurl and parses it as XML.
 
+config BR2_PACKAGE_COLLECTD_DBI
+	bool "dbi"
+	select BR2_PACKAGE_LIBDBI
+	help
+	  Executes SQL statements on various databases and
+	  interprets the returned data.
+
 config BR2_PACKAGE_COLLECTD_DF
 	bool "df"
 	help

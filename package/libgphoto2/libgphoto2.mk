@@ -4,11 +4,9 @@
 #
 ################################################################################
 
-LIBGPHOTO2_VERSION = 2.5.26
-LIBGPHOTO2_SOURCE = libgphoto2-$(LIBGPHOTO2_VERSION).tar.bz2
-# Project is maintained on github but github tarball doesn't have
-# configure, so use tarballs from SourceForge
-LIBGPHOTO2_SITE = https://downloads.sourceforge.net/project/gphoto/libgphoto/$(LIBGPHOTO2_VERSION)
+LIBGPHOTO2_VERSION = 2.5.27
+LIBGPHOTO2_SOURCE = libgphoto2-$(LIBGPHOTO2_VERSION).tar.xz
+LIBGPHOTO2_SITE = https://github.com/gphoto/libgphoto2/releases/download/v$(LIBGPHOTO2_VERSION)
 LIBGPHOTO2_LICENSE = LGPL-2.1+, GPL-2.0 (adc65), GPL-2.0+ (some camlibs), \
 	LGPL-2.0 (sipix), LGPL-3.0+ (pentax), BSD-3-Clause (ax203/tinyjpeg)
 # There is a single license file for the LGPL-2.1, no license files
