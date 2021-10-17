@@ -21,6 +21,13 @@ config BR2_PACKAGE_FASTD_STATUS_SOCKET
 	help
 	  Enable support for a socket to get fastd's status.
 
+config BR2_PACKAGE_FASTD_OFFLOAD_L2TP
+	bool "l2tp offload support"
+	select BR2_PACKAGE_LIBMNL
+	help
+	  L2TP can be offloaded to the Linux kernel, significantly
+	  increasing throughput.
+
 endif
 
 comment "fastd needs a toolchain w/ threads, dynamic library"
