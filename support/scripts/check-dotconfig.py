@@ -17,7 +17,7 @@ def main():
 
     # strip() to get rid of trailing \n
     with open(configfile) as configf:
-        configlines = [l.strip() for l in configf.readlines()]
+        configlines = [line.strip() for line in configf.readlines()]
 
     defconfiglines = []
     with open(defconfig) as defconfigf:

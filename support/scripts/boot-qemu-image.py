@@ -43,9 +43,9 @@ def main():
         # In this case, spawn above will succeed at starting the wrapper
         # start-qemu.sh, but that one will fail (exit with 127) in such
         # a situation.
-        exit = [int(l.split(' ')[1])
-                for l in e.value.splitlines()
-                if l.startswith('exitstatus: ')]
+        exit = [int(line.split(' ')[1])
+                for line in e.value.splitlines()
+                if line.startswith('exitstatus: ')]
         if len(exit) and exit[0] == 127:
             print('qemu-start.sh could not find the qemu binary')
             sys.exit(0)
