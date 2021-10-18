@@ -13,10 +13,6 @@ LIGHTNING_CPE_ID_VENDOR = gnu
 # We're patching include/Makefile.am
 LIGHTNING_AUTORECONF = YES
 
-# CVE-2020-7747 is for the Javascript lightning-server project, and not for
-# GNU Lightning.
-LIGHTNING_IGNORE_CVES = CVE-2020-7747
-
 ifeq ($(BR2_PACKAGE_LIGHTNING_DISASSEMBLER),y)
 LIGHTNING_DEPENDENCIES += binutils zlib
 LIGHTNING_CONF_OPTS += --enable-disassembler
