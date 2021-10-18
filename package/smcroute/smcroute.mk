@@ -16,7 +16,7 @@ SMCROUTE_CONF_OPTS = ac_cv_func_setpgrp_void=yes
 SMCROUTE_MAKE_ENV = $(TARGET_CONFIGURE_OPTS)
 
 ifeq ($(BR2_PACKAGE_LIBCAP),y)
-SMCROUTE_DEPENDENCIES = libcap
+SMCROUTE_DEPENDENCIES += libcap
 SMCROUTE_CONF_OPTS += --with-libcap
 else
 SMCROUTE_CONF_OPTS += --without-libcap
