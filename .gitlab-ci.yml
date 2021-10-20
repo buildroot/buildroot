@@ -1,7 +1,7 @@
 # Configuration for Gitlab-CI.
 # Builds appear on https://gitlab.com/buildroot.org/buildroot/pipelines
 
-image: buildroot/base:20211120.1925
+image: $CI_REGISTRY/buildroot.org/buildroot/base:20211120.1925
 
 stages:
   - generate-gitlab-ci
