@@ -61,6 +61,13 @@ LIBCAMERA_PIPELINES-$(BR2_PACKAGE_LIBCAMERA_PIPELINE_VIMC) += vimc
 
 LIBCAMERA_CONF_OPTS += -Dpipelines=$(subst $(space),$(comma),$(LIBCAMERA_PIPELINES-y))
 
+ifeq ($(BR2_PACKAGE_LIBCAMERA_COMPLIANCE),y)
+LIBCAMERA_DEPENDENCIES += gtest libevent
+LIBCAMERA_CONF_OPTS += -Dlc-compliance=enabled
+else
+LIBCAMERA_CONF_OPTS += -Dlc-compliance=disabled
+endif
+
 # gstreamer-video-1.0, gstreamer-allocators-1.0
 ifeq ($(BR2_PACKAGE_GSTREAMER1)$(BR2_PACKAGE_GST1_PLUGINS_BASE),yy)
 LIBCAMERA_CONF_OPTS += -Dgstreamer=enabled
