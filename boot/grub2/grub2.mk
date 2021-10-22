@@ -140,6 +140,7 @@ GRUB2_CONF_ENV = \
 	TARGET_STRIP="$(TARGET_CROSS)strip"
 
 HOST_GRUB2_CONF_OPTS = \
+	--with-platform=none \
 	--disable-grub-mkfont \
 	--enable-efiemu=no \
 	ac_cv_lib_lzma_lzma_code=no \
