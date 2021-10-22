@@ -192,7 +192,7 @@ define GRUB2_INSTALL_IMAGES_CMDS
 			$(GRUB2_BUILTIN_MODULES_$(tuple))
 		$(INSTALL) -D -m 0644 boot/grub2/grub.cfg $(GRUB2_CFG_$(tuple))
 		$(if $(findstring $(GRUB2_PLATFORM_$(tuple)), pc), \
-			cat $(HOST_DIR)/lib/grub/$(tuple)/cdboot.img $(GRUB2_IMAGE_$(tuple)) > \
+			cat $(@D)/build-$(tuple)/grub-core/cdboot.img $(GRUB2_IMAGE_$(tuple)) > \
 				$(BINARIES_DIR)/grub-eltorito.img
 		) \
 	)
