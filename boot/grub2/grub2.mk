@@ -195,5 +195,13 @@ define GRUB2_INSTALL_IMAGES_CMDS
 	)
 endef
 
+ifeq ($(BR2_TARGET_GRUB2_INSTALL_TOOLS),y)
+define GRUB2_INSTALL_TARGET_CMDS
+	$(foreach tuple, $(GRUB2_TUPLES-y), \
+		$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/build-$(tuple) DESTDIR=$(TARGET_DIR) install
+	)
+endef
+endif
+
 $(eval $(generic-package))
 $(eval $(host-autotools-package))
