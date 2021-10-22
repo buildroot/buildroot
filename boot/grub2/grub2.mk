@@ -149,6 +149,7 @@ HOST_GRUB2_CONF_OPTS = \
 
 define GRUB2_CONFIGURE_CMDS
 	$(foreach tuple, $(GRUB2_TUPLES-y), \
+		@$(call MESSAGE,Configuring $(tuple))
 		mkdir -p $(@D)/build-$(tuple)
 		cd $(@D)/build-$(tuple) && \
 		$(TARGET_CONFIGURE_OPTS) \
@@ -172,12 +173,14 @@ endef
 
 define GRUB2_BUILD_CMDS
 	$(foreach tuple, $(GRUB2_TUPLES-y), \
+		@$(call MESSAGE,Building $(tuple))
 		$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/build-$(tuple)
 	)
 endef
 
 define GRUB2_INSTALL_IMAGES_CMDS
 	$(foreach tuple, $(GRUB2_TUPLES-y), \
+		@$(call MESSAGE,Installing $(tuple) to images directory)
 		mkdir -p $(dir $(GRUB2_IMAGE_$(tuple)))
 		$(HOST_DIR)/usr/bin/grub-mkimage \
 			-d $(@D)/build-$(tuple)/grub-core/ \
@@ -198,6 +201,7 @@ endef
 ifeq ($(BR2_TARGET_GRUB2_INSTALL_TOOLS),y)
 define GRUB2_INSTALL_TARGET_CMDS
 	$(foreach tuple, $(GRUB2_TUPLES-y), \
+		@$(call MESSAGE,Installing $(tuple) to target directory)
 		$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/build-$(tuple) DESTDIR=$(TARGET_DIR) install
 	)
 endef
