@@ -149,8 +149,8 @@ HOST_GRUB2_CONF_OPTS = \
 
 define GRUB2_CONFIGURE_CMDS
 	$(foreach tuple, $(GRUB2_TUPLES-y), \
-		mkdir -p $(@D)/build-$(tuple) ; \
-		cd $(@D)/build-$(tuple) ; \
+		mkdir -p $(@D)/build-$(tuple)
+		cd $(@D)/build-$(tuple) && \
 		$(TARGET_CONFIGURE_OPTS) \
 		$(TARGET_CONFIGURE_ARGS) \
 		$(GRUB2_CONF_ENV) \
@@ -178,7 +178,7 @@ endef
 
 define GRUB2_INSTALL_IMAGES_CMDS
 	$(foreach tuple, $(GRUB2_TUPLES-y), \
-		mkdir -p $(dir $(GRUB2_IMAGE_$(tuple))) ; \
+		mkdir -p $(dir $(GRUB2_IMAGE_$(tuple)))
 		$(HOST_DIR)/usr/bin/grub-mkimage \
 			-d $(@D)/build-$(tuple)/grub-core/ \
 			-O $(tuple) \
@@ -186,11 +186,11 @@ define GRUB2_INSTALL_IMAGES_CMDS
 			-p "$(GRUB2_PREFIX_$(tuple))" \
 			$(if $(GRUB2_BUILTIN_CONFIG_$(tuple)), \
 				-c $(GRUB2_BUILTIN_CONFIG_$(tuple))) \
-			$(GRUB2_BUILTIN_MODULES_$(tuple)) ; \
-		$(INSTALL) -D -m 0644 boot/grub2/grub.cfg $(GRUB2_CFG_$(tuple)) ; \
+			$(GRUB2_BUILTIN_MODULES_$(tuple))
+		$(INSTALL) -D -m 0644 boot/grub2/grub.cfg $(GRUB2_CFG_$(tuple))
 		$(if $(findstring $(GRUB2_PLATFORM_$(tuple)), pc), \
 			cat $(HOST_DIR)/lib/grub/$(tuple)/cdboot.img $(GRUB2_IMAGE_$(tuple)) > \
-				$(BINARIES_DIR)/grub-eltorito.img ; \
+				$(BINARIES_DIR)/grub-eltorito.img
 		) \
 	)
 endef
