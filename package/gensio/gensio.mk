@@ -21,6 +21,10 @@ else
 GENSIO_CONF_OPTS += --without-openssl
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+GENSIO_CONF_ENV += LIBS=-latomic
+endif
+
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
 GENSIO_CONF_OPTS += --with-pthreads
 else
