@@ -18,6 +18,7 @@ STRONGSWAN_CONF_OPTS += \
 	--enable-pkcs11=yes \
 	--enable-kernel-netlink=yes \
 	--enable-socket-default=yes \
+	--enable-botan=$(if $(BR2_PACKAGE_STRONGSWAN_BOTAN),yes,no) \
 	--enable-openssl=$(if $(BR2_PACKAGE_STRONGSWAN_OPENSSL),yes,no) \
 	--enable-gcrypt=$(if $(BR2_PACKAGE_STRONGSWAN_GCRYPT),yes,no) \
 	--enable-gmp=$(if $(BR2_PACKAGE_STRONGSWAN_GMP),yes,no) \
@@ -66,6 +67,7 @@ STRONGSWAN_CONF_ENV += LIBS='-latomic'
 endif
 
 STRONGSWAN_DEPENDENCIES += \
+	$(if $(BR2_PACKAGE_STRONGSWAN_BOTAN),botan) \
 	$(if $(BR2_PACKAGE_STRONGSWAN_OPENSSL),openssl) \
 	$(if $(BR2_PACKAGE_STRONGSWAN_GCRYPT),libgcrypt) \
 	$(if $(BR2_PACKAGE_STRONGSWAN_GMP),gmp) \
