@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LUAJIT_VERSION = 2.1.2
-LUAJIT_SITE = $(call github,moonjit,moonjit,$(LUAJIT_VERSION))
+LUAJIT_VERSION = 05f1984e1a862e4b3d3c3b370c773492e2edf84a
+LUAJIT_SITE = $(call github,LuaJIT,LuaJIT,$(LUAJIT_VERSION))
 LUAJIT_LICENSE = MIT
 LUAJIT_LICENSE_FILES = COPYRIGHT
 

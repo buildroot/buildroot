@@ -14,7 +14,7 @@ class SampleInterface(ServiceInterface):
         pass
 
     @method()
-    def ConcatStrings(self, what1: 's', what2: 's') -> 's':
+    def ConcatStrings(self, what1: 's', what2: 's') -> 's':  # noqa: F821
         return what1 + what2
 
 

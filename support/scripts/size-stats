@@ -73,8 +73,8 @@ def add_file(filesdict, relpath, abspath, pkg):
 def build_package_dict(builddir):
     filesdict = {}
     with open(os.path.join(builddir, "build", "packages-file-list.txt")) as f:
-        for l in f.readlines():
-            pkg, fpath = l.split(",", 1)
+        for line in f.readlines():
+            pkg, fpath = line.split(",", 1)
             # remove the initial './' in each file path
             fpath = fpath.strip()[2:]
             fullpath = os.path.join(builddir, "target", fpath)

@@ -140,6 +140,7 @@ GRUB2_CONF_ENV = \
 	TARGET_STRIP="$(TARGET_CROSS)strip"
 
 HOST_GRUB2_CONF_OPTS = \
+	--with-platform=none \
 	--disable-grub-mkfont \
 	--enable-efiemu=no \
 	ac_cv_lib_lzma_lzma_code=no \
@@ -149,8 +150,9 @@ HOST_GRUB2_CONF_OPTS = \
 
 define GRUB2_CONFIGURE_CMDS
 	$(foreach tuple, $(GRUB2_TUPLES-y), \
-		mkdir -p $(@D)/build-$(tuple) ; \
-		cd $(@D)/build-$(tuple) ; \
+		@$(call MESSAGE,Configuring $(tuple))
+		mkdir -p $(@D)/build-$(tuple)
+		cd $(@D)/build-$(tuple) && \
 		$(TARGET_CONFIGURE_OPTS) \
 		$(TARGET_CONFIGURE_ARGS) \
 		$(GRUB2_CONF_ENV) \
@@ -172,13 +174,15 @@ endef
 
 define GRUB2_BUILD_CMDS
 	$(foreach tuple, $(GRUB2_TUPLES-y), \
+		@$(call MESSAGE,Building $(tuple))
 		$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/build-$(tuple)
 	)
 endef
 
 define GRUB2_INSTALL_IMAGES_CMDS
 	$(foreach tuple, $(GRUB2_TUPLES-y), \
-		mkdir -p $(dir $(GRUB2_IMAGE_$(tuple))) ; \
+		@$(call MESSAGE,Installing $(tuple) to images directory)
+		mkdir -p $(dir $(GRUB2_IMAGE_$(tuple)))
 		$(HOST_DIR)/usr/bin/grub-mkimage \
 			-d $(@D)/build-$(tuple)/grub-core/ \
 			-O $(tuple) \
@@ -186,14 +190,23 @@ define GRUB2_INSTALL_IMAGES_CMDS
 			-p "$(GRUB2_PREFIX_$(tuple))" \
 			$(if $(GRUB2_BUILTIN_CONFIG_$(tuple)), \
 				-c $(GRUB2_BUILTIN_CONFIG_$(tuple))) \
-			$(GRUB2_BUILTIN_MODULES_$(tuple)) ; \
-		$(INSTALL) -D -m 0644 boot/grub2/grub.cfg $(GRUB2_CFG_$(tuple)) ; \
+			$(GRUB2_BUILTIN_MODULES_$(tuple))
+		$(INSTALL) -D -m 0644 boot/grub2/grub.cfg $(GRUB2_CFG_$(tuple))
 		$(if $(findstring $(GRUB2_PLATFORM_$(tuple)), pc), \
-			cat $(HOST_DIR)/lib/grub/$(tuple)/cdboot.img $(GRUB2_IMAGE_$(tuple)) > \
-				$(BINARIES_DIR)/grub-eltorito.img ; \
+			cat $(@D)/build-$(tuple)/grub-core/cdboot.img $(GRUB2_IMAGE_$(tuple)) > \
+				$(BINARIES_DIR)/grub-eltorito.img
 		) \
 	)
 endef
+
+ifeq ($(BR2_TARGET_GRUB2_INSTALL_TOOLS),y)
+define GRUB2_INSTALL_TARGET_CMDS
+	$(foreach tuple, $(GRUB2_TUPLES-y), \
+		@$(call MESSAGE,Installing $(tuple) to target directory)
+		$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/build-$(tuple) DESTDIR=$(TARGET_DIR) install
+	)
+endef
+endif
 
 $(eval $(generic-package))
 $(eval $(host-autotools-package))

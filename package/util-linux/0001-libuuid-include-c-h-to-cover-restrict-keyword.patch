@@ -1,0 +1,30 @@
+From 5f9b88f43ba7f98f81bde3538d5f4e5cd1a6c01c Mon Sep 17 00:00:00 2001
+From: Karel Zak <kzak@redhat.com>
+Date: Thu, 5 Aug 2021 09:46:21 +0200
+Subject: libuuid: include c.h to cover restrict keyword
+
+References: https://github.com/karelzak/util-linux/issues/1405
+Signed-off-by: Karel Zak <kzak@redhat.com>
+
+[Retrieved from:
+https://git.kernel.org/pub/scm/utils/util-linux/util-linux.git/commit/?id=5f9b88f43ba7f98f81bde3538d5f4e5cd1a6c01c]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ libuuid/src/unparse.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/libuuid/src/unparse.c b/libuuid/src/unparse.c
+index f9a5e4315..ffeed2ed6 100644
+--- a/libuuid/src/unparse.c
++++ b/libuuid/src/unparse.c
+@@ -33,6 +33,7 @@
+  */
+ 
+ #include <stdio.h>
++#include "c.h"
+ 
+ #include "uuidP.h"
+ 
+-- 
+cgit 1.2.3-1.el7
+

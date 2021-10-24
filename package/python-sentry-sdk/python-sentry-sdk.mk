@@ -15,7 +15,7 @@ ifeq ($(BR2_PACKAGE_PYTHON),y)
 # only needed/valid for python 3.x
 define PYTHON_SENTRY_SDK_RM_PY3_FILES
 	rm -f $(addprefix $(TARGET_DIR)/usr/lib/python*/site-packages/sentry_sdk/integrations/,\
-		aiohttp.py asgi.py django/asgi.py sanic.py tornado.py)
+		aiohttp.py asgi.py django/asgi.py httpx.py sanic.py tornado.py)
 endef
 
 PYTHON_SENTRY_SDK_POST_INSTALL_TARGET_HOOKS += PYTHON_SENTRY_SDK_RM_PY3_FILES

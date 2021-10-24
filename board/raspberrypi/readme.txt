@@ -87,11 +87,14 @@ After building, you should obtain this tree:
     |   +-- bootcode.bin
     |   +-- cmdline.txt
     |   +-- config.txt
-    |   +-- fixup.dat
-    |   +-- start.elf
+    |   +-- fixup.dat               [1]
+    |   +-- fixup4.dat              [1]
+    |   +-- start.elf               [1]
+    |   +-- start4.elf              [1]
     |   `-- overlays/               [2]
     +-- sdcard.img
-    `-- zImage
+    +-- Image                       [1]
+    `-- zImage                      [1]
 
 [1] Not all of them will be present, depending on the RaspberryPi
     model you are using.

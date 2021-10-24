@@ -1,0 +1,39 @@
+From 55fc307d23d657b52433d1c8508467d0589754d5 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 16 Oct 2021 15:45:57 +0200
+Subject: [PATCH] meson.build: make C++ optional
+
+Remove cpp from meson project statement to make C++ optional and avoid
+the following build failure when the toolchain does not provide a C++
+compiler:
+
+../output-1/build/usbredir-0.11.0/meson.build:1:0: ERROR: Unknown compiler(s): [['/home/buildroot/autobuild/instance-3/output-1/host/bin/arm-linux-g++']]
+The following exception(s) were encountered:
+Running "/home/buildroot/autobuild/instance-3/output-1/host/bin/arm-linux-g++ --version" gave "[Errno 2] No such file or directory: '/home/buildroot/autobuild/instance-3/output-1/host/bin/arm-linux-g++'"
+
+Indeed C++ is only required for fuzzing which is already handled by
+meson through add_languages('cpp', required: true)
+
+Fixes:
+ - http://autobuild.buildroot.org/results/eca1d8a2b73a769354ab1d24c7996be30f152138
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:
+https://gitlab.freedesktop.org/spice/usbredir/-/merge_requests/55]
+---
+ meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 49dbce4..ca19f22 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1,4 +1,4 @@
+-project('usbredir', 'c', 'cpp',
++project('usbredir', 'c',
+     version: '0.11.0',
+     license: 'LGPLv2.1+',
+     meson_version : '>= 0.53',
+-- 
+2.33.0
+

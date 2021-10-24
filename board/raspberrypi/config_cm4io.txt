@@ -1,13 +1,11 @@
 # Please note that this is only a sample, we recommend you to change it to fit
 # your needs.
-# You should override this file using a post-build script.
+# You should override this file using BR2_PACKAGE_RPI_FIRMWARE_CONFIG_FILE.
 # See http://buildroot.org/manual.html#rootfs-custom
 # and http://elinux.org/RPiconfig for a description of config.txt syntax
 
-# We always use the same names, the real used variant is selected by
-# BR2_PACKAGE_RPI_FIRMWARE_{DEFAULT,X,CD} choice
-start_file=start.elf
-fixup_file=fixup.dat
+start_file=start4.elf
+fixup_file=fixup4.dat
 
 kernel=zImage
 
@@ -23,3 +21,6 @@ disable_overscan=1
 gpu_mem_256=100
 gpu_mem_512=100
 gpu_mem_1024=100
+
+# fixes rpi (3B, 3B+, 3A+, 4B and Zero W) ttyAMA0 serial console
+dtoverlay=miniuart-bt

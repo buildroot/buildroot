@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SUDO_VERSION_MAJOR = 1.9.5
+SUDO_VERSION_MAJOR = 1.9.8
 SUDO_VERSION_MINOR = p2
 SUDO_VERSION = $(SUDO_VERSION_MAJOR)$(SUDO_VERSION_MINOR)
 SUDO_SITE = https://www.sudo.ws/sudo/dist

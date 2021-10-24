@@ -146,6 +146,34 @@ endif
 
 comment "Legacy options removed in 2021.11"
 
+config BR2_BINUTILS_VERSION_CSKY
+	bool "binutils csky version removed"
+	select BR2_LEGACY
+	help
+	  Support for binutils csky version has been removed.
+
+config BR2_GCC_VERSION_CSKY
+	bool "gcc csky version removed"
+	select BR2_LEGACY
+	help
+	  Support for gcc csky version has been removed.
+
+config BR2_PACKAGE_CANFESTIVAL
+	bool "canfestival package removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it is unmaintained since
+	  November 2017.
+
+config BR2_PACKAGE_NMAP_NDIFF
+	bool "The ndiff utility has been removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_PYTHON_PYNDIFF
+	help
+	  The ndiff utility provided by nmap requires python2 which is
+	  deprecated. The same functionality is provided by the python
+	  package pyndiff.
+
 config BR2_GDB_VERSION_8_3
 	bool "gdb version 8.3.x removed"
 	select BR2_LEGACY
