@@ -24,6 +24,12 @@ config BR2_PACKAGE_OPTEE_CLIENT_TEE_FS_PATH
 	  normal world OS providing the actual storage via
 	  tee-supplicant.
 
+config BR2_PACKAGE_OPTEE_CLIENT_RPMB_EMU
+	bool "Enable RPMB emulation"
+	default y
+	help
+	  Enable RPMB device emulation in tee-supplicant.
+
 config BR2_PACKAGE_OPTEE_CLIENT_SUPP_PLUGINS
 	bool "Enable TEE supplicant plugins"
 	default y
