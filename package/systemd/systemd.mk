@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SYSTEMD_VERSION = 249.4
+SYSTEMD_VERSION = 249.5
 SYSTEMD_SITE = $(call github,systemd,systemd-stable,v$(SYSTEMD_VERSION))
 SYSTEMD_LICENSE = LGPL-2.1+, GPL-2.0+ (udev), Public Domain (few source files, see README), BSD-3-Clause (tools/chromiumos)
 SYSTEMD_LICENSE_FILES = LICENSE.GPL2 LICENSE.LGPL2.1 README tools/chromiumos/LICENSE
@@ -507,7 +507,6 @@ SYSTEMD_CONF_OPTS += \
 	-Defi-cc=$(TARGET_CC) \
 	-Defi-ld=$(TARGET_LD) \
 	-Defi-libdir=$(STAGING_DIR)/usr/lib \
-	-Defi-ldsdir=$(STAGING_DIR)/usr/lib \
 	-Defi-includedir=$(STAGING_DIR)/usr/include/efi
 
 SYSTEMD_BOOT_EFI_ARCH = $(call qstrip,$(BR2_PACKAGE_SYSTEMD_BOOT_EFI_ARCH))
@@ -730,7 +729,7 @@ HOST_SYSTEMD_CONF_OPTS = \
 	-Dinitrd=false \
 	-Dxdg-autostart=false \
 	-Dkernel-install=false \
-	-Dsystemd-analyze=false \
+	-Danalyze=false \
 	-Dlibcryptsetup=false \
 	-Daudit=false \
 	-Dzstd=false
