@@ -13,8 +13,8 @@ PANGO_LICENSE = LGPL-2.0+
 PANGO_LICENSE_FILES = COPYING
 PANGO_CPE_ID_VENDOR = pango
 
-PANGO_CONF_OPTS = -Duse_fontconfig=true
-HOST_PANGO_CONF_OPTS = -Duse_fontconfig=true -Dintrospection=disabled
+PANGO_CONF_OPTS = -Dfontconfig=enabled
+HOST_PANGO_CONF_OPTS = -Dfontconfig=enabled -Dintrospection=disabled
 
 PANGO_DEPENDENCIES = \
 	$(TARGET_NLS_DEPENDENCIES) \
