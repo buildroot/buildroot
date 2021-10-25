@@ -20,7 +20,7 @@ MONGODB_DEPENDENCIES = \
 	host-python3-psutil \
 	host-python3-pyyaml \
 	host-python3-regex \
-	host-python3-requests \
+	host-python-requests \
 	host-scons \
 	pcre \
 	snappy \
