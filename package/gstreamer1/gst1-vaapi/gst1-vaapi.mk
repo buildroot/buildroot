@@ -24,7 +24,7 @@ GST1_VAAPI_CONF_OPTS += \
 	-Dwith_wayland=no \
 	-Dwith_egl=no \
 	-Dexamples=disabled \
-	-Dtest=disabled \
+	-Dtests=disabled \
 	-Ddoc=disabled
 
 ifeq ($(BR2_PACKAGE_GST1_VAAPI_ENCODERS),y)
