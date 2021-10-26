@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-PIPEWIRE_VERSION = 0.3.38
+PIPEWIRE_VERSION = 0.3.39
 PIPEWIRE_SOURCE = pipewire-$(PIPEWIRE_VERSION).tar.bz2
 PIPEWIRE_SITE = https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/$(PIPEWIRE_VERSION)
 PIPEWIRE_LICENSE = MIT, LGPL-2.1+ (libspa-alsa), GPL-2.0 (libjackserver)
 PIPEWIRE_LICENSE_FILES = COPYING LICENSE
 PIPEWIRE_INSTALL_STAGING = YES
-PIPEWIRE_DEPENDENCIES = host-pkgconf dbus $(TARGET_NLS_DEPENDENCIES)
+PIPEWIRE_DEPENDENCIES = host-pkgconf $(TARGET_NLS_DEPENDENCIES)
 
 PIPEWIRE_CONF_OPTS += \
 	-Ddocs=disabled \
@@ -27,6 +27,13 @@ PIPEWIRE_CONF_OPTS += \
 	-Dvideoconvert=enabled \
 	-Dvideotestsrc=enabled \
 	-Dvolume=enabled
+
+ifeq ($(BR2_PACKAGE_DBUS),y)
+PIPEWIRE_CONF_OPTS += -Ddbus=enabled
+PIPEWIRE_DEPENDENCIES += dbus
+else
+PIPEWIRE_CONF_OPTS += -Ddbus=disabled
+endif
 
 ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
 PIPEWIRE_CONF_OPTS += -Dudev=enabled
@@ -106,9 +113,9 @@ PIPEWIRE_DEPENDENCIES += ncurses
 endif
 
 ifeq ($(BR2_PACKAGE_PIPEWIRE_V4L2),y)
-PIPEWIRE_CONF_OPTS += -Dv4l2=enabled
+PIPEWIRE_CONF_OPTS += -Dpipewire-v4l2=enabled -Dv4l2=enabled
 else
-PIPEWIRE_CONF_OPTS += -Dv4l2=disabled
+PIPEWIRE_CONF_OPTS += -Dpipewire-v4l2=disabled -Dv4l2=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBCAMERA)$(BR2_PACKAGE_LIBDRM)$(BR2_PACKAGE_HAS_UDEV),yyy)
