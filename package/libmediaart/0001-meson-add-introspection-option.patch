@@ -1,0 +1,87 @@
+From ee7d8736af172cd5ad71a0bd511c39daf401e3f6 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 5 Oct 2021 23:35:26 +0200
+Subject: [PATCH] meson: add introspection option
+
+Add introspection option
+
+Fix #3
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:
+https://gitlab.gnome.org/GNOME/libmediaart/-/merge_requests/14]
+---
+ libmediaart/meson.build | 42 +++++++++++++++++++++--------------------
+ meson_options.txt       |  2 ++
+ 2 files changed, 24 insertions(+), 20 deletions(-)
+
+diff --git a/libmediaart/meson.build b/libmediaart/meson.build
+index 56e00ab..2f44e63 100644
+--- a/libmediaart/meson.build
++++ b/libmediaart/meson.build
+@@ -41,28 +41,30 @@ libmediaart = shared_library(
+   install: true,
+ )
+ 
+-gir_args = [
+-  '--quiet',
+-  '-DLIBMEDIAART_COMPILATION',
+-]
++if get_option('introspection')
++  gir_args = [
++    '--quiet',
++    '-DLIBMEDIAART_COMPILATION',
++  ]
+ 
+-libmediaart_gir_and_typelib = gnome.generate_gir(libmediaart,
+-  sources: libmediaart_sources + libmediaart_introspection_sources + libmediaart_public_headers,
+-  nsversion: libmediaart_api_version,
+-  namespace: 'MediaArt',
+-  identifier_prefix: 'MediaArt',
+-  symbol_prefix: 'media_art',
+-  includes: ['Gio-2.0', 'GObject-2.0'],
+-  header: 'libmediaart/mediaart.h',
+-  export_packages: 'libmediaart-' + libmediaart_api_version,
+-  extra_args: gir_args,
+-  install: true
+-)
++  libmediaart_gir_and_typelib = gnome.generate_gir(libmediaart,
++    sources: libmediaart_sources + libmediaart_introspection_sources + libmediaart_public_headers,
++    nsversion: libmediaart_api_version,
++    namespace: 'MediaArt',
++    identifier_prefix: 'MediaArt',
++    symbol_prefix: 'media_art',
++    includes: ['Gio-2.0', 'GObject-2.0'],
++    header: 'libmediaart/mediaart.h',
++    export_packages: 'libmediaart-' + libmediaart_api_version,
++    extra_args: gir_args,
++    install: true
++  )
+ 
+-libmediaart_vapi = gnome.generate_vapi('libmediaart-' + libmediaart_api_version,
+-  sources: libmediaart_gir_and_typelib[0],
+-  packages: 'gio-2.0',
+-  install: true)
++  libmediaart_vapi = gnome.generate_vapi('libmediaart-' + libmediaart_api_version,
++    sources: libmediaart_gir_and_typelib[0],
++    packages: 'gio-2.0',
++    install: true)
++endif
+ 
+ libmediaart_dep = declare_dependency(
+   link_with: libmediaart,
+diff --git a/meson_options.txt b/meson_options.txt
+index 3ef49ba..b8c51b1 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -1,5 +1,7 @@
+ option('image_library', type: 'combo', choices: ['auto', 'gdk-pixbuf', 'qt4', 'qt5'],
+        description: 'Which image processing backend to use')
++option('introspection', type : 'boolean', value : 'true',
++       description : 'Enable / disable the GObject-Introspection integration')
+ option('gtk_doc',
+   type: 'boolean',
+   value: 'false',
+-- 
+2.33.0
+
