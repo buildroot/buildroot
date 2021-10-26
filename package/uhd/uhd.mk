@@ -15,7 +15,7 @@ UHD_INSTALL_STAGING = YES
 
 UHD_DEPENDENCIES = \
 	boost \
-	$(if $(BR2_PACKAGE_PYTHON),host-python,host-python3) \
+	host-python3 \
 	host-python-mako
 
 UHD_CONF_OPTS = \
