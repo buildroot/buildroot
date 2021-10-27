@@ -15,7 +15,7 @@ env:
 # This runs every sunday on 0000 UTC
 on:
   schedule:
-    - cron: '0 0 * * 0'
+    - cron: '0 23 * * 0,1,2,3,4'
   # Allows manual workflow run (must in default branch to work)
   workflow_dispatch:
 
