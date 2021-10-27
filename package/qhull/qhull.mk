@@ -11,6 +11,9 @@ QHULL_INSTALL_STAGING = YES
 QHULL_LICENSE = BSD-Style
 QHULL_LICENSE_FILES = COPYING.txt
 
+# Force Release mode to always build qhull_r instead of qhull_rd
+QHULL_CONF_OPTS = -DCMAKE_BUILD_TYPE=Release
+
 # BUILD_SHARED_LIBS is handled in pkg-cmake.mk as it is a generic cmake variable
 # although BUILD_STATIC_LIBS=ON is default, make it explicit,
 # cmake and static/shared libs is confusing enough already.
