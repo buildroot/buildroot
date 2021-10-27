@@ -1,0 +1,137 @@
+From 1dea576eac4289602adc4a37f48c80330bf82e63 Mon Sep 17 00:00:00 2001
+From: Damien Le Moal <damien.lemoal@wdc.com>
+Date: Wed, 9 Sep 2020 17:31:33 +0900
+Subject: [PATCH] elf2flt: add riscv 64-bits support
+
+Add support for riscv 64bits ISA by defining the relocation types
+R_RISCV_32_PCREL, R_RISCV_ADD32, R_RISCV_SUB32, R_RISCV_32 and
+R_RISCV_64. riscv64 support also needs the __global_pointer$ symbol to
+be defined right after the relocation tables in the data section.
+Furthermore, the .got and .got.plt sections must be reversed. These 2
+requirements are handled with runtime modifications of the default
+linker script using the append_sed() function.
+(1) For the .got.plt and .got sections order swap, append_sed() is used
+to rename "(.got.plt)" to "(.got.tmp)" and to rename "(.got)" to
+"(.got.plt)". A last call finalize the name swap by replacing
+"(.got.tmp)" with "(.got)"
+(2) For the global pointer synbol, a definition line starting with
+"RISCV_GP" is added. The "RISCV_GP" string is removed if the target CPU
+type is riscv64. The definition line is dropped for other CPU types.
+
+With these changes, buildroot/busybox builds and run on NOMMU
+systems with kernel 5.13. Tested on Canaan Kendryte K210 boards.
+
+This patch is based on earlier work by Christoph Hellwig <hch@lst.de>.
+
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+---
+ elf2flt.c     | 23 +++++++++++++++++++++++
+ elf2flt.ld.in |  9 +++++----
+ ld-elf2flt.c  | 16 ++++++++++++++++
+ 3 files changed, 44 insertions(+), 4 deletions(-)
+
+diff --git a/elf2flt.c b/elf2flt.c
+index f87f1fc..dbce467 100644
+--- a/elf2flt.c
++++ b/elf2flt.c
+@@ -80,6 +80,8 @@ const char *elf2flt_progname;
+ #include <elf/v850.h>
+ #elif defined(TARGET_xtensa)
+ #include <elf/xtensa.h>
++#elif defined(TARGET_riscv64)
++#include <elf/riscv.h>
+ #endif
+ 
+ #if defined(__MINGW32__)
+@@ -122,6 +124,8 @@ const char *elf2flt_progname;
+ #define ARCH	"nios2"
+ #elif defined(TARGET_xtensa)
+ #define ARCH	"xtensa"
++#elif defined(TARGET_riscv64)
++#define ARCH	"riscv64"
+ #else
+ #error "Don't know how to support your CPU architecture??"
+ #endif
+@@ -797,6 +801,16 @@ output_relocs (
+ 					goto good_32bit_resolved_reloc;
+ 				default:
+ 					goto bad_resolved_reloc;
++#elif defined(TARGET_riscv64)
++				case R_RISCV_32_PCREL:
++				case R_RISCV_ADD32:
++				case R_RISCV_SUB32:
++					continue;
++				case R_RISCV_32:
++				case R_RISCV_64:
++					goto good_32bit_resolved_reloc;
++				default:
++					goto bad_resolved_reloc;
+ #else
+ 				default:
+ 					/* The default is to assume that the
+@@ -1806,6 +1820,15 @@ int main(int argc, char *argv[])
+   if (!load_to_ram && !pfile)
+     load_to_ram = 1;
+ 
++#if defined(TARGET_riscv64)
++  /*
++   * riscv only supports loading text and data contiguously.
++   * So fail if load_to_ram is false.
++   */
++  if (!load_to_ram)
++    fatal("Loading to RAM ('-r' option) is required");
++#endif
++
+   fname = argv[argc-1];
+ 
+   if (pfile) {
+diff --git a/elf2flt.ld.in b/elf2flt.ld.in
+index ec1fe6f..c0c44b8 100644
+--- a/elf2flt.ld.in
++++ b/elf2flt.ld.in
+@@ -70,10 +70,11 @@ W_RODAT		*(.gnu.linkonce.r*)
+ 		. = ALIGN(0x20) ;
+ 		LONG(-1)
+ 		. = ALIGN(0x20) ;
+-R_RODAT		*(.rodata)
+-R_RODAT		*(.rodata1)
+-R_RODAT		*(.rodata.*)
+-R_RODAT		*(.gnu.linkonce.r*)
++RISCV_GP:	__global_pointer$ = . + 0x800 ;
++R_RODAT 	*(.rodata)
++R_RODAT 	*(.rodata1)
++R_RODAT 	*(.rodata.*)
++R_RODAT 	*(.gnu.linkonce.r*)
+ 		*(.data)
+ 		*(.data1)
+ 		*(.data.*)
+diff --git a/ld-elf2flt.c b/ld-elf2flt.c
+index e5de506..31b565f 100644
+--- a/ld-elf2flt.c
++++ b/ld-elf2flt.c
+@@ -324,6 +324,22 @@ static int do_final_link(void)
+ 		append_option(&other_options, concat(got_offset, "=", buf, NULL));
+ 	}
+ 
++	if (streq(TARGET_CPU, "riscv64")) {
++		/*
++		 * The .got section must come before the .got.plt section
++		 * (gcc/ld bug ?).
++		 */
++		append_sed(&sed, "(.got.plt)", "(.got.tmp)");
++		append_sed(&sed, "(.got.plt)", "(.got)");
++		append_sed(&sed, "(.got.tmp)", "(.got.plt)");
++
++		/* The global pointer symbol is defined after the GOT. */
++		append_sed(&sed, "^RISCV_GP:", "");
++	} else {
++		/* Get rid of the global pointer definition. */
++		append_sed(&sed, "^RISCV_GP:", NULL);
++	}
++
+ 	/* Locate the default linker script, if we don't have one provided. */
+ 	if (!linker_script)
+ 		linker_script = concat(ldscriptpath, "/elf2flt.ld", NULL);
+-- 
+2.31.1
+

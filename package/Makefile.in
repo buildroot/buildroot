@@ -39,8 +39,9 @@ endif
 # Compute GNU_TARGET_NAME
 GNU_TARGET_NAME = $(ARCH)-$(TARGET_VENDOR)-$(TARGET_OS)-$(LIBC)$(ABI)
 
-# FLAT binary format needs uclinux
-ifeq ($(BR2_BINFMT_FLAT),y)
+# FLAT binary format needs uclinux, except RISC-V 64-bits which needs
+# the regular linux name.
+ifeq ($(BR2_BINFMT_FLAT):$(BR2_RISCV_64),y:)
 TARGET_OS = uclinux
 else
 TARGET_OS = linux
@@ -178,13 +179,22 @@ TARGET_CXXFLAGS += -fno-dwarf2-cfi-asm
 endif
 
 ifeq ($(BR2_BINFMT_FLAT),y)
-TARGET_CFLAGS += $(if $($(PKG)_FLAT_STACKSIZE),-Wl$(comma)-elf2flt=-s$($(PKG)_FLAT_STACKSIZE),\
+ifeq ($(BR2_RISCV_64),y)
+TARGET_CFLAGS += -fPIC
+endif
+ifeq ($(BR2_BINFMT_FLAT_ONE),y)
+ELF2FLT_FLAGS = $(if $($(PKG)_FLAT_STACKSIZE),\
+	-Wl$(comma)-elf2flt="-r -s$($(PKG)_FLAT_STACKSIZE)",\
+        -Wl$(comma)-elf2flt=-r)
+else
+ELF2FLT_FLAGS = $(if $($(PKG)_FLAT_STACKSIZE),\
+	-Wl$(comma)-elf2flt=-s$($(PKG)_FLAT_STACKSIZE),\
 	-Wl$(comma)-elf2flt)
-TARGET_CXXFLAGS += $(if $($(PKG)_FLAT_STACKSIZE),-Wl$(comma)-elf2flt=-s$($(PKG)_FLAT_STACKSIZE),\
-	-Wl$(comma)-elf2flt)
-TARGET_FCFLAGS += $(if $($(PKG)_FLAT_STACKSIZE),-Wl$(comma)-elf2flt=-s$($(PKG)_FLAT_STACKSIZE),\
-	-Wl$(comma)-elf2flt)
-TARGET_LDFLAGS += $(if $($(PKG)_FLAT_STACKSIZE),-Wl$(comma)-elf2flt=-s$($(PKG)_FLAT_STACKSIZE),-Wl$(comma)-elf2flt)
+endif
+TARGET_CFLAGS += $(ELF2FLT_FLAGS)
+TARGET_CXXFLAGS += $(ELF2FLT_FLAGS)
+TARGET_FCFLAGS += $(ELF2FLT_FLAGS)
+TARGET_LDFLAGS += $(ELF2FLT_FLAGS)
 endif
 
 ifeq ($(BR2_BINFMT_FLAT_SHARED),y)
