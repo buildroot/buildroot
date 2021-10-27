@@ -31,6 +31,23 @@ choice
 	prompt "Cryptographic backend"
 	default BR2_PACKAGE_STRONGSWAN_GMP
 
+config BR2_PACKAGE_STRONGSWAN_BOTAN
+	bool "botan"
+	depends on BR2_PACKAGE_BOTAN_ARCH_SUPPORTS
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
+	depends on !BR2_TOOLCHAIN_HAS_GCC_BUG_64735
+	select BR2_PACKAGE_BOTAN
+
+comment "botan backend needs a toolchain w/ C++, gcc >= 4.8"
+	depends on !BR2_INSTALL_LIBSTDCPP \
+		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
+	depends on BR2_PACKAGE_BOTAN_ARCH_SUPPORTS
+
+comment "botan backend needs a toolchain not affected by GCC bug 64735"
+	depends on BR2_PACKAGE_BOTAN_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_HAS_GCC_BUG_64735
+
 config BR2_PACKAGE_STRONGSWAN_OPENSSL
 	bool "OpenSSL"
 	select BR2_PACKAGE_OPENSSL
@@ -86,11 +103,13 @@ config BR2_PACKAGE_STRONGSWAN_EAP_SIM
 config BR2_PACKAGE_STRONGSWAN_EAP_SIM_FILE
 	bool "Enable EAP-SIM file backend"
 	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+	select BR2_PACKAGE_STRONGSWAN_EAP_SIM
 
 config BR2_PACKAGE_STRONGSWAN_EAP_SIM_PCSC
 	bool "Enable EAP-SIM smart card backend"
 	depends on !BR2_STATIC_LIBS # pcsc-lite
 	select BR2_PACKAGE_PCSC_LITE
+	select BR2_PACKAGE_STRONGSWAN_EAP_SIM
 
 config BR2_PACKAGE_STRONGSWAN_EAP_AKA
 	bool "Enable EAP-AKA"
@@ -100,18 +119,25 @@ config BR2_PACKAGE_STRONGSWAN_EAP_AKA_3GPP2
 	bool "Enable EAP-AKA 3GPP2 algorithms"
 	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
 	select BR2_PACKAGE_GMP
+	select BR2_PACKAGE_STRONGSWAN_EAP_AKA
 
 config BR2_PACKAGE_STRONGSWAN_EAP_SIMAKA_SQL
 	bool "Enable EAP-SIM/AKA backend based on a triplet/quintuplet SQL database"
 	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+	select BR2_PACKAGE_STRONGSWAN_EAP_AKA
+	select BR2_PACKAGE_STRONGSWAN_EAP_SIM
 
 config BR2_PACKAGE_STRONGSWAN_EAP_SIMAKA_PSEUDONYM
 	bool "Enable EAP-SIM/AKA pseudonym storage"
 	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+	select BR2_PACKAGE_STRONGSWAN_EAP_AKA
+	select BR2_PACKAGE_STRONGSWAN_EAP_SIM
 
 config BR2_PACKAGE_STRONGSWAN_EAP_SIMAKA_REAUTH
 	bool "Enable EAP-SIM/AKA reauthentication data storage"
 	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
+	select BR2_PACKAGE_STRONGSWAN_EAP_AKA
+	select BR2_PACKAGE_STRONGSWAN_EAP_SIM
 
 config BR2_PACKAGE_STRONGSWAN_EAP_IDENTITY
 	bool "Enable EAP-Identity"

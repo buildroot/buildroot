@@ -72,6 +72,24 @@ config BR2_PACKAGE_LIBCAMERA_PIPELINE_VIMC
 	help
 	  Pipeline for the vimc device.
 
+config BR2_PACKAGE_LIBCAMERA_COMPLIANCE
+	bool "lc-compliance test application"
+	depends on BR2_USE_WCHAR # gtest
+	depends on BR2_TOOLCHAIN_HAS_THREADS # gtest
+	depends on BR2_INSTALL_LIBSTDCPP # gtest
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # gtest
+	depends on BR2_USE_MMU # gtest
+	select BR2_PACKAGE_GTEST
+	select BR2_PACKAGE_LIBEVENT
+	help
+	  lc-compliance test application
+
+comment "lc-compliance test application needs a toolchain w/ C++, wchar, threads, gcc >= 4.9"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_INSTALL_LIBSTDCPP || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
+
 endif # BR2_PACKAGE_LIBCAMERA
 
 comment "libcamera needs a toolchain w/ C++, threads, wchar, dynamic library, gcc >= 7"

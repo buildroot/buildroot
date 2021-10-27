@@ -11,9 +11,15 @@ LTP_TESTSUITE_SITE = https://github.com/linux-test-project/ltp/releases/download
 LTP_TESTSUITE_LICENSE = GPL-2.0, GPL-2.0+
 LTP_TESTSUITE_LICENSE_FILES = COPYING
 
-LTP_TESTSUITE_CONF_OPTS += \
-	--with-realtime-testsuite --with-open-posix-testsuite \
-	--disable-metadata
+LTP_TESTSUITE_CONF_OPTS += --disable-metadata
+
+ifeq ($(BR2_PACKAGE_LTP_TESTSUITE_OPEN_POSIX),y)
+LTP_TESTSUITE_CONF_OPTS += --with-open-posix-testsuite
+endif
+
+ifeq ($(BR2_PACKAGE_LTP_TESTSUITE_REALTIME),y)
+LTP_TESTSUITE_CONF_OPTS += --with-realtime-testsuite
+endif
 
 ifeq ($(BR2_LINUX_KERNEL),y)
 LTP_TESTSUITE_DEPENDENCIES += linux

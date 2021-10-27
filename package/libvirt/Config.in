@@ -65,6 +65,7 @@ config BR2_PACKAGE_LIBVIRT_QEMU
 	bool "qemu"
 	depends on BR2_PACKAGE_LIBSECCOMP_ARCH_SUPPORTS # libseccomp
 	depends on BR2_PACKAGE_QEMU_ARCH_SUPPORTS_TARGET
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_8 # qemu
 	select BR2_PACKAGE_HWDATA         # libpciaccess
 	select BR2_PACKAGE_HWDATA_PCI_IDS # libpciaccess
 	select BR2_PACKAGE_LIBSECCOMP
@@ -73,6 +74,11 @@ config BR2_PACKAGE_LIBVIRT_QEMU
 	select BR2_PACKAGE_YAJL
 	help
 	  QEMU/KVM support
+
+comment "qemu needs a toolchain with gcc >= 8"
+	depends on BR2_PACKAGE_LIBSECCOMP_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_QEMU_ARCH_SUPPORTS_TARGET
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_8
 
 config BR2_PACKAGE_LIBVIRT_LXC
 	bool "lxc"

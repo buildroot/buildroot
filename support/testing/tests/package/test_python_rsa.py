@@ -9,3 +9,4 @@ class TestPythonPy3RSA(TestPythonPackageBase):
         BR2_PACKAGE_PYTHON_RSA=y
         """
     sample_scripts = ["tests/package/sample_python_rsa.py"]
+    timeout = 20
