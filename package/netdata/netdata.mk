@@ -33,6 +33,13 @@ else
 NETDATA_CONF_OPTS += --disable-jsonc
 endif
 
+ifeq ($(BR2_PACKAGE_LIBCAP),y)
+NETDATA_CONF_OPTS += --with-libcap
+NETDATA_DEPENDENCIES += libcap
+else
+NETDATA_CONF_OPTS += --without-libcap
+endif
+
 ifeq ($(BR2_PACKAGE_NFACCT),y)
 NETDATA_CONF_OPTS += --enable-plugin-nfacct
 NETDATA_DEPENDENCIES += nfacct
