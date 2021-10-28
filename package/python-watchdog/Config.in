@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_WATCHDOG
 	bool "python-watchdog"
+	depends on BR2_PACKAGE_PYTHON3
 	select BR2_PACKAGE_PYTHON_ARGH # runtime
 	select BR2_PACKAGE_PYTHON_PATHTOOLS # runtime
 	select BR2_PACKAGE_PYTHON_PYYAML # runtime
