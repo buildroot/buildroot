@@ -29,6 +29,7 @@ define BCM_REFSW_INSTALL_NEXUS_DEV
 	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/include/*.h $(STAGING_DIR)/usr/include/refsw/
 	$(INSTALL) -m 644 $(BCM_REFSW_OUTPUT)/nexus/bin/include/*.h $(STAGING_DIR)/usr/include/refsw/
 	$(INSTALL) -m 644 $(BCM_REFSW_BIN)/include/platform_app.inc $(STAGING_DIR)/usr/include/
+	$(INSTALL) -m 644 $(@D)/BSEAV/lib/utils/*.h $(STAGING_DIR)/usr/include/refsw/
 endef
 
 BCM_NEXUS_CRYPTOGRAPHY_DIR = /BSEAV/lib/security
