@@ -6,7 +6,7 @@ config BR2_PACKAGE_HOST_LINUX_HEADERS
 choice
 	prompt "Kernel Headers"
 	default BR2_KERNEL_HEADERS_AS_KERNEL if BR2_LINUX_KERNEL
-	default BR2_KERNEL_HEADERS_5_14
+	default BR2_KERNEL_HEADERS_5_15
 	help
 	  Select the kernel version to get headers from.
 
@@ -65,6 +65,10 @@ config BR2_KERNEL_HEADERS_5_13
 config BR2_KERNEL_HEADERS_5_14
 	bool "Linux 5.14.x kernel headers"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_14
+
+config BR2_KERNEL_HEADERS_5_15
+	bool "Linux 5.15.x kernel headers"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_15
 	select BR2_KERNEL_HEADERS_LATEST
 
 config BR2_KERNEL_HEADERS_VERSION
@@ -139,8 +143,12 @@ choice
 	  If your kernel headers are more recent than the latest version
 	  in the choice, then select the latest version.
 
+config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_15
+	bool "5.15.x or later"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_15
+
 config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_14
-	bool "5.14.x or later"
+	bool "5.14.x"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_14
 
 config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_13
@@ -378,6 +386,7 @@ config BR2_DEFAULT_KERNEL_HEADERS
 	default "5.10.75"	if BR2_KERNEL_HEADERS_5_10
 	default "5.13.19"	if BR2_KERNEL_HEADERS_5_13
 	default "5.14.14"	if BR2_KERNEL_HEADERS_5_14
+	default "5.15"		if BR2_KERNEL_HEADERS_5_15
 	default BR2_DEFAULT_KERNEL_VERSION if BR2_KERNEL_HEADERS_VERSION
 	default "custom"	if BR2_KERNEL_HEADERS_CUSTOM_TARBALL
 	default BR2_KERNEL_HEADERS_CUSTOM_REPO_VERSION \
