@@ -4,11 +4,10 @@
 #
 ################################################################################
 
-LIBSTROPHE_VERSION = 0.10.1
-LIBSTROPHE_SITE = $(call github,strophe,libstrophe,$(LIBSTROPHE_VERSION))
-LIBSTROPHE_DEPENDENCIES = openssl host-pkgconf
-# Doesn't ship configure
-LIBSTROPHE_AUTORECONF = YES
+LIBSTROPHE_VERSION = 0.11.0
+LIBSTROPHE_SOURCE = libstrophe-$(LIBSTROPHE_VERSION).tar.xz
+LIBSTROPHE_SITE = https://github.com/strophe/libstrophe/releases/download/$(LIBSTROPHE_VERSION)
+LIBSTROPHE_DEPENDENCIES = host-pkgconf
 LIBSTROPHE_LICENSE = MIT or GPL-3.0
 LIBSTROPHE_LICENSE_FILES = MIT-LICENSE.txt GPL-LICENSE.txt
 LIBSTROPHE_INSTALL_STAGING = YES
@@ -19,6 +18,14 @@ LIBSTROPHE_DEPENDENCIES += expat
 else
 LIBSTROPHE_CONF_OPTS += --with-libxml2
 LIBSTROPHE_DEPENDENCIES += libxml2
+endif
+
+ifeq ($(BR2_PACKAGE_OPENSSL),y)
+LIBSTROPHE_CONF_OPTS += --with-tls --without-gnutls
+LIBSTROPHE_DEPENDENCIES += openssl
+else
+LIBSTROPHE_CONF_OPTS += --with-gnutls --without-tls
+LIBSTROPHE_DEPENDENCIES += gnutls
 endif
 
 $(eval $(autotools-package))

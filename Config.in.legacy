@@ -146,6 +146,15 @@ endif
 
 comment "Legacy options removed in 2021.11"
 
+config BR2_PACKAGE_MROUTED_RSRR
+	bool "RSRR for RSVP removed in mrouted v4.4"
+	select BR2_LEGACY
+	help
+	  The RSRR configure option and feature was dropped in upstream
+	  mrouted as of v4.4.  This feature was marked as experimental
+	  since its inception well before v4.0 and was never deployed
+	  in the field outside of academia.
+
 config BR2_BINUTILS_VERSION_CSKY
 	bool "binutils csky version removed"
 	select BR2_LEGACY
@@ -211,6 +220,13 @@ config BR2_KERNEL_HEADERS_5_12
 	select BR2_LEGACY
 	help
 	  Version 5.12.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+config BR2_KERNEL_HEADERS_5_13
+	bool "kernel headers version 5.13.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 5.13.x of the Linux kernel headers are no longer
 	  maintained upstream and are now removed.
 
 comment "Legacy options removed in 2021.08"

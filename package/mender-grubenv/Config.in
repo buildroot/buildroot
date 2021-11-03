@@ -2,8 +2,6 @@ config BR2_PACKAGE_MENDER_GRUBENV
 	bool "mender-grubenv"
 	depends on BR2_TARGET_GRUB2_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_MENDER # runtime
-	# grubenv provides it's own fw_printenv.
-	depends on !BR2_PACKAGE_UBOOT_TOOLS_FWPRINTENV
 	depends on BR2_TARGET_GRUB2
 	help
 	  Contains the boot scripts and tools used by Mender to
@@ -36,8 +34,3 @@ comment "mender-grubenv needs a grub2 bootloader"
 	depends on BR2_TARGET_GRUB2_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_MENDER
 	depends on !BR2_TARGET_GRUB2
-
-comment "mender-grubenv does not work with uboot-tools fw_printenv"
-	depends on BR2_TARGET_GRUB2_ARCH_SUPPORTS
-	depends on BR2_PACKAGE_MENDER
-	depends on BR2_PACKAGE_UBOOT_TOOLS_FWPRINTENV
