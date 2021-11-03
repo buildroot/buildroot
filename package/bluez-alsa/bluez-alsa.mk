@@ -69,4 +69,12 @@ else
 BLUEZ_ALSA_CONF_OPTS += --disable-rfcomm
 endif
 
+ifeq ($(BR2_PACKAGE_LIBOPENAPTX),y)
+BLUEZ_ALSA_DEPENDENCIES += libopenaptx
+BLUEZ_ALSA_CONF_OPTS += --with-libopenaptx --enable-aptx --enable-aptx-hd
+else
+BLUEZ_ALSA_CONF_OPTS += --without-libopenaptx --disable-aptx --disable-aptx-hd
+endif
+
+
 $(eval $(autotools-package))
