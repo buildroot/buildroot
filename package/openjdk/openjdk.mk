@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-ifeq ($(BR2_OPENJDK_VERSION_LATEST),y)
-OPENJDK_VERSION_MAJOR = 16
-OPENJDK_VERSION_MINOR = 0.2+7
+ifeq ($(BR2_PACKAGE_OPENJDK_VERSION_17),y)
+OPENJDK_VERSION_MAJOR = 17
+OPENJDK_VERSION_MINOR = 0.1+12
 else
 OPENJDK_VERSION_MAJOR = 11
 OPENJDK_VERSION_MINOR = 0.13+8
