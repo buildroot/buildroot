@@ -60,6 +60,10 @@ define DAHDI_LINUX_EXTRACT_FW
 endef
 DAHDI_LINUX_POST_EXTRACT_HOOKS += DAHDI_LINUX_EXTRACT_FW
 
+define DAHDI_LINUX_LINUX_CONFIG_FIXUPS
+	$(call KCONFIG_ENABLE_OPT,CONFIG_CRC_CCITT)
+endef
+
 # Need to pass the same options as for building the modules, because
 # it wants to scan Linux' .config file to check whether some options
 # are set or not (like CONFIG_FW_LOADER).
