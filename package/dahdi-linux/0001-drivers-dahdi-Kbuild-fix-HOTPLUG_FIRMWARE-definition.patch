@@ -1,0 +1,64 @@
+From dc0a646a460e6da10ddbe7bf02794051d76f8751 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 4 Nov 2021 17:30:06 +0100
+Subject: [PATCH] drivers/dahdi/Kbuild: fix HOTPLUG_FIRMWARE definition
+
+HOTPLUG_FIRMWARE is used before being defined resulting in the following
+build failure since version 2.7.0 and
+https://git.asterisk.org/gitweb/?p=dahdi/linux.git;a=commit;h=e2f492595c9191ba6d556ccac1bde4c1bb892938:
+
+  MODPOST /home/fabrice/buildroot/output/build/dahdi-linux-5c840cf43838e0690873e73409491c392333b3b8/drivers/dahdi/Module.symvers
+ERROR: modpost: "_binary_dahdi_fw_oct6114_032_bin_start" [/home/fabrice/buildroot/output/build/dahdi-linux-5c840cf43838e0690873e73409491c392333b3b8/drivers/dahdi/wcaxx.ko] undefined!
+ERROR: modpost: "_binary_dahdi_fw_oct6114_032_bin_size" [/home/fabrice/buildroot/output/build/dahdi-linux-5c840cf43838e0690873e73409491c392333b3b8/drivers/dahdi/wcaxx.ko] undefined!
+ERROR: modpost: "_binary_dahdi_fw_oct6114_128_bin_start" [/home/fabrice/buildroot/output/build/dahdi-linux-5c840cf43838e0690873e73409491c392333b3b8/drivers/dahdi/wcte43x.ko] undefined!
+ERROR: modpost: "_binary_dahdi_fw_oct6114_064_bin_start" [/home/fabrice/buildroot/output/build/dahdi-linux-5c840cf43838e0690873e73409491c392333b3b8/drivers/dahdi/wcte43x.ko] undefined!
+ERROR: modpost: "_binary_dahdi_fw_oct6114_128_bin_size" [/home/fabrice/buildroot/output/build/dahdi-linux-5c840cf43838e0690873e73409491c392333b3b8/drivers/dahdi/wcte43x.ko] undefined!
+ERROR: modpost: "_binary_dahdi_fw_oct6114_064_bin_size" [/home/fabrice/buildroot/output/build/dahdi-linux-5c840cf43838e0690873e73409491c392333b3b8/drivers/dahdi/wcte43x.ko] undefined!
+ERROR: modpost: "_binary_dahdi_fw_oct6114_032_bin_start" [/home/fabrice/buildroot/output/build/dahdi-linux-5c840cf43838e0690873e73409491c392333b3b8/drivers/dahdi/wcte13xp.ko] undefined!
+ERROR: modpost: "_binary_dahdi_fw_oct6114_032_bin_size" [/home/fabrice/buildroot/output/build/dahdi-linux-5c840cf43838e0690873e73409491c392333b3b8/drivers/dahdi/wcte13xp.ko] undefined!
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: sent to "Shaun Ruffell <sruffell@sruffell.net>"]
+---
+ drivers/dahdi/Kbuild | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/dahdi/Kbuild b/drivers/dahdi/Kbuild
+index 855e5bf..b1a8481 100644
+--- a/drivers/dahdi/Kbuild
++++ b/drivers/dahdi/Kbuild
+@@ -13,6 +13,15 @@ obj-$(DAHDI_BUILD_ALL)$(CONFIG_DAHDI_WCTC4XXP)		+= wctc4xxp/
+ obj-$(DAHDI_BUILD_ALL)$(CONFIG_DAHDI_WCTDM24XXP)	+= wctdm24xxp/
+ obj-$(DAHDI_BUILD_ALL)$(CONFIG_DAHDI_WCTE13XP)		+= wcte13xp.o
+ 
++ifndef HOTPLUG_FIRMWARE
++ifneq (,$(filter y m,$(CONFIG_FW_LOADER)))
++HOTPLUG_FIRMWARE := yes
++else
++HOTPLUG_FIRMWARE := no
++endif
++export HOTPLUG_FIRMWARE
++endif
++
+ wcte13xp-objs := wcte13xp-base.o wcxb_spi.o wcxb.o wcxb_flash.o
+ CFLAGS_wcte13xp-base.o += -I$(src)/oct612x -I$(src)/oct612x/include -I$(src)/oct612x/octdeviceapi -I$(src)/oct612x/octdeviceapi/oct6100api
+ ifeq ($(HOTPLUG_FIRMWARE),yes)
+@@ -61,15 +70,6 @@ endif
+ 
+ CFLAGS_MODULE += -I$(DAHDI_INCLUDE) -I$(src) -Wno-format-truncation
+ 
+-ifndef HOTPLUG_FIRMWARE
+-ifneq (,$(filter y m,$(CONFIG_FW_LOADER)))
+-HOTPLUG_FIRMWARE := yes
+-else
+-HOTPLUG_FIRMWARE := no
+-endif
+-export HOTPLUG_FIRMWARE
+-endif
+-
+ # fix typo present in CentOS and RHEL 2.6.9 kernels
+ BAD_KERNELS_VERS := 22 34 34.0.1 34.0.2
+ BAD_KERNELS := $(foreach ver,$(BAD_KERNELS_VERS),2.6.9-$(ver).EL 2.6.9-$(ver).ELsmp)
+-- 
+2.33.0
+
