@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-DAHDI_LINUX_VERSION = 3.0.0
-DAHDI_LINUX_SITE = http://downloads.asterisk.org/pub/telephony/dahdi-linux/releases
+DAHDI_LINUX_VERSION = 5c840cf43838e0690873e73409491c392333b3b8
+DAHDI_LINUX_SITE = git://git.asterisk.org/dahdi/linux.git
 
-# We need to download all thoe firmware blobs ourselves, otherwise
+# We need to download all those firmware blobs ourselves, otherwise
 # dahdi-linux will try to download them at install time.
 DAHDI_LINUX_FW_SITE = http://downloads.digium.com/pub/telephony/firmware/releases
 DAHDI_LINUX_FW_FILES = \
