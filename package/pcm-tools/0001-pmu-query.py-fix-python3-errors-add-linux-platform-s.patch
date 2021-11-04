@@ -1,0 +1,103 @@
+From 36b9aa5a8e071ac6349d2d7f9c23a25abcdc316d Mon Sep 17 00:00:00 2001
+From: Adam Duskett <aduskett@gmail.com>
+Date: Tue, 2 Nov 2021 10:30:55 -0700
+Subject: [PATCH] pmu-query.py: fix python3 errors, add linux platform support
+
+Unfortuantly, commit 0212b382624c744491a845c75dfb2a527d4a821f broke pmu-query
+in some unexpected ways.
+
+First, urllib.request.urlopen returns a bytes-object in Python3, which results
+in the csv.DictReader throwing the error: `TypeError: initial_value must be
+str or None, not HTTPResponse` A simple .read().decode('utf-8') appended to
+the end of urlopen fixes the error.
+
+Second, passing the map_file_raw string to DictReader results in a malformed
+dictionary. Fix this by wrapping the raw text string in io.StringIO().
+
+Third: During the python2 -> python3 refactoring, I accidentally switched some
+logic in the pull request. `if core_path != ''` changed to `if not core_path`,
+which breaks the logic, the same goes for
+`if offcore_path != ''` -> `if not offcore_path`. Change these to
+`if core_path` and `if offcore_path` respectively.
+
+From upstream commit: 7a670261c2063595f2330e6cc2a7f19eb18b6ea8
+
+Signed-off-by: Adam Duskett <aduskett@gmail.com>
+---
+ pmu-query.py | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/pmu-query.py b/pmu-query.py
+index 5595819..bc1e57b 100755
+--- a/pmu-query.py
++++ b/pmu-query.py
+@@ -1,4 +1,5 @@
+ #!/usr/bin/env python3
++import io
+ import urllib.request
+ import urllib.parse
+ import json
+@@ -8,6 +9,7 @@ import sys
+ import platform
+ import getopt
+ import re
++import shutil
+ 
+ all_flag = False
+ download_flag = False
+@@ -29,8 +31,8 @@ except getopt.GetoptError as err:
+     sys.exit(-2)
+ 
+ if filename is None:
+-    map_file_raw = urllib.request.urlopen("https://download.01.org/perfmon/mapfile.csv")
+-    map_dict = csv.DictReader(map_file_raw)
++    map_file_raw = urllib.request.urlopen("https://download.01.org/perfmon/mapfile.csv").read().decode('utf-8')
++    map_dict = csv.DictReader(io.StringIO(map_file_raw), delimiter=',')
+     map_file = []
+     core_path = ""
+     offcore_path = ""
+@@ -45,20 +47,26 @@ if filename is None:
+         p = subprocess.Popen(["./pcm-core.exe -c"], stdout=subprocess.PIPE, shell=True)
+     elif platform.system() == "Windows":
+         p = subprocess.Popen(["pcm-core.exe", "-c"], stdout=subprocess.PIPE, shell=True)
++    elif platform.system() == "Linux":
++        pcm_core = shutil.which("pcm-core")
++        if not pcm_core:
++            print("Could not find pcm-core executable!")
++            sys.exit(-1)
++        p = subprocess.Popen([pcm_core, "-c"], stdout=subprocess.PIPE, shell=True)
+     else:
+         p = subprocess.Popen(["./pcm-core.x -c"], stdout=subprocess.PIPE, shell=True)
+ 
+     (output, err) = p.communicate()
+     p_status = p.wait()
+     for model in map_file:
+-        if re.search(model["Family-model"], output):
++        if re.search(model["Family-model"], output.decode("utf-8")):
+             if model["EventType"] == "core":
+                 core_path = model["Filename"]
+             elif model["EventType"] == "offcore":
+                 offcore_path = model["Filename"]
+             print(model)
+ 
+-    if not core_path:
++    if core_path:
+         json_core_data = urllib.request.urlopen(
+             "https://download.01.org/perfmon" + core_path
+         )
+@@ -67,10 +75,10 @@ if filename is None:
+             with open(core_path.split("/")[-1], "w") as outfile:
+                 json.dump(core_events, outfile, sort_keys=True, indent=4)
+     else:
+-        print("no core event found for %s CPU, program abort..." % output)
++        print("no core event found for %s CPU, program abort..." % output.decode("utf-8"))
+         sys.exit(-1)
+ 
+-    if not offcore_path:
++    if offcore_path:
+         json_offcore_data = urllib.request.urlopen(
+             "https://download.01.org/perfmon" + offcore_path
+         )
+-- 
+2.32.0
+
