@@ -4,15 +4,12 @@
 #
 ################################################################################
 
-BOTAN_VERSION = 2.18.1
+BOTAN_VERSION = 2.18.2
 BOTAN_SOURCE = Botan-$(BOTAN_VERSION).tar.xz
 BOTAN_SITE = http://botan.randombit.net/releases
 BOTAN_LICENSE = BSD-2-Clause
 BOTAN_LICENSE_FILES = license.txt
 BOTAN_CPE_ID_VENDOR = botan_project
-
-# 0001-Avoid-using-short-exponents-with-ElGamal.patch
-BOTAN_IGNORE_CVES += CVE-2021-40529
 
 BOTAN_INSTALL_STAGING = YES
 
