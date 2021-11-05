@@ -15,6 +15,11 @@ ifeq ($(BR2_STATIC_LIBS),y)
 JANET_CONF_OPTS += -Ddynamic_modules=false
 endif
 
+# Uses __atomic_fetch_add_4
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+JANET_LDFLAGS += -latomic
+endif
+
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),)
 JANET_CONF_OPTS += -Dsingle_threaded=true
 endif
