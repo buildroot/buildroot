@@ -146,6 +146,36 @@ endif
 
 comment "Legacy options removed in 2022.02"
 
+config BR2_PACKAGE_SUNXI_MALI_MAINLINE
+	bool "sunxi-mali-mainline package was renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_SUNXI_MALI_UTGARD
+	help
+	  Since the removal of the sunxi-mali package, the
+	  sunxi-mali-mainline package that coexisted became the only
+	  package to provide Mali blobs. The "-mainline" suffix being
+	  undescriptive nowadays and before adding new packages bringing
+	  Mali support for other SoCs/GPU flavors, it is clearer to
+	  rename it SUNXI_MALI_UTGARD.
+
+config BR2_PACKAGE_SUNXI_MALI_MAINLINE_R6P2
+	bool "sunxi-mali-mainline-r6p2 was renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_SUNXI_MALI_UTGARD_R6P2
+	help
+	  The sunxi-mali-mainline package has been renamed
+	  sunxi-mali-utgard, the suboptions of this package have also
+	  been renamed accordingly.
+
+config BR2_PACKAGE_SUNXI_MALI_MAINLINE_R8P1
+	bool "sunxi-mali-mainline-r8p1 was renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_SUNXI_MALI_UTGARD_R8P1
+	help
+	  The sunxi-mali-mainline package has been renamed
+	  sunxi-mali-utgard, the suboptions of this package have also
+	  been renamed accordingly.
+
 config BR2_PACKAGE_QT5WEBKIT_EXAMPLES
 	bool "qt5webkit-examples removed"
 	select BR2_LEGACY
@@ -1451,7 +1481,7 @@ config BR2_PACKAGE_LIBUMP
 config BR2_PACKAGE_SUNXI_MALI
 	bool "sunxi-mali package removed"
 	select BR2_LEGACY
-	select BR2_PACKAGE_SUNXI_MALI_MAINLINE
+	select BR2_PACKAGE_SUNXI_MALI_UTGARD
 	help
 	  The sunxi-mali package was removed, as the
 	  sunxi-mali-mainline package replaces it for mainline

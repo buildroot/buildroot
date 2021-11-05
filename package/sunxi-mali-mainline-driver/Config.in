@@ -1,11 +1,11 @@
 comment "sunxi-mali-mainline-driver needs a Linux kernel to be built"
-	depends on BR2_PACKAGE_SUNXI_MALI_MAINLINE
+	depends on BR2_PACKAGE_SUNXI_MALI_UTGARD
 	depends on !BR2_LINUX_KERNEL
 
 config BR2_PACKAGE_SUNXI_MALI_MAINLINE_DRIVER
 	bool "sunxi-mali-mainline-driver"
 	default y
-	depends on BR2_PACKAGE_SUNXI_MALI_MAINLINE # runtime
+	depends on BR2_PACKAGE_SUNXI_MALI_UTGARD # runtime
 	depends on BR2_LINUX_KERNEL
 	select BR2_LINUX_NEEDS_MODULES # not using kernel-module infra
 	help
