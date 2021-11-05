@@ -6,7 +6,6 @@
 
 LIBTEAM_VERSION = 1.31
 LIBTEAM_SITE = $(call github,jpirko,libteam,v$(LIBTEAM_VERSION))
-LIBTEAM_CPE_ID_VENDOR = libteam
 LIBTEAM_LICENSE = LGPL-2.1+
 LIBTEAM_LICENSE_FILES = COPYING
 LIBTEAM_DEPENDENCIES = host-pkgconf jansson libdaemon libnl
