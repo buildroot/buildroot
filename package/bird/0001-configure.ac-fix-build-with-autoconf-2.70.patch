@@ -1,0 +1,33 @@
+From aa5bc6d2e59c5257d777a45ee4a0e0a784c44244 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 5 Nov 2021 20:58:41 +0100
+Subject: [PATCH] configure.ac: properly evaluate ac_test_CFLAGS
+
+Since autoconf 2.69 and
+https://git.savannah.gnu.org/cgit/autoconf.git/commit/?id=76754e04fce5f6a7701bec57b057020585df2ae3
+ac_test_CFLAGS is set to ${CFLAGS+y} instead of ${CFLAGS+set}.
+
+Just test that ac_test_CFLAGS is not empty, to support both cases.
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Signed-off-by: Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 64181d29..b4b3fcfb 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -114,7 +114,7 @@ AC_SEARCH_LIBS([clock_gettime], [rt posix4],
+ AC_CANONICAL_HOST
+ 
+ # Store this value because ac_test_CFLAGS is overwritten by AC_PROG_CC
+-if test "$ac_test_CFLAGS" != set ; then
++if ! test "$ac_test_CFLAGS" ; then
+   bird_cflags_default=yes
+ fi
+ 
+-- 
+2.33.0
+
