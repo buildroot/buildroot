@@ -16,7 +16,7 @@ KEXEC_MAKE_OPTS = STRIP="$(TARGET_CROSS)strip"
 
 ifeq ($(BR2_PACKAGE_KEXEC_ZLIB),y)
 KEXEC_CONF_OPTS += --with-zlib
-KEXEC_DEPENDENCIES = zlib
+KEXEC_DEPENDENCIES += zlib
 else
 KEXEC_CONF_OPTS += --without-zlib
 endif
