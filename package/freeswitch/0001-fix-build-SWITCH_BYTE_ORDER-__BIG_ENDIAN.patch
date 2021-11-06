@@ -1,0 +1,26 @@
+From 68039d344d8e826e8b403c9cd0284fd07b4495ac Mon Sep 17 00:00:00 2001
+From: Dragos Oancea <dragos@signalwire.com>
+Date: Tue, 26 Oct 2021 08:42:58 +0000
+Subject: [PATCH] [core] fix build SWITCH_BYTE_ORDER == __BIG_ENDIAN
+
+Downloaded from upstream commit:
+https://github.com/signalwire/freeswitch/commit/68039d344d8e826e8b403c9cd0284fd07b4495ac
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ src/switch_rtp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/switch_rtp.c b/src/switch_rtp.c
+index 1880bbb19c..843ee81381 100644
+--- a/src/switch_rtp.c
++++ b/src/switch_rtp.c
+@@ -2155,7 +2155,7 @@ static void switch_send_rtcp_event(switch_rtp_t *rtp_session ,struct switch_rtcp
+ 				switch_event_add_header_string(event, SWITCH_STACK_BOTTOM, header, value);
+ 				snprintf(header, sizeof(header), "Source-Lost");
+ #if SWITCH_BYTE_ORDER == __BIG_ENDIAN
+-				tmpLost = report->lost; /* signed 24bit will extended signess to int32_t automatically */
++				tmpLost = rtcp_report_block->lost; /* signed 24bit will extended signess to int32_t automatically */
+ #else
+ 				tmpLost = ntohl(rtcp_report_block->lost)>>8;
+ 				tmpLost = tmpLost | ((tmpLost & 0x00800000) ? 0xff000000 : 0x00000000); /* ...and signess compensation */

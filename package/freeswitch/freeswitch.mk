@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FREESWITCH_VERSION = 1.10.6
+FREESWITCH_VERSION = 1.10.7
 FREESWITCH_SOURCE = freeswitch-$(FREESWITCH_VERSION).-release.tar.xz
 FREESWITCH_SITE = https://files.freeswitch.org/freeswitch-releases
 # External modules need headers/libs from staging
@@ -120,7 +120,6 @@ FREESWITCH_ENABLED_MODULES += \
 	endpoints/mod_rtc \
 	endpoints/mod_rtmp \
 	endpoints/mod_sofia \
-	endpoints/mod_verto \
 	event_handlers/mod_cdr_csv \
 	event_handlers/mod_cdr_sqlite \
 	event_handlers/mod_event_socket \
@@ -207,6 +206,11 @@ endif
 ifeq ($(BR2_PACKAGE_LIBILBC),y)
 FREESWITCH_DEPENDENCIES += libilbc
 FREESWITCH_ENABLED_MODULES += codecs/mod_ilbc
+endif
+
+ifeq ($(BR2_PACKAGE_LIBKS),y)
+FREESWITCH_DEPENDENCIES += libks
+FREESWITCH_ENABLED_MODULES += endpoints/mod_verto
 endif
 
 ifeq ($(BR2_PACKAGE_LIBLDNS),y)
