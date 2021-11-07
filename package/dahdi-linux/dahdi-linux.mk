@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-DAHDI_LINUX_VERSION = 3.0.0
-DAHDI_LINUX_SITE = http://downloads.asterisk.org/pub/telephony/dahdi-linux/releases
+DAHDI_LINUX_VERSION = 5c840cf43838e0690873e73409491c392333b3b8
+DAHDI_LINUX_SITE = git://git.asterisk.org/dahdi/linux.git
 
-# We need to download all thoe firmware blobs ourselves, otherwise
+# We need to download all those firmware blobs ourselves, otherwise
 # dahdi-linux will try to download them at install time.
 DAHDI_LINUX_FW_SITE = http://downloads.digium.com/pub/telephony/firmware/releases
 DAHDI_LINUX_FW_FILES = \
@@ -59,6 +59,10 @@ define DAHDI_LINUX_EXTRACT_FW
 		cp $(DAHDI_LINUX_DL_DIR)/$(f) $(@D)/drivers/dahdi/firmware/$(f)$(sep))
 endef
 DAHDI_LINUX_POST_EXTRACT_HOOKS += DAHDI_LINUX_EXTRACT_FW
+
+define DAHDI_LINUX_LINUX_CONFIG_FIXUPS
+	$(call KCONFIG_ENABLE_OPT,CONFIG_CRC_CCITT)
+endef
 
 # Need to pass the same options as for building the modules, because
 # it wants to scan Linux' .config file to check whether some options

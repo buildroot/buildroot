@@ -1,9 +1,18 @@
-From 525dd2f3cf4a94837ce6b71d793acb90c25a5654 Mon Sep 17 00:00:00 2001
+From 7c245ffc17a9ab6215830d4ecd8b2f9beddb487c Mon Sep 17 00:00:00 2001
 From: Waldemar Brodkorb <wbx@openadk.org>
 Date: Fri, 1 Feb 2019 11:36:20 +0100
 Subject: [PATCH] arm-versatile-nommu: Linux patch
 
 Originally made by Waldemar Brodkorb <wbx@openadk.org> from LKML.
+
+Rename CLKSRC_OF to TIMER_OF (kernel >= 4.13)
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=bb0eb050a577a866cb47c2dc37596f1207f4c2d9
+
+Remove GENERIC_CLOCKEVENTS since its enabled by default (kernel >= 5.11)
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=0774a6ed294b963dc76df2d8342ab86d030759ec
+
+Select CONFIG_GENERIC_IRQ_MULTI_HANDLER since irqchip doesn't select it anymore (kernel >= 5.12)
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=a79f7051cccb6f3bcd3d2a0a058c7d5c79bb0371
 
 Signed-Off-by: Waldemar Brodkorb <wbx@openadk.org>
 [Gerome: reformated as a Git patch]
@@ -21,10 +30,10 @@ Signed-off-by: Romain Naour <romain.naour@smile.fr>
  create mode 100644 arch/arm/mach-versatile/Makefile.boot
 
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 002e0cf025f5..c71299b6f91f 100644
+index dcf2df6da98f..c2155c1a2eba 100644
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
-@@ -343,6 +343,17 @@ config ARM_SINGLE_ARMV7M
+@@ -337,6 +337,17 @@ config ARM_SINGLE_ARMV7M
  	select SPARSE_IRQ
  	select USE_OF
  
@@ -32,21 +41,21 @@ index 002e0cf025f5..c71299b6f91f 100644
 +	bool "ARM Ltd. Versatile family"
 +	depends on !MMU
 +	select AUTO_ZRELADDR
-+	select CLKSRC_OF
++	select TIMER_OF
 +	select COMMON_CLK
-+	select GENERIC_CLOCKEVENTS
++	select GENERIC_IRQ_MULTI_HANDLER
 +	select GPIOLIB
 +	select SPARSE_IRQ
 +	select USE_OF
 +
- config ARCH_EBSA110
- 	bool "EBSA-110"
- 	select ARCH_USES_GETTIMEOFFSET
+ config ARCH_EP93XX
+ 	bool "EP93xx-based"
+ 	select ARCH_SPARSEMEM_ENABLE
 diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index 8986a91a6f31..69cb6404e8ce 100644
+index 98436702e0c7..7e63299ceb40 100644
 --- a/arch/arm/Kconfig.debug
 +++ b/arch/arm/Kconfig.debug
-@@ -1943,7 +1943,8 @@ config DEBUG_UNCOMPRESS
+@@ -1891,7 +1891,8 @@ config DEBUG_UNCOMPRESS
  config UNCOMPRESS_INCLUDE
  	string
  	default "debug/uncompress.h" if ARCH_MULTIPLATFORM || ARCH_MSM || \
@@ -109,5 +118,5 @@ index 02ba68abe533..835b51bc597b 100644
  
  /*
 -- 
-2.17.1
+2.31.1
 

@@ -4,12 +4,10 @@
 #
 ################################################################################
 
-AUDIT_VERSION = 3.0.1
+AUDIT_VERSION = 3.0.6
 AUDIT_SITE = http://people.redhat.com/sgrubb/audit
 AUDIT_LICENSE = GPL-2.0+ (programs), LGPL-2.1+ (libraries)
 AUDIT_LICENSE_FILES = COPYING COPYING.LIB
-# 0002-Add-substitue-functions-for-strndupa-rawmemchr.patch
-AUDIT_AUTORECONF = YES
 AUDIT_CPE_ID_VENDOR = linux_audit_project
 AUDIT_CPE_ID_PRODUCT = linux_audit
 

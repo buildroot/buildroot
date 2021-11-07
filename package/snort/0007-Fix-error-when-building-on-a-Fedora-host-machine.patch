@@ -7,6 +7,8 @@ Remove the code that adds unsafe header/library path when
 cross-compiling on a Fedora host machine.
 
 Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
+[Fabrice: Update for 2.9.18.1 (also fix build on Centos host machine)]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  configure.in | 24 ------------------------
  1 file changed, 24 deletions(-)
@@ -15,7 +17,7 @@ diff --git a/configure.in b/configure.in
 index e6586f399898..fb35d4d7e3e3 100644
 --- a/configure.in
 +++ b/configure.in
-@@ -957,30 +957,6 @@ if test "x$enable_dlclose" = "xno"; then
+@@ -957,54 +957,6 @@ if test "x$enable_dlclose" = "xno"; then
      AC_DEFINE([DISABLE_DLCLOSE_FOR_VALGRIND_TESTING],[1],[Don't close opened shared objects for valgrind leak testing of dynamic libraries])
  fi
  
@@ -36,6 +38,30 @@ index e6586f399898..fb35d4d7e3e3 100644
 -            echo
 -            echo " ERROR! tirpc not found, get it by running "
 -            echo " yum install libtirpc-devel "
+-            exit
+-        fi
+-        LIBS="${LIBS} -ltirpc"
+-        extra_incl="-I/usr/include/tirpc"
+-    fi
+-fi
+-
+-##################################################
+-# Centos 8+ does not have inbuilt SunRPC support  #
+-# in glibc and is separately availble in tirpc   #
+-# package. Make sure we've got the library and   #
+-# link it                                        #
+-##################################################
+-if test -f /etc/centos-release ; then
+-    LINUX_FLAVOUR=$(awk '{ print $1 }' /etc/centos-release)
+-    DISTRO_VERSION=`cut -d ' ' -f 4 /etc/centos-release | cut -d '.' -f 1`
+-    if [[ "$LINUX_FLAVOUR" == "CentOS" ]] && [[ $DISTRO_VERSION -ge 8 ]]; then
+-        TIRPC=""
+-        AC_CHECK_LIB(tirpc,bindresvport,, TIRPC="no")
+-        echo "$TIRPC"
+-        if test "x$TIRPC" = "xno"; then
+-            echo
+-            echo " ERROR! tirpc not found, get it by running "
+-            echo " yum install libtirpc-devel or dnf install libtirpc-devel"
 -            exit
 -        fi
 -        LIBS="${LIBS} -ltirpc"

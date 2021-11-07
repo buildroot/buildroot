@@ -10,7 +10,9 @@ NETDATA_LICENSE = GPL-3.0+
 NETDATA_LICENSE_FILES = LICENSE
 # netdata's source code is released without a generated configure script
 NETDATA_AUTORECONF = YES
-NETDATA_CONF_OPTS = --disable-dbengine
+NETDATA_CONF_OPTS = \
+	--disable-dbengine \
+	--disable-unit-tests
 NETDATA_DEPENDENCIES = libuv util-linux zlib
 
 ifeq ($(BR2_GCC_ENABLE_LTO),y)
@@ -31,6 +33,13 @@ NETDATA_CONF_OPTS += --enable-jsonc
 NETDATA_DEPENDENCIES += json-c
 else
 NETDATA_CONF_OPTS += --disable-jsonc
+endif
+
+ifeq ($(BR2_PACKAGE_LIBCAP),y)
+NETDATA_CONF_OPTS += --with-libcap
+NETDATA_DEPENDENCIES += libcap
+else
+NETDATA_CONF_OPTS += --without-libcap
 endif
 
 ifeq ($(BR2_PACKAGE_NFACCT),y)

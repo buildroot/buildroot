@@ -1,0 +1,28 @@
+From 651f0decea5f83730c271e9bed03cdd0048fcd49 Mon Sep 17 00:00:00 2001
+From: Wim Taymans <wtaymans@redhat.com>
+Date: Thu, 21 Oct 2021 11:09:48 +0200
+Subject: [PATCH] cpu: fix compilation on some architectures
+
+[Retrieved from:
+https://gitlab.freedesktop.org/pipewire/pipewire/-/commit/651f0decea5f83730c271e9bed03cdd0048fcd49]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ spa/plugins/support/cpu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/spa/plugins/support/cpu.c b/spa/plugins/support/cpu.c
+index ee1816512..01cff4854 100644
+--- a/spa/plugins/support/cpu.c
++++ b/spa/plugins/support/cpu.c
+@@ -270,7 +270,7 @@ impl_init(const struct spa_handle_factory *factory,
+ 		if ((str = spa_dict_lookup(info, SPA_KEY_CPU_VM_TYPE)) != NULL)
+ 			this->vm_type = atoi(str);
+ 		if ((str = spa_dict_lookup(info, SPA_KEY_CPU_ZERO_DENORMALS)) != NULL)
+-			impl_cpu_zero_denormals(this, spa_atob(str));
++			spa_cpu_zero_denormals(&this->cpu, spa_atob(str));
+ 	}
+ 
+ 	spa_log_debug(this->log, "%p: count:%d align:%d flags:%08x",
+-- 
+GitLab
+

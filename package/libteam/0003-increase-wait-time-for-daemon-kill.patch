@@ -1,0 +1,37 @@
+From 6875e6c8efb0fe86766b3d4f1d0db390af6998b7 Mon Sep 17 00:00:00 2001
+From: Hangbin Liu <liuhangbin@gmail.com>
+Date: Tue, 15 Dec 2020 19:33:17 +0800
+Subject: [PATCH] teamd: increase the waitting time for daemon killing
+
+In the current code, we wait for at most 5s when kill the daemon pid.
+But in some environment, it may need more time. Then the teamd -k will
+failed and return error "Failed to kill daemon: Timer expired".
+
+Let's increase the value to have enough time. Here is the reuslt with
+this patch:
+
+$ time libteam/teamd/teamd -k -t team0
+
+real    0m10.442s
+user    0m0.017s
+sys     0m0.016s
+
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Signed-off-by: Jiri Pirko <jiri@nvidia.com>
+---
+ teamd/teamd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/teamd/teamd.c b/teamd/teamd.c
+index 9360cbf..b310140 100644
+--- a/teamd/teamd.c
++++ b/teamd/teamd.c
+@@ -1858,7 +1858,7 @@ int main(int argc, char **argv)
+ 		break;
+ 	case DAEMON_CMD_KILL:
+ 		if (daemon_pid_file_is_running() > 0) {
+-			err = daemon_pid_file_kill_wait(SIGTERM, 5);
++			err = daemon_pid_file_kill_wait(SIGTERM, 30);
+ 			if (err)
+ 				teamd_log_warn("Failed to kill daemon: %s",
+ 					       strerror(errno));
