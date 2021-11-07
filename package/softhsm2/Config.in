@@ -5,6 +5,7 @@ config BR2_PACKAGE_SOFTHSM2
 	depends on !BR2_STATIC_LIBS # dlopen()
 	select BR2_PACKAGE_OPENSSL
 	select BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_DES
 	help
 	  SoftHSM is an implementation of a cryptographic store
 	  accessible through a PKCS#11 interface. You can use it
