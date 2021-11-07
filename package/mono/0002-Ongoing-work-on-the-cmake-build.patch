@@ -1,0 +1,34 @@
+From 17650f7e0f571287bb14bb9b4fbde7b91d842bb4 Mon Sep 17 00:00:00 2001
+From: monojenkins <jo.shields+jenkins@xamarin.com>
+Date: Thu, 24 Sep 2020 12:17:34 -0400
+Subject: [PATCH] Ongoing work on the cmake build. (#20428)
+
+* Fix some warnings.
+* Avoid creating netcore/config.make.
+* Fix CPU_COUNT test.
+* Add missing source file.
+
+Co-authored-by: vargaz <vargaz@users.noreply.github.com>
+
+[Retrieved (and updated to keep only update of icall.c) from:
+https://github.com/mono/mono/commit/17650f7e0f571287bb14bb9b4fbde7b91d842bb4]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ mono/metadata/CMakeLists.txt | 1 +
+ mono/metadata/icall.c        | 2 +-
+ mono/mini/CMakeLists.txt     | 5 +++++
+ 3 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/mono/metadata/icall.c b/mono/metadata/icall.c
+index fa991bc72e57..f2c003ac1ff1 100644
+--- a/mono/metadata/icall.c
++++ b/mono/metadata/icall.c
+@@ -9605,7 +9605,7 @@ mono_create_icall_signatures (void)
+ 	int n;
+ 	while ((n = sig->param_count)) {
+ 		--sig->param_count; // remove ret
+-		gsize_a *types = (gsize*)(sig + 1);
++		gsize_a *types = (gsize_a*)(sig + 1);
+ 		for (int i = 0; i < n; ++i) {
+ 			gsize index = *types++;
+ 			g_assert (index < G_N_ELEMENTS (lookup));
