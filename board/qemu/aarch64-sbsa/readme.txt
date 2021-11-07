@@ -17,7 +17,7 @@ Run the emulation with:
 
   qemu-system-aarch64 \
     -M sbsa-ref \
-    -cpu cortex-a53 \
+    -cpu cortex-a57 \
     -smp 4 \
     -m 1024 \
     -nographic \
