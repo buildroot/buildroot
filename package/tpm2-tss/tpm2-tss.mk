@@ -17,6 +17,7 @@ TPM2_TSS_DEPENDENCIES = liburiparser openssl host-pkgconf
 TPM2_TSS_AUTORECONF = YES
 
 TPM2_TSS_CONF_OPTS = \
+	ac_cv_prog_result_groupadd=yes \
 	ac_cv_prog_result_setfacl=yes \
 	--with-crypto=ossl \
 	--disable-doxygen-doc \
