@@ -2,6 +2,7 @@ config BR2_PACKAGE_SOFTHSM2
 	bool "softhsm2"
 	depends on BR2_INSTALL_LIBSTDCPP
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # C++11
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on !BR2_STATIC_LIBS # dlopen()
 	select BR2_PACKAGE_OPENSSL
 	select BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL
@@ -14,6 +15,7 @@ config BR2_PACKAGE_SOFTHSM2
 
 	  https://www.opendnssec.org/softhsm
 
-comment "sofhsm2 needs a toolchain w/ C++, gcc >= 4.8 and dynamic library support"
+comment "softhsm2 needs a toolchain w/ C++, threads, gcc >= 4.8 and dynamic library support"
 	depends on !BR2_INSTALL_LIBSTDCPP || BR2_STATIC_LIBS || \
+		!BR2_TOOLCHAIN_HAS_THREADS || \
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
