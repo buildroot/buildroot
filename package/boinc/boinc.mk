@@ -45,6 +45,8 @@ else
 BOINC_CONF_OPTS += --disable-fcgi
 endif
 
+BOINC_MAKE_OPTS = CXXFLAGS="$(TARGET_CXXFLAGS) -std=c++11"
+
 # Remove boinc-client because it is incompatible with buildroot
 define BOINC_REMOVE_UNNEEDED_FILE
 	$(RM) $(TARGET_DIR)/etc/init.d/boinc-client
