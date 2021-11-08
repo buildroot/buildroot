@@ -1,6 +1,5 @@
 from tests.package.test_python import TestPythonPackageBase
 import os
-import time
 
 
 class TestPythonPy3UnitTestXmlReporting(TestPythonPackageBase):

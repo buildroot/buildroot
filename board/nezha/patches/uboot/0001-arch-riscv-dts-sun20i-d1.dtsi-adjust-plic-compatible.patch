@@ -1,0 +1,36 @@
+From 99cf8f37ceb1def9e7bbaccc395cf2275723e03d Mon Sep 17 00:00:00 2001
+From: Peter Korsgaard <peter@korsgaard.com>
+Date: Thu, 4 Nov 2021 22:15:13 +0100
+Subject: [PATCH] arch/riscv/dts/sun20i-d1.dtsi: adjust plic compatible to
+ match opensbi
+
+The T-HEAD PLIC is by default not accessible from S-mode, and access must be
+enabled by opensbi to make it accessible to Linux.
+
+The DTB is used both by U-Boot and opensbi (but the PLIC node is ignored by
+U-Boot), so change the compatible to match what opensbi expects to fix a
+crash during Linux boot:
+
+https://github.com/riscv-software-src/opensbi/commit/78c2b19218bd
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ arch/riscv/dts/sun20i-d1.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/riscv/dts/sun20i-d1.dtsi b/arch/riscv/dts/sun20i-d1.dtsi
+index 280e0336d4..56d02c33b0 100644
+--- a/arch/riscv/dts/sun20i-d1.dtsi
++++ b/arch/riscv/dts/sun20i-d1.dtsi
+@@ -1136,7 +1136,7 @@
+ 
+ 		plic: interrupt-controller@10000000 {
+ 			compatible = "allwinner,sun20i-d1-plic",
+-				     "sifive,plic-1.0.0";
++				     "thead,c900-plic";
+ 			reg = <0x10000000 0x4000000>;
+ 			#address-cells = <0>;
+ 			interrupts-extended = <&cpu0_intc 11>,
+-- 
+2.20.1
+
