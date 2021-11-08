@@ -136,6 +136,68 @@ LIBFOO_POST_INSTALL_TARGET_HOOKS += LIBFOO_REMOVE_DATA
 endif
 ---------------------
 
+[[writing-genimage-cfg]]
+
+=== The +genimage.cfg+ file
+
++genimage.cfg+ files contain the output image layout that genimage utility
+uses to create final .img file.
+
+An example follows:
+
+---------------------
+image efi-part.vfat {
+	vfat {
+		file EFI {
+			image = "efi-part/EFI"
+		}
+
+		file Image {
+			image = "Image"
+		}
+	}
+
+	size = 32M
+}
+
+image sdimage.img {
+	hdimage {
+	}
+
+	partition u-boot {
+		image = "efi-part.vfat"
+		offset = 8K
+	}
+
+	partition root {
+		image = "rootfs.ext2"
+		size = 512M
+	}
+}
+---------------------
+
+* Every +section+(i.e. hdimage, vfat etc.), +partition+ must be indented
+  with one tab.
+
+* Every +file+ or other +subnode+ must be indented with two tabs.
+
+* Every node(+section+, +partition+, +file+, +subnode+) must have an open
+  curly bracket on the same line of the node's name, while the closing one
+  must be on a newline and after it a newline must be added except for the
+  last one node. Same goes for its option, for example option +size = +.
+
+* Every +option+(i.e. +image+, +offset+, +size+) must have the +=+
+  assignment one space from it and one space from the value specified.
+
+* Filename must at least begin with genimage prefix and have the .cfg
+  extension to be easy to recognize.
+
+The +genimage.cfg+ files are the input for the genimage tool used in
+Buildroot to generate the final image file(i.e. sdcard.img). For further
+details about the _genimage_ language, refer to
+https://github.com/pengutronix/genimage/blob/master/README.rst[].
+
+
 === The documentation
 
 The documentation uses the
