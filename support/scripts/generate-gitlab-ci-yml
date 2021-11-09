@@ -36,6 +36,9 @@ gen_tests() {
              )
 
     if [ -n "${CI_COMMIT_TAG}" ]; then
+        # When a tag is added to the Buildroot git tree, we want
+        # to run the runtime tests and only test Qemu defconfigs.
+        defconfigs=( $(cd configs; LC_ALL=C ls -1 qemu_*_defconfig) )
         do_basics=true
         do_defconfigs=base
         do_runtime=true
