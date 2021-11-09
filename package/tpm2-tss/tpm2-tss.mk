@@ -16,9 +16,17 @@ TPM2_TSS_DEPENDENCIES = liburiparser openssl host-pkgconf
 # 0001-configure-Only-use-CXX-when-fuzzing.patch
 TPM2_TSS_AUTORECONF = YES
 
+# systemd-sysusers and systemd-tmpfiles are only used at install time
+# to trigger the creation of users adn tmpfiles, which we do not care
+# about at build time. groupadd, useradd, and setfacl are used in the
+# fallback path when systemd-sysusers or systemd-tmpfiles are missing
+# and their failure is ignored anyway.
 TPM2_TSS_CONF_OPTS = \
 	ac_cv_prog_result_groupadd=yes \
 	ac_cv_prog_result_setfacl=yes \
+	ac_cv_prog_systemd_sysusers=no \
+	ac_cv_prog_systemd_tmpfiles=no \
+	ac_cv_prog_result_useradd=yes \
 	--with-crypto=ossl \
 	--disable-doxygen-doc \
 	--disable-defaultflags
