@@ -162,6 +162,12 @@ config BR2_OPENJDK_VERSION_LATEST
 	  OpenJDK 16.x is no longer mainted, so the option has been
 	  removed. Use OpenJDK 17.x instead.
 
+config BR2_PACKAGE_MPD_TIDAL
+	bool "mpd tidal option removed"
+	select BR2_LEGACY
+	help
+	  tidal has been removed from mpd since version 0.22.10.
+
 config BR2_PACKAGE_MROUTED_RSRR
 	bool "RSRR for RSVP removed in mrouted v4.4"
 	select BR2_LEGACY

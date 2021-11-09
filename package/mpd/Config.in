@@ -58,13 +58,6 @@ config BR2_PACKAGE_MPD_SOUNDCLOUD
 	help
 	  Enable soundcloud.com playlist support.
 
-config BR2_PACKAGE_MPD_TIDAL
-	bool "tidal"
-	select BR2_PACKAGE_MPD_CURL
-	select BR2_PACKAGE_YAJL
-	help
-	  Play songs from the commercial streaming service TIDAL.
-
 comment "Converter plugins"
 
 config BR2_PACKAGE_MPD_LIBSAMPLERATE

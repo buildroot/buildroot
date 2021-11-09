@@ -277,13 +277,6 @@ ifneq ($(BR2_PACKAGE_MPD_TCP),y)
 MPD_CONF_OPTS += -Dtcp=true
 endif
 
-ifeq ($(BR2_PACKAGE_MPD_TIDAL),y)
-MPD_DEPENDENCIES += yajl
-MPD_CONF_OPTS += -Dtidal=enabled
-else
-MPD_CONF_OPTS += -Dtidal=disabled
-endif
-
 ifeq ($(BR2_PACKAGE_MPD_TREMOR),y)
 MPD_DEPENDENCIES += tremor
 MPD_CONF_OPTS += -Dtremor=enabled
