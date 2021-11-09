@@ -10,11 +10,11 @@ IMX_VPUWRAP_SOURCE = imx-vpuwrap-$(IMX_VPUWRAP_VERSION).bin
 IMX_VPUWRAP_INSTALL_STAGING = YES
 
 ifeq ($(BR2_PACKAGE_IMX_VPU),y)
-IMX_VPUWRAP_DEPENDENCIES = imx-vpu
+IMX_VPUWRAP_DEPENDENCIES += imx-vpu
 endif
 
 ifeq ($(BR2_PACKAGE_IMX_VPU_HANTRO),y)
-IMX_VPUWRAP_DEPENDENCIES = imx-vpu-hantro
+IMX_VPUWRAP_DEPENDENCIES += imx-vpu-hantro
 endif
 
 IMX_VPUWRAP_LICENSE = NXP Semiconductor Software License Agreement
