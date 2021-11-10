@@ -88,6 +88,8 @@ class OverriddenVariable(_CheckFunction):
         r"_SITE\s*=\s*",
         r"_SOURCE\s*=\s*",
         r"_VERSION\s*=\s*"])))
+    FORBIDDEN_OVERRIDDEN = re.compile(r"^[A-Z0-9_]+({})".format("|".join([
+        r"_DEPENDENCIES\s*=\s*"])))
 
     def before(self):
         self.conditional = 0
@@ -123,6 +125,10 @@ class OverriddenVariable(_CheckFunction):
                         .format(self.filename, lineno, variable),
                         text]
         else:
+            if self.FORBIDDEN_OVERRIDDEN.search(text):
+                return ["{}:{}: conditional override of variable {}"
+                        .format(self.filename, lineno, variable),
+                        text]
             if variable not in self.unconditionally_set:
                 self.conditionally_set.append(variable)
                 return
