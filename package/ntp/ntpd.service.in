@@ -9,7 +9,7 @@ PIDFile=/run/ntpd.pid
 # correct time to work, but we likely won't acquire that without NTP. Let's
 # break this chicken-and-egg cycle here.
 Environment=SYSTEMD_NSS_RESOLVE_VALIDATE=0
-ExecStart=/usr/sbin/ntpd -g -p /run/ntpd.pid
+ExecStart=/usr/sbin/ntpd @NTPD_EXTRA_ARGS@ -g -p /run/ntpd.pid
 
 [Install]
 WantedBy=multi-user.target

@@ -6,7 +6,7 @@
 DAEMON="ntpd"
 PIDFILE="/var/run/$DAEMON.pid"
 
-NTPD_ARGS="-g"
+NTPD_ARGS="@NTPD_EXTRA_ARGS@ -g"
 
 # shellcheck source=/dev/null
 [ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
