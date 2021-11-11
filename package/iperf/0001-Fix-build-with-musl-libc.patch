@@ -1,0 +1,67 @@
+From 6766ab322a9eb8c73f8276be9cdea356eb124de0 Mon Sep 17 00:00:00 2001
+From: Baruch Siach <baruch@tkos.co.il>
+Date: Thu, 11 Nov 2021 07:58:10 +0200
+Subject: [PATCH] Fix build with musl libc
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+musl libc defines its own struct ethhdr that conflicts with the kernel
+define one. The kernel headers provide a way to suppress its struct
+ethhdr. For that to work the libc headers must precede the kernel. Move
+the kernel linux/if_tun.h include below libc net/ethernet.h. That fixes
+the following build failure:
+
+In file included from .../arm-buildroot-linux-musleabihf/sysroot/usr/include/net/ethernet.h:10,
+                 from ../include/headers.h:117,
+                 from Thread.c:72:
+.../arm-buildroot-linux-musleabihf/sysroot/usr/include/netinet/if_ether.h:116:8: error: redefinition of ‘struct ethhdr’
+  116 | struct ethhdr {
+      |        ^~~~~~
+In file included from .../arm-buildroot-linux-musleabihf/sysroot/usr/include/linux/if_tun.h:20,
+                 from ../include/headers.h:110,
+                 from Thread.c:72:
+.../arm-buildroot-linux-musleabihf/sysroot/usr/include/linux/if_ether.h:148:8: note: originally defined here
+  148 | struct ethhdr {
+      |        ^~~~~~
+
+Fixes bug #157.
+
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+Upstream status: sent to Robert McMahon <rjmcmahon@rjmcmahon.com>
+
+ include/headers.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/include/headers.h b/include/headers.h
+index 00e0ea0dba42..887490475381 100644
+--- a/include/headers.h
++++ b/include/headers.h
+@@ -106,11 +106,6 @@ typedef bool _Bool;
+ #include <net/if.h>
+ #endif
+ 
+-#if ((HAVE_TUNTAP_TAP) || (HAVE_TUNTAP_TUN))
+-#include <linux/if_tun.h>
+-#include <sys/ioctl.h>
+-#endif
+-
+ 
+ // AF_PACKET HEADERS
+ #if defined(HAVE_LINUX_FILTER_H) && defined(HAVE_AF_PACKET)
+@@ -146,6 +141,11 @@ typedef bool _Bool;
+ #define  IPV6HDRLEN 40
+ #endif // HAVE_AF_PACKET
+ 
++#if ((HAVE_TUNTAP_TAP) || (HAVE_TUNTAP_TUN))
++#include <linux/if_tun.h>
++#include <sys/ioctl.h>
++#endif
++
+ #ifdef WIN32
+ 
+ /* Windows config file */
+-- 
+2.33.0
+
