@@ -4,6 +4,7 @@ config BR2_PACKAGE_PIPEWIRE_MEDIA_SESSION
 	depends on BR2_USE_MMU # dbus
 	depends on BR2_PACKAGE_PIPEWIRE
 	select BR2_PACKAGE_ALSA_LIB
+	select BR2_PACKAGE_ALSA_LIB_UCM
 	select BR2_PACKAGE_DBUS
 	help
 	  Build pipewire media-session support
