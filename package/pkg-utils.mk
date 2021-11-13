@@ -120,17 +120,17 @@ define _json-info-pkg
 		"install_images": $(call yesno-to-bool,$($(1)_INSTALL_IMAGES))$(comma) \
 	)
 	"dependencies": [
-		$(call make-comma-list,$(sort $($(1)_FINAL_ALL_DEPENDENCIES)))
+		$(call make-dq-comma-list,$(sort $($(1)_FINAL_ALL_DEPENDENCIES)))
 	],
 	"reverse_dependencies": [
-		$(call make-comma-list,$(sort $($(1)_RDEPENDENCIES)))
+		$(call make-dq-comma-list,$(sort $($(1)_RDEPENDENCIES)))
 	]
 	$(if $($(1)_CPE_ID_VALID), \
 		$(comma) "cpe-id": "$($(1)_CPE_ID)" \
 	)
 	$(if $($(1)_IGNORE_CVES),
 		$(comma) "ignore_cves": [
-			$(call make-comma-list,$(sort $($(1)_IGNORE_CVES)))
+			$(call make-dq-comma-list,$(sort $($(1)_IGNORE_CVES)))
 		]
 	)
 endef
@@ -144,7 +144,7 @@ define _json-info-pkg-details
 		{
 			"source": "$(notdir $(dl))",
 			"uris": [
-				$(call make-comma-list,
+				$(call make-dq-comma-list,
 					$(subst \|,|,
 						$(call DOWNLOAD_URIS,$(dl),$(1))
 					)
@@ -161,7 +161,7 @@ define _json-info-fs
 				null \
 			),
 	"dependencies": [
-		$(call make-comma-list,$(sort $($(1)_DEPENDENCIES)))
+		$(call make-dq-comma-list,$(sort $($(1)_DEPENDENCIES)))
 	]
 endef
 
