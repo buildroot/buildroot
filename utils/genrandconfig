@@ -422,7 +422,7 @@ def gen_config(args):
             return 1
         bounded_loop -= 1
         subprocess.check_call(["make", "O=%s" % args.outputdir, "-C", args.buildrootdir,
-                               "KCONFIG_PROBABILITY=%d" % randint(1, 30),
+                               "KCONFIG_PROBABILITY=%d" % randint(1, 20),
                                "randpackageconfig"])
 
         if fixup_config(sysinfo, configfile):
