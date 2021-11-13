@@ -51,11 +51,7 @@ endif
 
 define inner-cmake-package
 
-$(2)_CONF_ENV			?=
-$(2)_CONF_OPTS			?=
 $(2)_MAKE			?= $$(MAKE)
-$(2)_MAKE_ENV			?=
-$(2)_MAKE_OPTS			?=
 $(2)_INSTALL_OPTS		?= install
 $(2)_INSTALL_STAGING_OPTS	?= DESTDIR=$$(STAGING_DIR) install/fast
 $(2)_INSTALL_TARGET_OPTS	?= DESTDIR=$$(TARGET_DIR) install/fast
