@@ -1,0 +1,49 @@
+From ef08d0dbc99db8c4620512e92bfb3154282eb5d3 Mon Sep 17 00:00:00 2001
+From: Andrew Morrow <acm@mongodb.com>
+Date: Wed, 15 Sep 2021 15:23:42 -0400
+Subject: [PATCH] SERVER-59459 With glibc-2.34, MINSIGSTKSZ is no longer a
+ constant
+
+[Retrieved (and backported) from:
+https://github.com/mongodb/mongo/commit/ef08d0dbc99db8c4620512e92bfb3154282eb5d3]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/mongo/stdx/thread.h | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/src/mongo/stdx/thread.h b/src/mongo/stdx/thread.h
+index 7b15bb561bd9..6f1e16cdeb36 100644
+--- a/src/mongo/stdx/thread.h
++++ b/src/mongo/stdx/thread.h
+@@ -76,11 +76,19 @@ class SigAltStackController {
+     }
+ 
+ private:
++    static size_t _getStackSize() {
++        // It would be nice for this to be a constexpr, but
++        // MINSIGSTKSZ became a macro that invoked `sysconf` in glibc
++        // 2.34.
++        static const std::size_t kMinSigStkSz = MINSIGSTKSZ;
++        return std::max(kMongoMinSignalStackSize, kMinSigStkSz);
++    }
++
+     void _install() const {
+         stack_t ss;
+         ss.ss_sp = _stackStorage.get();
+         ss.ss_flags = 0;
+-        ss.ss_size = kStackSize;
++        ss.ss_size = _getStackSize();
+         if (sigaltstack(&ss, nullptr)) {
+             abort();
+         }
+@@ -107,9 +115,7 @@ class SigAltStackController {
+     //   ( https://jira.mongodb.org/secure/attachment/233569/233569_stacktrace-writeup.txt )
+     static constexpr std::size_t kMongoMinSignalStackSize = std::size_t{64} << 10;
+ 
+-    static constexpr std::size_t kStackSize =
+-        std::max(kMongoMinSignalStackSize, std::size_t{MINSIGSTKSZ});
+-    std::unique_ptr<std::byte[]> _stackStorage = std::make_unique<std::byte[]>(kStackSize);
++    std::unique_ptr<std::byte[]> _stackStorage = std::make_unique<std::byte[]>(_getStackSize());
+ 
+ #else   // !MONGO_HAS_SIGALTSTACK
+     auto makeInstallGuard() const {
