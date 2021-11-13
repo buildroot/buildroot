@@ -176,6 +176,17 @@ clean-json = $(strip \
 	))))) \
 )
 
+# mk-json-str -- escape and double-quote a string to make it a valid json string
+#  - escape \
+#  - escape "
+#  - escape \n
+#  - escape \t
+#  - escape ESC
+#  - escape SPACE (so that we can $(strip) a JSON blurb without squashing multiple spaces)
+# This unfortunately has to be on a single line...
+mk-json-str = "$(subst $(space),\u0020,$(subst $(escape),\u001b,$(subst $(tab),\t,$(subst $(sep),\n,$(subst ",\",$(subst \,\\,$(1)))))))"
+# )))))" # Syntax colouring
+
 ifeq ($(BR2_PER_PACKAGE_DIRECTORIES),y)
 # rsync the contents of per-package directories
 # $1: space-separated list of packages to rsync from
