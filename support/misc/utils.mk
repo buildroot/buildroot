@@ -13,6 +13,8 @@ qstrip = $(strip $(subst ",,$(1)))
 comma := ,
 empty :=
 space := $(empty) $(empty)
+tab := $(empty)	$(empty)
+escape := $(shell printf '\x1b')
 
 # make 4.3:
 # https://lwn.net/Articles/810071/
