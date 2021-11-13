@@ -5,6 +5,7 @@ config BR2_PACKAGE_GLMARK2_FLAVOR_DRM_GLESV2
 	bool
 	default y
 	depends on BR2_PACKAGE_HAS_LIBEGL
+	depends on BR2_PACKAGE_HAS_LIBGBM
 	depends on BR2_PACKAGE_HAS_LIBGLES
 	depends on BR2_PACKAGE_HAS_UDEV
 	depends on BR2_TOOLCHAIN_HAS_THREADS  # libpthread-stubs -> libdrm
