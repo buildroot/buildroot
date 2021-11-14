@@ -17,7 +17,7 @@ class TestLuvi(infra.basetest.BRTest):
 
     def login(self):
         cpio_file = os.path.join(self.builddir, "images", "rootfs.cpio")
-        self.emulator.boot(arch="armv7",
+        self.emulator.boot(arch="armv5",
                            kernel="builtin",
                            options=["-initrd", cpio_file])
         self.emulator.login()
@@ -25,11 +25,12 @@ class TestLuvi(infra.basetest.BRTest):
     def version_test(self):
         cmd = "luvi -v"
         output, exit_code = self.emulator.run(cmd)
-        self.assertIn('luvi', output[0])
-        self.assertIn('zlib', output[1])
+        output = sorted(output)
+        self.assertIn('libuv', output[0])
+        self.assertIn('luvi', output[1])
         self.assertIn('rex', output[2])
-        self.assertIn('libuv', output[3])
-        self.assertIn('ssl', output[4])
+        self.assertIn('ssl', output[3])
+        self.assertIn('zlib', output[4])
 
     def test_run(self):
         self.login()

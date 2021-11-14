@@ -26,8 +26,10 @@ endif
 # libraries are installed.
 ifeq ($(BR2_ARCH_IS_64),y)
 LUAJIT_HOST_CC = $(HOSTCC)
+# There is no LUAJIT_ENABLE_GC64 option.
 else
 LUAJIT_HOST_CC = $(HOSTCC) -m32
+LUAJIT_XCFLAGS += -DLUAJIT_DISABLE_GC64
 endif
 
 # We unfortunately can't use TARGET_CONFIGURE_OPTS, because the luajit
@@ -45,7 +47,7 @@ define LUAJIT_BUILD_CMDS
 		HOST_CFLAGS="$(HOST_CFLAGS)" \
 		HOST_LDFLAGS="$(HOST_LDFLAGS)" \
 		BUILDMODE=dynamic \
-		XCFLAGS=$(LUAJIT_XCFLAGS) \
+		XCFLAGS="$(LUAJIT_XCFLAGS)" \
 		-C $(@D) amalg
 endef
 
@@ -66,7 +68,7 @@ LUAJIT_POST_INSTALL_TARGET_HOOKS += LUAJIT_INSTALL_SYMLINK
 define HOST_LUAJIT_BUILD_CMDS
 	$(HOST_MAKE_ENV) $(MAKE) PREFIX="$(HOST_DIR)" BUILDMODE=dynamic \
 		TARGET_LDFLAGS="$(HOST_LDFLAGS)" \
-		XCFLAGS=$(LUAJIT_XCFLAGS) \
+		XCFLAGS="$(LUAJIT_XCFLAGS)" \
 		-C $(@D) amalg
 endef
 
