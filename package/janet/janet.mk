@@ -17,7 +17,7 @@ endif
 
 # Uses __atomic_fetch_add_4
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
-JANET_LDFLAGS += -latomic
+JANET_LDFLAGS += $(TARGET_LDFLAGS) -latomic
 endif
 
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),)
