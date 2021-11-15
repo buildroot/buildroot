@@ -153,6 +153,16 @@ config BR2_PACKAGE_LIBMEDIAART_BACKEND_NONE
 	  'none' backend has been removed from libmediaart since version
 	  1.9.5.
 
+config BR2_PACKAGE_MPD_UPNP
+	bool "MPD UPnP configuration changed"
+	select BR2_LEGACY
+	help
+	  From version 0.23, MPD supports npupnp in addition to pupnp to
+	  provide database access to a UPnP media server. To preserve
+	  the existing functionality, the pupnp option has been selected
+	  in the MPD UPnP configuration.
+# Note: BR2_PACKAGE_MPD_UPNP is still referenced from package/mpd/Config.in
+
 comment "Legacy options removed in 2021.11"
 
 config BR2_OPENJDK_VERSION_LTS

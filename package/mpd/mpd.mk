@@ -4,17 +4,20 @@
 #
 ################################################################################
 
-MPD_VERSION_MAJOR = 0.22
-MPD_VERSION = $(MPD_VERSION_MAJOR).11
+MPD_VERSION_MAJOR = 0.23
+MPD_VERSION = $(MPD_VERSION_MAJOR).3
 MPD_SOURCE = mpd-$(MPD_VERSION).tar.xz
 MPD_SITE = http://www.musicpd.org/download/mpd/$(MPD_VERSION_MAJOR)
-MPD_DEPENDENCIES = host-pkgconf boost
+MPD_DEPENDENCIES = host-pkgconf boost fmt
 MPD_LICENSE = GPL-2.0+
 MPD_LICENSE_FILES = COPYING
 MPD_SELINUX_MODULES = mpd
 MPD_CONF_OPTS = \
 	-Daudiofile=disabled \
-	-Ddocumentation=disabled
+	-Ddocumentation=disabled \
+	-Dopenmpt=disabled \
+	-Dpipewire=disabled \
+	-Dsnapcast=false
 
 # Zeroconf support depends on libdns_sd from avahi.
 ifeq ($(BR2_PACKAGE_MPD_AVAHI_SUPPORT),y)
@@ -291,12 +294,16 @@ else
 MPD_CONF_OPTS += -Dtwolame=disabled
 endif
 
-ifeq ($(BR2_PACKAGE_MPD_UPNP),y)
+ifeq ($(BR2_PACKAGE_MPD_UPNP_PUPNP),y)
 MPD_DEPENDENCIES += \
 	expat \
 	libupnp
-MPD_CONF_OPTS += -Dupnp=enabled
-else
+MPD_CONF_OPTS += -Dupnp=pupnp
+else ifeq ($(BR2_PACKAGE_MPD_UPNP_NPUPNP),y)
+MPD_DEPENDENCIES += \
+	libnpupnp
+MPD_CONF_OPTS += -Dupnp=npupnp
+else ifeq ($(BR2_PACKAGE_MPD_UPNP_DISABLED),y)
 MPD_CONF_OPTS += -Dupnp=disabled
 endif
 
