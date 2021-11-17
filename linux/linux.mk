@@ -375,6 +375,9 @@ ifeq ($(BR2_LINUX_KERNEL_DTS_SUPPORT),y)
 # reproducibility, we use our owns rather than the host ones.
 LINUX_DEPENDENCIES += host-bison host-flex
 
+# Starting with 5.16, host-libyaml is required to build Device Tree blobs.
+LINUX_DEPENDENCIES += host-libyaml
+
 ifeq ($(BR2_LINUX_KERNEL_DTB_IS_SELF_BUILT),)
 define LINUX_BUILD_DTB
 	$(LINUX_MAKE_ENV) $(MAKE) $(LINUX_MAKE_FLAGS) -C $(@D) $(LINUX_DTBS)
