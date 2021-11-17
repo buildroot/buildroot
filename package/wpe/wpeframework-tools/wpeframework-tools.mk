@@ -3,7 +3,7 @@
 # wpeframework-tools
 #
 ################################################################################
-WPEFRAMEWORK_TOOLS_VERSION = dc3e567e29fa77fd1b4eb5a395f5b8dd67e499a6
+WPEFRAMEWORK_TOOLS_VERSION = 14c858dda094aa76abfe2204ba4e85dc73150b4d
 HOST_WPEFRAMEWORK_TOOLS_SITE = $(call github,rdkcentral,Thunder,$(WPEFRAMEWORK_TOOLS_VERSION))
 HOST_WPEFRAMEWORK_TOOLS_INSTALL_STAGING = YES
 HOST_WPEFRAMEWORK_TOOLS_INSTALL_TARGET = NO
