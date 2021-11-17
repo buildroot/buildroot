@@ -59,7 +59,8 @@ ifeq ($(BR2_PER_PACKAGE_DIRECTORIES),y)
 define APPARMOR_FIXUP_APXS
 	$(SED) "s@$(PER_PACKAGE_DIR)/[^/]\+/@$(PER_PACKAGE_DIR)/apparmor/@g" \
 		$(STAGING_DIR)/usr/bin/apxs \
-		$(STAGING_DIR)/usr/build/config_vars.mk
+		$(STAGING_DIR)/usr/build/config_vars.mk \
+		$(STAGING_DIR)/usr/build-1/libtool
 endef
 APPARMOR_POST_CONFIGURE_HOOKS += APPARMOR_FIXUP_APXS
 endif
