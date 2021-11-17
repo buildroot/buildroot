@@ -16,6 +16,7 @@ config BR2_PACKAGE_SEATD_BUILTIN
 
 config BR2_PACKAGE_SEATD_DAEMON
 	bool "seatd daemon"
+	depends on BR2_USE_MMU # fork()
 	help
 	  Build the seatd daemon and support for it inside libseat.
 
