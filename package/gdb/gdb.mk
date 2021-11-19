@@ -166,6 +166,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_GDB_SERVER),y)
 GDB_CONF_OPTS += --enable-gdbserver
+GDB_DEPENDENCIES += $(TARGET_NLS_DEPENDENCIES)
 else
 GDB_CONF_OPTS += --disable-gdbserver
 endif
