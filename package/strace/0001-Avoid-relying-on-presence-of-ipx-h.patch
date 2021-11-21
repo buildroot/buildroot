@@ -1,0 +1,149 @@
+From 568ee52f885c463e7a283240f5ef6bbf9351bdb3 Mon Sep 17 00:00:00 2001
+From: Eugene Syromyatnikov <evgsyr@gmail.com>
+Date: Wed, 3 Nov 2021 00:48:59 +0100
+Subject: [PATCH] Avoid relying on presence of ipx.h
+
+After Linux has broken UAPI in commit v5.15-rc1~157^2~207, it is well
+possible that neither kernel nor libc (such as musl, for example)
+provides an IPX-related header.  Avoid relying on its presence
+in the strace's code and conditionalise the relevant checks in the tests.
+
+* configure.ac (AC_CHECK_HEADERS): Add linux/ipx.h.
+* src/net.c: Remove <netipx/ipx.h>/<linux/ipx.h> includes.
+* src/sockaddr.c: Likewise.
+(IPX_NODE_LEN): New macro constant.
+(struct sockaddr_ipx): New type definition.
+* src/xlat/sock_ipx_options.in (IPX_TYPE): Provide a fallback value.
+* tests/net-sockaddr.c [!HAVE_LINUX_IPX_H]: Do not include
+<linux/ipx.h>.
+[!HAVE_LINUX_IPX_H && HAVE_NETIPX_IPX_H]: Include <netipx/ipx.h>.
+[!(HAVE_LINUX_IPX_H || defined HAVE_NETIPX_IPX_H)] (check_ipx): Do not
+define.
+(main) [!(HAVE_LINUX_IPX_H || defined HAVE_NETIPX_IPX_H)]: Do not call
+check_ipx.
+
+Closes: https://github.com/strace/strace/issues/201
+
+[Retrieved (and backported) from:
+https://github.com/strace/strace/commit/568ee52f885c463e7a283240f5ef6bbf9351bdb3]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ configure.ac                 |  1 +
+ src/net.c                    |  5 -----
+ src/sockaddr.c               | 16 ++++++++++------
+ src/xlat/sock_ipx_options.in |  2 +-
+ tests/net-sockaddr.c         | 10 +++++++++-
+ 5 files changed, 21 insertions(+), 13 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index b5053b7aff..c074a70c01 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -424,6 +424,7 @@ AC_CHECK_HEADERS(m4_normalize([
+ 	elf.h
+ 	gcov.h
+ 	iconv.h
++	linux/ipx.h
+ 	mqueue.h
+ 	netinet/sctp.h
+ 	netipx/ipx.h
+diff --git a/src/net.c b/src/net.c
+index bc2b1ad048..42696bfe89 100644
+--- a/src/net.c
++++ b/src/net.c
+@@ -28,11 +28,6 @@
+ #include <arpa/inet.h>
+ #include <net/if.h>
+ #include <asm/types.h>
+-#ifdef HAVE_NETIPX_IPX_H
+-# include <netipx/ipx.h>
+-#else
+-# include <linux/ipx.h>
+-#endif
+ 
+ #include <linux/ip_vs.h>
+ #include "netlink.h"
+diff --git a/src/sockaddr.c b/src/sockaddr.c
+index bdd5a5bb7a..27fda59f26 100644
+--- a/src/sockaddr.c
++++ b/src/sockaddr.c
+@@ -24,12 +24,6 @@
+ #include <linux/if_ether.h>
+ #include <linux/x25.h>
+ 
+-#ifdef HAVE_NETIPX_IPX_H
+-# include <netipx/ipx.h>
+-#else
+-# include <linux/ipx.h>
+-#endif
+-
+ #include "xlat/addrfams.h"
+ #include "xlat/arp_hardware_types.h"
+ #include "xlat/ethernet_protocols.h"
+@@ -42,6 +36,16 @@
+ 
+ #define SIZEOF_SA_FAMILY sizeof_field(struct sockaddr, sa_family)
+ 
++#define IPX_NODE_LEN	6
++struct sockaddr_ipx {
++	uint16_t sipx_family;
++	uint16_t sipx_port;
++	uint32_t sipx_network;
++	unsigned char sipx_node[IPX_NODE_LEN];
++	uint8_t sipx_type;
++	unsigned char sipx_zero;
++};
++
+ static void
+ print_sockaddr_data_un(struct tcb *tcp, const void *const buf, const int addrlen)
+ {
+diff --git a/src/xlat/sock_ipx_options.in b/src/xlat/sock_ipx_options.in
+index eba97fd719..b09be117e4 100644
+--- a/src/xlat/sock_ipx_options.in
++++ b/src/xlat/sock_ipx_options.in
+@@ -1 +1 @@
+-IPX_TYPE
++IPX_TYPE	1
+diff --git a/tests/net-sockaddr.c b/tests/net-sockaddr.c
+index f1f9b01cdd..c8049fd68b 100644
+--- a/tests/net-sockaddr.c
++++ b/tests/net-sockaddr.c
+@@ -24,7 +24,11 @@
+ #include <linux/if_ether.h>
+ #include <linux/if_packet.h>
+ #include <linux/x25.h>
+-#include <linux/ipx.h>
++#if defined HAVE_LINUX_IPX_H
++# include <linux/ipx.h>
++#elif defined HAVE_NETIPX_IPX_H
++# include <netipx/ipx.h>
++#endif
+ #ifdef HAVE_BLUETOOTH_BLUETOOTH_H
+ # include <bluetooth/bluetooth.h>
+ # include <bluetooth/hci.h>
+@@ -269,6 +273,7 @@ check_in6(void)
+ 	printf("connect(-1, %p, %u) = %d EBADF (%m)\n", in6, len, ret);
+ }
+ 
++#if defined HAVE_LINUX_IPX_H || defined HAVE_NETIPX_IPX_H
+ static void
+ check_ipx(void)
+ {
+@@ -295,6 +300,7 @@ check_ipx(void)
+ 	       c_ipx.sipx_node[4], c_ipx.sipx_node[5],
+ 	       c_ipx.sipx_type, len, ret);
+ }
++#endif /* HAVE_LINUX_IPX_H || defined HAVE_NETIPX_IPX_H */
+ 
+ /* for a bit more compact AX.25 address definitions */
+ #define AX25_ADDR(c_, s_) \
+@@ -773,7 +779,9 @@ main(void)
+ 	check_un();
+ 	check_in();
+ 	check_in6();
++#if defined HAVE_LINUX_IPX_H || defined HAVE_NETIPX_IPX_H
+ 	check_ipx();
++#endif
+ 	check_ax25();
+ 	check_x25();
+ 	check_nl();

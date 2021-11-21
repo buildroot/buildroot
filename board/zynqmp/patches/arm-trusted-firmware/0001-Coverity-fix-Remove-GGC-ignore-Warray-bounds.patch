@@ -1,0 +1,68 @@
+From da003e6ada7d0217fe99dc7c649a731f8ebd3c34 Mon Sep 17 00:00:00 2001
+From: Deepika Bhavnani <deepika.bhavnani@arm.com>
+Date: Thu, 15 Aug 2019 00:56:46 +0300
+Subject: [PATCH] Coverity fix: Remove GGC ignore -Warray-bounds
+
+GCC diagnostics were added to ignore array boundaries, instead
+of ignoring GCC warning current code will check for array boundaries
+and perform and array update only for valid elements.
+
+Resolves: `CID 246574` `CID 246710` `CID 246651`
+
+Signed-off-by: Deepika Bhavnani <deepika.bhavnani@arm.com>
+Change-Id: I7530ecf7a1707351c6ee87e90cc3d33574088f57
+
+Backported from: 41af05154abe136938bcfb5f26c969933784bbef
+[Adapted to apply on 1.5]
+
+---
+ lib/psci/psci_common.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/lib/psci/psci_common.c b/lib/psci/psci_common.c
+index 2220a745cd6e..6282d992a2f0 100644
+--- a/lib/psci/psci_common.c
++++ b/lib/psci/psci_common.c
+@@ -188,21 +188,17 @@ static unsigned int get_power_on_target_pwrlvl(void)
+ /******************************************************************************
+  * Helper function to update the requested local power state array. This array
+  * does not store the requested state for the CPU power level. Hence an
+- * assertion is added to prevent us from accessing the wrong index.
++ * assertion is added to prevent us from accessing the CPU power level.
+  *****************************************************************************/
+ static void psci_set_req_local_pwr_state(unsigned int pwrlvl,
+ 					 unsigned int cpu_idx,
+ 					 plat_local_state_t req_pwr_state)
+ {
+-	/*
+-	 * This should never happen, we have this here to avoid
+-	 * "array subscript is above array bounds" errors in GCC.
+-	 */
+ 	assert(pwrlvl > PSCI_CPU_PWR_LVL);
+-#pragma GCC diagnostic push
+-#pragma GCC diagnostic ignored "-Warray-bounds"
+-	psci_req_local_pwr_states[pwrlvl - 1][cpu_idx] = req_pwr_state;
+-#pragma GCC diagnostic pop
++	if ((pwrlvl > PSCI_CPU_PWR_LVL) && (pwrlvl <= PLAT_MAX_PWR_LVL) &&
++			(cpu_idx < PLATFORM_CORE_COUNT)) {
++		psci_req_local_pwr_states[pwrlvl - 1U][cpu_idx] = req_pwr_state;
++	}
+ }
+ 
+ /******************************************************************************
+@@ -228,7 +224,11 @@ static plat_local_state_t *psci_get_req_local_pwr_states(unsigned int pwrlvl,
+ {
+ 	assert(pwrlvl > PSCI_CPU_PWR_LVL);
+ 
+-	return &psci_req_local_pwr_states[pwrlvl - 1][cpu_idx];
++	if ((pwrlvl > PSCI_CPU_PWR_LVL) && (pwrlvl <= PLAT_MAX_PWR_LVL) &&
++			(cpu_idx < PLATFORM_CORE_COUNT)) {
++		return &psci_req_local_pwr_states[pwrlvl - 1U][cpu_idx];
++	} else
++		return NULL;
+ }
+ 
+ /*
+-- 
+2.34.0
+
