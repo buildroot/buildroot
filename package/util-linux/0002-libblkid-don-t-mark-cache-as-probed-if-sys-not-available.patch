@@ -1,0 +1,141 @@
+From 84d38ae3eca523ef990cb848563cc63de25266e6 Mon Sep 17 00:00:00 2001
+From: Karel Zak <kzak@redhat.com>
+Date: Fri, 19 Nov 2021 14:19:03 +0100
+Subject: [PATCH] libblkid: don't mark cache as "probed" if /sys not available
+
+For "mount --all" we need to read the cache more than once in a short
+time. The library checks the delay between probes, and if the delay is
+too short, it does not read devices. This is a problem on boot when there
+are no /sys, and the cache is empty. In this case, we need to check
+for /sys until it's available constantly.
+
+https://github.com/util-linux/util-linux/issues/1492
+Signed-off-by: Karel Zak <kzak@redhat.com>
+
+[Retrieved from:
+https://github.com/util-linux/util-linux/commit/84d38ae3eca523ef990cb848563cc63de25266e6]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ libblkid/src/devname.c | 26 +++++++++++++++++---------
+ libblkid/src/resolve.c |  2 +-
+ libblkid/src/tag.c     |  8 +++++---
+ 3 files changed, 23 insertions(+), 13 deletions(-)
+
+diff --git a/libblkid/src/devname.c b/libblkid/src/devname.c
+index 90a8245fc9..9a173e3489 100644
+--- a/libblkid/src/devname.c
++++ b/libblkid/src/devname.c
+@@ -429,6 +429,8 @@ sysfs_probe_all(blkid_cache cache, int only_if_new, int only_removable)
+ 	if (!sysfs)
+ 		return -BLKID_ERR_SYSFS;
+ 
++	DBG(DEVNAME, ul_debug(" probe /sys/block"));
++
+ 	/* scan /sys/block */
+ 	while ((dev = xreaddir(sysfs))) {
+ 		DIR *dir = NULL;
+@@ -533,14 +535,18 @@ sysfs_probe_all(blkid_cache cache, int only_if_new, int only_removable)
+ /*
+  * Read the device data for all available block devices in the system.
+  */
+-static int probe_all(blkid_cache cache, int only_if_new)
++static int probe_all(blkid_cache cache, int only_if_new, int update_interval)
+ {
++	int rc;
++
+ 	if (!cache)
+ 		return -BLKID_ERR_PARAM;
+ 
+ 	if (cache->bic_flags & BLKID_BIC_FL_PROBED &&
+-	    time(NULL) - cache->bic_time < BLKID_PROBE_INTERVAL)
++	    time(NULL) - cache->bic_time < BLKID_PROBE_INTERVAL) {
++		DBG(PROBE, ul_debug("don't re-probe [delay < %d]", BLKID_PROBE_INTERVAL));
+ 		return 0;
++	}
+ 
+ 	blkid_read_cache(cache);
+ #ifdef VG_DIR
+@@ -548,7 +554,13 @@ static int probe_all(blkid_cache cache, int only_if_new)
+ #endif
+ 	ubi_probe_all(cache, only_if_new);
+ 
+-	sysfs_probe_all(cache, only_if_new, 0);
++	rc = sysfs_probe_all(cache, only_if_new, 0);
++
++	/* Don't mark the change as "probed" if /sys not avalable */
++	if (update_interval && rc == 0) {
++		cache->bic_time = time(NULL);
++		cache->bic_flags |= BLKID_BIC_FL_PROBED;
++	}
+ 
+ 	blkid_flush_cache(cache);
+ 	return 0;
+@@ -567,11 +579,7 @@ int blkid_probe_all(blkid_cache cache)
+ 	int ret;
+ 
+ 	DBG(PROBE, ul_debug("Begin blkid_probe_all()"));
+-	ret = probe_all(cache, 0);
+-	if (ret == 0) {
+-		cache->bic_time = time(NULL);
+-		cache->bic_flags |= BLKID_BIC_FL_PROBED;
+-	}
++	ret = probe_all(cache, 0, 1);
+ 	DBG(PROBE, ul_debug("End blkid_probe_all() [rc=%d]", ret));
+ 	return ret;
+ }
+@@ -589,7 +597,7 @@ int blkid_probe_all_new(blkid_cache cache)
+ 	int ret;
+ 
+ 	DBG(PROBE, ul_debug("Begin blkid_probe_all_new()"));
+-	ret = probe_all(cache, 1);
++	ret = probe_all(cache, 1, 0);
+ 	DBG(PROBE, ul_debug("End blkid_probe_all_new() [rc=%d]", ret));
+ 	return ret;
+ }
+diff --git a/libblkid/src/resolve.c b/libblkid/src/resolve.c
+index 641b022860..16653fa8e1 100644
+--- a/libblkid/src/resolve.c
++++ b/libblkid/src/resolve.c
+@@ -32,7 +32,7 @@ char *blkid_get_tag_value(blkid_cache cache, const char *tagname,
+ 	blkid_cache c = cache;
+ 	char *ret = NULL;
+ 
+-	DBG(TAG, ul_debug("looking for %s on %s", tagname, devname));
++	DBG(TAG, ul_debug("looking for tag %s on %s device", tagname, devname));
+ 
+ 	if (!devname)
+ 		return NULL;
+diff --git a/libblkid/src/tag.c b/libblkid/src/tag.c
+index 390a648648..178336505f 100644
+--- a/libblkid/src/tag.c
++++ b/libblkid/src/tag.c
+@@ -326,14 +326,14 @@ blkid_dev blkid_find_dev_with_tag(blkid_cache cache,
+ 	blkid_dev	dev;
+ 	int		pri;
+ 	struct list_head *p;
+-	int		probe_new = 0;
++	int		probe_new = 0, probe_all = 0;
+ 
+ 	if (!cache || !type || !value)
+ 		return NULL;
+ 
+ 	blkid_read_cache(cache);
+ 
+-	DBG(TAG, ul_debug("looking for %s=%s in cache", type, value));
++	DBG(TAG, ul_debug("looking for tag %s=%s in cache", type, value));
+ 
+ try_again:
+ 	pri = -1;
+@@ -366,9 +366,11 @@ blkid_dev blkid_find_dev_with_tag(blkid_cache cache,
+ 		goto try_again;
+ 	}
+ 
+-	if (!dev && !(cache->bic_flags & BLKID_BIC_FL_PROBED)) {
++	if (!dev && !probe_all
++	    && !(cache->bic_flags & BLKID_BIC_FL_PROBED)) {
+ 		if (blkid_probe_all(cache) < 0)
+ 			return NULL;
++		probe_all++;
+ 		goto try_again;
+ 	}
+ 	return dev;
