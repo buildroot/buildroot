@@ -1,7 +1,7 @@
 From d667b13a87cf3207599a19eb981a893a1d7a67ee Mon Sep 17 00:00:00 2001
 From: Brendan Heading <brendanheading@gmail.com>
 Date: Mon, 14 Sep 2015 23:25:52 +0100
-Subject: [PATCH 1/1] ibrcommon/data/File.cpp: support POSIX basename call
+Subject: [PATCH] ibrcommon/data/File.cpp: support POSIX basename call
 
 Firstly, and somewhat strangely, musl chooses not to provide a basename(3)
 prototype within <string.h> whenever __cplusplus is defined. This can be
