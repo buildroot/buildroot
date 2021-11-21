@@ -1,0 +1,40 @@
+From ab5519971a090863f8c559907766e0b2382e0471 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd.kuhls@t-online.de>
+Date: Sat, 20 Nov 2021 23:02:18 +0100
+Subject: [PATCH] c11_compat.h: fix uClibc build
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes build error with uClibc and gcc-9.3.0:
+
+../src/egl/main/egldisplay.c: In function ‘_eglGetNativePlatformFromEnv’:
+../src/egl/main/egldisplay.c:101:4: error: implicit declaration of function ‘static_assert’ [-Werror=implicit-function-declaration]
+  101 |    static_assert(ARRAY_SIZE(egl_platforms) == _EGL_NUM_PLATFORMS,
+
+CC: 21.3 <mesa-stable>
+
+Patch sent upstream:
+https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13898
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ include/c11_compat.h | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/include/c11_compat.h b/include/c11_compat.h
+index d35740f47a4..cdcd3f1f52f 100644
+--- a/include/c11_compat.h
++++ b/include/c11_compat.h
+@@ -8,8 +8,6 @@
+ 
+ #if defined(__cplusplus)
+    /* This is C++ code, not C */
+-#elif (__STDC_VERSION__ >= 201112L)
+-   /* Already C11 */
+ #else
+ 
+ 
+-- 
+GitLab
+
