@@ -10,11 +10,11 @@ NSS_MYHOSTNAME_LICENSE = LGPL-2.1+
 NSS_MYHOSTNAME_LICENSE_FILES = LICENSE
 
 # add myhostname after files if missing
-define MYHOSTNAME_SET_NSSWITCH
+define NSS_MYHOSTNAME_SET_NSSWITCH
 	$(SED) '/^hosts:/ {/myhostname/! s/files/files myhostname/}' \
 		$(TARGET_DIR)/etc/nsswitch.conf
 endef
 
-NSS_MYHOSTNAME_TARGET_FINALIZE_HOOKS += MYHOSTNAME_SET_NSSWITCH
+NSS_MYHOSTNAME_TARGET_FINALIZE_HOOKS += NSS_MYHOSTNAME_SET_NSSWITCH
 
 $(eval $(autotools-package))
