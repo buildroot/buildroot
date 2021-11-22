@@ -24,12 +24,12 @@ SPIDEV_TEST_LICENSE = GPL-2.0
 
 # musl libc requires linux/ioctl.h for _IOC_SIZEBITS. Do a sed patch to keep
 # compatibility with different spidev_test.c versions that we support.
-define SPIDEV_ADD_LINUX_IOCTL
+define SPIDEV_TEST_ADD_LINUX_IOCTL
 	$(SED) 's~^#include <sys/ioctl.h>~#include <sys/ioctl.h>\n#include <linux/ioctl.h>~' \
 		$(@D)/spidev_test.c
 endef
 
-SPIDEV_TEST_POST_PATCH_HOOKS += SPIDEV_ADD_LINUX_IOCTL
+SPIDEV_TEST_POST_PATCH_HOOKS += SPIDEV_TEST_ADD_LINUX_IOCTL
 
 define SPIDEV_TEST_EXTRACT_CMDS
 	cp $(SPIDEV_TEST_DL_DIR)/$(SPIDEV_TEST_SOURCE) $(@D)/spidev_test.c
