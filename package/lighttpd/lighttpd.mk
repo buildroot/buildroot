@@ -12,6 +12,8 @@ LIGHTTPD_LICENSE = BSD-3-Clause
 LIGHTTPD_LICENSE_FILES = COPYING
 LIGHTTPD_CPE_ID_VENDOR = lighttpd
 LIGHTTPD_DEPENDENCIES = host-pkgconf
+# Issue in configure script provided in tarball
+LIGHTTPD_AUTORECONF = YES
 LIGHTTPD_CONF_OPTS = \
 	--without-wolfssl \
 	--libdir=/usr/lib/lighttpd \

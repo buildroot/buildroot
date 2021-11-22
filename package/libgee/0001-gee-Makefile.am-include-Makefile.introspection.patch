@@ -1,0 +1,40 @@
+From d771e8ddb5e40f234459966e46880d10f34aaa1a Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 20 Nov 2021 23:57:33 +0100
+Subject: [PATCH] gee/Makefile.am: include Makefile.introspection
+
+Include Makefile.introspection instead of using a custom rule which will
+result in the following build failure when cross-compiling on buildroot
+because of missing --includedir:
+
+/home/giuliobenetti/autobuild/run/instance-1/output-1/host/bin/../riscv32-buildroot-linux-gnu/sysroot/usr/bin/g-ir-compiler -l `/usr/bin/sed -nE "s/^dlname='([A-Za-z0-9.+-]+)'/\1/p" libgee-0.8.la` -o Gee-0.8.typelib Gee-0.8.gir libgee-0.8.la
+Could not find GIR file 'GObject-2.0.gir'; check XDG_DATA_DIRS or use --includedir
+error parsing file Gee-0.8.gir: Failed to parse included gir GObject-2.0
+
+Fixes:
+ - http://autobuild.buildroot.org/results/884faa0f84c8dc43ed1ca6cde9caf21c731a4b35
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:
+https://gitlab.gnome.org/GNOME/libgee/-/merge_requests/8]
+---
+ gee/Makefile.am | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/gee/Makefile.am b/gee/Makefile.am
+index 5634bcb..e0d950e 100644
+--- a/gee/Makefile.am
++++ b/gee/Makefile.am
+@@ -167,7 +167,8 @@ INTROSPECTION_COMPILER_ARGS= \
+ 	-l $(libgee_dlname)
+ Gee-0.8.gir: libgee_0_8_la_vala.stamp
+ Gee-0.8.typelib: Gee-0.8.gir libgee-0.8.la
+-	@INTROSPECTION_COMPILER@ $(INTROSPECTION_COMPILER_ARGS) -o $@ $^
++
++-include $(INTROSPECTION_MAKEFILE)
+ endif
+ 
+ MOSTLYCLEANFILES = \
+-- 
+2.33.0
+
