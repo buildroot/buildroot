@@ -1,0 +1,57 @@
+From 3796175f32f0cc24c16809d8175d423bc7053de9 Mon Sep 17 00:00:00 2001
+From: StefanBruens <stefan.bruens@rwth-aachen.de>
+Date: Wed, 5 May 2021 18:24:58 +0200
+Subject: [PATCH] usrp2: Replace boost::math::iround/math::sign with std::lround
+
+Instead of multiplying zone with the sign repeatedly just make
+the zone a signed value.
+
+See #437, #438
+
+Signed-off-by: Aaron Rossetto <aaron.rossetto@ni.com>
+[gwenhael.goavec-merou@trabucayre.com: backport from upstream]
+Signed-off-by: Gwenhael Goavec-Merou <gwenhael.goavec-merou@trabucayre.com>
+---
+ host/lib/usrp/usrp2/usrp2_impl.cpp | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/host/lib/usrp/usrp2/usrp2_impl.cpp b/host/lib/usrp/usrp2/usrp2_impl.cpp
+index 1be4c7339..c0719a316 100644
+--- a/host/lib/usrp/usrp2/usrp2_impl.cpp
++++ b/host/lib/usrp/usrp2/usrp2_impl.cpp
+@@ -22,6 +22,7 @@
+ #include <boost/asio/ip/address_v4.hpp>
+ #include <boost/asio.hpp> //used for htonl and ntohl
+ #include <boost/thread.hpp>
++#include <cmath>
+ 
+ using namespace uhd;
+ using namespace uhd::usrp;
+@@ -844,20 +845,19 @@ double usrp2_impl::set_tx_dsp_freq(
+         _tree->access<double>("/mboards/"+mb+"/tick_rate").get();
+ 
+     //calculate the DAC shift (multiples of rate)
+-    const int sign = boost::math::sign(new_freq);
+-    const int zone = std::min(boost::math::iround(new_freq/tick_rate), 2);
+-    const double dac_shift = sign*zone*tick_rate;
++    const int zone         = std::max(std::min(std::lround(new_freq / tick_rate), 2), -2);
++    const double dac_shift = zone * tick_rate;
+     new_freq -= dac_shift; //update FPGA DSP target freq
+     UHD_LOG_TRACE("USRP2",
+         "DSP Tuning: Requested " + std::to_string(freq_/1e6) + " MHz, Using "
+-        "Nyquist zone " + std::to_string(sign*zone) + ", leftover DSP tuning: "
++        "Nyquist zone " + std::to_string(zone) + ", leftover DSP tuning: "
+         + std::to_string(new_freq/1e6) + " MHz.");
+ 
+     //set the DAC shift (modulation mode)
+     if (zone == 0) {
+         _mbc[mb].codec->set_tx_mod_mode(0); //no shift
+     } else {
+-        _mbc[mb].codec->set_tx_mod_mode(sign*4/zone); //DAC interp = 4
++        _mbc[mb].codec->set_tx_mod_mode(4 / zone); // DAC interp = 4
+     }
+ 
+     return _mbc[mb].tx_dsp->set_freq(new_freq) + dac_shift; //actual freq
+-- 
+2.32.0
+
