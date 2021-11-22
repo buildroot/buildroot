@@ -31,7 +31,7 @@ define INADYN_INSTALL_INIT_SYSV
 endef
 
 define INADYN_INSTALL_INIT_SYSTEMD
-	$(INSTALL) -D -m 644 package/inadyn/inadyn.service \
+	$(INSTALL) -D -m 644 $(@D)/inadyn.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/inadyn.service
 endef
 
