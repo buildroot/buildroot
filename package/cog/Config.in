@@ -28,12 +28,12 @@ config BR2_PACKAGE_COG_PROGRAMS_HOME_URI
 	  must be always specified in the command line.
 
 config BR2_PACKAGE_COG_PLATFORM_FDO
-	bool "FreeDesktop.org backend"
+	bool "Wayland backend"
 	default y
 	select BR2_PACKAGE_LIBXKBCOMMON
 	select BR2_PACKAGE_WAYLAND_PROTOCOLS
 	help
-	  Enable the FreeDesktop.org backend. Cog will interface with
+	  Enable the Wayland backend. Cog will interface with
 	  a compositor over the Wayland protocol.
 
 config BR2_PACKAGE_COG_PLATFORM_DRM
