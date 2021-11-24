@@ -375,7 +375,8 @@ def get_config_packages():
 
 def package_init_make_info():
     # Fetch all variables at once
-    variables = subprocess.check_output(["make", "BR2_HAVE_DOT_CONFIG=y", "-s", "printvars",
+    variables = subprocess.check_output(["make", "--no-print-directory", "-s",
+                                         "BR2_HAVE_DOT_CONFIG=y", "printvars",
                                          "VARS=%_LICENSE %_LICENSE_FILES %_VERSION %_IGNORE_CVES %_CPE_ID"])
     variable_list = variables.decode().splitlines()
 
