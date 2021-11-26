@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-LIBDRM_VERSION = 2.4.108
+LIBDRM_VERSION = 2.4.109
 LIBDRM_SOURCE = libdrm-$(LIBDRM_VERSION).tar.xz
 LIBDRM_SITE = https://dri.freedesktop.org/libdrm
 LIBDRM_LICENSE = MIT
-LIBDRM_LICENSE_FILES = xf86drm.c
+LIBDRM_LICENSE_FILES = data/meson.build
 LIBDRM_INSTALL_STAGING = YES
 
 LIBDRM_DEPENDENCIES = \
