@@ -13,6 +13,11 @@ PYTHON_REQUESTS_LICENSE_FILES = LICENSE
 PYTHON_REQUESTS_CPE_ID_VENDOR = python
 PYTHON_REQUESTS_CPE_ID_PRODUCT = requests
 HOST_PYTHON_REQUESTS_NEEDS_HOST_PYTHON = python3
+HOST_PYTHON_REQUESTS_DEPENDENCIES = \
+	host-python-certifi \
+	host-python-charset-normalizer \
+	host-python-idna \
+	host-python-urllib3
 
 $(eval $(python-package))
 $(eval $(host-python-package))
