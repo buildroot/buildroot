@@ -39,3 +39,11 @@ class TestGitHub(GitforgeTestBase):
         self.check_download("github-helper-hash")
         self.check_download("github-release")
 
+
+class TestGitLab(GitforgeTestBase):
+    br2_external = [infra.filepath("tests/download/br2-external/gitlab")]
+
+    def test_run(self):
+        self.check_download("gitlab-helper-hash")
+        self.check_download("gitlab-helper-tag")
+        self.check_download("gitlab-release")
