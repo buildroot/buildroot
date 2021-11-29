@@ -16,9 +16,9 @@ LEPTONICA_CONF_OPTS += --disable-programs
 
 ifeq ($(BR2_PACKAGE_GIFLIB),y)
 LEPTONICA_DEPENDENCIES += giflib
-LEPTONICA_CONF_OPTS +=  --with-giflib
+LEPTONICA_CONF_OPTS += --with-giflib
 else
-LEPTONICA_CONF_OPTS +=  --without-giflib
+LEPTONICA_CONF_OPTS += --without-giflib
 endif
 
 ifeq ($(BR2_PACKAGE_JPEG),y)
