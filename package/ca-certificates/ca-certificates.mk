@@ -22,7 +22,7 @@ define CA_CERTIFICATES_INSTALL_TARGET_CMDS
 	rm -f $(TARGET_DIR)/usr/sbin/update-ca-certificates
 
 	# Remove any existing certificates under /etc/ssl/certs
-	rm -f  $(TARGET_DIR)/etc/ssl/certs/*
+	rm -f $(TARGET_DIR)/etc/ssl/certs/*
 
 	# Create symlinks to certificates under /etc/ssl/certs
 	# and generate the bundle
