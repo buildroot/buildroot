@@ -12,7 +12,7 @@ WIRELESS_REGDB_LICENSE_FILES = LICENSE
 WIRELESS_REGDB_CPE_ID_VENDOR = kernel
 
 ifeq ($(BR2_PACKAGE_CRDA),y)
-define  WIRELESS_REGDB_INSTALL_CRDA_TARGET_CMDS
+define WIRELESS_REGDB_INSTALL_CRDA_TARGET_CMDS
 	$(INSTALL) -m 644 -D -T $(@D)/regulatory.bin \
 		$(TARGET_DIR)/usr/lib/crda/regulatory.bin
 	$(INSTALL) -m 644 -D -T $(@D)/sforshee.key.pub.pem \
