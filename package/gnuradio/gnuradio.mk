@@ -22,7 +22,7 @@ endif
 GNURADIO_DEPENDENCIES = \
 	host-python3 \
 	host-python-mako \
-	host-python-six \
+	host-python3-six \
 	host-swig \
 	boost \
 	log4cpp \
