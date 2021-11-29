@@ -1,90 +1,35 @@
---- a/src/cobalt/render_tree/color_rgba.h	2021-03-15 12:59:14.681236752 +0100
-+++ b/src/cobalt/render_tree/color_rgba.h	2021-03-15 13:04:28.455345839 +0100
-@@ -39,6 +39,8 @@
-  public:
-   ColorRGBA() : r_(0), g_(0), b_(0), a_(0) {}
+diff -Naur cobalt.orig/src/cobalt/browser/memory_settings/auto_mem.cc cobalt/src/cobalt/browser/memory_settings/auto_mem.cc
+--- cobalt.orig/src/cobalt/browser/memory_settings/auto_mem.cc	2021-11-29 22:54:12.685641240 +0530
++++ cobalt/src/cobalt/browser/memory_settings/auto_mem.cc	2021-11-30 01:27:03.573123050 +0530
+@@ -100,7 +100,7 @@
+       new MemorySettingType(setting_name));
+   SetMemorySetting(command_line_setting, build_setting, autoset_value,
+                    output.get());
+-  return std::move(output);
++  return output;
+ }
  
-+  ColorRGBA(const ColorRGBA& copy) : r_(copy.r_), g_(copy.g_), b_(copy.b_), a_(copy.a_) {
-+  }
-   ColorRGBA(float red, float green, float blue) {
-     CheckRange(red);
-     r_ = red;
---- a/src/cobalt/render_tree/rounded_corners.h	2021-03-15 13:11:07.658050242 +0100
-+++ b/src/cobalt/render_tree/rounded_corners.h	2021-03-15 13:10:23.177745487 +0100
-@@ -81,6 +81,14 @@
-         bottom_right(bottom_right),
-         bottom_left(bottom_left) {}
+ std::unique_ptr<IntSetting> CreateSystemMemorySetting(
+diff -Naur cobalt.orig/src/cobalt/browser/memory_settings/texture_dimensions.h cobalt/src/cobalt/browser/memory_settings/texture_dimensions.h
+--- cobalt.orig/src/cobalt/browser/memory_settings/texture_dimensions.h	2021-11-29 22:54:12.685641240 +0530
++++ cobalt/src/cobalt/browser/memory_settings/texture_dimensions.h	2021-11-30 01:27:03.573123050 +0530
+@@ -35,6 +35,13 @@
+         height_(other.height_),
+         bytes_per_pixel_(other.bytes_per_pixel_) {}
  
-+  RoundedCorners& operator= (const RoundedCorners& radiuses) {
-+    top_left = radiuses.top_left;
-+    top_right = radiuses.top_right;
-+    bottom_right = radiuses.bottom_right;
-+    bottom_left = radiuses.bottom_left; 
++  TextureDimensions& operator= (const TextureDimensions& other) {
++    width_ = other.width_;
++    height_ = other.height_;
++    bytes_per_pixel_ = other.bytes_per_pixel_;
 +    return (*this);
 +  }
 +
-   bool operator==(const RoundedCorners& other) const {
-     return top_left == other.top_left && top_right == other.top_right &&
-            bottom_right == other.bottom_right &&
---- a/src/cobalt/render_tree/composition_node.h	2021-03-15 13:13:39.263114548 +0100
-+++ b/src/cobalt/render_tree/composition_node.h	2021-03-15 13:15:28.779878893 +0100
-@@ -74,6 +74,12 @@
-       children_.swap(moved->children_);
-     }
- 
-+    Builder& operator= (const Builder& other) {
-+        offset_ = other.offset_;
-+        children_ = other.children_;
-+        return (*this);
-+    }
-+
-     bool operator==(const Builder& other) const {
-       return offset_ == other.offset_ && children_ == other.children_;
-     }
---- a/src/net/spdy/spdy_session_key.h	2021-03-15 13:18:51.137283739 +0100
-+++ b/src/net/spdy/spdy_session_key.h	2021-03-15 13:19:40.013621927 +0100
-@@ -22,6 +22,7 @@
-                  const SocketTag& socket_tag);
- 
-   SpdySessionKey(const SpdySessionKey& other);
-+  SpdySessionKey& operator= (const SpdySessionKey& other);
- 
-   ~SpdySessionKey();
- 
---- a/src/net/spdy/spdy_session_key.cc	2021-03-15 13:19:54.077719176 +0100
-+++ b/src/net/spdy/spdy_session_key.cc	2021-03-15 15:40:35.297362549 +0100
-@@ -28,6 +28,13 @@
- 
- SpdySessionKey::SpdySessionKey(const SpdySessionKey& other) = default;
- 
-+SpdySessionKey& SpdySessionKey::operator= (const SpdySessionKey& other) {
-+  host_port_proxy_pair_ = other.host_port_proxy_pair_;
-+  privacy_mode_ = other.privacy_mode_;
-+  socket_tag_ = other.socket_tag_;
-+  return (*this);
-+}
-+
- SpdySessionKey::~SpdySessionKey() = default;
- 
- bool SpdySessionKey::operator<(const SpdySessionKey& other) const {
---- a/rc/net/third_party/quic/core/frames/quic_inlined_frame.h	2021-03-15 15:44:23.275043043 +0100
-+++ b/src/net/third_party/quic/core/frames/quic_inlined_frame.h	2021-03-15 15:44:47.043216095 +0100
-@@ -17,13 +17,6 @@
- template <typename DerivedT>
- struct QUIC_EXPORT_PRIVATE QuicInlinedFrame {
-   QuicInlinedFrame(QuicFrameType type) : type(type) {
--#if !(defined(STARBOARD) && defined(__GNUC__) && !defined(__clang__) && \
--      __GNUC__ <= 8)
--    // Raspi compiler does not allow none-static type in offsetof, but we should
--    // turn on this check on as many platforms as possible.
--    static_assert(offsetof(DerivedT, type) == 0,
--                  "type must be the first field.");
--#endif
-     static_assert(sizeof(DerivedT) <= 24,
-                   "Frames larger than 24 bytes should not be inlined.");
-   }
---- a/src/cobalt/layout/layout_unit.h	2021-03-15 15:49:00.461043068 +0100
-+++ b/src/cobalt/layout/layout_unit.h	2021-03-15 15:53:44.619063933 +0100
+   bool operator==(const TextureDimensions& other) const {
+     return width_ == other.width_ && height_ == other.height_ &&
+            bytes_per_pixel_ == other.bytes_per_pixel_;
+diff -Naur cobalt.orig/src/cobalt/layout/layout_unit.h cobalt/src/cobalt/layout/layout_unit.h
+--- cobalt.orig/src/cobalt/layout/layout_unit.h	2021-11-29 22:54:12.885643324 +0530
++++ cobalt/src/cobalt/layout/layout_unit.h	2021-11-30 01:27:03.573123050 +0530
 @@ -57,6 +57,11 @@
  #endif
    }
@@ -106,41 +51,89 @@
      value_ = value.value_;
  #ifdef _DEBUG
      is_nan_ = is_nan_ || value.is_nan_;
---- a/src/cobalt/browser/memory_settings/texture_dimensions.h	2021-03-15 15:59:48.261625985 +0100
-+++ b/src/cobalt/browser/memory_settings/texture_dimensions.h	2021-03-15 16:01:24.654302396 +0100
-@@ -35,6 +35,13 @@
-         height_(other.height_),
-         bytes_per_pixel_(other.bytes_per_pixel_) {}
+diff -Naur cobalt.orig/src/cobalt/render_tree/color_rgba.h cobalt/src/cobalt/render_tree/color_rgba.h
+--- cobalt.orig/src/cobalt/render_tree/color_rgba.h	2021-11-29 22:54:13.197646530 +0530
++++ cobalt/src/cobalt/render_tree/color_rgba.h	2021-11-30 01:27:03.573123050 +0530
+@@ -39,6 +39,8 @@
+  public:
+   ColorRGBA() : r_(0), g_(0), b_(0), a_(0) {}
  
-+  TextureDimensions& operator= (const TextureDimensions& other) {
-+    width_ = other.width_;
-+    height_ = other.height_;
-+    bytes_per_pixel_ = other.bytes_per_pixel_;
++  ColorRGBA(const ColorRGBA& copy) : r_(copy.r_), g_(copy.g_), b_(copy.b_), a_(copy.a_) {
++  }
+   ColorRGBA(float red, float green, float blue) {
+     CheckRange(red);
+     r_ = red;
+diff -Naur cobalt.orig/src/cobalt/render_tree/composition_node.h cobalt/src/cobalt/render_tree/composition_node.h
+--- cobalt.orig/src/cobalt/render_tree/composition_node.h	2021-11-29 22:54:13.197646530 +0530
++++ cobalt/src/cobalt/render_tree/composition_node.h	2021-11-30 01:27:03.573123050 +0530
+@@ -74,6 +74,12 @@
+       children_.swap(moved->children_);
+     }
+ 
++    Builder& operator= (const Builder& other) {
++        offset_ = other.offset_;
++        children_ = other.children_;
++        return (*this);
++    }
++
+     bool operator==(const Builder& other) const {
+       return offset_ == other.offset_ && children_ == other.children_;
+     }
+diff -Naur cobalt.orig/src/cobalt/render_tree/rounded_corners.h cobalt/src/cobalt/render_tree/rounded_corners.h
+--- cobalt.orig/src/cobalt/render_tree/rounded_corners.h	2021-11-29 22:54:13.197646530 +0530
++++ cobalt/src/cobalt/render_tree/rounded_corners.h	2021-11-30 01:27:03.577123029 +0530
+@@ -81,6 +81,14 @@
+         bottom_right(bottom_right),
+         bottom_left(bottom_left) {}
+ 
++  RoundedCorners& operator= (const RoundedCorners& radiuses) {
++    top_left = radiuses.top_left;
++    top_right = radiuses.top_right;
++    bottom_right = radiuses.bottom_right;
++    bottom_left = radiuses.bottom_left; 
 +    return (*this);
 +  }
 +
-   bool operator==(const TextureDimensions& other) const {
-     return width_ == other.width_ && height_ == other.height_ &&
-            bytes_per_pixel_ == other.bytes_per_pixel_;
---- a/src/cobalt/browser/memory_settings/auto_mem.cc	2021-03-15 16:03:32.134773858 +0100
-+++ b/src/cobalt/browser/memory_settings/auto_mem.cc	2021-03-15 16:04:00.414880367 +0100
-@@ -100,7 +100,7 @@
-       new MemorySettingType(setting_name));
-   SetMemorySetting(command_line_setting, build_setting, autoset_value,
-                    output.get());
--  return std::move(output);
-+  return output;
- }
+   bool operator==(const RoundedCorners& other) const {
+     return top_left == other.top_left && top_right == other.top_right &&
+            bottom_right == other.bottom_right &&
+diff -Naur cobalt.orig/src/net/spdy/spdy_session_key.cc cobalt/src/net/spdy/spdy_session_key.cc
+--- cobalt.orig/src/net/spdy/spdy_session_key.cc	2021-11-29 22:54:13.533649953 +0530
++++ cobalt/src/net/spdy/spdy_session_key.cc	2021-11-30 01:27:03.577123029 +0530
+@@ -28,6 +28,13 @@
  
- std::unique_ptr<IntSetting> CreateSystemMemorySetting(
---- a/src/net/third_party/quic/core/frames/quic_frame.h	2021-03-15 19:57:08.191428438 +0100
-+++ b/src/net/third_party/quic/core/frames/quic_frame.h	2021-03-15 19:57:33.911585298 +0100
+ SpdySessionKey::SpdySessionKey(const SpdySessionKey& other) = default;
+ 
++SpdySessionKey& SpdySessionKey::operator= (const SpdySessionKey& other) {
++  host_port_proxy_pair_ = other.host_port_proxy_pair_;
++  privacy_mode_ = other.privacy_mode_;
++  socket_tag_ = other.socket_tag_;
++  return (*this);
++}
++
+ SpdySessionKey::~SpdySessionKey() = default;
+ 
+ bool SpdySessionKey::operator<(const SpdySessionKey& other) const {
+diff -Naur cobalt.orig/src/net/spdy/spdy_session_key.h cobalt/src/net/spdy/spdy_session_key.h
+--- cobalt.orig/src/net/spdy/spdy_session_key.h	2021-11-29 22:54:13.533649953 +0530
++++ cobalt/src/net/spdy/spdy_session_key.h	2021-11-30 01:27:03.577123029 +0530
+@@ -22,6 +22,7 @@
+                  const SocketTag& socket_tag);
+ 
+   SpdySessionKey(const SpdySessionKey& other);
++  SpdySessionKey& operator= (const SpdySessionKey& other);
+ 
+   ~SpdySessionKey();
+ 
+diff -Naur cobalt.orig/src/net/third_party/quic/core/frames/quic_frame.h cobalt/src/net/third_party/quic/core/frames/quic_frame.h
+--- cobalt.orig/src/net/third_party/quic/core/frames/quic_frame.h	2021-11-29 22:54:13.565650280 +0530
++++ cobalt/src/net/third_party/quic/core/frames/quic_frame.h	2021-11-30 01:27:03.577123029 +0530
 @@ -110,12 +110,6 @@
  
  static_assert(sizeof(QuicFrame) <= 24,
                "Frames larger than 24 bytes should be referenced by pointer.");
 -#if !(defined(STARBOARD) && defined(__GNUC__) && !defined(__clang__) && \
--      __GNUC__ <= 8)
+-      __GNUC__ <= 7)
 -// Raspi compiler does not allow none-static type in offsetof.
 -static_assert(offsetof(QuicStreamFrame, type) == offsetof(QuicFrame, type),
 -              "Offset of |type| must match in QuicFrame and QuicStreamFrame");
@@ -148,3 +141,20 @@
  
  // A inline size of 1 is chosen to optimize the typical use case of
  // 1-stream-frame in QuicTransmissionInfo.retransmittable_frames.
+diff -Naur cobalt.orig/src/net/third_party/quic/core/frames/quic_inlined_frame.h cobalt/src/net/third_party/quic/core/frames/quic_inlined_frame.h
+--- cobalt.orig/src/net/third_party/quic/core/frames/quic_inlined_frame.h	2021-11-29 22:54:13.565650280 +0530
++++ cobalt/src/net/third_party/quic/core/frames/quic_inlined_frame.h	2021-11-30 01:27:03.581123009 +0530
+@@ -17,13 +17,6 @@
+ template <typename DerivedT>
+ struct QUIC_EXPORT_PRIVATE QuicInlinedFrame {
+   QuicInlinedFrame(QuicFrameType type) : type(type) {
+-#if !(defined(STARBOARD) && defined(__GNUC__) && !defined(__clang__) && \
+-      __GNUC__ <= 7)
+-    // Raspi compiler does not allow none-static type in offsetof, but we should
+-    // turn on this check on as many platforms as possible.
+-    static_assert(offsetof(DerivedT, type) == 0,
+-                  "type must be the first field.");
+-#endif
+     static_assert(sizeof(DerivedT) <= 24,
+                   "Frames larger than 24 bytes should not be inlined.");
+   }

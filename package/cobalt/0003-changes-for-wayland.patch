@@ -1,6 +1,6 @@
-diff -ruN cobalt.orig/src/cobalt/renderer/backend/egl/graphics_context.cc cobalt/src/cobalt/renderer/backend/egl/graphics_context.cc
---- cobalt.orig/src/cobalt/renderer/backend/egl/graphics_context.cc	2021-05-27 17:36:48.000000000 +0530
-+++ cobalt/src/cobalt/renderer/backend/egl/graphics_context.cc	2021-07-05 22:36:14.143943715 +0530
+diff -Naur cobalt.orig/src/cobalt/renderer/backend/egl/graphics_context.cc cobalt/src/cobalt/renderer/backend/egl/graphics_context.cc
+--- cobalt.orig/src/cobalt/renderer/backend/egl/graphics_context.cc	2021-11-29 22:54:13.197646530 +0530
++++ cobalt/src/cobalt/renderer/backend/egl/graphics_context.cc	2021-11-30 01:32:19.702689365 +0530
 @@ -76,7 +76,7 @@
    // when we need to make OpenGL calls that do not depend on a surface (e.g.
    // creating a texture).
@@ -10,9 +10,9 @@ diff -ruN cobalt.orig/src/cobalt/renderer/backend/egl/graphics_context.cc cobalt
  
    ScopedMakeCurrent scoped_current_context(this);
  
-diff -ruN cobalt.orig/src/cobalt/renderer/backend/egl/graphics_system.cc cobalt/src/cobalt/renderer/backend/egl/graphics_system.cc
---- cobalt.orig/src/cobalt/renderer/backend/egl/graphics_system.cc	2021-05-27 17:36:48.000000000 +0530
-+++ cobalt/src/cobalt/renderer/backend/egl/graphics_system.cc	2021-07-05 22:36:39.544296168 +0530
+diff -Naur cobalt.orig/src/cobalt/renderer/backend/egl/graphics_system.cc cobalt/src/cobalt/renderer/backend/egl/graphics_system.cc
+--- cobalt.orig/src/cobalt/renderer/backend/egl/graphics_system.cc	2021-11-29 22:54:13.197646530 +0530
++++ cobalt/src/cobalt/renderer/backend/egl/graphics_system.cc	2021-11-30 01:32:19.702689365 +0530
 @@ -105,7 +105,10 @@
    // Return the first config that succeeds the above test.
    EGLint num_configs = 0;
@@ -41,25 +41,3 @@ diff -ruN cobalt.orig/src/cobalt/renderer/backend/egl/graphics_system.cc cobalt/
    DCHECK(choose_config_results);
  
    config_ = choose_config_results->config;
-diff -ruN cobalt.orig/src/third_party/starboard/wpe/rpi/gyp_configuration.gypi cobalt/src/third_party/starboard/wpe/rpi/gyp_configuration.gypi
---- cobalt.orig/src/third_party/starboard/wpe/rpi/gyp_configuration.gypi	2021-07-05 22:30:34.734565943 +0530
-+++ cobalt/src/third_party/starboard/wpe/rpi/gyp_configuration.gypi	2021-07-05 22:40:01.850929559 +0530
-@@ -50,6 +50,7 @@
- 
-       # To support large files
-       '-D_FILE_OFFSET_BITS=64',
-+      '-DEGL_NO_X11',
- 
-       # Suppress some warnings that will be hard to fix.
-       '-Wno-unused-local-typedefs',
-diff -ruN cobalt.orig/src/third_party/starboard/wpe/shared/window/window_internal.h cobalt/src/third_party/starboard/wpe/shared/window/window_internal.h
---- cobalt.orig/src/third_party/starboard/wpe/shared/window/window_internal.h	2021-05-27 17:36:48.000000000 +0530
-+++ cobalt/src/third_party/starboard/wpe/shared/window/window_internal.h	2021-07-05 22:37:46.997216291 +0530
-@@ -20,7 +20,6 @@
- #include "starboard/time.h"
- #include "starboard/window.h"
- 
--#define EGL_NO_X11
- #include "WPEFramework/compositor/Client.h"
- 
- namespace third_party {
