@@ -230,6 +230,7 @@ class TypoInPackageVariable(_CheckFunction):
         "BR_CCACHE_INITIAL_SETUP",
         "BR_LIBC",
         "BR_NO_CHECK_HASH_FOR",
+        "GCC_TARGET",
         "LINUX_EXTENSIONS",
         "LINUX_POST_PATCH_HOOKS",
         "LINUX_TOOLS",
@@ -242,7 +243,7 @@ class TypoInPackageVariable(_CheckFunction):
         "TARGET_FINALIZE_HOOKS",
         "TARGETS_ROOTFS",
         "XTENSA_CORE_NAME"]))
-    VARIABLE = re.compile(r"^([A-Z0-9_]+_[A-Z0-9_]+)\s*(\+|)=")
+    VARIABLE = re.compile(r"^(define\s+)?([A-Z0-9_]+_[A-Z0-9_]+)")
 
     def before(self):
         package, _ = os.path.splitext(os.path.basename(self.filename))
@@ -252,7 +253,7 @@ class TypoInPackageVariable(_CheckFunction):
         # linux extensions do not use LINUX_EXT_ prefix for variables
         package = package.replace("LINUX_EXT_", "")
         self.package = package
-        self.REGEX = re.compile(r"^(HOST_|ROOTFS_)?({}_[A-Z0-9_]+)".format(package))
+        self.REGEX = re.compile(r"(HOST_|ROOTFS_)?({}_[A-Z0-9_]+)".format(package))
         self.FIND_VIRTUAL = re.compile(
             r"^{}_PROVIDES\s*(\+|)=\s*(.*)".format(package))
         self.virtual = []
@@ -262,7 +263,7 @@ class TypoInPackageVariable(_CheckFunction):
         if m is None:
             return
 
-        variable = m.group(1)
+        variable = m.group(2)
 
         # allow to set variables for virtual package this package provides
         v = self.FIND_VIRTUAL.search(text)
