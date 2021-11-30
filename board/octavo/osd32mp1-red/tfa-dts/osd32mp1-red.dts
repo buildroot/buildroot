@@ -1,0 +1,615 @@
+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
+/*
+ * Copyright (C) STMicroelectronics 2020 - All Rights Reserved
+ * Author: STM32CubeMX code generation for STMicroelectronics.
+ */
+
+/* For more information on Device Tree configuration, please refer to
+ * https://wiki.st.com/stm32mpu/wiki/Category:Device_tree_configuration
+ */
+
+/dts-v1/;
+#include <dt-bindings/clock/stm32mp1-clksrc.h>
+#include "stm32mp15-osd32mp1-ddr3-1x4Gb-1066-binG.dtsi"
+
+#include "stm32mp157c.dtsi"
+#include "stm32mp157cac-pinctrl.dtsi"
+#include "stm32mp15-ddr.dtsi"
+#include "stm32mp157c-security.dtsi"
+#include <dt-bindings/power/stm32mp1-power.h>
+
+
+/ {
+	model = "Octavo OSD32MP1-RED board";
+	compatible = "octavo,osd32mp1-red", "st,stm32mp157";
+
+
+	chosen {
+		stdout-path = "serial0:115200n8";
+	};
+
+	aliases {
+		serial0 = &uart4;
+		serial1 = &usart3;
+		serial2 = &uart7;
+		gpio0 = &gpioa;
+		gpio1 = &gpiob;
+		gpio2 = &gpioc;
+		gpio3 = &gpiod;
+		gpio4 = &gpioe;
+		gpio5 = &gpiof;
+		gpio6 = &gpiog;
+		gpio7 = &gpioh;
+		gpio8 = &gpioi;
+		gpio25 = &gpioz;
+		i2c3 = &i2c4;
+	};
+
+
+	clocks {
+
+
+
+		clk_lse: clk-lse {
+			st,drive = < LSEDRV_MEDIUM_HIGH >;
+
+
+
+		};
+
+		clk_hse: clk-hse {
+			st,digbypass;
+
+
+
+		};
+	};
+
+}; /*root*/
+
+&pinctrl {
+	sdmmc1_pins_mx: sdmmc1_mx-0 {
+		pins1 {
+			pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDMMC1_D0 */
+					 <STM32_PINMUX('C', 9, AF12)>, /* SDMMC1_D1 */
+					 <STM32_PINMUX('C', 10, AF12)>, /* SDMMC1_D2 */
+					 <STM32_PINMUX('C', 11, AF12)>, /* SDMMC1_D3 */
+					 <STM32_PINMUX('D', 2, AF12)>; /* SDMMC1_CMD */
+			bias-disable;
+			drive-push-pull;
+			slew-rate = <1>;
+		};
+		pins2 {
+			pinmux = <STM32_PINMUX('C', 12, AF12)>; /* SDMMC1_CK */
+			bias-disable;
+			drive-push-pull;
+			slew-rate = <3>;
+		};
+	};
+
+	sdmmc2_pins_mx: sdmmc2_mx-0 {
+		pins1 {
+			pinmux = <STM32_PINMUX('A', 8, AF9)>, /* SDMMC2_D4 */
+					 <STM32_PINMUX('A', 9, AF10)>, /* SDMMC2_D5 */
+					 <STM32_PINMUX('B', 3, AF9)>, /* SDMMC2_D2 */
+					 <STM32_PINMUX('B', 4, AF9)>, /* SDMMC2_D3 */
+					 <STM32_PINMUX('B', 14, AF9)>, /* SDMMC2_D0 */
+					 <STM32_PINMUX('B', 15, AF9)>, /* SDMMC2_D1 */
+					 <STM32_PINMUX('C', 7, AF10)>, /* SDMMC2_D7 */
+					 <STM32_PINMUX('E', 5, AF9)>, /* SDMMC2_D6 */
+					 <STM32_PINMUX('G', 6, AF10)>; /* SDMMC2_CMD */
+			bias-pull-up;
+			drive-push-pull;
+			slew-rate = <1>;
+		};
+		pins2 {
+			pinmux = <STM32_PINMUX('E', 3, AF9)>; /* SDMMC2_CK */
+			bias-pull-up;
+			drive-push-pull;
+			slew-rate = <2>;
+		};
+	};
+
+	sdmmc3_pins_mx: sdmmc3_mx-0 {
+		pins1 {
+			pinmux = <STM32_PINMUX('D', 7, AF10)>, /* SDMMC3_D3 */
+					 <STM32_PINMUX('F', 0, AF9)>, /* SDMMC3_D0 */
+					 <STM32_PINMUX('F', 1, AF9)>, /* SDMMC3_CMD */
+					 <STM32_PINMUX('F', 4, AF9)>, /* SDMMC3_D1 */
+					 <STM32_PINMUX('F', 5, AF9)>; /* SDMMC3_D2 */
+			bias-disable;
+			drive-push-pull;
+			slew-rate = <1>;
+		};
+		pins2 {
+			pinmux = <STM32_PINMUX('G', 15, AF10)>; /* SDMMC3_CK */
+			bias-disable;
+			drive-push-pull;
+			slew-rate = <2>;
+		};
+	};
+
+	uart4_pins_mx: uart4_mx-0 {
+		pins1 {
+			pinmux = <STM32_PINMUX('B', 2, AF8)>; /* UART4_RX */
+			bias-disable;
+		};
+		pins2 {
+			pinmux = <STM32_PINMUX('G', 11, AF6)>; /* UART4_TX */
+			bias-disable;
+			drive-push-pull;
+			slew-rate = <0>;
+		};
+	};
+
+
+
+};
+
+&pinctrl_z {
+	i2c4_pins_z_mx: i2c4_mx-0 {
+		pins {
+			pinmux = <STM32_PINMUX('Z', 4, AF6)>, /* I2C4_SCL */
+			         <STM32_PINMUX('Z', 5, AF6)>; /* I2C4_SDA */
+			bias-disable;
+			drive-open-drain;
+			slew-rate = <0>;
+		};
+	};
+
+
+
+};
+
+&rcc {
+	st,csi-cal;
+	st,hsi-cal;
+	st,cal-sec = <60>;
+	st,clksrc = <
+		CLK_MPU_PLL1P
+		CLK_AXI_PLL2P
+		CLK_MCU_PLL3P
+		CLK_PLL12_HSE
+		CLK_PLL3_HSE
+		CLK_PLL4_HSE
+		CLK_RTC_LSE
+		CLK_MCO1_DISABLED
+		CLK_MCO2_DISABLED
+	>;
+	st,clkdiv = <
+		1 		/*MPU*/
+		0 		/*AXI*/
+		0 		/*MCU*/
+		1 		/*APB1*/
+		1 		/*APB2*/
+		1 		/*APB3*/
+		1 		/*APB4*/
+		2 		/*APB5*/
+		23 		/*RTC*/
+		0 		/*MCO1*/
+		0 		/*MCO2*/
+	>;
+	st,pkcs = <
+		CLK_CKPER_HSE
+		CLK_ETH_PLL3Q
+		CLK_SDMMC12_PLL4P
+		CLK_DSI_DSIPLL
+		CLK_STGEN_HSE
+		CLK_USBPHY_HSE
+		CLK_SPI2S1_DISABLED
+		CLK_SPI2S23_PLL3Q
+		CLK_SPI45_PCLK2
+		CLK_SPI6_DISABLED
+		CLK_I2C46_HSI
+		CLK_SDMMC3_PLL4P
+                CLK_USBO_USBPHY
+		CLK_ADC_CKPER
+		CLK_CEC_DISABLED
+		CLK_I2C12_HSI
+		CLK_I2C35_PCLK1
+		CLK_UART1_DISABLED
+		CLK_UART24_HSI
+		CLK_UART35_HSI
+		CLK_UART6_DISABLED
+		CLK_UART78_DISABLED
+		CLK_SPDIF_DISABLED
+		CLK_SAI1_DISABLED
+		CLK_SAI2_CKPER
+		CLK_SAI3_DISABLED
+		CLK_SAI4_DISABLED
+		CLK_RNG1_LSI
+		CLK_LPTIM1_DISABLED
+		CLK_LPTIM23_DISABLED
+		CLK_LPTIM45_DISABLED
+	>;
+	pll1:st,pll@0 {
+		cfg = < 2 80 0 1 1 PQR(1,0,0) >;
+		frac = < 0x800>;
+	};
+	pll2:st,pll@1 {
+		cfg = < 2 65 1 0 0 PQR(1,1,1) >;
+		frac = < 0x1400>;
+	};
+	pll3:st,pll@2 {
+		cfg = < 1 61 3 5 36 PQR(1,1,0) >;
+		frac = < 0x1000 >;
+	};
+	/* VCO = 594.0 MHz => P = 99, Q = 74, R = 74 */
+	pll4: st,pll@3 {
+		cfg = < 3 98 5 7 7 PQR(1,1,1) >;
+	};
+};
+
+&bsec{
+	status = "okay";
+	secure-status = "okay";
+
+
+	board_id: board_id@ec {
+		reg = <0xec 0x4>;
+		status = "okay";
+		secure-status = "okay";
+	};
+
+};
+
+&etzpc{
+	st,decprot = <
+	/*"Non Secured" peripherals*/
+	DECPROT(STM32MP1_ETZPC_DCMI_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
+	DECPROT(STM32MP1_ETZPC_ETH_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
+	DECPROT(STM32MP1_ETZPC_I2C1_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
+	DECPROT(STM32MP1_ETZPC_I2C2_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
+	DECPROT(STM32MP1_ETZPC_I2C4_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
+	DECPROT(STM32MP1_ETZPC_I2C5_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
+	DECPROT(STM32MP1_ETZPC_SPI2_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
+	DECPROT(STM32MP1_ETZPC_RNG1_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
+	DECPROT(STM32MP1_ETZPC_SAI2_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
+	DECPROT(STM32MP1_ETZPC_SDMMC3_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
+	DECPROT(STM32MP1_ETZPC_DLYBSD3_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
+	DECPROT(STM32MP1_ETZPC_SPI5_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
+	DECPROT(STM32MP1_ETZPC_TIM5_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
+	DECPROT(STM32MP1_ETZPC_UART4_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
+	DECPROT(STM32MP1_ETZPC_USART2_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
+
+	/*Restriction: following IDs are not managed  - please to use User-Section if needed:
+		STM32MP1_ETZPC_DMA1_ID, STM32MP1_ETZPC_DMA2_ID, STM32MP1_ETZPC_DMAMUX_ID,
+		STM32MP1_ETZPC_SRAMx_ID, STM32MP1_ETZPC_RETRAM_ID, STM32MP1_ETZPC_BKPSRAM_ID*/
+
+
+		/*STM32CubeMX generates a basic and standard configuration for ETZPC.
+		Additional device configurations can be added here if needed.
+		"etzpc" node could be also overloaded in "addons" User-Section.*/
+
+	>;
+
+	secure-status = "okay";
+
+
+
+};
+
+&i2c4{
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c4_pins_z_mx>;
+	status = "okay";
+	secure-status = "okay";
+
+
+	i2c-scl-rising-time-ns = <185>;
+	i2c-scl-falling-time-ns = <20>;
+
+	pmic: stpmic@33 {
+		compatible = "st,stpmic1";
+		reg = <0x33>;
+		interrupts-extended = <&exti_pwr 55 IRQ_TYPE_EDGE_FALLING>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		status = "okay";
+
+		st,main-control-register = <0x04>;
+		st,vin-control-register = <0xc0>;
+		st,usb-control-register = <0x20>;
+
+		regulators {
+			compatible = "st,stpmic1-regulators";
+
+			ldo1-supply = <&v3v3>;
+			ldo3-supply = <&vdd_ddr>;
+			ldo6-supply = <&v3v3>;
+
+			vddcore: buck1 {
+				regulator-name = "vddcore";
+				regulator-min-microvolt = <1200000>;
+				regulator-max-microvolt = <1350000>;
+				regulator-always-on;
+				regulator-initial-mode = <0>;
+				regulator-over-current-protection;
+				lp-stop {
+					regulator-on-in-suspend;
+					regulator-suspend-microvolt = <1200000>;
+				};
+				standby-ddr-sr {
+					regulator-off-in-suspend;
+				};
+				standby-ddr-off {
+					regulator-off-in-suspend;
+				};
+			};
+
+			vdd_ddr: buck2 {
+				regulator-name = "vdd_ddr";
+				regulator-min-microvolt = <1350000>;
+				regulator-max-microvolt = <1350000>;
+				regulator-always-on;
+				regulator-initial-mode = <0>;
+				regulator-over-current-protection;
+				lp-stop {
+					regulator-suspend-microvolt = <1350000>;
+					regulator-on-in-suspend;
+				};
+				standby-ddr-sr {
+					regulator-suspend-microvolt = <1350000>;
+					regulator-on-in-suspend;
+				};
+				standby-ddr-off {
+					regulator-off-in-suspend;
+				};
+			};
+
+			vdd: buck3 {
+				regulator-name = "vdd";
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+				regulator-always-on;
+				st,mask-reset;
+				regulator-initial-mode = <0>;
+				regulator-over-current-protection;
+				lp-stop {
+					regulator-suspend-microvolt = <3300000>;
+					regulator-on-in-suspend;
+				};
+				standby-ddr-sr {
+					regulator-suspend-microvolt = <3300000>;
+					regulator-on-in-suspend;
+				};
+				standby-ddr-off {
+					regulator-suspend-microvolt = <3300000>;
+					regulator-on-in-suspend;
+				};
+			};
+
+			v3v3: buck4 {
+				regulator-name = "v3v3";
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+				regulator-always-on;
+				regulator-over-current-protection;
+				regulator-initial-mode = <0>;
+				lp-stop {
+					regulator-suspend-microvolt = <3300000>;
+					regulator-on-in-suspend;
+				};
+				standby-ddr-sr {
+					regulator-off-in-suspend;
+				};
+				standby-ddr-off {
+					regulator-off-in-suspend;
+				};
+			};
+
+			v1v8_audio: ldo1 {
+				regulator-name = "v1v8_audio";
+				regulator-min-microvolt = <1800000>;
+				regulator-max-microvolt = <1800000>;
+				regulator-always-on;
+				standby-ddr-sr {
+						regulator-off-in-suspend;
+					};
+					standby-ddr-off {
+						regulator-off-in-suspend;
+					};
+			};
+
+			v3v3_hdmi: ldo2 {
+				regulator-name = "v3v3_hdmi";
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+				regulator-always-on;
+				standby-ddr-sr {
+					regulator-off-in-suspend;
+				};
+				standby-ddr-off {
+					regulator-off-in-suspend;
+				};
+			};
+
+			vtt_ddr: ldo3 {
+				regulator-name = "vtt_ddr";
+				regulator-min-microvolt = <500000>;
+				regulator-max-microvolt = <750000>;
+				regulator-always-on;
+				regulator-over-current-protection;
+				lp-stop {
+					regulator-off-in-suspend;
+				};
+				standby-ddr-sr {
+					regulator-off-in-suspend;
+				};
+				standby-ddr-off {
+					regulator-off-in-suspend;
+				};
+			};
+
+			vdd_usb: ldo4 {
+				regulator-name = "vdd_usb";
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+				standby-ddr-sr {
+					regulator-off-in-suspend;
+				};
+				standby-ddr-off {
+					regulator-off-in-suspend;
+				};
+			};
+
+			vdda: ldo5 {
+				regulator-name = "vdda";
+				regulator-min-microvolt = <2900000>;
+				regulator-max-microvolt = <2900000>;
+				regulator-boot-on;
+				standby-ddr-sr {
+					regulator-off-in-suspend;
+				};
+				standby-ddr-off {
+					regulator-off-in-suspend;
+				};
+			};
+
+			v1v2_hdmi: ldo6 {
+				regulator-name = "v1v2_hdmi";
+				regulator-min-microvolt = <1200000>;
+				regulator-max-microvolt = <1200000>;
+				regulator-always-on;
+				standby-ddr-sr {
+					regulator-off-in-suspend;
+				};
+				standby-ddr-off {
+					regulator-off-in-suspend;
+				};
+			};
+
+			vref_ddr: vref_ddr {
+				regulator-name = "vref_ddr";
+				regulator-always-on;
+				regulator-over-current-protection;
+				lp-stop {
+					regulator-on-in-suspend;
+				};
+				standby-ddr-sr {
+					regulator-on-in-suspend;
+				};
+				standby-ddr-off {
+					regulator-off-in-suspend;
+				};
+			};
+		};
+	};
+
+};
+
+&iwdg2{
+	status = "okay";
+	secure-status = "okay";
+
+
+	timeout-sec = <32>;
+
+};
+
+&pwr{
+	status = "okay";
+	secure-status = "okay";
+
+
+	system_suspend_supported_soc_modes = <
+		STM32_PM_CSLEEP_RUN
+		STM32_PM_CSTOP_ALLOW_LP_STOP
+		STM32_PM_CSTOP_ALLOW_STANDBY_DDR_SR
+	>;
+	system_off_soc_mode = <STM32_PM_CSTOP_ALLOW_STANDBY_DDR_OFF>;
+
+	pwr-regulators {
+		vdd-supply = <&vdd>;
+	};
+
+};
+
+&rcc{
+	status = "okay";
+	secure-status = "okay";
+
+
+
+};
+
+&rng1{
+	status = "okay";
+	secure-status = "okay";
+
+
+
+};
+
+&rtc{
+	status = "okay";
+	secure-status = "okay";
+
+
+
+};
+
+&sdmmc1{
+	pinctrl-names = "default";
+	pinctrl-0 = <&sdmmc1_pins_mx>;
+	status = "okay";
+
+
+	broken-cd;
+	st,neg-edge;
+	bus-width = <4>;
+	vmmc-supply = <&v3v3>;
+
+};
+
+&sdmmc2{
+	pinctrl-names = "default";
+	pinctrl-0 = <&sdmmc2_pins_mx>;
+	status = "okay";
+
+
+
+};
+
+&sdmmc3{
+	pinctrl-names = "default";
+	pinctrl-0 = <&sdmmc3_pins_mx>;
+	status = "okay";
+
+
+
+};
+
+&tamp{
+	status = "okay";
+	secure-status = "okay";
+
+
+
+};
+
+&uart4{
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart4_pins_mx>;
+	status = "okay";
+
+
+
+};
+
+
+/delete-node/ &qspi_bk1_pins_a;
+/delete-node/ &qspi_bk2_pins_a;
+/delete-node/ &qspi_clk_pins_a;
+/delete-node/ &sdmmc1_b4_pins_a;
+/delete-node/ &sdmmc1_dir_pins_a;
+/delete-node/ &sdmmc1_dir_pins_b;
+/delete-node/ &sdmmc2_b4_pins_a;
+/delete-node/ &sdmmc2_d47_pins_a;
+/delete-node/ &uart4_pins_a;
+/delete-node/ &uart7_pins_a;
+/delete-node/ &usart3_pins_a;
+/delete-node/ &usart3_pins_b;
+/delete-node/ &i2c4_pins_a;
+
+
