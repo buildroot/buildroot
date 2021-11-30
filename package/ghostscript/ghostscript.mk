@@ -71,7 +71,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_CUPS),y)
 GHOSTSCRIPT_DEPENDENCIES += cups
-GHOSTSCRIPT_CONF_OPTS  += \
+GHOSTSCRIPT_CONF_OPTS += \
 	CUPSCONFIG=$(STAGING_DIR)/usr/bin/cups-config \
 	--enable-cups
 else
