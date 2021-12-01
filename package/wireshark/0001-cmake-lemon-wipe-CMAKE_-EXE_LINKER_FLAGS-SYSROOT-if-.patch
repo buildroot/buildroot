@@ -1,26 +1,27 @@
-From 982e5ab072816e29f6f2dc84d9a00ee7c4fdee40 Mon Sep 17 00:00:00 2001
+From 33270f56477542dedf978e660cf8d08464f28797 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Fri, 26 Nov 2021 17:45:23 +0100
-Subject: [PATCH] cmake: lemon: wipe CMAKE_SYSROOT if needed
+Subject: [PATCH] cmake: lemon: wipe CMAKE_{EXE_LINKER_FLAGS,SYSROOT} if needed
 
-Wipe CMAKE_SYSROOT when LEMON_C_COMPILER is set to avoid a build failure
-when cross-compiling (e.g. with buildroot)
+Wipe CMAKE_{EXE_LINKER_FLAGS,SYSROOT} when LEMON_C_COMPILER is set to
+avoid a build failure when cross-compiling (e.g. with buildroot)
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 [Upstream status:
 https://gitlab.com/wireshark/wireshark/-/merge_requests/5224]
 ---
- tools/lemon/CMakeLists.txt | 1 +
- 1 file changed, 1 insertion(+)
+ tools/lemon/CMakeLists.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/tools/lemon/CMakeLists.txt b/tools/lemon/CMakeLists.txt
-index 8742aa9fc9..7c8cc23a35 100644
+index 8742aa9fc9..7a9263fe0d 100644
 --- a/tools/lemon/CMakeLists.txt
 +++ b/tools/lemon/CMakeLists.txt
-@@ -12,6 +12,7 @@ add_executable(lemon lemon.c)
+@@ -12,6 +12,8 @@ add_executable(lemon lemon.c)
  if(DEFINED LEMON_C_COMPILER)
  	set(CMAKE_C_COMPILER "${LEMON_C_COMPILER}")
  	set(CMAKE_C_FLAGS "")
++	set(CMAKE_EXE_LINKER_FLAGS "")
 +	set(CMAKE_SYSROOT "")
  endif()
  
