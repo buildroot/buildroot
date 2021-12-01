@@ -53,4 +53,11 @@ define NFTABLES_LINUX_CONFIG_FIXUPS
 	$(call KCONFIG_ENABLE_OPT,CONFIG_NF_TABLES_INET)
 endef
 
+define NFTABLES_INSTALL_ZSH_COMPLETION
+	mkdir -p $(TARGET_DIR)/usr/share/zsh/site-functions
+	$(INSTALL) -D -m 0644 package/nftables/_nftables \
+		$(TARGET_DIR)/usr/share/zsh/site-functions/_nftables
+endef
+NFTABLES_POST_INSTALL_TARGET_HOOKS += NFTABLES_INSTALL_ZSH_COMPLETION
+
 $(eval $(autotools-package))
