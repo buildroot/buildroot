@@ -111,6 +111,7 @@ endmenu
 menu "Extensions"
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_BROADCAST
+    select BR2_PACKAGE_WPEFRAMEWORK_LIBRARIES
     bool "Broadcast"
         default n
     help
@@ -291,6 +292,7 @@ endmenu
 
 source "package/wpe/wpeframework-interfaces/Config.in"
 source "package/wpe/wpeframework-clientlibraries/Config.in"
+source "package/wpe/wpeframework-libraries/Config.in"
 source "package/wpe/wpeframework-rdkservices/Config.in"
 
 endif
