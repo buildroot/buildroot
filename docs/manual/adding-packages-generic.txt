@@ -48,11 +48,11 @@ system is based on hand-written Makefiles or shell scripts.
 33: endef
 34:
 35: define LIBFOO_DEVICES
-36:	/dev/foo  c  666  0  0	42  0  -  -  -
+36:	/dev/foo c 666 0 0 42 0 - - -
 37: endef
 38:
 39: define LIBFOO_PERMISSIONS
-40:	/bin/foo  f  4755  foo  libfoo	 -  -  -  -  -
+40:	/bin/foo f 4755 foo libfoo - - - - -
 41: endef
 42:
 43: $(eval $(generic-package))
