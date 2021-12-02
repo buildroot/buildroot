@@ -38,7 +38,7 @@ define LIBFUSE_INSTALL_TARGET_CMDS
 endef
 
 define LIBFUSE_DEVICES
-	/dev/fuse  c  666  0  0  10  229  0  0  -
+	/dev/fuse c 666 0 0 10 229 0 0 -
 endef
 
 define LIBFUSE_PERMISSIONS
