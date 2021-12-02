@@ -194,8 +194,10 @@ TVHEADEND_POST_INSTALL_TARGET_HOOKS += TVHEADEND_CLEAN_SHARE
 #    to the other users (because there will be crendentials in there)
 
 define TVHEADEND_INSTALL_INIT_SYSV
-	$(INSTALL) -D package/tvheadend/etc.default.tvheadend $(TARGET_DIR)/etc/default/tvheadend
-	$(INSTALL) -D package/tvheadend/S99tvheadend          $(TARGET_DIR)/etc/init.d/S99tvheadend
+	$(INSTALL) -D package/tvheadend/etc.default.tvheadend \
+		$(TARGET_DIR)/etc/default/tvheadend
+	$(INSTALL) -D package/tvheadend/S99tvheadend \
+		$(TARGET_DIR)/etc/init.d/S99tvheadend
 endef
 
 define TVHEADEND_USERS
