@@ -1210,7 +1210,7 @@ release:
 	$(MAKE) O=$(OUT) distclean
 	tar rf $(OUT).tar $(OUT)
 	gzip -9 -c < $(OUT).tar > $(OUT).tar.gz
-	bzip2 -9 -c < $(OUT).tar > $(OUT).tar.bz2
+	xz -9 -c < $(OUT).tar > $(OUT).tar.xz
 	rm -rf $(OUT) $(OUT).tar
 
 print-version:
