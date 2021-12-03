@@ -602,13 +602,11 @@ define SYSTEMD_INSTALL_NSSCONFIG_HOOK
 		-e '/^gshadow:/ {/systemd/! s/$$/ systemd/}' \
 		$(if $(BR2_PACKAGE_SYSTEMD_RESOLVED), \
 			-e '/^hosts:/ s/[[:space:]]*mymachines//' \
-			-e '/^hosts:/ {/resolve/! s/files/files resolve [!UNAVAIL=return]/}' ) \
+			-e '/^hosts:/ {/resolve/! s/files/resolve [!UNAVAIL=return] files/}' ) \
 		$(if $(BR2_PACKAGE_SYSTEMD_MYHOSTNAME), \
-			-e '/^hosts:/ {/myhostname/! s/$$/ myhostname/}' ) \
+			-e '/^hosts:/ {/myhostname/! s/files/files myhostname/}' ) \
 		$(if $(BR2_PACKAGE_SYSTEMD_MACHINED), \
-			-e '/^passwd:/ {/mymachines/! s/files/files mymachines/}' \
-			-e '/^group:/ {/mymachines/! s/files/files [SUCCESS=merge] mymachines/}' \
-			-e '/^hosts:/ {/mymachines/! s/files/files mymachines/}' ) \
+			-e '/^hosts:/ {/mymachines/! s/^\(hosts:[[:space:]]*\)/\1mymachines /}' ) \
 		$(TARGET_DIR)/etc/nsswitch.conf
 endef
 
