@@ -20,6 +20,8 @@ FREESWITCH_LICENSE_FILES = \
 	libs/apr-util/LICENSE \
 	libs/srtp/LICENSE
 
+FREESWITCH_CPE_ID_VENDOR = freeswitch
+
 # required dependencies
 FREESWITCH_DEPENDENCIES = \
 	host-pkgconf \
