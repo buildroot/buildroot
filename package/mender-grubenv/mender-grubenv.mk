@@ -30,7 +30,7 @@ MENDER_GRUBENV_DEFINES = \
 
 # These grub modules must be built in for the grub scripts to work properly.
 # Without them, the system will not boot.
-MENDER_GRUBENV_MANDATORY_MODULES=loadenv hashsum echo halt gcry_sha256 test regexp
+MENDER_GRUBENV_MANDATORY_MODULES = loadenv hashsum echo halt gcry_sha256 test regexp
 MENDER_GRUBENV_MODULES_MISSING = \
 	$(filter-out $(call qstrip,$(BR2_TARGET_GRUB2_BUILTIN_MODULES)),\
 		$(MENDER_GRUBENV_MANDATORY_MODULES))
