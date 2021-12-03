@@ -29,6 +29,44 @@ MESON		= PYTHONNOUSERSITE=y $(HOST_DIR)/bin/meson
 NINJA		= PYTHONNOUSERSITE=y $(HOST_DIR)/bin/ninja
 NINJA_OPTS	= $(if $(VERBOSE),-v) -j$(PARALLEL_JOBS)
 
+# https://mesonbuild.com/Reference-tables.html#cpu-families
+ifeq ($(BR2_arcle)$(BR2_arceb),y)
+PKG_MESON_TARGET_CPU_FAMILY = arc
+else ifeq ($(BR2_arm)$(BR2_armeb),y)
+PKG_MESON_TARGET_CPU_FAMILY = arm
+else ifeq ($(BR2_aarch64)$(BR2_aarch64_be),y)
+PKG_MESON_TARGET_CPU_FAMILY = aarch64
+else ifeq ($(BR2_i386),y)
+PKG_MESON_TARGET_CPU_FAMILY = x86
+else ifeq ($(BR2_m68k),y)
+PKG_MESON_TARGET_CPU_FAMILY = m68k
+else ifeq ($(BR2_microblazeel)$(BR2_microblazebe),y)
+PKG_MESON_TARGET_CPU_FAMILY = microblaze
+else ifeq ($(BR2_mips)$(BR2_mipsel),y)
+PKG_MESON_TARGET_CPU_FAMILY = mips
+else ifeq ($(BR2_mips64)$(BR2_mips64el),y)
+PKG_MESON_TARGET_CPU_FAMILY = mips64
+else ifeq ($(BR2_powerpc),y)
+PKG_MESON_TARGET_CPU_FAMILY = ppc
+else ifeq ($(BR2_powerpc64)$(BR2_powerpc64le),y)
+PKG_MESON_TARGET_CPU_FAMILY = ppc64
+else ifeq ($(BR2_riscv),y)
+PKG_MESON_TARGET_CPU_FAMILY = riscv64
+else ifeq ($(BR2_sh4)$(BR2_sh4eb)$(BR2_sh4a)$(BR2_sh4aeb),y)
+PKG_MESON_TARGET_CPU_FAMILY = sh4
+else ifeq ($(BR2_sparc),y)
+PKG_MESON_TARGET_CPU_FAMILY = sparc
+else ifeq ($(BR2_sparc64),y)
+PKG_MESON_TARGET_CPU_FAMILY = sparc64
+else ifeq ($(BR2_x86_64),y)
+PKG_MESON_TARGET_CPU_FAMILY = x86_64
+else
+PKG_MESON_TARGET_CPU_FAMILY = $(ARCH)
+endif
+
+HOST_MESON_TARGET_ENDIAN = $(call qstrip,$(call LOWERCASE,$(BR2_ENDIAN)))
+HOST_MESON_TARGET_CPU = $(GCC_TARGET_CPU)
+
 ################################################################################
 # inner-meson-package -- defines how the configuration, compilation and
 # installation of a Meson package should be done, implements a few hooks to
@@ -181,7 +219,7 @@ meson-package = $(call inner-meson-package,$(pkgname),$(call UPPERCASE,$(pkgname
 host-meson-package = $(call inner-meson-package,host-$(pkgname),$(call UPPERCASE,host-$(pkgname)),$(call UPPERCASE,$(pkgname)),host)
 
 ################################################################################
-# Generation of the Meson cross-compilation.conf file
+# Generation of the Meson compile flags and cross-compilation file
 ################################################################################
 
 # Generate a Meson cross-compilation.conf suitable for use with the
