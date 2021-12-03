@@ -93,6 +93,13 @@ else
 COREUTILS_CONF_OPTS += --disable-libcap
 endif
 
+ifeq ($(BR2_PACKAGE_LIBSELINUX),y)
+COREUTILS_DEPENDENCIES += libselinux
+COREUTILS_CONF_OPTS += --with-selinux
+else
+COREUTILS_CONF_OPTS += --without-selinux
+endif
+
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 COREUTILS_CONF_OPTS += --with-openssl=yes
 COREUTILS_DEPENDENCIES += openssl
