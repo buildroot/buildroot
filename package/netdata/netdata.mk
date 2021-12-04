@@ -8,6 +8,7 @@ NETDATA_VERSION = 1.21.1
 NETDATA_SITE = $(call github,netdata,netdata,v$(NETDATA_VERSION))
 NETDATA_LICENSE = GPL-3.0+
 NETDATA_LICENSE_FILES = LICENSE
+NETDATA_CPE_ID_VENDOR = netdata
 # netdata's source code is released without a generated configure script
 NETDATA_AUTORECONF = YES
 NETDATA_CONF_OPTS = \
