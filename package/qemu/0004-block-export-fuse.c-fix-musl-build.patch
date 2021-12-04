@@ -1,0 +1,49 @@
+From 304332039014679b809f606e2f227ee0fc43a451 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 22 Oct 2021 11:52:09 +0200
+Subject: [PATCH] block/export/fuse.c: fix musl build
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Include linux/falloc.h if CONFIG_FALLOCATE_ZERO_RANGE is defined to fix
+https://gitlab.com/qemu-project/qemu/-/commit/50482fda98bd62e072c30b7ea73c985c4e9d9bbb
+and avoid the following build failure on musl:
+
+../block/export/fuse.c: In function 'fuse_fallocate':
+../block/export/fuse.c:643:21: error: 'FALLOC_FL_ZERO_RANGE' undeclared (first use in this function)
+  643 |     else if (mode & FALLOC_FL_ZERO_RANGE) {
+      |                     ^~~~~~~~~~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/be24433a429fda681fb66698160132c1c99bc53b
+
+Fixes: 50482fda98b ("block/export/fuse.c: fix musl build")
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Message-Id: <20211022095209.1319671-1-fontaine.fabrice@gmail.com>
+Reviewed-by: Philippe Mathieu-Daudé <philmd@redhat.com>
+Signed-off-by: Kevin Wolf <kwolf@redhat.com>
+[Retrieved from:
+https://gitlab.com/qemu-project/qemu/-/commit/304332039014679b809f606e2f227ee0fc43a451]
+---
+ block/export/fuse.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/block/export/fuse.c b/block/export/fuse.c
+index 2e3bf8270b..823c126d23 100644
+--- a/block/export/fuse.c
++++ b/block/export/fuse.c
+@@ -31,6 +31,10 @@
+ #include <fuse.h>
+ #include <fuse_lowlevel.h>
+ 
++#if defined(CONFIG_FALLOCATE_ZERO_RANGE)
++#include <linux/falloc.h>
++#endif
++
+ #ifdef __linux__
+ #include <linux/fs.h>
+ #endif
+-- 
+GitLab
+
