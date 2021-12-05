@@ -21,14 +21,14 @@ choice
 config BR2_PACKAGE_P7ZIP_7ZA
 	bool "7za"
 	help
-	  Stand-alone executable that handles fewer archive formats
-	  than 7z
+	  Full 7za archiver. The program supports 7z, ZIP, CAB, ARJ,
+	  GZIP, BZIP2, TAR, CPIO, RPM and DEB formats
 
 config BR2_PACKAGE_P7ZIP_7ZR
 	bool "7zr"
 	help
-	  Stand-alone executable which is a "light-version" of 7za that
-	  only handles 7z archives and cannot handle encrypted archives
+	  Lightweight 7zr archiver. The program only handles 7z archives
+	  and cannot handle encrypted archives
 
 endchoice
 
