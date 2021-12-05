@@ -79,16 +79,16 @@ endif
 
 ifeq ($(BR2_PACKAGE_READLINE),y)
 NETWORK_MANAGER_DEPENDENCIES += readline
-NETWORK_MANAGER_CONF_OPTS += --with-nmcli=yes
+NETWORK_MANAGER_CONF_OPTS += --with-nmcli
 else
-NETWORK_MANAGER_CONF_OPTS += --with-nmcli=no
+NETWORK_MANAGER_CONF_OPTS += --without-nmcli
 endif
 
 ifeq ($(BR2_PACKAGE_NETWORK_MANAGER_TUI),y)
 NETWORK_MANAGER_DEPENDENCIES += newt
-NETWORK_MANAGER_CONF_OPTS += --with-nmtui=yes
+NETWORK_MANAGER_CONF_OPTS += --with-nmtui
 else
-NETWORK_MANAGER_CONF_OPTS += --with-nmtui=no
+NETWORK_MANAGER_CONF_OPTS += --without-nmtui
 endif
 
 ifeq ($(BR2_PACKAGE_NETWORK_MANAGER_PPPD),y)
