@@ -70,6 +70,13 @@ else
 NETWORK_MANAGER_CONF_OPTS += --without-libpsl
 endif
 
+ifeq ($(BR2_PACKAGE_LIBSELINUX),y)
+NETWORK_MANAGER_DEPENDENCIES += libselinux
+NETWORK_MANAGER_CONF_OPTS += --with-selinux
+else
+NETWORK_MANAGER_CONF_OPTS += --without-selinux
+endif
+
 ifeq ($(BR2_PACKAGE_READLINE),y)
 NETWORK_MANAGER_DEPENDENCIES += readline
 NETWORK_MANAGER_CONF_OPTS += --with-nmcli=yes
