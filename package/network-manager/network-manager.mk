@@ -105,6 +105,13 @@ else
 NETWORK_MANAGER_CONF_OPTS += --without-modem-manager-1
 endif
 
+ifeq ($(BR2_PACKAGE_POLKIT),y)
+NETWORK_MANAGER_DEPENDENCIES += polkit
+NETWORK_MANAGER_CONF_OPTS += --enable-polkit
+else
+NETWORK_MANAGER_CONF_OPTS += --disable-polkit
+endif
+
 ifeq ($(BR2_PACKAGE_DHCP_CLIENT),y)
 NETWORK_MANAGER_CONF_OPTS += --with-dhclient=/sbin/dhclient
 endif
