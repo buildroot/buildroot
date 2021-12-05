@@ -554,3 +554,99 @@ over time. Such patches should not be downloaded, and instead be added
 locally to the package folder.
 
 If the +.hash+ file is missing, then no check is done at all.
+
+[[adding-packages-start-script]]
+=== The +SNNfoo+ start script
+
+Packages that provide a system daemon usually need to be started somehow
+at boot.  Buildroot comes with support for several init systems, some
+are considered tier one (see xref:init-system[]), while others are also
+available but do not have the same level of integration.  Ideally, all
+packages providing a system daemon should provide a start script for
+BusyBox/SysV init and a systemd unit file.
+
+For consistency, the start script must follow the style and composition
+as shown in the reference: +package/busybox/S01syslogd+. An annotated
+example of this style is shown below. There is no specific coding style
+for systemd unit files, but if a package comes with its own unit file,
+that is preferred over a buildroot specific one, if it is compatible
+with buildroot.
+
+The name of the start script is composed of the +SNN+ and the daemon
+name.  The +NN+ is the start order number which needs to be carefully
+chosen.  For example, a program that requires networking to be up should
+not start before +S40network+.  The scripts are started in alphabetical
+order, so +S01syslogd+ starts before +S01watchdogd+, and +S02sysctl+
+start thereafter.
+
+------------------------------
+01: #!/bin/sh
+02:
+03: DAEMON="syslogd"
+04: PIDFILE="/var/run/$DAEMON.pid"
+05:
+06: SYSLOGD_ARGS=""
+07:
+08: # shellcheck source=/dev/null
+09: [ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
+10:
+11: # BusyBox' syslogd does not create a pidfile, so pass "-n" in the command line
+12: # and use "-m" to instruct start-stop-daemon to create one.
+13: start() {
+14: 	printf 'Starting %s: ' "$DAEMON"
+15: 	# shellcheck disable=SC2086 # we need the word splitting
+16: 	start-stop-daemon -b -m -S -q -p "$PIDFILE" -x "/sbin/$DAEMON" \
+17: 		-- -n $SYSLOGD_ARGS
+18: 	status=$?
+19: 	if [ "$status" -eq 0 ]; then
+20: 		echo "OK"
+21: 	else
+22: 		echo "FAIL"
+23: 	fi
+24: 	return "$status"
+25: }
+26:
+27: stop() {
+28: 	printf 'Stopping %s: ' "$DAEMON"
+29: 	start-stop-daemon -K -q -p "$PIDFILE"
+30: 	status=$?
+31: 	if [ "$status" -eq 0 ]; then
+32: 		rm -f "$PIDFILE"
+33: 		echo "OK"
+34: 	else
+35: 		echo "FAIL"
+36: 	fi
+37: 	return "$status"
+38: }
+39:
+40: restart() {
+41: 	stop
+42: 	sleep 1
+43: 	start
+44: }
+45:
+46: case "$1" in
+47: 	start|stop|restart)
+48: 		"$1";;
+49: 	reload)
+50: 		# Restart, since there is no true "reload" feature.
+51: 		restart;;
+52: 	*)
+53: 		echo "Usage: $0 {start|stop|restart|reload}"
+54: 		exit 1
+55: esac
+------------------------------
+
+*Note:* programs that support reloading their configuration in some
+fashion (+SIGHUP+) should provide a +reload()+ function similar to
++stop()+.  The +start-stop-daemon+ supports +-K -s HUP+ for this.
+It is recommended to always append +-x "/sbin/$DAEMON"+ to all the
++start-stop-daemon+ commands to ensure signals are set to a PID that
+matches +$DAEMON+.
+
+Both start scripts and unit files can source command line arguments from
++/etc/default/foo+, in general, if such a file does not exist it should
+not block the start of the daemon, unless there is some site specirfic
+command line argument the daemon requires to start.  For start scripts a
++FOO_ARGS="-s -o -m -e -args"+ can be defined to a default value in and
+the user can override this from +/etc/default/foo+.
