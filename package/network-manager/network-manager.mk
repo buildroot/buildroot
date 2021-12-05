@@ -49,6 +49,13 @@ else
 NETWORK_MANAGER_CONF_OPTS += --without-iwd
 endif
 
+ifeq ($(BR2_PACKAGE_AUDIT),y)
+NETWORK_MANAGER_DEPENDENCIES += audit
+NETWORK_MANAGER_CONF_OPTS += --with-libaudit
+else
+NETWORK_MANAGER_CONF_OPTS += --without-libaudit
+endif
+
 ifeq ($(BR2_PACKAGE_LIBCURL),y)
 NETWORK_MANAGER_DEPENDENCIES += libcurl
 NETWORK_MANAGER_CONF_OPTS += --enable-concheck
