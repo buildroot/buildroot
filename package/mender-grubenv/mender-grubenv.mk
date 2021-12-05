@@ -13,16 +13,9 @@ MENDER_GRUBENV_LICENSE_FILES = LICENSE
 MENDER_GRUBENV_DEPENDENCIES = grub2
 MENDER_GRUBENV_INSTALL_IMAGES = YES
 
-ifeq ($(BR2_TARGET_GRUB2_I386_PC)$(BR2_TARGET_GRUB2_ARM_UBOOT),y)
-MENDER_GRUBENV_ENV_DIR = /boot/grub
-else
-MENDER_GRUBENV_ENV_DIR = /boot/EFI/BOOT
-endif
-
 MENDER_GRUBENV_MAKE_ENV = \
 	$(TARGET_CONFIGURE_OPTS) \
-	$(TARGET_MAKE_ENV) \
-	ENV_DIR=$(MENDER_GRUBENV_ENV_DIR)
+	$(TARGET_MAKE_ENV)
 
 MENDER_GRUBENV_DEFINES = \
 	$(or $(call qstrip,$(BR2_PACKAGE_MENDER_GRUBENV_DEFINES)),\
@@ -30,15 +23,46 @@ MENDER_GRUBENV_DEFINES = \
 
 # These grub modules must be built in for the grub scripts to work properly.
 # Without them, the system will not boot.
-MENDER_GRUBENV_MANDATORY_MODULES=loadenv hashsum echo halt gcry_sha256 test regexp
-MENDER_GRUBENV_MODULES_MISSING = \
-	$(filter-out $(call qstrip,$(BR2_TARGET_GRUB2_BUILTIN_MODULES)),\
+MENDER_GRUBENV_MANDATORY_MODULES = loadenv hashsum echo halt gcry_sha256 test regexp
+
+ifeq ($(BR2_TARGET_GRUB2_HAS_LEGACY_BOOT),y)
+MENDER_GRUBENV_MODULES_MISSING_PC = \
+	$(filter-out $(call qstrip,$(BR2_TARGET_GRUB2_BUILTIN_MODULES_PC)),\
 		$(MENDER_GRUBENV_MANDATORY_MODULES))
 
+MENDER_GRUBENV_MAKE_ENV += ENV_DIR=/boot/grub
+
+define MENDER_GRUBENV_INSTALL_I386_CFG
+	mkdir -p $(BINARIES_DIR)/boot-part/grub
+	cp -dpfr $(TARGET_DIR)/boot/grub/grub.cfg \
+		$(TARGET_DIR)/boot/grub/mender_grubenv* \
+		$(BINARIES_DIR)/boot-part/grub
+endef
+endif # BR2_TARGET_GRUB2_HAS_LEGACY_BOOT
+
+ifeq ($(BR2_TARGET_GRUB2_HAS_EFI_BOOT),y)
+MENDER_GRUBENV_MODULES_MISSING_EFI = \
+	$(filter-out $(call qstrip,$(BR2_TARGET_GRUB2_BUILTIN_MODULES_EFI)),\
+		$(MENDER_GRUBENV_MANDATORY_MODULES))
+
+MENDER_GRUBENV_MAKE_ENV += ENV_DIR=/boot/EFI/BOOT
+
+define MENDER_GRUBENV_INSTALL_EFI_CFG
+	mkdir -p $(BINARIES_DIR)/efi-part/EFI/BOOT
+	cp -dpfr $(TARGET_DIR)/boot/EFI/BOOT/grub.cfg \
+		$(TARGET_DIR)/boot/EFI/BOOT/mender_grubenv* \
+		$(BINARIES_DIR)/efi-part/EFI/BOOT
+endef
+endif # BR2_TARGET_GRUB2_HAS_EFI_BOOT
+
 ifeq ($(BR2_PACKAGE_MENDER_GRUBENV)$(BR_BUILDING),yy)
-ifneq ($(MENDER_GRUBENV_MODULES_MISSING),)
-$(error The following missing grub2 modules must be enabled for mender-grubenv \
-	to work: $(MENDER_GRUBENV_MODULES_MISSING))
+ifneq ($(MENDER_GRUBENV_MODULES_MISSING_EFI),)
+$(error The following missing grub2 efi modules must be enabled for mender-grubenv \
+	to work: $(MENDER_GRUBENV_MODULES_MISSING_EFI))
+endif
+ifneq ($(MENDER_GRUBENV_MODULES_MISSING_PC),)
+$(error The following missing grub2 pc modules must be enabled for mender-grubenv \
+	to work: $(MENDER_GRUBENV_MODULES_MISSING_PC))
 endif
 endif
 
@@ -54,21 +78,9 @@ define MENDER_GRUBENV_INSTALL_TARGET_CMDS
 	$(MENDER_GRUBENV_MAKE_ENV) $(MAKE) DESTDIR=$(TARGET_DIR) -C $(@D) install
 endef
 
-# Overwrite the default grub2 config files with the ones in this package.
-ifeq ($(BR2_TARGET_GRUB2_I386_PC)$(BR2_TARGET_GRUB2_ARM_UBOOT),y)
 define MENDER_GRUBENV_INSTALL_IMAGES_CMDS
-	mkdir -p $(BINARIES_DIR)/boot-part/grub
-	cp -dpfr $(TARGET_DIR)/boot/grub/grub.cfg \
-		$(TARGET_DIR)/boot/grub/mender_grubenv* \
-		$(BINARIES_DIR)/boot-part/grub
+	$(MENDER_GRUBENV_INSTALL_I386_CFG)
+	$(MENDER_GRUBENV_INSTALL_EFI_CFG)
 endef
-else
-define MENDER_GRUBENV_INSTALL_IMAGES_CMDS
-	mkdir -p $(BINARIES_DIR)/efi-part/EFI/BOOT
-	cp -dpfr $(TARGET_DIR)/boot/EFI/BOOT/grub.cfg \
-		$(TARGET_DIR)/boot/EFI/BOOT/mender_grubenv* \
-		$(BINARIES_DIR)/efi-part/EFI/BOOT
-endef
-endif
 
 $(eval $(generic-package))

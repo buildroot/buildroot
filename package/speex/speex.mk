@@ -8,6 +8,7 @@ SPEEX_VERSION = 1.2.0
 SPEEX_SITE = https://downloads.xiph.org/releases/speex
 SPEEX_LICENSE = BSD-3-Clause
 SPEEX_LICENSE_FILES = COPYING
+SPEEX_CPE_ID_VENDOR = xiph
 SPEEX_INSTALL_STAGING = YES
 SPEEX_DEPENDENCIES = host-pkgconf libogg
 SPEEX_CONF_OPTS = \

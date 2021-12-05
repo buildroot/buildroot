@@ -16,4 +16,10 @@ TINYDTLS_AUTORECONF = YES
 # use inttypes.h data types instead of u_intXX_t for musl compatibility
 TINYDTLS_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -DSHA2_USE_INTTYPES_H"
 
+# Fix build with automake >= 1.16.4
+define TINYDTLS_TOUCH_AR_LIB
+	touch $(@D)/ar-lib
+endef
+TINYDTLS_PRE_CONFIGURE_HOOKS += TINYDTLS_TOUCH_AR_LIB
+
 $(eval $(autotools-package))

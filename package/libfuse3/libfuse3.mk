@@ -19,7 +19,7 @@ LIBFUSE3_CONF_OPTS = \
 	-Dtests=false
 
 define LIBFUSE3_DEVICES
-	/dev/fuse  c  666  0  0  10  229  0  0  -
+	/dev/fuse c 666 0 0 10 229 0 0 -
 endef
 
 define LIBFUSE3_PERMISSIONS

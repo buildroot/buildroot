@@ -10,6 +10,8 @@ HPLIP_AUTORECONF = YES
 HPLIP_DEPENDENCIES = cups libusb jpeg host-pkgconf
 HPLIP_LICENSE = GPL-2.0, BSD-3-Clause, MIT
 HPLIP_LICENSE_FILES = COPYING
+HPLIP_CPE_ID_VENDOR = hp
+HPLIP_CPE_ID_PRODUCT = linux_imaging_and_printing_project
 
 HPLIP_CONF_OPTS = \
 	--disable-qt4 \

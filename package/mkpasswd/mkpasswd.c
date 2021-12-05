@@ -18,6 +18,11 @@
 
 /* for crypt, snprintf and strcasecmp */
 #define _XOPEN_SOURCE
+/*
+ * _BSD_SOURCE is deprecated as of GLIBC 2.20; _DEFAULT_SOURCE should be used
+ * instead. (https://lwn.net/Articles/611162/)
+ */
+#define _DEFAULT_SOURCE
 #define _BSD_SOURCE
 
 /* System library */
