@@ -113,6 +113,21 @@ else
 NETWORK_MANAGER_CONF_OPTS += --without-ofono
 endif
 
+ifeq ($(BR2_PACKAGE_SYSTEMD),y)
+NETWORK_MANAGER_DEPENDENCIES += systemd
+NETWORK_MANAGER_CONF_OPTS += \
+	--with-systemd-journal \
+	--with-config-logging-backend-default=journal \
+	--with-session-tracking=systemd \
+	--with-suspend-resume=systemd
+else
+NETWORK_MANAGER_CONF_OPTS += \
+	--without-systemd-journal \
+	--with-config-logging-backend-default=syslog \
+	--without-session-tracking \
+	--with-suspend-resume=upower
+endif
+
 ifeq ($(BR2_PACKAGE_POLKIT),y)
 NETWORK_MANAGER_DEPENDENCIES += polkit
 NETWORK_MANAGER_CONF_OPTS += --enable-polkit
