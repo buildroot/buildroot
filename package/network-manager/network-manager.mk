@@ -35,11 +35,19 @@ NETWORK_MANAGER_CONF_OPTS = \
 	--disable-ifupdown \
 	--without-nm-cloud-setup
 
-ifeq ($(BR2_PACKAGE_OFONO),y)
-NETWORK_MANAGER_DEPENDENCIES += ofono
-NETWORK_MANAGER_CONF_OPTS += --with-ofono
+ifeq ($(BR2_PACKAGE_AUDIT),y)
+NETWORK_MANAGER_DEPENDENCIES += audit
+NETWORK_MANAGER_CONF_OPTS += --with-libaudit
 else
-NETWORK_MANAGER_CONF_OPTS += --without-ofono
+NETWORK_MANAGER_CONF_OPTS += --without-libaudit
+endif
+
+ifeq ($(BR2_PACKAGE_DHCP_CLIENT),y)
+NETWORK_MANAGER_CONF_OPTS += --with-dhclient=/sbin/dhclient
+endif
+
+ifeq ($(BR2_PACKAGE_DHCPCD),y)
+NETWORK_MANAGER_CONF_OPTS += --with-dhcpcd=/sbin/dhcpcd
 endif
 
 ifeq ($(BR2_PACKAGE_IWD),y)
@@ -47,13 +55,6 @@ NETWORK_MANAGER_DEPENDENCIES += iwd
 NETWORK_MANAGER_CONF_OPTS += --with-iwd
 else
 NETWORK_MANAGER_CONF_OPTS += --without-iwd
-endif
-
-ifeq ($(BR2_PACKAGE_AUDIT),y)
-NETWORK_MANAGER_DEPENDENCIES += audit
-NETWORK_MANAGER_CONF_OPTS += --with-libaudit
-else
-NETWORK_MANAGER_CONF_OPTS += --without-libaudit
 endif
 
 ifeq ($(BR2_PACKAGE_LIBCURL),y)
@@ -77,18 +78,18 @@ else
 NETWORK_MANAGER_CONF_OPTS += --without-selinux
 endif
 
-ifeq ($(BR2_PACKAGE_READLINE),y)
-NETWORK_MANAGER_DEPENDENCIES += readline
-NETWORK_MANAGER_CONF_OPTS += --with-nmcli
+ifeq ($(BR2_PACKAGE_NETWORK_MANAGER_MODEM_MANAGER),y)
+NETWORK_MANAGER_DEPENDENCIES += modem-manager
+NETWORK_MANAGER_CONF_OPTS += --with-modem-manager-1
 else
-NETWORK_MANAGER_CONF_OPTS += --without-nmcli
+NETWORK_MANAGER_CONF_OPTS += --without-modem-manager-1
 endif
 
-ifeq ($(BR2_PACKAGE_NETWORK_MANAGER_TUI),y)
-NETWORK_MANAGER_DEPENDENCIES += newt
-NETWORK_MANAGER_CONF_OPTS += --with-nmtui
+ifeq ($(BR2_PACKAGE_NETWORK_MANAGER_OVS),y)
+NETWORK_MANAGER_CONF_OPTS += --enable-ovs
+NETWORK_MANAGER_DEPENDENCIES += jansson
 else
-NETWORK_MANAGER_CONF_OPTS += --without-nmtui
+NETWORK_MANAGER_CONF_OPTS += --disable-ovs
 endif
 
 ifeq ($(BR2_PACKAGE_NETWORK_MANAGER_PPPD),y)
@@ -98,11 +99,18 @@ else
 NETWORK_MANAGER_CONF_OPTS += --disable-ppp
 endif
 
-ifeq ($(BR2_PACKAGE_NETWORK_MANAGER_MODEM_MANAGER),y)
-NETWORK_MANAGER_DEPENDENCIES += modem-manager
-NETWORK_MANAGER_CONF_OPTS += --with-modem-manager-1
+ifeq ($(BR2_PACKAGE_NETWORK_MANAGER_TUI),y)
+NETWORK_MANAGER_DEPENDENCIES += newt
+NETWORK_MANAGER_CONF_OPTS += --with-nmtui
 else
-NETWORK_MANAGER_CONF_OPTS += --without-modem-manager-1
+NETWORK_MANAGER_CONF_OPTS += --without-nmtui
+endif
+
+ifeq ($(BR2_PACKAGE_OFONO),y)
+NETWORK_MANAGER_DEPENDENCIES += ofono
+NETWORK_MANAGER_CONF_OPTS += --with-ofono
+else
+NETWORK_MANAGER_CONF_OPTS += --without-ofono
 endif
 
 ifeq ($(BR2_PACKAGE_POLKIT),y)
@@ -112,19 +120,11 @@ else
 NETWORK_MANAGER_CONF_OPTS += --disable-polkit
 endif
 
-ifeq ($(BR2_PACKAGE_DHCP_CLIENT),y)
-NETWORK_MANAGER_CONF_OPTS += --with-dhclient=/sbin/dhclient
-endif
-
-ifeq ($(BR2_PACKAGE_DHCPCD),y)
-NETWORK_MANAGER_CONF_OPTS += --with-dhcpcd=/sbin/dhcpcd
-endif
-
-ifeq ($(BR2_PACKAGE_NETWORK_MANAGER_OVS),y)
-NETWORK_MANAGER_CONF_OPTS += --enable-ovs
-NETWORK_MANAGER_DEPENDENCIES += jansson
+ifeq ($(BR2_PACKAGE_READLINE),y)
+NETWORK_MANAGER_DEPENDENCIES += readline
+NETWORK_MANAGER_CONF_OPTS += --with-nmcli
 else
-NETWORK_MANAGER_CONF_OPTS += --disable-ovs
+NETWORK_MANAGER_CONF_OPTS += --without-nmcli
 endif
 
 define NETWORK_MANAGER_INSTALL_INIT_SYSV
