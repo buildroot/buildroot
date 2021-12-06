@@ -1,0 +1,45 @@
+config BR2_PACKAGE_LIBPEAS
+	bool "libpeas"
+	depends on BR2_USE_MMU # gobject-introspection
+	depends on BR2_PACKAGE_GOBJECT_INTROSPECTION_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # gobject-introspection
+	depends on BR2_HOST_GCC_AT_LEAST_8 # gobject-introspection -> host-qemu
+	depends on BR2_TOOLCHAIN_USES_GLIBC # gobject-introspection
+	depends on BR2_PACKAGE_PYTHON3 # gobject-introspection
+	select BR2_PACKAGE_GOBJECT_INTROSPECTION
+	select BR2_PACKAGE_LIBGLIB2
+	help
+	  libpeas is a gobject-based plugins engine, and is targetted at
+	  giving every application the chance to assume its own
+	  extensibility. It also has a set of features including, but
+	  not limited to:
+	    - multiple extension points
+	    - On demand (lazy) programming language support for C,
+	      Python and Lua
+	    - Simplicity of the API
+
+	  https://wiki.gnome.org/Projects/Libpeas
+
+if BR2_PACKAGE_LIBPEAS
+
+config BR2_PACKAGE_LIBPEAS_WIDGETS
+	bool "widgets"
+	depends on BR2_PACKAGE_LIBGTK3
+	help
+	  Build GTK+ widgetry
+
+comment "widget support needs libgtk3"
+	depends on !BR2_PACKAGE_LIBGTK3
+
+endif
+
+comment "libpeas needs python3"
+	depends on BR2_PACKAGE_GOBJECT_INTROSPECTION_ARCH_SUPPORTS
+	depends on BR2_USE_MMU
+	depends on !BR2_PACKAGE_PYTHON3
+
+comment "libpeas needs a glibc toolchain, gcc >= 4.9, host gcc >= 8"
+	depends on BR2_PACKAGE_GOBJECT_INTROSPECTION_ARCH_SUPPORTS
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_USES_GLIBC || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || !BR2_HOST_GCC_AT_LEAST_8

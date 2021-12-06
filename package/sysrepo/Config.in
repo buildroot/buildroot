@@ -6,8 +6,7 @@ config BR2_PACKAGE_SYSREPO
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # C++11
 	select BR2_PACKAGE_LIBYANG
-	select BR2_PACKAGE_PCRE
-	select BR2_PACKAGE_PCRE_UCP
+	select BR2_PACKAGE_PCRE2
 	help
 	  Sysrepo is an YANG-based configuration and operational state
 	  data store for Unix/Linux applications.

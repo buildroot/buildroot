@@ -1,0 +1,6 @@
+config BR2_PACKAGE_PYTHON_TINYCSS2
+	bool "python-tinycss2"
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON_WEBENCODINGS # runtime
+	help
+	  A tiny CSS parser.

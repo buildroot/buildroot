@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-FWUP_VERSION = 1.8.0
-FWUP_SITE = $(call github,fhunleth,fwup,v$(FWUP_VERSION))
+FWUP_VERSION = 1.9.0
+FWUP_SITE = $(call github,fwup-home,fwup,v$(FWUP_VERSION))
 FWUP_LICENSE = Apache-2.0
 FWUP_LICENSE_FILES = LICENSE
 FWUP_DEPENDENCIES = host-pkgconf libconfuse libarchive

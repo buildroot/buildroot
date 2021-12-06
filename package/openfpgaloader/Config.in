@@ -4,6 +4,7 @@ config BR2_PACKAGE_OPENFPGALOADER
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libftdi1 -> libusb
 	depends on BR2_INSTALL_LIBSTDCPP
 	select BR2_PACKAGE_LIBFTDI1
+	select BR2_PACKAGE_ZLIB
 	help
 	  Universal utility for programming FPGA
 

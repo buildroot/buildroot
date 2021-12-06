@@ -1,0 +1,78 @@
+From afc83d41293333f694630451f865a7a257a9b917 Mon Sep 17 00:00:00 2001
+From: Adrian Perez de Castro <aperez@igalia.com>
+Date: Mon, 25 Oct 2021 23:45:15 +0300
+Subject: [PATCH] [WPE][GTK] Multiple build issues with ENABLE_VIDEO=OFF
+ https://bugs.webkit.org/show_bug.cgi?id=232264
+
+.:
+
+Reviewed by NOBODY (OOPS!).
+
+* Source/cmake/WebKitFeatures.cmake: Make ENABLE_MEDIA_SESSION depend on ENABLE_VIDEO.
+
+Source/WebCore:
+
+Reviewed by NOBODY (OOPS!).
+
+No new tests needed.
+
+* accessibility/AXObjectCache.cpp:
+(WebCore::isSimpleImage): Guard usage of HTMLMediaElement with ENABLE(VIDEO).
+* page/EventHandler.cpp:
+(WebCore::EventHandler::textRecognitionCandidateElement const): Ditto.
+* platform/graphics/BifurcatedGraphicsContext.cpp: Ditto.
+* platform/graphics/displaylists/DisplayListRecorder.h: Guard usage of MediaPlayer with
+ENABLE(VIDEO).
+* platform/graphics/displaylists/DisplayListRecorderImpl.cpp: Ditto.
+* platform/graphics/displaylists/DisplayListRecorderImpl.h: Ditto.
+
+Source/WebKit:
+
+* WebProcess/WebCoreSupport/ShareableBitmapUtilities.cpp:
+(WebKit::createShareableBitmap): Guard usage of RenderVideo with ENABLE(VIDEO).
+
+Signed-off-by: Adrian Perez de Castro <aperez@igalia.com>
+---
+Upstream status: https://trac.webkit.org/changeset/284858/webkit
+
+ Source/WebCore/accessibility/AXObjectCache.cpp                 | 2 ++
+ Source/WebCore/platform/graphics/BifurcatedGraphicsContext.cpp | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/Source/WebCore/accessibility/AXObjectCache.cpp b/Source/WebCore/accessibility/AXObjectCache.cpp
+index f2451102040..930b969dcc2 100644
+--- a/Source/WebCore/accessibility/AXObjectCache.cpp
++++ b/Source/WebCore/accessibility/AXObjectCache.cpp
+@@ -528,9 +528,11 @@ static bool isSimpleImage(const RenderObject& renderer)
+         || (is<HTMLImageElement>(node) && downcast<HTMLImageElement>(node)->hasAttributeWithoutSynchronization(usemapAttr)))
+         return false;
+ 
++#if ENABLE(VIDEO)
+     // Exclude video and audio elements.
+     if (is<HTMLMediaElement>(node))
+         return false;
++#endif // ENABLE(VIDEO)
+ 
+     return true;
+ }
+diff --git a/Source/WebCore/platform/graphics/BifurcatedGraphicsContext.cpp b/Source/WebCore/platform/graphics/BifurcatedGraphicsContext.cpp
+index c0ce72c5ffc..d7ead303f3c 100644
+--- a/Source/WebCore/platform/graphics/BifurcatedGraphicsContext.cpp
++++ b/Source/WebCore/platform/graphics/BifurcatedGraphicsContext.cpp
+@@ -269,11 +269,13 @@ void BifurcatedGraphicsContext::drawPattern(NativeImage& nativeImage, const Floa
+     m_secondaryContext.drawPattern(nativeImage, imageSize, destRect, tileRect, patternTransform, phase, spacing, options);
+ }
+ 
++#if ENABLE(VIDEO)
+ void BifurcatedGraphicsContext::paintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
+ {
+     m_primaryContext.paintFrameForMedia(player, destination);
+     m_secondaryContext.paintFrameForMedia(player, destination);
+ }
++#endif // ENABLE(VIDEO)
+ 
+ void BifurcatedGraphicsContext::scale(const FloatSize& scale)
+ {
+-- 
+2.33.1
+

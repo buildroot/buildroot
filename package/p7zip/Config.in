@@ -12,6 +12,28 @@ config BR2_PACKAGE_P7ZIP
 
 	  http://sourceforge.net/projects/p7zip
 
+if BR2_PACKAGE_P7ZIP
+
+choice
+	prompt "p7zip binary"
+	default BR2_PACKAGE_P7ZIP_7ZR
+
+config BR2_PACKAGE_P7ZIP_7ZA
+	bool "7za"
+	help
+	  Full 7za archiver. The program supports 7z, ZIP, CAB, ARJ,
+	  GZIP, BZIP2, TAR, CPIO, RPM and DEB formats
+
+config BR2_PACKAGE_P7ZIP_7ZR
+	bool "7zr"
+	help
+	  Lightweight 7zr archiver. The program only handles 7z archives
+	  and cannot handle encrypted archives
+
+endchoice
+
+endif
+
 comment "p7zip needs a toolchain w/ threads, wchar, C++"
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || !BR2_USE_WCHAR || !BR2_INSTALL_LIBSTDCPP

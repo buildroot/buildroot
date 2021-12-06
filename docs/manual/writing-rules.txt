@@ -192,6 +192,12 @@ image sdimage.img {
 * Filename must at least begin with genimage prefix and have the .cfg
   extension to be easy to recognize.
 
+* Allowed notations for +offset+ and +size+ options are: +G+, +M+, +K+
+  (not +k+).  If it's not possible to express a precise byte count
+  with notations above then use hexadecimal +0x+ prefix or, as last
+  chance, the byte count.  In comments instead use +GB+, +MB+, +KB+
+  (not +kb+) in place of +G+, +M+, +K+.
+
 The +genimage.cfg+ files are the input for the genimage tool used in
 Buildroot to generate the final image file(i.e. sdcard.img). For further
 details about the _genimage_ language, refer to

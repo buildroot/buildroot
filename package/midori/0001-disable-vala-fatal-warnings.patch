@@ -1,0 +1,30 @@
+From be91b1260d3215119e4ab5b19012ab80d6ff788d Mon Sep 17 00:00:00 2001
+From: Adam Duskett <aduskett@gmail.com>
+Date: Mon, 11 Oct 2021 16:58:34 -0700
+Subject: [PATCH] disable vala fatal warnings
+
+When building midori in a buildroot directory cloned from git, the git
+descript --tags command return tags from buildroot, which in turn sets
+the --fatal-warnings flag. Disable --fatal-warnings unconditionally.
+
+Signed-off-by: Adam Duskett <aduskett@gmail.com>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8e72f08..39941e2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -18,7 +18,7 @@ execute_process(COMMAND "git" "describe" "--tags"
+ if (REVISION)
+     set(CORE_VERSION "${REVISION}")
+     # All warnings are errors in development builds
+-    set(VALAFLAGS ${VALAFLAGS} --fatal-warnings)
++    set(VALAFLAGS ${VALAFLAGS} --disable-assert)
+ else ()
+     # No runtime type checks
+     set(VALAFLAGS ${VALAFLAGS} --disable-assert)
+-- 
+2.30.2
+

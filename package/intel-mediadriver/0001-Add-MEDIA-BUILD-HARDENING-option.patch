@@ -12,6 +12,7 @@ Patch sent upstream: https://github.com/intel/media-driver/pull/1242
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Bernd: rebased for version 21.4.1]
 ---
  cmrtlib/linux/CMakeLists.txt                       | 14 ++++++++++----
  .../cmake/linux/media_compile_flags_linux.cmake    | 12 ++++++++++--
@@ -88,7 +89,7 @@ diff --git a/media_driver/media_top_cmake.cmake b/media_driver/media_top_cmake.c
 index f089ea45f..b0b428914 100755
 --- a/media_driver/media_top_cmake.cmake
 +++ b/media_driver/media_top_cmake.cmake
-@@ -111,7 +111,13 @@ if(MEDIA_BUILD_FATAL_WARNINGS)
+@@ -113,7 +113,13 @@ if(MEDIA_BUILD_FATAL_WARNINGS)
      set_target_properties(${LIB_NAME_OBJ} PROPERTIES COMPILE_FLAGS "-Werror")
  endif()
  

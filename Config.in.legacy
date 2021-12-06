@@ -144,6 +144,15 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2022.02"
+
+config BR2_PACKAGE_LIBMEDIAART_BACKEND_NONE
+	bool "libmediaart 'none' backend removed"
+	select BR2_LEGACY
+	help
+	  'none' backend has been removed from libmediaart since version
+	  1.9.5.
+
 comment "Legacy options removed in 2021.11"
 
 config BR2_OPENJDK_VERSION_LTS

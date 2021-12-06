@@ -14,7 +14,7 @@ SYSTEMD_DEPENDENCIES = \
 	$(BR2_COREUTILS_HOST_DEPENDENCY) \
 	$(if $(BR2_PACKAGE_BASH_COMPLETION),bash-completion) \
 	host-gperf \
-	host-python3-jinja2 \
+	host-python-jinja2 \
 	kmod \
 	libcap \
 	util-linux-libs \
@@ -738,7 +738,7 @@ HOST_SYSTEMD_DEPENDENCIES = \
 	host-patchelf \
 	host-libcap \
 	host-gperf \
-	host-python3-jinja2
+	host-python-jinja2
 
 HOST_SYSTEMD_NINJA_ENV = DESTDIR=$(HOST_DIR)
 

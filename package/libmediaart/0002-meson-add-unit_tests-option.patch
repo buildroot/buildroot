@@ -1,0 +1,48 @@
+From 01d94777d9d1906750db0e27e2e7b8f228ae4343 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 9 Oct 2021 23:45:53 +0200
+Subject: [PATCH] meson: add unit_tests option
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:  not sent yet (waiting feedback on first patch)]
+---
+ meson_options.txt |  2 ++
+ tests/meson.build | 14 ++++++++------
+ 2 files changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/meson_options.txt b/meson_options.txt
+index b8c51b1..1172f93 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -2,6 +2,8 @@ option('image_library', type: 'combo', choices: ['auto', 'gdk-pixbuf', 'qt4', 'q
+        description: 'Which image processing backend to use')
+ option('introspection', type : 'boolean', value : 'true',
+        description : 'Enable / disable the GObject-Introspection integration')
++option('unit_tests', type : 'boolean', value : 'true',
++       description : 'Enable / disable unit tests')
+ option('gtk_doc',
+   type: 'boolean',
+   value: 'false',
+diff --git a/tests/meson.build b/tests/meson.build
+index 28834c0..02c96a1 100644
+--- a/tests/meson.build
++++ b/tests/meson.build
+@@ -1,7 +1,9 @@
+-mediaart_test = executable('mediaart-test',
+-  'mediaarttest.c',
+-  dependencies: libmediaart_dep,
+-)
++if get_option('unit_tests')
++  mediaart_test = executable('mediaart-test',
++    'mediaarttest.c',
++    dependencies: libmediaart_dep,
++  )
+ 
+-test('mediaart', mediaart_test,
+-     env: 'G_TEST_SRCDIR=' + meson.current_source_dir())
++  test('mediaart', mediaart_test,
++       env: 'G_TEST_SRCDIR=' + meson.current_source_dir())
++endif
+-- 
+2.33.0
+

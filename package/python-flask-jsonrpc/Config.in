@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_FLASK_JSONRPC
 	bool "python-flask-jsonrpc"
+	depends on BR2_PACKAGE_PYTHON3
 	# runtime dependency
 	select BR2_PACKAGE_PYTHON_FLASK
 	help
