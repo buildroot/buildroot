@@ -5,7 +5,8 @@
 ################################################################################
 
 MIDORI_VERSION = 9.0
-MIDORI_SITE = $(call github,midori-browser,core,v$(MIDORI_VERSION))
+MIDORI_SOURCE = midori-v$(MIDORI_VERSION).tar.gz
+MIDORI_SITE = https://github.com/midori-browser/core/releases/download/v$(MIDORI_VERSION)
 MIDORI_LICENSE = LGPL-2.1+
 MIDORI_LICENSE_FILES = COPYING
 MIDORI_CPE_ID_VENDOR = midori-browser
