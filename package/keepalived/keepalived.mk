@@ -12,6 +12,9 @@ KEEPALIVED_LICENSE_FILES = COPYING
 KEEPALIVED_CPE_ID_VENDOR = keepalived
 KEEPALIVED_CONF_OPTS = --disable-hardening
 
+# 0002-dbus-fix-policy-to-not-be-overly-broad.patch
+KEEPALIVED_IGNORE_CVES += CVE-2021-44225
+
 ifeq ($(BR2_PACKAGE_JSON_C),y)
 KEEPALIVED_DEPENDENCIES += json-c
 KEEPALIVED_CONF_OPTS += --enable-json
