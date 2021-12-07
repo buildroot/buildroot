@@ -10,12 +10,19 @@ STELLA_SITE = https://github.com/stella-emu/stella/releases/download/$(STELLA_VE
 STELLA_LICENSE = GPL-2.0+
 STELLA_LICENSE_FILES = Copyright.txt License.txt
 
-STELLA_DEPENDENCIES = sdl2 libpng zlib
+STELLA_DEPENDENCIES = sdl2 zlib
 
 STELLA_CONF_OPTS = \
 	--host=$(GNU_TARGET_NAME) \
 	--prefix=/usr \
 	--with-sdl-prefix=$(STAGING_DIR)/usr
+
+ifeq ($(BR2_PACKAGE_LIBPNG),y)
+STELLA_CONF_OPTS += --enable-png
+STELLA_DEPENDENCIES += libpng
+else
+STELLA_CONF_OPTS += --disable-png
+endif
 
 # The configure script is not autoconf based, so we use the
 # generic-package infrastructure
