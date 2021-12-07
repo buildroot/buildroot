@@ -109,6 +109,7 @@ if BR2_PACKAGE_WPEWEBKIT_MULTIMEDIA
 
 config BR2_PACKAGE_WPEWEBKIT_MEDIA_STREAM
 	bool "media-stream support"
+	select BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VIDEORATE
 	help
 	  This option enables media-stream support.
 
