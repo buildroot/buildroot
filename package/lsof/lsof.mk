@@ -4,8 +4,9 @@
 #
 ################################################################################
 
-LSOF_VERSION = 4.93.2
-LSOF_SITE = $(call github,lsof-org,lsof,$(LSOF_VERSION))
+LSOF_VERSION = 4.94.0
+LSOF_SOURCE = lsof_$(LSOF_VERSION).linux.tar.bz2
+LSOF_SITE = https://github.com/lsof-org/lsof/releases/download/$(LSOF_VERSION)
 LSOF_LICENSE = lsof license
 # License is repeated in each file, this is a relatively small one.
 # It is also defined in 00README, but that contains a lot of other cruft.
