@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FRR_VERSION = 7.5.1
+FRR_VERSION = 8.1
 FRR_SITE = $(call github,FRRouting,frr,frr-$(FRR_VERSION))
 FRR_LICENSE = GPL-2.0
 FRR_LICENSE_FILES = COPYING
@@ -15,7 +15,7 @@ FRR_AUTORECONF = YES
 FRR_DEPENDENCIES = host-frr readline json-c \
 	libyang libnl c-ares
 
-HOST_FRR_DEPENDENCIES = host-flex host-bison host-python3
+HOST_FRR_DEPENDENCIES = host-flex host-bison host-elfutils host-python3
 
 FRR_CONF_OPTS = --with-clippy=$(HOST_DIR)/bin/clippy \
 	--sysconfdir=/etc/frr \
