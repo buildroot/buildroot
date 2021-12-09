@@ -5,7 +5,7 @@
 ################################################################################
 
 PCRE2_VERSION = 10.37
-PCRE2_SITE = https://ftp.pcre.org/pub/pcre
+PCRE2_SITE = https://github.com/PhilipHazel/pcre2/releases/download/pcre2-$(PCRE2_VERSION)
 PCRE2_SOURCE = pcre2-$(PCRE2_VERSION).tar.bz2
 PCRE2_LICENSE = BSD-3-Clause
 PCRE2_LICENSE_FILES = LICENCE
