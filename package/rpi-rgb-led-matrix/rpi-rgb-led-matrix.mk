@@ -10,8 +10,12 @@ RPI_RGB_LED_MATRIX_LICENSE = GPL-2.0
 RPI_RGB_LED_MATRIX_LICENSE_FILES = COPYING
 RPI_RGB_LED_MATRIX_INSTALL_STAGING = YES
 
+RPI_RGB_LED_MATRIX_MAKE_OPTS = \
+	$(TARGET_CONFIGURE_OPTS) \
+	CXXFLAGS="$(TARGET_CXXFLAGS) -fPIC"
+
 define RPI_RGB_LED_MATRIX_BUILD_CMDS
-	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/lib all
+	$(MAKE) $(RPI_RGB_LED_MATRIX_MAKE_OPTS) -C $(@D)/lib all
 endef
 
 define RPI_RGB_LED_MATRIX_INSTALL_STAGING_CMDS
@@ -31,7 +35,7 @@ ifeq ($(BR2_PACKAGE_RPI_RGB_LED_MATRIX_IMAGE_VIEWER),y)
 RPI_RGB_LED_MATRIX_DEPENDENCIES += graphicsmagick
 
 define RPI_RGB_LED_MATRIX_BUILD_IMAGE_VIEWER_CMDS
-	$(MAKE) $(TARGET_CONFIGURE_OPTS) \
+	$(MAKE) $(RPI_RGB_LED_MATRIX_MAKE_OPTS) \
 		MAGICK_CXXFLAGS="-I$(STAGING_DIR)/usr/include/GraphicsMagick $(shell $(STAGING_DIR)/usr/bin/GraphicsMagick++-config --cxxflags)" \
 		MAGICK_LDFLAGS="-L$(STAGING_DIR)/usr/lib $(shell $(STAGING_DIR)/usr/bin/GraphicsMagick++-config --libs)" \
 		-C $(@D)/utils led-image-viewer
@@ -46,7 +50,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_RPI_RGB_LED_MATRIX_TEXT_SCROLLER),y)
 define RPI_RGB_LED_MATRIX_BUILD_TEXT_SCROLLER_CMDS
-	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/utils text-scroller
+	$(MAKE) $(RPI_RGB_LED_MATRIX_MAKE_OPTS) -C $(@D)/utils text-scroller
 endef
 RPI_RGB_LED_MATRIX_POST_BUILD_HOOKS += RPI_RGB_LED_MATRIX_BUILD_TEXT_SCROLLER_CMDS
 
@@ -62,7 +66,7 @@ ifeq ($(BR2_PACKAGE_RPI_RGB_LED_MATRIX_VIDEO_VIEWER),y)
 RPI_RGB_LED_MATRIX_DEPENDENCIES += ffmpeg
 
 define RPI_RGB_LED_MATRIX_BUILD_VIDEO_VIEWER_CMDS
-	$(MAKE) $(TARGET_CONFIGURE_OPTS) \
+	$(MAKE) $(RPI_RGB_LED_MATRIX_MAKE_OPTS) \
 		AV_CXXFLAGS="$(shell $(HOST_DIR)/bin/pkg-config --cflags libavcodec libavformat libswscale libavutil)" \
 		AV_LDFLAGS="$(shell $(HOST_DIR)/bin/pkg-config --libs libavcodec libavformat libswscale libavutil)" \
 		-C $(@D)/utils video-viewer
