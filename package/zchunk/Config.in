@@ -1,0 +1,8 @@
+config BR2_PACKAGE_ZCHUNK
+	bool "zchunk"
+	select BR2_PACKAGE_LIBCURL
+	help
+	  A file format designed for highly efficient deltas while
+	  maintaining good compression.
+
+	  https://github.com/zchunk/zchunk
