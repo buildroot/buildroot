@@ -15,4 +15,11 @@ FINDUTILS_CONF_ENV = \
 	ac_cv_func_working_mktime=yes \
 	gl_cv_func_wcwidth_works=yes
 
+ifeq ($(BR2_PACKAGE_LIBSELINUX),y)
+FINDUTILS_DEPENDENCIES += libselinux
+FINDUTILS_CONF_OPTS += --with-selinux
+else
+FINDUTILS_CONF_OPTS += --without-selinux
+endif
+
 $(eval $(autotools-package))
