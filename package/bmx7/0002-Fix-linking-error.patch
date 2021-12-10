@@ -1,0 +1,29 @@
+From 974541b80bf8d7ec78ed9214a1b541957670f9cd Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jos=C3=A9=20Pekkarinen?= <jose.pekkarinen@unikie.com>
+Date: Fri, 10 Dec 2021 14:36:55 +0200
+Subject: [PATCH] Fix linking error
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: José Pekkarinen <jose.pekkarinen@unikie.com>
+---
+ src/bmx.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/bmx.h b/src/bmx.h
+index 4269903..7789f7f 100644
+--- a/src/bmx.h
++++ b/src/bmx.h
+@@ -290,7 +290,7 @@ enum ADGSN {
+ #define SUCCESS 0
+ #define FAILURE -1
+ 
+-const void* FAILURE_PTR;
++extern const void* FAILURE_PTR;
+ 
+ 
+ #define MAX_SELECT_TIMEOUT_MS 1100 /* MUST be smaller than (1000/2) to fit into max tv_usec */
+-- 
+2.30.2
+
