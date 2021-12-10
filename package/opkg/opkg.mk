@@ -11,6 +11,7 @@ OPKG_LICENSE = GPL-2.0+
 OPKG_LICENSE_FILES = COPYING
 OPKG_INSTALL_STAGING = YES
 OPKG_CONF_OPTS = --disable-curl
+OPKG_CONF_OPTS += --enable-libopkg-api
 
 # Ensure directory for lockfile exists
 define OPKG_CREATE_LOCKDIR

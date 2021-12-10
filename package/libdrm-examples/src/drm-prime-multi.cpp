@@ -122,6 +122,21 @@ constexpr size_t length (char const (&) [N]) {
       return N - 1;
 }
 
+template <class FROM, class TO, bool ENABLE>
+struct _narrowing {
+    static_assert (( std::is_arithmetic < FROM > :: value && std::is_arithmetic < TO > :: value ) != false);
+
+    // Not complete, assume zero is minimum for unsigned
+    // Common type of signed and unsigned typically is unsigned
+    using common_t = typename std::common_type < FROM, TO > :: type;
+    static constexpr bool value =   ENABLE
+                                    && (
+                                        ( std::is_signed < FROM > :: value && std::is_unsigned < TO > :: value )
+                                        || static_cast < common_t > ( std::numeric_limits < FROM >::max () ) >= static_cast < common_t > ( std::numeric_limits < TO >::max () )
+                                    )
+                                    ;
+};
+
 class DRM {
     public:
 
@@ -133,12 +148,14 @@ class DRM {
         using width_t = remove_pointer < decltype (drmModeFB2::width) >::type;
         using height_t = remove_pointer < decltype (drmModeFB2::height) >::type;
         using frmt_t = remove_pointer < decltype (drmModeFB2::pixel_format) >::type;
-//        using mod_t = remove_pointer < decltype (drmModeFB2::modifier) >::type;
-        using pitch_t = remove_pointer < std::decay < decltype (drmModeFB2::pitches) >::type >::type;
+        using modifier_t = remove_pointer < decltype (drmModeFB2::modifier) >::type;
+
         using handle_t = remove_pointer < std::decay < decltype (drmModeFB2::handles) >::type >::type;
+        using pitch_t = remove_pointer < std::decay < decltype (drmModeFB2::pitches) >::type >::type;
+        using offset_t = remove_pointer < std::decay < decltype (drmModeFB2::offsets) >::type >::type;
 
 // TODO: absent in FB2
-        using bpp_t = remove_pointer < decltype (drmModeFB::bpp) >::type;
+//        using bpp_t = remove_pointer < decltype (drmModeFB::bpp) >::type;
 
         using x_t = remove_pointer < decltype (drmModeCrtc::x) >::type;
         using y_t = remove_pointer < decltype (drmModeCrtc::y) >::type;
@@ -180,12 +197,18 @@ class DRM {
         class GBM {
 
             public :
-                using fd_t = remove_pointer < decltype (gbm_import_fd_data::fd) >::type;
 
-                using width_t = remove_pointer < decltype (gbm_import_fd_data::width) >::type;
-                using height_t = remove_pointer < decltype (gbm_import_fd_data::height) >::type;
-                using stride_t = remove_pointer < decltype (gbm_import_fd_data::stride) >::type;
-                using frmt_t = remove_pointer < decltype (gbm_import_fd_data::format) >::type const;
+                using width_t = remove_pointer < decltype (gbm_import_fd_modifier_data::width) >::type;
+                using height_t = remove_pointer < decltype (gbm_import_fd_modifier_data::height) >::type;
+                using frmt_t = remove_pointer < decltype (gbm_import_fd_modifier_data::format) >::type;
+
+                // See xf86drmMode.h for magic constant
+                static_assert (GBM_MAX_PLANES == 4);
+
+                using fd_t = remove_pointer < std::decay < decltype (gbm_import_fd_modifier_data::fds) > :: type >::type;
+                using stride_t = remove_pointer < std::decay < decltype (gbm_import_fd_modifier_data::strides) > :: type >::type;
+                using offset_t = remove_pointer < std::decay < decltype (gbm_import_fd_modifier_data::offsets) > :: type >::type;
+                using modifier_t = remove_pointer < decltype (gbm_import_fd_modifier_data::modifier) >::type;
 
                 using dev_t = struct gbm_device *;
                 using surf_t = struct  gbm_surface *;
@@ -212,7 +235,8 @@ class DRM {
 //                    std::function < height_t () > Height = [this] () { return this->_height; };
 
                     stride_t _stride;
-//                    frmt_t _frmt;
+                    frmt_t _frmt;
+                    modifier_t _modifier;
 
                     bool operator != (struct prime const & rhs) const { return /*_buf != rhs._buf || */ _fd != rhs._fd /* _width != InvalidWidth () || _height != InvalidHeight () */; }
                 } _prime;
@@ -221,6 +245,7 @@ class DRM {
                 height_t const _height;
                 stride_t _stride;
                 frmt_t _frmt;
+                modifier_t _modifier;
 
                 static_assert (is_same <decltype (GBM_BO_USE_SCANOUT), decltype (GBM_BO_USE_RENDERING)>::value != false);
 
@@ -228,7 +253,7 @@ class DRM {
                 static_assert (std::numeric_limits < decltype (GBM_BO_USE_SCANOUT) >::min () >= std::numeric_limits < gbm_bo_flags >::min ());
                 static_assert (std::numeric_limits < decltype (GBM_BO_USE_SCANOUT) >::max () <= std::numeric_limits < gbm_bo_flags >::max ());
 
-                static constexpr gbm_bo_flags _flags = static_cast <gbm_bo_flags> (GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING);
+                static constexpr gbm_bo_flags _flags = static_cast <gbm_bo_flags> (GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING | GBM_BO_USE_LINEAR);
 
                 bool const _valid;
 
@@ -241,9 +266,7 @@ class DRM {
 
                 using valid_t = decltype (_valid);
 
-                using bpp_t = decltype (gbm_bo_get_bpp (_buf)); 
-
-                static_assert (is_same <fd_t, DRM::fd_t>::value != false);
+//                static_assert (is_same <fd_t, DRM::fd_t>::value != false);
 
                 GBM () = delete;
                 explicit GBM (DRM::fd_t const & fd, width_t width, height_t height, frmt_t frmt) : _fd {fd}, _width {width}, _height {height}, _frmt {frmt}, _valid {Init ()} {}
@@ -262,7 +285,8 @@ class DRM {
                 static constexpr width_t InvalidWidth () { return 0; }
                 static constexpr height_t InvalidHeight () { return 0; }
                 static constexpr stride_t InvalidStride () { return 0; }
-                static constexpr frmt_t InvalidFrmt () { return 0; }
+                static constexpr frmt_t InvalidFrmt () { return DRM::InvalidFrmt (); }
+                static constexpr modifier_t InvalidModifier () { return DRM::InvalidModifier (); }
 
                 valid_t const Status () const { return _valid; }
 
@@ -318,7 +342,8 @@ class DRM {
 
         static constexpr width_t InvalidWidth () { return 0; }
         static constexpr height_t InvalidHeight () { return 0; }
-//        static constexpr frm_t InvalidFrmt () { return 0; }
+        static constexpr frmt_t InvalidFrmt () { return DRM_FORMAT_INVALID; }
+        static constexpr modifier_t InvalidModifier () { return DRM_FORMAT_MOD_INVALID; }
 
         // Especially, required for headless / off-screen without a mode set
 // TODO: instead of default communicated values and use in  platform initialization
@@ -326,22 +351,11 @@ class DRM {
         static constexpr height_t DefaultHeight () { return 1080; }
 
 // TODO: match FB and gbm_bo
-// TODO: configurable GBM format
-        static constexpr uint32_t ColorFormat () {
-            static_assert (sizeof (uint32_t) >= sizeof (DRM_FORMAT_XRGB8888));
-            static_assert (sizeof (uint32_t) >= sizeof (DRM_FORMAT_ARGB8888));
+        static_assert (_narrowing < decltype (DRM_FORMAT_ARGB8888), frmt_t, true > :: value != false);
+        static frmt_t ColorFormat () { return static_cast <frmt_t> (DRM_FORMAT_ARGB8888); }
 
-            static_assert (std::numeric_limits <decltype (DRM_FORMAT_XRGB8888)>::min () >= std::numeric_limits <uint32_t>::min ());
-            static_assert (std::numeric_limits <decltype (DRM_FORMAT_XRGB8888)>::max () <= std::numeric_limits <uint32_t>::max ());
-
-            static_assert (std::numeric_limits <decltype (DRM_FORMAT_ARGB8888)>::min () >= std::numeric_limits <uint32_t>::min ());
-            static_assert (std::numeric_limits <decltype (DRM_FORMAT_ARGB8888)>::max () <= std::numeric_limits <uint32_t>::max ());
-
-            // Formats might not be truly interchangeable
-            // static_assert (DRM_FORMAT_XRGB8888 == DRM_FORMAT_ARGB8888);
-
-            return static_cast <uint32_t> (DRM_FORMAT_ARGB8888);
-        }
+        static_assert (_narrowing < decltype (DRM_FORMAT_MOD_LINEAR), frmt_t, true > :: value != false);
+        static modifier_t FormatModifier () { return static_cast <modifier_t> (DRM_FORMAT_MOD_LINEAR); }
 
         static constexpr duration_t FrameDurationMax () { return 1; }
 
@@ -390,6 +404,9 @@ class EGL {
             EGLImageKHR _khr;
             EGLint _width;
             EGLint _height;
+
+            DRM::GBM::frmt_t _format;
+            DRM::GBM::modifier_t _modifier;
 
 //            static constexpr width_t InvalidWidth () { return DRM::GBM::InvalidWidth (); }
 //            static constexpr height_t InvalidHeight () { return DRM::GBM::InvalidHeight (); }
@@ -468,15 +485,27 @@ class GLES {
         std::array <GLuint, _max_textures> _tex;
 
         struct offset {
-            using coordinate_t =  float;
+            using coordinate_t = GLfloat;
 
             coordinate_t _x;
             coordinate_t _y;
             coordinate_t _z;
 
+            static_assert (_narrowing <float, coordinate_t, true> :: value != false);
             offset () : offset (0.0f, 0.0f, 0.0f) {}
             offset (coordinate_t x, coordinate_t y, coordinate_t z) : _x {x}, _y {y}, _z {z} {}
         } _offset;
+
+        struct scale {
+            using fraction_t = GLclampf;
+
+            fraction_t _horiz;
+            fraction_t _vert;
+
+            static_assert (_narrowing <float, fraction_t, true> :: value != false);
+            scale () : scale (1.0f, 1.0f) {};
+            scale (fraction_t horiz, fraction_t vert) : _horiz {horiz}, _vert {vert} {}
+        } _scale;
 
         bool const _valid;
 
@@ -487,6 +516,7 @@ class GLES {
         using tex_t = GLuint;
 
         using offset_t = decltype (_offset);
+        using scale_t = decltype (_scale);
 
         using valid_t = decltype (_valid);
 
@@ -508,12 +538,14 @@ class GLES {
         valid_t Status () const { return _valid; }
 
         bool RenderTile ();
-        bool RenderEGLImage (EGL::img_t const  & img,decltype (_max_textures) index = 0);
-        bool BufferColorFill (bool red = true, bool green = true, bool blue = true);
+        bool RenderTriangle ();
+        bool RenderEGLImage (EGL::img_t const & img, decltype (_max_textures) index = 0);
+        bool RenderColor (bool red = true, bool green = true, bool blue = true);
 
         // Valus used at render stages of different objects
         static offset InitialOffset () { return offset (0.0f, 0.0f, 0.0f); }
-        bool UpdateOffset (struct offset const & off);
+        bool UpdateOffset (offset_t const & off);
+        bool UpdateScale (scale_t const & scale);
 
     private:
 
@@ -522,7 +554,10 @@ class GLES {
         bool Init ();
         bool Deinit ();
 
-        bool SetupProgram ();
+        bool SetupProgram (char const vtx_src [], char const frag_src []);
+
+        template <size_t N>
+        bool RenderPolygon (std::array <GLfloat, N> const & vert);
 };
 
 class Base {
@@ -698,11 +733,15 @@ bool Base::ShareBuffer (bool mode) {
     constexpr char _width_tag [] = ";Width:";
     constexpr char _height_tag [] = ";Height:";
     constexpr char _stride_tag [] = ";Stride:";
+    constexpr char _format_tag [] = ";Format:";
+    constexpr char _modifier_tag [] = ";Modifier:";
 
     constexpr uint8_t _id_count = length (_id_tag);
     constexpr uint8_t _width_count = length (_width_tag);
     constexpr uint8_t _height_count = length (_height_tag);
     constexpr uint8_t _stride_count = length (_stride_tag);
+    constexpr uint8_t _format_count = length (_format_tag);
+    constexpr uint8_t _modifier_count = length (_modifier_tag);
 
     if (mode != false) {
         // Privileged
@@ -721,11 +760,13 @@ bool Base::ShareBuffer (bool mode) {
             std::string const _width_s = std::to_string (_prime._width);
             std::string const _height_s = std::to_string (_prime._height);
             std::string const _stride_s = std::to_string (_prime._stride);
+            std::string const _format_s = std::to_string (_prime._frmt);
+            std::string const _modifier_s = std::to_string (_prime._modifier);
 
 // TODO: total message size
 // TODO: more efficient message implementation
 
-            if (_id_s.size () != 0 && _width_s.size () > 0 && _height_s.size () > 0 && _stride_s.size () > 0) {
+            if (_id_s.size () != 0 && _width_s.size () > 0 && _height_s.size () > 0 && _stride_s.size () > 0 && _format_s.size () > 0 && _modifier_s.size () > 0) {
                 // Client / compositor ID
                 _msg.replace (0, _id_count, _id_tag);
                 _msg.replace (_id_count, _id_s.size (), _id_s.c_str ());
@@ -741,6 +782,14 @@ bool Base::ShareBuffer (bool mode) {
                 // Stride / Pitchh
                 _msg.replace ((_id_count + _width_count + _height_count) + _id_s.size () + _width_s.size () + _height_s.size (), _stride_count, _stride_tag);
                 _msg.replace ((_id_count + _width_count + _height_count + _stride_count) + _id_s.size () + _width_s.size () + _height_s.size (), _stride_s.size (), _stride_s.c_str ());
+
+                // Format
+                _msg.replace ((_id_count + _width_count + _height_count + _stride_count) + _id_s.size () + _width_s.size () + _height_s.size () + _stride_s.size (), _format_count, _format_tag);
+                _msg.replace ((_id_count + _width_count + _height_count + _stride_count + _format_count) + _id_s.size () + _width_s.size () + _height_s.size () + _stride_s.size (), _format_s.size (), _format_s.c_str ());
+
+                // Modifier
+                _msg.replace ((_id_count + _width_count + _height_count + _stride_count + _format_count) + _id_s.size () + _width_s.size () + _height_s.size () + _stride_s.size () + _format_s.size (), _modifier_count, _modifier_tag);
+                _msg.replace ((_id_count + _width_count + _height_count + _stride_count + _format_count + _modifier_count) + _id_s.size () + _width_s.size () + _height_s.size () + _stride_s.size () + _format_s.size (), _modifier_s.size (), _modifier_s.c_str ());
 
                 _ret = Send (_msg, _prime._fd);
             }
@@ -761,16 +810,19 @@ bool Base::ShareBuffer (bool mode) {
             size_t _width_p = _msg.find (_width_tag);
             size_t _height_p = _msg.find (_height_tag);
             size_t _stride_p = _msg.find (_stride_tag);
+            size_t _format_p = _msg.find (_format_tag);
+            size_t _modifier_p = _msg.find (_modifier_tag);
 
-            if (_id_p != std::string::npos && _width_p != std::string::npos && _height_p != std::string::npos && _stride_p != std::string::npos) {
+            if (_id_p != std::string::npos && _width_p != std::string::npos && _height_p != std::string::npos && _stride_p != std::string::npos && _format_p != std::string::npos && _modifier_p != std::string::npos) {
                 std::string const _id_s = _msg.substr (_id_p + _id_count, _width_p - _id_p - _id_count);
                 std::string const _width_s = _msg.substr (_width_p + _width_count, _height_p - _width_p - _width_count);
                 std::string const _height_s = _msg.substr (_height_p + _height_count, _stride_p - _height_p - _height_count);
-                std::string const _stride_s = _msg.substr (_stride_p + _stride_count, std::string::npos);
+                std::string const _stride_s = _msg.substr (_stride_p + _stride_count, _format_p - _stride_p - _stride_count );
+                std::string const _format_s = _msg.substr (_format_p + _format_count, _modifier_p - _format_p - _format_count);
+                std::string const _modifier_s = _msg.substr (_modifier_p + _modifier_count, std::string::npos);
 
                 // Client / compositor ID
                 long _val = std::atol (_id_s.c_str ());
-// TODO: assign
 
                 // Underlying buffer width
                 /* long */ _val = std::atol (_width_s.c_str ());
@@ -783,6 +835,16 @@ bool Base::ShareBuffer (bool mode) {
                 // Underlying buffer stride / pitch
                 /* long */ _val = std::atol (_stride_s.c_str ());
                 _prime._stride = _val != 0 ? _val : DRM::GBM::InvalidStride ();
+                // Underlying buffer stride / pitch
+
+                /// FourCC format
+                /* long */ _val = std::atol (_format_s.c_str ());
+                _prime._frmt = _val != 0 ? _val : DRM::GBM::InvalidFrmt ();
+
+                /* long */ _val = std::atol (_modifier_s.c_str ());
+//                _prime._modifier = _val != 0 ? _val : DRM::GBM::InvalidModifier ();
+// TODO: error condition coincides with DRM::GBM::InvalidFormat ();
+                _prime._modifier = _val;
 
 // TODO: invalid dimensions
 // TODO: narrowing
@@ -1147,21 +1209,24 @@ bool DRM::ScanOut (DRM::GBM::buf_t & buf) {
 
     if (_fd != DRM::InvalidFd () && buf != DRM::GBM::InvalidBuf ()) {
 
-        static_assert (is_same < std::decay < DRM::width_t >::type, std::decay < DRM::GBM::width_t >::type>::value != false);
-        static_assert (is_same < std::decay < DRM::height_t >::type, std::decay < DRM::GBM::height_t >::type>::value != false);
-        static_assert (is_same < std::decay < DRM::frmt_t >::type, std::decay < DRM::GBM::frmt_t >::type>::value != false);
-        static_assert (is_same < std::decay < DRM::bpp_t >::type, std::decay < DRM::GBM::bpp_t >::type>::value != false);
-        static_assert (is_same < std::decay < DRM::pitch_t >::type, std::decay < DRM::GBM::stride_t >::type>::value != false);
-        static_assert (is_same < std::decay < DRM::handle_t >::type, std::decay < DRM::GBM::handle_t >::type>::value != false);
+        static_assert (is_same < DRM::width_t, DRM::GBM::width_t > :: value != false);
+        static_assert (is_same < DRM::height_t, DRM::GBM::height_t > :: value != false);
+        static_assert (is_same < DRM::frmt_t, DRM::GBM::frmt_t > :: value != false);
+        static_assert (is_same < DRM::handle_t, DRM::GBM::handle_t > :: value != false);
+        static_assert (is_same < DRM::modifier_t, DRM::GBM::modifier_t > :: value != false);
+
+        // Possibly always failing
+        if (_narrowing <DRM::pitch_t, DRM::GBM::stride_t, true> :: value != false) {
+            std::cout << __FILE__ << " : " << __LINE__ << " : Possible narrowing detected." << std::endl;
+        }
 
 // TODO correct place?
         DRM::GBM::width_t _width = gbm_bo_get_width (buf);
         DRM::GBM::height_t _height = gbm_bo_get_height (buf);
         DRM::GBM::frmt_t _format = gbm_bo_get_format (buf);
-        DRM::GBM::bpp_t _bpp = gbm_bo_get_bpp (buf);
-
         DRM::GBM::handle_t _handle = gbm_bo_get_handle (buf).u32;
         DRM::GBM::stride_t _stride = gbm_bo_get_stride (buf);
+        DRM::GBM::modifier_t _modifier = gbm_bo_get_modifier (buf);
 
         if (_fb != DRM::InvalidFb ()) {
 // TODO: Do no remove the current FB before the FLIP otherwise EBUSY
@@ -1171,7 +1236,18 @@ bool DRM::ScanOut (DRM::GBM::buf_t & buf) {
 
         fb_id_t _fb;
 
-        if (drmModeAddFB (_fd, _width, _height, _format != DRM::ColorFormat () ? _bpp - 8 : _bpp, _bpp, _stride, _handle, &_fb) == 0) {
+        static_assert (GBM_MAX_PLANES == 4);
+        DRM::handle_t const _handles [GBM_MAX_PLANES] = { static_cast < DRM::handle_t > (_handle), 0, 0, 0 };
+        DRM::pitch_t const _pitches [GBM_MAX_PLANES] = { static_cast < DRM::pitch_t > (_stride), 0, 0, 0 };
+        DRM::offset_t  const _offsets [GBM_MAX_PLANES] = { static_cast < DRM::offset_t > (0), 0, 0, 0 };
+        DRM::modifier_t const _modifiers [GBM_MAX_PLANES] = { static_cast < DRM::modifier_t > (_modifier), 0, 0, 0};
+
+        // Possibly always failing
+        if (_narrowing <DRM::pitch_t, DRM::GBM::stride_t, true> :: value != false) {
+            std::cout << __FILE__ << " : " << __LINE__ << " : Possible narrowing detected." << std::endl;
+        }
+
+        if (drmModeAddFB2WithModifiers (_fd, _width, _height, _format, &_handles [0], &_pitches [0], &_offsets [0], &_modifiers [0], &_fb, 0) == 0) {
             static std::atomic <bool> _callback_data (true);
             _callback_data = true;
 
@@ -1396,15 +1472,16 @@ bool DRM::GBM::Init () {
     }
 
     if (_ret != false) {
-
         _ret = gbm_device_is_format_supported (_dev, _frmt, _flags) != 0;
     }
 
     if (_ret != false) {
         // It might work headless but lets keep clients similar in contructon as compositor
-        _surf = gbm_surface_create (_dev, Width (), Height (), ColorFormat (), _flags);
+        modifier_t _modifiers [1] = { DRM::FormatModifier () };
+        _surf = gbm_surface_create_with_modifiers (_dev, Width (), Height (), _frmt, &_modifiers [0], 1);
 
-        _ret = _surf != InvalidSurf ();
+// TODO: match EGL
+        _ret = _surf != InvalidSurf () && gbm_device_get_format_modifier_plane_count (_dev, _frmt, _modifiers [0]) == 1;
     }
 
     if (_ret != true) {
@@ -1473,6 +1550,8 @@ bool DRM::GBM::CreatePrime () {
 
     if (_ret != false) {
         _prime._fd = gbm_bo_get_fd (_prime._buf);
+        _prime._frmt = gbm_bo_get_format (_prime._buf);
+        _prime._modifier = gbm_bo_get_modifier (_prime._buf);
 
         _ret = _prime != InvalidPrime ();
 
@@ -1536,7 +1615,8 @@ bool DRM::GBM::CreateBuffer () {
 
     if (_ret != false) {
 
-        _prime._buf = gbm_bo_create (_dev, Width (), Height (), ColorFormat (), _flags);
+        modifier_t _modifiers [1] = { DRM::FormatModifier () };
+        _prime._buf = gbm_bo_create_with_modifiers (_dev, Width (), Height (), ColorFormat (), &_modifiers [0], 1);
 
         if (_prime._buf != InvalidBuf ()) {
             _prime._width = Width ();
@@ -1544,7 +1624,8 @@ bool DRM::GBM::CreateBuffer () {
             _prime._stride = Pitch (_prime._buf); 
         }
 
-        _ret = _prime._buf != InvalidBuf ();
+// TODO: match EGL
+        _ret = _prime._buf != InvalidBuf () && gbm_bo_get_plane_count (_prime._buf) == 1;
     }
 
     return _ret;
@@ -1693,18 +1774,20 @@ bool EGL::ImportBuffer (DRM::GBM::buf_t const & buf, decltype (_max_images) inde
             }
         }
 
-        // Possible narrowing
-//        using width_t = std::common_type <EGLint, DRM::GBM::width_t>::type;
-// TODO: print warning or fail
-//        static_assert (is_same < DRM::GBM::width_t, width_t >::value != false);
-//        static_assert (is_same < EGLint, width_t >::value != false);
-
         _img._width = DRM::GBM::Width (buf);
         _img._height = DRM::GBM::Height (buf);
 
+        // Possible narrowing
+        if (_narrowing < decltype (_img._width), EGLint, true> :: value
+         && _narrowing < decltype (_img._height), EGLint, true> :: value) {
+            // Narrowing detectedd
+            std::cout << __FILE__ << " : " << __LINE__ << " : Possible narrowing detected." << std::endl;
+        }
+
         EGLint _attrs [] = {
-            EGL_WIDTH, _img._width,
-            EGL_HEIGHT, _img._height,
+            EGL_WIDTH, static_cast <EGLint> (_img._width),
+            EGL_HEIGHT, static_cast <EGLint> (_img._height),
+            EGL_IMAGE_PRESERVED_KHR, static_cast <EGLint> (EGL_TRUE),
             EGL_NONE
         };
 
@@ -1745,19 +1828,26 @@ bool EGL::ImportBuffer (DRM::GBM::prime_t const & prime, decltype (_max_images) 
         }
 
         // Possible narrowing
-//        using width_t = std::common_type <EGLint, DRM::GBM::width_t>::type;
-// TODO: print warning or fail
-//        static_assert (is_same < DRM::GBM::width_t, width_t >::value != false);
-//        static_assert (is_same < EGLint, width_t >::value != false);
+        if (_narrowing < decltype (prime._width), EGLint, true> :: value
+         && _narrowing < decltype (prime._height), EGLint, true> :: value
+         && _narrowing < decltype (prime._stride), EGLint, true> :: value
+         && _narrowing < decltype (prime._modifier), EGLuint64KHR, true> :: value
+         ) {
+            // Narrowing detectedd
+            std::cout << __FILE__ << " : " << __LINE__ << " : Possible narrowing detected." << std::endl;
+        }
 
         EGLint _attrs [] = {
-            EGL_WIDTH,  prime._width,
-            EGL_HEIGHT, prime._height,
-            EGL_LINUX_DRM_FOURCC_EXT, DRM::ColorFormat (), //prime._frmt,
-            EGL_DMA_BUF_PLANE0_FD_EXT, prime._fd,
+            EGL_WIDTH,  static_cast <EGLint> (prime._width),
+            EGL_HEIGHT, static_cast <EGLint> (prime._height),
+            EGL_LINUX_DRM_FOURCC_EXT, static_cast <EGLint> (prime._frmt),
+            EGL_DMA_BUF_PLANE0_FD_EXT, static_cast <EGLint> (prime._fd),
 // TODO: magic constant ?
             EGL_DMA_BUF_PLANE0_OFFSET_EXT, 0,
-            EGL_DMA_BUF_PLANE0_PITCH_EXT, prime._stride,
+            EGL_DMA_BUF_PLANE0_PITCH_EXT, static_cast <EGLint> (prime._stride),
+            EGL_DMA_BUF_PLANE0_MODIFIER_LO_EXT, static_cast <EGLint> (prime._modifier & 0xFFFFFFFF),
+            EGL_DMA_BUF_PLANE0_MODIFIER_HI_EXT, static_cast <EGLint> (prime._modifier >> 32),
+            EGL_IMAGE_PRESERVED_KHR, static_cast <EGLint >(EGL_TRUE),
             EGL_NONE
         };
 
@@ -1769,7 +1859,7 @@ bool EGL::ImportBuffer (DRM::GBM::prime_t const & prime, decltype (_max_images) 
             _img._height = prime._height;
         }
 
-        _ret = _img != EGL::InvalidImage () && _gbm.ImportPrime (prime) != false;
+        _ret = _img != EGL::InvalidImage ();
     }
 
     }
@@ -1818,15 +1908,80 @@ bool GLES::Deinit () {
 }
 
 bool GLES::RenderTile () {
-    bool _ret = glGetError () == GL_NO_ERROR;
+    constexpr char const _vtx_src [] =
+        "#version 100                               \n"
+        "attribute vec3 position;                   \n"
+        "varying vec2 coordinates;                  \n"
+        "void main () {                             \n"
+            "gl_Position = vec4 (position.xyz, 1);  \n"
+            "coordinates = position.xy;             \n"
+        "}                                          \n"
+        ;
 
-    if (_ret != false) {
-        _ret = SetupProgram ();
-    }
+// TODO: For normal rendering no extention
 
-// TODO: range
+    constexpr char  const _frag_src [] =
+        "#version 100                                                           \n"
+        "#extension GL_OES_EGL_image_external : require                         \n"
+        "precision mediump float;                                               \n"
+        "uniform samplerExternalOES sampler;                                    \n"
+        "varying vec2 coordinates;                                              \n"
+        "void main () {                                                         \n"
+            "gl_FragColor = vec4 (texture2D (sampler, coordinates).rgb, 1.0f);  \n"
+        "}                                                                      \n"
+        ;
+
     static_assert (is_same <GLfloat, GLES::offset::coordinate_t>:: value != false);
-    std::array <GLfloat, 4 * VerticeDimensions> const _vert = {-0.5f + _offset._x, -0.5f + _offset._y, 0.0f + _offset._z /* v0 */, -0.5f + _offset._x, 0.5f + _offset._y, 0.0f + _offset._z /* v1 */, 0.5f + _offset._x, -0.5f + _offset._y, 0.0f + _offset._z /* v2 */, 0.5f + _offset._x, 0.5f + _offset._y, 0.0f + _offset._z /* v3 */};
+    std::array <GLfloat, 4 * VerticeDimensions> const _vert = {
+        0.0f, 0.0f, 0.0f /* v0 */,
+        1.0f, 0.0f, 0.0f /* v1 */,
+        0.0f, 1.0f, 0.0f /* v2 */,
+        1.0f, 1.0f, 0.0f /* v3 */};
+
+    bool _ret = glGetError () == GL_NO_ERROR
+                && RenderColor (true, false, false)
+                && SetupProgram (_vtx_src, _frag_src)
+                && RenderPolygon (_vert);
+
+    return _ret;
+}
+
+bool GLES::RenderTriangle () {
+    constexpr char const _vtx_src [] =
+        "#version 100                               \n"
+        "attribute vec3 position;                   \n"
+        "void main () {                             \n"
+            "gl_Position = vec4 (position.xyz, 1);  \n"
+        "}                                          \n"
+        ;
+
+    constexpr char  const _frag_src [] =
+        "#version 100                                                           \n"
+        "precision mediump float;                                               \n"
+        "void main () {                                                         \n"
+            "gl_FragColor = vec4 (0.0f, 1.0f, 0.0f, 1.0f);                      \n"
+        "}                                                                      \n"
+        ;
+
+    static_assert (is_same <GLfloat, GLES::offset::coordinate_t>:: value != false);
+    std::array <GLfloat, 3 * VerticeDimensions> const _vert = {
+        -1.0f, -1.0f, 0.0f /* v0 */,
+        1.0f, -1.0f, 0.0f /* v1 */,
+        -1.0f, 1.0f, 0.0f /* v2 */ };
+
+    bool _ret = glGetError () == GL_NO_ERROR
+                && RenderColor (false, false, true)
+                && SetupProgram (_vtx_src, _frag_src)
+                && RenderPolygon (_vert);
+
+    return _ret;
+}
+
+// TODO: Code growth if N differs
+
+template <size_t N>
+bool GLES::RenderPolygon (std::array <GLfloat, N> const & vert) {
+    bool _ret = glGetError () == GL_NO_ERROR;
 
     if (_ret != false) {
         GLuint _prog = 0;
@@ -1843,7 +1998,7 @@ bool GLES::RenderTile () {
         }
 
         if (_ret != false) {
-            glVertexAttribPointer (_loc, VerticeDimensions, GL_FLOAT, GL_FALSE, 0, _vert.data ());
+            glVertexAttribPointer (_loc, VerticeDimensions, GL_FLOAT, GL_FALSE, 0, vert.data ());
             _ret = glGetError () == GL_NO_ERROR;
         }
 
@@ -1851,11 +2006,16 @@ bool GLES::RenderTile () {
             glEnableVertexAttribArray (_loc);
             _ret = glGetError () == GL_NO_ERROR;
         }
-    }
 
-    if (_ret != false) {
-        glDrawArrays (GL_TRIANGLE_STRIP, 0, _vert.size () / VerticeDimensions);
-        _ret = glGetError () == GL_NO_ERROR;
+        if (_ret != false) {
+            glDrawArrays (GL_TRIANGLE_STRIP, 0, vert.size () / VerticeDimensions);
+            _ret = glGetError () == GL_NO_ERROR;
+        }
+
+        if (_ret != false) {
+            glDisableVertexAttribArray (_loc);
+            _ret = glGetError () == GL_NO_ERROR;
+        }
     }
 
     return _ret;
@@ -1863,104 +2023,216 @@ bool GLES::RenderTile () {
 
 bool GLES::RenderEGLImage (EGL::img_t const  & img, decltype (_max_textures) index) {
     bool _ret = glGetError () == GL_NO_ERROR && img != EGL::InvalidImage ();
-
 // TODO: add check ?
 //    fbo = _tgt != GL_TEXTURE_EXTERNAL_OES;
 
     if (index < _max_textures) {
 
-    if (_ret != false) {
-        glActiveTexture (GL_TEXTURE0);
-        _ret = glGetError () == GL_NO_ERROR;
-    }
-
-    if (_ret != false) {
-        if (_tex [index] != InvalidTex ()) {
-            glDeleteTextures (1, &_tex [index]);
+        if (_ret != false) {
+            glBindTexture(GL_TEXTURE_2D, 0);
             _ret = glGetError () == GL_NO_ERROR;
         }
-
-        _tex [index] = InvalidTex ();
 
         if (_ret != false) {
-            glGenTextures (1, &_tex [index]); 
+            glBindFramebuffer (GL_FRAMEBUFFER, 0);
             _ret = glGetError () == GL_NO_ERROR;
         }
-    }
 
-    if (_ret != false) {
-        glBindTexture (_tgt, _tex [index]);
-        _ret = glGetError () == GL_NO_ERROR;
-    }
+        if (_ret != false) {
+            glActiveTexture (GL_TEXTURE0);
+            _ret = glGetError () == GL_NO_ERROR;
+        }
 
-    if (_ret != false) {
-        glTexParameteri (_tgt, GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
-        _ret = glGetError () == GL_NO_ERROR;
-    }
-
-    if (_ret != false) {
-        glTexParameteri (_tgt, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        _ret = glGetError () == GL_NO_ERROR;
-    }
-
-    if (_ret != false) {
-        glTexParameteri (_tgt, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        _ret = glGetError () == GL_NO_ERROR;
-    }
-
-    if (_ret != false) {
-        glTexParameteri (_tgt, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        _ret = glGetError () == GL_NO_ERROR;
-    }
-
-    // Requires EGL 1.2 and either the EGL_OES_image or EGL_OES_image_base
-    // Use eglGetProcAddress, or dlsym for the function pointer of this GL extenstion
-    // https://www.khronos.org/registry/OpenGL/extensions/OES/OES_EGL_image_external.txt
-    static void (* _EGLImageTargetTexture2DOES) (GLenum, GLeglImageOES) = reinterpret_cast < void (*) (GLenum, GLeglImageOES) > (eglGetProcAddress ("glEGLImageTargetTexture2DOES"));
-
-    if (_ret != false && _EGLImageTargetTexture2DOES != nullptr) {
-        _EGLImageTargetTexture2DOES (_tgt, reinterpret_cast <GLeglImageOES> (img._khr));
-        _ret = glGetError () == GL_NO_ERROR;
-    }
-    else {
-        _ret = false;
-    }
-
-    if (_ret != false) {
-        if (_tgt != GL_TEXTURE_EXTERNAL_OES) {
-            if (_fbo != InvalidFbo ()) {
-                glDeleteFramebuffers (1, &_fbo);
+        if (_ret != false) {
+            if (_tex [index] != InvalidTex ()) {
+                glDeleteTextures (1, &_tex [index]);
                 _ret = glGetError () == GL_NO_ERROR;
             }
 
-            if (_ret != false) {
-                glGenFramebuffers(1, &_fbo);
-                _ret = glGetError () == GL_NO_ERROR;
-            }
+            _tex [index] = InvalidTex ();
 
             if (_ret != false) {
-                glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
-                _ret = glGetError () == GL_NO_ERROR;
-            }
-
-            if (_ret != false) {
-                glFramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _tgt, _tex [index], 0 /* level */);
+                glGenTextures (1, &_tex [index]);
                 _ret = glGetError () == GL_NO_ERROR;
             }
         }
-    }
 
-    if (_ret != false) {
-        // Image to full size
-        glViewport (0, 0, img._width, img._height);
-        _ret = glGetError () == GL_NO_ERROR;
-    }
-
-    if (_ret != false) {
-        if (_tgt == GL_TEXTURE_EXTERNAL_OES) {
-            _ret = RenderTile ();
+        if (_ret != false) {
+            glBindTexture (_tgt, _tex [index]);
+            _ret = glGetError () == GL_NO_ERROR;
         }
-    }
+
+        if (_ret != false) {
+            glTexParameteri (_tgt, GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+            _ret = glGetError () == GL_NO_ERROR;
+        }
+
+        if (_ret != false) {
+            glTexParameteri (_tgt, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            _ret = glGetError () == GL_NO_ERROR;
+        }
+
+        if (_ret != false) {
+            glTexParameteri (_tgt, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            _ret = glGetError () == GL_NO_ERROR;
+        }
+
+        if (_ret != false) {
+            glTexParameteri (_tgt, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            _ret = glGetError () == GL_NO_ERROR;
+        }
+
+        // Requires EGL 1.2 and either the EGL_OES_image or EGL_OES_image_base
+        // Use eglGetProcAddress, or dlsym for the function pointer of this GL extenstion
+        // https://www.khronos.org/registry/OpenGL/extensions/OES/OES_EGL_image_external.txt
+        static void (* _EGLImageTargetTexture2DOES) (GLenum, GLeglImageOES) = reinterpret_cast < void (*) (GLenum, GLeglImageOES) > (eglGetProcAddress ("glEGLImageTargetTexture2DOES"));
+
+        if (_ret != false && _EGLImageTargetTexture2DOES != nullptr) {
+            _EGLImageTargetTexture2DOES (_tgt, reinterpret_cast <GLeglImageOES> (img._khr));
+            _ret = glGetError () == GL_NO_ERROR;
+        }
+        else {
+            _ret = false;
+        }
+
+        if (_ret != false) {
+            if (_tgt != GL_TEXTURE_EXTERNAL_OES) {
+                if (_fbo != InvalidFbo ()) {
+                    glDeleteFramebuffers (1, &_fbo);
+                    _ret = glGetError () == GL_NO_ERROR;
+                }
+
+                if (_ret != false) {
+                    glGenFramebuffers(1, &_fbo);
+                    _ret = glGetError () == GL_NO_ERROR;
+                }
+
+                if (_ret != false) {
+                    glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
+                    _ret = glGetError () == GL_NO_ERROR;
+                }
+
+                if (_ret != false) {
+                    glFramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _tgt, _tex [index], 0 /* level */);
+                    _ret = glGetError () == GL_NO_ERROR;
+                }
+            }
+        }
+
+        EGLDisplay _dpy = EGL::InvalidDisplay ();
+
+        if (_ret != false) {
+            _dpy = eglGetCurrentDisplay ();
+            _ret = eglGetError () == EGL_SUCCESS
+                   && _dpy != EGL::InvalidDisplay ();
+        }
+
+        EGLSurface _surf = EGL::InvalidSurface ();
+
+        if (_ret != false) {
+            _surf = eglGetCurrentSurface (EGL_DRAW);
+            _ret  = eglGetError () == EGL_SUCCESS
+                    && _surf != EGL::InvalidSurface ();
+        }
+
+        EGLint _width = 0, _height = 0;
+
+        if (_ret != false) {
+            _ret = eglQuerySurface (_dpy, _surf, EGL_WIDTH, &_width) != EGL_FALSE
+                   && eglQuerySurface (_dpy, _surf, EGL_HEIGHT, &_height) != EGL_FALSE
+                   && eglGetError () == EGL_SUCCESS;
+        }
+
+        GLint _dims [2] = {0, 0};
+
+        if (_ret != false) {
+            glGetIntegerv (GL_MAX_VIEWPORT_DIMS, &_dims [0]);
+            _ret = glGetError () == GL_NO_ERROR;
+        }
+
+        if (_ret != false) {
+            if (_tgt == GL_TEXTURE_EXTERNAL_OES) {
+                // Compositor side; Image rendered on surface
+
+#ifdef _QUIRKS
+                // glViewport (x, y, width, height)
+                //
+                // Applied width = width / 2
+                // Applied height = height / 2
+                // Applied origin's x = width / 2 + x
+                // Applied origin's y = height / 2 + y
+                //
+                // Compensate to origin bottom left and true size by
+                // glViewport (-width, -height, width * 2, height * 2)
+                //
+                // _offset is in the range -1..1 wrt to origin, so the effective value maps to -width to width, -height to height
+
+                constexpr uint8_t _mult = 2;
+
+                using common_t = std::common_type < decltype (_width), decltype (_height), decltype (_mult), decltype (_scale._horiz), decltype (_scale._vert), decltype (_offset._x), decltype (_offset._y), remove_pointer < std::decay < decltype (_dims) > :: type > :: type > :: type;
+
+                common_t _quirk_width = static_cast <common_t> (_width) * static_cast <common_t> (_mult) * static_cast <common_t> (_scale._horiz);
+                common_t _quirk_height = static_cast <common_t> (_height) * static_cast <common_t> (_mult) * static_cast <common_t> (_scale._vert);
+
+                common_t _quirk_x = ( static_cast <common_t> (-_width) * static_cast <common_t> (_scale._horiz) ) + ( static_cast <common_t> (_offset._x) * static_cast <common_t> (_width) );
+                common_t _quirk_y = ( static_cast <common_t> (-_height) * static_cast <common_t> (_scale._vert) ) + ( static_cast <common_t> (_offset._y) * static_cast <common_t> (_height) );
+
+                if (    _quirk_x < ( -_quirk_width / static_cast <common_t> (_mult) )
+                     || _quirk_y < ( -_quirk_height / static_cast <common_t> (_mult) )
+                     || _quirk_x  > static_cast <common_t> (0)
+                     || _quirk_y  > static_cast <common_t> (0)
+                     || _quirk_width > ( static_cast <common_t> (_width) * static_cast <common_t> (_mult) )
+                     || _quirk_height > ( static_cast <common_t> (_height) * static_cast <common_t> (_mult) )
+                     || static_cast <common_t> (_width) > static_cast <common_t> (_dims [0])
+                     || static_cast <common_t> (_height) > static_cast <common_t> (_dims [1])
+                ) {
+                    // Clipping, or undefined / unknown behavior
+                    std::cout << "Warning: possible clipping or unknown behavior detected. [" << _quirk_x << ", " << _quirk_y << ", " << _quirk_width << ", " << _quirk_height << ", " << _width << ", " << _height << ", " << _dims [0] << ", " << _dims [1] << "]" << std::endl;
+                }
+
+                glViewport (static_cast <GLint> (_quirk_x), static_cast <GLint> (_quirk_y), static_cast <GLsizei> (_quirk_width), static_cast <GLsizei> (_quirk_height));
+#else
+                glViewport (0, 0, _width, _height);
+#endif
+
+                _ret = glGetError () == GL_NO_ERROR && RenderTile () != false;
+
+                glFinish ();
+
+                _ret = _ret != false && glGetError () == GL_NO_ERROR;
+            }
+            else {
+                // Client side, EGLImage as color attachment
+
+                // Center in the smallest possible dimensions
+
+                constexpr uint8_t _mult = 2;
+
+                using common_t = std::common_type < decltype (_width), decltype (_height), decltype (_mult), remove_pointer < std::decay < decltype (_dims) > :: type > :: type > :: type;
+
+                common_t _prop_width = static_cast <common_t> (_width) > static_cast <common_t> (_dims [0]) ? static_cast <common_t> (_dims [0]) : static_cast <common_t> (_width);
+                common_t _prop_height = static_cast <common_t> (_height) > static_cast <common_t> (_dims [1]) ? static_cast <common_t> (_dims [1]) : static_cast <common_t> (_height);
+
+                common_t _prop_x = ( static_cast <common_t> (_width) - _prop_width ) / static_cast <common_t> (_mult);
+                common_t _prop_y = ( static_cast <common_t> (_height) - _prop_height ) / static_cast <common_t> (_mult);
+
+                if (   _prop_x > static_cast <common_t> (0)
+                    || _prop_y > static_cast <common_t> (0)
+                ) {
+                    // Clipping
+                    std::cout << "Warning: possible clipping detected. [" << _prop_x << ", " << _prop_y << ", " << _prop_width << ", " << _prop_height << ", " << _width << ", " << _height << "]" << std::endl;
+                }
+
+                // Image scaled to 'full' size
+                glViewport (static_cast <GLint> (_prop_x), static_cast <GLint> (_prop_y), static_cast <GLsizei> (_prop_width), static_cast <GLsizei> (_prop_height));
+
+                _ret = glGetError () == GL_NO_ERROR && RenderTriangle ();
+
+                glFinish ();
+
+                _ret = _ret != false && glGetError () == GL_NO_ERROR;
+            }
+        }
 
     }
 
@@ -1985,7 +2257,7 @@ bool GLES::Clear () {
     return _ret;
 }
 
-bool GLES::BufferColorFill (bool red, bool green, bool blue) {
+bool GLES::RenderColor (bool red, bool green, bool blue) {
     bool _ret = false;
 
     constexpr float OMEGA = 3.14159265 / 180;
@@ -2028,13 +2300,14 @@ bool GLES::BufferColorFill (bool red, bool green, bool blue) {
     return _ret;
 }
 
-bool GLES::UpdateOffset (struct offset const & off) {
+bool GLES::UpdateOffset (offset_t const & off) {
     bool _ret = false;
 
     // Ramge check without taking into account rounding errors
-    if ( ((off._x - -0.5f) * (off._x - 0.5f) <= 0.0f) 
-        && ((off._y - -0.5f) * (off._y - 0.5f) <= 0.0f) 
-        && ((off._z - -0.5f) * (off._z - 0.5f) <= 0.0f) ){
+    if (    (off._x + 1.0f >= 0.0f)
+         && (off._x - 1.0f <= 0.0f)
+         && (off._y + 1.0f >= 0.0f)
+         && (off._y - 1.0f <= 0.0f) ) {
 
         _offset = off;
 
@@ -2044,7 +2317,23 @@ bool GLES::UpdateOffset (struct offset const & off) {
     return _ret;
 }
 
-bool GLES::SetupProgram () {
+bool GLES::UpdateScale (scale_t const & scale) {
+    bool _ret = false;
+
+    // Ramge check without taking into account rounding errors
+
+    if (    (scale._horiz <= 1.0f)
+         && (scale._vert <= 1.0f) ) {
+
+        _scale = scale;
+
+        _ret = true;
+    }
+
+    return _ret;
+}
+
+bool GLES::SetupProgram (char const vtx_src [], char const frag_src []) {
     auto LoadShader = [] (GLuint type, GLchar const code []) -> GLuint {
         bool _ret = glGetError () == GL_NO_ERROR;
 
@@ -2073,18 +2362,6 @@ bool GLES::SetupProgram () {
         GLuint _prog = 0;
 
         if (_ret != false) {
-            glGetIntegerv (GL_CURRENT_PROGRAM, reinterpret_cast <GLint *> (&_prog));
-            _ret = glGetError () == GL_NO_ERROR;
-        }
-
-        if (_ret != false && _prog != 0) {
-            glDeleteProgram (_prog);
-            _ret = glGetError () == GL_NO_ERROR;
-        }
-
-        _prog = 0;
-
-        if (_ret != false) {
             _prog = glCreateProgram ();
             _ret = _prog != 0;
         }
@@ -2109,59 +2386,66 @@ bool GLES::SetupProgram () {
             _ret = glGetError () == GL_NO_ERROR;
         }
 
-        if (_ret != true) {
-            glDeleteProgram (_prog);
-            _ret = glGetError () == GL_NO_ERROR;
-        }
-
         if (_ret != false) {
             glUseProgram (_prog);
-            _ret = glGetError () == GL_NO_ERROR;
-        }
-        else {
-            glDeleteShader (vertex);
-            _ret = glGetError () == GL_NO_ERROR;
-        }
-
-        if (_ret != false) {
-            glDeleteShader (fragment);
             _ret = glGetError () == GL_NO_ERROR;
         }
 
         return _ret;
     };
 
+    auto DeleteCurrentProgram = [] () -> bool {
+        bool _ret = glGetError () == GL_NO_ERROR;
 
-    bool _ret = glGetError () == GL_NO_ERROR;
+        GLuint _prog = 0;
 
-    constexpr char const _vtx_src [] =
-        "#version 100                               \n"
-        "attribute vec3 position;                   \n"
-        "varying vec2 coordinates;                  \n"
-        "void main () {                             \n"
-            "gl_Position = vec4 (position.xyz, 1);  \n"
-            "coordinates = position.xy;             \n"
-        "}                                          \n"
-        ;
+        if (_ret != false) {
+            glGetIntegerv (GL_CURRENT_PROGRAM, reinterpret_cast <GLint *> (&_prog));
+            _ret = glGetError () == GL_NO_ERROR;
+        }
 
-// TODO: For normal rendering no extention
+        if (_ret != false && _prog != 0) {
 
-    constexpr char  const _frag_src [] =
-        "#version 100                                                           \n"
-        "#extension GL_OES_EGL_image_external : require                         \n"
-        "precision mediump float;                                               \n"
-        "uniform samplerExternalOES sampler;                                    \n"
-        "varying vec2 coordinates;                                              \n"
-        "void main () {                                                         \n"
-            "gl_FragColor = vec4 (texture2D (sampler, coordinates).rgb, 1.0f);  \n"
-        "}                                                                      \n"
-        ;
+            GLint _count = 0;
 
-    GLuint _vtxShader = LoadShader (GL_VERTEX_SHADER, _vtx_src);
-    GLuint _fragShader = LoadShader (GL_FRAGMENT_SHADER, _frag_src);
+            glGetProgramiv (_prog, GL_ATTACHED_SHADERS, &_count);
+            _ret = glGetError () == GL_NO_ERROR && _count > 0;
+
+            if (_ret != false) {
+                GLuint _shaders [_count];
+
+                glGetAttachedShaders (_prog, _count, static_cast <GLsizei *> (&_count), &_shaders [0]);
+                _ret = glGetError () == GL_NO_ERROR;
+
+                if (_ret != false) {
+                    for (_count--; _count >= 0; _count--) {
+                        glDetachShader (_prog, _shaders [_count]);
+                        _ret = _ret && glGetError () == GL_NO_ERROR;
+                        glDeleteShader (_shaders [_count]);
+                        _ret = _ret && glGetError () == GL_NO_ERROR;
+                    }
+                }
+
+                if (_ret != false) {
+                    glDeleteProgram (_prog);
+                    _ret = glGetError () == GL_NO_ERROR;
+                }
+            }
+
+        }
+
+        return _ret;
+    };
+
+    bool _ret = DeleteCurrentProgram ();
+
+    if (_ret != false) {
+        GLuint _vtxShader = LoadShader (GL_VERTEX_SHADER, vtx_src);
+        GLuint _fragShader = LoadShader (GL_FRAGMENT_SHADER, frag_src);
 
 // TODO: inefficient on every call, reuse compiled program
-    _ret = ShadersToProgram(_vtxShader, _fragShader);
+        _ret = ShadersToProgram(_vtxShader, _fragShader);
+    }
 
     if (_ret != false) {
         glEnable (GL_BLEND);
@@ -2288,7 +2572,7 @@ bool RenderClient::Render () {
 
     constexpr decltype (EGL::_max_images) _index = 0;
 
-    bool _ret = _gles.RenderEGLImage (_egl.Image (_index)) != false  && _gles.BufferColorFill (_red, _green, _blue) && _egl.Render () != false;
+    bool _ret = _gles.RenderEGLImage (_egl.Image (_index)) != false && _egl.Render () != false;
 
     return _ret;
 }
@@ -2426,7 +2710,7 @@ bool Compositor::AwaitRequestCompleteSharingBuffer () {
 
     DRM::GBM::prime_t _prime = _gbm.Prime ();
 
-    _ret =_egl.ImportBuffer (_prime._buf, _index);
+    _ret =_egl.ImportBuffer (_prime, _index);
 
     return _ret;
 }
@@ -2444,22 +2728,8 @@ bool Compositor::Render () {
 
     for (remove_const <decltype (EGL::_max_images)>::type _index = 0; _index < EGL::_max_images; _index++) {
 
-        switch (_index) {
-            case 0      :   {
-                                _ret = _gles.UpdateOffset (GLES::offset_t (0.25f, 0.25f, 0.0f));
-                                break;
-                            }
-            case 1      :   {
-                                _ret = _gles.UpdateOffset (GLES::offset_t (-0.25f, -0.25f, 0.0f));
-                                break;
-                            }
-            default     :   /* Error */
-                            {
-                                _ret = false;
-                            }
-        }
+// TODO: Images might be invalid or have undefined content
 
-        // One image might be invalid
         _ret = _gles.RenderEGLImage (_egl.Image (_index)) || _ret;
 
         if (_ret != true) {

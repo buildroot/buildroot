@@ -35,6 +35,10 @@ CAIRO_CONF_OPTS = \
 
 CAIRO_DEPENDENCIES = host-pkgconf fontconfig pixman
 
+ifeq ($(BR2_PACKAGE_WAYLAND),y)
+CAIRO_DEPENDENCIES += wayland
+endif
+
 # Just the bare minimum to make other host-* packages happy
 HOST_CAIRO_CONF_OPTS = \
 	--enable-trace=no \
@@ -77,6 +81,10 @@ CAIRO_CONF_OPTS += --enable-ft
 CAIRO_DEPENDENCIES += freetype
 else
 CAIRO_CONF_OPTS += --disable-ft
+endif
+
+ifeq ($(BR2_PACKAGE_LIBDRM),y)
+CAIRO_DEPENDENCIES += libdrm
 endif
 
 ifeq ($(BR2_PACKAGE_LIBGLIB2),y)

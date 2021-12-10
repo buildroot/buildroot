@@ -1,0 +1,28 @@
+config BR2_PACKAGE_EXPLORA_SDK
+	bool "explora-sdk"
+	depends on BR2_arm
+	select BR2_PACKAGE_HAS_NEXUS_SAGE
+	select BR2_PACKAGE_HAS_NEXUS
+	select BR2_PACKAGE_HAS_LIBEGL
+	select BR2_PACKAGE_HAS_LIBGLES
+	select BR2_PACKAGE_HAS_PLAYREADY
+	select BR2_PACKAGE_HAS_WIDEVINE
+	help
+	  Pre-compiled binaries for a platform
+
+if BR2_PACKAGE_EXPLORA_SDK
+
+config BR2_PACKAGE_PROVIDES_NEXUS
+	default "explora-sdk"
+
+config BR2_PACKAGE_PROVIDES_LIBEGL
+	default "explora-sdk"
+
+config BR2_PACKAGE_PROVIDES_LIBGLES
+	default "explora-sdk"
+
+config BR2_PACKAGE_SDK_INSTALL
+        string 
+	default "explora-sdk"
+
+endif

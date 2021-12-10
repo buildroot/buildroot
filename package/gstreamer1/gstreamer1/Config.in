@@ -16,6 +16,12 @@ config BR2_PACKAGE_GSTREAMER1
 
 if BR2_PACKAGE_GSTREAMER1
 
+config BR2_PACKAGE_GSTREAMER1_GIT
+ bool "git snapshot"
+ select BR2_PACKAGE_GST1_COMMON
+ help
+   Use git snapshot version of master branch.
+
 config BR2_PACKAGE_GSTREAMER1_CHECK
 	bool "enable unit test libraries"
 	help

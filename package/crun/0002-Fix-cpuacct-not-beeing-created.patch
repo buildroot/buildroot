@@ -1,0 +1,25 @@
+From 0679805f6105d6b226fda00d265bdb3690eeeda2 Mon Sep 17 00:00:00 2001
+From: Michal Pogoda <michalpogoda@hotmail.com>
+Date: Thu, 9 Apr 2020 16:07:43 +0200
+Subject: [PATCH 2/2] Fix cpuacct not beeing created
+
+---
+ src/libcrun/cgroup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/libcrun/cgroup.c b/src/libcrun/cgroup.c
+index 6947eaf..9a5d34d 100644
+--- a/src/libcrun/cgroup.c
++++ b/src/libcrun/cgroup.c
+@@ -39,7 +39,7 @@
+ 
+ static const cgroups_subsystem_t cgroups_subsystems[] = { "cpuset", "cpu", "devices", "pids", "memory",
+                                                           "net_cls,net_prio", "freezer", "blkio",
+-                                                          "hugetlb", "cpu,cpuacct", "perf_event",
++                                                          "hugetlb", "cpu", "cpuacct", "perf_event",
+                                                           "unified", NULL};
+ 
+ const cgroups_subsystem_t *
+-- 
+2.20.1
+

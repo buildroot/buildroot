@@ -3,3 +3,11 @@ config BR2_PACKAGE_WPEBACKEND_RDK
     select BR2_PACKAGE_WAYLAND_EGL_BNXS if BR2_PACKAGE_HAS_NEXUS && BR2_PACKAGE_WESTEROS
 	help
 	  RDK-specific implementations of the WPEBackend interfaces.
+
+config BR2_PACKAGE_WPEBACKEND_RDK_ADDITIONAL_PATCHES
+    bool "wpebackend-rdk additional patches"
+    depends on BR2_PACKAGE_WPEBACKEND_RDK
+    default n
+
+comment "WPEBackend additional patches requires wpebackend-rdk"
+   depends on !BR2_PACKAGE_WPEBACKEND_RDK

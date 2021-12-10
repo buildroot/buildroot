@@ -2,6 +2,12 @@ if BR2_TOOLCHAIN_BUILDROOT_GLIBC
 
 comment "Glibc Options"
 
+config BR2_PACKAGE_GLIBC_LEGACY
+	bool "2.24"
+	default n
+        help
+          "For Legacy deployments, Use Glibc2.24."
+
 config BR2_PACKAGE_GLIBC
 	bool
 	default y
