@@ -2,10 +2,15 @@ config BR2_PACKAGE_LIBDRM_EXAMPLES
     bool "libdrm-examples"
     depends on BR2_PACKAGE_MESA3D_GBM
     depends on BR2_PACKAGE_LIBDRM
-    depends on BR2_PACKAGE_LIBEGL
-    depends on BR2_PACKAGE_LIBGLES
+    depends on BR2_PACKAGE_HAS_LIBEGL
+    depends on BR2_PACKAGE_HAS_LIBGLES
     help
         Various (libdrm) test examples
 
-comment "libdrm-examples requires libdrm, Mesa's GBM , EGL adn OpenGLES V2"
-   depends on !BR2_PACKAGE_MESA3D_GBM || !BR2_PACKAGE_LIBDRM || !BR2_PACKAGE_LIBEGL || !BR2_PACKAGE_LIBGLES
+config BR2_PACKAGE_LIBDRM_EXAMPLES_QUIRKS
+    bool "quirks"
+    depends on BR2_PACKAGE_LIBDRM_EXAMPLES
+    default n
+
+comment "libdrm-examples requires libdrm, Mesa's GBM , EGL and OpenGLES V2"
+   depends on !BR2_PACKAGE_MESA3D_GBM || !BR2_PACKAGE_LIBDRM || !BR2_PACKAGE_HAS_LIBEGL || !BR2_PACKAGE_HAS_LIBGLES

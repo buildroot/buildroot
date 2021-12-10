@@ -1,0 +1,90 @@
+diff -aurN weston-8.0.0/compositor/main.c weston-8.0.0-mod/compositor/main.c
+--- weston-8.0.0/compositor/main.c	2020-01-24 20:05:18.338963000 +0000
++++ weston-8.0.0-mod/compositor/main.c	2021-07-09 11:08:18.527209030 +0000
+@@ -455,6 +455,12 @@
+ }
+ 
+ WL_EXPORT void
++weston_init_process_list()
++{
++	wl_list_init(&child_process_list);
++}
++
++WL_EXPORT void
+ weston_watch_process(struct weston_process *process)
+ {
+ 	wl_list_insert(&child_process_list, &process->link);
+@@ -2518,11 +2524,15 @@
+ 	ret = weston_compositor_load_backend(c, WESTON_BACKEND_DRM,
+ 					     &config.base);
+ 
+-	/* remoting */
+-	load_remoting(c, wc);
++	if (ret < 0) {
++		weston_compositor_shutdown(c);
++	} else {
++		/* remoting */
++		load_remoting(c, wc);
+ 
+-	/* pipewire */
+-	load_pipewire(c, wc);
++		/* pipewire */
++		load_pipewire(c, wc);
++	}
+ 
+ 	free(config.gbm_format);
+ 	free(config.seat_id);
+diff -aurN weston-8.0.0/desktop-shell/shell.c weston-8.0.0-mod/desktop-shell/shell.c
+--- weston-8.0.0/desktop-shell/shell.c	2021-07-22 11:25:23.650120037 +0000
++++ weston-8.0.0-mod/desktop-shell/shell.c	2021-07-22 17:17:00.446797683 +0000
+@@ -2049,6 +2049,22 @@
+ 	}
+ }
+ 
++WL_EXPORT void
++wet_shell_surface_update_layer(struct weston_surface *surface)
++{
++	struct weston_desktop_surface *desktop_surface = weston_surface_get_desktop_surface(surface);
++	if (!desktop_surface)
++		return;
++
++	struct shell_surface *shsurf =	weston_desktop_surface_get_user_data(desktop_surface);
++	if (shsurf) {
++		if (shsurf->output)
++			lower_fullscreen_layer(shsurf->shell, shsurf->output);
++
++		shell_surface_update_layer(shsurf);
++	}
++}
++
+ static void
+ set_minimized(struct weston_surface *surface)
+ {
+@@ -4212,6 +4228,7 @@
+ static void
+ idle_handler(struct wl_listener *listener, void *data)
+ {
++#if 0
+ 	struct desktop_shell *shell =
+ 		container_of(listener, struct desktop_shell, idle_listener);
+ 
+@@ -4221,6 +4238,7 @@
+ 		weston_seat_break_desktop_grabs(seat);
+ 
+ 	shell_fade(shell, FADE_OUT);
++#endif
+ 	/* lock() is called from shell_fade_done_for_output() */
+ }
+ 
+diff -aurN weston-8.0.0/libweston/backend-drm/drm.c weston-8.0.0-mod/libweston/backend-drm/drm.c
+--- weston-8.0.0/libweston/backend-drm/drm.c	2020-01-24 20:05:18.368963000 +0000
++++ weston-8.0.0-mod/libweston/backend-drm/drm.c	2021-07-09 11:07:25.577719760 +0000
+@@ -3004,7 +3004,7 @@
+ err_udev:
+ 	udev_unref(b->udev);
+ err_compositor:
+-	weston_compositor_shutdown(compositor);
++	weston_compositor_log_scope_destroy(b->debug);
+ 	free(b);
+ 	return NULL;
+ }

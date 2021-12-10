@@ -96,6 +96,10 @@ config BR2_PACKAGE_WPEFRAMEWORK_SYSTEM_PREFIX
     string "system prefix"
     default ""
 
+config BR2_PACKAGE_WPEFRAMEWORK_HIDE_NON_EXTERNAL_SYMBOLS
+    bool "hide non external symbols"
+    default y
+
 config BR2_PACKAGE_WPEFRAMEWORK_EXCEPTIONS_ENABLE
     bool "exceptions on"
     default n
@@ -111,6 +115,7 @@ endmenu
 menu "Extensions"
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_BROADCAST
+    select BR2_PACKAGE_WPEFRAMEWORK_LIBRARIES
     bool "Broadcast"
         default n
     help
@@ -139,6 +144,19 @@ config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITORCLIENT
       A graphical/input abstraction. This library is included in micro services that requires user
           interaction (Graphics/input). The implementation hides all the compositor specific details.
       allows for relaying keys to plugins
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTHAUDIOSINK
+    select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
+    bool "BluetoothAudioSink"
+        default n
+    help
+      C-interface towards BluetoothAudioSink plugin for controlling the Bluetooth sink and supplying audio data samples
+
+if BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTHAUDIOSINK
+config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTHAUDIOSINK_EXAMPLEPLAYER
+    bool "Example .wav player"
+    default y
+endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_GSTREAMERCLIENT
         select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
@@ -291,6 +309,7 @@ endmenu
 
 source "package/wpe/wpeframework-interfaces/Config.in"
 source "package/wpe/wpeframework-clientlibraries/Config.in"
+source "package/wpe/wpeframework-libraries/Config.in"
 source "package/wpe/wpeframework-rdkservices/Config.in"
 
 endif
