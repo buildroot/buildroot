@@ -96,6 +96,10 @@ config BR2_PACKAGE_WPEFRAMEWORK_SYSTEM_PREFIX
     string "system prefix"
     default ""
 
+config BR2_PACKAGE_WPEFRAMEWORK_HIDE_NON_EXTERNAL_SYMBOLS
+    bool "hide non external symbols"
+    default y
+
 config BR2_PACKAGE_WPEFRAMEWORK_EXCEPTIONS_ENABLE
     bool "exceptions on"
     default n
