@@ -3,6 +3,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
     bool "BluetoothControl"
+    select BR2_PACKAGE_WPEFRAMEWORK_LIBRARIES
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     select BR2_PACKAGE_BLUEZ5_UTILS
     default n
@@ -348,14 +349,53 @@ config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_HARDWAREREADY
     default 0
 
 endif
+if BR2_PACKAGE_WESTON
+    config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_WESTON_TTY_LIST
+    string "Weston tty ids"
+    default "1;2;3;4"
+    help
+       Set ids tty can be used with weston drm backend
+
+    config BR2_PACKAGE_WPEFRAMEWORK_COMPOSITOR_WESTON_OUTPUT_CONFIGS
+    string "Weston Output Config Details"
+    default "HDMI-A-1,1280x720@60.0 16:9,normal;"
+    help
+      Set details of weston output configs in the format "Name,Mode,Trandform".
+      Example "HDMI-A-1,1280x720@60.0 16:9,normal;"
+
+endif
 endif
 
-config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
     select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     bool "DeviceInfo"
     default y
     help
       DeviceInfo Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO
+
+config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO_MODELNAME
+    string "modelname"
+    default "WPEFramework"
+
+config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO_MODELYEAR
+    string "modelyear"
+    default "2021"
+
+config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO_FRIENDLYNAME
+    string "friendlyname"
+    default "WPE"
+
+config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO_SYSTEMINTEGRATORNAME
+    string "systemintegratorname"
+    default "Metrological"
+
+config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO_PLATFORMNAME
+    string "platformname"
+    default "Linux"
+
+endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION
     select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
@@ -1034,12 +1074,12 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
 
 if BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
 
-menuconfig BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_INJECTEDBUNDLE_INTERFACES
-    bool "injectedbundle"
-    default y
-
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_AUTOSTART
     bool "autostart"
+    default y
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_INJECTEDBUNDLE_INTERFACES
+    bool "injectedbundle"
     default y
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_STARTURL

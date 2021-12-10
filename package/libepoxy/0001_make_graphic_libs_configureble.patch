@@ -1,0 +1,29 @@
+diff --git a/src/dispatch_common.c b/src/dispatch_common.c
+index b3e4f5f..538d468 100644
+--- a/src/dispatch_common.c
++++ b/src/dispatch_common.c
+@@ -173,6 +173,9 @@
+ 
+ #include "dispatch_common.h"
+ 
++#define xstr(s) str(s)
++#define str(s) #s
++
+ #if defined(__APPLE__)
+ #define GLX_LIB "/opt/X11/lib/libGL.1.dylib"
+ #define OPENGL_LIB "/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL"
+@@ -190,10 +193,10 @@
+ #define OPENGL_LIB "OPENGL32"
+ #else
+ #define GLVND_GLX_LIB "libGLX.so.1"
+-#define GLX_LIB "libGL.so.1"
+-#define EGL_LIB "libEGL.so.1"
+-#define GLES1_LIB "libGLESv1_CM.so.1"
+-#define GLES2_LIB "libGLESv2.so.2"
++#define GLX_LIB xstr(GLX_LIB_NAME)
++#define EGL_LIB xstr(EGL_LIB_NAME)
++#define GLES1_LIB xstr(GLES1_LIB_NAME)
++#define GLES2_LIB xstr(GLES2_LIB_NAME)
+ #define OPENGL_LIB "libOpenGL.so.0"
+ #endif
+ 

@@ -9,6 +9,7 @@ WESTON_SITE = http://wayland.freedesktop.org/releases
 WESTON_SOURCE = weston-$(WESTON_VERSION).tar.xz
 WESTON_LICENSE = MIT
 WESTON_LICENSE_FILES = COPYING
+WESTON_INSTALL_STAGING = YES
 
 WESTON_DEPENDENCIES = host-pkgconf wayland wayland-protocols \
 	libxkbcommon pixman libpng jpeg udev cairo libinput libdrm
@@ -139,5 +140,12 @@ WESTON_DEPENDENCIES += pango
 else
 WESTON_CONF_OPTS += -Ddemo-clients=false
 endif
+
+WESTON_POST_INSTALL_TARGET_HOOKS += WESTON_INSTALL_ADDITIONAL_STAGING_CMDS
+define WESTON_INSTALL_ADDITIONAL_STAGING_CMDS
+    mkdir -p $(STAGING_DIR)/usr/include/weston/shared
+    cp -ar $(@D)/shared/*.h $(STAGING_DIR)/usr/include/weston/shared
+    cp -ar $(@D)/libweston/backend.h $(STAGING_DIR)/usr/include/libweston-8/libweston
+endef
 
 $(eval $(meson-package))

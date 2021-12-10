@@ -1,0 +1,36 @@
+diff -urN mesa3d-21.0.1-org/src/gallium/drivers/v3d/v3d_screen.c mesa3d-21.0.1-mod/src/gallium/drivers/v3d/v3d_screen.c
+--- mesa3d-21.0.1-org/src/gallium/drivers/v3d/v3d_screen.c	2021-03-24 15:32:51.993416500 -0700
++++ mesa3d-21.0.1-mod/src/gallium/drivers/v3d/v3d_screen.c	2021-09-07 05:11:49.959600911 -0700
+@@ -646,6 +646,10 @@
+         int i;
+         int num_modifiers = ARRAY_SIZE(v3d_available_modifiers);
+ 
++	/* Expose DRM_FORMAT_MOD_BROADCOM_SAND128 only for PIPE_FORMAT_NV12 */
++        if (format != PIPE_FORMAT_NV12)
++                num_modifiers--;
++
+         if (!modifiers) {
+                 *count = num_modifiers;
+                 return;
+@@ -654,8 +658,9 @@
+         *count = MIN2(max, num_modifiers);
+         for (i = 0; i < *count; i++) {
+                 modifiers[i] = v3d_available_modifiers[i];
+-                if (external_only)
+-                        external_only[i] = false;
++                if (external_only) {
++		    external_only[i] = util_format_is_yuv(format);
++		}
+        }
+ }
+ 
+@@ -670,7 +675,7 @@
+         for (i = 0; i < ARRAY_SIZE(v3d_available_modifiers); i++) {
+                 if (v3d_available_modifiers[i] == modifier) {
+                         if (external_only)
+-                                *external_only = false;
++                                *external_only = util_format_is_yuv(format);;
+ 
+                         return true;
+                 }
+
