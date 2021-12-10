@@ -1,0 +1,11 @@
+--- A/Source/cmake/FindThunder.cmake	2021-11-27 10:43:47.296834259 +0100
++++ B/Source/cmake/FindThunder.cmake	2021-11-27 10:48:28.427090203 +0100
+@@ -52,7 +52,7 @@
+     NAMES open_cdm.h
+     HINTS ${PC_THUNDER_INCLUDEDIR}
+           ${PC_THUNDER_INCLUDE_DIRS}
+-    PATH_SUFFIXES "WPEFramework/ocdm/"
++    PATH_SUFFIXES "bridge/ocdm/"
+ )
+ 
+ find_library(THUNDER_LIBRARY
