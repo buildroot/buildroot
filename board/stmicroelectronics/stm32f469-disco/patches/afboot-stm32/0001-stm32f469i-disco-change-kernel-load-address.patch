@@ -1,0 +1,26 @@
+From d87969f72671cab5a88ba6e2418e43d0fa267d6f Mon Sep 17 00:00:00 2001
+From: Dario Binacchi <dariobin@libero.it>
+Date: Sat, 13 Nov 2021 15:46:32 +0100
+Subject: [PATCH] stm32f469i-disco: change kernel load address
+
+Signed-off-by: Dario Binacchi <dariobin@libero.it>
+---
+ stm32f469i-disco.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/stm32f469i-disco.c b/stm32f469i-disco.c
+index 2da1f4b..3aacb12 100644
+--- a/stm32f469i-disco.c
++++ b/stm32f469i-disco.c
+@@ -85,7 +85,7 @@ static void fmc_wait_busy(void)
+ 
+ void start_kernel(void)
+ {
+-	void (*kernel)(uint32_t reserved, uint32_t mach, uint32_t dt) = (void (*)(uint32_t, uint32_t, uint32_t))(0x08008000 | 1);
++	void (*kernel)(uint32_t reserved, uint32_t mach, uint32_t dt) = (void (*)(uint32_t, uint32_t, uint32_t))(0x0800C000 | 1);
+ 
+ 	kernel(0, ~0UL, 0x08004000);
+ }
+-- 
+2.17.1
+
