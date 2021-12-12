@@ -1,0 +1,219 @@
+From 25df596f009514b213c5eaf5d5eb94072391c1be Mon Sep 17 00:00:00 2001
+From: peak3d <pfau@peak3d.de>
+Date: Thu, 22 Jul 2021 10:22:39 +0200
+Subject: [PATCH] more SPS parameters
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ Source/C++/Codecs/Ap4AvcParser.cpp | 100 ++++++++++++++++++++++++++++-
+ Source/C++/Codecs/Ap4AvcParser.h   |  22 +++++++
+ Source/C++/Core/Ap4Utils.cpp       |   8 +++
+ Source/C++/Core/Ap4Utils.h         |   2 +-
+ 4 files changed, 129 insertions(+), 3 deletions(-)
+
+diff --git a/Source/C++/Codecs/Ap4AvcParser.cpp b/Source/C++/Codecs/Ap4AvcParser.cpp
+index b95398b..7efb5c9 100644
+--- a/Source/C++/Codecs/Ap4AvcParser.cpp
++++ b/Source/C++/Codecs/Ap4AvcParser.cpp
+@@ -30,7 +30,6 @@
+ |   includes
+ +---------------------------------------------------------------------*/
+ #include "Ap4AvcParser.h"
+-#include "Ap4Utils.h"
+ 
+ /*----------------------------------------------------------------------
+ |   debugging
+@@ -123,6 +122,25 @@ AP4_AvcNalParser::SliceTypeName(unsigned int slice_type)
+     }
+ }
+ 
++const int SAR[17][2] = {
++  { 0,  1 },
++  { 1,  1 },
++  { 12, 11 },
++  { 10, 11 },
++  { 16, 11 },
++  { 40, 33 },
++  { 24, 11 },
++  { 20, 11 },
++  { 32, 11 },
++  { 80, 33 },
++  { 18, 11 },
++  { 15, 11 },
++  { 64, 33 },
++  { 160, 99 },
++  { 4,  3 },
++  { 3,  2 },
++  { 2,  1 },
++};
+ /*----------------------------------------------------------------------
+ |   AP4_AvcNalParser::AP4_AvcNalParser
+ +---------------------------------------------------------------------*/
+@@ -236,7 +254,28 @@ AP4_AvcSequenceParameterSet::AP4_AvcSequenceParameterSet() :
+     frame_crop_left_offset(0),
+     frame_crop_right_offset(0),
+     frame_crop_top_offset(0),
+-    frame_crop_bottom_offset(0)
++    frame_crop_bottom_offset(0),
++    vui_parameters_present_flag(0),
++    aspect_ratio_info_present_flag(0),
++    aspect_ratio_idc(0),
++    sar_width(0),
++    sar_height(0),
++    overscan_info_present_flag(0),
++    overscan_appropriate_flag(0),
++    video_signal_type_present_flag(0),
++    video_format(0),
++    video_full_range_flag(0),
++    colour_description_present_flag(0),
++    colour_primaries(0),
++    transfer_characteristics(0),
++    matrix_coefficients(0),
++    chroma_loc_info_present_flag(0),
++    chroma_sample_loc_type_top_field(0),
++    chroma_sample_loc_type_bottom_field(0),
++    timing_info_present_flag(0),
++    num_units_in_tick(0),
++    time_scale(0),
++    fixed_frame_rate_flag(0)
+ {
+     AP4_SetMemory(scaling_list_4x4, 0, sizeof(scaling_list_4x4));
+     AP4_SetMemory(use_default_scaling_matrix_4x4, 0, sizeof(use_default_scaling_matrix_4x4));
+@@ -372,7 +411,64 @@ AP4_AvcFrameParser::ParseSPS(const unsigned char*         data,
+         sps.frame_crop_top_offset    = ReadGolomb(bits);
+         sps.frame_crop_bottom_offset = ReadGolomb(bits);
+     }
++    sps.vui_parameters_present_flag = bits.ReadBit();
++    if (sps.vui_parameters_present_flag) {
++      sps.aspect_ratio_info_present_flag = bits.ReadBit();
++      if (sps.aspect_ratio_info_present_flag) {
++        sps.aspect_ratio_idc = bits.ReadBits(8);
++        if (sps.aspect_ratio_idc == 0xFF)
++        {
++          sps.sar_width = bits.ReadBits(16);
++          sps.sar_height = bits.ReadBits(16);
++        }
++        else if (sps.aspect_ratio_idc < 17)
++        {
++          sps.sar_width = SAR[sps.aspect_ratio_idc][0];
++          sps.sar_height = SAR[sps.aspect_ratio_idc][1];
++        }
++      }
++      sps.overscan_info_present_flag = bits.ReadBit();
++      if (sps.overscan_info_present_flag)
++        sps.overscan_appropriate_flag = bits.ReadBit();
++
++      sps.video_signal_type_present_flag = bits.ReadBit();
++      if (sps.video_signal_type_present_flag) {
++        sps.video_format = bits.ReadBits(3);
++        sps.video_full_range_flag = bits.ReadBit();
++        sps.colour_description_present_flag = bits.ReadBit();
++        if (sps.colour_description_present_flag) {
++          sps.colour_primaries = bits.ReadBits(8);
++          sps.transfer_characteristics = bits.ReadBits(8);
++          sps.matrix_coefficients = bits.ReadBits(8);
++        }
++      }
++
+ 
++      sps.chroma_loc_info_present_flag = bits.ReadBit();
++      if (sps.chroma_loc_info_present_flag) {
++        sps.chroma_sample_loc_type_top_field = ReadGolomb(bits);
++        sps.chroma_sample_loc_type_bottom_field = ReadGolomb(bits);
++      }
++
++      if (bits.PeekBit() && bits.BitsLeft() < 10)
++        return AP4_SUCCESS;
++
++      sps.timing_info_present_flag = bits.ReadBit();
++      if (sps.timing_info_present_flag) {
++#if AP4_PLATFORM_BYTE_ORDER == AP4_PLATFORM_BYTE_ORDER_BIG_ENDIAN
++        sps.num_units_in_tick = bits.ReadBits(32);
++        sps.time_scale = bits.ReadBits(32);
++#else
++        sps.num_units_in_tick = bits.ReadBits(16) << 16;
++        sps.num_units_in_tick |= bits.ReadBits(16);
++        sps.time_scale = bits.ReadBits(16) << 16;
++        sps.time_scale |= bits.ReadBits(16);
++#endif
++        if (!sps.num_units_in_tick || !sps.time_scale)
++          sps.timing_info_present_flag = 0;
++        sps.fixed_frame_rate_flag = bits.ReadBit();
++      }
++    }
+     return AP4_SUCCESS;
+ }
+ 
+diff --git a/Source/C++/Codecs/Ap4AvcParser.h b/Source/C++/Codecs/Ap4AvcParser.h
+index 8f9cd6c..9f97892 100644
+--- a/Source/C++/Codecs/Ap4AvcParser.h
++++ b/Source/C++/Codecs/Ap4AvcParser.h
+@@ -37,6 +37,7 @@
+ #include "Ap4DataBuffer.h"
+ #include "Ap4NalParser.h"
+ #include "Ap4Array.h"
++#include "Ap4Utils.h"
+ 
+ /*----------------------------------------------------------------------
+ |   constants
+@@ -131,6 +132,27 @@ struct AP4_AvcSequenceParameterSet {
+     unsigned int frame_crop_right_offset;
+     unsigned int frame_crop_top_offset;
+     unsigned int frame_crop_bottom_offset;
++    unsigned int vui_parameters_present_flag;
++    unsigned int aspect_ratio_info_present_flag;
++    unsigned int aspect_ratio_idc;
++    unsigned int sar_width;
++    unsigned int sar_height;
++    unsigned int overscan_info_present_flag;
++    unsigned int overscan_appropriate_flag;
++    unsigned int video_signal_type_present_flag;
++    unsigned int video_format;
++    unsigned int video_full_range_flag;
++    unsigned int colour_description_present_flag;
++    unsigned int colour_primaries;
++    unsigned int transfer_characteristics;
++    unsigned int matrix_coefficients;
++    unsigned int chroma_loc_info_present_flag;
++    unsigned int chroma_sample_loc_type_top_field;
++    unsigned int chroma_sample_loc_type_bottom_field;
++    unsigned int timing_info_present_flag;
++    unsigned int num_units_in_tick;
++    unsigned int time_scale;
++    unsigned int fixed_frame_rate_flag;
+ };
+ 
+ struct AP4_AvcPictureParameterSet {
+diff --git a/Source/C++/Core/Ap4Utils.cpp b/Source/C++/Core/Ap4Utils.cpp
+index 96def27..6de4dba 100644
+--- a/Source/C++/Core/Ap4Utils.cpp
++++ b/Source/C++/Core/Ap4Utils.cpp
+@@ -581,4 +581,12 @@ AP4_BitReader::SkipBit()
+    }
+ }
+ 
++/*----------------------------------------------------------------------
++|   AP4_BitReader::BitsLeft
+++---------------------------------------------------------------------*/
++AP4_UI32
++AP4_BitReader::BitsLeft()
++{
++    return (m_Buffer.GetDataSize() - m_Position) * 8 + m_BitsCached;
++}
+ 
+diff --git a/Source/C++/Core/Ap4Utils.h b/Source/C++/Core/Ap4Utils.h
+index 475bff3..e66bafa 100644
+--- a/Source/C++/Core/Ap4Utils.h
++++ b/Source/C++/Core/Ap4Utils.h
+@@ -262,7 +262,7 @@ public:
+     AP4_Result   SkipBytes(AP4_Size byte_count);
+     void         SkipBit();
+     void         SkipBits(unsigned int bit_count);
+-
++    AP4_UI32     BitsLeft();
+     unsigned int GetBitsRead();
+ 
+ private:
+-- 
+2.30.2
+
