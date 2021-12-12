@@ -1,5 +1,6 @@
 config BR2_PACKAGE_DAVINCI_BOOTCOUNT
 	bool "davinci-bootcount"
+	depends on BR2_arm # only relevant for TI am335x
 	help
 	  U-Boot implements a boot count scheme that can be used to
 	  detect multiple failed attempts to boot Linux. On Davinci
