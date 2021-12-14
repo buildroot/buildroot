@@ -29,10 +29,16 @@ FRR_CONF_OPTS = --with-clippy=$(HOST_DIR)/bin/clippy \
 	--enable-user=frr \
 	--enable-group=frr \
 	--enable-vty-group=frrvty \
-	--disable-capabilities \
 	--enable-fpm
 
 HOST_FRR_CONF_OPTS = --enable-clippy-only
+
+ifeq ($(BR2_PACKAGE_LIBCAP),y)
+FRR_DEPENDENCIES += libcap
+FRR_CONF_OPTS += --enable-capabilities
+else
+FRR_CONF_OPTS += --disable-capabilities
+endif
 
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 FRR_CONF_ENV += LIBS=-latomic
