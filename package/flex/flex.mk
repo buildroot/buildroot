@@ -7,7 +7,7 @@
 FLEX_VERSION = 2.6.4
 FLEX_SITE = https://github.com/westes/flex/files/981163
 FLEX_INSTALL_STAGING = YES
-FLEX_LICENSE = FLEX
+FLEX_LICENSE = BSD-3-Clause
 FLEX_LICENSE_FILES = COPYING
 FLEX_CPE_ID_VENDOR = flex_project
 # bug does not cause stack overflows in the generated code and has been
