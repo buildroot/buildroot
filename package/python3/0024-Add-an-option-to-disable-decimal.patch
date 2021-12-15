@@ -1,4 +1,4 @@
-From d5fe81cbd51da2a84ed89d1e4c80d921d4efce26 Mon Sep 17 00:00:00 2001
+From 2eb05b69bb21df7884686ca2620612ac0f95b894 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 23 Dec 2015 11:51:31 +0100
 Subject: [PATCH] Add an option to disable decimal
@@ -19,10 +19,10 @@ Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
  2 files changed, 13 insertions(+), 6 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 7bd4623ccd..e513ef6a20 100644
+index 2efd7a6de0..86fd03cdbb 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3135,13 +3135,20 @@ fi
+@@ -3142,13 +3142,20 @@ fi
  AC_SUBST(LIBFFI_INCLUDEDIR)
  
  # Check for use of the system libmpdec library
@@ -49,10 +49,10 @@ index 7bd4623ccd..e513ef6a20 100644
  # Check whether _decimal should use a coroutine-local or thread-local context
  AC_MSG_CHECKING(for --with-decimal-contextvar)
 diff --git a/setup.py b/setup.py
-index c4ee989ba3..3d0c74bb7f 100644
+index 4f8cfcd28d..b471234473 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -2195,7 +2195,7 @@ class PyBuildExt(build_ext):
+@@ -2202,7 +2202,7 @@ class PyBuildExt(build_ext):
          # Stefan Krah's _decimal module
          extra_compile_args = []
          undef_macros = []
@@ -62,5 +62,5 @@ index c4ee989ba3..3d0c74bb7f 100644
              libraries = [':libmpdec.so.2']
              sources = ['_decimal/_decimal.c']
 -- 
-2.25.1
+2.20.1
 

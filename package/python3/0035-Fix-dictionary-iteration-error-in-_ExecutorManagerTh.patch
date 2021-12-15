@@ -1,4 +1,4 @@
-From 331966be70c371b268a4fcce9e97280cd869f137 Mon Sep 17 00:00:00 2001
+From 234364f756e3083164ec9bfcd4867855048372b4 Mon Sep 17 00:00:00 2001
 From: Jakub Kulik <kulikjak@gmail.com>
 Date: Mon, 15 Mar 2021 08:49:28 +0100
 Subject: [PATCH] Fix dictionary iteration error in _ExecutorManagerThread
@@ -12,7 +12,7 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Lib/concurrent/futures/process.py b/Lib/concurrent/futures/process.py
-index 90bc98bf2ec..e3b36dff572 100644
+index 90bc98bf2e..e3b36dff57 100644
 --- a/Lib/concurrent/futures/process.py
 +++ b/Lib/concurrent/futures/process.py
 @@ -373,7 +373,7 @@ class _ExecutorManagerThread(threading.Thread):
@@ -25,5 +25,5 @@ index 90bc98bf2ec..e3b36dff572 100644
  
          cause = None
 -- 
-2.31.1
+2.20.1
 

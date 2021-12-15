@@ -1,4 +1,4 @@
-From ad6b66b34f71ff6b60b3be5f6fd3e781cdeecd59 Mon Sep 17 00:00:00 2001
+From 8b77e7ce6723e11c1891befe7e6413d8328e8f67 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:23:42 -0800
 Subject: [PATCH] Add an option to disable the tk module
@@ -13,10 +13,10 @@ Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
  2 files changed, 17 insertions(+), 3 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index d826d8ac4b..dc84384680 100644
+index f700b780fb..4fcf8b5a96 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1411,7 +1411,7 @@ maninstall:	altmaninstall
+@@ -1410,7 +1410,7 @@ maninstall:	altmaninstall
  # Install the library
  XMLLIBSUBDIRS=  xml xml/dom xml/etree xml/parsers xml/sax
  
@@ -25,7 +25,7 @@ index d826d8ac4b..dc84384680 100644
  		asyncio \
  		collections concurrent concurrent/futures encodings \
  		email email/mime \
-@@ -1429,8 +1429,7 @@ LIBSUBDIRS=	tkinter site-packages \
+@@ -1428,8 +1428,7 @@ LIBSUBDIRS=	tkinter site-packages \
  		curses \
  		zoneinfo
  
@@ -35,7 +35,7 @@ index d826d8ac4b..dc84384680 100644
  		test/audiodata \
  		test/capath test/data \
  		test/cjkencodings test/decimaltestdata \
-@@ -1502,6 +1501,12 @@ TESTSUBDIRS=	tkinter/test tkinter/test/test_tkinter \
+@@ -1501,6 +1500,12 @@ TESTSUBDIRS=	tkinter/test tkinter/test/test_tkinter \
  		test/test_tools test/test_warnings test/test_warnings/data \
  		unittest/test unittest/test/testmock
  
@@ -49,10 +49,10 @@ index d826d8ac4b..dc84384680 100644
  LIBSUBDIRS += lib2to3 lib2to3/fixes lib2to3/pgen2
  TESTSUBDIRS += lib2to3/tests			\
 diff --git a/configure.ac b/configure.ac
-index 8b5c65974c..4c72dae960 100644
+index 644ed6d895..a4d06dcb50 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3367,6 +3367,15 @@ if test "$SQLITE3" = "no" ; then
+@@ -3374,6 +3374,15 @@ if test "$SQLITE3" = "no" ; then
     DISABLED_EXTENSIONS="${DISABLED_EXTENSIONS} _sqlite3"
  fi
  
@@ -69,5 +69,5 @@ index 8b5c65974c..4c72dae960 100644
  
  AC_ARG_ENABLE(pydoc,
 -- 
-2.25.1
+2.20.1
 

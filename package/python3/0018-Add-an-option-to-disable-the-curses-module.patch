@@ -1,4 +1,4 @@
-From 962deb43f5f340a8472d432ae8e6d61186f9040e Mon Sep 17 00:00:00 2001
+From 7dea1b79fbb905dd69862862f327cc0f25cd93c2 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:31:51 -0800
 Subject: [PATCH] Add an option to disable the curses module
@@ -13,10 +13,10 @@ Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
  2 files changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index dc84384680..2a82f3308f 100644
+index 4fcf8b5a96..2e45a41140 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1426,7 +1426,6 @@ LIBSUBDIRS=	site-packages \
+@@ -1425,7 +1425,6 @@ LIBSUBDIRS=	site-packages \
  		multiprocessing multiprocessing/dummy \
  		unittest \
  		venv venv/scripts venv/scripts/common venv/scripts/posix \
@@ -24,7 +24,7 @@ index dc84384680..2a82f3308f 100644
  		zoneinfo
  
  TESTSUBDIRS=	test \
-@@ -1507,6 +1506,10 @@ TESTSUBDIRS += tkinter/test tkinter/test/test_tkinter \
+@@ -1506,6 +1505,10 @@ TESTSUBDIRS += tkinter/test tkinter/test/test_tkinter \
  	tkinter/test/test_ttk
  endif
  
@@ -36,10 +36,10 @@ index dc84384680..2a82f3308f 100644
  LIBSUBDIRS += lib2to3 lib2to3/fixes lib2to3/pgen2
  TESTSUBDIRS += lib2to3/tests			\
 diff --git a/configure.ac b/configure.ac
-index 4c72dae960..acd98381a3 100644
+index a4d06dcb50..f034cd4bcb 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3376,6 +3376,15 @@ if test "$TK" = "no"; then
+@@ -3383,6 +3383,15 @@ if test "$TK" = "no"; then
     DISABLED_EXTENSIONS="${DISABLED_EXTENSIONS} _tkinter"
  fi
  
@@ -56,5 +56,5 @@ index 4c72dae960..acd98381a3 100644
  
  AC_ARG_ENABLE(pydoc,
 -- 
-2.25.1
+2.20.1
 
