@@ -1,4 +1,4 @@
-From dd2722dec08eb9c72c36313e93661eeca3ad64d8 Mon Sep 17 00:00:00 2001
+From fdef81b6f4280eb26bc620ed8dd3c4dc2018dd29 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:20:45 -0800
 Subject: [PATCH] Add option to disable the sqlite3 module
@@ -13,10 +13,10 @@ Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
  2 files changed, 14 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 8b7de12999..d826d8ac4b 100644
+index 6324970733..f700b780fb 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1417,7 +1417,6 @@ LIBSUBDIRS=	tkinter site-packages \
+@@ -1416,7 +1416,6 @@ LIBSUBDIRS=	tkinter site-packages \
  		email email/mime \
  		ensurepip ensurepip/_bundled \
  		html json http dbm xmlrpc \
@@ -24,7 +24,7 @@ index 8b7de12999..d826d8ac4b 100644
  		logging csv wsgiref urllib \
  		ctypes ctypes/macholib \
  		idlelib idlelib/Icons \
-@@ -1495,7 +1494,6 @@ TESTSUBDIRS=	tkinter/test tkinter/test/test_tkinter \
+@@ -1494,7 +1493,6 @@ TESTSUBDIRS=	tkinter/test tkinter/test/test_tkinter \
  		test/test_asyncio \
  		test/test_email test/test_email/data \
  		test/test_json \
@@ -32,7 +32,7 @@ index 8b7de12999..d826d8ac4b 100644
  		ctypes/test \
  		idlelib/idle_test \
  		distutils/tests \
-@@ -1512,6 +1510,11 @@ TESTSUBDIRS += lib2to3/tests			\
+@@ -1511,6 +1509,11 @@ TESTSUBDIRS += lib2to3/tests			\
  	lib2to3/tests/data/fixers/myfixes
  endif
  
@@ -45,10 +45,10 @@ index 8b7de12999..d826d8ac4b 100644
  LIBSUBDIRS += $(TESTSUBDIRS)
  endif
 diff --git a/configure.ac b/configure.ac
-index f1f5e9a7b0..8b5c65974c 100644
+index 58e9a8fe7a..644ed6d895 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3358,6 +3358,15 @@ if test "$posix_threads" = "yes"; then
+@@ -3365,6 +3365,15 @@ if test "$posix_threads" = "yes"; then
        AC_CHECK_FUNCS(pthread_getcpuclockid)
  fi
  
@@ -65,5 +65,5 @@ index f1f5e9a7b0..8b5c65974c 100644
  
  AC_ARG_ENABLE(pydoc,
 -- 
-2.25.1
+2.20.1
 
