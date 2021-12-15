@@ -1,0 +1,31 @@
+From e345ccaf4daa8c35698ab02c0de346fcc0ca9ef6 Mon Sep 17 00:00:00 2001
+From: Yann Collet <cyan@fb.com>
+Date: Fri, 6 Aug 2021 15:29:32 -0700
+Subject: [PATCH] fixed man page installation
+
+[Retrieved from:
+https://github.com/Cyan4973/xxHash/commit/e345ccaf4daa8c35698ab02c0de346fcc0ca9ef6]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ Makefile | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index b8552a9f..556a32a0 100644
+--- a/Makefile
++++ b/Makefile
+@@ -498,10 +498,10 @@ endif
+ 	$(Q)ln -sf xxhsum $(DESTDIR)$(BINDIR)/xxh64sum
+ 	$(Q)ln -sf xxhsum $(DESTDIR)$(BINDIR)/xxh128sum
+ 	@echo Installing man pages
+-	$(Q)$(INSTALL_DATA) xxhsum.1 $(DESTDIR)$(MANDIR)/xxhsum.1
+-	$(Q)ln -sf xxhsum.1 $(DESTDIR)$(MANDIR)/xxh32sum.1
+-	$(Q)ln -sf xxhsum.1 $(DESTDIR)$(MANDIR)/xxh64sum.1
+-	$(Q)ln -sf xxhsum.1 $(DESTDIR)$(MANDIR)/xxh128sum.1
++	$(Q)$(INSTALL_DATA) $(MAN) $(DESTDIR)$(MANDIR)/xxhsum.1
++	$(Q)ln -sf $(MAN) $(DESTDIR)$(MANDIR)/xxh32sum.1
++	$(Q)ln -sf $(MAN) $(DESTDIR)$(MANDIR)/xxh64sum.1
++	$(Q)ln -sf $(MAN) $(DESTDIR)$(MANDIR)/xxh128sum.1
+ 	@echo xxhash installation completed
+ 
+ .PHONY: uninstall
