@@ -1,0 +1,35 @@
+From 2153e165c48e541bb5a8b23f81e87db87a9394fd Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 14 Dec 2021 08:20:59 +0100
+Subject: [PATCH] src/hotplug_generic.c: fix build without lib{udev,usb}
+
+Fix the following build failure without lib{udev,usb} raised since
+version 1.9.5 and
+https://github.com/LudovicRousseau/PCSC/commit/6f8f170db3c88c59a5ddb5ae5319b921a901a6aa:
+
+/home/giuliobenetti/autobuild/run/instance-2/output-1/host/lib/gcc/arm-buildroot-linux-gnueabihf/11.2.0/../../../../arm-buildroot-linux-gnueabihf/bin/ld: pcscd-pcscdaemon.o: in function `signal_thread':
+pcscdaemon.c:(.text+0x444): undefined reference to `HPReCheckSerialReaders'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/6cf323229f32967aa554418410dc94b7094d09af
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/LudovicRousseau/PCSC/commit/2153e165c48e541bb5a8b23f81e87db87a9394fd]
+---
+ src/hotplug_generic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/hotplug_generic.c b/src/hotplug_generic.c
+index a0f34646..e4f19935 100644
+--- a/src/hotplug_generic.c
++++ b/src/hotplug_generic.c
+@@ -48,7 +48,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #define FALSE 0
+ #endif
+ 
+-#if !defined(__APPLE__) && !defined(HAVE_LIBUSB) && !defined(__linux__) && !defined(HAVE_LIBUDEV)
++#if !defined(__APPLE__) && !defined(HAVE_LIBUSB) && !defined(HAVE_LIBUDEV)
+ 
+ LONG HPSearchHotPluggables(void)
+ {
