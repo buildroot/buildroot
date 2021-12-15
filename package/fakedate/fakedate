@@ -18,15 +18,22 @@
 # Copyright (C) 2016 Jérôme Pouiller <jezz@sysmic.org>
 #
 
-DATE_BIN=false
 # Do not call any 'date' before us in the PATH, or that would create
 # an infinite recursion.
-for date in $(which -a date |tac); do
+found=false
+for date in $(which -a date); do
     if [ "${date}" -ef "$0" ]; then
+        found=true
+    elif ${found}; then
+        DATE_BIN="${date}"
         break
     fi
-    DATE_BIN="${date}"
 done
+
+if [ -z "${DATE_BIN}" ]; then
+    printf 'fakedate: no real date found in PATH after "%s"\n' "${0}" >&2
+    exit 1
+fi
 
 if [ -n "$SOURCE_DATE_EPOCH" ]; then
     FORCE_EPOCH=1
