@@ -1,4 +1,4 @@
-From e2ea659eac1849db471d3c01a0d0af9d6fca2e9a Mon Sep 17 00:00:00 2001
+From cda5c7447403440d679a3cd29d8dc38bb15eca33 Mon Sep 17 00:00:00 2001
 From: Christophe Vu-Brugier <cvubrugier@fastmail.fm>
 Date: Wed, 22 Feb 2017 16:48:49 -0800
 Subject: [PATCH] Add importlib fix for PEP 3147 issue
@@ -25,7 +25,7 @@ Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
  1 file changed, 5 insertions(+), 39 deletions(-)
 
 diff --git a/Lib/importlib/_bootstrap_external.py b/Lib/importlib/_bootstrap_external.py
-index 25a3f8c0e0..2cb9a9aa52 100644
+index fe31f437da..71e64aef30 100644
 --- a/Lib/importlib/_bootstrap_external.py
 +++ b/Lib/importlib/_bootstrap_external.py
 @@ -373,8 +373,6 @@ def cache_from_source(path, debug_override=None, *, optimization=None):
@@ -101,5 +101,5 @@ index 25a3f8c0e0..2cb9a9aa52 100644
  
  
 -- 
-2.25.1
+2.20.1
 
