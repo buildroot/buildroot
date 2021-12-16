@@ -1,0 +1,90 @@
+From 17b6ab4d8cecf55a3784dbefbef9bfcf84ee3b1b Mon Sep 17 00:00:00 2001
+From: Jocelyn Falempe <jfalempe@redhat.com>
+Date: Thu, 16 Dec 2021 15:46:43 +0100
+Subject: [PATCH] Fix compilation error when built without logind/platform bus
+
+This was introduced by commit 8eb1396d
+
+Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+[Peter: from https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/827]
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ hw/xfree86/common/xf86Events.c               |  9 +--------
+ hw/xfree86/os-support/linux/systemd-logind.c | 16 +++++++++++-----
+ include/systemd-logind.h                     |  4 ++--
+ 3 files changed, 14 insertions(+), 15 deletions(-)
+
+diff --git a/hw/xfree86/common/xf86Events.c b/hw/xfree86/common/xf86Events.c
+index 6076efa80..395bbc7b3 100644
+--- a/hw/xfree86/common/xf86Events.c
++++ b/hw/xfree86/common/xf86Events.c
+@@ -383,14 +383,7 @@ xf86VTLeave(void)
+         xf86GPUScreens[i]->LeaveVT(xf86GPUScreens[i]);
+ 
+     if (systemd_logind_controls_session()) {
+-        for (i = 0; i < xf86_num_platform_devices; i++) {
+-            if (xf86_platform_devices[i].flags & XF86_PDEV_SERVER_FD) {
+-                int major, minor;
+-                major = xf86_platform_odev_attributes(i)->major;
+-                minor = xf86_platform_odev_attributes(i)->minor;
+-                systemd_logind_drop_master(major, minor);
+-            }
+-        }
++        systemd_logind_drop_master();
+     }
+ 
+     if (!xf86VTSwitchAway())
+diff --git a/hw/xfree86/os-support/linux/systemd-logind.c b/hw/xfree86/os-support/linux/systemd-logind.c
+index 35d5cc75b..f6a223a55 100644
+--- a/hw/xfree86/os-support/linux/systemd-logind.c
++++ b/hw/xfree86/os-support/linux/systemd-logind.c
+@@ -308,13 +308,19 @@ cleanup:
+  * and ensure the drm_drop_master is done before
+  * VT_RELDISP when switching VT
+  */
+-void systemd_logind_drop_master(int _major, int _minor)
++void systemd_logind_drop_master(void)
+ {
+-    struct systemd_logind_info *info = &logind_info;
+-    dbus_int32_t major = _major;
+-    dbus_int32_t minor = _minor;
++    int i;
++    for (i = 0; i < xf86_num_platform_devices; i++) {
++        if (xf86_platform_devices[i].flags & XF86_PDEV_SERVER_FD) {
++            dbus_int32_t major, minor;
++            struct systemd_logind_info *info = &logind_info;
+ 
+-    systemd_logind_ack_pause(info, minor, major);
++            major = xf86_platform_odev_attributes(i)->major;
++            minor = xf86_platform_odev_attributes(i)->minor;
++            systemd_logind_ack_pause(info, minor, major);
++        }
++    }
+ }
+ 
+ static DBusHandlerResult
+diff --git a/include/systemd-logind.h b/include/systemd-logind.h
+index a8af2b96d..5c04d0130 100644
+--- a/include/systemd-logind.h
++++ b/include/systemd-logind.h
+@@ -33,7 +33,7 @@ int systemd_logind_take_fd(int major, int minor, const char *path, Bool *paus);
+ void systemd_logind_release_fd(int major, int minor, int fd);
+ int systemd_logind_controls_session(void);
+ void systemd_logind_vtenter(void);
+-void systemd_logind_drop_master(int major, int minor);
++void systemd_logind_drop_master(void);
+ #else
+ #define systemd_logind_init()
+ #define systemd_logind_fini()
+@@ -41,7 +41,7 @@ void systemd_logind_drop_master(int major, int minor);
+ #define systemd_logind_release_fd(major, minor, fd) close(fd)
+ #define systemd_logind_controls_session() 0
+ #define systemd_logind_vtenter()
+-#define systemd_logind_drop_master(major, minor)
++#define systemd_logind_drop_master()
+ #endif
+ 
+ #endif
+-- 
+2.20.1
+
