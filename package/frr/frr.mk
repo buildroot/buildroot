@@ -42,6 +42,13 @@ else
 FRR_CONF_OPTS += --disable-capabilities
 endif
 
+ifeq ($(BR2_PACKAGE_ZEROMQ),y)
+FRR_DEPENDENCIES += zeromq
+FRR_CONF_OPTS += --enable-zeromq
+else
+FRR_CONF_OPTS += --disable-zeromq
+endif
+
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 FRR_CONF_ENV += LIBS=-latomic
 endif
