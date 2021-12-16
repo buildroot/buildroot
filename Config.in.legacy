@@ -147,16 +147,17 @@ endif
 comment "Legacy options removed in 2022.02"
 
 config BR2_PACKAGE_IPUTILS_TFTPD
-	bool "tftpd"
+	bool "iputils tftpd option removed"
 	select BR2_LEGACY
 	help
-	  tftpd has been removed from upstream.
+	  tftpd has been removed from iputils since version 20211215.
 
 config BR2_PACKAGE_IPUTILS_TRACEROUTE6
-	bool "traceroute6"
+	bool "iputils traceroute6 option removed"
 	select BR2_LEGACY
 	help
-	  traceroute6 has been removed from upstream.
+	  traceroute6 has been removed from iputils since version
+	  20211215.
 
 config BR2_PACKAGE_LIBMEDIAART_BACKEND_NONE
 	bool "libmediaart 'none' backend removed"
