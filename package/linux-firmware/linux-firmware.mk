@@ -758,39 +758,38 @@ define LINUX_FIRMWARE_INSTALL_IMAGES_CMDS
 	$(call LINUX_FIRMWARE_INSTALL_FW, $(BINARIES_DIR))
 endef
 
-
 LINUX_FIRMWARE_LICENSE_FILES = LICENCE.Abilis \
-LICENSE.amdgpu \
-LICENCE.Marvell \
-LICENCE.atheros_firmware \
-ath10k/QCA6174/hw3.0/notice_ath10k_firmware-4.txt \
-ath10k/QCA6174/hw2.1/notice_ath10k_firmware-5.txt \
-ath10k/QCA6174/hw3.0/notice_ath10k_firmware-6.txt \
-LICENCE.broadcom_bcm43xx \
-LICENCE.chelsio_firmware \
-LICENCE.fw_sst_0f28 \
-LICENCE.ibt_firmware \
-LICENCE.it913x \
-LICENCE.iwlwifi_firmware \
-LICENCE.microchip \
-LICENCE.qat_firmware \
-LICENCE.qla2xxx \
-LICENCE.ralink-firmware.txt \
-LICENCE.ralink_a_mediatek_company_firmware \
-LICENCE.rtlwifi_firmware.txt \
-LICENCE.ti-connectivity \
-LICENCE.xc4000 \
-LICENCE.xc5000 \
-LICENCE.xc5000c \
-LICENSE.QualcommAtheros_ar3k \
-LICENSE.QualcommAtheros_ath10k \
-LICENSE.dib0700 \
-LICENSE.i915 \
-LICENSE.qcom \
-LICENSE.radeon \
-LICENSE.sdma_firmware \
-WHENCE \
-qcom/NOTICE.txt \
-LICENCE.e100
+	LICENSE.amdgpu \
+	LICENCE.Marvell \
+	LICENCE.atheros_firmware \
+	ath10k/QCA6174/hw3.0/notice_ath10k_firmware-4.txt \
+	ath10k/QCA6174/hw2.1/notice_ath10k_firmware-5.txt \
+	ath10k/QCA6174/hw3.0/notice_ath10k_firmware-6.txt \
+	LICENCE.broadcom_bcm43xx \
+	LICENCE.chelsio_firmware \
+	LICENCE.fw_sst_0f28 \
+	LICENCE.ibt_firmware \
+	LICENCE.it913x \
+	LICENCE.iwlwifi_firmware \
+	LICENCE.microchip \
+	LICENCE.qat_firmware \
+	LICENCE.qla2xxx \
+	LICENCE.ralink-firmware.txt \
+	LICENCE.ralink_a_mediatek_company_firmware \
+	LICENCE.rtlwifi_firmware.txt \
+	LICENCE.ti-connectivity \
+	LICENCE.xc4000 \
+	LICENCE.xc5000 \
+	LICENCE.xc5000c \
+	LICENSE.QualcommAtheros_ar3k \
+	LICENSE.QualcommAtheros_ath10k \
+	LICENSE.dib0700 \
+	LICENSE.i915 \
+	LICENSE.qcom \
+	LICENSE.radeon \
+	LICENSE.sdma_firmware \
+	WHENCE \
+	qcom/NOTICE.txt \
+	LICENCE.e100
 
 $(eval $(generic-package))
