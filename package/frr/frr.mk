@@ -12,8 +12,8 @@ FRR_CPE_ID_VENDOR = linuxfoundation
 FRR_CPE_ID_PRODUCT = free_range_routing
 FRR_AUTORECONF = YES
 
-FRR_DEPENDENCIES = host-frr readline json-c \
-	libyang libnl c-ares
+FRR_DEPENDENCIES = host-frr readline json-c libyang libnl \
+	$(if $(BR2_PACKAGE_C_ARES),c-ares)
 
 HOST_FRR_DEPENDENCIES = host-flex host-bison host-elfutils host-python3
 
@@ -34,6 +34,18 @@ FRR_CONF_OPTS = --with-clippy=$(HOST_DIR)/bin/clippy \
 	--enable-fpm
 
 HOST_FRR_CONF_OPTS = --enable-clippy-only
+
+ifeq ($(BR2_PACKAGE_FRR_BMP),y)
+FRR_CONF_OPTS += --enable-bgp-bmp
+else
+FRR_CONF_OPTS += --disable-bgp-bmp
+endif
+
+ifeq ($(BR2_PACKAGE_FRR_NHRPD),y)
+FRR_CONF_OPTS += --enable-nhrpd
+else
+FRR_CONF_OPTS += --disable-nhrpd
+endif
 
 ifeq ($(BR2_PACKAGE_LIBCAP),y)
 FRR_DEPENDENCIES += libcap

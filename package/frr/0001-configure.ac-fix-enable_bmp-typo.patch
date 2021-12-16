@@ -1,0 +1,29 @@
+From bacabf2476553d0e873b827359e1c8a4216c2f8c Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 16 Dec 2021 20:10:26 +0100
+Subject: [PATCH] configure.ac: fix enable_bmp typo
+
+enable_bmp doesn't exist, use enable_bgp_bmp
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/FRRouting/frr/pull/10236]
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 1bcc42ef8..c7a5f1286 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1806,7 +1806,7 @@ if test "$enable_bgp_vnc" != "no";then
+ fi
+ 
+ bgpd_bmp=false
+-case "${enable_bmp}" in
++case "${enable_bgp_bmp}" in
+   no)
+     ;;
+   yes)
+-- 
+2.33.0
+
