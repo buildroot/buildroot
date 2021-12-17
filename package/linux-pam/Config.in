@@ -11,5 +11,6 @@ config BR2_PACKAGE_LINUX_PAM
 	  http://linux-pam.org
 
 comment "linux-pam needs a toolchain w/ wchar, locale, dynamic library"
+	depends on BR2_USE_MMU
 	depends on !(BR2_ENABLE_LOCALE && BR2_USE_WCHAR) \
 		|| BR2_STATIC_LIBS
