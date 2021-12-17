@@ -28,7 +28,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
 LIBMEDIAART_CONF_OPTS += -Dintrospection=true
-LIBMEDIAART_DEPENDENCIES += gobject-introspection
+LIBMEDIAART_DEPENDENCIES += host-vala gobject-introspection
 else
 LIBMEDIAART_CONF_OPTS += -Dintrospection=false
 endif
