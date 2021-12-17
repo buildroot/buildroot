@@ -54,6 +54,13 @@ else
 FRR_CONF_OPTS += --disable-capabilities
 endif
 
+ifeq ($(BR2_PACKAGE_SQLITE),y)
+FRR_DEPENDENCIES += sqlite
+FRR_CONF_OPTS += --enable-config-rollbacks
+else
+FRR_CONF_OPTS += --disable-config-rollbacks
+endif
+
 ifeq ($(BR2_PACKAGE_ZEROMQ),y)
 FRR_DEPENDENCIES += zeromq
 FRR_CONF_OPTS += --enable-zeromq
