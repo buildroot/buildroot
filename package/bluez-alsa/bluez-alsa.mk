@@ -76,5 +76,4 @@ else
 BLUEZ_ALSA_CONF_OPTS += --without-libopenaptx --disable-aptx --disable-aptx-hd
 endif
 
-
 $(eval $(autotools-package))
