@@ -1,0 +1,32 @@
+From 3079cea1b18fe72aa1da6b04e561abfb36f4f443 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 11 Nov 2021 09:57:23 +0100
+Subject: sigsegv: fix build on microblazeel
+
+Fix the following build failure on microblazeel with diffutils 3.8:
+sigsegv.c:979:28: error: 'struct vma_struct' has no member named 'is_near_this'
+http://autobuild.buildroot.org/results/5ecd55b7c72f9630a7acc72341ccb60e94ddb574
+
+[Retrieved from:
+https://git.savannah.gnu.org/cgit/gnulib.git/commit/?id=3079cea1b18fe72aa1da6b04e561abfb36f4f443]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ m4/stack-direction.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/m4/stack-direction.m4 b/m4/stack-direction.m4
+index c90d69733..70286c8f5 100644
+--- a/m4/stack-direction.m4
++++ b/m4/stack-direction.m4
+@@ -37,7 +37,7 @@ AC_DEFUN([SV_STACK_DIRECTION],
+       m68* | \
+       m88k | \
+       mcore | \
+-      microblaze | \
++      microblaze* | \
+       mips* | \
+       mmix | \
+       mn10200 | \
+-- 
+cgit v1.2.1
+
