@@ -1,0 +1,35 @@
+From 7f54d48ee5db037778ead310e0b8278f3fe70b41 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Sun, 19 Dec 2021 07:52:55 +0100
+Subject: [PATCH] src/rebar_port_compiler: add -fPIC to LDFLAGS by default
+
+Since both DRV_CFLAGS and EXE_CFLAGS list -fPIC we need also the LDFLAGS
+to follow them. Unfortunately adding -fPIC only to DRV_LDFLAGS and
+EXE_LDFLAGS is not sufficient, since when linking as a library(.so) it
+doesn't take into account those variables. Since -fPIC is needed by default
+by any kind of linking, let's add it to the general -fPIC. Rebar seems to
+link libraries without taking into account any variable listed in:
+src/rebar_port_compiler.erl
+this after testing and tracing for every variable.
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ src/rebar_port_compiler.erl | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/rebar_port_compiler.erl b/src/rebar_port_compiler.erl
+index 9679c80..bd08b21 100644
+--- a/src/rebar_port_compiler.erl
++++ b/src/rebar_port_compiler.erl
+@@ -645,6 +645,8 @@ default_env() ->
+      {"OBJCOPY", get_tool(Arch, "objcopy", "objcopy")},
+      {"OBJDUMP", get_tool(Arch, "objdump", "objdump")},
+ 
++     {"LDFLAGS", "-fPIC $LDFLAGS"},
++
+      {"DRV_CXX_TEMPLATE",
+       "$CXX -c $CXXFLAGS $DRV_CFLAGS $PORT_IN_FILES -o $PORT_OUT_FILE"},
+      {"DRV_CC_TEMPLATE",
+-- 
+2.25.1
+
