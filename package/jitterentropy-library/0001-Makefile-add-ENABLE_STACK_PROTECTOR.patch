@@ -1,0 +1,52 @@
+From 272ee47892563e849f6b1bf59b0173f8aa33b631 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 19 Dec 2021 11:36:13 +0100
+Subject: [PATCH] Makefile: add ENABLE_STACK_PROTECTOR
+
+Add ENABLE_STACK_PROTECTOR as build on embedded toolchains without
+stack-protector is again broken since
+https://github.com/smuellerDD/jitterentropy-library/commit/5b3cb7f35e41ba2f34a75d004cf095c965a1a0c4:
+
+/home/buildroot/autobuild/instance-0/output-1/host/opt/ext-toolchain/bin/../lib/gcc/i686-buildroot-linux-uclibc/9.3.0/../../../../i686-buildroot-linux-uclibc/bin/ld: src/jitterentropy-base.o: in function `jent_fips_enabled':
+jitterentropy-base.c:(.text+0x131): undefined reference to `__stack_chk_fail_local'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/8dee462d16d934dd173d58f17933c6911e4336bf
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Signed-off-by: Stephan Mueller <smueller@chronox.de>
+[Retrieved from:
+https://github.com/smuellerDD/jitterentropy-library/commit/272ee47892563e849f6b1bf59b0173f8aa33b631]
+---
+ Makefile | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index dfb96a8..c999ef5 100644
+--- a/Makefile
++++ b/Makefile
+@@ -2,6 +2,7 @@
+ 
+ CC ?= gcc
+ #Hardening
++ENABLE_STACK_PROTECTOR ?= 1
+ CFLAGS ?= -fwrapv --param ssp-buffer-size=4 -fvisibility=hidden -fPIE -Wcast-align -Wmissing-field-initializers -Wshadow -Wswitch-enum
+ CFLAGS +=-Wextra -Wall -pedantic -fPIC -O0 -fwrapv -Wconversion
+ LDFLAGS +=-Wl,-z,relro,-z,now -lpthread
+@@ -13,10 +14,12 @@ else
+   GCC_GTEQ_490 := $(shell expr `$(CC) -dumpfullversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 40900)
+ endif
+ 
+-ifeq "$(GCC_GTEQ_490)" "1"
+-  CFLAGS += -fstack-protector-strong
+-else
+-  CFLAGS += -fstack-protector-all
++ifeq "$(ENABLE_STACK_PROTECTOR)" "1"
++  ifeq "$(GCC_GTEQ_490)" "1"
++    CFLAGS += -fstack-protector-strong
++  else
++    CFLAGS += -fstack-protector-all
++  endif
+ endif
+ 
+ # Change as necessary
