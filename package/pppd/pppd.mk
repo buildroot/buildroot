@@ -57,6 +57,13 @@ ifeq ($(BR2_PACKAGE_PPPD_OVERWRITE_RESOLV_CONF),y)
 PPPD_POST_EXTRACT_HOOKS += PPPD_SET_RESOLV_CONF
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_15),y)
+define PPPD_DROP_IPX
+	$(SED) 's/-DIPX_CHANGE//' $(PPPD_DIR)/pppd/Makefile.linux
+endef
+PPPD_POST_EXTRACT_HOOKS += PPPD_DROP_IPX
+endif
+
 define PPPD_CONFIGURE_CMDS
 	$(SED) 's/FILTER=y/#FILTER=y/' $(PPPD_DIR)/pppd/Makefile.linux
 	$(SED) 's/ifneq ($$(wildcard \/usr\/include\/pcap-bpf.h),)/ifdef FILTER/' $(PPPD_DIR)/*/Makefile.linux
