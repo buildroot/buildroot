@@ -32,6 +32,7 @@ class TestPhpLuaLua(infra.basetest.BRTest):
         # bumping package version.
         self.assertEqual(output[2][0:25], "lua extension version => ")
 
+
 class TestPhpLuaLuajit(infra.basetest.BRTest):
     config = infra.basetest.BASIC_TOOLCHAIN_CONFIG + \
         """
