@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GRPC_VERSION = 1.42.0
+GRPC_VERSION = 1.43.0
 GRPC_SITE = $(call github,grpc,grpc,v$(GRPC_VERSION))
 GRPC_LICENSE = Apache-2.0, BSD-3-Clause (third_party code), MPL-2.0 (etc/roots.pem)
 GRPC_LICENSE_FILES = LICENSE
