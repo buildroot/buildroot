@@ -1,0 +1,31 @@
+From de657e01635306085488290ea83de541ec393f8b Mon Sep 17 00:00:00 2001
+From: Leonardo Neumann <leonardo@neumann.dev.br>
+Date: Mon, 13 Dec 2021 01:07:20 -0300
+Subject: [PATCH] Fix missing sys/stat.h include on musl-based systems
+
+Boost 1.78.0 fails to build on musl-based systems because musl does
+not include sys/stat.h by default.
+
+Fixes #161 ("Boost compiler error")
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/boostorg/interprocess/pull/162]
+---
+ include/boost/interprocess/permissions.hpp | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/boost/interprocess/permissions.hpp b/boost/interprocess/permissions.hpp
+index ab55411e..0b21a685 100644
+--- a/boost/interprocess/permissions.hpp
++++ b/boost/interprocess/permissions.hpp
+@@ -29,6 +29,10 @@
+ 
+ #include <boost/interprocess/detail/win32_api.hpp>
+ 
++#else
++
++#include <sys/stat.h>
++
+ #endif
+ 
+ #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
