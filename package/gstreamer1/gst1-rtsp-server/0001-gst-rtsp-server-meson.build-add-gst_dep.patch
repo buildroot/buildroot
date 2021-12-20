@@ -1,0 +1,41 @@
+From b6bc8fbb72d6d3914c616dc64d15b961493cb9c2 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 20 Dec 2021 10:09:36 +0100
+Subject: [PATCH] gst/rtsp-server/meson.build: add gst_dep
+
+Add gst_dep to gst_rtsp_server_deps, in the context of buildroot, this
+will avoid the following build failure, because the correct girdir
+location will be retrieved from gstreamer-1.0.pc:
+
+/home/giuliobenetti/autobuild/run/instance-3/output-1/host/riscv32-buildroot-linux-gnu/sysroot/usr/bin/g-ir-compiler gst/rtsp-server/GstRtspServer-1.0.gir --output gst/rtsp-server/GstRtspServer-1.0.typelib --includedir=/usr/share/gir-1.0
+Could not find GIR file 'Gst-1.0.gir'; check XDG_DATA_DIRS or use --includedir
+error parsing file gst/rtsp-server/GstRtspServer-1.0.gir: Failed to parse included gir Gst-1.0
+If the above error message is about missing .so libraries, then setting up GIR_EXTRA_LIBS_PATH in the .mk file should help.
+Typically like this: PKG_MAKE_ENV += GIR_EXTRA_LIBS_PATH="$(@D)/.libs"
+
+Fixes:
+ - http://autobuild.buildroot.org/results/04af6b22cfa0cffb6a3109a3b32b27137ad2e0b0
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:
+https://gitlab.freedesktop.org/gstreamer/gst-rtsp-server/-/merge_requests/217]
+---
+ gst/rtsp-server/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gst/rtsp-server/meson.build b/gst/rtsp-server/meson.build
+index 24d7c39..874da14 100644
+--- a/gst/rtsp-server/meson.build
++++ b/gst/rtsp-server/meson.build
+@@ -55,7 +55,7 @@ rtsp_server_headers = [
+ 
+ install_headers(rtsp_server_headers, subdir : 'gstreamer-1.0/gst/rtsp-server')
+ 
+-gst_rtsp_server_deps = [gstrtsp_dep, gstrtp_dep, gstsdp_dep, gstnet_dep, gstapp_dep]
++gst_rtsp_server_deps = [gstrtsp_dep, gstrtp_dep, gstsdp_dep, gstnet_dep, gstapp_dep, gst_dep]
+ gst_rtsp_server = library('gstrtspserver-@0@'.format(api_version),
+   rtsp_server_sources,
+   include_directories : rtspserver_incs,
+-- 
+2.33.0
+
