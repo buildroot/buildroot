@@ -470,6 +470,18 @@ config BR2_LINUX_KERNEL_NEEDS_HOST_LIBELF
 	  CONFIG_UNWINDER_ORC=y, please install libelf-dev,
 	  libelf-devel or elfutils-libelf-devel".
 
+config BR2_LINUX_KERNEL_NEEDS_HOST_PAHOLE
+	bool "Needs host pahole"
+	help
+	  Some Linux kernel configuration options (such as
+	  CONFIG_DEBUG_INFO_BTF) require building a host program
+	  called pahole. Enabling this option will ensure host-pahole
+	  gets built before the Linux kernel.
+
+	  Enable this option if you get a Linux kernel build failure
+	  such as "BTF: .tmp_vmlinux.btf: pahole (pahole) is not
+	  available".
+
 # Linux extensions
 source "linux/Config.ext.in"
 
