@@ -14,6 +14,9 @@ JANUS_GATEWAY_CPE_ID_PRODUCT = janus
 # 0003-Fix-potential-Cross-site-Scripting-XSS-exploits-in-demos.patch
 JANUS_GATEWAY_IGNORE_CVES += CVE-2021-4020
 
+# 0004-Fixed-missing-XSS-mitigation.patch
+JANUS_GATEWAY_IGNORE_CVES += CVE-2021-4124
+
 # ding-libs provides the ini_config library
 JANUS_GATEWAY_DEPENDENCIES = host-pkgconf jansson libnice \
 	libsrtp host-gengetopt libglib2 openssl libconfig \
