@@ -27,6 +27,30 @@ NODEJS_CONF_OPTS = \
 	--cross-compiling \
 	--dest-os=linux
 
+HOST_NODEJS_MAKE_OPTS = \
+	$(HOST_CONFIGURE_OPTS) \
+	CXXFLAGS="$(HOST_NODEJS_CXXFLAGS)" \
+	LDFLAGS.host="$(HOST_LDFLAGS)" \
+	NO_LOAD=cctest.target.mk \
+	PATH=$(@D)/bin:$(BR_PATH)
+
+NODEJS_MAKE_OPTS = \
+	$(TARGET_CONFIGURE_OPTS) \
+	NO_LOAD=cctest.target.mk \
+	PATH=$(@D)/bin:$(BR_PATH) \
+	LDFLAGS="$(NODEJS_LDFLAGS)" \
+	LD="$(TARGET_CXX)"
+
+# nodejs's build system uses python which can be a symlink to an unsupported
+# python version (e.g. python 3.10 with nodejs 14.18.1). We work around this by
+# forcing host-python3 early in the PATH, via a python->python3 symlink.
+define NODEJS_PYTHON3_SYMLINK
+	mkdir -p $(@D)/bin
+	ln -sf $(HOST_DIR)/bin/python3 $(@D)/bin/python
+endef
+HOST_NODEJS_PRE_CONFIGURE_HOOKS += NODEJS_PYTHON3_SYMLINK
+NODEJS_PRE_CONFIGURE_HOOKS += NODEJS_PYTHON3_SYMLINK
+
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 NODEJS_DEPENDENCIES += openssl
 NODEJS_CONF_OPTS += --shared-openssl
@@ -75,21 +99,13 @@ HOST_NODEJS_CXXFLAGS = $(HOST_CXXFLAGS) -DU_DISABLE_RENAMING=1
 define HOST_NODEJS_BUILD_CMDS
 	$(HOST_MAKE_ENV) PYTHON=$(HOST_DIR)/bin/python3 \
 		$(MAKE) -C $(@D) \
-		$(HOST_CONFIGURE_OPTS) \
-		CXXFLAGS="$(HOST_NODEJS_CXXFLAGS)" \
-		LDFLAGS.host="$(HOST_LDFLAGS)" \
-		NO_LOAD=cctest.target.mk \
-		PATH=$(@D)/bin:$(BR_PATH)
+		$(HOST_NODEJS_MAKE_OPTS)
 endef
 
 define HOST_NODEJS_INSTALL_CMDS
 	$(HOST_MAKE_ENV) PYTHON=$(HOST_DIR)/bin/python3 \
 		$(MAKE) -C $(@D) install \
-		$(HOST_CONFIGURE_OPTS) \
-		CXXFLAGS="$(HOST_NODEJS_CXXFLAGS)" \
-		LDFLAGS.host="$(HOST_LDFLAGS)" \
-		NO_LOAD=cctest.target.mk \
-		PATH=$(@D)/bin:$(BR_PATH)
+		$(HOST_NODEJS_MAKE_OPTS)
 
 	$(foreach f,$(NODEJS_HOST_TOOLS), \
 		$(INSTALL) -m755 -D $(@D)/out/Release/$(f) $(HOST_DIR)/bin/$(f)
@@ -195,11 +211,7 @@ endef
 define NODEJS_BUILD_CMDS
 	$(TARGET_MAKE_ENV) PYTHON=$(HOST_DIR)/bin/python3 \
 		$(MAKE) -C $(@D) \
-		$(TARGET_CONFIGURE_OPTS) \
-		NO_LOAD=cctest.target.mk \
-		PATH=$(@D)/bin:$(BR_PATH) \
-		LDFLAGS="$(NODEJS_LDFLAGS)" \
-		LD="$(TARGET_CXX)"
+		$(NODEJS_MAKE_OPTS)
 endef
 
 #
@@ -236,22 +248,14 @@ define NODEJS_INSTALL_STAGING_CMDS
 	$(TARGET_MAKE_ENV) PYTHON=$(HOST_DIR)/bin/python3 \
 		$(MAKE) -C $(@D) install \
 		DESTDIR=$(STAGING_DIR) \
-		$(TARGET_CONFIGURE_OPTS) \
-		NO_LOAD=cctest.target.mk \
-		PATH=$(@D)/bin:$(BR_PATH) \
-		LDFLAGS="$(NODEJS_LDFLAGS)" \
-		LD="$(TARGET_CXX)"
+		$(NODEJS_MAKE_OPTS)
 endef
 
 define NODEJS_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) PYTHON=$(HOST_DIR)/bin/python3 \
 		$(MAKE) -C $(@D) install \
 		DESTDIR=$(TARGET_DIR) \
-		$(TARGET_CONFIGURE_OPTS) \
-		NO_LOAD=cctest.target.mk \
-		PATH=$(@D)/bin:$(BR_PATH) \
-		LDFLAGS="$(NODEJS_LDFLAGS)" \
-		LD="$(TARGET_CXX)"
+		$(NODEJS_MAKE_OPTS)
 	$(NODEJS_INSTALL_MODULES)
 endef
 
