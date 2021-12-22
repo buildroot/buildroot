@@ -153,6 +153,14 @@ menuconfig BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTHAUDIOSINK
       C-interface towards BluetoothAudioSink plugin for controlling the Bluetooth sink and supplying audio data samples
 
 if BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTHAUDIOSINK
+
+if BR2_PACKAGE_GSTREAMER1
+config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTHAUDIOSINK_GSTREAMERSINK
+    select BR2_PACKAGE_GST1_BLUETOOTHAUDIOSINK
+    bool "GStreamer audio sink"
+    default n
+endif
+
 config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTHAUDIOSINK_EXAMPLEPLAYER
     bool "Example .wav player"
     default y
