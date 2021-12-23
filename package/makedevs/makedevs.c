@@ -440,11 +440,13 @@ void bb_show_usage(void)
 int bb_recursive(const char *fpath, const struct stat *sb,
 		int tflag, struct FTW *ftwbuf){
 
-	if (chown(fpath, recursive_uid, recursive_gid) == -1) {
+	if (lchown(fpath, recursive_uid, recursive_gid) == -1) {
 		bb_perror_msg("chown failed for %s", fpath);
 		return -1;
 	}
-	if (recursive_mode != -1) {
+
+	/* chmod() is optional, also skip if dangling symlink */
+	if (recursive_mode != -1 && tflag == FTW_SL && access(fpath, F_OK)) {
 		if (chmod(fpath, recursive_mode) < 0) {
 			bb_perror_msg("chmod failed for %s", fpath);
 			return -1;
@@ -628,7 +630,7 @@ int main(int argc, char **argv)
 				if (mknod(full_name_inc, mode, rdev) < 0) {
 					bb_perror_msg("line %d: can't create node %s", linenum, full_name_inc);
 					ret = EXIT_FAILURE;
-				} else if (chown(full_name_inc, uid, gid) < 0) {
+				} else if (lchown(full_name_inc, uid, gid) < 0) {
 					bb_perror_msg("line %d: can't chown %s", linenum, full_name_inc);
 					ret = EXIT_FAILURE;
 				} else if (chmod(full_name_inc, mode) < 0) {
