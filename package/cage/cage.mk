@@ -10,7 +10,7 @@ CAGE_LICENSE = MIT
 CAGE_LICENSE_FILES = LICENSE
 CAGE_DEPENDENCIES = host-pkgconf wlroots
 
-ifeq ($(BR2_PACKAGE_XORG7),y)
+ifeq ($(BR2_PACKAGE_WLROOTS_X11),y)
 CAGE_CONF_OPTS = -Dxwayland=true
 else
 CAGE_CONF_OPTS = -Dxwayland=false
