@@ -1,0 +1,84 @@
+From 0764e3a327573e7bda2f0e1a914f28482ab00574 Mon Sep 17 00:00:00 2001
+From: Yu Watanabe <watanabe.yu+github@gmail.com>
+Date: Fri, 24 Dec 2021 09:15:51 +0900
+Subject: [PATCH] missing-syscall: define all MOUNT_ATTR_* if missing
+
+Fixes #21876.
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[james.hilliard1@gmail.com: backport from upstream commit
+0764e3a327573e7bda2f0e1a914f28482ab00574]
+---
+ src/basic/missing_syscall.h | 48 ++++++++++++++++++++++++++++++++-----
+ 1 file changed, 42 insertions(+), 6 deletions(-)
+
+diff --git a/src/basic/missing_syscall.h b/src/basic/missing_syscall.h
+index 3da30e6f0e..0b0cc3cec2 100644
+--- a/src/basic/missing_syscall.h
++++ b/src/basic/missing_syscall.h
+@@ -462,20 +462,56 @@ struct mount_attr {
+ struct mount_attr;
+ #endif
+ 
++#ifndef MOUNT_ATTR_RDONLY
++#define MOUNT_ATTR_RDONLY       0x00000001 /* Mount read-only */
++#endif
++
++#ifndef MOUNT_ATTR_NOSUID
++#define MOUNT_ATTR_NOSUID       0x00000002 /* Ignore suid and sgid bits */
++#endif
++
++#ifndef MOUNT_ATTR_NODEV
++#define MOUNT_ATTR_NODEV        0x00000004 /* Disallow access to device special files */
++#endif
++
++#ifndef MOUNT_ATTR_NOEXEC
++#define MOUNT_ATTR_NOEXEC       0x00000008 /* Disallow program execution */
++#endif
++
++#ifndef MOUNT_ATTR__ATIME
++#define MOUNT_ATTR__ATIME       0x00000070 /* Setting on how atime should be updated */
++#endif
++
++#ifndef MOUNT_ATTR_RELATIME
++#define MOUNT_ATTR_RELATIME     0x00000000 /* - Update atime relative to mtime/ctime. */
++#endif
++
++#ifndef MOUNT_ATTR_NOATIME
++#define MOUNT_ATTR_NOATIME      0x00000010 /* - Do not update access times. */
++#endif
++
++#ifndef MOUNT_ATTR_STRICTATIME
++#define MOUNT_ATTR_STRICTATIME  0x00000020 /* - Always perform atime updates */
++#endif
++
++#ifndef MOUNT_ATTR_NODIRATIME
++#define MOUNT_ATTR_NODIRATIME   0x00000080 /* Do not update directory access times */
++#endif
++
+ #ifndef MOUNT_ATTR_IDMAP
+-#define MOUNT_ATTR_IDMAP 0x00100000
++#define MOUNT_ATTR_IDMAP        0x00100000 /* Idmap mount to @userns_fd in struct mount_attr. */
+ #endif
+ 
+ #ifndef MOUNT_ATTR_NOSYMFOLLOW
+-#define MOUNT_ATTR_NOSYMFOLLOW 0x00200000
++#define MOUNT_ATTR_NOSYMFOLLOW  0x00200000 /* Do not follow symlinks */
+ #endif
+ 
+-#ifndef AT_RECURSIVE
+-#define AT_RECURSIVE 0x8000
++#ifndef MOUNT_ATTR_SIZE_VER0
++#define MOUNT_ATTR_SIZE_VER0    32 /* sizeof first published struct */
+ #endif
+ 
+-#ifndef MOUNT_ATTR_SIZE_VER0
+-#define MOUNT_ATTR_SIZE_VER0 32
++#ifndef AT_RECURSIVE
++#define AT_RECURSIVE 0x8000
+ #endif
+ 
+ static inline int missing_mount_setattr(
+-- 
+2.25.1
+

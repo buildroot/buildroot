@@ -4,10 +4,31 @@
 #
 ################################################################################
 
-SYSTEMD_VERSION = 249.5
+SYSTEMD_VERSION = 250
 SYSTEMD_SITE = $(call github,systemd,systemd-stable,v$(SYSTEMD_VERSION))
-SYSTEMD_LICENSE = LGPL-2.1+, GPL-2.0+ (udev), Public Domain (few source files, see README), BSD-3-Clause (tools/chromiumos)
-SYSTEMD_LICENSE_FILES = LICENSE.GPL2 LICENSE.LGPL2.1 README tools/chromiumos/LICENSE
+SYSTEMD_LICENSE = \
+	LGPL-2.1+, \
+	GPL-2.0+ (udev), \
+	Public Domain (few source files, see LICENSES/README.md), \
+	BSD-2-Clause (eBPF instruction mini library), \
+	BSD-3-Clause (tools/chromiumos), \
+	CC0-1.0 (few source files, see LICENSES/README.md), \
+	GPL-2.0 with Linux-syscall-note (linux kernel headers), \
+	MIT (few source files, see LICENSES/README.md), \
+	OFL-1.1 (Heebo fonts)
+SYSTEMD_LICENSE_FILES = \
+	LICENSE.GPL2 \
+	LICENSE.LGPL2.1 \
+	LICENSES/BSD-2-Clause.txt \
+	LICENSES/BSD-3-Clause.txt \
+	LICENSES/CC0-1.0.txt \
+	LICENSES/LGPL-2.0-or-later.txt \
+	LICENSES/Linux-syscall-note.txt \
+	LICENSES/lookup3-public-domain.txt \
+	LICENSES/MIT.txt \
+	LICENSES/murmurhash2-public-domain.txt \
+	LICENSES/OFL-1.1.txt \
+	LICENSES/README.md
 SYSTEMD_CPE_ID_VENDOR = freedesktop
 SYSTEMD_INSTALL_STAGING = YES
 SYSTEMD_DEPENDENCIES = \
@@ -31,6 +52,7 @@ SYSTEMD_CONF_OPTS += \
 	-Dkexec-path=/usr/sbin/kexec \
 	-Dkmod-path=/usr/bin/kmod \
 	-Dldconfig=false \
+	-Dlink-boot-shared=true \
 	-Dloadkeys-path=/usr/bin/loadkeys \
 	-Dman=false \
 	-Dmount-path=/usr/bin/mount \
@@ -81,9 +103,9 @@ endif
 
 ifeq ($(BR2_PACKAGE_CRYPTSETUP),y)
 SYSTEMD_DEPENDENCIES += cryptsetup
-SYSTEMD_CONF_OPTS += -Dlibcryptsetup=true
+SYSTEMD_CONF_OPTS += -Dlibcryptsetup=true -Dlibcryptsetup-plugins=true
 else
-SYSTEMD_CONF_OPTS += -Dlibcryptsetup=false
+SYSTEMD_CONF_OPTS += -Dlibcryptsetup=false -Dlibcryptsetup-plugins=false
 endif
 
 ifeq ($(BR2_PACKAGE_ELFUTILS),y)
@@ -505,7 +527,7 @@ SYSTEMD_CONF_OPTS += \
 	-Defi=true \
 	-Dgnu-efi=true \
 	-Defi-cc=$(TARGET_CC) \
-	-Defi-ld=$(TARGET_LD) \
+	-Defi-ld=bfd \
 	-Defi-libdir=$(STAGING_DIR)/usr/lib \
 	-Defi-includedir=$(STAGING_DIR)/usr/include/efi
 
