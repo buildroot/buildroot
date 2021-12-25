@@ -22,7 +22,7 @@ else
 GUPNP_DLNA_CONF_OPTS += -Dintrospection=false -Dvapi=false
 endif
 
-ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BASE),y)
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BASE):$(BR2_STATIC_LIBS),y:)
 GUPNP_DLNA_CONF_OPTS += -Dgstreamer_backend=enabled
 GUPNP_DLNA_DEPENDENCIES += gstreamer1 gst1-plugins-base
 else
