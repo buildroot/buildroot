@@ -45,6 +45,7 @@ RUN apt-get install -y --no-install-recommends \
         qemu-system-arm \
         qemu-system-x86 \
         rsync \
+        shellcheck \
         subversion \
         unzip \
         wget \
