@@ -16,3 +16,11 @@ class _CheckFunction(object):
 
     def after(self):
         pass
+
+
+class _Tool(object):
+    def __init__(self, filename):
+        self.filename = filename
+
+    def run(self):
+        pass

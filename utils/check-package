@@ -8,6 +8,7 @@ import re
 import six
 import sys
 
+import checkpackagelib.base
 import checkpackagelib.lib_config
 import checkpackagelib.lib_hash
 import checkpackagelib.lib_mk
@@ -87,9 +88,7 @@ def get_lib_from_filename(fname):
     return None
 
 
-def is_a_check_function(m):
-    if not inspect.isclass(m):
-        return False
+def common_inspect_rules(m):
     # do not call the base class
     if m.__name__.startswith("_"):
         return False
@@ -98,6 +97,22 @@ def is_a_check_function(m):
     if flags.exclude_list and m.__name__ in flags.exclude_list:
         return False
     return True
+
+
+def is_a_check_function(m):
+    if not inspect.isclass(m):
+        return False
+    if not issubclass(m, checkpackagelib.base._CheckFunction):
+        return False
+    return common_inspect_rules(m)
+
+
+def is_external_tool(m):
+    if not inspect.isclass(m):
+        return False
+    if not issubclass(m, checkpackagelib.base._Tool):
+        return False
+    return common_inspect_rules(m)
 
 
 def print_warnings(warnings):
@@ -121,14 +136,16 @@ def check_file_using_lib(fname):
         if flags.verbose >= VERBOSE_LEVEL_TO_SHOW_IGNORED_FILES:
             print("{}: ignored".format(fname))
         return nwarnings, nlines
-    classes = inspect.getmembers(lib, is_a_check_function)
+    internal_functions = inspect.getmembers(lib, is_a_check_function)
+    external_tools = inspect.getmembers(lib, is_external_tool)
+    all_checks = internal_functions + external_tools
 
     if flags.dry_run:
-        functions_to_run = [c[0] for c in classes]
+        functions_to_run = [c[0] for c in all_checks]
         print("{}: would run: {}".format(fname, functions_to_run))
         return nwarnings, nlines
 
-    objects = [c[1](fname, flags.manual_url) for c in classes]
+    objects = [c[1](fname, flags.manual_url) for c in internal_functions]
 
     for cf in objects:
         nwarnings += print_warnings(cf.before())
@@ -147,6 +164,11 @@ def check_file_using_lib(fname):
     f.close()
     for cf in objects:
         nwarnings += print_warnings(cf.after())
+
+    tools = [c[1](fname) for c in external_tools]
+
+    for tool in tools:
+        nwarnings += print_warnings(tool.run())
 
     return nwarnings, nlines
 
