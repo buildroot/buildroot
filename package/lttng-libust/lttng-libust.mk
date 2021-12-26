@@ -17,6 +17,8 @@ LTTNG_LIBUST_CONF_OPTS = \
 	--disable-tests \
 	--with-lttng-system-rundir=/run/lttng
 LTTNG_LIBUST_AUTORECONF = YES
+# https://www.mail-archive.com/lttng-dev@lists.lttng.org/msg12950.html
+LTTNG_LIBUST_CONF_ENV = CFLAGS="$(TARGET_CFLAGS) -DUATOMIC_NO_LINK_ERROR"
 
 ifeq ($(BR2_PACKAGE_PYTHON),y)
 LTTNG_LIBUST_DEPENDENCIES += python
