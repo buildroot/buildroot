@@ -24,3 +24,6 @@ class _Tool(object):
 
     def run(self):
         pass
+
+    def hint(self):
+        return ""

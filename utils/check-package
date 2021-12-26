@@ -13,6 +13,7 @@ import checkpackagelib.lib_config
 import checkpackagelib.lib_hash
 import checkpackagelib.lib_mk
 import checkpackagelib.lib_patch
+import checkpackagelib.lib_sysv
 
 VERBOSE_LEVEL_TO_SHOW_IGNORED_FILES = 3
 flags = None  # Command line arguments.
@@ -66,6 +67,8 @@ DO_NOT_CHECK_INTREE = re.compile(r"|".join([
     r"toolchain/toolchain-external/pkg-toolchain-external\.mk$",
     ]))
 
+SYSV_INIT_SCRIPT_FILENAME = re.compile(r"/S\d\d[^/]+$")
+
 
 def get_lib_from_filename(fname):
     if flags.intree_only:
@@ -85,6 +88,8 @@ def get_lib_from_filename(fname):
         return checkpackagelib.lib_mk
     if fname.endswith(".patch"):
         return checkpackagelib.lib_patch
+    if SYSV_INIT_SCRIPT_FILENAME.search(fname):
+        return checkpackagelib.lib_sysv
     return None
 
 

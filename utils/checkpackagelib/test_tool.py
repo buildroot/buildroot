@@ -39,3 +39,28 @@ NotExecutable = [
 def test_NotExecutable(testname, filename, permissions, string, expected):
     warnings = check_file(m.NotExecutable, filename, string, permissions)
     assert warnings == expected
+
+
+NotExecutable_hint = [
+    ('no hint',
+     "",
+     'sh-shebang.sh',
+     0o775,
+     '#!/bin/sh',
+     ["dir/sh-shebang.sh:0: This file does not need to be executable"]),
+    ('hint',
+     ", very special hint",
+     'sh-shebang.sh',
+     0o775,
+     '#!/bin/sh',
+     ["dir/sh-shebang.sh:0: This file does not need to be executable, very special hint"]),
+    ]
+
+
+@pytest.mark.parametrize('testname,hint,filename,permissions,string,expected', NotExecutable_hint)
+def test_NotExecutable_hint(testname, hint, filename, permissions, string, expected):
+    class NotExecutable(m.NotExecutable):
+        def hint(self):
+            return hint
+    warnings = check_file(NotExecutable, filename, string, permissions)
+    assert warnings == expected
