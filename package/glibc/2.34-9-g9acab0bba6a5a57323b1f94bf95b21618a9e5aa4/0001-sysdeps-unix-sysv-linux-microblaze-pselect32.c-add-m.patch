@@ -1,0 +1,85 @@
+From af06fe63f9babb6d0179ae5d7d9245daada6bf56 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sun, 26 Dec 2021 10:30:01 +0100
+Subject: [PATCH] sysdeps/unix/sysv/linux/microblaze/pselect32.c: add missing
+ implementation when !__ASSUME_TIME64_SYSCALLS
+
+In commit a92f4e6299fe0e3cb6f77e79de00817aece501ce ("linux: Add time64
+pselect support"), a Microblaze specific implementation of
+__pselect32() was added to cover the case of kernels < 3.15 which lack
+the pselect6 system call.
+
+This new file sysdeps/unix/sysv/linux/microblaze/pselect32.c takes
+precedence over the default implementation
+sysdeps/unix/sysv/linux/pselect32.c.
+
+However sysdeps/unix/sysv/linux/pselect32.c provides an implementation
+of __pselect32() which is needed when __ASSUME_TIME64_SYSCALLS is not
+defined. On Microblaze, which is a 32-bit architecture,
+__ASSUME_TIME64_SYSCALLS is only true for kernels >= 5.1.
+
+Due to sysdeps/unix/sysv/linux/microblaze/pselect32.c taking
+precedence over sysdeps/unix/sysv/linux/pselect32.c, it means that
+when we are with a kernel >= 3.15 but < 5.1, we need a __pselect32()
+implementation, but sysdeps/unix/sysv/linux/microblaze/pselect32.c
+doesn't provide it, and sysdeps/unix/sysv/linux/pselect32.c which
+would provide it is not compiled in.
+
+This causes the following build failure on Microblaze with for example
+Linux kernel headers 4.9:
+
+/home/thomas/buildroot/buildroot/output/host/lib/gcc/microblazeel-buildroot-linux-gnu/10.3.0/../../../../microblazeel-buildroot-linux-gnu/bin/ld: /home/thomas/buildroot/buildroot/output/build/glibc-2.34-9-g9acab0bba6a5a57323b1f94bf95b21618a9e5aa4/build/libc_pic.os: in function `__pselect64':
+(.text+0x120b44): undefined reference to `__pselect32'
+collect2: error: ld returned 1 exit status
+
+To fix this, we take a crude approach: replicate in
+sysdeps/unix/sysv/linux/microblaze/pselect32.c the
+!__ASSUME_TIME64_SYSCALLS implementation that is already in
+sysdeps/unix/sysv/linux/pselect32.c.
+
+Upstream: https://sourceware.org/pipermail/libc-alpha/2021-December/134635.html
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ .../unix/sysv/linux/microblaze/pselect32.c    | 22 +++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/sysdeps/unix/sysv/linux/microblaze/pselect32.c b/sysdeps/unix/sysv/linux/microblaze/pselect32.c
+index 70b7b52a48..6b6b3e8a2e 100644
+--- a/sysdeps/unix/sysv/linux/microblaze/pselect32.c
++++ b/sysdeps/unix/sysv/linux/microblaze/pselect32.c
+@@ -22,7 +22,25 @@
+ #include <sys/poll.h>
+ #include <sysdep-cancel.h>
+ 
+-#ifndef __ASSUME_PSELECT
++#if !defined(__ASSUME_TIME64_SYSCALLS)
++int
++__pselect32 (int nfds, fd_set *readfds, fd_set *writefds,
++	     fd_set *exceptfds, const struct __timespec64 *timeout,
++	     const sigset_t *sigmask)
++{
++  struct timespec ts32, *pts32 = NULL;
++  if (timeout != NULL)
++    {
++      ts32 = valid_timespec64_to_timespec (*timeout);
++      pts32 = &ts32;
++    }
++
++  return SYSCALL_CANCEL (pselect6, nfds, readfds, writefds, exceptfds,
++			 pts32,
++			 ((__syscall_ulong_t[]){ (uintptr_t) sigmask,
++						 __NSIG_BYTES }));
++}
++#elif !defined(__ASSUME_PSELECT)
+ int
+ __pselect32 (int nfds, fd_set *readfds, fd_set *writefds,
+ 	     fd_set *exceptfds, const struct __timespec64 *timeout,
+@@ -57,4 +75,4 @@ __pselect32 (int nfds, fd_set *readfds, fd_set *writefds,
+ 
+   return ret;
+ }
+-#endif /* __ASSUME_PSELECT  */
++#endif
+-- 
+2.31.1
+
