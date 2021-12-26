@@ -7,6 +7,7 @@ from checkpackagelib.lib import EmptyLastLine          # noqa: F401
 from checkpackagelib.lib import NewlineAtEof           # noqa: F401
 from checkpackagelib.lib import TrailingSpace          # noqa: F401
 import checkpackagelib.tool
+from checkpackagelib.tool import Shellcheck            # noqa: F401
 
 
 class Indent(_CheckFunction):

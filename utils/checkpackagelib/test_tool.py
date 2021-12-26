@@ -64,3 +64,49 @@ def test_NotExecutable_hint(testname, hint, filename, permissions, string, expec
             return hint
     warnings = check_file(NotExecutable, filename, string, permissions)
     assert warnings == expected
+
+
+Shellcheck = [
+    ('missing shebang',
+     'empty.sh',
+     '',
+     ["dir/empty.sh:0: run 'shellcheck' and fix the warnings",
+      "In dir/empty.sh line 1:",
+      "^-- SC2148: Tips depend on target shell and yours is unknown. Add a shebang or a 'shell' directive.",
+      "For more information:",
+      "  https://www.shellcheck.net/wiki/SC2148 -- Tips depend on target shell and y..."]),
+    ('sh shebang',
+     'sh-shebang.sh',
+     '#!/bin/sh',
+     []),
+    ('bash shebang',
+     'bash-shebang.sh',
+     '#!/bin/bash',
+     []),
+    ('2 warnings',
+     'unused.sh',
+     'unused=""',
+     ["dir/unused.sh:0: run 'shellcheck' and fix the warnings",
+      "In dir/unused.sh line 1:",
+      'unused=""',
+      "^-- SC2148: Tips depend on target shell and yours is unknown. Add a shebang or a 'shell' directive.",
+      "^----^ SC2034: unused appears unused. Verify use (or export if used externally).",
+      "For more information:",
+      "  https://www.shellcheck.net/wiki/SC2148 -- Tips depend on target shell and y...",
+      "  https://www.shellcheck.net/wiki/SC2034 -- unused appears unused. Verify use..."]),
+    ('tab',
+     'tab.sh',
+     '\t#!/bin/sh',
+     ["dir/tab.sh:0: run 'shellcheck' and fix the warnings",
+      "In dir/tab.sh line 1:",
+      '\t#!/bin/sh',
+      "^-- SC1114: Remove leading spaces before the shebang.",
+      "For more information:",
+      "  https://www.shellcheck.net/wiki/SC1114 -- Remove leading spaces before the ..."]),
+    ]
+
+
+@pytest.mark.parametrize('testname,filename,string,expected', Shellcheck)
+def test_Shellcheck(testname, filename, string, expected):
+    warnings = check_file(m.Shellcheck, filename, string)
+    assert warnings == expected
