@@ -42,6 +42,13 @@ else
 LINUX_PAM_CONF_OPTS += --disable-audit
 endif
 
+ifeq ($(BR2_PACKAGE_OPENSSL),y)
+LINUX_PAM_CONF_OPTS += --enable-openssl
+LINUX_PAM_DEPENDENCIES += openssl
+else
+LINUX_PAM_CONF_OPTS += --disable-openssl
+endif
+
 # Install default pam config (deny everything except login)
 define LINUX_PAM_INSTALL_CONFIG
 	$(INSTALL) -m 0644 -D package/linux-pam/login.pam \
