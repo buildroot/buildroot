@@ -9,6 +9,7 @@ CFM_SITE = $(call github,microchip-ung,cfm,v$(CFM_VERSION))
 CFM_DEPENDENCIES = libev libmnl libnl
 CFM_LICENSE = GPL-2.0
 CFM_LICENSE_FILES = LICENSE
+CFM_INSTALL_STAGING = YES
 
 define CFM_INSTALL_INIT_SYSV
 	$(INSTALL) -m 755 -D $(CFM_PKGDIR)/S65cfm \
