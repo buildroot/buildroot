@@ -1,0 +1,20 @@
+config BR2_PACKAGE_FREEIPMI
+	bool "freeipmi"
+	depends on BR2_USE_MMU # fork()
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_PACKAGE_ARGP_STANDALONE if BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_MUSL
+	help
+	  FreeIPMI provides in-band and out-of-band IPMI software based
+	  on the IPMI v1.5/2.0 specification.
+
+	  The IPMI specification defines a set of interfaces for
+	  platform management and is implemented by a number vendors
+	  for system management. The features of IPMI that most users
+	  will be interested in are sensor monitoring, system event
+	  monitoring, power control, and serial-over-LAN (SOL).
+
+	  https://www.gnu.org/software/freeipmi/
+
+comment "freeipmi needs a toolchain w/ threads"
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_HAS_THREADS

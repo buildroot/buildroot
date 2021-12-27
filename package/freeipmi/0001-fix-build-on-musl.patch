@@ -1,0 +1,49 @@
+From 6295c96ae54cb16efe41e53f526a4dc19cd719f2 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 30 Oct 2021 00:26:40 +0200
+Subject: [PATCH] fix build on musl
+
+musl doesn't provide getmsg or putmsg even if stropts.h is available
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://git.savannah.gnu.org/cgit/freeipmi.git/commit/?id=6295c96ae54cb16efe41e53f526a4dc19cd719f2]
+---
+ configure.ac                            | 1 +
+ libfreeipmi/driver/ipmi-sunbmc-driver.c | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 562dd624e..711b27674 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -479,6 +479,7 @@ AC_CHECK_FUNCS([flockfile fputs_unlocked fwrite_unlocked])
+ AC_CHECK_FUNCS([iopl])
+ AC_CHECK_FUNCS([asprintf])
+ AC_CHECK_FUNCS([cbrt])
++AC_CHECK_FUNCS([getmsg putmsg])
+ 
+ dnl sighandler_t apparently not defined in Apple/OS X
+ AC_CHECK_TYPES([sighandler_t], [], [], [[#include <signal.h>]])
+diff --git a/libfreeipmi/driver/ipmi-sunbmc-driver.c b/libfreeipmi/driver/ipmi-sunbmc-driver.c
+index 05caca8b6..4ae8c5719 100644
+--- a/libfreeipmi/driver/ipmi-sunbmc-driver.c
++++ b/libfreeipmi/driver/ipmi-sunbmc-driver.c
+@@ -423,7 +423,7 @@ _sunbmc_write (ipmi_sunbmc_ctx_t ctx,
+   assert (ctx->io_init);
+   assert (ctx->putmsg_intf);
+ 
+-#if defined(HAVE_SYS_STROPTS_H)
++#if defined(HAVE_SYS_STROPTS_H) && defined(HAVE_PUTMSG)
+   memset (&sbuf, '\0', sizeof (struct strbuf));
+ 
+   /* Due to API differences, we need to extract the cmd out of the
+@@ -573,7 +573,7 @@ _sunbmc_read (ipmi_sunbmc_ctx_t ctx,
+       return (-1);
+     }
+ 
+-#if defined(HAVE_SYS_STROPTS_H)
++#if defined(HAVE_SYS_STROPTS_H) && defined(HAVE_GETMSG)
+   if (getmsg (ctx->device_fd, NULL, &sbuf, &flags) < 0)
+     {
+       SUNBMC_ERRNO_TO_SUNBMC_ERRNUM (ctx, errno);
