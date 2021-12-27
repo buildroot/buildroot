@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-SQLITE_VERSION = 3.36.0
-SQLITE_TAR_VERSION = 3360000
+SQLITE_VERSION = 3.37.0
+SQLITE_TAR_VERSION = 3370000
 SQLITE_SOURCE = sqlite-autoconf-$(SQLITE_TAR_VERSION).tar.gz
 SQLITE_SITE = https://www.sqlite.org/2021
 SQLITE_LICENSE = Public domain
