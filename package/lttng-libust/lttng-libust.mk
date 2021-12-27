@@ -27,7 +27,7 @@ else ifeq ($(BR2_PACKAGE_PYTHON3),y)
 LTTNG_LIBUST_DEPENDENCIES += python3
 LTTNG_LIBUST_CONF_OPTS += --enable-python-agent
 else
-LTTNG_LIBUST_CONF_ENV = am_cv_pathless_PYTHON="none"
+LTTNG_LIBUST_CONF_ENV += am_cv_pathless_PYTHON="none"
 LTTNG_LIBUST_CONF_OPTS += --disable-python-agent
 endif
 
