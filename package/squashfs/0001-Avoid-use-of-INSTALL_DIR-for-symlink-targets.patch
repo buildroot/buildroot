@@ -1,0 +1,37 @@
+From f5c908e92d4c055859be2fddbda266d9e3bfd415 Mon Sep 17 00:00:00 2001
+From: Patrick McCarty <patrick.mccarty@intel.com>
+Date: Mon, 26 Jul 2021 11:38:43 -0700
+Subject: [PATCH] Avoid use of INSTALL_DIR for symlink targets
+
+In case INSTALL_DIR is overridden with a staged install location, using
+INSTALL_DIR for the symlink target path prefix will yield an incorrect location
+for the final installation.
+
+Because the symlink itself is already installed to INSTALL_DIR, simply removing
+the INSTALL_DIR prefix suffices as a fix.
+
+Note that using $DESTDIR/$INSTALL_DIR where appropriate can avoid this type of
+issue, but that can be considered a future enhancement.
+
+Signed-off-by: Patrick McCarty <patrick.mccarty@intel.com>
+Upstream: f5c908e92d4c055859be2fddbda266d9e3bfd415
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ squashfs-tools/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/squashfs-tools/Makefile b/squashfs-tools/Makefile
+index f5a55f1..7262a2e 100755
+--- a/squashfs-tools/Makefile
++++ b/squashfs-tools/Makefile
+@@ -406,5 +406,5 @@ install: mksquashfs unsquashfs
+ 	mkdir -p $(INSTALL_DIR)
+ 	cp mksquashfs $(INSTALL_DIR)
+ 	cp unsquashfs $(INSTALL_DIR)
+-	ln -fs $(INSTALL_DIR)/unsquashfs $(INSTALL_DIR)/sqfscat
+-	ln -fs $(INSTALL_DIR)/mksquashfs $(INSTALL_DIR)/sqfstar
++	ln -fs unsquashfs $(INSTALL_DIR)/sqfscat
++	ln -fs mksquashfs $(INSTALL_DIR)/sqfstar
+-- 
+2.31.1
+
