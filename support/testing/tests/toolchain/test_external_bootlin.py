@@ -2050,15 +2050,15 @@ class TestExternalToolchainBootlinRiscv32ilp32dGlibcBleedingEdge(TestExternalToo
         TestExternalToolchain.common_check(self)
 
 
-class TestExternalToolchainBootlinRiscv64GlibcBleedingEdge(TestExternalToolchain):
+class TestExternalToolchainBootlinRiscv64lp64dGlibcBleedingEdge(TestExternalToolchain):
     config = """
         BR2_riscv=y
         BR2_riscv_g=y
         BR2_RISCV_64=y
-        BR2_RISCV_ABI_LP64=y
+        BR2_RISCV_ABI_LP64D=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
-        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_RISCV64_GLIBC_BLEEDING_EDGE=y
+        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_RISCV64_LP64D_GLIBC_BLEEDING_EDGE=y
         # BR2_TARGET_ROOTFS_TAR is not set
         """
     toolchain_prefix = "riscv64-linux"
@@ -2067,15 +2067,83 @@ class TestExternalToolchainBootlinRiscv64GlibcBleedingEdge(TestExternalToolchain
         TestExternalToolchain.common_check(self)
 
 
-class TestExternalToolchainBootlinRiscv64MuslBleedingEdge(TestExternalToolchain):
+class TestExternalToolchainBootlinRiscv64lp64dGlibcStable(TestExternalToolchain):
     config = """
         BR2_riscv=y
         BR2_riscv_g=y
         BR2_RISCV_64=y
-        BR2_RISCV_ABI_LP64=y
+        BR2_RISCV_ABI_LP64D=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
-        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_RISCV64_MUSL_BLEEDING_EDGE=y
+        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_RISCV64_LP64D_GLIBC_STABLE=y
+        # BR2_TARGET_ROOTFS_TAR is not set
+        """
+    toolchain_prefix = "riscv64-linux"
+
+    def test_run(self):
+        TestExternalToolchain.common_check(self)
+
+
+class TestExternalToolchainBootlinRiscv64lp64dMuslBleedingEdge(TestExternalToolchain):
+    config = """
+        BR2_riscv=y
+        BR2_riscv_g=y
+        BR2_RISCV_64=y
+        BR2_RISCV_ABI_LP64D=y
+        BR2_TOOLCHAIN_EXTERNAL=y
+        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
+        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_RISCV64_LP64D_MUSL_BLEEDING_EDGE=y
+        # BR2_TARGET_ROOTFS_TAR is not set
+        """
+    toolchain_prefix = "riscv64-linux"
+
+    def test_run(self):
+        TestExternalToolchain.common_check(self)
+
+
+class TestExternalToolchainBootlinRiscv64lp64dMuslStable(TestExternalToolchain):
+    config = """
+        BR2_riscv=y
+        BR2_riscv_g=y
+        BR2_RISCV_64=y
+        BR2_RISCV_ABI_LP64D=y
+        BR2_TOOLCHAIN_EXTERNAL=y
+        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
+        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_RISCV64_LP64D_MUSL_STABLE=y
+        # BR2_TARGET_ROOTFS_TAR is not set
+        """
+    toolchain_prefix = "riscv64-linux"
+
+    def test_run(self):
+        TestExternalToolchain.common_check(self)
+
+
+class TestExternalToolchainBootlinRiscv64lp64dUclibcBleedingEdge(TestExternalToolchain):
+    config = """
+        BR2_riscv=y
+        BR2_riscv_g=y
+        BR2_RISCV_64=y
+        BR2_RISCV_ABI_LP64D=y
+        BR2_TOOLCHAIN_EXTERNAL=y
+        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
+        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_RISCV64_LP64D_UCLIBC_BLEEDING_EDGE=y
+        # BR2_TARGET_ROOTFS_TAR is not set
+        """
+    toolchain_prefix = "riscv64-linux"
+
+    def test_run(self):
+        TestExternalToolchain.common_check(self)
+
+
+class TestExternalToolchainBootlinRiscv64lp64dUclibcStable(TestExternalToolchain):
+    config = """
+        BR2_riscv=y
+        BR2_riscv_g=y
+        BR2_RISCV_64=y
+        BR2_RISCV_ABI_LP64D=y
+        BR2_TOOLCHAIN_EXTERNAL=y
+        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
+        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_RISCV64_LP64D_UCLIBC_STABLE=y
         # BR2_TARGET_ROOTFS_TAR is not set
         """
     toolchain_prefix = "riscv64-linux"
