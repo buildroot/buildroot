@@ -1,0 +1,43 @@
+From d1840e54a15fc454936cada10cce7fd91d06232b Mon Sep 17 00:00:00 2001
+From: Neil Horman <nhorman@gmail.com>
+Date: Thu, 15 Jul 2021 08:43:01 -0400
+Subject: [PATCH] Adding ability to detect non-posix extensions for pthreads
+
+Theres a desire to build rngd with musl, which doesn't have all the gnu
+extensions (but it has some).  So test for those.  Note, this requires
+the addition of the USE_EXTENSIONS macro to enable -d_GNU_SOURCE
+
+Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
+
+[Retrieved from:
+https://github.com/nhorman/rng-tools/commit/d1840e54a15fc454936cada10cce7fd91d06232b]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ configure.ac | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/configure.ac b/configure.ac
+index 0fe06fc..de7dca3 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -25,6 +25,7 @@ AC_CANONICAL_TARGET dnl required for broken AX_PTHREAD
+ AM_INIT_AUTOMAKE([foreign])
+ AC_CONFIG_HEADERS([rng-tools-config.h])
+ AC_CONFIG_MACRO_DIRS([m4])
++AC_USE_SYSTEM_EXTENSIONS
+ 
+ dnl Parse options
+ 
+@@ -100,6 +101,12 @@ AS_IF(
+ 	], [AC_MSG_NOTICE([Disabling JITTER entropy source])]
+ )
+ 
++AC_CHECK_DECL(pthread_attr_setaffinity_np,
++		[AC_DEFINE([HAVE_PTHREAD_ATTR_SETAFFINITY], 1,[Set ATTR_SETAFFINITY])],
++		[ AC_CHECK_DECL(pthread_setaffinity_np,
++		   [AC_DEFINE([HAVE_PTHREAD_SETAFFINITY],1, [Set PTHREAD_SETAFFINITY])], [ AC_MSG_ERROR([Neither pthread_setaffinity_np nor pthread_attr_setaffinity_np found])],[[#include <pthread.h>]])
++		], [[#include <pthread.h>]])
++
+ AS_IF(
+ 	[ test "x$with_nistbeacon" != "xno"],
+ 	[
