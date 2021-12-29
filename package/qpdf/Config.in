@@ -4,6 +4,7 @@ config BR2_PACKAGE_QPDF
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # C++14
 	select BR2_PACKAGE_ZLIB
 	select BR2_PACKAGE_JPEG
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_RC4 if BR2_PACKAGE_LIBOPENSSL
 	help
 	  QPDF is a command-line program that does structural,
 	  content- preserving transformations on PDF files. It could
