@@ -15,9 +15,15 @@ GLIBMM_DEPENDENCIES = libglib2 libsigc host-pkgconf
 GLIBMM_CONF_OPTS = -Dbuild-examples=false
 
 GLIBMM_CXXFLAGS = $(TARGET_CXXFLAGS)
+GLIBMM_LDFLAGS = $(TARGET_LDFLAGS)
 
 ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_85180),y)
 GLIBMM_CXXFLAGS += -O0
+endif
+
+# Uses __atomic_fetch_add_4
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+GLIBMM_LDFLAGS += -latomic
 endif
 
 $(eval $(meson-package))
