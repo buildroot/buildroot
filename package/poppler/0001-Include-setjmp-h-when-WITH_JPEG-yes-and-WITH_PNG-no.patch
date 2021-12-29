@@ -1,0 +1,27 @@
+From 3ea6bca90d87d3f91556205c4e58ca425c6ac437 Mon Sep 17 00:00:00 2001
+From: Marco Genasci <fedeliallalinea@gmail.com>
+Date: Sun, 12 Dec 2021 10:23:37 +0100
+Subject: [PATCH] Include setjmp.h when WITH_JPEG=yes and WITH_PNG=no
+
+[Retrieved from:
+https://gitlab.freedesktop.org/poppler/poppler/-/commit/3ea6bca90d87d3f91556205c4e58ca425c6ac437]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ poppler/ImageEmbeddingUtils.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/poppler/ImageEmbeddingUtils.cc b/poppler/ImageEmbeddingUtils.cc
+index 5c50f1269..c26b9eb2a 100644
+--- a/poppler/ImageEmbeddingUtils.cc
++++ b/poppler/ImageEmbeddingUtils.cc
+@@ -16,6 +16,7 @@
+ extern "C" {
+ #    include <jpeglib.h>
+ }
++#    include <csetjmp>
+ #endif
+ #ifdef ENABLE_LIBPNG
+ #    include <png.h>
+-- 
+GitLab
+
