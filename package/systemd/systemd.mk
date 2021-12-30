@@ -115,13 +115,6 @@ else
 SYSTEMD_CONF_OPTS += -Delfutils=false
 endif
 
-ifeq ($(BR2_PACKAGE_GNUTLS),y)
-SYSTEMD_DEPENDENCIES += gnutls
-SYSTEMD_CONF_OPTS += -Dgnutls=true
-else
-SYSTEMD_CONF_OPTS += -Dgnutls=false
-endif
-
 ifeq ($(BR2_PACKAGE_IPTABLES),y)
 SYSTEMD_DEPENDENCIES += iptables
 SYSTEMD_CONF_OPTS += -Dlibiptc=true
@@ -228,13 +221,6 @@ SYSTEMD_DEPENDENCIES += p11-kit
 SYSTEMD_CONF_OPTS += -Dp11kit=true
 else
 SYSTEMD_CONF_OPTS += -Dp11kit=false
-endif
-
-ifeq ($(BR2_PACKAGE_OPENSSL),y)
-SYSTEMD_DEPENDENCIES += openssl
-SYSTEMD_CONF_OPTS += -Dopenssl=true
-else
-SYSTEMD_CONF_OPTS += -Dopenssl=false
 endif
 
 ifeq ($(BR2_PACKAGE_PCRE2),y)
@@ -491,14 +477,26 @@ else
 SYSTEMD_CONF_OPTS += -Dnss-resolve=false -Dresolve=false
 endif
 
-ifeq ($(BR2_PACKAGE_GNUTLS),y)
-SYSTEMD_CONF_OPTS += -Ddns-over-tls=gnutls -Ddefault-dns-over-tls=opportunistic
-SYSTEMD_DEPENDENCIES += gnutls
-else ifeq ($(BR2_PACKAGE_OPENSSL),y)
-SYSTEMD_CONF_OPTS += -Ddns-over-tls=openssl -Ddefault-dns-over-tls=opportunistic
+ifeq ($(BR2_PACKAGE_OPENSSL),y)
+SYSTEMD_CONF_OPTS += \
+	-Dgnutls=false \
+	-Dopenssl=true \
+	-Ddns-over-tls=openssl \
+	-Ddefault-dns-over-tls=opportunistic
 SYSTEMD_DEPENDENCIES += openssl
+else ifeq ($(BR2_PACKAGE_GNUTLS),y)
+SYSTEMD_CONF_OPTS += \
+	-Dgnutls=true \
+	-Dopenssl=false \
+	-Ddns-over-tls=gnutls \
+	-Ddefault-dns-over-tls=opportunistic
+SYSTEMD_DEPENDENCIES += gnutls
 else
-SYSTEMD_CONF_OPTS += -Ddns-over-tls=false -Ddefault-dns-over-tls=no
+SYSTEMD_CONF_OPTS += \
+	-Dgnutls=false \
+	-Dopenssl=false \
+	-Ddns-over-tls=false \
+	-Ddefault-dns-over-tls=no
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD_TIMESYNCD),y)
