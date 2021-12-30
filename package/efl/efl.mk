@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EFL_VERSION = 1.25.1
+EFL_VERSION = 1.26.0
 EFL_SOURCE = efl-$(EFL_VERSION).tar.xz
 EFL_SITE = http://download.enlightenment.org/rel/libs/efl
 EFL_LICENSE = BSD-2-Clause, LGPL-2.1+, GPL-2.0+, FTL, MIT
@@ -209,7 +209,7 @@ EFL_DEPENDENCIES += $(if $(BR2_PACKAGE_LIBXKBCOMMON),libxkbcommon)
 # json evas loader is disabled by default by upstream.
 # Disable libspectre (ps).
 # Keep all other evas loader enabled or handled below.
-EFL_EVAS_LOADERS_DISABLER = avif gst json ps
+EFL_EVAS_LOADERS_DISABLER = avif gst heif json ps
 
 # efl already depends on jpeg.
 ifeq ($(BR2_PACKAGE_EFL_JPEG),y)
@@ -302,6 +302,7 @@ HOST_EFL_DEPENDENCIES = \
 # Configure options:
 # audio=false: remove libsndfile dependency.
 # eeze=false: remove libudev dependency.
+# input=false: remove libinput dependency.
 # libmount=false: remove dependency on host-util-linux libmount.
 # elua=true: build elua for the host.
 # physics=false: remove Bullet dependency.
@@ -324,6 +325,7 @@ HOST_EFL_CONF_OPTS += \
 	-Dglib=true \
 	-Dgstreamer=false \
 	-Dharfbuzz=false \
+	-Dinput=false \
 	-Dlibmount=false \
 	-Dlua-interpreter=luajit \
 	-Dnetwork-backend=none \
@@ -340,7 +342,7 @@ HOST_EFL_CONF_OPTS += \
 	-Dxinput22=false
 
 # List of modular image/vector loaders to disable in efl
-HOST_EFL_EVAS_LOADERS_DISABLER = avif bmp dds eet generic gst ico json \
+HOST_EFL_EVAS_LOADERS_DISABLER = avif bmp dds eet generic gst heif ico json \
 	jp2k pdf pmaps ps psd raw rsvg tga tgv tiff wbmp webp xcf xpm
 
 HOST_EFL_CONF_OPTS += -Devas-loaders-disabler=$(subst $(space),$(comma),$(HOST_EFL_EVAS_LOADERS_DISABLER))
