@@ -34,7 +34,9 @@ CRYPTSETUP_CONF_OPTS += --with-crypto_backend=kernel
 endif
 
 ifeq ($(BR2_PACKAGE_LIBSSH),y)
-CRYPTSETUP_DEPENDENCIES += libssh
+CRYPTSETUP_DEPENDENCIES += \
+	$(if $(BR2_PACKAGE_ARGP_STANDALONE),argp-standalone) \
+	libssh
 CRYPTSETUP_CONF_OPTS += --enable-ssh-token
 else
 CRYPTSETUP_CONF_OPTS += --disable-ssh-token
