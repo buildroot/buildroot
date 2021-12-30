@@ -1,4 +1,4 @@
-From 57e14d395860a781d0b43b1ef3e2a4a8b04bbf80 Mon Sep 17 00:00:00 2001
+From a65e5d3caf8e076d531191164c23c6240461f675 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:07:56 -0800
 Subject: [PATCH] Add an option to disable pydoc
@@ -10,17 +10,19 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Signed-off-by: Samuel Martin <s.martin49@gmail.com>
 [ Andrey Smirnov: ported to Python 3.6 ]
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+[ Adam Duskett: ported to Python 3.10.0 ]
+Signed-off-by: Adam Duskett <aduskett@gmail.com>
 ---
- Makefile.pre.in | 8 +++++++-
+ Makefile.pre.in | 7 ++++++-
  configure.ac    | 6 ++++++
  setup.py        | 9 +++++++--
- 3 files changed, 20 insertions(+), 3 deletions(-)
+ 3 files changed, 19 insertions(+), 3 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index bbc779ee6a..dd83413f17 100644
+index c0d5511..32b3df7 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1373,7 +1373,9 @@ bininstall: altbininstall
+@@ -1391,7 +1391,9 @@ bininstall: altbininstall
  	-rm -f $(DESTDIR)$(BINDIR)/idle3
  	(cd $(DESTDIR)$(BINDIR); $(LN) -s idle$(VERSION) idle3)
  	-rm -f $(DESTDIR)$(BINDIR)/pydoc3
@@ -30,31 +32,30 @@ index bbc779ee6a..dd83413f17 100644
  	-rm -f $(DESTDIR)$(BINDIR)/2to3
  	(cd $(DESTDIR)$(BINDIR); $(LN) -s 2to3-$(VERSION) 2to3)
  	if test "x$(LIPO_32BIT_FLAGS)" != "x" ; then \
-@@ -1423,7 +1425,7 @@ LIBSUBDIRS=	tkinter site-packages \
+@@ -1442,7 +1444,6 @@ LIBSUBDIRS=	asyncio \
+ 		lib2to3 lib2to3/fixes lib2to3/pgen2 \
+ 		logging \
  		multiprocessing multiprocessing/dummy \
- 		unittest \
- 		venv venv/scripts venv/scripts/common venv/scripts/posix \
--		curses pydoc_data \
-+		curses \
- 		zoneinfo
- 
- TESTSUBDIRS=	tkinter/test tkinter/test/test_tkinter \
-@@ -1507,6 +1509,10 @@ ifeq (@TEST_MODULES@,yes)
- LIBSUBDIRS += $(TESTSUBDIRS)
- endif
+-		pydoc_data \
+ 		site-packages \
+ 		sqlite3 \
+ 		tkinter \
+@@ -1530,6 +1531,10 @@ TESTSUBDIRS=	ctypes/test \
+ 		tkinter/test/test_ttk \
+ 		unittest/test unittest/test/testmock
  
 +ifeq (@PYDOC@,yes)
 +LIBSUBDIRS += pydoc_data
 +endif
 +
+ TEST_MODULES=@TEST_MODULES@
  libinstall:	build_all $(srcdir)/Modules/xxmodule.c
  	@for i in $(SCRIPTDIR) $(LIBDEST); \
- 	do \
 diff --git a/configure.ac b/configure.ac
-index bebad207f8..b748ad7957 100644
+index 083a12d..9079531 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3365,6 +3365,12 @@ if test "$posix_threads" = "yes"; then
+@@ -3373,6 +3373,12 @@ if test "$posix_threads" = "yes"; then
        AC_CHECK_FUNCS(pthread_getcpuclockid)
  fi
  
@@ -64,14 +65,14 @@ index bebad207f8..b748ad7957 100644
 +	AS_HELP_STRING([--disable-pydoc], [disable pydoc]),
 +	[ PYDOC="${enableval}" ], [ PYDOC=yes ])
 +
- AC_SUBST(TEST_MODULES)
  
- AC_ARG_ENABLE(test-modules,
+ # Check for enable-ipv6
+ AH_TEMPLATE(ENABLE_IPV6, [Define if --enable-ipv6 is specified])
 diff --git a/setup.py b/setup.py
-index 506f6107de..dcbc109c30 100644
+index d00d389..d23f148 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -2572,6 +2572,12 @@ def main():
+@@ -2721,6 +2721,12 @@ def main():
      # turn off warnings when deprecated modules are imported
      import warnings
      warnings.filterwarnings("ignore",category=DeprecationWarning)
@@ -84,7 +85,7 @@ index 506f6107de..dcbc109c30 100644
      setup(# PyPI Metadata (PEP 301)
            name = "Python",
            version = sys.version.split()[0],
-@@ -2596,8 +2602,7 @@ def main():
+@@ -2746,8 +2752,7 @@ def main():
            # If you change the scripts installed here, you also need to
            # check the PyBuildScripts command above, and change the links
            # created by the bininstall target in Makefile.pre.in
@@ -95,5 +96,5 @@ index 506f6107de..dcbc109c30 100644
  
  # --install-platlib
 -- 
-2.20.1
+2.30.2
 

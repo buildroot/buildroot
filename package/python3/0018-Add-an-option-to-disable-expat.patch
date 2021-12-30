@@ -1,4 +1,4 @@
-From e86dc4209f71d6dc4bfa74fcc2c963b678def39f Mon Sep 17 00:00:00 2001
+From 7e0e7dc25f50acd6922493ae620ee5cbf107a79a Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:40:45 -0800
 Subject: [PATCH] Add an option to disable expat
@@ -13,26 +13,27 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Signed-off-by: Samuel Martin <s.martin49@gmail.com>
 [ Andrey Smirnov: ported to Python 3.6 ]
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+[ Adam Duskett: ported to Python 3.10.0 ]
+Signed-off-by: Adam Duskett <aduskett@gmail.com>
 ---
- Makefile.pre.in |  6 +++++-
+ Makefile.pre.in |  5 ++++-
  configure.ac    | 18 +++++++++++++-----
  setup.py        |  2 +-
- 3 files changed, 19 insertions(+), 7 deletions(-)
+ 3 files changed, 18 insertions(+), 7 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 2e45a41140..4981087723 100644
+index f89f155..08c5e8a 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1419,7 +1419,7 @@ LIBSUBDIRS=	site-packages \
- 		logging csv wsgiref urllib \
- 		ctypes ctypes/macholib \
- 		idlelib idlelib/Icons \
--		distutils distutils/command $(XMLLIBSUBDIRS) \
-+		distutils distutils/command \
- 		importlib \
- 		turtledemo \
- 		multiprocessing multiprocessing/dummy \
-@@ -1509,6 +1509,10 @@ ifeq (@CURSES@,yes)
+@@ -1450,7 +1450,6 @@ LIBSUBDIRS=	asyncio \
+ 		urllib \
+ 		venv venv/scripts venv/scripts/common venv/scripts/posix \
+ 		wsgiref \
+-		$(XMLLIBSUBDIRS) \
+ 		xmlrpc \
+ 		zoneinfo
+ TESTSUBDIRS=	ctypes/test \
+@@ -1549,6 +1548,10 @@ ifeq (@CURSES@,yes)
  LIBSUBDIRS += curses
  endif
  
@@ -40,14 +41,14 @@ index 2e45a41140..4981087723 100644
 +LIBSUBDIRS += $(XMLLIBSUBDIRS)
 +endif
 +
- ifeq (@LIB2TO3@,yes)
- LIBSUBDIRS += lib2to3 lib2to3/fixes lib2to3/pgen2
- TESTSUBDIRS += lib2to3/tests			\
+ TEST_MODULES=@TEST_MODULES@
+ libinstall:	build_all $(srcdir)/Modules/xxmodule.c
+ 	@for i in $(SCRIPTDIR) $(LIBDEST); \
 diff --git a/configure.ac b/configure.ac
-index f034cd4bcb..c90c92c2de 100644
+index 4f1cda5..e99a174 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3091,13 +3091,21 @@ PKG_PROG_PKG_CONFIG
+@@ -3094,13 +3094,21 @@ PKG_PROG_PKG_CONFIG
  AC_SUBST(DISABLED_EXTENSIONS)
  
  # Check for use of the system expat library
@@ -75,10 +76,10 @@ index f034cd4bcb..c90c92c2de 100644
  # Check for use of the system libffi library
  AC_MSG_CHECKING(for --with-system-ffi)
 diff --git a/setup.py b/setup.py
-index 8d6348f560..0d6fe717da 100644
+index 663fd44..e30ed52 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -1671,7 +1671,7 @@ class PyBuildExt(build_ext):
+@@ -1764,7 +1764,7 @@ class PyBuildExt(build_ext):
          #
          # More information on Expat can be found at www.libexpat.org.
          #
@@ -88,5 +89,5 @@ index 8d6348f560..0d6fe717da 100644
              define_macros = []
              extra_compile_args = []
 -- 
-2.20.1
+2.30.2
 
