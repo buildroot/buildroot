@@ -1,0 +1,7 @@
+config BR2_PACKAGE_LIBEXECINFO
+	bool "libexecinfo"
+	depends on !BR2_TOOLCHAIN_USES_GLIBC
+	help
+	  Library for inspecting program's backtrace
+
+	  https://github.com/mikroskeem/libexecinfo
