@@ -20,11 +20,11 @@ LIBTASN1_CONF_ENV = MAKEINFO="true"
 
 LIBTASN1_CONF_OPTS = CFLAGS="$(TARGET_CFLAGS) -std=gnu99"
 
-LIBTANS1_PROGS = asn1Coding asn1Decoding asn1Parser
+LIBTASN1_PROGS = asn1Coding asn1Decoding asn1Parser
 
 # We only need the library
 define LIBTASN1_REMOVE_PROGS
-	$(RM) $(addprefix $(TARGET_DIR)/usr/bin/,$(LIBTANS1_PROGS))
+	$(RM) $(addprefix $(TARGET_DIR)/usr/bin/,$(LIBTASN1_PROGS))
 endef
 LIBTASN1_POST_INSTALL_TARGET_HOOKS += LIBTASN1_REMOVE_PROGS
 
