@@ -4,13 +4,15 @@
 #
 ################################################################################
 
-NEARD_VERSION = 0.16
-NEARD_SOURCE = neard-$(NEARD_VERSION).tar.xz
-NEARD_SITE = $(BR2_KERNEL_MIRROR)/linux/network/nfc
+NEARD_VERSION = 0.18
+NEARD_SITE = https://git.kernel.org/pub/scm/network/nfc/neard.git/snapshot
 NEARD_LICENSE = GPL-2.0
 NEARD_LICENSE_FILES = COPYING
 
-NEARD_DEPENDENCIES = host-pkgconf dbus libglib2 libnl
+NEARD_DEPENDENCIES = host-autoconf-archive host-pkgconf dbus libglib2 libnl
+# From git
+NEARD_AUTORECONF = YES
+NEARD_AUTORECONF_OPTS = --include=$(HOST_DIR)/share/autoconf-archive
 NEARD_CONF_OPTS = --disable-traces
 
 ifeq ($(BR2_PACKAGE_NEARD_TOOLS),y)
