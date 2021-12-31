@@ -1,0 +1,27 @@
+From 298cd8eaa21a21eee85f9551a26ad294347b1d5a Mon Sep 17 00:00:00 2001
+From: Peter Korsgaard <peter@korsgaard.com>
+Date: Thu, 30 Dec 2021 11:14:15 -0800
+Subject: [PATCH] python makefile
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+[adam: refresh for 1.14; make it git-formatted]
+Signed-off-by: Adam Duskett <aduskett@gmail.com>
+---
+ python/Makefile.am | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/python/Makefile.am b/python/Makefile.am
+index 1a74ef2..59fe0f3 100644
+--- a/python/Makefile.am
++++ b/python/Makefile.am
+@@ -11,6 +11,7 @@ $(srcdir)/dnet.c: $(srcdir)/dnet.pyx
+ 	pyrexc $(srcdir)/dnet.pyx
+ 
+ python-build: $(srcdir)/dnet.c
++	CC="$(CC)" LDSHARED="$(CC) -shared" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" $(PYTHON) setup.py build_ext -I$(PYINCDIR) -L$(PYLIBDIR)
+ 	$(PYTHON) setup.py build
+ 	touch python-build
+ 
+-- 
+2.33.1
+

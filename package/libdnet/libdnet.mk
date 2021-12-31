@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBDNET_VERSION = 1.11
-LIBDNET_SITE = http://downloads.sourceforge.net/project/libdnet/libdnet/libdnet-$(LIBDNET_VERSION)
+LIBDNET_VERSION = 1.14
+LIBDNET_SITE = $(call github,ofalk,libdnet,libdnet-$(LIBDNET_VERSION))
 LIBDNET_LICENSE = BSD-3-Clause
 LIBDNET_LICENSE_FILES = LICENSE
 LIBDNET_INSTALL_STAGING = YES
@@ -15,10 +15,10 @@ LIBDNET_CONF_OPTS = \
 	--with-check=no
 LIBDNET_CONFIG_SCRIPTS = dnet-config
 
-ifneq ($(BR2_PACKAGE_LIBDNET_PYTHON),)
-LIBDNET_DEPENDENCIES += python
-LIBDNET_CONF_OPTS += --with-python
-LIBDNET_MAKE_OPTS = PYINCDIR=$(STAGING_DIR)/usr/include/python$(PYTHON_VERSION_MAJOR) PYLIBDIR=$(STAGING_DIR)/usr/lib
+ifeq ($(BR2_PACKAGE_LIBDNET_PYTHON),y)
+LIBDNET_DEPENDENCIES += host-python3-cython python3
+LIBDNET_CONF_OPTS += --with-python=$(HOST_DIR)/bin
+LIBDNET_MAKE_ENV += $(PKG_PYTHON_DISTUTILS_ENV)
 LIBDNET_INSTALL_TARGET_OPTS = $(LIBDNET_MAKE_OPTS) DESTDIR=$(TARGET_DIR) INSTALL_STRIP_FLAG=-s install-exec
 LIBDNET_INSTALL_STAGING_OPTS = $(LIBDNET_MAKE_OPTS) DESTDIR=$(STAGING_DIR) install
 endif
