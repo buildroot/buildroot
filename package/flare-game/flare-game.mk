@@ -8,7 +8,7 @@ FLARE_GAME_VERSION = 1.11
 FLARE_GAME_SITE =  $(call github,flareteam,flare-game,v$(FLARE_GAME_VERSION))
 FLARE_GAME_LICENSE = CC-BY-SA-3.0 (data files), GPL-2.0 (GNU Unifont), \
 	OFL-1.1 (Liberation Sans)
-FLARE_GAME_LICENSE_FILES = README
+FLARE_GAME_LICENSE_FILES = LICENSE.txt
 
 FLARE_GAME_DEPENDENCIES = flare-engine
 
