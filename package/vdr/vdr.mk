@@ -26,6 +26,11 @@ VDR_MAKE_FLAGS = \
 	VIDEODIR=/var/lib/vdr
 VDR_LDFLAGS = $(TARGET_NLS_LIBS)
 
+ifeq ($(BR2_PACKAGE_LIBEXECINFO),y)
+VDR_DEPENDENCIES += libexecinfo
+VDR_LDFLAGS += -lexecinfo
+endif
+
 ifeq ($(BR2_PACKAGE_LIBFRIBIDI),y)
 VDR_DEPENDENCIES += libfribidi
 VDR_MAKE_FLAGS += BIDI=1

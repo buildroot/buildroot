@@ -1,0 +1,35 @@
+From 8711ce9c4ded311705f281c99e013a26987fbf1d Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 1 Jan 2022 23:35:29 +0100
+Subject: [PATCH] i18n.c: _nl_msg_cat_cntr is an internal symbol of some intl
+ implementation
+
+It is supported by glibc and uClibc (which both define __GLIBC__) but
+not musl (which doesn't define __GLIBC__). On musl, it doesn't do
+anything because musl has a basic NLS implementation. Even
+gettext-tiny defines _nl_msg_cat_cntr as a dummy symbol in its stub
+libintl-musl implementation.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ i18n.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/i18n.c b/i18n.c
+index 0ef08fd4..da2a3ede 100644
+--- a/i18n.c
++++ b/i18n.c
+@@ -123,8 +123,10 @@ static const char *SkipContext(const char *s)
+ static void SetEnvLanguage(const char *Locale)
+ {
+   setenv("LANGUAGE", Locale, 1);
++#if defined(__GLIBC__)
+   extern int _nl_msg_cat_cntr;
+   ++_nl_msg_cat_cntr;
++#endif
+ }
+ 
+ static void SetLanguageNames(void)
+-- 
+2.31.1
+
