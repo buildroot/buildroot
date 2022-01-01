@@ -1,0 +1,88 @@
+From c687c482107f746332dd18f7407f6c6efbffccb2 Mon Sep 17 00:00:00 2001
+From: Jaroslav Kysela <perex@perex.cz>
+Date: Sat, 1 Jan 2022 19:18:25 +0100
+Subject: [PATCH] conf: fix the export of safe_strto* functions from libasound
+
+Only one library should define the safe_strto function. Export it
+correctly and add _snd_ prefix to avoid possible clashes with the other
+application code.
+
+Fixes: 47252054 ("src/topology/parser.c: drop duplicate safe_strtol_base")
+Fixes: https://github.com/alsa-project/alsa-lib/pull/208
+Signed-off-by: Jaroslav Kysela <perex@perex.cz>
+
+[Retrieved from:
+https://github.com/alsa-project/alsa-lib/commit/c687c482107f746332dd18f7407f6c6efbffccb2]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ include/local.h | 8 ++++++--
+ src/Versions.in | 6 ++++++
+ src/conf.c      | 6 +++---
+ 3 files changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/include/local.h b/include/local.h
+index ebc9350c..f64fe9d8 100644
+--- a/include/local.h
++++ b/include/local.h
+@@ -232,10 +232,14 @@ size_t page_align(size_t size);
+ size_t page_size(void);
+ size_t page_ptr(size_t object_offset, size_t object_size, size_t *offset, size_t *mmap_offset);
+ 
+-int safe_strtoll_base(const char *str, long long *val, int base);
++#define safe_strtoll_base _snd_safe_strtoll_base
++int _snd_safe_strtoll_base(const char *str, long long *val, int base);
+ static inline int safe_strtoll(const char *str, long long *val) { return safe_strtoll_base(str, val, 0); }
+-int safe_strtol_base(const char *str, long *val, int base);
++#define safe_strtol_base _snd_safe_strtol_base
++int _snd_safe_strtol_base(const char *str, long *val, int base);
+ static inline int safe_strtol(const char *str, long *val) { return safe_strtol_base(str, val, 0); }
++#define safe_strtod _snd_safe_strtod
++int _snd_safe_strtod(const char *str, double *val);
+ 
+ int snd_send_fd(int sock, void *data, size_t len, int fd);
+ int snd_receive_fd(int sock, void *data, size_t len, int *fd);
+diff --git a/src/Versions.in b/src/Versions.in
+index 5daccbd4..85031b38 100644
+--- a/src/Versions.in
++++ b/src/Versions.in
+@@ -134,3 +134,9 @@ ALSA_1.1.6 {
+ 
+     @SYMBOL_PREFIX@snd_dlopen;
+ } ALSA_0.9.7;
++
++ALSA_1.2.6 {
++  global:
++
++    @SYMBOL_PREFIX@_snd_safe_strto*;
++} ALSA_1.1.6;
+diff --git a/src/conf.c b/src/conf.c
+index d3597cbc..098ebd63 100644
+--- a/src/conf.c
++++ b/src/conf.c
+@@ -663,7 +663,7 @@ static int input_stdio_open(snd_input_t **inputp, const char *file,
+ 	return err;
+ }
+ 
+-int safe_strtoll_base(const char *str, long long *val, int base)
++int _snd_safe_strtoll_base(const char *str, long long *val, int base)
+ {
+ 	char *end;
+ 	long v;
+@@ -679,7 +679,7 @@ int safe_strtoll_base(const char *str, long long *val, int base)
+ 	return 0;
+ }
+ 
+-int safe_strtol_base(const char *str, long *val, int base)
++int _snd_safe_strtol_base(const char *str, long *val, int base)
+ {
+ 	char *end;
+ 	long v;
+@@ -695,7 +695,7 @@ int safe_strtol_base(const char *str, long *val, int base)
+ 	return 0;
+ }
+ 
+-static int safe_strtod(const char *str, double *val)
++int _snd_safe_strtod(const char *str, double *val)
+ {
+ 	char *end;
+ 	double v;
