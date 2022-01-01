@@ -161,6 +161,7 @@ define TVHEADEND_CONFIGURE_CMDS
 			--enable-dvbscan \
 			--enable-bundle \
 			--enable-pngquant \
+			--disable-execinfo \
 			--disable-ffmpeg_static \
 			--disable-hdhomerun_static \
 			$(TVHEADEND_CONF_OPTS) \
