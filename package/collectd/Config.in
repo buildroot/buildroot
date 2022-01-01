@@ -312,6 +312,17 @@ config BR2_PACKAGE_COLLECTD_IPC
 	  IPC counters: semaphores used, number of allocated segments
 	  in shared memory and more.
 
+config BR2_PACKAGE_COLLECTD_IPMI
+	bool "ipmi"
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
+	select BR2_PACKAGE_OPENIPMI
+	help
+	  Read hardware sensors from servers using the Intelligent
+	  Platform Management Interface (IPMI).
+
+comment "ipmi needs a toolchain w/ NPTL"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS_NPTL
+
 config BR2_PACKAGE_COLLECTD_IPTABLES
 	bool "iptables"
 	select BR2_PACKAGE_IPTABLES
