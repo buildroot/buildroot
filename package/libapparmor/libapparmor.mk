@@ -16,7 +16,7 @@ LIBAPPARMOR_DEPENDENCIES = host-bison host-flex host-pkgconf
 LIBAPPARMOR_SUBDIR = libraries/libapparmor
 LIBAPPARMOR_INSTALL_STAGING = YES
 
-# Patches 0001 and 0002 touch Makefile.am and an m4 file
+# Patch 0001 touches Makefile.am and m4 files
 LIBAPPARMOR_AUTORECONF = YES
 
 # Most AppArmor tools will want to link to the static lib.
@@ -28,7 +28,7 @@ LIBAPPARMOR_CONF_OPTS = \
 	--disable-man-pages
 
 ifeq ($(BR2_PACKAGE_PYTHON3),y)
-LIBAPPARMOR_DEPENDENCIES += host-python3 host-swig python3
+LIBAPPARMOR_DEPENDENCIES += host-python3 host-python3-setuptools host-swig python3
 LIBAPPARMOR_CONF_OPTS += \
 	--with-python \
 	PYTHON=$(HOST_DIR)/usr/bin/python3 \
