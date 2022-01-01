@@ -21,6 +21,18 @@ config BR2_PACKAGE_TPM2_TOOLS
 
 	  https://github.com/tpm2-software/tpm2-tools
 
+if BR2_PACKAGE_TPM2_TOOLS
+
+config BR2_PACKAGE_TPM2_TOOLS_FAPI
+	bool "fapi tools"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	select BR2_PACKAGE_TPM2_TSS_FAPI
+	help
+	  This option enables Feature API (FAPI) support in
+	  tpm2-tools. The FAPI tools are prefixed with tss2_.
+
+endif
+
 comment "tpm2-tools needs a glibc or musl toolchain w/ dynamic library, wchar"
 	depends on BR2_STATIC_LIBS || !BR2_USE_WCHAR || \
 		!(BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL)
