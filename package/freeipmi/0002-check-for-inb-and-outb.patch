@@ -1,0 +1,50 @@
+From 47249279f3ef2c1fcfc312294f1c98c35232aed0 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 2 Jan 2022 10:37:00 +0100
+Subject: [PATCH] check for inb and outb
+
+Check for inb and outb before using them to avoid the following build
+failure on uclibc-ng:
+
+/home/buildroot/autobuild/instance-1/output-1/host/opt/ext-toolchain/bin/../lib/gcc/powerpc-buildroot-linux-uclibc/10.3.0/../../../../powerpc-buildroot-linux-uclibc/bin/ld: ../libfreeipmi/.libs/libfreeipmi.a(libfreeipmi_la-ipmi-kcs-driver.o): in function `_ipmi_kcs_test_if_state':
+/home/buildroot/autobuild/instance-1/output-1/build/freeipmi-1.6.8/libfreeipmi/driver/ipmi-kcs-driver.c:537: undefined reference to `inb'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/13f58266f7747c183033c811a4e8ca6fa30b6f4d
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/chu11/freeipmi-mirror/pull/50]
+---
+ configure.ac                         | 2 +-
+ libfreeipmi/driver/ipmi-kcs-driver.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 711b27674..bcc4156ff 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -476,7 +476,7 @@ AC_CHECK_FUNCS([memcpy mempcpy memset mlock])
+ AC_CHECK_FUNCS([getline getprogname])
+ AC_CHECK_FUNCS([strerror strerror_r])
+ AC_CHECK_FUNCS([flockfile fputs_unlocked fwrite_unlocked])
+-AC_CHECK_FUNCS([iopl])
++AC_CHECK_FUNCS([inb iopl outb])
+ AC_CHECK_FUNCS([asprintf])
+ AC_CHECK_FUNCS([cbrt])
+ AC_CHECK_FUNCS([getmsg putmsg])
+diff --git a/libfreeipmi/driver/ipmi-kcs-driver.c b/libfreeipmi/driver/ipmi-kcs-driver.c
+index c212887c0..a9d4b2e96 100644
+--- a/libfreeipmi/driver/ipmi-kcs-driver.c
++++ b/libfreeipmi/driver/ipmi-kcs-driver.c
+@@ -162,7 +162,7 @@
+ #if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
+ # define _INB(port)  inb (port)
+ # define _OUTB(data, port)  outb (port, data)
+-#elif defined(HAVE_IOPL)
++#elif defined(HAVE_INB) && defined(HAVE_OUTB)
+ # define _INB(port)  inb (port)
+ # define _OUTB(data, port)  outb (data, port)
+ #else
+-- 
+2.33.0
+
