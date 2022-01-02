@@ -1,0 +1,75 @@
+From 51def3dc6a168d03d28e0d4e2935d9ddb2929192 Mon Sep 17 00:00:00 2001
+From: Stafford Horne <shorne@gmail.com>
+Date: Sun, 2 Jan 2022 09:03:28 +0900
+Subject: [PATCH] or1k: Avoid R_OR1K_GOT16 signed overflow by using special
+ howto
+
+Previously when fixing PR 21464 we masked out upper bits of the
+relocation value in order to avoid overflow complaints when acceptable.
+It turns out this does not work when the relocation value ends up being
+signed.
+
+To fix this this patch introduces a special howto with
+complain_on_overflow set to complain_overflow_dont.  This is used in
+place of the normal R_OR1K_GOT16 howto when we detect R_OR1K_GOT_AHI16
+relocations.
+
+bfd/ChangeLog:
+
+	PR 28735
+	* elf32-or1k.c (or1k_elf_got16_no_overflow_howto): Define.
+	(or1k_elf_relocate_section): Use new howto instead of trying to
+	mask out relocation bits.
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ bfd/elf32-or1k.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
+
+diff --git a/bfd/elf32-or1k.c b/bfd/elf32-or1k.c
+index cfa292f0032..ecb70753b6a 100644
+--- a/bfd/elf32-or1k.c
++++ b/bfd/elf32-or1k.c
+@@ -828,6 +828,23 @@ static reloc_howto_type or1k_elf_howto_table[] =
+ 	FALSE),                /* pcrel_offset */
+ };
+ 
++/* A copy of the R_OR1K_GOT16 used in the presense of R_OR1K_GOT_AHI16
++   relocations when we know we can ignore overflows.  */
++static reloc_howto_type or1k_elf_got16_no_overflow_howto =
++  HOWTO (R_OR1K_GOT16,		/* type */
++	 0,			/* rightshift */
++	 2,			/* size (0 = byte, 1 = short, 2 = long) */
++	 16,			/* bitsize */
++	 FALSE,			/* pc_relative */
++	 0,			/* bitpos */
++	 complain_overflow_dont, /* complain_on_overflow */
++	 bfd_elf_generic_reloc, /* special_function */
++	 "R_OR1K_GOT16",	/* name */
++	 FALSE,			/* partial_inplace */
++	 0,			/* src_mask */
++	 0xffff,		/* dst_mask */
++	 FALSE);		/* pcrel_offset */
++
+ /* Map BFD reloc types to Or1k ELF reloc types.  */
+ 
+ struct or1k_reloc_map
+@@ -1477,12 +1494,11 @@ or1k_elf_relocate_section (bfd *output_bfd,
+ 	    if (r_type == R_OR1K_GOT_AHI16)
+ 	      saw_gotha = TRUE;
+ 
+-	    /* If we have a R_OR1K_GOT16 followed by a R_OR1K_GOT_AHI16
++	    /* If we have a R_OR1K_GOT16 following a R_OR1K_GOT_AHI16
+ 	       relocation we assume the code is doing the right thing to avoid
+-	       overflows.  Here we mask the lower 16-bit of the relocation to
+-	       avoid overflow validation failures.  */
++	       overflows.  */
+ 	    if (r_type == R_OR1K_GOT16 && saw_gotha)
+-	      relocation &= 0xffff;
++	      howto = &or1k_elf_got16_no_overflow_howto;
+ 
+ 	  /* Addend should be zero.  */
+ 	  if (rel->r_addend != 0)
+-- 
+2.25.1
+
