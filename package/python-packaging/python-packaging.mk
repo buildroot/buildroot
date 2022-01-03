@@ -12,3 +12,4 @@ PYTHON_PACKAGING_LICENSE = Apache-2.0 or BSD-2-Clause
 PYTHON_PACKAGING_LICENSE_FILES = LICENSE LICENSE.APACHE LICENSE.BSD
 
 $(eval $(python-package))
+$(eval $(host-python-package))
