@@ -1,0 +1,50 @@
+From a56338db0f003d5236f2ce98c73a591d64a70852 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 3 Jan 2022 22:57:11 +0100
+Subject: [PATCH] utils/text-scroller.cc: replace uint (#1383)
+
+Replace uint by uint64_t to avoid the following build failure on musl:
+
+text-scroller.cc: In function 'int main(int, char**)':
+text-scroller.cc:220:3: error: 'uint' was not declared in this scope; did you mean 'rint'?
+  220 |   uint frame_counter = 0;
+      |   ^~~~
+      |   rint
+
+Fixes:
+ - http://autobuild.buildroot.org/results/1a230bd46eac35081bdb6fe9aaacbb7b62ea6b73
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/hzeller/rpi-rgb-led-matrix/commit/a56338db0f003d5236f2ce98c73a591d64a70852]
+---
+ utils/text-scroller.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/utils/text-scroller.cc b/utils/text-scroller.cc
+index a64ba0c89..28d4f7182 100644
+--- a/utils/text-scroller.cc
++++ b/utils/text-scroller.cc
+@@ -21,6 +21,7 @@
+ #include <getopt.h>
+ #include <math.h>
+ #include <signal.h>
++#include <stdint.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+@@ -217,12 +218,12 @@ int main(int argc, char *argv[]) {
+ 
+   struct timespec next_frame = {0, 0};
+ 
+-  uint frame_counter = 0;
++  uint64_t frame_counter = 0;
+   while (!interrupt_received && loops != 0) {
+     ++frame_counter;
+     offscreen_canvas->Fill(bg_color.r, bg_color.g, bg_color.b);
+     const bool draw_on_frame = (blink_on <= 0)
+-      || (frame_counter % (blink_on + blink_off) < (uint)blink_on);
++      || (frame_counter % (blink_on + blink_off) < (uint64_t)blink_on);
+ 
+     if (draw_on_frame) {
+       if (outline_font) {
