@@ -1,0 +1,182 @@
+--- a/src/gallium/drivers/v3d/v3d_context.c
++++ b/src/gallium/drivers/v3d/v3d_context.c
+@@ -379,6 +379,8 @@
+ 
+         v3d->fd = screen->fd;
+ 
++        v3d->fence = NULL;
++
+         slab_create_child(&v3d->transfer_pool, &screen->transfer_pool);
+ 
+         v3d->uploader = u_upload_create_default(&v3d->base);
+--- a/src/gallium/drivers/v3d/v3d_context.h
++++ b/src/gallium/drivers/v3d/v3d_context.h
+@@ -555,6 +555,9 @@
+         uint32_t prim_counts_offset;
+         struct pipe_debug_callback debug;
+         /** @} */
++
++        // Custom field to track fence destruction
++        struct v3d_fence * fence;
+ };
+ 
+ struct v3d_rasterizer_state {
+--- a/src/gallium/frontends/dri/dri_drawable.c
++++ b/src/gallium/frontends/dri/dri_drawable.c
+@@ -523,14 +523,22 @@
+       struct pipe_screen *screen = drawable->screen->base.screen;
+       struct pipe_fence_handle *new_fence = NULL;
+ 
++      /* bool */ screen->fence_lock();
++
+       st->flush(st, flush_flags, &new_fence, args.ctx ? notify_before_flush_cb : NULL, &args);
++      screen->fence_finish(screen, NULL, new_fence, PIPE_TIMEOUT_INFINITE);
++      screen->fence_reference(screen, &new_fence, NULL);
++
++      /* bool */ screen->fence_unlock();
+ 
++#ifdef _0
+       /* throttle on the previous fence */
+       if (drawable->throttle_fence) {
+          screen->fence_finish(screen, NULL, drawable->throttle_fence, PIPE_TIMEOUT_INFINITE);
+          screen->fence_reference(screen, &drawable->throttle_fence, NULL);
+       }
+       drawable->throttle_fence = new_fence;
++#endif
+    }
+    else if (flags & (__DRI2_FLUSH_DRAWABLE | __DRI2_FLUSH_CONTEXT)) {
+       st->flush(st, flush_flags, NULL, args.ctx ? notify_before_flush_cb : NULL, &args);
+--- a/src/gallium/include/pipe/p_screen.h
++++ b/src/gallium/include/pipe/p_screen.h
+@@ -604,6 +604,10 @@
+    unsigned int (*get_dmabuf_modifier_planes)(struct pipe_screen *screen,
+                                               uint64_t modifier,
+                                               enum pipe_format format);
++
++   // (Un)lock the flow create, finish, reference
++   bool (* fence_lock) (void);
++   bool (* fence_unlock) (void);
+ };
+ 
+ 
+--- a/src/mesa/state_tracker/st_cb_flush.c
++++ b/src/mesa/state_tracker/st_cb_flush.c
+@@ -70,6 +70,9 @@
+    struct pipe_fence_handle *fence = NULL;
+ 
+    st_flush_bitmap_cache(st);
++
++   /* bool */ st->screen->fence_lock ();
++
+    st_flush(st, &fence, PIPE_FLUSH_ASYNC | PIPE_FLUSH_HINT_FINISH);
+ 
+    if (fence) {
+@@ -78,6 +81,8 @@
+       st->screen->fence_reference(st->screen, &fence, NULL);
+    }
+ 
++   /* bool */ st->screen->fence_unlock ();
++
+    st_manager_flush_swapbuffers();
+ }
+ 
+--- a/src/gallium/drivers/v3d/v3d_fence.c
++++ b/src/gallium/drivers/v3d/v3d_fence.c
+@@ -43,8 +43,12 @@
+ struct v3d_fence {
+         struct pipe_reference reference;
+         int fd;
++        struct v3d_context * ctx;
+ };
+ 
++static bool v3d_fence_lock (void);
++static bool v3d_fence_unlock (void);
++
+ static void
+ v3d_fence_reference(struct pipe_screen *pscreen,
+                     struct pipe_fence_handle **pp,
+@@ -55,8 +59,19 @@
+         struct v3d_fence *old = *p;
+ 
+         if (pipe_reference(&(*p)->reference, &f->reference)) {
+-                close(old->fd);
++                /* bool */ v3d_fence_lock ();
++
++                assert (old->ctx != NULL);
++                assert (old->ctx->fence->fd == old->fd || old->ctx->fence->fd == -1);
++
++                old->ctx->fence = NULL;
++
++                /* int */ close(old->fd);
+                 free(old);
++
++                /* bool */ v3d_fence_unlock ();
++
++                fprintf(stderr, "Sync file destructed\n");
+         }
+         *p = f;
+ }
+@@ -103,6 +118,19 @@
+         if (!f)
+                 return NULL;
+ 
++        /* bool */ v3d_fence_lock ();
++
++        if (v3d->fence != NULL) {
++            fprintf(stderr, "Sync file is NOT properly destructed\n");
++
++            /* int */ close (v3d->fence->fd);
++            free (v3d->fence);
++
++            v3d->fence = NULL;
++        }
++
++        /* bool */ v3d_fence_unlock ();
++
+         /* Snapshot the last V3D rendering's out fence.  We'd rather have
+          * another syncobj instead of a sync file, but this is all we get.
+          * (HandleToFD/FDToHandle just gives you another syncobj ID for the
+@@ -115,14 +143,43 @@
+                 return NULL;
+         }
+ 
++        // Update our custom fields in the v3d_context and v3d_fence
++
++        /* bool */ v3d_fence_lock ();
++
++        v3d->fence = f;
++
++        f->ctx = v3d;
++
++        /* bool */ v3d_fence_unlock ();
++
+         pipe_reference_init(&f->reference, 1);
+ 
+         return f;
+ }
+ 
++pthread_mutex_t mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
++
++/* static */ bool v3d_fence_lock (void)
++{
++        bool ret = pthread_mutex_lock (& mutex) == 0;
++        assert (ret != false);
++        return ret;
++}
++
++/* static */ bool v3d_fence_unlock (void)
++{
++        bool ret = pthread_mutex_unlock (& mutex) == 0;
++        assert (ret != false);
++        return ret;
++}
++
+ void
+ v3d_fence_init(struct v3d_screen *screen)
+ {
+         screen->base.fence_reference = v3d_fence_reference;
+         screen->base.fence_finish = v3d_fence_finish;
++
++        screen->base.fence_lock = v3d_fence_lock;
++        screen->base.fence_unlock = v3d_fence_unlock;
+ }
