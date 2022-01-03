@@ -187,16 +187,20 @@ define QEMU_CONFIGURE_CMDS
 			--audio-drv-list= \
 			--meson=$(HOST_DIR)/bin/meson \
 			--ninja=$(HOST_DIR)/bin/ninja \
+			--disable-alsa \
 			--disable-bpf \
 			--disable-brlapi \
 			--disable-bsd-user \
 			--disable-cap-ng \
 			--disable-capstone \
 			--disable-containers \
+			--disable-coreaudio \
 			--disable-curl \
 			--disable-curses \
 			--disable-docs \
+			--disable-dsound \
 			--disable-hvf \
+			--disable-jack \
 			--disable-libiscsi \
 			--disable-libxml2 \
 			--disable-linux-aio \
@@ -204,9 +208,13 @@ define QEMU_CONFIGURE_CMDS
 			--disable-malloc-trim \
 			--disable-membarrier \
 			--disable-mpath \
+			--disable-netmap \
 			--disable-opengl \
+			--disable-oss \
+			--disable-pa \
 			--disable-rbd \
 			--disable-sanitizers \
+			--disable-selinux \
 			--disable-sparse \
 			--disable-strip \
 			--disable-vde \
@@ -355,14 +363,24 @@ define HOST_QEMU_CONFIGURE_CMDS
 		--extra-ldflags="$(HOST_LDFLAGS)" \
 		--meson=$(HOST_DIR)/bin/meson \
 		--ninja=$(HOST_DIR)/bin/ninja \
+		--disable-alsa \
 		--disable-bpf \
 		--disable-bzip2 \
 		--disable-containers \
+		--disable-coreaudio \
 		--disable-curl \
 		--disable-docs \
+		--disable-dsound \
+		--disable-jack \
 		--disable-libssh \
+		--disable-linux-aio \
 		--disable-linux-io-uring \
+		--disable-netmap \
+		--disable-oss \
+		--disable-pa \
 		--disable-sdl \
+		--disable-selinux \
+		--disable-vde \
 		--disable-vhost-user-blk-server \
 		--disable-virtiofsd \
 		--disable-vnc-jpeg \
