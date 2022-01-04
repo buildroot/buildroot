@@ -1,4 +1,4 @@
-From 894a5448ee8ce0f134845c877b4c0a2a660e4ab3 Mon Sep 17 00:00:00 2001
+From d92b11fea65364fefa700249bd3340e0cd4c5b31 Mon Sep 17 00:00:00 2001
 From: Dmitry Shachnev <mitya57@gmail.com>
 Date: Tue, 4 Aug 2020 21:04:06 +0300
 Subject: [PATCH] Let Bison generate the header directly, to fix build with
@@ -9,24 +9,25 @@ by default, instead of duplicating it. So we should not delete it.
 
 Remove the code to add #ifdef guards to the header, since Bison adds
 them itself since version 2.6.3.
-
-[Original patch taken from
-https://gitweb.gentoo.org/repo/gentoo.git/plain/dev-qt/qtwebkit/files/qtwebkit-5.212.0_pre20200309-bison-3.7.patch?id=69e618c88a9134f754264efc11aa0b1fdc028b88
-ported to qtwebkit-opensource-src-5.9.1]
-Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[james.hilliard1@gmail.com: backport from upstream commit
+d92b11fea65364fefa700249bd3340e0cd4c5b31]
 ---
  Source/WebCore/css/makegrammar.pl | 21 +--------------------
  1 file changed, 1 insertion(+), 20 deletions(-)
 
 diff --git a/Source/WebCore/css/makegrammar.pl b/Source/WebCore/css/makegrammar.pl
-index 4e0452ed..9ef32963 100644
+index 5d63b08102eb..9435701c7061 100644
 --- a/Source/WebCore/css/makegrammar.pl
 +++ b/Source/WebCore/css/makegrammar.pl
-@@ -73,23 +73,4 @@ if ($suffix eq ".y.in") {
+@@ -73,25 +73,6 @@ if ($suffix eq ".y.in") {
  }
  
  my $fileBase = File::Spec->join($outputDir, $filename);
--system("$bison -d -p $symbolsPrefix $grammarFilePath -o $fileBase.cpp");
+-my @bisonCommand = ($bison, "-d", "-p", $symbolsPrefix, $grammarFilePath, "-o", "$fileBase.cpp");
++my @bisonCommand = ($bison, "--defines=$fileBase.h", "-p", $symbolsPrefix, $grammarFilePath, "-o", "$fileBase.cpp");
+ push @bisonCommand, "--no-lines" if $^O eq "MSWin32"; # Work around bug in bison >= 3.0 on Windows where it puts backslashes into #line directives.
+ system(@bisonCommand) == 0 or die;
 -
 -open HEADER, ">$fileBase.h" or die;
 -print HEADER << "EOF";
@@ -46,7 +47,6 @@ index 4e0452ed..9ef32963 100644
 -unlink("$fileBase.cpp.h");
 -unlink("$fileBase.hpp");
 -
-+system("$bison --defines=$fileBase.h -p $symbolsPrefix $grammarFilePath -o $fileBase.cpp");
 -- 
-2.28.0
+2.25.1
 
