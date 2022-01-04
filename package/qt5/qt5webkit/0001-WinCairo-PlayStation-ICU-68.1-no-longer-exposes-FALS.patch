@@ -1,18 +1,39 @@
-From bf936a2bc8120f693f1effd3d9b130cddc6c4185 Mon Sep 17 00:00:00 2001
-From: Henri Roosen <henri.roosen@ginzinger.com>
-Date: Thu, 18 Mar 2021 11:53:57 +0100
-Subject: [PATCH] Fix ICU related compile failures from capital bool defines
+From 736e1d804d1efa2077c4f1fe0b9084927d82e249 Mon Sep 17 00:00:00 2001
+From: "stephan.szabo@sony.com"
+ <stephan.szabo@sony.com@268f45cc-cd09-0410-ab3c-d52691b4dbfc>
+Date: Tue, 3 Nov 2020 20:06:15 +0000
+Subject: [PATCH] [WinCairo/PlayStation] ICU 68.1 no longer exposes FALSE and
+ TRUE macros by default https://bugs.webkit.org/show_bug.cgi?id=218522
 
-See ICU-21267
+Reviewed by Don Olmstead.
 
-Signed-off-by: Henri Roosen <henri.roosen@ginzinger.com>
+Source/WebCore:
+
+* platform/text/TextCodecICU.cpp: Replace use of TRUE with true
+
+Source/WebKit:
+
+* UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp: Replace FALSE with false
+
+Source/WTF:
+
+Replace uses of FALSE and TRUE with false and true.
+
+* wtf/text/icu/UTextProvider.h:
+* wtf/text/icu/UTextProviderLatin1.cpp:
+* wtf/text/icu/UTextProviderUTF16.cpp:
+
+Change-Id: I876cf2b10b8c858c3d265113c062d159749a2f3e
+git-svn-id: http://svn.webkit.org/repository/webkit/trunk@269325 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[james.hilliard1@gmail.com: backport from upstream commit
+736e1d804d1efa2077c4f1fe0b9084927d82e249]
 ---
  Source/WebCore/platform/text/TextCodecICU.cpp      |  2 +-
  Source/WebCore/platform/text/icu/UTextProvider.h   |  8 ++++----
  .../platform/text/icu/UTextProviderLatin1.cpp      | 14 +++++++-------
  .../platform/text/icu/UTextProviderUTF16.cpp       |  4 ++--
- 4 files changed, 14 insertions(+), 14 deletions(-)
+ 7 files changed, 45 insertions(+), 14 deletions(-)
 
 diff --git a/Source/WebCore/platform/text/TextCodecICU.cpp b/Source/WebCore/platform/text/TextCodecICU.cpp
 index dd6ff0675bb1..e0f4bd718828 100644
