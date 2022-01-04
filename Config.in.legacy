@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2022.02"
 
+config BR2_PACKAGE_HOST_GDB_PYTHON
+	bool "GDB Python2 support removed"
+	select BR2_LEGACY
+	help
+	  Python2 is deprecated and no longer supported.
+	  Please migrate to Python3.
+
 config BR2_PACKAGE_GSTREAMER1_MM
 	bool "gstreamer1-mm package removed"
 	select BR2_LEGACY
