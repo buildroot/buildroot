@@ -1,4 +1,4 @@
-From 9feaba4792c1d0a28e560ae941fa9ebabbbe4013 Mon Sep 17 00:00:00 2001
+From bf9f0d619e2e0a424e471a2f9235d26ece5b348c Mon Sep 17 00:00:00 2001
 From: "Arnout Vandecappelle (Essensium/Mind)" <arnout@mind.be>
 Date: Fri, 7 Jan 2022 19:32:18 +0100
 Subject: [PATCH] pybind11/commands.py: support STAGING_DIR
@@ -13,18 +13,17 @@ the current directory, if it is set.
 Signed-off-by: Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>
 Upstream-Status: N/A, Buildroot specific
 ---
- pybind11/commands.py | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ pybind11/commands.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/pybind11/commands.py b/pybind11/commands.py
-index 34dbaf8..8c4876d 100644
+index 11f81d2..8c4876d 100644
 --- a/pybind11/commands.py
 +++ b/pybind11/commands.py
-@@ -1,8 +1,8 @@
+@@ -1,7 +1,8 @@
  # -*- coding: utf-8 -*-
  import os
  
--
 -DIR = os.path.abspath(os.path.dirname(__file__))
 +DIR = os.environ.get('STAGING_DIR') or \
 +    os.path.abspath(os.path.dirname(__file__))
