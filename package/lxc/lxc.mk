@@ -44,6 +44,13 @@ else
 LXC_CONF_OPTS += --disable-selinux
 endif
 
+ifeq ($(BR2_PACKAGE_LIBURING),y)
+LXC_CONF_OPTS += --enable-liburing
+LXC_DEPENDENCIES += liburing
+else
+LXC_CONF_OPTS += --disable-liburing
+endif
+
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 LXC_CONF_OPTS += --enable-openssl
 LXC_DEPENDENCIES += openssl
