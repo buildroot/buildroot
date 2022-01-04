@@ -1,0 +1,6 @@
+config BR2_PACKAGE_PYTHON_PYBIND_EXAMPLE
+	bool "python-pybind-example"
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON_PYBIND
+	help
+	  This test creates a cpp macro later used on target in python
