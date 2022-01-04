@@ -17,7 +17,8 @@ define PCM_TOOLS_BUILD_CMDS
 	touch $(@D)/daemon-binaries
 	$(TARGET_MAKE_ENV) $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) \
 		CXXFLAGS="$(TARGET_CXXFLAGS) -std=c++11 -fPIC" \
-		UNAME=Linux HOST=_LINUX
+		UNAME=Linux HOST=_LINUX \
+		$(foreach f,$(PCM_TOOLS_EXE_FILES),$(f).x)
 endef
 
 ifeq ($(BR2_PACKAGE_PCM_TOOLS_PMU_QUERY),y)
