@@ -1,0 +1,71 @@
+From ba41a28cd526bccde4ec3db0998e1b00d3afc0e2 Mon Sep 17 00:00:00 2001
+From: "Arnout Vandecappelle (Essensium/Mind)" <arnout@mind.be>
+Date: Tue, 26 Jul 2022 18:31:14 +0200
+Subject: [PATCH] configure.ac: try execinfo in libc before searching
+ libexecinfo
+
+execinfo is provided by glibc, so the usual case is that it is part of
+libc. Do this before starting a redundant search for libexecinfo.
+
+This is especially relevant for cross-compilation, where
+FR_SMART_CHECK_LIB can find an incompatible library.
+
+Signed-off-by: Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>
+Upstream: https://github.com/FreeRADIUS/freeradius-server/pull/4632
+---
+ configure.ac | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index f431da6db5..faa7cfc2b4 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -2165,26 +2165,26 @@ dnl #
+ smart_try_dir=$execinfo_include_dir
+ FR_SMART_CHECK_INCLUDE(execinfo.h)
+ if test "x$ac_cv_header_execinfo_h" = "xyes"; then
+-  smart_try_dir=$execinfo_lib_dir
+-  FR_SMART_CHECK_LIB(execinfo, backtrace_symbols)
++  dnl # Might be provided as part of libc
++  AC_MSG_CHECKING([if execinfo provided as part of libc])
++  AC_TRY_LINK(
++    [
++      #include <execinfo.h>
++    ],
++    [
++      void *sym[1];
++      backtrace_symbols(&sym, sizeof(sym)) ],
++    [
++      AC_MSG_RESULT(yes)
++      ac_cv_lib_execinfo_backtrace_symbols="yes"
++    ],
++    [
++      AC_MSG_RESULT(no)
++    ]
++  )
+   if test "x$ac_cv_lib_execinfo_backtrace_symbols" != "xyes"; then
+-    dnl # Might be provided as part of libc
+-    AC_MSG_CHECKING([if execinfo provided as part of libc])
+-    AC_TRY_LINK(
+-      [
+-        #include <execinfo.h>
+-      ],
+-      [
+-        void *sym[1];
+-        backtrace_symbols(&sym, sizeof(sym)) ],
+-      [
+-        AC_MSG_RESULT(yes)
+-        ac_cv_lib_execinfo_backtrace_symbols="yes"
+-      ],
+-      [
+-        AC_MSG_RESULT(no)
+-      ]
+-    )
++    smart_try_dir=$execinfo_lib_dir
++    FR_SMART_CHECK_LIB(execinfo, backtrace_symbols)
+   fi
+ 
+   if test "x$ac_cv_lib_execinfo_backtrace_symbols" = "xyes"; then
+-- 
+2.35.3
+
