@@ -150,7 +150,7 @@ config BR2_PACKAGE_PLUGIN_DISPLAYINFO
 	help
 	  DisplayInfo Plugin
 
-menuconfig BR2_PACKAGE_PLUGIN_LAUNCHER
+config BR2_PACKAGE_PLUGIN_LAUNCHER
 	bool "Launcher"
 	select BR2_PACKAGE_PLUGIN_COMMON
 	help
@@ -175,7 +175,7 @@ config BR2_PACKAGE_PLUGIN_MONITOR
 	help
 	  Monitor Plugin
 
-config BR2_PACKAGE_PLUGIN_NETWORKCONTROL
+menuconfig BR2_PACKAGE_PLUGIN_NETWORKCONTROL
 	bool "NetworkControl"
 	select BR2_PACKAGE_PLUGIN_COMMON
 	help
@@ -183,7 +183,7 @@ config BR2_PACKAGE_PLUGIN_NETWORKCONTROL
 
 if BR2_PACKAGE_PLUGIN_NETWORKCONTROL
 
-menuconfig BR2_PACKAGE_PLUGIN_NETWORKCONTROL_INTERFACES
+config BR2_PACKAGE_PLUGIN_NETWORKCONTROL_INTERFACES
     string "Network Interfaces Details"
     default "eth0:Dynamic:::;wlan0:Dynamic:::;"
     help

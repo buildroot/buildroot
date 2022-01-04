@@ -67,12 +67,28 @@ config BR2_PACKAGE_PLUGIN_VIRTUALCONTROL
 	help
 	   VirtualControl plugin
 
-config BR2_PACKAGE_PLUGIN_ZIGBEECONTROL
+menuconfig BR2_PACKAGE_PLUGIN_ZIGBEECONTROL
 	bool "ZigBeeControl"
 	select BR2_PACKAGE_BRIDGE_ZIGBEE
         select BR2_PACKAGE_PLUGIN_DOMOTICA
 	help
 	   ZIGBEE control plugin
+
+if BR2_PACKAGE_PLUGIN_ZIGBEECONTROL
+
+config BR2_PACKAGE_ZIGBEE_PORT
+        string "port"
+        default "/dev/ttyAMA0"
+
+config BR2_PACKAGE_ZIGBEE_WATCHDOG_TIME
+        string "watchdog"
+        default "62"
+        help
+          Watchdog time in minutes. The hosts software will trigger the ZigBee
+          device within this period (and configure the stick for this watchdog)
+
+endif
+
 
 config BR2_PACKAGE_PLUGIN_ZWAVECONTROL
 	bool "ZWaveControl"
