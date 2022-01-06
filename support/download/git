@@ -209,10 +209,12 @@ fi
 
 # If there are large files then fetch them.
 if [ ${large_file} -eq 1 ]; then
+    _git lfs install --local
     _git lfs fetch
     _git lfs checkout
     # If there are also submodules, recurse into them,
     if [ ${recurse} -eq 1 ]; then
+        _git submodule foreach --recursive ${GIT} lfs install --local
         _git submodule foreach --recursive ${GIT} lfs fetch
         _git submodule foreach --recursive ${GIT} lfs checkout
     fi
