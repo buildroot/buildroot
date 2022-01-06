@@ -47,7 +47,7 @@ class OpenSSHDaemon():
         server_keyfile = os.path.join(builddir, SSHD_KEY)
         auth_keys_file = os.path.join(builddir, SSH_AUTH_KEYS_FILE)
         daemon_cmd = [SSHD_PATH,
-                      "-D", # or use -ddd to debug
+                      "-D",  # or use -ddd to debug
                       "-e",
                       "-h", server_keyfile,
                       "-f", "/dev/null",
