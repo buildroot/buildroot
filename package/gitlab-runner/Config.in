@@ -1,0 +1,31 @@
+config BR2_PACKAGE_GITLAB_RUNNER
+	bool "gitlab-runner"
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_USE_MMU # git
+	depends on BR2_USE_WCHAR # tar
+	select BR2_PACKAGE_BASH # runtime, shells/bash.go probably want to support bashism.
+	select BR2_PACKAGE_BUSYBOX_SHOW_OTHERS # bash
+	select BR2_PACKAGE_CA_CERTIFICATES # runtime
+	select BR2_PACKAGE_GIT # runtime
+	select BR2_PACKAGE_LIBCURL # runtime
+	select BR2_PACKAGE_LIBCURL_CURL # runtime
+	select BR2_PACKAGE_LIBCURL_OPENSSL # runtime, for ca-certificates.
+	select BR2_PACKAGE_OPENSSL # runtime
+	select BR2_PACKAGE_LIBOPENSSL # runtime
+	select BR2_PACKAGE_LIBOPENSSL_BIN # runtime
+	select BR2_PACKAGE_TAR # runtime
+	help
+	  GitLab Runner is the open source project that is used to run
+	  your jobs and send the results back to GitLab. It is used in
+	  conjunction with GitLab CI/CD, the open-source continuous
+	  integration service included with GitLab that coordinates the
+	  jobs.
+
+	  https://docs.gitlab.com/runner/
+
+comment "gitlab-runner needs a toolchain w/ threads"
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS
+	depends on !BR2_TOOLCHAIN_HAS_THREADS
