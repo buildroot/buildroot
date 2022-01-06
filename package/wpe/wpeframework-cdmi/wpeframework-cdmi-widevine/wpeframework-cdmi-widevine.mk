@@ -3,7 +3,7 @@
 # wpeframework-cdmi-widevine
 #
 ################################################################################
-WPEFRAMEWORK_CDMI_WIDEVINE_VERSION = 90befe56289c3192739c84257a05e70fe53c94d8
+WPEFRAMEWORK_CDMI_WIDEVINE_VERSION = 65841b1036a77c49a1447a5300b68e80e5d5305d
 WPEFRAMEWORK_CDMI_WIDEVINE_SITE_METHOD = git
 WPEFRAMEWORK_CDMI_WIDEVINE_SITE = git@github.com:rdkcentral/OCDM-Widevine.git
 WPEFRAMEWORK_CDMI_WIDEVINE_INSTALL_STAGING = NO
