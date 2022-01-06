@@ -72,5 +72,27 @@ mk_tar_gz() {
     popd >/dev/null
 }
 
+post_process_unpack() {
+    local dest="${1}"
+    local tarball="${2}"
+    local one_file
+
+    mkdir "${dest}"
+    tar -C "${dest}" --strip-components=1 -xf "${tarball}"
+    one_file="$(find "${dest}" -type f -print0 |LC_ALL=C sort -z |head -z -n1 |tr -d "\0")"
+    touch -r "${one_file}" "${dest}.timestamp"
+}
+
+post_process_repack() {
+    local in_dir="${1}"
+    local base_dir="${2}"
+    local out="${3}"
+    local date
+
+    date="@$(stat -c '%Y' "${in_dir}/${base_dir}.timestamp")"
+
+    mk_tar_gz "${in_dir}/${base_dir}" "${base_dir}" "${date}" "${out}"
+}
+
 # Keep this line and the following as last lines in this file.
 # vim: ft=bash
