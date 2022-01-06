@@ -25,7 +25,7 @@ main() {
     local -a uris
 
     # Parse our options; anything after '--' is for the backend
-    while getopts ":c:d:D:o:n:N:H:lrf:u:q" OPT; do
+    while getopts ":c:d:D:o:n:N:H:lrf:u:qp:" OPT; do
         case "${OPT}" in
         c)  cset="${OPTARG}";;
         d)  dl_dir="${OPTARG}";;
@@ -38,6 +38,7 @@ main() {
         r)  recurse="-r";;
         f)  filename="${OPTARG}";;
         u)  uris+=( "${OPTARG}" );;
+        p)  post_process="${OPTARG}";;
         q)  quiet="-q";;
         :)  error "option '%s' expects a mandatory argument\n" "${OPTARG}";;
         \?) error "unknown option '%s'\n" "${OPTARG}";;
@@ -134,6 +135,12 @@ main() {
             cd "${OLDPWD}"
             rm -rf "${tmpd}"
             continue
+        fi
+
+        if [ -n "${post_process}" ] ; then
+            "${OLDPWD}/support/download/${post_process}-post-process" \
+                -o "${tmpf}" \
+                -n "${raw_base_name}"
         fi
 
         # cd back to free the temp-dir, so we can remove it later
