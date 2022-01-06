@@ -3,7 +3,7 @@
 # wpeframework-interfaces
 #
 ################################################################################
-WPEFRAMEWORK_INTERFACES_VERSION = 0cf9ec2fb8aa289037e213b10e7dd0a6950486cd
+WPEFRAMEWORK_INTERFACES_VERSION = 1a3ad731e92abb983777547287b4169b9be0b8b4
 WPEFRAMEWORK_INTERFACES_SITE = $(call github,rdkcentral,ThunderInterfaces,$(WPEFRAMEWORK_INTERFACES_VERSION))
 WPEFRAMEWORK_INTERFACES_INSTALL_STAGING = YES
 WPEFRAMEWORK_INTERFACES_DEPENDENCIES = wpeframework
