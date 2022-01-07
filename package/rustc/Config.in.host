@@ -102,8 +102,9 @@ config BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
 
 config BR2_PACKAGE_HOST_RUSTC_ARCH
 	string
+	default "armv5te" if BR2_ARM_CPU_ARMV5
 	default "armv7"  if BR2_ARM_CPU_ARMV7A
-	default BR2_ARCH if !BR2_ARM_CPU_ARMV7A
+	default BR2_ARCH
 
 config BR2_PACKAGE_HOST_RUSTC_ABI
 	string
