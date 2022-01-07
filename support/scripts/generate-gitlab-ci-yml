@@ -66,8 +66,8 @@ gen_tests() {
           (*-defconfigs)
             do_defconfigs=base
             ;;
-	  (*-defconfigs-*)
-            pattern=$(echo ${CI_COMMIT_REF_NAME} | sed 's%[^\-]*-defconfigs-\(.*\)%\1%')
+          (*-defconfigs-*)
+            pattern=$(echo ${CI_COMMIT_REF_NAME} | sed 's%^.*-defconfigs-\(.*\)%\1%')
             defconfigs=( $(cd configs; LC_ALL=C ls -1 | grep ^${pattern}) )
             do_defconfigs=base
             ;;
