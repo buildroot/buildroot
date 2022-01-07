@@ -1,4 +1,4 @@
-menuconfig BR2_PACKAGE_GST1_PLUGINS_BAYER2RGB_NEON
+config BR2_PACKAGE_GST1_PLUGINS_BAYER2RGB_NEON
 	bool "gst1-plugins-bayer2rgb-neon"
 	depends on (BR2_arm && BR2_ARM_CPU_HAS_NEON) || BR2_aarch64 # bayer2rgb-neon
 	depends on !BR2_STATIC_LIBS # bayer2rgb-neon
