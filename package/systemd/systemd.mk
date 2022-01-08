@@ -563,17 +563,9 @@ define SYSTEMD_INSTALL_MACHINEID_HOOK
 	touch $(TARGET_DIR)/etc/machine-id
 endef
 
-# systemd doesn't install legacy.conf without sysv-compat
-# This config ensures /var/lock is created
-define SYSTEMD_INSTALL_LEGACY_CONF_HOOK
-	$(INSTALL) -D -m 0644 $(@D)/tmpfiles.d/legacy.conf \
-		$(TARGET_DIR)/usr/lib/tmpfiles.d
-endef
-
 SYSTEMD_POST_INSTALL_TARGET_HOOKS += \
 	SYSTEMD_INSTALL_INIT_HOOK \
-	SYSTEMD_INSTALL_MACHINEID_HOOK \
-	SYSTEMD_INSTALL_LEGACY_CONF_HOOK
+	SYSTEMD_INSTALL_MACHINEID_HOOK
 
 define SYSTEMD_INSTALL_IMAGES_CMDS
 	$(SYSTEMD_INSTALL_BOOT_FILES)
