@@ -86,7 +86,7 @@ endif
 
 define MONGODB_BUILD_CMDS
 	(cd $(@D); \
-		$(HOST_DIR)/bin/python3 $(SCONS) \
+		$(SCONS) \
 		$(MONGODB_SCONS_ENV) \
 		$(MONGODB_SCONS_OPTS) \
 		$(MONGODB_SCONS_TARGETS))
@@ -94,7 +94,7 @@ endef
 
 define MONGODB_INSTALL_TARGET_CMDS
 	(cd $(@D); \
-		$(HOST_DIR)/bin/python3 $(SCONS) \
+		$(SCONS) \
 		$(MONGODB_SCONS_ENV) \
 		$(MONGODB_SCONS_OPTS) \
 		--prefix=$(TARGET_DIR)/usr \
