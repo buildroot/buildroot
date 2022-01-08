@@ -12,7 +12,7 @@ GPSD_CPE_ID_VENDOR = gpsd_project
 GPSD_SELINUX_MODULES = gpsd
 GPSD_INSTALL_STAGING = YES
 
-GPSD_DEPENDENCIES = host-python3 host-scons host-pkgconf
+GPSD_DEPENDENCIES = host-scons host-pkgconf
 
 GPSD_LDFLAGS = $(TARGET_LDFLAGS)
 GPSD_CFLAGS = $(TARGET_CFLAGS)
