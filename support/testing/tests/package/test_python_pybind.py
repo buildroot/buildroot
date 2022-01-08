@@ -1,7 +1,6 @@
-import os
 import infra
-import subprocess
 from tests.package.test_python import TestPythonPackageBase
+
 
 class TestPythonPybind (TestPythonPackageBase):
     __test__ = True
