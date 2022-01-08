@@ -213,8 +213,8 @@ define per-package-rsync
 	mkdir -p $(3)
 	$(foreach pkg,$(1),\
 		rsync -a --link-dest=$(PER_PACKAGE_DIR)/$(pkg)/$(2)/ \
-		$(PER_PACKAGE_DIR)/$(pkg)/$(2)/ \
-		$(3)$(sep))
+			$(PER_PACKAGE_DIR)/$(pkg)/$(2)/ \
+			$(3)
 endef
 
 # prepares the per-package HOST_DIR and TARGET_DIR of the current
