@@ -8,7 +8,7 @@ BTRFS_PROGS_VERSION = 5.15.1
 BTRFS_PROGS_SITE = $(BR2_KERNEL_MIRROR)/linux/kernel/people/kdave/btrfs-progs
 BTRFS_PROGS_SOURCE = btrfs-progs-v$(BTRFS_PROGS_VERSION).tar.xz
 BTRFS_PROGS_DEPENDENCIES = host-pkgconf lzo util-linux zlib
-BTRFS_PROGS_CONF_OPTS = --disable-backtrace --disable-zstd --disable-python
+BTRFS_PROGS_CONF_OPTS = --disable-backtrace --disable-python
 BTRFS_PROGS_LICENSE = GPL-2.0, LGPL-2.1+ (libbtrfsutil)
 BTRFS_PROGS_LICENSE_FILES = COPYING libbtrfsutil/COPYING
 BTRFS_PROGS_INSTALL_STAGING = YES
@@ -28,6 +28,13 @@ BTRFS_PROGS_CONF_OPTS += --enable-convert --with-convert=ext2
 BTRFS_PROGS_DEPENDENCIES += e2fsprogs
 else
 BTRFS_PROGS_CONF_OPTS += --disable-convert
+endif
+
+ifeq ($(BR2_PACKAGE_ZSTD),y)
+BTRFS_PROGS_CONF_OPTS += --enable-zstd
+BTRFS_PROGS_DEPENDENCIES += zstd
+else
+BTRFS_PROGS_CONF_OPTS += --disable-zstd
 endif
 
 ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
