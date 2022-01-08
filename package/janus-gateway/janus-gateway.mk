@@ -4,17 +4,14 @@
 #
 ################################################################################
 
-JANUS_GATEWAY_VERSION = 0.10.10
+JANUS_GATEWAY_VERSION = 0.11.6
 JANUS_GATEWAY_SITE = $(call github,meetecho,janus-gateway,v$(JANUS_GATEWAY_VERSION))
 JANUS_GATEWAY_LICENSE = GPL-3.0 with OpenSSL exception
 JANUS_GATEWAY_LICENSE_FILES = COPYING
 JANUS_GATEWAY_CPE_ID_VENDOR = meetecho
 JANUS_GATEWAY_CPE_ID_PRODUCT = janus
 
-# 0003-Fix-potential-Cross-site-Scripting-XSS-exploits-in-demos.patch
-JANUS_GATEWAY_IGNORE_CVES += CVE-2021-4020
-
-# 0004-Fixed-missing-XSS-mitigation.patch
+# 0003-Fixed-missing-XSS-mitigation.patch
 JANUS_GATEWAY_IGNORE_CVES += CVE-2021-4124
 
 # ding-libs provides the ini_config library
