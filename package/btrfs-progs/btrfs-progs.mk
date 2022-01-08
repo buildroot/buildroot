@@ -4,14 +4,13 @@
 #
 ################################################################################
 
-BTRFS_PROGS_VERSION = 5.11
+BTRFS_PROGS_VERSION = 5.15.1
 BTRFS_PROGS_SITE = $(BR2_KERNEL_MIRROR)/linux/kernel/people/kdave/btrfs-progs
 BTRFS_PROGS_SOURCE = btrfs-progs-v$(BTRFS_PROGS_VERSION).tar.xz
 BTRFS_PROGS_DEPENDENCIES = host-pkgconf lzo util-linux zlib
 BTRFS_PROGS_CONF_OPTS = --disable-backtrace --disable-zstd --disable-python
-BTRFS_PROGS_LICENSE = GPL-2.0, LGPL-3.0+ (libbtrfsutil)
-BTRFS_PROGS_LICENSE_FILES = COPYING libbtrfsutil/COPYING \
-	libbtrfsutil/COPYING.LESSER
+BTRFS_PROGS_LICENSE = GPL-2.0, LGPL-2.1+ (libbtrfsutil)
+BTRFS_PROGS_LICENSE_FILES = COPYING libbtrfsutil/COPYING
 BTRFS_PROGS_INSTALL_STAGING = YES
 
 # Doesn't autodetect static-only and tries to build both
@@ -31,9 +30,17 @@ else
 BTRFS_PROGS_CONF_OPTS += --disable-convert
 endif
 
+ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
+BTRFS_PROGS_CONF_OPTS += --enable-libudev
+BTRFS_PROGS_DEPENDENCIES += udev
+else
+BTRFS_PROGS_CONF_OPTS += --disable-libudev
+endif
+
 HOST_BTRFS_PROGS_DEPENDENCIES = host-util-linux host-lzo host-zlib
 HOST_BTRFS_PROGS_CONF_OPTS = \
 	--disable-backtrace \
+	--disable-libudev \
 	--disable-zstd \
 	--disable-python \
 	--disable-convert
