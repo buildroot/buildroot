@@ -41,6 +41,7 @@ HOST_BTRFS_PROGS_DEPENDENCIES = host-util-linux host-lzo host-zlib
 HOST_BTRFS_PROGS_CONF_OPTS = \
 	--disable-backtrace \
 	--disable-libudev \
+	--disable-zoned \
 	--disable-zstd \
 	--disable-python \
 	--disable-convert
