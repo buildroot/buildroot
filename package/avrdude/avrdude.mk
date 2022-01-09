@@ -4,13 +4,12 @@
 #
 ################################################################################
 
-AVRDUDE_VERSION = r1450
-AVRDUDE_SITE_METHOD = svn
-AVRDUDE_SITE = http://svn.savannah.nongnu.org/svn/avrdude/trunk
+AVRDUDE_VERSION = v6.4
+AVRDUDE_SITE = $(call github,avrdudes,avrdude,$(AVRDUDE_VERSION))
 AVRDUDE_LICENSE = GPL-2.0+
-AVRDUDE_LICENSE_FILES = avrdude/COPYING
-AVRDUDE_SUBDIR = avrdude
-# Sources coming from svn, without generated configure and Makefile.in
+AVRDUDE_LICENSE_FILES = COPYING
+
+# Sources coming from git, without generated configure and Makefile.in
 # files.
 AVRDUDE_AUTORECONF = YES
 AVRDUDE_CONF_OPTS = --enable-linuxgpio
