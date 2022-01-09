@@ -170,8 +170,8 @@ endif
 # - for target packages, we always depend on the default python interpreter
 #   (the one selected by the config);
 # - for host packages:
-#   - if *_NEEDS_HOST_PYTHON is not set, then we depend on use the default
-#     interperter;
+#   - if *_NEEDS_HOST_PYTHON is not set, then we use the default
+#     interpreter;
 #   - otherwise, we depend on the one requested by *_NEEDS_HOST_PYTHON.
 #
 ifeq ($(4),target)
@@ -230,8 +230,8 @@ endif # SETUP_TYPE
 # - for target packages, we always use the default python interpreter (which
 #   is the same version as the one built and installed on the target);
 # - for host packages:
-#   - if *_NEEDS_HOST_PYTHON is not set, then we use use the default
-#     interperter;
+#   - if *_NEEDS_HOST_PYTHON is not set, then we use the default
+#     interpreter;
 #   - otherwise, we use the one requested by *_NEEDS_HOST_PYTHON.
 #
 ifeq ($(4),target)
