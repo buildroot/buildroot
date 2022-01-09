@@ -101,6 +101,7 @@ class Package:
         self.cpeid = None
         self.cves = list()
         self.ignored_cves = list()
+        self.unsure_cves = list()
         self.latest_version = {'status': RM_API_STATUS_ERROR, 'version': None, 'id': None}
         self.status = {}
 
@@ -580,8 +581,11 @@ def check_package_cve_affects(cve, cpe_product_pkgs):
         if product not in cpe_product_pkgs:
             continue
         for pkg in cpe_product_pkgs[product]:
-            if cve.affects(pkg.name, pkg.current_version, pkg.ignored_cves, pkg.cpeid) == cve.CVE_AFFECTS:
+            cve_status = cve.affects(pkg.name, pkg.current_version, pkg.ignored_cves, pkg.cpeid)
+            if cve_status == cve.CVE_AFFECTS:
                 pkg.cves.append(cve.identifier)
+            elif cve_status == cve.CVE_UNKNOWN:
+                pkg.unsure_cves.append(cve.identifier)
 
 
 def check_package_cves(nvd_path, packages):
@@ -607,7 +611,7 @@ def check_package_cves(nvd_path, packages):
 
     for pkg in packages:
         if 'cve' not in pkg.status:
-            if pkg.cves:
+            if pkg.cves or pkg.unsure_cves:
                 pkg.status['cve'] = ("error", "affected by CVEs")
             else:
                 pkg.status['cve'] = ("ok", "not affected by CVEs")
@@ -662,8 +666,11 @@ def calculate_stats(packages):
             stats["version-not-uptodate"] += 1
         stats["patches"] += pkg.patch_count
         stats["total-cves"] += len(pkg.cves)
+        stats["total-unsure-cves"] += len(pkg.unsure_cves)
         if len(pkg.cves) != 0:
             stats["pkg-cves"] += 1
+        if len(pkg.unsure_cves) != 0:
+            stats["pkg-unsure-cves"] += 1
         if pkg.cpeid:
             stats["cpe-id"] += 1
         else:
@@ -921,6 +928,8 @@ def dump_html_pkg(f, pkg):
     if pkg.is_status_error("cve"):
         for cve in pkg.cves:
             f.write("   <a href=\"https://security-tracker.debian.org/tracker/%s\">%s<br/>\n" % (cve, cve))
+        for cve in pkg.unsure_cves:
+            f.write("   <a href=\"https://security-tracker.debian.org/tracker/%s\">%s <i>(unsure)</i><br/>\n" % (cve, cve))
     elif pkg.is_status_na("cve"):
         f.write("    %s" % pkg.status['cve'][1])
     else:
@@ -1024,6 +1033,10 @@ def dump_html_stats(f, stats):
             stats["pkg-cves"])
     f.write("<tr><td>Total number of CVEs affecting all packages</td><td>%s</td></tr>\n" %
             stats["total-cves"])
+    f.write("<tr><td>Packages affected by unsure CVEs</td><td>%s</td></tr>\n" %
+            stats["pkg-unsure-cves"])
+    f.write("<tr><td>Total number of unsure CVEs affecting all packages</td><td>%s</td></tr>\n" %
+            stats["total-unsure-cves"])
     f.write("<tr><td>Packages with CPE ID</td><td>%s</td></tr>\n" %
             stats["cpe-id"])
     f.write("<tr><td>Packages without CPE ID</td><td>%s</td></tr>\n" %
