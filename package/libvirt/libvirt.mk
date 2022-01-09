@@ -220,10 +220,10 @@ LIBVIRT_CONF_OPTS += -Dsasl=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBSSH2),y)
-LIBVIRT_CONF_OPTS += -Dssh2=enabled
+LIBVIRT_CONF_OPTS += -Dlibssh2=enabled
 LIBVIRT_DEPENDENCIES += libssh2
 else
-LIBVIRT_CONF_OPTS += -Dssh2=disabled
+LIBVIRT_CONF_OPTS += -Dlibssh2=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBVIRT_LXC),y)
