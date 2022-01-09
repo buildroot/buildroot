@@ -20,14 +20,20 @@
 #
 ################################################################################
 
+PKG_COMMON_CARGO_ENV = \
+	CARGO_HOME=$(HOST_DIR)/share/cargo
+
 # __CARGO_TEST_CHANNEL_OVERRIDE_DO_NOT_USE_THIS is needed to allow
 # passing the -Z target-applies-to-host, which is needed together with
 # CARGO_TARGET_APPLIES_TO_HOST to fix build problems when target
 # architecture == host architecture.
 PKG_CARGO_ENV = \
-	CARGO_HOME=$(HOST_DIR)/share/cargo \
+	$(PKG_COMMON_CARGO_ENV) \
 	__CARGO_TEST_CHANNEL_OVERRIDE_DO_NOT_USE_THIS="nightly" \
 	CARGO_TARGET_APPLIES_TO_HOST="false"
+
+HOST_PKG_CARGO_ENV = \
+	$(PKG_COMMON_CARGO_ENV)
 
 ################################################################################
 # inner-cargo-package -- defines how the configuration, compilation and
@@ -97,7 +103,7 @@ define $(2)_BUILD_CMDS
 	$$(HOST_MAKE_ENV) \
 		RUSTFLAGS="$$(addprefix -C link-args=,$$(HOST_LDFLAGS))" \
 		$$(HOST_CONFIGURE_OPTS) \
-		$$(PKG_CARGO_ENV) \
+		$$(HOST_PKG_CARGO_ENV) \
 		$$($(2)_CARGO_ENV) \
 		cargo build \
 			--offline \
@@ -139,7 +145,7 @@ define $(2)_INSTALL_CMDS
 	$$(HOST_MAKE_ENV) \
 		RUSTFLAGS="$$(addprefix -C link-args=,$$(HOST_LDFLAGS))" \
 		$$(HOST_CONFIGURE_OPTS) \
-		$$(PKG_CARGO_ENV) \
+		$$(HOST_PKG_CARGO_ENV) \
 		$$($(2)_CARGO_ENV) \
 		cargo install \
 			--offline \
