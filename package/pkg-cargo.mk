@@ -42,7 +42,8 @@ PKG_CARGO_ENV = \
 	$(PKG_COMMON_CARGO_ENV) \
 	__CARGO_TEST_CHANNEL_OVERRIDE_DO_NOT_USE_THIS="nightly" \
 	CARGO_UNSTABLE_TARGET_APPLIES_TO_HOST="true" \
-	CARGO_TARGET_APPLIES_TO_HOST="false"
+	CARGO_TARGET_APPLIES_TO_HOST="false" \
+	CARGO_BUILD_TARGET="$(RUSTC_TARGET_NAME)"
 
 HOST_PKG_CARGO_ENV = \
 	$(PKG_COMMON_CARGO_ENV)
@@ -102,7 +103,6 @@ define $(2)_BUILD_CMDS
 		$$($(2)_CARGO_ENV) \
 		cargo build \
 			--offline \
-			--target $$(RUSTC_TARGET_NAME) \
 			$$(if $$(BR2_ENABLE_DEBUG),--debug,--release) \
 			--manifest-path Cargo.toml \
 			--locked \
@@ -138,7 +138,6 @@ define $(2)_INSTALL_TARGET_CMDS
 		$$(PKG_CARGO_ENV) \
 		$$($(2)_CARGO_ENV) \
 		cargo install \
-			--target $$(RUSTC_TARGET_NAME) \
 			--offline \
 			--root $$(TARGET_DIR)/usr/ \
 			--bins \
