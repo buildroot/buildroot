@@ -27,9 +27,21 @@ PKG_COMMON_CARGO_ENV = \
 # passing the -Z target-applies-to-host, which is needed together with
 # CARGO_TARGET_APPLIES_TO_HOST to fix build problems when target
 # architecture == host architecture.
+
+# __CARGO_TEST_CHANNEL_OVERRIDE_DO_NOT_USE_THIS="nightly" is to allow
+# using nighly features on stable releases, i.e features that are not
+# yet considered stable.
+#
+# CARGO_UNSTABLE_TARGET_APPLIES_TO_HOST="true" "enables the nightly
+# configuration option target-applies-to-host value to be set
+#
+# CARGO_TARGET_APPLIES_TO_HOST="false" is actually setting the value
+# for this feature, which we disable, to make sure builds where target
+# arch == host arch work correctly
 PKG_CARGO_ENV = \
 	$(PKG_COMMON_CARGO_ENV) \
 	__CARGO_TEST_CHANNEL_OVERRIDE_DO_NOT_USE_THIS="nightly" \
+	CARGO_UNSTABLE_TARGET_APPLIES_TO_HOST="true" \
 	CARGO_TARGET_APPLIES_TO_HOST="false"
 
 HOST_PKG_CARGO_ENV = \
@@ -94,7 +106,6 @@ define $(2)_BUILD_CMDS
 			$$(if $$(BR2_ENABLE_DEBUG),--debug,--release) \
 			--manifest-path Cargo.toml \
 			--locked \
-			-Z target-applies-to-host \
 			$$($(2)_CARGO_BUILD_OPTS)
 endef
 else # ifeq ($(4),target)
