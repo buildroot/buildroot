@@ -44,6 +44,12 @@ else
 BTRFS_PROGS_CONF_OPTS += --disable-libudev
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10),y)
+BTRFS_PROGS_CONF_OPTS += --enable-zoned
+else
+BTRFS_PROGS_CONF_OPTS += --disable-zoned
+endif
+
 HOST_BTRFS_PROGS_DEPENDENCIES = host-util-linux host-lzo host-zlib
 HOST_BTRFS_PROGS_CONF_OPTS = \
 	--disable-backtrace \
