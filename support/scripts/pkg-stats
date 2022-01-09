@@ -1130,15 +1130,15 @@ def __main__():
         pkg.set_url()
         pkg.set_ignored_cves()
         pkg.set_developers(developers)
-    if not "url" in args.disable:
+    if "url" not in args.disable:
         print("Checking URL status")
         loop = asyncio.get_event_loop()
         loop.run_until_complete(check_package_urls(packages))
-    if not "upstream" in args.disable:
+    if "upstream" not in args.disable:
         print("Getting latest versions ...")
         loop = asyncio.get_event_loop()
         loop.run_until_complete(check_package_latest_version(packages))
-    if not "cve" in args.disable and args.nvd_path:
+    if "cve" not in args.disable and args.nvd_path:
         print("Checking packages CVEs")
         check_package_cves(args.nvd_path, packages)
         check_package_cpes(args.nvd_path, packages)
