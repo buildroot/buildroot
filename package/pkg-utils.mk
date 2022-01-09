@@ -214,7 +214,7 @@ define per-package-rsync
 	$(foreach pkg,$(1),\
 		rsync -a --link-dest=$(PER_PACKAGE_DIR)/$(pkg)/$(2)/ \
 			$(PER_PACKAGE_DIR)/$(pkg)/$(2)/ \
-			$(3)
+			$(3)$(sep))
 endef
 
 # prepares the per-package HOST_DIR and TARGET_DIR of the current
