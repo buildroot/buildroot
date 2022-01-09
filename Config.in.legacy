@@ -153,15 +153,6 @@ config BR2_PACKAGE_PYTHON_BACKPORTS_FUNCTOOLS_LRU_CACHE
 	  This package has been removed as python-setuptools-scm
 	  dropped support of python 2 since version 6.0.0.
 
-config BR2_PACKAGE_SYSTEMD_TMPFILES
-	bool "systemd tmpfiles support always enabled"
-	select BR2_LEGACY
-	help
-	  The systemd tmpfiles support is always enabled, so the symbol
-	  to make it optional has been removed. You need to update any
-	  external packages that use this symbol to use
-	  BR2_PACKAGE_SYSTEMD instead.
-
 config BR2_PACKAGE_CIVETWEB_WITH_LUA
 	bool "civetweb lua support option removed"
 	select BR2_LEGACY
