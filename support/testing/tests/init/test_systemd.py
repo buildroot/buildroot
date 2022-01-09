@@ -9,6 +9,7 @@ class InitSystemSystemdBase(InitSystemBase):
         BR2_cortex_a9=y
         BR2_ARM_ENABLE_VFP=y
         BR2_TOOLCHAIN_EXTERNAL=y
+        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
         BR2_INIT_SYSTEMD=y
         BR2_TARGET_GENERIC_GETTY_PORT="ttyAMA0"
         # BR2_TARGET_ROOTFS_TAR is not set
@@ -76,6 +77,29 @@ class TestInitSystemSystemdRoIfupdown(InitSystemSystemdBase):
         self.check_systemd("squashfs")
 
 
+class TestInitSystemSystemdRoIfupdownDbusbroker(TestInitSystemSystemdRoIfupdown):
+    config = TestInitSystemSystemdRoIfupdown.config + \
+        """
+        BR2_PACKAGE_DBUS_BROKER=y
+        """
+
+    def test_run(self):
+        # Parent class' test_run() method does exactly that, no more:
+        self.check_systemd("squashfs")
+
+        # Check that the dbus-broker daemon is running as non-root
+        cmd = "find /proc/$(pidof dbus-broker) -maxdepth 1 -name exe -user dbus"
+        out, _ = self.emulator.run(cmd)
+        self.assertEqual(len(out), 1)
+
+
+class TestInitSystemSystemdRoIfupdownDbusbrokerDbus(TestInitSystemSystemdRoIfupdownDbusbroker):
+    config = TestInitSystemSystemdRoIfupdownDbusbroker.config + \
+        """
+        BR2_PACKAGE_DBUS=y
+        """
+
+
 class TestInitSystemSystemdRwIfupdown(InitSystemSystemdBase):
     config = InitSystemSystemdBase.config + \
         """
@@ -86,6 +110,29 @@ class TestInitSystemSystemdRwIfupdown(InitSystemSystemdBase):
 
     def test_run(self):
         self.check_systemd("ext2")
+
+
+class TestInitSystemSystemdRwIfupdownDbusbroker(TestInitSystemSystemdRwIfupdown):
+    config = TestInitSystemSystemdRwIfupdown.config + \
+        """
+        BR2_PACKAGE_DBUS_BROKER=y
+        """
+
+    def test_run(self):
+        # Parent class' test_run() method does exactly that, no more:
+        self.check_systemd("ext2")
+
+        # Check that the dbus-broker daemon is running as non-root
+        cmd = "find /proc/$(pidof dbus-broker) -maxdepth 1 -name exe -user dbus"
+        out, _ = self.emulator.run(cmd)
+        self.assertEqual(len(out), 1)
+
+
+class TestInitSystemSystemdRwIfupdownDbusbrokerDbus(TestInitSystemSystemdRwIfupdownDbusbroker):
+    config = TestInitSystemSystemdRwIfupdownDbusbroker.config + \
+        """
+        BR2_PACKAGE_DBUS=y
+        """
 
 
 class TestInitSystemSystemdRoFull(InitSystemSystemdBase):
