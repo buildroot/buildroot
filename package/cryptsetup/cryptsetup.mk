@@ -42,10 +42,8 @@ else
 CRYPTSETUP_CONF_OPTS += --disable-ssh-token
 endif
 
-ifeq ($(BR2_PACKAGE_SYSTEMD_TMPFILES),y)
+ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 CRYPTSETUP_CONF_OPTS += --with-tmpfilesdir=/usr/lib/tmpfiles.d
-else
-CRYPTSETUP_CONF_OPTS += --without-tmpfilesdir
 endif
 
 HOST_CRYPTSETUP_DEPENDENCIES = \
