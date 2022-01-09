@@ -21,8 +21,9 @@ class InitSystemSystemdBase(InitSystemBase):
         # BR2_TARGET_ROOTFS_TAR is not set
         """.format(infra.filepath("conf/binfmt-misc-kernel-fragment.config"))
 
-    def check_init(self):
-        super(InitSystemSystemdBase, self).check_init("/lib/systemd/systemd")
+    def check_systemd(self, fs):
+        self.start_emulator(fs, "zImage", "vexpress-v2p-ca9")
+        self.check_init("/lib/systemd/systemd")
 
         # Test all units are OK
         output, _ = self.emulator.run("systemctl --no-pager --failed --no-legend")
@@ -35,6 +36,9 @@ class InitSystemSystemdBase(InitSystemBase):
         output, _ = self.emulator.run("journalctl --no-pager --lines 1 --quiet")
         self.assertEqual(len(output), 1)
 
+        # Check the network is up
+        self.check_network("eth0")
+
 
 class TestInitSystemSystemdRoNetworkd(InitSystemSystemdBase):
     config = InitSystemSystemdBase.config + \
@@ -46,9 +50,7 @@ class TestInitSystemSystemdRoNetworkd(InitSystemSystemdBase):
         """.format(infra.filepath("tests/init/systemd-factory"))
 
     def test_run(self):
-        self.start_emulator("squashfs", "zImage", "vexpress-v2p-ca9")
-        self.check_init()
-        self.check_network("eth0")
+        self.check_systemd("squashfs")
 
         # This one must be executed on the target, to check that
         # the factory feature works as expected
@@ -65,9 +67,7 @@ class TestInitSystemSystemdRwNetworkd(InitSystemSystemdBase):
         """
 
     def test_run(self):
-        self.start_emulator("ext2", "zImage", "vexpress-v2p-ca9")
-        self.check_init()
-        self.check_network("eth0")
+        self.check_systemd("ext2")
 
 
 class TestInitSystemSystemdRoIfupdown(InitSystemSystemdBase):
@@ -80,9 +80,7 @@ class TestInitSystemSystemdRoIfupdown(InitSystemSystemdBase):
         """
 
     def test_run(self):
-        self.start_emulator("squashfs", "zImage", "vexpress-v2p-ca9")
-        self.check_init()
-        self.check_network("eth0")
+        self.check_systemd("squashfs")
 
 
 class TestInitSystemSystemdRwIfupdown(InitSystemSystemdBase):
@@ -94,9 +92,7 @@ class TestInitSystemSystemdRwIfupdown(InitSystemSystemdBase):
         """
 
     def test_run(self):
-        self.start_emulator("ext2", "zImage", "vexpress-v2p-ca9")
-        self.check_init()
-        self.check_network("eth0")
+        self.check_systemd("ext2")
 
 
 class TestInitSystemSystemdRoFull(InitSystemSystemdBase):
@@ -125,9 +121,7 @@ class TestInitSystemSystemdRoFull(InitSystemSystemdBase):
         """
 
     def test_run(self):
-        self.start_emulator("squashfs", "zImage", "vexpress-v2p-ca9")
-        self.check_init()
-        self.check_network("eth0")
+        self.check_systemd("squashfs")
 
 
 class TestInitSystemSystemdRwFull(InitSystemSystemdBase):
@@ -155,6 +149,4 @@ class TestInitSystemSystemdRwFull(InitSystemSystemdBase):
         """
 
     def test_run(self):
-        self.start_emulator("ext2", "zImage", "vexpress-v2p-ca9")
-        self.check_init()
-        self.check_network("eth0")
+        self.check_systemd("ext2")
