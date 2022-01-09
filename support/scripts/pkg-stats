@@ -1061,6 +1061,10 @@ def resolvepath(path):
     return os.path.abspath(os.path.expanduser(path))
 
 
+def list_str(values):
+    return values.split(',')
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
     output = parser.add_argument_group('output', 'Output file(s)')
@@ -1077,6 +1081,9 @@ def parse_args():
                           help='List of packages (comma separated)')
     parser.add_argument('--nvd-path', dest='nvd_path',
                         help='Path to the local NVD database', type=resolvepath)
+    parser.add_argument('--disable', type=list_str,
+                        help='Features to disable, comma-separated (cve, upstream, url)',
+                        default=[])
     args = parser.parse_args()
     if not args.html and not args.json:
         parser.error('at least one of --html or --json (or both) is required')
@@ -1123,13 +1130,15 @@ def __main__():
         pkg.set_url()
         pkg.set_ignored_cves()
         pkg.set_developers(developers)
-    print("Checking URL status")
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(check_package_urls(packages))
-    print("Getting latest versions ...")
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(check_package_latest_version(packages))
-    if args.nvd_path:
+    if not "url" in args.disable:
+        print("Checking URL status")
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(check_package_urls(packages))
+    if not "upstream" in args.disable:
+        print("Getting latest versions ...")
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(check_package_latest_version(packages))
+    if not "cve" in args.disable and args.nvd_path:
         print("Checking packages CVEs")
         check_package_cves(args.nvd_path, packages)
         check_package_cpes(args.nvd_path, packages)
