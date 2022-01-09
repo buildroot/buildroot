@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_JSONMODELS
 	bool "python-jsonmodels"
+	depends on BR2_PACKAGE_PYTHON3 # python-dateutil -> host-python-setuptools-scm
 	select BR2_PACKAGE_PYTHON_DATEUTIL # runtime
 	select BR2_PACKAGE_PYTHON_SIX # runtime
 	help

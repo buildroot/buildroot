@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_DATEUTIL
 	bool "python-dateutil"
+	depends on BR2_PACKAGE_PYTHON3 # host-python-setuptools-scm
 	select BR2_PACKAGE_PYTHON_SIX
 	help
 	  Extensions to the standard Python datetime module.

@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2022.02"
 
+config BR2_PACKAGE_PYTHON_BACKPORTS_FUNCTOOLS_LRU_CACHE
+	bool "python-backports-functools-lru-cache package removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as python-setuptools-scm
+	  dropped support of python 2 since version 6.0.0.
+
 config BR2_PACKAGE_SYSTEMD_TMPFILES
 	bool "systemd tmpfiles support always enabled"
 	select BR2_LEGACY
