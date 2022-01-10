@@ -1,0 +1,49 @@
+From a2511aaa85c8d95d12805dfdcbb5667fa3e30ba5 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 8 Jan 2022 22:44:44 +0100
+Subject: [PATCH] btrfs-progs: include sys/sysinfo.h conditionally on musl
+
+Make inclusion of sys/sysinfo.h conditional to avoid the following build
+failure on musl:
+
+In file included from .../i586-buildroot-linux-musl/sysroot/usr/include/linux/kernel.h:4,
+                 from ./kerncompat.h:31,
+                 from common/utils.c:42:
+.../i586-buildroot-linux-musl/sysroot/usr/include/linux/sysinfo.h:7:8: error: redefinition of 'struct sysinfo'
+    7 | struct sysinfo {
+      |        ^~~~~~~
+In file included from common/utils.c:27:
+.../i586-buildroot-linux-musl/sysroot/usr/include/sys/sysinfo.h:10:8: note: originally defined here
+   10 | struct sysinfo {
+      |        ^~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/16f44fb9dea72a7079e8e5517e760dd79d2724cc
+
+The 'struct sysinfo' is defined in linux/sysinfo.h and sys/sysinfo.h,
+while both must not be included at the same time. Stop including
+linux/kernel.h that sometimes unconditionally includes sys/sysinfo.h and
+causes the double definition for some reason. As we now include
+linux/const.h directly, there's no other effective change.
+
+Pull-request: #433
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+[Retrieved from:
+https://github.com/kdave/btrfs-progs/commit/a2511aaa85c8d95d12805dfdcbb5667fa3e30ba5]
+---
+ kerncompat.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/kerncompat.h b/kerncompat.h
+index 2503d1afa..6ca1526e2 100644
+--- a/kerncompat.h
++++ b/kerncompat.h
+@@ -28,7 +28,6 @@
+ #include <assert.h>
+ #include <stddef.h>
+ #include <linux/types.h>
+-#include <linux/kernel.h>
+ #include <linux/const.h>
+ #include <stdint.h>
+ 
