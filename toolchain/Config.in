@@ -566,6 +566,10 @@ config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_14
 config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_15
 	bool
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_14
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_16
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_15
 	select BR2_TOOLCHAIN_HEADERS_LATEST
 
 # This should be selected by the latest version, above, to indicate that
@@ -579,6 +583,7 @@ config BR2_TOOLCHAIN_HEADERS_LATEST
 # stops affecting a value on the first matching default.
 config BR2_TOOLCHAIN_HEADERS_AT_LEAST
 	string
+	default "5.16" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_16
 	default "5.15" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_15
 	default "5.14" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_14
 	default "5.13" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_13
