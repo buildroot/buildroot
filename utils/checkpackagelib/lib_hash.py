@@ -41,8 +41,6 @@ class HashType(_CheckFunction):
             return
 
         htype, hexa = fields[:2]
-        if htype == "none":
-            return
         if htype not in self.len_of_hash.keys():
             return ["{}:{}: unexpected type of hash ({}#adding-packages-hash)"
                     .format(self.filename, lineno, self.url_to_manual),
