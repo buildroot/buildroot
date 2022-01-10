@@ -26,6 +26,12 @@ MUSL_ADD_TOOLCHAIN_DEPENDENCY = NO
 
 MUSL_INSTALL_STAGING = YES
 
+# musl does not build with LTO, so explicitly disable it
+# when using a compiler that may have support for LTO
+ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_4_7),y)
+MUSL_EXTRA_CFLAGS += -fno-lto
+endif
+
 # Thumb build is broken, build in ARM mode, since all architectures
 # that support Thumb1 also support ARM.
 ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
