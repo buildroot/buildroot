@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2022.02"
 
+config BR2_KERNEL_HEADERS_5_14
+	bool "kernel headers version 5.14.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 5.14.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
 config BR2_PACKAGE_PYTHON_BACKPORTS_FUNCTOOLS_LRU_CACHE
 	bool "python-backports-functools-lru-cache package removed"
 	select BR2_LEGACY
