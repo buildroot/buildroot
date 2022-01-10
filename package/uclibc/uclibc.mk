@@ -362,10 +362,18 @@ endif
 # Commands
 #
 
+UCLIBC_EXTRA_CFLAGS = $(TARGET_ABI)
+
+# uClibc-ng does not build with LTO, so explicitly disable it
+# when using a compiler that may have support for LTO
+ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_4_7),y)
+UCLIBC_EXTRA_CFLAGS += -fno-lto
+endif
+
 UCLIBC_MAKE_FLAGS = \
 	ARCH="$(UCLIBC_TARGET_ARCH)" \
 	CROSS_COMPILE="$(TARGET_CROSS)" \
-	UCLIBC_EXTRA_CFLAGS="$(TARGET_ABI)" \
+	UCLIBC_EXTRA_CFLAGS="$(UCLIBC_EXTRA_CFLAGS)" \
 	HOSTCC="$(HOSTCC)"
 
 define UCLIBC_KCONFIG_FIXUP_CMDS
