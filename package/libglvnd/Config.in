@@ -1,5 +1,6 @@
 config BR2_PACKAGE_LIBGLVND
 	bool "libglvnd"
+	depends on !BR2_STATIC_LIBS # dlfcn.h
 	help
 	  The GL Vendor-Neutral Dispatch library
 
@@ -42,3 +43,6 @@ config BR2_PACKAGE_PROVIDES_LIBGLES
 	default "libglvnd" if BR2_PACKAGE_LIBGLVND_DISPATCH_GLES
 
 endif
+
+comment "libglvnd needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
