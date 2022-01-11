@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2022.02"
 
+config BR2_PACKAGE_GSTREAMER1_MM
+	bool "gstreamer1-mm package removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it is not actively
+	  maintained anymore and does not support glibmm-2.68 API.
+
 config BR2_KERNEL_HEADERS_5_14
 	bool "kernel headers version 5.14.x are no longer supported"
 	select BR2_LEGACY
