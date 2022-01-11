@@ -455,18 +455,6 @@ config BR2_TARGET_UBOOT_SPL_NAME
 	  and TPL name is tpl/u-boot-tpl.bin but not always. SPL name is
 	  MLO on OMAP and SPL on i.MX6 for example.
 
-config BR2_TARGET_UBOOT_ZYNQ_IMAGE
-	bool "Generate image for Xilinx Zynq"
-	depends on BR2_arm
-	depends on BR2_TARGET_UBOOT_SPL
-	depends on BR2_TARGET_UBOOT_FORMAT_DTB_IMG
-	help
-	  Generate the BOOT.BIN file from U-Boot's SPL. The image
-	  boots the Xilinx Zynq chip without any FPGA bitstream.
-	  A bitstream can be loaded by the U-Boot. The SPL searchs
-	  for u-boot-dtb.img file so this U-Boot format is required
-	  to be set.
-
 config BR2_TARGET_UBOOT_ZYNQMP
 	bool "Boot on the Xilinx ZynqMP SoCs"
 	depends on BR2_aarch64
