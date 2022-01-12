@@ -45,8 +45,7 @@ else
 CUPS_FILTERS_CONF_OPTS += --disable-dbus
 endif
 
-# avahi support requires avahi-client, which needs avahi-daemon and dbus
-ifeq ($(BR2_PACKAGE_AVAHI_DAEMON)$(BR2_PACKAGE_DBUS),yy)
+ifeq ($(BR2_PACKAGE_AVAHI_LIBAVAHI_CLIENT),y)
 CUPS_FILTERS_DEPENDENCIES += avahi
 CUPS_FILTERS_CONF_OPTS += --enable-avahi
 else

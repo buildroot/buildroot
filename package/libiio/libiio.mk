@@ -65,8 +65,7 @@ else
 LIBIIO_CONF_OPTS += -DWITH_AIO=OFF
 endif
 
-# Avahi support in libiio requires avahi-client, which needs avahi-daemon and dbus
-ifeq ($(BR2_PACKAGE_AVAHI_DAEMON)$(BR2_PACKAGE_DBUS),yy)
+ifeq ($(BR2_PACKAGE_AVAHI_LIBAVAHI_CLIENT),y)
 LIBIIO_DEPENDENCIES += avahi
 LIBIIO_CONF_OPTS += -DHAVE_DNS_SD=ON
 else

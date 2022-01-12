@@ -117,8 +117,7 @@ else
 VLC_CONF_OPTS += --disable-alsa
 endif
 
-# avahi support needs avahi-client, which needs avahi-daemon and dbus
-ifeq ($(BR2_PACKAGE_AVAHI)$(BR2_PACKAGE_AVAHI_DAEMON)$(BR2_PACKAGE_DBUS),yyy)
+ifeq ($(BR2_PACKAGE_AVAHI_LIBAVAHI_CLIENT),y)
 VLC_CONF_OPTS += --enable-avahi
 VLC_DEPENDENCIES += avahi
 else
