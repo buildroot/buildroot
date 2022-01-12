@@ -1,0 +1,44 @@
+From 5f26eaf8d7be760fafe11ef4a6e0f907e7e8c3f0 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 10 Jan 2022 23:17:45 +0100
+Subject: [PATCH] Makefile: add DISABLE_WERROR
+
+Allow the user to disable -Werror to avoid the following build failure
+with gcc 4.8 raised since version 0.6.0 and
+https://github.com/intel/tinycbor/commit/e2a4ed135c4d9101c4df83f2dd033cd249b6ef07:
+
+/home/buildroot/autobuild/instance-1/output-1/host/bin/arm-none-linux-gnueabi-gcc -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -I./src -std=gnu99 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -Os -g0 -D_FORTIFY_SOURCE=1 -Werror=incompatible-pointer-types -Werror=implicit-function-declaration -Werror=int-conversion -fPIC  -c -o src/cborerrorstrings.pic.o src/cborerrorstrings.c
+cc1: error: -Werror=incompatible-pointer-types: no option -Wincompatible-pointer-types
+cc1: error: -Werror=int-conversion: no option -Wint-conversion
+
+Fixes:
+ - http://autobuild.buildroot.org/results/a9f/a9fe64c42bb96f9e7b4af3050464f6570c1c00fa
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/intel/tinycbor/commit/5f26eaf8d7be760fafe11ef4a6e0f907e7e8c3f0]
+---
+ Makefile | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 6492ea16..3cde2b3d 100644
+--- a/Makefile
++++ b/Makefile
+@@ -236,10 +236,15 @@ tag: distcheck
+ .SECONDARY:
+ 
+ cflags := $(CPPFLAGS) -I$(SRCDIR)src
+-cflags += -std=gnu99 $(CFLAGS) \
++cflags += -std=gnu99 $(CFLAGS)
++
++ifneq ($(DISABLE_WERROR),1)
++cflags += \
+ 	-Werror=incompatible-pointer-types \
+ 	-Werror=implicit-function-declaration \
+ 	-Werror=int-conversion
++endif
++
+ %.o: %.c
+ 	@test -d $(@D) || $(MKDIR) $(@D)
+ 	$(CC) $(cflags) $($(basename $(notdir $@))_CCFLAGS) -c -o $@ $<
