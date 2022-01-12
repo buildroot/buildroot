@@ -1,0 +1,45 @@
+From 30c368a6b729bc8a0a9d0d023739c4fa07b0928b Mon Sep 17 00:00:00 2001
+From: Simon McVittie <smcv@debian.org>
+Date: Mon, 25 Oct 2021 20:21:27 +0100
+Subject: [PATCH] Don't pass positional parameters to i18n.merge_file
+
+These were always ignored, and Meson 0.60.0 disallowed them.
+
+Resolves: https://gitlab.freedesktop.org/polkit/polkit/-/issues/160
+Reference: https://github.com/mesonbuild/meson/pull/9445
+Signed-off-by: Simon McVittie <smcv@debian.org>
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[Upstream status:
+https://gitlab.freedesktop.org/polkit/polkit/-/merge_requests/99]
+---
+ actions/meson.build      | 1 -
+ src/examples/meson.build | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/actions/meson.build b/actions/meson.build
+index 2abaaf3..1e3f370 100644
+--- a/actions/meson.build
++++ b/actions/meson.build
+@@ -1,7 +1,6 @@
+ policy = 'org.freedesktop.policykit.policy'
+ 
+ i18n.merge_file(
+-  policy,
+   input: policy + '.in',
+   output: '@BASENAME@',
+   po_dir: po_dir,
+diff --git a/src/examples/meson.build b/src/examples/meson.build
+index c6305ab..8c18de5 100644
+--- a/src/examples/meson.build
++++ b/src/examples/meson.build
+@@ -1,7 +1,6 @@
+ policy = 'org.freedesktop.policykit.examples.pkexec.policy'
+ 
+ i18n.merge_file(
+-  policy,
+   input: policy + '.in',
+   output: '@BASENAME@',
+   po_dir: po_dir,
+-- 
+2.25.1
+
