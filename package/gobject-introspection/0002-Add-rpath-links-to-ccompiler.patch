@@ -1,4 +1,4 @@
-From 72a427bc50daee8f1ded0e9221e53dbbf2a80f08 Mon Sep 17 00:00:00 2001
+From 952e2e2bb6a22ec8824223b03b65cb28361c6e34 Mon Sep 17 00:00:00 2001
 From: Adam Duskett <aduskett@gmail.com>
 Date: Wed, 14 Mar 2018 12:07:10 -0400
 Subject: [PATCH] Add rpath links to ccompiler
@@ -12,7 +12,7 @@ Signed-off-by: Adam Duskett <aduskett@gmail.com>
  1 file changed, 2 insertions(+)
 
 diff --git a/giscanner/ccompiler.py b/giscanner/ccompiler.py
-index a8bd5b1..51bb9bc 100644
+index cb97e76f..d29b28c8 100644
 --- a/giscanner/ccompiler.py
 +++ b/giscanner/ccompiler.py
 @@ -231,6 +231,8 @@ class CCompiler(object):
@@ -25,5 +25,5 @@ index a8bd5b1..51bb9bc 100644
                      os.pathsep.join(runtime_paths + [os.environ[envvar]])
              else:
 -- 
-2.14.3
+2.25.1
 

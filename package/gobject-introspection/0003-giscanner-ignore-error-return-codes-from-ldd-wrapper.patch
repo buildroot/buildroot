@@ -1,4 +1,4 @@
-From f742da8b3913f4818d3f419117076afe62f4dbf4 Mon Sep 17 00:00:00 2001
+From e0fc4a2a5161a36483ddc518be9bb14390f11b19 Mon Sep 17 00:00:00 2001
 From: Alexander Kanavin <alex.kanavin@gmail.com>
 Date: Wed, 5 Sep 2018 16:46:52 +0200
 Subject: [PATCH] giscanner: ignore error return codes from ldd-wrapper
@@ -14,7 +14,7 @@ Signed-off-by: Adam Duskett <aduskett@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/giscanner/shlibs.py b/giscanner/shlibs.py
-index d67df95..80352a6 100644
+index 9f8ab5df..7a1a72fe 100644
 --- a/giscanner/shlibs.py
 +++ b/giscanner/shlibs.py
 @@ -103,7 +103,7 @@ def _resolve_non_libtool(options, binary, libraries):
@@ -26,3 +26,6 @@ index d67df95..80352a6 100644
          if isinstance(output, bytes):
              output = output.decode("utf-8", "replace")
  
+-- 
+2.25.1
+
