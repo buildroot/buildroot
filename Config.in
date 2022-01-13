@@ -370,6 +370,14 @@ config BR2_CCACHE_USE_BASEDIR
 	  the section "COMPILING IN DIFFERENT DIRECTORIES" in the ccache
 	  manual for more information.
 
+config BR2_CCACHE_BR_ONLY
+	bool "Only use ccache for building Buildroot packages"
+	default n
+	help
+	  When enabled, ccache will be used when building Buildroot
+	  itself, but the toolchain exported as SDK will not make use of
+	  ccache to build external programs.
+
 endif
 
 config BR2_ENABLE_DEBUG
