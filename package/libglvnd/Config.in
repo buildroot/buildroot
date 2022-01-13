@@ -1,5 +1,6 @@
 config BR2_PACKAGE_LIBGLVND
 	bool "libglvnd"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # __sync_*_4 intrisics
 	depends on !BR2_STATIC_LIBS # dlfcn.h
 	help
 	  The GL Vendor-Neutral Dispatch library
@@ -45,4 +46,5 @@ config BR2_PACKAGE_PROVIDES_LIBGLES
 endif
 
 comment "libglvnd needs a toolchain w/ dynamic library"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on BR2_STATIC_LIBS
