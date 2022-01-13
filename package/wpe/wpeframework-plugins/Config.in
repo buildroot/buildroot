@@ -403,13 +403,23 @@ config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO_PLATFORMNAME
 
 endif
 
-config BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION
     select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
-    depends on BR2_PACKAGE_HAS_NEXUS
     bool "DeviceIdentification"
     default y
     help
-      DeviceIdentification Plugin (Nexus OTP)
+      DeviceIdentification Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION
+
+config BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION_INTERFACE_NAME
+    string "InterfaceName"
+    default "eth0"
+    help
+      Name of interface, which has to be used for the device id generation
+      in case of generic implementation
+
+endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_DISPLAYINFO
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
