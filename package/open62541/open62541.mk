@@ -12,6 +12,7 @@ OPEN62541_GIT_SUBMODULES = YES
 OPEN62541_INSTALL_STAGING = YES
 OPEN62541_LICENSE = MPL-2.0
 OPEN62541_LICENSE_FILES = LICENSE
+OPEN62541_CPE_ID_VENDOR = open62541
 
 # Force Release build to remove -Werror.
 # Don't use git describe to get the version number.
