@@ -13,7 +13,7 @@ RTL8723BU_MODULE_MAKE_OPTS = \
 	KSRC=$(LINUX_DIR)
 
 define RTL8723BU_INSTALL_TARGET_CMDS
-	$(INSTALL) -D -m 644 $(@D)/rtl8723b_fw.bin $(TARGET_DIR)/lib/firmware/rtlwifi/rtl8723b_fw.bin
+	$(INSTALL) -D -m 644 $(@D)/rtl8723b_fw.bin $(TARGET_DIR)/lib/firmware/rtl_bt/rtl8723b_fw.bin
 endef
 
 $(eval $(kernel-module))
