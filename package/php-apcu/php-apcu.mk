@@ -22,4 +22,8 @@ define PHP_APCU_PHPIZE
 endef
 PHP_APCU_PRE_CONFIGURE_HOOKS += PHP_APCU_PHPIZE
 
+ifeq ($(BR2_TOOLCHAIN_HAS_SYNC_4),)
+PHP_APCU_CONF_OPTS += --disable-apcu-rwlocks
+endif
+
 $(eval $(autotools-package))
