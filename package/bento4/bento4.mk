@@ -9,6 +9,7 @@ BENTO4_SITE = $(call github,axiomatic-systems,Bento4,v$(BENTO4_VERSION))
 BENTO4_INSTALL_STAGING = YES
 BENTO4_LICENSE = GPL-2.0+
 BENTO4_LICENSE_FILES = Documents/LICENSE.txt
+BENTO4_CPE_ID_VENDOR = axiosys
 
 # Source/C++/Core/Ap4Config.h
 ifeq ($(BR2_ENDIAN),"BIG")
