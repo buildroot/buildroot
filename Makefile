@@ -437,22 +437,7 @@ QUIET := $(if $(findstring s,$(filter-out --%,$(MAKEFLAGS))),-q)
 
 # Strip off the annoying quoting
 ARCH := $(call qstrip,$(BR2_ARCH))
-
-KERNEL_ARCH := $(shell echo "$(ARCH)" | sed -e "s/-.*//" \
-	-e s/i.86/i386/ -e s/sun4u/sparc64/ \
-	-e s/arcle/arc/ \
-	-e s/arceb/arc/ \
-	-e s/arm.*/arm/ -e s/sa110/arm/ \
-	-e s/aarch64.*/arm64/ \
-	-e s/nds32.*/nds32/ \
-	-e s/or1k/openrisc/ \
-	-e s/parisc64/parisc/ \
-	-e s/powerpc64.*/powerpc/ \
-	-e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
-	-e s/riscv.*/riscv/ \
-	-e s/sh.*/sh/ \
-	-e s/s390x/s390/ \
-	-e s/microblazeel/microblaze/)
+KERNEL_ARCH := $(call qstrip,$(BR2_KERNEL_ARCH))
 
 ZCAT := $(call qstrip,$(BR2_ZCAT))
 BZCAT := $(call qstrip,$(BR2_BZCAT))
