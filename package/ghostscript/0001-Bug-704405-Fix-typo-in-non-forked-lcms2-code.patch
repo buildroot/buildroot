@@ -1,0 +1,28 @@
+From 830afae5454dea3bff903869d82022306890a96c Mon Sep 17 00:00:00 2001
+From: Robin Watts <Robin.Watts@artifex.com>
+Date: Fri, 1 Oct 2021 12:44:44 +0100
+Subject: [PATCH] Bug 704405: Fix typo in non-forked lcms2 code.
+
+[Retrieved from:
+https://git.ghostscript.com/?p=ghostpdl.git;a=commit;h=830afae5454dea3bff903869d82022306890a96c]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ base/gsicc_lcms2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/base/gsicc_lcms2.c b/base/gsicc_lcms2.c
+index ccf1d7051..9badb6dee 100644
+--- a/base/gsicc_lcms2.c
++++ b/base/gsicc_lcms2.c
+@@ -462,7 +462,7 @@ int
+ gscms_transform_color(gx_device *dev, gsicc_link_t *icclink, void *inputcolor,
+                              void *outputcolor, int num_bytes)
+ {
+-    return gscms_transformm_color_const(dev, icclink, inputcolor, outputcolor, num_bytes);
++    return gscms_transform_color_const(dev, icclink, inputcolor, outputcolor, num_bytes);
+ }
+ 
+ int
+-- 
+2.25.1
+
