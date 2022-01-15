@@ -564,7 +564,7 @@ config BR2_ARCH
 	default "i686"		if BR2_i386
 	default "x86_64"	if BR2_x86_64
 
-config BR2_KERNEL_ARCH
+config BR2_NORMALIZED_ARCH
 	default "i386"		if !BR2_x86_64
 	default "x86_64"	if BR2_x86_64
 

@@ -24,7 +24,7 @@ config BR2_ARCH
 	default "sh4a"		if BR2_sh4a
 	default "sh4aeb"	if BR2_sh4aeb
 
-config BR2_KERNEL_ARCH
+config BR2_NORMALIZED_ARCH
 	default "sh"
 
 config BR2_ENDIAN

@@ -62,7 +62,7 @@ config BR2_ARCH
 	default "arc"	if BR2_arcle
 	default "arceb"	if BR2_arceb
 
-config BR2_KERNEL_ARCH
+config BR2_NORMALIZED_ARCH
 	default "arc"
 
 config BR2_arc
