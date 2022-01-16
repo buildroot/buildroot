@@ -30,11 +30,13 @@ define LIBURING_BUILD_CMDS
 endef
 
 define LIBURING_INSTALL_STAGING_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) DESTDIR=$(STAGING_DIR) install
+	$(TARGET_MAKE_ENV) $(MAKE) $(LIBURING_MAKE_OPTS) -C $(@D) \
+		DESTDIR=$(STAGING_DIR) install
 endef
 
 define LIBURING_INSTALL_TARGET_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) DESTDIR=$(TARGET_DIR) install
+	$(TARGET_MAKE_ENV) $(MAKE) $(LIBURING_MAKE_OPTS) -C $(@D) \
+		DESTDIR=$(TARGET_DIR) install
 endef
 
 $(eval $(generic-package))
