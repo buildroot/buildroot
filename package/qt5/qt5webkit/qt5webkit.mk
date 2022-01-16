@@ -42,6 +42,7 @@ QT5WEBKIT_CONF_OPTS += \
 	-DENABLE_TOOLS=OFF \
 	-DPORT=Qt \
 	-DPYTHON_EXECUTABLE=$(HOST_DIR)/bin/python3 \
+	-DSHARED_CORE=ON \
 	-DUSE_LIBHYPHEN=OFF
 
 $(eval $(cmake-package))
