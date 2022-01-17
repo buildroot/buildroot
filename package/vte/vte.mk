@@ -11,6 +11,7 @@ VTE_SITE = http://ftp.gnome.org/pub/gnome/sources/vte/$(VTE_VERSION_MAJOR)
 VTE_DEPENDENCIES = host-pkgconf libgtk3 pcre2 $(TARGET_NLS_DEPENDENCIES)
 VTE_LICENSE = LGPL-3.0+
 VTE_LICENSE_FILES = COPYING.LGPL3
+VTE_INSTALL_STAGING = YES
 
 ifeq ($(BR2_PACKAGE_ICU),y)
 VTE_CONF_OPTS += -Dicu=true
