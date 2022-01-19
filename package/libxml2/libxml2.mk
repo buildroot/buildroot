@@ -24,6 +24,13 @@ LIBXML2_DEPENDENCIES = host-pkgconf
 
 HOST_LIBXML2_CONF_OPTS = --without-zlib --without-lzma --without-python
 
+ifeq ($(BR2_PACKAGE_ICU),y)
+LIBXML2_DEPENDENCIES += icu
+LIBXML2_CONF_OPTS += --with-icu
+else
+LIBXML2_CONF_OPTS += --without-icu
+endif
+
 ifeq ($(BR2_PACKAGE_ZLIB),y)
 LIBXML2_DEPENDENCIES += zlib
 LIBXML2_CONF_OPTS += --with-zlib=$(STAGING_DIR)/usr
