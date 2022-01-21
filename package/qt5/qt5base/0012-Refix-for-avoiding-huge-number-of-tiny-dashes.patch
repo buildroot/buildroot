@@ -1,0 +1,100 @@
+From 3b1a60f651776a7b2d155803b07a52a9e27bdf78 Mon Sep 17 00:00:00 2001
+From: Eirik Aavitsland <eirik.aavitsland@qt.io>
+Date: Fri, 30 Jul 2021 13:03:49 +0200
+Subject: [PATCH] Refix for avoiding huge number of tiny dashes
+
+Previous fix hit too widely so some valid horizontal and vertical
+lines were affected; the root problem being that such lines have an
+empty control point rect (width or height is 0). Fix by caculating in
+the pen width.
+
+Pick-to: 6.2 6.1 5.15
+Change-Id: I7a436e873f6d485028f6759d0e2c6456f07eebdc
+Reviewed-by: Allan Sandfeld Jensen <allan.jensen@qt.io>
+(cherry picked from commit 84aba80944a2e1c3058d7a1372e0e66676411884)
+[Retrieved from: https://invent.kde.org/qt/qt/qtbase/-/commit/427df34efdcb56582a9ae9f7d2d1f39eeff70328]
+Signed-off-by: Quentin Schulz <quentin.schulz@theobroma-systems.com>
+---
+ src/gui/painting/qpaintengineex.cpp           |  8 ++---
+ .../gui/painting/qpainter/tst_qpainter.cpp    | 31 +++++++++++++++++++
+ 2 files changed, 35 insertions(+), 4 deletions(-)
+
+diff --git a/src/gui/painting/qpaintengineex.cpp b/src/gui/painting/qpaintengineex.cpp
+index 19e4b23423..9fe510827a 100644
+--- a/src/gui/painting/qpaintengineex.cpp
++++ b/src/gui/painting/qpaintengineex.cpp
+@@ -415,18 +415,18 @@ void QPaintEngineEx::stroke(const QVectorPath &path, const QPen &inPen)
+             clipRect = xf.inverted().mapRect(QRectF(d->exDeviceRect));
+         }
+         // Check to avoid generating unwieldy amount of dashes that will not be visible anyway
+-        QRectF extentRect = cpRect & clipRect;
++        qreal pw = pen.widthF() ? pen.widthF() : 1;
++        QRectF extentRect = cpRect.adjusted(-pw, -pw, pw, pw) & clipRect;
+         qreal extent = qMax(extentRect.width(), extentRect.height());
+         qreal patternLength = 0;
+         const QVector<qreal> pattern = pen.dashPattern();
+         const int patternSize = qMin(pattern.size(), 32);
+         for (int i = 0; i < patternSize; i++)
+             patternLength += qMax(pattern.at(i), qreal(0));
+-        if (pen.widthF())
+-            patternLength *= pen.widthF();
++        patternLength *= pw;
+         if (qFuzzyIsNull(patternLength)) {
+             pen.setStyle(Qt::NoPen);
+-        } else if (qFuzzyIsNull(extent) || extent / patternLength > 10000) {
++        } else if (extent / patternLength > 10000) {
+             // approximate stream of tiny dashes with semi-transparent solid line
+             pen.setStyle(Qt::SolidLine);
+             QColor color(pen.color());
+diff --git a/tests/auto/gui/painting/qpainter/tst_qpainter.cpp b/tests/auto/gui/painting/qpainter/tst_qpainter.cpp
+index 42e98ce363..d7c3f95f1d 100644
+--- a/tests/auto/gui/painting/qpainter/tst_qpainter.cpp
++++ b/tests/auto/gui/painting/qpainter/tst_qpainter.cpp
+@@ -308,6 +308,7 @@ private slots:
+     void fillPolygon();
+ 
+     void drawImageAtPointF();
++    void scaledDashes();
+ 
+ private:
+     void fillData();
+@@ -5468,6 +5469,36 @@ void tst_QPainter::drawImageAtPointF()
+     paint.end();
+ }
+ 
++void tst_QPainter::scaledDashes()
++{
++    // Test that we do not hit the limit-huge-number-of-dashes path
++    QRgb fore = qRgb(0, 0, 0xff);
++    QRgb back = qRgb(0xff, 0xff, 0);
++    QImage image(5, 32, QImage::Format_RGB32);
++    image.fill(back);
++    QPainter p(&image);
++    QPen pen(QColor(fore), 3, Qt::DotLine);
++    p.setPen(pen);
++    p.scale(1, 2);
++    p.drawLine(2, 0, 2, 16);
++    p.end();
++
++    bool foreFound = false;
++    bool backFound = false;
++    int i = 0;
++    while (i < 32 && (!foreFound || !backFound)) {
++        QRgb pix = image.pixel(3, i);
++        if (pix == fore)
++            foreFound = true;
++        else if (pix == back)
++            backFound = true;
++        i++;
++    }
++
++    QVERIFY(foreFound);
++    QVERIFY(backFound);
++}
++
+ QTEST_MAIN(tst_QPainter)
+ 
+ #include "tst_qpainter.moc"
+-- 
+2.34.1
+

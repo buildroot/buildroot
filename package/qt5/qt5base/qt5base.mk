@@ -11,6 +11,10 @@ QT5BASE_SOURCE = qtbase-$(QT5_SOURCE_TARBALL_PREFIX)-$(QT5BASE_VERSION).tar.xz
 QT5BASE_DEPENDENCIES = host-pkgconf pcre2 zlib
 QT5BASE_INSTALL_STAGING = YES
 
+# 0010-Avoid-processing-intensive-painting-of-high-number-o.patch
+# 0011-Improve-fix-for-avoiding-huge-number-of-tiny-dashes.patch
+QT5BASE_IGNORE_CVES += CVE-2021-38593
+
 # A few comments:
 #  * -no-pch to workaround the issue described at
 #     http://comments.gmane.org/gmane.comp.lib.qt.devel/5933.
