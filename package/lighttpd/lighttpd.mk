@@ -26,6 +26,7 @@ LIGHTTPD_CONF_OPTS = \
 	-Dwith_mysql=false \
 	-Dwith_nettle=false \
 	-Dwith_nss=false \
+	-Dwith_pcre=false \
 	-Dwith_pgsql=false \
 	-Dwith_sasl=false \
 	-Dwith_wolfssl=false \
@@ -65,10 +66,10 @@ LIGHTTPD_CONF_OPTS += -Dwith_bzip=false
 endif
 
 ifeq ($(BR2_PACKAGE_LIGHTTPD_PCRE),y)
-LIGHTTPD_DEPENDENCIES += pcre
-LIGHTTPD_CONF_OPTS += -Dwith_pcre=true
+LIGHTTPD_DEPENDENCIES += pcre2
+LIGHTTPD_CONF_OPTS += -Dwith_pcre2=true
 else
-LIGHTTPD_CONF_OPTS += -Dwith_pcre=false
+LIGHTTPD_CONF_OPTS += -Dwith_pcre2=false
 endif
 
 ifeq ($(BR2_PACKAGE_LIGHTTPD_WEBDAV),y)
