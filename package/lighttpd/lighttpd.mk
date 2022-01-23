@@ -16,7 +16,6 @@ LIGHTTPD_CONF_OPTS = \
 	-Dwith_dbi=false \
 	-Dwith_fam=false \
 	-Dwith_gnutls=false \
-	-Dwith_krb5=false \
 	-Dwith_ldap=false \
 	-Dwith_libev=false \
 	-Dwith_libunwind=false \
@@ -46,6 +45,13 @@ LIGHTTPD_DEPENDENCIES += bzip2
 LIGHTTPD_CONF_OPTS += -Dwith_bzip=true
 else
 LIGHTTPD_CONF_OPTS += -Dwith_bzip=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIGHTTPD_KRB5),y)
+LIGHTTPD_DEPENDENCIES += libkrb5
+LIGHTTPD_CONF_OPTS += -Dwith_krb5=true
+else
+LIGHTTPD_CONF_OPTS += -Dwith_krb5=false
 endif
 
 ifeq ($(BR2_PACKAGE_LIGHTTPD_LUA),y)

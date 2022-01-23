@@ -33,6 +33,12 @@ config BR2_PACKAGE_LIGHTTPD_BZIP2
 	help
 	  Enable bzip2 support for lighttpd mod_deflate.
 
+config BR2_PACKAGE_LIGHTTPD_KRB5
+	bool "krb5 support"
+	select BR2_PACKAGE_LIBKRB5
+	help
+	  Enable Kerberos5 support for lighttpd mod_auth.
+
 config BR2_PACKAGE_LIGHTTPD_LUA
 	bool "lua support"
 	depends on BR2_PACKAGE_LUA
