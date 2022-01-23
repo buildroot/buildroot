@@ -16,7 +16,6 @@ LIGHTTPD_CONF_OPTS = \
 	-Dwith_dbi=false \
 	-Dwith_fam=false \
 	-Dwith_gnutls=false \
-	-Dwith_ldap=false \
 	-Dwith_libev=false \
 	-Dwith_libunwind=false \
 	-Dwith_mbedtls=false \
@@ -52,6 +51,13 @@ LIGHTTPD_DEPENDENCIES += libkrb5
 LIGHTTPD_CONF_OPTS += -Dwith_krb5=true
 else
 LIGHTTPD_CONF_OPTS += -Dwith_krb5=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIGHTTPD_LDAP),y)
+LIGHTTPD_DEPENDENCIES += openldap
+LIGHTTPD_CONF_OPTS += -Dwith_ldap=true
+else
+LIGHTTPD_CONF_OPTS += -Dwith_ldap=false
 endif
 
 ifeq ($(BR2_PACKAGE_LIGHTTPD_LUA),y)
