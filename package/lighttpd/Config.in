@@ -65,4 +65,10 @@ config BR2_PACKAGE_LIGHTTPD_ZLIB
 	help
 	  Enable zlib support for lighttpd mod_deflate.
 
+config BR2_PACKAGE_LIGHTTPD_ZSTD
+	bool "zstd support"
+	select BR2_PACKAGE_ZSTD
+	help
+	  Enable zstd support for lighttpd mod_deflate.
+
 endif

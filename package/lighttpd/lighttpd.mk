@@ -32,7 +32,6 @@ LIGHTTPD_CONF_OPTS = \
 	-Dwith_wolfssl=false \
 	-Dwith_xattr=false \
 	-Dwith_xxhash=true \
-	-Dwith_zstd=false \
 	-Dbuild_extra_warnings=false \
 	-Dbuild_static=false \
 	-Dmoduledir=lib/lighttpd
@@ -90,6 +89,13 @@ LIGHTTPD_DEPENDENCIES += zlib
 LIGHTTPD_CONF_OPTS += -Dwith_zlib=true
 else
 LIGHTTPD_CONF_OPTS += -Dwith_zlib=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIGHTTPD_ZSTD),y)
+LIGHTTPD_DEPENDENCIES += zstd
+LIGHTTPD_CONF_OPTS += -Dwith_zstd=true
+else
+LIGHTTPD_CONF_OPTS += -Dwith_zstd=false
 endif
 
 define LIGHTTPD_INSTALL_CONFIG
