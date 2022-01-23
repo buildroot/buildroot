@@ -21,6 +21,12 @@ config BR2_PACKAGE_LIGHTTPD
 
 if BR2_PACKAGE_LIGHTTPD
 
+config BR2_PACKAGE_LIGHTTPD_BROTLI
+	bool "brotli support"
+	select BR2_PACKAGE_BROTLI
+	help
+	  Enable brotli support for lighttpd mod_deflate.
+
 config BR2_PACKAGE_LIGHTTPD_BZIP2
 	bool "bzip2 support"
 	select BR2_PACKAGE_BZIP2

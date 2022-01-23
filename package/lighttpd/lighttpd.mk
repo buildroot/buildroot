@@ -13,7 +13,6 @@ LIGHTTPD_LICENSE_FILES = COPYING
 LIGHTTPD_CPE_ID_VENDOR = lighttpd
 LIGHTTPD_DEPENDENCIES = host-pkgconf xxhash
 LIGHTTPD_CONF_OPTS = \
-	-Dwith_brotli=false \
 	-Dwith_dbi=false \
 	-Dwith_fam=false \
 	-Dwith_gnutls=false \
@@ -35,6 +34,13 @@ LIGHTTPD_CONF_OPTS = \
 	-Dbuild_extra_warnings=false \
 	-Dbuild_static=false \
 	-Dmoduledir=lib/lighttpd
+
+ifeq ($(BR2_PACKAGE_LIGHTTPD_BROTLI),y)
+LIGHTTPD_DEPENDENCIES += brotli
+LIGHTTPD_CONF_OPTS += -Dwith_brotli=true
+else
+LIGHTTPD_CONF_OPTS += -Dwith_brotli=false
+endif
 
 ifeq ($(BR2_PACKAGE_LIGHTTPD_BZIP2),y)
 LIGHTTPD_DEPENDENCIES += bzip2
