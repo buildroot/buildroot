@@ -37,6 +37,20 @@ LIGHTTPD_CONF_OPTS = \
 	-Dbuild_static=false \
 	-Dmoduledir=lib/lighttpd
 
+ifeq ($(BR2_PACKAGE_LIGHTTPD_BZIP2),y)
+LIGHTTPD_DEPENDENCIES += bzip2
+LIGHTTPD_CONF_OPTS += -Dwith_bzip=true
+else
+LIGHTTPD_CONF_OPTS += -Dwith_bzip=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIGHTTPD_LUA),y)
+LIGHTTPD_DEPENDENCIES += lua
+LIGHTTPD_CONF_OPTS += -Dwith_lua=true
+else
+LIGHTTPD_CONF_OPTS += -Dwith_lua=false
+endif
+
 ifeq ($(BR2_PACKAGE_LIGHTTPD_OPENSSL),y)
 LIGHTTPD_DEPENDENCIES += openssl
 LIGHTTPD_CONF_OPTS += -Dwith_openssl=true
@@ -49,20 +63,6 @@ LIGHTTPD_DEPENDENCIES += linux-pam
 LIGHTTPD_CONF_OPTS += -Dwith_pam=true
 else
 LIGHTTPD_CONF_OPTS += -Dwith_pam=false
-endif
-
-ifeq ($(BR2_PACKAGE_LIGHTTPD_ZLIB),y)
-LIGHTTPD_DEPENDENCIES += zlib
-LIGHTTPD_CONF_OPTS += -Dwith_zlib=true
-else
-LIGHTTPD_CONF_OPTS += -Dwith_zlib=false
-endif
-
-ifeq ($(BR2_PACKAGE_LIGHTTPD_BZIP2),y)
-LIGHTTPD_DEPENDENCIES += bzip2
-LIGHTTPD_CONF_OPTS += -Dwith_bzip=true
-else
-LIGHTTPD_CONF_OPTS += -Dwith_bzip=false
 endif
 
 ifeq ($(BR2_PACKAGE_LIGHTTPD_PCRE),y)
@@ -85,11 +85,11 @@ else
 LIGHTTPD_CONF_OPTS += -Dwith_webdav_props=false -Dwith_webdav_locks=false
 endif
 
-ifeq ($(BR2_PACKAGE_LIGHTTPD_LUA),y)
-LIGHTTPD_DEPENDENCIES += lua
-LIGHTTPD_CONF_OPTS += -Dwith_lua=true
+ifeq ($(BR2_PACKAGE_LIGHTTPD_ZLIB),y)
+LIGHTTPD_DEPENDENCIES += zlib
+LIGHTTPD_CONF_OPTS += -Dwith_zlib=true
 else
-LIGHTTPD_CONF_OPTS += -Dwith_lua=false
+LIGHTTPD_CONF_OPTS += -Dwith_zlib=false
 endif
 
 define LIGHTTPD_INSTALL_CONFIG
