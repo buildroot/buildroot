@@ -20,7 +20,6 @@ LIGHTTPD_CONF_OPTS = \
 	-Dwith_ldap=false \
 	-Dwith_libev=false \
 	-Dwith_libunwind=false \
-	-Dwith_maxminddb=false \
 	-Dwith_mbedtls=false \
 	-Dwith_mysql=false \
 	-Dwith_nettle=false \
@@ -54,6 +53,13 @@ LIGHTTPD_DEPENDENCIES += lua
 LIGHTTPD_CONF_OPTS += -Dwith_lua=true
 else
 LIGHTTPD_CONF_OPTS += -Dwith_lua=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIGHTTPD_MAXMINDDB),y)
+LIGHTTPD_DEPENDENCIES += libmaxminddb
+LIGHTTPD_CONF_OPTS += -Dwith_maxminddb=true
+else
+LIGHTTPD_CONF_OPTS += -Dwith_maxminddb=false
 endif
 
 ifeq ($(BR2_PACKAGE_LIGHTTPD_OPENSSL),y)

@@ -39,6 +39,12 @@ config BR2_PACKAGE_LIGHTTPD_LUA
 	help
 	  Enable Lua support. Needed to support mod_magnet
 
+config BR2_PACKAGE_LIGHTTPD_MAXMINDDB
+	bool "maxminddb support"
+	select BR2_PACKAGE_LIBMAXMINDDB
+	help
+	  Enable MaxMind GeoIP2 support. Needed to support mod_maxminddb
+
 config BR2_PACKAGE_LIGHTTPD_OPENSSL
 	bool "openssl support"
 	select BR2_PACKAGE_OPENSSL
