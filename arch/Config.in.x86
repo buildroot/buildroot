@@ -174,6 +174,19 @@ config BR2_x86_corei7
 	select BR2_X86_CPU_HAS_SSSE3
 	select BR2_X86_CPU_HAS_SSE4
 	select BR2_X86_CPU_HAS_SSE42
+	help
+	  This option is deprecated. Since gcc 4.9, the gcc option
+	  "nehalem" is preferred. Use BR2_x86_nehalem instead.
+config BR2_x86_nehalem
+	bool "nehalem"
+	select BR2_X86_CPU_HAS_MMX
+	select BR2_X86_CPU_HAS_SSE
+	select BR2_X86_CPU_HAS_SSE2
+	select BR2_X86_CPU_HAS_SSE3
+	select BR2_X86_CPU_HAS_SSSE3
+	select BR2_X86_CPU_HAS_SSE4
+	select BR2_X86_CPU_HAS_SSE42
+	select BR2_ARCH_NEEDS_GCC_AT_LEAST_4_9
 config BR2_x86_westmere
 	bool "westmere"
 	select BR2_X86_CPU_HAS_MMX
@@ -193,6 +206,20 @@ config BR2_x86_corei7_avx
 	select BR2_X86_CPU_HAS_SSE4
 	select BR2_X86_CPU_HAS_SSE42
 	select BR2_X86_CPU_HAS_AVX
+	help
+	  This option is deprecated. Since gcc 4.9, the gcc option
+	  "sandybridge" is preferred. Use BR2_x86_sandybridge instead.
+config BR2_x86_sandybridge
+	bool "sandybridge"
+	select BR2_X86_CPU_HAS_MMX
+	select BR2_X86_CPU_HAS_SSE
+	select BR2_X86_CPU_HAS_SSE2
+	select BR2_X86_CPU_HAS_SSE3
+	select BR2_X86_CPU_HAS_SSSE3
+	select BR2_X86_CPU_HAS_SSE4
+	select BR2_X86_CPU_HAS_SSE42
+	select BR2_X86_CPU_HAS_AVX
+	select BR2_ARCH_NEEDS_GCC_AT_LEAST_4_9
 config BR2_x86_core_avx2
 	bool "core-avx2"
 	select BR2_X86_CPU_HAS_MMX
@@ -204,6 +231,21 @@ config BR2_x86_core_avx2
 	select BR2_X86_CPU_HAS_SSE42
 	select BR2_X86_CPU_HAS_AVX
 	select BR2_X86_CPU_HAS_AVX2
+	help
+	  This option is deprecated. Since gcc 4.9, the gcc option
+	  "haswell" is preferred. Use BR2_x86_haswell instead.
+config BR2_x86_haswell
+	bool "haswell"
+	select BR2_X86_CPU_HAS_MMX
+	select BR2_X86_CPU_HAS_SSE
+	select BR2_X86_CPU_HAS_SSE2
+	select BR2_X86_CPU_HAS_SSE3
+	select BR2_X86_CPU_HAS_SSSE3
+	select BR2_X86_CPU_HAS_SSE4
+	select BR2_X86_CPU_HAS_SSE42
+	select BR2_X86_CPU_HAS_AVX
+	select BR2_X86_CPU_HAS_AVX2
+	select BR2_ARCH_NEEDS_GCC_AT_LEAST_4_9
 config BR2_x86_atom
 	bool "atom"
 	select BR2_X86_CPU_HAS_MMX
@@ -211,6 +253,17 @@ config BR2_x86_atom
 	select BR2_X86_CPU_HAS_SSE2
 	select BR2_X86_CPU_HAS_SSE3
 	select BR2_X86_CPU_HAS_SSSE3
+	help
+	  This option is deprecated. Since gcc 4.9, the gcc option
+	  "bonnel" is preferred. Use BR2_x86_bonnel instead.
+config BR2_x86_bonnel
+	bool "bonnel"
+	select BR2_X86_CPU_HAS_MMX
+	select BR2_X86_CPU_HAS_SSE
+	select BR2_X86_CPU_HAS_SSE2
+	select BR2_X86_CPU_HAS_SSE3
+	select BR2_X86_CPU_HAS_SSSE3
+	select BR2_ARCH_NEEDS_GCC_AT_LEAST_4_9
 config BR2_x86_silvermont
 	bool "silvermont"
 	select BR2_X86_CPU_HAS_MMX
@@ -341,9 +394,13 @@ config BR2_GCC_TARGET_ARCH
 	default "nocona"	if BR2_x86_nocona
 	default "core2"		if BR2_x86_core2
 	default "corei7"	if BR2_x86_corei7
+	default "nehalem"	if BR2_x86_nehalem
 	default "corei7-avx"	if BR2_x86_corei7_avx
+	default "sandybridge"	if BR2_x86_sandybridge
 	default "core-avx2"	if BR2_x86_core_avx2
+	default "haswell"	if BR2_x86_haswell
 	default "atom"		if BR2_x86_atom
+	default "bonnel"	if BR2_x86_bonnel
 	default "westmere"	if BR2_x86_westmere
 	default "silvermont"	if BR2_x86_silvermont
 	default "k8"		if BR2_x86_opteron
