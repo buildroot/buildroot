@@ -12,7 +12,7 @@ LIBCAMERA_DEPENDENCIES = \
 	host-pkgconf \
 	host-python-jinja2 \
 	host-python3-ply \
-	host-python3-pyyaml \
+	host-python-pyyaml \
 	gnutls
 LIBCAMERA_CONF_OPTS = \
 	-Dandroid=disabled \

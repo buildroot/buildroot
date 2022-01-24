@@ -18,7 +18,7 @@ MONGODB_DEPENDENCIES = \
 	boost \
 	host-python3-cheetah \
 	host-python3-psutil \
-	host-python3-pyyaml \
+	host-python-pyyaml \
 	host-python3-regex \
 	host-python-requests \
 	host-scons \
