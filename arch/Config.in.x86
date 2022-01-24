@@ -22,6 +22,9 @@ config BR2_X86_CPU_HAS_AVX2
 config BR2_X86_CPU_HAS_AVX512
 	bool
 
+# This list of CPU architecture variant is (loosely) ordered according
+# to the gcc documentation at
+# https://gcc.gnu.org/onlinedocs/gcc-11.2.0/gcc/x86-Options.html
 choice
 	prompt "Target Architecture Variant"
 	default BR2_x86_i586 if BR2_i386
