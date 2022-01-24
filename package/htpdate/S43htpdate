@@ -9,7 +9,7 @@ test -r "/etc/default/$DAEMON" && . "/etc/default/$DAEMON"
 start() {
 	printf 'Starting %s: ' "$DAEMON"
 	# shellcheck disable=SC2086 # we need the word splitting
-	start-stop-daemon -S -q -x "/usr/bin/$DAEMON" \
+	start-stop-daemon -S -q -x "/usr/sbin/$DAEMON" \
 		-- -D -i "$PIDFILE" $HTPDATE_ARGS
 	status=$?
 	if [ "$status" -eq 0 ]; then

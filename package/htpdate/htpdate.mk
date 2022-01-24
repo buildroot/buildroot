@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-HTPDATE_VERSION = 1.2.6
-HTPDATE_SITE = $(call github,angeloc,htpdate,v$(HTPDATE_VERSION))
+HTPDATE_VERSION = 1.3.3
+HTPDATE_SITE = $(call github,twekkel,htpdate,v$(HTPDATE_VERSION))
 HTPDATE_LICENSE = GPL-2.0+
 HTPDATE_LICENSE_FILES = LICENSE
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
-HTPDATE_BUILD_OPTS = ENABLE_HTTPS=1
+HTPDATE_BUILD_OPTS = https
 HTPDATE_DEPENDENCIES += openssl host-pkgconf
 endif
 
