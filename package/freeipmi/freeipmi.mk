@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FREEIPMI_VERSION = 1.6.8
+FREEIPMI_VERSION = 1.6.9
 FREEIPMI_SITE = https://ftp.gnu.org/gnu/freeipmi
 FREEIPMI_LICENSE = GPL-3.0+, BSD-like (sunbmc)
 FREEIPMI_LICENSE_FILES = \
@@ -14,8 +14,6 @@ FREEIPMI_LICENSE_FILES = \
 	COPYING.sunbmc COPYING.ZRESEARCH
 FREEIPMI_DEPENDENCIES = host-pkgconf
 FREEIPMI_INSTALL_STAGING = YES
-# We're patching configure.ac
-FREEIPMI_AUTORECONF = YES
 # Disable checking for /dev/urandom and /dev/random through AC_CHECK_FILE
 FREEIPMI_CONF_OPTS = --without-random-device
 
