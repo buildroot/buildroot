@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-RUNC_VERSION = 1.0.3
+RUNC_VERSION = 1.1.0
 RUNC_SITE = $(call github,opencontainers,runc,v$(RUNC_VERSION))
-RUNC_LICENSE = Apache-2.0
+RUNC_LICENSE = Apache-2.0, LGPL-2.1 (libseccomp)
 RUNC_LICENSE_FILES = LICENSE
 RUNC_CPE_ID_VENDOR = linuxfoundation
 
