@@ -8,7 +8,7 @@
 # util-linux-libs/util-linux-libs.mk needs to be updated accordingly as well.
 
 UTIL_LINUX_VERSION_MAJOR = 2.37
-UTIL_LINUX_VERSION = $(UTIL_LINUX_VERSION_MAJOR).2
+UTIL_LINUX_VERSION = $(UTIL_LINUX_VERSION_MAJOR).3
 UTIL_LINUX_SOURCE = util-linux-$(UTIL_LINUX_VERSION).tar.xz
 UTIL_LINUX_SITE = $(BR2_KERNEL_MIRROR)/linux/utils/util-linux/v$(UTIL_LINUX_VERSION_MAJOR)
 
@@ -34,6 +34,13 @@ UTIL_LINUX_CONF_OPTS += \
 	--disable-makeinstall-chown
 
 UTIL_LINUX_LINK_LIBS = $(TARGET_NLS_LIBS)
+
+# workaround missing disk-utils/raw.8 file in util-linux-2.37.3
+# release download package
+define UTIL_LINUX_FIX_DISK_UTILS_COMPILE
+	touch $(@D)/disk-utils/raw.8
+endef
+UTIL_LINUX_POST_PATCH_HOOKS += UTIL_LINUX_FIX_DISK_UTILS_COMPILE
 
 HOST_UTIL_LINUX_DEPENDENCIES = host-pkgconf
 
