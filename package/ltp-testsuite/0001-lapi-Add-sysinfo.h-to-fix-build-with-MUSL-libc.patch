@@ -1,4 +1,4 @@
-From bee452dfa2a34ba7df7db677e5673cbdcd23f61e Mon Sep 17 00:00:00 2001
+From f34c6ca3d543968e900d6327d8b5900db63f08ad Mon Sep 17 00:00:00 2001
 From: Petr Vorel <petr.vorel@gmail.com>
 Date: Thu, 1 Oct 2020 23:28:39 +0200
 Subject: [PATCH] lapi: Add sysinfo.h to fix build with MUSL libc
@@ -56,7 +56,7 @@ Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
 
 diff --git a/include/lapi/sysinfo.h b/include/lapi/sysinfo.h
 new file mode 100644
-index 000000000..d0e0e93d7
+index 0000000000..d0e0e93d7f
 --- /dev/null
 +++ b/include/lapi/sysinfo.h
 @@ -0,0 +1,22 @@
@@ -83,7 +83,7 @@ index 000000000..d0e0e93d7
 +
 +#endif /* SYSINFO_H__ */
 diff --git a/include/tst_safe_macros.h b/include/tst_safe_macros.h
-index d99441c86..0d26e9d45 100644
+index d99441c86f..0d26e9d455 100644
 --- a/include/tst_safe_macros.h
 +++ b/include/tst_safe_macros.h
 @@ -12,7 +12,7 @@
@@ -96,44 +96,33 @@ index d99441c86..0d26e9d45 100644
  #include <libgen.h>
  #include <signal.h>
 diff --git a/lib/safe_macros.c b/lib/safe_macros.c
-index a5b6bc504..20d01d304 100644
+index a5b6bc5047..87d922a928 100644
 --- a/lib/safe_macros.c
 +++ b/lib/safe_macros.c
-@@ -11,7 +11,6 @@
+@@ -11,7 +11,7 @@
  #include <sys/wait.h>
  #include <sys/mount.h>
  #include <sys/xattr.h>
 -#include <sys/sysinfo.h>
++#include "lapi/sysinfo.h"
  #include <errno.h>
  #include <fcntl.h>
  #include <libgen.h>
-@@ -23,6 +22,7 @@
- #include <malloc.h>
- #include "test.h"
- #include "safe_macros.h"
-+#include "lapi/sysinfo.h"
- 
- char *safe_basename(const char *file, const int lineno,
- 		    void (*cleanup_fn) (void), char *path)
 diff --git a/lib/tst_memutils.c b/lib/tst_memutils.c
-index 69077861f..ae1cad29b 100644
+index 4a49747613..000688f5a3 100644
 --- a/lib/tst_memutils.c
 +++ b/lib/tst_memutils.c
-@@ -5,11 +5,11 @@
- 
+@@ -6,7 +6,7 @@
+ #include <stdio.h>
  #include <unistd.h>
  #include <limits.h>
 -#include <sys/sysinfo.h>
++#include "lapi/sysinfo.h"
  #include <stdlib.h>
  
  #define TST_NO_DEFAULT_MAIN
- #include "tst_test.h"
-+#include "lapi/sysinfo.h"
- 
- #define BLOCKSIZE (16 * 1024 * 1024)
- 
 diff --git a/testcases/kernel/mem/mtest01/mtest01.c b/testcases/kernel/mem/mtest01/mtest01.c
-index 9676ea4b5..33b2ac822 100644
+index 20cb95191d..3462dc3f82 100644
 --- a/testcases/kernel/mem/mtest01/mtest01.c
 +++ b/testcases/kernel/mem/mtest01/mtest01.c
 @@ -20,7 +20,6 @@
@@ -153,7 +142,7 @@ index 9676ea4b5..33b2ac822 100644
  
  #define FIVE_HUNDRED_MB         (500ULL*1024*1024)
 diff --git a/testcases/kernel/syscalls/madvise/madvise06.c b/testcases/kernel/syscalls/madvise/madvise06.c
-index 263b8e78b..4fa52e6ea 100644
+index 263b8e78bf..4fa52e6eae 100644
 --- a/testcases/kernel/syscalls/madvise/madvise06.c
 +++ b/testcases/kernel/syscalls/madvise/madvise06.c
 @@ -46,7 +46,7 @@
@@ -166,7 +155,7 @@ index 263b8e78b..4fa52e6ea 100644
  #include "tst_cgroup.h"
  
 diff --git a/testcases/kernel/syscalls/sysinfo/sysinfo01.c b/testcases/kernel/syscalls/sysinfo/sysinfo01.c
-index 2ea44a2be..a237345ef 100644
+index 2ea44a2beb..a237345ef7 100644
 --- a/testcases/kernel/syscalls/sysinfo/sysinfo01.c
 +++ b/testcases/kernel/syscalls/sysinfo/sysinfo01.c
 @@ -69,7 +69,7 @@
@@ -179,7 +168,7 @@ index 2ea44a2be..a237345ef 100644
  #include "test.h"
  
 diff --git a/testcases/kernel/syscalls/sysinfo/sysinfo02.c b/testcases/kernel/syscalls/sysinfo/sysinfo02.c
-index 7ad0e8bdc..61fa1ab75 100644
+index 7ad0e8bdcf..61fa1ab757 100644
 --- a/testcases/kernel/syscalls/sysinfo/sysinfo02.c
 +++ b/testcases/kernel/syscalls/sysinfo/sysinfo02.c
 @@ -65,7 +65,7 @@
@@ -192,7 +181,7 @@ index 7ad0e8bdc..61fa1ab75 100644
  
  #include "test.h"
 diff --git a/testcases/kernel/syscalls/sysinfo/sysinfo03.c b/testcases/kernel/syscalls/sysinfo/sysinfo03.c
-index af7cb6421..dc5ae65e3 100644
+index af7cb6421e..dc5ae65e35 100644
 --- a/testcases/kernel/syscalls/sysinfo/sysinfo03.c
 +++ b/testcases/kernel/syscalls/sysinfo/sysinfo03.c
 @@ -13,7 +13,7 @@
@@ -205,7 +194,7 @@ index af7cb6421..dc5ae65e3 100644
  #include "lapi/posix_clocks.h"
  #include "tst_test.h"
 diff --git a/testcases/open_posix_testsuite/conformance/interfaces/pthread_cond_broadcast/1-2.c b/testcases/open_posix_testsuite/conformance/interfaces/pthread_cond_broadcast/1-2.c
-index 22e7c3638..572701f9f 100644
+index 22e7c36386..572701f9fd 100644
 --- a/testcases/open_posix_testsuite/conformance/interfaces/pthread_cond_broadcast/1-2.c
 +++ b/testcases/open_posix_testsuite/conformance/interfaces/pthread_cond_broadcast/1-2.c
 @@ -43,7 +43,7 @@
@@ -218,5 +207,5 @@ index 22e7c3638..572701f9f 100644
  
  #include "../testfrmw/testfrmw.h"
 -- 
-2.33.0
+2.34.1
 
