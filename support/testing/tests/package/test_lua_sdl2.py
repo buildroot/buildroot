@@ -5,6 +5,7 @@ class TestLuaLuaSDL2(TestLuaBase):
     config = TestLuaBase.config + \
         """
         BR2_PACKAGE_LUA=y
+        BR2_PACKAGE_LUA_5_3=y
         BR2_PACKAGE_LUA_SDL2=y
         BR2_PACKAGE_SDL2_IMAGE=y
         BR2_PACKAGE_SDL2_MIXER=y
