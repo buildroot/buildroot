@@ -1,0 +1,40 @@
+From 8d9dc023ac12cf305c28786891d5b15e13f29a3d Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 25 Jan 2022 17:22:02 +0100
+Subject: [PATCH] spa/meson.build: add atomic_dep dependency
+
+Commit fa64d93e64592d5edd8767f722cf4ea093641052 moved the atomic_dep
+from pipewire-jack to pipewire_dep however atomic_dep should also be
+added to spa_dev to avoid the following build failure when building
+examples (which don't depend on pipewire_dep):
+
+FAILED: spa/examples/adapter-control
+/home/buildroot/autobuild/instance-0/output-1/host/bin/sparc-linux-gcc  -o spa/examples/adapter-control spa/examples/adapter-control.p/adapter-control.c.o -Wl,--as-needed -Wl,--no-undefined -Wl,-O1 -Wl,--start-group -lintl -ldl -pthread -lm -Wl,--end-group
+/home/buildroot/autobuild/instance-0/output-1/host/opt/ext-toolchain/bin/../lib/gcc/sparc-buildroot-linux-uclibc/10.3.0/../../../../sparc-buildroot-linux-uclibc/bin/ld: spa/examples/adapter-control.p/adapter-control.c.o: in function `spa_graph_node_trigger':
+adapter-control.c:(.text+0xdf4): undefined reference to `__atomic_fetch_sub_4'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/192f40a5c6e05fc11507494e19db52a47082fc35
+
+[Retrieved from:
+https://gitlab.freedesktop.org/pipewire/pipewire/-/commit/8d9dc023ac12cf305c28786891d5b15e13f29a3d]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ spa/meson.build | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/spa/meson.build b/spa/meson.build
+index 4ad37cdb4..2404748df 100644
+--- a/spa/meson.build
++++ b/spa/meson.build
+@@ -9,6 +9,7 @@ spa_dep = declare_dependency(
+   include_directories : [
+     include_directories('include'),
+   ],
++  dependencies : [atomic_dep],
+   version : spaversion,
+   variables : {
+     'plugindir' : meson.current_build_dir() / 'plugins',
+-- 
+GitLab
+
