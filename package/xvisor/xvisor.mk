@@ -32,6 +32,8 @@ ifeq ($(BR2_x86_64),y)
 XVISOR_ARCH = x86
 else ifeq ($(BR2_arm)$(BR2_aarch64),y)
 XVISOR_ARCH = arm
+else ifeq ($(BR2_riscv),y)
+XVISOR_ARCH = riscv
 endif
 
 ifeq ($(BR2_PACKAGE_XVISOR)$(BR_BUILDING),yy)
