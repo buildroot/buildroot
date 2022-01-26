@@ -4,12 +4,15 @@
 #
 ################################################################################
 
-POLKIT_VERSION = 0.120
-POLKIT_SITE = $(call github,aduskett,polkit-duktape,v$(POLKIT_VERSION))
+POLKIT_VERSION = a2bf5c9c83b6ae46cbd5c779d3055bff81ded683
+POLKIT_SITE = https://gitlab.freedesktop.org/polkit/polkit/-/archive/$(POLKIT_VERSION)
 POLKIT_LICENSE = GPL-2.0
 POLKIT_LICENSE_FILES = COPYING
 POLKIT_CPE_ID_VENDOR = polkit_project
 POLKIT_INSTALL_STAGING = YES
+
+# Fix was comitted in a2bf5c9c83b6ae46cbd5c779d3055bff81ded683
+POLKIT_IGNORE_CVE = CVE-2021-4034
 
 POLKIT_DEPENDENCIES = \
 	duktape libglib2 host-intltool expat $(TARGET_NLS_DEPENDENCIES)
