@@ -12,6 +12,9 @@ POLKIT_CPE_ID_VENDOR = polkit_project
 POLKIT_AUTORECONF = YES
 POLKIT_INSTALL_STAGING = YES
 
+# 0004-pkexec-local-privilege-escalation-CVE-2021-4034.patch
+POLKIT_IGNORE_CVE = CVE-2021-4034
+
 POLKIT_DEPENDENCIES = \
 	libglib2 host-intltool expat spidermonkey $(TARGET_NLS_DEPENDENCIES)
 
