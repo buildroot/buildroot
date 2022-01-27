@@ -1,0 +1,15 @@
+config BR2_PACKAGE_LILV
+	bool "lilv"
+	depends on !BR2_STATIC_LIBS
+	select BR2_PACKAGE_LV2
+	select BR2_PACKAGE_SERD
+	select BR2_PACKAGE_SORD
+	select BR2_PACKAGE_SRATOM
+	help
+	  Lilv is a C library to make the use of LV2 plugins as simple
+	  as possible for applications.
+
+	  https://drobilla.net/software/lilv.html
+
+comment "lilv needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
