@@ -49,7 +49,7 @@ jobs:
           cd ${{ github.workspace }}/configs/
           LOCAL_VERSION=`grep BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION reTerminal_64_defconfig`
           REMOTE_VERSION=`grep BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION raspberrypi4_64_defconfig`
-          if [ "$LOCAL_VERSION" != "$REMOTE_VERSION"];then
+          if [ "$LOCAL_VERSION" != "$REMOTE_VERSION" ];then
             sed -i '/BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION/d' reTerminal_64_defconfig
             echo "$REMOTE_VERSION" >> reTerminal_64_defconfig
             git add reTerminal_64_defconfig
