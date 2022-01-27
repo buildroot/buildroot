@@ -4,16 +4,14 @@
 #
 ################################################################################
 
-JASPER_VERSION = 2.0.28
-JASPER_SITE = $(call github,jasper-software,jasper,version-$(JASPER_VERSION))
+JASPER_VERSION = 2.0.33
+JASPER_SITE = https://github.com/jasper-software/jasper/releases/download/version-$(JASPER_VERSION)
 JASPER_INSTALL_STAGING = YES
 JASPER_LICENSE = JasPer-2.0
 JASPER_LICENSE_FILES = LICENSE
 JASPER_CPE_ID_VENDOR = jasper_project
 JASPER_SUPPORTS_IN_SOURCE_BUILD = NO
-JASPER_CONF_OPTS = \
-	-DCMAKE_DISABLE_FIND_PACKAGE_DOXYGEN=TRUE \
-	-DCMAKE_DISABLE_FIND_PACKAGE_LATEX=TRUE
+JASPER_CONF_OPTS = -DJAS_ENABLE_DOC=OFF
 
 ifeq ($(BR2_STATIC_LIBS),y)
 JASPER_CONF_OPTS += -DJAS_ENABLE_SHARED=OFF
