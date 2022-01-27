@@ -12,5 +12,9 @@ TINYXML_AUTORECONF = YES
 TINYXML_INSTALL_STAGING = YES
 TINYXML_LICENSE = Zlib
 TINYXML_LICENSE_FILES = README
+TINYXML_CPE_ID_VENDOT = tinyxml_project
+
+# 0001-In-stamp-always-advance-the-pointer-if-p-0xef.patch
+TINYXML_IGNORE_CVES += CVE-2021-42260
 
 $(eval $(autotools-package))

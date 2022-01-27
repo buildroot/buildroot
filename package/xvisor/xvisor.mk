@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XVISOR_VERSION = 0.3.0
+XVISOR_VERSION = 0.3.1
 XVISOR_SOURCE = xvisor-$(XVISOR_VERSION).tar.xz
 XVISOR_SITE = http://www.xhypervisor.org/tarball
 XVISOR_LICENSE = GPL-2.0+

@@ -144,6 +144,158 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2022.02"
+
+config BR2_PACKAGE_RPI_BT_FIRMWARE
+	bool "rpi-bt-firmware package was renamed"
+	depends on BR2_arm || BR2_aarch64
+	select BR2_LEGACY
+	select BR2_PACKAGE_BRCMFMAC_SDIO_FIRMWARE_RPI
+	select BR2_PACKAGE_BRCMFMAC_SDIO_FIRMWARE_RPI_BT
+	help
+	  Package rpi-bt-firmware was moved as option to
+	  package brcmfmac_sdio-firmware-rpi.
+
+config BR2_PACKAGE_RPI_WIFI_FIRMWARE
+	bool "rpi-wifi-firmware package was renamed"
+	depends on BR2_arm || BR2_aarch64
+	select BR2_LEGACY
+	select BR2_PACKAGE_BRCMFMAC_SDIO_FIRMWARE_RPI
+	select BR2_PACKAGE_BRCMFMAC_SDIO_FIRMWARE_RPI_WIFI
+	help
+	  Package rpi-wifi-firmware was moved as option to
+	  package brcmfmac_sdio-firmware-rpi.
+
+config BR2_PACKAGE_HOST_GDB_PYTHON
+	bool "GDB Python2 support removed"
+	select BR2_LEGACY
+	help
+	  Python2 is deprecated and no longer supported.
+	  Please migrate to Python3.
+
+config BR2_PACKAGE_GSTREAMER1_MM
+	bool "gstreamer1-mm package removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it is not actively
+	  maintained anymore and does not support glibmm-2.68 API.
+
+config BR2_KERNEL_HEADERS_5_14
+	bool "kernel headers version 5.14.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 5.14.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+config BR2_PACKAGE_PYTHON_BACKPORTS_FUNCTOOLS_LRU_CACHE
+	bool "python-backports-functools-lru-cache package removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as python-setuptools-scm
+	  dropped support of python 2 since version 6.0.0.
+
+config BR2_PACKAGE_CIVETWEB_WITH_LUA
+	bool "civetweb lua support option removed"
+	select BR2_LEGACY
+	help
+	  Lua support does not depend on a version of Lua bundled
+	  within the Civetweb sources anymore. Lua support is
+	  automatically enabled if an Lua interpreter (lua or luajit)
+	  is enabled in Buildroot.
+
+config BR2_PACKAGE_SUNXI_MALI_MAINLINE_DRIVER
+	bool "sunxi-mali-mainline-driver package was renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_SUNXI_MALI_UTGARD_DRIVER
+	help
+	  Since the removal of the sunxi-mali-driver package, the
+	  sunxi-mali-mainline-driver package that coexisted became the
+	  only package to provide the Sunxi Mali driver. The "-mainline"
+	  suffix being undescriptive nowadays and before adding new
+	  packages bringing Mali support for other SoCs/GPU flavors, it
+	  is clearer to rename it SUNXI_MALI_UTGARD_DRIVER.
+
+config BR2_PACKAGE_SUNXI_MALI_MAINLINE
+	bool "sunxi-mali-mainline package was renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_SUNXI_MALI_UTGARD
+	help
+	  Since the removal of the sunxi-mali package, the
+	  sunxi-mali-mainline package that coexisted became the only
+	  package to provide Mali blobs. The "-mainline" suffix being
+	  undescriptive nowadays and before adding new packages bringing
+	  Mali support for other SoCs/GPU flavors, it is clearer to
+	  rename it SUNXI_MALI_UTGARD.
+
+config BR2_PACKAGE_SUNXI_MALI_MAINLINE_R6P2
+	bool "sunxi-mali-mainline-r6p2 was renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_SUNXI_MALI_UTGARD_R6P2
+	help
+	  The sunxi-mali-mainline package has been renamed
+	  sunxi-mali-utgard, the suboptions of this package have also
+	  been renamed accordingly.
+
+config BR2_PACKAGE_SUNXI_MALI_MAINLINE_R8P1
+	bool "sunxi-mali-mainline-r8p1 was renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_SUNXI_MALI_UTGARD_R8P1
+	help
+	  The sunxi-mali-mainline package has been renamed
+	  sunxi-mali-utgard, the suboptions of this package have also
+	  been renamed accordingly.
+
+config BR2_PACKAGE_QT5WEBKIT_EXAMPLES
+	bool "qt5webkit-examples removed"
+	select BR2_LEGACY
+	help
+	  The qt5webkit-examples package is unmaintained and has been
+	  removed.
+
+config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_RISCV64_GLIBC_BLEEDING_EDGE
+	bool "Bootlin riscv64 glibc bleeding-edge toolchain removed"
+	select BR2_LEGACY
+	help
+	  The RISC-V 64-bit LP64 Bootlin toolchains have been removed,
+	  in favor of RISC-V 64-bit LP64D toolchains.
+
+config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_RISCV64_MUSL_BLEEDING_EDGE
+	bool "Bootlin riscv64 musl bleeding-edge toolchain removed"
+	select BR2_LEGACY
+	help
+	  The RISC-V 64-bit LP64 Bootlin toolchains have been removed,
+	  in favor of RISC-V 64-bit LP64D toolchains.
+
+config BR2_PACKAGE_IPUTILS_TFTPD
+	bool "iputils tftpd option removed"
+	select BR2_LEGACY
+	help
+	  tftpd has been removed from iputils since version 20211215.
+
+config BR2_PACKAGE_IPUTILS_TRACEROUTE6
+	bool "iputils traceroute6 option removed"
+	select BR2_LEGACY
+	help
+	  traceroute6 has been removed from iputils since version
+	  20211215.
+
+config BR2_PACKAGE_LIBMEDIAART_BACKEND_NONE
+	bool "libmediaart 'none' backend removed"
+	select BR2_LEGACY
+	help
+	  'none' backend has been removed from libmediaart since version
+	  1.9.5.
+
+config BR2_PACKAGE_MPD_UPNP
+	bool "MPD UPnP configuration changed"
+	select BR2_LEGACY
+	help
+	  From version 0.23, MPD supports npupnp in addition to pupnp to
+	  provide database access to a UPnP media server. To preserve
+	  the existing functionality, the pupnp option has been selected
+	  in the MPD UPnP configuration.
+# Note: BR2_PACKAGE_MPD_UPNP is still referenced from package/mpd/Config.in
+
 comment "Legacy options removed in 2021.11"
 
 config BR2_OPENJDK_VERSION_LTS
@@ -1398,7 +1550,7 @@ config BR2_PACKAGE_LIBUMP
 config BR2_PACKAGE_SUNXI_MALI
 	bool "sunxi-mali package removed"
 	select BR2_LEGACY
-	select BR2_PACKAGE_SUNXI_MALI_MAINLINE
+	select BR2_PACKAGE_SUNXI_MALI_UTGARD
 	help
 	  The sunxi-mali package was removed, as the
 	  sunxi-mali-mainline package replaces it for mainline

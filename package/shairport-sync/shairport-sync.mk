@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SHAIRPORT_SYNC_VERSION = 3.3.8
+SHAIRPORT_SYNC_VERSION = 3.3.9
 SHAIRPORT_SYNC_SITE = $(call github,mikebrady,shairport-sync,$(SHAIRPORT_SYNC_VERSION))
 
 SHAIRPORT_SYNC_LICENSE = MIT, BSD-3-Clause
@@ -22,11 +22,7 @@ SHAIRPORT_SYNC_CONF_OPTS = --with-alsa \
 SHAIRPORT_SYNC_CONF_ENV += LIBS="$(SHAIRPORT_SYNC_CONF_LIBS)"
 
 # Avahi or tinysvcmdns (shaiport-sync bundles its own version of tinysvcmdns).
-# Avahi support needs libavahi-client, which is built by avahi if avahi-daemon
-# and dbus is selected. Since there is no BR2_PACKAGE_LIBAVAHI_CLIENT config
-# option yet, use the avahi-daemon and dbus congig symbols to check for
-# libavahi-client.
-ifeq ($(BR2_PACKAGE_AVAHI_DAEMON)$(BR2_PACKAGE_DBUS),yy)
+ifeq ($(BR2_PACKAGE_AVAHI_LIBAVAHI_CLIENT),y)
 SHAIRPORT_SYNC_DEPENDENCIES += avahi
 SHAIRPORT_SYNC_CONF_OPTS += --with-avahi --without-tinysvcmdns
 else

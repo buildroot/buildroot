@@ -1,0 +1,10 @@
+[Unit]
+Description=Connectivity Fault Management
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/cfm_server
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -1,44 +1,70 @@
 #!/bin/sh
+# Customizations are sourced from /etc/default/inadyn.  For example,
+# override INADYN_ARGS to adjust log level, add a startup delay, etc.
 #
-# Start & stop the inadyn client
-#
+# NOTE: to start, add a line ENABLED="yes" to /etc/default/inadyn
 
-CONFIG=/etc/inadyn.conf
+DAEMON="inadyn"
+PIDFILE="/var/run/$DAEMON.pid"
 
-# check if CONFIG exists, print message & exit if it doesn't
-[ ! -f $CONFIG ] && ( echo "The config file "$CONFIG" is missing...exiting now." && exit 2 )
+INADYN_ARGS=""
 
-# Allow a few customizations from a config file. Especially inadyn
-# must be explicitly enabled by adding ENABLED="yes" in this file.
-test -r /etc/default/inadyn && . /etc/default/inadyn
+# shellcheck source=/dev/null
+[ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
+
+start() {
+	printf 'Starting %s: ' "$DAEMON"
+	if [ "$ENABLED" != "yes" ]; then
+		echo "SKIPPED"
+		exit 0
+	fi
+	# shellcheck disable=SC2086 # we need the word splitting
+	start-stop-daemon -S -q -p "$PIDFILE" -x "/usr/sbin/$DAEMON" \
+			  -- $INADYN_ARGS
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+stop() {
+	printf 'Stopping %s: ' "$DAEMON"
+	start-stop-daemon -K -q -p "$PIDFILE" -x "/usr/sbin/$DAEMON"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		rm -f "$PIDFILE"
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+restart() {
+	stop
+	sleep 1
+	start
+}
+
+reload() {
+	printf 'Reloading %s: ' "$DAEMON"
+	start-stop-daemon -K -s HUP -q -p "$PIDFILE" -x "/usr/sbin/$DAEMON"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
 
 case "$1" in
-	start)
-		printf "Starting inadyn: "
-		if test "${ENABLED}" != "yes" ; then
-		    echo "SKIPPED"
-		    exit 0
-		fi
-		start-stop-daemon -b -q -S -p /var/run/inadyn.pid -x /usr/sbin/inadyn
-		[ $? = 0 ] && echo "OK" || echo "FAIL"
-		;;
-	stop)
-		printf "Stopping inadyn: "
-		if test "${ENABLED}" != "yes" ; then
-		    echo "SKIPPED"
-		    exit 0
-		fi
-		start-stop-daemon -q -K -p /var/run/inadyn.pid -x /usr/sbin/inadyn
-		[ $? = 0 ] && echo "OK" || echo "FAIL"
-		rm -f /var/run/inadyn.pid
-		;;
-	restart)
-		"$0" stop
-		"$0" start
-		;;
-		*)
-		echo "Usage: $0 {start|stop|restart}"
+	start|stop|restart|reload)
+		"$1";;
+	*)
+		echo "Usage: $0 {start|stop|restart|reload}"
 		exit 1
 esac
-
-exit $?

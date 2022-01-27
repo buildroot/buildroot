@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ARMBIAN_FIRMWARE_VERSION = a1df8ab2ffbac51a8260905dd841bf825cf1bc53
+ARMBIAN_FIRMWARE_VERSION = 5d685ad233b4dfd03a4d025fa0061f6b0f850cb3
 ARMBIAN_FIRMWARE_SITE = https://github.com/armbian/firmware
 ARMBIAN_FIRMWARE_SITE_METHOD = git
 
@@ -39,7 +39,9 @@ endif
 ifeq ($(BR2_PACKAGE_ARMBIAN_FIRMWARE_RTL8822CS),y)
 ARMBIAN_FIRMWARE_FILES += \
 	rtlbt/rtl8822cs_config \
-	rtlbt/rtl8822cs_fw
+	rtlbt/rtl8822cs_fw \
+	rtl_bt/rtl8822cs_config.bin \
+	rtl_bt/rtl8822cs_fw.bin
 endif
 
 # XR819 WiFi firmware

@@ -30,8 +30,10 @@ else
 GCR_CONF_OPTS += -Dintrospection=false
 endif
 
-# Only the X11 backend is supported for the simple GUI
 ifeq ($(BR2_PACKAGE_LIBGTK3_X11),y)
+GCR_DEPENDENCIES += libgtk3
+GCR_CONF_OPTS += -Dgtk=true
+else ifeq ($(BR2_PACKAGE_LIBGTK3_WAYLAND),y)
 GCR_DEPENDENCIES += libgtk3
 GCR_CONF_OPTS += -Dgtk=true
 else

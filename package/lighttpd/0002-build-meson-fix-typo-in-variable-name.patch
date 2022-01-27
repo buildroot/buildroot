@@ -1,0 +1,25 @@
+From 876a1e1b2cc21282a0df5245004197cdffe1d380 Mon Sep 17 00:00:00 2001
+From: Glenn Strauss <gstrauss@gluelogic.com>
+Date: Thu, 20 Jan 2022 07:04:51 -0500
+Subject: [PATCH] [build] meson: fix typo in variable name
+
+[Retrieved from:
+https://github.com/lighttpd/lighttpd1.4/commit/876a1e1b2cc21282a0df5245004197cdffe1d380]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/meson.build b/src/meson.build
+index 4ee163468..b35c1037f 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -266,7 +266,7 @@ endif
+ libbrotli = []
+ if get_option('with_brotli')
+ 	libbrotli = [ compiler.find_library('brotlienc') ]
+-	if compiler.has_function('BrotliEncoderCreateInstance', args: defs, dependencies: libbrotlienc, prefix: '#include <brotli/encode.h>')
++	if compiler.has_function('BrotliEncoderCreateInstance', args: defs, dependencies: libbrotli, prefix: '#include <brotli/encode.h>')
+ 		conf_data.set('HAVE_BROTLI_ENCODE_H', true)
+ 		conf_data.set('HAVE_BROTLI', true)
+ 	else

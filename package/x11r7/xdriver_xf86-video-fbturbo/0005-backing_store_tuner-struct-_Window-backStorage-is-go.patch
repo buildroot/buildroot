@@ -1,0 +1,65 @@
+From 93631c1f68678bf3e860b1bbc6192c8b6ac4c563 Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Mon, 13 Dec 2021 19:55:08 +0100
+Subject: [PATCH] backing_store_tuner: struct _Window::backStorage is gone
+
+Fix struct _Window::backStorage related compile failure.
+
+Since xserver commit 'dix: Remove WindowRec::backStorage ' ([1])
+struct _Window::backStorage is gone, use struct _Window::backingStore instead.
+
+Fixes:
+
+  backing_store_tuner.c: In function 'xPostValidateTree':
+  backing_store_tuner.c:112:48: error: 'struct _Window' has no member named 'backStorage'
+    112 |     if (!private->ForceBackingStore && focusWin->backStorage) {
+        |                                                ^~
+  backing_store_tuner.c:128:20: error: 'struct _Window' has no member named 'backStorage'
+    128 |         if (!curWin->backStorage && (private->ForceBackingStore ||
+        |                    ^~
+  backing_store_tuner.c: In function 'xReparentWindow':
+  backing_store_tuner.c:161:46: error: 'struct _Window' has no member named 'backStorage'
+    161 |     if (pPriorParent == pScreen->root && pWin->backStorage) {
+        |                                              ^~
+
+[1] https://gitlab.freedesktop.org/xorg/xserver/-/commit/6975807945d12c07f00e18df7fafeff43efa0267
+
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ src/backing_store_tuner.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/backing_store_tuner.c b/src/backing_store_tuner.c
+index 067c05f..13f7ec3 100644
+--- a/src/backing_store_tuner.c
++++ b/src/backing_store_tuner.c
+@@ -109,7 +109,7 @@ xPostValidateTree(WindowPtr pWin, WindowPtr pLayerWin, VTKind kind)
+     private->PostValidateTreeNestingLevel++;
+ 
+     /* Disable backing store for the focus window */
+-    if (!private->ForceBackingStore && focusWin->backStorage) {
++    if (!private->ForceBackingStore && (focusWin->backingStore != NotUseful)) {
+         DebugMsg("Disable backing store for the focus window 0x%x\n",
+                  (unsigned int)focusWin->drawable.id);
+         pScreen->backingStoreSupport = Always;
+@@ -125,7 +125,7 @@ xPostValidateTree(WindowPtr pWin, WindowPtr pLayerWin, VTKind kind)
+     /* And enable backing store for all the other children of root */
+     curWin = pScreen->root->firstChild;
+     while (curWin) {
+-        if (!curWin->backStorage && (private->ForceBackingStore ||
++        if ((curWin->backingStore == NotUseful) && (private->ForceBackingStore ||
+                                      curWin != focusWin)) {
+             DebugMsg("Enable backing store for window 0x%x\n",
+                      (unsigned int)curWin->drawable.id);
+@@ -158,7 +158,7 @@ xReparentWindow(WindowPtr pWin, WindowPtr pPriorParent)
+     }
+ 
+     /* We only want backing store set for direct children of root */
+-    if (pPriorParent == pScreen->root && pWin->backStorage) {
++    if (pPriorParent == pScreen->root && (pWin->backingStore != NotUseful)) {
+         DebugMsg("Reparent window 0x%x from root, disabling backing store\n",
+                  (unsigned int)pWin->drawable.id);
+         pScreen->backingStoreSupport = Always;
+-- 
+2.34.1
+

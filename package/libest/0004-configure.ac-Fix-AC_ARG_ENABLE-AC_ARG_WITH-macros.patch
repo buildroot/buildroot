@@ -1,0 +1,164 @@
+From 9a76187aa4d779de39afa12024d5a73a14175371 Mon Sep 17 00:00:00 2001
+From: Aleksandr Makarov <aleksandr.o.makarov@gmail.com>
+Date: Wed, 15 Jul 2020 11:25:05 +0000
+Subject: [PATCH] configure.ac: Fix AC_ARG_ENABLE/AC_ARG_WITH macros
+
+Multiple tests in configure.ac are flawed:
+
+[--snip--]
+    AC_ARG_ENABLE([pthreads],
+            [AS_HELP_STRING([--disable-pthreads],
+                            [Disable support for pthreads])],
+            [pthreads_on=1],
+            [pthreads_on=0])
+[--snip--]
+
+The third argument is "action-if-given" and the fourth argument
+is "action-if-not-given" [0]. Which means that, whether you pass
+--enable-pthreads or --disable-pthreads, the third argument will be
+executed, that is "pthreads_on=1". And if you pass neither, the fourth
+argument will be executed, i.e. "pthreads_on=0".
+
+We want `--enable-pthreads` and `--disable-pthreads` flags to do their job.
+The right way to do that will be to eliminate "action-if-given" and replace
+the user-defined `FEATURE_on=0|1` shell variables with the `enable_FEATURE`
+and `with_PACKAGE` shell variables provided by Autotools.
+
+[0] https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.69/autoconf.html#Package-Options
+
+Upstream: https://github.com/cisco/libest/pull/81/. It was merged
+upstream in commit 4fd7e74dc556519132b9ea4c8a0f022bd1254a31, but this
+commit mixes multiple patches in one.
+
+Signed-off-by: Aleksandr Makarov <aleksandr.o.makarov@gmail.com>
+---
+ configure.ac | 60 ++++++++++++++++++++++++++--------------------------
+ 1 file changed, 30 insertions(+), 30 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 048aa3c..0b930bf 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -43,9 +43,9 @@ AM_CONDITIONAL([JAVA_HOME_SET], [test ! -z "$JAVA_HOME"])
+ AC_ARG_ENABLE([client-only], 
+ 	       [AS_HELP_STRING([--enable-client-only],
+ 			       [Enable the building of only the client mode of libEST])],
+-		[clientonly_on=1],
+-		[clientonly_on=0])
+-AM_CONDITIONAL([ENABLE_CLIENT_ONLY], [test x$clientonly_on = x1])
++		[],
++		[enable_client_only="no"])
++AM_CONDITIONAL([ENABLE_CLIENT_ONLY], [test "$enable_client_only" = "yes"])
+ AM_COND_IF([ENABLE_CLIENT_ONLY], 
+ 	   AC_MSG_RESULT([Client only build enabled])
+ 	   AC_DEFINE([ENABLE_CLIENT_ONLY]),
+@@ -54,9 +54,9 @@ AM_COND_IF([ENABLE_CLIENT_ONLY],
+ AC_ARG_ENABLE([brski], 
+ 	       [AS_HELP_STRING([--enable-brski],
+ 			       [Enable support for brski bootstrap functionality])],
+-		[brski_on=1],
+-		[brski_on=0])
+-AM_CONDITIONAL([ENABLE_BRSKI], [test x$brski_on = x1])
++		[],
++		[enable_brski="no"])
++AM_CONDITIONAL([ENABLE_BRSKI], [test "$enable_brski" = "yes"])
+ AM_COND_IF([ENABLE_BRSKI], 
+ 	   AC_MSG_RESULT([BRSKI support enabled])
+ 	   AC_DEFINE([ENABLE_BRSKI]),
+@@ -65,9 +65,9 @@ AM_COND_IF([ENABLE_BRSKI],
+ AC_ARG_ENABLE([pthreads], 
+ 	       [AS_HELP_STRING([--disable-pthreads],
+ 			       [Disable support for pthreads])],
+-		[pthreads_on=1],
+-		[pthreads_on=0])
+-AM_CONDITIONAL([DISABLE_PTHREAD], [test x$pthreads_on = x1])
++		[],
++		[enable_pthreads="yes"])
++AM_CONDITIONAL([DISABLE_PTHREAD], [test "$enable_pthreads" = "no"])
+ AM_COND_IF([DISABLE_PTHREAD], 
+ 	   AC_MSG_RESULT([pthread support disabled])
+ 	   AC_DEFINE([DISABLE_PTHREADS]), 
+@@ -88,13 +88,13 @@ AM_COND_IF([ENABLE_EXAMPLES], AC_MSG_RESULT([yes]), AC_MSG_RESULT([no]))
+ AC_ARG_WITH([ssl-dir],
+ 	    [AS_HELP_STRING([--with-ssl-dir],
+ 		[location of OpenSSL install folder, defaults to /usr/local/ssl])],
+-	    [ssldir="$withval"],
+-	    [ssldir="/usr/local/ssl"])
+-AC_SUBST([SSL_CFLAGS], "$ssldir/include")
+-AC_SUBST([SSL_LDFLAGS], "$ssldir/lib")
++	    [],
++	    [with_ssl_dir="/usr/local/ssl"])
++AC_SUBST([SSL_CFLAGS], "$with_ssl_dir/include")
++AC_SUBST([SSL_LDFLAGS], "$with_ssl_dir/lib")
+ 
+-CFLAGS="$CFLAGS -Wall -I$ssldir/include"
+-LDFLAGS="$LDFLAGS -L$ssldir/lib"
++CFLAGS="$CFLAGS -Wall -I$with_ssl_dir/include"
++LDFLAGS="$LDFLAGS -L$with_ssl_dir/lib"
+ if test "$is_freebsd" = "1" ; then
+ AC_CHECK_LIB([crypto], [EVP_EncryptInit], [],
+              [AC_MSG_FAILURE([can't find openssl crypto lib])]
+@@ -120,13 +120,13 @@ AC_CHECK_LIB([crypto], [EVP_CIPHER_CTX_reset], [],
+ AC_ARG_WITH([libcurl-dir],
+  [AS_HELP_STRING([--with-libcurl-dir],
+ 				 [enable support for client proxy using libcurl])],
+- [libcurldir="$withval"],
+- [with_libcurldir=no])
++ [],
++ [with_libcurl_dir=no])
+ 
+   AS_IF(
+-        [test "x$with_libcurldir" != xno],
+-        [[CFLAGS="$CFLAGS -I$libcurldir/include"]
+-         [LDFLAGS="$LDFLAGS -L$libcurldir/lib -lcurl"]
++        [test "$with_libcurl_dir" != "no"],
++        [[CFLAGS="$CFLAGS -I$with_libcurl_dir/include"]
++         [LDFLAGS="$LDFLAGS -L$with_libcurl_dir/lib -lcurl"]
+          AC_CHECK_LIB(
+               [curl],
+               [curl_easy_init],
+@@ -143,17 +143,17 @@ AC_ARG_WITH([libcurl-dir],
+ AC_ARG_WITH([uriparser-dir],
+  [AS_HELP_STRING([--with-uriparser-dir],
+ 				 [enable support for path segments using uriparser])],
+- [uriparserdir="$withval"],
+- [with_uriparserdir=no])
++ [],
++ [with_uriparser_dir=no])
+           
+  dnl CFLAGS="$CFLAGS -Wall -I$uriparserdir/include"
+  dnl CPPFLAGS="$CPPFLAGS -I$uriparser/include"
+  dnl LDFLAGS="$LDFLAGS -L$uriparserdir/lib -luriparser"
+ 
+   AS_IF(
+-        [test "x$with_uriparserdir" != xno],
+-        [[CFLAGS="$CFLAGS -I$uriparserdir/include"]
+-         [LDFLAGS="$LDFLAGS -L$uriparserdir/lib -luriparser"]
++        [test "$with_uriparser_dir" != "no"],
++        [[CFLAGS="$CFLAGS -I$with_uriparser_dir/include"]
++         [LDFLAGS="$LDFLAGS -L$with_uriparser_dir/lib -luriparser"]
+          AC_CHECK_LIB(
+               [uriparser], 
+               [uriParseUriA],
+@@ -170,13 +170,13 @@ AC_ARG_WITH([uriparser-dir],
+ AC_ARG_WITH([libcoap-dir],
+  [AS_HELP_STRING([--with-libcoap-dir],
+ 				 [enable support for ESToCoAP using libcoap library])],
+- [libcoapdir="$withval"],
+- [with_libcoapdir=no])          
++ [],
++ [with_libcoap_dir=no])
+ 
+   AS_IF(
+-        [test "x$with_libcoapdir" != xno],
+-        [[CFLAGS="$CFLAGS -I$libcoapdir/include"]
+-         [LDFLAGS="$LDFLAGS -L$libcoapdir/lib -lcoap-2-openssl"]
++        [test "$with_libcoap_dir" != "no"],
++        [[CFLAGS="$CFLAGS -I$with_libcoap_dir/include"]
++         [LDFLAGS="$LDFLAGS -L$with_libcoap_dir/lib -lcoap-2-openssl"]
+          AC_CHECK_LIB(
+               [coap-2-openssl], 
+               [coap_startup],
+-- 
+2.17.1
+

@@ -1,0 +1,17 @@
+config BR2_PACKAGE_PYTHON_WEASYPRINT
+	bool "python-weasyprint"
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON_BROTLI # runtime
+	select BR2_PACKAGE_PYTHON_CFFI # runtime
+	select BR2_PACKAGE_PYTHON_CSSSELECT2 # runtime
+	select BR2_PACKAGE_PYTHON_FONTTOOLS # runtime
+	select BR2_PACKAGE_PYTHON_HTML5LIB # runtime
+	select BR2_PACKAGE_PYTHON_PILLOW # runtime
+	select BR2_PACKAGE_PYTHON_PYDYF # runtime
+	select BR2_PACKAGE_PYTHON_PYPHEN # runtime
+	select BR2_PACKAGE_PYTHON_TINYCSS2 # runtime
+	select BR2_PACKAGE_PYTHON_ZOPFLI # runtime
+	help
+	  The Awesome Document Factory.
+
+	  https://www.courtbouillon.org/weasyprint

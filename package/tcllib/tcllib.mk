@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-TCLLIB_VERSION = 1.13
-TCLLIB_SOURCE = tcllib-$(TCLLIB_VERSION).tar.bz2
+TCLLIB_VERSION = 1.20
+TCLLIB_SOURCE = tcllib-$(TCLLIB_VERSION).tar.xz
 TCLLIB_SITE = http://downloads.sourceforge.net/project/tcllib/tcllib/$(TCLLIB_VERSION)
 TCLLIB_LICENSE = TCL
 TCLLIB_LICENSE_FILES = license.terms

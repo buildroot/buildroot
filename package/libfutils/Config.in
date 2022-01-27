@@ -1,0 +1,15 @@
+config BR2_PACKAGE_LIBFUTILS
+	bool "libfutils"
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC
+	depends on BR2_INSTALL_LIBSTDCPP # ulog
+	depends on BR2_TOOLCHAIN_HAS_THREADS # ulog
+	select BR2_PACKAGE_ULOG
+	help
+	  This library contains some common useful functions (list,
+	  hash, time)
+
+	  https://github.com/Parrot-Developers/libfutils
+
+comment "libfutils needs a toolchain w/ C++, threads"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC

@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-XLIB_LIBX11_VERSION = 1.7.2
-XLIB_LIBX11_SOURCE = libX11-$(XLIB_LIBX11_VERSION).tar.bz2
+XLIB_LIBX11_VERSION = 1.7.3.1
+XLIB_LIBX11_SOURCE = libX11-$(XLIB_LIBX11_VERSION).tar.xz
 XLIB_LIBX11_SITE = https://xorg.freedesktop.org/archive/individual/lib
 XLIB_LIBX11_LICENSE = MIT
 XLIB_LIBX11_LICENSE_FILES = COPYING

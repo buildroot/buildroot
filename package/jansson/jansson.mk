@@ -4,8 +4,10 @@
 #
 ################################################################################
 
-JANSSON_VERSION = 2.13.1
-JANSSON_SITE = http://www.digip.org/jansson/releases
+JANSSON_VERSION = 2.14
+JANSSON_SOURCE = jansson-$(JANSSON_VERSION).tar.bz2
+JANSSON_SITE = \
+	https://github.com/akheron/jansson/releases/download/v$(JANSSON_VERSION)
 JANSSON_LICENSE = MIT
 JANSSON_LICENSE_FILES = LICENSE
 JANSSON_CPE_ID_VENDOR = jansson_project

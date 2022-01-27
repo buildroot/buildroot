@@ -1,0 +1,91 @@
+From ac878566eb935fd3ebfb804e6bd9e1690d4a65e3 Mon Sep 17 00:00:00 2001
+From: Tollef Fog Heen <tfheen@err.no>
+Date: Tue, 20 Mar 2018 22:40:32 +0100
+Subject: [PATCH] Open raw sockets when adding hosts, not when doing the
+ pinging
+
+This allows this to run as non-root again, without this, oping will
+have dropped privileges before trying to ping, which then fails to
+open the necessary raw sockets.
+
+Fixes: #34
+
+[Upstream: https://github.com/octo/liboping/pull/35/commits/a88c51f38dafa1fba9118045176754bec05d3c94]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ src/liboping.c | 48 +++++++++++++++++-------------------------------
+ 1 file changed, 17 insertions(+), 31 deletions(-)
+
+diff --git a/src/liboping.c b/src/liboping.c
+index 39b0041..f98e810 100644
+--- a/src/liboping.c
++++ b/src/liboping.c
+@@ -1344,41 +1344,10 @@ int ping_send (pingobj_t *obj)
+ 	struct timeval nowtime;
+ 	struct timeval timeout;
+ 
+-	_Bool need_ipv4_socket = 0;
+-	_Bool need_ipv6_socket = 0;
+-
+ 	for (ptr = obj->head; ptr != NULL; ptr = ptr->next)
+ 	{
+ 		ptr->latency  = -1.0;
+ 		ptr->recv_ttl = -1;
+-
+-		if (ptr->addrfamily == AF_INET)
+-			need_ipv4_socket = 1;
+-		else if (ptr->addrfamily == AF_INET6)
+-			need_ipv6_socket = 1;
+-	}
+-
+-	if (!need_ipv4_socket && !need_ipv6_socket)
+-	{
+-		ping_set_error (obj, "ping_send", "No hosts to ping");
+-		return (-1);
+-	}
+-
+-	if (need_ipv4_socket && obj->fd4 == -1)
+-	{
+-		obj->fd4 = ping_open_socket(obj, AF_INET);
+-		if (obj->fd4 == -1)
+-			return (-1);
+-		ping_set_ttl (obj, obj->ttl);
+-		ping_set_qos (obj, obj->qos);
+-	}
+-	if (need_ipv6_socket && obj->fd6 == -1)
+-	{
+-		obj->fd6 = ping_open_socket(obj, AF_INET6);
+-		if (obj->fd6 == -1)
+-			return (-1);
+-		ping_set_ttl (obj, obj->ttl);
+-		ping_set_qos (obj, obj->qos);
+ 	}
+ 
+ 	if (gettimeofday (&nowtime, NULL) == -1)
+@@ -1698,6 +1667,23 @@ int ping_host_add (pingobj_t *obj, const char *host)
+ 	ph->table_next = obj->table[ph->ident % PING_TABLE_LEN];
+ 	obj->table[ph->ident % PING_TABLE_LEN] = ph;
+ 
++	if (ph->addrfamily == AF_INET && obj->fd4 == -1)
++	{
++		obj->fd4 = ping_open_socket(obj, AF_INET);
++		if (obj->fd4 == -1)
++			return (-1);
++		ping_set_ttl (obj, obj->ttl);
++		ping_set_qos (obj, obj->qos);
++	}
++	if (ph->addrfamily == AF_INET6 && obj->fd6 == -1)
++	{
++		obj->fd6 = ping_open_socket(obj, AF_INET6);
++		if (obj->fd6 == -1)
++			return (-1);
++		ping_set_ttl (obj, obj->ttl);
++		ping_set_qos (obj, obj->qos);
++	}
++
+ 	return (0);
+ } /* int ping_host_add */
+ 
+-- 
+2.25.1
+

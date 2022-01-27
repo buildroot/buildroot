@@ -7,13 +7,13 @@ configuration for the STM32F469 Discovery evaluation platform.
 Building
 --------
 
-  make stm32f469_disco_defconfig
+  make stm32f469_disco_sd_defconfig
   make
 
 Flashing
 --------
 
-  ./board/stmicroelectronics/stm32f469-disco/flash.sh output/
+  ./board/stmicroelectronics/stm32f469-disco/flash_sd.sh output/
 
 It will flash the U-boot bootloader.
 

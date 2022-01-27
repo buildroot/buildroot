@@ -1,0 +1,30 @@
+comment "libest needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
+
+config BR2_PACKAGE_LIBEST
+	bool "libest"
+	depends on !BR2_STATIC_LIBS # libexecinfo or glibc
+	select BR2_PACKAGE_LIBEXECINFO if !BR2_TOOLCHAIN_USES_GLIBC
+	select BR2_PACKAGE_OPENSSL
+	help
+	  libest is a C implementation of RFC 7030 (Enrollment over
+	  Secure Transport).
+
+	  It can be used to provision public key certificates from
+	  a certificate authority (CA) or registration authority (RA)
+	  to end-user devices and network infrastructure devices.
+
+	  https://github.com/cisco/libest
+
+if BR2_PACKAGE_LIBEST
+
+config BR2_PACKAGE_LIBEST_BRSKI
+	bool "BRSKI support"
+
+config BR2_PACKAGE_LIBEST_MODE_CLIENT_ONLY
+	bool "client-only mode"
+	# The client-only mode fails to build with OpenJDK/JNI
+	# bindings
+	depends on !BR2_PACKAGE_OPENJDK
+
+endif # BR2_PACKAGE_LIBEST

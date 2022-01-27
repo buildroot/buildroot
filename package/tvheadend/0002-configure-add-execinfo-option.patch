@@ -1,0 +1,55 @@
+From 04c01e631cb1bf47dd50b1ef92a086308e380eff Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 1 Jan 2022 16:53:29 +0100
+Subject: [PATCH] configure: add execinfo option
+
+Add execinfo option to allow the user to disable the feature even if
+execinfo.h is found on the system
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upsteam status: https://github.com/tvheadend/tvheadend/pull/1431]
+---
+ configure | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/configure b/configure
+index 4dad024c4..c087502bf 100755
+--- a/configure
++++ b/configure
+@@ -75,6 +75,7 @@ OPTIONS=(
+   "ddci:yes"
+   "cclang_threadsan:no"
+   "gperftools:no"
++  "execinfo:auto"
+ )
+ 
+ #
+@@ -150,11 +151,23 @@ if [ ${PLATFORM} = "freebsd" ]; then
+     # If we don't have libunwind then fallback to execinfo.
+     if ! enabled libunwind
+     then
+-        check_cc_header execinfo
++        if enabled_or_auto execinfo; then
++            if check_cc_header execinfo; then
++                enable execinfo
++            else
++                die "execinfo.h not found (use --disable-execinfo)"
++           fi
++        fi
+     fi
+ 
+ else
+-    check_cc_header execinfo
++    if enabled_or_auto execinfo; then
++        if check_cc_header execinfo; then
++            enable execinfo
++        else
++            die "execinfo.h not found (use --disable-execinfo)"
++        fi
++    fi
+ fi
+ check_cc_option mmx
+ check_cc_option sse2
+-- 
+2.33.0
+

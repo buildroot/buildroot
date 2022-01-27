@@ -4,11 +4,21 @@
 #
 ################################################################################
 
-RUBY_VERSION_MAJOR = 3.0
-RUBY_VERSION = $(RUBY_VERSION_MAJOR).2
-RUBY_VERSION_EXT = 3.0.0
+RUBY_VERSION_MAJOR = 3.1
+RUBY_VERSION = $(RUBY_VERSION_MAJOR).0
+RUBY_VERSION_EXT = 3.1.0
 RUBY_SITE = http://cache.ruby-lang.org/pub/ruby/$(RUBY_VERSION_MAJOR)
 RUBY_SOURCE = ruby-$(RUBY_VERSION).tar.xz
+
+RUBY_LICENSE = \
+	Ruby or BSD-2-Clause, \
+	BSD-3-Clause, \
+	MIT, \
+	others
+RUBY_LICENSE_FILES = LEGAL COPYING BSDL
+
+RUBY_CPE_ID_VENDOR = ruby-lang
+
 RUBY_DEPENDENCIES = host-pkgconf host-ruby
 HOST_RUBY_DEPENDENCIES = host-pkgconf host-openssl
 RUBY_MAKE_ENV = $(TARGET_MAKE_ENV)
@@ -17,11 +27,6 @@ HOST_RUBY_CONF_OPTS = \
 	--disable-install-doc \
 	--with-out-ext=curses,readline \
 	--without-gmp
-RUBY_LICENSE = Ruby or BSD-2-Clause, BSD-3-Clause, others
-RUBY_LICENSE_FILES = LEGAL COPYING BSDL
-RUBY_CPE_ID_VENDOR = ruby-lang
-# 0001-fix-default-coroutine-selection.patch
-RUBY_AUTORECONF = YES
 
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 RUBY_CONF_ENV += LIBS=-latomic

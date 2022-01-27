@@ -1,0 +1,13 @@
+config BR2_PACKAGE_HOST_RISCV_ISA_SIM
+	bool "host riscv-isa-sim"
+	depends on BR2_HOST_GCC_AT_LEAST_4_9 # C++11
+	help
+	  Spike, the RISC-V ISA Simulator, implements a functional
+	  model of one or more RISC-V harts.
+
+	  The host package provides an alternative solution to qemu.
+
+	  https://github.com/riscv-software-src/riscv-isa-sim
+
+comment "host riscv-isa-sim needs host gcc >= 4.9"
+	depends on !BR2_HOST_GCC_AT_LEAST_4_9

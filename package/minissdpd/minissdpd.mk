@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MINISSDPD_VERSION = 1.5.20200928
+MINISSDPD_VERSION = 1.5.20211105
 MINISSDPD_SITE = http://miniupnp.free.fr/files
 MINISSDPD_LICENSE = BSD-3-Clause
 MINISSDPD_LICENSE_FILES = LICENSE
@@ -20,7 +20,7 @@ endef
 
 define MINISSDPD_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) \
-		PREFIX=$(TARGET_DIR) install
+		DESTDIR=$(TARGET_DIR) install
 endef
 
 # Use dedicated init scripts for systemV and systemd instead of using

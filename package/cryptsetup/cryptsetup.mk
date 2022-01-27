@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-CRYPTSETUP_VERSION_MAJOR = 2.3
-CRYPTSETUP_VERSION = $(CRYPTSETUP_VERSION_MAJOR).6
+CRYPTSETUP_VERSION_MAJOR = 2.4
+CRYPTSETUP_VERSION = $(CRYPTSETUP_VERSION_MAJOR).2
 CRYPTSETUP_SOURCE = cryptsetup-$(CRYPTSETUP_VERSION).tar.xz
 CRYPTSETUP_SITE = $(BR2_KERNEL_MIRROR)/linux/utils/cryptsetup/v$(CRYPTSETUP_VERSION_MAJOR)
 CRYPTSETUP_DEPENDENCIES = \
@@ -33,10 +33,17 @@ else
 CRYPTSETUP_CONF_OPTS += --with-crypto_backend=kernel
 endif
 
-ifeq ($(BR2_PACKAGE_SYSTEMD_TMPFILES),y)
-CRYPTSETUP_CONF_OPTS += --with-tmpfilesdir=/usr/lib/tmpfiles.d
+ifeq ($(BR2_PACKAGE_LIBSSH),y)
+CRYPTSETUP_DEPENDENCIES += \
+	$(if $(BR2_PACKAGE_ARGP_STANDALONE),argp-standalone) \
+	libssh
+CRYPTSETUP_CONF_OPTS += --enable-ssh-token
 else
-CRYPTSETUP_CONF_OPTS += --without-tmpfilesdir
+CRYPTSETUP_CONF_OPTS += --disable-ssh-token
+endif
+
+ifeq ($(BR2_PACKAGE_SYSTEMD),y)
+CRYPTSETUP_CONF_OPTS += --with-tmpfilesdir=/usr/lib/tmpfiles.d
 endif
 
 HOST_CRYPTSETUP_DEPENDENCIES = \
@@ -49,6 +56,7 @@ HOST_CRYPTSETUP_DEPENDENCIES = \
 
 HOST_CRYPTSETUP_CONF_OPTS = --with-crypto_backend=openssl \
 	--disable-kernel_crypto \
+	--disable-ssh-token \
 	--enable-blkid \
 	--with-tmpfilesdir=no
 

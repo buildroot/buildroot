@@ -1,0 +1,29 @@
+From b83e85ab677c79b46f520abebd1ee031e3a139c0 Mon Sep 17 00:00:00 2001
+From: Heiko Becker <heirecka@exherbo.org>
+Date: Sun, 26 Sep 2021 21:34:30 +0200
+Subject: [PATCH] neon: Allow building against neon 0.32.x
+
+No API/ABI changes: https://github.com/notroj/neon/blob/0.32.0/NEWS#L3
+
+Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/1267>
+
+[Retrieved from:
+https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/b83e85ab677c79b46f520abebd1ee031e3a139c0]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ subprojects/gst-plugins-bad/ext/neon/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ext/neon/meson.build b/ext/neon/meson.build
+index bf49be9111..abd9763649 100644
+--- a/ext/neon/meson.build
++++ b/ext/neon/meson.build
+@@ -1,4 +1,4 @@
+-neon_dep = dependency('neon', version: ['>= 0.27', '<= 0.31.99'],
++neon_dep = dependency('neon', version: ['>= 0.27', '<= 0.32.99'],
+                       required : get_option('neon'))
+ 
+ if neon_dep.found()
+-- 
+GitLab
+

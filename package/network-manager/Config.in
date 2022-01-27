@@ -18,7 +18,6 @@ config BR2_PACKAGE_NETWORK_MANAGER
 	select BR2_PACKAGE_UTIL_LINUX_LIBUUID
 	select BR2_PACKAGE_WIRELESS_TOOLS
 	select BR2_PACKAGE_WIRELESS_TOOLS_LIB
-	select BR2_PACKAGE_READLINE
 	select BR2_PACKAGE_LIBNDP
 	help
 	  NetworkManager is a set of co-operative tools that make
@@ -46,13 +45,9 @@ config BR2_PACKAGE_NETWORK_MANAGER_MODEM_MANAGER
 
 config BR2_PACKAGE_NETWORK_MANAGER_PPPD
 	bool "pppd support"
-	depends on !BR2_TOOLCHAIN_USES_MUSL # pppd
 	select BR2_PACKAGE_PPPD
 	help
 	  This option enables support for PPPD daemon
-
-comment "pppd support needs a glibc or uClibc toolchain"
-	depends on BR2_TOOLCHAIN_USES_MUSL
 
 config BR2_PACKAGE_NETWORK_MANAGER_OVS
 	bool "OpenVSwitch support"

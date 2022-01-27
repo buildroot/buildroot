@@ -1,6 +1,6 @@
 config BR2_PACKAGE_PYTHON_CROSSBAR
 	bool "python-crossbar"
-	depends on BR2_INSTALL_LIBSTDCPP # python-cryptography
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-cryptography
 	depends on BR2_PACKAGE_PYTHON3
 	# All the following dependencies are runtime dependencies
 	select BR2_PACKAGE_PYTHON_ATTRS
@@ -48,7 +48,3 @@ config BR2_PACKAGE_PYTHON_CROSSBAR
 	  components that can talk in real-time with each other.
 
 	  https://pypi.python.org/pypi/crossbar
-
-comment "python-crossbar needs a toolchain w/ C++"
-	depends on !BR2_INSTALL_LIBSTDCPP
-	depends on BR2_PACKAGE_PYTHON3

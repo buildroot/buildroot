@@ -1,0 +1,55 @@
+From b3431c4fcaf65e66fda80ef89b79ff3da1912b4f Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 25 Dec 2021 20:05:29 +0100
+Subject: [PATCH] logger.c: initialize rport
+
+Fix the following build failure raised since version 1.6.11 and
+https://github.com/memcached/memcached/commit/617d7cd64d04698b76fee74882627690017e20ad:
+
+logger.c: In function '_logger_parse_cce':
+logger.c:297:13: error: 'rport' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  297 |     total = snprintf(scratch, LOGGER_PARSE_SCRATCH,
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  298 |             "ts=%d.%d gid=%llu type=conn_close rip=%s rport=%hu transport=%s reason=%s cfd=%d\n",
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  299 |             (int) e->tv.tv_sec, (int) e->tv.tv_usec, (unsigned long long) e->gid,
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  300 |             rip, rport, transport_map[le->transport],
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  301 |             reason_map[le->reason], le->sfd);
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/7a46ac38d10b1859034017e0294961daa8f48dd2
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: not sent yet]
+---
+ logger.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/logger.c b/logger.c
+index 667f3c7..394adae 100644
+--- a/logger.c
++++ b/logger.c
+@@ -269,7 +269,7 @@ static int _logger_parse_extw(logentry *e, char *scratch) {
+ 
+ static int _logger_parse_cne(logentry *e, char *scratch) {
+     int total;
+-    unsigned short rport;
++    unsigned short rport = 0;
+     char rip[64];
+     struct logentry_conn_event *le = (struct logentry_conn_event *) e->data;
+     const char * const transport_map[] = { "local", "tcp", "udp" };
+@@ -286,7 +286,7 @@ static int _logger_parse_cne(logentry *e, char *scratch) {
+ 
+ static int _logger_parse_cce(logentry *e, char *scratch) {
+     int total;
+-    unsigned short rport;
++    unsigned short rport = 0;
+     char rip[64];
+     struct logentry_conn_event *le = (struct logentry_conn_event *) e->data;
+     const char * const transport_map[] = { "local", "tcp", "udp" };
+-- 
+2.33.0
+

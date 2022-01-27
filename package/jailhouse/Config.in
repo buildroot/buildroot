@@ -11,15 +11,15 @@ if BR2_PACKAGE_JAILHOUSE
 
 config BR2_PACKAGE_JAILHOUSE_HELPER_SCRIPTS
 	bool "helper scripts"
-	depends on BR2_PACKAGE_PYTHON
+	depends on BR2_PACKAGE_PYTHON3
 	select BR2_PACKAGE_PYTHON_MAKO # runtime
 	help
 	  Python-based helpers for the Jailhouse Hypervisor.
 
 	  https://github.com/siemens/jailhouse
 
-comment "helper scripts require Python"
-	depends on !BR2_PACKAGE_PYTHON
+comment "helper scripts require Python3"
+	depends on !BR2_PACKAGE_PYTHON3
 
 endif
 

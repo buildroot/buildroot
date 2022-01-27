@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SOCAT_VERSION = 1.7.4.1
+SOCAT_VERSION = 1.7.4.3
 SOCAT_SOURCE = socat-$(SOCAT_VERSION).tar.bz2
 SOCAT_SITE = http://www.dest-unreach.org/socat/download
 SOCAT_LICENSE = GPL-2.0 with OpenSSL exception
@@ -24,7 +24,7 @@ SOCAT_CONF_ENV += \
 endif
 
 # We need to run autoconf to regenerate the configure script, since we patch
-# configure.in and Makefile.in. However, the package only uses autoconf and not
+# Makefile.in. However, the package only uses autoconf and not
 # automake, so we can't use the normal autoreconf logic.
 
 SOCAT_DEPENDENCIES = host-autoconf

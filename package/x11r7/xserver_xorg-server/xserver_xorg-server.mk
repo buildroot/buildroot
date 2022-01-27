@@ -4,17 +4,14 @@
 #
 ################################################################################
 
-XSERVER_XORG_SERVER_VERSION = 1.20.13
+XSERVER_XORG_SERVER_VERSION = 21.1.2
 XSERVER_XORG_SERVER_SOURCE = xorg-server-$(XSERVER_XORG_SERVER_VERSION).tar.xz
 XSERVER_XORG_SERVER_SITE = https://xorg.freedesktop.org/archive/individual/xserver
 XSERVER_XORG_SERVER_LICENSE = MIT
 XSERVER_XORG_SERVER_LICENSE_FILES = COPYING
 XSERVER_XORG_SERVER_SELINUX_MODULES = xdg xserver
 XSERVER_XORG_SERVER_INSTALL_STAGING = YES
-# xfont_font-util is needed only for autoreconf
-XSERVER_XORG_SERVER_AUTORECONF = YES
 XSERVER_XORG_SERVER_DEPENDENCIES = \
-	xfont_font-util \
 	xutil_util-macros \
 	xlib_libX11 \
 	xlib_libXau \
@@ -32,6 +29,7 @@ XSERVER_XORG_SERVER_DEPENDENCIES = \
 	xlib_libXdamage \
 	xlib_libXxf86vm \
 	xlib_libxkbfile \
+	xlib_libxcvt \
 	xlib_xtrans \
 	xdata_xbitmaps \
 	xorgproto \
@@ -65,14 +63,6 @@ else
 XSERVER_XORG_SERVER_CONF_OPTS += \
 	--without-systemd-daemon \
 	--disable-systemd-logind
-endif
-
-# Xwayland support needs libdrm, libepoxy, wayland and libxcomposite
-ifeq ($(BR2_PACKAGE_LIBDRM)$(BR2_PACKAGE_LIBEPOXY)$(BR2_PACKAGE_WAYLAND)$(BR2_PACKAGE_WAYLAND_PROTOCOLS)$(BR2_PACKAGE_XLIB_LIBXCOMPOSITE),yyyyy)
-XSERVER_XORG_SERVER_CONF_OPTS += --enable-xwayland
-XSERVER_XORG_SERVER_DEPENDENCIES += libdrm libepoxy wayland wayland-protocols xlib_libXcomposite
-else
-XSERVER_XORG_SERVER_CONF_OPTS += --disable-xwayland
 endif
 
 ifeq ($(BR2_PACKAGE_XSERVER_XORG_SERVER_MODULAR),y)

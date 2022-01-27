@@ -25,4 +25,16 @@ config BR2_PACKAGE_HOST_QORIQ_RCW_CUSTOM_PATH
 	  included for use in the SDK or with post scripts but no
 	  RCW binary will not be generated.
 
+config BR2_PACKAGE_HOST_QORIQ_RCW_INTREE
+	string "In-tree RCW name"
+	depends on !BR2_PACKAGE_HOST_QORIQ_RCW_CUSTOM_PATH
+	help
+	  This option is used to specify the RCW binary file for board.
+	  which is composed as platform/serdes_value/rcw_file: platform
+	  is the platform name, serdes_value is the setting of the
+	  Serdes, and rcw_file is the file name of RCW. For example:
+	  "ls1028ardb/R_SQPP_0x85bb/rcw_1300_sdboot.bin"
+
+	  If this option is empty, no rcw file is used.
+
 endif

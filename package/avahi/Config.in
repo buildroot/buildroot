@@ -34,6 +34,12 @@ config BR2_PACKAGE_AVAHI_DAEMON
 	  The daemon registers local IP addresses and services using
 	  mDNS/DNS-SD.
 
+# This hidden option allows packages that need the libavahi-client to
+# more easily determine if it's available or not.
+config BR2_PACKAGE_AVAHI_LIBAVAHI_CLIENT
+	bool
+	default y if BR2_PACKAGE_AVAHI_DAEMON && BR2_PACKAGE_DBUS
+
 config BR2_PACKAGE_AVAHI_LIBDNSSD_COMPATIBILITY
 	bool "libdns_sd compatibility (Bonjour)"
 	depends on BR2_PACKAGE_AVAHI_DAEMON
@@ -41,6 +47,13 @@ config BR2_PACKAGE_AVAHI_LIBDNSSD_COMPATIBILITY
 	help
 	  Enable the libdns_sd (Bonjour) compatibility library support
 	  for legacy applications.
+
+config BR2_PACKAGE_AVAHI_DEFAULT_SERVICES
+	bool "install default service definitions"
+	depends on BR2_PACKAGE_AVAHI_DAEMON
+	help
+	  Install the SSH/SFTP service definitions included with the
+	  Avahi daemon by default.
 
 endif
 

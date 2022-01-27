@@ -22,7 +22,7 @@ menuconfig BR2_PACKAGE_SYSTEMD
 	depends on !BR2_STATIC_LIBS # kmod
 	depends on BR2_TOOLCHAIN_USES_GLIBC
 	depends on BR2_TOOLCHAIN_HAS_SSP
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_10
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_13
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5
 	depends on BR2_HOST_GCC_AT_LEAST_5 # host-systemd
 	select BR2_PACKAGE_HAS_UDEV
@@ -51,13 +51,25 @@ menuconfig BR2_PACKAGE_SYSTEMD
 	  an elaborate transactional dependency-based service control
 	  logic.  It can work as a drop-in replacement for sysvinit.
 
-	  Systemd requires a Linux kernel >= 3.0 with the following
+	  Systemd requires a Linux kernel >= 3.13 with the following
 	  options enabled:
 
-	  - CONFIG_CGROUPS
+	  - CONFIG_DEVTMPFS
+	  - CONFIG_CGROUPS (it is OK to disable all controllers)
 	  - CONFIG_INOTIFY_USER
-	  - CONFIG_FHANDLE
-	  - CONFIG_AUTOFS4_FS
+	  - CONFIG_SIGNALFD
+	  - CONFIG_TIMERFD
+	  - CONFIG_EPOLL
+	  - CONFIG_UNIX (it requires CONFIG_NET, but every other flag in
+	    it is not necessary)
+	  - CONFIG_SYSFS
+	  - CONFIG_PROC_FS
+	  - CONFIG_FHANDLE (libudev, mount and bind mount handling)
+
+	  - CONFIG_NET_NS (needed by PrivateNetwork=, used in some
+	    systemd units)
+
+	  - CONFIG_AUTOFS_FS / CONFIG_AUTOFS4_FS
 	  - CONFIG_TMPFS_POSIX_ACL
 	  - CONFIG_TMPFS_XATTR
 
@@ -269,6 +281,20 @@ config BR2_PACKAGE_SYSTEMD_IMPORTD
 
 	  http://www.freedesktop.org/software/systemd/man/machinectl.html#Image%20Transfer%20Commands
 
+config BR2_PACKAGE_SYSTEMD_CATALOGDB
+	bool "enable journal catalog database installation"
+	depends on BR2_TARGET_GENERIC_REMOUNT_ROOTFS_RW # conflicting tmpfiles magic
+	help
+	  Build and install the journal catalog database.
+
+	  catalog files are used to provide extended and potentially
+	  localized messages for the journal.
+
+	  The original catalog files will be built into a DB at
+	  /usr/share/factory/var/lib/systemd/catalog/database.
+
+	  https://www.freedesktop.org/wiki/Software/systemd/catalog/
+
 config BR2_PACKAGE_SYSTEMD_LOCALED
 	bool "enable locale daemon"
 	help
@@ -473,17 +499,6 @@ config BR2_PACKAGE_SYSTEMD_TIMESYNCD
 	  the ntp package.
 
 	  http://www.freedesktop.org/software/systemd/man/systemd-timesyncd.html
-
-config BR2_PACKAGE_SYSTEMD_TMPFILES
-	bool "enable tmpfiles support"
-	default y
-	help
-	  systemd-tmpfiles creates, deletes, and cleans up volatile
-	  and temporary files and directories, based on the
-	  configuration file format and location specified in
-	  tmpfiles.d(5).
-
-	  http://www.freedesktop.org/software/systemd/man/systemd-tmpfiles.html
 
 config BR2_PACKAGE_SYSTEMD_USERDB
 	bool "enable userdb daemon"

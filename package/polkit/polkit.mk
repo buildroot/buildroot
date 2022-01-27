@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-POLKIT_VERSION = 0.119
+POLKIT_VERSION = 0.120
 POLKIT_SITE = $(call github,aduskett,polkit-duktape,v$(POLKIT_VERSION))
 POLKIT_LICENSE = GPL-2.0
 POLKIT_LICENSE_FILES = COPYING
@@ -13,6 +13,8 @@ POLKIT_INSTALL_STAGING = YES
 
 POLKIT_DEPENDENCIES = \
 	duktape libglib2 host-intltool expat $(TARGET_NLS_DEPENDENCIES)
+
+POLKIT_SELINUX_MODULES = policykit
 
 POLKIT_LDFLAGS = $(TARGET_NLS_LIBS)
 
@@ -39,9 +41,9 @@ endif
 # polkit.{its,loc} are needed for gvfs and must be installed in $(HOST_DIR)
 # and not $(STAGING_DIR)
 define POLKIT_INSTALL_ITS
-	$(INSTALL) -D -m 644 $(@D)/data/polkit.its \
+	$(INSTALL) -D -m 644 $(@D)/gettext/its/polkit.its \
 		$(HOST_DIR)/share/gettext/its/polkit.its
-	$(INSTALL) -D -m 644 $(@D)/data/polkit.loc \
+	$(INSTALL) -D -m 644 $(@D)/gettext/its/polkit.loc \
 		$(HOST_DIR)/share/gettext/its/polkit.loc
 endef
 POLKIT_POST_INSTALL_TARGET_HOOKS += POLKIT_INSTALL_ITS

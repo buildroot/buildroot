@@ -1,0 +1,33 @@
+From 9952446a2a28ea2b009f4b8b2a14ad50f0878bdd Mon Sep 17 00:00:00 2001
+From: Michal Vasilek <michal.vasilek@nic.cz>
+Date: Mon, 10 Jan 2022 21:27:30 +0100
+Subject: [PATCH] gnome: fix typo in vapigen option metadatadir
+
+This typo was introduced in 9ef36fa80bf4483bcd837ea3985a51ab533c7972 and
+can cause a build failure, because --metadatdir is not a valid vapigen
+option.
+
+[aperez@igalia.com: backport from upstream]
+Signed-off-by: Adrian Perez de Castro <aperez@igalia.com>
+[yann.morin.1998@free.fr: make it an actual backport]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ mesonbuild/modules/gnome.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mesonbuild/modules/gnome.py b/mesonbuild/modules/gnome.py
+index 1125e56e7..dfc66c2e3 100644
+--- a/mesonbuild/modules/gnome.py
++++ b/mesonbuild/modules/gnome.py
+@@ -1934,7 +1934,7 @@ class GnomeModule(ExtensionModule):
+         cmd: T.List[T.Union[str, 'ExternalProgram']]
+         cmd = [state.find_program('vapigen'), '--quiet', f'--library={library}', f'--directory={build_dir}']
+         cmd.extend([f'--vapidir={d}' for d in kwargs['vapi_dirs']])
+-        cmd.extend([f'--metadatdir={d}' for d in kwargs['metadata_dirs']])
++        cmd.extend([f'--metadatadir={d}' for d in kwargs['metadata_dirs']])
+         cmd.extend([f'--girdir={d}' for d in kwargs['gir_dirs']])
+         cmd += pkg_cmd
+         cmd += ['--metadatadir=' + source_dir]
+-- 
+2.25.1
+

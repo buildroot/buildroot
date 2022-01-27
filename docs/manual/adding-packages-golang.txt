@@ -120,3 +120,14 @@ possible to customize what is done in any particular step:
   +FOO_BUILD_CMDS+ variable, it will be used instead of the default Go
   one. However, using this method should be restricted to very
   specific cases. Do not use it in the general case.
+
+A Go package can depend on other Go modules, listed in its +go.mod+
+file. Buildroot automatically takes care of downloading such
+dependencies as part of the download step of packages that use the
++golang-package+ infrastructure. Such dependencies are then kept
+together with the package source code in the tarball cached in
+Buildroot's +DL_DIR+, and therefore the hash of the package's tarball
+includes such dependencies.
+
+This mechanism ensures that any change in the dependencies will be
+detected, and allows the build to be performed completely offline.

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LINUXCONSOLETOOLS_VERSION = 1.7.0
+LINUXCONSOLETOOLS_VERSION = 1.7.1
 LINUXCONSOLETOOLS_SOURCE = linuxconsoletools-$(LINUXCONSOLETOOLS_VERSION).tar.bz2
 LINUXCONSOLETOOLS_SITE = https://downloads.sourceforge.net/project/linuxconsole
 LINUXCONSOLETOOLS_LICENSE = GPL-2.0+

@@ -1,0 +1,14 @@
+config BR2_PACKAGE_LIBOPENAPTX
+	bool "libopenaptx"
+	# unconditionallly builds a shared lib
+	depends on !BR2_STATIC_LIBS
+	help
+	  This is Open Source implementation of Audio Processing
+	  Technology codec (aptX) originally derived from ffmpeg 4.0
+	  project and licensed under GPLv3+. This codec is mainly used
+	  in Bluetooth A2DP profile.
+
+	  https://github.com/pali/libopenaptx
+
+comment "libopenaptx needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS

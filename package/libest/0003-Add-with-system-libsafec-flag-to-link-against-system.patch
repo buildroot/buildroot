@@ -1,0 +1,109 @@
+From 017155b98ff3722816a52953b1079c9c8704d2ff Mon Sep 17 00:00:00 2001
+From: Aleksandr Makarov <aleksandr.o.makarov@gmail.com>
+Date: Tue, 14 Jul 2020 10:03:14 +0000
+Subject: [PATCH] Add --with-system-libsafec flag to link against system
+ libsafec
+
+Specifying the --with-system-libsafec flag shall allow the configuration
+program to search for and, if found, to link against the libsafec library
+that is installed in the system.
+
+Upstream: https://github.com/cisco/libest/pull/81/. It was merged
+upstream in commit 4fd7e74dc556519132b9ea4c8a0f022bd1254a31, but this
+commit mixes multiple patches in one.
+
+Signed-off-by: Aleksandr Makarov <aleksandr.o.makarov@gmail.com>
+---
+ Makefile.am  |  6 +++++-
+ configure.ac | 41 +++++++++++++++++++++++++++++++----------
+ 2 files changed, 36 insertions(+), 11 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index e2561e7..d53b0d5 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -12,5 +12,9 @@ examples = example/client example/client-simple example/client-brski example/ser
+ endif
+ endif
+ 
+-SUBDIRS = safe_c_stub src $(libest_jni) $(examples)
++if ! WITH_SYSTEM_LIBSAFEC
++builtin_libsafec = safe_c_stub
++endif
++
++SUBDIRS = $(builtin_libsafec) src $(libest_jni) $(examples)
+ EXTRA_DIST = autogen.sh example/util LICENSE README.brski $(srcdir)/build.gradle $(srcdir)/example/build_examples.gradle
+diff --git a/configure.ac b/configure.ac
+index 95b3223..048aa3c 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -10,6 +10,7 @@ AM_INIT_AUTOMAKE([subdir-objects])
+ 
+ AC_PROG_CC
+ AM_PROG_CC_C_O
++PKG_PROG_PKG_CONFIG
+ LT_INIT
+ AC_CANONICAL_HOST
+ case $host in
+@@ -187,22 +188,39 @@ AC_ARG_WITH([libcoap-dir],
+         ]
+        )
+ 
+-SAFEC_STUB_DIR='$(abs_top_builddir)/safe_c_stub'
+-AC_SUBST(SAFEC_STUB_DIR)
+-safecdir="$SAFEC_STUB_DIR" 
+-AC_SUBST([SAFEC_DIR], "$safecdir")
+-AC_SUBST([SAFEC_CFLAGS], "$safecdir/include")
+-AC_SUBST([SAFEC_LDFLAGS], "$safecdir/lib")
++AC_ARG_WITH(system-libsafec,
++            AS_HELP_STRING([--with-system-libsafec],
++                           [select to use libsafec installed in the system]),
++            [],
++            [with_system_libsafec="no"])
+ 
+-CFLAGS="$CFLAGS -Wall -I$safecdir/include"
+-LDFLAGS="$LDFLAGS -L$safecdir/lib"
+-LIBS="$LIBS -lsafe_lib"
++AC_MSG_CHECKING(which libsafec to use)
++AM_CONDITIONAL([WITH_SYSTEM_LIBSAFEC], [test "$with_system_libsafec" = "yes"])
++AM_COND_IF([WITH_SYSTEM_LIBSAFEC], AC_MSG_RESULT([system]), AC_MSG_RESULT([built-in]))
++AM_COND_IF([WITH_SYSTEM_LIBSAFEC],
++[
++           PKG_CHECK_MODULES([libsafec], [libsafec])
++           LIBS="$LIBS $libsafec_LIBS"
++           CFLAGS="$CFLAGS $libsafec_CFLAGS"
++           CPPFLAGS="$CPPFLAGS $libsafec_CFLAGS"
++],[
++           SAFEC_STUB_DIR='$(abs_top_builddir)/safe_c_stub'
++           AC_SUBST(SAFEC_STUB_DIR)
++           safecdir="$SAFEC_STUB_DIR"
++           AC_SUBST([SAFEC_DIR], "$safecdir")
++           AC_SUBST([SAFEC_CFLAGS], "$safecdir/include")
++           AC_SUBST([SAFEC_LDFLAGS], "$safecdir/lib")
++
++           CFLAGS="$CFLAGS -Wall -I$safecdir/include"
++           LDFLAGS="$LDFLAGS -L$safecdir/lib"
++           LIBS="$LIBS -lsafe_lib"
++])
+ 
+ AC_PREFIX_DEFAULT([/usr/local/est])
+ 
+ cp confdefs.h est_config.h
+ 
+-AC_CONFIG_FILES([Makefile version safe_c_stub/Makefile safe_c_stub/lib/Makefile src/Makefile src/est/Makefile])
++AC_CONFIG_FILES([Makefile version src/Makefile src/est/Makefile])
+ AM_COND_IF([ENABLE_JNI],
+            [AC_CONFIG_FILES([java/jni/Makefile])])
+ AM_COND_IF([ENABLE_EXAMPLES],
+@@ -212,5 +230,8 @@ AM_COND_IF([ENABLE_EXAMPLES],
+                        [],
+                        [AC_CONFIG_FILES([example/server/Makefile example/proxy/Makefile])])
+ ])
++AM_COND_IF([WITH_SYSTEM_LIBSAFEC],
++           [],
++           [AC_CONFIG_FILES([safe_c_stub/Makefile safe_c_stub/lib/Makefile])])
+ 
+ AC_OUTPUT
+-- 
+2.17.1
+

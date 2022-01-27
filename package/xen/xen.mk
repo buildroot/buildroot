@@ -11,6 +11,23 @@ XEN_LICENSE_FILES = COPYING
 XEN_CPE_ID_VENDOR = xen
 XEN_CPE_ID_PREFIX = cpe:2.3:o
 XEN_DEPENDENCIES = host-acpica host-python3
+XEN_PATCH = \
+	https://xenbits.xenproject.org/xsa/xsa385-4.15.patch \
+	https://xenbits.xenproject.org/xsa/xsa386.patch \
+	https://xenbits.xenproject.org/xsa/xsa388-4.14-1.patch \
+	https://xenbits.xenproject.org/xsa/xsa388-4.14-2.patch \
+	https://xenbits.xenproject.org/xsa/xsa389-4.14.patch
+
+# xsa385-4.15.patch
+XEN_IGNORE_CVES += CVE-2021-28706
+# xsa386.patch
+XEN_IGNORE_CVES += CVE-2021-28702
+# xsa388-4.14-1.patch
+XEN_IGNORE_CVES += CVE-2021-28704 CVE-2021-28707
+# xsa388-4.14-2.patch
+XEN_IGNORE_CVES += CVE-2021-28708
+# xsa389-4.14.patch
+XEN_IGNORE_CVES += CVE-2021-28705 CVE-2021-28709
 
 # Calculate XEN_ARCH
 ifeq ($(ARCH),aarch64)

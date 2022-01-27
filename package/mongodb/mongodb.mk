@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MONGODB_VERSION = 4.2.11
+MONGODB_VERSION = 4.2.18
 MONGODB_SITE = https://fastdl.mongodb.org/src
 MONGODB_SOURCE = mongodb-src-r$(MONGODB_VERSION).tar.gz
 
@@ -18,7 +18,7 @@ MONGODB_DEPENDENCIES = \
 	boost \
 	host-python3-cheetah \
 	host-python3-psutil \
-	host-python3-pyyaml \
+	host-python-pyyaml \
 	host-python3-regex \
 	host-python-requests \
 	host-scons \
@@ -86,7 +86,7 @@ endif
 
 define MONGODB_BUILD_CMDS
 	(cd $(@D); \
-		$(HOST_DIR)/bin/python3 $(SCONS) \
+		$(SCONS) \
 		$(MONGODB_SCONS_ENV) \
 		$(MONGODB_SCONS_OPTS) \
 		$(MONGODB_SCONS_TARGETS))
@@ -94,7 +94,7 @@ endef
 
 define MONGODB_INSTALL_TARGET_CMDS
 	(cd $(@D); \
-		$(HOST_DIR)/bin/python3 $(SCONS) \
+		$(SCONS) \
 		$(MONGODB_SCONS_ENV) \
 		$(MONGODB_SCONS_OPTS) \
 		--prefix=$(TARGET_DIR)/usr \

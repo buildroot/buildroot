@@ -44,6 +44,10 @@ endif
 ifeq ($(BR2_PACKAGE_LIBCAP),y)
 NTP_CONF_OPTS += --enable-linuxcaps
 NTP_DEPENDENCIES += libcap
+define NTP_USERS
+	ntp -1 ntp -1 * - - - ntpd user
+endef
+NTP_DAEMON_EXTRA_ARGS = -u ntp:ntp
 else
 NTP_CONF_OPTS += --disable-linuxcaps
 endif
@@ -109,11 +113,18 @@ endif
 
 ifeq ($(BR2_PACKAGE_NTP_NTPD),y)
 define NTP_INSTALL_INIT_SYSV_NTPD
-	$(INSTALL) -D -m 755 package/ntp/S49ntp $(TARGET_DIR)/etc/init.d/S49ntp
+	mkdir -p $(TARGET_DIR)/etc/init.d
+	sed -e 's%@NTPD_EXTRA_ARGS@%$(NTP_DAEMON_EXTRA_ARGS)%g' \
+		package/ntp/S49ntp.in \
+		> $(TARGET_DIR)/etc/init.d/S49ntp
+	chmod 0755 $(TARGET_DIR)/etc/init.d/S49ntp
 endef
 
 define NTP_INSTALL_INIT_SYSTEMD
-	$(INSTALL) -D -m 644 package/ntp/ntpd.service $(TARGET_DIR)/usr/lib/systemd/system/ntpd.service
+	mkdir -p $(TARGET_DIR)/usr/lib/systemd/system
+	sed -e 's%@NTPD_EXTRA_ARGS@%$(NTP_DAEMON_EXTRA_ARGS)%g' \
+		package/ntp/ntpd.service.in \
+		> $(TARGET_DIR)/usr/lib/systemd/system/ntpd.service
 endef
 endif
 

@@ -18,6 +18,16 @@ config BR2_PACKAGE_INTEL_MEDIADRIVER
 
 	  https://github.com/intel/media-driver
 
+if BR2_PACKAGE_INTEL_MEDIADRIVER
+
+config BR2_PACKAGE_INTEL_MEDIADRIVER_GEN8
+	bool "Gen8 support"
+	default y
+	help
+	  Enable support for Gen8 GPUs (Coffee Lake)
+
+endif # BR2_PACKAGE_INTEL_MEDIADRIVER
+
 comment "intel-mediadriver needs a toolchain w/ dynamic library, C++, NPTL"
 	depends on BR2_x86_64 && BR2_TOOLCHAIN_HAS_SYNC_1
 	depends on BR2_STATIC_LIBS || !BR2_INSTALL_LIBSTDCPP || \

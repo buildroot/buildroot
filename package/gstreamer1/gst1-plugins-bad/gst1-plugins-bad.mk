@@ -36,7 +36,6 @@ GST1_PLUGINS_BAD_CONF_OPTS = \
 GST1_PLUGINS_BAD_CONF_OPTS += \
 	-Davtp=disabled \
 	-Dopensles=disabled \
-	-Duvch264=disabled \
 	-Dmsdk=disabled \
 	-Dvoamrwbenc=disabled \
 	-Dbs2b=disabled \
@@ -720,6 +719,13 @@ GST1_PLUGINS_BAD_CONF_OPTS += -Dsrtp=enabled
 GST1_PLUGINS_BAD_DEPENDENCIES += libsrtp
 else
 GST1_PLUGINS_BAD_CONF_OPTS += -Dsrtp=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_UVCH264),y)
+GST1_PLUGINS_BAD_CONF_OPTS += -Duvch264=enabled
+GST1_PLUGINS_BAD_DEPENDENCIES += libgudev libusb
+else
+GST1_PLUGINS_BAD_CONF_OPTS += -Duvch264=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_VOAACENC),y)

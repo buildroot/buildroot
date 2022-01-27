@@ -1,0 +1,36 @@
+From bd4fad5e427f4d2828f2edbe8063f6d6c9276c7b Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 8 Jan 2022 13:30:58 +0100
+Subject: [PATCH] configure.ac: remove duplicate invocation of AM_INIT_AUTOMAKE
+
+autoreconf fails with:
+
+configure.ac:9: error: AM_INIT_AUTOMAKE expanded multiple times
+/home/thomas/projets/buildroot/output/host/share/aclocal-1.16/init.m4:29: AM_INIT_AUTOMAKE is expanded from...
+configure.ac:7: the top level
+/home/thomas/projets/buildroot/output/host/share/aclocal-1.16/init.m4:29: AM_INIT_AUTOMAKE is expanded from...
+configure.ac:9: the top level
+
+Drop the duplicate invocation to AM_INIT_AUTOMAKE to solve this.
+
+Upstream: https://github.com/cisco/libest/pull/106
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ configure.ac | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 0b930bf..66a91f2 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -4,7 +4,6 @@ AC_CONFIG_AUX_DIR(config)
+ AC_CONFIG_SRCDIR(src/est/est.c)
+ AC_CONFIG_MACRO_DIR([m4])
+ 
+-AM_INIT_AUTOMAKE
+ AM_MAINTAINER_MODE
+ AM_INIT_AUTOMAKE([subdir-objects])
+ 
+-- 
+2.33.1
+

@@ -3,7 +3,7 @@ config BR2_PACKAGE_IPUTILS
 	depends on BR2_USE_MMU # fork()
 	help
 	  This package is set of small useful utilities for Linux
-	  networking. It includes complete versions of ping, traceroute,
+	  networking. It includes complete versions of ping, arping,
 	  etc.
 
 	  https://github.com/iputils/iputils
@@ -46,22 +46,11 @@ config BR2_PACKAGE_IPUTILS_RDISC_SERVER
 	help
 	  Builds rdisc with server code.
 
-config BR2_PACKAGE_IPUTILS_TFTPD
-	bool "tftpd"
-	help
-	  Installs tftpd.
-
 config BR2_PACKAGE_IPUTILS_TRACEPATH
 	bool "tracepath"
 	default y
 	help
 	  Installs tracepath.
-
-config BR2_PACKAGE_IPUTILS_TRACEROUTE6
-	bool "traceroute6"
-	default y
-	help
-	  Installs traceroute6.
 
 config BR2_PACKAGE_IPUTILS_NINFOD
 	bool "ninfod"

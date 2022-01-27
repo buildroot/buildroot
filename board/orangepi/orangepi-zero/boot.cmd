@@ -1,6 +1,7 @@
 setenv fdt_high ffffffff
 
-setenv bootargs console=ttyS0,115200 earlyprintk root=/dev/mmcblk0p2 rootwait
+part uuid mmc 0:2 uuid
+setenv bootargs console=ttyS0,115200 root=PARTUUID=${uuid} rootwait
 
 fatload mmc 0 $kernel_addr_r zImage
 fatload mmc 0 $fdt_addr_r sun8i-h2-plus-orangepi-zero.dtb

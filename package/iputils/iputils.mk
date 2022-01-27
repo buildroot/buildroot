@@ -11,7 +11,7 @@
 # and IPv6 updates.
 # http://www.spinics.net/lists/netdev/msg279881.html
 
-IPUTILS_VERSION = 20210722
+IPUTILS_VERSION = 20211215
 IPUTILS_SITE = $(call github,iputils,iputils,$(IPUTILS_VERSION))
 IPUTILS_LICENSE = GPL-2.0+, BSD-3-Clause
 IPUTILS_LICENSE_FILES = LICENSE Documentation/LICENSE.BSD3 Documentation/LICENSE.GPL2
@@ -25,7 +25,6 @@ IPUTILS_CONF_OPTS += \
 	-DBUILD_RDISC=$(if $(BR2_PACKAGE_IPUTILS_RDISC),true,false) \
 	-DENABLE_RDISC_SERVER=$(if $(BR2_PACKAGE_IPUTILS_RDISC_SERVER),true,false) \
 	-DBUILD_TRACEPATH=$(if $(BR2_PACKAGE_IPUTILS_TRACEPATH),true,false) \
-	-DBUILD_TRACEROUTE6=$(if $(BR2_PACKAGE_IPUTILS_TRACEROUTE6),true,false) \
 	-DBUILD_NINFOD=$(if $(BR2_PACKAGE_IPUTILS_NINFOD),true,false) \
 	-DSKIP_TESTS=true
 
@@ -34,9 +33,7 @@ IPUTILS_SELINUX_MODULES = \
 	$(if $(BR2_PACKAGE_IPUTILS_ARPING),netutils) \
 	$(if $(BR2_PACKAGE_IPUTILS_PING),netutils) \
 	$(if $(BR2_PACKAGE_IPUTILS_TRACEPATH),netutils) \
-	$(if $(BR2_PACKAGE_IPUTILS_TRACEROUTE6),netutils) \
-	$(if $(BR2_PACKAGE_IPUTILS_RDISC),rdisc) \
-	$(if $(BR2_PACKAGE_IPUTILS_TFTPD),tftp)
+	$(if $(BR2_PACKAGE_IPUTILS_RDISC),rdisc)
 
 #
 # arping
@@ -80,16 +77,6 @@ else
 IPUTILS_CONF_OPTS += -DBUILD_PING=false
 endif
 
-#
-# tftpd
-#
-ifeq ($(BR2_PACKAGE_IPUTILS_TFTPD),y)
-IPUTILS_CONF_OPTS += -DBUILD_TFTPD=true
-
-else
-IPUTILS_CONF_OPTS += -DBUILD_TFTPD=false
-endif
-
 # Handle libraries
 ifeq ($(BR2_PACKAGE_LIBCAP),y)
 IPUTILS_CONF_OPTS += -DUSE_CAP=true
@@ -130,9 +117,6 @@ define IPUTILS_PERMISSIONS
 	$(if $(BR2_PACKAGE_IPUTILS_PING),\
 		/bin/ping             f 755 0 0 - - - - -
 		|xattr cap_net_raw+p,)
-	$(if $(BR2_PACKAGE_IPUTILS_TRACEROUTE6),\
-		/usr/bin/traceroute6  f 755 0 0 - - - - -
-		|xattr cap_net_raw+p,)
 endef
 else
 define IPUTILS_PERMISSIONS
@@ -142,8 +126,6 @@ define IPUTILS_PERMISSIONS
 		/usr/bin/clockdiff    f 4755 0 0 - - - - -,)
 	$(if $(BR2_PACKAGE_IPUTILS_PING),\
 		/bin/ping             f 4755 0 0 - - - - -,)
-	$(if $(BR2_PACKAGE_IPUTILS_TRACEROUTE6),\
-		/usr/bin/traceroute6  f 4755 0 0 - - - - -,)
 endef
 endif
 

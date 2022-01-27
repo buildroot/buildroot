@@ -4,10 +4,27 @@ config BR2_PACKAGE_OPENFPGALOADER
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libftdi1 -> libusb
 	depends on BR2_INSTALL_LIBSTDCPP
 	select BR2_PACKAGE_LIBFTDI1
+	select BR2_PACKAGE_ZLIB
 	help
 	  Universal utility for programming FPGA
 
 	  https://github.com/trabucayre/openFPGALoader/
+
+if BR2_PACKAGE_OPENFPGALOADER
+
+config BR2_PACAKGE_OPENFPGALOADER_CMSIS
+	bool "CMSIS-DAP support"
+	depends on BR2_PACKAGE_HAS_UDEV # hidapi
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # hidapi
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # hidapi -> libusb
+	select BR2_PACKAGE_HIDAPI
+	help
+	  openfpgaloader CMSIS-DAP support
+
+comment "openfpgaloader CMSIS-DAP needs udev /dev management and a toolchain w/ NPTL threads"
+	depends on !BR2_PACKAGE_HAS_UDEV || !BR2_TOOLCHAIN_HAS_THREADS_NPTL
+
+endif
 
 comment "openfpgaloader needs a toolchain w/ threads, C++, gcc >= 4.9"
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || \

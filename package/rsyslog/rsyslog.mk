@@ -28,14 +28,29 @@ endif
 RSYSLOG_CONF_OPTS = --disable-generate-man-pages \
 	$(foreach x,$(call qstrip,$(RSYSLOG_PLUGINS)),--enable-$(x))
 
-# Disable items requiring libcurl
-RSYSLOG_CONF_OPTS += --disable-elasticsearch \
+# Disable items requiring lognorm
+RSYSLOG_CONF_OPTS += \
+	--disable-mmkubernetes \
+	--disable-mmnormalize
+
+ifeq ($(BR2_PACKAGE_LIBCURL),y)
+RSYSLOG_DEPENDENCIES += libcurl
+RSYSLOG_CONF_OPTS += \
+	--enable-clickhouse \
+	--enable-elasticsearch \
+	--enable-fmhttp \
+	--enable-imdocker \
+	--enable-omhttp \
+	--enable-omhttpfs
+else
+RSYSLOG_CONF_OPTS += \
 	--disable-clickhouse \
-	--disable-omhttp \
+	--disable-elasticsearch \
 	--disable-fmhttp \
 	--disable-imdocker \
-	--disable-omhttpfs \
-	--disable-mmkubernetes
+	--disable-omhttp \
+	--disable-omhttpfs
+endif
 
 ifeq ($(BR2_PACKAGE_CIVETWEB_LIB),y)
 RSYSLOG_DEPENDENCIES += civetweb

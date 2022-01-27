@@ -27,6 +27,8 @@ OPENSSH_CONF_OPTS = \
 	--disable-wtmpx \
 	--disable-strip
 
+OPENSSH_SELINUX_MODULES = ssh
+
 define OPENSSH_PERMISSIONS
 	/var/empty d 755 root root - - - - -
 endef

@@ -1,0 +1,112 @@
+From 8f152a6e47484056968973a71a16e4f2142213a9 Mon Sep 17 00:00:00 2001
+From: Aleksandr Makarov <aleksandr.o.makarov@gmail.com>
+Date: Mon, 13 Jul 2020 23:05:26 +0000
+Subject: [PATCH] java/jni/client.c: add support for OpenSSL 1.1
+
+This shall allow the java/jni to build with and link against OpenSSL 1.1.
+
+Additionally, the configuration program will not attempt to process the
+java/jni/ subdirectory if no --enable-jni has been specified.
+
+Upstream: https://github.com/cisco/libest/pull/81/. It was merged
+upstream in commit 4fd7e74dc556519132b9ea4c8a0f022bd1254a31, but this
+commit mixes multiple patches in one.
+
+Signed-off-by: Aleksandr Makarov <aleksandr.o.makarov@gmail.com>
+---
+ Makefile.am       |  8 ++++++--
+ configure.ac      | 10 ++++++----
+ java/jni/client.c | 21 ++++++++++++++++-----
+ 3 files changed, 28 insertions(+), 11 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 10e38fd..9601de6 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -1,9 +1,13 @@
+ ACLOCAL_AMFLAGS = -I m4
+ 
++if ENABLE_JNI
++libest_jni = java/jni
++endif
++
+ if ENABLE_CLIENT_ONLY 
+-SUBDIRS = safe_c_stub src java/jni example/client example/client-simple example/client-brski
++SUBDIRS = safe_c_stub src $(libest_jni) example/client example/client-simple example/client-brski
+ else 
+-SUBDIRS = safe_c_stub src java/jni example/client example/client-simple example/server example/proxy example/client-brski
++SUBDIRS = safe_c_stub src $(libest_jni) example/client example/client-simple example/server example/proxy example/client-brski
+ endif
+ 
+ EXTRA_DIST = autogen.sh example/util LICENSE README.brski $(srcdir)/build.gradle $(srcdir)/example/build_examples.gradle
+diff --git a/configure.ac b/configure.ac
+index e02a54d..d648030 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -35,9 +35,9 @@ AM_COND_IF([FREEBSD], AC_MSG_RESULT([Skipping libdl check]),
+ AC_ARG_ENABLE([jni], 
+ 	       [AS_HELP_STRING([--enable-jni],
+ 			       [Enable support for JNI library])],
+-		[jni_on=1],
+-		[jni_on=0])
+-AM_CONDITIONAL([ENABLE_JNI], [test x$jni_on = x1])
++		[],
++		[enable_jni="no"])
++AM_CONDITIONAL([ENABLE_JNI], [test "$enable_jni" = "yes"])
+ AM_COND_IF([ENABLE_JNI], 
+ 	   AC_MSG_RESULT([JNI support enabled])
+ 	   AC_DEFINE([ENABLE_JNI]),
+@@ -198,5 +198,7 @@ AC_PREFIX_DEFAULT([/usr/local/est])
+ 
+ cp confdefs.h est_config.h
+ 
+-AC_CONFIG_FILES([Makefile version safe_c_stub/Makefile safe_c_stub/lib/Makefile java/jni/Makefile src/Makefile src/est/Makefile example/client/Makefile example/client-simple/Makefile example/client-brski/Makefile example/server/Makefile example/proxy/Makefile])
++AC_CONFIG_FILES([Makefile version safe_c_stub/Makefile safe_c_stub/lib/Makefile src/Makefile src/est/Makefile example/client/Makefile example/client-simple/Makefile example/client-brski/Makefile example/server/Makefile example/proxy/Makefile])
++AM_COND_IF([ENABLE_JNI],
++           [AC_CONFIG_FILES([java/jni/Makefile])])
+ AC_OUTPUT
+diff --git a/java/jni/client.c b/java/jni/client.c
+index 9a8a34e..f7aeefc 100644
+--- a/java/jni/client.c
++++ b/java/jni/client.c
+@@ -130,11 +130,18 @@ static int jni_est_client_X509_REQ_sign (X509_REQ *x, EVP_PKEY *pkey, const EVP_
+ {
+     int rv;
+     EVP_PKEY_CTX *pkctx = NULL;
+-    EVP_MD_CTX mctx;
++    EVP_MD_CTX *mctx;
+ 
+-    EVP_MD_CTX_init(&mctx);
++#ifdef HAVE_OLD_OPENSSL
++    EVP_MD_CTX md_ctx;
++    mctx = &md_ctx;
+ 
+-    if (!EVP_DigestSignInit(&mctx, &pkctx, md, NULL, pkey)) {
++    EVP_MD_CTX_init(mctx);
++#else
++    mctx = EVP_MD_CTX_new();
++#endif
++
++    if (!EVP_DigestSignInit(mctx, &pkctx, md, NULL, pkey)) {
+         return 0;
+     }
+ 
+@@ -150,9 +157,13 @@ static int jni_est_client_X509_REQ_sign (X509_REQ *x, EVP_PKEY *pkey, const EVP_
+     x->req_info->enc.modified = 1;
+ #endif
+ 
+-    rv = X509_REQ_sign_ctx(x, &mctx);
++    rv = X509_REQ_sign_ctx(x, mctx);
+ 
+-    EVP_MD_CTX_cleanup(&mctx);
++#ifdef HAVE_OLD_OPENSSL
++    EVP_MD_CTX_cleanup(mctx);
++#else
++    EVP_MD_CTX_free(mctx);
++#endif
+ 
+     return (rv);
+ }
+-- 
+2.17.1
+

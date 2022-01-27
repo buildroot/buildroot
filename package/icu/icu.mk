@@ -7,7 +7,7 @@
 # Git tags (and therefore versions on release-monitoring.org) use the
 # XX-Y format, but the tarballs are named XX_Y and the containing
 # directories XX.Y.
-ICU_VERSION = 69-1
+ICU_VERSION = 70-1
 ICU_SOURCE = icu4c-$(subst -,_,$(ICU_VERSION))-src.tgz
 ICU_SITE = \
 	https://github.com/unicode-org/icu/releases/download/release-$(ICU_VERSION)
@@ -49,6 +49,17 @@ HOST_ICU_CONF_OPTS = \
 	--disable-renaming
 ICU_SUBDIR = source
 HOST_ICU_SUBDIR = source
+
+# ICU build scripting adds paths to LD_LIBRARY_PATH using
+#   LD_LIBRARY_PATH="custom-path:${LD_LIBRARY_PATH}"
+# which, if LD_LIBRARY_PATH was empty, causes the last search directory
+# to be the working directory, causing the build to try to load target
+# libraries, possibly crashing the build due to ABI mismatches.
+# Workaround by ensuring LD_LIBRARY_PATH is never empty.
+# https://unicode-org.atlassian.net/browse/ICU-21417
+ifeq ($(LD_LIBRARY_PATH),)
+ICU_MAKE_ENV += LD_LIBRARY_PATH=/dev/null
+endif
 
 ICU_CUSTOM_DATA_PATH = $(call qstrip,$(BR2_PACKAGE_ICU_CUSTOM_DATA_PATH))
 

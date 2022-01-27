@@ -1,0 +1,30 @@
+config BR2_PACKAGE_LIBSHDATA
+	bool "libshdata"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC # libfutils
+	depends on BR2_INSTALL_LIBSTDCPP # libfutils
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libfutils
+	select BR2_PACKAGE_LIBFUTILS
+	select BR2_PACKAGE_ULOG
+	help
+	  This library provides lock free shared-memory tools
+
+	  https://github.com/Parrot-Developers/libshdata
+
+if BR2_PACKAGE_LIBSHDATA
+
+config BR2_PACKAGE_LIBSHDATA_STRESS
+	bool "libshdata-stress binary"
+	depends on !BR2_STATIC_LIBS
+	help
+	  Install libshdata-stress binary as well
+
+comment "libshdata-stress needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
+
+endif
+
+comment "libshdata needs a toolchain w/ C++, threads"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS

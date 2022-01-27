@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MP4V2_VERSION = 4.1.3
+MP4V2_VERSION = 5.0.1
 MP4V2_SITE = \
 	$(call github,TechSmith,mp4v2,Release-ThirdParty-MP4v2-$(MP4V2_VERSION))
 MP4V2_INSTALL_STAGING = YES

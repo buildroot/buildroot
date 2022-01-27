@@ -1,0 +1,25 @@
+From 3856224df9160c201bc6d224aa927e7c358e3269 Mon Sep 17 00:00:00 2001
+From: aeolio <git@aeolio.de>
+Date: Tue, 14 Dec 2021 09:01:23 +0100
+Subject: [PATCH] lib/alsa/Error: add missing #include
+
+Downloaded from upstream commit:
+https://github.com/MusicPlayerDaemon/MPD/commit/3856224df9160c201bc6d224aa927e7c358e3269
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ src/lib/alsa/Error.cxx | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/lib/alsa/Error.cxx b/src/lib/alsa/Error.cxx
+index cd351f37d1..8ceb4417ca 100644
+--- a/src/lib/alsa/Error.cxx
++++ b/src/lib/alsa/Error.cxx
+@@ -29,6 +29,7 @@
+ 
+ #include "Error.hxx"
+ 
++#include <stdarg.h>
+ #include <alsa/error.h>
+ 
+ namespace Alsa {

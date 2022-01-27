@@ -1,6 +1,7 @@
 config BR2_PACKAGE_SEMODULE_UTILS
 	bool "semodule-utils"
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libsepol
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # libsepol
 	select BR2_PACKAGE_LIBSEPOL
 	help
 	  semodule-utils is a package that contains tools for handling
@@ -15,5 +16,6 @@ config BR2_PACKAGE_SEMODULE_UTILS
 
 	  https://github.com/SELinuxProject/selinux/wiki/Releases
 
-comment "semodule-utils needs a toolchain w/ threads"
-	depends on !BR2_TOOLCHAIN_HAS_THREADS
+comment "semodule-utils needs a toolchain w/ threads, gcc >= 5"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_5

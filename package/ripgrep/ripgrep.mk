@@ -4,7 +4,11 @@
 #
 ################################################################################
 
-RIPGREP_VERSION = 13.0.0
+# Same as 13.0.0, we use a Git commit hash because the hash of this
+# tarball changed when moving to the cargo-package infrastructure, and
+# we can't change the hash of existing tarball. Please switch back to
+# a Git tag at the next version bump.
+RIPGREP_VERSION = af6b6c543b224d348a8876f0c06245d9ea7929c5
 RIPGREP_SITE = $(call github,burntsushi,ripgrep,$(RIPGREP_VERSION))
 RIPGREP_LICENSE = MIT
 RIPGREP_LICENSE_FILES = LICENSE-MIT
@@ -13,33 +17,4 @@ RIPGREP_CPE_ID_VENDOR = ripgrep_project
 # CVE only impacts ripgrep on Windows
 RIPGREP_IGNORE_CVES += CVE-2021-3013
 
-RIPGREP_DEPENDENCIES = host-rustc
-RIPGREP_CARGO_ENV = CARGO_HOME=$(HOST_DIR)/share/cargo \
-	__CARGO_TEST_CHANNEL_OVERRIDE_DO_NOT_USE_THIS="nightly" \
-	CARGO_TARGET_APPLIES_TO_HOST="false"
-
-RIPGREP_BIN_DIR = target/$(RUSTC_TARGET_NAME)/$(RIPGREP_CARGO_BIN_SUBDIR)
-
-RIPGREP_CARGO_OPTS = \
-	-Z target-applies-to-host \
-	--target=$(RUSTC_TARGET_NAME) \
-	--manifest-path=$(@D)/Cargo.toml
-
-ifeq ($(BR2_ENABLE_RUNTIME_DEBUG),y)
-RIPGREP_CARGO_BIN_SUBDIR = debug
-else
-RIPGREP_CARGO_OPTS += --release
-RIPGREP_CARGO_BIN_SUBDIR = release
-endif
-
-define RIPGREP_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(RIPGREP_CARGO_ENV) \
-		cargo build $(RIPGREP_CARGO_OPTS)
-endef
-
-define RIPGREP_INSTALL_TARGET_CMDS
-	$(INSTALL) -D -m 0755 $(@D)/$(RIPGREP_BIN_DIR)/rg \
-		$(TARGET_DIR)/usr/bin/rg
-endef
-
-$(eval $(generic-package))
+$(eval $(cargo-package))

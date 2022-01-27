@@ -1,0 +1,19 @@
+config BR2_PACKAGE_CUPS_PK_HELPER
+	bool "cups-pk-helper"
+	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 # polkit -> c++17
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2, polkit
+	depends on BR2_USE_WCHAR # libglib2
+	depends on !BR2_STATIC_LIBS # polkit -> duktape
+	depends on BR2_PACKAGE_CUPS
+	select BR2_PACKAGE_POLKIT
+	help
+	  cups-pk-helper is a PolicyKit helper to configure cups with
+	  fine-grained privileges.
+
+	  https://wiki.freedesktop.org/www/Software/cups-pk-helper/
+
+comment "cups-pk-helper support needs a toolchain with threads, wchar, dynamic library, gcc >= 7"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_GCC_AT_LEAST_7 || \
+		!BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS

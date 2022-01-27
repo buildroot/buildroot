@@ -58,13 +58,13 @@ config BR2_KERNEL_HEADERS_5_10
 	bool "Linux 5.10.x kernel headers"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10
 
-config BR2_KERNEL_HEADERS_5_14
-	bool "Linux 5.14.x kernel headers"
-	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_14
-
 config BR2_KERNEL_HEADERS_5_15
 	bool "Linux 5.15.x kernel headers"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_15
+
+config BR2_KERNEL_HEADERS_5_16
+	bool "Linux 5.16.x kernel headers"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_16
 	select BR2_KERNEL_HEADERS_LATEST
 
 config BR2_KERNEL_HEADERS_VERSION
@@ -139,8 +139,12 @@ choice
 	  If your kernel headers are more recent than the latest version
 	  in the choice, then select the latest version.
 
+config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_16
+	bool "5.16.x or later"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_16
+
 config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_15
-	bool "5.15.x or later"
+	bool "5.15.x"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_15
 
 config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_14
@@ -374,14 +378,14 @@ endchoice
 
 config BR2_DEFAULT_KERNEL_HEADERS
 	string
-	default "4.4.293"	if BR2_KERNEL_HEADERS_4_4
-	default "4.9.291"	if BR2_KERNEL_HEADERS_4_9
-	default "4.14.256"	if BR2_KERNEL_HEADERS_4_14
-	default "4.19.219"	if BR2_KERNEL_HEADERS_4_19
-	default "5.4.163"	if BR2_KERNEL_HEADERS_5_4
-	default "5.10.83"	if BR2_KERNEL_HEADERS_5_10
-	default "5.14.21"	if BR2_KERNEL_HEADERS_5_14
-	default "5.15.6"	if BR2_KERNEL_HEADERS_5_15
+	default "4.4.298"	if BR2_KERNEL_HEADERS_4_4
+	default "4.9.296"	if BR2_KERNEL_HEADERS_4_9
+	default "4.14.261"	if BR2_KERNEL_HEADERS_4_14
+	default "4.19.224"	if BR2_KERNEL_HEADERS_4_19
+	default "5.4.170"	if BR2_KERNEL_HEADERS_5_4
+	default "5.10.90"	if BR2_KERNEL_HEADERS_5_10
+	default "5.15.13"	if BR2_KERNEL_HEADERS_5_15
+	default "5.16"		if BR2_KERNEL_HEADERS_5_16
 	default BR2_DEFAULT_KERNEL_VERSION if BR2_KERNEL_HEADERS_VERSION
 	default "custom"	if BR2_KERNEL_HEADERS_CUSTOM_TARBALL
 	default BR2_KERNEL_HEADERS_CUSTOM_REPO_VERSION \

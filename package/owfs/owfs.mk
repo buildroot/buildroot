@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OWFS_VERSION = 3.2p3
+OWFS_VERSION = 3.2p4
 OWFS_SITE = https://github.com/owfs/owfs/releases/download/v$(OWFS_VERSION)
 OWFS_DEPENDENCIES = host-pkgconf
 OWFS_CONF_OPTS = --disable-owperl --without-perl5 --disable-owtcl --without-tcl

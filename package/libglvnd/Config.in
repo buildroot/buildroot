@@ -1,0 +1,50 @@
+config BR2_PACKAGE_LIBGLVND
+	bool "libglvnd"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # __sync_*_4 intrisics
+	depends on !BR2_STATIC_LIBS # dlfcn.h
+	help
+	  The GL Vendor-Neutral Dispatch library
+
+	  libglvnd is a vendor-neutral dispatch layer for arbitrating
+	  OpenGL API calls between multiple vendors. It allows multiple
+	  drivers from different vendors to coexist on the same
+	  filesystem, and determines which vendor to dispatch each API
+	  call to at runtime.
+
+	  Both GLX and EGL are supported, in any combination with OpenGL
+	  and OpenGL ES.
+
+if BR2_PACKAGE_LIBGLVND
+
+# The following symbols should be selected by the libglvnd-aware
+# GL/EGL/GLES providers.
+config BR2_PACKAGE_LIBGLVND_DISPATCH_GL
+	bool
+	depends on BR2_PACKAGE_XORG7 # libx11, libXext, xorgproto
+	select BR2_PACKAGE_XLIB_LIBX11
+	select BR2_PACKAGE_XLIB_LIBXEXT
+	select BR2_PACKAGE_XLIB_XORGPROTO
+	select BR2_PACKAGE_HAS_LIBGL
+
+config BR2_PACKAGE_LIBGLVND_DISPATCH_EGL
+	bool
+	select BR2_PACKAGE_HAS_LIBEGL
+
+config BR2_PACKAGE_LIBGLVND_DISPATCH_GLES
+	bool
+	select BR2_PACKAGE_HAS_LIBGLES
+
+config BR2_PACKAGE_PROVIDES_LIBGL
+	default "libglvnd" if BR2_PACKAGE_LIBGLVND_DISPATCH_GL
+
+config BR2_PACKAGE_PROVIDES_LIBEGL
+	default "libglvnd" if BR2_PACKAGE_LIBGLVND_DISPATCH_EGL
+
+config BR2_PACKAGE_PROVIDES_LIBGLES
+	default "libglvnd" if BR2_PACKAGE_LIBGLVND_DISPATCH_GLES
+
+endif
+
+comment "libglvnd needs a toolchain w/ dynamic library"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on BR2_STATIC_LIBS

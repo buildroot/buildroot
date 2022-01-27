@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CUPS_VERSION = 2.3.3op2
+CUPS_VERSION = 2.4.0
 CUPS_SOURCE = cups-$(CUPS_VERSION)-source.tar.gz
 CUPS_SITE = https://github.com/OpenPrinting/cups/releases/download/v$(CUPS_VERSION)
 CUPS_LICENSE = Apache-2.0 with GPL-2.0/LGPL-2.0 exception
@@ -50,10 +50,10 @@ CUPS_CONF_OPTS += --disable-dbus
 endif
 
 ifeq ($(BR2_PACKAGE_GNUTLS),y)
-CUPS_CONF_OPTS += --enable-gnutls
+CUPS_CONF_OPTS += --with-tls=yes
 CUPS_DEPENDENCIES += gnutls
 else
-CUPS_CONF_OPTS += --disable-gnutls
+CUPS_CONF_OPTS += --with-tls=no
 endif
 
 ifeq ($(BR2_PACKAGE_LIBUSB),y)

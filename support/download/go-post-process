@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -e
+
+. "${0%/*}/helpers"
+
+# Parse our options
+while getopts "n:o:" OPT; do
+    case "${OPT}" in
+    o)  output="${OPTARG}";;
+    n)  base_name="${OPTARG}";;
+    :)  error "option '%s' expects a mandatory argument\n" "${OPTARG}";;
+    \?) error "unknown option '%s'\n" "${OPTARG}";;
+    esac
+done
+
+# Already vendored tarball, nothing to do
+if tar tf "${output}" | grep -q "^[^/]*/vendor" ; then
+    exit 0
+fi
+
+post_process_unpack "${base_name}" "${output}"
+
+# Do the Go vendoring
+pushd "${base_name}" > /dev/null
+
+if [ ! -f go.mod ]; then
+    echo "ERROR: no vendor/ folder and no go.mod, aborting"
+    exit 1
+fi
+
+go mod vendor -v -modcacherw
+popd > /dev/null
+
+post_process_repack $(pwd) "${base_name}" "${output}"

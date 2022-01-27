@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TVHEADEND_VERSION = dbaa0f850394af8ab845df802f5f781ac0218ec4
+TVHEADEND_VERSION = b8710206eb073c72b142bce95846b77a0ffa34a6
 TVHEADEND_SITE = $(call github,tvheadend,tvheadend,$(TVHEADEND_VERSION))
 TVHEADEND_LICENSE = GPL-3.0+
 TVHEADEND_LICENSE_FILES = LICENSE.md
@@ -121,11 +121,14 @@ TVHEADEND_DEPENDENCIES += liburiparser
 TVHEADEND_CFLAGS += $(if $(BR2_USE_WCHAR),,-DURI_NO_UNICODE)
 endif
 
-ifeq ($(BR2_PACKAGE_PCRE),y)
+ifeq ($(BR2_PACKAGE_PCRE2),y)
+TVHEADEND_DEPENDENCIES += pcre2
+TVHEADEND_CONF_OPTS += --disable-pcre --enable-pcre2
+else ifeq ($(BR2_PACKAGE_PCRE),y)
 TVHEADEND_DEPENDENCIES += pcre
-TVHEADEND_CONF_OPTS += --enable-pcre
+TVHEADEND_CONF_OPTS += --enable-pcre --disable-pcre2
 else
-TVHEADEND_CONF_OPTS += --disable-pcre
+TVHEADEND_CONF_OPTS += --disable-pcre --disable-pcre2
 endif
 
 ifeq ($(BR2_TOOLCHAIN_SUPPORTS_PIE),)
@@ -158,6 +161,7 @@ define TVHEADEND_CONFIGURE_CMDS
 			--enable-dvbscan \
 			--enable-bundle \
 			--enable-pngquant \
+			--disable-execinfo \
 			--disable-ffmpeg_static \
 			--disable-hdhomerun_static \
 			$(TVHEADEND_CONF_OPTS) \

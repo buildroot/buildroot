@@ -1,0 +1,51 @@
+From 47252054b4a2d5c8382cb1342f5d4eb89dabf95f Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 1 Jan 2022 17:20:47 +0100
+Subject: [PATCH] src/topology/parser.c: drop duplicate safe_strtol_base
+
+The safe_strtol_base() function is defined twice since
+	f547b2e3 ("conf: introduce safe_strtol_base()") and
+	5fab157a ("topology: do not call strtol directly")
+resulting in the following build failure when alsa-utils is built
+statically because safe_strtol_base is defined twice.
+
+Fixes: http://autobuild.buildroot.org/results/08d028004090b2a8292f03910cb9bf80a73ac804
+Fixes: https://github.com/alsa-project/alsa-lib/pull/207
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Signed-off-by: Jaroslav Kysela <perex@perex.cz>
+[Retrieved from:
+https://github.com/alsa-project/alsa-lib/commit/47252054b4a2d5c8382cb1342f5d4eb89dabf95f]
+---
+ src/topology/parser.c | 19 -------------------
+ 1 file changed, 19 deletions(-)
+
+diff --git a/src/topology/parser.c b/src/topology/parser.c
+index 01c95afa..e70173f6 100644
+--- a/src/topology/parser.c
++++ b/src/topology/parser.c
+@@ -21,25 +21,6 @@
+ #include "list.h"
+ #include "tplg_local.h"
+ 
+-/*
+- * Safe strtol call
+- */
+-int safe_strtol_base(const char *str, long *val, int base)
+-{
+-	char *end;
+-	long v;
+-	if (!*str)
+-		return -EINVAL;
+-	errno = 0;
+-	v = strtol(str, &end, base);
+-	if (errno)
+-		return -errno;
+-	if (*end)
+-		return -EINVAL;
+-	*val = v;
+-	return 0;
+-}
+-
+ /*
+  * Get integer value
+  */

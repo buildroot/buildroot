@@ -45,10 +45,6 @@ NINJA_OPTS	= $(if $(VERBOSE),-v) -j$(PARALLEL_JOBS)
 
 define inner-meson-package
 
-$(2)_CONF_ENV		?=
-$(2)_CONF_OPTS		?=
-$(2)_NINJA_ENV		?=
-
 #
 # Configure step. Only define it if not already defined by the package
 # .mk file. And take care of the differences between host and target

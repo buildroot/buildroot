@@ -8,3 +8,22 @@ config BR2_PACKAGE_DHCPCD
 	  An RFC2131 compliant DHCP client
 
 	  http://roy.marples.name/projects/dhcpcd/
+
+if BR2_PACKAGE_DHCPCD
+
+config BR2_PACKAGE_DHCPCD_ENABLE_PRIVSEP
+	bool
+	default y
+	depends on BR2_USE_MMU
+	# Audit headers were only added in recent kernels for some arches
+	depends on !(BR2_arceb || BR2_arcle) || \
+		BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_2
+	depends on !(BR2_microblazeel || BR2_microblazebe) || \
+		BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_18
+	depends on !BR2_nds32 || BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_2
+	depends on !BR2_nios2 || BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_2
+	depends on !BR2_or1k || BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_7
+	depends on !BR2_sh || BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_7
+	depends on !BR2_xtensa || BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_0
+
+endif

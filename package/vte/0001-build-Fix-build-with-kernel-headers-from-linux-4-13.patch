@@ -1,0 +1,54 @@
+From 91123bb5201156e3d3adbe24305488f5eea2c8d7 Mon Sep 17 00:00:00 2001
+From: Christian Persch <chpe@src.gnome.org>
+Date: Mon, 27 Sep 2021 22:46:47 +0200
+Subject: [PATCH] build: Fix build with kernel headers from linux < 4.13
+
+We already support running with a kernel that doesn't support this
+ioctl, so let's also support building with one. Add the missing
+ioctl definition to missing.hh.
+
+Fixes: https://gitlab.gnome.org/GNOME/vte/-/issues/2514
+
+[Retrieved from:
+https://gitlab.gnome.org/GNOME/vte/-/commit/91123bb5201156e3d3adbe24305488f5eea2c8d7]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/missing.hh | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/src/missing.hh b/src/missing.hh
+index e5a58727..7902e41e 100644
+--- a/src/missing.hh
++++ b/src/missing.hh
+@@ -23,11 +23,14 @@
+ #include <fcntl.h>
+ 
+ #ifdef __linux__
++
++#include <sys/ioctl.h>
+ #include <sys/syscall.h>
+ 
+ #if defined(__mips__) || defined(__mips64__)
+ #include <asm/sgidefs.h>
+ #endif
++
+ #endif
+ 
+ /* NSIG isn't in POSIX, so if it doesn't exist use this here. See bug #759196 */
+@@ -128,4 +131,13 @@ char* strchrnul(char const* s,
+ #define CLOSE_RANGE_CLOEXEC (1u << 2)
+ #endif
+ 
++#if !defined(TIOCGPTPEER)
++/* See linux commit 54ebbfb1603415d9953c150535850d30609ef077 */
++#if defined(__sparc__)
++#define TIOCGPTPEER _IOR('t', 137, int)
++#else
++#define TIOCGPTPEER _IOR('T', 0x41, int)
++#endif
++#endif /* !TIOCGPTPEER */
++
+ #endif /* __linux__ */
+-- 
+GitLab
+

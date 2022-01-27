@@ -1,0 +1,35 @@
+From a327c06f5dee9f432666b503203fd15e4ccafc1b Mon Sep 17 00:00:00 2001
+From: lhofhansl <larsh@apache.org>
+Date: Thu, 6 May 2021 10:24:30 -0700
+Subject: [PATCH] Fix build for newer versions of GCC (#11246)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+(cherry picked from commit 7c2826cbc0f36027d4a9781f433150d1c5d0d03f)
+
+Fixes:
+
+minetest-5.4.1/src/clientiface.h:444:36: error: ‘shared_ptr’ in namespace ‘std’ does not name a template type
+  444 |         ClientInterface(const std::shared_ptr<con::Connection> &con);
+
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+---
+ src/clientiface.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/clientiface.h b/src/clientiface.h
+index cc5292b71..dfd976741 100644
+--- a/src/clientiface.h
++++ b/src/clientiface.h
+@@ -31,6 +31,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
+ #include <list>
+ #include <vector>
+ #include <set>
++#include <memory>
+ #include <mutex>
+ 
+ class MapBlock;
+-- 
+2.31.1
+

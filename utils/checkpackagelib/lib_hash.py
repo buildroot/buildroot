@@ -41,8 +41,6 @@ class HashType(_CheckFunction):
             return
 
         htype, hexa = fields[:2]
-        if htype == "none":
-            return
         if htype not in self.len_of_hash.keys():
             return ["{}:{}: unexpected type of hash ({}#adding-packages-hash)"
                     .format(self.filename, lineno, self.url_to_manual),
@@ -53,3 +51,19 @@ class HashType(_CheckFunction):
                     .format(self.filename, lineno, self.url_to_manual),
                     text,
                     "expected {} hex digits".format(self.len_of_hash[htype])]
+
+
+class HashSpaces(_CheckFunction):
+    def check_line(self, lineno, text):
+        if _empty_line_or_comment(text):
+            return
+
+        fields = text.split()
+        if len(fields) != 3:
+            # Handled by HashNumberOfFields
+            return
+
+        if not re.match(re.escape("{}  {}  {}".format(*fields)), text):
+            return ["{}:{}: separation does not match expectation "
+                    "({}#adding-packages-hash)"
+                    .format(self.filename, lineno, self.url_to_manual), text]

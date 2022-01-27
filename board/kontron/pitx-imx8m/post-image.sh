@@ -1,3 +1,3 @@
 #!/bin/sh
 
-support/scripts/genimage.sh -c $(dirname $0)/genimage.cfg
+support/scripts/genimage.sh -c ${BINARIES_DIR}/genimage.cfg

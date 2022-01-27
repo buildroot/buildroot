@@ -1,0 +1,35 @@
+From 2272d762436a3b0d2e4fef8fb4f1669814904620 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 12 Dec 2021 20:14:54 +0100
+Subject: [PATCH] libmediaart/meson.build: replace shared_library
+
+Replace shared_library by library call to avoid the following build
+failure when building statically:
+
+/home/buildroot/autobuild/instance-0/output-1/host/opt/ext-toolchain/bin/../lib/gcc/arm-buildroot-linux-uclibcgnueabi/9.3.0/../../../../arm-buildroot-linux-uclibcgnueabi/bin/ld: /home/buildroot/autobuild/instance-0/output-1/host/arm-buildroot-linux-uclibcgnueabi/sysroot/usr/lib/libc.a(__uClibc_main.os): in function `__uClibc_fini':
+__uClibc_main.c:(.text+0x15c): undefined reference to `__fini_array_start'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/18d26882a68dcf8f09b3e3d25636454a12939310
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ libmediaart/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libmediaart/meson.build b/libmediaart/meson.build
+index 2f44e63..1fd3b99 100644
+--- a/libmediaart/meson.build
++++ b/libmediaart/meson.build
+@@ -30,7 +30,7 @@ marshal = gnome.genmarshal('marshal',
+ 
+ libmediaart_dependencies = [glib, gio_unix, gobject, image_library]
+ 
+-libmediaart = shared_library(
++libmediaart = library(
+   'mediaart-' + libmediaart_api_version,
+   libmediaart_sources, marshal[0], marshal[1],
+   version: libmediaart_ltversion,
+-- 
+2.33.0
+

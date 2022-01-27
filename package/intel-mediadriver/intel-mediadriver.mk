@@ -6,7 +6,7 @@
 
 # based on https://software.intel.com/en-us/articles/build-and-debug-open-source-media-stack
 
-INTEL_MEDIADRIVER_VERSION = 21.3.5
+INTEL_MEDIADRIVER_VERSION = 22.1.1
 INTEL_MEDIADRIVER_SITE = http://github.com/intel/media-driver/archive
 INTEL_MEDIADRIVER_SOURCE= intel-media-$(INTEL_MEDIADRIVER_VERSION).tar.gz
 INTEL_MEDIADRIVER_LICENSE = MIT, BSD-3-Clause
@@ -31,5 +31,11 @@ INTEL_MEDIADRIVER_CONF_OPTS = \
 	-DMEDIA_BUILD_FATAL_WARNINGS=OFF \
 	-DMEDIA_RUN_TEST_SUITE=OFF \
 	-DMEDIA_BUILD_HARDENING=OFF
+
+ifeq ($(BR2_PACKAGE_INTEL_MEDIADRIVER_GEN8),y)
+INTEL_MEDIADRIVER_CONF_OPTS += -DGEN8=ON
+else
+INTEL_MEDIADRIVER_CONF_OPTS += -DGEN8=OFF
+endif
 
 $(eval $(cmake-package))

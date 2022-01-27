@@ -1,0 +1,41 @@
+From 6ce41f621154eff0145dab41308bc145c0440f16 Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Mon, 10 Jan 2022 22:32:18 +0100
+Subject: [PATCH] dpp: fix implicit declaration of function explicit_bzero
+ warning
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- add missing src/missing.h include for explicit_bzero, fixes uclibc
+  compile/linking
+
+Fixes:
+
+  src/dpp.c:166:2: warning: implicit declaration of function ‘explicit_bzero’ [-Wimplicit-function-declaration]
+    166 |  explicit_bzero(dpp->r_nonce, dpp->nonce_len);
+        |  ^~~~~~~~~~~~~~
+
+[backport from upstream]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+[yann.morin.1998@free.fr: actual backport now upstreamn applied]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ src/dpp.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/dpp.c b/src/dpp.c
+index 84e89f6c..8091ded1 100644
+--- a/src/dpp.c
++++ b/src/dpp.c
+@@ -30,6 +30,7 @@
+ 
+ #include "linux/nl80211.h"
+ 
++#include "src/missing.h"
+ #include "src/dbus.h"
+ #include "src/netdev.h"
+ #include "src/module.h"
+-- 
+2.34.1
+

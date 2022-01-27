@@ -1,0 +1,31 @@
+From f12fbb6f54b8302db2ab7c926a26f9189cf86532 Mon Sep 17 00:00:00 2001
+From: peak3d <pfau@peak3d.de>
+Date: Thu, 22 Jul 2021 10:41:35 +0200
+Subject: [PATCH] Android 32 ftello fix
+
+ref: https://android.googlesource.com/platform/bionic/+/master/docs/32-bit-abi.md
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ Source/C++/Core/Ap4Config.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Source/C++/Core/Ap4Config.h b/Source/C++/Core/Ap4Config.h
+index 422069e..c859a03 100644
+--- a/Source/C++/Core/Ap4Config.h
++++ b/Source/C++/Core/Ap4Config.h
+@@ -141,10 +141,10 @@
+ #endif
+ 
+ #if !defined(AP4_fseek)
+-#define AP4_fseek fseeko
++#define AP4_fseek fseek
+ #endif
+ #if !defined(AP4_ftell)
+-#define AP4_ftell ftello
++#define AP4_ftell ftell
+ #endif
+ 
+ /* some compilers (ex: MSVC 8) deprecate those, so we rename them */
+-- 
+2.30.2
+

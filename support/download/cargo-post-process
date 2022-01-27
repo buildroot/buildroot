@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+set -e
+
+. "${0%/*}/helpers"
+
+while getopts "n:o:" OPT; do
+    case "${OPT}" in
+    o)  output="${OPTARG}";;
+    n)  base_name="${OPTARG}";;
+    :)  error "option '%s' expects a mandatory argument\n" "${OPTARG}";;
+    \?) error "unknown option '%s'\n" "${OPTARG}";;
+    esac
+done
+
+# Already vendored tarball, nothing to do
+if tar tf "${output}" | grep -q "^[^/]*/VENDOR" ; then
+    exit 0
+fi
+
+post_process_unpack "${base_name}" "${output}"
+
+# Do the Cargo vendoring
+pushd "${base_name}" > /dev/null
+cargo vendor --manifest-path ${BR_CARGO_MANIFEST_PATH-Cargo.toml} --locked VENDOR
+
+# Create the local .cargo/config with vendor info
+mkdir -p .cargo/
+cat <<EOF >.cargo/config
+[source.crates-io]
+replace-with = "vendored-sources"
+
+[source.vendored-sources]
+directory = "VENDOR"
+EOF
+popd > /dev/null
+
+post_process_repack "$(pwd)" "${base_name}" "${output}"

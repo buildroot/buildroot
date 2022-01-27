@@ -1,7 +1,7 @@
 From 435b28cd90973cc03a533e75e90a46cd9f197dff Mon Sep 17 00:00:00 2001
 From: Peter Korsgaard <peter@korsgaard.com>
 Date: Sat, 25 Oct 2014 19:44:01 +0200
-Subject: [PATCH 2/5] Fix linking error without pthread
+Subject: [PATCH] Fix linking error without pthread
 
 The rollingfile functionality only gets built if pthread support is
 available, but a call to these functions from log4c_fini() was outside

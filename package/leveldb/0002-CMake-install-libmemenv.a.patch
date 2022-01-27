@@ -8,6 +8,8 @@ https://git.busybox.net/buildroot/commit/?id=8a10d9ce311c6cb0490d76921cae55618c2
 https://git.busybox.net/buildroot/commit/?id=16f847340d07dce620e4c3fc0a099aa79898d86a
 
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Fabrice : updated for 1.23]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  CMakeLists.txt | 26 +++++++++++++++++++++++++-
  1 file changed, 25 insertions(+), 1 deletion(-)
@@ -48,9 +50,9 @@ index a65afbf..83b2425 100644
    target_sources(leveldb
      PRIVATE
 @@ -418,7 +436,7 @@ endif(LEVELDB_BUILD_BENCHMARKS)
+ endif(LEVELDB_BUILD_BENCHMARKS)
  
  if(LEVELDB_INSTALL)
-   include(GNUInstallDirs)
 -  install(TARGETS leveldb
 +  install(TARGETS leveldb memenv
      EXPORT leveldbTargets

@@ -1,0 +1,28 @@
+From f16fa9796e05ca9ea6ee764b3c1f0b8baed535e8 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jos=C3=A9=20Pekkarinen?= <jose.pekkarinen@unikie.com>
+Date: Fri, 10 Dec 2021 14:35:45 +0200
+Subject: [PATCH] Fix schedule.c:378:36: error: 'SIOCGSTAMP' undeclared
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: José Pekkarinen <jose.pekkarinen@unikie.com>
+---
+ src/schedule.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/schedule.c b/src/schedule.c
+index 8868b01..09ab248 100644
+--- a/src/schedule.c
++++ b/src/schedule.c
+@@ -23,6 +23,7 @@
+ #include <fcntl.h>
+ #include <sys/ioctl.h>
+ #include <sys/socket.h>
++#include <linux/sockios.h>
+ 
+ 
+ #include "list.h"
+-- 
+2.30.2
+

@@ -7,6 +7,8 @@ Upstream: https://github.com/google/leveldb/pull/686/commits/3e73a396a082efc76e0
 [Thomas: this commit allows to fix the detection of the snappy library
 in static link configurations]
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+[Fabrice : updated for 1.23]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  CMakeLists.txt         | 12 ++++++++----
  cmake/FindSnappy.cmake | 31 +++++++++++++++++++++++++++++++
@@ -19,14 +21,14 @@ index 78fead6..2efccda 100644
 +++ b/CMakeLists.txt
 @@ -6,6 +6,9 @@ cmake_minimum_required(VERSION 3.9)
  # Keep the version below in sync with the one in db.h
- project(leveldb VERSION 1.22.0 LANGUAGES C CXX)
+ project(leveldb VERSION 1.23.0 LANGUAGES C CXX)
  
 +# Include local CMake modules.
 +list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 +
- # This project can use C11, but will gracefully decay down to C89.
- set(CMAKE_C_STANDARD 11)
- set(CMAKE_C_STANDARD_REQUIRED OFF)
+ # C standard can be overridden when this is used as a sub-project.
+ if(NOT CMAKE_C_STANDARD)
+   # This project can use C11, but will gracefully decay down to C89.
 @@ -31,13 +34,14 @@ option(LEVELDB_INSTALL "Install LevelDB's header and library" ON)
  include(TestBigEndian)
  test_big_endian(LEVELDB_IS_BIG_ENDIAN)

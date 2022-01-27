@@ -10,9 +10,9 @@ LIBCAMERA_SITE_METHOD = git
 LIBCAMERA_DEPENDENCIES = \
 	host-openssl \
 	host-pkgconf \
-	host-python3-jinja2 \
+	host-python-jinja2 \
 	host-python3-ply \
-	host-python3-pyyaml \
+	host-python-pyyaml \
 	gnutls
 LIBCAMERA_CONF_OPTS = \
 	-Dandroid=disabled \

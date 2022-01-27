@@ -1,0 +1,47 @@
+From 3eaf11bd957555674f5993435ef79dd4717ce890 Mon Sep 17 00:00:00 2001
+From: Herve Codina <herve.codina@bootlin.com>
+Date: Tue, 26 Oct 2021 08:45:10 +0200
+Subject: [PATCH] backend: Add missing include files
+
+With some libc library (musl), shd_dev_mem.c and shd_shm.c do not
+compile. Indeed, open() needs <fcntl.h> (Cf. man open).
+
+This patch fixes the compilation issue adding this
+include file.
+
+This patch was submitted upstream.
+https://github.com/Parrot-Developers/libshdata/issues/1
+
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+---
+ src/backend/shd_dev_mem.c | 1 +
+ src/backend/shd_shm.c     | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/src/backend/shd_dev_mem.c b/src/backend/shd_dev_mem.c
+index 14573c1..a65f052 100644
+--- a/src/backend/shd_dev_mem.c
++++ b/src/backend/shd_dev_mem.c
+@@ -33,6 +33,7 @@
+ #include <string.h>
+ #include <errno.h>
+ #include <unistd.h>		/* For ftruncate */
++#include <fcntl.h>		/* For open */
+ #include <sys/file.h>		/* for flock */
+ #include <sys/mman.h>		/* For shm and PROT flags */
+ #include <futils/fdutils.h>
+diff --git a/src/backend/shd_shm.c b/src/backend/shd_shm.c
+index 117bf01..1e5a38c 100644
+--- a/src/backend/shd_shm.c
++++ b/src/backend/shd_shm.c
+@@ -35,6 +35,7 @@
+ #include <string.h>
+ #include <errno.h>
+ #include <unistd.h>		/* For ftruncate */
++#include <fcntl.h>		/* For open */
+ #include <limits.h>		/* For NAME_MAX macro */
+ #include <sys/file.h>		/* for flock */
+ #include <sys/mman.h>		/* For shm and PROT flags */
+-- 
+2.31.1
+

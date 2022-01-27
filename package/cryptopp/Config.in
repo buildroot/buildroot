@@ -1,0 +1,9 @@
+config BR2_PACKAGE_CRYPTOPP
+	bool "cryptopp"
+	depends on !BR2_STATIC_LIBS
+	depends on BR2_USE_WCHAR
+	help
+	  A free C++ class library of cryptographic schemes
+
+comment "cryptopp needs a toolchain w/ dynamic library, wchar"
+	depends on BR2_STATIC_LIBS || !BR2_USE_WCHAR

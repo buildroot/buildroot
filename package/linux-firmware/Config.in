@@ -140,11 +140,13 @@ config BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_10K_QCA998X
 
 config BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM43XX
 	bool "Broadcom BRCM bcm43xx"
+	select BR2_PACKAGE_LINUX_FIRMWARE_CYPRESS_CYW43XX
 	help
 	  Firmware files for the Broadcom bcm43xx SoftMAC and FullMAC.
 
 config BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM43XXX
 	bool "Broadcom BRCM bcm43xxx"
+	select BR2_PACKAGE_LINUX_FIRMWARE_CYPRESS_CYW43XXX
 	help
 	  Firmware files for the Broadcom bcm43xxx, SoftMAC and FullMAC.
 
@@ -157,6 +159,21 @@ config BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM4366C0
 	bool "Broadcom 4366c0"
 	help
 	  Firmware file for the Broadcom 4366c0 FullMAC chip.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_CYPRESS_CYW43XX
+	bool "Cypress CY cyw43xx"
+	help
+	  Firmware files for the Cypress cyw43xx FullMAC.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_CYPRESS_CYW43XXX
+	bool "Cypress CY cyw43xxx"
+	help
+	  Firmware files for the Cypress cyw43xxx FullMAC.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_CYPRESS_CYW54XXX
+	bool "Cypress CY cyw54xxx"
+	help
+	  Firmware files for the Cypress cyw54xxx FullMAC.
 
 config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22260
 	bool "Intel iwlwifi 22260"
@@ -431,6 +448,12 @@ config BR2_PACKAGE_LINUX_FIRMWARE_INTEL_E100
 	help
 	  Firmware files for Intel 825xx handled by driver e100
 	  (e100)
+
+config BR2_PACKAGE_LINUX_FIRMWARE_INTEL_ICE
+	bool "Intel Ethernet 800 Series"
+	help
+	  Firmware files for Intel Ethernet 800 Series Network Adapters
+	  (ice)
 
 config BR2_PACKAGE_LINUX_FIRMWARE_MICROCHIP_VSC85XX_PHY
 	bool "Microchip VSC85xx PHYs"

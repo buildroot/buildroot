@@ -4,9 +4,11 @@
 #
 ################################################################################
 
-SUPERTUXKART_VERSION = 1.1
-SUPERTUXKART_SOURCE = supertuxkart-$(SUPERTUXKART_VERSION)-src.tar.xz
-SUPERTUXKART_SITE = http://downloads.sourceforge.net/project/supertuxkart/SuperTuxKart/$(SUPERTUXKART_VERSION)
+SUPERTUXKART_VERSION = 1.3
+SUPERTUXKART_SOURCE = SuperTuxKart-$(SUPERTUXKART_VERSION)-src.tar.xz
+# Do not use the github helper here, the generated tarball is *NOT*
+# the same as the one uploaded by upstream for the release.
+SUPERTUXKART_SITE = https://github.com/supertuxkart/stk-code/releases/download/$(SUPERTUXKART_VERSION)
 
 # Supertuxkart itself is GPL-3.0+, but it bundles a few libraries with different
 # licenses. Irrlicht, bullet and angelscript have Zlib license, while glew is
@@ -21,14 +23,13 @@ SUPERTUXKART_DEPENDENCIES = \
 	harfbuzz \
 	jpeg \
 	libcurl \
-	libfribidi \
 	libgl \
-	libglew \
 	libogg \
 	libpng \
 	libsquish \
 	libvorbis \
 	openal \
+	sdl2 \
 	xlib_libXrandr \
 	zlib
 
@@ -37,7 +38,6 @@ SUPERTUXKART_DEPENDENCIES = \
 # Disable In-game recorder (there is no libopenglrecorder package)
 SUPERTUXKART_CONF_OPTS = -DBUILD_SHARED_LIBS=OFF \
 	-DBUILD_RECORDER=OFF \
-	-DUSE_SYSTEM_GLEW=ON \
 	-DUSE_SYSTEM_ENET=ON \
 	-DUSE_SYSTEM_SQUISH=ON
 
@@ -49,12 +49,12 @@ else
 SUPERTUXKART_CONF_OPTS += -DUSE_WIIUSE=OFF
 endif
 
-# Prefer openssl (the default) over nettle.
+# Prefer openssl (the default) over mbedtls
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 SUPERTUXKART_DEPENDENCIES += openssl
 SUPERTUXKART_CONF_OPTS += -DUSE_CRYPTO_OPENSSL=ON
 else
-SUPERTUXKART_DEPENDENCIES += nettle
+SUPERTUXKART_DEPENDENCIES += mbedtls
 SUPERTUXKART_CONF_OPTS += -DUSE_CRYPTO_OPENSSL=OFF
 endif
 

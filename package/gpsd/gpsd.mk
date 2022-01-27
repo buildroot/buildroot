@@ -12,7 +12,7 @@ GPSD_CPE_ID_VENDOR = gpsd_project
 GPSD_SELINUX_MODULES = gpsd
 GPSD_INSTALL_STAGING = YES
 
-GPSD_DEPENDENCIES = host-python3 host-scons host-pkgconf
+GPSD_DEPENDENCIES = host-scons host-pkgconf
 
 GPSD_LDFLAGS = $(TARGET_LDFLAGS)
 GPSD_CFLAGS = $(TARGET_CFLAGS)
@@ -211,7 +211,7 @@ GPSD_SCONS_ENV += \
 define GPSD_BUILD_CMDS
 	(cd $(@D); \
 		$(GPSD_SCONS_ENV) \
-		$(HOST_DIR)/bin/python3 $(SCONS) \
+		$(SCONS) \
 		$(GPSD_SCONS_OPTS))
 endef
 
@@ -219,7 +219,7 @@ define GPSD_INSTALL_TARGET_CMDS
 	(cd $(@D); \
 		$(GPSD_SCONS_ENV) \
 		DESTDIR=$(TARGET_DIR) \
-		$(HOST_DIR)/bin/python3 $(SCONS) \
+		$(SCONS) \
 		$(GPSD_SCONS_OPTS) \
 		$(if $(BR2_PACKAGE_HAS_UDEV),udev-install,install))
 endef
@@ -241,7 +241,7 @@ define GPSD_INSTALL_STAGING_CMDS
 	(cd $(@D); \
 		$(GPSD_SCONS_ENV) \
 		DESTDIR=$(STAGING_DIR) \
-		$(HOST_DIR)/bin/python3 $(SCONS) \
+		$(SCONS) \
 		$(GPSD_SCONS_OPTS) \
 		install)
 endef

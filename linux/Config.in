@@ -31,7 +31,7 @@ config BR2_LINUX_KERNEL_LATEST_VERSION
 	bool "Latest version (5.15)"
 
 config BR2_LINUX_KERNEL_LATEST_CIP_VERSION
-	bool "Latest CIP SLTS version (4.19.198-cip54)"
+	bool "Latest CIP SLTS version (5.10.83-cip1)"
 	help
 	  CIP launched in the spring of 2016 to address the needs of
 	  organizations in industries such as power generation and
@@ -44,18 +44,18 @@ config BR2_LINUX_KERNEL_LATEST_CIP_VERSION
 	  implementation of software building blocks that meet
 	  these requirements.
 
-	  The CIP community plans to maintain 4.19 for security and
+	  The CIP community plans to maintain 5.10 for security and
 	  bug fixes for more than 10 years.
 
 	  https://www.cip-project.org
 
 config BR2_LINUX_KERNEL_LATEST_CIP_RT_VERSION
-	bool "Latest CIP RT SLTS version (4.19.198-cip54-rt21)"
+	bool "Latest CIP RT SLTS version (5.10.83-cip1-rt1)"
 	help
 	  Same as the CIP version, but this is the PREEMPT_RT realtime
 	  variant.
 
-	  The CIP community plans to maintain 4.19 for security and
+	  The CIP community plans to maintain 5.10 for security and
 	  bug fixes for more than 10 years.
 
 	  https://www.cip-project.org
@@ -125,9 +125,9 @@ endif
 
 config BR2_LINUX_KERNEL_VERSION
 	string
-	default "5.15.6" if BR2_LINUX_KERNEL_LATEST_VERSION
-	default "4.19.198-cip54" if BR2_LINUX_KERNEL_LATEST_CIP_VERSION
-	default "4.19.198-cip54-rt21" if BR2_LINUX_KERNEL_LATEST_CIP_RT_VERSION
+	default "5.15.13" if BR2_LINUX_KERNEL_LATEST_VERSION
+	default "5.10.83-cip1" if BR2_LINUX_KERNEL_LATEST_CIP_VERSION
+	default "5.10.83-cip1-rt1" if BR2_LINUX_KERNEL_LATEST_CIP_RT_VERSION
 	default BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE \
 		if BR2_LINUX_KERNEL_CUSTOM_VERSION
 	default "custom" if BR2_LINUX_KERNEL_CUSTOM_TARBALL
@@ -469,6 +469,18 @@ config BR2_LINUX_KERNEL_NEEDS_HOST_LIBELF
 	  such as "Cannot generate ORC metadata for
 	  CONFIG_UNWINDER_ORC=y, please install libelf-dev,
 	  libelf-devel or elfutils-libelf-devel".
+
+config BR2_LINUX_KERNEL_NEEDS_HOST_PAHOLE
+	bool "Needs host pahole"
+	help
+	  Some Linux kernel configuration options (such as
+	  CONFIG_DEBUG_INFO_BTF) require building a host program
+	  called pahole. Enabling this option will ensure host-pahole
+	  gets built before the Linux kernel.
+
+	  Enable this option if you get a Linux kernel build failure
+	  such as "BTF: .tmp_vmlinux.btf: pahole (pahole) is not
+	  available".
 
 # Linux extensions
 source "linux/Config.ext.in"

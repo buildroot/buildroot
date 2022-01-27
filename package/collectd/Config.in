@@ -214,10 +214,14 @@ config BR2_PACKAGE_COLLECTD_CURL_XML
 
 config BR2_PACKAGE_COLLECTD_DBI
 	bool "dbi"
+	depends on !BR2_STATIC_LIBS
 	select BR2_PACKAGE_LIBDBI
 	help
 	  Executes SQL statements on various databases and
 	  interprets the returned data.
+
+comment "dbi support needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
 
 config BR2_PACKAGE_COLLECTD_DF
 	bool "df"
@@ -308,6 +312,17 @@ config BR2_PACKAGE_COLLECTD_IPC
 	  IPC counters: semaphores used, number of allocated segments
 	  in shared memory and more.
 
+config BR2_PACKAGE_COLLECTD_IPMI
+	bool "ipmi"
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
+	select BR2_PACKAGE_OPENIPMI
+	help
+	  Read hardware sensors from servers using the Intelligent
+	  Platform Management Interface (IPMI).
+
+comment "ipmi needs a toolchain w/ NPTL"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS_NPTL
+
 config BR2_PACKAGE_COLLECTD_IPTABLES
 	bool "iptables"
 	select BR2_PACKAGE_IPTABLES
@@ -383,6 +398,10 @@ config BR2_PACKAGE_COLLECTD_MYSQL
 	help
 	  Connects to a MySQL database and issues a "show status"
 	  command.
+
+comment "mysql needs a toolchain w/ C++, threads"
+	depends on BR2_USE_MMU
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS
 
 config BR2_PACKAGE_COLLECTD_NETLINK
 	bool "netlink"
@@ -571,6 +590,24 @@ config BR2_PACKAGE_COLLECTD_USERS
 	bool "users"
 	help
 	  Counts the number of users currently logged in.
+
+config BR2_PACKAGE_COLLECTD_VIRT
+	bool "virt"
+	depends on BR2_PACKAGE_LIBVIRT_ARCH_SUPPORTS # libvirt
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_12 # libvirt
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_11 || !BR2_aarch64 # libvirt
+	depends on BR2_PACKAGE_HAS_UDEV # libvirt
+	depends on BR2_USE_WCHAR # libvirt
+	select BR2_PACKAGE_LIBVIRT
+	select BR2_PACKAGE_LIBXML2
+	help
+	  Gather statistics about virtualized guests on a system.
+
+comment "virt needs udev /dev management, a toolchain w/ wchar, kernel headers >= 3.12 (4.11 for AArch64)"
+	depends on BR2_PACKAGE_LIBVIRT_ARCH_SUPPORTS
+	depends on !BR2_PACKAGE_HAS_UDEV || !BR2_USE_WCHAR || \
+		!(BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_12 && \
+			(BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_11 || !BR2_aarch64))
 
 config BR2_PACKAGE_COLLECTD_VMEM
 	bool "vmem"

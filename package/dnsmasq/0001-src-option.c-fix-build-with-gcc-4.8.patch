@@ -1,0 +1,52 @@
+From 46312909d9080ff8743133fbd52427b4b2213171 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 31 Dec 2021 17:29:44 +0100
+Subject: [PATCH] src/option.c: fix build with gcc 4.8
+
+Fix the following build failure with gcc 4.8 raised since version 2.86:
+
+option.c: In function 'one_opt':
+option.c:2445:11: error: 'for' loop initial declarations are only allowed in C99 mode
+           for (char *p = arg; *p; p++) {
+           ^
+option.c:2445:11: note: use option -std=c99 or -std=gnu99 to compile your code
+option.c:2453:11: error: 'for' loop initial declarations are only allowed in C99 mode
+           for (u8 i = 0; i < sizeof(daemon->umbrella_device); i++, arg+=2) {
+           ^
+
+Fixes:
+ - http://autobuild.buildroot.org/results/39b34a4e69fc10f4bd9d4ddb0ed8c0aae5741c84
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream commit 46312909d9080ff8743133fbd52427b4b2213171]
+---
+ src/option.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/option.c b/src/option.c
+index ff54def..c57f6d8 100644
+--- a/src/option.c
++++ b/src/option.c
+@@ -2525,7 +2525,8 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
+           arg += 9;
+           if (strlen(arg) != 16)
+               ret_err(gen_err);
+-          for (char *p = arg; *p; p++) {
++          char *p;
++          for (*p = arg; *p; p++) {
+             if (!isxdigit((int)*p))
+               ret_err(gen_err);
+           }
+@@ -2533,7 +2534,8 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
+ 
+           u8 *u = daemon->umbrella_device;
+           char word[3];
+-          for (u8 i = 0; i < sizeof(daemon->umbrella_device); i++, arg+=2) {
++          u8 i;
++          for (i = 0; i < sizeof(daemon->umbrella_device); i++, arg+=2) {
+             memcpy(word, &(arg[0]), 2);
+             *u++ = strtoul(word, NULL, 16);
+           }
+-- 
+2.33.0
+

@@ -61,6 +61,16 @@ ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 NETDATA_CONF_ENV += LIBS=-latomic
 endif
 
+ifeq ($(BR2_PACKAGE_NETDATA_PROMETHEUS),y)
+# Override the result of AC_PATH_PROG([CXX_BINARY], [${CXX}], [no])
+# which fails because CXX is set to the full CXX binary path
+NETDATA_CONF_ENV += ac_cv_path_CXX_BINARY=yes
+NETDATA_CONF_OPTS += --enable-backend-prometheus-remote-write
+NETDATA_DEPENDENCIES += protobuf snappy
+else
+NETDATA_CONF_OPTS += --disable-backend-prometheus-remote-write
+endif
+
 define NETDATA_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 755 package/netdata/S60netdata \
 		$(TARGET_DIR)/etc/init.d/S60netdata

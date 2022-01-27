@@ -36,6 +36,7 @@ RUN apt-get install -y --no-install-recommends \
         libncurses5-dev \
         locales \
         mercurial \
+        openssh-server \
         python3 \
         python3-flake8 \
         python3-nose2 \

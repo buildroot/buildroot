@@ -1,0 +1,129 @@
+From 31ad5ec50ec0c9cc7a92f009925c5f58aecdcce1 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 30 Dec 2021 14:58:11 +0100
+Subject: [PATCH] Support glibmm 2.68
+
+Support glibmm 2.68 which has been released one year ago and is the
+first stable release in the glibmm-2.68 ABI series:
+https://gitlab.gnome.org/GNOME/glibmm/-/blob/2.68.2/NEWS
+
+As TimeVal is not available with glibmm 2.68, use DateTime which is
+available since version 2.26
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:
+https://sourceforge.net/p/sigrok/mailman/message/37410614]
+---
+ README                                             |  2 +-
+ bindings/cxx/classes.cpp                           | 13 ++++++-------
+ bindings/cxx/include/libsigrokcxx/libsigrokcxx.hpp |  4 ++--
+ bindings/cxx/libsigrokcxx.pc.in                    |  2 +-
+ configure.ac                                       |  7 ++++++-
+ 5 files changed, 16 insertions(+), 12 deletions(-)
+
+diff --git a/README b/README
+index 768c8ca2..2515f059 100644
+--- a/README
++++ b/README
+@@ -63,7 +63,7 @@ Requirements for the C++ bindings:
+  - doxygen (required for building the bindings, not only for C++ API docs!)
+  - graphviz (optional, only needed for the C++ API docs)
+  - Python (2 or 3) executable (development files are not needed)
+- - glibmm-2.4 (>= 2.32.0)
++ - glibmm-2.4 (>= 2.32.0) or glibmm-2.68 (>= 2.68.0)
+ 
+ Requirements for the Python bindings:
+ 
+diff --git a/bindings/cxx/classes.cpp b/bindings/cxx/classes.cpp
+index f9f79273..de600d03 100644
+--- a/bindings/cxx/classes.cpp
++++ b/bindings/cxx/classes.cpp
+@@ -287,12 +287,12 @@ shared_ptr<UserDevice> Context::create_user_device(
+ 		default_delete<UserDevice>{}};
+ }
+ 
+-shared_ptr<Packet> Context::create_header_packet(Glib::TimeVal start_time)
++shared_ptr<Packet> Context::create_header_packet(Glib::DateTime start_time)
+ {
+ 	auto header = g_new(struct sr_datafeed_header, 1);
+ 	header->feed_version = 1;
+-	header->starttime.tv_sec = start_time.tv_sec;
+-	header->starttime.tv_usec = start_time.tv_usec;
++	header->starttime.tv_sec = start_time.to_unix();
++	header->starttime.tv_usec = start_time.get_microsecond();
+ 	auto packet = g_new(struct sr_datafeed_packet, 1);
+ 	packet->type = SR_DF_HEADER;
+ 	packet->payload = header;
+@@ -1154,11 +1154,10 @@ int Header::feed_version() const
+ 	return _structure->feed_version;
+ }
+ 
+-Glib::TimeVal Header::start_time() const
++Glib::DateTime Header::start_time() const
+ {
+-	return Glib::TimeVal(
+-		_structure->starttime.tv_sec,
+-		_structure->starttime.tv_usec);
++	Glib::DateTime time = Glib::DateTime::create_now_utc(_structure->starttime.tv_sec);
++	return time.add_seconds(_structure->starttime.tv_usec / 1.0e6);
+ }
+ 
+ Meta::Meta(const struct sr_datafeed_meta *structure) :
+diff --git a/bindings/cxx/include/libsigrokcxx/libsigrokcxx.hpp b/bindings/cxx/include/libsigrokcxx/libsigrokcxx.hpp
+index 97e54e17..d090c379 100644
+--- a/bindings/cxx/include/libsigrokcxx/libsigrokcxx.hpp
++++ b/bindings/cxx/include/libsigrokcxx/libsigrokcxx.hpp
+@@ -274,7 +274,7 @@ public:
+ 	std::shared_ptr<UserDevice> create_user_device(
+ 		std::string vendor, std::string model, std::string version);
+ 	/** Create a header packet. */
+-	std::shared_ptr<Packet> create_header_packet(Glib::TimeVal start_time);
++	std::shared_ptr<Packet> create_header_packet(Glib::DateTime start_time);
+ 	/** Create a meta packet. */
+ 	std::shared_ptr<Packet> create_meta_packet(
+ 		std::map<const ConfigKey *, Glib::VariantBase> config);
+@@ -711,7 +711,7 @@ public:
+ 	/* Feed version number. */
+ 	int feed_version() const;
+ 	/* Start time of this session. */
+-	Glib::TimeVal start_time() const;
++	Glib::DateTime start_time() const;
+ private:
+ 	explicit Header(const struct sr_datafeed_header *structure);
+ 	~Header();
+diff --git a/bindings/cxx/libsigrokcxx.pc.in b/bindings/cxx/libsigrokcxx.pc.in
+index 10a92f2d..7d2723fc 100644
+--- a/bindings/cxx/libsigrokcxx.pc.in
++++ b/bindings/cxx/libsigrokcxx.pc.in
+@@ -6,7 +6,7 @@ includedir=@includedir@
+ Name: libsigrokcxx
+ Description: C++ bindings for libsigrok
+ URL: http://www.sigrok.org
+-Requires: libsigrok glibmm-2.4
++Requires: libsigrok @SR_GLIBMM_REQUIRES@
+ Version: @SR_PACKAGE_VERSION@
+ Libs: -L${libdir} -lsigrokcxx
+ Libs.private: -lm
+diff --git a/configure.ac b/configure.ac
+index 424b0002..d70575b7 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -407,9 +407,14 @@ AS_IF([test "x$HAVE_CXX11" != x1],
+ 	[SR_APPEND([sr_cxx_missing], [', '], ['C++11'])])
+ 
+ # The C++ bindings need glibmm.
+-SR_PKG_CHECK([glibmm], [SR_PKGLIBS_CXX], [glibmm-2.4 >= 2.32.0])
++SR_GLIBMM_REQUIRES=glibmm-2.4
++SR_PKG_CHECK([glibmm], [SR_PKGLIBS_CXX], [$SR_GLIBMM_REQUIRES >= 2.32.0])
++AS_IF([test "x$sr_have_glibmm" != xyes],
++	[SR_GLIBMM_REQUIRES=glibmm-2.68
++	SR_PKG_CHECK([glibmm], [SR_PKGLIBS_CXX], [$SR_GLIBMM_REQUIRES >= 2.68.0])])
+ AS_IF([test "x$sr_have_glibmm" != xyes],
+ 	[SR_APPEND([sr_cxx_missing], [', '], [glibmm])])
++AC_SUBST(SR_GLIBMM_REQUIRES)
+ 
+ # The C++ bindings use Doxygen to parse libsigrok symbols.
+ AC_CHECK_PROG([HAVE_DOXYGEN], [doxygen], [yes], [no])
+-- 
+2.34.1
+

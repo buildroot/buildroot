@@ -1,0 +1,36 @@
+From 2748fb81e23b71e2c44956e99321816aca91905d Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Sat, 1 Jan 2022 23:03:26 +0000
+Subject: [PATCH] Fix 46312909d9080ff8743133fbd52427b4b2213171 typo.
+
+[Upstream commit 2748fb81e23b71e2c44956e99321816aca91905d]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com> 
+---
+ src/option.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/option.c b/src/option.c
+index c57f6d8..6f56ce8 100644
+--- a/src/option.c
++++ b/src/option.c
+@@ -357,7 +357,7 @@ static const struct myoption opts[] =
+     { "dhcp-ignore-clid", 0, 0,  LOPT_IGNORE_CLID },
+     { "dynamic-host", 1, 0, LOPT_DYNHOST },
+     { "log-debug", 0, 0, LOPT_LOG_DEBUG },
+-	{ "umbrella", 2, 0, LOPT_UMBRELLA },
++    { "umbrella", 2, 0, LOPT_UMBRELLA },
+     { "quiet-tftp", 0, 0, LOPT_QUIET_TFTP },
+     { NULL, 0, 0, 0 }
+   };
+@@ -2526,7 +2526,7 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
+           if (strlen(arg) != 16)
+               ret_err(gen_err);
+           char *p;
+-          for (*p = arg; *p; p++) {
++          for (p = arg; *p; p++) {
+             if (!isxdigit((int)*p))
+               ret_err(gen_err);
+           }
+-- 
+2.33.0
+

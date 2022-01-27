@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-DEHYDRATED_VERSION = 0.6.5
-DEHYDRATED_SITE = https://github.com/lukas2511/dehydrated/releases/download/v$(DEHYDRATED_VERSION)
+DEHYDRATED_VERSION = 0.7.0
+DEHYDRATED_SITE = https://github.com/dehydrated-io/dehydrated/releases/download/v$(DEHYDRATED_VERSION)
 
 DEHYDRATED_LICENSE = MIT
 DEHYDRATED_LICENSE_FILES = LICENSE

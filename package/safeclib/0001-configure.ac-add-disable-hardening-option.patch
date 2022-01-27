@@ -1,0 +1,63 @@
+From 94c612016834d7bdc2b721ff5f4f5e158bda6fdd Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 8 Jan 2022 21:49:22 +0100
+Subject: [PATCH] configure.ac: add --disable-hardening option
+
+Allow the user to disable hardening which is enabled by default since
+version 02092020 and
+https://github.com/rurban/safeclib/commit/caa4408eb4a5c767f0474258af3b6ccf444e10aa
+to avoid the following build failure when the toolchain doesn't support
+stack-protector:
+
+/home/buildroot/autobuild/instance-3/output-1/host/opt/ext-toolchain/m68k-buildroot-uclinux-uclibc/bin/ld.real: ../src/.libs/libsafec-3.6.0.a(safe_mem_constraint.o): in function `handle_mem_bos_chk_warn':
+safe_mem_constraint.c:(.text+0x40): undefined reference to `__stack_chk_guard'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/a481ee2d26a094358b0298617cce691be3077f22
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/rurban/safeclib/pull/107]
+---
+ configure.ac | 27 +++++++++++++++++++--------
+ 1 file changed, 19 insertions(+), 8 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 55756b06..f852ed44 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -383,6 +383,21 @@ AC_ARG_ENABLE(debug-build,
+ 	esac], [enable_debug_build=false ])
+ AM_CONDITIONAL(ENABLE_DEBUG_BUILD, test "x$enable_debug_build" = "xtrue")
+ 
++AC_ARG_ENABLE(hardening,
++	AS_HELP_STRING([--disable-hardening],
++	               [disable hardening @<:@default=no@:>@]),
++	[case "${enableval}" in
++	yes) enable_hardening=true ;;
++	no)  enable_hardening=false ;;
++	*)   AC_MSG_ERROR([bad value ${enableval} for --enable-hardening]) ;;
++	esac], [enable_hardening=true])
++
++if test "x$enable_hardening" = "xtrue" ; then
++	AX_APPEND_COMPILE_FLAGS([-fstack-protector-strong -fstack-clash-protection -fcf-protection],
++                         [WARN_CFLAGS],[$ax_ccf_err])
++	AX_APPEND_LINK_FLAGS([-fstack-protector-strong -fstack-clash-protection -fcf-protection],
++                         [WARN_LDFLAGS],[$ax_ccf_err])
++fi
+ 
+ AC_MSG_NOTICE([Check programs])
+ # ===============================================
+@@ -543,10 +562,6 @@ case $host_os in
+        [],[$ax_ccf_err])
+     ;;
+ esac
+-AX_APPEND_COMPILE_FLAGS([-fstack-protector-strong -fstack-clash-protection -fcf-protection],
+-                         [WARN_CFLAGS],[$ax_ccf_err])
+-AX_APPEND_LINK_FLAGS([-fstack-protector-strong -fstack-clash-protection -fcf-protection],
+-                         [WARN_LDFLAGS],[$ax_ccf_err])
+ 
+ if test x$ax_cv_check_cflags__Wrestrict = xyes; then
+    AC_DEFINE([HAVE_WARNING_RESTRICT], 1, [Have -Wrestrict])
+-- 
+2.34.1
+
