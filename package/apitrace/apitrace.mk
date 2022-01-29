@@ -38,6 +38,11 @@ ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_85180),y)
 APITRACE_CXXFLAGS += -O0
 endif
 
+# m68k needs 32-bit offsets in switch tables to build
+ifeq ($(BR2_m68k),y)
+APITRACE_CXXFLAGS += -mlong-jump-table-offsets
+endif
+
 APITRACE_CONF_OPTS += \
 	-DCMAKE_C_FLAGS="$(APITRACE_CFLAGS)" \
 	-DCMAKE_CXX_FLAGS="$(APITRACE_CXXFLAGS)"
