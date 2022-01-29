@@ -104,7 +104,7 @@ define $(2)_BUILD_CMDS
 		$$($(2)_CARGO_ENV) \
 		cargo build \
 			--offline \
-			$$(if $$(BR2_ENABLE_DEBUG),--debug,--release) \
+			$$(if $$(BR2_ENABLE_DEBUG),,--release) \
 			--manifest-path Cargo.toml \
 			--locked \
 			$$($(2)_CARGO_BUILD_OPTS)
