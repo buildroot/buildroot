@@ -114,6 +114,17 @@ endef
 endif
 
 #
+# EASRC firmware
+#
+
+ifeq ($(BR2_PACKAGE_FIRMWARE_IMX_NEEDS_EASRC_FW),y)
+define FIRMWARE_IMX_INSTALL_TARGET_EASRC_FW
+	mkdir -p $(TARGET_DIR)/lib/firmware/imx
+	cp -r $(@D)/firmware/easrc $(TARGET_DIR)/lib/firmware/imx
+endef
+endif
+
+#
 # EPDC firmware
 #
 
@@ -160,6 +171,7 @@ define FIRMWARE_IMX_INSTALL_IMAGES_CMDS
 endef
 
 define FIRMWARE_IMX_INSTALL_TARGET_CMDS
+	$(FIRMWARE_IMX_INSTALL_TARGET_EASRC_FW)
 	$(FIRMWARE_IMX_INSTALL_TARGET_EPDC_FW)
 	$(FIRMWARE_IMX_INSTALL_TARGET_SDMA_FW)
 	$(FIRMWARE_IMX_INSTALL_TARGET_VPU_FW)
