@@ -4,8 +4,13 @@
 #
 ################################################################################
 
+ifeq ($(BR2_PACKAGE_LIBSOUP_VERSION_3),y)
+LIBSOUP_VERSION_MAJOR = 3.0
+LIBSOUP_VERSION = $(LIBSOUP_VERSION_MAJOR).0
+else
 LIBSOUP_VERSION_MAJOR = 2.74
 LIBSOUP_VERSION = $(LIBSOUP_VERSION_MAJOR).0
+endif
 LIBSOUP_SOURCE = libsoup-$(LIBSOUP_VERSION).tar.xz
 LIBSOUP_SITE = http://ftp.gnome.org/pub/gnome/sources/libsoup/$(LIBSOUP_VERSION_MAJOR)
 LIBSOUP_LICENSE = LGPL-2.0+
@@ -55,10 +60,16 @@ else
 LIBSOUP_CONF_OPTS += -Dgssapi=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_LIBSOUP_VERSION_2),y)
 ifeq ($(BR2_PACKAGE_LIBSOUP_GNOME),y)
 LIBSOUP_CONF_OPTS += -Dgnome=true
 else
 LIBSOUP_CONF_OPTS += -Dgnome=false
+endif
+endif
+
+ifeq ($(BR2_PACKAGE_LIBSOUP_VERSION_3),y)
+LIBSOUP_DEPENDENCIES += nghttp2
 endif
 
 $(eval $(meson-package))
