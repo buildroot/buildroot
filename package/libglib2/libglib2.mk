@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBGLIB2_VERSION_MAJOR = 2.68
-LIBGLIB2_VERSION = $(LIBGLIB2_VERSION_MAJOR).4
+LIBGLIB2_VERSION_MAJOR = 2.70
+LIBGLIB2_VERSION = $(LIBGLIB2_VERSION_MAJOR).0
 LIBGLIB2_SOURCE = glib-$(LIBGLIB2_VERSION).tar.xz
 LIBGLIB2_SITE = http://ftp.gnome.org/pub/gnome/sources/glib/$(LIBGLIB2_VERSION_MAJOR)
 LIBGLIB2_LICENSE = LGPL-2.1+
@@ -30,7 +30,6 @@ HOST_LIBGLIB2_CONF_OPTS = \
 	-Dselinux=disabled \
 	-Dsystemtap=false \
 	-Dxattr=false \
-	-Dinternal_pcre=false \
 	-Dtests=false \
 	-Doss_fuzz=disabled
 
@@ -52,7 +51,6 @@ HOST_LIBGLIB2_DEPENDENCIES = \
 # bogus installation path once combined with $(DESTDIR).
 LIBGLIB2_CONF_OPTS = \
 	-Dglib_debug=disabled \
-	-Dinternal_pcre=false \
 	-Dlibelf=disabled \
 	-Dgio_module_dir=/usr/lib/gio/modules \
 	-Dtests=false \
