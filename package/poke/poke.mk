@@ -13,6 +13,7 @@ POKE_LICENSE_FILES = COPYING jitter/COPYING
 # 0001-configure.ac-HELP2MAN-replace-by-false-when-cross-co.patch
 POKE_AUTORECONF = YES
 
+POKE_INSTALL_STAGING = YES
 POKE_DEPENDENCIES = host-flex host-bison host-pkgconf bdwgc readline
 
 # poke bundle gnulib that doesn't support the case where
