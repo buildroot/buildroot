@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2022.02"
 
+config BR2_PACKAGE_LINUX_TOOLS_BPFTOOL
+	bool "bpftool was moved"
+	select BR2_LEGACY
+	select BR2_PACKAGE_BPFTOOL
+	help
+	  The linux-tools bpftool build has been moved out
+	  of the linux-tools package.
+
 config BR2_TARGET_UBOOT_NEEDS_PYTHON2
 	bool "host-python 2.7 support for U-Boot was removed"
 	select BR2_LEGACY
