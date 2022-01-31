@@ -4,11 +4,11 @@
 # - Buildroot's 'target' is Meson's 'host'
 
 [binaries]
-c = '@TARGET_CROSS@gcc'
-cpp = '@TARGET_CROSS@g++'
-ar = '@TARGET_CROSS@ar'
-strip = '@TARGET_CROSS@strip'
-pkgconfig = '@HOST_DIR@/bin/pkgconf'
+c = '@TARGET_CC@'
+cpp = '@TARGET_CXX@'
+ar = '@TARGET_AR@'
+strip = '@TARGET_STRIP@'
+pkgconfig = '@PKGCONF_HOST_BINARY@'
 g-ir-compiler = '@STAGING_DIR@/usr/bin/g-ir-compiler'
 g-ir-scanner = '@STAGING_DIR@/usr/bin/g-ir-scanner'
 
