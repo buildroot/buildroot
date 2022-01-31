@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-THERMALD_VERSION = 2.4.6
+THERMALD_VERSION = 2.4.8
 THERMALD_SITE = $(call github,intel,thermal_daemon,v$(THERMALD_VERSION))
 # fetched from Github, with no configure script
 THERMALD_AUTORECONF = YES
