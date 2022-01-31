@@ -1,0 +1,31 @@
+From 95a311af81cd47c44d3d6e3f717f06a06d8f3dfd Mon Sep 17 00:00:00 2001
+From: Heiko Thiery <heiko.thiery@gmail.com>
+Date: Mon, 10 Jan 2022 14:13:02 +0100
+Subject: [PATCH 1/2] imx: imx8mm: imx8mm-kontron-n801x-s: convert options to Kconfig
+
+CONFIG_SPL_MMC and CONFIG_SPL_SERIAL
+
+Patch submitted upstream:
+https://patchwork.ozlabs.org/project/uboot/patch/20220112085755.7396-1-heiko.thiery@gmail.com/
+
+Signed-off-by: Heiko Thiery <heiko.thiery@gmail.com>
+---
+ configs/kontron-sl-mx8mm_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/configs/kontron-sl-mx8mm_defconfig b/configs/kontron-sl-mx8mm_defconfig
+index 35d12fca32..940bf07a92 100644
+--- a/configs/kontron-sl-mx8mm_defconfig
++++ b/configs/kontron-sl-mx8mm_defconfig
+@@ -15,6 +15,8 @@ CONFIG_SPL_DM_SPI=y
+ CONFIG_DEFAULT_DEVICE_TREE="imx8mm-kontron-n801x-s"
+ CONFIG_SPL_TEXT_BASE=0x7E1000
+ CONFIG_TARGET_KONTRON_MX8MM=y
++CONFIG_SPL_MMC=y
++CONFIG_SPL_SERIAL=y
+ CONFIG_BOOTCOUNT_BOOTLIMIT=3
+ CONFIG_SPL=y
+ CONFIG_DISTRO_DEFAULTS=y
+-- 
+2.30.2
+
