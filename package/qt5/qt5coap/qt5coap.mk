@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5COAP_VERSION = $(QT5_VERSION)
+QT5COAP_VERSION = 5.15.2
 QT5COAP_SITE = https://code.qt.io/cgit/qt/qtcoap.git
 QT5COAP_SITE_METHOD = git
 QT5COAP_INSTALL_STAGING = YES

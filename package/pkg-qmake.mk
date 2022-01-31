@@ -24,7 +24,9 @@
 # Hook to sync Qt headers
 #
 define QT_HEADERS_SYNC_HOOK
-	$(Q)cd $($(PKG)_BUILDDIR) && $(HOST_DIR)/bin/syncqt.pl -version $(QT5_VERSION)
+	sed -e '/^MODULE_VERSION/s/5\.15\.[3456789]/$(QT5_VERSION)/' -i \
+		$($(PKG)_BUILDDIR)/.qmake.conf
+	touch $($(PKG)_BUILDDIR)/.git
 endef
 
 ################################################################################
