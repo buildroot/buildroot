@@ -1,4 +1,4 @@
-From edc0757c56090364e0a95aabfa9f645a16a27569 Mon Sep 17 00:00:00 2001
+From d009b0142f77881dd75ff760fec728dbc8581a03 Mon Sep 17 00:00:00 2001
 From: Peter Korsgaard <peter@korsgaard.com>
 Date: Fri, 2 Aug 2019 15:53:16 +0200
 Subject: [PATCH] configure.ac: fixup $CC --print-multiarch output for
@@ -24,25 +24,28 @@ workaround, rewrite the --print-multiarch output to match older GCC versions
 to keep the configure script happy.
 
 Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+[Peter: updated for 3.10.2]
 ---
- configure.ac | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ configure.ac | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index 615c16aced..241298e6cf 100644
+index 913051c276..aba03f3779 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -873,7 +873,9 @@ fi
- rm -f conftest.c conftest.out
- 
- if test x$PLATFORM_TRIPLET != xdarwin; then
--  MULTIARCH=$($CC --print-multiarch 2>/dev/null)
+@@ -876,7 +876,11 @@ AC_MSG_CHECKING([for multiarch])
+ AS_CASE([$ac_sys_system],
+   [Darwin*], [MULTIARCH=""],
+   [FreeBSD*], [MULTIARCH=""],
+-  [MULTIARCH=$($CC --print-multiarch 2>/dev/null)]
++  [
 +  # GCC 8+ returns $arch-linux-{musl,uclibc} for musl/uClibc based
 +  # toolchains confusing python. Fix that up
 +  MULTIARCH=$($CC --print-multiarch 2>/dev/null | sed -E 's/-linux-(musl|uclibc)*$/-linux-gnu/')
- fi
- AC_SUBST(MULTIARCH)
- 
++  ]
+ )
+ AC_SUBST([MULTIARCH])
+ AC_MSG_RESULT([$MULTIARCH])
 -- 
-2.25.1
+2.20.1
 
