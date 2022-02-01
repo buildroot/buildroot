@@ -24,6 +24,12 @@ TESSERACT_OCR_CONF_ENV = \
 TESSERACT_OCR_CONF_OPTS = \
 	--disable-opencl
 
+ifeq ($(BR2_ARM_CPU_HAS_NEON),y)
+TESSERACT_OCR_CONF_ENV += ax_cv_check_cxxflags__mfpu_neon=yes
+else
+TESSERACT_OCR_CONF_ENV += ax_cv_check_cxxflags__mfpu_neon=no
+endif
+
 # Language data files download
 ifeq ($(BR2_PACKAGE_TESSERACT_OCR_LANG_ENG),y)
 TESSERACT_OCR_DATA_FILES += eng.traineddata

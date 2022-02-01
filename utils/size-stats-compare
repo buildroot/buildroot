@@ -77,7 +77,7 @@ def print_results(result, threshold):
     # list_result is a list of tuples: ((filename, pkgname), (flag, size difference))
     # filename may be None if no detail is requested.
 
-    maxpkgname=max(len(pkgname) for filename, pkgname in result)
+    maxpkgname = max(len(pkgname) for filename, pkgname in result)
 
     for entry in sorted(list_result, key=lambda entry: entry[1][1]):
         data = dict(
