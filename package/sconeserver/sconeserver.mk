@@ -29,6 +29,8 @@ SCONESERVER_CONF_OPTS += \
 ifeq ($(BR2_PACKAGE_LIBXML2),y)
 SCONESERVER_CONF_OPTS += \
 	--with-xml2-config="$(STAGING_DIR)/usr/bin/xml2-config"
+# Needed to fix build failure when icu is enabled in libxml2
+SCONESERVER_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -std=c++11"
 endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
