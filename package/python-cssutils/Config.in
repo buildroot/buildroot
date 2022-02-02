@@ -1,7 +1,7 @@
 config BR2_PACKAGE_PYTHON_CSSUTILS
 	bool "python-cssutils"
-	select BR2_PACKAGE_PYTHON_PYEXPAT if BR2_PACKAGE_PYTHON # runtime
-	select BR2_PACKAGE_PYTHON3_PYEXPAT if BR2_PACKAGE_PYTHON3 # runtime
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON3_PYEXPAT # runtime
 	help
 	  A CSS Cascading Style Sheets library for Python.
 
