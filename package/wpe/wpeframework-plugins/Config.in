@@ -514,6 +514,19 @@ config BR2_PACKAGE_WPEFRAMEWORK_DICTIONARY
     help
       Dictionary Plugin.
 
+config BR2_PACKAGE_WPEFRAMEWORK_FILETRANSFER
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "FileTransfer"
+    help
+      FileTransfer Plugin
+
+config BR2_PACKAGE_WPEFRAMEWORK_FIRMWARECONTROL
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_MFR_LIBRARY
+    bool "FirmwareControl"
+    help
+      FirmwareControl Plugin
+
 config BR2_PACKAGE_WPEFRAMEWORK_FRONTPANEL
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "FrontPanel"
@@ -988,19 +1001,6 @@ config BR2_PACKAGE_WPEFRAMEWORK_SYSTEMCOMMANDS
     help
       SystemCommands Plugin
 
-config BR2_PACKAGE_WPEFRAMEWORK_FILETRANSFER
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-    bool "FileTransfer"
-    help
-      FileTransfer Plugin
-
-config BR2_PACKAGE_WPEFRAMEWORK_FIRMWARECONTROL
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-    select BR2_PACKAGE_MFR_LIBRARY
-    bool "FirmwareControl"
-    help
-      FirmwareControl Plugin
-
 config BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT
     select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     select BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT_ACCESSOR
@@ -1022,6 +1022,11 @@ config BR2_PACKAGE_WPEFRAMEWORK_SPARK_AUTOSTART
     bool "autostart"
     default n
 endif
+
+config BR2_PACKAGE_WPEFRAMEWORK_SWITCHBOARD
+    bool "SwitchBoard"
+    help
+      SwitchBoard plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_TESTCONTROLLER
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
