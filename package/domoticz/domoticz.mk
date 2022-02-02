@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DOMOTICZ_VERSION = 2021.1
+DOMOTICZ_VERSION = 2022.1
 DOMOTICZ_SITE = https://github.com/domoticz/domoticz
 DOMOTICZ_SITE_METHOD = git
 DOMOTICZ_GIT_SUBMODULES = YES
