@@ -10,6 +10,18 @@ config BR2_PACKAGE_GLIBC
 	help
 	  https://www.gnu.org/software/libc/
 
+config BR2_PACKAGE_GLIBC_KERNEL_COMPAT
+	bool "Enable compatibiltiy shims to run on older kernels"
+	help
+	  Say 'y' here if you plan on running your system on a kernel
+	  older than the version used for the toolchain headers.
+
+	  Enabling those compatibility shims may generate a slightly
+	  bigger and slightly slower glibc library.
+
+	  The oldest supported kernel version depends on the
+	  architecture.
+
 config BR2_PACKAGE_GLIBC_UTILS
 	bool "Install glibc utilities"
 	help
