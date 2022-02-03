@@ -1023,10 +1023,38 @@ config BR2_PACKAGE_WPEFRAMEWORK_SPARK_AUTOSTART
     default n
 endif
 
-config BR2_PACKAGE_WPEFRAMEWORK_SWITCHBOARD
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_SWITCHBOARD
     bool "SwitchBoard"
     help
       SwitchBoard plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_SWITCHBOARD
+
+config BR2_PACKAGE_WPEFRAMEWORK_SWITCHBOARD_DEFAULT
+    string "Default Callsign"
+    help
+      Callsign of the plugin to be activated in case nothing is active
+
+config BR2_PACKAGE_WPEFRAMEWORK_SWITCH_AMAZON
+    depends on BR2_PACKAGE_WPEFRAMEWORK_AMAZON
+    bool "Amazon"
+    default y
+
+config BR2_PACKAGE_WPEFRAMEWORK_SWITCH_COBALT
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COBALT
+    bool "Cobalt"
+    default y
+
+config BR2_PACKAGE_WPEFRAMEWORK_SWITCH_NETFLIX
+    depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+    bool "Netflix"
+    default y
+
+config BR2_PACKAGE_WPEFRAMEWORK_SWITCH_WEBKITBROWSER
+    depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+    bool "WebKitBrowser"
+    default y
+endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_TESTCONTROLLER
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
