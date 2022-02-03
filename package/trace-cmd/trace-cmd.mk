@@ -4,9 +4,10 @@
 #
 ################################################################################
 
-TRACE_CMD_VERSION = trace-cmd-v2.9.6
-TRACE_CMD_SITE = https://git.kernel.org/pub/scm/utils/trace-cmd/trace-cmd.git
-TRACE_CMD_SITE_METHOD = git
+TRACE_CMD_VERSION = 2.9.6
+TRACE_CMD_SOURCE = trace-cmd-v$(TRACE_CMD_VERSION).tar.gz
+TRACE_CMD_SITE = \
+	https://git.kernel.org/pub/scm/utils/trace-cmd/trace-cmd.git/snapshot
 TRACE_CMD_LICENSE = GPL-2.0, LGPL-2.1
 TRACE_CMD_LICENSE_FILES = COPYING COPYING.LIB LICENSES/GPL-2.0 LICENSES/LGPL-2.1
 
