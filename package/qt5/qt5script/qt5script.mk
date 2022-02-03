@@ -4,10 +4,11 @@
 #
 ################################################################################
 
-QT5SCRIPT_VERSION = $(QT5_VERSION)
-QT5SCRIPT_SITE = $(QT5_SITE)
-QT5SCRIPT_SOURCE = qtscript-$(QT5_SOURCE_TARBALL_PREFIX)-$(QT5SCRIPT_VERSION).tar.xz
+QT5SCRIPT_VERSION = 5be95f966aabc5170f0aacfd4b0a46217241bfd6
+QT5SCRIPT_SITE = $(QT5_SITE)/qtscript/-/archive/$(QT5SCRIPT_VERSION)
+QT5SCRIPT_SOURCE = qtscript-$(QT5SCRIPT_VERSION).tar.bz2
 QT5SCRIPT_INSTALL_STAGING = YES
+QT5SCRIPT_SYNC_QT_HEADERS = YES
 
 # JavaScriptCore contains files under BSD-2-Clause, BSD-3-Clause, and LGPL-2+.
 # This is linked into libQt5Script, which also contains Qt sources under

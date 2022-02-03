@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-QT53D_VERSION = $(QT5_VERSION)
-QT53D_SITE = $(QT5_SITE)
-QT53D_SOURCE = qt3d-$(QT5_SOURCE_TARBALL_PREFIX)-$(QT53D_VERSION).tar.xz
+QT53D_VERSION = dba14d48611b9e9d59576172658779ab4a39b416
+QT53D_SITE = $(QT5_SITE)/qt3d/-/archive/$(QT53D_VERSION)
+QT53D_SOURCE = qt3d-$(QT53D_VERSION).tar.bz2
 QT53D_DEPENDENCIES = qt5declarative
 QT53D_INSTALL_STAGING = YES
+QT53D_SYNC_QT_HEADERS = YES
 
 ifeq ($(BR2_PACKAGE_ASSIMP),y)
 QT53D_DEPENDENCIES += assimp

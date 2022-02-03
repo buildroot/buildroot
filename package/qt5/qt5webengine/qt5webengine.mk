@@ -4,8 +4,9 @@
 #
 ################################################################################
 
-QT5WEBENGINE_VERSION = $(QT5_VERSION)
-QT5WEBENGINE_SITE = $(QT5_SITE)
+QT5WEBENGINE_VERSION_MAJOR = 5.15
+QT5WEBENGINE_VERSION = $(QT5WEBENGINE_VERSION_MAJOR).2
+QT5WEBENGINE_SITE = https://download.qt.io/archive/qt/$(QT5WEBENGINE_VERSION_MAJOR)/$(QT5WEBENGINE_VERSION)/submodules
 QT5WEBENGINE_SOURCE = qtwebengine-$(QT5_SOURCE_TARBALL_PREFIX)-$(QT5WEBENGINE_VERSION).tar.xz
 QT5WEBENGINE_DEPENDENCIES = ffmpeg libglib2 libvpx libxkbcommon opus webp \
 	qt5declarative qt5webchannel host-bison host-flex host-gperf \
@@ -44,7 +45,9 @@ endif
 # QtWebengine's build system uses python, but only supports python2. We work
 # around this by forcing python2 early in the PATH, via a python->python2
 # symlink.
-QT5WEBENGINE_ENV = PATH=$(@D)/host-bin:$(BR_PATH)
+QT5WEBENGINE_ENV = \
+	PATH=$(@D)/host-bin:$(BR_PATH) \
+	PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig
 define QT5WEBENGINE_PYTHON2_SYMLINK
 	mkdir -p $(@D)/host-bin
 	ln -sf $(HOST_DIR)/bin/python2 $(@D)/host-bin/python

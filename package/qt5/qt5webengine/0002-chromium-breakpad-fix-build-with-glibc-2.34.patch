@@ -1,0 +1,76 @@
+From a3bc792bdc116806a50e022d9102914c8daf6210 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <Martin.Jansa@gmail.com>
+Date: Wed, 4 Aug 2021 19:11:06 +0200
+Subject: [PATCH] chromium: breakpad: fix build with glibc-2.34
+
+* fixes:
+[218/24061] CXX obj/third_party/breakpad/client/exception_handler.o
+FAILED: obj/third_party/breakpad/client/exception_handler.o
+/OE/build/luneos-honister/webos-ports/tmp-glibc/work/core2-64-webos-linux/qtwebengine/5.15.4+gitAUTOINC+dd7f7a9166_555f348ae8-r0/recipe-sysroot-native/usr/bin/x86_64-webos-linux/x86_64-webos-linux-g++ -m64 -march=core2 -mtune=core2 -msse3 -mfpmath=sse -Wdate-time --sysroot=/OE/build/luneos-honister/webos-ports/tmp-glibc/work/core2-64-webos-linux/qtwebengine/5.15.4+gitAUTOINC+dd7f7a9166_555f348ae8-r0/recipe-sysroot -MMD -MF obj/third_party/breakpad/client/exception_handler.o.d -DUSE_UDEV -DUSE_AURA=1 -DUSE_NSS_CERTS=1 -DUSE_OZONE=1 -DOFFICIAL_BUILD -DTOOLKIT_QT -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -DNO_UNWIND_TABLES -DCR_SYSROOT_HASH=5f64b417e1018dcf8fcc81dc2714e0f264b9b911 -DNDEBUG -DNVALGRIND -DDYNAMIC_ANNOTATIONS_ENABLED=0 -I../../../../git/src/3rdparty/chromium/third_party/breakpad -I../../../../git/src/3rdparty/chromium/third_party/breakpad/breakpad/src -I../../../../git/src/3rdparty/chromium/third_party/breakpad/breakpad/src/client -I../../../../git/src/3rdparty/chromium/third_party/breakpad/breakpad/src/third_party/linux/include -Igen -I../../../../git/src/3rdparty/chromium -I../../../../git/src/3rdparty/chromium/third_party/breakpad/breakpad/src -fno-strict-aliasing --param=ssp-buffer-size=4 -fstack-protector -fno-unwind-tables -fno-asynchronous-unwind-tables -fPIC -pipe -pthread -m64 -O2 -fno-ident -fdata-sections -ffunction-sections -fno-omit-frame-pointer -g1 -fvisibility=hidden -Wno-unused-local-typedefs -Wno-maybe-uninitialized -Wno-deprecated-declarations -fno-delete-null-pointer-checks -Wno-comments -Wno-packed-not-aligned -Wno-dangling-else -Wno-missing-field-initializers -Wno-unused-parameter -std=gnu++14 -fno-exceptions -fno-rtti --sysroot=../../../../recipe-sysroot -fvisibility-inlines-hidden -Wno-narrowing -Wno-class-memaccess -Wno-attributes -Wno-class-memaccess -Wno-subobject-linkage -Wno-invalid-offsetof -Wno-return-type -Wno-deprecated-copy -c ../../../../git/src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/linux/handler/exception_handler.cc -o obj/third_party/breakpad/client/exception_handler.o
+../../../../git/src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/linux/handler/exception_handler.cc: In function 'void google_breakpad::{anonymous}::InstallAlternateStackLocked()':
+../../../../git/src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/linux/handler/exception_handler.cc:141:49: error: no matching function for call to 'max(int, long int)'
+  141 |   static const unsigned kSigStackSize = std::max(16384, SIGSTKSZ);
+      |                                         ~~~~~~~~^~~~~~~~~~~~~~~~~
+In file included from ../../../../recipe-sysroot/usr/include/c++/11.2.0/bits/char_traits.h:39,
+                 from ../../../../recipe-sysroot/usr/include/c++/11.2.0/string:40,
+                 from ../../../../git/src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/linux/handler/exception_handler.h:38,
+                 from ../../../../git/src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/linux/handler/exception_handler.cc:66:
+../../../../recipe-sysroot/usr/include/c++/11.2.0/bits/stl_algobase.h:254:5: note: candidate: 'template<class _Tp> constexpr const _Tp& std::max(const _Tp&, const _Tp&)'
+  254 |     max(const _Tp& __a, const _Tp& __b)
+      |     ^~~
+../../../../recipe-sysroot/usr/include/c++/11.2.0/bits/stl_algobase.h:254:5: note:   template argument deduction/substitution failed:
+../../../../git/src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/linux/handler/exception_handler.cc:141:49: note:   deduced conflicting types for parameter 'const _Tp' ('int' and 'long int')
+  141 |   static const unsigned kSigStackSize = std::max(16384, SIGSTKSZ);
+      |                                         ~~~~~~~~^~~~~~~~~~~~~~~~~
+In file included from ../../../../recipe-sysroot/usr/include/c++/11.2.0/bits/char_traits.h:39,
+                 from ../../../../recipe-sysroot/usr/include/c++/11.2.0/string:40,
+                 from ../../../../git/src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/linux/handler/exception_handler.h:38,
+                 from ../../../../git/src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/linux/handler/exception_handler.cc:66:
+../../../../recipe-sysroot/usr/include/c++/11.2.0/bits/stl_algobase.h:300:5: note: candidate: 'template<class _Tp, class _Compare> constexpr const _Tp& std::max(const _Tp&, const _Tp&, _Compare)'
+  300 |     max(const _Tp& __a, const _Tp& __b, _Compare __comp)
+      |     ^~~
+../../../../recipe-sysroot/usr/include/c++/11.2.0/bits/stl_algobase.h:300:5: note:   template argument deduction/substitution failed:
+../../../../git/src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/linux/handler/exception_handler.cc:141:49: note:   deduced conflicting types for parameter 'const _Tp' ('int' and 'long int')
+  141 |   static const unsigned kSigStackSize = std::max(16384, SIGSTKSZ);
+      |                                         ~~~~~~~~^~~~~~~~~~~~~~~~~
+In file included from ../../../../recipe-sysroot/usr/include/c++/11.2.0/algorithm:62,
+                 from ../../../../git/src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/linux/handler/exception_handler.cc:85:
+../../../../recipe-sysroot/usr/include/c++/11.2.0/bits/stl_algo.h:3461:5: note: candidate: 'template<class _Tp> constexpr _Tp std::max(std::initializer_list<_Tp>)'
+ 3461 |     max(initializer_list<_Tp> __l)
+      |     ^~~
+../../../../recipe-sysroot/usr/include/c++/11.2.0/bits/stl_algo.h:3461:5: note:   template argument deduction/substitution failed:
+../../../../git/src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/linux/handler/exception_handler.cc:141:49: note:   mismatched types 'std::initializer_list<_Tp>' and 'int'
+  141 |   static const unsigned kSigStackSize = std::max(16384, SIGSTKSZ);
+      |                                         ~~~~~~~~^~~~~~~~~~~~~~~~~
+In file included from ../../../../recipe-sysroot/usr/include/c++/11.2.0/algorithm:62,
+                 from ../../../../git/src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/linux/handler/exception_handler.cc:85:
+../../../../recipe-sysroot/usr/include/c++/11.2.0/bits/stl_algo.h:3467:5: note: candidate: 'template<class _Tp, class _Compare> constexpr _Tp std::max(std::initializer_list<_Tp>, _Compare)'
+ 3467 |     max(initializer_list<_Tp> __l, _Compare __comp)
+      |     ^~~
+../../../../recipe-sysroot/usr/include/c++/11.2.0/bits/stl_algo.h:3467:5: note:   template argument deduction/substitution failed:
+../../../../git/src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/linux/handler/exception_handler.cc:141:49: note:   mismatched types 'std::initializer_list<_Tp>' and 'int'
+  141 |   static const unsigned kSigStackSize = std::max(16384, SIGSTKSZ);
+      |                                         ~~~~~~~~^~~~~~~~~~~~~~~~~
+
+Adapted from:
+https://github.com/meta-qt5/meta-qt5/blob/2a38fca150f065f869ed530fffe1a07beec80692/recipes-qt/qt5/qtwebengine/chromium/0013-chromium-breakpad-fix-build-with-glibc-2.34.patch
+
+Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+---
+ .../breakpad/src/client/linux/handler/exception_handler.cc      | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/linux/handler/exception_handler.cc b/src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/linux/handler/exception_handler.cc
+index ca353c40997..2e43ba6fc04 100644
+--- a/src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/linux/handler/exception_handler.cc
++++ b/src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/linux/handler/exception_handler.cc
+@@ -138,7 +138,7 @@ void InstallAlternateStackLocked() {
+   // SIGSTKSZ may be too small to prevent the signal handlers from overrunning
+   // the alternative stack. Ensure that the size of the alternative stack is
+   // large enough.
+-  static const unsigned kSigStackSize = std::max(16384, SIGSTKSZ);
++  static const unsigned kSigStackSize = std::max<size_t>(16384, SIGSTKSZ);
+ 
+   // Only set an alternative stack if there isn't already one, or if the current
+   // one is too small.

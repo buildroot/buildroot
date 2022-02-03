@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5MQTT_VERSION = $(QT5_VERSION)
+QT5MQTT_VERSION = 5.15.2
 QT5MQTT_SITE = https://code.qt.io/cgit/qt/qtmqtt.git
 QT5MQTT_SITE_METHOD = git
 QT5MQTT_INSTALL_STAGING = YES

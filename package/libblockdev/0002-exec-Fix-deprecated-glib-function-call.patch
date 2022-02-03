@@ -1,0 +1,32 @@
+From aad927a81fd9067865dc391c5bbff12ac51a0002 Mon Sep 17 00:00:00 2001
+From: Manuel Wassermann <manuel.wassermann97@gmail.com>
+Date: Thu, 1 Jul 2021 04:45:49 +0200
+Subject: [PATCH] exec: Fix deprecated glib function call Glib will rename
+ "g_spawn_check_exit_status()" to "g_spawn_check_wait_status()" in version
+ 2.69.
+
+[Retrieved from:
+https://github.com/storaged-project/libblockdev/commit/aad927a81fd9067865dc391c5bbff12ac51a0002]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/utils/exec.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/utils/exec.c b/src/utils/exec.c
+index 317fb5525..8faeb289c 100644
+--- a/src/utils/exec.c
++++ b/src/utils/exec.c
+@@ -236,7 +236,12 @@ gboolean bd_utils_exec_and_report_status_error (const gchar **argv, const BDExtr
+     /* g_spawn_sync set the status in the same way waitpid() does, we need
+        to get the process exit code manually (this is similar to calling
+        WEXITSTATUS but also sets the error for terminated processes */
+-    if (!g_spawn_check_exit_status (exit_status, error)) {
++
++    #if !GLIB_CHECK_VERSION(2, 69, 0)
++    #define g_spawn_check_wait_status(x,y) (g_spawn_check_exit_status (x,y))
++    #endif
++
++    if (!g_spawn_check_wait_status (exit_status, error)) {
+         if (g_error_matches (*error, G_SPAWN_ERROR, G_SPAWN_ERROR_FAILED)) {
+             /* process was terminated abnormally (e.g. using a signal) */
+             g_free (stdout_data);

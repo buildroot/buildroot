@@ -1,0 +1,320 @@
+From eb79b2318066cafb75ffdce310e3bbd44f7c79e3 Mon Sep 17 00:00:00 2001
+From: Luis Machado <luis.machado@linaro.org>
+Date: Fri, 29 Oct 2021 14:54:36 -0300
+Subject: [PATCH] [AArch64] Make gdbserver register set selection dynamic
+
+The current register set selection mechanism for AArch64 is static, based
+on a pre-populated array of register sets.
+
+This means that we might potentially probe register sets that are not
+available. This is OK if the kernel errors out during ptrace, but probing the
+tag_ctl register, for example, does not result in a ptrace error if the kernel
+supports the tagged address ABI but not MTE (PR 28355).
+
+Making the register set selection dynamic, based on feature checks, solves
+this and simplifies the code a bit. It allows us to list all of the register
+sets only once, and pick and choose based on HWCAP/HWCAP2 or other properties.
+
+gdb/ChangeLog:
+
+2021-11-03  Luis Machado  <luis.machado@linaro.org>
+
+	PR gdb/28355
+
+	* arch/aarch64.h (struct aarch64_features): New struct.
+
+gdbserver/ChangeLog:
+
+2021-11-03  Luis Machado  <luis.machado@linaro.org>
+
+	PR gdb/28355
+
+	* linux-aarch64-low.cc (is_sve_tdesc): Remove.
+	(aarch64_target::low_arch_setup): Rework to adjust the register sets.
+	(aarch64_regsets): Update to list all register sets.
+	(aarch64_regsets_info, regs_info_aarch64): Replace NULL with nullptr.
+	(aarch64_sve_regsets, aarch64_sve_regsets_info)
+	(regs_info_aarch64_sve): Remove.
+	(aarch64_adjust_register_sets): New.
+	(aarch64_target::get_regs_info): Remove references to removed structs.
+	(initialize_low_arch): Likewise.
+
+Backported from: eb79b2318066cafb75ffdce310e3bbd44f7c79e3
+Signed-off-by: Joachim Wiberg <troglobit@gmail.com>
+---
+ gdb/arch/aarch64.h             |   9 ++
+ gdbserver/linux-aarch64-low.cc | 186 ++++++++++++++++++---------------
+ 4 files changed, 130 insertions(+), 85 deletions(-)
+
+diff --git a/gdb/arch/aarch64.h b/gdb/arch/aarch64.h
+index 0eb702c5b5e..95edb664b55 100644
+--- a/gdb/arch/aarch64.h
++++ b/gdb/arch/aarch64.h
+@@ -22,6 +22,15 @@
+ 
+ #include "gdbsupport/tdesc.h"
+ 
++/* Holds information on what architectural features are available.  This is
++   used to select register sets.  */
++struct aarch64_features
++{
++  bool sve = false;
++  bool pauth = false;
++  bool mte = false;
++};
++
+ /* Create the aarch64 target description.  A non zero VQ value indicates both
+    the presence of SVE and the Vector Quotient - the number of 128bit chunks in
+    an SVE Z register.  HAS_PAUTH_P indicates the presence of the PAUTH
+diff --git a/gdbserver/linux-aarch64-low.cc b/gdbserver/linux-aarch64-low.cc
+index daccfef746e..9a8cb4169a7 100644
+--- a/gdbserver/linux-aarch64-low.cc
++++ b/gdbserver/linux-aarch64-low.cc
+@@ -196,16 +196,6 @@ is_64bit_tdesc (void)
+   return register_size (regcache->tdesc, 0) == 8;
+ }
+ 
+-/* Return true if the regcache contains the number of SVE registers.  */
+-
+-static bool
+-is_sve_tdesc (void)
+-{
+-  struct regcache *regcache = get_thread_regcache (current_thread, 0);
+-
+-  return tdesc_contains_feature (regcache->tdesc, "org.gnu.gdb.aarch64.sve");
+-}
+-
+ static void
+ aarch64_fill_gregset (struct regcache *regcache, void *buf)
+ {
+@@ -680,40 +670,6 @@ aarch64_target::low_new_fork (process_info *parent,
+   *child->priv->arch_private = *parent->priv->arch_private;
+ }
+ 
+-/* Matches HWCAP_PACA in kernel header arch/arm64/include/uapi/asm/hwcap.h.  */
+-#define AARCH64_HWCAP_PACA (1 << 30)
+-
+-/* Implementation of linux target ops method "low_arch_setup".  */
+-
+-void
+-aarch64_target::low_arch_setup ()
+-{
+-  unsigned int machine;
+-  int is_elf64;
+-  int tid;
+-
+-  tid = lwpid_of (current_thread);
+-
+-  is_elf64 = linux_pid_exe_is_elf_64_file (tid, &machine);
+-
+-  if (is_elf64)
+-    {
+-      uint64_t vq = aarch64_sve_get_vq (tid);
+-      unsigned long hwcap = linux_get_hwcap (8);
+-      unsigned long hwcap2 = linux_get_hwcap2 (8);
+-      bool pauth_p = hwcap & AARCH64_HWCAP_PACA;
+-      /* MTE is AArch64-only.  */
+-      bool mte_p = hwcap2 & HWCAP2_MTE;
+-
+-      current_process ()->tdesc
+-	= aarch64_linux_read_description (vq, pauth_p, mte_p);
+-    }
+-  else
+-    current_process ()->tdesc = aarch32_linux_read_description ();
+-
+-  aarch64_linux_get_debug_reg_capacity (lwpid_of (current_thread));
+-}
+-
+ /* Wrapper for aarch64_sve_regs_copy_to_reg_buf.  */
+ 
+ static void
+@@ -730,21 +686,36 @@ aarch64_sve_regs_copy_from_regcache (struct regcache *regcache, void *buf)
+   return aarch64_sve_regs_copy_from_reg_buf (regcache, buf);
+ }
+ 
++/* Array containing all the possible register sets for AArch64/Linux.  During
++   architecture setup, these will be checked against the HWCAP/HWCAP2 bits for
++   validity and enabled/disabled accordingly.
++
++   Their sizes are set to 0 here, but they will be adjusted later depending
++   on whether each register set is available or not.  */
+ static struct regset_info aarch64_regsets[] =
+ {
++  /* GPR registers.  */
+   { PTRACE_GETREGSET, PTRACE_SETREGSET, NT_PRSTATUS,
+-    sizeof (struct user_pt_regs), GENERAL_REGS,
++    0, GENERAL_REGS,
+     aarch64_fill_gregset, aarch64_store_gregset },
++  /* Floating Point (FPU) registers.  */
+   { PTRACE_GETREGSET, PTRACE_SETREGSET, NT_FPREGSET,
+-    sizeof (struct user_fpsimd_state), FP_REGS,
++    0, FP_REGS,
+     aarch64_fill_fpregset, aarch64_store_fpregset
+   },
++  /* Scalable Vector Extension (SVE) registers.  */
++  { PTRACE_GETREGSET, PTRACE_SETREGSET, NT_ARM_SVE,
++    0, EXTENDED_REGS,
++    aarch64_sve_regs_copy_from_regcache, aarch64_sve_regs_copy_to_regcache
++  },
++  /* PAC registers.  */
+   { PTRACE_GETREGSET, PTRACE_SETREGSET, NT_ARM_PAC_MASK,
+-    AARCH64_PAUTH_REGS_SIZE, OPTIONAL_REGS,
+-    NULL, aarch64_store_pauthregset },
++    0, OPTIONAL_REGS,
++    nullptr, aarch64_store_pauthregset },
++  /* Tagged address control / MTE registers.  */
+   { PTRACE_GETREGSET, PTRACE_SETREGSET, NT_ARM_TAGGED_ADDR_CTRL,
+-    AARCH64_LINUX_SIZEOF_MTE, OPTIONAL_REGS, aarch64_fill_mteregset,
+-    aarch64_store_mteregset },
++    0, OPTIONAL_REGS,
++    aarch64_fill_mteregset, aarch64_store_mteregset },
+   NULL_REGSET
+ };
+ 
+@@ -752,47 +723,95 @@ static struct regsets_info aarch64_regsets_info =
+   {
+     aarch64_regsets, /* regsets */
+     0, /* num_regsets */
+-    NULL, /* disabled_regsets */
++    nullptr, /* disabled_regsets */
+   };
+ 
+ static struct regs_info regs_info_aarch64 =
+   {
+-    NULL, /* regset_bitmap */
+-    NULL, /* usrregs */
++    nullptr, /* regset_bitmap */
++    nullptr, /* usrregs */
+     &aarch64_regsets_info,
+   };
+ 
+-static struct regset_info aarch64_sve_regsets[] =
++/* Given FEATURES, adjust the available register sets by setting their
++   sizes.  A size of 0 means the register set is disabled and won't be
++   used.  */
++
++static void
++aarch64_adjust_register_sets (const struct aarch64_features &features)
+ {
+-  { PTRACE_GETREGSET, PTRACE_SETREGSET, NT_PRSTATUS,
+-    sizeof (struct user_pt_regs), GENERAL_REGS,
+-    aarch64_fill_gregset, aarch64_store_gregset },
+-  { PTRACE_GETREGSET, PTRACE_SETREGSET, NT_ARM_SVE,
+-    SVE_PT_SIZE (AARCH64_MAX_SVE_VQ, SVE_PT_REGS_SVE), EXTENDED_REGS,
+-    aarch64_sve_regs_copy_from_regcache, aarch64_sve_regs_copy_to_regcache
+-  },
+-  { PTRACE_GETREGSET, PTRACE_SETREGSET, NT_ARM_PAC_MASK,
+-    AARCH64_PAUTH_REGS_SIZE, OPTIONAL_REGS,
+-    NULL, aarch64_store_pauthregset },
+-  { PTRACE_GETREGSET, PTRACE_SETREGSET, NT_ARM_TAGGED_ADDR_CTRL,
+-    AARCH64_LINUX_SIZEOF_MTE, OPTIONAL_REGS, aarch64_fill_mteregset,
+-    aarch64_store_mteregset },
+-  NULL_REGSET
+-};
++  struct regset_info *regset;
+ 
+-static struct regsets_info aarch64_sve_regsets_info =
+-  {
+-    aarch64_sve_regsets, /* regsets.  */
+-    0, /* num_regsets.  */
+-    NULL, /* disabled_regsets.  */
+-  };
++  for (regset = aarch64_regsets; regset->size >= 0; regset++)
++    {
++      switch (regset->nt_type)
++	{
++	case NT_PRSTATUS:
++	  /* General purpose registers are always present.  */
++	  regset->size = sizeof (struct user_pt_regs);
++	  break;
++	case NT_FPREGSET:
++	  /* This is unavailable when SVE is present.  */
++	  if (!features.sve)
++	    regset->size = sizeof (struct user_fpsimd_state);
++	  break;
++	case NT_ARM_SVE:
++	  if (features.sve)
++	    regset->size = SVE_PT_SIZE (AARCH64_MAX_SVE_VQ, SVE_PT_REGS_SVE);
++	  break;
++	case NT_ARM_PAC_MASK:
++	  if (features.pauth)
++	    regset->size = AARCH64_PAUTH_REGS_SIZE;
++	  break;
++	case NT_ARM_TAGGED_ADDR_CTRL:
++	  if (features.mte)
++	    regset->size = AARCH64_LINUX_SIZEOF_MTE;
++	  break;
++	default:
++	  gdb_assert_not_reached ("Unknown register set found.");
++	}
++    }
++}
+ 
+-static struct regs_info regs_info_aarch64_sve =
+-  {
+-    NULL, /* regset_bitmap.  */
+-    NULL, /* usrregs.  */
+-    &aarch64_sve_regsets_info,
+-  };
++/* Matches HWCAP_PACA in kernel header arch/arm64/include/uapi/asm/hwcap.h.  */
++#define AARCH64_HWCAP_PACA (1 << 30)
++
++/* Implementation of linux target ops method "low_arch_setup".  */
++
++void
++aarch64_target::low_arch_setup ()
++{
++  unsigned int machine;
++  int is_elf64;
++  int tid;
++
++  tid = lwpid_of (current_thread);
++
++  is_elf64 = linux_pid_exe_is_elf_64_file (tid, &machine);
++
++  if (is_elf64)
++    {
++      struct aarch64_features features;
++
++      uint64_t vq = aarch64_sve_get_vq (tid);
++      features.sve = (vq > 0);
++      /* A-profile PAC is 64-bit only.  */
++      features.pauth = linux_get_hwcap (8) & AARCH64_HWCAP_PACA;
++      /* A-profile MTE is 64-bit only.  */
++      features.mte = linux_get_hwcap2 (8) & HWCAP2_MTE;
++
++      current_process ()->tdesc
++	= aarch64_linux_read_description (vq, features.pauth, features.mte);
++
++      /* Adjust the register sets we should use for this particular set of
++	 features.  */
++      aarch64_adjust_register_sets (features);
++    }
++  else
++    current_process ()->tdesc = aarch32_linux_read_description ();
++
++  aarch64_linux_get_debug_reg_capacity (lwpid_of (current_thread));
++}
+ 
+ /* Implementation of linux target ops method "get_regs_info".  */
+ 
+@@ -802,9 +821,7 @@ aarch64_target::get_regs_info ()
+   if (!is_64bit_tdesc ())
+     return &regs_info_aarch32;
+ 
+-  if (is_sve_tdesc ())
+-    return &regs_info_aarch64_sve;
+-
++  /* AArch64 64-bit registers.  */
+   return &regs_info_aarch64;
+ }
+ 
+@@ -3294,5 +3311,4 @@ initialize_low_arch (void)
+   initialize_low_arch_aarch32 ();
+ 
+   initialize_regsets_info (&aarch64_regsets_info);
+-  initialize_regsets_info (&aarch64_sve_regsets_info);
+ }
+-- 
+2.27.0
+
