@@ -11,6 +11,9 @@ MPDECIMAL_LICENSE = BSD-2-Clause
 MPDECIMAL_LICENSE_FILES = LICENSE.txt
 MPDECIMAL_CONF_OPTS = LD="$(TARGET_CC)"
 
+# threads are only needed for tests
+MPDECIMAL_MAKE_OPTS = MPD_PTHREAD=
+
 # On i386, by default, mpdecimal tries to uses <fenv.h> which is not
 # available in musl/uclibc. So in this case, we tell mpdecimal to use
 # the generic 32 bits code, which is anyway the one used on ARM,
