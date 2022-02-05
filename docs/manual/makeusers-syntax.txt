@@ -90,3 +90,16 @@ This will create this user:
 - +shell+ is: +/bin/sh+
 - +test+ is not a member of any additional +groups+
 - +comment+ is: +Test user+
+
+
+=== Caveat with automatic UIDs and GIDs
+
+When updating buildroot or when packages are added or removed to/from
+the configuration, it is possible that the automatic UIDs and GIDs are
+changed. This can be a problem if persistent files were created with
+that user or group: after upgrade, they will suddenly have a different
+owner.
+
+Therefore, it is advisable to perpetuate the automatic IDs. This can be
+done by adding a users table with the generated IDs. It is only needed
+to do this for UIDs that actually create persistent files, e.g. database.
