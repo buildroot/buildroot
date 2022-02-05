@@ -10,7 +10,14 @@ RAUC_SOURCE = rauc-$(RAUC_VERSION).tar.xz
 RAUC_LICENSE = LGPL-2.1
 RAUC_LICENSE_FILES = COPYING
 RAUC_CPE_ID_VENDOR = pengutronix
-RAUC_DEPENDENCIES = host-pkgconf openssl libglib2 dbus
+RAUC_DEPENDENCIES = host-pkgconf openssl libglib2
+
+ifeq ($(BR2_PACKAGE_RAUC_DBUS),y)
+RAUC_CONF_OPTS += --enable-service
+RAUC_DEPENDENCIES += dbus
+else
+RAUC_CONF_OPTS += --disable-service
+endif
 
 ifeq ($(BR2_PACKAGE_RAUC_NETWORK),y)
 RAUC_CONF_OPTS += --enable-network
