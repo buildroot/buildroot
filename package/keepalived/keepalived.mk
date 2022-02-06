@@ -4,16 +4,13 @@
 #
 ################################################################################
 
-KEEPALIVED_VERSION = 2.1.4
+KEEPALIVED_VERSION = 2.2.7
 KEEPALIVED_SITE = http://www.keepalived.org/software
 KEEPALIVED_DEPENDENCIES = host-pkgconf openssl
 KEEPALIVED_LICENSE = GPL-2.0+
 KEEPALIVED_LICENSE_FILES = COPYING
 KEEPALIVED_CPE_ID_VENDOR = keepalived
 KEEPALIVED_CONF_OPTS = --disable-hardening
-
-# 0002-dbus-fix-policy-to-not-be-overly-broad.patch
-KEEPALIVED_IGNORE_CVES += CVE-2021-44225
 
 ifeq ($(BR2_PACKAGE_JSON_C),y)
 KEEPALIVED_DEPENDENCIES += json-c

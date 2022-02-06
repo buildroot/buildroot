@@ -41,9 +41,11 @@ RUN apt-get install -y --no-install-recommends \
         python3-flake8 \
         python3-nose2 \
         python3-pexpect \
+        python3-pytest \
         qemu-system-arm \
         qemu-system-x86 \
         rsync \
+        shellcheck \
         subversion \
         unzip \
         wget \

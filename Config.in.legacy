@@ -146,6 +146,19 @@ endif
 
 comment "Legacy options removed in 2022.02"
 
+config BR2_TARGET_UBOOT_ZYNQ_IMAGE
+	bool "Generate image for Xilinx Zynq"
+	select BR2_LEGACY
+	help
+	  Since 2016.1, U-Boot can natively generate the Zynq boot
+	  image, and so the Xilinx-specific format and tools have been
+	  removed. Should you still have an older U-Boot that needs
+	  this, a python3 version of the zynq-boot-bin.py script can be
+	  downloaded from the URL below and called from a post-build
+	  script.
+
+	  https://gist.githubusercontent.com/jameshilliard/e09235dfc6f96c11418a134e6ebf7890/raw/135b7480c405ae8a77a9db615e495f9a9f2d3242/zynq-boot-bin.py
+
 config BR2_PACKAGE_RPI_BT_FIRMWARE
 	bool "rpi-bt-firmware package was renamed"
 	depends on BR2_arm || BR2_aarch64

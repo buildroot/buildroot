@@ -68,12 +68,13 @@ config BR2_PACKAGE_BOOST_CONTAINER
 	  Standard library containers and extensions.
 
 # see
-# http://www.boost.org/doc/libs/1_59_0/libs/context/doc/html/context/architectures.html
+# http://www.boost.org/doc/libs/1_78_0/libs/context/doc/html/context/architectures.html
 # for the list of supported architectures. Sparc pretends to be
 # supported, but it doesn't build.
 config BR2_PACKAGE_BOOST_CONTEXT_ARCH_SUPPORTS
 	bool
 	default y if ((BR2_arm || BR2_armeb) && BR2_ARM_CPU_HAS_ARM)
+	default y if (BR2_aarch64 || BR2_aarch64_be)
 	default y if BR2_i386
 	default y if BR2_mips
 	default y if BR2_mipsel

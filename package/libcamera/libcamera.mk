@@ -99,4 +99,9 @@ else
 LIBCAMERA_CONF_OPTS += -Dtracing=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_LIBEXECINFO),y)
+LIBCAMERA_DEPENDENCIES += libexecinfo
+LIBCAMERA_LDFLAGS = $(TARGET_LDFLAGS) -lexecinfo
+endif
+
 $(eval $(meson-package))

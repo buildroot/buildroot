@@ -80,6 +80,16 @@ config BR2_PACKAGE_LIGHTTPD_PCRE
 	help
 	  Enable PCRE support. Needed to support mod_rewrite
 
+config BR2_PACKAGE_LIGHTTPD_PGSQL
+	bool "pgsql support"
+	depends on BR2_USE_MMU # postgresql
+	select BR2_PACKAGE_POSTGRESQL
+	help
+	  Enable postgres support for lighttpd mod_vhostdb_pgsql.
+
+comment "pgsql support needs a toolchain w/ wchar"
+	depends on !BR2_USE_WCHAR
+
 config BR2_PACKAGE_LIGHTTPD_WEBDAV
 	bool "webdav support"
 	select BR2_PACKAGE_LIBXML2

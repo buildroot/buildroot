@@ -20,13 +20,16 @@ Where:
   It can not be +root+, and must be unique. If set to +-+, then just a
   group will be created.
 - +uid+ is the desired UID for the user. It must be unique, and not
-  +0+. If set to +-1+, then a unique UID will be computed by Buildroot
-  in the range [1000...1999]
+  +0+. If set to +-1+ or +-2+, then a unique UID will be computed by
+  Buildroot, with +-1+ denoting a system UID from [100...999] and +-2+
+  denoting a user UID from [1000...1999]. 
 - +group+ is the desired name for the user's main group. It can not
   be +root+. If the group does not exist, it will be created.
 - +gid+ is the desired GID for the user's main group. It must be unique,
-  and not +0+. If set to +-1+, and the group does not already exist, then
-  a unique GID will be computed by Buildroot in the range [1000..1999]
+  and not +0+. If set to +-1+ or +-2+, and the group does not already
+  exist, then a unique GID will be computed by Buildroot, with +-1+
+  denoting a system GID from [100...999] and +-2+ denoting a user GID
+  from [1000...1999]. 
 - +password+ is the crypt(3)-encoded password. If prefixed with +!+,
   then login is disabled. If prefixed with +=+, then it is interpreted
   as clear-text, and will be crypt-encoded (using MD5). If prefixed with

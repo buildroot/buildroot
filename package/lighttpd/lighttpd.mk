@@ -23,7 +23,6 @@ LIGHTTPD_CONF_OPTS = \
 	-Dwith_nettle=false \
 	-Dwith_nss=false \
 	-Dwith_pcre=false \
-	-Dwith_pgsql=false \
 	-Dwith_sasl=false \
 	-Dwith_wolfssl=false \
 	-Dwith_xattr=false \
@@ -93,6 +92,13 @@ LIGHTTPD_DEPENDENCIES += pcre2
 LIGHTTPD_CONF_OPTS += -Dwith_pcre2=true
 else
 LIGHTTPD_CONF_OPTS += -Dwith_pcre2=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIGHTTPD_PGSQL),y)
+LIGHTTPD_DEPENDENCIES += postgresql
+LIGHTTPD_CONF_OPTS += -Dwith_pgsql=true
+else
+LIGHTTPD_CONF_OPTS += -Dwith_pgsql=false
 endif
 
 ifeq ($(BR2_PACKAGE_LIGHTTPD_WEBDAV),y)

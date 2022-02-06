@@ -1,0 +1,30 @@
+From cdfa726bae1d82b7bd3735475fc2b2c6a31c1d2f Mon Sep 17 00:00:00 2001
+From: Ignacio Casal Quinteiro <qignacio@amazon.com>
+Date: Fri, 12 Nov 2021 11:51:33 +0100
+Subject: [PATCH] meson: change std to gnu99
+
+This is the same as glib and should fix issues with old
+compilers
+
+(cherry picked from commit b192086b9936602a40a14d00a6883b339b9d7955)
+Signed-off-by: Thomas Devoogdt <thomas.devoogdt@barco.com>
+---
+ meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index b018ca7b..130a2bf0 100644
+--- a/meson.build
++++ b/meson.build
+@@ -3,7 +3,7 @@ project(
+   version: '2.70.0',
+   license: 'LGPL2.1+',
+   meson_version: '>= 0.50.0',
+-  default_options: ['c_std=c99']
++  default_options: ['c_std=gnu99']
+ )
+ 
+ prefix = get_option('prefix')
+-- 
+2.17.1
+

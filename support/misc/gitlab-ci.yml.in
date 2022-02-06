@@ -1,3 +1,7 @@
+.check-check-package_base:
+    script:
+        - python3 -m pytest -v utils/checkpackagelib/
+
 .check-DEVELOPERS_base:
     # get-developers should print just "No action specified"; if it prints
     # anything else, it's a parse error.
