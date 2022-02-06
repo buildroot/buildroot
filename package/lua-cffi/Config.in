@@ -1,7 +1,7 @@
 config BR2_PACKAGE_LUA_CFFI
 	bool "lua-cffi"
 	depends on !BR2_PACKAGE_LUAJIT
-	depends on BR2_TOOLCHAIN_HAS_THREADS  # libffi
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libffi
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
 	depends on BR2_INSTALL_LIBSTDCPP
 	select BR2_PACKAGE_LIBFFI
