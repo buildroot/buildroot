@@ -1,0 +1,67 @@
+From f3263fed28bf510a1225661fe2b5f598300c11cd Mon Sep 17 00:00:00 2001
+From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Date: Wed, 5 Jan 2022 15:53:35 -0800
+Subject: [PATCH] shared/util: Rename btd_malloc to util_malloc
+
+util functions are not limited to daemon only which is normally the case
+when using btd prefix.
+
+(cherry picked from commit 710220f861b100856711a0a4d4a852874228a57a)
+Signed-off-by: Thomas Devoogdt <thomas.devoogdt@gmail.com>
+---
+ profiles/audio/avdtp.c | 2 +-
+ src/shared/util.c      | 2 +-
+ src/shared/util.h      | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/profiles/audio/avdtp.c b/profiles/audio/avdtp.c
+index d3dfbf96d..f2b461330 100644
+--- a/profiles/audio/avdtp.c
++++ b/profiles/audio/avdtp.c
+@@ -1333,7 +1333,7 @@ static GSList *caps_to_list(uint8_t *data, size_t size,
+ 			break;
+ 		}
+ 
+-		cpy = btd_malloc(sizeof(*cpy) + cap->length);
++		cpy = util_malloc(sizeof(*cpy) + cap->length);
+ 		memcpy(cpy, cap, sizeof(*cap) + cap->length);
+ 
+ 		size -= sizeof(*cap) + cap->length;
+diff --git a/src/shared/util.c b/src/shared/util.c
+index 81b20d86f..93110047b 100644
+--- a/src/shared/util.c
++++ b/src/shared/util.c
+@@ -25,7 +25,7 @@
+ 
+ #include "src/shared/util.h"
+ 
+-void *btd_malloc(size_t size)
++void *util_malloc(size_t size)
+ {
+ 	if (__builtin_expect(!!size, 1)) {
+ 		void *ptr;
+diff --git a/src/shared/util.h b/src/shared/util.h
+index ac70117ca..11d09979d 100644
+--- a/src/shared/util.h
++++ b/src/shared/util.h
+@@ -75,7 +75,7 @@ do {						\
+ 		size_t __n = (size_t) (count);	\
+ 		size_t __s = sizeof(type);	\
+ 		void *__p;			\
+-		__p = btd_malloc(__n * __s);	\
++		__p = util_malloc(__n * __s);	\
+ 		memset(__p, 0, __n * __s);	\
+ 		__p;				\
+ 	}))
+@@ -86,7 +86,7 @@ do {						\
+ char *strdelimit(char *str, char *del, char c);
+ int strsuffix(const char *str, const char *suffix);
+ 
+-void *btd_malloc(size_t size);
++void *util_malloc(size_t size);
+ 
+ typedef void (*util_debug_func_t)(const char *str, void *user_data);
+ 
+-- 
+2.17.1
+
