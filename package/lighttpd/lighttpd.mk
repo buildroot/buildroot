@@ -19,7 +19,6 @@ LIGHTTPD_CONF_OPTS = \
 	-Dwith_libev=false \
 	-Dwith_libunwind=false \
 	-Dwith_mbedtls=false \
-	-Dwith_mysql=false \
 	-Dwith_nettle=false \
 	-Dwith_nss=false \
 	-Dwith_pcre=false \
@@ -71,6 +70,13 @@ LIGHTTPD_DEPENDENCIES += libmaxminddb
 LIGHTTPD_CONF_OPTS += -Dwith_maxminddb=true
 else
 LIGHTTPD_CONF_OPTS += -Dwith_maxminddb=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIGHTTPD_MYSQL),y)
+LIGHTTPD_DEPENDENCIES += mysql
+LIGHTTPD_CONF_OPTS += -Dwith_mysql=true
+else
+LIGHTTPD_CONF_OPTS += -Dwith_mysql=false
 endif
 
 ifeq ($(BR2_PACKAGE_LIGHTTPD_OPENSSL),y)
