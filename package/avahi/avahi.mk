@@ -107,7 +107,6 @@ endif
 ifeq ($(BR2_PACKAGE_PYTHON),y)
 AVAHI_CONF_ENV += \
 	am_cv_pathless_PYTHON=python \
-	am_cv_path_PYTHON=$(PYTHON_TARGET_BINARY) \
 	am_cv_python_version=$(PYTHON_VERSION) \
 	am_cv_python_platform=linux2 \
 	am_cv_python_pythondir=/usr/lib/python$(PYTHON_VERSION_MAJOR)/site-packages \
