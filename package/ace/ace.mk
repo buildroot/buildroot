@@ -17,6 +17,10 @@ ACE_CPE_ID_PRODUCT = adaptive_communication_environment
 # Only compiling ACE libraries (no TAO)
 ACE_LIBARIES = ace ACEXML Kokyu netsvcs protocols/ace
 
+ACE_MAKE_OPTS = \
+	ACE_ROOT="$(@D)" \
+	DEFFLAGS="$(TARGET_CPPFLAGS) -std=c++11"
+
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 ACE_LIBARIES += ace/SSL
 ACE_DEPENDENCIES += openssl
@@ -39,14 +43,15 @@ endef
 
 define ACE_BUILD_CMDS
 	$(foreach lib,$(ACE_LIBARIES), \
-		$(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)/$(lib) ACE_ROOT="$(@D)" all
+		$(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)/$(lib) \
+			$(ACE_MAKE_OPTS) all
 	)
 endef
 
 define  ACE_LIBARIES_INSTALL
 	mkdir -p $(1)/usr/share/ace
 	$(foreach lib,$(ACE_LIBARIES), \
-		$(MAKE) -C $(@D)/$(lib) ACE_ROOT="$(@D)" DESTDIR=$(1) install
+		$(MAKE) -C $(@D)/$(lib) $(ACE_MAKE_OPTS) DESTDIR=$(1) install
 	)
 endef
 
