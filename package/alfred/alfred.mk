@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ALFRED_VERSION = 2021.4
+ALFRED_VERSION = 2022.0
 ALFRED_SITE = https://downloads.open-mesh.org/batman/stable/sources/alfred
 ALFRED_LICENSE = GPL-2.0
 ALFRED_LICENSE_FILES = LICENSES/preferred/GPL-2.0
