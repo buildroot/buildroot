@@ -11,13 +11,6 @@ GNURADIO_LICENSE_FILES = COPYING
 
 GNURADIO_SUPPORTS_IN_SOURCE_BUILD = NO
 
-# needed to determine site-packages path
-ifeq ($(BR2_PACKAGE_PYTHON),y)
-GNURADIO_PYVER = $(PYTHON_VERSION_MAJOR)
-else ifeq ($(BR2_PACKAGE_PYTHON3),y)
-GNURADIO_PYVER = $(PYTHON3_VERSION_MAJOR)
-endif
-
 # host-python-mako and host-python-six are needed for volk to compile
 GNURADIO_DEPENDENCIES = \
 	host-python3 \
@@ -125,7 +118,7 @@ GNURADIO_CONF_OPTS += -DENABLE_PYTHON=ON
 # mandatory to install python modules in site-packages and to use
 # correct path for python libraries
 GNURADIO_CONF_OPTS += -DGR_PYTHON_RELATIVE=ON \
-	-DGR_PYTHON_DIR=lib/python$(GNURADIO_PYVER)/site-packages
+	-DGR_PYTHON_DIR=lib/python$(PYTHON3_VERSION_MAJOR)/site-packages
 else
 GNURADIO_CONF_OPTS += -DENABLE_PYTHON=OFF
 endif

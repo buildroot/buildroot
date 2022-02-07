@@ -11,4 +11,3 @@ class TestLuaLuaCffi(TestLuaBase):
     def test_run(self):
         self.login()
         self.module_test("cffi")
-
