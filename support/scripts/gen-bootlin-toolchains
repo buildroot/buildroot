@@ -162,6 +162,10 @@ arches = {
         'conditions': ['BR2_riscv', 'BR2_riscv_g', 'BR2_RISCV_64', 'BR2_RISCV_ABI_LP64D'],
         'prefix': 'riscv64',
     },
+    's390x-z13': {
+        'conditions': ['BR2_s390x', 'BR2_s390x_z13'],
+        'prefix': 's390x',
+    },
     'sh-sh4': {
         'conditions': ['BR2_sh', 'BR2_sh4'],
         'prefix': 'sh4',
