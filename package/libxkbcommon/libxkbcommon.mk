@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBXKBCOMMON_VERSION = 1.3.1
+LIBXKBCOMMON_VERSION = 1.4.0
 LIBXKBCOMMON_SITE = https://xkbcommon.org/download
 LIBXKBCOMMON_SOURCE = libxkbcommon-$(LIBXKBCOMMON_VERSION).tar.xz
 LIBXKBCOMMON_LICENSE = MIT/X11
@@ -21,6 +21,12 @@ LIBXKBCOMMON_CONF_OPTS += -Denable-x11=true
 LIBXKBCOMMON_DEPENDENCIES += libxcb
 else
 LIBXKBCOMMON_CONF_OPTS += -Denable-x11=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIBXKBCOMMON_TOOLS),y)
+LIBXKBCOMMON_CONF_OPTS += -Denable-tools=true
+else
+LIBXKBCOMMON_CONF_OPTS += -Denable-tools=false
 endif
 
 $(eval $(meson-package))
