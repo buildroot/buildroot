@@ -56,4 +56,8 @@ else
 KEEPALIVED_CONF_OPTS += --disable-nftables
 endif
 
+ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_4_9),)
+KEEPALIVED_CONF_OPTS += --disable-track-process
+endif
+
 $(eval $(autotools-package))
