@@ -1,0 +1,95 @@
+From be76b10a50749e2e11dce8dcc38b414a7f9d8747 Mon Sep 17 00:00:00 2001
+From: Ben Walden <bwalden@redboxvoice.com>
+Date: Sat, 22 Aug 2020 23:14:11 +0100
+Subject: [PATCH] Fix some issue compiling with Visual Studio 16.7.0 and tidy
+ up Visual Studio 16 project files
+
+[Retrieved (and updated to keep only RendKa.cxx update) from:
+https://github.com/resiprocate/resiprocate/commit/be76b10a50749e2e11dce8dcc38b414a7f9d8747]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ VisualStudioReadme.htm                        |   65 +
+ contrib/GeoIP/GeoIP_12_0.vcxproj              |  550 -------
+ contrib/GeoIP/GeoIP_16_0.vcxproj              |   93 +-
+ .../db/build_windows/db_static_12_0.vcxproj   | 1260 -----------------
+ .../db/build_windows/db_static_16_0.vcxproj   |  696 +--------
+ contrib/db/dbinc/atomic.h                     |    4 +-
+ contrib/db/mp/mp_fget.c                       |    4 +-
+ contrib/db/mp/mp_mvcc.c                       |    4 +-
+ contrib/db/mp/mp_region.c                     |    4 +-
+ contrib/db/mutex/mut_method.c                 |    2 +-
+ contrib/pcre/pcre_12_0.vcxproj                |  466 ------
+ contrib/pcre/pcre_16_0.vcxproj                |  159 +--
+ contrib/popt/popt_12_0.vcxproj                |  394 ------
+ contrib/popt/popt_16_0.vcxproj                |  120 +-
+ reSIProcate_16_0.sln                          |   58 +-
+ .../queuetostream_12_0.vcxproj                |  582 --------
+ .../queuetostream_16_0.vcxproj                |  207 ++-
+ repro/repro_12_0.vcxproj                      |  825 -----------
+ repro/repro_12_0.vcxproj.filters              |   47 -
+ repro/repro_16_0.vcxproj                      |  159 ++-
+ repro/reprocmd/reprocmd_12_0.vcxproj          |  597 --------
+ repro/reprocmd/reprocmd_16_0.vcxproj          |  139 +-
+ repro/reprolib_12_0.vcxproj                   |  596 --------
+ repro/reprolib_12_0.vcxproj.filters           |  136 --
+ repro/reprolib_16_0.vcxproj                   |  132 +-
+ resip/dum/dum_12_0.vcxproj                    |  615 --------
+ resip/dum/dum_16_0.vcxproj                    |  124 +-
+ resip/dum/test/basicCall_12_0.vcxproj         |  621 --------
+ resip/dum/test/basicCall_16_0.vcxproj         |  145 +-
+ resip/dum/test/basicClient_12_0.vcxproj       |  653 ---------
+ resip/dum/test/basicClient_16_0.vcxproj       |  158 +--
+ resip/dum/test/basicMessage_12_0.vcxproj      |  615 --------
+ resip/dum/test/basicMessage_16_0.vcxproj      |  141 +-
+ resip/dum/test/basicRegister_12_0.vcxproj     |  615 --------
+ resip/dum/test/basicRegister_16_0.vcxproj     |  137 +-
+ resip/rend/RendKa.cxx                         |    2 +-
+ resip/rend/rend_12_0.vcxproj                  |  352 -----
+ resip/rend/rend_16_0.vcxproj                  |   89 +-
+ resip/stack/resiprocate_12_0.vcxproj          |  873 ------------
+ resip/stack/resiprocate_12_0.vcxproj.filters  |  351 -----
+ resip/stack/resiprocate_16_0.vcxproj          |  165 ++-
+ resip/stack/test/test_12_0.vcxproj            |  627 --------
+ resip/stack/test/test_16_0.vcxproj            |  171 ++-
+ rutil/dns/ares/ares_12_0.vcxproj              |  488 -------
+ rutil/dns/ares/ares_12_0.vcxproj.filters      |   34 -
+ rutil/dns/ares/ares_16_0.vcxproj              |  159 +--
+ rutil/rutil_12_0.vcxproj                      |  604 --------
+ rutil/rutil_16_0.vcxproj                      |  153 +-
+ 48 files changed, 1409 insertions(+), 13782 deletions(-)
+ delete mode 100644 contrib/GeoIP/GeoIP_12_0.vcxproj
+ delete mode 100644 contrib/db/build_windows/db_static_12_0.vcxproj
+ delete mode 100644 contrib/pcre/pcre_12_0.vcxproj
+ delete mode 100644 contrib/popt/popt_12_0.vcxproj
+ delete mode 100644 repro/accountingconsumers/queuetostream_12_0.vcxproj
+ delete mode 100644 repro/repro_12_0.vcxproj
+ delete mode 100644 repro/repro_12_0.vcxproj.filters
+ delete mode 100644 repro/reprocmd/reprocmd_12_0.vcxproj
+ delete mode 100644 repro/reprolib_12_0.vcxproj
+ delete mode 100644 repro/reprolib_12_0.vcxproj.filters
+ delete mode 100644 resip/dum/dum_12_0.vcxproj
+ delete mode 100644 resip/dum/test/basicCall_12_0.vcxproj
+ delete mode 100644 resip/dum/test/basicClient_12_0.vcxproj
+ delete mode 100644 resip/dum/test/basicMessage_12_0.vcxproj
+ delete mode 100644 resip/dum/test/basicRegister_12_0.vcxproj
+ delete mode 100644 resip/rend/rend_12_0.vcxproj
+ delete mode 100644 resip/stack/resiprocate_12_0.vcxproj
+ delete mode 100644 resip/stack/resiprocate_12_0.vcxproj.filters
+ delete mode 100644 resip/stack/test/test_12_0.vcxproj
+ delete mode 100644 rutil/dns/ares/ares_12_0.vcxproj
+ delete mode 100644 rutil/dns/ares/ares_12_0.vcxproj.filters
+ delete mode 100644 rutil/rutil_12_0.vcxproj
+
+diff --git a/resip/rend/RendKa.cxx b/resip/rend/RendKa.cxx
+index 8645f17636..8321ada1ee 100644
+--- a/resip/rend/RendKa.cxx
++++ b/resip/rend/RendKa.cxx
+@@ -66,7 +66,7 @@ bool operator<(const RendKaAssoc& a, const RendKaAssoc& b)
+ 
+ struct RendKaConn 
+ {
+-   bool operator() (const RendKaAssocPtr& a, const RendKaAssocPtr& b) 
++   bool operator()(const RendKaAssocPtr& a, const RendKaAssocPtr& b) const
+    {
+       return *a < *b;
+    }
