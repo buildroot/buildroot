@@ -24,6 +24,9 @@ config BR2_ARCH
 	default "sh4a"		if BR2_sh4a
 	default "sh4aeb"	if BR2_sh4aeb
 
+config BR2_NORMALIZED_ARCH
+	default "sh"
+
 config BR2_ENDIAN
 	default "LITTLE"	if BR2_sh4 || BR2_sh4a
 	default "BIG"		if BR2_sh2a || BR2_sh4eb || BR2_sh4aeb
