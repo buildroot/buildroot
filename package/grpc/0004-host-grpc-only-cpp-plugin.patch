@@ -10,6 +10,7 @@ others.
 Upstream-status: not accepted (see https://github.com/grpc/grpc/issues/25322)
 
 Signed-off-by: Thomas De Schampheleire <thomas.de_schampheleire@nokia.com>
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  CMakeLists.txt | 43 +++++++++++++++++++++++++++++++++++--------
  1 file changed, 35 insertions(+), 8 deletions(-)
@@ -166,15 +167,6 @@ index e8934a3e03..c2df332cc6 100644
 -
  add_executable(check_epollexclusive
    test/build/check_epollexclusive.c
- )
-@@ -3906,8 +3931,6 @@ target_link_libraries(gen_hpack_tables
-   gpr
- )
- 
--
--
- add_executable(gen_legal_metadata_characters
-   tools/codegen/core/gen_legal_metadata_characters.cc
  )
 @@ -3958,6 +3981,8 @@ target_link_libraries(gen_percent_encoding_tables
    ${_gRPC_ALLTARGETS_LIBRARIES}
