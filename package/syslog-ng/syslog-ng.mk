@@ -32,12 +32,7 @@ else
 SYSLOG_NG_CONF_OPTS += --disable-linux-caps
 endif
 
-ifeq ($(BR2_PACKAGE_PYTHON),y)
-SYSLOG_NG_DEPENDENCIES += python
-SYSLOG_NG_CONF_OPTS += \
-	--enable-python \
-	--with-python=$(PYTHON_VERSION_MAJOR)
-else ifeq ($(BR2_PACKAGE_PYTHON3),y)
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
 SYSLOG_NG_DEPENDENCIES += python3
 SYSLOG_NG_CONF_OPTS += \
 	--enable-python \
