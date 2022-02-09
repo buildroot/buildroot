@@ -33,7 +33,6 @@ config BR2_PACKAGE_GLSLSANDBOX_PLAYER_TESTING
 
 config BR2_PACKAGE_GLSLSANDBOX_PLAYER_SCRIPTS
 	bool "Install scripts"
-	depends on !BR2_PACKAGE_PYTHON # python3
 	depends on !BR2_STATIC_LIBS # python3
 	depends on BR2_TOOLCHAIN_HAS_THREADS # python3
 	depends on BR2_USE_MMU # bash, python3
