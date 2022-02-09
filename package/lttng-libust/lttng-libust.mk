@@ -20,10 +20,7 @@ LTTNG_LIBUST_AUTORECONF = YES
 # https://www.mail-archive.com/lttng-dev@lists.lttng.org/msg12950.html
 LTTNG_LIBUST_CONF_ENV = CFLAGS="$(TARGET_CFLAGS) -DUATOMIC_NO_LINK_ERROR"
 
-ifeq ($(BR2_PACKAGE_PYTHON),y)
-LTTNG_LIBUST_DEPENDENCIES += python
-LTTNG_LIBUST_CONF_OPTS += --enable-python-agent
-else ifeq ($(BR2_PACKAGE_PYTHON3),y)
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
 LTTNG_LIBUST_DEPENDENCIES += python3
 LTTNG_LIBUST_CONF_OPTS += --enable-python-agent
 else
