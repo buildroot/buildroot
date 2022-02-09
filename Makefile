@@ -873,6 +873,9 @@ graph-build: $(O)/build/build-time.log
 				   --type=pie-$(t) --input=$(<) \
 				   --output=$(GRAPHS_DIR)/build.pie-$(t).$(BR_GRAPH_OUT) \
 				   $(if $(BR2_GRAPH_ALT),--alternate-colors)$(sep))
+	./support/scripts/graph-build-time --type=timeline --input=$(<) \
+		--output=$(GRAPHS_DIR)/build.timeline.$(BR_GRAPH_OUT) \
+		$(if $(BR2_GRAPH_ALT),--alternate-colors)
 
 .PHONY: graph-depends-requirements
 graph-depends-requirements:
