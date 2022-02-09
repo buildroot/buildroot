@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-POKE_VERSION = 1.4
+POKE_VERSION = 2.1
 POKE_SITE = $(BR2_GNU_MIRROR)/poke
 # gnulib license is a mix/mess of public-domain and various GPL and LGPL versions.
 POKE_LICENSE = GPL-3.0+, GPL-3.0+ (jitter), gnulib license (gnulib)
