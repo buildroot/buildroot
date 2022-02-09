@@ -260,9 +260,7 @@ define PYTHON3_INSTALL_SYMLINK
 	ln -fs python3 $(TARGET_DIR)/usr/bin/python
 endef
 
-ifneq ($(BR2_PACKAGE_PYTHON),y)
 PYTHON3_POST_INSTALL_TARGET_HOOKS += PYTHON3_INSTALL_SYMLINK
-endif
 
 # Some packages may have build scripts requiring python3, whatever is the
 # python version chosen for the target.
