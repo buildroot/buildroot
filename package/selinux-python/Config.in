@@ -1,6 +1,5 @@
 config BR2_PACKAGE_SELINUX_PYTHON
 	bool "selinux-python"
-	depends on !BR2_PACKAGE_PYTHON
 	depends on BR2_USE_MMU
 	depends on BR2_USE_WCHAR
 	depends on BR2_TOOLCHAIN_HAS_THREADS
@@ -45,10 +44,6 @@ comment "sepolgen needs a toolchain w/ gcc 5"
 	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_5
 
 endif
-
-comment "selinux-python needs python3"
-	depends on BR2_USE_MMU
-	depends on BR2_PACKAGE_PYTHON
 
 comment "selinux-python packages needs a toolchain w/ wchar, threads, dynamic library"
 	depends on BR2_USE_MMU
