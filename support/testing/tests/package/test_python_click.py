@@ -26,15 +26,6 @@ class TestPythonClick(TestPythonPackageBase):
         self.assertEqual(exit_code, 2)
 
 
-class TestPythonPy2Click(TestPythonClick):
-    __test__ = True
-    config = TestPythonClick.config + \
-        """
-        BR2_PACKAGE_PYTHON=y
-        BR2_PACKAGE_PYTHON_CLICK=y
-        """
-
-
 class TestPythonPy3Click(TestPythonClick):
     __test__ = True
     config = TestPythonClick.config + \
