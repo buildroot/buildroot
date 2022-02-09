@@ -194,10 +194,6 @@ ifeq ($(BR2_PACKAGE_PYTHON3),y)
 GPSD_SCONS_OPTS += \
 	python=yes \
 	python_libdir="/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages"
-else ifeq ($(BR2_PACKAGE_PYTHON),y)
-GPSD_SCONS_OPTS += \
-	python=yes \
-	python_libdir="/usr/lib/python$(PYTHON_VERSION_MAJOR)/site-packages"
 else
 GPSD_SCONS_OPTS += python=no
 endif
