@@ -1,7 +1,6 @@
 config BR2_PACKAGE_PYTHON_WHOOSH
 	bool "python-whoosh"
-	select BR2_PACKAGE_PYTHON_ZLIB if BR2_PACKAGE_PYTHON # runtime
-	select BR2_PACKAGE_PYTHON3_ZLIB if BR2_PACKAGE_PYTHON3 # runtime
+	select BR2_PACKAGE_PYTHON3_ZLIB # runtime
 	help
 	  Whoosh is a fast, pure-Python full text indexing, search and
 	  spell checking library.
