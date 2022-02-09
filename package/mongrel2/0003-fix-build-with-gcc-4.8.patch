@@ -1,0 +1,60 @@
+From cc2dd3995dc9a9e6f0e705e11e791f3f3c7d7326 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 18 Jan 2022 22:41:36 +0100
+Subject: [PATCH] fix build with gcc 4.8
+
+Drop "-Wno-unused-const-variable -Wimplicit-fallthrough=0" as
+"-Wno-implicit-fallthrough -Wno-unused-const-variable" is already set in
+CFLAGS. This will avoid the following build failure with gcc 4.8 raised
+since version 1.13.0 and
+https://github.com/mongrel2/mongrel2/commit/725209578599bd7784753d86aee34f6441ff78a5:
+
+arm-none-linux-gnueabi-gcc: error: unrecognized command line option '-Wimplicit-fallthrough=0'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/de324b733e09057c87352220069fe65f6e535eb8
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/mongrel2/mongrel2/pull/354]
+---
+ Makefile            | 1 -
+ tools/m2sh/Makefile | 4 ++--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index f6627ed..fb8d028 100644
+--- a/Makefile
++++ b/Makefile
+@@ -22,7 +22,6 @@ all: bin/mongrel2 tests m2sh procer
+ 
+ ${OBJECTS_NOEXT}: CFLAGS += ${NOEXTCFLAGS}
+ ${OBJECTS}: | builddirs
+-$(RAGEL_OBJECTS): CFLAGS += -Wno-unused-const-variable -Wimplicit-fallthrough=0
+ 
+ .PHONY: builddirs
+ builddirs:
+diff --git a/tools/m2sh/Makefile b/tools/m2sh/Makefile
+index 83e7ae4..86364af 100644
+--- a/tools/m2sh/Makefile
++++ b/tools/m2sh/Makefile
+@@ -10,7 +10,7 @@ LIB_SRC=$(filter-out src/m2sh.c,${SOURCES})
+ LIB_OBJ=$(filter-out src/m2sh.o,${OBJECTS})
+ RAGEL_OBJECTS=src/lexer.o src/cli.o
+ 
+-$(RAGEL_OBJECTS): CFLAGS += -Wno-unused-const-variable -Wimplicit-fallthrough=0 -Wno-unused-parameter
++$(RAGEL_OBJECTS): CFLAGS += -Wno-unused-parameter
+ 
+ all: ../lemon/lemon tests build/m2sh
+ 
+@@ -20,7 +20,7 @@ dev: all
+ install: build/m2sh
+ 	install build/m2sh ${DESTDIR}${PREFIX}/bin
+ 
+-src/parser.o: CFLAGS += -Wno-unused-const-variable -Wno-unused-parameter
++src/parser.o: CFLAGS += -Wno-unused-parameter
+ 
+ build/libm2sh.a: ${LIB_OBJ}
+ 	mkdir -p build
+-- 
+2.34.1
+
