@@ -93,9 +93,9 @@ so _make_ recognizes them as commands.
 YES:
 +
 ---------------------
-ifeq ($(BR2_PACKAGE_PYTHON),y)
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
 LIBFOO_CONF_OPTS += --with-python-support
-LIBFOO_DEPENDENCIES += python
+LIBFOO_DEPENDENCIES += python3
 else
 LIBFOO_CONF_OPTS += --without-python-support
 endif
@@ -104,8 +104,8 @@ endif
 NO:
 +
 ---------------------
-LIBFOO_CONF_OPTS += --with$(if $(BR2_PACKAGE_PYTHON),,out)-python-support
-LIBFOO_DEPENDENCIES += $(if $(BR2_PACKAGE_PYTHON),python,)
+LIBFOO_CONF_OPTS += --with$(if $(BR2_PACKAGE_PYTHON3),,out)-python-support
+LIBFOO_DEPENDENCIES += $(if $(BR2_PACKAGE_PYTHON3),python3,)
 ---------------------
 
 ** Keep configure options and dependencies close together.
