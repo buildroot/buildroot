@@ -10,19 +10,8 @@ PYTHON_SIP_SITE = http://downloads.sourceforge.net/project/pyqt/sip/sip-$(PYTHON
 PYTHON_SIP_LICENSE = SIP license or GPL-2.0 or GPL-3.0
 PYTHON_SIP_LICENSE_FILES = LICENSE LICENSE-GPL2 LICENSE-GPL3
 
-PYTHON_SIP_DEPENDENCIES = qt5base
-
-ifeq ($(BR2_PACKAGE_PYTHON),y)
-PYTHON_SIP_DEPENDENCIES += python
-HOST_PYTHON_SIP_DEPENDENCIES += host-python
-PYTHON_SIP_LIB_DIR = usr/lib/python$(PYTHON_VERSION_MAJOR)/site-packages
-PYTHON_SIP_INCLUDE_DIR = usr/include/python$(PYTHON_VERSION_MAJOR)
-else ifeq ($(BR2_PACKAGE_PYTHON3),y)
-PYTHON_SIP_DEPENDENCIES += python3
-HOST_PYTHON_SIP_DEPENDENCIES += host-python3
-PYTHON_SIP_LIB_DIR = usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages
-PYTHON_SIP_INCLUDE_DIR = usr/include/python$(PYTHON3_VERSION_MAJOR)
-endif
+PYTHON_SIP_DEPENDENCIES = python3 qt5base
+HOST_PYTHON_SIP_DEPENDENCIES = host-python3
 
 define HOST_PYTHON_SIP_CONFIGURE_CMDS
 	(cd $(@D); \
@@ -41,8 +30,8 @@ define PYTHON_SIP_CONFIGURE_CMDS
 	(cd $(@D); \
 		$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(HOST_DIR)/bin/python configure.py \
 			--bindir $(TARGET_DIR)/usr/bin \
-			--destdir $(TARGET_DIR)/$(PYTHON_SIP_LIB_DIR) \
-			--incdir $(STAGING_DIR)/$(PYTHON_SIP_INCLUDE_DIR) \
+			--destdir $(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages \
+			--incdir $(STAGING_DIR)/usr/include/python$(PYTHON3_VERSION_MAJOR) \
 			--sipdir $(TARGET_DIR)/usr/share/sip \
 			--sysroot $(STAGING_DIR)/usr \
 			--use-qmake && \
