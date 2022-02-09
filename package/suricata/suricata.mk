@@ -116,9 +116,9 @@ else
 SURICATA_CONF_OPTS += --disable-luajit
 endif
 
-ifeq ($(BR2_PACKAGE_PYTHON)$(BR2_PACKAGE_PYTHON3),y)
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
 SURICATA_CONF_OPTS += --enable-python
-SURICATA_DEPENDENCIES += $(if $(BR2_PACKAGE_PYTHON),python,python3)
+SURICATA_DEPENDENCIES += python3
 else
 SURICATA_CONF_OPTS += --disable-python
 endif
