@@ -37,17 +37,7 @@ else
 ZFS_CONF_OPTS += --disable-systemd
 endif
 
-# The optional PyZFS uses different scripts depending on the python
-# version (ex: arc_summary2 or arc_summary3).
-ifeq ($(BR2_PACKAGE_PYTHON),y)
-ZFS_DEPENDENCIES += python python-setuptools host-python-cffi host-python-packaging
-ZFS_CONF_ENV += \
-	PYTHON=$(HOST_DIR)/usr/bin/python2 \
-	PYTHON_CPPFLAGS="`$(STAGING_DIR)/usr/bin/python2-config --includes`" \
-	PYTHON_LIBS="`$(STAGING_DIR)/usr/bin/python2-config --ldflags`" \
-	PYTHON_SITE_PKG="/usr/lib/python$(PYTHON_VERSION_MAJOR)/site-packages"
-ZFS_CONF_OPTS += --enable-pyzfs
-else ifeq ($(BR2_PACKAGE_PYTHON3),y)
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
 ZFS_DEPENDENCIES += python3 python-setuptools host-python-cffi host-python-packaging
 ZFS_CONF_ENV += \
 	PYTHON=$(HOST_DIR)/usr/bin/python3 \
