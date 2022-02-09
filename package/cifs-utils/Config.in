@@ -21,7 +21,7 @@ config BR2_PACKAGE_CIFS_UTILS_SMBTOOLS
 	depends on BR2_USE_WCHAR # python3
 	depends on BR2_TOOLCHAIN_HAS_THREADS # python3
 	depends on !BR2_STATIC_LIBS # python3
-	select BR2_PACKAGE_PYTHON3 if !BR2_PACKAGE_PYTHON # runtime
+	select BR2_PACKAGE_PYTHON3 # runtime
 	help
 	  Install the smb tools smbinfo and smb2-quota (python
 	  implementations).

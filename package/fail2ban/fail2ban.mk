@@ -15,15 +15,13 @@ FAIL2BAN_SETUP_TYPE = distutils
 # 0001-fixed-possible-RCE-vulnerability-unset-escape-variable.patch
 FAIL2BAN_IGNORE_CVES += CVE-2021-32749
 
-ifeq ($(BR2_PACKAGE_PYTHON3),y)
 define FAIL2BAN_PYTHON_2TO3
 	$(HOST_DIR)/bin/2to3 --write --nobackups --no-diffs $(@D)/bin/* $(@D)/fail2ban
 endef
-FAIL2BAN_DEPENDENCIES += host-python3
+FAIL2BAN_DEPENDENCIES = host-python3
 # We can't use _POST_PATCH_HOOKS because dependencies are not guaranteed
 # to build and install before _POST_PATCH_HOOKS run.
 FAIL2BAN_PRE_CONFIGURE_HOOKS += FAIL2BAN_PYTHON_2TO3
-endif
 
 define FAIL2BAN_FIX_DEFAULT_CONFIG
 	$(SED) '/^socket/c\socket = /run/fail2ban.sock' $(TARGET_DIR)/etc/fail2ban/fail2ban.conf
@@ -34,8 +32,7 @@ FAIL2BAN_POST_INSTALL_TARGET_HOOKS += FAIL2BAN_FIX_DEFAULT_CONFIG
 
 # fail2ban-python points to host python
 define FAIL2BAN_FIX_FAIL2BAN_PYTHON_SYMLINK
-	ln -snf $(if $(BR2_PACKAGE_PYTHON),python,python3) \
-		$(TARGET_DIR)/usr/bin/fail2ban-python
+	ln -snf python3	$(TARGET_DIR)/usr/bin/fail2ban-python
 endef
 FAIL2BAN_POST_INSTALL_TARGET_HOOKS += FAIL2BAN_FIX_FAIL2BAN_PYTHON_SYMLINK
 

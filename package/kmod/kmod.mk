@@ -62,8 +62,8 @@ else
 KMOD_CONF_OPTS += --without-openssl
 endif
 
-ifeq ($(BR2_PACKAGE_PYTHON)$(BR2_PACKAGE_PYTHON3),y)
-KMOD_DEPENDENCIES += $(if $(BR2_PACKAGE_PYTHON),python,python3)
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
+KMOD_DEPENDENCIES += python3
 KMOD_CONF_OPTS += --enable-python
 endif
 

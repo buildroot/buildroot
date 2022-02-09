@@ -67,30 +67,8 @@ else
 OWFS_CONF_OPTS += --disable-avahi
 endif
 
-# setup.py isn't python3 compliant
-ifeq ($(BR2_PACKAGE_PYTHON),y)
-OWFS_CONF_OPTS += \
-	--enable-owpython \
-	--with-python \
-	--with-pythonconfig=$(STAGING_DIR)/usr/bin/python-config
-OWFS_MAKE_ENV += \
-	CC="$(TARGET_CC)" \
-	PYTHONPATH="$(PYTHON_PATH)" \
-	_python_sysroot=$(STAGING_DIR) \
-	_python_prefix=/usr \
-	_python_exec_prefix=/usr
-OWFS_DEPENDENCIES += python host-swig
-# The configure scripts finds PYSITEDIR as the python_lib directory of
-# host-python, and then prepends DESTDIR in front of it. So we end up
-# installing things in $(TARGET_DIR)/$(HOST_DIR)/lib/python which is
-# clearly wrong.
-# Patching owfs to do the right thing is not trivial, it's much easier to
-# override the PYSITEDIR variable in make.
-OWFS_EXTRA_MAKE_OPTS += PYSITEDIR=/usr/lib/python$(PYTHON_VERSION_MAJOR)/site-packages
-
-else
+# python2 only (https://github.com/owfs/owfs/pull/32)
 OWFS_CONF_OPTS += --disable-owpython --without-python
-endif
 
 ifeq ($(BR2_STATIC_LIBS),y)
 # zeroconf support uses dlopen()

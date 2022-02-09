@@ -1,10 +1,10 @@
 config BR2_PACKAGE_DSTAT
 	bool "dstat"
-	depends on BR2_USE_WCHAR # python
-	depends on BR2_USE_MMU # python
-	depends on BR2_TOOLCHAIN_HAS_THREADS # python
-	depends on !BR2_STATIC_LIBS # python
-	select BR2_PACKAGE_PYTHON3 if !BR2_PACKAGE_PYTHON
+	depends on BR2_USE_WCHAR # python3
+	depends on BR2_USE_MMU # python3
+	depends on BR2_TOOLCHAIN_HAS_THREADS # python3
+	depends on !BR2_STATIC_LIBS # python3
+	select BR2_PACKAGE_PYTHON3 # runtime
 	help
 	  Dstat, written in Python, is a versatile replacement for
 	  vmstat, iostat, netstat and ifstat. Dstat overcomes some of

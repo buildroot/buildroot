@@ -37,9 +37,8 @@ config BR2_PACKAGE_JACK2_DBUS
 	depends on BR2_USE_WCHAR # dbus-python, python
 	select BR2_PACKAGE_DBUS
 	select BR2_PACKAGE_DBUS_PYTHON
-	select BR2_PACKAGE_PYTHON3 if !BR2_PACKAGE_PYTHON # runtime
-	select BR2_PACKAGE_PYTHON_PYEXPAT if BR2_PACKAGE_PYTHON # runtime
-	select BR2_PACKAGE_PYTHON3_PYEXPAT if BR2_PACKAGE_PYTHON3 # runtime
+	select BR2_PACKAGE_PYTHON3 # runtime
+	select BR2_PACKAGE_PYTHON3_PYEXPAT # runtime
 	help
 	  Build and use jackdbus.
 

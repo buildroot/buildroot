@@ -18,10 +18,7 @@ ifeq ($(BR2_PACKAGE_AUDIT),y)
 TRACE_CMD_DEPENDENCIES += audit
 endif
 
-ifeq ($(BR2_PACKAGE_PYTHON),y)
-TRACE_CMD_DEPENDENCIES += python host-swig
-TRACE_CMD_MAKE_OPTS += PYTHON_VERS=python
-else ifeq ($(BR2_PACKAGE_PYTHON3),y)
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
 TRACE_CMD_DEPENDENCIES += python3 host-swig
 TRACE_CMD_MAKE_OPTS += PYTHON_VERS=python3
 else

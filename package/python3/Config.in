@@ -4,7 +4,6 @@ comment "python3 needs a toolchain w/ wchar, threads, dynamic library"
 
 config BR2_PACKAGE_PYTHON3
 	bool "python3"
-	depends on !BR2_PACKAGE_PYTHON
 	depends on BR2_USE_WCHAR
 	# uses fork()
 	depends on BR2_USE_MMU

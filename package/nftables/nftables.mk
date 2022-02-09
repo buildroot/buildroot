@@ -35,9 +35,9 @@ else
 NFTABLES_CONF_OPTS += --without-json
 endif
 
-ifeq ($(BR2_PACKAGE_PYTHON)$(BR2_PACKAGE_PYTHON3),y)
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
 NFTABLES_CONF_OPTS += --enable-python
-NFTABLES_DEPENDENCIES += $(if $(BR2_PACKAGE_PYTHON),python,python3)
+NFTABLES_DEPENDENCIES += python3
 else
 NFTABLES_CONF_OPTS += --disable-python
 endif

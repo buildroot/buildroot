@@ -39,20 +39,6 @@ class TestPythonBase(infra.basetest.BRTest):
         self.assertEqual(exit_code, 1)
 
 
-class TestPython2(TestPythonBase):
-    config = TestPythonBase.config + \
-        """
-        BR2_PACKAGE_PYTHON=y
-        """
-
-    def test_run(self):
-        self.login()
-        self.version_test("Python 2")
-        self.math_floor_test()
-        self.libc_time_test()
-        self.zlib_test()
-
-
 class TestPython3(TestPythonBase):
     config = TestPythonBase.config + \
         """
