@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2022.02"
 
+config BR2_PACKAGE_PYTHON_SINGLEDISPATCH
+	bool "python-singledispatch removed"
+	select BR2_LEGACY
+	help
+	  Package was removed together with python 2.7 support.
+
 config BR2_PACKAGE_PYTHON_PYRO
 	bool "python-pyro removed"
 	select BR2_LEGACY
