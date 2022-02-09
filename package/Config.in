@@ -897,9 +897,8 @@ if BR2_STATIC_LIBS
 comment "External PHP extensions need a toolchain w/ dynamic library"
 endif
 endif
-	source "package/python/Config.in"
 	source "package/python3/Config.in"
-if BR2_PACKAGE_PYTHON || BR2_PACKAGE_PYTHON3
+if BR2_PACKAGE_PYTHON3
 menu "External python modules"
 	source "package/python-aenum/Config.in"
 	source "package/python-aexpect/Config.in"

@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2022.02"
 
+config BR2_PACKAGE_PYTHON
+	bool "python2.7 package removed"
+	select BR2_LEGACY
+	help
+	  Python 2.7 is EOL since April 2020 and has been removed.
+
+	  https://www.python.org/dev/peps/pep-0373/
+
 config BR2_TARGET_UBOOT_ZYNQ_IMAGE
 	bool "Generate image for Xilinx Zynq"
 	select BR2_LEGACY
