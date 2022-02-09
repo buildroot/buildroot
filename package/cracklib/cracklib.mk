@@ -20,9 +20,12 @@ else
 CRACKLIB_CONF_OPTS += --without-zlib
 endif
 
-ifeq ($(BR2_PACKAGE_PYTHON),y)
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
 CRACKLIB_CONF_OPTS += --with-python
-CRACKLIB_DEPENDENCIES += python
+CRACKLIB_CONF_ENV += \
+	ac_cv_path_PYTHON=$(HOST_DIR)/bin/python3 \
+	am_cv_python_version=$(PYTHON3_VERSION_MAJOR)
+CRACKLIB_DEPENDENCIES += python3
 else
 CRACKLIB_CONF_OPTS += --without-python
 endif
