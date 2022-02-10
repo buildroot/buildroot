@@ -45,7 +45,9 @@ define BCM_REFSW_INSTALL_NXSERVER
 	fi
 endef
 
-ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 19.1),1)
+ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 20.2),1)
+NX_SERVER_ARCHIVE = $(BCM_REFSW_OUTPUT)/nexus/nxclient/$(ARCH)-linux/server/libnxserver.a
+else ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 19.1),1)
 NX_SERVER_ARCHIVE = $(BCM_REFSW_OUTPUT)/nexus/nxclient/$(ARCH)-linux/server/libnxserver.a
 else
 NX_SERVER_ARCHIVE = $(BCM_REFSW_BIN)/libnxserver.a

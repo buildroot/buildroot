@@ -1,0 +1,61 @@
+diff --git a/BSEAV/lib/gpu/include/EGL/eglplatform.h b/BSEAV/lib/gpu/include/EGL/eglplatform.h
+index b71c2d19a..2e9fe7f2e 100644
+--- a/BSEAV/lib/gpu/include/EGL/eglplatform.h
++++ b/BSEAV/lib/gpu/include/EGL/eglplatform.h
+@@ -95,6 +95,8 @@ typedef void*                           EGLNativeDisplayType;
+ 
+ #elif defined(__unix__)
+ 
++#define BROADCOM_PLATFORM 1
++
+ #ifdef BROADCOM_PLATFORM
+ 
+ typedef void *EGLNativeDisplayType;
+diff --git a/BSEAV/lib/gpu/vc5/platform/nexus/platform_nexus_common.mk b/BSEAV/lib/gpu/vc5/platform/nexus/platform_nexus_common.mk
+index fc37e4408..8a7c0121b 100644
+--- a/BSEAV/lib/gpu/vc5/platform/nexus/platform_nexus_common.mk
++++ b/BSEAV/lib/gpu/vc5/platform/nexus/platform_nexus_common.mk
+@@ -82,7 +82,6 @@ CFLAGS += \
+ 	-mfpu=neon
+ endif
+ 
+-LDFLAGS += -Wl,--no-undefined
+ LDFLAGS += -L$(V3DDRIVER_LIB_TARGET) -lv3ddriver -lpthread
+ 
+ ifeq ($(V3D_DEBUG),y)
+@@ -135,9 +134,7 @@ OUTDIR :
+ 
+ .phony: V3DDriver
+ V3DDriver:
+-	$(Q)$(MAKE) --no-print-directory -C $(V3D_DIR) -f V3DDriver.mk \
+-	OBJDIR=$(V3DDRIVER_OBJ_TARGET) LIBDIR=$(V3DDRIVER_LIB_TARGET) \
+-	NEXUS_BIN_DIR=$(NEXUS_BIN_DIR) $(MAKECMDGOALS)
++	$(Q)$(MAKE) --no-print-directory -C $(V3D_DIR) -f V3DDriver.mk $(MAKECMDGOALS)
+ 
+ # $(1) = src
+ # $(2) = obj
+diff --git a/magnum/basemodules/dbg/bdbg.h b/magnum/basemodules/dbg/bdbg.h
+index db4f40495..fa9046659 100644
+--- a/magnum/basemodules/dbg/bdbg.h
++++ b/magnum/basemodules/dbg/bdbg.h
+@@ -957,7 +957,7 @@ See Also:
+ #else
+ #define BDBG_ASSERT(expr) (expr) ? (void) 0 : BDBG_P_AssertFailed(#expr, BSTD_FILE, BSTD_LINE)
+ #endif
+-#define BDBG_CASSERT(expr) do switch(0){case 0: case (expr):;} while(0)
++#define BDBG_CASSERT(expr) do switch(0){case (expr):;} while(0)
+ #define BDBG_CWARNING(expr) do {if(0){int unused = 1/(expr);unused++;}} while(0)
+ #define BDBG_CWARNING_EXPR(expr) ((1/(expr)) ? 0 : 0)
+ 
+diff --git a/nexus/nxclient/apps/Makefile b/nexus/nxclient/apps/Makefile
+index 8b46518ce..2d2055625 100644
+--- a/nexus/nxclient/apps/Makefile
++++ b/nexus/nxclient/apps/Makefile
+@@ -52,7 +52,6 @@ BASIC_BUILD_APPS = \
+ 	audio_fade \
+ 	audio_fade_toggle \
+ 	audio_karaoke \
+-    audio_presentation \
+ 	audio_wav_convert \
+ 	best_effort_bvn_status \
+ 	blit_client \
