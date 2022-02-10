@@ -12,16 +12,12 @@ GST1_DEVTOOLS_LICENSE_FILES = validate/COPYING
 GST1_DEVTOOLS_INSTALL_STAGING = YES
 
 GST1_DEVTOOLS_DEPENDENCIES = \
+	host-python3 \
+	python3 \
 	gstreamer1 \
 	gst1-plugins-base \
 	json-glib \
 	$(if $(BR2_PACKAGE_CAIRO),cairo)
-
-ifeq ($(BR2_PACKAGE_PYTHON3),y)
-GST1_DEVTOOLS_DEPENDENCIES += host-python3 python3
-else
-GST1_DEVTOOLS_DEPENDENCIES += host-python python
-endif
 
 ifeq ($(BR2_PACKAGE_GST1_RTSP_SERVER),y)
 GST1_DEVTOOLS_DEPENDENCIES += gst1-rtsp-server
