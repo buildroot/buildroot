@@ -11,7 +11,7 @@ LIBCAMERA_DEPENDENCIES = \
 	host-openssl \
 	host-pkgconf \
 	host-python-jinja2 \
-	host-python3-ply \
+	host-python-ply \
 	host-python-pyyaml \
 	gnutls
 LIBCAMERA_CONF_OPTS = \
