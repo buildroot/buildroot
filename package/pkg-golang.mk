@@ -47,8 +47,10 @@ $(2)_BUILD_OPTS += \
 	-trimpath \
 	-p $(PARALLEL_JOBS)
 
-# Target packages need the Go compiler on the host.
+# Target packages need the Go compiler on the host at download time (for
+# vendoring), and at build and install time.
 $(2)_DOWNLOAD_DEPENDENCIES += host-go
+$(2)_DEPENDENCIES += host-go
 
 $(2)_BUILD_TARGETS ?= .
 
