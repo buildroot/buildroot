@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_DEVTOOLS_VERSION = 1.18.6
+GST1_DEVTOOLS_VERSION = 1.20.0
 GST1_DEVTOOLS_SOURCE = gst-devtools-$(GST1_DEVTOOLS_VERSION).tar.xz
 GST1_DEVTOOLS_SITE = https://gstreamer.freedesktop.org/src/gst-devtools
 GST1_DEVTOOLS_LICENSE = LGPL-2.1+
@@ -16,8 +16,7 @@ GST1_DEVTOOLS_DEPENDENCIES = \
 	python3 \
 	gstreamer1 \
 	gst1-plugins-base \
-	json-glib \
-	$(if $(BR2_PACKAGE_CAIRO),cairo)
+	json-glib
 
 ifeq ($(BR2_PACKAGE_GST1_RTSP_SERVER),y)
 GST1_DEVTOOLS_DEPENDENCIES += gst1-rtsp-server
@@ -29,5 +28,13 @@ GST1_DEVTOOLS_CONF_OPTS = \
 	-Dintrospection=disabled \
 	-Dtests=disabled \
 	-Ddoc=disabled
+
+# build GstValidateVideo
+ifeq ($(BR2_PACKAGE_CAIRO),y)
+GST1_DEVTOOLS_CONF_OPTS += -Dcairo=enabled
+GST1_DEVTOOLS_DEPENDENCIES += cairo
+else
+GST1_DEVTOOLS_CONF_OPTS += -Dcairo=disabled
+endif
 
 $(eval $(meson-package))
