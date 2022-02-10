@@ -14,17 +14,10 @@ HOST_RUST_PROVIDES = host-rustc
 
 HOST_RUST_DEPENDENCIES = \
 	toolchain \
+	host-python3 \
 	host-rust-bin \
 	host-openssl \
 	$(BR2_CMAKE_HOST_DEPENDENCY)
-
-ifeq ($(BR2_PACKAGE_PYTHON3),y)
-HOST_RUST_PYTHON_VERSION = $(PYTHON3_VERSION_MAJOR)
-HOST_RUST_DEPENDENCIES += host-python3
-else
-HOST_RUST_PYTHON_VERSION = $(PYTHON_VERSION_MAJOR)
-HOST_RUST_DEPENDENCIES += host-python
-endif
 
 HOST_RUST_VERBOSITY = $(if $(VERBOSE),2,0)
 
@@ -50,7 +43,7 @@ define HOST_RUST_CONFIGURE_CMDS
 		echo 'target = ["$(RUSTC_TARGET_NAME)"]'; \
 		echo 'cargo = "$(HOST_RUST_BIN_DIR)/cargo/bin/cargo"'; \
 		echo 'rustc = "$(HOST_RUST_BIN_DIR)/rustc/bin/rustc"'; \
-		echo 'python = "$(HOST_DIR)/bin/python$(HOST_RUST_PYTHON_VERSION)"'; \
+		echo 'python = "$(HOST_DIR)/bin/python$(PYTHON3_VERSION_MAJOR)"'; \
 		echo 'submodules = false'; \
 		echo 'vendor = true'; \
 		echo 'extended = true'; \
@@ -71,12 +64,12 @@ define HOST_RUST_CONFIGURE_CMDS
 endef
 
 define HOST_RUST_BUILD_CMDS
-	cd $(@D); $(HOST_MAKE_ENV) $(HOST_DIR)/bin/python$(HOST_RUST_PYTHON_VERSION) x.py build
+	cd $(@D); $(HOST_MAKE_ENV) $(HOST_DIR)/bin/python$(PYTHON3_VERSION_MAJOR) x.py build
 endef
 
 define HOST_RUST_INSTALL_CMDS
-	cd $(@D); $(HOST_MAKE_ENV) $(HOST_DIR)/bin/python$(HOST_RUST_PYTHON_VERSION) x.py dist
-	cd $(@D); $(HOST_MAKE_ENV) $(HOST_DIR)/bin/python$(HOST_RUST_PYTHON_VERSION) x.py install
+	cd $(@D); $(HOST_MAKE_ENV) $(HOST_DIR)/bin/python$(PYTHON3_VERSION_MAJOR) x.py dist
+	cd $(@D); $(HOST_MAKE_ENV) $(HOST_DIR)/bin/python$(PYTHON3_VERSION_MAJOR) x.py install
 endef
 
 $(eval $(host-generic-package))

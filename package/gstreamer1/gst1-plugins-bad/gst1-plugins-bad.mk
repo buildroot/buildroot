@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_PLUGINS_BAD_VERSION = 1.18.6
+GST1_PLUGINS_BAD_VERSION = 1.20.0
 GST1_PLUGINS_BAD_SOURCE = gst-plugins-bad-$(GST1_PLUGINS_BAD_VERSION).tar.xz
 GST1_PLUGINS_BAD_SITE = https://gstreamer.freedesktop.org/src/gst-plugins-bad
 GST1_PLUGINS_BAD_INSTALL_STAGING = YES
@@ -34,6 +34,7 @@ GST1_PLUGINS_BAD_CONF_OPTS = \
 
 # Options which require currently unpackaged libraries
 GST1_PLUGINS_BAD_CONF_OPTS += \
+	-Dasio=disabled \
 	-Davtp=disabled \
 	-Dopensles=disabled \
 	-Dmsdk=disabled \
@@ -46,16 +47,18 @@ GST1_PLUGINS_BAD_CONF_OPTS += \
 	-Dresindvd=disabled \
 	-Dfaac=disabled \
 	-Dflite=disabled \
+	-Dgs=disabled \
 	-Dgsm=disabled \
 	-Dkate=disabled \
 	-Dladspa=disabled \
+	-Dldac=disabled \
 	-Dlv2=disabled \
 	-Dmediafoundation=disabled \
 	-Dmicrodns=disabled \
 	-Dlibde265=disabled \
 	-Dmodplug=disabled \
 	-Dmplex=disabled \
-	-Dofa=disabled \
+	-Donnx=disabled \
 	-Dopenexr=disabled \
 	-Dopenni2=disabled \
 	-Dteletext=disabled \
@@ -69,6 +72,7 @@ GST1_PLUGINS_BAD_CONF_OPTS += \
 	-Dwasapi2=disabled \
 	-Dzxing=disabled \
 	-Dmagicleap=disabled \
+	-Disac=disabled \
 	-Diqa=disabled \
 	-Dopencv=disabled
 
@@ -178,6 +182,12 @@ ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_CAMERABIN2),y)
 GST1_PLUGINS_BAD_CONF_OPTS += -Dcamerabin2=enabled
 else
 GST1_PLUGINS_BAD_CONF_OPTS += -Dcamerabin2=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_CODECALPHA),y)
+GST1_PLUGINS_BAD_CONF_OPTS += -Dcodecalpha=enabled
+else
+GST1_PLUGINS_BAD_CONF_OPTS += -Dcodecalpha=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_COLOREFFECTS),y)
@@ -497,6 +507,13 @@ endif
 
 # Plugins with dependencies
 
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_AES),y)
+GST1_PLUGINS_BAD_CONF_OPTS += -Daes=enabled
+GST1_PLUGINS_BAD_DEPENDENCIES += openssl
+else
+GST1_PLUGINS_BAD_CONF_OPTS += -Daes=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_ASSRENDER),y)
 GST1_PLUGINS_BAD_CONF_OPTS += -Dassrender=enabled
 GST1_PLUGINS_BAD_DEPENDENCIES += libass
@@ -604,13 +621,6 @@ else
 GST1_PLUGINS_BAD_CONF_OPTS += -Dkms=disabled
 endif
 
-ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_LIBMMS),y)
-GST1_PLUGINS_BAD_CONF_OPTS += -Dlibmms=enabled
-GST1_PLUGINS_BAD_DEPENDENCIES += libmms
-else
-GST1_PLUGINS_BAD_CONF_OPTS += -Dlibmms=disabled
-endif
-
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DTLS),y)
 GST1_PLUGINS_BAD_CONF_OPTS += -Ddtls=enabled
 GST1_PLUGINS_BAD_DEPENDENCIES += openssl
@@ -675,6 +685,13 @@ GST1_PLUGINS_BAD_CONF_OPTS += -Dopus=enabled
 GST1_PLUGINS_BAD_DEPENDENCIES += opus
 else
 GST1_PLUGINS_BAD_CONF_OPTS += -Dopus=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_QROVERLAY),y)
+GST1_PLUGINS_BAD_CONF_OPTS += -Dqroverlay=enabled
+GST1_PLUGINS_BAD_DEPENDENCIES += json-glib libqrencode
+else
+GST1_PLUGINS_BAD_CONF_OPTS += -Dqroverlay=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_RSVG),y)
@@ -787,6 +804,7 @@ endif
 
 # Add GPL license if GPL licensed plugins enabled.
 ifeq ($(GST1_PLUGINS_BAD_HAS_GPL_LICENSE),y)
+GST1_PLUGINS_BAD_CONF_OPTS += -Dgpl=enabled
 GST1_PLUGINS_BAD_LICENSE += , GPL-2.0+
 GST1_PLUGINS_BAD_LICENSE_FILES += COPYING
 endif

@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2022.02"
 
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_LIBMMS
+	bool "gst1-plugins-bad plugin libmms was removed"
+	depends on BR2_USE_WCHAR
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_LEGACY
+	help
+	  This plugin was removed with gst1-plugins-bad-1.20.0.
+
 config BR2_PACKAGE_PYTHON_FUNCTOOLS32
 	bool "python-functools32 removed"
 	select BR2_LEGACY

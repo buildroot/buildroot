@@ -60,7 +60,7 @@ LIBSIGROK_CONF_OPTS += --enable-cxx
 LIBSIGROK_DEPENDENCIES += \
 	glibmm \
 	host-doxygen \
-	$(if $(BR2_PACKAGE_PYTHON3),host-python3,host-python)
+	host-python3
 else
 LIBSIGROK_CONF_OPTS += --disable-cxx
 endif

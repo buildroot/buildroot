@@ -4,7 +4,8 @@
 #
 ################################################################################
 
-LZIP_VERSION = 1.22
+LZIP_VERSION = 1.23
+LZIP_SOURCE = lzip-$(LZIP_VERSION).tar.lz
 LZIP_SITE = http://download.savannah.gnu.org/releases/lzip
 LZIP_LICENSE = GPL-2.0+
 LZIP_LICENSE_FILES = COPYING

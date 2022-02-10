@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-GSTREAMER1_VERSION = 1.18.6
+GSTREAMER1_VERSION = 1.20.0
 GSTREAMER1_SOURCE = gstreamer-$(GSTREAMER1_VERSION).tar.xz
 GSTREAMER1_SITE = https://gstreamer.freedesktop.org/src/gstreamer
 GSTREAMER1_INSTALL_STAGING = YES
 GSTREAMER1_LICENSE_FILES = COPYING
-GSTREAMER1_LICENSE = LGPL-2.0+, LGPL-2.1+
+GSTREAMER1_LICENSE = LGPL-2.1+
 GSTREAMER1_CPE_ID_VENDOR = gstreamer_project
 GSTREAMER1_CPE_ID_PRODUCT = gstreamer
 
@@ -18,7 +18,6 @@ GSTREAMER1_CONF_OPTS = \
 	-Dtests=disabled \
 	-Dbenchmarks=disabled \
 	-Dtools=$(if $(BR2_PACKAGE_GSTREAMER1_INSTALL_TOOLS),enabled,disabled) \
-	-Dgtk_doc=disabled \
 	-Dgobject-cast-checks=disabled \
 	-Dglib-asserts=disabled \
 	-Dglib-checks=disabled \

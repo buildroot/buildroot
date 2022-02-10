@@ -11,11 +11,7 @@ OMNIORB_INSTALL_STAGING = YES
 OMNIORB_LICENSE = GPL2+, LGPL-2.1+
 OMNIORB_LICENSE_FILES = COPYING COPYING.LIB
 OMNIORB_DEPENDENCIES = host-omniorb
-HOST_OMNIORB_DEPENDENCIES = host-python
-
-# omniorb is not python3 friendly, so force the python interpreter
-OMNIORB_CONF_OPTS = ac_cv_path_PYTHON=$(HOST_DIR)/bin/python2
-HOST_OMNIORB_CONF_OPTS = ac_cv_path_PYTHON=$(HOST_DIR)/bin/python2
+HOST_OMNIORB_DEPENDENCIES = host-python3
 
 # Defaulting long double support to a safe option for the
 # mix of embedded targets, this could later be automated
