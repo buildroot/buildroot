@@ -4,7 +4,6 @@
 #
 ################################################################################
 
-# Please keep in sync with package/python3-psutil/python3-psutil.mk
 PYTHON_PSUTIL_VERSION = 5.8.0
 PYTHON_PSUTIL_SOURCE = psutil-$(PYTHON_PSUTIL_VERSION).tar.gz
 PYTHON_PSUTIL_SITE = https://files.pythonhosted.org/packages/e1/b0/7276de53321c12981717490516b7e612364f2cb372ee8901bd4a66a000d7

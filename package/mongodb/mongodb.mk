@@ -17,7 +17,7 @@ MONGODB_SELINUX_MODULES = mongodb
 MONGODB_DEPENDENCIES = \
 	boost \
 	host-python-cheetah \
-	host-python3-psutil \
+	host-python-psutil \
 	host-python-pyyaml \
 	host-python3-regex \
 	host-python-requests \
