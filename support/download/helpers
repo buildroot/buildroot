@@ -79,7 +79,7 @@ post_process_unpack() {
 
     mkdir "${dest}"
     tar -C "${dest}" --strip-components=1 -xzf "${tarball}"
-    one_file="$(find "${dest}" -type f -print0 |LC_ALL=C sort -z |head -z -n1 |tr -d "\0")"
+    one_file="$(find "${dest}" -type f -print0 |LC_ALL=C sort -z |sed 's/\x0.*//')"
     touch -r "${one_file}" "${dest}.timestamp"
 }
 
