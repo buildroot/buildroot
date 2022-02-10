@@ -65,8 +65,10 @@ HOST_PKG_CARGO_ENV = \
 
 define inner-cargo-package
 
-# We need host-rustc to run cargo
+# We need host-rustc to run cargo at download time (for vendoring),
+# and at build and install time.
 $(2)_DOWNLOAD_DEPENDENCIES += host-rustc
+$(2)_DEPENDENCIES += host-rustc
 
 $(2)_DOWNLOAD_POST_PROCESS = cargo
 $(2)_DL_ENV += CARGO_HOME=$$(HOST_DIR)/share/cargo
