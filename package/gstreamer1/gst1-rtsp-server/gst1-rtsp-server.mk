@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-GST1_RTSP_SERVER_VERSION = 1.18.6
+GST1_RTSP_SERVER_VERSION = 1.20.0
 GST1_RTSP_SERVER_SOURCE = gst-rtsp-server-$(GST1_RTSP_SERVER_VERSION).tar.xz
 GST1_RTSP_SERVER_SITE = http://gstreamer.freedesktop.org/src/gst-rtsp-server
-GST1_RTSP_SERVER_LICENSE = LGPL-2.0+
+GST1_RTSP_SERVER_LICENSE = LGPL-2.1+
 GST1_RTSP_SERVER_LICENSE_FILES = COPYING COPYING.LIB
 GST1_RTSP_SERVER_CPE_ID_VENDOR = gstreamer_project
 GST1_RTSP_SERVER_CPE_ID_PRODUCT = gst-rtsp-server
