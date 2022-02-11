@@ -12,3 +12,4 @@ PYTHON_REGEX_SETUP_TYPE = setuptools
 PYTHON_REGEX_LICENSE = CNRI-Python
 
 $(eval $(python-package))
+$(eval $(host-python-package))

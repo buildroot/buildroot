@@ -19,7 +19,7 @@ MONGODB_DEPENDENCIES = \
 	host-python-cheetah \
 	host-python-psutil \
 	host-python-pyyaml \
-	host-python3-regex \
+	host-python-regex \
 	host-python-requests \
 	host-scons \
 	pcre \
