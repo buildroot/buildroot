@@ -15,7 +15,7 @@ GNURADIO_SUPPORTS_IN_SOURCE_BUILD = NO
 GNURADIO_DEPENDENCIES = \
 	host-python3 \
 	host-python-mako \
-	host-python3-six \
+	host-python-six \
 	host-swig \
 	boost \
 	log4cpp \
