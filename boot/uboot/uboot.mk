@@ -216,7 +216,7 @@ UBOOT_DEPENDENCIES += host-swig
 endif
 
 ifeq ($(BR2_TARGET_UBOOT_NEEDS_PYELFTOOLS),y)
-UBOOT_DEPENDENCIES += host-python3-pyelftools
+UBOOT_DEPENDENCIES += host-python-pyelftools
 endif
 
 ifeq ($(BR2_TARGET_UBOOT_NEEDS_OPENSSL),y)
