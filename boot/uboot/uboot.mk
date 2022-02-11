@@ -207,9 +207,7 @@ ifeq ($(BR2_TARGET_UBOOT_NEEDS_DTC),y)
 UBOOT_DEPENDENCIES += host-dtc
 endif
 
-ifeq ($(BR2_TARGET_UBOOT_NEEDS_PYTHON2),y)
-UBOOT_DEPENDENCIES += host-python host-python-setuptools
-else ifeq ($(BR2_TARGET_UBOOT_NEEDS_PYTHON3),y)
+ifeq ($(BR2_TARGET_UBOOT_NEEDS_PYTHON3),y)
 UBOOT_DEPENDENCIES += host-python3 host-python3-setuptools
 endif
 
@@ -218,11 +216,7 @@ UBOOT_DEPENDENCIES += host-swig
 endif
 
 ifeq ($(BR2_TARGET_UBOOT_NEEDS_PYELFTOOLS),y)
-ifeq ($(BR2_TARGET_UBOOT_NEEDS_PYTHON2),y)
-UBOOT_DEPENDENCIES += host-python-pyelftools
-else ifeq ($(BR2_TARGET_UBOOT_NEEDS_PYTHON3),y)
 UBOOT_DEPENDENCIES += host-python3-pyelftools
-endif
 endif
 
 ifeq ($(BR2_TARGET_UBOOT_NEEDS_OPENSSL),y)

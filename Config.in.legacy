@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2022.02"
 
+config BR2_TARGET_UBOOT_NEEDS_PYTHON2
+	bool "host-python 2.7 support for U-Boot was removed"
+	select BR2_LEGACY
+	help
+	  Option was removed together with python 2.7 support.
+
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_LIBMMS
 	bool "gst1-plugins-bad plugin libmms was removed"
 	depends on BR2_USE_WCHAR
