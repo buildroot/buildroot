@@ -11,7 +11,5 @@ PYTHON_MARKUPSAFE_SETUP_TYPE = setuptools
 PYTHON_MARKUPSAFE_LICENSE = BSD-3-Clause
 PYTHON_MARKUPSAFE_LICENSE_FILES = LICENSE.rst
 
-HOST_PYTHON_MARKUPSAFE_NEEDS_HOST_PYTHON = python3
-
 $(eval $(python-package))
 $(eval $(host-python-package))

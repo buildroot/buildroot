@@ -13,7 +13,6 @@ SETOOLS_LICENSE_FILES = COPYING COPYING.GPL COPYING.LGPL
 SETOOLS_CPE_ID_VENDOR = selinuxproject
 SETOOLS_SETUP_TYPE = setuptools
 HOST_SETOOLS_DEPENDENCIES = host-python-cython host-libselinux host-libsepol host-python-networkx
-HOST_SETOOLS_NEEDS_HOST_PYTHON = python3
 
 define SETOOLS_FIX_SETUP
 	# By default, setup.py will look for libsepol.a in the host machines

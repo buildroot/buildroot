@@ -17,7 +17,5 @@ PYTHON_JINJA2_CPE_ID_PRODUCT = jinja2
 PYTHON_JINJA2_DEPENDENCIES = host-python-markupsafe
 HOST_PYTHON_JINJA2_DEPENDENCIES = host-python-markupsafe
 
-HOST_PYTHON_JINJA2_NEEDS_HOST_PYTHON = python3
-
 $(eval $(python-package))
 $(eval $(host-python-package))
