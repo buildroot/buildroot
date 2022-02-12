@@ -1,6 +1,5 @@
 config BR2_PACKAGE_PYTHON_IBMIOTF
 	bool "python-ibmiotf"
-	depends on BR2_PACKAGE_PYTHON3 # python-requests -> python-idna
 	select BR2_PACKAGE_PYTHON_ISO8601 # runtime
 	select BR2_PACKAGE_PYTHON_PAHO_MQTT # runtime
 	select BR2_PACKAGE_PYTHON_PYTZ # runtime

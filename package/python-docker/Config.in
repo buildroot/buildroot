@@ -1,6 +1,5 @@
 config BR2_PACKAGE_PYTHON_DOCKER
 	bool "python-docker"
-	depends on BR2_PACKAGE_PYTHON3 # python-requests -> python-idna
 	# docker-engine may be running on another host, so no other dependency
 	select BR2_PACKAGE_PYTHON3_SSL # runtime
 	select BR2_PACKAGE_PYTHON_REQUESTS # runtime

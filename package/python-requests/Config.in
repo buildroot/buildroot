@@ -1,6 +1,5 @@
 config BR2_PACKAGE_PYTHON_REQUESTS
 	bool "python-requests"
-	depends on BR2_PACKAGE_PYTHON3 # python-idna
 	select BR2_PACKAGE_PYTHON_CERTIFI # runtime
 	select BR2_PACKAGE_PYTHON_CHARSET_NORMALIZER # runtime
 	select BR2_PACKAGE_PYTHON_IDNA # runtime

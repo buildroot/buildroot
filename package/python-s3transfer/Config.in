@@ -1,6 +1,5 @@
 config BR2_PACKAGE_PYTHON_S3TRANSFER
 	bool "python-s3transfer"
-	depends on BR2_PACKAGE_PYTHON3
 	select BR2_PACKAGE_PYTHON_BOTOCORE # runtime
 	help
 	  An Amazon S3 Transfer Manager.

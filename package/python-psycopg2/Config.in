@@ -1,6 +1,5 @@
 config BR2_PACKAGE_PYTHON_PSYCOPG2
 	bool "python-psycopg2"
-	depends on BR2_PACKAGE_PYTHON3
 	depends on BR2_USE_WCHAR # postgresql
 	select BR2_PACKAGE_POSTGRESQL
 	help
@@ -24,5 +23,4 @@ config BR2_PACKAGE_PYTHON_PSYCOPG2
 	  http://initd.org/psycopg/
 
 comment "python-psycopg2 needs a toolchain w/ wchar"
-	depends on BR2_PACKAGE_PYTHON3
 	depends on !BR2_USE_WCHAR
