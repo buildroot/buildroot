@@ -73,7 +73,7 @@ LIBIIO_CONF_OPTS += -DHAVE_DNS_SD=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_LIBIIO_BINDINGS_PYTHON),y)
-LIBIIO_DEPENDENCIES += host-python3-setuptools python3
+LIBIIO_DEPENDENCIES += host-python-setuptools python3
 LIBIIO_CONF_OPTS += \
 	-DPYTHON_BINDINGS=ON \
 	-DPYTHON_EXECUTABLE=$(HOST_DIR)/bin/python3

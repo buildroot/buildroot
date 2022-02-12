@@ -150,86 +150,24 @@ endif
 # Target packages need both the python interpreter on the target (for
 # runtime) and the python interpreter on the host (for
 # compilation). However, host packages only need the python
-# interpreter on the host, whose version may be enforced by setting
-# the *_NEEDS_HOST_PYTHON variable.
-#
-# So:
-# - for target packages, we always depend on the default python interpreter
-#   (the one selected by the config);
-# - for host packages:
-#   - if *_NEEDS_HOST_PYTHON is not set, then we use the default
-#     interpreter;
-#   - otherwise, we depend on the one requested by *_NEEDS_HOST_PYTHON.
+# interpreter on the host.
 #
 ifeq ($(4),target)
-$(2)_DEPENDENCIES += $$(if $$(BR2_PACKAGE_PYTHON3),host-python3 python3,host-python python)
+$(2)_DEPENDENCIES += host-python3 python3
 else
-ifeq ($$($(2)_NEEDS_HOST_PYTHON),)
-$(2)_DEPENDENCIES += $$(if $$(BR2_PACKAGE_PYTHON3),host-python3,host-python)
-else
-ifeq ($$($(2)_NEEDS_HOST_PYTHON),python2)
-$(2)_DEPENDENCIES += host-python
-else ifeq ($$($(2)_NEEDS_HOST_PYTHON),python3)
 $(2)_DEPENDENCIES += host-python3
-else
-$$(error Incorrect value '$$($(2)_NEEDS_HOST_PYTHON)' for $(2)_NEEDS_HOST_PYTHON)
-endif
-endif # ($$($(2)_NEEDS_HOST_PYTHON),)
 endif # ($(4),target)
 
 # Setuptools based packages will need setuptools for the host Python
 # interpreter (both host and target).
 #
-# If we have a host package that says "I need Python 3", we install
-# setuptools for python3.
-#
-# If we have a host packge that says "I need Python 2", we install
-# setuptools for python2.
-#
-# If we have a target package, or a host package that doesn't have any
-# <pkg>_NEEDS_HOST_PYTHON, and BR2_PACKAGE_PYTHON3 is used, then
-# Python 3.x is the default Python interpreter, so we install
-# setuptools for python3.
-#
-# In all other cases, we install setuptools for python2. Those other
-# cases are: a target package or host package with
-# BR2_PACKAGE_PYTHON=y, or a host-package with neither
-# BR2_PACKAGE_PYTHON3=y or BR2_PACKAGE_PYTHON=y.
 ifeq ($$($(2)_SETUP_TYPE),setuptools)
-ifeq ($(4):$$($(2)_NEEDS_HOST_PYTHON),host:python3)
-$(2)_DEPENDENCIES += $$(if $$(filter host-python3-setuptools,$(1)),,host-python3-setuptools)
-else ifeq ($(4):$$($(2)_NEEDS_HOST_PYTHON),host:python2)
 $(2)_DEPENDENCIES += $$(if $$(filter host-python-setuptools,$(1)),,host-python-setuptools)
-else ifeq ($$(BR2_PACKAGE_PYTHON3),y)
-$(2)_DEPENDENCIES += $$(if $$(filter host-python3-setuptools,$(1)),,host-python3-setuptools)
-else
-$(2)_DEPENDENCIES += $$(if $$(filter host-python-setuptools,$(1)),,host-python-setuptools)
-endif
 endif # SETUP_TYPE
 
 # Python interpreter to use for building the package.
 #
-# We may want to specify the python interpreter to be used for building a
-# package, especially for host-packages (target packages must be built using
-# the same version of the interpreter as the one installed on the target).
-#
-# So:
-# - for target packages, we always use the default python interpreter (which
-#   is the same version as the one built and installed on the target);
-# - for host packages:
-#   - if *_NEEDS_HOST_PYTHON is not set, then we use the default
-#     interpreter;
-#   - otherwise, we use the one requested by *_NEEDS_HOST_PYTHON.
-#
-ifeq ($(4),target)
 $(2)_PYTHON_INTERPRETER = $$(HOST_DIR)/bin/python
-else
-ifeq ($$($(2)_NEEDS_HOST_PYTHON),)
-$(2)_PYTHON_INTERPRETER = $$(HOST_DIR)/bin/python
-else
-$(2)_PYTHON_INTERPRETER = $$(HOST_DIR)/bin/$$($(2)_NEEDS_HOST_PYTHON)
-endif
-endif
 
 #
 # Build step. Only define it if not already defined by the package .mk
