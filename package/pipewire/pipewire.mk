@@ -30,8 +30,7 @@ PIPEWIRE_CONF_OPTS += \
 	-Dvolume=enabled \
 	-Dsession-managers=[] \
 	-Dlegacy-rtkit=false \
-	-Dlibcanberra=disabled \
-	-Dlv2=disabled
+	-Dlibcanberra=disabled
 
 ifeq ($(BR2_PACKAGE_DBUS),y)
 PIPEWIRE_CONF_OPTS += -Ddbus=enabled
@@ -128,6 +127,13 @@ PIPEWIRE_CONF_OPTS += -Dlibcamera=enabled
 PIPEWIRE_DEPENDENCIES += libcamera libdrm
 else
 PIPEWIRE_CONF_OPTS += -Dlibcamera=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_LILV),y)
+PIPEWIRE_CONF_OPTS += -Dlv2=enabled
+PIPEWIRE_DEPENDENCIES += lilv
+else
+PIPEWIRE_CONF_OPTS += -Dlv2=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_XLIB_LIBX11),y)
