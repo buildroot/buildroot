@@ -14,3 +14,4 @@ PYTHON_PSUTIL_CPE_ID_VENDOR = psutil_project
 PYTHON_PSUTIL_CPE_ID_PRODUCT = psutil
 
 $(eval $(python-package))
+$(eval $(host-python-package))
