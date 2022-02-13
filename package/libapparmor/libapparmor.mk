@@ -28,7 +28,7 @@ LIBAPPARMOR_CONF_OPTS = \
 	--disable-man-pages
 
 ifeq ($(BR2_PACKAGE_PYTHON3),y)
-LIBAPPARMOR_DEPENDENCIES += host-python3 host-python3-setuptools host-swig python3
+LIBAPPARMOR_DEPENDENCIES += host-python3 host-python-setuptools host-swig python3
 LIBAPPARMOR_CONF_OPTS += \
 	--with-python \
 	PYTHON=$(HOST_DIR)/usr/bin/python3 \

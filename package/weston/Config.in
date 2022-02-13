@@ -35,7 +35,7 @@ choice
 	prompt "default compositor"
 
 config BR2_PACKAGE_WESTON_DEFAULT_FBDEV
-	bool "fbdev"
+	bool "fbdev (deprecated)"
 	select BR2_PACKAGE_WESTON_FBDEV
 
 config BR2_PACKAGE_WESTON_DEFAULT_DRM
@@ -46,21 +46,31 @@ config BR2_PACKAGE_WESTON_DEFAULT_DRM
 comment "drm backend needs mesa3d w/ EGL driver"
 	depends on !BR2_PACKAGE_MESA3D_OPENGL_EGL && !BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_WL
 
+config BR2_PACKAGE_WESTON_DEFAULT_HEADLESS
+	bool "headless"
+	select BR2_PACKAGE_WESTON_HEADLESS
+
+config BR2_PACKAGE_WESTON_DEFAULT_WAYLAND
+	bool "wayland (nested)"
+	select BR2_PACKAGE_WESTON_WAYLAND
+
 config BR2_PACKAGE_WESTON_DEFAULT_X11
-	bool "X11"
+	bool "X11 (nested)"
 	depends on BR2_PACKAGE_XORG7
 	select BR2_PACKAGE_WESTON_X11
 
-comment "X11 backend needs X.org"
+comment "X11 (nested) backend needs X.org"
 	depends on !BR2_PACKAGE_XORG7
 
 endchoice
 
 config BR2_PACKAGE_WESTON_DEFAULT_COMPOSITOR
 	string
-	default "fbdev" if BR2_PACKAGE_WESTON_DEFAULT_FBDEV
-	default "drm"   if BR2_PACKAGE_WESTON_DEFAULT_DRM
-	default "x11"   if BR2_PACKAGE_WESTON_DEFAULT_X11
+	default "fbdev"    if BR2_PACKAGE_WESTON_DEFAULT_FBDEV
+	default "drm"      if BR2_PACKAGE_WESTON_DEFAULT_DRM
+	default "headless" if BR2_PACKAGE_WESTON_DEFAULT_HEADLESS
+	default "wayland"  if BR2_PACKAGE_WESTON_DEFAULT_WAYLAND
+	default "x11"      if BR2_PACKAGE_WESTON_DEFAULT_X11
 
 config BR2_PACKAGE_WESTON_DRM
 	bool "DRM compositor"
@@ -71,7 +81,7 @@ comment "DRM compositor needs an OpenGL EGL backend provided by mesa3d"
 	depends on !BR2_PACKAGE_MESA3D_OPENGL_EGL && !BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_WL
 
 config BR2_PACKAGE_WESTON_FBDEV
-	bool "fbdev compositor"
+	bool "fbdev compositor (deprecated)"
 
 # FreeRDP needs threads and !static, already the case for weston
 config BR2_PACKAGE_WESTON_RDP
@@ -99,13 +109,19 @@ comment "RDP compositor needs a toolchain w/ wchar, C++"
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_USE_WCHAR || !BR2_INSTALL_LIBSTDCPP
 
+config BR2_PACKAGE_WESTON_HEADLESS
+	bool "headless (testing) compositor"
+
+config BR2_PACKAGE_WESTON_WAYLAND
+	bool "Wayland (nested) compositor"
+
 config BR2_PACKAGE_WESTON_X11
-	bool "X11 compositor"
+	bool "X11 (nested) compositor"
 	depends on BR2_PACKAGE_XORG7
 	select BR2_PACKAGE_LIBXCB
 	select BR2_PACKAGE_XLIB_LIBX11
 
-comment "X11 compositor needs X.org enabled"
+comment "X11 (nested) compositor needs X.org enabled"
 	depends on !BR2_PACKAGE_XORG7
 
 config BR2_PACKAGE_WESTON_XWAYLAND

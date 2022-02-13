@@ -12,6 +12,7 @@ RYGEL_LICENSE = LGPL-2.1+, CC-BY-SA-3.0 (logo)
 RYGEL_LICENSE_FILES = COPYING COPYING.logo
 RYGEL_DEPENDENCIES = \
 	gdk-pixbuf \
+	gobject-introspection \
 	gupnp-av \
 	gupnp-dlna \
 	libgee \
@@ -24,15 +25,9 @@ RYGEL_CONF_ENV = LIBS=$(TARGET_NLS_LIBS)
 RYGEL_CONF_OPTS += \
 	-Dapi-docs=false \
 	-Dexamples=false \
+	-Dintrospection=enabled \
 	-Dtests=false
 RYGEL_PLUGINS = external,lms,mpris,ruih
-
-ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
-RYGEL_CONF_OPTS += -Dintrospection=enabled
-RYGEL_DEPENDENCIES += gobject-introspection
-else
-RYGEL_CONF_OPTS += -Dintrospection=disabled
-endif
 
 ifeq ($(BR2_PACKAGE_RYGEL_MEDIA_ENGINE_GSTREAMER1),y)
 RYGEL_CONF_OPTS += \

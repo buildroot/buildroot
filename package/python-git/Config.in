@@ -1,6 +1,5 @@
 config BR2_PACKAGE_PYTHON_GIT
 	bool "python-git"
-	depends on BR2_PACKAGE_PYTHON3
 	depends on BR2_USE_MMU # git
 	select BR2_PACKAGE_GIT # runtime
 	select BR2_PACKAGE_PYTHON_GITDB2 # runtime

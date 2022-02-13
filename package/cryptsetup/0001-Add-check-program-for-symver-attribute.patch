@@ -1,0 +1,56 @@
+From 7c6ec620de3f99d4212f4a54aa576df1b97020ab Mon Sep 17 00:00:00 2001
+From: Ondrej Kozina <okozina@redhat.com>
+Date: Wed, 2 Feb 2022 11:34:57 +0100
+Subject: [PATCH] Add check program for symver attribute.
+
+Fixes: #709.
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ configure.ac               | 11 +++++++++++
+ lib/libcryptsetup_symver.h |  8 +++-----
+ 2 files changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index a0e5990d..b052f8cf 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -554,6 +554,17 @@ if test "x$enable_static_cryptsetup" = "xyes"; then
+ 	PKG_CONFIG=$saved_PKG_CONFIG
+ fi
+ 
++dnl Check compiler support for symver function attribute
++saved_CFLAGS=$CFLAGS
++CFLAGS="-O0 -Werror"
++AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
++	void _test_sym(void);
++	__attribute__((__symver__("sym@VERSION_4.2"))) void _test_sym(void) {}
++]],
++[[ _test_sym() ]]
++)],[ AC_DEFINE([HAVE_ATTRIBUTE_SYMVER], 1, [Define to 1 to use __attribute__((symver))])])
++CFLAGS=$saved_CFLAGS
++
+ AC_MSG_CHECKING([for systemd tmpfiles config directory])
+ PKG_CHECK_VAR([systemd_tmpfilesdir], [systemd], [tmpfilesdir], [], [systemd_tmpfilesdir=no])
+ AC_MSG_RESULT([$systemd_tmpfilesdir])
+diff --git a/lib/libcryptsetup_symver.h b/lib/libcryptsetup_symver.h
+index 2a804b6a..3558310d 100644
+--- a/lib/libcryptsetup_symver.h
++++ b/lib/libcryptsetup_symver.h
+@@ -67,11 +67,9 @@
+  *   under CRYPT_SYMBOL_EXPORT_OLD(int, crypt_func_X, ...) macro
+  */
+ 
+-#ifdef __has_attribute
+-#  if __has_attribute(symver)
+-#    define _CRYPT_SYMVER(_local_sym, _public_sym, _ver_str, _maj, _min)     \
+-       __attribute__((__symver__(#_public_sym _ver_str #_maj "." #_min)))
+-#  endif
++#if HAVE_ATTRIBUTE_SYMVER
++#  define _CRYPT_SYMVER(_local_sym, _public_sym, _ver_str, _maj, _min)     \
++     __attribute__((__symver__(#_public_sym _ver_str #_maj "." #_min)))
+ #endif
+ 
+ #if !defined(_CRYPT_SYMVER) && defined(__GNUC__)
+-- 
+2.25.1
+

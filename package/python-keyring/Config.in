@@ -2,7 +2,6 @@ config BR2_PACKAGE_PYTHON_KEYRING
 	bool "python-keyring"
 	# python-secretstorage -> python-cryptography
 	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
-	depends on BR2_PACKAGE_PYTHON3
 	select BR2_PACKAGE_PYTHON_ENTRYPOINTS # runtime
 	select BR2_PACKAGE_PYTHON_SECRETSTORAGE # runtime
 	help

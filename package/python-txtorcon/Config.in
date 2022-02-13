@@ -2,7 +2,6 @@ config BR2_PACKAGE_PYTHON_TXTORCON
 	bool "python-txtorcon"
 	# python-pyopenssl -> python-cryptography
 	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
-	depends on BR2_PACKAGE_PYTHON3 # python-idna
 	select BR2_PACKAGE_PYTHON_AUTOMAT # runtime
 	select BR2_PACKAGE_PYTHON_IDNA # runtime
 	select BR2_PACKAGE_PYTHON_INCREMENTAL # runtime

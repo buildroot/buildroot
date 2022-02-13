@@ -235,6 +235,14 @@ QT5BASE_DEPENDENCIES   += $(if $(BR2_PACKAGE_QT5BASE_ICU),icu)
 
 QT5BASE_CONFIGURE_OPTS += $(if $(BR2_PACKAGE_QT5BASE_EXAMPLES),-make,-nomake) examples
 
+# see qt5base-5.15.2/src/corelib/global/qlogging.cpp:110 - __has_include(<execinfo.h>)
+ifeq ($(BR2_PACKAGE_LIBEXECINFO),y)
+QT5BASE_DEPENDENCIES += libexecinfo
+define QT5BASE_CONFIGURE_ARCH_CONFIG_LIBEXECINFO
+	printf '!host_build { \n LIBS += -lexecinfo\n }' >$(QT5BASE_ARCH_CONFIG_FILE)
+endef
+endif
+
 ifeq ($(BR2_PACKAGE_LIBINPUT),y)
 QT5BASE_CONFIGURE_OPTS += -libinput
 QT5BASE_DEPENDENCIES += libinput
@@ -285,7 +293,7 @@ endif
 QT5BASE_ARCH_CONFIG_FILE = $(@D)/mkspecs/devices/linux-buildroot-g++/arch.conf
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 # Qt 5.8 needs atomics, which on various architectures are in -latomic
-define QT5BASE_CONFIGURE_ARCH_CONFIG
+define QT5BASE_CONFIGURE_ARCH_CONFIG_LIBATOMIC
 	printf '!host_build { \n LIBS += -latomic\n }' >$(QT5BASE_ARCH_CONFIG_FILE)
 endef
 endif
@@ -308,7 +316,8 @@ define QT5BASE_CONFIGURE_CMDS
 		$(@D)/mkspecs/devices/linux-buildroot-g++/qplatformdefs.h
 	$(QT5BASE_CONFIGURE_CONFIG_FILE)
 	touch $(QT5BASE_ARCH_CONFIG_FILE)
-	$(QT5BASE_CONFIGURE_ARCH_CONFIG)
+	$(QT5BASE_CONFIGURE_ARCH_CONFIG_LIBATOMIC)
+	$(QT5BASE_CONFIGURE_ARCH_CONFIG_LIBEXECINFO)
 	$(QT5BASE_CONFIGURE_HOSTCC)
 	(cd $(@D); \
 		$(TARGET_MAKE_ENV) \

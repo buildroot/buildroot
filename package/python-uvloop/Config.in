@@ -1,6 +1,5 @@
 config BR2_PACKAGE_PYTHON_UVLOOP
 	bool "python-uvloop"
-	depends on BR2_PACKAGE_PYTHON3
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libuv
 	depends on BR2_USE_MMU # libuv
 	depends on !BR2_STATIC_LIBS # libuv

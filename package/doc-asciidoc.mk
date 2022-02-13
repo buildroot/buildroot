@@ -42,12 +42,11 @@ BR_ASCIIDOC_CONF = docs/conf/asciidoc.conf
 #  argument 1 is the name of the document and the top-level asciidoc file must
 #             have the same name
 #  argument 2 is the uppercase name of the document
-#  argument 3 is the directory containing the document
-#  argument 4 is the type of document to generate (-f argument of a2x)
-#  argument 5 is the document type as used in the make target
-#  argument 6 is the output file extension for the document type
-#  argument 7 is the human text for the document type
-#  argument 8 (optional) are extra arguments for a2x
+#  argument 3 is the type of document to generate (-f argument of a2x)
+#  argument 4 is the document type as used in the make target
+#  argument 5 is the output file extension for the document type
+#  argument 6 is the human text for the document type
+#  argument 7 (optional) are extra arguments for a2x
 #
 # The variable <DOCUMENT_NAME>_SOURCES defines the dependencies.
 #
@@ -55,55 +54,55 @@ BR_ASCIIDOC_CONF = docs/conf/asciidoc.conf
 # all variable references except the arguments must be $$-quoted.
 ################################################################################
 define ASCIIDOC_INNER
-$(1): $(1)-$(5)
-.PHONY: $(1)-$(5)
-$(1)-$(5): $$(O)/docs/$(1)/$(1).$(6)
+$(1): $(1)-$(4)
+.PHONY: $(1)-$(4)
+$(1)-$(4): $$(O)/docs/$(1)/$(1).$(5)
 
-asciidoc-check-dependencies-$(5):
-.PHONY: $(1)-check-dependencies-$(5)
+asciidoc-check-dependencies-$(4):
+.PHONY: $(1)-check-dependencies-$(4)
 # Single line, because splitting a foreach is not easy...
-$(1)-check-dependencies-$(5): asciidoc-check-dependencies-$(5)
-	$$(Q)$$(foreach hook,$$($(2)_CHECK_DEPENDENCIES_$$(call UPPERCASE,$(5))_HOOKS),$$(call $$(hook))$$(sep))
+$(1)-check-dependencies-$(4): asciidoc-check-dependencies-$(4)
+	$$(Q)$$(foreach hook,$$($(2)_CHECK_DEPENDENCIES_$$(call UPPERCASE,$(4))_HOOKS),$$(call $$(hook))$$(sep))
 
 # Include Buildroot's AsciiDoc configuration first:
 #  - generic configuration,
 #  - then output-specific configuration
 ifneq ($$(wildcard $$(BR_ASCIIDOC_CONF)),)
-$(2)_$(4)_ASCIIDOC_OPTS += -f $$(BR_ASCIIDOC_CONF)
+$(2)_$(3)_ASCIIDOC_OPTS += -f $$(BR_ASCIIDOC_CONF)
 endif
-BR_$(4)_ASCIIDOC_CONF = docs/conf/asciidoc-$(4).conf
-ifneq ($$(wildcard $$(BR_$(4)_ASCIIDOC_CONF)),)
-$(2)_$(4)_ASCIIDOC_OPTS += -f $$(BR_$(4)_ASCIIDOC_CONF)
+BR_$(3)_ASCIIDOC_CONF = docs/conf/asciidoc-$(3).conf
+ifneq ($$(wildcard $$(BR_$(3)_ASCIIDOC_CONF)),)
+$(2)_$(3)_ASCIIDOC_OPTS += -f $$(BR_$(3)_ASCIIDOC_CONF)
 endif
 
 # Then include the document's AsciiDoc configuration:
 #  - generic configuration,
 #  - then output-specific configuration
 ifneq ($$(wildcard $$($(2)_ASCIIDOC_CONF)),)
-$(2)_$(4)_ASCIIDOC_OPTS += -f $$($(2)_ASCIIDOC_CONF)
+$(2)_$(3)_ASCIIDOC_OPTS += -f $$($(2)_ASCIIDOC_CONF)
 endif
-$(2)_$(4)_ASCIIDOC_CONF = $(3)/asciidoc-$(4).conf
-ifneq ($$(wildcard $$($(2)_$(4)_ASCIIDOC_CONF)),)
-$(2)_$(4)_ASCIIDOC_OPTS += -f $$($(2)_$(4)_ASCIIDOC_CONF)
+$(2)_$(3)_ASCIIDOC_CONF = $$($(2)_DOCDIR)/asciidoc-$(3).conf
+ifneq ($$(wildcard $$($(2)_$(3)_ASCIIDOC_CONF)),)
+$(2)_$(3)_ASCIIDOC_OPTS += -f $$($(2)_$(3)_ASCIIDOC_CONF)
 endif
 
 # Handle a2x warning about --destination-dir option only applicable to HTML
 # based outputs. So:
 # - use the --destination-dir option if possible (html and split-html),
 # - otherwise copy the generated document to the output directory
-$(2)_$(4)_A2X_OPTS =
-ifneq ($$(filter $(5),html split-html),)
-$(2)_$(4)_A2X_OPTS += --destination-dir="$$(@D)"
+$(2)_$(3)_A2X_OPTS =
+ifneq ($$(filter $(4),html split-html),)
+$(2)_$(3)_A2X_OPTS += --destination-dir="$$(@D)"
 else
-define $(2)_$(4)_INSTALL_CMDS
-	$$(Q)cp -f $$(BUILD_DIR)/docs/$(1)/$(1).$(6) $$(@D)
+define $(2)_$(3)_INSTALL_CMDS
+	$$(Q)cp -f $$(BUILD_DIR)/docs/$(1)/$(1).$(5) $$(@D)
 endef
 endif
 
-$$(O)/docs/$(1)/$(1).$(6): export TZ=UTC
+$$(O)/docs/$(1)/$(1).$(5): export TZ=UTC
 
-ifeq ($(6)-$$(GENDOC_XSLTPROC_IS_BROKEN),pdf-y)
-$$(O)/docs/$(1)/$(1).$(6):
+ifeq ($(5)-$$(GENDOC_XSLTPROC_IS_BROKEN),pdf-y)
+$$(O)/docs/$(1)/$(1).$(5):
 	$$(warning PDF generation is disabled because of a bug in \
 		xsltproc. To be able to generate a PDF, you should \
 		build xsltproc from the libxslt sources >=1.1.29 and pass it \
@@ -112,20 +111,20 @@ $$(O)/docs/$(1)/$(1).$(6):
 else
 # -r $(@D) is there for documents that use external filters; those filters
 # generate code at the same location it finds the document's source files.
-$$(O)/docs/$(1)/$(1).$(6): $$($(2)_SOURCES) \
+$$(O)/docs/$(1)/$(1).$(5): $$($(2)_SOURCES) \
 			   $(1)-check-dependencies \
-			   $(1)-check-dependencies-$(5) \
+			   $(1)-check-dependencies-$(4) \
 			   $(1)-prepare-sources
-	$$(Q)$$(call MESSAGE,"Generating $(7) $(1)...")
+	$$(Q)$$(call MESSAGE,"Generating $(6) $(1)...")
 	$$(Q)mkdir -p $$(@D)
-	$$(Q)a2x $(8) -f $(4) -d book -L \
+	$$(Q)a2x $(7) -f $(3) -d book -L \
 		$$(foreach r,$$($(2)_RESOURCES) $$(@D), \
 			--resource="$$(abspath $$(r))") \
-		$$($(2)_$(4)_A2X_OPTS) \
-		--asciidoc-opts="$$($(2)_$(4)_ASCIIDOC_OPTS)" \
+		$$($(2)_$(3)_A2X_OPTS) \
+		--asciidoc-opts="$$($(2)_$(3)_ASCIIDOC_OPTS)" \
 		$$(BUILD_DIR)/docs/$(1)/$(1).txt
 # install the generated document
-	$$($(2)_$(4)_INSTALL_CMDS)
+	$$($(2)_$(3)_INSTALL_CMDS)
 endif
 endef
 
@@ -135,13 +134,14 @@ endef
 # argument 1 is the lowercase name of the document; the document's main file
 #            must have the same name, with the .txt extension
 # argument 2 is the uppercase name of the document
-# argument 3 is the directory containing the document's sources
 #
 # The variable <DOCUMENT_NAME>_SOURCES defines the dependencies.
 # The variable <DOCUMENT_NAME>_RESOURCES defines where the document's
 # resources, such as images, are located; must be an absolute path.
 ################################################################################
 define ASCIIDOC
+$(2)_DOCDIR = $(pkgdir)
+
 # Single line, because splitting a foreach is not easy...
 .PHONY: $(1)-check-dependencies
 $(1)-check-dependencies: asciidoc-check-dependencies $$($(2)_DEPENDENCIES)
@@ -153,29 +153,29 @@ $(1)-check-dependencies: asciidoc-check-dependencies $$($(2)_DEPENDENCIES)
 $$(BUILD_DIR)/docs/$(1)/.stamp_doc_rsynced:
 	$$(Q)$$(call MESSAGE,"Preparing the $(1) sources...")
 	$$(Q)mkdir -p $$(@D)
-	$$(Q)rsync -a $(3) $$(@D)
+	$$(Q)rsync -a $$($(2)_DOCDIR) $$(@D)
 	$$(Q)$$(foreach hook,$$($(2)_POST_RSYNC_HOOKS),$$(call $$(hook))$$(sep))
 
 .PHONY: $(1)-prepare-sources
 $(1)-prepare-sources: $$(BUILD_DIR)/docs/$(1)/.stamp_doc_rsynced
 
-$(2)_ASCIIDOC_CONF = $(3)/asciidoc.conf
+$(2)_ASCIIDOC_CONF = $$($(2)_DOCDIR)/asciidoc.conf
 
-$(call ASCIIDOC_INNER,$(1),$(2),$(3),xhtml,html,html,HTML,\
+$(call ASCIIDOC_INNER,$(1),$(2),xhtml,html,html,HTML,\
 	--xsltproc-opts "--stringparam toc.section.depth 1")
 
-$(call ASCIIDOC_INNER,$(1),$(2),$(3),chunked,split-html,chunked,split HTML,\
+$(call ASCIIDOC_INNER,$(1),$(2),chunked,split-html,chunked,split HTML,\
 	--xsltproc-opts "--stringparam toc.section.depth 1")
 
 # dblatex needs to pass the '--maxvars ...' option to xsltproc to prevent it
 # from reaching the template recursion limit when processing the (long) target
 # package table and bailing out.
-$(call ASCIIDOC_INNER,$(1),$(2),$(3),pdf,pdf,pdf,PDF,\
+$(call ASCIIDOC_INNER,$(1),$(2),pdf,pdf,pdf,PDF,\
 	--dblatex-opts "-P latex.output.revhistory=0 -x '--maxvars 100000'")
 
-$(call ASCIIDOC_INNER,$(1),$(2),$(3),text,text,text,text)
+$(call ASCIIDOC_INNER,$(1),$(2),text,text,text,text)
 
-$(call ASCIIDOC_INNER,$(1),$(2),$(3),epub,epub,epub,ePUB)
+$(call ASCIIDOC_INNER,$(1),$(2),epub,epub,epub,ePUB)
 
 clean: $(1)-clean
 $(1)-clean:
@@ -187,4 +187,4 @@ endef
 # asciidoc-document -- the target generator macro for asciidoc documents
 ################################################################################
 
-asciidoc-document = $(call ASCIIDOC,$(pkgname),$(call UPPERCASE,$(pkgname)),$(pkgdir))
+asciidoc-document = $(call ASCIIDOC,$(pkgname),$(call UPPERCASE,$(pkgname)))

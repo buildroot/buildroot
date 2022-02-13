@@ -1,0 +1,305 @@
+From ef694c19c074333fd16589ec6ffef3e7ca895186 Mon Sep 17 00:00:00 2001
+From: Heiko Thiery <heiko.thiery@gmail.com>
+Date: Wed, 12 Jan 2022 08:44:36 +0100
+Subject: [PATCH 2/2] imx: imx8mm: imx8mm-kontron-n801x-s: add common board
+ u-boot.dtsi
+
+When using a board variant that selects the lvds specific dtb the
+*.u-boot.dtsi file will not be included. To have a lvds dtb specific
+u-boot.dtsi file move this part to a common board u-boot.dtsi file and
+include this in the board base u-boot.dtsi and create an additional one
+for the lvds variant.
+
+Patch submitted upstream:
+https://patchwork.ozlabs.org/project/uboot/patch/20220112085755.7396-2-heiko.thiery@gmail.com/
+
+Signed-off-by: Heiko Thiery <heiko.thiery@gmail.com>
+---
+ .../imx8mm-kontron-n801x-s-lvds-u-boot.dtsi   |   6 +
+ .../dts/imx8mm-kontron-n801x-s-u-boot.dtsi    | 124 +----------------
+ arch/arm/dts/imx8mm-kontron-n801x-u-boot.dtsi | 128 ++++++++++++++++++
+ 3 files changed, 135 insertions(+), 123 deletions(-)
+ create mode 100644 arch/arm/dts/imx8mm-kontron-n801x-s-lvds-u-boot.dtsi
+ create mode 100644 arch/arm/dts/imx8mm-kontron-n801x-u-boot.dtsi
+
+diff --git a/arch/arm/dts/imx8mm-kontron-n801x-s-lvds-u-boot.dtsi b/arch/arm/dts/imx8mm-kontron-n801x-s-lvds-u-boot.dtsi
+new file mode 100644
+index 0000000000..4bf75722bf
+--- /dev/null
++++ b/arch/arm/dts/imx8mm-kontron-n801x-s-lvds-u-boot.dtsi
+@@ -0,0 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2019 Kontron Electronics GmbH
++ */
++
++#include "imx8mm-kontron-n801x-u-boot.dtsi"
+diff --git a/arch/arm/dts/imx8mm-kontron-n801x-s-u-boot.dtsi b/arch/arm/dts/imx8mm-kontron-n801x-s-u-boot.dtsi
+index 22d18e6f1c..4bf75722bf 100644
+--- a/arch/arm/dts/imx8mm-kontron-n801x-s-u-boot.dtsi
++++ b/arch/arm/dts/imx8mm-kontron-n801x-s-u-boot.dtsi
+@@ -3,126 +3,4 @@
+  * Copyright (C) 2019 Kontron Electronics GmbH
+  */
+ 
+-#include "imx8mm-u-boot.dtsi"
+-
+-/ {
+-	aliases {
+-		usb0 = &usbotg1;
+-		usb1 = &usbotg2;
+-	};
+-
+-	wdt-reboot {
+-		compatible = "wdt-reboot";
+-		wdt = <&wdog1>;
+-		u-boot,dm-spl;
+-	};
+-
+-	firmware {
+-		optee {
+-			compatible = "linaro,optee-tz";
+-			method = "smc";
+-		};
+-	};
+-};
+-
+-&fec1 {
+-	phy-mode = "rgmii-rxid";
+-};
+-
+-&i2c1 {
+-	u-boot,dm-spl;
+-	u-boot,dm-pre-reloc;
+-};
+-
+-&i2c2 {
+-	status = "okay";
+-	u-boot,dm-spl;
+-	u-boot,dm-pre-reloc;
+-};
+-
+-&pinctrl_ecspi1 {
+-	u-boot,dm-spl;
+-};
+-
+-&pinctrl_i2c1 {
+-	u-boot,dm-spl;
+-};
+-
+-&pinctrl_pmic {
+-	u-boot,dm-spl;
+-	fsl,pins = <
+-		MX8MM_IOMUXC_GPIO1_IO00_GPIO1_IO0		0x141
+-		/* Disable Pullup for SD_VSEL */
+-		MX8MM_IOMUXC_GPIO1_IO04_GPIO1_IO4		0x41
+-	>;
+-};
+-
+-&pinctrl_uart3 {
+-	u-boot,dm-spl;
+-	u-boot,dm-pre-reloc;
+-};
+-
+-&pinctrl_usdhc1 {
+-	u-boot,dm-spl;
+-};
+-
+-&pinctrl_usdhc1_100mhz {
+-	u-boot,dm-spl;
+-};
+-
+-&pinctrl_usdhc1_200mhz {
+-	u-boot,dm-spl;
+-};
+-
+-&pinctrl_usdhc2 {
+-	u-boot,dm-spl;
+-};
+-
+-&pca9450 {
+-	u-boot,dm-spl;
+-};
+-
+-&{/soc@0/bus@30800000/i2c@30a20000/pmic@25/regulators} {
+-	u-boot,dm-spl;
+-};
+-
+-&ecspi1 {
+-	u-boot,dm-spl;
+-};
+-
+-&gpio1 {
+-	u-boot,dm-spl;
+-};
+-
+-&gpio2 {
+-	u-boot,dm-spl;
+-};
+-
+-&gpio3 {
+-	u-boot,dm-spl;
+-};
+-
+-&gpio4 {
+-	u-boot,dm-spl;
+-};
+-
+-&gpio5 {
+-	u-boot,dm-spl;
+-};
+-
+-&uart3 {
+-	u-boot,dm-spl;
+-	u-boot,dm-pre-reloc;
+-};
+-
+-&usdhc1 {
+-	u-boot,dm-spl;
+-};
+-
+-&usdhc2 {
+-	u-boot,dm-spl;
+-};
+-
+-&wdog1 {
+-	u-boot,dm-spl;
+-};
++#include "imx8mm-kontron-n801x-u-boot.dtsi"
+diff --git a/arch/arm/dts/imx8mm-kontron-n801x-u-boot.dtsi b/arch/arm/dts/imx8mm-kontron-n801x-u-boot.dtsi
+new file mode 100644
+index 0000000000..22d18e6f1c
+--- /dev/null
++++ b/arch/arm/dts/imx8mm-kontron-n801x-u-boot.dtsi
+@@ -0,0 +1,128 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2019 Kontron Electronics GmbH
++ */
++
++#include "imx8mm-u-boot.dtsi"
++
++/ {
++	aliases {
++		usb0 = &usbotg1;
++		usb1 = &usbotg2;
++	};
++
++	wdt-reboot {
++		compatible = "wdt-reboot";
++		wdt = <&wdog1>;
++		u-boot,dm-spl;
++	};
++
++	firmware {
++		optee {
++			compatible = "linaro,optee-tz";
++			method = "smc";
++		};
++	};
++};
++
++&fec1 {
++	phy-mode = "rgmii-rxid";
++};
++
++&i2c1 {
++	u-boot,dm-spl;
++	u-boot,dm-pre-reloc;
++};
++
++&i2c2 {
++	status = "okay";
++	u-boot,dm-spl;
++	u-boot,dm-pre-reloc;
++};
++
++&pinctrl_ecspi1 {
++	u-boot,dm-spl;
++};
++
++&pinctrl_i2c1 {
++	u-boot,dm-spl;
++};
++
++&pinctrl_pmic {
++	u-boot,dm-spl;
++	fsl,pins = <
++		MX8MM_IOMUXC_GPIO1_IO00_GPIO1_IO0		0x141
++		/* Disable Pullup for SD_VSEL */
++		MX8MM_IOMUXC_GPIO1_IO04_GPIO1_IO4		0x41
++	>;
++};
++
++&pinctrl_uart3 {
++	u-boot,dm-spl;
++	u-boot,dm-pre-reloc;
++};
++
++&pinctrl_usdhc1 {
++	u-boot,dm-spl;
++};
++
++&pinctrl_usdhc1_100mhz {
++	u-boot,dm-spl;
++};
++
++&pinctrl_usdhc1_200mhz {
++	u-boot,dm-spl;
++};
++
++&pinctrl_usdhc2 {
++	u-boot,dm-spl;
++};
++
++&pca9450 {
++	u-boot,dm-spl;
++};
++
++&{/soc@0/bus@30800000/i2c@30a20000/pmic@25/regulators} {
++	u-boot,dm-spl;
++};
++
++&ecspi1 {
++	u-boot,dm-spl;
++};
++
++&gpio1 {
++	u-boot,dm-spl;
++};
++
++&gpio2 {
++	u-boot,dm-spl;
++};
++
++&gpio3 {
++	u-boot,dm-spl;
++};
++
++&gpio4 {
++	u-boot,dm-spl;
++};
++
++&gpio5 {
++	u-boot,dm-spl;
++};
++
++&uart3 {
++	u-boot,dm-spl;
++	u-boot,dm-pre-reloc;
++};
++
++&usdhc1 {
++	u-boot,dm-spl;
++};
++
++&usdhc2 {
++	u-boot,dm-spl;
++};
++
++&wdog1 {
++	u-boot,dm-spl;
++};
+-- 
+2.30.2
+

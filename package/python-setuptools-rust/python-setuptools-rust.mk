@@ -11,6 +11,5 @@ PYTHON_SETUPTOOLS_RUST_SETUP_TYPE = setuptools
 PYTHON_SETUPTOOLS_RUST_LICENSE = MIT
 PYTHON_SETUPTOOLS_RUST_LICENSE_FILES = LICENSE
 HOST_PYTHON_SETUPTOOLS_RUST_DEPENDENCIES = host-rustc host-python-setuptools-scm host-python-toml host-python-semantic-version host-python-typing-extensions
-HOST_PYTHON_SETUPTOOLS_RUST_NEEDS_HOST_PYTHON = python3
 
 $(eval $(host-python-package))

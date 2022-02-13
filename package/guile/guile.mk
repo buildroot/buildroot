@@ -18,6 +18,10 @@ GUILE_CPE_ID_VENDOR = gnu
 GUILE_DEPENDENCIES = host-guile libunistring libffi gmp bdwgc host-pkgconf
 HOST_GUILE_DEPENDENCIES = host-libunistring host-libffi host-gmp host-bdwgc host-flex host-pkgconf host-gettext
 
+ifeq ($(BR2_ENABLE_LOCALE),)
+GUILE_DEPENDENCIES += libiconv
+endif
+
 # The HAVE_GC* CFLAGS specify that we will use internal callbacks
 # instead of the ones provided by
 # bdwgc. Eg. HAVE_GC_SET_FINALIZER_NOTIFIER specifies that we won't

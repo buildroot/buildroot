@@ -1,0 +1,41 @@
+From 9db9673c0c2407e18e215844adadbd4a397e6f78 Mon Sep 17 00:00:00 2001
+From: Lang Daniel <d.lang@abatec.at>
+Date: Fri, 28 Jan 2022 07:53:13 +0100
+Subject: [PATCH] use uid_t instead of __uid_t
+
+uclibc and glibc define getuid() as
+extern __uid_t getuid (void) __THROW;
+https://elixir.bootlin.com/glibc/glibc-2.34/source/posix/unistd.h#L698
+which is a typedef for unsigned int.
+
+musl uses uid_t as return type
+uid_t getuid(void);
+https://elixir.bootlin.com/musl/v1.2.2/source/include/unistd.h#L108
+which is a typedef to unsigned.
+
+glibc and uclibc include typedefs from __uid_t to uid_t,
+which means one should be able to use uid_t as a replacement
+for __uid_t and make compiling with all three c standard libraries
+possible.
+
+Fetch from: https://github.com/dbus-cxx/dbus-cxx/pull/87
+Signed-off-by: Daniel Lang <d.lang@abatec.at>
+
+---
+ dbus-cxx/sasl.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dbus-cxx/sasl.cpp b/dbus-cxx/sasl.cpp
+index e8a6060..7a76af6 100644
+--- a/dbus-cxx/sasl.cpp
++++ b/dbus-cxx/sasl.cpp
+@@ -70,7 +70,7 @@ std::tuple<bool, bool, std::vector<uint8_t>> SASL::authenticate() {
+     bool success = false;
+     bool negotiatedFD = false;
+     std::vector<uint8_t> serverGUID;
+-    __uid_t uid = getuid();
++    uid_t uid = getuid();
+     std::string line;
+     std::smatch regex_match;
+ 
+

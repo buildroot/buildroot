@@ -41,7 +41,6 @@ define UTIL_LINUX_FIX_DISK_UTILS_COMPILE
 	touch $(@D)/disk-utils/raw.8
 endef
 UTIL_LINUX_POST_PATCH_HOOKS += UTIL_LINUX_FIX_DISK_UTILS_COMPILE
-HOST_UTIL_LINUX_POST_PATCH_HOOKS += UTIL_LINUX_FIX_DISK_UTILS_COMPILE
 
 HOST_UTIL_LINUX_DEPENDENCIES = host-pkgconf
 
@@ -201,6 +200,11 @@ HOST_UTIL_LINUX_CONF_OPTS += \
 	--without-ncurses \
 	--without-ncursesw \
 	--without-tinfo
+
+# Disable raw command since starting from version 2.37 needs a
+# work-around to build but in the end we don't need at all.
+HOST_UTIL_LINUX_CONF_OPTS += \
+	--disable-raw
 
 ifeq ($(BR2_PACKAGE_HOST_UTIL_LINUX),y)
 HOST_UTIL_LINUX_CONF_OPTS += --disable-makeinstall-chown

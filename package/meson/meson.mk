@@ -11,7 +11,6 @@ MESON_LICENSE_FILES = COPYING
 MESON_SETUP_TYPE = setuptools
 
 HOST_MESON_DEPENDENCIES = host-ninja
-HOST_MESON_NEEDS_HOST_PYTHON = python3
 
 # Avoid interpreter shebang longer than 128 chars
 define HOST_MESON_SET_INTERPRETER
