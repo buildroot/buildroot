@@ -71,7 +71,7 @@ config BR2_GDB_VERSION
 	default "4ecb98fbc2f94dbe01b69384afbc515107de73df" if BR2_csky
 	default "9.2"      if BR2_GDB_VERSION_9_2
 	default "10.2"	   if BR2_GDB_VERSION_10 || !BR2_PACKAGE_HOST_GDB
-	default "11.1"     if BR2_GDB_VERSION_11
+	default "11.2"     if BR2_GDB_VERSION_11
 	depends on BR2_PACKAGE_GDB || BR2_PACKAGE_HOST_GDB
 
 # recent gdb versions (>= 10) have gdbserver moved at the top-level,
