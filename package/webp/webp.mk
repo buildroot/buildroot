@@ -13,6 +13,9 @@ WEBP_CPE_ID_VENDOR = webmproject
 WEBP_CPE_ID_PRODUCT = libwebp
 WEBP_INSTALL_STAGING = YES
 
+WEBP_CONF_OPTS += \
+	--disable-sdl
+
 HOST_WEBP_CONF_OPTS += \
 	--enable-libwebpdemux \
 	--enable-libwebpmux \
@@ -20,6 +23,7 @@ HOST_WEBP_CONF_OPTS += \
 	--disable-gl \
 	--disable-jpeg \
 	--disable-png \
+	--disable-sdl \
 	--disable-tiff
 
 ifeq ($(BR2_PACKAGE_WEBP_DEMUX),y)
