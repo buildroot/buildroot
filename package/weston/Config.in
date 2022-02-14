@@ -34,10 +34,6 @@ if BR2_PACKAGE_WESTON
 choice
 	prompt "default compositor"
 
-config BR2_PACKAGE_WESTON_DEFAULT_FBDEV
-	bool "fbdev (deprecated)"
-	select BR2_PACKAGE_WESTON_FBDEV
-
 config BR2_PACKAGE_WESTON_DEFAULT_DRM
 	bool "drm"
 	select BR2_PACKAGE_WESTON_DRM
@@ -62,7 +58,6 @@ endchoice
 
 config BR2_PACKAGE_WESTON_DEFAULT_COMPOSITOR
 	string
-	default "fbdev"    if BR2_PACKAGE_WESTON_DEFAULT_FBDEV
 	default "drm"      if BR2_PACKAGE_WESTON_DEFAULT_DRM
 	default "headless" if BR2_PACKAGE_WESTON_DEFAULT_HEADLESS
 	default "wayland"  if BR2_PACKAGE_WESTON_DEFAULT_WAYLAND
@@ -70,9 +65,6 @@ config BR2_PACKAGE_WESTON_DEFAULT_COMPOSITOR
 
 config BR2_PACKAGE_WESTON_DRM
 	bool "DRM compositor"
-
-config BR2_PACKAGE_WESTON_FBDEV
-	bool "fbdev compositor (deprecated)"
 
 # FreeRDP needs threads and !static, already the case for weston
 config BR2_PACKAGE_WESTON_RDP

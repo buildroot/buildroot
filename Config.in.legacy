@@ -146,6 +146,18 @@ endif
 
 comment "Legacy options removed in 2022.02"
 
+config BR2_PACKAGE_WESTON_DEFAULT_FBDEV
+	bool "weston fbdev removed"
+	select BR2_LEGACY
+	help
+	  fbdev was deprecated in weston 10.0.0.
+
+config BR2_PACKAGE_WESTON_FBDEV
+	bool "weston fbdev compositor removed"
+	select BR2_LEGACY
+	help
+	  fbdev compositor was deprecated in weston 10.0.0.
+
 config BR2_PACKAGE_LINUX_TOOLS_BPFTOOL
 	bool "bpftool was moved"
 	select BR2_LEGACY
