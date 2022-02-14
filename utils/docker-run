@@ -7,4 +7,4 @@ IMAGE=$(grep ^image: "${MAIN_DIR}/.gitlab-ci.yml" | \
         sed -e 's,^image: ,,g' | sed -e 's,\$CI_REGISTRY,registry.gitlab.com,g')
 
 set -x
-exec docker run -v "${MAIN_DIR}:/home/br-user" -t "${IMAGE}" "$@"
+exec docker run -v "${MAIN_DIR}:/home/br-user" -it "${IMAGE}" "$@"
