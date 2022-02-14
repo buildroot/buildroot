@@ -1,0 +1,34 @@
+From 2c60441239e1c10c4987cb586653b1ea08f703c0 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Tue, 28 Sep 2021 23:42:15 +0100
+Subject: [PATCH] Fix FTBFS when CONNTRACK and UBUS but not DNSSEC compile
+ options selected.
+
+[Retrieved from:
+https://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=2c60441239e1c10c4987cb586653b1ea08f703c0]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/dnsmasq.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/src/dnsmasq.h b/src/dnsmasq.h
+index c8a918a..3fdc1b0 100644
+--- a/src/dnsmasq.h
++++ b/src/dnsmasq.h
+@@ -1173,9 +1173,12 @@ extern struct daemon {
+   char *packet; /* packet buffer */
+   int packet_buff_sz; /* size of above */
+   char *namebuff; /* MAXDNAME size buffer */
++#if (defined(HAVE_CONNTRACK) && defined(HAVE_UBUS)) || defined(HAVE_DNSSEC)
++  /* CONNTRACK UBUS code uses this buffer, as well as DNSSEC code. */
++  char *workspacename;
++#endif
+ #ifdef HAVE_DNSSEC
+   char *keyname; /* MAXDNAME size buffer */
+-  char *workspacename; /* ditto */
+   unsigned long *rr_status; /* ceiling in TTL from DNSSEC or zero for insecure */
+   int rr_status_sz;
+   int dnssec_no_time_check;
+-- 
+2.20.1
+
