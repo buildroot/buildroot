@@ -1,0 +1,134 @@
+From 17eb5c417bd56be4b2f7627c2d6879fbad6a86d6 Mon Sep 17 00:00:00 2001
+From: Gao Xiang <xiang@kernel.org>
+Date: Mon, 22 Nov 2021 07:48:48 +0800
+Subject: [PATCH] erofs-utils: dump: fix de->nid issues
+
+As David Michael reported, "
+    In file included from main.c:11:
+    main.c: In function 'erofs_checkdirent':
+    ../include/erofs/print.h:68:25: error: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type '__le64' {aka 'long unsigned int'} [-Werror=format=]
+       68 |                         "<E> " PR_FMT_FUNC_LINE(fmt),   \
+          |                         ^~~~~~
+    main.c:264:17: note: in expansion of macro 'erofs_err'
+      264 |                 erofs_err("invalid file type %llu", de->nid);
+          |                 ^~~~~~~~~
+    main.c: In function 'erofs_read_dirent':
+    ../include/erofs/print.h:68:25: error: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type '__le64' {aka 'long unsigned int'} [-Werror=format=]
+       68 |                         "<E> " PR_FMT_FUNC_LINE(fmt),   \
+          |                         ^~~~~~
+    main.c:303:25: note: in expansion of macro 'erofs_err'
+      303 |                         erofs_err("parse dir nid %llu error occurred\n",
+          |                         ^~~~~~~~~
+    cc1: all warnings being treated as errors
+"
+
+Also there are many de->nid lacking of endianness handling.
+Should fix them together.
+
+Link: https://lore.kernel.org/r/20211121234848.12663-1-xiang@kernel.org
+Fixes: cf8be8a4352a ("erofs-utils: dump: add feature for collecting filesystem statistics")
+Cc: Wang Qi <mpiglet@outlook.com>
+Cc: Guo Xuenan <guoxuenan@huawei.com>
+Reported-by: David Michael <fedora.dm0@gmail.com>
+Signed-off-by: Gao Xiang <xiang@kernel.org>
+---
+ dump/main.c | 31 ++++++++++++++++---------------
+ 1 file changed, 16 insertions(+), 15 deletions(-)
+
+diff --git a/dump/main.c b/dump/main.c
+index b7560eca1080..f85903b059d2 100644
+--- a/dump/main.c
++++ b/dump/main.c
+@@ -242,11 +242,12 @@ static inline int erofs_checkdirent(struct erofs_dirent *de,
+ {
+ 	int dname_len;
+ 	unsigned int nameoff = le16_to_cpu(de->nameoff);
++	erofs_nid_t nid = le64_to_cpu(de->nid);
+ 
+ 	if (nameoff < sizeof(struct erofs_dirent) ||
+ 			nameoff >= PAGE_SIZE) {
+ 		erofs_err("invalid de[0].nameoff %u @ nid %llu",
+-				nameoff, de->nid | 0ULL);
++				nameoff, nid | 0ULL);
+ 		return -EFSCORRUPTED;
+ 	}
+ 
+@@ -255,13 +256,12 @@ static inline int erofs_checkdirent(struct erofs_dirent *de,
+ 	/* a corrupted entry is found */
+ 	if (nameoff + dname_len > maxsize ||
+ 			dname_len > EROFS_NAME_LEN) {
+-		erofs_err("bogus dirent @ nid %llu",
+-				le64_to_cpu(de->nid) | 0ULL);
++		erofs_err("bogus dirent @ nid %llu", nid | 0ULL);
+ 		DBG_BUGON(1);
+ 		return -EFSCORRUPTED;
+ 	}
+ 	if (de->file_type >= EROFS_FT_MAX) {
+-		erofs_err("invalid file type %llu", de->nid);
++		erofs_err("invalid file type %llu", nid | 0ULL);
+ 		return -EFSCORRUPTED;
+ 	}
+ 	return dname_len;
+@@ -273,7 +273,7 @@ static int erofs_read_dirent(struct erofs_dirent *de,
+ {
+ 	int err;
+ 	erofs_off_t occupied_size = 0;
+-	struct erofs_inode inode = { .nid = de->nid };
++	struct erofs_inode inode = { .nid = le64_to_cpu(de->nid) };
+ 
+ 	stats.files++;
+ 	stats.file_category_stat[de->file_type]++;
+@@ -296,12 +296,12 @@ static int erofs_read_dirent(struct erofs_dirent *de,
+ 		update_file_size_statatics(occupied_size, inode.i_size);
+ 	}
+ 
+-	if ((de->file_type == EROFS_FT_DIR)
+-			&& de->nid != nid && de->nid != parent_nid) {
+-		err = erofs_read_dir(de->nid, nid);
++	if (de->file_type == EROFS_FT_DIR && inode.nid != nid &&
++	    inode.nid != parent_nid) {
++		err = erofs_read_dir(inode.nid, nid);
+ 		if (err) {
+ 			erofs_err("parse dir nid %llu error occurred\n",
+-					de->nid);
++				  inode.nid | 0ULL);
+ 			return err;
+ 		}
+ 	}
+@@ -338,7 +338,8 @@ static int erofs_read_dir(erofs_nid_t nid, erofs_nid_t parent_nid)
+ 			int ret;
+ 
+ 			/* skip "." and ".." dentry */
+-			if (de->nid == nid || de->nid == parent_nid) {
++			if (le64_to_cpu(de->nid) == nid ||
++			    le64_to_cpu(de->nid) == parent_nid) {
+ 				de++;
+ 				continue;
+ 			}
+@@ -399,18 +400,18 @@ static int erofs_get_pathname(erofs_nid_t nid, erofs_nid_t parent_nid,
+ 			if (len < 0)
+ 				return len;
+ 
+-			if (de->nid == target) {
++			if (le64_to_cpu(de->nid) == target) {
+ 				memcpy(path + pos, dname, len);
+ 				path[pos + len] = '\0';
+ 				return 0;
+ 			}
+ 
+ 			if (de->file_type == EROFS_FT_DIR &&
+-					de->nid != parent_nid &&
+-					de->nid != nid) {
++			    le64_to_cpu(de->nid) != parent_nid &&
++			    le64_to_cpu(de->nid) != nid) {
+ 				memcpy(path + pos, dname, len);
+-				err = erofs_get_pathname(de->nid, nid,
+-						target, path, pos + len);
++				err = erofs_get_pathname(le64_to_cpu(de->nid),
++						nid, target, path, pos + len);
+ 				if (!err)
+ 					return 0;
+ 				memset(path + pos, 0, len);
+-- 
+2.30.2
+

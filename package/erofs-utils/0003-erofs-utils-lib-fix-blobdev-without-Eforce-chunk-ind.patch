@@ -1,0 +1,40 @@
+From eb255afa101b52096bd3e5e48f990576190f03bd Mon Sep 17 00:00:00 2001
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+Date: Thu, 23 Dec 2021 16:49:07 +0800
+Subject: [PATCH] erofs-utils: lib: fix --blobdev without -Eforce-chunk-indexes
+
+blockmap is used by default, chunk indexes should be switched
+instead if --blobdev is specified.
+
+Link: https://lore.kernel.org/r/20211223084907.93020-1-hsiangkao@linux.alibaba.com
+Fixes: 016bd812be1e ("erofs-utils: mkfs: enable block map chunk format")
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+ lib/blobchunk.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/lib/blobchunk.c b/lib/blobchunk.c
+index 5e9a88a30af3..a145be917b4a 100644
+--- a/lib/blobchunk.c
++++ b/lib/blobchunk.c
+@@ -113,7 +113,7 @@ int erofs_blob_write_chunk_indexes(struct erofs_inode *inode,
+ 
+ 	if (multidev) {
+ 		idx.device_id = 1;
+-		inode->u.chunkformat |= EROFS_CHUNK_FORMAT_INDEXES;
++		DBG_BUGON(!(inode->u.chunkformat & EROFS_CHUNK_FORMAT_INDEXES));
+ 	} else {
+ 		base_blkaddr = remapped_base;
+ 	}
+@@ -171,6 +171,8 @@ int erofs_blob_write_chunked_file(struct erofs_inode *inode)
+ 	int fd, ret;
+ 
+ 	inode->u.chunkformat |= inode->u.chunkbits - LOG_BLOCK_SIZE;
++	if (multidev)
++		inode->u.chunkformat |= EROFS_CHUNK_FORMAT_INDEXES;
+ 
+ 	if (inode->u.chunkformat & EROFS_CHUNK_FORMAT_INDEXES)
+ 		unit = sizeof(struct erofs_inode_chunk_index);
+-- 
+2.30.2
+
