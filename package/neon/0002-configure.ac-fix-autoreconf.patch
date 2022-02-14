@@ -1,0 +1,28 @@
+From cf779609a5dd38f0a8fdb3c4539371f13fd3a24a Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 8 Feb 2022 18:34:25 +0100
+Subject: [PATCH] configure.ac: fix autoreconf
+
+Add AC_CONFIG_MACRO_DIR(macros) to fix autoreconf
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: not sent yet]
+---
+ configure.ac | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/configure.ac b/configure.ac
+index 37b14ec..122151d 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1,5 +1,7 @@
+ AC_PREREQ(2.58) dnl 2.58 required for AS_HELP_STRING
+ 
++AC_CONFIG_MACRO_DIR(macros)
++
+ dnl Extract the version (sans LF) from .version, created at release-time.
+ m4_define(ne_version, [m4_translit(m4_include(.version), [
+ ])])
+-- 
+2.34.1
+
