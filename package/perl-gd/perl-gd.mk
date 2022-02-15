@@ -40,6 +40,12 @@ PERL_GD_OPTIONS += PNG
 PERL_GD_CONF_OPTS += -lib_png_path=$(STAGING_DIR)/usr
 endif
 
+ifeq ($(BR2_PACKAGE_WEBP),y)
+PERL_GD_DEPENDENCIES += webp
+PERL_GD_OPTIONS += WEBP
+PERL_GD_CONF_OPTS += -lib_webp_path=$(STAGING_DIR)/usr
+endif
+
 ifeq ($(BR2_PACKAGE_XLIB_LIBXPM),y)
 PERL_GD_DEPENDENCIES += xlib_libXpm
 PERL_GD_OPTIONS += XPM
