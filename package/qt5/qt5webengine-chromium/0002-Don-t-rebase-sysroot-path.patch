@@ -1,0 +1,32 @@
+From bfc520671693587a0b81842018326da35aa97f80 Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Thu, 3 Feb 2022 20:41:08 -0700
+Subject: [PATCH] Don't rebase sysroot path
+
+Just use the actual sysroot as rebase_path will generate an invalid
+sysroot path.
+
+Fixes:
+/home/buildroot/buildroot/output/per-package/qt5webengine/host/opt/ext-toolchain/bin/../lib/gcc/aarch64-buildroot-linux-gnu/10.3.0/../../../../aarch64-buildroot-linux-gnu/bin/ld: cannot find crti.o: No such file or directory
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+---
+ chromium/build/config/posix/BUILD.gn | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/chromium/build/config/posix/BUILD.gn b/chromium/build/config/posix/BUILD.gn
+index e61554c5656..dc957225869 100644
+--- a/chromium/build/config/posix/BUILD.gn
++++ b/chromium/build/config/posix/BUILD.gn
+@@ -27,7 +27,7 @@ config("runtime_library") {
+ 
+   if (!is_apple && sysroot != "") {
+     # Pass the sysroot to all C compiler variants, the assembler, and linker.
+-    sysroot_flags = [ "--sysroot=" + rebase_path(sysroot, root_build_dir) ]
++    sysroot_flags = [ "--sysroot=" + sysroot ]
+     if (is_linux || is_chromeos) {
+       # This is here so that all files get recompiled after a sysroot roll and
+       # when turning the sysroot on or off. (defines are passed via the command
+-- 
+2.25.1
+
