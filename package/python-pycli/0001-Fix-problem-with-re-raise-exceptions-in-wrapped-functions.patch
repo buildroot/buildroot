@@ -1,0 +1,26 @@
+From 57c563f8b47a56feefc0a8bcbef05f4b54280549 Mon Sep 17 00:00:00 2001
+From: mmbutter <mario.butter@gmail.com>
+Date: Tue, 9 Jun 2020 11:50:41 -0500
+Subject: [PATCH] Fix problem with re-raise exceptions in wrapped functions.
+
+[Retrieved from:
+https://github.com/whilp/cli/commit/57c563f8b47a56feefc0a8bcbef05f4b54280549]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ lib/cli/app.py | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/lib/cli/app.py b/lib/cli/app.py
+index 7b6db52..f487ab4 100644
+--- a/lib/cli/app.py
++++ b/lib/cli/app.py
+@@ -240,6 +240,9 @@ def run(self):
+         try:
+             returned = self.main(*args)
+         except Exception, e:
++        	elif isinstance(e, self.reraise):
++        	    # raising the last exception preserves traceback
++        	    raise
+             returned = e
+ 
+         return self.post_run(returned)
