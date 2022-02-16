@@ -11,9 +11,14 @@ SDL2_TTF_LICENSE = Zlib
 SDL2_TTF_LICENSE_FILES = COPYING.txt
 SDL2_TTF_INSTALL_STAGING = YES
 SDL2_TTF_DEPENDENCIES = sdl2 freetype host-pkgconf
+SDL2_TTF_CONF_OPTS = --disable-freetype-builtin
 
-SDL2_TTF_CONF_ENV = \
-	FREETYPE_CONFIG=$(STAGING_DIR)/usr/bin/freetype-config
+ifeq ($(BR2_PACKAGE_HARFBUZZ),y)
+SDL2_TTF_DEPENDENCIES += harfbuzz
+SDL2_TTF_CONF_OPTS += --enable-harfbuzz
+else
+SDL2_TTF_CONF_OPTS += --disable-harfbuzz
+endif
 
 # x-includes and x-libraries must be set for cross-compiling
 # By default x_includes and x_libraries contains unsafe paths.

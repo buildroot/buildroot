@@ -1,0 +1,41 @@
+From 2af95cff5609142ec14efdf13b394f9b0121ab2e Mon Sep 17 00:00:00 2001
+From: mmbutter <mario.butter@gmail.com>
+Date: Thu, 11 Jun 2020 15:50:03 -0500
+Subject: [PATCH] except statement changed slightly in 2.6. This could cause
+ problems in newer versions. Updated to the new format.
+
+[Retrieved from:
+https://github.com/whilp/cli/commit/2af95cff5609142ec14efdf13b394f9b0121ab2e]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ lib/cli/app.py | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/lib/cli/app.py b/lib/cli/app.py
+index f487ab4..45256b8 100644
+--- a/lib/cli/app.py
++++ b/lib/cli/app.py
+@@ -239,10 +239,10 @@ def run(self):
+             args = ()
+         try:
+             returned = self.main(*args)
+-        except Exception, e:
+-        	elif isinstance(e, self.reraise):
+-        	    # raising the last exception preserves traceback
+-        	    raise
++        except self.reraise:
++            # raising the last exception preserves traceback
++            raise
++        except Exception as e:
+             returned = e
+ 
+         return self.post_run(returned)
+@@ -420,7 +420,7 @@ def pre_run(self):
+         """
+         try:
+             ns = self.argparser.parse_args()
+-        except SystemExit, e:
++        except SystemExit as e:
+             if self.exit_after_main:
+                 raise
+             else:

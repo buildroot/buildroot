@@ -1,0 +1,37 @@
+From bea5891591402f14940a607eafbdcd169ff8827f Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Sun, 6 Feb 2022 07:12:14 +0100
+Subject: [PATCH] linux_usbfs: fix maybe-uninitialized error
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Initialize active_config to an invalid value to avoid the following
+compilation error:
+
+os/linux_usbfs.c: In function ‘op_get_configuration’:
+os/linux_usbfs.c:1452:12: error: ‘active_config’ may be used uninitialized in this function [-Werror=maybe-uninitialized]
+ 1452 |  *config = (uint8_t)active_config;
+
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+Upstream: https://github.com/libusb/libusb/pull/1062
+---
+ libusb/os/linux_usbfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libusb/os/linux_usbfs.c b/libusb/os/linux_usbfs.c
+index c300675..285d9ca 100644
+--- a/libusb/os/linux_usbfs.c
++++ b/libusb/os/linux_usbfs.c
+@@ -1429,7 +1429,7 @@ static int op_get_configuration(struct libusb_device_handle *handle,
+ 	uint8_t *config)
+ {
+ 	struct linux_device_priv *priv = usbi_get_device_priv(handle->dev);
+-	int active_config;
++	int active_config = -1; /* to please compiler */
+ 	int r;
+ 
+ 	if (priv->sysfs_dir) {
+-- 
+2.17.0
+

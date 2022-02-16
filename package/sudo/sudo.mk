@@ -45,15 +45,15 @@ endif
 ifeq ($(BR2_PACKAGE_OPENLDAP),y)
 SUDO_DEPENDENCIES += openldap
 SUDO_CONF_OPTS += --with-ldap
-# If we are building sudo statically and openldap was linked with openssl, then
-# when we link sudo with openldap we need to specify the openssl libs, otherwise
-# it will fail with "undefined reference" errors.
-ifeq ($(BR2_STATIC_LIBS)$(BR2_PACKAGE_OPENSSL),yy)
-SUDO_DEPENDENCIES += host-pkgconf
-SUDO_CONF_ENV += LIBS="`$(PKG_CONFIG_HOST_BINARY) --libs libssl libcrypto`"
-endif
 else
 SUDO_CONF_OPTS += --without-ldap
+endif
+
+ifeq ($(BR2_PACKAGE_OPENSSL),y)
+SUDO_DEPENDENCIES += host-pkgconf openssl
+SUDO_CONF_OPTS += --enable-openssl
+else
+SUDO_CONF_OPTS += --disable-openssl
 endif
 
 # mksigname/mksiglist needs to run on build host to generate source files
