@@ -17,7 +17,9 @@ FRR_DEPENDENCIES = host-frr readline json-c libyang libnl \
 
 HOST_FRR_DEPENDENCIES = host-flex host-bison host-elfutils host-python3
 
-FRR_CONF_ENV = ac_cv_lib_cunit_CU_initialize_registry=no
+FRR_CONF_ENV = \
+	ac_cv_lib_cunit_CU_initialize_registry=no \
+	CFLAGS="$(TARGET_CFLAGS) -DFRR_XREF_NO_NOTE"
 
 FRR_CONF_OPTS = --with-clippy=$(HOST_DIR)/bin/clippy \
 	--sysconfdir=/etc/frr \
