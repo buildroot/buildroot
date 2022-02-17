@@ -12,7 +12,7 @@ ARP_SCAN_DEPENDENCIES = libpcap
 ARP_SCAN_AUTORECONF = YES
 
 ifeq ($(BR2_STATIC_LIBS),y)
-ARP_SCAN_CONF_OPTS = LIBS="`$(STAGING_DIR)/usr/bin/pcap-config --static --additional-libs`"
+ARP_SCAN_CONF_OPTS += LIBS="`$(STAGING_DIR)/usr/bin/pcap-config --static --additional-libs`"
 endif
 
 ARP_SCAN_CONF_ENV = pgac_cv_snprintf_long_long_int_format='%lld'
