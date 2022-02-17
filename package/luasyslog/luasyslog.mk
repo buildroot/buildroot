@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LUASYSLOG_VERSION = 2.2.0
+LUASYSLOG_VERSION = 2.2.1
 LUASYSLOG_SITE = $(call github,ntd,luasyslog,$(LUASYSLOG_VERSION))
 LUASYSLOG_DEPENDENCIES = host-luarocks luainterpreter
 LUASYSLOG_LICENSE = MIT
