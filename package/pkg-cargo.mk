@@ -46,6 +46,14 @@ PKG_CARGO_ENV = \
 	CARGO_BUILD_TARGET="$(RUSTC_TARGET_NAME)" \
 	CARGO_TARGET_$(call UPPERCASE,$(RUSTC_TARGET_NAME))_LINKER=$(notdir $(TARGET_CROSS))gcc
 
+#
+# This is a workaround for https://github.com/rust-lang/compiler-builtins/issues/420
+# and should be removed when fixed upstream
+#
+ifeq ($(NORMALIZED_ARCH),arm)
+	PKG_CARGO_ENV += RUSTFLAGS="-Clink-arg=-Wl,--allow-multiple-definition"
+endif
+
 HOST_PKG_CARGO_ENV = \
 	$(PKG_COMMON_CARGO_ENV)
 
