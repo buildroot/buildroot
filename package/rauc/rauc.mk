@@ -31,6 +31,13 @@ else
 RAUC_CONF_OPTS += --disable-service
 endif
 
+ifeq ($(BR2_PACKAGE_RAUC_GPT),y)
+RAUC_CONF_OPTS += --enable-gpt
+RAUC_DEPENDENCIES += util-linux-libs
+else
+RAUC_CONF_OPTS += --disable-gpt
+endif
+
 ifeq ($(BR2_PACKAGE_RAUC_NETWORK),y)
 RAUC_CONF_OPTS += --enable-network
 RAUC_DEPENDENCIES += libcurl
