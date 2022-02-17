@@ -16,9 +16,9 @@ XDRIVER_XF86_VIDEO_ATI_DEPENDENCIES = \
 	xserver_xorg-server
 
 ifeq ($(BR2_PACKAGE_HAS_LIBEGL)$(BR2_PACKAGE_HAS_LIBGL)$(BR2_PACKAGE_LIBEPOXY),yyy)
-XDRIVER_XF86_VIDEO_ATI_CONF_OPTS = --enable-glamor
+XDRIVER_XF86_VIDEO_ATI_CONF_OPTS += --enable-glamor
 else
-XDRIVER_XF86_VIDEO_ATI_CONF_OPTS = --disable-glamor
+XDRIVER_XF86_VIDEO_ATI_CONF_OPTS += --disable-glamor
 endif
 
 # xdriver_xf86-video-ati requires O_CLOEXEC
