@@ -36,6 +36,8 @@ ASTERISK_DEPENDENCIES = \
 	sqlite \
 	util-linux
 
+ASTERISK_PJPROJECT_CONFIGURE_OPTS =
+
 # Asterisk wants to run its menuselect tool (a highly tweaked derivative of
 # kconfig), but builds it using the target tools. So we build it in the host
 # variant (see below), and copy the full build tree of menuselect.
@@ -129,22 +131,6 @@ ASTERISK_CONF_OPTS += --without-spandsp
 ASTERISK_CONF_ENV = \
 	ac_cv_file_bridges_bridge_softmix_include_hrirs_h=true \
 	ac_cv_path_CONFIG_LIBXML2=$(STAGING_DIR)/usr/bin/xml2-config \
-
-ASTERISK_MAKE_ENV += PJPROJECT_CONFIGURE_OPTS="--target=$(GNU_TARGET_NAME) \
-		--host=$(GNU_TARGET_NAME) \
-		--build=$(GNU_HOST_NAME) \
-		--prefix=/usr \
-		--exec-prefix=/usr \
-		--sysconfdir=/etc \
-		--localstatedir=/var \
-		--program-prefix="" \
-		--disable-gtk-doc \
-		--disable-gtk-doc-html \
-		--disable-doc \
-		--disable-docs \
-		--disable-documentation \
-		--with-xmlto=no \
-		--with-fop=no"
 
 # Uses __atomic_fetch_add_4
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
@@ -264,6 +250,7 @@ endif # DAHDI
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 ASTERISK_DEPENDENCIES += openssl
 ASTERISK_CONF_OPTS += --with-ssl=$(STAGING_DIR)/usr
+ASTERISK_PJPROJECT_CONFIGURE_OPTS += --with-ssl=$(STAGING_DIR)/usr
 else
 ASTERISK_CONF_OPTS += --without-ssl
 endif
@@ -334,6 +321,24 @@ ASTERISK_INSTALL_TARGET_OPTS = \
 	DESTDIR=$(TARGET_DIR) \
 	LDCONFIG=true \
 	install samples
+
+ASTERISK_MAKE_ENV += PJPROJECT_CONFIGURE_OPTS=" \
+		$(ASTERISK_PJPROJECT_CONFIGURE_OPTS) \
+		--target=$(GNU_TARGET_NAME) \
+		--host=$(GNU_TARGET_NAME) \
+		--build=$(GNU_HOST_NAME) \
+		--prefix=/usr \
+		--exec-prefix=/usr \
+		--sysconfdir=/etc \
+		--localstatedir=/var \
+		--program-prefix="" \
+		--disable-gtk-doc \
+		--disable-gtk-doc-html \
+		--disable-doc \
+		--disable-docs \
+		--disable-documentation \
+		--with-xmlto=no \
+		--with-fop=no"
 
 $(eval $(autotools-package))
 
