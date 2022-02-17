@@ -18,7 +18,7 @@ HOST_PCRE_CONF_OPTS = --enable-unicode-properties
 
 ifneq ($(BR2_INSTALL_LIBSTDCPP),y)
 # pcre will use the host g++ if a cross version isn't available
-PCRE_CONF_OPTS = --disable-cpp
+PCRE_CONF_OPTS += --disable-cpp
 endif
 
 PCRE_CONF_OPTS += --enable-pcre8
