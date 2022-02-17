@@ -18,7 +18,7 @@ URG_CONF_OPTS += \
 	--with-sdl-prefix=$(STAGING_DIR)/usr \
 	--with-sdl-exec-prefix=$(STAGING_DIR)/usr
 else
-URG_CONF_OPTS = --without-sdl
+URG_CONF_OPTS += --without-sdl
 URG_CONF_ENV += ac_cv_path_SDL_CONFIG=""
 endif
 
