@@ -14,9 +14,9 @@ XZ_LICENSE_FILES = COPYING COPYING.GPLv2 COPYING.GPLv3 COPYING.LGPLv2.1
 XZ_CPE_ID_VENDOR = tukaani
 
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
-XZ_CONF_OPTS = --enable-threads
+XZ_CONF_OPTS += --enable-threads
 else
-XZ_CONF_OPTS = --disable-threads
+XZ_CONF_OPTS += --disable-threads
 endif
 
 # we are built before ccache
