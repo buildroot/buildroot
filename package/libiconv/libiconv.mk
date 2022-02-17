@@ -11,7 +11,7 @@ LIBICONV_LICENSE = GPL-3.0+ (iconv program), LGPL-2.0+ (library)
 LIBICONV_LICENSE_FILES = COPYING COPYING.LIB
 
 ifeq ($(BR2_PACKAGE_LIBICONV_EXTRA_ENCODINGS),y)
-LIBICONV_CONF_OPTS = --enable-extra-encodings
+LIBICONV_CONF_OPTS += --enable-extra-encodings
 endif
 
 # Don't build the preloadable library, as we don't need it (it's only
