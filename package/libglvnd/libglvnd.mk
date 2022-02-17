@@ -37,17 +37,17 @@ LIBGLVND_CONF_OPTS += -Dglx=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBGLVND_DISPATCH_EGL),y)
-LIBGLVND_CONF_OPTS = -Degl=true
+LIBGLVND_CONF_OPTS += -Degl=true
 LIBGLVND_PROVIDES += libegl
 else
-LIBGLVND_CONF_OPTS = -Degl=false
+LIBGLVND_CONF_OPTS += -Degl=false
 endif
 
 ifeq ($(BR2_PACKAGE_LIBGLVND_DISPATCH_GLES),y)
-LIBGLVND_CONF_OPTS = -Dgles1=true -Dgles2=true
+LIBGLVND_CONF_OPTS += -Dgles1=true -Dgles2=true
 LIBGLVND_PROVIDES += libgles
 else
-LIBGLVND_CONF_OPTS = -Dgles1=false -Dgles2=false
+LIBGLVND_CONF_OPTS += -Dgles1=false -Dgles2=false
 endif
 
 $(eval $(meson-package))
