@@ -1,9 +1,9 @@
-diff --git a/source/modules/CMakeLists.txt b/modules/CMakeLists.txt
+diff --git a/modules/CMakeLists.txt b/modules/CMakeLists.txt
 index 8ff85c6..fb5f395 100644
---- a/source/modules/CMakeLists.txt
-+++ b/source/modules/CMakeLists.txt
+--- a/modules/CMakeLists.txt
++++ b/modules/CMakeLists.txt
 @@ -4,4 +4,8 @@ cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
- project(source/modules LANGUAGES CXX)
+ project(modules LANGUAGES CXX)
  
  add_subdirectory("Alexa")
 -add_subdirectory("GUI")
@@ -13,10 +13,10 @@ index 8ff85c6..fb5f395 100644
 +if(${JS_GUICLIENT_ENABLE})
 +    add_subdirectory("GUI")
 +endif()
-diff --git a/source/modules/GUI/CMakeLists.txt b/modules/GUI/CMakeLists.txt
+diff --git a/modules/GUI/CMakeLists.txt b/modules/GUI/CMakeLists.txt
 index ca62fb4..3332a24 100644
---- a/source/modules/GUI/CMakeLists.txt
-+++ b/source/modules/GUI/CMakeLists.txt
+--- a/modules/GUI/CMakeLists.txt
++++ b/modules/GUI/CMakeLists.txt
 @@ -7,10 +7,11 @@ else()
      set(DISABLE_WEBSOCKET_SSL_VALUE "false")
  endif()

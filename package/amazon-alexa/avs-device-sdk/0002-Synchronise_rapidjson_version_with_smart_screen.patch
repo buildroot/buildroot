@@ -1,7 +1,7 @@
-diff --git a/source/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/internal/biginteger.h b/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/internal/biginteger.h
+diff --git a/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/internal/biginteger.h b/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/internal/biginteger.h
 index 9d3e88c99..949cbb1f9 100755
---- a/source/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/internal/biginteger.h
-+++ b/source/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/internal/biginteger.h
+--- a/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/internal/biginteger.h
++++ b/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/internal/biginteger.h
 @@ -133,7 +133,7 @@ public:
          RAPIDJSON_ASSERT(count_ + offset <= kCapacity);
  
@@ -11,10 +11,10 @@ index 9d3e88c99..949cbb1f9 100755
              count_ += offset;
          }
          else {
-diff --git a/source/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/rapidjson.h b/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/rapidjson.h
+diff --git a/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/rapidjson.h b/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/rapidjson.h
 index 053b2ce43..ab925012f 100755
---- a/source/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/rapidjson.h
-+++ b/source/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/rapidjson.h
+--- a/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/rapidjson.h
++++ b/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/rapidjson.h
 @@ -264,16 +264,11 @@
  /*! \ingroup RAPIDJSON_CONFIG
      \param x pointer to align
@@ -34,10 +34,10 @@ index 053b2ce43..ab925012f 100755
  #endif
  
  ///////////////////////////////////////////////////////////////////////////////
-diff --git a/source/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/schema.h b/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/schema.h
+diff --git a/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/schema.h b/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/schema.h
 index b182aa27f..f9695dad8 100755
---- a/source/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/schema.h
-+++ b/source/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/schema.h
+--- a/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/schema.h
++++ b/ThirdParty/rapidjson/rapidjson-1.1.0/include/rapidjson/schema.h
 @@ -1017,10 +1017,12 @@ private:
      template <typename ValueType>
      RegexType* CreatePattern(const ValueType& value) {
@@ -52,10 +52,10 @@ index b182aa27f..f9695dad8 100755
              }
          return 0;
      }
-diff --git a/source/ThirdParty/rapidjson/rapidjson-1.1.0/test/unittest/allocatorstest.cpp b/ThirdParty/rapidjson/rapidjson-1.1.0/test/unittest/allocatorstest.cpp
+diff --git a/ThirdParty/rapidjson/rapidjson-1.1.0/test/unittest/allocatorstest.cpp b/ThirdParty/rapidjson/rapidjson-1.1.0/test/unittest/allocatorstest.cpp
 index a5958de19..2202c11f6 100755
---- a/source/ThirdParty/rapidjson/rapidjson-1.1.0/test/unittest/allocatorstest.cpp
-+++ b/source/ThirdParty/rapidjson/rapidjson-1.1.0/test/unittest/allocatorstest.cpp
+--- a/ThirdParty/rapidjson/rapidjson-1.1.0/test/unittest/allocatorstest.cpp
++++ b/ThirdParty/rapidjson/rapidjson-1.1.0/test/unittest/allocatorstest.cpp
 @@ -63,23 +63,21 @@ TEST(Allocator, MemoryPoolAllocator) {
  }
  

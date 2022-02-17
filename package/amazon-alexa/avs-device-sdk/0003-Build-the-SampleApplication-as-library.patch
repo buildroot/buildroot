@@ -4,17 +4,17 @@ Date: Tue, 16 Jun 2020 10:23:59 +0200
 Subject: [PATCH] Build the SampleApplication as library
 
 ---
- source/SampleApp/CMakeLists.txt                      |  6 ++--
- source/.../include/SampleApp/SampleApplication.h     |  2 +-
- source/SampleApp/src/CMakeLists.txt                  | 34 +++++++++++--------
- source/SampleApp/src/SampleApplication.cpp           |  3 +-
- source/build/cmake/PrepareInstall.cmake              |  6 ++--
+ SampleApp/CMakeLists.txt                      |  6 ++--
+ .../include/SampleApp/SampleApplication.h     |  2 +-
+ SampleApp/src/CMakeLists.txt                  | 34 +++++++++++--------
+ SampleApp/src/SampleApplication.cpp           |  3 +-
+ build/cmake/PrepareInstall.cmake              |  6 ++--
  5 files changed, 28 insertions(+), 23 deletions(-)
 
-diff --git a/source/SampleApp/CMakeLists.txt b/source/SampleApp/CMakeLists.txt
+diff --git a/SampleApp/CMakeLists.txt b/SampleApp/CMakeLists.txt
 index faad0b38a..6949a179c 100644
---- a/source/SampleApp/CMakeLists.txt
-+++ b/source/SampleApp/CMakeLists.txt
+--- a/SampleApp/CMakeLists.txt
++++ b/SampleApp/CMakeLists.txt
 @@ -1,8 +1,8 @@
  add_subdirectory("Authorization")
  
@@ -33,10 +33,10 @@ index faad0b38a..6949a179c 100644
 -    message("To build the sample app, please enable microphone and media player modules.")
 +    message("To build the sample app, please enable media player modules.")
  endif()
-diff --git a/source/SampleApp/include/SampleApp/SampleApplication.h b/source/SampleApp/include/SampleApp/SampleApplication.h
+diff --git a/SampleApp/include/SampleApp/SampleApplication.h b/SampleApp/include/SampleApp/SampleApplication.h
 index 625479ecb..e3a1c78e0 100644
---- a/source/SampleApp/include/SampleApp/SampleApplication.h
-+++ b/source/SampleApp/include/SampleApp/SampleApplication.h
+--- a/SampleApp/include/SampleApp/SampleApplication.h
++++ b/SampleApp/include/SampleApp/SampleApplication.h
 @@ -131,7 +131,7 @@ public:
              avsCommon::sdkInterfaces::SpeakerInterface::Type speakerType);
      };
@@ -46,10 +46,10 @@ index 625479ecb..e3a1c78e0 100644
      /**
       * Initialize a SampleApplication.
       *
-diff --git a/source/SampleApp/src/CMakeLists.txt b/source/SampleApp/src/CMakeLists.txt
+diff --git a/SampleApp/src/CMakeLists.txt b/SampleApp/src/CMakeLists.txt
 index 45e865398..f0eb4f82a 100644
---- a/source/SampleApp/src/CMakeLists.txt
-+++ b/source/SampleApp/src/CMakeLists.txt
+--- a/SampleApp/src/CMakeLists.txt
++++ b/SampleApp/src/CMakeLists.txt
 @@ -37,16 +37,17 @@ IF (HAS_EXTERNAL_MEDIA_PLAYER_ADAPTERS)
      endforeach(myfile)
  ENDIF()
@@ -127,10 +127,10 @@ index 45e865398..f0eb4f82a 100644
 +# install target
 +asdk_install()
 +
-diff --git a/source/SampleApp/src/SampleApplication.cpp b/source/SampleApp/src/SampleApplication.cpp
+diff --git a/SampleApp/src/SampleApplication.cpp b/SampleApp/src/SampleApplication.cpp
 index 62574cc8d..2f16f8516 100644
---- a/source/SampleApp/src/SampleApplication.cpp
-+++ b/source/SampleApp/src/SampleApplication.cpp
+--- a/SampleApp/src/SampleApplication.cpp
++++ b/SampleApp/src/SampleApplication.cpp
 @@ -859,7 +859,8 @@ bool SampleApplication::initialize(
      std::shared_ptr<applicationUtilities::androidUtilities::AndroidSLESMicrophone> micWrapper =
          m_openSlEngine->createMicrophoneRecorder(sharedDataStream);
@@ -141,10 +141,10 @@ index 62574cc8d..2f16f8516 100644
  #endif
      if (!micWrapper) {
          ACSDK_CRITICAL(LX("Failed to create PortAudioMicrophoneWrapper!"));
-diff --git a/source/build/cmake/PrepareInstall.cmake b/source/build/cmake/PrepareInstall.cmake
+diff --git a/build/cmake/PrepareInstall.cmake b/build/cmake/PrepareInstall.cmake
 index bba980a18..d26f7a10d 100644
---- a/source/build/cmake/PrepareInstall.cmake
-+++ b/source/build/cmake/PrepareInstall.cmake
+--- a/build/cmake/PrepareInstall.cmake
++++ b/build/cmake/PrepareInstall.cmake
 @@ -13,7 +13,7 @@ endfunction()
  function(asdk_install)
      SET(PKG_CONFIG_LIBS "${PKG_CONFIG_LIBS} -l${PROJECT_NAME}" CACHE INTERNAL "" FORCE)

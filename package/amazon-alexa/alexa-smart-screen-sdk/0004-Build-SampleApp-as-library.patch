@@ -4,18 +4,18 @@ Date: Mon, 29 Jun 2020 08:57:21 +0200
 Subject: [PATCH] Build SampleApp as library
 
 ---
- source/modules/Alexa/SampleApp/CMakeLists.txt        |  6 +--
- source/.../include/SampleApp/SampleApplication.h     |  2 +-
- source/modules/Alexa/SampleApp/src/CMakeLists.txt    | 46 ++++++++++---------
- source/.../Alexa/SampleApp/src/SampleApplication.cpp |  3 +-
- source/.../SmartScreenSDKInterfaces/CMakeLists.txt   |  2 +-
- source/.../Alexa/build/cmake/PrepareInstall.cmake    | 11 +++--
+ modules/Alexa/SampleApp/CMakeLists.txt        |  6 +--
+ .../include/SampleApp/SampleApplication.h     |  2 +-
+ modules/Alexa/SampleApp/src/CMakeLists.txt    | 46 ++++++++++---------
+ .../Alexa/SampleApp/src/SampleApplication.cpp |  3 +-
+ .../SmartScreenSDKInterfaces/CMakeLists.txt   |  2 +-
+ .../Alexa/build/cmake/PrepareInstall.cmake    | 11 +++--
  6 files changed, 39 insertions(+), 31 deletions(-)
 
-diff --git a/source/modules/Alexa/SampleApp/CMakeLists.txt b/source/modules/Alexa/SampleApp/CMakeLists.txt
+diff --git a/modules/Alexa/SampleApp/CMakeLists.txt b/modules/Alexa/SampleApp/CMakeLists.txt
 index b31f47b..c4adb48 100644
---- a/source/modules/Alexa/SampleApp/CMakeLists.txt
-+++ b/source/modules/Alexa/SampleApp/CMakeLists.txt
+--- a/modules/Alexa/SampleApp/CMakeLists.txt
++++ b/modules/Alexa/SampleApp/CMakeLists.txt
 @@ -1,7 +1,7 @@
  
 -if ((PORTAUDIO AND GSTREAMER_MEDIA_PLAYER) OR (ANDROID_MEDIA_PLAYER AND ANDROID_MICROPHONE))
@@ -33,10 +33,10 @@ index b31f47b..c4adb48 100644
 -    message("To build the sample app, please enable microphone and media player modules.")
 +    message("To build the sample app, please enable media player modules.")
  endif()
-diff --git a/source/modules/Alexa/SampleApp/include/SampleApp/SampleApplication.h b/source/modules/Alexa/SampleApp/include/SampleApp/SampleApplication.h
+diff --git a/modules/Alexa/SampleApp/include/SampleApp/SampleApplication.h b/modules/Alexa/SampleApp/include/SampleApp/SampleApplication.h
 index 014d3d6..3beb38d 100644
---- a/source/modules/Alexa/SampleApp/include/SampleApp/SampleApplication.h
-+++ b/source/modules/Alexa/SampleApp/include/SampleApp/SampleApplication.h
+--- a/modules/Alexa/SampleApp/include/SampleApp/SampleApplication.h
++++ b/modules/Alexa/SampleApp/include/SampleApp/SampleApplication.h
 @@ -145,7 +145,7 @@ public:
              MediaPlayerCreateFunction createFunction);
      };
@@ -46,10 +46,10 @@ index 014d3d6..3beb38d 100644
      /**
       * Initialize a SampleApplication.
       *
-diff --git a/source/modules/Alexa/SampleApp/src/CMakeLists.txt b/source/modules/Alexa/SampleApp/src/CMakeLists.txt
+diff --git a/modules/Alexa/SampleApp/src/CMakeLists.txt b/modules/Alexa/SampleApp/src/CMakeLists.txt
 index 9498e5f..f237b1d 100644
---- a/source/modules/Alexa/SampleApp/src/CMakeLists.txt
-+++ b/source/modules/Alexa/SampleApp/src/CMakeLists.txt
+--- a/modules/Alexa/SampleApp/src/CMakeLists.txt
++++ b/modules/Alexa/SampleApp/src/CMakeLists.txt
 @@ -38,10 +38,10 @@ IF (HAS_EXTERNAL_MEDIA_PLAYER_ADAPTERS)
      endforeach(myfile)
  ENDIF()
@@ -170,10 +170,10 @@ index 9498e5f..f237b1d 100644
 +
 +asdk_install()
 \ No newline at end of file
-diff --git a/source/modules/Alexa/SampleApp/src/SampleApplication.cpp b/source/modules/Alexa/SampleApp/src/SampleApplication.cpp
+diff --git a/modules/Alexa/SampleApp/src/SampleApplication.cpp b/modules/Alexa/SampleApp/src/SampleApplication.cpp
 index a10467e..61c75d3 100644
---- a/source/modules/Alexa/SampleApp/src/SampleApplication.cpp
-+++ b/source/modules/Alexa/SampleApp/src/SampleApplication.cpp
+--- a/modules/Alexa/SampleApp/src/SampleApplication.cpp
++++ b/modules/Alexa/SampleApp/src/SampleApplication.cpp
 @@ -798,7 +798,8 @@ bool SampleApplication::initialize(
      std::shared_ptr<applicationUtilities::androidUtilities::AndroidSLESMicrophone> micWrapper =
          m_openSlEngine->createMicrophoneRecorder(sharedDataStream);
@@ -184,20 +184,20 @@ index a10467e..61c75d3 100644
  #endif
      if (!micWrapper) {
          ACSDK_CRITICAL(LX("Failed to create PortAudioMicrophoneWrapper!"));
-diff --git a/source/modules/Alexa/SmartScreenSDKInterfaces/CMakeLists.txt b/source/modules/Alexa/SmartScreenSDKInterfaces/CMakeLists.txt
+diff --git a/modules/Alexa/SmartScreenSDKInterfaces/CMakeLists.txt b/modules/Alexa/SmartScreenSDKInterfaces/CMakeLists.txt
 index b12ac56..22cee2f 100644
---- a/source/modules/Alexa/SmartScreenSDKInterfaces/CMakeLists.txt
-+++ b/source/modules/Alexa/SmartScreenSDKInterfaces/CMakeLists.txt
+--- a/modules/Alexa/SmartScreenSDKInterfaces/CMakeLists.txt
++++ b/modules/Alexa/SmartScreenSDKInterfaces/CMakeLists.txt
 @@ -9,4 +9,4 @@ target_include_directories(SmartScreenSDKInterfaces INTERFACE
      "${SmartScreenSDKInterfaces_SOURCE_DIR}/include"
      "${SmartScreenSDKInterfaces_SOURCE_DIR}/test")
  
 -asdk_install()
 +asdk_install_interface()
-diff --git a/source/modules/Alexa/build/cmake/PrepareInstall.cmake b/source/modules/Alexa/build/cmake/PrepareInstall.cmake
+diff --git a/modules/Alexa/build/cmake/PrepareInstall.cmake b/modules/Alexa/build/cmake/PrepareInstall.cmake
 index bba980a..76986ab 100644
---- a/source/modules/Alexa/build/cmake/PrepareInstall.cmake
-+++ b/source/modules/Alexa/build/cmake/PrepareInstall.cmake
+--- a/modules/Alexa/build/cmake/PrepareInstall.cmake
++++ b/modules/Alexa/build/cmake/PrepareInstall.cmake
 @@ -13,7 +13,12 @@ endfunction()
  function(asdk_install)
      SET(PKG_CONFIG_LIBS "${PKG_CONFIG_LIBS} -l${PROJECT_NAME}" CACHE INTERNAL "" FORCE)
