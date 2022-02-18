@@ -403,13 +403,23 @@ config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO_PLATFORMNAME
 
 endif
 
-config BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION
     select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
-    depends on BR2_PACKAGE_HAS_NEXUS
     bool "DeviceIdentification"
     default y
     help
-      DeviceIdentification Plugin (Nexus OTP)
+      DeviceIdentification Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION
+
+config BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION_INTERFACE_NAME
+    string "InterfaceName"
+    default "eth0"
+    help
+      Name of interface, which has to be used for the device id generation
+      in case of generic implementation
+
+endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_DISPLAYINFO
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
@@ -503,6 +513,19 @@ config BR2_PACKAGE_WPEFRAMEWORK_DICTIONARY
     bool "Dictionary"
     help
       Dictionary Plugin.
+
+config BR2_PACKAGE_WPEFRAMEWORK_FILETRANSFER
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "FileTransfer"
+    help
+      FileTransfer Plugin
+
+config BR2_PACKAGE_WPEFRAMEWORK_FIRMWARECONTROL
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_MFR_LIBRARY
+    bool "FirmwareControl"
+    help
+      FirmwareControl Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_FRONTPANEL
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
@@ -978,19 +1001,6 @@ config BR2_PACKAGE_WPEFRAMEWORK_SYSTEMCOMMANDS
     help
       SystemCommands Plugin
 
-config BR2_PACKAGE_WPEFRAMEWORK_FILETRANSFER
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-    bool "FileTransfer"
-    help
-      FileTransfer Plugin
-
-config BR2_PACKAGE_WPEFRAMEWORK_FIRMWARECONTROL
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-    select BR2_PACKAGE_MFR_LIBRARY
-    bool "FirmwareControl"
-    help
-      FirmwareControl Plugin
-
 config BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT
     select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     select BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT_ACCESSOR
@@ -1011,6 +1021,39 @@ if BR2_PACKAGE_WPEFRAMEWORK_SPARK
 config BR2_PACKAGE_WPEFRAMEWORK_SPARK_AUTOSTART
     bool "autostart"
     default n
+endif
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_SWITCHBOARD
+    bool "SwitchBoard"
+    help
+      SwitchBoard plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_SWITCHBOARD
+
+config BR2_PACKAGE_WPEFRAMEWORK_SWITCHBOARD_DEFAULT
+    string "Default Callsign"
+    help
+      Callsign of the plugin to be activated in case nothing is active
+
+config BR2_PACKAGE_WPEFRAMEWORK_SWITCH_AMAZON
+    depends on BR2_PACKAGE_WPEFRAMEWORK_AMAZON
+    bool "Amazon"
+    default y
+
+config BR2_PACKAGE_WPEFRAMEWORK_SWITCH_COBALT
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COBALT
+    bool "Cobalt"
+    default y
+
+config BR2_PACKAGE_WPEFRAMEWORK_SWITCH_NETFLIX
+    depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+    bool "Netflix"
+    default y
+
+config BR2_PACKAGE_WPEFRAMEWORK_SWITCH_WEBKITBROWSER
+    depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+    bool "WebKitBrowser"
+    default y
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_TESTCONTROLLER
@@ -1087,6 +1130,10 @@ config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_AUTOSTART
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_INJECTEDBUNDLE_INTERFACES
     bool "injectedbundle"
     default y
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROW_EXTENSION_DIRECTORY
+    string "extension directory name"
+    default "Extension"
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_STARTURL
     string "start-url"
