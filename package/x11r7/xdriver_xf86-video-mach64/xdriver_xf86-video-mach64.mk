@@ -13,7 +13,7 @@ XDRIVER_XF86_VIDEO_MACH64_AUTORECONF = YES
 XDRIVER_XF86_VIDEO_MACH64_DEPENDENCIES = xserver_xorg-server xorgproto
 
 ifeq ($(BR2_PACKAGE_MESA3D_DRI_DRIVER),)
-XDRIVER_XF86_VIDEO_MACH64_CONF_OPTS = --disable-dri
+XDRIVER_XF86_VIDEO_MACH64_CONF_OPTS += --disable-dri
 endif
 
 $(eval $(autotools-package))
