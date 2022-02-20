@@ -26,6 +26,7 @@ HOST_GDK_PIXBUF_CONF_OPTS = \
 	-Dgio_sniffing=false \
 	-Dinstalled_tests=false \
 	-Dintrospection=disabled \
+	-Drelocatable=true \
 	-Dman=false
 
 ifeq ($(BR2_STATIC_LIBS),y)
