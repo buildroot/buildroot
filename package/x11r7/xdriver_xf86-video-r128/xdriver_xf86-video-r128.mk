@@ -12,7 +12,7 @@ XDRIVER_XF86_VIDEO_R128_LICENSE_FILES = COPYING
 XDRIVER_XF86_VIDEO_R128_DEPENDENCIES = xserver_xorg-server xorgproto
 
 ifeq ($(BR2_PACKAGE_MESA3D_DRI_DRIVER),)
-XDRIVER_XF86_VIDEO_R128_CONF_OPTS = --disable-dri
+XDRIVER_XF86_VIDEO_R128_CONF_OPTS += --disable-dri
 endif
 
 $(eval $(autotools-package))
