@@ -109,4 +109,9 @@ else
 CONNMAN_CONF_OPTS += --disable-client
 endif
 
+ifeq ($(BR2_PACKAGE_LIBEXECINFO),y)
+CONNMAN_DEPENDENCIES += libexecinfo
+CONNMAN_CONF_ENV += LDFLAGS="$(TARGET_LDFLAGS) -lexecinfo"
+endif
+
 $(eval $(autotools-package))
