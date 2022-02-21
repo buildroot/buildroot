@@ -1,0 +1,81 @@
+From 4c62082f64132bfcbcb6569aa914c5ec283303f9 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 21 Feb 2022 18:21:11 +0100
+Subject: [PATCH] Fix uclibc build
+
+Commit 4fbb6d4f2ecf2a96c17ea9880108409f852c08a9 reverted commit
+44036c9a9b45d03373fe90e9c112852bfc054c51 and so broke again the build on
+uclibc
+
+So put back the sys/auxv.h check as well as a getauxval check in a way
+that doesn't break iOS
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/xiph/flac/pull/292]
+---
+ configure.ac      | 5 ++++-
+ src/libFLAC/cpu.c | 9 ++++-----
+ 2 files changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 4d7dc2e4..6f32fa45 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -69,7 +69,7 @@ AC_C_INLINE
+ AC_C_VARARRAYS
+ AC_C_TYPEOF
+ 
+-AC_CHECK_HEADERS([stdint.h inttypes.h byteswap.h sys/param.h sys/ioctl.h termios.h x86intrin.h cpuid.h])
++AC_CHECK_HEADERS([stdint.h inttypes.h byteswap.h sys/auxv.h sys/param.h sys/ioctl.h termios.h x86intrin.h cpuid.h])
+ 
+ XIPH_C_BSWAP32
+ XIPH_C_BSWAP16
+@@ -101,6 +101,9 @@ fi
+ # For the XMMS plugin.
+ AC_CHECK_TYPES(socklen_t, [], [])
+ 
++dnl check for getauxval in standard library
++AC_CHECK_FUNCS(getauxval)
++
+ dnl check for getopt in standard library
+ dnl AC_CHECK_FUNCS(getopt_long , , [LIBOBJS="$LIBOBJS getopt.o getopt1.o"] )
+ AC_CHECK_FUNCS(getopt_long, [], [])
+diff --git a/src/libFLAC/cpu.c b/src/libFLAC/cpu.c
+index 8b92f4c7..64c6acad 100644
+--- a/src/libFLAC/cpu.c
++++ b/src/libFLAC/cpu.c
+@@ -53,11 +53,9 @@
+ #define dfprintf(file, format, ...)
+ #endif
+ 
+-#if defined FLAC__CPU_PPC
+-#if defined(__linux__) || (defined(__FreeBSD__) && (__FreeBSD__ >= 12))
++#if defined(HAVE_SYS_AUXV_H)
+ #include <sys/auxv.h>
+ #endif
+-#endif
+ 
+ #if (defined FLAC__CPU_IA32 || defined FLAC__CPU_X86_64) && (defined FLAC__HAS_NASM || FLAC__HAS_X86INTRIN) && !defined FLAC__NO_ASM
+ 
+@@ -247,7 +245,7 @@ ppc_cpu_info (FLAC__CPUInfo *info)
+ #define PPC_FEATURE2_ARCH_2_07		0x80000000
+ #endif
+ 
+-#ifdef __linux__
++#if defined (__linux__) && defined(HAVE_GETAUXVAL)
+ 	if (getauxval(AT_HWCAP2) & PPC_FEATURE2_ARCH_3_00) {
+ 		info->ppc.arch_3_00 = true;
+ 	} else if (getauxval(AT_HWCAP2) & PPC_FEATURE2_ARCH_2_07) {
+@@ -267,7 +265,8 @@ ppc_cpu_info (FLAC__CPUInfo *info)
+ 	info->ppc.arch_2_07 = false;
+ 	info->ppc.arch_3_00 = false;
+ #else
+-#error Unsupported platform! Please add support for reading ppc hwcaps.
++	info->ppc.arch_2_07 = false;
++	info->ppc.arch_3_00 = false;
+ #endif
+ 
+ #else
+-- 
+2.34.1
+
