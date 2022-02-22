@@ -59,3 +59,40 @@ index 8b46518ce..2d2055625 100644
  	audio_wav_convert \
  	best_effort_bvn_status \
  	blit_client \
+diff --git a/nexus/nxclient/server/nxserverlib.c b/nexus/nxclient/server/nxserverlib.c
+index aeae7d977..6ed304edf 100644
+--- a/nexus/nxclient/server/nxserverlib.c
++++ b/nexus/nxclient/server/nxserverlib.c
+@@ -4080,6 +4080,11 @@ void nxserverlib_get_settings(nxserver_t server, struct nxserver_settings *setti
+ }
+ 
+ nxserver_t nxserverlib_init(const struct nxserver_settings *settings)
++{
++    return (nxserverlib_init_extended(settings, true));
++}
++
++nxserver_t nxserverlib_init_extended(const struct nxserver_settings *settings, const bool authorizedOnly)
+ {
+     NEXUS_PlatformStartServerSettings serverSettings;
+     NEXUS_Error rc;
+@@ -4154,7 +4159,7 @@ nxserver_t nxserverlib_init(const struct nxserver_settings *settings)
+     BKNI_ReleaseMutex(server->settings.lock);
+ 
+     NEXUS_Platform_GetDefaultStartServerSettings(&serverSettings);
+-    serverSettings.allowUnauthenticatedClients = false;
++    serverSettings.allowUnauthenticatedClients = !authorizedOnly;
+     rc = NEXUS_Platform_StartServer(&serverSettings);
+     BDBG_ASSERT(!rc);
+ 
+diff --git a/nexus/nxclient/server/nxserverlib.h b/nexus/nxclient/server/nxserverlib.h
+index f7457a3a1..cd976504e 100644
+--- a/nexus/nxclient/server/nxserverlib.h
++++ b/nexus/nxclient/server/nxserverlib.h
+@@ -362,6 +362,7 @@ struct nxserver_cmdline_settings
+ /* nxserver_lib.c API */
+ void nxserver_get_default_settings(struct nxserver_settings *settings);
+ nxserver_t nxserverlib_init(const struct nxserver_settings *settings);
++nxserver_t nxserverlib_init_extended(const struct nxserver_settings *settings, const bool authorizedOnly);
+ void nxserverlib_uninit(nxserver_t server);
+ struct b_session *nxserver_get_client_session(nxclient_t client);
+ /* get_singleton is used for nxclient local to use externally opened nxserverlib */
