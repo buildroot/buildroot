@@ -49,6 +49,12 @@ ZSH_CONF_OPTS += \
 	zsh_cv_sys_dynamic_strip_lib=yes
 endif
 
+# regex is commonly used by completion scripts, link it statically
+define ZSH_USE_STATIC_REGEX_MODULE
+	$(SED) 's,echo dynamic,echo static,' $(@D)/Src/Modules/regex.mdd
+endef
+ZSH_POST_PATCH_HOOKS += ZSH_USE_STATIC_REGEX_MODULE
+
 # Add /bin/zsh to /etc/shells otherwise some login tools like dropbear
 # can reject the user connection. See man shells.
 define ZSH_ADD_ZSH_TO_SHELLS
