@@ -10,7 +10,7 @@ QT5WEBKIT_SOURCE = qtwebkit-$(QT5WEBKIT_VERSION).tar.xz
 QT5WEBKIT_DEPENDENCIES = \
 	host-bison host-flex host-gperf host-python3 host-ruby gstreamer1 \
 	gst1-plugins-base icu leveldb jpeg libpng libxml2 libxslt qt5location \
-	qt5sensors qt5webchannel sqlite webp woff2
+	openssl qt5sensors qt5webchannel sqlite webp woff2
 QT5WEBKIT_INSTALL_STAGING = YES
 
 QT5WEBKIT_LICENSE_FILES = Source/WebCore/LICENSE-LGPL-2 Source/WebCore/LICENSE-LGPL-2.1
