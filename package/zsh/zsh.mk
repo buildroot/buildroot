@@ -36,6 +36,19 @@ else
 ZSH_CONF_OPTS += --disable-pcre
 endif
 
+ifneq ($(BR2_STATIC_LIBS),y)
+# zsh uses TRY_RUN to determine these
+ZSH_CONF_OPTS += \
+	zsh_cv_shared_environ=yes \
+	zsh_cv_shared_tgetent=yes \
+	zsh_cv_shared_tigetstr=yes \
+	zsh_cv_sys_dynamic_clash_ok=yes \
+	zsh_cv_sys_dynamic_rtld_global=yes \
+	zsh_cv_sys_dynamic_execsyms=yes \
+	zsh_cv_sys_dynamic_strip_exe=yes \
+	zsh_cv_sys_dynamic_strip_lib=yes
+endif
+
 # Add /bin/zsh to /etc/shells otherwise some login tools like dropbear
 # can reject the user connection. See man shells.
 define ZSH_ADD_ZSH_TO_SHELLS
