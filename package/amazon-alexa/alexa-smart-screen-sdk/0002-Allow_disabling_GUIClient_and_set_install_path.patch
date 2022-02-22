@@ -1,0 +1,32 @@
+diff --git a/modules/CMakeLists.txt b/modules/CMakeLists.txt
+index 8ff85c6..fb5f395 100644
+--- a/modules/CMakeLists.txt
++++ b/modules/CMakeLists.txt
+@@ -4,4 +4,8 @@ cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+ project(modules LANGUAGES CXX)
+ 
+ add_subdirectory("Alexa")
+-add_subdirectory("GUI")
+\ No newline at end of file
++
++set(JS_GUICLIENT_ENABLE OFF CACHE BOOL "Build the JS GUI Client")
++if(${JS_GUICLIENT_ENABLE})
++    add_subdirectory("GUI")
++endif()
+diff --git a/modules/GUI/CMakeLists.txt b/modules/GUI/CMakeLists.txt
+index ca62fb4..3332a24 100644
+--- a/modules/GUI/CMakeLists.txt
++++ b/modules/GUI/CMakeLists.txt
+@@ -7,10 +7,11 @@ else()
+     set(DISABLE_WEBSOCKET_SSL_VALUE "false")
+ endif()
+ 
++set(JS_GUICLIENT_INSTALL_PATH "" CACHE STRING "The install path")
+ add_custom_target(GUIClient ALL
+         COMMAND "cp" "${CMAKE_CURRENT_SOURCE_DIR}/config/StartSample.sh" "${AlexaSmartScreenSDK_BINARY_DIR}"
+         COMMAND "npm" "install"
+         COMMAND "npm" "run" "build" "--"
+-            "--output-path" "${CMAKE_CURRENT_BINARY_DIR}"
++            "--output-path" "${JS_GUICLIENT_INSTALL_PATH}"
+             "--define" "DISABLE_WEBSOCKET_SSL=${DISABLE_WEBSOCKET_SSL_VALUE}"
+         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/js")

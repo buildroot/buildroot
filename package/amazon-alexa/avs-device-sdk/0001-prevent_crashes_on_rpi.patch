@@ -1,0 +1,13 @@
+diff --git a/AVSCommon/Utils/include/AVSCommon/Utils/Logger/ThreadMoniker.h b/AVSCommon/Utils/include/AVSCommon/Utils/Logger/ThreadMoniker.h
+index 672ae675e..d5c8e7bc7 100644
+--- a/AVSCommon/Utils/include/AVSCommon/Utils/Logger/ThreadMoniker.h
++++ b/AVSCommon/Utils/include/AVSCommon/Utils/Logger/ThreadMoniker.h
+@@ -97,7 +97,7 @@ const ThreadMoniker& ThreadMoniker::getMonikerObject(const std::string& moniker)
+     return getMonikerObjectFromMap(moniker);
+ #else
+     /// Per-thread static instance so that @c m_threadMoniker.m_moniker is @c std::this_thread's moniker.
+-    static thread_local ThreadMoniker m_threadMoniker{moniker};
++    static ThreadMoniker m_threadMoniker{moniker};
+ 
+     return m_threadMoniker;
+ #endif
