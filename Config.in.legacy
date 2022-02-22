@@ -158,6 +158,13 @@ config BR2_PACKAGE_WESTON_FBDEV
 	help
 	  fbdev compositor was deprecated in weston 10.0.0.
 
+config BR2_PACKAGE_PYTHON_PYCLI
+	bool "python-pycli removed"
+	select BR2_LEGACY
+	help
+	  Package was removed because it is not compatible with python
+	  3.10 and is not maintained anymore (no release since 2012).
+
 config BR2_PACKAGE_LINUX_TOOLS_BPFTOOL
 	bool "bpftool was moved"
 	select BR2_LEGACY
