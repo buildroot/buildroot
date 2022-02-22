@@ -22,4 +22,8 @@ ifeq ($(BR2_STATIC_LIBS),y)
 SORD_CONF_OPTS += --static --no-shared --static-progs
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),)
+SORD_CONF_OPTS += --no-threads
+endif
+
 $(eval $(waf-package))
