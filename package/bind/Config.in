@@ -1,6 +1,11 @@
 config BR2_PACKAGE_BIND
 	bool "bind"
-	depends on BR2_USE_MMU # fork()
+	depends on BR2_USE_MMU # fork(), libuv
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libuv
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # libuv
+	depends on !BR2_STATIC_LIBS # libuv
+	select BR2_PACKAGE_LIBUV
+	select BR2_PACKAGE_OPENSSL
 	help
 	  BIND (Berkeley Internet Name Domain) is an
 	  implementation of the Domain Name System (DNS) protocols
@@ -23,6 +28,11 @@ config BR2_PACKAGE_BIND
 	  service.
 
 	  https://www.isc.org/bind/
+
+comment "bind needs a toolchain w/ NPTL, dynamic library"
+	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_TOOLCHAIN_HAS_THREADS_NPTL || BR2_STATIC_LIBS
 
 if BR2_PACKAGE_BIND
 
