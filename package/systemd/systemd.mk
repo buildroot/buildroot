@@ -310,10 +310,6 @@ define SYSTEMD_BUILD_HWDB
 	$(HOST_DIR)/bin/systemd-hwdb update --root $(TARGET_DIR) --strict --usr
 endef
 SYSTEMD_TARGET_FINALIZE_HOOKS += SYSTEMD_BUILD_HWDB
-define SYSTEMD_RM_HWDB_SRV
-	rm -rf $(TARGET_DIR)/$(HOST_EUDEV_SYSCONFDIR)/udev/hwdb.d/
-endef
-SYSTEMD_ROOTFS_PRE_CMD_HOOKS += SYSTEMD_RM_HWDB_SRV
 else
 SYSTEMD_CONF_OPTS += -Dhwdb=false
 endif
@@ -729,6 +725,11 @@ define SYSTEMD_UPDATE_CATALOGS
 endef
 SYSTEMD_ROOTFS_PRE_CMD_HOOKS += SYSTEMD_UPDATE_CATALOGS
 endif
+
+define SYSTEMD_RM_HWDB_DATA
+	rm -rf $(TARGET_DIR)/usr/lib/udev/hwdb.d/ $(TARGET_DIR)/etc/udev/hwdb.d/
+endef
+SYSTEMD_ROOTFS_PRE_CMD_HOOKS += SYSTEMD_RM_HWDB_DATA
 
 define SYSTEMD_RM_CATALOG_UPDATE_SERVICE
 	rm -rf $(TARGET_DIR)/usr/lib/systemd/catalog \
