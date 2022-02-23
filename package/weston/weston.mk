@@ -85,12 +85,6 @@ else
 WESTON_CONF_OPTS += -Dbackend-rdp=false
 endif
 
-ifeq ($(BR2_PACKAGE_WESTON_FBDEV),y)
-WESTON_CONF_OPTS += -Ddeprecated-backend-fbdev=true
-else
-WESTON_CONF_OPTS += -Ddeprecated-backend-fbdev=false
-endif
-
 ifeq ($(BR2_PACKAGE_WESTON_DRM),y)
 WESTON_CONF_OPTS += -Dbackend-drm=true
 else
