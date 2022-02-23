@@ -21,7 +21,6 @@ HOST_PYTHON3_CONF_OPTS += \
 	--without-cxx-main \
 	--disable-tk \
 	--with-expat=system \
-	--disable-curses \
 	--disable-codecs-cjk \
 	--disable-nis \
 	--enable-unicodedata \
@@ -56,6 +55,10 @@ endif
 
 ifneq ($(BR2_PACKAGE_HOST_PYTHON3_SQLITE),y)
 HOST_PYTHON3_CONF_OPTS += --disable-sqlite
+endif
+
+ifneq ($(BR2_PACKAGE_HOST_PYTHON3_CURSES),y)
+HOST_PYTHON3_CONF_OPTS += --disable-curses
 endif
 
 PYTHON3_INSTALL_STAGING = YES
