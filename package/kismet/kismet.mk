@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-KISMET_VERSION = 2021-08-R1
+KISMET_VERSION = 2022-02-R1
 KISMET_SOURCE = kismet-$(KISMET_VERSION).tar.xz
 KISMET_SITE = http://www.kismetwireless.net/code
 KISMET_DEPENDENCIES = \
@@ -28,10 +28,6 @@ KISMET_CXXFLAGS += -O0
 endif
 
 KISMET_CONF_ENV += CXXFLAGS="$(KISMET_CXXFLAGS)"
-
-ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
-KISMET_CONF_ENV += LIBS=-latomic
-endif
 
 ifeq ($(BR2_PACKAGE_LIBCAP),y)
 KISMET_DEPENDENCIES += libcap
