@@ -19,7 +19,6 @@ PYTHON3_CPE_ID_PRODUCT = python
 HOST_PYTHON3_CONF_OPTS += \
 	--without-ensurepip \
 	--without-cxx-main \
-	--disable-sqlite3 \
 	--disable-tk \
 	--with-expat=system \
 	--disable-curses \
@@ -53,6 +52,10 @@ ifeq ($(BR2_PACKAGE_HOST_PYTHON3_SSL),y)
 HOST_PYTHON3_DEPENDENCIES += host-openssl
 else
 HOST_PYTHON3_CONF_OPTS += --disable-openssl
+endif
+
+ifneq ($(BR2_PACKAGE_HOST_PYTHON3_SQLITE),y)
+HOST_PYTHON3_CONF_OPTS += --disable-sqlite
 endif
 
 PYTHON3_INSTALL_STAGING = YES
