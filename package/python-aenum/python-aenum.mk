@@ -12,3 +12,4 @@ PYTHON_AENUM_LICENSE = BSD-3-Clause
 PYTHON_AENUM_LICENSE_FILES = aenum/LICENSE
 
 $(eval $(python-package))
+$(eval $(host-python-package))
