@@ -115,7 +115,8 @@ config BR2_PACKAGE_EFL_PULSEAUDIO
 config BR2_PACKAGE_EFL_UTIL_LINUX_LIBMOUNT
 	bool "Enable libmount support (recommended)"
 	default y
-	depends on BR2_PACKAGE_EFL_EEZE
+	depends on BR2_PACKAGE_HAS_UDEV # efl-eeze
+	select BR2_PACKAGE_EFL_EEZE
 	select BR2_PACKAGE_UTIL_LINUX
 	select BR2_PACKAGE_UTIL_LINUX_LIBMOUNT
 	# libblkid is part of required tools, see EFL's README.
@@ -125,8 +126,8 @@ config BR2_PACKAGE_EFL_UTIL_LINUX_LIBMOUNT
 	  devices etc... and disabling this will hurt support for
 	  Enlightenment and its filemanager.
 
-comment "efl's libmount support needs udev /dev management (eeze)"
-	depends on !BR2_PACKAGE_EFL_EEZE
+comment "efl's libmount support needs udev /dev management "
+	depends on !BR2_PACKAGE_HAS_UDEV
 
 config BR2_PACKAGE_EFL_HAS_RECOMMENDED_CONFIG
 	bool
@@ -173,16 +174,16 @@ config BR2_PACKAGE_EFL_WAYLAND
 	depends on BR2_PACKAGE_WAYLAND
 	depends on BR2_TOOLCHAIN_HAS_THREADS # Evas DRM Engine -> libdrm
 	depends on BR2_PACKAGE_MESA3D_OPENGL_EGL # Evas DRM Engine
-	depends on BR2_PACKAGE_EFL_EEZE # efl drm
+	depends on BR2_PACKAGE_HAS_UDEV # efl drm, efl-eeze
 	depends on BR2_PACKAGE_EFL_OPENGLES # OpenGL ES with EGL support only
 	depends on BR2_ENABLE_LOCALE # efl-drm <- efl-elput <- linput
 	select BR2_PACKAGE_EFL_DRM
 	select BR2_PACKAGE_WAYLAND_PROTOCOLS
 
-comment "Wayland support needs udev /dev management (eeze), OpenGL ES w/ EGL, threads, locales"
+comment "Wayland support needs udev /dev management, OpenGL ES w/ EGL, threads, locales"
 	depends on BR2_PACKAGE_WAYLAND
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || !BR2_PACKAGE_MESA3D_OPENGL_EGL \
-		|| !BR2_PACKAGE_EFL_OPENGLES || !BR2_PACKAGE_EFL_EEZE \
+		|| !BR2_PACKAGE_EFL_OPENGLES || !BR2_PACKAGE_HAS_UDEV \
 		|| !BR2_ENABLE_LOCALE
 
 choice
@@ -215,9 +216,10 @@ endchoice # OpenGL support
 
 config BR2_PACKAGE_EFL_DRM
 	bool "Evas DRM Engine"
-	depends on BR2_PACKAGE_EFL_EEZE
+	depends on BR2_PACKAGE_HAS_UDEV # efl-eeze
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libdrm
 	depends on BR2_PACKAGE_MESA3D_OPENGL_EGL # require libgbm from mesa3d
+	select BR2_PACKAGE_EFL_EEZE
 	select BR2_PACKAGE_LIBDRM
 	select BR2_PACKAGE_LIBINPUT # For elput
 	select BR2_PACKAGE_LIBXKBCOMMON
@@ -230,9 +232,9 @@ config BR2_PACKAGE_EFL_DRM
 	  etc) to handle interfacing with libinput without having to
 	  duplicate the code in each subsystem.
 
-comment "Evas DRM Engine needs udev /dev management (eeze), mesa3d w/ EGL support, threads"
+comment "Evas DRM Engine needs udev /dev management, mesa3d w/ EGL support, threads"
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || !BR2_PACKAGE_MESA3D_OPENGL_EGL \
-		|| !BR2_PACKAGE_EFL_EEZE
+		|| !BR2_PACKAGE_HAS_UDEV
 
 comment "libevas loaders"
 
