@@ -85,6 +85,19 @@ config BR2_PACKAGE_EFL_LIBFRIBIDI
 	  so you may also trigger code paths with bugs that are never
 	  normally used.
 
+config BR2_PACKAGE_EFL_ELPUT
+	bool "Enable elput support (recommended)"
+	default y
+	depends on BR2_PACKAGE_HAS_UDEV # libinput, efl-eeze
+	select BR2_PACKAGE_EFL_EEZE
+	select BR2_PACKAGE_LIBINPUT
+	select BR2_PACKAGE_LIBXKBCOMMON
+	help
+	  Eplut is used to support gesture recognition.
+
+comment "elput needs udev /dev management"
+	depends on !BR2_PACKAGE_HAS_UDEV
+
 config BR2_PACKAGE_EFL_LIBSNDFILE
 	bool "Enable libsndfile support (recommended)"
 	default y
@@ -216,13 +229,11 @@ endchoice # OpenGL support
 
 config BR2_PACKAGE_EFL_DRM
 	bool "Evas DRM Engine"
-	depends on BR2_PACKAGE_HAS_UDEV # efl-eeze
+	depends on BR2_PACKAGE_HAS_UDEV # efl-elput, efl-eeze
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libdrm
 	depends on BR2_PACKAGE_MESA3D_OPENGL_EGL # require libgbm from mesa3d
-	select BR2_PACKAGE_EFL_EEZE
+	select BR2_PACKAGE_EFL_ELPUT
 	select BR2_PACKAGE_LIBDRM
-	select BR2_PACKAGE_LIBINPUT # For elput
-	select BR2_PACKAGE_LIBXKBCOMMON
 	help
 	  This option enable building support for the Evas DRM Engine.
 
