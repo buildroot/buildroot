@@ -1,10 +1,10 @@
 Intro
 =====
 
-Andestech(nds32) AE3XX Platform
+Andestech(nds32) AE300 Platform
 
-The AE3XX prototype demonstrates the AE3XX example platform on the FPGA. 
-It is composed of one Andestech(nds32) processor and AE3XX.
+The AE300 prototype demonstrates the AE300 example platform on the FPGA.
+It is composed of one Andestech(nds32) processor and AE300.
 
 How to build it
 ===============
@@ -12,10 +12,10 @@ How to build it
 Configure Buildroot
 -------------------
 
-The andes_ae3xx_defconfig configuration is a sample configuration with
+The andes_ae300_defconfig configuration is a sample configuration with
 all that is required to bring the FPGA Development Board:
 
-  $ make andes_ae3xx_defconfig
+  $ make andes_ae300_defconfig
 
 Build everything
 ----------------
