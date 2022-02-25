@@ -60,10 +60,44 @@ index 8b46518ce..2d2055625 100644
  	best_effort_bvn_status \
  	blit_client \
 diff --git a/nexus/nxclient/server/nxserverlib.c b/nexus/nxclient/server/nxserverlib.c
-index aeae7d977..6ed304edf 100644
+index aeae7d977..49a934f24 100644
 --- a/nexus/nxclient/server/nxserverlib.c
 +++ b/nexus/nxclient/server/nxserverlib.c
-@@ -4080,6 +4080,11 @@ void nxserverlib_get_settings(nxserver_t server, struct nxserver_settings *setti
+@@ -1194,6 +1194,33 @@ int nxserverlib_set_server_alpha(nxclient_t client, unsigned alpha)
+     return 0;
+ }
+ 
++int nxserverlib_set_server_position(nxclient_t client, NEXUS_Rect rect)
++{
++    NEXUS_SurfaceCompositorClientSettings client_settings;
++    NEXUS_Error rc;
++    struct b_req *req;
++
++    for (req = BLST_D_FIRST(&client->requests); req; req = BLST_D_NEXT(req, link)) {
++        unsigned i;
++        for (i=0;i<NXCLIENT_MAX_IDS;i++) {
++            if (!req->results.surfaceClient[i].id) continue;
++
++            BDBG_OBJECT_ASSERT(client, b_client);
++            NEXUS_SurfaceCompositor_GetClientSettings(client->session->surfaceCompositor, req->handles.surfaceClient[i].handle, &client_settings);
++
++            client_settings.composition.position.x = rect.x;
++            client_settings.composition.position.y = rect.y;
++            client_settings.composition.position.width = rect.width;
++            client_settings.composition.position.height = rect.height;
++
++            rc = NEXUS_SurfaceCompositor_SetClientSettings(client->session->surfaceCompositor, req->handles.surfaceClient[i].handle, &client_settings);
++            if (rc) return BERR_TRACE(rc);
++        }
++    }
++
++    return 0;
++}
++
+ static NEXUS_DisplayHandle b_get_vbi_display(struct b_session *session)
+ {
+     return session->display[1].display ? session->display[1].display : session->display[0].display;
+@@ -4080,6 +4107,11 @@ void nxserverlib_get_settings(nxserver_t server, struct nxserver_settings *setti
  }
  
  nxserver_t nxserverlib_init(const struct nxserver_settings *settings)
@@ -75,7 +109,7 @@ index aeae7d977..6ed304edf 100644
  {
      NEXUS_PlatformStartServerSettings serverSettings;
      NEXUS_Error rc;
-@@ -4154,7 +4159,7 @@ nxserver_t nxserverlib_init(const struct nxserver_settings *settings)
+@@ -4154,7 +4186,7 @@ nxserver_t nxserverlib_init(const struct nxserver_settings *settings)
      BKNI_ReleaseMutex(server->settings.lock);
  
      NEXUS_Platform_GetDefaultStartServerSettings(&serverSettings);
@@ -85,7 +119,7 @@ index aeae7d977..6ed304edf 100644
      BDBG_ASSERT(!rc);
  
 diff --git a/nexus/nxclient/server/nxserverlib.h b/nexus/nxclient/server/nxserverlib.h
-index f7457a3a1..cd976504e 100644
+index f7457a3a1..63184fd94 100644
 --- a/nexus/nxclient/server/nxserverlib.h
 +++ b/nexus/nxclient/server/nxserverlib.h
 @@ -362,6 +362,7 @@ struct nxserver_cmdline_settings
@@ -96,3 +130,11 @@ index f7457a3a1..cd976504e 100644
  void nxserverlib_uninit(nxserver_t server);
  struct b_session *nxserver_get_client_session(nxclient_t client);
  /* get_singleton is used for nxclient local to use externally opened nxserverlib */
+@@ -372,6 +373,7 @@ void nxserverlib_get_settings(nxserver_t server, struct nxserver_settings *setti
+ int nxserverlib_send_input(nxclient_t client, unsigned inputClientId, const NEXUS_InputRouterCode *pCode);
+ #endif
+ int nxserverlib_set_server_alpha(nxclient_t client, unsigned alpha);
++int nxserverlib_set_server_position(nxclient_t client, NEXUS_Rect rect);
+ #if NEXUS_HAS_ASTM
+ /* modify the system defaults for ASTM */
+ void nxserverlib_get_astm_settings(NEXUS_AstmSettings *pSettings);
