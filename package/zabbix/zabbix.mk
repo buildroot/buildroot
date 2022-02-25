@@ -55,7 +55,7 @@ else
 ZABBIX_CONF_OPTS += --without-libxml2
 endif
 
-ifeq ($(BR2_PACKAGE_NETSNMP),y)
+ifeq ($(BR2_PACKAGE_NETSNMP_ENABLE_MIBS),y)
 ZABBIX_CONF_OPTS += --with-net-snmp=$(STAGING_DIR)/usr/bin/net-snmp-config
 ZABBIX_DEPENDENCIES += netsnmp
 else
