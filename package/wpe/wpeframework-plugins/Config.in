@@ -1217,7 +1217,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_TRACECONTROL
     bool "TraceControl"
     help
       TraceControl Plugin
-    
+
+config BR2_PACKAGE_WPEFRAMEWORK_MESSAGECONTROL
+    select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
+    depends on BR2_PACKAGE_WPEFRAMEWORK_MESSAGING
+    bool "MessageControl"
+    help
+        MessageControl Plugin
     
 config BR2_PACKAGE_WPEFRAMEWORK_WARNINGREPORTINGCONTROL
     select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
