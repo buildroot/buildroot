@@ -4,8 +4,11 @@
 #
 ################################################################################
 
-LIBXML2_VERSION = 2.9.12
-LIBXML2_SITE = http://xmlsoft.org/sources
+LIBXML2_VERSION_MAJOR = 2.9
+LIBXML2_VERSION = $(LIBXML2_VERSION_MAJOR).13
+LIBXML2_SOURCE = libxml2-$(LIBXML2_VERSION).tar.xz
+LIBXML2_SITE = \
+	http://ftp.gnome.org/pub/gnome/sources/libxml2/$(LIBXML2_VERSION_MAJOR)
 LIBXML2_INSTALL_STAGING = YES
 LIBXML2_LICENSE = MIT
 LIBXML2_LICENSE_FILES = COPYING
