@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-AT_VERSION = 3.2.4
+AT_VERSION = 3.2.5
 AT_SOURCE = at_$(AT_VERSION).orig.tar.gz
 AT_SITE = http://software.calhariz.com/at
 AT_DEPENDENCIES = $(if $(BR2_PACKAGE_FLEX),flex) host-bison host-flex
