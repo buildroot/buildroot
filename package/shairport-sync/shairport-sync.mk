@@ -59,6 +59,14 @@ endif
 ifeq ($(BR2_PACKAGE_SHAIRPORT_SYNC_DBUS),y)
 SHAIRPORT_SYNC_DEPENDENCIES += libglib2
 SHAIRPORT_SYNC_CONF_OPTS += --with-dbus-interface --with-mpris-interface
+define SHAIRPORT_SYNC_INSTALL_DBUS
+	$(INSTALL) -m 0644 -D \
+		$(@D)/scripts/shairport-sync-dbus-policy.conf \
+		$(TARGET_DIR)/etc/dbus-1/system.d/shairport-sync-dbus.conf
+	$(INSTALL) -m 0644 -D \
+		$(@D)/scripts/shairport-sync-mpris-policy.conf \
+		$(TARGET_DIR)/etc/dbus-1/system.d/shairport-sync-mpris.conf
+endef
 else
 SHAIRPORT_SYNC_CONF_OPTS += --without-dbus-interface --without-mpris-interface
 endif
@@ -82,6 +90,7 @@ define SHAIRPORT_SYNC_INSTALL_TARGET_CMDS
 		$(TARGET_DIR)/usr/bin/shairport-sync
 	$(INSTALL) -D -m 0644 $(@D)/scripts/shairport-sync.conf \
 		$(TARGET_DIR)/etc/shairport-sync.conf
+	$(SHAIRPORT_SYNC_INSTALL_DBUS)
 endef
 
 define SHAIRPORT_SYNC_INSTALL_INIT_SYSV
