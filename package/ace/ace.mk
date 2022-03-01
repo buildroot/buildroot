@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-ACE_VERSION = 7.0.1
-ACE_SOURCE = ACE-$(ACE_VERSION).tar.gz
+ACE_VERSION = 7.0.6
+ACE_SOURCE = ACE-$(ACE_VERSION).tar.bz2
 ACE_SITE = http://download.dre.vanderbilt.edu/previous_versions
 ACE_LICENSE = DOC
 ACE_LICENSE_FILES = COPYING
