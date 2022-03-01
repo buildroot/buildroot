@@ -26,6 +26,7 @@ RYGEL_CONF_OPTS += \
 	-Dapi-docs=false \
 	-Dexamples=false \
 	-Dintrospection=enabled \
+	-Dman_pages=false \
 	-Dtests=false
 RYGEL_PLUGINS = external,lms,mpris,ruih
 
