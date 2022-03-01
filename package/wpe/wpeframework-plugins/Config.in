@@ -528,7 +528,7 @@ endif
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION
     select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     bool "DeviceIdentification"
-    default y
+    default y if BR2_PACKAGE_HAS_NEXUS
     help
       DeviceIdentification Plugin
 
