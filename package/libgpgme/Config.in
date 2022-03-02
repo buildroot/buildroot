@@ -2,8 +2,8 @@ config BR2_PACKAGE_LIBGPGME
 	bool "libgpgme"
 	depends on BR2_PACKAGE_LIBGPG_ERROR_ARCH_SUPPORTS # libgpg-error
 	depends on BR2_USE_MMU # libassuan
-	#gnupg is not needed to build, but at runtime.
-	select BR2_PACKAGE_GNUPG if !BR2_PACKAGE_GNUPG2
+	select BR2_PACKAGE_GNUPG2 if BR2_PACKAGE_GNUPG2_DEPENDS && !BR2_PACKAGE_GNUPG # runtime
+	select BR2_PACKAGE_GNUPG if !BR2_PACKAGE_GNUPG2_DEPENDS # runtime
 	select BR2_PACKAGE_LIBGPG_ERROR
 	select BR2_PACKAGE_LIBASSUAN
 	help
