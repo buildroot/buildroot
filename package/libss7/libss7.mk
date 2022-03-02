@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBSS7_VERSION = 2.0.0
+LIBSS7_VERSION = 2.0.1
 LIBSS7_SITE = http://downloads.asterisk.org/pub/telephony/libss7/releases
 
 LIBSS7_LICENSE = GPL-2.0
