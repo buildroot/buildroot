@@ -14,6 +14,7 @@ XSCREENSAVER_CPE_ID_VENDOR = xscreensaver_project
 
 XSCREENSAVER_DEPENDENCIES = \
 	gdk-pixbuf \
+	gdk-pixbuf-xlib \
 	jpeg \
 	libgtk2 \
 	libxml2 \
