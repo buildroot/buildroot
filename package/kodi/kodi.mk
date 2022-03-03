@@ -6,7 +6,7 @@
 
 # When updating the version, please also update kodi-jsonschemabuilder
 # and kodi-texturepacker
-KODI_VERSION_MAJOR = 19.3
+KODI_VERSION_MAJOR = 19.4
 KODI_VERSION_NAME = Matrix
 KODI_VERSION = $(KODI_VERSION_MAJOR)-$(KODI_VERSION_NAME)
 KODI_SITE = $(call github,xbmc,xbmc,$(KODI_VERSION))
@@ -25,6 +25,7 @@ KODI_DEPENDENCIES = \
 	fontconfig \
 	freetype \
 	fstrcmp \
+	giflib \
 	host-flatbuffers \
 	host-gawk \
 	host-gettext \
@@ -34,6 +35,7 @@ KODI_DEPENDENCIES = \
 	host-nasm \
 	host-swig \
 	host-xmlstarlet \
+	jpeg \
 	libass \
 	libcdio \
 	libcrossguid \
@@ -42,6 +44,7 @@ KODI_DEPENDENCIES = \
 	libegl \
 	libfribidi \
 	libplist \
+	libpng \
 	lzo \
 	openssl \
 	pcre \
