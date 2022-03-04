@@ -39,7 +39,6 @@ LIBVIRT_CONF_OPTS = \
 	-Ddriver_ch=disabled \
 	-Ddriver_esx=disabled \
 	-Ddriver_hyperv=disabled \
-	-Ddriver_interface=enabled \
 	-Ddriver_libxl=disabled \
 	-Ddriver_openvz=disabled \
 	-Ddriver_remote=enabled \
@@ -196,7 +195,10 @@ endif
 
 ifeq ($(BR2_PACKAGE_LIBVIRT_DAEMON),y)
 # Network is used by daemon, only
-LIBVIRT_CONF_OPTS += -Ddriver_libvirtd=enabled -Ddriver_network=enabled
+LIBVIRT_CONF_OPTS += \
+	-Ddriver_interface=enabled \
+	-Ddriver_libvirtd=enabled \
+	-Ddriver_network=enabled
 
 ifeq ($(BR2_PACKAGE_LIBSSH),y)
 LIBVIRT_CONF_OPTS += -Dlibssh=enabled
@@ -235,7 +237,10 @@ endif
 
 else # BR2_PACKAGE_LIBVIRT_DAEMON
 
-LIBVIRT_CONF_OPTS += -Ddriver_libvirtd=disabled -Ddriver_network=disabled
+LIBVIRT_CONF_OPTS += \
+	-Ddriver_interface=disabled \
+	-Ddriver_libvirtd=disabled \
+	-Ddriver_network=disabled
 
 endif
 
