@@ -1,0 +1,25 @@
+From 7f1a2c060986472221464e8e4e5ff226e2e6096f Mon Sep 17 00:00:00 2001
+From: krp97 <k.plata@metrological.com>
+Date: Fri, 4 Mar 2022 09:57:47 +0000
+Subject: [PATCH 2/2] Disable libcurl and mpeg checking
+
+---
+ configure.ac | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index aac12bd..499054e 100755
+--- a/configure.ac
++++ b/configure.ac
+@@ -348,8 +348,6 @@ fi
+ 
+ plugindir="\$(libdir)/gstreamer-$GST_MAJORMINOR"
+ PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 0.10.28])
+-PKG_CHECK_MODULES([CURL], [libcurl >= 7.19.6])
+-PKG_CHECK_MODULES([MPG123], [libmpg123 >= 1.19.0])
+ AC_SUBST(PLUGIN_SRC)
+ AC_SUBST(USE_GPRINT)
+ AC_SUBST(ENABLE_SVP)
+-- 
+2.25.1
+
