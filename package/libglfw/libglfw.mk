@@ -29,7 +29,11 @@ LIBGLFW_DEPENDENCIES += libgles
 endif
 
 ifeq ($(BR2_PACKAGE_WAYLAND),y)
-LIBGLFW_CONF_OPTS +=  -DGLFW_USE_WAYLAND=1
+LIBGLFW_DEPENDENCIES += libxkbcommon wayland-protocols
+# Override pkg-config pkgdatadir variable, it needs the prefix
+LIBGLFW_CONF_OPTS += \
+	-DGLFW_USE_WAYLAND=1 \
+	-DWAYLAND_PROTOCOLS_BASE=$(STAGING_DIR)/usr/share/wayland-protocols
 endif
 
 ifeq ($(BR2_PACKAGE_XLIB_LIBXXF86VM),y)
