@@ -4,14 +4,13 @@
 #
 ################################################################################
 
-LIBXSLT_VERSION = 1.1.34
-LIBXSLT_SITE = http://xmlsoft.org/sources
+LIBXSLT_VERSION = 1.1.35
+LIBXSLT_SOURCE = libxslt-$(LIBXSLT_VERSION).tar.xz
+LIBXSLT_SITE = https://download.gnome.org/sources/libxslt/1.1
 LIBXSLT_INSTALL_STAGING = YES
 LIBXSLT_LICENSE = MIT
 LIBXSLT_LICENSE_FILES = COPYING
 LIBXSLT_CPE_ID_VENDOR = xmlsoft
-# We're patching configure.ac
-LIBXSLT_AUTORECONF = YES
 
 LIBXSLT_CONF_OPTS = \
 	--with-gnu-ld \
