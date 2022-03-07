@@ -5,7 +5,7 @@ This document explains how to set up a basic Buildroot system for the
 Technologic Systems TS-5x00 serie of x86-based Single Board Computers.
 
 TS-5x00 Single Board Computers are based on the AMD Elan520 processor. For more
-information please have a look at http://wiki.embeddedarm.com/wiki/#AMD
+information please have a look at https://docs.embeddedTS.com/Documentation_Home#AMD
 
 The kernel configuration works for any AMD Elan520-based SBCs, but the support
 is enhanced for the TS-5500 and TS-5400 models (on-board devices registration
@@ -45,7 +45,7 @@ config, the BIOS must use Logical Block Addressing (LBA). You can do it by
 choosing "Ide 0: AUTOCONFIG, LBA" under "IDE DRIVE GEOMETRY" in the "Basic CMOS
 Configuration" screen. Also, don't forget to set the 'active' (or 'bootable')
 flag on partition 1. For details about the CMOS setup, please see:
-http://wiki.embeddedarm.com/wiki/TS-5500#System_BIOS_Setup_Screens
+https://docs.embeddedts.com/TS-5500#System_BIOS_Setup_Screens
 
 Connect a terminal program to the rs232 connector marked "COM2"
 with baudrate set to 115200, insert the Compact Flash card into the socket,
