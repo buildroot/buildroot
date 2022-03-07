@@ -8,7 +8,7 @@ The TS-7680 SBC is based on the Freescale i.MX286 ARM ARM926EJ-S
 running at 454MHz. The TS-7680 features are 10/100 Ethernet ports,
 Wi-Fi, microSD card, eMMC, NOR Flash, USB host port, CAN ports,
 relays and ADC/DAC. More details on the board here:
-https://wiki.embeddedarm.com/wiki/TS-7680
+https://docs.embeddedTS.com/TS-7680
 
 The TS-7680 uses a 4.9 Linux kernel provided by Technologic Systems.
 
@@ -46,5 +46,5 @@ the SD jumper is present and the U-Boot jumper is not.
 The bootloader comes pre-flashed on the board on an SPI flash. Since
 updating the bootloader is risky and not trivial, it is not included
 in the Buildroot defconfig. Refer to
-https://wiki.embeddedarm.com/wiki/TS-7680#U-Boot for details on
+https://docs.embeddedts.com/TS-7680#U-Boot for details on
 which U-Boot config to use and how to flash it.
