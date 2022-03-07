@@ -9,7 +9,7 @@ Freescale i.MX6 Single or Quad Core ARM Cortex-A9 CPU clocked at
 1GHz. The TS-4900 features Gigabit Ethernet, SATA II Port, PCI Express
 Bus, high speed USB host and device (OTG), and microSD card.
 More details on the board here:
-   http://wiki.embeddedarm.com/wiki/TS-4900
+   https://docs.embeddedTS.com/TS-4900
 
 The TS-4900 is not currently supported by mainline Linux, so a
 Technologic Systems Linux is used based on Linux 4.1.
@@ -48,5 +48,5 @@ connector etc.
 The bootloader comes pre-flashed on the board on an SPI flash. Since
 updating the bootloader is risky and not trivial, it is not included
 in the Buildroot defconfig. Refer to
-http://wiki.embeddedarm.com/wiki/TS-4900#U-Boot for details on which
+https://docs.embeddedTS.com/TS-4900#U-Boot for details on which
 U-Boot config to use and how to flash it.
