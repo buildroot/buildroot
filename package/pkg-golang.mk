@@ -59,10 +59,10 @@ $(2)_BUILD_TARGETS ?= .
 # been specified, we assume that the binaries to be produced are named
 # after each build target building them (below in <pkg>_BUILD_CMDS).
 ifeq ($$($(2)_BUILD_TARGETS),.)
-$(2)_BIN_NAME ?= $(1)
+$(2)_BIN_NAME ?= $$($(2)_RAWNAME)
 endif
 
-$(2)_INSTALL_BINS ?= $(1)
+$(2)_INSTALL_BINS ?= $$($(2)_RAWNAME)
 
 # Source files in Go usually use an import path resolved around
 # domain/vendor/software. We infer domain/vendor/software from the upstream URL
