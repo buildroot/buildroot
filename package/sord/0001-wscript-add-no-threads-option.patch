@@ -1,0 +1,59 @@
+From 82ab045a45c06187dca5e9d2a9a4003fcfbfa830 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 22 Feb 2022 21:22:31 +0100
+Subject: [PATCH] wscript: add -no-threads option
+
+Add -no-threads options to avoid the following build failure on embedded
+toolchains without threads support:
+
+/home/buildroot/autobuild/instance-0/output-1/host/opt/ext-toolchain/bin/../lib/gcc/arm-buildroot-linux-uclibcgnueabihf/9.3.0/../../../../arm-buildroot-linux-uclibcgnueabihf/bin/ld: cannot find -lpthread
+
+Fixes:
+ - http://autobuild.buildroot.org/results/170d0114987b39a2b9ea173df7a5e806bd270fd8
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/drobilla/sord/pull/3]
+---
+ wscript | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/wscript b/wscript
+index fd8578e..d71d78c 100644
+--- a/wscript
++++ b/wscript
+@@ -35,6 +35,7 @@ def options(ctx):
+         {'no-utils':     'do not build command line utilities',
+          'static':       'build static library',
+          'no-shared':    'do not build shared library',
++         'no-threads':   'disable threads',
+          'static-progs': 'build programs as static binaries'})
+ 
+     opt.add_option('--dump', type='string', default='', dest='dump',
+@@ -55,6 +56,7 @@ def configure(conf):
+ 
+     conf.env.BUILD_UTILS  = not Options.options.no_utils
+     conf.env.BUILD_SHARED = not Options.options.no_shared
++    conf.env.ENABLE_THREADS = not Options.options.no_threads
+     conf.env.STATIC_PROGS = Options.options.static_progs
+     conf.env.BUILD_STATIC = (Options.options.static or
+                              Options.options.static_progs)
+@@ -124,7 +126,7 @@ def configure(conf):
+     conf.check_pkg('serd-0 >= 0.30.0', uselib_store='SERD')
+     conf.check_pkg('libpcre', uselib_store='PCRE', mandatory=False)
+ 
+-    if conf.env.HAVE_PCRE:
++    if conf.env.HAVE_PCRE and conf.env.ENABLE_THREADS:
+         if conf.check(cflags=['-pthread'], mandatory=False):
+             conf.env.PTHREAD_CFLAGS    = ['-pthread']
+             if conf.env.CC_NAME != 'clang':
+@@ -160,6 +162,7 @@ def configure(conf):
+         conf,
+         {'Static library': bool(conf.env.BUILD_STATIC),
+          'Shared library': bool(conf.env.BUILD_SHARED),
++         'Threads':        bool(conf.env.ENABLE_THREADS),
+          'Utilities':      bool(conf.env.BUILD_UTILS),
+          'Unit tests':     bool(conf.env.BUILD_TESTS),
+          'Debug dumping':  dump})
+-- 
+2.34.1
+

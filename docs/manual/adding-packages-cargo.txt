@@ -73,6 +73,11 @@ A few additional variables, specific to the Cargo infrastructure, can
 also be defined. Many of them are only useful in very specific cases,
 typical packages will therefore only use a few of them.
 
+* +FOO_SUBDIR+ may contain the name of a subdirectory inside the package
+  that contains the Cargo.toml file. This is useful, if for example, it
+  is not at the root of the tree extracted by the tarball. If
+  +HOST_FOO_SUBDIR+ is not specified, it defaults to +FOO_SUBDIR+.
+
 * +FOO_CARGO_ENV+ can be used to pass additional variables in the
   environment of +cargo+ invocations. It used at both build and
   installation time

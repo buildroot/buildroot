@@ -90,6 +90,7 @@ class OverriddenVariable(_CheckFunction):
         r"_SOURCE\s*=\s*",
         r"_VERSION\s*=\s*"])))
     FORBIDDEN_OVERRIDDEN = re.compile(r"^[A-Z0-9_]+({})".format("|".join([
+        r"_CONF_OPTS\s*=\s*",
         r"_DEPENDENCIES\s*=\s*"])))
 
     def before(self):

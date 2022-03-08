@@ -10,7 +10,7 @@ QT5WEBKIT_SOURCE = qtwebkit-$(QT5WEBKIT_VERSION).tar.xz
 QT5WEBKIT_DEPENDENCIES = \
 	host-bison host-flex host-gperf host-python3 host-ruby gstreamer1 \
 	gst1-plugins-base icu leveldb jpeg libpng libxml2 libxslt qt5location \
-	qt5sensors qt5webchannel sqlite webp woff2
+	openssl qt5sensors qt5webchannel sqlite webp woff2
 QT5WEBKIT_INSTALL_STAGING = YES
 
 QT5WEBKIT_LICENSE_FILES = Source/WebCore/LICENSE-LGPL-2 Source/WebCore/LICENSE-LGPL-2.1
@@ -19,6 +19,10 @@ QT5WEBKIT_LICENSE = LGPL-2.1+, BSD-3-Clause, BSD-2-Clause
 # Source files contain references to LGPL_EXCEPTION.txt but it is not included
 # in the archive.
 QT5WEBKIT_LICENSE_FILES += LICENSE.LGPLv21
+
+ifeq ($(BR2_MIPS_CPU_MIPS32R6),y)
+QT5WEBKIT_CONF_OPTS += -DENABLE_JIT=OFF
+endif
 
 ifeq ($(BR2_PACKAGE_QT5BASE_OPENGL),y)
 QT5WEBKIT_CONF_OPTS += \

@@ -83,4 +83,8 @@ else
 GHOSTSCRIPT_CONF_OPTS += --without-x
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),)
+GHOSTSCRIPT_CONF_OPTS += --without-tesseract
+endif
+
 $(eval $(autotools-package))

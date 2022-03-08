@@ -5,14 +5,16 @@ config BR2_PACKAGE_BPFTOOL
 	depends on !BR2_STATIC_LIBS # elfutils
 	depends on BR2_TOOLCHAIN_HAS_THREADS # elfutils
 	depends on BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_GLIBC # elfutils
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12
 	select BR2_PACKAGE_BINUTILS
 	select BR2_PACKAGE_ELFUTILS
 	help
 	  bpftool is a tool for for inspection and simple manipulation
 	  of eBPF programs and maps.
 
-comment "bpftool needs a uClibc or glibc toolchain w/ wchar, dynamic library, threads"
+comment "bpftool needs a uClibc or glibc toolchain w/ wchar, dynamic library, threads, headers >= 4.12"
 	depends on !BR2_nios2
 	depends on !BR2_USE_WCHAR || BR2_STATIC_LIBS \
 		|| !BR2_TOOLCHAIN_HAS_THREADS \
-		|| !(BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_GLIBC)
+		|| !(BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_GLIBC) \
+		|| !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12
