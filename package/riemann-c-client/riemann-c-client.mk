@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RIEMANN_C_CLIENT_VERSION = 1.10.4
+RIEMANN_C_CLIENT_VERSION = 1.10.5
 RIEMANN_C_CLIENT_SITE = \
 	$(call github,algernon,riemann-c-client,riemann-c-client-$(RIEMANN_C_CLIENT_VERSION))
 RIEMANN_C_CLIENT_LICENSE = LGPL-3.0+
