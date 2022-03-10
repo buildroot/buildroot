@@ -1,0 +1,50 @@
+From 5a5656920c6b49902ae0da6a0da84efe6e5a66f0 Mon Sep 17 00:00:00 2001
+From: Boris Kolpackov <boris@codesynthesis.com>
+Date: Wed, 31 Mar 2021 10:45:21 +0200
+Subject: [PATCH] Adjust to changes in GCC 11
+
+[Upstream: 61d80f051293a7449a09081f60f48b8377bfbbad]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ odb/gcc.hxx | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/odb/gcc.hxx b/odb/gcc.hxx
+index fb6a1bf..d8ad590 100644
+--- a/odb/gcc.hxx
++++ b/odb/gcc.hxx
+@@ -164,6 +164,7 @@ gcc_tree_code_name (gcc_tree_code_type tc) {return tree_code_name[tc];}
+ // In GCC 9:
+ //
+ // INCLUDED_FROM     Became linemap_included_from_linemap().
++//
+ // LAST_SOURCE_LINE  Was removed apparently as no longer used. Studying
+ //                   the line-map.h diff from 8.3 suggests that the old
+ //                   implementation should still work.
+@@ -193,4 +194,23 @@ LAST_SOURCE_LINE (const line_map_ordinary* map)
+ 
+ #endif
+ 
++// In GCC 11:
++//
++// lookup_qualified_name() has a new interface.
++//
++// DECL_IS_BUILTIN became DECL_IS_UNDECLARED_BUILTIN.
++//
++#if BUILDING_GCC_MAJOR >= 11
++
++inline tree
++lookup_qualified_name (tree scope, tree name, bool type, bool complain)
++{
++  return lookup_qualified_name (
++    scope, name, (type ? LOOK_want::TYPE : LOOK_want::NORMAL), complain);
++}
++
++#define DECL_IS_BUILTIN(decl) DECL_IS_UNDECLARED_BUILTIN(decl)
++
++#endif
++
+ #endif // ODB_GCC_HXX
+-- 
+2.34.1
+
