@@ -1,0 +1,68 @@
+From 60460df2a6d7b43a860a8f8b614c049ec0127ea8 Mon Sep 17 00:00:00 2001
+From: Boris Kolpackov <boris@codesynthesis.com>
+Date: Wed, 7 Jul 2021 09:26:57 +0200
+Subject: [PATCH] Resolve name lookup ambiguity causing error with GCC 11
+
+[Upstream: 47035c0f72efd99a2210cd45db6e42423fb74533]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ odb/relational/header.hxx | 2 ++
+ odb/relational/source.hxx | 8 ++++++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/odb/relational/header.hxx b/odb/relational/header.hxx
+index 63dea09..d7f78fa 100644
+--- a/odb/relational/header.hxx
++++ b/odb/relational/header.hxx
+@@ -50,6 +50,8 @@ namespace relational
+ 
+       typedef typename member_base_impl<T>::member_info member_info;
+ 
++      using member_base_impl<T>::container;
++
+       virtual bool
+       pre (member_info& mi)
+       {
+diff --git a/odb/relational/source.hxx b/odb/relational/source.hxx
+index 716aa10..7da25fc 100644
+--- a/odb/relational/source.hxx
++++ b/odb/relational/source.hxx
+@@ -1360,6 +1360,8 @@ namespace relational
+ 
+       typedef typename member_base_impl<T>::member_info member_info;
+ 
++      using member_base_impl<T>::container;
++
+       virtual bool
+       pre (member_info& mi)
+       {
+@@ -1744,6 +1746,8 @@ namespace relational
+ 
+       typedef typename member_base_impl<T>::member_info member_info;
+ 
++      using member_base_impl<T>::container;
++
+       virtual bool
+       pre (member_info& mi)
+       {
+@@ -2007,6 +2011,8 @@ namespace relational
+ 
+       typedef typename member_base_impl<T>::member_info member_info;
+ 
++      using member_base_impl<T>::container;
++
+       virtual void
+       set_null (member_info&) = 0;
+ 
+@@ -2458,6 +2464,8 @@ namespace relational
+ 
+       typedef typename member_base_impl<T>::member_info member_info;
+ 
++      using member_base_impl<T>::container;
++
+       virtual void
+       get_null (string const& var) const = 0;
+ 
+-- 
+2.34.1
+
