@@ -1,0 +1,32 @@
+From 284b6e5394652d519e31782e3b3cdfd7b21d1a81 Mon Sep 17 00:00:00 2001
+From: Darren Tucker <dtucker@dtucker.net>
+Date: Sat, 26 Feb 2022 14:06:14 +1100
+Subject: [PATCH] Allow ppoll_time64 in seccomp sandbox.
+
+Should fix sandbox violations on (some? at least i386 and armhf) 32bit
+Linux platforms.  Patch from chutzpahu at gentoo.org and cjwatson at
+debian.org via bz#3396.
+
+[Upstream: https://github.com/openssh/openssh-portable/commit/284b6e5394652d519e31782e3b3cdfd7b21d1a81.patch]
+Signed-off-by: John Keeping <john@metanate.com>
+---
+ sandbox-seccomp-filter.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/sandbox-seccomp-filter.c b/sandbox-seccomp-filter.c
+index 2e065ba3..4ce80cb2 100644
+--- a/sandbox-seccomp-filter.c
++++ b/sandbox-seccomp-filter.c
+@@ -276,6 +276,9 @@ static const struct sock_filter preauth_insns[] = {
+ #ifdef __NR_ppoll
+ 	SC_ALLOW(__NR_ppoll),
+ #endif
++#ifdef __NR_ppoll_time64
++	SC_ALLOW(__NR_ppoll_time64),
++#endif
+ #ifdef __NR_poll
+ 	SC_ALLOW(__NR_poll),
+ #endif
+-- 
+2.35.1
+
