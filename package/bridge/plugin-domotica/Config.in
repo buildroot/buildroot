@@ -14,6 +14,12 @@ config BR2_PACKAGE_PLUGIN_BUTLER
 	help
 	   Butler plugin
 
+config BR2_PACKAGE_PLUGIN_CLOUDRELAY
+	bool "CloudRelay"
+        select BR2_PACKAGE_PLUGIN_DOMOTICA
+	help
+	   CloudRelay plugin
+
 config BR2_PACKAGE_PLUGIN_I2CCONTROL
 	bool "I2CControl"
 	select BR2_PACKAGE_BRIDGE_DEVICES
