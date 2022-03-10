@@ -23,7 +23,7 @@ diff --git a/gio/meson.build b/gio/meson.build
 index 29473d26b..112d4ada9 100644
 --- a/gio/meson.build
 +++ b/gio/meson.build
-@@ -831,6 +831,7 @@ pkg.generate(libgio,
+@@ -841,6 +841,7 @@ pkg.generate(libgio,
    variables : ['datadir=' + join_paths('${prefix}', get_option('datadir')),
                 'schemasdir=' + join_paths('${datadir}', schemas_subdir),
                 'bindir=' + join_paths('${prefix}', get_option('bindir')),
@@ -35,7 +35,7 @@ diff --git a/glib/meson.build b/glib/meson.build
 index f78f32969..6c5486699 100644
 --- a/glib/meson.build
 +++ b/glib/meson.build
-@@ -377,6 +377,7 @@ pkg.generate(libglib,
+@@ -384,6 +384,7 @@ pkg.generate(libglib,
    subdirs : ['glib-2.0'],
    extra_cflags : ['-I${libdir}/glib-2.0/include'] + win32_cflags,
    variables : ['bindir=' + join_paths('${prefix}', get_option('bindir')),
