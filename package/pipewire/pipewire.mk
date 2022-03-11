@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PIPEWIRE_VERSION = 0.3.45
+PIPEWIRE_VERSION = 0.3.48
 PIPEWIRE_SOURCE = pipewire-$(PIPEWIRE_VERSION).tar.bz2
 PIPEWIRE_SITE = https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/$(PIPEWIRE_VERSION)
 PIPEWIRE_LICENSE = MIT, LGPL-2.1+ (libspa-alsa), GPL-2.0 (libjackserver)
@@ -134,6 +134,13 @@ PIPEWIRE_CONF_OPTS += -Dx11=enabled
 PIPEWIRE_DEPENDENCIES += xlib_libX11
 else
 PIPEWIRE_CONF_OPTS += -Dx11=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_XLIB_LIBXFIXES),y)
+PIPEWIRE_CONF_OPTS += -Dx11-xfixes=enabled
+PIPEWIRE_DEPENDENCIES += xlib_libXfixes
+else
+PIPEWIRE_CONF_OPTS += -Dx11-xfixes=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBUSB),y)
