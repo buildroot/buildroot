@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-POCO_VERSION = 1.10.1
+POCO_VERSION = 1.11.1
 POCO_SITE = $(call github,pocoproject,poco,poco-$(POCO_VERSION)-release)
 POCO_LICENSE = BSL-1.0
 POCO_LICENSE_FILES = LICENSE
@@ -20,6 +20,7 @@ POCO_DEPENDENCIES = pcre zlib \
 	$(if $(BR2_PACKAGE_POCO_XML),expat)
 
 POCO_OMIT = Data/ODBC PageCompiler \
+	$(if $(BR2_PACKAGE_POCO_ACTIVERECORD),,ActiveRecord) \
 	$(if $(BR2_PACKAGE_POCO_CPP_PARSER),,CppParser) \
 	$(if $(BR2_PACKAGE_POCO_CRYPTO),,Crypto) \
 	$(if $(BR2_PACKAGE_POCO_DATA),,Data) \
@@ -74,8 +75,10 @@ endef
 # Use $(MAKE1) to avoid failures on heavilly parallel machines (e.g. -j25)
 define POCO_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE1) POCO_TARGET_OSARCH=$(ARCH) CROSS_COMPILE=$(TARGET_CROSS) \
-		MYSQL_LIBDIR=$(STAGING_DIR)/usr/lib/mysql \
-		MYSQL_INCDIR=$(STAGING_DIR)/usr/include/mysql \
+		POCO_MYSQL_INCLUDE=$(STAGING_DIR)/usr/include/mysql \
+		POCO_MYSQL_LIB=$(STAGING_DIR)/usr/lib/mysql \
+		POCO_PGSQL_INCLUDE=$(STAGING_DIR)/usr/include/postgresql \
+		POCO_PGSQL_LIB=$(STAGING_DIR)/usr/lib/postgresql \
 		DEFAULT_TARGET=$(POCO_MAKE_TARGET) -C $(@D)
 endef
 

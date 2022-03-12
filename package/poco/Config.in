@@ -28,6 +28,10 @@ if BR2_PACKAGE_POCO
 
 comment "poco components"
 
+config BR2_PACKAGE_POCO_ACTIVERECORD
+	bool "ActiveRecord"
+	select BR2_PACKAGE_POCO_XML
+
 config BR2_PACKAGE_POCO_CPP_PARSER
 	bool "CppParser"
 

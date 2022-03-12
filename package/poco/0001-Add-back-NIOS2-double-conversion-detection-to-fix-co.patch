@@ -1,0 +1,36 @@
+From d328829e9cb8b9fde9e70b07f2b991972cf474d1 Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Sat, 12 Mar 2022 10:34:04 +0100
+Subject: [PATCH] Add back NIOS2 double conversion detection to fix compile
+ errors
+
+The commit
+https://github.com/pocoproject/poco/commit/558324f672d824300498060aff63356bc6bb8097
+
+removed the nios2 support, which was originally added in
+https://github.com/pocoproject/poco/commit/e7b91e8125d6910b53f94de5be4bb53f38dc77c1
+
+This commit add it back.
+
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ Foundation/src/utils.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Foundation/src/utils.h b/Foundation/src/utils.h
+index 4328344d7..0a222c77d 100644
+--- a/Foundation/src/utils.h
++++ b/Foundation/src/utils.h
+@@ -102,7 +102,8 @@ int main(int argc, char** argv) {
+     defined(__AARCH64EL__) || defined(__aarch64__) || defined(__AARCH64EB__) || \
+     defined(__riscv) || \
+     defined(__or1k__) || defined(__arc__) || \
+-    defined(__EMSCRIPTEN__)
++    defined(__EMSCRIPTEN__) || \
++    defined(nios2) || defined(__nios2) || defined(__nios2__)
+ #define DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS 1
+ #elif defined(__mc68000__) || \
+     defined(__pnacl__) || defined(__native_client__)
+-- 
+2.35.1
+
