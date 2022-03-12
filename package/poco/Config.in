@@ -29,10 +29,10 @@ if BR2_PACKAGE_POCO
 comment "poco components"
 
 config BR2_PACKAGE_POCO_CPP_PARSER
-	bool "cpp_parser"
+	bool "CppParser"
 
 config BR2_PACKAGE_POCO_CRYPTO
-	bool "crypto"
+	bool "Crypto"
 	select BR2_PACKAGE_LIBOPENSSL_ENABLE_DES if BR2_PACKAGE_LIBOPENSSL
 	select BR2_PACKAGE_OPENSSL
 
@@ -40,58 +40,58 @@ config BR2_PACKAGE_POCO_DATA
 	bool
 
 config BR2_PACKAGE_POCO_DATA_MYSQL
-	bool "mysql"
+	bool "Data/MySQL"
 	depends on BR2_USE_MMU # mysql
 	select BR2_PACKAGE_MYSQL
 	select BR2_PACKAGE_POCO_DATA
 
 config BR2_PACKAGE_POCO_DATA_SQLITE
-	bool "sqlite"
+	bool "Data/SQLite"
 	select BR2_PACKAGE_POCO_DATA
 	select BR2_PACKAGE_SQLITE
 
 config BR2_PACKAGE_POCO_JSON
-	bool "json"
+	bool "JSON"
 
 config BR2_PACKAGE_POCO_JWT
-	bool "jwt"
+	bool "JWT"
 	select BR2_PACKAGE_POCO_CRYPTO
 	select BR2_PACKAGE_POCO_JSON
 
 config BR2_PACKAGE_POCO_MONGODB
-	bool "mongodb"
+	bool "MongoDB"
 	select BR2_PACKAGE_POCO_NET
 
 config BR2_PACKAGE_POCO_NET
-	bool "net"
+	bool "Net"
 
 config BR2_PACKAGE_POCO_NETSSL_OPENSSL
-	bool "netssl_openssl"
+	bool "NetSSL_OpenSSL"
 	select BR2_PACKAGE_OPENSSL
 	select BR2_PACKAGE_POCO_CRYPTO
 	select BR2_PACKAGE_POCO_NET
 	select BR2_PACKAGE_POCO_UTIL
 
 config BR2_PACKAGE_POCO_PDF
-	bool "pdf"
+	bool "PDF"
 	select BR2_PACKAGE_POCO_JSON
 	select BR2_PACKAGE_POCO_UTIL
 	select BR2_PACKAGE_POCO_XML
 
 config BR2_PACKAGE_POCO_REDIS
-	bool "redis"
+	bool "Redis"
 	select BR2_PACKAGE_POCO_NET
 
 config BR2_PACKAGE_POCO_UTIL
-	bool "util"
+	bool "Util"
 	select BR2_PACKAGE_POCO_XML
 
 config BR2_PACKAGE_POCO_XML
-	bool "xml"
+	bool "XML"
 	select BR2_PACKAGE_EXPAT
 
 config BR2_PACKAGE_POCO_ZIP
-	bool "zip"
+	bool "Zip"
 	select BR2_PACKAGE_POCO_NET
 	select BR2_PACKAGE_POCO_UTIL
 	select BR2_PACKAGE_POCO_XML
