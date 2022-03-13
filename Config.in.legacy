@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2022.02"
 
+config BR2_PACKAGE_LIBCURL_LIBNSS
+	bool "libcurl NSS removed"
+	select BR2_LEGACY
+	help
+	  NSS was deprecated in libcurl 7.82.0.
+
 config BR2_PACKAGE_WESTON_DEFAULT_FBDEV
 	bool "weston fbdev removed"
 	select BR2_LEGACY
