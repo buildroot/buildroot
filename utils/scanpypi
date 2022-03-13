@@ -609,7 +609,8 @@ class BuildrootPackage():
 
         lines.append('\thelp\n')
 
-        help_lines = textwrap.wrap(self.metadata['info']['summary'], 62,
+        md_info = self.metadata['info']
+        help_lines = textwrap.wrap(md_info['summary'], 62,
                                    initial_indent='\t  ',
                                    subsequent_indent='\t  ')
 
@@ -617,11 +618,15 @@ class BuildrootPackage():
         if help_lines[-1][-1] != '.':
             help_lines[-1] += '.'
 
-        # \t + two spaces is 3 char long
-        help_lines.append('')
-        help_lines.append('\t  ' + self.metadata['info']['home_page'])
-        help_lines = [x + '\n' for x in help_lines]
-        lines += help_lines
+        home_page = md_info.get('home_page', None) or \
+                    md_info.get('project_urls', {}).get('Homepage', None)  # noqa: E127
+
+        if home_page:
+            # \t + two spaces is 3 char long
+            help_lines.append('')
+            help_lines.append('\t  ' + home_page)
+            help_lines = [x + '\n' for x in help_lines]
+            lines += help_lines
 
         with open(path_to_config, 'w') as config_file:
             config_file.writelines(lines)

@@ -1,0 +1,26 @@
+From 3d09501175ae6f5e3f6520b48b1358226a99ff16 Mon Sep 17 00:00:00 2001
+From: Yu Chien Peter Lin <peterlin@andestech.com>
+Date: Wed, 5 Jan 2022 18:17:39 +0800
+Subject: [PATCH] Fix u-boot proper booting issue
+
+Signed-off-by: Yu Chien Peter Lin <peterlin@andestech.com>
+---
+ arch/riscv/cpu/start.S | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/riscv/cpu/start.S b/arch/riscv/cpu/start.S
+index 76850ec9..2ccda4f5 100644
+--- a/arch/riscv/cpu/start.S
++++ b/arch/riscv/cpu/start.S
+@@ -139,7 +139,9 @@ call_harts_early_init:
+	 * accesses gd).
+	 */
+	mv	gp, s0
++#if !CONFIG_IS_ENABLED(RISCV_SMODE)
+	bnez	tp, secondary_hart_loop
++#endif
+ #endif
+
+	jal	board_init_f_init_reserve
+--
+2.25.1

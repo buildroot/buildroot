@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-LIBINPUT_VERSION = 1.19.3
-LIBINPUT_SOURCE = libinput-$(LIBINPUT_VERSION).tar.xz
-LIBINPUT_SITE = http://www.freedesktop.org/software/libinput
+LIBINPUT_VERSION = 1.20.0
+LIBINPUT_SOURCE = libinput-$(LIBINPUT_VERSION).tar.bz2
+LIBINPUT_SITE = https://gitlab.freedesktop.org/libinput/libinput/-/archive/$(LIBINPUT_VERSION)
 LIBINPUT_DEPENDENCIES = host-pkgconf libevdev mtdev udev
 LIBINPUT_INSTALL_STAGING = YES
 LIBINPUT_LICENSE = MIT

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PERL_GD_VERSION = 2.73
+PERL_GD_VERSION = 2.76
 PERL_GD_SOURCE = GD-$(PERL_GD_VERSION).tar.gz
 PERL_GD_SITE = $(BR2_CPAN_MIRROR)/authors/id/R/RU/RURBAN
 PERL_GD_DEPENDENCIES = host-perl-extutils-pkgconfig zlib gd
@@ -38,6 +38,12 @@ ifeq ($(BR2_PACKAGE_LIBPNG),y)
 PERL_GD_DEPENDENCIES += libpng
 PERL_GD_OPTIONS += PNG
 PERL_GD_CONF_OPTS += -lib_png_path=$(STAGING_DIR)/usr
+endif
+
+ifeq ($(BR2_PACKAGE_WEBP),y)
+PERL_GD_DEPENDENCIES += webp
+PERL_GD_OPTIONS += WEBP
+PERL_GD_CONF_OPTS += -lib_webp_path=$(STAGING_DIR)/usr
 endif
 
 ifeq ($(BR2_PACKAGE_XLIB_LIBXPM),y)

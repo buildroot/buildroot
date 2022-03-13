@@ -1,0 +1,31 @@
+From 1ca453ee89894b1669ac78d7f216bda172783e8d Mon Sep 17 00:00:00 2001
+From: Alexander Kanavin <alex@linutronix.de>
+Date: Mon, 6 Dec 2021 20:14:03 +0100
+Subject: [PATCH] fsck/main.c: add missing include
+
+Otherwise musl C library builds fail with missing S_IFMT/S_IFDIR
+definitions.
+
+Link: https://lore.kernel.org/r/20211206191403.1435229-1-alex@linutronix.de
+Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+Signed-off-by: Alexander Kanavin <alex@linutronix.de>
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+ fsck/main.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fsck/main.c b/fsck/main.c
+index aefa881f740a..ad48e35f587b 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -6,6 +6,7 @@
+ #include <stdlib.h>
+ #include <getopt.h>
+ #include <time.h>
++#include <sys/stat.h>
+ #include "erofs/print.h"
+ #include "erofs/io.h"
+ #include "erofs/decompress.h"
+-- 
+2.30.2
+

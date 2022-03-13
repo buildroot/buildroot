@@ -1,0 +1,29 @@
+From 534eda7f8678e5b8fc8ca0f5cf0d9d7a932e0d48 Mon Sep 17 00:00:00 2001
+From: Gao Xiang <xiang@kernel.org>
+Date: Mon, 22 Nov 2021 07:58:40 +0800
+Subject: [PATCH] erofs-utils: fix Makefile for fsck.erofs manpage
+
+Add the missing dependency for fsck.erofs manpage.
+
+Link: https://lore.kernel.org/r/20211121235840.17600-1-xiang@kernel.org
+Fixes: f44043561491 ("erofs-utils: introduce fsck.erofs")
+Signed-off-by: Gao Xiang <xiang@kernel.org>
+---
+ man/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/man/Makefile.am b/man/Makefile.am
+index 769b5578a175..4628b85df2ef 100644
+--- a/man/Makefile.am
++++ b/man/Makefile.am
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0+
+ 
+-dist_man_MANS = mkfs.erofs.1 dump.erofs.1
++dist_man_MANS = mkfs.erofs.1 dump.erofs.1 fsck.erofs.1
+ 
+ EXTRA_DIST = erofsfuse.1
+ if ENABLE_FUSE
+-- 
+2.30.2
+
