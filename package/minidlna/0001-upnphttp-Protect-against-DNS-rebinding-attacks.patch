@@ -1,0 +1,66 @@
+From c21208508dbc131712281ec5340687e5ae89e940 Mon Sep 17 00:00:00 2001
+From: Justin Maggard <jmaggard@arlo.com>
+Date: Wed, 9 Feb 2022 18:32:50 -0800
+Subject: [PATCH] upnphttp: Protect against DNS rebinding attacks
+
+Validate HTTP requests to protect against DNS rebinding.
+
+[Retrieved from:
+https://sourceforge.net/p/minidlna/git/ci/c21208508dbc131712281ec5340687e5ae89e940/]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ upnphttp.c | 17 +++++++++++++++++
+ upnphttp.h |  2 ++
+ 2 files changed, 19 insertions(+)
+
+diff --git a/upnphttp.c b/upnphttp.c
+index c8b5e99..62db89a 100644
+--- a/upnphttp.c
++++ b/upnphttp.c
+@@ -273,6 +273,11 @@ ParseHttpHeaders(struct upnphttp * h)
+ 				p = colon + 1;
+ 				while(isspace(*p))
+ 					p++;
++				n = 0;
++				while(p[n] >= ' ')
++					n++;
++				h->req_Host = p;
++				h->req_HostLen = n;
+ 				for(n = 0; n < n_lan_addr; n++)
+ 				{
+ 					for(i = 0; lan_addr[n].str[i]; i++)
+@@ -909,6 +914,18 @@ ProcessHttpQuery_upnphttp(struct upnphttp * h)
+ 	}
+ 
+ 	DPRINTF(E_DEBUG, L_HTTP, "HTTP REQUEST: %.*s\n", h->req_buflen, h->req_buf);
++	if(h->req_Host && h->req_HostLen > 0) {
++		const char *ptr = h->req_Host;
++		DPRINTF(E_MAXDEBUG, L_HTTP, "Host: %.*s\n", h->req_HostLen, h->req_Host);
++		for(i = 0; i < h->req_HostLen; i++) {
++			if(*ptr != ':' && *ptr != '.' && (*ptr > '9' || *ptr < '0')) {
++				DPRINTF(E_ERROR, L_HTTP, "DNS rebinding attack suspected (Host: %.*s)", h->req_HostLen, h->req_Host);
++				Send404(h);/* 403 */
++				return;
++			}
++			ptr++;
++		}
++	}
+ 	if(strcmp("POST", HttpCommand) == 0)
+ 	{
+ 		h->req_command = EPost;
+diff --git a/upnphttp.h b/upnphttp.h
+index e28a943..57eb2bb 100644
+--- a/upnphttp.h
++++ b/upnphttp.h
+@@ -89,6 +89,8 @@ struct upnphttp {
+ 	struct client_cache_s * req_client;
+ 	const char * req_soapAction;
+ 	int req_soapActionLen;
++	const char * req_Host;        /* Host: header */
++	int req_HostLen;
+ 	const char * req_Callback;	/* For SUBSCRIBE */
+ 	int req_CallbackLen;
+ 	const char * req_NT;
+-- 
+2.34.1
+

@@ -12,6 +12,9 @@ MINIDLNA_CPE_ID_VENDOR = readymedia_project
 MINIDLNA_CPE_ID_PRODUCT = readymedia
 MINIDLNA_SELINUX_MODULES = minidlna
 
+# 0001-upnphttp-Protect-against-DNS-rebinding-attacks.patch
+MINIDLNA_IGNORE_CVES += CVE-2022-26505
+
 MINIDLNA_DEPENDENCIES = \
 	$(TARGET_NLS_DEPENDENCIES) \
 	ffmpeg flac libvorbis libogg libid3tag libexif jpeg sqlite \
