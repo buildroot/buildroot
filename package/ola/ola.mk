@@ -54,6 +54,11 @@ endef
 OLA_CONF_ENV = PYTHONPATH=$(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages
 OLA_MAKE_ENV = PYTHONPATH=$(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages
 
+ifeq ($(BR2_PACKAGE_LIBEXECINFO),y)
+OLA_DEPENDENCIES += libexecinfo
+OLA_CONF_ENV += LDFLAGS="$(TARGET_LDFLAGS) -lexecinfo"
+endif
+
 ## OLA Bindings and Interface selections
 
 ifeq ($(BR2_PACKAGE_OLA_WEB),y)
