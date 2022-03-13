@@ -67,7 +67,7 @@ BIND_CONF_OPTS += --with-gssapi=no
 endif
 
 ifeq ($(BR2_PACKAGE_LIBXML2),y)
-BIND_CONF_OPTS += --with-libxml2=$(STAGING_DIR)/usr
+BIND_CONF_OPTS += --with-libxml2
 BIND_DEPENDENCIES += libxml2
 else
 BIND_CONF_OPTS += --with-libxml2=no
