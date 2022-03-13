@@ -1,0 +1,31 @@
+From 082c9e4cb6c8f96aa59dd3d03b0288752518fad7 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 19 Feb 2022 22:29:45 +0100
+Subject: [PATCH] Makefile.am: respect $(DESTDIR) with install-udev-rules
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/steve-m/librtlsdr/pull/67]
+---
+ Makefile.am | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 65b2f21..6b8691a 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -14,10 +14,10 @@ dist-hook:
+ 	echo $(VERSION) > $(distdir)/.tarball-version
+ 
+ install-udev-rules:
+-	$(INSTALL_DATA) rtl-sdr.rules /etc/udev/rules.d
++	$(INSTALL_DATA) rtl-sdr.rules $(DESTDIR)/etc/udev/rules.d
+ 
+ uninstall-udev-rules:
+-	rm -rf /etc/udev/rules.d/rtl-sdr.rules
++	rm -rf $(DESTDIR)/etc/udev/rules.d/rtl-sdr.rules
+ 
+ EXTRA_DIST = git-version-gen .version
+ 
+-- 
+2.34.1
+
