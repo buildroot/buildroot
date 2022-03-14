@@ -1,0 +1,39 @@
+From 1d21878d84f16e28e16c61b36799a62e22732d97 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 24 Feb 2022 18:19:33 +0100
+Subject: [PATCH] src/shared/util.h: include sys/types.h
+
+Include sys/types.h to avoid the following build failure on musl raised
+since commit fb57ad9b9d107856e5f1c8135da04ffa2f7a11ac:
+
+In file included from src/shared/queue.c:15:
+./src/shared/util.h:106:1: error: unknown type name 'ssize_t'; did you mean 'size_t'?
+  106 | ssize_t util_getrandom(void *buf, size_t buflen, unsigned int flags);
+      | ^~~~~~~
+      | size_t
+
+Fixes:
+ - http://autobuild.buildroot.org/results/83eaeb3863040645409f5787fdbdde79385c5257
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:
+https://patchwork.kernel.org/project/bluetooth/patch/20220224173104.479809-1-fontaine.fabrice@gmail.com]
+---
+ src/shared/util.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/shared/util.h b/src/shared/util.h
+index c01eccf8a..554481e1e 100644
+--- a/src/shared/util.h
++++ b/src/shared/util.h
+@@ -14,6 +14,7 @@
+ #include <alloca.h>
+ #include <byteswap.h>
+ #include <string.h>
++#include <sys/types.h>
+ 
+ #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+ #define BIT(n)  (1 << (n))
+-- 
+2.34.1
+

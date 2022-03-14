@@ -10,6 +10,8 @@ ZABBIX_SITE = https://cdn.zabbix.com/zabbix/sources/stable/$(ZABBIX_VERSION_MAJO
 ZABBIX_LICENSE = GPL-2.0+
 ZABBIX_LICENSE_FILES = README COPYING
 ZABBIX_CPE_ID_VENDOR = zabbix
+# We're patching m4/netsnmp.m4
+ZABBIX_AUTORECONF = YES
 
 ZABBIX_DEPENDENCIES = pcre
 ZABBIX_CONF_OPTS = \
@@ -53,7 +55,7 @@ else
 ZABBIX_CONF_OPTS += --without-libxml2
 endif
 
-ifeq ($(BR2_PACKAGE_NETSNMP),y)
+ifeq ($(BR2_PACKAGE_NETSNMP_ENABLE_MIBS),y)
 ZABBIX_CONF_OPTS += --with-net-snmp=$(STAGING_DIR)/usr/bin/net-snmp-config
 ZABBIX_DEPENDENCIES += netsnmp
 else

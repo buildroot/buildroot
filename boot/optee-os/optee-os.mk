@@ -23,6 +23,10 @@ endif
 
 OPTEE_OS_DEPENDENCIES = host-openssl host-python3 host-python-pycryptodomex host-python-pyelftools
 
+ifeq ($(BR2_TARGET_OPTEE_OS_NEEDS_DTC),y)
+OPTEE_OS_DEPENDENCIES += host-dtc
+endif
+
 # On 64bit targets, OP-TEE OS can be built in 32bit mode, or
 # can be built in 64bit mode and support 32bit and 64bit
 # trusted applications. Since buildroot currently references

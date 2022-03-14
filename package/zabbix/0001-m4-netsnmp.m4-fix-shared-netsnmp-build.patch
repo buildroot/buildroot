@@ -1,0 +1,44 @@
+From 3e810c0804ec40ad6e111a9791cdb2033ecdad71 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 25 Feb 2022 23:30:19 +0100
+Subject: [PATCH] m4/netsnmp.m4: fix shared netsnmp build
+
+Since commit fe391e8689c523d3c7ea6b173d25aa5dba3a6902, the build fails
+with the following error if the user provides the path of
+net-snmp-config through the --with-net-snmp option:
+
+configure: error: "libnetsnmp.a static library was not found in /home/buildroot/autobuild/instance-0/output-1/host/powerpc64le-buildroot-linux-gnu/sysroot/usr/bin/../../usr/lib"
+
+However, the assumption that a static library will be provided by the
+system is just plain wrong so replace AC_MSG_ERROR by AC_MSG_WARN
+
+Fixes:
+ - http://autobuild.buildroot.org/results/0f541e45d1fa27b3302968683bf64949131ec1c9
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/zabbix/zabbix/pull/61]
+---
+ m4/netsnmp.m4 | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/m4/netsnmp.m4 b/m4/netsnmp.m4
+index 5e84d84303..87e21a67e6 100644
+--- a/m4/netsnmp.m4
++++ b/m4/netsnmp.m4
+@@ -140,8 +140,11 @@ AC_HELP_STRING([--with-net-snmp@<:@=ARG@:>@],
+ 			test [ "x$static_linking_support" = "xno" -o -z "$static_linking_support" ] -a -z "$_libsnmp_dir_lib" && AC_MSG_ERROR(["Compiler not support statically linked libs from default folders"])
+ 
+ 			if test "x$static_linking_support" = "xno" -o -z "$static_linking_support"; then
+-				test -f $_libsnmp_dir_lib/libnetsnmp.a || AC_MSG_ERROR(["libnetsnmp.a static library was not found in $_libsnmp_dir_lib"])
+-				SNMP_LIBS=`echo "$SNMP_LIBS"|sed "s|-lnetsnmp|$_libsnmp_dir_lib/libnetsnmp.a|g"`
++				if test -f $_libsnmp_dir_lib/libnetsnmp.a; then
++					SNMP_LIBS=`echo "$SNMP_LIBS"|sed "s|-lnetsnmp|$_libsnmp_dir_lib/libnetsnmp.a|g"`
++				else
++					AC_MSG_WARN(["libnetsnmp.a static library was not found in $_libsnmp_dir_lib"])
++				fi
+ 			else
+ 				SNMP_LIBS=`echo "$SNMP_LIBS"|sed "s/-lnetsnmp/${static_linking_support}static -lnetsnmp ${static_linking_support}dynamic/g"`
+ 			fi
+-- 
+2.34.1
+

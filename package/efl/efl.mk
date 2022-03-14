@@ -67,6 +67,13 @@ else
 EFL_CONF_OPTS += -Deeze=false
 endif
 
+ifeq ($(BR2_PACKAGE_EFL_ELPUT),y)
+EFL_DEPENDENCIES += libinput libxkbcommon
+EFL_CONF_OPTS += -Dinput=true
+else
+EFL_CONF_OPTS += -Dinput=false
+endif
+
 ifeq ($(BR2_PACKAGE_EFL_UTIL_LINUX_LIBMOUNT),y)
 EFL_DEPENDENCIES += util-linux
 EFL_CONF_OPTS += -Dlibmount=true
@@ -192,7 +199,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_EFL_DRM),y)
 EFL_CONF_OPTS += -Ddrm=true
-EFL_DEPENDENCIES += libdrm libegl libinput mesa3d
+EFL_DEPENDENCIES += libdrm libegl mesa3d
 else
 EFL_CONF_OPTS += -Ddrm=false
 endif
@@ -203,8 +210,6 @@ EFL_CONF_OPTS += -Dwl=true
 else
 EFL_CONF_OPTS += -Dwl=false
 endif
-
-EFL_DEPENDENCIES += $(if $(BR2_PACKAGE_LIBXKBCOMMON),libxkbcommon)
 
 # json evas loader is disabled by default by upstream.
 # Disable libspectre (ps).
