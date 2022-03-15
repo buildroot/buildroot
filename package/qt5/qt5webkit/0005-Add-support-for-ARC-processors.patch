@@ -1,0 +1,93 @@
+From 8da574cf8f30f69e47f76705aa2eb07000540aeb Mon Sep 17 00:00:00 2001
+From: Alexey Brodkin <abrodkin@synopsys.com>
+Date: Mon, 21 Feb 2022 18:28:00 +0300
+Subject: [PATCH] Add support for ARC processors
+
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+---
+ CMakeLists.txt                       | 4 +++-
+ Source/JavaScriptCore/CMakeLists.txt | 3 ++-
+ Source/WTF/wtf/Platform.h            | 8 ++++++++
+ Source/WTF/wtf/dtoa/utils.h          | 2 +-
+ Source/cmake/OptionsQt.cmake         | 4 ++++
+ 5 files changed, 18 insertions(+), 3 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 31a2ea1fd..f0dfbda5b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -57,7 +57,9 @@ if (MSVC_CXX_ARCHITECTURE_ID)
+ else ()
+     string(TOLOWER ${CMAKE_SYSTEM_PROCESSOR} LOWERCASE_CMAKE_SYSTEM_PROCESSOR)
+ endif ()
+-if (LOWERCASE_CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
++if (LOWERCASE_CMAKE_SYSTEM_PROCESSOR MATCHES "^arc")
++    set(WTF_CPU_ARC 1)
++elseif (LOWERCASE_CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
+     set(WTF_CPU_ARM 1)
+ elseif (LOWERCASE_CMAKE_SYSTEM_PROCESSOR MATCHES "^aarch64")
+     set(WTF_CPU_ARM64 1)
+diff --git a/Source/JavaScriptCore/CMakeLists.txt b/Source/JavaScriptCore/CMakeLists.txt
+index 937b3ed00..205dde288 100644
+--- a/Source/JavaScriptCore/CMakeLists.txt
++++ b/Source/JavaScriptCore/CMakeLists.txt
+@@ -1275,7 +1275,8 @@ if (ENABLE_WEB_REPLAY)
+     list(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSReplayInputs.h)
+ endif ()
+ 
+-if (WTF_CPU_ARM)
++if (WTF_CPU_ARC)
++elseif (WTF_CPU_ARM)
+ elseif (WTF_CPU_ARM64)
+ elseif (WTF_CPU_ALPHA)
+ elseif (WTF_CPU_HPPA)
+diff --git a/Source/WTF/wtf/Platform.h b/Source/WTF/wtf/Platform.h
+index 5717f3ea1..b327ed693 100644
+--- a/Source/WTF/wtf/Platform.h
++++ b/Source/WTF/wtf/Platform.h
+@@ -349,6 +349,14 @@
+ 
+ #endif /* ARM */
+ 
++/* CPU(ARC) - ARC */
++#if defined(__arc__)
++#define WTF_CPU_ARC 1
++#if defined(__BIG_ENDIAN__)
++#define WTF_CPU_BIG_ENDIAN 1
++#endif
++#endif
++
+ #if CPU(ARM) || CPU(MIPS) || CPU(SH4) || CPU(ALPHA) || CPU(HPPA)
+ #define WTF_CPU_NEEDS_ALIGNED_ACCESS 1
+ #endif
+diff --git a/Source/WTF/wtf/dtoa/utils.h b/Source/WTF/wtf/dtoa/utils.h
+index 889642cee..8f1e9933e 100644
+--- a/Source/WTF/wtf/dtoa/utils.h
++++ b/Source/WTF/wtf/dtoa/utils.h
+@@ -49,7 +49,7 @@
+ defined(__ARMEL__) || \
+ defined(_MIPS_ARCH_MIPS32R2)
+ #define DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS 1
+-#elif CPU(MIPS) || CPU(MIPS64) || CPU(PPC) || CPU(PPC64) || CPU(PPC64LE) || CPU(SH4) || CPU(S390) || CPU(S390X) || CPU(IA64) || CPU(ALPHA) || CPU(ARM64) || CPU(HPPA)
++#elif CPU(MIPS) || CPU(MIPS64) || CPU(PPC) || CPU(PPC64) || CPU(PPC64LE) || CPU(SH4) || CPU(S390) || CPU(S390X) || CPU(IA64) || CPU(ALPHA) || CPU(ARM64) || CPU(HPPA) || CPU(ARC)
+ #define DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS 1
+ #elif defined(_M_IX86) || defined(__i386__)
+ #if defined(_WIN32)
+diff --git a/Source/cmake/OptionsQt.cmake b/Source/cmake/OptionsQt.cmake
+index ec6081de0..e1a5efc1e 100644
+--- a/Source/cmake/OptionsQt.cmake
++++ b/Source/cmake/OptionsQt.cmake
+@@ -365,6 +365,10 @@ if (MINGW AND CMAKE_SIZEOF_VOID_P EQUAL 8)
+     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_JIT PRIVATE OFF)
+ endif ()
+ 
++if (WTF_CPU_ARC)
++    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_JIT PRIVATE OFF)
++endif ()
++
+ WEBKIT_OPTION_CONFLICT(USE_GSTREAMER USE_QT_MULTIMEDIA)
+ WEBKIT_OPTION_CONFLICT(USE_GSTREAMER USE_MEDIA_FOUNDATION)
+ WEBKIT_OPTION_CONFLICT(USE_QT_MULTIMEDIA USE_MEDIA_FOUNDATION)
+-- 
+2.25.1
+

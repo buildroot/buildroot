@@ -1,6 +1,7 @@
 config BR2_PACKAGE_PYTHON_GNUPG
 	bool "python-gnupg"
-	select BR2_PACKAGE_GNUPG if !BR2_PACKAGE_GNUPG2 # runtime
+	select BR2_PACKAGE_GNUPG2 if BR2_PACKAGE_GNUPG2_DEPENDS && !BR2_PACKAGE_GNUPG # runtime
+	select BR2_PACKAGE_GNUPG if !BR2_PACKAGE_GNUPG2_DEPENDS # runtime
 	help
 	  A wrapper for the Gnu Privacy Guard (GPG or GnuPG).
 

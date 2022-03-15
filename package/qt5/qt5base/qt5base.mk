@@ -201,6 +201,19 @@ endif
 QT5BASE_DEFAULT_QPA = $(call qstrip,$(BR2_PACKAGE_QT5BASE_DEFAULT_QPA))
 QT5BASE_CONFIGURE_OPTS += $(if $(QT5BASE_DEFAULT_QPA),-qpa $(QT5BASE_DEFAULT_QPA))
 
+ifeq ($(BR2_arc),y)
+# In case of -Os (which is default in BR) gcc will use millicode implementation
+# from libgcc. That along with performance degradation may lead to issues during
+# linkage stage. In case of QtWebkit exactly that happens - millicode functions
+# get put way too far from caller functions and so linker fails.
+# To solve that problem we explicitly disable millicode call generation for Qt.
+# Also due to some Qt5 libs being really huge (the best example is QtWebKit)
+# it's good to firce compiler to not assume short or even medium-length calls
+# could be used. I.e. always use long jump instaructions.
+# Otherwise there's a high risk of hitting link-time failures.
+QT5BASE_CFLAGS += -mno-millicode -mlong-calls
+endif
+
 ifeq ($(BR2_PACKAGE_QT5BASE_EGLFS),y)
 QT5BASE_CONFIGURE_OPTS += -eglfs
 QT5BASE_DEPENDENCIES   += libegl

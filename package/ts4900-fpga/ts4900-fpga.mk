@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TS4900_FPGA_VERSION = 20150930
+TS4900_FPGA_VERSION = 20170510
 TS4900_FPGA_SOURCE = ts4900-fpga-$(TS4900_FPGA_VERSION).bin
 TS4900_FPGA_SITE = https://files.embeddedts.com/ts-socket-macrocontrollers/ts-4900-linux/fpga
 # No license file provided, Yocto recipe from the vendor claims MIT.
