@@ -1,7 +1,4 @@
 import os
-import tempfile
-import subprocess
-import shutil
 
 import infra.basetest
 
@@ -14,6 +11,7 @@ class TestRustBase(infra.basetest.BRTest):
                            kernel="builtin",
                            options=["-initrd", img])
         self.emulator.login()
+
 
 class TestRustBin(TestRustBase):
     config = \
