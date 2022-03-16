@@ -1,0 +1,38 @@
+From ffaef0be613121d3ee37867d82932a7a30c2bc6d Mon Sep 17 00:00:00 2001
+From: Heiko Becker <heirecka@exherbo.org>
+Date: Thu, 3 Feb 2022 22:46:41 +0000
+Subject: [PATCH] jitterentropy: Include <fcntl.h> and <limits.h>
+
+* random/jitterentropy-base-user.h: Include <fcntl.h> for O_RDONLY
+* random/jitterentropy-base-user.h: Include <limits.h> for LONG_MAX
+
+--
+
+Fixes the build with musl libc.
+
+Signed-off-by: Heiko Becker <heirecka@exherbo.org>
+
+[Retrieved from:
+https://git.gnupg.org/cgi-bin/gitweb.cgi?p=libgcrypt.git;a=commit;h=ffaef0be613121d3ee37867d82932a7a30c2bc6d]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ random/jitterentropy-base-user.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/random/jitterentropy-base-user.h b/random/jitterentropy-base-user.h
+index 326dfbed..389106ff 100644
+--- a/random/jitterentropy-base-user.h
++++ b/random/jitterentropy-base-user.h
+@@ -39,6 +39,9 @@
+  * DAMAGE.
+  */
+ 
++#include <fcntl.h>
++#include <limits.h>
++
+ #ifndef GCRYPT_JITTERENTROPY_BASE_USER_H
+ #define GCRYPT_JITTERENTROPY_BASE_USER_H
+ 
+-- 
+2.11.0
+
