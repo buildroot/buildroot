@@ -30,4 +30,11 @@ else
 ZYNADDSUBFX_CONF_OPTS += -DAlsaEnable=OFF
 endif
 
+ifeq ($(BR2_PACKAGE_JACK1)$(BR2_PACKAGE_JACK2),y)
+ZYNADDSUBFX_DEPENDENCIES += $(if $(BR2_PACKAGE_JACK1),jack1,jack2)
+ZYNADDSUBFX_CONF_OPTS += -DJackEnable=ON
+else
+ZYNADDSUBFX_CONF_OPTS += -DJackEnable=OFF
+endif
+
 $(eval $(cmake-package))
