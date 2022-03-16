@@ -486,7 +486,12 @@ async def check_package_get_latest_version_by_distro(session, pkg, retry=True):
                 return False
 
             data = await resp.json()
-            version = data['stable_versions'][0] if 'stable_versions' in data else data['version'] if 'version' in data else None
+            if 'stable_versions' in data and data['stable_versions']:
+                version = data['stable_versions'][0]
+            elif 'version' in data:
+                version = data['version']
+            else:
+                version = None
             check_package_latest_version_set_status(pkg,
                                                     RM_API_STATUS_FOUND_BY_DISTRO,
                                                     version,
