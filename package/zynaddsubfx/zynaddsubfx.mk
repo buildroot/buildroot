@@ -37,4 +37,11 @@ else
 ZYNADDSUBFX_CONF_OPTS += -DJackEnable=OFF
 endif
 
+ifeq ($(BR2_PACKAGE_PORTAUDIO),y)
+ZYNADDSUBFX_DEPENDENCIES += portaudio
+ZYNADDSUBFX_CONF_OPTS += -DPaEnable=ON
+else
+ZYNADDSUBFX_CONF_OPTS += -DPaEnable=OFF
+endif
+
 $(eval $(cmake-package))
