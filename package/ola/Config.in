@@ -164,8 +164,12 @@ config BR2_PACKAGE_OLA_PLUGIN_USBDMX
 
 config BR2_PACKAGE_OLA_PLUGIN_USBPRO
 	bool "usbpro"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
 	select BR2_PACKAGE_LIBUSB
 	help
 	  Build UsbPro plugin for OLA.
+
+comment "usbpro needs a toolchain w/ gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 
 endif
