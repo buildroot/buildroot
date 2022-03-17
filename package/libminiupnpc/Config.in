@@ -1,7 +1,5 @@
 config BR2_PACKAGE_LIBMINIUPNPC
 	bool "libminiupnpc"
-	depends on !BR2_BINFMT_FLAT
-	depends on !BR2_STATIC_LIBS
 	help
 	  The UPnP protocol is supported by most home adsl/cable routers
 	  and Microsoft Windows 2K/XP. The aim of the MiniUPnP project
@@ -14,7 +12,3 @@ config BR2_PACKAGE_LIBMINIUPNPC
 	  ANSI C.
 
 	  http://miniupnp.free.fr
-
-comment "libminiupnpc needs a toolchain w/ dynamic library"
-	depends on BR2_STATIC_LIBS
-	depends on !BR2_BINFMT_FLAT
