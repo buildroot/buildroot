@@ -6,6 +6,7 @@ config BR2_PACKAGE_KVM_UNIT_TESTS_ARCH_SUPPORTS
 		BR2_cortex_a17 || BR2_cortex_a17_a7
 	default y if BR2_i386 || BR2_x86_64
 	default y if BR2_powerpc64 || BR2_powerpc64le
+	default y if BR2_s390x
 
 config BR2_PACKAGE_KVM_UNIT_TESTS
 	bool "kvm-unit-tests"

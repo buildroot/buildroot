@@ -16,6 +16,8 @@ else ifeq ($(BR2_i386),y)
 KVM_UNIT_TESTS_ARCH = i386
 else ifeq ($(BR2_powerpc64)$(BR2_powerpc64le),y)
 KVM_UNIT_TESTS_ARCH = ppc64
+else ifeq ($(BR2_s390x),y)
+KVM_UNIT_TESTS_ARCH = s390x
 else ifeq ($(BR2_x86_64),y)
 KVM_UNIT_TESTS_ARCH = x86_64
 endif
