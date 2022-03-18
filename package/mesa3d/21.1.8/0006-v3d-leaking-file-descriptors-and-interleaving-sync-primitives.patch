@@ -123,7 +123,7 @@
 +        /* bool */ v3d_fence_lock ();
 +
 +        if (v3d->fence != NULL) {
-+            fprintf(stderr, "Sync file is NOT properly destructed\n");
++            fprintf(stderr, "Sync file iNOT properly destructed\n");
 +
 +            /* int */ close (v3d->fence->fd);
 +            free (v3d->fence);

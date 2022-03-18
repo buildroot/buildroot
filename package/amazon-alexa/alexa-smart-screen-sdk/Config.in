@@ -1,0 +1,67 @@
+menuconfig BR2_PACKAGE_ALEXA_SMART_SCREEN_SDK
+    bool "alexa-smart-screen-sdk"
+    select BR2_PACKAGE_APL_CORE_LIBRARY
+    select BR2_PACKAGE_AVS_DEVICE_SDK
+    select BR2_PACKAGE_WEBSOCKETPP
+    select BR2_PACKAGE_ASIO
+    select BR2_PACKAGE_RAPIDJSON
+    help
+        The Alexa Smart Screen SDK enables device makers to build screen-based products that
+        complement Alexa voice responses with rich visuals.
+        https://developer.amazon.com/alexa-voice-service/alexa-smart-screen-sdk
+
+
+if BR2_PACKAGE_ALEXA_SMART_SCREEN_SDK
+choice BR2_PACKAGE_ALEXA_SMART_SCREEN_SDK_BUILD_TYPE
+    prompt "Build type"
+    default BR2_PACKAGE_ALEXA_SMART_SCREEN_SDK_BUILD_TYPE_DEBUG
+    help
+        Select build type
+
+config BR2_PACKAGE_ALEXA_SMART_SCREEN_SDK_BUILD_TYPE_RELEASE
+    bool "Release"
+    help
+        Release build
+
+config BR2_PACKAGE_ALEXA_SMART_SCREEN_SDK_BUILD_TYPE_DEBUG
+    bool "Debug"
+    help
+        Debug build
+
+endchoice # BR2_PACKAGE_ALEXA_SMART_SCREEN_SDK_BUILD_TYPE
+
+config BR2_PACKAGE_ALEXA_SMART_SCREEN_SDK_ENABLE_JS_GUICLIENT
+    bool "Enable JS GUIClient"
+    default n
+    help
+        Builds the default GUIClient application
+
+if BR2_PACKAGE_ALEXA_SMART_SCREEN_SDK_ENABLE_JS_GUICLIENT
+    config BR2_PACKAGE_ALEXA_SMART_SCREEN_SDK_JS_GUICLIENT_INSTALL_PATH
+        string "GUIClient install path"
+        default "/www/alexa"
+        help
+            The path on the target where GUIClient should be installed
+endif
+
+config BR2_PACKAGE_ALEXA_SMART_SCREEN_SDK_USE_GSTREAMER
+    bool "Use gstreamer"
+    select BR2_PACKAGE_GSTREAMER1
+    select BR2_PACKAGE_GST1_PLUGINS_BASE
+    select BR2_PACKAGE_GST1_PLUGINS_GOOD
+    select BR2_PACKAGE_GST1_PLUGINS_BAD
+    select BR2_PACKAGE_GST1_LIBAV
+    default y
+    help
+        Build gstreamer media player
+
+config BR2_PACKAGE_ALEXA_SMART_SCREEN_SDK_MICROPHONE_BACKEND_PORTAUDIO
+    bool "Portaudio microphone backend"
+    select BR2_PACKAGE_PORTAUDIO
+    default y
+    help
+        Use portaudio as the microphone backend.
+
+endif
+
+

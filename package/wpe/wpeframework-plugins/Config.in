@@ -1,6 +1,128 @@
 config BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool
 
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_AVS
+  bool "AVS"
+  select BR2_PACKAGE_AVS_DEVICE_SDK
+  select BR2_PACKAGE_AVS_DEVICE_SDK_BUILD_GST_MEDIA_PLAYER
+  help
+    Thunder Alexa Voice Service Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_AVS
+  config BR2_PACKAGE_WPEFRAMEWORK_AVS_PLUGIN_NAME
+    string "Plugin Name"
+    default "AVS"
+    help
+      The plugin name
+
+  config BR2_PACKAGE_WPEFRAMEWORK_AVS_AUTOSTART
+    bool "Autostart"
+    help
+      Autostart the AVS plugin
+
+  choice BR2_PACKAGE_WPEFRAMEWORK_AVS_PLATFORM
+    bool "Platform"
+    default BR2_PACKAGE_WPEFRAMEWORK_AVS_PLATFORM_RPI3
+      config BR2_PACKAGE_WPEFRAMEWORK_AVS_PLATFORM_RPI3
+        bool "rpi3"
+      config BR2_PACKAGE_WPEFRAMEWORK_AVS_PLATFORM_CUSTOM
+        bool "Custom"
+
+  endchoice
+
+  if BR2_PACKAGE_WPEFRAMEWORK_AVS_PLATFORM_CUSTOM
+    config BR2_PACKAGE_WPEFRAMEWORK_AVS_PLATFORM_CUSTOM_VALUE
+      string "Custom platform"
+      help
+        Name of the custom platform
+
+  endif
+
+  config BR2_PACKAGE_WPEFRAMEWORK_AVS_DATA_PATH
+    string "Data path"
+    default BR2_PACKAGE_WPEFRAMEWORK_DATA_PATH
+    help
+      Path where AVS read only data will be stored
+
+  config BR2_PACKAGE_WPEFRAMEWORK_AVS_CUSTOM_ALEXA_CLIENT_CONFIG
+    string "Custom Alexa Client Config"
+    help
+      Custom path to configuration file for the Alexa Client
+
+  config BR2_PACKAGE_WPEFRAMEWORK_AVS_CUSTOM_SMART_SCREEN_CONFIG
+    string "Custom Smart Screen Config"
+    help
+      Custom path to configuration file for the Smart Screen
+
+  choice BR2_PACKAGE_WPEFRAMEWORK_AVS_LOG_LEVEL
+    bool "Log level"
+    default BR2_PACKAGE_WPEFRAMEWORK_AVS_LOG_LEVEL_CRITICAL
+      config BR2_PACKAGE_WPEFRAMEWORK_AVS_LOG_LEVEL_NONE
+        bool "None"
+      config BR2_PACKAGE_WPEFRAMEWORK_AVS_LOG_LEVEL_CRITICAL
+        bool "Critical"
+      config BR2_PACKAGE_WPEFRAMEWORK_AVS_LOG_LEVEL_ERROR
+        bool "Error"
+      config BR2_PACKAGE_WPEFRAMEWORK_AVS_LOG_LEVEL_WARN
+        bool "Warning"
+      config BR2_PACKAGE_WPEFRAMEWORK_AVS_LOG_LEVEL_DEBUG0
+        bool "Debug0"
+      config BR2_PACKAGE_WPEFRAMEWORK_AVS_LOG_LEVEL_DEBUG9
+        bool "Debug9"
+  endchoice
+
+  choice BR2_PACKAGE_WPEFRAMEWORK_AVS_AUDIOSOURCE
+    bool "Audiosource"
+    default BR2_PACKAGE_WPEFRAMEWORK_AVS_AUDIOSOURCE_PORTAUDIO
+      config BR2_PACKAGE_WPEFRAMEWORK_AVS_AUDIOSOURCE_PORTAUDIO
+        bool "Portaudio"
+      config BR2_PACKAGE_WPEFRAMEWORK_AVS_AUDIOSOURCE_BLRC
+        bool "BluetoothRemoteControl"
+      config BR2_PACKAGE_WPEFRAMEWORK_AVS_AUDIOSOURCE_CUSTOM
+        bool "Custom"
+  endchoice
+
+  if BR2_PACKAGE_WPEFRAMEWORK_AVS_AUDIOSOURCE_CUSTOM
+    config BR2_PACKAGE_WPEFRAMEWORK_AVS_AUDIOSOURCE_CUSTOM_VALUE
+      string "Custom Audiosource value"
+  endif
+
+  config BR2_PACKAGE_WPEFRAMEWORK_AVS_ENABLE_SMART_SCREEN_SUPPORT
+    bool "Enable Smart Screen Support"
+    select BR2_PACKAGE_ALEXA_SMART_SCREEN_SDK
+    default y
+    help
+      Compile in the Smart Screen support
+
+  if BR2_PACKAGE_WPEFRAMEWORK_AVS_ENABLE_SMART_SCREEN_SUPPORT
+    config BR2_PACKAGE_WPEFRAMEWORK_AVS_ENABLE_SMART_SCREEN
+      bool "Enable Smart Screen in runtime"
+      default n
+      help
+        Enables the Smart Screen in the runtime
+  endif
+
+  config BR2_PACKAGE_WPEFRAMEWORK_AVS_ENABLE_KWD_SUPPORT
+    bool "Enable KWD Support"
+    select BR2_PACKAGE_ALEXA_PRYON_KWD
+    default n
+    help
+      Compile in the Keyword Detection engine support
+
+  if BR2_PACKAGE_WPEFRAMEWORK_AVS_ENABLE_KWD_SUPPORT
+    config BR2_PACKAGE_WPEFRAMEWORK_AVS_ENABLE_KWD
+      bool "Enable KWD in runtime"
+      default n
+      help
+        Enables the Keyword Detection engine in the runtime
+
+    config BR2_PACKAGE_WPEFRAMEWORK_AVS_CUSTOM_KWD_MODELS_PATH
+      string "Custom KWD models path"
+      help
+        Custom path to the models directory for KWD
+  endif
+endif
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
     bool "BluetoothControl"
     select BR2_PACKAGE_WPEFRAMEWORK_LIBRARIES
@@ -403,13 +525,23 @@ config BR2_PACKAGE_WPEFRAMEWORK_DEVICEINFO_PLATFORMNAME
 
 endif
 
-config BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION
     select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
-    depends on BR2_PACKAGE_HAS_NEXUS
     bool "DeviceIdentification"
-    default y
+    default y if BR2_PACKAGE_HAS_NEXUS
     help
-      DeviceIdentification Plugin (Nexus OTP)
+      DeviceIdentification Plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION
+
+config BR2_PACKAGE_WPEFRAMEWORK_DEVICEIDENTIFICATION_INTERFACE_NAME
+    string "InterfaceName"
+    default "eth0"
+    help
+      Name of interface, which has to be used for the device id generation
+      in case of generic implementation
+
+endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_DISPLAYINFO
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
@@ -503,6 +635,19 @@ config BR2_PACKAGE_WPEFRAMEWORK_DICTIONARY
     bool "Dictionary"
     help
       Dictionary Plugin.
+
+config BR2_PACKAGE_WPEFRAMEWORK_FILETRANSFER
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    bool "FileTransfer"
+    help
+      FileTransfer Plugin
+
+config BR2_PACKAGE_WPEFRAMEWORK_FIRMWARECONTROL
+    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
+    select BR2_PACKAGE_MFR_LIBRARY
+    bool "FirmwareControl"
+    help
+      FirmwareControl Plugin
 
 config BR2_PACKAGE_WPEFRAMEWORK_FRONTPANEL
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
@@ -978,19 +1123,6 @@ config BR2_PACKAGE_WPEFRAMEWORK_SYSTEMCOMMANDS
     help
       SystemCommands Plugin
 
-config BR2_PACKAGE_WPEFRAMEWORK_FILETRANSFER
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-    bool "FileTransfer"
-    help
-      FileTransfer Plugin
-
-config BR2_PACKAGE_WPEFRAMEWORK_FIRMWARECONTROL
-    select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
-    select BR2_PACKAGE_MFR_LIBRARY
-    bool "FirmwareControl"
-    help
-      FirmwareControl Plugin
-
 config BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT
     select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
     select BR2_PACKAGE_WPEFRAMEWORK_SECURITYAGENT_ACCESSOR
@@ -1011,6 +1143,39 @@ if BR2_PACKAGE_WPEFRAMEWORK_SPARK
 config BR2_PACKAGE_WPEFRAMEWORK_SPARK_AUTOSTART
     bool "autostart"
     default n
+endif
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_SWITCHBOARD
+    bool "SwitchBoard"
+    help
+      SwitchBoard plugin
+
+if BR2_PACKAGE_WPEFRAMEWORK_SWITCHBOARD
+
+config BR2_PACKAGE_WPEFRAMEWORK_SWITCHBOARD_DEFAULT
+    string "Default Callsign"
+    help
+      Callsign of the plugin to be activated in case nothing is active
+
+config BR2_PACKAGE_WPEFRAMEWORK_SWITCH_AMAZON
+    depends on BR2_PACKAGE_WPEFRAMEWORK_AMAZON
+    bool "Amazon"
+    default y
+
+config BR2_PACKAGE_WPEFRAMEWORK_SWITCH_COBALT
+    depends on BR2_PACKAGE_WPEFRAMEWORK_COBALT
+    bool "Cobalt"
+    default y
+
+config BR2_PACKAGE_WPEFRAMEWORK_SWITCH_NETFLIX
+    depends on BR2_PACKAGE_WPEFRAMEWORK_NETFLIX
+    bool "Netflix"
+    default y
+
+config BR2_PACKAGE_WPEFRAMEWORK_SWITCH_WEBKITBROWSER
+    depends on BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER
+    bool "WebKitBrowser"
+    default y
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_TESTCONTROLLER
@@ -1052,7 +1217,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_TRACECONTROL
     bool "TraceControl"
     help
       TraceControl Plugin
-    
+
+config BR2_PACKAGE_WPEFRAMEWORK_MESSAGECONTROL
+    select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
+    depends on BR2_PACKAGE_WPEFRAMEWORK_MESSAGING
+    bool "MessageControl"
+    help
+        MessageControl Plugin
     
 config BR2_PACKAGE_WPEFRAMEWORK_WARNINGREPORTINGCONTROL
     select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
@@ -1087,6 +1258,10 @@ config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_AUTOSTART
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_INJECTEDBUNDLE_INTERFACES
     bool "injectedbundle"
     default y
+
+config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROW_EXTENSION_DIRECTORY
+    string "extension directory name"
+    default "Extension"
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_STARTURL
     string "start-url"

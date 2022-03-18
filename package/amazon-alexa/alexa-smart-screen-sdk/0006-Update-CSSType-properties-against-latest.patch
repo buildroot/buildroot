@@ -1,0 +1,30 @@
+diff --git a/modules/GUI/js/src/components/APLRendererWindow.tsx b/modules/GUI/js/src/components/APLRendererWindow.tsx
+index 6eac97a..6af96ca 100644
+--- a/modules/GUI/js/src/components/APLRendererWindow.tsx
++++ b/modules/GUI/js/src/components/APLRendererWindow.tsx
+@@ -20,7 +20,8 @@ import {AVSVideoFactory} from '../lib/media/AVSVideo';
+ import {ActivityTracker} from '../lib/activity/ActivityTracker';
+ import { Timer } from '../lib/utils/timer';
+ import { IAPLRendererWindowConfig } from '../lib/config/IDeviceAppConfig';
+-import { VisibilityProperty } from 'csstype';
++
++type VisibilityProperty = import('csstype').Property.Visibility;
+ 
+ const OVERLAY_WINDOW_ACTIVE_IN_MS : number = 750;
+ const OVERLAY_WINDOW_INACTIVE_IN_MS : number = 250;
+diff --git a/modules/GUI/js/src/components/VoiceChrome.tsx b/modules/GUI/js/src/components/VoiceChrome.tsx
+index ca6d1df..47417a8 100644
+--- a/modules/GUI/js/src/components/VoiceChrome.tsx
++++ b/modules/GUI/js/src/components/VoiceChrome.tsx
+@@ -4,9 +4,10 @@
+ import * as React from 'react';
+ import './voiceChrome.css';
+ import { AlexaState } from '../lib/messages/messages';
+-import { VisibilityProperty } from 'csstype';
+ import { IDeviceAppConfig, AudioInputInitiator } from '../lib/config/IDeviceAppConfig';
+ 
++type VisibilityProperty = import('csstype').Property.Visibility;
++
+ interface IVoiceChromeProps {
+     alexaState : AlexaState;
+     targetWindowId : string;

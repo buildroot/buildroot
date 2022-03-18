@@ -6,7 +6,7 @@
 
 ifneq ($(filter y,$(BR2_PACKAGE_GST1_BCM_UNIFIED_VERSION)),)
 GST1_BCM_SITE = git@github.com:Metrological/bcm-collaboration
-GST1_BCM_VERSION = 0846f6294a8a7851e405d7f2c4e2d3af27ba3817
+GST1_BCM_VERSION = 479464d4205d3f8828ca06609ff9b9ec89bd7b13
 else
 GST1_BCM_SITE = git@github.com:Metrological/gstreamer-plugins-soc.git
 
@@ -119,6 +119,10 @@ GST1_BCM_CONF_OPTS = \
 	--disable-tsparse \
 	--disable-playersinkbin \
 	--disable-gfxsink
+
+ifeq ($(BR2_PACKAGE_GST1_BCM_ENABLE_SVP),y)
+GST1_BCM_CONF_OPTS += --enable-svp
+endif
 
 ifeq ($(BR2_PACKAGE_GST1_BCM_AUDFILTER),y)
 GST1_BCM_CONF_OPTS += --enable-audfilter

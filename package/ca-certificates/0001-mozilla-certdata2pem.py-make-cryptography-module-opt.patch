@@ -1,0 +1,59 @@
+From bf18b564122e8f976681a2398862fde1eafd84ba Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Thu, 6 Jan 2022 23:15:00 +0100
+Subject: [PATCH] mozilla/certdata2pem.py: make cryptography module optional
+
+The Python cryptography module is only used to verify if trusted
+certificates have expired, but this is only a warning. For some build
+systems and distributions, providing Python cryptography is costly,
+especially since it's now partly written in Rust.
+
+As the check is only a warning, it's anyway going to be overlooked by
+most people. This commit changes the check to be optional: if the
+cryptography Python module is there, we perform the check, otherwise
+the check is skipped.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ mozilla/certdata2pem.py | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/mozilla/certdata2pem.py b/mozilla/certdata2pem.py
+index ede23d4..a6261f8 100644
+--- a/mozilla/certdata2pem.py
++++ b/mozilla/certdata2pem.py
+@@ -28,9 +28,6 @@ import sys
+ import textwrap
+ import io
+ 
+-from cryptography import x509
+-
+-
+ objects = []
+ 
+ # Dirty file parser.
+@@ -122,11 +119,16 @@ for obj in objects:
+         if not obj['CKA_LABEL'] in trust or not trust[obj['CKA_LABEL']]:
+             continue
+ 
+-        cert = x509.load_der_x509_certificate(obj['CKA_VALUE'])
+-        if cert.not_valid_after < datetime.datetime.now():
+-            print('!'*74)
+-            print('Trusted but expired certificate found: %s' % obj['CKA_LABEL'])
+-            print('!'*74)
++        try:
++            from cryptography import x509
++
++            cert = x509.load_der_x509_certificate(obj['CKA_VALUE'])
++            if cert.not_valid_after < datetime.datetime.now():
++                print('!'*74)
++                print('Trusted but expired certificate found: %s' % obj['CKA_LABEL'])
++                print('!'*74)
++        except ImportError:
++            pass
+ 
+         bname = obj['CKA_LABEL'][1:-1].replace('/', '_')\
+                                       .replace(' ', '_')\
+-- 
+2.33.1
+

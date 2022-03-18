@@ -60,6 +60,10 @@ config BR2_PACKAGE_WPEFRAMEWORK_INTERFACE
     string "interface"
     default ""
 
+config BR2_PACKAGE_WPEFRAMEWORK_ETHERNETCARD_NAME
+    string "ethernet card name"
+    default "eth0"
+
 config BR2_PACKAGE_WPEFRAMEWORK_IDLE_TIME
     string "idle-time"
     default "180"
@@ -84,7 +88,19 @@ config BR2_PACKAGE_WPEFRAMEWORK_PROXYSTUB_PATH
     string "proxystub path"
     default "/usr/lib/wpeframework/proxystubs"
 
+config BR2_PACKAGE_WPEFRAMEWORK_MESSAGING
+    bool "Use new messaging"
+    default n
+    help
+      Use a new version of messaging - tracing + logging
+
+config BR2_PACKAGE_WPEFRAMEWORK_MESSAGE_SETTINGS
+    depends on BR2_PACKAGE_WPEFRAMEWORK_MESSAGING
+    string "message settings"
+    default ""
+
 config BR2_PACKAGE_WPEFRAMEWORK_TRACE_SETTINGS
+    depends on !BR2_PACKAGE_WPEFRAMEWORK_MESSAGING
     string "trace settings"
     default ""
 
@@ -212,6 +228,27 @@ config BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY_IMPLEMENTATION_NEXUS
 	help
 	  Use Nexus as cryptography backend.
 endchoice
+
+if BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY_IMPLEMENTATION_NEXUS
+menu "Nexus Implemention Options"
+choice BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY_NEXUS_IMPLEMENTATION
+	prompt "Implementation"
+	default BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY_IMPLEMENTATION_NEXUS_DRM_BASED
+	help
+	  Choose Nexus implementation type
+
+config BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY_IMPLEMENTATION_NEXUS_DRM_BASED
+	bool "DRM based"
+	help
+	  Use DRM based implementation.
+
+config BR2_PACKAGE_WPEFRAMEWORK_CRYPTOGRAPHY_IMPLEMENTATION_NEXUS_COMMAND_BASED
+	bool "TEE Command based"
+	help
+	  Use TEE Command based implementation
+endchoice
+endmenu
+endif
 endif
 
 config BR2_PACKAGE_WPEFRAMEWORK_WARNING_REPORTING
@@ -304,14 +341,12 @@ endmenu
 menu "Plugins"
 source "package/wpe/wpeframework-plugins/Config.in"
 source "package/wpe/wpeframework-amazon/Config.in"
-source "package/wpe/wpeframework-avs/Config.in"
 source "package/wpe/wpeframework-avnclient/Config.in"
 source "package/wpe/wpeframework-launcher/Config.in"
 source "package/wpe/wpeframework-netflix/Config.in"
 source "package/wpe/wpeframework-playgiga/Config.in"
 source "package/wpe/wpeframework-provisioning/Config.in"
 source "package/wpe/wpeframework-spotify/Config.in"
-source "package/wpe/wpeframework-switchboard/Config.in"
 source "package/wpe/wpeframework-ui/Config.in"
 endmenu
 
