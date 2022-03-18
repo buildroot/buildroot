@@ -61,6 +61,15 @@ config BR2_TARGET_OPTEE_OS_NEEDS_DTC
 	  Select this option if your OP-TEE OS platform configuration
 	  requires the Device Tree compiler to be available.
 
+config BR2_TARGET_OPTEE_OS_NEEDS_PYTHON_CRYPTOGRAPHY
+	bool "OP-TEE OS needs host-python-cryptography"
+	depends on BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
+	help
+	  OP-TEE OS version below 3.16 used python-pycryptodomex
+	  package in python scripts. Newer version uses
+	  python-cryptography. Select this option if optee-os needs
+	  python-cryptography to be built.
+
 config BR2_TARGET_OPTEE_OS_CORE
 	bool "Build core"
 	default y
