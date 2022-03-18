@@ -14,6 +14,9 @@ WAVPACK_LICENSE = BSD-3-Clause
 WAVPACK_LICENSE_FILES = COPYING
 WAVPACK_CPE_ID_VENDOR = wavpack
 
+# 0001-issue-110-sanitize-DSD-file-types-for-invalid-lengths.patch
+WAVPACK_IGNORE_CVES += CVE-2021-44269
+
 ifeq ($(BR2_PACKAGE_LIBICONV),y)
 WAVPACK_CONF_OPTS += LIBS=-liconv
 endif
