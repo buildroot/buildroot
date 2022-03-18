@@ -54,6 +54,13 @@ else
 WGET_CONF_OPTS += --without-zlib
 endif
 
+ifeq ($(BR2_PACKAGE_C_ARES),y)
+WGET_CONF_OPTS += --with-cares
+WGET_DEPENDENCIES += c-ares
+else
+WGET_CONF_OPTS += --without-cares
+endif
+
 ifeq ($(BR2_PACKAGE_PCRE2),y)
 WGET_CONF_OPTS += --disable-pcre --enable-pcre2
 WGET_DEPENDENCIES += pcre2
