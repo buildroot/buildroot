@@ -12,6 +12,13 @@ WGET_LICENSE = GPL-3.0+
 WGET_LICENSE_FILES = COPYING
 WGET_CPE_ID_VENDOR = gnu
 
+ifeq ($(BR2_PACKAGE_LIBPSL),y)
+WGET_CONF_OPTS += --with-libpsl
+WGET_DEPENDENCIES += libpsl
+else
+WGET_CONF_OPTS += --without-libpsl
+endif
+
 ifeq ($(BR2_PACKAGE_GNUTLS),y)
 WGET_CONF_OPTS += --with-ssl=gnutls
 WGET_DEPENDENCIES += gnutls
