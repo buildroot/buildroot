@@ -17,6 +17,8 @@ XSCREENSAVER_DEPENDENCIES = \
 	gdk-pixbuf \
 	gdk-pixbuf-xlib \
 	jpeg \
+	libgl \
+	libglu \
 	libgtk2 \
 	libxml2 \
 	xlib_libX11 \
@@ -30,14 +32,8 @@ XSCREENSAVER_DEPENDENCIES = \
 # compiler/linker
 XSCREENSAVER_CONF_OPTS = \
 	--includedir=$(STAGING_DIR)/usr/include \
-	--libdir=$(STAGING_DIR)/usr/lib
-
-ifeq ($(BR2_PACKAGE_HAS_LIBGL),y)
-XSCREENSAVER_CONF_OPTS += --with-gl=yes
-XSCREENSAVER_DEPENDENCIES += libgl libglu
-else
-XSCREENSAVER_CONF_OPTS += --with-gl=no
-endif
+	--libdir=$(STAGING_DIR)/usr/lib \
+	--with-gl=yes
 
 ifeq ($(BR2_PACKAGE_LIBPNG),y)
 XSCREENSAVER_CONF_OPTS += --with-png=yes
