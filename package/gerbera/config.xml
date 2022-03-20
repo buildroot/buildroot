@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config version="2" xmlns="http://mediatomb.cc/config/2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://mediatomb.cc/config/2 http://mediatomb.cc/config/2.xsd">
   <!--
-     See http://gerbera.io or read the docs for more
+     See https://gerbera.io or read the docs for more
      information on creating and using config.xml configuration files.
     -->
   <server>
@@ -11,7 +11,7 @@
       </accounts>
     </ui>
     <name>Gerbera</name>
-    <udn>uuid:ac20d9b6-5c82-48e6-80de-436965fbe1d7</udn>
+    <udn>uuid:7b156a2a-d79e-4763-983b-ae1d13fe0ff4</udn>
     <home>/var/lib/gerbera</home>
     <webroot>/usr/share/gerbera/web</webroot>
     <!--
@@ -23,12 +23,20 @@
         the value configured here. Ex: A value of 62 will result
         in an SSDP advertisement being sent every second.
     -->
-    <alive>1800</alive>
+    <alive>180</alive>
     <storage>
       <sqlite3 enabled="yes">
         <database-file>gerbera.db</database-file>
       </sqlite3>
     </storage>
+    <containers enabled="yes">
+      <container location="/LastAdded" title="Recently Added" sort="-last_updated">
+        <filter>upnp:class derivedfrom "object.item" and last_updated &gt; "@last7"</filter>
+      </container>
+      <container location="/LastModified" title="Recently Modified" sort="-last_modified">
+        <filter>upnp:class derivedfrom "object.item" and last_modified &gt; "@last7"</filter>
+      </container>
+    </containers>
     <extended-runtime-options>
       <mark-played-items enabled="no" suppress-cds-updates="yes">
         <string mode="prepend">*</string>
@@ -45,12 +53,15 @@
     <mappings>
       <extension-mimetype ignore-unknown="no">
         <map from="asf" to="video/x-ms-asf" />
-        <map from="asx" to="video/x-ms-asf" />
-        <map from="dff" to="audio/x-dsd" />
-        <map from="dsf" to="audio/x-dsd" />
+        <map from="asx" to="video/x-ms-asx" />
+        <map from="dff" to="audio/x-dff" />
+        <map from="dsd" to="audio/x-dsd" />
+        <map from="dsf" to="audio/x-dsf" />
         <map from="flv" to="video/x-flv" />
         <map from="m2ts" to="video/mp2t" />
         <map from="m3u" to="audio/x-mpegurl" />
+        <map from="m3u8" to="audio/x-mpegurl" />
+        <map from="m4a" to="audio/mp4" />
         <map from="mka" to="audio/x-matroska" />
         <map from="mkv" to="video/x-matroska" />
         <map from="mp3" to="audio/mpeg" />
@@ -98,14 +109,42 @@
         <treat mimetype="audio/x-wav" as="pcm" />
         <treat mimetype="audio/x-wavpack" as="wv" />
         <treat mimetype="image/jpeg" as="jpg" />
+        <treat mimetype="image/png" as="png" />
+        <treat mimetype="video/mkv" as="mkv" />
         <treat mimetype="video/mp4" as="mp4" />
+        <treat mimetype="video/mpeg" as="mpeg" />
         <treat mimetype="video/x-matroska" as="mkv" />
+        <treat mimetype="video/x-mkv" as="mkv" />
+        <treat mimetype="video/x-ms-asf" as="asf" />
+        <treat mimetype="video/x-ms-asx" as="playlist" />
         <treat mimetype="video/x-msvideo" as="avi" />
       </mimetype-contenttype>
+      <mimetype-dlnatransfermode>
+        <map from="application/ogg" to="Streaming" />
+        <map from="application/x-srt" to="Background" />
+        <map from="audio/*" to="Streaming" />
+        <map from="image/*" to="Interactive" />
+        <map from="srt" to="Background" />
+        <map from="text/*" to="Background" />
+        <map from="video/*" to="Streaming" />
+      </mimetype-dlnatransfermode>
+      <contenttype-dlnaprofile>
+        <map from="asf" to="VC_ASF_AP_L2_WMA" />
+        <map from="avi" to="AVI" />
+        <map from="dsd" to="DSF" />
+        <map from="flac" to="FLAC" />
+        <map from="jpg" to="JPEG_LRG" />
+        <map from="mka" to="MKV" />
+        <map from="mkv" to="MKV" />
+        <map from="mp3" to="MP3" />
+        <map from="mp4" to="AVC_MP4_EU" />
+        <map from="mpeg" to="MPEG_PS_PAL" />
+        <map from="ogg" to="OGG" />
+        <map from="pcm" to="LPCM" />
+        <map from="png" to="PNG_LRG" />
+        <map from="wma" to="WMAFULL" />
+      </contenttype-dlnaprofile>
     </mappings>
-    <online-content>
-      <AppleTrailers enabled="no" refresh="43200" update-at-start="no" resolution="640" />
-    </online-content>
   </import>
   <transcoding enabled="no">
     <mimetype-profile-mappings>
@@ -133,3 +172,4 @@
     </profiles>
   </transcoding>
 </config>
+
