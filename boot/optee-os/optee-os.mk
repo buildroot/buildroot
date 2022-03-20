@@ -21,7 +21,13 @@ else
 OPTEE_OS_SITE = $(call github,OP-TEE,optee_os,$(OPTEE_OS_VERSION))
 endif
 
-OPTEE_OS_DEPENDENCIES = host-openssl host-python3 host-python-pycryptodomex host-python-pyelftools
+OPTEE_OS_DEPENDENCIES = host-openssl host-python3 host-python-pyelftools
+
+ifeq ($(BR2_TARGET_OPTEE_OS_NEEDS_PYTHON_CRYPTOGRAPHY),y)
+OPTEE_OS_DEPENDENCIES += host-python-cryptography
+else
+OPTEE_OS_DEPENDENCIES += host-python-pycryptodomex
+endif
 
 ifeq ($(BR2_TARGET_OPTEE_OS_NEEDS_DTC),y)
 OPTEE_OS_DEPENDENCIES += host-dtc

@@ -1,0 +1,32 @@
+From 3feee3e00dcb9467b5345671300e7c73f3e05f93 Mon Sep 17 00:00:00 2001
+From: Kory Maincent <kory.maincent@bootlin.com>
+Date: Tue, 5 Oct 2021 14:31:28 +0200
+Subject: [PATCH 2/2] configs/stm32mp15_trusted_defconfig: disable environment
+
+select only ENV_IS_NOWHERE
+
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+---
+ configs/stm32mp15_trusted_defconfig | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/configs/stm32mp15_trusted_defconfig b/configs/stm32mp15_trusted_defconfig
+index 7635d7f6c7..6ec4bcd080 100644
+--- a/configs/stm32mp15_trusted_defconfig
++++ b/configs/stm32mp15_trusted_defconfig
+@@ -38,12 +38,6 @@ CONFIG_CMD_MTDPARTS=y
+ CONFIG_CMD_UBI=y
+ CONFIG_DEFAULT_DEVICE_TREE="stm32mp157c-ev1"
+ CONFIG_ENV_IS_NOWHERE=y
+-CONFIG_ENV_IS_IN_EXT4=y
+-CONFIG_ENV_IS_IN_SPI_FLASH=y
+-CONFIG_ENV_IS_IN_UBI=y
+-CONFIG_ENV_EXT4_INTERFACE="mmc"
+-CONFIG_ENV_EXT4_DEVICE_AND_PART="0:auto"
+-CONFIG_ENV_EXT4_FILE="/uboot.env"
+ CONFIG_STM32_ADC=y
+ CONFIG_USB_FUNCTION_FASTBOOT=y
+ CONFIG_FASTBOOT_BUF_ADDR=0xC0000000
+-- 
+2.25.1
+

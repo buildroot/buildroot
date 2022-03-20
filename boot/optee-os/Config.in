@@ -18,7 +18,9 @@ choice
 	  Select the version of OP-TEE OS you want to use
 
 config BR2_TARGET_OPTEE_OS_LATEST
-	bool "3.15.0"
+	bool "3.16.0"
+	depends on BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
+	select BR2_TARGET_OPTEE_OS_NEEDS_PYTHON_CRYPTOGRAPHY
 	help
 	  Use the latest release tag from the OP-TEE OS official Git
 	  repository.
@@ -50,7 +52,7 @@ endif
 
 config BR2_TARGET_OPTEE_OS_VERSION
 	string
-	default "3.15.0"	if BR2_TARGET_OPTEE_OS_LATEST
+	default "3.16.0"	if BR2_TARGET_OPTEE_OS_LATEST
 	default BR2_TARGET_OPTEE_OS_CUSTOM_REPO_VERSION \
 				if BR2_TARGET_OPTEE_OS_CUSTOM_GIT
 
@@ -60,6 +62,15 @@ config BR2_TARGET_OPTEE_OS_NEEDS_DTC
 	help
 	  Select this option if your OP-TEE OS platform configuration
 	  requires the Device Tree compiler to be available.
+
+config BR2_TARGET_OPTEE_OS_NEEDS_PYTHON_CRYPTOGRAPHY
+	bool "OP-TEE OS needs host-python-cryptography"
+	depends on BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
+	help
+	  OP-TEE OS version below 3.16 used python-pycryptodomex
+	  package in python scripts. Newer version uses
+	  python-cryptography. Select this option if optee-os needs
+	  python-cryptography to be built.
 
 config BR2_TARGET_OPTEE_OS_CORE
 	bool "Build core"

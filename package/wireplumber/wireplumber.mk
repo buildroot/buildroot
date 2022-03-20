@@ -17,7 +17,7 @@ WIREPLUMBER_CONF_OPTS = \
 	-Dsystem-lua-version=
 
 ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
-WIREPLUMBER_DEPENDENCIES += gobject-introspection
+WIREPLUMBER_DEPENDENCIES += host-doxygen host-python-lxml gobject-introspection
 WIREPLUMBER_CONF_OPTS += -Dintrospection=enabled
 else
 WIREPLUMBER_CONF_OPTS += -Dintrospection=disabled
