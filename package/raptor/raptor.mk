@@ -20,6 +20,9 @@ RAPTOR_AUTORECONF = YES
 # 0002-Calcualte-max-nspace-declarations-correctly-for-XML-.patch
 RAPTOR_IGNORE_CVES += CVE-2017-18926
 
+# 0003-XML-Writer-compare-namespace-declarations-correctly.patch
+RAPTOR_IGNORE_CVES += CVE-2020-25713
+
 RAPTOR_CONF_OPTS =\
 	--with-xml2-config=$(STAGING_DIR)/usr/bin/xml2-config \
 	--with-xslt-config=$(STAGING_DIR)/usr/bin/xslt-config
