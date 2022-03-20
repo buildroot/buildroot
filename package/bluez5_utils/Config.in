@@ -79,14 +79,22 @@ config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HEALTH
 
 config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HID
 	bool "build hid plugin"
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_18
 	select BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HOG
 	help
 	  Build plugin for HID (input) profiles.
 
+comment "hid plugin needs a toolchain w/ headers >= 3.18"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_18
+
 config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HOG
 	bool "build hog plugin"
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_18
 	help
 	  Build plugin for HoG (input) profiles.
+
+comment "hog plugin needs a toolchain w/ headers >= 3.18"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_18
 
 config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_MESH
 	bool "build mesh plugin"
@@ -126,10 +134,14 @@ config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_SAP
 config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_SIXAXIS
 	bool "build sixaxis plugin"
 	depends on BR2_PACKAGE_HAS_UDEV
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_18 # hid plugin
 	select BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HID # runtime
 	help
 	  Build sixaxis plugin (support Sony Dualshock
 	  controller)
+
+comment "sixaxis plugin needs a toolchain w/ headers >= 3.18"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_18
 
 comment "sixaxis plugin needs udev /dev management"
 	depends on !BR2_PACKAGE_HAS_UDEV
@@ -142,10 +154,14 @@ config BR2_PACKAGE_BLUEZ5_UTILS_TEST
 config BR2_PACKAGE_BLUEZ5_UTILS_TOOLS_HID2HCI
 	bool "build hid2hci tool"
 	depends on BR2_PACKAGE_HAS_UDEV
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_18 # hid plugin
 	select BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HID # runtime
 	select BR2_PACKAGE_BLUEZ5_UTILS_TOOLS
 	help
 	  Build hid2hci tool
+
+comment "hid2hci tool needs a toolchain w/ headers >= 3.18"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_18
 
 comment "hid2hci tool needs udev /dev management"
 	depends on !BR2_PACKAGE_HAS_UDEV
