@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WGET_VERSION = 1.21.2
+WGET_VERSION = 1.21.3
 WGET_SOURCE = wget-$(WGET_VERSION).tar.lz
 WGET_SITE = $(BR2_GNU_MIRROR)/wget
 WGET_DEPENDENCIES = host-pkgconf
@@ -33,11 +33,12 @@ ifeq ($(BR2_PACKAGE_LIBICONV),y)
 WGET_DEPENDENCIES += libiconv
 endif
 
-ifeq ($(BR2_PACKAGE_LIBIDN2),y)
-WGET_CONF_OPTS += --with-libidn
+# BR2_ENABLE_LOCALE and BR2_PACKAGE_LIBICONV are mutually exclusive
+ifeq ($(BR2_ENABLE_LOCALE)$(BR2_PACKAGE_LIBICONV)$(BR2_PACKAGE_LIBIDN2),yy)
+WGET_CONF_OPTS += --enable-iri
 WGET_DEPENDENCIES += libidn2
 else
-WGET_CONF_OPTS += --without-libidn
+WGET_CONF_OPTS += --disable-iri
 endif
 
 ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBUUID),y)
