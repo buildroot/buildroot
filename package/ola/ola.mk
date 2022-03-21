@@ -26,7 +26,7 @@ OLA_CONF_OPTS = \
 	--disable-unittests \
 	--with-ola-protoc-plugin=$(HOST_DIR)/usr/bin/ola_protoc_plugin
 
-HOST_OLA_DEPENDENCIES = host-util-linux host-protobuf
+HOST_OLA_DEPENDENCIES = host-util-linux host-protobuf host-bison host-flex
 
 # When building the host part, disable as much as possible to speed up
 # the configure step and avoid missing host dependencies.
