@@ -1,0 +1,78 @@
+From fe21cede3939a435d62efbd5799547fab6af1b0a Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@smile.fr>
+Date: Mon, 5 Aug 2019 16:06:48 +0200
+Subject: [PATCH] lib/Driver/ToolChains/Gnu: Use GCC_INSTALL_PREFIX in the set
+ of prefixes for searching the gcc toolchain
+
+By default, the Gnu Toolchains driver is looking at the parent
+directory while looking for the gcc toolchain when clang is installed
+at "D.InstalledDir"
+
+But this doesn't work with Buildroot since the external
+toolchain is installed in host/opt/ext-toolchain and the sysroot is
+moved to host/<arch>-buildroot-linux-gnu/sysroot/ directory.
+
+We tried by setting GCC_INSTALL_PREFIX in clang.mk for host-clang
+but it doesn't work since we already provide a sysroot [1].
+
+Help the Gnu Toolchains driver by using GCC_INSTALL_PREFIX path.
+
+Since we want to be able to relocate the clang toolchain,
+allow to use a relative path with GCC_INSTALL_PREFIX.
+
+Buildroot will provide such relative path by using:
+HOST_CLANG_CONF_OPTS += -DGCC_INSTALL_PREFIX:PATH=`realpath --relative-to=$(HOST_DIR)/bin/ $(TOOLCHAIN_EXTERNAL_INSTALL_DIR)`
+
+Doing so allow to use clang without providing additional search
+paths with -B option on the clang's command line.
+
+[1] https://reviews.llvm.org/D49244
+[2] http://lists.busybox.net/pipermail/buildroot/2019-August/256204.html
+
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+Signed-off-by: Matthew Weber <matthew.weber@rockwellcollins.com>
+---
+Pending, access to llvm mailing lists to submit it is pending. They
+seem to be having issues with their listserv.
+---
+ lib/Driver/ToolChains/Gnu.cpp | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/lib/Driver/ToolChains/Gnu.cpp b/lib/Driver/ToolChains/Gnu.cpp
+index 2ad45097dc..90d6b5b748 100644
+--- a/lib/Driver/ToolChains/Gnu.cpp
++++ b/lib/Driver/ToolChains/Gnu.cpp
+@@ -1725,6 +1725,8 @@ void Generic_GCC::GCCInstallationDetector::init(
+ 
+     Prefixes.push_back(GCCToolchainDir);
+   } else {
++    StringRef GccIinstallPrefix = GCC_INSTALL_PREFIX;
++
+     // If we have a SysRoot, try that first.
+     if (!D.SysRoot.empty()) {
+       Prefixes.push_back(D.SysRoot);
+@@ -1734,6 +1736,21 @@ void Generic_GCC::GCCInstallationDetector::init(
+     // Then look for gcc installed alongside clang.
+     Prefixes.push_back(D.InstalledDir + "/..");
+ 
++    // Use GCC_INSTALL_PREFIX if provided by the buildsystem.
++    if (!GccIinstallPrefix.empty())
++    {
++        if (llvm::sys::path::is_relative(GccIinstallPrefix))
++        {
++            // Use a relative path to gcc from clang install path.
++            Prefixes.push_back(D.InstalledDir + "/" + GccIinstallPrefix.str());
++        }
++        else
++        {
++            // Hardcode the absolute path provided by GCC_INSTALL_PREFIX.
++            Prefixes.push_back(GCC_INSTALL_PREFIX);
++        }
++    }
++
+     // Next, look for prefix(es) that correspond to distribution-supplied gcc
+     // installations.
+     if (D.SysRoot.empty()) {
+-- 
+2.20.1
+
