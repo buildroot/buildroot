@@ -1,0 +1,22 @@
+diff --git a/patches/yoga.patch b/patches/yoga.patch
+index fc30d1e..354ecb5 100644
+--- a/patches/yoga.patch
++++ b/patches/yoga.patch
+@@ -3,10 +3,15 @@ new file mode 100644
+ index 0000000..3ecbe97
+ Binary files /dev/null and b/.DS_Store differ
+ diff --git a/CMakeLists.txt b/CMakeLists.txt
+-index 595faef..102ce08 100644
++index 595faef5..6e3f1395 100644
+ --- a/CMakeLists.txt
+ +++ b/CMakeLists.txt
+-@@ -15,3 +15,4 @@ add_library(yogacore STATIC ${yogacore_SRC})
++@@ -11,7 +11,9 @@ set(CMAKE_VERBOSE_MAKEFILE on)
++ 
++ file(GLOB_RECURSE yogacore_SRC yoga/*.cpp)
++ add_library(yogacore STATIC ${yogacore_SRC})
+++set_property(TARGET yogacore PROPERTY POSITION_INDEPENDENT_CODE ON)
++ 
+  target_include_directories(yogacore PUBLIC .)
+  target_link_libraries(yogacore android log)
+  set_target_properties(yogacore PROPERTIES CXX_STANDARD 11)

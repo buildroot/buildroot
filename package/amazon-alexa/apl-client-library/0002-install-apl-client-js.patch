@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 2d1d387..f716f1f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -15,4 +15,8 @@ add_subdirectory("APLClient")
+ 
+ if(SANDBOX)
+     add_subdirectory("APLClientSandbox")
++
++if (CMAKE_INSTALL_PREFIX)
++    install(DIRECTORY "${PROJECT_SOURCE_DIR}/apl-client-js" DESTINATION "${CMAKE_INSTALL_PREFIX}/share")
++endif()
+ endif()

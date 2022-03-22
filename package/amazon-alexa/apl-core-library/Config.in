@@ -1,5 +1,6 @@
 config BR2_PACKAGE_APL_CORE_LIBRARY
     bool "apl-core-library"
+    select BR2_PACKAGE_RAPIDJSON
     help
         APL Core Library enables device makers to create their own "APL viewhost",
         bringing Alexa experiences with visual renderings to new devices or platforms

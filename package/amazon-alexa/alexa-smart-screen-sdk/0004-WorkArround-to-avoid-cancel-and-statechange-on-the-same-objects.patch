@@ -1,0 +1,27 @@
+diff --git a/modules/Alexa/SmartScreenCapabilityAgents/AlexaPresentation/src/AlexaPresentation.cpp b/modules/Alexa/SmartScreenCapabilityAgents/AlexaPresentation/src/AlexaPresentation.cpp
+index 3b6a317..fbbde7b 100644
+--- a/modules/Alexa/SmartScreenCapabilityAgents/AlexaPresentation/src/AlexaPresentation.cpp
++++ b/modules/Alexa/SmartScreenCapabilityAgents/AlexaPresentation/src/AlexaPresentation.cpp
+@@ -1294,7 +1294,11 @@ void AlexaPresentation::executeProvideState(unsigned int stateRequestToken) {
+         return;
+     }
+ 
+-    if (m_lastDisplayedDirective && !m_lastRenderedAPLToken.empty() &&
++    // Note: a workarround change to avoid crash due to processActivityEvent:INTERRUPT sequence
++    // and provideState both use same object at the end and the interrupt sequence is
++    // releasing the object, which was expected to use from provideState.
++    // So adding m_documentInteractionState checking also to avoid this raise condition
++    if (m_lastDisplayedDirective && !m_lastRenderedAPLToken.empty() && (m_documentInteractionState == InteractionState::ACTIVE) &&
+         ALEXA_PRESENTATION_APL_NAMESPACE == m_lastDisplayedDirective->directive->getNamespace()) {
+         m_visualStateProvider->provideState(m_lastRenderedAPLToken, stateRequestToken);
+     } else {
+@@ -1496,6 +1500,9 @@ void AlexaPresentation::processActivityEvent(
+                 for (auto& observer : m_observers) {
+                     observer->interruptCommandSequence(m_lastRenderedAPLToken);
+                 }
++                // Note: Calling ClearCard sequence against the token since the token
++                // is already released by interruptCommandSequence
++                executeClearCard();
+                 if (DialogUXState::IDLE == m_dialogUxState &&
+                     InteractionState::INACTIVE == m_documentInteractionState) {
+                     executeStartOrExtendTimer();

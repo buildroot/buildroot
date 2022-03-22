@@ -1,0 +1,12 @@
+diff --git a/APLClient/CMakeLists.txt b/APLClient/CMakeLists.txt
+index be79935..e33a723 100644
+--- a/APLClient/CMakeLists.txt
++++ b/APLClient/CMakeLists.txt
+@@ -2,4 +2,7 @@ cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+ project(APLClient LANGUAGES CXX)
+ 
+ add_subdirectory("src")
++
++if(STANDALONE)
+ add_subdirectory("test")
++endif()
