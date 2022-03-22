@@ -1,12 +1,11 @@
 config BR2_PACKAGE_MP4V2
 	bool "mp4v2"
 	depends on BR2_INSTALL_LIBSTDCPP
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # C++11
 	help
 	  The MP4v2 library provides functions to read, create, and
 	  modify mp4 files.
 
-	  https://github.com/TechSmith/mp4v2/
+	  https://mp4v2.org/
 
 if BR2_PACKAGE_MP4V2
 
@@ -19,6 +18,5 @@ config BR2_PACKAGE_MP4V2_UTIL
 
 endif
 
-comment "mp4v2 needs a toolchain w/ C++, gcc >= 5"
-	depends on !BR2_INSTALL_LIBSTDCPP || \
-		!BR2_TOOLCHAIN_GCC_AT_LEAST_5
+comment "mp4v2 needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP
