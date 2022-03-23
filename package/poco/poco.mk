@@ -4,36 +4,39 @@
 #
 ################################################################################
 
-POCO_VERSION = 1.10.1
+POCO_VERSION = 1.11.1
 POCO_SITE = $(call github,pocoproject,poco,poco-$(POCO_VERSION)-release)
 POCO_LICENSE = BSL-1.0
 POCO_LICENSE_FILES = LICENSE
 POCO_CPE_ID_VENDOR = pocoproject
 POCO_INSTALL_STAGING = YES
 
-POCO_DEPENDENCIES = zlib pcre \
-	$(if $(BR2_PACKAGE_POCO_XML),expat) \
+POCO_DEPENDENCIES = pcre zlib \
 	$(if $(BR2_PACKAGE_POCO_CRYPTO),openssl) \
-	$(if $(BR2_PACKAGE_POCO_NETSSL_OPENSSL),openssl) \
+	$(if $(BR2_PACKAGE_POCO_DATA_MYSQL),mysql) \
 	$(if $(BR2_PACKAGE_POCO_DATA_SQLITE),sqlite) \
-	$(if $(BR2_PACKAGE_POCO_DATA_MYSQL),mysql)
+	$(if $(BR2_PACKAGE_POCO_DATA_PGSQL),postgresql) \
+	$(if $(BR2_PACKAGE_POCO_NETSSL_OPENSSL),openssl) \
+	$(if $(BR2_PACKAGE_POCO_XML),expat)
 
 POCO_OMIT = Data/ODBC PageCompiler \
-	$(if $(BR2_PACKAGE_POCO_JSON),,JSON) \
-	$(if $(BR2_PACKAGE_POCO_XML),,XML) \
-	$(if $(BR2_PACKAGE_POCO_UTIL),,Util) \
-	$(if $(BR2_PACKAGE_POCO_NET),,Net) \
-	$(if $(BR2_PACKAGE_POCO_NETSSL_OPENSSL),,NetSSL_OpenSSL) \
-	$(if $(BR2_PACKAGE_POCO_CRYPTO),,Crypto) \
-	$(if $(BR2_PACKAGE_POCO_ZIP),,Zip) \
+	$(if $(BR2_PACKAGE_POCO_ACTIVERECORD),,ActiveRecord) \
 	$(if $(BR2_PACKAGE_POCO_CPP_PARSER),,CppParser) \
-	$(if $(BR2_PACKAGE_POCO_PDF),,PDF) \
-	$(if $(BR2_PACKAGE_POCO_REDIS),,Redis) \
-	$(if $(BR2_PACKAGE_POCO_MONGODB),,MongoDB) \
+	$(if $(BR2_PACKAGE_POCO_CRYPTO),,Crypto) \
 	$(if $(BR2_PACKAGE_POCO_DATA),,Data) \
 	$(if $(BR2_PACKAGE_POCO_DATA_MYSQL),,Data/MySQL) \
 	$(if $(BR2_PACKAGE_POCO_DATA_SQLITE),,Data/SQLite) \
-	$(if $(BR2_PACKAGE_POCO_JWT),,JWT)
+	$(if $(BR2_PACKAGE_POCO_DATA_PGSQL),,Data/PostgreSQL) \
+	$(if $(BR2_PACKAGE_POCO_JSON),,JSON) \
+	$(if $(BR2_PACKAGE_POCO_JWT),,JWT) \
+	$(if $(BR2_PACKAGE_POCO_MONGODB),,MongoDB) \
+	$(if $(BR2_PACKAGE_POCO_NET),,Net) \
+	$(if $(BR2_PACKAGE_POCO_NETSSL_OPENSSL),,NetSSL_OpenSSL) \
+	$(if $(BR2_PACKAGE_POCO_PDF),,PDF) \
+	$(if $(BR2_PACKAGE_POCO_REDIS),,Redis) \
+	$(if $(BR2_PACKAGE_POCO_UTIL),,Util) \
+	$(if $(BR2_PACKAGE_POCO_XML),,XML) \
+	$(if $(BR2_PACKAGE_POCO_ZIP),,Zip)
 
 ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
 POCO_CONF_OPTS += --no-fpenvironment --no-wstring
@@ -72,8 +75,10 @@ endef
 # Use $(MAKE1) to avoid failures on heavilly parallel machines (e.g. -j25)
 define POCO_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE1) POCO_TARGET_OSARCH=$(ARCH) CROSS_COMPILE=$(TARGET_CROSS) \
-		MYSQL_LIBDIR=$(STAGING_DIR)/usr/lib/mysql \
-		MYSQL_INCDIR=$(STAGING_DIR)/usr/include/mysql \
+		POCO_MYSQL_INCLUDE=$(STAGING_DIR)/usr/include/mysql \
+		POCO_MYSQL_LIB=$(STAGING_DIR)/usr/lib/mysql \
+		POCO_PGSQL_INCLUDE=$(STAGING_DIR)/usr/include/postgresql \
+		POCO_PGSQL_LIB=$(STAGING_DIR)/usr/lib/postgresql \
 		DEFAULT_TARGET=$(POCO_MAKE_TARGET) -C $(@D)
 endef
 

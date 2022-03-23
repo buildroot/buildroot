@@ -3,9 +3,13 @@ config BR2_PACKAGE_KVM_UNIT_TESTS_ARCH_SUPPORTS
 	# On ARM, it uses virtualization extensions
 	default y if BR2_cortex_a7 || BR2_cortex_a12 || \
 		BR2_cortex_a15 || BR2_cortex_a15_a7 || \
-		BR2_cortex_a17 || BR2_cortex_a17_a7
+		BR2_cortex_a17 || BR2_cortex_a17_a7 || \
+		BR2_cortex_a55 || BR2_cortex_a75 || \
+		BR2_cortex_a75_a55 || BR2_cortex_a76 || \
+		BR2_cortex_a76_a55
 	default y if BR2_i386 || BR2_x86_64
 	default y if BR2_powerpc64 || BR2_powerpc64le
+	default y if BR2_s390x
 
 config BR2_PACKAGE_KVM_UNIT_TESTS
 	bool "kvm-unit-tests"
