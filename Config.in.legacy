@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2021.02"
 
+config BR2_PACKAGE_PYTHON_COHERENCE
+	bool "python-coherence package removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it does not work with
+	  Python 3.x and is unmaintained.
+
 config BR2_OPENJDK_VERSION_LTS
 	bool "OpenJDK LTS version was renamed to OpenJDK 11"
 	select BR2_LEGACY
