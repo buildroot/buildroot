@@ -1,6 +1,7 @@
 config BR2_PACKAGE_PYTHON_TXTORCON
 	bool "python-txtorcon"
 	depends on BR2_INSTALL_LIBSTDCPP # python-pyopenssl, python-service-identity
+	depends on BR2_PACKAGE_PYTHON3 # python-twisted
 	select BR2_PACKAGE_PYTHON_AUTOMAT # runtime
 	select BR2_PACKAGE_PYTHON_IDNA # runtime
 	select BR2_PACKAGE_PYTHON_INCREMENTAL # runtime
