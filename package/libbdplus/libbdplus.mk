@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBBDPLUS_VERSION = 0.1.2
+LIBBDPLUS_VERSION = 0.2.0
 LIBBDPLUS_SITE = http://download.videolan.org/pub/videolan/libbdplus/$(LIBBDPLUS_VERSION)
 LIBBDPLUS_SOURCE = libbdplus-$(LIBBDPLUS_VERSION).tar.bz2
 LIBBDPLUS_LICENSE = LGPL-2.1+

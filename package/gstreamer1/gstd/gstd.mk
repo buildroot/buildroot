@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GSTD_VERSION = 0.13.0
+GSTD_VERSION = 0.14.0
 GSTD_SITE = $(call github,RidgeRun,gstd-1.x,v$(GSTD_VERSION))
 GSTD_LICENSE_FILES = COPYING
 GSTD_LICENSE = GPL-2.0+

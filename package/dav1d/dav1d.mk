@@ -5,8 +5,8 @@
 ################################################################################
 
 DAV1D_VERSION = 0.9.2
-DAV1D_SOURCE = dav1d-$(DAV1D_VERSION).tar.bz2
-DAV1D_SITE = https://code.videolan.org/videolan/dav1d/-/archive/$(DAV1D_VERSION)
+DAV1D_SOURCE = dav1d-$(DAV1D_VERSION).tar.xz
+DAV1D_SITE = http://download.videolan.org/pub/videolan/dav1d/$(DAV1D_VERSION)
 DAV1D_LICENSE = BSD-2-Clause
 DAV1D_LICENSE_FILES = COPYING
 DAV1D_INSTALL_STAGING = YES
