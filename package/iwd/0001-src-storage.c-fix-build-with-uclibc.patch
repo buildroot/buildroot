@@ -1,0 +1,37 @@
+From 99e74ade2ea892e6d0b070bec1df6a135ce2c8b3 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 25 Mar 2022 16:35:49 +0100
+Subject: [PATCH] src/storage.c: fix build with uclibc
+
+explicit_bzero is used in src/storage.c since commit
+01cd8587606bf2da1af245163150589834126c1c but src/missing.h is not
+included, as a result build with uclibc fails on:
+
+/home/buildroot/autobuild/instance-0/output-1/host/lib/gcc/powerpc-buildroot-linux-uclibc/10.3.0/../../../../powerpc-buildroot-linux-uclibc/bin/ld: src/storage.o: in function `storage_init':
+storage.c:(.text+0x13a4): undefined reference to `explicit_bzero'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/2aff8d3d7c33c95e2c57f7c8a71e69939f0580a1
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:
+https://lists.01.org/hyperkitty/list/iwd@lists.01.org/thread/WB2XXRBUDHC5IVFDEOJBK23JHPURL427]
+---
+ src/storage.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/storage.c b/src/storage.c
+index 82a72443..aa8066b1 100644
+--- a/src/storage.c
++++ b/src/storage.c
+@@ -44,6 +44,7 @@
+ #include <ell/ell.h>
+ #include "ell/useful.h"
+ 
++#include "src/missing.h"
+ #include "src/common.h"
+ #include "src/storage.h"
+ #include "src/crypto.h"
+-- 
+2.35.1
+

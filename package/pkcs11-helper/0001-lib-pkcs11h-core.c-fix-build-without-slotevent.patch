@@ -1,0 +1,37 @@
+From 754911f553414a77d5b52001f5ef6e3a1314c4d5 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 20 Mar 2022 08:50:15 +0100
+Subject: [PATCH] lib/pkcs11h-core.c: fix build without slotevent
+
+Fix the following build failure with --disable-slotevent:
+
+/home/giuliobenetti/autobuild/run/instance-0/output-1/host/opt/ext-toolchain/bin/../lib/gcc/arm-buildroot-linux-uclibcgnueabihf/9.3.0/../../../../arm-buildroot-linux-uclibcgnueabihf/bin/ld: /home/giuliobenetti/autobuild/run/instance-0/output-1/host/arm-buildroot-linux-uclibcgnueabihf/sysroot/usr/lib/libpkcs11-helper.so: undefined reference to `_pkcs11h_slotevent_init'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/fcaa70cc035d6f9d35dfa8d564e9948c7e1cfd9e
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/OpenSC/pkcs11-helper/pull/50]
+---
+ lib/pkcs11h-core.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/lib/pkcs11h-core.c b/lib/pkcs11h-core.c
+index d7bb4cd..0bf11e8 100644
+--- a/lib/pkcs11h-core.c
++++ b/lib/pkcs11h-core.c
+@@ -726,9 +726,11 @@ pkcs11h_setProperty (
+ 
+ 	switch (property) {
+ 		case PKCS11H_PROPERTY_SLOT_EVENT_HOOK:
++#if defined(ENABLE_PKCS11H_SLOTEVENT)
+ 			if ((rv = _pkcs11h_slotevent_init ()) != CKR_OK) {
+ 				goto cleanup;
+ 			}
++#endif
+ 		break;
+ 	}
+ cleanup:
+-- 
+2.35.1
+

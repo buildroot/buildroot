@@ -13,7 +13,7 @@ if BR2_TARGET_OPTEE_OS
 
 choice
 	prompt "OP-TEE OS version"
-	default BR2_TARGET_OPTEE_OS_LATEST
+	default BR2_TARGET_OPTEE_OS_LATEST if BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
 	help
 	  Select the version of OP-TEE OS you want to use
 

@@ -14,12 +14,23 @@ JACK2_INSTALL_STAGING = YES
 
 JACK2_CONF_OPTS = --alsa
 
+ifeq ($(BR2_PACKAGE_LIBEXECINFO),y)
+JACK2_DEPENDENCIES += libexecinfo
+JACK2_CONF_ENV += LDFLAGS="$(TARGET_LDFLAGS) -lexecinfo"
+endif
+
 ifeq ($(BR2_PACKAGE_OPUS),y)
 JACK2_DEPENDENCIES += opus
+JACK2_CONF_OPTS += --opus=yes
+else
+JACK2_CONF_OPTS += --opus=no
 endif
 
 ifeq ($(BR2_PACKAGE_READLINE),y)
 JACK2_DEPENDENCIES += readline
+JACK2_CONF_OPTS += --readline=yes
+else
+JACK2_CONF_OPTS += --readline=no
 endif
 
 ifeq ($(BR2_PACKAGE_JACK2_LEGACY),y)

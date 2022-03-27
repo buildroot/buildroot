@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-NETWORK_MANAGER_VERSION_MAJOR = 1.34
-NETWORK_MANAGER_VERSION = $(NETWORK_MANAGER_VERSION_MAJOR).0
+NETWORK_MANAGER_VERSION_MAJOR = 1.36
+NETWORK_MANAGER_VERSION = $(NETWORK_MANAGER_VERSION_MAJOR).4
 NETWORK_MANAGER_SOURCE = NetworkManager-$(NETWORK_MANAGER_VERSION).tar.xz
 NETWORK_MANAGER_SITE = https://download.gnome.org/sources/NetworkManager/$(NETWORK_MANAGER_VERSION_MAJOR)
 NETWORK_MANAGER_INSTALL_STAGING = YES
@@ -53,8 +53,15 @@ endif
 ifeq ($(BR2_PACKAGE_IWD),y)
 NETWORK_MANAGER_DEPENDENCIES += iwd
 NETWORK_MANAGER_CONF_OPTS += --with-iwd
+ifeq ($(BR2_PACKAGE_WPA_SUPPLICANT),y)
+NETWORK_MANAGER_CONF_OPTS += --with-config-wifi-backend-default=wpa_supplicant
 else
-NETWORK_MANAGER_CONF_OPTS += --without-iwd
+NETWORK_MANAGER_CONF_OPTS += --with-config-wifi-backend-default=iwd
+endif
+else
+NETWORK_MANAGER_CONF_OPTS += \
+	--without-iwd \
+	--with-config-wifi-backend-default=wpa_supplicant
 endif
 
 ifeq ($(BR2_PACKAGE_LIBCURL),y)
