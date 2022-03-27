@@ -56,6 +56,7 @@ fi
 SYSDEV=$(echo $SYSPART |sed -n 's/\(\/dev\/mmcblk[0-9]\+\)p[0-9]\+/\1/p')
 
 [ "$MODEL" = "retromini" ] && MODEL=ylm,rs90
+[ "$MODEL" = "ylm,rg280m" ] && MODEL=ylm,rg280m-v1.1
 
 case "$MODEL" in
 	ylm,rs90|ylm,pmp5|ylm,rg99)
@@ -100,7 +101,7 @@ case "$MODEL" in
 		HWVARIANT_DT=$(echo $MODEL |cut -d',' -f2)
 		HWVARIANT_BL="v20_mddr_512mb"
 		;;
-	anbernic,rg350|anbernic,rg350m|ylm,rg350|ylm,rg350m|ylm,rg280m|ylm,rg280v|ylm,rg300x)
+	anbernic,rg350|anbernic,rg350m|ylm,rg350|ylm,rg350m|ylm,rg280m-*|ylm,rg280v|ylm,rg300x)
 		HWVARIANT_DT=$(echo $MODEL |cut -d',' -f2)
 		HWVARIANT_BL="rg350"
 		;;
