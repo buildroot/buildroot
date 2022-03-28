@@ -174,9 +174,13 @@ QT5BASE_CONFIGURE_OPTS += $(if $(BR2_PACKAGE_QT5BASE_LINUXFB),--enable-linuxfb,-
 QT5BASE_CONFIGURE_OPTS += $(if $(BR2_PACKAGE_QT5BASE_DIRECTFB),-directfb,-no-directfb)
 QT5BASE_DEPENDENCIES   += $(if $(BR2_PACKAGE_QT5BASE_DIRECTFB),directfb)
 
+ifeq ($(BR2_PACKAGE_LIBXKBCOMMON),y)
+QT5BASE_CONFIGURE_OPTS += -xkbcommon
+QT5BASE_DEPENDENCIES   += libxkbcommon
+endif
+
 ifeq ($(BR2_PACKAGE_QT5BASE_XCB),y)
 QT5BASE_CONFIGURE_OPTS += -xcb
-QT5BASE_CONFIGURE_OPTS += -xkbcommon
 
 QT5BASE_DEPENDENCIES   += \
 	libxcb \
@@ -184,8 +188,7 @@ QT5BASE_DEPENDENCIES   += \
 	xcb-util-image \
 	xcb-util-keysyms \
 	xcb-util-renderutil \
-	xlib_libX11 \
-	libxkbcommon
+	xlib_libX11
 ifeq ($(BR2_PACKAGE_QT5BASE_WIDGETS),y)
 QT5BASE_DEPENDENCIES   += xlib_libXext
 endif
