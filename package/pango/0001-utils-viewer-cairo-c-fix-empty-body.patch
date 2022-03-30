@@ -1,0 +1,40 @@
+From 5372a0cfd641776ece77db5590bf0d265e810086 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 29 Mar 2022 21:39:03 +0000
+Subject: [PATCH] utils/viewer-cairo.c: fix empty-body
+
+Fix the following build failure raised
+since version 1.50.5 and
+https://gitlab.gnome.org/GNOME/pango/-/commit/cd08fb7402498e6ea542b4628447547477ac212e:
+
+../utils/viewer-cairo.c: In function 'cairo_vector_view_create':
+../utils/viewer-cairo.c:228:5: error: suggest braces around empty body in an 'if' statement [-Werror=empty-body]
+     ;
+     ^
+
+Fixes:
+ - http://autobuild.buildroot.org/results/dee3d631474f83b345f22eb26c59a305c32258f8
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://gitlab.gnome.org/GNOME/pango/-/commit/5372a0cfd641776ece77db5590bf0d265e810086]
+---
+ utils/viewer-cairo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/utils/viewer-cairo.c b/utils/viewer-cairo.c
+index ca98c1cd..f15b3fb9 100644
+--- a/utils/viewer-cairo.c
++++ b/utils/viewer-cairo.c
+@@ -225,7 +225,7 @@ cairo_vector_view_create (const PangoViewer *klass G_GNUC_UNUSED)
+     return NULL;
+ 
+   if (0)
+-    ;
++    {}
+   #ifdef CAIRO_HAS_SVG_SURFACE
+     else if (0 == g_ascii_strcasecmp (extension, "svg"))
+       constructor = cairo_svg_surface_create;
+-- 
+GitLab
+
