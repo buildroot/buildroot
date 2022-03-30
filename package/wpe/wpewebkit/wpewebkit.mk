@@ -135,8 +135,7 @@ WPEWEBKIT_FLAGS += \
 	-DENABLE_MEDIA_STATISTICS=ON \
 	-DENABLE_THUNDER=ON \
 	-DENABLE_WEB_AUDIO=ON
-WPEWEBKIT_DEPENDENCIES += gstreamer1 gst1-plugins-base \
-	gst1-plugins-good wpeframework-clientlibraries
+WPEWEBKIT_DEPENDENCIES += gstreamer1 gst1-plugins-base gst1-plugins-good
 else
 WPEWEBKIT_FLAGS += \
 	-DENABLE_VIDEO=OFF \
