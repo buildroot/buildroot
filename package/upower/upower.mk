@@ -22,4 +22,11 @@ UPOWER_DEPENDENCIES = \
 
 UPOWER_CONF_OPTS = --disable-man-pages --disable-tests
 
+ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
+UPOWER_CONF_OPTS += --enable-introspection
+UPOWER_DEPENDENCIES += gobject-introspection
+else
+UPOWER_CONF_OPTS += --disable-introspection
+endif
+
 $(eval $(autotools-package))
