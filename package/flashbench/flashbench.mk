@@ -5,7 +5,8 @@
 ################################################################################
 
 FLASHBENCH_VERSION = 2e30b1968a66147412f21002ea844122a0d5e2f0
-FLASHBENCH_SITE = git://git.linaro.org/people/arnd/flashbench.git
+FLASHBENCH_SITE = https://git.linaro.org/people/arnd/flashbench.git
+FLASHBENCH_SITE_METHOD = git
 FLASHBENCH_LICENSE = GPL-2.0
 FLASHBENCH_LICENSE_FILES = COPYING
 
