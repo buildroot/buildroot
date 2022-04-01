@@ -5,7 +5,8 @@
 ################################################################################
 
 FIRMWARE_UTILS_VERSION = 86739f2b3ae9502368b89ef37fa6f31c42aad6f4
-FIRMWARE_UTILS_SITE = git://git.openwrt.org/project/firmware-utils.git
+FIRMWARE_UTILS_SITE = https://git.openwrt.org/project/firmware-utils.git
+FIRMWARE_UTILS_SITE_METHOD = git
 FIRMWARE_UTILS_LICENSE = \
 	BSD-2-Clause (tplink-safeloader), \
 	BSD-3-Clause (seama), \
