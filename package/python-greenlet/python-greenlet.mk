@@ -10,6 +10,7 @@ PYTHON_GREENLET_SITE = https://files.pythonhosted.org/packages/0c/10/754e21b5bea
 PYTHON_GREENLET_SETUP_TYPE = setuptools
 PYTHON_GREENLET_LICENSE = MIT, PSF-2.0
 PYTHON_GREENLET_LICENSE_FILES = LICENSE LICENSE.PSF
+PYTHON_GREENLET_ENV = GREENLET_TEST_CPP=no
 
 $(eval $(python-package))
 $(eval $(host-python-package))
