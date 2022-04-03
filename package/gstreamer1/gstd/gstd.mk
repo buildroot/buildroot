@@ -28,6 +28,8 @@ GSTD_CONF_OPTS = \
 	-Dwith-gstd-logstatedir=/var/log/gstd \
 	-Dwith-gstd-systemddir=/usr/lib/systemd/system
 
+GSTD_CFLAGS = $(TARGET_CFLAGS) -std=gnu99
+
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 GSTD_CONF_OPTS += -Denable-systemd=enabled -Denable-initd=disabled
 GSTD_DEPENDENCIES += systemd
