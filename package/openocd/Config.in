@@ -190,13 +190,17 @@ config BR2_PACKAGE_OPENOCD_AT91RM
 	help
 	  Enable building support for AT91RM9200 based SBCs
 
+endif # BR2_arm
+
+if BR2_arm || BR2_aarch64
+
 config BR2_PACKAGE_OPENOCD_BCM2835
 	bool "bitbanging on BCM2835"
 	help
 	  Enable building support for bitbanging on BCM2835
 	  (as found in Raspberry Pi)
 
-endif # BR2_arm
+endif # BR2_arm || BR2_aarch64
 
 config BR2_PACKAGE_OPENOCD_GW16012
 	bool "Gateworks GW16012 JTAG Programmer"

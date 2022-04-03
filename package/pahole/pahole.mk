@@ -5,7 +5,7 @@
 ################################################################################
 
 PAHOLE_VERSION = v1.23
-PAHOLE_SITE = git://git.kernel.org/pub/scm/devel/pahole/pahole.git
+PAHOLE_SITE = https://git.kernel.org/pub/scm/devel/pahole/pahole.git
 PAHOLE_SITE_METHOD = git
 # pahole contains git submodule and relies on them to be built.
 PAHOLE_GIT_SUBMODULES = YES

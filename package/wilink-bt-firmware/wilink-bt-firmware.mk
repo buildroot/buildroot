@@ -5,7 +5,7 @@
 ################################################################################
 
 WILINK_BT_FIRMWARE_VERSION = 43fca73c6a98c63fcb98f82af5bf83761778e005
-WILINK_BT_FIRMWARE_SITE = git://git.ti.com/ti-bt/service-packs.git
+WILINK_BT_FIRMWARE_SITE = https://git.ti.com/git/ti-bt/service-packs.git
 WILINK_BT_FIRMWARE_SITE_METHOD = git
 WILINK_BT_FIRMWARE_LICENSE = PROPRIETARY
 WILINK_BT_FIRMWARE_LICENSE_FILES = LICENSE

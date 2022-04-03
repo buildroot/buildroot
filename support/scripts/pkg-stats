@@ -27,12 +27,16 @@ import re
 import subprocess
 import json
 import sys
+import time
+import gzip
+import xml.etree.ElementTree
+import requests
 
 brpath = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 sys.path.append(os.path.join(brpath, "utils"))
 from getdeveloperlib import parse_developers  # noqa: E402
-from cpedb import CPEDB  # noqa: E402
+from cpedb import CPEDB_URL  # noqa: E402
 
 INFRA_RE = re.compile(r"\$\(eval \$\(([a-z-]*)-package\)\)")
 URL_RE = re.compile(r"\s*https?://\S*\s*$")
@@ -451,7 +455,8 @@ async def check_url_status(session, pkg, npkgs, retry=True):
 async def check_package_urls(packages):
     tasks = []
     connector = aiohttp.TCPConnector(limit_per_host=5)
-    async with aiohttp.ClientSession(connector=connector, trust_env=True) as sess:
+    async with aiohttp.ClientSession(connector=connector, trust_env=True,
+                                     timeout=aiohttp.ClientTimeout(total=15)) as sess:
         packages = [p for p in packages if p.status['url'][0] == 'ok']
         for pkg in packages:
             tasks.append(asyncio.ensure_future(check_url_status(sess, pkg, len(packages))))
@@ -623,12 +628,41 @@ def check_package_cves(nvd_path, packages):
 
 
 def check_package_cpes(nvd_path, packages):
-    cpedb = CPEDB(nvd_path)
-    cpedb.get_xml_dict()
+    class CpeXmlParser:
+        cpes = []
+
+        def start(self, tag, attrib):
+            if tag == "{http://scap.nist.gov/schema/cpe-extension/2.3}cpe23-item":
+                self.cpes.append(attrib['name'])
+
+        def close(self):
+            return self.cpes
+
+    print("CPE: Setting up NIST dictionary")
+    if not os.path.exists(os.path.join(nvd_path, "cpe")):
+        os.makedirs(os.path.join(nvd_path, "cpe"))
+
+    cpe_dict_local = os.path.join(nvd_path, "cpe", os.path.basename(CPEDB_URL))
+    if not os.path.exists(cpe_dict_local) or os.stat(cpe_dict_local).st_mtime < time.time() - 86400:
+        print("CPE: Fetching xml manifest from [" + CPEDB_URL + "]")
+        cpe_dict = requests.get(CPEDB_URL)
+        open(cpe_dict_local, "wb").write(cpe_dict.content)
+
+    print("CPE: Unzipping xml manifest...")
+    nist_cpe_file = gzip.GzipFile(fileobj=open(cpe_dict_local, 'rb'))
+
+    parser = xml.etree.ElementTree.XMLParser(target=CpeXmlParser())
+    while True:
+        c = nist_cpe_file.read(1024*1024)
+        if not c:
+            break
+        parser.feed(c)
+    cpes = parser.close()
+
     for p in packages:
         if not p.cpeid:
             continue
-        if cpedb.find(p.cpeid):
+        if p.cpeid in cpes:
             p.status['cpe'] = ("ok", "verified CPE identifier")
         else:
             p.status['cpe'] = ("error", "CPE version unknown in CPE database")
@@ -1125,7 +1159,7 @@ def parse_args():
     parser.add_argument('--nvd-path', dest='nvd_path',
                         help='Path to the local NVD database', type=resolvepath)
     parser.add_argument('--disable', type=list_str,
-                        help='Features to disable, comma-separated (cve, upstream, url)',
+                        help='Features to disable, comma-separated (cve, upstream, url, cpe, warning)',
                         default=[])
     args = parser.parse_args()
     if not args.html and not args.json:
@@ -1167,7 +1201,8 @@ def __main__():
         pkg.set_license()
         pkg.set_hash_info()
         pkg.set_patch_count()
-        pkg.set_check_package_warnings()
+        if "warnings" not in args.disable:
+            pkg.set_check_package_warnings()
         pkg.set_current_version()
         pkg.set_cpeid()
         pkg.set_url()
@@ -1184,6 +1219,8 @@ def __main__():
     if "cve" not in args.disable and args.nvd_path:
         print("Checking packages CVEs")
         check_package_cves(args.nvd_path, packages)
+    if "cpe" not in args.disable and args.nvd_path:
+        print("Checking packages CPEs")
         check_package_cpes(args.nvd_path, packages)
     print("Calculate stats")
     stats = calculate_stats(packages)
