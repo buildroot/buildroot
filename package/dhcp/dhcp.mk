@@ -9,8 +9,10 @@ DHCP_SITE = https://ftp.isc.org/isc/dhcp/$(DHCP_VERSION)
 DHCP_INSTALL_STAGING = YES
 DHCP_LICENSE = MPL-2.0
 DHCP_LICENSE_FILES = LICENSE
-DHCP_DEPENDENCIES = bind host-gawk
+DHCP_DEPENDENCIES = host-gawk
 DHCP_CPE_ID_VENDOR = isc
+# internal bind does not support parallel builds.
+DHCP_MAKE = $(MAKE1)
 
 # use libtool-enabled configure.ac
 define DHCP_LIBTOOL_AUTORECONF
@@ -21,11 +23,12 @@ DHCP_CONF_ENV = \
 	CPPFLAGS='-D_PATH_DHCPD_CONF=\"/etc/dhcp/dhcpd.conf\" \
 		-D_PATH_DHCLIENT_CONF=\"/etc/dhcp/dhclient.conf\"' \
 	CFLAGS='$(TARGET_CFLAGS) -DISC_CHECK_NONE=1'
+DHCP_BIND_EXTRA_CONFIG = BUILD_CC='$(TARGET_CC)'
 
 DHCP_CONF_ENV += ac_cv_prog_AWK=$(HOST_DIR)/bin/gawk
 
 DHCP_CONF_OPTS = \
-	--with-libbind=$(STAGING_DIR)/usr \
+	--with-bind-extra-config="$(DHCP_BIND_EXTRA_CONFIG)" \
 	--with-randomdev=/dev/random \
 	--with-srv-lease-file=/var/lib/dhcp/dhcpd.leases \
 	--with-srv6-lease-file=/var/lib/dhcp/dhcpd6.leases \
@@ -38,8 +41,18 @@ DHCP_CONF_OPTS = \
 	--with-relay-pid-file=/var/run/dhcrelay.pid \
 	--with-relay6-pid-file=/var/run/dhcrelay6.pid
 
+ifeq ($(BR2_PACKAGE_ZLIB),y)
+DHCP_BIND_EXTRA_CONFIG += --with-zlib
+DHCP_DEPENDENCIES += zlib
+else
+DHCP_BIND_EXTRA_CONFIG += --without-zlib
+endif
+
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+DHCP_CONF_ENV += LIBS=-latomic
+endif
+
 ifeq ($(BR2_STATIC_LIBS),y)
-DHCP_CONF_ENV += LIBS="`$(STAGING_DIR)/usr/bin/bind9-config --libs bind9`"
 DHCP_CONF_OPTS += --disable-libtool
 else
 DHCP_POST_EXTRACT_HOOKS += DHCP_LIBTOOL_AUTORECONF
