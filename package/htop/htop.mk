@@ -5,7 +5,8 @@
 ################################################################################
 
 HTOP_VERSION = 3.1.2
-HTOP_SITE = $(call github,htop-dev,htop,$(HTOP_VERSION))
+HTOP_SOURCE = htop-$(HTOP_VERSION).tar.xz
+HTOP_SITE = https://github.com/htop-dev/htop/releases/download/$(HTOP_VERSION)
 HTOP_DEPENDENCIES = ncurses
 HTOP_AUTORECONF = YES
 # Prevent htop build system from searching the host paths
