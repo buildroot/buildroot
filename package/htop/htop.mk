@@ -28,10 +28,10 @@ HTOP_CONF_OPTS += --disable-capabilities
 endif
 
 ifeq ($(BR2_PACKAGE_LM_SENSORS),y)
-HTOP_CONF_OPTS += --with-sensors
+HTOP_CONF_OPTS += --enable-sensors
 HTOP_DEPENDENCIES += lm-sensors
 else
-HTOP_CONF_OPTS += --without-sensors
+HTOP_CONF_OPTS += --disable-sensors
 endif
 
 ifeq ($(BR2_PACKAGE_NCURSES_WCHAR),y)
