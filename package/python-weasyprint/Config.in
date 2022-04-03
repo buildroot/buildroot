@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_WEASYPRINT
 	bool "python-weasyprint"
+	depends on BR2_INSTALL_LIBSTDCPP # python-brotli
 	select BR2_PACKAGE_PYTHON_BROTLI # runtime
 	select BR2_PACKAGE_PYTHON_CFFI # runtime
 	select BR2_PACKAGE_PYTHON_CSSSELECT2 # runtime
@@ -14,3 +15,6 @@ config BR2_PACKAGE_PYTHON_WEASYPRINT
 	  The Awesome Document Factory.
 
 	  https://www.courtbouillon.org/weasyprint
+
+comment "python-weasyprint needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP
