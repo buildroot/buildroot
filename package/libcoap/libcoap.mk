@@ -18,7 +18,7 @@ ifeq ($(BR2_PACKAGE_GNUTLS),y)
 LIBCOAP_DEPENDENCIES += gnutls
 LIBCOAP_CONF_OPTS += \
 	--enable-dtls --with-gnutls --without-mbedtls --without-openssl
-else ifeq ($(BR2_PACKAGE_OPENSSL),y)
+else ifeq ($(BR2_PACKAGE_LIBOPENSSL),y)
 LIBCOAP_DEPENDENCIES += openssl
 LIBCOAP_CONF_OPTS += \
 	--enable-dtls --without-gnutls --without-mbedtls --with-openssl
