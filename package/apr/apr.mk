@@ -16,6 +16,9 @@ APR_INSTALL_STAGING = YES
 # so we need to autoreconf:
 APR_AUTORECONF = YES
 
+# 0004-apr-1.7.0-CVE-2021-35940.patch
+APR_IGNORE_CVES += CVE-2021-35940
+
 # avoid apr_hints.m4 by setting apr_preload_done=yes and set
 # the needed CFLAGS on our own (avoids '-D_REENTRANT' in case
 # not supported by toolchain and subsequent configure failure)

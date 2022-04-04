@@ -5,7 +5,7 @@
 ################################################################################
 
 LIBNIDS_VERSION = 1.26
-LIBNIDS_SITE = $(call github,MITRECND,libnids,$(LIBNIDS_VERSION),$(LIBNIDS_VERSION).tar.gz)
+LIBNIDS_SITE = $(call github,MITRECND,libnids,$(LIBNIDS_VERSION))
 LIBNIDS_LICENSE = GPL-2.0
 LIBNIDS_LICENSE_FILES = COPYING
 LIBNIDS_CPE_ID_VENDOR = libnids_project

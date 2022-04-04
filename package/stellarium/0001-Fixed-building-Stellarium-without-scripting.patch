@@ -1,0 +1,49 @@
+From 710d1c5acd9e962260ce395474819ded2eb6ce12 Mon Sep 17 00:00:00 2001
+From: "Alexander V. Wolf" <alex.v.wolf@gmail.com>
+Date: Tue, 29 Mar 2022 18:57:06 +0700
+Subject: [PATCH] Fixed building Stellarium without scripting
+
+Downloaded from upstream commit:
+https://github.com/Stellarium/stellarium/commit/710d1c5acd9e962260ce395474819ded2eb6ce12
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ plugins/Calendars/src/Calendars.cpp | 2 ++
+ plugins/Calendars/src/Calendars.hpp | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/plugins/Calendars/src/Calendars.cpp b/plugins/Calendars/src/Calendars.cpp
+index e5d89a4c063..4df6caee42e 100644
+--- a/plugins/Calendars/src/Calendars.cpp
++++ b/plugins/Calendars/src/Calendars.cpp
+@@ -251,6 +251,7 @@ void Calendars::init()
+ 	}
+ }
+ 
++#ifdef ENABLE_SCRIPTING
+ // Add calendar as scriptable object! Some scripting functions won't work though, as they use object types unknown to the scripting engine.
+ void Calendars::makeCalendarsScriptable(StelScriptMgr *ssm)
+ {
+@@ -260,6 +261,7 @@ void Calendars::makeCalendarsScriptable(StelScriptMgr *ssm)
+ 		ssm->addObject(cal);
+ 	}
+ }
++#endif
+ 
+ void Calendars::loadSettings()
+ {
+diff --git a/plugins/Calendars/src/Calendars.hpp b/plugins/Calendars/src/Calendars.hpp
+index 461ae1bd9ba..4696183d9d2 100644
+--- a/plugins/Calendars/src/Calendars.hpp
++++ b/plugins/Calendars/src/Calendars.hpp
+@@ -145,8 +145,10 @@ class Calendars : public StelModule
+ 	//! TODO: ADD HERE: Chinese, NewHinduSolar, NewHinduLunar, ...
+ 	Calendar* getCal(QString name);
+ 
++	#ifdef ENABLE_SCRIPTING
+ 	//! to be called after program startup, when StelScriptMgr has been set up.
+ 	void makeCalendarsScriptable(StelScriptMgr *ssm);
++	#endif
+ 
+ signals:
+ 	//void jdChanged(double jd);

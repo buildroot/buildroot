@@ -1,0 +1,27 @@
+From 677f56825f7080403e18e57ffe8177f3df290f20 Mon Sep 17 00:00:00 2001
+From: Nathan Moinvaziri <nathan@nathanm.com>
+Date: Sun, 23 Jan 2022 12:59:01 -0800
+Subject: [PATCH] Use static keyword for vec_sumsu to prevent undefined
+ reference error when g++ linking.
+
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+ arch/power/adler32_power8.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/power/adler32_power8.c b/arch/power/adler32_power8.c
+index 029aa3a84c57..fc4086322efc 100644
+--- a/arch/power/adler32_power8.c
++++ b/arch/power/adler32_power8.c
+@@ -44,7 +44,7 @@
+ #include "adler32_p.h"
+ 
+ /* Vector across sum unsigned int (saturate).  */
+-inline vector unsigned int vec_sumsu(vector unsigned int __a, vector unsigned int __b) {
++static inline vector unsigned int vec_sumsu(vector unsigned int __a, vector unsigned int __b) {
+     __b = vec_sld(__a, __a, 8);
+     __b = vec_add(__b, __a);
+     __a = vec_sld(__b, __b, 4);
+-- 
+2.35.1
+

@@ -4,18 +4,20 @@
 #
 ################################################################################
 
-STELLARIUM_VERSION = 0.21.3
+STELLARIUM_VERSION = 0.22.0
 STELLARIUM_SITE = https://github.com/Stellarium/stellarium/releases/download/v$(STELLARIUM_VERSION)
 STELLARIUM_LICENSE = GPL-2.0+
 STELLARIUM_LICENSE_FILES = COPYING
 STELLARIUM_DEPENDENCIES = \
 	qt5base \
+	qt5charts \
 	qt5location \
 	qt5multimedia \
 	zlib
 STELLARIUM_CONF_OPTS = \
 	-DENABLE_MEDIA=ON \
 	-DENABLE_NLS=OFF \
+	-DENABLE_QTWEBENGINE=OFF \
 	-DUSE_SYSTEM_ZLIB=ON
 
 ifeq ($(BR2_PACKAGE_QT5SCRIPT),y)

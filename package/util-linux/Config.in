@@ -146,6 +146,11 @@ config BR2_PACKAGE_UTIL_LINUX_HWCLOCK
 	help
 	  Query or set the hardware clock (RTC)
 
+config BR2_PACKAGE_UTIL_LINUX_IPCMK
+	bool "ipcmk"
+	help
+	  Make various IPC resources
+
 config BR2_PACKAGE_UTIL_LINUX_IPCRM
 	bool "ipcrm"
 	help
@@ -197,6 +202,13 @@ config BR2_PACKAGE_UTIL_LINUX_LOSETUP
 	select BR2_PACKAGE_UTIL_LINUX_LIBSMARTCOLS
 	help
 	  Set up and control loop devices
+
+config BR2_PACKAGE_UTIL_LINUX_LSFD
+	bool "lsfd"
+	depends on BR2_USE_MMU # libsmartcols
+	select BR2_PACKAGE_UTIL_LINUX_LIBSMARTCOLS
+	help
+	  List file descriptors (modern replacement for lsof)
 
 config BR2_PACKAGE_UTIL_LINUX_LSLOGINS
 	bool "lslogins"

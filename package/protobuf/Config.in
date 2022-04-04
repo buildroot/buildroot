@@ -14,6 +14,20 @@
 # and we can live with requiring gcc 4.8 on PowerPC to build protobuf.
 #
 # host-protobuf only builds on certain architectures
+config BR2_PACKAGE_HOST_PROTOBUF_ARCH_SUPPORTS
+	bool
+	default y if BR2_HOSTARCH = "aarch64"
+	default y if BR2_HOSTARCH = "arm"
+	default y if BR2_HOSTARCH = "mips"
+	default y if BR2_HOSTARCH = "mipsel"
+	default y if BR2_HOSTARCH = "powerpc"
+	default y if BR2_HOSTARCH = "powerpc64"
+	default y if BR2_HOSTARCH = "powerpc64le"
+	default y if BR2_HOSTARCH = "sparc"
+	default y if BR2_HOSTARCH = "sparc64"
+	default y if BR2_HOSTARCH = "x86"
+	default y if BR2_HOSTARCH = "x86_64"
+
 config BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
 	bool
 	default y if BR2_arm
@@ -22,7 +36,7 @@ config BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
 	default y if BR2_x86_64
 	default y if BR2_sparc64
 	default y if BR2_TOOLCHAIN_HAS_ATOMIC
-	depends on BR2_HOSTARCH = "x86_64" || BR2_HOSTARCH = "x86"
+	depends on BR2_PACKAGE_HOST_PROTOBUF_ARCH_SUPPORTS
 	depends on BR2_USE_MMU # fork()
 
 config BR2_PACKAGE_PROTOBUF

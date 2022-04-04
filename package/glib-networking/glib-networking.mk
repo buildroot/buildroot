@@ -31,7 +31,7 @@ else
 GLIB_NETWORKING_CONF_OPTS += -Dgnutls=disabled
 endif
 
-ifeq ($(BR2_PACKAGE_OPENSSL),y)
+ifeq ($(BR2_PACKAGE_LIBOPENSSL),y)
 GLIB_NETWORKING_DEPENDENCIES += openssl
 GLIB_NETWORKING_CONF_OPTS += -Dopenssl=enabled
 else
