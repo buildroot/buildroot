@@ -566,6 +566,12 @@ endif
 
 ifeq ($(BR_BUILDING),y)
 
+ifeq ($(BR2_LINUX_KERNEL_CUSTOM_VERSION),y)
+ifeq ($(LINUX_VERSION),)
+$(error No custom kernel version set. Check your BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE setting)
+endif
+endif
+
 ifeq ($(BR2_LINUX_KERNEL_USE_DEFCONFIG),y)
 # We must use the user-supplied kconfig value, because
 # LINUX_KCONFIG_DEFCONFIG will at least contain the
