@@ -10,7 +10,7 @@
 # If you need quad-pumped spi support you need to upgrade your toolchain.
 # Note that the location of spidev_test.c changes from v4.5 onwards.
 
-ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_0),y)
+ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_8),y)
 SPIDEV_TEST_VERSION = 5.8
 SPIDEV_TEST_PATH = tools/spi
 else ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_15),y)
