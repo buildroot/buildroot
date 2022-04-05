@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WEBKITGTK_VERSION = 2.34.6
+WEBKITGTK_VERSION = 2.36.0
 WEBKITGTK_SITE = https://www.webkitgtk.org/releases
 WEBKITGTK_SOURCE = webkitgtk-$(WEBKITGTK_VERSION).tar.xz
 WEBKITGTK_INSTALL_STAGING = YES
@@ -84,13 +84,6 @@ WEBKITGTK_CONF_OPTS += \
 	-DENABLE_X11_TARGET=ON
 WEBKITGTK_DEPENDENCIES += libgl \
 	xlib_libXcomposite xlib_libXdamage xlib_libXrender xlib_libXt
-# It can use libgtk2 for npapi plugins
-ifeq ($(BR2_PACKAGE_LIBGTK2),y)
-WEBKITGTK_CONF_OPTS += -DENABLE_PLUGIN_PROCESS_GTK2=ON
-WEBKITGTK_DEPENDENCIES += libgtk2
-else
-WEBKITGTK_CONF_OPTS += -DENABLE_PLUGIN_PROCESS_GTK2=OFF
-endif
 else # !X11
 # GTK3-BROADWAY/WAYLAND needs at least EGL
 WEBKITGTK_DEPENDENCIES += libegl
@@ -115,10 +108,10 @@ WEBKITGTK_CONF_OPTS += -DUSE_GSTREAMER_GL=OFF
 endif
 
 ifeq ($(BR2_INIT_SYSTEMD),y)
-WEBKITGTK_CONF_OPTS += -DUSE_SYSTEMD=ON
+WEBKITGTK_CONF_OPTS += -DENABLE_JOURNALD_LOG=ON
 WEBKITGTK_DEPENDENCIES += systemd
 else
-WEBKITGTK_CONF_OPTS += -DUSE_SYSTEMD=OFF
+WEBKITGTK_CONF_OPTS += -DENABLE_JOURNALD_LOG=OFF
 endif
 
 # JIT is not supported for MIPS r6, but the WebKit build system does not
