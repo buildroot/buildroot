@@ -35,13 +35,6 @@ UTIL_LINUX_CONF_OPTS += \
 
 UTIL_LINUX_LINK_LIBS = $(TARGET_NLS_LIBS)
 
-# workaround missing disk-utils/raw.8 file in util-linux-2.37.3
-# release download package
-define UTIL_LINUX_FIX_DISK_UTILS_COMPILE
-	touch $(@D)/disk-utils/raw.8
-endef
-UTIL_LINUX_POST_PATCH_HOOKS += UTIL_LINUX_FIX_DISK_UTILS_COMPILE
-
 HOST_UTIL_LINUX_DEPENDENCIES = host-pkgconf
 
 # We also don't want the host-python dependency
