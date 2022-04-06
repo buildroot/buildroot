@@ -2,7 +2,7 @@ config BR2_PACKAGE_INTEL_MEDIADRIVER
 	bool "intel-mediadriver"
 	depends on BR2_x86_64
 	depends on !BR2_STATIC_LIBS # mesa3d, libva
-	depends on BR2_INSTALL_LIBSTDCPP # mesa3d
+	depends on BR2_INSTALL_LIBSTDCPP # intel-gmmlib, mesa3d
 	depends on BR2_TOOLCHAIN_HAS_SYNC_1 # mesa3d
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libva
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # mesa3d
