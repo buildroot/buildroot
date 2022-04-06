@@ -42,7 +42,7 @@ DHCP_CONF_OPTS = \
 	--with-relay6-pid-file=/var/run/dhcrelay6.pid
 
 ifeq ($(BR2_PACKAGE_ZLIB),y)
-DHCP_BIND_EXTRA_CONFIG += --with-zlib
+DHCP_BIND_EXTRA_CONFIG += --with-zlib=$(STAGING_DIR)/usr
 DHCP_DEPENDENCIES += zlib
 else
 DHCP_BIND_EXTRA_CONFIG += --without-zlib
