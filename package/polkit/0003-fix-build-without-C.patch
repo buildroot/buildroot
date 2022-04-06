@@ -1,0 +1,50 @@
+From abbc04f6f3acfc2dfa34b1c07decaa658786e142 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 2 Apr 2022 18:33:08 +0200
+Subject: [PATCH] fix build without C++
+
+Fix the following build failure without C++ raised since
+https://gitlab.freedesktop.org/polkit/polkit/-/commit/957a015157fd359d9679540f664183e4b9492896:
+
+The following exception(s) were encountered:
+Running "/home/autobuild/autobuild/instance-14/output-1/host/bin/or1k-buildroot-linux-musl-g++ --version" gave "[Errno 2] No such file or directory: '/home/autobuild/autobuild/instance-14/output-1/host/bin/or1k-buildroot-linux-musl-g++'"
+
+Indeed, C++ is only required with mozjs engine
+
+Fixes:
+ - http://autobuild.buildroot.org/results/1d52c8100414aa384572b23006a13f9b806d2d5a
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://gitlab.freedesktop.org/polkit/polkit/-/commit/abbc04f6f3acfc2dfa34b1c07decaa658786e142]
+---
+ meson.build                   | 2 +-
+ src/polkitbackend/meson.build | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index c6765fd..da60930 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1,5 +1,5 @@
+ project(
+-  'polkit', ['c', 'cpp'],
++  'polkit', ['c'],
+   version: '0.120',
+   license: 'LGPL2+',
+   default_options: [
+diff --git a/src/polkitbackend/meson.build b/src/polkitbackend/meson.build
+index 266f280..7c5d443 100644
+--- a/src/polkitbackend/meson.build
++++ b/src/polkitbackend/meson.build
+@@ -38,6 +38,7 @@ if js_engine == 'duktape'
+   deps += libm_dep
+   deps += thread_dep
+ elif js_engine == 'mozjs'
++  add_languages('cpp')
+   sources += files('polkitbackendjsauthority.cpp')
+ endif
+ 
+-- 
+GitLab
+
