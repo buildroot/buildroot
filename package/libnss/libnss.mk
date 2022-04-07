@@ -64,6 +64,11 @@ ifeq ($(BR2_POWERPC_CPU_HAS_ALTIVEC),)
 LIBNSS_BUILD_VARS += NSS_DISABLE_ALTIVEC=1
 endif
 
+ifeq ($(BR2_POWERPC_CPU_HAS_VSX),)
+# Disable VSX if not supported
+LIBNSS_BUILD_VARS += NSS_DISABLE_CRYPTO_VSX=1
+endif
+
 ifeq ($(BR2_ARM_CPU_HAS_NEON),)
 # Disable arm32-neon if neon is not supported
 LIBNSS_BUILD_VARS += NSS_DISABLE_ARM32_NEON=1
