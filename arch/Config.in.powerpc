@@ -1,6 +1,9 @@
 config BR2_POWERPC_CPU_HAS_ALTIVEC
 	bool
 
+config BR2_POWERPC_CPU_HAS_VSX
+	bool
+
 config BR2_POWERPC_CPU_HAS_SPE
 	bool
 
@@ -123,9 +126,11 @@ config BR2_powerpc_power6
 config BR2_powerpc_power7
 	bool "power7"
 	select BR2_POWERPC_CPU_HAS_ALTIVEC
+	select BR2_POWERPC_CPU_HAS_VSX
 config BR2_powerpc_power8
 	bool "power8"
 	select BR2_POWERPC_CPU_HAS_ALTIVEC
+	select BR2_POWERPC_CPU_HAS_VSX
 endchoice
 
 choice
