@@ -131,4 +131,9 @@ else
 JANUS_GATEWAY_CONF_OPTS += --disable-systemd-sockets
 endif
 
+define JANUS_GATEWAY_INSTALL_INIT_SYSTEMD
+	$(INSTALL) -D -m 644 package/janus-gateway/janus-gateway.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/janus-gateway.service
+endef
+
 $(eval $(autotools-package))
