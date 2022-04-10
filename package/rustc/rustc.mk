@@ -11,7 +11,9 @@ ifeq ($(BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS),y)
 RUSTC_TARGET_NAME = $(RUSTC_ARCH)-unknown-linux-$(LIBC)$(RUSTC_ABI)
 endif
 
-ifeq ($(HOSTARCH),x86)
+ifeq ($(HOSTARCH),riscv64)
+RUSTC_HOST_ARCH = riscv64gc
+else ifeq ($(HOSTARCH),x86)
 RUSTC_HOST_ARCH = i686
 else
 RUSTC_HOST_ARCH = $(HOSTARCH)

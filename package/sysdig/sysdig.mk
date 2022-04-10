@@ -4,16 +4,21 @@
 #
 ################################################################################
 
-SYSDIG_VERSION = 0.23.1
+SYSDIG_VERSION = 0.27.1
 SYSDIG_SITE = $(call github,draios,sysdig,$(SYSDIG_VERSION))
-SYSDIG_LICENSE = GPL-2.0
-SYSDIG_LICENSE_FILES = COPYING
+SYSDIG_LICENSE = Apache-2.0 (userspace), MIT or GPL-2.0 (driver)
+SYSDIG_LICENSE_FILES = COPYING driver/MIT.txt driver/GPL2.txt
 SYSDIG_CPE_ID_VENDOR = sysdig
-SYSDIG_CONF_OPTS = -DENABLE_DKMS=OFF -DUSE_BUNDLED_DEPS=OFF
+SYSDIG_CONF_OPTS = \
+	-DENABLE_DKMS=OFF \
+	-DUSE_BUNDLED_DEPS=OFF \
+	-DCREATE_TEST_TARGETS=OFF
 SYSDIG_SUPPORTS_IN_SOURCE_BUILD = NO
 
 SYSDIG_DEPENDENCIES = \
+	c-ares \
 	elfutils \
+	grpc \
 	jq \
 	jsoncpp \
 	libb64 \
@@ -21,6 +26,8 @@ SYSDIG_DEPENDENCIES = \
 	luainterpreter \
 	ncurses \
 	openssl \
+	protobuf \
+	tbb \
 	zlib
 
 # sysdig creates the module Makefile from a template, which contains a
