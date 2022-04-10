@@ -1,0 +1,56 @@
+From 262aa59c1a7a7100e1dd4e73a6d0112d9becc701 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 1 Apr 2022 19:23:06 +0200
+Subject: [PATCH] configure.ac: fix cross-compilation with openssl
+
+Don't call AC_LIB_LINKFLAGS when the libraries are retrieved through
+pkg-config to avoid the following build failure when cross-compiling
+raised since commit 77503f545d2806d07ab83c59ed9a96f435d281da:
+
+/home/autobuild/autobuild/instance-5/output-1/host/bin/arc-buildroot-linux-gnu-gcc  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -Os -g0 -D_FORTIFY_SOURCE=1 -I/home/autobuild/autobuild/instance-5/output-1/host/arc-buildroot-linux-gnu/sysroot/usr/include -I/usr/kerberos/include  -L/home/autobuild/autobuild/instance-5/output-1/host/arc-buildroot-linux-gnu/sysroot/usr/lib -L/home/autobuild/autobuild/instance-5/output-1/host/bin/../arc-buildroot-linux-gnu/sysroot/usr/lib -o fetchmail socket.o getpass.o fetchmail.o env.o idle.o options.o daemon.o driver.o transact.o sink.o smtp.o idlist.o uid.o mxget.o md5ify.o cram.o gssapi.o opie.o interface.o netrc.o unmime.o conf.o checkalias.o uid_db.o lock.o rcfile_l.o rcfile_y.o ucs/norm_charmap.o fm_realpath.o  pop3.o imap.o etrn.o odmr.o     libfm.a  strlcpy.o strlcat.o  /usr/lib/libssl.so /usr/lib/libcrypto.so
+/usr/lib/libssl.so: file not recognized: file format not recognized
+
+This build failure is raised because AC_LIB_LINKFLAGS will override the
+pkg-config target libraries by the host openssl libraries:
+
+configure: Enabling OpenSSL support in /home/autobuild/autobuild/instance-5/output-1/host/arc-buildroot-linux-gnu/sysroot/usr.
+configure: SSL-check: trying pkg-config for openssl
+checking for SSL... yes
+checking how to link with libssl... /usr/lib/libssl.so /usr/lib/libcrypto.so
+configure: From pkg-config: Adding /usr/lib/libssl.so /usr/lib/libcrypto.so to LIBS. LDFLAGS= -L/home/autobuild/autobuild/instance-5/output-1/host/arc-buildroot-linux-gnu/sysroot/usr/lib -L/home/autobuild/autobuild/instance-5/output-1/host/bin/../arc-buildroot-linux-gnu/sysroot/usr/lib
+
+Fixes:
+ - http://autobuild.buildroot.org/results/815f18f25017be178d478458c48712d9a8570d5a
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:
+https://gitlab.com/fetchmail/fetchmail/-/merge_requests/42]
+---
+ configure.ac | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index bd042d51..80e5bf91 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -838,15 +838,13 @@ else
+     PKG_CHECK_MODULES([SSL],[$i],[
+ 	  set -- $SSL_LIBS
+ 	  while test $# -ge 1 ; do
+-		  case $1 in -l*|lib*) :                     ;;
++		  case $1 in -l*|lib*) LIBS="$LIBS $1"       ;;
+ 				    *) LDFLAGS="$LDFLAGS $1" ;;
+ 		  esac
+ 		  shift
+ 	  done
+ 	  CPPFLAGS="$SSL_CFLAGS $CPPFLAGS"
+-	  AC_LIB_LINKFLAGS([ssl], [crypto])
+-	  AS_MESSAGE([From pkg-config: Adding $LIBSSL to LIBS. LDFLAGS=$LDFLAGS])
+-	  LIBS="$LIBS $LIBSSL"
++	  AS_MESSAGE([From pkg-config: $SSL_LIBS])
+ 	  found=1
+ 	  break],[: ignore-error])
+     done
+-- 
+2.35.1
+

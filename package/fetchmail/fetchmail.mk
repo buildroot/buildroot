@@ -12,6 +12,8 @@ FETCHMAIL_LICENSE = GPL-2.0; some exceptions are mentioned in COPYING
 FETCHMAIL_LICENSE_FILES = COPYING
 FETCHMAIL_CPE_ID_VENDOR = fetchmail
 FETCHMAIL_SELINUX_MODULES = fetchmail mta
+# We're patching configure.ac
+FETCHMAIL_AUTORECONF = YES
 
 FETCHMAIL_CONF_OPTS = \
 	--with-ssl=$(STAGING_DIR)/usr
