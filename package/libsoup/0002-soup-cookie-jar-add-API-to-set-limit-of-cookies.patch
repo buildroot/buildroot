@@ -1,7 +1,7 @@
-diff -ruN libsoup.orig/libsoup/soup-cookie-jar.c libsoup/libsoup/soup-cookie-jar.c
---- libsoup.orig/libsoup/soup-cookie-jar.c	2018-08-09 21:02:38.000000000 +0530
-+++ libsoup/libsoup/soup-cookie-jar.c	2021-01-12 00:13:00.018617423 +0530
-@@ -50,8 +50,12 @@
+diff -pruN libsoup-2.74.0.orig/libsoup/soup-cookie-jar.c libsoup-2.74.0/libsoup/soup-cookie-jar.c
+--- libsoup-2.74.0.orig/libsoup/soup-cookie-jar.c	2021-08-23 04:02:34.228970300 +0530
++++ libsoup-2.74.0/libsoup/soup-cookie-jar.c	2022-04-11 15:29:34.207731786 +0530
+@@ -51,8 +51,12 @@ typedef struct {
  	GHashTable *domains, *serials;
  	guint serial;
  	SoupCookieJarAcceptPolicy accept_policy;
@@ -14,7 +14,7 @@ diff -ruN libsoup.orig/libsoup/soup-cookie-jar.c libsoup/libsoup/soup-cookie-jar
  static void soup_cookie_jar_session_feature_init (SoupSessionFeatureInterface *feature_interface, gpointer interface_data);
  
  G_DEFINE_TYPE_WITH_CODE (SoupCookieJar, soup_cookie_jar, G_TYPE_OBJECT,
-@@ -234,6 +238,17 @@
+@@ -237,6 +241,17 @@ soup_cookie_jar_new (void)
  	return g_object_new (SOUP_TYPE_COOKIE_JAR, NULL);
  }
  
@@ -32,7 +32,7 @@ diff -ruN libsoup.orig/libsoup/soup-cookie-jar.c libsoup/libsoup/soup-cookie-jar
  /**
   * soup_cookie_jar_save:
   * @jar: a #SoupCookieJar
-@@ -258,10 +273,13 @@
+@@ -261,10 +276,13 @@ soup_cookie_jar_changed (SoupCookieJar *
  {
  	SoupCookieJarPrivate *priv = soup_cookie_jar_get_instance_private (jar);
  
@@ -47,8 +47,8 @@ diff -ruN libsoup.orig/libsoup/soup-cookie-jar.c libsoup/libsoup/soup-cookie-jar
  		g_hash_table_insert (priv->serials, new, GUINT_TO_POINTER (priv->serial));
  	}
  
-@@ -433,6 +451,15 @@
- 	return get_cookies (jar, uri, for_http, TRUE);
+@@ -564,6 +582,15 @@ incoming_cookie_is_third_party (SoupCook
+ 	return !g_hash_table_lookup (priv->domains, cookie->domain);
  }
  
 +static unsigned cookie_size (SoupCookie *cookie)
@@ -61,9 +61,9 @@ diff -ruN libsoup.orig/libsoup/soup-cookie-jar.c libsoup/libsoup/soup-cookie-jar
 +}
 +
  /**
-  * soup_cookie_jar_add_cookie:
+  * soup_cookie_jar_add_cookie_full:
   * @jar: a #SoupCookieJar
-@@ -463,6 +490,11 @@
+@@ -618,6 +645,11 @@ soup_cookie_jar_add_cookie_full (SoupCoo
  		return;
  	}
  
@@ -72,10 +72,10 @@ diff -ruN libsoup.orig/libsoup/soup-cookie-jar.c libsoup/libsoup/soup-cookie-jar
 +		return;
 +	}
 +
- 	priv = soup_cookie_jar_get_instance_private (jar);
  	old_cookies = g_hash_table_lookup (priv->domains, cookie->domain);
  	for (oc = old_cookies; oc; oc = oc->next) {
-@@ -498,6 +530,12 @@
+ 		old_cookie = oc->data;
+@@ -657,6 +689,12 @@ soup_cookie_jar_add_cookie_full (SoupCoo
  		soup_cookie_free (cookie);
  		return;
  	}
@@ -88,10 +88,10 @@ diff -ruN libsoup.orig/libsoup/soup-cookie-jar.c libsoup/libsoup/soup-cookie-jar
  
  	if (last)
  		last->next = g_slist_append (NULL, cookie);
-diff -ruN libsoup.orig/libsoup/soup-cookie-jar.h libsoup/libsoup/soup-cookie-jar.h
---- libsoup.orig/libsoup/soup-cookie-jar.h	2018-08-10 12:58:54.000000000 +0530
-+++ libsoup/libsoup/soup-cookie-jar.h	2021-01-11 23:51:29.206013391 +0530
-@@ -52,6 +52,9 @@
+diff -pruN libsoup-2.74.0.orig/libsoup/soup-cookie-jar.h libsoup-2.74.0/libsoup/soup-cookie-jar.h
+--- libsoup-2.74.0.orig/libsoup/soup-cookie-jar.h	2021-08-23 04:02:34.228970300 +0530
++++ libsoup-2.74.0/libsoup/soup-cookie-jar.h	2022-04-11 15:18:31.560698362 +0530
+@@ -53,6 +53,9 @@ GType                     soup_cookie_ja
  SOUP_AVAILABLE_IN_2_24
  SoupCookieJar *           soup_cookie_jar_new                         (void);
  SOUP_AVAILABLE_IN_2_24
@@ -101,3 +101,22 @@ diff -ruN libsoup.orig/libsoup/soup-cookie-jar.h libsoup/libsoup/soup-cookie-jar
  char          *           soup_cookie_jar_get_cookies                 (SoupCookieJar             *jar,
  								       SoupURI                   *uri,
  								       gboolean                   for_http);
+diff -pruN libsoup-2.74.0.orig/libsoup/soup-proxy-resolver-default.h libsoup-2.74.0/libsoup/soup-proxy-resolver-default.h
+--- libsoup-2.74.0.orig/libsoup/soup-proxy-resolver-default.h	2021-08-23 04:02:34.228970300 +0530
++++ libsoup-2.74.0/libsoup/soup-proxy-resolver-default.h	2022-04-11 17:47:21.294605162 +0530
+@@ -8,6 +8,8 @@
+ 
+ #include <libsoup/soup-types.h>
+ 
++G_BEGIN_DECLS
++
+ #define SOUP_PROXY_RESOLVER_DEFAULT(object)	    (G_TYPE_CHECK_INSTANCE_CAST ((object), SOUP_TYPE_PROXY_RESOLVER_DEFAULT, SoupProxyResolverDefault))
+ #define SOUP_PROXY_RESOLVER_DEFAULT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), SOUP_TYPE_PROXY_RESOLVER_DEFAULT, SoupProxyResolverDefaultClass))
+ #define SOUP_IS_PROXY_RESOLVER_DEFAULT(object)	    (G_TYPE_CHECK_INSTANCE_TYPE ((object), SOUP_TYPE_PROXY_RESOLVER_DEFAULT))
+@@ -28,4 +30,6 @@ SOUP_AVAILABLE_IN_2_4
+ GType soup_proxy_resolver_default_get_type (void);
+ #define SOUP_TYPE_PROXY_RESOLVER_DEFAULT (soup_proxy_resolver_default_get_type ())
+ 
++G_END_DECLS
++
+ #endif /* __SOUP_PROXY_RESOLVER_DEFAULT_H__ */
