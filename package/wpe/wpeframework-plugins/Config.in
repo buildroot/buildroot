@@ -786,6 +786,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_NETFLIX
 
 endif
 
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_PERFORMANCEMETRICS
+    select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
+    bool "PerformanceMetrics"
+    help
+      Performance Metrics Plugin
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS
     bool "NetworkControl"
