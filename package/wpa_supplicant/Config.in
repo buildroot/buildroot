@@ -41,11 +41,16 @@ config BR2_PACKAGE_WPA_SUPPLICANT_WEXT
 
 config BR2_PACKAGE_WPA_SUPPLICANT_WIRED
 	bool "Enable wired support"
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libnl
+	select BR2_PACKAGE_LIBNL
 	select BR2_PACKAGE_WPA_SUPPLICANT_EAP
 	help
 	  Include the "wired" driver, so the internal IEEE 802.1x
 	  supplicant can be used with Ethernet.  This also enables
 	  support for MACSEC.
+
+comment "wired support needs a toolchain w/ threads"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS
 
 comment "wpa_supplicant will be useless without at least one driver"
 	depends on !BR2_PACKAGE_WPA_SUPPLICANT_NL80211 && \
