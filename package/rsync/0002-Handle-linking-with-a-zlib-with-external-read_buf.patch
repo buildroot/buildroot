@@ -1,0 +1,27 @@
+From 60dd42be603a79cd57cec076fe1680e9037be774 Mon Sep 17 00:00:00 2001
+From: Wayne Davison <wayne@opencoder.net>
+Date: Mon, 11 Apr 2022 08:29:54 -0700
+Subject: [PATCH] Handle linking with a zlib with external read_buf.
+
+[Retrieved from:
+https://github.com/WayneD/rsync/commit/60dd42be603a79cd57cec076fe1680e9037be774]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ rsync.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/rsync.h b/rsync.h
+index 4b30570b..e5aacd25 100644
+--- a/rsync.h
++++ b/rsync.h
+@@ -1172,6 +1172,10 @@ struct name_num_obj {
+ 	struct name_num_item list[10]; /* we'll get a compile error/warning if this is ever too small */
+ };
+ 
++#ifdef EXTERNAL_ZLIB
++#define read_buf read_buf_
++#endif
++
+ #ifndef __cplusplus
+ #include "proto.h"
+ #endif
