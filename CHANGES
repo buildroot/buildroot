@@ -1,3 +1,57 @@
+2022.02.1, released April 11th, 2022
+
+	Important / security related fixes.
+
+	Graphs: Also generate a build time timeline graph (for top
+	level parallel builds).
+
+	scripts/pkg-stats: Optimize memory consumption for CPE parsing
+
+	Fix compatibility issue with the fakeroot script logic and
+	modern versions of dash.
+
+	Change git:// URLs pointing to Github to https://, now that
+	Github has turned off support for git://
+
+	Updated/fixed packages: ace, apache, apr, apr-util, belr,
+	bind, bluez5_utils, boinc, bpftool, busybox, cloop, cog,
+	containerd, cppcms, dav1d, dhcp, dieharder, dnsmasq,
+	docker-cli, docker-engine, efl, ell, fakeroot, flac,
+	fluidsynth, gdk-pixbuf, glib-networking, gnutls, gst-omx,
+	gst1-devtools, gst1-libav, gst1-plugins-bad,
+	gst1-plugins-base, gst1-plugins-good, gst1-plugins-ugly,
+	gst1-python, gst1-rtsp-server, gst1-vaapi, gstreamer1,
+	gstreamer1-editing-services, haproxym htop, intel-gmmlib,
+	ipmiutil, iwd, jack1, jack2, lftp, libabseil-cpp, libbluray,
+	libcamera-apps, libcoap, libcurl, libest, libgee, libglib2,
+	libgtk3, libiec61850, libkrb5, libminiupnpc, libodb,
+	libodb-boost, libopenssl, libp11, libpsl, libressl, librstp,
+	librtlsdr, liburing, libyang, libzlib, luasec, lxc, matio,
+	meson, minidlna, minizip, mpd, mtools, netatalk, nbd, odb,
+	openblas, openssh, openvpn, optee-os, opus, paho-mqtt-c,
+	pango, php, pipewire, pkcs11-helper, postgresql, ppp,
+	protozero, python-aioconsole, python-avro, python-brotli,
+	python-greenlet, python-paramiko, python-pillow,
+	python-rpi-gpio, python-treq, python-twisted, python-ujson,
+	python-weasyprint, qt5base, qt5wayland, raptor, rpi-firmware,
+	rpi-userland, rtl_433, runc, rust, rygel, samba4,
+	shairport-sync, spice, spidev_test, stunnel, systemd,
+	timescaledb, trace-cmd, trousers, ts4900-fpga, tvheadend,
+	udpcast, unbound, upower, urandom-scripts, usbguard, valgrind,
+	valijson, vim, wavpack, wget, wireplumber, wireshark, woff2,
+	xmrig, zabbix, zlib-ng, zynaddsubfx, zziplib
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13971: ip6tables-nft build does not include MASQUERADE target..
+	#14651: OpenSSH 8.9p1 compiler error under ARM
+	#14656: Adding dependencies from an external tree does not work
+	#14661: Fakeroot script relies on bash-isms, does not work ..
+	#14686: genimage.cfg have a hard-coded .ext4 extension which..
+	#14701: Multiple unresolved symbols while building kernel ..
+	#14711: nodjs build problem missing bzip
+	#14731: BR2_PACKAGE_IOSTAT
+
 2022.02, released March 8th, 2022
 
 	Various fixes.
