@@ -18,6 +18,10 @@ NETDATA_CONF_OPTS = \
 	--disable-unit-tests
 NETDATA_DEPENDENCIES = libuv util-linux zlib
 
+# ac_cv_prog_cc_c99 is required for BR2_USE_WCHAR=n because the C99 test
+# provided by autoconf relies on wchar_t.
+NETDATA_CONF_ENV = ac_cv_prog_cc_c99=-std=gnu99
+
 ifeq ($(BR2_GCC_ENABLE_LTO),y)
 NETDATA_CONF_OPTS += --enable-lto
 else
