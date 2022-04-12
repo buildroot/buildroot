@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DHCP_VERSION = 4.4.2-P1
+DHCP_VERSION = 4.4.3
 DHCP_SITE = https://ftp.isc.org/isc/dhcp/$(DHCP_VERSION)
 DHCP_INSTALL_STAGING = YES
 DHCP_LICENSE = MPL-2.0
@@ -23,7 +23,12 @@ DHCP_CONF_ENV = \
 	CPPFLAGS='-D_PATH_DHCPD_CONF=\"/etc/dhcp/dhcpd.conf\" \
 		-D_PATH_DHCLIENT_CONF=\"/etc/dhcp/dhclient.conf\"' \
 	CFLAGS='$(TARGET_CFLAGS) -DISC_CHECK_NONE=1'
-DHCP_BIND_EXTRA_CONFIG = BUILD_CC='$(TARGET_CC)'
+
+DHCP_BIND_EXTRA_CONFIG = \
+	BUILD_CC='$(HOSTCC)' \
+	BUILD_CFLAGS='$(HOST_CFLAGS)' \
+	BUILD_CPPFLAGS='$(HOST_CPPFLAGS)' \
+	BUILD_LDFLAGS='$(HOST_LDFLAGS)'
 
 DHCP_CONF_ENV += ac_cv_prog_AWK=$(HOST_DIR)/bin/gawk
 
