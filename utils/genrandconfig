@@ -19,24 +19,19 @@
 # This script generates a random configuration for testing Buildroot.
 
 from binascii import hexlify
-import contextlib
+import asyncio
 import csv
 import os
 from random import randint
-import subprocess
 import sys
 import traceback
 from distutils.version import StrictVersion
 import platform
 
-if sys.hexversion >= 0x3000000:
-    import urllib.request as _urllib
+if sys.version_info < (3, 8):
+    from asyncio import coroutine
 else:
-    import urllib2 as _urllib
-
-
-def urlopen_closing(uri):
-    return contextlib.closing(_urllib.urlopen(uri))
+    from types import coroutine
 
 
 class SystemInfo:
@@ -65,6 +60,7 @@ class SystemInfo:
         # --
         return None
 
+    @coroutine
     def has(self, prog):
         """Checks whether a program is available.
         Lazily evaluates missing entries.
@@ -80,11 +76,13 @@ class SystemInfo:
         have_it = self.find_prog(prog)
         # java[c] needs special care
         if have_it and prog in ('java', 'javac'):
-            with open(os.devnull, "w") as devnull:
-                if subprocess.call("%s -version | grep gcj" % prog,
-                                   shell=True,
-                                   stdout=devnull, stderr=devnull) != 1:
-                    have_it = False
+            proc = yield from asyncio.create_subprocess_shell(
+                "%s -version | grep gcj" % prog,
+                stdout=asyncio.subprocess.DEVNULL,
+                stderr=asyncio.subprocess.DEVNULL)
+            ret = yield from proc.wait()
+            if ret != 1:
+                have_it = False
         # --
         self.progs[prog] = have_it
         return have_it
@@ -161,6 +159,7 @@ def get_toolchain_configs(toolchains_csv, buildrootdir):
     return configs
 
 
+@coroutine
 def is_toolchain_usable(configfile, config):
     """Check if the toolchain is actually usable."""
 
@@ -181,7 +180,11 @@ def is_toolchain_usable(configfile, config):
            'BR2_TOOLCHAIN_EXTERNAL_LINARO_AARCH64=y\n' in configlines or \
            'BR2_TOOLCHAIN_EXTERNAL_LINARO_AARCH64_BE=y\n' in configlines or \
            'BR2_TOOLCHAIN_EXTERNAL_LINARO_ARMEB=y\n' in configlines:
-            ldd_version_output = subprocess.check_output(['ldd', '--version'])
+            proc = yield from asyncio.create_subprocess_exec(
+                'ldd', '--version', stdout=asyncio.subprocess.PIPE)
+            ldd_version_output, _ = yield from proc.communicate()
+            if proc.returncode:
+                return False
             glibc_version = ldd_version_output.decode().splitlines()[0].split()[-1]
             if StrictVersion('2.14') > StrictVersion(glibc_version):
                 print("WARN: ignoring the Linaro ARM toolchains because too old host glibc", file=sys.stderr)
@@ -190,6 +193,7 @@ def is_toolchain_usable(configfile, config):
     return True
 
 
+@coroutine
 def fixup_config(sysinfo, configfile):
     """Finalize the configuration and reject any problematic combinations
 
@@ -206,7 +210,8 @@ def fixup_config(sysinfo, configfile):
 
     BR2_TOOLCHAIN_EXTERNAL_URL = 'BR2_TOOLCHAIN_EXTERNAL_URL="http://autobuild.buildroot.org/toolchains/tarballs/'
 
-    if "BR2_NEEDS_HOST_JAVA=y\n" in configlines and not sysinfo.has("java"):
+    has_java = yield from sysinfo.has("java")
+    if "BR2_NEEDS_HOST_JAVA=y\n" in configlines and not has_java:
         return False
     # The ctng toolchain is affected by PR58854
     if 'BR2_PACKAGE_LTTNG_TOOLS=y\n' in configlines and \
@@ -649,6 +654,7 @@ def fixup_config(sysinfo, configfile):
     return True
 
 
+@coroutine
 def gen_config(args):
     """Generate a new random configuration
 
@@ -707,7 +713,8 @@ def gen_config(args):
 
     # Randomly enable BR2_REPRODUCIBLE 10% of times
     # also enable tar filesystem images for testing
-    if sysinfo.has("diffoscope") and randint(0, 10) == 0:
+    has_diffoscope = yield from sysinfo.has("diffoscope")
+    if has_diffoscope and randint(0, 10) == 0:
         configlines.append("BR2_REPRODUCIBLE=y\n")
         configlines.append("BR2_TARGET_ROOTFS_TAR=y\n")
 
@@ -721,10 +728,14 @@ def gen_config(args):
     with open(configfile, "w+") as configf:
         configf.writelines(configlines)
 
-    subprocess.check_call(["make", "O=%s" % args.outputdir, "-C", args.buildrootdir,
-                           "olddefconfig"])
+    proc = yield from asyncio.create_subprocess_exec(
+        "make", "O=%s" % args.outputdir, "-C", args.buildrootdir, "olddefconfig")
+    ret = yield from proc.wait()
+    if ret:
+        return ret
 
-    if not is_toolchain_usable(configfile, toolchainconfig):
+    toolchain_usable = yield from is_toolchain_usable(configfile, toolchainconfig)
+    if not toolchain_usable:
         return 2
 
     # Now, generate the random selection of packages, and fixup
@@ -744,19 +755,31 @@ def gen_config(args):
             "KCONFIG_PROBABILITY=%d" % randint(1, 20),
             "randpackageconfig" if args.toolchains_csv else "randconfig"
         ]
-        subprocess.check_call(make_rand)
+        proc = yield from asyncio.create_subprocess_exec(*make_rand)
+        ret = yield from proc.wait()
+        if ret:
+            return ret
 
-        if fixup_config(sysinfo, configfile):
+        ret = yield from fixup_config(sysinfo, configfile)
+        if ret:
             break
 
-    subprocess.check_call(["make", "O=%s" % args.outputdir, "-C", args.buildrootdir,
-                           "olddefconfig"])
+    proc = yield from asyncio.create_subprocess_exec(
+        "make", "O=%s" % args.outputdir, "-C", args.buildrootdir, "olddefconfig")
+    ret = yield from proc.wait()
+    if ret:
+        return ret
 
-    subprocess.check_call(["make", "O=%s" % args.outputdir, "-C", args.buildrootdir,
-                           "savedefconfig"])
+    proc = yield from asyncio.create_subprocess_exec(
+        "make", "O=%s" % args.outputdir, "-C", args.buildrootdir, "savedefconfig")
+    ret = yield from proc.wait()
+    if ret:
+        return ret
 
-    return subprocess.call(["make", "O=%s" % args.outputdir, "-C", args.buildrootdir,
-                            "dependencies"])
+    proc = yield from asyncio.create_subprocess_exec(
+        "make", "O=%s" % args.outputdir, "-C", args.buildrootdir, "dependencies")
+    ret = yield from proc.wait()
+    return ret
 
 
 if __name__ == '__main__':
@@ -788,7 +811,11 @@ if __name__ == '__main__':
     args.outputdir = os.path.abspath(args.outputdir)
 
     try:
-        ret = gen_config(args)
+        if sys.version_info < (3, 7):
+            loop = asyncio.get_event_loop()
+            ret = loop.run_until_complete(gen_config(args))
+        else:
+            ret = asyncio.run(gen_config(args))
     except Exception:
         traceback.print_exc()
         parser.exit(1)
