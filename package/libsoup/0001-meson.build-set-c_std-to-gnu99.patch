@@ -1,0 +1,40 @@
+From 5c3d431bdb094c59997f2a23e31e83f815ab667c Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 1 Jul 2021 22:09:23 +0200
+Subject: [PATCH] meson.build: set c_std to gnu99
+
+Set c_std to gnu99 to avoid the following build failure with gcc 4.8:
+
+In file included from /tmp/instance-0/output-1/host/arm-buildroot-linux-gnueabi/sysroot/usr/include/resolv.h:65:0,
+                 from /tmp/instance-0/output-1/host/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/gio/gnetworking.h:40,
+                 from ../libsoup/soup-address.c:14:
+/tmp/instance-0/output-1/host/arm-buildroot-linux-gnueabi/sysroot/usr/include/arpa/nameser.h:115:2: error: unknown type name 'u_char'
+  const u_char *_msg, *_eom;
+  ^
+
+Fixes:
+ - http://autobuild.buildroot.org/results/56b9cb987e25b99d6fed16c537552f47c3376f21
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:
+https://gitlab.gnome.org/GNOME/libsoup/-/merge_requests/241]
+---
+ meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 4dfd8c15..a5ebc63a 100644
+--- a/meson.build
++++ b/meson.build
+@@ -2,6 +2,6 @@ project('libsoup', 'c',
+         version: '2.74.0',
+         meson_version : '>= 0.50',
+         license : 'LGPL2',
+-        default_options : 'c_std=c99')
++        default_options : 'c_std=gnu99')
+ 
+ gnome = import('gnome')
+ 
+-- 
+2.30.2
+
