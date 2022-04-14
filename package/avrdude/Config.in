@@ -20,10 +20,10 @@ if BR2_PACKAGE_AVRDUDE
 config BR2_PACKAGE_AVRDUDE_SPI
 	bool "SPI support"
 	default y # Backward compatibility
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_6
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_8
 
-comment "SPI support needs a toolchain w/ linux headers >= 4.6"
-	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_6
+comment "SPI support needs a toolchain w/ linux headers >= 4.8"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_8
 
 endif
 

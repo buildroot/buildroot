@@ -36,19 +36,12 @@ config BR2_PACKAGE_BOOST_LAYOUT_TAGGED
 	  and version, or Boost version. This option is useful if you
 	  build several variants of Boost, using the same compiler.
 
-config BR2_PACKAGE_BOOST_LAYOUT_VERSIONED
-	bool "versioned"
-	help
-	  Boost binary names include the Boost version number, name
-	  and version of the compiler and encoded build properties.
-
 endchoice
 
 config BR2_PACKAGE_BOOST_LAYOUT
 	string
 	default "system" if BR2_PACKAGE_BOOST_LAYOUT_SYSTEM
 	default "tagged" if BR2_PACKAGE_BOOST_LAYOUT_TAGGED
-	default "versioned" if BR2_PACKAGE_BOOST_LAYOUT_VERSIONED
 
 config BR2_PACKAGE_BOOST_ATOMIC
 	bool "boost-atomic"

@@ -144,6 +144,15 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2022.05"
+
+config BR2_PACKAGE_BOOST_LAYOUT_VERSIONED
+	bool "boost versioned layout removed"
+	select BR2_LEGACY
+	help
+	  Boost versioned layout isn't handled by a number of autotools
+	  and cmake packages (e.g. azmq, cc-tool, i2pd).
+
 comment "Legacy options removed in 2022.02"
 
 config BR2_PACKAGE_LIBCURL_LIBNSS

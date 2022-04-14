@@ -234,6 +234,7 @@ config BR2_PACKAGE_SYSTEMD_HOMED
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12 # fscrypt_key
 	select BR2_PACKAGE_CRYPTSETUP
 	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL
 	select BR2_PACKAGE_UTIL_LINUX_LIBFDISK
 	help
 	  systemd-homed is a system service that may be used to create,
@@ -412,6 +413,7 @@ config BR2_PACKAGE_SYSTEMD_RANDOMSEED
 config BR2_PACKAGE_SYSTEMD_REPART
 	bool "enable repart support"
 	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL
 	select BR2_PACKAGE_UTIL_LINUX_LIBFDISK
 	help
 	  systemd-repart grows and adds partitions to a partition table,
