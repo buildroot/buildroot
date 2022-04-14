@@ -29,5 +29,4 @@ else
 ZLIB_NG_CONF_OPTS += -DWITH_POWER8=OFF
 endif
 
-
 $(eval $(cmake-package))
