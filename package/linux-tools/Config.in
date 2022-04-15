@@ -7,11 +7,15 @@ config BR2_PACKAGE_LINUX_TOOLS
 
 config BR2_PACKAGE_LINUX_TOOLS_CPUPOWER
 	bool "cpupower"
+	depends on !BR2_STATIC_LIBS
 	select BR2_PACKAGE_LINUX_TOOLS
 	select BR2_PACKAGE_PCIUTILS
 	help
 	  cpupower is a collection of tools to examine and tune power
 	  saving related features of your processor.
+
+comment "cpupower needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
 
 config BR2_PACKAGE_LINUX_TOOLS_GPIO
 	bool "gpio"
