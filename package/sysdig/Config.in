@@ -7,7 +7,7 @@ config BR2_PACKAGE_SYSDIG
 	depends on BR2_TOOLCHAIN_HAS_THREADS # elfutils, jq, protobuf, tbb
 	depends on !BR2_STATIC_LIBS # elfutils, protobuf, tbb
 	depends on BR2_USE_WCHAR # elfutils
-	depends on BR2_TOOLCHAIN_USES_GLIBC # elfutils, tbb
+	depends on BR2_TOOLCHAIN_USES_GLIBC # elfutils
 	depends on BR2_PACKAGE_LUAINTERPRETER_ABI_VERSION_5_1
 	select BR2_PACKAGE_C_ARES
 	select BR2_PACKAGE_ELFUTILS

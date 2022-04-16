@@ -1,0 +1,33 @@
+From 883c2e5245c39624b3b5d6d56d5b203cf09eac38 Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Wed, 15 Dec 2021 08:08:07 -0800
+Subject: [PATCH] Musl/linux can not use RTLD_DEEPBIND (#684)
+
+Exclude non-glibc linux systems along with android
+Fixes
+src/tbb/dynamic_link.cpp:417:29: error: use
+ of undeclared identifier 'RTLD_DEEPBIND'                                                                                    |             flags = flags | RTLD_DEEPBIND;
+|                             ^
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+
+[Retrieved from:
+https://github.com/oneapi-src/oneTBB/commit/883c2e5245c39624b3b5d6d56d5b203cf09eac38]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/tbb/dynamic_link.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/tbb/dynamic_link.cpp b/src/tbb/dynamic_link.cpp
+index 3f1342503..5330d7107 100644
+--- a/src/tbb/dynamic_link.cpp
++++ b/src/tbb/dynamic_link.cpp
+@@ -413,7 +413,7 @@ namespace r1 {
+         int flags = RTLD_NOW;
+         if (local_binding) {
+             flags = flags | RTLD_LOCAL;
+-#if __linux__ && !__ANDROID__ && !__TBB_USE_SANITIZERS
++#if (__linux__ && __GLIBC__) && !__TBB_USE_SANITIZERS
+             flags = flags | RTLD_DEEPBIND;
+ #endif
+         } else {
