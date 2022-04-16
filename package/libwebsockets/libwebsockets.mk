@@ -20,9 +20,13 @@ LIBWEBSOCKETS_CONF_OPTS = \
 # in the library. If unset, LWS_MAX_SMP defaults to 32 and a small
 # amount of pthread mutex code is built into the library.
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),)
-LIBWEBSOCKETS_CONF_OPTS += -DLWS_MAX_SMP=1
+LIBWEBSOCKETS_CONF_OPTS += \
+	-DLWS_MAX_SMP=1 \
+	-DLWS_WITH_SYS_SMD=OFF
 else
-LIBWEBSOCKETS_CONF_OPTS += -DLWS_MAX_SMP=
+LIBWEBSOCKETS_CONF_OPTS += \
+	-DLWS_MAX_SMP= \
+	-DLWS_WITH_SYS_SMD=ON
 endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
