@@ -1,0 +1,41 @@
+From 4e7899f3d0533f83b7230ffa787087b65ddd45c0 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 5 Apr 2022 18:20:14 +0200
+Subject: [PATCH] CMakeLists.txt: fix build without C++
+
+Fix the following build failure without a working C++ compiler raised
+since version 2.0.0 and
+https://github.com/zlib-ng/minizip-ng/commit/d383a5f2fca127d24407ff26adce579d63b85310:
+
+CMake Error at /nvmedata/autobuild/instance-20/output-1/host/share/cmake-3.18/Modules/CMakeTestCXXCompiler.cmake:59 (message):
+  The C++ compiler
+
+    "/usr/bin/c++"
+
+  is not able to compile a simple test program.
+
+Fixes:
+ - http://autobuild.buildroot.org/results/4452bc35b41414a5e8a0e9831b0854228df5fba4
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/zlib-ng/minizip-ng/pull/621]
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index fef46c3..83adaf3 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -661,7 +661,7 @@ endif()
+ list(APPEND MINIZIP_INC ${CMAKE_CURRENT_SOURCE_DIR})
+ 
+ # Create minizip library
+-project(minizip${MZ_PROJECT_SUFFIX} VERSION ${VERSION})
++project(minizip${MZ_PROJECT_SUFFIX} LANGUAGES C VERSION ${VERSION})
+ 
+ if(NOT ${MZ_PROJECT_SUFFIX} STREQUAL "")
+     message(STATUS "Project configured as ${PROJECT_NAME}")
+-- 
+2.35.1
+
