@@ -18,6 +18,7 @@ else
 fi
 
 init_rng() {
+	[ -f "$URANDOM_SEED" ] || return 0
 	printf 'Initializing random number generator: '
 	dd if="$URANDOM_SEED" bs="$pool_size" of=/dev/urandom count=1 2> /dev/null
 	status=$?
