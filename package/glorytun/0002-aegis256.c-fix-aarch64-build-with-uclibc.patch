@@ -1,0 +1,43 @@
+From eb22e270a962d4a2da1972304fd8b1216211c9d1 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 16 Apr 2022 23:32:55 +0200
+Subject: [PATCH] aegis256.c: fix aarch64 build with uclibc
+
+Fix the following aarch64 build failure with uclibc:
+
+mud/aegis256/aegis256.c:51:10: fatal error: sys/auxv.h: No such file or directory
+   51 | #include <sys/auxv.h>
+      |          ^~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/4e1bbd72b9b7e0f9963f6693c3d7bc9a1d24fab4
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/angt/aegis256/commit/eb22e270a962d4a2da1972304fd8b1216211c9d1]
+---
+ aegis256.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mud/aegis256/aegis256.c b/mud/aegis256/aegis256.c
+index 75a772c..4e73fab 100644
+--- a/mud/aegis256/aegis256.c
++++ b/mud/aegis256/aegis256.c
+@@ -48,7 +48,7 @@ typedef __m128i       x128;
+ #endif
+ 
+ #ifdef __ARM_FEATURE_CRYPTO
+-#ifdef __linux__
++#if defined(__linux__) && __has_include("sys/auxv.h")
+ #include <sys/auxv.h>
+ #endif
+ #include <arm_neon.h>
+@@ -64,7 +64,7 @@ typedef uint8x16_t    x128;
+ int
+ aegis256_is_available(void)
+ {
+-#ifdef __linux__
++#if defined(__linux__) && __has_include("sys/auxv.h")
+     return (getauxval(AT_HWCAP) & HWCAP_AES)
+ #ifdef HWCAP2_AES
+         || (getauxval(AT_HWCAP2) & HWCAP2_AES)
