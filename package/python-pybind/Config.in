@@ -1,8 +1,12 @@
 config BR2_PACKAGE_PYTHON_PYBIND
 	bool "python-pybind"
+	depends on BR2_INSTALL_LIBSTDCPP
 	help
 	  PyBind is a lightweight header-only library that exposes C++
 	  types in Python and vice versa, mainly to create Python
 	  bindings of existing C++ code.
 
 	  http://pybind11.readthedocs.org/en/master
+
+comment "python-pybind needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP
