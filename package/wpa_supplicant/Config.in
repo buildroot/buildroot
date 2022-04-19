@@ -89,6 +89,13 @@ config BR2_PACKAGE_WPA_SUPPLICANT_MESH_NETWORKING
 	  Enable support for open and secured mesh networking
 	  (IEEE 802.11s)
 
+config BR2_PACKAGE_WPA_SUPPLICANT_OVERRIDES
+	bool "Enable HT/VHT/HE overrides"
+	help
+	  Enable wpa_supplicant overrides for HT, VHT and HE (disable
+	  HT/HT40, mask MCS rates, etc.) in wpa_supplicant
+	  configuration file.
+
 config BR2_PACKAGE_WPA_SUPPLICANT_AUTOSCAN
 	bool "Enable autoscan"
 	help
