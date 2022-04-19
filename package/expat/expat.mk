@@ -15,8 +15,9 @@ EXPAT_LICENSE_FILES = COPYING
 EXPAT_CPE_ID_VENDOR = libexpat_project
 EXPAT_CPE_ID_PRODUCT = libexpat
 
-EXPAT_CONF_OPTS = --without-docbook
-HOST_EXPAT_CONF_OPTS = --without-docbook
+EXPAT_CONF_OPTS = \
+	--without-docbook --without-examples --without-tests --without-xmlwf
+HOST_EXPAT_CONF_OPTS = --without-docbook --without-examples --without-tests
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
