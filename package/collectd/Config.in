@@ -475,6 +475,7 @@ config BR2_PACKAGE_COLLECTD_PING
 config BR2_PACKAGE_COLLECTD_POSTGRESQL
 	bool "postgresql"
 	depends on BR2_USE_WCHAR # postgresql
+	depends on !BR2_OPTIMIZE_FAST # postgresql
 	select BR2_PACKAGE_POSTGRESQL
 	help
 	  Connects to and executes SQL statements on a PostgreSQL
@@ -484,6 +485,9 @@ config BR2_PACKAGE_COLLECTD_POSTGRESQL
 
 comment "postgresql support needs a toolchain w/ wchar"
 	depends on !BR2_USE_WCHAR
+
+comment "postgresql support can't be built with Optimize for fast"
+	depends on !BR2_OPTIMIZE_FAST
 
 config BR2_PACKAGE_COLLECTD_PROCESSES
 	bool "processes"
