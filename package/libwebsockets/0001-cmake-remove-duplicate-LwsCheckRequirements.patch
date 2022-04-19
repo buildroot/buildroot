@@ -1,0 +1,26 @@
+From 99a8b9c4422bed45c8b7412a1e121056f2a6132a Mon Sep 17 00:00:00 2001
+From: Andy Green <andy@warmcat.com>
+Date: Mon, 7 Feb 2022 14:48:55 +0000
+Subject: [PATCH] cmake: remove duplicate LwsCheckRequirements
+
+Signed-off-by: Andy Green <andy@warmcat.com>
+Signed-off-by: Bartosz Bilas <bartosz.bilas@hotmail.com>
+Signed-off-by: Bartosz Bilas <b.bilas@grinn-global.com>
+---
+ cmake/libwebsockets-config.cmake.in | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/cmake/libwebsockets-config.cmake.in b/cmake/libwebsockets-config.cmake.in
+index 6247b2cb..8ba97e6f 100644
+--- a/cmake/libwebsockets-config.cmake.in
++++ b/cmake/libwebsockets-config.cmake.in
+@@ -32,6 +32,5 @@ endforeach()
+ 
+ include(CheckIncludeFile)
+ include(CheckCSourceCompiles)
+-include(LwsCheckRequirements)
+ set(requirements 1)
+ 
+-- 
+2.35.3
+
