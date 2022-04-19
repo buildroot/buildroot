@@ -14,6 +14,13 @@ DHCP_CPE_ID_VENDOR = isc
 # internal bind does not support parallel builds.
 DHCP_MAKE = $(MAKE1)
 
+# untar internal bind so libtool patches will be applied on bind's libtool
+define DHCP_UNTAR_INTERNAL_BIND
+	$(TAR) xf $(@D)/bind/bind.tar.gz -C $(@D)/bind/
+endef
+
+DHCP_POST_EXTRACT_HOOKS = DHCP_UNTAR_INTERNAL_BIND
+
 # use libtool-enabled configure.ac
 define DHCP_LIBTOOL_AUTORECONF
 	cp $(@D)/configure.ac+lt $(@D)/configure.ac
