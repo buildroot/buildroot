@@ -2,6 +2,7 @@ config BR2_TARGET_SHIM
 	bool "shim"
 	# it includes gnu-efi
 	depends on BR2_PACKAGE_GNU_EFI_ARCH_SUPPORTS
+	depends on !BR2_mips64el
 	help
 	  Boot loader to chain-load signed boot loaders under Secure
 	  Boot.
