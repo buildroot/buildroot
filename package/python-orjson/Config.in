@@ -1,0 +1,12 @@
+config BR2_PACKAGE_PYTHON_ORJSON
+	bool "python-orjson"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_PYTHON_CFFI # runtime
+	help
+	  orjson is a fast, correct JSON library for Python. It
+	  benchmarks as the fastest Python library for JSON and is more
+	  correct than the standard json library or other third-party
+	  libraries. It serializes dataclass, datetime, numpy, and UUID
+	  instances natively.
+
+	  https://github.com/ijl/orjson
