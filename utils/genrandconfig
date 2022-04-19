@@ -237,12 +237,9 @@ def fixup_config(sysinfo, configfile):
     if 'BR2_PACKAGE_PYTHON3=y\n' in configlines and \
        BR2_TOOLCHAIN_EXTERNAL_URL + 'mips64el-ctng_n64-linux-gnu.tar.xz"\n' in configlines:
         return False
-    # libffi not available on sh2a and ARMv7-M, but propagating libffi
-    # arch dependencies in Buildroot is really too much work, so we
-    # handle this here.
-    if 'BR2_sh2a=y\n' in configlines and \
-       'BR2_PACKAGE_LIBFFI=y\n' in configlines:
-        return False
+    # libffi not available on ARMv7-M, but propagating libffi arch
+    # dependencies in Buildroot is really too much work, so we handle
+    # this here.
     if 'BR2_ARM_CPU_ARMV7M=y\n' in configlines and \
        'BR2_PACKAGE_LIBFFI=y\n' in configlines:
         return False
