@@ -152,6 +152,13 @@ config BR2_BINUTILS_VERSION_2_35_X
 	help
 	  binutils 2.35 has been removed, use a newer version.
 
+config BR2_PACKAGE_BOOST_LAYOUT_TAGGED
+	bool "boost tagged layout removed"
+	select BR2_LEGACY
+	help
+	  Boost tagged layout isn't handled by some packages (e.g. botan
+	  or libcpprestsdk).
+
 config BR2_PACKAGE_BOOST_LAYOUT_VERSIONED
 	bool "boost versioned layout removed"
 	select BR2_LEGACY
