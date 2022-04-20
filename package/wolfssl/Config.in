@@ -13,8 +13,12 @@ if BR2_PACKAGE_WOLFSSL
 
 config BR2_PACKAGE_WOLFSSL_ALL
 	bool "enable all features, except SSLv3"
+	depends on !BR2_STATIC_LIBS
 	help
 	  Enable all wolfSSL features, except SSL version 3.0 support.
+
+comment "all features, except SSLv3 needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
 
 config BR2_PACKAGE_WOLFSSL_SSLV3
 	bool "enable SSLv3"
