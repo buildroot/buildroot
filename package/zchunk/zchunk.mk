@@ -4,14 +4,20 @@
 #
 ################################################################################
 
-ZCHUNK_VERSION = 1.1.16
+ZCHUNK_VERSION = 1.2.2
 ZCHUNK_SITE = $(call github,zchunk,zchunk,$(ZCHUNK_VERSION))
 ZCHUNK_LICENSE = BSD-2-Clause
 ZCHUNK_LICENSE_FILES = LICENSE
 ZCHUNK_INSTALL_STAGING = YES
 ZCHUNK_DEPENDENCIES = \
-	libcurl \
 	$(if $(BR2_PACKAGE_ARGP_STANDALONE),argp-standalone)
+
+ifeq ($(BR2_PACKAGE_LIBCURL),y)
+ZCHUNK_DEPENDENCIES += libcurl
+ZCHUNK_CONF_OPTS += -Dwith-curl=enabled
+else
+ZCHUNK_CONF_OPTS += -Dwith-curl=disabled
+endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 ZCHUNK_DEPENDENCIES += openssl
