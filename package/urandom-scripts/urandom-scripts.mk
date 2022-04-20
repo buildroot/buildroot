@@ -5,8 +5,8 @@
 ################################################################################
 
 define URANDOM_SCRIPTS_INSTALL_INIT_SYSV
-	$(INSTALL) -D -m 0755 $(URANDOM_SCRIPTS_PKGDIR)/S20urandom \
-		$(TARGET_DIR)/etc/init.d/S20urandom
+	$(INSTALL) -D -m 0755 $(URANDOM_SCRIPTS_PKGDIR)/S20seedrng \
+		$(TARGET_DIR)/etc/init.d/S20seedrng
 endef
 
 $(eval $(generic-package))

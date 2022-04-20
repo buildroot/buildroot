@@ -1,0 +1,40 @@
+#! /bin/sh
+#
+# Preserve the random seed between reboots. See urandom(4).
+#
+# This script can be called multiple times during operation (e.g. with
+# "reload" argument) to refresh the seed.
+
+# The following arguments can be added to SEEDRNG_ARGS in
+# /etc/default/seedrng:
+#   --seed-dir=/path/to/seed/directory
+#     Path to the directory where the seed and the lock files are stored.
+#     for optimal operation, this should be a persistent, writeable
+#     location. Default is /var/lib/seedrng
+#
+#  --skip-credit
+#     Set this to true only if you do not want seed files to actually
+#     credit the RNG, for example if you plan to replicate this file
+#     system image and do not have the wherewithal to first delete the
+#     contents of /var/lib/seedrng.
+#
+# Example:
+# SEEDRNG_ARGS="--seed-dir=/data/seedrng --skip-credit"
+#
+
+DAEMON="seedrng"
+SEEDRNG_ARGS=""
+
+# shellcheck source=/dev/null
+[ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
+
+case "$1" in
+	start|stop|restart|reload)
+		# Never fail, as this isn't worth making a fuss
+		# over if it doesn't go as planned.
+		# shellcheck disable=SC2086 # we need the word splitting
+		seedrng $SEEDRNG_ARGS || true;;
+	*)
+		echo "Usage: $0 {start|stop|restart|reload}"
+		exit 1
+esac
