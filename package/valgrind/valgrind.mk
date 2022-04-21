@@ -14,6 +14,8 @@ VALGRIND_CONF_OPTS = \
 	--disable-ubsan \
 	--without-mpicc
 VALGRIND_INSTALL_STAGING = YES
+# 0003-coregrind-fix-compilation-for-uclibc.patch
+VALGRIND_AUTORECONF=YES
 
 # Valgrind must be compiled with no stack protection, so forcefully
 # pass -fno-stack-protector to override what Buildroot may have in
