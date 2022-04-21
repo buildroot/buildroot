@@ -10,6 +10,7 @@ config BR2_PACKAGE_LIBBPF_ARCH_SUPPORTS
 config BR2_PACKAGE_LIBBPF
 	bool "libbpf"
 	depends on BR2_PACKAGE_LIBBPF_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on BR2_USE_WCHAR # elfutils
 	depends on !BR2_STATIC_LIBS # elfutils
 	depends on BR2_TOOLCHAIN_HAS_THREADS # elfutils
@@ -27,6 +28,7 @@ config BR2_PACKAGE_LIBBPF
 
 comment "libbpf needs a uClibc or glibc toolchain w/ wchar, dynamic library, threads, headers >= 4.13"
 	depends on BR2_PACKAGE_LIBBPF_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_USE_WCHAR || BR2_STATIC_LIBS \
 		|| !BR2_TOOLCHAIN_HAS_THREADS \
 		|| !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_13 \

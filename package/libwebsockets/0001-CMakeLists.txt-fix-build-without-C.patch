@@ -1,0 +1,44 @@
+From 726b36eca158063d8871c91ad99a29113ea35aea Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 13 Apr 2022 21:03:26 +0200
+Subject: [PATCH] CMakeLists.txt: fix build without C++
+
+Fix the following build failure without C++ raised since version 4.2.0
+and
+https://github.com/warmcat/libwebsockets/commit/962e9ee345bc28749577c1fca2542a273404627d:
+
+CMake Error at /nvmedata/autobuild/instance-11/output-1/per-package/libwebsockets/host/share/cmake-3.18/Modules/CMakeTestCXXCompiler.cmake:59 (message):
+  The C++ compiler
+
+    "/usr/bin/clang++"
+
+  is not able to compile a simple test program.
+
+Fixes:
+ - http://autobuild.buildroot.org/results/550e7f7d54adf74f8cc078be5b91b3567d622ede
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/warmcat/libwebsockets/pull/2613]
+---
+ CMakeLists.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 08aaf8c6..96e3ad18 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -71,7 +71,10 @@ if (ESP_PLATFORM)
+ endif()
+ 
+ # it's at this point any toolchain file is brought in
+-project(libwebsockets C CXX)
++project(libwebsockets C)
++if (LWS_WITH_SECURE_STREAMS_CPP)
++	enable_language(CXX)
++endif()
+ include(CTest)
+ 
+ if (PICO_SDK_PATH)
+-- 
+2.35.1
+

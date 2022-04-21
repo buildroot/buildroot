@@ -1,0 +1,33 @@
+From 00e5b818f2d9f3264107801fc2fcff33a9355a78 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Sun, 17 Apr 2022 23:55:26 +0200
+Subject: [PATCH] Bug 1765100 - fix build on mips+musl libc
+
+This patch fix build failure on mips with musl libc by using Linux
+<asm/sgidefs.h> instead of the one provided by libc since musl doesn't
+provide <sgidefs.h>.
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+This patch is pending upstream:
+https://bugzilla.mozilla.org/show_bug.cgi?id=1765100
+---
+ nspr/pr/include/md/_linux.cfg | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/nspr/pr/include/md/_linux.cfg b/pr/include/md/_linux.cfg
+index 23b160fd..dbc0d40e 100644
+--- a/nspr/pr/include/md/_linux.cfg
++++ b/nspr/pr/include/md/_linux.cfg
+@@ -499,7 +499,7 @@
+ #elif defined(__mips__)
+ 
+ /* For _ABI64 */
+-#include <sgidefs.h>
++#include <asm/sgidefs.h>
+ 
+ #ifdef __MIPSEB__
+ #define IS_BIG_ENDIAN 1
+-- 
+2.25.1
+
