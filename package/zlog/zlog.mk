@@ -11,6 +11,9 @@ ZLOG_LICENSE_FILES = COPYING
 ZLOG_CPE_ID_VENDOR = zlog_project
 ZLOG_INSTALL_STAGING = YES
 
+# 0001-Fix-stack-buffer-overflow-at-zlog_conf_build_with_file.patch
+ZLOG_IGNORE_CVES += CVE-2021-43521
+
 define ZLOG_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE1) CC="$(TARGET_CC) $(TARGET_CFLAGS) $(TARGET_LDFLAGS)" \
 		-C $(@D) all
