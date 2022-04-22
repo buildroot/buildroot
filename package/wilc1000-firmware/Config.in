@@ -1,6 +1,29 @@
 config BR2_PACKAGE_WILC1000_FIRMWARE
 	bool "wilc1000-firmware"
 	help
-	  Firmware for Atmel Wilc1000 wireless device
+	  Firmware for Microchip WILC1000 wireless device
 
-	  https://github.com/linux4sc/wireless-firmware.git
+	  These binary blobs are provided directly from Microchip.
+	  Ideally, the firmware version should match driver version.
+	  Generally, the latest firmware would be acceptible regardless
+	  of driver version.
+
+	  These will be installed to /lib/firmware/mchp/
+
+	  https://github.com/linux4wilc/firmware
+
+if BR2_PACKAGE_WILC1000_FIRMWARE
+config BR2_PACKAGE_WILC3000_FIRMWARE
+	bool "wilc3000-firmware"
+	help
+	  Firmware for Microchip WILC3000 wireless device
+
+	  These binary blobs are provided directly from Microchip.
+	  Ideally, the firmware version should match driver version.
+	  Generally, the latest firmware would be acceptible regardless
+	  of driver version.
+
+	  These will be installed to /lib/firmware/mchp/
+
+	  https://github.com/linux4wilc/firmware
+endif
