@@ -23,8 +23,9 @@ WLROOTS_DEPENDENCIES = \
 	wayland \
 	wayland-protocols
 
-WLROOTS_CONF_OPTS = -Dexamples=false -Dxcb-errors=disabled -Drenderers=gles2
+WLROOTS_CONF_OPTS = -Dexamples=false -Dxcb-errors=disabled
 
+WLROOTS_RENDERERS = gles2
 WLROOTS_BACKENDS = libinput drm
 
 ifeq ($(BR2_PACKAGE_WLROOTS_X11),y)
@@ -35,6 +36,13 @@ else
 WLROOTS_CONF_OPTS += -Dxwayland=disabled
 endif
 
-WLROOTS_CONF_OPTS += -Dbackends=$(subst $(space),$(comma),$(strip $(WLROOTS_BACKENDS)))
+ifeq ($(BR2_PACKAGE_MESA3D_VULKAN_DRIVER),y)
+WLROOTS_RENDERERS += vulkan
+WLROOTS_DEPENDENCIES += mesa3d
+endif
+
+WLROOTS_CONF_OPTS += \
+	-Dbackends=$(subst $(space),$(comma),$(strip $(WLROOTS_BACKENDS))) \
+	-Drenderers=$(subst $(space),$(comma),$(strip $(WLROOTS_RENDERERS)))
 
 $(eval $(meson-package))
