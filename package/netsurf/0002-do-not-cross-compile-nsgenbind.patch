@@ -8,6 +8,8 @@ the build, so it should not be built with the cross-compiler, but with
 the native compiler.
 
 Signed-off-by: Francois Perrad <francois.perrad@gadz.org>
+[Fabrice: add quotes around BUILD_CC to fix build with ccache]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  Makefile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -21,7 +23,7 @@ index f279f01..5698c87 100644
  # prefixed install macro for each host sub target
  define do_build_prefix_install
 -	$(MAKE) install --directory=$1 HOST=$(BUILD) PREFIX=$(TMP_PREFIX) Q=$(Q) DESTDIR=
-+	$(MAKE) install --directory=$1 HOST=$(BUILD) CC=$(BUILD_CC) PREFIX=$(TMP_PREFIX) Q=$(Q) DESTDIR=
++	$(MAKE) install --directory=$1 HOST=$(BUILD) CC="$(BUILD_CC)" PREFIX=$(TMP_PREFIX) Q=$(Q) DESTDIR=
  
  endef
  
