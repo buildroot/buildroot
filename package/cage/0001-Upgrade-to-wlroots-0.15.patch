@@ -1,0 +1,312 @@
+From e51bef3fdad649d453276717294cc6177666cf5a Mon Sep 17 00:00:00 2001
+From: Simon Ser <contact@emersion.fr>
+Date: Wed, 11 Aug 2021 11:31:14 +0200
+Subject: [PATCH] Upgrade to wlroots 0.15
+
+- Update wlr_box includes to util/box.h: the wlroots header has
+  been moved upstream.
+- Subsurface fields have been moved
+- Create renderer and allocator, stop using wlr_backend_get_renderer
+- Initalize output rendering
+
+Signed-off-by: Adrian Perez de Castro <aperez@igalia.com>
+Upstream status: https://github.com/Hjdskes/cage/commit/395189fb051ed722c7b10b6cb11caa8f6904079c
+---
+ cage.c      | 21 +++++++++++++++++----
+ meson.build |  2 +-
+ output.c    |  5 +++++
+ render.c    | 26 ++++++++------------------
+ server.h    |  2 ++
+ util.c      |  2 --
+ util.h      |  2 +-
+ view.c      |  5 ++---
+ view.h      |  2 +-
+ xdg_shell.c |  1 -
+ xwayland.c  |  1 -
+ 11 files changed, 37 insertions(+), 32 deletions(-)
+
+diff --git a/cage.c b/cage.c
+index 5392535..f9db7a9 100644
+--- a/cage.c
++++ b/cage.c
+@@ -19,6 +19,7 @@
+ #include <unistd.h>
+ #include <wayland-server-core.h>
+ #include <wlr/backend.h>
++#include <wlr/render/allocator.h>
+ #include <wlr/render/wlr_renderer.h>
+ #include <wlr/types/wlr_compositor.h>
+ #include <wlr/types/wlr_data_device.h>
+@@ -261,7 +262,6 @@ main(int argc, char *argv[])
+ 	struct wl_event_source *sigint_source = NULL;
+ 	struct wl_event_source *sigterm_source = NULL;
+ 	struct wl_event_source *sigchld_source = NULL;
+-	struct wlr_renderer *renderer = NULL;
+ 	struct wlr_compositor *compositor = NULL;
+ 	struct wlr_data_device_manager *data_device_manager = NULL;
+ 	struct wlr_server_decoration_manager *server_decoration_manager = NULL;
+@@ -316,8 +316,21 @@ main(int argc, char *argv[])
+ 		goto end;
+ 	}
+ 
+-	renderer = wlr_backend_get_renderer(server.backend);
+-	wlr_renderer_init_wl_display(renderer, server.wl_display);
++	server.renderer = wlr_renderer_autocreate(server.backend);
++	if (!server.renderer) {
++		wlr_log(WLR_ERROR, "Unable to create the wlroots renderer");
++		ret = 1;
++		goto end;
++	}
++
++	server.allocator = wlr_allocator_autocreate(server.backend, server.renderer);
++	if (!server.allocator) {
++		wlr_log(WLR_ERROR, "Unable to create the wlroots allocator");
++		ret = 1;
++		goto end;
++	}
++
++	wlr_renderer_init_wl_display(server.renderer, server.wl_display);
+ 
+ 	wl_list_init(&server.views);
+ 	wl_list_init(&server.outputs);
+@@ -329,7 +342,7 @@ main(int argc, char *argv[])
+ 		goto end;
+ 	}
+ 
+-	compositor = wlr_compositor_create(server.wl_display, renderer);
++	compositor = wlr_compositor_create(server.wl_display, server.renderer);
+ 	if (!compositor) {
+ 		wlr_log(WLR_ERROR, "Unable to create the wlroots compositor");
+ 		ret = 1;
+diff --git a/meson.build b/meson.build
+index 3a84794..f2e5428 100644
+--- a/meson.build
++++ b/meson.build
+@@ -34,7 +34,7 @@ if is_freebsd
+   )
+ endif
+ 
+-wlroots        = dependency('wlroots', version: '>= 0.14.0')
++wlroots        = dependency('wlroots', version: '>= 0.15.0')
+ wayland_protos = dependency('wayland-protocols', version: '>=1.14')
+ wayland_server = dependency('wayland-server')
+ pixman         = dependency('pixman-1')
+diff --git a/output.c b/output.c
+index d8da3b9..e8b3a22 100644
+--- a/output.c
++++ b/output.c
+@@ -442,6 +442,11 @@ handle_new_output(struct wl_listener *listener, void *data)
+ 	struct cg_server *server = wl_container_of(listener, server, new_output);
+ 	struct wlr_output *wlr_output = data;
+ 
++	if (!wlr_output_init_render(wlr_output, server->allocator, server->renderer)) {
++		wlr_log(WLR_ERROR, "Failed to initialize output rendering");
++		return;
++	}
++
+ 	struct cg_output *output = calloc(1, sizeof(struct cg_output));
+ 	if (!output) {
+ 		wlr_log(WLR_ERROR, "Failed to allocate output");
+diff --git a/render.c b/render.c
+index 166a088..ffa960f 100644
+--- a/render.c
++++ b/render.c
+@@ -10,11 +10,11 @@
+ #include <wayland-server-core.h>
+ #include <wlr/backend.h>
+ #include <wlr/render/wlr_renderer.h>
+-#include <wlr/types/wlr_box.h>
+ #include <wlr/types/wlr_matrix.h>
+ #include <wlr/types/wlr_output.h>
+ #include <wlr/types/wlr_output_layout.h>
+ #include <wlr/types/wlr_surface.h>
++#include <wlr/util/box.h>
+ #include <wlr/util/log.h>
+ #include <wlr/util/region.h>
+ 
+@@ -27,8 +27,6 @@
+ static void
+ scissor_output(struct wlr_output *output, pixman_box32_t *rect)
+ {
+-	struct wlr_renderer *renderer = wlr_backend_get_renderer(output->backend);
+-
+ 	struct wlr_box box = {
+ 		.x = rect->x1,
+ 		.y = rect->y1,
+@@ -41,7 +39,7 @@ scissor_output(struct wlr_output *output, pixman_box32_t *rect)
+ 	enum wl_output_transform transform = wlr_output_transform_invert(output->transform);
+ 	wlr_box_transform(&box, &box, transform, output_width, output_height);
+ 
+-	wlr_renderer_scissor(renderer, &box);
++	wlr_renderer_scissor(output->renderer, &box);
+ }
+ 
+ struct render_data {
+@@ -52,8 +50,6 @@ static void
+ render_texture(struct wlr_output *wlr_output, pixman_region32_t *output_damage, struct wlr_texture *texture,
+ 	       const struct wlr_box *box, const float matrix[static 9])
+ {
+-	struct wlr_renderer *renderer = wlr_backend_get_renderer(wlr_output->backend);
+-
+ 	pixman_region32_t damage;
+ 	pixman_region32_init(&damage);
+ 	pixman_region32_union_rect(&damage, &damage, box->x, box->y, box->width, box->height);
+@@ -66,7 +62,7 @@ render_texture(struct wlr_output *wlr_output, pixman_region32_t *output_damage,
+ 	pixman_box32_t *rects = pixman_region32_rectangles(&damage, &nrects);
+ 	for (int i = 0; i < nrects; i++) {
+ 		scissor_output(wlr_output, &rects[i]);
+-		wlr_render_texture_with_matrix(renderer, texture, matrix, 1.0f);
++		wlr_render_texture_with_matrix(wlr_output->renderer, texture, matrix, 1.0f);
+ 	}
+ 
+ damage_finish:
+@@ -134,13 +130,7 @@ output_render(struct cg_output *output, pixman_region32_t *damage)
+ 	struct cg_server *server = output->server;
+ 	struct wlr_output *wlr_output = output->wlr_output;
+ 
+-	struct wlr_renderer *renderer = wlr_backend_get_renderer(wlr_output->backend);
+-	if (!renderer) {
+-		wlr_log(WLR_DEBUG, "Expected the output backend to have a renderer");
+-		return;
+-	}
+-
+-	wlr_renderer_begin(renderer, wlr_output->width, wlr_output->height);
++	wlr_renderer_begin(server->renderer, wlr_output->width, wlr_output->height);
+ 
+ 	if (!pixman_region32_not_empty(damage)) {
+ 		wlr_log(WLR_DEBUG, "Output isn't damaged but needs a buffer swap");
+@@ -149,7 +139,7 @@ output_render(struct cg_output *output, pixman_region32_t *damage)
+ 
+ #ifdef DEBUG
+ 	if (server->debug_damage_tracking) {
+-		wlr_renderer_clear(renderer, (float[]){1.0f, 0.0f, 0.0f, 1.0f});
++		wlr_renderer_clear(server->renderer, (float[]){1.0f, 0.0f, 0.0f, 1.0f});
+ 	}
+ #endif
+ 
+@@ -158,7 +148,7 @@ output_render(struct cg_output *output, pixman_region32_t *damage)
+ 	pixman_box32_t *rects = pixman_region32_rectangles(damage, &nrects);
+ 	for (int i = 0; i < nrects; i++) {
+ 		scissor_output(wlr_output, &rects[i]);
+-		wlr_renderer_clear(renderer, color);
++		wlr_renderer_clear(server->renderer, color);
+ 	}
+ 
+ 	// TODO: render only top view, possibly use focused view for this, see #35.
+@@ -178,8 +168,8 @@ renderer_end:
+ 	/* Draw software cursor in case hardware cursors aren't
+ 	   available. This is a no-op when they are. */
+ 	wlr_output_render_software_cursors(wlr_output, damage);
+-	wlr_renderer_scissor(renderer, NULL);
+-	wlr_renderer_end(renderer);
++	wlr_renderer_scissor(server->renderer, NULL);
++	wlr_renderer_end(server->renderer);
+ 
+ 	int output_width, output_height;
+ 	wlr_output_transformed_resolution(wlr_output, &output_width, &output_height);
+diff --git a/server.h b/server.h
+index 817637b..74970c5 100644
+--- a/server.h
++++ b/server.h
+@@ -25,6 +25,8 @@ struct cg_server {
+ 	struct wl_display *wl_display;
+ 	struct wl_list views;
+ 	struct wlr_backend *backend;
++	struct wlr_renderer *renderer;
++	struct wlr_allocator *allocator;
+ 
+ 	struct cg_seat *seat;
+ 	struct wlr_idle *idle;
+diff --git a/util.c b/util.c
+index 95de499..714c7e3 100644
+--- a/util.c
++++ b/util.c
+@@ -6,8 +6,6 @@
+  * See the LICENSE file accompanying this file.
+  */
+ 
+-#include <wlr/types/wlr_box.h>
+-
+ #include "util.h"
+ 
+ int
+diff --git a/util.h b/util.h
+index db6bc7d..b6281f3 100644
+--- a/util.h
++++ b/util.h
+@@ -1,7 +1,7 @@
+ #ifndef CG_UTIL_H
+ #define CG_UTIL_H
+ 
+-#include <wlr/types/wlr_box.h>
++#include <wlr/util/box.h>
+ 
+ /** Apply scale to a width or height. */
+ int scale_length(int length, int offset, float scale);
+diff --git a/view.c b/view.c
+index 3f3b0ed..33b59b4 100644
+--- a/view.c
++++ b/view.c
+@@ -12,7 +12,6 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <wayland-server-core.h>
+-#include <wlr/types/wlr_box.h>
+ #include <wlr/types/wlr_output.h>
+ #include <wlr/types/wlr_surface.h>
+ 
+@@ -235,10 +234,10 @@ view_map(struct cg_view *view, struct wlr_surface *surface)
+ 	view->wlr_surface = surface;
+ 
+ 	struct wlr_subsurface *subsurface;
+-	wl_list_for_each (subsurface, &view->wlr_surface->subsurfaces_below, parent_link) {
++	wl_list_for_each (subsurface, &view->wlr_surface->current.subsurfaces_below, current.link) {
+ 		subsurface_create(view, subsurface);
+ 	}
+-	wl_list_for_each (subsurface, &view->wlr_surface->subsurfaces_above, parent_link) {
++	wl_list_for_each (subsurface, &view->wlr_surface->current.subsurfaces_above, current.link) {
+ 		subsurface_create(view, subsurface);
+ 	}
+ 
+diff --git a/view.h b/view.h
+index cd16e42..87477d0 100644
+--- a/view.h
++++ b/view.h
+@@ -5,9 +5,9 @@
+ 
+ #include <stdbool.h>
+ #include <wayland-server-core.h>
+-#include <wlr/types/wlr_box.h>
+ #include <wlr/types/wlr_surface.h>
+ #include <wlr/types/wlr_xdg_shell.h>
++#include <wlr/util/box.h>
+ #if CAGE_HAS_XWAYLAND
+ #include <wlr/xwayland.h>
+ #endif
+diff --git a/xdg_shell.c b/xdg_shell.c
+index 2e42347..d676552 100644
+--- a/xdg_shell.c
++++ b/xdg_shell.c
+@@ -9,7 +9,6 @@
+ #include <stdbool.h>
+ #include <stdlib.h>
+ #include <wayland-server-core.h>
+-#include <wlr/types/wlr_box.h>
+ #include <wlr/types/wlr_xdg_shell.h>
+ #include <wlr/util/log.h>
+ 
+diff --git a/xwayland.c b/xwayland.c
+index 2aae0f9..ebd8e54 100644
+--- a/xwayland.c
++++ b/xwayland.c
+@@ -9,7 +9,6 @@
+ #include <stdbool.h>
+ #include <stdlib.h>
+ #include <wayland-server-core.h>
+-#include <wlr/types/wlr_box.h>
+ #include <wlr/util/log.h>
+ #include <wlr/xwayland.h>
+ 
+-- 
+2.36.0
+
