@@ -1,5 +1,11 @@
+config BR2_PACKAGE_WILC_FIRMWARE
+	bool
+	help
+	  Provider package for WILC1000_FIRMWARE & WILC3000_FIRMWARE
+
 config BR2_PACKAGE_WILC1000_FIRMWARE
 	bool "wilc1000-firmware"
+	select BR2_PACKAGE_WILC_FIRMWARE
 	help
 	  Firmware for Microchip WILC1000 wireless device
 
@@ -12,9 +18,9 @@ config BR2_PACKAGE_WILC1000_FIRMWARE
 
 	  https://github.com/linux4wilc/firmware
 
-if BR2_PACKAGE_WILC1000_FIRMWARE
 config BR2_PACKAGE_WILC3000_FIRMWARE
 	bool "wilc3000-firmware"
+	select BR2_PACKAGE_WILC_FIRMWARE
 	help
 	  Firmware for Microchip WILC3000 wireless device
 
@@ -26,4 +32,3 @@ config BR2_PACKAGE_WILC3000_FIRMWARE
 	  These will be installed to /lib/firmware/mchp/
 
 	  https://github.com/linux4wilc/firmware
-endif
