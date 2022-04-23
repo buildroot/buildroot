@@ -4,10 +4,9 @@
 #
 ################################################################################
 
-DING_LIBS_VERSION = 0.6.1
-DING_LIBS_SOURCE = ding-libs-ding_libs-$(subst .,_,$(DING_LIBS_VERSION)).tar.gz
+DING_LIBS_VERSION = 0.6.2
 DING_LIBS_SITE = \
-	https://pagure.io/SSSD/ding-libs/archive/ding_libs-$(subst .,_,$(DING_LIBS_VERSION))
+	https://github.com/SSSD/ding-libs/releases/download/$(DING_LIBS_VERSION)
 DING_LIBS_DEPENDENCIES = host-pkgconf \
 	$(TARGET_NLS_DEPENDENCIES) \
 	$(if $(BR2_PACKAGE_LIBICONV),libiconv)
