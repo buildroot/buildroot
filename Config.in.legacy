@@ -146,6 +146,26 @@ endif
 
 comment "Legacy options removed in 2022.05"
 
+config BR2_sh2a
+	bool "sh2a architecture support removed"
+	select BR2_LEGACY
+	help
+	  The SuperH 2A (SH2A) architecture was not maintained, and
+	  broken, so its support was dropped.
+
+config BR2_BINUTILS_VERSION_2_35_X
+	bool "binutils 2.35.x has been removed"
+	select BR2_LEGACY
+	help
+	  binutils 2.35 has been removed, use a newer version.
+
+config BR2_PACKAGE_BOOST_LAYOUT_TAGGED
+	bool "boost tagged layout removed"
+	select BR2_LEGACY
+	help
+	  Boost tagged layout isn't handled by some packages (e.g. botan
+	  or libcpprestsdk).
+
 config BR2_PACKAGE_BOOST_LAYOUT_VERSIONED
 	bool "boost versioned layout removed"
 	select BR2_LEGACY

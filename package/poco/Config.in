@@ -52,8 +52,12 @@ config BR2_PACKAGE_POCO_DATA_MYSQL
 config BR2_PACKAGE_POCO_DATA_PGSQL
 	bool "Data/PostgreSQL"
 	depends on BR2_USE_MMU # postgresql
+	depends on !BR2_OPTIMIZE_FAST # postgresql
 	select BR2_PACKAGE_POCO_DATA
 	select BR2_PACKAGE_POSTGRESQL
+
+comment "Data/PostgreSQL can't be built with Optimize for fast"
+	depends on !BR2_OPTIMIZE_FAST
 
 config BR2_PACKAGE_POCO_DATA_SQLITE
 	bool "Data/SQLite"

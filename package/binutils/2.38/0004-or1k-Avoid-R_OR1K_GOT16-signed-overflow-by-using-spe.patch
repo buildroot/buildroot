@@ -1,4 +1,4 @@
-From fbab8933bca6b7dba2aa19190a71f799a370c3d4 Mon Sep 17 00:00:00 2001
+From 362a20108782b87cd780a989c0dbd014fc2def8b Mon Sep 17 00:00:00 2001
 From: Stafford Horne <shorne@gmail.com>
 Date: Sun, 2 Jan 2022 09:03:28 +0900
 Subject: [PATCH] or1k: Avoid R_OR1K_GOT16 signed overflow by using special
@@ -27,11 +27,11 @@ Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
  1 file changed, 20 insertions(+), 4 deletions(-)
 
 diff --git a/bfd/elf32-or1k.c b/bfd/elf32-or1k.c
-index 2ff998066a8..3df31172fcb 100644
+index 4ae7f324d33..7fd88d72442 100644
 --- a/bfd/elf32-or1k.c
 +++ b/bfd/elf32-or1k.c
 @@ -828,6 +828,23 @@ static reloc_howto_type or1k_elf_howto_table[] =
- 	FALSE),                /* pcrel_offset */
+ 	 false),		/* pcrel_offset */
  };
  
 +/* A copy of the R_OR1K_GOT16 used in the presense of R_OR1K_GOT_AHI16
@@ -41,22 +41,22 @@ index 2ff998066a8..3df31172fcb 100644
 +	 0,			/* rightshift */
 +	 2,			/* size (0 = byte, 1 = short, 2 = long) */
 +	 16,			/* bitsize */
-+	 FALSE,			/* pc_relative */
++	 false,			/* pc_relative */
 +	 0,			/* bitpos */
 +	 complain_overflow_dont, /* complain_on_overflow */
 +	 bfd_elf_generic_reloc, /* special_function */
 +	 "R_OR1K_GOT16",	/* name */
-+	 FALSE,			/* partial_inplace */
++	 false,			/* partial_inplace */
 +	 0,			/* src_mask */
 +	 0xffff,		/* dst_mask */
-+	 FALSE);		/* pcrel_offset */
++	 false);		/* pcrel_offset */
 +
  /* Map BFD reloc types to Or1k ELF reloc types.  */
  
  struct or1k_reloc_map
-@@ -1508,12 +1525,11 @@ or1k_elf_relocate_section (bfd *output_bfd,
+@@ -1506,12 +1523,11 @@ or1k_elf_relocate_section (bfd *output_bfd,
  	    if (r_type == R_OR1K_GOT_AHI16)
- 	      saw_gotha = TRUE;
+ 	      saw_gotha = true;
  
 -	    /* If we have a R_OR1K_GOT16 followed by a R_OR1K_GOT_AHI16
 +	    /* If we have a R_OR1K_GOT16 following a R_OR1K_GOT_AHI16

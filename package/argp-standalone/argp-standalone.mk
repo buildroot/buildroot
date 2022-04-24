@@ -4,11 +4,14 @@
 #
 ################################################################################
 
-ARGP_STANDALONE_VERSION = 1.3
-ARGP_STANDALONE_SITE = http://www.lysator.liu.se/~nisse/archive
+ARGP_STANDALONE_VERSION = 1.4.1
+ARGP_STANDALONE_SITE = \
+	$(call github,ericonr,argp-standalone,$(ARGP_STANDALONE_VERSION))
 ARGP_STANDALONE_INSTALL_STAGING = YES
-ARGP_STANDALONE_LICENSE = LGPL-2.0+
-ARGP_STANDALONE_LICENSE_FILES = argp.h
+ARGP_STANDALONE_LICENSE = LGPL-2.1+
+ARGP_STANDALONE_LICENSE_FILES = README.md
+# From git
+ARGP_STANDALONE_AUTORECONF = YES
 
 ARGP_STANDALONE_CONF_ENV = \
 	CFLAGS="$(TARGET_CFLAGS) -fPIC -fgnu89-inline"

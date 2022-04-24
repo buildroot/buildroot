@@ -5,11 +5,11 @@
 ################################################################################
 
 # Use the same version that the one used by Google-breakpad (see DEPS file)
-LINUX_SYSCALL_SUPPORT_VERSION = 3f6478ac95edf86cd3da300c2c0d34a438f5dbeb
+LINUX_SYSCALL_SUPPORT_VERSION = e1e7b0ad8ee99a875b272c8e33e308472e897660
 LINUX_SYSCALL_SUPPORT_SITE = https://chromium.googlesource.com/linux-syscall-support
 LINUX_SYSCALL_SUPPORT_SITE_METHOD = git
 LINUX_SYSCALL_SUPPORT_LICENSE = BSD-3-Clause
-LINUX_SYSCALL_SUPPORT_LICENSE_FILES = linux_syscall_support.h
+LINUX_SYSCALL_SUPPORT_LICENSE_FILES = LICENSE
 
 # Provide only one header file.
 LINUX_SYSCALL_SUPPORT_INSTALL_TARGET = NO

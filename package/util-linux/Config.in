@@ -206,9 +206,14 @@ config BR2_PACKAGE_UTIL_LINUX_LOSETUP
 config BR2_PACKAGE_UTIL_LINUX_LSFD
 	bool "lsfd"
 	depends on BR2_USE_MMU # libsmartcols
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_19
 	select BR2_PACKAGE_UTIL_LINUX_LIBSMARTCOLS
 	help
 	  List file descriptors (modern replacement for lsof)
+
+comment "lsfd needs a toolchain w/ headers >= 3.19"
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_19
 
 config BR2_PACKAGE_UTIL_LINUX_LSLOGINS
 	bool "lslogins"

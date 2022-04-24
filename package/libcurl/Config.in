@@ -68,7 +68,12 @@ config BR2_PACKAGE_LIBCURL_MBEDTLS
 config BR2_PACKAGE_LIBCURL_WOLFSSL
 	bool "WolfSSL"
 	depends on BR2_PACKAGE_WOLFSSL
+	depends on !BR2_STATIC_LIBS # wolfssl-all
 	select BR2_PACKAGE_WOLFSSL_ALL
+
+comment "WolfSSL needs a toolchain w/ dynamic library"
+	depends on BR2_PACKAGE_WOLFSSL
+	depends on BR2_STATIC_LIBS
 
 config BR2_PACKAGE_LIBCURL_TLS_NONE
 	bool "None"

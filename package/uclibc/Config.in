@@ -124,7 +124,6 @@ config BR2_UCLIBC_MIPS_NAN
 
 config BR2_UCLIBC_SH_TYPE
 	string
-	default "SH2A" if BR2_sh2a
 	default "SH4"  if BR2_sh4 || BR2_sh4eb
 	depends on BR2_UCLIBC_TARGET_ARCH = "sh"
 

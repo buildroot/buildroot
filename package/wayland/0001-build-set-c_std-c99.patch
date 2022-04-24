@@ -1,0 +1,34 @@
+From 40c275f642e3895aeb748403fcdfd92d7d875d65 Mon Sep 17 00:00:00 2001
+From: Simon Ser <contact@emersion.fr>
+Date: Mon, 10 Jan 2022 14:54:02 +0100
+Subject: [PATCH] build: set c_std=c99
+
+Set explicitly the C standard to use to make sure we don't use
+features not available on our target platforms.
+
+Signed-off-by: Simon Ser <contact@emersion.fr>
+
+[Retrieved from:
+https://gitlab.freedesktop.org/wayland/wayland/-/commit/40c275f642e3895aeb748403fcdfd92d7d875d65]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ meson.build | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index cab267e9..e9691ffe 100644
+--- a/meson.build
++++ b/meson.build
+@@ -5,7 +5,8 @@ project(
+ 	meson_version: '>= 0.52.1',
+ 	default_options: [
+ 		'warning_level=2',
+-		'buildtype=debugoptimized'
++		'buildtype=debugoptimized',
++		'c_std=c99',
+ 	]
+ )
+ wayland_version = meson.project_version().split('.')
+-- 
+GitLab
+

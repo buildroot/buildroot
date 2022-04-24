@@ -4,14 +4,14 @@
 #
 ################################################################################
 
-GOOGLE_BREAKPAD_VERSION = 7515ab13768c7edc09f0f2ec2354dc6c928239a6
+GOOGLE_BREAKPAD_VERSION = c85eb4a59b618f3beaad5445ceb1f865ffa8efdf
 GOOGLE_BREAKPAD_SITE = https://chromium.googlesource.com/breakpad/breakpad
 GOOGLE_BREAKPAD_SITE_METHOD = git
 GOOGLE_BREAKPAD_CONF_OPTS = --disable-processor --disable-tools
 # Only a static library is installed
 GOOGLE_BREAKPAD_INSTALL_TARGET = NO
 GOOGLE_BREAKPAD_INSTALL_STAGING = YES
-GOOGLE_BREAKPAD_LICENSE = BSD-3-Clause
+GOOGLE_BREAKPAD_LICENSE = BSD-3-Clause, MIT
 GOOGLE_BREAKPAD_LICENSE_FILES = LICENSE
 GOOGLE_BREAKPAD_DEPENDENCIES = host-google-breakpad linux-syscall-support
 
