@@ -4,7 +4,7 @@ config BR2_PACKAGE_LIBSELINUX
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # libsepol
 	select BR2_PACKAGE_LIBSEPOL
-	select BR2_PACKAGE_PCRE
+	select BR2_PACKAGE_PCRE2
 	select BR2_PACKAGE_MUSL_FTS if !BR2_TOOLCHAIN_USES_GLIBC
 	help
 	  libselinux is the runtime SELinux library that provides
