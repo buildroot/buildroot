@@ -25,7 +25,7 @@ HOST_OMNIORB_CONF_OPTS += --disable-longdouble
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 OMNIORB_CONF_OPTS += --with-openssl
-OMNIORB_DEPENDENCIES += openssl
+OMNIORB_DEPENDENCIES += host-pkgconf openssl
 else
 OMNIORB_CONF_OPTS += --without-openssl
 endif
