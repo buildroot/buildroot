@@ -10,7 +10,8 @@ LIBSELINUX_LICENSE = Public Domain
 LIBSELINUX_LICENSE_FILES = LICENSE
 LIBSELINUX_CPE_ID_VENDOR = selinuxproject
 
-LIBSELINUX_DEPENDENCIES = $(BR2_COREUTILS_HOST_DEPENDENCY) libsepol pcre
+LIBSELINUX_DEPENDENCIES = \
+	$(BR2_COREUTILS_HOST_DEPENDENCY) host-pkgconf libsepol pcre
 
 LIBSELINUX_INSTALL_STAGING = YES
 
@@ -52,8 +53,7 @@ endif # python3
 # when the python binding is enabled.
 LIBSELINUX_MAKE_OPTS += \
 	CFLAGS="$(filter-out -D_FILE_OFFSET_BITS=64,$(TARGET_CFLAGS))" \
-	CPPFLAGS="$(filter-out -D_FILE_OFFSET_BITS=64,$(TARGET_CPPFLAGS))" \
-	LDFLAGS="$(TARGET_LDFLAGS) -lpcre -lpthread"
+	CPPFLAGS="$(filter-out -D_FILE_OFFSET_BITS=64,$(TARGET_CPPFLAGS))"
 
 define LIBSELINUX_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) \
@@ -76,13 +76,12 @@ define LIBSELINUX_INSTALL_TARGET_CMDS
 endef
 
 HOST_LIBSELINUX_DEPENDENCIES = \
-	host-libsepol host-pcre host-swig host-python3
+	host-pkgconf host-libsepol host-pcre host-swig host-python3
 
 HOST_LIBSELINUX_MAKE_OPTS = \
 	$(HOST_CONFIGURE_OPTS) \
 	PREFIX=$(HOST_DIR) \
 	SHLIBDIR=$(HOST_DIR)/lib \
-	LDFLAGS="$(HOST_LDFLAGS) -lpcre -lpthread" \
 	$(HOST_PKG_PYTHON_DISTUTILS_ENV) \
 	PYTHON=python$(PYTHON3_VERSION_MAJOR)
 
