@@ -1,0 +1,35 @@
+From 37455483889bd1c641bdaafc493d1cc236b74904 Mon Sep 17 00:00:00 2001
+From: "Christian W. Zuckschwerdt" <christian@zuckschwerdt.org>
+Date: Fri, 18 Mar 2022 08:09:15 +0100
+Subject: [PATCH] Fix overflow in Acurite-00275rm (closes #2012)
+
+[Retrieved from:
+https://github.com/merbanan/rtl_433/commit/37455483889bd1c641bdaafc493d1cc236b74904]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/devices/acurite.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/devices/acurite.c b/src/devices/acurite.c
+index 6879e52da..4f3e83eb3 100644
+--- a/src/devices/acurite.c
++++ b/src/devices/acurite.c
+@@ -1318,15 +1318,15 @@ static int acurite_00275rm_decode(r_device *decoder, bitbuffer_t *bitbuffer)
+ 
+     // Combine signal if exactly three repeats were found
+     if (n_rows == 3) {
+-        uint8_t *b = bitbuffer->bb[bitbuffer->num_rows];
++        bitbuffer_add_row(bitbuffer);
++        uint8_t *b = bitbuffer->bb[bitbuffer->num_rows - 1];
+         for (int i = 0; i < 11; ++i) {
+             // The majority bit count wins
+             b[i] = (b_rows[0][i] & b_rows[1][i]) |
+                     (b_rows[1][i] & b_rows[2][i]) |
+                     (b_rows[2][i] & b_rows[0][i]);
+         }
+-        bitbuffer->bits_per_row[bitbuffer->num_rows] = 88;
+-        bitbuffer->num_rows += 1;
++        bitbuffer->bits_per_row[bitbuffer->num_rows - 1] = 88;
+     }
+ 
+     // Output the first valid row
