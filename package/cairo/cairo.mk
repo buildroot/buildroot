@@ -15,6 +15,8 @@ CAIRO_INSTALL_STAGING = YES
 # 0002-ft-Use-FT_Done_MM_Var-instead-of-free-when-available-in-cairo_ft_apply_variation.patch
 CAIRO_IGNORE_CVES += CVE-2018-19876
 
+CAIRO_CONF_ENV = LIBS="$(CAIRO_LIBS)"
+
 # relocation truncated to fit: R_68K_GOT16O
 ifeq ($(BR2_m68k_cf),y)
 CAIRO_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -mxgot"
@@ -27,7 +29,7 @@ endif
 # cairo can use C++11 atomics when available, so we need to link with
 # libatomic for the architectures who need libatomic.
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
-CAIRO_CONF_ENV += LIBS="-latomic"
+CAIRO_LIBS += -latomic
 endif
 
 CAIRO_CONF_OPTS = \
@@ -79,6 +81,11 @@ CAIRO_CONF_OPTS += --enable-ft
 CAIRO_DEPENDENCIES += freetype
 else
 CAIRO_CONF_OPTS += --disable-ft
+endif
+
+ifeq ($(BR2_PACKAGE_LIBEXECINFO),y)
+CAIRO_DEPENDENCIES += libexecinfo
+CAIRO_LIBS += -lexecinfo
 endif
 
 ifeq ($(BR2_PACKAGE_LIBGLIB2),y)
