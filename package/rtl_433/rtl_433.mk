@@ -20,6 +20,9 @@ RTL_433_CONF_OPTS = \
 # 0003-minor-Fix-overflow-in-Clipsal-CMR113-and-Somfy-IOHC.patch
 RTL_433_IGNORE_CVES += CVE-2022-25051
 
+# 0004-Fix-overflow-in-Acurite-00275rm.patch
+RTL_433_IGNORE_CVES += CVE-2022-27419
+
 ifeq ($(BR2_PACKAGE_LIBRTLSDR),y)
 RTL_433_DEPENDENCIES += librtlsdr
 RTL_433_CONF_OPTS += -DENABLE_RTLSDR=ON
