@@ -73,3 +73,8 @@ class TestZfsUclibc(TestZfsBase):
         """
 
 
+class TestZfsMusl(TestZfsBase):
+    config = TestZfsBase.config + \
+        """
+        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_X86_64_MUSL_STABLE=y
+        """
