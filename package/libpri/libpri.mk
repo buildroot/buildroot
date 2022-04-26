@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBPRI_VERSION = 1.5.0
+LIBPRI_VERSION = 1.6.0
 LIBPRI_SITE = http://downloads.asterisk.org/pub/telephony/libpri/releases
 
 LIBPRI_LICENSE = GPL-2.0 with OpenH323 exception
