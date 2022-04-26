@@ -23,5 +23,10 @@ define CRYPTODEV_LINUX_INSTALL_STAGING_CMDS
 		$(STAGING_DIR)/usr/include/crypto/cryptodev.h
 endef
 
+define CRYPTODEV_LINUX_CONFIG_FIXUPS
+	$(call KCONFIG_ENABLE_OPT,CONFIG_CRYPTO)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_CRYPTO_USER_API_AEAD)
+endef
+
 $(eval $(kernel-module))
 $(eval $(generic-package))
