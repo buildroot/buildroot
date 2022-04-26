@@ -154,6 +154,17 @@ source "$BR2_BASE_DIR/.br2-external.in.init"
 
 endchoice
 
+config BR2_PACKAGE_SYSTEMD_DEFAULT_TARGET
+	string "The default unit systemd starts at bootup"
+	default "multi-user.target"
+	depends on BR2_INIT_SYSTEMD
+	help
+	  Specify the name of the unit configuration file to be started
+	  at bootup by systemd. Should end in ".target".
+	  ex: multi-user.target
+
+	  https://www.freedesktop.org/software/systemd/man/systemd.special.html#default.target
+
 choice
 	prompt "/dev management" if !BR2_INIT_SYSTEMD
 	default BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_DEVTMPFS
