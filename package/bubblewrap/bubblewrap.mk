@@ -17,7 +17,8 @@ BUBBLEWRAP_CONF_OPTS = \
 	-Dzsh_completion=disabled \
 	-Dman=disabled \
 	-Dpython=$(HOST_DIR)/bin/python \
-	-Drequire_userns=false
+	-Drequire_userns=false \
+	-Dtests=false
 
 ifeq ($(BR2_PACKAGE_BASH_COMPLETION),y)
 BUBBLEWRAP_CONF_OPTS += \
