@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBPRI_VERSION = 1.5.0
+LIBPRI_VERSION = 1.6.0
 LIBPRI_SITE = http://downloads.asterisk.org/pub/telephony/libpri/releases
 
 LIBPRI_LICENSE = GPL-2.0 with OpenH323 exception
@@ -17,6 +17,7 @@ LIBPRI_INSTALL_STAGING = YES
 # So we need to explicitly build only what we can.
 ifneq ($(BR2_SHARED_LIBS),y)
 LIBPRI_LIBS = libpri.a
+LIBPRI_UTILS += pritest rosetest testprilib
 define LIBPRI_INSTALL_A
 	$(INSTALL) -D -m 0644 $(@D)/libpri.a $(1)/usr/lib/libpri.a
 endef
@@ -24,13 +25,12 @@ endif
 
 ifneq ($(BR2_STATIC_LIBS),y)
 LIBPRI_LIBS += libpri.so.1.4
+LIBPRI_UTILS += pridump
 define LIBPRI_INSTALL_SO
 	$(INSTALL) -D -m 0644 $(@D)/libpri.so.1.4 $(1)/usr/lib/libpri.so.1.4
 	ln -sf libpri.so.1.4 $(1)/usr/lib/libpri.so
 endef
 endif
-
-LIBPRI_UTILS = pridump pritest rosetest testprilib
 
 define LIBPRI_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE1) $(TARGET_CONFIGURE_OPTS) \

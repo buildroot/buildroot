@@ -1,0 +1,108 @@
+From 0d314c4a04ef1b86a1ea66107b2d1a8d1bcd93b9 Mon Sep 17 00:00:00 2001
+From: Simon Ser <contact@emersion.fr>
+Date: Mon, 10 Jan 2022 14:51:55 +0100
+Subject: [PATCH] build: don't rely on implicit GNU extensions
+
+Currently libwayland assumes GNU extensions will be available, but
+doesn't define the C standard to use. Instead, let's unconditionally
+enable POSIX extensions, and enable GNU extensions on a case-by-case
+basis as needed.
+
+Signed-off-by: Simon Ser <contact@emersion.fr>
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[james.hilliard1@gmail.com: backport from upstream commit
+0d314c4a04ef1b86a1ea66107b2d1a8d1bcd93b9]
+---
+ cursor/xcursor.c        |  1 +
+ meson.build             | 10 ++++++++--
+ tests/display-test.c    |  1 +
+ tests/event-loop-test.c |  1 +
+ tests/fixed-test.c      |  1 +
+ 5 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/cursor/xcursor.c b/cursor/xcursor.c
+index 0506680..188be7c 100644
+--- a/cursor/xcursor.c
++++ b/cursor/xcursor.c
+@@ -23,6 +23,7 @@
+  * SOFTWARE.
+  */
+ 
++#define _GNU_SOURCE
+ #include "xcursor.h"
+ #include <stdio.h>
+ #include <stdlib.h>
+diff --git a/meson.build b/meson.build
+index 07bbd29..cab267e 100644
+--- a/meson.build
++++ b/meson.build
+@@ -14,6 +14,12 @@ config_h = configuration_data()
+ config_h.set_quoted('PACKAGE', meson.project_name())
+ config_h.set_quoted('PACKAGE_VERSION', meson.project_version())
+ 
++cc_args = []
++if host_machine.system() != 'freebsd'
++	cc_args += ['-D_POSIX_C_SOURCE=200809L']
++endif
++add_project_arguments(cc_args, language: 'c')
++
+ compiler_flags = [
+ 	'-Wno-unused-parameter',
+ 	'-Wstrict-prototypes',
+@@ -79,7 +85,7 @@ if get_option('libraries')
+ 	]
+ 
+ 	foreach d: decls
+-		if not cc.has_header_symbol(d['header'], d['symbol'], dependencies: epoll_dep)
++		if not cc.has_header_symbol(d['header'], d['symbol'], dependencies: epoll_dep, args: cc_args)
+ 			error('@0@ is needed to compile Wayland libraries'.format(d['symbol']))
+ 		endif
+ 	endforeach
+@@ -87,7 +93,7 @@ if get_option('libraries')
+ 	rt_dep = []
+ 	if not cc.has_function('clock_gettime', prefix: '#include <time.h>')
+ 		rt_dep = cc.find_library('rt')
+-		if not cc.has_function('clock_gettime', prefix: '#include <time.h>', dependencies: rt_dep)
++		if not cc.has_function('clock_gettime', prefix: '#include <time.h>', dependencies: rt_dep, args: cc_args)
+ 			error('clock_gettime not found')
+ 		endif
+ 	endif
+diff --git a/tests/display-test.c b/tests/display-test.c
+index 763adc9..a6f410d 100644
+--- a/tests/display-test.c
++++ b/tests/display-test.c
+@@ -24,6 +24,7 @@
+  * SOFTWARE.
+  */
+ 
++#define _GNU_SOURCE
+ #include <stdbool.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+diff --git a/tests/event-loop-test.c b/tests/event-loop-test.c
+index 9d43c91..a51ba8f 100644
+--- a/tests/event-loop-test.c
++++ b/tests/event-loop-test.c
+@@ -24,6 +24,7 @@
+  * SOFTWARE.
+  */
+ 
++#define _GNU_SOURCE
+ #include <stdlib.h>
+ #include <stdint.h>
+ #include <assert.h>
+diff --git a/tests/fixed-test.c b/tests/fixed-test.c
+index 47a4dae..0b58797 100644
+--- a/tests/fixed-test.c
++++ b/tests/fixed-test.c
+@@ -23,6 +23,7 @@
+  * SOFTWARE.
+  */
+ 
++#define _GNU_SOURCE
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <assert.h>
+-- 
+2.25.1
+

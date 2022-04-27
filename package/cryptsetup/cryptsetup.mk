@@ -19,6 +19,7 @@ CRYPTSETUP_CPE_ID_VENDOR = cryptsetup_project
 CRYPTSETUP_INSTALL_STAGING = YES
 
 # 0001-Add-check-program-for-symver-attribute.patch
+# 0002-configure.ac-replace-argp_usage-check.patch
 CRYPTSETUP_AUTORECONF = YES
 
 CRYPTSETUP_CONF_ENV += LDFLAGS="$(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)"

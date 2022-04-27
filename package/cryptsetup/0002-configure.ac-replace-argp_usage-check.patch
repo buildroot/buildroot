@@ -1,0 +1,40 @@
+From 21515ad7a3b000ee6038f82bbb428ab527002bbd Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 24 Apr 2022 19:47:53 +0200
+Subject: [PATCH] configure.ac: replace argp_usage check
+
+Replace check for argp_usage by argp_parse as argp_usage is not used by
+cryptsetup. Moreover, this will fix the following build failure raised
+with argp-standalone in version 1.4.0 and
+https://github.com/ericonr/argp-standalone/commit/e7ff8d9787d2641e55f6ac4afb777da60ef98043:
+
+/home/autobuild/autobuild/instance-10/output-1/host/lib/gcc/i686-buildroot-linux-musl/10.3.0/../../../../i686-buildroot-linux-musl/bin/ld: tokens/ssh/cryptsetup_ssh-cryptsetup-ssh.o: in function `parse_opt':
+cryptsetup-ssh.c:(.text+0x14c): undefined reference to `argp_state_help'
+/home/autobuild/autobuild/instance-10/output-1/host/lib/gcc/i686-buildroot-linux-musl/10.3.0/../../../../i686-buildroot-linux-musl/bin/ld: tokens/ssh/cryptsetup_ssh-cryptsetup-ssh.o: in function `main':
+cryptsetup-ssh.c:(.text+0x7db): undefined reference to `argp_parse'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/cb3fdae4e0da603f304501f65127800346cb3915
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://gitlab.com/cryptsetup/cryptsetup/-/issues/737]
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index d31fb0a7..e47179f2 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -413,7 +413,7 @@ if test "x$enable_ssh_token" = "xyes"; then
+ 	AC_CHECK_DECLS([ssh_session_is_known_server], [], [], [#include <libssh/libssh.h>])
+ 	AC_CHECK_HEADER([argp.h], [], AC_MSG_ERROR([You need argp library.]))
+ 	saved_LIBS=$LIBS
+-	AC_SEARCH_LIBS([argp_usage],[argp])
++	AC_SEARCH_LIBS([argp_parse],[argp])
+ 	AC_SUBST(ARGP_LIBS, $LIBS)
+ 	LIBS=$saved_LIBS
+ fi
+-- 
+2.35.1
+
