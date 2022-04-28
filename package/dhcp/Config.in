@@ -25,6 +25,14 @@ config BR2_PACKAGE_DHCP_SERVER_DELAYED_ACK
 	help
 	  Enable delayed ACK feature in the ISC DHCP server.
 
+config BR2_PACKAGE_DHCP_SERVER_ENABLE_PARANOIA
+	bool "Enable paranoia options"
+	depends on BR2_PACKAGE_DHCP_SERVER
+	help
+	  Add option --enable-paranoia to configure script. This
+	  activates additional server options (-user, -group and
+	  -chroot) to make dhcp server more secure.
+
 config BR2_PACKAGE_DHCP_RELAY
 	bool "dhcp relay"
 	help
