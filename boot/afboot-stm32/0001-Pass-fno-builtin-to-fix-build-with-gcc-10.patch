@@ -1,4 +1,4 @@
-From 5448f328ff63a6ca4a64519c2f1dfc63a33df4b7 Mon Sep 17 00:00:00 2001
+From 9901603e18524c4c52fd1dd47bda4ab4016628fc Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Date: Thu, 10 Sep 2020 11:37:33 +0200
 Subject: [PATCH] Pass -fno-builtin to fix build with gcc 10
@@ -23,7 +23,7 @@ stm32f429i-disco.c:(.text.reset+0x1a): undefined reference to `memcpy'
 /home/thomas/projets/buildroot/output/host/opt/ext-toolchain/bin/../arm-buildroot-uclinux-uclibcgnueabi/bin/ld.real: stm32f429i-disco.c:(.text.reset+0x34): undefined reference to `memset'
 make[1]: *** [Makefile:26: stm32f429i-disco] Error 1
 
-Upstream: https://github.com/mcoquelin-stm32/afboot-stm32/pull/9
+Upstream: https://github.com/mcoquelin-stm32/afboot-stm32/pull/11
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 ---
  Makefile | 1 +
@@ -42,5 +42,5 @@ index f699176..1e8557d 100644
  
  obj-y += gpio.o mpu.o qspi.o start_kernel.o
 -- 
-2.26.2
+2.35.1
 
