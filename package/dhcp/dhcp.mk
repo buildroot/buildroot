@@ -76,10 +76,14 @@ endif
 
 ifeq ($(BR2_PACKAGE_DHCP_SERVER_DELAYED_ACK),y)
 DHCP_CONF_OPTS += --enable-delayed-ack
+else
+DHCP_CONF_OPTS += --disable-delayed-ack
 endif
 
 ifeq ($(BR2_PACKAGE_DHCP_SERVER_ENABLE_PARANOIA),y)
 DHCP_CONF_OPTS += --enable-paranoia
+else
+DHCP_CONF_OPTS += --disable-paranoia
 endif
 
 define DHCP_INSTALL_LIBS
