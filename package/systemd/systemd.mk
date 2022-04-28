@@ -603,6 +603,8 @@ endef
 
 define SYSTEMD_USERS
 	# udev user groups
+	- - render -1 * - - - DRI rendering nodes
+	- - sgx -1 * - - - SGX device nodes
 	# systemd user groups
 	- - systemd-journal -1 * - - - Journal
 	$(SYSTEMD_REMOTE_USER)
