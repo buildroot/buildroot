@@ -1,4 +1,4 @@
-From 26165906f85d82f0a4456f34b5c60fcaaef48535 Mon Sep 17 00:00:00 2001
+From d78acba6510527aaa01a41eaf4c931f7a57e5f44 Mon Sep 17 00:00:00 2001
 From: Romain Naour <romain.naour@smile.fr>
 Date: Wed, 5 Feb 2020 10:31:32 +0100
 Subject: [PATCH] elf2flt: handle binutils >= 2.34
@@ -30,7 +30,7 @@ Signed-off-by: Romain Naour <romain.naour@smile.fr>
  2 files changed, 61 insertions(+), 36 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index e82eb1d..cf7dea8 100644
+index b7db2cb..fdc0876 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -229,6 +229,22 @@ AC_CHECK_FUNCS([ \
@@ -57,7 +57,7 @@ index e82eb1d..cf7dea8 100644
  	CFLAGS="-Wall $CFLAGS"
  	if test "$werror" = 1 ; then
 diff --git a/elf2flt.c b/elf2flt.c
-index b93aecd..3bcf4fe 100644
+index 7ac0617..ea6b5a1 100644
 --- a/elf2flt.c
 +++ b/elf2flt.c
 @@ -149,6 +149,17 @@ const char *elf2flt_progname;
@@ -100,7 +100,7 @@ index b93aecd..3bcf4fe 100644
  
  	if (verbose)
  		printf("SECTION: %s [%p]: flags=0x%x vma=0x%"PRIx32"\n",
-@@ -442,7 +451,7 @@ output_relocs (
+@@ -443,7 +452,7 @@ output_relocs (
  	  continue;
  	if (verbose)
  	  printf(" RELOCS: %s [%p]: flags=0x%x vma=0x%"BFD_VMA_FMT"x\n",
@@ -109,7 +109,7 @@ index b93aecd..3bcf4fe 100644
    	if ((r->flags & SEC_RELOC) == 0)
    	  continue;
  	relsize = bfd_get_reloc_upper_bound(rel_bfd, r);
-@@ -694,7 +703,7 @@ output_relocs (
+@@ -695,7 +704,7 @@ output_relocs (
  				case R_BFIN_RIMM16:
  				case R_BFIN_LUIMM16:
  				case R_BFIN_HUIMM16:
@@ -118,7 +118,7 @@ index b93aecd..3bcf4fe 100644
  				    sym_addr += sym_vma + q->addend;
  
  				    if (weak_und_symbol(sym_section->name, (*(q->sym_ptr_ptr))))
-@@ -727,7 +736,7 @@ output_relocs (
+@@ -728,7 +737,7 @@ output_relocs (
  				    break;
  
  				case R_BFIN_BYTE4_DATA:
@@ -127,7 +127,7 @@ index b93aecd..3bcf4fe 100644
  				    sym_addr += sym_vma + q->addend;
  
  				    if (weak_und_symbol (sym_section->name, (*(q->sym_ptr_ptr))))
-@@ -885,7 +894,7 @@ output_relocs (
+@@ -886,7 +895,7 @@ output_relocs (
  #if defined(TARGET_m68k)
  				case R_68K_32:
  					relocation_needed = 1;
@@ -136,7 +136,7 @@ index b93aecd..3bcf4fe 100644
  					sym_addr += sym_vma + q->addend;
  					break;
  				case R_68K_PC16:
-@@ -910,7 +919,7 @@ output_relocs (
+@@ -911,7 +920,7 @@ output_relocs (
  							q->address, sym_addr,
  							(*p)->howto->rightshift,
  							*(uint32_t *)r_mem);
@@ -145,7 +145,7 @@ index b93aecd..3bcf4fe 100644
  					sym_addr += sym_vma + q->addend;
  					break;
  				case R_ARM_GOT32:
-@@ -938,7 +947,7 @@ output_relocs (
+@@ -939,7 +948,7 @@ output_relocs (
  #ifdef TARGET_v850
  				case R_V850_ABS32:
  					relocation_needed = 1;
@@ -154,7 +154,7 @@ index b93aecd..3bcf4fe 100644
  					sym_addr += sym_vma + q->addend;
  					break;
  				case R_V850_ZDA_16_16_OFFSET:
-@@ -960,7 +969,7 @@ output_relocs (
+@@ -961,7 +970,7 @@ output_relocs (
  					sym_addr = (*(q->sym_ptr_ptr))->value;
  					q->address -= 1;
  					r_mem -= 1; /* tracks q->address */
@@ -163,7 +163,7 @@ index b93aecd..3bcf4fe 100644
  					sym_addr += sym_vma + q->addend;
  					sym_addr |= (*(unsigned char *)r_mem<<24);
  					break;
-@@ -973,7 +982,7 @@ output_relocs (
+@@ -974,7 +983,7 @@ output_relocs (
  					/* Absolute symbol done not relocation */
  					relocation_needed = !bfd_is_abs_section(sym_section);
  					sym_addr = (*(q->sym_ptr_ptr))->value;
@@ -172,7 +172,7 @@ index b93aecd..3bcf4fe 100644
  					sym_addr += sym_vma + q->addend;
  					break;
  				case R_H8_DIR32:
-@@ -986,7 +995,7 @@ output_relocs (
+@@ -987,7 +996,7 @@ output_relocs (
  					}
  					relocation_needed = 1;
  					sym_addr = (*(q->sym_ptr_ptr))->value;
@@ -181,7 +181,7 @@ index b93aecd..3bcf4fe 100644
  					sym_addr += sym_vma + q->addend;
  					break;
  				case R_H8_PCREL16:
-@@ -1012,7 +1021,7 @@ output_relocs (
+@@ -1013,7 +1022,7 @@ output_relocs (
  #ifdef TARGET_microblaze
  				case R_MICROBLAZE_64:
  					/* work out the relocation */
@@ -190,7 +190,7 @@ index b93aecd..3bcf4fe 100644
  					sym_addr += sym_vma + q->addend;
  					/* Write relocated pointer back */
  					r_mem[2] = (sym_addr >> 24) & 0xff;
-@@ -1026,7 +1035,7 @@ output_relocs (
+@@ -1027,7 +1036,7 @@ output_relocs (
  					pflags = 0x80000000;
  					break;
  				case R_MICROBLAZE_32:
@@ -199,7 +199,7 @@ index b93aecd..3bcf4fe 100644
  					sym_addr += sym_vma + q->addend;
  					relocation_needed = 1;
  					break;
-@@ -1058,7 +1067,7 @@ output_relocs (
+@@ -1059,7 +1068,7 @@ output_relocs (
  				case R_NIOS2_BFD_RELOC_32:
  					relocation_needed = 1;
  					pflags = (FLAT_NIOS2_R_32 << 28);
@@ -208,25 +208,25 @@ index b93aecd..3bcf4fe 100644
  					sym_addr += sym_vma + q->addend;
  					/* modify target, in target order */
  					*(unsigned long *)r_mem = htoniosl(sym_addr);
-@@ -1068,7 +1077,7 @@ output_relocs (
+@@ -1069,7 +1078,7 @@ output_relocs (
  					unsigned long exist_val;
  					relocation_needed = 1;
  					pflags = (FLAT_NIOS2_R_CALL26 << 28);
 -					sym_vma = bfd_section_vma(abs_bfd, sym_section);
 +					sym_vma = elf2flt_bfd_section_vma(sym_section);
  					sym_addr += sym_vma + q->addend;
- 					
+ 
  					/* modify target, in target order */
-@@ -1099,7 +1108,7 @@ output_relocs (
+@@ -1100,7 +1109,7 @@ output_relocs (
  								? FLAT_NIOS2_R_HIADJ_LO : FLAT_NIOS2_R_HI_LO;
  							pflags <<= 28;
- 						
+ 
 -							sym_vma = bfd_section_vma(abs_bfd, sym_section);
-+							sym_vma = elf2flt_bfd_section_vma(sym_section);
++							sym_vma = elf2flt_bfd_section_vma(abs_bfd, sym_section);
  							sym_addr += sym_vma + q->addend;
  
  							/* modify high 16 bits, in target order */
-@@ -1132,7 +1141,7 @@ output_relocs (
+@@ -1133,7 +1142,7 @@ output_relocs (
  						goto NIOS2_RELOC_ERR;
  					}
  					/* _gp holds a absolute value, otherwise the ld cannot generate correct code */
@@ -235,7 +235,7 @@ index b93aecd..3bcf4fe 100644
  					//printf("sym=%x, %d, _gp=%x, %d\n", sym_addr+sym_vma, sym_addr+sym_vma, gp, gp);
  					sym_addr += sym_vma + q->addend;
  					sym_addr -= gp;
-@@ -1213,7 +1222,7 @@ NIOS2_RELOC_ERR:
+@@ -1214,7 +1223,7 @@ NIOS2_RELOC_ERR:
  				case R_SPARC_32:
  				case R_SPARC_UA32:
  					relocation_needed = 1;
@@ -244,7 +244,7 @@ index b93aecd..3bcf4fe 100644
  					sym_addr += sym_vma + q->addend;
  					break;
  				case R_SPARC_PC22:
-@@ -1232,7 +1241,7 @@ NIOS2_RELOC_ERR:
+@@ -1233,7 +1242,7 @@ NIOS2_RELOC_ERR:
  				case R_SPARC_HI22:
  					relocation_needed = 1;
  					pflags = 0x80000000;
@@ -253,7 +253,7 @@ index b93aecd..3bcf4fe 100644
  					sym_addr += sym_vma + q->addend;
  					sym_addr |= (
  						htonl(*(uint32_t *)r_mem)
-@@ -1242,7 +1251,7 @@ NIOS2_RELOC_ERR:
+@@ -1243,7 +1252,7 @@ NIOS2_RELOC_ERR:
  				case R_SPARC_LO10:
  					relocation_needed = 1;
  					pflags = 0x40000000;
@@ -262,7 +262,7 @@ index b93aecd..3bcf4fe 100644
  					sym_addr += sym_vma + q->addend;
  					sym_addr &= 0x000003ff;
  					sym_addr |= (
-@@ -1256,7 +1265,7 @@ NIOS2_RELOC_ERR:
+@@ -1257,7 +1266,7 @@ NIOS2_RELOC_ERR:
  #ifdef TARGET_sh
  				case R_SH_DIR32:
  					relocation_needed = 1;
@@ -271,7 +271,7 @@ index b93aecd..3bcf4fe 100644
  					sym_addr += sym_vma + q->addend;
  					break;
  				case R_SH_REL32:
-@@ -1288,7 +1297,7 @@ NIOS2_RELOC_ERR:
+@@ -1289,7 +1298,7 @@ NIOS2_RELOC_ERR:
  				case R_E1_CONST31:
  						relocation_needed = 1;
  						DBG_E1("Handling Reloc <CONST31>\n");
@@ -280,7 +280,7 @@ index b93aecd..3bcf4fe 100644
  						DBG_E1("sec_vma : [0x%x], sym_addr : [0x%x], q->address : [0x%x]\n",
  										sec_vma, sym_addr, q->address);
  						sym_addr = sec_vma + sym_addr;
-@@ -1303,7 +1312,7 @@ NIOS2_RELOC_ERR:
+@@ -1304,7 +1313,7 @@ NIOS2_RELOC_ERR:
  						relocation_needed = 0;
  						DBG_E1("Handling Reloc <CONST31_PCREL>\n");
  						DBG_E1("DONT RELOCATE AT LOADING\n");
@@ -289,7 +289,7 @@ index b93aecd..3bcf4fe 100644
  						DBG_E1("sec_vma : [0x%x], sym_addr : [0x%x], q->address : [0x%x]\n",
  										sec_vma, sym_addr, q->address);
  						sym_addr =  sec_vma + sym_addr;
-@@ -1330,7 +1339,7 @@ NIOS2_RELOC_ERR:
+@@ -1331,7 +1340,7 @@ NIOS2_RELOC_ERR:
  						relocation_needed = 0;
  						DBG_E1("Handling Reloc <DIS29W_PCREL>\n");
  						DBG_E1("DONT RELOCATE AT LOADING\n");
@@ -298,7 +298,7 @@ index b93aecd..3bcf4fe 100644
  						DBG_E1("sec_vma : [0x%x], sym_addr : [0x%x], q->address : [0x%x]\n",
  										sec_vma, sym_addr, q->address);
  						sym_addr =  sec_vma + sym_addr;
-@@ -1363,7 +1372,7 @@ NIOS2_RELOC_ERR:
+@@ -1364,7 +1373,7 @@ NIOS2_RELOC_ERR:
  						DBG_E1("Handling Reloc <DIS29B>\n");
  DIS29_RELOCATION:
  						relocation_needed = 1;
@@ -307,7 +307,7 @@ index b93aecd..3bcf4fe 100644
  						DBG_E1("sec_vma : [0x%x], sym_addr : [0x%08x]\n",
  										sec_vma, sym_addr);
  						sym_addr =  sec_vma + sym_addr;
-@@ -1380,7 +1389,7 @@ DIS29_RELOCATION:
+@@ -1381,7 +1390,7 @@ DIS29_RELOCATION:
  						relocation_needed = 0;
  						DBG_E1("Handling Reloc <IMM32_PCREL>\n");
  						DBG_E1("DONT RELOCATE AT LOADING\n");
@@ -316,7 +316,7 @@ index b93aecd..3bcf4fe 100644
  						DBG_E1("sec_vma : [0x%x], sym_addr : [0x%x]\n",
  										sec_vma, sym_addr);
  						sym_addr =  sec_vma + sym_addr;
-@@ -1406,7 +1415,7 @@ DIS29_RELOCATION:
+@@ -1407,7 +1416,7 @@ DIS29_RELOCATION:
  				case R_E1_IMM32:
  						relocation_needed = 1;
  						DBG_E1("Handling Reloc <IMM32>\n");
@@ -325,7 +325,7 @@ index b93aecd..3bcf4fe 100644
  						DBG_E1("sec_vma : [0x%x], sym_addr : [0x%x]\n",
  										sec_vma, sym_addr);
  						sym_addr =  sec_vma + sym_addr;
-@@ -1422,7 +1431,7 @@ DIS29_RELOCATION:
+@@ -1423,7 +1432,7 @@ DIS29_RELOCATION:
  				case R_E1_WORD:
  						relocation_needed = 1;
  						DBG_E1("Handling Reloc <WORD>\n");
@@ -334,7 +334,7 @@ index b93aecd..3bcf4fe 100644
  						DBG_E1("sec_vma : [0x%x], sym_addr : [0x%x]\n",
  										sec_vma, sym_addr);
  						sym_addr =  sec_vma + sym_addr;
-@@ -1449,7 +1458,7 @@ DIS29_RELOCATION:
+@@ -1450,7 +1459,7 @@ DIS29_RELOCATION:
  			}
  
  			sprintf(&addstr[0], "+0x%lx", sym_addr - (*(q->sym_ptr_ptr))->value -
@@ -343,7 +343,7 @@ index b93aecd..3bcf4fe 100644
  
  
  			/*
-@@ -1887,8 +1896,8 @@ int main(int argc, char *argv[])
+@@ -1890,8 +1899,8 @@ int main(int argc, char *argv[])
      } else
        continue;
  
@@ -354,8 +354,8 @@ index b93aecd..3bcf4fe 100644
  
      if (sec_vma < *vma) {
        if (*len > 0)
-@@ -1913,7 +1922,7 @@ int main(int argc, char *argv[])
-     if (s->flags & SEC_CODE) 
+@@ -1920,7 +1929,7 @@ int main(int argc, char *argv[])
+                     (SEC_DATA | SEC_READONLY | SEC_RELOC)))
        if (!bfd_get_section_contents(abs_bfd, s,
  				   text + (s->vma - text_vma), 0,
 -				   bfd_section_size(abs_bfd, s)))
@@ -363,8 +363,8 @@ index b93aecd..3bcf4fe 100644
        {
  	fatal("read error section %s", s->name);
        }
-@@ -1939,7 +1948,7 @@ int main(int argc, char *argv[])
-     if (s->flags & SEC_DATA) 
+@@ -1950,7 +1959,7 @@ int main(int argc, char *argv[])
+                     (SEC_READONLY | SEC_RELOC)))
        if (!bfd_get_section_contents(abs_bfd, s,
  				   data + (s->vma - data_vma), 0,
 -				   bfd_section_size(abs_bfd, s)))
@@ -373,5 +373,5 @@ index b93aecd..3bcf4fe 100644
  	fatal("read error section %s", s->name);
        }
 -- 
-2.25.4
+2.35.1
 
