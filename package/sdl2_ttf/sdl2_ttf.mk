@@ -11,7 +11,7 @@ SDL2_TTF_LICENSE = Zlib
 SDL2_TTF_LICENSE_FILES = COPYING.txt
 SDL2_TTF_INSTALL_STAGING = YES
 SDL2_TTF_DEPENDENCIES = sdl2 freetype host-pkgconf
-SDL2_TTF_CONF_OPTS = --disable-freetype-builtin
+SDL2_TTF_CONF_OPTS = --disable-freetype-builtin --disable-harfbuzz-builtin
 
 ifeq ($(BR2_PACKAGE_HARFBUZZ),y)
 SDL2_TTF_DEPENDENCIES += harfbuzz
