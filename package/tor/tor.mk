@@ -11,7 +11,6 @@ TOR_LICENSE_FILES = LICENSE
 TOR_CPE_ID_VENDOR = torproject
 TOR_SELINUX_MODULES = tor
 TOR_DEPENDENCIES = libevent openssl zlib
-TOR_AUTORECONF = YES
 
 TOR_CONF_OPTS = \
 	--disable-gcc-hardening \
@@ -64,8 +63,12 @@ endif
 TOR_CONF_ENV = ac_cv_prog_cc_c99='-std=gnu99'
 
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
-TOR_CONF_ENV += LIBS=-latomic
+TOR_LIBS += -latomic
 endif
+ifeq ($(BR2_STATIC_LIBS),y)
+TOR_LIBS += -lz
+endif
+TOR_CONF_ENV += LIBS="$(TOR_LIBS)"
 
 define TOR_INSTALL_CONF
 	$(INSTALL) -D -m 644 $(@D)/src/config/torrc.minimal \
