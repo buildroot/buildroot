@@ -13,6 +13,7 @@ TBB_CPE_ID_VENDOR = intel
 TBB_CPE_ID_PRODUCT = threading_building_blocks
 
 TBB_CONF_OPTS = \
+	-DCMAKE_BUILD_TYPE=Release \
 	-DTBB_STRICT=OFF \
 	-DTBB_TEST=OFF
 
