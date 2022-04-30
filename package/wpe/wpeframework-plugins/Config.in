@@ -90,6 +90,7 @@ if BR2_PACKAGE_WPEFRAMEWORK_AVS
   config BR2_PACKAGE_WPEFRAMEWORK_AVS_ENABLE_SMART_SCREEN_SUPPORT
     bool "Enable Smart Screen Support"
     select BR2_PACKAGE_ALEXA_SMART_SCREEN_SDK
+    select BR2_PACKAGE_WPEFRAMEWORK_AVS_ENABLE_KWD_SUPPORT
     default y
     help
       Compile in the Smart Screen support
@@ -785,6 +786,12 @@ config BR2_PACKAGE_WPEFRAMEWORK_MONITOR_NETFLIX
     default "614400"
 
 endif
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_PERFORMANCEMETRICS
+    select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
+    bool "PerformanceMetrics"
+    help
+      Performance Metrics Plugin
 
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_NETWORKCONTROL
     select BR2_PACKAGE_WPEFRAMEWORK_PLUGINS

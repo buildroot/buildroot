@@ -1,10 +1,9 @@
 menuconfig BR2_PACKAGE_ALEXA_SMART_SCREEN_SDK
     bool "alexa-smart-screen-sdk"
+    select BR2_PACKAGE_APL_CLIENT_LIBRARY
     select BR2_PACKAGE_APL_CORE_LIBRARY
     select BR2_PACKAGE_AVS_DEVICE_SDK
-    select BR2_PACKAGE_WEBSOCKETPP
-    select BR2_PACKAGE_ASIO
-    select BR2_PACKAGE_RAPIDJSON
+    select BR2_PACKAGE_HOST_NODEJS
     help
         The Alexa Smart Screen SDK enables device makers to build screen-based products that
         complement Alexa voice responses with rich visuals.
@@ -32,7 +31,7 @@ endchoice # BR2_PACKAGE_ALEXA_SMART_SCREEN_SDK_BUILD_TYPE
 
 config BR2_PACKAGE_ALEXA_SMART_SCREEN_SDK_ENABLE_JS_GUICLIENT
     bool "Enable JS GUIClient"
-    default n
+    default y
     help
         Builds the default GUIClient application
 

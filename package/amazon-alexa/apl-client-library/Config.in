@@ -1,0 +1,9 @@
+config BR2_PACKAGE_APL_CLIENT_LIBRARY
+    bool "apl-client-library"
+    select BR2_PACKAGE_ASIO
+    select BR2_PACKAGE_WEBSOCKETPP
+    help
+        APL Client Library provides communication between APLViewhostWeb and apl-core-library.
+        Its job is making sure that APL Documents are correctly rendered and getting updated
+        based on user's interaction.
+
