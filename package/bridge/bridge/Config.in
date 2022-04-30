@@ -67,6 +67,13 @@ config BR2_PACKAGE_BRIDGE_OOM_ADJUST
 	string "oom-adjust"
 	default ""
 
+config BR2_PACKAGE_BRIDGE_MESSAGING
+    bool "Use messaging i.s.o. tracing"
+    default n
+    help
+      Use messaging which replaces the tracing + logging into one
+      frmaework to relay the information to the parent process.
+
 source "package/bridge/bridge-devtools/Config.in"
 
 endmenu
