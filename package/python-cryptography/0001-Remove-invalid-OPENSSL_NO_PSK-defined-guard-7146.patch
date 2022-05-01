@@ -1,0 +1,56 @@
+From 891a06101d7b48c61d0d3174f79e9962b995770e Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Fri, 29 Apr 2022 16:06:10 -0600
+Subject: [PATCH] Remove invalid OPENSSL_NO_PSK defined guard (#7146)
+
+These symbols are not conditional on OPENSSL_NO_PSK in ssl.h
+
+SSL_CTX_set_psk_find_session_callback:
+https://github.com/openssl/openssl/blob/openssl-3.0.2/include/openssl/ssl.h.in#L847
+
+SSL_CTX_set_psk_use_session_callback:
+https://github.com/openssl/openssl/blob/openssl-3.0.2/include/openssl/ssl.h.in#L850-L851
+
+As such we can not guard the fallback with defined(OPENSSL_NO_PSK)
+as this will result in redeclaration errors.
+
+Fixes:
+build/temp.linux-sparc64-3.10/_openssl.c:2286:8: error: 'SSL_CTX_set_psk_find_session_callback' redeclared as different kind of symbol
+ 2286 | void (*SSL_CTX_set_psk_find_session_callback)(SSL_CTX *,
+      |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from build/temp.linux-sparc64-3.10/_openssl.c:832:
+/home/giuliobenetti/autobuild/run/instance-0/output-1/host/sparc64-buildroot-linux-gnu/sysroot/usr/include/openssl/ssl.h:855:6: note: previous declaration of 'SSL_CTX_set_psk_find_session_callback' was here
+  855 | void SSL_CTX_set_psk_find_session_callback(SSL_CTX *ctx,
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+build/temp.linux-sparc64-3.10/_openssl.c:2293:8: error: 'SSL_CTX_set_psk_use_session_callback' redeclared as different kind of symbol
+ 2293 | void (*SSL_CTX_set_psk_use_session_callback)(SSL_CTX *,
+      |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from build/temp.linux-sparc64-3.10/_openssl.c:832:
+/home/giuliobenetti/autobuild/run/instance-0/output-1/host/sparc64-buildroot-linux-gnu/sysroot/usr/include/openssl/ssl.h:858:6: note: previous declaration of 'SSL_CTX_set_psk_use_session_callback' was here
+  858 | void SSL_CTX_set_psk_use_session_callback(SSL_CTX *ctx,
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[james.hilliard1@gmail.com: backport from upstream commit
+891a06101d7b48c61d0d3174f79e9962b995770e]
+---
+ src/_cffi_src/openssl/ssl.py | 3 +--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/src/_cffi_src/openssl/ssl.py b/src/_cffi_src/openssl/ssl.py
+index 1314b85b0..d036e4f2d 100644
+--- a/src/_cffi_src/openssl/ssl.py
++++ b/src/_cffi_src/openssl/ssl.py
+@@ -785,8 +785,7 @@ void (*SSL_CTX_set_cookie_verify_cb)(SSL_CTX *,
+ static const long Cryptography_HAS_SSL_COOKIE = 1;
+ #endif
+ #if CRYPTOGRAPHY_OPENSSL_LESS_THAN_111 || \
+-    CRYPTOGRAPHY_IS_LIBRESSL || CRYPTOGRAPHY_IS_BORINGSSL || \
+-    defined(OPENSSL_NO_PSK)
++    CRYPTOGRAPHY_IS_LIBRESSL || CRYPTOGRAPHY_IS_BORINGSSL
+ static const long Cryptography_HAS_PSK_TLSv1_3 = 0;
+ void (*SSL_CTX_set_psk_find_session_callback)(SSL_CTX *,
+                                            int (*)(
+-- 
+2.25.1
+

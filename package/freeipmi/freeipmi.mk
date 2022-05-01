@@ -20,7 +20,8 @@ FREEIPMI_CONF_OPTS = --without-random-device
 # Work around for uClibc or musl toolchains which lack argp_*()
 # functions.
 ifeq ($(BR2_PACKAGE_ARGP_STANDALONE),y)
-FREEIPMI_DEPENDENCIES += argp-standalone
+FREEIPMI_DEPENDENCIES += argp-standalone $(TARGET_NLS_DEPENDENCIES)
+FREEIPMI_CONF_ENV = LIBS=$(TARGET_NLS_LIBS)
 endif
 
 ifeq ($(BR2_PACKAGE_LIBGCRYPT),y)

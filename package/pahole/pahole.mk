@@ -4,14 +4,14 @@
 #
 ################################################################################
 
-PAHOLE_VERSION = v1.23
-PAHOLE_SITE = https://git.kernel.org/pub/scm/devel/pahole/pahole.git
-PAHOLE_SITE_METHOD = git
-# pahole contains git submodule and relies on them to be built.
-PAHOLE_GIT_SUBMODULES = YES
-HOST_PAHOLE_DEPENDENCIES = host-elfutils
+PAHOLE_VERSION = 73383b3a39afe86b22e098773e47b8546c48a649
+PAHOLE_SITE = https://git.kernel.org/pub/scm/devel/pahole/pahole.git/snapshot
+HOST_PAHOLE_DEPENDENCIES = \
+	host-elfutils \
+	host-libbpf
 # Defining __LIB is needed to build pahole.
-HOST_PAHOLE_CONF_OPTS = -D__LIB=lib
+# Set LIBBPF_EMBEDDED to OFF to use host-libbpf.
+HOST_PAHOLE_CONF_OPTS = -D__LIB=lib -DLIBBPF_EMBEDDED=OFF
 PAHOLE_LICENSE = GPL-2.0
 PAHOLE_LICENSE_FILES = COPYING
 

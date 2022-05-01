@@ -1,0 +1,96 @@
+From 887d618239312cc8c11e41c45492eee02a8f28a2 Mon Sep 17 00:00:00 2001
+From: Theo Buehler <tb@openbsd.org>
+Date: Tue, 11 Jan 2022 21:14:24 +0100
+Subject: [PATCH] Use accessors for DSA and RSA objects
+
+In the upcoming LibreSSL version 3.5, the DSA and RSA structs will
+become opaque, so we should use the OpenSSL 1.1 setters and getters
+to fix the build.  The relevant API has been available since
+LibreSSL 2.7. The last LibreSSL version (2.6) not having these
+accessors was EOL late 2018, so no users should be affected by this
+change.
+
+[Retrieved from:
+https://github.com/NLnetLabs/ldns/commit/887d618239312cc8c11e41c45492eee02a8f28a2]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ dnssec.c   | 4 ++--
+ host2str.c | 4 ++--
+ keys.c     | 6 +++---
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/dnssec.c b/dnssec.c
+index 63fece52..fbaa518a 100644
+--- a/dnssec.c
++++ b/dnssec.c
+@@ -381,7 +381,7 @@ ldns_key_buf2dsa_raw(const unsigned char* key, size_t len)
+ 		BN_free(Y);
+ 		return NULL;
+ 	}
+-#if OPENSSL_VERSION_NUMBER < 0x10100000 || defined(HAVE_LIBRESSL)
++#if OPENSSL_VERSION_NUMBER < 0x10100000 || (defined(HAVE_LIBRESSL) && LIBRESSL_VERSION_NUMBER < 0x20700000)
+ #ifndef S_SPLINT_S
+ 	dsa->p = P;
+ 	dsa->q = Q;
+@@ -468,7 +468,7 @@ ldns_key_buf2rsa_raw(const unsigned char* key, size_t len)
+ 		BN_free(modulus);
+ 		return NULL;
+ 	}
+-#if OPENSSL_VERSION_NUMBER < 0x10100000 || defined(HAVE_LIBRESSL)
++#if OPENSSL_VERSION_NUMBER < 0x10100000 || (defined(HAVE_LIBRESSL) && LIBRESSL_VERSION_NUMBER < 0x20700000)
+ #ifndef S_SPLINT_S
+ 	rsa->n = modulus;
+ 	rsa->e = exponent;
+diff --git a/host2str.c b/host2str.c
+index a207a913..634c5676 100644
+--- a/host2str.c
++++ b/host2str.c
+@@ -2451,7 +2451,7 @@ ldns_key2buffer_str(ldns_buffer *output, const ldns_key *k)
+ 					const BIGNUM *n=NULL, *e=NULL, *d=NULL,
+ 						*p=NULL, *q=NULL, *dmp1=NULL,
+ 						*dmq1=NULL, *iqmp=NULL;
+-#if OPENSSL_VERSION_NUMBER < 0x10100000 || defined(HAVE_LIBRESSL)
++#if OPENSSL_VERSION_NUMBER < 0x10100000 || (defined(HAVE_LIBRESSL) && LIBRESSL_VERSION_NUMBER < 0x20700000)
+ 					n = rsa->n;
+ 					e = rsa->e;
+ 					d = rsa->d;
+@@ -2504,7 +2504,7 @@ ldns_key2buffer_str(ldns_buffer *output, const ldns_key *k)
+ 				if(1) {
+ 					const BIGNUM *p=NULL, *q=NULL, *g=NULL,
+ 						*priv_key=NULL, *pub_key=NULL;
+-#if OPENSSL_VERSION_NUMBER < 0x10100000 || defined(HAVE_LIBRESSL)
++#if OPENSSL_VERSION_NUMBER < 0x10100000 || (defined(HAVE_LIBRESSL) && LIBRESSL_VERSION_NUMBER < 0x20700000)
+ #ifndef S_SPLINT_S
+ 					p = dsa->p;
+ 					q = dsa->q;
+diff --git a/keys.c b/keys.c
+index 91a3dffd..78bea972 100644
+--- a/keys.c
++++ b/keys.c
+@@ -861,7 +861,7 @@ ldns_key_new_frm_fp_rsa_l(FILE *f, int *line_nr)
+ 	}
+ #endif /* splint */
+ 
+-#if OPENSSL_VERSION_NUMBER < 0x10100000 || defined(HAVE_LIBRESSL)
++#if OPENSSL_VERSION_NUMBER < 0x10100000 || (defined(HAVE_LIBRESSL) && LIBRESSL_VERSION_NUMBER < 0x20700000)
+ # ifndef S_SPLINT_S
+ 	rsa->n = n;
+ 	rsa->e = e;
+@@ -982,7 +982,7 @@ ldns_key_new_frm_fp_dsa_l(FILE *f, ATTR_UNUSED(int *line_nr))
+ 	}
+ #endif /* splint */
+ 
+-#if OPENSSL_VERSION_NUMBER < 0x10100000 || defined(HAVE_LIBRESSL)
++#if OPENSSL_VERSION_NUMBER < 0x10100000 || (defined(HAVE_LIBRESSL) && LIBRESSL_VERSION_NUMBER < 0x20700000)
+ # ifndef S_SPLINT_S
+ 	dsa->p = p;
+ 	dsa->q = q;
+@@ -1660,7 +1660,7 @@ ldns_key_rsa2bin(unsigned char *data, RSA *k, uint16_t *size)
+ 	if (!k) {
+ 		return false;
+ 	}
+-#if OPENSSL_VERSION_NUMBER < 0x10100000 || defined(HAVE_LIBRESSL)
++#if OPENSSL_VERSION_NUMBER < 0x10100000 || (defined(HAVE_LIBRESSL) && LIBRESSL_VERSION_NUMBER < 0x20700000)
+ 	n = k->n;
+ 	e = k->e;
+ #else
