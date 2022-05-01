@@ -266,6 +266,12 @@ config BR2_PACKAGE_PLUGIN_TRACECONTROL
 	help
 	  TraceControl Plugin
 
+config BR2_PACKAGE_PLUGIN_MESSAGECONTROL
+	bool "MessageControl"
+	select BR2_PACKAGE_PLUGIN_COMMON
+	help
+	  MessageControl Plugin
+
 menuconfig BR2_PACKAGE_PLUGIN_WEBKITBROWSER
 	bool "WebKitBrowser"
 	depends on BR2_PACKAGE_WPEWEBKIT
