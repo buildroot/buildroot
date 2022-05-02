@@ -11,4 +11,12 @@ PYTHON_AENUM_SETUP_TYPE = setuptools
 PYTHON_AENUM_LICENSE = BSD-3-Clause
 PYTHON_AENUM_LICENSE_FILES = aenum/LICENSE
 
+# _py2.py uses syntax not compatible with Python3.
+# Remove _py2.py to avoid compilation error.
+define PYTHON_AENUM_REMOVE_PY2_PY
+	rm $(@D)/aenum/_py2.py
+endef
+
+PYTHON_AENUM_POST_EXTRACT_HOOKS = PYTHON_AENUM_REMOVE_PY2_PY
+
 $(eval $(python-package))
