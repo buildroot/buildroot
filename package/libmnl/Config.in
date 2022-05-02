@@ -5,3 +5,12 @@ config BR2_PACKAGE_LIBMNL
 	  to Netlink developers.
 
 	  http://netfilter.org/projects/libmnl/
+
+if BR2_PACKAGE_LIBMNL
+
+config BR2_PACKAGE_LIBMNL_EXAMPLES
+	bool "install examples"
+	help
+	  Install binary examples.
+
+endif

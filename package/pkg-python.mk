@@ -233,8 +233,10 @@ ifeq ($$($(2)_SETUP_TYPE),flit)
 $(2)_DEPENDENCIES += host-python-flit-core
 endif
 else ifeq ($$($(2)_SETUP_TYPE),flit-bootstrap)
+# Don't add dependency on host-python-installer for
+# host-python-installer itself, and its dependencies.
 ifeq ($$(filter host-python-flit-core host-python-installer,$(1)),)
-$(2)_DEPENDENCIES += host-python-flit-core host-python-installer
+$(2)_DEPENDENCIES += host-python-installer
 endif
 endif # SETUP_TYPE
 
