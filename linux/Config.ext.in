@@ -48,6 +48,9 @@ comment "xenomai needs a uClibc or glibc toolchain w/ threads"
 # RTAI
 config BR2_LINUX_KERNEL_EXT_RTAI
 	bool "RTAI Real-time patch"
+	depends on !BR2_LINUX_KERNEL_LATEST_VERSION
+	depends on !BR2_LINUX_KERNEL_LATEST_CIP_VERSION
+	depends on !BR2_LINUX_KERNEL_LATEST_CIP_RT_VERSION
 	select BR2_PACKAGE_RTAI
 	help
 	  RTAI Kernel part.
