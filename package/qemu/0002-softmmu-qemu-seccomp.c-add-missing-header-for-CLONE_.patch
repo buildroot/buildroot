@@ -1,0 +1,42 @@
+From df07d3754bdf15e0efac244cfee290c9bac86352 Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@gmail.com>
+Date: Mon, 2 May 2022 23:17:46 +0200
+Subject: [PATCH] softmmu/qemu-seccomp.c: add missing header for CLONE_NEWGROUP
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+With seccomp support enabled Qemu 7.0.0 fail to build with the
+following error:
+
+../softmmu/qemu-seccomp.c:116:19: error: ‘CLONE_NEWCGROUP’ undeclared here (not in a function)
+  116 | FORBID_CLONE_FLAG(CLONE_NEWCGROUP);
+      |                   ^~~~~~~~~~~~~~~
+../softmmu/qemu-seccomp.c:73:18: note: in definition of macro ‘FORBID_CLONE_FLAG’
+   73 |       .datum_a = flag, .datum_b = flag } }
+      |                  ^~~~
+
+CLONE_NEWCGROUP has been added in Qemu 7.0.0 by commit [1].
+
+[1] https://git.qemu.org/?p=qemu.git;a=commitdiff;h=5a2f693f07a1e93ada5277b2fb1530b2698be0fa
+
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+---
+ softmmu/qemu-seccomp.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/softmmu/qemu-seccomp.c b/softmmu/qemu-seccomp.c
+index deaf8a4ef5..96c83e121f 100644
+--- a/softmmu/qemu-seccomp.c
++++ b/softmmu/qemu-seccomp.c
+@@ -21,6 +21,7 @@
+ #include <sys/prctl.h>
+ #include <seccomp.h>
+ #include "sysemu/seccomp.h"
++#include <linux/sched.h>
+ #include <linux/seccomp.h>
+ 
+ /* For some architectures (notably ARM) cacheflush is not supported until
+-- 
+2.35.1
+
