@@ -14,6 +14,8 @@ config BR2_PACKAGE_LUAJIT_ARCH_SUPPORTS
 config BR2_PACKAGE_LUAJIT
 	bool "luajit"
 	depends on !BR2_STATIC_LIBS # dlopen
+	# Luajit conflicts with the regular lua package
+	depends on !BR2_PACKAGE_LUA
 	# Luajit is only available for some target architectures, and
 	# has some complexity wrt 32/64. See luajit.mk for details.
 	depends on BR2_PACKAGE_LUAJIT_ARCH_SUPPORTS

@@ -1,0 +1,40 @@
+From e4dcfefac4215ee66c3dda5b067dd6d06066b0a2 Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Sat, 5 Mar 2022 12:36:09 +0100
+Subject: [PATCH] Fix BLAS library integer size detection
+
+When cross-compiling, octave ./configure script fails to detect the BLAS
+library integer size and fails with the message:
+
+    configure: error: unrecognized BLAS library integer size
+
+This patch fixes this detection.
+
+Patch adapted from:
+https://github.com/openembedded/meta-openembedded/commit/0ad153f721ef99de585c4452a997a7104f45d71d
+
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ configure.ac | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/configure.ac b/configure.ac
+index de7a00a330..383ce27b06 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -781,6 +781,12 @@ if test $ax_blas_ok = no || test $ax_lapack_ok = no; then
+   AC_MSG_ERROR([BLAS and LAPACK libraries are required])
+ fi
+ 
++if ac_fn_f77_try_run "$LINENO"; then :
++  ax_blas_integer_size=8
++else
++  ax_blas_integer_size=4
++fi
++
+ case $ax_blas_integer_size in
+   4)
+     HAVE_64_BIT_BLAS=no
+-- 
+2.36.0
+

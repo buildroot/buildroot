@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_PYDEVMEM
+	bool "python-pydevmem"
+	help
+	  Python DevMem is designed primarily for use with accessing
+	  /dev/mem on OMAP platforms. It should work on other platforms
+	  and work to mmap() files rather then just /dev/mem, but these
+	  use cases aren't well tested.
+
+	  https://github.com/kylemanna/pydevmem
