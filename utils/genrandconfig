@@ -385,6 +385,9 @@ def fixup_config(sysinfo, configfile):
         if 'BR2_LINUX_KERNEL_APPENDED_ZIMAGE=y\n' in configlines:
             configlines.remove('BR2_LINUX_KERNEL_APPENDED_ZIMAGE=y\n')
             configlines.append('BR2_LINUX_KERNEL_ZIMAGE=y\n')
+        if 'BR2_LINUX_KERNEL_CUIMAGE=y\n' in configlines:
+            configlines.remove('BR2_LINUX_KERNEL_CUIMAGE=y\n')
+            configlines.append('BR2_LINUX_KERNEL_UIMAGE=y\n')
         if 'BR2_LINUX_KERNEL_SIMPLEIMAGE=y\n' in configlines:
             configlines.remove('BR2_LINUX_KERNEL_SIMPLEIMAGE=y\n')
             configlines.append('BR2_LINUX_KERNEL_VMLINUX=y\n')
