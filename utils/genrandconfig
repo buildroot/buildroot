@@ -18,6 +18,7 @@
 
 # This script generates a random configuration for testing Buildroot.
 
+from binascii import hexlify
 import contextlib
 import csv
 import os
@@ -605,9 +606,13 @@ def gen_config(args):
                   file=sys.stderr)
             return 1
         bounded_loop -= 1
-        subprocess.check_call(["make", "O=%s" % args.outputdir, "-C", args.buildrootdir,
-                               "KCONFIG_PROBABILITY=%d" % randint(1, 20),
-                               "randpackageconfig" if args.toolchains_csv else "randconfig"])
+        make_rand = [
+            "make", "O=%s" % args.outputdir, "-C", args.buildrootdir,
+            "KCONFIG_SEED=0x%s" % hexlify(os.urandom(4)).decode("ascii").upper(),
+            "KCONFIG_PROBABILITY=%d" % randint(1, 20),
+            "randpackageconfig" if args.toolchains_csv else "randconfig"
+        ]
+        subprocess.check_call(make_rand)
 
         if fixup_config(sysinfo, configfile):
             break
