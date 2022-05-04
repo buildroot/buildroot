@@ -27,12 +27,6 @@ config BR2_KERNEL_HEADERS_AS_KERNEL
 	depends on BR2_LINUX_KERNEL
 	select BR2_KERNEL_HEADERS_LATEST if BR2_LINUX_KERNEL_LATEST_VERSION
 
-config BR2_KERNEL_HEADERS_4_4
-	bool "Linux 4.4.x kernel headers"
-	depends on !BR2_riscv
-	depends on !BR2_csky
-	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_4
-
 config BR2_KERNEL_HEADERS_4_9
 	bool "Linux 4.9.x kernel headers"
 	depends on !BR2_riscv
@@ -381,14 +375,13 @@ endchoice
 
 config BR2_DEFAULT_KERNEL_HEADERS
 	string
-	default "4.4.302"	if BR2_KERNEL_HEADERS_4_4
-	default "4.9.309"	if BR2_KERNEL_HEADERS_4_9
-	default "4.14.275"	if BR2_KERNEL_HEADERS_4_14
-	default "4.19.237"	if BR2_KERNEL_HEADERS_4_19
-	default "5.4.188"	if BR2_KERNEL_HEADERS_5_4
-	default "5.10.110"	if BR2_KERNEL_HEADERS_5_10
-	default "5.15.33"	if BR2_KERNEL_HEADERS_5_15
-	default "5.16.19"	if BR2_KERNEL_HEADERS_5_16
+	default "4.9.312"	if BR2_KERNEL_HEADERS_4_9
+	default "4.14.277"	if BR2_KERNEL_HEADERS_4_14
+	default "4.19.241"	if BR2_KERNEL_HEADERS_4_19
+	default "5.4.191"	if BR2_KERNEL_HEADERS_5_4
+	default "5.10.113"	if BR2_KERNEL_HEADERS_5_10
+	default "5.15.37"	if BR2_KERNEL_HEADERS_5_15
+	default "5.16.20"	if BR2_KERNEL_HEADERS_5_16
 	default BR2_DEFAULT_KERNEL_VERSION if BR2_KERNEL_HEADERS_VERSION
 	default "custom"	if BR2_KERNEL_HEADERS_CUSTOM_TARBALL
 	default BR2_KERNEL_HEADERS_CUSTOM_REPO_VERSION \
