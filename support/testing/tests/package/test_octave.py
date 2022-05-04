@@ -43,7 +43,7 @@ class TestOctave(infra.basetest.BRTest):
         # Solve equation system example from Octave homepage
         octave_expr = "b = [4; 9; 2]; "
         octave_expr += "A = [ 3 4 5; 1 3 1; 3 5 9 ]; "
-        octave_expr += "x = A \ b; "
+        octave_expr += "x = A \\ b; "
         octave_expr += "assert(x, [-1.5; 4; -1.5], 1e-10)"
         cmd = self.octave_cmd(octave_expr)
         self.assertRunOk(cmd)
