@@ -36,6 +36,8 @@ else ifeq ($(BR2_arm)$(BR2_armeb),y)
 PKG_MESON_TARGET_CPU_FAMILY = arm
 else ifeq ($(BR2_aarch64)$(BR2_aarch64_be),y)
 PKG_MESON_TARGET_CPU_FAMILY = aarch64
+else ifeq ($(BR2_csky),y)
+PKG_MESON_TARGET_CPU_FAMILY = csky
 else ifeq ($(BR2_i386),y)
 PKG_MESON_TARGET_CPU_FAMILY = x86
 else ifeq ($(BR2_m68k),y)
@@ -50,8 +52,12 @@ else ifeq ($(BR2_powerpc),y)
 PKG_MESON_TARGET_CPU_FAMILY = ppc
 else ifeq ($(BR2_powerpc64)$(BR2_powerpc64le),y)
 PKG_MESON_TARGET_CPU_FAMILY = ppc64
-else ifeq ($(BR2_riscv),y)
+else ifeq ($(BR2_riscv)$(BR2_RISCV_32),yy)
+PKG_MESON_TARGET_CPU_FAMILY = riscv32
+else ifeq ($(BR2_riscv)$(BR2_RISCV_64),yy)
 PKG_MESON_TARGET_CPU_FAMILY = riscv64
+else ifeq ($(BR2_s390x),y)
+PKG_MESON_TARGET_CPU_FAMILY = s390x
 else ifeq ($(BR2_sh4)$(BR2_sh4eb)$(BR2_sh4a)$(BR2_sh4aeb),y)
 PKG_MESON_TARGET_CPU_FAMILY = sh4
 else ifeq ($(BR2_sparc),y)
