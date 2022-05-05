@@ -192,7 +192,8 @@ $(BUILD_DIR)/%/.stamp_downloaded:
 			break ; \
 		fi ; \
 	done
-	$(foreach p,$($(PKG)_ALL_DOWNLOADS),$(call DOWNLOAD,$(p),$(PKG))$(sep))
+	$(call DOWNLOAD,$($(PKG)_MAIN_DOWNLOAD),$(PKG),$(patsubst %,-p '%',$($(PKG)_DOWNLOAD_POST_PROCESS)))
+	$(foreach p,$($(PKG)_ADDITIONAL_DOWNLOADS),$(call DOWNLOAD,$(p),$(PKG))$(sep))
 	$(foreach hook,$($(PKG)_POST_DOWNLOAD_HOOKS),$(call $(hook))$(sep))
 	$(Q)mkdir -p $(@D)
 	@$(call step_end,download)
@@ -601,11 +602,15 @@ ifndef $(2)_PATCH
  endif
 endif
 
-$(2)_ALL_DOWNLOADS = \
-	$$(if $$($(2)_SOURCE),$$($(2)_SITE_METHOD)+$$($(2)_SITE)/$$($(2)_SOURCE)) \
+$(2)_MAIN_DOWNLOAD = \
+	$$(if $$($(2)_SOURCE),$$($(2)_SITE_METHOD)+$$($(2)_SITE)/$$($(2)_SOURCE))
+
+$(2)_ADDITIONAL_DOWNLOADS = \
 	$$(foreach p,$$($(2)_PATCH) $$($(2)_EXTRA_DOWNLOADS),\
 		$$(if $$(findstring ://,$$(p)),$$(p),\
 			$$($(2)_SITE_METHOD)+$$($(2)_SITE)/$$(p)))
+
+$(2)_ALL_DOWNLOADS = $$($(2)_MAIN_DOWNLOAD) $$($(2)_ADDITIONAL_DOWNLOADS)
 
 ifndef $(2)_SITE
  ifdef $(3)_SITE
