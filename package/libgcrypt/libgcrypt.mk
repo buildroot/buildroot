@@ -18,6 +18,7 @@ LIBGCRYPT_CPE_ID_VENDOR = gnupg
 LIBGCRYPT_AUTORECONF = YES
 LIBGCRYPT_CONF_OPTS = \
 	--disable-tests \
+	$(if $(BR2_OPTIMIZE_0),--disable-ppc-crypto-support,) \
 	--with-gpg-error-prefix=$(STAGING_DIR)/usr
 
 # Libgcrypt doesn't support assembly for coldfire

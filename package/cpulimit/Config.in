@@ -1,0 +1,8 @@
+config BR2_PACKAGE_CPULIMIT
+	bool "cpulimit"
+	depends on BR2_USE_MMU # fork()
+	help
+	  Cpulimit is a tool which limits the CPU usage of a process
+	  (expressed in percentage, not in CPU time)
+
+	  https://github.com/opsengine/cpulimit

@@ -203,6 +203,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_OLA_PLUGIN_STAGEPROFI),y)
 OLA_CONF_OPTS += --enable-stageprofi --enable-libusb
+OLA_DEPENDENCIES += libusb
 else
 OLA_CONF_OPTS += --disable-stageprofi
 endif
@@ -215,12 +216,14 @@ endif
 
 ifeq ($(BR2_PACKAGE_OLA_PLUGIN_USBDMX),y)
 OLA_CONF_OPTS += --enable-usbdmx --enable-libusb
+OLA_DEPENDENCIES += libusb
 else
 OLA_CONF_OPTS += --disable-usbdmx
 endif
 
 ifeq ($(BR2_PACKAGE_OLA_PLUGIN_USBPRO),y)
 OLA_CONF_OPTS += --enable-usbpro --enable-libusb
+OLA_DEPENDENCIES += libusb
 else
 OLA_CONF_OPTS += --disable-usbpro
 endif
