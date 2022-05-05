@@ -225,6 +225,12 @@ endif
 
 endif
 
+config BR2_PACKAGE_WPEFRAMEWORK_CECCONTROL
+  bool "CEC Control"
+  default n
+  help
+    Thunder CEC Control plugin
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_CDMI
     bool "CDMi"
     select BR2_PACKAGE_WPEFRAMEWORK_RDKSERVICES
