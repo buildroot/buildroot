@@ -104,4 +104,24 @@ LIBCAMERA_DEPENDENCIES += libexecinfo
 LIBCAMERA_LDFLAGS = $(TARGET_LDFLAGS) -lexecinfo
 endif
 
+# Open-Source IPA shlibs need to be signed in order to be runnable within the
+# same process, otherwise they are deemed Closed-Source and run in another
+# process and communicate over IPC.
+# Buildroot sanitizes RPATH in a post build process. meson gets rid of rpath
+# while installing so we don't need to do it manually here.
+# Buildroot may strip symbols, so we need to do the same before signing
+# otherwise the signature won't match the shlib on the rootfs. Since meson
+# install target is signing the shlibs, we need to strip them before.
+LIBCAMERA_STRIP_FIND_CMD = \
+	find $(@D)/build/src/ipa \
+	$(if $(call qstrip,$(BR2_STRIP_EXCLUDE_FILES)), \
+		-not \( $(call findfileclauses,$(call qstrip,$(BR2_STRIP_EXCLUDE_FILES))) \) ) \
+	-type f -name 'ipa_*.so' -print0
+
+define LIBCAMERA_BUILD_STRIP_IPA_SO
+	$(LIBCAMERA_STRIP_FIND_CMD) | xargs --no-run-if-empty -0 $(STRIPCMD)
+endef
+
+LIBCAMERA_POST_BUILD_HOOKS += LIBCAMERA_BUILD_STRIP_IPA_SO
+
 $(eval $(meson-package))
