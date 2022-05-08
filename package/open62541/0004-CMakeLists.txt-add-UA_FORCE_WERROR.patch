@@ -29,16 +29,16 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index bc839f27..963460d0 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -292,6 +292,8 @@ if(UA_FORCE_CPP)
+@@ -257,6 +257,8 @@ if(UA_FORCE_CPP)
      add_definitions(-D__STDC_CONSTANT_MACROS) # We need the UINT32_C define
  endif()
  
 +option(UA_FORCE_WERROR "Force compilation with -Werror" ON)
 +
  #General PubSub setup
- option(UA_ENABLE_PUBSUB "Enable the PubSub protocol" OFF)
- 
-@@ -589,7 +591,9 @@ if(NOT UA_FORCE_CPP AND (CMAKE_COMPILER_IS_GNUCC OR "x${CMAKE_C_COMPILER_ID}" ST
+ option(UA_ENABLE_PUBSUB "Enable publish/subscribe" OFF)
+ mark_as_advanced(UA_ENABLE_PUBSUB)
+@@ -526,7 +528,9 @@ if(NOT UA_FORCE_CPP AND (CMAKE_COMPILER_IS_GNUCC OR "x${CMAKE_C_COMPILER_ID}" ST
      check_add_cc_flag("-Wall")      # Warnings
      check_add_cc_flag("-Wextra")    # More warnings
      check_add_cc_flag("-Wpedantic") # Standard compliance
