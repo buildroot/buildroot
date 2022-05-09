@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PYTHON_ORJSON_VERSION = 3.6.7
+PYTHON_ORJSON_VERSION = 3.6.8
 PYTHON_ORJSON_SITE = $(call github,ijl,orjson,$(PYTHON_ORJSON_VERSION))
 PYTHON_ORJSON_LICENSE = Apache-2.0 or MIT
 PYTHON_ORJSON_LICENSE_FILES = LICENSE-APACHE LICENSE-MIT
