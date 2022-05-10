@@ -49,7 +49,8 @@ endif
 ifeq ($(BR2_PACKAGE_LIBICONV),y)
 GIT_DEPENDENCIES += libiconv
 GIT_CONF_ENV_LIBS += -liconv
-GIT_CONF_OPTS += --with-iconv=/usr/lib
+GIT_CONF_OPTS += --with-iconv=$(STAGING_DIR)/usr
+GIT_CONF_ENV += ac_cv_iconv_omits_bom=no
 else
 GIT_CONF_OPTS += --without-iconv
 endif
