@@ -182,6 +182,8 @@ config BR2_PACKAGE_WPEWEBKIT_MULTIMEDIA
 	select BR2_PACKAGE_GSTREAMER1
 	select BR2_PACKAGE_GST1_PLUGINS_BASE
 	select BR2_PACKAGE_GST1_PLUGINS_GOOD
+	# Needed for WebAudio, to enable "audiointerleave" from audiomixer
+	select BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_AUDIOMIXER
 	help
 	  This option pulls in all of the required dependencies
 	  to enable multimedia (video/audio) support.

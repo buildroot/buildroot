@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export SOURCE=/UserApps/metrological
-export LD_LIBRARY_PATH=$SOURCE/usr/share/ignition/lib:$SOURCE/usr/lib:/lib:/usr/lib:$SOURCE/lib:$SOURCE/usr/lib/wpeframework/plugins:$SOURCE/usr/lib/wpeframework/proxystubs
+export LD_LIBRARY_PATH=$SOURCE/usr/share/ignition/lib:$SOURCE/usr/lib:/lib:/usr/lib:$SOURCE/lib:$SOURCE/usr/lib/wpeframework/plugins:$SOURCE/usr/lib/wpeframework/proxystubs:$SOURCE/usr/libexec/wpe-webkit-1.0
 export PATH=$SOURCE/usr/bin:$PATH
 export GST_PLUGIN_SCANNER=$SOURCE/usr/libexec/gstreamer-1.0/gst-plugin-scanner
 export GST_PLUGIN_SYSTEM_PATH=$SOURCE/usr/lib/gstreamer-1.0
@@ -18,6 +18,10 @@ export NF_GST_AUDIO_PCM_TRANSPORT_UNIT_OVERRIDE=5
 export NF_GST_AUDIO_PCM_LATENCY_OVERRIDE=170
 export NF_SW_PLAYBACK_QUEUE_SIZE_OVERRIDE=32
 export GST_DEBUG=1
+export GST_VIDEO_WINDOW_BOX_MODE='y'
+export GST_VIRTUAL_DISP_WIDTH=1280
+export GST_VIRTUAL_DISP_HEIGHT=720
+export GST_ENABLE_SVP='y'
 
 #FIXME: Temporary solution for TCP receive buffer size
 sysctl net.core.rmem_max=262144 
@@ -78,7 +82,12 @@ case "$1" in
 	if [ ! -f $DRMSTORE ]; then
 		touch /tmp/drmstore
 	fi
-
+        if [ ! -f usr/libexec ]; then
+                ln -s $SOURCE/usr/libexec /usr/libexec
+        fi
+        if [ ! -f /etc/ssl/certs/ca-certificates.crt ]; then
+                ln -s /Systemapps/wpe/metrological/etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+        fi
 	grep -q "/usr/share ext4" /proc/mounts && echo "/usr/share is already mounted" || mount -t ext4 --bind $DESTINATION/share/ /usr/share/
 	grep -q "/etc ext4" /proc/mounts && echo "/etc is already mounted" || mount -t ext4 --bind $DESTINATION/etc/ /etc/
 	grep -q "/usr/lib ext4" /proc/mounts && echo "/usr/lib is already mounted" || mount -t ext4 --bind $DESTINATION/lib/ /usr/lib/

@@ -1,0 +1,22 @@
+diff --git a/modules/Alexa/build/cmake/PrepareInstall.cmake b/modules/Alexa/build/cmake/PrepareInstall.cmake
+index d56c752..77ddc4a 100644
+--- a/modules/Alexa/build/cmake/PrepareInstall.cmake
++++ b/modules/Alexa/build/cmake/PrepareInstall.cmake
+@@ -30,7 +30,7 @@ function(asdk_install_targets targets install_headers)
+     endforeach()
+ 
+     if (${install_headers})
+-        install(DIRECTORY "${PROJECT_SOURCE_DIR}/include" DESTINATION "${ASDK_INCLUDE_INSTALL_DIR}")
++        install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/" DESTINATION "${ASDK_INCLUDE_INSTALL_DIR}/include/AVSSDK")
+     endif()
+ endfunction()
+ 
+@@ -62,7 +62,7 @@ if(BLUETOOTH_BLUEZ)
+ endif()
+ SET(PKG_CONFIG_LIBS         "-L\${libdir}" CACHE INTERNAL "" FORCE)
+ SET(PKG_CONFIG_LIBDIR       "\${prefix}/lib")
+-SET(PKG_CONFIG_INCLUDEDIR   "\${prefix}/include")
++SET(PKG_CONFIG_INCLUDEDIR   "\${prefix}/include/AVSSDK")
+ SET(PKG_CONFIG_CFLAGS       "-I\${includedir}")
+ 
+ # Set library and header files install directory

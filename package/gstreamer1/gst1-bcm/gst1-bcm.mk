@@ -6,7 +6,7 @@
 
 ifneq ($(filter y,$(BR2_PACKAGE_GST1_BCM_UNIFIED_VERSION)),)
 GST1_BCM_SITE = git@github.com:Metrological/bcm-collaboration
-GST1_BCM_VERSION = 0846f6294a8a7851e405d7f2c4e2d3af27ba3817
+GST1_BCM_VERSION = 5d3252fd8b44fbaea4abbe96fa1f57d76e6c6a5b
 else
 GST1_BCM_SITE = git@github.com:Metrological/gstreamer-plugins-soc.git
 
@@ -120,6 +120,10 @@ GST1_BCM_CONF_OPTS = \
 	--disable-playersinkbin \
 	--disable-gfxsink
 
+ifeq ($(BR2_PACKAGE_GST1_BCM_ENABLE_SVP),y)
+GST1_BCM_CONF_OPTS += --enable-svp
+endif
+
 ifeq ($(BR2_PACKAGE_GST1_BCM_AUDFILTER),y)
 GST1_BCM_CONF_OPTS += --enable-audfilter
 else
@@ -171,7 +175,7 @@ define GST1_BCM_INSTALL_SVP_DEV
     	$(INSTALL) -D -m 0644 ${@D}/reference/svpmeta/src/gst_brcm_svp_meta.h $(STAGING_DIR)/usr/include ; \
     else \
     	$(INSTALL) -D -m 0644 ${@D}/svpmeta/src/gst_brcm_svp_meta.h $(STAGING_DIR)/usr/include ; \
-    fi 
+    fi
 endef
 
 GST1_BCM_POST_INSTALL_STAGING_HOOKS += GST1_BCM_INSTALL_SVP_DEV

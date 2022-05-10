@@ -1,0 +1,13 @@
+diff --git a/cmakeBuild/BuildDefaults.cmake b/cmakeBuild/BuildDefaults.cmake
+index 742297e5bb..aba25d205c 100644
+--- a/cmakeBuild/BuildDefaults.cmake
++++ b/cmakeBuild/BuildDefaults.cmake
+@@ -23,7 +23,7 @@ macro(include_once module)
+ endmacro()
+ 
+ # Disallow out-of-source-builds.
+-include_once(DisallowOutOfSourceBuilds)
++#include_once(DisallowOutOfSourceBuilds)
+ 
+ # Setup default build options, like compiler flags and build type.
+ include_once(BuildOptions)

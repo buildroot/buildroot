@@ -1,0 +1,20 @@
+diff --git a/shared/acsdkManufactory/include/acsdkManufactory/internal/TypeIndex.h b/shared/acsdkManufactory/include/acsdkManufactory/internal/TypeIndex.h
+index 68efa7cafb..f401ccc919 100644
+--- a/shared/acsdkManufactory/include/acsdkManufactory/internal/TypeIndex.h
++++ b/shared/acsdkManufactory/include/acsdkManufactory/internal/TypeIndex.h
+@@ -36,7 +36,7 @@ namespace internal {
+  * TypeIndex provide a sortable and hashable identity for C++ types, much like std::type_index,
+  * but with optional use of RTTI.
+  */
+-struct TypeIndex {
++struct __attribute__ ((visibility ("default"))) TypeIndex {
+ #ifdef ACSDK_USE_RTTI
+ 
+     /// Type of value used to identify discrete types.  With RTTI enabled we can just use std::type_index.
+@@ -198,4 +198,4 @@ inline std::size_t hash<alexaClientSDK::acsdkManufactory::internal::TypeIndex>::
+ 
+ }  // namespace std
+ 
+-#endif  // ACSDKMANUFACTORY_INTERNAL_TYPEINDEX_H_
+\ No newline at end of file
++#endif  // ACSDKMANUFACTORY_INTERNAL_TYPEINDEX_H_

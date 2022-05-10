@@ -1,0 +1,138 @@
+From 293b00e131f49ac4f59c88b063635ff45304ca9c Mon Sep 17 00:00:00 2001
+From: krp97 <k.plata@metrological.com>
+Date: Fri, 4 Mar 2022 09:57:26 +0000
+Subject: [PATCH 1/2] Revert "BCMCZ-121: remove gstsvpmeta.h"
+
+This reverts commit 6584b71d647c5b31869959767632e9db794ce21b.
+---
+ reference/util/src/gst_svp_util.h |   4 +-
+ reference/util/src/gstsvpmeta.h   | 101 ++++++++++++++++++++++++++++++
+ 2 files changed, 104 insertions(+), 1 deletion(-)
+ create mode 100644 reference/util/src/gstsvpmeta.h
+
+diff --git a/reference/util/src/gst_svp_util.h b/reference/util/src/gst_svp_util.h
+index 81b3eec..7ac9165 100755
+--- a/reference/util/src/gst_svp_util.h
++++ b/reference/util/src/gst_svp_util.h
+@@ -53,8 +53,10 @@
+ #include "astra_crypto_types.h"
+ #include "libvpucom_api.h"
+ #endif
++
+ #include "nexus_memory.h"
+-#include <gst/gstsvpmeta.h>
++#include "gstsvpmeta.h"
++#include "sage_srai.h"
+ 
+ gboolean svp_util_open(void);
+ void svp_util_close();
+diff --git a/reference/util/src/gstsvpmeta.h b/reference/util/src/gstsvpmeta.h
+new file mode 100644
+index 0000000..1e6107f
+--- /dev/null
++++ b/reference/util/src/gstsvpmeta.h
+@@ -0,0 +1,101 @@
++/******************************************************************************
++ *  Copyright (C) 2017 Broadcom. The term "Broadcom" refers to Broadcom Limited and/or its subsidiaries.
++ *
++ *  This program is the proprietary software of Broadcom and/or its licensors,
++ *  and may only be used, duplicated, modified or distributed pursuant to the terms and
++ *  conditions of a separate, written license agreement executed between you and Broadcom
++ *  (an "Authorized License").  Except as set forth in an Authorized License, Broadcom grants
++ *  no license (express or implied), right to use, or waiver of any kind with respect to the
++ *  Software, and Broadcom expressly reserves all rights in and to the Software and all
++ *  intellectual property rights therein.  IF YOU HAVE NO AUTHORIZED LICENSE, THEN YOU
++ *  HAVE NO RIGHT TO USE THIS SOFTWARE IN ANY WAY, AND SHOULD IMMEDIATELY
++ *  NOTIFY BROADCOM AND DISCONTINUE ALL USE OF THE SOFTWARE.
++ *
++ *  Except as expressly set forth in the Authorized License,
++ *
++ *  1.     This program, including its structure, sequence and organization, constitutes the valuable trade
++ *  secrets of Broadcom, and you shall use all reasonable efforts to protect the confidentiality thereof,
++ *  and to use this information only in connection with your use of Broadcom integrated circuit products.
++ *
++ *  2.     TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE SOFTWARE IS PROVIDED "AS IS"
++ *  AND WITH ALL FAULTS AND BROADCOM MAKES NO PROMISES, REPRESENTATIONS OR
++ *  WARRANTIES, EITHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE, WITH RESPECT TO
++ *  THE SOFTWARE.  BROADCOM SPECIFICALLY DISCLAIMS ANY AND ALL IMPLIED WARRANTIES
++ *  OF TITLE, MERCHANTABILITY, NONINFRINGEMENT, FITNESS FOR A PARTICULAR PURPOSE,
++ *  LACK OF VIRUSES, ACCURACY OR COMPLETENESS, QUIET ENJOYMENT, QUIET POSSESSION
++ *  OR CORRESPONDENCE TO DESCRIPTION. YOU ASSUME THE ENTIRE RISK ARISING OUT OF
++ *  USE OR PERFORMANCE OF THE SOFTWARE.
++ *
++ *  3.     TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL BROADCOM OR ITS
++ *  LICENSORS BE LIABLE FOR (i) CONSEQUENTIAL, INCIDENTAL, SPECIAL, INDIRECT, OR
++ *  EXEMPLARY DAMAGES WHATSOEVER ARISING OUT OF OR IN ANY WAY RELATING TO YOUR
++ *  USE OF OR INABILITY TO USE THE SOFTWARE EVEN IF BROADCOM HAS BEEN ADVISED OF
++ *  THE POSSIBILITY OF SUCH DAMAGES; OR (ii) ANY AMOUNT IN EXCESS OF THE AMOUNT
++ *  ACTUALLY PAID FOR THE SOFTWARE ITSELF OR U.S. $1, WHICHEVER IS GREATER. THESE
++ *  LIMITATIONS SHALL APPLY NOTWITHSTANDING ANY FAILURE OF ESSENTIAL PURPOSE OF
++ *  ANY LIMITED REMEDY.
++ ******************************************************************************/
++
++#ifndef __GST_SVP_META_H__
++#define __GST_SVP_META_H__
++
++#include <gst/gst.h>
++
++G_BEGIN_DECLS
++
++#define GST_SVP_SYSTEM_ID_CAPS_FIELD "svp-system"
++
++typedef struct _GstSvpMeta GstSvpMeta;
++
++typedef void (*GstSvpMetaCustomRelease)(GstStructure *info);
++
++struct _GstSvpMeta
++{
++  GstMeta meta;
++  GstStructure            *info;
++  GstSvpMetaCustomRelease release;
++};
++
++GType gst_svp_meta_api_get_type (void);
++
++#define GST_SVP_META_API_TYPE (gst_svp_meta_api_get_type())
++
++#ifdef BGST_WEBKIT_CDM
++#define gst_buffer_get_svp_meta(b) ((GstSvpMeta*)gst_buffer_get_meta ((b), GST_SVP_META_API_TYPE))
++#else
++#define gst_buffer_get_svp_meta(b) NULL
++#endif
++
++#define GST_SVP_META_INFO (gst_svp_meta_get_info())
++
++const GstMetaInfo *gst_svp_meta_get_info (void);
++
++/*
++ *  GstBuffer               *buffer  - buffer to which meta data will be added
++ *  GstStructure            *info    - metada structure
++ *                                     This structure should contain:
++ *                                        "secure_buffer"  : G_TYPE_POINTER
++ *                                        "chunks_cnt"     : G_TYPE_UINT
++ *                                        "chunks_info"    : GST_TYPE_BUFFER
++ *                                                           data of this buffer contains
++ *                                                           for (i=0; i<chunks_cnt; i++) {
++ *                                                              guint32 clear_size;
++ *                                                              guint32 encrypted_size;
++ *                                                              guint32 secure_buffer_offset;
++ *                                                           }
++ *                                                           "clear size"           : size of clear data part in "buffer.data"
++ *                                                           "encrypted_size"       : size of encrypted data part in "buffer.data" available as clear in "secure_buffer"
++ *                                                           "secure_buffer_offset" : offset from the begining of "secure_buffer" where decrypted data of encrypted part is stored
++ *                                                                                    data in secure buffer can be stored with an alignment, so this offset should be used to access
++ *                                                                                    begining of decrypted part
++ *
++ *                                                            buffer.data   = {clear_1, encrytped_1, clear_2, encrypted_2, ...}
++ *                                                            secure_buffer = {decrypted_1,decrytped_2 , ...}
++ *                                                                            "decrypted_N" is clear data after decrypting "encrypted_N"
++ *
++ *  GstSvpMetaCustomRelease *release - custom fuction to release any custom specific data present in "info"
++ */
++GstSvpMeta *gst_buffer_add_svp_meta (GstBuffer * buffer,  GstStructure * info, GstSvpMetaCustomRelease release);
++
++G_END_DECLS
++#endif /* __GST_SVP_META_H__ */
+-- 
+2.25.1
+

@@ -1,0 +1,35 @@
+diff --git a/modules/CMakeLists.txt b/modules/CMakeLists.txt
+index 45145b6..8bfaed4 100644
+--- a/modules/CMakeLists.txt
++++ b/modules/CMakeLists.txt
+@@ -6,5 +6,8 @@ project(modules LANGUAGES CXX)
+ add_subdirectory("Alexa")
+ if (NOT MSVC)
+ 	# For UWP, build the GUIClient on UWP branch on a different platform
+-	add_subdirectory("GUI")
+-endif()
+\ No newline at end of file
++    set(JS_GUICLIENT_ENABLE OFF CACHE BOOL "Build the JS GUI Client")
++    if(${JS_GUICLIENT_ENABLE})
++        add_subdirectory("GUI")
++    endif()
++endif()
+diff --git a/modules/GUI/CMakeLists.txt b/modules/GUI/CMakeLists.txt
+index 4094546..feadbf3 100644
+--- a/modules/GUI/CMakeLists.txt
++++ b/modules/GUI/CMakeLists.txt
+@@ -21,12 +21,13 @@ else()
+     set(RTCSC_JS_PATH_VALUE "${CMAKE_CURRENT_SOURCE_DIR}/js/src/lib/liveView/RTCSC_Adapter_Stub")
+ endif()
+ 
++set(JS_GUICLIENT_INSTALL_PATH "" CACHE STRING "The install path")
+ add_custom_target(GUIClient ALL
+         COMMAND "npm" "install"
+         COMMAND "npm" "install" "${APL_CLIENT_JS_PATH}"
+         COMMAND "npm" "install" "${RTCSC_JS_PATH_VALUE}"
+         COMMAND "npm" "run" "build" "--"
+-            "--output-path" "${CMAKE_CURRENT_BINARY_DIR}"
++            "--output-path" "${JS_GUICLIENT_INSTALL_PATH}"
+             "--env" "DISABLE_WEBSOCKET_SSL=${DISABLE_WEBSOCKET_SSL_VALUE}"
+             "--env" "USE_UWP_CLIENT=${USE_UWP_CLIENT_VALUE}"
+             "--env" "RTCSC_ENABLED=${RTCSC_ENABLED_VALUE}"
