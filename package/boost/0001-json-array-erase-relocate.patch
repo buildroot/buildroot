@@ -1,0 +1,65 @@
+From 07d7c3b2e0f8c6b269ba167117cd3e549df2f342 Mon Sep 17 00:00:00 2001
+From: Vinnie Falco <vinnie.falco@gmail.com>
+Date: Wed, 13 Apr 2022 05:49:05 -0700
+Subject: [PATCH] array::erase relocates correctly
+
+fix #692
+
+Signed-off-by: Michael Nosthoff<buildroot@heine.tech>
+[Upstream status: https://github.com/boostorg/json/issues/692]
+---
+ boost/json/impl/array.ipp |  5 ++++-
+ test/array.cpp                    | 16 ++++++++++++++++
+ 2 files changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/boost/json/impl/array.ipp b/boost/json/impl/array.ipp
+index 4d067fb5..a2c7fd6d 100644
+--- a/boost/json/impl/array.ipp
++++ b/boost/json/impl/array.ipp
+@@ -491,8 +491,11 @@ erase(
+     auto const p = &(*t_)[0] +
+         (pos - &(*t_)[0]);
+     destroy(p, p + 1);
+-    relocate(p, p + 1, 1);
+     --t_->size;
++    if(t_->size > 0)
++        relocate(p, p + 1,
++            t_->size - (p -
++                &(*t_)[0]));
+     return p;
+ }
+ 
+diff --git a/libs/json/test/array.cpp b/libs/json/test/array.cpp
+index 1cc87566..4516cc78 100644
+--- a/libs/json/test/array.cpp
++++ b/libs/json/test/array.cpp
+@@ -1269,6 +1269,21 @@ class array_test
+             array{nullptr, "a", "b"}));
+     }
+ 
++    void
++    testIssue692()
++    {
++	    array a;
++	    object obj;
++	    obj["test1"] = "hello";
++	    a.push_back(obj);
++	    a.push_back(obj);
++	    a.push_back(obj);
++	    a.push_back(obj);
++	    a.push_back(obj);
++	    while(a.size())
++		    a.erase(a.begin());
++    }
++
+     void
+     run()
+     {
+@@ -1283,6 +1298,7 @@ class array_test
+         testExceptions();
+         testEquality();
+         testHash();
++        testIssue692();
+     }
+ };
+ 
