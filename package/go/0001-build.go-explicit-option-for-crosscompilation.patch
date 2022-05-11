@@ -1,4 +1,4 @@
-From e1382a731a726293e30901038c6870fa77ef6095 Mon Sep 17 00:00:00 2001
+From 335c6245674088de616324398137416c7a1cbe8f Mon Sep 17 00:00:00 2001
 From: Angelo Compagnucci <angelo@amarulasolutions.com>
 Date: Tue, 8 May 2018 16:08:44 +0200
 Subject: [PATCH] build.go: explicit option for crosscompilation
@@ -17,10 +17,10 @@ Signed-off-by: Anisse Astier <anisse@astier.eu>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/src/cmd/dist/build.go b/src/cmd/dist/build.go
-index 99d1db5..eb4097f 100644
+index f99f1f4e43..08a9f24f59 100644
 --- a/src/cmd/dist/build.go
 +++ b/src/cmd/dist/build.go
-@@ -252,12 +252,13 @@ func xinit() {
+@@ -286,12 +286,13 @@ func xinit() {
  // $CC_FOR_goos_goarch, if set, applies only to goos/goarch.
  func compilerEnv(envName, def string) map[string]string {
  	m := map[string]string{"": def}
@@ -36,5 +36,5 @@ index 99d1db5..eb4097f 100644
  		}
  		m[""] = env
 -- 
-2.7.4
+2.35.1
 
