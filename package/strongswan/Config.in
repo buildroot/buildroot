@@ -195,6 +195,9 @@ config BR2_PACKAGE_STRONGSWAN_SQL
 	bool "Enable SQL database configuration backend"
 	depends on BR2_PACKAGE_SQLITE || BR2_PACKAGE_MYSQL
 
+config BR2_PACKAGE_STRONGSWAN_BYPASS_LAN
+	bool "Enable BYPASS-LAN plugin"
+
 endif
 
 config BR2_PACKAGE_STRONGSWAN_PKI
