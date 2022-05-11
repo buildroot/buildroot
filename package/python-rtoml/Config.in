@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_RTOML
+	bool "python-rtoml"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	help
+	  A better TOML library for python implemented in rust.
+
+	  https://github.com/samuelcolvin/rtoml
