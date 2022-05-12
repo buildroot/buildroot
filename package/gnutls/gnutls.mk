@@ -12,7 +12,7 @@ GNUTLS_SITE = https://www.gnupg.org/ftp/gcrypt/gnutls/v$(GNUTLS_VERSION_MAJOR)
 GNUTLS_LICENSE = LGPL-2.1+ (core library)
 GNUTLS_LICENSE_FILES = doc/COPYING.LESSER
 
-GNUTLS_DEPENDENCIES = host-pkgconf libtasn1 nettle
+GNUTLS_DEPENDENCIES = host-pkgconf libtasn1 libunistring nettle
 GNUTLS_CPE_ID_VENDOR = gnu
 GNUTLS_CONF_OPTS = \
 	--disable-doc \
@@ -20,6 +20,7 @@ GNUTLS_CONF_OPTS = \
 	--disable-libdane \
 	--disable-rpath \
 	--disable-tests \
+	--without-included-unistring \
 	--without-libcrypto-prefix \
 	--without-libdl-prefix \
 	--without-libev-prefix \
@@ -72,12 +73,6 @@ GNUTLS_CONF_OPTS += --with-p11-kit
 GNUTLS_DEPENDENCIES += p11-kit
 else
 GNUTLS_CONF_OPTS += --without-p11-kit
-endif
-
-ifeq ($(BR2_PACKAGE_LIBUNISTRING),y)
-GNUTLS_DEPENDENCIES += libunistring
-else
-GNUTLS_CONF_OPTS += --with-included-unistring
 endif
 
 ifeq ($(BR2_PACKAGE_ZLIB),y)
