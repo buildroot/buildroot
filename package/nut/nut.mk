@@ -61,7 +61,7 @@ else
 NUT_CONF_OPTS += --without-cgi
 endif
 
-# nut-scanner needs libltdl, which is a wrapper arounf dlopen/dlsym,
+# nut-scanner needs libltdl, which is a wrapper around dlopen/dlsym,
 # so is not available for static-only builds.
 # There is no flag to directly enable/disable nut-scanner, it's done
 # via the --enable/disable-libltdl flag.
