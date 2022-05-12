@@ -7,10 +7,21 @@
 NODEJS_VERSION = 16.15.0
 NODEJS_SOURCE = node-v$(NODEJS_VERSION).tar.xz
 NODEJS_SITE = http://nodejs.org/dist/v$(NODEJS_VERSION)
-NODEJS_DEPENDENCIES = host-qemu host-pkgconf host-python3 host-nodejs c-ares \
-	libuv zlib nghttp2 \
+NODEJS_DEPENDENCIES = \
+	host-nodejs \
+	host-pkgconf \
+	host-python3 \
+	host-qemu \
+	c-ares \
+	libuv \
+	nghttp2 \
+	zlib \
 	$(call qstrip,$(BR2_PACKAGE_NODEJS_MODULES_ADDITIONAL_DEPS))
-HOST_NODEJS_DEPENDENCIES = host-icu host-libopenssl host-pkgconf host-python3 \
+HOST_NODEJS_DEPENDENCIES = \
+	host-icu \
+	host-libopenssl \
+	host-pkgconf \
+	host-python3 \
 	host-zlib
 NODEJS_INSTALL_STAGING = YES
 NODEJS_LICENSE = MIT (core code); MIT, Apache and BSD family licenses (Bundled components)
