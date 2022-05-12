@@ -25,7 +25,7 @@ class TestZfsBase(infra.basetest.BRTest):
         # BR2_TARGET_ROOTFS_TAR is not set
         """
 
-    def test_run(self):
+    def base_test_run(self):
         kernel = os.path.join(self.builddir, "images", "bzImage")
         cpio_file = os.path.join(self.builddir, "images", "rootfs.cpio")
         self.emulator.boot(
@@ -65,6 +65,9 @@ class TestZfsGlibc(TestZfsBase):
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_X86_64_CORE_I7_GLIBC_STABLE=y
         """
 
+    def test_run(self):
+        TestZfsBase.base_test_run(self)
+
 
 class TestZfsUclibc(TestZfsBase):
     config = TestZfsBase.config + \
@@ -72,9 +75,15 @@ class TestZfsUclibc(TestZfsBase):
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_X86_64_CORE_I7_UCLIBC_STABLE=y
         """
 
+    def test_run(self):
+        TestZfsBase.base_test_run(self)
+
 
 class TestZfsMusl(TestZfsBase):
     config = TestZfsBase.config + \
         """
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_X86_64_MUSL_STABLE=y
         """
+
+    def test_run(self):
+        TestZfsBase.base_test_run(self)
