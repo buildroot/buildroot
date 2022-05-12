@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-XAPP_XSM_VERSION = 1.0.4
-XAPP_XSM_SOURCE = xsm-$(XAPP_XSM_VERSION).tar.bz2
+XAPP_XSM_VERSION = 1.0.5
+XAPP_XSM_SOURCE = xsm-$(XAPP_XSM_VERSION).tar.xz
 XAPP_XSM_SITE = http://xorg.freedesktop.org/releases/individual/app
 XAPP_XSM_LICENSE = MIT
 XAPP_XSM_LICENSE_FILES = COPYING
