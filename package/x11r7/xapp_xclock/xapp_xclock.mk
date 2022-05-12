@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-XAPP_XCLOCK_VERSION = 1.0.9
-XAPP_XCLOCK_SOURCE = xclock-$(XAPP_XCLOCK_VERSION).tar.bz2
+XAPP_XCLOCK_VERSION = 1.1.1
+XAPP_XCLOCK_SOURCE = xclock-$(XAPP_XCLOCK_VERSION).tar.xz
 XAPP_XCLOCK_SITE = https://xorg.freedesktop.org/archive/individual/app
 XAPP_XCLOCK_LICENSE = MIT
 XAPP_XCLOCK_LICENSE_FILES = COPYING
