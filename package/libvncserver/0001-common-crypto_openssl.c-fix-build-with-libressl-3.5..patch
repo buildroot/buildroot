@@ -1,0 +1,66 @@
+From 97fbbd678b2012e64acddd523677bc55a177bc58 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 12 May 2022 20:41:50 +0200
+Subject: [PATCH] common/crypto_openssl.c: fix build with libressl >= 3.5.0
+ (#522)
+
+Fix the following build failure with libressl >= 3.5.0:
+
+/nvmedata/autobuild/instance-26/output-1/build/libvncserver-0.9.13/common/crypto_openssl.c: In function 'dh_generate_keypair':
+/nvmedata/autobuild/instance-26/output-1/build/libvncserver-0.9.13/common/crypto_openssl.c:149:7: error: dereferencing pointer to incomplete type 'DH' {aka 'struct dh_st'}
+  149 |     dh->p = BN_bin2bn(prime, keylen, NULL);
+      |       ^~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/49b3940b9d0432cb5fb0c5d22dfa017b18c6e233
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/LibVNC/libvncserver/commit/97fbbd678b2012e64acddd523677bc55a177bc58]
+---
+ common/crypto_openssl.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/common/crypto_openssl.c b/common/crypto_openssl.c
+index 60d4bd4df..51d7ec2d9 100644
+--- a/common/crypto_openssl.c
++++ b/common/crypto_openssl.c
+@@ -138,14 +138,16 @@ int dh_generate_keypair(uint8_t *priv_out, uint8_t *pub_out, const uint8_t *gen,
+ {
+     int result = 0;
+     DH *dh;
+-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
++#if OPENSSL_VERSION_NUMBER >= 0x10100000L || \
++	(defined (LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER >= 0x30500000)
+     const BIGNUM *pub_key = NULL;
+     const BIGNUM *priv_key = NULL;
+ #endif
+ 
+     if(!(dh = DH_new()))
+ 	goto out;
+-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined LIBRESSL_VERSION_NUMBER
++#if OPENSSL_VERSION_NUMBER < 0x10100000L || \
++	(defined (LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x30500000)
+     dh->p = BN_bin2bn(prime, keylen, NULL);
+     dh->g = BN_bin2bn(gen, gen_len, NULL);
+ #else
+@@ -154,7 +156,8 @@ int dh_generate_keypair(uint8_t *priv_out, uint8_t *pub_out, const uint8_t *gen,
+ #endif
+     if(!DH_generate_key(dh))
+ 	goto out;
+-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined LIBRESSL_VERSION_NUMBER
++#if OPENSSL_VERSION_NUMBER < 0x10100000L || \
++	(defined (LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x30500000)
+     if(BN_bn2bin(dh->priv_key, priv_out) == 0)
+ 	goto out;
+     if(BN_bn2bin(dh->pub_key, pub_out) == 0)
+@@ -181,7 +184,8 @@ int dh_compute_shared_key(uint8_t *shared_out, const uint8_t *priv, const uint8_
+ 
+     if(!(dh = DH_new()))
+ 	goto out;
+-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined LIBRESSL_VERSION_NUMBER
++#if OPENSSL_VERSION_NUMBER < 0x10100000L || \
++	(defined LIBRESSL_VERSION_NUMBER && LIBRESSL_VERSION_NUMBER < 0x30500000)
+     dh->p = BN_bin2bn(prime, keylen, NULL);
+     dh->priv_key = BN_bin2bn(priv, keylen, NULL);
+ #else
