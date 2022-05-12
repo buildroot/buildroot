@@ -48,6 +48,13 @@ else
 GNUTLS_CONF_OPTS += --disable-openssl-compatibility
 endif
 
+ifeq ($(BR2_PACKAGE_BROTLI),y)
+GNUTLS_CONF_OPTS += --with-libbrotli
+GNUTLS_DEPENDENCIES += brotli
+else
+GNUTLS_CONF_OPTS += --without-libbrotli
+endif
+
 ifeq ($(BR2_PACKAGE_CRYPTODEV_LINUX),y)
 GNUTLS_CONF_OPTS += --enable-cryptodev
 GNUTLS_DEPENDENCIES += cryptodev-linux
@@ -71,6 +78,20 @@ ifeq ($(BR2_PACKAGE_LIBUNISTRING),y)
 GNUTLS_DEPENDENCIES += libunistring
 else
 GNUTLS_CONF_OPTS += --with-included-unistring
+endif
+
+ifeq ($(BR2_PACKAGE_ZLIB),y)
+GNUTLS_CONF_OPTS += --with-zlib
+GNUTLS_DEPENDENCIES += zlib
+else
+GNUTLS_CONF_OPTS += --without-zlib
+endif
+
+ifeq ($(BR2_PACKAGE_ZSTD),y)
+GNUTLS_CONF_OPTS += --with-libzstd
+GNUTLS_DEPENDENCIES += zstd
+else
+GNUTLS_CONF_OPTS += --without-libzstd
 endif
 
 # Provide a default CA cert location
