@@ -45,4 +45,8 @@ ifeq ($(PACKAGE_PCSC_LITE_EMBEDDED),y)
 PCSC_LITE_CONF_OPTS += --enable-embedded
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+PCSC_LITE_CONF_ENV += LIBS=-latomic
+endif
+
 $(eval $(autotools-package))
