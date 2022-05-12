@@ -4,14 +4,15 @@
 #
 ################################################################################
 
-PCSC_LITE_VERSION = 1.9.5
+PCSC_LITE_VERSION = 1.9.6
 PCSC_LITE_SOURCE = pcsc-lite-$(PCSC_LITE_VERSION).tar.bz2
 PCSC_LITE_SITE = https://pcsclite.apdu.fr/files
 PCSC_LITE_INSTALL_STAGING = YES
-PCSC_LITE_DEPENDENCIES = host-pkgconf
+PCSC_LITE_DEPENDENCIES = host-pkgconf host-flex
 PCSC_LITE_LICENSE = BSD-2-Clause (auth), BSD-3-Clause, GPL-3.0+ (demo, spy, tests), ISC (simclist)
 PCSC_LITE_LICENSE_FILES = COPYING GPL-3.0.txt
 PCSC_LITE_SELINUX_MODULES = pcscd
+PCSC_LITE_CONF_OPTS = --disable-strict
 
 # - libudev and libusb are optional
 # - libudev and libusb can't be used together

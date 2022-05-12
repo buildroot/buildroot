@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-XAPP_XCALC_VERSION = 1.1.0
-XAPP_XCALC_SOURCE = xcalc-$(XAPP_XCALC_VERSION).tar.bz2
+XAPP_XCALC_VERSION = 1.1.1
+XAPP_XCALC_SOURCE = xcalc-$(XAPP_XCALC_VERSION).tar.xz
 XAPP_XCALC_SITE = https://xorg.freedesktop.org/releases/individual/app
 XAPP_XCALC_LICENSE = MIT
 XAPP_XCALC_LICENSE_FILES = COPYING
