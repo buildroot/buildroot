@@ -4,6 +4,7 @@
 #
 ################################################################################
 
+# When bumping, make sure *all* --without-libfoo-prefix options are in GNUTLS_CONF_OPTS
 GNUTLS_VERSION_MAJOR = 3.7
 GNUTLS_VERSION = $(GNUTLS_VERSION_MAJOR).4
 GNUTLS_SOURCE = gnutls-$(GNUTLS_VERSION).tar.xz
@@ -26,7 +27,15 @@ GNUTLS_CONF_OPTS = \
 	--disable-tests \
 	--enable-local-libopts \
 	--enable-openssl-compatibility \
-	--with-librt-prefix=$(STAGING_DIR) \
+	--without-libcrypto-prefix \
+	--without-libdl-prefix \
+	--without-libev-prefix \
+	--without-libiconv-prefix \
+	--without-libintl-prefix \
+	--without-libpthread-prefix \
+	--without-libseccomp-prefix \
+	--without-librt-prefix \
+	--without-libz-prefix \
 	--without-tpm \
 	$(if $(BR2_PACKAGE_GNUTLS_OPENSSL),--enable,--disable)-openssl-compatibility \
 	$(if $(BR2_PACKAGE_GNUTLS_TOOLS),--enable-tools,--disable-tools) \
@@ -38,9 +47,6 @@ GNUTLS_CONF_ENV = gl_cv_socket_ipv6=yes \
 	gt_cv_c_wint_t=$(if $(BR2_USE_WCHAR),yes,no) \
 	gl_cv_func_gettimeofday_clobber=no
 GNUTLS_INSTALL_STAGING = YES
-
-# libpthread autodetection poison the linkpath
-GNUTLS_CONF_OPTS += $(if $(BR2_TOOLCHAIN_HAS_THREADS),--with-libpthread-prefix=$(STAGING_DIR)/usr)
 
 # gnutls needs libregex, but pcre can be used too
 # The check isn't cross-compile friendly
@@ -70,7 +76,6 @@ GNUTLS_CONF_OPTS += --without-p11-kit
 endif
 
 ifeq ($(BR2_PACKAGE_LIBUNISTRING),y)
-GNUTLS_CONF_OPTS += --with-libunistring-prefix=$(STAGING_DIR)/usr
 GNUTLS_DEPENDENCIES += libunistring
 else
 GNUTLS_CONF_OPTS += --with-included-unistring
