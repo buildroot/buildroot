@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2022.05"
 
+config BR2_KERNEL_HEADERS_5_16
+	bool "kernel headers version 5.16.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 5.16.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
 config BR2_KERNEL_HEADERS_4_4
 	bool "kernel headers version 4.4.x are no longer supported"
 	select BR2_LEGACY
