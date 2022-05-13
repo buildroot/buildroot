@@ -1,0 +1,27 @@
+From 0a1e302e8a242bbd1d39556e5ef05aced1b3b504 Mon Sep 17 00:00:00 2001
+From: orbea <orbea@riseup.net>
+Date: Sun, 8 May 2022 22:50:44 -0700
+Subject: [PATCH] libi2pd: Fix the build with LibreSSL 3.5.2
+
+[Retrieved from:
+https://github.com/PurpleI2P/i2pd/commit/0a1e302e8a242bbd1d39556e5ef05aced1b3b504]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ libi2pd/Crypto.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/libi2pd/Crypto.h b/libi2pd/Crypto.h
+index b02778141..726bd0a1e 100644
+--- a/libi2pd/Crypto.h
++++ b/libi2pd/Crypto.h
+@@ -29,7 +29,9 @@
+ #include "CPU.h"
+ 
+ // recognize openssl version and features
+-#if ((OPENSSL_VERSION_NUMBER < 0x010100000) || defined(LIBRESSL_VERSION_NUMBER)) // 1.0.2 and below or LibreSSL
++#if (defined(LIBRESSL_VERSION_NUMBER) && (LIBRESSL_VERSION_NUMBER >= 0x3050200fL)) // LibreSSL 3.5.2 and above
++#   define LEGACY_OPENSSL 0
++#elif ((OPENSSL_VERSION_NUMBER < 0x010100000) || defined(LIBRESSL_VERSION_NUMBER)) // 1.0.2 and below or LibreSSL
+ #   define LEGACY_OPENSSL 1
+ #   define X509_getm_notBefore X509_get_notBefore
+ #   define X509_getm_notAfter X509_get_notAfter
