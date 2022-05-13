@@ -195,6 +195,26 @@ config BR2_PACKAGE_BOOST_LAYOUT_VERSIONED
 
 comment "Legacy options removed in 2022.02"
 
+config BR2_TARGET_ROOTFS_OCI_ENTRYPOINT_ARGS
+	string "entrypoint argumetns has been changed as command"
+	help
+	  The OCI image BR2_TARGET_ROOTFS_OCI_ENTRYPOINT_ARGS option
+	  has been renamed to BR2_TARGET_ROOTFS_OCI_CMD to better
+	  reflect its relation to the actual 'command' of the OCI
+	  image.
+
+	  The new semantic for BR2_TARGET_ROOTFS_OCI_CMD is slightly
+	  differnt in relation to how it is interpreted, so be sure to
+	  review the help entry for it.
+
+	  Due to this breaking change, the old value here could not be
+	  set to the new variable.
+
+config BR2_TARGET_ROOTFS_OCI_ENTRYPOINT_ARGS_WRAP
+	bool
+	default y if BR2_TARGET_ROOTFS_OCI_ENTRYPOINT_ARGS != ""
+	select BR2_LEGACY
+
 config BR2_PACKAGE_LIBCURL_LIBNSS
 	bool "libcurl NSS removed"
 	select BR2_LEGACY

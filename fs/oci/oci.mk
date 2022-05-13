@@ -12,17 +12,23 @@ OCI_SLOCI_IMAGE_OPTS = --arch $(GO_GOARCH)
 # architecture variant (typically used only for arm)
 OCI_SLOCI_IMAGE_OPTS += $(and $(GO_GOARM),--arch-variant v$(GO_GOARM))
 
-# entrypoint
-OCI_ENTRYPOINT = $(call qstrip,$(BR2_TARGET_ROOTFS_OCI_ENTRYPOINT))
-ifneq ($(OCI_ENTRYPOINT),)
-OCI_SLOCI_IMAGE_OPTS += --entrypoint "$(OCI_ENTRYPOINT)"
-endif
-
-# entrypoint arguments
-OCI_ENTRYPOINT_ARGS = $(call qstrip,$(BR2_TARGET_ROOTFS_OCI_ENTRYPOINT_ARGS))
-ifneq ($(OCI_ENTRYPOINT_ARGS),)
-OCI_SLOCI_IMAGE_OPTS += --cmd "$(OCI_ENTRYPOINT_ARGS)"
-endif
+# entrypoint and command
+# Special treatment: both the entrypoint and arguments (aka command) are
+# a double-quoted, space-separated, escaped-double-quoted string, like:
+#     "foo \"1 2   3 4\" '  a b c d  ' bar\ buz"
+# which should be interpreted as a 4-item list (using single quotes to
+# delimit them and see leading/trailing spaces):
+#     'foo'
+#     '1 2   3 4'
+#     '  a b c d  '
+#     'bar buz'
+#
+# We use some trickery to have the shell properly expand this into a list
+# where each item is single-quoted and prefixed with the appropriate
+# option string:
+OCI_SLOCI_IMAGE_OPTS += \
+	$(shell eval printf -- "--entrypoint\ \'%s\'\ " $(BR2_TARGET_ROOTFS_OCI_ENTRYPOINT)) \
+	$(shell eval printf -- "--cmd\ \'%s\'\ " $(BR2_TARGET_ROOTFS_OCI_CMD))
 
 # author
 OCI_AUTHOR = $(call qstrip,$(BR2_TARGET_ROOTFS_OCI_AUTHOR))
