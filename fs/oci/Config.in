@@ -42,10 +42,26 @@ config BR2_TARGET_ROOTFS_OCI_ENTRYPOINT
 	help
 	  Command to execute when the container starts.
 
-config BR2_TARGET_ROOTFS_OCI_ENTRYPOINT_ARGS
-	string "entrypoint arguments"
+	  Spaces must be quoted or escaped, like for a shell string:
+	    /usr/bin/env sh -c
+	    /bin/my-init --some-option "1 2 3 4" some\ arg --
+
+	  See the Docker documentation on how entrypoint and command
+	  interact together:
+	    https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact
+
+config BR2_TARGET_ROOTFS_OCI_CMD
+	string "command (or entrypoint arguments)"
 	help
-	  Default arguments to the entrypoint of the container.
+	  Default command, or entrypoint arguments, of the container.
+
+	  Spaces must be quoted or escaped, like for a shell string:
+	    "your shell scriptlet"
+	    /usr/bin/env sh
+
+	  See the Docker documentation on how entrypoint and command
+	  interact together:
+	    https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact
 
 config BR2_TARGET_ROOTFS_OCI_WORKDIR
 	string "working directory"
