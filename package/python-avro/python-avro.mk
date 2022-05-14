@@ -4,7 +4,8 @@
 #
 ################################################################################
 
-PYTHON_AVRO_VERSION = $(AVRO_C_VERSION)
+# When updating the version, please also update python-avro
+PYTHON_AVRO_VERSION = 1.11.0
 PYTHON_AVRO_SITE = \
 	https://www-eu.apache.org/dist/avro/avro-$(PYTHON_AVRO_VERSION)/py
 PYTHON_AVRO_SOURCE = avro-$(PYTHON_AVRO_VERSION).tar.gz

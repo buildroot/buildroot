@@ -4,6 +4,7 @@
 #
 ################################################################################
 
+# When updating the version, please also update python-avro
 AVRO_C_VERSION = 1.11.0
 AVRO_C_SITE = https://www-eu.apache.org/dist/avro/avro-$(AVRO_C_VERSION)/c
 AVRO_C_LICENSE = Apache-2.0
