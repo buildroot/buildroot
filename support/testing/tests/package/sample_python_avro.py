@@ -1,8 +1,8 @@
 from io import BytesIO
-from avro.schema import Parse
+from avro.schema import parse
 from avro.io import DatumReader, BinaryDecoder
 
-schema = Parse("""{
+schema = parse("""{
 "namespace": "org.buildroot.package.python_avro",
 "type": "record",
 "name": "Developer",
