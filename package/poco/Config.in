@@ -57,7 +57,7 @@ config BR2_PACKAGE_POCO_DATA_PGSQL
 	select BR2_PACKAGE_POSTGRESQL
 
 comment "Data/PostgreSQL can't be built with Optimize for fast"
-	depends on !BR2_OPTIMIZE_FAST
+	depends on BR2_OPTIMIZE_FAST
 
 config BR2_PACKAGE_POCO_DATA_SQLITE
 	bool "Data/SQLite"
