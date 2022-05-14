@@ -103,7 +103,7 @@ comment "pgsql support needs a toolchain w/ wchar"
 	depends on !BR2_USE_WCHAR
 
 comment "pgsql support can't be built with Optimize for fast"
-	depends on !BR2_OPTIMIZE_FAST
+	depends on BR2_OPTIMIZE_FAST
 
 config BR2_PACKAGE_LIGHTTPD_WEBDAV
 	bool "webdav support"
