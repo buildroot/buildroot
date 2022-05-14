@@ -1,0 +1,18 @@
+Modify the Makefile to include '$(PREFIX)/bin/systemctl' in the list of paths.
+This makes the udev intgeration work as intended when using systemd.
+
+Signed-off-by: Sol Bekic <s+removethis@s-ol.nu>
+
+diff --git a/Makefile b/Makefile
+index 22bd0e0..72321a4 100755
+--- a/Makefile
++++ b/Makefile
+@@ -62,7 +62,7 @@
+	install -D --mode=755 usb_modeswitch_dispatcher $(SBINDIR)/usb_modeswitch_dispatcher
+	install -d $(DESTDIR)/var/lib/usb_modeswitch
+	test -d $(UPSDIR) -a -e /sbin/initctl && install --mode=644 usb-modeswitch-upstart.conf $(UPSDIR) || test 1
+-	test -d $(SYSDIR) -a \( -e /usr/bin/systemctl -o -e /bin/systemctl \) && install --mode=644 usb_modeswitch@.service $(SYSDIR) || test 1
++	test -d $(SYSDIR) -a \( -e /usr/bin/systemctl -o -e /bin/systemctl -o -e $(PREFIX)/bin/systemctl \) && install --mode=644 usb_modeswitch@.service $(SYSDIR) || test 1
+ 
+ install: install-script
+ 
