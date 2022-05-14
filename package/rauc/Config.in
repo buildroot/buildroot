@@ -27,6 +27,8 @@ config BR2_PACKAGE_RAUC_DBUS
 
 config BR2_PACKAGE_RAUC_GPT
 	bool "GPT support"
+	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_LIBS
 	select BR2_PACKAGE_UTIL_LINUX_LIBFDISK
 	help
 	    This option enables support for GPT partition tables.
