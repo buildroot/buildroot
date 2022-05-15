@@ -4,13 +4,17 @@
 #
 ################################################################################
 
-SYSREPO_VERSION = 2.0.53
+SYSREPO_VERSION = 2.1.42
 SYSREPO_SITE = $(call github,sysrepo,sysrepo,v$(SYSREPO_VERSION))
 SYSREPO_INSTALL_STAGING = YES
 SYSREPO_LICENSE = BSD-3-Clause
 SYSREPO_LICENSE_FILES = LICENSE
 SYSREPO_DEPENDENCIES = libyang pcre2 host-sysrepo
 HOST_SYSREPO_DEPENDENCIES = host-libyang host-pcre2
+
+ifeq ($(BR2_INIT_SYSTEMD),y)
+SYSREPO_DEPENDENCIES += systemd
+endif
 
 SYSREPO_CONF_OPTS = \
 	-DBUILD_EXAMPLES=$(if $(BR2_PACKAGE_SYSREPO_EXAMPLES),ON,OFF) \

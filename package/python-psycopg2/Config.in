@@ -27,4 +27,4 @@ comment "python-psycopg2 needs a toolchain w/ wchar"
 	depends on !BR2_USE_WCHAR
 
 comment "python-psycopg2 can't be built with Optimize for fast"
-	depends on !BR2_OPTIMIZE_FAST
+	depends on BR2_OPTIMIZE_FAST

@@ -1,0 +1,59 @@
+From c8cc6f1773ff370bb14bb963e2f632eef6d6a3c2 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 12 May 2022 23:22:42 +0200
+Subject: [PATCH] libs/srtp/crypto/hash/hmac_ossl.c: fix build with libressl >=
+ 3.5.0
+
+Fix the following build failure with libressl >= 3.5.0:
+
+crypto/hash/hmac_ossl.c: In function 'srtp_hmac_alloc':
+crypto/hash/hmac_ossl.c:88:55: error: invalid application of 'sizeof' to incomplete type 'HMAC_CTX' {aka 'struct hmac_ctx_st'}
+   88 |         pointer = (uint8_t *)srtp_crypto_alloc(sizeof(HMAC_CTX) +
+      |                                                       ^~~~~~~~
+crypto/hash/hmac_ossl.c:97:9: warning: implicit declaration of function 'HMAC_CTX_init'; did you mean 'HMAC_CTX_new'? [-Wimplicit-function-declaration]
+   97 |         HMAC_CTX_init(new_hmac_ctx);
+      |         ^~~~~~~~~~~~~
+      |         HMAC_CTX_new
+crypto/hash/hmac_ossl.c: In function 'srtp_hmac_dealloc':
+crypto/hash/hmac_ossl.c:130:5: warning: implicit declaration of function 'HMAC_CTX_cleanup' [-Wimplicit-function-declaration]
+  130 |     HMAC_CTX_cleanup(hmac_ctx);
+      |     ^~~~~~~~~~~~~~~~
+crypto/hash/hmac_ossl.c:133:40: error: invalid application of 'sizeof' to incomplete type 'HMAC_CTX' {aka 'struct hmac_ctx_st'}
+  133 |     octet_string_set_to_zero(a, sizeof(HMAC_CTX) + sizeof(srtp_auth_t));
+      |                                        ^~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/e696ead9ffffa5bb80928d75607bfbb9b263d3c6
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ libs/srtp/crypto/hash/hmac_ossl.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/libs/srtp/crypto/hash/hmac_ossl.c b/libs/srtp/crypto/hash/hmac_ossl.c
+index 8146438b05..6730cbb35c 100644
+--- a/libs/srtp/crypto/hash/hmac_ossl.c
++++ b/libs/srtp/crypto/hash/hmac_ossl.c
+@@ -79,7 +79,8 @@ static srtp_err_status_t srtp_hmac_alloc(srtp_auth_t **a,
+ 
+ /* OpenSSL 1.1.0 made HMAC_CTX an opaque structure, which must be allocated
+    using HMAC_CTX_new.  But this function doesn't exist in OpenSSL 1.0.x. */
+-#if OPENSSL_VERSION_NUMBER < 0x10100000L || LIBRESSL_VERSION_NUMBER
++#if OPENSSL_VERSION_NUMBER < 0x10100000L || \
++	(defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x30500000L)
+     {
+         /* allocate memory for auth and HMAC_CTX structures */
+         uint8_t *pointer;
+@@ -125,7 +126,8 @@ static srtp_err_status_t srtp_hmac_dealloc(srtp_auth_t *a)
+ 
+     hmac_ctx = (HMAC_CTX *)a->state;
+ 
+-#if OPENSSL_VERSION_NUMBER < 0x10100000L || LIBRESSL_VERSION_NUMBER
++#if OPENSSL_VERSION_NUMBER < 0x10100000L || \
++	(defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x30500000L)
+     HMAC_CTX_cleanup(hmac_ctx);
+ 
+     /* zeroize entire state*/
+-- 
+2.35.1
+

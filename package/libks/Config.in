@@ -2,7 +2,7 @@ config BR2_PACKAGE_LIBKS
 	bool "libks"
 	depends on BR2_INSTALL_LIBSTDCPP
 	depends on !BR2_STATIC_LIBS # dlfcn.h
-	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # pthread_setname_np()
 	select BR2_PACKAGE_OPENSSL
 	select BR2_PACKAGE_UTIL_LINUX
 	select BR2_PACKAGE_UTIL_LINUX_LIBUUID
@@ -11,6 +11,6 @@ config BR2_PACKAGE_LIBKS
 
 	  https://github.com/signalwire/libks
 
-comment "libks needs a toolchain w/ C++, threads, dynamic library"
+comment "libks needs a toolchain w/ C++, NPTL, dynamic library"
 	depends on BR2_STATIC_LIBS || !BR2_INSTALL_LIBSTDCPP \
-		|| !BR2_TOOLCHAIN_HAS_THREADS
+		|| !BR2_TOOLCHAIN_HAS_THREADS_NPTL

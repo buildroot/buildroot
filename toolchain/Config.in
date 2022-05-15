@@ -572,6 +572,10 @@ config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_15
 config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_16
 	bool
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_15
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_17
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_16
 	select BR2_TOOLCHAIN_HEADERS_LATEST
 
 # This should be selected by the latest version, above, to indicate that
