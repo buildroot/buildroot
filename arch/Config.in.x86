@@ -286,9 +286,9 @@ config BR2_x86_atom
 	select BR2_X86_CPU_HAS_SSSE3
 	help
 	  This option is deprecated. Since gcc 4.9, the gcc option
-	  "bonnel" is preferred. Use BR2_x86_bonnel instead.
-config BR2_x86_bonnel
-	bool "bonnel"
+	  "bonnell" is preferred. Use BR2_x86_bonnell instead.
+config BR2_x86_bonnell
+	bool "bonnell"
 	select BR2_X86_CPU_HAS_MMX
 	select BR2_X86_CPU_HAS_SSE
 	select BR2_X86_CPU_HAS_SSE2
@@ -598,7 +598,7 @@ config BR2_GCC_TARGET_ARCH
 	default "broadwell"	if BR2_x86_broadwell
 	default "skylake"	if BR2_x86_skylake
 	default "atom"		if BR2_x86_atom
-	default "bonnel"	if BR2_x86_bonnel
+	default "bonnell"	if BR2_x86_bonnell
 	default "westmere"	if BR2_x86_westmere
 	default "silvermont"	if BR2_x86_silvermont
 	default "goldmont"	if BR2_x86_goldmont
