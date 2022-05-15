@@ -118,6 +118,11 @@ ifeq ($(BR2_nios2),y)
 GLIBC_CFLAGS += -O2
 endif
 
+# glibc can't be built with Optimize for fast
+ifeq ($(BR2_OPTIMIZE_FAST),y)
+GLIBC_CFLAGS += -O2
+endif
+
 define GLIBC_CONFIGURE_CMDS
 	mkdir -p $(@D)/build
 	# Do the configuration
