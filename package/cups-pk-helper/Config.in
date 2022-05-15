@@ -5,6 +5,7 @@ config BR2_PACKAGE_CUPS_PK_HELPER
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2, polkit
 	depends on BR2_USE_WCHAR # libglib2
 	depends on !BR2_STATIC_LIBS # polkit -> duktape
+	depends on !BR2_OPTIMIZE_FAST # polkit -> duktape
 	depends on BR2_PACKAGE_CUPS
 	select BR2_PACKAGE_POLKIT
 	help
@@ -17,3 +18,6 @@ comment "cups-pk-helper support needs a toolchain with threads, wchar, dynamic l
 	depends on BR2_USE_MMU
 	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_GCC_AT_LEAST_7 || \
 		!BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
+
+comment "cups-pk-helper can't be built with Optimize for fast"
+	depends on BR2_OPTIMIZE_FAST

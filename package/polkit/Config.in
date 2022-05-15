@@ -5,6 +5,7 @@ config BR2_PACKAGE_POLKIT
 	depends on BR2_USE_MMU # libglib2, dbus
 	depends on BR2_USE_WCHAR # libglib2
 	depends on !BR2_STATIC_LIBS # duktape
+	depends on !BR2_OPTIMIZE_FAST # duktape
 	select BR2_PACKAGE_DBUS # runtime
 	select BR2_PACKAGE_DUKTAPE
 	select BR2_PACKAGE_EXPAT
@@ -20,3 +21,6 @@ comment "polkit needs a toolchain with dynamic library, wchar, threads, gcc >= 7
 	depends on BR2_USE_MMU
 	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_GCC_AT_LEAST_7 || \
 		BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS
+
+comment "polkit can't be built with Optimize for fast"
+	depends on BR2_OPTIMIZE_FAST
