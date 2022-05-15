@@ -359,6 +359,7 @@ config BR2_PACKAGE_SYSTEMD_POLKIT
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 # polkit -> c++17
 	depends on BR2_TOOLCHAIN_HAS_THREADS # polkit
 	depends on BR2_USE_WCHAR # libglib2
+	depends on !BR2_OPTIMIZE_FAST # polkit -> duktape
 	select BR2_PACKAGE_POLKIT
 	help
 	  If enabled, systemd is built with polkit support and policy
@@ -371,6 +372,9 @@ config BR2_PACKAGE_SYSTEMD_POLKIT
 comment "polkit support needs a toolchain with threads, wchar, gcc >= 7"
 	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_GCC_AT_LEAST_7 || \
 		!BR2_TOOLCHAIN_HAS_THREADS
+
+comment "polkit support can't be built with Optimize for fast"
+	depends on BR2_OPTIMIZE_FAST
 
 config BR2_PACKAGE_SYSTEMD_PORTABLED
 	bool "enable portable services"
