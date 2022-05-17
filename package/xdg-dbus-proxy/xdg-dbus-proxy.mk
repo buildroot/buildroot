@@ -12,6 +12,6 @@ XDG_DBUS_PROXY_DEPENDENCIES = host-pkgconf libglib2
 XDG_DBUS_PROXY_LICENSE = LGPL-2.1+
 XDG_DBUS_PROXY_LICENSE_FILES = COPYING
 
-XDG_DBUS_PROXY_CONF_OPTS = --disable-man
+XDG_DBUS_PROXY_CONF_OPTS = -Dman=disabled -Dtests=false
 
-$(eval $(autotools-package))
+$(eval $(meson-package))
