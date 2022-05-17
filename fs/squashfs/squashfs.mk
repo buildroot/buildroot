@@ -6,7 +6,10 @@
 
 ROOTFS_SQUASHFS_DEPENDENCIES = host-squashfs
 
-ROOTFS_SQUASHFS_ARGS = -noappend -processors $(PARALLEL_JOBS)
+ROOTFS_SQUASHFS_ARGS = \
+	-noappend \
+	-processors $(PARALLEL_JOBS) \
+	-b $(call qstrip,$(BR2_TARGET_ROOTFS_SQUASHFS_BS))
 
 ifeq ($(BR2_TARGET_ROOTFS_SQUASHFS_PAD),)
 ROOTFS_SQUASHFS_ARGS += -nopad

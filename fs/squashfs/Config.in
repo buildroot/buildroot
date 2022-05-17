@@ -5,6 +5,56 @@ config BR2_TARGET_ROOTFS_SQUASHFS
 
 if BR2_TARGET_ROOTFS_SQUASHFS
 
+choice
+	prompt "block size"
+	default BR2_TARGET_ROOTFS_SQUASHFS_BS_128K
+	help
+	  Data block size. Bigger values can improve
+	  compression ratio.
+
+	  If unsure, leave at 128k (default).
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS_4K
+	bool "4k"
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS_8K
+	bool "8k"
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS_16K
+	bool "16k"
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS_32K
+	bool "32k"
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS_64K
+	bool "64k"
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS_128K
+	bool "128k"
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS_256K
+	bool "256k"
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS_512K
+	bool "512k"
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS_1024K
+	bool "1024k"
+
+endchoice
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS
+	string
+	default "4K" if BR2_TARGET_ROOTFS_SQUASHFS_BS_4K
+	default "8K" if BR2_TARGET_ROOTFS_SQUASHFS_BS_84K
+	default "16K" if BR2_TARGET_ROOTFS_SQUASHFS_BS_16K
+	default "32K" if BR2_TARGET_ROOTFS_SQUASHFS_BS_32K
+	default "64K" if BR2_TARGET_ROOTFS_SQUASHFS_BS_64K
+	default "128K" if BR2_TARGET_ROOTFS_SQUASHFS_BS_128K
+	default "256K" if BR2_TARGET_ROOTFS_SQUASHFS_BS_256K
+	default "512K" if BR2_TARGET_ROOTFS_SQUASHFS_BS_512K
+	default "1024K" if BR2_TARGET_ROOTFS_SQUASHFS_BS_1024K
+
 config BR2_TARGET_ROOTFS_SQUASHFS_PAD
 	bool "pad to a 4K boundary"
 	default y # legacy was always ON
