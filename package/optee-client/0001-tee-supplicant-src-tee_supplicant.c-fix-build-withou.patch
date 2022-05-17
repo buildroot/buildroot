@@ -1,0 +1,39 @@
+From f2a7c942393c6383ac89d9264999cd9c93a70b80 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 14 May 2022 19:33:57 +0200
+Subject: [PATCH] tee-supplicant/src/tee_supplicant.c: fix build without
+ plugins
+
+Fix the following build failure with CFG_TEE_SUPP_PLUGINS != y raised
+since version 3.17.0 and commit [1].
+
+/home/giuliobenetti/autobuild/run/instance-2/output-1/build/optee-client-3.17.0/tee-supplicant/src/tee_supplicant.c:104:22: error: 'TEE_PLUGIN_LOAD_PATH' undeclared here (not in a function); did you mean 'TEEC_LOAD_PATH'?
+  104 |  .plugin_load_path = TEE_PLUGIN_LOAD_PATH,
+      |                      ^~~~~~~~~~~~~~~~~~~~
+      |                      TEEC_LOAD_PATH
+
+Link: [1] https://github.com/OP-TEE/optee_client/commit/876b1ae719e12890ddd96e85cd4e9862dab46448
+Fixes: http://autobuild.buildroot.org/results/384e0ca894dbc0ec72cea76141de890f1ce484db
+Reviewed-by: Jerome Forissier <jerome.forissier@linaro.org>
+Reviewed-by: Etienne Carriere <etienne.carriere@linaro.org>
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/OP-TEE/optee_client/commit/f2a7c942393c6383ac89d9264999cd9c93a70b80]
+---
+ tee-supplicant/src/tee_supplicant.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tee-supplicant/src/tee_supplicant.c b/tee-supplicant/src/tee_supplicant.c
+index 7b186ed9..53c29a26 100644
+--- a/tee-supplicant/src/tee_supplicant.c
++++ b/tee-supplicant/src/tee_supplicant.c
+@@ -101,7 +101,9 @@ static struct tee_shm *shm_head;
+ 
+ struct tee_supplicant_params supplicant_params = {
+ 	.ta_dir = "optee_armtz",
++#ifdef TEE_PLUGIN_LOAD_PATH
+ 	.plugin_load_path = TEE_PLUGIN_LOAD_PATH,
++#endif
+ 	.fs_parent_path  = TEE_FS_PARENT_PATH,
+ };
+ 
