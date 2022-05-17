@@ -31,6 +31,8 @@ config BR2_GCC_VERSION_9_X
 	# upstream gcc. C-SKY gcc upstream support not tested
 	# with upstream binutils and glibc.
 	depends on !BR2_csky
+	# ARC HS48 rel 31 only supported by gcc arc fork.
+	depends on !BR2_archs4x_rel31
 	select BR2_TOOLCHAIN_GCC_AT_LEAST_9
 
 config BR2_GCC_VERSION_10_X
@@ -43,6 +45,8 @@ config BR2_GCC_VERSION_10_X
 	# upstream gcc. C-SKY gcc upstream support not tested
 	# with upstream binutils and glibc.
 	depends on !BR2_csky
+	# ARC HS48 rel 31 only supported by gcc arc fork.
+	depends on !BR2_archs4x_rel31
 	select BR2_TOOLCHAIN_GCC_AT_LEAST_10
 
 config BR2_GCC_VERSION_11_X
@@ -54,6 +58,8 @@ config BR2_GCC_VERSION_11_X
 	# that need to be reverted since gcc 8.4, 9.3 and 10.1.
 	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=98784
 	depends on !BR2_sparc
+	# ARC HS48 rel 31 only supported by gcc arc fork.
+	depends on !BR2_archs4x_rel31
 	select BR2_TOOLCHAIN_GCC_AT_LEAST_11
 
 endchoice

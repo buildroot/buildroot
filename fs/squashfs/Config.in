@@ -5,6 +5,56 @@ config BR2_TARGET_ROOTFS_SQUASHFS
 
 if BR2_TARGET_ROOTFS_SQUASHFS
 
+choice
+	prompt "block size"
+	default BR2_TARGET_ROOTFS_SQUASHFS_BS_128K
+	help
+	  Data block size. Bigger values can improve
+	  compression ratio.
+
+	  If unsure, leave at 128k (default).
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS_4K
+	bool "4k"
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS_8K
+	bool "8k"
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS_16K
+	bool "16k"
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS_32K
+	bool "32k"
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS_64K
+	bool "64k"
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS_128K
+	bool "128k"
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS_256K
+	bool "256k"
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS_512K
+	bool "512k"
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS_1024K
+	bool "1024k"
+
+endchoice
+
+config BR2_TARGET_ROOTFS_SQUASHFS_BS
+	string
+	default "4K" if BR2_TARGET_ROOTFS_SQUASHFS_BS_4K
+	default "8K" if BR2_TARGET_ROOTFS_SQUASHFS_BS_84K
+	default "16K" if BR2_TARGET_ROOTFS_SQUASHFS_BS_16K
+	default "32K" if BR2_TARGET_ROOTFS_SQUASHFS_BS_32K
+	default "64K" if BR2_TARGET_ROOTFS_SQUASHFS_BS_64K
+	default "128K" if BR2_TARGET_ROOTFS_SQUASHFS_BS_128K
+	default "256K" if BR2_TARGET_ROOTFS_SQUASHFS_BS_256K
+	default "512K" if BR2_TARGET_ROOTFS_SQUASHFS_BS_512K
+	default "1024K" if BR2_TARGET_ROOTFS_SQUASHFS_BS_1024K
+
 config BR2_TARGET_ROOTFS_SQUASHFS_PAD
 	bool "pad to a 4K boundary"
 	default y # legacy was always ON
@@ -38,5 +88,31 @@ config BR2_TARGET_ROOTFS_SQUASHFS4_ZSTD
 	bool "zstd"
 
 endchoice
+
+config BR2_TARGET_ROOTFS_SQUASHFS_EXTREME_COMP
+	bool "extreme compression when available"
+	default y if BR2_TARGET_ROOTFS_SQUASHFS4_LZ4  # legacy
+	help
+	  Use options to increase compression ration as much as
+	  possible, like using architecture-specific options, at
+	  the cost of time when assembling the filesystem image.
+
+	  For example:
+	   - with gzip and lzo, use -Xcompression-level 9
+	   - with xz use arch-specific bcj (branch-call-jump) filters
+	   - with zstd use -Xcompression-level 22
+	   - and more
+
+config BR2_TARGET_ROOTFS_SQUASHFS_COMP_OPTS
+	string
+	default "-Xcompression-level 9" if BR2_TARGET_ROOTFS_SQUASHFS4_GZIP
+	default "-Xcompression-level 9" if BR2_TARGET_ROOTFS_SQUASHFS4_LZO
+	default "-Xhc" if BR2_TARGET_ROOTFS_SQUASHFS4_LZ4
+	default "-Xbcj arm,armthumb" if BR2_TARGET_ROOTFS_SQUASHFS4_XZ && (BR2_arm || BR_aarch64)
+	default "-Xbcj powerpc" if BR2_TARGET_ROOTFS_SQUASHFS4_XZ && (BR2_powerpc || BR2_powerpc64)
+	default "-Xbcj sparc" if BR2_TARGET_ROOTFS_SQUASHFS4_XZ && (BR2_sparc || BR2_sparc64)
+	default "-Xbcj x86" if BR2_TARGET_ROOTFS_SQUASHFS4_XZ && (BR2_i386 || BR2_x86_64)
+	default "-Xcompression-level 22" if BR2_TARGET_ROOTFS_SQUASHFS4_ZSTD
+	depends on BR2_TARGET_ROOTFS_SQUASHFS_EXTREME_COMP
 
 endif

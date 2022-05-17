@@ -1,0 +1,168 @@
+From 1e299a6c9eeb08555208b76623e453d8ab96b6e3 Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Fri, 4 Feb 2022 16:16:35 -0700
+Subject: [PATCH] Add python3 build support
+
+Adapted from:
+https://github.com/archlinux/svntogit-packages/blob/6edf5f1aaea952d046aff89a2e0175258fe77361/trunk/qt5-webengine-python3.patch
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+---
+ configure.pri                     | 13 ++++++-------
+ mkspecs/features/functions.prf    |  6 +++---
+ src/buildtools/config/support.pri | 10 +++++-----
+ src/buildtools/configure.json     | 18 +++++++++---------
+ 4 files changed, 23 insertions(+), 24 deletions(-)
+
+diff --git a/configure.pri b/configure.pri
+index e072961f..6fec7b20 100644
+--- a/configure.pri
++++ b/configure.pri
+@@ -13,8 +13,7 @@ defineTest(isPythonVersionSupported) {
+     python_version = $$split(python_version, ',')
+     python_major_version = $$first(python_version)
+     greaterThan(python_major_version, 2) {
+-        qtLog("Python version 3 is not supported by Chromium.")
+-        return(false)
++        return(true)
+     }
+     python_minor_version = $$member(python_version, 1)
+     python_patch_version = $$member(python_version, 2)
+@@ -52,10 +51,10 @@ defineTest(qtConfReport_jumboBuild) {
+     qtConfReportPadded($${1}, $$mergeLimit)
+ }
+ 
+-defineTest(qtConfTest_detectPython2) {
+-    python = $$qtConfFindInPath("python2$$EXE_SUFFIX")
++defineTest(qtConfTest_detectPython) {
++    python = $$qtConfFindInPath("python$$EXE_SUFFIX")
+     isEmpty(python) {
+-        qtLog("'python2$$EXE_SUFFIX' not found in PATH. Checking for 'python$$EXE_SUFFIX'.")
++        qtLog("'python$$EXE_SUFFIX' not found in PATH. Checking for 'python$$EXE_SUFFIX'.")
+         python = $$qtConfFindInPath("python$$EXE_SUFFIX")
+     }
+     isEmpty(python) {
+@@ -63,11 +62,11 @@ defineTest(qtConfTest_detectPython2) {
+         return(false)
+     }
+     !isPythonVersionSupported($$python) {
+-        qtLog("A suitable Python 2 executable could not be located.")
++        qtLog("A suitable Python executable could not be located.")
+         return(false)
+     }
+ 
+-    # Make tests.python2.location available in configure.json.
++    # Make tests.python.location available in configure.json.
+     $${1}.location = $$clean_path($$python)
+     export($${1}.location)
+     $${1}.cache += location
+diff --git a/mkspecs/features/functions.prf b/mkspecs/features/functions.prf
+index 2750d707..9fda13d0 100644
+--- a/mkspecs/features/functions.prf
++++ b/mkspecs/features/functions.prf
+@@ -39,11 +39,11 @@ defineReplace(which) {
+ 
+ # Returns the unquoted path to the python executable.
+ defineReplace(pythonPath) {
+-    isEmpty(QMAKE_PYTHON2) {
++    isEmpty(QMAKE_PYTHON) {
+         # Fallback for building QtWebEngine with Qt < 5.8
+-        QMAKE_PYTHON2 = python
++        QMAKE_PYTHON = python
+     }
+-    return($$QMAKE_PYTHON2)
++    return($$QMAKE_PYTHON)
+ }
+ 
+ # Returns the python executable for use with shell / make targets.
+diff --git a/src/buildtools/config/support.pri b/src/buildtools/config/support.pri
+index e7f869a1..1bf2c5d7 100644
+--- a/src/buildtools/config/support.pri
++++ b/src/buildtools/config/support.pri
+@@ -21,7 +21,7 @@ defineReplace(qtwebengine_checkWebEngineCoreError) {
+     !qtwebengine_checkForGperf(QtWebEngine):return(false)
+     !qtwebengine_checkForBison(QtWebEngine):return(false)
+     !qtwebengine_checkForFlex(QtWebEngine):return(false)
+-    !qtwebengine_checkForPython2(QtWebEngine):return(false)
++    !qtwebengine_checkForPython(QtWebEngine):return(false)
+     !qtwebengine_checkForNodejs(QtWebEngine):return(false)
+     !qtwebengine_checkForSanitizer(QtWebEngine):return(false)
+     linux:!qtwebengine_checkForPkgCfg(QtWebEngine):return(false)
+@@ -51,7 +51,7 @@ defineReplace(qtwebengine_checkPdfError) {
+     !qtwebengine_checkForGperf(QtPdf):return(false)
+     !qtwebengine_checkForBison(QtPdf):return(false)
+     !qtwebengine_checkForFlex(QtPdf):return(false)
+-    !qtwebengine_checkForPython2(QtPdf):return(false)
++    !qtwebengine_checkForPython(QtPdf):return(false)
+     !qtwebengine_checkForSanitizer(QtPdf):return(false)
+     linux:!qtwebengine_checkForPkgCfg(QtPdf):return(false)
+     linux:!qtwebengine_checkForHostPkgCfg(QtPdf):return(false)
+@@ -143,10 +143,10 @@ defineTest(qtwebengine_checkForFlex) {
+     return(true)
+ }
+ 
+-defineTest(qtwebengine_checkForPython2) {
++defineTest(qtwebengine_checkForPython) {
+     module = $$1
+-    !qtConfig(webengine-python2) {
+-        qtwebengine_skipBuild("Python version 2 (2.7.5 or later) is required to build $${module}.")
++    !qtConfig(webengine-python) {
++        qtwebengine_skipBuild("Python is required to build $${module}.")
+         return(false)
+     }
+     return(true)
+diff --git a/src/buildtools/configure.json b/src/buildtools/configure.json
+index 88d1790c..032aa665 100644
+--- a/src/buildtools/configure.json
++++ b/src/buildtools/configure.json
+@@ -295,9 +295,9 @@
+             "label": "system ninja",
+             "type": "detectNinja"
+         },
+-        "webengine-python2": {
+-            "label": "python2",
+-            "type": "detectPython2",
++        "webengine-python": {
++            "label": "python",
++            "type": "detectPython",
+             "log": "location"
+         },
+         "webengine-winversion": {
+@@ -374,7 +374,7 @@
+                          && features.webengine-gperf
+                          && features.webengine-bison
+                          && features.webengine-flex
+-                         && features.webengine-python2
++                         && features.webengine-python
+                          && features.webengine-nodejs
+                          && (!config.sanitizer || features.webengine-sanitizer)
+                          && (!config.linux || features.pkg-config)
+@@ -400,7 +400,7 @@
+                          && features.webengine-gperf
+                          && features.webengine-bison
+                          && features.webengine-flex
+-                         && features.webengine-python2
++                         && features.webengine-python
+                          && (!config.sanitizer || features.webengine-sanitizer)
+                          && (!config.linux || features.pkg-config)
+                          && (!config.linux || features.webengine-host-pkg-config)
+@@ -423,12 +423,12 @@
+             "autoDetect": "features.private_tests",
+             "output": [ "privateFeature" ]
+         },
+-        "webengine-python2": {
+-            "label": "python2",
+-            "condition": "tests.webengine-python2",
++        "webengine-python": {
++            "label": "python",
++            "condition": "tests.webengine-python",
+             "output": [
+                 "privateFeature",
+-                { "type": "varAssign", "name": "QMAKE_PYTHON2", "value": "tests.webengine-python2.location" }
++                { "type": "varAssign", "name": "QMAKE_PYTHON", "value": "tests.webengine-python.location" }
+             ]
+         },
+         "webengine-gperf": {
+-- 
+2.25.1
+
