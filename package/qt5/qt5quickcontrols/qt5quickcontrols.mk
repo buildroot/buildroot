@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5QUICKCONTROLS_VERSION = cf3f6d7fec824cdf01f9b329ab3b92b1c0e0a420
+QT5QUICKCONTROLS_VERSION = d405bf6a29bc9d6da6e3dcefbd1b88f5ed70fb1b
 QT5QUICKCONTROLS_SITE = $(QT5_SITE)/qtquickcontrols/-/archive/$(QT5QUICKCONTROLS_VERSION)
 QT5QUICKCONTROLS_SOURCE = qtquickcontrols-$(QT5QUICKCONTROLS_VERSION).tar.bz2
 QT5QUICKCONTROLS_DEPENDENCIES = qt5declarative

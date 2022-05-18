@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5WEBCHANNEL_VERSION = fa8b07105b5e274daaa8adcc129fa4aa0447f9f7
+QT5WEBCHANNEL_VERSION = 8c842152da613f941892481d62267c73c4a4f006
 QT5WEBCHANNEL_SITE = $(QT5_SITE)/qtwebchannel/-/archive/$(QT5WEBCHANNEL_VERSION)
 QT5WEBCHANNEL_SOURCE = qtwebchannel-$(QT5WEBCHANNEL_VERSION).tar.bz2
 QT5WEBCHANNEL_DEPENDENCIES = qt5websockets
