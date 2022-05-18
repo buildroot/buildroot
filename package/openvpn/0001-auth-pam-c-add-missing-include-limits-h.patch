@@ -1,0 +1,41 @@
+From 0fed64a91d894b46105bf7e8b16edea4d90ab70c Mon Sep 17 00:00:00 2001
+From: Antonio Quartulli <a@unstable.cc>
+Date: Thu, 21 Apr 2022 15:19:09 +0200
+Subject: [PATCH] auth-pam.c: add missing include limits.h
+
+On most systems limits.h is pulled in by some other header and thus no
+error is ever triggered, but it's possible to find the right environment
+which lackis this and prevents compiling auth-pam.c (possibly when using
+LibreSSL).
+
+Include the header explicitly as it includes the definition of PATH_MAX.
+
+(note that this bug is fixed in Gentoo since 2020 by including a custom
+patch, but apparently the issue was never reported upstream)
+
+Reported-by: Michelangelo Scopelliti <kernelpanic@gmx.com>
+Signed-off-by: Antonio Quartulli <a@unstable.cc>
+Acked-by: Gert Doering <gert@greenie.muc.de>
+Message-Id: <20220421131909.32053-1-a@unstable.cc>
+URL: https://www.mail-archive.com/openvpn-devel@lists.sourceforge.net/msg24136.html
+Signed-off-by: Gert Doering <gert@greenie.muc.de>
+
+[Retrieved from:
+https://github.com/OpenVPN/openvpn/commit/0fed64a91d894b46105bf7e8b16edea4d90ab70c]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/plugins/auth-pam/auth-pam.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/plugins/auth-pam/auth-pam.c b/src/plugins/auth-pam/auth-pam.c
+index f893b51fe3..7033944568 100644
+--- a/src/plugins/auth-pam/auth-pam.c
++++ b/src/plugins/auth-pam/auth-pam.c
+@@ -47,6 +47,7 @@
+ #include <fcntl.h>
+ #include <signal.h>
+ #include <syslog.h>
++#include <limits.h>
+ #include "utils.h"
+ 
+ #include <openvpn-plugin.h>
