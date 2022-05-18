@@ -21,10 +21,15 @@ comment "midori needs libgtk3 w/ X11 or wayland backend"
 	depends on !BR2_PACKAGE_LIBGTK3_X11 && \
 		!BR2_PACKAGE_LIBGTK3_WAYLAND
 
+comment "midori is incompatible with gnupg, gnupg2 only"
+	depends on BR2_PACKAGE_MIDORI_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_GNUPG
+
 config BR2_PACKAGE_MIDORI
 	bool "midori"
 	depends on BR2_PACKAGE_MIDORI_ARCH_SUPPORTS
 	depends on !BR2_STATIC_LIBS # webkitgtk
+	depends on !BR2_PACKAGE_GNUPG # gcr
 	depends on BR2_INSTALL_LIBSTDCPP # webkitgtk
 	depends on BR2_HOST_GCC_AT_LEAST_8 # gobject-introspection
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 # webkitgtk

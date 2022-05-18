@@ -1,0 +1,25 @@
+From 8e450a097f5f0c7e9c034e954fbc709797521f1c Mon Sep 17 00:00:00 2001
+From: Lorenzo Miniero <lminiero@gmail.com>
+Date: Fri, 13 May 2022 18:42:38 +0200
+Subject: [PATCH] Fix build with libressl >= 3.5.0 (see #2980)
+
+[Retrieved from:
+https://github.com/meetecho/janus-gateway/commit/8e450a097f5f0c7e9c034e954fbc709797521f1c]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ dtls-bio.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dtls-bio.h b/dtls-bio.h
+index 92f06d7c0a..fbfd4c37bf 100644
+--- a/dtls-bio.h
++++ b/dtls-bio.h
+@@ -35,7 +35,7 @@ void janus_dtls_bio_agent_set_mtu(int start_mtu);
+ int janus_dtls_bio_agent_get_mtu(void);
+ 
+ #if defined(LIBRESSL_VERSION_NUMBER)
+-#define JANUS_USE_OPENSSL_PRE_1_1_API (1)
++#define JANUS_USE_OPENSSL_PRE_1_1_API (LIBRESSL_VERSION_NUMBER < 0x30500000L)
+ #else
+ #define JANUS_USE_OPENSSL_PRE_1_1_API (OPENSSL_VERSION_NUMBER < 0x10100000L)
+ #endif
