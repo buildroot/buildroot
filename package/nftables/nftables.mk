@@ -42,10 +42,6 @@ else
 NFTABLES_CONF_OPTS += --disable-python
 endif
 
-ifeq ($(BR2_STATIC_LIBS)$(BR2_PACKAGE_LIBNFTNL_JSON),yy)
-NFTABLES_LIBS += -ljansson -lm
-endif
-
 NFTABLES_CONF_ENV = LIBS="$(NFTABLES_LIBS)"
 
 define NFTABLES_LINUX_CONFIG_FIXUPS
