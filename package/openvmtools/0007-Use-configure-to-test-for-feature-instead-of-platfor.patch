@@ -125,6 +125,7 @@ Index: open-vm-tools/lib/nicInfo/nicInfoPosix.c
  #include <sys/socket.h>
  #include <sys/stat.h>
  #include <errno.h>
+ #include <limits.h>
 -#if defined(__FreeBSD__) || defined(__APPLE__)
 +#if HAVE_SYS_SYSCTL_H
  # include <sys/sysctl.h>

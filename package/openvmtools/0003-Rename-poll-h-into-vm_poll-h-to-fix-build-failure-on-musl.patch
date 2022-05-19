@@ -1,4 +1,5 @@
-From 9d13e32e362ad3ce5169f49b7f0fe1d9380e558c Mon Sep 17 00:00:00 2001
+From 1dfab46d367d11e9132506ee0f7d3eb2ceff5f3c Mon Sep 17 00:00:00 2001
+Message-Id: <1dfab46d367d11e9132506ee0f7d3eb2ceff5f3c.1652913832.git.stefan@agner.ch>
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Mon, 30 Sep 2019 13:32:35 +0200
 Subject: [PATCH] Rename poll.h into vm_poll.h to fix build failure on musl
@@ -38,19 +39,19 @@ Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
  lib/asyncsocket/asyncsocket.c |   4 +-
  lib/hgfsServer/hgfsServer.c   |   2 +-
  lib/include/asyncsocket.h     |   2 +-
- lib/include/poll.h            | 330 --------------------
+ lib/include/poll.h            | 337 --------------------
  lib/include/pollImpl.h        |   2 +-
- lib/include/vm_poll.h         | 330 ++++++++++++++++++++
+ lib/include/vm_poll.h         | 337 ++++++++++++++++++++
  lib/rpcIn/rpcin.c             |   2 +-
- 7 files changed, 336 insertions(+), 336 deletions(-)
- delete mode 100644 open-vm-tools/lib/include/poll.h
- create mode 100644 open-vm-tools/lib/include/vm_poll.h
+ 7 files changed, 343 insertions(+), 343 deletions(-)
+ delete mode 100644 lib/include/poll.h
+ create mode 100644 lib/include/vm_poll.h
 
-diff --git a/lib/asyncsocket/asyncsocket.c b/lib/asyncsocket/asyncsocket.c
-index 102638cc..01181a95 100644
+diff --git a/lib/asyncsocket/asyncsocket.c b/open-vm-tools/lib/asyncsocket/asyncsocket.c
+index 05147d2e..16949567 100644
 --- a/lib/asyncsocket/asyncsocket.c
 +++ b/lib/asyncsocket/asyncsocket.c
-@@ -69,8 +69,8 @@
+@@ -70,8 +70,8 @@
  #else
  #include <stddef.h>
  #include <ctype.h>
@@ -60,7 +61,7 @@ index 102638cc..01181a95 100644
  #include <sys/socket.h>
  #include <sys/un.h>
  #include <netdb.h>
-@@ -86,7 +86,7 @@
+@@ -87,7 +87,7 @@
  #include "random.h"
  #include "asyncsocket.h"
  #include "asyncSocketBase.h"
@@ -69,24 +70,24 @@ index 102638cc..01181a95 100644
  #include "log.h"
  #include "err.h"
  #include "hostinfo.h"
-diff --git a/lib/hgfsServer/hgfsServer.c b/lib/hgfsServer/hgfsServer.c
-index 46224551..fc691286 100644
+diff --git a/lib/hgfsServer/hgfsServer.c b/open-vm-tools/lib/hgfsServer/hgfsServer.c
+index 98f5b3f0..b436f0c7 100644
 --- a/lib/hgfsServer/hgfsServer.c
 +++ b/lib/hgfsServer/hgfsServer.c
-@@ -48,7 +48,7 @@
- #include "hgfsServerOplock.h"
+@@ -51,7 +51,7 @@
  #include "hgfsDirNotify.h"
+ #include "hgfsThreadpool.h"
  #include "userlock.h"
 -#include "poll.h"
 +#include "vm_poll.h"
  #include "mutexRankLib.h"
  #include "vm_basic_asm.h"
  #include "unicodeOperations.h"
-diff --git a/lib/include/asyncsocket.h b/lib/include/asyncsocket.h
-index 95a5e464..a4b4e5aa 100644
+diff --git a/lib/include/asyncsocket.h b/open-vm-tools/lib/include/asyncsocket.h
+index 47b5b873..b8b0149e 100644
 --- a/lib/include/asyncsocket.h
 +++ b/lib/include/asyncsocket.h
-@@ -164,7 +164,7 @@ typedef struct AsyncSocket AsyncSocket;
+@@ -171,7 +171,7 @@ typedef struct AsyncSocket AsyncSocket;
   * Or the client can specify its favorite poll class and locking behavior.
   * Use of IVmdbPoll is only supported for regular sockets and for Attach.
   */
@@ -95,14 +96,14 @@ index 95a5e464..a4b4e5aa 100644
  struct IVmdbPoll;
  typedef struct AsyncSocketPollParams {
     int flags;               /* Default 0, only POLL_FLAG_NO_BULL is valid */
-diff --git a/lib/include/poll.h b/lib/include/poll.h
+diff --git a/lib/include/poll.h b/open-vm-tools/lib/include/poll.h
 deleted file mode 100644
-index 6acd4f35..00000000
+index c90f5dcd..00000000
 --- a/lib/include/poll.h
 +++ /dev/null
-@@ -1,330 +0,0 @@
+@@ -1,337 +0,0 @@
 -/*********************************************************
-- * Copyright (C) 1998-2018 VMware, Inc. All rights reserved.
+- * Copyright (C) 1998-2020 VMware, Inc. All rights reserved.
 - *
 - * This program is free software; you can redistribute it and/or modify it
 - * under the terms of the GNU Lesser General Public License as published
@@ -152,7 +153,7 @@ index 6acd4f35..00000000
 -
 -#ifdef _WIN32
 -#define HZ 100
--#elif defined linux
+-#elif defined __linux__
 -#include <asm/param.h>
 -#elif __APPLE__
 -#include <TargetConditionals.h>
@@ -335,6 +336,12 @@ index 6acd4f35..00000000
 - *      implementations are distinct from the core poll code.
 - */
 -
+-
+-/* Socket pair created with non-blocking mode */
+-#define POLL_OPTIONS_SOCKET_PAIR_NONBLOCK_CONN  0x01
+-
+-typedef unsigned int SocketSpecialOpts;
+-
 -typedef struct PollOptions {
 -   Bool locked;           // Use internal MXUser for locking
 -   Bool allowFullQueue;   // Don't assert when device event queue is full.
@@ -342,6 +349,7 @@ index 6acd4f35..00000000
 -   PollerFireWrapper fireWrapperFn;  // optional; may be useful for stats
 -   void *fireWrapperData; // optional
 -   PollerErrorFn errorFn; // optional; called upon unrecoverable error
+-   SocketSpecialOpts pollSocketOpts;
 -} PollOptions;
 -
 -
@@ -354,7 +362,7 @@ index 6acd4f35..00000000
 -/*
 - * Functions
 - */
--int Poll_SocketPair(Bool vmci, Bool stream, int fds[2]);
+-int Poll_SocketPair(Bool vmci, Bool stream, int fds[2], SocketSpecialOpts opts);
 -void Poll_Loop(Bool loop, Bool *exit, PollClass c);
 -void Poll_LoopTimeout(Bool loop, Bool *exit, PollClass c, int timeout);
 -Bool Poll_LockingEnabled(void);
@@ -431,7 +439,7 @@ index 6acd4f35..00000000
 -#endif
 -
 -#endif // _POLL_H_
-diff --git a/lib/include/pollImpl.h b/lib/include/pollImpl.h
+diff --git a/lib/include/pollImpl.h b/open-vm-tools/lib/include/pollImpl.h
 index 46442e55..8bc66997 100644
 --- a/lib/include/pollImpl.h
 +++ b/lib/include/pollImpl.h
@@ -444,14 +452,14 @@ index 46442e55..8bc66997 100644
  #include "vm_basic_asm.h"
  
  #if defined(__cplusplus)
-diff --git a/lib/include/vm_poll.h b/lib/include/vm_poll.h
+diff --git a/lib/include/vm_poll.h b/open-vm-tools/lib/include/vm_poll.h
 new file mode 100644
-index 00000000..6acd4f35
+index 00000000..c90f5dcd
 --- /dev/null
 +++ b/lib/include/vm_poll.h
-@@ -0,0 +1,330 @@
+@@ -0,0 +1,337 @@
 +/*********************************************************
-+ * Copyright (C) 1998-2018 VMware, Inc. All rights reserved.
++ * Copyright (C) 1998-2020 VMware, Inc. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or modify it
 + * under the terms of the GNU Lesser General Public License as published
@@ -501,7 +509,7 @@ index 00000000..6acd4f35
 +
 +#ifdef _WIN32
 +#define HZ 100
-+#elif defined linux
++#elif defined __linux__
 +#include <asm/param.h>
 +#elif __APPLE__
 +#include <TargetConditionals.h>
@@ -684,6 +692,12 @@ index 00000000..6acd4f35
 + *      implementations are distinct from the core poll code.
 + */
 +
++
++/* Socket pair created with non-blocking mode */
++#define POLL_OPTIONS_SOCKET_PAIR_NONBLOCK_CONN  0x01
++
++typedef unsigned int SocketSpecialOpts;
++
 +typedef struct PollOptions {
 +   Bool locked;           // Use internal MXUser for locking
 +   Bool allowFullQueue;   // Don't assert when device event queue is full.
@@ -691,6 +705,7 @@ index 00000000..6acd4f35
 +   PollerFireWrapper fireWrapperFn;  // optional; may be useful for stats
 +   void *fireWrapperData; // optional
 +   PollerErrorFn errorFn; // optional; called upon unrecoverable error
++   SocketSpecialOpts pollSocketOpts;
 +} PollOptions;
 +
 +
@@ -703,7 +718,7 @@ index 00000000..6acd4f35
 +/*
 + * Functions
 + */
-+int Poll_SocketPair(Bool vmci, Bool stream, int fds[2]);
++int Poll_SocketPair(Bool vmci, Bool stream, int fds[2], SocketSpecialOpts opts);
 +void Poll_Loop(Bool loop, Bool *exit, PollClass c);
 +void Poll_LoopTimeout(Bool loop, Bool *exit, PollClass c, int timeout);
 +Bool Poll_LockingEnabled(void);
@@ -780,8 +795,8 @@ index 00000000..6acd4f35
 +#endif
 +
 +#endif // _POLL_H_
-diff --git a/lib/rpcIn/rpcin.c b/lib/rpcIn/rpcin.c
-index 47a3380e..660382c6 100644
+diff --git a/lib/rpcIn/rpcin.c b/open-vm-tools/lib/rpcIn/rpcin.c
+index 8b1fe759..f22fcd40 100644
 --- a/lib/rpcIn/rpcin.c
 +++ b/lib/rpcIn/rpcin.c
 @@ -57,7 +57,7 @@
@@ -794,5 +809,5 @@ index 47a3380e..660382c6 100644
  #  include "vmci_defs.h"
  #include "dataMap.h"
 -- 
-2.23.0
+2.36.1
 
