@@ -1,0 +1,30 @@
+From 48a88c033c5704d37645051ca51799a8b5a7e059 Mon Sep 17 00:00:00 2001
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Thu, 19 May 2022 14:22:40 -0700
+Subject: [PATCH] Remove procfs.h inclusion
+
+We do not use anything from this header
+
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+[Upstream: https://github.com/opsengine/cpulimit/pull/110]
+---
+ src/process_iterator.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/src/process_iterator.c b/src/process_iterator.c
+index 8b4019d237f2..5b6c651bc5d0 100644
+--- a/src/process_iterator.c
++++ b/src/process_iterator.c
+@@ -22,9 +22,6 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+-#ifndef __APPLE__
+-#include <sys/procfs.h>
+-#endif
+ #include <time.h>
+ #include "process_iterator.h"
+ 
+-- 
+2.25.1
+
