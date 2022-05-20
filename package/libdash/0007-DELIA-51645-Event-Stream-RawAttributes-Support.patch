@@ -1,0 +1,112 @@
+diff --git a/libdash/source/mpd/Event.cpp b/libdash/source/mpd/Event.cpp
+index d8b2e16..32698f8 100644
+--- a/libdash/source/mpd/Event.cpp
++++ b/libdash/source/mpd/Event.cpp
+@@ -47,3 +47,11 @@ void                              Event::SetId                 (uint32_t id)
+ 	this->id = id;
+ }
+ 
++void                            Event::SetAttributes           (const std::map<std::string,std::string>& attributes)
++{
++    this->attributes = attributes;
++}
++const std::map<std::string,std::string> Event::GetRawAttributes()  const
++{
++    return this->attributes;
++}
+diff --git a/libdash/source/mpd/Event.h b/libdash/source/mpd/Event.h
+index 402dd1c..71815cb 100644
+--- a/libdash/source/mpd/Event.h
++++ b/libdash/source/mpd/Event.h
+@@ -25,15 +25,18 @@ namespace dash
+                 const uint64_t                    GetPresentationTime   ()  const;
+                 const uint32_t                    GetDuration           ()  const;
+                 const uint32_t                    GetId                 ()  const;
++		const std::map<std::string,std::string> GetRawAttributes()  const;
+ 
+                 void                              SetPresentationTime   (uint64_t presentationTime);
+                 void                              SetDuration           (uint32_t duration);
+                 void                              SetId                 (uint32_t id);
++		void                              SetAttributes         (const std::map<std::string,std::string>& attributes);
+ 
+             private:
+                 uint64_t presentationTime;
+ 				uint32_t duration;
+                 uint32_t id;
++		std::map<std::string,std::string> attributes;
+ 
+         };
+     }
+diff --git a/libdash/source/mpd/EventStream.cpp b/libdash/source/mpd/EventStream.cpp
+index ebddbc1..dba23d2 100644
+--- a/libdash/source/mpd/EventStream.cpp
++++ b/libdash/source/mpd/EventStream.cpp
+@@ -76,3 +76,12 @@ void                            EventStream::SetTimescale   (uint32_t timescale)
+ {
+     this->timescale = timescale;
+ }
++
++void                            EventStream::SetAttributes           (const std::map<std::string,std::string>& attributes)
++{
++    this->attributes = attributes;
++}
++const std::map<std::string,std::string> EventStream::GetRawAttributes()  const
++{
++    return this->attributes;
++}
+diff --git a/libdash/source/mpd/EventStream.h b/libdash/source/mpd/EventStream.h
+index ff218e2..405304e 100644
+--- a/libdash/source/mpd/EventStream.h
++++ b/libdash/source/mpd/EventStream.h
+@@ -28,6 +28,7 @@ namespace dash
+                 const std::string&              GetSchemeIdUri  ()  const;
+                 const std::string&              GetValue        ()  const;
+                 const uint32_t                  GetTimescale    ()  const;
++		const std::map<std::string,std::string> GetRawAttributes()  const;
+ 
+                 void    AddEvent                (IEvent *event);
+                 void    SetXlinkHref            (const std::string& xlinkHref);
+@@ -35,6 +36,7 @@ namespace dash
+                 void    SetSchemeIdUri          (const std::string& schemeIdUri);
+                 void    SetValue                (const std::string& value);
+                 void    SetTimescale            (uint32_t timescale);
++		void    SetAttributes           (const std::map<std::string,std::string>& attributes);
+ 
+             private:
+                 std::vector<IEvent *>  events;
+@@ -43,6 +45,7 @@ namespace dash
+                 std::string            schemeIdUri;
+                 std::string            value;
+                 uint32_t               timescale;
++		std::map<std::string,std::string> attributes;
+         };
+     }
+ }
+diff --git a/libdash/source/xml/Node.cpp b/libdash/source/xml/Node.cpp
+index 2d88e4c..b79f1a3 100644
+--- a/libdash/source/xml/Node.cpp
++++ b/libdash/source/xml/Node.cpp
+@@ -737,7 +737,10 @@ dash::mpd::EventStream*                    Node::ToEventStream              ()
+ {
+     dash::mpd::EventStream *eventStream = new dash::mpd::EventStream();
+     std::vector<Node *> subNodes = this->GetSubNodes();
+-
++    if (this->GetAttributes().size())
++    {
++        eventStream->SetAttributes(this->GetAttributes());
++    }
+     if (this->HasAttribute("xlink:href"))
+     {
+         eventStream->SetXlinkHref(this->GetAttributeValue("xlink:href"));
+@@ -772,7 +775,10 @@ dash::mpd::Event*                    Node::ToEvent              ()  const
+ {
+     dash::mpd::Event *event = new dash::mpd::Event();
+     std::vector<Node *> subNodes = this->GetSubNodes();
+-
++    if (this->GetAttributes().size())
++    {
++        event->SetAttributes(this->GetAttributes());
++    }
+     if (this->HasAttribute("presentationTime"))
+     {
+         event->SetPresentationTime(strtoull(this->GetAttributeValue("presentationTime").c_str(), NULL, 10));

@@ -1,0 +1,20 @@
+diff --git a/drm/AampOcdmBasicSessionAdapter.cpp b/drm/AampOcdmBasicSessionAdapter.cpp
+index 37493c9c..2e69df15 100755
+--- a/drm/AampOcdmBasicSessionAdapter.cpp
++++ b/drm/AampOcdmBasicSessionAdapter.cpp
+@@ -26,9 +26,15 @@ int AAMPOCDMBasicSessionAdapter::decrypt(const uint8_t *f_pbIV, uint32_t f_cbIV,
+ 		dataToSend = vdata.data();
+ 	}
+ 
++        //Set the Encryption Scheme and Pattern to defaults.
++        EncryptionScheme encScheme = AesCtr_Cenc;
++        EncryptionPattern pattern = {0};
++
+ 	int retvalue = opencdm_session_decrypt(m_pOpenCDMSession,
+ 										   dataToSend,
+ 										   sizeToSend,
++										   encScheme,
++										   pattern,
+ 										   f_pbIV, f_cbIV,
+ 										   m_keyId.data(), m_keyId.size());
+ 	if (retvalue != 0)

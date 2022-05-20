@@ -1,0 +1,35 @@
+License: LGPL-2.1-or-later
+Date: Nov 26 10:26:00 2019
+From: b44d1b40660c91ffe610ace1fd2a32588e05f4ae Nov 26 12:12:45 2019
+Subject: [PATCH] DELIA-39460: libdash leaks when refreshing manifest
+Source: COMCAST
+Upstream-Status: Pending
+Signed-off-by: Vinod Damodaran <vinod_damodaran@comcast.com>
+---
+
+diff --git a/libdash/source/mpd/MPD.cpp b/libdash/source/mpd/MPD.cpp
+index 84e0e61..b60a6f1 100644
+--- a/libdash/source/mpd/MPD.cpp
++++ b/libdash/source/mpd/MPD.cpp
+@@ -26,6 +26,7 @@ MPD::MPD    () :
+         suggestedPresentationDelay(""),
+         maxSegmentDuration(""),
+         maxSubsegmentDuration("")
++       ,mpdPathBaseUrl(NULL)
+ {
+ }
+ MPD::~MPD   ()
+@@ -38,6 +39,12 @@ MPD::~MPD   ()
+         delete(this->periods.at(i));
+     for(size_t i = 0; i < this->baseUrls.size(); i++)
+         delete(this->baseUrls.at(i));
++    if(NULL != mpdPathBaseUrl)
++        delete mpdPathBaseUrl;
++    for(size_t i = 0; i < this->tcpConnections.size(); i++)
++        delete(this->tcpConnections.at(i));
++    for(size_t i = 0; i < this->httpTransactions.size(); i++)
++        delete(this->httpTransactions.at(i));
+ }
+ 
+ const std::vector<IProgramInformation *>&   MPD::GetProgramInformations             () const 
+
