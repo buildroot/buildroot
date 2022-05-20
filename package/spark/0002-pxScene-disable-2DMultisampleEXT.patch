@@ -1,0 +1,13 @@
+diff --git a/examples/pxScene2d/src/pxContextGL.cpp b/examples/pxScene2d/src/pxContextGL.cpp
+index aef118b..d24b083 100644
+--- a/examples/pxScene2d/src/pxContextGL.cpp
++++ b/examples/pxScene2d/src/pxContextGL.cpp
+@@ -504,7 +504,7 @@ public:
+ #if (defined(PX_PLATFORM_WAYLAND_EGL) || defined(PX_PLATFORM_GENERIC_EGL)) && !defined(PXSCENE_DISABLE_PXCONTEXT_EXT)
+       if (mAntiAliasing)
+       {
+-        glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextureId, 0, 2);
++        //glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextureId, 0, 2);
+       }
+ #endif
+ 

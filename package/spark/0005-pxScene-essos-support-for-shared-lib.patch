@@ -1,0 +1,12 @@
+diff --git a/examples/pxScene2d/src/CMakeLists.txt b/examples/pxScene2d/src/CMakeLists.txt
+index 5ef779c56..0a5aae622 100644
+--- a/examples/pxScene2d/src/CMakeLists.txt
++++ b/examples/pxScene2d/src/CMakeLists.txt
+@@ -211,6 +211,7 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+             message("Building pxscene with essos windows")
+             set(PX_PLATFORM PX_PLATFORM_WAYLAND_EGL)
+             set(PXSCENE_APP_LIBRARIES ${PXSCENE_APP_LIBRARIES} essos)
++            set(PXSCENE_LINK_LIBRARIES ${PXSCENE_LINK_LIBRARIES} essos)
+         elseif (BUILD_PXSCENE_WAYLAND_EGL)
+             message("Building pxscene with wayland windows")
+             set(PX_PLATFORM PX_PLATFORM_WAYLAND_EGL)

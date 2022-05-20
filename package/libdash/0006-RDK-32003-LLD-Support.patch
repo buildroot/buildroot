@@ -1,0 +1,1227 @@
+Date: Jun 26, 2021 9:41 AM
+From: 5c87316977e223ef462f53761444ad777f5e1e17 Wed Apr 28, 2021 8:49 PM
+Subject: RDK-32004: Added Low Latency Dash Element Processing
+Source: COMCAST
+License: LGPL-2.1-or-later
+Upstream-Status: Pending
+Signed-off-by: Lalit Arora <lalit_arora@comcast.com>
+diff --git a/libdash/include/IAdaptationSet.h b/libdash/include/IAdaptationSet.h
+index eff9c7e..b6938ef 100644
+--- a/libdash/include/IAdaptationSet.h
++++ b/libdash/include/IAdaptationSet.h
+@@ -60,6 +60,8 @@
+ #include "ISegmentTemplate.h"
+ #include "IRepresentation.h"
+ #include "IRepresentationBase.h"
++#include "IProducerReferenceTime.h"
++#include "IResync.h"
+ 
+ namespace dash
+ {
+@@ -145,6 +147,22 @@ namespace dash
+                  */
+                 virtual const std::vector<IRepresentation *>&   GetRepresentation               ()  const = 0;
+ 
++                /**
++                 *  Returns a reference to a vector of pointers to dash::mpd::IResync  objects that specifies a Resync .\n
++                 *  At least one Resync  element shall be present in each Adaptation Set. The actual element may however be part of a remote element.\n
++                 *  For more details refer to section 9.X.4.4. of <em>hhttps://dashif.org/docs/CR-Low-Latency-Live-r8.pdf</em>.
++                 *  @return     a reference to a vector of pointers to dash::mpd::IResync objects
++                 */
++                virtual const std::vector<IResync *>&   GetResync  ()  const = 0;
++
++                /**
++                 *  Returns a reference to a vector of pointers to dash::mpd::IProducerReferenceTime  objects that specifies a ProducerReferenceTime .\n
++                 *  At least one ProducerReferenceTime  element shall be present in each Adaptation Set. The actual element may however be part of a remote element.\n
++                 *  For more details refer to section 9.x.4.3. of <em>hhttps://dashif.org/docs/CR-Low-Latency-Live-r8.pdf</em>.
++                 *  @return     a reference to a vector of pointers to dash::mpd::IProducerReferenceTime objects
++                 */
++                virtual const std::vector<IProducerReferenceTime *>&   GetProducerReferenceTime  ()  const = 0;
++
+                 /**
+                  *  Returns a reference to a string that specifies a reference to external <tt><b>AdaptationSet</b></tt> element.
+                  *  @return     a reference to a string
+@@ -364,4 +382,4 @@ namespace dash
+     }
+ }
+ 
+-#endif /* IADAPTATIONSET_H_ */
+\ No newline at end of file
++#endif /* IADAPTATIONSET_H_ */
+diff --git a/libdash/include/ILatency.h b/libdash/include/ILatency.h
+new file mode 100644
+index 0000000..1a9601e
+--- /dev/null
++++ b/libdash/include/ILatency.h
+@@ -0,0 +1,24 @@
++#ifndef ILATENCY_H_
++#define ILATENCY_H_
++
++#include "config.h"
++
++#include "IMPDElement.h"
++
++namespace dash
++{
++    namespace mpd
++    {
++        class ILatency : public virtual IMPDElement
++        {
++            public:
++                virtual ~ILatency(){}
++
++                virtual const uint32_t         GetTarget                 ()  const = 0;
++                virtual const uint32_t         GetMax                    ()  const = 0;
++                virtual const uint32_t         GetMin                    ()  const = 0;
++        };
++    }
++}
++
++#endif /* ILATENCY_H_ */
+diff --git a/libdash/include/IPlaybackRate.h b/libdash/include/IPlaybackRate.h
+new file mode 100644
+index 0000000..b0c7e62
+--- /dev/null
++++ b/libdash/include/IPlaybackRate.h
+@@ -0,0 +1,23 @@
++#ifndef IPLAYBACKRATE_H_
++#define IPLAYBACKRATE_H_
++
++#include "config.h"
++
++#include "IMPDElement.h"
++
++namespace dash
++{
++    namespace mpd
++    {
++        class IPlaybackRate : public virtual IMPDElement
++        {
++            public:
++                virtual ~IPlaybackRate(){}
++
++                virtual const double         GetMax                    ()  const = 0;
++                virtual const double         GetMin                    ()  const = 0;
++        };
++    }
++}
++
++#endif /* IPLAYBACKRATE_H_ */
+diff --git a/libdash/include/IProducerReferenceTime.h b/libdash/include/IProducerReferenceTime.h
+new file mode 100644
+index 0000000..33e7655
+--- /dev/null
++++ b/libdash/include/IProducerReferenceTime.h
+@@ -0,0 +1,28 @@
++#ifndef IPRODUCERREFERENCETIME_H_
++#define IPRODUCERREFERENCETIME_H_
++
++#include "config.h"
++
++#include "IUTCTiming.h"
++
++namespace dash
++{
++    namespace mpd
++    {
++        class IProducerReferenceTime : public virtual IMPDElement
++        {
++            public:
++                virtual ~IProducerReferenceTime(){}
++
++                virtual const std::vector<IUTCTiming *>&              GetUTCTimings                 ()  const = 0;
++                
++                virtual const std::string&                            GetId                         ()  const = 0;
++                virtual const std::string&                            GetType                       ()  const = 0;
++                virtual const std::string&                            GetWallClockTime              ()  const = 0;
++                virtual uint32_t                                      GetPresentationTime           ()  const = 0;
++                virtual bool                                          GetInband                     ()  const = 0;
++        };
++    }
++}
++
++#endif /* IPRODUCERREFERENCETIME_H_ */
+diff --git a/libdash/include/IResync.h b/libdash/include/IResync.h
+new file mode 100644
+index 0000000..058a229
+--- /dev/null
++++ b/libdash/include/IResync.h
+@@ -0,0 +1,23 @@
++#ifndef IRESYNC_H_
++#define IRESYNC_H_
++
++#include "config.h"
++
++#include "IMPDElement.h"
++
++namespace dash
++{
++    namespace mpd
++    {
++        class IResync : public virtual IMPDElement
++        {
++            public:
++                virtual ~IResync(){}
++
++                virtual uint32_t                                GetdT                   ()  const = 0;
++                virtual const std::string&                      GetType                   ()  const = 0;
++        };
++    }
++}
++
++#endif /* IRESYNC_H_ */
+diff --git a/libdash/include/IScope.h b/libdash/include/IScope.h
+new file mode 100644
+index 0000000..a418d9e
+--- /dev/null
++++ b/libdash/include/IScope.h
+@@ -0,0 +1,20 @@
++#ifndef ISCOPE_H_
++#define ISCOPE_H_
++
++#include "config.h"
++
++#include "IMPDElement.h"
++
++namespace dash
++{
++    namespace mpd
++    {
++        class IScope : public virtual IMPDElement
++        {
++            public:
++                virtual ~IScope(){}
++        };
++    }
++}
++
++#endif /* ISCOPE_H_ */
+diff --git a/libdash/include/IServiceDescription.h b/libdash/include/IServiceDescription.h
+new file mode 100644
+index 0000000..ab50be7
+--- /dev/null
++++ b/libdash/include/IServiceDescription.h
+@@ -0,0 +1,28 @@
++#ifndef ISERVICEDESCRIPTION_H_
++#define ISERVICEDESCRIPTION_H_
++
++#include "config.h"
++
++#include "IMPDElement.h"
++#include "IScope.h"
++#include "ILatency.h"
++#include "IPlaybackRate.h"
++
++namespace dash
++{
++    namespace mpd
++    {
++        class IServiceDescription : public virtual IMPDElement
++        {
++            public:
++                virtual ~IServiceDescription(){}
++                virtual const std::string&                    GetId                 ()  const = 0;
++                virtual const std::vector<IScope *>&          GetScopes             ()  const = 0;
++                virtual const std::vector<ILatency *>&        GetLatencys           ()  const = 0;
++                virtual const std::vector<IPlaybackRate *>&   GetPlaybackRates      ()  const = 0;
++
++        };
++    }
++}
++
++#endif /* ISERVICEDESCRIPTION_H_ */
+diff --git a/libdash/include/IUTCTiming.h b/libdash/include/IUTCTiming.h
+new file mode 100644
+index 0000000..79c2faf
+--- /dev/null
++++ b/libdash/include/IUTCTiming.h
+@@ -0,0 +1,37 @@
++#ifndef IUTCTIMING_H_
++#define IUTCTIMING_H_
++
++#include "config.h"
++
++#include "IMPDElement.h"
++
++namespace dash
++{
++    namespace mpd
++    {
++        class IUTCTiming : public virtual IMPDElement
++        {
++            public:
++                virtual ~IUTCTiming(){}
++
++                /**
++                 *  Returns a reference to a string that specifies a URI to identify the scheme. \n
++                 *  The semantics of this element are specific to the scheme specified by this attribute.
++                 *  The \c \@schemeIdUri may be a URN or URL. When a URL is used, it should also contain a month-date in the form 
++                 *  mmyyyy; the assignment of the URL must have been authorized by the owner of the domain name in that URL on 
++                 *  or very close to that date, to avoid problems when domain names change ownership.
++                 *  @return     a reference to a string
++                 */
++                virtual const std::string&      GetSchemeIdUri  () const = 0;
++                
++                /**
++                 *  Returns a reference to a string that specifies the value for the descriptor element. \n
++                 *  The value space and semantics must be defined by the owners of the scheme identified in the \c \@schemeIdUri attribute.
++                 *  @return     a reference to a string
++                 */
++                virtual const std::string&      GetValue        () const = 0;
++        };
++    }
++}
++
++#endif /* IUTCTIMING_H_ */
+diff --git a/libdash/source/mpd/AdaptationSet.cpp b/libdash/source/mpd/AdaptationSet.cpp
+index b1a0331..4fa47d5 100644
+--- a/libdash/source/mpd/AdaptationSet.cpp
++++ b/libdash/source/mpd/AdaptationSet.cpp
+@@ -57,6 +57,10 @@ AdaptationSet::~AdaptationSet   ()
+         delete(this->baseURLs.at(i));
+     for(size_t i = 0; i < this->representation.size(); i++)
+         delete(this->representation.at(i));
++    for(size_t i = 0; i < this->resyncs.size(); i++)
++        delete(this->resyncs.at(i));
++    for(size_t i = 0; i < this->producerReferenceTimes.size(); i++)
++        delete(this->producerReferenceTimes.at(i));
+ 
+     delete(segmentBase);
+     delete(segmentList);
+@@ -143,6 +147,22 @@ void                                    AdaptationSet::AddRepresentation
+ {
+     this->representation.push_back(representation);
+ }
++const std::vector<IResync *>&   AdaptationSet::GetResync                ()  const
++{
++    return (std::vector<IResync *> &) this->resyncs;
++}
++void                                    AdaptationSet::AddResync                (Resync *resync)
++{
++    this->resyncs.push_back(resync);
++}
++const std::vector<IProducerReferenceTime *>&   AdaptationSet::GetProducerReferenceTime                ()  const
++{
++    return (std::vector<IProducerReferenceTime *> &) this->producerReferenceTimes;
++}
++void                                    AdaptationSet::AddProducerReferenceTime                (ProducerReferenceTime *producerReferenceTime)
++{
++    this->producerReferenceTimes.push_back(producerReferenceTime);
++}
+ const std::string&                      AdaptationSet::GetXlinkHref                     ()  const
+ {
+     return this->xlinkHref;
+diff --git a/libdash/source/mpd/AdaptationSet.h b/libdash/source/mpd/AdaptationSet.h
+index 5a17cf4..2b01be7 100644
+--- a/libdash/source/mpd/AdaptationSet.h
++++ b/libdash/source/mpd/AdaptationSet.h
+@@ -22,6 +22,8 @@
+ #include "SegmentTemplate.h"
+ #include "ContentComponent.h"
+ #include "Representation.h"
++#include "ProducerReferenceTime.h"
++#include "Resync.h"
+ 
+ namespace dash
+ {
+@@ -43,6 +45,8 @@ namespace dash
+                 ISegmentList*                           GetSegmentList                  ()  const;
+                 ISegmentTemplate*                       GetSegmentTemplate              ()  const;
+                 const std::vector<IRepresentation *>&   GetRepresentation               ()  const;
++                const std::vector<IResync *>&           GetResync                       ()  const;
++                const std::vector<IProducerReferenceTime *>&   GetProducerReferenceTime ()  const;
+                 const std::string&                      GetXlinkHref                    ()  const;
+                 const std::string&                      GetXlinkActuate                 ()  const;
+                 uint32_t                                GetId                           ()  const;
+@@ -77,6 +81,8 @@ namespace dash
+                 void    SetSegmentList              (SegmentList *segmentList);
+                 void    SetSegmentTemplate          (SegmentTemplate *segmentTemplate);
+                 void    AddRepresentation           (Representation* representation);
++                void    AddResync                   (Resync* resync);
++                void    AddProducerReferenceTime    (ProducerReferenceTime* producerReferenceTime);
+                 void    SetXlinkHref                (const std::string& xlinkHref);
+                 void    SetXlinkActuate             (const std::string& xlinkActuate);
+                 void    SetId                       (uint32_t id);
+@@ -108,6 +114,8 @@ namespace dash
+                 SegmentList                     *segmentList;
+                 SegmentTemplate                 *segmentTemplate;
+                 std::vector<Representation *>   representation;
++                std::vector<Resync *>            resyncs;
++                std::vector<ProducerReferenceTime *>   producerReferenceTimes;
+                 std::string                     xlinkHref;
+                 std::string                     xlinkActuate;
+                 uint32_t                        id;
+diff --git a/libdash/source/mpd/Latency.cpp b/libdash/source/mpd/Latency.cpp
+new file mode 100644
+index 0000000..8598587
+--- /dev/null
++++ b/libdash/source/mpd/Latency.cpp
+@@ -0,0 +1,38 @@
++#include "Latency.h"
++
++using namespace dash::mpd;
++
++Latency::Latency    () :
++                target(0),
++                max(0),
++                min(0)
++{
++}
++Latency::~Latency   ()
++{
++}
++
++const uint32_t                                Latency::GetTarget                  ()  const
++{   
++    return this->target;
++}
++void                                    Latency::SetTarget                  (uint32_t target)
++{   
++    this->target = target;
++}
++const uint32_t                                Latency::GetMax                      ()  const
++{
++    return this->max;
++}
++void                                    Latency::SetMax                      (uint32_t max)
++{
++    this->max = max;
++}
++const uint32_t                                Latency::GetMin                      ()  const
++{
++    return this->min;
++}
++void                                    Latency::SetMin                      (uint32_t min)
++{
++    this->min = min;
++}
+diff --git a/libdash/source/mpd/Latency.h b/libdash/source/mpd/Latency.h
+new file mode 100644
+index 0000000..065f34a
+--- /dev/null
++++ b/libdash/source/mpd/Latency.h
+@@ -0,0 +1,34 @@
++#ifndef LATENCY_H_
++#define LATENCY_H_
++
++#include "config.h"
++
++#include "ILatency.h"
++#include "AbstractMPDElement.h"
++
++namespace dash
++{
++    namespace mpd
++    {
++        class Latency : public ILatency, public AbstractMPDElement
++        {
++            public:
++                Latency         ();
++                virtual ~Latency();
++
++                const uint32_t         GetTarget                 ()  const;
++                const uint32_t         GetMax                    ()  const;
++                const uint32_t         GetMin                    ()  const;
++
++                void    SetTarget             (uint32_t target);
++                void    SetMax                (uint32_t max);
++                void    SetMin                (uint32_t min);
++            private:
++                uint32_t                        target;
++                uint32_t                        max;
++                uint32_t                        min;
++        };
++    }
++}
++
++#endif /* LATENCY_H_ */
+diff --git a/libdash/source/mpd/MPD.cpp b/libdash/source/mpd/MPD.cpp
+index 84e0e61..6f65ace 100644
+--- a/libdash/source/mpd/MPD.cpp
++++ b/libdash/source/mpd/MPD.cpp
+@@ -34,6 +34,10 @@ MPD::~MPD   ()
+         delete(this->programInformations.at(i));
+     for(size_t i = 0; i < this->metrics.size(); i++)
+         delete(this->metrics.at(i));
++    for(size_t i = 0; i < this->serviceDescriptions.size(); i++)
++        delete(this->serviceDescriptions.at(i));
++    for(size_t i = 0; i < this->utcTimings.size(); i++)
++        delete(this->utcTimings.at(i));
+     for(size_t i = 0; i < this->periods.size(); i++)
+         delete(this->periods.at(i));
+     for(size_t i = 0; i < this->baseUrls.size(); i++)
+@@ -64,6 +68,22 @@ void                                        MPD::AddLocation
+ {
+     this->locations.push_back(location);
+ }
++const std::vector<IServiceDescription*>&    MPD::GetServiceDescriptions             () const
++{
++    return (std::vector<IServiceDescription*> &) this->serviceDescriptions;
++}
++void                                        MPD::AddServiceDescription              (ServiceDescription *serviceDescription)
++{
++    this->serviceDescriptions.push_back(serviceDescription);
++}
++const std::vector<IUTCTiming*>&    MPD::GetUTCTimings             () const
++{
++    return (std::vector<IUTCTiming*> &) this->utcTimings;
++}
++void                                        MPD::AddUTCTiming                         (UTCTiming *utcTiming)
++{
++    this->utcTimings.push_back(utcTiming);
++}
+ const std::vector<IPeriod*>&                MPD::GetPeriods                         () const 
+ {
+     return (std::vector<IPeriod*> &) this->periods;
+diff --git a/libdash/source/mpd/MPD.h b/libdash/source/mpd/MPD.h
+index 9bcb38a..a0d5ce0 100644
+--- a/libdash/source/mpd/MPD.h
++++ b/libdash/source/mpd/MPD.h
+@@ -17,6 +17,8 @@
+ #include "IMPD.h"
+ #include "ProgramInformation.h"
+ #include "BaseUrl.h"
++#include "ServiceDescription.h"
++#include "UTCTiming.h"
+ #include "Period.h"
+ #include "Metrics.h"
+ #include "AbstractMPDElement.h"
+@@ -36,6 +38,8 @@ namespace dash
+                 const std::vector<IProgramInformation *>&   GetProgramInformations          ()  const;
+                 const std::vector<IBaseUrl *>&              GetBaseUrls                     ()  const;
+                 const std::vector<std::string>&             GetLocations                    ()  const;
++                const std::vector<IServiceDescription *>&   GetServiceDescriptions          ()  const;
++                const std::vector<IUTCTiming *>&            GetUTCTimings                   ()  const;
+                 const std::vector<IPeriod *>&               GetPeriods                      ()  const;
+                 const std::vector<IMetrics *>&              GetMetrics                      ()  const;
+                 const std::string&                          GetId                           ()  const;
+@@ -61,6 +65,8 @@ namespace dash
+                 void    AddProgramInformation           (ProgramInformation *programInformation);
+                 void    AddBaseUrl                      (BaseUrl *url);
+                 void    AddLocation                     (const std::string& location);
++                void    AddServiceDescription           (ServiceDescription *serviceDescription);
++                void    AddUTCTiming                    (UTCTiming *utcTiming);
+                 void    AddPeriod                       (Period *period);
+                 void    AddMetrics                      (Metrics *metrics);
+                 void    SetId                           (const std::string& id);
+@@ -82,6 +88,8 @@ namespace dash
+                 std::vector<ProgramInformation *>   programInformations;
+                 std::vector<BaseUrl *>              baseUrls;
+                 std::vector<std::string>            locations;
++                std::vector<ServiceDescription *>   serviceDescriptions;
++                std::vector<UTCTiming *>            utcTimings;
+                 std::vector<Period *>               periods;
+                 std::vector<Metrics *>              metrics;
+                 std::string                         id;
+diff --git a/libdash/source/mpd/PlaybackRate.cpp b/libdash/source/mpd/PlaybackRate.cpp
+new file mode 100644
+index 0000000..72b6be2
+--- /dev/null
++++ b/libdash/source/mpd/PlaybackRate.cpp
+@@ -0,0 +1,29 @@
++#include "PlaybackRate.h"
++
++using namespace dash::mpd;
++
++PlaybackRate::PlaybackRate    () :
++                max(0),
++                min(0)
++{
++}
++PlaybackRate::~PlaybackRate   ()
++{
++}
++
++const double                                PlaybackRate::GetMax                      ()  const
++{
++    return this->max;
++}
++void                                    PlaybackRate::SetMax                      (double max)
++{
++    this->max = max;
++}
++const double                                PlaybackRate::GetMin                      ()  const
++{
++    return this->min;
++}
++void                                    PlaybackRate::SetMin                      (double min)
++{
++    this->min = min;
++}
+diff --git a/libdash/source/mpd/PlaybackRate.h b/libdash/source/mpd/PlaybackRate.h
+new file mode 100644
+index 0000000..4f381e2
+--- /dev/null
++++ b/libdash/source/mpd/PlaybackRate.h
+@@ -0,0 +1,31 @@
++#ifndef PLAYBACKRATE_H_
++#define PLAYBACKRATE_H_
++
++#include "config.h"
++
++#include "IPlaybackRate.h"
++#include "AbstractMPDElement.h"
++
++namespace dash
++{
++    namespace mpd
++    {
++        class PlaybackRate : public IPlaybackRate, public AbstractMPDElement
++        {
++            public:
++                PlaybackRate         ();
++                virtual ~PlaybackRate();
++
++                const double         GetMax                    ()  const;
++                const double         GetMin                    ()  const;
++
++                void    SetMax                (double max);
++                void    SetMin                (double min);
++            private:
++                double                        max;
++                double                        min;
++        };
++    }
++}
++
++#endif /* PLAYBACKRATE_H_ */
+diff --git a/libdash/source/mpd/ProducerReferenceTime.cpp b/libdash/source/mpd/ProducerReferenceTime.cpp
+new file mode 100644
+index 0000000..3180726
+--- /dev/null
++++ b/libdash/source/mpd/ProducerReferenceTime.cpp
+@@ -0,0 +1,62 @@
++#include "ProducerReferenceTime.h"
++
++using namespace dash::mpd;
++
++ProducerReferenceTime::ProducerReferenceTime  ()
++{
++}
++ProducerReferenceTime::~ProducerReferenceTime ()
++{
++    for(size_t i = 0; i < this->utcTimings.size(); i++)
++        delete(this->utcTimings.at(i));
++}
++
++const std::vector<IUTCTiming *>&              ProducerReferenceTime::GetUTCTimings                 () const
++{
++    return (std::vector<IUTCTiming *> &) this->utcTimings;
++}
++void                                        ProducerReferenceTime::AddUTCTiming                  (UTCTiming *utcTiming)
++{
++    this->utcTimings.push_back(utcTiming);
++}
++
++const std::string&                            ProducerReferenceTime::GetId                         ()  const
++{
++	return this->id;
++}
++void    ProducerReferenceTime::SetId                                 (const std::string &id)
++{
++	this->id = id;
++}
++const std::string&                            ProducerReferenceTime::GetType                       ()  const
++{
++    return this->type;
++}
++void    ProducerReferenceTime::SetType                               (const std::string &type)
++{
++	this->type = type;
++}
++const std::string&                            ProducerReferenceTime::GetWallClockTime              ()  const
++{
++   return this->wallClockTime;
++}
++void    ProducerReferenceTime::SetWallClockTime                      (const std::string &wallClockTime)
++{
++		this->wallClockTime = wallClockTime;
++}
++uint32_t                                      ProducerReferenceTime::GetPresentationTime           ()  const
++{
++   return this->presentationTime;
++}
++void    ProducerReferenceTime::SetPresentationTime                   (uint32_t presentationTime)
++{
++	this->presentationTime = presentationTime;
++}
++bool                                          ProducerReferenceTime::GetInband                     ()  const
++{
++   return this->inband;
++}
++void    ProducerReferenceTime::SetInband                             (bool inband)
++{
++	this->inband = inband;
++}
+\ No newline at end of file
+diff --git a/libdash/source/mpd/ProducerReferenceTime.h b/libdash/source/mpd/ProducerReferenceTime.h
+new file mode 100644
+index 0000000..55144bf
+--- /dev/null
++++ b/libdash/source/mpd/ProducerReferenceTime.h
+@@ -0,0 +1,44 @@
++#ifndef PRODUCERREFERENCETIME_H_
++#define PRODUCERREFERENCETIME_H_
++
++#include "config.h"
++
++#include "IProducerReferenceTime.h"
++#include "UTCTiming.h"
++
++namespace dash
++{
++    namespace mpd
++    {
++        class ProducerReferenceTime : public IProducerReferenceTime, public AbstractMPDElement
++        {
++            public:
++                ProducerReferenceTime          ();
++                virtual ~ProducerReferenceTime ();
++
++                const std::vector<IUTCTiming *>&              GetUTCTimings                 ()  const;
++                const std::string&                            GetId                         ()  const;
++                const std::string&                            GetType                       ()  const;
++                const std::string&                            GetWallClockTime              ()  const;
++                uint32_t                                      GetPresentationTime           ()  const;
++                bool                                          GetInband                     ()  const;
++
++                void    AddUTCTiming                          (UTCTiming *utcTiming);
++                void    SetId                                 (const std::string &id);
++                void    SetType                               (const std::string &type);
++                void    SetWallClockTime                      (const std::string &wallClockTime);
++                void    SetPresentationTime                   (uint32_t presentationTime);
++                void    SetInband                             (bool inband);
++
++            private:
++                std::vector<IUTCTiming *>                      utcTimings;
++                std::string                                    id;
++                std::string                                    type;
++                std::string                                    wallClockTime;
++                uint32_t                                       presentationTime;
++                bool                                           inband;
++        };
++    }
++}
++
++#endif /* PRODUCERREFERENCETIME_H_ */
+diff --git a/libdash/source/mpd/Resync.cpp b/libdash/source/mpd/Resync.cpp
+new file mode 100644
+index 0000000..4360a53
+--- /dev/null
++++ b/libdash/source/mpd/Resync.cpp
+@@ -0,0 +1,29 @@
++#include "Resync.h"
++
++using namespace dash::mpd;
++
++Resync::Resync  () :
++                type(""),
++                dT       (0)
++{
++}
++Resync::~Resync ()
++{
++}
++
++const std::string&                          Resync::GetType                       () const
++{
++    return this->type;
++}
++void                                        Resync::SetType                       (const std::string &type)
++{
++    this->type = type;
++}
++uint32_t                                    Resync::GetdT                () const
++{
++    return this->dT;
++}
++void                                        Resync::SetdT                (uint32_t dT)
++{
++    this->dT = dT;
++}
+diff --git a/libdash/source/mpd/Resync.h b/libdash/source/mpd/Resync.h
+new file mode 100644
+index 0000000..d51a5b2
+--- /dev/null
++++ b/libdash/source/mpd/Resync.h
+@@ -0,0 +1,32 @@
++#ifndef RESYNC_H_
++#define RESYNC_H_
++
++#include "config.h"
++
++#include "IResync.h"
++#include "AbstractMPDElement.h"
++
++namespace dash
++{
++    namespace mpd
++    {
++        class Resync : public IResync, public AbstractMPDElement
++        {
++            public:
++                Resync          ();
++                virtual ~Resync ();
++
++                uint32_t                                    GetdT                ()  const;
++                const std::string&                          GetType                     ()  const;
++
++                void    SetType                     (const std::string &type);
++                void    SetdT                (uint32_t dT);
++
++            private:
++                std::string                         type;
++                uint32_t                            dT;
++        };
++    }
++}
++
++#endif /* RESYNC_H_ */
+diff --git a/libdash/source/mpd/Scope.cpp b/libdash/source/mpd/Scope.cpp
+new file mode 100644
+index 0000000..e378bee
+--- /dev/null
++++ b/libdash/source/mpd/Scope.cpp
+@@ -0,0 +1,11 @@
++#include "Scope.h"
++
++using namespace dash::mpd;
++
++Scope::Scope    ()
++{
++}
++Scope::~Scope   ()
++{
++}
++
+diff --git a/libdash/source/mpd/Scope.h b/libdash/source/mpd/Scope.h
+new file mode 100644
+index 0000000..8fe71d7
+--- /dev/null
++++ b/libdash/source/mpd/Scope.h
+@@ -0,0 +1,22 @@
++#ifndef SCOPE_H_
++#define SCOPE_H_
++
++#include "config.h"
++
++#include "IScope.h"
++#include "AbstractMPDElement.h"
++
++namespace dash
++{
++    namespace mpd
++    {
++        class Scope : public IScope, public AbstractMPDElement
++        {
++            public:
++                Scope         ();
++                virtual ~Scope();
++        };
++    }
++}
++
++#endif /* SCOPE_H_ */
+diff --git a/libdash/source/mpd/ServiceDescription.cpp b/libdash/source/mpd/ServiceDescription.cpp
+new file mode 100644
+index 0000000..80bf8ac
+--- /dev/null
++++ b/libdash/source/mpd/ServiceDescription.cpp
+@@ -0,0 +1,53 @@
++#include "ServiceDescription.h"
++
++using namespace dash::mpd;
++
++ServiceDescription::ServiceDescription  ()
++{
++}
++ServiceDescription::~ServiceDescription ()
++{
++	for(size_t i = 0; i < this->scopes.size(); i++)
++        	delete(this->scopes.at(i));
++    	for(size_t i = 0; i < this->latencys.size(); i++)
++        	delete(this->latencys.at(i));
++    	for(size_t i = 0; i < this->playbackRates.size(); i++)
++        	delete(this->playbackRates.at(i));
++}
++
++
++const std::string&                  ServiceDescription::GetId                   ()  const
++{
++    return this->id;
++}
++void                                ServiceDescription::SetId                   (const std::string& id)
++{
++    this->id = id;
++}
++
++const std::vector<IScope *>&      ServiceDescription::GetScopes                 ()  const
++{
++    return (std::vector<IScope *> &) this->scopes;
++}
++void                                ServiceDescription::AddScope                (Scope *scope)
++{
++    this->scopes.push_back(scope);
++}
++
++const std::vector<ILatency *>&      ServiceDescription::GetLatencys             ()  const
++{
++    return (std::vector<ILatency *> &) this->latencys;
++}
++void                                ServiceDescription::AddLatency              (Latency *latency)
++{
++    this->latencys.push_back(latency);
++}
++
++const std::vector<IPlaybackRate *>&      ServiceDescription::GetPlaybackRates   ()  const
++{
++    return (std::vector<IPlaybackRate *> &) this->playbackRates;
++}
++void                                ServiceDescription::AddPlaybackRate          (PlaybackRate *playbackRate)
++{
++    this->playbackRates.push_back(playbackRate);
++}
+diff --git a/libdash/source/mpd/ServiceDescription.h b/libdash/source/mpd/ServiceDescription.h
+new file mode 100644
+index 0000000..755db97
+--- /dev/null
++++ b/libdash/source/mpd/ServiceDescription.h
+@@ -0,0 +1,41 @@
++#ifndef SERVICEDESCRIPTION_H_
++#define SERVICEDESCRIPTION_H_
++
++#include "config.h"
++
++#include "IServiceDescription.h"
++#include "AbstractMPDElement.h"
++#include "Scope.h"
++#include "Latency.h"
++#include "PlaybackRate.h"
++
++namespace dash
++{
++    namespace mpd
++    {
++        class ServiceDescription : public IServiceDescription, public AbstractMPDElement
++        {
++            public:
++                ServiceDescription          ();
++                virtual ~ServiceDescription ();
++
++                const std::string&                    GetId               ()  const;
++                const std::vector<IScope *>&          GetScopes             ()  const;
++				const std::vector<ILatency *>&        GetLatencys           ()  const;
++				const std::vector<IPlaybackRate *>&   GetPlaybackRates      ()  const;
++
++                void    SetId                         (const std::string& id);
++				void    AddScope                      (Scope *scope);
++				void    AddLatency                    (Latency *latency);
++				void    AddPlaybackRate               (PlaybackRate *playbackRate);
++	   private:
++                std::string                           id;
++                std::vector<IScope *>                 scopes;
++                std::vector<ILatency *>               latencys;
++                std::vector<IPlaybackRate *>          playbackRates;
++
++        };
++    }
++}
++
++#endif /* SERVICEDESCRIPTION_H_ */
+diff --git a/libdash/source/mpd/UTCTiming.cpp b/libdash/source/mpd/UTCTiming.cpp
+new file mode 100644
+index 0000000..68727cf
+--- /dev/null
++++ b/libdash/source/mpd/UTCTiming.cpp
+@@ -0,0 +1,28 @@
++#include "UTCTiming.h"
++
++using namespace dash::mpd;
++
++UTCTiming::UTCTiming  () :
++            schemeIdUri (""),
++            value       ("")
++{
++}
++UTCTiming::~UTCTiming ()
++{
++}
++const std::string&  UTCTiming::GetSchemeIdUri  ()  const
++{
++    return this->schemeIdUri;
++}
++void                UTCTiming::SetSchemeIdUri  (const std::string& schemeIdUri) 
++{
++    this->schemeIdUri = schemeIdUri;
++}
++const std::string&  UTCTiming::GetValue        ()  const
++{
++    return this->value;
++}
++void                UTCTiming::SetValue        (const std::string& value) 
++{
++    this->value = value;
++}
+diff --git a/libdash/source/mpd/UTCTiming.h b/libdash/source/mpd/UTCTiming.h
+new file mode 100644
+index 0000000..9695fd8
+--- /dev/null
++++ b/libdash/source/mpd/UTCTiming.h
+@@ -0,0 +1,32 @@
++#ifndef UTCTIMING_H_
++#define UTCTIMING_H_
++
++#include "config.h"
++
++#include "IUTCTiming.h"
++#include "AbstractMPDElement.h"
++
++namespace dash
++{
++    namespace mpd
++    {
++        class UTCTiming : public IUTCTiming, public AbstractMPDElement
++        {
++            public:
++                UTCTiming          ();
++                virtual ~UTCTiming ();
++
++                const std::string&      GetSchemeIdUri  () const;
++                const std::string&      GetValue        () const;
++
++                void    SetValue        (const std::string& value);
++                void    SetSchemeIdUri  (const std::string& schemeIdUri);
++
++            private:
++                std::string  schemeIdUri;
++                std::string  value;
++        };
++    }
++}
++
++#endif /* UTCTIMING_H_ */
+diff --git a/libdash/source/xml/Node.cpp b/libdash/source/xml/Node.cpp
+index 9164332..c02eeae 100644
+--- a/libdash/source/xml/Node.cpp
++++ b/libdash/source/xml/Node.cpp
+@@ -93,6 +93,108 @@ dash::mpd::BaseUrl*                         Node::ToBaseUrl             ()  cons
+     baseUrl->AddRawAttributes(this->attributes);
+     return baseUrl;
+ }
++dash::mpd::ServiceDescription*                Node::ToServiceDescription             ()  const
++{
++    dash::mpd::ServiceDescription *serviceDesciption = new dash::mpd::ServiceDescription();
++
++    if(this->HasAttribute("id"))
++    {
++        serviceDesciption->SetId(this->GetAttributeValue("id"));
++    }
++
++    for(size_t i = 0; i < subNodes.size(); i++)
++    {
++        if (subNodes.at(i)->GetName() == "Scope")
++        {
++            serviceDesciption->AddScope(subNodes.at(i)->ToScope());
++            continue;
++        }
++        if (subNodes.at(i)->GetName() == "Latency")
++        {
++            serviceDesciption->AddLatency(subNodes.at(i)->ToLatency());
++            continue;
++        }
++        if (subNodes.at(i)->GetName() == "PlaybackRate")
++        {
++            serviceDesciption->AddPlaybackRate(subNodes.at(i)->ToPlaybackRate());
++            continue;
++        }
++
++        serviceDesciption->AddAdditionalSubNode((xml::INode *) new Node(*(subNodes.at(i))));
++    }
++
++    serviceDesciption->AddRawAttributes(this->attributes);
++    return serviceDesciption;
++}
++dash::mpd::Scope*                Node::ToScope             ()  const
++{
++    dash::mpd::Scope *scope = new dash::mpd::Scope();
++    for(size_t i = 0; i < subNodes.size(); i++)
++    {   
++        scope->AddAdditionalSubNode((xml::INode *) new Node(*(subNodes.at(i))));
++    }
++    return scope;
++}
++dash::mpd::Latency*                Node::ToLatency             ()  const
++{
++    dash::mpd::Latency *latency = new dash::mpd::Latency();
++    if (this->HasAttribute("target"))
++    {
++        latency->SetTarget(strtoull(this->GetAttributeValue("target").c_str(),NULL,10));
++    }
++    if (this->HasAttribute("max"))
++    {
++        latency->SetMax(strtoull(this->GetAttributeValue("max").c_str(),NULL,10));
++    }
++    if (this->HasAttribute("min"))
++    {
++        latency->SetMin(strtoull(this->GetAttributeValue("min").c_str(),NULL,10));
++    }
++    for(size_t i = 0; i < subNodes.size(); i++)
++    {
++        latency->AddAdditionalSubNode((xml::INode *) new Node(*(subNodes.at(i))));
++    }
++    latency->AddRawAttributes(this->attributes);
++    return latency;
++}
++dash::mpd::PlaybackRate*                Node::ToPlaybackRate             ()  const
++{
++    dash::mpd::PlaybackRate *playbackRate = new dash::mpd::PlaybackRate();
++    if (this->HasAttribute("max"))
++    {   
++        playbackRate->SetMax(atof(this->GetAttributeValue("max").c_str()));
++    }
++    if (this->HasAttribute("min"))
++    {
++        playbackRate->SetMin(atof(this->GetAttributeValue("min").c_str()));
++    }
++    for(size_t i = 0; i < subNodes.size(); i++)
++    {
++        playbackRate->AddAdditionalSubNode((xml::INode *) new Node(*(subNodes.at(i))));
++    }
++    playbackRate->AddRawAttributes(this->attributes);
++    return playbackRate;
++}
++dash::mpd::UTCTiming*                Node::ToUTCTiming             ()  const
++{
++    dash::mpd::UTCTiming *utcTiming = new dash::mpd::UTCTiming();
++    if (this->HasAttribute("schemeIdUri"))
++    {
++        utcTiming->SetSchemeIdUri(this->GetAttributeValue("schemeIdUri"));
++    }
++    if (this->HasAttribute("value"))
++    {
++        utcTiming->SetValue(this->GetAttributeValue("value"));
++    }
++    
++    for(size_t i = 0; i < subNodes.size(); i++)
++    {
++        utcTiming->AddAdditionalSubNode((xml::INode *) new Node(*(subNodes.at(i))));
++    }
++
++    utcTiming->AddRawAttributes(this->attributes);
++    return utcTiming;
++}
+ dash::mpd::Descriptor*                      Node::ToDescriptor          ()  const
+ {
+     dash::mpd::Descriptor *descriptor = new dash::mpd::Descriptor();
+@@ -429,6 +531,43 @@ dash::mpd::Representation*                  Node::ToRepresentation      ()  cons
+     representation->AddRawAttributes(this->attributes);
+     return representation;
+ }
++dash::mpd::Resync*                   Node::ToResync       ()  const
++{
++    dash::mpd::Resync *resync = new dash::mpd::Resync();
++
++    if (this->HasAttribute("type"))
++    {
++        resync->SetType(this->GetAttributeValue("type"));
++    }
++    if (this->HasAttribute("dT"))
++    {
++        resync->SetdT(strtoul(this->GetAttributeValue("dT").c_str(), NULL, 10));
++    }
++
++    for(size_t i = 0; i < subNodes.size(); i++)
++    {
++        resync->AddAdditionalSubNode((xml::INode *) new Node(*(subNodes.at(i))));
++    }
++    resync->AddRawAttributes(this->attributes);
++    return resync;
++
++}
++dash::mpd::ProducerReferenceTime*                   Node::ToProducerReferenceTime       ()  const
++{
++    dash::mpd::ProducerReferenceTime *producerReferenceTime = new dash::mpd::ProducerReferenceTime();
++    for(size_t i = 0; i < subNodes.size(); i++)
++    {
++        if (subNodes.at(i)->GetName() == "UTCTiming")
++        {
++            producerReferenceTime->AddUTCTiming(subNodes.at(i)->ToUTCTiming());
++            continue;
++        }
++        producerReferenceTime->AddAdditionalSubNode((xml::INode *) new Node(*(subNodes.at(i))));
++    }
++    producerReferenceTime->AddRawAttributes(this->attributes);
++    return producerReferenceTime;
++
++}
+ dash::mpd::AdaptationSet*                   Node::ToAdaptationSet       ()  const
+ {
+     dash::mpd::AdaptationSet *adaptationSet = new dash::mpd::AdaptationSet();
+@@ -565,6 +704,16 @@ dash::mpd::AdaptationSet*                   Node::ToAdaptationSet       ()  cons
+             adaptationSet->AddRepresentation(subNodes.at(i)->ToRepresentation());
+             continue;
+         }
++        if (subNodes.at(i)->GetName() == "Resync")
++        {
++            adaptationSet->AddResync(subNodes.at(i)->ToResync());
++            continue;
++        }
++        if (subNodes.at(i)->GetName() == "ProducerReferenceTime")
++        {
++            adaptationSet->AddProducerReferenceTime(subNodes.at(i)->ToProducerReferenceTime());
++            continue;
++        }
+         if (subNodes.at(i)->GetName() != "FramePacking" && subNodes.at(i)->GetName() != "AudioChannelConfiguration" && subNodes.at(i)->GetName() != "ContentProtection")
+             adaptationSet->AddAdditionalSubNode((xml::INode *) new Node(*(subNodes.at(i))));
+     }
+@@ -765,6 +914,16 @@ dash::mpd::MPD*                             Node::ToMPD                 ()  cons
+             mpd->AddLocation(subNodes.at(i)->GetText());
+             continue;
+         }
++        if (subNodes.at(i)->GetName() == "ServiceDescription")
++        {
++            mpd->AddServiceDescription(subNodes.at(i)->ToServiceDescription());
++            continue;
++        }
++        if (subNodes.at(i)->GetName() == "UTCTiming")
++        {
++            mpd->AddUTCTiming(subNodes.at(i)->ToUTCTiming());
++            continue;
++        }
+         if (subNodes.at(i)->GetName() == "Period")
+         {
+             mpd->AddPeriod(subNodes.at(i)->ToPeriod());
+diff --git a/libdash/source/xml/Node.h b/libdash/source/xml/Node.h
+index 552d83e..508cb99 100644
+--- a/libdash/source/xml/Node.h
++++ b/libdash/source/xml/Node.h
+@@ -18,6 +18,8 @@
+ #include "../helpers/String.h"
+ #include "../mpd/AdaptationSet.h"
+ #include "../mpd/BaseUrl.h"
++#include "../mpd/ServiceDescription.h"
++#include "../mpd/UTCTiming.h"
+ #include "../mpd/ContentComponent.h"
+ #include "../mpd/Descriptor.h"
+ #include "../mpd/Metrics.h"
+@@ -74,6 +76,11 @@ namespace dash
+                 void                                        SetCommonValuesForMSeg  (dash::mpd::MultipleSegmentBase& object) const;
+                 dash::mpd::AdaptationSet*                   ToAdaptationSet         ()  const;
+                 dash::mpd::BaseUrl*                         ToBaseUrl               ()  const;
++                dash::mpd::ServiceDescription*              ToServiceDescription    ()  const;
++                dash::mpd::Scope*                           ToScope                 ()  const;
++                dash::mpd::Latency*                         ToLatency               ()  const;
++                dash::mpd::PlaybackRate*                    ToPlaybackRate          ()  const;
++                dash::mpd::UTCTiming*                       ToUTCTiming             ()  const;
+                 dash::mpd::ContentComponent*                ToContentComponent      ()  const;
+                 dash::mpd::Descriptor*                      ToDescriptor            ()  const;
+                 dash::mpd::Metrics*                         ToMetrics               ()  const;
+@@ -81,6 +88,8 @@ namespace dash
+                 dash::mpd::ProgramInformation*              ToProgramInformation    ()  const;
+                 dash::mpd::Range*                           ToRange                 ()  const;
+                 dash::mpd::Representation*                  ToRepresentation        ()  const;
++                dash::mpd::Resync*                          ToResync                ()  const;
++                dash::mpd::ProducerReferenceTime*           ToProducerReferenceTime ()  const;
+                 dash::mpd::SegmentBase*                     ToSegmentBase           ()  const;
+                 dash::mpd::SegmentList*                     ToSegmentList           ()  const;
+                 dash::mpd::SegmentTemplate*                 ToSegmentTemplate       ()  const;

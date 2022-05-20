@@ -1,0 +1,91 @@
+diff --git a/libdash/include/IAdaptationSet.h b/libdash/include/IAdaptationSet.h
+index b6938ef..7ccf65b 100644
+--- a/libdash/include/IAdaptationSet.h
++++ b/libdash/include/IAdaptationSet.h
+@@ -197,6 +197,11 @@ namespace dash
+                  *  @return     a reference to a string
+                  */
+                 virtual const std::string&                      GetLang                         ()  const = 0;
++                 /**
++                 *  Returns a reference to a string that declares the label for this Adaptation Set. The syntax and semantics according to IETF RFC 5646 shall be used.\n
++                 *  @return     a reference to a string
++                 */
++                virtual const std::string&                      GetLabel                        ()  const = 0;
+ 
+                 /**
+                  *  Returns a reference to a string that specifies the media content component type for this Adaptation Set. 
+diff --git a/libdash/source/mpd/AdaptationSet.cpp b/libdash/source/mpd/AdaptationSet.cpp
+index 4fa47d5..ac83850 100644
+--- a/libdash/source/mpd/AdaptationSet.cpp
++++ b/libdash/source/mpd/AdaptationSet.cpp
+@@ -22,6 +22,7 @@ AdaptationSet::AdaptationSet    () :
+                 xlinkActuate("onRequest"),
+                 id(0),
+                 lang(""),
++                label(""),
+                 contentType(""),
+                 par(""),
+                 minBandwidth(0),
+@@ -199,10 +200,18 @@ const std::string&                      AdaptationSet::GetLang
+ {
+     return this->lang;
+ }
++const std::string&                      AdaptationSet::GetLabel                          ()  const
++{
++    return this->label;
++}
+ void                                    AdaptationSet::SetLang                          (const std::string& lang)
+ {
+     this->lang = lang;
+ }
++void                                    AdaptationSet::SetLabel                          (const std::string& label)
++{
++    this->label = label;
++}
+ const std::string&                      AdaptationSet::GetContentType                   ()  const
+ {
+     return this->contentType;
+diff --git a/libdash/source/mpd/AdaptationSet.h b/libdash/source/mpd/AdaptationSet.h
+index 2b01be7..f185194 100644
+--- a/libdash/source/mpd/AdaptationSet.h
++++ b/libdash/source/mpd/AdaptationSet.h
+@@ -52,6 +52,7 @@ namespace dash
+                 uint32_t                                GetId                           ()  const;
+                 uint32_t                                GetGroup                        ()  const;
+                 const std::string&                      GetLang                         ()  const;
++                const std::string&                      GetLabel                         ()  const;
+                 const std::string&                      GetContentType                  ()  const;
+                 const std::string&                      GetPar                          ()  const;
+                 uint32_t                                GetMinBandwidth                 ()  const;
+@@ -88,6 +89,7 @@ namespace dash
+                 void    SetId                       (uint32_t id);
+                 void    SetGroup                    (uint32_t group);
+                 void    SetLang                     (const std::string& lang);
++                void    SetLabel                     (const std::string& label);
+                 void    SetContentType              (const std::string& contentType);
+                 void    SetPar                      (const std::string& par);
+                 void    SetMinBandwidth             (uint32_t minBandwidth);
+@@ -121,6 +123,7 @@ namespace dash
+                 uint32_t                        id;
+                 uint32_t                        group;
+                 std::string                     lang;
++                std::string                     label;
+                 std::string                     contentType;
+                 std::string                     par;
+                 uint32_t                        minBandwidth;
+diff --git a/libdash/source/xml/Node.cpp b/libdash/source/xml/Node.cpp
+index 2d88e4c..b9dc915 100644
+--- a/libdash/source/xml/Node.cpp
++++ b/libdash/source/xml/Node.cpp
+@@ -654,6 +654,11 @@ dash::mpd::AdaptationSet*                   Node::ToAdaptationSet       ()  cons
+ 
+     for(size_t i = 0; i < subNodes.size(); i++)
+     {
++        if (subNodes.at(i)->GetName() == "Label")
++        {
++            adaptationSet->SetLabel(subNodes.at(i)->GetText());
++            continue;
++        }
+         if (subNodes.at(i)->GetName() == "Accessibility")
+         {
+             adaptationSet->AddAccessibity(subNodes.at(i)->ToDescriptor());
