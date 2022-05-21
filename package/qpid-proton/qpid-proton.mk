@@ -23,6 +23,7 @@ QPID_PROTON_DEPENDENCIES = \
 # go language binding is enabled when host-go is present
 # For now, disable all of them.
 QPID_PROTON_CONF_OPTS = \
+	-DBUILD_CPP=ON \
 	-DBUILD_GO=OFF \
 	-DBUILD_PYTHON=OFF \
 	-DBUILD_RUBY=OFF \
@@ -30,20 +31,6 @@ QPID_PROTON_CONF_OPTS = \
 	-DENABLE_VALGRIND=OFF \
 	-DENABLE_WARNING_ERROR=OFF \
 	-DPYTHON_EXECUTABLE=$(HOST_DIR)/bin/python3
-
-# epoll proactor unconditionally uses pthread and cpp (C++) bindings
-# unconditionally use proactor
-ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
-ifeq ($(BR2_INSTALL_LIBSTDCPP),y)
-QPID_PROTON_CONF_OPTS += -DBUILD_CPP=ON
-else
-QPID_PROTON_CONF_OPTS += -DBUILD_CPP=OFF
-endif
-else
-QPID_PROTON_CONF_OPTS += \
-	-DBUILD_CPP=OFF \
-	-DPROACTOR=none
-endif
 
 ifeq ($(BR2_PACKAGE_JSONCPP),y)
 QPID_PROTON_DEPENDENCIES += jsoncpp
