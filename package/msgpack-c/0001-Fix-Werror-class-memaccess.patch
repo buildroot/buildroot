@@ -1,0 +1,33 @@
+From a05d92ae85024d0648f69f95307a1d3e8e51109c Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Sun, 1 Apr 2018 19:55:38 -0700
+Subject: [PATCH] Fix -Werror=class-memaccess
+
+Casting to void* make gcc happy since its upset about
+object types and rightly so
+
+Fixes
+
+'void* memcpy(void*, const void*, size_t)' copying an object of non-trivial type 'struct msgpack::v2::object' from an array of 'const msgpack_object' {aka 'const struct msgpack_object'} [-Werror=class-memaccess]
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+---
+ include/msgpack/v1/object.hpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/msgpack/v1/object.hpp b/include/msgpack/v1/object.hpp
+index 64da8c53..9721f705 100644
+--- a/include/msgpack/v1/object.hpp
++++ b/include/msgpack/v1/object.hpp
+@@ -661,7 +661,7 @@ inline object::object(const msgpack_object& o)
+ inline void operator<< (msgpack::object& o, const msgpack_object& v)
+ {
+     // FIXME beter way?
+-    std::memcpy(&o, &v, sizeof(v));
++    std::memcpy(static_cast<void*>(&o), &v, sizeof(v));
+ }
+ 
+ inline object::operator msgpack_object() const
+-- 
+2.17.1
+

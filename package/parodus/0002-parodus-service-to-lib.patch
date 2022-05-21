@@ -1,0 +1,46 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 8138ca6..a02d27d 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -27,7 +27,12 @@ if (ENABLE_WEBCFGBIN)
+ set(SOURCES ${SOURCES} upstream_rbus.c)
+ endif (ENABLE_WEBCFGBIN)
+ 
++if (PARODUS_SERVICE_APP)
+ add_executable(parodus ${SOURCES})
++set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DPARODUS_SERVICE_APP ")
++else ()
++add_library(parodus SHARED ${SOURCES})
++endif (PARODUS_SERVICE_APP)
+ 
+ target_link_libraries (parodus
+     ${CMAKE_THREAD_LIBS_INIT}
+@@ -59,4 +64,11 @@ endif (ENABLE_SESHAT)
+ if (ENABLE_WEBCFGBIN)
+ target_link_libraries (parodus -lrbus -lrbus-core)
+ endif (ENABLE_WEBCFGBIN)
+-install (TARGETS parodus DESTINATION bin)
++
++if (PARODUS_SERVICE_APP)
++set (INSTALL_DIR bin)
++else ()
++set (INSTALL_DIR lib)
++endif ()
++
++install (TARGETS parodus DESTINATION ${INSTALL_DIR})
+diff --git a/src/main.c b/src/main.c
+index b97a471..f56549b 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -76,7 +76,11 @@ signal (int signo, Sigfunc *func)
+ /*----------------------------------------------------------------------------*/
+ /*                             External Functions                             */
+ /*----------------------------------------------------------------------------*/
++#ifdef PARODUS_SERVICE_APP
+ int main( int argc, char **argv)
++#else
++int ParodusServiceMain( int argc, char **argv)
++#endif
+ {
+     set_global_shutdown_reason (SHUTDOWN_REASON_PARODUS_STOP);
+     signal(SIGTERM, sig_handler);
