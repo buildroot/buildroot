@@ -66,10 +66,6 @@ else
 RSYSLOG_CONF_OPTS += --disable-gnutls
 endif
 
-ifeq ($(BR2_PACKAGE_LIBEE),y)
-RSYSLOG_DEPENDENCIES += libee
-endif
-
 ifeq ($(BR2_PACKAGE_LIBGCRYPT),y)
 RSYSLOG_DEPENDENCIES += libgcrypt
 RSYSLOG_CONF_ENV += LIBGCRYPT_CONFIG=$(STAGING_DIR)/usr/bin/libgcrypt-config
