@@ -1,0 +1,37 @@
+From 452b2049b2ee3e73968c603e5524b2d349ac0c3e Mon Sep 17 00:00:00 2001
+From: psykose <alice@ayaya.dev>
+Date: Sat, 9 Apr 2022 17:59:11 +0000
+Subject: [PATCH] cecloader.h: fix null return
+
+returning NULL is invalid for a return type of bool when NULL is defined
+as `nullptr` instead of 0L
+
+[Retrieved from:
+https://github.com/Pulse-Eight/libcec/pull/599/commits/452b2049b2ee3e73968c603e5524b2d349ac0c3e]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ include/cecloader.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/cecloader.h b/include/cecloader.h
+index be76468f..550f598e 100644
+--- a/include/cecloader.h
++++ b/include/cecloader.h
+@@ -172,7 +172,7 @@ bool LibCecBootloader(const char *strLib = NULL)
+     if (!g_libCEC)
+     {
+       std::cout << dlerror() << std::endl;
+-      return NULL;
++      return false;
+     }
+   }
+ 
+@@ -181,7 +181,7 @@ bool LibCecBootloader(const char *strLib = NULL)
+   if (!LibCecBootloader)
+   {
+     std::cout << "cannot find CECStartBootloader" << std::endl;
+-    return NULL;
++    return false;
+   }
+ 
+   bool bReturn = LibCecBootloader();
