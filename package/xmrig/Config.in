@@ -1,7 +1,7 @@
 config BR2_PACKAGE_XMRIG
 	bool "xmrig"
 	# archs officially supported by upstream
-	depends on BR2_aarch64 || BR2_x86_64 || BR2_i386
+	depends on BR2_ARM_CPU_ARMV7A || BR2_aarch64 || BR2_x86_64 || BR2_i386
 	depends on BR2_USE_MMU # libuv
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libuv
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # libuv
@@ -16,7 +16,7 @@ config BR2_PACKAGE_XMRIG
 	  https://xmrig.com
 
 comment "xmrig needs a glibc or musl toolchain w/ NPTL, dynamic library, C++"
-	depends on BR2_aarch64 || BR2_x86_64 || BR2_i386
+	depends on BR2_ARM_CPU_ARMV7A || BR2_aarch64 || BR2_x86_64 || BR2_i386
 	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_TOOLCHAIN_HAS_THREADS_NPTL || \
