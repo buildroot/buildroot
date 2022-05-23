@@ -1,0 +1,48 @@
+From 84863e007d4ef0858e74a1250e2472954924c617 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 14 May 2022 16:10:16 +0200
+Subject: [PATCH] linux-user/syscall.c: fix build without RLIMIT_RTTIME
+
+RLIMIT_RTTIME is not provided by uclibc-ng or by musl prior to version
+1.2.0 and
+https://github.com/bminor/musl/commit/2507e7f5312e79620f6337935d0a6c9045ccba09
+resulting in the following build failure since
+https://git.qemu.org/?p=qemu.git;a=commit;h=244fd08323088db73590ff2317dfe86f810b51d7:
+
+../linux-user/syscall.c: In function 'target_to_host_resource':
+../linux-user/syscall.c:1057:16: error: 'RLIMIT_RTTIME' undeclared (first use in this function); did you mean 'RLIMIT_NOFILE'?
+ 1057 |         return RLIMIT_RTTIME;
+      |                ^~~~~~~~~~~~~
+      |                RLIMIT_NOFILE
+
+Fixes:
+ - http://autobuild.buildroot.org/results/22d3b584b704613d030e1ea9e6b709b713e4cc26
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:
+https://patchwork.ozlabs.org/project/qemu-devel/patch/20220523105239.1499162-1-fontaine.fabrice@gmail.com]
+---
+Changes v1 -> v2 (after review of Laurent Vivier):
+ - Use an ifdef block instead of defining RLIMIT_RTTIME
+
+ linux-user/syscall.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/linux-user/syscall.c b/linux-user/syscall.c
+index dd0d92ba4e..488facb356 100644
+--- a/linux-user/syscall.c
++++ b/linux-user/syscall.c
+@@ -1053,8 +1053,10 @@ static inline int target_to_host_resource(int code)
+         return RLIMIT_RSS;
+     case TARGET_RLIMIT_RTPRIO:
+         return RLIMIT_RTPRIO;
++#ifdef RLIMIT_RTTIME
+     case TARGET_RLIMIT_RTTIME:
+         return RLIMIT_RTTIME;
++#endif
+     case TARGET_RLIMIT_SIGPENDING:
+         return RLIMIT_SIGPENDING;
+     case TARGET_RLIMIT_STACK:
+-- 
+2.35.1
+
