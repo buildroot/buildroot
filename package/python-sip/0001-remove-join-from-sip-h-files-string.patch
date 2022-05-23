@@ -1,0 +1,33 @@
+From 009e5cf0750134ed5403aae23ef53a177764ca04 Mon Sep 17 00:00:00 2001
+From: Adam Duskett <aduskett@gmail.com>
+Date: Wed, 29 Dec 2021 13:49:15 -0800
+Subject: [PATCH] remove join from sip_h.files string
+
+When cross compiling, the configure system appends the hosts /usr/ directory 
+to the path of which to find files that python-sip will install. This leads to
+python-sip attempting to install everything under the hosts /usr directory into
+the targets /usr/include/python directory.
+
+Remove the .join() in the sip_h.files string to prevent the above issue.
+
+Signed-off-by: Adam Duskett <aduskett@gmail.com>
+---
+ configure.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.py b/configure.py
+index 25bcaa7..fc8f2dc 100644
+--- a/configure.py
++++ b/configure.py
+@@ -408,7 +408,7 @@ def create_makefiles(macros):
+             # There will only be one element.
+             files, path = gen_installs[0]
+             pro.write("\n")
+-            pro.write("sip_h.files = %s\n" % " ".join(files))
++            pro.write("sip_h.files = %s\n" % files)
+             pro.write("sip_h.path = %s\n" % quote(path))
+             pro.write("INSTALLS += sip_h\n")
+ 
+-- 
+2.33.1
+
