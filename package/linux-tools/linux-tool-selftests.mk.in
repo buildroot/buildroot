@@ -16,7 +16,10 @@ SELFTESTS_ARCH=$(NORMALIZED_ARCH)
 endif
 endif
 
-SELFTESTS_DEPENDENCIES = libcap-ng popt
+SELFTESTS_DEPENDENCIES = \
+	libcap-ng \
+	popt \
+	$(if $(BR2_PACKAGE_OPENSSL),openssl)
 
 SELFTESTS_MAKE_FLAGS = \
 	$(LINUX_MAKE_FLAGS) \
