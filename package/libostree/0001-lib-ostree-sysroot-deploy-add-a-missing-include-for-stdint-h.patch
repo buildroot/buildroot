@@ -1,0 +1,24 @@
+From 4b7fc4f1e90bbeac89d2f939cde3070e69b4787a Mon Sep 17 00:00:00 2001
+From: Luca BRUNO <luca.bruno@coreos.com>
+Date: Fri, 6 May 2022 10:07:23 +0000
+Subject: [PATCH] lib/ostree-sysroot-deploy: add a missing include for stdint.h
+
+[Retrieved from:
+https://github.com/ostreedev/ostree/commit/4b7fc4f1e90bbeac89d2f939cde3070e69b4787a]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/libostree/ostree-sysroot-deploy.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/libostree/ostree-sysroot-deploy.c b/src/libostree/ostree-sysroot-deploy.c
+index 404f336fb5..96cc07531e 100644
+--- a/src/libostree/ostree-sysroot-deploy.c
++++ b/src/libostree/ostree-sysroot-deploy.c
+@@ -22,6 +22,7 @@
+ #include <gio/gunixinputstream.h>
+ #include <gio/gunixoutputstream.h>
+ #include <glib-unix.h>
++#include <stdint.h>
+ #include <sys/mount.h>
+ #include <sys/statvfs.h>
+ #include <sys/socket.h>
