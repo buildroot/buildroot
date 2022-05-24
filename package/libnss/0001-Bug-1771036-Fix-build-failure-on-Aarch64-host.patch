@@ -1,0 +1,37 @@
+From 9d5900c1ee9000906a90923e861b0fd7f1061cde Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Tue, 24 May 2022 23:40:45 +0200
+Subject: [PATCH] Bug 1771036 - Fix build failure on Aarch64 host
+
+If trying to build on Aarch64 host for powerpc64 target we can't override
+the LDFLAGS leading to this build failure:
+gcc: error: unrecognized command-line option '-m64'
+
+So let's add NATIVE_LDFLAGS check and use it to link nsinstall. This way
+any build environment can pass LDFLAGS that fits better for host
+architecture.
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+[upstream: https://bugzilla.mozilla.org/show_bug.cgi?id=1771036]
+---
+ coreconf/nsinstall/Makefile | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/nss/coreconf/nsinstall/Makefile b/nss/coreconf/nsinstall/Makefile
+index 08dfbc2fe..5061789ff 100644
+--- a/nss/coreconf/nsinstall/Makefile
++++ b/nss/coreconf/nsinstall/Makefile
+@@ -34,6 +34,10 @@ ifdef NATIVE_FLAGS
+ OS_CFLAGS=$(NATIVE_FLAGS)
+ endif
+ 
++ifdef NATIVE_LDFLAGS
++LDFLAGS=$(NATIVE_LDFLAGS)
++endif
++
+ include $(DEPTH)/coreconf/rules.mk
+ 
+ # Redefine MAKE_OBJDIR for just this directory
+-- 
+2.34.1
+
