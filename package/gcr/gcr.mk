@@ -15,13 +15,17 @@ GCR_DEPENDENCIES = \
 	p11-kit \
 	$(TARGET_NLS_DEPENDENCIES)
 GCR_INSTALL_STAGING = YES
-GCR_CONF_OPTS = \
-	-Dgpg_path=/usr/bin/gpg2 \
-	-Dgtk_doc=false
+GCR_CONF_OPTS = -Dgtk_doc=false
 # Even though COPYING is v2 the code states v2.1+
 GCR_LICENSE = LGPL-2.1+
 GCR_LICENSE_FILES = COPYING
 GCR_LDFLAGS = $(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)
+
+ifeq ($(BR2_PACKAGE_GNUPG2),y)
+GCR_CONF_OPTS += -Dgpg_path=/usr/bin/gpg2
+else
+GCR_CONF_OPTS += -Dgpg_path=/usr/bin/gpg
+endif
 
 ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
 GCR_DEPENDENCIES += gobject-introspection host-libxslt host-vala
