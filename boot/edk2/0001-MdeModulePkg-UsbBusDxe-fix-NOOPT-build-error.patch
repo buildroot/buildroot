@@ -1,0 +1,48 @@
+From 59aa67f7a4d8efc564b46fe467aaf6eccec17183 Mon Sep 17 00:00:00 2001
+From: Gerd Hoffmann <kraxel@redhat.com>
+Date: Mon, 20 Dec 2021 22:32:38 +0800
+Subject: [PATCH] MdeModulePkg/UsbBusDxe: fix NOOPT build error
+
+gcc-11 (fedora 35):
+
+/home/kraxel/projects/edk2/MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBus.c: In function ?UsbIoBulkTransfer?:
+/home/kraxel/projects/edk2/MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBus.c:277:12: error: ?UsbHcBulkTransfer? accessing 80 bytes in a region of size 8 [-Werror=stringop-overflow=]
+
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Hao A Wu <hao.a.wu@intel.com>
+(cherry picked from commit ae8272ef787d80950803c521a13a308651bdc62e)
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+---
+ MdeModulePkg/Bus/Usb/UsbBusDxe/UsbUtility.c | 2 +-
+ MdeModulePkg/Bus/Usb/UsbBusDxe/UsbUtility.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/MdeModulePkg/Bus/Usb/UsbBusDxe/UsbUtility.c b/MdeModulePkg/Bus/Usb/UsbBusDxe/UsbUtility.c
+index 7529e03e85..b2ce97ca37 100644
+--- a/MdeModulePkg/Bus/Usb/UsbBusDxe/UsbUtility.c
++++ b/MdeModulePkg/Bus/Usb/UsbBusDxe/UsbUtility.c
+@@ -285,7 +285,7 @@ UsbHcBulkTransfer (
+   IN  UINT8                               DevSpeed,
+   IN  UINTN                               MaxPacket,
+   IN  UINT8                               BufferNum,
+-  IN  OUT VOID                            *Data[EFI_USB_MAX_BULK_BUFFER_NUM],
++  IN  OUT VOID                            *Data[],
+   IN  OUT UINTN                           *DataLength,
+   IN  OUT UINT8                           *DataToggle,
+   IN  UINTN                               TimeOut,
+diff --git a/MdeModulePkg/Bus/Usb/UsbBusDxe/UsbUtility.h b/MdeModulePkg/Bus/Usb/UsbBusDxe/UsbUtility.h
+index 1d2b8a6174..1316a5981f 100644
+--- a/MdeModulePkg/Bus/Usb/UsbBusDxe/UsbUtility.h
++++ b/MdeModulePkg/Bus/Usb/UsbBusDxe/UsbUtility.h
+@@ -149,7 +149,7 @@ UsbHcBulkTransfer (
+   IN  UINT8                               DevSpeed,
+   IN  UINTN                               MaxPacket,
+   IN  UINT8                               BufferNum,
+-  IN  OUT VOID                            *Data[EFI_USB_MAX_BULK_BUFFER_NUM],
++  IN  OUT VOID                            *Data[],
+   IN  OUT UINTN                           *DataLength,
+   IN  OUT UINT8                           *DataToggle,
+   IN  UINTN                               TimeOut,
+-- 
+2.35.3
+
