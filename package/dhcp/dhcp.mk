@@ -62,8 +62,13 @@ else
 DHCP_BIND_EXTRA_CONFIG += --without-zlib
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HAS_ATOMIC),y)
+DHCP_BIND_EXTRA_CONFIG += --enable-atomic
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 DHCP_CONF_ENV += LIBS=-latomic
+endif
+else
+DHCP_BIND_EXTRA_CONFIG += --disable-atomic
 endif
 
 ifeq ($(BR2_STATIC_LIBS),y)
