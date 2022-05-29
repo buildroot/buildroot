@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2022.05"
 
+config BR2_PACKAGE_KTAP
+	bool "ktap removed"
+	select BR2_LEGACY
+	help
+	  Package was removed because it is not compatible with latest
+	  kernels and is not maintained anymore (no release since 2013).
+
 config BR2_KERNEL_HEADERS_5_16
 	bool "kernel headers version 5.16.x are no longer supported"
 	select BR2_LEGACY

@@ -1,0 +1,65 @@
+From 4738c934bbf2a86aa62d752a130d13c524a47696 Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Fri, 20 May 2022 20:18:07 -0600
+Subject: [PATCH] Fix build on uclibc without locale support
+
+When uclibc is build with !UCLIBC_HAS_LOCALE the macro
+__LOCALE_C_ONLY will be set, use this to disable unsupported and
+not required(due to only supporting the C locale) locale functions.
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[james.hilliard1@gmail.com: backport from upstream commit
+4738c934bbf2a86aa62d752a130d13c524a47696]
+---
+ spa/include/spa/utils/string.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/spa/include/spa/utils/string.h b/spa/include/spa/utils/string.h
+index 43d19616c..edf4e954f 100644
+--- a/spa/include/spa/utils/string.h
++++ b/spa/include/spa/utils/string.h
+@@ -275,14 +275,20 @@ static inline int spa_scnprintf(char *buffer, size_t size, const char *format, .
+  */
+ static inline float spa_strtof(const char *str, char **endptr)
+ {
++#ifndef __LOCALE_C_ONLY
+ 	static locale_t locale = NULL;
+ 	locale_t prev;
++#endif
+ 	float v;
++#ifndef __LOCALE_C_ONLY
+ 	if (SPA_UNLIKELY(locale == NULL))
+ 		locale = newlocale(LC_ALL_MASK, "C", NULL);
+ 	prev = uselocale(locale);
++#endif
+ 	v = strtof(str, endptr);
++#ifndef __LOCALE_C_ONLY
+ 	uselocale(prev);
++#endif
+ 	return v;
+ }
+ 
+@@ -319,14 +325,20 @@ static inline bool spa_atof(const char *str, float *val)
+  */
+ static inline double spa_strtod(const char *str, char **endptr)
+ {
++#ifndef __LOCALE_C_ONLY
+ 	static locale_t locale = NULL;
+ 	locale_t prev;
++#endif
+ 	double v;
++#ifndef __LOCALE_C_ONLY
+ 	if (SPA_UNLIKELY(locale == NULL))
+ 		locale = newlocale(LC_ALL_MASK, "C", NULL);
+ 	prev = uselocale(locale);
++#endif
+ 	v = strtod(str, endptr);
++#ifndef __LOCALE_C_ONLY
+ 	uselocale(prev);
++#endif
+ 	return v;
+ }
+ 
+-- 
+2.25.1
+
