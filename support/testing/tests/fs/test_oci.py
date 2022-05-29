@@ -20,7 +20,7 @@ class TestOci(infra.basetest.BRTest):
         BR2_TARGET_ROOTFS_EXT2_SIZE="600M"
         BR2_TARGET_ROOTFS_OCI=y
         BR2_TARGET_ROOTFS_OCI_ENTRYPOINT="df"
-        BR2_TARGET_ROOTFS_OCI_ENTRYPOINT_ARGS="-h"
+        BR2_TARGET_ROOTFS_OCI_CMD="-h"
         BR2_TARGET_ROOTFS_OCI_ARCHIVE=y
         # BR2_TARGET_ROOTFS_TAR is not set
         """
