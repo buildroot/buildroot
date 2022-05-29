@@ -118,7 +118,7 @@ endif
 
 # quadmath support requires wchar
 ifeq ($(BR2_USE_WCHAR)$(BR2_TOOLCHAIN_HAS_LIBQUADMATH),yy)
-HOST_GCC_COMMON_CONF_OPTS += --enable-libquadmath
+HOST_GCC_COMMON_CONF_OPTS += --enable-libquadmath --enable-libquadmath-support
 else
 HOST_GCC_COMMON_CONF_OPTS += --disable-libquadmath --disable-libquadmath-support
 endif
