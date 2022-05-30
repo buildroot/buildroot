@@ -1,0 +1,48 @@
+From 1a55d1d9c6d1cf7739645080bdd92fe903b4211e Mon Sep 17 00:00:00 2001
+From: Nikita Kniazev <nok.raven@gmail.com>
+Date: Wed, 28 Jul 2021 21:06:54 +0300
+Subject: [PATCH] Rename mips1 to mips and alias mips1 to mips
+
+[Retrieved from:
+https://github.com/boostorg/config/commit/1a55d1d9c6d1cf7739645080bdd92fe903b4211e]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ checks/architecture/Jamfile.jam             | 3 ++-
+ checks/architecture/{mips1.cpp => mips.cpp} | 4 ++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+ rename checks/architecture/{mips1.cpp => mips.cpp} (89%)
+
+diff --git a/libs/config/checks/architecture/Jamfile.jam b/libs/config/checks/architecture/Jamfile.jam
+index 2ba54f9ad..c3779d917 100644
+--- a/libs/config/checks/architecture/Jamfile.jam
++++ b/libs/config/checks/architecture/Jamfile.jam
+@@ -18,7 +18,8 @@ obj 64 : 64.cpp ;
+ 
+ obj arm      : arm.cpp ;
+ obj combined : combined.cpp ;
+-obj mips1    : mips1.cpp ;
++obj mips     : mips.cpp ;
++alias mips1  : mips ; # Backwards compatibility
+ obj power    : power.cpp ;
+ obj riscv    : riscv.cpp ;
+ obj sparc    : sparc.cpp ;
+diff --git a/libs/config/checks/architecture/mips1.cpp b/libs/config/checks/architecture/mips.cpp
+similarity index 89%
+rename from checks/architecture/mips1.cpp
+rename to checks/architecture/mips.cpp
+index b4a670b89..85f85583d 100644
+--- a/libs/config/checks/architecture/mips1.cpp
++++ b/libs/config/checks/architecture/mips.cpp
+@@ -1,4 +1,4 @@
+-// mips1.cpp
++// mips.cpp
+ //
+ // Copyright (c) 2012 Steven Watanabe
+ //
+@@ -7,5 +7,5 @@
+ // http://www.boost.org/LICENSE_1_0.txt)
+ 
+ #if !(defined(__mips) || defined(_MIPS_ISA_MIPS1) || defined(_R3000))
+-#error "Not MIPS1"
++#error "Not MIPS"
+ #endif

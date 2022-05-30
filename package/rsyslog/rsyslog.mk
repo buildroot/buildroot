@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RSYSLOG_VERSION = 8.2010.0
+RSYSLOG_VERSION = 8.2204.1
 RSYSLOG_SITE = http://rsyslog.com/files/download/rsyslog
 RSYSLOG_LICENSE = GPL-3.0, LGPL-3.0, Apache-2.0
 RSYSLOG_LICENSE_FILES = COPYING COPYING.LESSER COPYING.ASL20
@@ -64,10 +64,6 @@ RSYSLOG_DEPENDENCIES += gnutls
 RSYSLOG_CONF_OPTS += --enable-gnutls
 else
 RSYSLOG_CONF_OPTS += --disable-gnutls
-endif
-
-ifeq ($(BR2_PACKAGE_LIBEE),y)
-RSYSLOG_DEPENDENCIES += libee
 endif
 
 ifeq ($(BR2_PACKAGE_LIBGCRYPT),y)

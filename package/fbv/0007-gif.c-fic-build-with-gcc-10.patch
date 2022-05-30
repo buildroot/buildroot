@@ -1,0 +1,36 @@
+From 8877207b290da1c3bc100f2705c30e6bdafcd985 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 26 May 2022 23:59:46 +0200
+Subject: [PATCH] gif.c: fic build with gcc >= 10
+
+Fix the following build failure with gcc >= 10::
+
+/nvmedata/autobuild/instance-30/output-1/per-package/fbv/host/bin/../lib/gcc/powerpc-buildroot-linux-uclibc/11.3.0/../../../../powerpc-buildroot-linux-uclibc/bin/ld: gif.o: in function `fh_gif_load':
+gif.c:(.text+0x338): undefined reference to `m_rend_gif_decodecolormap'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/dca603a61b1fd0558992b4a40152d23b5b9c0049
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: not upstreamable (most active fork dropped gif
+support: https://github.com/godspeed1989/fbv/pull/17)]
+---
+ gif.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gif.c b/gif.c
+index 689e549..5560f25 100644
+--- a/gif.c
++++ b/gif.c
+@@ -48,7 +48,7 @@ int fh_gif_id(char *name)
+     return(0);
+ }
+ 
+-inline void m_rend_gif_decodecolormap(unsigned char *cmb,unsigned char *rgbb,ColorMapObject *cm,int s,int l, int transparency)
++static inline void m_rend_gif_decodecolormap(unsigned char *cmb,unsigned char *rgbb,ColorMapObject *cm,int s,int l, int transparency)
+ {
+     GifColorType *cmentry;
+     int i;
+-- 
+2.35.1
+
