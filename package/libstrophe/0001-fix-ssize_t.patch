@@ -1,0 +1,49 @@
+From f31ef9c35c9bba831510777d551c4179295b208f Mon Sep 17 00:00:00 2001
+From: Michael Vetter <jubalh@iodoru.org>
+Date: Mon, 30 May 2022 14:47:44 +0200
+Subject: [PATCH] Include sys/types.h for ssize_t
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When compiling on buildroot I get:
+`src/tls.c:235:28: error: ‘ssize_t’ undeclared (first use in this
+function); did you mean ‘size_t’? `
+
+To have this POSIX type available we will need to include
+`sys/types.h` on Linux. Unsure about other systems.
+
+Upstream: https://github.com/strophe/libstrophe/pull/207
+Signed-off-by: Michael Vetter <jubalh@iodoru.org>
+---
+ src/rand.c | 1 +
+ src/tls.c  | 4 ++++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/src/rand.c b/src/rand.c
+index 061e85ee..25e4614a 100644
+--- a/src/rand.c
++++ b/src/rand.c
+@@ -28,6 +28,7 @@
+ #if __GLIBC_PREREQ(2, 25)
+ #define USE_GETRANDOM
+ #include <sys/random.h>
++#include <sys/types.h>
+ #include <errno.h>
+ #endif
+ #endif
+diff --git a/src/tls.c b/src/tls.c
+index 17d85dda..54746baa 100644
+--- a/src/tls.c
++++ b/src/tls.c
+@@ -21,6 +21,10 @@
+ #include <stdarg.h>
+ #include <string.h>
+ 
++#if defined(__linux__)
++#include <sys/types.h>
++#endif
++
+ #include "strophe.h"
+ 
+ #include "common.h"
