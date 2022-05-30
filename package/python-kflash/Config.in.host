@@ -1,0 +1,7 @@
+config BR2_PACKAGE_HOST_PYTHON_KFLASH
+	bool "host python-kflash"
+	depends on BR2_RISCV_64 && !BR2_USE_MMU
+	help
+	  Kendryte UART ISP Utility - programming code to k210.
+
+	  https://github.com/vowstar/kflash.py
