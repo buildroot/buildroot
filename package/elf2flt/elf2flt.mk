@@ -11,7 +11,7 @@ ELF2FLT_LICENSE_FILES = LICENSE.TXT
 
 HOST_ELF2FLT_DEPENDENCIES = host-binutils host-zlib
 
-# 0003-elf2flt-handle-binutils-2.34.patch
+# 0001-elf2flt-handle-binutils-2.34.patch
 HOST_ELF2FLT_AUTORECONF = YES
 
 # It is not exactly a host variant, but more a cross variant, which is
