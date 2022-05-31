@@ -39,6 +39,11 @@ else
 SAMBA4_CONF_OPTS += --disable-python
 endif
 
+ifeq ($(BR2_PACKAGE_LIBICONV),y)
+SAMBA4_DEPENDENCIES += libiconv
+SAMBA4_LDFLAGS += -liconv
+endif
+
 ifeq ($(BR2_PACKAGE_LIBTIRPC),y)
 SAMBA4_CFLAGS += `$(PKG_CONFIG_HOST_BINARY) --cflags libtirpc`
 SAMBA4_LDFLAGS += `$(PKG_CONFIG_HOST_BINARY) --libs libtirpc`
