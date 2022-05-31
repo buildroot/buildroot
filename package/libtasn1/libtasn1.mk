@@ -29,3 +29,4 @@ endef
 LIBTASN1_POST_INSTALL_TARGET_HOOKS += LIBTASN1_REMOVE_PROGS
 
 $(eval $(autotools-package))
+$(eval $(host-autotools-package))
