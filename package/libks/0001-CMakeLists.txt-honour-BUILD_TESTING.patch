@@ -1,0 +1,41 @@
+From c850e04898a9498d447b43bf346365646ff1b19c Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 13 May 2022 23:12:31 +0200
+Subject: [PATCH] CMakeLists.txt:  honour BUILD_TESTING
+
+Allow the user to disable tests through the standard BUILD_TESTING
+option: https://cmake.org/cmake/help/latest/module/CTest.html
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/signalwire/libks/pull/125]
+---
+ CMakeLists.txt | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 5bbac31..37e6bcd 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,5 +1,6 @@
+ cmake_minimum_required(VERSION 3.7.2)
+ 
++option(BUILD_TESTING "Build tests" ON)
+ option(KS_DEBUG_MUTEX "Debug mutexes, only works on linux for now" OFF)
+ option(KS_DEBUG_SPINLOCK "Debug spinlocks" OFF)
+ option(KS_DEBUG_POOL "Track pool allocations and provide hooks for rendering them" OFF)
+@@ -609,8 +610,10 @@ endif()
+ #cotire(ks)
+ 
+ # Add tests
+-enable_testing()
+-add_subdirectory(tests)
++if (BUILD_TESTING)
++	enable_testing()
++	add_subdirectory(tests)
++endif()
+ 
+ if (WITH_KS_TEST)
+ 	enable_testing()
+-- 
+2.35.1
+
