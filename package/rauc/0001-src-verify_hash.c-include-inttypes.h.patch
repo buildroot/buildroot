@@ -1,0 +1,38 @@
+From b19a9c26d88a913417e77aaf60c72cdbf393d1f6 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 31 May 2022 21:22:36 +0200
+Subject: [PATCH] src/verify_hash.c: include inttypes.h
+
+Include inttypes.h to avoid the following build failure:
+
+In file included from /nvmedata/autobuild/instance-22/output-1/host/bin/../sparc-buildroot-linux-uclibc/sysroot/usr/include/glib-2.0/glib.h:62,
+                 from src/verity_hash.c:26:
+src/verity_hash.c: In function 'verify_zero':
+src/verity_hash.c:69:55: error: expected ')' before 'PRIu64'
+   69 |    g_message("Spare area is not zeroed at position %" PRIu64 ".",
+      |                                                       ^~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/1a093c0e194a061836884419d2f50506105db01e
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/rauc/rauc/pull/914]
+---
+ src/verity_hash.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/verity_hash.c b/src/verity_hash.c
+index db82a78..3b2c2a0 100644
+--- a/src/verity_hash.c
++++ b/src/verity_hash.c
+@@ -19,6 +19,7 @@
+  */
+ 
+ #include <errno.h>
++#include <inttypes.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+-- 
+2.35.1
+
