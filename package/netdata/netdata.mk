@@ -12,6 +12,7 @@ NETDATA_LICENSE = GPL-3.0+
 NETDATA_LICENSE_FILES = LICENSE
 NETDATA_CPE_ID_VENDOR = netdata
 NETDATA_CONF_OPTS = \
+	--disable-cloud \
 	--disable-dbengine \
 	--disable-ebpf \
 	--disable-ml \
