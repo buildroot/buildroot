@@ -1,0 +1,17 @@
+config BR2_PACKAGE_LIBMANETTE
+	bool "libmanette"
+	depends on BR2_USE_MMU # libglib2
+	depends on BR2_USE_WCHAR # libglib2 -> gettext
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_16
+	select BR2_PACKAGE_LIBEVDEV
+	select BR2_PACKAGE_LIBGLIB2
+	help
+	  GObject library which provides access to game controllers.
+
+	  https://gitlab.gnome.org/GNOME/libmanette
+
+comment "libmanette needs a toolchain w/ wchar, threads, headers >= 4.16"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_16
