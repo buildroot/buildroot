@@ -72,6 +72,13 @@ config BR2_TARGET_OPTEE_OS_NEEDS_PYTHON_CRYPTOGRAPHY
 	  python-cryptography. Select this option if optee-os needs
 	  python-cryptography to be built.
 
+config BR2_TARGET_OPTEE_OS_NEEDS_PYTHON_PILLOW
+	bool "OP-TEE OS needs host-python-pillow"
+	help
+	  Some specific OP-TEE OS versions may use python-pillow to
+	  build the Trusted User Interface feature.  Select this
+	  option if optee-os need python-pillow to be built.
+
 config BR2_TARGET_OPTEE_OS_CORE
 	bool "Build core"
 	default y
