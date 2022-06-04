@@ -52,6 +52,13 @@ else
 RAUC_CONF_OPTS += --disable-json
 endif
 
+ifeq ($(BR2_PACKAGE_RAUC_STREAMING),y)
+RAUC_CONF_OPTS += --enable-streaming
+RAUC_DEPENDENCIES += libnl
+else
+RAUC_CONF_OPTS += --disable-streaming
+endif
+
 HOST_RAUC_DEPENDENCIES = \
 	host-pkgconf \
 	host-openssl \
