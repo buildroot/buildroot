@@ -98,7 +98,7 @@ check_elf_has_rpath() {
 	    # PER_PACKAGE_DIR and therefore ${perpackagedir} points to
 	    # a non-existent directory, and this check will always be
 	    # false.
-            [[ ${dir} =~ ${perpackagedir}/[^/]+/host/lib ]] && return 0
+            [[ ${dir} =~ "${perpackagedir}/"[^/]+/host/lib ]] && return 0
         done
     done < <( readelf -d "${file}"                                              \
               |sed -r -e '/.* \(R(UN)?PATH\) +Library r(un)?path: \[(.+)\]$/!d' \
