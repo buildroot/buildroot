@@ -50,6 +50,7 @@ config BR2_PACKAGE_LINUX_TOOLS_PCI
 config BR2_PACKAGE_LINUX_TOOLS_PERF
 	bool "perf"
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_STATIC_LIBS # dlfcn.h
 	select BR2_PACKAGE_LINUX_TOOLS
 	help
 	  perf (sometimes "Perf Events" or perf tools, originally
@@ -68,6 +69,10 @@ config BR2_PACKAGE_LINUX_TOOLS_PERF
 	  configuration.
 
 	  https://perf.wiki.kernel.org/
+
+comment "perf needs a toolchain w/ dynamic library"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on BR2_STATIC_LIBS
 
 if BR2_PACKAGE_LINUX_TOOLS_PERF
 
@@ -117,11 +122,15 @@ comment "selftests needs BR2_PACKAGE_BUSYBOX_SHOW_OTHERS and a toolchain w/ dyna
 
 config BR2_PACKAGE_LINUX_TOOLS_TMON
 	bool "tmon"
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_PACKAGE_LINUX_TOOLS
 	select BR2_PACKAGE_NCURSES
 	help
 	  tmon is a terminal-based tool (using curses) that allows the
 	  user to access thermal information about the system.
+
+comment "tmon needs a toolchain w/ threads"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS
 
 config BR2_PACKAGE_LINUX_TOOLS_HV
 	bool "hv"
