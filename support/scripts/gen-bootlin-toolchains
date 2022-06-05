@@ -482,7 +482,10 @@ def gen_config_in_options(toolchains, fpath):
         f.write("config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_ARCH_SUPPORTS\n")
         f.write("\tbool\n")
         for arch, details in arches.items():
-            f.write("\tdefault y if %s\n" % " && ".join(details['conditions']))
+            conditions = details['conditions'].copy()
+            if set([t.libc for t in toolchains if t.arch == arch]) == set(['glibc']):
+                conditions.append("!BR2_STATIC_LIBS")
+            f.write("\tdefault y if %s\n" % " && ".join(conditions))
         f.write("\n")
 
         f.write("if BR2_TOOLCHAIN_EXTERNAL_BOOTLIN\n\n")
