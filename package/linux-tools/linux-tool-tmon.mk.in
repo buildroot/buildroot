@@ -9,6 +9,7 @@ LINUX_TOOLS += tmon
 TMON_DEPENDENCIES = host-pkgconf ncurses
 TMON_MAKE_OPTS = $(LINUX_MAKE_FLAGS) \
 	CC=$(TARGET_CC) \
+	LDFLAGS="$(TARGET_LDFLAGS)" \
 	PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig
 
 ifeq ($(BR2_TOOLCHAIN_HAS_SSP),)
