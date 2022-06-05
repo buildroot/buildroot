@@ -20,6 +20,11 @@ config BR2_TOOLCHAIN_BUILDROOT_VENDOR
 
 	  If you're not sure, just leave the default "buildroot" value.
 
+config BR2_TOOLCHAIN_BUILDROOT_STATIC_LIBS_SUPPORTS
+	bool
+	default y if BR2_PACKAGE_UCLIBC_SUPPORTS
+	default y if BR2_PACKAGE_MUSL_SUPPORTS
+
 choice
 	prompt "C library"
 	default BR2_TOOLCHAIN_BUILDROOT_UCLIBC
