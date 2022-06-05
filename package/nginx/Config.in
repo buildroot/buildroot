@@ -296,6 +296,14 @@ config BR2_PACKAGE_NGINX_HTTP_UPSTREAM_RANDOM_MODULE
 	help
 	  Enable ngx_http_upstream_random_module
 
+config BR2_PACKAGE_NGINX_HTTP_UPSTREAM_ZONE_MODULE
+	bool "ngx_http_upstream_zone_module"
+	default y
+	depends on BR2_PACKAGE_LIBATOMIC_OPS_ARCH_SUPPORTS
+	select BR2_PACKAGE_LIBATOMIC_OPS
+	help
+	  Enable ngx_http_upstream_zone_module
+
 endif #BR2_PACKAGE_NGINX_HTTP
 
 config BR2_PACKAGE_NGINX_MAIL
@@ -419,6 +427,8 @@ config BR2_PACKAGE_NGINX_STREAM_UPSTREAM_RANDOM_MODULE
 config BR2_PACKAGE_NGINX_STREAM_UPSTREAM_ZONE_MODULE
 	bool "ngx_stream_upstream_zone_module"
 	default y
+	depends on BR2_PACKAGE_LIBATOMIC_OPS_ARCH_SUPPORTS
+	select BR2_PACKAGE_LIBATOMIC_OPS
 	help
 	  Enable ngx_stream_upstream_zone_module
 
