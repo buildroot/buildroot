@@ -77,6 +77,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_LIBCURL_WOLFSSL),y)
 LIBCURL_CONF_OPTS += --with-wolfssl=$(STAGING_DIR)/usr
+LIBCURL_CONF_OPTS += --with-ca-bundle=/etc/ssl/certs/ca-certificates.crt
 LIBCURL_DEPENDENCIES += wolfssl
 else
 LIBCURL_CONF_OPTS += --without-wolfssl
