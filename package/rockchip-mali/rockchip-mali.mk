@@ -14,7 +14,7 @@ ROCKCHIP_MALI_PROVIDES = libegl libgles libgbm
 
 ROCKCHIP_MALI_LIB = libmali-bifrost-g31-rxp0$(ROCKCHIP_MALI_SUFFIX).so
 ROCKCHIP_MALI_PKGCONFIG_FILES = egl gbm glesv2 mali
-ROCKCHIP_MALI_ARCH_DIR = $(if $(BR2_arm),arm-linux-gnueabihf,aarch64-linux-gnu)
+ROCKCHIP_MALI_ARCH_DIR = $(if $(BR2_arm)$(BR2_armeb),arm-linux-gnueabihf,aarch64-linux-gnu)
 ROCKCHIP_MALI_HEADERS = EGL FBDEV GLES GLES2 GLES3 KHR gbm.h
 
 # We need to create:
