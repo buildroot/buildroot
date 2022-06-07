@@ -491,4 +491,11 @@ else
 GST1_PLUGINS_GOOD_CONF_OPTS += -Dbz2=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_WPEWEBKIT2_28),y)
+define GST1_PLUGINS_GOOD_APPLY_WPEWEBKIT2_28_EXTRA_PATCHES_POST_HOOK
+        cd $(@D) && { for P in ../../../package/gstreamer1/gst1-plugins-good/1.16.2-wpe-2.28/*.patch; do patch -p1 < "$$P" ; done; }
+endef
+GST1_PLUGINS_GOOD_POST_PATCH_HOOKS += GST1_PLUGINS_GOOD_APPLY_WPEWEBKIT2_28_EXTRA_PATCHES_POST_HOOK
+endif
+
 $(eval $(meson-package))
