@@ -72,3 +72,4 @@ PYTHON_PILLOW_BUILD_OPTS += --disable-webp --disable-webpmux
 endif
 
 $(eval $(python-package))
+$(eval $(host-python-package))

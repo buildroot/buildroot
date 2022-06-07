@@ -1,0 +1,40 @@
+From 72234ae73590fa93d837034a3fb48b71eb071a2a Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd.kuhls@t-online.de>
+Date: Sun, 22 May 2022 20:24:14 +0200
+Subject: [PATCH] astrobwt: fix build with gcc-4.8
+
+Fixes build error:
+
+xmrig-6.17.0/src/crypto/astrobwt/sort_indices2.cpp:40:24: error: missing binary operator before token "("
+ #if __has_cpp_attribute(unlikely)
+
+found with the buildroot toolchain
+arm-none-linux-gnueabi-gcc (Sourcery CodeBench Lite 2014.05-29) 4.8.3 20140320 (prerelease)
+
+Inspired by
+https://reviews.llvm.org/rG91c32fd8c8fa395971a028f7091273fa2c8f44e6
+
+Patch sent upstream: https://github.com/xmrig/xmrig/pull/3057
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ src/crypto/astrobwt/sort_indices2.cpp | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/crypto/astrobwt/sort_indices2.cpp b/src/crypto/astrobwt/sort_indices2.cpp
+index 2d86d462..3a70f619 100644
+--- a/src/crypto/astrobwt/sort_indices2.cpp
++++ b/src/crypto/astrobwt/sort_indices2.cpp
+@@ -36,6 +36,9 @@
+ #define RESTRICT
+ #endif
+ 
++#ifndef __has_cpp_attribute
++#define __has_cpp_attribute(x) 0
++#endif
+ 
+ #if __has_cpp_attribute(unlikely)
+ #define UNLIKELY(X) (X) [[unlikely]]
+-- 
+2.30.2
+
