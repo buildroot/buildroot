@@ -12,7 +12,7 @@ endif
 ifeq ($(BR2_PACKAGE_WPEWEBKIT2_28),y)
 # This is the wpe-2.28-soup3 branch tip.
 WPEWEBKIT_VERSION = 2.28
-WPEWEBKIT_VERSION_VALUE = e880573375dd9aa75533179669f149d96f24995e
+WPEWEBKIT_VERSION_VALUE = fdf2f014629a4b4e93f43cec0be4698aa640b826
 endif
 
 WPEWEBKIT_SITE = $(call github,WebPlatformForEmbedded,WPEWebKit,$(WPEWEBKIT_VERSION_VALUE))
@@ -26,9 +26,9 @@ WPEWEBKIT_DEPENDENCIES = host-gperf host-python host-ruby \
 	libgles wpebackend libepoxy cairo jpeg libpng harfbuzz icu webp libsoup \
 	libgcrypt libxslt openjpeg
 
-ifeq ($(BR2_PACKAGE_WPEWEBKIT2_22),y)
-
 WPEWEBKIT_EXTRA_FLAGS = -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+ifeq ($(BR2_PACKAGE_WPEWEBKIT2_22),y)
 
 WPEWEBKIT_FLAGS = \
 	-DPORT=WPE \
