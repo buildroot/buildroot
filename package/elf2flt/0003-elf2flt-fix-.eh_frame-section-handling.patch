@@ -1,0 +1,73 @@
+From 8b7fdb1dedfb8a6e858b46e5af33029fe0462ab8 Mon Sep 17 00:00:00 2001
+From: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Date: Tue, 10 May 2022 23:14:36 +0900
+Subject: [PATCH] elf2flt: fix .eh_frame section handling
+
+elf2flt.ld linker script positions the .eh_frame section in an output
+section after the .text and .data output sections.
+
+However, when elf2flt.c is supplied the ELF linked using the elf2flt.ld
+linker script, it only looks at the flags for each input section, and
+then puts it in either a bFLT text, data or bss output section.
+
+Commit ba379d08bb7 ("elf2flt: fix for segfault on some ARM ELFs")
+modified the section scanning loop of elf2flt main() function to put
+read-only relocation data sections in the bFLT text output section so
+that the .ARM.exidx section is placed in the .text flat output section.
+Previously a read-only relocation data section would be put in the data
+output section.
+
+On ARM, the .eh_frame section does not have the SEC_RELOC flag set, so
+it will still end up in the data output section. However, on
+architectures that generates the .eh_frame section with the SEC_RELOC
+flag set, this section will now be placed in the text output section.
+
+The logic in elf2flt will handle all sections in order, and since the
+input order is .text, .data, and .eh_frame, putting .eh_frame in text
+output section does not work, since elf2flt.c has already put the .data
+input section in the bFLT data output section. This leads to the
+following print (example for riscv64 architecture):
+
+buildroot/output/host/riscv64-buildroot-linux-uclibc/bin/elf2flt:
+ERROR: text=0x3bab8 overlaps data=0x33f60 ?
+
+The way that elf2flt is written, we cannot append to the text output
+section after an input section has been added to the data output
+section. It might be possible to change this, but that would require
+moving all the code the was already placed in the data output section.
+
+Instead, let's allow putting a read-only relocation data section in the
+text output section (so that .ARM.exidx will still be placed correctly),
+but only if there has not yet been anything placed in the data output
+section.
+
+That way .ARM.exidx will still be placed correctly, and .eh_frame will
+be placed correctly in the .data output section, regardless if it has
+flag SEC_RELOC set or not.
+
+Fixes: ba379d08bb7 ("elf2flt: fix for segfault on some ARM ELFs")
+Signed-off-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Signed-off-by: Niklas Cassel <niklas.cassel@wdc.com>
+---
+ elf2flt.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/elf2flt.c b/elf2flt.c
+index 7ac0617..da25e93 100644
+--- a/elf2flt.c
++++ b/elf2flt.c
+@@ -1877,8 +1877,9 @@ int main(int argc, char *argv[])
+     bfd_vma sec_vma;
+ 
+     if ((s->flags & SEC_CODE) ||
+-       ((s->flags & (SEC_DATA | SEC_READONLY | SEC_RELOC)) ==
+-                    (SEC_DATA | SEC_READONLY | SEC_RELOC))) {
++        (((s->flags & (SEC_DATA | SEC_READONLY | SEC_RELOC)) ==
++                     (SEC_DATA | SEC_READONLY | SEC_RELOC)) &&
++          !data_len)) {
+       vma = &text_vma;
+       len = &text_len;
+     } else if (s->flags & SEC_DATA) {
+-- 
+2.35.1
+

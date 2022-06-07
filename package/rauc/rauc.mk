@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RAUC_VERSION = 1.6
+RAUC_VERSION = 1.7
 RAUC_SITE = https://github.com/rauc/rauc/releases/download/v$(RAUC_VERSION)
 RAUC_SOURCE = rauc-$(RAUC_VERSION).tar.xz
 RAUC_LICENSE = LGPL-2.1
@@ -50,6 +50,13 @@ RAUC_CONF_OPTS += --enable-json
 RAUC_DEPENDENCIES += json-glib
 else
 RAUC_CONF_OPTS += --disable-json
+endif
+
+ifeq ($(BR2_PACKAGE_RAUC_STREAMING),y)
+RAUC_CONF_OPTS += --enable-streaming
+RAUC_DEPENDENCIES += libnl
+else
+RAUC_CONF_OPTS += --disable-streaming
 endif
 
 HOST_RAUC_DEPENDENCIES = \

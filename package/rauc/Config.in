@@ -40,6 +40,16 @@ config BR2_PACKAGE_RAUC_NETWORK
 	  This option enables support for updating firmware over
 	  the network using libcurl.
 
+if BR2_PACKAGE_RAUC_NETWORK
+
+config BR2_PACKAGE_RAUC_STREAMING
+	bool "streaming update support"
+	select BR2_PACKAGE_LIBNL
+	help
+	  This option enables support for streaming update mode.
+
+endif
+
 config BR2_PACKAGE_RAUC_JSON
 	bool "JSON output support"
 	select BR2_PACKAGE_JSON_GLIB
