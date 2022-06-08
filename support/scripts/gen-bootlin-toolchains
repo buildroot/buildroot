@@ -4,6 +4,7 @@ import os.path
 import re
 import requests
 import textwrap
+import sys
 
 BASE_URL = "https://toolchains.bootlin.com/downloads/releases/toolchains"
 
@@ -478,6 +479,10 @@ def get_toolchains():
                 variant = "bleeding-edge"
                 version = parts[2][len("bleeding-edge-"):]
             tmp[(arch, libc, variant)] = version
+
+        if len(tmp) == 0:
+            print("ERROR: no toolchains found for architecture %s" % arch)
+            sys.exit(1)
 
         toolchains += [Toolchain(k[0], k[1], k[2], v) for k, v in tmp.items()]
 
