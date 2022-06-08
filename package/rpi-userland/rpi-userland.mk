@@ -15,7 +15,6 @@ RPI_USERLAND_PROVIDES = libegl libgles libopenmax libopenvg
 
 ifeq ($(BR2_PACKAGE_LIBEXECINFO),y)
 RPI_USERLAND_DEPENDENCIES += libexecinfo
-RPI_USERLAND_CONF_OPTS += -DCMAKE_EXE_LINKER_FLAGS=-lexecinfo
 endif
 
 ifeq ($(BR2_PACKAGE_RPI_USERLAND_HELLO),y)
