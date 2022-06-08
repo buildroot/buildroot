@@ -50,6 +50,23 @@ ifeq ($(BR2_TOOLCHAIN_USES_MUSL),y)
 QT5WEBKIT_CONF_OPTS += -DENABLE_SAMPLING_PROFILER=OFF
 endif
 
+define QT5WEBKIT_CONF_PRI
+	$(SED) 's/QT.webkit.includes =.*/QT.webkit.includes = \$$\$$QT_MODULE_INCLUDE_BASE \$$\$$QT_MODULE_INCLUDE_BASE\/QtWebKit/g' -e 's/QT.webkit.libs =.*/QT.webkit.libs = \$$\$$QT_MODULE_LIB_BASE/g' -e 's/QT.webkit.rpath =.*/QT.webkit.rpath = \$$\$$QT_MODULE_LIB_BASE/g' -e 's/QT.webkit.bins =.*/QT.webkit.bins = \$$\$$QT_MODULE_BIN_BASE/g' -e 's/QMAKE_RPATHDIR +=.*/QMAKE_RPATHDIR += \$$\$$QT_MODULE_LIB_BASE/g' $(@D)/Source/WebKit/qt_lib_webkit.pri
+
+	$(SED) 's/QT.webkit_private.includes =.*/QT.webkit_private.includes = \$$\$$QT_MODULE_INCLUDE_BASE\/QtWebKit\/5.212.0 \$$\$$QT_MODULE_INCLUDE_BASE\/QtWebKit\/5.212.0\/QtWebKit/g' -e 's/QT.webkit_private.libs =.*/QT.webkit_private.libs = \$$\$$QT_MODULE_LIB_BASE/g' -e 's/QT.webkit_private.bins =.*/QT.webkit_private.bins = \$$\$$QT_MODULE_BIN_BASE/g' $(@D)/Source/WebKit/qt_lib_webkit_private.pri
+
+	$(SED) 's/QT.webkitwidgets.includes =.*/QT.webkitwidgets.includes = \$$\$$QT_MODULE_INCLUDE_BASE \$$\$$QT_MODULE_INCLUDE_BASE\/QtWebKitWidgets/g' -e 's/QT.webkitwidgets.libs =.*/QT.webkitwidgets.libs = \$$\$$QT_MODULE_LIB_BASE/g' -e 's/QT.webkitwidgets.rpath =.*/QT.webkitwidgets.rpath = \$$\$$QT_MODULE_LIB_BASE/g' -e 's/QT.webkitwidgets.bins =.*/QT.webkitwidgets.bins = \$$\$$QT_MODULE_BIN_BASE/g' -e 's/QMAKE_RPATHDIR +=.*/QMAKE_RPATHDIR += \$$\$$QT_MODULE_LIB_BASE/g' $(@D)/Source/WebKit/qt_lib_webkitwidgets.pri
+
+	$(SED) 's/QT.webkitwidgets_private.includes =.*/QT.webkitwidgets_private.includes = \$$\$$QT_MODULE_INCLUDE_BASE\/QtWebKitWidgets\/5.212.0 \$$\$$QT_MODULE_INCLUDE_BASE\/QtWebKitWidgets\/5.212.0\/QtWebKitWidgets/g' -e 's/QT.webkitwidgets_private.libs =.*/QT.webkitwidgets_private.libs = \$$\$$QT_MODULE_LIB_BASE/g' -e 's/QT.webkitwidgets_private.bins =.*/QT.webkitwidgets_private.bins = \$$\$$QT_MODULE_BIN_BASE/g' $(@D)/Source/WebKit/qt_lib_webkitwidgets_private.pri
+endef
+QT5WEBKIT_POST_CONFIGURE_HOOKS += QT5WEBKIT_CONF_PRI
+
+define QT5WEBKIT_CREATE_SYMLINK
+	ln -sf $(HOST_DIR)/arm-buildroot-linux-gnueabihf/sysroot/usr/mkspecs/modules/*.pri $(HOST_DIR)/mkspecs/modules/
+	ln -sf $(HOST_DIR)/arm-buildroot-linux-gnueabihf/sysroot/usr/include/QtWebKit* $(HOST_DIR)/arm-buildroot-linux-gnueabihf/sysroot/usr/include/qt5/
+endef
+QT5WEBKIT_POST_INSTALL_STAGING_HOOKS += QT5WEBKIT_CREATE_SYMLINK
+
 QT5WEBKIT_CONF_OPTS += \
 	-DENABLE_TOOLS=OFF \
 	-DPORT=Qt \
