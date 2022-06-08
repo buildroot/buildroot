@@ -49,7 +49,7 @@ config BR2_arm
 
 config BR2_armeb
 	bool "ARM (big endian)"
-	# MMU support is set by the subarchitecture file, arch/Config.in.arm
+	select BR2_ARCH_HAS_MMU_MANDATORY
 	help
 	  ARM is a 32-bit reduced instruction set computer (RISC)
 	  instruction set architecture (ISA) developed by ARM Holdings.

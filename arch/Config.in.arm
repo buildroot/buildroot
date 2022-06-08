@@ -242,6 +242,8 @@ config BR2_pj4
 	select BR2_ARM_CPU_HAS_VFPV3
 	select BR2_ARM_CPU_ARMV7A
 
+# Cortex-M cores are only supported for little endian configurations
+if BR2_arm
 comment "armv7m cores"
 config BR2_cortex_m3
 	bool "cortex-M3"
@@ -258,6 +260,7 @@ config BR2_cortex_m7
 	select BR2_ARM_CPU_MAYBE_HAS_FPV5
 	select BR2_ARM_CPU_ARMV7M
 	select BR2_ARCH_NEEDS_GCC_AT_LEAST_5
+endif # BR2_arm
 endif # !BR2_ARCH_IS_64
 
 comment "armv8 cores"
