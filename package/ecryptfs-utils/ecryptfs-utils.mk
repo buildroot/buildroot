@@ -11,14 +11,10 @@ ECRYPTFS_UTILS_LICENSE = GPL-2.0+
 ECRYPTFS_UTILS_LICENSE_FILES = COPYING
 ECRYPTFS_UTILS_CPE_ID_VENDOR = ecryptfs
 
-ECRYPTFS_UTILS_DEPENDENCIES = keyutils libnss host-intltool
+ECRYPTFS_UTILS_DEPENDENCIES = host-pkgconf keyutils libnss host-intltool
 ECRYPTFS_UTILS_CONF_OPTS = --disable-pywrap
 
-#Needed for build system to find pk11func.h and libnss3.so
-ECRYPTFS_UTILS_CONF_ENV = \
-	ac_cv_path_POD2MAN=true \
-	NSS_CFLAGS="-I$(STAGING_DIR)/usr/include/nss -I$(STAGING_DIR)/usr/include/nspr" \
-	NSS_LIBS="-lnss3"
+ECRYPTFS_UTILS_CONF_ENV = ac_cv_path_POD2MAN=true
 
 ifeq ($(BR2_PACKAGE_LINUX_PAM),y)
 ECRYPTFS_UTILS_CONF_OPTS += --enable-pam
