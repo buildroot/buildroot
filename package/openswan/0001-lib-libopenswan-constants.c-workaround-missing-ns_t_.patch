@@ -1,0 +1,29 @@
+From 66f8abe037970dda50fbc460edb2a2fa9f391d8a Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Wed, 3 Aug 2022 19:14:25 +0200
+Subject: [PATCH] lib/libopenswan/constants.c: workaround missing ns_t_tkey
+ definition in uClibc < 1.0.41
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ lib/libopenswan/constants.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/lib/libopenswan/constants.c b/lib/libopenswan/constants.c
+index 90c973b5f..04e68da42 100644
+--- a/lib/libopenswan/constants.c
++++ b/lib/libopenswan/constants.c
+@@ -1411,7 +1411,9 @@ static const char *const rr_qtype_name[] = {
+ 	NULL
+     };
+ 
+-enum_names rr_qtype_names = { ns_t_tkey, ns_t_any
++/* ns_t_tkey is 249, but its definition is missing from uClibc <
++ * 1.0.41, so let's hardcode it */
++enum_names rr_qtype_names = { 249 /* ns_t_tkey */, ns_t_any
+ 			      , rr_qtype_name, &rr_type_names };
+ 
+ static const char *const rr_class_name[] = {
+-- 
+2.37.1
+
