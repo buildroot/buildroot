@@ -26,6 +26,14 @@ endif
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 ECRYPTFS_UTILS_CONF_OPTS += --enable-openssl
 ECRYPTFS_UTILS_DEPENDENCIES += openssl
+
+ifeq ($(BR2_PACKAGE_PKCS11_HELPER),y)
+ECRYPTFS_UTILS_CONF_OPTS += --enable-pkcs11-helper
+ECRYPTFS_UTILS_DEPENDENCIES += pkcs11-helper
+else
+ECRYPTFS_UTILS_CONF_OPTS += --disable-pkcs11-helper
+endif
+
 else
 ECRYPTFS_UTILS_CONF_OPTS += --disable-openssl
 endif
