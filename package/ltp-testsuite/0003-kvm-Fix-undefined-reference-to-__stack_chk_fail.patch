@@ -1,0 +1,41 @@
+From: Petr Vorel <petr.vorel@gmail.com>
+Date: Fri, 10 Jun 2022 09:13:09 +0200
+Subject: [PATCH] kvm: Fix undefined reference to __stack_chk_fail()
+
+Some x86_64 buildroot toolchains (bootlin-x86-64-glibc,
+bootlin-x86-64-musl) try to link to __stack_chk_fail().
+-nostdlib is not enough, it requires also -fno-stack-protector.
+
+x86_64-buildroot-linux-gnu/bin/ld: /tmp/ccgBXEoR.o: in function `handle_page_fault':
+kvm_pagefault01.c:(.text+0x5d): undefined reference to `__stack_chk_fail'
+collect2: error: ld returned 1 exit status
+
+[ upstream status: 1a51aa710 ("kvm: Fix undefined reference to __stack_chk_fail()") ]
+
+Suggested-by: Martin Doucha <mdoucha@suse.cz>
+Reviewed-by: Cyril Hrubis <chrubis@suse.cz>
+Reviewed-by: Martin Doucha <mdoucha@suse.cz>
+Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Reviewed-by: Joerg Vehlow <joerg.vehlow@aox-tech.de>
+Tested-by: Joerg Vehlow <joerg.vehlow@aox-tech.de>
+Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
+---
+ testcases/kernel/kvm/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/testcases/kernel/kvm/Makefile b/testcases/kernel/kvm/Makefile
+index 8d5193d8e..c5a09719c 100644
+--- a/testcases/kernel/kvm/Makefile
++++ b/testcases/kernel/kvm/Makefile
+@@ -9,7 +9,7 @@ ASFLAGS =
+ CPPFLAGS += -I$(abs_srcdir)/include
+ GUEST_CPPFLAGS = $(CPPFLAGS) -DCOMPILE_PAYLOAD
+ GUEST_CFLAGS = -ffreestanding -O2 -Wall -fno-asynchronous-unwind-tables -mno-mmx -mno-sse
+-GUEST_LDFLAGS = -nostdlib -Wl,--build-id=none
++GUEST_LDFLAGS = -nostdlib -Wl,--build-id=none -fno-stack-protector
+ GUEST_LDLIBS =
+ 
+ FILTER_OUT_MAKE_TARGETS := lib_guest lib_host lib_x86
+-- 
+2.36.1
+
