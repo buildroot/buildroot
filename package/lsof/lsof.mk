@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LSOF_VERSION = 4.94.0
+LSOF_VERSION = 4.95.0
 LSOF_SOURCE = lsof_$(LSOF_VERSION).linux.tar.bz2
 LSOF_SITE = https://github.com/lsof-org/lsof/releases/download/$(LSOF_VERSION)
 LSOF_LICENSE = lsof license

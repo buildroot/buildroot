@@ -1,0 +1,65 @@
+From 2007edc683499d2e82772f84241b453bdf319372 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd.kuhls@t-online.de>
+Date: Fri, 10 Jun 2022 18:42:34 +0200
+Subject: [PATCH] Fix uClibc build
+
+uClibc does not provide execinfo.h
+
+Patch sent upstream: https://github.com/intel/media-driver/pull/1437
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ CMakeLists.txt                                              | 6 ++++++
+ .../linux/common/os/osservice/mos_utilities_specific.cpp    | 4 ++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8305acfdb..6bec00f7d 100755
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -53,6 +53,12 @@ option (BUILD_CMRTLIB "Build and Install cmrtlib together with media driver" ON)
+ 
+ option (ENABLE_PRODUCTION_KMD "Enable Production KMD header files" OFF)
+ 
++include(CheckIncludeFileCXX)
++check_include_file_cxx("execinfo.h" HAVE_EXECINFO)
++if (HAVE_EXECINFO)
++    add_definitions(-DHAVE_EXECINFO)
++endif()
++
+ include(GNUInstallDirs)
+ 
+ if (BUILD_CMRTLIB AND NOT CMAKE_WDDM_LINUX)
+diff --git a/media_softlet/linux/common/os/osservice/mos_utilities_specific.cpp b/media_softlet/linux/common/os/osservice/mos_utilities_specific.cpp
+index ff0b68655..8ea621f0e 100644
+--- a/media_softlet/linux/common/os/osservice/mos_utilities_specific.cpp
++++ b/media_softlet/linux/common/os/osservice/mos_utilities_specific.cpp
+@@ -51,7 +51,9 @@
+ #include <signal.h>
+ #include <unistd.h>  // fork
+ #include <algorithm>
++#ifdef HAVE_EXECINFO
+ #include <execinfo.h> // backtrace
++#endif
+ 
+ const char           *MosUtilitiesSpecificNext::m_szUserFeatureFile     = USER_FEATURE_FILE;
+ MOS_PUF_KEYLIST      MosUtilitiesSpecificNext::m_ufKeyList              = nullptr;
+@@ -2492,6 +2494,7 @@ void MosUtilities::MosTraceEvent(
+                 MOS_FreeMemory(pTraceBuf);
+             }
+         }
++#ifdef HAVE_EXECINFO
+         if (m_mosTraceFilter & (1ULL << TR_KEY_CALL_STACK))
+         {
+             // reserve space for header and stack size field.
+@@ -2511,6 +2514,7 @@ void MosUtilities::MosTraceEvent(
+                 size_t ret = write(MosUtilitiesSpecificNext::m_mosTraceFd, traceBuf, nLen);
+             }
+         }
++#endif
+     }
+     return;
+ }
+-- 
+2.30.2
+

@@ -1,16 +1,16 @@
 config BR2_PACKAGE_MINETEST
 	bool "minetest"
-	depends on BR2_INSTALL_LIBSTDCPP # irrlicht
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # C++11
+	depends on BR2_INSTALL_LIBSTDCPP # irrlichtMt (bundled)
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # C++11
 	depends on BR2_TOOLCHAIN_HAS_THREADS
-	depends on BR2_PACKAGE_XORG7 # irrlicht
-	depends on BR2_PACKAGE_HAS_LIBGL # irrlicht
+	depends on BR2_PACKAGE_XORG7 # irrlichtMt (bundled)
+	depends on BR2_PACKAGE_HAS_LIBGL # irrlichtMt (bundled)
 	depends on BR2_PACKAGE_LUAJIT
-	select BR2_PACKAGE_IRRLICHT
 	select BR2_PACKAGE_GMP
 	select BR2_PACKAGE_JSONCPP
 	select BR2_PACKAGE_SQLITE
 	select BR2_PACKAGE_ZLIB
+	select BR2_PACKAGE_ZSTD
 	# At least one option must be enabled
 	select BR2_PACKAGE_MINETEST_CLIENT if !BR2_PACKAGE_MINETEST_SERVER
 	help
@@ -25,6 +25,7 @@ if BR2_PACKAGE_MINETEST
 config BR2_PACKAGE_MINETEST_CLIENT
 	bool "minetest client"
 	select BR2_PACKAGE_BZIP2
+	select BR2_PACKAGE_FREETYPE
 	select BR2_PACKAGE_LIBPNG
 	select BR2_PACKAGE_JPEG
 	select BR2_PACKAGE_XLIB_LIBXXF86VM
@@ -51,14 +52,14 @@ comment "sound support needs a toolchain w/ threads NPTL"
 
 endif
 
-comment "minetest needs a toolchain w/ C++, gcc >= 4.9, threads"
+comment "minetest needs a toolchain w/ C++, gcc >= 5.1, threads"
 	depends on BR2_PACKAGE_LUAJIT_ARCH_SUPPORTS
 	depends on !BR2_INSTALL_LIBSTDCPP \
-		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 \
+		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_5 \
 		|| !BR2_TOOLCHAIN_HAS_THREADS
 
 comment "minetest needs X11 and an OpenGL provider"
 	depends on (BR2_INSTALL_LIBSTDCPP \
-		&& BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 \
+		&& BR2_TOOLCHAIN_GCC_AT_LEAST_5 \
 		&& BR2_TOOLCHAIN_HAS_THREADS)
 	depends on !BR2_PACKAGE_HAS_LIBGL || !BR2_PACKAGE_XORG7
