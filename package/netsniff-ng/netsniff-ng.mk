@@ -27,6 +27,8 @@ endif
 
 ifeq ($(BR2_PACKAGE_GEOIP),y)
 NETSNIFF_NG_DEPENDENCIES += geoip
+else
+NETSNIFF_NG_CONF_OPTS += --disable-geoip
 endif
 
 ifeq ($(BR2_PACKAGE_LIBNL),y)
@@ -41,6 +43,8 @@ endif
 
 ifeq ($(BR2_PACKAGE_ZLIB),y)
 NETSNIFF_NG_DEPENDENCIES += zlib
+else
+NETSNIFF_NG_CONF_OPTS += --disable-zlib
 endif
 
 # hand-written configure script and makefile
