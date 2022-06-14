@@ -1,0 +1,20 @@
+config BR2_PACKAGE_SLIRP4NETNS
+	bool "slirp4netns"
+	depends on BR2_USE_MMU # libcap, libglib2, slirp
+	depends on BR2_USE_WCHAR # libglib2, slirp
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2, slirp
+	depends on BR2_PACKAGE_LIBSECCOMP_ARCH_SUPPORTS # libseccomp
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17 # libseccomp
+	select BR2_PACKAGE_LIBCAP
+	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_LIBSECCOMP
+	select BR2_PACKAGE_SLIRP
+	help
+	  User-mode networking for unprivileged network namespaces.
+
+	  https://github.com/rootless-containers/slirp4netns
+
+comment "slirp4netns needs a toolchain w/ wchar, threads, headers >= 3.17"
+	depends on BR2_USE_MMU
+	depends on BR2_PACKAGE_LIBSECCOMP_ARCH_SUPPORTS
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17
