@@ -78,6 +78,20 @@ config BR2_PACKAGE_OPEN62541_PUBSUB_INFORMATIONMODEL
 	  Enable the information model representation of the PubSub
 	  configuration.
 
+if BR2_PACKAGE_OPEN62541_PUBSUB_INFORMATIONMODEL
+
+config BR2_PACKAGE_OPEN62541_PUBSUB_INFORMATIONMODEL_METHODS
+	bool "publish/subscribe information model methods"
+	help
+	  Enable PubSub informationmodel methods
+
+endif
+
+config BR2_PACKAGE_OPEN62541_PUBSUB_ETH_UADP
+	bool "publish/subscribe UADP"
+	help
+	  Enable publish/subscribe UADP over Ethernet
+
 endif # BR2_PACKAGE_OPEN62541_PUBSUB
 
 endif
