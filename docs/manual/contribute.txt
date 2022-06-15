@@ -418,7 +418,8 @@ editing the commit message. Below the +Signed-off-by+ section, add
 +---+ and your changelog.
 
 Although the changelog will be visible for the reviewers in the mail
-thread, as well as in http://patchwork.buildroot.org[patchwork], +git+
+thread, as well as in
+https://patchwork.ozlabs.org/project/buildroot/list/[patchwork], +git+
 will automatically ignores lines below +---+ when the patch will be
 merged. This is the intended behavior: the changelog is not meant to
 be preserved forever in the +git+ history of the project.
@@ -470,19 +471,22 @@ $ git format-patch -v4 -M -s -o outgoing origin/master
 ---------------------
 
 When you provide a new version of a patch, please mark the old one as
-superseded in http://patchwork.buildroot.org[patchwork]. You need to
-create an account on http://patchwork.buildroot.org[patchwork] to be
+superseded in
+https://patchwork.ozlabs.org/project/buildroot/list/[patchwork]. You
+need to create an account on
+https://patchwork.ozlabs.org/project/buildroot/list/[patchwork] to be
 able to modify the status of your patches. Note that you can only change
 the status of patches you submitted yourself, which means the email
-address you register in http://patchwork.buildroot.org[patchwork] should
+address you register in
+https://patchwork.ozlabs.org/project/buildroot/list/[patchwork] should
 match the one you use for sending patches to the mailing list.
 
 You can also add the +--in-reply-to <message-id>+ option when
 submitting a patch to the mailing list. The id of the mail to reply to
 can be found under the "Message Id" tag on
-http://patchwork.buildroot.org[patchwork].  The advantage of
-*in-reply-to* is that patchwork will automatically mark the previous
-version of the patch as superseded.
+https://patchwork.ozlabs.org/project/buildroot/list/[patchwork]. The
+advantage of *in-reply-to* is that patchwork will automatically mark
+the previous version of the patch as superseded.
 
 [[reporting-bugs]]
 === Reporting issues/bugs or getting help
