@@ -8,6 +8,26 @@ config BR2_PACKAGE_OPEN62541
 if BR2_PACKAGE_OPEN62541
 
 choice
+	prompt "encryption"
+	default BR2_PACKAGE_OPEN62541_ENCRYPTION_NONE
+	help
+	  Encryption support
+
+config BR2_PACKAGE_OPEN62541_ENCRYPTION_NONE
+	bool "none"
+
+config BR2_PACKAGE_OPEN62541_ENCRYPTION_MBEDTLS
+	bool "mbedtls"
+	select BR2_PACKAGE_MBEDTLS
+
+config BR2_PACKAGE_OPEN62541_ENCRYPTION_OPENSSL
+	bool "openssl"
+	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL
+
+endchoice
+
+choice
 	prompt "namespace zero nodes"
 	help
 	  Namespace zero contains the standard-defined nodes. The full
