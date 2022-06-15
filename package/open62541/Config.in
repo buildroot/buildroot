@@ -39,8 +39,20 @@ config BR2_PACKAGE_OPEN62541_UA_NAMESPACE_ZERO_FULL
 
 endchoice
 
+config BR2_PACKAGE_OPEN62541_HISTORIZING
+	bool "historizing"
+	help
+	  Enable basic support for historical access (client and server)
+
+config BR2_PACKAGE_OPEN62541_DISCOVERY
+	bool "discovery"
+	help
+	  Enable Discovery Service (LDS)
+
 config BR2_PACKAGE_OPEN62541_JSON_ENCODING
 	bool "json encoding"
+	help
+	  Enable JSON encoding
 
 config BR2_PACKAGE_OPEN62541_PUBSUB
 	bool "publish/subscribe"
