@@ -31,6 +31,7 @@ BIND_CONF_ENV = \
 	BUILD_CFLAGS="$(TARGET_CFLAGS)" \
 	LIBS=`$(PKG_CONFIG_HOST_BINARY) --libs openssl`
 BIND_CONF_OPTS = \
+	--without-cmocka \
 	--without-lmdb \
 	--with-json-c=no \
 	--enable-epoll \
