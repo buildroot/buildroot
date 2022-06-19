@@ -104,6 +104,13 @@ else
 RSYSLOG_CONF_OPTS += --disable-pgsql
 endif
 
+ifeq ($(BR2_PACKAGE_RABBITMQ_C),y)
+RSYSLOG_DEPENDENCIES += rabbitmq-c
+RSYSLOG_CONF_OPTS += --enable-omrabbitmq
+else
+RSYSLOG_CONF_OPTS += --disable-omrabbitmq
+endif
+
 ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBUUID),y)
 RSYSLOG_DEPENDENCIES += util-linux
 RSYSLOG_CONF_OPTS += --enable-uuid
