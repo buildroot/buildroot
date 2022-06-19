@@ -104,6 +104,13 @@ else
 RSYSLOG_CONF_OPTS += --disable-pgsql
 endif
 
+ifeq ($(BR2_PACKAGE_QPID_PROTON),y)
+RSYSLOG_DEPENDENCIES += qpid-proton
+RSYSLOG_CONF_OPTS += --enable-omamqp1
+else
+RSYSLOG_CONF_OPTS += --disable-omamqp1
+endif
+
 ifeq ($(BR2_PACKAGE_RABBITMQ_C),y)
 RSYSLOG_DEPENDENCIES += rabbitmq-c
 RSYSLOG_CONF_OPTS += --enable-omrabbitmq
