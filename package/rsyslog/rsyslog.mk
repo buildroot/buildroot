@@ -59,6 +59,13 @@ else
 RSYSLOG_CONF_OPTS += --disable-imhttp
 endif
 
+ifeq ($(BR2_PACKAGE_CZMQ),y)
+RSYSLOG_DEPENDENCIES += czmq
+RSYSLOG_CONF_OPTS += --enable-imczmq --enable-omczmq
+else
+RSYSLOG_CONF_OPTS += --disable-imczmq --disable-omczmq
+endif
+
 ifeq ($(BR2_PACKAGE_GNUTLS),y)
 RSYSLOG_DEPENDENCIES += gnutls
 RSYSLOG_CONF_OPTS += --enable-gnutls
