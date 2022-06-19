@@ -81,6 +81,13 @@ else
 RSYSLOG_CONF_OPTS += --disable-libgcrypt
 endif
 
+ifeq ($(BR2_PACKAGE_LIBMAXMINDDB),y)
+RSYSLOG_DEPENDENCIES += libmaxminddb
+RSYSLOG_CONF_OPTS += --enable-mmdblookup
+else
+RSYSLOG_CONF_OPTS += --disable-mmdblookup
+endif
+
 ifeq ($(BR2_PACKAGE_LIBPCAP),y)
 RSYSLOG_DEPENDENCIES += libpcap
 RSYSLOG_CONF_OPTS += --enable-impcap
