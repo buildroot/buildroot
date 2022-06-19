@@ -1,0 +1,18 @@
+config BR2_PACKAGE_HOST_UUU
+	bool "host uuu"
+	depends on BR2_HOST_GCC_AT_LEAST_4_9 # host-libusb
+	help
+	  UUU (Universal Update Utility) is Freescale/NXP I.MX Chip
+	  image deploy tool. UUU is an evolution of MFGTools
+	  (aka MFGTools v3).
+
+	  To be able to run uuu without root privileges, execute the
+	  following steps:
+
+	    sudo sh -c "uuu -udev >> /etc/udev/rules.d/70-uuu.rules"
+	    sudo udevadm control --reload
+
+	  https://github.com/NXPmicro/mfgtools
+
+comment "host uuu needs a toolchain w/ host gcc >= 4.9"
+	depends on !BR2_HOST_GCC_AT_LEAST_4_9

@@ -39,7 +39,7 @@ ifeq ($(BR2_STATIC_LIBS),y)
 UCLIBC_NG_TEST_MAKE_ENV += NO_TLS=1 NO_NPTL=1 NO_DL=1
 endif
 # no TLS macros available
-ifeq ($(BR2_nds32)$(BR2_s390x),y)
+ifeq ($(BR2_s390x),y)
 UCLIBC_NG_TEST_MAKE_ENV += NO_TLS=1
 endif
 
