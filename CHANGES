@@ -1,3 +1,35 @@
+2022.02.3, released June 19th, 2022
+
+	Important / security related fixes.
+
+	Infrastructure: Fix building under paths containing regex
+	characters (E.G. '+')
+
+	Toolchain: Only allow ppc64le variants for which a
+	glibc/musl/uclibc toolchain is supported.
+	Mark codescape mti/img mips toolchains as shared library only
+	(glibc).
+
+	Updated/fixed packages: arm-trusted-firmware,
+	at91dataflashboot, boinc, dhcp, diffutils, edk2, fbv, gensio,
+	glibc, go, gtest, iucode-tool, janet, libcec, libcurl,
+	libfreeimage, libnftnl, libodb-boost, linux, linux-tools,
+	lttng-modules, mariadb, memcached, mono, mutt,
+	network-manager, nginx, ntfs-3g, ogre, openjpeg, openvpn,
+	qemu, qpid-proton, qt5webengine, rauc, rockchip-mali, rsyslog,
+	ruby, runc, rustc, samba4, strace, tiff, uclibc, unrar, vim,
+	webkitgtk, wpewebkit, xdriver_xf86-video-amdgpu,
+	xdriver_xf86-video-ati, zlib-ng
+
+	New packages: qt5webengine-chromium,
+	qt5webengine-chromium-catapult
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14766: package dhcp on buildroot 2022.02.1 failed
+	#14821: Samba server is failing to compile
+	#14826: make qemu_x86_64_defconfig stopped working
+
 2022.02.2, released May 29th, 2022
 
 	Important / security related fixes.
