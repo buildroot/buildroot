@@ -5,7 +5,7 @@
 ################################################################################
 
 # LLVM, Clang and lld should be version bumped together
-LLVM_VERSION = 9.0.1
+LLVM_VERSION = 11.1.0
 LLVM_SITE = https://github.com/llvm/llvm-project/releases/download/llvmorg-$(LLVM_VERSION)
 LLVM_SOURCE = llvm-$(LLVM_VERSION).src.tar.xz
 LLVM_LICENSE = Apache-2.0 with exceptions
@@ -157,15 +157,9 @@ LLVM_CONF_OPTS += -DLLVM_ENABLE_PIC=ON
 HOST_LLVM_CONF_OPTS += -DCMAKE_BUILD_TYPE=Release
 LLVM_CONF_OPTS += -DCMAKE_BUILD_TYPE=Release
 
-# Disable C++1y (ISO C++ 2014 standard)
-# Disable C++1z (ISO C++ 2017 standard)
-# Compile llvm with the C++11 (ISO C++ 2011 standard) which is the fallback.
-HOST_LLVM_CONF_OPTS += \
-	-DLLVM_ENABLE_CXX1Y=OFF \
-	-DLLVM_ENABLE_CXX1Z=OFF
-LLVM_CONF_OPTS += \
-	-DLLVM_ENABLE_CXX1Y=OFF \
-	-DLLVM_ENABLE_CXX1Z=OFF
+# Compile llvm with the C++14 (ISO C++ 2014 standard).
+HOST_LLVM_CONF_OPTS += -DCMAKE_CXX_STANDARD=14
+LLVM_CONF_OPTS += -DCMAKE_CXX_STANDARD=14
 
 # Disabled, requires sys/ndir.h header
 # Disable debug in module
@@ -220,8 +214,7 @@ HOST_LLVM_CONF_OPTS += \
 # We need to activate LLVM_INCLUDE_TOOLS, otherwise it does not generate
 # libLLVM.so
 LLVM_CONF_OPTS += \
-	-DLLVM_INCLUDE_TOOLS=ON \
-	-DLLVM_BUILD_TOOLS=OFF
+	-DLLVM_INCLUDE_TOOLS=ON
 
 ifeq ($(BR2_PACKAGE_LLVM_RTTI),y)
 HOST_LLVM_CONF_OPTS += -DLLVM_ENABLE_RTTI=ON
@@ -237,13 +230,11 @@ endif
 HOST_LLVM_CONF_OPTS += \
 	-DLLVM_BUILD_EXTERNAL_COMPILER_RT=OFF \
 	-DLLVM_BUILD_RUNTIME=OFF \
-	-DLLVM_INCLUDE_RUNTIMES=OFF \
-	-DLLVM_POLLY_BUILD=OFF
+	-DLLVM_INCLUDE_RUNTIMES=OFF
 LLVM_CONF_OPTS += \
 	-DLLVM_BUILD_EXTERNAL_COMPILER_RT=OFF \
 	-DLLVM_BUILD_RUNTIME=OFF \
-	-DLLVM_INCLUDE_RUNTIMES=OFF \
-	-DLLVM_POLLY_BUILD=OFF
+	-DLLVM_INCLUDE_RUNTIMES=OFF
 
 HOST_LLVM_CONF_OPTS += \
 	-DLLVM_ENABLE_WARNINGS=ON \
@@ -286,11 +277,25 @@ LLVM_CONF_OPTS += \
 # directories from STAGING_DIR.
 # output/staging/usr/bin/llvm-config --includedir
 # output/staging/usr/include
-define HOST_LLVM_COPY_LLVM_CONFIG_TO_STAGING_DIR
+define LLVM_COPY_LLVM_CONFIG_TO_STAGING_DIR
 	$(INSTALL) -D -m 0755 $(HOST_DIR)/bin/llvm-config \
 		$(STAGING_DIR)/usr/bin/llvm-config
 endef
-HOST_LLVM_POST_INSTALL_HOOKS = HOST_LLVM_COPY_LLVM_CONFIG_TO_STAGING_DIR
+HOST_LLVM_POST_INSTALL_HOOKS = LLVM_COPY_LLVM_CONFIG_TO_STAGING_DIR
+
+# The llvm-symbolizer binary is used by the Compiler-RT Fuzzer
+# and AddressSanitizer tools on the target for stack traces.
+# If we set -DLLVM_BUILD_TOOLS=ON this will also install the llvm-config
+# target binary to STAGING_DIR, which means we can no longer run it.
+# Therefore, overwrite it again with the host llvm-config.
+ifeq ($(BR2_PACKAGE_COMPILER_RT),y)
+LLVM_CONF_OPTS += \
+	-DLLVM_BUILD_TOOLS=ON
+LLVM_POST_INSTALL_STAGING_HOOKS = LLVM_COPY_LLVM_CONFIG_TO_STAGING_DIR
+else
+LLVM_CONF_OPTS += \
+	-DLLVM_BUILD_TOOLS=OFF
+endif
 
 # By default llvm-tblgen is built and installed on the target but it is
 # not necessary. Also erase LLVMHello.so from /usr/lib

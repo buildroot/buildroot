@@ -164,6 +164,14 @@ config BR2_nds32
 
 comment "Legacy options removed in 2022.05"
 
+config BR2_PACKAGE_RTL8723BS
+	bool "rtl8723bs removed"
+	select BR2_LEGACY
+	help
+	  Package was removed because it is not compatible with latest
+	  kernels and is not maintained anymore: code has been removed
+	  in 2017 as driver is available in the linux-next tree.
+
 config BR2_PACKAGE_KTAP
 	bool "ktap removed"
 	select BR2_LEGACY
