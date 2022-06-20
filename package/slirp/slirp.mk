@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-SLIRP_VERSION = 4.6.1
-SLIRP_SOURCE = libslirp-$(SLIRP_VERSION).tar.xz
-SLIRP_SITE = https://gitlab.freedesktop.org/slirp/libslirp/uploads/83b199ea6fcdfc0c243dfde8546ee4c9
+SLIRP_VERSION = 4.7.0
+SLIRP_SOURCE = libslirp-v$(SLIRP_VERSION).tar.bz2
+SLIRP_SITE = https://gitlab.freedesktop.org/slirp/libslirp/-/archive/v$(SLIRP_VERSION)
 SLIRP_LICENSE = BSD-3-Clause
 SLIRP_LICENSE_FILES = COPYRIGHT
 SLIRP_CPE_ID_VENDOR = libslirp_project
