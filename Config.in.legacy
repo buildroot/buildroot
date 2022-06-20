@@ -159,8 +159,6 @@ config BR2_PACKAGE_PHP_EXT_WDDX
 	help
 	  The WDDX extension was removed from php.
 
-comment "Legacy options removed in 2022.08"
-
 config BR2_nds32
 	bool "nds32 architecture removed"
 	select BR2_LEGACY
@@ -169,8 +167,6 @@ config BR2_nds32
 	  its support being removed from the upstream Linux kernel,
 	  and its lack of maintenance in Buildroot.
 
-comment "Legacy options removed in 2022.05"
-
 config BR2_PACKAGE_RTL8723BS
 	bool "rtl8723bs removed"
 	select BR2_LEGACY
@@ -178,6 +174,8 @@ config BR2_PACKAGE_RTL8723BS
 	  Package was removed because it is not compatible with latest
 	  kernels and is not maintained anymore: code has been removed
 	  in 2017 as driver is available in the linux-next tree.
+
+comment "Legacy options removed in 2022.05"
 
 config BR2_PACKAGE_KTAP
 	bool "ktap removed"
