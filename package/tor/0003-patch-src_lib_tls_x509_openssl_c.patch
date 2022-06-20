@@ -1,0 +1,22 @@
+Fix build with opaque structs in LibreSSL 3.5
+
+Downloaded from OpenBSD ports:
+http://cvsweb.openbsd.org/cgi-bin/cvsweb/ports/net/tor/patches/patch-src_lib_tls_x509_openssl_c?rev=1.2&content-type=text/x-cvsweb-markup
+
+Patch series was sent upstream:
+https://forum.torproject.net/t/tor-relays-openbsd-stable-net-tor-and-0-4-7-7/3244
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+
+Index: src/lib/tls/x509_openssl.c
+--- a/src/lib/tls/x509_openssl.c.orig
++++ b/src/lib/tls/x509_openssl.c
+@@ -329,7 +329,7 @@ tor_tls_cert_is_valid(int severity,
+   cert_key = X509_get_pubkey(cert->cert);
+   if (check_rsa_1024 && cert_key) {
+     RSA *rsa = EVP_PKEY_get1_RSA(cert_key);
+-#ifdef OPENSSL_1_1_API
++#if defined(OPENSSL_1_1_API) || defined(LIBRESSL_VERSION_NUMBER)
+     if (rsa && RSA_bits(rsa) == 1024) {
+ #else
+     if (rsa && BN_num_bits(rsa->n) == 1024) {
