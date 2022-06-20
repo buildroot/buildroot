@@ -84,6 +84,13 @@ XSERVER_XORG_SERVER_CONF_OPTS += \
 	--disable-glx \
 	--disable-dri
 
+ifeq ($(BR2_PACKAGE_XSERVER_XORG_SERVER_XEPHYR),y)
+XSERVER_XORG_SERVER_DEPENDENCIES += \
+	xcb-util-image \
+	xcb-util-keysyms \
+	xcb-util-renderutil \
+	xcb-util-wm
+endif
 else # modular
 XSERVER_XORG_SERVER_CONF_OPTS += --disable-kdrive
 endif
