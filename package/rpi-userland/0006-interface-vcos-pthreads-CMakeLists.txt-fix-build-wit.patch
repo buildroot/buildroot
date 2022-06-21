@@ -1,4 +1,4 @@
-From 220c37b496f5c883bbfa955ee7fee471e41c34d4 Mon Sep 17 00:00:00 2001
+From c8270cea98bcce0d22ddc8e2f86eae2c9989efd4 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Fri, 25 Feb 2022 19:21:06 +0100
 Subject: [PATCH] interface/vcos/pthreads/CMakeLists.txt: fix build with
@@ -20,7 +20,7 @@ Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
  1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/interface/vcos/pthreads/CMakeLists.txt b/interface/vcos/pthreads/CMakeLists.txt
-index 1d81ca3..43aca03 100644
+index 1d81ca3..100207f 100644
 --- a/interface/vcos/pthreads/CMakeLists.txt
 +++ b/interface/vcos/pthreads/CMakeLists.txt
 @@ -33,12 +33,14 @@ set (SOURCES
@@ -32,11 +32,11 @@ index 1d81ca3..43aca03 100644
  if (VCOS_PTHREADS_BUILD_SHARED)
     add_library (vcos SHARED ${SOURCES})
 -   target_link_libraries (vcos pthread dl rt)
-+   target_link_libraries (vcos pthread dl rt ${EXECINFO_LIBRARY})
++   target_link_libraries (vcos pthread dl rt $<$<BOOL:${EXECINFO_LIBRARY}>:${EXECINFO_LIBRARY}>)
  else ()
     add_library (vcos ${SOURCES})
 -   target_link_libraries (vcos pthread rt)
-+   target_link_libraries (vcos pthread rt ${EXECINFO_LIBRARY})
++   target_link_libraries (vcos pthread rt $<$<BOOL:${EXECINFO_LIBRARY}>:${EXECINFO_LIBRARY}>)
  endif ()
  
  
