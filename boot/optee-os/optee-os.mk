@@ -13,12 +13,19 @@ endif
 OPTEE_OS_INSTALL_STAGING = YES
 OPTEE_OS_INSTALL_IMAGES = YES
 
-ifeq ($(BR2_TARGET_OPTEE_OS_CUSTOM_GIT),y)
+ifeq ($(BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL),y)
+OPTEE_OS_TARBALL = $(call qstrip,$(BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL_LOCATION))
+OPTEE_OS_SITE = $(patsubst %/,%,$(dir $(OPTEE_OS_TARBALL)))
+OPTEE_OS_SOURCE = $(notdir $(OPTEE_OS_TARBALL))
+else ifeq ($(BR2_TARGET_OPTEE_OS_CUSTOM_GIT),y)
 OPTEE_OS_SITE = $(call qstrip,$(BR2_TARGET_OPTEE_OS_CUSTOM_REPO_URL))
 OPTEE_OS_SITE_METHOD = git
-BR_NO_CHECK_HASH_FOR += $(OPTEE_OS_SOURCE)
 else
 OPTEE_OS_SITE = $(call github,OP-TEE,optee_os,$(OPTEE_OS_VERSION))
+endif
+
+ifeq ($(BR2_TARGET_OPTEE_OS):$(BR2_TARGET_OPTEE_OS_LATEST_VERSION),y:)
+BR_NO_CHECK_HASH_FOR += $(OPTEE_OS_SOURCE)
 endif
 
 OPTEE_OS_DEPENDENCIES = host-openssl host-python3 host-python-pyelftools
@@ -130,6 +137,19 @@ ifeq ($(BR2_TARGET_OPTEE_OS)$(BR_BUILDING),yy)
 ifeq ($(call qstrip,$(BR2_TARGET_OPTEE_OS_PLATFORM)),)
 $(error No OP-TEE OS platform set. Check your BR2_TARGET_OPTEE_OS_PLATFORM setting)
 endif
+
+ifeq ($(BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL),y)
+ifeq ($(call qstrip,$(BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL_LOCATION)),)
+$(error No tarball location specified. Please check BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL_LOCATION)
+endif
+endif
+
+ifeq ($(BR2_TARGET_OPTEE_OS_CUSTOM_GIT),y)
+ifeq ($(call qstrip,$(BR2_TARGET_OPTEE_OS_CUSTOM_REPO_URL)),)
+$(error No repository specified. Please check BR2_TARGET_OPTEE_OS_CUSTOM_REPO_URL)
+endif
+endif
+
 endif # BR2_TARGET_OPTEE_OS && BR2_BUILDING
 
 $(eval $(generic-package))
