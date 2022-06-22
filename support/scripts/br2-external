@@ -163,6 +163,7 @@ do_kconfig() {
         openssl
         skeleton
         init
+        linux
     )
 
     for br2 in "${items[@]}"; do
@@ -242,6 +243,14 @@ do_kconfig() {
         else
             printf '# No init from: %s\n\n' "${br2_desc}"
         fi >>"${outputdir}/.br2-external.in.init"
+
+        if [ -f "${br2_ext}/linux/Config.ext.in" ]; then
+            printf 'comment "linux extension from: %s"\n' "${br2_desc}"
+            printf 'source "%s/linux/Config.ext.in"\n' "${br2_ext}"
+            printf '\n'
+        else
+            printf '# No linux extension from: %s\n\n' "${br2_desc}"
+        fi >>"${outputdir}/.br2-external.in.linux"
     done
 
     printf 'endmenu\n' >>"${outputdir}/.br2-external.in.menus"
