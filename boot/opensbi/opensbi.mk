@@ -6,7 +6,7 @@
 
 OPENSBI_VERSION = $(call qstrip,$(BR2_TARGET_OPENSBI_VERSION))
 
-ifeq ($(OPENSBI_VERSION),custom)
+ifeq ($(BR2_TARGET_OPENSBI_CUSTOM_TARBALL),y)
 # Handle custom OpenSBI tarballs as specified by the configuration
 OPENSBI_TARBALL = $(call qstrip,$(BR2_TARGET_OPENSBI_CUSTOM_TARBALL_LOCATION))
 OPENSBI_SITE = $(patsubst %/,%,$(dir $(OPENSBI_TARBALL)))
