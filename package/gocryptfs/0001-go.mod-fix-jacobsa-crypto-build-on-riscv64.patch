@@ -1,0 +1,152 @@
+From e9b64ab75e8539a52d60ecb299fc5425f0d27dc7 Mon Sep 17 00:00:00 2001
+From: Christian Stewart <christian@paral.in>
+Date: Sat, 25 Jun 2022 14:57:38 -0700
+Subject: [PATCH] go.mod: fix jacobsa/crypto build on riscv64
+
+Replace dependency jacobsa/crypto with a fork with support for riscv64.
+
+Issue: https://github.com/rfjakob/gocryptfs/issues/666
+
+Upstream PR: https://github.com/jacobsa/crypto/issues/13
+
+Signed-off-by: Christian Stewart <christian@paral.in>
+---
+ go.mod                                        |  9 ++---
+ go.sum                                        |  4 +-
+ .../jacobsa/crypto/cmac/hash_generic.go       | 40 +++++++++++++++++++
+ vendor/modules.txt                            | 13 +-----
+ 4 files changed, 48 insertions(+), 18 deletions(-)
+ create mode 100644 vendor/github.com/jacobsa/crypto/cmac/hash_generic.go
+
+diff --git a/go.mod b/go.mod
+index 29f7c2c..533fcdd 100644
+--- a/go.mod
++++ b/go.mod
+@@ -2,19 +2,18 @@ module github.com/rfjakob/gocryptfs/v2
+ 
+ go 1.16
+ 
++// Fixes build against risc-v
++// See: https://github.com/jacobsa/crypto/issues/13
++replace github.com/jacobsa/crypto => github.com/aperturerobotics/jacobsa-crypto v0.0.0-20220403053904-77863254e607 // xorblock-generic-1
++
+ require (
+ 	github.com/hanwen/go-fuse/v2 v2.1.1-0.20210825171523-3ab5d95a30ae
+ 	github.com/jacobsa/crypto v0.0.0-20190317225127-9f44e2d11115
+-	github.com/jacobsa/oglematchers v0.0.0-20150720000706-141901ea67cd // indirect
+-	github.com/jacobsa/oglemock v0.0.0-20150831005832-e94d794d06ff // indirect
+-	github.com/jacobsa/ogletest v0.0.0-20170503003838-80d50a735a11 // indirect
+-	github.com/jacobsa/reqtrace v0.0.0-20150505043853-245c9e0234cb // indirect
+ 	github.com/pkg/xattr v0.4.3
+ 	github.com/rfjakob/eme v1.1.2
+ 	github.com/sabhiram/go-gitignore v0.0.0-20201211210132-54b8a0bf510f
+ 	github.com/spf13/pflag v1.0.5
+ 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
+-	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d // indirect
+ 	golang.org/x/sys v0.0.0-20210817190340-bfb29a6856f2
+ 	golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b
+ )
+diff --git a/go.sum b/go.sum
+index be0be5f..c26b80e 100644
+--- a/go.sum
++++ b/go.sum
+@@ -1,9 +1,9 @@
++github.com/aperturerobotics/jacobsa-crypto v0.0.0-20220403053904-77863254e607 h1:N8UVJlxKDhrvHTKXC7oVVfhVvGbgaw2mmlnCgGkfOFc=
++github.com/aperturerobotics/jacobsa-crypto v0.0.0-20220403053904-77863254e607/go.mod h1:Om5VFfyh5VipAEOOVoHAUa4hebUCKxQUjggFPTLeH08=
+ github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
+ github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+ github.com/hanwen/go-fuse/v2 v2.1.1-0.20210825171523-3ab5d95a30ae h1:4CB6T4YTUVvnro5ba8ju1QCbOuyGAeF3vvKlo50EJ4k=
+ github.com/hanwen/go-fuse/v2 v2.1.1-0.20210825171523-3ab5d95a30ae/go.mod h1:B1nGE/6RBFyBRC1RRnf23UpwCdyJ31eukw34oAKukAc=
+-github.com/jacobsa/crypto v0.0.0-20190317225127-9f44e2d11115 h1:YuDUUFNM21CAbyPOpOP8BicaTD/0klJEKt5p8yuw+uY=
+-github.com/jacobsa/crypto v0.0.0-20190317225127-9f44e2d11115/go.mod h1:LadVJg0XuawGk+8L1rYnIED8451UyNxEMdTWCEt5kmU=
+ github.com/jacobsa/oglematchers v0.0.0-20150720000706-141901ea67cd h1:9GCSedGjMcLZCrusBZuo4tyKLpKUPenUUqi34AkuFmA=
+ github.com/jacobsa/oglematchers v0.0.0-20150720000706-141901ea67cd/go.mod h1:TlmyIZDpGmwRoTWiakdr+HA1Tukze6C6XbRVidYq02M=
+ github.com/jacobsa/oglemock v0.0.0-20150831005832-e94d794d06ff h1:2xRHTvkpJ5zJmglXLRqHiZQNjUoOkhUyhTAhEQvPAWw=
+diff --git a/vendor/github.com/jacobsa/crypto/cmac/hash_generic.go b/vendor/github.com/jacobsa/crypto/cmac/hash_generic.go
+new file mode 100644
+index 0000000..235e3fc
+--- /dev/null
++++ b/vendor/github.com/jacobsa/crypto/cmac/hash_generic.go
+@@ -0,0 +1,40 @@
++// Copyright 2012 Aaron Jacobs. All Rights Reserved.
++// Author: aaronjjacobs@gmail.com (Aaron Jacobs)
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++// +build riscv64
++
++// This code doesn't require that it's safe to perform unaligned word-sized loads, but has a poor performance.
++
++package cmac
++
++import (
++	"unsafe"
++)
++
++// XOR the blockSize bytes starting at a and b, writing the result over dst.
++func xorBlock(
++	dstPtr unsafe.Pointer,
++	aPtr unsafe.Pointer,
++	bPtr unsafe.Pointer) {
++	// Convert.
++	a := (*[blockSize]byte)(aPtr)
++	b := (*[blockSize]byte)(bPtr)
++	dst := (*[blockSize]byte)(dstPtr)
++
++	// Compute.
++	for i := 0; i < blockSize; i++ {
++		dst[i] = a[i] ^ b[i]
++	}
++}
+diff --git a/vendor/modules.txt b/vendor/modules.txt
+index 662f0c3..9b47daa 100644
+--- a/vendor/modules.txt
++++ b/vendor/modules.txt
+@@ -5,19 +5,11 @@ github.com/hanwen/go-fuse/v2/fuse
+ github.com/hanwen/go-fuse/v2/internal
+ github.com/hanwen/go-fuse/v2/internal/utimens
+ github.com/hanwen/go-fuse/v2/splice
+-# github.com/jacobsa/crypto v0.0.0-20190317225127-9f44e2d11115
++# github.com/jacobsa/crypto v0.0.0-20190317225127-9f44e2d11115 => github.com/aperturerobotics/jacobsa-crypto v0.0.0-20220403053904-77863254e607
+ ## explicit
+ github.com/jacobsa/crypto/cmac
+ github.com/jacobsa/crypto/common
+ github.com/jacobsa/crypto/siv
+-# github.com/jacobsa/oglematchers v0.0.0-20150720000706-141901ea67cd
+-## explicit
+-# github.com/jacobsa/oglemock v0.0.0-20150831005832-e94d794d06ff
+-## explicit
+-# github.com/jacobsa/ogletest v0.0.0-20170503003838-80d50a735a11
+-## explicit
+-# github.com/jacobsa/reqtrace v0.0.0-20150505043853-245c9e0234cb
+-## explicit
+ # github.com/pkg/xattr v0.4.3
+ ## explicit
+ github.com/pkg/xattr
+@@ -40,8 +32,6 @@ golang.org/x/crypto/pbkdf2
+ golang.org/x/crypto/poly1305
+ golang.org/x/crypto/scrypt
+ golang.org/x/crypto/ssh/terminal
+-# golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d
+-## explicit
+ # golang.org/x/sys v0.0.0-20210817190340-bfb29a6856f2
+ ## explicit
+ golang.org/x/sys/cpu
+@@ -52,3 +42,4 @@ golang.org/x/sys/windows
+ # golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b
+ ## explicit
+ golang.org/x/term
++# github.com/jacobsa/crypto => github.com/aperturerobotics/jacobsa-crypto v0.0.0-20220403053904-77863254e607
+-- 
+2.35.1
+
