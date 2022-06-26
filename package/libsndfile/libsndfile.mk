@@ -4,19 +4,13 @@
 #
 ################################################################################
 
-LIBSNDFILE_VERSION = 1.0.31
-LIBSNDFILE_SOURCE = libsndfile-$(LIBSNDFILE_VERSION).tar.bz2
+LIBSNDFILE_VERSION = 1.1.0
+LIBSNDFILE_SOURCE = libsndfile-$(LIBSNDFILE_VERSION).tar.xz
 LIBSNDFILE_SITE = https://github.com/libsndfile/libsndfile/releases/download/$(LIBSNDFILE_VERSION)
 LIBSNDFILE_INSTALL_STAGING = YES
 LIBSNDFILE_LICENSE = LGPL-2.1+
 LIBSNDFILE_LICENSE_FILES = COPYING
 LIBSNDFILE_CPE_ID_VENDOR = libsndfile_project
-
-# 0001-ms_adpcm-Fix-and-extend-size-checks.patch
-LIBSNDFILE_IGNORE_CVES += CVE-2021-3246
-
-# disputed, https://github.com/erikd/libsndfile/issues/398
-LIBSNDFILE_IGNORE_CVES += CVE-2018-13419
 
 LIBSNDFILE_CONF_ENV = ac_cv_prog_cc_c99='-std=gnu99'
 LIBSNDFILE_CONF_OPTS = \
