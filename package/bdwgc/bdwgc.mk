@@ -21,6 +21,9 @@ endif
 ifeq ($(BR2_STATIC_LIBS),y)
 BDWGC_CFLAGS_EXTRA += -DGC_NO_DLOPEN
 endif
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS_NPTL),)
+BDWGC_CFLAGS_EXTRA += -DNO_PTHREAD_GETATTR_NP
+endif
 
 # Ensure we use the system libatomic_ops, and not the internal one.
 BDWGC_CONF_OPTS += --with-libatomic-ops=yes
