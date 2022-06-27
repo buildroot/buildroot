@@ -390,6 +390,7 @@ define HOST_QEMU_CONFIGURE_CMDS
 		--disable-vnc-jpeg \
 		--disable-vnc-png \
 		--disable-vnc-sasl \
+		--enable-tools \
 		$(HOST_QEMU_OPTS)
 endef
 
