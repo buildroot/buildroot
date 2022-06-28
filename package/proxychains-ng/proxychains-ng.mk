@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-PROXYCHAINS_NG_VERSION = 4.14
+PROXYCHAINS_NG_VERSION = 4.16
 PROXYCHAINS_NG_SOURCE = proxychains-ng-$(PROXYCHAINS_NG_VERSION).tar.xz
-PROXYCHAINS_NG_SITE = http://downloads.sourceforge.net/project/proxychains-ng
+PROXYCHAINS_NG_SITE = https://github.com/rofl0r/proxychains-ng/releases/download/v$(PROXYCHAINS_NG_VERSION)
 PROXYCHAINS_NG_LICENSE = GPL-2.0+
 PROXYCHAINS_NG_LICENSE_FILES = COPYING
 PROXYCHAINS_NG_CPE_ID_VENDOR = proxychains-ng_project
