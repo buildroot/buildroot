@@ -15,6 +15,9 @@ LIBSAMPLERATE_CPE_ID_VENDOR = libsamplerate_project
 
 ifeq ($(BR2_PACKAGE_ALSA_LIB),y)
 LIBSAMPLERATE_DEPENDENCIES += alsa-lib
+LIBSAMPLERATE_CONF_OPTS += --enable-alsa
+else
+LIBSAMPLERATE_CONF_OPTS += --disable-alsa
 endif
 
 ifeq ($(BR2_PACKAGE_LIBSNDFILE),y)
