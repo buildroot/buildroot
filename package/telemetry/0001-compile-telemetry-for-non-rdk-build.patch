@@ -1,0 +1,159 @@
+diff --git a/source/Makefile.am b/source/Makefile.am
+index 7eb16df..a9aac9a 100644
+--- a/source/Makefile.am
++++ b/source/Makefile.am
+@@ -54,7 +54,7 @@ telemetry2_0_CPPFLAGS = -fPIC -I${PKG_CONFIG_SYSROOT_DIR}$(includedir)/dbus-1.0
+                                 -I${top_srcdir}/source/utils \
+                                 -I${top_srcdir}/source/xconf-client \
+                                 -I${top_srcdir}/source/interChipHelper
+-telemetry2_0_LDFLAGS = -lrdkloggers -lcjson
++telemetry2_0_LDFLAGS = -lcjson
+ if ENABLE_CCSP_SUPPORT
+ telemetry2_0_LDFLAGS+=-lccsp_common -lwebconfig_framework
+ telemetry2_0_SOURCES += t2ssp/ssp_main.c t2ssp/ssp_action.c t2ssp/ssp_messagebus_interface.c t2ssp/dm_pack_datamodel.c
+diff --git a/source/telemetry2_0.c b/source/telemetry2_0.c
+index 9cb1e4a..85c5d26 100644
+--- a/source/telemetry2_0.c
++++ b/source/telemetry2_0.c
+@@ -86,7 +86,9 @@ T2ERROR initTelemetry()
+ static void terminate() {
+     uninitXConfClient();
+     ReportProfiles_uninit();
++#ifdef RDK_BUILD
+     rdk_logger_deinit();
++#endif
+     if(0 != remove("/tmp/.t2ReadyToReceiveEvents")){
+         T2Info("%s Unable to remove ready to receive event flag \n", __FUNCTION__);
+     }
+diff --git a/source/utils/Makefile.am b/source/utils/Makefile.am
+index 3c11351..aadb953 100644
+--- a/source/utils/Makefile.am
++++ b/source/utils/Makefile.am
+@@ -22,7 +22,7 @@ AM_CFLAGS += -D_ANSC_LITTLE_ENDIAN_
+ 
+ lib_LTLIBRARIES = libutils.la
+ libutils_la_SOURCES = vector.c t2collection.c t2log_wrapper.c t2MtlsUtils.c
+-libutils_la_LDFLAGS = -shared -fPIC -lrdkloggers -lsecure_wrapper
++libutils_la_LDFLAGS = -shared -fPIC
+ libutils_la_CPPFLAGS = -fPIC -I${PKG_CONFIG_SYSROOT_DIR}$(includedir)/dbus-1.0 \
+                                 -I${PKG_CONFIG_SYSROOT_DIR}$(libdir)/dbus-1.0/include \
+                                 -I${PKG_CONFIG_SYSROOT_DIR}$(includedir) \
+diff --git a/source/utils/t2MtlsUtils.c b/source/utils/t2MtlsUtils.c
+index 419bc5b..2b7f60d 100644
+--- a/source/utils/t2MtlsUtils.c
++++ b/source/utils/t2MtlsUtils.c
+@@ -23,7 +23,9 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <unistd.h>
++#ifdef ENABLE_RDKB_SUPPORT
+ #include <secure_wrapper.h>
++#endif
+ #include <stdbool.h>
+ 
+ #include "t2log_wrapper.h"
+@@ -46,17 +48,20 @@ void initMtls() {
+     T2Debug("%s ++in\n", __FUNCTION__);
+     // Prepare certs required for mTls commmunication
+     // CPG doesn't support api's - will have to use v_secure_system calls
++#ifdef ENABLE_RDKB_SUPPORT
+     v_secure_system("/usr/bin/GetConfigFile %s", staticMtlsDestFile);
+     v_secure_system("/usr/bin/GetConfigFile %s", dynamicMtlsDestFile);
+     T2Debug("%s --out\n", __FUNCTION__);
+-
++#endif
+ }
+ 
+ void uninitMtls() {
++#ifdef ENABLE_RDKB_SUPPORT
+     T2Debug("%s ++in\n", __FUNCTION__);
+     v_secure_system("rm -f %s", staticMtlsDestFile);
+     v_secure_system("rm -f %s", dynamicMtlsDestFile);
+     T2Debug("%s --out\n", __FUNCTION__);
++#endif
+ 
+ }
+ 
+@@ -66,7 +71,7 @@ void uninitMtls() {
+ T2ERROR getMtlsCerts(char **certName, char **phrase) {
+ 
+     T2ERROR ret = T2ERROR_FAILURE;
+-
++#if 0
+     T2Debug("%s ++in\n", __FUNCTION__);
+     char buf[124];
+     memset(buf, 0, sizeof(buf));
+@@ -125,6 +130,7 @@ T2ERROR getMtlsCerts(char **certName, char **phrase) {
+     T2Debug("Using Cert = %s Pass = %s \n", *certName, *phrase);
+ 
+     T2Debug("%s --out\n", __FUNCTION__);
++#endif
+     return ret;
+ }
+ 
+diff --git a/source/utils/t2log_wrapper.c b/source/utils/t2log_wrapper.c
+index e547d2e..c1ba77d 100644
+--- a/source/utils/t2log_wrapper.c
++++ b/source/utils/t2log_wrapper.c
+@@ -24,15 +24,22 @@
+ #include <string.h>
+ #include "t2log_wrapper.h"
+ 
++#ifdef ENABLE_RDKB_SUPPORT
+ unsigned int rdkLogLevel = RDK_LOG_INFO;
++#else
++unsigned int rdkLogLevel = 0;
++#endif
+ 
+ void LOGInit()
+ {
++#ifdef ENABLE_RDKB_SUPPORT
+      rdk_logger_init(DEBUG_INI_NAME);
++#endif
+ }
+ 
+ void T2Log(unsigned int level, const char *msg, ...)
+ {
++#ifdef ENABLE_RDKB_SUPPORT
+   va_list arg;
+   char *pTempChar = NULL;
+   int ret = 0;
+@@ -84,4 +91,5 @@ void T2Log(unsigned int level, const char *msg, ...)
+       }
+     }
+     va_end(arg);
++#endif
+ }
+diff --git a/source/utils/t2log_wrapper.h b/source/utils/t2log_wrapper.h
+index e63d857..2989da1 100644
+--- a/source/utils/t2log_wrapper.h
++++ b/source/utils/t2log_wrapper.h
+@@ -20,7 +20,9 @@
+ #ifndef  _CCSP_T2LOG_WRPPER_H_
+ #define  _CCSP_T2LOG_WRPPER_H_
+ 
++#ifdef ENABLE_RDKB_SUPPORT
+ #include "rdk_debug.h"
++#endif
+ 
+ #define DEBUG_INI_NAME  "/etc/debug.ini"
+ 
+@@ -30,11 +32,17 @@
+ #define ENABLE_DEBUG_FLAG "/opt/enable_t2_debug"
+ #endif
+ 
++#ifdef ENABLE_RDKB_SUPPORT
+ #define T2Error(...)                   T2Log(RDK_LOG_ERROR, __VA_ARGS__)
+ #define T2Info(...)                    T2Log(RDK_LOG_INFO, __VA_ARGS__)
+ #define T2Warning(...)                 T2Log(RDK_LOG_WARN, __VA_ARGS__)
+ #define T2Debug(...)                   T2Log(RDK_LOG_DEBUG, __VA_ARGS__)
+-
++#else
++#define T2Error(...)
++#define T2Info(...)
++#define T2Warning(...)
++#define T2Debug(...)
++#endif
+ 
+ void LOGInit();
+ 

@@ -1,0 +1,16 @@
+diff --git a/source/broadband/cosa_webpa_apis.c b/source/broadband/cosa_webpa_apis.c
+index 6515f64..7fb2928 100644
+--- a/source/broadband/cosa_webpa_apis.c
++++ b/source/broadband/cosa_webpa_apis.c
+@@ -16,7 +16,10 @@
+  * To enable when all webpa params getting from syscfg.db file otherwise keep 
+  * it disable.
+  */
+-//#define WEBPA_PARAMS_VIA_SYSCFG
++#ifndef RDK_BUILD
++#include <syscfg/syscfg.h>
++#define WEBPA_PARAMS_VIA_SYSCFG
++#endif
+ 
+ extern ANSC_HANDLE bus_handle;
+ extern char        g_Subsystem[32];

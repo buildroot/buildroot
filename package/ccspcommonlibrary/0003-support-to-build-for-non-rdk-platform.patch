@@ -1,0 +1,17 @@
+diff --git a/source/debug_api/ansc_debug.c b/source/debug_api/ansc_debug.c
+index 7945da13..b6a47d42 100644
+--- a/source/debug_api/ansc_debug.c
++++ b/source/debug_api/ansc_debug.c
+@@ -534,10 +534,12 @@ void CcspTraceLogAPI(char *fileName, char *pComponentName, int level, const char
+                 char    sfn[32];
+                 va_list args;
+ 
++#if FEATURE_SUPPORT_RDKLOG
+                 CcspTraceShortenFileName(sfn, 32, fileName);
+                 va_start(args, format);
+                 RDK_LOG1(level, ComponentName, format, args);
+                 va_end(args);
++#endif
+             }
+         }
+     }

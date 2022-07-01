@@ -1,0 +1,81 @@
+diff --git a/configure.ac b/configure.ac
+index ab515d19..0573c0f9 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -146,9 +146,18 @@ AC_CONFIG_FILES([
+    source/service_dslite/Makefile
+ ])] )
+ 
+-AC_CONFIG_FILES(
+-	Makefile
+-	source/Makefile
++# Checks for RDK Feature Support
++AC_ARG_ENABLE([rdk_feature_support],
++[  --enable-rdk_feature_support=val Turn on RDK Feature, val=true or false],
++[case "${enableval}" in
++  yes) rdk_feature_support=true ;;
++  no)  rdk_feature_support=false ;;
++  *) AC_MSG_ERROR([bad value ${enableval} for --enable-rdk_feature_support]) ;;
++esac],[rdk_feature_support=true])
++AM_CONDITIONAL(RDK_FEATURE_SUPPORT, test x"$rdk_feature_support" = x"true")
++
++AM_COND_IF( [RDK_FEATURE_SUPPORT], [
++AC_CONFIG_FILES([
+ 	source/dhcpproxy/Makefile
+ 	source/firewall/Makefile
+ 	source/firewall_log/Makefile
+@@ -172,9 +181,6 @@ AC_CONFIG_FILES(
+ 	source/service_routed/Makefile
+ 	source/service_udhcpc/Makefile
+ 	source/service_wan/Makefile
+-	source/syscfg/Makefile
+-	source/syscfg/cmd/Makefile
+-	source/syscfg/lib/Makefile
+ 	source/sysevent/Makefile
+ 	source/sysevent/control/Makefile
+ 	source/sysevent/fork_helper/Makefile
+@@ -182,7 +188,6 @@ AC_CONFIG_FILES(
+ 	source/sysevent/proxy/Makefile
+ 	source/sysevent/server/Makefile
+ 	source/trigger/Makefile
+-	source/ulog/Makefile
+ 	source/utapi/Makefile
+ 	source/utapi/cmd/Makefile
+ 	source/utapi/lib/Makefile
+@@ -195,6 +200,17 @@ AC_CONFIG_FILES(
+ 	source/util/rpc/client/Makefile
+ 	source/util/rpc/server/Makefile
+ 	source/util/utils/Makefile
++
++])] )
++
++
++AC_CONFIG_FILES(
++	Makefile
++	source/Makefile
++	source/syscfg/Makefile
++	source/syscfg/cmd/Makefile
++	source/syscfg/lib/Makefile
++	source/ulog/Makefile
+ )
+ 
+ AC_SUBST(GTEST_ENABLE_FLAG)
+diff --git a/source/Makefile.am b/source/Makefile.am
+index 1d20ee6d..8fef129f 100644
+--- a/source/Makefile.am
++++ b/source/Makefile.am
+@@ -16,10 +16,13 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ ##########################################################################
+-SUBDIRS = ulog syscfg sysevent services utctx utapi firewall firewall_log dhcpproxy newhost macclone util pal pmon services service_wan trigger igd service_routed service_ipv6 scripts service_multinet service_dhcp service_udhcpc
++SUBDIRS = ulog syscfg
++if RDK_FEATURE_SUPPORT
++SUBDIRS += sysevent services utctx utapi firewall firewall_log dhcpproxy newhost macclone util pal pmon services service_wan trigger igd service_routed service_ipv6 scripts service_multinet service_dhcp service_udhcpc
+ if DSLITE_FEATURE_SUPPORT
+ SUBDIRS += service_dslite
+ endif
+ if WITH_GTEST_SUPPORT
+ SUBDIRS += test
+ endif
++endif

@@ -1,0 +1,7 @@
+config BR2_PACKAGE_CCSPCR
+    bool "CCSP cr module"
+    select BR2_PACKAGE_TELEMETRY
+    select BR2_PACKAGE_LIBUNPRIV
+    default n
+    help
+       Ccsp cr module

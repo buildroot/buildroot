@@ -3,3 +3,13 @@ config BR2_PACKAGE_CIMPLOG
     default n
     help
        Simple logging library
+
+if BR2_PACKAGE_CIMPLOG
+    config BR2_PACKAGE_CIMPLOG_SUPPORT_ONBOARD_LOGGING
+    bool "cimplog enable logging"
+    default n
+
+    config BR2_PACKAGE_CIMPLOG_LEVEL_DEFAULT
+    string "default log level Error(0), Info(1) and Debug(2)
+    default "0"
+endif

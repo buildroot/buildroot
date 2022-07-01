@@ -1,6 +1,5 @@
 config BR2_PACKAGE_PARODUS
     bool "parodus"
-    default n
     select BR2_PACKAGE_NOPOLL
     select BR2_PACKAGE_NANOMSG
     select BR2_PACKAGE_MSGPACK_C
@@ -12,6 +11,7 @@ config BR2_PACKAGE_PARODUS
     select BR2_PACKAGE_CJSON
     select BR2_PACKAGE_CJWT
     select BR2_PACKAGE_LIBCURL
+    default n
     help
        parodus client library
 

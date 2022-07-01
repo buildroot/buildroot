@@ -1,0 +1,78 @@
+From 872b085f12f56da25a2dbd9bd0b2dff31d5aea63 Mon Sep 17 00:00:00 2001
+From: Simon McVittie <smcv@collabora.com>
+Date: Thu, 16 Apr 2020 14:45:11 +0100
+Subject: [PATCH] sysdeps-unix: On MSG_CTRUNC, close the fds we did receive
+
+MSG_CTRUNC indicates that we have received fewer fds that we should
+have done because the buffer was too small, but we were treating it
+as though it indicated that we received *no* fds. If we received any,
+we still have to make sure we close them, otherwise they will be leaked.
+
+On the system bus, if an attacker can induce us to leak fds in this
+way, that's a local denial of service via resource exhaustion.
+
+Reported-by: Kevin Backhouse, GitHub Security Lab
+Fixes: dbus#294
+Fixes: CVE-2020-12049
+Fixes: GHSL-2020-057
+
+Upstream-Status: Backport [https://gitlab.freedesktop.org/dbus/dbus/-/commit/872b085f12f56da25a2dbd9bd0b2dff31d5aea63]
+CVE: CVE-2020-12049
+Signed-off-by: Lee Chee Yang <chee.yang.lee@intel.com>
+---
+ dbus/dbus-sysdeps-unix.c | 32 ++++++++++++++++++++------------
+ 1 file changed, 20 insertions(+), 12 deletions(-)
+
+diff --git a/dbus/dbus-sysdeps-unix.c b/dbus/dbus-sysdeps-unix.c
+index b5fc2466..b176dae1 100644
+--- a/dbus/dbus-sysdeps-unix.c
++++ b/dbus/dbus-sysdeps-unix.c
+@@ -435,18 +435,6 @@ _dbus_read_socket_with_unix_fds (DBusSocket        fd,
+       struct cmsghdr *cm;
+       dbus_bool_t found = FALSE;
+ 
+-      if (m.msg_flags & MSG_CTRUNC)
+-        {
+-          /* Hmm, apparently the control data was truncated. The bad
+-             thing is that we might have completely lost a couple of fds
+-             without chance to recover them. Hence let's treat this as a
+-             serious error. */
+-
+-          errno = ENOSPC;
+-          _dbus_string_set_length (buffer, start);
+-          return -1;
+-        }
+-
+       for (cm = CMSG_FIRSTHDR(&m); cm; cm = CMSG_NXTHDR(&m, cm))
+         if (cm->cmsg_level == SOL_SOCKET && cm->cmsg_type == SCM_RIGHTS)
+           {
+@@ -501,6 +489,26 @@ _dbus_read_socket_with_unix_fds (DBusSocket        fd,
+       if (!found)
+         *n_fds = 0;
+ 
++      if (m.msg_flags & MSG_CTRUNC)
++        {
++          unsigned int i;
++
++          /* Hmm, apparently the control data was truncated. The bad
++             thing is that we might have completely lost a couple of fds
++             without chance to recover them. Hence let's treat this as a
++             serious error. */
++
++          /* We still need to close whatever fds we *did* receive,
++           * otherwise they'll never get closed. (CVE-2020-12049) */
++          for (i = 0; i < *n_fds; i++)
++            close (fds[i]);
++
++          *n_fds = 0;
++          errno = ENOSPC;
++          _dbus_string_set_length (buffer, start);
++          return -1;
++        }
++
+       /* put length back (doesn't actually realloc) */
+       _dbus_string_set_length (buffer, start + bytes_read);
+ 
+-- 
+2.25.1
+

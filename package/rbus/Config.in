@@ -1,0 +1,7 @@
+config BR2_PACKAGE_RBUS
+    bool "RBUS"
+    select BR2_PACKAGE_RBUS_CORE
+    select BR2_PACKAGE_LINENOISE
+    default n
+    help
+       RDK Bus (RBus) is a lightweight, fast and efficient bus messaging system

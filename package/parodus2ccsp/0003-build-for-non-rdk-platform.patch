@@ -1,0 +1,59 @@
+diff --git a/source/broadband/webpa_internal.c b/source/broadband/webpa_internal.c
+index 88c3dc7..a6990ec 100644
+--- a/source/broadband/webpa_internal.c
++++ b/source/broadband/webpa_internal.c
+@@ -173,6 +173,7 @@ void initComponentCaching(int status)
+ 
+ int waitForOperationalReadyCondition()
+ {
++#ifdef RDK_BUILD
+ 	// Wait till PAM, CM, PSM, WiFi components are ready on the stack.
+ 	if(waitForComponentReady(RDKB_PAM_COMPONENT_NAME,RDKB_PAM_DBUS_PATH) != CCSP_SUCCESS)
+ 	{
+@@ -200,6 +201,7 @@ int waitForOperationalReadyCondition()
+ 	{
+ 		return WIFI_FAILED;
+ 	}
++#endif
+ 	return 0;
+ }
+
+diff --git a/source/broadband/webpa_notification.c b/source/broadband/webpa_notification.c
+index b48de11..6d2953d 100644
+--- a/source/broadband/webpa_notification.c
++++ b/source/broadband/webpa_notification.c
+@@ -66,6 +66,7 @@ pthread_cond_t con=PTHREAD_COND_INITIALIZER;
+ pthread_mutex_t device_mac_mutex = PTHREAD_MUTEX_INITIALIZER;
+ 
+ const char * notifyparameters[]={
++#ifdef RDK_BUILD
+ "Device.NotifyComponent.X_RDKCENTRAL-COM_Connected-Client",
+ "Device.Bridging.Bridge.1.Port.8.Enable",
+ "Device.Bridging.Bridge.2.Port.2.Enable",
+@@ -166,6 +167,7 @@ const char * notifyparameters[]={
+ /* Always keep AdvancedSecurity parameters as the last parameters in notify list as these have to be removed if cujo/fp is not enabled. */
+ "Device.DeviceInfo.X_RDKCENTRAL-COM_AdvancedSecurity.SafeBrowsing.Enable",
+ "Device.DeviceInfo.X_RDKCENTRAL-COM_AdvancedSecurity.Softflowd.Enable"
++#endif
+ };
+ /*----------------------------------------------------------------------------*/
+ /*                             Function Prototypes                            */
+@@ -800,13 +802,17 @@ void getDeviceMac()
+ static void *notifyTask(void *status)
+ {
+ 	pthread_detach(pthread_self());
+-	getDeviceMac();
+ 	loadCfgFile();
++#ifdef RDK_BUILD
++	getDeviceMac();
+ 	processDeviceStatusNotification(*(int *)status);
++#endif
+ 	RegisterNotifyCB(&notifyCallback);
+ 	sendNotificationForFactoryReset();
++#ifdef RDK_BUILD
+ 	FactoryResetCloudSyncTask();
+ 	sendNotificationForFirmwareUpgrade();
++#endif
+ 	setInitialNotify();
+ 	handleNotificationEvents();
+ 	WAL_FREE(status);
