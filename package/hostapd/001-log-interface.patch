@@ -1,0 +1,11 @@
+--- hostapd-2.10/src/ap/hostapd.c.orig	2022-07-04 15:31:16.603846467 -0400
++++ hostapd-2.10/src/ap/hostapd.c	2022-07-04 15:32:10.200788332 -0400
+@@ -1233,7 +1233,7 @@
+ 	conf->ssid.short_ssid = crc32(conf->ssid.ssid, conf->ssid.ssid_len);
+ 
+ 	if (!hostapd_drv_none(hapd)) {
+-		wpa_printf(MSG_DEBUG, "Using interface %s with hwaddr " MACSTR
++		wpa_printf(MSG_ERROR, "Using interface %s with hwaddr " MACSTR
+ 			   " and ssid \"%s\"",
+ 			   conf->iface, MAC2STR(hapd->own_addr),
+ 			   wpa_ssid_txt(conf->ssid.ssid, conf->ssid.ssid_len));
