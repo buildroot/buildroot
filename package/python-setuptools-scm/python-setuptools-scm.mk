@@ -10,6 +10,10 @@ PYTHON_SETUPTOOLS_SCM_SITE = https://files.pythonhosted.org/packages/bc/e6/ac8b0
 PYTHON_SETUPTOOLS_SCM_LICENSE = MIT
 PYTHON_SETUPTOOLS_SCM_LICENSE_FILES = LICENSE
 PYTHON_SETUPTOOLS_SCM_SETUP_TYPE = setuptools
-HOST_PYTHON_SETUPTOOLS_SCM_DEPENDENCIES = host-python-packaging host-python-tomli
+
+HOST_PYTHON_SETUPTOOLS_SCM_DEPENDENCIES = \
+	host-python-packaging \
+	host-python-tomli \
+	host-python-typing-extensions
 
 $(eval $(host-python-package))
