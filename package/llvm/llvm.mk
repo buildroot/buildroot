@@ -41,8 +41,13 @@ HOST_LLVM_CONF_OPTS += -DCMAKE_INSTALL_RPATH="$(HOST_DIR)/lib"
 # Get target architecture
 LLVM_TARGET_ARCH = $(call qstrip,$(BR2_PACKAGE_LLVM_TARGET_ARCH))
 
-# Build backend for target architecture. This include backends like AMDGPU.
+# Build backend for target architecture. This include backends like
+# AMDGPU. We need to special case RISCV.
+ifneq ($(filter riscv%,$(LLVM_TARGET_ARCH)),)
+LLVM_TARGETS_TO_BUILD = RISCV
+else
 LLVM_TARGETS_TO_BUILD = $(LLVM_TARGET_ARCH)
+endif
 HOST_LLVM_CONF_OPTS += -DLLVM_TARGETS_TO_BUILD="$(subst $(space),;,$(LLVM_TARGETS_TO_BUILD))"
 LLVM_CONF_OPTS += -DLLVM_TARGETS_TO_BUILD="$(subst $(space),;,$(LLVM_TARGETS_TO_BUILD))"
 
