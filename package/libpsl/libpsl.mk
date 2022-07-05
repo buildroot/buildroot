@@ -11,6 +11,10 @@ LIBPSL_LICENSE_FILES = COPYING src/LICENSE.chromium
 LIBPSL_DEPENDENCIES = host-pkgconf
 LIBPSL_INSTALL_STAGING = YES
 
+ifeq ($(BR2_ENABLE_LOCALE),)
+LIBPSL_DEPENDENCIES += libiconv
+endif
+
 # The order of checks is the same as done by libpsl when configured.
 ifeq ($(BR2_PACKAGE_LIBIDN2)$(BR2_PACKAGE_LIBUNISTRING),yy)
 LIBPSL_CONF_OPTS += -Druntime=libidn2 -Dbuiltin=libidn2
