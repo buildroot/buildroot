@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-PIGZ_VERSION = 2.6
-PIGZ_SITE = $(call github,madler,pigz,v$(PIGZ_VERSION))
+PIGZ_VERSION = 2.7
+PIGZ_SITE = http://zlib.net/pigz
 PIGZ_DEPENDENCIES = zlib
 HOST_PIGZ_DEPENDENCIES = host-zlib
 PIGZ_LICENSE = Zlib

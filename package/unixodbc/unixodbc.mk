@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-UNIXODBC_VERSION = 2.3.9
+UNIXODBC_VERSION = 2.3.11
 UNIXODBC_SOURCE = unixODBC-$(UNIXODBC_VERSION).tar.gz
-UNIXODBC_SITE = ftp://ftp.unixodbc.org/pub/unixODBC
+UNIXODBC_SITE = http://www.unixodbc.org
 UNIXODBC_INSTALL_STAGING = YES
 UNIXODBC_LICENSE = LGPL-2.1+ (library), GPL-2.0+ (programs)
 UNIXODBC_LICENSE_FILES = COPYING exe/COPYING
