@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-X264_VERSION = 35417dcd65a57321fbadf98c9a4cff1cb741db4b
+X264_VERSION = baee400fa9ced6f5481a728138fed6e867b0ff7f
 X264_SITE = https://code.videolan.org/videolan/x264.git
 X264_SITE_METHOD = git
 X264_LICENSE = GPL-2.0+
