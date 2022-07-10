@@ -5,7 +5,7 @@ config BR2_PACKAGE_EXIM
 	bool "exim"
 	depends on BR2_USE_MMU # fork()
 	depends on BR2_TOOLCHAIN_HAS_THREADS
-	select BR2_PACKAGE_PCRE
+	select BR2_PACKAGE_PCRE2
 	select BR2_PACKAGE_BERKELEYDB
 	help
 	  Exim is a message transfer agent (MTA) developed at the
