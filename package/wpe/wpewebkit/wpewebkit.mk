@@ -6,12 +6,13 @@
 
 ifeq ($(BR2_PACKAGE_WPEWEBKIT2_22),y)
 WPEWEBKIT_VERSION = 2.22
-WPEWEBKIT_VERSION_VALUE = fdd0de84bb678cbc781d583ca06e4f9464f5a519
+WPEWEBKIT_VERSION_VALUE = c2bbe41520037aa883e6cab9fc40524f6e2e4cd0
 endif
 
 ifeq ($(BR2_PACKAGE_WPEWEBKIT2_28),y)
+# This is the wpe-2.28-soup3 branch tip.
 WPEWEBKIT_VERSION = 2.28
-WPEWEBKIT_VERSION_VALUE = b2e6a99cdbd58952a56a45c70490704fb5c7cd45
+WPEWEBKIT_VERSION_VALUE = fdf2f014629a4b4e93f43cec0be4698aa640b826
 endif
 
 WPEWEBKIT_SITE = $(call github,WebPlatformForEmbedded,WPEWebKit,$(WPEWEBKIT_VERSION_VALUE))
@@ -25,9 +26,9 @@ WPEWEBKIT_DEPENDENCIES = host-gperf host-python host-ruby \
 	libgles wpebackend libepoxy cairo jpeg libpng harfbuzz icu webp libsoup \
 	libgcrypt libxslt openjpeg
 
-ifeq ($(BR2_PACKAGE_WPEWEBKIT2_22),y)
-
 WPEWEBKIT_EXTRA_FLAGS = -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+ifeq ($(BR2_PACKAGE_WPEWEBKIT2_22),y)
 
 WPEWEBKIT_FLAGS = \
 	-DPORT=WPE \
@@ -134,8 +135,7 @@ WPEWEBKIT_FLAGS += \
 	-DENABLE_MEDIA_STATISTICS=ON \
 	-DENABLE_THUNDER=ON \
 	-DENABLE_WEB_AUDIO=ON
-WPEWEBKIT_DEPENDENCIES += gstreamer1 gst1-plugins-base \
-	gst1-plugins-good wpeframework-clientlibraries
+WPEWEBKIT_DEPENDENCIES += gstreamer1 gst1-plugins-base gst1-plugins-good
 else
 WPEWEBKIT_FLAGS += \
 	-DENABLE_VIDEO=OFF \

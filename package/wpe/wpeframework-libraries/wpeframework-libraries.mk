@@ -3,7 +3,7 @@
 # wpeframework-libraries
 #
 ################################################################################
-WPEFRAMEWORK_LIBRARIES_VERSION = 82497384c740a63b6fda3a448a0c209cee9a5f69
+WPEFRAMEWORK_LIBRARIES_VERSION = 4408be5a034d4903baa9d20dd926a516566609b2
 WPEFRAMEWORK_LIBRARIES_SITE_METHOD = git
 WPEFRAMEWORK_LIBRARIES_SITE = git@github.com:WebPlatformForEmbedded/ThunderLibraries.git
 WPEFRAMEWORK_LIBRARIES_INSTALL_STAGING = YES

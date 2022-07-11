@@ -16,8 +16,24 @@ config BR2_PACKAGE_LIBSOUP
 
 if BR2_PACKAGE_LIBSOUP
 
+choice
+	prompt "libsoup version"
+	default BR2_PACKAGE_LIBSOUP_VERSION_3
+	help
+	  Select the version of libsoup you wish to use.
+
+config BR2_PACKAGE_LIBSOUP_VERSION_3
+	select BR2_PACKAGE_NGHTTP2
+	bool "libsoup3"
+
+config BR2_PACKAGE_LIBSOUP_VERSION_2
+	bool "libsoup2"
+
+endchoice
+
 config BR2_PACKAGE_LIBSOUP_GNOME
 	bool "libsoup-gnome"
+	depends on BR2_PACKAGE_LIBSOUP_VERSION_2
 	help
 	  Build libsoup-gnome library.
 

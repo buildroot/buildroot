@@ -116,6 +116,19 @@ config BR2_PACKAGE_WPEFRAMEWORK_OOM_ADJUST
     string "oom-adjust"
     default ""
 
+config BR2_PACKAGE_WPEFRAMEWORK_UMASK
+    string "umask"
+    default ""
+    help
+      Set the umask for new files created by Thunder
+      e.g. 0022 will not set the write permission for group and others
+
+config BR2_PACKAGE_WPEFRAMEWORK_GROUP
+    string "group"
+    default ""
+    help
+      Set a system group that need to the used by Thunder
+
 config BR2_PACKAGE_WPEFRAMEWORK_SYSTEM_PREFIX
     string "system prefix"
     default ""

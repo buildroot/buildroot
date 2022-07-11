@@ -1,0 +1,48 @@
+From ff3db531608eb0f9de8a88c1bc34fe0f1d93121c Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 12 Nov 2021 18:01:05 +0100
+Subject: [PATCH] meson.build: add girdir to gio-2.0.pc and glib-2.0.pc
+
+Add girdir to gio-2.0.pc and glib-2.0.pc to fix the following build
+failure with atk or libnice:
+
+/home/giuliobenetti/autobuild/run/instance-1/output-1/host/riscv32-buildroot-linux-gnu/sysroot/usr/bin/g-ir-compiler atk/Atk-1.0.gir --output atk/Atk-1.0.typelib --includedir=/usr/share/gir-1.0
+Could not find GIR file 'GObject-2.0.gir'; check XDG_DATA_DIRS or use --includedir
+
+Fixes:
+ - http://autobuild.buildroot.org/results/2716929db638977e6bf665352a08bd580e1dd0ae
+ - http://autobuild.buildroot.org/results/3088ef32b03e0bb984291b1227b187f1ff816eb7
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ gio/meson.build  | 1 +
+ glib/meson.build | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/gio/meson.build b/gio/meson.build
+index 29473d26b..112d4ada9 100644
+--- a/gio/meson.build
++++ b/gio/meson.build
+@@ -831,6 +831,7 @@ pkg.generate(libgio,
+   variables : ['datadir=' + join_paths('${prefix}', get_option('datadir')),
+                'schemasdir=' + join_paths('${datadir}', schemas_subdir),
+                'bindir=' + join_paths('${prefix}', get_option('bindir')),
++               'girdir=' + join_paths('${libdir}', '../share/gir-1.0'),
+                'giomoduledir=' + pkgconfig_giomodulesdir,
+                'gio=' + join_paths('${bindir}', 'gio'),
+                'gio_querymodules=' + join_paths('${bindir}', 'gio-querymodules'),
+diff --git a/glib/meson.build b/glib/meson.build
+index f78f32969..6c5486699 100644
+--- a/glib/meson.build
++++ b/glib/meson.build
+@@ -377,6 +377,7 @@ pkg.generate(libglib,
+   subdirs : ['glib-2.0'],
+   extra_cflags : ['-I${libdir}/glib-2.0/include'] + win32_cflags,
+   variables : ['bindir=' + join_paths('${prefix}', get_option('bindir')),
++               'girdir=' + join_paths('${libdir}', '../share/gir-1.0'),
+                'glib_genmarshal=' + join_paths('${bindir}', 'glib-genmarshal'),
+                'gobject_query=' + join_paths('${bindir}', 'gobject-query'),
+                'glib_mkenums=' + join_paths('${bindir}', 'glib-mkenums')],
+-- 
+2.33.0
+

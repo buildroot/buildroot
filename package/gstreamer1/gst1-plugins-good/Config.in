@@ -376,7 +376,7 @@ config BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_SOUPHTTPSRC
 	bool "souphttpsrc (http client)"
 	depends on BR2_USE_WCHAR # libsoup -> glib2
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libsoup -> glib2
-	select BR2_PACKAGE_LIBSOUP
+	depends on BR2_PACKAGE_LIBSOUP_VERSION_2
 	help
 	  libsoup HTTP client src/sink
 

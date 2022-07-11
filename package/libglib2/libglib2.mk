@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBGLIB2_VERSION_MAJOR = 2.62
-LIBGLIB2_VERSION = $(LIBGLIB2_VERSION_MAJOR).4
+LIBGLIB2_VERSION_MAJOR = 2.70
+LIBGLIB2_VERSION = $(LIBGLIB2_VERSION_MAJOR).0
 LIBGLIB2_SOURCE = glib-$(LIBGLIB2_VERSION).tar.xz
 LIBGLIB2_SITE = http://ftp.gnome.org/pub/gnome/sources/glib/$(LIBGLIB2_VERSION_MAJOR)
 LIBGLIB2_LICENSE = LGPL-2.1+
@@ -23,11 +23,12 @@ endif
 HOST_LIBGLIB2_CONF_OPTS = \
 	-Ddtrace=false \
 	-Dfam=false \
+	-Dglib_debug=disabled \
+	-Dlibelf=disabled \
 	-Dselinux=disabled \
 	-Dsystemtap=false \
 	-Dxattr=false \
-	-Dinternal_pcre=false \
-	-Dinstalled_tests=false \
+	-Dtests=false \
 	-Doss_fuzz=disabled
 
 LIBGLIB2_DEPENDENCIES = \
@@ -47,10 +48,16 @@ HOST_LIBGLIB2_DEPENDENCIES = \
 # ${libdir} would be prefixed by the sysroot by pkg-config, causing a
 # bogus installation path once combined with $(DESTDIR).
 LIBGLIB2_CONF_OPTS = \
-	-Dinternal_pcre=false \
+	-Dglib_debug=disabled \
+	-Dlibelf=disabled \
 	-Dgio_module_dir=/usr/lib/gio/modules \
-	-Dinstalled_tests=false \
+	-Dtests=false \
 	-Doss_fuzz=disabled
+
+LIBGLIB2_MESON_EXTRA_PROPERTIES = \
+	have_c99_vsnprintf=true \
+	have_c99_snprintf=true \
+	have_unix98_printf=true
 
 ifneq ($(BR2_ENABLE_LOCALE),y)
 LIBGLIB2_DEPENDENCIES += libiconv
@@ -66,10 +73,10 @@ LIBGLIB2_DEPENDENCIES += libiconv
 endif
 
 ifeq ($(BR2_PACKAGE_LIBSELINUX),y)
-LIBGLIB2_CONF_OPTS += -Dselinux=enabled
+LIBGLIB2_CONF_OPTS += -Dselinux=enabled -Dxattr=true
 LIBGLIB2_DEPENDENCIES += libselinux
 else
-LIBGLIB2_CONF_OPTS += -Dselinux=disabled
+LIBGLIB2_CONF_OPTS += -Dselinux=disabled -Dxattr=false
 endif
 
 # Purge gdb-related files
@@ -80,10 +87,14 @@ endef
 endif
 
 ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBMOUNT),y)
-LIBGLIB2_CONF_OPTS += -Dlibmount=true
-LIBGLIB2_DEPENDENCIES += util-linux
+LIBGLIB2_CONF_OPTS += -Dlibmount=enabled
+ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBS),y)
+LIBGLIB2_DEPENDENCIES += util-linux-libs
 else
-LIBGLIB2_CONF_OPTS += -Dlibmount=false
+LIBGLIB2_DEPENDENCIES += util-linux
+endif
+else
+LIBGLIB2_CONF_OPTS += -Dlibmount=disabled
 endif
 
 # Purge useless binaries from target

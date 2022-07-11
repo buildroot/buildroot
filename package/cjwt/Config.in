@@ -1,0 +1,7 @@
+config BR2_PACKAGE_CJWT
+    bool "cjwt"
+    default n
+    select BR2_PACKAGE_TROWER_BASE64
+    select BR2_PACKAGE_OPENSSL
+    help
+       Recipe to build c library for processing jwt token

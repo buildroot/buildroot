@@ -1,0 +1,39 @@
+From 15d8bb6792c9639d85a9ffe2ac81431f1b986c21 Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Sat, 22 Apr 2017 08:53:50 -0700
+Subject: [PATCH] Comment intentional fallthrough in case statements
+
+Fixes build with gcc7
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+---
+ include/msgpack/v1/adaptor/detail/cpp03_define_array.hpp | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/include/msgpack/v1/adaptor/detail/cpp03_define_array.hpp b/include/msgpack/v1/adaptor/detail/cpp03_define_array.hpp
+index b35c21a7..4c463a90 100644
+--- a/include/msgpack/v1/adaptor/detail/cpp03_define_array.hpp
++++ b/include/msgpack/v1/adaptor/detail/cpp03_define_array.hpp
+@@ -105,6 +105,7 @@ struct define_array<A0, A1> {
+             switch(size) {
+             default:
+             case 2: ptr[1].convert(a1);
++            //fallthrough
+             case 1: ptr[0].convert(a0);
+             }
+         }
+@@ -193,8 +194,11 @@ struct define_array<A0, A1, A2, A3> {
+             switch(size) {
+             default:
+             case 4: ptr[3].convert(a3);
++            //fallthrough
+             case 3: ptr[2].convert(a2);
++            //fallthrough
+             case 2: ptr[1].convert(a1);
++            //fallthrough
+             case 1: ptr[0].convert(a0);
+             }
+         }
+-- 
+2.12.2
+

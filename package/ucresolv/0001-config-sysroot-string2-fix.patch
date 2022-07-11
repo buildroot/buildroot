@@ -1,0 +1,20 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index cfe4730..18a0b09 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -30,7 +30,7 @@ include_directories(${INCLUDE_DIR}
+                     ${INCLUDE_DIR}/sys
+                     )
+ 
+-include_directories (SYSTEM /usr/include)
++include_directories (SYSTEM -I${SYSROOT}/usr/include)
+ include_directories (./src)
+ include_directories (./include)
+ include_directories (./include/sysdeps/generic)
+diff --git a/include/bits/string2.h b/include/bits/string2.h
+deleted file mode 100644
+index e4c4c70..0000000
+--- a/include/bits/string2.h
++++ /dev/null
+@@ -1 +0,0 @@
+-#include <string/bits/string2.h>
