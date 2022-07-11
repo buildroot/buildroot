@@ -1,0 +1,16 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3508bb8..1bc28c1 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -30,9 +30,9 @@ include_directories(${INCLUDE_DIR}
+                     ${CURL_INCLUDE_DIRS}
+                     ${INCLUDE_DIR}/cimplog)
+ 				
+-include_directories (SYSTEM /usr/include)
++include_directories (SYSTEM $(SYSROOT)/usr/include)
+ 
+-if (NOT BUILD_YOCTO)
++if (NOT BUILD_YOCTO AND NOT BUILD_BR)
+ 
+ # cJSON external dependency
+ ExternalProject_Add(cJSON

@@ -1,0 +1,24 @@
+diff --git a/source/util_api/ansc/AnscPlatform/user_openssl.c b/source/util_api/ansc/AnscPlatform/user_openssl.c
+index ec0f962b..f998278d 100644
+--- a/source/util_api/ansc/AnscPlatform/user_openssl.c
++++ b/source/util_api/ansc/AnscPlatform/user_openssl.c
+@@ -68,8 +68,10 @@ void initialize_openssl_lib()
+ 
+     SSL_library_init ();
+     SSL_load_error_strings ();
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
+     SSLeay_add_all_algorithms ();
+     SSLeay_add_ssl_algorithms ();
++#endif
+ }
+ 
+ 
+@@ -402,7 +404,7 @@ SSL * openssl_connect (int fd)
+ 
+   SSL_set_connect_state (ssl);
+ 
+-  if (SSL_connect (ssl) <= 0 || ssl->state != SSL_ST_OK)
++  if (SSL_connect (ssl) <= 0)
+   {
+     AnscTraceWarning(("openssl_connect - failed in SSL_set_connect_state \n"));
+     goto error;
