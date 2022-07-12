@@ -176,7 +176,9 @@ ifeq ($(BR2_PACKAGE_BCM_REFSW_SAGE_PLAYREADY_30),y)
 
 BCM_NEXUS_PLAYREADY30_DIR = /BSEAV/thirdparty/playready/3.0
 
-ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 19.2),1)
+ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 20.2),1)
+    BCM_NEXUS_PLAYREADY30_LIBDIR = $(BCM_NEXUS_PLAYREADY30_DIR)/bin/$(ARCH)-linux/secv2/lib
+else ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 19.2),1)
     BCM_NEXUS_PLAYREADY30_LIBDIR = $(BCM_NEXUS_PLAYREADY30_DIR)/bin/$(ARCH)-linux/secv2/lib
 else ifeq ($(shell expr $(BCM_REFSW_VERSION) \>= 18.1),1)
 ifeq ($(BCM_REFSW_PLATFORM_SECURITY_ZEUS_VERSION),5)
@@ -342,5 +344,6 @@ define BCM_REFSW_INSTALL_BP3
     $(INSTALL) -m 750 -D $(BCM_REFSW_BIN)/bp3 $(1)/usr/bin
     $(INSTALL) -m 644 -D $(BCM_REFSW_BIN)/libbp3_host.so $(1)/usr/lib
     $(INSTALL) -m 644 -D $(BCM_REFSW_BIN)/libcjson.so $(1)/usr/lib
+    cd $1/usr/lib && ln -sf libcjson.so libcjson.so.1
 endef
 endif

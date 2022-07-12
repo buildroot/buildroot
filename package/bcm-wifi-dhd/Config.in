@@ -1,0 +1,10 @@
+config BR2_PACKAGE_BCM_WIFI_DHD
+	bool "bcm-wifi-dhd"
+	depends on BR2_LINUX_KERNEL
+	help
+	  bcm-wifi-dhd wifi driver
+
+	  https://github.com/Metrological/bcm-wifi-dhd
+
+comment "bcm-wifi-dhd needs a Linux kernel to be built"
+	depends on !BR2_LINUX_KERNEL

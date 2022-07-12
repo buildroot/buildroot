@@ -71,6 +71,9 @@ choice
 
     config BR2_PACKAGE_BCM_REFSW_19_2
         bool "bcm-refsw 19.2"
+
+    config BR2_PACKAGE_BCM_REFSW_20_2
+        bool "bcm-refsw 20.2"
 endchoice
 
 if BR2_PACKAGE_BCM_REFSW_CUSTOM_VERSION
@@ -191,28 +194,28 @@ config BR2_PACKAGE_BCM_REFSW_SAGE_PATH
 config BR2_PACKAGE_BCM_REFSW_PAK_PATH
         string "PAK Path"
         default "/usr/bin/"
-        depends on BR2_PACKAGE_BCM_REFSW_18_2 || BR2_PACKAGE_BCM_REFSW_19_1 || BR2_PACKAGE_BCM_REFSW_19_2
+        depends on BR2_PACKAGE_BCM_REFSW_18_2 || BR2_PACKAGE_BCM_REFSW_19_1 || BR2_PACKAGE_BCM_REFSW_19_2 || BR2_PACKAGE_BCM_REFSW_20_2
 	help
 	  PAK binaries path
 
 config BR2_PACKAGE_BCM_REFSW_DRM_PATH
         string "DRM Path"
         default "/usr/bin/"
-        depends on BR2_PACKAGE_BCM_REFSW_18_2 || BR2_PACKAGE_BCM_REFSW_19_1 || BR2_PACKAGE_BCM_REFSW_19_2
+        depends on BR2_PACKAGE_BCM_REFSW_18_2 || BR2_PACKAGE_BCM_REFSW_19_1 || BR2_PACKAGE_BCM_REFSW_19_2 || BR2_PACKAGE_BCM_REFSW_20_2
 	help
 	  DRM binaries path
 
 config BR2_PACKAGE_BCM_REFSW_HDCP1XBIN_PATH
         string "HDCP 1.x bin"
         default ""
-        depends on BR2_PACKAGE_BCM_REFSW_18_2 || BR2_PACKAGE_BCM_REFSW_19_1 || BR2_PACKAGE_BCM_REFSW_19_2
+        depends on BR2_PACKAGE_BCM_REFSW_18_2 || BR2_PACKAGE_BCM_REFSW_19_1 || BR2_PACKAGE_BCM_REFSW_19_2 || BR2_PACKAGE_BCM_REFSW_20_2
 	help
 	  A file locator for the HDCP1.X key
 
 config BR2_PACKAGE_BCM_REFSW_HDCP2XBIN_PATH
         string "HDCP 2.x bin"
         default ""
-        depends on BR2_PACKAGE_BCM_REFSW_18_2 || BR2_PACKAGE_BCM_REFSW_19_1 || BR2_PACKAGE_BCM_REFSW_19_2
+        depends on BR2_PACKAGE_BCM_REFSW_18_2 || BR2_PACKAGE_BCM_REFSW_19_1 || BR2_PACKAGE_BCM_REFSW_19_2 || BR2_PACKAGE_BCM_REFSW_20_2
 	help
 	  A file locator for the HDCP2.X key
 
