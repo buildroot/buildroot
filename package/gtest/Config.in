@@ -26,7 +26,6 @@ if BR2_PACKAGE_GTEST
 
 config BR2_PACKAGE_GTEST_GMOCK
 	bool "gmock"
-	depends on BR2_HOST_GCC_AT_LEAST_5 # host-gtest
 	help
 	  Inspired by jMock, EasyMock, and Hamcrest, and designed with
 	  C++'s specifics in mind, Google C++ Mocking Framework (or
@@ -42,14 +41,6 @@ config BR2_PACKAGE_GTEST_GMOCK
 	    * is extensible by users, and
 	    * works on Linux, Mac OS X, Windows, Windows Mobile, minGW,
 	      and Symbian.
-
-	  There are both host and target packages. The target one has
-	  include files required to compile the tests and the static
-	  libraries required to link/run them. The host package installs
-	  gmock_gen, a Python script used to generate code mocks.
-
-comment "gmock needs host gcc >= 5"
-	depends on !BR2_HOST_GCC_AT_LEAST_5
 
 endif # BR2_PACKAGE_GTEST
 
