@@ -157,7 +157,7 @@ define GRUB2_INSTALL_IMAGES_CMDS
 	$(foreach tuple, $(GRUB2_TUPLES-y), \
 		@$(call MESSAGE,Installing $(tuple) to images directory)
 		mkdir -p $(dir $(GRUB2_IMAGE_$(tuple)))
-		$(HOST_DIR)/usr/bin/grub-mkimage \
+		$(HOST_DIR)/bin/grub-mkimage \
 			-d $(@D)/build-$(tuple)/grub-core/ \
 			-O $(tuple) \
 			-o $(GRUB2_IMAGE_$(tuple)) \

@@ -27,7 +27,7 @@ define HOST_ABOOTIMG_BUILD_CMDS
 endef
 
 define HOST_ABOOTIMG_INSTALL_CMDS
-	$(INSTALL) -m 0755 $(@D)/abootimg $(HOST_DIR)/usr/bin/abootimg
+	$(INSTALL) -m 0755 $(@D)/abootimg $(HOST_DIR)/bin/abootimg
 endef
 
 $(eval $(generic-package))

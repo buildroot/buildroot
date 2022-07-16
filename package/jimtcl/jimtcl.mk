@@ -92,11 +92,11 @@ endef
 
 define HOST_JIMTCL_INSTALL_CMDS
 	for i in $(JIMTCL_HEADERS_TO_INSTALL); do \
-		cp -a $(@D)/$$i $(HOST_DIR)/usr/include/ || exit 1 ; \
+		cp -a $(@D)/$$i $(HOST_DIR)/include/ || exit 1 ; \
 	done;
 	$(INSTALL) -m 0755 -D $(@D)/libjim.so.$(JIMTCL_VERSION) \
-		$(HOST_DIR)/usr/lib/libjim.so.$(JIMTCL_VERSION)
-	ln -sf libjim.so.$(JIMTCL_VERSION) $(HOST_DIR)/usr/lib/libjim.so
+		$(HOST_DIR)/lib/libjim.so.$(JIMTCL_VERSION)
+	ln -sf libjim.so.$(JIMTCL_VERSION) $(HOST_DIR)/lib/libjim.so
 endef
 
 $(eval $(generic-package))

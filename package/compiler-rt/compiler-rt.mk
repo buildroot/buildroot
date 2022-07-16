@@ -19,7 +19,7 @@ COMPILER_RT_INSTALL_TARGET = NO
 COMPILER_RT_CONF_OPTS=-DCOMPILER_RT_STANDALONE_BUILD=OFF \
 	-DCOMPILER_RT_STANDALONE_BUILD=ON \
 	-DCOMPILER_RT_DEFAULT_TARGET_TRIPLE=$(GNU_TARGET_NAME) \
-	-DLLVM_CONFIG_PATH=$(HOST_DIR)/usr/bin/llvm-config
+	-DLLVM_CONFIG_PATH=$(HOST_DIR)/bin/llvm-config
 
 # The installation of the target runtime libraries defaults to DESTDIR, however
 # host-clang resources directory needs a link so Clang can find the runtime
