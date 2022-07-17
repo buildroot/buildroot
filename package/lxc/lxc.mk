@@ -55,7 +55,7 @@ ifeq ($(BR2_PACKAGE_LINUX_PAM),y)
 LXC_CONF_OPTS += --enable-pam
 LXC_DEPENDENCIES += linux-pam
 else
-LXC_DEPENDENCIES += --disable-pam
+LXC_CONF_OPTS += --disable-pam
 endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
