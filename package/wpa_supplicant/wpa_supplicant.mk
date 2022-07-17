@@ -260,7 +260,9 @@ ifeq ($(BR2_PACKAGE_IFUPDOWN_SCRIPTS),y)
 define WPA_SUPPLICANT_INSTALL_IFUP_SCRIPTS
 	$(INSTALL) -m 0755 -D package/wpa_supplicant/ifupdown.sh \
 		$(TARGET_DIR)/etc/network/if-up.d/wpasupplicant
-	ln -sf ../if-up.d/wpasupplicant $(TARGET_DIR)/etc/network/if-down.d/wpasupplicant
+	mkdir -p $(TARGET_DIR)/etc/network/if-down.d
+	ln -sf ../if-up.d/wpasupplicant \
+		$(TARGET_DIR)/etc/network/if-down.d/wpasupplicant
 endef
 endif
 

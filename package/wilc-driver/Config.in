@@ -17,9 +17,6 @@ config BR2_PACKAGE_WILC_DRIVER
 
 	  https://github.com/embeddedTS/wilc3000-external-module
 
-comment "wilc kernel module needs a Linux kernel to be built"
-	depends on !BR2_LINUX_KERNEL
-
 if BR2_PACKAGE_WILC_DRIVER
 
 config BR2_PACKAGE_WILC_DRIVER_SPI
@@ -60,3 +57,6 @@ config BR2_PACKAGE_WILC_DRIVER_SDIO_OOB
 	  time division interrupt.
 endif
 endif
+
+comment "wilc kernel module needs a Linux kernel to be built"
+	depends on !BR2_LINUX_KERNEL

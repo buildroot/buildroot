@@ -71,5 +71,18 @@ else
 PYTHON_PILLOW_BUILD_OPTS += --disable-webp --disable-webpmux
 endif
 
+HOST_PYTHON_PILLOW_DEPENDENCIES = host-pkgconf
+HOST_PYTHON_PILLOW_BUILD_OPTS = \
+	build_ext \
+	--disable-freetype \
+	--disable-jpeg \
+	--disable-lcms \
+	--disable-xcb \
+	--disable-jpeg2000 \
+	--disable-tiff \
+	--disable-webp \
+	--disable-webpmux
+HOST_PYTHON_PILLOW_INSTALL_OPTS = $(HOST_PYTHON_PILLOW_BUILD_OPTS)
+
 $(eval $(python-package))
 $(eval $(host-python-package))
