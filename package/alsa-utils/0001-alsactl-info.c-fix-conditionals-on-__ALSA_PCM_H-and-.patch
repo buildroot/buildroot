@@ -1,0 +1,108 @@
+From 4bfd1f15114550e1be7e43ae37a61906e1bff809 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sun, 17 Jul 2022 18:59:48 +0200
+Subject: [PATCH] alsactl/info.c: fix conditionals on __ALSA_PCM_H and
+ __ALSA_RAWMIDI_H
+
+Commit bbc74a61ac7c35e506c3d7f76ecf943cb55736a6 ("alsactl: implement
+'info' command") implemented an alsactl info command. In this
+implementation, there was an attempt to properly address optional
+features from alsa-lib by using conditions on __ALSA_PCM_H,
+__ALSA_RAWMIDI_H.
+
+Unfortunately, this attempt does not work entirely: only the code
+inside pcm_device_list(), rawmidi_device_list() was conditionally
+compiled, but their very prototype also use type definitions provided
+in pcm.h and rawmidi.h. So really, it's the entire function that needs
+to be conditionally implemented.
+
+Also, snd_rawmidi_stream_name() was not handled properly, for the same
+reason.
+
+This commit implements pcm_device_list() only if __ALSA_PCM_H is
+defined, and implements snd_rawmidi_stream_name() and
+rawmidi_device_list() only if __ALSA_RAWMIDI_H is defined.
+
+general_card_info() is modified to not call the PCM or raw MIDI
+functions when support is not available.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Upstream: https://mailman.alsa-project.org/pipermail/alsa-devel/2022-July/203846.html
+---
+ alsactl/info.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/alsactl/info.c b/alsactl/info.c
+index 253539d..9bd72af 100644
+--- a/alsactl/info.c
++++ b/alsactl/info.c
+@@ -22,9 +22,9 @@
+ #include "aconfig.h"
+ #include "alsactl.h"
+ 
++#ifdef __ALSA_PCM_H
+ static int pcm_device_list(snd_ctl_t *ctl, snd_pcm_stream_t stream, bool *first)
+ {
+-#ifdef __ALSA_PCM_H
+ 	int err, dev, idx;
+ 	unsigned int count;
+ 	snd_pcm_info_t *pcminfo;
+@@ -76,10 +76,12 @@ static int pcm_device_list(snd_ctl_t *ctl, snd_pcm_stream_t stream, bool *first)
+ 						idx, snd_pcm_info_get_subdevice_name(pcminfo));
+ 		}
+ 	}
+-#endif
++
+ 	return 0;
+ }
++#endif
+ 
++#ifdef __ALSA_RAWMIDI_H
+ static const char *snd_rawmidi_stream_name(snd_rawmidi_stream_t stream)
+ {
+ 	if (stream == SND_RAWMIDI_STREAM_INPUT)
+@@ -91,7 +93,6 @@ static const char *snd_rawmidi_stream_name(snd_rawmidi_stream_t stream)
+ 
+ static int rawmidi_device_list(snd_ctl_t *ctl, snd_rawmidi_stream_t stream, bool *first)
+ {
+-#ifdef __ALSA_RAWMIDI_H
+ 	int err, dev, idx;
+ 	unsigned int count;
+ 	snd_rawmidi_info_t *info;
+@@ -143,9 +144,10 @@ static int rawmidi_device_list(snd_ctl_t *ctl, snd_rawmidi_stream_t stream, bool
+ 						idx, snd_rawmidi_info_get_subdevice_name(info));
+ 		}
+ 	}
+-#endif
++
+ 	return 0;
+ }
++#endif
+ 
+ static int hwdep_device_list(snd_ctl_t *ctl)
+ {
+@@ -227,17 +229,21 @@ int general_card_info(int cardno)
+ 	}
+ 	err = card_info(ctl);
+ 
++#ifdef __ALSA_PCM_H
+ 	first = true;
+ 	if (err >= 0)
+ 		err = pcm_device_list(ctl, SND_PCM_STREAM_PLAYBACK, &first);
+ 	if (err >= 0)
+ 		err = pcm_device_list(ctl, SND_PCM_STREAM_CAPTURE, &first);
++#endif
+ 
++#ifdef __ALSA_RAWMIDI_H
+ 	first = true;
+ 	if (err >= 0)
+ 		err = rawmidi_device_list(ctl, SND_PCM_STREAM_PLAYBACK, &first);
+ 	if (err >= 0)
+ 		err = rawmidi_device_list(ctl, SND_PCM_STREAM_CAPTURE, &first);
++#endif
+ 
+ 	if (err >= 0)
+ 		err = hwdep_device_list(ctl);
+-- 
+2.36.1
+
