@@ -45,6 +45,12 @@ config BR2_PACKAGE_LIBCURL_EXTRA_PROTOCOLS_FEATURES
 	  - DICT
 	  - Gopher
 
+# Packages must select that if they require a SSL/TLS-enabled libcurl.
+# Those packages must also select one crypto package that can be used
+# as a backend below.
+config BR2_PACKAGE_LIBCURL_FORCE_TLS
+	bool
+
 choice
 	prompt "SSL/TLS library to use"
 
@@ -77,6 +83,7 @@ comment "WolfSSL needs a toolchain w/ dynamic library"
 
 config BR2_PACKAGE_LIBCURL_TLS_NONE
 	bool "None"
+	depends on !BR2_PACKAGE_LIBCURL_FORCE_SSL_TLS
 
 endchoice
 
