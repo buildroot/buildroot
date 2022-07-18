@@ -4,7 +4,9 @@
 #
 ################################################################################
 
-SPIRV_LLVM_TRANSLATOR_VERSION = llvm_release_110
+# Generate version string using:
+#   git describe --tags --match 'v11*' --abbrev=40 origin/llvm_release_110
+SPIRV_LLVM_TRANSLATOR_VERSION = v11.0.0-269-g13c76c4b275ae990d23883f7f15eec1a9adddc18
 SPIRV_LLVM_TRANSLATOR_SITE = $(call github,KhronosGroup,SPIRV-LLVM-Translator,$(SPIRV_LLVM_TRANSLATOR_VERSION))
 SPIRV_LLVM_TRANSLATOR_LICENSE = NCSA
 SPIRV_LLVM_TRANSLATOR_LICENSE_FILES = LICENSE.TXT
