@@ -231,6 +231,10 @@ ifeq ($(BR2_TARGET_UBOOT_NEEDS_GNUTLS),y)
 UBOOT_DEPENDENCIES += host-gnutls
 endif
 
+ifeq ($(BR2_TARGET_UBOOT_NEEDS_UTIL_LINUX),y)
+UBOOT_DEPENDENCIES += host-util-linux
+endif
+
 # prior to u-boot 2013.10 the license info was in COPYING. Copy it so
 # legal-info finds it
 define UBOOT_COPY_OLD_LICENSE_FILE
