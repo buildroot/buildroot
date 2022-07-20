@@ -432,7 +432,7 @@ config BR2_ENABLE_RUNTIME_DEBUG
 config BR2_STRIP_strip
 	bool "strip target binaries"
 	default y
-	depends on !BR2_PACKAGE_HOST_ELF2FLT
+	depends on BR2_BINFMT_ELF
 	help
 	  Binaries and libraries in the target filesystem will be
 	  stripped using the normal 'strip' command. This allows to save
