@@ -1,0 +1,50 @@
+From 7b51bc95d9cf0d9a2e91a37319fa34e4e5f26927 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 6 Jul 2022 12:58:15 +0200
+Subject: [PATCH] [cplusplus] Fix build on GCC < 7
+
+[Retrieved from:
+https://github.com/harfbuzz/harfbuzz/commit/7b51bc95d9cf0d9a2e91a37319fa34e4e5f26927]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/hb-cplusplus.hh | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/src/hb-cplusplus.hh b/src/hb-cplusplus.hh
+index 86d0452080..f06a32d912 100644
+--- a/src/hb-cplusplus.hh
++++ b/src/hb-cplusplus.hh
+@@ -166,8 +166,14 @@ HB_DEFINE_VTABLE (unicode_funcs);
+ 
+ } // namespace hb
+ 
++/* Workaround for GCC < 7, see:
++ * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=56480
++ * https://stackoverflow.com/a/25594741 */
++namespace std {
++
++
+ template<typename T>
+-struct std::hash<hb::shared_ptr<T>>
++struct hash<hb::shared_ptr<T>>
+ {
+     std::size_t operator()(const hb::shared_ptr<T>& v) const noexcept
+     {
+@@ -177,7 +183,7 @@ struct std::hash<hb::shared_ptr<T>>
+ };
+ 
+ template<typename T>
+-struct std::hash<hb::unique_ptr<T>>
++struct hash<hb::unique_ptr<T>>
+ {
+     std::size_t operator()(const hb::unique_ptr<T>& v) const noexcept
+     {
+@@ -187,6 +193,8 @@ struct std::hash<hb::unique_ptr<T>>
+ };
+ 
+ 
++} // namespace std
++
+ #endif /* __cplusplus */
+ 
+ #endif /* HB_CPLUSPLUS_HH */
