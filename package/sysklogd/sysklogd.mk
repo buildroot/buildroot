@@ -8,6 +8,7 @@ SYSKLOGD_VERSION = 2.4.0
 SYSKLOGD_SITE = https://github.com/troglobit/sysklogd/releases/download/v$(SYSKLOGD_VERSION)
 SYSKLOGD_LICENSE = BSD-3-Clause
 SYSKLOGD_LICENSE_FILES = LICENSE
+SYSKLOGD_INSTALL_STAGING = YES
 SYSKLOGD_CPE_ID_VENDOR = sysklogd_project
 
 # Busybox install logger in /usr/bin, and syslogd in /sbin, so install in
