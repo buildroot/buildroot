@@ -18,7 +18,10 @@ ZEROMQ_CPE_ID_PRODUCT = libzmq
 # SOCK_CLOEXEC, since linux v2.6.27.
 # Note: the flag TCP_KEEPALIVE is NOT available so we do not include it.
 ZEROMQ_CONF_ENV = libzmq_cv_sock_cloexec=yes \
+	libzmq_cv_o_cloexec=yes \
 	libzmq_cv_so_keepalive=yes \
+	libzmq_cv_so_priority=yes \
+	libzmq_cv_so_bindtodevice=yes \
 	libzmq_cv_tcp_keepcnt=yes \
 	libzmq_cv_tcp_keepidle=yes \
 	libzmq_cv_tcp_keepintvl=yes
