@@ -1,0 +1,60 @@
+From 2c0ad0d7547558be59ef10dd289e619373341704 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Thu, 21 Jul 2022 09:47:49 +0200
+Subject: [PATCH] inc/efi*.h: also support __mips64 to recognize mips64
+
+gcc built-in define for the MIPS64 architecture is __mips64, not
+__mips64__, so the current condition did not match for gcc. See
+https://gcc.gnu.org/git/?p=gcc.git;a=blob;f=gcc/config/mips/mips.h;h=47aac9d3d61245c4d3df5dbd0bbcd833190de7c3;hb=2d280e7eafc086e9df85f50ed1a6526d6a3a204d#l431
+in the gcc source.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Upstream: https://sourceforge.net/p/gnu-efi/mailman/message/37683797/
+---
+ inc/efi.h      | 2 +-
+ inc/efilib.h   | 2 +-
+ inc/efirtlib.h | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/inc/efi.h b/inc/efi.h
+index 43c832e..b193932 100644
+--- a/inc/efi.h
++++ b/inc/efi.h
+@@ -48,7 +48,7 @@ Revision History
+ #include "aarch64/efibind.h"
+ #elif defined (_M_ARM) || defined(__arm__)
+ #include "arm/efibind.h"
+-#elif defined (_M_MIPS64) || defined(__mips64__)
++#elif defined (_M_MIPS64) || defined(__mips64__) || defined(__mips64)
+ #include "mips64el/efibind.h"
+ #elif defined (__riscv) && __riscv_xlen == 64
+ #include "riscv64/efibind.h"
+diff --git a/inc/efilib.h b/inc/efilib.h
+index 9f748ad..a2b39b2 100644
+--- a/inc/efilib.h
++++ b/inc/efilib.h
+@@ -31,7 +31,7 @@ Revision History
+ #include "aarch64/efilibplat.h"
+ #elif defined (_M_ARM) || defined(__arm__)
+ #include "arm/efilibplat.h"
+-#elif defined (_M_MIPS64) || defined(__mips64__)
++#elif defined (_M_MIPS64) || defined(__mips64__) || defined(__mips64)
+ #include "mips64el/efilibplat.h"
+ #elif defined (__riscv) && __riscv_xlen == 64
+ #include "riscv64/efilibplat.h"
+diff --git a/inc/efirtlib.h b/inc/efirtlib.h
+index 8643061..518859e 100644
+--- a/inc/efirtlib.h
++++ b/inc/efirtlib.h
+@@ -30,7 +30,7 @@ Revision History
+ #include "aarch64/efilibplat.h"
+ #elif defined (_M_ARM) || defined(__arm__)
+ #include "arm/efilibplat.h"
+-#elif defined (_M_MIPS64) || defined(__mips64__)
++#elif defined (_M_MIPS64) || defined(__mips64__) || defined(__mips64)
+ #include "mips64el/efilibplat.h"
+ #elif defined (__riscv) && __riscv_xlen == 64
+ #include "riscv64/efilibplat.h"
+-- 
+2.36.1
+
