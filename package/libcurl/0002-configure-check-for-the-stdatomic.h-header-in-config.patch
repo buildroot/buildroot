@@ -1,0 +1,70 @@
+From a68074b5db2a1fb637853b808e5b263c2ce9cbdd Mon Sep 17 00:00:00 2001
+From: Daniel Stenberg <daniel@haxx.se>
+Date: Tue, 28 Jun 2022 08:37:22 +0200
+Subject: [PATCH] configure: check for the stdatomic.h header in configure
+
+... and only set HAVE_ATOMIC if that header exists since we use
+typedefes set in it.
+
+Reported-by: Ryan Schmidt
+Fixes #9059
+Closes #9060
+
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+Upstream status: commit a68074b5db2a1fb637853b808e5b263c2ce9cbdd
+
+ m4/curl-functions.m4 | 36 +++++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 17 deletions(-)
+
+diff --git a/m4/curl-functions.m4 b/m4/curl-functions.m4
+index ec406f56aed8..f3e12a53a9fd 100644
+--- a/m4/curl-functions.m4
++++ b/m4/curl-functions.m4
+@@ -6570,24 +6570,26 @@ AC_DEFUN([CURL_COVERAGE],[
+ ])
+ 
+ dnl CURL_ATOMIC
+-dnl --------------------------------------------------
+-dnl Check if _Atomic works
++dnl -------------------------------------------------------------
++dnl Check if _Atomic works. But only check if stdatomic.h exists.
+ dnl
+ AC_DEFUN([CURL_ATOMIC],[
+-  AC_MSG_CHECKING([if _Atomic is available])
+-  AC_COMPILE_IFELSE([
+-    AC_LANG_PROGRAM([[
+-      $curl_includes_unistd
+-    ]],[[
+-      _Atomic int i = 0;
+-    ]])
+-  ],[
+-    AC_MSG_RESULT([yes])
+-    AC_DEFINE_UNQUOTED(HAVE_ATOMIC, 1,
+-      [Define to 1 if you have _Atomic support.])
+-    tst_atomic="yes"
+-  ],[
+-    AC_MSG_RESULT([no])
+-    tst_atomic="no"
++  AC_CHECK_HEADERS(stdatomic.h, [
++    AC_MSG_CHECKING([if _Atomic is available])
++    AC_COMPILE_IFELSE([
++      AC_LANG_PROGRAM([[
++        $curl_includes_unistd
++      ]],[[
++        _Atomic int i = 0;
++      ]])
++    ],[
++      AC_MSG_RESULT([yes])
++      AC_DEFINE_UNQUOTED(HAVE_ATOMIC, 1,
++        [Define to 1 if you have _Atomic support.])
++      tst_atomic="yes"
++    ],[
++      AC_MSG_RESULT([no])
++      tst_atomic="no"
++    ])
+   ])
+ ])
+-- 
+2.35.1
+
