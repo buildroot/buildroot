@@ -83,7 +83,7 @@ comment "WolfSSL needs a toolchain w/ dynamic library"
 
 config BR2_PACKAGE_LIBCURL_TLS_NONE
 	bool "None"
-	depends on !BR2_PACKAGE_LIBCURL_FORCE_SSL_TLS
+	depends on !BR2_PACKAGE_LIBCURL_FORCE_TLS
 
 endchoice
 
