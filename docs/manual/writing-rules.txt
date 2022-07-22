@@ -198,6 +198,18 @@ image sdimage.img {
   chance, the byte count.  In comments instead use +GB+, +MB+, +KB+
   (not +kb+) in place of +G+, +M+, +K+.
 
+* For GPT partitions, the +partition-type-uuid+ value must be +U+ for
+  the EFI System Partition (expanded to
+  +c12a7328-f81f-11d2-ba4b-00a0c93ec93b+ by _genimage_), +F+ for a FAT
+  partition (expanded to +ebd0a0a2-b9e5-4433-87c0-68b6b72699c7+ by
+  _genimage_) or +L+ for the root filesystem or other filesystems
+  (expanded to +0fc63daf-8483-4772-8e79-3d69d8477de4+ by
+  _genimage_). Even though +L+ is the default value of _genimage_, we
+  prefer to have it explicitly specified in our +genimage.cfg+
+  files. Finally, these shortcuts should be used without double
+  quotes, e.g +partition-type-uuid = U+. If an explicit GUID is
+  specified, lower-case letters should be used.
+
 The +genimage.cfg+ files are the input for the genimage tool used in
 Buildroot to generate the final image file(i.e. sdcard.img). For further
 details about the _genimage_ language, refer to
