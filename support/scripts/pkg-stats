@@ -828,7 +828,7 @@ function sortGrid(sortLabel){
 <a href=\"#results\">Results</a><br/>
 
 <p id=\"sortable_hint\"></p>
-"""
+"""  # noqa - tabs and spaces
 
 
 html_footer = """
@@ -865,8 +865,8 @@ def boolean_str(b):
 
 
 def dump_html_pkg(f, pkg):
-    f.write( f'<div id=\"package_{pkg.name}\" \
-	class=\"package data {pkg.name}\">{pkg.path}</div>\n')
+    f.write(f'<div id=\"package_{pkg.name}\" \
+        class=\"package data {pkg.name}\">{pkg.path}</div>\n')
     # Patch count
     data_field_id = f'patch_count_{pkg.name}'
     div_class = ["centered patch_count data"]
@@ -877,8 +877,8 @@ def dump_html_pkg(f, pkg):
         div_class.append("somepatches")
     else:
         div_class.append("lotsofpatches")
-    f.write( f'  <div id=\"{data_field_id}\" class=\"{" ".join(div_class)} \
-	\">{str(pkg.patch_count)}</div>\n')
+    f.write(f'  <div id=\"{data_field_id}\" class=\"{" ".join(div_class)} \
+        \">{str(pkg.patch_count)}</div>\n')
 
     # Infrastructure
     data_field_id = f'infrastructure_{pkg.name}'
@@ -889,8 +889,8 @@ def dump_html_pkg(f, pkg):
         div_class.append("wrong")
     else:
         div_class.append("correct")
-    f.write( f'  <div id=\"{data_field_id}\" class=\"{" ".join(div_class)} \
-	\">{infra_str(pkg.infras)}</div>\n')
+    f.write(f'  <div id=\"{data_field_id}\" class=\"{" ".join(div_class)} \
+        \">{infra_str(pkg.infras)}</div>\n')
 
     # License
     data_field_id = f'license_{pkg.name}'
@@ -901,7 +901,7 @@ def dump_html_pkg(f, pkg):
     else:
         div_class.append("wrong")
     f.write(f'  <div id=\"{data_field_id}\" class=\"{" ".join(div_class)} \
-	\">{boolean_str(pkg.is_status_ok("license"))}</div>\n')
+        \">{boolean_str(pkg.is_status_ok("license"))}</div>\n')
 
     # License files
     data_field_id = f'license_files_{pkg.name}'
@@ -912,7 +912,7 @@ def dump_html_pkg(f, pkg):
     else:
         div_class.append("wrong")
     f.write(f'  <div id=\"{data_field_id}\" class=\"{" ".join(div_class)} \
-	\">{boolean_str(pkg.is_status_ok("license-files"))}</div>\n')
+        \">{boolean_str(pkg.is_status_ok("license-files"))}</div>\n')
 
     # Hash
     data_field_id = f'hash_file_{pkg.name}'
@@ -923,7 +923,7 @@ def dump_html_pkg(f, pkg):
     else:
         div_class.append("wrong")
     f.write(f'  <div id=\"{data_field_id}\" class=\"{" ".join(div_class)} \
-	\">{boolean_str(pkg.is_status_ok("hash"))}</div>\n')
+        \">{boolean_str(pkg.is_status_ok("hash"))}</div>\n')
 
     # Current version
     data_field_id = f'current_version_{pkg.name}'
@@ -932,7 +932,7 @@ def dump_html_pkg(f, pkg):
     else:
         current_version = pkg.current_version
     f.write(f'  <div id=\"{data_field_id}\" \
-	class=\"centered current_version data {pkg.name}\">{current_version}</div>\n')
+        class=\"centered current_version data {pkg.name}\">{current_version}</div>\n')
 
     # Latest version
     data_field_id = f'latest_version_{pkg.name}'
@@ -1059,19 +1059,32 @@ def dump_html_pkg(f, pkg):
 def dump_html_all_pkgs(f, packages):
     f.write("""
 <div id=\"package-grid\">
-<div style="grid-column: 1;" onclick="sortGrid(this.id)" id=\"package\" class=\"package data label\"><span>Package</span><span></span></div>
-<div style="grid-column: 2;" onclick="sortGrid(this.id)" id=\"patch_count\" class=\"centered patch_count data label\"><span>Patch count</span><span></span></div>
-<div style="grid-column: 3;" onclick="sortGrid(this.id)" id=\"infrastructure\" class=\"centered infrastructure data label\">Infrastructure<span></span></div>
-<div style="grid-column: 4;" onclick="sortGrid(this.id)" id=\"license\" class=\"centered license data label\"><span>License</span><span></span></div>
-<div style="grid-column: 5;" onclick="sortGrid(this.id)" id=\"license_files\" class=\"centered license_files data label\"><span>License files</span><span></span></div>
-<div style="grid-column: 6;" onclick="sortGrid(this.id)" id=\"hash_file\" class=\"centered hash_file data label\"><span>Hash file</span><span></span></div>
-<div style="grid-column: 7;" onclick="sortGrid(this.id)" id=\"current_version\" class=\"centered current_version data label\"><span>Current version</span><span></span></div>
-<div style="grid-column: 8;" onclick="sortGrid(this.id)" id=\"latest_version\" class=\"centered latest_version data label\"><span>Latest version</span><span></span></div>
-<div style="grid-column: 9;" onclick="sortGrid(this.id)" id=\"warnings\" class=\"centered warnings data label\"><span>Warnings</span><span></span></div>
-<div style="grid-column: 10;" onclick="sortGrid(this.id)" id=\"upstream_url\" class=\"centered upstream_url data label\"><span>Upstream URL</span><span></span></div>
-<div style="grid-column: 11;" onclick="sortGrid(this.id)" id=\"cves\" class=\"centered cves data label\"><span>CVEs</span><span></span></div>
-<div style="grid-column: 12;" onclick="sortGrid(this.id)" id=\"ignored_cves\" class=\"centered ignored_cves data label\"><span>CVEs Ignored</span><span></span></div>
-<div style="grid-column: 13;" onclick="sortGrid(this.id)" id=\"cpe_id\" class=\"centered cpe_id data label\"><span>CPE ID</span><span></span></div>
+<div style="grid-column: 1;" onclick="sortGrid(this.id)" id=\"package\"
+     class=\"package data label\"><span>Package</span><span></span></div>
+<div style="grid-column: 2;" onclick="sortGrid(this.id)" id=\"patch_count\"
+     class=\"centered patch_count data label\"><span>Patch count</span><span></span></div>
+<div style="grid-column: 3;" onclick="sortGrid(this.id)" id=\"infrastructure\"
+     class=\"centered infrastructure data label\">Infrastructure<span></span></div>
+<div style="grid-column: 4;" onclick="sortGrid(this.id)" id=\"license\"
+     class=\"centered license data label\"><span>License</span><span></span></div>
+<div style="grid-column: 5;" onclick="sortGrid(this.id)" id=\"license_files\"
+     class=\"centered license_files data label\"><span>License files</span><span></span></div>
+<div style="grid-column: 6;" onclick="sortGrid(this.id)" id=\"hash_file\"
+     class=\"centered hash_file data label\"><span>Hash file</span><span></span></div>
+<div style="grid-column: 7;" onclick="sortGrid(this.id)" id=\"current_version\"
+     class=\"centered current_version data label\"><span>Current version</span><span></span></div>
+<div style="grid-column: 8;" onclick="sortGrid(this.id)" id=\"latest_version\"
+     class=\"centered latest_version data label\"><span>Latest version</span><span></span></div>
+<div style="grid-column: 9;" onclick="sortGrid(this.id)" id=\"warnings\"
+     class=\"centered warnings data label\"><span>Warnings</span><span></span></div>
+<div style="grid-column: 10;" onclick="sortGrid(this.id)" id=\"upstream_url\"
+     class=\"centered upstream_url data label\"><span>Upstream URL</span><span></span></div>
+<div style="grid-column: 11;" onclick="sortGrid(this.id)" id=\"cves\"
+     class=\"centered cves data label\"><span>CVEs</span><span></span></div>
+<div style="grid-column: 12;" onclick="sortGrid(this.id)" id=\"ignored_cves\"
+     class=\"centered ignored_cves data label\"><span>CVEs Ignored</span><span></span></div>
+<div style="grid-column: 13;" onclick="sortGrid(this.id)" id=\"cpe_id\"
+     class=\"centered cpe_id data label\"><span>CPE ID</span><span></span></div>
 """)
     for pkg in sorted(packages):
         dump_html_pkg(f, pkg)
