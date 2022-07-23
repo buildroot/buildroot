@@ -69,6 +69,3 @@ for i in ${TARGET_DIR}/usr/lib/mono/4.5/* ${TARGET_DIR}/usr/lib/mono/gac/* ; do
 			;;
 	esac
 done
-
-# Remove modules installed in target dir
-rm -rf ${TARGET_DIR}/lib/modules/*
