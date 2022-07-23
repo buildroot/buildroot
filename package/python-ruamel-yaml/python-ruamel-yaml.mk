@@ -10,5 +10,7 @@ PYTHON_RUAMEL_YAML_SITE = https://files.pythonhosted.org/packages/46/a9/6ed24832
 PYTHON_RUAMEL_YAML_SETUP_TYPE = setuptools
 PYTHON_RUAMEL_YAML_LICENSE = MIT
 PYTHON_RUAMEL_YAML_LICENSE_FILES = LICENSE
+PYTHON_RUAMEL_YAML_CPE_ID_VENDOR = ruamel.yaml_project
+PYTHON_RUAMEL_YAML_CPE_ID_PRODUCT = ruamel.yaml
 
 $(eval $(python-package))
