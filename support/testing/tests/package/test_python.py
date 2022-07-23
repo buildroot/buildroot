@@ -27,7 +27,7 @@ class TestPythonBase(infra.basetest.BRTest):
         self.assertRunOk(cmd, timeout)
 
     def libc_time_test(self, timeout=-1):
-        cmd = self.interpreter + " -c 'from __future__ import print_function;"
+        cmd = self.interpreter + " -c '"
         cmd += "import ctypes;"
         cmd += "libc = ctypes.cdll.LoadLibrary(\"libc.so.1\");"
         cmd += "print(libc.time(None))'"
