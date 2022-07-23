@@ -20,7 +20,7 @@ genrandconfig
     (http://autobuild.buildroot.org). It selects a random toolchain from
     support/config-fragments/autobuild and randomly selects packages to build.
 
-get-developpers
+get-developers
     a script to return the list of people interested in a specific part
     of Buildroot, so they can be Cc:ed on a mail. Accepts a patch as
     input, a package name or and architecture name.
