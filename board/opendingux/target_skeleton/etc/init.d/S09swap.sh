@@ -4,6 +4,7 @@
 
 SWAP_PERCENT_MEM=80
 SWAPPINESS=20
+SWAP_COMPRESSOR=lzo-rle
 
 # User overrides.
 [ -r /usr/local/etc/swap.conf ] && . /usr/local/etc/swap.conf
@@ -12,8 +13,10 @@ SWAPPINESS=20
 
 psplash_write "Setup swap..."
 
+modprobe -q zram
+
 SWAP_FILE_MB=$(expr $(sed -n 's/MemTotal: \+\([[:digit:]]\+\).*/\1/p' /proc/meminfo) \* ${SWAP_PERCENT_MEM} / 102400)
-SWAP_FILE=$(zramctl -a lzo -s ${SWAP_FILE_MB}M -f)
+SWAP_FILE=$(zramctl -a ${SWAP_COMPRESSOR} -s ${SWAP_FILE_MB}M -f)
 
 echo $SWAPPINESS > /proc/sys/vm/swappiness
 
