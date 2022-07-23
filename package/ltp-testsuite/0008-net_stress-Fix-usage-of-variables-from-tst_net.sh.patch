@@ -1,0 +1,154 @@
+From 33c156e295e35d4839a135d8ba5db485b7712ced Mon Sep 17 00:00:00 2001
+From: Joerg Vehlow <joerg.vehlow@aox.de>
+Date: Mon, 27 Jun 2022 09:27:09 +0200
+Subject: [PATCH] net_stress: Fix usage of variables from tst_net.sh
+
+These tests use variables (NS_TIMES, IP_TOTAL, ROUTE_TOTAL
+and IF_UPDOWN_TIMES) from tst_net.sh, before sourcing it.
+
+Fixes: 04021637f ("tst_test.sh: Cleanup getopts usage")
+
+Reviewed-by: Petr Vorel <pvorel@suse.cz>
+Signed-off-by: Joerg Vehlow <joerg.vehlow@aox.de>
+[ upstream status: 33c156e295e35d4839a135d8ba5db485b7712ced ]
+---
+ testcases/network/stress/interface/if-addr-adddel.sh    | 7 ++++---
+ testcases/network/stress/interface/if-addr-addlarge.sh  | 7 ++++---
+ testcases/network/stress/interface/if-route-adddel.sh   | 5 +++--
+ testcases/network/stress/interface/if-route-addlarge.sh | 5 +++--
+ testcases/network/stress/interface/if-updown.sh         | 5 +++--
+ testcases/network/stress/interface/if4-addr-change.sh   | 4 +++-
+ 6 files changed, 20 insertions(+), 13 deletions(-)
+
+diff --git a/testcases/network/stress/interface/if-addr-adddel.sh b/testcases/network/stress/interface/if-addr-adddel.sh
+index cb453e612..0750501f0 100755
+--- a/testcases/network/stress/interface/if-addr-adddel.sh
++++ b/testcases/network/stress/interface/if-addr-adddel.sh
+@@ -7,9 +7,6 @@
+ 
+ IF_CMD='ifconfig'
+ 
+-# The interval of the check interface activity
+-CHECK_INTERVAL=${CHECK_INTERVAL:-$(($NS_TIMES / 20))}
+-
+ test_body()
+ {
+ 	local cmd="$CMD"
+@@ -89,4 +86,8 @@ test_body()
+ }
+ 
+ . if-lib.sh
++
++# The interval of the check interface activity
++CHECK_INTERVAL=${CHECK_INTERVAL:-$(($NS_TIMES / 20))}
++
+ tst_run
+diff --git a/testcases/network/stress/interface/if-addr-addlarge.sh b/testcases/network/stress/interface/if-addr-addlarge.sh
+index 3c876c17d..d0759c86b 100755
+--- a/testcases/network/stress/interface/if-addr-addlarge.sh
++++ b/testcases/network/stress/interface/if-addr-addlarge.sh
+@@ -7,9 +7,6 @@
+ 
+ IF_CMD='ifconfig'
+ 
+-# The interval of the check interface activity
+-CHECK_INTERVAL=${CHECK_INTERVAL:-$(($IP_TOTAL / 20))}
+-
+ test_body()
+ {
+ 	local cmd="$CMD"
+@@ -110,4 +107,8 @@ test_body()
+ }
+ 
+ . if-lib.sh
++
++# The interval of the check interface activity
++CHECK_INTERVAL=${CHECK_INTERVAL:-$(($IP_TOTAL / 20))}
++
+ tst_run
+diff --git a/testcases/network/stress/interface/if-route-adddel.sh b/testcases/network/stress/interface/if-route-adddel.sh
+index b50da268a..51445e4f7 100755
+--- a/testcases/network/stress/interface/if-route-adddel.sh
++++ b/testcases/network/stress/interface/if-route-adddel.sh
+@@ -7,8 +7,6 @@
+ 
+ IF_CMD='route'
+ 
+-CHECK_INTERVAL=${CHECK_INTERVAL:-$(($NS_TIMES / 20))}
+-
+ test_body()
+ {
+ 	local cmd="$CMD"
+@@ -64,4 +62,7 @@ test_body()
+ }
+ 
+ . if-lib.sh
++
++CHECK_INTERVAL=${CHECK_INTERVAL:-$(($NS_TIMES / 20))}
++
+ tst_run
+diff --git a/testcases/network/stress/interface/if-route-addlarge.sh b/testcases/network/stress/interface/if-route-addlarge.sh
+index 7d09d1216..355b6b4ab 100755
+--- a/testcases/network/stress/interface/if-route-addlarge.sh
++++ b/testcases/network/stress/interface/if-route-addlarge.sh
+@@ -7,8 +7,6 @@
+ 
+ IF_CMD='route'
+ 
+-CHECK_INTERVAL=${CHECK_INTERVAL:-$(($ROUTE_TOTAL / 20))}
+-
+ test_body()
+ {
+ 	local cmd="$CMD"
+@@ -76,4 +74,7 @@ test_body()
+ }
+ 
+ . if-lib.sh
++
++CHECK_INTERVAL=${CHECK_INTERVAL:-$(($ROUTE_TOTAL / 20))}
++
+ tst_run
+diff --git a/testcases/network/stress/interface/if-updown.sh b/testcases/network/stress/interface/if-updown.sh
+index 9a5709c85..71c78d785 100755
+--- a/testcases/network/stress/interface/if-updown.sh
++++ b/testcases/network/stress/interface/if-updown.sh
+@@ -8,8 +8,6 @@
+ IF_CMD='ifconfig'
+ TST_CLEANUP="if_cleanup_restore"
+ 
+-CHECK_INTERVAL=${CHECK_INTERVAL:-$(($IF_UPDOWN_TIMES / 20))}
+-
+ test_body()
+ {
+ 	local cmd="$CMD"
+@@ -47,4 +45,7 @@ test_body()
+ }
+ 
+ . if-lib.sh
++
++CHECK_INTERVAL=${CHECK_INTERVAL:-$(($IF_UPDOWN_TIMES / 20))}
++
+ tst_run
+diff --git a/testcases/network/stress/interface/if4-addr-change.sh b/testcases/network/stress/interface/if4-addr-change.sh
+index b9ece2af9..f162e6a51 100755
+--- a/testcases/network/stress/interface/if4-addr-change.sh
++++ b/testcases/network/stress/interface/if4-addr-change.sh
+@@ -9,7 +9,6 @@ TST_CLEANUP="do_cleanup"
+ TST_TESTFUNC="test_body"
+ TST_NEEDS_CMDS="ifconfig"
+ 
+-CHECK_INTERVAL=${CHECK_INTERVAL:-$(($NS_TIMES / 20))}
+ # Maximum host portion of the IPv4 address on the local host
+ LHOST_IPV4_HOST_MAX="254"
+ 
+@@ -61,4 +60,7 @@ test_body()
+ }
+ 
+ . tst_net.sh
++
++CHECK_INTERVAL=${CHECK_INTERVAL:-$(($NS_TIMES / 20))}
++
+ tst_run
+-- 
+2.37.1
+

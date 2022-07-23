@@ -1,0 +1,53 @@
+From cc4a27c235d0cf69a55cd8829b232566b0223333 Mon Sep 17 00:00:00 2001
+From: Petr Vorel <pvorel@suse.cz>
+Date: Wed, 13 Jul 2022 09:46:14 +0200
+Subject: [PATCH] netstress: Restore runtime to 5m
+
+netstress requires the previous default timeout 5m due longer timeout
+for higher message sizes (e.g. 65535):
+
+./sctp_ipsec.sh -6 -p comp -m transport -s 100:1000:65535:R65535
+sctp_ipsec 1 TPASS: netstress passed, median time 5 ms, data: 5 9 6 5 5
+sctp_ipsec 2 TINFO: run server 'netstress -T sctp -S fd00:1:1:1::1 -D ltp_ns_veth1 -R 500000 -B /tmp/LTP_sctp_ipsec.ARZbGkvjPa'
+sctp_ipsec 2 TINFO: run client 'netstress -l -T sctp -H fd00:1:1:1::1 -n 1000 -N 1000 -S fd00:1:1:1::2 -D ltp_ns_veth2 -a 2 -r 100 -d /tmp/LTP_sctp_ipsec.ARZbGkvjPa/tst_netload.res' 5 times
+sctp_ipsec 2 TPASS: netstress passed, median time 6 ms, data: 8 6 6 5 6
+sctp_ipsec 3 TINFO: run server 'netstress -T sctp -S fd00:1:1:1::1 -D ltp_ns_veth1 -R 500000 -B /tmp/LTP_sctp_ipsec.ARZbGkvjPa'
+sctp_ipsec 3 TINFO: run client 'netstress -l -T sctp -H fd00:1:1:1::1 -n 65535 -N 65535 -S fd00:1:1:1::2 -D ltp_ns_veth2 -a 2 -r 100 -d /tmp/LTP_sctp_ipsec.ARZbGkvjPa/tst_netload.res' 5 times
+sctp_ipsec 3 TWARN: netstress failed, ret: 2
+tst_test.c:1526: TINFO: Timeout per run is 0h 00m 30s
+netstress.c:896: TINFO: IP_BIND_ADDRESS_NO_PORT is used
+netstress.c:898: TINFO: connection: addr 'fd00:1:1:1::1', port '55097'
+netstress.c:900: TINFO: client max req: 100
+netstress.c:901: TINFO: clients num: 2
+netstress.c:906: TINFO: client msg size: 65535
+netstress.c:907: TINFO: server msg size: 65535
+netstress.c:979: TINFO: SCTP client
+netstress.c:475: TINFO: Running the test over IPv6
+Test timeouted, sending SIGKILL!
+tst_test.c:1577: TINFO: If you are running on slow machine, try exporting LTP_TIMEOUT_MUL > 1
+tst_test.c:1579: TBROK: Test killed! (timeout?)
+
+Converting netstress.c to use TST_NO_DEFAULT_MAIN (i.e. implementing main)
+would require more changes, because it uses .forks_child, .needs_checkpoints,
+cleanup function.
+
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+[ upstream status: cc4a27c235d0cf69a55cd8829b232566b0223333 ]
+---
+ testcases/network/netstress/netstress.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/testcases/network/netstress/netstress.c b/testcases/network/netstress/netstress.c
+index 6c9e83112..7c222531d 100644
+--- a/testcases/network/netstress/netstress.c
++++ b/testcases/network/netstress/netstress.c
+@@ -1028,5 +1028,6 @@ static struct tst_test test = {
+ 		{"B:", &server_bg, "Run in background, arg is the process directory"},
+ 		{}
+ 	},
++	.max_runtime = 300,
+ 	.needs_checkpoints = 1,
+ };
+-- 
+2.37.1
+
