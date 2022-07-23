@@ -33,7 +33,6 @@ BIND_CONF_ENV = \
 BIND_CONF_OPTS = \
 	--without-cmocka \
 	--without-lmdb \
-	--with-json-c=no \
 	--enable-epoll \
 	--disable-backtrace \
 	--with-openssl=$(STAGING_DIR)/usr
@@ -45,6 +44,13 @@ BIND_CONF_OPTS += --with-zlib
 BIND_DEPENDENCIES += zlib
 else
 BIND_CONF_OPTS += --without-zlib
+endif
+
+ifeq ($(BR2_PACKAGE_JSON_C),y)
+BIND_CONF_OPTS += --with-json-c
+BIND_DEPENDENCIES += json-c
+else
+BIND_CONF_OPTS += --without-json-c
 endif
 
 ifeq ($(BR2_PACKAGE_LIBCAP),y)
