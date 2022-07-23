@@ -135,6 +135,13 @@ ifeq ($(BR2_sparc)$(BR2_sparc64),y)
 HOST_GCC_COMMON_CONF_OPTS += --disable-libsanitizer
 endif
 
+# libsanitizer is available for mips64{el} since gcc 12 but fail to build
+# with n32 ABI due to struct stat64 definition clash due to mixing
+# kernel and user headers.
+ifeq ($(BR2_mips64)$(BR2_mips64el):$(BR2_MIPS_NABI32),y:y)
+HOST_GCC_COMMON_CONF_OPTS += --disable-libsanitizer
+endif
+
 # The logic in libbacktrace/configure.ac to detect if __sync builtins
 # are available assumes they are as soon as target_subdir is not
 # empty, i.e when cross-compiling. However, some platforms do not have
