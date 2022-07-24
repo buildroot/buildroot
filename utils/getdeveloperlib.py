@@ -225,13 +225,13 @@ def parse_developer_runtime_tests(fnames):
     return runtimes
 
 
-def parse_developers():
+def parse_developers(filename=None):
     """Parse the DEVELOPERS file and return a list of Developer objects."""
     developers = []
     linen = 0
     global unittests
     unittests = list_unittests()
-    developers_fname = os.path.join(brpath, 'DEVELOPERS')
+    developers_fname = filename or os.path.join(brpath, 'DEVELOPERS')
     with open(developers_fname, mode='r', encoding='utf_8') as f:
         files = []
         name = None

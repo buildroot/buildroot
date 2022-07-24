@@ -1,0 +1,44 @@
+From 9fb28002bb2ce988b99d1756ff7b902f76e3472a Mon Sep 17 00:00:00 2001
+From: Jan Stancek <jstancek@redhat.com>
+Date: Tue, 21 Jun 2022 10:37:17 +0200
+Subject: [PATCH] syscalls/migrate_pages03: restore runtime to 5m
+
+Arches with large pages have trouble completing all loops in 30s,
+restore runtime to 5m. Also check for remaining runtime and
+exit if we run out.
+
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+Reviewed-by: Cyril Hrubis <chrubis@suse.cz>
+Signed-off-by: Li Wang <liwang@redhat.com>
+[ upstream status: 9fb28002bb2ce988b99d1756ff7b902f76e3472a ]
+---
+ testcases/kernel/syscalls/migrate_pages/migrate_pages03.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/testcases/kernel/syscalls/migrate_pages/migrate_pages03.c b/testcases/kernel/syscalls/migrate_pages/migrate_pages03.c
+index c6afb4cce..2866c96e6 100644
+--- a/testcases/kernel/syscalls/migrate_pages/migrate_pages03.c
++++ b/testcases/kernel/syscalls/migrate_pages/migrate_pages03.c
+@@ -127,6 +127,11 @@ static void migrate_test(void)
+ 			tst_res(TFAIL | TERRNO, "migrate_pages() failed");
+ 			return;
+ 		}
++
++		if (!tst_remaining_runtime()) {
++			tst_res(TINFO, "Out of runtime, exitting...");
++			break;
++		}
+ 	}
+ 	SAFE_SETEUID(0);
+ 
+@@ -134,6 +139,7 @@ static void migrate_test(void)
+ }
+ 
+ static struct tst_test test = {
++	.max_runtime = 300,
+ 	.min_kver = "2.6.32",
+ 	.needs_root = 1,
+ 	.setup = setup,
+-- 
+2.37.1
+

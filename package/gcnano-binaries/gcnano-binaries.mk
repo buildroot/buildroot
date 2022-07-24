@@ -4,12 +4,10 @@
 #
 ################################################################################
 
-GCNANO_BINARIES_LIB_VERSION = 6.4
-GCNANO_BINARIES_LIB_REVISION = 3
-GCNANO_BINARIES_LIB_FULL_VERSION = $(GCNANO_BINARIES_LIB_VERSION).$(GCNANO_BINARIES_LIB_REVISION)
-GCNANO_BINARIES_DRIVER_VERSION = $(GCNANO_BINARIES_LIB_FULL_VERSION)
-GCNANO_BINARIES_USERLAND_VERSION = $(GCNANO_BINARIES_LIB_FULL_VERSION)-20210726
-GCNANO_BINARIES_VERSION = 969d11518529bb70a132909b02ddcc5736c92d91
+GCNANO_BINARIES_LIB_VERSION = 6.4.7
+GCNANO_BINARIES_DRIVER_VERSION = $(GCNANO_BINARIES_LIB_VERSION)
+GCNANO_BINARIES_USERLAND_VERSION = $(GCNANO_BINARIES_LIB_VERSION)-20220524
+GCNANO_BINARIES_VERSION = a20611434ef048d3d0c04f55b6cd7d75a2156d43
 GCNANO_BINARIES_SITE = $(call github,STMicroelectronics,gcnano-binaries,$(GCNANO_BINARIES_VERSION))
 
 GCNANO_BINARIES_LICENSE = MIT, Vivante End User Software License Terms
@@ -44,26 +42,20 @@ GCNANO_BINARIES_MODULE_MAKE_OPTS = \
 	AQROOT=$(@D) \
 	DEBUG=0
 
-GCNANO_BINARIES_LIBRARIES = \
-	libgbm_viv libEGL libGAL libgbm libGLESv1_CM \
-	libGLESv2 libGLSLC libOpenVG libVSC
-
 GCNANO_BINARIES_USERLAND_SUBDIR = gcnano-userland-multi-$(GCNANO_BINARIES_USERLAND_VERSION)
 
-GCNANO_BINARIES_PKG_CONFIGS = egl gbm glesv1_cm glesv2 vg
-
 define GCNANO_BINARIES_INSTALL
-	$(foreach lib,$(GCNANO_BINARIES_LIBRARIES), \
-		$(INSTALL) -D -m 0755 $(@D)/$(GCNANO_BINARIES_USERLAND_SUBDIR)/usr/lib/$(lib).$(GCNANO_BINARIES_LIB_VERSION).multi.release.so \
-			$(1)/usr/lib/$(lib).$(GCNANO_BINARIES_LIB_VERSION).multi.release.so ; \
-		cp -a $(@D)/$(GCNANO_BINARIES_USERLAND_SUBDIR)/usr/lib/$(lib).so* $(1)/usr/lib
-	)
+	cd $(@D)/$(GCNANO_BINARIES_USERLAND_SUBDIR)/release/drivers/ ; \
+	find . -type f -exec $(INSTALL) -D -m 0755 {} $(1)/usr/lib/{} \; ; \
+	find . -type l -exec cp -a {} $(1)/usr/lib \;
 	mkdir -p $(1)/usr/include
-	cp -a $(@D)/$(GCNANO_BINARIES_USERLAND_SUBDIR)/usr/include/* $(1)/usr/include/
-	$(foreach pkgconfig,$(GCNANO_BINARIES_PKG_CONFIGS), \
-		$(INSTALL) -D -m 0644 $(@D)/$(GCNANO_BINARIES_USERLAND_SUBDIR)/usr/lib/pkgconfig/$(pkgconfig).pc \
-			$(1)/usr/lib/pkgconfig/$(pkgconfig).pc
-	)
+	cp -a $(@D)/$(GCNANO_BINARIES_USERLAND_SUBDIR)/release/include/* $(1)/usr/include/
+	ln -sf gbm/gbm.h $(1)/usr/include/gbm.h
+	cd $(@D)/$(GCNANO_BINARIES_USERLAND_SUBDIR)/pkgconfig/ ; \
+	for file in *.pc ; do \
+		sed -e "s|#PREFIX#|/usr|" $$file > $$file.temp ; \
+		$(INSTALL) -D -m 0644 $$file.temp $(1)/usr/lib/pkgconfig/$$file ; \
+	done
 endef
 
 define GCNANO_BINARIES_INSTALL_TARGET_CMDS

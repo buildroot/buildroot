@@ -33,7 +33,6 @@ BIND_CONF_ENV = \
 BIND_CONF_OPTS = \
 	--without-cmocka \
 	--without-lmdb \
-	--with-json-c=no \
 	--enable-epoll \
 	--disable-backtrace \
 	--with-openssl=$(STAGING_DIR)/usr
@@ -47,11 +46,25 @@ else
 BIND_CONF_OPTS += --without-zlib
 endif
 
+ifeq ($(BR2_PACKAGE_JSON_C),y)
+BIND_CONF_OPTS += --with-json-c
+BIND_DEPENDENCIES += json-c
+else
+BIND_CONF_OPTS += --without-json-c
+endif
+
 ifeq ($(BR2_PACKAGE_LIBCAP),y)
 BIND_CONF_OPTS += --enable-linux-caps
 BIND_DEPENDENCIES += libcap
 else
 BIND_CONF_OPTS += --disable-linux-caps
+endif
+
+ifeq ($(BR2_PACKAGE_LIBIDN2),y)
+BIND_CONF_OPTS += --with-libidn2
+BIND_DEPENDENCIES += libidn2
+else
+BIND_CONF_OPTS += --without-libidn2
 endif
 
 ifeq ($(BR2_PACKAGE_LIBKRB5),y)
@@ -78,7 +91,7 @@ endif
 # Used by dnssec-keymgr
 ifeq ($(BR2_PACKAGE_PYTHON_PLY),y)
 BIND_DEPENDENCIES += host-python-ply
-BIND_CONF_OPTS += --with-python=$(HOST_DIR)/usr/bin/python
+BIND_CONF_OPTS += --with-python=$(HOST_DIR)/bin/python
 else
 BIND_CONF_OPTS += --with-python=no
 endif

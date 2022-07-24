@@ -1,0 +1,40 @@
+From: Petr Vorel <petr.vorel@gmail.com>
+Date: Mon, 6 Jun 2022 20:43:19 +0200
+Subject: [PATCH] kvm: Fix compilation on x86
+
+Buildroot supports i386 pentium toolchains (br-i386-pentium-mmx-musl,
+br-i386-pentium4-full) which fail to compile because as is run without --32.
+
+[ upstream status: a471d87ef ("kvm: Fix compilation on x86") ]
+
+Suggested-by: Martin Doucha <mdoucha@suse.cz>
+Reviewed-by: Cyril Hrubis <chrubis@suse.cz>
+Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
+---
+ testcases/kernel/kvm/Makefile | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/testcases/kernel/kvm/Makefile b/testcases/kernel/kvm/Makefile
+index adab56952..8d5193d8e 100644
+--- a/testcases/kernel/kvm/Makefile
++++ b/testcases/kernel/kvm/Makefile
+@@ -17,11 +17,14 @@ FILTER_OUT_MAKE_TARGETS := lib_guest lib_host lib_x86
+ ifeq ($(HOST_CPU),x86_64)
+ 	ifneq (,$(findstring m32,$(CFLAGS)))
+ 		HOST_CPU = x86
+-		GUEST_CFLAGS += -m32
+-		ASFLAGS += --32
+ 	endif
+ endif
+ 
++ifeq ($(HOST_CPU),x86)
++	GUEST_CFLAGS += -m32
++	ASFLAGS += --32
++endif
++
+ # Some distros enable -pie by default. That breaks KVM payload linking.
+ ifdef LTP_CFLAGS_NOPIE
+ 	GUEST_CFLAGS += -fno-pie
+-- 
+2.36.1
+

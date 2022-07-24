@@ -1,0 +1,65 @@
+From 09ce52fe375a6fc1ccf51b6b691aaa2c3f53fbd5 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd.kuhls@t-online.de>
+Date: Fri, 3 Jun 2022 16:26:03 +0200
+Subject: [PATCH] Fix uClibc build
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes build errors with uClibc and gcc-9.3.0:
+
+../src/gallium/drivers/lima/lima_texture.c:47:15: error: expected
+ declaration specifiers or ‘...’ before ‘__builtin_offsetof’
+   47 | static_assert(offsetof(lima_tex_desc, va) == 24,
+ "lima_tex_desc->va offset isn't 24");
+
+../src/egl/main/egldisplay.c: In function ‘_eglGetNativePlatformFromEnv’:
+ ../src/egl/main/egldisplay.c:101:4: error: implicit declaration of
+ function ‘static_assert’ [-Werror=implicit-function-declaration] 101 |
+ static_assert(ARRAY_SIZE(egl_platforms) == _EGL_NUM_PLATFORMS,
+
+Patch sent upstream:
+https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13898
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ src/egl/main/egldisplay.c |  1 +
+ src/util/compiler.h       | 10 ++++++++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/src/egl/main/egldisplay.c b/src/egl/main/egldisplay.c
+index 131fc22786f9..d3e2bb96e2f6 100644
+--- a/src/egl/main/egldisplay.c
++++ b/src/egl/main/egldisplay.c
+@@ -42,6 +42,7 @@
+ #endif
+ #include <fcntl.h>
+ #include "c11/threads.h"
++#include "util/compiler.h"
+ #include "util/macros.h"
+ #include "util/os_file.h"
+ #include "util/u_atomic.h"
+diff --git a/src/util/compiler.h b/src/util/compiler.h
+index d184ad455af9..b5c56807acc6 100644
+--- a/src/util/compiler.h
++++ b/src/util/compiler.h
+@@ -36,6 +36,16 @@
+ 
+ #include <assert.h>
+ 
++/*
++ * C11 static_assert() macro
++ * assert.h only defines that name for C11 and above
++ */
++#if !defined(__cplusplus)
++#ifndef static_assert
++#define static_assert _Static_assert
++#endif
++#endif
++
+ #include "util/macros.h"
+ 
+ 
+-- 
+GitLab
+

@@ -4,22 +4,25 @@
 #
 ################################################################################
 
-LIBEST_VERSION = 3.2.0
-LIBEST_SITE = $(call github,cisco,libest,r$(LIBEST_VERSION))
+LIBEST_VERSION = f8a6e5b53a5f70e72fe4029981df0693b17cbb32
+LIBEST_SITE = $(call github,cisco,libest,$(LIBEST_VERSION))
 # We don't build examples, so we're not affected by the OpenSSL
 # license
 LIBEST_LICENSE = BSD-3-Clause, MIT, W3C
 LIBEST_LICENSE_FILES = LICENSE
 LIBEST_INSTALL_STAGING = YES
 LIBEST_AUTORECONF = YES
-LIBEST_DEPENDENCIES = openssl host-pkgconf
+LIBEST_DEPENDENCIES = openssl host-pkgconf safeclib
 # libcoap support is explicitly disabled because it breaks the build
+# libsafec support is explicitly enabled because we want to avoid
+# possible hidden use of bundled copy of library.
 LIBEST_CONF_OPTS = \
 	--with-ssl-dir=$(STAGING_DIR)/usr \
 	$(if $(BR2_TOOLCHAIN_HAS_THREADS),--enable-pthreads,--disable-pthreads) \
 	$(if $(BR2_PACKAGE_LIBEST_BRSKI),--enable-brski,--disable-brski) \
 	--disable-examples \
-	--without-libcoap-dir
+	--without-libcoap-dir \
+	--with-system-libsafec
 
 ifeq ($(BR2_PACKAGE_LIBEXECINFO),y)
 LIBEST_DEPENDENCIES += libexecinfo
@@ -53,13 +56,6 @@ LIBEST_CONF_OPTS += --with-uriparser-dir=$(STAGING_DIR)/usr
 LIBEST_DEPENDENCIES += liburiparser
 else
 LIBEST_CONF_OPTS += --without-uriparser-dir
-endif
-
-ifeq ($(BR2_PACKAGE_SAFECLIB),y)
-LIBEST_CONF_OPTS += --with-system-libsafec
-LIBEST_DEPENDENCIES += safeclib
-else
-LIBEST_CONF_OPTS += --without-system-libsafec
 endif
 
 define LIBEST_INSTALL_PC

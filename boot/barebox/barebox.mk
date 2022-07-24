@@ -17,7 +17,7 @@ define inner-barebox-package
 
 $(1)_VERSION = $$(call qstrip,$$(BR2_TARGET_BAREBOX_VERSION))
 
-ifeq ($$($(1)_VERSION),custom)
+ifeq ($$(BR2_TARGET_BAREBOX_CUSTOM_TARBALL),y)
 # Handle custom Barebox tarballs as specified by the configuration
 $(1)_TARBALL = $$(call qstrip,$$(BR2_TARGET_BAREBOX_CUSTOM_TARBALL_LOCATION))
 $(1)_SITE = $$(patsubst %/,%,$$(dir $$($(1)_TARBALL)))

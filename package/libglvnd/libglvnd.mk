@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-LIBGLVND_VERSION = 1.3.2
-LIBGLVND_SOURCE = libglvnd-v$(LIBGLVND_VERSION).tar.gz
-LIBGLVND_SITE = https://gitlab.freedesktop.org/glvnd/libglvnd/-/archive/v$(LIBGLVND_VERSION)
+LIBGLVND_VERSION = 1.4.0
+LIBGLVND_SITE = https://gitlab.freedesktop.org/glvnd/libglvnd/uploads/ca5bf4295beb39bb324f692c481ac8a1
 
 LIBGLVND_LICENSE = \
 	libglvnd license, \

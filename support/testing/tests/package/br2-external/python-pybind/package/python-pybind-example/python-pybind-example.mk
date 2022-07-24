@@ -10,7 +10,7 @@
 PYTHON_PYBIND_EXAMPLE_DEPENDENCIES = python-pybind
 
 PYTHON_PYBIND_EXAMPLE_PYBIND_INCLUDE = \
-	$(shell $(HOST_DIR)/usr/bin/python3 -c 'import pybind11; print(pybind11.get_include())')
+	$(shell $(HOST_DIR)/bin/python3 -c 'import pybind11; print(pybind11.get_include())')
 
 PYTHON_PYBIND_EXAMPLE_CXX_FLAGS = \
 	$(TARGET_CXXFLAGS) \

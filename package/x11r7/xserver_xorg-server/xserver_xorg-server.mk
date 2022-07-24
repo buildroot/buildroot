@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XSERVER_XORG_SERVER_VERSION = 21.1.3
+XSERVER_XORG_SERVER_VERSION = 21.1.4
 XSERVER_XORG_SERVER_SOURCE = xorg-server-$(XSERVER_XORG_SERVER_VERSION).tar.xz
 XSERVER_XORG_SERVER_SITE = https://xorg.freedesktop.org/archive/individual/xserver
 XSERVER_XORG_SERVER_LICENSE = MIT
@@ -45,7 +45,6 @@ XSERVER_XORG_SERVER_CONF_OPTS = \
 	--disable-config-hal \
 	--enable-record \
 	--disable-xnest \
-	--disable-dmx \
 	--disable-unit-tests \
 	--with-builder-addr=buildroot@buildroot.org \
 	CFLAGS="$(TARGET_CFLAGS) -I$(STAGING_DIR)/usr/include/pixman-1 -O2" \
@@ -84,6 +83,13 @@ XSERVER_XORG_SERVER_CONF_OPTS += \
 	--disable-glx \
 	--disable-dri
 
+ifeq ($(BR2_PACKAGE_XSERVER_XORG_SERVER_XEPHYR),y)
+XSERVER_XORG_SERVER_DEPENDENCIES += \
+	xcb-util-image \
+	xcb-util-keysyms \
+	xcb-util-renderutil \
+	xcb-util-wm
+endif
 else # modular
 XSERVER_XORG_SERVER_CONF_OPTS += --disable-kdrive
 endif
@@ -156,10 +162,6 @@ XSERVER_XORG_SERVER_DEPENDENCIES += xlib_libXScrnSaver
 XSERVER_XORG_SERVER_CONF_OPTS += --enable-screensaver
 else
 XSERVER_XORG_SERVER_CONF_OPTS += --disable-screensaver
-endif
-
-ifneq ($(BR2_PACKAGE_XLIB_LIBDMX),y)
-XSERVER_XORG_SERVER_CONF_OPTS += --disable-dmx
 endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)

@@ -24,7 +24,7 @@ OLA_CONF_OPTS = \
 	--disable-root-check \
 	--disable-tcmalloc \
 	--disable-unittests \
-	--with-ola-protoc-plugin=$(HOST_DIR)/usr/bin/ola_protoc_plugin
+	--with-ola-protoc-plugin=$(HOST_DIR)/bin/ola_protoc_plugin
 
 HOST_OLA_DEPENDENCIES = host-util-linux host-protobuf host-bison host-flex
 
@@ -47,7 +47,7 @@ HOST_OLA_CONF_OPTS = \
 # only.
 HOST_OLA_MAKE_OPTS = protoc/ola_protoc_plugin
 define HOST_OLA_INSTALL_CMDS
-	$(INSTALL) -D -m 0755 $(@D)/protoc/ola_protoc_plugin $(HOST_DIR)/usr/bin/ola_protoc_plugin
+	$(INSTALL) -D -m 0755 $(@D)/protoc/ola_protoc_plugin $(HOST_DIR)/bin/ola_protoc_plugin
 endef
 
 # sets where to find python libs built for target and required by ola

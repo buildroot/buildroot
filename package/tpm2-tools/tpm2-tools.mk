@@ -20,4 +20,10 @@ TPM2_TOOLS_CONF_OPTS = --disable-hardening
 # do not build man pages
 TPM2_TOOLS_CONF_ENV += ac_cv_prog_PANDOC=''
 
+ifeq ($(BR2_PACKAGE_TPM2_TOOLS_FAPI),y)
+TPM2_TOOLS_CONF_OPTS += --enable-fapi
+else
+TPM2_TOOLS_CONF_OPTS += --disable-fapi
+endif
+
 $(eval $(autotools-package))

@@ -20,9 +20,9 @@ DBUS_PYTHON_CONF_ENV = \
 
 HOST_DBUS_PYTHON_CONF_ENV = \
 	PYTHON=$(HOST_DIR)/bin/python3 \
-	PYTHON_INCLUDES="`$(HOST_DIR)/usr/bin/python3-config --includes`" \
-	PYTHON_LIBS="`$(HOST_DIR)/usr/bin/python3-config --ldflags`" \
-	PYTHON_EXTRA_LIBS="`$(HOST_DIR)/usr/bin/python3-config --libs --embed`"
+	PYTHON_INCLUDES="`$(HOST_DIR)/bin/python3-config --includes`" \
+	PYTHON_LIBS="`$(HOST_DIR)/bin/python3-config --ldflags`" \
+	PYTHON_EXTRA_LIBS="`$(HOST_DIR)/bin/python3-config --libs --embed`"
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))

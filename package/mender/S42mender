@@ -5,7 +5,7 @@
 DAEMON="mender"
 DAEMON_PATH="/usr/bin/mender"
 PIDFILE="/var/run/${DAEMON}.pid"
-DAEMON_ARGS="-daemon"
+DAEMON_ARGS="daemon"
 
 start() {
 	# If /var/lib/mender is a symlink to /var/run/mender, and

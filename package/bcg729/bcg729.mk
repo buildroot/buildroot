@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-BCG729_VERSION = 1.0.4
+BCG729_VERSION = 1.1.1
 BCG729_SITE = $(call github,BelledonneCommunications,bcg729,$(BCG729_VERSION))
-BCG729_LICENSE = GPL-2.0+
-BCG729_LICENSE_FILES = COPYING
+BCG729_LICENSE = GPL-3.0+
+BCG729_LICENSE_FILES = LICENSE.txt
 BCG729_INSTALL_STAGING = YES
 
 ifeq ($(BR2_STATIC_LIBS),y)

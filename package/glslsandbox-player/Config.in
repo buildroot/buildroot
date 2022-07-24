@@ -2,9 +2,6 @@ config BR2_PACKAGE_GLSLSANDBOX_PLAYER
 	bool "glslsandbox-player"
 	depends on BR2_PACKAGE_HAS_LIBEGL
 	depends on BR2_PACKAGE_HAS_LIBGLES
-	# Doesn't really depend on threads, but this makes sure we have at least
-	# one native windowing system available, and is good enough in practice.
-	depends on BR2_TOOLCHAIN_HAS_THREADS
 	help
 	  GLSL Sandbox standalone player allow one to run and render
 	  (most of) nice shaders available online on the
@@ -65,9 +62,15 @@ choice
 	help
 	  Select the native windowing system you wish to use.
 
+config BR2_PACKAGE_GLSLSANDBOX_PLAYER_NULL
+	bool "NullWS"
+	help
+	  Enable Null Windowing System
+
 config BR2_PACKAGE_GLSLSANDBOX_PLAYER_KMS
 	bool "KMS/DRM/GBM"
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libdrm
+	depends on BR2_PACKAGE_HAS_LIBGBM
 	select BR2_PACKAGE_LIBDRM
 
 config BR2_PACKAGE_GLSLSANDBOX_PLAYER_MALI
@@ -112,6 +115,5 @@ endif
 
 endif
 
-comment "glslsandbox-player needs a toolchain w/ threads and an openGL ES and EGL driver"
-	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
-		!BR2_PACKAGE_HAS_LIBEGL || !BR2_PACKAGE_HAS_LIBGLES
+comment "glslsandbox-player needs openGL ES and EGL driver"
+	depends on !BR2_PACKAGE_HAS_LIBEGL || !BR2_PACKAGE_HAS_LIBGLES

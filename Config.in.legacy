@@ -146,13 +146,42 @@ endif
 
 comment "Legacy options removed in 2022.08"
 
+config BR2_PACKAGE_MESA3D_DRI_DRIVER_I915
+	bool "mesa DRI i915 driver removed"
+	select BR2_LEGACY
+	help
+	  The DRI i915 driver was removed upstream.
+
+config BR2_PACKAGE_MESA3D_DRI_DRIVER_I965
+	bool "mesa DRI i965 driver removed"
+	select BR2_LEGACY
+	help
+	  The DRI i965 driver was removed upstream.
+
+config BR2_PACKAGE_MESA3D_DRI_DRIVER_NOUVEAU
+	bool "mesa DRI nouveau driver removed"
+	select BR2_LEGACY
+	help
+	  The DRI radeon nouveau was removed upstream.
+
+config BR2_PACKAGE_MESA3D_DRI_DRIVER_RADEON
+	bool "mesa DRI radeon r100 driver removed"
+	select BR2_LEGACY
+	help
+	  The DRI radeon r100 driver was removed upstream.
+
+config BR2_GCC_VERSION_9_X
+	bool "gcc 9.x support removed"
+	select BR2_LEGACY
+	help
+	  Support for gcc version 9.x has been removed. The current
+	  default version (11.x or later) has been selected instead.
+
 config BR2_PACKAGE_PHP_EXT_WDDX
 	bool "php wddx removed"
 	select BR2_LEGACY
 	help
 	  The WDDX extension was removed from php.
-
-comment "Legacy options removed in 2022.08"
 
 config BR2_nds32
 	bool "nds32 architecture removed"
@@ -162,8 +191,6 @@ config BR2_nds32
 	  its support being removed from the upstream Linux kernel,
 	  and its lack of maintenance in Buildroot.
 
-comment "Legacy options removed in 2022.05"
-
 config BR2_PACKAGE_RTL8723BS
 	bool "rtl8723bs removed"
 	select BR2_LEGACY
@@ -171,6 +198,8 @@ config BR2_PACKAGE_RTL8723BS
 	  Package was removed because it is not compatible with latest
 	  kernels and is not maintained anymore: code has been removed
 	  in 2017 as driver is available in the linux-next tree.
+
+comment "Legacy options removed in 2022.05"
 
 config BR2_PACKAGE_KTAP
 	bool "ktap removed"

@@ -632,6 +632,17 @@ F:	package/log4cpp/
 
 N:	Damien Le Moal <damien.lemoal@wdc.com>
 F:	package/python-kflash/
+F:	board/canaan/
+F:	configs/canaan_kd233_defconfig
+F:	board/sipeed/
+F:	configs/sipeed_maix_bit_defconfig
+F:	configs/sipeed_maix_bit_sdcard_defconfig
+F:	configs/sipeed_maixduino_defconfig
+F:	configs/sipeed_maixduino_sdcard_defconfig
+F:	configs/sipeed_maix_dock_defconfig
+F:	configs/sipeed_maix_dock_sdcard_defconfig
+F:	configs/sipeed_maix_go_defconfig
+F:	configs/sipeed_maix_go_sdcard_defconfig
 
 N:	Daniel Nicoletti <dantti12@gmail.com>
 F:	package/cutelyst/
@@ -1337,7 +1348,9 @@ F:	package/python-greenlet/
 F:	package/python-installer/
 F:	package/python-janus/
 F:	package/python-logstash/
+F:	package/python-maturin/
 F:	package/python-multidict/
+F:	package/python-mypy-extensions/
 F:	package/python-pep517/
 F:	package/python-pycares/
 F:	package/python-pydyf/
@@ -1348,6 +1361,8 @@ F:	package/python-sockjs/
 F:	package/python-terminaltables/
 F:	package/python-tinycss2/
 F:	package/python-tomli/
+F:	package/python-typeguard/
+F:	package/python-typing-inspect/
 F:	package/python-weasyprint/
 F:	package/python-yarl/
 F:	package/python-zopfli/
@@ -1543,8 +1558,10 @@ F:	support/testing/tests/package/test_zfs.py
 N:	José Pekkarinen <jose.pekkarinen@unikie.com>
 F:	package/alfred/
 F:	package/bmx7/
+F:	package/opensc/
 F:	package/python-aexpect/
 F:	package/python-alembic/
+F:	package/python-lark/
 F:	package/softhsm2/
 F:	support/testing/tests/package/sample_python_aexpect.py
 F:	support/testing/tests/package/test_python_aexpect.py
@@ -2081,9 +2098,6 @@ F:	configs/bananapi_m2_plus_defconfig
 N:	Mikhail Boiko <mikhailboiko85@gmail.com>
 F:	package/libfribidi/
 
-N:	Min Xu <xuminready@gmail.com>
-F:	package/shadowsocks-libev/
-
 N:	Miquèl Raynal <miquel.raynal@bootlin.com>
 F:	package/mali-driver/
 F:	package/rockchip-mali/
@@ -2252,7 +2266,6 @@ F:	boot/sun20i-d1-spl/
 F:	configs/avenger96_defconfig
 F:	configs/beagleboneai_defconfig
 F:	configs/lafrite_defconfig
-F:	configs/minnowboard_max-graphical_defconfig
 F:	configs/minnowboard_max_defconfig
 F:	configs/nexbox_a95x_defconfig
 F:	configs/nezha_defconfig
@@ -2314,6 +2327,7 @@ F:	package/libcamera-apps/
 F:	package/libevdev/
 F:	package/libuev/
 F:	package/log4cplus/
+F:	package/ntpsec/
 F:	package/postgresql/
 F:	package/python-colorzero/
 F:	package/python-flask-wtf/
@@ -2435,8 +2449,12 @@ F:	package/python-jmespath/
 F:	package/python-pymupdf/
 F:	package/python-rsa/
 F:	package/python-s3transfer/
+F:	support/testing/tests/package/sample_python_jmespath.py
 F:	support/testing/tests/package/sample_python_rsa.py
+F:	support/testing/tests/package/sample_python_s3transfer.py
+F:	support/testing/tests/package/test_python_jmespath.py
 F:	support/testing/tests/package/test_python_rsa.py
+F:	support/testing/tests/package/test_python_s3transfer.py
 
 N:	Refik Tuzakli <tuzakli.refik@gmail.com>
 F:	package/freescale-imx/
@@ -2564,6 +2582,10 @@ F:	package/fmt/
 F:	package/libbson/
 F:	package/lua-resty-http/
 F:	package/mpir/
+
+N:	Sen Hastings <sen@phobosdpl.com>
+F:	package/systemd
+F:	support/scripts/pkg-stats
 
 N:	Sergey Bobrenok <bobrofon@gmail.com>
 F:	package/sdbus-cpp/
@@ -2854,6 +2876,8 @@ F:	package/squashfs/
 F:	package/tinifier/
 F:	package/wayland/
 F:	package/weston/
+F:	support/testing/tests/boot/test_grub.py
+F:	support/testing/tests/boot/test_grub/
 F:	support/testing/tests/boot/test_syslinux.py
 F:	support/testing/tests/package/sample_python_augeas.py
 F:	support/testing/tests/package/sample_python_flask.py

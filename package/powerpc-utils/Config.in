@@ -1,12 +1,17 @@
 comment "powerpc-utils tools needs a toolchain w/ dynamic library"
 	depends on BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le
 	depends on BR2_STATIC_LIBS
+	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC
 
 config BR2_PACKAGE_POWERPC_UTILS
 	bool "powerpc-utils"
 	depends on !BR2_STATIC_LIBS # dlfcn.h
 	depends on BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le
+	depends on BR2_USE_MMU # numactl
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC # numactl
 	select BR2_PACKAGE_ZLIB
+	select BR2_PACKAGE_NUMACTL
 	help
 	  System utilities for PowerPC machines.
 
@@ -16,7 +21,6 @@ if BR2_PACKAGE_POWERPC_UTILS
 
 config BR2_PACKAGE_POWERPC_UTILS_RTAS
 	bool "RTAS support"
-	depends on BR2_TOOLCHAIN_USES_GLIBC
 	select BR2_PACKAGE_LIBRTAS
 	help
 	  Enable support for functions that require RTAS.
@@ -27,8 +31,5 @@ config BR2_PACKAGE_POWERPC_UTILS_RTAS
 	  ppc64_cpu --run-mode, uesensor, set_poweron_time, drmgr,
 	  lsslot, activate_firmware, rtas_ibm_get_vpd, serv_config,
 	  rtas_event_decode, sys_ident.
-
-comment "RTAS support needs a glibc toolchain"
-	depends on !BR2_TOOLCHAIN_USES_GLIBC
 
 endif

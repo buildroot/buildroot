@@ -1,0 +1,100 @@
+From df2dd474c73982e89d0ed71951ff723eb7060ce6 Mon Sep 17 00:00:00 2001
+From: Erik Faye-Lund <erik.faye-lund@collabora.com>
+Date: Wed, 1 Jun 2022 13:38:39 +0200
+Subject: include: drop c11_compat.h
+
+We now require C11, and C++ supports static_assert just fine, which is
+the only thing this header ever added support for. So let's get rid of
+this needless header.
+
+Reviewed-by: Jesse Natalie <jenatali@microsoft.com>
+Reviewed-by: Alyssa Rosenzweig <alyssa@collabora.com>
+Reviewed-by: Eric Engestrom <eric@engestrom.ch>
+Part-of: <https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/16812>
+
+Downloaded from upstream commit
+https://cgit.freedesktop.org/mesa/mesa/commit/?id=df2dd474c73982e89d0ed71951ff723eb7060ce6
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ include/c11_compat.h                    | 27 ---------------------------
+ src/amd/common/ac_sqtt.h                |  1 -
+ src/imagination/vulkan/pvr_cmd_buffer.c |  1 -
+ src/util/macros.h                       |  3 ---
+ 4 files changed, 32 deletions(-)
+ delete mode 100644 include/c11_compat.h
+
+diff --git a/include/c11_compat.h b/include/c11_compat.h
+deleted file mode 100644
+index d35740f47a4..00000000000
+--- a/include/c11_compat.h
++++ /dev/null
+@@ -1,27 +0,0 @@
+-/* Copyright 2019 Intel Corporation */
+-/* SPDX-License-Identifier: MIT */
+-
+-#include "no_extern_c.h"
+-
+-#ifndef _C11_COMPAT_H_
+-#define _C11_COMPAT_H_
+-
+-#if defined(__cplusplus)
+-   /* This is C++ code, not C */
+-#elif (__STDC_VERSION__ >= 201112L)
+-   /* Already C11 */
+-#else
+-
+-
+-/*
+- * C11 static_assert() macro
+- * assert.h only defines that name for C11 and above
+- */
+-#ifndef static_assert
+-#define static_assert _Static_assert
+-#endif
+-
+-
+-#endif /* !C++ && !C11 */
+-
+-#endif /* _C11_COMPAT_H_ */
+diff --git a/src/amd/common/ac_sqtt.h b/src/amd/common/ac_sqtt.h
+index 55130aa2221..05798b7e1da 100644
+--- a/src/amd/common/ac_sqtt.h
++++ b/src/amd/common/ac_sqtt.h
+@@ -30,7 +30,6 @@
+ #include <stdbool.h>
+ 
+ #include <assert.h>
+-#include "c11_compat.h"
+ #include "ac_rgp.h"
+ 
+ struct radeon_cmdbuf;
+diff --git a/src/imagination/vulkan/pvr_cmd_buffer.c b/src/imagination/vulkan/pvr_cmd_buffer.c
+index 0afd463e2fb..4fe224f481d 100644
+--- a/src/imagination/vulkan/pvr_cmd_buffer.c
++++ b/src/imagination/vulkan/pvr_cmd_buffer.c
+@@ -29,7 +29,6 @@
+ #include <string.h>
+ #include <vulkan/vulkan.h>
+ 
+-#include "c11_compat.h"
+ #include "hwdef/rogue_hw_defs.h"
+ #include "hwdef/rogue_hw_utils.h"
+ #include "pvr_bo.h"
+diff --git a/src/util/macros.h b/src/util/macros.h
+index a5dc4846211..dd8af86bcf8 100644
+--- a/src/util/macros.h
++++ b/src/util/macros.h
+@@ -26,9 +26,6 @@
+ 
+ #include <stdio.h>
+ #include <assert.h>
+-
+-#include "c11_compat.h"
+-
+ #include <stdint.h>
+ 
+ /* Compute the size of an array */
+-- 
+cgit v1.2.1
+

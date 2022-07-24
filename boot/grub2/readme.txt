@@ -86,17 +86,14 @@ Notes on using Grub2 for x86/x86_64 EFI-based platforms
 To test your i386/x86-64 EFI image in Qemu
 ------------------------------------------
 
-1. Download the EFI BIOS for Qemu
-   Version IA32 or X64 depending on the chosen Grub2
-   platform (i386-efi vs. x86-64-efi)
-   https://www.kraxel.org/repos/jenkins/edk2/
-   (or use one provided by your distribution as OVMF)
-2. Extract, and rename OVMF.fd to bios.bin and
-   CirrusLogic5446.rom to vgabios-cirrus.bin.
-3. qemu-system-{i386,x86-64} -L ovmf-dir/ -hda disk.img
-4. Make sure to pass pci=nocrs to the kernel command line,
-   to workaround a bug in the EFI BIOS regarding the
-   EFI framebuffer.
+1. Download/install the EFI BIOS for Qemu
+   You can get it using the edk2 package in Buildroot (installed
+   in BINARIES_DIR), grab prebuilt images from the unofficial nightly
+   builds [0], or use one provided by your distribution as OVMF.
+
+   [0] https://github.com/retrage/edk2-nightly
+
+2. qemu-system-{i386,x86-64} -bios <path-to-OVMF.fd> -hda disk.img
 
 Notes on using Grub2 for ARM u-boot-based platforms
 ===================================================
@@ -177,8 +174,13 @@ using qemu and EFI firmware built for qemu.
  2. make
 
  3. Download the EFI firmware for qemu aarch64
-    https://www.kraxel.org/repos/jenkins/edk2/
-    (or use one provided by your distribution as OVMF-aarch64 or AAVMF)
+
+    You can get it using the edk2 package in Buildroot (installed
+    in BINARIES_DIR), grab prebuilt images from the unofficial nightly
+    builds [1], or use one provided by your distribution as OVMF-aarch64
+    or AAVMF.
+
+    [1] https://github.com/retrage/edk2-nightly
 
  4. Run qemu with:
 
