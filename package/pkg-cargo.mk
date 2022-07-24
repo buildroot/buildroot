@@ -57,7 +57,8 @@ ifeq ($(NORMALIZED_ARCH),arm)
 endif
 
 HOST_PKG_CARGO_ENV = \
-	$(PKG_COMMON_CARGO_ENV)
+	$(PKG_COMMON_CARGO_ENV) \
+	RUSTFLAGS="$(addprefix -C link-args=,$(HOST_LDFLAGS))"
 
 ################################################################################
 # inner-cargo-package -- defines how the configuration, compilation and
@@ -130,7 +131,6 @@ else # ifeq ($(4),target)
 define $(2)_BUILD_CMDS
 	cd $$($$(PKG)_SRCDIR) && \
 	$$(HOST_MAKE_ENV) \
-		RUSTFLAGS="$$(addprefix -C link-args=,$$(HOST_LDFLAGS))" \
 		$$(HOST_CONFIGURE_OPTS) \
 		$$(HOST_PKG_CARGO_ENV) \
 		$$($(2)_CARGO_ENV) \
@@ -171,7 +171,6 @@ ifndef $(2)_INSTALL_CMDS
 define $(2)_INSTALL_CMDS
 	cd $$($$(PKG)_SRCDIR) && \
 	$$(HOST_MAKE_ENV) \
-		RUSTFLAGS="$$(addprefix -C link-args=,$$(HOST_LDFLAGS))" \
 		$$(HOST_CONFIGURE_OPTS) \
 		$$(HOST_PKG_CARGO_ENV) \
 		$$($(2)_CARGO_ENV) \
