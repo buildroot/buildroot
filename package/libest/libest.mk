@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBEST_VERSION = 3.2.0
-LIBEST_SITE = $(call github,cisco,libest,r$(LIBEST_VERSION))
+LIBEST_VERSION = f8a6e5b53a5f70e72fe4029981df0693b17cbb32
+LIBEST_SITE = $(call github,cisco,libest,$(LIBEST_VERSION))
 # We don't build examples, so we're not affected by the OpenSSL
 # license
 LIBEST_LICENSE = BSD-3-Clause, MIT, W3C
