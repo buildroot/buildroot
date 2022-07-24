@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XLIB_LIBXCVT_VERSION = 0.1.1
+XLIB_LIBXCVT_VERSION = 0.1.2
 XLIB_LIBXCVT_SOURCE = libxcvt-$(XLIB_LIBXCVT_VERSION).tar.xz
 XLIB_LIBXCVT_SITE = https://xorg.freedesktop.org/releases/individual/lib
 XLIB_LIBXCVT_LICENSE = MIT
