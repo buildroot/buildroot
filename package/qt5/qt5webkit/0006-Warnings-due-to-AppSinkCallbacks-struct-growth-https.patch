@@ -1,0 +1,39 @@
+From 53d5bbf4d597a2fcb26149fab3185a3db09529af Mon Sep 17 00:00:00 2001
+From: Philippe Normand <pnormand@igalia.com>
+Date: Fri, 23 Jul 2021 15:38:29 +0000
+Subject: [PATCH] Warnings due to AppSinkCallbacks struct growth
+ https://bugs.webkit.org/show_bug.cgi?id=228229
+
+Patch by Philippe Normand <pnormand@igalia.com> on 2021-07-23
+Reviewed by Xabier Rodriguez-Calvar.
+
+A new callback was added, for event notifications.
+
+Canonical link: https://commits.webkit.org/239911@main
+git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280243268f45cc-cd09-0410-ab3c-d52691b4dbfc
+[Thomas: backported from upstream, only the part touching
+Source/WebCore/platform/audio/gstreamer/AudioFileReaderGStreamer.cpp
+as other parts are not relevant]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ .../platform/audio/gstreamer/AudioFileReaderGStreamer.cpp     | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Source/WebCore/platform/audio/gstreamer/AudioFileReaderGStreamer.cpp b/Source/WebCore/platform/audio/gstreamer/AudioFileReaderGStreamer.cpp
+index 2f24c0cf5..dd9d91cf3 100644
+--- a/Source/WebCore/platform/audio/gstreamer/AudioFileReaderGStreamer.cpp
++++ b/Source/WebCore/platform/audio/gstreamer/AudioFileReaderGStreamer.cpp
+@@ -230,6 +230,10 @@ void AudioFileReader::handleNewDeinterleavePad(GstPad* pad)
+         [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
+             return static_cast<AudioFileReader*>(userData)->handleSample(sink);
+         },
++#if GST_CHECK_VERSION(1, 19, 1)
++        // new_event
++        nullptr,
++#endif
+         { nullptr }
+     };
+     gst_app_sink_set_callbacks(GST_APP_SINK(sink), &callbacks, this, 0);
+-- 
+2.37.1
+
