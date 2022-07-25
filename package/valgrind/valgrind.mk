@@ -52,7 +52,7 @@ VALGRIND_CONF_OPTS += \
 	--host=$(patsubst arm-%,armv7-%,$(GNU_TARGET_NAME))
 endif
 
-ifeq ($(BR2_GCC_ENABLE_LTO),y)
+ifeq ($(BR2_ENABLE_LTO),y)
 VALGRIND_CONF_OPTS += --enable-lto
 else
 VALGRIND_CONF_OPTS += --disable-lto

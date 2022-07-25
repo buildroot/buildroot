@@ -23,7 +23,7 @@ NETDATA_DEPENDENCIES = libuv util-linux zlib
 # provided by autoconf relies on wchar_t.
 NETDATA_CONF_ENV = ac_cv_prog_cc_c99=-std=gnu99
 
-ifeq ($(BR2_GCC_ENABLE_LTO),y)
+ifeq ($(BR2_ENABLE_LTO),y)
 NETDATA_CONF_OPTS += --enable-lto
 else
 NETDATA_CONF_OPTS += --disable-lto
