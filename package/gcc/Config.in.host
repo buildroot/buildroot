@@ -130,12 +130,6 @@ config BR2_TOOLCHAIN_BUILDROOT_DLANG
 	  D language and you want D libraries to be installed on your
 	  target system.
 
-config BR2_GCC_ENABLE_LTO
-	bool "Enable compiler link-time-optimization support"
-	help
-	  This option enables link-time optimization (LTO) support in
-	  gcc.
-
 config BR2_GCC_ENABLE_OPENMP
 	bool "Enable compiler OpenMP support"
 	depends on !BR2_PTHREADS_NONE && !BR2_arc && !BR2_microblaze
