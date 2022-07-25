@@ -13,6 +13,7 @@ PULSEAUDIO_LICENSE_FILES = LICENSE GPL LGPL
 PULSEAUDIO_CPE_ID_VENDOR = pulseaudio
 PULSEAUDIO_SELINUX_MODULES = pulseaudio xdg
 PULSEAUDIO_CONF_OPTS = \
+	-Ddoxygen=false \
 	-Dlegacy-database-entry-format=false \
 	-Dman=false \
 	-Drunning-from-build-tree=false \
