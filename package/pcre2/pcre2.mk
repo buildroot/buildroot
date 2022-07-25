@@ -28,5 +28,8 @@ ifeq ($(BR2_USE_MMU),)
 PCRE2_CONF_OPTS += --disable-pcre2grep-callout
 endif
 
+# needed for qt6base
+HOST_PCRE2_CONF_OPTS = --enable-pcre2-16
+
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
