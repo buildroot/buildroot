@@ -125,3 +125,12 @@ if(@@TOOLCHAIN_HAS_FORTRAN@@)
     set(CMAKE_Fortran_COMPILER "${RELOCATED_HOST_DIR}/@@TARGET_FC@@")
   endif()
 endif()
+
+# For Qt6
+if(NOT DEFINED QT_HOST_PATH)
+  set(QT_HOST_PATH "${RELOCATED_HOST_DIR}")
+endif()
+
+if(NOT DEFINED QT_HOST_PATH_CMAKE_DIR)
+  set(QT_HOST_PATH_CMAKE_DIR "${RELOCATED_HOST_DIR}/lib/cmake")
+endif()
