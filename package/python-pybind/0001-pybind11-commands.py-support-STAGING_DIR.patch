@@ -12,16 +12,16 @@ the current directory, if it is set.
 
 Signed-off-by: Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>
 Upstream-Status: N/A, Buildroot specific
+Signed-off-by: Guillaume W. Bres <guillaume.bressaix@gmail.com>
 ---
  pybind11/commands.py | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/pybind11/commands.py b/pybind11/commands.py
-index 11f81d2..8c4876d 100644
+index a29c8ca..de8a27c 100644
 --- a/pybind11/commands.py
 +++ b/pybind11/commands.py
-@@ -1,7 +1,8 @@
- # -*- coding: utf-8 -*-
+@@ -1,6 +1,7 @@
  import os
  
 -DIR = os.path.abspath(os.path.dirname(__file__))
@@ -29,7 +29,7 @@ index 11f81d2..8c4876d 100644
 +    os.path.abspath(os.path.dirname(__file__))
  
  
- def get_include(user=False):
+ def get_include(user: bool = False) -> str:  # pylint: disable=unused-argument
 -- 
 2.31.1
 

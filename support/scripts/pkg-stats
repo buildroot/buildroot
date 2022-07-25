@@ -92,6 +92,11 @@ class Package:
         self.name = name
         self.path = path
         self.pkg_path = os.path.dirname(path)
+        # Contains a list of tuple (type, infra), such as ("target",
+        # "autotools"). When pkg-stats is run without -c, it contains
+        # the list of all infra/type supported by the package. When
+        # pkg-stats is run with -c, it contains the list of infra/type
+        # used by the current configuration.
         self.infras = None
         self.license = None
         self.has_license = False
@@ -151,10 +156,20 @@ class Package:
             return False
         return True
 
-    def set_infra(self):
+    def set_infra(self, show_info_js):
         """
         Fills in the .infras field
         """
+        # If we're running pkg-stats for a given Buildroot
+        # configuration, keep only the type/infra that applies
+        if show_info_js:
+            keep_host = "host-%s" % self.name in show_info_js
+            keep_target = self.name in show_info_js
+        # Otherwise, keep all
+        else:
+            keep_host = True
+            keep_target = True
+
         self.infras = list()
         with open(os.path.join(brpath, self.path), 'r') as f:
             lines = f.readlines()
@@ -163,9 +178,9 @@ class Package:
                 if not match:
                     continue
                 infra = match.group(1)
-                if infra.startswith("host-"):
+                if infra.startswith("host-") and keep_host:
                     self.infras.append(("host", infra[5:]))
-                else:
+                elif keep_target:
                     self.infras.append(("target", infra))
 
     def set_license(self):
@@ -372,10 +387,9 @@ def get_pkglist(npackages, package_list):
     return packages
 
 
-def get_config_packages():
+def get_show_info_js():
     cmd = ["make", "--no-print-directory", "show-info"]
-    js = json.loads(subprocess.check_output(cmd))
-    return set([v["name"] for v in js.values() if 'name' in v])
+    return json.loads(subprocess.check_output(cmd))
 
 
 def package_init_make_info():
@@ -1229,10 +1243,12 @@ def __main__():
     if args.nvd_path:
         import cve as cvecheck
 
+    show_info_js = None
     if args.packages:
         package_list = args.packages.split(",")
     elif args.configpackages:
-        package_list = get_config_packages()
+        show_info_js = get_show_info_js()
+        package_list = set([v["name"] for v in show_info_js.values() if 'name' in v])
     else:
         package_list = None
     date = datetime.datetime.utcnow()
@@ -1251,7 +1267,7 @@ def __main__():
     package_init_make_info()
     print("Getting package details ...")
     for pkg in packages:
-        pkg.set_infra()
+        pkg.set_infra(show_info_js)
         pkg.set_license()
         pkg.set_hash_info()
         pkg.set_patch_count()

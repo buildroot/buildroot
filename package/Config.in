@@ -108,6 +108,7 @@ menu "Debugging, profiling and benchmark"
 	source "package/fwts/Config.in"
 	source "package/gdb/Config.in"
 	source "package/google-breakpad/Config.in"
+	source "package/hyperfine/Config.in"
 	source "package/iozone/Config.in"
 	source "package/kexec/Config.in"
 	source "package/kexec-lite/Config.in"
@@ -1692,6 +1693,7 @@ endif
 	source "package/jszip/Config.in"
 	source "package/openlayers/Config.in"
 	source "package/popperjs/Config.in"
+	source "package/vis-network/Config.in"
 	source "package/vuejs/Config.in"
 if BR2_PACKAGE_VUEJS
 comment "External Vue.js plugins"
@@ -1738,6 +1740,7 @@ endmenu
 
 menu "Logging"
 	source "package/glog/Config.in"
+	source "package/hawktracer/Config.in"
 	source "package/liblog4c-localtime/Config.in"
 	source "package/liblogging/Config.in"
 	source "package/log4cplus/Config.in"
@@ -2442,6 +2445,7 @@ endif
 	source "package/xl2tp/Config.in"
 	source "package/xtables-addons/Config.in"
 	source "package/zabbix/Config.in"
+	source "package/zeek/Config.in"
 	source "package/znc/Config.in"
 
 endmenu
