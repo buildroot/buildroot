@@ -1,0 +1,8 @@
+config BR2_PACKAGE_HOST_RUNC
+	bool "host runc"
+	depends on BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS
+	help
+	  runC is a CLI tool for spawning and running containers
+	  according to the OCI specification.
+
+	  https://github.com/opencontainers/runc
