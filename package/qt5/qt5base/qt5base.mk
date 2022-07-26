@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5BASE_VERSION = f31e001a9399e4e620847ea2c3e90749350140ae
+QT5BASE_VERSION = 2ffb7ad8a1079a0444b9c72affe3d19b089b60de
 QT5BASE_SITE = $(QT5_SITE)/qtbase/-/archive/$(QT5BASE_VERSION)
 QT5BASE_SOURCE = qtbase-$(QT5BASE_VERSION).tar.bz2
 

@@ -1,0 +1,33 @@
+From 8a8506320acf3ea18940a6e3a447d7d394a3bd8e Mon Sep 17 00:00:00 2001
+From: David Gouarin <david.gouarin@thalesgroup.com>
+Date: Mon, 12 Apr 2021 11:05:54 -0500
+Subject: [PATCH] jlibtool cross with host CC
+
+jlibtool.c: while cross compiling, use host CC instead of target CC to build jlibtool
+
+Upstream: Not applicable
+
+Signed-off-by: David Gouarin <david.gouarin@thalesgroup.com>
+Signed-off-by: Matt Weber <matthew.weber@rockwellcollins.com>
+---
+ scripts/libtool.mk | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/libtool.mk b/scripts/libtool.mk
+index 57915e1053..c28260dd7e 100644
+--- a/scripts/libtool.mk
++++ b/scripts/libtool.mk
+@@ -43,8 +43,8 @@ ifeq "${LIBTOOL}" "JLIBTOOL"
+     # binary!
+     ${JLIBTOOL}: ${top_makedir}/jlibtool.c
+ 	$(Q)mkdir -p $(dir $@)
+-	$(Q)echo CC jlibtool.c
+-	$(Q)${CC} $< -o $@
++	$(Q)echo HOSTCC jlibtool.c
++	$(Q)${HOSTCC} $< -o $@
+ 
+     clean: jlibtool_clean
+ 
+-- 
+2.17.1
+

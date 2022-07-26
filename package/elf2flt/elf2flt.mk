@@ -24,11 +24,7 @@ HOST_ELF2FLT_CONF_OPTS = \
 	--target=$(GNU_TARGET_NAME) \
 	--disable-werror
 
-HOST_ELF2FLT_LIBS = -lz
-
-ifeq ($(BR2_GCC_ENABLE_LTO),y)
-HOST_ELF2FLT_LIBS += -ldl
-endif
+HOST_ELF2FLT_LIBS = -lz -ldl
 
 HOST_ELF2FLT_CONF_ENV = LIBS="$(HOST_ELF2FLT_LIBS)"
 

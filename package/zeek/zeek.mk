@@ -17,6 +17,7 @@ ZEEK_LICENSE = \
 	Apache-2.0 (highwayhash, folly), \
 	MPL-2.0 (mozilla-ca-list.zeek)
 ZEEK_LICENSE_FILES = COPYING COPYING.3rdparty
+ZEEK_CPE_ID_VENDOR = zeek
 ZEEK_SUPPORTS_IN_SOURCE_BUILD = NO
 ZEEK_DEPENDENCIES = \
 	host-bison \

@@ -15,5 +15,15 @@ define V4L2LOOPBACK_INSTALL_TARGET_CMDS
 endef
 endif
 
+# CONFIG_MEDIA_SUPPORT depends on CONFIG_HAS_IOMEM, which is only
+# available when CONFIG_PCI=y on S390. CONFIG_VIDEO_DEV needs
+# CONFIG_I2C since Linux 5.18.
+define V4L2LOOPBACK_LINUX_CONFIG_FIXUPS
+	$(if $(BR2_s390x),$(call KCONFIG_ENABLE_OPT,CONFIG_PCI))
+	$(call KCONFIG_ENABLE_OPT,CONFIG_MEDIA_SUPPORT)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_I2C)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_VIDEO_DEV)
+endef
+
 $(eval $(kernel-module))
 $(eval $(generic-package))

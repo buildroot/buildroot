@@ -46,7 +46,7 @@ else
 FASTD_CONF_OPTS += -Dsystemd=disabled
 endif
 
-ifeq ($(BR2_GCC_ENABLE_LTO),y)
+ifeq ($(BR2_ENABLE_LTO),y)
 FASTD_CONF_OPTS += -Db_lto=true
 else
 FASTD_CONF_OPTS += -Db_lto=false

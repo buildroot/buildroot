@@ -11,7 +11,7 @@ LOG4CPLUS_LICENSE = Apache-2.0, BSD-2-Clause, BSD-like (threadpool)
 LOG4CPLUS_LICENSE_FILES = LICENSE
 LOG4CPLUS_INSTALL_STAGING = YES
 
-ifeq ($(BR2_GCC_ENABLE_LTO),y)
+ifeq ($(BR2_ENABLE_LTO),y)
 LOG4CPLUS_CONF_OPTS += --enable-lto
 else
 LOG4CPLUS_CONF_OPTS += --disable-lto

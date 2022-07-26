@@ -551,6 +551,25 @@ config BR2_OPTIMIZE_FAST
 
 endchoice
 
+config BR2_ENABLE_LTO
+	bool "build packages with link-time optimisation"
+	help
+	  Enable the link-time optimisation (LTO) option when building
+	  packages. Link-time optimisation re-runs optimisations at
+	  link time, which allows the compiler to do interprocedural
+	  analysis across compilation units and thus come with better
+	  results: smaller size and better performance.
+
+	  Note that this analysis is limited to statically linked
+	  object files and libraries.
+
+	  This option may significantly increase build times,
+	  sometimes 5 times longer, with only limited gains.
+
+	  At this time, this option only enables LTO in packages that
+	  have an explicit configuration option for it. Other packages
+	  always enable LTO, but most packages never enable LTO.
+
 config BR2_GOOGLE_BREAKPAD_ENABLE
 	bool "Enable google-breakpad support"
 	depends on BR2_INSTALL_LIBSTDCPP

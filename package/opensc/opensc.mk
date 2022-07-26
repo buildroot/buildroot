@@ -11,6 +11,6 @@ OPENSC_LICENSE_FILES = COPYING
 OPENSC_CPE_ID_VENDOR = opensc_project
 OPENSC_DEPENDENCIES = openssl pcsc-lite
 OPENSC_INSTALL_STAGING = YES
-OPENSC_CONF_OPTS = --disable-strict
+OPENSC_CONF_OPTS = --disable-cmocka --disable-strict
 
 $(eval $(autotools-package))

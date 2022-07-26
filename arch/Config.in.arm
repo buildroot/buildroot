@@ -770,6 +770,31 @@ config BR2_ARM_INSTRUCTIONS_THUMB2
 
 endchoice
 
+choice
+	prompt "MMU Page Size"
+	default BR2_ARM64_PAGE_SIZE_4K
+	depends on BR2_aarch64 || BR2_aarch64_be
+	help
+	  The default is 4KB, and you should probably keep this unless
+	  you know what you are doing. In particular, the kernel
+	  configuration must match this choice. If your kernel is
+	  built by Buildroot, the kernel configuration is
+	  automatically adjusted, but not if you built your kernel
+	  outside of Buildroot.
+
+config BR2_ARM64_PAGE_SIZE_4K
+	bool "4KB"
+
+config BR2_ARM64_PAGE_SIZE_64K
+	bool "64KB"
+
+endchoice
+
+config BR2_ARM64_PAGE_SIZE
+	string
+	default "4K" if BR2_ARM64_PAGE_SIZE_4K
+	default "64K" if BR2_ARM64_PAGE_SIZE_64K
+
 config BR2_ARCH
 	default "arm"		if BR2_arm
 	default "armeb"		if BR2_armeb
