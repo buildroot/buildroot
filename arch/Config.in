@@ -371,56 +371,6 @@ config BR2_BINFMT_SUPPORTS_SHARED
 config BR2_READELF_ARCH_NAME
 	string
 
-# Set up target binary format
-choice
-	prompt "Target Binary Format"
-	default BR2_BINFMT_ELF if BR2_USE_MMU
-	default BR2_BINFMT_FLAT
-
-config BR2_BINFMT_ELF
-	bool "ELF"
-	depends on BR2_USE_MMU
-	select BR2_BINFMT_SUPPORTS_SHARED
-	help
-	  ELF (Executable and Linkable Format) is a format for libraries
-	  and executables used across different architectures and
-	  operating systems.
-
-config BR2_BINFMT_FLAT
-	bool "FLAT"
-	depends on !BR2_USE_MMU
-	help
-	  FLAT binary is a relatively simple and lightweight executable
-	  format based on the original a.out format. It is widely used
-	  in environment where no MMU is available.
-
-endchoice
-
-# Set up flat binary type
-choice
-	prompt "FLAT Binary type"
-	default BR2_BINFMT_FLAT_ONE
-	depends on BR2_BINFMT_FLAT
-
-config BR2_BINFMT_FLAT_ONE
-	bool "One memory region"
-	help
-	  All segments are linked into one memory region.
-
-config BR2_BINFMT_FLAT_SHARED
-	bool "Shared binary"
-	depends on BR2_m68k
-	# Even though this really generates shared binaries, there is no libdl
-	# and dlopen() cannot be used. So packages that require shared
-	# libraries cannot be built. Therefore, we don't select
-	# BR2_BINFMT_SUPPORTS_SHARED and therefore force BR2_STATIC_LIBS.
-	# Although this adds -static to the compilation, that's not a problem
-	# because the -mid-shared-library option overrides it.
-	help
-	  Allow to load and link indiviual FLAT binaries at run time.
-
-endchoice
-
 if BR2_arcle || BR2_arceb
 source "arch/Config.in.arc"
 endif
@@ -480,5 +430,55 @@ endif
 if BR2_xtensa
 source "arch/Config.in.xtensa"
 endif
+
+# Set up target binary format
+choice
+	prompt "Target Binary Format"
+	default BR2_BINFMT_ELF if BR2_USE_MMU
+	default BR2_BINFMT_FLAT
+
+config BR2_BINFMT_ELF
+	bool "ELF"
+	depends on BR2_USE_MMU
+	select BR2_BINFMT_SUPPORTS_SHARED
+	help
+	  ELF (Executable and Linkable Format) is a format for libraries
+	  and executables used across different architectures and
+	  operating systems.
+
+config BR2_BINFMT_FLAT
+	bool "FLAT"
+	depends on !BR2_USE_MMU
+	help
+	  FLAT binary is a relatively simple and lightweight executable
+	  format based on the original a.out format. It is widely used
+	  in environment where no MMU is available.
+
+endchoice
+
+# Set up flat binary type
+choice
+	prompt "FLAT Binary type"
+	default BR2_BINFMT_FLAT_ONE
+	depends on BR2_BINFMT_FLAT
+
+config BR2_BINFMT_FLAT_ONE
+	bool "One memory region"
+	help
+	  All segments are linked into one memory region.
+
+config BR2_BINFMT_FLAT_SHARED
+	bool "Shared binary"
+	depends on BR2_m68k
+	# Even though this really generates shared binaries, there is no libdl
+	# and dlopen() cannot be used. So packages that require shared
+	# libraries cannot be built. Therefore, we don't select
+	# BR2_BINFMT_SUPPORTS_SHARED and therefore force BR2_STATIC_LIBS.
+	# Although this adds -static to the compilation, that's not a problem
+	# because the -mid-shared-library option overrides it.
+	help
+	  Allow to load and link indiviual FLAT binaries at run time.
+
+endchoice
 
 endmenu # Target options
