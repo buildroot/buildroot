@@ -105,8 +105,8 @@ else
 PULSEAUDIO_CONF_OPTS += -Dwebrtc-aec=disabled
 endif
 
-# pulseaudio alsa backend needs pcm/mixer apis
-ifeq ($(BR2_PACKAGE_ALSA_LIB_PCM)$(BR2_PACKAGE_ALSA_LIB_MIXER),yy)
+# pulseaudio alsa backend needs pcm/mixer/ucm apis
+ifeq ($(BR2_PACKAGE_ALSA_LIB_PCM)$(BR2_PACKAGE_ALSA_LIB_MIXER)$(BR2_PACKAGE_ALSA_LIB_UCM),yyy)
 PULSEAUDIO_DEPENDENCIES += alsa-lib
 PULSEAUDIO_CONF_OPTS += -Dalsa=enabled
 else
