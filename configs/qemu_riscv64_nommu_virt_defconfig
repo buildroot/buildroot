@@ -1,12 +1,10 @@
 # Architecture
 BR2_riscv=y
 BR2_RISCV_64=y
+# BR2_RISCV_USE_MMU is not set
 
 # Patches
 BR2_GLOBAL_PATCH_DIR="board/riscv/nommu/patches"
-
-# Toolchain
-# BR2_USE_MMU is not set
 
 # Busybox with hush
 BR2_PACKAGE_BUSYBOX_CONFIG="package/busybox/busybox-minimal.config"
