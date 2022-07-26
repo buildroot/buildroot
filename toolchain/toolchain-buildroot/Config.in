@@ -64,6 +64,14 @@ comment "glibc on MIPS w/ NAN2008 needs a toolchain w/ headers >= 4.5"
 	depends on BR2_MIPS_NAN_2008
 	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_5
 
+comment "glibc on RISC-V 64-bit needs a toolchain w/ headers >= 5.0"
+	depends on BR2_RISCV_64
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_0
+
+comment "glibc on ARC needs a toolchain w/ headers >= 5.1"
+	depends on BR2_arc
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_1
+
 config BR2_TOOLCHAIN_BUILDROOT_MUSL
 	bool "musl"
 	depends on BR2_PACKAGE_MUSL_SUPPORTS
