@@ -1,0 +1,32 @@
+From f8decf82af07591833f89004e9b72cc39c1b5c52 Mon Sep 17 00:00:00 2001
+From: Juhee Kang <claudiajkang@gmail.com>
+Date: Tue, 19 Jul 2022 00:58:27 +0900
+Subject: [PATCH] bpf_glue: include errno.h
+
+If __NR_bpf is not enabled, bpf() function set errno and return -1. Thus,
+this patch includes the header.
+
+Fixes: ac4e0913beb1 ("bpf: Export bpf syscall wrapper")
+Signed-off-by: Juhee Kang <claudiajkang@gmail.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+[ upstream status: f8decf82af07591833f89004e9b72cc39c1b5c52 ]
+Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
+---
+ lib/bpf_glue.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lib/bpf_glue.c b/lib/bpf_glue.c
+index c1cf351b..88a24751 100644
+--- a/lib/bpf_glue.c
++++ b/lib/bpf_glue.c
+@@ -7,6 +7,7 @@
+ #include <sys/syscall.h>
+ #include <limits.h>
+ #include <unistd.h>
++#include <errno.h>
+ 
+ #include "bpf_util.h"
+ #ifdef HAVE_LIBBPF
+-- 
+2.37.1
+
