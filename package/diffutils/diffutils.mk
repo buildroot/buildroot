@@ -20,4 +20,3 @@ DIFFUTILS_CONF_ENV += gl_cv_func_getopt_gnu=yes
 endif
 
 $(eval $(autotools-package))
-$(eval $(host-autotools-package))
