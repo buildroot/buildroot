@@ -61,7 +61,7 @@ elf_needs_rpath() {
 
     while read lib; do
         [ -e "${hostdir}/lib/${lib}" ] && return 0
-    done < <( readelf -d "${file}"                                         \
+    done < <( readelf -d "${file}" 2>/dev/null                             \
               |sed -r -e '/^.* \(NEEDED\) .*Shared library: \[(.+)\]$/!d;' \
                      -e 's//\1/;'                                          \
             )
@@ -100,7 +100,7 @@ check_elf_has_rpath() {
 	    # false.
             [[ ${dir} =~ "${perpackagedir}/"[^/]+/host/lib ]] && return 0
         done
-    done < <( readelf -d "${file}"                                              \
+    done < <( readelf -d "${file}" 2>/dev/null                                  \
               |sed -r -e '/.* \(R(UN)?PATH\) +Library r(un)?path: \[(.+)\]$/!d' \
                       -e 's//\3/;'                                              \
             )
