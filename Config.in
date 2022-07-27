@@ -87,6 +87,8 @@ config BR2_NEEDS_HOST_GCC_PLUGIN_SUPPORT
 
 source "arch/Config.in"
 
+source "toolchain/Config.in"
+
 menu "Build options"
 
 menu "Commands"
@@ -620,8 +622,7 @@ choice
 
 config BR2_STATIC_LIBS
 	bool "static only"
-	depends on !BR2_TOOLCHAIN_BUILDROOT || \
-		BR2_TOOLCHAIN_BUILDROOT_STATIC_LIBS_SUPPORTS
+	depends on !BR2_TOOLCHAIN_USES_GLIBC
 	help
 	  Build and use only static libraries. No shared libraries will
 	  be installed on the target. This potentially increases your
@@ -629,6 +630,9 @@ config BR2_STATIC_LIBS
 	  doing. Note that some packages may not be available when this
 	  option is enabled, due to their need for dynamic library
 	  support.
+
+comment "static only needs a toolchain w/ uclibc or musl"
+	depends on BR2_TOOLCHAIN_USES_GLIBC
 
 config BR2_SHARED_LIBS
 	bool "shared only"
@@ -931,8 +935,6 @@ comment "Fortify Source needs a glibc toolchain and optimization"
 	depends on BR2_FORTIFY_SOURCE_ARCH_SUPPORTS
 	depends on (!BR2_TOOLCHAIN_USES_GLIBC || BR2_OPTIMIZE_0)
 endmenu
-
-source "toolchain/Config.in"
 
 source "system/Config.in"
 

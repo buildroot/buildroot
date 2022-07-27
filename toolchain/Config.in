@@ -315,13 +315,6 @@ config BR2_TOOLCHAIN_EXTRA_LIBS
 config BR2_TOOLCHAIN_HAS_FULL_GETTEXT
 	bool
 
-config BR2_USE_MMU
-	bool "Enable MMU support" if BR2_ARCH_HAS_MMU_OPTIONAL
-	default y if BR2_ARCH_HAS_MMU_OPTIONAL || BR2_ARCH_HAS_MMU_MANDATORY
-	help
-	  If your target has a MMU, you should say Y here.  If you
-	  are unsure, just say Y.
-
 config BR2_TARGET_OPTIMIZATION
 	string "Target Optimizations"
 	default ""

@@ -21,7 +21,6 @@ config BR2_PACKAGE_GLIBC_ARCH_SUPPORTS
 	default y if BR2_microblaze
 	default y if BR2_nios2
 	default y if BR2_arc && BR2_ARC_ATOMIC_EXT
-	default y if BR2_csky
 	depends on !BR2_powerpc_SPE
 	depends on BR2_RISCV_ISA_RVA || !BR2_riscv
 	depends on BR2_USE_MMU
@@ -29,7 +28,6 @@ config BR2_PACKAGE_GLIBC_ARCH_SUPPORTS
 config BR2_PACKAGE_GLIBC_SUPPORTS
 	bool
 	default y if BR2_PACKAGE_GLIBC_ARCH_SUPPORTS
-	depends on !BR2_STATIC_LIBS
 	# Make sure to keep these dependencies in sync with the
 	# Config.in comments in
 	# toolchain/toolchain-buildroot/Config.in

@@ -19,4 +19,10 @@ MOBY_BUILDKIT_LDFLAGS = \
 
 MOBY_BUILDKIT_INSTALL_BINS = $(notdir $(MOBY_BUILDKIT_BUILD_TARGETS))
 
+HOST_MOBY_BUILDKIT_TAGS = cgo
+HOST_MOBY_BUILDKIT_BUILD_TARGETS = cmd/buildctl cmd/buildkitd
+
+HOST_MOBY_BUILDKIT_INSTALL_BINS = $(notdir $(HOST_MOBY_BUILDKIT_BUILD_TARGETS))
+
 $(eval $(golang-package))
+$(eval $(host-golang-package))

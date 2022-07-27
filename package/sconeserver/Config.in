@@ -15,24 +15,6 @@ if BR2_PACKAGE_SCONESERVER
 
 comment "Sconeserver modules"
 
-config BR2_PACKAGE_SCONESERVER_EXAMPLES
-	bool "examples"
-	help
-	  Example modules for Sconeserver
-
-config BR2_PACKAGE_SCONESERVER_HTTP_SCONESITE
-	bool "http::sconesite"
-	select BR2_PACKAGE_LIBXML2
-	help
-	  http::sconesite module for Sconeserver
-
-config BR2_PACKAGE_SCONESERVER_MYSQL
-	bool "mysql"
-	depends on BR2_USE_MMU # mysql
-	select BR2_PACKAGE_MYSQL
-	help
-	  MySQL module for Sconeserver
-
 config BR2_PACKAGE_SCONESERVER_BLUETOOTH
 	bool "bluetooth"
 	depends on BR2_USE_WCHAR # bluez5_utils -> libglib2
@@ -51,11 +33,16 @@ comment "bluetooth support needs a toolchain w/ wchar, threads, dynamic library,
 	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
 		BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_4
 
-config BR2_PACKAGE_SCONESERVER_RSS
-	bool "rss"
+config BR2_PACKAGE_SCONESERVER_EXAMPLES
+	bool "examples"
+	help
+	  Example modules for Sconeserver
+
+config BR2_PACKAGE_SCONESERVER_HTTP_SCONESITE
+	bool "http::sconesite"
 	select BR2_PACKAGE_LIBXML2
 	help
-	  RSS module for Sconeserver
+	  http::sconesite module for Sconeserver
 
 config BR2_PACKAGE_SCONESERVER_LOCATION
 	bool "location"
@@ -75,6 +62,25 @@ config BR2_PACKAGE_SCONESERVER_MATHS
 	select BR2_PACKAGE_MPFR
 	help
 	  Mathematics module for Sconeserver
+
+config BR2_PACKAGE_SCONESERVER_MYSQL
+	bool "mysql"
+	depends on BR2_USE_MMU # mysql
+	select BR2_PACKAGE_MYSQL
+	help
+	  MySQL module for Sconeserver
+
+config BR2_PACKAGE_SCONESERVER_RSS
+	bool "rss"
+	select BR2_PACKAGE_LIBXML2
+	help
+	  RSS module for Sconeserver
+
+config BR2_PACKAGE_SCONESERVER_SQLITE
+	bool "sqlite"
+	select BR2_PACKAGE_SQLITE
+	help
+	  SQLite module for Sconeserver
 
 config BR2_PACKAGE_SCONESERVER_TESTBUILDER
 	bool "testbuilder"

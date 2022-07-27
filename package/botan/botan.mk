@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BOTAN_VERSION = 2.19.1
+BOTAN_VERSION = 2.19.2
 BOTAN_SOURCE = Botan-$(BOTAN_VERSION).tar.xz
 BOTAN_SITE = http://botan.randombit.net/releases
 BOTAN_LICENSE = BSD-2-Clause
@@ -59,11 +59,6 @@ endif
 ifeq ($(BR2_PACKAGE_BZIP2),y)
 BOTAN_DEPENDENCIES += bzip2
 BOTAN_CONF_OPTS += --with-bzip2
-endif
-
-ifeq ($(BR2_PACKAGE_OPENSSL),y)
-BOTAN_DEPENDENCIES += openssl
-BOTAN_CONF_OPTS += --with-openssl
 endif
 
 ifeq ($(BR2_PACKAGE_SQLITE),y)

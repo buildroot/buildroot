@@ -25,8 +25,8 @@ CRYPTSETUP_AUTORECONF = YES
 CRYPTSETUP_CONF_ENV += LDFLAGS="$(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)"
 CRYPTSETUP_CONF_OPTS += --enable-blkid --enable-libargon2
 
-# cryptsetup uses OpenSSL by default, but can be configured to use libgcrypt
-# or kernel crypto modules instead
+# cryptsetup uses OpenSSL by default, but can be configured to use libgcrypt,
+# nettle, libnss or kernel crypto modules instead
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 CRYPTSETUP_DEPENDENCIES += openssl
 CRYPTSETUP_CONF_OPTS += --with-crypto_backend=openssl
@@ -34,6 +34,12 @@ else ifeq ($(BR2_PACKAGE_LIBGCRYPT),y)
 CRYPTSETUP_DEPENDENCIES += libgcrypt
 CRYPTSETUP_CONF_ENV += LIBGCRYPT_CONFIG=$(STAGING_DIR)/usr/bin/libgcrypt-config
 CRYPTSETUP_CONF_OPTS += --with-crypto_backend=gcrypt
+else ifeq ($(BR2_PACKAGE_NETTLE),y)
+CRYPTSETUP_DEPENDENCIES += nettle
+CRYPTSETUP_CONF_OPTS += --with-crypto_backend=nettle
+else ifeq ($(BR2_PACKAGE_LIBNSS),y)
+CRYPTSETUP_DEPENDENCIES += libnss
+CRYPTSETUP_CONF_OPTS += --with-crypto_backend=nss
 else
 CRYPTSETUP_CONF_OPTS += --with-crypto_backend=kernel
 endif

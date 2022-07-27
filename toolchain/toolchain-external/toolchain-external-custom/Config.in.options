@@ -385,21 +385,11 @@ config BR2_TOOLCHAIN_EXTERNAL_CUSTOM_UCLIBC
 	  C library.
 
 config BR2_TOOLCHAIN_EXTERNAL_CUSTOM_GLIBC
-	bool "glibc/eglibc"
-	depends on !BR2_STATIC_LIBS
+	bool "glibc"
 	select BR2_TOOLCHAIN_EXTERNAL_GLIBC
 	help
 	  Select this option if your external toolchain uses the GNU C
-	  library (available from https://www.gnu.org/software/libc/)
-	  or its variant the eglibc library (http://www.eglibc.org/).
-
-	  Note: eglibc is a variant of glibc that (among other things)
-	  can be configured to exclude some of its features. Using a
-	  toolchain with eglibc configured to exclude key features may
-	  cause build failures to some packages.
-
-comment "(e)glibc only available with shared lib support"
-	depends on BR2_STATIC_LIBS
+	  library (available from https://www.gnu.org/software/libc/).
 
 config BR2_TOOLCHAIN_EXTERNAL_CUSTOM_MUSL
 	bool "musl (experimental)"

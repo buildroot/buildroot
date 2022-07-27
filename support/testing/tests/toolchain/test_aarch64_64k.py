@@ -31,16 +31,16 @@ class TestAarch64Pages64kBase(infra.basetest.BRTest):
                            options=["-M", "virt", "-cpu", "cortex-a57", "-m", "512M", "-initrd", img])
         self.emulator.login()
 
-
     def test_run(self):
         self.login()
 
         cmd = "dmesg | grep 'Dentry cache'"
         output, exit_code = self.emulator.run(cmd, 120)
-        r = re.match(".*Dentry cache hash table entries: [0-9]* \(order: ([0-9]*), ([0-9]*) bytes.*", output[0])
+        r = re.match(r".*Dentry cache hash table entries: [0-9]* \(order: ([0-9]*), ([0-9]*) bytes.*", output[0])
         order = int(r.group(1))
         size = int(r.group(2))
         self.assertEqual(2 ** order * 64 * 1024, size)
+
 
 class TestAarch64Pages64kGlibc(TestAarch64Pages64kBase):
     __test__ = True
@@ -49,6 +49,7 @@ class TestAarch64Pages64kGlibc(TestAarch64Pages64kBase):
         BR2_TOOLCHAIN_BUILDROOT_GLIBC=y
         """
 
+
 class TestAarch64Pages64kuClibc(TestAarch64Pages64kBase):
     __test__ = True
     config = TestAarch64Pages64kBase.config + \
@@ -56,10 +57,10 @@ class TestAarch64Pages64kuClibc(TestAarch64Pages64kBase):
         BR2_TOOLCHAIN_BUILDROOT_UCLIBC=y
         """
 
+
 class TestAarch64Pages64kMusl(TestAarch64Pages64kBase):
     __test__ = True
     config = TestAarch64Pages64kBase.config + \
         """
         BR2_TOOLCHAIN_BUILDROOT_MUSL=y
         """
-

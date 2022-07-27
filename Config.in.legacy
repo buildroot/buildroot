@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2022.08"
 
+config BR2_csky
+	bool "csky architecture removed"
+	select BR2_LEGACY
+	help
+	  The csky architecture was removed, by lack of toolchain
+	  support.
+
 config BR2_PACKAGE_MESA3D_DRI_DRIVER_I915
 	bool "mesa DRI i915 driver removed"
 	select BR2_LEGACY

@@ -9,20 +9,15 @@ class InitSystemSystemdBase(InitSystemBase):
         BR2_cortex_a9=y
         BR2_ARM_ENABLE_VFP=y
         BR2_TOOLCHAIN_EXTERNAL=y
+        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
         BR2_INIT_SYSTEMD=y
         BR2_TARGET_GENERIC_GETTY_PORT="ttyAMA0"
-        BR2_LINUX_KERNEL=y
-        BR2_LINUX_KERNEL_CUSTOM_VERSION=y
-        BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="4.19.204"
-        BR2_LINUX_KERNEL_DEFCONFIG="vexpress"
-        BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES="{}"
-        BR2_LINUX_KERNEL_DTS_SUPPORT=y
-        BR2_LINUX_KERNEL_INTREE_DTS_NAME="vexpress-v2p-ca9"
         # BR2_TARGET_ROOTFS_TAR is not set
-        """.format(infra.filepath("conf/binfmt-misc-kernel-fragment.config"))
+        """
 
-    def check_init(self):
-        super(InitSystemSystemdBase, self).check_init("/lib/systemd/systemd")
+    def check_systemd(self, fs):
+        self.start_emulator(fs)
+        self.check_init("/lib/systemd/systemd")
 
         # Test all units are OK
         output, _ = self.emulator.run("systemctl --no-pager --failed --no-legend")
@@ -35,6 +30,9 @@ class InitSystemSystemdBase(InitSystemBase):
         output, _ = self.emulator.run("journalctl --no-pager --lines 1 --quiet")
         self.assertEqual(len(output), 1)
 
+        # Check the network is up
+        self.check_network("eth0")
+
 
 class TestInitSystemSystemdRoNetworkd(InitSystemSystemdBase):
     config = InitSystemSystemdBase.config + \
@@ -46,9 +44,7 @@ class TestInitSystemSystemdRoNetworkd(InitSystemSystemdBase):
         """.format(infra.filepath("tests/init/systemd-factory"))
 
     def test_run(self):
-        self.start_emulator("squashfs", "zImage", "vexpress-v2p-ca9")
-        self.check_init()
-        self.check_network("eth0")
+        self.check_systemd("squashfs")
 
         # This one must be executed on the target, to check that
         # the factory feature works as expected
@@ -65,9 +61,7 @@ class TestInitSystemSystemdRwNetworkd(InitSystemSystemdBase):
         """
 
     def test_run(self):
-        self.start_emulator("ext2", "zImage", "vexpress-v2p-ca9")
-        self.check_init()
-        self.check_network("eth0")
+        self.check_systemd("ext2")
 
 
 class TestInitSystemSystemdRoIfupdown(InitSystemSystemdBase):
@@ -80,9 +74,30 @@ class TestInitSystemSystemdRoIfupdown(InitSystemSystemdBase):
         """
 
     def test_run(self):
-        self.start_emulator("squashfs", "zImage", "vexpress-v2p-ca9")
-        self.check_init()
-        self.check_network("eth0")
+        self.check_systemd("squashfs")
+
+
+class TestInitSystemSystemdRoIfupdownDbusbroker(TestInitSystemSystemdRoIfupdown):
+    config = TestInitSystemSystemdRoIfupdown.config + \
+        """
+        BR2_PACKAGE_DBUS_BROKER=y
+        """
+
+    def test_run(self):
+        # Parent class' test_run() method does exactly that, no more:
+        self.check_systemd("squashfs")
+
+        # Check that the dbus-broker daemon is running as non-root
+        cmd = "find /proc/$(pidof dbus-broker) -maxdepth 1 -name exe -user dbus"
+        out, _ = self.emulator.run(cmd)
+        self.assertEqual(len(out), 1)
+
+
+class TestInitSystemSystemdRoIfupdownDbusbrokerDbus(TestInitSystemSystemdRoIfupdownDbusbroker):
+    config = TestInitSystemSystemdRoIfupdownDbusbroker.config + \
+        """
+        BR2_PACKAGE_DBUS=y
+        """
 
 
 class TestInitSystemSystemdRwIfupdown(InitSystemSystemdBase):
@@ -94,9 +109,30 @@ class TestInitSystemSystemdRwIfupdown(InitSystemSystemdBase):
         """
 
     def test_run(self):
-        self.start_emulator("ext2", "zImage", "vexpress-v2p-ca9")
-        self.check_init()
-        self.check_network("eth0")
+        self.check_systemd("ext2")
+
+
+class TestInitSystemSystemdRwIfupdownDbusbroker(TestInitSystemSystemdRwIfupdown):
+    config = TestInitSystemSystemdRwIfupdown.config + \
+        """
+        BR2_PACKAGE_DBUS_BROKER=y
+        """
+
+    def test_run(self):
+        # Parent class' test_run() method does exactly that, no more:
+        self.check_systemd("ext2")
+
+        # Check that the dbus-broker daemon is running as non-root
+        cmd = "find /proc/$(pidof dbus-broker) -maxdepth 1 -name exe -user dbus"
+        out, _ = self.emulator.run(cmd)
+        self.assertEqual(len(out), 1)
+
+
+class TestInitSystemSystemdRwIfupdownDbusbrokerDbus(TestInitSystemSystemdRwIfupdownDbusbroker):
+    config = TestInitSystemSystemdRwIfupdownDbusbroker.config + \
+        """
+        BR2_PACKAGE_DBUS=y
+        """
 
 
 class TestInitSystemSystemdRoFull(InitSystemSystemdBase):
@@ -125,9 +161,7 @@ class TestInitSystemSystemdRoFull(InitSystemSystemdBase):
         """
 
     def test_run(self):
-        self.start_emulator("squashfs", "zImage", "vexpress-v2p-ca9")
-        self.check_init()
-        self.check_network("eth0")
+        self.check_systemd("squashfs")
 
 
 class TestInitSystemSystemdRwFull(InitSystemSystemdBase):
@@ -155,6 +189,4 @@ class TestInitSystemSystemdRwFull(InitSystemSystemdBase):
         """
 
     def test_run(self):
-        self.start_emulator("ext2", "zImage", "vexpress-v2p-ca9")
-        self.check_init()
-        self.check_network("eth0")
+        self.check_systemd("ext2")

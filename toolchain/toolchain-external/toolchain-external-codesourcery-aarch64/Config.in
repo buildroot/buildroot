@@ -5,7 +5,6 @@ config BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_AARCH64
 	# a57/a53 and a72/a53 appeared in gcc-6 or were broken before
 	depends on !BR2_cortex_a57_a53 && !BR2_cortex_a72_a53
 	depends on BR2_HOSTARCH = "x86_64" || BR2_HOSTARCH = "x86"
-	depends on !BR2_STATIC_LIBS
 	select BR2_TOOLCHAIN_EXTERNAL_GLIBC
 	select BR2_TOOLCHAIN_HAS_SSP
 	select BR2_INSTALL_LIBSTDCPP

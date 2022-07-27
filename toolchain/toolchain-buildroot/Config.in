@@ -20,11 +20,6 @@ config BR2_TOOLCHAIN_BUILDROOT_VENDOR
 
 	  If you're not sure, just leave the default "buildroot" value.
 
-config BR2_TOOLCHAIN_BUILDROOT_STATIC_LIBS_SUPPORTS
-	bool
-	default y if BR2_PACKAGE_UCLIBC_SUPPORTS
-	default y if BR2_PACKAGE_MUSL_SUPPORTS
-
 choice
 	prompt "C library"
 	default BR2_TOOLCHAIN_BUILDROOT_UCLIBC
@@ -50,9 +45,9 @@ config BR2_TOOLCHAIN_BUILDROOT_GLIBC
 
 	  http://www.gnu.org/software/libc/
 
-comment "glibc needs a toolchain w/ dynamic library, kernel headers >= 3.2"
+comment "glibc needs a toolchain w/ kernel headers >= 3.2"
 	depends on BR2_PACKAGE_GLIBC_ARCH_SUPPORTS
-	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_2
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_2
 
 # glibc >= 2.26 require kernel headers >= 3.10 on powerpc64le.
 comment "glibc on powerpc64le needs a toolchain w/ headers >= 3.10"

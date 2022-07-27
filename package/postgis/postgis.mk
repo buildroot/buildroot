@@ -21,18 +21,18 @@ POSTGIS_CONF_OPTS += \
 	--with-geosconfig=$(STAGING_DIR)/usr/bin/geos-config \
 	--with-xml2config=$(STAGING_DIR)/usr/bin/xml2-config
 
-ifeq ($(BR2_PACKAGE_LIBGDAL),y)
-POSTGIS_DEPENDENCIES += libgdal
-POSTGIS_CONF_OPTS += --with-raster
-else
-POSTGIS_CONF_OPTS += --without-raster
-endif
-
 ifeq ($(BR2_PACKAGE_JSON_C),y)
 POSTGIS_DEPENDENCIES += json-c
 POSTGIS_CONF_OPTS += --with-json
 else
 POSTGIS_CONF_OPTS += --without-json
+endif
+
+ifeq ($(BR2_PACKAGE_GDAL),y)
+POSTGIS_DEPENDENCIES += gdal
+POSTGIS_CONF_OPTS += --with-raster --with-gdalconfig=$(STAGING_DIR)/usr/bin/gdal-config
+else
+POSTGIS_CONF_OPTS += --without-raster
 endif
 
 ifeq ($(BR2_PACKAGE_PCRE),y)

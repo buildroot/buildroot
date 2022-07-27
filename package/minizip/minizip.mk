@@ -5,7 +5,7 @@
 ################################################################################
 
 MINIZIP_VERSION = 3.0.6
-MINIZIP_SITE = $(call github,nmoinvaz,minizip,$(MINIZIP_VERSION))
+MINIZIP_SITE = $(call github,zlib-ng,minizip-ng,$(MINIZIP_VERSION))
 MINIZIP_DEPENDENCIES = host-pkgconf
 MINIZIP_INSTALL_STAGING = YES
 MINIZIP_CONF_OPTS = \
