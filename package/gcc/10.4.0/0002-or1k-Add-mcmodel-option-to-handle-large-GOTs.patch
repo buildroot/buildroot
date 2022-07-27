@@ -1,4 +1,4 @@
-From 1dad3f95ffcd1871ca670a13a06fbedb1c3ce509 Mon Sep 17 00:00:00 2001
+From 8555b8d4f1d873d172c12a540ff97c57ed17f045 Mon Sep 17 00:00:00 2001
 From: Stafford Horne <shorne@gmail.com>
 Date: Sun, 2 May 2021 06:11:44 +0900
 Subject: [PATCH] or1k: Add mcmodel option to handle large GOTs
@@ -166,10 +166,10 @@ index 03c9b8d0bba..8e035075f8a 100644
  Target RejectNegative Mask(CMOV)
  Enable generation of conditional move (l.cmov) instructions.  By default the
 diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
-index eabeec944e7..eda350c99ec 100644
+index d7c787af226..848112e5b24 100644
 --- a/gcc/doc/invoke.texi
 +++ b/gcc/doc/invoke.texi
-@@ -1102,7 +1102,8 @@ Objective-C and Objective-C++ Dialects}.
+@@ -1103,7 +1103,8 @@ Objective-C and Objective-C++ Dialects}.
  @gccoptlist{-mboard=@var{name}  -mnewlib  -mhard-mul  -mhard-div @gol
  -msoft-mul  -msoft-div @gol
  -msoft-float  -mhard-float  -mdouble-float -munordered-float @gol
@@ -179,7 +179,7 @@ index eabeec944e7..eda350c99ec 100644
  
  @emph{PDP-11 Options}
  @gccoptlist{-mfpu  -msoft-float  -mac0  -mno-ac0  -m40  -m45  -m10 @gol
-@@ -25111,6 +25112,15 @@ Enable generation of shift with immediate (@code{l.srai}, @code{l.srli},
+@@ -25142,6 +25143,15 @@ Enable generation of shift with immediate (@code{l.srai}, @code{l.srli},
  @code{l.slli}) instructions.  By default extra instructions will be generated
  to store the immediate to a register first.
  
@@ -196,5 +196,5 @@ index eabeec944e7..eda350c99ec 100644
  @end table
  
 -- 
-2.25.1
+2.34.3
 
