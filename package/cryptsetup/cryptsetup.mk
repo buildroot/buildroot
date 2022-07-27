@@ -26,7 +26,7 @@ CRYPTSETUP_CONF_ENV += LDFLAGS="$(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)"
 CRYPTSETUP_CONF_OPTS += --enable-blkid --enable-libargon2
 
 # cryptsetup uses OpenSSL by default, but can be configured to use libgcrypt,
-# nettle or kernel crypto modules instead
+# nettle, libnss or kernel crypto modules instead
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 CRYPTSETUP_DEPENDENCIES += openssl
 CRYPTSETUP_CONF_OPTS += --with-crypto_backend=openssl
@@ -37,6 +37,9 @@ CRYPTSETUP_CONF_OPTS += --with-crypto_backend=gcrypt
 else ifeq ($(BR2_PACKAGE_NETTLE),y)
 CRYPTSETUP_DEPENDENCIES += nettle
 CRYPTSETUP_CONF_OPTS += --with-crypto_backend=nettle
+else ifeq ($(BR2_PACKAGE_LIBNSS),y)
+CRYPTSETUP_DEPENDENCIES += libnss
+CRYPTSETUP_CONF_OPTS += --with-crypto_backend=nss
 else
 CRYPTSETUP_CONF_OPTS += --with-crypto_backend=kernel
 endif
