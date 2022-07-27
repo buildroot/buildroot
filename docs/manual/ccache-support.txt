@@ -15,10 +15,12 @@ speed up the build process.
 +Enable compiler cache+ in +Build options+. This will automatically
 build +ccache+ and use it for every host and target compilation.
 
-The cache is located in +$HOME/.buildroot-ccache+. It is stored
-outside of Buildroot output directory so that it can be shared by
-separate Buildroot builds. If you want to get rid of the cache, simply
-remove this directory.
+The cache is located in the directory defined by the +BR2_CCACHE_DIR+
+configuration option, which defaults to
++$HOME/.buildroot-ccache+. This default location is outside of
+Buildroot output directory so that it can be shared by separate
+Buildroot builds. If you want to get rid of the cache, simply remove
+this directory.
 
 You can get statistics on the cache (its size, number of hits,
 misses, etc.) by running +make ccache-stats+.
