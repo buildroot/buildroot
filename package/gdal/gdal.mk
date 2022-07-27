@@ -9,6 +9,7 @@ GDAL_SITE = https://download.osgeo.org/gdal/$(GDAL_VERSION)
 GDAL_SOURCE = gdal-$(GDAL_VERSION).tar.xz
 GDAL_LICENSE = MIT, many others
 GDAL_LICENSE_FILES = LICENSE.TXT
+GDAL_CPE_ID_VENDOR = osgeo
 GDAL_INSTALL_STAGING = YES
 GDAL_CONFIG_SCRIPTS = gdal-config
 # gdal at its core only needs host-pkgconf, libgeotiff, proj and tiff
