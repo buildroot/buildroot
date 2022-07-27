@@ -1,0 +1,27 @@
+// -*- mode:doc; -*-
+// vim: set syntax=asciidoc:
+
+[[integration-systemd]]
+=== Systemd
+
+This chapter describes the decisions taken in Buildroot's integration of
+systemd, and how various use cases can be implemented.
+
+==== DBus daemon
+
+Systemd requires a DBus daemon. There are two options for it: traditional dbus
+(+BR2_PACKAGE_DBUS+) and bus1 dbus-broker (+BR2_PACKAGE_DBUS_BROKER+). At
+least one of them must be chosen. If both are included in the configuration,
+dbus-broker will be used as system bus, but the traditional dbus-daemon is
+still installed as well and can be used as session bus. Also its tools (e.g.
++dbus-send+) can be used (systemd itself has +busctl+ as an alternative). In
+addition, the traditional dbus package is the only one that provides +libdbus+,
+which is used by many packages as dbus integration library.
+
+Both in the dbus and in the dbus-broker case, the daemon runs as user +dbus+.
+The DBus configuration files are also identical for both.
+
+To make sure that only one of the two daemons is started as system bus, the
+systemd activation files of the dbus package (+dbus.socket+ and the
++dbus.service+ symlink in +multi-user.target.wants+) are removed when
+dbus-broker is selected.
