@@ -9,7 +9,7 @@ JACK2_SITE = $(call github,jackaudio,jack2,v$(JACK2_VERSION))
 JACK2_LICENSE = GPL-2.0+ (jack server), LGPL-2.1+ (jack library)
 JACK2_LICENSE_FILES = COPYING
 JACK2_CPE_ID_VENDOR = jackaudio
-JACK2_DEPENDENCIES = libsndfile alsa-lib
+JACK2_DEPENDENCIES = alsa-lib
 JACK2_INSTALL_STAGING = YES
 
 JACK2_CONF_OPTS = --alsa
@@ -24,6 +24,13 @@ JACK2_DEPENDENCIES += libsamplerate
 JACK2_CONF_OPTS += --samplerate=yes
 else
 JACK2_CONF_OPTS += --samplerate=no
+endif
+
+ifeq ($(BR2_PACKAGE_LIBSNDFILE),y)
+JACK2_DEPENDENCIES += libsndfile
+JACK2_CONF_OPTS += --sndfile=yes
+else
+JACK2_CONF_OPTS += --sndfile=no
 endif
 
 ifeq ($(BR2_PACKAGE_OPUS),y)
