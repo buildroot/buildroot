@@ -70,16 +70,6 @@ config BR2_aarch64_be
 	  http://www.arm.com/products/processors/instruction-set-architectures/armv8-architecture.php
 	  http://en.wikipedia.org/wiki/ARM
 
-config BR2_csky
-	bool "csky"
-	select BR2_ARCH_HAS_NO_TOOLCHAIN_BUILDROOT
-	select BR2_USE_MMU
-	select BR2_ARCH_NEEDS_GCC_AT_LEAST_9
-	help
-	  csky is processor IP from china.
-	  http://www.c-sky.com/
-	  http://www.github.com/c-sky
-
 config BR2_i386
 	bool "i386"
 	select BR2_USE_MMU
@@ -374,10 +364,6 @@ endif
 
 if BR2_arm || BR2_armeb || BR2_aarch64 || BR2_aarch64_be
 source "arch/Config.in.arm"
-endif
-
-if BR2_csky
-source "arch/Config.in.csky"
 endif
 
 if BR2_m68k
