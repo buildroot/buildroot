@@ -1,0 +1,29 @@
+From af96f4fe916adc7dc6d649a07c10b45c978d31a1 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 27 Jul 2022 14:17:20 +0200
+Subject: [PATCH] build/pcre.m4: fix build without pcre
+
+Don't raise an error if pcre is disabled now that pcre2 is supported
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: not sent (no feedback on
+https://github.com/SpiderLabs/ModSecurity/pull/2596)]
+---
+ build/pcre.m4 | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/build/pcre.m4 b/build/pcre.m4
+index f6c9ae18..3e40f5c9 100644
+--- a/build/pcre.m4
++++ b/build/pcre.m4
+@@ -99,7 +99,6 @@ AC_SUBST(PCRE_LD_PATH)
+ 
+ if test -z "${PCRE_VERSION}"; then
+     AC_MSG_NOTICE([*** pcre library not found.])
+-    ifelse([$2], , AC_MSG_ERROR([pcre library is required]), $2)
+ else
+     AC_MSG_NOTICE([using pcre v${PCRE_VERSION}])
+     ifelse([$1], , , $1) 
+-- 
+2.35.1
+
