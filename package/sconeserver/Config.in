@@ -76,6 +76,12 @@ config BR2_PACKAGE_SCONESERVER_RSS
 	help
 	  RSS module for Sconeserver
 
+config BR2_PACKAGE_SCONESERVER_SQLITE
+	bool "sqlite"
+	select BR2_PACKAGE_SQLITE
+	help
+	  SQLite module for Sconeserver
+
 config BR2_PACKAGE_SCONESERVER_TESTBUILDER
 	bool "testbuilder"
 	help

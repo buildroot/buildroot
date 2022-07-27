@@ -91,6 +91,13 @@ else
 SCONESERVER_CONF_OPTS += --without-rss
 endif
 
+ifeq ($(BR2_PACKAGE_SCONESERVER_SQLITE),y)
+SCONESERVER_DEPENDENCIES += sqlite
+SCONESERVER_CONF_OPTS += --with-sqlite
+else
+SCONESERVER_CONF_OPTS += --without-sqlite
+endif
+
 ifeq ($(BR2_PACKAGE_SCONESERVER_TESTBUILDER),y)
 SCONESERVER_CONF_OPTS += --with-testbuilder
 else
