@@ -1,4 +1,4 @@
-From 0824d6819857f306583592bce96315893f91bd84 Mon Sep 17 00:00:00 2001
+From d672b64ae257e789311dfd0aea947972af64b966 Mon Sep 17 00:00:00 2001
 From: Romain Naour <romain.naour@gmail.com>
 Date: Wed, 20 Jan 2021 23:26:29 +0100
 Subject: [PATCH] Revert "re PR target/92095 (internal error with -O1
@@ -45,10 +45,10 @@ index 5f9999a669c..37452b06415 100644
  extern const char *output_cbranch (rtx, rtx, int, int, int, rtx_insn *);
  extern const char *output_return (rtx_insn *);
 diff --git a/gcc/config/sparc/sparc.c b/gcc/config/sparc/sparc.c
-index d0843102148..14d112d8ca8 100644
+index 7cfa9f80676..3a721f19eb5 100644
 --- a/gcc/config/sparc/sparc.c
 +++ b/gcc/config/sparc/sparc.c
-@@ -4157,6 +4157,13 @@ eligible_for_sibcall_delay (rtx_insn *trial)
+@@ -4243,6 +4243,13 @@ eligible_for_sibcall_delay (rtx_insn *trial)
  static bool
  sparc_cannot_force_const_mem (machine_mode mode, rtx x)
  {
@@ -62,7 +62,7 @@ index d0843102148..14d112d8ca8 100644
    switch (GET_CODE (x))
      {
      case CONST_INT:
-@@ -4192,11 +4199,9 @@ sparc_cannot_force_const_mem (machine_mode mode, rtx x)
+@@ -4278,11 +4285,9 @@ sparc_cannot_force_const_mem (machine_mode mode, rtx x)
  }
  
  /* Global Offset Table support.  */
@@ -76,7 +76,7 @@ index d0843102148..14d112d8ca8 100644
  
  /* Return the SYMBOL_REF for the Global Offset Table.  */
  
-@@ -4209,6 +4214,27 @@ sparc_got (void)
+@@ -4295,6 +4300,27 @@ sparc_got (void)
    return got_symbol_rtx;
  }
  
@@ -104,7 +104,7 @@ index d0843102148..14d112d8ca8 100644
  /* Wrapper around the load_pcrel_sym{si,di} patterns.  */
  
  static rtx
-@@ -4228,78 +4254,30 @@ gen_load_pcrel_sym (rtx op0, rtx op1, rtx op2)
+@@ -4314,78 +4340,30 @@ gen_load_pcrel_sym (rtx op0, rtx op1, rtx op2)
    return insn;
  }
  
@@ -189,7 +189,7 @@ index d0843102148..14d112d8ca8 100644
  }
  
  /* Ensure that we are not using patterns that are not OK with PIC.  */
-@@ -5464,7 +5442,7 @@ save_local_or_in_reg_p (unsigned int regno, int leaf_function)
+@@ -5550,7 +5528,7 @@ save_local_or_in_reg_p (unsigned int regno, int leaf_function)
      return true;
  
    /* GOT register (%l7) if needed.  */
@@ -198,7 +198,7 @@ index d0843102148..14d112d8ca8 100644
      return true;
  
    /* If the function accesses prior frames, the frame pointer and the return
-@@ -12507,9 +12485,10 @@ static void
+@@ -12658,9 +12636,10 @@ static void
  sparc_file_end (void)
  {
    /* If we need to emit the special GOT helper function, do so now.  */
@@ -210,7 +210,7 @@ index d0843102148..14d112d8ca8 100644
  #ifdef DWARF2_UNWIND_INFO
        bool do_cfi;
  #endif
-@@ -12546,22 +12525,17 @@ sparc_file_end (void)
+@@ -12697,22 +12676,17 @@ sparc_file_end (void)
  #ifdef DWARF2_UNWIND_INFO
        do_cfi = dwarf2out_do_cfi_asm ();
        if (do_cfi)
@@ -239,7 +239,7 @@ index d0843102148..14d112d8ca8 100644
  #endif
      }
  
-@@ -13056,10 +13030,7 @@ sparc_init_pic_reg (void)
+@@ -13207,10 +13181,7 @@ sparc_init_pic_reg (void)
    edge entry_edge;
    rtx_insn *seq;
  
@@ -252,10 +252,10 @@ index d0843102148..14d112d8ca8 100644
  
    start_sequence ();
 diff --git a/gcc/config/sparc/sparc.md b/gcc/config/sparc/sparc.md
-index 6e9ccb4ecfd..8fb0fa11aed 100644
+index b242c4b4481..7d08f50705a 100644
 --- a/gcc/config/sparc/sparc.md
 +++ b/gcc/config/sparc/sparc.md
-@@ -1601,7 +1601,10 @@
+@@ -1603,7 +1603,10 @@
     (clobber (reg:P O7_REG))]
    "REGNO (operands[0]) == INTVAL (operands[3])"
  {
@@ -324,5 +324,5 @@ index f00283f6e7b..67d4ac38095 100644
  #include <stdbool.h>
  #include <stdint.h>
 -- 
-2.30.2
+2.34.3
 
