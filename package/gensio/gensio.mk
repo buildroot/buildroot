@@ -11,9 +11,15 @@ GENSIO_LICENSE_FILES = COPYING.LIB COPYING
 GENSIO_INSTALL_STAGING = YES
 GENSIO_DEPENDENCIES = $(if $(BR2_PACKAGE_AVAHI_LIBAVAHI_CLIENT),avahi)
 GENSIO_CONF_OPTS = \
-	--without-openipmi \
 	--without-swig \
 	--without-python
+
+ifeq ($(BR2_PACKAGE_OPENIPMI),y)
+GENSIO_DEPENDENCIES += openipmi
+GENSIO_CONF_OPTS += --with-openipmi
+else
+GENSIO_CONF_OPTS += --without-openipmi
+endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 GENSIO_DEPENDENCIES += host-pkgconf openssl
