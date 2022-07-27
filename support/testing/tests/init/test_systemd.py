@@ -11,18 +11,11 @@ class InitSystemSystemdBase(InitSystemBase):
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_INIT_SYSTEMD=y
         BR2_TARGET_GENERIC_GETTY_PORT="ttyAMA0"
-        BR2_LINUX_KERNEL=y
-        BR2_LINUX_KERNEL_CUSTOM_VERSION=y
-        BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="4.19.204"
-        BR2_LINUX_KERNEL_DEFCONFIG="vexpress"
-        BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES="{}"
-        BR2_LINUX_KERNEL_DTS_SUPPORT=y
-        BR2_LINUX_KERNEL_INTREE_DTS_NAME="vexpress-v2p-ca9"
         # BR2_TARGET_ROOTFS_TAR is not set
-        """.format(infra.filepath("conf/binfmt-misc-kernel-fragment.config"))
+        """
 
     def check_systemd(self, fs):
-        self.start_emulator(fs, "zImage", "vexpress-v2p-ca9")
+        self.start_emulator(fs)
         self.check_init("/lib/systemd/systemd")
 
         # Test all units are OK
