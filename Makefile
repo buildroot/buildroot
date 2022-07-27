@@ -646,14 +646,6 @@ STRIP_FIND_SPECIAL_LIBS_CMD = \
 	\( -name 'ld-*.so*' -o -name 'libpthread*.so*' \) \
 	-print0
 
-ifeq ($(BR2_ECLIPSE_REGISTER),y)
-define TOOLCHAIN_ECLIPSE_REGISTER
-	./support/scripts/eclipse-register-toolchain `readlink -f $(O)` \
-		$(notdir $(TARGET_CROSS)) $(BR2_ARCH)
-endef
-TARGET_FINALIZE_HOOKS += TOOLCHAIN_ECLIPSE_REGISTER
-endif
-
 # Generate locale data.
 ifeq ($(BR2_TOOLCHAIN_USES_GLIBC),y)
 GLIBC_GENERATE_LOCALES = $(call qstrip,$(BR2_GENERATE_LOCALE))
