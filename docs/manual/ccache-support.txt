@@ -55,3 +55,15 @@ first.
 See https://ccache.samba.org/manual.html#_compiling_in_different_directories[the
 ccache manual's section on "Compiling in different directories"] for
 more details about this rewriting of absolute paths.
+
+When +ccache+ is enabled in Buildroot using the +BR2_CCACHE=y+ option:
+
+* +ccache+ is used during the Buildroot build itself
+
+* +ccache+ is not used when building outside of Buildroot, for example
+  when directly calling the cross-compiler or using the SDK
+
+One can override this behavior using the +BR2_USE_CCACHE+ environment
+variable: when set to +1+, usage of ccache is enabled (default during
+the Buildroot build), when unset or set to a value different from +1+,
+usage of ccache is disabled.
