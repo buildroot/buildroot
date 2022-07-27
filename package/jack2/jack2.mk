@@ -47,6 +47,13 @@ else
 JACK2_CONF_OPTS += --readline=no
 endif
 
+ifeq ($(BR2_PACKAGE_SYSTEMD),y)
+JACK2_DEPENDENCIES += systemd
+JACK2_CONF_OPTS += --systemd=yes
+else
+JACK2_CONF_OPTS += --systemd=no
+endif
+
 ifeq ($(BR2_PACKAGE_JACK2_LEGACY),y)
 JACK2_CONF_OPTS += --classic
 else
