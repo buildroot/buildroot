@@ -29,6 +29,13 @@ else
 NETDATA_CONF_OPTS += --disable-plugin-cups
 endif
 
+ifeq ($(BR2_PACKAGE_FREEIPMI),y)
+NETDATA_CONF_OPTS += --enable-plugin-freeipmi
+NETDATA_DEPENDENCIES += freeipmi
+else
+NETDATA_CONF_OPTS += --disable-plugin-freeipmi
+endif
+
 ifeq ($(BR2_PACKAGE_JSON_C),y)
 NETDATA_CONF_OPTS += --enable-jsonc
 NETDATA_DEPENDENCIES += json-c
