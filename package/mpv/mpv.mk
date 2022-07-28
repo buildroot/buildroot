@@ -39,8 +39,7 @@ else
 MPV_CONF_OPTS += --enable-libmpv-shared --disable-libmpv-static
 endif
 
-# ALSA support requires pcm+mixer
-ifeq ($(BR2_PACKAGE_ALSA_LIB_MIXER)$(BR2_PACKAGE_ALSA_LIB_PCM),yy)
+ifeq ($(BR2_PACKAGE_ALSA_LIB),y)
 MPV_CONF_OPTS += --enable-alsa
 MPV_DEPENDENCIES += alsa-lib
 else

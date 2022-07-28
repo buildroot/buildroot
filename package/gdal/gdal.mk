@@ -18,14 +18,14 @@ GDAL_CONFIG_SCRIPTS = gdal-config
 # enabled but it seems, in contrast to mrf driver support, that they
 # can be implicitly disabled, by configuring gdal without their
 # respectively needed dependencies.
-GDAL_DEPENDENCIES = host-pkgconf jpeg libgeotiff libpng proj tiff zlib
+GDAL_DEPENDENCIES = host-pkgconf jpeg json-c libgeotiff libpng proj tiff zlib
 
 # Yes, even though they have --with options, these few libraries are
 # mandatory. If we don't provide them, bundled versions are used.
 GDAL_CONF_OPTS = \
 	--with-geotiff \
 	--with-jpeg \
-	--with-libjson-c \
+	--with-libjson-c=$(STAGING_DIR)/usr \
 	--with-libtool \
 	--with-libz \
 	--with-png \
@@ -38,45 +38,35 @@ GDAL_CONF_OPTS = \
 	--without-cryptopp \
 	--without-curl \
 	--without-dds \
-	--without-dods-root \
 	--without-ecw \
 	--without-expat \
 	--without-exr \
 	--without-fgdb \
-	--without-fme \
 	--without-freexl \
 	--without-geos \
 	--without-gnm \
 	--without-libkml \
 	--without-lz4 \
-	--without-grass \
-	--without-libgrass \
 	--without-gta \
 	--without-hdf4 \
 	--without-hdf5 \
 	--without-hdfs \
 	--without-heif \
 	--without-idb \
-	--without-ingres \
 	--without-jp2lura \
-	--without-jasper \
 	--without-java \
 	--without-jpeg12 \
 	--without-jxl \
-	--without-charls \
 	--without-kakadu \
 	--without-kea \
 	--without-lerc \
 	--without-gif \
 	--without-liblzma \
 	--without-libdeflate \
-	--without-mdb \
-	--without-mongocxx \
 	--without-mongocxxv3 \
 	--without-mrsid \
 	--without-jp2mrsid \
 	--without-macosx-framework \
-	--without-mrsid_lidar \
 	--without-msg \
 	--without-mysql \
 	--without-netcdf \
@@ -92,7 +82,6 @@ GDAL_CONF_OPTS = \
 	--without-pcre \
 	--without-pcre2 \
 	--without-pdfium \
-	--without-perl \
 	--without-podofo \
 	--without-poppler \
 	--without-python \

@@ -307,13 +307,15 @@ endif
 ifeq ($(BR2_PACKAGE_SYSTEMD_HWDB),y)
 SYSTEMD_CONF_OPTS += -Dhwdb=true
 define SYSTEMD_BUILD_HWDB
-	$(HOST_DIR)/bin/udevadm hwdb --update --root $(TARGET_DIR)
+	$(HOST_DIR)/bin/systemd-hwdb update --root $(TARGET_DIR) --strict --usr
 endef
 SYSTEMD_TARGET_FINALIZE_HOOKS += SYSTEMD_BUILD_HWDB
-define SYSTEMD_RM_HWDB_SRV
-	rm -rf $(TARGET_DIR)/$(HOST_EUDEV_SYSCONFDIR)/udev/hwdb.d/
+define SYSTEMD_RM_HWBD_UPDATE_SERVICE
+	rm -rf $(TARGET_DIR)/usr/lib/systemd/system/systemd-hwdb-update.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/*/systemd-hwdb-update.service \
+		$(TARGET_DIR)/usr/bin/systemd-hwdb
 endef
-SYSTEMD_ROOTFS_PRE_CMD_HOOKS += SYSTEMD_RM_HWDB_SRV
+SYSTEMD_POST_INSTALL_TARGET_HOOKS += SYSTEMD_RM_HWBD_UPDATE_SERVICE
 else
 SYSTEMD_CONF_OPTS += -Dhwdb=false
 endif
@@ -819,7 +821,7 @@ HOST_SYSTEMD_CONF_OPTS = \
 	-Dsysusers=false \
 	-Dtmpfiles=true \
 	-Dimportd=false \
-	-Dhwdb=false \
+	-Dhwdb=true \
 	-Drfkill=false \
 	-Dman=false \
 	-Dhtml=false \

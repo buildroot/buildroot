@@ -14,6 +14,14 @@ ZSH_LICENSE = MIT-like
 ZSH_LICENSE_FILES = LICENCE
 ZSH_CPE_ID_VENDOR = zsh
 
+# zsh uses TRY_RUN to determine these
+ZSH_CONF_OPTS += \
+	zsh_cv_long_is_64_bit=$(if $(BR2_ARCH_IS_64),yes,no) \
+	zsh_cv_off_t_is_64_bit=yes \
+	zsh_cv_64_bit_type='long long' \
+	zsh_cv_64_bit_utype='unsigned long long' \
+	zsh_cv_printf_has_lld=yes
+
 ifeq ($(BR2_PACKAGE_GDBM),y)
 ZSH_CONF_OPTS += --enable-gdbm
 ZSH_DEPENDENCIES += gdbm
@@ -35,6 +43,25 @@ ZSH_DEPENDENCIES += pcre
 else
 ZSH_CONF_OPTS += --disable-pcre
 endif
+
+ifeq ($(BR2_STATIC_LIBS),)
+# zsh uses TRY_RUN to determine these
+ZSH_CONF_OPTS += \
+	zsh_cv_shared_environ=yes \
+	zsh_cv_shared_tgetent=yes \
+	zsh_cv_shared_tigetstr=yes \
+	zsh_cv_sys_dynamic_clash_ok=yes \
+	zsh_cv_sys_dynamic_rtld_global=yes \
+	zsh_cv_sys_dynamic_execsyms=yes \
+	zsh_cv_sys_dynamic_strip_exe=yes \
+	zsh_cv_sys_dynamic_strip_lib=yes
+endif
+
+# regex is commonly used by completion scripts, link it statically
+define ZSH_USE_STATIC_REGEX_MODULE
+	$(SED) 's,echo dynamic,echo static,' $(@D)/Src/Modules/regex.mdd
+endef
+ZSH_POST_PATCH_HOOKS += ZSH_USE_STATIC_REGEX_MODULE
 
 # Add /bin/zsh to /etc/shells otherwise some login tools like dropbear
 # can reject the user connection. See man shells.
