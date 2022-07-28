@@ -81,13 +81,5 @@ define HOST_EUDEV_BUILD_HWDB
 endef
 HOST_EUDEV_TARGET_FINALIZE_HOOKS += HOST_EUDEV_BUILD_HWDB
 
-# Note: this will run in the filesystem context, so will use a copy
-# of tharget/, not the real one, so the files are still available on
-# re-builds (foo-rebuild, etc...)
-define HOST_EUDEV_RM_HWDB_SRC
-	rm -rf $(TARGET_DIR)/etc/udev/hwdb.d/
-endef
-HOST_EUDEV_ROOTFS_PRE_CMD_HOOKS += HOST_EUDEV_RM_HWDB_SRC
-
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
