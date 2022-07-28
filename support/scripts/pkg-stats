@@ -885,12 +885,13 @@ def boolean_str(b):
 
 
 def dump_html_pkg(f, pkg):
-    f.write(f'<div id=\"package__{pkg.name}\" \
-        class=\"package data _{pkg.name}\">{pkg.path}</div>\n')
+    pkg_css_class = pkg.path.replace("/", "_")[:-3]
+    f.write(f'<div id=\"package__{pkg_css_class}\" \
+        class=\"package data _{pkg_css_class}\">{pkg.path}</div>\n')
     # Patch count
-    data_field_id = f'patch_count__{pkg.name}'
+    data_field_id = f'patch_count__{pkg_css_class}'
     div_class = ["centered patch_count data"]
-    div_class.append(f'_{pkg.name}')
+    div_class.append(f'_{pkg_css_class}')
     if pkg.patch_count == 0:
         div_class.append("nopatches")
     elif pkg.patch_count < 5:
@@ -901,10 +902,10 @@ def dump_html_pkg(f, pkg):
         \">{str(pkg.patch_count)}</div>\n')
 
     # Infrastructure
-    data_field_id = f'infrastructure__{pkg.name}'
+    data_field_id = f'infrastructure__{pkg_css_class}'
     infra = infra_str(pkg.infras)
     div_class = ["centered infrastructure data"]
-    div_class.append(f'_{pkg.name}')
+    div_class.append(f'_{pkg_css_class}')
     if infra == "Unknown":
         div_class.append("wrong")
     else:
@@ -913,9 +914,9 @@ def dump_html_pkg(f, pkg):
         \">{infra_str(pkg.infras)}</div>\n')
 
     # License
-    data_field_id = f'license__{pkg.name}'
+    data_field_id = f'license__{pkg_css_class}'
     div_class = ["centered license data"]
-    div_class.append(f'_{pkg.name}')
+    div_class.append(f'_{pkg_css_class}')
     if pkg.is_status_ok('license'):
         div_class.append("correct")
     else:
@@ -924,9 +925,9 @@ def dump_html_pkg(f, pkg):
         \">{boolean_str(pkg.is_status_ok("license"))}</div>\n')
 
     # License files
-    data_field_id = f'license_files__{pkg.name}'
+    data_field_id = f'license_files__{pkg_css_class}'
     div_class = ["centered license_files data"]
-    div_class.append(f'_{pkg.name}')
+    div_class.append(f'_{pkg_css_class}')
     if pkg.is_status_ok('license-files'):
         div_class.append("correct")
     else:
@@ -935,9 +936,9 @@ def dump_html_pkg(f, pkg):
         \">{boolean_str(pkg.is_status_ok("license-files"))}</div>\n')
 
     # Hash
-    data_field_id = f'hash_file__{pkg.name}'
+    data_field_id = f'hash_file__{pkg_css_class}'
     div_class = ["centered hash_file data"]
-    div_class.append(f'_{pkg.name}')
+    div_class.append(f'_{pkg_css_class}')
     if pkg.is_status_ok('hash'):
         div_class.append("correct")
     else:
@@ -946,17 +947,17 @@ def dump_html_pkg(f, pkg):
         \">{boolean_str(pkg.is_status_ok("hash"))}</div>\n')
 
     # Current version
-    data_field_id = f'current_version__{pkg.name}'
+    data_field_id = f'current_version__{pkg_css_class}'
     if len(pkg.current_version) > 20:
         current_version = pkg.current_version[:20] + "..."
     else:
         current_version = pkg.current_version
     f.write(f'  <div id=\"{data_field_id}\" \
-        class=\"centered current_version data {pkg.name}\">{current_version}</div>\n')
+        class=\"centered current_version data _{pkg_css_class}\">{current_version}</div>\n')
 
     # Latest version
-    data_field_id = f'latest_version__{pkg.name}'
-    div_class.append(f'_{pkg.name}')
+    data_field_id = f'latest_version__{pkg_css_class}'
+    div_class.append(f'_{pkg_css_class}')
     div_class.append("latest_version data")
     if pkg.latest_version['status'] == RM_API_STATUS_ERROR:
         div_class.append("version-error")
@@ -988,9 +989,9 @@ def dump_html_pkg(f, pkg):
     f.write(f'  <div id=\"{data_field_id}\" class=\"{" ".join(div_class)}\">{latest_version_text}</div>\n')
 
     # Warnings
-    data_field_id = f'warnings__{pkg.name}'
+    data_field_id = f'warnings__{pkg_css_class}'
     div_class = ["centered warnings data"]
-    div_class.append(f'_{pkg.name}')
+    div_class.append(f'_{pkg_css_class}')
     if pkg.warnings == 0:
         div_class.append("correct")
     else:
@@ -998,9 +999,9 @@ def dump_html_pkg(f, pkg):
     f.write(f'  <div id=\"{data_field_id}\" class=\"{" ".join(div_class)}\">{pkg.warnings}</div>\n')
 
     # URL status
-    data_field_id = f'upstream_url__{pkg.name}'
+    data_field_id = f'upstream_url__{pkg_css_class}'
     div_class = ["centered upstream_url data"]
-    div_class.append(f'_{pkg.name}')
+    div_class.append(f'_{pkg_css_class}')
     url_str = pkg.status['url'][1]
     if pkg.status['url'][0] in ("error", "warning"):
         div_class.append("missing_url")
@@ -1013,9 +1014,9 @@ def dump_html_pkg(f, pkg):
     f.write(f'  <div id=\"{data_field_id}\" class=\"{" ".join(div_class)}\">{url_str}</div>\n')
 
     # CVEs
-    data_field_id = f'cves__{pkg.name}'
+    data_field_id = f'cves__{pkg_css_class}'
     div_class = ["centered cves data"]
-    div_class.append(f'_{pkg.name}')
+    div_class.append(f'_{pkg_css_class}')
     if pkg.is_status_ok("cve"):
         div_class.append("cve-ok")
     elif pkg.is_status_error("cve"):
@@ -1037,9 +1038,9 @@ def dump_html_pkg(f, pkg):
     f.write("  </div>\n")
 
     # CVEs Ignored
-    data_field_id = f'ignored_cves__{pkg.name}'
+    data_field_id = f'ignored_cves__{pkg_css_class}'
     div_class = ["centered data ignored_cves"]
-    div_class.append(f'_{pkg.name}')
+    div_class.append(f'_{pkg_css_class}')
     if pkg.ignored_cves:
         div_class.append("cve_ignored")
     f.write(f'  <div id=\"{data_field_id}\" class=\"{" ".join(div_class)}\">\n')
@@ -1048,9 +1049,9 @@ def dump_html_pkg(f, pkg):
     f.write("  </div>\n")
 
     # CPE ID
-    data_field_id = f'cpe_id__{pkg.name}'
+    data_field_id = f'cpe_id__{pkg_css_class}'
     div_class = ["left cpe_id data"]
-    div_class.append(f'_{pkg.name}')
+    div_class.append(f'_{pkg_css_class}')
     if pkg.is_status_ok("cpe"):
         div_class.append("cpe-ok")
     elif pkg.is_status_error("cpe"):
