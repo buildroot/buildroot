@@ -744,60 +744,72 @@ html_header = """
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
+const triangleUp = String.fromCodePoint(32, 9652);
+const triangleDown = String.fromCodePoint(32, 9662);
+var lastColumnName = false;
+
 function sortGrid(sortLabel){
+	let i = 0;
 	let pkgSortArray = [], sortedPkgArray = [], pkgStringSortArray = [], pkgNumSortArray = [];
-	let columnValues = Array.from(document.getElementsByClassName(sortLabel));
+	const columnValues = Array.from(document.getElementsByClassName(sortLabel));
+	const columnName = document.getElementById(sortLabel);
+	let lastStyle = document.getElementById("sort-css");
 
-	columnValues.shift();
-	columnValues.forEach((listing) => {
-		let sortArr = [];
-		sortArr[0] = listing.id.replace(sortLabel+"_", "");
-		if (!listing.innerText){
-			sortArr[1] = -1;
-		} else {
-			sortArr[1] = listing.innerText;
-		};
-		pkgSortArray.push(sortArr);
-	})
-	pkgSortArray.forEach((listing) => {
-		if ( isNaN(parseInt(listing[1], 10)) ){
-			pkgStringSortArray.push(listing);
-		} else {
-			listing[1] = parseFloat(listing[1]);
-			pkgNumSortArray.push(listing);
-		};
-	})
-	sortedStringPkgArray = pkgStringSortArray.sort(function(a, b) {
-		const nameA = a[1].toUpperCase(); // ignore upper and lowercase
-		const nameB = b[1].toUpperCase(); // ignore upper and lowercase
-		if (nameA < nameB) { return -1;	};
-		if (nameA > nameB) { return 1; };
-		return 0;   // names must be equal
-	});
-	sortedNumPkgArray = pkgNumSortArray.sort(function(a, b) {
-		return a[1] - b[1];
-	});
+	if (lastStyle){
+		lastStyle.disable = true;
+		lastStyle.remove();
+	};
+	const styleElement = document.createElement('style');
+	styleElement.id = "sort-css";
+	document.head.appendChild(styleElement);
+	const styleSheet = styleElement.sheet;
 
-	let triangleUp = String.fromCodePoint(32, 9652);
-	let triangleDown = String.fromCodePoint(32, 9662);
-	let columnName = document.getElementById(sortLabel);
+        columnValues.shift();
+        columnValues.forEach((listing) => {
+                let sortArr = [];
+                sortArr[0] = listing.id.replace(sortLabel+"_", "");
+                if (!listing.innerText){
+                        sortArr[1] = -1;
+                } else {
+                        sortArr[1] = listing.innerText;
+                };
+                pkgSortArray.push(sortArr);
+        });
+        pkgSortArray.forEach((listing) => {
+                if ( isNaN(parseInt(listing[1], 10)) ){
+                        pkgStringSortArray.push(listing);
+                } else {
+                        listing[1] = parseFloat(listing[1]);
+                        pkgNumSortArray.push(listing);
+                };
+        });
 
-	if (columnName.lastElementChild.innerText == triangleDown) {
-		columnName.lastElementChild.innerText = triangleUp;
-		sortedStringPkgArray.reverse();
-		sortedNumPkgArray.reverse();
-		sortedPkgArray = sortedNumPkgArray.concat(sortedStringPkgArray)
-	} else {
-		columnName.lastElementChild.innerText = triangleDown;
-		sortedPkgArray = sortedStringPkgArray.concat(sortedNumPkgArray)
-	}
+        let sortedStringPkgArray = pkgStringSortArray.sort((a, b) => {
+                if (a[1].toUpperCase() < b[1].toUpperCase()) { return -1; };
+                if (a[1].toUpperCase() > b[1].toUpperCase()) { return 1; };
+                return 0;
+        });
+        let sortedNumPkgArray = pkgNumSortArray.sort((a, b) => a[1] - b[1]);
 
-	sortedPkgArray.forEach((listing) => {
-		let row = Array.from(document.getElementsByClassName(listing[0]));
-		let packageGrid = document.getElementById("package-grid");
-		row.forEach((element) => { packageGrid.append(element)});
-	})
-}
+        if (columnName.lastElementChild.innerText == triangleDown) {
+                columnName.lastElementChild.innerText = triangleUp;
+                sortedStringPkgArray.reverse();
+                sortedNumPkgArray.reverse();
+                sortedPkgArray = sortedNumPkgArray.concat(sortedStringPkgArray);
+        } else {
+                columnName.lastElementChild.innerText = triangleDown;
+                sortedPkgArray = sortedStringPkgArray.concat(sortedNumPkgArray);
+        };
+
+	if (lastColumnName && lastColumnName != columnName){lastColumnName.lastElementChild.innerText = ""};
+	lastColumnName = columnName;
+	sortedPkgArray.unshift(["label"]);
+        sortedPkgArray.forEach((listing) => {
+		i++;
+		let rule = "." + listing[0] + " { grid-row: " + i + "; }";
+		styleSheet.insertRule(rule);
+        });
+};
 </script>
 
 <style>
