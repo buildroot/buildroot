@@ -44,7 +44,7 @@ else
 ZSH_CONF_OPTS += --disable-pcre
 endif
 
-ifneq ($(BR2_STATIC_LIBS),y)
+ifeq ($(BR2_STATIC_LIBS),)
 # zsh uses TRY_RUN to determine these
 ZSH_CONF_OPTS += \
 	zsh_cv_shared_environ=yes \
