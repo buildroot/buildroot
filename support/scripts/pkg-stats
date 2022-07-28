@@ -750,11 +750,13 @@ var lastColumnName = false;
 const styleElement = document.createElement('style');
 document.head.insertAdjacentElement("afterend", styleElement);
 const styleSheet = styleElement.sheet;
-const collapseRule = ".collapse{ height: 200px; overflow: hidden scroll;}"
-const buttonRule = ".see-more{ display: block;}"
+addedCSSRules = [
+".collapse{ height: 200px; overflow: hidden scroll;}",
+".see-more{ display: block;}",
+".label:hover,.see-more:hover { cursor: pointer; background: #d2ffc4;}"
+];
 
-styleSheet.insertRule(collapseRule);
-styleSheet.insertRule(buttonRule);
+addedCSSRules.forEach(rule => styleSheet.insertRule(rule));
 
 function sortGrid(sortLabel){
 	let i = 0;
@@ -816,8 +818,7 @@ function sortGrid(sortLabel){
 		let rule = "." + listing[0] + " { grid-row: " + i + "; }";
 		styleSheet.insertRule(rule);
         });
-	styleSheet.insertRule(collapseRule);
-	styleSheet.insertRule(buttonRule);
+	addedCSSRules.forEach(rule => styleSheet.insertRule(rule));
 };
 
 function expandField(fieldId){
@@ -887,17 +888,10 @@ function expandField(fieldId){
 
 <a href=\"#results\">Results</a><br/>
 
-<p id=\"sortable_hint\"></p>
 """  # noqa - tabs and spaces
 
 
 html_footer = """
-<script>
-if (typeof sortGrid === "function") {
-  document.getElementById("sortable_hint").innerHTML =
-  "hint: the table can be sorted by clicking the column headers"
-}
-</script>
 </body>
 </html>
 """
