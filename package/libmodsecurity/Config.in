@@ -6,7 +6,7 @@ config BR2_PACKAGE_LIBMODSECURITY
 	# various issues when static linking and other dependencies of
 	# libmodsecurity in turn use mbedtls
 	depends on !BR2_STATIC_LIBS
-	select BR2_PACKAGE_PCRE
+	select BR2_PACKAGE_PCRE2
 	help
 	  Libmodsecurity is one component of the ModSecurity
 	  v3 project. The library codebase serves as an
