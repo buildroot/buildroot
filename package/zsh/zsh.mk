@@ -14,6 +14,14 @@ ZSH_LICENSE = MIT-like
 ZSH_LICENSE_FILES = LICENCE
 ZSH_CPE_ID_VENDOR = zsh
 
+# zsh uses TRY_RUN to determine these
+ZSH_CONF_OPTS += \
+	zsh_cv_long_is_64_bit=$(if $(BR2_ARCH_IS_64),yes,no) \
+	zsh_cv_off_t_is_64_bit=yes \
+	zsh_cv_64_bit_type='long long' \
+	zsh_cv_64_bit_utype='unsigned long long' \
+	zsh_cv_printf_has_lld=yes
+
 ifeq ($(BR2_PACKAGE_GDBM),y)
 ZSH_CONF_OPTS += --enable-gdbm
 ZSH_DEPENDENCIES += gdbm
