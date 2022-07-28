@@ -65,6 +65,12 @@ else
 CONNMAN_CONF_OPTS += --disable-ofono
 endif
 
+ifeq ($(BR2_PACKAGE_CONNMAN_STATS),y)
+CONNMAN_CONF_OPTS += --enable-stats
+else
+CONNMAN_CONF_OPTS += --disable-stats
+endif
+
 ifeq ($(BR2_PACKAGE_CONNMAN_WIFI),y)
 CONNMAN_CONF_OPTS += --enable-wifi
 else
