@@ -94,6 +94,14 @@ comment "ofono support needs a toolchain w/ headers >= 4.12"
 config BR2_PACKAGE_CONNMAN_DEBUG
 	bool "enable compiling with debugging information"
 
+config BR2_PACKAGE_CONNMAN_STATS
+	bool "enable statistics round robin file generation"
+	help
+	  Enable generation of statistics in a round robin file.
+
+	  This is enabled by default upstream but is marked as
+	  experimental.
+
 config BR2_PACKAGE_CONNMAN_CLIENT
 	bool "enable command line client"
 	select BR2_PACKAGE_READLINE
