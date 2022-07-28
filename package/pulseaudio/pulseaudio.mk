@@ -162,9 +162,11 @@ else
 PULSEAUDIO_CONF_OPTS += -Dx11=disabled
 endif
 
-ifeq ($(BR2_PACKAGE_SPEEX),y)
+# This is not a mistake: the option is called speex, but what it
+# really needs is speexdsp
+ifeq ($(BR2_PACKAGE_SPEEXDSP),y)
 PULSEAUDIO_CONF_OPTS += -Dspeex=enabled
-PULSEAUDIO_DEPENDENCIES += speex
+PULSEAUDIO_DEPENDENCIES += speexdsp
 else
 PULSEAUDIO_CONF_OPTS += -Dspeex=disabled
 endif
