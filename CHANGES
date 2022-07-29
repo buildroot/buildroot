@@ -1,3 +1,35 @@
+2022.02.4, released July 28th, 2022
+
+	Important / security related fixes.
+
+	Disable big endian no-mmu on ARM as it is not supported by
+	elf2flt.
+
+	Tighten dependencies for external Bootlin toolchains to ensure
+	they can only be selected in compatible configurations.
+
+	Support external toolchains without gdbserver.
+
+	Updated/fixed packages: apache, avahi, bdwgc, bind, bpftool,
+	cups, darkhttpd, dmalloc, ecryptfs-utils, fxload, ghostscript,
+	gnutls, gst-omx, gst1-devtools, gst1-libav, gst1-plugins-base,
+	gst1-plugins-bad, gst1-plugins-good, gst1-plugins-ugly,
+	gst1-python, gst1-rtsp-server, gst1-vaapi, gstreamer1,
+	gstreamer1-editing-services, gtest, iptables, keyutils, lcms2,
+	libabseil-cpp, libcamera, libcurl, libeastl, libgpgme,
+	libgtk3, libmdbx, libmediaart, libmodsecurity, libnetconf2,
+	libopenssl, libpjsip, libsamplerate, libsndfile, libtalloc,
+	logrotate, luajit, nginx, noip, paxtest, php, postgresql,
+	procrank_linux, pure-ftpd, python-pillow, qdecoder,
+	rabbitmq-server, rpi-userland, rustc, sofia-sip, systemd,
+	tcpreplay, tinyproxy, tor, uacme, uboot-tools, vim, watchdogd,
+	webkitgtk, wireguard-linux-compat, wpa_supplicant, wpewebkit,
+	zstd
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14881: Watchdogd Package missing INSTALL_STAGING
+
 2022.02.3, released June 19th, 2022
 
 	Important / security related fixes.
