@@ -1048,23 +1048,19 @@ ifeq ($(NEED_WRAPPER),y)
 	$(Q)$(TOPDIR)/support/scripts/mkmakefile $(TOPDIR) $(O)
 endif
 
-.PHONY: check-make-version
-check-make-version:
-ifneq ($(filter $(RUNNING_MAKE_VERSION),4.3),)
-	@echo "Make 4.3 doesn't support 'printvars' and 'show-vars' recipes"
-	@exit 1
-endif
-
 # printvars prints all the variables currently defined in our
 # Makefiles. Alternatively, if a non-empty VARS variable is passed,
 # only the variables matching the make pattern passed in VARS are
 # displayed.
 # show-vars does the same, but as a JSON dictionnary.
+#
+# Note: we iterate of .VARIABLES and filter each variable individually,
+# to workaround a bug in make 4.3; see https://savannah.gnu.org/bugs/?59093
 .PHONY: printvars
-printvars: check-make-version
+printvars:
 	@:
 	$(foreach V, \
-		$(sort $(filter $(VARS),$(.VARIABLES))), \
+		$(sort $(foreach X, $(.VARIABLES), $(filter $(VARS),$(X)))), \
 		$(if $(filter-out environment% default automatic, \
 				$(origin $V)), \
 		$(if $(QUOTED_VARS),\
@@ -1072,13 +1068,14 @@ printvars: check-make-version
 			$(info $V=$(if $(RAW_VARS),$(value $V),$($V))))))
 # ')))) # Syntax colouring...
 
+# See details above, same as for printvars
 .PHONY: show-vars
 show-vars: VARS?=%
-show-vars: check-make-version
+show-vars:
 	@:
 	$(info $(call clean-json, { \
 			$(foreach V, \
-				$(sort $(filter $(VARS),$(.VARIABLES))), \
+				$(sort $(foreach X, $(.VARIABLES), $(filter $(VARS),$(X)))), \
 				$(if $(filter-out environment% default automatic, $(origin $V)), \
 					"$V": { \
 						"expanded": $(call mk-json-str,$($V))$(comma) \
