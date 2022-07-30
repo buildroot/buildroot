@@ -93,11 +93,11 @@ check_elf_has_rpath() {
             dir="$( sed -r -e 's:/+:/:g; s:/$::;' <<<"${dir}" )"
             [ "${dir}" = "${hostdir}/lib" ] && return 0
             [ "${dir}" = "\$ORIGIN/../lib" ] && return 0
-	    # This check is done even for builds where
-	    # BR2_PER_PACKAGE_DIRECTORIES is disabled. In this case,
-	    # PER_PACKAGE_DIR and therefore ${perpackagedir} points to
-	    # a non-existent directory, and this check will always be
-	    # false.
+            # This check is done even for builds where
+            # BR2_PER_PACKAGE_DIRECTORIES is disabled. In this case,
+            # PER_PACKAGE_DIR and therefore ${perpackagedir} points to
+            # a non-existent directory, and this check will always be
+            # false.
             [[ ${dir} =~ "${perpackagedir}/"[^/]+/host/lib ]] && return 0
         done
     done < <( readelf -d "${file}" 2>/dev/null                                  \
