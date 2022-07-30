@@ -66,7 +66,8 @@ config BR2_PACKAGE_TVHEADEND_TRANSCODING
 	select BR2_PACKAGE_FFMPEG_AVRESAMPLE
 	select BR2_PACKAGE_FFMPEG_GPL # needed for x264 support
 	select BR2_PACKAGE_FFMPEG_SWSCALE
-	select BR2_PACKAGE_LIBVPX
+	# vp8 encoder needs c++
+	select BR2_PACKAGE_LIBVPX if BR2_INSTALL_LIBSTDCPP
 	select BR2_PACKAGE_X264
 	help
 	  Enable transcoding support.
