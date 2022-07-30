@@ -46,7 +46,7 @@ J2: jumper on pins 2 and 4.
 
 In case the board was flashed with a wrong u-boot, or the eMMC is
 erased, u-boot can be loaded by USB Serial Download boot mode, using
-imx-usb-loader. See [3] and [4].
+imx-usb-loader. See [3].
 
 For flashing:
 - Plug the micro USB cable from the Debug USB Port, to your computer
@@ -54,9 +54,13 @@ For flashing:
 
 In the U-Boot prompt launch:
 
-=> ums 0 mmc 1
+=> ums 0 mmc ${mmcdev}
 
 This will mount the eMMC content in the host PC as a mass storage device.
+Note: the ${mmcdev} id may change from one uboot version to another. The
+actual id can be confirmed by running commands "mmc rescan" then
+"mmc list", to find the eMMC entry. Finally it's possible to enter
+directly the mmc device id, for example: "ums 0 mmc 2".
 
 To determine the device associated to the eMMC card have a look in the
 /proc/partitions file:
@@ -70,12 +74,13 @@ Buildroot prepares a bootable "sdcard.img" image in the output/images/
 directory, ready to be dumped on the eMMC. Launch the following
 command as root:
 
-  dd if=output/images/sdcard.img of=/dev/<your-sd-device>
+  dd bs=1M if=output/images/sdcard.img of=/dev/<your-sd-device>
 
 *** WARNING! This will destroy all the eMMC content. Use with care! ***
 
 This operation can take several minutes, depending on the image
-size. When tested, a 2MB/s transfer rate was observed.
+size. When tested, a 10MB/s transfer rate was observed. Note: the
+blocksize "bs=1M" parameter gives better transfer performances.
 
 For details about the medium image layout, see the definition in
 board/freescale/common/imx/genimage.cfg.template.
@@ -91,6 +96,5 @@ To boot your newly created system:
 Enjoy!
 
 [1]. https://www.technexion.com/products/system-on-modules/pico/pico-compute-modules/detail/PICO-IMX8M-MINI
-[2]. https://www.technexion.com/products/pico-evaluation-kits/detail/PICOPIIMX8MM1GDEV
-[3]. https://www.technexion.com/support/knowledgebase/boot-configuration-settings-for-pico-baseboards/
-[4]. https://www.technexion.com/support/knowledgebase/loading-bootable-software-images-onto-the-emmc-of-picosom-on-pico-pi/
+[2]. https://www.technexion.com/products/system-on-modules/evk/pico-pi-imx8m-mini/
+[3]. https://developer.technexion.com/docs/recover-to-factory-settings-pico-imx8m-mini
