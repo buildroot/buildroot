@@ -14,6 +14,7 @@ import checkpackagelib.lib_config
 import checkpackagelib.lib_hash
 import checkpackagelib.lib_mk
 import checkpackagelib.lib_patch
+import checkpackagelib.lib_python
 import checkpackagelib.lib_shellscript
 import checkpackagelib.lib_sysv
 
@@ -100,6 +101,8 @@ def get_lib_from_filetype(fname):
     filetype = get_filetype(fname)
     if filetype == "text/x-shellscript":
         return checkpackagelib.lib_shellscript
+    if filetype in ["text/x-python", "text/x-script.python"]:
+        return checkpackagelib.lib_python
     return None
 
 
