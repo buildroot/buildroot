@@ -294,6 +294,12 @@ $ git fetch --all --tags
 $ git rebase origin/master
 ---------------------
 
+Now check the coding style for the changes you committed:
+
+---------------------
+$ utils/docker-run make check-package
+---------------------
+
 Now, you are ready to generate then submit your patch set.
 
 To generate it, run:
