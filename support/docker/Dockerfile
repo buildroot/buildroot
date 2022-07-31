@@ -39,6 +39,7 @@ RUN apt-get install -y --no-install-recommends \
         openssh-server \
         python3 \
         python3-flake8 \
+        python3-magic \
         python3-nose2 \
         python3-pexpect \
         python3-pytest \
