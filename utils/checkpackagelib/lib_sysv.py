@@ -21,6 +21,9 @@ class Indent(_CheckFunction):
 
 
 class NotExecutable(checkpackagelib.tool.NotExecutable):
+    def ignore(self):
+        return 'etc/init.d/' in self.filename
+
     def hint(self):
         return ", just make sure you use '$(INSTALL) -D -m 0755' in the .mk file"
 

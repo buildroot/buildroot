@@ -4,7 +4,12 @@ from checkpackagelib.base import _Tool
 
 
 class NotExecutable(_Tool):
+    def ignore(self):
+        return False
+
     def run(self):
+        if self.ignore():
+            return
         if os.access(self.filename, os.X_OK):
             return ["{}:0: This file does not need to be executable{}".format(self.filename, self.hint())]
 
