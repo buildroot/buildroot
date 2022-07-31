@@ -3,6 +3,29 @@ import checkpackagelib.test_util as util
 import checkpackagelib.lib_mk as m
 
 
+DoNotInstallToHostdirUsr = [
+    ('real case',
+     'libapparmor.mk',
+     'LIBAPPARMOR_CONF_OPTS += \\\n'
+     '\t--with-python \\\n'
+     '\tPYTHON=$(HOST_DIR)/usr/bin/python3 \\\n'
+     '\tPYTHON_CONFIG=$(STAGING_DIR)/usr/bin/python3-config \\\n'
+     '\tSWIG=$(SWIG)\n',
+     [['libapparmor.mk:3: install files to $(HOST_DIR)/ instead of $(HOST_DIR)/usr/',
+       '\tPYTHON=$(HOST_DIR)/usr/bin/python3 \\\n']]),
+    ('ignore comment',
+     'any',
+     '# following code do not install to $(HOST_DIR)/usr/\n',
+     []),
+    ]
+
+
+@pytest.mark.parametrize('testname,filename,string,expected', DoNotInstallToHostdirUsr)
+def test_DoNotInstallToHostdirUsr(testname, filename, string, expected):
+    warnings = util.check_file(m.DoNotInstallToHostdirUsr, filename, string)
+    assert warnings == expected
+
+
 Ifdef = [
     ('ignore commented line',
      'any',

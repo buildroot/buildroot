@@ -14,6 +14,7 @@ SKELETON_ADD_SKELETON_DEPENDENCY = NO
 # We create a compatibility symlink in case a post-build script still
 # uses $(HOST_DIR)/usr
 define HOST_SKELETON_INSTALL_CMDS
+# check-package DoNotInstallToHostdirUsr
 	$(Q)ln -snf . $(HOST_DIR)/usr
 	$(Q)mkdir -p $(HOST_DIR)/lib
 	$(Q)mkdir -p $(HOST_DIR)/include
