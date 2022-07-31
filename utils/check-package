@@ -63,10 +63,16 @@ def parse_args():
                         help="do not run the specified functions (debug)")
     parser.add_argument("--dry-run", action="store_true", help="print the "
                         "functions that would be called for each file (debug)")
+    parser.add_argument("--failed-only", action="store_true", help="print only"
+                        " the name of the functions that failed (debug)")
 
     flags = parser.parse_args()
 
     flags.ignore_list = get_ignored_parsers_per_file(flags.intree_only, flags.ignore_filename)
+
+    if flags.failed_only:
+        flags.dry_run = False
+        flags.verbose = -1
 
     return flags
 
@@ -221,6 +227,11 @@ def check_file_using_lib(fname):
                   .format(fname, should_fail, flags.ignore_filename))
             nwarnings += 1
 
+    if flags.failed_only:
+        if len(failed) > 0:
+            f = " ".join(sorted(failed))
+            print("{} {}".format(fname, f))
+
     return nwarnings, nlines
 
 
@@ -259,7 +270,7 @@ def __main__():
         print("{} lines processed".format(total_lines), file=sys.stderr)
         print("{} warnings generated".format(total_warnings), file=sys.stderr)
 
-    if total_warnings > 0:
+    if total_warnings > 0 and not flags.failed_only:
         sys.exit(1)
 
 
