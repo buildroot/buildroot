@@ -19,6 +19,24 @@ VERBOSE_LEVEL_TO_SHOW_IGNORED_FILES = 3
 flags = None  # Command line arguments.
 
 
+def get_ignored_parsers_per_file(intree_only, ignore_filename):
+    ignored = dict()
+    entry_base_dir = ''
+
+    if not ignore_filename:
+        return ignored
+
+    filename = os.path.abspath(ignore_filename)
+    entry_base_dir = os.path.join(os.path.dirname(filename))
+
+    with open(filename, "r") as f:
+        for line in f.readlines():
+            filename, warnings_str = line.split(' ', 1)
+            warnings = warnings_str.split()
+            ignored[os.path.join(entry_base_dir, filename)] = warnings
+    return ignored
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
 
@@ -29,6 +47,8 @@ def parse_args():
 
     parser.add_argument("--br2-external", "-b", dest='intree_only', action="store_false",
                         help="do not apply the pathname filters used for intree files")
+    parser.add_argument("--ignore-list", dest='ignore_filename', action="store",
+                        help='override the default list of ignored warnings')
 
     parser.add_argument("--manual-url", action="store",
                         default="http://nightly.buildroot.org/",
@@ -44,7 +64,11 @@ def parse_args():
     parser.add_argument("--dry-run", action="store_true", help="print the "
                         "functions that would be called for each file (debug)")
 
-    return parser.parse_args()
+    flags = parser.parse_args()
+
+    flags.ignore_list = get_ignored_parsers_per_file(flags.intree_only, flags.ignore_filename)
+
+    return flags
 
 
 CONFIG_IN_FILENAME = re.compile(r"Config\.\S*$")
@@ -120,21 +144,25 @@ def is_external_tool(m):
     return common_inspect_rules(m)
 
 
-def print_warnings(warnings):
+def print_warnings(warnings, xfail):
     # Avoid the need to use 'return []' at the end of every check function.
     if warnings is None:
-        return 0  # No warning generated.
+        return 0, 0  # No warning generated.
 
+    if xfail:
+        return 0, 1  # Warning not generated, fail expected for this file.
     for level, message in enumerate(warnings):
         if flags.verbose >= level:
             print(message.replace("\t", "< tab  >").rstrip())
-    return 1  # One more warning to count.
+    return 1, 1  # One more warning to count.
 
 
 def check_file_using_lib(fname):
     # Count number of warnings generated and lines processed.
     nwarnings = 0
     nlines = 0
+    xfail = flags.ignore_list.get(os.path.abspath(fname), [])
+    failed = set()
 
     lib = get_lib_from_filename(fname)
     if not lib:
@@ -150,10 +178,13 @@ def check_file_using_lib(fname):
         print("{}: would run: {}".format(fname, functions_to_run))
         return nwarnings, nlines
 
-    objects = [c[1](fname, flags.manual_url) for c in internal_functions]
+    objects = [[c[0], c[1](fname, flags.manual_url)] for c in internal_functions]
 
-    for cf in objects:
-        nwarnings += print_warnings(cf.before())
+    for name, cf in objects:
+        warn, fail = print_warnings(cf.before(), name in xfail)
+        if fail > 0:
+            failed.add(name)
+        nwarnings += warn
     if six.PY3:
         f = open(fname, "r", errors="surrogateescape")
     else:
@@ -161,19 +192,34 @@ def check_file_using_lib(fname):
     lastline = ""
     for lineno, text in enumerate(f.readlines()):
         nlines += 1
-        for cf in objects:
+        for name, cf in objects:
             if cf.disable.search(lastline):
                 continue
-            nwarnings += print_warnings(cf.check_line(lineno + 1, text))
+            warn, fail = print_warnings(cf.check_line(lineno + 1, text), name in xfail)
+            if fail > 0:
+                failed.add(name)
+            nwarnings += warn
         lastline = text
     f.close()
-    for cf in objects:
-        nwarnings += print_warnings(cf.after())
+    for name, cf in objects:
+        warn, fail = print_warnings(cf.after(), name in xfail)
+        if fail > 0:
+            failed.add(name)
+        nwarnings += warn
 
-    tools = [c[1](fname) for c in external_tools]
+    tools = [[c[0], c[1](fname)] for c in external_tools]
 
-    for tool in tools:
-        nwarnings += print_warnings(tool.run())
+    for name, tool in tools:
+        warn, fail = print_warnings(tool.run(), name in xfail)
+        if fail > 0:
+            failed.add(name)
+        nwarnings += warn
+
+    for should_fail in xfail:
+        if should_fail not in failed:
+            print("{}:0: {} was expected to fail, did you fixed the file and forgot to update {}?"
+                  .format(fname, should_fail, flags.ignore_filename))
+            nwarnings += 1
 
     return nwarnings, nlines
 
