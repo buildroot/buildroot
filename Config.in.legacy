@@ -146,6 +146,15 @@ endif
 
 comment "Legacy options removed in 2022.08"
 
+config BR2_ECLIPSE_REGISTER
+	bool "Eclipse integration removed"
+	select BR2_LEGACY
+	help
+	  The Buildroot integration with the Eclipse IDE has been
+	  removed, as the corresponding Eclipse plugin is no longer
+	  maintained, and is no longer usable with current versions of
+	  Eclipse.
+
 config BR2_csky
 	bool "csky architecture removed"
 	select BR2_LEGACY

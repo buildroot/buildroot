@@ -2,7 +2,7 @@
 // vim: set syntax=asciidoc:
 
 [[selinux]]
-== Using SELinux in Buildroot
+=== Using SELinux in Buildroot
 
 https://selinuxproject.org[SELinux] is a Linux kernel security module
 enforcing access control policies. In addition to the traditional file
@@ -30,7 +30,7 @@ upstream https://github.com/SELinuxProject/refpolicy[refpolicy]
 project, enabled with +BR2_PACKAGE_REFPOLICY+.
 
 [[enabling-selinux]]
-=== Enabling SELinux support
+==== Enabling SELinux support
 
 To have proper support for +SELinux+ in a Buildroot generated system,
 the following configuration options must be enabled:
@@ -42,7 +42,7 @@ In addition, your filesystem image format must support extended
 attributes.
 
 [[selinux-policy-tweaking]]
-=== SELinux policy tweaking
+==== SELinux policy tweaking
 
 The +SELinux refpolicy+ contains modules that can be enabled or
 disabled when being built. Each module provide a number of +SELinux+

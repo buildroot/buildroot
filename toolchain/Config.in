@@ -109,16 +109,13 @@ config BR2_TOOLCHAIN_SUPPORTS_VARIADIC_MI_THUNK
 	depends on !BR2_or1k
 	depends on !BR2_xtensa
 
-# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=43744. This bug no
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=43744. This bug
 # reappeared on gcc 9.x and is still not fixed on gcc 11.x
 config BR2_TOOLCHAIN_HAS_GCC_BUG_43744
 	bool
-	default y if BR2_sh4
-	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_8 || \
-		BR2_TOOLCHAIN_GCC_AT_LEAST_9 || \
-		BR2_TOOLCHAIN_GCC_AT_LEAST_10 || \
-		BR2_TOOLCHAIN_GCC_AT_LEAST_11 || \
-		BR2_TOOLCHAIN_GCC_AT_LEAST_12
+	default y if !BR2_TOOLCHAIN_GCC_AT_LEAST_8
+	default y if BR2_TOOLCHAIN_GCC_AT_LEAST_9
+	depends on BR2_sh4
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63261. This bug no
 # longer exists in gcc 8.x.
@@ -139,7 +136,7 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_64735
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_7
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=68485. This bug still
-# exists in gcc 9.x
+# exists in gcc 12.x
 config BR2_TOOLCHAIN_HAS_GCC_BUG_68485
 	bool
 	default y if BR2_microblaze
@@ -150,9 +147,9 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_68485
 # it still not been fixed yet.
 config BR2_TOOLCHAIN_HAS_GCC_BUG_83143
 	bool
-	default y if BR2_sh
-	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_10 || BR2_TOOLCHAIN_GCC_AT_LEAST_11 || \
-		   BR2_TOOLCHAIN_GCC_AT_LEAST_12
+	default y if !BR2_TOOLCHAIN_GCC_AT_LEAST_10
+	default y if BR2_TOOLCHAIN_GCC_AT_LEAST_11
+	depends on BR2_sh
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=85180. This bug no
 # longer exists in gcc 8.x.
@@ -186,12 +183,12 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_93847
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=99410
 # Error: branch offset out of range on Nios II. This bug
-# no longer exists in gcc 8.x but reappeared on gcc 9.x and has been
-# fixed on gcc 11.x.
-config BR2_TOOLCHAIN_HAS_GCC_BUG_99140
+# no longer exists in gcc 8.x but reappeared on gcc 9.x and still exists
+# on gcc 12.x
+config BR2_TOOLCHAIN_HAS_GCC_BUG_99410
 	bool
 	default y if !BR2_TOOLCHAIN_GCC_AT_LEAST_8
-	default y if BR2_TOOLCHAIN_GCC_AT_LEAST_9 && !BR2_TOOLCHAIN_GCC_AT_LEAST_11
+	default y if BR2_TOOLCHAIN_GCC_AT_LEAST_9
 	depends on BR2_nios2
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101737
@@ -330,13 +327,6 @@ config BR2_TARGET_LDFLAGS
 
 	  Note that options with a '$' sign (eg.
 	  -Wl,-rpath='$ORIGIN/../lib') are not supported.
-
-config BR2_ECLIPSE_REGISTER
-	bool "Register toolchain within Eclipse Buildroot plug-in"
-	help
-	  This options tells Buildroot to generate the necessary
-	  configuration files to make your toolchain appear within
-	  Eclipse, through the Eclipse Buildroot plugin.
 
 # Options for packages to depend on, if they require at least a
 # specific version of the kernel headers.
