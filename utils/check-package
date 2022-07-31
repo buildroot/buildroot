@@ -3,6 +3,7 @@
 
 import argparse
 import inspect
+import magic
 import os
 import re
 import six
@@ -13,10 +14,26 @@ import checkpackagelib.lib_config
 import checkpackagelib.lib_hash
 import checkpackagelib.lib_mk
 import checkpackagelib.lib_patch
+import checkpackagelib.lib_shellscript
 import checkpackagelib.lib_sysv
 
 VERBOSE_LEVEL_TO_SHOW_IGNORED_FILES = 3
 flags = None  # Command line arguments.
+
+# There are two Python packages called 'magic':
+#   https://pypi.org/project/file-magic/
+#   https://pypi.org/project/python-magic/
+# Both allow to return a MIME file type, but with a slightly different
+# interface. Detect which one of the two we have based on one of the
+# attributes.
+if hasattr(magic, 'FileMagic'):
+    # https://pypi.org/project/file-magic/
+    def get_filetype(fname):
+        return magic.detect_from_filename(fname).mime_type
+else:
+    # https://pypi.org/project/python-magic/
+    def get_filetype(fname):
+        return magic.from_file(fname, mime=True)
 
 
 def get_ignored_parsers_per_file(intree_only, ignore_filename):
@@ -77,6 +94,15 @@ def parse_args():
     return flags
 
 
+def get_lib_from_filetype(fname):
+    if not os.path.isfile(fname):
+        return None
+    filetype = get_filetype(fname)
+    if filetype == "text/x-shellscript":
+        return checkpackagelib.lib_shellscript
+    return None
+
+
 CONFIG_IN_FILENAME = re.compile(r"Config\.\S*$")
 DO_CHECK_INTREE = re.compile(r"|".join([
     r"Config.in",
@@ -120,7 +146,7 @@ def get_lib_from_filename(fname):
         return checkpackagelib.lib_patch
     if SYSV_INIT_SCRIPT_FILENAME.search(fname):
         return checkpackagelib.lib_sysv
-    return None
+    return get_lib_from_filetype(fname)
 
 
 def common_inspect_rules(m):

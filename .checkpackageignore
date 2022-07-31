@@ -16,11 +16,13 @@ package/busybox/S02sysctl Variables
 package/busybox/S10mdev ConsecutiveEmptyLines Indent Shellcheck
 package/busybox/S15watchdog Indent Variables
 package/busybox/S50telnet Indent Shellcheck Variables
+package/busybox/udhcpc.script Shellcheck
 package/c-icap/S96cicap Indent Shellcheck Variables
 package/cfm/S65cfm Indent Variables
 package/cgroupfs-mount/S30cgroupfs Indent Shellcheck Variables
 package/chrony/S49chrony Indent Shellcheck Variables
 package/connman/S45connman Variables
+package/coremark-pro/coremark-pro.sh.in Shellcheck
 package/curlftpfs/0001-fix-CURLOPT_INFILESIZE.patch Sob
 package/curlftpfs/0002-free_ftpfs_file-memleak-fix.patch Sob
 package/curlftpfs/0003-nocache-memleak-fix.patch Sob
@@ -30,6 +32,7 @@ package/dbus/S30dbus Indent Shellcheck TrailingSpace Variables
 package/dcron/S90dcron Variables
 package/dhcp/S80dhcp-relay Shellcheck Variables
 package/dhcp/S80dhcp-server Shellcheck Variables
+package/dhcp/dhclient-script Shellcheck TrailingSpace
 package/dhcpcd/S41dhcpcd Indent Variables
 package/dhrystone/0001-cmdline-nruns.patch Sob
 package/dhrystone/0002-HZ.patch Sob
@@ -41,12 +44,15 @@ package/dmraid/S20dmraid Variables
 package/dnsmasq/S80dnsmasq Shellcheck Variables
 package/docker-engine/S60dockerd Indent Shellcheck Variables
 package/domoticz/S99domoticz Shellcheck
+package/dracut/merged-usr-module-setup.sh Shellcheck
 package/dropbear/S50dropbear Indent Shellcheck Variables
 package/earlyoom/S02earlyoom Indent Shellcheck
 package/ejabberd/S50ejabberd Indent Shellcheck Variables
+package/ejabberd/check-erlang-lib Shellcheck
 package/eudev/S10udev ConsecutiveEmptyLines Indent Shellcheck Variables
 package/exim/S86exim Indent Variables
 package/fail2ban/S60fail2ban Shellcheck Variables
+package/fakedate/fakedate Shellcheck
 package/fbv/0001-cross.patch Sob
 package/fbv/0002-fix-24bpp-support-on-big-endian.patch Sob
 package/fbv/0005-include.patch Sob
@@ -56,6 +62,7 @@ package/gamin/0002-no-const-return.patch Sob
 package/gcc/arc-2020.09-release/0002-libsanitizer-Remove-cyclades-from-libsanitizer.patch Sob
 package/genromfs/0001-build-system.patch Sob
 package/gerbera/S99gerbera Indent
+package/google-breakpad/gen-syms.sh Shellcheck
 package/gpsd/S50gpsd Indent Shellcheck Variables
 package/haveged/S21haveged Shellcheck Variables
 package/htpdate/S43htpdate Shellcheck
@@ -63,8 +70,12 @@ package/i2pd/S99i2pd Indent Shellcheck Variables
 package/ifplugd/0001-cross.patch Sob
 package/ifplugd/0002-fix-headers.patch Sob
 package/ifupdown-scripts/S40network EmptyLastLine Indent Shellcheck Variables
+package/ifupdown-scripts/network/if-pre-up.d/wait_iface EmptyLastLine Shellcheck
+package/ifupdown-scripts/nfs_check Shellcheck
 package/igd2-for-linux/S99upnpd Indent Shellcheck Variables
 package/inadyn/S70inadyn Indent NotExecutable
+package/initscripts/init.d/rcK ConsecutiveEmptyLines EmptyLastLine Shellcheck
+package/initscripts/init.d/rcS ConsecutiveEmptyLines EmptyLastLine Shellcheck
 package/input-event-daemon/S99input-event-daemon ConsecutiveEmptyLines Indent Variables
 package/iptables/S35iptables Shellcheck
 package/irda-utils/0001-daemon.patch Sob
@@ -94,6 +105,7 @@ package/lldpd/S60lldpd Indent Shellcheck Variables
 package/lockfile-progs/0001-sus3v-legacy.patch Sob
 package/madplay/0001-switch-to-new-alsa-api.patch Sob
 package/mariadb/S97mysqld Indent Shellcheck Variables
+package/matchbox-keyboard/mb-applet-kbd-wrapper.sh Shellcheck TrailingSpace
 package/mender-connect/S43mender-connect Shellcheck
 package/mii-diag/0001-strchr.patch Sob
 package/minidlna/S60minidlnad Indent Shellcheck Variables
@@ -111,6 +123,7 @@ package/netcat/0001-signed-bit-counting.patch Sob
 package/netopeer2/S52netopeer2 Shellcheck Variables
 package/netplug/0001-makefile-flags.patch Sob
 package/netplug/S29netplug Indent Shellcheck Variables
+package/netplug/netplug-script ConsecutiveEmptyLines Shellcheck
 package/netsnmp/S59snmpd Indent Shellcheck Variables
 package/network-manager/S45network-manager ConsecutiveEmptyLines EmptyLastLine Shellcheck Variables
 package/nfs-utils/S60nfs ConsecutiveEmptyLines Shellcheck Variables
@@ -122,11 +135,13 @@ package/ofono/S46ofono Variables
 package/olsr/S50olsr Indent Shellcheck Variables
 package/openntpd/S49ntp Shellcheck Variables
 package/openssh/S50sshd EmptyLastLine Indent Variables
+package/openvmtools/shutdown Shellcheck
 package/openvpn/S60openvpn Indent Shellcheck Variables
 package/oracle-mysql/S97mysqld Shellcheck Variables
 package/owfs/S55owserver Shellcheck Variables
 package/owfs/S60owfs Shellcheck Variables
 package/pigpio/S50pigpio Shellcheck Variables
+package/pkgconf/pkg-config.in Shellcheck
 package/poco/0001-Fix-optional-JSON-support-for-MySQL-3753.patch Sob
 package/postgresql/S50postgresql Variables
 package/procps-ng/S02sysctl Variables
@@ -147,6 +162,7 @@ package/samba4/S91smb Indent Shellcheck Variables
 package/seatd/S70seatd NotExecutable Variables
 package/ser2net/S50ser2net Indent Shellcheck Variables
 package/shairport-sync/S99shairport-sync Indent Shellcheck Variables
+package/skeleton-init-systemd/fakeroot_tmpfiles.sh Shellcheck
 package/smcroute/S41smcroute Indent NotExecutable Variables
 package/smstools3/S50smsd Shellcheck Variables
 package/solarus/0002-Add-a-basic-FindOpenGLES2.cmake.patch Sob
@@ -156,11 +172,13 @@ package/sslh/S35sslh Indent Shellcheck Variables
 package/stunnel/S50stunnel Indent Shellcheck Variables
 package/supervisor/S99supervisord Variables
 package/suricata/S99suricata Shellcheck
+package/swupdate/swupdate.sh Shellcheck
 package/sysrepo/S51sysrepo-plugind Indent Shellcheck
 package/targetcli-fb/S50target Shellcheck Variables
 package/tcf-agent/S55tcf-agent Shellcheck Variables
 package/tftpd/S80tftpd-hpa Indent Shellcheck Variables
 package/ti-gfx/S80ti-gfx Shellcheck Variables
+package/ti-gfx/esrev.sh Shellcheck
 package/ti-sgx-um/S80ti-sgx Variables
 package/tpm2-abrmd/S80tpm2-abrmd Indent Shellcheck Variables
 package/transmission/S92transmission ConsecutiveEmptyLines Indent Shellcheck Variables
@@ -170,10 +188,13 @@ package/unbound/S70unbound Shellcheck
 package/unscd/S46unscd Indent Shellcheck Variables
 package/upmpdcli/S99upmpdcli Indent Shellcheck Variables
 package/usbguard/S20usbguard Indent Shellcheck Variables
+package/vala/vala-wrapper Shellcheck
 package/vsftpd/S70vsftpd Indent Shellcheck Variables
 package/watchdogd/S01watchdogd Indent NotExecutable
+package/wpa_supplicant/ifupdown.sh Shellcheck
 package/x11r7/xapp_xdm/S99xdm Indent Variables
 package/x11r7/xdriver_xf86-video-mach64/0001-cross-compile.patch Sob
 package/x11r7/xdriver_xf86-video-savage/0001-cross-compile.patch Sob
 package/x11r7/xdriver_xf86-video-tdfx/0001-cross.patch Sob
 package/x11r7/xserver_xorg-server/S40xorg Shellcheck Variables
+package/xl2tp/xl2tpd TrailingSpace
