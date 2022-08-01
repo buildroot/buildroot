@@ -5,9 +5,7 @@
 ################################################################################
 
 DOMOTICZ_VERSION = 2022.1
-DOMOTICZ_SITE = https://github.com/domoticz/domoticz
-DOMOTICZ_SITE_METHOD = git
-DOMOTICZ_GIT_SUBMODULES = YES
+DOMOTICZ_SITE = $(call github,domoticz,domoticz,$(DOMOTICZ_VERSION))
 DOMOTICZ_LICENSE = GPL-3.0
 DOMOTICZ_LICENSE_FILES = License.txt
 DOMOTICZ_CPE_ID_VENDOR = domoticz
@@ -19,6 +17,7 @@ DOMOTICZ_DEPENDENCIES = \
 	jsoncpp \
 	libcurl \
 	lua \
+	minizip \
 	mosquitto \
 	openssl \
 	sqlite \
@@ -34,10 +33,11 @@ DOMOTICZ_CONF_OPTS += \
 	-DUSE_OPENSSL_STATIC=OFF
 
 # Do not use any built-in libraries which are enabled by default for
-# jsoncpp, fmt, sqlite and mqtt
+# jsoncpp, fmt, minizip, sqlite and mqtt
 DOMOTICZ_CONF_OPTS += \
 	-DUSE_BUILTIN_JSONCPP=OFF \
 	-DUSE_BUILTIN_LIBFMT=OFF \
+	-DUSE_BUILTIN_MINIZIP=OFF \
 	-DUSE_BUILTIN_SQLITE=OFF \
 	-DUSE_BUILTIN_MQTT=OFF
 

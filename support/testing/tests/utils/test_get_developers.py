@@ -51,6 +51,7 @@ class TestGetDevelopers(unittest.TestCase):
         self.assertIn("Syntax error in DEVELOPERS file, line 0: 'text1'", err)
         self.assertEqual(rc, 1)
         self.assertEqual(len(out), 0)
+        self.assertEqual(len(err), 1)
 
         # -v generating error, called from path
         developers = b'text2\n'
@@ -58,6 +59,61 @@ class TestGetDevelopers(unittest.TestCase):
         self.assertIn("Syntax error in DEVELOPERS file, line 0: 'text2'", err)
         self.assertEqual(rc, 1)
         self.assertEqual(len(out), 0)
+        self.assertEqual(len(err), 1)
+
+        # -v generating error for file entry with no developer entry
+        developers = b'# comment\n' \
+                     b'\n' \
+                     b'F:\tutils/get-developers\n' \
+                     b'\n' \
+                     b'N:\tAuthor2 <email>\n' \
+                     b'F:\tutils/get-developers\n'
+        out, err, rc = call_get_developers("get-developers", ["-v"], self.WITH_UTILS_IN_PATH, topdir, developers)
+        self.assertIn("Syntax error in DEVELOPERS file, line 1", err)
+        self.assertEqual(rc, 0)
+        self.assertEqual(len(out), 0)
+        self.assertEqual(len(err), 1)
+
+        # -v generating error for developer entry with no file entries
+        developers = b'# comment\n' \
+                     b'# comment\n' \
+                     b'\n' \
+                     b'N:\tAuthor1 <email>\n' \
+                     b'N:\tAuthor2 <email>\n' \
+                     b'N:\tAuthor3 <email>\n' \
+                     b'F:\tutils/get-developers\n'
+        out, err, rc = call_get_developers("get-developers", ["-v"], self.WITH_UTILS_IN_PATH, topdir, developers)
+        self.assertIn("Syntax error in DEVELOPERS file, line 1", err)
+        self.assertIn("Syntax error in DEVELOPERS file, line 2", err)
+        self.assertEqual(rc, 0)
+        self.assertEqual(len(out), 0)
+        self.assertEqual(len(err), 2)
+
+        # -v not generating error for developer entry with empty list of file entries
+        developers = b'# comment\n' \
+                     b'# comment\n' \
+                     b'\n' \
+                     b'N:\tAuthor1 <email>\n' \
+                     b'\n' \
+                     b'N:\tAuthor2 <email>\n' \
+                     b'\n' \
+                     b'N:\tAuthor3 <email>\n' \
+                     b'F:\tutils/get-developers\n'
+        out, err, rc = call_get_developers("get-developers", ["-v"], self.WITH_UTILS_IN_PATH, topdir, developers)
+        self.assertEqual(rc, 0)
+        self.assertEqual(len(out), 0)
+        self.assertEqual(len(err), 0)
+
+        # -v generating warning for old file entry
+        developers = b'N:\tAuthor <email>\n' \
+                     b'F:\tpath/that/does/not/exists/1\n' \
+                     b'F:\tpath/that/does/not/exists/2\n'
+        out, err, rc = call_get_developers("get-developers", ["-v"], self.WITH_UTILS_IN_PATH, topdir, developers)
+        self.assertIn("WARNING: 'path/that/does/not/exists/1' doesn't match any file", err)
+        self.assertIn("WARNING: 'path/that/does/not/exists/2' doesn't match any file", err)
+        self.assertEqual(rc, 0)
+        self.assertEqual(len(out), 0)
+        self.assertEqual(len(err), 2)
 
         # -c generating warning and printing lots of files with no developer
         developers = b'N:\tAuthor <email>\n' \
@@ -68,6 +124,17 @@ class TestGetDevelopers(unittest.TestCase):
         self.assertIn("WARNING: 'path/that/does/not/exists/2' doesn't match any file", err)
         self.assertEqual(rc, 0)
         self.assertGreater(len(out), 1000)
+        self.assertEqual(len(err), 2)
+
+        # -c printing lots of files with no developer
+        developers = b'# comment\n' \
+                     b'\n' \
+                     b'N:\tAuthor <email>\n' \
+                     b'F:\tutils/get-developers\n'
+        out, err, rc = call_get_developers("./utils/get-developers", ["-c"], self.WITH_EMPTY_PATH, topdir, developers)
+        self.assertEqual(rc, 0)
+        self.assertGreater(len(out), 1000)
+        self.assertEqual(len(err), 0)
 
         # -p lists more than one developer
         developers = b'N:\tdev1\n' \

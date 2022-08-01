@@ -747,6 +747,16 @@ html_header = """
 const triangleUp = String.fromCodePoint(32, 9652);
 const triangleDown = String.fromCodePoint(32, 9662);
 var lastColumnName = false;
+const styleElement = document.createElement('style');
+document.head.insertAdjacentElement("afterend", styleElement);
+const styleSheet = styleElement.sheet;
+addedCSSRules = [
+".collapse{ height: 200px; overflow: hidden scroll;}",
+".see-more{ display: block;}",
+".label:hover,.see-more:hover { cursor: pointer; background: #d2ffc4;}"
+];
+
+addedCSSRules.forEach(rule => styleSheet.insertRule(rule));
 
 function sortGrid(sortLabel){
 	let i = 0;
@@ -759,7 +769,6 @@ function sortGrid(sortLabel){
 		lastStyle.disable = true;
 		lastStyle.remove();
 	};
-	const styleElement = document.createElement('style');
 	styleElement.id = "sort-css";
 	document.head.appendChild(styleElement);
 	const styleSheet = styleElement.sheet;
@@ -809,16 +818,36 @@ function sortGrid(sortLabel){
 		let rule = "." + listing[0] + " { grid-row: " + i + "; }";
 		styleSheet.insertRule(rule);
         });
+	addedCSSRules.forEach(rule => styleSheet.insertRule(rule));
+};
+
+function expandField(fieldId){
+        const field = document.getElementById(fieldId);
+        const fieldText = field.firstElementChild.innerText;
+        const fieldTotal = fieldText.split(' ')[2];
+
+        if (fieldText == "see all " + fieldTotal + triangleDown){
+		field.firstElementChild.innerText = "see less " + fieldTotal + triangleUp;
+                field.style.height = "auto";
+        } else {
+                field.firstElementChild.innerText = "see all " + fieldTotal + triangleDown;
+                field.style.height = "200px";
+        }
 };
 </script>
 
 <style>
 
-.label {
+.see-more{
+  display: none;
+}
+
+.label, .see-more {
   position: sticky;
   top: 1px;
 }
 .label{
+  z-index: 1;
   background: white;
   padding: 10px 2px 10px 2px;
 }
@@ -859,17 +888,10 @@ function sortGrid(sortLabel){
 
 <a href=\"#results\">Results</a><br/>
 
-<p id=\"sortable_hint\"></p>
 """  # noqa - tabs and spaces
 
 
 html_footer = """
-<script>
-if (typeof sortGrid === "function") {
-  document.getElementById("sortable_hint").innerHTML =
-  "hint: the table can be sorted by clicking the column headers"
-}
-</script>
 </body>
 </html>
 """
@@ -1029,6 +1051,8 @@ def dump_html_pkg(f, pkg):
     data_field_id = f'cves__{pkg_css_class}'
     div_class = ["centered cves data"]
     div_class.append(f'_{pkg_css_class}')
+    if len(pkg.cves) > 10:
+        div_class.append("collapse")
     if pkg.is_status_ok("cve"):
         div_class.append("cve-ok")
     elif pkg.is_status_error("cve"):
@@ -1038,6 +1062,10 @@ def dump_html_pkg(f, pkg):
     else:
         div_class.append("cve-unknown")
     f.write(f'  <div id=\"{data_field_id}\" class=\"{" ".join(div_class)}\">\n')
+    if len(pkg.cves) > 10:
+        cve_total = len(pkg.cves) + 1
+        f.write(f' <div onclick=\"expandField(\'{data_field_id}\')\" \
+        class=\"see-more centered cve_ignored\">see all ({cve_total}) &#9662;</div>\n')
     if pkg.is_status_error("cve"):
         for cve in pkg.cves:
             f.write("   <a href=\"https://security-tracker.debian.org/tracker/%s\">%s</a><br/>\n" % (cve, cve))

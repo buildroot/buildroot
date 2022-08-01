@@ -4,12 +4,15 @@ config BR2_PACKAGE_LLVM_ARCH_SUPPORTS
 	default y if BR2_x86_64
 	default y if BR2_aarch64
 	default y if BR2_arm || BR2_armeb
+	default y if BR2_riscv
 
 config BR2_PACKAGE_LLVM_TARGET_ARCH
 	string
 	default "AArch64" if BR2_aarch64
 	default "ARM" if BR2_arm || BR2_armeb
 	default "X86" if BR2_i386 || BR2_x86_64
+	default "riscv32" if BR2_riscv && !BR2_ARCH_IS_64
+	default "riscv64" if BR2_riscv && BR2_ARCH_IS_64
 
 config BR2_PACKAGE_LLVM
 	bool "llvm"
