@@ -1102,7 +1102,9 @@ def dump_html_pkg(f, pkg):
         div_class.append("cpe-unknown")
     f.write(f'  <div id=\"{data_field_id}\" class=\"{" ".join(div_class)}\">\n')
     if pkg.cpeid:
-        f.write("  <code>%s</code>\n" % pkg.cpeid)
+        cpeid_begin = ":".join(pkg.cpeid.split(":")[0:4]) + ":"
+        cpeid_formatted = pkg.cpeid.replace(cpeid_begin, cpeid_begin + "<wbr>")
+        f.write("  <code>%s</code>\n" % cpeid_formatted)
     if not pkg.is_status_ok("cpe"):
         if pkg.is_actual_package and pkg.current_version:
             if pkg.cpeid:

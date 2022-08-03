@@ -2,7 +2,6 @@ config BR2_PACKAGE_OPENSWAN
 	bool "openswan"
 	depends on BR2_USE_MMU # iproute2
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_4 # iproute2
-	depends on !BR2_TOOLCHAIN_USES_UCLIBC # ns_t_tkey
 	select BR2_PACKAGE_GMP
 	select BR2_PACKAGE_IPROUTE2
 	help
@@ -10,7 +9,6 @@ config BR2_PACKAGE_OPENSWAN
 
 	  http://www.openswan.org
 
-comment "openswan needs a glibc or musl toolchain w/ headers >= 3.4"
+comment "openswan needs a toolchain w/ headers >= 3.4"
 	depends on BR2_USE_MMU
-	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_4 || \
-		BR2_TOOLCHAIN_USES_UCLIBC
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_4
