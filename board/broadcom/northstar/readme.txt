@@ -25,7 +25,7 @@ device setup).
 How to build it
 ===============
 
-  $ make broadcom_ns_defconfig
+  $ make broadcom_northstar_defconfig
 
   $ make
 
