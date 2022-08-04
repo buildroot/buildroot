@@ -1062,8 +1062,7 @@ endif
 .PHONY: printvars
 printvars:
 ifndef VARS
-	@echo "Please pass a non-empty VARS to 'make printvars'"
-	@exit 1
+	$(error Please pass a non-empty VARS to 'make printvars')
 endif
 	@:
 	$(foreach V, \
