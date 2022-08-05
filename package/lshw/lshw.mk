@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-LSHW_VERSION = 02.19.2
-LSHW_SITE = http://ezix.org/software/files
-LSHW_SOURCE = lshw-B.$(LSHW_VERSION).tar.gz
+LSHW_VERSION = d76afbaaf40e953243da921844cddff8185324f3
+LSHW_SITE = $(call github,lyonel,lshw,$(LSHW_VERSION))
 LSHW_LICENSE = GPL-2.0
 LSHW_LICENSE_FILES = COPYING
 
@@ -16,6 +15,7 @@ LSHW_MAKE_OPTS = \
 	CC="$(TARGET_CC)" \
 	CXX="$(TARGET_CXX)" \
 	AR="$(TARGET_AR)" \
+	LANGUAGES= \
 	RPM_OPT_FLAGS="$(TARGET_CFLAGS)"
 
 LSHW_MAKE_ENV = \
