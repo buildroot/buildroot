@@ -1010,13 +1010,12 @@ def dump_html_pkg(f, pkg):
         if pkg.latest_version['version'] is None:
             latest_version_text = "<b>Found, but no version</b>"
         else:
-            latest_version_text = "<a href=\"https://release-monitoring.org/project/%s\"><b>%s</b></a>" % \
-                (pkg.latest_version['id'], str(pkg.latest_version['version']))
+            latest_version_text = f"""<a href="https://release-monitoring.org/project/{pkg.latest_version['id']}"><b>{str(pkg.latest_version['version'])}</b></a>"""
 
         latest_version_text += "<br/>"
 
         if pkg.latest_version['status'] == RM_API_STATUS_FOUND_BY_DISTRO:
-            latest_version_text += "found by <a href=\"https://release-monitoring.org/distro/Buildroot/\">distro</a>"
+            latest_version_text += f'found by <a href="https://release-monitoring.org/distro/Buildroot/">distro</a>'
         else:
             latest_version_text += "found by guess"
 
@@ -1041,10 +1040,10 @@ def dump_html_pkg(f, pkg):
         div_class.append("missing_url")
     if pkg.status['url'][0] == "error":
         div_class.append("invalid_url")
-        url_str = "<a href=\"%s\">%s</a>" % (pkg.url, pkg.status['url'][1])
+        url_str = f"""<a href="{pkg.url}">{pkg.status['url'][1]}</a>"""
     else:
         div_class.append("good_url")
-        url_str = "<a href=\"%s\">Link</a>" % pkg.url
+        url_str = f'<a href="{pkg.url}">Link</a>'
     f.write(f'  <div id="{data_field_id}" class="{" ".join(div_class)}">{url_str}</div>\n')
 
     # CVEs
@@ -1068,11 +1067,11 @@ def dump_html_pkg(f, pkg):
         class="see-more centered cve_ignored">see all ({cve_total}) &#9662;</div>\n')
     if pkg.is_status_error("cve"):
         for cve in pkg.cves:
-            f.write("   <a href=\"https://security-tracker.debian.org/tracker/%s\">%s</a><br/>\n" % (cve, cve))
+            f.write(f'   <a href="https://security-tracker.debian.org/tracker/{cve}">{cve}</a><br/>\n')
         for cve in pkg.unsure_cves:
-            f.write("   <a href=\"https://security-tracker.debian.org/tracker/%s\">%s <i>(unsure)</i></a><br/>\n" % (cve, cve))
+            f.write(f'   <a href="https://security-tracker.debian.org/tracker/{cve}">{cve} <i>(unsure)</i></a><br/>\n')
     elif pkg.is_status_na("cve"):
-        f.write("    %s" % pkg.status['cve'][1])
+        f.write(f"""    {pkg.status['cve'][1]}""")
     else:
         f.write("    N/A\n")
     f.write("  </div>\n")
@@ -1085,7 +1084,7 @@ def dump_html_pkg(f, pkg):
         div_class.append("cve_ignored")
     f.write(f'  <div id="{data_field_id}" class="{" ".join(div_class)}">\n')
     for ignored_cve in pkg.ignored_cves:
-        f.write("    <a href=\"https://security-tracker.debian.org/tracker/%s\">%s</a><br/>\n" % (ignored_cve, ignored_cve))
+        f.write(f'    <a href="https://security-tracker.debian.org/tracker/{ignored_cve}">{ignored_cve}</a><br/>\n')
     f.write("  </div>\n")
 
     # CPE ID
@@ -1108,11 +1107,9 @@ def dump_html_pkg(f, pkg):
     if not pkg.is_status_ok("cpe"):
         if pkg.is_actual_package and pkg.current_version:
             if pkg.cpeid:
-                f.write("  <br/>%s <a href=\"https://nvd.nist.gov/products/cpe/search/results?namingFormat=2.3&keyword=%s\">(Search)</a>\n" %  # noqa: E501
-                        (pkg.status['cpe'][1], ":".join(pkg.cpeid.split(":")[0:5])))
+                f.write(f"""  <br/>{pkg.status['cpe'][1]} <a href="https://nvd.nist.gov/products/cpe/search/results?namingFormat=2.3&keyword={":".join(pkg.cpeid.split(":")[0:5])}">(Search)</a>\n""") # noqa: E501
             else:
-                f.write("  %s <a href=\"https://nvd.nist.gov/products/cpe/search/results?namingFormat=2.3&keyword=%s\">(Search)</a>\n" %  # noqa: E501
-                        (pkg.status['cpe'][1], pkg.name))
+                f.write(f"""  {pkg.status['cpe'][1]} <a href="https://nvd.nist.gov/products/cpe/search/results?namingFormat=2.3&keyword={pkg.name}">(Search)</a>\n""")  # noqa: E501
         else:
             f.write("  %s\n" % pkg.status['cpe'][1])
 
@@ -1155,49 +1152,49 @@ def dump_html_all_pkgs(f, packages):
 
 
 def dump_html_stats(f, stats):
-    f.write("<a id=\"results\"></a>\n")
-    f.write("<div class=\"data\" id=\"results-grid\">\n")
+    f.write('<a id="results"></a>\n')
+    f.write('<div class="data" id="results-grid">\n')
     infras = [infra[6:] for infra in stats.keys() if infra.startswith("infra-")]
     for infra in infras:
-        f.write(" <div class=\"data\">Packages using the <i>%s</i> infrastructure</div><div class=\"data\">%s</div>\n" %
+        f.write(' <div class="data">Packages using the <i>%s</i> infrastructure</div><div class="data">%s</div>\n' %
                 (infra, stats["infra-%s" % infra]))
-    f.write(" <div class=\"data\">Packages having license information</div><div class=\"data\">%s</div>\n" %
+    f.write(' <div class="data">Packages having license information</div><div class="data">%s</div>\n' %
             stats["license"])
-    f.write(" <div class=\"data\">Packages not having license information</div><div class=\"data\">%s</div>\n" %
+    f.write(' <div class="data">Packages not having license information</div><div class="data">%s</div>\n' %
             stats["no-license"])
-    f.write(" <div class=\"data\">Packages having license files information</div><div class=\"data\">%s</div>\n" %
+    f.write(' <div class="data">Packages having license files information</div><div class="data">%s</div>\n' %
             stats["license-files"])
-    f.write(" <div class=\"data\">Packages not having license files information</div><div class=\"data\">%s</div>\n" %
+    f.write(' <div class="data">Packages not having license files information</div><div class="data">%s</div>\n' %
             stats["no-license-files"])
-    f.write(" <div class=\"data\">Packages having a hash file</div><div class=\"data\">%s</div>\n" %
+    f.write(' <div class="data">Packages having a hash file</div><div class="data">%s</div>\n' %
             stats["hash"])
-    f.write(" <div class=\"data\">Packages not having a hash file</div><div class=\"data\">%s</div>\n" %
+    f.write(' <div class="data">Packages not having a hash file</div><div class="data">%s</div>\n' %
             stats["no-hash"])
-    f.write(" <div class=\"data\">Total number of patches</div><div class=\"data\">%s</div>\n" %
+    f.write(' <div class="data">Total number of patches</div><div class="data">%s</div>\n' %
             stats["patches"])
-    f.write("<div class=\"data\">Packages having a mapping on <i>release-monitoring.org</i></div><div class=\"data\">%s</div>\n" %
+    f.write('<div class="data">Packages having a mapping on <i>release-monitoring.org</i></div><div class="data">%s</div>\n' %
             stats["rmo-mapping"])
-    f.write("<div class=\"data\">Packages lacking a mapping on <i>release-monitoring.org</i></div><div class=\"data\">%s</div>\n" %
+    f.write('<div class="data">Packages lacking a mapping on <i>release-monitoring.org</i></div><div class="data">%s</div>\n' %
             stats["rmo-no-mapping"])
-    f.write("<div class=\"data\">Packages that are up-to-date</div><div class=\"data\">%s</div>\n" %
+    f.write('<div class="data">Packages that are up-to-date</div><div class="data">%s</div>\n' %
             stats["version-uptodate"])
-    f.write("<div class=\"data\">Packages that are not up-to-date</div><div class=\"data\">%s</div>\n" %
+    f.write('<div class="data">Packages that are not up-to-date</div><div class="data">%s</div>\n' %
             stats["version-not-uptodate"])
-    f.write("<div class=\"data\">Packages with no known upstream version</div><div class=\"data\">%s</div>\n" %
+    f.write('<div class="data">Packages with no known upstream version</div><div class="data">%s</div>\n' %
             stats["version-unknown"])
-    f.write("<div class=\"data\">Packages affected by CVEs</div><div class=\"data\">%s</div>\n" %
+    f.write('<div class="data">Packages affected by CVEs</div><div class="data">%s</div>\n' %
             stats["pkg-cves"])
-    f.write("<div class=\"data\">Total number of CVEs affecting all packages</div><div class=\"data\">%s</div>\n" %
+    f.write('<div class="data">Total number of CVEs affecting all packages</div><div class="data">%s</div>\n' %
             stats["total-cves"])
-    f.write("<div class=\"data\">Packages affected by unsure CVEs</div><div class=\"data\">%s</div>\n" %
+    f.write('<div class="data">Packages affected by unsure CVEs</div><div class="data">%s</div>\n' %
             stats["pkg-unsure-cves"])
-    f.write("<div class=\"data\">Total number of unsure CVEs affecting all packages</div><div class=\"data\">%s</div>\n" %
+    f.write('<div class="data">Total number of unsure CVEs affecting all packages</div><div class="data">%s</div>\n' %
             stats["total-unsure-cves"])
-    f.write("<div class=\"data\">Packages with CPE ID</div><div class=\"data\">%s</div>\n" %
+    f.write('<div class="data">Packages with CPE ID</div><div class="data">%s</div>\n' %
             stats["cpe-id"])
-    f.write("<div class=\"data\">Packages without CPE ID</div><div class=\"data\">%s</div>\n" %
+    f.write('<div class="data">Packages without CPE ID</div><div class="data">%s</div>\n' %
             stats["no-cpe-id"])
-    f.write("</div>\n")
+    f.write('</div>\n')
 
 
 def dump_html_gen_info(f, date, commit):
