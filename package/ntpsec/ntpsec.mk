@@ -53,6 +53,12 @@ ifeq ($(BR2_PACKAGE_NTPSEC_NTS),)
 NTPSEC_CONF_OPTS += --disable-nts
 endif
 
+# refclocks are disabled by default, can only be enabled
+ifeq ($(BR2_PACKAGE_NTPSEC_REFCLOCK_ALL),y)
+NTPSEC_DEPENDENCIES += pps-tools
+NTPSEC_CONF_OPTS += --refclock=all
+endif
+
 define NTPSEC_INSTALL_NTPSEC_CONF
 	$(INSTALL) -m 644 package/ntpsec/ntpd.etc.conf $(TARGET_DIR)/etc/ntp.conf
 endef
