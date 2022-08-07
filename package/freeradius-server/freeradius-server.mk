@@ -4,7 +4,9 @@
 #
 ################################################################################
 
-FREERADIUS_SERVER_VERSION = 3.0.25
+FREERADIUS_SERVER_VERSION = 3.2.0
+FREERADIUS_SERVER_SOURCE = \
+	freeradius-server-$(FREERADIUS_SERVER_VERSION).tar.bz2
 FREERADIUS_SERVER_SITE = ftp://ftp.freeradius.org/pub/freeradius
 FREERADIUS_SERVER_LICENSE = GPL-2.0
 FREERADIUS_SERVER_LICENSE_FILES = COPYRIGHT

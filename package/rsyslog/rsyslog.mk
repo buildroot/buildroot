@@ -53,7 +53,7 @@ RSYSLOG_CONF_OPTS += \
 endif
 
 ifeq ($(BR2_PACKAGE_CIVETWEB_LIB),y)
-RSYSLOG_DEPENDENCIES += civetweb
+RSYSLOG_DEPENDENCIES += apr-util civetweb
 RSYSLOG_CONF_OPTS += --enable-imhttp
 else
 RSYSLOG_CONF_OPTS += --disable-imhttp

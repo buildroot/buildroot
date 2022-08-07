@@ -13,6 +13,13 @@ GRUB2_DEPENDENCIES = host-bison host-flex host-grub2
 HOST_GRUB2_DEPENDENCIES = host-bison host-flex
 GRUB2_INSTALL_IMAGES = YES
 
+# 0001-Makefile-Make-grub_fstest.pp-depend-on-config-util.h.patch
+define GRUB2_AVOID_AUTORECONF
+	$(Q)touch $(@D)/Makefile.in
+endef
+GRUB2_POST_PATCH_HOOKS += GRUB2_AVOID_AUTORECONF
+HOST_GRUB2_POST_PATCH_HOOKS += GRUB2_AVOID_AUTORECONF
+
 # CVE-2019-14865 is about a flaw in the grub2-set-bootflag tool, which
 # doesn't exist upstream, but is added by the Redhat/Fedora
 # packaging. Not applicable to Buildroot.

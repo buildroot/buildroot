@@ -29,6 +29,13 @@ config BR2_PACKAGE_NTPSEC_NTS
 	help
 	  Enable Network Time Security (NTS) support.
 
+config BR2_PACKAGE_NTPSEC_REFCLOCK_ALL
+	bool "refclock-all"
+	select BR2_PACKAGE_PPS_TOOLS
+	help
+	  Enable all refclocks (hardware, sync source and discplined
+	  clocks)
+
 endif
 
 comment "ntpsec needs a toolchain w/ wchar, threads, dynamic library"

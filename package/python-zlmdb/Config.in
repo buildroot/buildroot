@@ -1,0 +1,22 @@
+config BR2_PACKAGE_PYTHON_ZLMDB
+	bool "python-zlmdb"
+	depends on BR2_PACKAGE_PYTHON_NUMPY_ARCH_SUPPORTS # python-numpy
+	depends on BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL # python-numpy
+	select BR2_PACKAGE_PYTHON_CBOR2 # runtime
+	select BR2_PACKAGE_PYTHON_CFFI # runtime
+	select BR2_PACKAGE_PYTHON_CLICK # runtime
+	select BR2_PACKAGE_PYTHON_FLATBUFFERS # runtime
+	select BR2_PACKAGE_PYTHON_LMDB # runtime
+	select BR2_PACKAGE_PYTHON_NUMPY # runtime
+	select BR2_PACKAGE_PYTHON_PYNACL # runtime
+	select BR2_PACKAGE_PYTHON_PYYAML # runtime
+	select BR2_PACKAGE_PYTHON_TXAIO # runtime
+	help
+	  Object-relational zero-copy in-memory database layer for
+	  LMDB.
+
+	  https://github.com/crossbario/zlmdb
+
+comment "python-zlmdb needs glibc or musl"
+	depends on BR2_PACKAGE_PYTHON_NUMPY_ARCH_SUPPORTS
+	depends on !(BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL)

@@ -65,7 +65,8 @@ HOST_CRYPTSETUP_CONF_OPTS = --with-crypto_backend=openssl \
 	--disable-kernel_crypto \
 	--disable-ssh-token \
 	--enable-blkid \
-	--with-tmpfilesdir=no
+	--with-tmpfilesdir=no \
+	--disable-asciidoc
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))

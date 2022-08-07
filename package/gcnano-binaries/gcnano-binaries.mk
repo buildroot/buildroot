@@ -44,16 +44,23 @@ GCNANO_BINARIES_MODULE_MAKE_OPTS = \
 
 GCNANO_BINARIES_USERLAND_SUBDIR = gcnano-userland-multi-$(GCNANO_BINARIES_USERLAND_VERSION)
 
+# This creates:
+#   libGLESv2.so.2    -> libGLESv2.so
+#   libGLESv1_CM.so.1 -> libGLESv1_CM.so
+# symlinks, as most OpenGL implementations have them, and they are
+# expected by some users such as libepoxy.
 define GCNANO_BINARIES_INSTALL
 	cd $(@D)/$(GCNANO_BINARIES_USERLAND_SUBDIR)/release/drivers/ ; \
 	find . -type f -exec $(INSTALL) -D -m 0755 {} $(1)/usr/lib/{} \; ; \
 	find . -type l -exec cp -a {} $(1)/usr/lib \;
+	ln -sf libGLESv2.so $(1)/usr/lib/libGLESv2.so.2
+	ln -sf libGLESv1_CM.so $(1)/usr/lib/libGLESv1_CM.so.1
 	mkdir -p $(1)/usr/include
 	cp -a $(@D)/$(GCNANO_BINARIES_USERLAND_SUBDIR)/release/include/* $(1)/usr/include/
 	ln -sf gbm/gbm.h $(1)/usr/include/gbm.h
 	cd $(@D)/$(GCNANO_BINARIES_USERLAND_SUBDIR)/pkgconfig/ ; \
 	for file in *.pc ; do \
-		sed -e "s|#PREFIX#|/usr|" $$file > $$file.temp ; \
+		sed -e "s|#PREFIX#|/usr|" -e "s|#VERSION#|21.1.1|" $$file > $$file.temp ; \
 		$(INSTALL) -D -m 0644 $$file.temp $(1)/usr/lib/pkgconfig/$$file ; \
 	done
 endef
