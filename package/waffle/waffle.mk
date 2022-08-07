@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-WAFFLE_VERSION = 1.6.1
-WAFFLE_SOURCE = waffle-v$(WAFFLE_VERSION).tar.bz2
-WAFFLE_SITE = https://gitlab.freedesktop.org/mesa/waffle/-/archive/v$(WAFFLE_VERSION)
+WAFFLE_VERSION = 1.7.0
+WAFFLE_SOURCE = waffle-$(WAFFLE_VERSION).tar.xz
+WAFFLE_SITE = https://gitlab.freedesktop.org/mesa/waffle/uploads/9eaadda4ec2ed1d8a26ddefd2cfd16be
 WAFFLE_INSTALL_STAGING = YES
 WAFFLE_LICENSE = BSD-2-Clause
 WAFFLE_LICENSE_FILES = LICENSE.txt
