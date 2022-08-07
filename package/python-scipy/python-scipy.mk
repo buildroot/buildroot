@@ -22,6 +22,8 @@ PYTHON_SCIPY_LICENSE_FILES = \
 	scipy/sparse/linalg/_dsolve/SuperLU/License.txt \
 	scipy/sparse/linalg/_eigen/arpack/ARPACK/COPYING \
 	scipy/spatial/qhull_src/COPYING.txt
+PYTHON_SCIPY_CPE_ID_VENDOR = scipy
+PYTHON_SCIPY_CPE_ID_PRODUCT = scipy
 PYTHON_SCIPY_DEPENDENCIES += \
 	host-python-numpy \
 	host-python-pythran \
