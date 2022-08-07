@@ -1,6 +1,8 @@
 Drop ldconfig call, it's useless for cross-compiling.
 
 Signed-off-by: Gustavo Zacarias <gustavo@zacarias.com.ar>
+[Fabrice: update for 4.15]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 
 diff -Nura crda-3.18.orig/Makefile crda-3.18/Makefile
 --- crda-3.18.orig/Makefile	2015-02-18 10:34:23.841259401 -0300
@@ -8,7 +10,7 @@ diff -Nura crda-3.18.orig/Makefile crda-3.18/Makefile
 @@ -127,7 +127,6 @@
  	$(NQ) '  INSTALL  libreg'
  	$(Q)mkdir -p $(DESTDIR)/$(LIBDIR)
- 	$(Q)cp $(LIBREG) $(DESTDIR)/$(LIBDIR)/
+	$(Q)$(INSTALL) -m 644 $(LIBREG) $(DESTDIR)/$(LIBDIR)/
 -	$(Q)ldconfig
  
  %.o: %.c regdb.h $(LIBREG)
