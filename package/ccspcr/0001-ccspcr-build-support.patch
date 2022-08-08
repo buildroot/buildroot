@@ -49,17 +49,3 @@ index 9320169..a1639ff 100644
 +#endif
    pthread_exit(NULL);
  }
- 
-diff --git a/source/Makefile.am b/source/Makefile.am
-index 0b60f65..aeb6c09 100644
---- a/source/Makefile.am
-+++ b/source/Makefile.am
-@@ -44,7 +44,7 @@ CcspCrSsp_SOURCES = \
- 	CCSP_CR/ccsp_cr_profile.c \
- 	CCSP_CR/ccsp_cr_session.c \
- 	CCSP_CR/ccsp_cr_utility.c
--CcspCrSsp_LDFLAGS += -lccsp_common -lsyscfg -ltelemetry_msgsender -lprivilege $(SYSTEMD_LDFLAGS) -lpthread
-+CcspCrSsp_LDFLAGS += -lccsp_common -ldbus-1 -ltelemetry_msgsender -lprivilege $(SYSTEMD_LDFLAGS) -lpthread
- if RBUS_BUILD_INTEGRATED
- CcspCrSsp_SOURCES += CrSsp/ssp_rbus.c
- CcspCrSsp_LDFLAGS += -lrbus -lrbus-core -lrtMessage -lxml2

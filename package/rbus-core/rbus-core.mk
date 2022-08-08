@@ -13,4 +13,9 @@ RBUS_CORE_DEPENDENCIES = rtmessage msgpack-c
 
 RBUS_CORE_CONF_OPTS = -DRBUS_ALWAYS_ON=ON
 
+define RBUS_CORE_INSTALL_INIT_SYSV
+    $(INSTALL) -m 0755 -D $(RBUS_CORE_PKGDIR)S30rbuscore \
+        $(TARGET_DIR)/etc/init.d/S30rbuscore
+endef
+
 $(eval $(cmake-package))

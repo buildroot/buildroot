@@ -3,17 +3,16 @@
 start() {
     printf "Starting WebPA CcspCR module: "
 
-    ln -s /usr/ccsp/ccsp_msg.cfg /tmp/ccsp_msg.cfg
+    ln -sf /usr/ccsp/ccsp_msg.cfg /tmp/ccsp_msg.cfg
     rm -rf /tmp/syscfg.shmid
     syscfg_create -f /usr/ccsp/syscfg.db
-    CcspCrSsp -subsys eRT.
+    start-stop-daemon -S -q -b --exec /usr/bin/CcspCrSsp -- -subsys eRT. </dev/null >/dev/nul
     [ $? == 0 ] && echo "OK" || echo "FAIL"
 }
 
 stop() {
     printf "Stopping WebPA CcspCR module: "
-
-    killall -9 CcspCrSsp
+    start-stop-daemon -K -q --exec /usr/bin/CcspCrSsp
     [ $? == 0 ] && echo "OK" || echo "FAIL"
 }
 

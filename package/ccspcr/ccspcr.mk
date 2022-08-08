@@ -23,6 +23,7 @@ CCSPCR_CONF_OPTS = \
     --docdir=$(STAGING_DIR)/usr/share/doc \
     --with-ccsp-platform=bcm \
     --with-ccsp-arch=arm \
+    --with-rbus-build=only \
     $(CUSTOM_HOST)
 
 CCSPCR_CPPFLAGS = $(TARGET_CXXFLAGS) -I$(STAGING_DIR)/usr/include/dbus-1.0 -I$(STAGING_DIR)/usr/lib/dbus-1.0/include -I$(STAGING_DIR)/usr/include/ccsp -I$(STAGING_DIR)/usr/include/libxml2 -I$(STAGING_DIR)/usr/include/telemetry -I$(STAGING_DIR)/usr/include/rbus -D_DEBUG
