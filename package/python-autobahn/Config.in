@@ -25,7 +25,8 @@ config BR2_PACKAGE_PYTHON_AUTOBAHN_ENCRYPTION
 	bool "TLS and WAMP-cryptosign encryption/authentication support"
 	select BR2_PACKAGE_PYTHON_PYNACL # runtime
 	select BR2_PACKAGE_PYTHON_PYOPENSSL # runtime
-	select BR2_PACKAGE_PYTHON_PYQRCODE # runtime
+	select BR2_PACKAGE_PYTHON_QRCODE # runtime
+	select BR2_PACKAGE_PYTHON_QRCODE_SVG # runtime
 	select BR2_PACKAGE_PYTHON_PYTRIE # runtime
 	select BR2_PACKAGE_PYTHON_SERVICE_IDENTITY # runtime
 
