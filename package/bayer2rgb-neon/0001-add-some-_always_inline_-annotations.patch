@@ -1,0 +1,75 @@
+From 4e5d8be1b0d18453b76fca2c5139222a071dd207 Mon Sep 17 00:00:00 2001
+From: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
+Date: Mon, 4 Jul 2022 12:05:30 +0200
+Subject: [PATCH] add some _always_inline_ annotations
+
+enforce inlining to fix build errors with '-Og'
+
+fixes #1
+
+Signed-off-by: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
+[Retrieved from:
+https://gitlab-ext.sigma-chemnitz.de/ensc/bayer2rgb/-/commit/4e5d8be1b0d18453b76fca2c5139222a071dd207]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/convert.c | 5 +++--
+ src/main.c    | 5 +++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/src/convert.c b/src/convert.c
+index c852a14..ec77040 100644
+--- a/src/convert.c
++++ b/src/convert.c
+@@ -17,8 +17,9 @@
+ #include <stdbool.h>
+ #include <assert.h>
+ #include "bayer2rgb.h"
++#include "compiler.h"
+ 
+-static bool have_neon()
++inline static  _always_inline_ bool have_neon()
+ {
+ #ifdef HAVE_NEON
+ 	return true;
+@@ -27,7 +28,7 @@ static bool have_neon()
+ #endif
+ }
+ 
+-static bool have_cplusplus()
++inline static  _always_inline_ bool have_cplusplus()
+ {
+ #ifdef HAVE_CPLUSPLUS
+ 	return true;
+diff --git a/src/main.c b/src/main.c
+index 841a142..087e8e5 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -33,6 +33,7 @@
+ 
+ #include "src/bayer2rgb.h"
+ #include "src/bayer2rgb-cmdline.h"
++#include "src/compiler.h"
+ 
+ #define BPP_TO_BYTE(_bpp)	(((_bpp) + 7) / 8)
+ 
+@@ -68,7 +69,7 @@ struct x_image_out {
+ 	size_t			total_size;
+ };
+ 
+-inline static bool have_neon(void)
++inline static  _always_inline_ bool have_neon(void)
+ {
+ #ifdef HAVE_NEON
+ 	return true;
+@@ -77,7 +78,7 @@ inline static bool have_neon(void)
+ #endif
+ }
+ 
+-static bool have_cplusplus()
++inline static  _always_inline_ bool have_cplusplus()
+ {
+ #ifdef HAVE_CPLUSPLUS
+ 	return true;
+-- 
+GitLab
+
