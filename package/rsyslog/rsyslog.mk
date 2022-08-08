@@ -73,6 +73,13 @@ else
 RSYSLOG_CONF_OPTS += --disable-gnutls
 endif
 
+ifeq ($(BR2_PACKAGE_HIREDIS),y)
+RSYSLOG_DEPENDENCIES += hiredis
+RSYSLOG_CONF_OPTS += --enable-omhiredis
+else
+RSYSLOG_CONF_OPTS += --disable-omhiredis
+endif
+
 ifeq ($(BR2_PACKAGE_LIBGCRYPT),y)
 RSYSLOG_DEPENDENCIES += libgcrypt
 RSYSLOG_CONF_ENV += LIBGCRYPT_CONFIG=$(STAGING_DIR)/usr/bin/libgcrypt-config
