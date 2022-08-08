@@ -1,0 +1,18 @@
+config BR2_PACKAGE_PYTHON_QRCODE
+	bool "python-qrcode"
+	help
+	  Pure python QR Code generator
+
+	  https://github.com/lincolnloop/python-qrcode
+
+if BR2_PACKAGE_PYTHON_QRCODE
+
+config BR2_PACKAGE_PYTHON_QRCODE_SVG
+	bool "SVG support"
+	select BR2_PACKAGE_PYTHON3_PYEXPAT
+
+config BR2_PACKAGE_PYTHON_QRCODE_PIL
+	bool "PIL support"
+	select BR2_PACKAGE_PYTHON_PILLOW
+
+endif
