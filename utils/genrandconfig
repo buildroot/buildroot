@@ -535,7 +535,7 @@ def fixup_config(sysinfo, configfile):
         if 'BR2_ARCH_HAS_NO_TOOLCHAIN_BUILDROOT=y\n' in configlines:
             return False
 
-   if 'BR2_PACKAGE_REFPOLICY=y\n' in configlines and \
+    if 'BR2_PACKAGE_REFPOLICY=y\n' in configlines and \
        'BR2_PACKAGE_REFPOLICY_CUSTOM_GIT=y\n' in configlines and \
        'BR2_PACKAGE_REFPOLICY_CUSTOM_REPO_URL=""\n' in configlines:
         configlines.remove('BR2_PACKAGE_REFPOLICY_CUSTOM_GIT=y\n')
