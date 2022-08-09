@@ -1,4 +1,4 @@
-From 9de058e15a4caba4939a864fb7caf67e0164f07e Mon Sep 17 00:00:00 2001
+From ac88536d7c3fde3c22933368296c9029bb67b9fc Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Mon, 25 Jul 2022 21:49:25 +0200
 Subject: [PATCH] meson.build: fix build without C++
@@ -16,8 +16,9 @@ Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 [Upstream status:
 https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/merge_requests/737]
 ---
- meson.build | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ meson.build                         | 3 ++-
+ src/modules/echo-cancel/meson.build | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/meson.build b/meson.build
 index c5135330f..8248f263b 100644
@@ -37,6 +38,19 @@ index c5135330f..8248f263b 100644
    add_project_arguments('--coverage', language: ['c', 'cpp'])
    add_project_link_arguments('--coverage', language: ['c', 'cpp'])
  endif
+diff --git a/src/modules/echo-cancel/meson.build b/src/modules/echo-cancel/meson.build
+index 641cd35e7..3b998364e 100644
+--- a/src/modules/echo-cancel/meson.build
++++ b/src/modules/echo-cancel/meson.build
+@@ -6,6 +6,8 @@
+ # '-Wl,--unresolved-symbols=ignore-in-object-files' otherwise it fails
+ # at link time.
+ 
++add_languages('cpp')
++
+ libwebrtc_util_sources = [
+   'webrtc.cc'
+ ]
 -- 
-2.35.1
+GitLab
 
