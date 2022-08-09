@@ -4,12 +4,13 @@
 #
 ################################################################################
 
-OCRAD_VERSION = 0.27
+OCRAD_VERSION = 0.28
 OCRAD_SOURCE = ocrad-$(OCRAD_VERSION).tar.lz
 OCRAD_SITE = $(BR2_GNU_MIRROR)/ocrad
-OCRAD_LICENSE = GPL-3.0+
+OCRAD_LICENSE = GPL-2.0+
 OCRAD_LICENSE_FILES = COPYING
 OCRAD_INSTALL_STAGING = YES
+OCRAD_DEPENDENCIES = libpng
 
 # This is not a true autotools package.
 define OCRAD_CONFIGURE_CMDS

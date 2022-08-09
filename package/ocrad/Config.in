@@ -1,6 +1,7 @@
 config BR2_PACKAGE_OCRAD
 	bool "ocrad"
 	depends on BR2_INSTALL_LIBSTDCPP
+	select BR2_PACKAGE_LIBPNG
 	help
 	  GNU Ocrad is an OCR (Optical Character Recognition) program
 	  based on a feature extraction method.
