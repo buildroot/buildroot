@@ -1,0 +1,35 @@
+From 33b16f2c4f996a98c3bbbec9af542d020ac276fa Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 9 Aug 2022 23:53:06 +0200
+Subject: [PATCH] Makefile.linux: pass LDFLAGS
+
+Pass LDFLAGS to avoid the following musl static build failure:
+
+/home/autobuild/autobuild/instance-5/output-1/host/lib/gcc/sh4eb-buildroot-linux-musl/11.3.0/../../../../sh4eb-buildroot-linux-musl/bin/ld: /home/autobuild/autobuild/instance-5/output-1/host/lib/gcc/sh4eb-buildroot-linux-musl/11.3.0/libgcc.a(unwind-dw2.o): in function `size_of_encoded_value':
+/home/autobuild/autobuild/instance-5/output-1/build/host-gcc-final-11.3.0/build/sh4eb-buildroot-linux-musl/libgcc/../../../libgcc/unwind-pe.h:89: undefined reference to `abort'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/bf041723ed813746c61892262630a3ac2bc43b14
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: upstream is dead]
+---
+ Makefile.linux | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.linux b/Makefile.linux
+index 5f1a41f..df887e6 100644
+--- a/Makefile.linux
++++ b/Makefile.linux
+@@ -14,7 +14,7 @@ MAJOR = 4
+ MINOR = 0.31
+ 
+ ficl: main.o $(HEADERS) libficl.a
+-	$(CC) main.o -o ficl -L. -lficl -lm
++	$(CC) $(LDFLAGS) main.o -o ficl -L. -lficl -lm
+ 
+ lib: libficl.so.$(MAJOR).$(MINOR)
+ 
+-- 
+2.35.1
+
