@@ -30,4 +30,21 @@ else
 LIBINPUT_CONF_OPTS += -Ddebug-gui=false
 endif
 
+LIBINPUT_PYTHON_TOOLS = libinput-analyze-per-slot-delta \
+	libinput-analyze-recording \
+	libinput-analyze-touch-down-state \
+	libinput-measure-fuzz \
+	libinput-measure-touchpad-pressure \
+	libinput-measure-touchpad-size \
+	libinput-measure-touchpad-tap \
+	libinput-measure-touch-size \
+	libinput-replay
+
+define LIBINPUT_REMOVE_UNNEEDED_FILES
+	$(foreach f,$(LIBINPUT_PYTHON_TOOLS), \
+		rm -f $(TARGET_DIR)/usr/libexec/libinput/$(f)
+	)
+endef
+LIBINPUT_POST_INSTALL_TARGET_HOOKS += LIBINPUT_REMOVE_UNNEEDED_FILES
+
 $(eval $(meson-package))
