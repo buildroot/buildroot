@@ -1,0 +1,7 @@
+config BR2_PACKAGE_LIBUNPRIV
+    bool "LIBUNPRIV"
+    default n
+    select BR2_PACKAGE_LIBCAP
+    select BR2_PACKAGE_JSONCPP
+    help
+       LIBUNPRIV library component

@@ -1571,10 +1571,14 @@ config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CERTPATH
     default "/etc/ssl/certs/ca-certificates.crt"
 endif
 
-config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CCSP
-        bool "webpa ccsp client"
-        select BR2_PACKAGE_PARODUS2CCSP
-        default n
+choice BR2_PACKAGE_WPEFRAMEWORK_WEBPA_PLATFORM
+    bool "Client"
+    default BR2_PACKAGE_WPEFRAMEWORK_WEBPA_GENERIC_ADAPTER
+    config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_GENERIC_ADAPTER
+        bool "Generic adapter client"
+    config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CCSP
+        bool "CCSP client"
+endchoice
 
 if BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CCSP
 config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CCSPCLIENTURL
@@ -1585,12 +1589,9 @@ config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CCSP_DATAFILE
     default ""
 config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CCSP_CONFIGFILE
     string "Config File for CCSP Client"
-    default "/etc/webpa_cfg.json"
+    default "/usr/ccsp/ccsp_msg.cfg"
 endif
 
-config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_GENERIC_ADAPTER
-        bool "webpa generic adapter client"
-        default y
 
 if BR2_PACKAGE_WPEFRAMEWORK_WEBPA_GENERIC_ADAPTER
 config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_GENERICCLIENTURL

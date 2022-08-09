@@ -1,0 +1,52 @@
+From d69f7dc3304bb5dd8803cef63a1a96e7c102e153 Mon Sep 17 00:00:00 2001
+From: Jaga <jagadheesan_duraisamy@comcast.com>
+Date: Mon, 6 Apr 2020 17:29:42 +0000
+Subject: [PATCH] DBusLoop-SSL_state-TLS_ST_OK
+
+Reason for change: typedef DBusLoop struct, changed ssl->state
+to SSL_state(ssl) for openssl > 1.1 and SSL_get_state(ssl) for openssl >
+1.1.1
+
+Source: COMCAST
+License: Apache-2.0
+Upstream-Status: Pending
+Signed-off-by: Jaga <jagadheesan_duraisamy@comcast.com>
+---
+ source/ccsp/include/ccsp_message_bus.h           |  2 ++
+ source/util_api/ansc/AnscPlatform/user_openssl.c | 10 +++++++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/source/ccsp/include/ccsp_message_bus.h b/source/ccsp/include/ccsp_message_bus.h
+index 9fb9aae9..7c315be0 100644
+--- a/source/ccsp/include/ccsp_message_bus.h
++++ b/source/ccsp/include/ccsp_message_bus.h
+@@ -153,6 +153,8 @@ typedef struct _CCSP_MESSAGE_FILTER
+ 
+ } CCSP_MESSAGE_FILTER;
+ 
++typedef struct DBusLoop DBusLoop;
++
+ typedef struct _CCSP_MESSAGE_BUS_CONNECTION
+ {
+     DBusConnection *conn;
+diff --git a/source/util_api/ansc/AnscPlatform/user_openssl.c b/source/util_api/ansc/AnscPlatform/user_openssl.c
+index 7e5c2c7d..6d1f4f51 100644
+--- a/source/util_api/ansc/AnscPlatform/user_openssl.c
++++ b/source/util_api/ansc/AnscPlatform/user_openssl.c
+@@ -392,7 +392,15 @@ SSL * openssl_connect (int fd)
+ 
+   SSL_set_connect_state (ssl);
+ 
+-  if (SSL_connect (ssl) <= 0 || ssl->state != SSL_ST_OK)
++  if (SSL_connect (ssl) <= 0 || 
++#if (OPENSSL_VERSION_NUMBER >= 0x10101000L)
++  				SSL_get_state(ssl) != TLS_ST_OK)
++#elif (OPENSSL_VERSION_NUMBER >= 0x10100000L)
++				 SSL_state(ssl) != TLS_ST_OK)
++#else
++				ssl->state != SSL_ST_OK)
++#endif
++     
+   {
+     AnscTraceWarning(("openssl_connect - failed in SSL_set_connect_state \n"));
+     goto error;

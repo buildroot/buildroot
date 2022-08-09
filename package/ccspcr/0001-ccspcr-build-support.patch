@@ -1,0 +1,65 @@
+diff --git a/source/CCSP_CR/ccsp_cr_exportDM.c b/source/CCSP_CR/ccsp_cr_exportDM.c
+index 4b41ecb..088ffcd 100644
+--- a/source/CCSP_CR/ccsp_cr_exportDM.c
++++ b/source/CCSP_CR/ccsp_cr_exportDM.c
+@@ -135,6 +135,7 @@ static void WriteXmlHead(FILE *file)
+     if(NULL == g_pDbusHandle)
+         printf("g_pDbusHanle is NULL\n");
+     /* CID 57006 - Unchecked return value */
++#ifdef RDK_BUILD
+     ret = CcspBaseIf_getParameterValues(g_pDbusHandle, "com.cisco.spvtg.ccsp.tdm", "/com/cisco/spvtg/ccsp/tdm", pParamNames, 5, &valCount, &ppReturnVal);
+     if (CCSP_Message_Bus_OK != ret)
+     {
+@@ -154,7 +155,8 @@ static void WriteXmlHead(FILE *file)
+         fprintf(file, "%s%s%s\n",  "<softwareVersion>",ppReturnVal[4]->parameterValue, "</softwareVersion>");
+         free_parameterValStruct_t(g_pDbusHandle, valCount, ppReturnVal);
+     }
+-    
++#endif
++
+     fprintf(file, "%s", ATTRIBUTE_STR);        
+ }
+ 
+diff --git a/source/CrSsp/ssp_main.c b/source/CrSsp/ssp_main.c
+index 9320169..a1639ff 100644
+--- a/source/CrSsp/ssp_main.c
++++ b/source/CrSsp/ssp_main.c
+@@ -48,7 +48,9 @@
+ #endif
+ 
+ #include "ssp_global.h"
++#ifdef RDK_BUILD
+ #include "syscfg/syscfg.h"
++#endif
+ #include "cap.h"
+ #include "telemetry_busmessage_sender.h"
+ 
+@@ -456,6 +458,7 @@ static void* waitforsyscfgReady(void *arg)
+   #define MAX_WAIT_TIME 90
+   int times = 0;
+   pthread_detach(pthread_self());
++#ifdef RDK_BUILD
+   while(times++ < MAX_WAIT_TIME)    {
+         if ( 0 != syscfg_init( ) )    {
+              CCSP_Msg_SleepInMilliSeconds(TIME_INTERVAL);
+@@ -465,6 +468,7 @@ static void* waitforsyscfgReady(void *arg)
+              break;
+         }
+   }
++#endif
+   pthread_exit(NULL);
+ }
+ 
+diff --git a/source/Makefile.am b/source/Makefile.am
+index 0b60f65..aeb6c09 100644
+--- a/source/Makefile.am
++++ b/source/Makefile.am
+@@ -44,7 +44,7 @@ CcspCrSsp_SOURCES = \
+ 	CCSP_CR/ccsp_cr_profile.c \
+ 	CCSP_CR/ccsp_cr_session.c \
+ 	CCSP_CR/ccsp_cr_utility.c
+-CcspCrSsp_LDFLAGS += -lccsp_common -lsyscfg -ltelemetry_msgsender -lprivilege $(SYSTEMD_LDFLAGS) -lpthread
++CcspCrSsp_LDFLAGS += -lccsp_common -ldbus-1 -ltelemetry_msgsender -lprivilege $(SYSTEMD_LDFLAGS) -lpthread
+ if RBUS_BUILD_INTEGRATED
+ CcspCrSsp_SOURCES += CrSsp/ssp_rbus.c
+ CcspCrSsp_LDFLAGS += -lrbus -lrbus-core -lrtMessage -lxml2

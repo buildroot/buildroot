@@ -31,8 +31,47 @@ index bc49341..a74b9f3 100644
 +set (INSTALL_DIR lib)
 +endif ()
 +install (TARGETS webpa DESTINATION ${INSTALL_DIR})
+diff --git a/source/app/libpd.c b/source/app/libpd.c
+index 800a630..17e75d5 100644
+--- a/source/app/libpd.c
++++ b/source/app/libpd.c
+@@ -39,9 +39,16 @@ char *cloud_status = "offline";
+ int wakeUpFlag = 0;
+ pthread_mutex_t cloud_mut=PTHREAD_MUTEX_INITIALIZER;
+ pthread_cond_t cloud_con=PTHREAD_COND_INITIALIZER;
++bool receive_data = true;
++
++void shutdown_connection()
++{
++	receive_data = false;
++}
+ 
+ static void connect_parodus()
+ {
++	receive_data = true;
+         int backoffRetryTime = 0;
+         int backoff_max_time = 5;
+         int max_retry_sleep;
+@@ -247,7 +254,7 @@ void *parallelProcessTask(void *id)
+ 		WalPrint("Detaching parallelProcess thread\n");
+         	pthread_detach(pthread_self());
+ 	}
+-        while( FOREVER() )
++        while( receive_data == true )
+         {
+                 parodus_receive();
+         }
+diff --git a/source/app/libpd.h b/source/app/libpd.h
+index e6d8b49..634ddf6 100644
+--- a/source/app/libpd.h
++++ b/source/app/libpd.h
+@@ -7,3 +7,4 @@
+  */
+ 
+ void libpd_client_mgr();
++void shutdownConnection();
 diff --git a/source/app/main.c b/source/app/main.c
-index 1e8074f..cf82777 100644
+index 7bd7b14..d34a696 100644
 --- a/source/app/main.c
 +++ b/source/app/main.c
 @@ -27,8 +27,13 @@ static void sig_handler(int sig);
@@ -49,3 +88,38 @@ index 1e8074f..cf82777 100644
          int ret = -1;
  
  #ifdef INCLUDE_BREAKPAD
+@@ -82,7 +87,7 @@ curl_global_cleanup();
+ #ifndef INCLUDE_BREAKPAD
+ static void sig_handler(int sig)
+ {
+-
++	shutdown_connection();
+ 	if ( sig == SIGINT ) 
+ 	{
+ 		signal(SIGINT, sig_handler); /* reset it to this function */
+diff --git a/source/broadband/ssp_main.c b/source/broadband/ssp_main.c
+index 48b76be..6a3a249 100755
+--- a/source/broadband/ssp_main.c
++++ b/source/broadband/ssp_main.c
+@@ -116,9 +116,10 @@ WDMP_STATUS msgBusInit(const char *pComponentName)
+     AnscCopyString(g_Subsystem, "");
+ #endif
+ 
+-    if ( bRunAsDaemon ) 
++    if ( bRunAsDaemon )
++#if (PARODUS2CCSP_APP)
+         daemonize();
+-
++#endif
+     cmd_dispatch('e');
+ 
+     subSys = NULL;      /* use default sub-system */
+@@ -130,7 +131,7 @@ WDMP_STATUS msgBusInit(const char *pComponentName)
+         exit(1);
+     }
+     system("touch /tmp/webpa_initialized");
+-if ( bRunAsDaemon )
++    if ( bRunAsDaemon )
+     {
+         return WDMP_FAILURE;
+     }

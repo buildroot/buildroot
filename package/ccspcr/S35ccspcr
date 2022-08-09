@@ -1,0 +1,39 @@
+#!/bin/sh
+
+start() {
+    printf "Starting WebPA CcspCR module: "
+
+    ln -s /usr/ccsp/ccsp_msg.cfg /tmp/ccsp_msg.cfg
+    rm -rf /tmp/syscfg.shmid
+    syscfg_create -f /usr/ccsp/syscfg.db
+    CcspCrSsp -subsys eRT.
+    [ $? == 0 ] && echo "OK" || echo "FAIL"
+}
+
+stop() {
+    printf "Stopping WebPA CcspCR module: "
+
+    killall -9 CcspCrSsp
+    [ $? == 0 ] && echo "OK" || echo "FAIL"
+}
+
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	restart|reload)
+		restart
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+esac
+exit $?

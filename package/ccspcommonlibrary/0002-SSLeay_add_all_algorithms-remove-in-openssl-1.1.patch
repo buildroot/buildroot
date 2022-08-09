@@ -1,0 +1,30 @@
+From d1b13416095d4fe513ee739de179913222539993 Mon Sep 17 00:00:00 2001
+From: Jaga <jagadheesan_duraisamy@comcast.com>
+Date: Mon, 6 Apr 2020 18:35:17 +0000
+Subject: [PATCH] SSLeay_add_all_algorithms remove in openssl 1.1
+
+Reason for change: Remove deprecated API SSLeay_add_all_algorithms for
+openssl 1.1 and above
+
+Source: COMCAST
+License: Apache-2.0
+Upstream-Status: Pending
+Signed-off-by: Jaga <jagadheesan_duraisamy@comcast.com>
+---
+ source/util_api/ansc/AnscPlatform/user_openssl.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/source/util_api/ansc/AnscPlatform/user_openssl.c b/source/util_api/ansc/AnscPlatform/user_openssl.c
+index 0d74871f..4cac8483 100644
+--- a/source/util_api/ansc/AnscPlatform/user_openssl.c
++++ b/source/util_api/ansc/AnscPlatform/user_openssl.c
+@@ -68,7 +68,9 @@ void initialize_openssl_lib()
+ 
+     SSL_library_init ();
+     SSL_load_error_strings ();
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
+     SSLeay_add_all_algorithms ();
++#endif
+     SSLeay_add_ssl_algorithms ();
+ }
+ 

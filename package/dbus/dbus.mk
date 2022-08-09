@@ -13,7 +13,7 @@ DBUS_INSTALL_STAGING = YES
 ifeq ($(BR2_PACKAGE_PARODUS2CCSP),y)
 DBUS_POST_PATCH_HOOKS += DBUS_PATCHES
 define DBUS_PATCHES
-	patch -d $(@D)/ -p1 < package/dbus/$(DBUS_VERSION)/0001-dbus-include-ccsp-support.patch.ccsp
+	patch -d $(@D)/ -p1 < package/dbus/$(DBUS_VERSION)/0004-dbus-include-ccsp-support.patch.ccsp
 endef
 
 endif
@@ -34,6 +34,8 @@ DBUS_CONF_OPTS = \
 	--disable-asserts \
 	--disable-xml-docs \
 	--disable-doxygen-docs \
+	--disable-libaudit \
+	--disable-checks \
 	--with-xml=expat \
 	--with-system-socket=/var/run/dbus/system_bus_socket \
 	--with-system-pid-file=/var/run/messagebus.pid
@@ -84,11 +86,6 @@ endif
 define DBUS_REMOVE_VAR_LIB_DBUS
 	rm -rf $(TARGET_DIR)/var/lib/dbus
 endef
-
-#define DBUS_RUN_AUTORECONF
-#        cd $(@D) && $(HOST_DIR)/usr/bin/autoreconf --force --install
-#endef
-#DBUS_PRE_CONFIGURE_HOOKS += DBUS_RUN_AUTORECONF
 
 DBUS_PRE_INSTALL_TARGET_HOOKS += DBUS_REMOVE_VAR_LIB_DBUS
 

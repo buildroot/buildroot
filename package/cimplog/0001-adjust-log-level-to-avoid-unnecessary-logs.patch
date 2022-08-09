@@ -1,0 +1,33 @@
+diff --git a/src/cimplog.c b/src/cimplog.c
+index 4880c20..8491a4e 100644
+--- a/src/cimplog.c
++++ b/src/cimplog.c
+@@ -26,7 +26,7 @@
+ #if defined(LEVEL_DEFAULT)
+ int cimplog_debug_level = LEVEL_DEFAULT;
+ #else
+-int cimplog_debug_level = LEVEL_INFO;
++int cimplog_debug_level = LEVEL_CRITICAL;
+ #endif
+ 
+ void __cimplog(const char *module, int level, const char *msg, ...)
+diff --git a/src/cimplog.h b/src/cimplog.h
+index 630275b..c2d6338 100644
+--- a/src/cimplog.h
++++ b/src/cimplog.h
+@@ -19,10 +19,12 @@
+ 
+ #include <stdarg.h>
+ 
+-#define LEVEL_ERROR    0
+-#define LEVEL_INFO     1
+-#define LEVEL_DEBUG    2
++#define LEVEL_CRITICAL 0
++#define LEVEL_ERROR    1
++#define LEVEL_INFO     2
++#define LEVEL_DEBUG    3
+ 
++#define cimplog_critical(module, ...) __cimplog(module, LEVEL_CRITICAL, __VA_ARGS__)
+ #define cimplog_error(module, ...)    __cimplog(module, LEVEL_ERROR, __VA_ARGS__)
+ #define cimplog_info(module, ...)     __cimplog(module, LEVEL_INFO, __VA_ARGS__)
+ #define cimplog_debug(module, ...)    __cimplog(module, LEVEL_DEBUG, __VA_ARGS__)

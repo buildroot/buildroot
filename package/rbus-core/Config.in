@@ -1,0 +1,8 @@
+config BR2_PACKAGE_RBUS_CORE
+    bool "RBUS Core"
+    select BR2_PACKAGE_RTMESSAGE
+    select BR2_PACKAGE_MSGPACK_C
+    default n
+    help
+       RBUS Core is for the bus communication to support TR181/TR369 and
+       build on top of rtMessage, as an alternate to D-bus
