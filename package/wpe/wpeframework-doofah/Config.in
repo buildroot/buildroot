@@ -1,0 +1,23 @@
+comment "WPEFramework Doofah plugin needs wpeframework"
+	depends on !BR2_PACKAGE_WPEFRAMEWORK
+
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_DOOFAH
+    bool "Doofah"
+    depends on BR2_PACKAGE_WPEFRAMEWORK
+    help
+    	Plugin to act as a remote control on your test
+    	workbench
+
+if BR2_PACKAGE_WPEFRAMEWORK_DOOFAH 
+config BR2_PACKAGE_WPEFRAMEWORK_DOOFAH_AUTOSTART
+    bool "Start Automatically"
+    default y
+    help
+      Select this to start the plugin automatically when starting WPEFramework
+
+config BR2_PACKAGE_WPEFRAMEWORK_DOOFAH_CONNECTOR_CONFIG
+    string "Connector config"
+    help
+      Set a custom connector configutarion 
+
+endif
