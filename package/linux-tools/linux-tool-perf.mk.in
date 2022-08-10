@@ -159,12 +159,18 @@ define PERF_BUILD_CMDS
 endef
 
 # After installation, we remove the Perl and Python scripts from the
-# target.
+# target unless BR2_PACKAGE_LINUX_TOOLS_PERF_SCRIPTS is enabled
+ifeq ($(BR2_PACKAGE_LINUX_TOOLS_PERF_SCRIPTS),)
+define PERF_INSTALL_REMOVE_SCRIPTS
+	$(RM) -rf $(TARGET_DIR)/usr/libexec/perf-core/scripts/
+	$(RM) -rf $(TARGET_DIR)/usr/libexec/perf-core/tests/
+endef
+endif
+
 define PERF_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE1) $(PERF_MAKE_FLAGS) \
 		-C $(LINUX_DIR)/tools/perf O=$(LINUX_DIR)/tools/perf/ install
-	$(RM) -rf $(TARGET_DIR)/usr/libexec/perf-core/scripts/
-	$(RM) -rf $(TARGET_DIR)/usr/libexec/perf-core/tests/
+	$(PERF_INSTALL_REMOVE_SCRIPTS)
 endef
 
 define PERF_LINUX_CONFIG_FIXUPS
