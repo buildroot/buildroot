@@ -133,6 +133,13 @@ config BR2_PACKAGE_WPEFRAMEWORK_SYSTEM_PREFIX
     string "system prefix"
     default ""
 
+config BR2_PACKAGE_WPEFRAMEWORK_DISABLE_LEGACY_CONFIG_GENERATOR
+    bool "disable legacy config generator"
+    default n
+    help
+      This disables the legacy config generator for all thunder components by default
+      even if you build with a cmake version < v3.20.0.
+
 config BR2_PACKAGE_WPEFRAMEWORK_HIDE_NON_EXTERNAL_SYMBOLS
     bool "hide non external symbols"
     default y
