@@ -76,6 +76,13 @@ comment "perf needs a toolchain w/ dynamic library"
 
 if BR2_PACKAGE_LINUX_TOOLS_PERF
 
+config BR2_PACKAGE_LINUX_TOOLS_PERF_SCRIPTS
+	bool "enable installation of perf scripts"
+	help
+	  Enable the installation of the perf scripts under
+	  /usr/libexec/perf-core/ which is necessary for running "perf
+	  tests"
+
 config BR2_PACKAGE_LINUX_TOOLS_PERF_TUI
 	bool "enable perf TUI"
 	depends on BR2_USE_MMU # slang

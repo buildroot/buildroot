@@ -109,7 +109,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_MEMCACHED),y)
 FREERADIUS_SERVER_CONF_OPTS += --with-rlm_cache_memcached
-FREERADIUS_SERVER_DEPENDENCIES += mysql
+FREERADIUS_SERVER_DEPENDENCIES += memcached
 else
 FREERADIUS_SERVER_CONF_OPTS += --without-rlm_cache_memcached
 endif
