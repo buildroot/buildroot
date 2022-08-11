@@ -16,4 +16,8 @@ LIBUNWIND_CONF_OPTS = \
 	--disable-tests \
 	$(if $(BR2_INSTALL_LIBSTDCPP),--enable-cxx-exceptions,--disable-cxx-exceptions)
 
+ifeq ($(BR2_PACKAGE_LIBUCONTEXT),y)
+LIBUNWIND_DEPENDENCIES += libucontext
+endif
+
 $(eval $(autotools-package))
