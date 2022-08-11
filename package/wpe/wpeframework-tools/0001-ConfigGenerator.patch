@@ -1,0 +1,56 @@
+From 767ebcd136f8cb6c4c15a9d0dc73a2c54396cad2 Mon Sep 17 00:00:00 2001
+From: Bram Oosterhuis <bram.oosterhuis.nl@gmail.com>
+Date: Thu, 11 Aug 2022 12:28:48 +0200
+Subject: [PATCH] ConfigGenerator: - Change fatal error to a autor warning -
+ Add option to skip compare
+
+---
+ Tools/cmake/FindConfigGenerator.cmake.in | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/Tools/cmake/FindConfigGenerator.cmake.in b/Tools/cmake/FindConfigGenerator.cmake.in
+index e3a83c1f..b4c7aa06 100644
+--- a/Tools/cmake/FindConfigGenerator.cmake.in
++++ b/Tools/cmake/FindConfigGenerator.cmake.in
+@@ -27,7 +27,7 @@ endmacro()
+ #    COMPONENT   The cmake component group defaults to PROJECT_NAME
+ # ----------------------------------------------------------------------------------------
+ function(write_config)
+-    set(optionsArgs )
++    set(optionsArgs SKIP_COMPARE)
+     set(oneValueArgs CLASSNAME LOCATOR COMPONENT)
+     set(multiValueArgs PLUGINS)
+ 
+@@ -93,6 +93,11 @@ function(write_config)
+         set(_locator lib${MODULE_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX})
+     endif()
+ 
++    set(COMPARE ON) # default on
++    if(ARG_SKIP_COMPARE)
++        set(COMPARE OFF)
++    endif(ARG_SKIP_COMPARE)
++
+     IncludeConfig()
+ 
+     foreach(plugin ${_plugins})
+@@ -184,7 +189,7 @@ function(write_config)
+             endif()
+ 
+             if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug" AND
+-                    "${config_generated}" STREQUAL "Y")
++                    "${config_generated}" STREQUAL "Y" AND COMPARE)
+ 
+                 json_write("${CMAKE_CURRENT_BINARY_DIR}/config/${plugin}_legacy.json" ${plugin_config})
+ 
+@@ -200,7 +205,7 @@ function(write_config)
+                     if(compare_result EQUAL 0)
+                         message(STATUS "config json files generated using legacy method and Python ConfigGenerator are identical") 
+                     elseif( compare_result EQUAL 1)
+-                        message(FATAL_ERROR " Comparing the config json files generated using legacy method and Python ConfigGenerator: \n"
++                        message(AUTHOR_WARNING " Comparing the config json files generated using legacy method and Python ConfigGenerator: \n"
+                                             " ${CMAKE_CURRENT_BINARY_DIR}/config/${plugin}_legacy.json and ${CMAKE_CURRENT_BINARY_DIR}/config/${plugin}.json are not identical \n"
+                                             " This could mean one of the following: \n"
+                                             "    1. Parameters are out of order \n"
+-- 
+2.34.1
+
