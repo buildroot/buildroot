@@ -1,3 +1,92 @@
+2022.08-rc1, to be released
+
+	Fixes all over the tree and new features.
+
+	Architecture
+
+	- Support for NDS32 removed
+	- Support for C-SKY removed
+	- Support for configurable page size on ARM64 added
+	- Architecture menu re-organized: the MMU selection now
+	  appears in this architecture menu.
+
+	Toolchain:
+
+	- GCC 12.x support added, GCC 11.x is now the default
+	  compiler, and support for building a GCC 9.x toolchain has
+	  been removed.
+	- glibc bumped to 2.35-134-gb6aade18a7e5719c942aa2da6cf3157aca993fa4
+	- uclibc bumped to 1.0.42
+	- BR2_GCC_ENABLE_LTO option removed, the toolchain is now
+	  always built with LTO support. The new option BR2_ENABLE_LTO
+	  enables the use of LTO in a subset of packages that have
+	  explicit handling for LTO.
+	- GDB enabled on OpenRISC.
+	- Toolchain menu now appears before "Build options". The
+	  selection of the C library now determines whether static
+	  library (BR2_STATIC_LIBS) will be available or not, instead
+	  of the other way around.
+
+	Filesystem:
+
+	- genimage.cfg files now use shortcuts from genimage for the
+	  GUID of well-known GPT partitions.
+
+	Bootloaders:
+
+	- U-Boot can now be built with host-gnutls as a dependency,
+	  needed for some configurations
+	- OP-TEE can now be built with host-python-pillow as a
+	  dependency, needed for some configurations.
+	- OP-TEE source can now be retrieved from a custom tarball
+	  URL.
+	- Grub has been bumped to 2.06.
+
+	Over 390 packages updated.
+
+	New defconfigs: aspeed_ast2500evb, aspeed_ast2600evb,
+	broadcom_northstar, canaan_kd233, qemu_riscv64_nommu_virt,
+	sipeed_maix_bit, sipeed_maix_bit_sdcard, sipeed_maix_dock,
+	sipeed_maix_dock_sdcard, sipeed_maix_go,
+	sipeed_maix_go_sdcard, sipeed_maixduino,
+	sipeed_maixduino_sdcard
+
+	Removed defconfigs: andes_ae300, csky_gx6605s,
+	friendlyarm_nanopi_neo, minnowboard_max-graphical
+
+	New packages: clpeak, compiler-rt, crucible, dbus-broker, dht,
+	double-conversion, dust, freeradius-server, gdal, hawktracer,
+	hyperfine, libb2, libdeflate, libdill, mbw, mender-connect,
+	minizip-zlib, nerdctl, ntpsec, opencl-hpp, opensc,
+	python-alembic, python-appdirs, python-beniget,
+	python-construct, python-dtschema, python-gast, python-kflash,
+	python-lark, python-maturin, python-mypy-extensions,
+	python-pylibfdt, python-pythran, python-pyrsistent,
+	python-qrcode, python-rfc3987, python-rtoml,
+	python-ruamel-yaml, python-scipy, python-typeguard,
+	python-typing-inspect, python-zlmdb, qt6base, rtl8723ds,
+	spirv-llvm-translator, tealdeer, uuu, vis-network, volk,
+	wolftpm, zeek, zerofree
+
+	Removed packages: rtl8723bs
+
+	Issues resolved:
+
+	#14556: python-crossbar fails to build
+	#14951: boost compile error when running make  silently
+	#14646: OpenSSH 8.9p1 compiler error under mipsel
+	#14841: support/download/git fails with "fatal: No  such remote
+		'origin'" due to incorrect check for origin remote
+	#13356: libabseil-cpp: not building for raspberry pi
+	#14911: host-python3 build needs python3 on the host
+	#13831: mesa3d - kmsro driver requires dri3
+	#13816: xstart failed since update the x11 libraries
+	#13796: Problems compiling package gst-plugins-good
+	#14191: patchelf v0.9 corrupt Nvidia shared  libraries
+	#14891: sudo: group setup fails since commit  9b7f8da96b
+	#14881: Watchdogd Package missing INSTALL_STAGING
+	#14876: arm-trusted-firmware can no longer be  compiled with fPIE
+
 2022.05.1, released July 24th, 2022
 
 	Important / security related fixes.
