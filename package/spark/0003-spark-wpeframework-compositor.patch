@@ -2,7 +2,7 @@ diff --git a/cmake/CommDeps.cmake b/cmake/CommDeps.cmake
 index e2ef012e0..d66bad57e 100644
 --- a/cmake/CommDeps.cmake
 +++ b/cmake/CommDeps.cmake
-@@ -251,6 +251,26 @@ set(COMM_DEPS_LIBRARY_DIRS ${COMM_DEPS_LIBRARY_DIRS}
+@@ -251,6 +251,27 @@ set(COMM_DEPS_LIBRARY_DIRS ${COMM_DEPS_LIBRARY_DIRS}
        ${SQLITE_LIBRARY_DIRS}
     )
  
@@ -22,6 +22,7 @@ index e2ef012e0..d66bad57e 100644
 +       ${ICU_I18N_LIBRARIES}
 +         ${ICU_UC_LIBRARIES}
 +         ${SQLITE_LIBRARIES}
++         ${EGL_LIBRARIES}
 +   )
 +
 +else ()
@@ -58,7 +59,7 @@ index 55d6499f3..5ef779c56 100644
 +        set(PLATFORM_SOURCES egl/pxContextUtils.cpp)
 +        find_package(WPEFramework CONFIG REQUIRED)
 +        find_package(${NAMESPACE}Plugins REQUIRED)
-+        set(PXSCENE_LINK_LIBRARIES ${PXSCENE_LINK_LIBRARIES} compositorclient ${NAMESPACE}Plugins::${NAMESPACE}Plugins)
++        set(PXSCENE_LINK_LIBRARIES ${PXSCENE_LINK_LIBRARIES} compositorclient rtCore ${NAMESPACE}Plugins::${NAMESPACE}Plugins)
      else ()
          message("building pxscene for glut")
          set(PX_PLATFORM PX_PLATFORM_GLUT)
@@ -967,17 +968,17 @@ index 000000000..e5cbec201
 +    ~Display()
 +    {
 +        Stop();
-+        close(_display->FileDescriptor());
-+        Wait(Thread::BLOCKED | Thread::STOPPED, Core::infinite);
 +
 +        if (_graphicsSurface != nullptr) {
 +            _graphicsSurface->Keyboard(nullptr);
 +            _graphicsSurface->Release();
 +        }
-+
 +        if (_display != nullptr) {
++            close(_display->FileDescriptor());
 +            _display->Release();
 +        }
++
++        Wait(Thread::BLOCKED | Thread::STOPPED, Core::infinite);
 +    }
 +public:
 +    EGLNativeDisplayType Native()
