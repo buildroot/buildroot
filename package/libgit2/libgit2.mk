@@ -44,4 +44,9 @@ else
 LIBGIT2_CONF_OPTS += -DUSE_HTTPS=OFF
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+LIBGIT2_CONF_OPTS += \
+	-DCMAKE_SHARED_LINKER_FLAGS=-latomic
+endif
+
 $(eval $(cmake-package))
