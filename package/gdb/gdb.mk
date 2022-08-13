@@ -65,8 +65,9 @@ GDB_DEPENDENCIES += host-flex host-bison
 HOST_GDB_DEPENDENCIES += host-flex host-bison
 endif
 
-# Add the necessary host-gmp dependency for the newer releases of GDB
-ifeq ($(BR2_GDB_VERSION_11)$(BR2_GDB_VERSION_12),y)
+# All newer versions of GDB need host-gmp, so it's only for older
+# versions that the dependency can be avoided.
+ifeq ($(BR2_GDB_VERSION_10)$(BR2_arc),)
 HOST_GDB_DEPENDENCIES += host-gmp
 endif
 
@@ -154,11 +155,10 @@ GDB_CONF_OPTS += \
 	--without-curses
 endif
 
-# When GDB >= 11.x (because it's enabled for the host) and we're
-# building the full gdb for the target, we need gmp as a
-# dependency. For now the default gdb version in Buildroot doesn't
-# require gmp.
-ifeq ($(BR2_GDB_VERSION_11)$(BR2_GDB_VERSION_12):$(BR2_PACKAGE_GDB_DEBUGGER),y:y)
+# Starting from GDB 11.x, gmp is needed as a dependency to build full
+# gdb. So we avoid the dependency only for GDB 10.x and the special
+# version used on ARC.
+ifeq ($(BR2_GDB_VERSION_10)$(BR2_arc):$(BR2_PACKAGE_GDB_DEBUGGER),:y)
 GDB_CONF_OPTS += \
 	--with-libgmp-prefix=$(STAGING_DIR)/usr
 GDB_DEPENDENCIES += gmp
