@@ -46,11 +46,6 @@ choice
 	help
 	  Select the version of gdb you wish to use.
 
-config BR2_GDB_VERSION_9_2
-	bool "gdb 9.2.x"
-	# gdbserver support missing
-	depends on !BR2_riscv
-
 config BR2_GDB_VERSION_10
 	bool "gdb 10.x"
 
@@ -68,7 +63,6 @@ endif
 config BR2_GDB_VERSION
 	string
 	default "arc-2020.09-release-gdb" if BR2_arc
-	default "9.2"      if BR2_GDB_VERSION_9_2
 	default "10.2"	   if BR2_GDB_VERSION_10 || !BR2_PACKAGE_HOST_GDB
 	default "11.2"     if BR2_GDB_VERSION_11
 	default "12.1"     if BR2_GDB_VERSION_12
