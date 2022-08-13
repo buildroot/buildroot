@@ -17,7 +17,7 @@ DOMOTICZ_DEPENDENCIES = \
 	jsoncpp \
 	libcurl \
 	lua \
-	minizip \
+	minizip-zlib \
 	mosquitto \
 	openssl \
 	sqlite \
