@@ -34,6 +34,12 @@ config BR2_BINUTILS_VERSION
 	default "2.38"		if BR2_BINUTILS_VERSION_2_38_X
 	default "2.39"		if BR2_BINUTILS_VERSION_2_39_X
 
+config BR2_BINUTILS_GPROFNG
+	bool "gprofng support"
+	depends on BR2_BINUTILS_VERSION_2_39_X
+	help
+	  This option enables support for gprofng, a new profiler.
+
 config BR2_BINUTILS_EXTRA_CONFIG_OPTIONS
 	string "Additional binutils options"
 	default ""
