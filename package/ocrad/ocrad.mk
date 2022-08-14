@@ -10,12 +10,19 @@ OCRAD_SITE = $(BR2_GNU_MIRROR)/ocrad
 OCRAD_LICENSE = GPL-2.0+
 OCRAD_LICENSE_FILES = COPYING
 OCRAD_INSTALL_STAGING = YES
-OCRAD_DEPENDENCIES = libpng
+OCRAD_DEPENDENCIES = host-pkgconf libpng
+
+OCRAD_LIBS = `$(PKG_CONFIG_HOST_BINARY) --libs libpng`
 
 # This is not a true autotools package.
 define OCRAD_CONFIGURE_CMDS
 	cd $(@D) && \
-	$(TARGET_MAKE_ENV) ./configure --prefix=/usr --sysconfdir=/etc $(TARGET_CONFIGURE_OPTS)
+	$(TARGET_MAKE_ENV) \
+	./configure \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+		$(TARGET_CONFIGURE_OPTS) \
+		LIBS="$(OCRAD_LIBS)"
 endef
 
 define OCRAD_BUILD_CMDS

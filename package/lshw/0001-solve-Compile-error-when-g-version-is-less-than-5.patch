@@ -1,0 +1,65 @@
+From 383c80bf486f806438bb11a9c9a9567407cd47ab Mon Sep 17 00:00:00 2001
+From: "E.V.Acacia" <624758472@qq.com>
+Date: Fri, 3 Sep 2021 14:19:37 +0800
+Subject: [PATCH] solve: Compile error when gcc version is less than 5
+
+[Retrieved from:
+https://github.com/lyonel/lshw/pull/70/commits/383c80bf486f806438bb11a9c9a9567407cd47ab]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/core/cpuinfo.cc | 8 ++++----
+ src/core/hw.cc      | 2 +-
+ src/core/spd.cc     | 4 ++--
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/src/core/cpuinfo.cc b/src/core/cpuinfo.cc
+index 9e41a421..ed1c4164 100644
+--- a/src/core/cpuinfo.cc
++++ b/src/core/cpuinfo.cc
+@@ -465,13 +465,13 @@ string value)
+     if (id == "model name")
+       cpu->setProduct(value);
+     if (id == "microcode")
+-      cpu->setConfig(id, stoll(value, NULL, 0));
++      cpu->setConfig(id, strtoll(value.c_str(), NULL, 0));
+     if (id == "cpu family")
+-      cpu->addHint(id, stoll(value, NULL, 0));
++      cpu->addHint(id, strtoll(value.c_str(), NULL, 0));
+     if (id == "model")
+-      cpu->addHint(id, stoll(value, NULL, 0));
++      cpu->addHint(id, strtoll(value.c_str(), NULL, 0));
+     if (id == "stepping")
+-      cpu->addHint(id, stoll(value, NULL, 0));
++      cpu->addHint(id, strtoll(value.c_str(), NULL, 0));
+ 
+     family = cpu->getHint("cpu family");
+     model = cpu->getHint("model");
+diff --git a/src/core/hw.cc b/src/core/hw.cc
+index 1c1dad46..b266a863 100644
+--- a/src/core/hw.cc
++++ b/src/core/hw.cc
+@@ -2459,7 +2459,7 @@ long long value::asInteger() const
+   switch(This->type)
+   {
+     case hw::text:
+-      return stoll(This->s, NULL, 0);
++      return strtoll(This->s.c_str(), NULL, 0);
+     case hw::integer:
+       return This->ll;
+     case hw::boolean:
+diff --git a/src/core/spd.cc b/src/core/spd.cc
+index a304d061..2ad66b82 100644
+--- a/src/core/spd.cc
++++ b/src/core/spd.cc
+@@ -195,9 +195,9 @@ static bool scan_eeproms(hwNode & memory)
+   {
+     if (scan_eeprom(memory, namelist[i]->d_name))
+       current_bank++;
+-    free(namelist[i]);
++    delete(namelist[i]);
+   }
+-  free(namelist);
++  delete(namelist);
+ 
+   return true;
+ }

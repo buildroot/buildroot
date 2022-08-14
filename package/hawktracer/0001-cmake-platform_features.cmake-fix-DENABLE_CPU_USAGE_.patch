@@ -1,0 +1,38 @@
+From 65e78e2b972e2fab76b18732941ae611ec782dee Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 12 Aug 2022 14:51:33 +0200
+Subject: [PATCH] cmake/platform_features.cmake: fix
+ -DENABLE_CPU_USAGE_FEATURE=OFF
+
+Fix -DENABLE_CPU_USAGE_FEATURE=OFF to allow the user to disable
+CPU_USAGE and avoid the following build failure without threads:
+
+/home/giuliobenetti/autobuild/run/instance-2/output-1/build/hawktracer-e53b07bc812c4cfe8f6253ddb48ac43de8fa74a8/lib/platform/linux/cpu_usage.c:5:10: fatal error: pthread.h: No such file or directory
+    5 | #include <pthread.h>
+      |          ^~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/7edc29e21e441e66ad7c4df1673e506950930913
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/amzn/hawktracer/pull/86]
+---
+ cmake/platform_features.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cmake/platform_features.cmake b/cmake/platform_features.cmake
+index 1abbd41..8d7cfd9 100644
+--- a/cmake/platform_features.cmake
++++ b/cmake/platform_features.cmake
+@@ -18,7 +18,7 @@ macro(_validate_feature_enabled FEATURE_NAME VARIABLE)
+ endmacro(_validate_feature_enabled)
+ 
+ macro(define_platform_feature FEATURE_NAME FEATURE_DEFAULT_FILE DEFAULT_ENABLE)
+-    if (NOT "${DEFAULT_ENABLE}" STREQUAL "OFF" OR "${ENABLE_${FEATURE_NAME}_FEATURE}" STREQUAL "ON")
++    if (NOT "${DEFAULT_ENABLE}" STREQUAL "OFF" AND NOT "${ENABLE_${FEATURE_NAME}_FEATURE}" STREQUAL "OFF")
+         set(OPTION_VALUE ON)
+     else()
+         set(OPTION_VALUE OFF)
+-- 
+2.35.1
+

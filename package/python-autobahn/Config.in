@@ -19,10 +19,15 @@ config BR2_PACKAGE_PYTHON_AUTOBAHN_ACCELERATE
 
 config BR2_PACKAGE_PYTHON_AUTOBAHN_COMPRESS
 	bool "Non-standard WebSocket compression support"
+	depends on BR2_INSTALL_LIBSTDCPP # python-snappy -> snappy
 	select BR2_PACKAGE_PYTHON_SNAPPY # runtime
+
+comment "Non-standard WebSocket compression needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP
 
 config BR2_PACKAGE_PYTHON_AUTOBAHN_ENCRYPTION
 	bool "TLS and WAMP-cryptosign encryption/authentication support"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-pyopenssl -> python-cryptography
 	select BR2_PACKAGE_PYTHON_PYNACL # runtime
 	select BR2_PACKAGE_PYTHON_PYOPENSSL # runtime
 	select BR2_PACKAGE_PYTHON_QRCODE # runtime
@@ -37,11 +42,15 @@ config BR2_PACKAGE_PYTHON_AUTOBAHN_SCRAM
 
 config BR2_PACKAGE_PYTHON_AUTOBAHN_SERIALIZATION
 	bool "Accelerated JSON, MessagePack, CBOR, UBJSON, and FlatBuffers serialization support"
+	depends on BR2_INSTALL_LIBSTDCPP # python-ujson
 	select BR2_PACKAGE_PYTHON_CBOR2 # runtime
 	select BR2_PACKAGE_PYTHON_FLATBUFFERS # runtime
 	select BR2_PACKAGE_PYTHON_MSGPACK # runtime
 	select BR2_PACKAGE_PYTHON_UBJSON # runtime
 	select BR2_PACKAGE_PYTHON_UJSON # runtime
+
+comment "Accelerated JSON, MessagePack, CBOR, UBJSON, and FlatBuffers serialization needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP
 
 config BR2_PACKAGE_PYTHON_AUTOBAHN_TWISTED
 	bool "Twisted support"
