@@ -94,9 +94,9 @@ HOST_BINUTILS_CONF_OPTS = \
 
 ifeq ($(BR2_BINUTILS_GPROFNG),y)
 HOST_BINUTILS_DEPENDENCIES += host-bison
-HOST_INBUTILS_CONF_OPTS += --enable-gprofng
+HOST_BINUTILS_CONF_OPTS += --enable-gprofng
 else
-HOST_INBUTILS_CONF_OPTS += --disable-gprofng
+HOST_BINUTILS_CONF_OPTS += --disable-gprofng
 endif
 
 # binutils run configure script of subdirs at make time, so ensure
