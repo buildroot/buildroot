@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NETTLE_VERSION = 3.8
+NETTLE_VERSION = 3.8.1
 NETTLE_SITE = https://ftp.gnu.org/gnu/nettle
 NETTLE_DEPENDENCIES = gmp
 NETTLE_INSTALL_STAGING = YES
