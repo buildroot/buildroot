@@ -36,11 +36,11 @@ else
 PCSC_LITE_CONF_OPTS += --disable-libsystemd
 endif
 
-ifeq ($(PACKAGE_PCSC_LITE_DEBUGATR),y)
+ifeq ($(BR2_PACKAGE_PCSC_LITE_DEBUGATR),y)
 PCSC_LITE_CONF_OPTS += --enable-debugatr
 endif
 
-ifeq ($(PACKAGE_PCSC_LITE_EMBEDDED),y)
+ifeq ($(BR2_PACKAGE_PCSC_LITE_EMBEDDED),y)
 PCSC_LITE_CONF_OPTS += --enable-embedded
 endif
 
