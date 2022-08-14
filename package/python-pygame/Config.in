@@ -41,12 +41,6 @@ config BR2_PACKAGE_PYTHON_PYGAME_MIXER
 	  pygame module for loading and playing sounds.
 	  Will autoselect sdl_mixer.
 
-config BR2_PACKAGE_PYTHON_PYGAME_MIXER_MUSIC
-	bool "pygame.mixer.music"
-	depends on BR2_PACKAGE_PYTHON_PYGAME_MIXER
-	help
-	  pygame module for controlling streamed audio
-
 config BR2_PACKAGE_PYTHON_PYGAME_SCRAP
 	bool "pygame.scrap"
 	depends on BR2_PACKAGE_SDL_X11
