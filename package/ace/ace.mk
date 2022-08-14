@@ -23,6 +23,9 @@ ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_101915),y)
 ACE_CPPFLAGS += -O0
 endif
 
+# ACE uses DEFFLAGS as C++ pre-processor flags, and CCFLAGS as the C++ flags.
+# Ace passes the pre-processor flags after the C++ flags, so we pass our
+# C++ flags as pre-processor flags, via DEFFLAGS.
 ACE_MAKE_OPTS = \
 	ACE_ROOT="$(@D)" \
 	DEFFLAGS="$(ACE_CPPFLAGS)"
