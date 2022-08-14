@@ -41,7 +41,7 @@ else
 WOLFTPM_CONF_OPTS += --disable-st33
 endif
 
-ifeq ($(BR2_PACKAGE_WOLFTPM_NPCT750),y)
+ifeq ($(BR2_PACKAGE_WOLFTPM_NUVOTON),y)
 WOLFTPM_CONF_OPTS += --enable-nuvoton
 else
 WOLFTPM_CONF_OPTS += --disable-nuvoton
