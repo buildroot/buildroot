@@ -15,6 +15,12 @@ FREERADIUS_SERVER_CPE_ID_PRODUCT = freeradius
 FREERADIUS_SERVER_DEPENDENCIES = libtalloc
 FREERADIUS_SERVER_AUTORECONF = YES
 
+# We're patching src/modules/rlm_krb5/configure.ac
+define FREERADIUS_SERVER_RUN_KRB5_AUTOCONF
+	cd $(@D)/src/modules/rlm_krb5; $(AUTOCONF) -I$(@D)
+endef
+FREERADIUS_SERVER_PRE_CONFIGURE_HOOKS += FREERADIUS_SERVER_RUN_KRB5_AUTOCONF
+
 # some compiler checks are not supported while cross compiling.
 # instead of removing those checks, we cache the answers
 FREERADIUS_SERVER_CONF_OPTS += \

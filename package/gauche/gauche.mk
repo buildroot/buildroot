@@ -12,7 +12,7 @@ GAUCHE_LICENSE_FILES = COPYING
 GAUCHE_DEPENDENCIES = host-gauche
 
 HOST_GAUCHE_CONF_OPTS = --without-zlib
-GAUCHE_CONF_OPTS = --without-libatomic-ops
+GAUCHE_CONF_OPTS = --with-libatomic-ops=none
 
 # Enable embedded axTLS
 GAUCHE_TLS_LIBS = axtls

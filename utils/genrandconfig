@@ -542,6 +542,27 @@ def fixup_config(sysinfo, configfile):
         configlines.append('BR2_PACKAGE_REFPOLICY_UPSTREAM_VERSION=y\n')
         configlines.remove('BR2_PACKAGE_REFPOLICY_CUSTOM_REPO_URL=""\n')
 
+    if 'BR2_PACKAGE_XENOMAI=y\n' in configlines and \
+       'BR2_PACKAGE_XENOMAI_CUSTOM_GIT=y\n' in configlines and \
+       'BR2_PACKAGE_XENOMAI_REPOSITORY=""\n' in configlines:
+        configlines.remove('BR2_PACKAGE_XENOMAI_CUSTOM_GIT=y\n')
+        configlines.append('BR2_PACKAGE_XENOMAI_LATEST_VERSION=y\n')
+        configlines.remove('BR2_PACKAGE_XENOMAI_REPOSITORY=""\n')
+
+    if 'BR2_PACKAGE_XENOMAI=y\n' in configlines and \
+       'BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL=y\n' in configlines and \
+       'BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL_URL=""\n' in configlines:
+        configlines.remove('BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL=y\n')
+        configlines.append('BR2_PACKAGE_XENOMAI_LATEST_VERSION=y\n')
+        configlines.remove('BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL_URL=""\n')
+
+    if 'BR2_PACKAGE_XENOMAI=y\n' in configlines and \
+       'BR2_PACKAGE_XENOMAI_CUSTOM_VERSION=y\n' in configlines and \
+       'BR2_PACKAGE_XENOMAI_CUSTOM_VERSION_VALUE=""\n' in configlines:
+        configlines.remove('BR2_PACKAGE_XENOMAI_CUSTOM_VERSION=y\n')
+        configlines.append('BR2_PACKAGE_XENOMAI_LATEST_VERSION=y\n')
+        configlines.remove('BR2_PACKAGE_XENOMAI_CUSTOM_VERSION_VALUE=""\n')
+
     if 'BR2_PACKAGE_XVISOR=y\n' in configlines and \
        'BR2_PACKAGE_XVISOR_USE_CUSTOM_CONFIG=y\n' in configlines and \
        'BR2_PACKAGE_XVISOR_CUSTOM_CONFIG_FILE=""\n' in configlines:

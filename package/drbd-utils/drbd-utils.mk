@@ -20,6 +20,12 @@ else
 DRBD_UTILS_CONF_OPTS += --with-initscripttype=sysv
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
+DRBD_UTILS_CONF_OPTS += --with-drbdmon
+else
+DRBD_UTILS_CONF_OPTS += --without-drbdmon
+endif
+
 ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
 DRBD_UTILS_CONF_OPTS += --with-udev=yes
 DRBD_UTILS_DEPENDENCIES += udev
