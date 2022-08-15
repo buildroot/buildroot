@@ -45,6 +45,10 @@ config BR2_PACKAGE_ALSA_UTILS_ALSAUCM
 
 config BR2_PACKAGE_ALSA_UTILS_ALSATPLG
 	bool "alsatplg"
+	depends on !BR2_STATIC_LIBS # dlfcn.h
+
+comment "alsatplg needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
 
 config BR2_PACKAGE_ALSA_UTILS_AMIDI
 	bool "amidi"
