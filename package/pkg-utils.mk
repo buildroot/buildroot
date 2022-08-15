@@ -276,7 +276,8 @@ legal-deps = \
             $(call non-virtual-deps,\
                 $($(call UPPERCASE,$(1))_FINAL_RECURSIVE_DEPENDENCIES))),$(p) [$($(call UPPERCASE,$(p))_LICENSE)])
 
-# Helper for self-extracting binaries distributed by Freescale.
+# Helper for self-extracting binaries distributed by NXP, and
+# formerlly Freescale.
 #
 # The --force option makes sure it doesn't fail if the source
 # directory already exists. The --auto-accept skips the license check,
@@ -290,7 +291,7 @@ legal-deps = \
 #
 # $(1): full path to the archive file
 #
-define FREESCALE_IMX_EXTRACT_HELPER
+define NXP_EXTRACT_HELPER
 	awk 'BEGIN      { start = 0; } \
 	     /^EOEULA/  { start = 0; } \
 	                { if (start) print; } \
