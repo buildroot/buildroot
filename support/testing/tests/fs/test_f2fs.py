@@ -30,7 +30,7 @@ class TestF2FS(infra.basetest.BRTest):
         img = os.path.join(self.builddir, "images", "rootfs.f2fs")
         out = infra.run_cmd_on_host(self.builddir, ["host/sbin/dump.f2fs", img])
         out = out.splitlines()
-        prop = dumpf2fs_getprop(out, "Info: total sectors")
+        prop = dumpf2fs_getprop(out, "Info: total FS sectors")
         self.assertEqual(prop, "262144 (128 MB)")
 
         kernel = os.path.join(self.builddir, "images", "zImage")
