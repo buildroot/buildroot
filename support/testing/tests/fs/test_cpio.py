@@ -57,10 +57,6 @@ class TestCpioDracutBase(infra.basetest.BRTest):
                              self.builddir)
         self.assertEqual(exit_code, 0)
 
-        # No pivot_root is done, so pv shouldn't be there
-        _, exit_code = self.emulator.run("ls -l /usr/bin/pv")
-        self.assertNotEqual(exit_code, 0)
-
 
 class TestCpioDracutUclibc(TestCpioDracutBase):
     config = TestCpioDracutBase.config + \
