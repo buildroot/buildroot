@@ -1,0 +1,43 @@
+#!/bin/sh
+
+set -e
+
+# Must be a valid filename
+NAME=websocketd-2
+PIDFILE=/var/run/$NAME.pid
+#This is the command to be run, give the full pathname
+DAEMON=/usr/sbin/websocketd
+DAEMON_OPTS="--port=8080 tail -n 1000 -f /var/log/opentrickler.log"
+
+start() {
+  echo -n "Starting daemon: "$NAME
+  start-stop-daemon --start --quiet --background --make-pidfile --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_OPTS
+  [ $? = 0 ] && echo "OK" || echo "FAIL"
+}
+
+
+stop() {
+  echo -n "Stopping daemon: "$NAME
+  start-stop-daemon --stop --quiet --oknodo --pidfile $PIDFILE
+  [ $? = 0 ] && echo "OK" || echo "FAIL"
+}
+
+
+case "$1" in
+    start)
+  start
+  ;;
+    stop)
+  stop
+  ;;
+    restart|reload)
+  stop
+  start
+  ;;
+  *)
+  echo "Usage: $0 {start|stop|restart}"
+  exit 1
+esac
+
+
+exit $?

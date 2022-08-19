@@ -1,0 +1,53 @@
+#!/bin/sh
+
+# References:
+# https://gist.github.com/alobato/1968852
+# https://github.com/buildroot/buildroot/blob/2019.02.6/package/dropbear/S50dropbear
+# https://github.com/buildroot/buildroot/blob/2019.02.6/package/busybox/S50telnet
+# http://man7.org/linux/man-pages/man8/start-stop-daemon.8.html
+
+  
+# Quick start-stop-daemon example, derived from Debian /etc/init.d/ssh
+set -e
+
+# Must be a valid filename
+NAME=opentrickler
+PIDFILE=/var/run/$NAME.pid
+LOGFILE=/var/log/$NAME.log
+#This is the command to be run, give the full pathname
+DAEMON=/code/opentrickler/server.sh
+DAEMON_OPTS="$LOGFILE"
+
+start() {
+  echo -n "Starting daemon: "$NAME
+  touch $LOGFILE
+  start-stop-daemon --start --quiet --background --make-pidfile --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_OPTS
+  [ $? = 0 ] && echo "OK" || echo "FAIL"
+}
+
+
+stop() {
+  echo -n "Stopping daemon: "$NAME
+  start-stop-daemon --stop --quiet --oknodo --pidfile $PIDFILE
+  [ $? = 0 ] && echo "OK" || echo "FAIL"
+}
+
+
+case "$1" in
+    start)
+  start
+  ;;
+    stop)
+  stop
+  ;;
+    restart|reload)
+  stop
+  start
+  ;;
+  *)
+  echo "Usage: $0 {start|stop|restart}"
+  exit 1
+esac
+
+
+exit $?

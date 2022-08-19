@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<pre id="log"></pre>
+<script>
+  // setup websocket with callbacks
+  var ws = new WebSocket('ws://' + location.host + ':8082/');
+  ws.onopen = function() {
+    console.log('connected to websocket server');
+  };
+  ws.onclose = function() {
+    console.log('disconnected from websocket server');
+  };
+  ws.onmessage = function(event) {
+    document.getElementById('log').textContent += event.data + '\n';
+  };
+</script>

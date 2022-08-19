@@ -1,0 +1,15 @@
+#!/bin/sh
+# For on-board BT, route SCO packets to the HCI interface (enables HFP/HSP)
+
+set -e
+
+if [ "$#" -ne 1 ]; then
+   echo "Usage: $0 <bluetooth hci device>"
+   exit 0
+fi
+
+dev="$1"
+# Need to bring hci up before looking at MAC as it can be all zeros during init
+/usr/bin/hciconfig "$dev" up
+/usr/bin/hciconfig "$dev" | grep -qE "BD Address: (B8:27:EB|DC:A6:32):" || exit 0
+/usr/bin/hcitool -i "$dev" cmd 0x3f 0x1c 0x01 0x02 0x00 0x01 0x01 > /dev/null
