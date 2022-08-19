@@ -1,0 +1,18 @@
+config BR2_PACKAGE_PYTHON_CONNEXION
+	bool "python-connexion"
+	select BR2_PACKAGE_PYTHON_SETUPTOOLS_SCM
+	select BR2_PACKAGE_PYTHON_CLICKCLICK # runtime
+	select BR2_PACKAGE_PYTHON_FLASK # runtime
+	select BR2_PACKAGE_PYTHON_IMPORTLIB_METADATA # runtime
+	select BR2_PACKAGE_PYTHON_INFLECTION # runtime
+	select BR2_PACKAGE_PYTHON_ITSDANGEROUS # runtime
+	select BR2_PACKAGE_PYTHON_JSONSCHEMA # runtime
+	select BR2_PACKAGE_PYTHON_PACKAGING # runtime
+	select BR2_PACKAGE_PYTHON_PYYAML # runtime
+	select BR2_PACKAGE_PYTHON_REQUESTS # runtime
+	select BR2_PACKAGE_PYTHON_WERKZEUG # runtime
+	help
+	  Connexion - API first applications with OpenAPI/Swagger and
+	  Flask.
+
+	  https://github.com/zalando/connexion
