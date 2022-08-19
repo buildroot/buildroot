@@ -29,13 +29,15 @@ endchoice
 
 if BR2_TARGET_ROOTFS_CPIO_DRACUT
 
-config BR2_TARGET_ROOTFS_CPIO_DRACUT_CONF_FILE
-	string "dracut configuration file"
+config BR2_TARGET_ROOTFS_CPIO_DRACUT_CONF_FILES
+	string "dracut configuration files"
 	default "fs/cpio/dracut.conf"
 	help
-	  Dracut configuration file. It determines which parts of the
-	  rootfs get included in the cpio image. See dracut.conf(5) or
-	  https://github.com/dracutdevs/dracut/blob/master/man/dracut.conf.5.asc
+	  Space-separated list of Dracut configuration files. They
+	  determine which parts of the rootfs get included in the
+	  cpio image. See:
+	    dracut.conf(5)
+	    https://github.com/dracutdevs/dracut/blob/master/man/dracut.conf.5.asc
 
 	  The default configuration file is suitable for busybox init.
 	  It doesn't, however, pivot_root into a full rootfs.
