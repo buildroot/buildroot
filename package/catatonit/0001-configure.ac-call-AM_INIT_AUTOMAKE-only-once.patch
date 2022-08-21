@@ -1,0 +1,41 @@
+From 99bb9048f532257f3a2c3856cfa19fe957ab6cec Mon Sep 17 00:00:00 2001
+From: Antonio Terceiro <terceiro@debian.org>
+Date: Thu, 4 Nov 2021 07:37:13 -0300
+Subject: [PATCH] configure.ac: call AM_INIT_AUTOMAKE only once
+
+That second call seems to be there since the beginning, and autoconf
+2.69 was fine with it. autoconf 2.71 doesn't allow it anymore:
+
+    $ ./autogen.sh
+    autoreconf: export WARNINGS=
+    autoreconf: Entering directory '.'
+    autoreconf: configure.ac: not using Gettext
+    autoreconf: running: aclocal --force
+    configure.ac:34: error: AM_INIT_AUTOMAKE expanded multiple times
+    /usr/share/aclocal-1.16/init.m4:29: AM_INIT_AUTOMAKE is expanded from...
+    configure.ac:19: the top level
+    /usr/share/aclocal-1.16/init.m4:29: AM_INIT_AUTOMAKE is expanded from...
+    configure.ac:34: the top level
+    autom4te: error: /usr/bin/m4 failed with exit status: 1
+    aclocal: error: /usr/bin/autom4te failed with exit status: 1
+    autoreconf: error: aclocal failed with exit status: 1
+
+Signed-off-by: Antonio Terceiro <terceiro@debian.org>
+Upstream: https://github.com/openSUSE/catatonit/commit/99bb9048f532257f3a2c3856cfa19fe957ab6cec
+Signed-off-by: Christian Stewart <christian@paral.in>
+---
+ configure.ac | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 12c9186..94c5c84 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -31,4 +31,3 @@ AC_FUNC_FORK
+ 
+ AC_CONFIG_FILES([Makefile config.h])
+ AC_OUTPUT
+-AM_INIT_AUTOMAKE
+-- 
+2.37.2
+
