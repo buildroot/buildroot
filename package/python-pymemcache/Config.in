@@ -1,0 +1,10 @@
+config BR2_PACKAGE_PYTHON_PYMEMCACHE
+	bool "python-pymemcache"
+	select BR2_PACKAGE_PYTHON_SETUPTOOLS_SCM
+	select BR2_PACKAGE_PYTHON_SIX
+	depends on BR2_arm
+	help
+	  A comprehensive, fast, pure-Python memcached client.
+
+	  https://github.com/pinterest/pymemcache
+
