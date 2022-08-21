@@ -53,7 +53,7 @@ else ifeq ($(BR2_TOOLCHAIN_USES_MUSL),y)
 LIBC = musl
 else ifeq ($(BR2_TOOLCHAIN_USES_GLIBC),y)
 LIBC = gnu
-else
+else ifeq ($(BR_BUILDING),y)
 # This happens if there is a bug in Buildroot that allows an
 # architecture configuration that isn't supported by any library.
 $(error No C library enabled, this is not possible.)
