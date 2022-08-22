@@ -155,6 +155,7 @@ LINUX_MAKE_FLAGS = \
 	INSTALL_MOD_PATH=$(TARGET_DIR) \
 	CROSS_COMPILE="$(TARGET_CROSS)" \
 	WERROR=0 \
+	REGENERATE_PARSERS=1 \
 	DEPMOD=$(HOST_DIR)/sbin/depmod
 
 ifeq ($(BR2_REPRODUCIBLE),y)
@@ -285,6 +286,19 @@ define LINUX_DROP_YYLLOC
 	|xargs -0 -r $(SED) '/^YYLTYPE yylloc;$$/d'
 endef
 LINUX_POST_PATCH_HOOKS += LINUX_DROP_YYLLOC
+
+# Kernel version < 5.6 breaks if host-gcc version is >= 10 and
+# 'yylloc' symbol is removed in previous hook, due to missing
+# '%locations' bison directive in dtc-parser.y.  See:
+# https://bugs.busybox.net/show_bug.cgi?id=14971
+define LINUX_ADD_DTC_LOCATIONS
+	$(Q)DTC_PARSER=$(@D)/scripts/dtc/dtc-parser.y; \
+	if test -e "$${DTC_PARSER}" \
+		&& ! grep -Eq '^%locations$$' "$${DTC_PARSER}" ; then \
+		$(SED) '/^%{$$/i %locations' "$${DTC_PARSER}"; \
+	fi
+endef
+LINUX_POST_PATCH_HOOKS += LINUX_ADD_DTC_LOCATIONS
 
 # Older linux kernels use deprecated perl constructs in timeconst.pl
 # that were removed for perl 5.22+ so it breaks on newer distributions
