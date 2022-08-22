@@ -124,6 +124,61 @@ if BR2_PACKAGE_WPEFRAMEWORK_AVS
   endif
 endif
 
+menuconfig BR2_PACKAGE_WPEFRAMEWORK_BACKOFFICE
+    bool "BackOffice"
+    help
+        BackOffice Plugin
+if BR2_PACKAGE_WPEFRAMEWORK_BACKOFFICE
+config BR2_PACKAGE_WPEFRAMEWORK_BACKOFFICE_AUTOSTART
+    bool "Start Automatically"
+    default y
+    help
+      Select this to start the plugin automatically when starting WPEFramework
+
+config BR2_PACKAGE_WPEFRAMEWORK_BACKOFFICE_SERVER_ADDRESS
+    string "Server Address"
+    default "localhost"
+
+config BR2_PACKAGE_WPEFRAMEWORK_BACKOFFICE_SERVER_PORT
+    string "Server Port"
+    default "80"
+
+config BR2_PACKAGE_WPEFRAMEWORK_BACKOFFICE_CUSTOMER
+    string "Customer"
+    default "Metrological"
+
+config BR2_PACKAGE_WPEFRAMEWORK_BACKOFFICE_PLATFORM
+    string "Platform"
+    default "RPI"
+
+config BR2_PACKAGE_WPEFRAMEWORK_BACKOFFICE_COUNTRY
+    string "Country"
+    default "US"
+
+config BR2_PACKAGE_WPEFRAMEWORK_BACKOFFICE_TYPE
+    string "Type"
+    default "App"
+
+config BR2_PACKAGE_WPEFRAMEWORK_BACKOFFICE_SESSION
+    string "Session"
+    default "1234"
+
+config BR2_PACKAGE_WPEFRAMEWORK_BACKOFFICE_CALLSIGN_MAPPING
+    string "Callsign Mapping"
+    default ""
+    help
+      Set callsign mapping in the format "Callsign1,DomainName1:Callsign2,DomainName2".
+      Example "DisneyPlus,com.metrological.app.DisneyPlus;AmazonPrime,com.metrological.app.AmazonPrime"
+
+config BR2_PACKAGE_WPEFRAMEWORK_BACKOFFICE_STATE_MAPPING
+    string "State Mapping"
+    default "Activated,load;Deactivated,unload;Resumed,open;Suspended,close"
+    help
+      Set state mapping in the format "PluginState1,Action1;PluginState2,Action2".
+      Example "Activated,load;Deactivated,unload;Resumed,open;Suspended,close"
+
+endif
+
 menuconfig BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTH
     bool "BluetoothControl"
     select BR2_PACKAGE_WPEFRAMEWORK_LIBRARIES
