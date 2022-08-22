@@ -2,10 +2,32 @@
 
 import argparse
 import glob
+import pathlib
+
+from importlib.machinery import PathFinder
+from importlib.metadata import DistributionFinder
 
 from installer import install
+from installer._core import _process_WHEEL_file
 from installer.destinations import SchemeDictionaryDestination
 from installer.sources import WheelFile
+
+
+def clean(source, destination):
+    scheme = _process_WHEEL_file(source)
+    scheme_path = destination.scheme_dict[scheme]
+    context = DistributionFinder.Context(
+        name=source.distribution,
+        path=[scheme_path],
+    )
+    for path in PathFinder.find_distributions(context=context):
+        # path.files is either an iterable, or None
+        if path.files is None:
+            continue
+        for file in path.files:
+            file_path = pathlib.Path(file.locate())
+            if file_path.exists():
+                file_path.unlink()
 
 
 def main():
@@ -58,6 +80,7 @@ def main():
     )
 
     with WheelFile.open(glob.glob(args.wheel_file)[0]) as source:
+        clean(source, destination)
         install(
             source=source,
             destination=destination,
