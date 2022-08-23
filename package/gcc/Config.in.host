@@ -77,6 +77,10 @@ config BR2_GCC_SUPPORTS_DLANG
 	default y if BR2_riscv && !BR2_RISCV_64
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_9
 	depends on BR2_TOOLCHAIN_USES_GLIBC
+	# "The D front-end is now itself written in D, in order to build GDC, you
+	# will need a working GDC compiler (GCC version 9.1 or later)."
+	# https://gcc.gnu.org/git/?p=gcc.git;a=commitdiff;h=5fee5ec362f7a243f459e6378fd49dfc89dc9fb5
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_12
 
 config BR2_GCC_VERSION
 	string
