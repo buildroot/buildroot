@@ -1,0 +1,173 @@
+From 302ad70471efa279b033d4d5511d979ec5d965fe Mon Sep 17 00:00:00 2001
+From: Frank Morgner <frankmorgner@gmail.com>
+Date: Thu, 20 Jan 2022 17:01:46 +0100
+Subject: [PATCH] added compatibility with LibreSSL
+
+[Retrieved (and backported) from:
+https://github.com/OpenSC/OpenSC/commit/302ad70471efa279b033d4d5511d979ec5d965fe]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/libopensc/sc-ossl-compat.h             |  7 +++++++
+ src/tests/p11test/p11test_case_common.c    | 14 ++++++++++++++
+ src/tests/p11test/p11test_case_ec_derive.c |  4 ++++
+ src/tests/p11test/p11test_case_readonly.c  |  9 +++++++--
+ 4 files changed, 32 insertions(+), 2 deletions(-)
+
+diff --git a/src/libopensc/sc-ossl-compat.h b/src/libopensc/sc-ossl-compat.h
+index f885f85bb9..ec694ad48d 100644
+--- a/src/libopensc/sc-ossl-compat.h
++++ b/src/libopensc/sc-ossl-compat.h
+@@ -105,6 +105,13 @@ extern "C" {
+ /* workaround unused value warning for a macro that does nothing */
+ #if defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER >= 0x20700000L
+ #define OPENSSL_malloc_init()
++#define FIPS_mode()                             (0)
++#define EVP_sha3_224()                          (NULL)
++#define EVP_sha3_256()                          (NULL)
++#define EVP_sha3_384()                          (NULL)
++#define EVP_sha3_512()                          (NULL)
++#define EVP_PKEY_new_raw_public_key(t, e, p, l) (NULL)
++#define EVP_PKEY_get_raw_public_key(p, pu, l)   (0)
+ #endif
+ 
+ #if OPENSSL_VERSION_NUMBER >= 0x30000000L
+diff --git a/src/tests/p11test/p11test_case_common.c b/src/tests/p11test/p11test_case_common.c
+index e432f8f4ed..f091dbcc10 100644
+--- a/src/tests/p11test/p11test_case_common.c
++++ b/src/tests/p11test/p11test_case_common.c
+@@ -164,6 +164,7 @@ add_supported_mechs(test_cert_t *o)
+ 			o->mechs[0].result_flags = 0;
+ 			o->mechs[0].usage_flags = CKF_SIGN | CKF_VERIFY;
+ 		}
++#ifdef EVP_PKEY_ED25519
+ 	} else if (o->type == EVP_PKEY_ED25519) {
+ 		if (token.num_ed_mechs > 0 ) {
+ 			o->num_mechs = token.num_ed_mechs;
+@@ -184,6 +185,8 @@ add_supported_mechs(test_cert_t *o)
+ 			o->mechs[0].result_flags = 0;
+ 			o->mechs[0].usage_flags = CKF_SIGN | CKF_VERIFY;
+ 		}
++#endif
++#ifdef EVP_PKEY_X25519
+ 	} else if (o->type == EVP_PKEY_X25519) {
+ 		if (token.num_montgomery_mechs > 0 ) {
+ 			o->num_mechs = token.num_montgomery_mechs;
+@@ -204,6 +207,7 @@ add_supported_mechs(test_cert_t *o)
+ 			o->mechs[0].result_flags = 0;
+ 			o->mechs[0].usage_flags = CKF_DERIVE;
+ 		}
++#endif
+ 	}
+ }
+ 
+@@ -601,6 +605,7 @@ int callback_public_keys(test_certs_t *objects,
+ 		a = template[6].pValue;
+ 		if (d2i_ASN1_PRINTABLESTRING(&curve, &a, (long)template[6].ulValueLen) != NULL) {
+ 			switch (o->key_type) {
++#ifdef EVP_PKEY_ED25519
+ 			case CKK_EC_EDWARDS:
+ 				if (strcmp((char *)curve->data, "edwards25519")) {
+ 					debug_print(" [WARN %s ] Unknown curve name. "
+@@ -608,6 +613,8 @@ int callback_public_keys(test_certs_t *objects,
+ 				}
+ 				evp_type = EVP_PKEY_ED25519;
+ 				break;
++#endif
++#ifdef EVP_PKEY_X25519
+ 			case CKK_EC_MONTGOMERY:
+ 				if (strcmp((char *)curve->data, "curve25519")) {
+ 					debug_print(" [WARN %s ] Unknown curve name. "
+@@ -615,16 +622,20 @@ int callback_public_keys(test_certs_t *objects,
+ 				}
+ 				evp_type = EVP_PKEY_X25519;
+ 				break;
++#endif
+ 			default:
+ 				debug_print(" [WARN %s ] Unknown key type %lu", o->id_str, o->key_type);
+ 				return -1;
+ 			}
+ 			ASN1_PRINTABLESTRING_free(curve);
+ 		} else if (d2i_ASN1_OBJECT(&obj, &a, (long)template[6].ulValueLen) != NULL) {
++#if defined(EVP_PKEY_ED25519) || defined (EVP_PKEY_X25519)
+ 			int nid = OBJ_obj2nid(obj);
++#endif
+ 			ASN1_OBJECT_free(obj);
+ 
+ 			switch (o->key_type) {
++#ifdef EVP_PKEY_ED25519
+ 			case CKK_EC_EDWARDS:
+ 				if (nid != NID_ED25519) {
+ 					debug_print(" [WARN %s ] Unknown OID. "
+@@ -632,6 +643,8 @@ int callback_public_keys(test_certs_t *objects,
+ 				}
+ 				evp_type = EVP_PKEY_ED25519;
+ 				break;
++#endif
++#ifdef EVP_PKEY_X25519
+ 			case CKK_EC_MONTGOMERY:
+ 				if (nid != NID_X25519) {
+ 					debug_print(" [WARN %s ] Unknown OID. "
+@@ -639,6 +652,7 @@ int callback_public_keys(test_certs_t *objects,
+ 				}
+ 				evp_type = EVP_PKEY_X25519;
+ 				break;
++#endif
+ 			default:
+ 				debug_print(" [WARN %s ] Unknown key type %lu", o->id_str, o->key_type);
+ 				return -1;
+diff --git a/src/tests/p11test/p11test_case_ec_derive.c b/src/tests/p11test/p11test_case_ec_derive.c
+index 9f13b3e9d6..f7a5f92f9e 100644
+--- a/src/tests/p11test/p11test_case_ec_derive.c
++++ b/src/tests/p11test/p11test_case_ec_derive.c
+@@ -89,6 +89,7 @@ pkcs11_derive(test_cert_t *o, token_info_t * info,
+ 
+ int test_derive_x25519(test_cert_t *o, token_info_t *info, test_mech_t *mech)
+ {
++#ifdef EVP_PKEY_X25519
+ 	unsigned char *secret = NULL, *pkcs11_secret = NULL;
+ 	EVP_PKEY_CTX *pctx = NULL;
+ 	EVP_PKEY *pkey = NULL; /* This is peer key */
+@@ -210,6 +211,9 @@ int test_derive_x25519(test_cert_t *o, token_info_t *info, test_mech_t *mech)
+ 	free(secret);
+ 	free(pkcs11_secret);
+ 	return 1;
++#else
++	return 0;
++#endif
+ }
+ 
+ int test_derive(test_cert_t *o, token_info_t *info, test_mech_t *mech)
+diff --git a/src/tests/p11test/p11test_case_readonly.c b/src/tests/p11test/p11test_case_readonly.c
+index 624bd6a54d..2aefdc7a70 100644
+--- a/src/tests/p11test/p11test_case_readonly.c
++++ b/src/tests/p11test/p11test_case_readonly.c
+@@ -522,6 +522,7 @@ int verify_message_openssl(test_cert_t *o, token_info_t *info, CK_BYTE *message,
+ 				rv, ERR_error_string(ERR_peek_last_error(), NULL));
+ 			return -1;
+ 		}
++#ifdef EVP_PKEY_ED25519
+ 	} else if (o->type == EVP_PKEY_ED25519) {
+ 		/* need to be created even though we do not do any MD */
+ 		EVP_MD_CTX *ctx = EVP_MD_CTX_create();
+@@ -547,7 +548,7 @@ int verify_message_openssl(test_cert_t *o, token_info_t *info, CK_BYTE *message,
+ 			EVP_MD_CTX_free(ctx);
+ 			return -1;
+ 		}
+-
++#endif
+ 	} else {
+ 		fprintf(stderr, " [ KEY %s ] Unknown type. Not verifying\n", o->id_str);
+ 	}
+@@ -641,7 +642,11 @@ int sign_verify_test(test_cert_t *o, token_info_t *info, test_mech_t *mech,
+ 		return 0;
+ 	}
+ 
+-	if (o->type != EVP_PK_EC && o->type != EVP_PK_RSA && o->type != EVP_PKEY_ED25519) {
++	if (o->type != EVP_PK_EC && o->type != EVP_PK_RSA
++#ifdef EVP_PKEY_ED25519
++			&& o->type != EVP_PKEY_ED25519
++#endif
++			) {
+ 		debug_print(" [SKIP %s ] Skip non-RSA and non-EC key", o->id_str);
+ 		return 0;
+ 	}
