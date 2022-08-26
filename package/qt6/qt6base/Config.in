@@ -54,6 +54,24 @@ comment "MySQL plugin needs a toolchain w/ C++, threads"
 	depends on BR2_USE_MMU
 	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS
 
+config BR2_PACKAGE_QT6BASE_PSQL
+	bool "PostgreSQL Plugin"
+	depends on BR2_USE_MMU
+	depends on !BR2_STATIC_LIBS
+	depends on BR2_USE_WCHAR
+	depends on !BR2_OPTIMIZE_FAST
+	select BR2_PACKAGE_POSTGRESQL
+	help
+	  Build PostgreSQL plugin
+
+comment "PostgreSQL plugin needs a toolchain w/ wchar, dynamic library"
+	depends on BR2_USE_MMU
+	depends on BR2_STATIC_LIBS || !BR2_USE_WCHAR
+
+comment "PostgreSQL plugin can't be built with optimize for fast"
+	depends on BR2_USE_MMU
+	depends on BR2_OPTIMIZE_FAST
+
 endif
 
 config BR2_PACKAGE_QT6BASE_SYSLOG
