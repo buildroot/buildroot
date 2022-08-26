@@ -8,7 +8,7 @@ ZEROFREE_VERSION = 1.1.1
 ZEROFREE_SOURCE = zerofree-$(ZEROFREE_VERSION).tgz
 ZEROFREE_SITE = https://frippery.org/uml
 ZEROFREE_LICENSE = GPL-2.0
-ZEROFREE_LICENSE_FILE = COPYING
+ZEROFREE_LICENSE_FILES = COPYING
 ZEROFREE_DEPENDENCIES = e2fsprogs
 
 # We use the same workaround as in https://bugs.gentoo.org/716136
