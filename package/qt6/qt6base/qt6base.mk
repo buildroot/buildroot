@@ -101,6 +101,13 @@ endef
 # Conditional blocks below are ordered by alphabetic ordering of the
 # BR2_PACKAGE_* option.
 
+ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
+QT6BASE_CONF_OPTS += -DFEATURE_libudev=ON
+QT6BASE_DEPENDENCIES += udev
+else
+QT6BASE_CONF_OPTS += -DFEATURE_libudev=OFF
+endif
+
 ifeq ($(BR2_PACKAGE_ICU),y)
 QT6BASE_CONF_OPTS += -DFEATURE_icu=ON
 QT6BASE_DEPENDENCIES += icu
