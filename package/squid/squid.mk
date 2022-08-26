@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SQUID_VERSION = 5.3
+SQUID_VERSION = 5.6
 SQUID_SOURCE = squid-$(SQUID_VERSION).tar.xz
 SQUID_SITE = http://www.squid-cache.org/Versions/v5
 SQUID_LICENSE = GPL-2.0+
