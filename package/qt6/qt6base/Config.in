@@ -72,6 +72,13 @@ comment "PostgreSQL plugin can't be built with optimize for fast"
 	depends on BR2_USE_MMU
 	depends on BR2_OPTIMIZE_FAST
 
+config BR2_PACKAGE_QT6BASE_SQLITE
+	bool "SQLite plugin"
+	select BR2_PACKAGE_SQLITE
+	select BR2_PACKAGE_SQLITE_ENABLE_COLUMN_METADATA
+	help
+	  Build SQLite plugin
+
 endif
 
 config BR2_PACKAGE_QT6BASE_SYSLOG

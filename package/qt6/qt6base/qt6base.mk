@@ -172,6 +172,13 @@ else
 QT6BASE_CONF_OPTS += -DFEATURE_sql_psql=OFF
 endif
 
+ifeq ($(BR2_PACKAGE_QT6BASE_SQLITE),y)
+QT6BASE_CONF_OPTS += -DFEATURE_sql_sqlite=ON -DFEATURE_system_sqlite=ON
+QT6BASE_DEPENDENCIES += sqlite
+else
+QT6BASE_CONF_OPTS += -DFEATURE_sql_sqlite=OFF
+endif
+
 else
 QT6BASE_CONF_OPTS += -DFEATURE_sql=OFF
 endif
