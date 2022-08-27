@@ -8,6 +8,7 @@ MINETEST_VERSION = 5.5.1
 MINETEST_SITE = $(call github,minetest,minetest,$(MINETEST_VERSION))
 MINETEST_LICENSE = LGPL-2.1+ (code), CC-BY-SA-3.0 (textures and sounds), Zlib (irrlicht)
 MINETEST_LICENSE_FILES = LICENSE.txt lib/irrlichtmt/doc/irrlicht-license.txt
+MINETEST_CPE_ID_VENDOR = minetest
 
 MINETEST_DEPENDENCIES = gmp jsoncpp luajit sqlite zlib zstd
 
