@@ -44,6 +44,11 @@ These patch files should be named +<number>-<description>.patch+.
 - The field +<number>+ in the patch file name refers to the 'apply order',
   and shall start at 1; It is preferred to pad the number with zeros up to 4
   digits, like 'git-format-patch' does. E.g.: +0001-foobar-the-buz.patch+
+- The patch email subject prefix shall not be numbered. Patches shall
+  be generated with the +git format-patch -N+ command, since this
+  numbering is automatically added for series. For example, the patch
+  subject line should look like +Subject: [PATCH] foobar the buz+ rather
+  than +Subject: [PATCH n/m] foobar the buz+.
 - Previously, it was mandatory for patches to be prefixed with the name of
   the package, like +<package>-<number>-<description>.patch+, but that is
   no longer the case. Existing packages will be fixed as time passes. 'Do
