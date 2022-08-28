@@ -4,14 +4,14 @@
 #
 ################################################################################
 
-POCO_VERSION = 1.11.2
+POCO_VERSION = 1.12.2
 POCO_SITE = $(call github,pocoproject,poco,poco-$(POCO_VERSION)-release)
 POCO_LICENSE = BSL-1.0
 POCO_LICENSE_FILES = LICENSE
 POCO_CPE_ID_VENDOR = pocoproject
 POCO_INSTALL_STAGING = YES
 
-POCO_DEPENDENCIES = pcre zlib \
+POCO_DEPENDENCIES = pcre2 zlib \
 	$(if $(BR2_PACKAGE_POCO_CRYPTO),openssl) \
 	$(if $(BR2_PACKAGE_POCO_DATA_MYSQL),mysql) \
 	$(if $(BR2_PACKAGE_POCO_DATA_SQLITE),sqlite) \
@@ -60,11 +60,17 @@ else ifeq ($(BR2_SHARED_STATIC_LIBS),y)
 POCO_MAKE_TARGET = all_release
 endif
 
+POCO_LDFLAGS=$(TARGET_LDFLAGS)
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+POCO_LDFLAGS += -latomic
+endif
+
 define POCO_CONFIGURE_CMDS
 	(cd $(@D); $(TARGET_MAKE_ENV) ./configure \
 		--config=Linux \
 		--prefix=/usr \
 		--cflags=-std=c++14 \
+		--ldflags="$(POCO_LDFLAGS)" \
 		--omit="$(POCO_OMIT)" \
 		$(POCO_CONF_OPTS) \
 		--unbundled \
