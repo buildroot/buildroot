@@ -23,6 +23,7 @@ DBUS_BROKER_LICENSE_FILES = \
 	subprojects/c-stdaux/AUTHORS subprojects/c-stdaux/README.md \
 	subprojects/c-utf8/AUTHORS subprojects/c-utf8/README.md
 
+DBUS_BROKER_CPE_ID_VENDOR = dbus-broker_project
 DBUS_BROKER_DEPENDENCIES = expat systemd
 DBUS_BROKER_CONF_OPTS = -Dlauncher=true
 

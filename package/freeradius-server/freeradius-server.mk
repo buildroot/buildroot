@@ -87,7 +87,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_LIBKRB5),y)
 FREERADIUS_SERVER_CONF_OPTS += \
-	ac_cv_path_krb5-config=$(STAGING_DIR)/usr/bin/krb5-config \
+	ac_cv_path_krb5_config=$(STAGING_DIR)/usr/bin/krb5-config \
 	--with-rlm_krb5
 FREERADIUS_SERVER_DEPENDENCIES += libkrb5
 else
