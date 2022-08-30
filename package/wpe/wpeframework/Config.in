@@ -214,14 +214,6 @@ config BR2_PACKAGE_WPEFRAMEWORK_BLUETOOTHAUDIOSINK_EXAMPLEPLAYER
     default y
 endif
 
-config BR2_PACKAGE_WPEFRAMEWORK_GSTREAMERCLIENT
-        select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
-        bool "GstreamerClient"
-        default n
-        help
-          Gstreamer client provides custom APIs to manipulate underneath stream sinks which will be linked with created pipeline.
-          This implementation will vary based on custom platforms and sink backends.
-
 config BR2_PACKAGE_WPEFRAMEWORK_DISPLAYINFO
     select BR2_PACKAGE_WPEFRAMEWORK_CLIENTLIBRARIES
     bool "DisplayInfo"
