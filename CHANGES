@@ -87,6 +87,43 @@
 	#14881: Watchdogd Package missing INSTALL_STAGING
 	#14876: arm-trusted-firmware can no longer be  compiled with fPIE
 
+2022.05.2, released August 31st, 2022
+
+	Important / security related fixes.
+
+	dependencies: Ensure 'cmp' is available on the build host.
+
+	pkg-utils: The KCONFIG_ENABLE_OPT macro used to enforce a specific
+	Kconfig option to be enabled (E.G. for kernel options needed by
+	packages) no longer changes a =m (modular) with =y (built in).
+
+	check-host-rpath: Silence readelf warnings when clang is used
+
+	GCC 10.x updated to 10.4.0
+
+	Defconfigs: Kria kv260: Fix u-boot configuration
+
+	Updated/fixed packages: apg, arm-trusted-firmware, assimp,
+	bayer2rgb-neon, bind, bird, cog, cwiid, diffutils, freerdp,
+	fluidsynth, gcc, gdk-pixbuf, glibc, glslsandbox-player,
+	gnupg2, gtest, i2pd, jack2, jquery-validation, jszip,
+	kvm-unit-tests, libbsd, libcamera, libcurl, libest, libiio,
+	libkrb5, libopenssl, libp11, libpsl, libwebsockets, localedef,
+	luasyslog, lxc, mbedtls, mstpd, mutt, netdata, netsniff-ng,
+	nodejs, nvidia-driver, ola, openssl, opkg-utils, paho-mqtt-c,
+	pango, pcsc-lite, perl, perl-crypt-openssl-rsa, pimd, poppler,
+	postgis, powerpc-utils, pppd, protobuf-c, pulseaudio,
+	python-bottle, python-django, python-lxml, python3, qt5webkit,
+	redis, rpi-userland, rsyslog, runc, rustc, sconeserver,
+	sg3_utils, shadowsocks-libev, stellarium, suricata, swupdate,
+	tcpreplay, uacme, uclibc, v4l2loopback, webkitgtk,
+	wilc-driver, wine, wpewebkit, xdg-dbus-proxy,
+	xserver_xorg-server, zeromq, zfs, zlib-ng
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13796: Problems compiling package gst-plugins-good
+
 2022.05.1, released July 24th, 2022
 
 	Important / security related fixes.
