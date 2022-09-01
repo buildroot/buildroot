@@ -1,0 +1,130 @@
+From 799df4affeaab3dff911378af7988ad072d60730 Mon Sep 17 00:00:00 2001
+From: Siarhei Volkau <lis8215@gmail.com>
+Date: Thu, 1 Sep 2022 10:19:49 +0300
+Subject: [PATCH] add support for ingenic mips lx<whb><u> instructions
+
+This is a quick and dirty patch which adds useful ingenic instructions
+and unconditionally enables them for any mips32 CPU, this is useful
+for testing purposes as no need to explicitly change build flags
+in any package where it needed, but of course resulting binaries will
+not work on machines other than Ingenic XBurst ones.
+You have beed warned.
+
+NOTE: use it in conjunction with corresponding binutils/GAS patch.
+
+Signed-off-by: Siarhei Volkau <lis8215@gmail.com>
+---
+ gcc/config/mips/mips-dsp.md | 49 +++++++++++++++++++++++++++++++++++++
+ gcc/config/mips/mips.c      | 29 ++++++++++++++++++++--
+ 2 files changed, 76 insertions(+), 2 deletions(-)
+
+diff --git a/gcc/config/mips/mips-dsp.md b/gcc/config/mips/mips-dsp.md
+index 5a5694f3f..6a9cfd000 100644
+--- a/gcc/config/mips/mips-dsp.md
++++ b/gcc/config/mips/mips-dsp.md
+@@ -1124,6 +1124,55 @@
+   DONE;
+ })
+ 
++
++;; Ingenic STRD2 shift modes
++(define_int_iterator STRD2 [(1 "") (2 "") (4 "")])
++(define_int_attr strd2_shift [(1 "0") (2 "1") (4 "2")])
++
++(define_insn "*ingenic_lxw_scale<STRD2:strd2_shift>_extsi"
++  [(set (match_operand:SI 0 "register_operand" "=d")
++	(mem:SI (plus:SI
++		(mult:SI (match_operand:SI 1 "register_operand" "d") (const_int STRD2))
++		(match_operand:SI 2 "register_operand" "d")
++		  )))]
++  "!TARGET_64BIT && !TARGET_MIPS16"
++  "lxw\t%0,%2,%1,<STRD2:strd2_shift>"
++  [(set_attr "type"	"load")
++   (set_attr "mode"	"SI")])
++
++(define_insn "*ingenic_lxw_noscale_extsi"
++  [(set (match_operand:SI 0 "register_operand" "=d")
++	(mem:SI (plus:SI
++		(match_operand:SI 1 "register_operand" "d")
++		(match_operand:SI 2 "register_operand" "d")
++		  )))]
++  "!TARGET_64BIT && !TARGET_MIPS16"
++  "lxw\t%0,%2,%1,0"
++  [(set_attr "type"	"load")
++   (set_attr "mode"	"SI")])
++
++(define_insn "*ingenic_lx<SHORT:size><u>_scale<STRD2:strd2_shift>_extsi"
++  [(set (match_operand:SI 0 "register_operand" "=d")
++	(any_extend:SI (mem:SHORT (plus:SI
++		(mult:SI (match_operand:SI 1 "register_operand" "d") (const_int STRD2))
++		(match_operand:SI 2 "register_operand" "d")
++		  ))))]
++  "!TARGET_64BIT && !TARGET_MIPS16"
++  "lx<SHORT:size><u>\t%0,%2,%1,<STRD2:strd2_shift>"
++  [(set_attr "type"	"load")
++   (set_attr "mode"	"<SHORT:MODE>")])
++
++(define_insn "*ingenic_lx<SHORT:size><u>_noscale_extsi"
++  [(set (match_operand:SI 0 "register_operand" "=d")
++	(any_extend:SI (mem:SHORT (plus:SI
++		(match_operand:SI 1 "register_operand" "d")
++		(match_operand:SI 2 "register_operand" "d")
++		  ))))]
++  "!TARGET_64BIT && !TARGET_MIPS16"
++  "lx<SHORT:size><u>\t%0,%2,%1,0"
++  [(set_attr "type"	"load")
++   (set_attr "mode"	"<SHORT:MODE>")])
++
+ (define_insn "mips_l<GPR:size>x_<P:mode>"
+   [(set (match_operand:GPR 0 "register_operand" "=d")
+ 	(mem:GPR (plus:P (match_operand:P 1 "register_operand" "d")
+diff --git a/gcc/config/mips/mips.c b/gcc/config/mips/mips.c
+index 315545966..33843d810 100644
+--- a/gcc/config/mips/mips.c
++++ b/gcc/config/mips/mips.c
+@@ -2673,7 +2673,31 @@ mips_lx_address_p (rtx addr, machine_mode mode)
+     return true;
+   return false;
+ }
+-
++
++static bool
++ingenic_lx_address_p (rtx addr, machine_mode mode)
++{
++  if (GET_CODE (addr) == PLUS
++      && REG_P (XEXP (addr, 1)))
++    {
++      rtx offset = XEXP (addr, 0);
++      if (REG_P (offset))
++          return true;
++      else if (GET_CODE (offset) == MULT
++	  && REG_P (XEXP (offset, 0))
++	  && CONST_INT_P (XEXP (offset, 1))) {
++	    if (INTVAL (XEXP (offset, 1)) == 4 || INTVAL (XEXP (offset, 1)) == 2)
++	      return true;
++      }/* else if (GET_CODE (offset) == ASHIFT
++	  && REG_P (XEXP (offset, 0))
++	  && CONST_INT_P (XEXP (offset, 1))) {
++	    if (INTVAL (XEXP (offset, 1)) == 2 || INTVAL (XEXP (offset, 1)) == 1)
++	      return true;
++      }*/
++    }
++  return false;
++}
++
+ /* Return true if a value at OFFSET bytes from base register BASE can be
+    accessed using an unextended MIPS16 instruction.  MODE is the mode of
+    the value.
+@@ -4197,7 +4221,8 @@ mips_rtx_costs (rtx x, machine_mode mode, int outer_code,
+ 	}
+       /* Check for a scaled indexed address.  */
+       if (mips_lwxs_address_p (addr)
+-	  || mips_lx_address_p (addr, mode))
++	  || mips_lx_address_p (addr, mode)
++	  || ingenic_lx_address_p(addr, mode))
+ 	{
+ 	  *total = COSTS_N_INSNS (2);
+ 	  return true;
+-- 
+2.36.1
+

@@ -1,0 +1,46 @@
+From 47fca730a675d8314a434b4c357cdb6726512b1f Mon Sep 17 00:00:00 2001
+From: Siarhei Volkau <lis8215@gmail.com>
+Date: Thu, 1 Sep 2022 10:14:34 +0300
+Subject: [PATCH] add support of ingenic lx<whb><u> instructions
+
+This is a quick and dirty patch which adds useful ingenic instructions
+and unconditionally enables them for any mips32 CPU, this is useful
+for testing purposes as no need to explicitly change build flags
+in any package where it needed, but of course resulting binaries will
+not work on machines other than Ingenic XBurst ones.
+You have beed warned.
+
+NOTE: use it in conjunction with corresponding GCC patch.
+
+Signed-off-by: Siarhei Volkau <lis8215@gmail.com>
+---
+ opcodes/mips-opc.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/opcodes/mips-opc.c b/opcodes/mips-opc.c
+index db72c039..d0f837b0 100644
+--- a/opcodes/mips-opc.c
++++ b/opcodes/mips-opc.c
+@@ -96,6 +96,7 @@ decode_mips_operand (const char *p)
+ 	case 'V': INT_ADJ (10, 16, 511, 2, false); /* (-512 .. 511) << 2 */
+ 	case 'W': INT_ADJ (10, 16, 511, 3, false); /* (-512 .. 511) << 3 */
+ 	case 'X': BIT (5, 16, 32);		/* (32 .. 63) */
++	case 'Y': UINT (2, 9);		/* (MXU STRD2) */
+ 	case 'Z': REG (5, 0, FP);
+ 
+ 	case 'a': SINT (8, 6);
+@@ -1342,6 +1343,11 @@ const struct mips_opcode mips_builtin_opcodes[] =
+ {"lwu",			"t,A(b)",	0,    (int) M_LWU_AB,	INSN_MACRO,		0,		I3,		0,	0 },
+ {"lwxc1",		"D,t(b)",	0x4c000000, 0xfc00f83f, WR_1|RD_2|RD_3|LM|FP_S,     0,		I4_33,		0,	I37 },
+ {"lwxs",		"d,t(b)",	0x70000088, 0xfc0007ff,	WR_1|RD_2|RD_3|LM,	     0,		0,		SMT,	0 },
++{"lxw",			"d,s,t,+Y",	0x700000e8, 0xfc0001ff,	WR_1|RD_2|RD_3|LM,	     0,		I32,		0,	0 },
++{"lxh",			"d,s,t,+Y",	0x70000068, 0xfc0001ff,	WR_1|RD_2|RD_3|LM,	     0,		I32,		0,	0 },
++{"lxhu",		"d,s,t,+Y",	0x70000168, 0xfc0001ff,	WR_1|RD_2|RD_3|LM,	     0,		I32,		0,	0 },
++{"lxb",			"d,s,t,+Y",	0x70000028, 0xfc0001ff,	WR_1|RD_2|RD_3|LM,	     0,		I32,		0,	0 },
++{"lxbu",		"d,s,t,+Y",	0x70000128, 0xfc0001ff,	WR_1|RD_2|RD_3|LM,	     0,		I32,		0,	0 },
+ {"macc",		"d,s,t",	0x00000028, 0xfc0007ff, WR_1|RD_2|RD_3|WR_HILO,	     0,		N412,		0,	0 },
+ {"macc",		"d,s,t",	0x00000158, 0xfc0007ff, WR_1|RD_2|RD_3|WR_HILO,	     0,		N5,		0,	0 },
+ {"maccs",		"d,s,t",	0x00000428, 0xfc0007ff,	WR_1|RD_2|RD_3|WR_HILO,	     0,		N412,		0,	0 },
+-- 
+2.36.1
+
