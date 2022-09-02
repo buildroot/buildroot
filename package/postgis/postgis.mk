@@ -19,14 +19,8 @@ POSTGIS_DEPENDENCIES = postgresql libgeos proj libxml2
 POSTGIS_CONF_OPTS += \
 	--with-pgconfig=$(STAGING_DIR)/usr/bin/pg_config \
 	--with-geosconfig=$(STAGING_DIR)/usr/bin/geos-config \
-	--with-xml2config=$(STAGING_DIR)/usr/bin/xml2-config
-
-ifeq ($(BR2_PACKAGE_LIBGDAL),y)
-POSTGIS_DEPENDENCIES += libgdal
-POSTGIS_CONF_OPTS += --with-raster
-else
-POSTGIS_CONF_OPTS += --without-raster
-endif
+	--with-xml2config=$(STAGING_DIR)/usr/bin/xml2-config \
+	--without-raster
 
 ifeq ($(BR2_PACKAGE_JSON_C),y)
 POSTGIS_DEPENDENCIES += json-c

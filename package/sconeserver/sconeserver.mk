@@ -40,6 +40,13 @@ else
 SCONESERVER_CONF_OPTS += --without-ssl
 endif
 
+ifeq ($(BR2_PACKAGE_SCONESERVER_BLUETOOTH),y)
+SCONESERVER_DEPENDENCIES += bluez5_utils
+SCONESERVER_CONF_OPTS += --with-bluetooth
+else
+SCONESERVER_CONF_OPTS += --without-bluetooth
+endif
+
 ifeq ($(BR2_PACKAGE_SCONESERVER_EXAMPLES),y)
 SCONESERVER_CONF_OPTS += --with-examples
 else
@@ -51,30 +58,6 @@ SCONESERVER_DEPENDENCIES += libxml2
 SCONESERVER_CONF_OPTS += --with-sconesite
 else
 SCONESERVER_CONF_OPTS += --without-sconesite
-endif
-
-ifeq ($(BR2_PACKAGE_SCONESERVER_MYSQL),y)
-SCONESERVER_DEPENDENCIES += mysql
-SCONESERVER_CONF_OPTS += \
-	--with-mysql \
-	--with-mysql_config="$(STAGING_DIR)/usr/bin/mysql_config" \
-	LDFLAGS="$(TARGET_LDFLAGS) -L$(STAGING_DIR)/usr/lib/mysql"
-else
-SCONESERVER_CONF_OPTS += --without-mysql
-endif
-
-ifeq ($(BR2_PACKAGE_SCONESERVER_BLUETOOTH),y)
-SCONESERVER_DEPENDENCIES += bluez5_utils
-SCONESERVER_CONF_OPTS += --with-bluetooth
-else
-SCONESERVER_CONF_OPTS += --without-bluetooth
-endif
-
-ifeq ($(BR2_PACKAGE_SCONESERVER_RSS),y)
-SCONESERVER_DEPENDENCIES += libxml2
-SCONESERVER_CONF_OPTS += --with-rss
-else
-SCONESERVER_CONF_OPTS += --without-rss
 endif
 
 ifeq ($(BR2_PACKAGE_SCONESERVER_LOCATION),y)
@@ -89,6 +72,30 @@ SCONESERVER_DEPENDENCIES += mpfr
 SCONESERVER_CONF_OPTS += --with-maths
 else
 SCONESERVER_CONF_OPTS += --without-maths
+endif
+
+ifeq ($(BR2_PACKAGE_SCONESERVER_MYSQL),y)
+SCONESERVER_DEPENDENCIES += mysql
+SCONESERVER_CONF_OPTS += \
+	--with-mysql \
+	--with-mysql_config="$(STAGING_DIR)/usr/bin/mysql_config" \
+	LDFLAGS="$(TARGET_LDFLAGS) -L$(STAGING_DIR)/usr/lib/mysql"
+else
+SCONESERVER_CONF_OPTS += --without-mysql
+endif
+
+ifeq ($(BR2_PACKAGE_SCONESERVER_RSS),y)
+SCONESERVER_DEPENDENCIES += libxml2
+SCONESERVER_CONF_OPTS += --with-rss
+else
+SCONESERVER_CONF_OPTS += --without-rss
+endif
+
+ifeq ($(BR2_PACKAGE_SCONESERVER_SQLITE),y)
+SCONESERVER_DEPENDENCIES += sqlite
+SCONESERVER_CONF_OPTS += --with-sqlite
+else
+SCONESERVER_CONF_OPTS += --without-sqlite
 endif
 
 ifeq ($(BR2_PACKAGE_SCONESERVER_TESTBUILDER),y)
