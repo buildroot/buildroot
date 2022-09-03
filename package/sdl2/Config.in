@@ -29,6 +29,20 @@ comment "X11 video driver needs X.org"
 	depends on !BR2_PACKAGE_XORG7
 	depends on BR2_USE_MMU
 
+config BR2_PACKAGE_SDL2_WAYLAND
+	bool "Wayland video driver"
+	depends on BR2_PACKAGE_WAYLAND
+	depends on BR2_PACKAGE_WAYLAND_PROTOCOLS
+	depends on BR2_PACKAGE_HAS_LIBEGL
+	depends on BR2_PACKAGE_HAS_LIBEGL_WAYLAND
+	select BR2_PACKAGE_LIBXKBCOMMON
+
+comment "Wayland video driver needs wayland, libegl"
+	depends on !BR2_PACKAGE_WAYLAND
+	depends on !BR2_PACKAGE_WAYLAND_PROTOCOLS
+	depends on !BR2_PACKAGE_HAS_LIBEGL
+	depends on !BR2_PACKAGE_HAS_LIBEGL_WAYLAND
+
 config BR2_PACKAGE_SDL2_KMSDRM
 	bool "KMS/DRM video driver"
 	depends on BR2_PACKAGE_LIBDRM
