@@ -17,13 +17,9 @@ SCONESERVER_DEPENDENCIES = \
 # https://github.com/sconemad/sconeserver/tree/master/markdown
 # has no cross-compile support provided by the sconeserver build system
 SCONESERVER_CONF_OPTS += \
+	-DCMAKE_CXX_FLAGS="$(TARGET_CXXFLAGS) -std=c++11" \
 	-DWITH_IMAGE=OFF \
 	-DWITH_MARKDOWN=OFF
-
-ifeq ($(BR2_PACKAGE_LIBXML2),y)
-# Needed to fix build failure when icu is enabled in libxml2
-SCONESERVER_CONF_OPTS += -DCMAKE_CXX_FLAGS="-std=c++11"
-endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 SCONESERVER_DEPENDENCIES += openssl
