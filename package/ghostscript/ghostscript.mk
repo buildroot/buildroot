@@ -43,7 +43,6 @@ GHOSTSCRIPT_CONF_OPTS = \
 	--enable-freetype \
 	--disable-gtk \
 	--without-libpaper \
-	--without-pdf \
 	--with-system-libtiff
 
 ifeq ($(BR2_PACKAGE_JBIG2DEC),y)
@@ -65,6 +64,15 @@ GHOSTSCRIPT_DEPENDENCIES += openjpeg
 GHOSTSCRIPT_CONF_OPTS += --enable-openjpeg
 else
 GHOSTSCRIPT_CONF_OPTS += --disable-openjpeg
+endif
+
+ifeq ($(BR2_PACKAGE_OPENJPEG)$(BR2_PACKAGE_JBIG2DEC),yy)
+# Dependencies already handle on per-package basis above,
+# but duplicated here for consistency.
+GHOSTSCRIPT_DEPENDENCIES += openjpeg jbig2dec
+GHOSTSCRIPT_CONF_OPTS += --with-pdf
+else
+GHOSTSCRIPT_CONF_OPTS += --without-pdf
 endif
 
 ifeq ($(BR2_PACKAGE_CUPS),y)
