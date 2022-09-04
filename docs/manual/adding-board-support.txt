@@ -54,3 +54,19 @@ utils/docker-run script and inside it issue these commands:
  $ make +<boardname>_defconfig+
  $ make
 --------------------
+
+By default, Buildroot developers use the official image hosted on the
+https://gitlab.com/buildroot.org/buildroot/container_registry/2395076[gitlab.com
+registry] and it should be convenient for most usage. If you still want
+to build your own docker image, you can base it off the official image
+as the +FROM+ directive of your own _Dockerfile_:
+
+----
+FROM registry.gitlab.com/buildroot.org/buildroot/base:YYYYMMDD.HHMM
+RUN ...
+COPY ...
+----
+
+The current version _YYYYMMDD.HHMM_ can be found in the +.gitlab-ci.yml+
+file at the top of the Buildroot source tree; all past versions are
+listed in the aforementioned registry as well.
