@@ -8,6 +8,10 @@ LINUX_TOOLS += perf
 
 PERF_DEPENDENCIES = host-flex host-bison
 
+ifeq ($(BR2_PACKAGE_LINUX_TOOLS_PERF_NEEDS_HOST_PYTHON3),y)
+PERF_DEPENDENCIES += host-python3
+endif
+
 ifeq ($(NORMALIZED_ARCH),x86_64)
 PERF_ARCH=x86
 else
