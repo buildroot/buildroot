@@ -11,4 +11,10 @@ RBUS_INSTALL_STAGING = YES
 RBUS_AUTORECONF = YES
 RBUS_DEPENDENCIES = rbus-core linenoise
 
+define RBUS_INSTALL_INIT_SYSV
+    mkdir -p $(TARGET_DIR)/nvram
+    $(INSTALL) -m 0755 -D $(RBUS_PKGDIR)S25rbus \
+        $(TARGET_DIR)/etc/init.d/S25rbus
+endef
+
 $(eval $(cmake-package))
