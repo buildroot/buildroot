@@ -1632,6 +1632,8 @@ choice BR2_PACKAGE_WPEFRAMEWORK_WEBPA_PLATFORM
     config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_GENERIC_ADAPTER
         bool "Generic adapter client"
     config BR2_PACKAGE_WPEFRAMEWORK_WEBPA_CCSP
+        select BR2_PACKAGE_PARODUS2CCSP
+        select BR2_PACKAGE_CCSPCR
         bool "CCSP client"
 endchoice
 
