@@ -36,10 +36,6 @@ else
 OPTEE_OS_DEPENDENCIES += host-python-pycryptodomex
 endif
 
-ifeq ($(BR2_TARGET_OPTEE_OS_NEEDS_PYTHON_PILLOW),y)
-OPTEE_OS_DEPENDENCIES += host-python-pillow
-endif
-
 ifeq ($(BR2_TARGET_OPTEE_OS_NEEDS_DTC),y)
 OPTEE_OS_DEPENDENCIES += host-dtc
 endif
