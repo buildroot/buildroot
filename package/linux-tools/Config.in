@@ -47,6 +47,10 @@ config BR2_PACKAGE_LINUX_TOOLS_PCI
 
 	  These tools are available only from kernel version 4.20.
 
+comment "perf needs a toolchain w/ dynamic library"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on BR2_STATIC_LIBS
+
 config BR2_PACKAGE_LINUX_TOOLS_PERF
 	bool "perf"
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
@@ -69,10 +73,6 @@ config BR2_PACKAGE_LINUX_TOOLS_PERF
 	  configuration.
 
 	  https://perf.wiki.kernel.org/
-
-comment "perf needs a toolchain w/ dynamic library"
-	depends on BR2_TOOLCHAIN_HAS_SYNC_4
-	depends on BR2_STATIC_LIBS
 
 if BR2_PACKAGE_LINUX_TOOLS_PERF
 
