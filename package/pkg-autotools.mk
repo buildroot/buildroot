@@ -187,7 +187,7 @@ define $(2)_CONFIGURE_CMDS
 		--exec-prefix=/usr \
 		--sysconfdir=/etc \
 		--localstatedir=/var \
-		runstatedir=/run \
+		`grep -q -e '--runstatedir' configure && printf '%s' --runstatedir=/run` \
 		--program-prefix="" \
 		--disable-gtk-doc \
 		--disable-gtk-doc-html \
