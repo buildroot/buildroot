@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBNICE_VERSION = 0.1.18
+LIBNICE_VERSION = 0.1.19
 LIBNICE_SITE = http://nice.freedesktop.org/releases
 LIBNICE_LICENSE = MPL-1.1 or LGPL-2.1
 LIBNICE_LICENSE_FILES = COPYING COPYING.MPL COPYING.LGPL
