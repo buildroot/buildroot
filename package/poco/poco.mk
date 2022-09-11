@@ -4,14 +4,16 @@
 #
 ################################################################################
 
-POCO_VERSION = 1.11.2
+POCO_VERSION = 1.12.2
 POCO_SITE = $(call github,pocoproject,poco,poco-$(POCO_VERSION)-release)
 POCO_LICENSE = BSL-1.0
 POCO_LICENSE_FILES = LICENSE
 POCO_CPE_ID_VENDOR = pocoproject
 POCO_INSTALL_STAGING = YES
 
-POCO_DEPENDENCIES = pcre zlib \
+POCO_DEPENDENCIES = \
+	pcre2 \
+	zlib \
 	$(if $(BR2_PACKAGE_POCO_CRYPTO),openssl) \
 	$(if $(BR2_PACKAGE_POCO_DATA_MYSQL),mysql) \
 	$(if $(BR2_PACKAGE_POCO_DATA_SQLITE),sqlite) \
@@ -19,7 +21,9 @@ POCO_DEPENDENCIES = pcre zlib \
 	$(if $(BR2_PACKAGE_POCO_NETSSL_OPENSSL),openssl) \
 	$(if $(BR2_PACKAGE_POCO_XML),expat)
 
-POCO_OMIT = Data/ODBC PageCompiler \
+POCO_OMIT = \
+	Data/ODBC \
+	PageCompiler \
 	$(if $(BR2_PACKAGE_POCO_ACTIVERECORD),,ActiveRecord) \
 	$(if $(BR2_PACKAGE_POCO_CPP_PARSER),,CppParser) \
 	$(if $(BR2_PACKAGE_POCO_CRYPTO),,Crypto) \
@@ -33,6 +37,7 @@ POCO_OMIT = Data/ODBC PageCompiler \
 	$(if $(BR2_PACKAGE_POCO_NET),,Net) \
 	$(if $(BR2_PACKAGE_POCO_NETSSL_OPENSSL),,NetSSL_OpenSSL) \
 	$(if $(BR2_PACKAGE_POCO_PDF),,PDF) \
+	$(if $(BR2_PACKAGE_POCO_PROMETHEUS),,Prometheus) \
 	$(if $(BR2_PACKAGE_POCO_REDIS),,Redis) \
 	$(if $(BR2_PACKAGE_POCO_UTIL),,Util) \
 	$(if $(BR2_PACKAGE_POCO_XML),,XML) \
@@ -60,11 +65,17 @@ else ifeq ($(BR2_SHARED_STATIC_LIBS),y)
 POCO_MAKE_TARGET = all_release
 endif
 
+POCO_LDFLAGS=$(TARGET_LDFLAGS)
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+POCO_LDFLAGS += -latomic
+endif
+
 define POCO_CONFIGURE_CMDS
 	(cd $(@D); $(TARGET_MAKE_ENV) ./configure \
 		--config=Linux \
 		--prefix=/usr \
 		--cflags=-std=c++14 \
+		--ldflags="$(POCO_LDFLAGS)" \
 		--omit="$(POCO_OMIT)" \
 		$(POCO_CONF_OPTS) \
 		--unbundled \

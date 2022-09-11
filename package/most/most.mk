@@ -5,7 +5,7 @@
 ################################################################################
 
 MOST_SITE = http://www.jedsoft.org/releases/most
-MOST_VERSION = 5.1.0
+MOST_VERSION = 5.2.0
 MOST_LICENSE = GPL-2.0+
 MOST_LICENSE_FILES = COPYING COPYRIGHT
 MOST_DEPENDENCIES = slang

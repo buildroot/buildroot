@@ -18,23 +18,14 @@ GDB_LICENSE = GPL-2.0+, LGPL-2.0+, GPL-3.0+, LGPL-3.0+
 GDB_LICENSE_FILES = COPYING COPYING.LIB COPYING3 COPYING3.LIB
 GDB_CPE_ID_VENDOR = gnu
 
-# On gdb < 10, if you want to build only gdbserver, you need to
-# configure only gdb/gdbserver.
-ifeq ($(BR2_PACKAGE_GDB_DEBUGGER)$(BR2_PACKAGE_GDB_TOPLEVEL),)
-GDB_SUBDIR = gdb/gdbserver
-
-# When we want to build the full gdb, or for very recent versions of
-# gdb with gdbserver at the top-level, out of tree build is mandatory,
-# so we create a 'build' subdirectory in the gdb sources, and build
-# from there.
-else
+# Out of tree build is mandatory, so we create a 'build' subdirectory
+# in the gdb sources, and build from there.
 GDB_SUBDIR = build
 define GDB_CONFIGURE_SYMLINK
 	mkdir -p $(@D)/$(GDB_SUBDIR)
 	ln -sf ../configure $(@D)/$(GDB_SUBDIR)/configure
 endef
 GDB_PRE_CONFIGURE_HOOKS += GDB_CONFIGURE_SYMLINK
-endif
 
 # For the host variant, we really want to build with XML support,
 # which is needed to read XML descriptions of target architectures. We
@@ -65,9 +56,9 @@ GDB_DEPENDENCIES += host-flex host-bison
 HOST_GDB_DEPENDENCIES += host-flex host-bison
 endif
 
-# When BR2_GDB_VERSION_11=y, we're going to build gdb 11.x for the
-# host (if enabled), so we add the necessary gmp dependency.
-ifeq ($(BR2_GDB_VERSION_11),y)
+# All newer versions of GDB need host-gmp, so it's only for older
+# versions that the dependency can be avoided.
+ifeq ($(BR2_GDB_VERSION_10)$(BR2_arc),)
 HOST_GDB_DEPENDENCIES += host-gmp
 endif
 
@@ -155,11 +146,10 @@ GDB_CONF_OPTS += \
 	--without-curses
 endif
 
-# When BR2_GDB_VERSION_11=y (because it's enabled for the host) and
-# we're building the full gdb for the target, we need gmp as a
-# dependency. For now the default gdb version in Buildroot doesn't
-# require gmp.
-ifeq ($(BR2_GDB_VERSION_11)$(BR2_PACKAGE_GDB_DEBUGGER),yy)
+# Starting from GDB 11.x, gmp is needed as a dependency to build full
+# gdb. So we avoid the dependency only for GDB 10.x and the special
+# version used on ARC.
+ifeq ($(BR2_GDB_VERSION_10)$(BR2_arc):$(BR2_PACKAGE_GDB_DEBUGGER),:y)
 GDB_CONF_OPTS += \
 	--with-libgmp-prefix=$(STAGING_DIR)/usr
 GDB_DEPENDENCIES += gmp
