@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBPEAS_VERSION_MAJOR = 1.30
+LIBPEAS_VERSION_MAJOR = 1.32
 LIBPEAS_VERSION = $(LIBPEAS_VERSION_MAJOR).0
 LIBPEAS_SOURCE = libpeas-$(LIBPEAS_VERSION).tar.xz
 LIBPEAS_SITE = http://ftp.gnome.org/pub/gnome/sources/libpeas/$(LIBPEAS_VERSION_MAJOR)
