@@ -162,6 +162,14 @@ config BR2_TARGET_ARM_TRUSTED_FIRMWARE_EDK2_AS_BL33
 	  for the 'qemu_sbsa' platform. In this case, due to the EDK2
 	  build system, the dependency between ATF and EDK is reversed.
 
+config BR2_TARGET_ARM_TRUSTED_FIRMWARE_RCW
+	bool "Include NXP RCW in BL2"
+	depends on BR2_PACKAGE_HOST_QORIQ_RCW
+	help
+	  Include the NXP RCW (Reset Control Word) in BL2. See
+	  package/qoriq-rcw/ for more details. This is mostly useful
+	  on NXP LayerScape platforms.
+
 config BR2_TARGET_ARM_TRUSTED_FIRMWARE_ADDITIONAL_TARGETS
 	string "Additional ATF make targets"
 	help

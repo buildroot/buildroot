@@ -4,7 +4,17 @@
 #
 ################################################################################
 
-LINUX_BACKPORTS_VERSION_MAJOR = 5.8
+ifeq ($(BR2_PACKAGE_LINUX_BACKPORTS_5_10_X),y)
+LINUX_BACKPORTS_VERSION_MAJOR = 5.10.110
+LINUX_BACKPORTS_MINIMAL_KVER_MAJOR = 3
+LINUX_BACKPORTS_MINIMAL_KVER_MINOR = 10
+else
+# use default the latest version as default
+LINUX_BACKPORTS_VERSION_MAJOR = 5.15.58
+LINUX_BACKPORTS_MINIMAL_KVER_MAJOR = 4
+LINUX_BACKPORTS_MINIMAL_KVER_MINOR = 4
+endif
+
 LINUX_BACKPORTS_VERSION = $(LINUX_BACKPORTS_VERSION_MAJOR)-1
 LINUX_BACKPORTS_SOURCE = backports-$(LINUX_BACKPORTS_VERSION).tar.xz
 LINUX_BACKPORTS_SITE = $(BR2_KERNEL_MIRROR)/linux/kernel/projects/backports/stable/v$(LINUX_BACKPORTS_VERSION_MAJOR)
@@ -93,8 +103,8 @@ $(eval $(kconfig-package))
 # can't use it as a stamp file. We use the LINUX_KCONFIG_STAMP_DOTCONFIG
 # instead.
 #
-# Furthermore, we want to check the kernel version, since linux-backports
-# only supports kernels >= 3.10. To avoid overriding linux-backports'
+# Furthermore, we want to check the kernel version is compatible with
+# linux-backports. To avoid overriding linux-backports'
 # KCONFIG_STAMP_DOTCONFIG rule defined in the kconfig-package infra, we
 # use an intermediate stamp-file.
 #
@@ -107,11 +117,18 @@ $(LINUX_BACKPORTS_DIR)/$(LINUX_BACKPORTS_KCONFIG_STAMP_DOTCONFIG): $(LINUX_BACKP
 .SECONDEXPANSION:
 $(LINUX_BACKPORTS_DIR)/.stamp_check_kernel_version: $$(LINUX_DIR)/$$(LINUX_KCONFIG_STAMP_DOTCONFIG)
 	$(Q)KVER=$(LINUX_VERSION_PROBED); \
+	MIN_KVER_MAJOR=$(LINUX_BACKPORTS_MINIMAL_KVER_MAJOR); \
+	MIN_KVER_MINOR=$(LINUX_BACKPORTS_MINIMAL_KVER_MINOR); \
 	KVER_MAJOR=`echo $${KVER} | sed 's/^\([0-9]*\)\..*/\1/'`; \
 	KVER_MINOR=`echo $${KVER} | sed 's/^[0-9]*\.\([0-9]*\).*/\1/'`; \
-	if [ $${KVER_MAJOR} -lt 3 -o \( $${KVER_MAJOR} -eq 3 -a $${KVER_MINOR} -lt 10 \) ]; then \
-		printf "Linux version '%s' is too old for linux-backports (needs 3.10 or later)\n" \
-			"$${KVER}"; \
+	if [ $${KVER_MAJOR} -lt $(LINUX_BACKPORTS_MINIMAL_KVER_MAJOR) \
+		-o \( $${KVER_MAJOR} -eq $(LINUX_BACKPORTS_MINIMAL_KVER_MAJOR) \
+			-a $${KVER_MINOR} -lt $(LINUX_BACKPORTS_MINIMAL_KVER_MINOR) \
+		\) ]; then \
+		printf "Linux version '%s' is too old for linux-backports (needs %s.%s or later)\n" \
+			"$${KVER}" \
+			"$(LINUX_BACKPORTS_MINIMAL_KVER_MAJOR)" \
+			"$(LINUX_BACKPORTS_MINIMAL_KVER_MINOR)"; \
 		exit 1; \
 	fi
 	$(Q)touch $(@)

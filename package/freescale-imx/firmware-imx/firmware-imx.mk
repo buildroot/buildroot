@@ -15,7 +15,7 @@ FIRMWARE_IMX_REDISTRIBUTE = NO
 FIRMWARE_IMX_INSTALL_IMAGES = YES
 
 define FIRMWARE_IMX_EXTRACT_CMDS
-	$(call FREESCALE_IMX_EXTRACT_HELPER,$(FIRMWARE_IMX_DL_DIR)/$(FIRMWARE_IMX_SOURCE))
+	$(call NXP_EXTRACT_HELPER,$(FIRMWARE_IMX_DL_DIR)/$(FIRMWARE_IMX_SOURCE))
 endef
 
 #
@@ -36,6 +36,11 @@ define FIRMWARE_IMX_PREPARE_DDR_FW
 		$(FIRMWARE_IMX_DDRFW_DIR)/$(strip $(3)).bin
 endef
 
+FIRMWARE_IMX_DDR_VERSION = $(call qstrip,$(BR2_PACKAGE_FIRMWARE_IMX_DDR_VERSION))
+ifneq ($(FIRMWARE_IMX_DDR_VERSION),)
+FIRMWARE_IMX_DDR_VERSION_SUFFIX = _$(FIRMWARE_IMX_DDR_VERSION)
+endif
+
 ifeq ($(BR2_PACKAGE_FIRMWARE_IMX_LPDDR4),y)
 FIRMWARE_IMX_DDRFW_DIR = $(@D)/firmware/ddr/synopsys
 
@@ -44,9 +49,13 @@ define FIRMWARE_IMX_INSTALL_IMAGE_DDR_FW
 	# lpddr4_pmu_train_fw.bin is needed when generating imx8-boot-sd.bin
 	# which is done in post-image script.
 	$(call FIRMWARE_IMX_PREPARE_DDR_FW, \
-		lpddr4_pmu_train_1d_imem,lpddr4_pmu_train_1d_dmem,lpddr4_pmu_train_1d_fw)
+		lpddr4_pmu_train_1d_imem$(FIRMWARE_IMX_DDR_VERSION_SUFFIX),
+		lpddr4_pmu_train_1d_dmem$(FIRMWARE_IMX_DDR_VERSION_SUFFIX),
+		lpddr4_pmu_train_1d_fw)
 	$(call FIRMWARE_IMX_PREPARE_DDR_FW, \
-		lpddr4_pmu_train_2d_imem,lpddr4_pmu_train_2d_dmem,lpddr4_pmu_train_2d_fw)
+		lpddr4_pmu_train_2d_imem$(FIRMWARE_IMX_DDR_VERSION_SUFFIX),
+		lpddr4_pmu_train_2d_dmem$(FIRMWARE_IMX_DDR_VERSION_SUFFIX),
+		lpddr4_pmu_train_2d_fw)
 	cat $(FIRMWARE_IMX_DDRFW_DIR)/lpddr4_pmu_train_1d_fw.bin \
 		$(FIRMWARE_IMX_DDRFW_DIR)/lpddr4_pmu_train_2d_fw.bin > \
 		$(BINARIES_DIR)/lpddr4_pmu_train_fw.bin
@@ -67,13 +76,17 @@ define FIRMWARE_IMX_INSTALL_IMAGE_DDR_FW
 	# ddr4_fw.bin is needed when generating imx8-boot-sd.bin
 	# which is done in post-image script.
 	$(call FIRMWARE_IMX_PREPARE_DDR_FW, \
-		ddr4_imem_1d_201810,ddr4_dmem_1d_201810,ddr4_1d_201810_fw)
+		ddr4_imem_1d$(FIRMWARE_IMX_DDR_VERSION_SUFFIX),
+		ddr4_dmem_1d$(FIRMWARE_IMX_DDR_VERSION_SUFFIX),
+		ddr4_1d_fw)
 	$(call FIRMWARE_IMX_PREPARE_DDR_FW, \
-		ddr4_imem_2d_201810,ddr4_dmem_2d_201810,ddr4_2d_201810_fw)
-	cat $(FIRMWARE_IMX_DDRFW_DIR)/ddr4_1d_201810_fw.bin \
-		$(FIRMWARE_IMX_DDRFW_DIR)/ddr4_2d_201810_fw.bin > \
-		$(BINARIES_DIR)/ddr4_201810_fw.bin
-	ln -sf $(BINARIES_DIR)/ddr4_201810_fw.bin $(BINARIES_DIR)/ddr_fw.bin
+		ddr4_imem_2d$(FIRMWARE_IMX_DDR_VERSION_SUFFIX),
+		ddr4_dmem_2d$(FIRMWARE_IMX_DDR_VERSION_SUFFIX),
+		ddr4_2d_fw)
+	cat $(FIRMWARE_IMX_DDRFW_DIR)/ddr4_1d_fw.bin \
+		$(FIRMWARE_IMX_DDRFW_DIR)/ddr4_2d_fw.bin > \
+		$(BINARIES_DIR)/ddr4_fw.bin
+	ln -sf $(BINARIES_DIR)/ddr4_fw.bin $(BINARIES_DIR)/ddr_fw.bin
 
 	# U-Boot supports creation of the combined flash.bin image. To make
 	# sure that U-Boot can access all available files copy them to
@@ -90,10 +103,12 @@ define FIRMWARE_IMX_INSTALL_IMAGE_DDR_FW
 	# ddr3_fw.bin is needed when generating imx8-boot-sd.bin
 	# which is done in post-image script.
 	$(call FIRMWARE_IMX_PREPARE_DDR_FW, \
-		ddr3_imem_1d_201810,ddr3_dmem_1d_201810,ddr3_1d_201810_fw)
-	cat $(FIRMWARE_IMX_DDRFW_DIR)/ddr3_1d_201810_fw.bin > \
-		$(BINARIES_DIR)/ddr3_201810_fw.bin
-	ln -sf $(BINARIES_DIR)/ddr3_201810_fw.bin $(BINARIES_DIR)/ddr_fw.bin
+		ddr3_imem_1d$(FIRMWARE_IMX_DDR_VERSION_SUFFIX),
+		ddr3_dmem_1d$(FIRMWARE_IMX_DDR_VERSION_SUFFIX),
+		ddr3_1d_fw)
+	cat $(FIRMWARE_IMX_DDRFW_DIR)/ddr3_1d_fw.bin > \
+		$(BINARIES_DIR)/ddr3_fw.bin
+	ln -sf $(BINARIES_DIR)/ddr3_fw.bin $(BINARIES_DIR)/ddr_fw.bin
 
 	# U-Boot supports creation of the combined flash.bin image. To make
 	# sure that U-Boot can access all available files copy them to

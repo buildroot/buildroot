@@ -31,14 +31,19 @@ comment "X11 video driver needs X.org"
 
 config BR2_PACKAGE_SDL2_KMSDRM
 	bool "KMS/DRM video driver"
-	depends on BR2_PACKAGE_LIBDRM
-	depends on BR2_PACKAGE_MESA3D_GBM
+	depends on BR2_TOOLCHAIN_HAS_THREADS  # libdrm
+	depends on BR2_PACKAGE_HAS_LIBGBM
+	depends on BR2_PACKAGE_HAS_LIBEGL
+	depends on BR2_PACKAGE_SDL2_OPENGL || BR2_PACKAGE_SDL2_OPENGLES
+	select BR2_PACKAGE_LIBDRM
 
-comment "KMS/DRM video driver needs libdrm"
-	depends on !BR2_PACKAGE_LIBDRM
+comment "KMS/DRM video driver needs a toolchain w/ threads"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS
 
-comment "KMS/DRM video driver needs mesa3d w/ GBM"
-	depends on !BR2_PACKAGE_MESA3D_GBM
+comment "KMS/DRM video driver needs a GBM provider, and OpenGL or OpenGLES+EGL"
+	depends on !BR2_PACKAGE_HAS_LIBGBM || \
+		!BR2_PACKAGE_HAS_LIBEGL || \
+		!(BR2_PACKAGE_SDL2_OPENGL || BR2_PACKAGE_SDL2_OPENGLES)
 
 config BR2_PACKAGE_SDL2_OPENGL
 	bool "OpenGL (GLX)"

@@ -17,8 +17,8 @@ config BR2_PACKAGE_POCO
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
 	depends on !BR2_STATIC_LIBS # dlopen()
 	depends on BR2_PACKAGE_POCO_ARCH_SUPPORTS
+	select BR2_PACKAGE_PCRE2
 	select BR2_PACKAGE_ZLIB
-	select BR2_PACKAGE_PCRE
 	help
 	  The C++ Portable Components Libraries
 
@@ -91,6 +91,10 @@ config BR2_PACKAGE_POCO_PDF
 	select BR2_PACKAGE_POCO_JSON
 	select BR2_PACKAGE_POCO_UTIL
 	select BR2_PACKAGE_POCO_XML
+
+config BR2_PACKAGE_POCO_PROMETHEUS
+	bool "Prometheus"
+	select BR2_PACKAGE_POCO_NET
 
 config BR2_PACKAGE_POCO_REDIS
 	bool "Redis"

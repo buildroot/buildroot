@@ -8,6 +8,41 @@ config BR2_TARGET_ROOTFS_CPIO
 if BR2_TARGET_ROOTFS_CPIO
 
 choice
+	prompt "cpio type"
+	default BR2_TARGET_ROOTFS_CPIO_FULL
+
+config BR2_TARGET_ROOTFS_CPIO_FULL
+	bool "cpio the whole root filesystem"
+	help
+	  Build a cpio archive containing the whole the root filesystem.
+
+config BR2_TARGET_ROOTFS_CPIO_DRACUT
+	bool "Invoke dracut to make a partial initramfs"
+	select BR2_PACKAGE_HOST_DRACUT
+	help
+	  Build an additional initramfs using dracut. This only contains
+	  a subset of the rootfs, as determined by the configuration
+	  file.
+	  This can be useful to create a recovery system, for instance.
+
+endchoice
+
+if BR2_TARGET_ROOTFS_CPIO_DRACUT
+
+config BR2_TARGET_ROOTFS_CPIO_DRACUT_CONF_FILE
+	string "dracut configuration file"
+	default "fs/cpio/dracut.conf"
+	help
+	  Dracut configuration file. It determines which parts of the
+	  rootfs get included in the cpio image. See dracut.conf(5) or
+	  https://github.com/dracutdevs/dracut/blob/master/man/dracut.conf.5.asc
+
+	  The default configuration file is suitable for busybox init.
+	  It doesn't, however, pivot_root into a full rootfs.
+
+endif
+
+choice
 	prompt "Compression method"
 	default BR2_TARGET_ROOTFS_CPIO_NONE
 	help

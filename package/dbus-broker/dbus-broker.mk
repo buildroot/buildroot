@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DBUS_BROKER_VERSION = 29
+DBUS_BROKER_VERSION = 32
 DBUS_BROKER_SOURCE = dbus-broker-$(DBUS_BROKER_VERSION).tar.xz
 DBUS_BROKER_SITE = https://github.com/bus1/dbus-broker/releases/download/v$(DBUS_BROKER_VERSION)
 
@@ -15,13 +15,13 @@ DBUS_BROKER_LICENSE = \
 # the AUTHORS and README, so keep both
 DBUS_BROKER_LICENSE_FILES = \
 	LICENSE \
-	subprojects/c-dvar/AUTHORS subprojects/c-dvar/README.md \
-	subprojects/c-ini/AUTHORS subprojects/c-ini/README.md \
-	subprojects/c-list/AUTHORS subprojects/c-list/README.md \
-	subprojects/c-rbtree/AUTHORS subprojects/c-rbtree/README.md \
-	subprojects/c-shquote/AUTHORS subprojects/c-shquote/README.md \
-	subprojects/c-stdaux/AUTHORS subprojects/c-stdaux/README.md \
-	subprojects/c-utf8/AUTHORS subprojects/c-utf8/README.md
+	subprojects/libcdvar-1/AUTHORS subprojects/libcdvar-1/README.md \
+	subprojects/libcini-1/AUTHORS subprojects/libcini-1/README.md \
+	subprojects/libclist-3/AUTHORS subprojects/libclist-3/README.md \
+	subprojects/libcrbtree-3/AUTHORS subprojects/libcrbtree-3/README.md \
+	subprojects/libcshquote-1/AUTHORS subprojects/libcshquote-1/README.md \
+	subprojects/libcstdaux-1/AUTHORS subprojects/libcstdaux-1/README.md \
+	subprojects/libcutf8-1/AUTHORS subprojects/libcutf8-1/README.md
 
 DBUS_BROKER_CPE_ID_VENDOR = dbus-broker_project
 DBUS_BROKER_DEPENDENCIES = expat systemd

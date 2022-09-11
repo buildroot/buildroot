@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QEMU_VERSION = 7.0.0
+QEMU_VERSION = 7.1.0
 QEMU_SOURCE = qemu-$(QEMU_VERSION).tar.xz
 QEMU_SITE = http://download.qemu.org
 QEMU_LICENSE = GPL-2.0, LGPL-2.1, MIT, BSD-3-Clause, BSD-2-Clause, Others/BSD-1c
@@ -124,10 +124,10 @@ QEMU_OPTS += \
 	--disable-vnc-sasl
 QEMU_DEPENDENCIES += libvncserver
 ifeq ($(BR2_PACKAGE_LIBPNG),y)
-QEMU_OPTS += --enable-vnc-png
+QEMU_OPTS += --enable-png
 QEMU_DEPENDENCIES += libpng
 else
-QEMU_OPTS += --disable-vnc-png
+QEMU_OPTS += --disable-png
 endif
 ifeq ($(BR2_PACKAGE_JPEG),y)
 QEMU_OPTS += --enable-vnc-jpeg
@@ -388,7 +388,7 @@ define HOST_QEMU_CONFIGURE_CMDS
 		--disable-vhost-user-blk-server \
 		--disable-virtiofsd \
 		--disable-vnc-jpeg \
-		--disable-vnc-png \
+		--disable-png \
 		--disable-vnc-sasl \
 		--enable-tools \
 		$(HOST_QEMU_OPTS)
