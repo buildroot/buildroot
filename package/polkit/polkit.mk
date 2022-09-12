@@ -68,8 +68,8 @@ define POLKIT_INSTALL_INIT_SYSTEMD
 endef
 
 define POLKIT_INSTALL_INIT_SYSV
-	$(INSTALL) -D -m 0755 package/polkit/S50polkit \
-		$(TARGET_DIR)/etc/init.d/S50polkit
+	$(INSTALL) -D -m 0755 package/polkit/S50polkitd \
+		$(TARGET_DIR)/etc/init.d/S50polkitd
 endef
 
 $(eval $(meson-package))

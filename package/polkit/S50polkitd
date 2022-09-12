@@ -40,7 +40,7 @@ restart() {
 }
 
 case "$1" in
-	start|stop|restart|reload)
+	start|stop|restart)
 		"$1";;
 	reload)
 		# Restart, since there is no true "reload" feature.
