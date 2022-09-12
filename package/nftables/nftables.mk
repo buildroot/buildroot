@@ -24,6 +24,9 @@ ifeq ($(BR2_PACKAGE_READLINE),y)
 NFTABLES_CONF_OPTS += --with-cli=readline
 NFTABLES_DEPENDENCIES += readline
 NFTABLES_LIBS += -lncurses
+else ifeq ($(BR2_PACKAGE_LINENOISE),y)
+NFTABLES_CONF_OPTS += --with-cli=linenoise
+NFTABLES_DEPENDENCIES += linenoise
 else
 NFTABLES_CONF_OPTS += --without-cli
 endif
