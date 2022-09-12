@@ -103,7 +103,10 @@ endif
 
 ifeq ($(BR2_PACKAGE_NETWORK_MANAGER_PPPD),y)
 NETWORK_MANAGER_DEPENDENCIES += pppd
-NETWORK_MANAGER_CONF_OPTS += -Dppp=true
+NETWORK_MANAGER_CONF_OPTS += \
+	-Dppp=true \
+	-Dpppd=/usr/sbin/pppd \
+	-Dpppd_plugin_dir=/usr/lib/pppd/$(PPPD_VERSION)
 else
 NETWORK_MANAGER_CONF_OPTS += -Dppp=false
 endif
