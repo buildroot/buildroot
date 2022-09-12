@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LINENOISE_VERSION = 1.0
+LINENOISE_VERSION = 97d2850af13c339369093b78abe5265845d78220
 LINENOISE_SITE = $(call github,antirez,linenoise,$(LINENOISE_VERSION))
 LINENOISE_LICENSE = BSD-2-Clause
 LINENOISE_LICENSE_FILES = LICENSE
