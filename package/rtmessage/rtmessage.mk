@@ -10,6 +10,7 @@ RTMESSAGE_SITE = https://code.rdkcentral.com/r/rdk/components/opensource/rtmessa
 RTMESSAGE_INSTALL_STAGING = YES
 RTMESSAGE_AUTORECONF = YES
 
+RTMESSAGE_DEPENDENCIES = cjson
 RTMESSAGE_CONF_OPTS += \
     -DRDKC_BUILD=OFF \
     -DENABLE_RDKLOGGER=OFF \
