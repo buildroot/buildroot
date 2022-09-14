@@ -1,0 +1,7 @@
+config BR2_PACKAGE_NGINX_HEADERS_MORE
+	bool "nginx-headers-more"
+	depends on BR2_PACKAGE_NGINX_HTTP
+	help
+	  Set and clear input and output headers...more than "add"!
+
+	  https://github.com/openresty/headers-more-nginx-module

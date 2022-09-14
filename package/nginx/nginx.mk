@@ -291,6 +291,11 @@ NGINX_CONF_OPTS += --add-module=$(NGINX_SUBSTITUTIONS_DIR)
 NGINX_DEPENDENCIES += nginx-substitutions
 endif
 
+ifeq ($(BR2_PACKAGE_NGINX_HEADERS_MORE),y)
+NGINX_CONF_OPTS += --add-module=$(NGINX_HEADERS_MORE_DIR)
+NGINX_DEPENDENCIES += nginx-headers-more
+endif
+
 # Debug logging
 NGINX_CONF_OPTS += $(if $(BR2_PACKAGE_NGINX_DEBUG),--with-debug)
 
