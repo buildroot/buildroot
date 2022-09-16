@@ -168,9 +168,6 @@ endif
 ifeq ($(BR2_PACKAGE_GPSD_SQUELCH),y)
 GPSD_SCONS_OPTS += squelch=yes
 endif
-ifneq ($(BR2_PACKAGE_GPSD_OLDSTYLE),y)
-GPSD_SCONS_OPTS += oldstyle=no
-endif
 ifeq ($(BR2_PACKAGE_GPSD_PROFILING),y)
 GPSD_SCONS_OPTS += profiling=yes
 endif

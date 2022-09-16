@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2022.11"
 
+config BR2_PACKAGE_GPSD_OLDSTYLE
+	bool "gpsd oldstyle removed"
+	select BR2_LEGACY
+	help
+	  gpsd oldstyle option has been removed by upstream in 2015.
+
 config BR2_GDB_VERSION_9_2
 	bool "gdb 9.2 removed"
 	help
