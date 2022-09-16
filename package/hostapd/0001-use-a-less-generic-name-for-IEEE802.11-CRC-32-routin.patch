@@ -1,0 +1,102 @@
+From 9896d8c116f054cebc49928404018a75c9b892cb Mon Sep 17 00:00:00 2001
+From: Sergey Matyukevich <geomatsi@gmail.com>
+Date: Fri, 16 Sep 2022 23:18:50 +0300
+Subject: [PATCH] hostapd: use a less generic name for IEEE802.11 CRC-32 routine
+
+Hostapd uses 'crc32' name for IEEE802.11 CRC-32 routine. This name is
+too generic. Buildroot autobuilder detected build configuration that
+failed to build due to the naming conflict: static linking with openssl
+using zlib-ng as a zlib provider, e.g. see:
+- http://autobuild.buildroot.net/results/9901df820d3afa4cde78e8ad6d62cb8ce7e69fdb/
+- http://autobuild.buildroot.net/results/ac19975f0bf77f4a8ca574c374092ba81cd5a332/
+
+Use a less generic name ieee80211_crc32 for IEEE802.11 CRC-32 routine
+to avoid such naming conflicts.
+
+Upstream: https://w1.fi/cgit/hostap/commit/?id=0c7b3814ca6070a8e930dea09fde08b4058a4ca6
+Signed-off-by: Sergey Matyukevich <geomatsi@gmail.com>
+---
+ hostapd/config_file.c | 4 ++--
+ src/ap/hostapd.c      | 3 ++-
+ src/ap/neighbor_db.c  | 2 +-
+ src/utils/crc32.c     | 2 +-
+ src/utils/crc32.h     | 2 +-
+ 5 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/hostapd/config_file.c b/hostapd/config_file.c
+index b14728d1b..b38a84647 100644
+--- a/hostapd/config_file.c
++++ b/hostapd/config_file.c
+@@ -2407,7 +2407,7 @@ static int hostapd_config_fill(struct hostapd_config *conf,
+ 		}
+ 		os_memcpy(ssid->ssid, pos, ssid->ssid_len);
+ 		ssid->ssid_set = 1;
+-		ssid->short_ssid = crc32(ssid->ssid, ssid->ssid_len);
++		ssid->short_ssid = ieee80211_crc32(ssid->ssid, ssid->ssid_len);
+ 	} else if (os_strcmp(buf, "ssid2") == 0) {
+ 		struct hostapd_ssid *ssid = &bss->ssid;
+ 		size_t slen;
+@@ -2421,7 +2421,7 @@ static int hostapd_config_fill(struct hostapd_config *conf,
+ 		os_memcpy(ssid->ssid, str, slen);
+ 		ssid->ssid_len = slen;
+ 		ssid->ssid_set = 1;
+-		ssid->short_ssid = crc32(ssid->ssid, ssid->ssid_len);
++		ssid->short_ssid = ieee80211_crc32(ssid->ssid, ssid->ssid_len);
+ 		os_free(str);
+ 	} else if (os_strcmp(buf, "utf8_ssid") == 0) {
+ 		bss->ssid.utf8_ssid = atoi(pos) > 0;
+diff --git a/src/ap/hostapd.c b/src/ap/hostapd.c
+index 4b88641a2..56c8fb90e 100644
+--- a/src/ap/hostapd.c
++++ b/src/ap/hostapd.c
+@@ -1230,7 +1230,8 @@ static int hostapd_setup_bss(struct hostapd_data *hapd, int first)
+ 	 * Short SSID calculation is identical to FCS and it is defined in
+ 	 * IEEE P802.11-REVmd/D3.0, 9.4.2.170.3 (Calculating the Short-SSID).
+ 	 */
+-	conf->ssid.short_ssid = crc32(conf->ssid.ssid, conf->ssid.ssid_len);
++	conf->ssid.short_ssid = ieee80211_crc32(conf->ssid.ssid,
++						conf->ssid.ssid_len);
+ 
+ 	if (!hostapd_drv_none(hapd)) {
+ 		wpa_printf(MSG_DEBUG, "Using interface %s with hwaddr " MACSTR
+diff --git a/src/ap/neighbor_db.c b/src/ap/neighbor_db.c
+index 229edd2a9..ef17634c3 100644
+--- a/src/ap/neighbor_db.c
++++ b/src/ap/neighbor_db.c
+@@ -136,7 +136,7 @@ int hostapd_neighbor_set(struct hostapd_data *hapd, const u8 *bssid,
+ 
+ 	os_memcpy(entry->bssid, bssid, ETH_ALEN);
+ 	os_memcpy(&entry->ssid, ssid, sizeof(entry->ssid));
+-	entry->short_ssid = crc32(ssid->ssid, ssid->ssid_len);
++	entry->short_ssid = ieee80211_crc32(ssid->ssid, ssid->ssid_len);
+ 
+ 	entry->nr = wpabuf_dup(nr);
+ 	if (!entry->nr)
+diff --git a/src/utils/crc32.c b/src/utils/crc32.c
+index 12d9e2a70..371254994 100644
+--- a/src/utils/crc32.c
++++ b/src/utils/crc32.c
+@@ -72,7 +72,7 @@ static const u32 crc32_table[256] = {
+ };
+ 
+ 
+-u32 crc32(const u8 *frame, size_t frame_len)
++u32 ieee80211_crc32(const u8 *frame, size_t frame_len)
+ {
+ 	size_t i;
+ 	u32 crc;
+diff --git a/src/utils/crc32.h b/src/utils/crc32.h
+index dc31399be..71a19dc5f 100644
+--- a/src/utils/crc32.h
++++ b/src/utils/crc32.h
+@@ -9,6 +9,6 @@
+ #ifndef CRC32_H
+ #define CRC32_H
+ 
+-u32 crc32(const u8 *frame, size_t frame_len);
++u32 ieee80211_crc32(const u8 *frame, size_t frame_len);
+ 
+ #endif /* CRC32_H */
+-- 
+2.37.1
+
