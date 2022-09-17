@@ -1,0 +1,30 @@
+From c88897ebaf173b97068811b520a4741039f09dcd Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 20 Aug 2022 15:16:22 +0200
+Subject: [PATCH] src/build-data/arch/superh.txt: add sh4{eb,aeb}
+
+Fix the following build failure with sh4{eb,aeb}:
+
+  ERROR: Unknown or unidentifiable processor "sh4aeb"
+
+Fixes:
+ - http://autobuild.buildroot.org/results/d7750b734736a66e10bc5a8ee06708041b36443a
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/randombit/botan/commit/c88897ebaf173b97068811b520a4741039f09dcd]
+---
+ src/build-data/arch/superh.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/build-data/arch/superh.txt b/src/build-data/arch/superh.txt
+index 8e2833a914..e17edb097a 100644
+--- a/src/build-data/arch/superh.txt
++++ b/src/build-data/arch/superh.txt
+@@ -2,4 +2,6 @@
+ <aliases>
+ sh4
+ sh4a
++sh4eb
++sh4aeb
+ </aliases>
