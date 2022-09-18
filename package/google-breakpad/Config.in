@@ -41,3 +41,13 @@ comment "google-breakpad requires a glibc or uClibc toolchain w/ wchar, thread, 
 		!BR2_TOOLCHAIN_HAS_THREADS || \
 		!(BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_UCLIBC) || \
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
+
+if BR2_PACKAGE_GOOGLE_BREAKPAD
+
+config BR2_PACKAGE_GOOGLE_BREAKPAD_TOOLS
+	bool "Build target tools"
+	help
+	  Build processor and tools for target: dump_syms,
+	  minidump_stackwalk and microdump_stackwalk.
+
+endif

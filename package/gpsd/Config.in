@@ -31,9 +31,6 @@ comment "Features"
 config BR2_PACKAGE_GPSD_CLIENT_DEBUG
 	bool "client debugging support"
 
-config BR2_PACKAGE_GPSD_OLDSTYLE
-	bool "oldstyle (pre-JSON) protocol support"
-
 config BR2_PACKAGE_GPSD_PROFILING
 	bool "profiling support"
 	depends on BR2_TOOLCHAIN_USES_GLIBC
@@ -157,21 +154,10 @@ config BR2_PACKAGE_GPSD_ITRAX
 	help
 	  iTrax support
 
-config BR2_PACKAGE_GPSD_MTK3301
-	bool "MTK-3301"
-	help
-	  Mediatek MTK-3301 support
-
 config BR2_PACKAGE_GPSD_NAVCOM
 	bool "Navcom"
 	help
 	  Navcom binary support
-
-config BR2_PACKAGE_GPSD_NMEA
-	bool "NMEA"
-	default y
-	help
-	  Generic NMEA support
 
 config BR2_PACKAGE_GPSD_NMEA2000
 	bool "NMEA2000"
@@ -179,11 +165,6 @@ config BR2_PACKAGE_GPSD_NMEA2000
 	select BR2_PACKAGE_GPSD_AIVDM
 	help
 	  NMEA2000/CAN support
-
-config BR2_PACKAGE_GPSD_NTRIP
-	bool "NTRIP"
-	help
-	  NTRIP support
 
 config BR2_PACKAGE_GPSD_OCEANSERVER
 	bool "OceanServer"

@@ -4,16 +4,12 @@
 #
 ################################################################################
 
-POLKIT_VERSION = a2bf5c9c83b6ae46cbd5c779d3055bff81ded683
-POLKIT_SITE = https://gitlab.freedesktop.org/polkit/polkit/-/archive/$(POLKIT_VERSION)
+POLKIT_VERSION = 121
+POLKIT_SITE = https://www.freedesktop.org/software/polkit/releases
 POLKIT_LICENSE = GPL-2.0
 POLKIT_LICENSE_FILES = COPYING
 POLKIT_CPE_ID_VENDOR = polkit_project
 POLKIT_INSTALL_STAGING = YES
-
-# Fix was comitted in a2bf5c9c83b6ae46cbd5c779d3055bff81ded683
-POLKIT_IGNORE_CVES += CVE-2021-4034
-
 POLKIT_DEPENDENCIES = \
 	duktape libglib2 host-intltool expat $(TARGET_NLS_DEPENDENCIES)
 
@@ -68,8 +64,8 @@ define POLKIT_INSTALL_INIT_SYSTEMD
 endef
 
 define POLKIT_INSTALL_INIT_SYSV
-	$(INSTALL) -D -m 0755 package/polkit/S50polkit \
-		$(TARGET_DIR)/etc/init.d/S50polkit
+	$(INSTALL) -D -m 0755 package/polkit/S50polkitd \
+		$(TARGET_DIR)/etc/init.d/S50polkitd
 endef
 
 $(eval $(meson-package))

@@ -1,0 +1,29 @@
+From 64f8f754447572a6b7bed4038a9a29a12b448479 Mon Sep 17 00:00:00 2001
+From: Jan Luebbe <jlu@pengutronix.de>
+Date: Thu, 25 Aug 2022 12:19:16 +0200
+Subject: [PATCH] tools:gensiot: Fix build with musl
+
+According to POSIX getpid() is available in unistd.h, not sys/unistd.h.
+
+Signed-off-by: Jan Luebbe <jlu@pengutronix.de>
+
+[Retrieved from:
+https://github.com/cminyard/gensio/commit/64f8f754447572a6b7bed4038a9a29a12b448479]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ tools/gensiotool.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/gensiotool.c b/tools/gensiotool.c
+index cac531bb..ab0bb958 100644
+--- a/tools/gensiotool.c
++++ b/tools/gensiotool.c
+@@ -44,7 +44,7 @@
+ #include <signal.h>
+ #include <errno.h>
+ #include <sys/types.h>
+-#include <sys/unistd.h>
++#include <unistd.h>
+ #include <syslog.h>
+ #endif
+ 

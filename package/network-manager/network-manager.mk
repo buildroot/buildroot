@@ -20,7 +20,6 @@ NETWORK_MANAGER_DEPENDENCIES = \
 	host-libxslt \
 	host-pkgconf \
 	dbus \
-	gnutls \
 	libglib2 \
 	libndp \
 	udev \
@@ -31,7 +30,6 @@ NETWORK_MANAGER_CONF_OPTS = \
 	-Ddocs=false \
 	-Dtests=no \
 	-Dqt=false \
-	-Dcrypto=gnutls \
 	-Diptables=/usr/sbin/iptables \
 	-Difupdown=false \
 	-Dnm_cloud_setup=false \
@@ -73,6 +71,14 @@ else
 NETWORK_MANAGER_CONF_OPTS += -Dconcheck=false
 endif
 
+ifeq ($(BR2_PACKAGE_LIBNSS),y)
+NETWORK_MANAGER_DEPENDENCIES += libnss
+NETWORK_MANAGER_CONF_OPTS += -Dcrypto=nss
+else
+NETWORK_MANAGER_DEPENDENCIES += gnutls
+NETWORK_MANAGER_CONF_OPTS += -Dcrypto=gnutls
+endif
+
 ifeq ($(BR2_PACKAGE_LIBPSL),y)
 NETWORK_MANAGER_DEPENDENCIES += libpsl
 NETWORK_MANAGER_CONF_OPTS += -Dlibpsl=true
@@ -103,7 +109,10 @@ endif
 
 ifeq ($(BR2_PACKAGE_NETWORK_MANAGER_PPPD),y)
 NETWORK_MANAGER_DEPENDENCIES += pppd
-NETWORK_MANAGER_CONF_OPTS += -Dppp=true
+NETWORK_MANAGER_CONF_OPTS += \
+	-Dppp=true \
+	-Dpppd=/usr/sbin/pppd \
+	-Dpppd_plugin_dir=/usr/lib/pppd/$(PPPD_VERSION)
 else
 NETWORK_MANAGER_CONF_OPTS += -Dppp=false
 endif
