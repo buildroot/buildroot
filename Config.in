@@ -930,6 +930,15 @@ config BR2_FORTIFY_SOURCE_2
 	  Also adds checks at run-time (detected buffer overflow
 	  terminates the program)
 
+config BR2_FORTIFY_SOURCE_3
+	bool "Extended"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_12
+	help
+	  This option sets _FORTIFY_SOURCES to 3 and even more
+	  checking is added compared to level 2. Extends checks at
+	  run-time that can introduce an additional performance
+	  overhead.
+
 endchoice
 
 comment "Fortify Source needs a glibc toolchain and optimization"
