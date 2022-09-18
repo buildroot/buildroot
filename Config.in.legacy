@@ -154,6 +154,7 @@ config BR2_PACKAGE_GPSD_OLDSTYLE
 
 config BR2_GDB_VERSION_9_2
 	bool "gdb 9.2 removed"
+	select BR2_LEGACY
 	help
 	  Support for GDB 9.2 has been removed. A new version has
 	  automatically been selected.
