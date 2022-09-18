@@ -77,6 +77,15 @@ define HOST_QT6BASE_INSTALL_CMDS
 	$(HOST_MAKE_ENV) $(BR2_CMAKE) --install $(HOST_QT6BASE_BUILDDIR)
 endef
 
+# Conditional blocks below are ordered by alphabetic ordering of the
+# BR2_PACKAGE_* option.
+
+ifeq ($(BR2_PACKAGE_QT6BASE_CONCURRENT),y)
+QT6BASE_CONF_OPTS += -DFEATURE_concurrent=ON
+else
+QT6BASE_CONF_OPTS += -DFEATURE_concurrent=OFF
+endif
+
 # We need host-qt6base with D-Bus support, otherwise: "the tool
 # "Qt6::qdbuscpp2xml" was not found in the Qt6DBusTools package."
 ifeq ($(BR2_PACKAGE_QT6BASE_DBUS),y)
@@ -95,10 +104,10 @@ else
 QT6BASE_CONF_OPTS += -DFEATURE_network=OFF
 endif
 
-ifeq ($(BR2_PACKAGE_QT6BASE_CONCURRENT),y)
-QT6BASE_CONF_OPTS += -DFEATURE_concurrent=ON
+ifeq ($(BR2_PACKAGE_QT6BASE_SYSLOG),y)
+QT6BASE_CONF_OPTS += -DFEATURE_syslog=ON
 else
-QT6BASE_CONF_OPTS += -DFEATURE_concurrent=OFF
+QT6BASE_CONF_OPTS += -DFEATURE_syslog=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_QT6BASE_TEST),y)
@@ -111,12 +120,6 @@ ifeq ($(BR2_PACKAGE_QT6BASE_XML),y)
 QT6BASE_CONF_OPTS += -DFEATURE_xml=ON
 else
 QT6BASE_CONF_OPTS += -DFEATURE_xml=OFF
-endif
-
-ifeq ($(BR2_PACKAGE_QT6BASE_SYSLOG),y)
-QT6BASE_CONF_OPTS += -DFEATURE_syslog=ON
-else
-QT6BASE_CONF_OPTS += -DFEATURE_syslog=OFF
 endif
 
 $(eval $(cmake-package))
