@@ -1,0 +1,42 @@
+From 9d825e854ef53ebbe0aea2f1a69f52b763104daf Mon Sep 17 00:00:00 2001
+From: Ariadne Conill <ariadne@dereferenced.org>
+Date: Mon, 19 Sep 2022 14:15:12 +0200
+Subject: [PATCH] libbb: sockaddr2str: ensure only printable characters are
+ returned for the hostname part
+
+CVE: CVE-2022-28391
+Signed-off-by: Ariadne Conill <ariadne@dereferenced.org>
+Tested-by: Radoslav Kolev <radoslav.kolev@suse.com>
+Backport from ML: http://lists.busybox.net/pipermail/busybox/2022-July/089796.html
+Signed-off-by: Quentin Schulz <quentin.schulz@theobroma-systems.com>
+---
+ libbb/xconnect.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/libbb/xconnect.c b/libbb/xconnect.c
+index 0e0b247b8..02c061e67 100644
+--- a/libbb/xconnect.c
++++ b/libbb/xconnect.c
+@@ -497,8 +497,9 @@ static char* FAST_FUNC sockaddr2str(const struct sockaddr *sa, int flags)
+ 	);
+ 	if (rc)
+ 		return NULL;
++	/* ensure host contains only printable characters */
+ 	if (flags & IGNORE_PORT)
+-		return xstrdup(host);
++		return xstrdup(printable_string(host));
+ #if ENABLE_FEATURE_IPV6
+ 	if (sa->sa_family == AF_INET6) {
+ 		if (strchr(host, ':')) /* heh, it's not a resolved hostname */
+@@ -509,7 +510,7 @@ static char* FAST_FUNC sockaddr2str(const struct sockaddr *sa, int flags)
+ #endif
+ 	/* For now we don't support anything else, so it has to be INET */
+ 	/*if (sa->sa_family == AF_INET)*/
+-		return xasprintf("%s:%s", host, serv);
++		return xasprintf("%s:%s", printable_string(host), serv);
+ 	/*return xstrdup(host);*/
+ }
+ 
+-- 
+2.37.3
+
