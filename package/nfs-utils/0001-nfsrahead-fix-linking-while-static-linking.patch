@@ -1,31 +1,46 @@
-From a69014a1b4e5b8068630abe3109f31eb64b6a076 Mon Sep 17 00:00:00 2001
+From d9abb221cea81dee5956bd987c6efa680c03571a Mon Sep 17 00:00:00 2001
 From: Giulio Benetti <giulio.benetti@benettiengineering.com>
-Date: Wed, 10 Aug 2022 00:10:51 +0200
+Date: Wed, 10 Aug 2022 23:38:17 +0200
 Subject: [PATCH] nfsrahead: fix linking while static linking
 
--lmount must preceed -lblkid and to obtain this let's add:
-`pkg-config --libs mount`
-in place of:
-`-lmount`
-This ways the library order will always be correct.
+-lmount must preceed -lblkid and to obtain this let's add in configure.ac:
+PKG_CHECK_MODULES([LIBMOUNT], [mount])
+and in tools/nfsrahead/Makefile.am let's substitute explicit `-lmount`
+with:
+$(LIBMOUNT_LIBS)
+This way all the required libraries will be present and in the right order
+when static linking.
 
 Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+[Upstream: https://git.linux-nfs.org/?p=steved/nfs-utils.git;a=commit;h=627c95b2b853161b359095e7fdf05d3b07d51379]
 ---
-Pending Upstream:
-https://patchwork.kernel.org/project/linux-nfs/patch/20220809223308.1421081-1-giulio.benetti@benettiengineering.com/
----
+ configure.ac                | 3 +++
  tools/nfsrahead/Makefile.am | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
+diff --git a/configure.ac b/configure.ac
+index f1c46c5c..ff85200b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -273,6 +273,9 @@ AC_LIBCAP
+ dnl Check for -lxml2
+ AC_LIBXML2
+ 
++dnl Check for -lmount
++PKG_CHECK_MODULES([LIBMOUNT], [mount])
++
+ # Check whether user wants TCP wrappers support
+ AC_TCP_WRAPPERS
+ 
 diff --git a/tools/nfsrahead/Makefile.am b/tools/nfsrahead/Makefile.am
-index 845ea0d5..280a2eb4 100644
+index 845ea0d5..7e08233a 100644
 --- a/tools/nfsrahead/Makefile.am
 +++ b/tools/nfsrahead/Makefile.am
 @@ -1,6 +1,6 @@
  libexec_PROGRAMS = nfsrahead
  nfsrahead_SOURCES = main.c
 -nfsrahead_LDFLAGS= -lmount
-+nfsrahead_LDFLAGS= `pkg-config --libs mount`
++nfsrahead_LDFLAGS= $(LIBMOUNT_LIBS)
  nfsrahead_LDADD = ../../support/nfs/libnfsconf.la
  
  man5_MANS = nfsrahead.man

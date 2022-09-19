@@ -34,6 +34,7 @@ HOST_NFS_UTILS_CONF_OPTS = \
 	--without-tcp-wrappers \
 	--with-statedir=/run/nfs \
 	--disable-caps \
+	--disable-nfsrahead \
 	--without-systemd \
 	--with-rpcgen=internal \
 	--with-tirpcinclude=$(HOST_DIR)/include/tirpc
@@ -66,12 +67,6 @@ NFS_UTILS_CONF_OPTS += --enable-caps
 NFS_UTILS_DEPENDENCIES += libcap
 else
 NFS_UTILS_CONF_OPTS += --disable-caps
-endif
-
-ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBBLKID),y)
-NFS_UTILS_CONF_OPTS += --enable-uuid
-else
-NFS_UTILS_CONF_OPTS += --disable-uuid
 endif
 
 define NFS_UTILS_INSTALL_FIXUP

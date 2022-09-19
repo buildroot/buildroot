@@ -1,0 +1,68 @@
+From 9a0002978eb32b78d22f053302e012a4255dc4ef Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Mon, 19 Sep 2022 23:43:28 +0200
+Subject: [PATCH] configure.ac: allow to disable nfsrahead tool
+
+This allows to make libmount not mandatory but depending on nfsrahead
+since it only requires it. This is useful when cross-compiling because
+in that case we need rpcgen only built for host but not nfsrahead that
+also require libmount. So this reduces the dependencies for host
+building.
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+[Upstream: https://git.linux-nfs.org/?p=steved/nfs-utils.git;a=commit;h=844d3ad5376603bc9c205a6084d38a2d25146179]
+---
+ configure.ac      | 13 ++++++++++---
+ tools/Makefile.am |  6 +++++-
+ 2 files changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index ff85200b..5d9cbf31 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -249,6 +249,16 @@ AC_ARG_ENABLE(nfsdcld,
+ 	enable_nfsdcld=$enableval,
+ 	enable_nfsdcld="yes")
+ 
++AC_ARG_ENABLE(nfsrahead,
++	[AS_HELP_STRING([--disable-nfsrahead],[disable nfsrahead command @<:@default=no@:>@])],
++	enable_nfsrahead=$enableval,
++	enable_nfsrahead="yes")
++	AM_CONDITIONAL(CONFIG_NFSRAHEAD, [test "$enable_nfsrahead" = "yes" ])
++	if test "$enable_nfsrahead" = yes; then
++		dnl Check for -lmount
++		PKG_CHECK_MODULES([LIBMOUNT], [mount])
++	fi
++
+ AC_ARG_ENABLE(nfsdcltrack,
+ 	[AS_HELP_STRING([--disable-nfsdcltrack],[disable NFSv4 clientid tracking programs @<:@default=no@:>@])],
+ 	enable_nfsdcltrack=$enableval,
+@@ -273,9 +283,6 @@ AC_LIBCAP
+ dnl Check for -lxml2
+ AC_LIBXML2
+ 
+-dnl Check for -lmount
+-PKG_CHECK_MODULES([LIBMOUNT], [mount])
+-
+ # Check whether user wants TCP wrappers support
+ AC_TCP_WRAPPERS
+ 
+diff --git a/tools/Makefile.am b/tools/Makefile.am
+index 40c17c37..48fd0cdf 100644
+--- a/tools/Makefile.am
++++ b/tools/Makefile.am
+@@ -12,6 +12,10 @@ if CONFIG_NFSDCLD
+ OPTDIRS += nfsdclddb
+ endif
+ 
+-SUBDIRS = locktest rpcdebug nlmtest mountstats nfs-iostat rpcctl nfsdclnts nfsrahead $(OPTDIRS)
++if CONFIG_NFSRAHEAD
++OPTDIRS += nfsrahead
++endif
++
++SUBDIRS = locktest rpcdebug nlmtest mountstats nfs-iostat rpcctl nfsdclnts $(OPTDIRS)
+ 
+ MAINTAINERCLEANFILES = Makefile.in
+-- 
+2.34.1
+
