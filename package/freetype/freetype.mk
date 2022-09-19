@@ -15,6 +15,13 @@ FREETYPE_CPE_ID_VENDOR = freetype
 FREETYPE_DEPENDENCIES = host-pkgconf
 FREETYPE_CONFIG_SCRIPTS = freetype-config
 
+# 0001-sfnt-Avoid-invalid-face-index.patch
+FREETYPE_IGNORE_CVES += CVE-2022-27404
+# 0002-src-base-ftobjs.c-ft_open_face_internal-Properly-gua.patch
+FREETYPE_IGNORE_CVES += CVE-2022-27405
+# 0003-src-base-ftobjs.c-FT_Request_Size-Guard-face-size.patch
+FREETYPE_IGNORE_CVES += CVE-2022-27406
+
 # harfbuzz already depends on freetype so disable harfbuzz in freetype to avoid
 # a circular dependency
 FREETYPE_CONF_OPTS = --without-harfbuzz
