@@ -225,14 +225,6 @@ define GPSD_INSTALL_INIT_SYSV
 	$(SED) 's,^DEVICES=.*,DEVICES=$(BR2_PACKAGE_GPSD_DEVICES),' $(TARGET_DIR)/etc/init.d/S50gpsd
 endef
 
-# systemd unit files are installed automatically, but need to update the
-# /usr/local path references in the provided files to /usr.
-define GPSD_INSTALL_INIT_SYSTEMD
-	$(SED) 's%/usr/local%/usr%' \
-		$(TARGET_DIR)/usr/lib/systemd/system/gpsd.service \
-		$(TARGET_DIR)/usr/lib/systemd/system/gpsdctl@.service
-endef
-
 define GPSD_INSTALL_STAGING_CMDS
 	(cd $(@D); \
 		$(GPSD_SCONS_ENV) \
