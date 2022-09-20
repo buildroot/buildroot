@@ -24,6 +24,8 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
+          git branch
+          git remote -v
           git checkout opentrickler-2022.05.x
           make opentrickler_dev_defconfig
           make
