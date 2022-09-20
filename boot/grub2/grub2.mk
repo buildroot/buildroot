@@ -30,6 +30,8 @@ GRUB2_IGNORE_CVES += CVE-2019-14865
 # grub_linuxefi_secure_validate() is not implemented in the grub2
 # version available in Buildroot.
 GRUB2_IGNORE_CVES += CVE-2020-15705
+# 0002-grub-mkconfig-Restore-umask-for-the-grub.cfg.patch
+GRUB2_IGNORE_CVES += CVE-2021-3981
 
 ifeq ($(BR2_TARGET_GRUB2_INSTALL_TOOLS),y)
 GRUB2_INSTALL_TARGET = YES
