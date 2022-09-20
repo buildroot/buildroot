@@ -32,6 +32,8 @@ GRUB2_IGNORE_CVES += CVE-2019-14865
 GRUB2_IGNORE_CVES += CVE-2020-15705
 # 0002-grub-mkconfig-Restore-umask-for-the-grub.cfg.patch
 GRUB2_IGNORE_CVES += CVE-2021-3981
+# vulnerability is specific to the SUSE distribution
+GRUB2_IGNORE_CVES += CVE-2021-46705
 
 ifeq ($(BR2_TARGET_GRUB2_INSTALL_TOOLS),y)
 GRUB2_INSTALL_TARGET = YES
