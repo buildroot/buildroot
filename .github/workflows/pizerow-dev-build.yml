@@ -24,11 +24,8 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
-          git remote -v
-          git remote remove origin
-          git remote add origin git@github.com:ammolytics/opentrickler-buildroot.git
-          git pull --ff-only
-          git remote -v
-          git checkout opentrickler-2022.05.x
+          pwd
+          ls -al
+          whoami
           make opentrickler_dev_defconfig
           make
