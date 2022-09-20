@@ -11,3 +11,4 @@ CRUDINI_LICENSE = GPL-2.0
 CRUDINI_LICENSE_FILES = COPYING
 
 $(eval $(python-package))
+$(eval $(host-python-package))

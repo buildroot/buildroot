@@ -1,0 +1,9 @@
+config BR2_PACKAGE_HOST_CRUDINI
+	bool "host crudini"
+	select BR2_PACKAGE_HOST_PYTHON3
+	select BR2_PACKAGE_HOST_PYTHON_INIPARSE # runtime
+	help
+	  A utility for handling ini files from the command line and
+	  shell scripts
+
+	  https://pypi.python.org/pypi/crudini
