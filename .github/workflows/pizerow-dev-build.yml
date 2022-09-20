@@ -4,6 +4,8 @@ name: pizerow-dev-build
 
 # Controls when the workflow will run
 on:
+  pull_request:
+    types: [labeled, synchronize]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
