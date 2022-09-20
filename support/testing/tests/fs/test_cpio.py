@@ -41,9 +41,11 @@ class TestCpioDracutBase(infra.basetest.BRTest):
         BR2_PACKAGE_PV=y
         BR2_TARGET_ROOTFS_CPIO=y
         BR2_TARGET_ROOTFS_CPIO_DRACUT=y
+        BR2_TARGET_ROOTFS_CPIO_DRACUT_MODULES="{}"
         BR2_TARGET_ROOTFS_CPIO_DRACUT_CONF_FILES="{}"
         # BR2_TARGET_ROOTFS_TAR is not set
-        """.format(" ".join(["fs/cpio/dracut.conf",
+        """.format("support/testing/tests/fs/test_cpio/modules",
+                   " ".join(["fs/cpio/dracut.conf",
                              "support/testing/tests/fs/test_cpio/dracut-cramfs.conf"]))
 
     def check_dracut(self):
@@ -57,6 +59,7 @@ class TestCpioDracutBase(infra.basetest.BRTest):
         self.assertEqual(out.find("bin/pv"), -1)
         # libz should be, because of cramfs
         self.assertNotEqual(out.find("usr/bin/mkcramfs"), -1)
+        self.assertNotEqual(out.find("usr/bin/cramfsck"), -1)
         self.assertNotEqual(out.find("usr/lib/libz.so"), -1)
 
         exit_code = boot_img(self.emulator,
