@@ -25,7 +25,7 @@ jobs:
       - name: Run a multi-line script
         run: |
           git remote -v
-          git remove remote origin
+          git remote remove origin
           git remote add origin git@github.com:ammolytics/opentrickler-buildroot.git
           git pull --ff-only
           git remote -v
