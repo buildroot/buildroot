@@ -29,11 +29,11 @@ echo "BASE_DIR: ${BASE_DIR}"
 
 
 
-which python
-python --version
-which pip
-pip --version
-python -m pip --version
+which python || true
+python --version || true
+which pip || true
+pip --version || true
+python -m pip --version || true
 
 echo "`ls -al ${TARGET_DIR}/code`"
 
@@ -42,10 +42,10 @@ python -m venv ${TARGET_DIR}/code/venv
 # Activate new python venv
 . ${TARGET_DIR}/code/venv/bin/activate
 
-which python
-python --version
-python -m ensurepip --upgrade
-which pip
+which python || true
+python --version || true
+python -m ensurepip --upgrade || true
+which pip || true
 pip install --upgrade pip
 pip install wheel
 pip install bluezero pybleno pyserial gpiozero pymemcache RPi.GPIO grpcio
