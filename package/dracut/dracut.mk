@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-DRACUT_VERSION = 055
-DRACUT_SOURCE = dracut-$(DRACUT_VERSION).tar.xz
-DRACUT_SITE = $(BR2_KERNEL_MIRROR)/linux/utils/boot/dracut
+DRACUT_VERSION = 057
+DRACUT_SITE = $(call github,dracutdevs,dracut,$(DRACUT_VERSION))
 DRACUT_LICENSE = GPL-2.0
 DRACUT_LICENSE_FILES = COPYING
 

@@ -4,20 +4,14 @@
 #
 ################################################################################
 
-IPMITOOL_VERSION = 1.8.18
-IPMITOOL_SOURCE = ipmitool-$(IPMITOOL_VERSION).tar.bz2
-IPMITOOL_SITE = http://downloads.sourceforge.net/project/ipmitool/ipmitool/$(IPMITOOL_VERSION)
+IPMITOOL_VERSION = 1_8_19
+IPMITOOL_SOURCE = IPMITOOL_$(IPMITOOL_VERSION).tar.gz
+IPMITOOL_SITE = https://github.com/ipmitool/ipmitool/archive/refs/tags
 IPMITOOL_LICENSE = BSD-3-Clause
 IPMITOOL_LICENSE_FILES = COPYING
 IPMITOOL_CPE_ID_VENDOR = ipmitool_project
-
-# 0008-fru-Fix-buffer-overflow-vulnerabilities.patch
-# 0009-fru-Fix-buffer-overflow-in-ipmi_spd_print_fru.patch
-# 0010-session-Fix-buffer-overflow-in-ipmi_get_session_info.patch
-# 0011-channel-Fix-buffer-overflow.patch
-# 0012-lanp-Fix-buffer-overflows-in-get_lan_param_select.patch
-# 0013-fru-sdr-Fix-id_string-buffer-overflows.patch
-IPMITOOL_IGNORE_CVES += CVE-2020-5208
+# From git
+IPMITOOL_AUTORECONF = YES
 
 ifeq ($(BR2_PACKAGE_FREEIPMI),y)
 IPMITOOL_DEPENDENCIES += freeipmi

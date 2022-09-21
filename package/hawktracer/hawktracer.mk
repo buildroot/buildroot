@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HAWKTRACER_VERSION = e53b07bc812c4cfe8f6253ddb48ac43de8fa74a8
+HAWKTRACER_VERSION = 2ec19d71923344148928ef45fce549eda67030a4
 HAWKTRACER_SITE = $(call github,amzn,hawktracer,$(HAWKTRACER_VERSION))
 HAWKTRACER_LICENSE = MIT
 HAWKTRACER_LICENSE_FILES = LICENSE
