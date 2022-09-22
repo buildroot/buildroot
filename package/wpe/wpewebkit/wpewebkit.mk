@@ -23,8 +23,8 @@ WPEWEBKIT_LICENSE_FILES = \
 	Source/WebCore/LICENSE-LGPL-2.1
 
 WPEWEBKIT_DEPENDENCIES = host-gperf host-python host-ruby \
-	libgles wpebackend libepoxy cairo jpeg libpng harfbuzz icu webp libsoup \
-	libgcrypt libxslt openjpeg
+	harfbuzz cairo icu jpeg libepoxy libgcrypt libgles libsoup libtasn1 \
+	libpng libxslt openjpeg webp wpebackend
 
 WPEWEBKIT_EXTRA_FLAGS = -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 

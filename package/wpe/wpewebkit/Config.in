@@ -38,23 +38,28 @@ config BR2_PACKAGE_WPEWEBKIT
 	depends on BR2_PACKAGE_HAS_LIBGLES # libepoxy
 	depends on BR2_PACKAGE_HAS_LIBEGL # libepoxy
 	depends on BR2_PACKAGE_WPEWEBKIT_ARCH_SUPPORTS
-	select BR2_PACKAGE_WPEBACKEND
-	select BR2_PACKAGE_WPEBACKEND_RDK
-	select BR2_PACKAGE_LIBEPOXY
 	select BR2_PACKAGE_CAIRO
 	select BR2_PACKAGE_CAIRO_PNG
-	select BR2_PACKAGE_JPEG
-	select BR2_PACKAGE_LIBPNG
 	select BR2_PACKAGE_HARFBUZZ
 	select BR2_PACKAGE_ICU
-	select BR2_PACKAGE_WEBP
-	select BR2_PACKAGE_WEBP_DEMUX
+	select BR2_PACKAGE_JPEG
+	select BR2_PACKAGE_LIBEPOXY
+	select BR2_PACKAGE_LIBGCRYPT
+	select BR2_PACKAGE_LIBPNG
 	select BR2_PACKAGE_LIBSOUP
 	select BR2_PACKAGE_LIBSOUP_SSL
-	select BR2_PACKAGE_LIBGCRYPT
 	select BR2_PACKAGE_LIBXSLT
-	select BR2_PACKAGE_XKEYBOARD_CONFIG
 	select BR2_PACKAGE_OPENJPEG
+	select BR2_PACKAGE_WEBP
+	select BR2_PACKAGE_WEBP_DEMUX
+	select BR2_PACKAGE_WPEBACKEND
+	select BR2_PACKAGE_WPEBACKEND_RDK
+	help
+	  WPE (Web Platform for Embedded) port of the WebKit engine,
+	  to allow embedders to create simple and performant systems
+	  based on Web platform technologies.
+
+	  https://wpewebkit.org/
 
 if BR2_PACKAGE_WPEWEBKIT
 
