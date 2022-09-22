@@ -1,6 +1,11 @@
 comment "libwpe needs a toolchain w/ C++, dynamic library and an OpenEGL-capable backend"
 	depends on !BR2_PACKAGE_HAS_LIBEGL || !BR2_INSTALL_LIBSTDCPP || BR2_STATIC_LIBS
 
+config BR2_PACKAGE_WPEBACKEND_LIBWPE_VERSION
+	string
+	default "1.6.0" if BR2_PACKAGE_WPEWEBKIT2_28
+	default "1.14.0" if BR2_PACKAGE_WPEWEBKIT2_38
+
 config BR2_PACKAGE_WPEBACKEND
 	bool "wpebackend"
 	depends on !BR2_STATIC_LIBS # dlfcn.h
