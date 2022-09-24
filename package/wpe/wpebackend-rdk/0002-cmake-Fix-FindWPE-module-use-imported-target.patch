@@ -1,0 +1,121 @@
+From 0f18abd62a4c07c2ecdc2d1da55eb9e22123b867 Mon Sep 17 00:00:00 2001
+From: Adrian Perez de Castro <aperez@igalia.com>
+Date: Sat, 24 Sep 2022 22:42:42 +0300
+Subject: [PATCH] cmake: Fix FindWPE module, use imported target
+
+Populate WPE_CFLAGS from the value of PC_WPE_CFLAGS_OTHER, in order
+to bring in additional compilation flags defined in the .pc file;
+and define WPE_ENABLE_XKB by hand for versions of libwpe <1.14.0.
+
+Using imported targets automatically propagates compilation flags
+properly without needing to use additional variables, which is much
+less error prone. Targets are good, so is using them more. But fix
+them first: with older versions of CMake which do not support global
+alias targets, use UNKNOWN IMPORTED GLOBAL to ensure the created
+target gets hoisted to the global scope instead of IMPORTED SHARED
+because otherwise the target is only visible inside FindWPE.cmake
+and its descendants. The CMake scoping rules are... quite something.
+Last but not least, only IMPORTED_LOCATION can contain the path of
+the library, while INTERFACE_LINK_LIBRARIES can only be used in
+interface library targets to declare dependencies on other targets,
+so drop the latter. By now we have established that CMake is anything
+by confusing.
+
+While at it, add a fallback method to obtain the libwpe version which
+reads the values from wpe/version.h for the sake of completeness.
+
+Signed-off-by: Adrian Perez de Castro <aperez@igalia.com>
+[Upstream status: https://github.com/WebPlatformForEmbedded/WPEBackend-rdk/pull/86]
+---
+ CMakeLists.txt      |  3 +--
+ cmake/FindWPE.cmake | 53 ++++++++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 48 insertions(+), 8 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 603292e..9f5f48c 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -41,15 +41,14 @@ set(WPE_PLATFORM_INCLUDE_DIRECTORIES
+         "${CMAKE_SOURCE_DIR}/src/util"
+         ${GIO_UNIX_INCLUDE_DIRS}
+         ${GLIB_INCLUDE_DIRS}
+-        ${WPE_INCLUDE_DIRS}
+         )
+ 
+ set(WPE_PLATFORM_LIBRARIES
+         ${GLIB_GIO_LIBRARIES}
+         ${GLIB_GOBJECT_LIBRARIES}
+         ${GLIB_LIBRARIES}
+-        ${WPE_LIBRARIES}
+         ${LIBXKBCOMMON_LIBRARIES}
++        WPE::WPE
+         )
+ 
+ if (USE_VIRTUAL_KEYBOARD)
+diff --git a/cmake/FindWPE.cmake b/cmake/FindWPE.cmake
+index 32f24f2..0ea25b4 100644
+--- a/cmake/FindWPE.cmake
++++ b/cmake/FindWPE.cmake
+@@ -42,12 +42,53 @@ find_path(WPE_INCLUDE_DIRS
+     HINTS ${PC_WPE_INCLUDEDIR} ${PC_WPE_INCLUDE_DIRS}
+ )
+ 
+-find_library(WPE_LIBRARIES
+-    NAMES ${PC_WPE_LIBRARIES}
+-    HINTS ${PC_WPE_LIBDIR} ${PC_WPE_LIBRARY_DIRS}
+-)
++if(PC_WPE_FOUND)
++    set(WPE_VERSION ${PC_WPE_VERSION} CACHE INTERNAL "")
++    set(WPE_CFLAGS ${PC_WPE_CFLAGS_OTHER})
+ 
+-mark_as_advanced(WPE_INCLUDE_DIRS WPE_LIBRARIES)
++    find_library(WPE_LIBRARIES
++        NAMES ${PC_WPE_LIBRARIES}
++        HINTS ${PC_WPE_LIBDIR} ${PC_WPE_LIBRARY_DIRS}
++    )
++else()
++    message(FATAL_ERROR "libwpe not found!")
++endif()
++
++if (WPE_INCLUDE_DIR AND NOT WPE_VERSION)
++    if (EXISTS "${WPE_INCLUDE_DIR}/wpe/version.h")
++        file(READ "${WPE_INCLUDE_DIR}/wpe/version.h" WPE_VERSION_CONTENT)
++
++        string(REGEX MATCH "#define +WPE_MAJOR_VERSION +\\(([0-9]+)\\)" _dummy "${WPE_VERSION_CONTENT}")
++        set(WPE_VERSION_MAJOR "${CMAKE_MATCH_1}")
++
++        string(REGEX MATCH "#define +WPE_MINOR_VERSION +\\(([0-9]+)\\)" _dummy "${WPE_VERSION_CONTENT}")
++        set(WPE_VERSION_MINOR "${CMAKE_MATCH_1}")
++
++        string(REGEX MATCH "#define +WPE_MICRO_VERSION +\\(([0-9]+)\\)" _dummy "${WPE_VERSION_CONTENT}")
++        set(WPE_VERSION_PATCH "${CMAKE_MATCH_1}")
++
++        set(WPE_VERSION "${WPE_VERSION_MAJOR}.${WPE_VERSION_MINOR}.${WPE_VERSION_PATCH}")
++    endif ()
++endif ()
++
++# Version 1.12.0 is the last release where XKB support was always present
++if (WPE_VERSION VERSION_LESS_EQUAL 1.12.0)
++    list(APPEND WPE_CFLAGS -DWPE_ENABLE_XKB=1)
++endif ()
+ 
+ include(FindPackageHandleStandardArgs)
+-FIND_PACKAGE_HANDLE_STANDARD_ARGS(WPE REQUIRED_VARS WPE_INCLUDE_DIRS WPE_LIBRARIES)
++find_package_handle_standard_args(WPE
++    FOUND_VAR WPE_FOUND
++    REQUIRED_VARS WPE_LIBRARIES WPE_INCLUDE_DIRS
++    VERSION_VAR WPE_VERSION
++)
++mark_as_advanced(WPE_INCLUDE_DIRS WPE_LIBRARIES)
++
++if(WPE_LIBRARIES AND NOT TARGET WPE::WPE)
++    add_library(WPE::WPE UNKNOWN IMPORTED GLOBAL)
++    set_target_properties(WPE::WPE PROPERTIES
++            IMPORTED_LOCATION "${WPE_LIBRARIES}"
++            INTERFACE_COMPILE_OPTIONS "${WPE_CFLAGS}"
++            INTERFACE_INCLUDE_DIRECTORIES "${WPE_INCLUDE_DIRS}"
++    )
++endif()
+-- 
+2.37.3
+

@@ -1,0 +1,26 @@
+From 953a3ede1e8aa23f47ee8c49eccb70184956f426 Mon Sep 17 00:00:00 2001
+From: Adrian Perez de Castro <aperez@igalia.com>
+Date: Sat, 24 Sep 2022 22:41:22 +0300
+Subject: [PATCH] libinput: Add missing xkbcommon/xkbcommon.h header
+
+Signed-off-by: Adrian Perez de Castro <aperez@igalia.com>
+[Upstream status: https://github.com/WebPlatformForEmbedded/WPEBackend-rdk/pull/86]
+---
+ src/input/Libinput/LibinputServer.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/input/Libinput/LibinputServer.cpp b/src/input/Libinput/LibinputServer.cpp
+index 0530368..be1e125 100644
+--- a/src/input/Libinput/LibinputServer.cpp
++++ b/src/input/Libinput/LibinputServer.cpp
+@@ -28,6 +28,7 @@
+ #include "LibinputServer.h"
+ 
+ #include "KeyboardEventRepeating.h"
++#include <xkbcommon/xkbcommon.h>
+ #include <cstdio>
+ #include <fcntl.h>
+ #include <unistd.h>
+-- 
+2.37.3
+
