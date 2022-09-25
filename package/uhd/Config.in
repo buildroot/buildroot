@@ -23,7 +23,6 @@ config BR2_PACKAGE_UHD
 	select BR2_PACKAGE_BOOST_FILESYSTEM
 	select BR2_PACKAGE_BOOST_MATH
 	select BR2_PACKAGE_BOOST_PROGRAM_OPTIONS
-	select BR2_PACKAGE_BOOST_REGEX
 	select BR2_PACKAGE_BOOST_SERIALIZATION
 	select BR2_PACKAGE_BOOST_SYSTEM
 	select BR2_PACKAGE_BOOST_THREAD
@@ -76,11 +75,6 @@ config BR2_PACKAGE_UHD_MPMD
 	help
 	  enable MPMD support
 
-config BR2_PACKAGE_UHD_N230
-	bool "N230 support"
-	help
-	  enable N230 support
-
 config BR2_PACKAGE_UHD_N300
 	bool "N300 support"
 	select BR2_PACKAGE_UHD_MPMD
@@ -112,11 +106,6 @@ config BR2_PACKAGE_UHD_PYTHON
 	select BR2_PACKAGE_PYTHON_REQUESTS
 	help
 	  enable python API support
-
-config BR2_PACKAGE_UHD_RFNOC
-	bool "RFNoC support"
-	help
-	  enable RFNoC support
 
 config BR2_PACKAGE_UHD_USB
 	bool "USB support"

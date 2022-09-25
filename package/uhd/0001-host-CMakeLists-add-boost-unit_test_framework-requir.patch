@@ -9,8 +9,10 @@ when ENABLE_TESTS=ON.
 This PR suppress unit_test_framework to the default list and append
 UHD_BOOST_REQUIRED_COMPONENTS when this library is needed
 
-[backported from https://github.com/EttusResearch/uhd/pull/341]
 Signed-off-by: Gwenhael Goavec-Merou <gwenhael.goavec-merou@trabucayre.com>
+[Fabrice: updated for 4.3.0.0]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: reverted (https://github.com/EttusResearch/uhd/commit/1a00949b19eaecb84af0f27c370400dc71a9fd84)]
 ---
  host/CMakeLists.txt | 6 +++++-
  1 file changed, 5 insertions(+), 1 deletion(-)
@@ -19,15 +21,13 @@ diff --git a/host/CMakeLists.txt b/host/CMakeLists.txt
 index 8f72ece76..a7731ffbd 100644
 --- a/host/CMakeLists.txt
 +++ b/host/CMakeLists.txt
-@@ -291,10 +291,14 @@ set(UHD_BOOST_REQUIRED_COMPONENTS
-     filesystem
-     program_options
+@@ -291,9 +291,12 @@ set(UHD_BOOST_REQUIRED_COMPONENTS
      system
--    unit_test_framework
      serialization
      thread
+-    unit_test_framework
  )
-+
+
 +if(ENABLE_TESTS)
 +    list(APPEND UHD_BOOST_REQUIRED_COMPONENTS unit_test_framework)
 +endif(ENABLE_TESTS)
