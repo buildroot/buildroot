@@ -21,7 +21,8 @@ PIXMAN_AUTORECONF = YES
 # don't build gtk based demos
 PIXMAN_CONF_OPTS = \
 	--disable-gtk \
-	--disable-loongson-mmi
+	--disable-loongson-mmi \
+	--disable-arm-iwmmxt
 
 # The ARM SIMD code from pixman requires a recent enough ARM core, but
 # there is a runtime CPU check that makes sure it doesn't get used if
@@ -38,12 +39,6 @@ ifeq ($(BR2_ARM_CPU_HAS_ARM)$(BR2_ARM_CPU_HAS_NEON),yy)
 PIXMAN_CONF_OPTS += --enable-arm-neon
 else
 PIXMAN_CONF_OPTS += --disable-arm-neon
-endif
-
-# disable iwmmxt support for CPU's that don't have
-# this feature
-ifneq ($(BR2_iwmmxt),y)
-PIXMAN_CONF_OPTS += --disable-arm-iwmmxt
 endif
 
 PIXMAN_CFLAGS = $(TARGET_CFLAGS)

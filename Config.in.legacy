@@ -146,6 +146,16 @@ endif
 
 comment "Legacy options removed in 2022.11"
 
+config BR2_iwmmxt
+	bool "ARM iwmmxt variant removed"
+	select BR2_LEGACY
+	help
+	  Support for the ARM iwmmxt architecture variant in GCC has
+	  bitroten and is no longer maintained. GCC maintainers
+	  recommend to no longer use it, and suggest to use "xscale"
+	  as a replacement architecture variant. See
+	  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=106972
+
 config BR2_PACKAGE_GPSD_OLDSTYLE
 	bool "gpsd oldstyle removed"
 	select BR2_LEGACY
