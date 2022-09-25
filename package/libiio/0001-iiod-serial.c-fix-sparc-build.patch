@@ -1,0 +1,76 @@
+From 40ffc5d9b8f6e47866292bf1365ac3a5d22cf123 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 25 Sep 2022 11:19:18 +0200
+Subject: [PATCH] iiod/serial.c: fix sparc build
+
+Fix the following sparc build failure raised since version 0.24 and
+https://github.com/analogdevicesinc/libiio/commit/2d3cae005f364742b3a9e7234d15b2fd2cbac664:
+
+/home/buildroot/autobuild/instance-0/output-1/build/libiio-0.24/iiod/serial.c: In function 'serial_configure':
+/home/buildroot/autobuild/instance-0/output-1/build/libiio-0.24/iiod/serial.c:99:58: error: 'B2500000' undeclared (first use in this function); did you mean 'B1500000'?
+   99 | #define CASE_BPS(bps, attr) case bps: (attr)->c_cflag |= B##bps; break
+      |                                                          ^
+/home/buildroot/autobuild/instance-0/output-1/build/libiio-0.24/iiod/serial.c:127:9: note: in expansion of macro 'CASE_BPS'
+  127 |         CASE_BPS(2500000, &tty_attrs);
+      |         ^~~~~~~~
+/home/buildroot/autobuild/instance-0/output-1/build/libiio-0.24/iiod/serial.c:99:58: note: each undeclared identifier is reported only once for each function it appears in
+   99 | #define CASE_BPS(bps, attr) case bps: (attr)->c_cflag |= B##bps; break
+      |                                                          ^
+/home/buildroot/autobuild/instance-0/output-1/build/libiio-0.24/iiod/serial.c:127:9: note: in expansion of macro 'CASE_BPS'
+  127 |         CASE_BPS(2500000, &tty_attrs);
+      |         ^~~~~~~~
+/home/buildroot/autobuild/instance-0/output-1/build/libiio-0.24/iiod/serial.c:99:58: error: 'B3000000' undeclared (first use in this function); did you mean 'B1000000'?
+   99 | #define CASE_BPS(bps, attr) case bps: (attr)->c_cflag |= B##bps; break
+      |                                                          ^
+/home/buildroot/autobuild/instance-0/output-1/build/libiio-0.24/iiod/serial.c:128:9: note: in expansion of macro 'CASE_BPS'
+  128 |         CASE_BPS(3000000, &tty_attrs);
+      |         ^~~~~~~~
+/home/buildroot/autobuild/instance-0/output-1/build/libiio-0.24/iiod/serial.c:99:58: error: 'B3500000' undeclared (first use in this function); did you mean 'B1500000'?
+   99 | #define CASE_BPS(bps, attr) case bps: (attr)->c_cflag |= B##bps; break
+      |                                                          ^
+/home/buildroot/autobuild/instance-0/output-1/build/libiio-0.24/iiod/serial.c:129:9: note: in expansion of macro 'CASE_BPS'
+  129 |         CASE_BPS(3500000, &tty_attrs);
+      |         ^~~~~~~~
+/home/buildroot/autobuild/instance-0/output-1/build/libiio-0.24/iiod/serial.c:99:58: error: 'B4000000' undeclared (first use in this function); did you mean 'B1000000'?
+   99 | #define CASE_BPS(bps, attr) case bps: (attr)->c_cflag |= B##bps; break
+      |                                                          ^
+/home/buildroot/autobuild/instance-0/output-1/build/libiio-0.24/iiod/serial.c:130:9: note: in expansion of macro 'CASE_BPS'
+  130 |         CASE_BPS(4000000, &tty_attrs);
+      |         ^~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/8a9902f6eddaab812ebce3506ed6de686f647e02
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[yann.morin.1998@free.fr: actual backport now that upstream accepted it]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ iiod/serial.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/iiod/serial.c b/iiod/serial.c
+index f829361d..b140d051 100644
+--- a/iiod/serial.c
++++ b/iiod/serial.c
+@@ -124,10 +124,18 @@ static int serial_configure(int fd, unsigned int uart_bps,
+ 	CASE_BPS(1152000, &tty_attrs);
+ 	CASE_BPS(1500000, &tty_attrs);
+ 	CASE_BPS(2000000, &tty_attrs);
++#ifdef B2500000 /* Not available on all architectures, i.e. sparc */
+ 	CASE_BPS(2500000, &tty_attrs);
++#endif
++#ifdef B3000000 /* Not available on all architectures, i.e. sparc */
+ 	CASE_BPS(3000000, &tty_attrs);
++#endif
++#ifdef B3500000 /* Not available on all architectures, i.e. sparc */
+ 	CASE_BPS(3500000, &tty_attrs);
++#endif
++#ifdef B4000000 /* Not available on all architectures, i.e. sparc */
+ 	CASE_BPS(4000000, &tty_attrs);
++#endif
+ 	default:
+ 		IIO_ERROR("Invalid baud rate\n");
+ 		return -EINVAL;
+-- 
+2.25.1
+
