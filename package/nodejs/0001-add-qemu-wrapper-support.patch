@@ -1,4 +1,4 @@
-From c6103ceab64b73c1a25ece3315ea8f52507c2bfe Mon Sep 17 00:00:00 2001
+From 1f6c55d7318e7075169004b4314708f4766ec193 Mon Sep 17 00:00:00 2001
 From: Adam Duskett <aduskett@gmail.com>
 Date: Mon, 27 Sep 2021 12:55:09 -0700
 Subject: [PATCH] add qemu-wrapper support
@@ -22,10 +22,10 @@ Signed-off-by: Adam Duskett <aduskett@gmail.com>
  2 files changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/node.gyp b/node.gyp
-index 74e9f9cc2e..c3eaab6c92 100644
+index 97cdbb531d..db5cf51ce6 100644
 --- a/node.gyp
 +++ b/node.gyp
-@@ -295,7 +295,7 @@
+@@ -319,7 +319,7 @@
                'action_name': 'run_mkcodecache',
                'process_outputs_as_sources': 1,
                'inputs': [
@@ -34,17 +34,17 @@ index 74e9f9cc2e..c3eaab6c92 100644
                ],
                'outputs': [
                  '<(SHARED_INTERMEDIATE_DIR)/node_code_cache.cc',
-@@ -320,7 +320,7 @@
-               'action_name': 'node_mksnapshot',
-               'process_outputs_as_sources': 1,
-               'inputs': [
--                '<(node_mksnapshot_exec)',
-+                @MAYBE_WRAPPER@ '<(node_mksnapshot_exec)',
-               ],
-               'outputs': [
-                 '<(SHARED_INTERMEDIATE_DIR)/node_snapshot.cc',
+@@ -346,7 +346,7 @@
+                   'action_name': 'node_mksnapshot',
+                   'process_outputs_as_sources': 1,
+                   'inputs': [
+-                    '<(node_mksnapshot_exec)',
++                    @MAYBE_WRAPPER@ '<(node_mksnapshot_exec)',
+                     '<(node_snapshot_main)',
+                   ],
+                   'outputs': [
 diff --git a/tools/v8_gypfiles/v8.gyp b/tools/v8_gypfiles/v8.gyp
-index 39b96803c7..9321982ea4 100644
+index 73099a03e4..88ca91efb4 100644
 --- a/tools/v8_gypfiles/v8.gyp
 +++ b/tools/v8_gypfiles/v8.gyp
 @@ -68,7 +68,7 @@
@@ -83,7 +83,7 @@ index 39b96803c7..9321982ea4 100644
            ],
            'outputs': [
              '<(INTERMEDIATE_DIR)/snapshot.cc',
-@@ -1503,7 +1503,7 @@
+@@ -1505,7 +1505,7 @@
          {
            'action_name': 'run_gen-regexp-special-case_action',
            'inputs': [

@@ -1,4 +1,4 @@
-From e6e691d093de440e0f408d48971e2b7332a07d58 Mon Sep 17 00:00:00 2001
+From af47d317e5ae12978c1cdc40627008ada144f98b Mon Sep 17 00:00:00 2001
 From: Min RK <benjaminrk@gmail.com>
 Date: Fri, 19 Feb 2021 11:57:04 +0100
 Subject: [PATCH] include obj name in shared intermediate
@@ -12,7 +12,7 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
  1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/tools/gyp/pylib/gyp/generator/ninja.py b/tools/gyp/pylib/gyp/generator/ninja.py
-index d173bf2299..efaeee53ef 100644
+index 3db3771ac9..2e0a021703 100644
 --- a/tools/gyp/pylib/gyp/generator/ninja.py
 +++ b/tools/gyp/pylib/gyp/generator/ninja.py
 @@ -42,7 +42,7 @@ generator_default_variables = {
