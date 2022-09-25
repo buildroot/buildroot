@@ -129,10 +129,6 @@ config BR2_arm926t
 	select BR2_ARM_CPU_MAYBE_HAS_VFPV2
 	select BR2_ARM_CPU_HAS_THUMB
 	select BR2_ARM_CPU_ARMV5
-config BR2_iwmmxt
-	bool "iwmmxt"
-	select BR2_ARM_CPU_HAS_ARM
-	select BR2_ARM_CPU_ARMV5
 config BR2_xscale
 	bool "xscale"
 	select BR2_ARM_CPU_HAS_ARM
@@ -817,7 +813,6 @@ config BR2_GCC_TARGET_CPU
 	default "strongarm"	if BR2_strongarm
 	# armv5
 	default "arm926ej-s"	if BR2_arm926t
-	default "iwmmxt"	if BR2_iwmmxt
 	default "xscale"	if BR2_xscale
 	# armv6
 	default "arm1136j-s"	if BR2_arm1136j_s

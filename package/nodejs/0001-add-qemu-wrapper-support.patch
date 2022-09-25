@@ -1,4 +1,4 @@
-From fa09fa3ad6a21ae0b35fb860f76d1762e5f29972 Mon Sep 17 00:00:00 2001
+From 1f6c55d7318e7075169004b4314708f4766ec193 Mon Sep 17 00:00:00 2001
 From: Adam Duskett <aduskett@gmail.com>
 Date: Mon, 27 Sep 2021 12:55:09 -0700
 Subject: [PATCH] add qemu-wrapper support
@@ -17,15 +17,15 @@ host-builds.
 
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
 ---
- node.gyp                 | 4 ++--
- tools/v8_gypfiles/v8.gyp | 8 ++++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ node.gyp                 |  4 ++--
+ tools/v8_gypfiles/v8.gyp | 10 +++++-----
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/node.gyp b/node.gyp
-index 8ba0dfeb..c77f6f7d 100644
+index 97cdbb531d..db5cf51ce6 100644
 --- a/node.gyp
 +++ b/node.gyp
-@@ -491,7 +491,7 @@
+@@ -319,7 +319,7 @@
                'action_name': 'run_mkcodecache',
                'process_outputs_as_sources': 1,
                'inputs': [
@@ -34,20 +34,20 @@ index 8ba0dfeb..c77f6f7d 100644
                ],
                'outputs': [
                  '<(SHARED_INTERMEDIATE_DIR)/node_code_cache.cc',
-@@ -516,7 +516,7 @@
-               'action_name': 'node_mksnapshot',
-               'process_outputs_as_sources': 1,
-               'inputs': [
--                '<(node_mksnapshot_exec)',
-+                @MAYBE_WRAPPER@ '<(node_mksnapshot_exec)',
-               ],
-               'outputs': [
-                 '<(SHARED_INTERMEDIATE_DIR)/node_snapshot.cc',
+@@ -346,7 +346,7 @@
+                   'action_name': 'node_mksnapshot',
+                   'process_outputs_as_sources': 1,
+                   'inputs': [
+-                    '<(node_mksnapshot_exec)',
++                    @MAYBE_WRAPPER@ '<(node_mksnapshot_exec)',
+                     '<(node_snapshot_main)',
+                   ],
+                   'outputs': [
 diff --git a/tools/v8_gypfiles/v8.gyp b/tools/v8_gypfiles/v8.gyp
-index 48ec392b..f9bb0fbe 100644
+index 73099a03e4..88ca91efb4 100644
 --- a/tools/v8_gypfiles/v8.gyp
 +++ b/tools/v8_gypfiles/v8.gyp
-@@ -220,7 +220,7 @@
+@@ -68,7 +68,7 @@
          {
            'action_name': 'run_torque_action',
            'inputs': [  # Order matters.
@@ -56,7 +56,16 @@ index 48ec392b..f9bb0fbe 100644
              '<@(torque_files)',
            ],
            'outputs': [
-@@ -351,7 +351,7 @@
+@@ -99,7 +99,7 @@
+             '<@(torque_outputs_inc)',
+           ],
+           'action': [
+-            '<(PRODUCT_DIR)/<(EXECUTABLE_PREFIX)torque<(EXECUTABLE_SUFFIX)',
++            @MAYBE_WRAPPER@ '<(PRODUCT_DIR)/<(EXECUTABLE_PREFIX)torque<(EXECUTABLE_SUFFIX)',
+             '-o', '<(SHARED_INTERMEDIATE_DIR)/torque-generated',
+             '-v8-root', '<(V8_ROOT)',
+             '<@(torque_files_without_v8_root)',
+@@ -211,7 +211,7 @@
          {
            'action_name': 'generate_bytecode_builtins_list_action',
            'inputs': [
@@ -65,7 +74,7 @@ index 48ec392b..f9bb0fbe 100644
            ],
            'outputs': [
              '<(generate_bytecode_builtins_list_output)',
-@@ -533,7 +533,7 @@
+@@ -395,7 +395,7 @@
              ],
            },
            'inputs': [
@@ -74,7 +83,7 @@ index 48ec392b..f9bb0fbe 100644
            ],
            'outputs': [
              '<(INTERMEDIATE_DIR)/snapshot.cc',
-@@ -1448,7 +1448,7 @@
+@@ -1505,7 +1505,7 @@
          {
            'action_name': 'run_gen-regexp-special-case_action',
            'inputs': [
@@ -83,6 +92,6 @@ index 48ec392b..f9bb0fbe 100644
            ],
            'outputs': [
              '<(SHARED_INTERMEDIATE_DIR)/src/regexp/special-case.cc',
---
-2.31.1
+-- 
+2.37.3
 

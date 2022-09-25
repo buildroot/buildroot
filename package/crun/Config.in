@@ -1,0 +1,7 @@
+config BR2_PACKAGE_CRUN
+	bool "crun"
+	select BR2_PACKAGE_YAJL # libocispec
+	help
+	  crun is a fast and low-memory OCI Container Runtime in C.
+
+	  https://github.com/containers/crun
