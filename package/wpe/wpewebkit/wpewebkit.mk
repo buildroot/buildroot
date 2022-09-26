@@ -29,7 +29,7 @@ WPEWEBKIT_LICENSE_FILES = \
 	Source/WebCore/LICENSE-APPLE \
 	Source/WebCore/LICENSE-LGPL-2.1
 
-WPEWEBKIT_DEPENDENCIES = host-gperf host-python host-ruby \
+WPEWEBKIT_DEPENDENCIES = host-gperf host-ninja host-python host-ruby \
 	harfbuzz cairo icu jpeg libepoxy libgcrypt libgles libsoup libtasn1 \
 	libpng libxslt openjpeg webp wpebackend
 
@@ -211,7 +211,28 @@ WPEWEBKIT_FLAGS += -DUSE_WPEWEBKIT_PLATFORM_RPI=ON
 endif
 
 WPEWEBKIT_CONF_OPTS = \
+	-GNinja \
 	$(WPEWEBKIT_EXTRA_FLAGS) \
 	$(WPEWEBKIT_FLAGS)
+
+define WPEWEBKIT_BUILD_CMDS
+	$(TARGET_MAKE_ENV) $(WPEWEBKIT_NINJA_ENV) \
+		$(BR2_CMAKE) --build $(WPEWEBKIT_BUILDDIR) -- $(NINJA_OPTS) $(WPEWEBKIT_NINJA_OPTS)
+endef
+
+define WPEWEBKIT_INSTALL_CMDS
+	$(TARGET_MAKE_ENV) $(WPEWEBKIT_NINJA_ENV) \
+		$(BR2_CMAKE) --install $(WPEWEBKIT_BUILDDIR)
+endef
+
+define WPEWEBKIT_INSTALL_STAGING_CMDS
+	$(TARGET_MAKE_ENV) $(WPEWEBKIT_NINJA_ENV) DESTDIR=$(STAGING_DIR) \
+		$(BR2_CMAKE) --install $(WPEWEBKIT_BUILDDIR)
+endef
+
+define WPEWEBKIT_INSTALL_TARGET_CMDS
+	$(TARGET_MAKE_ENV) $(WPEWEBKIT_MAKE_ENV) DESTDIR=$(TARGET_DIR) \
+		$(BR2_CMAKE) --install $(WPEWEBKIT_BUILDDIR)
+endef
 
 $(eval $(cmake-package))
