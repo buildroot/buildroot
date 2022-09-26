@@ -156,6 +156,20 @@ config BR2_iwmmxt
 	  as a replacement architecture variant. See
 	  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=106972
 
+config BR2_PACKAGE_UHD_N230
+	bool "uhd N230 support removed"
+	select BR2_LEGACY
+	help
+	  uhd N230 support has been dropped by upstream since version
+	  4.0.0.0.
+
+config BR2_PACKAGE_UHD_RFNOC
+	bool "uhd RFNoC support removed"
+	select BR2_LEGACY
+	help
+	  uhd RFNoC support has been dropped by upstream since version
+	  4.0.0.0.
+
 config BR2_PACKAGE_GPSD_OLDSTYLE
 	bool "gpsd oldstyle removed"
 	select BR2_LEGACY

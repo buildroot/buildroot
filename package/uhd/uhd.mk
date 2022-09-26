@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-UHD_VERSION = 3.15.0.0
+UHD_VERSION = 4.3.0.0
 UHD_SITE = $(call github,EttusResearch,uhd,v$(UHD_VERSION))
-UHD_LICENSE = GPL-3.0+
-UHD_LICENSE_FILES = LICENSE.md host/LICENSE
+UHD_LICENSE = GPL-3.0+, LGPL-3.0+ (fpga/usrp3)
+UHD_LICENSE_FILES = LICENSE.md host/LICENSE fpga/usrp3/LICENSE.md
 
 UHD_SUPPORTS_IN_SOURCE_BUILD = NO
 UHD_SUBDIR = host
@@ -36,7 +36,6 @@ ifeq ($(BR2_ARM_CPU_HAS_NEON),y)
 UHD_CONF_OPTS += -DCMAKE_CXX_FLAGS="$(TARGET_CXXFLAGS) -mfpu=neon"
 UHD_CONF_OPTS += -DNEON_SIMD_ENABLE=ON
 else
-UHD_CONF_OPTS += -Dhave_mfpu_neon=0
 UHD_CONF_OPTS += -DNEON_SIMD_ENABLE=OFF
 endif
 
@@ -80,12 +79,6 @@ else
 UHD_CONF_OPTS += -DENABLE_MPMD=OFF
 endif
 
-ifeq ($(BR2_PACKAGE_UHD_N230),y)
-UHD_CONF_OPTS += -DENABLE_N230=ON
-else
-UHD_CONF_OPTS += -DENABLE_N230=OFF
-endif
-
 ifeq ($(BR2_PACKAGE_UHD_N300),y)
 UHD_CONF_OPTS += -DENABLE_N300=ON
 else
@@ -102,12 +95,6 @@ ifeq ($(BR2_PACKAGE_UHD_OCTOCLOCK),y)
 UHD_CONF_OPTS += -DENABLE_OCTOCLOCK=ON
 else
 UHD_CONF_OPTS += -DENABLE_OCTOCLOCK=OFF
-endif
-
-ifeq ($(BR2_PACKAGE_UHD_RFNOC),y)
-UHD_CONF_OPTS += -DENABLE_RFNOC=ON
-else
-UHD_CONF_OPTS += -DENABLE_RFNOC=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_UHD_PYTHON),y)
