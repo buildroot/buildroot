@@ -1,4 +1,4 @@
-From e481c2f990ffa71f205d4b9daf0823e71269a7f3 Mon Sep 17 00:00:00 2001
+From feb05271b484b158c14611839f968109e9cf3082 Mon Sep 17 00:00:00 2001
 From: Erico Nunes <nunes.erico@gmail.com>
 Date: Fri, 12 Aug 2016 23:11:56 +0200
 Subject: [PATCH] fwts: do not use -Werror
@@ -25,7 +25,7 @@ Signed-off-by: Vincent Stehlé <vincent.stehle@laposte.net>
  4 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index f40c3678..0ff5025b 100644
+index ca2f54e2..ed584abf 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -1,5 +1,5 @@
@@ -36,25 +36,25 @@ index f40c3678..0ff5025b 100644
  	  AC_CANONICAL_HOST
  	  AC_CONFIG_MACRO_DIR([m4])
 diff --git a/src/Makefile.am b/src/Makefile.am
-index cdabb386..7c2e5730 100644
+index 3bb35e5c..e9fe92fe 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -12,7 +12,7 @@ AM_CPPFLAGS = \
- 	-I$(top_srcdir)/src/acpica/source/compiler	\
+@@ -13,7 +13,7 @@ AM_CPPFLAGS = \
  	-I$(top_srcdir)/efi_runtime			\
- 	-pthread `pkg-config --cflags glib-2.0 gio-2.0` \
+ 	-I$(top_srcdir)/smccc_test			\
+ 	-pthread					\
 -	-Wall -Werror -Wextra				\
-+	-Wall -Wextra					\
++	-Wall -Wextra				\
  	-Wno-address-of-packed-member			\
  	-Wfloat-equal -Wmissing-declarations		\
  	-Wno-long-long -Wredundant-decls -Wshadow	\
 diff --git a/src/lib/src/Makefile.am b/src/lib/src/Makefile.am
-index 55c52b41..50efa97a 100644
+index d5d53dd7..76c48d4d 100644
 --- a/src/lib/src/Makefile.am
 +++ b/src/lib/src/Makefile.am
-@@ -25,7 +25,7 @@ AM_CPPFLAGS = \
- 	`pkg-config --silence-errors --cflags json-c`	\
- 	`pkg-config --cflags glib-2.0 gio-2.0` 		\
+@@ -22,7 +22,7 @@ AM_CPPFLAGS = \
+ 	-I$(top_srcdir)/src/acpica/source/include	\
+ 	-I$(top_srcdir)/src/acpica/source/compiler	\
  	-DDATAROOTDIR=\"$(datarootdir)\"		\
 -	-Wall -Werror -Wextra				\
 +	-Wall -Wextra					\
@@ -62,7 +62,7 @@ index 55c52b41..50efa97a 100644
  
  pkglib_LTLIBRARIES = libfwts.la
 diff --git a/src/utilities/Makefile.am b/src/utilities/Makefile.am
-index 1fc0fc02..53614e33 100644
+index de38f070..785975ff 100644
 --- a/src/utilities/Makefile.am
 +++ b/src/utilities/Makefile.am
 @@ -16,7 +16,7 @@
@@ -75,5 +75,5 @@ index 1fc0fc02..53614e33 100644
  
  bin_PROGRAMS = kernelscan
 -- 
-2.30.2
+2.36.1
 
