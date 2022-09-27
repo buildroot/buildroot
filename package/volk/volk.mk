@@ -15,7 +15,7 @@ VOLK_LICENSE_FILES = COPYING COPYING-LGPL
 VOLK_SUPPORTS_IN_SOURCE_BUILD = NO
 
 # host-python-mako are needed for volk to compile
-VOLK_DEPENDENCIES = host-python3 host-python-mako boost
+VOLK_DEPENDENCIES = host-python3 host-python-mako
 
 VOLK_CONF_OPTS = \
 	-DPYTHON_EXECUTABLE=$(HOST_DIR)/bin/python3 \
