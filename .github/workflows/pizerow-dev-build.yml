@@ -23,10 +23,12 @@ jobs:
       
       - name: Pre-flight check
         run: |
+          pwd
           which python
           python --version
           which pip || true
           pip --version || true
+          pip freeze || true
           python -m pip --version || true
           python -m venv tmp-venv
           . tmp-venv/bin/activate
@@ -35,6 +37,7 @@ jobs:
           python -m ensurepip --upgrade
           which pip
           pip install --upgrade pip
+          pip freeze
           pip install wheel
           pip install bluezero pybleno pyserial gpiozero pymemcache RPi.GPIO grpcio
           deactivate
