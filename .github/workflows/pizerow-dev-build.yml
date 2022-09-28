@@ -21,16 +21,15 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
       
-      - name: Pre-flight check
-        run: |
-          pwd
-          which python
-          python --version
-          which pip || true
-          pip --version || true
-          pip freeze || true
-          python -m pip --version || true
-          python -m venv tmp-venv
+      - run: pwd
+      - run: which python
+      - run: python --version
+      - run: which pip || true
+      - run: pip --version || true
+      - run: pip freeze || true
+      - run: python -m pip --version || true
+      - run: python -m venv tmp-venv
+      - run: |
           . tmp-venv/bin/activate
           which python
           python --version
