@@ -29,15 +29,15 @@ echo "BASE_DIR: ${BASE_DIR}"
 
 
 
-which python || true
-python --version || true
-which pip || true
-pip --version || true
-python -m pip --version || true
+which python3 || true
+python3 --version || true
+which pip3 || true
+pip3 --version || true
+python3 -m pip --version || true
 
 echo "`ls -al ${TARGET_DIR}/code`"
 
-python -m venv ${TARGET_DIR}/code/venv
+python3 -m venv ${TARGET_DIR}/code/venv
 
 # Activate new python venv
 . ${TARGET_DIR}/code/venv/bin/activate
