@@ -22,13 +22,13 @@ jobs:
       - uses: actions/checkout@v3
       
       - run: pwd
-      - run: which python
-      - run: python --version
-      - run: which pip || true
-      - run: pip --version || true
-      - run: pip freeze || true
-      - run: python -m pip --version || true
-      - run: python -m venv tmp-venv
+      - run: which python3
+      - run: python3 --version
+      - run: which pip3 || true
+      - run: pip3 --version || true
+      - run: pip3 freeze || true
+      - run: python3 -m pip --version || true
+      - run: python3 -m venv tmp-venv
       - run: |
           . tmp-venv/bin/activate
           which python
