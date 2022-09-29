@@ -56,13 +56,16 @@ else
 export COBALT_EXECUTABLE_TYPE = executable
 endif
 
+export COBALT_DATA_PATH = "$(subst ",,$(BR2_PACKAGE_WPEFRAMEWORK_DATA_PATH)")/Cobalt"
+COBALT_DATA_INSTALL_PATH = $(TARGET_DIR)/$(COBALT_DATA_PATH)
+
 define COBALT_BUILD_CMDS
     $(@D)/src/cobalt/build/gyp_cobalt -C $(COBALT_BUILD_TYPE) $(COBALT_PLATFORM)
     $(HOST_DIR)/usr/bin/ninja -C $(@D)/src/out/$(COBALT_PLATFORM)_$(COBALT_BUILD_TYPE) cobalt_deploy
 endef
 
 define COBALT_INSTALL_TARGET_CMDS
-    cp -a $(@D)/src/out/$(COBALT_PLATFORM)_$(COBALT_BUILD_TYPE)/content $(TARGET_DIR)/usr/share
+    cp -a $(@D)/src/out/$(COBALT_PLATFORM)_$(COBALT_BUILD_TYPE)/content/data/* $(COBALT_DATA_INSTALL_PATH)
 endef
 
 

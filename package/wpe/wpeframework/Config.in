@@ -125,7 +125,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_UMASK
 
 config BR2_PACKAGE_WPEFRAMEWORK_GROUP
     string "group"
-    default ""
+    default "thunder"
     help
       Set a system group that need to the used by Thunder
 
@@ -143,18 +143,54 @@ config BR2_PACKAGE_WPEFRAMEWORK_DISABLE_LEGACY_CONFIG_GENERATOR
 config BR2_PACKAGE_WPEFRAMEWORK_HIDE_NON_EXTERNAL_SYMBOLS
     bool "hide non external symbols"
     default y
+    help
+        This will hide all symbols that are not marked as EXTERNAL, making
+        the binaries flash footprint smaller.
 
 config BR2_PACKAGE_WPEFRAMEWORK_ENABLE_STRICT_COMPILER
-    bool "enable strict compiler settings"
+    bool "strict compiler settings"
     default y
+    help
+        Enabling this will trigger more warings and turn them into compile errors.
+
 
 config BR2_PACKAGE_WPEFRAMEWORK_EXCEPTIONS_ENABLE
-    bool "exceptions on"
+    bool "exceptions"
     default n
+    help
+        Enable the use of exceptions.
 
 config BR2_PACKAGE_WPEFRAMEWORK_PERFORMANCE_MONITOR
-    bool "performance monitor on"
+    bool "performance monitor"
     default n
+    help
+        Enable the performance monitor
+
+menu "Platform Device Groups"
+
+comment "This should match the groups applied to the respective platforms device resourses."
+
+config BR2_PACKAGE_WPEFRAMEWORK_PLATFORM_VIDEO_DEVICE_GROUP
+    string "video"
+    default video
+    help
+        This should be set to the group needed to access the video devices on the platform.
+
+
+# config BR2_PACKAGE_WPEFRAMEWORK_PLATFORM_AUDIO_DEVICE_GROUP
+#     string "audio"
+#     default audio
+#     help
+#         This should be set to the group needed to access the audio devices on the platform.
+
+
+# config BR2_PACKAGE_WPEFRAMEWORK_PLATFORM_INPUT_DEVICE_GROUP
+#     string "input"
+#     default input
+#     help
+#         This should be set to the group needed to access the inpout devices on the platform.
+         
+endmenu
 
 source "package/wpe/wpeframework-devtools/Config.in"
 

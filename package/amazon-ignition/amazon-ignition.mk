@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-AMAZON_IGNITION_VERSION = 92c39937e6ddc69bc67bbb1fdb715515c0a7c6e5
+AMAZON_IGNITION_VERSION = 4fcef097a49f2316d8a92fbf609f4d396b2a29a
 AMAZON_IGNITION_SITE_METHOD = git
 AMAZON_IGNITION_SITE = git@github.com:Metrological/amazon.git
 AMAZON_IGNITION_DEPENDENCIES = jpeg libpng wpeframework amazon-backend libcurl
@@ -131,32 +131,31 @@ define AMAZON_IGNITION_INSTALL_GENERIC
 endef
 
 define AMAZON_IGNITION_INSTALL_IGNITION
-    @$(call MESSAGE,"Installing ignition to: $(call qstrip,$(1))")  
-    @$(INSTALL) -v -d -m 0755 $(call qstrip,$(1))/$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)
+    @$(call MESSAGE,"Installing ignition to: $(call qstrip,$(TARGET_DIR))")
+    @$(INSTALL) -v -d -m 0755 $(call qstrip,$(TARGET_DIR))/$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)
 
-    $(INSTALL) -d $(1)/usr/lib
-    $(INSTALL) -m 755 ${AMAZON_IGNITION_BINARY_INSTALL_DIR}/lib/*.so $(1)/usr/lib
+    rsync -av --exclude lib/ ${AMAZON_IGNITION_BINARY_INSTALL_DIR}/ $(call qstrip,$(TARGET_DIR))$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)
 
-    rsync -av --exclude lib/ ${AMAZON_IGNITION_BINARY_INSTALL_DIR}/ $(call qstrip,$(1))$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)
-    $(INSTALL) -d $(call qstrip,$(1))$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib
+    $(INSTALL) -d $(call qstrip,$(TARGET_DIR))$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib
+    $(INSTALL) -m 755 ${AMAZON_IGNITION_BINARY_INSTALL_DIR}/lib/*.so $(call qstrip,$(TARGET_DIR))$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib
 
-    ln -sf "../../../lib/libignition.so" "$(call qstrip,$(1))$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib/libignition.so"
-    ln -sf "../../../lib/libprime-video-device-layer.so" "$(call qstrip,$(1))$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib/libprime-video-device-layer.so"
-    ln -sf "../../../lib/libamazon_playready.so" "$(call qstrip,$(1))$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib/libamazon_playready.so"
-    ln -sf "../../../lib/libamazon_player_mediapipeline.so" "$(call qstrip,$(1))$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib/libamazon_player_mediapipeline.so"
-    ln -sf "../../../lib/libamazon_player.so" "$(call qstrip,$(1))$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib/libamazon_player.so"
-
-    ln -sf "../../../lib/libamazon-backend.so" "$(call qstrip,$(1))$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib/libamazon-backend.so"
+    $(INSTALL) -d $(TARGET_DIR)/usr/lib
+    ln -sf "$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib/libignition.so" "$(TARGET_DIR)/usr/lib/libignition.so"
+    ln -sf "$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib/libamazon_player.so" "$(TARGET_DIR)/usr/lib/libamazon_player.so"
+    ln -sf "$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib/libamazon_playready.so" "$(TARGET_DIR)/usr/lib/libamazon_playready.so"
+    ln -sf "$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib/libamazon_player_mediapipeline.so" "$(TARGET_DIR)/usr/lib/libamazon_player_mediapipeline.so"
+    ln -sf "$(BR2_PACKAGE_AMAZON_IGNITION_IG_INSTALL_PATH)/lib/libprime-video-device-layer.so" "$(TARGET_DIR)/usr/lib/libprime-video-device-layer.so"
 endef
 
 define AMAZON_IGNITION_INSTALL_IGNITION_DEV
-    @$(call MESSAGE,"Installing ignition headers to: ${STAGING_DIR}/usr/include/ignition") 
-    @$(call AMAZON_IGNITION_INSTALL_IGNITION, ${STAGING_DIR})
+    @$(call MESSAGE,"Installing ignition headers to: ${STAGING_DIR}/usr/include/ignition")
 
     @$(INSTALL) -v -d -m 0755 ${STAGING_DIR}/usr/include/ignition
 
     @$(call MESSAGE,"Installing ignition header  [ ${AMAZON_IGNITION_DEVICE_LAYER_DIR}/../interface/ ] to: ${STAGING_DIR}/usr/include/ignition")
     cd "${AMAZON_IGNITION_DEVICE_LAYER_DIR}/../interface/include" && find -name "*.h" -type f -exec cp --parents {} ${STAGING_DIR}/usr/include/ignition/ \;
+    $(INSTALL) -d ${STAGING_DIR}/usr/lib
+    $(INSTALL) -m 755 ${AMAZON_IGNITION_BINARY_INSTALL_DIR}/lib/*.so ${STAGING_DIR}/usr/lib
 endef
 
 ifeq ($(BR2_PACKAGE_AMAZON_IGNITION_BUILD_TESTS),y)
@@ -205,8 +204,7 @@ else #BR2_PACKAGE_AMAZON_IGNITION_BUILD_TESTS
     endef
 
     define AMAZON_IGNITION_INSTALL_TARGET_CMDS
-        @$(call AMAZON_IGNITION_INSTALL_IGNITION_DEV)
-        @$(call AMAZON_IGNITION_INSTALL_IGNITION, ${TARGET_DIR})
+        @$(call AMAZON_IGNITION_INSTALL_IGNITION)
     endef
 
 endif # BR2_PACKAGE_AMAZON_IGNITION_BUILD_TESTS

@@ -304,7 +304,7 @@ if BR2_PACKAGE_WPEFRAMEWORK_CDMI
 
 config BR2_PACKAGE_WPEFRAMEWORK_CDMI_GROUP
     string "group"
-    default ""
+    default BR2_PACKAGE_WPEFRAMEWORK_CDMI_USER
     help
         run OpenCDM as this group, leave empty to use the same as
         WPEframework
@@ -372,7 +372,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_COBALT_USER
 
 config BR2_PACKAGE_WPEFRAMEWORK_COBALT_GROUP
     string "group"
-    default ""
+    default BR2_PACKAGE_WPEFRAMEWORK_COBALT_USER
     help
         run Cobalt under this group, leave empty to use the same as
         WPEframework
@@ -1385,7 +1385,7 @@ config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_USER
 
 config BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_GROUP
     string "group"
-    default ""
+    default BR2_PACKAGE_WPEFRAMEWORK_WEBKITBROWSER_USER
     help
         run WebKitBrowser as this group, leave empty to use the same as
         WPEframework

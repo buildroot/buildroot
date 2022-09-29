@@ -169,6 +169,18 @@ config BR2_PACKAGE_WPEFRAMEWORK_PLUGIN_NETFLIX_DEVICE_KEYS
     string "device keys"
     help 
         "Define the location where the hareware bound ESN and encryption keys can be found. Leave empty to disable"
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETFLIX_USER
+    string "user"
+    help
+        The user that amazon prime should use (root is not allowed)
+
+config BR2_PACKAGE_WPEFRAMEWORK_NETFLIX_GROUP
+    string "group"
+    default BR2_PACKAGE_WPEFRAMEWORK_NETFLIX_USER
+    help
+        The group that amazon prime user should use (root is not allowed)
+
 endif
 
 comment "netflix is dependent on the netflix package compiled as library"
