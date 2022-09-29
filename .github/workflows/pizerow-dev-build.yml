@@ -21,15 +21,18 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
       
-      - run: pwd
-      - run: which python3
-      - run: python3 --version
-      - run: which pip3 || true
-      - run: pip3 --version || true
-      - run: pip3 freeze || true
-      - run: python3 -m pip --version || true
-      - run: python3 -m venv tmp-venv
-      - run: |
+      - name: Python pre-flight check
+        run: |
+          pwd
+          ls -al
+          whoami
+          which python3
+          python3 --version
+          which pip3 || true
+          pip3 --version || true
+          pip3 freeze || true
+          python3 -m pip --version || true
+          python3 -m venv tmp-venv
           . tmp-venv/bin/activate
           which python
           python --version
@@ -41,12 +44,24 @@ jobs:
           pip install bluezero pybleno pyserial gpiozero pymemcache RPi.GPIO grpcio
           deactivate
 
-      - name: Build opentrickler_dev_defconfig
+      - name: Build pi-zero-w firmware
         run: |
-          pwd
-          ls -al
-          whoami
           make opentrickler_dev_defconfig
           make -j10
           ls -al
           ls -al output/images/
+          
+      - name: Package firmware image
+        run: |
+          xz --keep --force output/images/sdcard.img
+          shasum -a 256 output/images/sdcard.img* > shasum.txt
+          ls -al output/images/sdcard.img*
+          du -sh output/images/sdcard.img*
+            
+      - uses: actions/upload-artifact@v3
+        with:
+          name: pi-zero-w compressed artifacts
+          path: |
+            output/images/sdcard.img
+            output/images/sdcard.img.xz
+            shasum.txt
