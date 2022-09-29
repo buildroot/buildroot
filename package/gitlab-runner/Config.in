@@ -13,7 +13,7 @@ config BR2_PACKAGE_GITLAB_RUNNER
 	select BR2_PACKAGE_LIBCURL_CURL # runtime
 	select BR2_PACKAGE_LIBCURL_OPENSSL # runtime, for ca-certificates.
 	select BR2_PACKAGE_OPENSSL # runtime
-	select BR2_PACKAGE_LIBOPENSSL # runtime
+	select BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL # runtime
 	select BR2_PACKAGE_LIBOPENSSL_BIN # runtime
 	select BR2_PACKAGE_TAR # runtime
 	help
