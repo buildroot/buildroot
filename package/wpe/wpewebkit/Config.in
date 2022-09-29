@@ -168,6 +168,20 @@ config BR2_PACKAGE_WPEWEBKIT_USE_GSTREAMER_WEBKIT_HTTP_SRC
 	help
 	  Use the WebKit network resource loader to download Media data over HTTP(S)
 
+config BR2_PACKAGE_WPEWEBKIT_ENABLE_TEXT_SINK
+	bool "Enable text sink"
+	default y
+	help
+	  Defines ENABLE_TEXT_SINK=ON
+
+config BR2_PACKAGE_WPEWEBKIT_WEBDRIVER
+	bool
+	default y
+
+endif
+
+if BR2_PACKAGE_WPEWEBKIT2_22 || BR2_PACKAGE_WPEWEBKIT2_38
+
 config BR2_PACKAGE_WPEWEBKIT_ENABLE_NATIVE_VIDEO
 	bool "Enable native video"
 	default y
@@ -179,12 +193,6 @@ config BR2_PACKAGE_WPEWEBKIT_ENABLE_NATIVE_AUDIO
 	default n
 	help
 	  Defines ENABLE_NATIVE_AUDIO=ON
-
-config BR2_PACKAGE_WPEWEBKIT_ENABLE_TEXT_SINK
-	bool "Enable text sink"
-	default y
-	help
-	  Defines ENABLE_TEXT_SINK=ON
 
 endif
 
