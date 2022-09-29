@@ -56,8 +56,14 @@ else
 export COBALT_EXECUTABLE_TYPE = executable
 endif
 
+ifeq ($(BR2_PACKAGE_COBALT_USE_WPEFRAMEWORK_DATA_PATH), y)
 export COBALT_DATA_PATH = "$(subst ",,$(BR2_PACKAGE_WPEFRAMEWORK_DATA_PATH)")/Cobalt"
 COBALT_DATA_INSTALL_PATH = $(TARGET_DIR)/$(COBALT_DATA_PATH)
+COBALT_DATA_SRC_PATH = content/data/*
+else
+COBALT_DATA_INSTALL_PATH = $(TARGET_DIR)/usr/share/
+COBALT_DATA_SRC_PATH = content
+endif
 
 define COBALT_BUILD_CMDS
     $(@D)/src/cobalt/build/gyp_cobalt -C $(COBALT_BUILD_TYPE) $(COBALT_PLATFORM)
@@ -65,7 +71,8 @@ define COBALT_BUILD_CMDS
 endef
 
 define COBALT_INSTALL_TARGET_CMDS
-    cp -a $(@D)/src/out/$(COBALT_PLATFORM)_$(COBALT_BUILD_TYPE)/content/data/* $(COBALT_DATA_INSTALL_PATH)
+    mkdir -p $(COBALT_DATA_INSTALL_PATH)
+    cp -a $(@D)/src/out/$(COBALT_PLATFORM)_$(COBALT_BUILD_TYPE)/$(COBALT_DATA_SRC_PATH) $(COBALT_DATA_INSTALL_PATH)
 endef
 
 

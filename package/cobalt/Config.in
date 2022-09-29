@@ -14,6 +14,13 @@ config BR2_PACKAGE_COBALT_IMAGE_AS_LIB
        This option allows to create cobalt.so,
        default is cobalt bin
 
+config BR2_PACKAGE_COBALT_USE_WPEFRAMEWORK_DATA_PATH
+    bool "Use Thunder defined Data path"
+    default y
+    help
+        This option allows to set thunder define data path
+        for cobalt data installation
+
 choice BR2_PACKAGE_COBALT_BUILD_TYPE
     prompt "Build type"
     default BR2_PACKAGE_COBALT_BUILD_TYPE_GOLD
