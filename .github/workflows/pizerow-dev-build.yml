@@ -11,6 +11,11 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  board_matrix:
+    strategy:
+      matrix:
+        board: [dev]
+
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
@@ -44,24 +49,24 @@ jobs:
           pip install bluezero pybleno pyserial gpiozero pymemcache RPi.GPIO grpcio
           deactivate
 
-      - name: Build pi-zero-w firmware
+      - name: Build firmware
         run: |
-          make opentrickler_dev_defconfig
+          make opentrickler_${{ matrix.board }}_defconfig
           make -j10
-          ls -al
-          ls -al output/images/
           
       - name: Package firmware image
         run: |
-          xz --keep --force output/images/sdcard.img
-          shasum -a 256 output/images/sdcard.img* > shasum.txt
-          ls -al output/images/sdcard.img*
-          du -sh output/images/sdcard.img*
+          ls -al output/images/
+          cp output/images/sdcard.img .
+          xz --keep --force sdcard.img
+          mv sdcard.img.xz ${{ matrix.board }}_sdcard.img.xz
+          shasum -a 256 ${{ matrix.board }}_sdcard.img.xz > shasum.txt
+          ls -al *sdcard.img*
+          du -sh *sdcard.img*
             
       - uses: actions/upload-artifact@v3
         with:
-          name: pi-zero-w compressed artifacts
+          name: ${{ matrix.board }} firmware
           path: |
-            output/images/sdcard.img
-            output/images/sdcard.img.xz
+            ${{ matrix.board }}_sdcard.img.xz
             shasum.txt

@@ -40,16 +40,4 @@ genimage \
 	--outputpath "${BINARIES_DIR}" \
 	--config "${GENIMAGE_CFG}"
 
-
-OT_IMG_FILENAME="opentrickler-python-$(date +%Y%m%d).img"
-OT_XZ_FILENAME="${OT_IMG_FILENAME}.xz"
-
-xz --keep --force ${BINARIES_DIR}/sdcard.img
-shasum -a 256 ${BINARIES_DIR}/sdcard.img.xz
-ls -al ${BINARIES_DIR}/sdcard.img*
-du -sh ${BINARIES_DIR}/sdcard.img*
-
-cp ${BINARIES_DIR}/sdcard.img.xz ${OT_XZ_FILENAME}
-shasum -a 256 ${OT_XZ_FILENAME}
-
 exit $?
