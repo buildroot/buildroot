@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-VOLK_VERSION = 2.5.1
+VOLK_VERSION = 2.5.2
 VOLK_SITE = https://github.com/gnuradio/volk/releases/download/v$(VOLK_VERSION)
 VOLK_SOURCE = volk-$(VOLK_VERSION).tar.xz
 # See https://github.com/gnuradio/volk/tree/v2.5.1#license for some
