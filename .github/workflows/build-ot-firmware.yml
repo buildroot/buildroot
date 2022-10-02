@@ -18,12 +18,22 @@ jobs:
     # Define the firmware matrix to build
     strategy:
       matrix:
-        board: [dev, prod, pi3_dev]
+        board: [pi0w_dev, pi0w_prod, pi3_dev]
+
+    outputs:
+      date: ${{ steps.date.outputs.date }}
+      sha: ${{ steps.sha.outputs.sha }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+
+      - id: date
+        run: echo "::set-output name=date::$(date +'%Y%m%d')"
+
+      - id: sha
+        run: echo "::set-output name=sha::${GITHUB_SHA:0:7}"
       
       - name: Python pre-flight check
         run: |
@@ -58,8 +68,8 @@ jobs:
           ls -al output/images/
           cp output/images/sdcard.img .
           xz --keep --force sdcard.img
-          mv sdcard.img.xz ${{ matrix.board }}_sdcard.img.xz
-          shasum -a 256 ${{ matrix.board }}_sdcard.img.xz > shasum.txt
+          mv sdcard.img.xz opentrickler-${{ matrix.board }}-${{ steps.date.outputs.date }}-${{ steps.sha.outputs.sha }}.img.xz
+          shasum -a 256 opentrickler-${{ matrix.board }}-${{ steps.date.outputs.date }}-${{ steps.sha.outputs.sha }}.img.xz > shasum.txt
           ls -al *sdcard.img*
           du -sh *sdcard.img*
             
@@ -67,8 +77,8 @@ jobs:
         with:
           name: ${{ matrix.board }} firmware
           path: |
-            ${{ matrix.board }}_sdcard.img.xz
+            opentrickler-${{ matrix.board }}-${{ steps.date.outputs.date }}-${{ steps.sha.outputs.sha }}.img.xz
             shasum.txt
 
       - name: Garbage collection
-        run: make distclean
+        run: make clean

@@ -8,15 +8,15 @@ BR2_TOOLCHAIN_BUILDROOT_CXX=y
 BR2_TARGET_GENERIC_HOSTNAME="opentrickler"
 BR2_TARGET_GENERIC_ISSUE="Open Trickler by Ammolytics"
 BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_MDEV=y
-BR2_ROOTFS_DEVICE_TABLE="system/device_table.txt board/ammolytics/opentrickler/device_table.txt"
+BR2_ROOTFS_DEVICE_TABLE="system/device_table.txt board/ammolytics/opentrickler-pi0w/device_table.txt"
 BR2_ROOTFS_DEVICE_TABLE_SUPPORTS_EXTENDED_ATTRIBUTES=y
 # BR2_TARGET_ENABLE_ROOT_LOGIN is not set
 # BR2_TARGET_GENERIC_GETTY is not set
-BR2_ROOTFS_USERS_TABLES="board/ammolytics/opentrickler/user_table.txt"
-BR2_ROOTFS_OVERLAY="board/ammolytics/opentrickler/rootfs_overlay/"
-BR2_ROOTFS_POST_BUILD_SCRIPT="board/ammolytics/opentrickler/post-build.sh"
-BR2_ROOTFS_POST_FAKEROOT_SCRIPT="board/ammolytics/opentrickler/post-fakeroot.sh"
-BR2_ROOTFS_POST_IMAGE_SCRIPT="board/ammolytics/opentrickler/post-image.sh"
+BR2_ROOTFS_USERS_TABLES="board/ammolytics/opentrickler-pi0w/user_table.txt"
+BR2_ROOTFS_OVERLAY="board/ammolytics/opentrickler-pi0w/rootfs_overlay/"
+BR2_ROOTFS_POST_BUILD_SCRIPT="board/ammolytics/opentrickler-pi0w/post-build.sh"
+BR2_ROOTFS_POST_FAKEROOT_SCRIPT="board/ammolytics/opentrickler-pi0w/post-fakeroot.sh"
+BR2_ROOTFS_POST_IMAGE_SCRIPT="board/ammolytics/opentrickler-pi0w/post-image.sh"
 BR2_LINUX_KERNEL=y
 BR2_LINUX_KERNEL_CUSTOM_TARBALL=y
 BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION="$(call github,raspberrypi,linux,0b54dbda3cca2beb51e236a25738784e90853b64)/linux-0b54dbda3cca2beb51e236a25738784e90853b64.tar.gz"
