@@ -1,3 +1,51 @@
+2022.02.6, released October 2nd, 2022
+
+	Important / security related fixes.
+
+	Fixed compatibility issue with make 4.3 and the 'printvars' /
+	'show-vars' commands.
+
+	Dependencies: Ensure 'find' and 'xargs' are available on the
+	build host.
+
+	A large number of typo fixes.
+
+	Defconfigs: Galileo: Fix defconfig syntax, Licheepi zero: Fix
+	U-Boot dependencies, Bananapi m1, Olimx a20 olinuxino lime
+	1+2, a33 olinuxino: Use standard FPU configuration, Pine 64
+	sopine, Rockpro 64: Change to mainline ATF to fix build issue.
+
+	Updated/fixed packages: ace, arm-trusted-firmware,
+	babeltrace2, boost, botan, busybox, clamav, cog, connman,
+	containerd, cups, dhcpcd, directfb, docker-cli, docker-engine,
+	edk2, edk2-platforms, elf2flt, expat, ffmpeg, ficl,
+	freeswitch, freetype, gcc, gdb, git, gnutls, go,
+	graphicsmagic, grub2, gst1-plugins-bad, gst1-plugins-good,
+	heirloom-mailx, icu, igh-ethercat, imagemagick, imx-gpu-viv,
+	jose, jpeg, jquery-ui-themes, kodi, libconfuse, libfreeimage,
+	libglvnd, libgpg-error, libinput, libmdbx, libsepol, libtirpc,
+	libupnp, libvirt, libvncserver, libwpe, libxml2, libzlib,
+	linux, linux-tools, lshw, m4, makedevs, makedumpfile,
+	mali-driver, mariadb, memcached, mesa3d, minidlna, mosquitto,
+	mutt, mv-ddr-marvell, ncurses, ne10, netsniff-ng,
+	networkd-dispatcher, ocrad, opencv4, openocd, openssh, pango,
+	pcsc-lite, polkit, postgis, postgresql, python-paho-mqtt,
+	python-pygame, python3, qemu, qlibc,
+	qoriq-cadence-dp-firmware, qt5xmlpatterns, ranger, rng-tools,
+	rsync, rsyslog, rtl8189es, rtl8723be, runc, rustc,
+	sconeserver, sdl2, snort, sox, sqlite, squid, stress-ng,
+	strongswan, sunxi-mali-utgard-driver, syslinux, syslog-ng,
+	tcf-agent, tcpreplay, tesseract-ocr, tinyproxy, uacme,
+	uboot-tools, uclibc, unzip, usbguard, v4l2loopback, vim,
+	webkitgtk, wolfssl, wpewebkit, xfsprogs, xserver_xorg-server,
+	xtables-addons, zziplib
+
+	Issues resolved:
+
+	#13216: [Documentation] 2020.02.6 requires GNU find utils
+	#14796: 64 bit time and seccomp conflict (OpenSSH server crash)
+	#14951: boost compile error when running make silently
+
 2022.02.5, released August 31st, 2022
 
 	Important / security related fixes.
