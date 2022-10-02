@@ -1,3 +1,53 @@
+2022.05.3, released October 2nd, 2022
+
+	Important / security related fixes.
+
+	Fixed compatibility issue with make 4.3 and the 'printvars' /
+	'show-vars' commands.
+
+	Dependencies: Ensure 'find' and 'xargs' are available on the
+	build host.
+
+	A large number of typo fixes.
+
+	Defconfigs: Galileo: Fix defconfig syntax, Licheepi zero: Fix
+	U-Boot dependencies, Bananapi m1, Olimx a20 olinuxino lime
+	1+2, a33 olinuxino: Use standard FPU configuration, Pine 64
+	sopine, Rockpro 64: Change to mainline ATF to fix build issue.
+
+	Updated/fixed packages: ace, arm-trusted-firmware,
+	babeltrace2, boost, botan, busybox, clamav, cog, containerd,
+	cups, dhcpcd, directfb, docker-cli, docker-engine, connman,
+	edk2, edk2-platform, elf2flt, expat, ffmpeg, ficl, freeswitch,
+	gcc, gdb, git, glibc, gnutls, go, gocryptfs, graphicsmagick,
+	grub2, gst1-plugins-bad, gst1-plugins-good, heirloom-mailx,
+	icu, igh-ethercat, imagemagick, imx-gpu-viv, jack2, jose,
+	jpeg, jquery-ui-themes, kodi, kvm-unit-tests, libcamera,
+	libconfuse, libfreeimage, libglvnd, libgpg-error, libinput,
+	libmdbx, libp11, libsepol, libtirpc, libupnp, libvirt,
+	libvncserver, libwpe, libxml2, libzlib, linux, linux-tools,
+	lshw, m4, makedevs, mali-driver, mariadb, memcached, mesa3d,
+	minidlna, mosquitto, mutt, mv-ddr-marvell, ncurses, ne10,
+	netsniff-ng, networkd-dispatcher, ocrad, ola, opencv4,
+	openocd, openssh, openvmtools, pango, pcsc-lite, pistache,
+	polkit, postgis, postgresql, python-crossbar,
+	python-paho-mqtt, python-pygame, python-service-identity,
+	python-txdbus, python3, qemu, qlibc,
+	qoriq-cadence-dp-firmware, qt5xmlpatterns, ranger, redis,
+	rng-tools, rsync, rsyslog, rtl8189es, rtl8723bu, runc, rustc,
+	sconeserver, sdl2, snort, sox, sqlite, squid, stress-ng,
+	strongswan, sunxi-mali-utgard-driver, sysdig, syslinux,
+	syslog-ng, tcf-agent, tcpreplay, tesseract-ocr, tinyproxy,
+	uacme, uboot-tools, uclibc, unzip, usbguard, v4l2loopback,
+	vim, waffle, webkitgtk, weston, wolfssl, wpewebkit, xfsprogs,
+	xserver_xorg-server, xtables-addons, zziplib
+
+	Issues resolved:
+
+	#14556: python-crossbar fails to build
+	#14796: 64 bit time and seccomp conflict (OpenSSH server crash)
+	#14951: boost compile error when running make  silently
+
 2022.05.2, released August 31st, 2022
 
 	Important / security related fixes.
