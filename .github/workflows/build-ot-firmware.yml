@@ -61,7 +61,7 @@ jobs:
       - name: Build firmware
         run: |
           make opentrickler_${{ matrix.board }}_defconfig
-          make -j10
+          make -j12
           
       - name: Package firmware image
         run: |
