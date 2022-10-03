@@ -81,4 +81,6 @@ jobs:
             shasum.txt
 
       - name: Garbage collection
-        run: make clean
+        run: |
+          make clean
+          rm shasum.txt *.img *.img.xz
