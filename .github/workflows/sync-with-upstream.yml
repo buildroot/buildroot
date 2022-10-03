@@ -1,0 +1,27 @@
+# Sync local branches with buildroot upstream on a regular basis.
+name: sync-with-upstream
+
+on:
+  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+  schedule:
+    # Monday at 12:30pm UTC which is usually 5:30am Pacific
+    - cron: '30 12 * * 1'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      - name: Sync with upstream then merge local changes
+        run: |
+          git checkout 2022.05.x
+          git pull
+          git checkout opentrickler-2022.05.x
+          git merge 2022.05.x
+          git push origin opentrickler-2022.05.x
+
