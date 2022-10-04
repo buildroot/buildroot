@@ -4,6 +4,7 @@ import infra.basetest
 
 
 class TestZfsBase(infra.basetest.BRTest):
+    timeout = 60 * 3
     config = \
         """
         BR2_x86_64=y
@@ -57,7 +58,7 @@ class TestZfsBase(infra.basetest.BRTest):
             "arc_summary",
         ]
         for cmd in cmds:
-            self.assertRunOk(cmd)
+            self.assertRunOk(cmd, timeout=self.timeout)
 
 
 class TestZfsGlibc(TestZfsBase):
