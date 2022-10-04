@@ -4,29 +4,42 @@
 #
 ################################################################################
 
-EFIVAR_VERSION = 37
+EFIVAR_VERSION = 38
 EFIVAR_SITE = $(call github,rhboot,efivar,$(EFIVAR_VERSION))
 EFIVAR_LICENSE = LGPL-2.1
 EFIVAR_LICENSE_FILES = COPYING
 EFIVAR_INSTALL_STAGING = YES
+EFIVAR_DEPENDENCIES = host-efivar
 
 # -fPIC is needed at least on MIPS, otherwise fails to build shared
 # -library.
+# SUBDIRS is redefined so it skips building docs.
+# LD_DASH_T is redefined as the linker detection does not seem to
+# work properly for cross-compilation.
 EFIVAR_MAKE_OPTS = \
 	libdir=/usr/lib \
-	LDFLAGS="$(TARGET_LDFLAGS) -fPIC"
+	LDFLAGS="$(TARGET_LDFLAGS) -fPIC" \
+	TOPDIR=$(@D) \
+	SUBDIRS=src \
+	LD_DASH_T=-T
 
-define EFIVAR_BUILD_CMDS
+define HOST_EFIVAR_BUILD_CMDS
 	# makeguids is an internal host tool and must be built separately with
 	# $(HOST_CC), otherwise it gets cross-built.
 	$(HOST_MAKE_ENV) $(HOST_CONFIGURE_OPTS) \
 		CFLAGS="$(HOST_CFLAGS) -std=gnu99" \
-		$(MAKE) -C $(@D)/src gcc_cflags=  makeguids
+		TOPDIR=$(@D) CFLAGS_GCC= \
+		$(MAKE) -C $(@D)/src makeguids
+endef
 
+define EFIVAR_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE1) -C $(@D) \
-		AR=$(TARGET_AR) NM=$(TARGET_NM) RANLIB=$(TARGET_RANLIB) \
 		$(EFIVAR_MAKE_OPTS) \
 		all
+endef
+
+define HOST_EFIVAR_INSTALL_CMDS
+	$(INSTALL) -D -m 0755 $(@D)/src/makeguids $(HOST_DIR)/usr/bin/makeguids
 endef
 
 define EFIVAR_INSTALL_STAGING_CMDS
@@ -44,3 +57,4 @@ define EFIVAR_INSTALL_TARGET_CMDS
 endef
 
 $(eval $(generic-package))
+$(eval $(host-generic-package))
