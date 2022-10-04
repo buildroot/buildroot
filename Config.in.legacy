@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2022.11"
 
+config BR2_KERNEL_HEADERS_5_17
+	bool "kernel headers version 5.17.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 5.17.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
 config BR2_iwmmxt
 	bool "ARM iwmmxt variant removed"
 	select BR2_LEGACY
