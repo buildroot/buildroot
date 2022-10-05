@@ -4,8 +4,13 @@ name: build-ot-firmware
 
 # Controls when the workflow will run
 on:
-  pull_request:
-    types: [labeled, synchronize]
+  # Note(eric): Disabled for now in favor of cron. Run on commits to existing PR.
+  #pull_request:
+  #  types: [labeled, synchronize]
+  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+  schedule:
+    # Monday at 1:00pm UTC which is usually 6:00am Pacific
+    - cron: '0 13 * * 1'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
