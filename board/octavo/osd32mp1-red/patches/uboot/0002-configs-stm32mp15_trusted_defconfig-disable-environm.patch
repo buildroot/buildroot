@@ -1,32 +1,49 @@
-From 3feee3e00dcb9467b5345671300e7c73f3e05f93 Mon Sep 17 00:00:00 2001
+From 27a516e2ad464bf1de5e23e8277e0f6d6735bd21 Mon Sep 17 00:00:00 2001
 From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Tue, 5 Oct 2021 14:31:28 +0200
+Date: Mon, 3 Oct 2022 12:20:40 +0200
 Subject: [PATCH 2/2] configs/stm32mp15_trusted_defconfig: disable environment
-
-select only ENV_IS_NOWHERE
 
 Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 ---
- configs/stm32mp15_trusted_defconfig | 6 ------
- 1 file changed, 6 deletions(-)
+ board/st/stm32mp1/stm32mp1.c        | 4 ++++
+ configs/stm32mp15_trusted_defconfig | 9 ---------
+ 2 files changed, 4 insertions(+), 9 deletions(-)
 
+diff --git a/board/st/stm32mp1/stm32mp1.c b/board/st/stm32mp1/stm32mp1.c
+index 48591b2f1e..ba510d843c 100644
+--- a/board/st/stm32mp1/stm32mp1.c
++++ b/board/st/stm32mp1/stm32mp1.c
+@@ -78,6 +78,10 @@ DECLARE_GLOBAL_DATA_PTR;
+ #define USB_START_LOW_THRESHOLD_UV	1230000
+ #define USB_START_HIGH_THRESHOLD_UV	2150000
+ 
++#ifndef CONFIG_SYS_MMC_ENV_DEV
++#define CONFIG_SYS_MMC_ENV_DEV -1
++#endif
++
+ int board_early_init_f(void)
+ {
+ 	/* nothing to do, only used in SPL */
 diff --git a/configs/stm32mp15_trusted_defconfig b/configs/stm32mp15_trusted_defconfig
-index 7635d7f6c7..6ec4bcd080 100644
+index 2161ccbefa..fd3fed8fb0 100644
 --- a/configs/stm32mp15_trusted_defconfig
 +++ b/configs/stm32mp15_trusted_defconfig
-@@ -38,12 +38,6 @@ CONFIG_CMD_MTDPARTS=y
+@@ -45,15 +45,6 @@ CONFIG_CMD_EXT4_WRITE=y
+ CONFIG_CMD_MTDPARTS=y
  CONFIG_CMD_UBI=y
- CONFIG_DEFAULT_DEVICE_TREE="stm32mp157c-ev1"
  CONFIG_ENV_IS_NOWHERE=y
--CONFIG_ENV_IS_IN_EXT4=y
+-CONFIG_ENV_IS_IN_MMC=y
 -CONFIG_ENV_IS_IN_SPI_FLASH=y
 -CONFIG_ENV_IS_IN_UBI=y
--CONFIG_ENV_EXT4_INTERFACE="mmc"
--CONFIG_ENV_EXT4_DEVICE_AND_PART="0:auto"
--CONFIG_ENV_EXT4_FILE="/uboot.env"
+-CONFIG_SYS_REDUNDAND_ENVIRONMENT=y
+-CONFIG_ENV_UBI_PART="UBI"
+-CONFIG_ENV_UBI_VOLUME="uboot_config"
+-CONFIG_ENV_UBI_VOLUME_REDUND="uboot_config_r"
+-CONFIG_SYS_RELOC_GD_ENV_ADDR=y
+-CONFIG_SYS_MMC_ENV_DEV=-1
  CONFIG_STM32_ADC=y
- CONFIG_USB_FUNCTION_FASTBOOT=y
- CONFIG_FASTBOOT_BUF_ADDR=0xC0000000
+ CONFIG_CLK_SCMI=y
+ CONFIG_SET_DFU_ALT_INFO=y
 -- 
 2.25.1
 
