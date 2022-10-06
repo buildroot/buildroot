@@ -1,0 +1,36 @@
+From 9a1982c563e218b7695e6a174c8230d3b063eb27 Mon Sep 17 00:00:00 2001
+From: Gary Bisson <gary.bisson@boundarydevices.com>
+Date: Thu, 6 Oct 2022 09:04:22 +0200
+Subject: [PATCH] wl: Fix libdrm dependency when protocols are used
+
+As the comment says, cog-platform-wl.c needs drm_fourcc.h to build
+properly when wayland_weston_direct_display is enabled.
+
+However, libdrm.pc doesn't specify "include/libdrm" as part of its
+includedir but whether in its cflags. So use the compile_args dep
+instead of includes to fix the build failure.
+
+Signed-off-by: Gary Bisson <gary.bisson@boundarydevices.com>
+(cherry picked from commit 32c1d9533bcdc22cbc01d02bf2e6ac0d4bda2dc2)
+Signed-off-by: Adrian Perez de Castro <aperez@igalia.com>
+[Upstream status: https://github.com/Igalia/cog/pull/501]
+---
+ platform/wayland/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/platform/wayland/meson.build b/platform/wayland/meson.build
+index f1e18ec..31e4460 100644
+--- a/platform/wayland/meson.build
++++ b/platform/wayland/meson.build
+@@ -67,7 +67,7 @@ if wayland_platform_weston_protocols.length() > 0
+ 
+     # The code uses definitions from the drm_fourcc.h header, but does not
+     # need to link the library; libdrm here is only a build-time dependency.
+-    wayland_platform_dependencies += [dependency('libdrm').partial_dependency(includes: true)]
++    wayland_platform_dependencies += [dependency('libdrm').partial_dependency(compile_args: true)]
+ endif
+ 
+ 
+-- 
+2.38.0
+

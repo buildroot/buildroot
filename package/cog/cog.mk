@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-COG_VERSION = 0.14.1
+COG_VERSION = 0.16.0
 COG_SITE = https://wpewebkit.org/releases
 COG_SOURCE = cog-$(COG_VERSION).tar.xz
 COG_INSTALL_STAGING = YES
@@ -12,37 +12,40 @@ COG_DEPENDENCIES = dbus wpewebkit wpebackend-fdo wayland
 COG_LICENSE = MIT
 COG_LICENSE_FILES = COPYING
 COG_CONF_OPTS = \
-	-DCOG_BUILD_PROGRAMS=ON \
-	-DCOG_PLATFORM_HEADLESS=ON \
-	-DINSTALL_MAN_PAGES=OFF \
-	-DCOG_HOME_URI='$(call qstrip,$(BR2_PACKAGE_COG_PROGRAMS_HOME_URI))' \
-	-DUSE_SOUP2=ON
+	-Ddocumentation=false \
+	-Dmanpages=false \
+	-Dprograms=true \
+	-Dsoup2=enabled \
+	-Dcog_home_uri='$(call qstrip,$(BR2_PACKAGE_COG_PROGRAMS_HOME_URI))' \
+	-Dplatforms='$(subst $(space),$(comma),$(strip $(COG_PLATFORMS_LIST)))'
+
+COG_PLATFORMS_LIST = headless
 
 ifeq ($(BR2_PACKAGE_WESTON),y)
-COG_CONF_OPTS += -DCOG_WESTON_DIRECT_DISPLAY=ON
+COG_CONF_OPTS += -Dwayland_weston_direct_display=true
 COG_DEPENDENCIES += weston
 else
-COG_CONF_OPTS += -DCOG_WESTON_DIRECT_DISPLAY=OFF
+COG_CONF_OPTS += -Dwayland_weston_direct_display=false
 endif
 
 ifeq ($(BR2_PACKAGE_COG_PLATFORM_FDO),y)
-COG_CONF_OPTS += -DCOG_PLATFORM_WL=ON
+COG_PLATFORMS_LIST += wayland
 COG_DEPENDENCIES += libxkbcommon wayland-protocols
-else
-COG_CONF_OPTS += -DCOG_PLATFORM_WL=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_COG_PLATFORM_DRM),y)
-COG_CONF_OPTS += -DCOG_PLATFORM_DRM=ON
+COG_PLATFORMS_LIST += drm
 COG_DEPENDENCIES += libdrm libinput libgbm libegl udev
-else
-COG_CONF_OPTS += -DCOG_PLATFORM_DRM=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_COG_USE_SYSTEM_DBUS),y)
-COG_CONF_OPTS += -DCOG_DBUS_SYSTEM_BUS=ON
+COG_CONF_OPTS += -Dcog_dbus_control=system
 else
-COG_CONF_OPTS += -DCOG_DBUS_SYSTEM_BUS=OFF
+COG_CONF_OPTS += -Dcog_dbus_control=user
 endif
 
-$(eval $(cmake-package))
+ifeq ($(BR2_PACKAGE_LIBMANETTE),y)
+COG_DEPENDENCIES += libmanette
+endif
+
+$(eval $(meson-package))
