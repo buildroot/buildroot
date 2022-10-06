@@ -44,4 +44,11 @@ else
 CRUN_CONF_OPTS += --disable-systemd
 endif
 
+ifeq ($(BR2_PACKAGE_RUNC),)
+define CRUN_CREATE_SYMLINK
+	ln -sf crun $(TARGET_DIR)/usr/bin/runc
+endef
+CRUN_POST_INSTALL_TARGET_HOOKS += CRUN_CREATE_SYMLINK
+endif
+
 $(eval $(autotools-package))
