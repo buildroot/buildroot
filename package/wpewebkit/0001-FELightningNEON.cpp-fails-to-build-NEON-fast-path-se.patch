@@ -1,4 +1,4 @@
-From 59c9e3a4aeb4753be97b3817d106816d9a4ebe73 Mon Sep 17 00:00:00 2001
+From da159b0150cba0e5e5251e4cc6a090440f73cb7c Mon Sep 17 00:00:00 2001
 From: Adrian Perez de Castro <aperez@igalia.com>
 Date: Thu, 2 Jun 2022 11:19:06 +0300
 Subject: [PATCH] FELightningNEON.cpp fails to build, NEON fast path seems
@@ -35,15 +35,28 @@ left for a follow-up fix.
 Signed-off-by: Adrian Perez de Castro <aperez@igalia.com>
 [Upstream status: https://bugs.webkit.org/show_bug.cgi?id=241182]
 ---
+ Source/WebCore/Sources.txt                    |  1 +
  .../cpu/arm/filters/FELightingNEON.cpp        |  4 +-
- .../graphics/cpu/arm/filters/FELightingNEON.h | 52 +++++++++----------
+ .../graphics/cpu/arm/filters/FELightingNEON.h | 54 +++++++++----------
  .../graphics/filters/DistantLightSource.h     |  4 ++
  .../platform/graphics/filters/FELighting.h    |  7 ---
  .../graphics/filters/PointLightSource.h       |  4 ++
  .../graphics/filters/SpotLightSource.h        |  4 ++
  .../software/FELightingSoftwareApplier.h      | 16 ++++++
- 7 files changed, 56 insertions(+), 35 deletions(-)
+ 8 files changed, 58 insertions(+), 36 deletions(-)
 
+diff --git a/Source/WebCore/Sources.txt b/Source/WebCore/Sources.txt
+index 8ce3510fe1a8..efd56bcb8746 100644
+--- a/Source/WebCore/Sources.txt
++++ b/Source/WebCore/Sources.txt
+@@ -2136,6 +2136,7 @@ platform/graphics/WebMResourceClient.cpp
+ platform/graphics/WOFFFileFormat.cpp
+ platform/graphics/WidthIterator.cpp
+ platform/graphics/cpu/arm/filters/FEBlendNeonApplier.cpp
++platform/graphics/cpu/arm/filters/FELightingNEON.cpp
+ platform/graphics/displaylists/DisplayList.cpp
+ platform/graphics/displaylists/DisplayListDrawingContext.cpp
+ platform/graphics/displaylists/DisplayListItems.cpp
 diff --git a/Source/WebCore/platform/graphics/cpu/arm/filters/FELightingNEON.cpp b/Source/WebCore/platform/graphics/cpu/arm/filters/FELightingNEON.cpp
 index f6ff8c20a5a8..42a97ffc5372 100644
 --- a/Source/WebCore/platform/graphics/cpu/arm/filters/FELightingNEON.cpp
@@ -67,7 +80,7 @@ index f6ff8c20a5a8..42a97ffc5372 100644
      // Calling a powf function from the assembly code would require to save
      // and reload a lot of NEON registers. Since the base is in range [0..1]
 diff --git a/Source/WebCore/platform/graphics/cpu/arm/filters/FELightingNEON.h b/Source/WebCore/platform/graphics/cpu/arm/filters/FELightingNEON.h
-index b17c603d40d3..e4629cda0b7c 100644
+index b17c603d40d3..c6d17f573eca 100644
 --- a/Source/WebCore/platform/graphics/cpu/arm/filters/FELightingNEON.h
 +++ b/Source/WebCore/platform/graphics/cpu/arm/filters/FELightingNEON.h
 @@ -24,14 +24,15 @@
@@ -98,9 +111,10 @@ index b17c603d40d3..e4629cda0b7c 100644
  {
 -    alignas(16) FELightingFloatArgumentsForNeon floatArguments;
 -    FELightingPaintingDataForNeon neonData = {
+-        data.pixels->data(),
 +    WebCore::FELightingFloatArgumentsForNeon alignas(16) floatArguments;
 +    WebCore::FELightingPaintingDataForNeon neonData = {
-         data.pixels->data(),
++        data.pixels->bytes(),
          1,
 -        data.widthDecreasedByOne - 1,
 -        data.heightDecreasedByOne - 1,
@@ -244,7 +258,7 @@ index 0c073bc13f8c..e0db00545c17 100644
      float m_surfaceScale;
      float m_diffuseConstant;
 diff --git a/Source/WebCore/platform/graphics/filters/PointLightSource.h b/Source/WebCore/platform/graphics/filters/PointLightSource.h
-index 5c9c7fb783e6..e53aa012ac1c 100644
+index 126b3b2350f6..d906db21aa9c 100644
 --- a/Source/WebCore/platform/graphics/filters/PointLightSource.h
 +++ b/Source/WebCore/platform/graphics/filters/PointLightSource.h
 @@ -26,6 +26,10 @@
@@ -259,7 +273,7 @@ index 5c9c7fb783e6..e53aa012ac1c 100644
  
  class PointLightSource : public LightSource {
 diff --git a/Source/WebCore/platform/graphics/filters/SpotLightSource.h b/Source/WebCore/platform/graphics/filters/SpotLightSource.h
-index 04e331ec4ec0..763c8d400b00 100644
+index 641b205f986d..64380d9b6eb8 100644
 --- a/Source/WebCore/platform/graphics/filters/SpotLightSource.h
 +++ b/Source/WebCore/platform/graphics/filters/SpotLightSource.h
 @@ -26,6 +26,10 @@
@@ -274,7 +288,7 @@ index 04e331ec4ec0..763c8d400b00 100644
  
  class SpotLightSource : public LightSource {
 diff --git a/Source/WebCore/platform/graphics/filters/software/FELightingSoftwareApplier.h b/Source/WebCore/platform/graphics/filters/software/FELightingSoftwareApplier.h
-index 3875b0a4b5de..6d3864aafb9a 100644
+index c974d92115ff..e2896660cfbd 100644
 --- a/Source/WebCore/platform/graphics/filters/software/FELightingSoftwareApplier.h
 +++ b/Source/WebCore/platform/graphics/filters/software/FELightingSoftwareApplier.h
 @@ -36,6 +36,7 @@
