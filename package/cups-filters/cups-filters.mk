@@ -80,7 +80,6 @@ else
 CUPS_FILTERS_CONF_OPTS += --disable-exif
 endif
 
-
 define CUPS_FILTERS_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 0755 package/cups-filters/S82cups-browsed \
 		$(TARGET_DIR)/etc/init.d/S82cups-browsed
