@@ -2,7 +2,7 @@
 BR2_x86_64=y
 
 # Toolchain
-BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_17=y
+BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_18=y
 
 # System
 BR2_TARGET_GENERIC_GETTY_PORT="ttyS0"
@@ -19,7 +19,7 @@ BR2_PACKAGE_HOST_MTOOLS=y
 BR2_TARGET_GRUB2=y
 BR2_TARGET_GRUB2_X86_64_EFI=y
 # Add mandatory modules from MENDER_GRUBENV_MANDATORY_MODULES
-BR2_TARGET_GRUB2_BUILTIN_MODULES_EFI="boot linux ext2 fat squash4 part_msdos part_gpt normal efi_gop loadenv hashsum echo halt gcry_sha256 test regexp"
+BR2_TARGET_GRUB2_BUILTIN_MODULES_EFI="boot linux ext2 fat squash4 part_msdos part_gpt normal efi_gop loadenv hashsum echo halt gcry_sha256 test regexp sleep"
 BR2_TARGET_GRUB2_INSTALL_TOOLS=y
 
 # Required tools to create a mender image
