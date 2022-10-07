@@ -1,0 +1,15 @@
+config BR2_PACKAGE_REDIS_PLUS_PLUS
+	bool "redis-plus-plus"
+	depends on BR2_INSTALL_LIBSTDCPP
+	select BR2_PACKAGE_HIREDIS
+	help
+	  Redis client written in C++
+
+	  This is a C++ client library for Redis.
+	  It's based on hiredis, and is compatible
+	  with C++ 17, C++ 14, and C++ 11.
+
+	  https://github.com/sewenew/redis-plus-plus
+
+comment "redis-plus-plus needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP
