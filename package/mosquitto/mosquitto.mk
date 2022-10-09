@@ -128,4 +128,24 @@ define MOSQUITTO_USERS
 endef
 endif
 
+HOST_MOSQUITTO_DEPENDENCIES = host-pkgconf host-openssl
+
+HOST_MOSQUITTO_MAKE_OPTS = \
+	$(HOST_CONFIGURE_OPTS) \
+	UNAME=Linux \
+	STRIP=true \
+	prefix=$(HOST_DIR) \
+	WITH_WRAP=no \
+	WITH_DOCS=no \
+	WITH_TLS=yes
+
+define HOST_MOSQUITTO_BUILD_CMDS
+	$(MAKE) -C $(@D)/apps/mosquitto_passwd $(HOST_MOSQUITTO_MAKE_OPTS)
+endef
+
+define HOST_MOSQUITTO_INSTALL_CMDS
+	$(MAKE) -C $(@D)/apps/mosquitto_passwd $(HOST_MOSQUITTO_MAKE_OPTS) install
+endef
+
 $(eval $(generic-package))
+$(eval $(host-generic-package))
