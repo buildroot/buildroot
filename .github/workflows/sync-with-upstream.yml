@@ -19,6 +19,7 @@ jobs:
 
       - name: Sync with upstream then merge local changes
         run: |
+          git fetch
           git checkout 2022.05.x
           git pull
           git checkout opentrickler-2022.05.x
