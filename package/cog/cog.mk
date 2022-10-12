@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ifeq ($(BR2_PACKAGE_WPEWEBKIT2_38),y)
+ifeq ($(BR2_PACKAGE_WPEWEBKIT2_28)$(BR2_PACKAGE_WPEWEBKIT2_38),y)
 COG_VERSION = 0.14.1
 else
 COG_VERSION = 0.6.0
@@ -27,7 +27,7 @@ ifneq ($(BR2_PACKAGE_COG_PLATFORM_HEADLESS)$(BR2_PACKAGE_COG_PLATFORM_FDO)$(BR2_
 COG_DEPENDENCIES += wpebackend-fdo
 endif
 
-ifeq ($(BR2_PACKAGE_WPEWEBKIT2_38),y)
+ifeq ($(BR2_PACKAGE_WPEWEBKIT2_28)$(BR2_PACKAGE_WPEWEBKIT2_38),y)
 COG_FDO_PLATFORM_CMAKE_OPTION = COG_PLATFORM_WL
 COG_CONF_OPTS += \
 	-DCOG_PLATFORM_GTK4=OFF \
@@ -76,6 +76,19 @@ COG_CONF_OPTS += -DCOG_DBUS_SYSTEM_BUS=ON
 else
 COG_CONF_OPTS += -DCOG_DBUS_SYSTEM_BUS=OFF
 endif # BR2_PACKAGE_COG_USE_SYSTEM_DBUS
+
+# WPE WebKit 2.28 has been patched to use libsoup3, but the pkg-config
+# module is still named wpe-webkit-1.0 (instead of -1.1), so patch the
+# build system after extracting the tarball.
+ifeq ($(BR2_PACKAGE_WPEWEBKIT2_28),y)
+define COG_POST_EXTRACT_ADJUST_PKGCONF_REQUIREMENT
+	sed -i \
+		-e 's/wpe-webkit-1.1/wpe-webkit-1.0/g' \
+		-e 's/wpe-webkit-1.0>=[0-9.]\+/wpe-webkit-1.0/g' \
+		$(@D)/CMakeLists.txt
+endef
+COG_POST_EXTRACT_HOOKS += COG_POST_EXTRACT_ADJUST_PKGCONF_REQUIREMENT
+endif # BR2_PACKAGE_WPEWEBKIT2_28
 
 define COG_INSTALL_SETTINGS
 	$(INSTALL) -D -m 0644 package/cog/websettings.txt $(TARGET_DIR)/root
