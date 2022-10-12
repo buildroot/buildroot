@@ -23,8 +23,9 @@ jobs:
           git remote -v
           git remote add upstream https://github.com/buildroot/buildroot.git
           git remote -v
-          git fetch upstream
+          git fetch origin
           git checkout 2022.05.x
+          git fetch upstream
           git merge upstream/2022.05.x
           git checkout opentrickler-2022.05.x
           git merge 2022.05.x
