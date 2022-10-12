@@ -71,18 +71,24 @@ choice
 
 config BR2_PACKAGE_WPEWEBKIT2_22
         bool "2.22"
+        depends on BR2_PACKAGE_LIBSOUP_VERSION_2
         help
           Build WPEWEBKIT 2.22
 
+comment "version 2.22 depends on libsoup2"
+	depends on !BR2_PACKAGE_LIBSOUP_VERSION_2
+
 config BR2_PACKAGE_WPEWEBKIT2_28
         bool "2.28"
-        select BR2_PACKAGE_LIBSOUP_VERSION_3
+        depends on BR2_PACKAGE_LIBSOUP_VERSION_3
         help
           Build WPEWEBKIT 2.28
 
+comment "version 2.28 depends on libsoup3"
+	depends on !BR2_PACKAGE_LIBSOUP_VERSION_3
+
 config BR2_PACKAGE_WPEWEBKIT2_38
 	bool "2.38"
-	select BR2_PACKAGE_LIBSOUP_VERSION_3
 	help
 	  Build WPE WebKit 2.38.x
 
