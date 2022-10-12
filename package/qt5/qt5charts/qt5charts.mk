@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5CHARTS_VERSION = 16c2a8821135bf89369c4e3c5a1bdff8b05ffdb5
+QT5CHARTS_VERSION = 841083c263f16f8acb81e4915bf24bbed0461c9a
 QT5CHARTS_SITE = $(QT5_SITE)/qtcharts/-/archive/$(QT5CHARTS_VERSION)
 QT5CHARTS_SOURCE = qtcharts-$(QT5CHARTS_VERSION).tar.bz2
 QT5CHARTS_INSTALL_STAGING = YES

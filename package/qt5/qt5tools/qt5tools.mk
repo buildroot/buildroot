@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5TOOLS_VERSION = 53ee43a51b5a3de2877dafffc78e71ff55926708
+QT5TOOLS_VERSION = 32912a06aadfc3dcbc34e0a668ce2c78351eee6e
 QT5TOOLS_SITE = $(QT5_SITE)/qttools/-/archive/$(QT5TOOLS_VERSION)
 QT5TOOLS_SOURCE = qttools-$(QT5TOOLS_VERSION).tar.bz2
 

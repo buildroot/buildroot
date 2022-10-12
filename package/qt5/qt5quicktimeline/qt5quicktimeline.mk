@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5QUICKTIMELINE_VERSION = 2ce816fa5822bcc1c47678447405b2e5dc1312c1
+QT5QUICKTIMELINE_VERSION = 87ad61716a7cba5a070d8a7b1756c8b2b48d5d53
 QT5QUICKTIMELINE_SITE = $(QT5_SITE)/qtquicktimeline/-/archive/$(QT5QUICKTIMELINE_VERSION)
 QT5QUICKTIMELINE_SOURCE = qtquicktimeline-$(QT5QUICKTIMELINE_VERSION).tar.bz2
 QT5QUICKTIMELINE_DEPENDENCIES = qt5declarative

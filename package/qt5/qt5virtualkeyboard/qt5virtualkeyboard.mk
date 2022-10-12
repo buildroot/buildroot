@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5VIRTUALKEYBOARD_VERSION = e8ae4757dd32e8dbf69a7c57f2bc5c1e238416db
+QT5VIRTUALKEYBOARD_VERSION = 9fbb837b55887bec5d73fad142c853ef68db35b3
 QT5VIRTUALKEYBOARD_SITE = $(QT5_SITE)/qtvirtualkeyboard/-/archive/$(QT5VIRTUALKEYBOARD_VERSION)
 QT5VIRTUALKEYBOARD_SOURCE = qtvirtualkeyboard-$(QT5VIRTUALKEYBOARD_VERSION).tar.bz2
 QT5VIRTUALKEYBOARD_DEPENDENCIES = qt5declarative qt5svg

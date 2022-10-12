@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5X11EXTRAS_VERSION = 51b0a5a2e3e35f4cb17da1e7cb4babef6294bfb4
+QT5X11EXTRAS_VERSION = 982f20eb585d77e5b5c721e05a466d7161f7f2d1
 QT5X11EXTRAS_SITE = $(QT5_SITE)/qtx11extras/-/archive/$(QT5X11EXTRAS_VERSION)
 QT5X11EXTRAS_SOURCE = qtx11extras-$(QT5X11EXTRAS_VERSION).tar.bz2
 QT5X11EXTRAS_INSTALL_STAGING = YES

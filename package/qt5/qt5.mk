@@ -5,7 +5,7 @@
 ################################################################################
 
 QT5_VERSION_MAJOR = 5.15
-QT5_VERSION = $(QT5_VERSION_MAJOR).8
+QT5_VERSION = $(QT5_VERSION_MAJOR).10
 QT5_SITE = https://invent.kde.org/qt/qt
 
 include $(sort $(wildcard package/qt5/*/*.mk))

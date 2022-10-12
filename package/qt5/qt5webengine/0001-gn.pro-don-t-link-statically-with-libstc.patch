@@ -28,24 +28,25 @@ linking statically by default.
 [1] https://github.com/qt/qtwebengine-chromium/commit/cfab9198a9917f42cf08b1caf84ab9b71aac1911#diff-905c8f054808213577c0a92d1b704615
 
 Signed-off-by: Romain Naour <romain.naour@gmail.com>
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+[Giulio: rebased to qt5.15.10]
 ---
  src/buildtools/gn.pro | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/src/buildtools/gn.pro b/src/buildtools/gn.pro
-index 033202e6..5dd8e241 100644
+index f94694da0..19079a5b3 100644
 --- a/src/buildtools/gn.pro
 +++ b/src/buildtools/gn.pro
 @@ -20,7 +20,8 @@ build_pass|!debug_and_release {
- 
+
              gn_gen_args = --no-last-commit-position --out-path $$out_path \
                            --cc \"$$which($$QMAKE_CC)\" --cxx \"$$which($$QMAKE_CXX)\" \
 -                          --ld \"$$which($$QMAKE_LINK)\"
 +                          --ld \"$$which($$QMAKE_LINK)\" \
 +                          --no-static-libstdc++
- 
-             msvc:!clang_cl: gn_gen_args += --use-lto
- 
--- 
-2.25.4
+             !isEmpty(QMAKE_AR): gn_gen_args += --ar \"$$which($$first(QMAKE_AR))\"
 
+             msvc:!clang_cl: gn_gen_args += --use-lto
+--
+2.34.1

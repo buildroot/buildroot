@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5XMLPATTERNS_VERSION = dfcae10dec8c1c2c544ad0cd303cea113b0af51d
+QT5XMLPATTERNS_VERSION = 30e6c84fe2752cde8b53aff9d38c2095cd7c8761
 QT5XMLPATTERNS_SITE = $(QT5_SITE)/qtxmlpatterns/-/archive/$(QT5XMLPATTERNS_VERSION)
 QT5XMLPATTERNS_SOURCE = qtxmlpatterns-$(QT5XMLPATTERNS_VERSION).tar.bz2
 QT5XMLPATTERNS_INSTALL_STAGING = YES
