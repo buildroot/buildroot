@@ -21,7 +21,7 @@ jobs:
         run: |
           which gh
           whoami
-          git config --get user.username
+          git config --list | head -10
           git remote -v
           git remote add upstream https://github.com/buildroot/buildroot.git
           git remote -v
