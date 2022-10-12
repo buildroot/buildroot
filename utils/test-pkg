@@ -201,7 +201,7 @@ build_one() {
 
     # Validate that we generate proper json as show-info
     { tput smso; printf '>>> Running show-info\n'; tput rmso; } >> "${dir}/logfile" 2> /dev/null;
-    JQ="$(which jq)"
+    JQ="$(which jq 2> /dev/null)"
     if [ -z "${JQ}" ]; then
         make O="${dir}" host-jq >> "${dir}/logfile" 2>&1
         JQ="${dir}/host/bin/jq"
