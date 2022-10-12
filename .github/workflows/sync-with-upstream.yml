@@ -20,6 +20,8 @@ jobs:
       - name: Sync with upstream then merge local changes
         run: |
           which gh
+          whoami
+          git config --get user.username
           git remote -v
           git remote add upstream https://github.com/buildroot/buildroot.git
           git remote -v
