@@ -47,4 +47,10 @@ else
 WOLFTPM_CONF_OPTS += --disable-nuvoton
 endif
 
+ifeq ($(BR2_PACKAGE_WOLFTPM_DEBUG),y)
+WOLFTPM_CONF_OPTS += --enable-debug
+else
+WOLFTPM_CONF_OPTS += --disable-debug
+endif
+
 $(eval $(autotools-package))

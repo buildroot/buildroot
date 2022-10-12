@@ -35,6 +35,11 @@ config BR2_PACKAGE_WOLFTPM_NUVOTON
 	  Enable support of TPM 2.0 extra functionality offered by the
 	  Nuvoton NPCT750 chip.
 
+config BR2_PACKAGE_WOLFTPM_DEBUG
+	bool "Debug output"
+	help
+	  Enable debug messages in wolfTPM.
+
 comment "wolfCrypt hooks need a toolchain w/ threads, dynamic library"
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
 
