@@ -21,10 +21,12 @@ jobs:
         run: |
           which gh
           whoami
-          git config --list | head -10
+          cat .git/config
+          git config --list | head -20
           git remote -v
           git remote add upstream https://github.com/buildroot/buildroot.git
           git remote -v
+          cat .git/config
           git fetch origin
           git checkout 2022.05.x
           git fetch upstream
@@ -32,7 +34,5 @@ jobs:
           git push origin 2022.05.x
           git pull
           git checkout opentrickler-2022.05.x
-          git log 2022.05.x...
           git merge 2022.05.x
-          git push origin opentrickler-2022.05.x
 
