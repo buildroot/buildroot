@@ -1,6 +1,6 @@
 config BR2_PACKAGE_MMC_UTILS
 	bool "mmc-utils"
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_0
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_4
 	help
 	  MMC utils
 
@@ -17,5 +17,5 @@ config BR2_PACKAGE_MMC_UTILS_ENABLE_DANGEROUS_COMMANDS
 
 endif
 
-comment "mmc-utils needs a toolchain w/ headers >= 3.0"
-	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_0
+comment "mmc-utils needs a toolchain w/ headers >= 4.4"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_4
