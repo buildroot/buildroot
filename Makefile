@@ -653,7 +653,7 @@ ifneq ($(GLIBC_GENERATE_LOCALES),)
 PACKAGES += host-localedef
 
 define GENERATE_GLIBC_LOCALES
-	$(MAKE) -f support/misc/gen-glibc-locales.mk \
+	+$(MAKE) -f support/misc/gen-glibc-locales.mk \
 		ENDIAN=$(call LOWERCASE,$(BR2_ENDIAN)) \
 		LOCALES="$(GLIBC_GENERATE_LOCALES)" \
 		Q=$(Q)
