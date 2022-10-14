@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-AGENT_PROXY_VERSION = agent-proxy-1.97
-AGENT_PROXY_SITE = git://git.kernel.org/pub/scm/utils/kernel/kgdb/agent-proxy.git
+AGENT_PROXY_VERSION = 1.97
+AGENT_PROXY_SITE = https://git.kernel.org/pub/scm/utils/kernel/kgdb/agent-proxy.git/snapshot
 AGENT_PROXY_LICENSE = GPL-2.0
 AGENT_PROXY_LICENSE_FILES = COPYING
 
