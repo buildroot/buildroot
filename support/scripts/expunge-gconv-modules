@@ -19,7 +19,7 @@
 # we handle each with slightly different code, since the second never has
 # associated aliases.
 
-gawk -v files="${1}" '
+awk -v files="${2}" '
 $1 == "alias" {
     aliases[$3] = aliases[$3] " " $2;
 }
