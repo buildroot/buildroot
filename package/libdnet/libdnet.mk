@@ -14,6 +14,7 @@ LIBDNET_CONF_OPTS = \
 	--with-gnu-ld \
 	--with-check=no
 LIBDNET_CONFIG_SCRIPTS = dnet-config
+LIBDNET_DEPENDENCIES = host-pkgconf
 
 ifeq ($(BR2_PACKAGE_LIBDNET_PYTHON),y)
 LIBDNET_DEPENDENCIES += host-python-cython python3
