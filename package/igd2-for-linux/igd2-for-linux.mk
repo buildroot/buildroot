@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IGD2_FOR_LINUX_VERSION = 2.1
+IGD2_FOR_LINUX_VERSION = 2.2
 IGD2_FOR_LINUX_SITE = \
 	$(call github,Orange-OpenSource,igd2-for-linux,v$(IGD2_FOR_LINUX_VERSION))
 
