@@ -17,6 +17,12 @@ LIBKCAPI_CONF_ENV = \
 	ac_cv_path_XMLTO=""
 LIBKCAPI_MAKE_OPTS = CPPFLAGS="$(TARGET_CPPFLAGS)"
 
+ifeq ($(BR2_PACKAGE_LIBKCAPI_DGSTAPP),y)
+LIBKCAPI_CONF_OPTS += --enable-kcapi-dgstapp
+else
+LIBKCAPI_CONF_OPTS += --disable-kcapi-dgstapp
+endif
+
 ifeq ($(BR2_PACKAGE_LIBKCAPI_ENCAPP),y)
 LIBKCAPI_CONF_OPTS += --enable-kcapi-encapp
 else
