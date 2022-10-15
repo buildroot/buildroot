@@ -8,6 +8,13 @@ config BR2_PACKAGE_LIBKCAPI
 
 if BR2_PACKAGE_LIBKCAPI
 
+config BR2_PACKAGE_LIBKCAPI_ASYM
+	bool "build asymmetric ciphers library"
+	help
+	  Using this library requires the Linux kernel to be patched
+	  with libkcapi Linux kernel patches found in libkcapi
+	  kernel-patches/ directory.
+
 config BR2_PACKAGE_LIBKCAPI_DGSTAPP
 	bool "build dgst application"
 
@@ -20,6 +27,13 @@ config BR2_PACKAGE_LIBKCAPI_HASHER
 
 comment "hasher application needs a toolchain w/ dynamic library"
 	depends on BR2_STATIC_LIBS
+
+config BR2_PACKAGE_LIBKCAPI_KPP
+	bool "build KPP library"
+	help
+	  Using this library requires the Linux kernel to be patched
+	  with libkcapi Linux kernel patches found in libkcapi
+	  kernel-patches/ directory.
 
 config BR2_PACKAGE_LIBKCAPI_RNGAPP
 	bool "build rng read application"

@@ -17,6 +17,12 @@ LIBKCAPI_CONF_ENV = \
 	ac_cv_path_XMLTO=""
 LIBKCAPI_MAKE_OPTS = CPPFLAGS="$(TARGET_CPPFLAGS)"
 
+ifeq ($(BR2_PACKAGE_LIBKCAPI_ASYM),y)
+LIBKCAPI_CONF_OPTS += --enable-lib-asym
+else
+LIBKCAPI_CONF_OPTS += --disable-lib-asym
+endif
+
 ifeq ($(BR2_PACKAGE_LIBKCAPI_DGSTAPP),y)
 LIBKCAPI_CONF_OPTS += --enable-kcapi-dgstapp
 else
@@ -33,6 +39,12 @@ ifeq ($(BR2_PACKAGE_LIBKCAPI_HASHER),y)
 LIBKCAPI_CONF_OPTS += --enable-kcapi-hasher
 else
 LIBKCAPI_CONF_OPTS += --disable-kcapi-hasher
+endif
+
+ifeq ($(BR2_PACKAGE_LIBKCAPI_KPP),y)
+LIBKCAPI_CONF_OPTS += --enable-lib-kpp
+else
+LIBKCAPI_CONF_OPTS += --disable-lib-kpp
 endif
 
 ifeq ($(BR2_PACKAGE_LIBKCAPI_RNGAPP),y)
