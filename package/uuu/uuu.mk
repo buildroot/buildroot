@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-UUU_VERSION = 1.4.243
+UUU_VERSION = 1.5.4
 UUU_SOURCE = uuu_source-$(UUU_VERSION).tar.gz
 UUU_SITE = https://github.com/NXPmicro/mfgtools/releases/download/uuu_$(UUU_VERSION)
 UUU_LICENSE = BSD 3-Clause "New" or "Revised" License
