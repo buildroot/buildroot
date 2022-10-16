@@ -1,0 +1,11 @@
+config BR2_PACKAGE_HOST_AGENT_PROXY
+	bool "host agent-proxy"
+	help
+	  This is a simple, small proxy which was intended for use
+	  with kgdb, or gdbserver type connections where you want to
+	  share a text console and a debug session.
+
+	  The idea is that you use the agent-proxy to connect to a
+	  serial port directly or to a remote terminal server.
+
+	  git://git.kernel.org/pub/scm/utils/kernel/kgdb/agent-proxy.git

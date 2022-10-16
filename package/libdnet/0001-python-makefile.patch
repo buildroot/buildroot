@@ -6,6 +6,8 @@ Subject: [PATCH] python makefile
 Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
 [adam: refresh for 1.14; make it git-formatted]
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
+[Fabrice: updated for 1.16.1]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  python/Makefile.am | 1 +
  1 file changed, 1 insertion(+)
@@ -15,9 +17,9 @@ index 1a74ef2..59fe0f3 100644
 --- a/python/Makefile.am
 +++ b/python/Makefile.am
 @@ -11,6 +11,7 @@ $(srcdir)/dnet.c: $(srcdir)/dnet.pyx
- 	pyrexc $(srcdir)/dnet.pyx
  
- python-build: $(srcdir)/dnet.c
+ 
+ python-build: 
 +	CC="$(CC)" LDSHARED="$(CC) -shared" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" $(PYTHON) setup.py build_ext -I$(PYINCDIR) -L$(PYLIBDIR)
  	$(PYTHON) setup.py build
  	touch python-build

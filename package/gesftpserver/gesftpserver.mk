@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GESFTPSERVER_VERSION = 1
+GESFTPSERVER_VERSION = 2
 GESFTPSERVER_SOURCE = sftpserver-$(GESFTPSERVER_VERSION).tar.gz
 GESFTPSERVER_SITE = http://www.greenend.org.uk/rjk/sftpserver
 GESFTPSERVER_LICENSE = GPL-2.0+
@@ -25,7 +25,7 @@ GESFTPSERVER_DEPENDENCIES += \
 
 # Python on the host is only used for tests, which we don't use in
 # Buildroot
-GESFTPSERVER_CONF_ENV += rjk_cv_python24=false
+GESFTPSERVER_CONF_ENV += rjk_cv_python3=false
 
 # openssh/dropbear looks here
 define GESFTPSERVER_ADD_SYMLINK
