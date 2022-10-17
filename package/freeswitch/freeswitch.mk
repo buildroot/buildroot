@@ -4,20 +4,19 @@
 #
 ################################################################################
 
-FREESWITCH_VERSION = 1.10.7
+FREESWITCH_VERSION = 1.10.8
 FREESWITCH_SOURCE = freeswitch-$(FREESWITCH_VERSION).-release.tar.xz
 FREESWITCH_SITE = https://files.freeswitch.org/freeswitch-releases
 # External modules need headers/libs from staging
 FREESWITCH_INSTALL_STAGING = YES
 FREESWITCH_LICENSE = MPL-1.1, \
 	GPL-3.0+ with font exception (fonts), \
-	Apache-2.0 (apr, apr-util), \
+	Apache-2.0 (apr), \
 	BSD-3-Clause (libsrtp)
 
 FREESWITCH_LICENSE_FILES = \
 	COPYING \
 	libs/apr/LICENSE \
-	libs/apr-util/LICENSE \
 	libs/srtp/LICENSE
 
 FREESWITCH_CPE_ID_VENDOR = freeswitch
@@ -49,6 +48,10 @@ FREESWITCH_CONF_ENV += \
 	ac_cv_have_php=no \
 	ac_cv_prog_PHP_CONFIG=false \
 	ac_cv_have_php_config=no
+
+# disable pcap detection, pcap is an optional dependency for unit tests
+FREESWITCH_CONF_ENV += \
+	ac_cv_prog_HAVE_PCAP_CONFIG=false
 
 # copied from freeswitch/configure.ac, line 258+
 FREESWITCH_CONF_ENV += \
