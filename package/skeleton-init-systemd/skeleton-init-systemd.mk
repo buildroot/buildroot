@@ -30,7 +30,6 @@ else
 # back there by the tmpfiles.d mechanism.
 define SKELETON_INIT_SYSTEMD_ROOT_RO_OR_RW
 	echo "/dev/root / auto ro 0 1" >$(TARGET_DIR)/etc/fstab
-	echo "tmpfs /var tmpfs mode=1777 0 0" >>$(TARGET_DIR)/etc/fstab
 endef
 
 define SKELETON_INIT_SYSTEMD_PRE_ROOTFS_VAR
@@ -52,6 +51,8 @@ define SKELETON_INIT_SYSTEMD_PRE_ROOTFS_VAR
 			|| exit 1; \
 		fi; \
 	done >$(TARGET_DIR)/usr/lib/tmpfiles.d/00-buildroot-var.conf
+	$(INSTALL) -D -m 0644 $(SKELETON_INIT_SYSTEMD_PKGDIR)/var.mount \
+		$(TARGET_DIR)/usr/lib/systemd/system/var.mount
 endef
 SKELETON_INIT_SYSTEMD_ROOTFS_PRE_CMD_HOOKS += SKELETON_INIT_SYSTEMD_PRE_ROOTFS_VAR
 
