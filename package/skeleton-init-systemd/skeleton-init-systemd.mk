@@ -29,7 +29,6 @@ else
 # a real (but empty) directory, and the "factory files" will be copied
 # back there by the tmpfiles.d mechanism.
 define SKELETON_INIT_SYSTEMD_ROOT_RO_OR_RW
-	mkdir -p $(TARGET_DIR)/etc/systemd/tmpfiles.d
 	echo "/dev/root / auto ro 0 1" >$(TARGET_DIR)/etc/fstab
 	echo "tmpfs /var tmpfs mode=1777 0 0" >>$(TARGET_DIR)/etc/fstab
 endef
@@ -38,6 +37,7 @@ define SKELETON_INIT_SYSTEMD_PRE_ROOTFS_VAR
 	rm -rf $(TARGET_DIR)/usr/share/factory/var
 	mv $(TARGET_DIR)/var $(TARGET_DIR)/usr/share/factory/var
 	mkdir -p $(TARGET_DIR)/var
+	mkdir -p $(TARGET_DIR)/usr/lib/tmpfiles.d
 	for i in $(TARGET_DIR)/usr/share/factory/var/* \
 		 $(TARGET_DIR)/usr/share/factory/var/lib/* \
 		 $(TARGET_DIR)/usr/share/factory/var/lib/systemd/*; do \
@@ -51,7 +51,7 @@ define SKELETON_INIT_SYSTEMD_PRE_ROOTFS_VAR
 			printf "C! %s - - - -\n" "$${j}" \
 			|| exit 1; \
 		fi; \
-	done >$(TARGET_DIR)/etc/tmpfiles.d/var-factory.conf
+	done >$(TARGET_DIR)/usr/lib/tmpfiles.d/00-buildroot-var.conf
 endef
 SKELETON_INIT_SYSTEMD_ROOTFS_PRE_CMD_HOOKS += SKELETON_INIT_SYSTEMD_PRE_ROOTFS_VAR
 
