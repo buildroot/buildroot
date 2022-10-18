@@ -167,6 +167,14 @@ choice
 	  Select how Buildroot provides a read-write /var when the
 	  rootfs is not remounted read-write.
 
+	  Note: Buildroot uses a tmpfs, either as a mount point or as
+	  the upper of an overlayfs, so as to at least make the system
+	  bootable out of the box; mounting a filesystem from actual
+	  storage is left to the integration, as it is too specific and
+	  may need preparatory work like partitionning a device and/or
+	  formatting a filesystem first, which falls out of the scope
+	  of Buildroot.
+
 config BR2_INIT_SYSTEMD_VAR_FACTORY
 	bool "build a factory to populate a tmpfs"
 	help
@@ -179,16 +187,20 @@ config BR2_INIT_SYSTEMD_VAR_FACTORY
 	  It probably does not play very well with triggering a call
 	  to systemd-tmpfiles at build time (below).
 
-	  Note: Buildroot mounts a tmpfs on /var to at least make the
-	  system bootable out of the box; mounting a filesystem from
-	  actual storage is left to the integration, as it is too
-	  specific and may need preparatory work like partitionning a
-	  device and/or formatting a filesystem first, so that falls
-	  out of the scope of Buildroot.
-
 	  To use persistent storage, provide a systemd dropin for the
 	  var.mount unit, that overrides the What and Type, and possibly
 	  the Options and After, fields.
+
+config BR2_INIT_SYSTEMD_VAR_OVERLAYFS
+	bool "mount an overlayfs backed by a tmpfs"
+	select BR2_INIT_SYSTEMD_POPULATE_TMPFILES
+	help
+	  Mount an overlayfs on /var, with the upper as a tmpfs.
+
+	  To use a persistent storage, provide either a mount unit or a
+	  fstab line to mount it on /run/buildroot/mounts/var, e.g.
+
+	  /dev/sdc1    /run/buildroot/mounts/var    ext4    defaults
 
 config BR2_INIT_SYSTEMD_VAR_NONE
 	bool "do nothing"

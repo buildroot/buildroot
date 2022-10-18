@@ -33,7 +33,7 @@ endef
 # a real (but empty) directory, and the "factory files" will be copied
 # back there by the tmpfiles.d mechanism.
 ifeq ($(BR2_INIT_SYSTEMD_VAR_FACTORY),y)
-define SKELETON_INIT_SYSTEMD_PRE_ROOTFS_VAR
+define SKELETON_INIT_SYSTEMD_PRE_ROOTFS_VAR_FACTORY
 	rm -rf $(TARGET_DIR)/usr/share/factory/var
 	mv $(TARGET_DIR)/var $(TARGET_DIR)/usr/share/factory/var
 	mkdir -p $(TARGET_DIR)/var
@@ -52,11 +52,30 @@ define SKELETON_INIT_SYSTEMD_PRE_ROOTFS_VAR
 			|| exit 1; \
 		fi; \
 	done >$(TARGET_DIR)/usr/lib/tmpfiles.d/00-buildroot-var.conf
-	$(INSTALL) -D -m 0644 $(SKELETON_INIT_SYSTEMD_PKGDIR)/var.mount \
+	$(INSTALL) -D -m 0644 $(SKELETON_INIT_SYSTEMD_PKGDIR)/factory/var.mount \
 		$(TARGET_DIR)/usr/lib/systemd/system/var.mount
 endef
-SKELETON_INIT_SYSTEMD_ROOTFS_PRE_CMD_HOOKS += SKELETON_INIT_SYSTEMD_PRE_ROOTFS_VAR
+SKELETON_INIT_SYSTEMD_ROOTFS_PRE_CMD_HOOKS += SKELETON_INIT_SYSTEMD_PRE_ROOTFS_VAR_FACTORY
 endif  # BR2_INIT_SYSTEMD_VAR_FACTORY
+
+ifeq ($(BR2_INIT_SYSTEMD_VAR_OVERLAYFS),y)
+
+define SKELETON_INIT_SYSTEMD_LINUX_CONFIG_FIXUPS
+	$(call KCONFIG_ENABLE_OPT,CONFIG_OVERLAY_FS)
+endef
+
+define SKELETON_INIT_SYSTEMD_PRE_ROOTFS_VAR_OVERLAYFS
+	$(INSTALL) -D -m 0644 \
+		$(SKELETON_INIT_SYSTEMD_PKGDIR)/overlayfs/prepare-var-overlay.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/prepare-var-overlay.service
+	$(INSTALL) -D -m 0644 \
+		$(SKELETON_INIT_SYSTEMD_PKGDIR)/overlayfs/var.mount \
+		$(TARGET_DIR)/usr/lib/systemd/system/var.mount
+endef
+SKELETON_INIT_SYSTEMD_POST_INSTALL_TARGET_HOOKS += SKELETON_INIT_SYSTEMD_PRE_ROOTFS_VAR_OVERLAYFS
+
+endif  # BR2_INIT_SYSTEMD_VAR_OVERLAYFS
+
 endif  # BR2_TARGET_GENERIC_REMOUNT_ROOTFS_RW
 
 ifeq ($(BR2_INIT_SYSTEMD_POPULATE_TMPFILES),y)
