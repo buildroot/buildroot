@@ -154,16 +154,56 @@ source "$BR2_BASE_DIR/.br2-external.in.init"
 
 endchoice
 
+if BR2_INIT_SYSTEMD
+
+config BR2_INIT_SYSTEMD_VAR_FACTORY
+	bool "build a factory to populate a tmpfs on /var"
+	default y  # legacy
+	depends on !BR2_TARGET_GENERIC_REMOUNT_ROOTFS_RW
+	help
+	  Build a factory of the content of /var as installed by
+	  packages, mount a tmpfs on /var at runtime, so that
+	  systemd-tmpfiles can populate it from the factory.
+
+	  This may help on a read-only rootfs.
+
+	  It probably does not play very well with triggering a call
+	  to systemd-tmpfiles at build time (below).
+
+	  Note: Buildroot mounts a tmpfs on /var to at least make the
+	  system bootable out of the box; mounting a filesystem from
+	  actual storage is left to the integration, as it is too
+	  specific and may need preparatory work like partitionning a
+	  device and/or formatting a filesystem first, so that falls
+	  out of the scope of Buildroot.
+
+	  To use persistent storage, provide a systemd dropin for the
+	  var.mount unit, that overrides the What and Type, and possibly
+	  the Options and After, fields.
+
+config BR2_INIT_SYSTEMD_POPULATE_TMPFILES
+	bool "trigger systemd-tmpfiles during build"
+	default y  # legacy
+	help
+	  Act on the systemd-tmpfiles.d database at build time, when
+	  assembling the root filesystems.
+
+	  This may help on a read-only filesystem.
+
+	  It probably does not play very well with the /var factory
+	  (above).
+
 config BR2_PACKAGE_SYSTEMD_DEFAULT_TARGET
 	string "The default unit systemd starts at bootup"
 	default "multi-user.target"
-	depends on BR2_INIT_SYSTEMD
 	help
 	  Specify the name of the unit configuration file to be started
 	  at bootup by systemd. Should end in ".target".
 	  ex: multi-user.target
 
 	  https://www.freedesktop.org/software/systemd/man/systemd.special.html#default.target
+
+endif # BR2_INIT_SYSTEMD
 
 choice
 	prompt "/dev management" if !BR2_INIT_SYSTEMD
