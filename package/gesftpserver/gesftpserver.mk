@@ -16,7 +16,9 @@ GESFTPSERVER_CPE_ID_VENDOR = green_end
 GESFTPSERVER_CPE_ID_PRODUCT = sftpserver
 
 # forgets to link against pthread when cross compiling
-GESFTPSERVER_CONF_ENV = LIBS=-lpthread
+GESFTPSERVER_CONF_ENV = \
+	CFLAGS="$(TARGET_CFLAGS) -std=c99" \
+	LIBS=-lpthread
 
 # overwrite openssh version if enabled
 GESFTPSERVER_DEPENDENCIES += \
