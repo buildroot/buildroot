@@ -13,6 +13,9 @@ OPENVMTOOLS_LICENSE_FILES = COPYING
 OPENVMTOOLS_CPE_ID_VENDOR = vmware
 OPENVMTOOLS_CPE_ID_PRODUCT = tools
 
+# 0013-Properly-check-authorization-on-incoming-guestOps-re.patch
+OPENVMTOOLS_IGNORE_CVES += CVE-2022-31676
+
 # configure.ac is patched
 OPENVMTOOLS_AUTORECONF = YES
 OPENVMTOOLS_CONF_OPTS = --with-dnet \
