@@ -4,22 +4,19 @@
 #
 ################################################################################
 
-GNURADIO_VERSION = 3.8.2.0
-GNURADIO_SITE = https://github.com/gnuradio/gnuradio/releases/download/v$(GNURADIO_VERSION)
+GNURADIO_VERSION = 3.10.4.0
+GNURADIO_SITE = $(call github,gnuradio,gnuradio,v$(GNURADIO_VERSION))
 GNURADIO_LICENSE = GPL-3.0+
 GNURADIO_LICENSE_FILES = COPYING
 
 GNURADIO_SUPPORTS_IN_SOURCE_BUILD = NO
 
-# host-python-mako and host-python-six are needed for volk to compile
 GNURADIO_DEPENDENCIES = \
 	host-python3 \
-	host-python-mako \
-	host-python-six \
-	host-swig \
 	boost \
 	log4cpp \
 	gmp \
+	spdlog \
 	volk
 
 GNURADIO_CONF_OPTS = \
@@ -115,7 +112,8 @@ GNURADIO_CONF_OPTS += -DENABLE_GR_FILTER=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_GNURADIO_PYTHON),y)
-GNURADIO_DEPENDENCIES += python3
+GNURADIO_DEPENDENCIES += python3 python-pybind \
+	host-python-numpy host-python-packaging
 GNURADIO_CONF_OPTS += -DENABLE_PYTHON=ON
 # mandatory to install python modules in site-packages and to use
 # correct path for python libraries
