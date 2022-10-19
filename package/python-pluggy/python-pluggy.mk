@@ -11,5 +11,7 @@ PYTHON_PLUGGY_SETUP_TYPE = setuptools
 PYTHON_PLUGGY_LICENSE = MIT
 PYTHON_PLUGGY_LICENSE_FILES = LICENSE
 PYTHON_PLUGGY_DEPENDENCIES = host-python-setuptools-scm
+HOST_PYTHON_PLUGGY_DEPENDENCIES = host-python-setuptools-scm
 
 $(eval $(python-package))
+$(eval $(host-python-package))
