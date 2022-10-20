@@ -1,0 +1,20 @@
+config BR2_PACKAGE_KMEMD
+	bool "kmemd"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libbpf
+	depends on BR2_USE_WCHAR # libbpf
+	depends on !BR2_STATIC_LIBS # libbpf
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libbpf
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_13 # libbpf
+	depends on BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_GLIBC # libbpf
+	select BR2_PACKAGE_LIBBPF
+	help
+	  Explore a live Linux kernel's memory using GDB
+
+	  https://github.com/wkz/kmemd
+
+comment "kmemd needs a uClibc or glibc toolchain w/ wchar, dynamic library, threads, headers >= 4.13"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_USE_WCHAR || BR2_STATIC_LIBS \
+		|| !BR2_TOOLCHAIN_HAS_THREADS \
+		|| !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_13 \
+		|| !(BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_GLIBC)
