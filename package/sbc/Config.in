@@ -1,8 +1,17 @@
 config BR2_PACKAGE_SBC
 	bool "sbc"
-	select BR2_PACKAGE_LIBSNDFILE
 	help
 	  An audio codec to connect bluetooth high quality audio
 	  devices like headphones or loudspeakers.
 
 	  http://www.bluez.org/
+
+if BR2_PACKAGE_SBC
+
+config BR2_PACKAGE_SBC_TOOLS
+	bool "tools"
+	select BR2_PACKAGE_LIBSNDFILE
+	help
+	  Build the command-line SBC tools as well as the library.
+
+endif
