@@ -1,15 +1,5 @@
-config BR2_PACKAGE_LIBBPF_ARCH_SUPPORTS
-	bool
-	# see src/bpf.c
-	default y if BR2_arc
-	default y if BR2_aarch64 || BR2_aarch64_be
-	default y if BR2_i386 || BR2_x86_64
-	default y if BR2_sparc || BR2_sparc64
-	default y if BR2_s390x
-
 config BR2_PACKAGE_LIBBPF
 	bool "libbpf"
-	depends on BR2_PACKAGE_LIBBPF_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on BR2_USE_WCHAR # elfutils
 	depends on !BR2_STATIC_LIBS # elfutils
@@ -27,7 +17,6 @@ config BR2_PACKAGE_LIBBPF
 	  https://github.com/libbpf/libbpf
 
 comment "libbpf needs a uClibc or glibc toolchain w/ wchar, dynamic library, threads, headers >= 4.13"
-	depends on BR2_PACKAGE_LIBBPF_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_USE_WCHAR || BR2_STATIC_LIBS \
 		|| !BR2_TOOLCHAIN_HAS_THREADS \
