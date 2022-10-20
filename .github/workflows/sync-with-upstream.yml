@@ -27,6 +27,7 @@ jobs:
           git remote add upstream https://github.com/buildroot/buildroot.git
           git remote -v
           cat .git/config
+          tree .git/refs/
           git fetch origin
           git checkout 2022.05.x
           git fetch upstream
