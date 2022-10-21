@@ -53,6 +53,106 @@ PKG_CARGO_ENV = \
 	CARGO_HOST_RUSTFLAGS="$(addprefix -C link-args=,$(HOST_LDFLAGS))" \
 	CARGO_TARGET_$(call UPPERCASE,$(RUSTC_TARGET_NAME))_LINKER=$(notdir $(TARGET_CROSS))gcc
 
+# We always set both CARGO_PROFILE_DEV and CARGO_PROFILE_RELEASE
+# as we are unable to select a build profile using the environment.
+#
+# Other cargo profiles generally derive from these two profiles.
+
+# Disable incremental compilation to match release default.
+#
+# Set codegen-units to release default.
+#
+# Set split-debuginfo to default off for ELF platforms.
+PKG_CARGO_ENV += \
+	CARGO_PROFILE_DEV_INCREMENTAL="false" \
+	CARGO_PROFILE_RELEASE_INCREMENTAL="false" \
+	CARGO_PROFILE_DEV_CODEGEN_UNITS="16" \
+	CARGO_PROFILE_RELEASE_CODEGEN_UNITS="16" \
+	CARGO_PROFILE_DEV_SPLIT_DEBUGINFO="off" \
+	CARGO_PROFILE_RELEASE_SPLIT_DEBUGINFO="off"
+
+# Set the optimization level with the release default as fallback.
+ifeq ($(BR2_OPTIMIZE_0),y)
+PKG_CARGO_ENV += \
+	CARGO_PROFILE_DEV_OPT_LEVEL="0" \
+	CARGO_PROFILE_RELEASE_OPT_LEVEL="0"
+else ifeq ($(BR2_OPTIMIZE_1),y)
+PKG_CARGO_ENV += \
+	CARGO_PROFILE_DEV_OPT_LEVEL="1" \
+	CARGO_PROFILE_RELEASE_OPT_LEVEL="1"
+else ifeq ($(BR2_OPTIMIZE_2),y)
+PKG_CARGO_ENV += \
+	CARGO_PROFILE_DEV_OPT_LEVEL="2" \
+	CARGO_PROFILE_RELEASE_OPT_LEVEL="2"
+else ifeq ($(BR2_OPTIMIZE_3),y)
+PKG_CARGO_ENV += \
+	CARGO_PROFILE_DEV_OPT_LEVEL="3" \
+	CARGO_PROFILE_RELEASE_OPT_LEVEL="3"
+else ifeq ($(BR2_OPTIMIZE_G),y)
+PKG_CARGO_ENV += \
+	CARGO_PROFILE_DEV_OPT_LEVEL="0" \
+	CARGO_PROFILE_RELEASE_OPT_LEVEL="0"
+else ifeq ($(BR2_OPTIMIZE_S),y)
+PKG_CARGO_ENV += \
+	CARGO_PROFILE_DEV_OPT_LEVEL="s" \
+	CARGO_PROFILE_RELEASE_OPT_LEVEL="s"
+else ifeq ($(BR2_OPTIMIZE_FAST),y)
+PKG_CARGO_ENV += \
+	CARGO_PROFILE_DEV_OPT_LEVEL="3" \
+	CARGO_PROFILE_RELEASE_OPT_LEVEL="3"
+else
+PKG_CARGO_ENV += \
+	CARGO_PROFILE_DEV_OPT_LEVEL="3" \
+	CARGO_PROFILE_RELEASE_OPT_LEVEL="3"
+endif
+
+ifeq ($(BR2_ENABLE_LTO),y)
+PKG_CARGO_ENV += \
+	CARGO_PROFILE_DEV_LTO="true" \
+	CARGO_PROFILE_RELEASE_LTO="true"
+else
+PKG_CARGO_ENV += \
+	CARGO_PROFILE_DEV_LTO="false" \
+	CARGO_PROFILE_RELEASE_LTO="false"
+endif
+
+
+ifeq ($(BR2_ENABLE_DEBUG),y)
+ifeq ($(BR2_DEBUG_3),y)
+# full debug info
+PKG_CARGO_ENV += \
+	CARGO_PROFILE_DEV_DEBUG="2" \
+	CARGO_PROFILE_RELEASE_DEBUG="2"
+else
+# line tables only
+PKG_CARGO_ENV += \
+	CARGO_PROFILE_DEV_DEBUG="1" \
+	CARGO_PROFILE_RELEASE_DEBUG="1"
+endif
+else
+# no debug info
+PKG_CARGO_ENV += \
+	CARGO_PROFILE_DEV_DEBUG="0" \
+	CARGO_PROFILE_RELEASE_DEBUG="0"
+endif
+
+# Enabling debug-assertions enables the runtime debug_assert! macro.
+#
+# Enabling overflow-checks enables runtime panic on integer overflow.
+ifeq ($(BR2_ENABLE_RUNTIME_DEBUG),y)
+PKG_CARGO_ENV += \
+	CARGO_PROFILE_DEV_DEBUG_ASSERTIONS="true" \
+	CARGO_PROFILE_RELEASE_DEBUG_ASSERTIONS="true" \
+	CARGO_PROFILE_DEV_OVERFLOW_CHECKS="true" \
+	CARGO_PROFILE_RELEASE_OVERFLOW_CHECKS="true"
+else
+PKG_CARGO_ENV += \
+	CARGO_PROFILE_DEV_DEBUG_ASSERTIONS="false" \
+	CARGO_PROFILE_RELEASE_DEBUG_ASSERTIONS="false" \
+	CARGO_PROFILE_DEV_OVERFLOW_CHECKS="false" \
+	CARGO_PROFILE_RELEASE_OVERFLOW_CHECKS="false"
+endif
+
 #
 # This is a workaround for https://github.com/rust-lang/compiler-builtins/issues/420
 # and should be removed when fixed upstream
