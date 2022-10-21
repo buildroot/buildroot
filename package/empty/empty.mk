@@ -4,12 +4,11 @@
 #
 ################################################################################
 
-EMPTY_VERSION = 0.6.21b
+EMPTY_VERSION = 0.6.22b
 EMPTY_SOURCE = empty-$(EMPTY_VERSION).tgz
 EMPTY_SITE = http://downloads.sourceforge.net/project/empty/empty/empty-$(EMPTY_VERSION)
 EMPTY_LICENSE = BSD-3-Clause
 EMPTY_LICENSE_FILES = COPYRIGHT
-EMPTY_STRIP_COMPONENTS = 0
 
 define EMPTY_BUILD_CMDS
 	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) all
