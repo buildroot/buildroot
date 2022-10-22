@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-WHOIS_VERSION = 5.5.13
-WHOIS_SITE = http://snapshot.debian.org/archive/debian/20220408T031931Z/pool/main/w/whois
+WHOIS_VERSION = 5.5.14
+WHOIS_SITE = http://snapshot.debian.org/archive/debian/20221017T031443Z/pool/main/w/whois
 WHOIS_SOURCE = whois_$(WHOIS_VERSION).tar.xz
 WHOIS_DEPENDENCIES = \
 	host-pkgconf \
