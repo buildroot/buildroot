@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TINYSSH_VERSION = 20210601
+TINYSSH_VERSION = 20220801
 TINYSSH_SITE = $(call github,janmojzis,tinyssh,$(TINYSSH_VERSION))
 TINYSSH_LICENSE = Public Domain, CC0-1.0
 TINYSSH_LICENSE_FILES = LICENCE
