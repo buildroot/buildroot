@@ -1,0 +1,13 @@
+[Unit]
+Description=Variable permanent storage overlay
+ConditionPathIsSymbolicLink=!/var
+DefaultDependencies=no
+After=local-fs-pre.target
+
+[Mount]
+# Rather than creating an actual writable partition, we just create
+# another tmpfs. For tmpfs, the What is not relevant - but we use it in
+# the test to distinguish it from other tmpfses
+What=other-var-backing-store
+Where=/run/buildroot/mounts/var
+Type=tmpfs
