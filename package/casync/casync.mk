@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CASYNC_VERSION = 4ad9bcb94bc83ff36cfc65515107ea06a88c2dfc
+CASYNC_VERSION = 0efa7abffe5fffbde8c457d3c8fafbdde0bb6e4f
 CASYNC_SITE = $(call github,systemd,casync,$(CASYNC_VERSION))
 CASYNC_LICENSE = LGPL-2.1+
 CASYNC_LICENSE_FILES = LICENSE.LGPL2.1
