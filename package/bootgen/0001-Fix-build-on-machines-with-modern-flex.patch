@@ -1,0 +1,133 @@
+From 7251dce3dc974c7372e7024ade3e8a455266cfd2 Mon Sep 17 00:00:00 2001
+From: Peter Korsgaard <peter@korsgaard.com>
+Date: Fri, 18 Mar 2022 09:02:31 +0100
+Subject: [PATCH] Fix build on machines with modern flex
+
+Bootgen embeds an old version of flex, but uses the system include syntax
+(#include <>) to reference it, causing conflicts on systems with the
+development headers for a modern flex version installed, leading to build
+issues like:
+
+../bisonflex/bif.yy.cpp: In member function 'virtual int BIF::FlexScanner::yylex()':
+../bisonflex/bif.yy.cpp:1608:18: error: no match for 'operator=' (operand types are 'std::istream' {aka 'std::basic_istream<char>'} and 'std::istream*' {aka 'std::basic_istream<char>*'})
+
+Fix it by using normal local #include statements by:
+
+sed -i 's/<FlexLexer.h>/"FlexLexer.h"/g' *
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+[Submitted upstream: https://github.com/Xilinx/bootgen/pull/20]
+---
+ FlexLexer.h         | 6 +++---
+ bif.yy.cpp          | 2 +-
+ bifscanner.h        | 2 +-
+ cmdoptions.yy.cpp   | 2 +-
+ cmdoptionsscanner.h | 2 +-
+ reginit.yy.cpp      | 2 +-
+ reginitscanner.h    | 2 +-
+ 7 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/FlexLexer.h b/FlexLexer.h
+index b115b5d..1c0386f 100755
+--- a/FlexLexer.h
++++ b/FlexLexer.h
+@@ -33,15 +33,15 @@
+ //
+ // If you want to create multiple lexer classes, you use the -P flag
+ // to rename each yyFlexLexer to some other xxFlexLexer.  You then
+-// include <FlexLexer.h> in your other sources once per lexer class:
++// include "FlexLexer.h" in your other sources once per lexer class:
+ //
+ //	#undef yyFlexLexer
+ //	#define yyFlexLexer xxFlexLexer
+-//	#include <FlexLexer.h>
++//	#include "FlexLexer.h"
+ //
+ //	#undef yyFlexLexer
+ //	#define yyFlexLexer zzFlexLexer
+-//	#include <FlexLexer.h>
++//	#include "FlexLexer.h"
+ //	...
+ 
+ #ifndef __FLEX_LEXER_H
+diff --git a/bif.yy.cpp b/bif.yy.cpp
+index 7dd0841..9e09267 100644
+--- a/bif.yy.cpp
++++ b/bif.yy.cpp
+@@ -379,7 +379,7 @@ typedef unsigned char YY_CHAR;
+ 
+ #define yytext_ptr yytext
+ 
+-#include <FlexLexer.h>
++#include "FlexLexer.h"
+ 
+ int yyFlexLexer::yywrap() { return 1; }
+ int yyFlexLexer::yylex()
+diff --git a/bifscanner.h b/bifscanner.h
+index a6ec9e4..ded78da 100755
+--- a/bifscanner.h
++++ b/bifscanner.h
+@@ -28,7 +28,7 @@
+ #if ! defined(yyFlexLexerOnce)
+ #undef yyFlexLexer
+ #define yyFlexLexer bifFlexLexer
+-#include <FlexLexer.h>
++#include "FlexLexer.h"
+ #endif
+ 
+ // Override the interface for yylex since we namespaced it
+diff --git a/cmdoptions.yy.cpp b/cmdoptions.yy.cpp
+index 6ee80de..1acfcce 100644
+--- a/cmdoptions.yy.cpp
++++ b/cmdoptions.yy.cpp
+@@ -379,7 +379,7 @@ typedef unsigned char YY_CHAR;
+ 
+ #define yytext_ptr yytext
+ 
+-#include <FlexLexer.h>
++#include "FlexLexer.h"
+ 
+ int yyFlexLexer::yywrap() { return 1; }
+ int yyFlexLexer::yylex()
+diff --git a/cmdoptionsscanner.h b/cmdoptionsscanner.h
+index a48af09..e02c1f1 100755
+--- a/cmdoptionsscanner.h
++++ b/cmdoptionsscanner.h
+@@ -29,7 +29,7 @@
+ 
+ #undef yyFlexLexer
+ #define yyFlexLexer reginitFlexLexer
+-#include <FlexLexer.h>
++#include "FlexLexer.h"
+ #endif
+ 
+ // Override the interface for yylex since we namespaced it
+diff --git a/reginit.yy.cpp b/reginit.yy.cpp
+index 8422867..ff088f9 100644
+--- a/reginit.yy.cpp
++++ b/reginit.yy.cpp
+@@ -379,7 +379,7 @@ typedef unsigned char YY_CHAR;
+ 
+ #define yytext_ptr yytext
+ 
+-#include <FlexLexer.h>
++#include "FlexLexer.h"
+ 
+ int yyFlexLexer::yywrap() { return 1; }
+ int yyFlexLexer::yylex()
+diff --git a/reginitscanner.h b/reginitscanner.h
+index 4e78af9..23177be 100755
+--- a/reginitscanner.h
++++ b/reginitscanner.h
+@@ -29,7 +29,7 @@
+ 
+ #undef yyFlexLexer
+ #define yyFlexLexer reginitFlexLexer
+-#include <FlexLexer.h>
++#include "FlexLexer.h"
+ #endif
+ 
+ // Override the interface for yylex since we namespaced it
+-- 
+2.30.2
+
