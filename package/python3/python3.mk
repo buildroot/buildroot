@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-PYTHON3_VERSION_MAJOR = 3.10
-PYTHON3_VERSION = $(PYTHON3_VERSION_MAJOR).8
+PYTHON3_VERSION_MAJOR = 3.11
+PYTHON3_VERSION = $(PYTHON3_VERSION_MAJOR).0
 PYTHON3_SOURCE = Python-$(PYTHON3_VERSION).tar.xz
 PYTHON3_SITE = https://python.org/ftp/python/$(PYTHON3_VERSION)
 PYTHON3_LICENSE = Python-2.0, others
@@ -41,7 +41,12 @@ HOST_PYTHON3_CONF_ENV += \
 
 PYTHON3_DEPENDENCIES = host-python3 libffi
 
-HOST_PYTHON3_DEPENDENCIES = host-autoconf-archive host-expat host-zlib host-libffi
+HOST_PYTHON3_DEPENDENCIES = \
+	host-autoconf-archive \
+	host-expat \
+	host-libffi \
+	host-pkgconf \
+	host-zlib
 
 ifeq ($(BR2_PACKAGE_HOST_PYTHON3_BZIP2),y)
 HOST_PYTHON3_DEPENDENCIES += host-bzip2
@@ -174,6 +179,7 @@ endif
 PYTHON3_CONF_OPTS += \
 	--without-ensurepip \
 	--without-cxx-main \
+	--with-build-python=$(HOST_DIR)/bin/python3 \
 	--with-system-ffi \
 	--disable-pydoc \
 	--disable-test-modules \

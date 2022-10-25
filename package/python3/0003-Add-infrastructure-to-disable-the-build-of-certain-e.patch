@@ -1,4 +1,4 @@
-From df7c95b4ceecf390b961d843a556c470ac9080b2 Mon Sep 17 00:00:00 2001
+From 8e02cebdac536dfb6748da2c50656a26f70d9da7 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 16:33:22 -0800
 Subject: [PATCH] Add infrastructure to disable the build of certain extensions
@@ -44,10 +44,10 @@ Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
  3 files changed, 11 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 0c809f3d8a..7c3dde8dd4 100644
+index 2957c8e5a1..c1cfb96767 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -218,6 +218,8 @@ FILEMODE=	644
+@@ -239,6 +239,8 @@ FILEMODE=	644
  # configure script arguments
  CONFIG_ARGS=	@CONFIG_ARGS@
  
@@ -56,18 +56,18 @@ index 0c809f3d8a..7c3dde8dd4 100644
  
  # Subdirectories with code
  SRCDIRS= 	@SRCDIRS@
-@@ -628,6 +630,7 @@ sharedmods: $(BUILDPYTHON) pybuilddir.txt Modules/_math.o
+@@ -739,6 +741,7 @@ sharedmods: $(PYTHON_FOR_BUILD_DEPS) pybuilddir.txt @LIBMPDEC_INTERNAL@ @LIBEXPA
+ 	    *) quiet="";; \
  	esac; \
  	echo "$(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' \
- 		_TCLTK_INCLUDES='$(TCLTK_INCLUDES)' _TCLTK_LIBS='$(TCLTK_LIBS)' \
 +		DISABLED_EXTENSIONS="$(DISABLED_EXTENSIONS)" \
  		$(PYTHON_FOR_BUILD) $(srcdir)/setup.py $$quiet build"; \
  	$(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' \
- 		_TCLTK_INCLUDES='$(TCLTK_INCLUDES)' _TCLTK_LIBS='$(TCLTK_LIBS)' \
-@@ -1748,7 +1751,8 @@ libainstall:	@DEF_MAKE_RULE@ python-config
+ 		$(PYTHON_FOR_BUILD) $(srcdir)/setup.py $$quiet build
+@@ -2228,7 +2231,8 @@ libainstall: all python-config
  # Install the dynamically loadable modules
  # This goes into $(exec_prefix)
- sharedinstall: sharedmods
+ sharedinstall: all
 -	$(RUNSHARED) $(PYTHON_FOR_BUILD) $(srcdir)/setup.py install \
 +	$(RUNSHARED) DISABLED_EXTENSIONS="$(DISABLED_EXTENSIONS)" \
 +		$(PYTHON_FOR_BUILD) $(srcdir)/setup.py install \
@@ -75,12 +75,12 @@ index 0c809f3d8a..7c3dde8dd4 100644
  		--install-scripts=$(BINDIR) \
  		--install-platlib=$(DESTSHARED) \
 diff --git a/configure.ac b/configure.ac
-index c2445edc88..73d66167de 100644
+index 830885fcb3..5a6a1fe608 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3091,6 +3091,8 @@ LIBS="$withval $LIBS"
- 
- PKG_PROG_PKG_CONFIG
+@@ -3562,6 +3562,8 @@ LIBS="$withval $LIBS"
+ ],
+ [AC_MSG_RESULT(no)])
  
 +AC_SUBST(DISABLED_EXTENSIONS)
 +
@@ -88,11 +88,11 @@ index c2445edc88..73d66167de 100644
  AC_MSG_CHECKING(for --with-system-expat)
  AC_ARG_WITH(system_expat,
 diff --git a/setup.py b/setup.py
-index 770866bca7..b6c829b3a5 100644
+index 15d0d4576a..e496ee34c2 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -58,7 +58,10 @@ with warnings.catch_warnings():
- TEST_EXTENSIONS = (sysconfig.get_config_var('TEST_MODULES') == 'yes')
+@@ -56,7 +56,10 @@
+ 
  
  # This global variable is used to hold the list of modules to be disabled.
 -DISABLED_MODULE_LIST = []
@@ -104,5 +104,5 @@ index 770866bca7..b6c829b3a5 100644
  # --list-module-names option used by Tools/scripts/generate_module_names.py
  LIST_MODULE_NAMES = False
 -- 
-2.25.1
+2.34.1
 

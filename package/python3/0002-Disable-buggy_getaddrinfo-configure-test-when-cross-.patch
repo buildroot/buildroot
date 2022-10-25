@@ -1,4 +1,4 @@
-From 72e20220f3a592b3ab9f440fbe74efa9f9e82d49 Mon Sep 17 00:00:00 2001
+From b180ab302e2a82be239af334382436628b81381e Mon Sep 17 00:00:00 2001
 From: Vanya Sergeev <vsergeev@gmail.com>
 Date: Wed, 23 Dec 2015 11:30:33 +0100
 Subject: [PATCH] Disable buggy_getaddrinfo configure test when cross-compiling
@@ -10,18 +10,18 @@ Signed-off-by: Vanya Sergeev <vsergeev@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index 1ee5a09588..c2445edc88 100644
+index 0cf89ed641..830885fcb3 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4230,7 +4230,7 @@ fi
+@@ -5086,7 +5086,7 @@ fi]))
+ dnl if ac_cv_func_getaddrinfo
+ ])
  
- AC_MSG_RESULT($ac_cv_buggy_getaddrinfo)
- 
--if test $have_getaddrinfo = no || test "$ac_cv_buggy_getaddrinfo" = yes
-+if test $have_getaddrinfo = no || test "$cross_compiling" != "yes" -a "$ac_cv_buggy_getaddrinfo" = yes
+-if test "$ac_cv_func_getaddrinfo" = no -o "$ac_cv_buggy_getaddrinfo" = yes
++if test "$ac_cv_func_getaddrinfo" = no || test "$cross_compiling" != "yes" -a "$ac_cv_buggy_getaddrinfo" = yes
  then
- 	if test $ipv6 = yes
- 	then
+   AS_VAR_IF([ipv6], [yes], [
+     AC_MSG_ERROR([m4_normalize([
 -- 
-2.25.1
+2.34.1
 

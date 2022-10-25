@@ -1,0 +1,47 @@
+From e52e2c5e3df4bc3d2ff07ecb3b8e2a9099ea1631 Mon Sep 17 00:00:00 2001
+From: Adam Duskett <aduskett@gmail.com>
+Date: Thu, 16 Aug 2018 14:52:37 -0700
+Subject: [PATCH] fix building on older distributions
+
+Python > 3.6.3 calls os.replace in the update_file.py script, during the
+regen-importlib phase of the build process.
+
+According to Doc/whatsnew/3.3.rst line 1631, os.replace acts in the same
+way as os.rename, however, it is now cross-platform compatible for Windows.
+
+Because BuildRoot is guaranteed only to be built in  POSIX environment, it is
+safe to change os.replace back to os.rename.
+
+This change fixes building on older systems such as CentOS7, that only come
+with python 2.
+
+Signed-off-by: Adam Duskett <aduskett@gmail.com>
+---
+ Tools/scripts/update_file.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Tools/scripts/update_file.py b/Tools/scripts/update_file.py
+index b4182c1d0c..ab443cb1a6 100644
+--- a/Tools/scripts/update_file.py
++++ b/Tools/scripts/update_file.py
+@@ -53,7 +53,7 @@ def update_file_with_tmpfile(filename, tmpfile, *, create=False):
+         if not create:
+             raise  # re-raise
+         outcome = 'created'
+-        os.replace(tmpfile, filename)
++        os.rename(tmpfile, filename)
+     else:
+         with targetfile:
+             old_contents = targetfile.read()
+@@ -62,7 +62,7 @@ def update_file_with_tmpfile(filename, tmpfile, *, create=False):
+         # Now compare!
+         if old_contents != new_contents:
+             outcome = 'updated'
+-            os.replace(tmpfile, filename)
++            os.rename(tmpfile, filename)
+         else:
+             outcome = 'same'
+             os.unlink(tmpfile)
+-- 
+2.34.1
+
