@@ -10,6 +10,7 @@ USBGUARD_LICENSE = GPL-2.0+
 USBGUARD_LICENSE_FILES = LICENSE
 USBGUARD_CPE_ID_VENDOR = usbguard_project
 USBGUARD_SELINUX_MODULES = usbguard
+USBGUARD_CONF_ENV = ac_cv_prog_A2X=""
 USBGUARD_CONF_OPTS = \
 	--with-bundled-catch \
 	--with-bundled-pegtl \
