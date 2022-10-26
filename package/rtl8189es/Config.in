@@ -1,5 +1,6 @@
 config BR2_PACKAGE_RTL8189ES
 	bool "rtl8189es"
+	depends on !BR2_s390x
 	depends on BR2_LINUX_KERNEL
 	help
 	  Wireless driver rtl8189es.
@@ -7,4 +8,5 @@ config BR2_PACKAGE_RTL8189ES
 	  https://github.com/jwrdegoede/rtl8189ES_linux.git
 
 comment "rtl8189es needs a Linux kernel to be built"
+	depends on !BR2_s390x
 	depends on !BR2_LINUX_KERNEL
