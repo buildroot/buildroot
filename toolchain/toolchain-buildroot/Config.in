@@ -80,6 +80,18 @@ config BR2_TOOLCHAIN_BUILDROOT_MUSL
 
 	  https://www.musl-libc.org/
 
+config BR2_TOOLCHAIN_BUILDROOT_NONE
+	bool "none"
+	depends on !BR2_PACKAGE_UCLIBC_SUPPORTS && \
+		!BR2_PACKAGE_GLIBC_SUPPORTS && \
+		!BR2_PACKAGE_MUSL_SUPPORTS
+	help
+	  This option is visible if no C library is available for the
+	  currently selected configuration. If you select this option,
+	  the build will refuse to start as Buildroot needs a C
+	  library to build a toolchain. Change your configuration
+	  settings to make sure one of the C libraries is selected.
+
 endchoice
 
 config BR2_TOOLCHAIN_BUILDROOT_LIBC
