@@ -62,6 +62,10 @@ comment "glibc on RISC-V 64-bit needs a toolchain w/ headers >= 5.0"
 	depends on BR2_RISCV_64
 	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_0
 
+comment "glibc on RISC-V 32-bit needs a toolchain w/ headers >= 5.4"
+	depends on BR2_RISCV_32
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_4
+
 comment "glibc on ARC needs a toolchain w/ headers >= 5.1"
 	depends on BR2_arc
 	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_1
