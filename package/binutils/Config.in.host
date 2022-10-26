@@ -14,6 +14,9 @@ choice
 
 config BR2_BINUTILS_VERSION_2_37_X
 	bool "binutils 2.37"
+	# AVX512FP16 instructions were not supported before binutils
+	# 2.38
+	depends on !BR2_X86_CPU_HAS_AVX512
 
 config BR2_BINUTILS_VERSION_2_38_X
 	bool "binutils 2.38"
