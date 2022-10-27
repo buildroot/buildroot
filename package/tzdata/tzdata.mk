@@ -59,7 +59,7 @@ endef
 
 define HOST_TZDATA_INSTALL_CMDS
 	$(INSTALL) -d -m 0755 $(HOST_DIR)/share/zoneinfo
-	cp -a $(@D)/_output/* $(@D)/*.tab $(HOST_DIR)/share/zoneinfo
+	cp -a $(@D)/_output/* $(@D)/*.tab $(@D)/leap-seconds.list $(HOST_DIR)/share/zoneinfo
 endef
 
 $(eval $(generic-package))
