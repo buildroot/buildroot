@@ -2,7 +2,7 @@ comment "mdio-tools needs a Linux kernel to be built"
 	depends on !BR2_LINUX_KERNEL
 
 comment "mdio-tools needs a toolchain w/ headers >= 5.1"
-	depends on !BR2_LINUX_KERNEL
+	depends on BR2_LINUX_KERNEL
 	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_1
 
 config BR2_PACKAGE_MDIO_TOOLS
