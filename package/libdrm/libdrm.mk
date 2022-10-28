@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBDRM_VERSION = 2.4.112
+LIBDRM_VERSION = 2.4.113
 LIBDRM_SOURCE = libdrm-$(LIBDRM_VERSION).tar.xz
 LIBDRM_SITE = https://dri.freedesktop.org/libdrm
 LIBDRM_LICENSE = MIT
@@ -16,8 +16,8 @@ LIBDRM_DEPENDENCIES = \
 	host-pkgconf
 
 LIBDRM_CONF_OPTS = \
-	-Dcairo-tests=false \
-	-Dman-pages=false
+	-Dcairo-tests=disabled \
+	-Dman-pages=disabled
 
 ifeq ($(BR2_PACKAGE_LIBATOMIC_OPS),y)
 LIBDRM_DEPENDENCIES += libatomic_ops
@@ -27,70 +27,70 @@ endif
 endif
 
 ifeq ($(BR2_PACKAGE_LIBDRM_INTEL),y)
-LIBDRM_CONF_OPTS += -Dintel=true
+LIBDRM_CONF_OPTS += -Dintel=enabled
 LIBDRM_DEPENDENCIES += libpciaccess
 else
-LIBDRM_CONF_OPTS += -Dintel=false
+LIBDRM_CONF_OPTS += -Dintel=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBDRM_RADEON),y)
-LIBDRM_CONF_OPTS += -Dradeon=true
+LIBDRM_CONF_OPTS += -Dradeon=enabled
 else
-LIBDRM_CONF_OPTS += -Dradeon=false
+LIBDRM_CONF_OPTS += -Dradeon=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBDRM_AMDGPU),y)
-LIBDRM_CONF_OPTS += -Damdgpu=true
+LIBDRM_CONF_OPTS += -Damdgpu=enabled
 else
-LIBDRM_CONF_OPTS += -Damdgpu=false
+LIBDRM_CONF_OPTS += -Damdgpu=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBDRM_NOUVEAU),y)
-LIBDRM_CONF_OPTS += -Dnouveau=true
+LIBDRM_CONF_OPTS += -Dnouveau=enabled
 else
-LIBDRM_CONF_OPTS += -Dnouveau=false
+LIBDRM_CONF_OPTS += -Dnouveau=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBDRM_VMWGFX),y)
-LIBDRM_CONF_OPTS += -Dvmwgfx=true
+LIBDRM_CONF_OPTS += -Dvmwgfx=enabled
 else
-LIBDRM_CONF_OPTS += -Dvmwgfx=false
+LIBDRM_CONF_OPTS += -Dvmwgfx=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBDRM_OMAP),y)
-LIBDRM_CONF_OPTS += -Domap=true
+LIBDRM_CONF_OPTS += -Domap=enabled
 else
-LIBDRM_CONF_OPTS += -Domap=false
+LIBDRM_CONF_OPTS += -Domap=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBDRM_ETNAVIV),y)
-LIBDRM_CONF_OPTS += -Detnaviv=true
+LIBDRM_CONF_OPTS += -Detnaviv=enabled
 else
-LIBDRM_CONF_OPTS += -Detnaviv=false
+LIBDRM_CONF_OPTS += -Detnaviv=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBDRM_EXYNOS),y)
-LIBDRM_CONF_OPTS += -Dexynos=true
+LIBDRM_CONF_OPTS += -Dexynos=enabled
 else
-LIBDRM_CONF_OPTS += -Dexynos=false
+LIBDRM_CONF_OPTS += -Dexynos=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBDRM_FREEDRENO),y)
-LIBDRM_CONF_OPTS += -Dfreedreno=true
+LIBDRM_CONF_OPTS += -Dfreedreno=enabled
 else
-LIBDRM_CONF_OPTS += -Dfreedreno=false
+LIBDRM_CONF_OPTS += -Dfreedreno=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBDRM_TEGRA),y)
-LIBDRM_CONF_OPTS += -Dtegra=true
+LIBDRM_CONF_OPTS += -Dtegra=enabled
 else
-LIBDRM_CONF_OPTS += -Dtegra=false
+LIBDRM_CONF_OPTS += -Dtegra=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBDRM_VC4),y)
-LIBDRM_CONF_OPTS += -Dvc4=true
+LIBDRM_CONF_OPTS += -Dvc4=enabled
 else
-LIBDRM_CONF_OPTS += -Dvc4=false
+LIBDRM_CONF_OPTS += -Dvc4=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
@@ -101,10 +101,10 @@ LIBDRM_CONF_OPTS += -Dudev=false
 endif
 
 ifeq ($(BR2_PACKAGE_VALGRIND),y)
-LIBDRM_CONF_OPTS += -Dvalgrind=true
+LIBDRM_CONF_OPTS += -Dvalgrind=enabled
 LIBDRM_DEPENDENCIES += valgrind
 else
-LIBDRM_CONF_OPTS += -Dvalgrind=false
+LIBDRM_CONF_OPTS += -Dvalgrind=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBDRM_INSTALL_TESTS),y)
