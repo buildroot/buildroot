@@ -1,0 +1,34 @@
+From 19f77c6f6277a274434d6d8883f50e7955c6a8db Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Mon, 29 Aug 2022 11:03:35 -0700
+Subject: f2fs-tools: fix build error on lz4-1.9.4
+
+LZ4_STREAMSIZE_U64 is undefined in new lz4 lib.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+[Retrieved from:
+https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-tools.git/commit/?id=19f77c6f6277a274434d6d8883f50e7955c6a8db]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ fsck/compress.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/fsck/compress.c b/fsck/compress.c
+index b413492..b15f0a4 100644
+--- a/fsck/compress.c
++++ b/fsck/compress.c
+@@ -32,10 +32,7 @@
+ #ifdef HAVE_LIBLZ4
+ #define LZ4_MEMORY_USAGE		14
+ #define LZ4_MAX_INPUT_SIZE		0x7E000000 /* 2 113 929 216 bytes */
+-#ifndef LZ4_STREAMSIZE
+-#define LZ4_STREAMSIZE			(LZ4_STREAMSIZE_U64 * sizeof(long long))
+-#endif
+-#define LZ4_MEM_COMPRESS		LZ4_STREAMSIZE
++#define LZ4_MEM_COMPRESS		sizeof(LZ4_stream_t)
+ #define LZ4_ACCELERATION_DEFAULT	1
+ #define LZ4_WORK_SIZE			ALIGN_UP(LZ4_MEM_COMPRESS, 8)
+ #endif
+-- 
+cgit 
+
