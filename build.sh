@@ -7,6 +7,13 @@ if [ -z "$CONFIG" ] ; then
 	exit 1
 fi
 
+# Set TOP_MAKE_COMMAND to utils/brmake for compact output
+TOP_MAKE_COMMAND="${TOP_MAKE_COMMAND:-make}"
+
+if [ "$TOP_MAKE_COMMAND" = utils/brmake ]; then
+	rm -f br.log
+fi
+
 # Clear the build location.
 if [ "$1" = clean ]; then
   echo "Clearing build location..."
@@ -32,7 +39,7 @@ fi
 echo "Starting build..."
 PARALLELISM=$(getconf _NPROCESSORS_ONLN)
 for target in $TARGETS; do
-	nice make "$target" BR2_SDK_PREFIX=${CONFIG}-toolchain O=output/${CONFIG} -j $PARALLELISM
+	nice ${TOP_MAKE_COMMAND} "$target" BR2_SDK_PREFIX=${CONFIG}-toolchain O=output/${CONFIG} -j $PARALLELISM
 done
 
 if [ "${TARGETS}" = sdk ] ; then

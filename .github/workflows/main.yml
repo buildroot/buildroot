@@ -48,6 +48,7 @@ jobs:
       run: ./rebuild.sh
       env:
         CONFIG: ${{ matrix.target }}
+        TOP_MAKE_COMMAND: utils/brmake
         BR2_JLEVEL: 0
         FORCE_UNSAFE_CONFIGURE: 1
     - uses: actions/upload-artifact@v3
@@ -60,6 +61,12 @@ jobs:
         name: update-${{ matrix.target }}
         path: |
           output/${{ matrix.target }}/images/*.opk
+    - uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: ${{ matrix.target }}-log
+        path: |
+          br.log
     - name: Build installer
       if: ${{ matrix.target == 'rs90' }}
       run: |
@@ -71,6 +78,7 @@ jobs:
         ./rebuild.sh
       env:
         CONFIG: installer
+        TOP_MAKE_COMMAND: utils/brmake
         BR2_JLEVEL: 0
         FORCE_UNSAFE_CONFIGURE: 1
     - uses: actions/upload-artifact@v3
@@ -85,6 +93,12 @@ jobs:
         name: vmlinuz
         path: |
           output/installer/images/vmlinuz.bin
+    - uses: actions/upload-artifact@v3
+      if: ${{ matrix.target == 'rs90' && always() }}
+      with:
+        name: ${{ matrix.target }}-installer-log
+        path: |
+          br.log
 
   build-win:
     name: Build odbootd (Windows)
