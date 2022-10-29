@@ -20,14 +20,14 @@ jobs:
       matrix:
         target: ['lepus', 'gcw0', 'rs90']
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: 'true'
     - name: Blocked invisible-mirror.net workaround
       run: echo "1.1.1.1 invisible-mirror.net" | tee -a /etc/hosts
     - name: Cache downloads
       id: cache-downloads
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: dl
         key: downloads
@@ -38,7 +38,7 @@ jobs:
         string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
         file(APPEND $ENV{GITHUB_OUTPUT} "timestamp=${current_date}\n")
     - name: ccache cache files
-      uses: actions/cache@v1.1.0
+      uses: actions/cache@v3
       with:
         path: output/ccache/${{ matrix.target }}
         key: ${ { matrix.config.name } }-ccache-${ { steps.ccache_cache_timestamp.outputs.timestamp } }
@@ -50,12 +50,12 @@ jobs:
         CONFIG: ${{ matrix.target }}
         BR2_JLEVEL: 0
         FORCE_UNSAFE_CONFIGURE: 1
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: toolchain-${{ matrix.target }}
         path: |
           output/${{ matrix.target }}/images/*.tar*
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: update-${{ matrix.target }}
         path: |
@@ -73,13 +73,13 @@ jobs:
         CONFIG: installer
         BR2_JLEVEL: 0
         FORCE_UNSAFE_CONFIGURE: 1
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       if: ${{ matrix.target == 'rs90' }}
       with:
         name: odboot-client-linux
         path: |
           output/installer/images/odboot-client
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       if: ${{ matrix.target == 'rs90' }}
       with:
         name: vmlinuz
@@ -137,7 +137,7 @@ jobs:
         PKG_CONFIG_PATH=/usr/lib/pkgconfig cmake -DWITH_ODBOOTD=OFF -DSTATIC_EXE=ON -DEMBEDDED_INSTALLER=vmlinuz.bin -Bbuild -G "MSYS Makefiles"
         cmake --build build --config Release
       working-directory: odbootd
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: odboot-client-windows
         path: |
