@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-KISMET_VERSION = 2022-02-R1
+KISMET_VERSION = 2022-08-R1
 KISMET_SOURCE = kismet-$(KISMET_VERSION).tar.xz
 KISMET_SITE = http://www.kismetwireless.net/code
 KISMET_DEPENDENCIES = \
