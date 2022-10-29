@@ -29,6 +29,7 @@ GMENU2X_DEPENDENCIES += libxdgmime
 endif
 
 define GMENU2X_INSTALL_WRAPPER
+	mkdir -p $(TARGET_DIR)/usr/libexec
 	mv $(TARGET_DIR)/usr/bin/gmenu2x $(TARGET_DIR)/usr/libexec/gmenu2x
 	$(INSTALL) -D -m 0755 board/opendingux/package/gmenu2x/gmenu2x.sh $(TARGET_DIR)/usr/bin/gmenu2x
 endef

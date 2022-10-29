@@ -4,6 +4,8 @@
 #
 #############################################################
 
+WLAN_SCAN_DEPENDENCIES = libnl
+
 define WLAN_SCAN_BUILD_CMDS
 	mkdir -p $(@D)
 	$(TARGET_CC) $(TARGET_CFLAGS) -I $(STAGING_DIR)/usr/include/libnl3 \

@@ -23,16 +23,19 @@ echo "Copy .config to target"
 mkdir output/${CONFIG}/host && cp output/${CONFIG}/.config output/${CONFIG}/host/
 
 if [ "${CONFIG}" = "installer" ] ; then
-	TARGET="all host-odbootd"
+	TARGETS="all host-odbootd"
 else
-	TARGET=sdk
+	TARGETS=sdk
 fi
 
 # Perform the build.
 echo "Starting build..."
-nice make ${TARGET} BR2_SDK_PREFIX=${CONFIG}-toolchain O=output/${CONFIG}
+PARALLELISM=$(getconf _NPROCESSORS_ONLN)
+for target in $TARGETS; do
+	nice make "$target" BR2_SDK_PREFIX=${CONFIG}-toolchain O=output/${CONFIG} -j $PARALLELISM
+done
 
-if [ "${TARGET}" = sdk ] ; then
+if [ "${TARGETS}" = sdk ] ; then
 	echo "Recompressing SDK to XZ..."
 	ARCHIVE_NAME=opendingux-${CONFIG}-toolchain.`date +'%Y-%m-%d'`
 	gzip -d -c output/${CONFIG}/images/${CONFIG}-toolchain.tar.gz | xz -T0 -9 > output/${CONFIG}/images/$ARCHIVE_NAME.tar.xz
