@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MTD_VERSION = 2.1.3
+MTD_VERSION = 2.1.5
 MTD_SOURCE = mtd-utils-$(MTD_VERSION).tar.bz2
 MTD_SITE = ftp://ftp.infradead.org/pub/mtd-utils
 MTD_LICENSE = GPL-2.0
