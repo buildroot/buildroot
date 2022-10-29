@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-PPS_TOOLS_VERSION = e2b25049df9a4da28168b7378016f1650d0dfa6b
-PPS_TOOLS_SITE = $(call github,ago,pps-tools,$(PPS_TOOLS_VERSION))
+PPS_TOOLS_VERSION = 1.0.3
+PPS_TOOLS_SITE = $(call github,redlab-i,pps-tools,v$(PPS_TOOLS_VERSION))
 PPS_TOOLS_INSTALL_STAGING = YES
 PPS_TOOLS_LICENSE = GPL-2.0+
 PPS_TOOLS_LICENSE_FILES = COPYING
