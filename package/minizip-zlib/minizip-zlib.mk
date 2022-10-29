@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-MINIZIP_ZLIB_VERSION = 1.2.12
+MINIZIP_ZLIB_VERSION = 1.2.13
 MINIZIP_ZLIB_SOURCE = zlib-$(MINIZIP_ZLIB_VERSION).tar.xz
 MINIZIP_ZLIB_SITE = http://www.zlib.net
 MINIZIP_ZLIB_LICENSE = Zlib
-MINIZIP_ZLIB_LICENSE_FILES = README
+MINIZIP_ZLIB_LICENSE_FILES = LICENSE
 MINIZIP_ZLIB_INSTALL_STAGING = YES
 MINIZIP_ZLIB_SUBDIR = contrib/minizip
 # configure is not shipped in contrib/minizip
