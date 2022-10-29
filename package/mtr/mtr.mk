@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MTR_VERSION = 0.94
+MTR_VERSION = 0.95
 MTR_SITE = $(call github,traviscross,mtr,v$(MTR_VERSION))
 MTR_AUTORECONF = YES
 MTR_DEPENDENCIES = \
