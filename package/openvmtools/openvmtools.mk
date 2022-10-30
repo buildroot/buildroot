@@ -10,6 +10,8 @@ OPENVMTOOLS_SITE = https://github.com/vmware/open-vm-tools/releases/download/sta
 OPENVMTOOLS_SOURCE = open-vm-tools-$(OPENVMTOOLS_VERSION).tar.gz
 OPENVMTOOLS_LICENSE = LGPL-2.1
 OPENVMTOOLS_LICENSE_FILES = COPYING
+OPENVMTOOLS_CPE_ID_VENDOR = vmware
+OPENVMTOOLS_CPE_ID_PRODUCT = tools
 
 # configure.ac is patched
 OPENVMTOOLS_AUTORECONF = YES
