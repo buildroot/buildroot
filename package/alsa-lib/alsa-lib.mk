@@ -58,6 +58,9 @@ endif
 ifneq ($(BR2_PACKAGE_ALSA_LIB_OLD_SYMBOLS),y)
 ALSA_LIB_CONF_OPTS += --disable-old-symbols
 endif
+ifneq ($(BR2_PACKAGE_ALSA_LIB_TOPOLOGY),y)
+ALSA_LIB_CONF_OPTS += --disable-topology
+endif
 
 ifeq ($(BR2_PACKAGE_ALSA_LIB_PYTHON),y)
 ALSA_LIB_CONF_OPTS += \
