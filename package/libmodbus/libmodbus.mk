@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBMODBUS_VERSION = 3.1.7
-LIBMODBUS_SITE = http://libmodbus.org/releases
+LIBMODBUS_VERSION = 3.1.8
+LIBMODBUS_SITE = https://github.com/stephane/libmodbus/releases/download/v$(LIBMODBUS_VERSION)
 LIBMODBUS_LICENSE = LGPL-2.1+
 LIBMODBUS_LICENSE_FILES = COPYING.LESSER
 LIBMODBUS_CPE_ID_VENDOR = libmodbus
