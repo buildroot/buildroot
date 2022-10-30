@@ -23,6 +23,9 @@ config BR2_PACKAGE_WOLFTPM_WOLFCRYPT
 	  encryption. Disabling this option is not recommended as it
 	  could create a security breach in most environments.
 
+comment "wolfCrypt hooks need a toolchain w/ threads, dynamic library"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
+
 config BR2_PACKAGE_WOLFTPM_ST33
 	bool "ST33 extra functionality"
 	help
@@ -39,8 +42,5 @@ config BR2_PACKAGE_WOLFTPM_DEBUG
 	bool "Debug output"
 	help
 	  Enable debug messages in wolfTPM.
-
-comment "wolfCrypt hooks need a toolchain w/ threads, dynamic library"
-	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
 
 endif
