@@ -15,7 +15,6 @@ OPENIPMI_INSTALL_STAGING = YES
 OPENIPMI_AUTORECONF = YES
 OPENIPMI_CONF_ENV = ac_cv_path_pkgprog="$(PKG_CONFIG_HOST_BINARY)"
 OPENIPMI_CONF_OPTS = \
-	--with-execinfo=no \
 	--with-glib=no \
 	--with-tcl=no \
 	--with-perl=no \
@@ -24,6 +23,11 @@ OPENIPMI_CONF_OPTS = \
 
 ifeq ($(BR2_PACKAGE_GDBM),y)
 OPENIPMI_DEPENDENCIES += gdbm
+endif
+
+ifeq ($(BR2_PACKAGE_LIBEXECINFO),y)
+OPENIPMI_DEPENDENCIES += libexecinfo
+OPENIPMI_CONF_ENV += LDFLAGS="$(TARGET_LDFLAGS) -lexecinfo"
 endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
