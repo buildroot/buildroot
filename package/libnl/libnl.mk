@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBNL_VERSION = 3.6.0
+LIBNL_VERSION = 3.7.0
 LIBNL_SITE = https://github.com/thom311/libnl/releases/download/libnl$(subst .,_,$(LIBNL_VERSION))
 LIBNL_LICENSE = LGPL-2.1+
 LIBNL_LICENSE_FILES = COPYING
