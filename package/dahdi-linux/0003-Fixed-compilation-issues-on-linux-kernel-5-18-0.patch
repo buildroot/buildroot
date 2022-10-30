@@ -1,0 +1,58 @@
+From dbb43101c2a9205b67223b006bf75c29ebadced9 Mon Sep 17 00:00:00 2001
+From: Pushkar Singh <psingh@sangoma.com>
+Date: Tue, 2 Aug 2022 19:40:00 +0530
+Subject: [PATCH] Fixed compilation issues on linux kernel >= 5.18.0
+
+With kernel 5.18 and higher
+PCI: Remove the deprecated "pci-dma-compat.h" API
+
+The commit will make sure to impplement pci dma related api's
+[Retrieved from:
+https://github.com/asterisk/dahdi-linux/commit/dbb43101c2a9205b67223b006bf75c29ebadced9]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ include/dahdi/kernel.h | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/include/dahdi/kernel.h b/include/dahdi/kernel.h
+index ed81e9e3..35e93bc4 100644
+--- a/include/dahdi/kernel.h
++++ b/include/dahdi/kernel.h
+@@ -58,6 +58,37 @@
+ 
+ #include <linux/poll.h>
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0)
++#include <linux/pci.h>
++#include <linux/dma-mapping.h>
++
++static inline void *pci_alloc_consistent(struct pci_dev *hwdev, size_t size, dma_addr_t *dma_handle)
++{
++    return dma_alloc_coherent(hwdev == NULL ? NULL : &hwdev->dev, size, dma_handle, GFP_ATOMIC);
++}
++
++static inline void pci_free_consistent(struct pci_dev *hwdev, size_t size, void *vaddr, dma_addr_t dma_handle)
++{
++    dma_free_coherent(hwdev == NULL ? NULL : &hwdev->dev, size, vaddr, dma_handle);
++}
++
++static inline dma_addr_t pci_map_single(struct pci_dev *hwdev, void *ptr, size_t size, int direction)
++{
++    return dma_map_single(&hwdev->dev, ptr, size, (enum dma_data_direction)direction);
++}
++
++static inline void pci_unmap_single(struct pci_dev *hwdev, dma_addr_t dma_addr, size_t size, int direction)
++{
++    dma_unmap_single(&hwdev->dev, dma_addr, size, (enum dma_data_direction)direction);
++}
++
++static inline int pci_set_dma_mask(struct pci_dev *dev, u64 mask)
++{
++    return dma_set_mask(&dev->dev, mask);
++}
++
++#endif
++
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 29)
+ #define HAVE_NET_DEVICE_OPS
+ #endif
