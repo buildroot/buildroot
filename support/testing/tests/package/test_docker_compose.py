@@ -42,7 +42,7 @@ class TestDockerCompose(infra.basetest.BRTest):
         # will download container if not available, which may take some time
         self.assertRunOk('docker compose up -d', 120)
         # container may take some time to start
-        self.assertRunOk('while ! docker inspect root_busybox_1 2>&1 >/dev/null; do sleep 1; done', 120)
+        self.assertRunOk('while ! docker inspect root-busybox-1 2>&1 >/dev/null; do sleep 1; done', 120)
         self.assertRunOk('wget -O /tmp/busybox http://127.0.0.1/busybox', 120)
         self.assertRunOk('cmp /bin/busybox /tmp/busybox', 120)
 
