@@ -69,12 +69,13 @@ endif
 
 define ROOTFS_CPIO_CMD
 	mkdir -p $(ROOTFS_CPIO_DIR)/tmp $(ROOTFS_CPIO_DIR)/confdir
+	touch $(ROOTFS_CPIO_DIR)/empty-config
 	$(foreach cfg,$(ROOTFS_CPIO_DRACUT_CONF_FILES), \
 		cp $(cfg) $(ROOTFS_CPIO_DIR)/confdir/$(notdir $(cfg))
 	)
 	$(HOST_DIR)/bin/dracut \
 		$(ROOTFS_CPIO_OPTS) \
-		-c /dev/null \
+		-c $(ROOTFS_CPIO_DIR)/empty-config \
 		--confdir $(ROOTFS_CPIO_DIR)/confdir \
 		--sysroot $(TARGET_DIR) \
 		--tmpdir $(ROOTFS_CPIO_DIR)/tmp \
