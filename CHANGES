@@ -1,3 +1,53 @@
+2022.11-rc1, to be released
+
+	Fixes all over the tree and new features.
+
+	Architecture:
+
+	- PowerPC: add Power9 CPU type
+	- ARM: support dropped for iWMMXt processors
+
+	Toolchain:
+
+	- binutils 2.39 added, binutils 2.38 is now the default
+	- gdb 12 added, gdb 11 is now the default
+	- support for 5.18, 5.19 and 6.0 kernel headers
+	- glibc updated to 2.36
+
+	Filesystem:
+
+	- Ability to use dracut to create an initramfs that contains a
+          subset of the root filesystem contents.
+
+	New packages: agent-proxy, catatonit, cni-plugins, crun,
+	docopt-cpp, dracut, forge, kmemd, libmanette, mdio-tools,
+	open-isns, python-editables, python-hatch-fancy-pypi-readme,
+	python-hatch-vcs, python-hatchling, python-libevdev,
+	python-minimalmodbus, python-pathspec, qt6-serialport,
+	rtl8192eu, signal-estimator, slirp4netns, tinycompress
+
+	More than 400 packages have been updated to a newer version.
+
+	New defconfigs: ls1028ardb, qemu_aarch64_ebbr, visionfive.
+
+	Issues resolved:
+
+	#11776: qt5webengine 5.12.2 build failed with arm toolchain
+	        and linaro toolchain
+	#12131: qt5webengine builderror in the latest stable Buildroot
+	        2019.05.01 version
+	#13216: 2020.02.6 requires GNU find  utils
+	#14601: Python build fails on 2022.02-rc2
+	#14746: Lack of management after loading
+	#14796: 64 bit time and seccomp conflict (OpenSSH  server crash)
+	#14921: wpewebkit build fails because of internal  build order
+	#14936: nodejs does not build
+	#15006: toolchain Arm AArch64 toolchain 11.2-2022.02
+	#15021: Buildroot not compiling with systemd  and glibc.
+	#15026: package/udisks: install to staging
+	#15061: Node.js Package fails to build against musl  i386
+	#15071: RTL8723BS library is outdated
+
 2022.08.1, released October 2nd, 2022
 
 	Important / security related fixes.
