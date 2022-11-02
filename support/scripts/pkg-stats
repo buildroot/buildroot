@@ -23,7 +23,7 @@ import asyncio
 import datetime
 import fnmatch
 import os
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 import re
 import subprocess
 import json
@@ -77,6 +77,19 @@ def get_defconfig_list():
     ]
 
 
+Br2Tree = namedtuple("Br2Tree", ["name", "path"])
+
+
+def get_trees():
+    raw_variables = subprocess.check_output(["make", "--no-print-directory", "-s",
+                                             "BR2_HAVE_DOT_CONFIG=y", "printvars",
+                                             "VARS=BR2_EXTERNAL_NAMES BR2_EXTERNAL_%_PATH"])
+    variables = dict(line.split("=") for line in raw_variables.decode().split("\n") if line)
+    variables["BR2_EXTERNAL_BUILDROOT_PATH"] = brpath
+    externals = ["BUILDROOT", *variables["BR2_EXTERNAL_NAMES"].split()]
+    return [Br2Tree(name, os.path.normpath(variables[f"BR2_EXTERNAL_{name}_PATH"])) for name in externals]
+
+
 class Package:
     all_licenses = dict()
     all_license_files = list()
@@ -89,7 +102,9 @@ class Package:
     status_checks = ['cve', 'developers', 'hash', 'license',
                      'license-files', 'patches', 'pkg-check', 'url', 'version']
 
-    def __init__(self, name, path):
+    def __init__(self, tree, name, path):
+        self.tree = tree.name
+        self.tree_path = tree.path
         self.name = name
         self.path = path
         self.pkg_path = os.path.dirname(path)
@@ -118,15 +133,26 @@ class Package:
     def pkgvar(self):
         return self.name.upper().replace("-", "_")
 
+    @property
+    def pkgdir(self):
+        return os.path.join(self.tree_path, self.pkg_path)
+
+    @property
+    def pkgfile(self):
+        return os.path.join(self.tree_path, self.path)
+
+    @property
+    def hashpath(self):
+        return self.pkgfile.replace(".mk", ".hash")
+
     def set_url(self):
         """
         Fills in the .url field
         """
         self.status['url'] = ("warning", "no Config.in")
-        pkgdir = os.path.dirname(os.path.join(brpath, self.path))
-        for filename in os.listdir(pkgdir):
+        for filename in os.listdir(self.pkgdir):
             if fnmatch.fnmatch(filename, 'Config.*'):
-                fp = open(os.path.join(pkgdir, filename), "r")
+                fp = open(os.path.join(self.pkgdir, filename), "r")
                 for config_line in fp:
                     if URL_RE.match(config_line):
                         self.url = config_line.strip()
@@ -172,7 +198,7 @@ class Package:
             keep_target = True
 
         self.infras = list()
-        with open(os.path.join(brpath, self.path), 'r') as f:
+        with open(self.pkgfile, 'r') as f:
             lines = f.readlines()
             for line in lines:
                 match = INFRA_RE.match(line)
@@ -211,8 +237,7 @@ class Package:
             self.status['hash-license'] = ("na", "no valid package infra")
             return
 
-        hashpath = self.path.replace(".mk", ".hash")
-        if os.path.exists(os.path.join(brpath, hashpath)):
+        if os.path.exists(self.hashpath):
             self.status['hash'] = ("ok", "found")
         else:
             self.status['hash'] = ("error", "missing")
@@ -225,8 +250,7 @@ class Package:
             self.status['patches'] = ("na", "no valid package infra")
             return
 
-        pkgdir = os.path.dirname(os.path.join(brpath, self.path))
-        for subdir, _, _ in os.walk(pkgdir):
+        for subdir, _, _ in os.walk(self.pkgdir):
             self.patch_files = fnmatch.filter(os.listdir(subdir), '*.patch')
 
         if self.patch_count == 0:
@@ -268,9 +292,8 @@ class Package:
         Fills in the .warnings and .status['pkg-check'] fields
         """
         cmd = [os.path.join(brpath, "utils/check-package")]
-        pkgdir = os.path.dirname(os.path.join(brpath, self.path))
         self.status['pkg-check'] = ("error", "Missing")
-        for root, dirs, files in os.walk(pkgdir):
+        for root, dirs, files in os.walk(self.pkgdir):
             for f in files:
                 cmd.append(os.path.join(root, f))
         o = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[1]
@@ -327,7 +350,7 @@ class Package:
              self.is_status_ok('license-files'), self.status['hash'], self.patch_count)
 
 
-def get_pkglist(npackages, package_list):
+def get_pkglist(trees, npackages, package_list):
     """
     Builds the list of Buildroot packages, returning a list of Package
     objects. Only the .name and .path fields of the Package object are
@@ -362,8 +385,8 @@ def get_pkglist(npackages, package_list):
                      "toolchain/toolchain-wrapper.mk"]
     packages = list()
     count = 0
-    for root, dirs, files in os.walk(brpath):
-        root = os.path.relpath(root, brpath)
+    for br_tree, root, dirs, files in ((tree, *rdf) for tree in trees for rdf in os.walk(tree.path)):
+        root = os.path.relpath(root, br_tree.path)
         rootdir = root.split("/")
         if len(rootdir) < 1:
             continue
@@ -384,7 +407,7 @@ def get_pkglist(npackages, package_list):
                     continue
             if skip:
                 continue
-            p = Package(pkgname, pkgpath)
+            p = Package(br_tree, pkgname, pkgpath)
             packages.append(p)
             count += 1
             if npackages and count == npackages:
@@ -858,7 +881,7 @@ function expandField(fieldId){
 #package-grid, #results-grid {
   display: grid;
   grid-gap: 2px;
-  grid-template-columns: 1fr repeat(12, min-content);
+  grid-template-columns: min-content 1fr repeat(12, min-content);
 }
 #results-grid {
   grid-template-columns: 3fr 1fr;
@@ -924,6 +947,8 @@ def boolean_str(b):
 
 def dump_html_pkg(f, pkg):
     pkg_css_class = pkg.path.replace("/", "_")[:-3]
+    f.write(f'<div id="tree__{pkg_css_class}" \
+        class="tree data _{pkg_css_class}">{pkg.tree}</div>\n')
     f.write(f'<div id="package__{pkg_css_class}" \
         class="package data _{pkg_css_class}">{pkg.path}</div>\n')
     # Patch count
@@ -1128,31 +1153,33 @@ def dump_html_pkg(f, pkg):
 def dump_html_all_pkgs(f, packages):
     f.write("""
 <div id="package-grid">
-<div style="grid-column: 1;" onclick="sortGrid(this.id)" id="package"
+<div style="grid-column: 1;" onclick="sortGrid(this.id)" id="tree"
+     class="tree data label"><span>Tree</span><span></span></div>
+<div style="grid-column: 2;" onclick="sortGrid(this.id)" id="package"
      class="package data label"><span>Package</span><span></span></div>
-<div style="grid-column: 2;" onclick="sortGrid(this.id)" id="patch_count"
+<div style="grid-column: 3;" onclick="sortGrid(this.id)" id="patch_count"
      class="centered patch_count data label"><span>Patch count</span><span></span></div>
-<div style="grid-column: 3;" onclick="sortGrid(this.id)" id="infrastructure"
+<div style="grid-column: 4;" onclick="sortGrid(this.id)" id="infrastructure"
      class="centered infrastructure data label">Infrastructure<span></span></div>
-<div style="grid-column: 4;" onclick="sortGrid(this.id)" id="license"
+<div style="grid-column: 5;" onclick="sortGrid(this.id)" id="license"
      class="centered license data label"><span>License</span><span></span></div>
-<div style="grid-column: 5;" onclick="sortGrid(this.id)" id="license_files"
+<div style="grid-column: 6;" onclick="sortGrid(this.id)" id="license_files"
      class="centered license_files data label"><span>License files</span><span></span></div>
-<div style="grid-column: 6;" onclick="sortGrid(this.id)" id="hash_file"
+<div style="grid-column: 7;" onclick="sortGrid(this.id)" id="hash_file"
      class="centered hash_file data label"><span>Hash file</span><span></span></div>
-<div style="grid-column: 7;" onclick="sortGrid(this.id)" id="current_version"
+<div style="grid-column: 8;" onclick="sortGrid(this.id)" id="current_version"
      class="centered current_version data label"><span>Current version</span><span></span></div>
-<div style="grid-column: 8;" onclick="sortGrid(this.id)" id="latest_version"
+<div style="grid-column: 9;" onclick="sortGrid(this.id)" id="latest_version"
      class="centered latest_version data label"><span>Latest version</span><span></span></div>
-<div style="grid-column: 9;" onclick="sortGrid(this.id)" id="warnings"
+<div style="grid-column: 10;" onclick="sortGrid(this.id)" id="warnings"
      class="centered warnings data label"><span>Warnings</span><span></span></div>
-<div style="grid-column: 10;" onclick="sortGrid(this.id)" id="upstream_url"
+<div style="grid-column: 11;" onclick="sortGrid(this.id)" id="upstream_url"
      class="centered upstream_url data label"><span>Upstream URL</span><span></span></div>
-<div style="grid-column: 11;" onclick="sortGrid(this.id)" id="cves"
+<div style="grid-column: 12;" onclick="sortGrid(this.id)" id="cves"
      class="centered cves data label"><span>CVEs</span><span></span></div>
-<div style="grid-column: 12;" onclick="sortGrid(this.id)" id="ignored_cves"
+<div style="grid-column: 13;" onclick="sortGrid(this.id)" id="ignored_cves"
      class="centered ignored_cves data label"><span>CVEs Ignored</span><span></span></div>
-<div style="grid-column: 13;" onclick="sortGrid(this.id)" id="cpe_id"
+<div style="grid-column: 14;" onclick="sortGrid(this.id)" id="cpe_id"
      class="centered cpe_id data label"><span>CPE ID</span><span></span></div>
 """)
     for pkg in sorted(packages):
@@ -1223,7 +1250,7 @@ def dump_html(packages, stats, date, commit, output):
 def dump_json(packages, defconfigs, stats, date, commit, output):
     # Format packages as a dictionnary instead of a list
     # Exclude local field that does not contains real date
-    excluded_fields = ['url_worker', 'name']
+    excluded_fields = ['url_worker', 'name', 'tree_path']
     pkgs = {
         pkg.name: {
             k: v
@@ -1311,7 +1338,8 @@ def __main__():
                                       'rev-parse',
                                       'HEAD']).splitlines()[0].decode()
     print("Build package list ...")
-    packages = get_pkglist(args.npackages, package_list)
+    all_trees = get_trees()
+    packages = get_pkglist(all_trees, args.npackages, package_list)
     print("Getting developers ...")
     developers = parse_developers()
     print("Build defconfig list ...")
