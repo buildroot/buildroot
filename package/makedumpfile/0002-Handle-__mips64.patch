@@ -1,0 +1,69 @@
+From a5779893ee087409b2d1fe391ead102defe0f00b Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 2 Nov 2022 13:00:00 +0100
+Subject: [PATCH] Handle __mips64
+
+Handle __mips64 as __mips64__ to avoid the following build failure:
+
+makedumpfile.c: In function 'is_kvaddr':
+makedumpfile.c:1613:39: error: 'KVBASE' undeclared (first use in this function)
+  return (addr >= (unsigned long long)(KVBASE));
+                                       ^~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/94824fa8baa8edb99a5ca245e5561e0c4e430638
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/makedumpfile/makedumpfile/pull/11]
+---
+ arch/mips64.c  | 2 +-
+ makedumpfile.h | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/mips64.c b/arch/mips64.c
+index ab45b6e..fd987b0 100644
+--- a/arch/mips64.c
++++ b/arch/mips64.c
+@@ -16,7 +16,7 @@
+  * along with this program; if not, write to the Free Software
+  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  */
+-#ifdef __mips64__
++#if defined(__mips64__) || defined(__mips64)
+ 
+ #include "../print_info.h"
+ #include "../elf_info.h"
+diff --git a/makedumpfile.h b/makedumpfile.h
+index 70a1a91..3842f9c 100644
+--- a/makedumpfile.h
++++ b/makedumpfile.h
+@@ -963,7 +963,7 @@ typedef unsigned long pgd_t;
+ 
+ #endif          /* sparc64 */
+ 
+-#ifdef __mips64__ /* mips64 */
++#if defined(__mips64__) || defined(__mips64) /* mips64 */
+ #define KVBASE			PAGE_OFFSET
+ 
+ #ifndef _XKPHYS_START_ADDR
+@@ -1204,7 +1204,7 @@ unsigned long long vaddr_to_paddr_sparc64(unsigned long vaddr);
+ #define arch_crashkernel_mem_size()	stub_false()
+ #endif		/* sparc64 */
+ 
+-#ifdef __mips64__ /* mips64 */
++#if defined(__mips64__) || defined(__mips64) /* mips64 */
+ int get_phys_base_mips64(void);
+ int get_machdep_info_mips64(void);
+ int get_versiondep_info_mips64(void);
+@@ -2364,7 +2364,7 @@ int get_xen_info_ia64(void);
+ #define get_xen_info_arch(X) FALSE
+ #endif	/* sparc64 */
+ 
+-#ifdef __mips64__ /* mips64 */
++#if defined(__mips64__) || defined(__mips64) /* mips64 */
+ #define kvtop_xen(X)	FALSE
+ #define get_xen_basic_info_arch(X) FALSE
+ #define get_xen_info_arch(X) FALSE
+-- 
+2.35.1
+
