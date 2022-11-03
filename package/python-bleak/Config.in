@@ -1,6 +1,7 @@
 config BR2_PACKAGE_PYTHON_BLEAK
 	bool "python-bleak"
-	select BR2_PACKAGE_PYTHON_DBUS_NEXT # runtime
+	select BR2_PACKAGE_PYTHON_ASYNC_TIMEOUT # runtime
+	select BR2_PACKAGE_PYTHON_DBUS_FAST # runtime
 	help
 	  Bluetooth Low Energy platform Agnostic Klient.
 
