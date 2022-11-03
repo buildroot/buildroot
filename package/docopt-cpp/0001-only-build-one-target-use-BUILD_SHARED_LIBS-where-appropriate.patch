@@ -1,0 +1,87 @@
+From 6d3b803d2b0e4bf8703bbfa51a67f378d6bd59f6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Th=C3=A9o=20DELRIEU?= <theo.delrieu@tanker.io>
+Date: Tue, 19 Nov 2019 14:58:59 +0100
+Subject: [PATCH] only build one target, use BUILD_SHARED_LIBS where
+ appropriate
+
+[Retrieved from:
+https://github.com/docopt/docopt.cpp/commit/6d3b803d2b0e4bf8703bbfa51a67f378d6bd59f6]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ CMakeLists.txt | 39 ++++++---------------------------------
+ 1 file changed, 6 insertions(+), 33 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index feff32e..14c3420 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -34,33 +34,15 @@ set(docopt_HEADERS
+ #============================================================================
+ # Compile targets
+ #============================================================================
+-if(MSVC OR XCODE)
+-    # MSVC requires __declspec() attributes, which are achieved via the 
+-    # DOCOPT_DLL and DOCOPT_EXPORTS macros below. Since those macros are only
+-    # defined when building a shared library, we must build the shared and
+-    # static libraries completely separately.
+-    # Xcode does not support libraries with only object files as sources.
+-    # See https://cmake.org/cmake/help/v3.0/command/add_library.html?highlight=add_library
+-    add_library(docopt SHARED ${docopt_SOURCES} ${docopt_HEADERS})
+-    add_library(docopt_s STATIC ${docopt_SOURCES} ${docopt_HEADERS})
+-else()
+-    # If not using MSVC or Xcode, we will create an intermediate object target
+-    # to avoid compiling the source code twice.
+-    add_library(docopt_o OBJECT ${docopt_SOURCES} ${docopt_HEADERS})
+-    set_target_properties(docopt_o PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+-
+-    add_library(docopt SHARED $<TARGET_OBJECTS:docopt_o>)
+-	set_target_properties(docopt PROPERTIES
+-			VERSION ${PROJECT_VERSION}
+-			SOVERSION ${PROJECT_VERSION_MAJOR}
+-			)
+-    add_library(docopt_s STATIC $<TARGET_OBJECTS:docopt_o>)
+-endif()
++add_library(docopt ${docopt_SOURCES} ${docopt_HEADERS})
++set_target_properties(docopt PROPERTIES
++  VERSION ${PROJECT_VERSION}
++  SOVERSION ${PROJECT_VERSION_MAJOR}
++)
+ 
+ target_include_directories(docopt PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}> $<INSTALL_INTERFACE:include/docopt>)
+-target_include_directories(docopt_s PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}> $<INSTALL_INTERFACE:include/docopt>)
+ 
+-if(MSVC)
++if(MSVC AND BUILD_SHARED_LIBS)
+     # DOCOPT_DLL: Must be specified when building *and* when using the DLL.
+     #             That's what the "PUBLIC" means.
+     # DOCOPT_EXPORTS: Must use __declspec(dllexport) when building the DLL.
+@@ -69,11 +51,6 @@ if(MSVC)
+                                       PRIVATE DOCOPT_EXPORTS)
+ endif()
+ 
+-if(NOT MSVC)
+-	set_target_properties(docopt PROPERTIES OUTPUT_NAME docopt)
+-	set_target_properties(docopt_s PROPERTIES OUTPUT_NAME docopt)
+-endif()
+-
+ if(USE_BOOST_REGEX)
+ 	add_definitions("-DDOCTOPT_USE_BOOST_REGEX")
+ 	# This is needed on Linux, where linking a static library into docopt.so
+@@ -82,9 +59,6 @@ if(USE_BOOST_REGEX)
+     find_package(Boost 1.53 REQUIRED COMPONENTS regex)
+     include_directories(${Boost_INCLUDE_DIRS})
+     target_link_libraries(docopt ${Boost_LIBRARIES})
+-	if(WITH_STATIC)
+-		target_link_libraries(docopt_s ${Boost_LIBRARIES})
+-	endif()
+ endif()
+ 
+ #============================================================================
+@@ -120,7 +94,6 @@ set(export_name "docopt-targets")
+ install(TARGETS docopt EXPORT ${export_name} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ 
+ # Development package
+-install(TARGETS docopt_s EXPORT ${export_name} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ install(FILES ${docopt_HEADERS} DESTINATION include/docopt)
+ 
+ # CMake Package
