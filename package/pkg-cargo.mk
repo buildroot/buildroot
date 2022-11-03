@@ -20,7 +20,7 @@
 #
 ################################################################################
 
-BR_CARGO_HOME = $(HOST_DIR)/share/cargo
+BR_CARGO_HOME = $(DL_DIR)/br-cargo-home
 
 PKG_COMMON_CARGO_ENV = \
 	CARGO_HOME=$(BR_CARGO_HOME)
