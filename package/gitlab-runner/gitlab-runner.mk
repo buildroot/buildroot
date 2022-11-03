@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GITLAB_RUNNER_VERSION = 14.5.1
+GITLAB_RUNNER_VERSION = 15.5.0
 GITLAB_RUNNER_SITE = https://gitlab.com/gitlab-org/gitlab-runner/-/archive/v$(GITLAB_RUNNER_VERSION)
 GITLAB_RUNNER_LICENSE = MIT
 GITLAB_RUNNER_LICENSE_FILES = LICENSE
