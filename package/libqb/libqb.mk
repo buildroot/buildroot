@@ -12,6 +12,9 @@ LIBQB_LICENSE = LGPL-2.1+
 LIBQB_LICENSE_FILES = COPYING
 LIBQB_CPE_ID_VENDOR = clusterlabs
 LIBQB_INSTALL_STAGING = YES
+# We're patching configure.ac
+LIBQB_AUTORECONF = YES
+LIBQB_CONF_OPTS = --disable-tests
 LIBQB_DEPENDENCIES = libxml2
 
 # ac_cv_prog_cc_c99 is required for BR2_USE_WCHAR=n because the C99 test
