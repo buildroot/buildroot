@@ -10,5 +10,7 @@ PYTHON_BABEL_SITE = https://files.pythonhosted.org/packages/ff/80/45b42203ecc32c
 PYTHON_BABEL_SETUP_TYPE = setuptools
 PYTHON_BABEL_LICENSE = BSD-3-Clause
 PYTHON_BABEL_LICENSE_FILES = LICENSE
+HOST_PYTHON_BABEL_DEPENDENCIES = host-python-pytz
 
 $(eval $(python-package))
+$(eval $(host-python-package))
