@@ -1,0 +1,49 @@
+From 9836e2211ba8b3035a1d390bbf6a0eebe4c2439d Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 3 Nov 2022 17:19:09 +0100
+Subject: [PATCH] configure.ac: fix readline static build
+
+Use pkg-config to retrieve readline dependencies such as ncurses to
+avoid the following static build when readline is built with ncurses
+support (which is raised since version 1.8.19 and
+https://github.com/ipmitool/ipmitool/commit/63dd71c39c9bf522ad3a785dd001737a285458eb):
+
+** Unable to build Solaris 9 x86 IPMI interface support!
+checking for library containing readline... no
+configure: error: ** Unable to find readline required by ipmishell.
+
+[...]
+
+configure:15125: /tmp/instance-0/output-1/host/bin/armeb-buildroot-linux-musleabi-gcc -o conftest -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -O0 -g0  -static -Wall -Wextra -std=gnu11 -pedantic -Wformat -Wformat-nonliteral -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -static conftest.c -lreadline   -lcrypto >&5
+/tmp/instance-0/output-1/host/lib/gcc/armeb-buildroot-linux-musleabi/11.3.0/../../../../armeb-buildroot-linux-musleabi/bin/ld: /tmp/instance-0/output-1/host/armeb-buildroot-linux-musleabi/sysroot/usr/lib/libreadline.a(display.o): in function `_rl_move_cursor_relative':
+display.c:(.text+0x80fc): undefined reference to `tputs'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/dabc6a4f49d464c129ac6bc3710011678142fcbe
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/ipmitool/ipmitool/pull/374]
+---
+ configure.ac | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index d6ba62b..4ee1be8 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -624,7 +624,11 @@ AC_ARG_ENABLE([ipmishell],
+ 
+ dnl check for readline library to enable ipmi shell
+ if test "x$xenable_ipmishell" = "xyes"; then
+-	AC_SEARCH_LIBS([readline], [readline edit], [have_readline=yes])
++	PKG_PROG_PKG_CONFIG
++	PKG_CHECK_MODULES([READLINE], [readline],
++		[LIBS="$LIBS $READLINE_LIBS" have_readline=yes],
++		[AC_SEARCH_LIBS([readline], [readline edit], [have_readline=yes])]
++	)
+ 	if test "x$have_readline" != "xyes"; then
+ 		AC_MSG_ERROR([** Unable to find readline required by ipmishell.])
+ 		xenable_ipmishell=no
+-- 
+2.35.1
+
