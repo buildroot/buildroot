@@ -13,10 +13,12 @@ LIBIDN2_DEPENDENCIES = \
 	host-pkgconf \
 	$(TARGET_NLS_DEPENDENCIES) \
 	$(if $(BR2_PACKAGE_LIBICONV),libiconv)
+LIBIDN2_CONF_OPTS = --without-included-libunistring
 LIBIDN2_INSTALL_STAGING = YES
 
 ifeq ($(BR2_PACKAGE_LIBUNISTRING),y)
 LIBIDN2_DEPENDENCIES += libunistring
+LIBIDN2_CONF_OPTS += --with-libunistring-prefix=$(STAGING_DIR)/usr/lib
 endif
 
 ifeq ($(BR2_PACKAGE_LIBIDN2_BINARY),)
