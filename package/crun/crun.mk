@@ -15,6 +15,10 @@ CRUN_CPE_ID_VENDOR = crun_project
 CRUN_AUTORECONF = YES
 CRUN_CONF_OPTS = --disable-embedded-yajl
 
+ifeq ($(BR2_PACKAGE_ARGP_STANDALONE),y)
+CRUN_DEPENDENCIES += argp-standalone
+endif
+
 ifeq ($(BR2_PACKAGE_LIBCAP),y)
 CRUN_DEPENDENCIES += libcap
 CRUN_CONF_OPTS += --enable-caps
