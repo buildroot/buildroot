@@ -63,4 +63,19 @@ else
 LXC_CONF_OPTS += -Dopenssl=false
 endif
 
+ifeq ($(BR2_PACKAGE_SYSTEMD),y)
+LXC_CONF_OPTS += -Dsd-bus=enabled
+LXC_DEPENDENCIES += systemd
+else
+LXC_CONF_OPTS += -Dsd-bus=disabled
+endif
+
+ifeq ($(BR2_INIT_SYSTEMD),y)
+LXC_CONF_OPTS += -Dinit-script=systemd
+else ifeq ($(BR2_INIT_SYSV),y)
+LXC_CONF_OPTS += -Dinit-script=sysvinit
+else
+LXC_CONF_OPTS += -Dinit-script=
+endif
+
 $(eval $(meson-package))
