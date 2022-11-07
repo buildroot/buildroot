@@ -3,7 +3,7 @@
 DAEMON="gitlab-runner"
 PIDFILE="/var/run/$DAEMON.pid"
 
-GITLAB_RUNNER_ARGS="run"
+DAEMON_ARGS="run --syslog --user gitlab-runner -d /var/lib/gitlab-runner -c /etc/gitlab-runner/config.toml"
 
 # shellcheck source=/dev/null
 [ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
@@ -11,8 +11,8 @@ GITLAB_RUNNER_ARGS="run"
 start() {
 	printf 'Starting %s: ' "$DAEMON"
 	# shellcheck disable=SC2086 # we need the word splitting
-	start-stop-daemon -S -q -m -b -p "$PIDFILE" -c "$DAEMON:$DAEMON" -x "/usr/bin/$DAEMON" \
-		-- $GITLAB_RUNNER_ARGS
+	start-stop-daemon -S -q -m -b -p "$PIDFILE" -x "/usr/bin/$DAEMON" \
+		-- $DAEMON_ARGS
 	status=$?
 	if [ "$status" -eq 0 ]; then
 		echo "OK"
