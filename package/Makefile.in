@@ -426,9 +426,8 @@ else ifeq ($(BR2_SHARED_STATIC_LIBS),y)
 SHARED_STATIC_LIBS_OPTS = --enable-static --enable-shared
 endif
 
-ifeq ($(BR2_COMPILER_PARANOID_UNSAFE_PATH),y)
+# Used by our binutils patches.
 export BR_COMPILER_PARANOID_UNSAFE_PATH=enabled
-endif
 
 include package/pkg-download.mk
 include package/pkg-autotools.mk

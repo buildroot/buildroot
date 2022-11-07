@@ -154,12 +154,9 @@ static const struct str_len_s unsafe_opts[] = {
  * or separated (e.g. -I /foo/bar). In the first case, we need only print
  * the argument as it already contains the path (arg_has_path), while in
  * the second case we need to print both (!arg_has_path).
- *
- * If paranoid, exit in error instead of just printing a warning.
  */
 static void check_unsafe_path(const char *arg,
 			      const char *path,
-			      int paranoid,
 			      int arg_has_path)
 {
 	const struct str_len_s *p;
@@ -168,14 +165,12 @@ static void check_unsafe_path(const char *arg,
 		if (strncmp(path, p->str, p->len))
 			continue;
 		fprintf(stderr,
-			"%s: %s: unsafe header/library path used in cross-compilation: '%s%s%s'\n",
+			"%s: ERROR: unsafe header/library path used in cross-compilation: '%s%s%s'\n",
 			program_invocation_short_name,
-			paranoid ? "ERROR" : "WARNING",
 			arg,
 			arg_has_path ? "" : "' '", /* close single-quote, space, open single-quote */
 			arg_has_path ? "" : path); /* so that arg and path are properly quoted. */
-		if (paranoid)
-			exit(1);
+		exit(1);
 	}
 }
 
@@ -250,8 +245,6 @@ int main(int argc, char **argv)
 	char *progpath = argv[0];
 	char *basename;
 	char *env_debug;
-	char *paranoid_wrapper;
-	int paranoid;
 	int ret, i, count = 0, debug = 0, found_shared = 0;
 
 	/* Debug the wrapper to see arguments it was called with.
@@ -470,12 +463,6 @@ int main(int argc, char **argv)
 #endif
 	}
 
-	paranoid_wrapper = getenv("BR_COMPILER_PARANOID_UNSAFE_PATH");
-	if (paranoid_wrapper && strlen(paranoid_wrapper) > 0)
-		paranoid = 1;
-	else
-		paranoid = 0;
-
 	/* Check for unsafe library and header paths */
 	for (i = 1; i < argc; i++) {
 		const struct str_len_s *opt;
@@ -492,9 +479,9 @@ int main(int argc, char **argv)
 				i++;
 				if (i == argc)
 					break;
-				check_unsafe_path(argv[i-1], argv[i], paranoid, 0);
+				check_unsafe_path(argv[i-1], argv[i], 0);
 			} else
-				check_unsafe_path(argv[i], argv[i] + opt->len, paranoid, 1);
+				check_unsafe_path(argv[i], argv[i] + opt->len, 1);
 		}
 	}
 
