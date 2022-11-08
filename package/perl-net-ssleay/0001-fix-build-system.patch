@@ -8,29 +8,29 @@ paths, since they are missing the destdir; Buildroot compilers
 and linkers already know where to search, anyway.
 
 Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
+[Fabrice: update for 1.93_01]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 
 diff -durN perl-net-ssleay-1.64.orig/inc/Module/Install/PRIVATE/Net/SSLeay.pm perl-net-ssleay-1.64/inc/Module/Install/PRIVATE/Net/SSLeay.pm
---- perl-net-ssleay-1.64.orig/inc/Module/Install/PRIVATE/Net/SSLeay.pm	2014-04-01 08:08:37.000000000 +0200
-+++ perl-net-ssleay-1.64/inc/Module/Install/PRIVATE/Net/SSLeay.pm	2014-07-13 00:38:46.281380282 +0200
-@@ -37,14 +37,18 @@
-         exit 0; # according http://wiki.cpantesters.org/wiki/CPANAuthorNotes this is best-practice when "missing library"
+--- perl-net-ssleay-1.64.orig/Makefile.PL	2014-04-01 08:08:37.000000000 +0200
++++ perl-net-ssleay-1.64/Makefile.PL	2014-07-13 00:38:46.281380282 +0200
+@@ -192,12 +192,16 @@
+         exit MISSING_PREREQ;
      }
  
--    $self->check_openssl_version($prefix, $exec);
+-    check_openssl_version($prefix, $exec);
 +# Does not work for cross-compilation.
 +# In Buildroot, we do have a supported version.
-+#    $self->check_openssl_version($prefix, $exec);
-     my $opts = $self->ssleay_get_build_opts($prefix, $exec);
- 
-     $self->makemaker_args(
++#    check_openssl_version($prefix, $exec);
+     my %args = (
          CCCDLFLAGS => $opts->{cccdlflags},
          OPTIMIZE => $opts->{optimize},
--        INC => join(' ', map {"-I$_"} @{$opts->{inc_paths}}),
--        LIBS => join(' ', (map {"-L$_"} @{$opts->{lib_paths}}), (map {"-l$_"} @{$opts->{lib_links}})),
+-        INC => qq{-I"$opts->{inc_path}"},
+-        LIBS => join(' ', (map '-L'.maybe_quote($_), @{$opts->{lib_paths}}), (map {"-l$_"} @{$opts->{lib_links}})),
 +# Buildroot already has the correct include and library search paths.
-+#        INC => join(' ', map {"-I$_"} @{$opts->{inc_paths}}),
-+#        LIBS => join(' ', (map {"-L$_"} @{$opts->{lib_paths}}), (map {"-l$_"} @{$opts->{lib_links}})),
++#        INC => qq{-I"$opts->{inc_path}"},
++#        LIBS => join(' ', (map '-L'.maybe_quote($_), @{$opts->{lib_paths}}), (map {"-l$_"} @{$opts->{lib_links}})),
 +        LIBS => join(' ', (map {"-l$_"} @{$opts->{lib_links}})),
      );
- 
-     if ( $self->prompt(
+     # From HMBRAND to handle multple version of OPENSSL installed
+     if (my $lp = join " " => map '-L'.maybe_quote($_), @{$opts->{lib_paths} || []})
