@@ -1,0 +1,41 @@
+From 4ac1482bb40376e47805c3737dfed60abb1dd3b4 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 22 Dec 2021 00:39:35 +0100
+Subject: [PATCH] iw_if.h: don't include linux/if.h (#109)
+
+Don't include linux/if.h to avoid the following build failure:
+
+In file included from iw_if.h:31:0,
+                 from conf.c:19:
+/home/buildroot/autobuild/instance-3/output-1/host/arm-buildroot-linux-gnueabi/sysroot/usr/include/linux/if.h: At top level:
+/home/buildroot/autobuild/instance-3/output-1/host/arm-buildroot-linux-gnueabi/sysroot/usr/include/linux/if.h:143:8: error: redefinition of 'struct ifmap'
+ struct ifmap {
+        ^
+In file included from iw_if.h:26:0,
+                 from conf.c:19:
+/home/buildroot/autobuild/instance-3/output-1/host/arm-buildroot-linux-gnueabi/sysroot/usr/include/net/if.h:111:8: note: originally defined here
+ struct ifmap
+        ^
+
+Fixes:
+ - http://autobuild.buildroot.org/results/a6ee162cf04b70b144b54e1ca4b7b2421071c50c
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/uoaerg/wavemon/commit/4ac1482bb40376e47805c3737dfed60abb1dd3b4]
+---
+ iw_if.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/iw_if.h b/iw_if.h
+index 9e7fa89..6607e0b 100644
+--- a/iw_if.h
++++ b/iw_if.h
+@@ -28,7 +28,6 @@
+ #include <net/ethernet.h>
+ #include <sys/types.h>
+ #include <sys/socket.h>
+-#include <linux/if.h>
+ 
+ /* Definitions from linux/ieee80211.h (not necessarily part of distro headers) */
+ #define WLAN_CAPABILITY_ESS		(1<<0)
