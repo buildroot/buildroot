@@ -304,6 +304,11 @@ def fixup_config(sysinfo, configfile):
     # No C library for internal toolchain
     if 'BR2_TOOLCHAIN_BUILDROOT_NONE=y' in configlines:
         return False
+    # Xtensa custom cores require an overlay file with internal
+    # toolchains
+    if 'BR2_XTENSA_CUSTOM=y' in configlines and \
+       'BR2_TOOLCHAIN_BUILDROOT=y' in configlines:
+        return False
 
     if 'BR2_PACKAGE_AUFS_UTIL=y\n' in configlines and \
        'BR2_PACKAGE_AUFS_UTIL_VERSION=""\n' in configlines:
