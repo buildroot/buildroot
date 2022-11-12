@@ -17,7 +17,7 @@ Use it at your own risk.
 Do you agree with these terms?"
 
 dialog --defaultno --yesno "$DISCLAIMER" 13 38
-if [ $? -eq 1 ] ; then
+if [ $? -ne 0 ] ; then
 	reboot
 	exit 1
 fi
@@ -38,7 +38,7 @@ Model:   ${MODEL}
 Is this correct?"
 
 dialog --defaultno --yesno "$MODELMSG" 9 42
-if [ $? -eq 1 ] ; then
+if [ $? -ne 0 ] ; then
 	reboot
 	exit 1
 fi
@@ -56,11 +56,17 @@ if [ "$NAND_FLASH" = "yes" ] ; then
 else
 	dialog --defaultno --yes-label "F2FS" --no-label "EXT4" --yesno \
 		"What format should be used for the data partition?" 7 38
-	if [ $? -eq 1 ] ; then
-		FORMAT=ext4
-	else
-		FORMAT=f2fs
-	fi
+	case $? in
+		1)
+			FORMAT=ext4
+			;;
+		0)
+			FORMAT=f2fs
+			;;
+		*)
+			reboot
+			exit 1
+	esac
 
 	clear
 
