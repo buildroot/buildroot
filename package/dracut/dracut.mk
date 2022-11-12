@@ -22,6 +22,8 @@ HOST_DRACUT_POST_INSTALL_HOOKS += HOST_DRACUT_POST_INSTALL_WRAPPER_SCRIPT
 # "ld-musl-x.so" symlinks, respectively - else the init process cannot
 # start
 define HOST_DRACUT_POST_INSTALL_LIBC_LINKS_MODULE
+	$(INSTALL) -D -m 0755 package/dracut/merged-usr-module-setup.sh \
+		$(HOST_DIR)/lib/dracut/modules.d/0000-merged-usr/module-setup.sh
 	$(INSTALL) -D -m 0755 package/dracut/libc-links-module-setup.sh \
 		$(HOST_DIR)/lib/dracut/modules.d/05libc-links/module-setup.sh
 endef
