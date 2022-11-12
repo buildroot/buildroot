@@ -184,16 +184,6 @@ define NCURSES_TARGET_CLEANUP_TERMINFO
 endef
 NCURSES_POST_INSTALL_TARGET_HOOKS += NCURSES_TARGET_CLEANUP_TERMINFO
 
-#
-# On systems with an older version of tic, the installation of ncurses hangs
-# forever. To resolve the problem, build a static version of tic on host
-# ourselves, and use that during installation.
-#
-define HOST_NCURSES_BUILD_CMDS
-	$(HOST_MAKE_ENV) $(MAKE1) -C $(@D) sources
-	$(HOST_MAKE_ENV) $(MAKE) -C $(@D)/progs tic
-endef
-
 HOST_NCURSES_CONF_ENV = \
 	ac_cv_path_LDCONFIG=""
 

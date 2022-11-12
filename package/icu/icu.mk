@@ -28,6 +28,13 @@ ICU_CONF_OPTS = \
 	--disable-samples \
 	--disable-tests
 
+# the icu build process breaks if the TARGET environment variable is
+# non-empty
+ICU_CONF_ENV += TARGET=""
+ICU_MAKE_ENV += TARGET=""
+HOST_ICU_CONF_ENV += TARGET=""
+HOST_ICU_MAKE_ENV += TARGET=""
+
 # When available, icu prefers to use C++11 atomics, which rely on the
 # __atomic builtins. On certain architectures, this requires linking
 # with libatomic starting from gcc 4.8.

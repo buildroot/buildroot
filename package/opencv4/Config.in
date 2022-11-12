@@ -34,11 +34,14 @@ config BR2_PACKAGE_OPENCV4_LIB_DNN
 	bool "dnn"
 	# dnn needs fenv.h which is not provided by uclibc
 	depends on !BR2_TOOLCHAIN_USES_UCLIBC
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
+	select BR2_PACKAGE_OPENCV4_WITH_PROTOBUF
 	help
 	  Include opencv_dnn (Deep Neural Networks) module into the
 	  OpenCV build.
 
 comment "dnn needs a glibc or musl toolchain"
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_USES_UCLIBC
 
 config BR2_PACKAGE_OPENCV4_LIB_FEATURES2D
@@ -150,13 +153,20 @@ config BR2_PACKAGE_OPENCV4_LIB_ML
 
 config BR2_PACKAGE_OPENCV4_LIB_OBJDETECT
 	bool "objdetect"
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC # dnn support
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS # dnn support
 	# opencv_core dependency is already enabled
 	select BR2_PACKAGE_OPENCV4_LIB_CALIB3D
+	select BR2_PACKAGE_OPENCV4_LIB_DNN
 	select BR2_PACKAGE_OPENCV4_LIB_IMGPROC
 	select BR2_PACKAGE_OPENCV4_LIB_ML
 	help
 	  Include opencv_objdetect (object detection) module into the
 	  OpenCV build.
+
+comment "objdetect needs a glibc or musl toolchain"
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_USES_UCLIBC
 
 config BR2_PACKAGE_OPENCV4_LIB_PHOTO
 	bool "photo"

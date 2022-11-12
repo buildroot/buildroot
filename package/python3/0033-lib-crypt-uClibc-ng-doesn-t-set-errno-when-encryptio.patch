@@ -16,6 +16,8 @@ https://gitlab.com/buildroot.org/buildroot/-/jobs/830981979
 [2] https://cgit.uclibc-ng.org/cgi/cgit/uclibc-ng.git/tree/libcrypt/crypt.c?h=v1.0.36#n29
 
 Signed-off-by: Romain Naour <romain.naour@gmail.com>
+[Daniel: updated for 3.10.7]
+Signed-off-by: Daniel Lang <d.lang@abatec.at>
 ---
  Lib/crypt.py | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
@@ -28,10 +30,10 @@ index 33dbc46bb3..4692a5270c 100644
          result = crypt('', salt)
      except OSError as e:
          # Not all libc libraries support all encryption methods.
--        if e.errno == errno.EINVAL:
+-        if e.errno in {errno.EINVAL, errno.EPERM, errno.ENOSYS}:
 +        # Not all libc libraries set errno when encryption method is not
 +        # available.
-+        if e.errno == errno.EINVAL or e.errno == 0:
++        if e.errno in {errno.EINVAL, errno.EPERM, errno.ENOSYS} or e.errno == 0:
              return False
          raise
      if result and len(result) == method.total_size:

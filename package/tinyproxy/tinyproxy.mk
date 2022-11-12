@@ -11,4 +11,7 @@ TINYPROXY_LICENSE = GPL-2.0+
 TINYPROXY_LICENSE_FILES = COPYING
 TINYPROXY_CPE_ID_VENDOR = tinyproxy_project
 
+# 0001-prevent-junk-from-showing-up-in-error-page-in-invalid-requests.patch
+TINYPROXY_IGNORE_CVES += CVE-2022-40468
+
 $(eval $(autotools-package))

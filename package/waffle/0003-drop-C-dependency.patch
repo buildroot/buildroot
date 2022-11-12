@@ -1,0 +1,46 @@
+From a54a5d086c5f7e0751f68ac1a2942d8077922ebc Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 7 Aug 2022 16:18:22 +0200
+Subject: [PATCH] drop C++ dependency
+
+C++ dependency has been added for nacl backend which has been added by
+https://gitlab.freedesktop.org/mesa/waffle/-/commit/6ca943584e593aec2bd4f9c66d91859e63e02d61
+and dropped by
+https://gitlab.freedesktop.org/mesa/waffle/-/commit/a7c7152b054e6d2b9af36ed9db9a0df44731b279
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: not sent yet]
+---
+ CMakeLists.txt            | 2 +-
+ src/waffle/CMakeLists.txt | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index acece86..04ea68c 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -23,7 +23,7 @@
+ # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+-project(waffle1 C CXX)
++project(waffle1 C)
+ 
+ cmake_minimum_required(VERSION 2.8.12)
+ 
+diff --git a/src/waffle/CMakeLists.txt b/src/waffle/CMakeLists.txt
+index 8014b51..276f276 100644
+--- a/src/waffle/CMakeLists.txt
++++ b/src/waffle/CMakeLists.txt
+@@ -238,7 +238,7 @@ include_directories(
+     ${XCB_INCLUDE_DIRS}
+     )
+ 
+-add_library(${waffle_libname} SHARED ${waffle_sources} ${waffle_cxx_sources})
++add_library(${waffle_libname} SHARED ${waffle_sources})
+ 
+ # Debian's packaging system emits warnings if wflinfo directly links to any
+ # library that it doesn't directly use. Silence the warnings by annotating
+-- 
+2.35.1
+

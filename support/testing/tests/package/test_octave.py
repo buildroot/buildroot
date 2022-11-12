@@ -76,4 +76,4 @@ class TestOctave(infra.basetest.BRTest):
 
         for mod in octave_modules:
             cmd = self.octave_cmd('assert(test(\"{}\"),true)'.format(mod))
-            self.assertRunOk(cmd)
+            self.assertRunOk(cmd, timeout=10)

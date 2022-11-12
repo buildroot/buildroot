@@ -17,7 +17,7 @@ BABELTRACE2_DEPENDENCIES = libglib2 host-pkgconf
 # options for host packages, just build support for it
 # unconditionally.
 HOST_BABELTRACE2_DEPENDENCIES = host-libglib2 host-pkgconf host-elfutils
-HOST_BABELTRACE2_CONF_OPTS += --enable-debug-info
+HOST_BABELTRACE2_CONF_OPTS += --disable-man-pages --enable-debug-info
 
 ifeq ($(BR2_PACKAGE_ELFUTILS),y)
 BABELTRACE2_DEPENDENCIES += elfutils

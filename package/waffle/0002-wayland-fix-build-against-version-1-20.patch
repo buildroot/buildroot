@@ -1,0 +1,59 @@
+From 2c33597245bb74f19104f0a858cd40e80b26991d Mon Sep 17 00:00:00 2001
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Date: Fri, 17 Dec 2021 13:46:40 +0100
+Subject: [PATCH] wayland: fix build against version 1.20
+
+Wayland 1.20 introduces two new symbols wl_proxy_marshal_flags and
+wl_proxy_marshal_array_flags, which need to be wrapped as well.
+
+Closes: https://gitlab.freedesktop.org/mesa/waffle/-/issues/76
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+[Retrieved from:
+https://gitlab.freedesktop.org/mesa/waffle/-/commit/2c33597245bb74f19104f0a858cd40e80b26991d]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/waffle/wayland/wayland_sym.h     | 18 ++++++++++++++++++
+ src/waffle/wayland/wayland_wrapper.h |  2 ++
+ 2 files changed, 20 insertions(+)
+
+diff --git a/src/waffle/wayland/wayland_sym.h b/src/waffle/wayland/wayland_sym.h
+index 3d48625..4c6ac8d 100644
+--- a/src/waffle/wayland/wayland_sym.h
++++ b/src/waffle/wayland/wayland_sym.h
+@@ -26,3 +26,21 @@ WAFFLE_WAYLAND_SYM(struct wl_proxy *, wl_proxy_marshal_constructor,
+ WAFFLE_WAYLAND_SYM(struct wl_proxy *, wl_proxy_marshal_constructor_versioned,
+                    (struct wl_proxy *proxy, uint32_t opcode,
+                     const struct wl_interface *interface, uint32_t version, ...))
++
++WAFFLE_WAYLAND_SYM(struct wl_proxy *,
++                   wl_proxy_marshal_flags,
++                   (struct wl_proxy * p,
++                    uint32_t opcode,
++                    const struct wl_interface *interface,
++                    uint32_t version,
++                    uint32_t flags,
++                    ...))
++
++WAFFLE_WAYLAND_SYM(struct wl_proxy *,
++                   wl_proxy_marshal_array_flags,
++                   (struct wl_proxy * p,
++                    uint32_t opcode,
++                    const struct wl_interface *interface,
++                    uint32_t version,
++                    uint32_t flags,
++                    union wl_argument *args))
+diff --git a/src/waffle/wayland/wayland_wrapper.h b/src/waffle/wayland/wayland_wrapper.h
+index 4af2f64..6addf4f 100644
+--- a/src/waffle/wayland/wayland_wrapper.h
++++ b/src/waffle/wayland/wayland_wrapper.h
+@@ -65,5 +65,7 @@ struct wl_display;
+ #define wl_proxy_marshal (*wfl_wl_proxy_marshal)
+ #define wl_proxy_marshal_constructor (*wfl_wl_proxy_marshal_constructor)
+ #define wl_proxy_marshal_constructor_versioned (*wfl_wl_proxy_marshal_constructor_versioned)
++#define wl_proxy_marshal_flags (*wfl_wl_proxy_marshal_flags)
++#define wl_proxy_marshal_array_flags (*wfl_wl_proxy_marshal_array_flags)
+ 
+ #include <wayland-client-protocol.h>
+-- 
+GitLab
+

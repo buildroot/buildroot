@@ -159,8 +159,7 @@ config BR2_UCLIBC_SH_TYPE
 
 config BR2_UCLIBC_SPARC_TYPE
 	string
-	default "V7"	if BR2_sparc_v7 || BR2_sparc_sparchfleon || BR2_sparc_sparcsfleon
-	default "V8"	if BR2_sparc_v8 || BR2_sparc_sparchfleonv8 || BR2_sparc_sparcsfleonv8
+	default "V8"	if BR2_sparc_v8
 	depends on BR2_UCLIBC_TARGET_ARCH = "sparc"
 
 config BR2_UCLIBC_POWERPC_TYPE

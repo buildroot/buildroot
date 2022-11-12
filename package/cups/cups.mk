@@ -27,6 +27,7 @@ CUPS_CONF_OPTS = \
 	--with-cups-user=lp \
 	--with-cups-group=lp \
 	--with-system-groups="lpadmin sys root" \
+	--disable-libpaper \
 	--without-rcdir
 CUPS_CONFIG_SCRIPTS = cups-config
 CUPS_DEPENDENCIES = \
@@ -61,13 +62,6 @@ CUPS_CONF_OPTS += --enable-libusb
 CUPS_DEPENDENCIES += libusb
 else
 CUPS_CONF_OPTS += --disable-libusb
-endif
-
-ifeq ($(BR2_PACKAGE_LIBPAPER),y)
-CUPS_CONF_OPTS += --enable-libpaper
-CUPS_DEPENDENCIES += libpaper
-else
-CUPS_CONF_OPTS += --disable-libpaper
 endif
 
 ifeq ($(BR2_PACKAGE_AVAHI),y)

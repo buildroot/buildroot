@@ -15,14 +15,23 @@ ACE_CPE_ID_PRODUCT = adaptive_communication_environment
 
 # Note: We are excluding examples, apps and tests
 # Only compiling ACE libraries (no TAO)
-ACE_LIBARIES = ace ACEXML Kokyu netsvcs protocols/ace
+ACE_LIBRARIES = ace ACEXML Kokyu netsvcs protocols/ace
 
+ACE_CPPFLAGS = $(TARGET_CPPFLAGS) -std=c++11
+
+ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_101915),y)
+ACE_CPPFLAGS += -O0
+endif
+
+# ACE uses DEFFLAGS as C++ pre-processor flags, and CCFLAGS as the C++ flags.
+# Ace passes the pre-processor flags after the C++ flags, so we pass our
+# C++ flags as pre-processor flags, via DEFFLAGS.
 ACE_MAKE_OPTS = \
 	ACE_ROOT="$(@D)" \
-	DEFFLAGS="$(TARGET_CPPFLAGS) -std=c++11"
+	DEFFLAGS="$(ACE_CPPFLAGS)"
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
-ACE_LIBARIES += ace/SSL
+ACE_LIBRARIES += ace/SSL
 ACE_DEPENDENCIES += openssl
 define ACE_CONFIGURE_SSL
 	echo "ssl = 1" >> $(@D)/include/makeinclude/platform_macros.GNU
@@ -42,25 +51,25 @@ define ACE_CONFIGURE_CMDS
 endef
 
 define ACE_BUILD_CMDS
-	$(foreach lib,$(ACE_LIBARIES), \
+	$(foreach lib,$(ACE_LIBRARIES), \
 		$(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)/$(lib) \
 			$(ACE_MAKE_OPTS) all
 	)
 endef
 
-define  ACE_LIBARIES_INSTALL
+define  ACE_LIBRARIES_INSTALL
 	mkdir -p $(1)/usr/share/ace
-	$(foreach lib,$(ACE_LIBARIES), \
+	$(foreach lib,$(ACE_LIBRARIES), \
 		$(MAKE) -C $(@D)/$(lib) $(ACE_MAKE_OPTS) DESTDIR=$(1) install
 	)
 endef
 
 define  ACE_INSTALL_TARGET_CMDS
-	$(call ACE_LIBARIES_INSTALL,$(TARGET_DIR))
+	$(call ACE_LIBRARIES_INSTALL,$(TARGET_DIR))
 endef
 
 define  ACE_INSTALL_STAGING_CMDS
-	$(call ACE_LIBARIES_INSTALL,$(STAGING_DIR))
+	$(call ACE_LIBRARIES_INSTALL,$(STAGING_DIR))
 endef
 
 $(eval $(generic-package))

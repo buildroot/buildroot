@@ -54,6 +54,9 @@ class Config:
 # pkg: package to which the file belongs
 #
 def add_file(filesdict, relpath, abspath, pkg):
+    if relpath.endswith(".py"):
+        # also check for compiled .pyc file
+        add_file(filesdict, relpath + "c", abspath + "c", pkg)
     if not os.path.exists(abspath):
         return
     if os.path.islink(abspath):

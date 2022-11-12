@@ -11,6 +11,12 @@ BUSYBOX_LICENSE = GPL-2.0, bzip2-1.0.4
 BUSYBOX_LICENSE_FILES = LICENSE archival/libarchive/bz/LICENSE
 BUSYBOX_CPE_ID_VENDOR = busybox
 
+# 0003-awk-fix-use-after-free-CVE-2022-30065.patch
+BUSYBOX_IGNORE_CVES += CVE-2022-30065
+# 0004-libbb-sockaddr2str-ensure-only-printable-characters-.patch
+# 0005-nslookup-sanitize-all-printed-strings-with-printable.patch
+BUSYBOX_IGNORE_CVES += CVE-2022-28391
+
 BUSYBOX_CFLAGS = \
 	$(TARGET_CFLAGS)
 
@@ -48,7 +54,7 @@ BUSYBOX_DEPENDENCIES = \
 	$(if $(BR2_PACKAGE_MTD),mtd) \
 	$(if $(BR2_PACKAGE_NET_TOOLS),net-tools) \
 	$(if $(BR2_PACKAGE_NETCAT),netcat) \
-	$(if $(BR2_PACKAGE_NETCAT_OPENSBSD),netcat-openbsd) \
+	$(if $(BR2_PACKAGE_NETCAT_OPENBSD),netcat-openbsd) \
 	$(if $(BR2_PACKAGE_NMAP),nmap) \
 	$(if $(BR2_PACKAGE_NTP),ntp) \
 	$(if $(BR2_PACKAGE_PCIUTILS),pciutils) \
