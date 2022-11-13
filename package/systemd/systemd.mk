@@ -90,6 +90,11 @@ SYSTEMD_CONF_OPTS += \
 	-Dumount-path=/usr/bin/umount \
 	-Dutmp=false
 
+SYSTEMD_CFLAGS = $(TARGET_CFLAGS)
+ifeq ($(BR2_OPTIMIZE_FAST),y)
+SYSTEMD_CFLAGS += -O3
+endif
+
 ifeq ($(BR2_nios2),y)
 # Nios2 ld emits warnings, make warnings not to be treated as errors
 SYSTEMD_LDFLAGS = $(TARGET_LDFLAGS) -Wl,--no-fatal-warnings
