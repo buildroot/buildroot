@@ -1,5 +1,9 @@
 #!/bin/sh
 
+for mod in usb_f_ecm usb_f_fs usb_f_rndis ; do
+	modprobe -q ${mod}
+done
+
 if [ ! -d /sys/kernel/config/usb_gadget ] ; then
 	echo 'configfs not mounted!' >&2
 	exit 1
