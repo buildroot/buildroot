@@ -8,7 +8,6 @@ case "$MODEL" in
 	# Only the RS90 needs to start USB at bootup, because it does not have
 	# USB cable detection.
 	ylm,rs90)
-		break
 		;;
 	*)
 		exit 0
