@@ -14,6 +14,9 @@ LIBVNCSERVER_INSTALL_STAGING = YES
 LIBVNCSERVER_DEPENDENCIES = host-pkgconf lzo
 LIBVNCSERVER_CONF_OPTS = -DWITH_LZO=ON
 
+# 0002-libvncclient-free-vncRec-memory-in-rfbClientCleanup.patch
+LIBVNCSERVER_IGNORE_CVES += CVE-2020-29260
+
 # only used for examples
 LIBVNCSERVER_CONF_OPTS += \
 	-DWITH_FFMPEG=OFF \
