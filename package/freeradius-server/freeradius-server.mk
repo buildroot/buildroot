@@ -9,11 +9,14 @@ FREERADIUS_SERVER_SOURCE = \
 	freeradius-server-$(FREERADIUS_SERVER_VERSION).tar.bz2
 FREERADIUS_SERVER_SITE = ftp://ftp.freeradius.org/pub/freeradius
 FREERADIUS_SERVER_LICENSE = GPL-2.0
-FREERADIUS_SERVER_LICENSE_FILES = COPYRIGHT
+FREERADIUS_SERVER_LICENSE_FILES = LICENSE COPYRIGHT
 FREERADIUS_SERVER_CPE_ID_VENDOR = freeradius
 FREERADIUS_SERVER_CPE_ID_PRODUCT = freeradius
 FREERADIUS_SERVER_DEPENDENCIES = libtalloc
 FREERADIUS_SERVER_AUTORECONF = YES
+
+define FREERADIUS_SERVER_USERS
+	radius 1011 radius 1015 * - - -
 
 # We're patching src/modules/rlm_krb5/configure.ac
 define FREERADIUS_SERVER_RUN_KRB5_AUTOCONF
@@ -51,7 +54,9 @@ FREERADIUS_SERVER_CONF_OPTS += \
 	--without-rlm_sql_iodbc \
 	--without-rlm_sql_oracle \
 	--without-rlm_sql_freetds \
-	--without-rlm_yubikey
+	--without-rlm_yubikey \
+	--without-rlm_sql_mongo \
+	--with-experimental-modules
 
 ifeq ($(BR2_PACKAGE_COLLECTD),y)
 FREERADIUS_SERVER_CONF_OPTS += --with-collectdclient
@@ -218,10 +223,5 @@ FREERADIUS_SERVER_MAKE_ENV = R=$(TARGET_DIR) TARGET_DIR=""
 
 # use MAKE1 because make install does not support parallel build
 FREERADIUS_SERVER_MAKE = $(MAKE1)
-
-define FREERADIUS_SERVER_INSTALL_INIT_SYSTEMD
-	$(INSTALL) -D -m 644 package/freeradius-server/radiusd.service \
-		$(TARGET_DIR)/usr/lib/systemd/system/radiusd.service
-endef
 
 $(eval $(autotools-package))
