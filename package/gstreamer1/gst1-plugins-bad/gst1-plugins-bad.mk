@@ -70,7 +70,6 @@ GST1_PLUGINS_BAD_CONF_OPTS += \
 	-Dsvthevcenc=disabled \
 	-Dtranscode=disabled \
 	-Dwasapi2=disabled \
-	-Dzxing=disabled \
 	-Dmagicleap=disabled \
 	-Disac=disabled \
 	-Diqa=disabled \
@@ -810,6 +809,13 @@ GST1_PLUGINS_BAD_CONF_OPTS += -Dzbar=enabled
 GST1_PLUGINS_BAD_DEPENDENCIES += zbar
 else
 GST1_PLUGINS_BAD_CONF_OPTS += -Dzbar=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_ZXING),y)
+GST1_PLUGINS_BAD_CONF_OPTS += -Dzxing=enabled
+GST1_PLUGINS_BAD_DEPENDENCIES += zxing-cpp
+else
+GST1_PLUGINS_BAD_CONF_OPTS += -Dzxing=disabled
 endif
 
 # Add GPL license if GPL licensed plugins enabled.
