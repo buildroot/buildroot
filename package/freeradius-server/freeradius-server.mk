@@ -17,6 +17,7 @@ FREERADIUS_SERVER_AUTORECONF = YES
 
 define FREERADIUS_SERVER_USERS
 	radius 1011 radius 1015 * - - -
+endef
 
 # We're patching src/modules/rlm_krb5/configure.ac
 define FREERADIUS_SERVER_RUN_KRB5_AUTOCONF

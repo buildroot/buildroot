@@ -14,4 +14,12 @@ MSTPD_LICENSE_FILES = LICENSE hmac_md5.c
 # not /usr/sbin.
 MSTPD_CONF_OPTS = --sbindir=/sbin
 
+define MSTPD_REMOVE_SCRIPTS
+	rm -fr $(TARGET_DIR)/usr/sbin/bridge-stp
+	rm -fr $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/mstpd.service
+	rm -fr $(TARGET_DIR)/usr/lib/systemd/system/mstpd.service
+endef
+
+MSTPD_POST_INSTALL_TARGET_HOOKS += MSTPD_REMOVE_SCRIPTS
+
 $(eval $(autotools-package))
