@@ -5,3 +5,23 @@ config BR2_TARGET_AFBOOT_STM32
 	  afboot-stm32 is a very small bootloader for STM32 platforms
 
 	  https://github.com/mcoquelin-stm32/afboot-stm32
+
+if BR2_TARGET_AFBOOT_STM32
+
+config BR2_TARGET_AFBOOT_STM32_KERNEL_ADDR
+	hex "Kernel load address"
+	default "0x08008000"
+	help
+	  This is the physical address in your flash memory the kernel
+	  will be linked for and stored to. This address is dependent on
+	  your own flash usage.
+
+config BR2_TARGET_AFBOOT_STM32_DTB_ADDR
+	hex "Device-tree load address"
+	default "0x08004000"
+	help
+	  This is the physical address in your flash memory the
+	  device-tree will be stored to. This address is dependent on
+	  your own flash usage.
+
+endif

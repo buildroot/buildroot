@@ -1,0 +1,34 @@
+From 51fb81264323f01a86dd0bdeaf1c7a044a9cb6dc Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@gmail.com>
+Date: Fri, 30 Apr 2021 15:43:59 +0200
+Subject: [PATCH] configure.ac: HELP2MAN replace ':' by 'true' when
+ cross-compiling
+
+Avoid:
+/usr/bin/make  ./../poke/poke
+../run \
+  : -p poke --name="The GNU extensible binary editor" \
+      ./../poke/poke -o ./poke.1
+../run: line 51: exec: :: not found
+
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index a1943b57..c633f719 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -90,7 +90,7 @@ gl_LIBTEXTSTYLE_OPTIONAL([0.20.5])
+ if test $cross_compiling = no; then
+   AM_MISSING_PROG(HELP2MAN, help2man)
+ else
+-  HELP2MAN=:
++  HELP2MAN=true
+ fi
+ 
+ dnl recfix is part of the GNU recutils suite, and is used in cfg.mk to
+-- 
+2.31.1
+

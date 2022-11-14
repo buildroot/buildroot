@@ -1,0 +1,40 @@
+From be760c062c5d05bd2223f3916afafd37120d3318 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Thu, 28 Apr 2022 22:47:09 +0200
+Subject: [PATCH] Makefile: drop -nostartfiles
+
+In commit 0f3e61c9dd48fd8b4248ce4672c044c2562e4de1 ("Use ld instead of
+gcc for linking "), we started using ld instead of gcc for the link
+step. This worked fine for a while, but recent versions of ld no
+longer accept the -nostartfiles option, causing the build to break:
+
+Error: unable to disambiguate: -nostartfiles (did you mean --nostartfiles ?)
+
+In fact, -nostartfiles was passed to gcc prior to
+0f3e61c9dd48fd8b4248ce4672c044c2562e4de1, but it is not a ld
+option. It is only by luck that it was accepted and ignored by older
+ld versions. Since this option is useless when calling ld directly, we
+can simply drop it.
+
+Upstream: https://github.com/mcoquelin-stm32/afboot-stm32/pull/11
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 1e8557d..8f42be1 100644
+--- a/Makefile
++++ b/Makefile
+@@ -14,7 +14,7 @@ CFLAGS := -mthumb -mcpu=cortex-m4
+ CFLAGS += -ffunction-sections -fdata-sections
+ CFLAGS += -Os -std=gnu99 -Wall
+ CFLAGS += -fno-builtin
+-LINKERFLAGS := -nostartfiles --gc-sections
++LINKERFLAGS := --gc-sections
+ 
+ obj-y += gpio.o mpu.o qspi.o start_kernel.o
+ obj-f4 += $(obj-y) usart-f4.o
+-- 
+2.35.1
+

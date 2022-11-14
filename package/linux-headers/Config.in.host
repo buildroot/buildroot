@@ -6,7 +6,7 @@ config BR2_PACKAGE_HOST_LINUX_HEADERS
 choice
 	prompt "Kernel Headers"
 	default BR2_KERNEL_HEADERS_AS_KERNEL if BR2_LINUX_KERNEL
-	default BR2_KERNEL_HEADERS_5_14
+	default BR2_KERNEL_HEADERS_6_0
 	help
 	  Select the kernel version to get headers from.
 
@@ -27,27 +27,18 @@ config BR2_KERNEL_HEADERS_AS_KERNEL
 	depends on BR2_LINUX_KERNEL
 	select BR2_KERNEL_HEADERS_LATEST if BR2_LINUX_KERNEL_LATEST_VERSION
 
-config BR2_KERNEL_HEADERS_4_4
-	bool "Linux 4.4.x kernel headers"
-	depends on !BR2_riscv
-	depends on !BR2_csky
-	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_4
-
 config BR2_KERNEL_HEADERS_4_9
 	bool "Linux 4.9.x kernel headers"
 	depends on !BR2_riscv
-	depends on !BR2_csky
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_9
 
 config BR2_KERNEL_HEADERS_4_14
 	bool "Linux 4.14.x kernel headers"
 	depends on !BR2_riscv
-	depends on !BR2_csky
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14
 
 config BR2_KERNEL_HEADERS_4_19
 	bool "Linux 4.19.x kernel headers"
-	depends on !BR2_csky
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_19
 
 config BR2_KERNEL_HEADERS_5_4
@@ -58,13 +49,17 @@ config BR2_KERNEL_HEADERS_5_10
 	bool "Linux 5.10.x kernel headers"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10
 
-config BR2_KERNEL_HEADERS_5_13
-	bool "Linux 5.13.x kernel headers"
-	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_13
+config BR2_KERNEL_HEADERS_5_15
+	bool "Linux 5.15.x kernel headers"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_15
 
-config BR2_KERNEL_HEADERS_5_14
-	bool "Linux 5.14.x kernel headers"
-	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_14
+config BR2_KERNEL_HEADERS_5_19
+	bool "Linux 5.19.x kernel headers"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_19
+
+config BR2_KERNEL_HEADERS_6_0
+	bool "Linux 6.0.x kernel headers"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_0
 	select BR2_KERNEL_HEADERS_LATEST
 
 config BR2_KERNEL_HEADERS_VERSION
@@ -127,6 +122,9 @@ endif
 
 choice
 	bool "Custom kernel headers series"
+	depends on !BR2_LINUX_KERNEL_LATEST_VERSION || !BR2_KERNEL_HEADERS_AS_KERNEL
+	depends on !BR2_LINUX_KERNEL_LATEST_CIP_VERSION || !BR2_KERNEL_HEADERS_AS_KERNEL
+	depends on !BR2_LINUX_KERNEL_LATEST_CIP_RT_VERSION || !BR2_KERNEL_HEADERS_AS_KERNEL
 	depends on BR2_KERNEL_HEADERS_VERSION || BR2_KERNEL_HEADERS_AS_KERNEL || \
 		   BR2_KERNEL_HEADERS_CUSTOM_TARBALL || BR2_KERNEL_HEADERS_CUSTOM_GIT
 	help
@@ -139,8 +137,32 @@ choice
 	  If your kernel headers are more recent than the latest version
 	  in the choice, then select the latest version.
 
+config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_6_0
+	bool "6.0.x or later"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_0
+
+config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_19
+	bool "5.19.x"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_19
+
+config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_18
+	bool "5.18.x"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_18
+
+config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_17
+	bool "5.17.x"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_17
+
+config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_16
+	bool "5.16.x"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_16
+
+config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_15
+	bool "5.15.x"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_15
+
 config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_14
-	bool "5.14.x or later"
+	bool "5.14.x"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_14
 
 config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_13
@@ -370,14 +392,14 @@ endchoice
 
 config BR2_DEFAULT_KERNEL_HEADERS
 	string
-	default "4.4.283"	if BR2_KERNEL_HEADERS_4_4
-	default "4.9.282"	if BR2_KERNEL_HEADERS_4_9
-	default "4.14.246"	if BR2_KERNEL_HEADERS_4_14
-	default "4.19.206"	if BR2_KERNEL_HEADERS_4_19
-	default "5.4.145"	if BR2_KERNEL_HEADERS_5_4
-	default "5.10.64"	if BR2_KERNEL_HEADERS_5_10
-	default "5.13.16"	if BR2_KERNEL_HEADERS_5_13
-	default "5.14.3"	if BR2_KERNEL_HEADERS_5_14
+	default "4.9.330"	if BR2_KERNEL_HEADERS_4_9
+	default "4.14.295"	if BR2_KERNEL_HEADERS_4_14
+	default "4.19.261"	if BR2_KERNEL_HEADERS_4_19
+	default "5.4.217"	if BR2_KERNEL_HEADERS_5_4
+	default "5.10.147"	if BR2_KERNEL_HEADERS_5_10
+	default "5.15.73"	if BR2_KERNEL_HEADERS_5_15
+	default "5.19.15"	if BR2_KERNEL_HEADERS_5_19
+	default "6.0.1"		if BR2_KERNEL_HEADERS_6_0
 	default BR2_DEFAULT_KERNEL_VERSION if BR2_KERNEL_HEADERS_VERSION
 	default "custom"	if BR2_KERNEL_HEADERS_CUSTOM_TARBALL
 	default BR2_KERNEL_HEADERS_CUSTOM_REPO_VERSION \

@@ -1,6 +1,5 @@
 config BR2_PACKAGE_SELINUX_PYTHON
 	bool "selinux-python"
-	depends on !BR2_PACKAGE_PYTHON
 	depends on BR2_USE_MMU
 	depends on BR2_USE_WCHAR
 	depends on BR2_TOOLCHAIN_HAS_THREADS
@@ -17,6 +16,7 @@ if BR2_PACKAGE_SELINUX_PYTHON
 
 config BR2_PACKAGE_SELINUX_PYTHON_AUDIT2ALLOW
 	bool "audit2allow"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # semodule-utils -> libsepol
 	select BR2_PACKAGE_CHECKPOLICY
 	select BR2_PACKAGE_SELINUX_PYTHON_SEPOLGEN
 	select BR2_PACKAGE_SEMODULE_UTILS
@@ -29,18 +29,21 @@ config BR2_PACKAGE_SELINUX_PYTHON_AUDIT2ALLOW
 	  audit2why - translates SELinux audit messages into a
 	  description of why the access was denied (audit2allow -w)
 
+comment "audit2allow needs a toolchain w/ gcc 5"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_5
+
 config BR2_PACKAGE_SELINUX_PYTHON_SEPOLGEN
 	bool "sepolgen"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # semodule-utils -> libsepol
 	select BR2_PACKAGE_SEMODULE_UTILS
 	help
 	  This package contains a Python module that allows you to
 	  generate an initial SELinux policy module template.
 
-endif
+comment "sepolgen needs a toolchain w/ gcc 5"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_5
 
-comment "selinux-python needs python3"
-	depends on BR2_USE_MMU
-	depends on BR2_PACKAGE_PYTHON
+endif
 
 comment "selinux-python packages needs a toolchain w/ wchar, threads, dynamic library"
 	depends on BR2_USE_MMU

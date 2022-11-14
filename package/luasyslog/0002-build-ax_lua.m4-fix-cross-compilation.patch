@@ -1,0 +1,45 @@
+From aed16d13d881492e8558f9da21be2dffc4ab2c33 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 4 Sep 2021 17:23:58 +0200
+Subject: [PATCH] build/ax_lua.m4: fix cross-compilation
+
+Don't try to "find" and "fix" the script and module directories when
+cross-compiling as this will give unexpected results such as using
+${prefix}/lfs/hdd_v1/rc-buildroot-test/scripts/instance-0/output-1/host/usr/share/lua/5.3
+instead of
+${prefix}/share/lua/5.3
+if the host machine root directory is /usr
+
+Fixes:
+ - http://autobuild.buildroot.org/results/09fa6dd9844d6d4694801ec59434dad7a56bf290
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ build/ax_lua.m4 | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/build/ax_lua.m4 b/build/ax_lua.m4
+index 23ca774..7c25cfd 100644
+--- a/build/ax_lua.m4
++++ b/build/ax_lua.m4
+@@ -291,7 +291,7 @@ AC_DEFUN([AX_PROG_LUA],
+ 
+         dnl Try to find a path with the prefix.
+         _AX_LUA_FND_PRFX_PTH([$LUA], [$ax_lua_prefix], [package.path])
+-        AS_IF([test "x$ax_lua_prefixed_path" != 'x'],
++        AS_IF([test "x$ax_lua_prefixed_path" != 'x' && test "x$cross_compiling" != 'xyes'],
+         [ dnl Fix the prefix.
+           _ax_strip_prefix=`echo "$ax_lua_prefix" | sed 's|.|.|g'`
+           ax_cv_lua_luadir=`echo "$ax_lua_prefixed_path" | \
+@@ -318,7 +318,7 @@ AC_DEFUN([AX_PROG_LUA],
+         dnl Try to find a path with the prefix.
+         _AX_LUA_FND_PRFX_PTH([$LUA],
+           [$ax_lua_exec_prefix], [package.cpathd])
+-        AS_IF([test "x$ax_lua_prefixed_path" != 'x'],
++        AS_IF([test "x$ax_lua_prefixed_path" != 'x' && test "x$cross_compiling" != 'xyes'],
+         [ dnl Fix the prefix.
+           _ax_strip_prefix=`echo "$ax_lua_exec_prefix" | sed 's|.|.|g'`
+           ax_cv_lua_luaexecdir=`echo "$ax_lua_prefixed_path" | \
+-- 
+2.32.0
+

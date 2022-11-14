@@ -1,0 +1,11 @@
+config BR2_PACKAGE_LIBDBI
+	bool "lidbi"
+	depends on !BR2_STATIC_LIBS
+	help
+	  libdbi implements a database-independent abstraction layer
+	  in C, similar to the DBI/DBD layer in Perl.
+
+	  http://libdbi.sourceforge.net
+
+comment "libdbi needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS

@@ -5,7 +5,6 @@ config BR2_PACKAGE_OPKG_UTILS
 	depends on BR2_USE_WCHAR # python3
 	depends on BR2_TOOLCHAIN_HAS_THREADS # python3 <- libffi
 	depends on !BR2_STATIC_LIBS # python3
-	depends on !BR2_PACKAGE_PYTHON # python3
 	select BR2_PACKAGE_BINUTILS if !BR2_PACKAGE_BUSYBOX # runtime
 	select BR2_PACKAGE_BINUTILS_TARGET if !BR2_PACKAGE_BUSYBOX # runtime
 	select BR2_PACKAGE_COREUTILS if !BR2_PACKAGE_BUSYBOX # runtime
@@ -27,8 +26,3 @@ comment "opkg-utils needs a toolchain w/ wchar, threads, dynamic library"
 	depends on !BR2_nios2 || BR2_PACKAGE_BUSYBOX
 	depends on BR2_USE_MMU
 	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
-
-comment "opkg-utils needs python3"
-	depends on !BR2_nios2 || BR2_PACKAGE_BUSYBOX
-	depends on BR2_USE_MMU
-	depends on BR2_PACKAGE_PYTHON

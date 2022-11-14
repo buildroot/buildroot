@@ -1,7 +1,6 @@
 config BR2_PACKAGE_PYTHON_ITSDANGEROUS
 	bool "python-itsdangerous"
-	select BR2_PACKAGE_PYTHON_ZLIB if BR2_PACKAGE_PYTHON # runtime
-	select BR2_PACKAGE_PYTHON3_ZLIB if BR2_PACKAGE_PYTHON3 # runtime
+	select BR2_PACKAGE_PYTHON3_ZLIB # runtime
 	help
 	  Itsdangerous contains various helpers to pass data to
 	  untrusted environments and to get it back safe and sound.

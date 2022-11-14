@@ -20,6 +20,22 @@ config BR2_PACKAGE_LTP_TESTSUITE
 
 	  http://linux-test-project.github.io
 
+if BR2_PACKAGE_LTP_TESTSUITE
+
+config BR2_PACKAGE_LTP_TESTSUITE_OPEN_POSIX
+	bool "Open POSIX testsuite"
+	default y
+	help
+	  Test suite for POSIX compliance. Included with the LTP.
+
+config BR2_PACKAGE_LTP_TESTSUITE_REALTIME
+	bool "Realtime testsuite"
+	default y
+	help
+	  Test suite for realtime kernels. Included with the LTP.
+
+endif
+
 comment "ltp-testsuite needs a toolchain w/ NPTL"
 	depends on BR2_PACKAGE_LTP_TESTSUITE_ARCH_SUPPORTS
 	depends on BR2_USE_MMU

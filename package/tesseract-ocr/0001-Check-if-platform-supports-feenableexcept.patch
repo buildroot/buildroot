@@ -1,0 +1,42 @@
+From 52484af83a58664c3cc91b8af07aeeea271f67ef Mon Sep 17 00:00:00 2001
+From: Gilles Talis <gilles.talis@gmail.com>
+Date: Sun, 9 Jan 2022 10:58:36 +0100
+Subject: [PATCH] Check if platform supports feenableexcept
+
+Signed-off-by: Gilles Talis <gilles.talis@gmail.com>
+---
+ configure.ac      | 4 ++++
+ src/tesseract.cpp | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 9177d64..80cd735 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -188,6 +188,10 @@ case "${host_cpu}" in
+ 
+ esac
+
++# check whether feenableexcept is supported. some C libraries (e.g. uclibc) don't.
++AC_CHECK_FUNC(feenableexcept, [feenableexcept=true], [feenableexcept=false])
++AM_CONDITIONAL([HAVE_FEENABLEEXCEPT], $feenableexcept)
++
+ AX_CHECK_COMPILE_FLAG([-fopenmp-simd], [openmp_simd=true], [openmp_simd=false], [$WERROR])
+ AM_CONDITIONAL([OPENMP_SIMD], $openmp_simd)
+ 
+diff --git a/src/tesseract.cpp b/src/tesseract.cpp
+index 933116e..9154db8 100644
+--- a/src/tesseract.cpp
++++ b/src/tesseract.cpp
+@@ -629,7 +629,7 @@ static void PreloadRenderers(tesseract::TessBaseAPI &api,
+  **********************************************************************/
+ 
+ int main(int argc, char **argv) {
+-#if defined(__USE_GNU)
++#if defined(__USE_GNU) && defined(HAVE_FEENABLEEXCEPT)
+   // Raise SIGFPE.
+ #  if defined(__clang__)
+   // clang creates code which causes some FP exceptions, so don't enable those.
+-- 
+2.32.0
+

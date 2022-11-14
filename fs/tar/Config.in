@@ -46,6 +46,11 @@ config BR2_TARGET_ROOTFS_TAR_XZ
 	help
 	  Do compress the tarball with xz.
 
+config BR2_TARGET_ROOTFS_TAR_ZSTD
+	bool "zstd"
+	help
+	  Do compress the tarball with zstd.
+
 endchoice
 
 config BR2_TARGET_ROOTFS_TAR_OPTIONS

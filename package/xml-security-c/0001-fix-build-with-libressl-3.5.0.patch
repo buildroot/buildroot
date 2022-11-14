@@ -1,0 +1,91 @@
+From 66d1d626cf1405119d89c6fd0fb7e9019bd67f6c Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 6 Jun 2022 10:24:58 +0200
+Subject: [PATCH] fix build with libressl >= 3.5.0
+
+Fix the following build failure with libressl >= 3.5.0:
+
+In file included from ../xsec/enc/OpenSSL/OpenSSLCryptoBase64.hpp:36:0,
+                 from enc/OpenSSL/OpenSSLCryptoKeyRSA.cpp:35:
+../xsec/enc/OpenSSL/OpenSSLSupport.hpp:92:20: error: field 'mp_ctx_store' has incomplete type 'EVP_ENCODE_CTX {aka evp_Encode_Ctx_st}'
+     EVP_ENCODE_CTX mp_ctx_store;
+                    ^~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/e908e59ec5b8e1ac505c44900dcb39527f0ec1d3
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://issues.apache.org/jira/browse/SANTUARIO-588]
+---
+ xsec/enc/OpenSSL/OpenSSLCryptoBase64.cpp | 3 ++-
+ xsec/enc/OpenSSL/OpenSSLCryptoBase64.hpp | 3 ++-
+ xsec/enc/OpenSSL/OpenSSLSupport.cpp      | 5 +++--
+ xsec/enc/OpenSSL/OpenSSLSupport.hpp      | 3 ++-
+ 4 files changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/xsec/enc/OpenSSL/OpenSSLCryptoBase64.cpp b/xsec/enc/OpenSSL/OpenSSLCryptoBase64.cpp
+index a8ea9f1d..a9a84e3f 100644
+--- a/xsec/enc/OpenSSL/OpenSSLCryptoBase64.cpp
++++ b/xsec/enc/OpenSSL/OpenSSLCryptoBase64.cpp
+@@ -48,7 +48,8 @@ XERCES_CPP_NAMESPACE_USE
+ //           Construction/Destruction
+ // --------------------------------------------------------------------------------
+ 
+-#if (OPENSSL_VERSION_NUMBER < 0x10100000L) || defined(LIBRESSL_VERSION_NUMBER)
++#if (OPENSSL_VERSION_NUMBER < 0x10100000L) || \
++	((defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x30500000L))
+ OpenSSLCryptoBase64::OpenSSLCryptoBase64() : mp_ectx(&m_ectx_store), mp_dctx(&m_dctx_store) { }
+ OpenSSLCryptoBase64::~OpenSSLCryptoBase64() { }
+ #else
+diff --git a/xsec/enc/OpenSSL/OpenSSLCryptoBase64.hpp b/xsec/enc/OpenSSL/OpenSSLCryptoBase64.hpp
+index 82aeb0a1..7c947d50 100644
+--- a/xsec/enc/OpenSSL/OpenSSLCryptoBase64.hpp
++++ b/xsec/enc/OpenSSL/OpenSSLCryptoBase64.hpp
+@@ -205,7 +205,8 @@ private :
+     EVP_ENCODE_CTX *mp_ectx;              // Encode context
+     EVP_ENCODE_CTX *mp_dctx;              // Decode context
+ 
+-#if (OPENSSL_VERSION_NUMBER < 0x10100000L) || defined(LIBRESSL_VERSION_NUMBER)
++#if (OPENSSL_VERSION_NUMBER < 0x10100000L) || \
++	((defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x30500000L))
+     EVP_ENCODE_CTX m_ectx_store;
+     EVP_ENCODE_CTX m_dctx_store;
+ #endif 
+diff --git a/xsec/enc/OpenSSL/OpenSSLSupport.cpp b/xsec/enc/OpenSSL/OpenSSLSupport.cpp
+index cf874f82..c4453004 100644
+--- a/xsec/enc/OpenSSL/OpenSSLSupport.cpp
++++ b/xsec/enc/OpenSSL/OpenSSLSupport.cpp
+@@ -273,7 +273,8 @@ int ECDSA_SIG_set0(ECDSA_SIG *sig, BIGNUM *r, BIGNUM *s)
+ 
+ #endif
+ 
+-#if (OPENSSL_VERSION_NUMBER < 0x10100000L) || defined(LIBRESSL_VERSION_NUMBER)
++#if (OPENSSL_VERSION_NUMBER < 0x10100000L) || \
++	 ((defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x30500000L))
+ EvpEncodeCtxRAII::EvpEncodeCtxRAII() : mp_ctx(&mp_ctx_store) { };
+ EvpEncodeCtxRAII::~EvpEncodeCtxRAII() { }
+ #else
+@@ -289,4 +290,4 @@ EVP_ENCODE_CTX
+     return mp_ctx;
+ }
+ 
+-#endif
+\ No newline at end of file
++#endif
+diff --git a/xsec/enc/OpenSSL/OpenSSLSupport.hpp b/xsec/enc/OpenSSL/OpenSSLSupport.hpp
+index b5f67f26..09d50899 100644
+--- a/xsec/enc/OpenSSL/OpenSSLSupport.hpp
++++ b/xsec/enc/OpenSSL/OpenSSLSupport.hpp
+@@ -88,7 +88,8 @@ public:
+ 
+ private:
+     EVP_ENCODE_CTX *mp_ctx;
+-#if (OPENSSL_VERSION_NUMBER < 0x10100000L) || defined(LIBRESSL_VERSION_NUMBER)
++#if (OPENSSL_VERSION_NUMBER < 0x10100000L) || \
++	((defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x30500000L))
+     EVP_ENCODE_CTX mp_ctx_store;
+ #endif    
+ };
+-- 
+2.35.1
+

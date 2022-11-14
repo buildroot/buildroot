@@ -145,11 +145,13 @@ config BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_11K_QCA6390
 
 config BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM43XX
 	bool "Broadcom BRCM bcm43xx"
+	select BR2_PACKAGE_LINUX_FIRMWARE_CYPRESS_CYW43XX
 	help
 	  Firmware files for the Broadcom bcm43xx SoftMAC and FullMAC.
 
 config BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM43XXX
 	bool "Broadcom BRCM bcm43xxx"
+	select BR2_PACKAGE_LINUX_FIRMWARE_CYPRESS_CYW43XXX
 	help
 	  Firmware files for the Broadcom bcm43xxx, SoftMAC and FullMAC.
 
@@ -162,6 +164,27 @@ config BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM4366C0
 	bool "Broadcom 4366c0"
 	help
 	  Firmware file for the Broadcom 4366c0 FullMAC chip.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_CYPRESS_CYW43XX
+	bool "Cypress CY cyw43xx"
+	help
+	  Firmware files for the Cypress cyw43xx FullMAC.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_CYPRESS_CYW43XXX
+	bool "Cypress CY cyw43xxx"
+	help
+	  Firmware files for the Cypress cyw43xxx FullMAC.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_CYPRESS_CYW54XXX
+	bool "Cypress CY cyw54xxx"
+	help
+	  Firmware files for the Cypress cyw54xxx FullMAC.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22000
+	bool "Intel iwlwifi 22000"
+	help
+	  Firmware files for the Intel Wifi 22000 devices supported by
+	  the iwlwifi kernel driver.
 
 config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22260
 	bool "Intel iwlwifi 22260"
@@ -180,6 +203,18 @@ config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_3168
 	help
 	  Firmware files for the Intel Wifi 3168 devices supported by
 	  the iwlwifi kernel driver.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_3945
+	bool "Intel iwlwifi 3945"
+	help
+	  Firmware files for the Intel Wifi 3945 devices supported by
+	  the iwl3945 kernel driver.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_4965
+	bool "Intel iwlwifi 4965"
+	help
+	  Firmware files for the Intel Wifi 4965 devices supported by
+	  the iwl4965 kernel driver.
 
 config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_5000
 	bool "Intel iwlwifi 5000"
@@ -437,6 +472,12 @@ config BR2_PACKAGE_LINUX_FIRMWARE_INTEL_E100
 	  Firmware files for Intel 825xx handled by driver e100
 	  (e100)
 
+config BR2_PACKAGE_LINUX_FIRMWARE_INTEL_ICE
+	bool "Intel Ethernet 800 Series"
+	help
+	  Firmware files for Intel Ethernet 800 Series Network Adapters
+	  (ice)
+
 config BR2_PACKAGE_LINUX_FIRMWARE_MICROCHIP_VSC85XX_PHY
 	bool "Microchip VSC85xx PHYs"
 	help
@@ -449,6 +490,12 @@ config BR2_PACKAGE_LINUX_FIRMWARE_QLOGIC_4X
 	help
 	  Firmware files for QLogic FastLinQ 4xxxx ethernet devices
 	  (qede)
+
+config BR2_PACKAGE_LINUX_FIRMWARE_RTL_815X
+	bool "Realtek 8152/8153/8156 USB Ethernet Adapaters"
+	help
+	  Firmware files for Realtek 8152/8153/8156 based USB Ethernet
+	  adapters.
 
 config BR2_PACKAGE_LINUX_FIRMWARE_RTL_8169
 	bool "Realtek 8169"

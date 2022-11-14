@@ -4,13 +4,15 @@
 #
 ################################################################################
 
-HTPDATE_VERSION = 1.2.6
-HTPDATE_SITE = $(call github,angeloc,htpdate,v$(HTPDATE_VERSION))
+HTPDATE_VERSION = 1.3.6
+HTPDATE_SITE = $(call github,twekkel,htpdate,v$(HTPDATE_VERSION))
 HTPDATE_LICENSE = GPL-2.0+
 HTPDATE_LICENSE_FILES = LICENSE
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
-HTPDATE_BUILD_OPTS = ENABLE_HTTPS=1
+HTPDATE_BUILD_OPTS = \
+	https \
+	SSL_LIBS="`$(PKG_CONFIG_HOST_BINARY) --libs openssl`"
 HTPDATE_DEPENDENCIES += openssl host-pkgconf
 endif
 
@@ -19,7 +21,8 @@ define HTPDATE_BUILD_CMDS
 endef
 
 define HTPDATE_INSTALL_TARGET_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) DESTDIR=$(TARGET_DIR) install
+	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D) \
+		DESTDIR=$(TARGET_DIR) install
 endef
 
 define HTPDATE_INSTALL_INIT_SYSV

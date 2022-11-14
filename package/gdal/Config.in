@@ -1,0 +1,32 @@
+config BR2_PACKAGE_GDAL
+	bool "gdal"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # json-c
+	depends on BR2_INSTALL_LIBSTDCPP # proj
+	# configure can't find proj, when linking statically
+	depends on !BR2_STATIC_LIBS
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_7 # C++11, proj
+	depends on !BR2_TOOLCHAIN_HAS_BINUTILS_BUG_27597
+	depends on BR2_TOOLCHAIN_HAS_THREADS # proj
+	depends on BR2_USE_WCHAR # proj
+	select BR2_PACKAGE_JPEG
+	select BR2_PACKAGE_JSON_C
+	select BR2_PACKAGE_LIBGEOTIFF
+	select BR2_PACKAGE_LIBPNG
+	select BR2_PACKAGE_PROJ
+	select BR2_PACKAGE_ZLIB
+	help
+	  GDAL is a translator library for raster and vector geospatial
+	  data formats. As a library, it presents a single raster
+	  abstract data model and single vector abstract data model to
+	  the calling application for all supported formats. It also
+	  comes with a variety of useful command line utilities for data
+	  translation and processing.
+
+	  https://gdal.org/
+
+comment "gdal needs a toolchain w/ C++, dynamic library, gcc >= 4.7, not binutils bug 27597, threads, wchar"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_INSTALL_LIBSTDCPP || BR2_STATIC_LIBS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_7 || \
+		BR2_TOOLCHAIN_HAS_BINUTILS_BUG_27597 || \
+		!BR2_TOOLCHAIN_HAS_THREADS || !BR2_USE_WCHAR

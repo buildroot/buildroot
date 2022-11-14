@@ -1,0 +1,17 @@
+config BR2_PACKAGE_QT5DOC
+	bool "qt5doc (includes quick demos)"
+	depends on BR2_PACKAGE_QT5_JSCORE_AVAILABLE # qt5declarative
+	select BR2_PACKAGE_QT5BASE_EXAMPLES
+	select BR2_PACKAGE_QT5DECLARATIVE
+	select BR2_PACKAGE_QT5DECLARATIVE_QUICK
+	help
+	  Qt is a cross-platform application and UI framework for
+	  developers using C++.
+
+	  Qtdoc contains the main Qt Reference Documentation, which
+	  includes overviews, Qt topics, and examples not specific to
+	  any Qt module. The configuration files are located in
+	  qtdoc/doc/config and the articles in qtdoc/doc/src. Note that
+	  QDoc itself is located in qtbase.
+
+	  https://doc.qt.io/qt-5/overviews.html

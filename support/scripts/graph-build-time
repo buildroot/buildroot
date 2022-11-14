@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (C) 2011 by Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 # Copyright (C) 2013 by Yann E. MORIN <yann.morin.1998@free.fr>
@@ -241,6 +241,65 @@ def pkg_pie_time_per_step(data, output):
     plt.savefig(output)
 
 
+def pkg_timeline(data, output):
+    start = 0
+    end = 0
+
+    # Find the first timestamp and the last timestamp
+    for p in data:
+        for k, v in p.steps_start.items():
+            if start == 0 or v < start:
+                start = v
+            if end < v:
+                end = v
+
+    # Readjust all timestamps so that 0 is the start of the build
+    # instead of being Epoch
+    for p in data:
+        for k, v in p.steps_start.items():
+            p.steps_start[k] = v - start
+        for k, v in p.steps_end.items():
+            p.steps_end[k] = v - start
+
+    plt.figure()
+
+    i = 0
+    labels_names = []
+    labels_coords = []
+    # put last packages that started to configure last; this does not
+    # give the proper dependency chain, but still provides a good-enough
+    # cascade graph.
+    for p in sorted(data, reverse=True, key=lambda x: x.steps_start['configure']):
+        durations = []
+        facecolors = []
+        for step in steps:
+            if step not in p.steps_start or step not in p.steps_end:
+                continue
+            durations.append((p.steps_start[step],
+                              p.steps_end[step] - p.steps_start[step]))
+            facecolors.append(colors[steps.index(step)])
+        plt.broken_barh(durations, (i, 6), facecolors=facecolors)
+        labels_coords.append(i + 3)
+        labels_names.append(p.name)
+        i += 10
+
+    axes = plt.gcf().gca()
+
+    axes.set_ylim(0, i + 10)
+    axes.set_xlim(0, end - start)
+    axes.set_xlabel('seconds since start')
+    axes.set_yticks(labels_coords)
+    axes.set_yticklabels(labels_names)
+    axes.set_axisbelow(True)
+    axes.grid(True, linewidth=0.2, zorder=-1)
+
+    plt.gcf().subplots_adjust(left=0.2)
+
+    plt.tick_params(axis='y', which='both', labelsize=6)
+    plt.title('Timeline')
+    plt.savefig(output, dpi=300)
+
+
 # Parses the csv file passed on standard input and returns a list of
 # Package objects, filed with the duration of each step and the total
 # duration of the package.
@@ -277,7 +336,7 @@ def read_data(input_file):
 
 parser = argparse.ArgumentParser(description='Draw build time graphs')
 parser.add_argument("--type", '-t', metavar="GRAPH_TYPE",
-                    help="Type of graph (histogram, pie-packages, pie-steps)")
+                    help="Type of graph (histogram, pie-packages, pie-steps, timeline)")
 parser.add_argument("--order", '-O', metavar="GRAPH_ORDER",
                     help="Ordering of packages: build or duration (for histogram only)")
 parser.add_argument("--alternate-colors", '-c', action="store_true",
@@ -307,6 +366,8 @@ elif args.type == "pie-packages":
     pkg_pie_time_per_package(d, args.output)
 elif args.type == "pie-steps":
     pkg_pie_time_per_step(d, args.output)
+elif args.type == "timeline":
+    pkg_timeline(d, args.output)
 else:
     sys.stderr.write("Unknown type: %s\n" % args.type)
     exit(1)

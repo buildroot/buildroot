@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DAVICI_VERSION = 1.3
+DAVICI_VERSION = 1.4
 DAVICI_SITE = $(call github,strongswan,davici,v$(DAVICI_VERSION))
 DAVICI_LICENSE = LGPL-2.1+
 DAVICI_LICENSE_FILES = COPYING

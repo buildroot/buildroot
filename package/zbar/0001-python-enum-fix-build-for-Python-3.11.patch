@@ -1,0 +1,62 @@
+From fbaec4b4e6fe735efe6916fe5b92805a0d96bf8a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=C4=90o=C3=A0n=20Tr=E1=BA=A7n=20C=C3=B4ng=20Danh?=
+ <congdanhqx@gmail.com>
+Date: Wed, 21 Sep 2022 10:32:11 +0700
+Subject: [PATCH] python: enum: fix build for Python 3.11
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Python 3.9 introduced Py_SET_SIZE function to set size instead of
+relying on Py_SIZE() as a macro [3.9].
+
+Python 3.10 started to encourage to use Py_SET_SIZE instead of
+assigning into return value of Py_SIZE [3.10].
+
+Python 3.11 flips the switch, turn Py_SIZE into a function [3.11],
+thus Py_SIZE(obj) will be a rvalue. We need to use Py_SET_SIZE
+to set size now.
+
+[3.9]: https://docs.python.org/3.9/c-api/structures.html#c.Py_SET_SIZE
+[3.10]: https://docs.python.org/3.10/c-api/structures.html#c.Py_SIZE
+[3.11]: https://docs.python.org/3.11/c-api/structures.html#c.Py_SIZE
+
+Signed-off-by: Đoàn Trần Công Danh <congdanhqx@gmail.com>
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[Upstream status:
+https://github.com/mchehab/zbar/pull/231]
+---
+ python/enum.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/python/enum.c b/python/enum.c
+index dfe1b1e..946344f 100644
+--- a/python/enum.c
++++ b/python/enum.c
+@@ -52,7 +52,11 @@ enumitem_new (PyTypeObject *type,
+ 
+     /* we assume the "fast path" for a single-digit ints (see longobject.c) */
+     /* this also holds if we get a small_int preallocated long */
++#if PY_VERSION_HEX >= 0x03090000
++    Py_SET_SIZE(&self->val, Py_SIZE(longval));
++#else
+     Py_SIZE(&self->val) = Py_SIZE(longval);
++#endif
+     self->val.ob_digit[0] = longval->ob_digit[0];
+     Py_DECREF(longval);
+ #else
+@@ -143,7 +147,11 @@ zbarEnumItem_New (PyObject *byname,
+ 
+     /* we assume the "fast path" for a single-digit ints (see longobject.c) */
+     /* this also holds if we get a small_int preallocated long */
++#if PY_VERSION_HEX >= 0x03090000
++    Py_SET_SIZE(&self->val, Py_SIZE(longval));
++#else
+     Py_SIZE(&self->val) = Py_SIZE(longval);
++#endif
+     self->val.ob_digit[0] = longval->ob_digit[0];
+     Py_DECREF(longval);
+ 
+-- 
+2.34.1
+

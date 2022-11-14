@@ -1,0 +1,27 @@
+From ea4675215b53d16a72d29b8a6fc6a86cccf59cf0 Mon Sep 17 00:00:00 2001
+From: Yu Chien Peter Lin <peterlin@andestech.com>
+Date: Wed, 5 Jan 2022 11:00:59 +0800
+Subject: [PATCH] Fix mmc no partition table error
+
+Signed-off-by: Yu Chien Peter Lin <peterlin@andestech.com>
+---
+ drivers/mmc/ftsdc010_mci.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/mmc/ftsdc010_mci.c b/drivers/mmc/ftsdc010_mci.c
+index 570d54cf..3b1e0aa0 100644
+--- a/drivers/mmc/ftsdc010_mci.c
++++ b/drivers/mmc/ftsdc010_mci.c
+@@ -438,10 +438,6 @@ static int ftsdc010_mmc_probe(struct udevice *dev)
+		return ret;
+ #endif
+
+-	if (dev_read_bool(dev, "cap-mmc-highspeed") || \
+-		  dev_read_bool(dev, "cap-sd-highspeed"))
+-		chip->caps |= MMC_MODE_HS | MMC_MODE_HS_52MHz;
+-
+	ftsdc_setup_cfg(&plat->cfg, dev->name, chip->buswidth, chip->caps,
+			priv->minmax[1] , priv->minmax[0]);
+	chip->mmc = &plat->mmc;
+--
+2.25.1

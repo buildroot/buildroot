@@ -17,7 +17,7 @@ Build results
 
 After building, output/images contains:
 
-+ bootloader-BEAGLEV-buildroot.bin.out
++ bootloader-JH7100-buildroot.bin.out
 + ddrinit-2133-buildroot.bin.out
 + Image
 + fw_payload.bin
@@ -30,7 +30,7 @@ After building, output/images contains:
 
 The four important files are:
 
- - bootloader-BEAGLEV-buildroot.bin.out, the first stage bootloader
+ - bootloader-JH7100-buildroot.bin.out, the first stage bootloader
 
  - ddrinit-2133-buildroot.bin.out, the DDR initialization firmware
 
@@ -109,7 +109,7 @@ You can flash them as follows:
    "expert" features.
 
  - Then, press 0 and send over X-modem the
-   bootloader-BEAGLEV-buildroot.bin.out file.
+   bootloader-JH7100-buildroot.bin.out file.
 
  - Then, press 1 and send over X-modem the
    ddrinit-2133-buildroot.bin.out.

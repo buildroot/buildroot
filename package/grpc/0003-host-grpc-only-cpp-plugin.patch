@@ -1,0 +1,206 @@
+From a1922eadfc87da3dd221ff631f94ddd4a8ee7049 Mon Sep 17 00:00:00 2001
+From: Thomas De Schampheleire <thomas.de_schampheleire@nokia.com>
+Date: Tue, 25 May 2021 14:55:23 +0200
+Subject: [PATCH] Add option to restrict building of (host-)grpc to
+ grpc_cpp_plugin only.
+
+This avoids unnecessary dependencies on big packages like libabseil-cpp and
+others.
+
+Upstream-status: not accepted (see https://github.com/grpc/grpc/issues/25322)
+
+Signed-off-by: Thomas De Schampheleire <thomas.de_schampheleire@nokia.com>
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+
+Updated for 1.48.0:
+Signed-off-by: Michael Nosthoff <buildroot@heine.tech>
+---
+ CMakeLists.txt | 43 +++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 35 insertions(+), 8 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d3963b074b..51cef83141 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -49,12 +49,16 @@ option(gRPC_BUILD_TESTS "Build tests" OFF)
+ option(gRPC_BUILD_CODEGEN "Build codegen" ON)
+ option(gRPC_BUILD_CSHARP_EXT "Build C# extensions" ON)
+ option(gRPC_BACKWARDS_COMPATIBILITY_MODE "Build libraries that are binary compatible across a larger number of OS and libc versions" OFF)
++option(gRPC_BUILD_PLUGIN_SUPPORT_ONLY "Build plugin support only" OFF)
+ 
+ set(gRPC_INSTALL_default ON)
+ if(NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+   # Disable gRPC_INSTALL by default if building as a submodule
+   set(gRPC_INSTALL_default OFF)
+ endif()
++if(gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
++  set(gRPC_INSTALL_default OFF)
++endif()
+ set(gRPC_INSTALL ${gRPC_INSTALL_default} CACHE BOOL
+     "Generate installation target")
+ 
+@@ -555,6 +559,8 @@ add_custom_target(plugins
+   DEPENDS ${_gRPC_PLUGIN_LIST}
+ )
+ 
++if (NOT gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
++
+ add_custom_target(tools_c
+   DEPENDS
+ )
+@@ -567,6 +573,8 @@ add_custom_target(tools_cxx
+ add_custom_target(tools
+   DEPENDS tools_c tools_cxx)
+ 
++endif() # gRPC_BUILD_PLUGIN_SUPPORT_ONLY
++
+ protobuf_generate_grpc_cpp_with_import_path_correction(
+   src/proto/grpc/channelz/channelz.proto src/proto/grpc/channelz/channelz.proto
+ )
+@@ -1228,6 +1236,7 @@ if(gRPC_BUILD_TESTS)
+     DEPENDS buildtests_c buildtests_cxx)
+ endif()
+ 
++if (NOT gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
+ 
+ add_library(address_sorting
+   third_party/address_sorting/address_sorting.c
+@@ -1280,6 +1289,8 @@ if(gRPC_INSTALL)
+   )
+ endif()
+ 
++endif() # gRPC_BUILD_PLUGIN_SUPPORT_ONLY
++
+ if(gRPC_BUILD_TESTS)
+ 
+ add_library(end2end_tests
+@@ -1451,6 +1462,8 @@ endforeach()
+ 
+ endif()
+ 
++if(NOT gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
++
+ add_library(gpr
+   src/core/ext/upb-generated/google/protobuf/any.upb.c
+   src/core/ext/upb-generated/google/rpc/status.upb.c
+@@ -2373,6 +2386,8 @@ if(gRPC_INSTALL)
+   )
+ endif()
+ 
++endif() # gRPC_BUILD_PLUGIN_SUPPORT_ONLY
++
+ if(gRPC_BUILD_TESTS)
+ 
+ add_library(grpc_test_util
+@@ -2511,6 +2526,8 @@ endif()
+ 
+ endif()
+ 
++if(NOT gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
++
+ add_library(grpc_unsecure
+   src/core/ext/filters/census/grpc_context.cc
+   src/core/ext/filters/channel_idle/channel_idle_filter.cc
+@@ -2916,6 +2933,8 @@ if(gRPC_INSTALL)
+   )
+ endif()
+ 
++endif() # gRPC_BUILD_PLUGIN_SUPPORT_ONLY
++
+ if(gRPC_BUILD_TESTS)
+ 
+ if(gRPC_BUILD_CODEGEN)
+@@ -2987,6 +3006,8 @@ endif()
+ 
+ endif()
+ 
++if(NOT gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
++
+ add_library(grpc++
+   src/core/ext/transport/binder/client/binder_connector.cc
+   src/core/ext/transport/binder/client/channel_create.cc
+@@ -3463,6 +3484,7 @@ if(gRPC_INSTALL)
+   )
+ endif()
+ 
++endif() # gRPC_BUILD_PLUGIN_SUPPORT_ONLY
+ 
+ if(gRPC_BUILD_CODEGEN)
+ add_library(grpc++_reflection
+@@ -3705,6 +3727,8 @@ target_link_libraries(grpc++_test_util
+ 
+ endif()
+ 
++if(NOT gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
++
+ add_library(grpc++_unsecure
+   src/cpp/client/channel_cc.cc
+   src/cpp/client/client_callback.cc
+@@ -4023,6 +4047,7 @@ if(gRPC_INSTALL)
+   )
+ endif()
+ 
++endif() # gRPC_BUILD_PLUGIN_SUPPORT_ONLY
+ 
+ add_library(grpc_plugin_support
+   src/compiler/cpp_generator.cc
+@@ -4082,7 +4107,7 @@ foreach(_hdr
+ endforeach()
+ 
+ 
+-if(gRPC_INSTALL)
++if(gRPC_INSTALL OR gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
+   install(TARGETS grpc_plugin_support EXPORT gRPCTargets
+     RUNTIME DESTINATION ${gRPC_INSTALL_BINDIR}
+     BUNDLE DESTINATION  ${gRPC_INSTALL_BINDIR}
+@@ -4166,6 +4191,8 @@ endif()
+ 
+ endif()
+ 
++if(NOT gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
++
+ add_library(upb
+   third_party/upb/third_party/utf8_range/naive.c
+   third_party/upb/third_party/utf8_range/range2-neon.c
+@@ -4256,6 +4283,8 @@ target_link_libraries(gen_hpack_tables
+   gpr
+ )
+ 
++endif() # gRPC_BUILD_PLUGIN_SUPPORT_ONLY
++
+ 
+ if(gRPC_BUILD_TESTS)
+ 
+@@ -11228,7 +11257,7 @@ target_link_libraries(grpc_cli
+ 
+ 
+ endif()
+-if(gRPC_BUILD_CODEGEN AND gRPC_BUILD_GRPC_CPP_PLUGIN)
++if(gRPC_BUILD_GRPC_CPP_PLUGIN)
+ 
+ add_executable(grpc_cpp_plugin
+   src/compiler/cpp_plugin.cc
+@@ -11258,7 +11287,7 @@ target_link_libraries(grpc_cpp_plugin
+ 
+ 
+ 
+-if(gRPC_INSTALL)
++if(gRPC_INSTALL OR gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
+   install(TARGETS grpc_cpp_plugin EXPORT gRPCTargets
+     RUNTIME DESTINATION ${gRPC_INSTALL_BINDIR}
+     BUNDLE DESTINATION  ${gRPC_INSTALL_BINDIR}
+@@ -19803,7 +19832,7 @@ endif()
+ 
+ 
+ 
+-
++if (NOT gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
+ 
+ if(gRPC_INSTALL)
+   install(EXPORT gRPCTargets
+@@ -19900,3 +19929,5 @@ generate_pkgconfig(
+   "-lgrpc++_unsecure"
+   ""
+   "grpc++_unsecure.pc")
++
++endif() # gRPC_BUILD_PLUGIN_SUPPORT_ONLY

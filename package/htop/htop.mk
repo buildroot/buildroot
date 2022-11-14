@@ -4,25 +4,38 @@
 #
 ################################################################################
 
-# This commit hash corresponds to version 3.0.5.
-# htop sources were moved from bintray to github and the sources tar archive
-# was also changed (the build process requires `HTOP_AUTORECONF = YES` now). We
-# use commit hash instead of git tag here to avoid breaking existing source
-# caches
-HTOP_VERSION = ce6d60e7def146c13d0b8bca4642e7401a0a8995
-HTOP_SITE = $(call github,htop-dev,htop,$(HTOP_VERSION))
+HTOP_VERSION = 3.2.1
+HTOP_SOURCE = htop-$(HTOP_VERSION).tar.xz
+HTOP_SITE = https://github.com/htop-dev/htop/releases/download/$(HTOP_VERSION)
 HTOP_DEPENDENCIES = ncurses
-HTOP_AUTORECONF = YES
 # Prevent htop build system from searching the host paths
 HTOP_CONF_ENV = HTOP_NCURSES_CONFIG_SCRIPT=$(STAGING_DIR)/usr/bin/$(NCURSES_CONFIG_SCRIPTS)
-HTOP_LICENSE = GPL-2.0
+HTOP_LICENSE = GPL-2.0+
 HTOP_LICENSE_FILES = COPYING
 
+# ac_cv_prog_cc_c99 is required for BR2_USE_WCHAR=n because the C99 test
+# provided by autoconf relies on wchar_t.
+HTOP_CONF_ENV += ac_cv_prog_cc_c99=-std=gnu99
+
+ifeq ($(BR2_PACKAGE_HWLOC),y)
+HTOP_CONF_OPTS += --enable-hwloc
+HTOP_DEPENDENCIES += hwloc
+else
+HTOP_CONF_OPTS += --disable-hwloc
+endif
+
+ifeq ($(BR2_PACKAGE_LIBCAP),y)
+HTOP_CONF_OPTS += --enable-capabilities
+HTOP_DEPENDENCIES += libcap
+else
+HTOP_CONF_OPTS += --disable-capabilities
+endif
+
 ifeq ($(BR2_PACKAGE_LM_SENSORS),y)
-HTOP_CONF_OPTS += --with-sensors
+HTOP_CONF_OPTS += --enable-sensors
 HTOP_DEPENDENCIES += lm-sensors
 else
-HTOP_CONF_OPTS += --without-sensors
+HTOP_CONF_OPTS += --disable-sensors
 endif
 
 ifeq ($(BR2_PACKAGE_NCURSES_WCHAR),y)

@@ -33,14 +33,6 @@ class TestCrudiniBase(TestPythonPackageBase):
         self.assertEqual(out, ['this-is-the-magic-value'])
 
 
-class TestCrudiniPy2(TestCrudiniBase):
-    __test__ = True
-    config = TestCrudiniBase.config + \
-        """
-        BR2_PACKAGE_PYTHON=y
-        """
-
-
 class TestCrudiniPy3(TestCrudiniBase):
     __test__ = True
     config = TestCrudiniBase.config + \

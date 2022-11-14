@@ -3,7 +3,6 @@ config BR2_PACKAGE_DHCP
 	# fork()
 	depends on BR2_USE_MMU
 	depends on BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
-	select BR2_PACKAGE_BIND
 	help
 	  DHCP relay agent from the ISC DHCP distribution.
 
@@ -13,7 +12,6 @@ if BR2_PACKAGE_DHCP
 
 config BR2_PACKAGE_DHCP_SERVER
 	bool "dhcp server"
-	select BR2_PACKAGE_SYSTEMD_TMPFILES if BR2_PACKAGE_SYSTEMD
 	help
 	  DHCP server from the ISC DHCP distribution.
 
@@ -26,6 +24,14 @@ config BR2_PACKAGE_DHCP_SERVER_DELAYED_ACK
 	depends on BR2_PACKAGE_DHCP_SERVER
 	help
 	  Enable delayed ACK feature in the ISC DHCP server.
+
+config BR2_PACKAGE_DHCP_SERVER_ENABLE_PARANOIA
+	bool "Enable paranoia options"
+	depends on BR2_PACKAGE_DHCP_SERVER
+	help
+	  Add option --enable-paranoia to configure script. This
+	  activates additional server options (-user, -group and
+	  -chroot) to make dhcp server more secure.
 
 config BR2_PACKAGE_DHCP_RELAY
 	bool "dhcp relay"

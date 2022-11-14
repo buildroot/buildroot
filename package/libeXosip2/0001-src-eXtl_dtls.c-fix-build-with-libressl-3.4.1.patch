@@ -1,0 +1,43 @@
+From 4201c0ff3fd75e09025d515c427f85f9fec89621 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 5 Apr 2022 22:27:35 +0200
+Subject: [PATCH] src/eXtl_dtls.c: fix build with libressl >= 3.4.1
+
+Fix the following build failure with libressl >= 3.4.1 which provides
+SSL_set0_rbio() since
+https://github.com/libressl-portable/openbsd/commit/c99939f9665a9c3c648682b4987df46600b70efc:
+
+In file included from eXtl_dtls.c:82:
+/home/autobuild/autobuild/instance-4/output-1/host/x86_64-buildroot-linux-musl/sysroot/usr/include/openssl/ssl.h:1272:6: note: previous declaration of 'SSL_set0_rbio' was here
+ 1272 | void SSL_set0_rbio(SSL *s, BIO *rbio);
+      |      ^~~~~~~~~~~~~
+eXtl_dtls.c: In function 'SSL_set0_rbio':
+eXtl_dtls.c:108:17: error: invalid use of incomplete typedef 'SSL' {aka 'struct ssl_st'}
+  108 |   BIO_free_all(s->rbio);
+      |                 ^~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/dfafdbf71b31fbda1b5ba491ac35239af4a20aa2
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: sent to amoizard@antisip.com]
+---
+ src/eXtl_dtls.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/eXtl_dtls.c b/src/eXtl_dtls.c
+index 07c0dc2..d0bd7dc 100644
+--- a/src/eXtl_dtls.c
++++ b/src/eXtl_dtls.c
+@@ -102,7 +102,7 @@
+ #define RANDOM "random.pem"
+ #define DHFILE "dh1024.pem"
+ 
+-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
++#if OPENSSL_VERSION_NUMBER < 0x10100000L || (defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x3040100L)
+ 
+ static void SSL_set0_rbio(SSL *s, BIO *rbio) {
+   BIO_free_all(s->rbio);
+-- 
+2.35.1
+

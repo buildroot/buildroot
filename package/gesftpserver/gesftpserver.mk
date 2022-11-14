@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GESFTPSERVER_VERSION = 1
+GESFTPSERVER_VERSION = 2
 GESFTPSERVER_SOURCE = sftpserver-$(GESFTPSERVER_VERSION).tar.gz
 GESFTPSERVER_SITE = http://www.greenend.org.uk/rjk/sftpserver
 GESFTPSERVER_LICENSE = GPL-2.0+
@@ -16,7 +16,9 @@ GESFTPSERVER_CPE_ID_VENDOR = green_end
 GESFTPSERVER_CPE_ID_PRODUCT = sftpserver
 
 # forgets to link against pthread when cross compiling
-GESFTPSERVER_CONF_ENV = LIBS=-lpthread
+GESFTPSERVER_CONF_ENV = \
+	CFLAGS="$(TARGET_CFLAGS) -std=c99" \
+	LIBS=-lpthread
 
 # overwrite openssh version if enabled
 GESFTPSERVER_DEPENDENCIES += \
@@ -25,7 +27,7 @@ GESFTPSERVER_DEPENDENCIES += \
 
 # Python on the host is only used for tests, which we don't use in
 # Buildroot
-GESFTPSERVER_CONF_ENV += rjk_cv_python24=false
+GESFTPSERVER_CONF_ENV += rjk_cv_python3=false
 
 # openssh/dropbear looks here
 define GESFTPSERVER_ADD_SYMLINK

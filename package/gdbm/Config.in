@@ -1,7 +1,13 @@
 config BR2_PACKAGE_GDBM
 	bool "gdbm"
+	depends on BR2_USE_MMU # fork()
+	depends on BR2_USE_WCHAR
 	help
 	  GNU dbm is a set of database routines that use extensible
 	  hashing. It works similar to the standard UNIX dbm routines.
 
-	  http://www.gnu.org/software/gdbm/gdbm.html
+	  https://www.gnu.org/software/gdbm/gdbm.html
+
+comment "gdbm needs a toolchain w/ wchar"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR

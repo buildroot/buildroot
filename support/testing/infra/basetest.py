@@ -29,6 +29,7 @@ MINIMAL_CONFIG = \
 
 
 class BRConfigTest(unittest.TestCase):
+    """Test up to the configure stage."""
     config = None
     br2_external = list()
     downloaddir = None
@@ -66,6 +67,7 @@ class BRConfigTest(unittest.TestCase):
 
 
 class BRTest(BRConfigTest):
+    """Test up to the build stage and instantiate an emulator."""
     def __init__(self, names):
         super(BRTest, self).__init__(names)
         self.emulator = None

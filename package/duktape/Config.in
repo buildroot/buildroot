@@ -1,6 +1,7 @@
 config BR2_PACKAGE_DUKTAPE
 	bool "duktape"
 	depends on !BR2_STATIC_LIBS
+	depends on !BR2_OPTIMIZE_FAST
 	help
 	  Duktape is an embeddable Javascript engine, with a focus on
 	  portability and compact footprint.
@@ -14,3 +15,6 @@ config BR2_PACKAGE_DUKTAPE
 
 comment "duktape needs a toolchain w/ dynamic library"
 	depends on BR2_STATIC_LIBS
+
+comment "duktape can't be built with Optimize for fast"
+	depends on BR2_OPTIMIZE_FAST

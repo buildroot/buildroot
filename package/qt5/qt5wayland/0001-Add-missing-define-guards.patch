@@ -1,0 +1,35 @@
+From 05658e127dedfff65789860415537c6920ec574d Mon Sep 17 00:00:00 2001
+From: Samuli Piippo <samuli.piippo@qt.io>
+Date: Thu, 22 Apr 2021 15:29:56 +0300
+Subject: [PATCH] Add missing define guards
+
+Ammend cca1b94190a094b5d1d7ce492b6533e2d330c5e8 to use m_composeState
+only if xcbcommon is available.
+
+Pick-to: 5.15
+Change-Id: I48332b15def3282c5bda3e1c7c393ea7e9849cbe
+Reviewed-by: Aleix Pol Gonzalez <aleixpol@kde.org>
+[Backported from: 05658e127dedfff65789860415537c6920ec574d]
+Signed-off-by: Quentin Schulz <quentin.schulz@theobroma-systems.com>
+---
+ src/client/qwaylandinputcontext.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/client/qwaylandinputcontext.cpp b/src/client/qwaylandinputcontext.cpp
+index 16e03ea1..cbf63cde 100644
+--- a/src/client/qwaylandinputcontext.cpp
++++ b/src/client/qwaylandinputcontext.cpp
+@@ -408,8 +408,10 @@ bool QWaylandInputContext::isValid() const
+ void QWaylandInputContext::reset()
+ {
+     qCDebug(qLcQpaInputMethods) << Q_FUNC_INFO;
++#if QT_CONFIG(xkbcommon)
+     if (m_composeState)
+         xkb_compose_state_reset(m_composeState);
++#endif
+ 
+     QPlatformInputContext::reset();
+ 
+-- 
+2.35.1
+

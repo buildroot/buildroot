@@ -46,3 +46,11 @@ create a directory +board/<manufacturer>+ and a subdirectory
 +board/<manufacturer>/<boardname>+. You can then store your patches
 and configurations in these directories, and reference them from the main
 Buildroot configuration. Refer to xref:customize[] for more details.
+
+Before submitting patches for new boards it is recommended to test it by
+building it using latest gitlab-CI docker container. To do this use
+utils/docker-run script and inside it issue these commands:
+--------------------
+ $ make +<boardname>_defconfig+
+ $ make
+--------------------

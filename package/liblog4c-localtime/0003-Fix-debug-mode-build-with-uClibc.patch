@@ -1,7 +1,7 @@
 From acbaee34bcb1881db97969dd2c411446f32ca4cc Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Sat, 25 Oct 2014 19:45:33 +0200
-Subject: [PATCH 3/5] Fix debug mode build with uClibc
+Subject: [PATCH] Fix debug mode build with uClibc
 
 When --enable-debug is passed, liblog4c-localtime wants to use
 <mcheck.h>. It takes the precaution of testing if __GLIBC__ is

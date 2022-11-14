@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BOOST_VERSION = 1.77.0
+BOOST_VERSION = 1.80.0
 BOOST_SOURCE = boost_$(subst .,_,$(BOOST_VERSION)).tar.bz2
 BOOST_SITE = https://boostorg.jfrog.io/artifactory/main/release/$(BOOST_VERSION)/source
 BOOST_INSTALL_STAGING = YES
@@ -17,7 +17,7 @@ HOST_BOOST_FLAGS = --without-icu --with-toolset=gcc \
 	--without-libraries=$(subst $(space),$(comma),atomic chrono context \
 	contract container coroutine date_time exception fiber filesystem graph \
 	graph_parallel iostreams json locale log math mpi nowide program_options \
-	python random regex serialization stacktrace system test thread timer \
+	python random serialization stacktrace test thread timer \
 	type_erasure wave)
 
 BOOST_WITHOUT_FLAGS += $(if $(BR2_PACKAGE_BOOST_ATOMIC),,atomic)
@@ -68,34 +68,36 @@ BOOST_DEPENDENCIES += bzip2 zlib
 endif
 
 ifeq ($(BR2_PACKAGE_BOOST_PYTHON),y)
-BOOST_FLAGS += --with-python-root=$(HOST_DIR)
-ifeq ($(BR2_PACKAGE_PYTHON3),y)
-BOOST_FLAGS += --with-python=$(HOST_DIR)/bin/python$(PYTHON3_VERSION_MAJOR)
+BOOST_FLAGS += \
+	--with-python-root=$(HOST_DIR) \
+	--with-python=$(HOST_DIR)/bin/python$(PYTHON3_VERSION_MAJOR)
 BOOST_TARGET_CXXFLAGS += -I$(STAGING_DIR)/usr/include/python$(PYTHON3_VERSION_MAJOR)
 BOOST_DEPENDENCIES += python3
-else
-BOOST_FLAGS += --with-python=$(HOST_DIR)/bin/python$(PYTHON_VERSION_MAJOR)
-BOOST_TARGET_CXXFLAGS += -I$(STAGING_DIR)/usr/include/python$(PYTHON_VERSION_MAJOR)
-BOOST_DEPENDENCIES += python
-endif
 endif
 
 HOST_BOOST_OPTS += --no-cmake-config toolset=gcc threading=multi \
-	variant=release link=shared runtime-link=shared
+	variant=release link=shared runtime-link=shared -j$(PARALLEL_JOBS) -q \
+	--ignore-site-config --layout=system --prefix=$(HOST_DIR) \
+	--user-config=$(@D)/user-config.jam
 
 ifeq ($(BR2_MIPS_OABI32),y)
 BOOST_ABI = o32
-else ifeq ($(BR2_arm),y)
+else ifeq ($(BR2_arm)$(BR2_armeb)$(BR2_aarch64)$(BR2_aarch64_be),y)
 BOOST_ABI = aapcs
 else
 BOOST_ABI = sysv
 endif
 
 BOOST_OPTS += --no-cmake-config \
-	     toolset=gcc \
-	     threading=multi \
-	     abi=$(BOOST_ABI) \
-	     variant=$(if $(BR2_ENABLE_RUNTIME_DEBUG),debug,release)
+	toolset=gcc \
+	threading=multi \
+	abi=$(BOOST_ABI) \
+	variant=$(if $(BR2_ENABLE_RUNTIME_DEBUG),debug,release) \
+	-j$(PARALLEL_JOBS) \
+	-q \
+	--ignore-site-config \
+	--layout=system \
+	--user-config=$(@D)/user-config.jam
 
 ifeq ($(BR2_sparc64),y)
 BOOST_OPTS += architecture=sparc instruction-set=ultrasparc
@@ -124,43 +126,29 @@ endif
 
 BOOST_WITHOUT_FLAGS_COMMASEPARATED += $(subst $(space),$(comma),$(strip $(BOOST_WITHOUT_FLAGS)))
 BOOST_FLAGS += $(if $(BOOST_WITHOUT_FLAGS_COMMASEPARATED), --without-libraries=$(BOOST_WITHOUT_FLAGS_COMMASEPARATED))
-BOOST_LAYOUT = $(call qstrip, $(BR2_PACKAGE_BOOST_LAYOUT))
 
 # how verbose should the build be?
-BOOST_OPTS += $(if $(QUIET),-d,-d+1)
-HOST_BOOST_OPTS += $(if $(QUIET),-d,-d+1)
+BOOST_OPTS += $(if $(QUIET),-d0,-d+1)
+HOST_BOOST_OPTS += $(if $(QUIET),-d0,-d+1)
 
 define BOOST_CONFIGURE_CMDS
-	(cd $(@D) && ./bootstrap.sh $(BOOST_FLAGS))
+	cd $(@D) && ./bootstrap.sh $(BOOST_FLAGS)
 	echo "using gcc : `$(TARGET_CC) -dumpversion` : $(TARGET_CXX) : <cxxflags>\"$(BOOST_TARGET_CXXFLAGS)\" <linkflags>\"$(TARGET_LDFLAGS)\" ;" > $(@D)/user-config.jam
-	echo "" >> $(@D)/user-config.jam
 	sed -i "s/: -O.* ;/: $(TARGET_OPTIMIZATION) ;/" $(@D)/tools/build/src/tools/gcc.jam
 endef
 
 define BOOST_BUILD_CMDS
-	(cd $(@D) && $(TARGET_MAKE_ENV) ./tools/build/src/engine/bjam -j$(PARALLEL_JOBS) -q \
-	--user-config=$(@D)/user-config.jam \
-	$(BOOST_OPTS) \
-	--ignore-site-config \
-	--layout=$(BOOST_LAYOUT))
+	cd $(@D) && $(TARGET_MAKE_ENV) ./b2 $(BOOST_OPTS)
 endef
 
 define BOOST_INSTALL_TARGET_CMDS
-	(cd $(@D) && $(TARGET_MAKE_ENV) ./b2 -j$(PARALLEL_JOBS) -q \
-	--user-config=$(@D)/user-config.jam \
-	$(BOOST_OPTS) \
-	--prefix=$(TARGET_DIR)/usr \
-	--ignore-site-config \
-	--layout=$(BOOST_LAYOUT) install )
+	cd $(@D) && $(TARGET_MAKE_ENV) ./b2 $(BOOST_OPTS) \
+		--prefix=$(TARGET_DIR)/usr install
 endef
 
 define BOOST_INSTALL_STAGING_CMDS
-	(cd $(@D) && $(TARGET_MAKE_ENV) ./tools/build/src/engine/bjam -j$(PARALLEL_JOBS) -q \
-	--user-config=$(@D)/user-config.jam \
-	$(BOOST_OPTS) \
-	--prefix=$(STAGING_DIR)/usr \
-	--ignore-site-config \
-	--layout=$(BOOST_LAYOUT) install)
+	cd $(@D) && $(TARGET_MAKE_ENV) ./b2 $(BOOST_OPTS) \
+		--prefix=$(STAGING_DIR)/usr install
 endef
 
 # These hooks will help us to detect missing select in Config.in
@@ -182,26 +170,16 @@ endef
 BOOST_POST_INSTALL_TARGET_HOOKS += BOOST_CHECK_TARGET_LIBRARIES
 
 define HOST_BOOST_CONFIGURE_CMDS
-	(cd $(@D) && ./bootstrap.sh $(HOST_BOOST_FLAGS))
+	cd $(@D) && ./bootstrap.sh $(HOST_BOOST_FLAGS)
 	echo "using gcc : `$(HOST_CC) -dumpversion` : $(HOSTCXX) : <cxxflags>\"$(HOST_CXXFLAGS)\" <linkflags>\"$(HOST_LDFLAGS)\" ;" > $(@D)/user-config.jam
-	echo "" >> $(@D)/user-config.jam
 endef
 
 define HOST_BOOST_BUILD_CMDS
-	(cd $(@D) && ./b2 -j$(PARALLEL_JOBS) -q \
-	--user-config=$(@D)/user-config.jam \
-	$(HOST_BOOST_OPTS) \
-	--ignore-site-config \
-	--prefix=$(HOST_DIR) )
+	cd $(@D) && ./b2 $(HOST_BOOST_OPTS)
 endef
 
 define HOST_BOOST_INSTALL_CMDS
-	(cd $(@D) && ./b2 -j$(PARALLEL_JOBS) -q \
-	--user-config=$(@D)/user-config.jam \
-	$(HOST_BOOST_OPTS) \
-	--prefix=$(HOST_DIR) \
-	--ignore-site-config \
-	--layout=$(BOOST_LAYOUT) install )
+	cd $(@D) && ./b2 $(HOST_BOOST_OPTS) install
 endef
 
 $(eval $(generic-package))

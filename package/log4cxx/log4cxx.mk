@@ -4,29 +4,31 @@
 #
 ################################################################################
 
-LOG4CXX_VERSION = 0.11.0
-LOG4CXX_SITE = http://archive.apache.org/dist/logging/log4cxx/$(LOG4CXX_VERSION)
+LOG4CXX_VERSION = 0.13.0
+LOG4CXX_SITE = https://archive.apache.org/dist/logging/log4cxx/$(LOG4CXX_VERSION)
 LOG4CXX_SOURCE = apache-log4cxx-$(LOG4CXX_VERSION).tar.gz
 LOG4CXX_INSTALL_STAGING = YES
 LOG4CXX_LICENSE = Apache-2.0
 LOG4CXX_LICENSE_FILES = LICENSE
-# error: required file './compile' not found
-LOG4CXX_AUTORECONF = YES
 
 LOG4CXX_CONF_OPTS = \
-	--with-apr=$(STAGING_DIR)/usr/bin/apr-1-config \
-	--with-apr-util=$(STAGING_DIR)/usr/bin/apu-1-config \
-	--disable-dot \
-	--disable-doxygen \
-	--disable-html-docs
+	-DAPR_CONFIG_EXECUTABLE=$(STAGING_DIR)/usr/bin/apr-1-config \
+	-DAPR_UTIL_CONFIG_EXECUTABLE=$(STAGING_DIR)/usr/bin/apu-1-config
 
 LOG4CXX_DEPENDENCIES = apr apr-util
 
-ifeq ($(BR2_PACKAGE_LIBESMTP),y)
-LOG4CXX_DEPENDENCIES += libesmtp
-LOG4CXX_CONF_OPTS += --with-SMTP=libesmtp
-else
-LOG4CXX_CONF_OPTS += --without-SMTP
+ifeq ($(BR2_PACKAGE_BOOST),y)
+LOG4CXX_DEPENDENCIES += boost
 endif
 
-$(eval $(autotools-package))
+ifeq ($(BR2_PACKAGE_LIBESMTP),y)
+LOG4CXX_DEPENDENCIES += libesmtp
+endif
+
+ifeq ($(BR2_USE_WCHAR),y)
+LOG4CXX_CONF_OPTS += -DLOG4CXX_WCHAR_T=ON
+else
+LOG4CXX_CONF_OPTS += -DLOG4CXX_WCHAR_T=OFF
+endif
+
+$(eval $(cmake-package))

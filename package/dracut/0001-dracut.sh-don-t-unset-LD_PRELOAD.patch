@@ -1,0 +1,31 @@
+From bb12f15856911d8532b569116da7dab4cbf107be Mon Sep 17 00:00:00 2001
+From: Thierry Bultel <thierry.bultel@linatsea.fr>
+Date: Mon, 10 Jan 2022 09:09:43 +0100
+Subject: [PATCH] dracut.sh: don't unset LD_PRELOAD
+
+LD_PRELOAD and LD_LIBRARY_PATH are needed to run under fakeroot.
+
+Signed-off-by: Thierry Bultel <thierry.bultel@linatsea.fr>
+Signed-off-by: Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>
+[yann.morin.1998@free.fr: commit log also mentions LD_LIBRARY_PATH]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ dracut.sh | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/dracut.sh b/dracut.sh
+index 60ac46f4..37f25b38 100755
+--- a/dracut.sh
++++ b/dracut.sh
+@@ -868,8 +868,6 @@ export LC_ALL=C
+ export LANG=C
+ unset LC_MESSAGES
+ unset LC_CTYPE
+-unset LD_LIBRARY_PATH
+-unset LD_PRELOAD
+ unset GREP_OPTIONS
+ 
+ export DRACUT_LOG_LEVEL=warning
+-- 
+2.37.1
+

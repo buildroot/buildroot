@@ -1,0 +1,72 @@
+From 5324c88632c021a87251370b03067d857e9a9892 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 2 Nov 2022 19:02:42 +0100
+Subject: [PATCH] add --disable-doc
+
+Allow the user to disable documentation through --disable-doc to avoid
+the following build failure without makeinfo:
+
+/home/buildroot/autobuild/instance-0/output-1/build/freeipmi-1.6.10/config/missing: line 81: makeinfo: command not found
+WARNING: 'makeinfo' is missing on your system.
+         You should only need it if you modified a '.texi' file, or
+         any other file indirectly affecting the aspect of the manual.
+         You might want to install the Texinfo package:
+         <https://www.gnu.org/software/texinfo/>
+         The spurious makeinfo call might also be the consequence of
+         using a buggy 'make' (AIX, DU, IRIX), in which case you might
+         want to install GNU make:
+         <https://www.gnu.org/software/make/>
+Makefile:442: recipe for target 'freeipmi-faq.info' failed
+
+Fixes:
+ - http://autobuild.buildroot.org/results/ac6ff1c746a354f885fc1674d10e7bff9e536134
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/chu11/freeipmi-mirror/pull/61]
+---
+ Makefile.am  | 6 +++++-
+ configure.ac | 4 ++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index cf757f634..d74952e30 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -3,7 +3,6 @@
+ ACLOCAL_AMFLAGS = -I config
+ 
+ SUBDIRS = \
+-	doc \
+ 	etc \
+ 	common \
+ 	libfreeipmi \
+@@ -33,6 +32,11 @@ SUBDIRS = \
+ 	rmcpping \
+ 	contrib
+ 
++if ENABLE_DOC
++SUBDIRS += \
++	doc
++endif
++
+ PACKAGE = @PACKAGE@
+ VERSION = @VERSION@
+ 
+diff --git a/configure.ac b/configure.ac
+index 54fdf6367..7a94b958b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -341,6 +341,10 @@ else
+ fi
+ AC_SUBST(WITH_DEBUG)
+ 
++AC_ARG_ENABLE(doc,
++              AC_HELP_STRING([--disable-doc], [turn off documentation]))
++AM_CONDITIONAL(ENABLE_DOC, test "$enable_doc" != "no")
++
+ dnl Allow advanced developers to compile with raw dumping
+ AC_ARG_ENABLE(rawdumps,
+    AC_HELP_STRING([--enable-rawdumps], [output raw packet dumps when debugging]))
+-- 
+2.35.1
+

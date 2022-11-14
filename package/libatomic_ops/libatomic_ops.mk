@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBATOMIC_OPS_VERSION = 7.6.10
+LIBATOMIC_OPS_VERSION = 7.6.14
 LIBATOMIC_OPS_SITE = $(call github,ivmai,libatomic_ops,v$(LIBATOMIC_OPS_VERSION))
 LIBATOMIC_OPS_AUTORECONF = YES
 
@@ -16,6 +16,7 @@ LIBATOMIC_OPS_AUTORECONF = YES
 # library, libatomic_ops_gpl.a."
 LIBATOMIC_OPS_LICENSE = MIT (main library) / GPL-2.0+ (gpl extension)
 LIBATOMIC_OPS_LICENSE_FILES = doc/LICENSING.txt COPYING
+LIBATOMIC_OPS_CPE_ID_VENDOR = libatomic_ops_project
 
 LIBATOMIC_OPS_INSTALL_STAGING = YES
 

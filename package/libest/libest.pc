@@ -1,0 +1,10 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libest
+Description: implementation of RFC 7030 (Enrollment over Secure Transport) 
+Version: 2.1.0
+Libs: -lest
+Cflags: -I${includedir}/est

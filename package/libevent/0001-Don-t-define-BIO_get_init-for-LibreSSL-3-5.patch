@@ -1,0 +1,29 @@
+From 883630f76cbf512003b81de25cd96cb75c6cf0f9 Mon Sep 17 00:00:00 2001
+From: Theo Buehler <tb@openbsd.org>
+Date: Sun, 21 Nov 2021 21:38:20 +0100
+Subject: [PATCH] Don't define BIO_get_init() for LibreSSL 3.5+
+
+BIO_get_init() is available in LibreSSL 3.5 and later. The BIO type
+will become opaque, so the existing macro will break the build.
+
+[Retrieved from:
+https://github.com/libevent/libevent/commit/883630f76cbf512003b81de25cd96cb75c6cf0f9]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ openssl-compat.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/openssl-compat.h b/openssl-compat.h
+index a23e34251b..f5de25539f 100644
+--- a/openssl-compat.h
++++ b/openssl-compat.h
+@@ -40,7 +40,8 @@ static inline BIO_METHOD *BIO_meth_new(int type, const char *name)
+ #endif /* (OPENSSL_VERSION_NUMBER < 0x10100000L) || \
+ 	(defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x20700000L) */
+ 
+-#if defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER >= 0x20700000L
++#if defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER >= 0x20700000L && \
++	LIBRESSL_VERSION_NUMBER < 0x30500000L
+ #define BIO_get_init(b) (b)->init
+ #endif
+ 

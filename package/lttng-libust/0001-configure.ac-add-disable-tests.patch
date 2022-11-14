@@ -1,0 +1,59 @@
+From a1f8509283ad29b5144bda6f6dba9f5eb7165adc Mon Sep 17 00:00:00 2001
+From: Norbert Lange <nolange79@gmail.com>
+Date: Thu, 23 Dec 2021 21:56:46 +0100
+Subject: [PATCH] configure.ac: add --disable-tests
+
+Add configure option to disable tests.
+Upstream is not likely to accept it, see lttng-tools package.
+
+Signed-off-by: Norbert Lange <nolange79@gmail.com>
+---
+ Makefile.am  | 5 ++++-
+ configure.ac | 6 ++++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 9ab93ccd..8a1c1dca 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -7,9 +7,12 @@ SUBDIRS = \
+ 	src \
+ 	tools \
+ 	doc \
+-	tests \
+ 	extras
+ 
++if ENABLE_TESTS
++SUBDIRS += tests
++endif
++
+ dist_doc_DATA = \
+ 	ChangeLog \
+ 	LICENSE \
+diff --git a/configure.ac b/configure.ac
+index b6254228..fe5f2700 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -360,6 +360,11 @@ AE_FEATURE([python-agent],[build the LTTng UST Python agent])
+ AE_FEATURE_DEFAULT_ENABLE
+ AE_FEATURE([examples],[Do not build and install examples])
+ 
++# Build the tests
++# Enabled by default
++AE_FEATURE_DEFAULT_ENABLE
++AE_FEATURE([tests],[Do not build tests])
++
+ # Man pages
+ # Enabled by default
+ AE_FEATURE_DEFAULT_ENABLE
+@@ -525,6 +530,7 @@ AC_DEFINE([LTTNG_UST_CTL_LIB_SONAME_MAJOR], [ust_ctl_lib_version_current], [Majo
+ ##                                                                          ##
+ 
+ AM_CONDITIONAL([ENABLE_EXAMPLES], AE_IS_FEATURE_ENABLED([examples]))
++AM_CONDITIONAL([ENABLE_TESTS], AE_IS_FEATURE_ENABLED([tests]))
+ AM_CONDITIONAL([ENABLE_GEN_TP_EXAMPLES], [test "x$PYTHON" != "x"])
+ AM_CONDITIONAL([ENABLE_JAVA_AGENT], AE_IS_FEATURE_ENABLED([java-agent-jul]) || AE_IS_FEATURE_ENABLED([java-agent-log4j]))
+ AM_CONDITIONAL([ENABLE_JAVA_AGENT_WITH_JUL], AE_IS_FEATURE_ENABLED([java-agent-jul]))
+-- 
+2.34.1
+

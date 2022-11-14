@@ -4,13 +4,16 @@
 #
 ################################################################################
 
-E2FSPROGS_VERSION = 1.46.4
+E2FSPROGS_VERSION = 1.46.5
 E2FSPROGS_SOURCE = e2fsprogs-$(E2FSPROGS_VERSION).tar.xz
 E2FSPROGS_SITE = $(BR2_KERNEL_MIRROR)/linux/kernel/people/tytso/e2fsprogs/v$(E2FSPROGS_VERSION)
 E2FSPROGS_LICENSE = GPL-2.0, MIT-like with advertising clause (libss and libet)
 E2FSPROGS_LICENSE_FILES = NOTICE lib/ss/mit-sipb-copyright.h lib/et/internal.h
 E2FSPROGS_CPE_ID_VENDOR = e2fsprogs_project
 E2FSPROGS_INSTALL_STAGING = YES
+
+# 0001-libext2fs-add-sanity-check-to-extent-manipulation.patch
+E2FSPROGS_IGNORE_CVES += CVE-2022-1304
 
 # Use libblkid and libuuid from util-linux for host and target packages.
 # This prevents overriding them with e2fsprogs' ones, which may cause
@@ -89,6 +92,12 @@ E2FSPROGS_INSTALL_TARGET_OPTS = \
 define HOST_E2FSPROGS_INSTALL_CMDS
 	$(HOST_MAKE_ENV) $(MAKE1) -C $(@D) install install-libs
 endef
+
+# Remove compile_et which raises a build failure with samba4
+define HOST_E2FSPROGS_REMOVE_COMPILE_ET
+	$(RM) $(HOST_DIR)/bin/compile_et
+endef
+HOST_E2FSPROGS_POST_INSTALL_HOOKS += HOST_E2FSPROGS_REMOVE_COMPILE_ET
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))

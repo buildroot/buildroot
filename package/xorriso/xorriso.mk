@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XORRISO_VERSION = 1.5.2
+XORRISO_VERSION = 1.5.4.pl02
 XORRISO_SITE = $(BR2_GNU_MIRROR)/xorriso
 XORRISO_LICENSE = GPL-3.0+
 XORRISO_LICENSE_FILES = COPYING COPYRIGHT
@@ -12,13 +12,15 @@ XORRISO_LICENSE_FILES = COPYING COPYRIGHT
 # Disable everything until we actually need those features, and add the correct
 # host libraries
 HOST_XORRISO_CONF_OPTS = \
+	--enable-zlib \
 	--disable-xattr-h-pref-attr \
-	--disable-zlib \
 	--disable-libbz2 \
 	--disable-libcdio \
 	--disable-libreadline \
 	--disable-libedit \
 	--disable-libacl
+
+HOST_XORRISO_DEPENDENCIES = host-zlib
 
 # libcdio doesn't make sense for Linux
 # http://lists.gnu.org/archive/html/bug-xorriso/2017-04/msg00004.html

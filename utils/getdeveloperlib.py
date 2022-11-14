@@ -1,4 +1,3 @@
-from __future__ import print_function
 from io import open
 import os
 import re
@@ -226,13 +225,13 @@ def parse_developer_runtime_tests(fnames):
     return runtimes
 
 
-def parse_developers():
+def parse_developers(filename=None):
     """Parse the DEVELOPERS file and return a list of Developer objects."""
     developers = []
     linen = 0
     global unittests
     unittests = list_unittests()
-    developers_fname = os.path.join(brpath, 'DEVELOPERS')
+    developers_fname = filename or os.path.join(brpath, 'DEVELOPERS')
     with open(developers_fname, mode='r', encoding='utf_8') as f:
         files = []
         name = None
@@ -254,6 +253,8 @@ def parse_developers():
                 for f in dev_files:
                     dev_file = os.path.relpath(f, brpath)
                     dev_file = dev_file.replace(os.sep, '/')  # force unix sep
+                    if f[-1] == '/':  # relpath removes the trailing /
+                        dev_file = dev_file + '/'
                     files.append(dev_file)
             elif line == "":
                 if not name:
@@ -278,12 +279,12 @@ def check_developers(developers, basepath=None):
     if basepath is None:
         basepath = os.getcwd()
     cmd = ["git", "--git-dir", os.path.join(basepath, ".git"), "ls-files"]
-    files = subprocess.check_output(cmd).strip().split("\n")
+    files = subprocess.check_output(cmd).decode(sys.stdout.encoding).strip().split("\n")
     unhandled_files = []
     for f in files:
         handled = False
         for d in developers:
-            if d.hasfile(os.path.join(basepath, f)):
+            if d.hasfile(f):
                 handled = True
                 break
         if not handled:

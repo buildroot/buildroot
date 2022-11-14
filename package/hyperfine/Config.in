@@ -1,0 +1,11 @@
+config BR2_PACKAGE_HYPERFINE
+	bool "hyperfine"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_RUSTC
+	help
+	  hyperfine is a benchmark tool written in Rust. It evaluates
+	  execution time of a command passed in arguments and make a
+	  relative comparison if multiple arguments are used at the
+	  same time.
+
+	  https://github.com/sharkdp/hyperfine

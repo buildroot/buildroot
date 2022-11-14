@@ -1,0 +1,54 @@
+From 6d87fc890c3de81ee33baf25d7c3c86532f26060 Mon Sep 17 00:00:00 2001
+From: Joel Stanley <joel@jms.id.au>
+Date: Mon, 9 May 2022 20:27:58 +0930
+Subject: [PATCH] return: Fix PowerPC assembly
+
+The original assembly used suspicious syntax. However, due to the
+!defined(__OPTIMIZE__) guard this code was rarely built.
+
+There nothing to stop the compiler using r0 between the two asm blocks,
+which may have been the cause of the note mentioning it failed when
+build with optimisation enabled.
+
+Write a single asm statement that places the result in the given
+location.
+
+This builds for powerpc64le and passes tests.
+
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+Upstream: https://github.com/j256/dmalloc/pull/113
+---
+ return.h | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
+
+diff --git a/return.h b/return.h
+index 55b9369fe12d..fafbe3754f0f 100644
+--- a/return.h
++++ b/return.h
+@@ -260,20 +260,13 @@ asm void ASM_GET_RET_ADDR(file)
+ /*************************************/
+ 
+ /*
+- * For Powerpc 603 based system running LynxOS 2.3.1 using gcc/gas.
+- */
+-#if defined(__powerpc__) && defined(__GNUC__) && !defined(__OPTIMIZE__)
+-
+-/*
+- * This won't compile if "-O2" is used, but it seems to work fine with
+- * "-O0".  I'm no assembler expert; I was happy enough to come up with
+- * something that works at all...  :-)
++ * For PowerPC using gcc/gas.
+  */
++#if defined(__powerpc__) && defined(__GNUC__)
+ 
+ #define GET_RET_ADDR(file) \
+ do { \
+-  asm("mflr 0"); \
+-  asm("stw 0,%0" : "=g" (file)); \
++  asm("mflr %0" : "=r" (file)); \
+ } while(0)
+ 
+ #endif /* __powerpc__ && __GNUC__ && !__OPTIMIZE__ */
+-- 
+2.35.1
+

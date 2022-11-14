@@ -1,0 +1,34 @@
+From 05ae5237b1bc23399898f9c06463cfe2b5bba499 Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Tue, 14 Sep 2021 17:48:03 -0600
+Subject: [PATCH] Don't require gstd-check-user-xenv.sh for systemd service
+
+The gstd-check-user-xenv.sh script does not appear to be required
+for running the gstd service so we shouldn't require it for the
+service to start.
+
+Note that the non-systemd init script already does not require this.
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[Upstream status:
+https://github.com/RidgeRun/gstd-1.x/pull/251]
+---
+ init/gstd.service.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/init/gstd.service.in b/init/gstd.service.in
+index 3d20ecd..9125983 100644
+--- a/init/gstd.service.in
++++ b/init/gstd.service.in
+@@ -6,7 +6,7 @@ StartLimitIntervalSec=30
+ [Service]
+ Restart=on-failure
+ RestartSec=5s
+-ExecStartPre=@GSTD_SYSTEMD_DIR@/gstd-check-user-xenv.sh
++ExecStartPre=-@GSTD_SYSTEMD_DIR@/gstd-check-user-xenv.sh
+ ExecStart=@prefix@/bin/gstd
+ 
+ [Install]
+-- 
+2.25.1
+

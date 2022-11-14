@@ -1,0 +1,28 @@
+From 689265cd522c770ad3e0391cae80ee884a8c475c Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Thu, 21 Apr 2022 01:14:52 -0500
+Subject: [PATCH] meson.build: add missing init subdir
+
+Seems this got accidentially removed in:
+9f4490138c8892b1c86008134438b2ab405c9b0f
+
+Restore it so that init files are properly installed.
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[upstreeam: https://github.com/RidgeRun/gstd-1.x/pull/291]
+---
+ meson.build | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/meson.build b/meson.build
+index a30f776..7a8690a 100644
+--- a/meson.build
++++ b/meson.build
+@@ -300,3 +300,4 @@ subdir('gst_client')
+ subdir('tests')
+ subdir('examples')
+ subdir('docs')
++subdir('init')
+-- 
+2.25.1
+

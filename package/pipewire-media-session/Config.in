@@ -1,0 +1,10 @@
+config BR2_PACKAGE_PIPEWIRE_MEDIA_SESSION
+	bool "pipewire media-session"
+	depends on BR2_TOOLCHAIN_HAS_THREADS # alsa-lib, dbus
+	depends on BR2_USE_MMU # dbus
+	depends on BR2_PACKAGE_PIPEWIRE
+	select BR2_PACKAGE_ALSA_LIB
+	select BR2_PACKAGE_ALSA_LIB_UCM
+	select BR2_PACKAGE_DBUS
+	help
+	  Build pipewire media-session support

@@ -1,0 +1,10 @@
+config BR2_PACKAGE_PHP_APCU
+	bool "php-apcu"
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	help
+	  APCu is an in-memory key-value store for PHP.
+
+	  https://pecl.php.net/package/APCu
+
+comment "php-apcu needs a toolchain w/ threads"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS

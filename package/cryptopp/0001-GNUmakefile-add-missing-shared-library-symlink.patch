@@ -1,0 +1,62 @@
+From e4c2e3bc8174f24cf63923619f5d06d85b84ae1d Mon Sep 17 00:00:00 2001
+From: Kamel Bouhara <kamel.bouhara@bootlin.com>
+Date: Fri, 7 Jan 2022 22:59:23 +0100
+Subject: [PATCH] GNUmakefile: add missing shared library symlink
+
+The GNUmakefile install-lib target currently installs the following
+symlink:
+
+	libcryptopp.so -> libcryptopp.so.8.6.0
+
+However, it does not create the following symlink:
+
+	libcryptopp.so.8 -> libcryptopp.so.8.6.0
+
+This symlink is necessary at runtime because libcryptopp.so.8 is the
+SONAME of the cryptopp library, and therefore this is what the dynamic
+loader will search when starting a program that is linked against
+cryptopp.
+
+For native compilation, the 'ldconfig' invocation that immediately
+follows will create that symlink, so everything works.
+
+For cross-compilation however, ldconfig can't be used, and therefore
+LDCONFIG is passed as /bin/true, and therefore it doesn't create the
+symlink. So instead, create it directly inside the GNUmakefile,
+without relying on ldconfig.
+
+Upstream: https://github.com/weidai11/cryptopp/pull/1101
+Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ GNUmakefile       | 1 +
+ GNUmakefile-cross | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/GNUmakefile b/GNUmakefile
+index 23273edb..3b55e420 100644
+--- a/GNUmakefile
++++ b/GNUmakefile
+@@ -1412,6 +1412,7 @@ ifneq ($(wildcard libcryptopp.so$(SOLIB_VERSION_SUFFIX)),)
+ 	$(CHMOD) u=rwx,go=rx $(DESTDIR)$(LIBDIR)/libcryptopp.so$(SOLIB_VERSION_SUFFIX)
+ ifeq ($(HAS_SOLIB_VERSION),1)
+ 	-$(LN) libcryptopp.so$(SOLIB_VERSION_SUFFIX) $(DESTDIR)$(LIBDIR)/libcryptopp.so
++	-$(LN) libcryptopp.so$(SOLIB_VERSION_SUFFIX) $(DESTDIR)$(LIBDIR)/libcryptopp.so$(SOLIB_COMPAT_SUFFIX)
+ 	$(LDCONF) $(DESTDIR)$(LIBDIR)
+ endif
+ endif
+diff --git a/GNUmakefile-cross b/GNUmakefile-cross
+index 9847f04b..a2b87e4a 100644
+--- a/GNUmakefile-cross
++++ b/GNUmakefile-cross
+@@ -856,6 +856,7 @@ ifneq ($(wildcard libcryptopp.so$(SOLIB_VERSION_SUFFIX)),)
+ 	$(CHMOD) u=rwx,go=rx $(DESTDIR)$(LIBDIR)/libcryptopp.so$(SOLIB_VERSION_SUFFIX)
+ ifeq ($(HAS_SOLIB_VERSION),1)
+ 	-$(LN) libcryptopp.so$(SOLIB_VERSION_SUFFIX) $(DESTDIR)$(LIBDIR)/libcryptopp.so
++	-$(LN) libcryptopp.so$(SOLIB_VERSION_SUFFIX) $(DESTDIR)$(LIBDIR)/libcryptopp.so$(SOLIB_COMPAT_SUFFIX)
+ 	$(LDCONF) $(DESTDIR)$(LIBDIR)
+ endif
+ endif
+-- 
+2.33.1
+

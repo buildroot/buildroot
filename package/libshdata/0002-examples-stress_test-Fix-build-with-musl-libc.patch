@@ -1,0 +1,37 @@
+From ddded7337812a2797d31f276624da98932d8e17f Mon Sep 17 00:00:00 2001
+From: Herve Codina <herve.codina@bootlin.com>
+Date: Sun, 9 Jan 2022 14:59:27 +0100
+Subject: [PATCH] examples/stress_test: Fix build with musl libc
+
+The musl C library uses sched_priority instead of
+__sched_priority as GNU libc and uClibc do.
+Use sched_priority instead.
+
+This does not break compilation with GNU libc and uClibc
+because they both define in sched.h:
+  #define sched_priority         __sched_priority
+
+This patch was submitted upstream.
+https://github.com/Parrot-Developers/libshdata/issues/3
+
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+---
+ examples/stress_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/examples/stress_test.c b/examples/stress_test.c
+index a859115..cfb5418 100644
+--- a/examples/stress_test.c
++++ b/examples/stress_test.c
+@@ -617,7 +617,7 @@ static void launch_test(int timer_fd, struct test_setup *setup)
+ 	if (ret < 0)
+ 		ULOGI("Error setting the timer : %s", strerror(errno));
+ 	struct sched_param sched_params;
+-	sched_params.__sched_priority = sched_get_priority_max(SCHED_RR);
++	sched_params.sched_priority = sched_get_priority_max(SCHED_RR);
+ 
+ 	pid_t pid = fork();
+ 
+-- 
+2.33.1
+

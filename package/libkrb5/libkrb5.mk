@@ -4,12 +4,11 @@
 #
 ################################################################################
 
-LIBKRB5_VERSION_MAJOR = 1.18
-LIBKRB5_VERSION = $(LIBKRB5_VERSION_MAJOR).4
-LIBKRB5_SITE = https://web.mit.edu/kerberos/dist/krb5/$(LIBKRB5_VERSION_MAJOR)
+LIBKRB5_VERSION = 1.20
+LIBKRB5_SITE = https://web.mit.edu/kerberos/dist/krb5/$(LIBKRB5_VERSION)
 LIBKRB5_SOURCE = krb5-$(LIBKRB5_VERSION).tar.gz
 LIBKRB5_SUBDIR = src
-LIBKRB5_LICENSE = MIT
+LIBKRB5_LICENSE = MIT, BSD-2-Clause, BSD-3-Clause, BSD-4-Clause, others
 LIBKRB5_LICENSE_FILES = NOTICE
 LIBKRB5_CPE_ID_VENDOR = mit
 LIBKRB5_CPE_ID_PRODUCT = kerberos_5
@@ -34,6 +33,11 @@ LIBKRB5_CONF_OPTS = \
 	--without-tcl \
 	--disable-rpath
 
+# Enabling static and shared at the same time is not supported
+ifeq ($(BR2_SHARED_STATIC_LIBS),y)
+LIBKRB5_CONF_OPTS += --disable-static
+endif
+
 ifeq ($(BR2_PACKAGE_OPENLDAP),y)
 LIBKRB5_CONF_OPTS += --with-ldap
 LIBKRB5_DEPENDENCIES += openldap
@@ -41,7 +45,7 @@ else
 LIBKRB5_CONF_OPTS += --without-ldap
 endif
 
-ifeq ($(BR2_PACKAGE_OPENSSL),y)
+ifeq ($(BR2_PACKAGE_LIBOPENSSL),y)
 LIBKRB5_CONF_OPTS += \
 	--enable-pkinit \
 	--with-crypto-impl=openssl \

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SBC_VERSION = 1.5
+SBC_VERSION = 2.0
 SBC_SOURCE = sbc-$(SBC_VERSION).tar.xz
 SBC_SITE = $(BR2_KERNEL_MIRROR)/linux/bluetooth
 SBC_INSTALL_STAGING = YES

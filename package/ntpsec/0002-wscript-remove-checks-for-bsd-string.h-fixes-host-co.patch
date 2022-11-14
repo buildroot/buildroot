@@ -1,0 +1,73 @@
+From 54fbeaa68a59f536819d1cfb2e9204176fbff54b Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Thu, 16 Dec 2021 23:27:35 +0100
+Subject: [PATCH] wscript: remove checks for bsd/string.h, fixes host-compile
+ failure
+
+Fixes the following host-compile failure while cross-compiling
+in case target libbsd is found:
+
+  [2/2] Compiling build/host/ntpd/ntp_parser.tab.c
+  In file included from ../../include/ntp.h:15,
+                   from .../build/ntpsec-1_2_1/ntpd/ntp_parser.y:16:
+  ../../include/ntp_stdlib.h:20:10: fatal error: bsd/string.h: No such file or directory
+     20 | #include <bsd/string.h>
+        |          ^~~~~~~~~~~~~~
+  compilation terminated.
+
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ include/ntp_stdlib.h |  4 ----
+ wscript              | 14 --------------
+ 2 files changed, 18 deletions(-)
+
+diff --git a/include/ntp_stdlib.h b/include/ntp_stdlib.h
+index fe4d78e5c..73d97084f 100644
+--- a/include/ntp_stdlib.h
++++ b/include/ntp_stdlib.h
+@@ -16,10 +16,6 @@
+ #include "ntp_malloc.h"
+ #include "ntp_syslog.h"
+ 
+-#ifdef HAVE_BSD_STRING_H
+-#include <bsd/string.h>
+-#endif
+-
+ #ifdef __GNUC__
+ #define NTP_PRINTF(fmt, args) __attribute__((__format__(__printf__, fmt, args)))
+ #else
+diff --git a/wscript b/wscript
+index 641073f00..aa04b1d1c 100644
+--- a/wscript
++++ b/wscript
+@@ -660,19 +660,6 @@ int main(int argc, char **argv) {
+                        prerequisites=ft[1], use=ft[2],
+                        mandatory=ft[3])
+ 
+-    # check for BSD versions outside of libc
+-    if not ctx.get_define("HAVE_STRLCAT"):
+-        ret = probe_function(ctx, function='strlcat',
+-                             prerequisites=['bsd/string.h'])
+-        if ret:
+-            ctx.define("HAVE_STRLCAT", 1, comment="Using bsd/strlcat")
+-
+-    if not ctx.get_define("HAVE_STRLCPY"):
+-        ret = probe_function(ctx, function='strlcpy',
+-                             prerequisites=['bsd/string.h'])
+-        if ret:
+-            ctx.define("HAVE_STRLCPY", 1, comment="Using bsd/strlcpy")
+-
+     # Nobody uses the symbol, but this seems like a good sanity check.
+     ctx.check_cc(header_name="stdbool.h", mandatory=True,
+                  comment="Sanity check.")
+@@ -691,7 +678,6 @@ int main(int argc, char **argv) {
+     optional_headers = (
+         "alloca.h",
+         ("arpa/nameser.h", ["sys/types.h"]),
+-        "bsd/string.h",     # bsd emulation
+         ("ifaddrs.h", ["sys/types.h"]),
+         ("linux/if_addr.h", ["sys/socket.h"]),
+         ("linux/rtnetlink.h", ["sys/socket.h"]),
+-- 
+2.34.1
+

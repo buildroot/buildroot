@@ -10,10 +10,11 @@ menuconfig BR2_PACKAGE_LIBCAMERA
 	depends on BR2_PACKAGE_LIBCAMERA_ARCH_SUPPORTS
 	depends on BR2_INSTALL_LIBSTDCPP
 	depends on BR2_TOOLCHAIN_HAS_THREADS
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 # C++17
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_8 # C++17
 	depends on !BR2_STATIC_LIBS # gnutls
 	depends on BR2_USE_WCHAR # gnutls
 	select BR2_PACKAGE_GNUTLS
+	select BR2_PACKAGE_LIBYAML
 	select BR2_PACKAGE_LIBCAMERA_PIPELINE_UVCVIDEO if !BR2_PACKAGE_LIBCAMERA_HAS_PIPELINE
 	help
 	  libcamera provides a software stack to support
@@ -34,12 +35,14 @@ config BR2_PACKAGE_LIBCAMERA_HAS_PIPELINE
 
 config BR2_PACKAGE_LIBCAMERA_PIPELINE_IPU3
 	bool "ipu3 pipeline"
+	depends on BR2_i386 || BR2_x86_64
 	select BR2_PACKAGE_LIBCAMERA_HAS_PIPELINE
 	help
 	  Pipeline for Intel IPU3.
 
 config BR2_PACKAGE_LIBCAMERA_PIPELINE_RASPBERRYPI
 	bool "raspberrypi pipeline"
+	depends on BR2_arm || BR2_aarch64
 	depends on BR2_USE_WCHAR # boost (already enforced for gnutls)
 	select BR2_PACKAGE_BOOST
 	select BR2_PACKAGE_LIBCAMERA_HAS_PIPELINE
@@ -48,6 +51,7 @@ config BR2_PACKAGE_LIBCAMERA_PIPELINE_RASPBERRYPI
 
 config BR2_PACKAGE_LIBCAMERA_PIPELINE_RKISP1
 	bool "rkisp1 pipeline"
+	depends on BR2_arm || BR2_aarch64
 	select BR2_PACKAGE_LIBCAMERA_HAS_PIPELINE
 	help
 	  Pipeline for Rockchip ISP1.
@@ -69,9 +73,26 @@ config BR2_PACKAGE_LIBCAMERA_PIPELINE_VIMC
 	help
 	  Pipeline for the vimc device.
 
+config BR2_PACKAGE_LIBCAMERA_COMPLIANCE
+	bool "lc-compliance test application"
+	depends on BR2_USE_WCHAR # gtest
+	depends on BR2_TOOLCHAIN_HAS_THREADS # gtest
+	depends on BR2_INSTALL_LIBSTDCPP # gtest
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # gtest
+	depends on BR2_USE_MMU # gtest
+	select BR2_PACKAGE_GTEST
+	select BR2_PACKAGE_LIBEVENT
+	help
+	  lc-compliance test application
+
+comment "lc-compliance test application needs a toolchain w/ C++, wchar, threads, gcc >= 5"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_GCC_AT_LEAST_5
+
 endif # BR2_PACKAGE_LIBCAMERA
 
-comment "libcamera needs a toolchain w/ C++, threads, wchar, dynamic library, gcc >= 7"
+comment "libcamera needs a toolchain w/ C++, threads, wchar, dynamic library, gcc >= 8"
 	depends on BR2_PACKAGE_LIBCAMERA_ARCH_SUPPORTS
 	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS || \
-		!BR2_TOOLCHAIN_GCC_AT_LEAST_7 || BR2_STATIC_LIBS || !BR2_USE_WCHAR
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_8 || BR2_STATIC_LIBS || !BR2_USE_WCHAR

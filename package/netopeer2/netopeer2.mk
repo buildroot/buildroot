@@ -4,14 +4,20 @@
 #
 ################################################################################
 
-NETOPEER2_VERSION = 1.1.70
+NETOPEER2_VERSION = 2.1.23
 NETOPEER2_SITE = $(call github,CESNET,Netopeer2,v$(NETOPEER2_VERSION))
 NETOPEER2_DL_SUBDIR = netopeer2
 NETOPEER2_LICENSE = BSD-3-Clause
 NETOPEER2_LICENSE_FILES = LICENSE
 NETOPEER2_DEPENDENCIES = libnetconf2 libyang sysrepo host-sysrepo
 
-NETOPEER2_CONF_OPTS = -DBUILD_CLI=$(if $(BR2_PACKAGE_NETOPEER2_CLI),ON,OFF)
+ifeq ($(BR2_INIT_SYSTEMD),y)
+NETOPEER2_DEPENDENCIES += systemd
+endif
+
+NETOPEER2_CONF_OPTS = \
+	-DBUILD_CLI=$(if $(BR2_PACKAGE_NETOPEER2_CLI),ON,OFF) \
+	-DENABLE_TESTS=OFF
 
 # Set a build specific SYSREPO_SHM_PREFIX to ensure we can safely delete the
 # files. This also ensures that concurrent parallel builds will not be

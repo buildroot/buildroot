@@ -6,6 +6,7 @@ config BR2_PACKAGE_LIBOSMIUM
 	depends on BR2_USE_WCHAR # boost
 	select BR2_PACKAGE_BOOST
 	select BR2_PACKAGE_PROTOZERO
+	select BR2_PACKAGE_LZ4
 	help
 	  A fast and flexible C++ library for working with OpenStreetMap
 	  data. Libosmium works on Linux, macOS and Windows.

@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-ED_VERSION = 1.16
+ED_VERSION = 1.18
 ED_SITE = $(BR2_GNU_MIRROR)/ed
 ED_SOURCE = ed-$(ED_VERSION).tar.lz
-ED_LICENSE = GPL-3.0+
+ED_LICENSE = GPL-2.0+
 ED_LICENSE_FILES = COPYING
 ED_CPE_ID_VENDOR = gnu
 

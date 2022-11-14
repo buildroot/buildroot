@@ -15,6 +15,7 @@ export BZR := $(call qstrip,$(BR2_BZR))
 export GIT := $(call qstrip,$(BR2_GIT))
 export HG := $(call qstrip,$(BR2_HG))
 export SCP := $(call qstrip,$(BR2_SCP))
+export SFTP := $(call qstrip,$(BR2_SFTP))
 export LOCALFILES := $(call qstrip,$(BR2_LOCALFILES))
 
 # Version of the format of the archives we generate in the corresponding
@@ -102,6 +103,7 @@ endif
 #
 # Argument 1 is the source location
 # Argument 2 is the upper-case package name
+# Argument 3 is a space-separated list of optional arguments
 #
 ################################################################################
 
@@ -118,7 +120,9 @@ define DOWNLOAD
 		-N '$($(2)_RAWNAME)' \
 		-o '$($(2)_DL_DIR)/$(notdir $(1))' \
 		$(if $($(2)_GIT_SUBMODULES),-r) \
+		$(if $($(2)_GIT_LFS),-l) \
 		$(foreach uri,$(call DOWNLOAD_URIS,$(1),$(2)),-u $(uri)) \
+		$(3) \
 		$(QUIET) \
 		-- \
 		$($(2)_DL_OPTS)

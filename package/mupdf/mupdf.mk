@@ -28,6 +28,9 @@ MUPDF_IGNORE_CVES += CVE-2021-3407
 # 0003-Bug-703791-Stay-within-hash-table-max-key-size-in-cached-color-converter.patch
 MUPDF_IGNORE_CVES += CVE-2021-37220
 
+# 0005-Bug-704834-Fix-division-by-zero-for-zero-width-pages-in-muraster.patch
+MUPDF_IGNORE_CVES += CVE-2021-4216
+
 # The pkg-config name for gumbo-parser is `gumbo`.
 MUPDF_PKG_CONFIG_PACKAGES = \
 	freetype2 \
@@ -52,25 +55,28 @@ MUPDF_MAKE_ENV = $(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) \
 	XLIBS="$(MUPDF_LDFLAGS)" \
 	USE_SYSTEM_LIBS=yes
 
+MUPDF_MAKE_OPTS = \
+	HAVE_OBJCOPY=no \
+	prefix="/usr"
+
 ifeq ($(BR2_PACKAGE_LIBFREEGLUT),y)
 MUPDF_DEPENDENCIES += libfreeglut
 else
-define MUPDF_DISABLE_OPENGL
-	sed -i 's/HAVE_GLUT := yes/HAVE_GLUT := no/g' $(@D)/Makerules
-endef
-MUPDF_POST_PATCH_HOOKS = MUPDF_DISABLE_OPENGL
+MUPDF_MAKE_OPTS += HAVE_GLUT=no
 endif
 
 define MUPDF_BUILD_CMDS
-	$(MUPDF_MAKE_ENV) $(MAKE) -C $(@D) all
+	$(MUPDF_MAKE_ENV) $(MAKE) -C $(@D) $(MUPDF_MAKE_OPTS) all
 endef
 
 define MUPDF_INSTALL_STAGING_CMDS
-	$(MUPDF_MAKE_ENV) $(MAKE) -C $(@D) DESTDIR="$(STAGING_DIR)" prefix="/usr" install_libs
+	$(MUPDF_MAKE_ENV) $(MAKE) -C $(@D) $(MUPDF_MAKE_OPTS) \
+		DESTDIR="$(STAGING_DIR)" install_libs
 endef
 
 define MUPDF_INSTALL_TARGET_CMDS
-	$(MUPDF_MAKE_ENV) $(MAKE) -C $(@D) DESTDIR="$(TARGET_DIR)" prefix="/usr" install
+	$(MUPDF_MAKE_ENV) $(MAKE) -C $(@D) $(MUPDF_MAKE_OPTS) \
+		DESTDIR="$(TARGET_DIR)" install
 endef
 
 $(eval $(generic-package))

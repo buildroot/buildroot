@@ -66,6 +66,14 @@ config BR2_PACKAGE_UBOOT_TOOLS_MKIMAGE
 	  The mkimage tool from Das U-Boot bootloader, which allows
 	  generation of U-Boot images in various formats.
 
+config BR2_PACKAGE_UBOOT_TOOLS_MKEFICAPSULE
+	bool "mkeficapsule"
+	help
+	  Install the mkeficapsule tool on the target system
+
+	  The mkeficapsule tool from Das U-Boot bootloader, which allows
+	  generation of UEFI capsule binaries.
+
 config BR2_PACKAGE_UBOOT_TOOLS_MKENVIMAGE
 	bool "mkenvimage"
 	help

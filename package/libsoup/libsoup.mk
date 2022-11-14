@@ -5,7 +5,7 @@
 ################################################################################
 
 LIBSOUP_VERSION_MAJOR = 2.74
-LIBSOUP_VERSION = $(LIBSOUP_VERSION_MAJOR).0
+LIBSOUP_VERSION = $(LIBSOUP_VERSION_MAJOR).2
 LIBSOUP_SOURCE = libsoup-$(LIBSOUP_VERSION).tar.xz
 LIBSOUP_SITE = http://ftp.gnome.org/pub/gnome/sources/libsoup/$(LIBSOUP_VERSION_MAJOR)
 LIBSOUP_LICENSE = LGPL-2.0+
@@ -25,7 +25,6 @@ LIBSOUP_DEPENDENCIES = \
 LIBSOUP_LDFLAGS = $(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)
 
 LIBSOUP_CONF_OPTS = \
-	-Dgssapi=disabled \
 	-Dgtk_doc=false \
 	-Dntlm=disabled \
 	-Dsysprof=disabled \
@@ -45,6 +44,15 @@ LIBSOUP_CONF_OPTS += -Dintrospection=enabled
 LIBSOUP_DEPENDENCIES += gobject-introspection
 else
 LIBSOUP_CONF_OPTS += -Dintrospection=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_LIBKRB5),y)
+LIBSOUP_CONF_OPTS += \
+	-Dgssapi=enabled \
+	-Dkrb5_config=$(STAGING_DIR)/usr/bin/krb5-config
+LIBSOUP_DEPENDENCIES += libkrb5
+else
+LIBSOUP_CONF_OPTS += -Dgssapi=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBSOUP_GNOME),y)

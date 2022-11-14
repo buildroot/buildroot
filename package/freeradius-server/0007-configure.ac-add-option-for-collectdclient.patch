@@ -1,0 +1,67 @@
+From b8c75df6e252a1c0648448d6d561826ee9c464dd Mon Sep 17 00:00:00 2001
+From: "Arnout Vandecappelle (Essensium/Mind)" <arnout@mind.be>
+Date: Tue, 26 Jul 2022 18:02:21 +0200
+Subject: [PATCH] configure.ac: add option for collectdclient
+
+Signed-off-by: Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>
+Upstream: https://github.com/FreeRADIUS/freeradius-server/pull/4632
+---
+ configure.ac | 34 +++++++++++++++++++++++++---------
+ 1 file changed, 25 insertions(+), 9 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index f760a5b236..f431da6db5 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1070,6 +1070,20 @@ if test "x$WITH_PCAP" = xyes; then
+   LIBS="${old_LIBS}"
+ fi
+ 
++dnl extra argument: --with-collectdclient=yes/no
++WITH_COLLECTDCLIENT=yes
++AC_ARG_WITH(collectdclient,
++[  --with-collectdclient  use collectd client. (default=yes)],
++[ case "$withval" in
++  no)
++    WITH_COLLECTDCLIENT=no
++    ;;
++  *)
++    WITH_COLLECTDCLIENT=yes
++    ;;
++  esac ]
++)
++
+ dnl Check for collectdclient
+ dnl extra argument: --with-collectdclient-lib-dir=DIR
+ collectdclient_lib_dir=
+@@ -1103,16 +1117,18 @@ AC_ARG_WITH(collectdclient-include-dir,
+       ;;
+   esac])
+ 
+-smart_try_dir="$collectdclient_lib_dir"
+-FR_SMART_CHECK_LIB(collectdclient, lcc_connect)
+-if test "x$ac_cv_lib_collectdclient_lcc_connect" != "xyes"; then
+-  AC_MSG_WARN([collectdclient library not found. Use --with-collectdclient-lib-dir=<path>.])
+-else
+-  COLLECTDC_LIBS="${smart_lib}"
+-  COLLECTDC_LDFLAGS="${smart_ldflags}"
++if test "x$WITH_COLLECTDCLIENT" = xyes; then
++  smart_try_dir="$collectdclient_lib_dir"
++  FR_SMART_CHECK_LIB(collectdclient, lcc_connect)
++  if test "x$ac_cv_lib_collectdclient_lcc_connect" != "xyes"; then
++    AC_MSG_WARN([collectdclient library not found. Use --with-collectdclient-lib-dir=<path>.])
++  else
++    COLLECTDC_LIBS="${smart_lib}"
++    COLLECTDC_LDFLAGS="${smart_ldflags}"
++  fi
++  dnl Set by FR_SMART_CHECKLIB
++  LIBS="${old_LIBS}"
+ fi
+-dnl Set by FR_SMART_CHECKLIB
+-LIBS="${old_LIBS}"
+ 
+ dnl #
+ dnl #  extra argument: --with-libcap
+-- 
+2.35.3
+

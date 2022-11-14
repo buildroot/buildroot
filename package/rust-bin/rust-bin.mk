@@ -4,7 +4,9 @@
 #
 ################################################################################
 
-RUST_BIN_VERSION = 1.54.0
+# When updating this version, check whether support/download/cargo-post-process
+# still generates the same archives.
+RUST_BIN_VERSION = 1.64.0
 RUST_BIN_SITE = https://static.rust-lang.org/dist
 RUST_BIN_LICENSE = Apache-2.0 or MIT
 RUST_BIN_LICENSE_FILES = LICENSE-APACHE LICENSE-MIT

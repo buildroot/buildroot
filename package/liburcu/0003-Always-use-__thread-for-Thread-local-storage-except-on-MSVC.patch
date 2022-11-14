@@ -1,0 +1,53 @@
+From 2e359284497c361e3208501fc70d49b2c54dc4ef Mon Sep 17 00:00:00 2001
+From: Michael Jeanson <mjeanson@efficios.com>
+Date: Tue, 14 Sep 2021 10:41:08 -0400
+Subject: [PATCH] Always use '__thread' for Thread local storage except on MSVC
+
+Use the GCC extension '__thread' [1] for Thread local storage on all C
+and C++ compilers except MSVC.
+
+While C11 and C++11 respectively offer '_Thread_local' and
+'thread_local' as potentialy faster implementations, they offer no
+guarantees of compatibility when used in a library interface which might
+be used by both C and C++ client code.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Thread-Local.html
+
+Change-Id: If4fe8bcdbda24b21dedf382112bd5c5f836c00c8
+Signed-off-by: Michael Jeanson <mjeanson@efficios.com>
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+
+[Retrieved from:
+https://github.com/urcu/userspace-rcu/commit/2e359284497c361e3208501fc70d49b2c54dc4ef]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ include/urcu/tls-compat.h | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/include/urcu/tls-compat.h b/include/urcu/tls-compat.h
+index 25cf375a..a2c94ded 100644
+--- a/include/urcu/tls-compat.h
++++ b/include/urcu/tls-compat.h
+@@ -35,15 +35,14 @@ extern "C" {
+ #ifdef CONFIG_RCU_TLS
+ 
+ /*
+- * Don't use C++ 'thread_local' on MacOs, the implementation is incompatible
+- * with C and will result in a link error when accessing an extern variable
+- * provided by the C library from C++ code.
++ * Default to '__thread' on all C and C++ compilers except MSVC. While C11 has
++ * '_Thread_local' and C++11 has 'thread_local', only '__thread' seems to have
++ * a compatible implementation when linking public extern symbols across
++ * language boundaries.
++ *
++ * For more details, see 'https://gcc.gnu.org/onlinedocs/gcc/Thread-Local.html'.
+  */
+-#if defined (__cplusplus) && (__cplusplus >= 201103L) && !defined(__APPLE__)
+-# define URCU_TLS_STORAGE_CLASS	thread_local
+-#elif defined (__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
+-# define URCU_TLS_STORAGE_CLASS	_Thread_local
+-#elif defined (_MSC_VER)
++#if defined(_MSC_VER)
+ # define URCU_TLS_STORAGE_CLASS	__declspec(thread)
+ #else
+ # define URCU_TLS_STORAGE_CLASS	__thread

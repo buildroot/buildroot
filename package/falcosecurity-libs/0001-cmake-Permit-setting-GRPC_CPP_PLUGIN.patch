@@ -1,0 +1,34 @@
+From 2e8a50cd4975df3ab60ee07c9675831cd5ad397f Mon Sep 17 00:00:00 2001
+From: Francis Laniel <flaniel@linux.microsoft.com>
+Date: Tue, 12 Apr 2022 19:54:11 +0100
+Subject: [PATCH] cmake: Permit setting GRPC_CPP_PLUGIN.
+
+This patch enables users to set GRPC_CPP_PLUGIN while calling cmake with:
+cmake -DGRPC_CPP_PLUGIN=/path
+
+Signed-off-by: Francis Laniel <flaniel@linux.microsoft.com>
+---
+ cmake/modules/grpc.cmake | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/cmake/modules/grpc.cmake b/cmake/modules/grpc.cmake
+index e5fd16b8..9d8f5934 100644
+--- a/cmake/modules/grpc.cmake
++++ b/cmake/modules/grpc.cmake
+@@ -12,9 +12,11 @@ elseif(NOT USE_BUNDLED_GRPC)
+ 		set(GRPCPP_LIB gRPC::grpc++)
+ 
+ 		# gRPC C++ plugin
+-		get_target_property(GRPC_CPP_PLUGIN gRPC::grpc_cpp_plugin LOCATION)
+ 		if(NOT GRPC_CPP_PLUGIN)
+-			message(FATAL_ERROR "System grpc_cpp_plugin not found")
++			get_target_property(GRPC_CPP_PLUGIN gRPC::grpc_cpp_plugin LOCATION)
++			if(NOT GRPC_CPP_PLUGIN)
++				message(FATAL_ERROR "System grpc_cpp_plugin not found")
++			endif()
+ 		endif()
+ 
+ 		# gRPC include dir + properly handle grpc{++,pp}
+-- 
+2.25.1
+

@@ -1,0 +1,39 @@
+config BR2_PACKAGE_OCTAVE
+	bool "octave"
+	depends on BR2_PACKAGE_OPENBLAS_ARCH_SUPPORTS
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # C++11
+	depends on BR2_TOOLCHAIN_HAS_FORTRAN
+	# Some Bootlin x86_64 toolchains (like version
+	# bleeding-edge-2021.11-1) has a file
+	# "x86_64-buildroot-linux-gnu/lib64/libgfortran.la" including
+	# a "dependency_libs=" entry with an incorrect absolute path
+	# to linquadmath.la on the bootlin build host. This breaks
+	# builds using libtool with libgfortran. Those toolchains are
+	# used by the "utils/test-pkg" script.
+	depends on !BR2_TOOLCHAIN_EXTERNAL_BOOTLIN || !BR2_x86_64
+	select BR2_PACKAGE_OPENBLAS
+	select BR2_PACKAGE_PCRE
+	select BR2_PACKAGE_PCRE_UTF
+	help
+	  GNU Octave is a high-level language, primarily intended for
+	  numerical computations. It provides a convenient command
+	  line interface for solving linear and nonlinear problems
+	  numerically, and for performing other numerical experiments
+	  using a language that is mostly compatible with Matlab. It
+	  may also be used as a batch-oriented language. Octave has
+	  extensive tools for solving common numerical linear algebra
+	  problems, finding the roots of nonlinear equations,
+	  integrating ordinary functions, manipulating polynomials,
+	  and integrating ordinary differential and
+	  differential-algebraic equations. It is easily extensible
+	  and customizable via user-defined functions written in
+	  Octave's own language, or using dynamically loaded modules
+	  written in C++, C, Fortran, or other languages.
+
+	  https://www.octave.org/
+
+comment "octave needs a toolchain w/ C++ and fortran, gcc >= 4.8"
+	depends on !BR2_INSTALL_LIBSTDCPP || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 || \
+		!BR2_TOOLCHAIN_HAS_FORTRAN

@@ -1,0 +1,43 @@
+config BR2_PACKAGE_RPI_RGB_LED_MATRIX
+	bool "rpi-rgb-led-matrix"
+	depends on BR2_aarch64 || BR2_arm
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on !BR2_STATIC_LIBS
+	help
+	  A library to control commonly available 64x64, 32x32 or 16x32
+	  RGB LED panels with the Raspberry Pi. Can support PWM up to
+	  11Bit per channel, providing true 24bpp color with CIE1931
+	  profile.
+
+	  https://github.com/hzeller/rpi-rgb-led-matrix
+
+if BR2_PACKAGE_RPI_RGB_LED_MATRIX
+
+config BR2_PACKAGE_RPI_RGB_LED_MATRIX_IMAGE_VIEWER
+	bool "Build led-image-viewer"
+	select BR2_PACKAGE_GRAPHICSMAGICK
+	help
+	  The image viewer reads all kinds of image formats,
+	  including animated gifs.
+
+config BR2_PACKAGE_RPI_RGB_LED_MATRIX_TEXT_SCROLLER
+	bool "Build text-scroller"
+	help
+	  The text scroller allows to show some scrolling text.
+
+config BR2_PACKAGE_RPI_RGB_LED_MATRIX_VIDEO_VIEWER
+	bool "Build video-viewer"
+	select BR2_PACKAGE_FFMPEG
+	select BR2_PACKAGE_FFMPEG_SWSCALE
+	help
+	  The video viewer allows to play common video formats
+	  on the RGB matrix (just the picture, no sound).
+
+endif
+
+comment "rpi-rgb-led-matrix needs a toolchain w/ C++, threads, dynamic library"
+	depends on BR2_aarch64 || BR2_arm
+	depends on !BR2_INSTALL_LIBSTDCPP || \
+		!BR2_TOOLCHAIN_HAS_THREADS || \
+		BR2_STATIC_LIBS

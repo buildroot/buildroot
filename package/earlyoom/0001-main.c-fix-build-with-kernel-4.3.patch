@@ -1,0 +1,45 @@
+From 499e81bfcdd9379bf4619a7c3ad85ed7f2b1dca5 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 28 Jul 2022 10:05:18 +0200
+Subject: [PATCH] main.c: fix build with kernel < 4.3
+
+PR_CAP_AMBIENT is only available since kernel 4.3 and
+https://github.com/torvalds/linux/commit/58319057b7847667f0c9585b9de0e8932b0fdb08
+resulting in the following build failure since version 1.7 and
+https://github.com/rfjakob/earlyoom/commit/9edc5cfc9ad794ed59baec5e6ee8d1060456a315:
+
+main.c: In function 'main':
+main.c:119:11: error: 'PR_CAP_AMBIENT' undeclared (first use in this function)
+     prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_CLEAR_ALL, 0, 0, 0);
+           ^
+
+Fixes:
+ - http://autobuild.buildroot.org/results/5a0ad7e1f6de3c37e40c37d8f583fc699a457753
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/rfjakob/earlyoom/pull/276]
+---
+ main.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/main.c b/main.c
+index c068c7c..99ca9e2 100644
+--- a/main.c
++++ b/main.c
+@@ -115,11 +115,13 @@ int main(int argc, char* argv[])
+         fatal(4, "Could not cd to /proc: %s", strerror(errno));
+     }
+ 
++#ifdef PR_CAP_AMBIENT
+     // When systemd starts a daemon with capabilities, it uses ambient
+     // capabilities to do so. If not dropped, the capabilities can spread
+     // to any child process. This is usually not necessary and its a good
+     // idea to drop them if not needed.
+     prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_CLEAR_ALL, 0, 0, 0);
++#endif
+ 
+     meminfo_t m = parse_meminfo();
+ 
+-- 
+2.35.1
+

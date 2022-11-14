@@ -1,0 +1,27 @@
+From 6fad69889da67bc4d4baff4afa94f77da45e006d Mon Sep 17 00:00:00 2001
+From: Felix Yan <felixonmars@archlinux.org>
+Date: Thu, 7 Oct 2021 14:16:16 +0800
+Subject: [PATCH] Define ITT_ARCH_IA64 when undefiend (#550)
+
+[Retrieved from:
+https://github.com/oneapi-src/oneTBB/commit/6fad69889da67bc4d4baff4afa94f77da45e006d]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/tbb/tools_api/ittnotify_config.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/tbb/tools_api/ittnotify_config.h b/src/tbb/tools_api/ittnotify_config.h
+index 8ecc23781..f904a8e9d 100644
+--- a/src/tbb/tools_api/ittnotify_config.h
++++ b/src/tbb/tools_api/ittnotify_config.h
+@@ -147,6 +147,10 @@
+ #  define ITT_ARCH_IA32E 2
+ #endif /* ITT_ARCH_IA32E */
+ 
++#ifndef ITT_ARCH_IA64
++#  define ITT_ARCH_IA64 3
++#endif /* ITT_ARCH_IA64 */
++
+ #ifndef ITT_ARCH_ARM
+ #  define ITT_ARCH_ARM  4
+ #endif /* ITT_ARCH_ARM */

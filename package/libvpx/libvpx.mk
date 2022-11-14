@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBVPX_VERSION = 1.10.0
+LIBVPX_VERSION = 1.12.0
 LIBVPX_SITE = $(call github,webmproject,libvpx,v$(LIBVPX_VERSION))
 LIBVPX_LICENSE = BSD-3-Clause
 LIBVPX_LICENSE_FILES = LICENSE PATENTS
@@ -21,11 +21,11 @@ LIBVPX_CONF_OPTS = \
 	--disable-docs \
 	--disable-unit-tests
 
-# vp9/ratectrl_rtc.cc
+# vp8/ratectrl_rtc.cc vp9/ratectrl_rtc.cc
 ifeq ($(BR2_INSTALL_LIBSTDCPP),y)
-LIBVPX_CONF_OPTS += --enable-vp9-encoder
+LIBVPX_CONF_OPTS += --enable-vp8-encoder --enable-vp9-encoder
 else
-LIBVPX_CONF_OPTS += --disable-vp9-encoder
+LIBVPX_CONF_OPTS += --disable-vp8-encoder --disable-vp9-encoder
 endif
 
 # This is not a true autotools package.  It is based on the ffmpeg build system

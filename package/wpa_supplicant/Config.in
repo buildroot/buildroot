@@ -41,11 +41,20 @@ config BR2_PACKAGE_WPA_SUPPLICANT_WEXT
 
 config BR2_PACKAGE_WPA_SUPPLICANT_WIRED
 	bool "Enable wired support"
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libnl
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_6
+	select BR2_PACKAGE_LIBNL
 	select BR2_PACKAGE_WPA_SUPPLICANT_EAP
 	help
 	  Include the "wired" driver, so the internal IEEE 802.1x
 	  supplicant can be used with Ethernet.  This also enables
 	  support for MACSEC.
+
+comment "wired macsec support needs a toolchain w/ headers >= 4.6"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_6
+
+comment "wired support needs a toolchain w/ threads"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS
 
 comment "wpa_supplicant will be useless without at least one driver"
 	depends on !BR2_PACKAGE_WPA_SUPPLICANT_NL80211 && \
@@ -83,6 +92,13 @@ config BR2_PACKAGE_WPA_SUPPLICANT_MESH_NETWORKING
 	help
 	  Enable support for open and secured mesh networking
 	  (IEEE 802.11s)
+
+config BR2_PACKAGE_WPA_SUPPLICANT_OVERRIDES
+	bool "Enable HT/VHT/HE overrides"
+	help
+	  Enable wpa_supplicant overrides for HT, VHT and HE (disable
+	  HT/HT40, mask MCS rates, etc.) in wpa_supplicant
+	  configuration file.
 
 config BR2_PACKAGE_WPA_SUPPLICANT_AUTOSCAN
 	bool "Enable autoscan"

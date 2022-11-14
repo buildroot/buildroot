@@ -1,0 +1,56 @@
+/dts-v1/;
+
+/ {
+	description = "Kernel and buildroot image";
+	#address-cells = <1>;
+
+	images {
+		kernel-1 {
+			description = "Linux kernel";
+			data = /incbin/("zImage");
+			type = "kernel";
+			arch = "arm";
+			os = "linux";
+			compression = "none";
+			load = <0x80001000>;
+			entry = <0x80001000>;
+			hash-1 {
+				algo = "sha256";
+			};
+		};
+		fdt-1 {
+			description = "Flattened Device Tree blob";
+			data = /incbin/("%BOARD_DTB%");
+			type = "flat_dt";
+			arch = "arm";
+			compression = "none";
+			hash-1 {
+				algo = "sha256";
+			};
+		};
+		ramdisk-1 {
+			description = "ramdisk";
+			data = /incbin/("rootfs.cpio.xz");
+			type = "ramdisk";
+			arch = "arm";
+			os = "linux";
+			compression = "none";
+			hash-1 {
+				algo = "sha256";
+			};
+		};
+	};
+
+	configurations {
+		default = "conf-1";
+		conf-1 {
+			description = "Boot Linux kernel with FDT blob, ramdisk";
+			kernel = "kernel-1";
+			fdt = "fdt-1";
+			ramdisk = "ramdisk-1";
+			hash-1 {
+				algo = "sha256";
+			};
+		};
+	};
+};

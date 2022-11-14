@@ -16,40 +16,6 @@ config BR2_PACKAGE_BOOST
 
 if BR2_PACKAGE_BOOST
 
-choice
-	prompt "Layout"
-	default BR2_PACKAGE_BOOST_LAYOUT_SYSTEM
-	help
-	  Selects the layout of Boost binary names
-
-config BR2_PACKAGE_BOOST_LAYOUT_SYSTEM
-	bool "system"
-	help
-	  Boost binary names do not include the Boost version number
-	  or the name and version number of the compiler.
-
-config BR2_PACKAGE_BOOST_LAYOUT_TAGGED
-	bool "tagged"
-	help
-	  Boost binary names include the encoded build properties such
-	  as variant and threading, but do not include compiler name
-	  and version, or Boost version. This option is useful if you
-	  build several variants of Boost, using the same compiler.
-
-config BR2_PACKAGE_BOOST_LAYOUT_VERSIONED
-	bool "versioned"
-	help
-	  Boost binary names include the Boost version number, name
-	  and version of the compiler and encoded build properties.
-
-endchoice
-
-config BR2_PACKAGE_BOOST_LAYOUT
-	string
-	default "system" if BR2_PACKAGE_BOOST_LAYOUT_SYSTEM
-	default "tagged" if BR2_PACKAGE_BOOST_LAYOUT_TAGGED
-	default "versioned" if BR2_PACKAGE_BOOST_LAYOUT_VERSIONED
-
 config BR2_PACKAGE_BOOST_ATOMIC
 	bool "boost-atomic"
 	depends on BR2_TOOLCHAIN_SUPPORTS_ALWAYS_LOCKFREE_ATOMIC_INTS
@@ -68,12 +34,13 @@ config BR2_PACKAGE_BOOST_CONTAINER
 	  Standard library containers and extensions.
 
 # see
-# http://www.boost.org/doc/libs/1_59_0/libs/context/doc/html/context/architectures.html
+# http://www.boost.org/doc/libs/1_78_0/libs/context/doc/html/context/architectures.html
 # for the list of supported architectures. Sparc pretends to be
 # supported, but it doesn't build.
 config BR2_PACKAGE_BOOST_CONTEXT_ARCH_SUPPORTS
 	bool
 	default y if ((BR2_arm || BR2_armeb) && BR2_ARM_CPU_HAS_ARM)
+	default y if (BR2_aarch64 || BR2_aarch64_be)
 	default y if BR2_i386
 	default y if BR2_mips
 	default y if BR2_mipsel
@@ -295,7 +262,7 @@ config BR2_PACKAGE_BOOST_PROGRAM_OPTIONS
 
 config BR2_PACKAGE_BOOST_PYTHON
 	bool "boost-python"
-	depends on BR2_PACKAGE_PYTHON || BR2_PACKAGE_PYTHON3
+	depends on BR2_PACKAGE_PYTHON3
 	help
 	  The Boost Python Library is a framework for interfacing Python
 	  and C++. It allows you to quickly and seamlessly expose C++

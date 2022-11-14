@@ -48,7 +48,7 @@ COREMARK_PRO_MARKS = cjpeg-rose7-preset core linear_alg-mid-100x100-sp loops-all
 COREMARK_PRO_SCRIPTS = results_parser.pl cert_median.pl cert_mark.pl headings.txt
 
 define COREMARK_PRO_INSTALL_TARGET_CMDS
-	mkdir -p  $(TARGET_DIR)/usr/share/coremark-pro/logs
+	mkdir -p $(TARGET_DIR)/usr/share/coremark-pro/logs
 	$(foreach m,$(COREMARK_PRO_MARKS),\
 		$(INSTALL) -D $(@D)/builds/linux$(if $(BR2_ARCH_IS_64),64)/gcc$(if $(BR2_ARCH_IS_64),64)/bin/$(m) $(TARGET_DIR)/usr/bin/$(m)$(sep) \
 		size $(TARGET_DIR)/usr/bin/$(m) > $(TARGET_DIR)/usr/share/coremark-pro/logs/$(m).size.log$(sep))

@@ -1,0 +1,10 @@
+config BR2_PACKAGE_LIBUTP
+	bool "libutp"
+	depends on BR2_INSTALL_LIBSTDCPP
+	help
+	  uTorrent Transport Protocol library
+
+	  https://github.com/bittorrent/libutp
+
+comment "libutp support needs a toolchain with C++"
+	depends on !BR2_INSTALL_LIBSTDCPP

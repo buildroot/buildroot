@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-UCLIBC_VERSION = 1.0.38
+UCLIBC_VERSION = 1.0.42
 UCLIBC_SOURCE = uClibc-ng-$(UCLIBC_VERSION).tar.xz
 UCLIBC_SITE = https://downloads.uclibc-ng.org/releases/$(UCLIBC_VERSION)
 UCLIBC_LICENSE = LGPL-2.1+
@@ -72,6 +72,18 @@ define UCLIBC_BINFMT_CONFIG
 	$(call KCONFIG_DISABLE_OPT,UCLIBC_FORMAT_FDPIC_ELF)
 endef
 endif
+
+#
+# AArch64 definitions
+#
+
+ifeq ($(UCLIBC_TARGET_ARCH),aarch64)
+UCLIBC_ARM64_PAGE_SIZE = CONFIG_AARCH64_PAGE_SIZE_$(call qstrip,$(BR2_ARM64_PAGE_SIZE))
+define UCLIBC_AARCH64_PAGE_SIZE_CONFIG
+	$(SED) '/CONFIG_AARCH64_PAGE_SIZE_*/d' $(@D)/.config
+	$(call KCONFIG_ENABLE_OPT,$(UCLIBC_ARM64_PAGE_SIZE))
+endef
+endif # aarch64
 
 #
 # ARC definitions
@@ -362,10 +374,18 @@ endif
 # Commands
 #
 
+UCLIBC_EXTRA_CFLAGS = $(TARGET_ABI)
+
+# uClibc-ng does not build with LTO, so explicitly disable it
+# when using a compiler that may have support for LTO
+ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_4_7),y)
+UCLIBC_EXTRA_CFLAGS += -fno-lto
+endif
+
 UCLIBC_MAKE_FLAGS = \
 	ARCH="$(UCLIBC_TARGET_ARCH)" \
 	CROSS_COMPILE="$(TARGET_CROSS)" \
-	UCLIBC_EXTRA_CFLAGS="$(TARGET_ABI)" \
+	UCLIBC_EXTRA_CFLAGS="$(UCLIBC_EXTRA_CFLAGS)" \
 	HOSTCC="$(HOSTCC)"
 
 define UCLIBC_KCONFIG_FIXUP_CMDS
@@ -378,6 +398,7 @@ define UCLIBC_KCONFIG_FIXUP_CMDS
 	$(call KCONFIG_SET_OPT,SHARED_LIB_LOADER_PREFIX,"/lib")
 	$(UCLIBC_MMU_CONFIG)
 	$(UCLIBC_BINFMT_CONFIG)
+	$(UCLIBC_AARCH64_PAGE_SIZE_CONFIG)
 	$(UCLIBC_ARC_PAGE_SIZE_CONFIG)
 	$(UCLIBC_ARC_ATOMICS_CONFIG)
 	$(UCLIBC_ARM_ABI_CONFIG)

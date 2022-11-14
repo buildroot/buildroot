@@ -71,12 +71,22 @@ choice
 
 config BR2_RISCV_32
 	bool "32-bit"
+	select BR2_USE_MMU
 
 config BR2_RISCV_64
 	bool "64-bit"
 	select BR2_ARCH_IS_64
 
 endchoice
+
+config BR2_RISCV_USE_MMU
+	bool "MMU support"
+	default y
+	depends on BR2_RISCV_64
+	select BR2_USE_MMU
+	help
+	  Enable this option if your RISC-V core has a MMU (Memory
+	  Management Unit).
 
 choice
 	prompt "Target ABI"
@@ -106,6 +116,7 @@ config BR2_RISCV_ABI_LP64
 config BR2_RISCV_ABI_LP64F
 	bool "lp64f"
 	depends on BR2_ARCH_IS_64 && BR2_RISCV_ISA_RVF
+	depends on BR2_USE_MMU
 
 config BR2_RISCV_ABI_LP64D
 	bool "lp64d"
@@ -115,6 +126,9 @@ endchoice
 config BR2_ARCH
 	default "riscv32" if !BR2_ARCH_IS_64
 	default "riscv64" if BR2_ARCH_IS_64
+
+config BR2_NORMALIZED_ARCH
+	default "riscv"
 
 config BR2_ENDIAN
 	default "LITTLE"

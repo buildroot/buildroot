@@ -1,7 +1,6 @@
 config BR2_PACKAGE_PYTHON_AUTOBAHN
 	bool "python-autobahn"
-	depends on BR2_INSTALL_LIBSTDCPP # python-cryptography -> python-pyasn
-	depends on BR2_PACKAGE_PYTHON3
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-cryptography
 	select BR2_PACKAGE_PYTHON_CFFI # runtime
 	select BR2_PACKAGE_PYTHON_CRYPTOGRAPHY # runtime
 	select BR2_PACKAGE_PYTHON_HYPERLINK # runtime
@@ -12,6 +11,51 @@ config BR2_PACKAGE_PYTHON_AUTOBAHN
 
 	  https://pypi.python.org/pypi/autobahn
 
-comment "python-autobahn needs a toolchain w/ C++"
+if BR2_PACKAGE_PYTHON_AUTOBAHN
+
+config BR2_PACKAGE_PYTHON_AUTOBAHN_ACCELERATE
+	bool "C-based WebSocket acceleration"
+	select BR2_PACKAGE_PYTHON_WSACCEL # runtime
+
+config BR2_PACKAGE_PYTHON_AUTOBAHN_COMPRESS
+	bool "Non-standard WebSocket compression support"
+	depends on BR2_INSTALL_LIBSTDCPP # python-snappy -> snappy
+	select BR2_PACKAGE_PYTHON_SNAPPY # runtime
+
+comment "Non-standard WebSocket compression needs a toolchain w/ C++"
 	depends on !BR2_INSTALL_LIBSTDCPP
-	depends on BR2_PACKAGE_PYTHON3
+
+config BR2_PACKAGE_PYTHON_AUTOBAHN_ENCRYPTION
+	bool "TLS and WAMP-cryptosign encryption/authentication support"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-pyopenssl -> python-cryptography
+	select BR2_PACKAGE_PYTHON_PYNACL # runtime
+	select BR2_PACKAGE_PYTHON_PYOPENSSL # runtime
+	select BR2_PACKAGE_PYTHON_QRCODE # runtime
+	select BR2_PACKAGE_PYTHON_QRCODE_SVG # runtime
+	select BR2_PACKAGE_PYTHON_PYTRIE # runtime
+	select BR2_PACKAGE_PYTHON_SERVICE_IDENTITY # runtime
+
+config BR2_PACKAGE_PYTHON_AUTOBAHN_SCRAM
+	bool "WAMP-SCRAM authentication support"
+	select BR2_PACKAGE_PYTHON_ARGON2_CFFI # runtime
+	select BR2_PACKAGE_PYTHON_PASSLIB # runtime
+
+config BR2_PACKAGE_PYTHON_AUTOBAHN_SERIALIZATION
+	bool "Accelerated JSON, MessagePack, CBOR, UBJSON, and FlatBuffers serialization support"
+	depends on BR2_INSTALL_LIBSTDCPP # python-ujson
+	select BR2_PACKAGE_PYTHON_CBOR2 # runtime
+	select BR2_PACKAGE_PYTHON_FLATBUFFERS # runtime
+	select BR2_PACKAGE_PYTHON_MSGPACK # runtime
+	select BR2_PACKAGE_PYTHON_UBJSON # runtime
+	select BR2_PACKAGE_PYTHON_UJSON # runtime
+
+comment "Accelerated JSON, MessagePack, CBOR, UBJSON, and FlatBuffers serialization needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP
+
+config BR2_PACKAGE_PYTHON_AUTOBAHN_TWISTED
+	bool "Twisted support"
+	select BR2_PACKAGE_PYTHON_ATTRS # runtime
+	select BR2_PACKAGE_PYTHON_TWISTED # runtime
+	select BR2_PACKAGE_PYTHON_ZOPE_INTERFACE # runtime
+
+endif

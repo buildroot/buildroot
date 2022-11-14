@@ -95,7 +95,7 @@ define HOST_GETTEXT_TINY_INSTALL_CMDS
 	$(Q)touch $(HOST_DIR)/share/gettext-tiny/ABOUT-NLS
 
 	# for gettextize
-	ln -sf $(HOST_DIR)/usr/share/gettext-tiny $(HOST_DIR)/usr/share/gettext
+	ln -sf $(HOST_DIR)/share/gettext-tiny $(HOST_DIR)/share/gettext
 endef
 
 # Install simple echo wrapper for gettext tool

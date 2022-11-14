@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBOPENSSL_VERSION = 1.1.1l
+LIBOPENSSL_VERSION = 1.1.1q
 LIBOPENSSL_SITE = https://www.openssl.org/source
 LIBOPENSSL_SOURCE = openssl-$(LIBOPENSSL_VERSION).tar.gz
 LIBOPENSSL_LICENSE = OpenSSL or SSLeay
@@ -52,7 +52,7 @@ LIBOPENSSL_CFLAGS += -DOPENSSL_NO_ASYNC
 endif
 
 define HOST_LIBOPENSSL_CONFIGURE_CMDS
-	(cd $(@D); \
+	cd $(@D); \
 		$(HOST_CONFIGURE_OPTS) \
 		./config \
 		--prefix=$(HOST_DIR) \
@@ -61,15 +61,14 @@ define HOST_LIBOPENSSL_CONFIGURE_CMDS
 		no-fuzz-libfuzzer \
 		no-fuzz-afl \
 		shared \
-		zlib-dynamic \
-	)
-	$(SED) "s#-O[0-9sg]#$(HOST_CFLAGS)#" $(@D)/Makefile
+		zlib-dynamic
 endef
 
 define LIBOPENSSL_CONFIGURE_CMDS
-	(cd $(@D); \
+	cd $(@D); \
 		$(TARGET_CONFIGURE_ARGS) \
 		$(TARGET_CONFIGURE_OPTS) \
+		 CFLAGS="$(LIBOPENSSL_CFLAGS)" \
 		./Configure \
 			$(LIBOPENSSL_TARGET_ARCH) \
 			--prefix=/usr \
@@ -84,6 +83,7 @@ define LIBOPENSSL_CONFIGURE_CMDS
 			no-tests \
 			no-fuzz-libfuzzer \
 			no-fuzz-afl \
+			no-afalgeng \
 			$(if $(BR2_PACKAGE_LIBOPENSSL_ENABLE_CHACHA),,no-chacha) \
 			$(if $(BR2_PACKAGE_LIBOPENSSL_ENABLE_RC5),,no-rc5) \
 			$(if $(BR2_PACKAGE_LIBOPENSSL_ENABLE_RC2),,no-rc2) \
@@ -108,11 +108,7 @@ define LIBOPENSSL_CONFIGURE_CMDS
 			$(if $(BR2_PACKAGE_LIBOPENSSL_DYNAMIC_ENGINE),,no-dynamic-engine ) \
 			$(if $(BR2_PACKAGE_LIBOPENSSL_ENABLE_COMP),,no-comp) \
 			$(if $(BR2_STATIC_LIBS),zlib,zlib-dynamic) \
-			$(if $(BR2_STATIC_LIBS),no-dso) \
-	)
-	$(SED) "s#-march=[-a-z0-9] ##" -e "s#-mcpu=[-a-z0-9] ##g" $(@D)/Makefile
-	$(SED) "s#-O[0-9sg]#$(LIBOPENSSL_CFLAGS)#" $(@D)/Makefile
-	$(SED) "s# build_tests##" $(@D)/Makefile
+			$(if $(BR2_STATIC_LIBS),no-dso)
 endef
 
 # libdl is not available in a static build, and this is not implied by no-dso

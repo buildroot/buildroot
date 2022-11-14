@@ -4,14 +4,15 @@
 #
 ################################################################################
 
-TREE_VERSION = 1.8.0
+TREE_VERSION = 2.0.2
 TREE_SOURCE = tree-$(TREE_VERSION).tgz
 TREE_SITE = http://mama.indstate.edu/users/ice/tree/src
 TREE_LICENSE = GPL-2.0+
 TREE_LICENSE_FILES = LICENSE
 
 define TREE_BUILD_CMDS
-	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)
+	$(MAKE) $(TARGET_CONFIGURE_OPTS) CFLAGS="$(TARGET_CFLAGS) -std=c99" \
+		-C $(@D)
 endef
 
 define TREE_INSTALL_TARGET_CMDS

@@ -6,6 +6,7 @@ config BR2_PACKAGE_LIGHTTPD
 	bool "lighttpd"
 	depends on BR2_USE_MMU # fork()
 	depends on !BR2_STATIC_LIBS
+	select BR2_PACKAGE_XXHASH
 	help
 	  lighttpd a secure, fast, compliant and very flexible
 	  web-server which has been optimized for high-performance
@@ -20,6 +21,55 @@ config BR2_PACKAGE_LIGHTTPD
 
 if BR2_PACKAGE_LIGHTTPD
 
+config BR2_PACKAGE_LIGHTTPD_BROTLI
+	bool "brotli support"
+	select BR2_PACKAGE_BROTLI
+	help
+	  Enable brotli support for lighttpd mod_deflate.
+
+config BR2_PACKAGE_LIGHTTPD_BZIP2
+	bool "bzip2 support"
+	select BR2_PACKAGE_BZIP2
+	help
+	  Enable bzip2 support for lighttpd mod_deflate.
+
+config BR2_PACKAGE_LIGHTTPD_KRB5
+	bool "krb5 support"
+	select BR2_PACKAGE_LIBKRB5
+	help
+	  Enable Kerberos5 support for lighttpd mod_auth.
+
+config BR2_PACKAGE_LIGHTTPD_LDAP
+	bool "ldap support"
+	depends on BR2_USE_WCHAR # openldap
+	select BR2_PACKAGE_OPENLDAP
+	help
+	  Enable LDAP support for lighttpd mod_auth mod_vhostdb_ldap.
+
+comment "ldap support needs a toolchain w/ wchar"
+	depends on !BR2_USE_WCHAR
+
+config BR2_PACKAGE_LIGHTTPD_LUA
+	bool "lua support"
+	depends on BR2_PACKAGE_LUA
+	help
+	  Enable Lua support. Needed to support mod_magnet
+
+config BR2_PACKAGE_LIGHTTPD_MAXMINDDB
+	bool "maxminddb support"
+	select BR2_PACKAGE_LIBMAXMINDDB
+	help
+	  Enable MaxMind GeoIP2 support. Needed to support mod_maxminddb
+
+config BR2_PACKAGE_LIGHTTPD_MYSQL
+	bool "mysql support"
+	depends on BR2_PACKAGE_MARIADB
+	help
+	  Enable mysql support for lighttpd mod_vhostdb_mysql.
+
+comment "mysql support needs mariadb"
+	depends on !BR2_PACKAGE_MARIADB
+
 config BR2_PACKAGE_LIGHTTPD_OPENSSL
 	bool "openssl support"
 	select BR2_PACKAGE_OPENSSL
@@ -33,23 +83,27 @@ config BR2_PACKAGE_LIGHTTPD_PAM
 	help
 	  Enable PAM authentication support for lighttpd.
 
-config BR2_PACKAGE_LIGHTTPD_ZLIB
-	bool "zlib support"
-	select BR2_PACKAGE_ZLIB
-	help
-	  Enable zlib support for lighttpd mod_compress.
-
-config BR2_PACKAGE_LIGHTTPD_BZIP2
-	bool "bzip2 support"
-	select BR2_PACKAGE_BZIP2
-	help
-	  Enable bzip2 support for lighttpd mod_compress.
-
 config BR2_PACKAGE_LIGHTTPD_PCRE
 	bool "pcre support"
-	select BR2_PACKAGE_PCRE
+	select BR2_PACKAGE_PCRE2
 	help
 	  Enable PCRE support. Needed to support mod_rewrite
+
+config BR2_PACKAGE_LIGHTTPD_PGSQL
+	bool "pgsql support"
+	depends on BR2_USE_MMU # postgresql
+	depends on BR2_USE_WCHAR # postgresql
+	depends on !BR2_OPTIMIZE_FAST # postgresql
+	select BR2_PACKAGE_POSTGRESQL
+	help
+	  Enable postgres support for lighttpd mod_vhostdb_pgsql.
+
+comment "pgsql support needs a toolchain w/ wchar"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR
+
+comment "pgsql support can't be built with Optimize for fast"
+	depends on BR2_OPTIMIZE_FAST
 
 config BR2_PACKAGE_LIGHTTPD_WEBDAV
 	bool "webdav support"
@@ -58,10 +112,16 @@ config BR2_PACKAGE_LIGHTTPD_WEBDAV
 	help
 	  Enable webdav support. Needed to support mod_webdav
 
-config BR2_PACKAGE_LIGHTTPD_LUA
-	bool "lua support"
-	depends on BR2_PACKAGE_LUA
+config BR2_PACKAGE_LIGHTTPD_ZLIB
+	bool "zlib support"
+	select BR2_PACKAGE_ZLIB
 	help
-	  Enable Lua support. Needed to support mod_magnet
+	  Enable zlib support for lighttpd mod_deflate.
+
+config BR2_PACKAGE_LIGHTTPD_ZSTD
+	bool "zstd support"
+	select BR2_PACKAGE_ZSTD
+	help
+	  Enable zstd support for lighttpd mod_deflate.
 
 endif

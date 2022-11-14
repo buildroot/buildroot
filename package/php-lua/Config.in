@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PHP_LUA
+	bool "php-lua"
+	depends on BR2_PACKAGE_HAS_LUAINTERPRETER
+	help
+	  This extension embeds the lua interpreter and offers an
+	  OO-API to lua variables and functions.
+
+	  https://pecl.php.net/package/lua

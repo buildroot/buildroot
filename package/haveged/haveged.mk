@@ -4,13 +4,11 @@
 #
 ################################################################################
 
-HAVEGED_VERSION = 1.9.14
+HAVEGED_VERSION = 1.9.15
 HAVEGED_SITE = $(call github,jirka-h,haveged,v$(HAVEGED_VERSION))
 HAVEGED_LICENSE = GPL-3.0+
 HAVEGED_LICENSE_FILES = COPYING
 HAVEGED_SELINUX_MODULES = entropyd
-# patch touching configure.ac
-HAVEGED_AUTORECONF = YES
 
 # '--disable-init' as buildroot ships its own sysv/systemd init files
 HAVEGED_CONF_OPTS = \

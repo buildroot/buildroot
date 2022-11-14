@@ -42,11 +42,14 @@ define inner-golang-package
 
 $(2)_BUILD_OPTS += \
 	-ldflags "$$($(2)_LDFLAGS)" \
+	-modcacherw \
 	-tags "$$($(2)_TAGS)" \
 	-trimpath \
-	-p $(PARALLEL_JOBS)
+	-p $$(PARALLEL_JOBS)
 
-# Target packages need the Go compiler on the host.
+# Target packages need the Go compiler on the host at download time (for
+# vendoring), and at build and install time.
+$(2)_DOWNLOAD_DEPENDENCIES += host-go
 $(2)_DEPENDENCIES += host-go
 
 $(2)_BUILD_TARGETS ?= .
@@ -56,10 +59,10 @@ $(2)_BUILD_TARGETS ?= .
 # been specified, we assume that the binaries to be produced are named
 # after each build target building them (below in <pkg>_BUILD_CMDS).
 ifeq ($$($(2)_BUILD_TARGETS),.)
-$(2)_BIN_NAME ?= $(1)
+$(2)_BIN_NAME ?= $$($(2)_RAWNAME)
 endif
 
-$(2)_INSTALL_BINS ?= $(1)
+$(2)_INSTALL_BINS ?= $$($(2)_RAWNAME)
 
 # Source files in Go usually use an import path resolved around
 # domain/vendor/software. We infer domain/vendor/software from the upstream URL
@@ -80,6 +83,15 @@ define $(2)_GEN_GOMOD
 	fi
 endef
 $(2)_POST_PATCH_HOOKS += $(2)_GEN_GOMOD
+
+$(2)_DOWNLOAD_POST_PROCESS = go
+$(2)_DL_ENV += \
+	$$(HOST_GO_COMMON_ENV) \
+	GOPROXY=direct
+
+# Due to vendoring, it is pretty likely that not all licenses are
+# listed in <pkg>_LICENSE.
+$(2)_LICENSE += , vendored dependencies licenses probably not listed
 
 # Build step. Only define it if not already defined by the package .mk
 # file.
@@ -121,7 +133,7 @@ endif
 ifndef $(2)_INSTALL_TARGET_CMDS
 define $(2)_INSTALL_TARGET_CMDS
 	$$(foreach d,$$($(2)_INSTALL_BINS),\
-		$(INSTALL) -D -m 0755 $$(@D)/bin/$$(d) $$(TARGET_DIR)/usr/bin/$$(d)
+		$$(INSTALL) -D -m 0755 $$(@D)/bin/$$(d) $$(TARGET_DIR)/usr/bin/$$(d)
 	)
 endef
 endif
@@ -130,7 +142,7 @@ endif
 ifndef $(2)_INSTALL_CMDS
 define $(2)_INSTALL_CMDS
 	$$(foreach d,$$($(2)_INSTALL_BINS),\
-		$(INSTALL) -D -m 0755 $$(@D)/bin/$$(d) $$(HOST_DIR)/bin/$$(d)
+		$$(INSTALL) -D -m 0755 $$(@D)/bin/$$(d) $$(HOST_DIR)/bin/$$(d)
 	)
 endef
 endif

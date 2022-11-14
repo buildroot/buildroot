@@ -31,6 +31,10 @@ choice
 	  Set to the gcc version that is used by your external
 	  toolchain.
 
+config BR2_TOOLCHAIN_EXTERNAL_GCC_12
+	bool "12.x"
+	select BR2_TOOLCHAIN_GCC_AT_LEAST_12
+
 config BR2_TOOLCHAIN_EXTERNAL_GCC_11
 	bool "11.x"
 	select BR2_TOOLCHAIN_GCC_AT_LEAST_11
@@ -123,8 +127,32 @@ choice
 	  If your toolchain uses headers newer than the latest version
 	  in the choice, then select the latest version.
 
+config BR2_TOOLCHAIN_EXTERNAL_HEADERS_6_0
+	bool "6.0.x or later"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_0
+
+config BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_19
+	bool "5.19.x"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_19
+
+config BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_18
+	bool "5.18.x"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_18
+
+config BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_17
+	bool "5.17.x"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_17
+
+config BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_16
+	bool "5.16.x"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_16
+
+config BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_15
+	bool "5.15.x"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_15
+
 config BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_14
-	bool "5.14.x or later"
+	bool "5.14.x"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_14
 
 config BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_13
@@ -369,21 +397,11 @@ config BR2_TOOLCHAIN_EXTERNAL_CUSTOM_UCLIBC
 	  C library.
 
 config BR2_TOOLCHAIN_EXTERNAL_CUSTOM_GLIBC
-	bool "glibc/eglibc"
-	depends on !BR2_STATIC_LIBS
+	bool "glibc"
 	select BR2_TOOLCHAIN_EXTERNAL_GLIBC
 	help
 	  Select this option if your external toolchain uses the GNU C
-	  library (available from https://www.gnu.org/software/libc/)
-	  or its variant the eglibc library (http://www.eglibc.org/).
-
-	  Note: eglibc is a variant of glibc that (among other things)
-	  can be configured to exclude some of its features. Using a
-	  toolchain with eglibc configured to exclude key features may
-	  cause build failures to some packages.
-
-comment "(e)glibc only available with shared lib support"
-	depends on BR2_STATIC_LIBS
+	  library (available from https://www.gnu.org/software/libc/).
 
 config BR2_TOOLCHAIN_EXTERNAL_CUSTOM_MUSL
 	bool "musl (experimental)"

@@ -8,12 +8,23 @@ config BR2_PACKAGE_LINUX_BACKPORTS
 	  The linux-backports package includes many Linux drivers from
 	  recent kernels, backported to older ones.
 
-	  This version of linux-backports supports kernels starting
-	  from 3.10.
-
 	  https://backports.wiki.kernel.org
 
 if BR2_PACKAGE_LINUX_BACKPORTS
+
+choice
+	prompt "Linux Backports version"
+	default BR2_PACKAGE_LINUX_BACKPORTS_5_15_X
+	help
+	  Select the highest version that supports your kernel version.
+
+config BR2_PACKAGE_LINUX_BACKPORTS_5_15_X
+	bool "5.15.x (for kernels back to 4.4)"
+
+config BR2_PACKAGE_LINUX_BACKPORTS_5_10_X
+	bool "5.10.x (for kernels back to 3.10)"
+
+endchoice
 
 choice
 	prompt "Linux kernel driver backports configuration"

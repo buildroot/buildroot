@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-UCLIBC_NG_TEST_VERSION = 0844445e7358eb10e716155b55b0fb23e88d644a
+UCLIBC_NG_TEST_VERSION = 6790eafe897b3a8c19a2caf50a5ecccf06647adf
 UCLIBC_NG_TEST_SITE = git://uclibc-ng.org/git/uclibc-ng-test
 UCLIBC_NG_TEST_LICENSE = LGPL-2.1+
 UCLIBC_NG_TEST_LICENSE_FILES = COPYING.LIB
@@ -39,7 +39,7 @@ ifeq ($(BR2_STATIC_LIBS),y)
 UCLIBC_NG_TEST_MAKE_ENV += NO_TLS=1 NO_NPTL=1 NO_DL=1
 endif
 # no TLS macros available
-ifeq ($(BR2_nds32)$(BR2_s390x),y)
+ifeq ($(BR2_s390x),y)
 UCLIBC_NG_TEST_MAKE_ENV += NO_TLS=1
 endif
 

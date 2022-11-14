@@ -29,4 +29,10 @@ config BR2_PACKAGE_MBEDTLS_COMPRESSION
 	  sure CRIME and similar attacks are not applicable to your
 	  particular situation.
 
+config BR2_PACKAGE_MBEDTLS_DTLS_SRTP
+	bool "enable DTLS-SRTP support"
+	help
+	  Enable support for negotiation of DTLS-SRTP (RFC 5764)
+	  through the use_srtp extension.
+
 endif

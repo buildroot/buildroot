@@ -45,7 +45,7 @@ the instructions in [3], with qemu_arm64_defconfig.
 
 This should give you a nor_flash.bin, which you can use with qemu as an
 alternative to QEMU_EFI.fd. You will also need to change the machine
-specification to "-M virt,secure" on qemu command line, to enable TrustZone
+specification to "-M virt,secure=on" on qemu command line, to enable TrustZone
 support, and you will need to increase the memory with "-m 1024".
 
 [1]: https://github.com/ARM-software/ebbr

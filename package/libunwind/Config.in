@@ -23,6 +23,7 @@ config BR2_PACKAGE_LIBUNWIND
 	bool "libunwind"
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_PACKAGE_LIBUNWIND_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # C11 atomics
 	# forcefully links against libgcc_s, only available in dynamic
 	# linking configurations
 	depends on !BR2_STATIC_LIBS
@@ -31,6 +32,7 @@ config BR2_PACKAGE_LIBUNWIND
 
 	  http://www.nongnu.org/libunwind/index.html
 
-comment "libunwind needs a toolchain w/ threads, dynamic library"
+comment "libunwind needs a toolchain w/ threads, dynamic library, gcc >= 4.9"
 	depends on BR2_PACKAGE_LIBUNWIND_ARCH_SUPPORTS
-	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9

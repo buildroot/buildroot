@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SDL2_VERSION = 2.0.16
+SDL2_VERSION = 2.24.1
 SDL2_SOURCE = SDL2-$(SDL2_VERSION).tar.gz
 SDL2_SITE = http://www.libsdl.org/release
 SDL2_LICENSE = Zlib
@@ -20,7 +20,24 @@ SDL2_CONF_OPTS += \
 	--disable-esd \
 	--disable-dbus \
 	--disable-pulseaudio \
-	--disable-video-wayland
+	--disable-video-vivante \
+	--disable-video-cocoa \
+	--disable-video-metal \
+	--disable-video-wayland \
+	--disable-video-dummy \
+	--disable-video-offscreen \
+	--disable-video-vulkan \
+	--disable-ime \
+	--disable-ibus \
+	--disable-fcitx \
+	--disable-joystick-mfi \
+	--disable-directx \
+	--disable-xinput \
+	--disable-wasapi \
+	--disable-hidapi-joystick \
+	--disable-hidapi-libusb \
+	--disable-joystick-virtual \
+	--disable-render-d3d
 
 # We are using autotools build system for sdl2, so the sdl2-config.cmake
 # include path are not resolved like for sdl2-config script.
@@ -138,10 +155,16 @@ SDL2_CONF_OPTS += --disable-video-opengl
 endif
 
 ifeq ($(BR2_PACKAGE_SDL2_OPENGLES),y)
-SDL2_CONF_OPTS += --enable-video-opengles
+SDL2_CONF_OPTS += \
+	--enable-video-opengles \
+	--enable-video-opengles1 \
+	--enable-video-opengles2
 SDL2_DEPENDENCIES += libgles
 else
-SDL2_CONF_OPTS += --disable-video-opengles
+SDL2_CONF_OPTS += \
+	--disable-video-opengles \
+	--disable-video-opengles1 \
+	--disable-video-opengles2
 endif
 
 ifeq ($(BR2_PACKAGE_ALSA_LIB),y)
@@ -152,7 +175,7 @@ SDL2_CONF_OPTS += --disable-alsa
 endif
 
 ifeq ($(BR2_PACKAGE_SDL2_KMSDRM),y)
-SDL2_DEPENDENCIES += libdrm mesa3d
+SDL2_DEPENDENCIES += libdrm libgbm libegl
 SDL2_CONF_OPTS += --enable-video-kmsdrm
 else
 SDL2_CONF_OPTS += --disable-video-kmsdrm

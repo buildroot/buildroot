@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-POSTGRESQL_VERSION = 11.13
+POSTGRESQL_VERSION = 11.18
 POSTGRESQL_SOURCE = postgresql-$(POSTGRESQL_VERSION).tar.bz2
 POSTGRESQL_SITE = https://ftp.postgresql.org/pub/source/v$(POSTGRESQL_VERSION)
 POSTGRESQL_LICENSE = PostgreSQL
@@ -38,11 +38,11 @@ ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
 POSTGRESQL_CONF_ENV += pgac_cv_type_locale_t=no
 endif
 
-ifneq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
+ifneq ($(BR2_TOOLCHAIN_HAS_THREADS_NPTL),y)
 POSTGRESQL_CONF_OPTS += --disable-thread-safety
 endif
 
-ifeq ($(BR2_arcle)$(BR2_arceb)$(BR2_microblazeel)$(BR2_microblazebe)$(BR2_or1k)$(BR2_nios2)$(BR2_riscv)$(BR2_xtensa)$(BR2_nds32),y)
+ifeq ($(BR2_arcle)$(BR2_arceb)$(BR2_microblazeel)$(BR2_microblazebe)$(BR2_or1k)$(BR2_nios2)$(BR2_riscv)$(BR2_xtensa),y)
 POSTGRESQL_CONF_OPTS += --disable-spinlocks
 endif
 

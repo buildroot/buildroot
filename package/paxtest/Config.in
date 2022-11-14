@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PAXTEST
 	bool "paxtest"
+	depends on !BR2_microblaze
 	# No UCLIBC or MUSL because __NO_A_OUT_SUPPORT
 	depends on BR2_TOOLCHAIN_USES_GLIBC
 	help
@@ -8,4 +9,5 @@ config BR2_PACKAGE_PAXTEST
 	  http://pax.grsecurity.net/docs
 
 comment "paxtest needs a glibc toolchain"
+	depends on !BR2_microblaze
 	depends on !BR2_TOOLCHAIN_USES_GLIBC

@@ -1,6 +1,5 @@
 config BR2_PACKAGE_PYTHON_CHERRYPY
 	bool "python-cherrypy"
-	depends on BR2_PACKAGE_PYTHON3 # python-cheroot, python-portend
 	select BR2_PACKAGE_PYTHON_CHEROOT # runtime
 	select BR2_PACKAGE_PYTHON_JARACO_CLASSES # runtime
 	select BR2_PACKAGE_PYTHON_PORTEND # runtime

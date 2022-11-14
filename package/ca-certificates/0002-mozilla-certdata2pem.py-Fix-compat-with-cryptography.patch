@@ -1,0 +1,29 @@
+From 5e493ca307a031e81528ceddb96f3da40bc062cf Mon Sep 17 00:00:00 2001
+From: Wataru Ashihara <wsh@iij.ad.jp>
+Date: Wed, 2 Nov 2022 12:40:05 -0400
+Subject: [PATCH] mozilla/certdata2pem.py: Fix compat with cryptography > 3.0
+
+In newer cryptography packages, load_der_x509_certificate is enforced to be 'bytes' rather than currently used 'bytearray'.  This fixes that.
+
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1008244
+Signed-off-by: Justin Wood <jwood@starry.com>
+---
+ mozilla/certdata2pem.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mozilla/certdata2pem.py b/mozilla/certdata2pem.py
+index a6261f8..c0fa52c 100644
+--- a/mozilla/certdata2pem.py
++++ b/mozilla/certdata2pem.py
+@@ -122,7 +122,7 @@ for obj in objects:
+         try:
+             from cryptography import x509
+ 
+-            cert = x509.load_der_x509_certificate(obj['CKA_VALUE'])
++            cert = x509.load_der_x509_certificate(bytes(obj['CKA_VALUE']))
+             if cert.not_valid_after < datetime.datetime.now():
+                 print('!'*74)
+                 print('Trusted but expired certificate found: %s' % obj['CKA_LABEL'])
+-- 
+2.38.1
+

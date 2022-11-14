@@ -11,6 +11,8 @@ LIBSIGROK_LICENSE_FILES = COPYING
 LIBSIGROK_INSTALL_STAGING = YES
 LIBSIGROK_DEPENDENCIES = libglib2 libzip host-pkgconf
 LIBSIGROK_CONF_OPTS = --disable-java --disable-python
+# We're patching configure.ac
+LIBSIGROK_AUTORECONF = YES
 
 ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS),y)
 LIBSIGROK_CONF_OPTS += --with-libbluez
@@ -52,12 +54,13 @@ LIBSIGROK_DEPENDENCIES += glibmm
 endif
 
 ifeq ($(BR2_PACKAGE_LIBSIGROKCXX),y)
+LIBSIGROK_CONF_ENV = CXXFLAGS="$(TARGET_CXXFLAGS) -std=c++17"
 LIBSIGROK_CONF_OPTS += --enable-cxx
 # host-doxygen is used by C++ bindings to parse libsigrok symbols
 LIBSIGROK_DEPENDENCIES += \
 	glibmm \
 	host-doxygen \
-	$(if $(BR2_PACKAGE_PYTHON3),host-python3,host-python)
+	host-python3
 else
 LIBSIGROK_CONF_OPTS += --disable-cxx
 endif

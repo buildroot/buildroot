@@ -1,0 +1,46 @@
+From 148712f8a559cc613236e9e72b3ce6c24b83c373 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 23 Jul 2022 18:51:37 +0200
+Subject: [PATCH] configure.ac: remove LOCAL_CHECK_FLAGS
+
+These cause problems with Buildroot (the -fstack-protector-all check
+does only a compile test, it should do a link test), and generally the
+decision of using those flags or not should be left to Buildroot.
+
+An issue has been reported upstream at
+https://github.com/ibm-power-utilities/librtas/issues/25 to hopefully
+get a better solution.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ configure.ac | 14 --------------
+ 1 file changed, 14 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index c3429e8..b7208ee 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -24,20 +24,6 @@ AC_TYPE_UID_T
+ AC_TYPE_UINT32_T
+ AC_TYPE_UINT64_T
+ 
+-AC_DEFUN([LOCAL_CHECK_FLAGS],[
+-  AC_REQUIRE([AX_CHECK_LINK_FLAG])
+-  AC_REQUIRE([AX_APPEND_COMPILE_FLAGS])
+-  AC_LANG_PUSH([C])
+-  AX_APPEND_COMPILE_FLAGS([-Wall])
+-  AX_APPEND_COMPILE_FLAGS([-D_FORTIFY_SOURCE=2 -fstack-protector-all])
+-  AX_APPEND_COMPILE_FLAGS([-fwrapv -fPIE -Wstack-protector])
+-  AX_APPEND_COMPILE_FLAGS([--param=ssp-buffer-size=1])
+-  AX_CHECK_LINK_FLAG([-z relro -z now])
+-  AX_CHECK_LINK_FLAG([-pie])
+-  AC_LANG_POP
+-])
+-LOCAL_CHECK_FLAGS
+-
+ LT_INIT
+ LT_LANG([C])
+ 
+-- 
+2.37.1
+

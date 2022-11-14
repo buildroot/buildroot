@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-POWERPC_UTILS_VERSION = 1.3.8
+POWERPC_UTILS_VERSION = 1.3.10
 POWERPC_UTILS_SITE = $(call github,ibm-power-utilities,powerpc-utils,v$(POWERPC_UTILS_VERSION))
-POWERPC_UTILS_DEPENDENCIES = zlib
+POWERPC_UTILS_DEPENDENCIES = zlib numactl
 POWERPC_UTILS_AUTORECONF = YES
 POWERPC_UTILS_LICENSE = GPL-2.0+
 POWERPC_UTILS_LICENSE_FILES = COPYING

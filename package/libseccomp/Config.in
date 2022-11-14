@@ -5,11 +5,13 @@ config BR2_PACKAGE_LIBSECCOMP_ARCH_SUPPORTS
 	default y if BR2_mips || BR2_mipsel || BR2_mips64 || BR2_mips64el
 	default y if BR2_i386 || BR2_x86_64
 	default y if BR2_powerpc64 || BR2_powerpc
+	default y if BR2_RISCV_64
+	default y if BR2_s390x
 
 config BR2_PACKAGE_LIBSECCOMP
 	bool "libseccomp"
 	depends on BR2_PACKAGE_LIBSECCOMP_ARCH_SUPPORTS
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_12
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17
 	help
 	  High level interface to the Linux Kernel's seccomp filter
 
@@ -23,6 +25,6 @@ config BR2_PACKAGE_LIBSECCOMP
 
 	  https://github.com/seccomp/libseccomp
 
-comment "libseccomp needs a toolchain w/ headers >= 3.12"
+comment "libseccomp needs a toolchain w/ headers >= 3.17"
 	depends on BR2_PACKAGE_LIBSECCOMP_ARCH_SUPPORTS
-	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_12
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17

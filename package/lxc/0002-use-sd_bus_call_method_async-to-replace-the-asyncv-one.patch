@@ -1,0 +1,47 @@
+From b0abedf60b40adf0f2fb3cf9dfee4bc601f7b39f Mon Sep 17 00:00:00 2001
+From: Chen Qi <Qi.Chen@windriver.com>
+Date: Thu, 25 Aug 2022 05:45:53 -0700
+Subject: [PATCH] use sd_bus_call_method_async to replace the asyncv one
+
+The sd_bus_call_method_asyncv's 10th parameter is of type
+va_list and supplying NULL when invoking it causes compilation
+error. Just replace it with the async one.
+
+Signed-off-by: Chen Qi <Qi.Chen@windriver.com>
+[Retrieved from:
+https://github.com/lxc/lxc/commit/b0abedf60b40adf0f2fb3cf9dfee4bc601f7b39f]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ meson.build              | 4 ++--
+ src/lxc/cgroups/cgfsng.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 21955a0504..f8bdcf4e83 100644
+--- a/meson.build
++++ b/meson.build
+@@ -295,9 +295,9 @@ if not want_sd_bus.disabled()
+         has_sd_bus = false
+     endif
+ 
+-    if not cc.has_function('sd_bus_call_method_asyncv', prefix: '#include <systemd/sd-bus.h>', dependencies: libsystemd) 
++    if not cc.has_function('sd_bus_call_method_async', prefix: '#include <systemd/sd-bus.h>', dependencies: libsystemd) 
+         if not sd_bus_optional
+-            error('libsystemd misses required sd_bus_call_method_asyncv function')
++            error('libsystemd misses required sd_bus_call_method_async function')
+         endif
+ 
+         has_sd_bus = false
+diff --git a/src/lxc/cgroups/cgfsng.c b/src/lxc/cgroups/cgfsng.c
+index 8a3615893f..d90e5385e1 100644
+--- a/src/lxc/cgroups/cgfsng.c
++++ b/src/lxc/cgroups/cgfsng.c
+@@ -1232,7 +1232,7 @@ static int unpriv_systemd_create_scope(struct cgroup_ops *ops, struct lxc_conf *
+ 	if (r < 0)
+ 		return log_error(SYSTEMD_SCOPE_FAILED, "Failed to connect to user bus: %s", strerror(-r));
+ 
+-	r = sd_bus_call_method_asyncv(bus, NULL, DESTINATION, PATH, INTERFACE, "Subscribe", NULL, NULL, NULL, NULL);
++	r = sd_bus_call_method_async(bus, NULL, DESTINATION, PATH, INTERFACE, "Subscribe", NULL, NULL, NULL);
+ 	if (r < 0)
+ 		return log_error(SYSTEMD_SCOPE_FAILED, "Failed to subscribe to signals: %s", strerror(-r));
+ 

@@ -1,11 +1,10 @@
-comment "iotop depends on python or python3"
-	depends on !BR2_PACKAGE_PYTHON && !BR2_PACKAGE_PYTHON3
+comment "iotop depends on python3"
+	depends on !BR2_PACKAGE_PYTHON3
 
 config BR2_PACKAGE_IOTOP
 	bool "iotop"
-	depends on BR2_PACKAGE_PYTHON || BR2_PACKAGE_PYTHON3
-	select BR2_PACKAGE_PYTHON_CURSES if BR2_PACKAGE_PYTHON
-	select BR2_PACKAGE_PYTHON3_CURSES if BR2_PACKAGE_PYTHON3
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON3_CURSES
 	help
 	  iotop does for I/O usage what top does for CPU usage.
 

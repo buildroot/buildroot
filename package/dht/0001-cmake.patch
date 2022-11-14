@@ -1,0 +1,67 @@
+From 25e12bb39eea3d433602de6390796fec8a8f3620 Mon Sep 17 00:00:00 2001
+From: Mike Gelfand <mikedld@mikedld.com>
+Date: Sun, 1 Jan 2017 16:23:21 +0300
+Subject: [PATCH] Remove Makefile, add Makefile.am and CMakeLists.txt
+
+Downloaded from transmission repo:
+https://github.com/transmission/dht/commit/25e12bb39eea3d433602de6390796fec8a8f3620
+
+Upstream status: rejected (https://github.com/jech/dht/pull/19)
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ CMakeLists.txt |  9 +++++++++
+ Makefile       |  9 ---------
+ Makefile.am    | 11 +++++++++++
+ 3 files changed, 20 insertions(+), 9 deletions(-)
+ create mode 100644 CMakeLists.txt
+ delete mode 100644 Makefile
+ create mode 100644 Makefile.am
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+new file mode 100644
+index 0000000..6d4aa99
+--- /dev/null
++++ b/CMakeLists.txt
+@@ -0,0 +1,9 @@
++cmake_minimum_required(VERSION 2.8)
++project(dht C)
++
++add_library(${PROJECT_NAME} STATIC
++    dht.c
++)
++
++install(TARGETS ${PROJECT_NAME} DESTINATION lib)
++install(FILES dht.h DESTINATION include/dht)
+diff --git a/Makefile b/Makefile
+deleted file mode 100644
+index e012945..0000000
+--- a/Makefile
++++ /dev/null
+@@ -1,9 +0,0 @@
+-CFLAGS = -g -Wall
+-LDLIBS = -lcrypt
+-
+-dht-example: dht-example.o dht.o
+-
+-all: dht-example
+-
+-clean:
+-	-rm -f dht-example dht-example.o dht-example.id dht.o *~ core
+diff --git a/Makefile.am b/Makefile.am
+new file mode 100644
+index 0000000..2dba648
+--- /dev/null
++++ b/Makefile.am
+@@ -0,0 +1,11 @@
++AM_CFLAGS = @PTHREAD_CFLAGS@
++
++noinst_LIBRARIES = libdht.a
++libdht_a_SOURCES = dht.c
++libdht_a_DEPENDENCIES = $(builddir)/include/dht
++noinst_HEADERS = dht.h
++EXTRA_DIST = CHANGES CMakeLists.txt dht-example.c LICENCE README
++
++$(builddir)/include/dht:
++	$(MKDIR_P) $(builddir)/include
++	(cd $(builddir)/include && $(LN_S) $(abs_srcdir) dht)

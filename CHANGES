@@ -1,3 +1,1092 @@
+2022.11-rc1, released November 3rd, 2022
+
+	Fixes all over the tree and new features.
+
+	Architecture:
+
+	- PowerPC: add Power9 CPU type
+	- ARM: support dropped for iWMMXt processors
+
+	Toolchain:
+
+	- binutils 2.39 added, binutils 2.38 is now the default
+	- gdb 12 added, gdb 11 is now the default
+	- support for 5.18, 5.19 and 6.0 kernel headers
+	- glibc updated to 2.36
+
+	Filesystem:
+
+	- Ability to use dracut to create an initramfs that contains a
+          subset of the root filesystem contents.
+
+	New packages: agent-proxy, catatonit, cni-plugins, crun,
+	docopt-cpp, dracut, forge, kmemd, libmanette, mdio-tools,
+	open-isns, python-editables, python-hatch-fancy-pypi-readme,
+	python-hatch-vcs, python-hatchling, python-libevdev,
+	python-minimalmodbus, python-pathspec, qt6-serialport,
+	rtl8192eu, signal-estimator, slirp4netns, tinycompress
+
+	More than 400 packages have been updated to a newer version.
+
+	New defconfigs: ls1028ardb, qemu_aarch64_ebbr, visionfive.
+
+	Issues resolved:
+
+	#11776: qt5webengine 5.12.2 build failed with arm toolchain
+	        and linaro toolchain
+	#12131: qt5webengine builderror in the latest stable Buildroot
+	        2019.05.01 version
+	#13216: 2020.02.6 requires GNU find  utils
+	#14601: Python build fails on 2022.02-rc2
+	#14746: Lack of management after loading
+	#14796: 64 bit time and seccomp conflict (OpenSSH  server crash)
+	#14921: wpewebkit build fails because of internal  build order
+	#14936: nodejs does not build
+	#15006: toolchain Arm AArch64 toolchain 11.2-2022.02
+	#15021: Buildroot not compiling with systemd  and glibc.
+	#15026: package/udisks: install to staging
+	#15061: Node.js Package fails to build against musl  i386
+	#15071: RTL8723BS library is outdated
+
+2022.08.1, released October 2nd, 2022
+
+	Important / security related fixes.
+
+	Updated/fixed packages: botan, busybox, docker-cli,
+	docker-engine, expat, git, haproxy, heirloom-mailx, icu,
+	imx-gpu-viv, libconfuse, libmdbx, libupnp, libxml2,
+	ltp-testsuite, m4, makedevs, mariadb, mesa3d, meson,
+	mosquitto, ncurses, openssh, pango, python3, qlibc,
+	qt5xmlpatterns, rtl8189es, rtl8723bu, rt8723ds,
+	rtl8812au-aircrack-ng, runc, sox, tinyproxy, uacme, unbound,
+	unzip, vim, xtables-addons
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14796: 64 bit time and seccomp conflict (OpenSSH server crash)
+	#14921: wpewebkit build fails because of internal build order
+
+2022.08, released September 10th, 2022
+
+	Fixes all over the tree.
+
+	Autotools: Drop --runstatedir=/run as it causes build issues
+	with older packages
+
+	Defconfigs: rockpro64: Change to mainline ATF to fix build issue
+
+	Updated/fixed packages: dhcpd, fwup, gcc, gdb, go, linux-tools,
+	minidlna, mosquitto, mv-ddr-mervell, networkd-dispatcher,
+	optee-os, polkit, python-pillow, python3, sconeserver, uuu,
+	wolfssl
+
+2022.08-rc2, released September 1st, 2022
+
+	Fixes all over the tree.
+
+	dependencies: Ensure 'find' and 'xargs' are available on the
+	build host.
+
+	A large number of typo fixes.
+
+	Defconfigs: bananapi m1, olimex a20/a33/lime: Use standard FPU
+	configuration, pine64_sopine: Use mainline ATF to fix build
+
+	Updated/fixed packages: ace, alsa-utils, busybox, cups,
+	dbus-broker, directfb, domoticz, drbd-utils, edk2,
+	edk2-platforms, ffmpeg, freeradius-server, freeswitch, gauche,
+	gcc, gdb, glibc, gnutls, gst1-plugins-bad, gst1-plugins-good,
+	hawktracer, igd-ethercat, imagemagick, intel-mediadriver,
+	jack2, jose, jpeg, jquery-ui-themes, kodi, libcamera, libdill,
+	libgit2, libglvnd, libgpg-error, libgpgme, libinput, libp11,
+	libsepol, libtirpc, libvirtd, libvncserver, libwpe, libzlib,
+	linux, linux-tools-perf, llvm, lshw, makedumpfile,
+	mali-driver, memcached, minetest, mutt, ne10, netsniff-ng,
+	ntpsec, ocrad, ola, opencv4, openocd, opensc, optee-os,
+	pcsc-lite, postgresql, protobuf, pulseaudio, python-autobahn,
+	python-paho-mqtt, python-protobuf, python-pygame, python3, qemu,
+	qoriq-cadence-dp-firmware, qt5doc, qt6base, ranger, rng-tools,
+	rsync, rustc, sconeserver, sdl2, snort, sqlite, squid,
+	stress-ng, strongswan, sunxi-mali-utgard-driver, sysdig,
+	sysklogd, syslinux, syslog-ng, tcf-agent, tcpreplay,
+	tesseract-ocr, uacme, uboot-tools, uclibc, udpcast, usbguard,
+	v4l2loopback, vim, webkitgtk, wolftpm, wpewebkit, xenomai,
+	xserver_xorg-server, zeek, zerofree
+
+2022.08-rc1, released August 12th, 2022
+
+	Fixes all over the tree and new features.
+
+	Architecture
+
+	- Support for NDS32 removed
+	- Support for C-SKY removed
+	- Support for configurable page size on ARM64 added
+	- Architecture menu re-organized: the MMU selection now
+	  appears in this architecture menu.
+
+	Toolchain:
+
+	- GCC 12.x support added, GCC 11.x is now the default
+	  compiler, and support for building a GCC 9.x toolchain has
+	  been removed.
+	- glibc bumped to 2.35-134-gb6aade18a7e5719c942aa2da6cf3157aca993fa4
+	- uclibc bumped to 1.0.42
+	- BR2_GCC_ENABLE_LTO option removed, the toolchain is now
+	  always built with LTO support. The new option BR2_ENABLE_LTO
+	  enables the use of LTO in a subset of packages that have
+	  explicit handling for LTO.
+	- GDB enabled on OpenRISC.
+	- Toolchain menu now appears before "Build options". The
+	  selection of the C library now determines whether static
+	  library (BR2_STATIC_LIBS) will be available or not, instead
+	  of the other way around.
+
+	Filesystem:
+
+	- genimage.cfg files now use shortcuts from genimage for the
+	  GUID of well-known GPT partitions.
+
+	Bootloaders:
+
+	- U-Boot can now be built with host-gnutls as a dependency,
+	  needed for some configurations
+	- OP-TEE can now be built with host-python-pillow as a
+	  dependency, needed for some configurations.
+	- OP-TEE source can now be retrieved from a custom tarball
+	  URL.
+	- Grub has been bumped to 2.06.
+
+	Over 390 packages updated.
+
+	New defconfigs: aspeed_ast2500evb, aspeed_ast2600evb,
+	broadcom_northstar, canaan_kd233, qemu_riscv64_nommu_virt,
+	sipeed_maix_bit, sipeed_maix_bit_sdcard, sipeed_maix_dock,
+	sipeed_maix_dock_sdcard, sipeed_maix_go,
+	sipeed_maix_go_sdcard, sipeed_maixduino,
+	sipeed_maixduino_sdcard
+
+	Removed defconfigs: andes_ae300, csky_gx6605s,
+	friendlyarm_nanopi_neo, minnowboard_max-graphical
+
+	New packages: clpeak, compiler-rt, crucible, dbus-broker, dht,
+	double-conversion, dust, freeradius-server, gdal, hawktracer,
+	hyperfine, libb2, libdeflate, libdill, mbw, mender-connect,
+	minizip-zlib, nerdctl, ntpsec, opencl-hpp, opensc,
+	python-alembic, python-appdirs, python-beniget,
+	python-construct, python-dtschema, python-gast, python-kflash,
+	python-lark, python-maturin, python-mypy-extensions,
+	python-pylibfdt, python-pythran, python-pyrsistent,
+	python-qrcode, python-rfc3987, python-rtoml,
+	python-ruamel-yaml, python-scipy, python-typeguard,
+	python-typing-inspect, python-zlmdb, qt6base, rtl8723ds,
+	spirv-llvm-translator, tealdeer, uuu, vis-network, volk,
+	wolftpm, zeek, zerofree
+
+	Removed packages: rtl8723bs
+
+	Issues resolved:
+
+	#14556: python-crossbar fails to build
+	#14951: boost compile error when running make  silently
+	#14646: OpenSSH 8.9p1 compiler error under mipsel
+	#14841: support/download/git fails with "fatal: No  such remote
+		'origin'" due to incorrect check for origin remote
+	#13356: libabseil-cpp: not building for raspberry pi
+	#14911: host-python3 build needs python3 on the host
+	#13831: mesa3d - kmsro driver requires dri3
+	#13816: xstart failed since update the x11 libraries
+	#13796: Problems compiling package gst-plugins-good
+	#14191: patchelf v0.9 corrupt Nvidia shared  libraries
+	#14891: sudo: group setup fails since commit  9b7f8da96b
+	#14881: Watchdogd Package missing INSTALL_STAGING
+	#14876: arm-trusted-firmware can no longer be  compiled with fPIE
+
+2022.05.3, released October 2nd, 2022
+
+	Important / security related fixes.
+
+	Fixed compatibility issue with make 4.3 and the 'printvars' /
+	'show-vars' commands.
+
+	Dependencies: Ensure 'find' and 'xargs' are available on the
+	build host.
+
+	A large number of typo fixes.
+
+	Defconfigs: Galileo: Fix defconfig syntax, Licheepi zero: Fix
+	U-Boot dependencies, Bananapi m1, Olimx a20 olinuxino lime
+	1+2, a33 olinuxino: Use standard FPU configuration, Pine 64
+	sopine, Rockpro 64: Change to mainline ATF to fix build issue.
+
+	Updated/fixed packages: ace, arm-trusted-firmware,
+	babeltrace2, boost, botan, busybox, clamav, cog, containerd,
+	cups, dhcpcd, directfb, docker-cli, docker-engine, connman,
+	edk2, edk2-platform, elf2flt, expat, ffmpeg, ficl, freeswitch,
+	gcc, gdb, git, glibc, gnutls, go, gocryptfs, graphicsmagick,
+	grub2, gst1-plugins-bad, gst1-plugins-good, heirloom-mailx,
+	icu, igh-ethercat, imagemagick, imx-gpu-viv, jack2, jose,
+	jpeg, jquery-ui-themes, kodi, kvm-unit-tests, libcamera,
+	libconfuse, libfreeimage, libglvnd, libgpg-error, libinput,
+	libmdbx, libp11, libsepol, libtirpc, libupnp, libvirt,
+	libvncserver, libwpe, libxml2, libzlib, linux, linux-tools,
+	lshw, m4, makedevs, mali-driver, mariadb, memcached, mesa3d,
+	minidlna, mosquitto, mutt, mv-ddr-marvell, ncurses, ne10,
+	netsniff-ng, networkd-dispatcher, ocrad, ola, opencv4,
+	openocd, openssh, openvmtools, pango, pcsc-lite, pistache,
+	polkit, postgis, postgresql, python-crossbar,
+	python-paho-mqtt, python-pygame, python-service-identity,
+	python-txdbus, python3, qemu, qlibc,
+	qoriq-cadence-dp-firmware, qt5xmlpatterns, ranger, redis,
+	rng-tools, rsync, rsyslog, rtl8189es, rtl8723bu, runc, rustc,
+	sconeserver, sdl2, snort, sox, sqlite, squid, stress-ng,
+	strongswan, sunxi-mali-utgard-driver, sysdig, syslinux,
+	syslog-ng, tcf-agent, tcpreplay, tesseract-ocr, tinyproxy,
+	uacme, uboot-tools, uclibc, unzip, usbguard, v4l2loopback,
+	vim, waffle, webkitgtk, weston, wolfssl, wpewebkit, xfsprogs,
+	xserver_xorg-server, xtables-addons, zziplib
+
+	Issues resolved:
+
+	#13216: [Documentation] 2020.02.6 requires GNU find utils
+	#14556: python-crossbar fails to build
+	#14796: 64 bit time and seccomp conflict (OpenSSH server crash)
+	#14951: boost compile error when running make  silently
+
+2022.05.2, released August 31st, 2022
+
+	Important / security related fixes.
+
+	dependencies: Ensure 'cmp' is available on the build host.
+
+	pkg-utils: The KCONFIG_ENABLE_OPT macro used to enforce a specific
+	Kconfig option to be enabled (E.G. for kernel options needed by
+	packages) no longer changes a =m (modular) with =y (built in).
+
+	check-host-rpath: Silence readelf warnings when clang is used
+
+	GCC 10.x updated to 10.4.0
+
+	Defconfigs: Kria kv260: Fix u-boot configuration
+
+	Updated/fixed packages: apg, arm-trusted-firmware, assimp,
+	bayer2rgb-neon, bind, bird, cog, cwiid, diffutils, freerdp,
+	fluidsynth, gcc, gdk-pixbuf, glibc, glslsandbox-player,
+	gnupg2, gtest, i2pd, jack2, jquery-validation, jszip,
+	kvm-unit-tests, libbsd, libcamera, libcurl, libest, libiio,
+	libkrb5, libopenssl, libp11, libpsl, libwebsockets, localedef,
+	luasyslog, lxc, mbedtls, mstpd, mutt, netdata, netsniff-ng,
+	nodejs, nvidia-driver, ola, openssl, opkg-utils, paho-mqtt-c,
+	pango, pcsc-lite, perl, perl-crypt-openssl-rsa, pimd, poppler,
+	postgis, powerpc-utils, pppd, protobuf-c, pulseaudio,
+	python-bottle, python-django, python-lxml, python3, qt5webkit,
+	redis, rpi-userland, rsyslog, runc, rustc, sconeserver,
+	sg3_utils, shadowsocks-libev, stellarium, suricata, swupdate,
+	tcpreplay, uacme, uclibc, v4l2loopback, webkitgtk,
+	wilc-driver, wine, wpewebkit, xdg-dbus-proxy,
+	xserver_xorg-server, zeromq, zfs, zlib-ng
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13796: Problems compiling package gst-plugins-good
+
+2022.05.1, released July 24th, 2022
+
+	Important / security related fixes.
+
+	Disable big endian no-mmu on ARM as it is not supported by
+	elf2flt.
+
+	Tighten dependencies for external Bootlin toolchains to ensure
+	they can only be selected in compatible configurations.
+
+	Support external toolchains without gdbserver.
+
+	Updated/fixed packages: apache, avahi, bdwgc, bind, bpftool,
+	cups, darkhttpd, dmalloc, ecryptfs-utils, fxload, ghostscript,
+	gnutls, gst-omx, gst1-devtools, gst1-libav, gst1-plugins-base,
+	gst1-plugins-bad, gst1-plugins-good, gst1-plugins-ugly,
+	gst1-python, gst1-rtsp-server, gst1-vaapi, gstreamer1,
+	gstreamer1-editing-services, gtest, iptables, keyutils, lcms2,
+	libabseil-cpp, libcamera, libcurl, libeastl, libgpgme,
+	libgtk3, libmdbx, libmediaart, libmodsecurity, libnetconf2,
+	libopenssl, libpjsip, libsamplerate, libsndfile, libtalloc,
+	logrotate, luajit, nginx, noip, paxtest, php, postgresql,
+	procrank_linux, pure-ftpd, python-pillow, qdecoder,
+	rabbitmq-server, rpi-userland, ruby, rustc, sofia-sip,
+	systemd, tcpreplay, tinyproxy, tor, uacme, uboot-tools, vim,
+	watchdogd, webkitgtk, weston, wireguard-linux-compat,
+	wpa_supplicant, wpewebkit, zstd
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14881: Watchdogd Package missing INSTALL_STAGING
+
+2022.05, released June 6th, 2022
+
+	Fixes all over the tree.
+
+	Rework BR2_STATIC_LIBS handling to ensure it can only be
+	enabled if a suitable C library is available.
+
+	Updated/fixed packages: arm-trusted-firmware, at91bootstap,
+	boinc, boost, cpulimit, diffutils, edk2, eigen, fbv, gcr,
+	gensio, glibc, go, gtest, iucode-tool, kvm-unit-tests, libcec,
+	libcurl, libks, linux, linux-tools, lttng-modules, mariadb,
+	memcached, mono, musl, mutt, netdata, network-manager, nginx,
+	ogre, openjpeg, openvpn, pipewire, python-crossbar, qemu,
+	qpid-proton, rauc, rockchip-mali, rsyslog,
+	rtl8812au-aircrack-ng, ruby, runc, rustc, samba4, tiff,
+	uclibc, unrar, vim, webkitgtk, wpewebkit,
+	xdriver_xf86-video-ati, xml-security-c, zchunk, zlib-ng
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14821: Samba server is failing to compile
+	#14826: make qemu_x86_64_defconfig stopped working
+
+2022.05-rc2, released May 30th, 2022
+
+	Fixes all over the tree.
+
+	Defconfigs: qemu_ppc64*: Use binutils 2.36.1 to fix build
+	issue, qemu_arm_vexpress_tz: Fix optee-os build issue,
+	qemu_arm_versatile_nommu: Drop now that nommu for ARMv5 is no
+	longer available
+
+	Updated/fixed packages: dhcp, edk2, gcr, glibc, i2pd, janet,
+	janus-gateway, libfreeimage, libnftnl, libnss, libodb-boost,
+	libostree, libwebsockets, linux-tools, midori, ntfs-3g, ola,
+	optee-client, pcsc-lite, pipewire, python-flask,
+	python-service-identity, python-werkzeug, qemu, rng-tools,
+	rockchip-mali, strace, xdriver_xf86-video-amdgpu
+
+	Removed packages: ktap
+
+2022.05-rc1, released May 18th, 2022
+
+	Fixes all over the tree and new features.
+
+	Toolchain:
+	- glibc update to 2.35, musl updated to 1.2.3
+	- gcc 11.x updated to 11.3, support for external gcc 12.x
+	- binutils 2.38 added, 2.32/2.35.2 removed, default changed to 2.37
+	- s390x Bootlin external toolchain added
+	- 5.17.x kernel headers support added
+
+	Filesystem:
+	- Rework OCI entrypoint/command logic to handle command arguments
+	- Squashfs block size is now configurable
+
+	Graphs: Also generate a build time timeline graph (for top
+	level parallel builds).
+
+	scripts/pkg-stats: Optimize memory consumption for CPE parsing
+
+	Fix compatibility issue with the fakeroot script logic and
+	modern versions of dash.
+
+	Change git:// URLs pointing to Github to https://, now that
+	Github has turned off support for git://
+
+	New defconfigs: Octavo osd32mp1_brk / osd32mp1_red
+
+	New packages: falcosecurity-libs, lzma-alone, octave,
+	python-flit-core, python-orjson, python-pydevmem,
+	qt5webengine-chromium, qt5webengine-chromium-catapult, ragel,
+	tbb, wilc-driver, wtfutil
+
+	Wilc1000-firmware renamed to wilc-firmware
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14596: package dialog is outdated and contains a bug
+	#14651: OpenSSH 8.9p1 compiler error under ARM
+	#14656: Adding dependencies from an external tree does not work
+	#14661: Fakeroot script relies on bash-isms, does not work with..
+	#14681: QT5WEBENGINE not building
+	#14686: genimage.cfg have a hard-coded .ext4 extension which..
+	#14701: Multiple unresolved symbols while building kernel ..
+	#14706: nodjs build problem
+	#14711: nodjs build problem missing bzip
+	#14721: python-argon2_cffi no longer works
+	#14731: BR2_PACKAGE_IOSTAT
+	#14751: LVM2 Outdated Link
+
+2022.02.6, released October 2nd, 2022
+
+	Important / security related fixes.
+
+	Fixed compatibility issue with make 4.3 and the 'printvars' /
+	'show-vars' commands.
+
+	Dependencies: Ensure 'find' and 'xargs' are available on the
+	build host.
+
+	A large number of typo fixes.
+
+	Defconfigs: Galileo: Fix defconfig syntax, Licheepi zero: Fix
+	U-Boot dependencies, Bananapi m1, Olimx a20 olinuxino lime
+	1+2, a33 olinuxino: Use standard FPU configuration, Pine 64
+	sopine, Rockpro 64: Change to mainline ATF to fix build issue.
+
+	Updated/fixed packages: ace, arm-trusted-firmware,
+	babeltrace2, boost, botan, busybox, clamav, cog, connman,
+	containerd, cups, dhcpcd, directfb, docker-cli, docker-engine,
+	edk2, edk2-platforms, elf2flt, expat, ffmpeg, ficl,
+	freeswitch, freetype, gcc, gdb, git, gnutls, go,
+	graphicsmagic, grub2, gst1-plugins-bad, gst1-plugins-good,
+	heirloom-mailx, icu, igh-ethercat, imagemagick, imx-gpu-viv,
+	jose, jpeg, jquery-ui-themes, kodi, libconfuse, libfreeimage,
+	libglvnd, libgpg-error, libinput, libmdbx, libsepol, libtirpc,
+	libupnp, libvirt, libvncserver, libwpe, libxml2, libzlib,
+	linux, linux-tools, lshw, m4, makedevs, makedumpfile,
+	mali-driver, mariadb, memcached, mesa3d, minidlna, mosquitto,
+	mutt, mv-ddr-marvell, ncurses, ne10, netsniff-ng,
+	networkd-dispatcher, ocrad, opencv4, openocd, openssh, pango,
+	pcsc-lite, polkit, postgis, postgresql, python-paho-mqtt,
+	python-pygame, python3, qemu, qlibc,
+	qoriq-cadence-dp-firmware, qt5xmlpatterns, ranger, rng-tools,
+	rsync, rsyslog, rtl8189es, rtl8723be, runc, rustc,
+	sconeserver, sdl2, snort, sox, sqlite, squid, stress-ng,
+	strongswan, sunxi-mali-utgard-driver, syslinux, syslog-ng,
+	tcf-agent, tcpreplay, tesseract-ocr, tinyproxy, uacme,
+	uboot-tools, uclibc, unzip, usbguard, v4l2loopback, vim,
+	webkitgtk, wolfssl, wpewebkit, xfsprogs, xserver_xorg-server,
+	xtables-addons, zziplib
+
+	Issues resolved:
+
+	#13216: [Documentation] 2020.02.6 requires GNU find utils
+	#14796: 64 bit time and seccomp conflict (OpenSSH server crash)
+	#14951: boost compile error when running make silently
+
+2022.02.5, released August 31st, 2022
+
+	Important / security related fixes.
+
+	dependencies: Ensure 'cmp' is available on the build host.
+
+	pkg-utils: The KCONFIG_ENABLE_OPT macro used to enforce a specific
+	Kconfig option to be enabled (E.G. for kernel options needed by
+	packages) no longer changes a =m (modular) with =y (built in).
+
+	check-host-rpath: Silence readelf warnings when clang is used
+
+	GCC 10.x updated to 10.4.0
+
+	Updated/fixed packages: apg, arm-trusted-firmware, assimp,
+	bayer2rgb-neon, bind, bird, cog, cwiid, diffutils, fluidsynth,
+	freerdp, gcc, glibc, glslsandbox-player, gdk-pixbuf, gnupg2,
+	gtest, i2pd, jack2, jquery-validation, jszip, libbsd, libcamera,
+	libcurl, libest, libiio, libkrb5, libopenssl, libpsl,
+	luasyslog, lxc, mbedtls, mstpd, mutt, netdata, netsniff-ng,
+	nodejs, nvidia-driver, openssl, opkg-utils, paho-mqtt-c,
+	pango, pcsc-lite, perl, pimd, poppler, postgis, powerpc-utils,
+	pppd, protobuf-c, pulseaudio, python-bottle, python-django,
+	python-lxml, python3, qt5webkit, rpi-userland, rsyslog, runc,
+	rustc, sconeserver, sg3_utils, shadowsocks-libev, suricata,
+	tcpreplay, uacme, uclibc, v4l2loopback,, webkitgtk, wine,
+	wpewebkit, xdg-dbus-proxy, xserver_xorg-server, zeromq, zfs,
+	zlib-ng
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13796: Problems compiling package gst-plugins-good
+	#14926: package/nodejs: build for host fails with GTEST errors
+
+2022.02.4, released July 28th, 2022
+
+	Important / security related fixes.
+
+	Disable big endian no-mmu on ARM as it is not supported by
+	elf2flt.
+
+	Tighten dependencies for external Bootlin toolchains to ensure
+	they can only be selected in compatible configurations.
+
+	Support external toolchains without gdbserver.
+
+	Updated/fixed packages: apache, avahi, bdwgc, bind, bpftool,
+	cups, darkhttpd, dmalloc, ecryptfs-utils, fxload, ghostscript,
+	gnutls, gst-omx, gst1-devtools, gst1-libav, gst1-plugins-base,
+	gst1-plugins-bad, gst1-plugins-good, gst1-plugins-ugly,
+	gst1-python, gst1-rtsp-server, gst1-vaapi, gstreamer1,
+	gstreamer1-editing-services, gtest, iptables, keyutils, lcms2,
+	libabseil-cpp, libcamera, libcurl, libeastl, libgpgme,
+	libgtk3, libmdbx, libmediaart, libmodsecurity, libnetconf2,
+	libopenssl, libpjsip, libsamplerate, libsndfile, libtalloc,
+	logrotate, luajit, nginx, noip, paxtest, php, postgresql,
+	procrank_linux, pure-ftpd, python-pillow, qdecoder,
+	rabbitmq-server, rpi-userland, rustc, sofia-sip, systemd,
+	tcpreplay, tinyproxy, tor, uacme, uboot-tools, vim, watchdogd,
+	webkitgtk, wireguard-linux-compat, wpa_supplicant, wpewebkit,
+	zstd
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14881: Watchdogd Package missing INSTALL_STAGING
+
+2022.02.3, released June 19th, 2022
+
+	Important / security related fixes.
+
+	Infrastructure: Fix building under paths containing regex
+	characters (E.G. '+')
+
+	Toolchain: Only allow ppc64le variants for which a
+	glibc/musl/uclibc toolchain is supported.
+	Mark codescape mti/img mips toolchains as shared library only
+	(glibc).
+
+	Updated/fixed packages: arm-trusted-firmware,
+	at91dataflashboot, boinc, dhcp, diffutils, edk2, fbv, gensio,
+	glibc, go, gtest, iucode-tool, janet, libcec, libcurl,
+	libfreeimage, libnftnl, libodb-boost, linux, linux-tools,
+	lttng-modules, mariadb, memcached, mono, mutt,
+	network-manager, nginx, ntfs-3g, ogre, openjpeg, openvpn,
+	qemu, qpid-proton, qt5webengine, rauc, rockchip-mali, rsyslog,
+	ruby, runc, rustc, samba4, strace, tiff, uclibc, unrar, vim,
+	webkitgtk, wpewebkit, xdriver_xf86-video-amdgpu,
+	xdriver_xf86-video-ati, zlib-ng
+
+	New packages: qt5webengine-chromium,
+	qt5webengine-chromium-catapult
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14766: package dhcp on buildroot 2022.02.1 failed
+	#14821: Samba server is failing to compile
+	#14826: make qemu_x86_64_defconfig stopped working
+
+2022.02.2, released May 29th, 2022
+
+	Important / security related fixes.
+
+	Archictures: Drop sh2a, correct x86 Bonnell variant
+
+	Toolchain: Bump GCC 11.x to 11.3, correct pre-installed
+	external toolchain logic when toolchain is available in path.
+
+	Rework OCI filesystem entrypoint/command logic to handle
+	command arguments
+
+	Defconfigs: Update Zynqmp zcu102/106 to final 2022.1 release,
+	fix zcu106 PLL config
+
+	Updated/fixed packages: adwaita-icon-theme, afboot-stm32,
+	aircrack-ng, alchemy, alsa-lib, arptables, assimp, asterisk,
+	aubio, avrdude, azure-iot-sdk-c, batman-adv, binutils,
+	bpftool, brotli, cairo, cifs-utils, clamav, cryptodev-linux,
+	dhcp, diffutils, dmalloc, duktape, e2fsprogs, elf2flt, espeak,
+	expat, ffmpeg, fluidsynth, freerdp, gcc, git, glorytun,
+	glslsandbox-player, gnutls, go, gst1-imx, gst1-plugins-good,
+	gzip, imagemagick, janus-gateway, keepalived, kompexsqlite,
+	kvm-unit-tests, libarchive, libcgi, libcurl, libevdev,
+	libeXosip2, libhtp, libinput, libkcapi, libkrb5, libks,
+	libmdbx, libmnl, libnpupnp, libnspr, libopenssl, liboping,
+	libpjsip, libpri, libselinux, libsigsegv, libv4l,
+	libwebsockets, libxml2, linux, linux-tools, ltp-testsuite,
+	luajit, lvm2, mali-driver, mariadb, mc, minizip, mpd, mutt,
+	netatalk, netsurf, network-manager, nodejs, numactl, nut,
+	omniorb, openbox, opencv4, openjdk, openjdk-bin, openocd,
+	pamtester, pango, pcre2, php, php-apcu, pinentry, pixman,
+	polkit, postgis, postgresql, pure-ftpd, python-aenum,
+	python-avro, python-django, python-pillow, python-simplejson,
+	python-urllib3, python-zopfli, python3, qemu, qpdf, quazip,
+	redis, rockchip-mali, rsync, rt-tests, rust, rtl8818eu,
+	rtl8189es, rtl8189fs, rtl_433, sam-ba, samba4, sdl2_ttf,
+	shadowsocks-libev, shim, subversion, sun20i-d1-spl, suricata,
+	systemd, tftpd, trinity, tvheadend, udev, uftrace,
+	urandom-scripts, usb_modeswitch, valgrind, vde2, vim,
+	wireplumber, wolfssl, wpa_supplicant, xlib_libXfont2, xz,
+	zlib, zlog
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14751: LVM2 Outdated Link
+
+2022.02.1, released April 11th, 2022
+
+	Important / security related fixes.
+
+	Graphs: Also generate a build time timeline graph (for top
+	level parallel builds).
+
+	scripts/pkg-stats: Optimize memory consumption for CPE parsing
+
+	Fix compatibility issue with the fakeroot script logic and
+	modern versions of dash.
+
+	Change git:// URLs pointing to Github to https://, now that
+	Github has turned off support for git://
+
+	Updated/fixed packages: ace, apache, apr, apr-util, belr,
+	bind, bluez5_utils, boinc, bpftool, busybox, cloop, cog,
+	containerd, cppcms, dav1d, dhcp, dieharder, dnsmasq,
+	docker-cli, docker-engine, efl, ell, fakeroot, flac,
+	fluidsynth, gdk-pixbuf, glib-networking, gnutls, gst-omx,
+	gst1-devtools, gst1-libav, gst1-plugins-bad,
+	gst1-plugins-base, gst1-plugins-good, gst1-plugins-ugly,
+	gst1-python, gst1-rtsp-server, gst1-vaapi, gstreamer1,
+	gstreamer1-editing-services, haproxy, htop, intel-gmmlib,
+	ipmiutil, iwd, jack1, jack2, lftp, libabseil-cpp, libbluray,
+	libcamera-apps, libcoap, libcurl, libest, libgee, libglib2,
+	libgtk3, libiec61850, libkrb5, libminiupnpc, libodb,
+	libodb-boost, libopenssl, libp11, libpsl, libressl, librstp,
+	librtlsdr, liburing, libyang, libzlib, luasec, lxc, matio,
+	meson, minidlna, minizip, mpd, mtools, netatalk, nbd, odb,
+	openblas, openssh, openvpn, optee-os, opus, paho-mqtt-c,
+	pango, php, pipewire, pkcs11-helper, postgresql, ppp,
+	protozero, python-aioconsole, python-avro, python-brotli,
+	python-greenlet, python-paramiko, python-pillow,
+	python-rpi-gpio, python-treq, python-twisted, python-ujson,
+	python-weasyprint, qt5base, qt5wayland, raptor, rpi-firmware,
+	rpi-userland, rtl_433, runc, rust, rygel, samba4,
+	shairport-sync, spice, spidev_test, stunnel, systemd,
+	timescaledb, trace-cmd, trousers, ts4900-fpga, tvheadend,
+	udpcast, unbound, upower, urandom-scripts, usbguard, valgrind,
+	valijson, vim, wavpack, wget, wireplumber, wireshark, woff2,
+	xmrig, zabbix, zlib-ng, zynaddsubfx, zziplib
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13971: ip6tables-nft build does not include MASQUERADE target..
+	#14651: OpenSSH 8.9p1 compiler error under ARM
+	#14656: Adding dependencies from an external tree does not work
+	#14661: Fakeroot script relies on bash-isms, does not work ..
+	#14686: genimage.cfg have a hard-coded .ext4 extension which..
+	#14701: Multiple unresolved symbols while building kernel ..
+	#14711: nodjs build problem missing bzip
+	#14731: BR2_PACKAGE_IOSTAT
+
+2022.02, released March 8th, 2022
+
+	Various fixes.
+
+	Fixes to cargo and golang packaging infrastructure.
+
+	Defconfigs: OrangePi RK3399: Fix genimage format
+
+	Updated/fixed packages: azure-iot-sdk-c, bpftool, cog,
+	directfb, directfb-examples, dnsmasq, docker-engine, expat,
+	freerdp, frr, gdb, ghostscript, glib-networking, go, haproxy,
+	hostapd, kf5-extra-cmake-modules, kf5-kcoreaddons,
+	kf5-modemmanager-qt, kf5-networkmanager-qt, libcamera-apps,
+	libgee, libglfw, librstp, libtorrent, libvirt, libxslt, linux,
+	mariadb, oprofile, osm2pgsql, pulseview, python-cryptography,
+	python-gnupg, python-treq, qt5base, qt5webkit, rauc, re2,
+	rygel, safeclib, sconeserver, seatd, sord, upmpdcli,
+	util-linux, weston, wpa_supplicant, xdriver_xf86-video-mach64,
+	xdriver_xf86-video-nouveau, xdriver_xf86-video-qxl,
+	xscreensaver, zabbix
+
+	New packages: gdk-pixbuf-xlib
+
+	Removed packages: python-pycli
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13126: make fails - bzip2-1.0.6.tar.gz and DirectFB-1.7.7.tar..
+	#14611: 2022.02-rc2: Build of BR2_x86_64 with BR2_LINUX_KERNEL_..
+	#14631: host-go-bootstrap: go not being built for package in ..
+	#14636: azure-iot-sdk-c: Installed headers do not compile
+	#14641: oprofile can not find the events files
+
+2022.02-rc3, released February 28th, 2022
+
+	Fixes all over the tree.
+
+	Defconfigs: Xilinx zynqmp zcu102/zcu106: Fix U-Boot DTS config
+
+	Updated/fixed packages: bluez5_utils, bpftool, dbus, exempi,
+	flac, freerdp, frr, gnutls, libpjsip, libxml2, mariadb,
+	openssh, python-twisted, qt5webkit, samba4, vim, weston,
+	wireshark, wolfssl, xdg-dbus-proxy, xterm,
+
+2022.02-rc2, released February 20th, 2022
+
+	Fixes all over the tree.
+
+	Defconfigs: Friendlyarm Nanopi R2S: Fix U-Boot build, Kontron
+	BL i.MX8M Mini: Fix U-Boot build, PC Engines APU2: Fix Linux
+	build, ROC-RK3399-PC: Bump rootfs size to fix build
+
+	Updated/fixed packages: apache, apparmor, apr-util, arp-scan,
+	binutils, bluez5_utils, connman, cryptsetup, dnsmasq,
+	dovecot-pigeonhole, expat, gdk-pixbuf, gst1-plugins-base,
+	guile, keepalived, kodi, libbpf, libglvnd, libgsasl, libiconv,
+	librsvg, libuhttpd, libusb, libv4l, luasyslog, mongrel2, neon,
+	pcre, perl-netaddr-ip, php, psmisc, python-ipython,
+	python-pycli, python-pygame, python-regex, python-twisted,
+	qt5location, qt5webkit, resiprocate, rygel, safeclib,
+	sdl2_ttf, socketcand, strongswan, sudo, systemd, toolchain,
+	urg, webkitgtk, wireless-regdb, wpewebkit,
+	xdriver_xf86-video-{ati,mach64,mga,r128,savage,tdfx}, xz, zfs,
+	zsh
+
+2022.02-rc1, released February 13th, 2022
+
+	Numerous package updates and many (80) new packages.
+
+	Toolchain:
+	- glibc: Optional support for compatibility shims for running
+          on older kernels than what glibc has been built against
+	- uClibc: Use uClibc-ng 1.0.40
+	- External toolchains: Update Bootlin toolchains to 2021.11-1
+          version
+
+	Python 2.7 and python 2.x specific packages removed as python
+	2.x is EOL since April 2020. Likewise a number of python3
+	specific host packages has been renamed (host-python-foo
+	instead of host-python3-foo) now host-python is always python
+	3.x.
+
+	Cargo (Rust) package infrastructure added. Vendoring support
+	added to golang package infrastructure.
+
+	New defconfigs: FriendlyARM NanoPi R2S, Kontron BL i.MX8M
+	Mini, Microchip Sama7g7ek, Olimex STMP157 OlinuXino LIME2,
+	QEMU PPC Bamboo, PPC64 PowerNV, Raspberry Pi Zero 2W, Spike
+	Riscv64, Xilinx zcu102
+
+	Removed defconfigs: Synopsys arch38 VDK, aarch64 VDK
+
+	New packages: ace, alchemy, alfred, bat, bento4, bmx7,
+	bpftool, brcmfmac_sdio-firmware-rpi, cfm, cups-pk-helper,
+	davinci-bootcount, dbus-cxx, embiggen-disk, freeipmi,
+	gocryptfs, kodi-pvr-plutotv, kodi-pvr-waipu, ksmbd-tools,
+	libcamera-apps, libest, libexecinfo, libfutils, libglvnd,
+	libks, libmd, libopenaptx, libpeas, libshdata, liburing, lilv,
+	lua-argon2, lua-cffi, lua-inotify, lv2, mali-driver,
+	moby-buildkit, modsecurity2, networkd-dispatcher, pahole,
+	php-apcu, php-lua, php-pam, python-argon2-cffi-bindings,
+	python-cssselect2, python-distro, python-fonttools,
+	python-gnupg, python-installer, python-memory-profiler,
+	python-mpd2, python-pep517, python-pydyf, python-pypa-build,
+	python-pyphen, python-tinycss2, python-tomli,
+	python-weasyprint, python-zopfli, qoriq-cadence-dp-firmware,
+	riscv-isa-sim, rockchip-mali, rpi-rgb-led-matrix, sdbus-cpp,
+	sentry-cli, serd, simple-mail, sord, sratom,
+	sunxi-mali-utgard, sunxi-mali-utgard-driver, tinifier, ulog,
+	vulkan-headers, xlib_libxcvt, zabbix, zchunk, zynaddsubfx
+
+	Removed packages: gstreamer1-mm, python, python-backports-abc,
+	python-backports-functools-lru-cache,
+	python-backports-shutil-get-terminal-size,
+	python-backports-ssl-match-hostname, python-configobj,
+	python-dialog, python-enum, python-enum34, python-functools32,
+	python-futures, python-id3, python-ipaddr, python-ipaddress,
+	python-mad, python-nfc, python-pam, python-pathlib2,
+	python-pycap, python-pyro, python-singledispatch,
+	python-subprocess32, python-typing, python-yieldfrom,
+	qt5webkit-examples, rpi-bt-firmware, rpi-wifi-firmware,
+	sunxi-mali-mainline, sunxi-mali-mainline-driver, zynq-boot-bin
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12271: python-iptables runtime dependencies
+	#13436: PPP 2.4.9 is out
+	#14351: needs to mount sysfs before mount -a
+	#14451: nodejs won't build on Fedora 35
+	#14471: alsa_utils wrong deployment
+	#14501: lttng-modules v2.11 package fails to build
+	#14531: Package EFL - build error
+
+2021.11.3, released March 24th, 2022
+
+	Important / security related fixes.
+
+	Updated/fixed packages: apache, azure-iot-sdk-c, boinc, dbus,
+	directfb, docker-engine, exempi, expat, flac, gdb, gdk-pixbuf,
+	gnutls, go, haproxy, libcurl, libiec61850, libminiupnpc,
+	libodb, libodb-boost, libopenssl, libpjsip, libressl, librsvg,
+	libsrtp, libvirt, libxml2, libxslt, lxc, mariadb, minidlna,
+	odb, openblas, openvpn, oprofile, php, pppd, python-ipython,
+	python-twisted, raptor, rpi-firmware, samba4, seatd,
+	timescaledb, usbguard, util-linux, vim, wavpack,
+	wireless-regdb, wireplumber, wireshark, wolfssl, xscreensaver,
+	xterm, zsh
+
+	New packages: gdk-pixbuf-xlib
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13126: make fails - bzip2-1.0.6.tar.gz and DirectFB-1.7.7.tar..
+	#14636: azure-iot-sdk-c: Installed headers do not compile
+	#14641: oprofile can not find the events files
+
+2021.11.2, released February 28th, 2022
+
+	Important / security related fixes.
+
+	Defconfigs: Andes ae3xx, Intel galileo: Fix build with host
+	gcc >= 10, ROC-RK3399-PC: Bump rootfs size to fix build issue.
+
+	Add conditional patching logic to fix build issues for older
+	U-Boot / Linux kernel versions when built with a host gcc >=
+	10.
+
+	Updated/fixed packages: apitrace, binutils, casync, cgilua,
+	connman, expat, gauche, gdb, gensio, glibc, go, gst-omx,
+	gst1-devtools, gst1-libav, gst1-plugins-bad,
+	gst1-plugins-base, gst1-plugins-good, gst1-plugins-ugly,
+	gst1-python, gst1-rtsp-server, gst1-vaapi, gstreamer1,
+	gstreamer1-editing-services, kf5-extra-cmake-modules, kodi,
+	libarchive, linux, lm-sensors, localedef, log4cxx, mpd,
+	nfs-utils, php, pistache, pkcs11-helper, prosody,
+	python-django, python-pyzmq, python-regex,
+	python-sqliteschema, resiprocate, rtl8723bu, thermald, tiff,
+	tor, util-linux, vim, xen
+
+2021.11.1, released January 29th, 2022
+
+	Important / security related fixes.
+
+	check-package: Improve variable override check
+
+	pkg-stats: List CVEs where the version info cannot be parsed
+	as unsure rather than completely ignoring them.
+
+	Defconfigs: Beaglebone: Support BeagleBone black wireless,
+	stm32f469_xip_disco: Fix kernel boot
+
+	Updated/fixed packages: alsa-utils, apache, binutils, cage,
+	capnproto, civetweb, clamav, collectd, connman, containerd,
+	coreutils, dav1d, docker-cli, docker-engine, erlang,
+	erlang-rebar, expat, findutils, flare-engine, flare-game,
+	font-awesome, freeswitch, gcc, ghostscript, glibc, gnuchess,
+	go, grpc, gst1-interpipe, gst1-rtsp-server, gupnp-tools,
+	hackrf, icu, imagemagick, janus-gateway, json-for-modern-cpp,
+	keepalived, lapack, libdbi, libiio, libjpeg, libmbim, libnss,
+	libopenssl, libpjsip, libqmi, liburiparser, libvirt,
+	linux-pam, lxc, mbedtls, mender, mongodb, mpd-mpc, mutt,
+	nodejs, openblas, pcre2, php, pipewire, polkit, privoxy,
+	prosody, python-charset-normalizer, python-django,
+	python-idna, python-lxml, python-pyqt5, python-requests,
+	python-urllib3, python3, qt5base, qt5location, rhash,
+	rng-tools, ruby, runc, rustc, samba4, sofia-sip, targetcli-fb,
+	tcpreplay, tinyxml, tor, tpm2-tss, util-linux-libs, vim, vlc,
+	wireshark, xapp_xauth, xapp_xinput-calibrator, xen, xenomai,
+	xlib_libX11, xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14451: nodejs won't build on Fedora 35
+	#14471: alsa_utils wrong deployment
+
+2021.11, released December 5th, 2021
+
+	Various fixes.
+
+	Defconfigs: Grinn chiliboard/liteboard, PC x86-64 bios: Fix
+	build
+
+	Updated/fixed packages: apr, coreutils, diffutils, e2fsprogs,
+	exfat, freeswitch, gnupg, grub2, gstreamer1, guile, heimdal,
+	hiawatha, hplip, icu, janus-gateway,
+	kodi-screensaver-asterwave, kodi-screensaver-cpblobs,
+	kodi-screensaver-matrixtrails, libatomic_ops, libbson, libffi,
+	libgdiplus, libgee, libhtp, libite, libnspr, libnss,
+	libunwind, lynx, mender-grubenv, mkpasswd, motion, mxml,
+	netdata, qemu, samba4, speex, stress-ng, tinydtls, unixodbc,
+	unrar, util-linux, util-linux-libs, watchdogd, wireshark
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14351: needs to mount sysfs before mount -a
+	#14411: 2021.11-rc2: Samba doesn't compile
+
+2021.11-rc3, released November 30th, 2021
+
+	Fixes all over the tree.
+
+	Defconfigs: Nitrogen8mp: Fix Linux build, Zynqmp-zxu106: Fix
+	ATF build
+
+	Updated/fixed packages: asterisk, automake, gdb, glorytun,
+	gmp, hackrf, libgee, libglib2, libmodsecurity, libosmium,
+	libressl, lighttpd, linux, micropython, mosquitto, mtd,
+	nfs-utils, nss-myhostname, pcre, php, poco, pure-ftpd,
+	python-cycler, qemu, qdecoder, smack, smcroute, spidev_test,
+	strace, syslinux, toolchain, uboot, uhd, vim, websocketpp,
+	wireshark, xcursor-transparent-theme, xscreensaver,
+	xtables-addons
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14346: BR2_PACKAGE_NFS_UTILS_RPC_NFSD does not patch CONFIG_NFSD..
+
+2021.11-rc2, released November 19th, 2021
+
+	Fixes all over the tree.
+
+	Coding style fixes for a large number of board genimage
+	configuration files for clarity and consistency.
+
+	Defconfigs: Acmesystems Aria/Arietta g25, Armadeus
+	apf28/apf51, beagleboneai, Olimx a64, rock64, sheevaplug: Fix
+	build with hostcc >= 10, Nezha: Correct U-Boot dependencies
+
+	Updated/fixed packages: alsa-lib, apparmor, binutils,
+	bluez5_utils, botan, diffutils, firmware-utils, gdb, glmark2,
+	glog, gpu-amd-bin-mx51, gst1-interpipe, imx-vpuwrap, iperf,
+	isl, janet, libdnet, libglib2, libhtp, liburcu, log4cxx,
+	luajit, luvi, meson, mksh, mongodb, mosquitto, mpd, mupdf,
+	opencv4, oracle-mysql, pipewire, postgresql, python-aiohttp,
+	python-pudb, python-ujson, qhull, samba4, seatd, sg3_utils,
+	suricata, tpm2-tss, uboot, vim, xserver_xorg-server
+
+	New packages: pipewire-media-session
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	14311: Cannot compile dahdi (part of Asterisk) for x86 (P1mmx)
+
+2021.11-rc1, released November 8th, 2021
+
+	Numerous package updates. Notable updates including numerous
+	Python modules, Kodi add-ons, nodejs, OpenJDK.
+
+	Toolchain:
+	- glibc update to 2.34
+	- support for gdb 11.x added, gdb 10.x now the default
+	- external toolchains provided by ARM updated
+	- remove support for internal toolchain on the CSKY
+          architecture, as it was broken and unmaintained
+
+	Many packages updated to enable the appropriate SELinux
+	refpolicy module when SELinux support is enabled.
+
+	Support was added in the test-pkg package testing utility for
+	using Gitlab CI to run the builds.
+
+	New libgbm virtual package to better support OpenGL
+	implementations that provide a libgbm library.
+
+	Bootloaders/firmware: grub2 extended to be able to support
+	multiple platforms in the same build.
+
+	Filesystems:
+	- new OCI filesystem type, to build container images
+	  compatible with the Open Container Initiative standard
+	- support for hybrid ISO9660 images added, which work on
+          legacy and EFI BIOS machines
+
+	New defconfigs: Allwinner nezha, stm32mp157c_odyssey
+
+	Removed defconfigs: qemu_csky
+
+	New packages: dtbocfg, firmware-utils, gstd, libdbi,
+	libdbi-drivers, libteam, lua-augeas, mstpd, php-pecl-dbus,
+	python-aioprocessing, python-bidict,
+	python-charset-normalizer, python-flask-expects-json,
+	python-git, python-pyndiff, python-rsa,
+	python-unitest-xml-reporting, python-xmljson,
+	python3-cryptography, python3-pip, qt5opcua, rwmem,
+	sloci-image, softhsm2, sun20i-d1-spl, uqmi, vuejs-router,
+	watchdogd, wireplumber
+
+	Removed packages: canfestival, python-meld3
+
+	Work toward the removal of python 2 has progressed: many
+	python modules and packages have been updated to a version
+	supporting python 3.
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14271: compilation error with rsync command for  permission
+	#14276: Unable to get login prompt
+	#14196: when using raspberrypicm4io_64_defconfig, make fails
+	        with mkfs.ext4: No such file or directory while trying
+	        to determine filesystem size
+
+2021.08.3, released December 13th, 2021
+
+	Important / security related fixes.
+
+	Defconfigs: Various fixes for building with gcc >= 10 host or
+	target compilers.
+
+	Updated/fixed packages: alsa-lib, apparmor, apr, asterisk,
+	binutils, bluez5_utils, coreutils, e2fsprogs, exfat,
+	freeswitch, gdb, glmark2, glog, glorytun, gmp,
+	gpu-amd-bin-mx51, gst1-interpipe, gstreamer1, guile, gupnp,
+	hackrf, heimdal, hiawatha, hplip, icu, imx-vpuwrap, isl,
+	janus-gateway, libatomic_ops, libbson, libdnet, libffi,
+	libgdiplus, libgee, libglib2, libhtp, libmodsecurity, libnspr,
+	libnss, libosmium, libunwind, linux, lynx, meson, micropython,
+	mkpasswd, mksh, mosquitto, motion, mupdf, mxml, netdata,
+	nfs-utils, opencv4, oracle-mysql, pcre, php, postgresql,
+	pure-ftpd, python-cycler, qdecoder, rcw-smarc-sal28, samba4,
+	smack, speex, stress-ng, suricata, syslinux, uboot, unixodbc,
+	unrar, vim, websocketpp, wireshark
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14346: BR2_PACKAGE_NFS_UTILS_RPC_NFSD does not patch CONFIG_NFSD..
+
+2021.08.2, released November 10th, 2021
+
+	Important / security related fixes.
+
+	Updated/fixed packages: asterisk, audit, bind, bitcoin,
+	containerd, cryptsetup, dahdi-linux, dbus-python, dfu-util,
+	docker-cli, docker-engine, earlyoom, edk2-platforms, exiv2,
+	ffmpeg, freerdp, gdb, gensio, gnupg2, go, gpsd,
+	gst1-plugins-bad, gst1-plugins-ugly, gst1-vaapi, gtest,
+	hiredis, lftp, libps1, libva, libva-utils, lightning,
+	log4cplus, lrzip, netdata, nodejs, olsr, openjdk, openjdk-bin,
+	pango, php, python3-cffi, qemu, refpolicy, rng-tools, samba4,
+	snort, strongswan, sunxi-mali-mainline-driver, suricata,
+	systemd, tor, vim, weston, wf111, wireguard-linux-compat,
+	xerces
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14311: Cannot compile dahdi (part of Asterisk) for x86 (P1mmx)
+
+2021.08.1, released October 11, 2021
+
+	Important / security related fixes.
+
+	gdbinit: Mark the sysroot as a "safe path" before configuring
+	it, so pretty printers work correctly without having to pass
+	-ix to gdb
+
+	Updated/fixed packages: alsa-lib, apache,
+	arm-trusted-firmware, atftp, bind, botan, cog, containerd,
+	cryptopp, docker-cli, dash, dc3dd, docker-engine, dovecot,
+	environment-setup, erlang, fetchmail, ffmpeg, fio, gcc, gd,
+	gdb, ghostscript, gnuradio, gnutils, go,
+	gobject-introspection, google-breakpad, gst-omx,
+	gst1-devtools, gst1-interpipe, gst1-libav, gst1-plugins-bad,
+	gst1-plugins-base, gst1-plugins-good, gst1-plugins-ugly,
+	gst1-python, gst1-rtsp-server, gst1-vaapi, gstreamer1,
+	gstreamer1-editing-services, gupnp, haproxy, imlib2, kodi,
+	kodi-pvr-octonet, kodi-visualisation-fishbmc, libcurl,
+	libexif, libgcrypt, libglib2, libkrb5, libressl, librsvg,
+	libsndfile, libssh, libvirt, libxcrypt, libyang, links, lvm2,
+	lynx, lxc, mc, mesa3d, micropython, minicom, mono, mosquitto,
+	mtr, mupdf, mv-ddr-marvell, net-tools, nginx-dav-ext, nmap,
+	nodejs, ntfs-3g, openjdk, openjdk-bin, openldap, openssh,
+	pcre2, php, php-gnupg, pipewire, postgis, python-aioconsole,
+	python-cbor2, python-cffi, python-cython, python-dateutil,
+	python-django, python-pillow, python-pip, python-texttable,
+	python-urllib3, python-webob, qemu, qt5location, redis,
+	refpolicy, ripgrep, ruby, runc, sispmctl, sox, squid,
+	strongswan, supervisor, swupdate, syslinux, systemd, tinycbor,
+	trace-cmd, uboot-tools, uclibc, udisks, uhd, vim, vsftpd,
+	wavemon, webkitgtk, wget, wireless-regdb, wpewebkit,
+	xapp_xrdb, xapp_xwd, xen, xlib_libXfont2, xlib_libXft,
+	xserver_xorg-server, zip
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14206: Kodi: even when not enabled, forcefully selects libevdev..
+	#14211: libffi-3.3.tar.gz repacked
+	#14221: mv-ddr-marvell fails license validation
+
 2021.08, released September 4th, 2021
 
 	Various fixes.
@@ -121,6 +1210,62 @@
 	        pkg-generic pkg types
 	#13846: BR2_PACKAGE_LVM2_STANDARD_INSTALL should be default to
 	        y as before
+
+2021.05.3, released October 11, 2021
+
+	Important / security related fixes.
+
+	gdbinit: Mark the sysroot as a "safe path" before configuring
+	it, so pretty printers work correctly without having to pass
+	-ix to gdb
+
+	Updated/fixed packages: alsa-lib, apache,
+	arm-trusted-firmware, atftp, bind, botan, containerd,
+	cryptopp, dash, dc3dd, docker-cli, docker-engine, dovecot,
+	erlang, fetchmail, ffmpeg, gdb, ghostscript, go, gst-omx,
+	gst1-devtools, gst1-interpipe, gst1-libav, gst1-plugins-bad,
+	gst1-plugins-base, gst1-plugins-good, gst1-plugins-ugly,
+	gst1-python, gst1-rtsp-server, gst1-vaapi, gstreamer1,
+	gstreamer1-editing-services, kodi, kodi-pvr-octonet,
+	kodi-visualisation-fishbmc, libcurl, libkrb5, libressl,
+	libsndfile, libxcrypt, libyang, lxc, lynx, mesa3d,
+	micropython, minicom, mono, mtr, mv-ddr-marvell, net-tools,
+	nmap, nodejs, ntfs-3g, openjdk, openjdk-bin, openldap,
+	openssh, pcre2, php, python-aioconsole, python-cffi,
+	python-dateutil, python-django, python-pip, python-texttable,
+	python-urllib, python-webob, qt5location, redis, refpolicy,
+	ripgrep, runc, sispmctl, squid, strongswan, supervisor,
+	syslinux, tinycbor, trace-cmd, uboot-tools, uclibc, wavemon,
+	wget, wireless-regdb, xen, xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14206: Kodi: even when not enabled, forcefully selects libevdev..
+	#14211: libffi-3.3.tar.gz repacked
+	#14221: mv-ddr-marvell fails license validation
+
+2021.05.2, released September 15th, 2021
+
+	Important / security related fixes.
+
+	Toolchain: Disable fortify support for Microblaze as it is not
+	currently working.
+
+	Updated/fixed packages: alsa-utils, arm-trusted-firmware,
+	bayer2rgb-neon, belle-sip, bullet, busybox, c-ares, cjson,
+	coreutils, cpio, eigen, environment-setup, fetchmail, ffmpeg,
+	fontconfig, gd, gdb, gnuradio, gnutls, go, haproxy, ipmiutil,
+	iputils, jszip, kvm-unit-tests, libarchive, libargtable2,
+	libexif, libgcrypt, libmodsecurity, libopenssl, librsvg,
+	libshout, libssh, libxcrypt, linux, linux-pam, localedef, mc,
+	mesa3d, mosquitto, netsniff-ng, nginx, nodejs, ogre, openjdk,
+	openmpi, openvmtools, perl-net-ssh2, php, pipewire,
+	postgresql, prelink-cross, prosody, protobuf, python-keyring,
+	python-matplotlib, python-pillow, python-pyudev,
+	python-secretstorage, python3, qt5base, samba4, sdl2, sox,
+	swupdate, sylpheed, tar, terminology, tor, uboot-tools, uhd,
+	unbound, ushare, vim, wlroots, xapp_xrdb, xapp_xwd, xen,
+	xenomai, xlib_libXfont2, xlib_libXft, zip
 
 2021.05.1, released August 10, 2021
 
@@ -319,6 +1464,188 @@
 	#13741: genext2fs does not allow to set perms of root node
 	#13751: libopenssl (static): huge drop in performance in newer ..
 	#13771: package htop has undeclared dependency on host python
+
+2021.02.12, released April 6th, 2022
+
+	Important / security related fixes.
+
+	pkg-stats: Limit memory use for CPE matching
+
+	Updated/fixed packages: gdk-pixbuf, jack2, libzlib, matio,
+	nbd, netatalk, opus, python-paramiko, python-treq,
+	python-twisted, spidev_test, unbound, urandom-scripts, vim,
+	wireshark, zlib-ng, zziplib
+
+2021.02.11, released March 25th, 2022
+
+	Important / security related fixes.
+
+	Updated/fixed packages: apache, azure-iot-sdk-c, dbus,
+	directfb, docker-engine, exempi, expat, flac, gdk-pixbuf,
+	gnutls, go, haproxy, libcurl, libiec61850, libminiupnpc,
+	libodb, libodb-boost, libopenssl, libpjsip, libressl, librsvg,
+	libsrtp, libxml2, libxslt, lxc, mariadb, odbm openblas,
+	openvpn, oprofile, php, pppd, python-ipython, python-treq,
+	python-twisted, python-txbus, python-txtorcon, raptor,
+	rpi-firmware, samba4, timescaledb, util-linux, vim, wavpack,
+	wireless-regdb, wireshark, wolfssl, xscreensaver, xterm, zsh
+
+	New packages: gdk-pixbuf-xlib
+
+	Removed packages: python-coherence
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13126: make fails - bzip2-1.0.6.tar.gz and DirectFB-1.7.7.tar..
+	#14636: azure-iot-sdk-c: Installed headers do not compile
+	#14641: oprofile can not find the events files
+
+2021.02.10, released February 28th, 2022
+
+	Important / security related fixes.
+
+	Defconfigs: Andes ae3xx, Intel galileo: Fix build with host
+	gcc >= 10, ROC-RK3399-PC: Bump rootfs size to fix build issue.
+
+	Add conditional patching logic to fix build issues for older
+	U-Boot / Linux kernel versions when built with a host gcc >=
+	10.
+
+	Updated/fixed packages: casync, cgilua, connman, expat,
+	gauche, gensio, go, gst-omx, gst1-devtools, gst1-libav,
+	gst1-plugins-bad, gst1-plugins-base, gst1-plugins-good,
+	gst1-plugins-ugly, gst1-python, gst1-rtsp-server, gst1-vaapi,
+	gstreamer1, gstreamer1-editing-services,
+	kf5-extra-cmake-modules, kodi, libarchive, linux, lm-sensors,
+	log4cxx, mpd, nfs-utils, pistache, prosody, python-django,
+	python-pyzmq, rtl8723bu, thermald, tiff, util-linux, vim, xen
+
+2021.02.9, released January 29th, 2022
+
+	Important / security related fixes.
+
+	check-package: Improve variable override check
+
+	pkg-stats: List CVEs where the version info cannot be parsed
+	as unsure rather than completely ignoring them.
+
+	Defconfigs: Beaglebone: Support BeagleBone black wireless
+
+	Updated/fixed packages: alsa-utils, apache, cage, capnproto,
+	civetweb, clamav, collectd, connman, coreutils, dav1d,
+	docker-cli, docker-containerd, docker-engine, expat,
+	findutils, flare-engine, flare-game, font-awesome, freeswitch,
+	gcc, ghostscript, gnuchess, go, grpc, gst1-interpipe,
+	gst1-plugins-bad, gst-rtsp-sever, gupnp-tools, hackrf, icu,
+	imagemagick, janus-gateway, keepalived, lapack, libjpeg,
+	libopenssl, libpjsip, liburiparser, linux-pam, lxc, mbedtls,
+	mongodb, mpd-mpc, nodejs, openblas, pcre2, polkit, poppler,
+	privoxy, prosody, python-django, python-lxml, python-pyqt5,
+	python3, qt5base, qt5location, rhash, ruby, runc, samba4,
+	sofia-sip, targetcli-fb, tcpreplay, tinyxml, vim, vlc,
+	wireshark, xapp_xauth, xen, xlib_libX11, xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14471: alsa_utils wrong deployment
+
+2021.02.8, released December 14th, 2021
+
+	Important / security related fixes.
+
+	Defconfigs: Various fixes for building with gcc >= 10 host or
+	target compilers.
+
+	Updated/fixed packages: alsa-lib, apparmor, apr, asterisk,
+	binutils, bluez5_utils, busybox, coreutils, e2fsprogs, ell,
+	exfat, freeswitch, gdb, glmark2, glog, glorytun, gmp,
+	gpu-amd-bin-mx51, gst1-interpipe, gstreamer1, guile, gupnp,
+	hackrf, heimdal, hiawatha, hplip, icu, imx-vpuwrap, isl, iwd,
+	janus-gateway, libatomic_ops, libbson, libdnet, libffi,
+	libgdiplus, libgee, libhtp, libmodsecurity, libnspr, libnss,
+	libunwind, linux, lynx, meson, micropython, mkpasswd, mksh,
+	mosquitto, motion, mxml, netdata, nfs-utils, oracle-mysql,
+	pcre, pkcs11-helper, postgresql, pure-ftpd, python-cycler,
+	qdecoder, rcw-smarc-sal28, samba4, smack, speex, stress-ng,
+	suricata, syslinux, uboot, unixodbc, unrar, vim, websocketpp,
+	wireshark
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14346: BR2_PACKAGE_NFS_UTILS_RPC_NFSD does not patch CONFIG_NFSD..
+
+2021.02.7, released November 10th, 2021
+
+	Important / security related fixes.
+
+	OpenJDK 16.x moved to 17.x as 16.x is EOL.
+
+	Updated/fixed packages: asterisk, audit, bind, bitcoin,
+	cryptsetup, dahdi-linux, dbus-python, dfu-util, docker-cli,
+	docker-containerd, docker-engine, earlyoom, exiv2, ffmpeg,
+	freerdp, gdb, gensio, gnupg2, go, gpsd, gst1-plugins-bad,
+	gst1-plugins-ugly, gst1-vaapi, hiredis, lftp, lightning,
+	lrzip, netdata, nodejs, olsr, openjdk, openjdk-bin, pango,
+	qemu, samba4, snort, strongswan, suricata, systemd, vim,
+	wf111, wireguard-linux-compat, xerces
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14311: Cannot compile dahdi (part of Asterisk) for x86 (P1mmx)
+
+2021.02.6, released October 11, 2021
+
+	Important / security related fixes.
+
+	gdbinit: Mark the sysroot as a "safe path" before configuring
+	it, so pretty printers work correctly without having to pass
+	-ix to gdb
+
+	Updated/fixed packages: alsa-lib, apache,
+	arm-trusted-firmware, atftp, bind, botan, cryptopp, dash,
+	dc3dd, docker-cli, docker-containerd, docker-engine, dovecot,
+	erlang, fetchmail, gdb, ghostscript, go, gst-omx,
+	gst1-devtools, gst1-interpipe, gst1-libav, gst1-plugins-bad,
+	gst1-plugins-base, gst1-plugins-good, gst1-plugins-ugly,
+	gst1-python, gst1-rtsp-server, gst1-vaapi, gstreamer1,
+	gstreamer1-editing-services, kodi-pvr-octonet, libcurl,
+	libkrb5, libressl, libsndfile, libyang, lxc, lynx, mesa3d,
+	micropython, minicom, mono, mtr, mv-ddr-marvell, net-tools,
+	nmap, nodejs, ntfs-3g, openjdk, openjdk-bin, openldap,
+	openssh, php, python-aioconsole, python-cffi, python-dateutil,
+	python-django, python-pip, python-texttable, python-urllib3,
+	python-webob, qt5location, redis, refpolicy, ripgrep, runc,
+	sispmctl, squid, strongswan, supervisor, syslinux, tinycbor,
+	trace-cmd, uboot-tools, uclibc, wavemon, wireless-regdb, xen,
+	xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14206: Kodi: even when not enabled, forcefully selects libevdev..
+	#14211: libffi-3.3.tar.gz repacked
+	#14221: mv-ddr-marvell fails license validation
+
+2021.02.5, released September 15th, 2021
+
+	Important / security related fixes.
+
+	Toolchain: Disable fortify support for Microblaze as it is not
+	currently working.
+
+	Updated/fixed packages: alsa-utils, arm-trusted-firmware,
+	bayer2rgb-neon, belle-sip, busybox, c-ares, cjson, coreutils,
+	cpio, eigen, environt-setup, fetchmail, fluidsynth,
+	fontconfig, gd, gdb, gnuradio, gnutls, go, haproxy, ipmiutil,
+	iputils, jszip, kvm-unit-tests, libarchive, libexif,
+	libgcrypt, libmodsecurity, libopenssl, librsvg, libshout,
+	libssh, linux, localedef, mc, mesa3d, mosquitto, netsniff-ng,
+	nginx, nodejs, ogre, openmpi, openvmtools, php, postgresql,
+	prelink-cross, prosody, protobuf, python-keyring,
+	python-matplotlib, python-pillow, python-pyudev,
+	python-secretstorage, python3, qt5base, samba4, sdl2, sox,
+	swupdate, sylpheed, tor, uboot-tools, uhd, unbound, vim,
+	wlroots, xapp_xrdb, xapp_xwd, xen, xenomai, xlib_libXfont2,
+	xlib_libXft, zip
 
 2021.02.4, released August 10th, 2021
 

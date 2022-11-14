@@ -31,4 +31,12 @@ config BR2_PACKAGE_OPENSSH_KEY_UTILS
 	help
 	  Key utilities: ssh-keygen, ssh-keyscan.
 
+config BR2_PACKAGE_OPENSSH_SANDBOX
+	bool "use sandboxing"
+	default y
+	help
+	  Use sandboxing for extra privilege protection of processes.
+
+	  This is normally preferable, but may cause seccomp problems
+	  for certain combinations of C libraries and kernel versions.
 endif

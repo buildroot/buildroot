@@ -1,0 +1,38 @@
+# Reference from: freeradius-server/redhat/radiusd.service
+
+[Unit]
+Description=FreeRADIUS multi-protocol policy server
+After=network-online.target
+Documentation=man:radiusd(8) man:radiusd.conf(5) http://wiki.freeradius.org/ http://networkradius.com/doc/
+
+[Service]
+Type=notify
+WatchdogSec=60
+NotifyAccess=all
+EnvironmentFile=-/etc/default/radiusd
+
+# FreeRADIUS can do static evaluation of policy language rules based
+# on environmental variables which is very useful for doing per-host
+# customization.
+# Unfortunately systemd does not allow variable substitutions such
+# as %H or $(hostname) in the EnvironmentFile.
+# We provide HOSTNAME here for convenience.
+Environment=HOSTNAME=%H
+
+# Limit memory to 2G this is fine for %99.99 of deployments.  FreeRADIUS
+# is not memory hungry, if it's using more than this, then there's probably
+# a leak somewhere.
+MemoryLimit=2G
+
+ExecStartPre=/usr/sbin/radiusd $FREERADIUS_OPTIONS -Cx -lstdout
+ExecStart=/usr/sbin/radiusd -f $FREERADIUS_OPTIONS
+Restart=on-failure
+RestartSec=5
+ExecReload=/usr/sbin/radiusd $FREERADIUS_OPTIONS -Cxm -lstdout
+ExecReload=/bin/kill -HUP $MAINPID
+
+# Only allow native system calls
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

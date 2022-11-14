@@ -1,9 +1,9 @@
 comment "targetcli-fb depends on Python"
-	depends on !BR2_PACKAGE_PYTHON && !BR2_PACKAGE_PYTHON3
+	depends on !BR2_PACKAGE_PYTHON3
 
 config BR2_PACKAGE_TARGETCLI_FB
 	bool "targetcli-fb"
-	depends on BR2_PACKAGE_PYTHON || BR2_PACKAGE_PYTHON3
+	depends on BR2_PACKAGE_PYTHON3 # python-configshell-fb
 	select BR2_PACKAGE_PYTHON_CONFIGSHELL_FB
 	select BR2_PACKAGE_PYTHON_RTSLIB_FB
 	select BR2_PACKAGE_PYTHON_SIX

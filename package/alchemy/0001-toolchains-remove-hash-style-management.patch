@@ -1,0 +1,36 @@
+From 4cb9681ab99db3d8e330ac789e17ec69583aecd4 Mon Sep 17 00:00:00 2001
+From: Herve Codina <herve.codina@bootlin.com>
+Date: Thu, 28 Oct 2021 18:39:18 +0200
+Subject: [PATCH] toolchains: remove --hash-style management
+
+Using an external toolchain, with an external configuration given
+using TARGET_GLOBAL_XXXX variables, having '--hash-style=both'
+in Alchemy toolchains can lead to compilation failure.
+
+This patch simply removes all --hash-style settings.
+
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+---
+ toolchains/linux/eglibc/flags.mk | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/toolchains/linux/eglibc/flags.mk b/toolchains/linux/eglibc/flags.mk
+index 95c0a46..4474729 100644
+--- a/toolchains/linux/eglibc/flags.mk
++++ b/toolchains/linux/eglibc/flags.mk
+@@ -11,11 +11,4 @@ TARGET_GLOBAL_LDLIBS += -pthread -lrt
+ TARGET_GLOBAL_CFLAGS += -funwind-tables
+ 
+ # Enable link optimization for binutils's ld.
+-# gnu hash not supported by mips ABI
+-ifeq ("$(TARGET_ARCH)","mips")
+-  TARGET_GLOBAL_LDFLAGS += -Wl,-O1
+-else ifeq ("$(TARGET_ARCH)","mips64")
+-  TARGET_GLOBAL_LDFLAGS += -Wl,-O1
+-else
+-  TARGET_GLOBAL_LDFLAGS += -Wl,-O1,--hash-style=both
+-endif
++TARGET_GLOBAL_LDFLAGS += -Wl,-O1
+-- 
+2.31.1
+

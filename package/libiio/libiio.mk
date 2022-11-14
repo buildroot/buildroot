@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBIIO_VERSION = 0.23
+LIBIIO_VERSION = 0.24
 LIBIIO_SITE = $(call github,analogdevicesinc,libiio,v$(LIBIIO_VERSION))
 LIBIIO_INSTALL_STAGING = YES
 LIBIIO_LICENSE = LGPL-2.1+
@@ -16,6 +16,12 @@ LIBIIO_CONF_OPTS = -DENABLE_IPV6=ON \
 	-DINSTALL_UDEV_RULE=$(if $(BR2_PACKAGE_HAS_UDEV),ON,OFF) \
 	-DWITH_TESTS=$(if $(BR2_PACKAGE_LIBIIO_TESTS),ON,OFF) \
 	-DWITH_DOC=OFF
+
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
+LIBIIO_CONF_OPTS += -DNO_THREADS=OFF
+else
+LIBIIO_CONF_OPTS += -DNO_THREADS=ON
+endif
 
 ifeq ($(BR2_PACKAGE_LIBIIO_XML_BACKEND),y)
 LIBIIO_DEPENDENCIES += libxml2
@@ -59,8 +65,7 @@ else
 LIBIIO_CONF_OPTS += -DWITH_AIO=OFF
 endif
 
-# Avahi support in libiio requires avahi-client, which needs avahi-daemon and dbus
-ifeq ($(BR2_PACKAGE_AVAHI_DAEMON)$(BR2_PACKAGE_DBUS),yy)
+ifeq ($(BR2_PACKAGE_AVAHI_LIBAVAHI_CLIENT),y)
 LIBIIO_DEPENDENCIES += avahi
 LIBIIO_CONF_OPTS += -DHAVE_DNS_SD=ON
 else
@@ -68,12 +73,10 @@ LIBIIO_CONF_OPTS += -DHAVE_DNS_SD=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_LIBIIO_BINDINGS_PYTHON),y)
-ifeq ($(BR2_PACKAGE_PYTHON),y)
-LIBIIO_DEPENDENCIES += host-python-setuptools python
-else ifeq ($(BR2_PACKAGE_PYTHON3),y)
-LIBIIO_DEPENDENCIES += host-python3-setuptools python3
-endif
-LIBIIO_CONF_OPTS += -DPYTHON_BINDINGS=ON
+LIBIIO_DEPENDENCIES += host-python-setuptools python3
+LIBIIO_CONF_OPTS += \
+	-DPYTHON_BINDINGS=ON \
+	-DPYTHON_EXECUTABLE=$(HOST_DIR)/bin/python3
 else
 LIBIIO_CONF_OPTS += -DPYTHON_BINDINGS=OFF
 endif

@@ -1,0 +1,47 @@
+From 30a954525f4e53a9cd50a1a8a6f201c7cf6595c7 Mon Sep 17 00:00:00 2001
+From: "H.J. Lu" <hjl.tools@gmail.com>
+Date: Mon, 7 Feb 2022 15:22:19 -0800
+Subject: [PATCH] i386: Allow GOT32 relocations against ABS symbols
+
+GOT32 relocations are allowed since absolute value + addend is stored in
+the GOT slot.
+
+Tested on glibc 2.35 build with GCC 11.2 and -Os.
+
+bfd/
+
+	PR ld/28870
+	* elfxx-x86.c (_bfd_elf_x86_valid_reloc_p): Also allow GOT32
+	relocations.
+
+
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+
+diff --git a/bfd/elfxx-x86.c b/bfd/elfxx-x86.c
+index 7ac2411fc80..d00dc45677b 100644
+--- a/bfd/elfxx-x86.c
++++ b/bfd/elfxx-x86.c
+@@ -1942,9 +1942,9 @@ _bfd_elf_x86_valid_reloc_p (asection *input_section,
+       irel = *rel;
+ 
+       /* Only allow relocations against absolute symbol, which can be
+-	 resolved as absolute value + addend.  GOTPCREL relocations
+-	 are allowed since absolute value + addend is stored in the
+-	 GOT slot.  */
++	 resolved as absolute value + addend.  GOTPCREL and GOT32
++	 relocations are allowed since absolute value + addend is
++	 stored in the GOT slot.  */
+       if (bed->target_id == X86_64_ELF_DATA)
+ 	{
+ 	  r_type &= ~R_X86_64_converted_reloc_bit;
+@@ -1965,7 +1965,9 @@ _bfd_elf_x86_valid_reloc_p (asection *input_section,
+       else
+ 	valid_p = (r_type == R_386_32
+ 		   || r_type == R_386_16
+-		   || r_type == R_386_8);
++		   || r_type == R_386_8
++		   || r_type == R_386_GOT32
++		   || r_type == R_386_GOT32X);
+ 
+       if (valid_p)
+ 	*no_dynreloc_p = true;

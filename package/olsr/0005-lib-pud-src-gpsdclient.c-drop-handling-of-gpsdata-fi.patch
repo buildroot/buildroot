@@ -1,0 +1,49 @@
+From 665051a845464c0f95edb81432104dac39426f79 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 6 Nov 2021 15:50:58 +0100
+Subject: [PATCH] lib/pud/src/gpsdclient.c: drop handling of
+ gpsdata->fix.status
+
+Here is an extract of https://gpsd.gitlab.io/gpsd/gpsd_json.html:
+
+The optional "status" field (aka fix type), is a modifier (adjective) to
+mode. It is not a replacement for, or superset of, the "mode" field. It
+is almost, but not quite, the same as the NMEA 4.x xxGGA GPS Quality
+Indicator Values. Many GNSS receivers do not supply it. Those that do
+interpret the specification in various incompatible ways.
+
+So status field is optional and STATUS_NO_FIX has been explicitly
+renamed into STATUS_UNK to avoid confusion with MODE_NO_FIX (which is
+already handled by gpsdclient.c) so drop the if block to fix the build
+failure with gpsd >= 3.23.1.
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream: https://github.com/OLSR/olsrd/commit/665051a845464c0f95edb81432104dac39426f79]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ lib/pud/src/gpsdclient.c | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+diff --git a/lib/pud/src/gpsdclient.c b/lib/pud/src/gpsdclient.c
+index a2a9cee0..d448867d 100644
+--- a/lib/pud/src/gpsdclient.c
++++ b/lib/pud/src/gpsdclient.c
+@@ -370,15 +370,6 @@ void nmeaInfoFromGpsd(struct gps_data_t *gpsdata, NmeaInfo *info, struct GpsdCon
+           );
+ 
+   gpsdata->set &= ~STATUS_SET; /* always valid */
+-  #if GPSD_API_MAJOR_VERSION >= 10
+-  if (gpsdata->fix.status == STATUS_NO_FIX) {
+-  #else
+-  if (gpsdata->status == STATUS_NO_FIX) {
+-  #endif
+-    nmeaInfoClear(info);
+-    nmeaTimeSet(&info->utc, &info->present, NULL);
+-    return;
+-  }
+ 
+   if (!gpsdata->set) {
+     return;
+-- 
+2.33.1
+

@@ -2,12 +2,22 @@ comment "gnupg2 needs a toolchain w/ threads and dynamic library support"
 	depends on BR2_USE_MMU
 	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS
 
-config BR2_PACKAGE_GNUPG2
-	bool "gnupg2"
+# helper to make it easier to select gnupg2 or gnupg; usage:
+# select BR2_PACKAGE_GNUPG2 if BR2_PACKAGE_GNUPG2_DEPENDS && !BR2_PACKAGE_GNUPG
+# select BR2_PACKAGE_GNUPG if !BR2_PACKAGE_GNUPG2_DEPENDS
+
+config BR2_PACKAGE_GNUPG2_DEPENDS
+	bool
+	default y
 	depends on BR2_PACKAGE_LIBGPG_ERROR_ARCH_SUPPORTS # libgpg-error
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libnpth
 	depends on BR2_USE_MMU # libassuan, libnpth
 	depends on !BR2_STATIC_LIBS
+
+config BR2_PACKAGE_GNUPG2
+	bool "gnupg2"
+	depends on BR2_PACKAGE_GNUPG2_DEPENDS
+	depends on !BR2_PACKAGE_GNUPG
 	select BR2_PACKAGE_ZLIB
 	select BR2_PACKAGE_LIBGPG_ERROR
 	select BR2_PACKAGE_LIBGCRYPT

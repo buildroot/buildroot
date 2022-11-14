@@ -13,10 +13,6 @@ I2C_TOOLS_CPE_ID_VENDOR = i2c-tools_project
 I2C_TOOLS_MAKE_OPTS = EXTRA=eeprog
 I2C_TOOLS_INSTALL_STAGING = YES
 
-ifeq ($(BR2_PACKAGE_PYTHON),y)
-I2C_TOOLS_DEPENDENCIES += python
-endif
-
 ifeq ($(BR2_PACKAGE_PYTHON3),y)
 I2C_TOOLS_DEPENDENCIES += python3
 endif
@@ -31,7 +27,7 @@ endif
 
 # Build/install steps mirror the distutil python package type in the python package
 # infrastructure
-ifeq ($(BR2_PACKAGE_PYTHON)$(BR2_PACKAGE_PYTHON3),y)
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
 # BASE_ENV taken from PKG_PYTHON_DISTUTILS_ENV in package/pkg-python.mk
 I2C_TOOLS_PYTHON_BASE_ENV = \
 	$(PKG_PYTHON_DISTUTILS_ENV) \
@@ -51,7 +47,7 @@ define I2C_TOOLS_INSTALL_PYSMBUS
 		$(PKG_PYTHON_DISTUTILS_INSTALL_TARGET_OPTS))
 endef
 
-endif # BR2_PACKAGE_PYTHON
+endif # BR2_PACKAGE_PYTHON3
 
 define I2C_TOOLS_BUILD_CMDS
 	$(MAKE) $(TARGET_CONFIGURE_OPTS) $(I2C_TOOLS_MAKE_OPTS) -C $(@D)

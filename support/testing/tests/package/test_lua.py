@@ -42,8 +42,8 @@ class TestLua(TestLuaBase):
 
     def test_run(self):
         self.login()
-        self.version_test('Lua 5.3')
-        self.g_version_test('Lua 5.3')
+        self.version_test('Lua 5.4')
+        self.g_version_test('Lua 5.4')
 
 
 class TestLuajit(TestLuaBase):

@@ -1,0 +1,49 @@
+From 7d8285ae92253017a15282dd25f76d76eed49518 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 21 Apr 2022 13:43:23 +0200
+Subject: [PATCH] libarptc/libarptc_incl.c: fix build with -O0
+
+Fix the following build failure with -O0:
+
+libarptc/libarptc.c:48:21: error: redefinition of 'arpt_get_target'
+   48 | #define GET_TARGET  arpt_get_target
+      |                     ^~~~~~~~~~~~~~~
+libarptc/libarptc_incl.c:16:1: note: in expansion of macro 'GET_TARGET'
+   16 | GET_TARGET(STRUCT_ENTRY *e)
+      | ^~~~~~~~~~
+In file included from .//include/libarptc/libarptc.h:7,
+                 from libarptc/libarptc.c:26:
+.//include/linux/netfilter_arp/arp_tables.h:196:43: note: previous definition of 'arpt_get_target' was here
+  196 | static __inline__ struct xt_entry_target *arpt_get_target(struct arpt_entry *e)
+      |                                           ^~~~~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/730dce4101e7afcee233067e2870603cd64b8a48
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ libarptc/libarptc_incl.c | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/libarptc/libarptc_incl.c b/libarptc/libarptc_incl.c
+index c4d5de3..441f2de 100644
+--- a/libarptc/libarptc_incl.c
++++ b/libarptc/libarptc_incl.c
+@@ -11,14 +11,6 @@
+ /* (C)1999 Paul ``Rusty'' Russell - Placed under the GNU GPL (See
+    COPYING for details). */
+ 
+-#ifndef __OPTIMIZE__
+-STRUCT_ENTRY_TARGET *
+-GET_TARGET(STRUCT_ENTRY *e)
+-{
+-	return (void *)e + e->target_offset;
+-}
+-#endif
+-
+ static int sockfd = -1;
+ static void *arptc_fn = NULL;
+ 
+-- 
+2.35.1
+

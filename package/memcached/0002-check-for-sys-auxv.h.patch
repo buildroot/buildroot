@@ -1,0 +1,50 @@
+From 58b6de2135c10b64918f25c48f69f144d08a9c0d Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 3 Jun 2022 19:10:15 +0200
+Subject: [PATCH] check for sys/auxv.h
+
+Check for sys/auxv.h to avoid the following uclibc build failure on
+aarch64:
+
+crc32c.c:277:10: fatal error: sys/auxv.h: No such file or directory
+  277 | #include <sys/auxv.h>
+      |          ^~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/08591fbf9677ff126492c50c15170c641bcab56a
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: not sent yet]
+---
+ configure.ac | 1 +
+ crc32c.c     | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 0985f07..3337fe7 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -516,6 +516,7 @@ AH_BOTTOM([#ifdef HAVE_INTTYPES_H
+ #include <inttypes.h>
+ #endif
+ ])
++AC_CHECK_HEADERS([sys/auxv.h])
+ 
+ dnl **********************************************************************
+ dnl Figure out if this system has the stupid sasl_callback_ft
+diff --git a/crc32c.c b/crc32c.c
+index 26df879..05e61ff 100644
+--- a/crc32c.c
++++ b/crc32c.c
+@@ -273,7 +273,7 @@ void crc32c_init(void) {
+     }
+ }
+ 
+-#elif defined(__aarch64__) && defined(__linux__)
++#elif defined(__aarch64__) && defined(__linux__) && defined(HAVE_SYS_AUX_H)
+ #include <sys/auxv.h>
+ 
+ #if defined(HWCAP_CRC32)
+-- 
+2.35.1
+

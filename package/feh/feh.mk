@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FEH_VERSION = 3.6.3
+FEH_VERSION = 3.7.1
 FEH_SOURCE = feh-$(FEH_VERSION).tar.bz2
 FEH_SITE = http://feh.finalrewind.org
 FEH_DEPENDENCIES = imlib2 libpng xlib_libXt

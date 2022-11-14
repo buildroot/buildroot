@@ -1,0 +1,13 @@
+config BR2_PACKAGE_MODSECURITY2
+	bool "modsecurity2"
+	depends on BR2_PACKAGE_APACHE
+	select BR2_PACKAGE_LIBXML2
+	select BR2_PACKAGE_PCRE
+	help
+	  ModSecurity is an open source, cross-platform web application
+	  firewall (WAF) module. Known as the "Swiss Army Knife" of
+	  WAFs, it enables web application defenders to gain visibility
+	  into HTTP(S) traffic and provides a power rules language and
+	  API to implement advanced protections.
+
+	  https://github.com/SpiderLabs/ModSecurity

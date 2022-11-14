@@ -1,0 +1,13 @@
+config BR2_PACKAGE_PYTHON_DISTRO
+	bool "python distro"
+	help
+	  distro provides information about the OS distribution it
+	  runs on, such as a reliable machine-readable ID, or version
+	  information.
+
+	  It is the recommended replacement for Python's original
+	  platform.linux_distribution function (removed in Python
+	  3.8). It also provides much more functionality which isn't
+	  necessarily Python bound, like a command-line interface.
+
+	  https://github.com/nir0s/distro

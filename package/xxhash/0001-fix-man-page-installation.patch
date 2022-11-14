@@ -1,0 +1,66 @@
+From 836f4e735cf368542f14005e41d2f84ec29dfd60 Mon Sep 17 00:00:00 2001
+From: Yann Collet <yann.collet.73@gmail.com>
+Date: Sat, 4 Dec 2021 10:29:49 -0800
+Subject: [PATCH] fix man page installation
+
+for variant redirectors (`xxh32sum`, `xxh64sum` and `xxh128sum`).
+fix #647, reported by @jpalus.
+
+Also : slightly updated man page text, for clarity and accuracy.
+
+[Retrieved (and updated to keep only Makefile update) from:
+https://github.com/Cyan4973/xxHash/commit/836f4e735cf368542f14005e41d2f84ec29dfd60]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ Makefile        | 14 ++++++++------
+ cli/xxhsum.1    |  8 ++++----
+ cli/xxhsum.1.md |  8 +++++---
+ 3 files changed, 17 insertions(+), 13 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 2fbefbc6..63273e16 100644
+--- a/Makefile
++++ b/Makefile
+@@ -457,6 +457,7 @@ endif
+ 
+ INSTALL_PROGRAM ?= $(INSTALL)
+ INSTALL_DATA    ?= $(INSTALL) -m 644
++INSTALL_DIR     ?= $(INSTALL) -d -m 755
+ 
+ 
+ # Escape special symbols by putting each character into its separate class
+@@ -496,7 +497,7 @@ libxxhash.pc: libxxhash.pc.in
+ .PHONY: install
+ install: lib libxxhash.pc xxhsum  ## install libraries, CLI, links and man page
+ 	@echo Installing libxxhash
+-	$(Q)$(INSTALL) -d -m 755 $(DESTDIR)$(LIBDIR)
++	$(Q)$(INSTALL_DIR) $(DESTDIR)$(LIBDIR)
+ 	$(Q)$(INSTALL_DATA) libxxhash.a $(DESTDIR)$(LIBDIR)
+ 	$(Q)$(INSTALL_PROGRAM) $(LIBXXH) $(DESTDIR)$(LIBDIR)
+ 	$(Q)ln -sf $(LIBXXH) $(DESTDIR)$(LIBDIR)/libxxhash.$(SHARED_EXT_MAJOR)
+@@ -508,19 +509,20 @@ ifeq ($(DISPATCH),1)
+ 	$(Q)$(INSTALL_DATA) xxh_x86dispatch.h $(DESTDIR)$(INCLUDEDIR)
+ endif
+ 	@echo Installing pkgconfig
+-	$(Q)$(INSTALL) -d -m 755 $(DESTDIR)$(PKGCONFIGDIR)/
++	$(Q)$(INSTALL_DIR) $(DESTDIR)$(PKGCONFIGDIR)/
+ 	$(Q)$(INSTALL_DATA) libxxhash.pc $(DESTDIR)$(PKGCONFIGDIR)/
+ 	@echo Installing xxhsum
+-	$(Q)$(INSTALL) -d -m 755 $(DESTDIR)$(BINDIR)/ $(DESTDIR)$(MANDIR)/
++	$(Q)$(INSTALL_DIR) $(DESTDIR)$(BINDIR)/
+ 	$(Q)$(INSTALL_PROGRAM) xxhsum $(DESTDIR)$(BINDIR)/xxhsum
+ 	$(Q)ln -sf xxhsum $(DESTDIR)$(BINDIR)/xxh32sum
+ 	$(Q)ln -sf xxhsum $(DESTDIR)$(BINDIR)/xxh64sum
+ 	$(Q)ln -sf xxhsum $(DESTDIR)$(BINDIR)/xxh128sum
+ 	@echo Installing man pages
++	$(Q)$(INSTALL_DIR) $(DESTDIR)$(MANDIR)/
+ 	$(Q)$(INSTALL_DATA) $(MAN) $(DESTDIR)$(MANDIR)/xxhsum.1
+-	$(Q)ln -sf $(MAN) $(DESTDIR)$(MANDIR)/xxh32sum.1
+-	$(Q)ln -sf $(MAN) $(DESTDIR)$(MANDIR)/xxh64sum.1
+-	$(Q)ln -sf $(MAN) $(DESTDIR)$(MANDIR)/xxh128sum.1
++	$(Q)ln -sf xxhsum.1 $(DESTDIR)$(MANDIR)/xxh32sum.1
++	$(Q)ln -sf xxhsum.1 $(DESTDIR)$(MANDIR)/xxh64sum.1
++	$(Q)ln -sf xxhsum.1 $(DESTDIR)$(MANDIR)/xxh128sum.1
+ 	@echo xxhash installation completed
+ 
+ .PHONY: uninstall

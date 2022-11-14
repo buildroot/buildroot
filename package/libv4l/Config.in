@@ -20,6 +20,7 @@ comment "libv4l JPEG support not enabled"
 
 config BR2_PACKAGE_LIBV4L_UTILS
 	bool "v4l-utils tools"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # C++11
 	help
 	  v4l-utils is a collection of various video4linux and DVB
 	  utilities.
@@ -34,6 +35,9 @@ config BR2_PACKAGE_LIBV4L_UTILS
 	  - v4l2-sysfs-path
 	  - rds-ctl
 	  - qv4l2 (if Qt is enabled)
+
+comment "v4l-utils tools needs a toolchain w/ C++11"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
 
 endif
 

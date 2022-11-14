@@ -4,11 +4,13 @@
 #
 ################################################################################
 
-MATCHBOX_LIB_VERSION = 1.9
+MATCHBOX_LIB_VERSION = 1.12
 MATCHBOX_LIB_SOURCE = libmatchbox-$(MATCHBOX_LIB_VERSION).tar.bz2
-MATCHBOX_LIB_SITE = http://downloads.yoctoproject.org/releases/matchbox/libmatchbox/$(MATCHBOX_LIB_VERSION)
+MATCHBOX_LIB_SITE = http://git.yoctoproject.org/cgit/cgit.cgi/libmatchbox/snapshot
 MATCHBOX_LIB_LICENSE = LGPL-2.1+
 MATCHBOX_LIB_LICENSE_FILES = COPYING
+# From git
+MATCHBOX_LIB_AUTORECONF = YES
 MATCHBOX_LIB_INSTALL_STAGING = YES
 MATCHBOX_LIB_DEPENDENCIES = host-pkgconf xlib_libXext
 MATCHBOX_LIB_CONF_OPTS = --disable-doxygen-docs

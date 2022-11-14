@@ -1,0 +1,18 @@
+config BR2_PACKAGE_GSTD
+	bool "gstd"
+	depends on BR2_USE_WCHAR # libglib2 -> gettext, libsoup
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2, libsoup
+	depends on BR2_USE_MMU # libdaemon, libglib2
+	select BR2_PACKAGE_GSTREAMER1_GST_DEBUG # gst_debug_bin_to_dot_data
+	select BR2_PACKAGE_JANSSON
+	select BR2_PACKAGE_JSON_GLIB
+	select BR2_PACKAGE_LIBDAEMON
+	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_LIBSOUP
+	select BR2_PACKAGE_READLINE
+	help
+	  GStreamer Daemon, also called gstd, is a GStreamer framework
+	  for controlling audio and video streaming using an
+	  InterProcess Communication protocol.
+
+	  https://developer.ridgerun.com/wiki/index.php?title=GStreamer_Daemon

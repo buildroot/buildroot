@@ -33,8 +33,19 @@ LINUX_HEADERS_REPO_URL = $(call qstrip,$(BR2_KERNEL_HEADERS_CUSTOM_REPO_URL))
 LINUX_HEADERS_CIP =
 endif # BR2_KERNEL_HEADERS_AS_KERNEL
 
+ifeq ($(BR2_KERNEL_HEADERS_VERSION)$(BR_BUILDING),yy)
+ifeq ($(LINUX_HEADERS_VERSION),)
+$(error No kernel headers version set, check your BR2_DEFAULT_KERNEL_VERSION setting)
+endif
+endif
+
 # Compute LINUX_HEADERS_SOURCE and LINUX_HEADERS_SITE from the configuration
 ifeq ($(LINUX_HEADERS_CUSTOM_TARBALL),y)
+ifeq ($(BR_BUILDING),y)
+ifeq ($(LINUX_HEADERS_CUSTOM_TARBALL_LOCATION),)
+$(error No kernel headers tarball location set, check your BR2_KERNEL_HEADERS_CUSTOM_TARBALL_LOCATION setting)
+endif
+endif
 LINUX_HEADERS_SOURCE = $(notdir $(LINUX_HEADERS_CUSTOM_TARBALL_LOCATION))
 LINUX_HEADERS_SITE = $(patsubst %/,%,$(dir $(LINUX_HEADERS_CUSTOM_TARBALL_LOCATION)))
 else ifeq ($(LINUX_HEADERS_CUSTOM_GIT),y)

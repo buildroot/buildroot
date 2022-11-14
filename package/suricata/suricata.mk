@@ -4,10 +4,11 @@
 #
 ################################################################################
 
-SURICATA_VERSION = 6.0.3
+SURICATA_VERSION = 6.0.6
 SURICATA_SITE = https://www.openinfosecfoundation.org/download
 SURICATA_LICENSE = GPL-2.0
 SURICATA_LICENSE_FILES = COPYING LICENSE
+SURICATA_CPE_ID_VENDOR = oisf
 # 0001-python-ensure-proper-shabang-on-python-scripts.patch
 # 0002-configure.ac-allow-the-user-to-override-RUST_TARGET.patch
 SURICATA_AUTORECONF = YES
@@ -115,9 +116,9 @@ else
 SURICATA_CONF_OPTS += --disable-luajit
 endif
 
-ifeq ($(BR2_PACKAGE_PYTHON)$(BR2_PACKAGE_PYTHON3),y)
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
 SURICATA_CONF_OPTS += --enable-python
-SURICATA_DEPENDENCIES += $(if $(BR2_PACKAGE_PYTHON),python,python3)
+SURICATA_DEPENDENCIES += python3
 else
 SURICATA_CONF_OPTS += --disable-python
 endif

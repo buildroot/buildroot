@@ -12,7 +12,7 @@ PERL_NETADDR_IP_LICENSE_FILES = Artistic Copying
 PERL_NETADDR_IP_DISTNAME = NetAddr-IP
 
 ifeq ($(BR2_STATIC_LIBS),y)
-PERL_NETADDR_IP_CONF_OPTS = -noxs
+PERL_NETADDR_IP_CONF_OPTS += -noxs
 endif
 
 $(eval $(perl-package))

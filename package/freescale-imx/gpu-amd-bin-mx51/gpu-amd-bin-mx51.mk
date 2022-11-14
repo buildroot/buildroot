@@ -12,7 +12,7 @@ GPU_AMD_BIN_MX51_SOURCE = amd-gpu-bin-mx51-$(GPU_AMD_BIN_MX51_BASE_VERSION).bin
 else
 GPU_AMD_BIN_MX51_VERSION = $(GPU_AMD_BIN_MX51_BASE_VERSION)-x11
 GPU_AMD_BIN_MX51_SOURCE = amd-gpu-x11-bin-mx51-$(GPU_AMD_BIN_MX51_BASE_VERSION).bin
-GPU_AMD_BIN_MX51_DEPENDENCIES = libxcb xlib_libX11 xlib_libXext \
+GPU_AMD_BIN_MX51_DEPENDENCIES += libxcb xlib_libX11 xlib_libXext \
 	xlib_libXrender xlib_libXau xlib_libXdmcp
 endif
 GPU_AMD_BIN_MX51_PROVIDES = libegl libgles libopenvg
@@ -23,7 +23,7 @@ GPU_AMD_BIN_MX51_LICENSE_FILES = EULA
 GPU_AMD_BIN_MX51_REDISTRIBUTE = NO
 
 define GPU_AMD_BIN_MX51_EXTRACT_CMDS
-	$(call FREESCALE_IMX_EXTRACT_HELPER,$(GPU_AMD_BIN_MX51_DL_DIR)/$(GPU_AMD_BIN_MX51_SOURCE))
+	$(call NXP_EXTRACT_HELPER,$(GPU_AMD_BIN_MX51_DL_DIR)/$(GPU_AMD_BIN_MX51_SOURCE))
 endef
 
 # Upstream headers need to be compiled with -D_LINUX. It is more convenient

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XAPP_TWM_VERSION = 1.0.11
+XAPP_TWM_VERSION = 1.0.12
 XAPP_TWM_SOURCE = twm-$(XAPP_TWM_VERSION).tar.xz
 XAPP_TWM_SITE = http://xorg.freedesktop.org/releases/individual/app
 XAPP_TWM_LICENSE = MIT

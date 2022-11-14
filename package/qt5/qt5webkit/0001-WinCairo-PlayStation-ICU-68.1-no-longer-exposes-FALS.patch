@@ -1,0 +1,168 @@
+From 736e1d804d1efa2077c4f1fe0b9084927d82e249 Mon Sep 17 00:00:00 2001
+From: "stephan.szabo@sony.com"
+ <stephan.szabo@sony.com@268f45cc-cd09-0410-ab3c-d52691b4dbfc>
+Date: Tue, 3 Nov 2020 20:06:15 +0000
+Subject: [PATCH] [WinCairo/PlayStation] ICU 68.1 no longer exposes FALSE and
+ TRUE macros by default https://bugs.webkit.org/show_bug.cgi?id=218522
+
+Reviewed by Don Olmstead.
+
+Source/WebCore:
+
+* platform/text/TextCodecICU.cpp: Replace use of TRUE with true
+
+Source/WebKit:
+
+* UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp: Replace FALSE with false
+
+Source/WTF:
+
+Replace uses of FALSE and TRUE with false and true.
+
+* wtf/text/icu/UTextProvider.h:
+* wtf/text/icu/UTextProviderLatin1.cpp:
+* wtf/text/icu/UTextProviderUTF16.cpp:
+
+Change-Id: I876cf2b10b8c858c3d265113c062d159749a2f3e
+git-svn-id: http://svn.webkit.org/repository/webkit/trunk@269325 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[james.hilliard1@gmail.com: backport from upstream commit
+736e1d804d1efa2077c4f1fe0b9084927d82e249]
+---
+ Source/WebCore/platform/text/TextCodecICU.cpp      |  2 +-
+ Source/WebCore/platform/text/icu/UTextProvider.h   |  8 ++++----
+ .../platform/text/icu/UTextProviderLatin1.cpp      | 14 +++++++-------
+ .../platform/text/icu/UTextProviderUTF16.cpp       |  4 ++--
+ 7 files changed, 45 insertions(+), 14 deletions(-)
+
+diff --git a/Source/WebCore/platform/text/TextCodecICU.cpp b/Source/WebCore/platform/text/TextCodecICU.cpp
+index dd6ff0675bb1..e0f4bd718828 100644
+--- a/Source/WebCore/platform/text/TextCodecICU.cpp
++++ b/Source/WebCore/platform/text/TextCodecICU.cpp
+@@ -308,7 +308,7 @@ void TextCodecICU::createICUConverter() const
+     m_converterICU = ucnv_open(m_canonicalConverterName, &err);
+     ASSERT(U_SUCCESS(err));
+     if (m_converterICU)
+-        ucnv_setFallback(m_converterICU, TRUE);
++        ucnv_setFallback(m_converterICU, true);
+ }
+ 
+ int TextCodecICU::decodeToBuffer(UChar* target, UChar* targetLimit, const char*& source, const char* sourceLimit, int32_t* offsets, bool flush, UErrorCode& err)
+diff --git a/Source/WebCore/platform/text/icu/UTextProvider.h b/Source/WebCore/platform/text/icu/UTextProvider.h
+index c254fc4c7ce2..6d1e1cbc5eb2 100644
+--- a/Source/WebCore/platform/text/icu/UTextProvider.h
++++ b/Source/WebCore/platform/text/icu/UTextProvider.h
+@@ -80,12 +80,12 @@ inline bool uTextAccessInChunkOrOutOfRange(UText* text, int64_t nativeIndex, int
+             // Ensure chunk offset is well formed if computed offset exceeds int32_t range.
+             ASSERT(offset < std::numeric_limits<int32_t>::max());
+             text->chunkOffset = offset < std::numeric_limits<int32_t>::max() ? static_cast<int32_t>(offset) : 0;
+-            isAccessible = TRUE;
++            isAccessible = true;
+             return true;
+         }
+         if (nativeIndex >= nativeLength && text->chunkNativeLimit == nativeLength) {
+             text->chunkOffset = text->chunkLength;
+-            isAccessible = FALSE;
++            isAccessible = false;
+             return true;
+         }
+     } else {
+@@ -94,12 +94,12 @@ inline bool uTextAccessInChunkOrOutOfRange(UText* text, int64_t nativeIndex, int
+             // Ensure chunk offset is well formed if computed offset exceeds int32_t range.
+             ASSERT(offset < std::numeric_limits<int32_t>::max());
+             text->chunkOffset = offset < std::numeric_limits<int32_t>::max() ? static_cast<int32_t>(offset) : 0;
+-            isAccessible = TRUE;
++            isAccessible = true;
+             return true;
+         }
+         if (nativeIndex <= 0 && !text->chunkNativeStart) {
+             text->chunkOffset = 0;
+-            isAccessible = FALSE;
++            isAccessible = false;
+             return true;
+         }
+     }
+diff --git a/Source/WebCore/platform/text/icu/UTextProviderLatin1.cpp b/Source/WebCore/platform/text/icu/UTextProviderLatin1.cpp
+index cd6852c71e55..6a864b1c1567 100644
+--- a/Source/WebCore/platform/text/icu/UTextProviderLatin1.cpp
++++ b/Source/WebCore/platform/text/icu/UTextProviderLatin1.cpp
+@@ -100,23 +100,23 @@ static UBool uTextLatin1Access(UText* uText, int64_t index, UBool forward)
+         if (index < uText->chunkNativeLimit && index >= uText->chunkNativeStart) {
+             // Already inside the buffer. Set the new offset.
+             uText->chunkOffset = static_cast<int32_t>(index - uText->chunkNativeStart);
+-            return TRUE;
++            return true;
+         }
+         if (index >= length && uText->chunkNativeLimit == length) {
+             // Off the end of the buffer, but we can't get it.
+             uText->chunkOffset = static_cast<int32_t>(index - uText->chunkNativeStart);
+-            return FALSE;
++            return false;
+         }
+     } else {
+         if (index <= uText->chunkNativeLimit && index > uText->chunkNativeStart) {
+             // Already inside the buffer. Set the new offset.
+             uText->chunkOffset = static_cast<int32_t>(index - uText->chunkNativeStart);
+-            return TRUE;
++            return true;
+         }
+         if (!index && !uText->chunkNativeStart) {
+             // Already at the beginning; can't go any farther.
+             uText->chunkOffset = 0;
+-            return FALSE;
++            return false;
+         }
+     }
+     
+@@ -144,7 +144,7 @@ static UBool uTextLatin1Access(UText* uText, int64_t index, UBool forward)
+ 
+     uText->nativeIndexingLimit = uText->chunkLength;
+ 
+-    return TRUE;
++    return true;
+ }
+ 
+ static int32_t uTextLatin1Extract(UText* uText, int64_t start, int64_t limit, UChar* dest, int32_t destCapacity, UErrorCode* status)
+@@ -336,7 +336,7 @@ static int64_t uTextLatin1ContextAwareNativeLength(UText* text)
+ static UBool uTextLatin1ContextAwareAccess(UText* text, int64_t nativeIndex, UBool forward)
+ {
+     if (!text->context)
+-        return FALSE;
++        return false;
+     int64_t nativeLength = uTextLatin1ContextAwareNativeLength(text);
+     UBool isAccessible;
+     if (uTextAccessInChunkOrOutOfRange(text, nativeIndex, nativeLength, forward, isAccessible))
+@@ -356,7 +356,7 @@ static UBool uTextLatin1ContextAwareAccess(UText* text, int64_t nativeIndex, UBo
+         ASSERT(newContext == UTextProviderContext::PriorContext);
+         textLatin1ContextAwareSwitchToPriorContext(text, nativeIndex, nativeLength, forward);
+     }
+-    return TRUE;
++    return true;
+ }
+ 
+ static int32_t uTextLatin1ContextAwareExtract(UText*, int64_t, int64_t, UChar*, int32_t, UErrorCode* errorCode)
+diff --git a/Source/WebCore/platform/text/icu/UTextProviderUTF16.cpp b/Source/WebCore/platform/text/icu/UTextProviderUTF16.cpp
+index 7aaac48c8151..9ae0d367f1f6 100644
+--- a/Source/WebCore/platform/text/icu/UTextProviderUTF16.cpp
++++ b/Source/WebCore/platform/text/icu/UTextProviderUTF16.cpp
+@@ -125,7 +125,7 @@ static inline int64_t uTextUTF16ContextAwareNativeLength(UText* text)
+ static UBool uTextUTF16ContextAwareAccess(UText* text, int64_t nativeIndex, UBool forward)
+ {
+     if (!text->context)
+-        return FALSE;
++        return false;
+     int64_t nativeLength = uTextUTF16ContextAwareNativeLength(text);
+     UBool isAccessible;
+     if (uTextAccessInChunkOrOutOfRange(text, nativeIndex, nativeLength, forward, isAccessible))
+@@ -145,7 +145,7 @@ static UBool uTextUTF16ContextAwareAccess(UText* text, int64_t nativeIndex, UBoo
+         ASSERT(newContext == UTextProviderContext::PriorContext);
+         textUTF16ContextAwareSwitchToPriorContext(text, nativeIndex, nativeLength, forward);
+     }
+-    return TRUE;
++    return true;
+ }
+ 
+ static int32_t uTextUTF16ContextAwareExtract(UText*, int64_t, int64_t, UChar*, int32_t, UErrorCode* errorCode)
+-- 
+2.25.1
+

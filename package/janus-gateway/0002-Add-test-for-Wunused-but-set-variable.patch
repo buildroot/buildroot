@@ -18,6 +18,10 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 (rebased against v0.6.3)
 Signed-off-by: Adam Duskett <Aduskett@gmail.com>
+[rebased against v1.0.3)
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: rejected
+(https://github.com/meetecho/janus-gateway/pull/1789)]
 ---
  Makefile.am                 |  1 +
  configure.ac                |  6 ++-
@@ -25,10 +29,10 @@ Signed-off-by: Adam Duskett <Aduskett@gmail.com>
  3 files changed, 79 insertions(+), 2 deletions(-)
  create mode 100644 m4/ax_check_compile_flag.m4
 
-diff --git a/Makefile.am b/Makefile.am
+diff --git a/src/Makefile.am b/src/Makefile.am
 index f961fdb..3ddbe59 100644
---- a/Makefile.am
-+++ b/Makefile.am
+--- a/src/Makefile.am
++++ b/src/Makefile.am
 @@ -151,6 +151,7 @@ janus_CFLAGS = \
  	-DEVENTDIR=\"$(eventdir)\" \
  	-DLOGGERDIR=\"$(loggerdir)\" \

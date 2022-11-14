@@ -3,9 +3,29 @@ config BR2_PACKAGE_OPEN62541
 	help
 	  open62541 is an open source and free implementation of OPC UA.
 
-	  http://open62541.org
+	  https://open62541.org/
 
 if BR2_PACKAGE_OPEN62541
+
+choice
+	prompt "encryption"
+	default BR2_PACKAGE_OPEN62541_ENCRYPTION_NONE
+	help
+	  Encryption support
+
+config BR2_PACKAGE_OPEN62541_ENCRYPTION_NONE
+	bool "none"
+
+config BR2_PACKAGE_OPEN62541_ENCRYPTION_MBEDTLS
+	bool "mbedtls"
+	select BR2_PACKAGE_MBEDTLS
+
+config BR2_PACKAGE_OPEN62541_ENCRYPTION_OPENSSL
+	bool "openssl"
+	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL
+
+endchoice
 
 choice
 	prompt "namespace zero nodes"
@@ -39,8 +59,20 @@ config BR2_PACKAGE_OPEN62541_UA_NAMESPACE_ZERO_FULL
 
 endchoice
 
+config BR2_PACKAGE_OPEN62541_HISTORIZING
+	bool "historizing"
+	help
+	  Enable basic support for historical access (client and server)
+
+config BR2_PACKAGE_OPEN62541_DISCOVERY
+	bool "discovery"
+	help
+	  Enable Discovery Service (LDS)
+
 config BR2_PACKAGE_OPEN62541_JSON_ENCODING
 	bool "json encoding"
+	help
+	  Enable JSON encoding
 
 config BR2_PACKAGE_OPEN62541_PUBSUB
 	bool "publish/subscribe"
@@ -65,6 +97,20 @@ config BR2_PACKAGE_OPEN62541_PUBSUB_INFORMATIONMODEL
 	help
 	  Enable the information model representation of the PubSub
 	  configuration.
+
+if BR2_PACKAGE_OPEN62541_PUBSUB_INFORMATIONMODEL
+
+config BR2_PACKAGE_OPEN62541_PUBSUB_INFORMATIONMODEL_METHODS
+	bool "publish/subscribe information model methods"
+	help
+	  Enable PubSub informationmodel methods
+
+endif
+
+config BR2_PACKAGE_OPEN62541_PUBSUB_ETH_UADP
+	bool "publish/subscribe UADP"
+	help
+	  Enable publish/subscribe UADP over Ethernet
 
 endif # BR2_PACKAGE_OPEN62541_PUBSUB
 

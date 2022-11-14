@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BLUEZ_ALSA_VERSION = 3.1.0
+BLUEZ_ALSA_VERSION = 4.0.0
 BLUEZ_ALSA_SITE = $(call github,Arkq,bluez-alsa,v$(BLUEZ_ALSA_VERSION))
 BLUEZ_ALSA_LICENSE = MIT
 BLUEZ_ALSA_LICENSE_FILES = LICENSE
@@ -67,6 +67,13 @@ BLUEZ_ALSA_DEPENDENCIES += readline
 BLUEZ_ALSA_CONF_OPTS += --enable-rfcomm
 else
 BLUEZ_ALSA_CONF_OPTS += --disable-rfcomm
+endif
+
+ifeq ($(BR2_PACKAGE_LIBOPENAPTX),y)
+BLUEZ_ALSA_DEPENDENCIES += libopenaptx
+BLUEZ_ALSA_CONF_OPTS += --with-libopenaptx --enable-aptx --enable-aptx-hd
+else
+BLUEZ_ALSA_CONF_OPTS += --without-libopenaptx --disable-aptx --disable-aptx-hd
 endif
 
 $(eval $(autotools-package))

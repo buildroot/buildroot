@@ -2,15 +2,14 @@ config BR2_PACKAGE_MENDER_GRUBENV
 	bool "mender-grubenv"
 	depends on BR2_TARGET_GRUB2_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_MENDER # runtime
-	# grubenv provides it's own fw_printenv.
-	depends on !BR2_PACKAGE_UBOOT_TOOLS_FWPRINTENV
 	depends on BR2_TARGET_GRUB2
+	depends on !(BR2_TARGET_GRUB2_HAS_LEGACY_BOOT && BR2_TARGET_GRUB2_HAS_EFI_BOOT)
 	help
 	  Contains the boot scripts and tools used by Mender to
 	  integrate with the GRUB bootloader.
 
 	  The following Grub modules must be selected for this package:
-	  loadenv hashsum echo halt gcry_sha256 test
+	  loadenv hashsum echo halt gcry_sha256 test regexp
 
 	  https://github.com/mendersoftware/grub-mender-grubenv
 
@@ -37,7 +36,6 @@ comment "mender-grubenv needs a grub2 bootloader"
 	depends on BR2_PACKAGE_MENDER
 	depends on !BR2_TARGET_GRUB2
 
-comment "mender-grubenv does not work with uboot-tools fw_printenv"
-	depends on BR2_TARGET_GRUB2_ARCH_SUPPORTS
+comment "mender-grubenv does not support both legacy and EFI grub2 bootloaders at the same time"
 	depends on BR2_PACKAGE_MENDER
-	depends on BR2_PACKAGE_UBOOT_TOOLS_FWPRINTENV
+	depends on BR2_TARGET_GRUB2_HAS_LEGACY_BOOT && BR2_TARGET_GRUB2_HAS_EFI_BOOT

@@ -1,0 +1,51 @@
+From 61efd6de2fbb8ee077863ee5a355ac3dfd9365b9 Mon Sep 17 00:00:00 2001
+From: Xin Long <lucien.xin@gmail.com>
+Date: Tue, 1 Sep 2020 13:59:27 +0800
+Subject: [PATCH] Revert "teamd: Disregard current state when considering port
+ enablement"
+
+This reverts commit deadb5b715227429a1879b187f5906b39151eca9.
+
+As Patrick noticed, with that commit, teamd_port_check_enable()
+would set the team port to the new state unconditionally, which
+triggers another change message from kernel to userspace, then
+teamd_port_check_enable() is called again to set the team port
+to the new state.
+
+This would go around and around to update the team port state,
+and even cause teamd to consume 100% cpu.
+
+As the issue caused by that commit is serious, it has to be
+reverted. As for the issued fixed by that commit, I would
+propose a new fix later.
+
+Signed-off-by: Jiri Pirko <jiri@nvidia.com>
+---
+ teamd/teamd_per_port.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/teamd/teamd_per_port.c b/teamd/teamd_per_port.c
+index 166da57..d429753 100644
+--- a/teamd/teamd_per_port.c
++++ b/teamd/teamd_per_port.c
+@@ -442,14 +442,18 @@ int teamd_port_check_enable(struct teamd_context *ctx,
+ 			    bool should_enable, bool should_disable)
+ {
+ 	bool new_enabled_state;
++	bool curr_enabled_state;
+ 	int err;
+ 
+ 	if (!teamd_port_present(ctx, tdport))
+ 		return 0;
++	err = teamd_port_enabled(ctx, tdport, &curr_enabled_state);
++	if (err)
++		return err;
+ 
+-	if (should_enable)
++	if (!curr_enabled_state && should_enable)
+ 		new_enabled_state = true;
+-	else if (should_disable)
++	else if (curr_enabled_state && should_disable)
+ 		new_enabled_state = false;
+ 	else
+ 		return 0;

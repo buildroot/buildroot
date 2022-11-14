@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBFUSE3_VERSION = 3.10.4
+LIBFUSE3_VERSION = 3.11.0
 LIBFUSE3_SITE = $(call github,libfuse,libfuse,fuse-$(LIBFUSE3_VERSION))
 LIBFUSE3_LICENSE = LGPL-2.1
 LIBFUSE3_LICENSE_FILES = LICENSE
@@ -19,7 +19,7 @@ LIBFUSE3_CONF_OPTS = \
 	-Dtests=false
 
 define LIBFUSE3_DEVICES
-	/dev/fuse  c  666  0  0  10  229  0  0  -
+	/dev/fuse c 666 0 0 10 229 0 0 -
 endef
 
 define LIBFUSE3_PERMISSIONS

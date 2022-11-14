@@ -1,0 +1,37 @@
+From d1732a79dbf30c41802245909d0250ebe2b9d92e Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd.kuhls@t-online.de>
+Date: Sun, 12 Dec 2021 10:27:42 +0100
+Subject: [PATCH] lib/util: Add signal.h include
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes build error with samba-4.15.3 and uClibc:
+
+../../source3/printing/samba-bgqd.c: In function ‘main’:
+../../source3/printing/samba-bgqd.c:340:21: error: ‘SIGPIPE’ undeclared (first use in this function); did you mean ‘EPIPE’?
+../../source3/printing/samba-bgqd.c:384:14: error: ‘SIGTERM’ undeclared (first use in this function)
+
+Patch sent upstream:
+https://gitlab.com/samba-team/samba/-/merge_requests/2296
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ lib/util/signal.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lib/util/signal.h b/lib/util/signal.h
+index 0663af6ab94..f662ee110d6 100644
+--- a/lib/util/signal.h
++++ b/lib/util/signal.h
+@@ -21,6 +21,7 @@
+ #ifndef _SAMBA_UTIL_SIGNAL_H_
+ #define _SAMBA_UTIL_SIGNAL_H_
+ 
++#include <signal.h>
+ #include <stdbool.h>
+ 
+ /**
+-- 
+2.30.2
+

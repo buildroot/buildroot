@@ -1,0 +1,10 @@
+config BR2_PACKAGE_SRATOM
+	bool "sratom"
+	select BR2_PACKAGE_LV2
+	select BR2_PACKAGE_SERD
+	select BR2_PACKAGE_SORD
+	help
+	  Sratom is a library for serialising LV2 atoms to and from
+	  RDF, particularly the Turtle syntax.
+
+	  https://drobilla.net/software/sratom.html

@@ -70,11 +70,11 @@ Let's look at a more complex example:
 14: FOO_MODULE_MAKE_OPTS = KVERSION=$(LINUX_VERSION_PROBED)
 15: 
 16: ifeq ($(BR2_PACKAGE_LIBBAR),y)
-17: FOO_DEPENDENCIES = libbar
-18: FOO_CONF_OPTS = --enable-bar
+17: FOO_DEPENDENCIES += libbar
+18: FOO_CONF_OPTS += --enable-bar
 19: FOO_MODULE_SUBDIRS += driver/bar
 20: else
-21: FOO_CONF_OPTS = --disable-bar
+21: FOO_CONF_OPTS += --disable-bar
 22: endif
 23: 
 24: $(eval $(kernel-module))

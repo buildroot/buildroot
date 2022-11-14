@@ -1,0 +1,31 @@
+fix musl build
+
+Fix the following musl build failure:
+
+receivedata.c: In function 'findSlice':
+receivedata.c:348:2: error: unknown type name 'ptrdiff_t'
+  348 |  ptrdiff_t pos = slice - clst->slices;
+      |  ^~~~~~~~~
+receivedata.c:17:1: note: 'ptrdiff_t' is defined in header '<stddef.h>'; did you forget to '#include <stddef.h>'?
+   16 | #include "fec.h"
+  +++ |+#include <stddef.h>
+   17 | 
+
+Fixes:
+ - http://autobuild.buildroot.org/results/30208c6f175967fed6de690447a09e0c86547b24
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:
+https://udpcast.linux.lu/mailman3/hyperkitty/list/udpcast@udpcast.linux.lu/thread/4MBES2CPUSUNIZTC7NXCQYS2GAE4DQSG/]
+
+diff '--color=auto' -Nura udpcast-20211207.orig/receivedata.c udpcast-20211207/receivedata.c
+--- udpcast-20211207.orig/receivedata.c	2022-08-13 21:48:06.226588614 +0200
++++ udpcast-20211207/receivedata.c	2022-08-13 21:48:40.242992238 +0200
+@@ -1,6 +1,7 @@
+ #include <assert.h>
+ #include <sys/types.h>
+ #include <unistd.h>
++#include <stddef.h>
+ #include <stdlib.h>
+ #include <sys/time.h>
+ #include <errno.h>

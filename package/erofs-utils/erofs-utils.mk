@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-EROFS_UTILS_VERSION = 1.3
+EROFS_UTILS_VERSION = 1.5
 EROFS_UTILS_SITE = https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git/snapshot
-EROFS_UTILS_LICENSE = GPL-2.0+
-EROFS_UTILS_LICENSE_FILES = COPYING
+EROFS_UTILS_LICENSE = GPL-2.0+, GPL-2.0+ or Apache-2.0 (liberofs)
+EROFS_UTILS_LICENSE_FILES = COPYING LICENSES/Apache-2.0 LICENSES/GPL-2.0
 
 # From a git tree: no generated autotools files
 EROFS_UTILS_AUTORECONF = YES

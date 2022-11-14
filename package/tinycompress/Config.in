@@ -1,0 +1,10 @@
+config BR2_PACKAGE_TINYCOMPRESS
+	bool "tinycompress"
+	depends on !BR2_STATIC_LIBS # dlfcn.h
+	help
+	  tinycompress is a library for compress audio offload in alsa.
+
+	  https://www.alsa-project.org/
+
+comment "tinycompress needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS

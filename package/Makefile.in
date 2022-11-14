@@ -39,8 +39,9 @@ endif
 # Compute GNU_TARGET_NAME
 GNU_TARGET_NAME = $(ARCH)-$(TARGET_VENDOR)-$(TARGET_OS)-$(LIBC)$(ABI)
 
-# FLAT binary format needs uclinux
-ifeq ($(BR2_BINFMT_FLAT),y)
+# FLAT binary format needs uclinux, except RISC-V 64-bits which needs
+# the regular linux name.
+ifeq ($(BR2_BINFMT_FLAT):$(BR2_RISCV_64),y:)
 TARGET_OS = uclinux
 else
 TARGET_OS = linux
@@ -50,8 +51,12 @@ ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
 LIBC = uclibc
 else ifeq ($(BR2_TOOLCHAIN_USES_MUSL),y)
 LIBC = musl
-else
+else ifeq ($(BR2_TOOLCHAIN_USES_GLIBC),y)
 LIBC = gnu
+else ifeq ($(BR_BUILDING),y)
+# This happens if there is a bug in Buildroot that allows an
+# architecture configuration that isn't supported by any library.
+$(error No C library enabled, this is not possible.)
 endif
 
 # The ABI suffix is a bit special on ARM, as it needs to be
@@ -67,15 +72,6 @@ endif
 
 ifeq ($(BR2_ARM_EABIHF),y)
 ABI := $(ABI)hf
-endif
-endif
-
-# For C-SKY abiv1 & abiv2
-ifeq ($(BR2_csky),y)
-ifeq ($(BR2_ck610),y)
-ABI = abiv1
-else
-ABI = abiv2
 endif
 endif
 
@@ -178,13 +174,22 @@ TARGET_CXXFLAGS += -fno-dwarf2-cfi-asm
 endif
 
 ifeq ($(BR2_BINFMT_FLAT),y)
-TARGET_CFLAGS += $(if $($(PKG)_FLAT_STACKSIZE),-Wl$(comma)-elf2flt=-s$($(PKG)_FLAT_STACKSIZE),\
+ifeq ($(BR2_RISCV_64),y)
+TARGET_CFLAGS += -fPIC
+endif
+ifeq ($(BR2_BINFMT_FLAT_ONE),y)
+ELF2FLT_FLAGS = $(if $($(PKG)_FLAT_STACKSIZE),\
+	-Wl$(comma)-elf2flt="-r -s$($(PKG)_FLAT_STACKSIZE)",\
+        -Wl$(comma)-elf2flt=-r)
+else
+ELF2FLT_FLAGS = $(if $($(PKG)_FLAT_STACKSIZE),\
+	-Wl$(comma)-elf2flt=-s$($(PKG)_FLAT_STACKSIZE),\
 	-Wl$(comma)-elf2flt)
-TARGET_CXXFLAGS += $(if $($(PKG)_FLAT_STACKSIZE),-Wl$(comma)-elf2flt=-s$($(PKG)_FLAT_STACKSIZE),\
-	-Wl$(comma)-elf2flt)
-TARGET_FCFLAGS += $(if $($(PKG)_FLAT_STACKSIZE),-Wl$(comma)-elf2flt=-s$($(PKG)_FLAT_STACKSIZE),\
-	-Wl$(comma)-elf2flt)
-TARGET_LDFLAGS += $(if $($(PKG)_FLAT_STACKSIZE),-Wl$(comma)-elf2flt=-s$($(PKG)_FLAT_STACKSIZE),-Wl$(comma)-elf2flt)
+endif
+TARGET_CFLAGS += $(ELF2FLT_FLAGS)
+TARGET_CXXFLAGS += $(ELF2FLT_FLAGS)
+TARGET_FCFLAGS += $(ELF2FLT_FLAGS)
+TARGET_LDFLAGS += $(ELF2FLT_FLAGS)
 endif
 
 ifeq ($(BR2_BINFMT_FLAT_SHARED),y)
@@ -200,16 +205,23 @@ else
 TARGET_CROSS = $(HOST_DIR)/bin/$(TOOLCHAIN_EXTERNAL_PREFIX)-
 endif
 
+# gcc-4.7 and later ships with wrappers that will automatically pass
+# arguments to the binutils tools. Those are paths to necessary linker
+# plugins.
+ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_4_7),y)
+TARGET_GCC_WRAPPERS_PREFIX = gcc-
+endif
+
 # Define TARGET_xx variables for all common binutils/gcc
-TARGET_AR       = $(TARGET_CROSS)ar
+TARGET_AR       = $(TARGET_CROSS)$(TARGET_GCC_WRAPPERS_PREFIX)ar
 TARGET_AS       = $(TARGET_CROSS)as
 TARGET_CC       = $(TARGET_CROSS)gcc
 TARGET_CPP      = $(TARGET_CROSS)cpp
 TARGET_CXX      = $(TARGET_CROSS)g++
 TARGET_FC       = $(TARGET_CROSS)gfortran
 TARGET_LD       = $(TARGET_CROSS)ld
-TARGET_NM       = $(TARGET_CROSS)nm
-TARGET_RANLIB   = $(TARGET_CROSS)ranlib
+TARGET_NM       = $(TARGET_CROSS)$(TARGET_GCC_WRAPPERS_PREFIX)nm
+TARGET_RANLIB   = $(TARGET_CROSS)$(TARGET_GCC_WRAPPERS_PREFIX)ranlib
 TARGET_READELF  = $(TARGET_CROSS)readelf
 TARGET_OBJCOPY  = $(TARGET_CROSS)objcopy
 TARGET_OBJDUMP  = $(TARGET_CROSS)objdump
@@ -431,3 +443,4 @@ include package/pkg-waf.mk
 include package/pkg-golang.mk
 include package/pkg-meson.mk
 include package/pkg-qmake.mk
+include package/pkg-cargo.mk

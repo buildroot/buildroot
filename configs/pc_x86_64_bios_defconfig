@@ -1,9 +1,6 @@
 # Architecture
 BR2_x86_64=y
 
-# Toolchain, required for eudev (to autoload drivers)
-BR2_TOOLCHAIN_BUILDROOT_WCHAR=y
-
 # System
 BR2_TARGET_GENERIC_GETTY_PORT="tty1"
 BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_EUDEV=y
@@ -13,6 +10,7 @@ BR2_PACKAGE_HOST_GENIMAGE=y
 
 # Bootloader
 BR2_TARGET_GRUB2=y
+BR2_TARGET_GRUB2_INSTALL_TOOLS=y
 
 # Filesystem / image
 BR2_TARGET_ROOTFS_EXT2=y

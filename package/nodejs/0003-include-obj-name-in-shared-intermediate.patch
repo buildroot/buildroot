@@ -1,0 +1,42 @@
+From af47d317e5ae12978c1cdc40627008ada144f98b Mon Sep 17 00:00:00 2001
+From: Min RK <benjaminrk@gmail.com>
+Date: Fri, 19 Feb 2021 11:57:04 +0100
+Subject: [PATCH] include obj name in shared intermediate
+
+avoids duplicate ninja rules for v8 used in host and target
+
+From: https://github.com/minrk/node/commit/5e533cb943eef68b270f55f0cba02c0ec67c699d
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ tools/gyp/pylib/gyp/generator/ninja.py | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/tools/gyp/pylib/gyp/generator/ninja.py b/tools/gyp/pylib/gyp/generator/ninja.py
+index 3db3771ac9..2e0a021703 100644
+--- a/tools/gyp/pylib/gyp/generator/ninja.py
++++ b/tools/gyp/pylib/gyp/generator/ninja.py
+@@ -42,7 +42,7 @@ generator_default_variables = {
+     # the start of a string, while $| is used for variables that can appear
+     # anywhere in a string.
+     "INTERMEDIATE_DIR": "$!INTERMEDIATE_DIR",
+-    "SHARED_INTERMEDIATE_DIR": "$!PRODUCT_DIR/gen",
++    "SHARED_INTERMEDIATE_DIR": "$!PRODUCT_DIR/$|OBJ/gen",
+     "PRODUCT_DIR": "$!PRODUCT_DIR",
+     "CONFIGURATION_NAME": "$|CONFIGURATION_NAME",
+     # Special variables that may be used by gyp 'rule' targets.
+@@ -285,6 +285,12 @@ class NinjaWriter:
+         CONFIGURATION_NAME = "$|CONFIGURATION_NAME"
+         path = path.replace(CONFIGURATION_NAME, self.config_name)
+ 
++        obj = "obj"
++        if self.toolset != "target":
++            obj += "." + self.toolset
++
++        path = path.replace("$|OBJ", obj)
++
+         return path
+ 
+     def ExpandRuleVariables(self, path, root, dirname, source, ext, name):
+-- 
+2.37.3
+

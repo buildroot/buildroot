@@ -1,0 +1,41 @@
+From 267f24839536234ca621d4fd0466d3b57cb6dccd Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Pavel=20=C5=A0imerda?= <code@simerda.eu>
+Date: Tue, 12 Jan 2021 04:41:56 +0100
+Subject: [PATCH] fix build on OpenWRT/musl-libc
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Pavel Šimerda <code@simerda.eu>
+Signed-off-by: Jiri Pirko <jiri@nvidia.com>
+---
+ teamd/teamd_runner_lacp.c | 2 --
+ utils/teamnl.c            | 1 +
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/teamd/teamd_runner_lacp.c b/teamd/teamd_runner_lacp.c
+index 9437f05..f524be2 100644
+--- a/teamd/teamd_runner_lacp.c
++++ b/teamd/teamd_runner_lacp.c
+@@ -23,9 +23,7 @@
+ #include <unistd.h>
+ #include <limits.h>
+ #include <sys/ioctl.h>
+-#include <linux/if_ether.h>
+ #include <sys/socket.h>
+-#include <linux/netdevice.h>
+ #include <netinet/in.h>
+ #include <errno.h>
+ #include <team.h>
+diff --git a/utils/teamnl.c b/utils/teamnl.c
+index c53345d..ec2b435 100644
+--- a/utils/teamnl.c
++++ b/utils/teamnl.c
+@@ -24,6 +24,7 @@
+ #include <getopt.h>
+ #include <errno.h>
+ #include <sys/signalfd.h>
++#include <sys/select.h>
+ #include <signal.h>
+ #include <unistd.h>
+ #include <team.h>

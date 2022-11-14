@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (C) 2014 by Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 #
@@ -18,14 +18,14 @@
 
 # This script generates a random configuration for testing Buildroot.
 
-from __future__ import print_function
-
+from binascii import hexlify
 import contextlib
 import csv
 import os
 from random import randint
 import subprocess
 import sys
+import traceback
 from distutils.version import StrictVersion
 import platform
 
@@ -182,7 +182,7 @@ def is_toolchain_usable(configfile, config):
            'BR2_TOOLCHAIN_EXTERNAL_LINARO_AARCH64_BE=y\n' in configlines or \
            'BR2_TOOLCHAIN_EXTERNAL_LINARO_ARMEB=y\n' in configlines:
             ldd_version_output = subprocess.check_output(['ldd', '--version'])
-            glibc_version = ldd_version_output.splitlines()[0].split()[-1]
+            glibc_version = ldd_version_output.decode().splitlines()[0].split()[-1]
             if StrictVersion('2.14') > StrictVersion(glibc_version):
                 print("WARN: ignoring the Linaro ARM toolchains because too old host glibc", file=sys.stderr)
                 return False
@@ -201,6 +201,8 @@ def fixup_config(sysinfo, configfile):
 
     with open(configfile) as configf:
         configlines = configf.readlines()
+
+    ROOTFS_SIZE = '5G'
 
     BR2_TOOLCHAIN_EXTERNAL_URL = 'BR2_TOOLCHAIN_EXTERNAL_URL="http://autobuild.buildroot.org/toolchains/tarballs/'
 
@@ -239,17 +241,16 @@ def fixup_config(sysinfo, configfile):
     if 'BR2_PACKAGE_PYTHON3=y\n' in configlines and \
        BR2_TOOLCHAIN_EXTERNAL_URL + 'mips64el-ctng_n64-linux-gnu.tar.xz"\n' in configlines:
         return False
-    # libffi not available on sh2a and ARMv7-M, but propagating libffi
-    # arch dependencies in Buildroot is really too much work, so we
-    # handle this here.
-    if 'BR2_sh2a=y\n' in configlines and \
-       'BR2_PACKAGE_LIBFFI=y\n' in configlines:
-        return False
+    # libffi not available on ARMv7-M, but propagating libffi arch
+    # dependencies in Buildroot is really too much work, so we handle
+    # this here.
     if 'BR2_ARM_CPU_ARMV7M=y\n' in configlines and \
        'BR2_PACKAGE_LIBFFI=y\n' in configlines:
         return False
-    if 'BR2_nds32=y\n' in configlines and \
-       'BR2_PACKAGE_LIBFFI=y\n' in configlines:
+    # libopenssl needs atomic, but propagating this dependency in
+    # Buildroot is really too much work, so we handle this here.
+    if 'BR2_PACKAGE_LIBOPENSSL=y\n' in configlines and \
+       'BR2_TOOLCHAIN_HAS_ATOMIC=y\n' not in configlines:
         return False
     if 'BR2_PACKAGE_SUNXI_BOARDS=y\n' in configlines:
         configlines.remove('BR2_PACKAGE_SUNXI_BOARDS_FEX_FILE=""\n')
@@ -300,8 +301,24 @@ def fixup_config(sysinfo, configfile):
     if 'BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_NIOSII=y\n' in configlines and \
        'BR2_PACKAGE_FLANN=y\n' in configlines:
         return False
+    # No C library for internal toolchain
+    if 'BR2_TOOLCHAIN_BUILDROOT_NONE=y' in configlines:
+        return False
+    # Xtensa custom cores require an overlay file with internal
+    # toolchains
+    if 'BR2_XTENSA_CUSTOM=y' in configlines and \
+       'BR2_TOOLCHAIN_BUILDROOT=y' in configlines:
+        return False
 
-    if 'BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE=y\n' in configlines:
+    if 'BR2_PACKAGE_AUFS_UTIL=y\n' in configlines and \
+       'BR2_PACKAGE_AUFS_UTIL_VERSION=""\n' in configlines:
+        return False
+    if 'BR2_PACKAGE_A10DISP=y\n' in configlines:
+        return False
+
+    if 'BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE=y\n' in configlines and \
+       'BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SOURCE=""\n' in configlines and \
+       'BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SIZE=""\n' in configlines:
         bootenv = os.path.join(args.outputdir, "boot_env.txt")
         with open(bootenv, "w+") as bootenvf:
             bootenvf.write("prop=value")
@@ -310,12 +327,307 @@ def fixup_config(sysinfo, configfile):
         configlines.remove('BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SIZE=""\n')
         configlines.append('BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SIZE="0x1000"\n')
 
-    if 'BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT=y\n' in configlines:
+    if 'BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT=y\n' in configlines and \
+       'BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT_SOURCE=""\n' in configlines:
         bootscr = os.path.join(args.outputdir, "boot_script.txt")
         with open(bootscr, "w+") as bootscrf:
             bootscrf.write("prop=value")
         configlines.remove('BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT_SOURCE=""\n')
         configlines.append('BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT_SOURCE="%s"\n' % bootscr)
+
+    if 'BR2_ROOTFS_SKELETON_CUSTOM=y\n' in configlines and \
+       'BR2_ROOTFS_SKELETON_CUSTOM_PATH=""\n' in configlines:
+        configlines.remove('BR2_ROOTFS_SKELETON_CUSTOM=y\n')
+        configlines.remove('BR2_ROOTFS_SKELETON_CUSTOM_PATH=""\n')
+
+    if 'BR2_LINUX_KERNEL=y\n' in configlines and \
+       'BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG=y\n' in configlines and \
+       'BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE=""\n' in configlines:
+        configlines.remove('BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG=y\n')
+        configlines.append('BR2_LINUX_KERNEL_USE_ARCH_DEFAULT_CONFIG=y\n')
+        configlines.remove('BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE=""\n')
+
+    if 'BR2_LINUX_KERNEL=y\n' in configlines and \
+       'BR2_LINUX_KERNEL_USE_DEFCONFIG=y\n' in configlines and \
+       'BR2_LINUX_KERNEL_DEFCONFIG=""\n' in configlines:
+        configlines.remove('BR2_LINUX_KERNEL_USE_DEFCONFIG=y\n')
+        configlines.append('BR2_LINUX_KERNEL_USE_ARCH_DEFAULT_CONFIG=y\n')
+        configlines.remove('BR2_LINUX_KERNEL_DEFCONFIG=""\n')
+
+    if 'BR2_LINUX_KERNEL=y\n' in configlines and \
+       'BR2_LINUX_KERNEL_CUSTOM_GIT=y\n' in configlines and \
+       'BR2_LINUX_KERNEL_CUSTOM_REPO_URL=""\n' in configlines:
+        configlines.remove('BR2_LINUX_KERNEL_CUSTOM_GIT=y\n')
+        configlines.append('BR2_LINUX_KERNEL_LATEST_VERSION=y\n')
+        configlines.remove('BR2_LINUX_KERNEL_CUSTOM_REPO_URL=""\n')
+
+    if 'BR2_LINUX_KERNEL=y\n' in configlines and \
+       'BR2_LINUX_KERNEL_CUSTOM_HG=y\n' in configlines and \
+       'BR2_LINUX_KERNEL_CUSTOM_REPO_URL=""\n' in configlines:
+        configlines.remove('BR2_LINUX_KERNEL_CUSTOM_HG=y\n')
+        configlines.append('BR2_LINUX_KERNEL_LATEST_VERSION=y\n')
+        configlines.remove('BR2_LINUX_KERNEL_CUSTOM_REPO_URL=""\n')
+
+    if 'BR2_LINUX_KERNEL=y\n' in configlines and \
+       'BR2_LINUX_KERNEL_CUSTOM_SVN=y\n' in configlines and \
+       'BR2_LINUX_KERNEL_CUSTOM_REPO_URL=""\n' in configlines:
+        configlines.remove('BR2_LINUX_KERNEL_CUSTOM_SVN=y\n')
+        configlines.append('BR2_LINUX_KERNEL_LATEST_VERSION=y\n')
+        configlines.remove('BR2_LINUX_KERNEL_CUSTOM_REPO_URL=""\n')
+
+    if 'BR2_LINUX_KERNEL=y\n' in configlines and \
+       'BR2_LINUX_KERNEL_CUSTOM_TARBALL=y\n' in configlines and \
+       'BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION=""\n' in configlines:
+        configlines.remove('BR2_LINUX_KERNEL_CUSTOM_TARBALL=y\n')
+        configlines.append('BR2_LINUX_KERNEL_LATEST_VERSION=y\n')
+        configlines.remove('BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION=""\n')
+
+    if 'BR2_LINUX_KERNEL=y\n' in configlines and \
+       'BR2_LINUX_KERNEL_CUSTOM_VERSION=y\n' in configlines and \
+       'BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE=""\n' in configlines:
+        configlines.remove('BR2_LINUX_KERNEL_CUSTOM_VERSION=y\n')
+        configlines.append('BR2_LINUX_KERNEL_LATEST_VERSION=y\n')
+        configlines.remove('BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE=""\n')
+
+    if 'BR2_LINUX_KERNEL=y\n' in configlines and \
+       'BR2_LINUX_KERNEL_DTS_SUPPORT=y\n' in configlines and \
+       'BR2_LINUX_KERNEL_INTREE_DTS_NAME=""\n' in configlines and \
+       'BR2_LINUX_KERNEL_CUSTOM_DTS_PATH=""\n' in configlines:
+        configlines.remove('BR2_LINUX_KERNEL_DTS_SUPPORT=y\n')
+        configlines.remove('BR2_LINUX_KERNEL_INTREE_DTS_NAME=""\n')
+        configlines.remove('BR2_LINUX_KERNEL_CUSTOM_DTS_PATH=""\n')
+        if 'BR2_LINUX_KERNEL_APPENDED_UIMAGE=y\n' in configlines:
+            configlines.remove('BR2_LINUX_KERNEL_APPENDED_UIMAGE=y\n')
+            configlines.append('BR2_LINUX_KERNEL_UIMAGE=y\n')
+        if 'BR2_LINUX_KERNEL_APPENDED_ZIMAGE=y\n' in configlines:
+            configlines.remove('BR2_LINUX_KERNEL_APPENDED_ZIMAGE=y\n')
+            configlines.append('BR2_LINUX_KERNEL_ZIMAGE=y\n')
+        if 'BR2_LINUX_KERNEL_CUIMAGE=y\n' in configlines:
+            configlines.remove('BR2_LINUX_KERNEL_CUIMAGE=y\n')
+            configlines.append('BR2_LINUX_KERNEL_UIMAGE=y\n')
+        if 'BR2_LINUX_KERNEL_SIMPLEIMAGE=y\n' in configlines:
+            configlines.remove('BR2_LINUX_KERNEL_SIMPLEIMAGE=y\n')
+            configlines.append('BR2_LINUX_KERNEL_VMLINUX=y\n')
+
+    if 'BR2_LINUX_KERNEL_EXT_AUFS=y\n' in configlines and \
+       'BR2_LINUX_KERNEL_EXT_AUFS_VERSION=""\n' in configlines:
+        configlines.remove('BR2_LINUX_KERNEL_EXT_AUFS=y\n')
+        configlines.remove('BR2_LINUX_KERNEL_EXT_AUFS_VERSION=""\n')
+
+    if 'BR2_PACKAGE_LINUX_BACKPORTS=y\n' in configlines and \
+       'BR2_PACKAGE_LINUX_BACKPORTS_USE_CUSTOM_CONFIG=y\n' in configlines and \
+       'BR2_PACKAGE_LINUX_BACKPORTS_CUSTOM_CONFIG_FILE=""\n' in configlines:
+        configlines.remove('BR2_PACKAGE_LINUX_BACKPORTS=y\n')
+        configlines.remove('BR2_PACKAGE_LINUX_BACKPORTS_USE_CUSTOM_CONFIG=y\n')
+        configlines.remove('BR2_PACKAGE_LINUX_BACKPORTS_CUSTOM_CONFIG_FILE=""\n')
+
+    if 'BR2_PACKAGE_LINUX_BACKPORTS=y\n' in configlines and \
+       'BR2_PACKAGE_LINUX_BACKPORTS_USE_DEFCONFIG=y\n' in configlines and \
+       'BR2_PACKAGE_LINUX_BACKPORTS_DEFCONFIG=""\n' in configlines:
+        configlines.remove('BR2_PACKAGE_LINUX_BACKPORTS=y\n')
+        configlines.remove('BR2_PACKAGE_LINUX_BACKPORTS_USE_DEFCONFIG=y\n')
+        configlines.remove('BR2_PACKAGE_LINUX_BACKPORTS_DEFCONFIG=""\n')
+
+    if 'BR2_KERNEL_HEADERS_VERSION=y\n' in configlines and \
+       'BR2_DEFAULT_KERNEL_VERSION=""\n' in configlines:
+        configlines.remove('BR2_KERNEL_HEADERS_VERSION=y\n')
+        configlines.remove('BR2_DEFAULT_KERNEL_VERSION=""\n')
+
+    if 'BR2_KERNEL_HEADERS_CUSTOM_GIT=y\n' in configlines and \
+       'BR2_KERNEL_HEADERS_CUSTOM_REPO_URL=""\n':
+        configlines.remove('BR2_KERNEL_HEADERS_CUSTOM_GIT=y\n')
+        configlines.remove('BR2_KERNEL_HEADERS_CUSTOM_REPO_URL=""\n')
+
+    if 'BR2_KERNEL_HEADERS_CUSTOM_TARBALL=y\n' in configlines and \
+       'BR2_KERNEL_HEADERS_CUSTOM_TARBALL_LOCATION=""\n' in configlines:
+        configlines.remove('BR2_KERNEL_HEADERS_CUSTOM_TARBALL=y\n')
+        configlines.remove('BR2_KERNEL_HEADERS_CUSTOM_TARBALL_LOCATION=""\n')
+
+    if 'BR2_TARGET_ARM_TRUSTED_FIRMWARE=y\n' in configlines and \
+       'BR2_TARGET_ARM_TRUSTED_FIRMWARE_PLATFORM=""\n' in configlines:
+        return False
+
+    if 'BR2_TARGET_ARM_TRUSTED_FIRMWARE=y\n' in configlines and \
+       'BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_VERSION=y\n' in configlines and \
+       'BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_VERSION_VALUE=""\n' in configlines:
+        configlines.remove('BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_VERSION=y\n')
+        configlines.append('BR2_TARGET_ARM_TRUSTED_FIRMWARE_LATEST_VERSION=y\n')
+        configlines.remove('BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_VERSION_VALUE=""\n')
+
+    if 'BR2_TARGET_ARM_TRUSTED_FIRMWARE=y\n' in configlines and \
+       'BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_TARBALL=y\n' in configlines and \
+       'BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_TARBALL_LOCATION=""\n' in configlines:
+        configlines.remove('BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_TARBALL=y\n')
+        configlines.append('BR2_TARGET_ARM_TRUSTED_FIRMWARE_LATEST_VERSION=y\n')
+        configlines.remove('BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_TARBALL_LOCATION=""\n')
+
+    if 'BR2_TARGET_ARM_TRUSTED_FIRMWARE=y\n' in configlines and \
+       'BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_GIT=y\n' in configlines and \
+       'BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_REPO_URL=""\n' in configlines:
+        configlines.remove('BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_GIT=y\n')
+        configlines.append('BR2_TARGET_ARM_TRUSTED_FIRMWARE_LATEST_VERSION=y\n')
+        configlines.remove('BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_REPO_URL=""\n')
+
+    if 'BR2_TARGET_AT91BOOTSTRAP3=y\n' in configlines and \
+       'BR2_TARGET_AT91BOOTSTRAP3_DEFCONFIG=""\n' in configlines:
+        configlines.remove('BR2_TARGET_AT91BOOTSTRAP3=y\n')
+        configlines.remove('BR2_TARGET_AT91BOOTSTRAP3_DEFCONFIG=""\n')
+
+    if 'BR2_TARGET_BAREBOX=y\n' in configlines and \
+       'BR2_TARGET_BAREBOX_USE_CUSTOM_CONFIG=y\n' in configlines and \
+       'BR2_TARGET_BAREBOX_CUSTOM_CONFIG_FILE=""\n' in configlines:
+        configlines.remove('BR2_TARGET_BAREBOX=y\n')
+        configlines.remove('BR2_TARGET_BAREBOX_USE_CUSTOM_CONFIG=y\n')
+        configlines.remove('BR2_TARGET_BAREBOX_CUSTOM_CONFIG_FILE=""\n')
+
+    if 'BR2_TARGET_BAREBOX=y\n' in configlines and \
+       'BR2_TARGET_BAREBOX_USE_DEFCONFIG=y\n' in configlines and \
+       'BR2_TARGET_BAREBOX_BOARD_DEFCONFIG=""\n' in configlines:
+        configlines.remove('BR2_TARGET_BAREBOX=y\n')
+        configlines.remove('BR2_TARGET_BAREBOX_USE_DEFCONFIG=y\n')
+        configlines.remove('BR2_TARGET_BAREBOX_BOARD_DEFCONFIG=""\n')
+
+    if 'BR2_TARGET_OPTEE_OS=y\n' in configlines and \
+       'BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL=y\n' in configlines and \
+       'BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL_LOCATION=""\n' in configlines:
+        configlines.remove('BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL=y\n')
+        configlines.append('BR2_TARGET_OPTEE_OS_LATEST=y\n')
+        configlines.remove('BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL_LOCATION=""\n')
+
+    if 'BR2_TARGET_OPTEE_OS=y\n' in configlines and \
+       'BR2_TARGET_OPTEE_OS_PLATFORM=""\n' in configlines:
+        configlines.remove('BR2_TARGET_OPTEE_OS=y\n')
+        configlines.remove('BR2_TARGET_OPTEE_OS_PLATFORM=""\n')
+
+    if 'BR2_TARGET_ROOTFS_EXT2=y\n' in configlines and \
+       'BR2_TARGET_ROOTFS_EXT2_SIZE="60M"\n' in configlines:
+        configlines.remove('BR2_TARGET_ROOTFS_EXT2_SIZE="60M"\n')
+        configlines.append('BR2_TARGET_ROOTFS_EXT2_SIZE="%s"\n' % ROOTFS_SIZE)
+
+    if 'BR2_TARGET_ROOTFS_F2FS=y\n' in configlines and \
+       'BR2_TARGET_ROOTFS_F2FS_SIZE="100M"\n' in configlines:
+        configlines.remove('BR2_TARGET_ROOTFS_F2FS_SIZE="100M"\n')
+        configlines.append('BR2_TARGET_ROOTFS_F2FS_SIZE="%s"\n' % ROOTFS_SIZE)
+
+    if 'BR2_TARGET_S500_BOOTLOADER=y\n' in configlines and \
+       'BR2_TARGET_S500_BOOTLOADER_BOARD=""\n' in configlines:
+        configlines.remove('BR2_TARGET_S500_BOOTLOADER=y\n')
+        configlines.remove('BR2_TARGET_S500_BOOTLOADER_BOARD=""\n')
+
+    if 'BR2_TARGET_UBOOT=y\n' in configlines and \
+       'BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG=y\n' in configlines and \
+       'BR2_TARGET_UBOOT_USE_CUSTOM_CONFIG=y\n' in configlines and \
+       'BR2_TARGET_UBOOT_CUSTOM_CONFIG_FILE=""\n' in configlines:
+        configlines.remove('BR2_TARGET_UBOOT=y\n')
+        configlines.remove('BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG=y\n')
+        configlines.remove('BR2_TARGET_UBOOT_USE_CUSTOM_CONFIG=y\n')
+        configlines.remove('BR2_TARGET_UBOOT_CUSTOM_CONFIG_FILE=""\n')
+
+    if 'BR2_TARGET_UBOOT=y\n' in configlines and \
+       'BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG=y\n' in configlines and \
+       'BR2_TARGET_UBOOT_USE_DEFCONFIG=y\n' in configlines and \
+       'BR2_TARGET_UBOOT_BOARD_DEFCONFIG=""\n' in configlines:
+        configlines.remove('BR2_TARGET_UBOOT=y\n')
+        configlines.remove('BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG=y\n')
+        configlines.remove('BR2_TARGET_UBOOT_USE_DEFCONFIG=y\n')
+        configlines.remove('BR2_TARGET_UBOOT_BOARD_DEFCONFIG=""\n')
+
+    if 'BR2_TARGET_UBOOT=y\n' in configlines and \
+       'BR2_TARGET_UBOOT_BUILD_SYSTEM_LEGACY=y\n' in configlines and \
+       'BR2_TARGET_UBOOT_BOARDNAME=""\n' in configlines:
+        configlines.remove('BR2_TARGET_UBOOT=y\n')
+        configlines.remove('BR2_TARGET_UBOOT_BUILD_SYSTEM_LEGACY=y\n')
+        configlines.remove('BR2_TARGET_UBOOT_BOARDNAME=""\n')
+
+    if 'BR2_TOOLCHAIN_EXTERNAL=y\n' in configlines and \
+       'BR2_TOOLCHAIN_EXTERNAL_PREINSTALLED=y\n' in configlines and \
+       'BR2_TOOLCHAIN_EXTERNAL_PATH=""\n' in configlines:
+        configlines.remove('BR2_TOOLCHAIN_EXTERNAL=y\n')
+        configlines.remove('BR2_TOOLCHAIN_EXTERNAL_PREINSTALLED=y\n')
+        configlines.remove('BR2_TOOLCHAIN_EXTERNAL_PATH=""\n')
+        if 'BR2_ARCH_HAS_NO_TOOLCHAIN_BUILDROOT=y\n' in configlines:
+            return False
+
+    if 'BR2_TOOLCHAIN_EXTERNAL=y\n' in configlines and \
+       'BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y\n' in configlines and \
+       'BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y\n' in configlines and \
+       'BR2_TOOLCHAIN_EXTERNAL_URL=""\n' in configlines:
+        configlines.remove('BR2_TOOLCHAIN_EXTERNAL=y\n')
+        configlines.remove('BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y\n')
+        configlines.remove('BR2_TOOLCHAIN_EXTERNAL_DOWNLOAD=y\n')
+        configlines.remove('BR2_TOOLCHAIN_EXTERNAL_URL=""\n')
+        if 'BR2_ARCH_HAS_NO_TOOLCHAIN_BUILDROOT=y\n' in configlines:
+            return False
+
+    if 'BR2_TARGET_MXS_BOOTLETS=y\n' in configlines and \
+       'BR2_TARGET_MXS_BOOTLETS_CUSTOM_GIT=y\n' in configlines and \
+       'BR2_TARGET_MXS_BOOTLETS_CUSTOM_GIT_URL=""\n' in configlines:
+        configlines.remove('BR2_TARGET_MXS_BOOTLETS_CUSTOM_GIT=y\n')
+        configlines.append('BR2_TARGET_MXS_BOOTLETS_FREESCALE=y\n')
+        configlines.remove('BR2_TARGET_MXS_BOOTLETS_CUSTOM_GIT_URL=""\n')
+
+    if 'BR2_TARGET_MXS_BOOTLETS=y\n' in configlines and \
+       'BR2_TARGET_MXS_BOOTLETS_CUSTOM_TARBALL=y\n' in configlines and \
+       'BR2_TARGET_MXS_BOOTLETS_CUSTOM_TARBALL_URL=""\n' in configlines:
+        configlines.remove('BR2_TARGET_MXS_BOOTLETS_CUSTOM_TARBALL=y\n')
+        configlines.append('BR2_TARGET_MXS_BOOTLETS_FREESCALE=y\n')
+        configlines.remove('BR2_TARGET_MXS_BOOTLETS_CUSTOM_TARBALL_URL=""\n')
+
+    if 'BR2_TARGET_OPENSBI=y\n' in configlines and \
+       'BR2_TARGET_OPENSBI_CUSTOM_GIT=y\n' in configlines and \
+       'BR2_TARGET_OPENSBI_CUSTOM_REPO_URL=""\n' in configlines:
+        configlines.remove('BR2_TARGET_OPENSBI_CUSTOM_GIT=y\n')
+        configlines.append('BR2_TARGET_OPENSBI_LATEST_VERSION=y\n')
+        configlines.remove('BR2_TARGET_OPENSBI_CUSTOM_REPO_URL=""\n')
+
+    if 'BR2_TARGET_OPENSBI=y\n' in configlines and \
+       'BR2_TARGET_OPENSBI_CUSTOM_TARBALL=y\n' in configlines and \
+       'BR2_TARGET_OPENSBI_CUSTOM_TARBALL_LOCATION=""\n' in configlines:
+        configlines.remove('BR2_TARGET_OPENSBI_CUSTOM_TARBALL=y\n')
+        configlines.append('BR2_TARGET_OPENSBI_LATEST_VERSION=y\n')
+        configlines.remove('BR2_TARGET_OPENSBI_CUSTOM_TARBALL_LOCATION=""\n')
+
+    if 'BR2_TARGET_OPENSBI=y\n' in configlines and \
+       'BR2_TARGET_OPENSBI_CUSTOM_VERSION=y\n' in configlines and \
+       'BR2_TARGET_OPENSBI_CUSTOM_VERSION_VALUE=""\n' in configlines:
+        configlines.remove('BR2_TARGET_OPENSBI_CUSTOM_VERSION=y\n')
+        configlines.append('BR2_TARGET_OPENSBI_LATEST_VERSION=y\n')
+        configlines.remove('BR2_TARGET_OPENSBI_CUSTOM_VERSION_VALUE=""\n')
+
+    if 'BR2_PACKAGE_REFPOLICY=y\n' in configlines and \
+       'BR2_PACKAGE_REFPOLICY_CUSTOM_GIT=y\n' in configlines and \
+       'BR2_PACKAGE_REFPOLICY_CUSTOM_REPO_URL=""\n' in configlines:
+        configlines.remove('BR2_PACKAGE_REFPOLICY_CUSTOM_GIT=y\n')
+        configlines.append('BR2_PACKAGE_REFPOLICY_UPSTREAM_VERSION=y\n')
+        configlines.remove('BR2_PACKAGE_REFPOLICY_CUSTOM_REPO_URL=""\n')
+
+    if 'BR2_PACKAGE_XENOMAI=y\n' in configlines and \
+       'BR2_PACKAGE_XENOMAI_CUSTOM_GIT=y\n' in configlines and \
+       'BR2_PACKAGE_XENOMAI_REPOSITORY=""\n' in configlines:
+        configlines.remove('BR2_PACKAGE_XENOMAI_CUSTOM_GIT=y\n')
+        configlines.append('BR2_PACKAGE_XENOMAI_LATEST_VERSION=y\n')
+        configlines.remove('BR2_PACKAGE_XENOMAI_REPOSITORY=""\n')
+
+    if 'BR2_PACKAGE_XENOMAI=y\n' in configlines and \
+       'BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL=y\n' in configlines and \
+       'BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL_URL=""\n' in configlines:
+        configlines.remove('BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL=y\n')
+        configlines.append('BR2_PACKAGE_XENOMAI_LATEST_VERSION=y\n')
+        configlines.remove('BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL_URL=""\n')
+
+    if 'BR2_PACKAGE_XENOMAI=y\n' in configlines and \
+       'BR2_PACKAGE_XENOMAI_CUSTOM_VERSION=y\n' in configlines and \
+       'BR2_PACKAGE_XENOMAI_CUSTOM_VERSION_VALUE=""\n' in configlines:
+        configlines.remove('BR2_PACKAGE_XENOMAI_CUSTOM_VERSION=y\n')
+        configlines.append('BR2_PACKAGE_XENOMAI_LATEST_VERSION=y\n')
+        configlines.remove('BR2_PACKAGE_XENOMAI_CUSTOM_VERSION_VALUE=""\n')
+
+    if 'BR2_PACKAGE_XVISOR=y\n' in configlines and \
+       'BR2_PACKAGE_XVISOR_USE_CUSTOM_CONFIG=y\n' in configlines and \
+       'BR2_PACKAGE_XVISOR_CUSTOM_CONFIG_FILE=""\n' in configlines:
+        configlines.remove('BR2_PACKAGE_XVISOR_USE_CUSTOM_CONFIG=y\n')
+        configlines.append('BR2_PACKAGE_XVISOR_USE_DEFCONFIG=y\n')
+        configlines.remove('BR2_PACKAGE_XVISOR_CUSTOM_CONFIG_FILE=""\n')
 
     with open(configfile, "w+") as configf:
         configf.writelines(configlines)
@@ -333,11 +645,14 @@ def gen_config(args):
 
     sysinfo = SystemInfo()
 
-    # Select a random toolchain configuration
-    configs = get_toolchain_configs(args.toolchains_csv, args.buildrootdir)
+    if args.toolchains_csv:
+        # Select a random toolchain configuration
+        configs = get_toolchain_configs(args.toolchains_csv, args.buildrootdir)
 
-    i = randint(0, len(configs) - 1)
-    toolchainconfig = configs[i]
+        i = randint(0, len(configs) - 1)
+        toolchainconfig = configs[i]
+    else:
+        toolchainconfig = []
 
     configlines = list(toolchainconfig)
 
@@ -368,7 +683,7 @@ def gen_config(args):
     if randint(0, 20) == 0:
         configlines.append("BR2_STATIC_LIBS=y\n")
     if randint(0, 20) == 0:
-        configlines.append("BR2_PACKAGE_PYTHON_PY_ONLY=y\n")
+        configlines.append("BR2_PACKAGE_PYTHON3_PY_ONLY=y\n")
     if randint(0, 5) == 0:
         configlines.append("BR2_OPTIMIZE_2=y\n")
     if randint(0, 4) == 0:
@@ -409,9 +724,13 @@ def gen_config(args):
                   file=sys.stderr)
             return 1
         bounded_loop -= 1
-        subprocess.check_call(["make", "O=%s" % args.outputdir, "-C", args.buildrootdir,
-                               "KCONFIG_PROBABILITY=%d" % randint(1, 30),
-                               "randpackageconfig"])
+        make_rand = [
+            "make", "O=%s" % args.outputdir, "-C", args.buildrootdir,
+            "KCONFIG_SEED=0x%s" % hexlify(os.urandom(4)).decode("ascii").upper(),
+            "KCONFIG_PROBABILITY=%d" % randint(1, 20),
+            "randpackageconfig" if args.toolchains_csv else "randconfig"
+        ]
+        subprocess.check_call(make_rand)
 
         if fixup_config(sysinfo, configfile):
             break
@@ -435,10 +754,18 @@ if __name__ == '__main__':
     parser.add_argument("--buildrootdir", "-b",
                         help="Buildroot directory (relative to current directory)",
                         type=str, default='.')
-    parser.add_argument("--toolchains-csv",
-                        help="Path of the toolchain configuration file",
-                        type=str,
-                        default="support/config-fragments/autobuild/toolchain-configs.csv")
+
+    toolchains_csv = parser.add_mutually_exclusive_group(required=False)
+    toolchains_csv.add_argument("--toolchains-csv",
+                                dest="toolchains_csv",
+                                help="Path of the toolchain configuration file",
+                                type=str)
+    toolchains_csv.add_argument("--no-toolchains-csv",
+                                dest="toolchains_csv",
+                                help="Generate random toolchain configuration",
+                                action='store_false')
+    parser.set_defaults(toolchains_csv="support/config-fragments/autobuild/toolchain-configs.csv")
+
     args = parser.parse_args()
 
     # We need the absolute path to use with O=, because the relative
@@ -448,7 +775,7 @@ if __name__ == '__main__':
 
     try:
         ret = gen_config(args)
-    except Exception as e:
-        print(str(e), file=sys.stderr)
+    except Exception:
+        traceback.print_exc()
         parser.exit(1)
     parser.exit(ret)

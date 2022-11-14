@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NMAP_VERSION = 7.91
+NMAP_VERSION = 7.92
 NMAP_SITE = https://nmap.org/dist
 NMAP_SOURCE = nmap-$(NMAP_VERSION).tar.bz2
 NMAP_DEPENDENCIES = liblinear libpcap
@@ -44,6 +44,13 @@ else
 NMAP_CONF_OPTS += --without-openssl
 endif
 
+ifeq ($(BR2_PACKAGE_ZLIB),y)
+NMAP_CONF_OPTS += --with-libz="$(STAGING_DIR)/usr"
+NMAP_DEPENDENCIES += zlib
+else
+NMAP_CONF_OPTS += --without-libz
+endif
+
 NMAP_INSTALL_TARGET_OPTS = DESTDIR=$(TARGET_DIR) install-nse
 
 ifeq ($(BR2_PACKAGE_NMAP_NCAT),y)
@@ -52,15 +59,6 @@ NMAP_MAKE_OPTS += build-ncat
 NMAP_INSTALL_TARGET_OPTS += install-ncat
 else
 NMAP_CONF_OPTS += --without-ncat
-endif
-
-ifeq ($(BR2_PACKAGE_NMAP_NDIFF),y)
-NMAP_DEPENDENCIES += python
-NMAP_CONF_OPTS += --with-ndiff
-NMAP_MAKE_OPTS += build-ndiff
-NMAP_INSTALL_TARGET_OPTS += install-ndiff
-else
-NMAP_CONF_OPTS += --without-ndiff
 endif
 
 ifeq ($(BR2_PACKAGE_NMAP_NMAP),y)

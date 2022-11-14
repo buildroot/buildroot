@@ -1,0 +1,46 @@
+config BR2_PACKAGE_WOLFTPM
+	bool "wolftpm"
+	help
+	  wolfTPM is a portable, open-source TPM 2.0 stack with
+	  backward API compatibility, designed for embedded use.
+	  No external dependencies, compact code size with low
+	  resource usage.
+
+	  https://www.wolfssl.com/
+
+if BR2_PACKAGE_WOLFTPM
+
+config BR2_PACKAGE_WOLFTPM_WOLFCRYPT
+	bool "wolfCrypt hooks"
+	default y
+	depends on BR2_TOOLCHAIN_HAS_THREADS # wolfssl
+	depends on !BR2_STATIC_LIBS # wolfssl-all
+	select BR2_PACKAGE_WOLFSSL
+	# not mandatory, but needed to get all features
+	select BR2_PACKAGE_WOLFSSL_ALL
+	help
+	  Enable wolfCrypt hooks for RNG, Auth Sessions and Parameter
+	  encryption. Disabling this option is not recommended as it
+	  could create a security breach in most environments.
+
+comment "wolfCrypt hooks need a toolchain w/ threads, dynamic library"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
+
+config BR2_PACKAGE_WOLFTPM_ST33
+	bool "ST33 extra functionality"
+	help
+	  Enable support of TPM 2.0 extra functionality offered by the
+	  STMicroelectronics ST33 chip.
+
+config BR2_PACKAGE_WOLFTPM_NUVOTON
+	bool "NPCT750 extra functionality"
+	help
+	  Enable support of TPM 2.0 extra functionality offered by the
+	  Nuvoton NPCT750 chip.
+
+config BR2_PACKAGE_WOLFTPM_DEBUG
+	bool "Debug output"
+	help
+	  Enable debug messages in wolfTPM.
+
+endif

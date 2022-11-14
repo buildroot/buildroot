@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QORIQ_RCW_VERSION = LSDK-20.12
+QORIQ_RCW_VERSION = LSDK-21.08
 QORIQ_RCW_SITE = https://source.codeaurora.org/external/qoriq/qoriq-components/rcw
 QORIQ_RCW_SITE_METHOD = git
 QORIQ_RCW_LICENSE = BSD-3-Clause
@@ -13,8 +13,10 @@ QORIQ_RCW_LICENSE_FILES = LICENSE
 HOST_QORIQ_RCW_DEPENDENCIES = $(BR2_PYTHON3_HOST_DEPENDENCY)
 
 QORIQ_RCW_FILES = $(call qstrip,$(BR2_PACKAGE_HOST_QORIQ_RCW_CUSTOM_PATH))
+QORIQ_RCW_INTREE = $(call qstrip,$(BR2_PACKAGE_HOST_QORIQ_RCW_INTREE))
 
 ifneq ($(QORIQ_RCW_FILES),)
+
 QORIQ_RCW_INCLUDES = $(filter-out %.rcw,$(QORIQ_RCW_FILES))
 # Get the name of the custom rcw file from the custom list
 QORIQ_RCW_PROJECT = $(notdir $(filter %.rcw,$(QORIQ_RCW_FILES)))
@@ -54,12 +56,26 @@ endef
 define HOST_QORIQ_RCW_INSTALL_DELIVERY_FILE
 	$(INSTALL) -D -m 0644 $(@D)/PBL.bin $(BINARIES_DIR)/PBL.bin
 endef
+
+else ifneq ($(QORIQ_RCW_INTREE),)
+
+QORIQ_RCW_PLATFORM = $(firstword $(subst /, ,$(QORIQ_RCW_INTREE)))
+QORIQ_RCW_FILE_BIN = $(lastword $(subst /, ,$(QORIQ_RCW_INTREE)))
+
+define HOST_QORIQ_RCW_BUILD_CMDS
+	$(MAKE) -C $(@D)/$(QORIQ_RCW_PLATFORM)
+endef
+
+define HOST_QORIQ_RCW_INSTALL_DELIVERY_FILE
+	$(INSTALL) -D -m 0644 $(@D)/$(patsubst %.rcw,%.bin,$(QORIQ_RCW_INTREE)) \
+		$(BINARIES_DIR)/PBL.bin
+endef
 endif
 
 # Copy source files and script into $(HOST_DIR)/share/rcw/ so a developer
 # could use a post image or SDK to build/install PBL files.
 define HOST_QORIQ_RCW_INSTALL_CMDS
-	mkdir -p  $(HOST_DIR)/share/rcw
+	mkdir -p $(HOST_DIR)/share/rcw
 	cp -a $(@D)/* $(HOST_DIR)/share/rcw
 	$(HOST_QORIQ_RCW_INSTALL_DELIVERY_FILE)
 endef

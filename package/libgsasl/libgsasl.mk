@@ -11,10 +11,10 @@ LIBGSASL_LICENSE_FILES = README COPYING.LIB COPYING
 LIBGSASL_INSTALL_STAGING = YES
 
 ifeq ($(BR2_PACKAGE_LIBGCRYPT),y)
-LIBGSASL_CONF_OPTS = --with-libgcrypt-prefix=$(STAGING_DIR)/usr
+LIBGSASL_CONF_OPTS += --with-libgcrypt-prefix=$(STAGING_DIR)/usr
 LIBGSASL_DEPENDENCIES += libgcrypt
 else
-LIBGSASL_CONF_OPTS = --without-libgcrypt
+LIBGSASL_CONF_OPTS += --without-libgcrypt
 endif
 
 ifeq ($(BR2_PACKAGE_LIBIDN),y)

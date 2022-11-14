@@ -4,12 +4,13 @@
 #
 ################################################################################
 
-UDISKS_VERSION = 2.9.3
+UDISKS_VERSION = 2.9.4
 UDISKS_SOURCE = udisks-$(UDISKS_VERSION).tar.bz2
 UDISKS_SITE = https://github.com/storaged-project/udisks/releases/download/udisks-$(UDISKS_VERSION)
 UDISKS_LICENSE = GPL-2.0+
 UDISKS_LICENSE_FILES = COPYING
 UDISKS_CPE_ID_VENDOR = freedesktop
+UDISKS_INSTALL_STAGING = YES
 
 UDISKS_DEPENDENCIES = \
 	host-pkgconf \

@@ -1,0 +1,37 @@
+From f681f428477812e54484f631b0da332cc2e00eaa Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Wed, 16 Mar 2022 19:08:55 +0100
+Subject: [PATCH] eglconvenience: add missing QList include
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes:
+
+  qeglconvenience.cpp:418:23: error: variable ‘QList<QByteArray> extensions’ has initializer but incomplete type
+    418 |     QList<QByteArray> extensions =
+        |                       ^~~~~~~~~~
+  qeglconvenience.cpp:420:65: error: invalid use of incomplete type ‘class QList<QByteArray>’
+    420 |             (eglQueryString(display, EGL_EXTENSIONS))).split(' ');
+        |                                                                 ^
+
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ src/platformsupport/eglconvenience/qeglconvenience.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/platformsupport/eglconvenience/qeglconvenience.cpp b/src/platformsupport/eglconvenience/qeglconvenience.cpp
+index 5303d37c..daceeb8b 100644
+--- a/src/platformsupport/eglconvenience/qeglconvenience.cpp
++++ b/src/platformsupport/eglconvenience/qeglconvenience.cpp
+@@ -38,6 +38,7 @@
+ ****************************************************************************/
+ 
+ #include <QByteArray>
++#include <QList>
+ #include <QOpenGLContext>
+ 
+ #ifdef Q_OS_LINUX
+-- 
+2.35.1
+

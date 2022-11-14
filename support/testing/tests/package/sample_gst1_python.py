@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """A simple test that uses gst1-python to run a fake videotestsrc for 100
 frames
 """

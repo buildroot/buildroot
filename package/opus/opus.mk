@@ -17,9 +17,14 @@ OPUS_CFLAGS += -O0
 endif
 
 OPUS_CONF_ENV = CFLAGS="$(OPUS_CFLAGS)"
+OPUS_CONF_OPTS = --enable-custom-modes
 
 ifeq ($(BR2_PACKAGE_OPUS_FIXED_POINT),y)
 OPUS_CONF_OPTS += --enable-fixed-point
+endif
+
+ifeq ($(BR2_OPTIMIZE_FAST),y)
+OPUS_CONF_OPTS += --enable-float-approx
 endif
 
 # When we're on ARM, but we don't have ARM instructions (only

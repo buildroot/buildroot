@@ -13,15 +13,28 @@ if BR2_TARGET_OPTEE_OS
 
 choice
 	prompt "OP-TEE OS version"
-	default BR2_TARGET_OPTEE_OS_LATEST
+	default BR2_TARGET_OPTEE_OS_LATEST if BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
 	help
 	  Select the version of OP-TEE OS you want to use
 
 config BR2_TARGET_OPTEE_OS_LATEST
-	bool "3.13.0"
+	bool "3.18.0"
+	depends on BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
+	select BR2_TARGET_OPTEE_OS_NEEDS_PYTHON_CRYPTOGRAPHY
 	help
 	  Use the latest release tag from the OP-TEE OS official Git
 	  repository.
+
+config BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL
+	bool "Custom tarball"
+	help
+	  This option allows to specify a URL pointing to an OP-TEE OS
+	  source tarball. This URL can use any protocol recognized by
+	  Buildroot, like http://, ftp://, file:// or scp://.
+
+	  When pointing to a local tarball using file://, you may want
+	  to use a make variable like $(TOPDIR) to reference the root of
+	  the Buildroot tree.
 
 config BR2_TARGET_OPTEE_OS_CUSTOM_GIT
 	bool "Custom Git repository"
@@ -29,6 +42,13 @@ config BR2_TARGET_OPTEE_OS_CUSTOM_GIT
 	  Use a custom version fetched from a Git repository.
 
 endchoice
+
+if BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL
+
+config BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL_LOCATION
+	string "URL of custom OP-TEE OS tarball"
+
+endif
 
 if BR2_TARGET_OPTEE_OS_CUSTOM_GIT
 
@@ -50,9 +70,26 @@ endif
 
 config BR2_TARGET_OPTEE_OS_VERSION
 	string
-	default "3.13.0"	if BR2_TARGET_OPTEE_OS_LATEST
+	default "3.18.0"	if BR2_TARGET_OPTEE_OS_LATEST
+	default "custom"	if BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL
 	default BR2_TARGET_OPTEE_OS_CUSTOM_REPO_VERSION \
 				if BR2_TARGET_OPTEE_OS_CUSTOM_GIT
+
+config BR2_TARGET_OPTEE_OS_NEEDS_DTC
+	bool "OP-TEE OS needs dtc"
+	select BR2_PACKAGE_HOST_DTC
+	help
+	  Select this option if your OP-TEE OS platform configuration
+	  requires the Device Tree compiler to be available.
+
+config BR2_TARGET_OPTEE_OS_NEEDS_PYTHON_CRYPTOGRAPHY
+	bool "OP-TEE OS needs host-python-cryptography"
+	depends on BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
+	help
+	  OP-TEE OS version below 3.16 used python-pycryptodomex
+	  package in python scripts. Newer version uses
+	  python-cryptography. Select this option if optee-os needs
+	  python-cryptography to be built.
 
 config BR2_TARGET_OPTEE_OS_CORE
 	bool "Build core"

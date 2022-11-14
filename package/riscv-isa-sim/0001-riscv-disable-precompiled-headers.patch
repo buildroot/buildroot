@@ -1,0 +1,34 @@
+From 980d5143089bf32ef8a6dfdf1bb9e9fe92fa7bf5 Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Sun, 9 Jan 2022 13:38:48 +0100
+Subject: [PATCH] riscv: disable precompiled headers
+
+While precompiling header, some toolchains fail with the message:
+
+    /path/to/toolchain/bin/ld: /path/to/sysroot/usr/lib/Scrt1.o: in function `_start':
+    (.text+0x54): undefined reference to `main'
+
+The patch totally disable precompiled headers.
+
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ riscv/riscv.mk.in | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/riscv/riscv.mk.in b/riscv/riscv.mk.in
+index 2347ce6..4f56eaf 100644
+--- a/riscv/riscv.mk.in
++++ b/riscv/riscv.mk.in
+@@ -35,9 +35,6 @@ riscv_hdrs = \
+ 
+ riscv_install_hdrs = mmio_plugin.h
+ 
+-riscv_precompiled_hdrs = \
+-	insn_template.h \
+-
+ riscv_srcs = \
+ 	processor.cc \
+ 	execute.cc \
+-- 
+2.34.1
+

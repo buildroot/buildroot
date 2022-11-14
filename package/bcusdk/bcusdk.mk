@@ -21,9 +21,12 @@ BCUSDK_CONF_OPTS = \
 	--without-pth-test \
 	--with-pth=$(STAGING_DIR)/usr
 
-BCUSDK_DEPENDENCIES = \
-	libpthsem \
-	$(if $(BR2_PACKAGE_ARGP_STANDALONE),argp-standalone)
+BCUSDK_DEPENDENCIES = libpthsem
+
+ifeq ($(BR2_PACKAGE_ARGP_STANDALONE),y)
+BCUSDK_DEPENDENCIES += argp-standalone $(TARGET_NLS_DEPENDENCIES)
+BCUSDK_CONF_ENV += LIBS=$(TARGET_NLS_LIBS)
+endif
 
 define BCUSDK_REMOVE_EXAMPLES
 	$(RM) -rf $(TARGET_DIR)/usr/share/bcusdk

@@ -1,0 +1,99 @@
+From 97088e7bd7e84a493bea7e5fe4e808c8ac3e00ff Mon Sep 17 00:00:00 2001
+From: CastagnaIT <gottardo.stefano.83@gmail.com>
+Date: Thu, 22 Jul 2021 10:09:24 +0200
+Subject: [PATCH] Backport Smmothstream changes
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ Source/C++/Core/Ap4File.cpp                | 14 ++++++++------
+ Source/C++/Core/Ap4File.h                  |  6 ++++--
+ Source/C++/Core/Ap4FragmentSampleTable.cpp |  2 +-
+ 3 files changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/Source/C++/Core/Ap4File.cpp b/Source/C++/Core/Ap4File.cpp
+index cb20c3e..f1d2727 100644
+--- a/Source/C++/Core/Ap4File.cpp
++++ b/Source/C++/Core/Ap4File.cpp
+@@ -55,13 +55,14 @@ AP4_File::AP4_File(AP4_Movie* movie) :
+ +---------------------------------------------------------------------*/
+ AP4_File::AP4_File(AP4_ByteStream&  stream, 
+                    AP4_AtomFactory& atom_factory,
+-                   bool             moov_only) :
+-    m_Movie(NULL),
++                   bool             moov_only,
++                   AP4_Movie*       movie) :
++    m_Movie(movie),
+     m_FileType(NULL),
+     m_MetaData(NULL),
+     m_MoovIsBeforeMdat(true)
+ {
+-    ParseStream(stream, atom_factory, moov_only);
++    ParseStream(stream, atom_factory, moov_only, movie);
+ }
+ 
+ /*----------------------------------------------------------------------
+@@ -75,7 +76,7 @@ AP4_File::AP4_File(AP4_ByteStream&  stream,
+     m_MoovIsBeforeMdat(true)
+ {
+     AP4_DefaultAtomFactory atom_factory;
+-    ParseStream(stream, atom_factory, moov_only);
++    ParseStream(stream, atom_factory, moov_only, m_Movie);
+ }
+ 
+ /*----------------------------------------------------------------------
+@@ -93,12 +94,13 @@ AP4_File::~AP4_File()
+ void
+ AP4_File::ParseStream(AP4_ByteStream&  stream,
+                       AP4_AtomFactory& atom_factory,
+-                      bool             moov_only)
++                      bool             moov_only,
++                      AP4_Movie*       movie)
+ {
+     // parse top-level atoms
+     AP4_Atom*    atom;
+     AP4_Position stream_position;
+-    bool         keep_parsing = true;
++    bool         keep_parsing = movie == 0;
+     while (keep_parsing &&
+            AP4_SUCCEEDED(stream.Tell(stream_position)) && 
+            AP4_SUCCEEDED(atom_factory.CreateAtomFromStream(stream, atom))) {
+diff --git a/Source/C++/Core/Ap4File.h b/Source/C++/Core/Ap4File.h
+index 9375258..2f00187 100644
+--- a/Source/C++/Core/Ap4File.h
++++ b/Source/C++/Core/Ap4File.h
+@@ -101,7 +101,8 @@ public:
+      */
+     AP4_File(AP4_ByteStream&  stream, 
+              AP4_AtomFactory& atom_factory,
+-             bool             moov_only);
++             bool             moov_only,
++             AP4_Movie*       movie = NULL);
+ 
+     /**
+      * Constructs an AP4_File from a stream using the default atom factory
+@@ -161,7 +162,8 @@ private:
+     // methods
+     void ParseStream(AP4_ByteStream&  stream,
+                      AP4_AtomFactory& atom_factory,
+-                     bool             moov_only);
++                     bool             moov_only,
++                     AP4_Movie*       movie);
+     
+     // members
+     AP4_Movie*    m_Movie;
+diff --git a/Source/C++/Core/Ap4FragmentSampleTable.cpp b/Source/C++/Core/Ap4FragmentSampleTable.cpp
+index 84e5ded..3fbb53e 100644
+--- a/Source/C++/Core/Ap4FragmentSampleTable.cpp
++++ b/Source/C++/Core/Ap4FragmentSampleTable.cpp
+@@ -130,7 +130,7 @@ AP4_FragmentSampleTable::AddTrun(AP4_TrunAtom*   trun,
+         data_offset += trun->GetDataOffset();
+     }         
+     // MS hack
+-    if (data_offset == moof_offset) {
++    if (data_offset < payload_offset) {
+         data_offset = payload_offset;
+     } else {
+         payload_offset = data_offset;
+-- 
+2.30.2
+

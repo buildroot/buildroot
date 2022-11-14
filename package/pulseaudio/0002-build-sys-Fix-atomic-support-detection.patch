@@ -1,0 +1,59 @@
+From a5392576ceba92d04706cefc1929ddd5ace5537a Mon Sep 17 00:00:00 2001
+From: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
+Date: Fri, 1 Jul 2022 14:03:44 +0200
+Subject: [PATCH] build-sys: Fix atomic support detection
+
+Attempting to use atomics operations on an architecture that does not
+support them generally results in a link error:
+
+ld: /tmp/ccjYcMPP.o: in function `func':
+testfile.c:(.text+0x1c): undefined reference to `__sync_bool_compare_and_swap_4'
+
+The current build system uses cc.compiles() to check if atomic ops are
+supported, but cc.compiles() does not attempt to link, so the test fails
+to enable libatomics_opts.
+
+Fix this by using cc.links() instead of cc.compiles().
+
+Signed-off-by: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
+Upstream-status: Submitted [https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/merge_requests/732]
+---
+ meson.build | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index c6db7e670..c5135330f 100644
+--- a/meson.build
++++ b/meson.build
+@@ -498,22 +498,24 @@ endif
+ 
+ need_libatomic_ops = false
+ 
+-atomictest = '''void func() {
++atomictest = '''int main() {
+   volatile int atomic = 2;
+   __sync_bool_compare_and_swap (&atomic, 2, 3);
++  return 0;
+ }
+ '''
+ 
+-if cc.compiles(atomictest)
++if cc.links(atomictest)
+   cdata.set('HAVE_ATOMIC_BUILTINS', 1)
+ 
+-  newatomictest = '''void func() {
++  newatomictest = '''int main() {
+     int c = 0;
+     __atomic_store_n(&c, 4, __ATOMIC_SEQ_CST);
++    return 0;
+   }
+   '''
+ 
+-  if(cc.compiles(newatomictest))
++  if(cc.links(newatomictest))
+     cdata.set('HAVE_ATOMIC_BUILTINS_MEMORY_MODEL', 1)
+   endif
+ 
+-- 
+2.36.1
+

@@ -6,7 +6,7 @@
 
 OPENSBI_VERSION = $(call qstrip,$(BR2_TARGET_OPENSBI_VERSION))
 
-ifeq ($(OPENSBI_VERSION),custom)
+ifeq ($(BR2_TARGET_OPENSBI_CUSTOM_TARBALL),y)
 # Handle custom OpenSBI tarballs as specified by the configuration
 OPENSBI_TARBALL = $(call qstrip,$(BR2_TARGET_OPENSBI_CUSTOM_TARBALL_LOCATION))
 OPENSBI_SITE = $(patsubst %/,%,$(dir $(OPENSBI_TARBALL)))
@@ -31,7 +31,8 @@ BR_NO_CHECK_HASH_FOR += $(OPENSBI_SOURCE)
 endif
 
 OPENSBI_MAKE_ENV = \
-	CROSS_COMPILE=$(TARGET_CROSS)
+	CROSS_COMPILE=$(TARGET_CROSS) \
+	$(call qstrip,$(BR2_TARGET_OPENSBI_ADDITIONAL_VARIABLES))
 
 OPENSBI_PLAT = $(call qstrip,$(BR2_TARGET_OPENSBI_PLAT))
 ifneq ($(OPENSBI_PLAT),)

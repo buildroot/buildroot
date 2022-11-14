@@ -1,0 +1,56 @@
+From ac88536d7c3fde3c22933368296c9029bb67b9fc Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 25 Jul 2022 21:49:25 +0200
+Subject: [PATCH] meson.build: fix build without C++
+
+Fix the following build failure without C++:
+
+../output-1/build/pulseaudio-16.1/meson.build:1:0: ERROR: Unknown compiler(s): [['/home/autobuild/autobuild/instance-1/output-1/per-package/pulseaudio/host/bin/powerpc64-buildroot-linux-gnu-g++']]
+The following exception(s) were encountered:
+Running "/home/autobuild/autobuild/instance-1/output-1/per-package/pulseaudio/host/bin/powerpc64-buildroot-linux-gnu-g++ --version" gave "[Errno 2] No such file or directory: '/home/autobuild/autobuild/instance-1/output-1/per-package/pulseaudio/host/bin/powerpc64-buildroot-linux-gnu-g++'"
+
+Fixes:
+ - http://autobuild.buildroot.org/results/6526a21bd4da3b8458188f27c1ec04c381e4b673
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:
+https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/merge_requests/737]
+---
+ meson.build                         | 3 ++-
+ src/modules/echo-cancel/meson.build | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index c5135330f..8248f263b 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1,4 +1,4 @@
+-project('pulseaudio', 'c', 'cpp',
++project('pulseaudio', 'c',
+         version : run_command(find_program('git-version-gen'), join_paths(meson.current_source_dir(), '.tarball-version')).stdout().strip(),
+         meson_version : '>= 0.50.0',
+         default_options : [ 'c_std=gnu11', 'cpp_std=c++11' ]
+@@ -433,6 +433,7 @@ endif
+ # Code coverage
+ 
+ if get_option('gcov')
++  add_languages('cpp')
+   add_project_arguments('--coverage', language: ['c', 'cpp'])
+   add_project_link_arguments('--coverage', language: ['c', 'cpp'])
+ endif
+diff --git a/src/modules/echo-cancel/meson.build b/src/modules/echo-cancel/meson.build
+index 641cd35e7..3b998364e 100644
+--- a/src/modules/echo-cancel/meson.build
++++ b/src/modules/echo-cancel/meson.build
+@@ -6,6 +6,8 @@
+ # '-Wl,--unresolved-symbols=ignore-in-object-files' otherwise it fails
+ # at link time.
+ 
++add_languages('cpp')
++
+ libwebrtc_util_sources = [
+   'webrtc.cc'
+ ]
+-- 
+GitLab
+

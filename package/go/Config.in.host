@@ -5,10 +5,16 @@ config BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_HOST_GO_BOOTSTRAP_ARCH_SUPPORTS
 	depends on (BR2_arm && BR2_TOOLCHAIN_SUPPORTS_PIE) || BR2_aarch64 \
 		|| BR2_i386 || BR2_x86_64 || BR2_powerpc64le \
-		|| BR2_mips64 || BR2_mips64el || BR2_s390x
+		|| BR2_mips64 || BR2_mips64el || BR2_riscv || BR2_s390x
 	depends on !BR2_ARM_CPU_ARMV4
 	# MIPS R6 support in Go has not yet been developed.
 	depends on !BR2_MIPS_CPU_MIPS64R6
+	# Go doesn't support Risc-v 32-bit.
+	depends on !BR2_RISCV_32
+	# Go requires the following Risc-v General (G) features:
+	depends on !BR2_riscv || (BR2_RISCV_ISA_RVI && \
+		BR2_RISCV_ISA_RVM && BR2_RISCV_ISA_RVA && \
+		BR2_RISCV_ISA_RVF && BR2_RISCV_ISA_RVD)
 
 config BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS
 	bool

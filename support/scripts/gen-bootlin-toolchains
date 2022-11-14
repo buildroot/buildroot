@@ -4,6 +4,7 @@ import os.path
 import re
 import requests
 import textwrap
+import sys
 
 BASE_URL = "https://toolchains.bootlin.com/downloads/releases/toolchains"
 
@@ -41,22 +42,27 @@ arches = {
         'prefix': 'arc',
     },
     'armv5-eabi': {
-        'conditions': ['BR2_ARM_CPU_ARMV5', 'BR2_ARM_EABI'],
+        'conditions': ['BR2_arm', 'BR2_ARM_CPU_ARMV5', 'BR2_ARM_EABI'],
         'test_options': ['BR2_arm', 'BR2_arm926t', 'BR2_ARM_EABI'],
         'prefix': 'arm',
     },
     'armv6-eabihf': {
-        'conditions': ['BR2_ARM_CPU_ARMV6', 'BR2_ARM_EABIHF'],
+        'conditions': ['BR2_arm', 'BR2_ARM_CPU_ARMV6', 'BR2_ARM_EABIHF'],
         'test_options': ['BR2_arm', 'BR2_arm1176jzf_s', 'BR2_ARM_EABIHF'],
         'prefix': 'arm',
     },
     'armv7-eabihf': {
-        'conditions': ['BR2_ARM_CPU_ARMV7A', 'BR2_ARM_EABIHF'],
+        'conditions': ['BR2_arm', 'BR2_ARM_CPU_ARMV7A', 'BR2_ARM_EABIHF'],
         'test_options': ['BR2_arm', 'BR2_cortex_a8', 'BR2_ARM_EABIHF'],
         'prefix': 'arm',
     },
+    'armebv7-eabihf': {
+        'conditions': ['BR2_armeb', 'BR2_ARM_CPU_ARMV7A', 'BR2_ARM_EABIHF'],
+        'test_options': ['BR2_armeb', 'BR2_cortex_a8', 'BR2_ARM_EABIHF'],
+        'prefix': 'armeb',
+    },
     'armv7m': {
-        'conditions': ['BR2_ARM_CPU_ARMV7M'],
+        'conditions': ['BR2_arm', 'BR2_ARM_CPU_ARMV7M'],
         'test_options': ['BR2_arm', 'BR2_cortex_m4'],
         'prefix': 'arm',
     },
@@ -73,10 +79,12 @@ arches = {
     'microblazebe': {
         'conditions': ['BR2_microblazebe'],
         'prefix': 'microblaze',
+        'gdbserver': False
     },
     'microblazeel': {
         'conditions': ['BR2_microblazeel'],
         'prefix': 'microblazeel',
+        'gdbserver': False
     },
     'mips32': {
         # Not sure it could be used by other mips32 variants?
@@ -95,11 +103,6 @@ arches = {
     'mips32r6el': {
         'conditions': ['BR2_mipsel', 'BR2_mips_32r6', '!BR2_MIPS_SOFT_FLOAT'],
         'prefix': 'mipsel',
-    },
-    'mips64': {
-        # Not sure it could be used by other mips64 variants?
-        'conditions': ['BR2_mips64', 'BR2_mips_64', '!BR2_MIPS_SOFT_FLOAT'],
-        'prefix': 'mips64',
     },
     'mips64-n32': {
         # Not sure it could be used by other mips64 variants?
@@ -122,6 +125,7 @@ arches = {
     'openrisc': {
         'conditions': ['BR2_or1k'],
         'prefix': 'or1k',
+        'gdbserver': False,
     },
     'powerpc-440fp': {
         # Not sure it could be used by other powerpc variants?
@@ -158,9 +162,13 @@ arches = {
         'conditions': ['BR2_riscv', 'BR2_riscv_g', 'BR2_RISCV_32', 'BR2_RISCV_ABI_ILP32D'],
         'prefix': 'riscv32',
     },
-    'riscv64': {
-        'conditions': ['BR2_riscv', 'BR2_riscv_g', 'BR2_RISCV_64', 'BR2_RISCV_ABI_LP64'],
+    'riscv64-lp64d': {
+        'conditions': ['BR2_riscv', 'BR2_riscv_g', 'BR2_RISCV_64', 'BR2_RISCV_ABI_LP64D', 'BR2_USE_MMU'],
         'prefix': 'riscv64',
+    },
+    's390x-z13': {
+        'conditions': ['BR2_s390x', 'BR2_s390x_z13'],
+        'prefix': 's390x',
     },
     'sh-sh4': {
         'conditions': ['BR2_sh', 'BR2_sh4'],
@@ -177,6 +185,55 @@ arches = {
     'sparcv8': {
         'conditions': ['BR2_sparc', 'BR2_sparc_v8'],
         'prefix': 'sparc',
+    },
+    'x86-64': {
+        'conditions': ['BR2_x86_64',
+                       'BR2_X86_CPU_HAS_MMX',
+                       'BR2_X86_CPU_HAS_SSE',
+                       'BR2_X86_CPU_HAS_SSE2'],
+        'test_options': ['BR2_x86_64', 'BR2_x86_x86_64'],
+        'prefix': 'x86_64',
+    },
+    'x86-64-v2': {
+        'conditions': ['BR2_x86_64',
+                       'BR2_X86_CPU_HAS_MMX',
+                       'BR2_X86_CPU_HAS_SSE',
+                       'BR2_X86_CPU_HAS_SSE2',
+                       'BR2_X86_CPU_HAS_SSE3',
+                       'BR2_X86_CPU_HAS_SSSE3',
+                       'BR2_X86_CPU_HAS_SSE4',
+                       'BR2_X86_CPU_HAS_SSE42'],
+        'test_options': ['BR2_x86_64', 'BR2_x86_x86_64_v2'],
+        'prefix': 'x86_64',
+    },
+    'x86-64-v3': {
+        'conditions': ['BR2_x86_64',
+                       'BR2_X86_CPU_HAS_MMX',
+                       'BR2_X86_CPU_HAS_SSE',
+                       'BR2_X86_CPU_HAS_SSE2',
+                       'BR2_X86_CPU_HAS_SSE3',
+                       'BR2_X86_CPU_HAS_SSSE3',
+                       'BR2_X86_CPU_HAS_SSE4',
+                       'BR2_X86_CPU_HAS_SSE42',
+                       'BR2_X86_CPU_HAS_AVX',
+                       'BR2_X86_CPU_HAS_AVX2'],
+        'test_options': ['BR2_x86_64', 'BR2_x86_x86_64_v3'],
+        'prefix': 'x86_64',
+    },
+    'x86-64-v4': {
+        'conditions': ['BR2_x86_64',
+                       'BR2_X86_CPU_HAS_MMX',
+                       'BR2_X86_CPU_HAS_SSE',
+                       'BR2_X86_CPU_HAS_SSE2',
+                       'BR2_X86_CPU_HAS_SSE3',
+                       'BR2_X86_CPU_HAS_SSSE3',
+                       'BR2_X86_CPU_HAS_SSE4',
+                       'BR2_X86_CPU_HAS_SSE42',
+                       'BR2_X86_CPU_HAS_AVX',
+                       'BR2_X86_CPU_HAS_AVX2',
+                       'BR2_X86_CPU_HAS_AVX512'],
+        'test_options': ['BR2_x86_64', 'BR2_x86_x86_64_v4'],
+        'prefix': 'x86_64',
     },
     'x86-64-core-i7': {
         'conditions': ['BR2_x86_64',
@@ -204,7 +261,12 @@ arches = {
         'conditions': ['BR2_i386',
                        '!BR2_x86_i486',
                        '!BR2_x86_i586',
-                       '!BR2_x86_x1000'],
+                       '!BR2_x86_x1000',
+                       '!BR2_x86_pentium_mmx',
+                       '!BR2_x86_geode',
+                       '!BR2_x86_c3',
+                       '!BR2_x86_winchip_c6',
+                       '!BR2_x86_winchip2'],
         'test_options': ['BR2_i386',
                          'BR2_x86_i686'],
         'prefix': 'i686',
@@ -253,19 +315,22 @@ class Toolchain:
         for c in arches[self.arch]['conditions']:
             depends.append(c)
 
+        if not arches[self.arch].get('gdbserver', True):
+            selects.append("BR2_TOOLCHAIN_EXTERNAL_HAS_NO_GDBSERVER")
+
         for frag in self.fragment:
             # libc type
             if frag.startswith("BR2_TOOLCHAIN_EXTERNAL_CUSTOM_UCLIBC"):
                 selects.append("BR2_TOOLCHAIN_EXTERNAL_UCLIBC")
             elif frag.startswith("BR2_TOOLCHAIN_EXTERNAL_CUSTOM_GLIBC"):
                 # glibc needs mmu support
-                depends.append("BR2_USE_MMU")
-                # glibc doesn't support static only configuration
-                depends.append("!BR2_STATIC_LIBS")
+                if "BR2_USE_MMU" not in depends:
+                    depends.append("BR2_USE_MMU")
                 selects.append("BR2_TOOLCHAIN_EXTERNAL_GLIBC")
             elif frag.startswith("BR2_TOOLCHAIN_EXTERNAL_CUSTOM_MUSL"):
                 # musl needs mmu support
-                depends.append("BR2_USE_MMU")
+                if "BR2_USE_MMU" not in depends:
+                    depends.append("BR2_USE_MMU")
                 selects.append("BR2_TOOLCHAIN_EXTERNAL_MUSL")
 
             # gcc version
@@ -417,6 +482,10 @@ def get_toolchains():
                 version = parts[2][len("bleeding-edge-"):]
             tmp[(arch, libc, variant)] = version
 
+        if len(tmp) == 0:
+            print("ERROR: no toolchains found for architecture %s" % arch)
+            sys.exit(1)
+
         toolchains += [Toolchain(k[0], k[1], k[2], v) for k, v in tmp.items()]
 
     return toolchains
@@ -429,7 +498,8 @@ def gen_config_in_options(toolchains, fpath):
         f.write("config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_ARCH_SUPPORTS\n")
         f.write("\tbool\n")
         for arch, details in arches.items():
-            f.write("\tdefault y if %s\n" % " && ".join(details['conditions']))
+            conditions = details['conditions'].copy()
+            f.write("\tdefault y if %s\n" % " && ".join(conditions))
         f.write("\n")
 
         f.write("if BR2_TOOLCHAIN_EXTERNAL_BOOTLIN\n\n")

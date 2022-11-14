@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MRAA_VERSION = 2.1.0
+MRAA_VERSION = 2.2.0
 MRAA_SITE = $(call github,eclipse,mraa,v$(MRAA_VERSION))
 MRAA_LICENSE = MIT
 MRAA_LICENSE_FILES = COPYING

@@ -1,0 +1,27 @@
+From e5b37c1e0a7a84fdc7b403c5e30a5e93706104b8 Mon Sep 17 00:00:00 2001
+From: Dobroslaw Kijowski <dobo90@gmail.com>
+Date: Tue, 19 Oct 2021 14:17:11 +0200
+Subject: [PATCH] Fix segfault in Ap4LinearReader ProcessMoof
+
+Downloaded from https://github.com/xbmc/inputstream.adaptive/pull/856
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ Source/C++/Core/Ap4LinearReader.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/C++/Core/Ap4LinearReader.cpp b/Source/C++/Core/Ap4LinearReader.cpp
+index 61c3a9d..2464865 100644
+--- a/Source/C++/Core/Ap4LinearReader.cpp
++++ b/Source/C++/Core/Ap4LinearReader.cpp
+@@ -329,7 +329,7 @@ AP4_LinearReader::ProcessMoof(AP4_ContainerAtom* moof,
+         tracker->m_SampleTable = NULL;
+         tracker->m_NextSampleIndex = 0;
+         for (unsigned int j=0; j<ids.ItemCount(); j++) {
+-            if (ids[j] == tracker->m_Track->GetId()) {
++            if (ids.ItemCount()==1 || ids[j] == tracker->m_Track->GetId()) {
+                 AP4_FragmentSampleTable* sample_table = NULL;
+                 result = m_Fragment->CreateSampleTable(&m_Movie, 
+                                                        ids[j], 
+-- 
+2.33.1

@@ -4,19 +4,19 @@
 #
 ################################################################################
 
-SUPERTUX_VERSION = 0.6.0
+SUPERTUX_VERSION = 0.6.3
 SUPERTUX_SITE = https://github.com/SuperTux/supertux/releases/download/v$(SUPERTUX_VERSION)
 SUPERTUX_SOURCE = SuperTux-v$(SUPERTUX_VERSION)-Source.tar.gz
 
 # Supertux itself is GPL-3.0+, but it bundles a few libraries with different
 # licenses (sexp-cpp, squirrel, tinygettext) which are linked statically.
-SUPERTUX_LICENSE = GPL-3.0+ (code), CC-BY-SA-2.0, CC-BY-SA-3.0, GPL-2.0+ (images music sounds)
+SUPERTUX_LICENSE = GPL-3.0+ (code), CC-BY-SA-2.0, CC-BY-SA-3.0, CC-BY-SA-4.0, GPL-2.0+ (images music sounds)
 SUPERTUX_LICENSE_FILES = LICENSE.txt data/AUTHORS
 
 # Use bundled squirrel, tinygettext sexp-cpp packages which are hardcoded in
 # the CMake build system.
-SUPERTUX_DEPENDENCIES = host-pkgconf boost freetype libcurl libgl libglew \
-	libogg libpng libvorbis openal physfs sdl2 sdl2_image
+SUPERTUX_DEPENDENCIES = host-pkgconf boost freetype glm libcurl libgl libglew \
+	libogg libpng libvorbis openal physfs sdl2 sdl2_image zlib
 
 # CMAKE_BUILD_TYPE=Release: disable profiling code (-pg)
 # ENABLE_BOOST_STATIC_LIBS=OFF: use boost shared libraries since supertux

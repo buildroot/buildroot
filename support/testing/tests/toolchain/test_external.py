@@ -27,7 +27,7 @@ class TestExternalToolchain(infra.basetest.BRTest):
             self.assertFalse(has_broken_links(path))
 
         with open(os.path.join(self.builddir, ".config"), 'r') as configf:
-            configlines = [l.strip() for l in configf.readlines()]
+            configlines = [line.strip() for line in configf.readlines()]
 
         if "BR2_BINFMT_ELF=y" in configlines:
             interp = infra.get_elf_prog_interpreter(self.builddir,

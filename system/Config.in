@@ -125,7 +125,7 @@ config BR2_INIT_SYSTEMD
 	depends on BR2_TOOLCHAIN_USES_GLIBC
 	depends on BR2_TOOLCHAIN_HAS_SSP
 	depends on BR2_TOOLCHAIN_HAS_THREADS
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_10
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_13
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5
 	depends on BR2_HOST_GCC_AT_LEAST_5
 	select BR2_ROOTFS_MERGED_USR
@@ -153,6 +153,17 @@ config BR2_INIT_NONE
 source "$BR2_BASE_DIR/.br2-external.in.init"
 
 endchoice
+
+config BR2_PACKAGE_SYSTEMD_DEFAULT_TARGET
+	string "The default unit systemd starts at bootup"
+	default "multi-user.target"
+	depends on BR2_INIT_SYSTEMD
+	help
+	  Specify the name of the unit configuration file to be started
+	  at bootup by systemd. Should end in ".target".
+	  ex: multi-user.target
+
+	  https://www.freedesktop.org/software/systemd/man/systemd.special.html#default.target
 
 choice
 	prompt "/dev management" if !BR2_INIT_SYSTEMD
@@ -532,6 +543,16 @@ config BR2_ROOTFS_OVERLAY
 
 	  They are copied as-is into the rootfs, excluding files ending
 	  with ~ and .git, .svn and .hg directories.
+
+config BR2_ROOTFS_PRE_BUILD_SCRIPT
+	string "Custom scripts to run before commencing the build"
+	default ""
+	help
+	  Specify a space-separated list of scripts to be run before the
+	  build commences.
+
+	  This gives users the opportunity to do board-specific
+	  preparations before starting the build.
 
 config BR2_ROOTFS_POST_BUILD_SCRIPT
 	string "Custom scripts to run before creating filesystem images"

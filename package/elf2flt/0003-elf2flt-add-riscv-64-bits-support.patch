@@ -1,0 +1,103 @@
+From 3f1f323feb5cf25d8c80861991d0360784f4d2e6 Mon Sep 17 00:00:00 2001
+From: Damien Le Moal <damien.lemoal@wdc.com>
+Date: Wed, 9 Sep 2020 17:31:33 +0900
+Subject: [PATCH] elf2flt: add riscv 64-bits support
+
+Add support for riscv 64bits ISA by defining the relocation types
+R_RISCV_32_PCREL, R_RISCV_ADD32, R_RISCV_SUB32, R_RISCV_32 and
+R_RISCV_64. riscv64 support also needs the __global_pointer$ symbol to
+be defined right after the relocation tables in the data section. To
+define this symbol, the "RISCV_GP" line prefix is added. The "RISCV_GP"
+string is removed if the target CPU type is riscv64 and the definition
+line is dropped for other CPU types.
+
+With these changes, buildroot and busybox build and run on riscv NOMMU
+systems with Linux kernel including patch 6045ab5fea4c
+("binfmt_flat: do not stop relocating GOT entries prematurely on riscv")
+fixing the binfmt_flat loader. Tested on QEMU and Canaan Kendryte K210
+boards.
+
+This patch is based on earlier work by Christoph Hellwig <hch@lst.de>.
+
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+---
+ elf2flt.c     | 16 ++++++++++++++++
+ elf2flt.ld.in |  1 +
+ ld-elf2flt.c  |  8 ++++++++
+ 3 files changed, 25 insertions(+)
+
+diff --git a/elf2flt.c b/elf2flt.c
+index da25e93..a03ea3a 100644
+--- a/elf2flt.c
++++ b/elf2flt.c
+@@ -81,6 +81,8 @@ const char *elf2flt_progname;
+ #include <elf/v850.h>
+ #elif defined(TARGET_xtensa)
+ #include <elf/xtensa.h>
++#elif defined(TARGET_riscv64)
++#include <elf/riscv.h>
+ #endif
+ 
+ #if defined(__MINGW32__)
+@@ -123,6 +125,8 @@ const char *elf2flt_progname;
+ #define ARCH	"nios2"
+ #elif defined(TARGET_xtensa)
+ #define ARCH	"xtensa"
++#elif defined(TARGET_riscv64)
++#define ARCH	"riscv64"
+ #else
+ #error "Don't know how to support your CPU architecture??"
+ #endif
+@@ -812,6 +816,18 @@ output_relocs (
+ 					goto good_32bit_resolved_reloc;
+ 				default:
+ 					goto bad_resolved_reloc;
++#elif defined(TARGET_riscv64)
++				case R_RISCV_32_PCREL:
++				case R_RISCV_ADD32:
++				case R_RISCV_ADD64:
++				case R_RISCV_SUB32:
++				case R_RISCV_SUB64:
++					continue;
++				case R_RISCV_32:
++				case R_RISCV_64:
++					goto good_32bit_resolved_reloc;
++				default:
++					goto bad_resolved_reloc;
+ #else
+ 				default:
+ 					/* The default is to assume that the
+diff --git a/elf2flt.ld.in b/elf2flt.ld.in
+index e5aea14..950849e 100644
+--- a/elf2flt.ld.in
++++ b/elf2flt.ld.in
+@@ -106,6 +106,7 @@ W_RODAT:	*(.gnu.linkonce.r*)
+ 		. = ALIGN(0x20) ;
+ 		LONG(-1)
+ 		. = ALIGN(0x20) ;
++RISCV_GP:	__global_pointer$ = . + 0x800 ;
+ R_RODAT:	*(.rodata)
+ R_RODAT:	*(.rodata1)
+ R_RODAT:	*(.rodata.*)
+diff --git a/ld-elf2flt.c b/ld-elf2flt.c
+index 7cb02d5..75ee1bb 100644
+--- a/ld-elf2flt.c
++++ b/ld-elf2flt.c
+@@ -324,6 +324,14 @@ static int do_final_link(void)
+ 		append_option(&other_options, concat(got_offset, "=", buf, NULL));
+ 	}
+ 
++	/* riscv adds a global pointer symbol to the linker file with the
++	   "RISCV_GP:" prefix. Remove the prefix for riscv64 architecture and
++	   the entire line for other architectures. */
++	if (streq(TARGET_CPU, "riscv64"))
++		append_sed(&sed, "^RISCV_GP:", "");
++	else
++		append_sed(&sed, "^RISCV_GP:", NULL);
++
+ 	/* Locate the default linker script, if we don't have one provided. */
+ 	if (!linker_script)
+ 		linker_script = concat(ldscriptpath, "/elf2flt.ld", NULL);
+-- 
+2.36.1
+

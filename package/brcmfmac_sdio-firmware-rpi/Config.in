@@ -1,0 +1,28 @@
+config BR2_PACKAGE_BRCMFMAC_SDIO_FIRMWARE_RPI
+	bool "brcmfmac-sdio-firmware-rpi"
+	help
+	  Raspberry Broadcom Bluetooth and Wifi firmware.
+
+	  https://github.com/LibreELEC/brcmfmac_sdio-firmware-rpi
+
+if BR2_PACKAGE_BRCMFMAC_SDIO_FIRMWARE_RPI
+
+config BR2_PACKAGE_BRCMFMAC_SDIO_FIRMWARE_RPI_BT
+	bool "brcmfmac-sdio-firmware-rpi-bt"
+	help
+	  Raspberry Pi 3 and Zero W Broadcom BCM43438 Bluetooth module
+	  firmware. Raspberry Pi 3 Model B+ Broadcom BCM4345C0
+	  Bluetooth module firmware.
+
+config BR2_PACKAGE_BRCMFMAC_SDIO_FIRMWARE_RPI_WIFI
+	bool "brcmfmac-sdio-firmware-rpi-wifi"
+	depends on !BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM43XXX
+	help
+	  Raspberry Pi 3 and Zero W Broadcom BCM43430 wifi module
+	  NVRAM data. Raspberry Pi 3 Model B+ Broadcom BCM43455
+	  wifi module NVRAM data.
+
+comment "brcmfmac-sdio-firmware-rpi-wifi conflicts with linux-firmware Broadcom BRCM bcm43xx"
+	depends on BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM43XXX
+
+endif

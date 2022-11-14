@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-JANUS_GATEWAY_VERSION = 0.10.10
+JANUS_GATEWAY_VERSION = 1.0.3
 JANUS_GATEWAY_SITE = $(call github,meetecho,janus-gateway,v$(JANUS_GATEWAY_VERSION))
 JANUS_GATEWAY_LICENSE = GPL-3.0 with OpenSSL exception
 JANUS_GATEWAY_LICENSE_FILES = COPYING
@@ -13,7 +13,7 @@ JANUS_GATEWAY_CPE_ID_PRODUCT = janus
 
 # ding-libs provides the ini_config library
 JANUS_GATEWAY_DEPENDENCIES = host-pkgconf jansson libnice \
-	libsrtp host-gengetopt libglib2 openssl libconfig \
+	libsrtp libglib2 openssl libconfig \
 	$(if $(BR2_PACKAGE_LIBOGG),libogg)
 
 # Straight out of the repository, no ./configure, and we also patch
@@ -36,6 +36,13 @@ JANUS_GATEWAY_DEPENDENCIES += opus
 JANUS_GATEWAY_CONF_OPTS += --enable-plugin-audiobridge
 else
 JANUS_GATEWAY_CONF_OPTS += --disable-plugin-audiobridge
+endif
+
+ifeq ($(BR2_PACKAGE_JANUS_GATEWAY_DUKTAPE),y)
+JANUS_GATEWAY_DEPENDENCIES += duktape
+JANUS_GATEWAY_CONF_OPTS += --enable-plugin-duktape
+else
+JANUS_GATEWAY_CONF_OPTS += --disable-plugin-duktape
 endif
 
 ifeq ($(BR2_PACKAGE_JANUS_GATEWAY_ECHO_TEST),y)
@@ -127,5 +134,10 @@ JANUS_GATEWAY_CONF_OPTS += --enable-systemd-sockets
 else
 JANUS_GATEWAY_CONF_OPTS += --disable-systemd-sockets
 endif
+
+define JANUS_GATEWAY_INSTALL_INIT_SYSTEMD
+	$(INSTALL) -D -m 644 package/janus-gateway/janus-gateway.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/janus-gateway.service
+endef
 
 $(eval $(autotools-package))

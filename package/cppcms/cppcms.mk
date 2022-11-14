@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-CPPCMS_VERSION = 1.2.1
-CPPCMS_SOURCE = cppcms-$(CPPCMS_VERSION).tar.bz2
+CPPCMS_VERSION = 2.0.0-beta2
+CPPCMS_SOURCE = cppcms-$(subst -,.,$(CPPCMS_VERSION)).tar.bz2
 CPPCMS_LICENSE = MIT, BSL-1.0 (boost), Public Domain (json2.js), Zlib (md5)
 CPPCMS_LICENSE_FILES = COPYING.TXT MIT.TXT THIRD_PARTY_SOFTWARE.TXT
 CPPCMS_SITE = http://downloads.sourceforge.net/project/cppcms/cppcms/$(CPPCMS_VERSION)
@@ -18,7 +18,7 @@ CPPCMS_CONF_OPTS = \
 	-DCMAKE_SKIP_RPATH=ON \
 	-DCMAKE_CXX_FLAGS="$(CPPCMS_CXXFLAGS)"
 
-CPPCMS_DEPENDENCIES = zlib pcre libgcrypt
+CPPCMS_DEPENDENCIES = host-python3 pcre
 
 ifeq ($(BR2_PACKAGE_CPPCMS_ICU),y)
 CPPCMS_CONF_OPTS += -DDISABLE_ICU_LOCALE=OFF
@@ -26,6 +26,27 @@ CPPCMS_DEPENDENCIES += icu
 CPPCMS_CXXFLAGS += "`$(STAGING_DIR)/usr/bin/icu-config --cxxflags`"
 else
 CPPCMS_CONF_OPTS += -DDISABLE_ICU_LOCALE=ON
+endif
+
+ifeq ($(BR2_PACKAGE_LIBGCRYPT),y)
+CPPCMS_CONF_OPTS += -DDISABLE_GCRYPT=OFF
+CPPCMS_DEPENDENCIES += libgcrypt
+else
+CPPCMS_CONF_OPTS += -DDISABLE_GCRYPT=ON
+endif
+
+ifeq ($(BR2_PACKAGE_OPENSSL),y)
+CPPCMS_CONF_OPTS += -DDISABLE_OPENSSL=OFF
+CPPCMS_DEPENDENCIES += openssl
+else
+CPPCMS_CONF_OPTS += -DDISABLE_OPENSSL=ON
+endif
+
+ifeq ($(BR2_PACKAGE_ZLIB),y)
+CPPCMS_CONF_OPTS += -DDISABLE_GZIP=OFF
+CPPCMS_DEPENDENCIES += zlib
+else
+CPPCMS_CONF_OPTS += -DDISABLE_GZIP=ON
 endif
 
 ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)

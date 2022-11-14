@@ -4,11 +4,14 @@
 #
 ################################################################################
 
-LIBXML2_VERSION = 2.9.12
-LIBXML2_SITE = http://xmlsoft.org/sources
+LIBXML2_VERSION_MAJOR = 2.10
+LIBXML2_VERSION = $(LIBXML2_VERSION_MAJOR).3
+LIBXML2_SOURCE = libxml2-$(LIBXML2_VERSION).tar.xz
+LIBXML2_SITE = \
+	http://ftp.gnome.org/pub/gnome/sources/libxml2/$(LIBXML2_VERSION_MAJOR)
 LIBXML2_INSTALL_STAGING = YES
 LIBXML2_LICENSE = MIT
-LIBXML2_LICENSE_FILES = COPYING
+LIBXML2_LICENSE_FILES = Copyright
 LIBXML2_CPE_ID_VENDOR = xmlsoft
 LIBXML2_CONFIG_SCRIPTS = xml2-config
 
@@ -23,6 +26,13 @@ HOST_LIBXML2_DEPENDENCIES = host-pkgconf
 LIBXML2_DEPENDENCIES = host-pkgconf
 
 HOST_LIBXML2_CONF_OPTS = --without-zlib --without-lzma --without-python
+
+ifeq ($(BR2_PACKAGE_ICU),y)
+LIBXML2_DEPENDENCIES += icu
+LIBXML2_CONF_OPTS += --with-icu
+else
+LIBXML2_CONF_OPTS += --without-icu
+endif
 
 ifeq ($(BR2_PACKAGE_ZLIB),y)
 LIBXML2_DEPENDENCIES += zlib

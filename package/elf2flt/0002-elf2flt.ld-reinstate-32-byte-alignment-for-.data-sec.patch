@@ -1,0 +1,81 @@
+From 85ba5664eb368eb1cbd2c30b7cd574acd75edd4c Mon Sep 17 00:00:00 2001
+From: Niklas Cassel <niklas.cassel@wdc.com>
+Date: Mon, 4 Apr 2022 15:30:24 +0200
+Subject: [PATCH] elf2flt.ld: reinstate 32 byte alignment for .data section
+
+Commit 8a3e74446fe7 ("allow to build arm flat binaries") moved the
+following commands:
+	. = ALIGN(0x20) ;
+	@SYMBOL_PREFIX@_etext = . ;
+from the .text section to the top level in the SECTIONS node.
+
+The .text output section is being directed to a memory region using the
+"> flatmem :text" output section attribute. Commands in the top level in
+the SECTIONS node are not.
+
+This means that the ALIGN() command is no longer being appended to the
+flatmem memory region, it will simply update the Location Counter.
+
+The heuristic for placing an output section is described here:
+https://sourceware.org/binutils/docs-2.38/ld.html#Output-Section-Address
+
+"If an output memory region is set for the section then it is added to this
+region and its address will be the next free address in that region."
+
+Since the .data section is being directed to the same memory region as the
+.text section, this means that the Location Counter is not used when
+assigning an address to the .data output section, it will simply use the
+next free address.
+
+No longer directing these commands to the flatmem memory region means that
+the .data output section is no longer aligned to a 32 byte boundary.
+
+Before commit 8a3e74446fe7 ("allow to build arm flat binaries"):
+$ readelf -S busybox_unstripped.gdb | grep data
+  [ 3] .data             PROGBITS         0000000000035ac0  00036ac0
+$ readelf -s busybox_unstripped.gdb | grep _etext
+ 19286: 0000000000035ac0     0 NOTYPE  GLOBAL DEFAULT    1 _etext
+
+After commit 8a3e74446fe7 ("allow to build arm flat binaries"):
+$ readelf -S busybox_unstripped.gdb | grep data
+  [ 3] .data             PROGBITS         0000000000035ab0  00036ab0
+$ readelf -s busybox_unstripped.gdb | grep _etext
+ 19287: 0000000000035ac0     0 NOTYPE  GLOBAL DEFAULT    3 _etext
+
+The .data output section has to be aligned to a 32 byte boundary, see the
+FLAT_DATA_ALIGN 0x20 macro and its usage in fs/binfmt_flat.c:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/binfmt_flat.c?h=v5.17#n59
+
+Readd an explicit ALIGN attribute on the .data section itself, since the
+linker will obey this attribute regardless if being directed to a memory
+region or not. Also remove the ALIGN() command before the .data section,
+since this misleads the reader to think that the Location Counter is used
+when assigning an address to the .data section, when it actually is not.
+
+Fixes: 8a3e74446fe7 ("allow to build arm flat binaries")
+Signed-off-by: Niklas Cassel <niklas.cassel@wdc.com>
+---
+ elf2flt.ld.in | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/elf2flt.ld.in b/elf2flt.ld.in
+index 0df999d..e5aea14 100644
+--- a/elf2flt.ld.in
++++ b/elf2flt.ld.in
+@@ -94,12 +94,9 @@ W_RODAT:	*(.gnu.linkonce.r*)
+ 		*(.ARM.exidx* .gnu.linkonce.armexidx.*)
+ 	} > flatmem
+ 	@SYMBOL_PREFIX@__exidx_end = .;
+-
+-	. = ALIGN(0x20) ;
+ 	@SYMBOL_PREFIX@_etext = . ;
+ 
+-	.data : {
+-		. = ALIGN(0x4) ;
++	.data ALIGN(0x20): {
+ 		@SYMBOL_PREFIX@_sdata = . ;
+ 		@SYMBOL_PREFIX@__data_start = . ;
+ 		@SYMBOL_PREFIX@data_start = . ;
+-- 
+2.35.1
+

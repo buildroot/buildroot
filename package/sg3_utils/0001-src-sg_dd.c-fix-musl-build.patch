@@ -1,0 +1,39 @@
+From c93ad13ecd8ddfbb8bb3e4d5d5ad7f3f2c633db6 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 14 Nov 2021 12:37:16 +0100
+Subject: [PATCH] src/sg_dd.c: fix musl build
+
+Fix the following build failure on musl raised since version 1.47 and
+https://github.com/doug-gilbert/sg3_utils/commit/f0195003bb0c66ba55084b2f7e0fe982f08c5675:
+
+sg_dd.c: In function 'main':
+sg_dd.c:2402:17: error: unknown type name 'uint'; did you mean 'int'?
+ 2402 |                 uint off;
+      |                 ^~~~
+      |                 int
+
+Fixes:
+ - http://autobuild.buildroot.org/results/9ead59ffefefe2a4e3b94a153b3d23231736d882
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/doug-gilbert/sg3_utils/pull/7]
+---
+ src/sg_dd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/sg_dd.c b/src/sg_dd.c
+index 9d05c93..35e2423 100644
+--- a/src/sg_dd.c
++++ b/src/sg_dd.c
+@@ -2399,7 +2399,7 @@ main(int argc, char * argv[])
+             res = blocks * blk_sz;
+             if (iflag.zero && iflag.ff && (blk_sz >= 4)) {
+                 uint32_t pos = (uint32_t)skip;
+-                uint off;
++                uint32_t off;
+ 
+                 for (k = 0, off = 0; k < blocks; ++k, off += blk_sz, ++pos) {
+                     for (j = 0; j < (blk_sz - 3); j += 4)
+-- 
+2.33.0
+

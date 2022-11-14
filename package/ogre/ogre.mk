@@ -4,17 +4,21 @@
 #
 ################################################################################
 
-OGRE_VERSION = 1.12.0
-OGRE_SITE = $(call github,OGRECave,ogre,v$(OGRE_VERSION))
-OGRE_LICENSE = MIT (main library, DeferredShadingMedia samples), Public Domain (samples and plugins), Zlib (tinyxml)
+OGRE_VERSION = v1.12.12
+OGRE_SITE = https://github.com/OGRECave/ogre
+OGRE_SITE_METHOD = git
+OGRE_LICENSE = MIT (main library, DeferredShadingMedia samples), Public Domain (samples and plugins)
 OGRE_LICENSE_FILES = LICENSE
 OGRE_INSTALL_STAGING = YES
 
-# Ogre use a bundled version of tinyxml
+# Download with imgui submodule (https://github.com/ocornut/imgui
+OGRE_GIT_SUBMODULES = YES
+
 OGRE_DEPENDENCIES = host-pkgconf \
 	freetype \
 	libfreeimage \
 	libgl \
+	pugixml \
 	sdl2 \
 	xlib_libX11 \
 	xlib_libXaw \
@@ -27,17 +31,19 @@ OGRE_CXXFLAGS = $(TARGET_CXXFLAGS) -DGLEW_NO_GLU
 
 # Unbundle freetype and zziplib.
 # Disable java and nvidia cg support.
+# Disable imgui overlay to avoid extra download from CMake.
 OGRE_CONF_OPTS = -DOGRE_BUILD_DEPENDENCIES=OFF \
+	-DOGRE_BUILD_COMPONENT_CSHARP=OFF \
 	-DOGRE_BUILD_COMPONENT_JAVA=OFF \
 	-DOGRE_BUILD_PLUGIN_CG=OFF \
+	-DOGRE_BUILD_COMPONENT_OVERLAY_IMGUI=OFF \
 	-DOGRE_INSTALL_DOCS=OFF \
 	-DCMAKE_C_FLAGS="$(OGRE_CFLAGS)" \
 	-DCMAKE_CXX_FLAGS="$(OGRE_CXXFLAGS)"
 
 # Enable optional python component if python interpreter is present on the target.
-ifeq ($(BR2_PACKAGE_PYTHON)$(BR2_PACKAGE_PYTHON3),y)
-OGRE_DEPENDENCIES += host-swig \
-	$(if $(BR2_PACKAGE_PYTHON3),host-python3,host-python)
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
+OGRE_DEPENDENCIES += host-swig host-python3
 OGRE_CONF_OPTS += -DOGRE_BUILD_COMPONENT_PYTHON=ON
 else
 OGRE_CONF_OPTS += -DOGRE_BUILD_COMPONENT_PYTHON=OFF

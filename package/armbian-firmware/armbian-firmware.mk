@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ARMBIAN_FIRMWARE_VERSION = 70a08503ac9e765f5d1ccf4fa3e825db0751e53e
+ARMBIAN_FIRMWARE_VERSION = 5d685ad233b4dfd03a4d025fa0061f6b0f850cb3
 ARMBIAN_FIRMWARE_SITE = https://github.com/armbian/firmware
 ARMBIAN_FIRMWARE_SITE_METHOD = git
 
@@ -19,6 +19,29 @@ ARMBIAN_FIRMWARE_FILES += \
 	brcm/BCM4345C5.hcd \
 	brcm/brcmfmac43456-sdio.bin \
 	brcm/brcmfmac43456-sdio.txt
+endif
+
+# AP6255 WiFi/BT combo firmware
+ifeq ($(BR2_PACKAGE_ARMBIAN_FIRMWARE_AP6255),y)
+ARMBIAN_FIRMWARE_FILES += \
+	BCM4345C0.hcd \
+	fw_bcm43455c0_ag.bin \
+	fw_bcm43455c0_ag_apsta.bin \
+	fw_bcm43455c0_ag_p2p.bin \
+	nvram_ap6255.txt \
+	brcm/brcmfmac43455-sdio.bin \
+	brcm/brcmfmac43455-sdio.clm_blob \
+	brcm/brcmfmac43455-sdio.txt \
+	brcm/config.txt
+endif
+
+# Realtek 8822CS SDIO WiFi/BT combo firmware
+ifeq ($(BR2_PACKAGE_ARMBIAN_FIRMWARE_RTL8822CS),y)
+ARMBIAN_FIRMWARE_FILES += \
+	rtlbt/rtl8822cs_config \
+	rtlbt/rtl8822cs_fw \
+	rtl_bt/rtl8822cs_config.bin \
+	rtl_bt/rtl8822cs_fw.bin
 endif
 
 # XR819 WiFi firmware

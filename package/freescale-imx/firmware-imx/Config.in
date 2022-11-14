@@ -39,6 +39,10 @@ config BR2_PACKAGE_FIRMWARE_IMX_NEEDS_HDMI_FW
 	bool
 	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8M
 
+config BR2_PACKAGE_FIRMWARE_IMX_NEEDS_EASRC_FW
+	bool
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MN
+
 config BR2_PACKAGE_FIRMWARE_IMX_NEEDS_EPDC_FW
 	bool
 	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX6Q
@@ -71,7 +75,22 @@ config BR2_PACKAGE_FIRMWARE_IMX_DDR4
 	help
 	  Use DDR4 binaries (i.e.: ddr4_*_201810.bin).
 
+config BR2_PACKAGE_FIRMWARE_IMX_DDR3
+	bool "DDR3"
+	help
+	  Use DDR3 binaries (i.e.: ddr3_*_201810.bin).
+
 endchoice # DDR training FW
+
+config BR2_PACKAGE_FIRMWARE_IMX_DDR_VERSION
+	string "DDR3/DDR4/LPDDR4 firmware version"
+	# Needed for backward compatibility, the package used to
+	# unconditionally use HW version 201810 when DDR3/DDR4 was
+	# selected
+	default "201810" if BR2_PACKAGE_FIRMWARE_IMX_DDR3 || BR2_PACKAGE_FIRMWARE_IMX_DDR4
+	help
+	  Use a specific version of the imx ddr binaries. Leaving this
+	  field empty will select the default version.
 
 config BR2_PACKAGE_FIRMWARE_IMX_IMEM_LEN
 	hex "(LP)DDR IMEM padding length"

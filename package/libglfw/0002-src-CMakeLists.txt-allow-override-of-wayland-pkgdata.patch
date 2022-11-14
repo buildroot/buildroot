@@ -1,0 +1,32 @@
+From 46aaf2b2b4d3ec240b9aad175bb3eddb6ae11ead Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 4 Mar 2022 17:59:19 +0100
+Subject: [PATCH] src/CMakeLists.txt: allow override of wayland pkgdatadir
+
+Allow the user to override WAYLAND_{PROTOCOLS_BASE,CLIENT_PKGDATADIR}
+(needed when cross-compiling)
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/glfw/glfw/pull/2053]
+---
+ src/CMakeLists.txt | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 01f191c9..475ce882 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -75,7 +75,9 @@ if (GLFW_BUILD_WAYLAND)
+     include(FindPkgConfig)
+     find_program(WAYLAND_SCANNER_EXECUTABLE NAMES wayland-scanner)
+     pkg_check_modules(WAYLAND_PROTOCOLS REQUIRED wayland-protocols>=1.15)
+-    pkg_get_variable(WAYLAND_PROTOCOLS_BASE wayland-protocols pkgdatadir)
++    if (NOT WAYLAND_PROTOCOLS_BASE)
++        pkg_get_variable(WAYLAND_PROTOCOLS_BASE wayland-protocols pkgdatadir)
++    endif()
+ 
+     macro(wayland_generate protocol_file output_file)
+         add_custom_command(OUTPUT "${output_file}.h"
+-- 
+2.34.1
+

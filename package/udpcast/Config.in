@@ -6,6 +6,8 @@ config BR2_PACKAGE_UDPCAST
 	bool "udpcast"
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_USE_MMU # fork()
+	select BR2_PACKAGE_UDPCAST_SENDER \
+		if !BR2_PACKAGE_UDPCAST_RECEIVER
 	help
 	  A multicast protocol implementation which happens to
 	  be very handy for imaging drives over the network.

@@ -19,6 +19,10 @@ config BR2_PACKAGE_WF111
 
 	  https://www.silabs.com/wireless/wi-fi/bluegiga-legacy-modules/device.wf111
 
+comment "wf111 needs a Linux kernel to be built"
+	depends on !BR2_LINUX_KERNEL
+	depends on BR2_ARM_CPU_ARMV5 || BR2_ARM_CPU_ARMV7A || BR2_i386
+
 comment "wf111 needs a glibc toolchain"
 	depends on BR2_LINUX_KERNEL
 	depends on BR2_ARM_CPU_ARMV5 || BR2_ARM_CPU_ARMV7A || BR2_i386

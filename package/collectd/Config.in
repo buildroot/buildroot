@@ -212,6 +212,17 @@ config BR2_PACKAGE_COLLECTD_CURL_XML
 	help
 	  Reads files using libcurl and parses it as XML.
 
+config BR2_PACKAGE_COLLECTD_DBI
+	bool "dbi"
+	depends on !BR2_STATIC_LIBS
+	select BR2_PACKAGE_LIBDBI
+	help
+	  Executes SQL statements on various databases and
+	  interprets the returned data.
+
+comment "dbi support needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
+
 config BR2_PACKAGE_COLLECTD_DF
 	bool "df"
 	help
@@ -301,6 +312,17 @@ config BR2_PACKAGE_COLLECTD_IPC
 	  IPC counters: semaphores used, number of allocated segments
 	  in shared memory and more.
 
+config BR2_PACKAGE_COLLECTD_IPMI
+	bool "ipmi"
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
+	select BR2_PACKAGE_OPENIPMI
+	help
+	  Read hardware sensors from servers using the Intelligent
+	  Platform Management Interface (IPMI).
+
+comment "ipmi needs a toolchain w/ NPTL"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS_NPTL
+
 config BR2_PACKAGE_COLLECTD_IPTABLES
 	bool "iptables"
 	select BR2_PACKAGE_IPTABLES
@@ -377,6 +399,10 @@ config BR2_PACKAGE_COLLECTD_MYSQL
 	  Connects to a MySQL database and issues a "show status"
 	  command.
 
+comment "mysql needs a toolchain w/ C++, threads"
+	depends on BR2_USE_MMU
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS
+
 config BR2_PACKAGE_COLLECTD_NETLINK
 	bool "netlink"
 	select BR2_PACKAGE_LIBMNL
@@ -449,6 +475,7 @@ config BR2_PACKAGE_COLLECTD_PING
 config BR2_PACKAGE_COLLECTD_POSTGRESQL
 	bool "postgresql"
 	depends on BR2_USE_WCHAR # postgresql
+	depends on !BR2_OPTIMIZE_FAST # postgresql
 	select BR2_PACKAGE_POSTGRESQL
 	help
 	  Connects to and executes SQL statements on a PostgreSQL
@@ -458,6 +485,9 @@ config BR2_PACKAGE_COLLECTD_POSTGRESQL
 
 comment "postgresql support needs a toolchain w/ wchar"
 	depends on !BR2_USE_WCHAR
+
+comment "postgresql support can't be built with Optimize for fast"
+	depends on BR2_OPTIMIZE_FAST
 
 config BR2_PACKAGE_COLLECTD_PROCESSES
 	bool "processes"
@@ -565,6 +595,24 @@ config BR2_PACKAGE_COLLECTD_USERS
 	help
 	  Counts the number of users currently logged in.
 
+config BR2_PACKAGE_COLLECTD_VIRT
+	bool "virt"
+	depends on BR2_PACKAGE_LIBVIRT_ARCH_SUPPORTS # libvirt
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_12 # libvirt
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_11 || !BR2_aarch64 # libvirt
+	depends on BR2_PACKAGE_HAS_UDEV # libvirt
+	depends on BR2_USE_WCHAR # libvirt
+	select BR2_PACKAGE_LIBVIRT
+	select BR2_PACKAGE_LIBXML2
+	help
+	  Gather statistics about virtualized guests on a system.
+
+comment "virt needs udev /dev management, a toolchain w/ wchar, kernel headers >= 3.12 (4.11 for AArch64)"
+	depends on BR2_PACKAGE_LIBVIRT_ARCH_SUPPORTS
+	depends on !BR2_PACKAGE_HAS_UDEV || !BR2_USE_WCHAR || \
+		!(BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_12 && \
+			(BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_11 || !BR2_aarch64))
+
 config BR2_PACKAGE_COLLECTD_VMEM
 	bool "vmem"
 	help
@@ -635,17 +683,15 @@ config BR2_PACKAGE_COLLECTD_GRPC
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 || BR2_TOOLCHAIN_HAS_ATOMIC # grpc
 	depends on BR2_INSTALL_LIBSTDCPP # grpc -> protobuf
 	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS # grpc -> protobuf
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # grpc -> libabseil-cpp
-	depends on BR2_HOST_GCC_AT_LEAST_4_9 # grpc -> host-libabseil-cpp
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # grpc -> libabseil-cpp
 	depends on BR2_PACKAGE_LIBABSEIL_CPP_ARCH_SUPPORTS # grpc
 	select BR2_PACKAGE_GRPC
 	help
 	  Send/receive values using the gRPC protocol.
 
-comment "grpc needs a toolchain w/ C++, gcc >= 4.9, host gcc >= 4.9"
+comment "grpc needs a toolchain w/ C++, gcc >= 5"
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 || BR2_TOOLCHAIN_HAS_ATOMIC
-	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 \
-		|| !BR2_HOST_GCC_AT_LEAST_4_9
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_GCC_AT_LEAST_5
 	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_LIBABSEIL_CPP_ARCH_SUPPORTS # grpc
 
@@ -682,7 +728,7 @@ config BR2_PACKAGE_COLLECTD_RIEMANN
 	bool "riemann"
 	# riemann-c-client -> protobuf-c
 	depends on BR2_INSTALL_LIBSTDCPP
-	depends on BR2_HOSTARCH = "x86_64" || BR2_HOSTARCH = "x86"
+	depends on BR2_PACKAGE_HOST_PROTOBUF_ARCH_SUPPORTS
 	select BR2_PACKAGE_RIEMANN_C_CLIENT
 	select BR2_PACKAGE_LIBTOOL
 	help
@@ -716,7 +762,7 @@ config BR2_PACKAGE_COLLECTD_WRITELOG
 config BR2_PACKAGE_COLLECTD_WRITEPROMETHEUS
 	bool "write_prometheus"
 	depends on BR2_INSTALL_LIBSTDCPP # protobuf-c
-	depends on BR2_HOSTARCH = "x86_64" || BR2_HOSTARCH = "x86" # protobuf-c
+	depends on BR2_PACKAGE_HOST_PROTOBUF_ARCH_SUPPORTS # protobuf-c
 	select BR2_PACKAGE_LIBMICROHTTPD
 	select BR2_PACKAGE_PROTOBUF_C
 	help
@@ -725,7 +771,7 @@ config BR2_PACKAGE_COLLECTD_WRITEPROMETHEUS
 
 comment "write_prometheus needs a toolchain w/ C++"
 	depends on !BR2_INSTALL_LIBSTDCPP
-	depends on BR2_HOSTARCH = "x86_64" || BR2_HOSTARCH = "x86"
+	depends on BR2_PACKAGE_HOST_PROTOBUF_ARCH_SUPPORTS
 
 config BR2_PACKAGE_COLLECTD_WRITEREDIS
 	bool "write_redis"

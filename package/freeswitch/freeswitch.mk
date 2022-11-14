@@ -4,21 +4,22 @@
 #
 ################################################################################
 
-FREESWITCH_VERSION = 1.10.6
+FREESWITCH_VERSION = 1.10.8
 FREESWITCH_SOURCE = freeswitch-$(FREESWITCH_VERSION).-release.tar.xz
 FREESWITCH_SITE = https://files.freeswitch.org/freeswitch-releases
 # External modules need headers/libs from staging
 FREESWITCH_INSTALL_STAGING = YES
 FREESWITCH_LICENSE = MPL-1.1, \
 	GPL-3.0+ with font exception (fonts), \
-	Apache-2.0 (apr, apr-util), \
+	Apache-2.0 (apr), \
 	BSD-3-Clause (libsrtp)
 
 FREESWITCH_LICENSE_FILES = \
 	COPYING \
 	libs/apr/LICENSE \
-	libs/apr-util/LICENSE \
 	libs/srtp/LICENSE
+
+FREESWITCH_CPE_ID_VENDOR = freeswitch
 
 # required dependencies
 FREESWITCH_DEPENDENCIES = \
@@ -47,6 +48,10 @@ FREESWITCH_CONF_ENV += \
 	ac_cv_have_php=no \
 	ac_cv_prog_PHP_CONFIG=false \
 	ac_cv_have_php_config=no
+
+# disable pcap detection, pcap is an optional dependency for unit tests
+FREESWITCH_CONF_ENV += \
+	ac_cv_prog_HAVE_PCAP_CONFIG=false
 
 # copied from freeswitch/configure.ac, line 258+
 FREESWITCH_CONF_ENV += \
@@ -78,7 +83,7 @@ FREESWITCH_CONF_OPTS = \
 
 # zrtp supports a limited set of archs, sparc support is also broken due
 # to a broken ld call by gcc, see libs/libzrtp/include/zrtp_config.h
-ifeq ($(BR2_i386)$(BR2_arm)$(BR2_armeb)$(BR2_aarch64)$(BR2_aarch64_be)$(BR2_mips)$(BR2_mipsel)$(BR2_mips64)$(BR2_mips64el)$(BR2_powerpc)$(BR2_powerpc64)$(BR2_powerpcle)$(BR2_x86_64),y)
+ifeq ($(BR2_i386)$(BR2_arm)$(BR2_armeb)$(BR2_aarch64)$(BR2_aarch64_be)$(BR2_mips)$(BR2_mipsel)$(BR2_mips64)$(BR2_mips64el)$(BR2_powerpc)$(BR2_powerpc64)$(BR2_powerpc64le)$(BR2_x86_64),y)
 FREESWITCH_LICENSE_FILES += libs/libzrtp/src/zrtp_legal.c
 FREESWITCH_CONF_OPTS += --enable-zrtp
 else
@@ -118,7 +123,6 @@ FREESWITCH_ENABLED_MODULES += \
 	endpoints/mod_rtc \
 	endpoints/mod_rtmp \
 	endpoints/mod_sofia \
-	endpoints/mod_verto \
 	event_handlers/mod_cdr_csv \
 	event_handlers/mod_cdr_sqlite \
 	event_handlers/mod_event_socket \
@@ -205,6 +209,11 @@ endif
 ifeq ($(BR2_PACKAGE_LIBILBC),y)
 FREESWITCH_DEPENDENCIES += libilbc
 FREESWITCH_ENABLED_MODULES += codecs/mod_ilbc
+endif
+
+ifeq ($(BR2_PACKAGE_LIBKS),y)
+FREESWITCH_DEPENDENCIES += libks
+FREESWITCH_ENABLED_MODULES += endpoints/mod_verto
 endif
 
 ifeq ($(BR2_PACKAGE_LIBLDNS),y)

@@ -1,6 +1,9 @@
 config BR2_ARCH
 	default "m68k"		if BR2_m68k
 
+config BR2_NORMALIZED_ARCH
+	default "m68k"
+
 config BR2_ENDIAN
 	default "BIG"
 
@@ -23,7 +26,7 @@ choice
 config BR2_m68k_68040
 	bool "68040"
 	select BR2_m68k_m68k
-	select BR2_ARCH_HAS_MMU_MANDATORY
+	select BR2_USE_MMU
 
 config BR2_m68k_cf5208
 	bool "5208"

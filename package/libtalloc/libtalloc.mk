@@ -4,12 +4,18 @@
 #
 ################################################################################
 
-LIBTALLOC_VERSION = 2.3.1
+LIBTALLOC_VERSION = 2.3.4
 LIBTALLOC_SOURCE = talloc-$(LIBTALLOC_VERSION).tar.gz
 LIBTALLOC_SITE = https://www.samba.org/ftp/talloc
-LIBTALLOC_LICENSE = LGPL-3.0+, GPL-3.0+
-LIBTALLOC_LICENSE_FILES = talloc.h pytalloc.h
+LIBTALLOC_LICENSE = LGPL-3.0+
+LIBTALLOC_LICENSE_FILES = talloc.h
 LIBTALLOC_INSTALL_STAGING = YES
+
+# libtalloc is extracted from the samba source tree, and that has a workaround
+# that requires PYTHONHASHSEED to be set, and to be set to 1.
+# See https://gitlab.com/samba-team/samba/-/commit/420bbb1d92fd2a28725b53f425ba3d214831b660
+LIBTALLOC_CONF_ENV = PYTHONHASHSEED=1
+LIBTALLOC_MAKE_ENV = PYTHONHASHSEED=1
 
 # --with-libiconv= is unconditionally passed, even if libiconv is not
 # present. Indeed, waf will search for libiconv by default in
@@ -20,6 +26,7 @@ LIBTALLOC_INSTALL_STAGING = YES
 # libtalloc since it's optional.
 LIBTALLOC_CONF_OPTS += --cross-compile \
 		--cross-answers=$(@D)/cache.txt \
+		--disable-stack-protector \
 		--hostcc=gcc \
 		--with-libiconv=$(STAGING_DIR)/usr
 

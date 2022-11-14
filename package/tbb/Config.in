@@ -1,0 +1,22 @@
+config BR2_PACKAGE_TBB
+	bool "tbb"
+	# tbb needs fenv.h which is not provided by uclibc
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC
+	depends on !BR2_STATIC_LIBS
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on !BR2_TOOLCHAIN_HAS_GCC_BUG_64735 # exception_ptr
+	help
+	  Intel(R) Threading Building Blocks (Intel(R) TBB) lets you
+	  easily write parallel C++ programs that take full advantage
+	  of multicore performance, that are portable, composable and
+	  have future-proof scalability.
+
+	  https://www.threadingbuildingblocks.org/
+
+comment "tbb needs a glibc or musl toolchain w/ dynamic library, threads, C++"
+	depends on BR2_TOOLCHAIN_USES_UCLIBC || BR2_STATIC_LIBS || \
+		!BR2_TOOLCHAIN_HAS_THREADS || !BR2_INSTALL_LIBSTDCPP
+
+comment "tbb needs exception_ptr"
+	depends on BR2_TOOLCHAIN_HAS_GCC_BUG_64735

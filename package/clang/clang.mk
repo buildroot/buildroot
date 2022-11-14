@@ -5,7 +5,8 @@
 ################################################################################
 
 # LLVM, Clang and lld should be version bumped together
-CLANG_VERSION = 9.0.1
+CLANG_VERSION_MAJOR = 11
+CLANG_VERSION = $(CLANG_VERSION_MAJOR).1.0
 CLANG_SITE = https://github.com/llvm/llvm-project/releases/download/llvmorg-$(CLANG_VERSION)
 CLANG_SOURCE = clang-$(CLANG_VERSION).src.tar.xz
 CLANG_LICENSE = Apache-2.0 with exceptions
@@ -103,6 +104,41 @@ CLANG_CONF_OPTS += -DLLVM_LINK_LLVM_DYLIB=ON
 # Prevent clang binaries from linking against LLVM static libs
 HOST_CLANG_CONF_OPTS += -DLLVM_DYLIB_COMPONENTS=all
 CLANG_CONF_OPTS += -DLLVM_DYLIB_COMPONENTS=all
+
+# Help host-clang to find our external toolchain, use a relative path from the clang
+# installation directory to the external toolchain installation directory in order to
+# not hardcode the toolchain absolute path.
+ifeq ($(BR2_TOOLCHAIN_EXTERNAL),y)
+HOST_CLANG_CONF_OPTS += -DGCC_INSTALL_PREFIX:PATH=`realpath --relative-to=$(HOST_DIR)/bin/ $(TOOLCHAIN_EXTERNAL_INSTALL_DIR)`
+endif
+
+define HOST_CLANG_INSTALL_WRAPPER_AND_SIMPLE_SYMLINKS
+	$(Q)cd $(HOST_DIR)/bin; \
+	rm -f clang-$(CLANG_VERSION_MAJOR).br_real; \
+	mv clang-$(CLANG_VERSION_MAJOR) clang-$(CLANG_VERSION_MAJOR).br_real; \
+	ln -sf toolchain-wrapper-clang clang-$(CLANG_VERSION_MAJOR); \
+	for i in clang clang++ clang-cl clang-cpp; do \
+		ln -snf toolchain-wrapper-clang $$i; \
+		ln -snf clang-$(CLANG_VERSION_MAJOR).br_real $$i.br_real; \
+	done
+endef
+
+define HOST_CLANG_TOOLCHAIN_WRAPPER_BUILD
+	$(HOSTCC) $(HOST_CFLAGS) $(TOOLCHAIN_WRAPPER_ARGS) \
+		-s -Wl,--hash-style=$(TOOLCHAIN_WRAPPER_HASH_STYLE) \
+		toolchain/toolchain-wrapper.c \
+		-o $(@D)/toolchain-wrapper-clang
+endef
+
+define HOST_CLANG_TOOLCHAIN_WRAPPER_INSTALL
+	$(INSTALL) -D -m 0755 $(@D)/toolchain-wrapper-clang \
+		$(HOST_DIR)/bin/toolchain-wrapper-clang
+endef
+
+HOST_CLANG_TOOLCHAIN_WRAPPER_ARGS += -DBR_CROSS_PATH_SUFFIX='".br_real"'
+HOST_CLANG_POST_BUILD_HOOKS += HOST_CLANG_TOOLCHAIN_WRAPPER_BUILD
+HOST_CLANG_POST_INSTALL_HOOKS += HOST_CLANG_TOOLCHAIN_WRAPPER_INSTALL
+HOST_CLANG_POST_INSTALL_HOOKS += HOST_CLANG_INSTALL_WRAPPER_AND_SIMPLE_SYMLINKS
 
 $(eval $(cmake-package))
 $(eval $(host-cmake-package))

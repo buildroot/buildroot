@@ -1,9 +1,16 @@
 config BR2_PACKAGE_LIBUHTTPD
 	bool "libuhttpd"
+	depends on BR2_USE_MMU # fork()
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 	select BR2_PACKAGE_LIBEV
-	select BR2_PACKAGE_WOLFSSL_ALL if BR2_PACKAGE_WOLFSSL
+	select BR2_PACKAGE_WOLFSSL_ALL if BR2_PACKAGE_WOLFSSL && \
+		!BR2_STATIC_LIBS
 	help
 	  A lightweight and fully asynchronous HTTP server
 	  library based on libev
 
 	  https://github.com/zhaojh329/libuhttpd
+
+comment "libuhttpd needs a toolchain w/ gcc >= 4.9"
+	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9

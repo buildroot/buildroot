@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5KNX_VERSION = $(QT5_VERSION)
+QT5KNX_VERSION = 5.15.2
 QT5KNX_SITE = https://code.qt.io/cgit/qt/qtknx.git
 QT5KNX_SITE_METHOD = git
 QT5KNX_INSTALL_STAGING = YES

@@ -1,0 +1,39 @@
+From 25681d8adde4a90d5da02051e30f6a3a27322136 Mon Sep 17 00:00:00 2001
+From: Jernej Skrabec <jernej.skrabec@gmail.com>
+Date: Sat, 25 Sep 2021 07:41:10 +0200
+Subject: [PATCH] [cmake] allow to override PYTHON_EXECUTABLE
+
+If Kodi is being build for distro which has different python version
+than host, PYTHON_EXECUTABLE must be overriden and point to distro
+version. Otherwise, eventclients will be installed in wrong location and
+be thus unusable.
+
+Use case: Cross compiling Kodi for LibreELEC
+
+Backport of https://github.com/xbmc/xbmc/pull/20171
+
+Patch sent upstream: https://github.com/xbmc/xbmc/pull/20989
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ cmake/modules/FindPython.cmake | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/cmake/modules/FindPython.cmake b/cmake/modules/FindPython.cmake
+index c469ed9fb6..87b8368705 100644
+--- a/cmake/modules/FindPython.cmake
++++ b/cmake/modules/FindPython.cmake
+@@ -77,7 +77,9 @@ if(Python3_FOUND)
+   list(APPEND PYTHON_DEFINITIONS -DHAS_PYTHON=1)
+   # These are all set for easy integration with the rest of our build system
+   set(PYTHON_FOUND ${Python3_FOUND})
+-  set(PYTHON_EXECUTABLE ${Python3_EXECUTABLE} CACHE FILEPATH "Python interpreter" FORCE)
++  if(NOT PYTHON_EXECUTABLE)
++    set(PYTHON_EXECUTABLE ${Python3_EXECUTABLE} CACHE FILEPATH "Python interpreter" FORCE)
++  endif()
+   set(PYTHON_INCLUDE_DIRS ${Python3_INCLUDE_DIRS})
+   set(PYTHON_LIBRARIES ${Python3_LIBRARIES})
+   set(PYTHON_VERSION "${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}" CACHE INTERNAL "" FORCE)
+-- 
+2.30.2
+

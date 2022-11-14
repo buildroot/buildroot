@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-CUPS_VERSION = 2.3.3op2
+CUPS_VERSION = 2.4.2
 CUPS_SOURCE = cups-$(CUPS_VERSION)-source.tar.gz
 CUPS_SITE = https://github.com/OpenPrinting/cups/releases/download/v$(CUPS_VERSION)
 CUPS_LICENSE = Apache-2.0 with GPL-2.0/LGPL-2.0 exception
 CUPS_LICENSE_FILES = LICENSE NOTICE
-CUPS_CPE_ID_VENDOR = cups
+CUPS_CPE_ID_VENDOR = openprinting
 CUPS_SELINUX_MODULES = cups
 CUPS_INSTALL_STAGING = YES
 
@@ -27,6 +27,7 @@ CUPS_CONF_OPTS = \
 	--with-cups-user=lp \
 	--with-cups-group=lp \
 	--with-system-groups="lpadmin sys root" \
+	--disable-libpaper \
 	--without-rcdir
 CUPS_CONFIG_SCRIPTS = cups-config
 CUPS_DEPENDENCIES = \
@@ -50,10 +51,10 @@ CUPS_CONF_OPTS += --disable-dbus
 endif
 
 ifeq ($(BR2_PACKAGE_GNUTLS),y)
-CUPS_CONF_OPTS += --enable-gnutls
+CUPS_CONF_OPTS += --with-tls=yes
 CUPS_DEPENDENCIES += gnutls
 else
-CUPS_CONF_OPTS += --disable-gnutls
+CUPS_CONF_OPTS += --with-tls=no
 endif
 
 ifeq ($(BR2_PACKAGE_LIBUSB),y)
@@ -61,13 +62,6 @@ CUPS_CONF_OPTS += --enable-libusb
 CUPS_DEPENDENCIES += libusb
 else
 CUPS_CONF_OPTS += --disable-libusb
-endif
-
-ifeq ($(BR2_PACKAGE_LIBPAPER),y)
-CUPS_CONF_OPTS += --enable-libpaper
-CUPS_DEPENDENCIES += libpaper
-else
-CUPS_CONF_OPTS += --disable-libpaper
 endif
 
 ifeq ($(BR2_PACKAGE_AVAHI),y)

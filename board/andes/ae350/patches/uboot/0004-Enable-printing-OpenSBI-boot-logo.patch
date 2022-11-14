@@ -1,0 +1,25 @@
+From 3847a959ac4c07facbd80104ca5fa6a91fad5f35 Mon Sep 17 00:00:00 2001
+From: Yu Chien Peter Lin <peterlin@andestech.com>
+Date: Thu, 6 Jan 2022 13:50:07 +0800
+Subject: [PATCH] Enable printing OpenSBI boot logo
+
+Signed-off-by: Yu Chien Peter Lin <peterlin@andestech.com>
+---
+ include/opensbi.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/opensbi.h b/include/opensbi.h
+index d812cc8c..91fb8fd9 100644
+--- a/include/opensbi.h
++++ b/include/opensbi.h
+@@ -20,7 +20,7 @@
+
+ enum sbi_scratch_options {
+	/** Disable prints during boot */
+-	SBI_SCRATCH_NO_BOOT_PRINTS = (1 << 0),
++	SBI_SCRATCH_NO_BOOT_PRINTS = 0,
+ };
+
+ /** Representation dynamic info passed by previous booting stage */
+--
+2.25.1

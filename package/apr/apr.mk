@@ -6,13 +6,18 @@
 
 APR_VERSION = 1.7.0
 APR_SOURCE = apr-$(APR_VERSION).tar.bz2
-APR_SITE = http://archive.apache.org/dist/apr
+APR_SITE = https://archive.apache.org/dist/apr
 APR_LICENSE = Apache-2.0
 APR_LICENSE_FILES = LICENSE
+APR_CPE_ID_VENDOR = apache
+APR_CPE_ID_PRODUCT = portable_runtime
 APR_INSTALL_STAGING = YES
 # We have a patch touching configure.in and Makefile.in,
 # so we need to autoreconf:
 APR_AUTORECONF = YES
+
+# 0004-apr-1.7.0-CVE-2021-35940.patch
+APR_IGNORE_CVES += CVE-2021-35940
 
 # avoid apr_hints.m4 by setting apr_preload_done=yes and set
 # the needed CFLAGS on our own (avoids '-D_REENTRANT' in case

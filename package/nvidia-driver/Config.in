@@ -75,7 +75,7 @@ config BR2_PACKAGE_NVIDIA_DRIVER_CUDA_PROGS
 
 endif # BR2_PACKAGE_NVIDIA_DRIVER_CUDA
 
-comment "nvidia kernel module needs a kernel to be built"
+comment "nvidia kernel module needs a Linux kernel to be built"
 	depends on !BR2_LINUX_KERNEL
 
 config BR2_PACKAGE_NVIDIA_DRIVER_MODULE

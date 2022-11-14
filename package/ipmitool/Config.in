@@ -5,7 +5,7 @@ config BR2_PACKAGE_IPMITOOL
 	  IPMItool provides a simple command-line interface to
 	  IPMI-enabled devices.
 
-	  http://sourceforge.net/projects/ipmitool/
+	  https://github.com/ipmitool/ipmitool/
 
 if BR2_PACKAGE_IPMITOOL
 
@@ -32,7 +32,6 @@ config BR2_PACKAGE_IPMITOOL_IPMIEVD
 
 config BR2_PACKAGE_IPMITOOL_IPMISHELL
 	bool "ipmishell"
-	select BR2_PACKAGE_NCURSES
 	select BR2_PACKAGE_READLINE
 	help
 	  IPMI shell interface

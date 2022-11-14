@@ -1,0 +1,42 @@
+From ba44b87318ed89e489fa3ce0a5d66002afa2bd6c Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 12 Aug 2022 11:54:54 +0200
+Subject: [PATCH] src/p11_attr.c: fix build with gcc 4.8
+
+Fix the following build failure with gcc 4.8 raised since version 0.4.12
+and
+https://github.com/OpenSC/libp11/commit/639a4b6463278c0119a2ec60b261da3e5330fb33:
+
+p11_attr.c: In function 'pkcs11_zap_attrs':
+p11_attr.c:167:2: error: 'for' loop initial declarations are only allowed in C99 mode
+  for (unsigned i = 0; i < 32; i++) {
+  ^
+p11_attr.c:167:2: note: use option -std=c99 or -std=gnu99 to compile your code
+
+Fixes:
+ - http://autobuild.buildroot.org/results/4391020fb5738cc8c26dc53783a6228bbf76473a
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/OpenSC/libp11/commit/ba44b87318ed89e489fa3ce0a5d66002afa2bd6c]
+---
+ src/p11_attr.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/p11_attr.c b/src/p11_attr.c
+index d49456ff..d425241a 100644
+--- a/src/p11_attr.c
++++ b/src/p11_attr.c
+@@ -162,9 +162,11 @@ void pkcs11_addattr_obj(PKCS11_TEMPLATE *tmpl, int type, pkcs11_i2d_fn enc, void
+ 
+ void pkcs11_zap_attrs(PKCS11_TEMPLATE *tmpl)
+ {
++	unsigned int i;
++
+ 	if (!tmpl->allocated)
+ 		return;
+-	for (unsigned i = 0; i < 32; i++) {
++	for (i = 0; i < 32; i++) {
+ 		if (tmpl->allocated & (1<<i))
+ 			OPENSSL_free(tmpl->attrs[i].pValue);
+ 	}

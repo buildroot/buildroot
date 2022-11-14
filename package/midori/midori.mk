@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-MIDORI_VERSION = 0.5.11
-MIDORI_SOURCE = midori_$(MIDORI_VERSION)_all_.tar.bz2
-MIDORI_SITE = http://midori-browser.org/downloads
+MIDORI_VERSION = 9.0
+MIDORI_SOURCE = midori-v$(MIDORI_VERSION).tar.gz
+MIDORI_SITE = https://github.com/midori-browser/core/releases/download/v$(MIDORI_VERSION)
 MIDORI_LICENSE = LGPL-2.1+
 MIDORI_LICENSE_FILES = COPYING
 MIDORI_CPE_ID_VENDOR = midori-browser
@@ -15,10 +15,14 @@ MIDORI_DEPENDENCIES = \
 	host-librsvg \
 	host-pkgconf \
 	host-vala \
-	host-python \
-	$(if $(BR2_PACKAGE_LIBGTK3_X11),gcr) \
+	host-python3 \
+	gcr \
+	gobject-introspection \
 	granite \
+	json-glib \
+	libarchive \
 	libgtk3 \
+	libpeas \
 	libsoup \
 	libxml2 \
 	sqlite \
@@ -26,10 +30,6 @@ MIDORI_DEPENDENCIES = \
 	$(TARGET_NLS_DEPENDENCIES) \
 	$(if $(BR2_PACKAGE_LIBICONV),libiconv)
 
-MIDORI_CONF_OPTS = \
-	-DHALF_BRO_INCOM_WEBKIT2=ON \
-	-DUSE_GRANITE=ON \
-	-DUSE_GTK3=ON \
-	-DUSE_ZEITGEIST=OFF
+MIDORI_CONF_OPTS += -DGIR_COMPILER_PATH=$(STAGING_DIR)/usr/bin/g-ir-compiler
 
 $(eval $(cmake-package))

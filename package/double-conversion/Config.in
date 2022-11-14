@@ -1,0 +1,11 @@
+config BR2_PACKAGE_DOUBLE_CONVERSION
+	bool "double-conversion"
+	depends on BR2_INSTALL_LIBSTDCPP
+	help
+	  Provides binary-decimal and decimal-binary routines for
+	  IEEE doubles.
+
+	  https://github.com/google/double-conversion
+
+comment "double-conversion needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP

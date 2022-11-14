@@ -1,9 +1,13 @@
+config BR2_PACKAGE_ZLIB_FORCE_LIBZLIB
+	bool
+
 config BR2_PACKAGE_ZLIB_NG_ARCH_SUPPORTS
 	bool
 	default y if BR2_arm
 	default y if BR2_aarch64
 	default y if BR2_i386
 	default y if BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le
+	default y if BR2_riscv
 	default y if BR2_s390x
 	default y if BR2_x86_64
 
@@ -32,6 +36,7 @@ config BR2_PACKAGE_LIBZLIB
 config BR2_PACKAGE_ZLIB_NG
 	bool "zlib-ng"
 	depends on BR2_PACKAGE_ZLIB_NG_ARCH_SUPPORTS
+	depends on !BR2_PACKAGE_ZLIB_FORCE_LIBZLIB
 	select BR2_PACKAGE_HAS_ZLIB
 	help
 	  Zlib replacement with optimizations for

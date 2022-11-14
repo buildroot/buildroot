@@ -1,0 +1,55 @@
+From 4d9bbc866682bdf46c78047dca02230372620295 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 6 Nov 2022 17:05:14 +0100
+Subject: [PATCH] lib/kcapi-kernel-if.c: fix uclibc build
+
+Fix the following uclibc build failure raised since version 1.4.0 and
+https://github.com/smuellerDD/libkcapi/commit/12f19b9a1dd308117f83e8cb33e28e3c040710a0:
+
+lib/kcapi-kernel-if.c: In function '_kcapi_common_send_meta':
+lib/kcapi-kernel-if.c:196:26: error: conversion to 'int' from 'size_t' {aka 'unsigned int'} may change the sign of the result [-Werror=sign-conversion]
+  196 |         msg.msg_iovlen = kcapi_downcast_int(iovlen);
+      |                          ^~~~~~~~~~~~~~~~~~
+
+Indeed, uclibc has the same behavior than musl when __WORDSIZE != 32
+even if it defines __GLIBC__:
+https://github.com/wbx-github/uclibc-ng/blob/ab1dd83bec59c9e65c31efd6e887182948f627be/libc/sysdeps/linux/common/bits/socket.h
+
+Fixes:
+ - http://autobuild.buildroot.org/results/eccf4b84670b5ef0fdd68b46338edf5043c7cc0d
+
+Signed-off-by: Tan En De <ende.tan@linux.starfivetech.com>
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Signed-off-by: Stephan Mueller <smueller@chronox.de>
+[Retrieved from:
+https://github.com/smuellerDD/libkcapi/commit/4d9bbc866682bdf46c78047dca02230372620295]
+---
+ lib/kcapi-kernel-if.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/lib/kcapi-kernel-if.c b/lib/kcapi-kernel-if.c
+index d7b10bf..b4d7f74 100644
+--- a/lib/kcapi-kernel-if.c
++++ b/lib/kcapi-kernel-if.c
+@@ -119,7 +119,7 @@ int _kcapi_common_accept(struct kcapi_handle *handle)
+ 	return 0;
+ }
+ 
+-#ifdef __GLIBC__
++#if defined(__GLIBC__) && !(defined(__UCLIBC__) && __WORDSIZE == 32)
+ static inline size_t kcapi_downcast_int(size_t in)
+ {
+ 	return in;
+@@ -564,11 +564,7 @@ ssize_t _kcapi_common_recv_data(struct kcapi_handle *handle,
+ 	msg.msg_controllen = 0;
+ 	msg.msg_flags = 0;
+ 	msg.msg_iov = iov;
+-#ifdef __GLIBC__
+-	msg.msg_iovlen = iovlen;
+-#else
+-	msg.msg_iovlen = (int)iovlen;
+-#endif
++	msg.msg_iovlen = kcapi_downcast_int(iovlen);
+ 	ret = recvmsg(*_kcapi_get_opfd(handle), &msg, 0);
+ 	if (ret < 0)
+ 		ret = -errno;

@@ -1,0 +1,55 @@
+From f19b109f2a879af7b0753d94a2a312e4039adbed Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 8 May 2022 23:52:36 +0200
+Subject: [PATCH] fix build without C++
+
+Fix the following build failure without C++ raised since version 1.2.0
+and
+https://github.com/projectNe10/Ne10/commit/20b1896fd6532336e6a46608778bd6e0396dc4dc:
+
+CMake Error at /nvmedata/autobuild/instance-11/output-1/host/share/cmake-3.18/Modules/CMakeTestCXXCompiler.cmake:59 (message):
+  The C++ compiler
+
+    "/usr/bin/clang++"
+
+  is not able to compile a simple test program.
+
+Fixes:
+ - http://autobuild.buildroot.org/results/a86d09d569babe6b88cb8e5fbb47483772f42aed
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/projectNe10/Ne10/pull/280]
+---
+ CMakeLists.txt         | 2 +-
+ modules/CMakeLists.txt | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 40e1b72..10081f8 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -26,7 +26,7 @@
+ #
+ cmake_minimum_required(VERSION 2.6)
+ 
+-project(NE10 C CXX ASM)
++project(NE10 C ASM)
+ 
+ option(NE10_BUILD_SHARED "Build NE10 shared libraries" OFF)
+ option(NE10_BUILD_STATIC "Build NE10 static libraries" ON)
+diff --git a/modules/CMakeLists.txt b/modules/CMakeLists.txt
+index 4f158e9..951527a 100644
+--- a/modules/CMakeLists.txt
++++ b/modules/CMakeLists.txt
+@@ -173,6 +173,8 @@ endif(IOS_PLATFORM)
+ endif()
+ 
+ if(NE10_ENABLE_DSP)
++    enable_language(CXX)
++
+     #enable NE10_init_dsp
+     add_definitions(-DNE10_ENABLE_DSP)
+ 
+-- 
+2.35.1
+

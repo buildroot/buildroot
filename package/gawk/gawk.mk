@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GAWK_VERSION = 5.1.0
+GAWK_VERSION = 5.2.0
 GAWK_SOURCE = gawk-$(GAWK_VERSION).tar.xz
 GAWK_SITE = $(BR2_GNU_MIRROR)/gawk
 GAWK_DEPENDENCIES = host-gawk
@@ -40,7 +40,7 @@ endef
 GAWK_POST_INSTALL_TARGET_HOOKS += GAWK_CREATE_SYMLINK
 
 define HOST_GAWK_CREATE_SYMLINK
-	ln -sf gawk $(HOST_DIR)/usr/bin/awk
+	ln -sf gawk $(HOST_DIR)/bin/awk
 endef
 
 HOST_GAWK_POST_INSTALL_HOOKS += HOST_GAWK_CREATE_SYMLINK

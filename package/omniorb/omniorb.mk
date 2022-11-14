@@ -4,18 +4,14 @@
 #
 ################################################################################
 
-OMNIORB_VERSION = 4.2.4
+OMNIORB_VERSION = 4.3.0
 OMNIORB_SITE = http://downloads.sourceforge.net/project/omniorb/omniORB/omniORB-$(OMNIORB_VERSION)
 OMNIORB_SOURCE = omniORB-$(OMNIORB_VERSION).tar.bz2
 OMNIORB_INSTALL_STAGING = YES
 OMNIORB_LICENSE = GPL2+, LGPL-2.1+
 OMNIORB_LICENSE_FILES = COPYING COPYING.LIB
 OMNIORB_DEPENDENCIES = host-omniorb
-HOST_OMNIORB_DEPENDENCIES = host-python
-
-# omniorb is not python3 friendly, so force the python interpreter
-OMNIORB_CONF_OPTS = ac_cv_path_PYTHON=$(HOST_DIR)/bin/python2
-HOST_OMNIORB_CONF_OPTS = ac_cv_path_PYTHON=$(HOST_DIR)/bin/python2
+HOST_OMNIORB_DEPENDENCIES = host-python3
 
 # Defaulting long double support to a safe option for the
 # mix of embedded targets, this could later be automated
@@ -29,7 +25,7 @@ HOST_OMNIORB_CONF_OPTS += --disable-longdouble
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 OMNIORB_CONF_OPTS += --with-openssl
-OMNIORB_DEPENDENCIES += openssl
+OMNIORB_DEPENDENCIES += host-pkgconf openssl
 else
 OMNIORB_CONF_OPTS += --without-openssl
 endif

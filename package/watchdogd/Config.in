@@ -1,0 +1,58 @@
+config BR2_PACKAGE_WATCHDOGD
+	bool "watchdogd"
+	depends on BR2_USE_MMU # fork()
+	select BR2_PACKAGE_LIBCONFUSE
+	select BR2_PACKAGE_LIBITE
+	select BR2_PACKAGE_LIBUEV
+	help
+	  Extended version of uClinux-dist watchdogd.  Monitors loadavg,
+	  file descriptors and memory leaks, and capable of supervising
+	  your processes main loop using an instrumentation API.
+
+	  A reset reason is saved for power loss, CPU overload, or any
+	  of the monitored conditions (above).	The full capabilities
+	  are limited by the kernel watchdog driver, but even the basic
+	  "softdog" driver is supported.  See /etc/watchdogd.conf for
+	  details, and try watchdogctl for system status and available
+	  commands.
+
+	  https://github.com/troglobit/watchdogd/
+
+if BR2_PACKAGE_WATCHDOGD
+
+config BR2_PACKAGE_WATCHDOGD_TEST_SUITE
+	bool "Enable watchdogctl test cases"
+	help
+	  The watchdogctl program comes with a suite of tests built-in.
+	  They can be used to verify correct operation of watchdogd and
+	  the kernel watchdog driver.
+
+config BR2_PACKAGE_WATCHDOGD_GENERIC_POLL
+	int "Generic script monitor poll interval (sec)"
+	default "300"
+	help
+	  Poll interval for generic script monitor, in seconds.  A value
+	  of zero (0) disables the monitor.
+
+config BR2_PACKAGE_WATCHDOGD_LOADAVG_POLL
+	int "CPU load average monitor poll interval (sec)"
+	default "300"
+	help
+	  Poll interval for CPU load average monitor, in seconds.  A
+	  value of zero (0) disables the monitor.
+
+config BR2_PACKAGE_WATCHDOGD_FILENR_POLL
+	int "File descriptor leak monitor poll interval (sec)"
+	default "300"
+	help
+	  Poll interval for file descriptor leak monitor, in seconds.  A
+	  value of zero (0) disables the monitor.
+
+config BR2_PACKAGE_WATCHDOGD_MEMINFO_POLL
+	int "Memory leak monitor poll interval (sec)"
+	default "300"
+	help
+	  Poll interval for memory leak monitor, in seconds.  A value of
+	  zero (0) disables the monitor.
+
+endif

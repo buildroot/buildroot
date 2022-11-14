@@ -48,11 +48,11 @@ system is based on hand-written Makefiles or shell scripts.
 33: endef
 34:
 35: define LIBFOO_DEVICES
-36:	/dev/foo  c  666  0  0	42  0  -  -  -
+36:	/dev/foo c 666 0 0 42 0 - - -
 37: endef
 38:
 39: define LIBFOO_PERMISSIONS
-40:	/bin/foo  f  4755  foo  libfoo	 -  -  -  -  -
+40:	/bin/foo f 4755 foo libfoo - - - - -
 41: endef
 42:
 43: $(eval $(generic-package))
@@ -256,7 +256,7 @@ not and can not work as people would expect it should:
   +scp://[user@]host:filepath+, and that filepath is relative to the
   user's home directory, so you may want to prepend the path with a
   slash for absolute paths:
-  +scp://[user@]host:/absolutepath+. +
+  +scp://[user@]host:/absolutepath+. The same goes for SFTP URLs. +
   If +HOST_LIBFOO_SITE+ is not specified, it defaults to
   +LIBFOO_SITE+.
   Examples: +
@@ -291,6 +291,8 @@ not and can not work as people would expect it should:
      +ftp://+.
   ** +scp+ for downloads of tarballs over SSH with scp. Used by
      default when +LIBFOO_SITE+ begins with +scp://+.
+  ** +sftp+ for downloads of tarballs over SSH with sftp. Used by
+     default when +LIBFOO_SITE+ begins with +sftp://+.
   ** +svn+ for retrieving source code from a Subversion repository.
      Used by default when +LIBFOO_SITE+ begins with +svn://+. When a
      +http://+ Subversion repository URL is specified in
@@ -314,8 +316,7 @@ not and can not work as people would expect it should:
      13:45+01" see "man cvs" for further details).
   ** +git+ for retrieving source code from a Git repository. Used by
      default when +LIBFOO_SITE+ begins with +git://+. The downloaded
-     source code is cached as with the +svn+
-     method.
+     source code is cached as with the +svn+ method.
   ** +hg+ for retrieving source code from a Mercurial repository. One
      'must' specify +LIBFOO_SITE_METHOD=hg+ when +LIBFOO_SITE+
      contains a Mercurial repository URL. The downloaded source code
@@ -341,6 +342,10 @@ not and can not work as people would expect it should:
   +LIBFOO_SITE_METHOD=git+).  Note that we try not to use such git
   submodules when they contain bundled libraries, in which case we
   prefer to use those libraries from their own package.
+
+* +LIBFOO_GIT_LFS+ should be set to +YES+ if the Git repository uses
+  Git LFS to store large files out of band.  This is only available for
+  packages downloaded with git (i.e. when +LIBFOO_SITE_METHOD=git+).
 
 * +LIBFOO_STRIP_COMPONENTS+ is the number of leading components
   (directories) that tar must strip from file names on extraction.

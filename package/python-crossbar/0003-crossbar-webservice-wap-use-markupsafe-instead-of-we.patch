@@ -1,0 +1,53 @@
+From a6866509b0387ab6d6f99f68cd82bcac922fe839 Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@gmail.com>
+Date: Mon, 30 May 2022 19:38:11 +0200
+Subject: [PATCH] crossbar/webservice/wap: use markupsafe instead of werkzeug
+
+wap.py use escape from werkzeug but it has been removed since
+the version 2.1.0 [1].
+
+Replace with escape from markupsafe like upstream commit [2]
+(wihout other changes).
+
+[1] https://github.com/pallets/werkzeug/commit/22d1e9ac13829b83347107a9b4d77072a8e1af6a
+[2] https://github.com/crossbario/crossbar/commit/ca8d383f01231e2b3f986e791f215f12f2deee5d
+
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+---
+ crossbar/webservice/wap.py | 7 ++++++-
+ requirements-min.txt       | 1 +
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/crossbar/webservice/wap.py b/crossbar/webservice/wap.py
+index 825558b1..6daa9b21 100644
+--- a/crossbar/webservice/wap.py
++++ b/crossbar/webservice/wap.py
+@@ -36,7 +36,12 @@ from collections.abc import Mapping, Sequence
+ 
+ from werkzeug.routing import Map, Rule
+ from werkzeug.exceptions import NotFound, MethodNotAllowed
+-from werkzeug.utils import escape
++
++try:
++    # removed in werkzeug 2.1.0
++    from werkzeug.utils import escape
++except ImportError:
++    from markupsafe import escape
+ 
+ from jinja2 import Environment, FileSystemLoader
+ from jinja2.sandbox import SandboxedEnvironment
+diff --git a/requirements-min.txt b/requirements-min.txt
+index cdd82d27..50cb1489 100644
+--- a/requirements-min.txt
++++ b/requirements-min.txt
+@@ -7,6 +7,7 @@ cryptography>=2.6.1
+ importlib-resources>=4.1.1
+ jinja2>=2.10.1
+ lmdb>=0.92
++MarkupSafe>=1.1.1
+ mistune>=0.7.4
+ passlib>=1.7.1
+ priority>=1.3.0
+-- 
+2.37.1
+

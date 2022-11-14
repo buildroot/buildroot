@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-BOINC_VERSION_MAJOR = 7.16
-BOINC_VERSION = $(BOINC_VERSION_MAJOR).18
+BOINC_VERSION_MAJOR = 7.20
+BOINC_VERSION = $(BOINC_VERSION_MAJOR).2
 BOINC_SITE = \
 	$(call github,BOINC,boinc,client_release/$(BOINC_VERSION_MAJOR)/$(BOINC_VERSION))
 BOINC_LICENSE = LGPL-3.0+
@@ -14,10 +14,19 @@ BOINC_CPE_ID_VENDOR = rom_walton
 BOINC_SELINUX_MODULES = boinc
 BOINC_DEPENDENCIES = host-pkgconf libcurl openssl
 BOINC_AUTORECONF = YES
-BOINC_CONF_ENV = ac_cv_path__libcurl_config=$(STAGING_DIR)/usr/bin/curl-config
+# The ac_cv_c_undeclared_builtin_options value is to help
+# AC_CHECK_DECLS realize that it doesn't need any particular compiler
+# option to get an error when building a program that uses undeclared
+# symbols. Otherwise, AC_CHECK_DECLS is confused by the configure
+# script unconditionally passing -mavx, which only exists on x86, and
+# therefore causes a failure on all other architectures.
+BOINC_CONF_ENV = \
+	ac_cv_c_undeclared_builtin_options='none needed' \
+	ac_cv_path__libcurl_config=$(STAGING_DIR)/usr/bin/curl-config
 BOINC_CONF_OPTS = \
 	--disable-apps \
 	--disable-boinczip \
+	--disable-fcgi \
 	--disable-manager \
 	--disable-server \
 	--enable-client \
@@ -30,12 +39,12 @@ ifeq ($(BR2_PACKAGE_FREETYPE),y)
 BOINC_DEPENDENCIES += freetype
 endif
 
-ifeq ($(BR2_PACKAGE_LIBFCGI),y)
-BOINC_DEPENDENCIES += libfcgi
-BOINC_CONF_OPTS += --enable-fcgi
-else
-BOINC_CONF_OPTS += --disable-fcgi
+ifeq ($(BR2_PACKAGE_LIBEXECINFO),y)
+BOINC_DEPENDENCIES += libexecinfo
+BOINC_MAKE_OPTS += LIBS="-lexecinfo"
 endif
+
+BOINC_MAKE_OPTS += CXXFLAGS="$(TARGET_CXXFLAGS) -std=c++11"
 
 # Remove boinc-client because it is incompatible with buildroot
 define BOINC_REMOVE_UNNEEDED_FILE

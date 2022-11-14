@@ -2,6 +2,7 @@ config BR2_PACKAGE_INTEL_GMMLIB
 	bool "intel-gmmlib"
 	depends on BR2_x86_64
 	depends on !BR2_STATIC_LIBS
+	depends on BR2_INSTALL_LIBSTDCPP
 	help
 	  The Intel(R) Graphics Memory Management Library provides
 	  device specific and buffer management for the Intel(R)
@@ -10,5 +11,5 @@ config BR2_PACKAGE_INTEL_GMMLIB
 
 	  https://github.com/intel/gmmlib
 
-comment "intel-gmmlib needs a toolchain w/ dynamic library"
-	depends on BR2_STATIC_LIBS
+comment "intel-gmmlib needs a toolchain w/ dynamic library, C++"
+	depends on BR2_STATIC_LIBS || !BR2_INSTALL_LIBSTDCPP

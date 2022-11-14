@@ -39,7 +39,7 @@ Here is an example to render a simple AsciiDoc document.
 04: #
 05: ################################################################################
 06:
-07: FOO_SOURCES = $(sort $(wildcard $(pkgdir)/*))
+07: FOO_SOURCES = $(sort $(wildcard $(FOO_DOCDIR)/*))
 08: $(eval $(call asciidoc-document))
 ----
 
@@ -85,6 +85,17 @@ various steps:
 * +FOO_CHECK_DEPENDENCIES_<FMT>_HOOKS+, to run additional tests for
   the specified format +<FMT>+ (see the list of rendered formats, above).
 
+Buildroot sets the following variable that can be used in the definitions
+above:
+
+* +$(FOO_DOCDIR)+, similar to +$(FOO_PKGDIR)+, contains the path to the
+  directory containing +foo.mk+. It can be used to refer to the document
+  sources, and can be used in the hooks, especially the post-rsync hook
+  if parts of the documentation needs to be generated.
+
+* +$(@D)+, as for traditional packages, contains the path to the directory
+  where the document will be copied and built.
+
 Here is a complete example that uses all variables and all hooks:
 
 ----
@@ -94,8 +105,8 @@ Here is a complete example that uses all variables and all hooks:
 04: #
 05: ################################################################################
 06:
-07: FOO_SOURCES = $(sort $(wildcard $(pkgdir)/*))
-08: FOO_RESOURCES = $(sort $(wildcard $(pkgdir)/ressources))
+07: FOO_SOURCES = $(sort $(wildcard $(FOO_DOCDIR)/*))
+08: FOO_RESOURCES = $(sort $(wildcard $(FOO_DOCDIR)/ressources))
 09:
 10: define FOO_GEN_EXTRA_DOC
 11:     /path/to/generate-script --outdir=$(@D)

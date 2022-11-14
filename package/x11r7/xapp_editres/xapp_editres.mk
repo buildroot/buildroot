@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-XAPP_EDITRES_VERSION = 1.0.7
-XAPP_EDITRES_SOURCE = editres-$(XAPP_EDITRES_VERSION).tar.bz2
+XAPP_EDITRES_VERSION = 1.0.8
+XAPP_EDITRES_SOURCE = editres-$(XAPP_EDITRES_VERSION).tar.xz
 XAPP_EDITRES_SITE = http://xorg.freedesktop.org/releases/individual/app
 XAPP_EDITRES_LICENSE = MIT
 XAPP_EDITRES_LICENSE_FILES = COPYING

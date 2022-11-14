@@ -1,0 +1,83 @@
+config BR2_PACKAGE_ZABBIX
+	bool "zabbix"
+	depends on BR2_TOOLCHAIN_USES_GLIBC
+	select BR2_PACKAGE_PCRE
+	help
+	  Zabbix is an enterprise-class open source distributed
+	  monitoring solution. Zabbix is free of cost. Zabbix is
+	  written and distributed under the GPL General Public License
+	  version 2.
+
+	  https://zabbix.com
+
+comment "zabbix need glibc"
+	depends on !BR2_TOOLCHAIN_USES_GLIBC
+
+if BR2_PACKAGE_ZABBIX
+
+comment "zabbix server needs C++ and threads or wchar and dynamic libs"
+	depends on BR2_USE_MMU
+	depends on \
+		!(BR2_INSTALL_LIBSTDCPP && BR2_TOOLCHAIN_HAS_THREADS) && \
+		!(BR2_USE_WCHAR && !BR2_STATIC_LIBS)
+
+config BR2_PACKAGE_ZABBIX_SERVER
+	bool "zabbix server"
+	depends on BR2_USE_MMU # mysql, postgresql
+	depends on \
+		(BR2_INSTALL_LIBSTDCPP && BR2_TOOLCHAIN_HAS_THREADS) || \
+		(BR2_USE_WCHAR && !BR2_STATIC_LIBS)
+	select BR2_PACKAGE_ZLIB
+	select BR2_PACKAGE_LIBEVENT
+
+if BR2_PACKAGE_ZABBIX_SERVER
+
+choice
+	prompt "server database backend"
+
+config BR2_PACKAGE_ZABBIX_SERVER_MYSQL
+	bool "mysql"
+	depends on BR2_INSTALL_LIBSTDCPP # mysql
+	depends on BR2_TOOLCHAIN_HAS_THREADS # mysql
+	select BR2_PACKAGE_MYSQL
+
+config BR2_PACKAGE_ZABBIX_SERVER_POSTGRESQL
+	bool "postgresql"
+	depends on BR2_USE_WCHAR # postgresql
+	depends on !BR2_STATIC_LIBS # postgresql
+	depends on !BR2_OPTIMIZE_FAST # postgresql
+	select BR2_PACKAGE_POSTGRESQL
+
+endchoice
+
+config BR2_PACKAGE_ZABBIX_SERVER_COPY_DUMPS
+	bool "install SQL dumps"
+	help
+	  Copy initial database dumps to /var/lib/zabbix/schema
+
+	  These still need to be imported into the database by hand.
+
+config BR2_PACKAGE_ZABBIX_SERVER_COPY_FRONTEND
+	bool "install web UI to target"
+	depends on BR2_PACKAGE_PHP # runtime
+	select BR2_PACKAGE_PHP_EXT_MYSQLI if BR2_PACKAGE_ZABBIX_SERVER_MYSQL
+	select BR2_PACKAGE_PHP_EXT_PGSQL if BR2_PACKAGE_ZABBIX_SERVER_POSTGRESQL
+	select BR2_PACKAGE_PHP_EXT_BCMATH
+	select BR2_PACKAGE_PHP_EXT_SOCKETS
+	select BR2_PACKAGE_PHP_EXT_MBSTRING
+	select BR2_PACKAGE_PHP_EXT_GD
+	select BR2_PACKAGE_PHP_EXT_LIBXML2
+	select BR2_PACKAGE_PHP_EXT_CTYPE
+	select BR2_PACKAGE_PHP_EXT_SESSION
+	select BR2_PACKAGE_PHP_EXT_XMLREADER
+	select BR2_PACKAGE_PHP_EXT_XMLWRITER
+	help
+	  Copy web-UI to /var/www/zabbix. You need to set up a web
+	  server to access it.
+
+comment "zabbix web UI requires PHP"
+	depends on !BR2_PACKAGE_PHP
+
+endif
+
+endif

@@ -1,0 +1,179 @@
+From 7bb5120b52814e4471a165e295acdc6b6155259e Mon Sep 17 00:00:00 2001
+From: peak3d <pfau@peak3d.de>
+Date: Thu, 22 Jul 2021 11:01:12 +0200
+Subject: [PATCH] Add argument to reuse single sample decrypter
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ Source/C++/Core/Ap4CommonEncryption.cpp | 36 ++++++++++++++++++-------
+ Source/C++/Core/Ap4CommonEncryption.h   |  8 +++++-
+ Source/C++/Core/Ap4Protection.cpp       |  3 ++-
+ 3 files changed, 35 insertions(+), 12 deletions(-)
+
+diff --git a/Source/C++/Core/Ap4CommonEncryption.cpp b/Source/C++/Core/Ap4CommonEncryption.cpp
+index 5308200..cb5c328 100644
+--- a/Source/C++/Core/Ap4CommonEncryption.cpp
++++ b/Source/C++/Core/Ap4CommonEncryption.cpp
+@@ -1967,6 +1967,7 @@ AP4_CencSampleDecrypter::Create(AP4_ProtectedSampleDescription* sample_descripti
+                                 const AP4_UI08*                 key, 
+                                 AP4_Size                        key_size,
+                                 AP4_BlockCipherFactory*         block_cipher_factory,
++                                AP4_CencSingleSampleDecrypter*  singlesample_decrypter,
+                                 AP4_CencSampleDecrypter*&       decrypter)
+ {
+     AP4_SaioAtom* saio = NULL;
+@@ -1982,6 +1983,7 @@ AP4_CencSampleDecrypter::Create(AP4_ProtectedSampleDescription* sample_descripti
+                   saio,
+                   saiz,
+                   sample_encryption_atom,
++                  singlesample_decrypter,
+                   decrypter);
+ }
+ 
+@@ -1999,6 +2001,7 @@ AP4_CencSampleDecrypter::Create(AP4_ProtectedSampleDescription* sample_descripti
+                                 AP4_SaioAtom*&                  saio,
+                                 AP4_SaizAtom*&                  saiz,
+                                 AP4_CencSampleEncryption*&      sample_encryption_atom,
++                                AP4_CencSingleSampleDecrypter*  singlesample_decrypter,
+                                 AP4_CencSampleDecrypter*&       decrypter)
+ {
+     // default return values
+@@ -2032,6 +2035,7 @@ AP4_CencSampleDecrypter::Create(AP4_ProtectedSampleDescription* sample_descripti
+                   key_size,
+                   block_cipher_factory,
+                   reset_iv_at_each_subsample,
++                  singlesample_decrypter,
+                   decrypter);
+ }
+ 
+@@ -2045,6 +2049,7 @@ AP4_CencSampleDecrypter::Create(AP4_CencSampleInfoTable*  sample_info_table,
+                                 AP4_Size                  key_size,
+                                 AP4_BlockCipherFactory*   block_cipher_factory,
+                                 bool                      reset_iv_at_each_subsample,
++                                AP4_CencSingleSampleDecrypter* singlesample_decrypter,
+                                 AP4_CencSampleDecrypter*& decrypter)
+ {
+     // default return value
+@@ -2074,15 +2079,23 @@ AP4_CencSampleDecrypter::Create(AP4_CencSampleInfoTable*  sample_info_table,
+ 
+     // create a single-sample decrypter
+     AP4_CencSingleSampleDecrypter* single_sample_decrypter = NULL;
+-    AP4_Result result = AP4_CencSingleSampleDecrypter::Create(cipher_type,
+-                                                              key,
+-                                                              key_size,
+-                                                              sample_info_table->GetCryptByteBlock(),
+-                                                              sample_info_table->GetSkipByteBlock(),
+-                                                              block_cipher_factory,
+-                                                              reset_iv_at_each_subsample,
+-                                                              single_sample_decrypter);
+-    if (AP4_FAILED(result)) return result;
++    if (!singlesample_decrypter)
++    {
++        AP4_Result result = AP4_CencSingleSampleDecrypter::Create(cipher_type,
++                                                                  key,
++                                                                  key_size,
++                                                                  sample_info_table->GetCryptByteBlock(),
++                                                                  sample_info_table->GetSkipByteBlock(),
++                                                                  block_cipher_factory,
++                                                                  reset_iv_at_each_subsample,
++                                                                  single_sample_decrypter);
++
++        if (AP4_FAILED(result)) return result;
++    }
++    else
++    {
++        single_sample_decrypter = singlesample_decrypter;
++    }
+ 
+     // create the decrypter
+     decrypter = new AP4_CencSampleDecrypter(single_sample_decrypter, sample_info_table);
+@@ -2333,7 +2346,9 @@ AP4_CencFragmentDecrypter::ProcessSample(AP4_DataBuffer& data_in,
+ |   AP4_CencDecryptingProcessor::AP4_CencDecryptingProcessor
+ +---------------------------------------------------------------------*/
+ AP4_CencDecryptingProcessor::AP4_CencDecryptingProcessor(const AP4_ProtectionKeyMap* key_map, 
+-                                                         AP4_BlockCipherFactory*     block_cipher_factory) :
++                                                         AP4_BlockCipherFactory*     block_cipher_factory,
++                                                         AP4_CencSingleSampleDecrypter *cenc_singlesample_decrypter) :
++    m_CencSingleSampleDecrypter(cenc_singlesample_decrypter),
+     m_KeyMap(key_map)
+ {
+     if (block_cipher_factory) {
+@@ -2483,6 +2498,7 @@ AP4_CencDecryptingProcessor::CreateFragmentHandler(AP4_TrakAtom*      trak,
+         saio,
+         saiz,
+         sample_encryption_atom,
++        m_CencSingleSampleDecrypter,
+         sample_decrypter);
+     if (AP4_FAILED(result)) return NULL;
+     
+diff --git a/Source/C++/Core/Ap4CommonEncryption.h b/Source/C++/Core/Ap4CommonEncryption.h
+index 580de66..a6b20ce 100644
+--- a/Source/C++/Core/Ap4CommonEncryption.h
++++ b/Source/C++/Core/Ap4CommonEncryption.h
+@@ -48,6 +48,7 @@ class AP4_SaioAtom;
+ class AP4_CencSampleInfoTable;
+ class AP4_AvcFrameParser;
+ class AP4_HevcFrameParser;
++class AP4_CencSingleSampleDecrypter;
+ 
+ /*----------------------------------------------------------------------
+ |   constants
+@@ -654,7 +655,8 @@ class AP4_CencDecryptingProcessor : public AP4_Processor
+ public:
+     // constructor
+     AP4_CencDecryptingProcessor(const AP4_ProtectionKeyMap* key_map, 
+-                                AP4_BlockCipherFactory*     block_cipher_factory = NULL);
++                                AP4_BlockCipherFactory*     block_cipher_factory = NULL,
++                                AP4_CencSingleSampleDecrypter* cenc_singlesample_decrypter = NULL);
+ 
+     // AP4_Processor methods
+     virtual AP4_Processor::TrackHandler*    CreateTrackHandler(AP4_TrakAtom* trak);
+@@ -670,6 +672,7 @@ protected:
+ 
+     // members
+     AP4_BlockCipherFactory*     m_BlockCipherFactory;
++    AP4_CencSingleSampleDecrypter* m_CencSingleSampleDecrypter;
+     const AP4_ProtectionKeyMap* m_KeyMap;
+ };
+ 
+@@ -752,6 +755,7 @@ public:
+                              AP4_SaioAtom*&                  saio_atom,              // [out]
+                              AP4_SaizAtom*&                  saiz_atom,              // [out]
+                              AP4_CencSampleEncryption*&      sample_encryption_atom, // [out]
++                             AP4_CencSingleSampleDecrypter*  singlesample_decrypter,
+                              AP4_CencSampleDecrypter*&       decrypter);
+ 
+     static AP4_Result Create(AP4_ProtectedSampleDescription* sample_description, 
+@@ -761,6 +765,7 @@ public:
+                              const AP4_UI08*                 key, 
+                              AP4_Size                        key_size,
+                              AP4_BlockCipherFactory*         block_cipher_factory,
++                             AP4_CencSingleSampleDecrypter*  singlesample_decrypter,
+                              AP4_CencSampleDecrypter*&       decrypter);
+ 
+     static AP4_Result Create(AP4_CencSampleInfoTable*  sample_info_table,
+@@ -769,6 +774,7 @@ public:
+                              AP4_Size                  key_size,
+                              AP4_BlockCipherFactory*   block_cipher_factory,
+                              bool                      reset_iv_at_each_subsample,
++                             AP4_CencSingleSampleDecrypter* singlesample_decrypter,
+                              AP4_CencSampleDecrypter*& decrypter);
+     
+     // methods
+diff --git a/Source/C++/Core/Ap4Protection.cpp b/Source/C++/Core/Ap4Protection.cpp
+index fd421e9..80bb9f0 100644
+--- a/Source/C++/Core/Ap4Protection.cpp
++++ b/Source/C++/Core/Ap4Protection.cpp
+@@ -812,7 +812,8 @@ AP4_SampleDecrypter::Create(AP4_ProtectedSampleDescription* sample_description,
+                                                                 aux_info_data_offset,
+                                                                 key, 
+                                                                 key_size, 
+-                                                                block_cipher_factory, 
++                                                                block_cipher_factory,
++                                                                NULL,
+                                                                 decrypter);
+             if (AP4_FAILED(result)) return NULL;
+             return decrypter;
+-- 
+2.30.2
+

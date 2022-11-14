@@ -2,9 +2,6 @@ config BR2_PACKAGE_GLSLSANDBOX_PLAYER
 	bool "glslsandbox-player"
 	depends on BR2_PACKAGE_HAS_LIBEGL
 	depends on BR2_PACKAGE_HAS_LIBGLES
-	# Doesn't really depend on threads, but this makes sure we have at least
-	# one native windowing system available, and is good enough in practice.
-	depends on BR2_TOOLCHAIN_HAS_THREADS
 	help
 	  GLSL Sandbox standalone player allow one to run and render
 	  (most of) nice shaders available online on the
@@ -33,7 +30,6 @@ config BR2_PACKAGE_GLSLSANDBOX_PLAYER_TESTING
 
 config BR2_PACKAGE_GLSLSANDBOX_PLAYER_SCRIPTS
 	bool "Install scripts"
-	depends on !BR2_PACKAGE_PYTHON # python3
 	depends on !BR2_STATIC_LIBS # python3
 	depends on BR2_TOOLCHAIN_HAS_THREADS # python3
 	depends on BR2_USE_MMU # bash, python3
@@ -55,7 +51,7 @@ config BR2_PACKAGE_GLSLSANDBOX_PLAYER_SCRIPTS
 
 choice
 	prompt "Native windowing system"
-	default BR2_PACKAGE_GLSLSANDBOX_PLAYER_MALI  if BR2_PACKAGE_SUNXI_MALI_MAINLINE
+	default BR2_PACKAGE_GLSLSANDBOX_PLAYER_MALI  if BR2_PACKAGE_SUNXI_MALI_UTGARD
 	default BR2_PACKAGE_GLSLSANDBOX_PLAYER_MALI_T76X if BR2_PACKAGE_MALI_T76X
 	default BR2_PACKAGE_GLSLSANDBOX_PLAYER_RPI   if BR2_PACKAGE_RPI_USERLAND
 	default BR2_PACKAGE_GLSLSANDBOX_PLAYER_SDL2  if BR2_PACKAGE_SDL2_OPENGLES
@@ -66,14 +62,20 @@ choice
 	help
 	  Select the native windowing system you wish to use.
 
+config BR2_PACKAGE_GLSLSANDBOX_PLAYER_NULL
+	bool "NullWS"
+	help
+	  Enable Null Windowing System
+
 config BR2_PACKAGE_GLSLSANDBOX_PLAYER_KMS
 	bool "KMS/DRM/GBM"
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libdrm
+	depends on BR2_PACKAGE_HAS_LIBGBM
 	select BR2_PACKAGE_LIBDRM
 
 config BR2_PACKAGE_GLSLSANDBOX_PLAYER_MALI
 	bool "Allwinner ARM/Mali Frame Buffer"
-	depends on BR2_PACKAGE_SUNXI_MALI_MAINLINE
+	depends on BR2_PACKAGE_SUNXI_MALI_UTGARD
 
 config BR2_PACKAGE_GLSLSANDBOX_PLAYER_MALI_T76X
 	bool "ARM/Mali T76x Frame Buffer"
@@ -113,6 +115,5 @@ endif
 
 endif
 
-comment "glslsandbox-player needs a toolchain w/ threads and an openGL ES and EGL driver"
-	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
-		!BR2_PACKAGE_HAS_LIBEGL || !BR2_PACKAGE_HAS_LIBGLES
+comment "glslsandbox-player needs openGL ES and EGL driver"
+	depends on !BR2_PACKAGE_HAS_LIBEGL || !BR2_PACKAGE_HAS_LIBGLES

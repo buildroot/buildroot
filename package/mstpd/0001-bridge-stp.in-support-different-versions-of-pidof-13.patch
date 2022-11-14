@@ -1,0 +1,48 @@
+From 181c453fc1a00573e19f14960dcc54ad84beea7c Mon Sep 17 00:00:00 2001
+From: colin-foster-in-advantage <colin.foster@in-advantage.com>
+Date: Tue, 12 Jul 2022 23:01:09 -0700
+Subject: [PATCH] bridge-stp.in: support different versions of pidof (#137)
+
+* bridge-stp.in: support different versions of pidof
+
+Busybox uses a version of pdiof that doesn't support the -c option. As
+such, this renders mstpd non-functional on any Busybox system.
+
+Just use the standard form of pidof to detect any running instances of mstpd.
+
+Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
+---
+ bridge-stp.in | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/bridge-stp.in b/bridge-stp.in
+index 47cbe79..3807873 100755
+--- a/bridge-stp.in
++++ b/bridge-stp.in
+@@ -139,7 +139,7 @@ case "$action" in
+         fi
+ 
+         # Start mstpd if necessary.
+-        if ! pidof -c -s mstpd >/dev/null; then
++        if ! pidof -s mstpd >/dev/null; then
+             if [ "$MANAGE_MSTPD" != 'y' ]; then
+                 errmsg 'mstpd is not running'
+                 exit 3
+@@ -212,12 +212,12 @@ case "$action" in
+         done
+ 
+         # Kill mstpd, since no bridges are currently using it.
+-        kill $(pidof -c mstpd)
++        kill $(pidof mstpd)
+         ;;
+     restart|restart_config)
+         if [ "$action" = 'restart' ]; then
+             # Kill mstpd.
+-            pids="$(pidof -c mstpd)" ; Err=$?
++            pids="$(pidof mstpd)" ; Err=$?
+             if [ $Err -eq 0 ]; then
+                 echo 'Stopping mstpd ...'
+                 kill $pids
+-- 
+2.25.1
+

@@ -1,0 +1,35 @@
+From fc13da06c1de4d085e21dc2bf45e1e95eb6145d9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jos=C3=A9=20Pekkarinen?= <jose.pekkarinen@unikie.com>
+Date: Fri, 10 Dec 2021 14:37:37 +0200
+Subject: [PATCH] Reorder includes to avoid ethhdr collision
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: José Pekkarinen <jose.pekkarinen@unikie.com>
+---
+ src/ip.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/ip.c b/src/ip.c
+index cd50074..4198e92 100644
+--- a/src/ip.c
++++ b/src/ip.c
+@@ -43,13 +43,13 @@
+ #include <net/if_arp.h>
+ #include <linux/if_tunnel.h>
+ 
+-#include <linux/if_tun.h> /* TUNSETPERSIST, ... */
+ #include <linux/ip6_tunnel.h>
+ 
+ #ifndef BMX7_LIB_IWINFO
+ #define BMX7_LIB_IW
+ #include <iwlib.h>
+ #endif
++#include <linux/if_tun.h> /* TUNSETPERSIST, ... */
+ //#include <iwlib.h>
+ // apt-get install libiw-dev
+ //#include <math.h>
+-- 
+2.30.2
+

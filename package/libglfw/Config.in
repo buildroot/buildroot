@@ -1,17 +1,20 @@
 config BR2_PACKAGE_LIBGLFW
 	bool "libglfw"
-	depends on BR2_PACKAGE_XORG7
-	depends on BR2_PACKAGE_HAS_LIBGL
-	select BR2_PACKAGE_XLIB_LIBXCURSOR
-	select BR2_PACKAGE_XLIB_LIBXEXT
-	select BR2_PACKAGE_XLIB_LIBXI
-	select BR2_PACKAGE_XLIB_LIBXINERAMA
-	select BR2_PACKAGE_XLIB_LIBXRANDR
+	depends on BR2_PACKAGE_XORG7 || BR2_PACKAGE_WAYLAND
+	depends on BR2_PACKAGE_HAS_LIBGL || BR2_PACKAGE_HAS_LIBGLES
+	select BR2_PACKAGE_LIBXKBCOMMON if BR2_PACKAGE_WAYLAND
+	select BR2_PACKAGE_WAYLAND_PROTOCOLS if BR2_PACKAGE_WAYLAND
+	select BR2_PACKAGE_XLIB_LIBXCURSOR if BR2_PACKAGE_XORG7
+	select BR2_PACKAGE_XLIB_LIBXEXT if BR2_PACKAGE_XORG7
+	select BR2_PACKAGE_XLIB_LIBXI if BR2_PACKAGE_XORG7
+	select BR2_PACKAGE_XLIB_LIBXINERAMA if BR2_PACKAGE_XORG7
+	select BR2_PACKAGE_XLIB_LIBXRANDR if BR2_PACKAGE_XORG7
 	help
 	  GLFW is an Open Source, multi-platform library for creating
 	  windows with OpenGL contexts and receiving input and events.
 
 	  http://www.glfw.org
 
-comment "libglfw depends on X.org and needs an OpenGL backend"
-	depends on !BR2_PACKAGE_XORG7 || !BR2_PACKAGE_HAS_LIBGL
+comment "libglfw depends on X.org or Wayland and an OpenGL or GLES backend"
+	depends on !(BR2_PACKAGE_XORG7 || BR2_PACKAGE_WAYLAND)
+	depends on !(BR2_PACKAGE_HAS_LIBGL || BR2_PACKAGE_HAS_LIBGLES)

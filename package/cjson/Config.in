@@ -5,3 +5,14 @@ config BR2_PACKAGE_CJSON
 	  ANSI-C compliant JSON parser, under MIT license.
 
 	  https://github.com/DaveGamble/cJSON
+
+if BR2_PACKAGE_CJSON
+
+config BR2_PACKAGE_CJSON_UTILS
+	bool "cJSON utils"
+	help
+	  Supplementary library with support for JSON Pointer
+	  (RFC-6901), JSON Patch (RFC-6902), JSON Merge Patch
+	  (RFC-7386), and more.
+
+endif

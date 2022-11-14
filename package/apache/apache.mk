@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-APACHE_VERSION = 2.4.48
+APACHE_VERSION = 2.4.54
 APACHE_SOURCE = httpd-$(APACHE_VERSION).tar.bz2
-APACHE_SITE = http://archive.apache.org/dist/httpd
+APACHE_SITE = https://downloads.apache.org/httpd
 APACHE_LICENSE = Apache-2.0
 APACHE_LICENSE_FILES = LICENSE
 APACHE_CPE_ID_VENDOR = apache
@@ -17,19 +17,11 @@ APACHE_INSTALL_STAGING = YES
 # We have a patch touching configure.in and Makefile.in,
 # so we need to autoreconf:
 APACHE_AUTORECONF = YES
-APACHE_DEPENDENCIES = apr apr-util pcre
-
-ifeq ($(BR2_PER_PACKAGE_DIRECTORIES),y)
-define APACHE_FIXUP_APR_LIBTOOL
-	$(SED) "s@$(PER_PACKAGE_DIR)/[^/]\+/@$(PER_PACKAGE_DIR)/apache/@g" \
-		$(STAGING_DIR)/usr/build-1/libtool
-endef
-APACHE_POST_PREPARE_HOOKS += APACHE_FIXUP_APR_LIBTOOL
-endif
+APACHE_DEPENDENCIES = apr apr-util pcre2
 
 APACHE_CONF_ENV= \
 	ap_cv_void_ptr_lt_long=no \
-	PCRE_CONFIG=$(STAGING_DIR)/usr/bin/pcre-config
+	PCRE_CONFIG=$(STAGING_DIR)/usr/bin/pcre2-config
 
 ifeq ($(BR2_PACKAGE_APACHE_MPM_EVENT),y)
 APACHE_MPM = event
@@ -43,7 +35,7 @@ APACHE_CONF_OPTS = \
 	--sysconfdir=/etc/apache2 \
 	--with-apr=$(STAGING_DIR)/usr \
 	--with-apr-util=$(STAGING_DIR)/usr \
-	--with-pcre=$(STAGING_DIR)/usr/bin/pcre-config \
+	--with-pcre=$(STAGING_DIR)/usr/bin/pcre2-config \
 	--enable-http \
 	--enable-dbd \
 	--enable-proxy \
@@ -52,6 +44,13 @@ APACHE_CONF_OPTS = \
 	--enable-mods-shared=all \
 	--with-mpm=$(APACHE_MPM) \
 	--disable-luajit
+
+ifeq ($(BR2_PACKAGE_BROTLI),y)
+APACHE_CONF_OPTS += --enable-brotli
+APACHE_DEPENDENCIES += brotli
+else
+APACHE_CONF_OPTS += --disable-brotli
+endif
 
 ifeq ($(BR2_PACKAGE_LIBXML2),y)
 APACHE_DEPENDENCIES += libxml2
