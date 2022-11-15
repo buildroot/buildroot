@@ -63,13 +63,6 @@ else
 LXC_CONF_OPTS += -Dopenssl=false
 endif
 
-ifeq ($(BR2_PACKAGE_LINUX_PAM),y)
-LXC_DEPENDENCIES += linux-pam
-LXC_CONF_OPTS += --enable-pam
-else
-LXC_CONF_OPTS += --disable-pam
-endif
-
 define LXC_USERS
 	lxc -1 lxc -1 * /var/lib/lxcunpriv - -
 endef
