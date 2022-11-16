@@ -629,6 +629,13 @@ def fixup_config(sysinfo, configfile):
         configlines.append('BR2_PACKAGE_XVISOR_USE_DEFCONFIG=y\n')
         configlines.remove('BR2_PACKAGE_XVISOR_CUSTOM_CONFIG_FILE=""\n')
 
+    # Don't build igh-ethercat driver as they are highly
+    # kernel-version specific
+    for opt in ['8139TOO', 'E100', 'E1000', 'E1000E', 'R8169']:
+        optstr = 'BR2_PACKAGE_IGH_ETHERCAT_%s=y\n' % opt
+        if optstr in configlines:
+            configlines.remove(optstr)
+
     with open(configfile, "w+") as configf:
         configf.writelines(configlines)
 
