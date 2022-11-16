@@ -181,6 +181,8 @@ define GRUB2_INSTALL_IMAGES_CMDS
 			cat $(@D)/build-$(tuple)/grub-core/cdboot.img $(GRUB2_IMAGE_$(tuple)) > \
 				$(BINARIES_DIR)/grub-eltorito.img
 		) \
+		mkdir -p $(HOST_DIR)/usr/lib/grub/$(tuple)
+		cp $(@D)/build-$(tuple)/grub-core/*.img $(HOST_DIR)/usr/lib/grub/$(tuple)
 	)
 endef
 
