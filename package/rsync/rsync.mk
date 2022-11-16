@@ -17,12 +17,12 @@ RSYNC_CONF_ENV = rsync_cv_HAVE_C99_VSNPRINTF=yes
 RSYNC_CONF_OPTS = \
 	--with-included-zlib=no \
 	--with-included-popt=no \
-	--disable-simd \
+	--disable-roll-simd \
 	--disable-openssl \
 	--disable-xxhash \
 	--disable-zstd \
 	--disable-lz4 \
-	--disable-asm
+	--disable-md5-asm
 
 ifeq ($(BR2_PACKAGE_ACL),y)
 RSYNC_DEPENDENCIES += acl
