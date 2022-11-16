@@ -18,29 +18,22 @@ Fixes build errors with uClibc and gcc-9.3.0:
  function ‘static_assert’ [-Werror=implicit-function-declaration] 101 |
  static_assert(ARRAY_SIZE(egl_platforms) == _EGL_NUM_PLATFORMS,
 
+../src/util/macros.h:74:4: error: implicit declaration of function
+ ‘static_assert’ [-Werror=implicit-function-declaration]
+   74 |    static_assert(cond, #cond); \
+      |    ^~~~~~~~~~~~~
+
 Patch sent upstream:
 https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13898
 
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 ---
- src/egl/main/egldisplay.c |  1 +
- src/util/compiler.h       | 10 ++++++++++
+ src/util/compiler.h | 10 ++++++++++
+ src/util/macros.h   |  1 +
  2 files changed, 11 insertions(+)
 
-diff --git a/src/egl/main/egldisplay.c b/src/egl/main/egldisplay.c
-index 131fc22786f9..d3e2bb96e2f6 100644
---- a/src/egl/main/egldisplay.c
-+++ b/src/egl/main/egldisplay.c
-@@ -42,6 +42,7 @@
- #endif
- #include <fcntl.h>
- #include "c11/threads.h"
-+#include "util/compiler.h"
- #include "util/macros.h"
- #include "util/os_file.h"
- #include "util/u_atomic.h"
 diff --git a/src/util/compiler.h b/src/util/compiler.h
-index d184ad455af9..b5c56807acc6 100644
+index d184ad455af..b5c56807acc 100644
 --- a/src/util/compiler.h
 +++ b/src/util/compiler.h
 @@ -36,6 +36,16 @@
@@ -60,6 +53,18 @@ index d184ad455af9..b5c56807acc6 100644
  #include "util/macros.h"
  
  
+diff --git a/src/util/macros.h b/src/util/macros.h
+index 22b18303826..8f73ee72693 100644
+--- a/src/util/macros.h
++++ b/src/util/macros.h
+@@ -27,6 +27,7 @@
+ #include <stdio.h>
+ #include <assert.h>
+ #include <stdint.h>
++#include "util/compiler.h"
+ 
+ /* Compute the size of an array */
+ #ifndef ARRAY_SIZE
 -- 
-GitLab
+2.34.1
 
