@@ -63,6 +63,10 @@ The Mender server can be setup in different ways, and how you
 configure the Mender client differs slightly depending on which server
 environment is used.
 
+Note that Mender also provides the 'mender setup' command to either manually
+configure the system by specifying flags or interactively when no flags are
+specified.
+
 - Mender demo environment
 
 This is if you have followed the Getting started documentation where
@@ -91,8 +95,8 @@ To get your tenant token:
 
 - log in to https://hosted.mender.io
 - click your email at the top right and then “My organization”
-- press the “COPY TO CLIPBOARD”
-- assign content of clipboard to TenantToken
+- copy the "Organization token" to a clipboard
+- assign contents of clipboard to TenantToken
 
 Example mender.conf options for Hosted Mender:
 
@@ -102,7 +106,6 @@ Example mender.conf options for Hosted Mender:
       "TenantToken": "<paste tenant token here>"
       ...
     }
-
 
 Creating Mender Artifacts
 -------------------------
