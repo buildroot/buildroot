@@ -47,15 +47,6 @@ FREERADIUS_SERVER_CONF_OPTS += \
 # Modules for which we don't have the dependencies must be disabled
 # explicitly, to avoid that they're searched on the host.
 FREERADIUS_SERVER_CONF_OPTS += \
-	--without-rlm_eap_ike \
-	--without-rlm_eap_tnc \
-	--without-rlm_mschap \
-	--without-rlm_perl \
-	--without-rlm_realm \
-	--without-rlm_sql_iodbc \
-	--without-rlm_sql_oracle \
-	--without-rlm_sql_freetds \
-	--without-rlm_yubikey \
 	--without-rlm_sql_mongo \
 	--with-experimental-modules
 
