@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XEN_VERSION = 4.14.4
+XEN_VERSION = 4.14.5
 XEN_SITE = https://downloads.xenproject.org/release/xen/$(XEN_VERSION)
 XEN_LICENSE = GPL-2.0
 XEN_LICENSE_FILES = COPYING
