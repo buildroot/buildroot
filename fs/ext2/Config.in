@@ -60,6 +60,19 @@ config BR2_TARGET_ROOTFS_EXT2_INODES
 	int "exact number of inodes (leave at 0 for auto calculation)"
 	default 0
 
+config BR2_TARGET_ROOTFS_EXT2_INODE_SIZE
+	int "inode size"
+	default 256
+	help
+	  Set the size of inodes, in bytes, as a power of 2 larger or
+	  equal to 128.
+
+	  Set to 0 to let the filesystem generator decide based on the
+	  file system size. If unsure, keep the default, 256.
+
+	  Note: 128-byte inodes suffer of the Y2K38 problem, and can't
+	  store timestamps beyond 2038-01-19 03:14:07Z.
+
 config BR2_TARGET_ROOTFS_EXT2_RESBLKS
 	int "reserved blocks percentage"
 	default 5
