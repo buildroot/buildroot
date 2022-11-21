@@ -2,17 +2,28 @@
 
 . /etc/os-release
 ROOTFS_VERSION=`echo $VERSION | sed -e 's/.*-g/g/'`
-ROOTFS_DATE=`date -r /etc/os-release '+%a %b %d %Y' `
+ROOTFS_DATE=`date -r /etc/os-release '+%b %d %H:%M:%S %Y'`
 
 KERNEL_VERSION=`uname -r`
-KERNEL_DATE=`uname -v |cut -d ' ' -f 3-5,8`
-PROCESSOR=`cat /proc/cpuinfo |head -1 |sed 's/^.*: //' `
-RAM=`cat /proc/meminfo | head -1 |sed 's/^MemTotal: \+//' `
+KERNEL_DATE=`uname -v |cut -d ' ' -f 3-5,7`
+CPU=`cat /proc/cpuinfo |head -1 |sed 's/^.*: //' `
+CPU_FREQ=`awk '{print $1/1000 " MHz"}' /sys/devices/system/cpu/cpufreq/policy0/scaling_cur_freq`
+MODEL=`grep machine /proc/cpuinfo |sed 's/.*: //'`
+IFS= read -r -d $'\0' DT_DEV </sys/firmware/devicetree/base/compatible
+USABLE_RAM=`cat /proc/meminfo | head -1 |sed 's/^MemTotal: \+//'`
+FREE_RAM=`cat /proc/meminfo | grep 'MemAvailable:' | sed 's/^MemAvailable: \+//'`
 SWAP=`awk 'BEGIN { getline } { print "\t"$1": "$3" kB" }' /proc/swaps 2>/dev/null`
 [ "$SWAP" ] && SWAP="Swap: $SWAP\n"
 
-echo -e "Kernel version: $KERNEL_VERSION\nCompiled: $KERNEL_DATE\n
-Root FS version: $ROOTFS_VERSION\nCompiled: $ROOTFS_DATE\n
-Processor: $PROCESSOR\nUsable RAM: $RAM\n$SWAP
+echo -e "Kernel version: $KERNEL_VERSION
+Compiled: $KERNEL_DATE
+
+Root FS version: $ROOTFS_VERSION
+Compiled: $ROOTFS_DATE
+
+Device: $MODEL (${DT_DEV})
+CPU: $CPU @ $CPU_FREQ
+RAM: $USABLE_RAM usable, $FREE_RAM free
+$SWAP
 Network interfaces:"
 ip -o -4 address list | awk '{if ($2 != "lo") { printf "%7s %s\n", $2, gensub("/.*$", "", "g", $4) ; outlines++ } } END { if (outlines == 0) print " (none)" }'
