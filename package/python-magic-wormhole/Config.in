@@ -1,0 +1,27 @@
+config BR2_PACKAGE_PYTHON_MAGIC_WORMHOLE
+	bool "python-magic-wormhole"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-autobahn -> python-cryptography
+	select BR2_PACKAGE_PYTHON_ATTRS # runtime
+	select BR2_PACKAGE_PYTHON_AUTOBAHN # runtime
+	select BR2_PACKAGE_PYTHON_AUTOMAT # runtime
+	select BR2_PACKAGE_PYTHON_CLICK # runtime
+	select BR2_PACKAGE_PYTHON_HKDF # runtime
+	select BR2_PACKAGE_PYTHON_HUMANIZE # runtime
+	select BR2_PACKAGE_PYTHON_PYNACL # runtime
+	select BR2_PACKAGE_PYTHON_SIX # runtime
+	select BR2_PACKAGE_PYTHON_SPAKE2 # runtime
+	select BR2_PACKAGE_PYTHON_TQDM # runtime
+	select BR2_PACKAGE_PYTHON_TWISTED # runtime
+	select BR2_PACKAGE_PYTHON_TXTORCON # runtime
+	help
+	  Securely transfer data between computers.
+
+	  This package provides a library and a command-line tool
+	  named "wormhole", which makes it possible to get
+	  arbitrary-sized files and directories (or short pieces of
+	  text) from one computer to another. The two endpoints are
+	  identified by using identical "wormhole codes": in general,
+	  the sending machine generates and displays the code, which
+	  must then be typed into the receiving machine.
+
+	  https://github.com/magic-wormhole/magic-wormhole
