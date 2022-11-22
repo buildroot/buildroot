@@ -2,7 +2,7 @@
 
 USB_MODE=mtp
 
-MODEL=`sed -n 's/\(.*\)ingenic.*/\1/p' /sys/firmware/devicetree/base/compatible`
+IFS= read -r -d $'\0' MODEL </sys/firmware/devicetree/base/compatible
 
 case "$MODEL" in
 	# Only the RS90 needs to start USB at bootup, because it does not have

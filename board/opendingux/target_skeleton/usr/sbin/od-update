@@ -18,7 +18,7 @@ HWVARIANT_DT=""
 HWVARIANT_CMDLINE="$(sed -n 's/.*hwvariant=\([[:alnum:]_]\+\).*/\1/p' /proc/cmdline)"
 
 if [ -e /sys/firmware/devicetree/base/compatible ] ; then
-	MODEL=$(sed -n 's/\(.*\)ingenic.*/\1/p' /sys/firmware/devicetree/base/compatible)
+	IFS= read -r -d $'\0' MODEL </sys/firmware/devicetree/base/compatible
 	if [ -e /sys/firmware/devicetree/base/model ] ; then
 		HWVARIANT=$(cat /sys/firmware/devicetree/base/model)
 	fi

@@ -13,7 +13,7 @@ case "$1" in
 			/usr/bin/amixer set $CONTROL `cat $VOLUME_STATEFILE`
 		fi
 
-		MODEL=$(sed -n 's/\(.*\)ingenic.*/\1/p' /sys/firmware/devicetree/base/compatible)
+		IFS= read -r -d $'\0' MODEL </sys/firmware/devicetree/base/compatible
 		case "$MODEL" in
 			wolsen,pocketgo2v2|ylm,rg280m|ylm,rg300x|ylm,rg350|ylm,rg350m)
 				amixer set Mixer Playback 45%

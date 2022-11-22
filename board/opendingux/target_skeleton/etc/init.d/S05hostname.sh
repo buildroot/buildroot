@@ -2,7 +2,7 @@
 
 [ -z "$1" ] || [ "x$1" = "xstart" ] || exit 0
 
-MODEL=$(sed -n 's/\(.*\)ingenic.*/\1/p' /sys/firmware/devicetree/base/compatible)
+IFS= read -r -d $'\0' MODEL </sys/firmware/devicetree/base/compatible
 
 case "$MODEL" in
 	gcw,zero)
