@@ -1,0 +1,62 @@
+From 491e3b1c2b8c44a2cfd35db117b02ef0fdf6a8e5 Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Wed, 23 Nov 2022 23:27:11 +0100
+Subject: [PATCH] Check for the presence of <sys/auxv.h>
+
+Not all gcc versions are providing <sys/auxv.h>. Checking for
+HWY_ARCH_ARM && HWY_COMPILER_GCC_ACTUAL && HWY_OS_LINUX is not
+sufficient and fail to build in some situations (it was observed for
+some gcc armv7m toolchains).
+
+This patch adds a check for <sys/auxv.h> and include it only if present.
+
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ CMakeLists.txt       | 3 +++
+ hwy/detect_targets.h | 2 +-
+ hwy/targets.cc       | 2 +-
+ 3 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b6b14ab..df6b5ab 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -84,6 +84,9 @@ check_cxx_source_compiles(
+   HWY_RISCV
+ )
+ 
++include(CheckIncludeFile)
++check_include_file(sys/auxv.h  HAVE_SYS_AUXV_H)
++
+ if (HWY_ENABLE_CONTRIB)
+ # Glob all the traits so we don't need to modify this file when adding
+ # additional special cases.
+diff --git a/hwy/detect_targets.h b/hwy/detect_targets.h
+index 7f7e179..f0c6f94 100644
+--- a/hwy/detect_targets.h
++++ b/hwy/detect_targets.h
+@@ -392,7 +392,7 @@
+ #define HWY_HAVE_RUNTIME_DISPATCH 1
+ // On Arm, currently only GCC does, and we require Linux to detect CPU
+ // capabilities.
+-#elif HWY_ARCH_ARM && HWY_COMPILER_GCC_ACTUAL && HWY_OS_LINUX
++#elif HWY_ARCH_ARM && HWY_COMPILER_GCC_ACTUAL && HWY_OS_LINUX && HAVE_SYS_AUXV_H
+ #define HWY_HAVE_RUNTIME_DISPATCH 1
+ #else
+ #define HWY_HAVE_RUNTIME_DISPATCH 0
+diff --git a/hwy/targets.cc b/hwy/targets.cc
+index 2fde4db..abd6a94 100644
+--- a/hwy/targets.cc
++++ b/hwy/targets.cc
+@@ -42,7 +42,7 @@
+ #include <cpuid.h>
+ #endif  // HWY_COMPILER_MSVC
+ 
+-#elif HWY_ARCH_ARM && HWY_OS_LINUX
++#elif HWY_ARCH_ARM && HWY_OS_LINUX && HAVE_SYS_AUXV_H
+ #include <asm/hwcap.h>
+ #include <sys/auxv.h>
+ #endif  // HWY_ARCH_*
+-- 
+2.38.1
+
