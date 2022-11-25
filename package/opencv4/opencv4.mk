@@ -203,12 +203,10 @@ OPENCV4_CONF_OPTS += \
 	-DINSTALL_PYTHON_EXAMPLES=OFF \
 	-DINSTALL_TO_MANGLED_PATHS=OFF
 
-# Disabled features (mostly because they are not available in Buildroot), but
-# - eigen: OpenCV does not use it, not take any benefit from it.
+# Disabled features (mostly because they are not available in Buildroot)
 OPENCV4_CONF_OPTS += \
 	-DWITH_1394=OFF \
 	-DWITH_CLP=OFF \
-	-DWITH_EIGEN=OFF \
 	-DWITH_GDAL=OFF \
 	-DWITH_GPHOTO2=OFF \
 	-DWITH_GSTREAMER_0_10=OFF \
@@ -282,6 +280,11 @@ OPENCV4_CONF_OPTS += \
 	-DBUILD_opencv_ximgproc=$(if $(BR2_PACKAGE_OPENCV4_CONTRIB_LIB_XIMGPROC),ON,OFF) \
 	-DBUILD_opencv_xobjdetect=$(if $(BR2_PACKAGE_OPENCV4_CONTRIB_LIB_XOBJDETECT),ON,OFF) \
 	-DBUILD_opencv_xphoto=$(if $(BR2_PACKAGE_OPENCV4_CONTRIB_LIB_XPHOTO),ON,OFF)
+endif
+
+ifeq ($(BR2_PACKAGE_OPENCV4_CONTRIB_LIB_SFM),y)
+OPENCV4_DEPENDENCIES += eigen glog gflags
+OPENCV4_CONF_OPTS += -DWITH_EIGEN=ON
 endif
 
 ifeq ($(BR2_PACKAGE_OPENCV4_JPEG2000_WITH_JASPER),y)
