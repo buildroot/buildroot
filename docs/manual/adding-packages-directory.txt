@@ -639,7 +639,7 @@ matches +$DAEMON+.
 
 Both start scripts and unit files can source command line arguments from
 +/etc/default/foo+, in general, if such a file does not exist it should
-not block the start of the daemon, unless there is some site specirfic
+not block the start of the daemon, unless there is some site specific
 command line argument the daemon requires to start.  For start scripts a
 +FOO_ARGS="-s -o -m -e -args"+ can be defined to a default value in and
 the user can override this from +/etc/default/foo+.
