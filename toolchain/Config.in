@@ -231,13 +231,13 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_104028
 # https://sourceware.org/bugzilla/show_bug.cgi?id=29621
 config BR2_TOOLCHAIN_HAS_GCC_BUG_107728
 	bool
-	depends on BR2_TOOLCHAIN_USES_GLIBC
-	depends on BR2_OPTIMIZE_0
 	default y if BR2_microblazebe || BR2_microblazeel \
 		|| BR2_mips || BR2_mipsel \
 		|| BR2_nios2 \
 		|| BR2_or1k \
 		|| BR2_sh
+	depends on BR2_TOOLCHAIN_USES_GLIBC
+	depends on BR2_OPTIMIZE_0
 
 config BR2_TOOLCHAIN_HAS_NATIVE_RPC
 	bool
