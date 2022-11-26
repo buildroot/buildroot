@@ -28,36 +28,11 @@ config BR2_PACKAGE_IPUTILS_PING
 	help
 	  Installs ping.
 
-config BR2_PACKAGE_IPUTILS_RARPD
-	bool "rarpd"
-	help
-	  Installs rarpd.
-
-config BR2_PACKAGE_IPUTILS_RDISC
-	bool "rdisc"
-	default y
-	help
-	  Installs rdisc.
-
-config BR2_PACKAGE_IPUTILS_RDISC_SERVER
-	bool "rdisc (server code)"
-	default y
-	depends on BR2_PACKAGE_IPUTILS_RDISC
-	help
-	  Builds rdisc with server code.
-
 config BR2_PACKAGE_IPUTILS_TRACEPATH
 	bool "tracepath"
 	default y
 	help
 	  Installs tracepath.
-
-config BR2_PACKAGE_IPUTILS_NINFOD
-	bool "ninfod"
-	default y
-	depends on BR2_TOOLCHAIN_HAS_THREADS # ninfod requires <pthread.h>
-	help
-	  Installs ninfod.
 
 comment "ninfod needs a toolchain w/ threads"
 	depends on !BR2_TOOLCHAIN_HAS_THREADS
