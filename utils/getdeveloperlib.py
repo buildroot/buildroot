@@ -243,6 +243,7 @@ def parse_developers(filename=None):
                 if name is not None or len(files) != 0:
                     print("Syntax error in DEVELOPERS file, line %d" % linen,
                           file=sys.stderr)
+                    return None
                 name = line[2:].strip()
             elif line.startswith("F:"):
                 fname = line[2:].strip()

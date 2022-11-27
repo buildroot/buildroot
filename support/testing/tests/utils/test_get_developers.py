@@ -70,11 +70,11 @@ class TestGetDevelopers(unittest.TestCase):
                      b'F:\tutils/get-developers\n'
         out, err, rc = call_get_developers("get-developers", ["-v"], self.WITH_UTILS_IN_PATH, topdir, developers)
         self.assertIn("Syntax error in DEVELOPERS file, line 1", err)
-        self.assertEqual(rc, 0)
+        self.assertEqual(rc, 1)
         self.assertEqual(len(out), 0)
         self.assertEqual(len(err), 1)
 
-        # -v generating error for developer entry with no file entries
+        # -v generating error for developer entry with no file entries, stopping on first error
         developers = b'# comment\n' \
                      b'# comment\n' \
                      b'\n' \
@@ -84,10 +84,9 @@ class TestGetDevelopers(unittest.TestCase):
                      b'F:\tutils/get-developers\n'
         out, err, rc = call_get_developers("get-developers", ["-v"], self.WITH_UTILS_IN_PATH, topdir, developers)
         self.assertIn("Syntax error in DEVELOPERS file, line 1", err)
-        self.assertIn("Syntax error in DEVELOPERS file, line 2", err)
-        self.assertEqual(rc, 0)
+        self.assertEqual(rc, 1)
         self.assertEqual(len(out), 0)
-        self.assertEqual(len(err), 2)
+        self.assertEqual(len(err), 1)
 
         # -v not generating error for developer entry with empty list of file entries
         developers = b'# comment\n' \
