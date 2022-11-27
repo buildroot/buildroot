@@ -21,6 +21,9 @@ DOVECOT_DEPENDENCIES = \
 # is part of the Red Hat packaging and not part of upstream dovecot
 DOVECOT_IGNORE_CVES += CVE-2016-4983
 
+# 0001-auth-Fix-handling-passdbs-with-identical-driver-args.patch
+DOVECOT_IGNORE_CVES += CVE-2022-30550
+
 DOVECOT_CONF_ENV = \
 	RPCGEN=__disable_RPCGEN_rquota \
 	i_cv_epoll_works=yes \
