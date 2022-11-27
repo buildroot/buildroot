@@ -3,6 +3,54 @@ import checkpackagelib.test_util as util
 import checkpackagelib.lib_mk as m
 
 
+Ifdef = [
+    ('ignore commented line',
+     'any',
+     '# ifdef\n',
+     []),
+    ('simple',
+     'any',
+     '\n'
+     'ifdef BR2_PACKAGE_FWTS_EFI_RUNTIME_MODULE\n'
+     'endif\n',
+     [['any:2: use ifeq ($(SYMBOL),y) instead of ifdef SYMBOL',
+       'ifdef BR2_PACKAGE_FWTS_EFI_RUNTIME_MODULE\n']]),
+    ('ignore indentation',
+     'any',
+     '  ifdef FOO\n'
+     '  endif\n'
+     '\tifdef BAR\n'
+     'endif\n',
+     [['any:1: use ifeq ($(SYMBOL),y) instead of ifdef SYMBOL',
+       '  ifdef FOO\n'],
+      ['any:3: use ifeq ($(SYMBOL),y) instead of ifdef SYMBOL',
+       '\tifdef BAR\n']]),
+    ('typo',
+     'any',
+     '\n'
+     'ifndef ($(BR2_ENABLE_LOCALE),y)\n'
+     'endif\n',
+     [['any:2: use ifneq ($(SYMBOL),y) instead of ifndef SYMBOL',
+       'ifndef ($(BR2_ENABLE_LOCALE),y)\n']]),
+    ('else ifdef',
+     'any',
+     'else ifdef  SYMBOL # comment\n',
+     [['any:1: use ifeq ($(SYMBOL),y) instead of ifdef SYMBOL',
+       'else ifdef  SYMBOL # comment\n']]),
+    ('else ifndef',
+     'any',
+     '\t else  ifndef\t($(SYMBOL),y) # comment\n',
+     [['any:1: use ifneq ($(SYMBOL),y) instead of ifndef SYMBOL',
+       '\t else  ifndef\t($(SYMBOL),y) # comment\n']]),
+    ]
+
+
+@pytest.mark.parametrize('testname,filename,string,expected', Ifdef)
+def test_Ifdef(testname, filename, string, expected):
+    warnings = util.check_file(m.Ifdef, filename, string)
+    assert warnings == expected
+
+
 Indent = [
     ('ignore comment at beginning of line',
      'any',
