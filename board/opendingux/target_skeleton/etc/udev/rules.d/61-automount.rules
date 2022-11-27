@@ -11,8 +11,12 @@ ACTION=="add", PROGRAM=="/bin/grep '/dev/%k' /proc/mounts", RESULT!="", GOTO="me
 # Global mount options
 ACTION=="add", ENV{mount_options}="noatime,nodiratime,nodev,nosuid"
 # Filesystem specific options
-ACTION=="add", PROGRAM=="/usr/sbin/blkid_fs %N", RESULT=="vfat", ENV{mount_options}="%E{mount_options},utf8,flush,uid=1000,gid=100"
-ACTION=="add", PROGRAM=="/usr/sbin/blkid_fs %N", RESULT=="exfat", ENV{mount_options}="%E{mount_options},uid=1000,gid=100"
+ACTION=="add", PROGRAM=="/usr/sbin/blkid_fs %N", ENV{filesystem}="%c"
+ACTION=="add", ENV{filesystem}=="vfat", ENV{mount_options}="%E{mount_options},utf8,flush,uid=1000,gid=100"
+ACTION=="add", ENV{filesystem}=="exfat", ENV{mount_options}="%E{mount_options},uid=1000,gid=100"
+
+# Load filesystem modules on demand
+ACTION=="add", ENV{filesystem}=="?*", RUN+="/sbin/modprobe -q %E{filesystem}"
 
 # Get label
 ACTION=="add", ENV{dir_name}!="?*", PROGRAM=="/usr/sbin/blkid_label %N", ENV{dir_name}="%c"
