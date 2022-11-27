@@ -26,7 +26,7 @@ gen_tests() {
     local do_basics do_defconfigs do_runtime do_testpkg
     local defconfigs_ext cfg tst
 
-    basics=( check-package DEVELOPERS flake8 package )
+    basics=( check-package check-symbol DEVELOPERS flake8 package symbol )
 
     defconfigs=( $(cd configs; LC_ALL=C ls -1 *_defconfig) )
 

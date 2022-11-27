@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+
+import argparse
+import os
+import sys
+
+import checksymbolslib.file as file
+from checksymbolslib.db import DB
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--search', action='store', default=None,
+                        help='print all symbols matching a given regular expression')
+    return parser.parse_args()
+
+
+def change_to_top_dir():
+    base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    os.chdir(base_dir)
+
+
+def get_full_db(files_to_process):
+    db = DB()
+    for f in files_to_process:
+        file.populate_db_from_file(db, f)
+    return db
+
+
+def print_filenames_with_pattern(all_files, files_to_process, pattern):
+    ignored_filenames = file.get_list_of_filenames_with_pattern(all_files, files_to_process, pattern)
+    processed_filenames = file.get_list_of_filenames_with_pattern(files_to_process, [], pattern)
+    print('========== filenames found with pattern "{}": {}'.format(pattern, len(processed_filenames)))
+    for f in processed_filenames:
+        print(f)
+    print('========== ignored filenames with pattern "{}": {}'.format(pattern, len(ignored_filenames)))
+    for f in ignored_filenames:
+        print(f)
+
+
+def print_symbols_with_pattern(db, pattern):
+    symbols = db.get_symbols_with_pattern(pattern)
+    print('========== symbols with pattern "{}": {}'.format(pattern, len(symbols)))
+    for s in symbols:
+        print(s, str(symbols[s]))
+
+
+def __main__():
+    flags = parse_args()
+
+    change_to_top_dir()
+    all_files = file.get_list_of_files_in_the_repo()
+    files_to_process = file.get_list_of_files_to_process(all_files)
+    db = get_full_db(files_to_process)
+
+    if flags.search:
+        print_filenames_with_pattern(all_files, files_to_process, flags.search)
+        print_symbols_with_pattern(db, flags.search)
+        print('========== warnings:')
+
+    warnings = []
+    warnings += db.get_warnings_for_choices_selected()
+    warnings += db.get_warnings_for_legacy_symbols_being_defined()
+    warnings += db.get_warnings_for_legacy_symbols_being_used()
+    warnings += db.get_warnings_for_symbols_with_legacy_note_and_no_comment_on_usage()
+    warnings += db.get_warnings_for_symbols_with_legacy_note_and_no_usage()
+    warnings += db.get_warnings_for_symbols_without_definition()
+    warnings += db.get_warnings_for_symbols_without_usage()
+
+    for filename, lineno, msg in sorted(warnings):
+        print('{}:{}: {}'.format(filename, lineno, msg), file=sys.stderr)
+
+    if len(warnings) > 0:
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    __main__()

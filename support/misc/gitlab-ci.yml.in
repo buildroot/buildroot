@@ -2,6 +2,10 @@
     script:
         - python3 -m pytest -v utils/checkpackagelib/
 
+.check-check-symbol_base:
+    script:
+        - python3 -m pytest -v utils/checksymbolslib/
+
 .check-DEVELOPERS_base:
     script:
         - utils/get-developers -v
@@ -13,6 +17,10 @@
 .check-package_base:
     script:
         - make check-package
+
+.check-symbol_base:
+    script:
+        - utils/check-symbols
 
 .defconfig_check:
     before_script:
