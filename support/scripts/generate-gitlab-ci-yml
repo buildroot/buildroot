@@ -91,7 +91,7 @@ gen_tests() {
 
     # Retrieve defconfig for test-pkg from the git commit message (if any)
     if grep -q -E '^test-pkg config:$' <<<"${CI_COMMIT_DESCRIPTION}"; then
-        sed -r -n -e '/^test-pkg config:$/{:a;n;p;ba;}' \
+        sed -r -n -e '/^test-pkg config:$/{:a;n;s/^ +//;p;ba;}' \
             <<<"${CI_COMMIT_DESCRIPTION}" \
             >defconfig.frag
         if [ ! -s defconfig.frag ]; then
