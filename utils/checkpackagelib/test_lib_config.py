@@ -385,3 +385,81 @@ Indent = [
 def test_Indent(testname, filename, string, expected):
     warnings = util.check_file(m.Indent, filename, string)
     assert warnings == expected
+
+
+RedefinedConfig = [
+    ('no redefinition',
+     'any',
+     'config BR2_PACKAGE_FOO\n'
+     'bool "foo"\n'
+     'config BR2_PACKAGE_FOO_BAR\n'
+     'bool "foo"\n',
+     []),
+    ('no conditional',
+     'any',
+     'config BR2_PACKAGE_FOO\n'
+     'bool "foo"\n'
+     'config BR2_PACKAGE_BAR\n'
+     'bool "bar"\n'
+     'config BR2_PACKAGE_FOO\n'
+     'bool "foo"\n',
+     [['any:5: config BR2_PACKAGE_FOO redeclared (previous line: 1)',
+       'config BR2_PACKAGE_FOO\n']]),
+    ('three times',
+     'any',
+     'config BR2_PACKAGE_FOO\n'
+     'bool "foo"\n'
+     'config BR2_PACKAGE_FOO\n'
+     'bool "foo"\n'
+     'config BR2_PACKAGE_FOO\n'
+     'bool "foo"\n',
+     [['any:3: config BR2_PACKAGE_FOO redeclared (previous line: 1)',
+       'config BR2_PACKAGE_FOO\n'],
+      ['any:5: config BR2_PACKAGE_FOO redeclared (previous line: 1)',
+       'config BR2_PACKAGE_FOO\n']]),
+    ('same conditional',
+     'any',
+     'if BR2_PACKAGE_BAZ\n'
+     'config BR2_PACKAGE_FOO\n'
+     'bool "foo"\n'
+     'config BR2_PACKAGE_BAR\n'
+     'bool "bar"\n'
+     'config BR2_PACKAGE_FOO\n'
+     'bool "foo"\n'
+     'endif\n',
+     [['any:6: config BR2_PACKAGE_FOO redeclared (previous line: 2)',
+       'config BR2_PACKAGE_FOO\n']]),
+    ('equivalent conditional',
+     'any',
+     'if BR2_PACKAGE_BAZ\n'
+     'config BR2_PACKAGE_FOO\n'
+     'bool "foo"\n'
+     'endif\n'
+     'config BR2_PACKAGE_FOO\n'
+     'bool "foo"\n'
+     'if BR2_PACKAGE_BAZ\n'
+     'config BR2_PACKAGE_FOO\n'
+     'bool "foo"\n'
+     'endif\n',
+     [['any:8: config BR2_PACKAGE_FOO redeclared (previous line: 2)',
+       'config BR2_PACKAGE_FOO\n']]),
+    ('not equivalent conditional',
+     'any',
+     'if BR2_PACKAGE_BAZ\n'
+     'config BR2_PACKAGE_FOO\n'
+     'bool "foo"\n'
+     'endif\n'
+     'config BR2_PACKAGE_FOO\n'
+     'bool "foo"\n'
+     'if !BR2_PACKAGE_BAZ\n'
+     'config BR2_PACKAGE_FOO\n'
+     'bool "foo"\n'
+     'endif\n',
+     []),
+    ]
+
+
+@pytest.mark.parametrize('testname,filename,string,expected', RedefinedConfig)
+def test_RedefinedConfig(testname, filename, string, expected):
+    warnings = util.check_file(m.RedefinedConfig, filename, string)
+    assert warnings == expected
