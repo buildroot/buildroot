@@ -25,6 +25,10 @@ config BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS
 	# Go doesn't support CGO linking on MIPS64x platforms
 	# See: https://github.com/karalabe/xgo/issues/46
 	depends on !BR2_mips64 && !BR2_mips64el
+	# go uses dlfcn.h + cgo for its plugin module
+	depends on !BR2_STATIC_LIBS
+	# cgo supports uses threads
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 
 # Host go packages should depend on BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS
 config BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS
