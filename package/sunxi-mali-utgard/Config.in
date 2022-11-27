@@ -20,6 +20,8 @@ config BR2_PACKAGE_PROVIDES_LIBGLES
 
 choice
 	prompt "Version"
+	default BR2_PACKAGE_SUNXI_MALI_UTGARD_R6P2 if BR2_PACKAGE_SUNXI_MALI_MAINLINE_R6P2 # legacy
+	default BR2_PACKAGE_SUNXI_MALI_UTGARD_R8P1 if BR2_PACKAGE_SUNXI_MALI_MAINLINE_R8P1 # legacy
 	default BR2_PACKAGE_SUNXI_MALI_UTGARD_R6P2
 	help
 	  Select the version of the userspace module.
