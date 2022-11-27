@@ -14,4 +14,7 @@ TOOLCHAIN_BUILDROOT_DEPENDENCIES = host-gcc-final
 
 TOOLCHAIN_BUILDROOT_ADD_TOOLCHAIN_DEPENDENCY = NO
 
+# Not really a virtual package, but we use the virtual package infra here so
+# both the build log and build directory look nicer (toolchain-buildroot-virtual
+# instead of toolchain-buildroot-undefined)
 $(eval $(virtual-package))
