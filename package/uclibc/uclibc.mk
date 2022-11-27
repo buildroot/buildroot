@@ -22,6 +22,7 @@ UCLIBC_DEPENDENCIES = host-gcc-initial linux-headers
 
 # specifying UCLIBC_CONFIG_FILE on the command-line overrides the .config
 # setting.
+# check-package disable Ifdef
 ifndef UCLIBC_CONFIG_FILE
 UCLIBC_CONFIG_FILE = $(call qstrip,$(BR2_UCLIBC_CONFIG))
 endif
