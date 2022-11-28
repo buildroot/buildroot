@@ -1,0 +1,14 @@
+config BR2_PACKAGE_REPROC
+	bool "reproc"
+	depends on BR2_USE_MMU # fork()
+	depends on BR2_USE_WCHAR # uses wchar_t
+	depends on BR2_TOOLCHAIN_HAS_THREADS # pthread
+	help
+	  reproc is a cross-platform C/C++ library that simplifies
+	  starting, stopping and communicating with external programs.
+
+	  https://github.com/DaanDeMeyer/reproc
+
+comment "reproc needs a toolchain w/ threads, wchar"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS
