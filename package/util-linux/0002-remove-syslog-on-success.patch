@@ -1,0 +1,34 @@
+--- util-linux-2.38/login-utils/su-common.c.orig	2022-11-28 07:58:21.857039029 -0500
++++ util-linux-2.38/login-utils/su-common.c	2022-11-28 07:58:43.920596933 -0500
+@@ -281,22 +281,6 @@
+ }
+ #endif
+ 
+-/* Log the fact that someone has run su to the user given by PW;
+-   if SUCCESSFUL is true, they gave the correct password, etc.  */
+-
+-static void log_syslog(struct su_context *su, bool successful)
+-{
+-	DBG(LOG, ul_debug("syslog logging"));
+-
+-	openlog(program_invocation_short_name, LOG_PID, LOG_AUTH);
+-	syslog(LOG_NOTICE, "%s(to %s) %s on %s",
+-	       successful ? "" :
+-	       su->runuser ? "FAILED RUNUSER " : "FAILED SU ",
+-	       su->new_user, su->old_user ? : "",
+-	       su->tty_name ? : "none");
+-	closelog();
+-}
+-
+ /*
+  * Log failed login attempts in _PATH_BTMP if that exists.
+  */
+@@ -420,8 +404,6 @@
+ 	if (rc == PAM_NEW_AUTHTOK_REQD)
+ 		rc = pam_chauthtok(su->pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
+  done:
+-	log_syslog(su, !is_pam_failure(rc));
+-
+ 	if (is_pam_failure(rc)) {
+ 		const char *msg;
+ 
