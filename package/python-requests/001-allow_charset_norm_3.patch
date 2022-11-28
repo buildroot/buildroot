@@ -1,0 +1,12 @@
+--- python-requests-2.28.1/requests/__init__.py.orig	2022-11-28 07:21:42.175947043 -0500
++++ python-requests-2.28.1/requests/__init__.py	2022-11-28 07:21:58.289424594 -0500
+@@ -80,8 +80,8 @@
+     elif charset_normalizer_version:
+         major, minor, patch = charset_normalizer_version.split(".")[:3]
+         major, minor, patch = int(major), int(minor), int(patch)
+-        # charset_normalizer >= 2.0.0 < 3.0.0
+-        assert (2, 0, 0) <= (major, minor, patch) < (3, 0, 0)
++        # charset_normalizer >= 2.0.0 < 4.0.0
++        assert (2, 0, 0) <= (major, minor, patch) < (4, 0, 0)
+     else:
+         raise Exception("You need either charset_normalizer or chardet installed")
