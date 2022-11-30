@@ -1,0 +1,35 @@
+From e8768cc1f0f1231cbd4864417de629330e21222d Mon Sep 17 00:00:00 2001
+From: Sergey Kuzminov <kuzminov.sergey81@gmail.com>
+Date: Sun, 21 Nov 2021 00:58:32 +0300
+Subject: [PATCH] ARM: dts: orange-pi-zero: enable uart
+
+Enable uart1 and uart2 on orange-pi-zero board.
+
+Signed-off-by: Sergey Kuzminov <kuzminov.sergey81@gmail.com>
+---
+ arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts b/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts
+index f19ed981da9d..03acf166ab70 100644
+--- a/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts
++++ b/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts
+@@ -184,13 +184,13 @@ &uart0 {
+ &uart1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart1_pins>;
+-	status = "disabled";
++	status = "okay";
+ };
+ 
+ &uart2 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart2_pins>;
+-	status = "disabled";
++	status = "okay";
+ };
+ 
+ &usb_otg {
+-- 
+2.32.0
+

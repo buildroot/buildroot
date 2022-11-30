@@ -4,11 +4,8 @@
 #
 ################################################################################
 
-WPA_SUPPLICANT_VERSION = 2.9
+WPA_SUPPLICANT_VERSION = 2.10
 WPA_SUPPLICANT_SITE = http://w1.fi/releases
-WPA_SUPPLICANT_PATCH = \
-	https://w1.fi/security/2020-2/0001-P2P-Fix-copying-of-secondary-device-types-for-P2P-gr.patch \
-	https://w1.fi/security/2021-1/0001-P2P-Fix-a-corner-case-in-peer-addition-based-on-PD-R.patch
 WPA_SUPPLICANT_LICENSE = BSD-3-Clause
 WPA_SUPPLICANT_LICENSE_FILES = README
 WPA_SUPPLICANT_CPE_ID_VENDOR = w1.fi
@@ -18,15 +15,6 @@ WPA_SUPPLICANT_DBUS_SERVICE = fi.w1.wpa_supplicant1
 WPA_SUPPLICANT_CFLAGS = $(TARGET_CFLAGS) -I$(STAGING_DIR)/usr/include/libnl3/
 WPA_SUPPLICANT_LDFLAGS = $(TARGET_LDFLAGS)
 WPA_SUPPLICANT_SELINUX_MODULES = networkmanager
-
-# 0001-AP-Silently-ignore-management-frame-from-unexpected-.patch
-WPA_SUPPLICANT_IGNORE_CVES += CVE-2019-16275
-
-# 0001-P2P-Fix-a-corner-case-in-peer-addition-based-on-PD-R.patch
-WPA_SUPPLICANT_IGNORE_CVES += CVE-2021-27803
-
-# 0002-ASN.1-Validate-DigestAlgorithmIdentifier-parameters.patch
-WPA_SUPPLICANT_IGNORE_CVES += CVE-2021-30004
 
 # install the wpa_client library
 WPA_SUPPLICANT_INSTALL_STAGING = YES
@@ -75,11 +63,18 @@ WPA_SUPPLICANT_CONFIG_DISABLE += \
 	CONFIG_FILS
 endif
 
-ifeq ($(BR2_PACKAGE_WPA_SUPPLICANT_WIRED),)
+ifeq ($(BR2_PACKAGE_WPA_SUPPLICANT_WIRED),y)
+WPA_SUPPLICANT_DEPENDENCIES += host-pkgconf libnl
+WPA_SUPPLICANT_CONFIG_ENABLE += \
+	CONFIG_LIBNL32 \
+	CONFIG_DRIVER_WIRED \
+	CONFIG_MACSEC \
+	CONFIG_DRIVER_MACSEC_LINUX
+else
 WPA_SUPPLICANT_CONFIG_DISABLE += \
 	CONFIG_DRIVER_WIRED \
 	CONFIG_MACSEC \
-	CONFIG_DRIVER_MACSEC
+	CONFIG_DRIVER_MACSEC_LINUX
 endif
 
 ifeq ($(BR2_PACKAGE_WPA_SUPPLICANT_HOTSPOT),)
@@ -104,8 +99,22 @@ else
 WPA_SUPPLICANT_CONFIG_DISABLE += CONFIG_WIFI_DISPLAY
 endif
 
-ifeq ($(BR2_PACKAGE_WPA_SUPPLICANT_MESH_NETWORKING),)
+ifeq ($(BR2_PACKAGE_WPA_SUPPLICANT_MESH_NETWORKING),y)
+WPA_SUPPLICANT_CONFIG_ENABLE += CONFIG_MESH
+else
 WPA_SUPPLICANT_CONFIG_DISABLE += CONFIG_MESH
+endif
+
+ifeq ($(BR2_PACKAGE_WPA_SUPPLICANT_OVERRIDES),y)
+WPA_SUPPLICANT_CONFIG_ENABLE += \
+	CONFIG_HT_OVERRIDES \
+	CONFIG_VHT_OVERRIDES \
+	CONFIG_HE_OVERRIDES
+else
+WPA_SUPPLICANT_CONFIG_DISABLE += \
+	CONFIG_HT_OVERRIDES \
+	CONFIG_VHT_OVERRIDES \
+	CONFIG_HE_OVERRIDES
 endif
 
 ifeq ($(BR2_PACKAGE_WPA_SUPPLICANT_AUTOSCAN),y)
@@ -122,11 +131,13 @@ ifeq ($(BR2_PACKAGE_WPA_SUPPLICANT_WPA3),y)
 WPA_SUPPLICANT_CONFIG_ENABLE += \
 	CONFIG_DPP \
 	CONFIG_SAE \
+	CONFIG_SAE_PK \
 	CONFIG_OWE
 else
 WPA_SUPPLICANT_CONFIG_DISABLE += \
 	CONFIG_DPP \
 	CONFIG_SAE \
+	CONFIG_SAE_PK \
 	CONFIG_OWE
 endif
 
@@ -173,8 +184,14 @@ WPA_SUPPLICANT_DEPENDENCIES += readline
 WPA_SUPPLICANT_CONFIG_ENABLE += CONFIG_READLINE
 endif
 
+ifeq ($(BR2_PACKAGE_WPA_SUPPLICANT_CTRL_IFACE),y)
+define WPA_SUPPLICANT_ENABLE_CTRL_IFACE
+	sed -i '/ctrl_interface/s/^#//g' $(TARGET_DIR)/etc/wpa_supplicant.conf
+endef
+endif
+
 ifeq ($(BR2_PACKAGE_WPA_SUPPLICANT_WPA_CLIENT_SO),y)
-WPA_SUPPLICANT_CONFIG_SET += CONFIG_BUILD_WPA_CLIENT_SO
+WPA_SUPPLICANT_CONFIG_ENABLE += CONFIG_BUILD_WPA_CLIENT_SO
 define WPA_SUPPLICANT_INSTALL_WPA_CLIENT_SO
 	$(INSTALL) -m 0644 -D $(@D)/$(WPA_SUPPLICANT_SUBDIR)/libwpa_client.so \
 		$(TARGET_DIR)/usr/lib/libwpa_client.so
@@ -193,9 +210,14 @@ define WPA_SUPPLICANT_CONFIGURE_CMDS
 	cp $(@D)/wpa_supplicant/defconfig $(WPA_SUPPLICANT_CONFIG)
 	sed -i $(patsubst %,-e 's/^#\(%\)/\1/',$(WPA_SUPPLICANT_CONFIG_ENABLE)) \
 		$(patsubst %,-e 's/^\(%\)/#\1/',$(WPA_SUPPLICANT_CONFIG_DISABLE)) \
-		$(patsubst %,-e '1i%=y',$(WPA_SUPPLICANT_CONFIG_SET)) \
 		$(patsubst %,-e %,$(WPA_SUPPLICANT_CONFIG_EDITS)) \
 		$(WPA_SUPPLICANT_CONFIG)
+	# set requested configuration options not listed in wpa_s defconfig
+	for s in $(WPA_SUPPLICANT_CONFIG_ENABLE) ; do \
+		if ! grep -q "^$${s}" $(WPA_SUPPLICANT_CONFIG); then \
+			echo "$${s}=y" >> $(WPA_SUPPLICANT_CONFIG) ; \
+		fi \
+	done
 endef
 
 # LIBS for wpa_supplicant, LIBS_c for wpa_cli, LIBS_p for wpa_passphrase
@@ -234,6 +256,16 @@ define WPA_SUPPLICANT_INSTALL_STAGING_CMDS
 	$(WPA_SUPPLICANT_INSTALL_STAGING_WPA_CLIENT_SO)
 endef
 
+ifeq ($(BR2_PACKAGE_IFUPDOWN_SCRIPTS),y)
+define WPA_SUPPLICANT_INSTALL_IFUP_SCRIPTS
+	$(INSTALL) -m 0755 -D package/wpa_supplicant/ifupdown.sh \
+		$(TARGET_DIR)/etc/network/if-up.d/wpasupplicant
+	mkdir -p $(TARGET_DIR)/etc/network/if-down.d
+	ln -sf ../if-up.d/wpasupplicant \
+		$(TARGET_DIR)/etc/network/if-down.d/wpasupplicant
+endef
+endif
+
 define WPA_SUPPLICANT_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 0755 -D $(@D)/$(WPA_SUPPLICANT_SUBDIR)/wpa_supplicant \
 		$(TARGET_DIR)/usr/sbin/wpa_supplicant
@@ -243,6 +275,8 @@ define WPA_SUPPLICANT_INSTALL_TARGET_CMDS
 	$(WPA_SUPPLICANT_INSTALL_PASSPHRASE)
 	$(WPA_SUPPLICANT_INSTALL_DBUS)
 	$(WPA_SUPPLICANT_INSTALL_WPA_CLIENT_SO)
+	$(WPA_SUPPLICANT_INSTALL_IFUP_SCRIPTS)
+	$(WPA_SUPPLICANT_ENABLE_CTRL_IFACE)
 endef
 
 define WPA_SUPPLICANT_INSTALL_INIT_SYSTEMD

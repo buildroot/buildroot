@@ -22,7 +22,7 @@ if BR2_PACKAGE_ALSA_LIB
 
 config BR2_PACKAGE_ALSA_LIB_PYTHON
 	bool "Python support for alsa-lib"
-	depends on BR2_PACKAGE_PYTHON
+	depends on BR2_PACKAGE_PYTHON3
 	help
 	  Add python support for alsa-lib.
 	  Python will be built and libpython will be installed
@@ -79,5 +79,10 @@ config BR2_PACKAGE_ALSA_LIB_ALISP
 config BR2_PACKAGE_ALSA_LIB_OLD_SYMBOLS
 	bool "old-symbols"
 	default y
+
+config BR2_PACKAGE_ALSA_LIB_TOPOLOGY
+	bool "topology"
+	default y
+	depends on !BR2_STATIC_LIBS
 
 endif

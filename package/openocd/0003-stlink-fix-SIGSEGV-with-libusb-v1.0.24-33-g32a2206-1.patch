@@ -1,0 +1,89 @@
+From cff0e417da58adef1ceef9a63a99412c2cc87ff3 Mon Sep 17 00:00:00 2001
+From: Antonio Borneo <borneo.antonio@gmail.com>
+Date: Wed, 23 Jun 2021 16:52:16 +0200
+Subject: [PATCH] stlink: fix SIGSEGV with libusb v1.0.24-33-g32a2206 (11618)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The stlink driver incorrectly uses a NULL pointer for libusb's
+struct libusb_context.
+The correct value to be used is local in libusb_helper.c.
+
+Move in the helper file, in a wrapper function, the only call that
+requires the above value, and let stlink driver to use this
+wrapper.
+
+This issue has not triggered any visible problem until a code
+refactoring [1] in libusb has made OpenOCD crashing on Windows and
+on MacOS.
+
+Change-Id: Id1818c8af7cf0d4d17dfa1d22aad079da01ef740
+Signed-off-by: Antonio Borneo <borneo.antonio@gmail.com>
+Fixes: https://sourceforge.net/p/openocd/tickets/308/
+Fixes: https://github.com/libusb/libusb/issues/928/
+Fixes: 42d8fa899c6a ("stlink_usb: Submit multiple USB URBs at once to improve performance")
+Link: [1] https://github.com/libusb/libusb/commit/32a22069428c
+Reported-by: Andrzej Sierżęga <asier70@gmail.com>
+Co-developed-by: Andrzej Sierżęga <asier70@gmail.com>
+Co-developed-by: Xiaofan Chen <xiaofanc@gmail.com>
+Reviewed-on: http://openocd.zylin.com/6331
+Tested-by: jenkins
+Reviewed-by: Marc Schink <dev@zapb.de>
+Reviewed-by: Xiaofan <xiaofanc@gmail.com>
+Reviewed-by: Andrzej Sierżęga <asier70@gmail.com>
+Reviewed-by: Oleksij Rempel <linux@rempel-privat.de>
+Reviewed-by: Andreas Fritiofson <andreas.fritiofson@gmail.com>
+Signed-off-by: Yannick Brosseau <yannick.brosseau@gmail.com>
+---
+ src/jtag/drivers/libusb_helper.c | 5 +++++
+ src/jtag/drivers/libusb_helper.h | 1 +
+ src/jtag/drivers/stlink_usb.c    | 7 +------
+ 3 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/src/jtag/drivers/libusb_helper.c b/src/jtag/drivers/libusb_helper.c
+index f0122d534..18fe4bad4 100644
+--- a/src/jtag/drivers/libusb_helper.c
++++ b/src/jtag/drivers/libusb_helper.c
+@@ -363,3 +363,8 @@ int jtag_libusb_get_pid(struct libusb_device *dev, uint16_t *pid)
+ 
+ 	return ERROR_FAIL;
+ }
++
++int jtag_libusb_handle_events_completed(int *completed)
++{
++	return libusb_handle_events_completed(jtag_libusb_context, completed);
++}
+diff --git a/src/jtag/drivers/libusb_helper.h b/src/jtag/drivers/libusb_helper.h
+index fa7d06e28..3e77865d6 100644
+--- a/src/jtag/drivers/libusb_helper.h
++++ b/src/jtag/drivers/libusb_helper.h
+@@ -60,5 +60,6 @@ int jtag_libusb_choose_interface(struct libusb_device_handle *devh,
+ 		unsigned int *usb_write_ep,
+ 		int bclass, int subclass, int protocol, int trans_type);
+ int jtag_libusb_get_pid(struct libusb_device *dev, uint16_t *pid);
++int jtag_libusb_handle_events_completed(int *completed);
+ 
+ #endif /* OPENOCD_JTAG_DRIVERS_LIBUSB_HELPER_H */
+diff --git a/src/jtag/drivers/stlink_usb.c b/src/jtag/drivers/stlink_usb.c
+index c68bbb3ca..7b1932b9f 100644
+--- a/src/jtag/drivers/stlink_usb.c
++++ b/src/jtag/drivers/stlink_usb.c
+@@ -497,13 +497,8 @@ static void sync_transfer_wait_for_completion(struct libusb_transfer *transfer)
+ {
+ 	int r, *completed = transfer->user_data;
+ 
+-	/* Assuming a single libusb context exists.  There no existing interface into this
+-	 * module to pass a libusb context.
+-	 */
+-	struct libusb_context *ctx = NULL;
+-
+ 	while (!*completed) {
+-		r = libusb_handle_events_completed(ctx, completed);
++		r = jtag_libusb_handle_events_completed(completed);
+ 		if (r < 0) {
+ 			if (r == LIBUSB_ERROR_INTERRUPTED)
+ 				continue;
+-- 
+2.35.1
+

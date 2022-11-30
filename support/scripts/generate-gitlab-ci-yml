@@ -26,7 +26,7 @@ gen_tests() {
     local do_basics do_defconfigs do_runtime do_testpkg
     local defconfigs_ext cfg tst
 
-    basics=( DEVELOPERS flake8 package )
+    basics=( check-package DEVELOPERS flake8 package )
 
     defconfigs=( $(cd configs; LC_ALL=C ls -1 *_defconfig) )
 
@@ -36,6 +36,9 @@ gen_tests() {
              )
 
     if [ -n "${CI_COMMIT_TAG}" ]; then
+        # When a tag is added to the Buildroot git tree, we want
+        # to run the runtime tests and only test Qemu defconfigs.
+        defconfigs=( $(cd configs; LC_ALL=C ls -1 qemu_*_defconfig) )
         do_basics=true
         do_defconfigs=base
         do_runtime=true
@@ -63,6 +66,11 @@ gen_tests() {
           (*-defconfigs)
             do_defconfigs=base
             ;;
+          (*-defconfigs-*)
+            pattern=$(echo ${CI_COMMIT_REF_NAME} | sed 's%^.*-defconfigs-\(.*\)%\1%')
+            defconfigs=( $(cd configs; LC_ALL=C ls -1 | grep ^${pattern}) )
+            do_defconfigs=base
+            ;;
           (*-*_defconfig)
             defconfigs=( "${CI_COMMIT_REF_NAME##*-}" )
             do_defconfigs=base
@@ -71,7 +79,11 @@ gen_tests() {
             do_runtime=true
             ;;
           (*-tests.*)
-            runtimes=( "${CI_COMMIT_REF_NAME##*-}" )
+            runtimes=( $(./support/testing/run-tests -l 2>&1 \
+                         | sed -r -e '/^test_run \((.*)\).*/!d; s//\1/' \
+                         | LC_ALL=C sort \
+                         | grep "^${CI_COMMIT_REF_NAME##*-}")
+                     )
             do_runtime=true
             ;;
         esac

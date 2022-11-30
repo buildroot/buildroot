@@ -17,6 +17,10 @@ config BR2_PACKAGE_IMX_GPU_VIV
 	select BR2_PACKAGE_LIBDRM if !(BR2_arm && BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_FB)
 	select BR2_PACKAGE_HAS_LIBEGL
 	select BR2_PACKAGE_HAS_LIBGLES
+	# gbm is only available in the aarch64 blobs
+	select BR2_PACKAGE_HAS_LIBGBM if BR2_aarch64
+	select BR2_PACKAGE_LIBGBM_HAS_FEATURE_DMA_BUF if BR2_aarch64
+	select BR2_PACKAGE_LIBGBM_HAS_FEATURE_FORMAT_MODIFIER_PLANE_COUNT if BR2_aarch64
 	select BR2_PACKAGE_HAS_LIBOPENCL
 	select BR2_PACKAGE_HAS_LIBOPENVG
 	help
@@ -81,6 +85,13 @@ config BR2_PACKAGE_PROVIDES_LIBOPENCL
 
 config BR2_PACKAGE_PROVIDES_LIBOPENVG
 	default "imx-gpu-viv"
+
+if BR2_aarch64
+
+config BR2_PACKAGE_PROVIDES_LIBGBM
+	default "imx-gpu-viv"
+
+endif
 
 config BR2_PACKAGE_IMX_GPU_VIV_EXAMPLES
 	bool "install examples"

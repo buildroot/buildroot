@@ -1,0 +1,38 @@
+#!/bin/bash
+set -e
+
+# Find the --sysroot argument
+sysroot=
+next_arg=false
+for arg; do
+	if ${next_arg}; then
+		next_arg=false
+		sysroot="${arg}"
+		continue  # not break, in case there are more than one
+	fi
+	case "${arg}" in
+	(--sysroot|-r)
+		next_arg=true
+		continue
+		;;
+	(--sysroot=*)
+		sysroot="${arg#*=}"
+		continue  # not break, in case there are more than one
+		;;
+	(-r?*)
+		sysroot="${arg#-r}"
+		continue  # not break, in case there are more than one
+		;;
+	esac
+done
+if [ -z "${sysroot}" ]; then
+	echo "${0}: --sysroot argument must be given." 1>&2
+	exit 1
+fi
+
+topdir="$(dirname "$(realpath "$(dirname "${0}")")")"
+export DRACUT_LDD="${topdir}/sbin/prelink-rtld --root='${sysroot}'"
+export DRACUT_INSTALL="${topdir}/lib/dracut/dracut-install"
+export DRACUT_LDCONFIG=/bin/true
+export dracutbasedir="${topdir}/lib/dracut"
+exec "${topdir}/bin/dracut.real" "${@}"

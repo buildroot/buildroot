@@ -1,0 +1,51 @@
+From 0d8ab9b020870c62c216fca77e7f8bd3eeb710c3 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 9 Oct 2021 19:23:46 +0200
+Subject: [PATCH] config/ac-macros/alloca.m4: Remove obsolete Cray support
+
+Remove obsolete Cray support to avoid the following build failure since
+autoconf >= 2.70 and
+http://git.savannah.gnu.org/gitweb/?p=autoconf.git;a=commit;h=15edf7fd8094fd14a89d9891dd72a9624762597a:
+
+autoheader: warning: missing template: CRAY_STACKSEG_END
+autoheader: warning: Use AC_DEFINE([CRAY_STACKSEG_END], [], [Description])
+autoreconf: error: /home/buildroot/autobuild/instance-2/output-1/host/bin/autoheader failed with exit status: 1
+package/pkg-generic.mk:273: recipe for target '/home/buildroot/autobuild/instance-2/output-1/build/oracle-mysql-5.1.73/.stamp_configured' failed
+
+Fixes:
+ - http://autobuild.buildroot.org/results/e5329bcf166d46b2eb17f2bc727c0307bef5ed02
+
+Upstream: switched to CMake a very long time ago, so not sent upstream
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ config/ac-macros/alloca.m4 | 14 --------------
+ 1 file changed, 14 deletions(-)
+
+diff --git a/config/ac-macros/alloca.m4 b/config/ac-macros/alloca.m4
+index 8c730dd671f..eecb8249573 100644
+--- a/config/ac-macros/alloca.m4
++++ b/config/ac-macros/alloca.m4
+@@ -46,20 +46,6 @@ then
+    ALLOCA=alloca.o
+    AC_DEFINE(C_ALLOCA, 1)
+  
+- AC_CACHE_CHECK(whether alloca needs Cray hooks, ac_cv_os_cray,
+- [AC_EGREP_CPP(webecray,
+- [#if defined(CRAY) && ! defined(CRAY2)
+- webecray
+- #else
+- wenotbecray
+- #endif
+- ], ac_cv_os_cray=yes, ac_cv_os_cray=no)])
+- if test "$ac_cv_os_cray" = "yes"; then
+- for ac_func in _getb67 GETB67 getb67; do
+-   AC_CHECK_FUNC($ac_func, [AC_DEFINE_UNQUOTED(CRAY_STACKSEG_END, $ac_func)
+-   break])
+- done
+- fi
+  fi
+  AC_SUBST(ALLOCA)dnl
+ else
+-- 
+2.33.0
+

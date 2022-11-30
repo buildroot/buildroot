@@ -1,0 +1,76 @@
+From d91e947bda590765e1c791f40e8ffb4135ab1cd3 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 11 Jan 2022 00:01:49 +0100
+Subject: [PATCH] include time.h before asound.h
+
+Include time.h before asound.h to avoid the following build failure on
+musl that was already fixed a long time with
+https://github.com/tinyalsa/tinyalsa/commit/c8333f8c7a4e4b9549abeef7530b2cd20a18e537
+but reappeared on version 2.0.0:
+
+In file included from ../src/pcm_hw.c:42:
+/home/peko/autobuild/instance-1/output-1/host/i586-buildroot-linux-musl/sysroot/usr/include/sound/asound.h:444:18: error: field 'trigger_tstamp' has incomplete type
+  444 |  struct timespec trigger_tstamp; /* time when stream was started/stopped/paused */
+      |                  ^~~~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/a75e23dc585bd071f4d65face5489ed6ac22edbe
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/tinyalsa/tinyalsa/commit/c127110249967e0722d80bb41e33713accdcff8f]
+---
+ src/mixer.c      | 1 +
+ src/mixer_hw.c   | 1 +
+ src/pcm_hw.c     | 1 +
+ src/pcm_plugin.c | 1 +
+ 4 files changed, 4 insertions(+)
+
+diff --git a/src/mixer.c b/src/mixer.c
+index afbc015..029fc84 100644
+--- a/src/mixer.c
++++ b/src/mixer.c
+@@ -55,6 +55,7 @@
+ #define __user
+ #endif
+ 
++#include <time.h>
+ #include <sound/asound.h>
+ 
+ #include <tinyalsa/mixer.h>
+diff --git a/src/mixer_hw.c b/src/mixer_hw.c
+index da5a390..50e9d07 100644
+--- a/src/mixer_hw.c
++++ b/src/mixer_hw.c
+@@ -42,6 +42,7 @@
+ #include <sys/ioctl.h>
+ 
+ #include <linux/ioctl.h>
++#include <time.h>
+ #include <sound/asound.h>
+ 
+ #include "mixer_io.h"
+diff --git a/src/pcm_hw.c b/src/pcm_hw.c
+index 5eb53be..2383ae0 100644
+--- a/src/pcm_hw.c
++++ b/src/pcm_hw.c
+@@ -41,6 +41,7 @@
+ #include <sys/ioctl.h>
+ #include <sys/mman.h>
+ #include <linux/ioctl.h>
++#include <time.h>
+ #include <sound/asound.h>
+ #include <tinyalsa/asoundlib.h>
+ 
+diff --git a/src/pcm_plugin.c b/src/pcm_plugin.c
+index 47bf4a5..b6b69aa 100644
+--- a/src/pcm_plugin.c
++++ b/src/pcm_plugin.c
+@@ -40,6 +40,7 @@
+ 
+ #include <sys/ioctl.h>
+ #include <linux/ioctl.h>
++#include <time.h>
+ #include <sound/asound.h>
+ #include <tinyalsa/asoundlib.h>
+ #include <tinyalsa/plugin.h>

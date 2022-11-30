@@ -1,0 +1,61 @@
+From e8ba4d6fd11ce795d9ed7b7a2c0ee0f6bf50f352 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 23 Jul 2022 18:20:00 +0200
+Subject: [PATCH] lib*/Makefile.am: remove -static from LDFLAGS
+
+The libbloom, libcork and libipset libraries are "convenience
+libraries" in libtool speak, and their code ends up being used in a
+shared library, so building them with -static does not work as it
+causes the code to be built without fPIC.
+
+https://www.gnu.org/software/libtool/manual/html_node/Static-libraries.html
+explains:
+
+"""
+If you omit both -rpath and -static, libtool will create a convenience
+library that can be used to create other libtool libraries, even
+shared ones. Just like in the static case, the library behaves as an
+alias to a set of object files and dependency libraries, but in this
+case the object files are suitable for inclusion in shared libraries.
+"""
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ libbloom/Makefile.am | 2 --
+ libcork/Makefile.am  | 2 --
+ libipset/Makefile.am | 2 --
+ 3 files changed, 6 deletions(-)
+
+diff --git a/libbloom/Makefile.am b/libbloom/Makefile.am
+index 17c0761..6b2eddd 100644
+--- a/libbloom/Makefile.am
++++ b/libbloom/Makefile.am
+@@ -2,5 +2,3 @@ noinst_LTLIBRARIES = libbloom.la
+ 
+ libbloom_la_SOURCES = bloom.c murmur2/MurmurHash2.c
+ libbloom_la_CFLAGS = -I$(top_srcdir)/libbloom -I$(top_srcdir)/libbloom/murmur2
+-
+-libbloom_la_LDFLAGS = -static
+diff --git a/libcork/Makefile.am b/libcork/Makefile.am
+index 82ce062..e466a68 100644
+--- a/libcork/Makefile.am
++++ b/libcork/Makefile.am
+@@ -17,5 +17,3 @@ endif
+ 
+ libcork_la_SOURCES = $(cli_src) $(core_src) $(ds_src) $(pthreads_src) $(posix_src)
+ libcork_la_CFLAGS = -I$(top_srcdir)/libcork/include -DCORK_API=CORK_LOCAL
+-					 
+-libcork_la_LDFLAGS = -static
+diff --git a/libipset/Makefile.am b/libipset/Makefile.am
+index 3edfde6..bee8493 100644
+--- a/libipset/Makefile.am
++++ b/libipset/Makefile.am
+@@ -23,5 +23,3 @@ set_src = src/libipset/set/allocation.c \
+ 
+ libipset_la_SOURCES = src/libipset/general.c ${bdd_src} ${map_src} ${set_src}
+ libipset_la_CFLAGS = -I$(top_srcdir)/libipset/include -I$(top_srcdir)/libcork/include
+-
+-libipset_la_LDFLAGS = -static
+-- 
+2.37.1
+

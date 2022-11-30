@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-BCM2835_VERSION = 1.68
-BCM2835_SITE = http://www.airspayce.com/mikem/bcm2835
+BCM2835_VERSION = 1.71
+BCM2835_SITE = https://www.airspayce.com/mikem/bcm2835
 BCM2835_LICENSE = GPL-3.0
 BCM2835_LICENSE_FILES = COPYING
 BCM2835_INSTALL_STAGING = YES

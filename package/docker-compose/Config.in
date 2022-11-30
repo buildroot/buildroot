@@ -1,29 +1,15 @@
 config BR2_PACKAGE_DOCKER_COMPOSE
 	bool "docker-compose"
-	depends on !BR2_PACKAGE_PYTHON # python-paramiko -> python-bcrypt
-	depends on BR2_USE_MMU # python
-	depends on BR2_USE_WCHAR # python
-	depends on BR2_TOOLCHAIN_HAS_THREADS # python
-	depends on !BR2_STATIC_LIBS # python
-	depends on BR2_INSTALL_LIBSTDCPP # python-paramiko -> python-cryptography
-	select BR2_PACKAGE_PYTHON3
-	select BR2_PACKAGE_PYTHON_CACHED_PROPERTY # runtime
-	select BR2_PACKAGE_PYTHON_DOCOPT # runtime
-	select BR2_PACKAGE_PYTHON_PARAMIKO # runtime
-	select BR2_PACKAGE_PYTHON_PYYAML # runtime
-	select BR2_PACKAGE_PYTHON_REQUESTS # runtime
-	select BR2_PACKAGE_PYTHON_TEXTTABLE # runtime
-	select BR2_PACKAGE_PYTHON_WEBSOCKET_CLIENT # runtime
-	select BR2_PACKAGE_PYTHON_DOCKER # runtime
-	select BR2_PACKAGE_PYTHON_DOCKERPTY # runtime
-	select BR2_PACKAGE_PYTHON_SIX # runtime
-	select BR2_PACKAGE_PYTHON_JSONSCHEMA # runtime
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_PACKAGE_DOCKER_CLI
 	help
-	  Multi-container orchestration for Docker.
+	  Multi-container applications with the Docker CLI.
 
-	  https://www.docker.com/
+	  https://github.com/docker/compose
 
-comment "docker-compose needs a toolchain w/ C++, wchar, threads, dynamic library"
-	depends on BR2_USE_MMU
-	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
-		BR2_STATIC_LIBS || !BR2_INSTALL_LIBSTDCPP
+comment "docker-compose needs docker-cli and a toolchain w/ threads"
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || !BR2_PACKAGE_DOCKER_CLI

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IMAGEMAGICK_VERSION = 7.0.11-13
+IMAGEMAGICK_VERSION = 7.1.0-51
 IMAGEMAGICK_SITE = $(call github,ImageMagick,ImageMagick,$(IMAGEMAGICK_VERSION))
 IMAGEMAGICK_LICENSE = Apache-2.0
 IMAGEMAGICK_LICENSE_FILES = LICENSE
@@ -176,6 +176,12 @@ IMAGEMAGICK_CONF_OPTS += --with-bzlib
 IMAGEMAGICK_DEPENDENCIES += bzip2
 else
 IMAGEMAGICK_CONF_OPTS += --without-bzlib
+endif
+
+ifeq ($(BR2_INSTALL_LIBSTDCPP),y)
+IMAGEMAGICK_CONF_OPTS += --with-utilities
+else
+IMAGEMAGICK_CONF_OPTS += --without-utilities
 endif
 
 HOST_IMAGEMAGICK_CONF_OPTS = \

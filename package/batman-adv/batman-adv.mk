@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BATMAN_ADV_VERSION = 2021.1
+BATMAN_ADV_VERSION = 2022.2
 BATMAN_ADV_SITE = https://downloads.open-mesh.org/batman/stable/sources/batman-adv
 BATMAN_ADV_LICENSE = GPL-2.0, MIT (batman_adv.h)
 BATMAN_ADV_LICENSE_FILES = LICENSES/preferred/GPL-2.0 LICENSES/preferred/MIT
@@ -35,6 +35,7 @@ define BATMAN_ADV_CONFIGURE_CMDS
 endef
 
 define BATMAN_ADV_LINUX_CONFIG_FIXUPS
+	$(call KCONFIG_ENABLE_OPT,CONFIG_CRC16)
 	$(call KCONFIG_ENABLE_OPT,CONFIG_LIBCRC32C)
 endef
 

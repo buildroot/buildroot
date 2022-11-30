@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PYTHON_GOBJECT_VERSION_MAJOR = 3.36
+PYTHON_GOBJECT_VERSION_MAJOR = 3.42
 PYTHON_GOBJECT_VERSION = $(PYTHON_GOBJECT_VERSION_MAJOR).1
 PYTHON_GOBJECT_SOURCE = pygobject-$(PYTHON_GOBJECT_VERSION).tar.xz
 PYTHON_GOBJECT_SITE = https://ftp.gnome.org/pub/gnome/sources/pygobject/$(PYTHON_GOBJECT_VERSION_MAJOR)
@@ -18,7 +18,7 @@ PYTHON_GOBJECT_DEPENDENCIES = \
 	python3
 
 PYTHON_GOBJECT_CONF_OPTS += \
-	-Dpycairo=false \
+	-Dpycairo=disabled \
 	-Dtests=false
 
 # A sysconfigdata_name must be manually specified or the resulting .so

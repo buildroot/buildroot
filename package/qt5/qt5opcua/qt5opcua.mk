@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5OPCUA_VERSION = $(QT5_VERSION)
+QT5OPCUA_VERSION = 5.15.2
 QT5OPCUA_SITE = https://code.qt.io/qt/qtopcua.git
 QT5OPCUA_SITE_METHOD = git
 QT5OPCUA_INSTALL_STAGING = YES

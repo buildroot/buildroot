@@ -1,0 +1,71 @@
+From 495491e9d53bfb184c15753b5187e4bb55b19511 Mon Sep 17 00:00:00 2001
+From: Matt Weber <matthew.weber@rockwellcollins.com>
+Date: Tue, 9 Mar 2021 15:55:17 -0600
+Subject: [PATCH] support out of tree build
+
+(1) The package has a prepare_builtins tool which is built
+but not placed in the path for later use in the build. This
+fix allows the later build steps to use the binary in-place.
+
+(2) With cmake, find_file() when used for non-host builds is
+limited by CMAKE_FIND_ROOT_PATH* scope.
+
+In $(HOST_DIR)/share/buildroot/toolchainfile.cmake we set the
+following target settings for CMAKE_FIND_ROOT_PATH* which
+limit the scope.
+set(CMAKE_FIND_ROOT_PATH "${RELOCATED_HOST_DIR}/aarch64-buildroot-linux-gnu/sysroot")
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+
+
+Signed-off-by: Matthew Weber <matthew.weber@rockwellcollins.com>
+---
+ CMakeLists.txt                          | 2 +-
+ cmake/CMakeDetermineCLCCompiler.cmake   | 4 ++++
+ cmake/CMakeDetermineLLAsmCompiler.cmake | 4 ++++
+ 3 files changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9472f19..a784519 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -279,7 +279,7 @@ foreach( t ${LIBCLC_TARGETS_TO_BUILD} )
+ 
+			# Add prepare target
+			add_custom_command( OUTPUT "${obj_suffix}"
+-				            COMMAND prepare_builtins -o
++				            COMMAND ./prepare_builtins -o
+					    "${obj_suffix}"
+					    "builtins.opt.${obj_suffix}"
+					    DEPENDS "opt.${obj_suffix}"
+diff --git a/cmake/CMakeDetermineCLCCompiler.cmake b/cmake/CMakeDetermineCLCCompiler.cmake
+index 94d85d9..5de6a48 100644
+--- a/cmake/CMakeDetermineCLCCompiler.cmake
++++ b/cmake/CMakeDetermineCLCCompiler.cmake
+@@ -12,7 +12,7 @@ mark_as_advanced(CMAKE_CLC_ARCHIVE)
+ 
+ set(CMAKE_CLC_COMPILER_ENV_VAR "CLC_COMPILER")
+ set(CMAKE_CLC_ARCHIVE_ENV_VAR "CLC_LINKER")
+-find_file(clc_comp_in CMakeCLCCompiler.cmake.in PATHS ${CMAKE_ROOT}/Modules ${CMAKE_MODULE_PATH})
++set(clc_comp_in "${CMAKE_MODULE_PATH}/CMakeCLCCompiler.cmake.in" )
+ # configure all variables set in this file
+ configure_file(${clc_comp_in} ${CMAKE_PLATFORM_INFO_DIR}/CMakeCLCCompiler.cmake @ONLY)
+ mark_as_advanced(clc_comp_in)
+diff --git a/cmake/CMakeDetermineLLAsmCompiler.cmake b/cmake/CMakeDetermineLLAsmCompiler.cmake
+index 1c424c7..dd3bfb6 100644
+--- a/cmake/CMakeDetermineLLAsmCompiler.cmake
++++ b/cmake/CMakeDetermineLLAsmCompiler.cmake
+@@ -18,7 +18,7 @@ mark_as_advanced(CMAKE_LLAsm_ARCHIVE)
+ set(CMAKE_LLAsm_PREPROCESSOR_ENV_VAR "LL_PREPROCESSOR")
+ set(CMAKE_LLAsm_COMPILER_ENV_VAR "LL_ASSEMBLER")
+ set(CMAKE_LLAsm_ARCHIVE_ENV_VAR "LL_LINKER")
+-find_file(ll_comp_in CMakeLLAsmCompiler.cmake.in PATHS ${CMAKE_ROOT}/Modules ${CMAKE_MODULE_PATH})
++set(ll_comp_in "${CMAKE_MODULE_PATH}/CMakeLLAsmCompiler.cmake.in" )
+ # configure all variables set in this file
+ configure_file(${ll_comp_in} ${CMAKE_PLATFORM_INFO_DIR}/CMakeLLAsmCompiler.cmake @ONLY)
+ mark_as_advanced(ll_comp_in)
+-- 
+2.17.1
+

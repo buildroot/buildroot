@@ -1,10 +1,21 @@
 config BR2_PACKAGE_MMC_UTILS
 	bool "mmc-utils"
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_0
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_4
 	help
 	  MMC utils
 
 	  https://git.kernel.org/cgit/linux/kernel/git/cjb/mmc-utils.git
 
-comment "mmc-utils needs a toolchain w/ headers >= 3.0"
-	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_0
+if BR2_PACKAGE_MMC_UTILS
+
+config BR2_PACKAGE_MMC_UTILS_ENABLE_DANGEROUS_COMMANDS
+	bool "Enable dangerous commands"
+	help
+	   Enable support for dangerous commands in mmc-utils. mmc-utils
+	   considers turning on permanent write protection on a device a
+	   "dangerous command" and doesn't offer it by default.
+
+endif
+
+comment "mmc-utils needs a toolchain w/ headers >= 4.4"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_4

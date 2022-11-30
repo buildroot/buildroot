@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FASTD_VERSION = 21
+FASTD_VERSION = 22
 FASTD_SITE = https://github.com/NeoRaider/fastd/releases/download/v$(FASTD_VERSION)
 FASTD_SOURCE = fastd-$(FASTD_VERSION).tar.xz
 FASTD_LICENSE = BSD-2-Clause
@@ -33,13 +33,20 @@ else
 FASTD_CONF_OPTS += -Dstatus_socket=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_FASTD_OFFLOAD_L2TP),y)
+FASTD_CONF_OPTS += -Doffload_l2tp=enabled -Dlibmnl_builtin=false
+FASTD_DEPENDENCIES += libmnl
+else
+FASTD_CONF_OPTS += -Doffload_l2tp=disabled
+endif
+
 ifeq ($(BR2_INIT_SYSTEMD),y)
 FASTD_CONF_OPTS += -Dsystemd=enabled
 else
 FASTD_CONF_OPTS += -Dsystemd=disabled
 endif
 
-ifeq ($(BR2_GCC_ENABLE_LTO),y)
+ifeq ($(BR2_ENABLE_LTO),y)
 FASTD_CONF_OPTS += -Db_lto=true
 else
 FASTD_CONF_OPTS += -Db_lto=false

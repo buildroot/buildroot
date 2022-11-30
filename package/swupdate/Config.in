@@ -60,6 +60,15 @@ config BR2_PACKAGE_SWUPDATE_CONFIG
 	  I you wish to use your own modified swupdate configuration
 	  file specify the config file location with this option.
 
+config BR2_PACKAGE_SWUPDATE_USB
+	bool "swupdate usb"
+	depends on BR2_PACKAGE_SYSTEMD
+	help
+	  Enable update from USB disk.
+
+comment "swupdate usb needs systemd"
+	depends on !BR2_PACKAGE_SYSTEMD
+
 config BR2_PACKAGE_SWUPDATE_WEBSERVER
 	bool "swupdate webserver"
 	default y

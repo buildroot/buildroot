@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-EUDEV_VERSION = 3.2.10
-EUDEV_SITE = http://dev.gentoo.org/~blueness/eudev
+EUDEV_VERSION = 3.2.11
+EUDEV_SITE = https://github.com/eudev-project/eudev/releases/download/v$(EUDEV_VERSION)
 EUDEV_LICENSE = GPL-2.0+ (programs), LGPL-2.1+ (libraries)
 EUDEV_LICENSE_FILES = COPYING
 EUDEV_INSTALL_STAGING = YES
@@ -57,13 +57,12 @@ endef
 
 HOST_EUDEV_DEPENDENCIES = host-gperf host-pkgconf
 
-HOST_EUDEV_SYSCONFDIR = $(if $(BR2_PACKAGE_SYSTEMD),/usr/lib,/etc)
 HOST_EUDEV_CONF_OPTS = \
 	--prefix=/usr \
 	--sbindir=/sbin \
 	--libexecdir=/lib \
 	--with-rootlibdir=/lib \
-	--sysconfdir=$(HOST_EUDEV_SYSCONFDIR) \
+	--sysconfdir=/etc \
 	--disable-blkid \
 	--disable-introspection \
 	--disable-kmod \
@@ -81,14 +80,6 @@ define HOST_EUDEV_BUILD_HWDB
 	$(HOST_DIR)/bin/udevadm hwdb --update --root $(TARGET_DIR)
 endef
 HOST_EUDEV_TARGET_FINALIZE_HOOKS += HOST_EUDEV_BUILD_HWDB
-
-# Note: this will run in the filesystem context, so will use a copy
-# of tharget/, not the real one, so the files are still available on
-# re-builds (foo-rebuild, etc...)
-define HOST_EUDEV_RM_HWDB_SRC
-	rm -rf $(TARGET_DIR)/$(HOST_EUDEV_SYSCONFDIR)/udev/hwdb.d/
-endef
-HOST_EUDEV_ROOTFS_PRE_CMD_HOOKS += HOST_EUDEV_RM_HWDB_SRC
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))

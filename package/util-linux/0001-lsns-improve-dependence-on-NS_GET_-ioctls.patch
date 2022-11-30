@@ -1,0 +1,34 @@
+From fc686823b008bc95e2ebe904c706a117a03e2754 Mon Sep 17 00:00:00 2001
+From: Karel Zak <kzak@redhat.com>
+Date: Wed, 6 Apr 2022 10:38:43 +0200
+Subject: lsns: improve dependence on NS_GET_ ioctls
+
+Fixes: http://autobuild.buildroot.org/results/572ecf8e37ac733a4e4265f4f78f35230337278e
+Reported-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Signed-off-by: Karel Zak <kzak@redhat.com>
+
+[Retrieved from:
+https://git.kernel.org/pub/scm/utils/util-linux/util-linux.git/commit/?id=fc686823b008bc95e2ebe904c706a117a03e2754]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ sys-utils/lsns.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/sys-utils/lsns.c b/sys-utils/lsns.c
+index 1a7e9f333..75625b3a6 100644
+--- a/sys-utils/lsns.c
++++ b/sys-utils/lsns.c
+@@ -40,7 +40,9 @@
+ 
+ #ifdef HAVE_LINUX_NSFS_H
+ # include <linux/nsfs.h>
+-# define USE_NS_GET_API	1
++# if defined(NS_GET_NSTYPE) && defined(NS_GET_OWNER_UID)
++#  define USE_NS_GET_API	1
++# endif
+ #endif
+ 
+ #include "pathnames.h"
+-- 
+cgit 
+

@@ -4,12 +4,14 @@
 #
 ################################################################################
 
-GST1_PLUGINS_BASE_VERSION = 1.18.4
+GST1_PLUGINS_BASE_VERSION = 1.20.4
 GST1_PLUGINS_BASE_SOURCE = gst-plugins-base-$(GST1_PLUGINS_BASE_VERSION).tar.xz
 GST1_PLUGINS_BASE_SITE = https://gstreamer.freedesktop.org/src/gst-plugins-base
 GST1_PLUGINS_BASE_INSTALL_STAGING = YES
 GST1_PLUGINS_BASE_LICENSE_FILES = COPYING
-GST1_PLUGINS_BASE_LICENSE = LGPL-2.0+, LGPL-2.1+
+GST1_PLUGINS_BASE_LICENSE = LGPL-2.1+
+
+GST1_PLUGINS_BASE_CFLAGS = $(TARGET_CFLAGS) -std=gnu99
 
 GST1_PLUGINS_BASE_CONF_OPTS = \
 	-Dexamples=disabled \
@@ -17,6 +19,7 @@ GST1_PLUGINS_BASE_CONF_OPTS = \
 	-Dgobject-cast-checks=disabled \
 	-Dglib-asserts=disabled \
 	-Dglib-checks=disabled \
+	-Dqt5=disabled \
 	-Ddoc=disabled
 
 # Options which require currently unpackaged libraries

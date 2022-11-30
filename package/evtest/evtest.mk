@@ -4,12 +4,11 @@
 #
 ################################################################################
 
-EVTEST_VERSION = 1.34
+EVTEST_VERSION = 1.35
 EVTEST_SOURCE = evtest-evtest-$(EVTEST_VERSION).tar.gz
 EVTEST_SITE = https://gitlab.freedesktop.org/libevdev/evtest/-/archive/evtest-$(EVTEST_VERSION)
 EVTEST_LICENSE = GPL-2.0+
 EVTEST_LICENSE_FILES = COPYING
-EVTEST_DEPENDENCIES = host-pkgconf
 # needed because source package contains no generated files
 EVTEST_AUTORECONF = YES
 

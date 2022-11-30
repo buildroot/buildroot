@@ -38,7 +38,7 @@ endef
 define HOST_SUNXI_TOOLS_INSTALL_CMDS
 	$(HOST_MAKE_ENV) $(MAKE) CROSS_COMPILE="" CC="$(HOSTCC)" \
 		PREFIX=$(HOST_DIR) EXTRA_CFLAGS="$(HOST_CFLAGS)" \
-		LDFLAGS="$(HOST_LDFLAGS)"  -C $(@D) install-tools install-misc
+		LDFLAGS="$(HOST_LDFLAGS)" -C $(@D) install-tools install-misc
 endef
 
 define SUNXI_TOOLS_BUILD_CMDS

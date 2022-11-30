@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XVISOR_VERSION = 0.3.0
+XVISOR_VERSION = 0.3.1
 XVISOR_SOURCE = xvisor-$(XVISOR_VERSION).tar.xz
 XVISOR_SITE = http://www.xhypervisor.org/tarball
 XVISOR_LICENSE = GPL-2.0+
@@ -32,6 +32,8 @@ ifeq ($(BR2_x86_64),y)
 XVISOR_ARCH = x86
 else ifeq ($(BR2_arm)$(BR2_aarch64),y)
 XVISOR_ARCH = arm
+else ifeq ($(BR2_riscv),y)
+XVISOR_ARCH = riscv
 endif
 
 ifeq ($(BR2_PACKAGE_XVISOR)$(BR_BUILDING),yy)

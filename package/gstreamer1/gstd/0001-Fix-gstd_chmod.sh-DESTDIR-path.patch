@@ -1,0 +1,27 @@
+From f1c953b9077619a83ab21c24dc343c7e21cd220d Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Tue, 14 Sep 2021 01:46:25 -0600
+Subject: [PATCH] Fix gstd_chmod.sh DESTDIR path.
+
+This should fix the chmod path when cross compiling.
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[Upstream status:
+https://github.com/RidgeRun/gstd-1.x/pull/247]
+---
+ gstd/gstd_chmod.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gstd/gstd_chmod.sh b/gstd/gstd_chmod.sh
+index 8e58bce..fa7fa80 100755
+--- a/gstd/gstd_chmod.sh
++++ b/gstd/gstd_chmod.sh
+@@ -3,4 +3,4 @@
+ # $1 mode
+ # $2 file
+ 
+-chmod $1 $2
++chmod $1 ${DESTDIR}/$2
+-- 
+2.25.1
+

@@ -1,5 +1,10 @@
 config BR2_PACKAGE_ADWAITA_ICON_THEME
 	bool "adwaita icon theme"
 	depends on BR2_PACKAGE_LIBGTK2 || BR2_PACKAGE_LIBGTK3
+	# host-libgtk3 -> host-librsvg -> host-pango -> host-harfbuzz
+	depends on BR2_HOST_GCC_AT_LEAST_4_9
 	help
 	  Adwaita icon theme
+
+comment "adwaita icon theme needs host gcc >= 4.9"
+	depends on !BR2_HOST_GCC_AT_LEAST_4_9

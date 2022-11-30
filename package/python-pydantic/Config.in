@@ -1,6 +1,6 @@
 config BR2_PACKAGE_PYTHON_PYDANTIC
 	bool "python-pydantic"
-	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS # runtime
 	help
 	  Data validation and settings management using python 3.6
 	  type hinting.

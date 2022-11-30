@@ -51,10 +51,12 @@ _on_error() {
 }
 
 quiet=
+large_file=0
 recurse=0
 while getopts "${BR_BACKEND_DL_GETOPTS}" OPT; do
     case "${OPT}" in
     q)  quiet=-q; exec >/dev/null;;
+    l)  large_file=1;;
     r)  recurse=1;;
     o)  output="${OPTARG}";;
     u)  uri="${OPTARG}";;
@@ -203,6 +205,19 @@ if [ ${recurse} -eq 1 ]; then
         relative_dir="$( sed -r -e 's,/+,/,g; s,[^/]+/,../,g' <<<"${module_dir}" )"
         sed -r -i -e "s:^gitdir\: $(pwd)/:gitdir\: "${relative_dir}":" "${module_dir}/.git"
     done
+fi
+
+# If there are large files then fetch them.
+if [ ${large_file} -eq 1 ]; then
+    _git lfs install --local
+    _git lfs fetch
+    _git lfs checkout
+    # If there are also submodules, recurse into them,
+    if [ ${recurse} -eq 1 ]; then
+        _git submodule foreach --recursive ${GIT} lfs install --local
+        _git submodule foreach --recursive ${GIT} lfs fetch
+        _git submodule foreach --recursive ${GIT} lfs checkout
+    fi
 fi
 
 popd >/dev/null

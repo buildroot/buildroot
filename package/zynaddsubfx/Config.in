@@ -1,0 +1,30 @@
+config BR2_PACKAGE_ZYNADDSUBFX
+	bool "zynaddsubfx"
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # C++11
+	depends on BR2_TOOLCHAIN_HAS_THREADS # liblo
+	select BR2_PACKAGE_FFTW
+	select BR2_PACKAGE_FFTW_SINGLE
+	select BR2_PACKAGE_LIBLO
+	select BR2_PACKAGE_MXML
+	select BR2_PACKAGE_ZLIB
+	help
+	  ZynAddSubFX is a fully featured open source software
+	  synthesizer capable of making a countless number of
+	  instruments, from some common heard from expensive hardware
+	  to interesting sounds that you'll boost to an amazing
+	  universe of sounds.
+
+	  Note: this Buildroot package does not include the graphical
+	  user interface. It is meant to be executed as a headless
+	  daemon to be controlled with MIDI events or network OSC
+	  (Open Sound Control) events. OSC events can be generated
+	  from an external system with the ZynAddSubFX external GUI
+	  program zynaddsubfx-ext-gui.
+
+	  https://zynaddsubfx.sourceforge.io/
+
+comment "zynaddsubfx needs a toolchain w/ C++11 and threads"
+	depends on !BR2_INSTALL_LIBSTDCPP || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || \
+		!BR2_TOOLCHAIN_HAS_THREADS

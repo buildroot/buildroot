@@ -1,0 +1,18 @@
+config BR2_PACKAGE_HOST_LZMA_ALONE
+	bool "host lzma-alone"
+	help
+	  LZMA has two well-known command-line tools:
+	  1. lzma from LZMA SDK
+	  2. lzma from XZ Utils (previously LZMA Utils)
+
+	  This package provides the former one which:
+	  1. Gives more control over compression parameters
+	  2. Gets named lzma_alone to allow coexistence
+
+	  This tool may be used to prepare firmwares for bootloaders
+	  with limited LZMA support.
+	  E.g. Broadcom's CFE bootloader for MIPS BCM47xx devices is
+	  known to fail to boot images using LZMA compression with
+	  dictionary.
+
+	  https://www.7-zip.org/sdk.html

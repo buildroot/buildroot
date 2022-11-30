@@ -14,6 +14,17 @@ NETSURF_CPE_ID_VENDOR = netsurf-browser
 NETSURF_DEPENDENCIES = expat jpeg libpng \
 	host-bison host-flex host-gperf host-pkgconf host-vim
 
+# internal duktape doesn't build with BR2_OPTIMIZE_FAST
+ifeq ($(BR2_OPTIMIZE_FAST),y)
+define NETSURF_DUKTAPE_CONFIGURE_CMDS
+	echo "override NETSURF_USE_DUKTAPE := NO"       >> $(@D)/netsurf/Makefile.config
+endef
+else
+define NETSURF_DUKTAPE_CONFIGURE_CMDS
+	echo "override NETSURF_USE_DUKTAPE := YES"      >> $(@D)/netsurf/Makefile.config
+endef
+endif
+
 ifeq ($(BR2_PACKAGE_NETSURF_GTK),y)
 NETSURF_DEPENDENCIES += libgtk2
 NETSURF_FRONTEND = gtk2
@@ -77,6 +88,7 @@ endef
 endif
 
 define NETSURF_CONFIGURE_CMDS
+	$(NETSURF_DUKTAPE_CONFIGURE_CMDS)
 	$(NETSURF_ICONV_CONFIGURE_CMDS)
 	$(NETSURF_SVG_CONFIGURE_CMDS)
 	$(NETSURF_FONTLIB_CONFIGURE_CMDS)

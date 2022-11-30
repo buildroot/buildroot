@@ -1,0 +1,41 @@
+From e915ab84fd0c02d37504f3eb1e1f3be93ea6dc37 Mon Sep 17 00:00:00 2001
+From: Michael Jeanson <mjeanson@efficios.com>
+Date: Thu, 9 Sep 2021 12:11:16 -0400
+Subject: [PATCH] fix: don't use C++ thread_local on MacOs
+
+Recent versions of Apple's clang++ do support 'thread_local' but the
+implementation generates additional helper symbols. This is a problem
+when accessing an extern TLS variable in a C++ compile unit that is
+provided by a C library that doesn't have those extra symbols.
+
+Fallback to using '__thread' on MacOs.
+
+Change-Id: I87cb5b3c9293f7bf66f7115f453b546dd793a449
+Signed-off-by: Michael Jeanson <mjeanson@efficios.com>
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+
+[Retrieved from:
+https://github.com/urcu/userspace-rcu/commit/e915ab84fd0c02d37504f3eb1e1f3be93ea6dc37]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ include/urcu/tls-compat.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/include/urcu/tls-compat.h b/include/urcu/tls-compat.h
+index 24ef1b9a..25cf375a 100644
+--- a/include/urcu/tls-compat.h
++++ b/include/urcu/tls-compat.h
+@@ -34,7 +34,12 @@ extern "C" {
+ 
+ #ifdef CONFIG_RCU_TLS
+ 
+-#if defined (__cplusplus) && (__cplusplus >= 201103L)
++/*
++ * Don't use C++ 'thread_local' on MacOs, the implementation is incompatible
++ * with C and will result in a link error when accessing an extern variable
++ * provided by the C library from C++ code.
++ */
++#if defined (__cplusplus) && (__cplusplus >= 201103L) && !defined(__APPLE__)
+ # define URCU_TLS_STORAGE_CLASS	thread_local
+ #elif defined (__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
+ # define URCU_TLS_STORAGE_CLASS	_Thread_local

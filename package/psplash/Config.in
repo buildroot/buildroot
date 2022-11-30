@@ -27,5 +27,15 @@ config BR2_PACKAGE_PSPLASH
 
 	  http://git.yoctoproject.org/cgit/cgit.cgi/psplash/
 
+if BR2_PACKAGE_PSPLASH
+
+config BR2_PACKAGE_PSPLASH_IMAGE
+	string "psplash image"
+	help
+	  Use a personalized png image as boot splash.
+	  Let it empty if you want to keep the psplash default image.
+
+endif
+
 comment "psplash needs a toolchain w/ wchar"
 	depends on !BR2_USE_WCHAR

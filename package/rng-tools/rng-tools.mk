@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RNG_TOOLS_VERSION = 6.12
+RNG_TOOLS_VERSION = 6.15
 RNG_TOOLS_SITE = $(call github,nhorman,$(RNG_TOOLS_NAME),v$(RNG_TOOLS_VERSION))
 RNG_TOOLS_LICENSE = GPL-2.0
 RNG_TOOLS_LICENSE_FILES = COPYING
@@ -20,8 +20,8 @@ RNG_TOOLS_CONF_OPTS = --without-pkcs11
 # Work around for uClibc or musl toolchains which lack argp_*()
 # functions.
 ifeq ($(BR2_PACKAGE_ARGP_STANDALONE),y)
-RNG_TOOLS_CONF_ENV += LIBS="-largp"
-RNG_TOOLS_DEPENDENCIES += argp-standalone
+RNG_TOOLS_CONF_ENV += LIBS="-largp $(TARGET_NLS_LIBS)"
+RNG_TOOLS_DEPENDENCIES += argp-standalone $(TARGET_NLS_DEPENDENCIES)
 endif
 
 ifeq ($(BR2_PACKAGE_LIBRTLSDR),y)

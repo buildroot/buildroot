@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-UHTTPD_VERSION = f53a63999784bcb7dc513e221f3f25dd3de2f35e
+UHTTPD_VERSION = 15346de8d3ba422002496526ee24c62a3601ab8c
 UHTTPD_SITE = https://git.openwrt.org/project/uhttpd.git
 UHTTPD_SITE_METHOD = git
 UHTTPD_LICENSE = ISC

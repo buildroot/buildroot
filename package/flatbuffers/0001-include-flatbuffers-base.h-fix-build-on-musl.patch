@@ -28,7 +28,10 @@ Fixes:
  - http://autobuild.buildroot.org/results/68045b83e94f8caa337b1af7ed5f493ac1a55c47
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
-[Upstream status: https://github.com/google/flatbuffers/pull/6773]
+[Upstream status: Rejected:
+ https://github.com/google/flatbuffers/pull/6773]
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+(rebased and added fix for uClibc-build)
 ---
  include/flatbuffers/base.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -37,15 +40,16 @@ diff --git a/include/flatbuffers/base.h b/include/flatbuffers/base.h
 index de7898dc..101c7598 100644
 --- a/include/flatbuffers/base.h
 +++ b/include/flatbuffers/base.h
-@@ -266,7 +266,7 @@ namespace flatbuffers {
- #ifndef FLATBUFFERS_LOCALE_INDEPENDENT
-   // Enable locale independent functions {strtof_l, strtod_l,strtoll_l, strtoull_l}.
-   #if ((defined(_MSC_VER) && _MSC_VER >= 1800)            || \
--       (defined(_XOPEN_VERSION) && (_XOPEN_VERSION>=700)) && (!defined(__ANDROID_API__) || (defined(__ANDROID_API__) && (__ANDROID_API__>=21))))
-+       (defined(__GLIBC__) && defined(_XOPEN_VERSION) && (_XOPEN_VERSION>=700)) && (!defined(__ANDROID_API__) || (defined(__ANDROID_API__) && (__ANDROID_API__>=21))))
+@@ -264,7 +264,8 @@ namespace flatbuffers {
+   // strtoull_l}.
+   #if (defined(_MSC_VER) && _MSC_VER >= 1800) || \
+       (defined(__ANDROID_API__) && __ANDROID_API__>= 21) || \
+-      (defined(_XOPEN_VERSION) && (_XOPEN_VERSION >= 700)) && \
++      (defined(_XOPEN_VERSION) && (_XOPEN_VERSION >= 700) && \
++        defined(__GLIBC__) && !defined(__UCLIBC__)) && \
+         (!defined(__Fuchsia__) && !defined(__ANDROID_API__))
      #define FLATBUFFERS_LOCALE_INDEPENDENT 1
    #else
-     #define FLATBUFFERS_LOCALE_INDEPENDENT 0
 -- 
 2.30.2
 

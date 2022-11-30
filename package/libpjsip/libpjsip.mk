@@ -4,18 +4,20 @@
 #
 ################################################################################
 
-LIBPJSIP_VERSION = 2.10
+LIBPJSIP_VERSION = 2.12.1
 LIBPJSIP_SOURCE = pjproject-$(LIBPJSIP_VERSION).tar.gz
 LIBPJSIP_SITE = $(call github,pjsip,pjproject,$(LIBPJSIP_VERSION))
-# https://github.com/pjsip/pjproject/archive/2.10.tar.gz
 
 LIBPJSIP_DEPENDENCIES = libsrtp
 LIBPJSIP_LICENSE = GPL-2.0+
 LIBPJSIP_LICENSE_FILES = COPYING
-LIBPJSIP_CPE_ID_VENDOR = pjsip
+LIBPJSIP_CPE_ID_VENDOR = teluu
 LIBPJSIP_CPE_ID_PRODUCT = pjsip
 LIBPJSIP_INSTALL_STAGING = YES
 LIBPJSIP_MAKE = $(MAKE1)
+
+# 0001-Merge-pull-request-from-GHSA-26j7-ww69-c4qj.patch
+LIBPJSIP_IGNORE_CVES += CVE-2022-31031
 
 LIBPJSIP_CFLAGS = $(TARGET_CFLAGS) -DPJ_HAS_IPV6=1
 

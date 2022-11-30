@@ -19,6 +19,6 @@ Building
 Flashing
 --------
 
-  ./board/stmicroelectronics/stm32f469-disco/flash.sh output/
+  ./board/stmicroelectronics/stm32f469-disco/flash_xip.sh output/
 
 It will flash binary to internal flash memory.

@@ -1,0 +1,33 @@
+config BR2_PACKAGE_MENDER_CONNECT
+	bool "mender-connect"
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2, mender
+	depends on BR2_USE_WCHAR # libglib2 -> gettext
+	depends on BR2_USE_MMU # dbus -> fork()
+	select BR2_PACKAGE_DBUS # runtime
+	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_MENDER # runtime
+	select BR2_PACKAGE_OPENSSL
+	help
+	  mender-connect is a daemon responsible for handling
+	  bidirectional (websocket) communication with the Mender
+	  server. The daemon is responsible for implementing a range of
+	  troubleshooting features to the device as well as several
+	  enhancement to the mender-client.
+
+	  Mender Connect is loosely coupled with the Mender Client. The
+	  main information passed between mender-client and
+	  mender-connect is the device authorization status. Since only
+	  accepted devices can interact with the Mender Server, the
+	  Mender Client passes over DBus the authorization token which
+	  Mender Connect uses to establish a Websocket connection to the
+	  server.
+
+	  https://github.com/mendersoftware/mender-connect
+
+comment "mender-connect needs a toolchain w/ threads, wchar"
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || !BR2_USE_WCHAR

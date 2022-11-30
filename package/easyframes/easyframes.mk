@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EASYFRAMES_VERSION = 0.3
+EASYFRAMES_VERSION = 0.4
 EASYFRAMES_SITE = $(call github,microchip-ung,easyframes,v$(EASYFRAMES_VERSION))
 EASYFRAMES_DEPENDENCIES = host-pkgconf libpcap
 EASYFRAMES_LICENSE = MIT

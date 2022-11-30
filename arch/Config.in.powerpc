@@ -1,6 +1,10 @@
 config BR2_POWERPC_CPU_HAS_ALTIVEC
 	bool
 
+config BR2_POWERPC_CPU_HAS_VSX
+	bool
+	select BR2_POWERPC_CPU_HAS_ALTIVEC
+
 config BR2_POWERPC_CPU_HAS_SPE
 	bool
 
@@ -11,121 +15,135 @@ choice
 	  Specific CPU variant to use
 config BR2_generic_powerpc
 	bool "generic"
+	# No C library supports this variant on ppc64le
+	depends on BR2_powerpc || BR2_powerpc64
 config BR2_powerpc_401
 	bool "401"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_403
 	bool "403"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_405
 	bool "405"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_405fp
 	bool "405 with FPU"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_440
 	bool "440"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_440fp
 	bool "440 with FPU"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_464
 	bool "464"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_464fp
 	bool "464 with FPU"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_476
 	bool "476"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_476fp
 	bool "476 with FPU"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_505
 	bool "505"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_602
 	bool "602"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_603
 	bool "603"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_603e
 	bool "603e"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_604
 	bool "604"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_604e
 	bool "604e"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_620
 	bool "620"
+	depends on BR2_powerpc || BR2_powerpc64
 config BR2_powerpc_630
 	bool "630"
+	depends on BR2_powerpc || BR2_powerpc64
 config BR2_powerpc_740
 	bool "740"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_7400
 	bool "7400"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 	select BR2_POWERPC_CPU_HAS_ALTIVEC
 config BR2_powerpc_7450
 	bool "7450"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 	select BR2_POWERPC_CPU_HAS_ALTIVEC
 config BR2_powerpc_750
 	bool "750"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_821
 	bool "821"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_823
 	bool "823"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_860
 	bool "860"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_970
 	bool "970"
+	depends on BR2_powerpc || BR2_powerpc64
 	select BR2_POWERPC_CPU_HAS_ALTIVEC
 config BR2_powerpc_8540
 	bool "8540 / e500v1"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 	select BR2_POWERPC_CPU_HAS_SPE
 config BR2_powerpc_8548
 	bool "8548 / e500v2"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 	select BR2_POWERPC_CPU_HAS_SPE
 config BR2_powerpc_e300c2
 	bool "e300c2"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_e300c3
 	bool "e300c3"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_e500mc
 	bool "e500mc"
-	depends on !BR2_ARCH_IS_64
+	depends on BR2_powerpc
 config BR2_powerpc_e5500
 	bool "e5500"
-	depends on !BR2_powerpc64le
+	depends on BR2_powerpc || BR2_powerpc64
 config BR2_powerpc_e6500
 	bool "e6500"
-	depends on !BR2_powerpc64le
+	depends on BR2_powerpc || BR2_powerpc64
 	select BR2_POWERPC_CPU_HAS_ALTIVEC
 config BR2_powerpc_power4
 	bool "power4"
+	depends on BR2_powerpc || BR2_powerpc64
 config BR2_powerpc_power5
 	bool "power5"
+	depends on BR2_powerpc || BR2_powerpc64
 config BR2_powerpc_power6
 	bool "power6"
+	depends on BR2_powerpc || BR2_powerpc64
 	select BR2_POWERPC_CPU_HAS_ALTIVEC
 config BR2_powerpc_power7
 	bool "power7"
-	select BR2_POWERPC_CPU_HAS_ALTIVEC
+	depends on BR2_powerpc || BR2_powerpc64
+	select BR2_POWERPC_CPU_HAS_VSX
 config BR2_powerpc_power8
 	bool "power8"
+	select BR2_POWERPC_CPU_HAS_VSX
+config BR2_powerpc_power9
+	bool "power9"
 	select BR2_POWERPC_CPU_HAS_ALTIVEC
+	select BR2_POWERPC_CPU_HAS_VSX
+	select BR2_ARCH_NEEDS_GCC_AT_LEAST_6
 endchoice
 
 choice
@@ -156,6 +174,9 @@ config BR2_ARCH
 	default "powerpc"	if BR2_powerpc
 	default "powerpc64"	if BR2_powerpc64
 	default "powerpc64le"	if BR2_powerpc64le
+
+config BR2_NORMALIZED_ARCH
+	default "powerpc"
 
 config BR2_ENDIAN
 	default "BIG"    if BR2_powerpc || BR2_powerpc64
@@ -200,6 +221,7 @@ config BR2_GCC_TARGET_CPU
 	default "power6"	if BR2_powerpc_power6
 	default "power7"	if BR2_powerpc_power7
 	default "power8"	if BR2_powerpc_power8
+	default "power9"	if BR2_powerpc_power9
 
 config BR2_READELF_ARCH_NAME
 	default "PowerPC"	if BR2_powerpc

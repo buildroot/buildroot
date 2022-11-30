@@ -64,17 +64,29 @@ config BR2_PACKAGE_XENOMAI_CUSTOM_GIT
 
 endchoice
 
+config BR2_PACKAGE_XENOMAI_CUSTOM_VERSION_VALUE
+	string "Xenomai version"
+	depends on BR2_PACKAGE_XENOMAI_CUSTOM_VERSION
+
 config BR2_PACKAGE_XENOMAI_REPOSITORY
 	string "URL of custom repository"
-	default "https://gitlab.denx.de/Xenomai/xenomai.git"
 	depends on BR2_PACKAGE_XENOMAI_CUSTOM_GIT
 
+config BR2_PACKAGE_XENOMAI_REPOSITORY_VERSION
+	string "Custom repository version"
+	depends on BR2_PACKAGE_XENOMAI_CUSTOM_GIT
+	help
+	  Revision to use in the typical format used by Git, i.e a
+	  SHA1 or a tag.
+
 config BR2_PACKAGE_XENOMAI_VERSION
-	string "Custom Xenomai version" if \
-		!BR2_PACKAGE_XENOMAI_LATEST_VERSION && \
-		!BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL
+	string
 	default "3.0.10" if BR2_PACKAGE_XENOMAI_LATEST_VERSION
+	default BR2_PACKAGE_XENOMAI_CUSTOM_VERSION_VALUE \
+		if BR2_PACKAGE_XENOMAI_CUSTOM_VERSION
 	default "custom" if BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL
+	default BR2_PACKAGE_XENOMAI_REPOSITORY_VERSION \
+		if BR2_PACKAGE_XENOMAI_CUSTOM_GIT
 
 config BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL_URL
 	string "URL of custom tarball"

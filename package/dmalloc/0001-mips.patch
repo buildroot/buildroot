@@ -1,14 +1,16 @@
+[Fabrice: Updated for 5.6.5]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 --- a/configure
 +++ b/configure
 @@ -7107,7 +7107,7 @@
- echo $ECHO_N "checking return.h macros work... $ECHO_C" >&6
- if test "$cross_compiling" = yes; then
-    cat >>confdefs.h <<\_ACEOF
--#define RETURN_MACROS_WORK 0
-+#define RETURN_MACROS_WORK 1
- _ACEOF
-  echo "$as_me:$LINENO: result: no" >&5
- echo "${ECHO_T}no" >&6
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking return.h macros work" >&5
+ $as_echo_n "checking return.h macros work... " >&6; }
+ if test "$cross_compiling" = yes; then :
+-   $as_echo "#define RETURN_MACROS_WORK 0" >>confdefs.h
++   $as_echo "#define RETURN_MACROS_WORK 1" >>confdefs.h
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+ $as_echo "no" >&6; }
+ 
 --- a/return.h
 +++ b/return.h
 @@ -106,26 +106,16 @@

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RPM_VERSION_MAJOR = 4.17
+RPM_VERSION_MAJOR = 4.18
 RPM_VERSION = $(RPM_VERSION_MAJOR).0
 RPM_SOURCE = rpm-$(RPM_VERSION).tar.bz2
 RPM_SITE = http://ftp.rpm.org/releases/rpm-$(RPM_VERSION_MAJOR).x

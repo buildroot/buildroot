@@ -11,6 +11,14 @@ non-POSIX function in all cases.
 
 Upstream: https://github.com/grpc/grpc/pull/17610
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+
+[buildroot@heine.tech:
+  1.42.0 added new logic to handle older glibc without pthread_setname_np()
+  but is still not sufficient for all cases. So alter the patch to wrap all
+  this with our cmake based workaround.
+  See: https://github.com/grpc/grpc/pull/27540
+]
+Signed-off-by: Michael Nosthoff <buildroot@heine.tech>
 ---
  CMakeLists.txt                            | 6 ++++++
  include/grpc/impl/codegen/port_platform.h | 2 ++
@@ -37,15 +45,22 @@ diff --git a/include/grpc/impl/codegen/port_platform.h b/include/grpc/impl/codeg
 index 4f213ff..55ecd9d 100644
 --- a/include/grpc/impl/codegen/port_platform.h
 +++ b/include/grpc/impl/codegen/port_platform.h
-@@ -168,7 +168,9 @@
+@@ -186,6 +186,7 @@
  #endif /* _LP64 */
  #ifdef __GLIBC__
  #define GPR_POSIX_CRASH_HANDLER 1
 +#if defined(HAVE_PTHREAD_SETNAME_NP)
+ #ifdef __GLIBC_PREREQ
+ #if __GLIBC_PREREQ(2, 12)
  #define GPR_LINUX_PTHREAD_NAME 1
+@@ -194,6 +195,7 @@
+ // musl libc & others
+ #define GPR_LINUX_PTHREAD_NAME 1
+ #endif
 +#endif /* HAVE_PTHREAD_SETNAME_NP */
  #include <linux/version.h>
  #else /* musl libc */
  #define GPR_MUSL_LIBC_COMPAT 1
+
 -- 
 2.26.63

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SHAIRPORT_SYNC_VERSION = 3.3.8
+SHAIRPORT_SYNC_VERSION = 3.3.9
 SHAIRPORT_SYNC_SITE = $(call github,mikebrady,shairport-sync,$(SHAIRPORT_SYNC_VERSION))
 
 SHAIRPORT_SYNC_LICENSE = MIT, BSD-3-Clause
@@ -22,11 +22,7 @@ SHAIRPORT_SYNC_CONF_OPTS = --with-alsa \
 SHAIRPORT_SYNC_CONF_ENV += LIBS="$(SHAIRPORT_SYNC_CONF_LIBS)"
 
 # Avahi or tinysvcmdns (shaiport-sync bundles its own version of tinysvcmdns).
-# Avahi support needs libavahi-client, which is built by avahi if avahi-daemon
-# and dbus is selected. Since there is no BR2_PACKAGE_LIBAVAHI_CLIENT config
-# option yet, use the avahi-daemon and dbus congig symbols to check for
-# libavahi-client.
-ifeq ($(BR2_PACKAGE_AVAHI_DAEMON)$(BR2_PACKAGE_DBUS),yy)
+ifeq ($(BR2_PACKAGE_AVAHI_LIBAVAHI_CLIENT),y)
 SHAIRPORT_SYNC_DEPENDENCIES += avahi
 SHAIRPORT_SYNC_CONF_OPTS += --with-avahi --without-tinysvcmdns
 else
@@ -63,6 +59,14 @@ endif
 ifeq ($(BR2_PACKAGE_SHAIRPORT_SYNC_DBUS),y)
 SHAIRPORT_SYNC_DEPENDENCIES += libglib2
 SHAIRPORT_SYNC_CONF_OPTS += --with-dbus-interface --with-mpris-interface
+define SHAIRPORT_SYNC_INSTALL_DBUS
+	$(INSTALL) -m 0644 -D \
+		$(@D)/scripts/shairport-sync-dbus-policy.conf \
+		$(TARGET_DIR)/etc/dbus-1/system.d/shairport-sync-dbus.conf
+	$(INSTALL) -m 0644 -D \
+		$(@D)/scripts/shairport-sync-mpris-policy.conf \
+		$(TARGET_DIR)/etc/dbus-1/system.d/shairport-sync-mpris.conf
+endef
 else
 SHAIRPORT_SYNC_CONF_OPTS += --without-dbus-interface --without-mpris-interface
 endif
@@ -86,6 +90,7 @@ define SHAIRPORT_SYNC_INSTALL_TARGET_CMDS
 		$(TARGET_DIR)/usr/bin/shairport-sync
 	$(INSTALL) -D -m 0644 $(@D)/scripts/shairport-sync.conf \
 		$(TARGET_DIR)/etc/shairport-sync.conf
+	$(SHAIRPORT_SYNC_INSTALL_DBUS)
 endef
 
 define SHAIRPORT_SYNC_INSTALL_INIT_SYSV

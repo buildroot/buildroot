@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IGMPPROXY_VERSION = 0.3
+IGMPPROXY_VERSION = 0.4
 IGMPPROXY_SITE = \
 	https://github.com/pali/igmpproxy/releases/download/$(IGMPPROXY_VERSION)
 IGMPPROXY_AUTORECONF = YES

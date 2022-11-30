@@ -1,0 +1,13 @@
+comment "cpulimit needs a toolchain w/ threads"
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_HAS_THREADS
+
+config BR2_PACKAGE_CPULIMIT
+	bool "cpulimit"
+	depends on BR2_USE_MMU # fork()
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	help
+	  Cpulimit is a tool which limits the CPU usage of a process
+	  (expressed in percentage, not in CPU time)
+
+	  https://github.com/opsengine/cpulimit

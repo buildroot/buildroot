@@ -1,0 +1,35 @@
+From b8d5d086489ff20339e221323a60c140a9820e67 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 9 Oct 2021 09:39:52 +0200
+Subject: [PATCH] configure.ac: fix autoreconf with autoconf >= 2.70
+
+Drop AC_CONFIG_AUX_DIR to avoid the following build failure with
+autoconf >= 2.70:
+
+autoreconf: error: cannot create config/autoconf: No such file or directory
+
+Fixes:
+ - http://autobuild.buildroot.org/results/433599039d6e1ee301465f9867e169c121a0646f
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: not sent as upstream is unmaintained:
+https://gitlab.com/cespedes/ltrace/-/issues/8]
+---
+ configure.ac | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index b9c39fa..486589b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -28,7 +28,6 @@ AC_INIT([ltrace],[0.7.91],[ltrace-devel@lists.alioth.debian.org],
+ AC_CONFIG_HEADERS([config.h])
+ AC_CONFIG_SRCDIR(libltrace.c)
+ AC_CONFIG_MACRO_DIR([config/m4])
+-AC_CONFIG_AUX_DIR([config/autoconf])
+ AC_CANONICAL_BUILD
+ AC_CANONICAL_HOST
+ 
+-- 
+2.33.0
+

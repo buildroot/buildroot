@@ -8,10 +8,14 @@ LINUX_TOOLS += perf
 
 PERF_DEPENDENCIES = host-flex host-bison
 
-ifeq ($(KERNEL_ARCH),x86_64)
+ifeq ($(BR2_PACKAGE_LINUX_TOOLS_PERF_NEEDS_HOST_PYTHON3),y)
+PERF_DEPENDENCIES += host-python3
+endif
+
+ifeq ($(NORMALIZED_ARCH),x86_64)
 PERF_ARCH=x86
 else
-PERF_ARCH=$(KERNEL_ARCH)
+PERF_ARCH=$(NORMALIZED_ARCH)
 endif
 
 PERF_MAKE_FLAGS = \
@@ -20,7 +24,6 @@ PERF_MAKE_FLAGS = \
 	ARCH=$(PERF_ARCH) \
 	DESTDIR=$(TARGET_DIR) \
 	prefix=/usr \
-	WERROR=0 \
 	NO_GTK2=1 \
 	NO_LIBPERL=1 \
 	NO_LIBPYTHON=1 \
@@ -127,7 +130,7 @@ define PERF_DISABLE_DOCUMENTATION
 		printf "%%:\n\t@:\n" >$(LINUX_DIR)/tools/perf/Documentation/GNUmakefile; \
 	fi
 endef
-LINUX_POST_PATCH_HOOKS += PERF_DISABLE_DOCUMENTATION
+LINUX_TOOLS_POST_PATCH_HOOKS += PERF_DISABLE_DOCUMENTATION
 
 # O must be redefined here to overwrite the one used by Buildroot for
 # out of tree build. We build perf in $(LINUX_DIR)/tools/perf/ and not just
@@ -160,12 +163,18 @@ define PERF_BUILD_CMDS
 endef
 
 # After installation, we remove the Perl and Python scripts from the
-# target.
+# target unless BR2_PACKAGE_LINUX_TOOLS_PERF_SCRIPTS is enabled
+ifeq ($(BR2_PACKAGE_LINUX_TOOLS_PERF_SCRIPTS),)
+define PERF_INSTALL_REMOVE_SCRIPTS
+	$(RM) -rf $(TARGET_DIR)/usr/libexec/perf-core/scripts/
+	$(RM) -rf $(TARGET_DIR)/usr/libexec/perf-core/tests/
+endef
+endif
+
 define PERF_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE1) $(PERF_MAKE_FLAGS) \
 		-C $(LINUX_DIR)/tools/perf O=$(LINUX_DIR)/tools/perf/ install
-	$(RM) -rf $(TARGET_DIR)/usr/libexec/perf-core/scripts/
-	$(RM) -rf $(TARGET_DIR)/usr/libexec/perf-core/tests/
+	$(PERF_INSTALL_REMOVE_SCRIPTS)
 endef
 
 define PERF_LINUX_CONFIG_FIXUPS

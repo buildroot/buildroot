@@ -1,0 +1,33 @@
+From 8cf87b3027009c0acac591d9ae80262dc25daccf Mon Sep 17 00:00:00 2001
+From: Ondrej Jirman <megous@megous.com>
+Date: Wed, 21 Nov 2018 17:29:21 +0100
+Subject: [PATCH] fix incorrect parameter name in internal netlink.h RTA_OK
+ macro
+
+the wrong name works only by accident.
+
+Signed-off-by: Ondrej Jirman <megous@megous.com>
+Signed-off-by: Rich Felker <dalias@aerifal.cx>
+Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
+
+[ upstream status: 8cf87b3027009c0acac591d9ae80262dc25daccf ]
+---
+ src/network/netlink.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/network/netlink.h b/src/network/netlink.h
+index 38acb178..873fabe2 100644
+--- a/src/network/netlink.h
++++ b/src/network/netlink.h
+@@ -86,7 +86,7 @@ struct ifaddrmsg {
+ #define RTA_DATALEN(rta)	((rta)->rta_len-sizeof(struct rtattr))
+ #define RTA_DATAEND(rta)	((char*)(rta)+(rta)->rta_len)
+ #define RTA_NEXT(rta)		(struct rtattr*)((char*)(rta)+NETLINK_ALIGN((rta)->rta_len))
+-#define RTA_OK(nlh,end)		((char*)(end)-(char*)(rta) >= sizeof(struct rtattr))
++#define RTA_OK(rta,end)		((char*)(end)-(char*)(rta) >= sizeof(struct rtattr))
+ 
+ #define NLMSG_RTA(nlh,len)	((void*)((char*)(nlh)+sizeof(struct nlmsghdr)+NETLINK_ALIGN(len)))
+ #define NLMSG_RTAOK(rta,nlh)	RTA_OK(rta,NLMSG_DATAEND(nlh))
+-- 
+2.36.0
+

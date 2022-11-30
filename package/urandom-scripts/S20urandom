@@ -17,43 +17,39 @@ else
 	pool_size=512
 fi
 
-check_file_size() {
-	[ -f "$URANDOM_SEED" ] || return 1
-	# Try to read two blocks but exactly one will be read if the file has
-	# the correct size.
-	size=$(dd if="$URANDOM_SEED" bs="$pool_size" count=2 2> /dev/null | wc -c)
-	test "$size" -eq "$pool_size"
-}
-
 init_rng() {
-	if check_file_size; then
-		printf 'Initializing random number generator: '
-		dd if="$URANDOM_SEED" bs="$pool_size" of=/dev/urandom count=1 2> /dev/null
-		status=$?
-		if [ "$status" -eq 0 ]; then
-			echo "OK"
-		else
-			echo "FAIL"
-		fi
-		return "$status"
+	[ -f "$URANDOM_SEED" ] || return 0
+	printf 'Initializing random number generator: '
+	dd if="$URANDOM_SEED" bs="$pool_size" of=/dev/urandom count=1 2> /dev/null
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
 	fi
+	return "$status"
 }
 
 save_random_seed() {
 	printf 'Saving random seed: '
-	if touch "$URANDOM_SEED" 2> /dev/null; then
+	status=1
+	if touch "$URANDOM_SEED.new" 2> /dev/null; then
 		old_umask=$(umask)
 		umask 077
-		dd if=/dev/urandom of="$URANDOM_SEED" bs="$pool_size" count=1 2> /dev/null
-		status=$?
+		dd if=/dev/urandom of="$URANDOM_SEED.tmp" bs="$pool_size" count=1 2> /dev/null
+		cat "$URANDOM_SEED" "$URANDOM_SEED.tmp" 2>/dev/null \
+			| sha256sum \
+			| cut -d ' ' -f 1 > "$URANDOM_SEED.new" && \
+		mv "$URANDOM_SEED.new" "$URANDOM_SEED" && status=0
+		rm -f "$URANDOM_SEED.tmp"
 		umask "$old_umask"
 		if [ "$status" -eq 0 ]; then
 			echo "OK"
 		else
 			echo "FAIL"
 		fi
+
 	else
-		status=$?
 		echo "SKIP (read-only file system detected)"
 	fi
 	return "$status"

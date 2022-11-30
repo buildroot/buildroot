@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_VAAPI_VERSION = 1.18.4
+GST1_VAAPI_VERSION = 1.20.4
 GST1_VAAPI_SITE = https://gstreamer.freedesktop.org/src/gstreamer-vaapi
 GST1_VAAPI_SOURCE = gstreamer-vaapi-$(GST1_VAAPI_VERSION).tar.xz
 GST1_VAAPI_LICENSE = LGPL-2.1+
@@ -24,7 +24,7 @@ GST1_VAAPI_CONF_OPTS += \
 	-Dwith_wayland=no \
 	-Dwith_egl=no \
 	-Dexamples=disabled \
-	-Dtest=disabled \
+	-Dtests=disabled \
 	-Ddoc=disabled
 
 ifeq ($(BR2_PACKAGE_GST1_VAAPI_ENCODERS),y)

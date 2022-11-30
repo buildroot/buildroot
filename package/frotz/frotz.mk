@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FROTZ_VERSION = 2.53
+FROTZ_VERSION = 2.54
 FROTZ_SOURCE = frotz-$(FROTZ_VERSION).tar.bz2
 FROTZ_SITE = $(call gitlab,DavidGriffith,frotz,$(FROTZ_VERSION))
 FROTZ_DEPENDENCIES = host-pkgconf ncurses

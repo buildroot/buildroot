@@ -1,0 +1,43 @@
+config BR2_PACKAGE_SUNXI_MALI_UTGARD
+	bool "sunxi-mali-utgard"
+	depends on BR2_aarch64 || (BR2_ARM_EABIHF && BR2_arm)
+	depends on BR2_TOOLCHAIN_USES_GLIBC
+	select BR2_PACKAGE_HAS_LIBEGL
+	select BR2_PACKAGE_HAS_LIBGLES
+	help
+	  Install userspace Allwinner OpenGL libraries for Mali
+	  Utgard GPUs.
+
+	  https://github.com/bootlin/mali-blobs
+
+if BR2_PACKAGE_SUNXI_MALI_UTGARD
+
+config BR2_PACKAGE_PROVIDES_LIBEGL
+	default "sunxi-mali-utgard"
+
+config BR2_PACKAGE_PROVIDES_LIBGLES
+	default "sunxi-mali-utgard"
+
+choice
+	prompt "Version"
+	default BR2_PACKAGE_SUNXI_MALI_UTGARD_R6P2
+	help
+	  Select the version of the userspace module.
+
+config BR2_PACKAGE_SUNXI_MALI_UTGARD_R6P2
+	bool "r6p2"
+config BR2_PACKAGE_SUNXI_MALI_UTGARD_R8P1
+	bool "r8p1"
+
+endchoice
+
+config BR2_PACKAGE_SUNXI_MALI_UTGARD_REVISION
+	string
+	default "r6p2"	if BR2_PACKAGE_SUNXI_MALI_UTGARD_R6P2
+	default "r8p1"	if BR2_PACKAGE_SUNXI_MALI_UTGARD_R8P1
+
+endif
+
+comment "sunxi-mali-utgard needs an EABIhf glibc toolchain"
+	depends on BR2_arm
+	depends on !BR2_TOOLCHAIN_USES_GLIBC || !BR2_ARM_EABIHF

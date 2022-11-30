@@ -4,21 +4,26 @@
 #
 ################################################################################
 
-LIBSAMPLERATE_VERSION = 0.1.9
-LIBSAMPLERATE_SITE = http://www.mega-nerd.com/SRC
+LIBSAMPLERATE_VERSION = 0.2.2
+LIBSAMPLERATE_SOURCE = libsamplerate-$(LIBSAMPLERATE_VERSION).tar.xz
+LIBSAMPLERATE_SITE = https://github.com/libsndfile/libsamplerate/releases/download/$(LIBSAMPLERATE_VERSION)
 LIBSAMPLERATE_INSTALL_STAGING = YES
 LIBSAMPLERATE_DEPENDENCIES = host-pkgconf
-LIBSAMPLERATE_CONF_OPTS = --disable-fftw --program-transform-name=''
+# sndfile is only used for examples and tests so it doesn't make sense
+# to support it as an optional dependency
+LIBSAMPLERATE_CONF_OPTS = \
+	--disable-fftw \
+	--disable-sndfile \
+	--program-transform-name=''
 LIBSAMPLERATE_LICENSE = BSD-2-Clause
 LIBSAMPLERATE_LICENSE_FILES = COPYING
 LIBSAMPLERATE_CPE_ID_VENDOR = libsamplerate_project
 
 ifeq ($(BR2_PACKAGE_ALSA_LIB),y)
 LIBSAMPLERATE_DEPENDENCIES += alsa-lib
-endif
-
-ifeq ($(BR2_PACKAGE_LIBSNDFILE),y)
-LIBSAMPLERATE_DEPENDENCIES += libsndfile
+LIBSAMPLERATE_CONF_OPTS += --enable-alsa
+else
+LIBSAMPLERATE_CONF_OPTS += --disable-alsa
 endif
 
 $(eval $(autotools-package))

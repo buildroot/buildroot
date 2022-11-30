@@ -21,6 +21,9 @@ config BR2_PACKAGE_WIREGUARD_LINUX_COMPAT
 
 	  https://www.wireguard.com
 
+comment "wireguard-linux-compat needs a Linux kernel to be built"
+	depends on !BR2_LINUX_KERNEL
+
 comment "wireguard-linux-compat needs a toolchain w/ headers >= 3.10"
 	depends on BR2_LINUX_KERNEL
 	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_10

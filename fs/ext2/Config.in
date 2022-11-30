@@ -131,6 +131,11 @@ config BR2_TARGET_ROOTFS_EXT2_XZ
 	help
 	  Do compress the ext2 filesystem with xz.
 
+config BR2_TARGET_ROOTFS_EXT2_ZSTD
+	bool "zstd"
+	help
+	  Do compress the ext2 filesystem with zstd.
+
 endchoice
 
 endif # BR2_TARGET_ROOTFS_EXT2

@@ -2,6 +2,9 @@ config BR2_ARCH
 	default "microblazeel"  if BR2_microblazeel
 	default "microblaze"    if BR2_microblazebe
 
+config BR2_NORMALIZED_ARCH
+	default "microblaze"
+
 config BR2_ENDIAN
 	default "LITTLE" if BR2_microblazeel
 	default "BIG"	 if BR2_microblazebe

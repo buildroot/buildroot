@@ -1,0 +1,74 @@
+From 3ae2b36e48fc0f75f0bb6c89f893ece033bccd87 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sun, 7 Aug 2022 18:44:29 +0200
+Subject: [PATCH] requirements-min.txt: drop indirect dependencies
+
+For some interesting reason, the crossbar maintainers have decided to
+include indirect dependencies in their requirements-min.txt, i.e
+dependencies that they don't use directly, but that packages they
+depend on themselves depend on.
+
+This makes the packaging in Buildroot confusing, as it means not all
+dependencies in requirements-min.txt should be taken into
+account. Also some of these indirect dependencies cause issues due to
+upper bounds set on the version (which is the case for idna and
+urllib3).
+
+This patch therefore clarifies the situation by removing such indirect
+dependencies from requirements-min.txt. As the patch is obviously not
+upstreamable, it will require some maintenance effort, but that effort
+is anyway already there to sort out direct dependencies from indirect
+dependencies when updating the Buildroot packaging for crossbar.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ requirements-min.txt | 12 ------------
+ 1 file changed, 12 deletions(-)
+
+diff --git a/requirements-min.txt b/requirements-min.txt
+index 5ac4e0ee..cdd82d27 100644
+--- a/requirements-min.txt
++++ b/requirements-min.txt
+@@ -1,20 +1,13 @@
+-attrs>=17.2.0
+ autobahn[asyncio,twisted,encryption,compress,serialization,scram]>=21.3.1
+ bitstring>=3.1.5
+-bcrypt>=3.1.6
+ cbor>=1.0.0
+ click>=6.7
+ colorama>=0.4.4
+-constantly>=15.1.0
+ cryptography>=2.6.1
+-h2>=3.2.0
+-idna<2.6,>=2.5
+ importlib-resources>=4.1.1
+-incremental>=17.5.0
+ jinja2>=2.10.1
+ lmdb>=0.92
+ mistune>=0.7.4
+-netaddr>=0.7.19
+ passlib>=1.7.1
+ priority>=1.3.0
+ psutil>=5.2.2
+@@ -28,7 +21,6 @@ pyqrcode>=1.2.1
+ pytrie>=0.3
+ pyyaml>=4.2b4
+ sdnotify>=0.3.1
+-service_identity>=17.0.0
+ setproctitle>=1.1.10
+ setuptools>=36.2.7
+ treq>=20.4.1
+@@ -37,10 +29,6 @@ twisted[tls,conch,http2,osx_platform]>=20.3.0; sys_platform == 'darwin'
+ twisted[tls,conch,http2,windows_platform]>=20.3.0; sys_platform == 'win32'
+ txaio>=21.2.1
+ txtorcon>=20.0.0
+-u-msgpack-python>=2.4.1
+-# urllib3 is an indirect dependency, but we force a recent version because of https://nvd.nist.gov/vuln/detail/CVE-2019-11324
+-# workaround for version conflict in requests vs sth else:
+-urllib3<1.25,>=1.21.1
+ vmprof>=0.4.12; platform_machine=='x86_64' or platform_machine=='i386' or platform_machine=='arm'
+ watchdog>=0.8.3
+ werkzeug>=0.14.1
+-- 
+2.37.1
+

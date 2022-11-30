@@ -1,0 +1,68 @@
+From 0f5132e09d970cacabcca3bab01405bc25b87d66 Mon Sep 17 00:00:00 2001
+From: cdosoftei <ciprian.dosoftei@gmail.com>
+Date: Tue, 11 Aug 2020 12:42:17 -0400
+Subject: [PATCH] php8: explicitly declare arginfo
+
+[Hervé: Taken from https://github.com/laruence/php-lua/pull/47 to fix
+PHP8 compatibility.]
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+---
+ lua.c         | 7 +++++--
+ lua_closure.c | 5 ++++-
+ 2 files changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/lua.c b/lua.c
+index f2648ac..bbbd623 100755
+--- a/lua.c
++++ b/lua.c
+@@ -35,6 +35,9 @@ static zend_object_handlers lua_object_handlers;
+ /** {{{ ARG_INFO
+  *
+  */
++ZEND_BEGIN_ARG_INFO_EX(arginfo_void, 0, 0, 0)
++ZEND_END_ARG_INFO()
++
+ ZEND_BEGIN_ARG_INFO_EX(arginfo_lua_call, 0, 0, 2)
+ 	ZEND_ARG_INFO(0, method)
+ 	ZEND_ARG_INFO(0, args)
+@@ -817,12 +820,12 @@ PHP_METHOD(lua, __construct) {
+  *
+  */
+ zend_function_entry lua_class_methods[] = {
+-	PHP_ME(lua, __construct,		NULL,  					ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
++	PHP_ME(lua, __construct,		arginfo_void,				ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
+ 	PHP_ME(lua, eval,          		arginfo_lua_eval,  		ZEND_ACC_PUBLIC)
+ 	PHP_ME(lua, include,			arginfo_lua_include, 	ZEND_ACC_PUBLIC)
+ 	PHP_ME(lua, call,				arginfo_lua_call,  		ZEND_ACC_PUBLIC)
+ 	PHP_ME(lua, assign,				arginfo_lua_assign,		ZEND_ACC_PUBLIC)
+-	PHP_ME(lua, getVersion,			NULL, 					ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
++	PHP_ME(lua, getVersion,			arginfo_void,				ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+ 	PHP_ME(lua, registerCallback,	arginfo_lua_register, 	ZEND_ACC_PUBLIC)
+ 	PHP_MALIAS(lua, __call, call, 	arginfo_lua_call,		ZEND_ACC_PUBLIC)
+ 	PHP_FE_END
+diff --git a/lua_closure.c b/lua_closure.c
+index 50ef039..b0f6780 100644
+--- a/lua_closure.c
++++ b/lua_closure.c
+@@ -39,6 +39,9 @@ static zend_object_handlers lua_closure_handlers;
+ /** {{{ ARG_INFO
+  *
+  */
++ZEND_BEGIN_ARG_INFO_EX(arginfo_void, 0, 0, 0)
++ZEND_END_ARG_INFO()
++
+ ZEND_BEGIN_ARG_INFO_EX(arginfo_lua_invoke, 0, 0, 1)
+ 	ZEND_ARG_INFO(0, arg)
+ 	ZEND_ARG_INFO(0, ...)
+@@ -145,7 +148,7 @@ PHP_METHOD(lua_closure, invoke) {
+ /* {{{ lua_class_methods[]
+  */
+ zend_function_entry lua_closure_methods[] = {
+-	PHP_ME(lua_closure, __construct,		NULL,  					ZEND_ACC_PRIVATE|ZEND_ACC_CTOR)
++	PHP_ME(lua_closure, __construct,		arginfo_void,				ZEND_ACC_PRIVATE|ZEND_ACC_CTOR)
+ 	PHP_ME(lua_closure, invoke,				arginfo_lua_invoke,  	ZEND_ACC_PUBLIC)
+ 	PHP_MALIAS(lua_closure, __invoke, invoke, arginfo_lua_invoke,	ZEND_ACC_PUBLIC)
+ 	PHP_FE_END
+-- 
+2.31.1
+

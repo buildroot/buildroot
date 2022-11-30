@@ -1,0 +1,10 @@
+config BR2_PACKAGE_PYTHON_ZOPFLI
+	bool "python-zopfli"
+	depends on BR2_INSTALL_LIBSTDCPP
+	help
+	  Zopfli module for python.
+
+	  https://github.com/fonttools/py-zopfli
+
+comment "python-zopfli needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP

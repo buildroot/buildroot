@@ -1,0 +1,20 @@
+config BR2_PACKAGE_ALFRED
+	bool "alfred"
+	depends on !BR2_STATIC_LIBS # dlopen()
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libnl
+	select BR2_PACKAGE_LIBNL
+	help
+	  Alfred is a user space daemon for distributing arbitrary
+	  local information over the mesh/network in a decentralized
+	  fashion.
+
+	  This data can be anything which appears to be useful -
+	  originally designed to replace the batman-adv visualization
+	  (vis), you may distribute hostnames, phone books,
+	  administration information, DNS information, the local
+	  weather forecast ...
+
+	  https://www.open-mesh.org/projects/alfred/wiki
+
+comment "alfred needs a toolchain w/ dynamic library, threads"
+	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS

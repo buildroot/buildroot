@@ -4,13 +4,14 @@
 #
 ################################################################################
 
-LIBSELINUX_VERSION = 3.2
+LIBSELINUX_VERSION = 3.3
 LIBSELINUX_SITE = https://github.com/SELinuxProject/selinux/releases/download/$(LIBSELINUX_VERSION)
 LIBSELINUX_LICENSE = Public Domain
 LIBSELINUX_LICENSE_FILES = LICENSE
 LIBSELINUX_CPE_ID_VENDOR = selinuxproject
 
-LIBSELINUX_DEPENDENCIES = $(BR2_COREUTILS_HOST_DEPENDENCY) libsepol pcre
+LIBSELINUX_DEPENDENCIES = \
+	$(BR2_COREUTILS_HOST_DEPENDENCY) host-pkgconf libsepol pcre2
 
 LIBSELINUX_INSTALL_STAGING = YES
 
@@ -18,8 +19,9 @@ LIBSELINUX_INSTALL_STAGING = YES
 # we won't have to use a relative path in 0002-revert-ln-relative.patch
 LIBSELINUX_MAKE_OPTS = \
 	$(TARGET_CONFIGURE_OPTS) \
-	ARCH=$(KERNEL_ARCH) \
-	SHLIBDIR=/usr/lib
+	ARCH=$(NORMALIZED_ARCH) \
+	SHLIBDIR=/usr/lib \
+	USE_PCRE2=y
 
 LIBSELINUX_MAKE_INSTALL_TARGETS = install
 
@@ -52,8 +54,7 @@ endif # python3
 # when the python binding is enabled.
 LIBSELINUX_MAKE_OPTS += \
 	CFLAGS="$(filter-out -D_FILE_OFFSET_BITS=64,$(TARGET_CFLAGS))" \
-	CPPFLAGS="$(filter-out -D_FILE_OFFSET_BITS=64,$(TARGET_CPPFLAGS))" \
-	LDFLAGS="$(TARGET_LDFLAGS) -lpcre -lpthread"
+	CPPFLAGS="$(filter-out -D_FILE_OFFSET_BITS=64,$(TARGET_CPPFLAGS))"
 
 define LIBSELINUX_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) \
@@ -76,15 +77,15 @@ define LIBSELINUX_INSTALL_TARGET_CMDS
 endef
 
 HOST_LIBSELINUX_DEPENDENCIES = \
-	host-libsepol host-pcre host-swig host-python3
+	host-pkgconf host-libsepol host-pcre2 host-swig host-python3
 
 HOST_LIBSELINUX_MAKE_OPTS = \
 	$(HOST_CONFIGURE_OPTS) \
 	PREFIX=$(HOST_DIR) \
 	SHLIBDIR=$(HOST_DIR)/lib \
-	LDFLAGS="$(HOST_LDFLAGS) -lpcre -lpthread" \
 	$(HOST_PKG_PYTHON_DISTUTILS_ENV) \
-	PYTHON=python$(PYTHON3_VERSION_MAJOR)
+	PYTHON=python$(PYTHON3_VERSION_MAJOR) \
+	USE_PCRE2=y
 
 define HOST_LIBSELINUX_BUILD_CMDS
 	$(HOST_MAKE_ENV) $(MAKE1) -C $(@D) \

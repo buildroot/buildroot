@@ -1,0 +1,30 @@
+From d1ca3f53c96dc8a4048b17dc16147a8fac782d4a Mon Sep 17 00:00:00 2001
+From: Alexandros Frantzis <alexandros.frantzis@collabora.com>
+Date: Mon, 14 Feb 2022 13:54:09 +0200
+Subject: [PATCH] libmatrix: Add missing <utility> include
+
+Fixes compilation with GCC 12.
+
+Fixes #169
+[Paul: backport upstream d1ca3f53c96dc8a4048b17dc16147a8fac782d4a]
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+
+ src/libmatrix/program.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/libmatrix/program.h b/src/libmatrix/program.h
+index f95b470..1c9de08 100644
+--- a/src/libmatrix/program.h
++++ b/src/libmatrix/program.h
+@@ -15,6 +15,7 @@
+ #include <string>
+ #include <vector>
+ #include <map>
++#include <utility>
+ #include "mat.h"
+ 
+ // Simple shader container.  Abstracts all of the OpenGL bits, but leaves
+-- 
+2.35.1
+

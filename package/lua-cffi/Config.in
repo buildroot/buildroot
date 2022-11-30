@@ -1,0 +1,19 @@
+config BR2_PACKAGE_LUA_CFFI
+	bool "lua-cffi"
+	depends on !BR2_PACKAGE_LUAJIT
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libffi
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
+	depends on BR2_INSTALL_LIBSTDCPP
+	select BR2_PACKAGE_LIBFFI
+	help
+	  This is a portable C FFI for Lua, based on libffi and aiming
+	  to be mostly compatible with LuaJIT FFI, but written from
+	  scratch.
+
+	  https://github.com/q66/cffi-lua
+
+comment "lua-cffi needs a toolchain w/ C++, gcc >= 4.8, threads"
+	depends on !BR2_PACKAGE_LUAJIT
+	depends on !BR2_INSTALL_LIBSTDCPP || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 || \
+		!BR2_TOOLCHAIN_HAS_THREADS

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-UNCLUTTER_XFIXES_VERSION = 1.5
+UNCLUTTER_XFIXES_VERSION = 1.6
 UNCLUTTER_XFIXES_SITE = $(call github,Airblader,unclutter-xfixes,v$(UNCLUTTER_XFIXES_VERSION))
 UNCLUTTER_XFIXES_LICENSE = MIT
 UNCLUTTER_XFIXES_LICENSE_FILES = LICENSE

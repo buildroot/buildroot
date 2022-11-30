@@ -1,6 +1,5 @@
 config BR2_PACKAGE_PYTHON_SIMPLEAUDIO
 	bool "python-simpleaudio"
-	depends on BR2_PACKAGE_PYTHON3
 	depends on BR2_TOOLCHAIN_HAS_THREADS # alsa-lib
 	select BR2_PACKAGE_ALSA_LIB
 	help

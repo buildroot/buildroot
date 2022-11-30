@@ -1,0 +1,12 @@
+config BR2_PACKAGE_LIBDBI_DRIVERS
+	bool "libdbi-drivers"
+	depends on !BR2_STATIC_LIBS # libdbi
+	select BR2_PACKAGE_LIBDBI
+	help
+	  The libdbi-drivers project provides the
+	  database-specific drivers for the libdbi framework.
+
+	  http://libdbi-drivers.sourceforge.net
+
+comment "libdbi-drivers needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS

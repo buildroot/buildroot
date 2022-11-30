@@ -1,0 +1,32 @@
+From fb39f9600d464ce761917c0e787b940097f6024c Mon Sep 17 00:00:00 2001
+From: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
+Date: Thu, 23 Jun 2022 16:52:49 +0200
+Subject: [PATCH] shm.c: use _Static_assert instead of static_assert for uclibc
+
+Both are C11 constructs.  The first one is defined by the compiler in
+gnu11 mode, but the second one should be a macro defined in assert.h
+
+The macro exists in glibc >= 2.16 and musl >= 1.1.10 but not in
+uclibc 1.0.41.  It is expected to be present in uclibc 1.0.42.
+
+Signed-off-by: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
+---
+ src/pulsecore/shm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/pulsecore/shm.c b/src/pulsecore/shm.c
+index e464f6bce..5220cc90d 100644
+--- a/src/pulsecore/shm.c
++++ b/src/pulsecore/shm.c
+@@ -94,7 +94,7 @@ struct shm_marker {
+ };
+ 
+ // Ensure struct is appropriately packed
+-static_assert(sizeof(struct shm_marker) == 8 * 5, "`struct shm_marker` is not tightly packed");
++_Static_assert(sizeof(struct shm_marker) == 8 * 5, "`struct shm_marker` is not tightly packed");
+ 
+ static inline size_t shm_marker_size(pa_mem_type_t type) {
+     if (type == PA_MEM_TYPE_SHARED_POSIX)
+-- 
+2.36.1
+

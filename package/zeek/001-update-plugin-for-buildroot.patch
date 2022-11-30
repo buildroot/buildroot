@@ -1,0 +1,27 @@
+--- zeek-4.1.1/cmake/ZeekPluginDynamic.cmake.orig	2022-11-16 10:11:20.269143133 -0500
++++ zeek-4.1.1/cmake/ZeekPluginDynamic.cmake	2022-11-16 10:11:45.682731959 -0500
+@@ -14,12 +14,12 @@
+     if ( BRO_DIST )
+         include(${BRO_DIST}/cmake/CommonCMakeConfig.cmake)
+ 
+-        if ( NOT EXISTS "${BRO_DIST}/build/CMakeCache.txt" )
++        if ( NOT EXISTS "${BRO_DIST}/buildroot-build/CMakeCache.txt" )
+            message(FATAL_ERROR
+-                   "${BRO_DIST}/build/CMakeCache.txt; has Zeek been built?")
++                   "${BRO_DIST}/buildroot-build/CMakeCache.txt; has Zeek been built?")
+         endif ()
+ 
+-        load_cache("${BRO_DIST}/build" READ_WITH_PREFIX bro_cache_
++        load_cache("${BRO_DIST}/buildroot-build" READ_WITH_PREFIX bro_cache_
+                    CMAKE_INSTALL_PREFIX
+                    Zeek_BINARY_DIR
+                    Zeek_SOURCE_DIR
+@@ -97,7 +97,7 @@
+                             ${CMAKE_CURRENT_SOURCE_DIR}/src
+                             )
+ 
+-        set(ENV{PATH} "${BRO_PLUGIN_BRO_BUILD}/build/src:$ENV{PATH}")
++        set(ENV{PATH} "${BRO_PLUGIN_BRO_BUILD}/buildroot-build/src:$ENV{PATH}")
+ 
+     else ()
+         # Independent from BRO_DIST source tree

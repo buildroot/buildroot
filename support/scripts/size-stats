@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (C) 2014 by Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
@@ -54,6 +54,9 @@ class Config:
 # pkg: package to which the file belongs
 #
 def add_file(filesdict, relpath, abspath, pkg):
+    if relpath.endswith(".py"):
+        # also check for compiled .pyc file
+        add_file(filesdict, relpath + "c", abspath + "c", pkg)
     if not os.path.exists(abspath):
         return
     if os.path.islink(abspath):
@@ -73,8 +76,8 @@ def add_file(filesdict, relpath, abspath, pkg):
 def build_package_dict(builddir):
     filesdict = {}
     with open(os.path.join(builddir, "build", "packages-file-list.txt")) as f:
-        for l in f.readlines():
-            pkg, fpath = l.split(",", 1)
+        for line in f.readlines():
+            pkg, fpath = line.split(",", 1)
             # remove the initial './' in each file path
             fpath = fpath.strip()[2:]
             fullpath = os.path.join(builddir, "target", fpath)

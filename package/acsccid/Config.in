@@ -1,7 +1,7 @@
 config BR2_PACKAGE_ACSCCID
 	bool "acsccid"
 	depends on BR2_TOOLCHAIN_HAS_THREADS # pcsc-lite, libusb
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb, pcsc-lite
 	depends on BR2_USE_MMU # pcsc-lite
 	depends on !BR2_STATIC_LIBS # pcsc-lite
 	select BR2_PACKAGE_LIBICONV if !BR2_ENABLE_LOCALE

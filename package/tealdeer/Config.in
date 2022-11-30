@@ -1,0 +1,10 @@
+config BR2_PACKAGE_TEALDEER
+	bool "tealdeer"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_RUSTC
+	help
+	  A fast and full-featured tldr client. tldr pages are
+	  simplified and community-driven man pages, see
+	  https://tldr.sh/ for more information.
+
+	  https://github.com/dbrgn/tealdeer/

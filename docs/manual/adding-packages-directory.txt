@@ -196,13 +196,13 @@ config BR2_PACKAGE_E
 --------------------------
 config BR2_PACKAGE_D
 	bool "Package D"
-	select BR2_PACKAGE_B
 	depends on BR2_PACKAGE_A
+	select BR2_PACKAGE_B
 
 config BR2_PACKAGE_E
 	bool "Package E"
-	select BR2_PACKAGE_D
 	depends on BR2_PACKAGE_A
+	select BR2_PACKAGE_D
 --------------------------
 
 Overall, for package library dependencies, +select+ should be
@@ -429,8 +429,8 @@ different way, using different infrastructures:
    and xref:cmake-package-reference[reference].
 
 * *Makefiles for Python modules*: We have a dedicated infrastructure
-   for Python modules that use either the +distutils+ or the
-   +setuptools+ mechanism. We cover them through a
+   for Python modules that use the +distutils+, +flit+, +pep517+ or
+   +setuptools+ mechanisms. We cover them through a
    xref:python-package-tutorial[tutorial] and a
    xref:python-package-reference[reference].
 
@@ -464,9 +464,8 @@ The format of this file is one line for each file for which to check the
 hash, each line with the following three fields separated by two spaces:
 
 * the type of hash, one of:
-** +md5+, +sha1+, +sha224+, +sha256+, +sha384+, +sha512+, +none+
+** +md5+, +sha1+, +sha224+, +sha256+, +sha384+, +sha512+
 * the hash of the file:
-** for +none+, one or more non-space chars, usually just the string +xxx+
 ** for +md5+, 32 hexadecimal characters
 ** for +sha1+, 40 hexadecimal characters
 ** for +sha224+, 56 hexadecimal characters
@@ -500,9 +499,6 @@ target run. For a package with multiple versions (like Qt5),
 create the hash file in a subdirectory +<packageversion>+ of that package
 (see also xref:patch-apply-order[]).
 
-The +none+ hash type is reserved to those archives downloaded from a
-repository, like a 'git clone', a 'subversion checkout'...
-
 The example below defines a +sha1+ and a +sha256+ published by upstream for
 the main +libfoo-1.2.3.tar.bz2+ tarball, an +md5+ from upstream and a
 locally-computed +sha256+ hashes for a binary blob, a +sha256+ for a
@@ -519,9 +515,6 @@ sha256  01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b  libfoo
 
 # Locally computed:
 sha256  ff52101fb90bbfc3fe9475e425688c660f46216d7e751c4bbdb1dc85cdccacb9  libfoo-fix-blabla.patch
-
-# No hash for 1234:
-none  xxx  libfoo-1234.tar.gz
 
 # Hash for license files:
 sha256  a45a845012742796534f7e91fe623262ccfb99460a2bd04015bd28d66fba95b8  COPYING
@@ -554,3 +547,99 @@ over time. Such patches should not be downloaded, and instead be added
 locally to the package folder.
 
 If the +.hash+ file is missing, then no check is done at all.
+
+[[adding-packages-start-script]]
+=== The +SNNfoo+ start script
+
+Packages that provide a system daemon usually need to be started somehow
+at boot.  Buildroot comes with support for several init systems, some
+are considered tier one (see xref:init-system[]), while others are also
+available but do not have the same level of integration.  Ideally, all
+packages providing a system daemon should provide a start script for
+BusyBox/SysV init and a systemd unit file.
+
+For consistency, the start script must follow the style and composition
+as shown in the reference: +package/busybox/S01syslogd+. An annotated
+example of this style is shown below. There is no specific coding style
+for systemd unit files, but if a package comes with its own unit file,
+that is preferred over a buildroot specific one, if it is compatible
+with buildroot.
+
+The name of the start script is composed of the +SNN+ and the daemon
+name.  The +NN+ is the start order number which needs to be carefully
+chosen.  For example, a program that requires networking to be up should
+not start before +S40network+.  The scripts are started in alphabetical
+order, so +S01syslogd+ starts before +S01watchdogd+, and +S02sysctl+
+start thereafter.
+
+------------------------------
+01: #!/bin/sh
+02:
+03: DAEMON="syslogd"
+04: PIDFILE="/var/run/$DAEMON.pid"
+05:
+06: SYSLOGD_ARGS=""
+07:
+08: # shellcheck source=/dev/null
+09: [ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
+10:
+11: # BusyBox' syslogd does not create a pidfile, so pass "-n" in the command line
+12: # and use "-m" to instruct start-stop-daemon to create one.
+13: start() {
+14: 	printf 'Starting %s: ' "$DAEMON"
+15: 	# shellcheck disable=SC2086 # we need the word splitting
+16: 	start-stop-daemon -b -m -S -q -p "$PIDFILE" -x "/sbin/$DAEMON" \
+17: 		-- -n $SYSLOGD_ARGS
+18: 	status=$?
+19: 	if [ "$status" -eq 0 ]; then
+20: 		echo "OK"
+21: 	else
+22: 		echo "FAIL"
+23: 	fi
+24: 	return "$status"
+25: }
+26:
+27: stop() {
+28: 	printf 'Stopping %s: ' "$DAEMON"
+29: 	start-stop-daemon -K -q -p "$PIDFILE"
+30: 	status=$?
+31: 	if [ "$status" -eq 0 ]; then
+32: 		rm -f "$PIDFILE"
+33: 		echo "OK"
+34: 	else
+35: 		echo "FAIL"
+36: 	fi
+37: 	return "$status"
+38: }
+39:
+40: restart() {
+41: 	stop
+42: 	sleep 1
+43: 	start
+44: }
+45:
+46: case "$1" in
+47: 	start|stop|restart)
+48: 		"$1";;
+49: 	reload)
+50: 		# Restart, since there is no true "reload" feature.
+51: 		restart;;
+52: 	*)
+53: 		echo "Usage: $0 {start|stop|restart|reload}"
+54: 		exit 1
+55: esac
+------------------------------
+
+*Note:* programs that support reloading their configuration in some
+fashion (+SIGHUP+) should provide a +reload()+ function similar to
++stop()+.  The +start-stop-daemon+ supports +-K -s HUP+ for this.
+It is recommended to always append +-x "/sbin/$DAEMON"+ to all the
++start-stop-daemon+ commands to ensure signals are set to a PID that
+matches +$DAEMON+.
+
+Both start scripts and unit files can source command line arguments from
++/etc/default/foo+, in general, if such a file does not exist it should
+not block the start of the daemon, unless there is some site specirfic
+command line argument the daemon requires to start.  For start scripts a
++FOO_ARGS="-s -o -m -e -args"+ can be defined to a default value in and
+the user can override this from +/etc/default/foo+.

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CUPS_FILTERS_VERSION = 1.28.9
+CUPS_FILTERS_VERSION = 1.28.16
 CUPS_FILTERS_SITE = http://openprinting.org/download/cups-filters
 CUPS_FILTERS_LICENSE = GPL-2.0, GPL-2.0+, GPL-3.0, GPL-3.0+, LGPL-2, LGPL-2.1+, MIT, BSD-4-Clause
 CUPS_FILTERS_LICENSE_FILES = COPYING
@@ -45,8 +45,7 @@ else
 CUPS_FILTERS_CONF_OPTS += --disable-dbus
 endif
 
-# avahi support requires avahi-client, which needs avahi-daemon and dbus
-ifeq ($(BR2_PACKAGE_AVAHI_DAEMON)$(BR2_PACKAGE_DBUS),yy)
+ifeq ($(BR2_PACKAGE_AVAHI_LIBAVAHI_CLIENT),y)
 CUPS_FILTERS_DEPENDENCIES += avahi
 CUPS_FILTERS_CONF_OPTS += --enable-avahi
 else
@@ -72,6 +71,13 @@ CUPS_FILTERS_DEPENDENCIES += poppler
 CUPS_FILTERS_CONF_OPTS += --enable-poppler
 else
 CUPS_FILTERS_CONF_OPTS += --disable-poppler
+endif
+
+ifeq ($(BR2_PACKAGE_LIBEXIF),y)
+CUPS_FILTERS_CONF_OPTS += --enable-exif
+CUPS_FILTERS_DEPENDENCIES += libexif
+else
+CUPS_FILTERS_CONF_OPTS += --disable-exif
 endif
 
 define CUPS_FILTERS_INSTALL_INIT_SYSV

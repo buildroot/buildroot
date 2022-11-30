@@ -6,7 +6,7 @@
 
 # When updating the version here, please also update the apparmor package
 LIBAPPARMOR_VERSION_MAJOR = 3.0
-LIBAPPARMOR_VERSION = $(LIBAPPARMOR_VERSION_MAJOR).3
+LIBAPPARMOR_VERSION = $(LIBAPPARMOR_VERSION_MAJOR).7
 LIBAPPARMOR_SOURCE = apparmor-$(LIBAPPARMOR_VERSION).tar.gz
 LIBAPPARMOR_SITE = https://launchpad.net/apparmor/$(LIBAPPARMOR_VERSION_MAJOR)/$(LIBAPPARMOR_VERSION)/+download
 LIBAPPARMOR_LICENSE = LGPL-2.1
@@ -16,7 +16,7 @@ LIBAPPARMOR_DEPENDENCIES = host-bison host-flex host-pkgconf
 LIBAPPARMOR_SUBDIR = libraries/libapparmor
 LIBAPPARMOR_INSTALL_STAGING = YES
 
-# Patches 0001 and 0002 touch Makefile.am and an m4 file
+# Patch 0001 touches Makefile.am and m4 files
 LIBAPPARMOR_AUTORECONF = YES
 
 # Most AppArmor tools will want to link to the static lib.
@@ -28,22 +28,10 @@ LIBAPPARMOR_CONF_OPTS = \
 	--disable-man-pages
 
 ifeq ($(BR2_PACKAGE_PYTHON3),y)
-LIBAPPARMOR_DEPENDENCIES += host-python3 host-swig python3
-
-LIBAPPARMOR_MAKE_OPTS += PYTHON_DISTUTILS_OPTS=\
-	PATH=$(BR_PATH) \
-	$(TARGET_CONFIGURE_OPTS) \
-	LDSHARED="$(TARGET_CROSS)gcc -shared" \
-	PYTHONPATH="$(if $(BR2_PACKAGE_PYTHON3),$(PYTHON3_PATH),$(PYTHON_PATH))" \
-	PYTHONNOUSERSITE=1 \
-	_PYTHON_SYSCONFIGDATA_NAME="$(PKG_PYTHON_SYSCONFIGDATA_NAME)" \
-	_python_sysroot=$(STAGING_DIR) \
-	_python_prefix=/usr \
-	_python_exec_prefix=/usr
-
+LIBAPPARMOR_DEPENDENCIES += host-python3 host-python-setuptools host-swig python3
 LIBAPPARMOR_CONF_OPTS += \
 	--with-python \
-	PYTHON=$(HOST_DIR)/usr/bin/python3 \
+	PYTHON=$(HOST_DIR)/bin/python3 \
 	PYTHON_CONFIG=$(STAGING_DIR)/usr/bin/python3-config \
 	SWIG=$(SWIG)
 else

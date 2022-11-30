@@ -1,0 +1,57 @@
+From d1f42082590bed42cbf6ef1bf37e936df1afbf6b Mon Sep 17 00:00:00 2001
+From: Tobias Tangemann <tobias@tangemann.org>
+Date: Thu, 9 Jul 2015 23:51:07 +0200
+Subject: [PATCH] Fix crash (and compiler warnings)
+
+[Upstream: https://github.com/opsengine/cpulimit/pull/48]
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ src/cpulimit.c                | 2 +-
+ src/process_group.c           | 4 ++++
+ tests/process_iterator_test.c | 2 +-
+ 3 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/src/cpulimit.c b/src/cpulimit.c
+index 50eabeacf214..42d7ca280738 100644
+--- a/src/cpulimit.c
++++ b/src/cpulimit.c
+@@ -43,7 +43,7 @@
+ #include <sys/types.h>
+ #include <sys/wait.h>
+ 
+-#ifdef __APPLE__ || __FREEBSD__
++#if defined(__APPLE__) || defined(__FREEBSD__)
+ #include <libgen.h>
+ #endif
+ 
+diff --git a/src/process_group.c b/src/process_group.c
+index 06d73a6f3541..c9e148cd1b60 100644
+--- a/src/process_group.c
++++ b/src/process_group.c
+@@ -25,6 +25,10 @@
+ #include <sys/time.h>
+ #include <signal.h>
+ 
++#if defined(__APPLE__) || defined(__FREEBSD__)
++#include <libgen.h>
++#endif
++
+ #include <assert.h>
+ 
+ #include "process_iterator.h"
+diff --git a/tests/process_iterator_test.c b/tests/process_iterator_test.c
+index 16151967eb24..1bfc167ba895 100644
+--- a/tests/process_iterator_test.c
++++ b/tests/process_iterator_test.c
+@@ -28,7 +28,7 @@
+ #include <signal.h>
+ #include <string.h>
+ 
+-#ifdef __APPLE__ || __FREEBSD__
++#if defined(__APPLE__) || defined(__FREEBSD__)
+ #include <libgen.h>
+ #endif
+ 
+-- 
+2.25.1
+

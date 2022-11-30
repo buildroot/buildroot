@@ -11,6 +11,7 @@ AUBIO_LICENSE = GPL-3.0+
 AUBIO_LICENSE_FILES = COPYING
 AUBIO_INSTALL_STAGING = YES
 
+AUBIO_DEPENDENCIES = host-pkgconf
 AUBIO_CONF_OPTS = \
 	--disable-docs \
 	--disable-atlas

@@ -1,0 +1,80 @@
+From 35494386a99a4e46be3a99849d2f48651e6ca268 Mon Sep 17 00:00:00 2001
+From: "Arnout Vandecappelle (Essensium/Mind)" <arnout@mind.be>
+Date: Tue, 26 Jul 2022 18:01:48 +0200
+Subject: [PATCH] configure.ac: add option for pcap
+
+Signed-off-by: Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>
+Upstream: https://github.com/FreeRADIUS/freeradius-server/pull/4632
+---
+ configure.ac | 46 +++++++++++++++++++++++++++++++---------------
+ 1 file changed, 31 insertions(+), 15 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 45d8e619e2..f760a5b236 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1004,6 +1004,20 @@ AC_CHECK_LIB(ws2_32, htonl)
+ dnl #
+ dnl #  Check the pcap library for the RADIUS sniffer.
+ dnl #
++dnl extra argument: --with-pcap=yes/no
++WITH_PCAP=yes
++AC_ARG_WITH(pcap,
++[  --with-pcap          use pcap library for the RADIUS sniffer. (default=yes)],
++[ case "$withval" in
++  no)
++    WITH_PCAP=no
++    ;;
++  *)
++    WITH_PCAP=yes
++    ;;
++  esac ]
++)
++
+ dnl extra argument: --with-pcap-lib-dir=DIR
+ pcap_lib_dir=
+ AC_ARG_WITH(pcap-lib-dir,
+@@ -1036,23 +1050,25 @@ AC_ARG_WITH(pcap-include-dir,
+       ;;
+   esac])
+ 
+-smart_try_dir="$pcap_lib_dir"
+-FR_SMART_CHECK_LIB(pcap, pcap_open_live)
+-if test "x$ac_cv_lib_pcap_pcap_open_live" != "xyes"; then
+-  AC_MSG_WARN([pcap library not found, silently disabling the RADIUS sniffer, and ARP listener.  Use --with-pcap-lib-dir=<path>.])
+-else
+-  AC_CHECK_FUNCS(\
+-    pcap_fopen_offline \
+-    pcap_dump_fopen \
+-    pcap_create \
+-    pcap_activate
+-  )
++if test "x$WITH_PCAP" = xyes; then
++  smart_try_dir="$pcap_lib_dir"
++  FR_SMART_CHECK_LIB(pcap, pcap_open_live)
++  if test "x$ac_cv_lib_pcap_pcap_open_live" != "xyes"; then
++    AC_MSG_WARN([pcap library not found, silently disabling the RADIUS sniffer, and ARP listener.  Use --with-pcap-lib-dir=<path>.])
++  else
++    AC_CHECK_FUNCS(\
++      pcap_fopen_offline \
++      pcap_dump_fopen \
++      pcap_create \
++      pcap_activate
++    )
+ 
+-  PCAP_LIBS="${smart_lib}"
+-  PCAP_LDFLAGS="${smart_ldflags}"
++    PCAP_LIBS="${smart_lib}"
++    PCAP_LDFLAGS="${smart_ldflags}"
++  fi
++  dnl Set by FR_SMART_CHECK_LIB
++  LIBS="${old_LIBS}"
+ fi
+-dnl Set by FR_SMART_CHECK_LIB
+-LIBS="${old_LIBS}"
+ 
+ dnl Check for collectdclient
+ dnl extra argument: --with-collectdclient-lib-dir=DIR
+-- 
+2.35.3
+

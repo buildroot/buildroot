@@ -18,13 +18,7 @@ if BR2_PACKAGE_LIBMEDIAART
 
 choice
 	prompt "media art backend"
-	default BR2_PACKAGE_LIBMEDIAART_BACKEND_NONE
-
-config BR2_PACKAGE_LIBMEDIAART_BACKEND_NONE
-	bool "none"
-	help
-	  With no backend, libmediaart will not be able to process MP3
-	  album art.
+	default BR2_PACKAGE_LIBMEDIAART_BACKEND_GDK_PIXBUF
 
 config BR2_PACKAGE_LIBMEDIAART_BACKEND_GDK_PIXBUF
 	bool "gdk-pixbuf"

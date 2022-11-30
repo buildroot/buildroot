@@ -17,7 +17,7 @@ if [ -L /var/lib/mender \
         mkdir -p "$(readlink /var/lib/mender)"; \
     fi; \
 fi'
-ExecStart=/usr/bin/mender -daemon
+ExecStart=/usr/bin/mender daemon
 Restart=on-abort
 
 [Install]

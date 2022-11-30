@@ -1,9 +1,10 @@
-.check-DEVELOPERS_base:
-    # get-developers should print just "No action specified"; if it prints
-    # anything else, it's a parse error.
-    # The initial ! is removed by YAML so we need to quote it.
+.check-check-package_base:
     script:
-        - "! utils/get-developers | grep -v 'No action specified'"
+        - python3 -m pytest -v utils/checkpackagelib/
+
+.check-DEVELOPERS_base:
+    script:
+        - utils/get-developers -v
 
 .check-flake8_base:
     script:

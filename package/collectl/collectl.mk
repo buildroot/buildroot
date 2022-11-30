@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-COLLECTL_VERSION = 4.3.1
+COLLECTL_VERSION = 4.3.2
 COLLECTL_SOURCE = collectl-$(COLLECTL_VERSION).src.tar.gz
 COLLECTL_SITE = http://downloads.sourceforge.net/collectl/collectl
 COLLECTL_LICENSE = Artistic or GPL-2.0

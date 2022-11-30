@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-QT5TOOLS_VERSION = $(QT5_VERSION)
-QT5TOOLS_SITE = $(QT5_SITE)
-QT5TOOLS_SOURCE = qttools-$(QT5_SOURCE_TARBALL_PREFIX)-$(QT5TOOLS_VERSION).tar.xz
+QT5TOOLS_VERSION = 53ee43a51b5a3de2877dafffc78e71ff55926708
+QT5TOOLS_SITE = $(QT5_SITE)/qttools/-/archive/$(QT5TOOLS_VERSION)
+QT5TOOLS_SOURCE = qttools-$(QT5TOOLS_VERSION).tar.bz2
 
 QT5TOOLS_INSTALL_STAGING = YES
+QT5TOOLS_SYNC_QT_HEADERS = YES
 
 # linguist tools compile conditionally on qtHaveModule(qmldevtools-private),
 # but the condition is used only used to decide if lupdate will support

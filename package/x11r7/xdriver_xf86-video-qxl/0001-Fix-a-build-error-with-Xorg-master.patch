@@ -1,0 +1,106 @@
+From 4e1963a812f2c1777ba5d56ea9e939a3e40a0496 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Zolt=C3=A1n=20B=C3=B6sz=C3=B6rm=C3=A9nyi?=
+ <zboszor@gmail.com>
+Date: Sat, 28 Aug 2021 15:38:40 +0200
+Subject: [PATCH] Fix a build  error with Xorg master
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Use xf86ReturnOptValBool() in get_bool_option() instead of
+options[option_index].value.bool to fix a compiler error with
+current Xorg xserver master branch.
+
+Also use xf86GetOptValInteger() in get_int_option() and
+xf86GetOptValString() in get_str_option() for consistency.
+
+The change causes a slight performance drop during option parsing
+because the passed-in index_value is no longer used as an index
+into the options array.
+
+Instead, it's used as a token now for the standard option getter
+functions which works since the index_value to the get_*_option()
+functions are identical to the value of options[n].token in the
+passed-in OptionInfoRec array.
+
+Also rename "int option_index" to "int token" for clarity in all
+three functions.
+
+Signed-off-by: Zoltán Böszörményi <zboszor@gmail.com>
+
+Downloaded from upstream commit
+https://gitlab.freedesktop.org/xorg/driver/xf86-video-qxl/-/commit/4e1963a812f2c1777ba5d56ea9e939a3e40a0496
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ src/qxl_option_helpers.c | 13 +++++++------
+ src/qxl_option_helpers.h |  6 +++---
+ 2 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/src/qxl_option_helpers.c b/src/qxl_option_helpers.c
+index 2aba677..7707b7c 100644
+--- a/src/qxl_option_helpers.c
++++ b/src/qxl_option_helpers.c
+@@ -10,31 +10,32 @@
+ 
+ #include "qxl_option_helpers.h"
+ 
+-int get_int_option(OptionInfoPtr options, int option_index,
++int get_int_option(OptionInfoPtr options, int token,
+                    const char *env_name)
+ {
++    int value;
+     if (env_name && getenv(env_name)) {
+         return atoi(getenv(env_name));
+     }
+-    return options[option_index].value.num;
++    return xf86GetOptValInteger(options, token, &value) ? value : 0;
+ }
+ 
+-const char *get_str_option(OptionInfoPtr options, int option_index,
++const char *get_str_option(OptionInfoPtr options, int token,
+                            const char *env_name)
+ {
+     if (getenv(env_name)) {
+         return getenv(env_name);
+     }
+-    return options[option_index].value.str;
++    return xf86GetOptValString(options, token);
+ }
+ 
+-int get_bool_option(OptionInfoPtr options, int option_index,
++int get_bool_option(OptionInfoPtr options, int token,
+                      const char *env_name)
+ {
+     const char* value = getenv(env_name);
+ 
+     if (!value) {
+-        return options[option_index].value.bool;
++        return xf86ReturnOptValBool(options, token, FALSE);
+     }
+     if (strcmp(value, "0") == 0 ||
+         strcasecmp(value, "off") == 0 ||
+diff --git a/src/qxl_option_helpers.h b/src/qxl_option_helpers.h
+index 7c54c72..66d0a17 100644
+--- a/src/qxl_option_helpers.h
++++ b/src/qxl_option_helpers.h
+@@ -4,13 +4,13 @@
+ #include <xf86Crtc.h>
+ #include <xf86Opt.h>
+ 
+-int get_int_option(OptionInfoPtr options, int option_index,
++int get_int_option(OptionInfoPtr options, int token,
+                    const char *env_name);
+ 
+-const char *get_str_option(OptionInfoPtr options, int option_index,
++const char *get_str_option(OptionInfoPtr options, int token,
+                            const char *env_name);
+ 
+-int get_bool_option(OptionInfoPtr options, int option_index,
++int get_bool_option(OptionInfoPtr options, int token,
+                      const char *env_name);
+ 
+ #endif // OPTION_HELPERS_H
+-- 
+GitLab
+

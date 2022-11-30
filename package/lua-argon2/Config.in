@@ -1,0 +1,13 @@
+config BR2_PACKAGE_LUA_ARGON2
+	bool "lua-argon2"
+	depends on !BR2_STATIC_LIBS
+	depends on BR2_USE_MMU # libargon2
+	select BR2_PACKAGE_LIBARGON2
+	help
+	  Lua C binding for the Argon2 password hashing algorithm.
+
+	  https://github.com/thibaultcha/lua-argon2
+
+comment "lua-argon2 needs a toolchain w/ dynamic library"
+	depends on BR2_USE_MMU
+	depends on BR2_STATIC_LIBS

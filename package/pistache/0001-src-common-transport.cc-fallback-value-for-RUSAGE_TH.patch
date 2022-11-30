@@ -1,0 +1,33 @@
+From 5feed6d2f86750bfe1e7c26d6fd4e8d2195ea81f Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Thu, 4 Aug 2022 19:54:23 +0200
+Subject: [PATCH] src/common/transport.cc: fallback value for RUSAGE_THREAD
+
+uClibc-ng currently does not define RUSAGE_THREAD, so let's add a
+fallback value until it gets fixed in uClibc-ng. The value is the same
+on all Linux systems, regardless of the CPU architecture.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Upstream bug: https://mailman.openadk.org/mailman3/hyperkitty/list/devel@uclibc-ng.org/thread/MEXOUSFSH46UFS3AEMEIEPTL5U4HVEFL/
+---
+ src/common/transport.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/common/transport.cc b/src/common/transport.cc
+index 62efb8c..0f3abb0 100644
+--- a/src/common/transport.cc
++++ b/src/common/transport.cc
+@@ -515,6 +515,10 @@ namespace Pistache::Tcp
+ 
+         rusage now;
+ 
++#if !defined(RUSAGE_THREAD)
++#define RUSAGE_THREAD 1
++#endif
++
+         auto res = getrusage(RUSAGE_THREAD, &now);
+         if (res == -1)
+             loadRequest_.reject(std::runtime_error("Could not compute usage"));
+-- 
+2.37.1
+

@@ -1,5 +1,18 @@
+config BR2_PACKAGE_PHP_ARCH_SUPPORTS
+	bool
+	# see fiber_cpu in configure.ac
+	default y if BR2_aarch64 || BR2_aarch64_be
+	default y if BR2_arm || BR2_armeb
+	default y if BR2_i386 || BR2_x86_64
+	default y if BR2_mips || BR2_mipsel || BR2_mips64 || BR2_mips64el
+	default y if BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le
+	default y if BR2_RISCV_64
+	default y if BR2_s390x
+	default y if BR2_TOOLCHAIN_HAS_UCONTEXT
+
 config BR2_PACKAGE_PHP
 	bool "php"
+	depends on BR2_PACKAGE_PHP_ARCH_SUPPORTS
 	# PHP uses -export-dynamic, which breaks with elf2flt with a
 	# message like "ld.real: section .junk LMA [...,...] overlaps
 	# section .text LMA [...,...]"
@@ -52,5 +65,6 @@ source "package/php/Config.ext"
 endif
 
 comment "php needs a toolchain w/ wchar"
+	depends on BR2_PACKAGE_PHP_ARCH_SUPPORTS
 	depends on !BR2_BINFMT_FLAT
 	depends on !BR2_USE_WCHAR

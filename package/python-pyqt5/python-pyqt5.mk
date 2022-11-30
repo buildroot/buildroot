@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-PYTHON_PYQT5_VERSION = 5.7
-PYTHON_PYQT5_SOURCE = PyQt5_gpl-$(PYTHON_PYQT5_VERSION).tar.gz
-PYTHON_PYQT5_SITE = http://downloads.sourceforge.net/project/pyqt/PyQt5/PyQt-$(PYTHON_PYQT5_VERSION)
+PYTHON_PYQT5_VERSION = 5.15.6
+PYTHON_PYQT5_SOURCE = PyQt5-$(PYTHON_PYQT5_VERSION).tar.gz
+PYTHON_PYQT5_SITE = https://files.pythonhosted.org/packages/3b/27/fd81188a35f37be9b3b4c2db1654d9439d1418823916fe702ac3658c9c41
 PYTHON_PYQT5_LICENSE = GPL-3.0
 PYTHON_PYQT5_LICENSE_FILES = LICENSE
 
@@ -18,14 +18,6 @@ PYTHON_PYQT5_MODULES = \
 	$(if $(BR2_PACKAGE_QT5BASE_OPENGL_LIB),QtOpenGL) \
 	$(if $(BR2_PACKAGE_QT5BASE_PRINTSUPPORT),QtPrintSupport) \
 	$(if $(BR2_PACKAGE_QT5BASE_XML),QtXml)
-
-ifeq ($(BR2_PACKAGE_PYTHON),y)
-PYTHON_PYQT5_PYTHON_DIR = python$(PYTHON_VERSION_MAJOR)
-PYTHON_PYQT5_RM_PORT_BASE = port_v3
-else ifeq ($(BR2_PACKAGE_PYTHON3),y)
-PYTHON_PYQT5_PYTHON_DIR = python$(PYTHON3_VERSION_MAJOR)
-PYTHON_PYQT5_RM_PORT_BASE = port_v2
-endif
 
 ifeq ($(BR2_PACKAGE_QT5BASE_WIDGETS),y)
 PYTHON_PYQT5_MODULES += QtWidgets
@@ -99,13 +91,6 @@ PYTHON_PYQT5_DEPENDENCIES += qt5webchannel
 PYTHON_PYQT5_MODULES += QtWebChannel
 endif
 
-ifeq ($(BR2_PACKAGE_QT5WEBENGINE),y)
-PYTHON_PYQT5_DEPENDENCIES += qt5webengine
-PYTHON_PYQT5_MODULES += \
-	QtWebEngineCore \
-	$(if $(BR2_PACKAGE_QT5BASE_WIDGETS),QtWebEngineWidgets)
-endif
-
 ifeq ($(BR2_PACKAGE_QT5WEBKIT),y)
 PYTHON_PYQT5_DEPENDENCIES += qt5webkit
 PYTHON_PYQT5_MODULES += \
@@ -128,43 +113,49 @@ PYTHON_PYQT5_DEPENDENCIES += qt5xmlpatterns
 PYTHON_PYQT5_MODULES += QtXmlPatterns
 endif
 
-PYTHON_PYQT5_QTDETAIL_LICENSE = Open Source
+PYTHON_PYQT5_QTCORE_LICENSE = Open Source
 
-PYTHON_PYQT5_QTDETAIL_TYPE = shared
+PYTHON_PYQT5_QTCORE_TYPE = shared
 
 # Turn off features that aren't available in current qt configuration
-PYTHON_PYQT5_QTDETAIL_DISABLE_FEATURES += $(if $(BR2_PACKAGE_QT5BASE_OPENGL),,PyQt_OpenGL)
-PYTHON_PYQT5_QTDETAIL_DISABLE_FEATURES += $(if $(BR2_PACKAGE_QT5BASE_OPENGL_DESKTOP),,PyQt_Desktop_OpenGL)
-PYTHON_PYQT5_QTDETAIL_DISABLE_FEATURES += $(if $(BR2_PACKAGE_OPENSSL),,PyQt_SSL)
+PYTHON_PYQT5_QTCORE_DISABLE_FEATURES += $(if $(BR2_PACKAGE_QT5BASE_OPENGL),,PyQt_OpenGL)
+PYTHON_PYQT5_QTCORE_DISABLE_FEATURES += $(if $(BR2_PACKAGE_QT5BASE_OPENGL_DESKTOP),,PyQt_Desktop_OpenGL)
+PYTHON_PYQT5_QTCORE_DISABLE_FEATURES += $(if $(BR2_PACKAGE_OPENSSL),,PyQt_SSL)
 
-define PYTHON_PYQT5_QTDETAIL
-	echo $(1) >> $(2)/qtdetail.out
+define PYTHON_PYQT5_QTCORE
+	echo $(1) >> $(2)/cfgtest_QtCore.out
 endef
 
-# Since we can't run generate qtdetail.out by running qtdetail on target device
+# Since we can't run generate cfgtest_QtCore.out by running qtdetail on target device
 # we must generate the configuration.
-define PYTHON_PYQT5_GENERATE_QTDETAIL
-	$(RM) -f $(1)/qtdetail.out
-	$(call PYTHON_PYQT5_QTDETAIL,$(PYTHON_PYQT5_QTDETAIL_LICENSE),$(1))
-	$(call PYTHON_PYQT5_QTDETAIL,$(PYTHON_PYQT5_QTDETAIL_TYPE),$(1))
-	$(foreach f,$(PYTHON_PYQT5_QTDETAIL_DISABLE_FEATURES),
-		$(call PYTHON_PYQT5_QTDETAIL,$(f),$(1)) \
+define PYTHON_PYQT5_GENERATE_QTCORE
+	$(RM) -f $(1)/cfgtest_QtCore.out
+	$(call PYTHON_PYQT5_QTCORE,$(PYTHON_PYQT5_QTCORE_LICENSE),$(1))
+	$(call PYTHON_PYQT5_QTCORE,$(PYTHON_PYQT5_QTCORE_TYPE),$(1))
+	$(foreach f,$(PYTHON_PYQT5_QTCORE_DISABLE_FEATURES),
+		$(call PYTHON_PYQT5_QTCORE,$(f),$(1)) \
 	)
 endef
 
+# The file "qt.conf" can be used to override the hard-coded paths that are
+# compiled into the Qt library. We need it to make "qmake" relocatable and
+# tweak the per-package install pathes
+PYTHON_PYQT5_PRE_CONFIGURE_HOOKS += QT5_QT_CONF_FIXUP
+
 PYTHON_PYQT5_CONF_OPTS = \
 	--bindir $(TARGET_DIR)/usr/bin \
-	--destdir $(TARGET_DIR)/usr/lib/$(PYTHON_PYQT5_PYTHON_DIR)/site-packages \
+	--destdir $(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages \
 	--qmake $(HOST_DIR)/bin/qmake \
 	--sysroot $(STAGING_DIR)/usr \
 	-w --confirm-license \
 	--no-designer-plugin \
 	--no-docstrings \
 	--no-sip-files \
+	--assume-shared \
 	$(foreach module,$(PYTHON_PYQT5_MODULES),--enable=$(module))
 
 define PYTHON_PYQT5_CONFIGURE_CMDS
-	$(call PYTHON_PYQT5_GENERATE_QTDETAIL,$(@D))
+	$(call PYTHON_PYQT5_GENERATE_QTCORE,$(@D))
 	(cd $(@D); \
 		$(TARGET_MAKE_ENV) \
 		$(TARGET_CONFIGURE_OPTS) \
@@ -180,9 +171,10 @@ endef
 # __init__.py is needed to import PyQt5
 # __init__.pyc is needed if BR2_PACKAGE_PYTHON_PYC_ONLY is set
 define PYTHON_PYQT5_INSTALL_TARGET_CMDS
-	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D) install
-	touch $(TARGET_DIR)/usr/lib/$(PYTHON_PYQT5_PYTHON_DIR)/site-packages/PyQt5/__init__.py
-	$(RM) -rf $(TARGET_DIR)/usr/lib/$(PYTHON_PYQT5_PYTHON_DIR)/site-packages/PyQt5/uic/$(PYTHON_PYQT5_RM_PORT_BASE)
+	# Parallel install is not supported.
+	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE1) -C $(@D) install
+	touch $(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages/PyQt5/__init__.py
+	$(RM) -rf $(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages/PyQt5/uic/port_v2
 endef
 
 $(eval $(generic-package))

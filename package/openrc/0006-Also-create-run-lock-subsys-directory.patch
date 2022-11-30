@@ -1,0 +1,29 @@
+From 49e5929b468f604d80a0c04a6ce78eb96ca36090 Mon Sep 17 00:00:00 2001
+From: Norbert Lange <nolange79@gmail.com>
+Date: Sun, 9 Jan 2022 00:22:40 +0100
+Subject: [PATCH] Also create /run/lock/subsys directory
+
+Buildroot service scripts regularly use this directory, so
+create it in the most appropriate spot.
+
+Signed-off-by: Norbert Lange <nolange79@gmail.com>
+---
+ sh/init.sh.Linux.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sh/init.sh.Linux.in b/sh/init.sh.Linux.in
+index e8afc1fb..662ab223 100644
+--- a/sh/init.sh.Linux.in
++++ b/sh/init.sh.Linux.in
+@@ -82,7 +82,7 @@ elif ! mountinfo -q /run; then
+ fi
+ 
+ checkpath -d "$RC_SVCDIR"
+-checkpath -d -m 0775 -o root:daemon /run/lock
++checkpath -d -m 0775 -o root:daemon /run/lock /run/lock/subsys
+ 
+ # Try to mount xenfs as early as possible, otherwise rc_sys() will always
+ # return RC_SYS_XENU and will think that we are in a domU while it's not.
+-- 
+2.34.1
+

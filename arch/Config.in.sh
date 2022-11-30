@@ -5,8 +5,6 @@ choice
 	help
 	  Specific CPU variant to use
 
-config BR2_sh2a
-	bool "sh2a (SH2A big endian)"
 config BR2_sh4
 	bool "sh4 (SH4 little endian)"
 config BR2_sh4eb
@@ -18,15 +16,17 @@ config BR2_sh4aeb
 endchoice
 
 config BR2_ARCH
-	default "sh2a"		if BR2_sh2a
 	default "sh4"		if BR2_sh4
 	default "sh4eb"		if BR2_sh4eb
 	default "sh4a"		if BR2_sh4a
 	default "sh4aeb"	if BR2_sh4aeb
 
+config BR2_NORMALIZED_ARCH
+	default "sh"
+
 config BR2_ENDIAN
 	default "LITTLE"	if BR2_sh4 || BR2_sh4a
-	default "BIG"		if BR2_sh2a || BR2_sh4eb || BR2_sh4aeb
+	default "BIG"		if BR2_sh4eb || BR2_sh4aeb
 
 config BR2_READELF_ARCH_NAME
 	default "Renesas / SuperH SH"

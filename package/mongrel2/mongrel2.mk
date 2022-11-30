@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MONGREL2_VERSION = 1.12.2
+MONGREL2_VERSION = 1.13.0
 MONGREL2_SOURCE = mongrel2-v$(MONGREL2_VERSION).tar.bz2
 # Do not use the github helper here, the generated tarball is *NOT* the same
 # as the one uploaded by upstream for the release.

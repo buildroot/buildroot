@@ -1,0 +1,44 @@
+config BR2_PACKAGE_NTPSEC
+	bool "ntpsec"
+	depends on BR2_USE_MMU # python3
+	depends on BR2_USE_WCHAR # python3
+	depends on BR2_TOOLCHAIN_HAS_THREADS # python3
+	depends on !BR2_STATIC_LIBS # python3
+	select BR2_PACKAGE_LIBCAP
+	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_PYTHON3
+	help
+	  NTPsec project - a secure, hardened, and improved
+	  implementation of Network Time Protocol derived
+	  from NTP Classic, Dave Mills’s original.
+
+	  Provides things like ntpd, ntpdate, ntpq, etc...
+
+	  https://www.ntpsec.org/
+
+if BR2_PACKAGE_NTPSEC
+
+config BR2_PACKAGE_NTPSEC_CLASSIC_MODE
+	bool "classic-mode"
+	help
+	  Enable strict configuration and log-format compatibility
+	  with NTP Classic.
+
+config BR2_PACKAGE_NTPSEC_NTS
+	bool "NTS support"
+	help
+	  Enable Network Time Security (NTS) support.
+
+config BR2_PACKAGE_NTPSEC_REFCLOCK_ALL
+	bool "refclock-all"
+	select BR2_PACKAGE_PPS_TOOLS
+	help
+	  Enable all refclocks (hardware, sync source and discplined
+	  clocks)
+
+endif
+
+comment "ntpsec needs a toolchain w/ wchar, threads, dynamic library"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
+		BR2_STATIC_LIBS

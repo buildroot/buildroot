@@ -1,0 +1,30 @@
+From cf4d7fd9f7cb6c1ced32ee323b2b5755640051b7 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd.kuhls@t-online.de>
+Date: Sat, 11 Apr 2020 22:01:40 +0200
+Subject: [PATCH] Add an option to disable the berkeleydb module
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ configure.ac | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/configure.ac b/configure.ac
+index 4e733f6..1e52f30 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -3480,6 +3480,12 @@ if test "$UUID" = "no"; then
+    DISABLED_EXTENSIONS="${DISABLED_EXTENSIONS} _uuid"
+ fi
+ 
++AC_ARG_ENABLE(berkeleydb,
++	AS_HELP_STRING([--disable-berkeleydb], [disable berkeleydb]),
++	[ if test "$enableval" = "no"; then
++	     DISABLED_EXTENSIONS="${DISABLED_EXTENSIONS} _dbm"
++	  fi])
++
+ AC_SUBST(PYDOC)
+ 
+ AC_ARG_ENABLE(pydoc,
+-- 
+2.30.2
+

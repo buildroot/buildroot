@@ -119,4 +119,10 @@ config BR2_TARGET_OPENSBI_FW_FDT_PATH
 	  must be set in the U-Boot configuration for this file to be
 	  produced.
 
+config BR2_TARGET_OPENSBI_ADDITIONAL_VARIABLES
+	string "Additional build variables"
+	help
+	  Additional parameters for the build, which will be passed on
+	  the make command line. E.g: BUILD_INFO=1.
+
 endif

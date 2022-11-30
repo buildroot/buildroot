@@ -13,13 +13,3 @@ config BR2_PACKAGE_LIBNFTNL
 	  currently used by nftables.
 
 	  http://netfilter.org/projects/libnftnl/index.html
-
-if BR2_PACKAGE_LIBNFTNL
-
-config BR2_PACKAGE_LIBNFTNL_JSON
-	bool "enable JSON support"
-	select BR2_PACKAGE_JANSSON
-	help
-	  Enable JSON parsing support
-
-endif

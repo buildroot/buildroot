@@ -1,0 +1,28 @@
+From 0ad9ee080a7cd8037c341067cc67a84e32e69fea Mon Sep 17 00:00:00 2001
+From: Maurice Smulders <Maurice.Smulders@windtalker.com>
+Date: Thu, 30 Dec 2021 10:45:42 -0700
+Subject: [PATCH] Fix compile break with GCC 7+ - buffer overflow with snprintf
+
+[Retrieved from:
+https://github.com/octo/liboping/pull/64/commits/0ad9ee080a7cd8037c341067cc67a84e32e69fea]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/liboping.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/liboping.c b/src/liboping.c
+index bf9e059..9fd8f53 100644
+--- a/src/liboping.c
++++ b/src/liboping.c
+@@ -203,8 +203,11 @@ static char *sstrerror (int errnum, char *buf, size_t buflen)
+ static void ping_set_error (pingobj_t *obj, const char *function,
+ 	       	const char *message)
+ {
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wformat-truncation"
+ 	snprintf (obj->errmsg, sizeof (obj->errmsg),
+ 			"%s: %s", function, message);
++#pragma GCC diagnostic pop
+ 	obj->errmsg[sizeof (obj->errmsg) - 1] = 0;
+ }
+ 

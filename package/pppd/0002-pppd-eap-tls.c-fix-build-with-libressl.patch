@@ -1,0 +1,36 @@
+From b0a011bc4abac8cb3de8dfff42b754ed236ecf0f Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 4 Jul 2022 10:07:03 +0200
+Subject: [PATCH] pppd/eap-tls.c: fix build with libressl (#338)
+
+Fix the following build failure with libressl:
+
+eap-tls.c: In function 'ssl_msg_callback':
+eap-tls.c:1284:10: error: 'SSL3_RT_HEADER' undeclared (first use in this function); did you mean 'SSL3_RT_ALERT'?
+ 1284 |     case SSL3_RT_HEADER:
+      |          ^~~~~~~~~~~~~~
+      |          SSL3_RT_ALERT
+
+Fixes:
+ - http://autobuild.buildroot.org/results/7d721833bddf73531fa03b0a626511af6826d0df
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved (and backported) from:
+https://github.com/ppp-project/ppp/commit/b0a011bc4abac8cb3de8dfff42b754ed236ecf0f]
+---
+ pppd/eap-tls.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/pppd/eap-tls.c b/pppd/eap-tls.c
+index b9bab842..40796d58 100644
+--- a/pppd/eap-tls.c
++++ b/pppd/eap-tls.c
+@@ -61,7 +61,7 @@
+ #include "mppe.h"
+ #include "pathnames.h"
+ 
+-#if OPENSSL_VERSION_NUMBER < 0x10100000L
++#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
+ 
+ #define TLS_method SSLv23_method
+ 

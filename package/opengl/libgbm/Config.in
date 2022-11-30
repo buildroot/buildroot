@@ -1,0 +1,25 @@
+config BR2_PACKAGE_HAS_LIBGBM
+	bool
+
+config BR2_PACKAGE_PROVIDES_LIBGBM
+	string
+	depends on BR2_PACKAGE_HAS_LIBGBM
+
+# gbm implementations should select
+# BR2_PACKAGE_LIBGBM_HAS_FEATURE_FORMAT_MODIFIER_PLANE_COUNT if they
+# provide the format modifier plane count feature. This API was
+# initially introduced in mesa3d version 17. A gbm implementation
+# provides this feature if it is implement function
+# gbm_device_get_format_modifier_plane_count.
+config BR2_PACKAGE_LIBGBM_HAS_FEATURE_FORMAT_MODIFIER_PLANE_COUNT
+	bool
+	depends on BR2_PACKAGE_HAS_LIBGBM
+
+# gbm implementations should select
+# BR2_PACKAGE_LIBGBM_HAS_FEATURE_DMA_BUF if they provide the dma
+# buffer feature. This API was initially introduced in mesa3d version
+# 10. A gbm implementation provides this feature if it is implement
+# function gbm_bo_get_fd.
+config BR2_PACKAGE_LIBGBM_HAS_FEATURE_DMA_BUF
+	bool
+	depends on BR2_PACKAGE_HAS_LIBGBM

@@ -4,13 +4,15 @@
 #
 ################################################################################
 
-TESSERACT_OCR_VERSION = 4.1.1
-TESSERACT_OCR_DATA_VERSION = 4.0.0
+TESSERACT_OCR_VERSION = 5.0.1
+TESSERACT_OCR_DATA_VERSION = 4.1.0
 TESSERACT_OCR_SITE = $(call github,tesseract-ocr,tesseract,$(TESSERACT_OCR_VERSION))
 TESSERACT_OCR_LICENSE = Apache-2.0
 TESSERACT_OCR_LICENSE_FILES = LICENSE
 
 # Source from github, no configure script provided
+# 0001-Check-if-platform-supports-feenableexcept.patch
+# 0002-configure.ac-fix-build-on-aarch64_be.patch
 TESSERACT_OCR_AUTORECONF = YES
 
 # cairo, pango and icu are optional dependencies, but only needed for
@@ -24,6 +26,12 @@ TESSERACT_OCR_CONF_ENV = \
 TESSERACT_OCR_CONF_OPTS = \
 	--disable-opencl
 
+ifeq ($(BR2_ARM_CPU_HAS_NEON),y)
+TESSERACT_OCR_CONF_ENV += ax_cv_check_cxxflags__mfpu_neon=yes
+else
+TESSERACT_OCR_CONF_ENV += ax_cv_check_cxxflags__mfpu_neon=no
+endif
+
 # Language data files download
 ifeq ($(BR2_PACKAGE_TESSERACT_OCR_LANG_ENG),y)
 TESSERACT_OCR_DATA_FILES += eng.traineddata
@@ -33,7 +41,7 @@ ifeq ($(BR2_PACKAGE_TESSERACT_OCR_LANG_FRA),y)
 TESSERACT_OCR_DATA_FILES += fra.traineddata
 endif
 
-ifeq ($(BR2_PACKAGE_TESSERACT_OCR_LANG_DEU),y)
+ifeq ($(BR2_PACKAGE_TESSERACT_OCR_LANG_GER),y)
 TESSERACT_OCR_DATA_FILES += deu.traineddata
 endif
 

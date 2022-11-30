@@ -1,0 +1,43 @@
+From 0658d38be16c88585b248b237895b4dc63f28e79 Mon Sep 17 00:00:00 2001
+From: peak3d <pfau@peak3d.de>
+Date: Thu, 22 Jul 2021 11:23:13 +0200
+Subject: [PATCH] Avoid set next fragment position
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ Source/C++/Core/Ap4LinearReader.cpp | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/Source/C++/Core/Ap4LinearReader.cpp b/Source/C++/Core/Ap4LinearReader.cpp
+index eabeacf..61c3a9d 100644
+--- a/Source/C++/Core/Ap4LinearReader.cpp
++++ b/Source/C++/Core/Ap4LinearReader.cpp
+@@ -54,8 +54,8 @@ AP4_LinearReader::AP4_LinearReader(AP4_Movie&      movie,
+     m_HasFragments = movie.HasFragments();
+     if (fragment_stream) {
+         fragment_stream->AddReference();
+-        fragment_stream->Tell(m_CurrentFragmentPosition);
+-        m_NextFragmentPosition = m_CurrentFragmentPosition;
++        //fragment_stream->Tell(m_CurrentFragmentPosition);
++        //m_NextFragmentPosition = m_CurrentFragmentPosition;
+     }
+ }
+ 
+@@ -360,9 +360,11 @@ AP4_LinearReader::AdvanceFragment()
+     AP4_Result result;
+      
+     // go the the start of the next fragment
+-    result = m_FragmentStream->Seek(m_NextFragmentPosition);
+-    if (AP4_FAILED(result)) return result;
+-    m_CurrentFragmentPosition = m_NextFragmentPosition;
++    if (m_NextFragmentPosition) {
++        result = m_FragmentStream->Seek(m_NextFragmentPosition);
++        if (AP4_FAILED(result)) return result;
++        m_CurrentFragmentPosition = m_NextFragmentPosition;
++    }
+ 
+     // read atoms until we find a moof
+     assert(m_HasFragments);
+-- 
+2.30.2
+

@@ -1,0 +1,14 @@
+config BR2_PACKAGE_HOST_NODEJS
+	bool "host nodejs"
+	depends on BR2_HOST_GCC_AT_LEAST_8
+	select BR2_PACKAGE_HOST_PYTHON3
+	select BR2_PACKAGE_HOST_PYTHON3_BZIP2
+	select BR2_PACKAGE_HOST_PYTHON3_SSL
+	help
+	  Event-driven I/O server-side JavaScript environment based on
+	  V8.
+
+	  http://nodejs.org/
+
+comment "host nodejs needs a host gcc >= 8"
+	depends on !BR2_HOST_GCC_AT_LEAST_8

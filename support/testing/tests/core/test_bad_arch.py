@@ -14,5 +14,5 @@ class DetectBadArchTest(infra.basetest.BRConfigTest):
         if logf_path:
             s = 'ERROR: architecture for "/usr/bin/foo" is'
             with open(logf_path, "r") as f:
-                lines = [l for l in f.readlines() if l.startswith(s)]
+                lines = [line for line in f.readlines() if line.startswith(s)]
             self.assertEqual(len(lines), 1)

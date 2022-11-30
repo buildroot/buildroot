@@ -4,8 +4,9 @@
 === Infrastructure for Python packages
 
 This infrastructure applies to Python packages that use the standard
-Python setuptools mechanism as their build system, generally
-recognizable by the usage of a +setup.py+ script.
+Python setuptools or pep517 mechanisms as their build system, generally
+recognizable by the usage of a +setup.py+ script or +pyproject.toml+
+file.
 
 [[python-package-tutorial]]
 
@@ -50,8 +51,8 @@ On line 13, we declare our dependencies, so that they are built
 before the build process of our package starts.
 
 On line 14, we declare the specific Python build system being used. In
-this case the +distutils+ Python build system is used. The two
-supported ones are +distutils+ and +setuptools+.
+this case the +distutils+ Python build system is used. The four
+supported ones are +distutils+, +flit+, +pep517+ and +setuptools+.
 
 Finally, on line 16, we invoke the +python-package+ macro that
 generates all the Makefile rules that actually allow the package to be
@@ -66,14 +67,6 @@ named +python-<something>+ in Buildroot. Other packages that use the
 Python build system, but are not Python modules, can freely choose
 their name (existing examples in Buildroot are +scons+ and
 +supervisor+).
-
-Packages that are only compatible with one version of Python (as in:
-Python 2 or Python 3) should depend on that version explicitely in
-their +Config.in+ file (+BR2_PACKAGE_PYTHON+ for Python 2,
-+BR2_PACKAGE_PYTHON3+ for Python 3).  Packages that are compatible
-with both versions should not explicitely depend on them in their
-+Config.in+ file, since that condition is already expressed for the
-whole "External python modules" menu.
 
 The main macro of the Python package infrastructure is
 +python-package+. It is similar to the +generic-package+ macro. It is
@@ -105,11 +98,13 @@ Note that:
 One variable specific to the Python infrastructure is mandatory:
 
 * +PYTHON_FOO_SETUP_TYPE+, to define which Python build system is used
-  by the package. The two supported values are +distutils+ and
-  +setuptools+. If you don't know which one is used in your package,
-  look at the +setup.py+ file in your package source code, and see
-  whether it imports things from the +distutils+ module or the
-  +setuptools+ module.
+  by the package. The four supported values are +distutils+, +flit+,
+  +pep517+ and +setuptools+. If you don't know which one is used in
+  your package, look at the +setup.py+ or +pyproject.toml+ file in your
+  package source code, and see whether it imports things from the
+  +distutils+, +flit+ module or the +setuptools+ module. If the package
+  is using a +pyproject.toml+ file without any build-system requires
+  and with a local in-tree backend-path one should use +pep517+.
 
 A few additional variables, specific to the Python infrastructure, can
 optionally be defined, depending on the package's needs. Many of them
@@ -117,44 +112,48 @@ are only useful in very specific cases, typical packages will
 therefore only use a few of them, or none.
 
 * +PYTHON_FOO_SUBDIR+ may contain the name of a subdirectory inside the
-  package that contains the main +setup.py+ file. This is useful,
-  if for example, the main +setup.py+ file is not at the root of
-  the tree extracted by the tarball. If +HOST_PYTHON_FOO_SUBDIR+ is not
-  specified, it defaults to +PYTHON_FOO_SUBDIR+.
+  package that contains the main +setup.py+ or +pyproject.toml+ file.
+  This is useful, if for example, the main +setup.py+ or +pyproject.toml+
+  file is not at the root of the tree extracted by the tarball. If
+  +HOST_PYTHON_FOO_SUBDIR+ is not specified, it defaults to
+  +PYTHON_FOO_SUBDIR+.
 
 * +PYTHON_FOO_ENV+, to specify additional environment variables to
-  pass to the Python +setup.py+ script (for both the build and install
-  steps). Note that the infrastructure is automatically passing
-  several standard variables, defined in +PKG_PYTHON_DISTUTILS_ENV+
-  (for distutils target packages), +HOST_PKG_PYTHON_DISTUTILS_ENV+
-  (for distutils host packages), +PKG_PYTHON_SETUPTOOLS_ENV+ (for
-  setuptools target packages) and +HOST_PKG_PYTHON_SETUPTOOLS_ENV+
-  (for setuptools host packages).
+  pass to the Python +setup.py+ script (for distutils/setuptools
+  packages) or the +support/scripts/pyinstaller.py+ script (for
+  flit/pep517 packages) for both the build and install steps. Note
+  that the infrastructure is automatically passing several standard
+  variables, defined in +PKG_PYTHON_DISTUTILS_ENV+ (for distutils
+  target packages), +HOST_PKG_PYTHON_DISTUTILS_ENV+ (for distutils
+  host packages), +PKG_PYTHON_SETUPTOOLS_ENV+ (for setuptools target
+  packages), +HOST_PKG_PYTHON_SETUPTOOLS_ENV+ (for setuptools host
+  packages), +PKG_PYTHON_PEP517_ENV+ (for flit/pep517 target packages)
+  and +HOST_PKG_PYTHON_PEP517_ENV+ (for flit/pep517 host packages).
 
 * +PYTHON_FOO_BUILD_OPTS+, to specify additional options to pass to the
-  Python +setup.py+ script during the build step. For target distutils
-  packages, the +PKG_PYTHON_DISTUTILS_BUILD_OPTS+ options are already
-  passed automatically by the infrastructure.
+  Python +setup.py+ script during the build step, this generally only
+  makes sense to use for distutils/setuptools based packages as
+  flit/pep517 based packages do not pass these options to a +setup.py+
+  script but instead pass them to +support/scripts/pyinstaller.py+.
+  For target distutils packages, the +PKG_PYTHON_DISTUTILS_BUILD_OPTS+
+  options are already passed automatically by the infrastructure.
 
 * +PYTHON_FOO_INSTALL_TARGET_OPTS+, +PYTHON_FOO_INSTALL_STAGING_OPTS+,
   +HOST_PYTHON_FOO_INSTALL_OPTS+ to specify additional options to pass
-  to the Python +setup.py+ script during the target installation step,
-  the staging installation step or the host installation,
-  respectively. Note that the infrastructure is automatically passing
-  some options, defined in +PKG_PYTHON_DISTUTILS_INSTALL_TARGET_OPTS+
-  or +PKG_PYTHON_DISTUTILS_INSTALL_STAGING_OPTS+ (for target distutils
+  to the Python +setup.py+ script (for distutils/setuptools packages)
+  or +support/scripts/pyinstaller.py+ (for flit/pep517 packages) during
+  the target installation step, the staging installation step or the
+  host installation, respectively. Note that the infrastructure is
+  automatically passing some options, defined in
+  +PKG_PYTHON_DISTUTILS_INSTALL_TARGET_OPTS+ or
+  +PKG_PYTHON_DISTUTILS_INSTALL_STAGING_OPTS+ (for target distutils
   packages), +HOST_PKG_PYTHON_DISTUTILS_INSTALL_OPTS+ (for host
   distutils packages), +PKG_PYTHON_SETUPTOOLS_INSTALL_TARGET_OPTS+ or
   +PKG_PYTHON_SETUPTOOLS_INSTALL_STAGING_OPTS+ (for target setuptools
-  packages) and +HOST_PKG_PYTHON_SETUPTOOLS_INSTALL_OPTS+ (for host
-  setuptools packages).
-
-* +HOST_PYTHON_FOO_NEEDS_HOST_PYTHON+, to define the host python
-  interpreter. The usage of this variable is limited to host
-  packages. The two supported value are +python2+ and +python3+. It
-  will ensure the right host python package is available and will
-  invoke it for the build. If some build steps are overloaded, the
-  right python interpreter must be explicitly called in the commands.
+  packages), +HOST_PKG_PYTHON_SETUPTOOLS_INSTALL_OPTS+ (for host
+  setuptools packages) and +PKG_PYTHON_PEP517_INSTALL_TARGET_OPTS+ or
+  +PKG_PYTHON_PEP517_INSTALL_STAGING_OPTS+ (for target flit/pep517
+  packages).
 
 With the Python infrastructure, all the steps required to build and
 install the packages are already defined, and they generally work well

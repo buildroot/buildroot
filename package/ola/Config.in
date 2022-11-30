@@ -1,0 +1,193 @@
+comment "ola needs a toolchain w/ C++, threads, dynamic library, gcc >= 4.8"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS \
+		|| BR2_STATIC_LIBS \
+		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
+
+menuconfig BR2_PACKAGE_OLA
+	bool "ola (open lighting architecture)"
+	depends on BR2_INSTALL_LIBSTDCPP # protobuf
+	depends on !BR2_STATIC_LIBS # protobuf
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # protobuf
+	select BR2_PACKAGE_PROTOBUF
+	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_LIBUUID
+	help
+	  Open Lighting Architecture provides applications
+	  with a mechanism to send and receive DMX512 & RDM
+	  commands using hardware devices and DMX over IP protocols.
+
+	  https://www.openlighting.org/ola/
+
+if BR2_PACKAGE_OLA
+
+comment "bindings and interface"
+
+config BR2_PACKAGE_OLA_WEB
+	bool "http interface"
+	depends on BR2_PACKAGE_LIBGPG_ERROR_ARCH_SUPPORTS # libgcrypt, libmicrohttpd
+	select BR2_PACKAGE_LIBMICROHTTPD
+	help
+	  Build OLA with browser interface.
+
+config BR2_PACKAGE_OLA_PYTHON_BINDINGS
+	bool "python bindings"
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS # protobuf
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON_PROTOBUF
+	help
+	  Build OLA with support for the Python language.
+
+comment "tests and examples"
+
+config BR2_PACKAGE_OLA_EXAMPLES
+	bool "examples"
+	select BR2_PACKAGE_NCURSES
+	help
+	  Build OLA examples.
+
+config BR2_PACKAGE_OLA_RDM_TESTS
+	bool "rdm tests"
+	depends on BR2_PACKAGE_OLA_PYTHON_BINDINGS
+	depends on BR2_PACKAGE_PYTHON_NUMPY_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL # python-numpy
+	select BR2_PACKAGE_PYTHON_NUMPY
+	help
+	  Build OLA RDM tests.
+
+comment "rdm tests needs a toolchain w/ glibc or musl"
+	depends on BR2_PACKAGE_OLA_PYTHON_BINDINGS
+	depends on BR2_PACKAGE_PYTHON_NUMPY_ARCH_SUPPORTS
+	depends on !BR2_TOOLCHAIN_USES_GLIBC && !BR2_TOOLCHAIN_USES_MUSL
+
+comment "plugin selections"
+
+config BR2_PACKAGE_OLA_PLUGIN_ARTNET
+	bool "artnet"
+	help
+	  Build Artnet plugin for OLA.
+
+config BR2_PACKAGE_OLA_PLUGIN_DUMMY
+	bool "dummy"
+	help
+	  Build Dummy plugin for OLA.
+
+config BR2_PACKAGE_OLA_PLUGIN_E131
+	bool "acn E131"
+	help
+	  Build ACN E131 plugin for OLA.
+
+config BR2_PACKAGE_OLA_PLUGIN_ESPNET
+	bool "espnet"
+	help
+	  Build EspNet plugin for OLA.
+
+config BR2_PACKAGE_OLA_PLUGIN_FTDIDMX
+	bool "ftdidmx"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libftdi1 -> libusb
+	select BR2_PACKAGE_LIBFTDI1
+	help
+	  Build FTDI USB DMX plugin for OLA.
+
+comment "ftdidmx needs a toolchain w/ gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
+
+config BR2_PACKAGE_OLA_PLUGIN_GPIO
+	bool "GPIO"
+	help
+	  Build GPIO plugin for OLA.
+
+config BR2_PACKAGE_OLA_PLUGIN_KARATE
+	bool "karate"
+	help
+	  Build Karate plugin for OLA.
+
+config BR2_PACKAGE_OLA_PLUGIN_KINET
+	bool "kinet"
+	help
+	  Build KiNet plugin for OLA.
+
+config BR2_PACKAGE_OLA_PLUGIN_MILINT
+	bool "Milford Instruments"
+	help
+	  Build Milford Instruments 1-463 plugin for OLA.
+
+config BR2_PACKAGE_OLA_PLUGIN_OPENDMX
+	bool "Enttec Open DMX"
+	help
+	  Build Enttec Open DMX plugin for OLA.
+
+config BR2_PACKAGE_OLA_PLUGIN_OPENPIXELCONTROL
+	bool "Open Pixel Control"
+	help
+	  Build Open Pixel Control (OPC) plugin for OLA.
+
+config BR2_PACKAGE_OLA_PLUGIN_OSC
+	bool "osc"
+	select BR2_PACKAGE_LIBLO
+	help
+	  Build Open Sound Control (OSC) plugin for OLA.
+
+config BR2_PACKAGE_OLA_PLUGIN_PATHPORT
+	bool "pathport"
+	help
+	  Build Pathport plugin for OLA.
+
+config BR2_PACKAGE_OLA_PLUGIN_RENARD
+	bool "renard"
+	help
+	  Build Renard plugin for OLA.
+
+config BR2_PACKAGE_OLA_PLUGIN_SANDNET
+	bool "sandnet"
+	help
+	  Build SandNet plugin for OLA.
+
+config BR2_PACKAGE_OLA_PLUGIN_SHOWNET
+	bool "shownet"
+	help
+	  Build ShowNet plugin for OLA.
+
+config BR2_PACKAGE_OLA_PLUGIN_SPI
+	bool "spi"
+	help
+	  Build SPI plugin for OLA.
+
+config BR2_PACKAGE_OLA_PLUGIN_STAGEPROFI
+	bool "stageprofi"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
+	select BR2_PACKAGE_LIBUSB
+	help
+	  Build StageProfi plugin for OLA.
+
+comment "stageprofi needs a toolchain w/ gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
+
+config BR2_PACKAGE_OLA_PLUGIN_UARTDMX
+	bool "uartdmx"
+	help
+	  Build UART Native DMX plugin for OLA.
+
+config BR2_PACKAGE_OLA_PLUGIN_USBDMX
+	bool "usbdmx"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
+	select BR2_PACKAGE_LIBUSB
+	help
+	  Build USB DMX plugin for OLA.
+
+comment "usbdmx needs a toolchain w/ gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
+
+config BR2_PACKAGE_OLA_PLUGIN_USBPRO
+	bool "usbpro"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
+	select BR2_PACKAGE_LIBUSB
+	help
+	  Build UsbPro plugin for OLA.
+
+comment "usbpro needs a toolchain w/ gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
+
+endif

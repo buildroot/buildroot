@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TVHEADEND_VERSION = dbaa0f850394af8ab845df802f5f781ac0218ec4
+TVHEADEND_VERSION = fbc94aee8bfdd25baba87ab62a39234da20e8dd2
 TVHEADEND_SITE = $(call github,tvheadend,tvheadend,$(TVHEADEND_VERSION))
 TVHEADEND_LICENSE = GPL-3.0+
 TVHEADEND_LICENSE_FILES = LICENSE.md
@@ -47,6 +47,12 @@ TVHEADEND_DEPENDENCIES += rpi-userland
 else
 TVHEADEND_CONF_OPTS += --disable-omx
 endif
+ifeq ($(BR2_PACKAGE_LIBVPX)$(BR2_INSTALL_LIBSTDCPP),yy)
+TVHEADEND_CONF_OPTS += --enable-libvpx
+TVHEADEND_DEPENDENCIES += libvpx
+else
+TVHEADEND_CONF_OPTS += --disable-libvpx
+endif
 ifeq ($(BR2_PACKAGE_X265),y)
 TVHEADEND_CONF_OPTS += --enable-libx265
 TVHEADEND_DEPENDENCIES += x265
@@ -59,6 +65,7 @@ TVHEADEND_CONF_OPTS += \
 	--disable-libopus \
 	--disable-omx \
 	--disable-vaapi \
+	--disable-libvpx \
 	--disable-libx264 \
 	--disable-libx265
 endif
@@ -121,11 +128,14 @@ TVHEADEND_DEPENDENCIES += liburiparser
 TVHEADEND_CFLAGS += $(if $(BR2_USE_WCHAR),,-DURI_NO_UNICODE)
 endif
 
-ifeq ($(BR2_PACKAGE_PCRE),y)
+ifeq ($(BR2_PACKAGE_PCRE2),y)
+TVHEADEND_DEPENDENCIES += pcre2
+TVHEADEND_CONF_OPTS += --disable-pcre --enable-pcre2
+else ifeq ($(BR2_PACKAGE_PCRE),y)
 TVHEADEND_DEPENDENCIES += pcre
-TVHEADEND_CONF_OPTS += --enable-pcre
+TVHEADEND_CONF_OPTS += --enable-pcre --disable-pcre2
 else
-TVHEADEND_CONF_OPTS += --disable-pcre
+TVHEADEND_CONF_OPTS += --disable-pcre --disable-pcre2
 endif
 
 ifeq ($(BR2_TOOLCHAIN_SUPPORTS_PIE),)
@@ -158,6 +168,7 @@ define TVHEADEND_CONFIGURE_CMDS
 			--enable-dvbscan \
 			--enable-bundle \
 			--enable-pngquant \
+			--disable-execinfo \
 			--disable-ffmpeg_static \
 			--disable-hdhomerun_static \
 			$(TVHEADEND_CONF_OPTS) \
@@ -194,8 +205,10 @@ TVHEADEND_POST_INSTALL_TARGET_HOOKS += TVHEADEND_CLEAN_SHARE
 #    to the other users (because there will be crendentials in there)
 
 define TVHEADEND_INSTALL_INIT_SYSV
-	$(INSTALL) -D package/tvheadend/etc.default.tvheadend $(TARGET_DIR)/etc/default/tvheadend
-	$(INSTALL) -D package/tvheadend/S99tvheadend          $(TARGET_DIR)/etc/init.d/S99tvheadend
+	$(INSTALL) -D package/tvheadend/etc.default.tvheadend \
+		$(TARGET_DIR)/etc/default/tvheadend
+	$(INSTALL) -D package/tvheadend/S99tvheadend \
+		$(TARGET_DIR)/etc/init.d/S99tvheadend
 endef
 
 define TVHEADEND_USERS

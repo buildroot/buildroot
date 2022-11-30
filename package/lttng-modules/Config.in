@@ -1,6 +1,7 @@
 config BR2_PACKAGE_LTTNG_MODULES
 	bool "lttng-modules"
 	depends on BR2_LINUX_KERNEL
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_0
 	help
 	  Linux kernel modules for the LTTng 2.x kernel tracing
 	  infrastructure.
@@ -8,7 +9,8 @@ config BR2_PACKAGE_LTTNG_MODULES
 	  Make sure your target kernel has the following config
 	  options enabled:
 
-	    * CONFIG_MODULES: loadable module support
+	    * CONFIG_MODULES: loadable module support (not strictly
+	      required when built into the kernel)
 	    * CONFIG_KALLSYMS: this is necessary until the few
 	      required missing symbols are exported to GPL
 	      modules from mainline
@@ -17,6 +19,8 @@ config BR2_PACKAGE_LTTNG_MODULES
 	    * CONFIG_TRACEPOINTS: kernel tracepoint instrumentation
 	      (enabled as a side-effect of any of the
 	      perf/ftrace/blktrace instrumentation features)
+	    * CONFIG_KPROBES (5.7+): use kallsyms for kernel 5.7 and
+	      newer.
 
 	  The following kernel configuration options will
 	  affect the features available from LTTng:
@@ -29,9 +33,11 @@ config BR2_PACKAGE_LTTNG_MODULES
 	    * CONFIG_KALLSYMS_ALL: state dump of mapping between block
 	      device number and name
 
-	  The packaged version is compatible with Linux 2.6.38 to 3.16.
-
 	  http://lttng.org
 
 comment "lttng-modules needs a Linux kernel to be built"
 	depends on !BR2_LINUX_KERNEL
+
+comment "lttng-modules needs a toolchain w/ headers >= 3.0"
+	depends on BR2_LINUX_KERNEL
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_0

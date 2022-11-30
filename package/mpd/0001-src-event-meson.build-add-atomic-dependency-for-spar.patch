@@ -20,7 +20,7 @@ diff --git a/src/event/meson.build b/src/event/meson.build
 index bc13bbcd2..88370c03a 100644
 --- a/src/event/meson.build
 +++ b/src/event/meson.build
-@@ -21,9 +21,13 @@ event = static_library(
+@@ -47,9 +47,13 @@ event = declare_dependency(
    ],
  )
  
@@ -32,8 +32,8 @@ index bc13bbcd2..88370c03a 100644
    dependencies: [
 +    atomic_dep,
      thread_dep,
+     net_dep,
      system_dep,
-     boost_dep,
 -- 
 2.20.1
 

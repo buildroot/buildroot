@@ -1,5 +1,6 @@
 config BR2_PACKAGE_LIBNETFILTER_LOG
 	bool "libnetfilter_log"
+	select BR2_PACKAGE_LIBMNL
 	select BR2_PACKAGE_LIBNFNETLINK
 	help
 	  libnetfilter_log is a userspace library providing interface

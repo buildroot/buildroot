@@ -1,0 +1,32 @@
+From 6405b7a005bb2364466b56f480d50af0be423d76 Mon Sep 17 00:00:00 2001
+From: Robert McMahon <rjmcmahon@rjmcmahon.com>
+Date: Tue, 27 Sep 2022 20:31:04 -0700
+Subject: [PATCH] fix single threaded compile breakage
+
+[Retrieved (and backported) from:
+https://sourceforge.net/p/iperf2/code/ci/6405b7a005bb2364466b56f480d50af0be423d76]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ include/version.h | 2 +-
+ src/Settings.cpp  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/Settings.cpp b/src/Settings.cpp
+index aac1b5f..fc5a181 100644
+--- a/src/Settings.cpp
++++ b/src/Settings.cpp
+@@ -1160,10 +1160,10 @@ void Settings_Interpret (char option, const char *optarg, struct thread_Settings
+ 			delete [] tmp;
+ 		    }
+ 		}
++	    }
+ #else
+ 		fprintf(stderr, "bounceback-congest option requires a platform that supports threads\n");
+ #endif
+-	    }
+ 	}
+ 	if (bouncebackdelaystart) {
+ 	    bouncebackdelaystart = 0;
+-- 
+2.35.1
+

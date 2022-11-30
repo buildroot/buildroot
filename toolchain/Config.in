@@ -71,12 +71,6 @@ source "package/gdb/Config.in.host"
 
 comment "Toolchain Generic Options"
 
-# https://sourceware.org/bugzilla/show_bug.cgi?id=21464
-# Affect toolchains built with binutils 2.31.1, still not fixed.
-config BR2_TOOLCHAIN_HAS_BINUTILS_BUG_21464
-	bool
-	default y if BR2_or1k
-
 # https://sourceware.org/bugzilla/show_bug.cgi?id=27597
 # Affect toolchains built with binutils 2.36.1, still not fixed.
 config BR2_TOOLCHAIN_HAS_BINUTILS_BUG_27597
@@ -115,6 +109,14 @@ config BR2_TOOLCHAIN_SUPPORTS_VARIADIC_MI_THUNK
 	depends on !BR2_or1k
 	depends on !BR2_xtensa
 
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=43744. This bug
+# reappeared on gcc 9.x and is still not fixed on gcc 11.x
+config BR2_TOOLCHAIN_HAS_GCC_BUG_43744
+	bool
+	default y if !BR2_TOOLCHAIN_GCC_AT_LEAST_8
+	default y if BR2_TOOLCHAIN_GCC_AT_LEAST_9
+	depends on BR2_sh4
+
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63261. This bug no
 # longer exists in gcc 8.x.
 config BR2_TOOLCHAIN_HAS_GCC_BUG_63261
@@ -134,7 +136,7 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_64735
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_7
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=68485. This bug still
-# exists in gcc 9.x
+# exists in gcc 12.x
 config BR2_TOOLCHAIN_HAS_GCC_BUG_68485
 	bool
 	default y if BR2_microblaze
@@ -145,8 +147,9 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_68485
 # it still not been fixed yet.
 config BR2_TOOLCHAIN_HAS_GCC_BUG_83143
 	bool
-	default y if BR2_sh
-	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_10 || BR2_TOOLCHAIN_GCC_AT_LEAST_11
+	default y if !BR2_TOOLCHAIN_GCC_AT_LEAST_10
+	default y if BR2_TOOLCHAIN_GCC_AT_LEAST_11
+	depends on BR2_sh
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=85180. This bug no
 # longer exists in gcc 8.x.
@@ -165,11 +168,12 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_85862
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90620
 # ICE: in do_output_reload, at reload1.c:7978 on microblaze.
-# This bug no longer exists in gcc 10.x
+# This bug no longer exists in gcc 10.x but reappeared in gcc 11.x
 config BR2_TOOLCHAIN_HAS_GCC_BUG_90620
 	bool
 	default y if BR2_microblaze
-	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_10
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_10 \
+		|| BR2_TOOLCHAIN_GCC_AT_LEAST_11
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93847
 # ICE: compiler error: Segmentation fault on Nios II. This bug
@@ -180,12 +184,12 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_93847
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=99410
 # Error: branch offset out of range on Nios II. This bug
-# no longer exists in gcc 8.x but reappeared on gcc 9.x and has been
-# fixed on gcc 10.x.
-config BR2_TOOLCHAIN_HAS_GCC_BUG_99140
+# no longer exists in gcc 8.x but reappeared on gcc 9.x and still exists
+# on gcc 12.x
+config BR2_TOOLCHAIN_HAS_GCC_BUG_99410
 	bool
 	default y if !BR2_TOOLCHAIN_GCC_AT_LEAST_8
-	default y if BR2_TOOLCHAIN_GCC_AT_LEAST_9 && !BR2_TOOLCHAIN_GCC_AT_LEAST_10
+	default y if BR2_TOOLCHAIN_GCC_AT_LEAST_9
 	depends on BR2_nios2
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101737
@@ -193,11 +197,11 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_99140
 # still exists in gcc = 11.1.0
 config BR2_TOOLCHAIN_HAS_GCC_BUG_101737
 	bool
-	default y if BR2_sh4
+	default y if BR2_sh
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101915
 # ICE: in extract_insn, at recog.c:2294 on microblaze.
-# This bug still exists in gcc = 11.1.0
+# This bug still exists in gcc = 12.1.0
 config BR2_TOOLCHAIN_HAS_GCC_BUG_101915
 	bool
 	default y if BR2_microblaze
@@ -215,6 +219,13 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_101916
 config BR2_TOOLCHAIN_HAS_GCC_BUG_101952
 	bool
 	default y if BR2_sh4
+
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=104028
+# ICE: on M68K: Error: value -16034 out of range
+# This bug still exists in gcc = 11.1.0
+config BR2_TOOLCHAIN_HAS_GCC_BUG_104028
+	bool
+	default y if BR2_m68k
 
 config BR2_TOOLCHAIN_HAS_NATIVE_RPC
 	bool
@@ -302,13 +313,6 @@ config BR2_TOOLCHAIN_EXTRA_LIBS
 config BR2_TOOLCHAIN_HAS_FULL_GETTEXT
 	bool
 
-config BR2_USE_MMU
-	bool "Enable MMU support" if BR2_ARCH_HAS_MMU_OPTIONAL
-	default y if BR2_ARCH_HAS_MMU_OPTIONAL || BR2_ARCH_HAS_MMU_MANDATORY
-	help
-	  If your target has a MMU, you should say Y here.  If you
-	  are unsure, just say Y.
-
 config BR2_TARGET_OPTIMIZATION
 	string "Target Optimizations"
 	default ""
@@ -324,13 +328,6 @@ config BR2_TARGET_LDFLAGS
 
 	  Note that options with a '$' sign (eg.
 	  -Wl,-rpath='$ORIGIN/../lib') are not supported.
-
-config BR2_ECLIPSE_REGISTER
-	bool "Register toolchain within Eclipse Buildroot plug-in"
-	help
-	  This options tells Buildroot to generate the necessary
-	  configuration files to make your toolchain appear within
-	  Eclipse, through the Eclipse Buildroot plugin.
 
 # Options for packages to depend on, if they require at least a
 # specific version of the kernel headers.
@@ -558,6 +555,30 @@ config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_13
 config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_14
 	bool
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_13
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_15
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_14
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_16
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_15
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_17
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_16
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_18
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_17
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_19
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_18
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_0
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_19
 	select BR2_TOOLCHAIN_HEADERS_LATEST
 
 # This should be selected by the latest version, above, to indicate that
@@ -571,6 +592,12 @@ config BR2_TOOLCHAIN_HEADERS_LATEST
 # stops affecting a value on the first matching default.
 config BR2_TOOLCHAIN_HEADERS_AT_LEAST
 	string
+	default "6.0"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_0
+	default "5.19" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_19
+	default "5.18" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_18
+	default "5.17" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_17
+	default "5.16" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_16
+	default "5.15" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_15
 	default "5.14" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_14
 	default "5.13" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_13
 	default "5.12" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_12
@@ -684,10 +711,15 @@ config BR2_TOOLCHAIN_GCC_AT_LEAST_11
 	bool
 	select BR2_TOOLCHAIN_GCC_AT_LEAST_10
 
+config BR2_TOOLCHAIN_GCC_AT_LEAST_12
+	bool
+	select BR2_TOOLCHAIN_GCC_AT_LEAST_11
+
 # This order guarantees that the highest version is set, as kconfig
 # stops affecting a value on the first matching default.
 config BR2_TOOLCHAIN_GCC_AT_LEAST
 	string
+	default "12"	if BR2_TOOLCHAIN_GCC_AT_LEAST_12
 	default "11"	if BR2_TOOLCHAIN_GCC_AT_LEAST_11
 	default "10"	if BR2_TOOLCHAIN_GCC_AT_LEAST_10
 	default "9"	if BR2_TOOLCHAIN_GCC_AT_LEAST_9
@@ -808,9 +840,11 @@ config BR2_TOOLCHAIN_HAS_ATOMIC
 # - At least, libquadmath is available on:
 #   - i*86
 #   - x86_64
+#   - PowerPC with vector scalar (VSX) instruction set
 # - When available, libquadmath requires wchar support.
 config BR2_TOOLCHAIN_HAS_LIBQUADMATH
 	bool
 	default y if BR2_i386 || BR2_x86_64
+	default y if BR2_POWERPC_CPU_HAS_VSX
 
 endmenu

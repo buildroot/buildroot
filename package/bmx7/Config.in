@@ -1,0 +1,15 @@
+config BR2_PACKAGE_BMX7
+	bool "bmx7"
+	depends on !BR2_STATIC_LIBS # dlopen()
+	select BR2_PACKAGE_ZLIB
+	select BR2_PACKAGE_MBEDTLS
+	select BR2_PACKAGE_WIRELESS_TOOLS
+	select BR2_PACKAGE_WIRELESS_TOOLS_LIB
+	help
+	  BMX7 is a mesh routing protocol for Linux based
+	  operating systems.
+
+	  https://github.com/bmx-routing/bmx7
+
+comment "bmx7 needs a toolchain with dynamic library support"
+	depends on BR2_STATIC_LIBS

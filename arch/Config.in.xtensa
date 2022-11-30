@@ -5,11 +5,10 @@ choice
 
 config BR2_XTENSA_CUSTOM
 	bool "Custom Xtensa processor configuration"
-	select BR2_ARCH_HAS_MMU_OPTIONAL
 
 config BR2_xtensa_fsf
 	bool "fsf - Default configuration"
-	select BR2_ARCH_HAS_MMU_MANDATORY
+	select BR2_USE_MMU
 
 endchoice
 
@@ -41,12 +40,24 @@ config BR2_XTENSA_BIG_ENDIAN
 
 endchoice
 
+config BR2_XTENSA_USE_MMU
+	bool "MMU support"
+	default y
+	depends on BR2_XTENSA_CUSTOM
+	select BR2_USE_MMU
+	help
+	  Enable this option if your Xtensa core has a MMU (Memory
+	  Management Unit).
+
 config BR2_ENDIAN
 	default "LITTLE"	if BR2_XTENSA_LITTLE_ENDIAN
 	default "BIG"		if BR2_xtensa_fsf || BR2_XTENSA_BIG_ENDIAN
 
 config BR2_ARCH
 	default "xtensa"	if BR2_xtensa
+
+config BR2_NORMALIZED_ARCH
+	default "xtensa"
 
 config BR2_READELF_ARCH_NAME
 	default "Tensilica Xtensa Processor"

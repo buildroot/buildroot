@@ -17,7 +17,7 @@ ARMADILLO_CONF_OPTS = -DDETECT_HDF5=false
 ARMADILLO_CONF_OPTS += -DBLAS_FOUND=ON
 ifeq ($(BR2_PACKAGE_ARMADILLO_OPENBLAS),y)
 ARMADILLO_CONF_OPTS += -DBLAS_LIBRARIES=-lopenblas
-ARMADILLO_DEPENDENCIES = openblas
+ARMADILLO_DEPENDENCIES += openblas
 else
 # Since BR2_PACKAGE_LAPACK is selected in this case, the dependency on it is
 # added below.

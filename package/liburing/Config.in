@@ -1,0 +1,17 @@
+config BR2_PACKAGE_LIBURING
+	bool "liburing"
+	depends on BR2_USE_MMU # madvise()
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # C11/stdatomic.h
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_1
+	help
+	  This is the io_uring library, liburing. liburing provides
+	  helpers to setup and teardown io_uring instances, and also a
+	  simplified interface for applications that don't need (or
+	  want) to deal with the full kernel side implementation.
+
+	  https://git.kernel.dk/cgit/liburing
+
+comment "liburing needs a toolchain w/ gcc >= 4.9, headers >= 5.1"
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_1

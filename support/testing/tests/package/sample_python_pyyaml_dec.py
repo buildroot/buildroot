@@ -2,7 +2,7 @@ import yaml
 
 with open("/tmp/data.yml", "rb") as f:
     serialized = f.read()
-data = yaml.load(serialized)
+data = yaml.safe_load(serialized)
 print(data)
 assert(data["name"] == "python-pyyaml")
 assert(data["versions"] == ["1", "2"])

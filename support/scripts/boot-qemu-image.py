@@ -25,7 +25,7 @@ def main():
     qemu_start = os.path.join(os.getcwd(), 'output/images/start-qemu.sh')
 
     child = pexpect.spawn(qemu_start, ['serial-only'],
-                          timeout=5, encoding='utf-8',
+                          timeout=50, encoding='utf-8',
                           env={"QEMU_AUDIO_DRV": "none"})
 
     # We want only stdout into the log to avoid double echo
@@ -36,16 +36,16 @@ def main():
     time.sleep(1)
 
     try:
-        child.expect(["buildroot login:"], timeout=60)
+        child.expect(["buildroot login:"], timeout=600)
     except pexpect.EOF as e:
         # Some emulations require a fork of qemu-system, which may be
         # missing on the system, and is not provided by Buildroot.
         # In this case, spawn above will succeed at starting the wrapper
         # start-qemu.sh, but that one will fail (exit with 127) in such
         # a situation.
-        exit = [int(l.split(' ')[1])
-                for l in e.value.splitlines()
-                if l.startswith('exitstatus: ')]
+        exit = [int(line.split(' ')[1])
+                for line in e.value.splitlines()
+                if line.startswith('exitstatus: ')]
         if len(exit) and exit[0] == 127:
             print('qemu-start.sh could not find the qemu binary')
             sys.exit(0)
@@ -58,7 +58,7 @@ def main():
     child.sendline("root\r")
 
     try:
-        child.expect(["# "], timeout=60)
+        child.expect(["# "], timeout=600)
     except pexpect.EOF:
         print("Cannot connect to shell")
         sys.exit(1)
@@ -69,7 +69,7 @@ def main():
     child.sendline("poweroff\r")
 
     try:
-        child.expect(["System halted"], timeout=60)
+        child.expect(["System halted"], timeout=600)
         child.expect(pexpect.EOF)
     except pexpect.EOF:
         pass

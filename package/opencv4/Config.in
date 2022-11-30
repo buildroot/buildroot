@@ -30,6 +30,20 @@ config BR2_PACKAGE_OPENCV4_LIB_CALIB3D
 	  Include opencv_calib3d (camera calibration and 3d
 	  reconstruction) module into the OpenCV build.
 
+config BR2_PACKAGE_OPENCV4_LIB_DNN
+	bool "dnn"
+	# dnn needs fenv.h which is not provided by uclibc
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
+	select BR2_PACKAGE_OPENCV4_WITH_PROTOBUF
+	help
+	  Include opencv_dnn (Deep Neural Networks) module into the
+	  OpenCV build.
+
+comment "dnn needs a glibc or musl toolchain"
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_USES_UCLIBC
+
 config BR2_PACKAGE_OPENCV4_LIB_FEATURES2D
 	bool "features2d"
 	select BR2_PACKAGE_OPENCV4_LIB_FLANN
@@ -139,13 +153,20 @@ config BR2_PACKAGE_OPENCV4_LIB_ML
 
 config BR2_PACKAGE_OPENCV4_LIB_OBJDETECT
 	bool "objdetect"
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC # dnn support
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS # dnn support
 	# opencv_core dependency is already enabled
 	select BR2_PACKAGE_OPENCV4_LIB_CALIB3D
+	select BR2_PACKAGE_OPENCV4_LIB_DNN
 	select BR2_PACKAGE_OPENCV4_LIB_IMGPROC
 	select BR2_PACKAGE_OPENCV4_LIB_ML
 	help
 	  Include opencv_objdetect (object detection) module into the
 	  OpenCV build.
+
+comment "objdetect needs a glibc or musl toolchain"
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_USES_UCLIBC
 
 config BR2_PACKAGE_OPENCV4_LIB_PHOTO
 	bool "photo"
@@ -308,6 +329,20 @@ config BR2_PACKAGE_OPENCV4_WITH_PROTOBUF
 	select BR2_PACKAGE_PROTOBUF
 	help
 	  Use shared protobuf from the target system.
+
+config BR2_PACKAGE_OPENCV4_WITH_TBB
+	bool "tbb support"
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC # tbb
+	depends on !BR2_TOOLCHAIN_HAS_GCC_BUG_64735 # tbb
+	select BR2_PACKAGE_TBB
+	help
+	  Use shared tbb from the target system.
+
+comment "tbb needs a glibc or musl toolchain"
+	depends on BR2_TOOLCHAIN_USES_UCLIBC
+
+comment "tbb needs exception_ptr"
+	depends on BR2_TOOLCHAIN_HAS_GCC_BUG_64735
 
 config BR2_PACKAGE_OPENCV4_WITH_TIFF
 	bool "tiff support"

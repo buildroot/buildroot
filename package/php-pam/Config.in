@@ -1,0 +1,16 @@
+config BR2_PACKAGE_PHP_PAM
+	bool "php-pam"
+	depends on BR2_ENABLE_LOCALE # linux-pam
+	depends on BR2_USE_WCHAR # linux-pam
+	depends on BR2_USE_MMU # linux-pam
+	depends on !BR2_STATIC_LIBS # linux-pam
+	select BR2_PACKAGE_LINUX_PAM
+	help
+	  PHP PAM (Pluggable Authentication Modules) integration
+
+	  https://pecl.php.net/package/PAM
+
+comment "php-pam needs a toolchain w/ wchar, locale, dynamic library"
+	depends on BR2_USE_MMU
+	depends on !BR2_ENABLE_LOCALE || !BR2_USE_WCHAR \
+		|| BR2_STATIC_LIBS

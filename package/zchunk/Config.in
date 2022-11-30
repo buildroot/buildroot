@@ -1,0 +1,9 @@
+config BR2_PACKAGE_ZCHUNK
+	bool "zchunk"
+	depends on BR2_USE_MMU # fork()
+	select BR2_PACKAGE_ARGP_STANDALONE if BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_MUSL
+	help
+	  A file format designed for highly efficient deltas while
+	  maintaining good compression.
+
+	  https://github.com/zchunk/zchunk

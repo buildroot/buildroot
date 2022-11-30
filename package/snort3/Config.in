@@ -1,5 +1,6 @@
 config BR2_PACKAGE_SNORT3
 	bool "snort3"
+	depends on !BR2_PACKAGE_LUA # luajit
 	depends on BR2_PACKAGE_LUAJIT_ARCH_SUPPORTS # luajit
 	depends on !(BR2_PACKAGE_DAQ || BR2_PACKAGE_SNORT)
 	depends on BR2_USE_MMU # fork()
@@ -34,6 +35,7 @@ config BR2_PACKAGE_SNORT3
 	  https://www.snort.org/snort3
 
 comment "snort3 needs a toolchain w/ C++, wchar, threads, dynamic library, gcc >= 4.9"
+	depends on !BR2_PACKAGE_LUA
 	depends on BR2_PACKAGE_LUAJIT_ARCH_SUPPORTS
 	depends on !(BR2_PACKAGE_DAQ || BR2_PACKAGE_SNORT)
 	depends on BR2_USE_MMU

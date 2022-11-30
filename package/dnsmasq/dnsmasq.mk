@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DNSMASQ_VERSION = 2.85
+DNSMASQ_VERSION = 2.87
 DNSMASQ_SOURCE = dnsmasq-$(DNSMASQ_VERSION).tar.xz
 DNSMASQ_SITE = http://thekelleys.org.uk/dnsmasq
 DNSMASQ_MAKE_ENV = $(TARGET_MAKE_ENV) CC="$(TARGET_CC)"
@@ -26,9 +26,6 @@ endif
 ifeq ($(BR2_PACKAGE_DNSMASQ_DNSSEC),y)
 DNSMASQ_DEPENDENCIES += gmp nettle
 DNSMASQ_COPTS += -DHAVE_DNSSEC
-ifeq ($(BR2_STATIC_LIBS),y)
-DNSMASQ_COPTS += -DHAVE_DNSSEC_STATIC
-endif
 endif
 
 ifneq ($(BR2_PACKAGE_DNSMASQ_TFTP),y)

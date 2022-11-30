@@ -1,0 +1,20 @@
+config BR2_PACKAGE_FIRMWARE_UTILS
+	bool "firmware-utils"
+	depends on !BR2_STATIC_LIBS
+	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_DES if BR2_PACKAGE_LIBOPENSSL
+	select BR2_PACKAGE_ZLIB
+	help
+	  Firmware utils are tools that can be used for managing
+	  platform / device / vendor specific firmware images. Depending
+	  on a specific tool it may be possible to read information,
+	  extract data, modify or build an image from a scratch.
+
+	  A common target usage of firmware utils is to upgrade kernel
+	  and / or rootfs. Depending on device it may be required to
+	  extract a part of firmware image and flash it.
+
+	  https://git.openwrt.org/?p=project/firmware-utils.git;a=summary
+
+comment "firmware-utils needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS

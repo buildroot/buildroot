@@ -1,0 +1,13 @@
+config BR2_PACKAGE_LUA_AUGEAS
+	bool "lua-augeas"
+	depends on !BR2_arc # augeas
+	depends on BR2_USE_WCHAR # augeas
+	select BR2_PACKAGE_AUGEAS
+	help
+	  Lua binding for augeas library
+
+	  https://github.com/ncopa/lua-augeas
+
+comment "lua-augeas needs a toolchain w/ wchar"
+	depends on !BR2_arc
+	depends on !BR2_USE_WCHAR

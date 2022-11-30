@@ -4,19 +4,26 @@
 #
 ################################################################################
 
-GUILE_VERSION = 3.0.4
+GUILE_VERSION = 3.0.8
 GUILE_SOURCE = guile-$(GUILE_VERSION).tar.xz
 GUILE_SITE = $(BR2_GNU_MIRROR)/guile
 GUILE_INSTALL_STAGING = YES
 # For 0002-calculate-csqrt_manually.patch and
-# 0003-Makefile.am-fix-build-without-makeinfo.patch
+# 0003-Makefile.am-fix-build-without-makeinfo.patch and
+# 0004-Update-gnulib-to-8f4538a53d64054ae2fc8b86c0f87c418c6176e6.patch
 GUILE_AUTORECONF = YES
 GUILE_LICENSE = LGPL-3.0+
 GUILE_LICENSE_FILES = LICENSE COPYING COPYING.LESSER
+GUILE_CPE_ID_VENDOR = gnu
 
-# libtool dependency is needed because guile uses libltdl
-GUILE_DEPENDENCIES = host-guile libunistring libffi gmp bdwgc host-pkgconf libtool
-HOST_GUILE_DEPENDENCIES = host-libunistring host-libffi host-gmp host-bdwgc host-flex host-pkgconf host-gettext
+GUILE_DEPENDENCIES = host-guile libunistring libffi gmp bdwgc host-pkgconf
+HOST_GUILE_DEPENDENCIES = \
+	host-libunistring host-libffi host-gmp host-bdwgc host-flex \
+	host-pkgconf host-gettext host-gperf
+
+ifeq ($(BR2_ENABLE_LOCALE),)
+GUILE_DEPENDENCIES += libiconv
+endif
 
 # The HAVE_GC* CFLAGS specify that we will use internal callbacks
 # instead of the ones provided by
@@ -64,7 +71,6 @@ GUILE_CONF_ENV += GUILE_FOR_BUILD=$(HOST_DIR)/bin/guile \
 	CFLAGS="$(TARGET_CFLAGS) $(GUILE_CFLAGS)"
 
 GUILE_CONF_OPTS += \
-	--with-libltdl-prefix=$(STAGING_DIR)/usr/lib \
 	--with-libgmp-prefix=$(STAGING_DIR)/usr/lib \
 	--with-libunistring-prefix=$(STAGING_DIR)/usr/lib
 

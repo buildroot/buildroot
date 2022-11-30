@@ -1,0 +1,57 @@
+From fda20d4bcb91f0f9d0db294b4813264de2d88866 Mon Sep 17 00:00:00 2001
+From: Baruch Siach <baruch@tkos.co.il>
+Date: Thu, 12 May 2022 16:16:21 +0300
+Subject: [PATCH] Workaround build failure with older binutils
+
+binutils releases older than 2.35 are affected by bug gas/23840[1] that
+breaks the link of shared library:
+
+cc -O2 -Wall -W -Wno-parentheses -Wstrict-prototypes -Wmissing-prototypes -fPIC -fvisibility=hidden   -c -o filter.o filter.c
+/tmp/ccLtucRG.s: Assembler messages:
+/tmp/ccLtucRG.s:6: Error: multiple versions [`pci_filter_init@@LIBPCI_3.8'|`pci_filter_init@LIBPCI_3.3'] for symbol `pci_filter_init_v38'
+/tmp/ccLtucRG.s:8: Error: multiple versions [`pci_filter_parse_slot@@LIBPCI_3.8'|`pci_filter_parse_slot@LIBPCI_3.3'] for symbol `pci_filter_parse_slot_v38'
+/tmp/ccLtucRG.s:10: Error: multiple versions [`pci_filter_parse_id@@LIBPCI_3.8'|`pci_filter_parse_id@LIBPCI_3.3'] for symbol `pci_filter_parse_id_v38'
+/tmp/ccLtucRG.s:12: Error: multiple versions [`pci_filter_match@@LIBPCI_3.8'|`pci_filter_match@LIBPCI_3.3'] for symbol `pci_filter_match_v38'
+
+The symbol versioning feature has little value in the context of
+Buildroot. As a workaround remove one of each duplicated symbol.
+
+[1] https://sourceware.org/bugzilla/show_bug.cgi?id=23840
+
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+Upstream status: not upstreamable
+
+Upstream bug report: https://lore.kernel.org/linux-pci/87mtfm7v58.fsf@tarshish/
+---
+ lib/filter.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/lib/filter.c b/lib/filter.c
+index b881b6bc9083..bc34e8c2bab9 100644
+--- a/lib/filter.c
++++ b/lib/filter.c
+@@ -304,20 +304,16 @@ pci_filter_match_v30(struct pci_filter_v30 *f, struct pci_dev *d)
+ 
+ STATIC_ALIAS(void pci_filter_init(struct pci_access *a, struct pci_filter *f), pci_filter_init_v38(a, f));
+ SYMBOL_VERSION(pci_filter_init_v30, pci_filter_init@LIBPCI_3.0);
+-SYMBOL_VERSION(pci_filter_init_v38, pci_filter_init@LIBPCI_3.3);
+ SYMBOL_VERSION(pci_filter_init_v38, pci_filter_init@@LIBPCI_3.8);
+ 
+ STATIC_ALIAS(char *pci_filter_parse_slot(struct pci_filter *f, char *str), pci_filter_parse_slot_v38(f, str));
+ SYMBOL_VERSION(pci_filter_parse_slot_v30, pci_filter_parse_slot@LIBPCI_3.0);
+-SYMBOL_VERSION(pci_filter_parse_slot_v38, pci_filter_parse_slot@LIBPCI_3.3);
+ SYMBOL_VERSION(pci_filter_parse_slot_v38, pci_filter_parse_slot@@LIBPCI_3.8);
+ 
+ STATIC_ALIAS(char *pci_filter_parse_id(struct pci_filter *f, char *str), pci_filter_parse_id_v38(f, str));
+ SYMBOL_VERSION(pci_filter_parse_id_v30, pci_filter_parse_id@LIBPCI_3.0);
+-SYMBOL_VERSION(pci_filter_parse_id_v38, pci_filter_parse_id@LIBPCI_3.3);
+ SYMBOL_VERSION(pci_filter_parse_id_v38, pci_filter_parse_id@@LIBPCI_3.8);
+ 
+ STATIC_ALIAS(int pci_filter_match(struct pci_filter *f, struct pci_dev *d), pci_filter_match_v38(f, d));
+ SYMBOL_VERSION(pci_filter_match_v30, pci_filter_match@LIBPCI_3.0);
+-SYMBOL_VERSION(pci_filter_match_v38, pci_filter_match@LIBPCI_3.3);
+ SYMBOL_VERSION(pci_filter_match_v38, pci_filter_match@@LIBPCI_3.8);
+-- 
+2.35.1
+

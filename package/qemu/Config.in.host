@@ -22,7 +22,7 @@ config BR2_PACKAGE_HOST_QEMU_ARCH_SUPPORTS
 	default y if BR2_xtensa
 	default y if BR2_x86_64
 	depends on !BR2_x86_steamroller && !BR2_x86_core_avx2
-	depends on !BR2_powerpc_620 && !BR2_powerpc_630 && !BR2_powerpc_970
+	depends on !BR2_powerpc_620 && !BR2_powerpc_630
 
 config BR2_PACKAGE_HOST_QEMU_SYSTEM_ARCH_SUPPORTS
 	bool
@@ -37,6 +37,7 @@ config BR2_PACKAGE_HOST_QEMU_USER_ARCH_SUPPORTS
 config BR2_PACKAGE_HOST_QEMU
 	bool "host qemu"
 	depends on BR2_PACKAGE_HOST_QEMU_SYSTEM_ARCH_SUPPORTS || BR2_PACKAGE_HOST_QEMU_USER_ARCH_SUPPORTS
+	depends on BR2_HOST_GCC_AT_LEAST_8
 	select BR2_PACKAGE_HOST_QEMU_LINUX_USER_MODE \
 		if !BR2_PACKAGE_HOST_QEMU_SYSTEM_MODE && BR2_PACKAGE_HOST_QEMU_USER_ARCH_SUPPORTS
 	select BR2_PACKAGE_HOST_QEMU_SYSTEM_MODE \
@@ -48,6 +49,11 @@ config BR2_PACKAGE_HOST_QEMU
 	  This option builds an emulator for your selected architecture.
 
 	  http://www.qemu.org
+
+comment "host-qemu needs a host gcc >= 8"
+	depends on BR2_PACKAGE_HOST_QEMU_SYSTEM_ARCH_SUPPORTS || \
+		BR2_PACKAGE_HOST_QEMU_USER_ARCH_SUPPORT
+	depends on !BR2_HOST_GCC_AT_LEAST_8
 
 if BR2_PACKAGE_HOST_QEMU
 
@@ -93,11 +99,7 @@ config BR2_PACKAGE_HOST_QEMU_VIRTFS
 
 config BR2_PACKAGE_HOST_QEMU_USB
 	bool "USB passthrough support"
-	depends on BR2_HOST_GCC_AT_LEAST_4_9 # host-libusb
 	help
 	  Enables USB passthrough support from guest to host.
-
-comment "USB passthrough support needs a toolchain w/ host gcc >= 4.9"
-	depends on !BR2_HOST_GCC_AT_LEAST_4_9
 
 endif

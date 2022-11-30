@@ -1,0 +1,48 @@
+From e9d1f80dffb4e29e44fc0b0627704af15cdd281a Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 13 Mar 2022 12:05:04 +0100
+Subject: [PATCH] src/corelib/configure.json: fix atomicfptr detection
+
+Fix atomicfptr detection on sparc v8 by linking with libatomic if needed
+to avoid the following build failure:
+
+/sysroot -std=gnu++11 -w -fPIC  -I. -I/home/peko/autobuild/instance-0/output-1/build/qt5base-d16bf02a11953dcac01dca73e6f3778f293adefe/mkspecs/devices/linux-buildroot-g++ -o main.o main.cpp
+> /home/peko/autobuild/instance-0/output-1/host/bin/sparc-linux-g++ --sysroot=/home/peko/autobuild/instance-0/output-1/host/sparc-buildroot-linux-uclibc/sysroot --sysroot=/home/peko/autobuild/instance-0/output-1/host/sparc-buildroot-linux-uclibc/sysroot -Wl,-O1 -o atomicfptr main.o   -lexecinfo  -lrt -lpthread -ldl
+> /home/peko/autobuild/instance-0/output-1/host/opt/ext-toolchain/bin/../lib/gcc/sparc-buildroot-linux-uclibc/10.3.0/../../../../sparc-buildroot-linux-uclibc/bin/ld: main.o: in function `test(std::atomic<void (*)(int)> volatile&)':
+> main.cpp:(.text+0x40): undefined reference to `__atomic_compare_exchange_4'
+> collect2: error: ld returned 1 exit status
+> make[1]: *** [Makefile:69: atomicfptr] Error 1
+
+[...]
+
+ERROR: detected a std::atomic implementation that fails for function pointers.
+Please apply the patch corresponding to your Standard Library vendor, found in
+  qtbase/config.tests/atomicfptr
+
+Fixes:
+ - http://autobuild.buildroot.org/results/5a20e984a5536165056b3fbd93b8712e8ddbeed4
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:
+https://invent.kde.org/qt/qt/qtbase/-/merge_requests/138]
+---
+ src/corelib/configure.json | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/corelib/configure.json b/src/corelib/configure.json
+index 9b5d19d41b..ac88f5856c 100644
+--- a/src/corelib/configure.json
++++ b/src/corelib/configure.json
+@@ -309,7 +309,8 @@
+                     "test(fptr);"
+                 ],
+                 "qmake": "CONFIG += c++11"
+-            }
++            },
++            "use": "libatomic"
+         },
+         "clock-monotonic": {
+             "label": "POSIX monotonic clock",
+-- 
+2.34.1
+

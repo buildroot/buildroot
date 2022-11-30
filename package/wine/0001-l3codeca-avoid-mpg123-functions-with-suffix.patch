@@ -1,0 +1,21 @@
+commit 75b70efdaa2d4baa064271098878b79f66df155f
+Author: André Zwing <nerv@dawncrow.de>
+Date:   Sat May 21 17:53:07 2022 +0200
+
+    l3codeca.acm: Avoid mpg123 functions with suffix.
+
+[Upstream commit: https://source.winehq.org/git/wine.git/commit/75b70efdaa2d4baa064271098878b79f66df155f]
+Signed-off-by: André Zwing <nerv@dawncrow.de>
+
+diff --git a/dlls/l3codeca.acm/Makefile.in b/dlls/l3codeca.acm/Makefile.in
+index 451794b2624..31765766d4e 100644
+--- a/dlls/l3codeca.acm/Makefile.in
++++ b/dlls/l3codeca.acm/Makefile.in
+@@ -1,6 +1,7 @@
+ MODULE    = l3codeca.acm
+ IMPORTS   = $(MPG123_PE_LIBS) winmm user32 kernelbase
+ EXTRAINCL = $(MPG123_PE_CFLAGS)
++EXTRADEFS = -DMPG123_NO_LARGENAME
+ 
+ C_SRCS = \
+        mpegl3.c

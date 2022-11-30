@@ -1,0 +1,14 @@
+config BR2_PACKAGE_OPENCL_CLHPP
+	bool "opencl-clhpp"
+	# header only library, so there is no build per-se, but
+	# packages depending on us will need C++ support
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_PACKAGE_HAS_LIBOPENCL
+	help
+	  opencl-clhpp are the OpenCL API C++ bindings
+
+	  http://github.khronos.org/OpenCL-CLHPP/
+
+comment "opencl-clhpp needs a toolchain w/ C++"
+	depends on BR2_PACKAGE_HAS_LIBOPENCL
+	depends on !BR2_INSTALL_LIBSTDCPP

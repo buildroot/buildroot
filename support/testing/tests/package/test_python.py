@@ -27,7 +27,7 @@ class TestPythonBase(infra.basetest.BRTest):
         self.assertRunOk(cmd, timeout)
 
     def libc_time_test(self, timeout=-1):
-        cmd = self.interpreter + " -c 'from __future__ import print_function;"
+        cmd = self.interpreter + " -c '"
         cmd += "import ctypes;"
         cmd += "libc = ctypes.cdll.LoadLibrary(\"libc.so.1\");"
         cmd += "print(libc.time(None))'"
@@ -39,24 +39,40 @@ class TestPythonBase(infra.basetest.BRTest):
         self.assertEqual(exit_code, 1)
 
 
-class TestPython2(TestPythonBase):
+class TestPython3Pyc(TestPythonBase):
     config = TestPythonBase.config + \
         """
-        BR2_PACKAGE_PYTHON=y
+        BR2_PACKAGE_PYTHON3=y
         """
 
     def test_run(self):
         self.login()
-        self.version_test("Python 2")
+        self.version_test("Python 3")
         self.math_floor_test()
         self.libc_time_test()
         self.zlib_test()
 
 
-class TestPython3(TestPythonBase):
+class TestPython3Py(TestPythonBase):
     config = TestPythonBase.config + \
         """
         BR2_PACKAGE_PYTHON3=y
+        BR2_PACKAGE_PYTHON3_PY_ONLY=y
+        """
+
+    def test_run(self):
+        self.login()
+        self.version_test("Python 3")
+        self.math_floor_test()
+        self.libc_time_test()
+        self.zlib_test()
+
+
+class TestPython3PyPyc(TestPythonBase):
+    config = TestPythonBase.config + \
+        """
+        BR2_PACKAGE_PYTHON3=y
+        BR2_PACKAGE_PYTHON3_PY_PYC=y
         """
 
     def test_run(self):

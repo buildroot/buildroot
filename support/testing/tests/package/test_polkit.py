@@ -15,6 +15,10 @@ class TestPolkitInfra(infra.basetest.BRTest):
         BR2_PACKAGE_POLKIT=y
         BR2_PACKAGE_POLKIT_RULES_TEST=y
         """
+    rule_paths = [
+        "/etc/polkit-1/rules.d",
+        "/usr/share/polkit-1/rules.d"
+    ]
 
     def base_test_run(self):
         cpio_file = os.path.join(self.builddir, "images", "rootfs.cpio")
@@ -36,17 +40,23 @@ class TestPolkitSystemd(TestPolkitInfra):
     def test_run(self):
         TestPolkitInfra.base_test_run(self)
 
-        cmd = "su brtest -c '/bin/systemctl restart systemd-timesyncd.service'"
-        _, exit_code = self.emulator.run(cmd, 10)
-        self.assertEqual(exit_code, 1)
+        rule_file = "systemd-timesyncd-restart.rules"
+        for rule_path in TestPolkitInfra.rule_paths:
+            cmd = "su brtest -c '/bin/systemctl restart systemd-timesyncd.service'"
+            _, exit_code = self.emulator.run(cmd, 10)
+            self.assertEqual(exit_code, 1)
 
-        cmd = "mv /root/systemd-timesyncd-restart.rules /etc/polkit-1/rules.d"
-        _, exit_code = self.emulator.run(cmd, 10)
-        self.assertEqual(exit_code, 0)
+            cmd = "cp /root/{file} {path}".format(file=rule_file, path=rule_path)
+            _, exit_code = self.emulator.run(cmd, 10)
+            self.assertEqual(exit_code, 0)
 
-        cmd = "su brtest -c '/bin/systemctl restart systemd-timesyncd.service'"
-        _, exit_code = self.emulator.run(cmd, 10)
-        self.assertEqual(exit_code, 0)
+            cmd = "su brtest -c '/bin/systemctl restart systemd-timesyncd.service'"
+            _, exit_code = self.emulator.run(cmd, 10)
+            self.assertEqual(exit_code, 0)
+
+            cmd = "rm {path}/{file}".format(file=rule_file, path=rule_path)
+            _, exit_code = self.emulator.run(cmd, 10)
+            self.assertEqual(exit_code, 0)
 
 
 class TestPolkitInitd(TestPolkitInfra):
@@ -55,16 +65,22 @@ class TestPolkitInitd(TestPolkitInfra):
     def test_run(self):
         TestPolkitInfra.base_test_run(self)
 
-        cmd = "su brtest -c 'pkexec hello-polkit'"
-        output, exit_code = self.emulator.run(cmd, 10)
-        self.assertEqual(exit_code, 127)
-        self.assertEqual(output[0], "Error executing command as another user: Not authorized")
+        rule_file = "hello-polkit.rules"
+        for rule_path in TestPolkitInfra.rule_paths:
+            cmd = "su brtest -c 'pkexec hello-polkit'"
+            output, exit_code = self.emulator.run(cmd, 10)
+            self.assertEqual(exit_code, 127)
+            self.assertEqual(output[0], "Error executing command as another user: Not authorized")
 
-        cmd = "mv /root/hello-polkit.rules /etc/polkit-1/rules.d/hello-polkit.rules"
-        _, exit_code = self.emulator.run(cmd, 10)
-        self.assertEqual(exit_code, 0)
+            cmd = "cp /root/{file} {path}/{file}".format(file=rule_file, path=rule_path)
+            _, exit_code = self.emulator.run(cmd, 10)
+            self.assertEqual(exit_code, 0)
 
-        cmd = "su brtest -c 'pkexec hello-polkit'"
-        output, exit_code = self.emulator.run(cmd, 10)
-        self.assertEqual(exit_code, 0)
-        self.assertEqual(output[0], "Hello polkit!")
+            cmd = "su brtest -c 'pkexec hello-polkit'"
+            output, exit_code = self.emulator.run(cmd, 10)
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(output[0], "Hello polkit!")
+
+            cmd = "rm {path}/{file}".format(file=rule_file, path=rule_path)
+            _, exit_code = self.emulator.run(cmd, 10)
+            self.assertEqual(exit_code, 0)

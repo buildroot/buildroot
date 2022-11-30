@@ -1,0 +1,39 @@
+From b0599c3d1b52818c79ea8fa5dfdc40a4ce01e454 Mon Sep 17 00:00:00 2001
+From: Michael Nosthoff <buildroot@heine.tech>
+Date: Fri, 22 Jul 2022 08:49:48 +0200
+Subject: [PATCH] disable unconditionally downloading api repos
+
+The Buildroot build doesn't need those submodules, so disable them hard
+for now.
+
+See https://github.com/grpc/grpc/issues/30385
+
+Signed-off-by: Michael Nosthoff <buildroot@heine.tech>
+
+---
+ CMakeLists.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 11e7ae2b67..a9062fa6ef 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -327,6 +327,7 @@ include(cmake/xxhash.cmake)
+ include(cmake/zlib.cmake)
+ include(cmake/download_archive.cmake)
+ 
++if(FALSE)
+ # Setup external proto library at third_party/envoy-api with 2 download URLs
+ if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/third_party/envoy-api)
+   # Download the archive via HTTP, validate the checksum, and extract to third_party/envoy-api.
+@@ -403,6 +404,7 @@ if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/third_party/xds)
+     xds-cb28da3451f158a947dfc45090fe92b07b243bc1
+   )
+ endif()
++endif()
+ 
+ if(WIN32)
+   set(_gRPC_BASELIB_LIBRARIES ws2_32 crypt32)
+-- 
+2.25.1
+

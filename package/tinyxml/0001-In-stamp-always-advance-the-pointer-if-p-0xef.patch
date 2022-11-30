@@ -1,0 +1,37 @@
+From f7ca0035d17a663f55668e662b840afce7b86112 Mon Sep 17 00:00:00 2001
+From: Christian Voegl <cvoegl@suse.com>
+Date: Wed, 27 Oct 2021 11:25:18 +0200
+Subject: [PATCH] In stamp always advance the pointer if *p= 0xef
+
+The current implementation only advanced if 0xef is followed
+by two non-zero bytes. In case of malformed input (0xef should be
+the start byte of a three byte character) this leads to an infinite
+loop. (CVE-2021-42260)
+
+[Retrieved (and backported) from:
+https://sourceforge.net/p/tinyxml/git/merge-requests/1]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ tinyxmlparser.cpp | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/tinyxmlparser.cpp b/src/tinyxmlparser.cpp
+index 81b7eae..8aa0dfa 100755
+--- a/src/tinyxmlparser.cpp
++++ b/src/tinyxmlparser.cpp
+@@ -274,6 +274,12 @@ void TiXmlParsingData::Stamp( const char* now, TiXmlEncoding encoding )
+ 						else
+ 							{ p +=3; ++col; }	// A normal character.
+ 					}
++					else
++					{
++						// TIXML_UTF_LEAD_0 (239) is the start character of a 3 byte sequence, so
++						// there is something wrong here. Just advance the pointer to evade infinite loops
++						++p;
++					}
+ 				}
+ 				else
+ 				{
+-- 
+2.34.1
+

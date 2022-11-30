@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NETIFRC_VERSION = 0.6.1
+NETIFRC_VERSION = 0.7.3
 NETIFRC_SITE = $(call github,gentoo,netifrc,$(NETIFRC_VERSION))
 NETIFRC_LICENSE = BSD-2-Clause
 NETIFRC_LICENSE_FILES = LICENSE

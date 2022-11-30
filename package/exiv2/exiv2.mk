@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EXIV2_VERSION = 0.27.4
+EXIV2_VERSION = 0.27.5
 EXIV2_SOURCE = exiv2-$(EXIV2_VERSION)-Source.tar.gz
 EXIV2_SITE = https://exiv2.org/builds
 EXIV2_INSTALL_STAGING = YES

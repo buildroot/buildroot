@@ -4,10 +4,11 @@
 #
 ################################################################################
 
-ASSIMP_VERSION = 5.0.1
+ASSIMP_VERSION = 5.2.5
 ASSIMP_SITE = $(call github,assimp,assimp,v$(ASSIMP_VERSION))
 ASSIMP_LICENSE = BSD-3-Clause
 ASSIMP_LICENSE_FILES = LICENSE
+ASSIMP_CPE_ID_VENDOR = assimp
 ASSIMP_DEPENDENCIES = zlib
 ASSIMP_INSTALL_STAGING = YES
 
@@ -38,6 +39,7 @@ ASSIMP_CXXFLAGS += -O0
 endif
 
 ASSIMP_CONF_OPTS += -DASSIMP_BUILD_TESTS=OFF \
+	-DASSIMP_WARNINGS_AS_ERRORS=OFF \
 	-DCMAKE_CXX_FLAGS="$(TARGET_CXXFLAGS) $(ASSIMP_CXXFLAGS)"
 
 $(eval $(cmake-package))

@@ -25,6 +25,8 @@ linux_image()
 		echo "\"uImage\""
 	elif grep -Eq "^BR2_LINUX_KERNEL_IMAGE=y$" ${BR2_CONFIG}; then
 		echo "\"Image\""
+	elif grep -Eq "^BR2_LINUX_KERNEL_IMAGEGZ=y$" ${BR2_CONFIG}; then
+		echo "\"Image.gz\""
 	else
 		echo "\"zImage\""
 	fi

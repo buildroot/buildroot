@@ -1,0 +1,50 @@
+From bbec15d4781670ac1be5e543cb04543f79200e69 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 12 Apr 2022 20:30:57 +0200
+Subject: [PATCH] fix build with libressl
+
+SSL_set0_rbio is provided by libressl since version 3.4.0 and
+https://github.com/libressl-portable/openbsd/commit/c99939f9665a9c3c648682b4987df46600b70efc
+but SSL_set0_wbio is not provided resulting in the following build
+failure:
+
+/nvmedata/autobuild/instance-9/output-1/host/lib/gcc/s390x-buildroot-linux-gnu/10.3.0/../../../../s390x-buildroot-linux-gnu/bin/ld: check/libcheck.a(check_ssl.o): in function `ssl_connect':
+check_ssl.c:(.text+0x7da): undefined reference to `SSL_set0_wbio'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/76f72a3c7350ea265e2277c89d68e5256410e94c
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/acassen/keepalived/commit/bbec15d4781670ac1be5e543cb04543f79200e69]
+---
+ configure.ac                 | 2 +-
+ keepalived/check/check_ssl.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 5a2ea76ec..e8b5ccc41 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1327,7 +1327,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+ AC_CHECK_FUNCS([SSL_CTX_set_verify_depth])
+ 
+ # SSL_set0_rbio(), SSL_set0_wbio() OPENSSL_init_crypto() and TLS_method() introduced OpenSSL v1.1.0
+-AC_CHECK_FUNCS([SSL_set0_rbio OPENSSL_init_crypto TLS_method])
++AC_CHECK_FUNCS([SSL_set0_wbio OPENSSL_init_crypto TLS_method])
+ 
+ # In OpenSSL v1.1.1 the call to SSL_CTX_new() fails if OPENSSL_init_crypto() has been called with
+ # OPENSSL_INIT_NO_LOAD_CONFIG. It does not fail in v1.1.0h and v1.1.1b.
+diff --git a/keepalived/check/check_ssl.c b/keepalived/check/check_ssl.c
+index 0155fce59..2cbedb8d3 100644
+--- a/keepalived/check/check_ssl.c
++++ b/keepalived/check/check_ssl.c
+@@ -234,7 +234,7 @@ ssl_connect(thread_ref_t thread, int new_req)
+ 		BIO_get_fd(req->bio, &bio_fd);
+ 		if (fcntl(bio_fd, F_SETFD, fcntl(bio_fd, F_GETFD) | FD_CLOEXEC) == -1)
+ 			log_message(LOG_INFO, "Setting CLOEXEC failed on ssl socket - errno %d", errno);
+-#ifdef HAVE_SSL_SET0_RBIO
++#ifdef HAVE_SSL_SET0_WBIO
+ 		BIO_up_ref(req->bio);
+ 		SSL_set0_rbio(req->ssl, req->bio);
+ 		SSL_set0_wbio(req->ssl, req->bio);

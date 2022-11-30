@@ -4,12 +4,8 @@
 #
 ################################################################################
 
-LIBJPEG_VERSION = 9d
-# 9d was released 2020-01-12, but the tarball was replaced upstream circa
-# 2021-03, causing hash mismatch. Until there is a new version released,
-# use our cached copy from s.b.o.
-#LIBJPEG_SITE = http://www.ijg.org/files
-LIBJPEG_SITE = http://sources.buildroot.org/libjpeg
+LIBJPEG_VERSION = 9e
+LIBJPEG_SITE = http://www.ijg.org/files
 LIBJPEG_SOURCE = jpegsrc.v$(LIBJPEG_VERSION).tar.gz
 LIBJPEG_LICENSE = IJG
 LIBJPEG_LICENSE_FILES = README

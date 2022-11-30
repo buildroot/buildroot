@@ -81,9 +81,6 @@ define inner-kconfig-package
 # Default values
 $(2)_MAKE ?= $$(MAKE)
 $(2)_KCONFIG_EDITORS ?= menuconfig
-$(2)_KCONFIG_OPTS ?=
-$(2)_KCONFIG_FIXUP_CMDS ?=
-$(2)_KCONFIG_FRAGMENT_FILES ?=
 $(2)_KCONFIG_DOTCONFIG ?= .config
 $(2)_KCONFIG_SUPPORTS_DEFCONFIG ?= YES
 

@@ -1,6 +1,8 @@
 config BR2_PACKAGE_XR819_XRADIO
 	bool "xr819-xradio"
 	depends on BR2_LINUX_KERNEL
+	depends on BR2_arm || BR2_armeb || BR2_aarch64 || \
+		BR2_aarch64_be || BR2_riscv
 	help
 	  Wireless driver for SDIO WiFi chip XR819
 

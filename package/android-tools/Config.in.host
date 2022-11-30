@@ -11,10 +11,14 @@ if BR2_PACKAGE_HOST_ANDROID_TOOLS
 
 config BR2_PACKAGE_HOST_ANDROID_TOOLS_FASTBOOT
 	bool "fastboot"
+	depends on BR2_HOST_GCC_AT_LEAST_5 # host-libselinux -> host-libsepol
 	help
 	  This option will build and install the fastboot utility for
 	  the host, which can be used to reflash target devices
 	  implementing the fastboot protocol.
+
+comment "fastboot needs a toolchain w/ host gcc >= 5"
+	depends on !BR2_HOST_GCC_AT_LEAST_5
 
 config BR2_PACKAGE_HOST_ANDROID_TOOLS_ADB
 	bool "adb"
@@ -25,9 +29,13 @@ config BR2_PACKAGE_HOST_ANDROID_TOOLS_ADB
 
 config BR2_PACKAGE_HOST_ANDROID_TOOLS_EXT4_UTILS
 	bool "ext4 utils"
+	depends on BR2_HOST_GCC_AT_LEAST_5 # host-libselinux -> host-libsepol
 	help
 	  This option will build and install the ext4 utils for the
 	  host, i.e. make_ext4fs, ext4fixup, ext2simg, img2simg,
 	  simg2img and simg2simg.
+
+comment "ext4 utils needs a toolchain w/ host gcc >= 5"
+	depends on !BR2_HOST_GCC_AT_LEAST_5
 
 endif

@@ -1,0 +1,46 @@
+From 3657a11d45f133776b50c716d99f37965eb07ed1 Mon Sep 17 00:00:00 2001
+From: Olivier Fourdan <ofourdan@redhat.com>
+Date: Wed, 14 Sep 2022 09:07:10 +0200
+Subject: [PATCH] wayland-info: Fix build without libdrm
+
+wayland-info can optionally use libdrm to provide a description of the
+dmabuf format modifiers.
+
+When not using libdrm however, the build fails because "dev_t" is not
+defined.
+
+The definition of "dev_t" comes from <sys/types.h> which is included
+from <libdrm.h>, which is not included without libdrm support, hence the
+build failure.
+
+Simply include <sys/types.h> unconditionally to make sure "dev_t" is
+defined regardless of libdrm support, to fix the build failure.
+
+Closes: https://gitlab.freedesktop.org/wayland/wayland-utils/-/issues/6
+Signed-off-by: Olivier Fourdan <ofourdan@redhat.com>
+Fixes: 240cb739 - "Add support for linux_dmabuf version 4"
+Reviewed-by: Simon Ser <contact@emersion.fr>
+Reviewed-by: Pekka Paalanen <pekka.paalanen@collabora.com>
+(cherry picked from commit baa65ba9f62e6a05c32b9202b524158a21f24245)
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[james.hilliard1@gmail.com: backport from upstream commit
+3657a11d45f133776b50c716d99f37965eb07ed1]
+---
+ wayland-info/wayland-info.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/wayland-info/wayland-info.c b/wayland-info/wayland-info.c
+index 53cd04b..98ff205 100644
+--- a/wayland-info/wayland-info.c
++++ b/wayland-info/wayland-info.c
+@@ -34,6 +34,7 @@
+ #include <ctype.h>
+ #include <unistd.h>
+ #include <sys/mman.h>
++#include <sys/types.h>
+ 
+ #include <wayland-client.h>
+ #if HAVE_HUMAN_FORMAT_MODIFIER
+-- 
+2.34.1
+

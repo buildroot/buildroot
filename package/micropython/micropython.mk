@@ -4,11 +4,14 @@
 #
 ################################################################################
 
-MICROPYTHON_VERSION = 1.14
+MICROPYTHON_VERSION = 1.19.1
 MICROPYTHON_SITE = $(call github,micropython,micropython,v$(MICROPYTHON_VERSION))
-MICROPYTHON_LICENSE = MIT
+# Micropython has a lot of code copied from other projects, and also a number
+# of submodules for various libs. However, we don't even clone the submodules,
+# and most of the copied code is not used in the unix build.
+MICROPYTHON_LICENSE = MIT, BSD-1-Clause, BSD-3-Clause, Zlib
 MICROPYTHON_LICENSE_FILES = LICENSE
-MICROPYTHON_DEPENDENCIES = host-pkgconf libffi $(BR2_PYTHON3_HOST_DEPENDENCY)
+MICROPYTHON_DEPENDENCIES = host-pkgconf libffi host-python3
 
 # Set GIT_DIR so package won't use buildroot's version number
 MICROPYTHON_MAKE_ENV = \

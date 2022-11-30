@@ -1,7 +1,7 @@
 From 8e273c688aa235ed9c68570a700d31596bac14df Mon Sep 17 00:00:00 2001
 From: Giulio Benetti <giulio.benetti@micronovasrl.com>
 Date: Mon, 15 Oct 2018 19:07:05 +0200
-Subject: [PATCH 1/2] configure: fix AC_CHECK_FUNCS(EVP_sha224 EVP_sha384 ...)
+Subject: [PATCH] configure: fix AC_CHECK_FUNCS(EVP_sha224 EVP_sha384 ...)
  failure on static linking
 
 If building as static lib, AC_CHECK_FUNCS(EVP_sha224 EVP_sha384 ...)

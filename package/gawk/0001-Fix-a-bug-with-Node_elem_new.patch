@@ -1,0 +1,29 @@
+From baab183439ff4e0c6b77d62156d447e61fc1dcfb Mon Sep 17 00:00:00 2001
+From: "Arnold D. Robbins" <arnold@skeeve.com>
+Date: Wed, 14 Sep 2022 21:08:59 +0300
+Subject: [PATCH] Fix a bug with Node_elem_new.
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[james.hilliard1@gmail.com: backport from upstream commit
+baab183439ff4e0c6b77d62156d447e61fc1dcfb]
+[yann.morin.1998@free.fr: drop all hunks about tests and changelogs]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ interpret.h       | 1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/interpret.h b/interpret.h
+index 57d060e6..268655b2 100644
+--- a/interpret.h
++++ b/interpret.h
+@@ -238,6 +238,7 @@ uninitialized_scalar:
+ 						_("reference to uninitialized argument `%s'") :
+ 						_("reference to uninitialized variable `%s'"),
+ 								save_symbol->vname);
++				UPREF(m);
+ 				PUSH(m);
+ 				break;
+ 
+-- 
+2.34.1
+

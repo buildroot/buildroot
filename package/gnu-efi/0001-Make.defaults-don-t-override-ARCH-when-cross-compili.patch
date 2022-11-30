@@ -1,4 +1,4 @@
-From 3452721eafae90749f4af63264c412f398460b15 Mon Sep 17 00:00:00 2001
+From b2dbeec5063265eb0121342c24a900a4888712a7 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Sun, 20 Jan 2019 21:07:11 +0100
 Subject: [PATCH] Make.defaults: don't override ARCH when cross-compiling
@@ -15,18 +15,18 @@ Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Make.defaults b/Make.defaults
-index ba743f1..a0e5632 100755
+index 47ed361..7420344 100755
 --- a/Make.defaults
 +++ b/Make.defaults
 @@ -67,7 +67,7 @@ ARCH         ?= $(shell $(HOSTCC) -dumpmachine | cut -f1 -d- | sed -e s,i[345678
  
  # Get ARCH from the compiler if cross compiling 
  ifneq ($(CROSS_COMPILE),)
--  override ARCH := $(shell $(CC) -dumpmachine | cut -f1 -d-| sed -e s,i[3456789]86,ia32, -e 's,armv7.*,arm,' )
-+  ARCH := $(shell $(CC) -dumpmachine | cut -f1 -d-| sed -e s,i[3456789]86,ia32, -e 's,armv7.*,arm,' )
+-  override ARCH := $(shell $(CC) -dumpmachine | cut -f1 -d-| sed -e s,i[3456789]86,ia32, -e 's,armv[67].*,arm,' )
++  ARCH := $(shell $(CC) -dumpmachine | cut -f1 -d-| sed -e s,i[3456789]86,ia32, -e 's,armv[67].*,arm,' )
  endif
  
  # FreeBSD (and possibly others) reports amd64 instead of x86_64
 -- 
-2.14.1
+2.36.1
 

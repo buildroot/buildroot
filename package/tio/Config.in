@@ -1,6 +1,7 @@
 config BR2_PACKAGE_TIO
 	bool "tio"
 	depends on !BR2_sparc64 && !BR2_sparc
+	select BR2_PACKAGE_INIH
 	help
 	  "tio" is a simple TTY terminal application which features a
 	  straightforward commandline interface to easily connect to

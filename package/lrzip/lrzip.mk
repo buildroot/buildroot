@@ -4,12 +4,14 @@
 #
 ################################################################################
 
-LRZIP_VERSION = 7f3bf46203bf45ea115d8bd9f310ea219be88af4
-LRZIP_SITE = $(call github,ckolivas,lrzip,$(LRZIP_VERSION))
-LRZIP_AUTORECONF = YES
+LRZIP_VERSION = 0.651
+LRZIP_SOURCE = lrzip-$(LRZIP_VERSION).tar.xz
+LRZIP_SITE = http://ck.kolivas.org/apps/lrzip
 LRZIP_LICENSE = GPL-2.0+
 LRZIP_LICENSE_FILES = COPYING
-LRZIP_DEPENDENCIES = zlib lzo bzip2
+LRZIP_CPE_ID_VENDOR = long_range_zip_project
+LRZIP_CPE_ID_PRODUCT = long_range_zip
+LRZIP_DEPENDENCIES = zlib lz4 lzo bzip2
 
 ifeq ($(BR2_i386)$(BR2_x86_64),y)
 LRZIP_DEPENDENCIES += host-nasm

@@ -1,0 +1,44 @@
+From 15ec267520efbe45193eb1df5361a4ab56164294 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 8 May 2022 17:54:42 +0200
+Subject: [PATCH] CMakeLists.txt: honour BUILD_TESTING
+
+Allow the user to disable tests through the standard BUILD_TESTING
+option: https://cmake.org/cmake/help/latest/module/CTest.html
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/rafaelsteil/libcgi/commit/15ec267520efbe45193eb1df5361a4ab56164294]
+---
+ CMakeLists.txt | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index cbf0d97..e3329a1 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -29,15 +29,21 @@ option(BUILD_SHARED_LIBS
+ 	"Global flag to cause add_library to create shared libraries if on."
+ 	ON
+ )
++option(BUILD_TESTING
++	"Build tests."
++	ON
++)
+ 
+ # subdirectories
+ add_subdirectory("include/libcgi")
+ add_subdirectory("src")
+ 
+ # test
+-enable_testing()
+-include(CTest)
+-add_subdirectory("test")
++if(BUILD_TESTING)
++	enable_testing()
++	include(CTest)
++	add_subdirectory("test")
++endif(BUILD_TESTING)
+ 
+ # cmake package stuff
+ configure_package_config_file(${PROJECT_NAME_LC}-config.cmake.in

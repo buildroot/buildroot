@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MUSL_VERSION = 1.2.2
+MUSL_VERSION = 1.2.3
 MUSL_SITE = http://www.musl-libc.org/releases
 MUSL_LICENSE = MIT
 MUSL_LICENSE_FILES = COPYRIGHT
@@ -25,6 +25,12 @@ MUSL_DEPENDENCIES += musl-compat-headers
 MUSL_ADD_TOOLCHAIN_DEPENDENCY = NO
 
 MUSL_INSTALL_STAGING = YES
+
+# musl does not build with LTO, so explicitly disable it
+# when using a compiler that may have support for LTO
+ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_4_7),y)
+MUSL_EXTRA_CFLAGS += -fno-lto
+endif
 
 # Thumb build is broken, build in ARM mode, since all architectures
 # that support Thumb1 also support ARM.
@@ -54,12 +60,14 @@ endef
 define MUSL_INSTALL_STAGING_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) \
 		DESTDIR=$(STAGING_DIR) install-libs install-tools install-headers
+	ln -sf libc.so $(STAGING_DIR)/lib/ld-musl*
 endef
 
 define MUSL_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) \
 		DESTDIR=$(TARGET_DIR) install-libs
 	$(RM) $(addprefix $(TARGET_DIR)/lib/,crt1.o crtn.o crti.o rcrt1.o Scrt1.o)
+	ln -sf libc.so $(TARGET_DIR)/lib/ld-musl*
 endef
 
 $(eval $(generic-package))

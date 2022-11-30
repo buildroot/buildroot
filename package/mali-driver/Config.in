@@ -1,0 +1,15 @@
+comment "mali-driver needs a Linux kernel to be built"
+	depends on !BR2_LINUX_KERNEL
+
+config BR2_PACKAGE_MALI_DRIVER
+	bool "mali-driver"
+	depends on BR2_aarch64 || BR2_arm
+	depends on BR2_LINUX_KERNEL
+	help
+	  This package builds and installs the Linux kernel driver for
+	  the Mali Midgard/Bifrost GPU, compatible with recent Linux
+	  kernels (>= 5.4). Note that it should be installed together
+	  with the corresponding userspace OpenGL libraries, which are
+	  usually provided as binaries only by hardware vendors.
+
+	  mali-driver requires a Linux kernel >= 5.4.

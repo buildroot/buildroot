@@ -1,7 +1,5 @@
 config BR2_PACKAGE_KNOCK
 	bool "knock"
-	depends on BR2_USE_MMU # fork()
-	select BR2_PACKAGE_LIBPCAP
 	help
 	  A port knocking implementation.
 	  Provides a daemon and a user application. Port knocking can be
@@ -11,3 +9,15 @@ config BR2_PACKAGE_KNOCK
 	  firewall.
 
 	  http://www.zeroflux.org/projects/knock
+
+if BR2_PACKAGE_KNOCK
+
+config BR2_PACKAGE_KNOCK_KNOCKD
+	bool "knockd"
+	default y
+	depends on BR2_USE_MMU # fork()
+	select BR2_PACKAGE_LIBPCAP
+	help
+	  Enable knockd
+
+endif

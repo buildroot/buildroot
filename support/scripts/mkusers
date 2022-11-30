@@ -4,10 +4,19 @@ myname="${0##*/}"
 
 #----------------------------------------------------------------------------
 # Configurable items
-MIN_UID=1000
-MAX_UID=1999
-MIN_GID=1000
-MAX_GID=1999
+FIRST_USER_UID=1000
+LAST_USER_UID=1999
+FIRST_USER_GID=1000
+LAST_USER_GID=1999
+# use names from /etc/adduser.conf
+FIRST_SYSTEM_UID=100
+LAST_SYSTEM_UID=999
+FIRST_SYSTEM_GID=100
+LAST_SYSTEM_GID=999
+# argument to automatically crease system/user id
+AUTO_SYSTEM_ID=-1
+AUTO_USER_ID=-2
+
 # No more is configurable below this point
 #----------------------------------------------------------------------------
 
@@ -136,9 +145,9 @@ check_user_validity() {
         fail "invalid username '%s\n'" "${username}"
     fi
 
-    if [ ${gid} -lt -1 -o ${gid} -eq 0 ]; then
+    if [ ${gid} -lt -2 -o ${gid} -eq 0 ]; then
         fail "invalid gid '%d' for '%s'\n" ${gid} "${username}"
-    elif [ ${gid} -ne -1 ]; then
+    elif [ ${gid} -ge 0 ]; then
         # check the gid is not already used for another group
         if [ -n "${_group}" -a "${_group}" != "${group}" ]; then
             fail "gid '%d' for '%s' is already used by group '%s'\n" \
@@ -162,9 +171,9 @@ check_user_validity() {
         fi
     fi
 
-    if [ ${uid} -lt -1 -o ${uid} -eq 0 ]; then
+    if [ ${uid} -lt -2 -o ${uid} -eq 0 ]; then
         fail "invalid uid '%d' for '%s'\n" ${uid} "${username}"
-    elif [ ${uid} -ne -1 ]; then
+    elif [ ${uid} -ge 0 ]; then
         # check the uid is not already used for another user
         if [ -n "${_username}" -a "${_username}" != "${username}" ]; then
             fail "uid '%d' for '%s' already used by user '%s'\n" \
@@ -194,20 +203,22 @@ check_user_validity() {
 # then simply report its current GID. Otherwise, generate the lowest GID
 # that is:
 #   - not 0
-#   - comprised in [MIN_GID..MAX_GID]
+#   - comprised in [$2..$3]
 #   - not already used by a group
 generate_gid() {
     local group="${1}"
+    local mingid="${2}"
+    local maxgid="${3}"
     local gid
 
     gid="$( get_gid "${group}" )"
     if [ -z "${gid}" ]; then
-        for(( gid=MIN_GID; gid<=MAX_GID; gid++ )); do
+        for(( gid=mingid; gid<=maxgid; gid++ )); do
             if [ -z "$( get_group "${gid}" )" ]; then
                 break
             fi
         done
-        if [ ${gid} -gt ${MAX_GID} ]; then
+        if [ ${gid} -gt ${maxgid} ]; then
             fail "can not allocate a GID for group '%s'\n" "${group}"
         fi
     fi
@@ -222,8 +233,10 @@ add_one_group() {
     local members
 
     # Generate a new GID if needed
-    if [ ${gid} -eq -1 ]; then
-        gid="$( generate_gid "${group}" )"
+    if [ ${gid} -eq ${AUTO_USER_ID} ]; then
+        gid="$( generate_gid "${group}" $FIRST_USER_GID $LAST_USER_GID )"
+    elif [ ${gid} -eq ${AUTO_SYSTEM_ID} ]; then
+        gid="$( generate_gid "${group}" $FIRST_SYSTEM_GID $LAST_SYSTEM_GID )"
     fi
 
     members=$(get_members "$group")
@@ -243,20 +256,23 @@ add_one_group() {
 # then simply report its current UID. Otherwise, generate the lowest UID
 # that is:
 #   - not 0
-#   - comprised in [MIN_UID..MAX_UID]
+#   - comprised in [$2..$3]
 #   - not already used by a user
 generate_uid() {
     local username="${1}"
+    local minuid="${2}"
+    local maxuid="${3}"
+
     local uid
 
     uid="$( get_uid "${username}" )"
     if [ -z "${uid}" ]; then
-        for(( uid=MIN_UID; uid<=MAX_UID; uid++ )); do
+        for(( uid=minuid; uid<=maxuid; uid++ )); do
             if [ -z "$( get_username "${uid}" )" ]; then
                 break
             fi
         done
-        if [ ${uid} -gt ${MAX_UID} ]; then
+        if [ ${uid} -gt ${maxuid} ]; then
             fail "can not allocate a UID for user '%s'\n" "${username}"
         fi
     fi
@@ -307,8 +323,10 @@ add_one_user() {
     check_user_validity "${username}" "${uid}" "${group}" "${gid}"
 
     # Generate a new UID if needed
-    if [ ${uid} -eq -1 ]; then
-        uid="$( generate_uid "${username}" )"
+    if [ ${uid} -eq ${AUTO_USER_ID} ]; then
+        uid="$( generate_uid "${username}" $FIRST_USER_GID $LAST_USER_GID )"
+    elif [ ${uid} -eq ${AUTO_SYSTEM_ID} ]; then
+        uid="$( generate_uid "${username}" $FIRST_SYSTEM_GID $LAST_SYSTEM_GID )"
     fi
 
     # Remove any previous instance of this user
@@ -369,14 +387,15 @@ add_one_user() {
 main() {
     local username uid group gid passwd home shell groups comment
     local line
+    local auto_id
     local -a ENTRIES
 
     # Some sanity checks
-    if [ ${MIN_UID} -le 0 ]; then
-        fail "MIN_UID must be >0 (currently %d)\n" ${MIN_UID}
+    if [ ${FIRST_USER_UID} -le 0 ]; then
+        fail "FIRST_USER_UID must be >0 (currently %d)\n" ${FIRST_USER_UID}
     fi
-    if [ ${MIN_GID} -le 0 ]; then
-        fail "MIN_GID must be >0 (currently %d)\n" ${MIN_GID}
+    if [ ${FIRST_USER_GID} -le 0 ]; then
+        fail "FIRST_USER_GID must be >0 (currently %d)\n" ${FIRST_USER_GID}
     fi
 
     # Read in all the file in memory, exclude empty lines and comments
@@ -384,8 +403,8 @@ main() {
         ENTRIES+=( "${line}" )
     done < <( sed -r -e 's/#.*//; /^[[:space:]]*$/d;' "${USERS_TABLE}" )
 
-    # We first create groups whose gid is not -1, and then we create groups
-    # whose gid is -1 (automatic), so that, if a group is defined both with
+    # We first create groups whose gid is positive, and then we create groups
+    # whose gid is automatic, so that, if a group is defined both with
     # a specified gid and an automatic gid, we ensure the specified gid is
     # used, rather than a different automatic gid is computed.
 
@@ -399,18 +418,27 @@ main() {
     # Then, create all the main groups which gid *is* automatic
     for line in "${ENTRIES[@]}"; do
         read username uid group gid passwd home shell groups comment <<<"${line}"
-        [ ${gid} -eq -1 ] || continue    # Non-automatic gid
+        [ ${gid} -lt 0 ] || continue    # Non-automatic gid
         add_one_group "${group}" "${gid}"
     done
 
     # Then, create all the additional groups
     # If any additional group is already a main group, we should use
-    # the gid of that main group; otherwise, we can use any gid
+    # the gid of that main group; otherwise, we can use any gid - a
+    # system gid if the uid is a system user (<= LAST_SYSTEM_UID),
+    # otherwise a user gid.
     for line in "${ENTRIES[@]}"; do
         read username uid group gid passwd home shell groups comment <<<"${line}"
         if [ "${groups}" != "-" ]; then
+            if [ ${uid} -le 0 ]; then
+                auto_id=${uid}
+            elif [ ${uid} -le ${LAST_SYSTEM_UID} ]; then
+                auto_id=${AUTO_SYSTEM_ID}
+            else
+                auto_id=${AUTO_USER_ID}
+            fi
             for g in ${groups//,/ }; do
-                add_one_group "${g}" -1
+                add_one_group "${g}" ${auto_id}
             done
         fi
     done
@@ -433,7 +461,7 @@ main() {
     for line in "${ENTRIES[@]}"; do
         read username uid group gid passwd home shell groups comment <<<"${line}"
         [ "${username}" != "-" ] || continue # Magic string to skip user creation
-        [ ${uid} -eq -1        ] || continue # Non-automatic uid
+        [ ${uid} -lt 0        ] || continue # Non-automatic uid
         add_one_user "${username}" "${uid}" "${group}" "${gid}" "${passwd}" \
                      "${home}" "${shell}" "${groups}" "${comment}"
     done

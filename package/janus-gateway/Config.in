@@ -30,6 +30,14 @@ config BR2_PACKAGE_JANUS_GATEWAY_AUDIO_BRIDGE
 	bool "audio bridge"
 	select BR2_PACKAGE_OPUS
 
+config BR2_PACKAGE_JANUS_GATEWAY_DUKTAPE
+	bool "duktape"
+	depends on !BR2_OPTIMIZE_FAST # duktape
+	select BR2_PACKAGE_DUKTAPE
+
+comment "duktape plugin can't be built with optimize for fast"
+	depends on BR2_OPTIMIZE_FAST
+
 config BR2_PACKAGE_JANUS_GATEWAY_ECHO_TEST
 	bool "echo test"
 

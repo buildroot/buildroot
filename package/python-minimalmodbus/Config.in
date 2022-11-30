@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_MINIMALMODBUS
+	bool "python-minimalmodbus"
+	select BR2_PACKAGE_PYTHON_SERIAL # runtime
+	help
+	  Easy-to-use Modbus RTU and Modbus ASCII implementation.
+
+	  https://minimalmodbus.readthedocs.io/

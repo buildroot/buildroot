@@ -1,8 +1,14 @@
 config BR2_PACKAGE_PYTHON_AUGEAS
 	bool "python-augeas"
-	depends on BR2_PACKAGE_AUGEAS
+	depends on !BR2_arc
+	depends on BR2_USE_WCHAR
+	select BR2_PACKAGE_AUGEAS
 	select BR2_PACKAGE_PYTHON_CFFI # runtime
 	help
 	  Pure python bindings for Augeas.
 
 	  https://github.com/hercules-team/python-augeas
+
+comment "python-augeas needs a toolchain w/ wchar"
+	depends on !BR2_arc
+	depends on !BR2_USE_WCHAR

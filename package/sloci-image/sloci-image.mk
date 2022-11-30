@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SLOCI_IMAGE_VERSION = 0.1.1
+SLOCI_IMAGE_VERSION = 0.1.2
 SLOCI_IMAGE_SITE = $(call github,jirutka,sloci-image,v$(SLOCI_IMAGE_VERSION))
 
 SLOCI_IMAGE_LICENSE = MIT

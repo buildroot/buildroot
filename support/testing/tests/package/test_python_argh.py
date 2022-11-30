@@ -27,15 +27,6 @@ class TestPythonArgh(TestPythonPackageBase):
         self.assertEqual(exit_code, 2)
 
 
-class TestPythonPy2Argh(TestPythonArgh):
-    __test__ = True
-    config = TestPythonArgh.config + \
-        """
-        BR2_PACKAGE_PYTHON=y
-        BR2_PACKAGE_PYTHON_ARGH=y
-        """
-
-
 class TestPythonPy3Argh(TestPythonArgh):
     __test__ = True
     config = TestPythonArgh.config + \

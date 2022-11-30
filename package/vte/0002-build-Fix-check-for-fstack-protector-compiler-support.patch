@@ -1,0 +1,43 @@
+From e32dba1d5cf884959af5b2c0691db00c263ea048 Mon Sep 17 00:00:00 2001
+From: Christian Persch <chpe@src.gnome.org>
+Date: Mon, 27 Dec 2021 19:24:46 +0100
+Subject: [PATCH] build: Fix check for -fstack-protector* compiler support
+
+Need to use has_link_argument() on some platforms.
+
+Fixes: https://gitlab.gnome.org/GNOME/vte/-/issues/2535
+
+[Retrieved from:
+https://gitlab.gnome.org/GNOME/vte/-/commit/e32dba1d5cf884959af5b2c0691db00c263ea048]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ meson.build | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 93b7f376..381d5d58 100644
+--- a/meson.build
++++ b/meson.build
+@@ -461,8 +461,6 @@ compiler_flags_common = [
+   '-fdiagnostics-show-option',
+   '-fno-common',
+   '-fno-semantic-interposition',
+-  '-fstack-protector',
+-  '-fstack-protector-strong',
+ ]
+ 
+ if enable_debug
+@@ -550,6 +548,10 @@ add_project_arguments(global_cxxflags, language: 'cpp')
+ linker_flags = [
+   ['-Wl,-Bsymbolic', false,],
+   ['-Wl,-Bsymbolic-functions', get_option('_b_symbolic_functions'),],
++
++  # See issue vte#2535.
++  ['-fstack-protector', false],
++  ['-fstack-protector-strong', false],
+ ]
+ 
+ foreach flag: linker_flags
+-- 
+GitLab
+

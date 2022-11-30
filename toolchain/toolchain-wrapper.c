@@ -507,8 +507,10 @@ int main(int argc, char **argv)
 
 	exec_args = args;
 #ifdef BR_CCACHE
-	if (getenv("BR_NO_CCACHE"))
-		/* Skip the ccache call */
+	/* If BR2_USE_CCACHE is not defined, or its value is not 1,
+	 * skip the ccache call */
+	char *br_use_ccache = getenv("BR2_USE_CCACHE");
+	if (!br_use_ccache || strncmp(br_use_ccache, "1", strlen("1")))
 		exec_args++;
 #endif
 

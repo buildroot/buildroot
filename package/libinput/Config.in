@@ -13,5 +13,27 @@ config BR2_PACKAGE_LIBINPUT
 
 	  http://freedesktop.org/wiki/Software/libinput/
 
+if BR2_PACKAGE_LIBINPUT
+
+config BR2_PACKAGE_LIBINPUT_PYTHON_TOOLS
+	bool "install python tools "
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON_LIBEVDEV # runtime
+	select BR2_PACKAGE_PYTHON_PYUDEV # runtime
+	select BR2_PACKAGE_PYTHON_PYYAML # runtime
+	help
+	  Install python tools:
+	  libinput-analyze-per-slot-delta,
+	  libinput-analyze-recording,
+	  libinput-analyze-touch-down-state,
+	  libinput-measure-fuzz,
+	  libinput-measure-touchpad-pressure,
+	  libinput-measure-touchpad-size,
+	  libinput-measure-touchpad-tap,
+	  libinput-measure-touch-size,
+	  libinput-replay
+
+endif
+
 comment "libinput needs udev /dev management"
 	depends on !BR2_PACKAGE_HAS_UDEV

@@ -1,0 +1,28 @@
+comment "volk needs a toolchain w/ C++, NPTL, wchar, dynamic library"
+	depends on BR2_USE_MMU
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_GCC_AT_LEAST_7 || \
+		!BR2_TOOLCHAIN_HAS_THREADS_NPTL || BR2_STATIC_LIBS
+
+config BR2_PACKAGE_VOLK
+	bool "volk"
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on !BR2_STATIC_LIBS
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 # C++17
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
+	depends on BR2_USE_MMU # use fork()
+	help
+	  VOLK is the Vector-Optimized Library of Kernels. It is a
+	  library that contains kernels of hand-written SIMD code
+	  for different mathematical operations. Since each SIMD
+	  architecture can be very different and no compiler has yet
+	  come along to handle vectorization properly or highly
+	  efficiently, VOLK approaches the problem differently.
+
+	  For each architecture or platform that a developer wishes
+	  to vectorize for, a new proto-kernel is added to VOLK. At
+	  runtime, VOLK will select the correct proto-kernel. In this
+	  way, the users of VOLK call a kernel for performing the
+	  operation that is platform/architecture agnostic. This
+	  allows us to write portable SIMD code.
+
+	  https://www.libvolk.org/

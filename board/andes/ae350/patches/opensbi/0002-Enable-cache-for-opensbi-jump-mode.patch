@@ -1,0 +1,25 @@
+From 325328f4204b40b1fcc8db3b46c7c8805710d21c Mon Sep 17 00:00:00 2001
+From: Yu Chien Peter Lin <peterlin@andestech.com>
+Date: Thu, 30 Dec 2021 08:47:34 +0800
+Subject: [PATCH] Enable cache for opensbi jump mode
+
+Signed-off-by: Yu Chien Peter Lin <peterlin@andestech.com>
+---
+ firmware/fw_base.S | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/firmware/fw_base.S b/firmware/fw_base.S
+index ab33e11..155d230 100644
+--- a/firmware/fw_base.S
++++ b/firmware/fw_base.S
+@@ -46,6 +46,8 @@
+	.globl _start
+	.globl _start_warm
+ _start:
++	li t0, 0x80003
++	csrw  0x7ca, t0
+	/* Find preferred boot HART id */
+	MOV_3R	s0, a0, s1, a1, s2, a2
+	call	fw_boot_hart
+--
+2.25.1

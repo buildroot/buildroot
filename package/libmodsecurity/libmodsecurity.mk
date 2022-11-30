@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBMODSECURITY_VERSION = 3.0.5
+LIBMODSECURITY_VERSION = 3.0.7
 LIBMODSECURITY_SOURCE = modsecurity-v$(LIBMODSECURITY_VERSION).tar.gz
 LIBMODSECURITY_SITE = https://github.com/SpiderLabs/ModSecurity/releases/download/v$(LIBMODSECURITY_VERSION)
 LIBMODSECURITY_INSTALL_STAGING = YES
@@ -12,12 +12,13 @@ LIBMODSECURITY_LICENSE = Apache-2.0
 LIBMODSECURITY_LICENSE_FILES = LICENSE
 LIBMODSECURITY_CPE_ID_VENDOR = trustwave
 LIBMODSECURITY_CPE_ID_PRODUCT = modsecurity
-# We're patching build/libmaxmind.m4
+# We're patching build/libmaxmind.m4 and build/pcre.m4
 LIBMODSECURITY_AUTORECONF = YES
 
-LIBMODSECURITY_DEPENDENCIES = pcre
+LIBMODSECURITY_DEPENDENCIES = pcre2
 LIBMODSECURITY_CONF_OPTS = \
-	--with-pcre="$(STAGING_DIR)/usr/bin/pcre-config" \
+	--without-pcre \
+	--with-pcre2="$(STAGING_DIR)/usr" \
 	--disable-examples \
 	--without-lmdb \
 	--without-ssdeep \

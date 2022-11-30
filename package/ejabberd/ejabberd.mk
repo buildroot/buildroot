@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EJABBERD_VERSION = 20.07
+EJABBERD_VERSION = 21.12
 EJABBERD_SOURCE = ejabberd-$(EJABBERD_VERSION).tgz
 EJABBERD_SITE = https://static.process-one.net/ejabberd/downloads/$(EJABBERD_VERSION)
 EJABBERD_LICENSE = GPL-2.0+ with OpenSSL exception
@@ -16,7 +16,8 @@ EJABBERD_DEPENDENCIES = getent openssl erlang-eimp host-erlang-lager \
 	erlang-p1-utils erlang-p1-xml erlang-p1-xmpp erlang-p1-yaml \
 	erlang-p1-zlib host-erlang-p1-utils host-erlang-p1-xmpp
 
-# 0001-remove-make-targets-for-deps.patch updates Makefile.in
+# 0001-Makefile.in-do-not-download-or-compile-dependencies.patch
+# updates Makefile.in
 EJABBERD_USE_AUTOCONF = YES
 EJABBERD_AUTORECONF = YES
 
