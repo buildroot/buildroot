@@ -1,0 +1,51 @@
+From e248d9774506fdd8698b14a7edead113f19ecdb0 Mon Sep 17 00:00:00 2001
+From: Max Filippov <jcmvbkbc@gmail.com>
+Date: Tue, 29 Nov 2022 17:47:54 -0800
+Subject: [PATCH] xtensa: fix text relocations
+
+The commit 5e08f1968316 ("Don't always update text in !pic_with_got case")
+changed good_32bit_resolved_reloc to not do endianness swapping for
+relocated entries in the text segment. This broke little-endian xtensa
+FLAT images which after this change fail to start with the following
+message:
+
+  binfmt_flat: reloc outside program 0x24c80100 (0 - 0x6e430/0x56a20)
+
+Fix it by preserving 'update_text' when building for xtensa.
+
+Fixes: 5e08f1968316 ("Don't always update text in !pic_with_got case")
+Reported-by: Niklas Cassel <niklas.cassel@wdc.com>
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+---
+ elf2flt.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/elf2flt.c b/elf2flt.c
+index b93aecdaced3..cec3f4a22239 100644
+--- a/elf2flt.c
++++ b/elf2flt.c
+@@ -808,7 +808,20 @@ output_relocs (
+ 					continue;
+ 				case R_XTENSA_32:
+ 				case R_XTENSA_PLT:
+-					goto good_32bit_resolved_reloc;
++					if (bfd_big_endian (abs_bfd))
++						sym_addr =
++							(r_mem[0] << 24)
++							+ (r_mem[1] << 16)
++							+ (r_mem[2] << 8)
++							+ r_mem[3];
++					else
++						sym_addr =
++							r_mem[0]
++							+ (r_mem[1] << 8)
++							+ (r_mem[2] << 16)
++							+ (r_mem[3] << 24);
++					relocation_needed = 1;
++					break;
+ 				default:
+ 					goto bad_resolved_reloc;
+ #else
+-- 
+2.30.2
+
