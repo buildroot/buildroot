@@ -1,0 +1,11 @@
+config BR2_PACKAGE_EDK2_NON_OSI
+	bool
+	help
+	  EDK2 description files for additional platforms, not
+	  compatible with the normal licensing requirements.
+	  The main EDK2 bootloader package will depend on these
+	  description files while building firmware for some platforms.
+
+	  Only the Marvell Armada files are copied at this point.
+
+	  https://github.com/tianocore/edk2-non-osi
