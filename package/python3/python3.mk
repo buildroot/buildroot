@@ -16,6 +16,9 @@ PYTHON3_CPE_ID_PRODUCT = python
 # 0033-3.11-gh-98433-Fix-quadratic-time-idna-decoding.-GH-9.patch
 PYTHON3_IGNORE_CVES += CVE-2022-45061
 
+# 0034-3-10-gh-98517-Fix-buffer-overflows-in-_sha3-module.patch
+PYTHON3_IGNORE_CVES += CVE-2022-37454
+
 # This host Python is installed in $(HOST_DIR), as it is needed when
 # cross-compiling third-party Python modules.
 
