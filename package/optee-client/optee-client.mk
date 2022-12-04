@@ -27,8 +27,8 @@ OPTEE_CLIENT_CONF_OPTS += -DCFG_TEE_SUPP_PLUGINS=OFF
 endif
 
 define OPTEE_CLIENT_INSTALL_INIT_SYSV
-	$(INSTALL) -m 0755 -D $(OPTEE_CLIENT_PKGDIR)/S30optee \
-		$(TARGET_DIR)/etc/init.d/S30optee
+	$(INSTALL) -m 0755 -D $(OPTEE_CLIENT_PKGDIR)/S30tee-supplicant \
+		$(TARGET_DIR)/etc/init.d/S30tee-supplicant
 endef
 
 $(eval $(cmake-package))
