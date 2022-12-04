@@ -560,6 +560,13 @@ def fixup_config(sysinfo, configfile):
             return False
 
     if 'BR2_TARGET_MXS_BOOTLETS=y\n' in configlines and \
+       'BR2_TARGET_MXS_BOOTLETS_CUSTOM_BOARD=y\n' in configlines and \
+       'BR2_TARGET_MXS_BOOTLETS_CUSTOM_BOARD_NAME=""\n' in configlines:
+        configlines.remove('BR2_TARGET_MXS_BOOTLETS_CUSTOM_BOARD=y\n')
+        configlines.append('BR2_TARGET_MXS_BOOTLETS_STMP37xx=y\n')
+        configlines.remove('BR2_TARGET_MXS_BOOTLETS_CUSTOM_BOARD_NAME=""\n')
+
+    if 'BR2_TARGET_MXS_BOOTLETS=y\n' in configlines and \
        'BR2_TARGET_MXS_BOOTLETS_CUSTOM_GIT=y\n' in configlines and \
        'BR2_TARGET_MXS_BOOTLETS_CUSTOM_GIT_URL=""\n' in configlines:
         configlines.remove('BR2_TARGET_MXS_BOOTLETS_CUSTOM_GIT=y\n')
