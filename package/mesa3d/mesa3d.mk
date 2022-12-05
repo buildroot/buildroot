@@ -5,7 +5,7 @@
 ################################################################################
 
 # When updating the version, please also update mesa3d-headers
-MESA3D_VERSION = 22.2.2
+MESA3D_VERSION = 22.3.0
 MESA3D_SOURCE = mesa-$(MESA3D_VERSION).tar.xz
 MESA3D_SITE = https://archive.mesa3d.org
 MESA3D_LICENSE = MIT, SGI, Khronos
@@ -77,7 +77,6 @@ ifeq ($(BR2_PACKAGE_MESA3D_OPENGL_GLX),y)
 # glx:
 #  dri          : dri based GLX requires at least one DRI driver || dri based GLX requires shared-glapi
 #  xlib         : xlib conflicts with any dri driver
-#  gallium-xlib : Gallium-xlib based GLX requires at least one gallium driver || Gallium-xlib based GLX requires softpipe or llvmpipe || gallium-xlib conflicts with any dri driver.
 # Always enable glx-direct; without it, many GLX applications don't work.
 MESA3D_CONF_OPTS += \
 	-Dglx=dri \
@@ -210,13 +209,6 @@ MESA3D_PROVIDES += $(if $(BR2_PACKAGE_LIBGLVND),,libgles)
 MESA3D_CONF_OPTS += -Dgles1=enabled -Dgles2=enabled
 else
 MESA3D_CONF_OPTS += -Dgles1=disabled -Dgles2=disabled
-endif
-
-ifeq ($(BR2_PACKAGE_MESA3D_XVMC),y)
-MESA3D_DEPENDENCIES += xlib_libXv xlib_libXvMC
-MESA3D_CONF_OPTS += -Dgallium-xvmc=enabled
-else
-MESA3D_CONF_OPTS += -Dgallium-xvmc=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_VALGRIND),y)

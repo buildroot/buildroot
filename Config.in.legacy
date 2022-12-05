@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2023.02"
 
+config BR2_PACKAGE_MESA3D_XVMC
+	bool "mesa Gallium XvMC state tracker removed"
+	select BR2_LEGACY
+	help
+	  The Gallium XvMC state tracker was removed upstream.
+
 config BR2_KERNEL_HEADERS_5_19
 	bool "kernel headers version 5.19.x are no longer supported"
 	select BR2_LEGACY
