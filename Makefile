@@ -92,7 +92,7 @@ all:
 .PHONY: all
 
 # Set and export the version string
-export BR2_VERSION := 2022.11-rc3
+export BR2_VERSION := 2022.11
 # Actual time the release is cut (for reproducible builds)
 BR2_VERSION_EPOCH = 1669308000
 
