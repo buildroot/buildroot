@@ -29,7 +29,6 @@ UDISKS_CONF_OPTS = \
 	--disable-acl \
 	--disable-bcache \
 	--disable-btrfs \
-	--disable-fhs-media \
 	--disable-introspection \
 	--disable-iscsi \
 	--disable-lsm \
@@ -39,5 +38,11 @@ UDISKS_CONF_OPTS = \
 	--disable-rpath \
 	--disable-vdo \
 	--disable-zram
+
+ifeq ($(BR2_PACKAGE_UDISKS_FHS_MEDIA),y)
+UDISKS_CONF_OPTS += --enable-fhs-media
+else
+UDISKS_CONF_OPTS += --disable-fhs-media
+endif
 
 $(eval $(autotools-package))

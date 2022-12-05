@@ -1,4 +1,4 @@
-From f034b1b0f33a7bd4dde23f0bc1fa8e00e3518c9d Mon Sep 17 00:00:00 2001
+From 0e4f0a525ea0a68f6d4c5349c301da2e9b0c8ac9 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:15:31 -0800
 Subject: [PATCH] Add an option to disable lib2to3
@@ -14,15 +14,15 @@ Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
 ---
  Makefile.pre.in | 17 ++++++++++++-----
- configure.ac    |  5 +++++
+ configure.ac    |  6 ++++++
  setup.py        |  6 +++---
- 3 files changed, 20 insertions(+), 8 deletions(-)
+ 3 files changed, 21 insertions(+), 8 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 28cf88e..63fa9fb 100644
+index 403380e181..f5d0573067 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1395,7 +1395,9 @@ ifeq (@PYDOC@,yes)
+@@ -1868,7 +1868,9 @@ ifeq (@PYDOC@,yes)
  	(cd $(DESTDIR)$(BINDIR); $(LN) -s pydoc$(VERSION) pydoc3)
  endif
  	-rm -f $(DESTDIR)$(BINDIR)/2to3
@@ -32,15 +32,15 @@ index 28cf88e..63fa9fb 100644
  	if test "x$(LIPO_32BIT_FLAGS)" != "x" ; then \
  		rm -f $(DESTDIR)$(BINDIR)/python3-32$(EXE); \
  		(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(VERSION)-32$(EXE) python3-32$(EXE)) \
-@@ -1441,7 +1443,6 @@ LIBSUBDIRS=	asyncio \
+@@ -1914,7 +1916,6 @@ LIBSUBDIRS=	asyncio \
  		idlelib idlelib/Icons \
- 		importlib importlib/metadata \
+ 		importlib importlib/resources importlib/metadata \
  		json \
 -		lib2to3 lib2to3/fixes lib2to3/pgen2 \
  		logging \
  		multiprocessing multiprocessing/dummy \
- 		site-packages \
-@@ -1458,10 +1459,6 @@ LIBSUBDIRS=	asyncio \
+ 		re \
+@@ -1934,10 +1935,6 @@ LIBSUBDIRS=	asyncio \
  TESTSUBDIRS=	ctypes/test \
  		distutils/tests \
  		idlelib/idle_test \
@@ -48,10 +48,10 @@ index 28cf88e..63fa9fb 100644
 -		lib2to3/tests/data \
 -		lib2to3/tests/data/fixers \
 -		lib2to3/tests/data/fixers/myfixes \
- 		sqlite3/test \
  		test test/audiodata \
  		test/capath test/cjkencodings \
-@@ -1535,6 +1532,14 @@ ifeq (@PYDOC@,yes)
+ 		test/data test/decimaltestdata \
+@@ -2013,6 +2010,14 @@ ifeq (@PYDOC@,yes)
  LIBSUBDIRS += pydoc_data
  endif
  
@@ -64,9 +64,9 @@ index 28cf88e..63fa9fb 100644
 +endif
 +
  TEST_MODULES=@TEST_MODULES@
- libinstall:	build_all $(srcdir)/Modules/xxmodule.c
+ libinstall:	all $(srcdir)/Modules/xxmodule.c
  	@for i in $(SCRIPTDIR) $(LIBDEST); \
-@@ -1637,10 +1642,12 @@ ifeq (@PYC_BUILD@,yes)
+@@ -2115,10 +2120,12 @@ ifeq (@PYC_BUILD@,yes)
  		-j0 -d $(LIBDEST)/site-packages -f \
  		-x badsyntax $(DESTDIR)$(LIBDEST)/site-packages
  endif
@@ -80,26 +80,27 @@ index 28cf88e..63fa9fb 100644
  # bpo-21536: Misc/python-config.sh is generated in the build directory
  # from $(srcdir)Misc/python-config.sh.in.
 diff --git a/configure.ac b/configure.ac
-index 9079531..34c2ba9 100644
+index f68ea72321..d8e10cf2b2 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -6014,6 +6014,11 @@ else
- fi
- AC_SUBST(TEST_MODULES)
+@@ -7078,6 +7078,12 @@ PY_STDLIB_MOD([xxlimited_35], [test "$with_trace_refs" = "no"], [test "$ac_cv_fu
+ # substitute multiline block, must come after last PY_STDLIB_MOD()
+ AC_SUBST([MODULE_BLOCK])
  
 +AC_SUBST(LIB2TO3)
 +
 +AC_ARG_ENABLE(lib2to3,
 +	AS_HELP_STRING([--disable-lib2to3], [disable lib2to3]),
 +	[ LIB2TO3="${enableval}" ], [ LIB2TO3=yes ])
- 
++
  # generate output files
  AC_CONFIG_FILES(Makefile.pre Misc/python.pc Misc/python-embed.pc Misc/python-config.sh)
+ AC_CONFIG_FILES([Modules/Setup.bootstrap Modules/Setup.stdlib])
 diff --git a/setup.py b/setup.py
-index d23f148..663fd44 100644
+index 3e55f5b2e0..c490b0b08f 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -2722,11 +2722,11 @@ def main():
+@@ -1594,11 +1594,11 @@ class DummyProcess:
      import warnings
      warnings.filterwarnings("ignore",category=DeprecationWarning)
  
@@ -115,5 +116,5 @@ index d23f148..663fd44 100644
            name = "Python",
            version = sys.version.split()[0],
 -- 
-2.30.2
+2.34.1
 

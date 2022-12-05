@@ -1,0 +1,8 @@
+config BR2_PACKAGE_SSCEP
+	bool "sscep"
+	select BR2_PACKAGE_OPENSSL
+	help
+	  SSCEP is a client-only implementation of the SCEP
+	  (Cisco System's Simple Certificate Enrollment Protocol).
+
+	  https://github.com/certnanny/sscep

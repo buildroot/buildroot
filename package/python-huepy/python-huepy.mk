@@ -4,8 +4,9 @@
 #
 ################################################################################
 
-PYTHON_HUEPY_VERSION = a9851d5aea10d2299cc62b3f6dce26ac4ef2ea3e
-PYTHON_HUEPY_SITE = $(call github,s0md3v,hue,$(PYTHON_HUEPY_VERSION))
+PYTHON_HUEPY_VERSION = 1.2.1
+PYTHON_HUEPY_SOURCE = huepy-$(PYTHON_HUEPY_VERSION).tar.gz
+PYTHON_HUEPY_SITE = https://files.pythonhosted.org/packages/d6/4e/2dae447d8858a31158ca6c313f5d1902bc83b8542bb5f10c0307de2973bc
 PYTHON_HUEPY_LICENSE = GPL-3.0
 PYTHON_HUEPY_LICENSE_FILES = LICENSE
 PYTHON_HUEPY_SETUP_TYPE = setuptools

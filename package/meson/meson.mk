@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MESON_VERSION = 0.63.3
+MESON_VERSION = 0.64.1
 MESON_SITE = https://github.com/mesonbuild/meson/releases/download/$(MESON_VERSION)
 MESON_LICENSE = Apache-2.0
 MESON_LICENSE_FILES = COPYING

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EDK2_VERSION = edk2-stable202102
+EDK2_VERSION = edk2-stable202208
 EDK2_SITE = https://github.com/tianocore/edk2
 EDK2_SITE_METHOD = git
 EDK2_LICENSE = BSD-2-Clause-Patent
@@ -47,7 +47,7 @@ endif
 
 EDK2_GIT_SUBMODULES = YES
 EDK2_BUILD_PACKAGES = $(@D)/Build/Buildroot
-EDK2_PACKAGES_PATH = $(@D):$(EDK2_BUILD_PACKAGES):$(STAGING_DIR)/usr/share/edk2-platforms
+EDK2_PACKAGES_PATHS = $(@D) $(EDK2_BUILD_PACKAGES) $(STAGING_DIR)/usr/share/edk2-platforms
 
 ifeq ($(BR2_TARGET_EDK2_PLATFORM_OVMF_I386),y)
 EDK2_ARCH = IA32
@@ -108,12 +108,13 @@ endef
 
 else ifeq ($(BR2_TARGET_EDK2_PLATFORM_SOLIDRUN_ARMADA80X0MCBIN),y)
 EDK2_ARCH = AARCH64
-EDK2_DEPENDENCIES += host-dtc arm-trusted-firmware
+EDK2_DEPENDENCIES += host-dtc arm-trusted-firmware edk2-non-osi
 EDK2_PACKAGE_NAME = Platform/SolidRun/Armada80x0McBin
 EDK2_PLATFORM_NAME = Armada80x0McBin
 EDK2_BUILD_DIR = $(EDK2_PLATFORM_NAME)-$(EDK2_ARCH)
 EDK2_BUILD_ENV += DTC_PREFIX=$(HOST_DIR)/bin/
 EDK2_BUILD_OPTS += -D INCLUDE_TFTP_COMMAND
+EDK2_PACKAGES_PATHS += $(STAGING_DIR)/usr/share/edk2-non-osi
 
 else ifeq ($(BR2_TARGET_EDK2_PLATFORM_QEMU_SBSA),y)
 EDK2_ARCH = AARCH64
@@ -133,6 +134,8 @@ endif
 EDK2_BASETOOLS_OPTS = \
 	EXTRA_LDFLAGS="$(HOST_LDFLAGS)" \
 	EXTRA_OPTFLAGS="$(HOST_CPPFLAGS)"
+
+EDK2_PACKAGES_PATH = $(subst $(space),:,$(strip $(EDK2_PACKAGES_PATHS)))
 
 EDK2_BUILD_ENV += \
 	WORKSPACE=$(@D) \

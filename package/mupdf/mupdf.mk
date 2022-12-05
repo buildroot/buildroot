@@ -5,8 +5,8 @@
 ################################################################################
 
 # python-pymupdf's version must match mupdf's version
-MUPDF_VERSION = 1.18.0
-MUPDF_SOURCE = mupdf-$(MUPDF_VERSION)-source.tar.xz
+MUPDF_VERSION = 1.20.3
+MUPDF_SOURCE = mupdf-$(MUPDF_VERSION)-source.tar.lz
 MUPDF_SITE = https://mupdf.com/downloads/archive
 MUPDF_LICENSE = AGPL-3.0+
 MUPDF_LICENSE_FILES = COPYING
@@ -71,7 +71,7 @@ endef
 
 define MUPDF_INSTALL_STAGING_CMDS
 	$(MUPDF_MAKE_ENV) $(MAKE) -C $(@D) $(MUPDF_MAKE_OPTS) \
-		DESTDIR="$(STAGING_DIR)" install_libs
+		DESTDIR="$(STAGING_DIR)" install-libs
 endef
 
 define MUPDF_INSTALL_TARGET_CMDS
