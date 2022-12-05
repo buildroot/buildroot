@@ -28,9 +28,6 @@ MUPDF_IGNORE_CVES += CVE-2021-3407
 # 0003-Bug-703791-Stay-within-hash-table-max-key-size-in-cached-color-converter.patch
 MUPDF_IGNORE_CVES += CVE-2021-37220
 
-# 0005-Bug-704834-Fix-division-by-zero-for-zero-width-pages-in-muraster.patch
-MUPDF_IGNORE_CVES += CVE-2021-4216
-
 # The pkg-config name for gumbo-parser is `gumbo`.
 MUPDF_PKG_CONFIG_PACKAGES = \
 	freetype2 \
