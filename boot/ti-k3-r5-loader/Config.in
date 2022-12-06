@@ -1,0 +1,35 @@
+config BR2_TARGET_TI_K3_R5_LOADER
+	bool "ti-k3-r5-loader"
+	depends on BR2_aarch64
+	help
+	  Separate U-Boot build for R5 cores on TI's k3 boards.
+	  Usually used to build tiboot3.bin with k3-image-gen.
+
+if BR2_TARGET_TI_K3_R5_LOADER
+
+choice
+	prompt "Configuration"
+	default BR2_TARGET_TI_K3_R5_LOADER_USE_DEFCONFIG
+
+config BR2_TARGET_TI_K3_R5_LOADER_USE_DEFCONFIG
+	bool "Using an in-tree board defconfig file"
+
+config BR2_TARGET_TI_K3_R5_LOADER_USE_CUSTOM_CONFIG
+	bool "Using a custom board (def)config file"
+
+endchoice
+
+config BR2_TARGET_TI_K3_R5_LOADER_BOARD_DEFCONFIG
+	string "Board defconfig"
+	depends on BR2_TARGET_TI_K3_R5_LOADER_USE_DEFCONFIG
+	help
+	  Name of the board for which TI K3 R5 Loader should be
+	  built, without the _defconfig suffix.
+
+config BR2_TARGET_TI_K3_R5_LOADER_CUSTOM_CONFIG_FILE
+	string "Configuration file path"
+	depends on BR2_TARGET_TI_K3_R5_LOADER_USE_CUSTOM_CONFIG
+	help
+	  Path to the TI K3 R5 Loader configuration file.
+
+endif
