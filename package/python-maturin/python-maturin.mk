@@ -12,7 +12,6 @@ PYTHON_MATURIN_LICENSE = Apache-2.0 or MIT
 PYTHON_MATURIN_LICENSE_FILES = license-apache license-mit
 HOST_PYTHON_MATURIN_DEPENDENCIES = \
 	host-python-setuptools-rust \
-	host-python-tomli \
 	host-rustc
 HOST_PYTHON_MATURIN_ENV = \
 	$(HOST_PKG_CARGO_ENV) \
