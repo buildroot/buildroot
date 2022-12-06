@@ -12,7 +12,6 @@ PYTHON_PYPA_BUILD_LICENSE_FILES = LICENSE
 PYTHON_PYPA_BUILD_SETUP_TYPE = setuptools
 HOST_PYTHON_PYPA_BUILD_DEPENDENCIES = \
 	host-python-packaging \
-	host-python-pep517 \
-	host-python-tomli
+	host-python-pep517
 
 $(eval $(host-python-package))
