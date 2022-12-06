@@ -107,9 +107,15 @@ endif
 #
 ################################################################################
 
+# Restore the user's original umask during the whole download, in case he has
+# provisions set to share the download directory with his group (or others).
+ifneq ($(BR_ORIG_UMASK),)
+DOWNLOAD_SET_UMASK = umask $(BR_ORIG_UMASK);
+endif
+
 define DOWNLOAD
-	$(Q)mkdir -p $($(PKG)_DL_DIR)
-	$(Q)$(EXTRA_ENV) \
+	$(Q)$(DOWNLOAD_SET_UMASK) mkdir -p $($(PKG)_DL_DIR)
+	$(Q)$(DOWNLOAD_SET_UMASK) $(EXTRA_ENV) \
 	$($(PKG)_DL_ENV) \
 	TAR="$(TAR)" \
 	BR_NO_CHECK_HASH_FOR="$(if $(BR2_DOWNLOAD_FORCE_CHECK_HASHES),,$(BR_NO_CHECK_HASH_FOR))" \
