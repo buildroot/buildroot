@@ -24,7 +24,7 @@ cat <<-__HEADER_EOF > "${BINARIES_DIR}/bootgen.bif"
 	  }
 	  image {
 	    id = 0x1c000000, name=apu_subsystem 
-	    { type=raw, load=0x00001000, file=${BINARIES_DIR}/system.dtb }
+	    { type=raw, load=0x00001000, file=${BINARIES_DIR}/u-boot.dtb }
 	    { core=a72-0, exception_level=el-3, trustzone, file=${BINARIES_DIR}/bl31.elf }
 	    { core=a72-0, exception_level=el-2, file=${BINARIES_DIR}/u-boot.elf }
 	  }
