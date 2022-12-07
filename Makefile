@@ -92,9 +92,9 @@ all:
 .PHONY: all
 
 # Set and export the version string
-export BR2_VERSION := 2022.11-rc1
+export BR2_VERSION := 2023.02-git
 # Actual time the release is cut (for reproducible builds)
-BR2_VERSION_EPOCH = 1667490600
+BR2_VERSION_EPOCH = 1669308000
 
 # Save running make version since it's clobbered by the make package
 RUNNING_MAKE_VERSION := $(MAKE_VERSION)
@@ -395,6 +395,9 @@ unexport DESTDIR
 
 # Causes breakage with packages that needs host-ruby
 unexport RUBYOPT
+
+# Compilation of perl-related packages will fail otherwise
+unexport PERL_MM_OPT
 
 include package/pkg-utils.mk
 include package/doc-asciidoc.mk

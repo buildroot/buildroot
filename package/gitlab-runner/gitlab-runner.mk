@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GITLAB_RUNNER_VERSION = 14.5.1
+GITLAB_RUNNER_VERSION = 15.5.0
 GITLAB_RUNNER_SITE = https://gitlab.com/gitlab-org/gitlab-runner/-/archive/v$(GITLAB_RUNNER_VERSION)
 GITLAB_RUNNER_LICENSE = MIT
 GITLAB_RUNNER_LICENSE_FILES = LICENSE
@@ -12,9 +12,8 @@ GITLAB_RUNNER_LICENSE_FILES = LICENSE
 GITLAB_RUNNER_LDFLAGS = \
 	-X gitlab.com/gitlab-org/gitlab-runner/common.VERSION=$(GITLAB_RUNNER_VERSION)
 
-# Don't run gitlab runner as root.
 define GITLAB_RUNNER_USERS
-	gitlab-runner -1 gitlab-runner -1 * /var/run/dbus /bin/false - Gitlab Runner
+	gitlab-runner -1 gitlab-runner -1 * /var/lib/gitlab-runner /bin/false - Gitlab Runner
 endef
 
 define GITLAB_RUNNER_INSTALL_INIT_SYSV

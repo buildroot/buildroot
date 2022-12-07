@@ -1,4 +1,4 @@
-From f1b15834045d0641c43014b970721df066fa71f7 Mon Sep 17 00:00:00 2001
+From 2c9dbd6d49744aa8da8ebf8d0187d6b06f93c2b5 Mon Sep 17 00:00:00 2001
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:45:14 -0800
 Subject: [PATCH] Add an option to disable IDLE
@@ -18,10 +18,10 @@ Signed-off-by: Adam Duskett <aduskett@gmail.com>
  3 files changed, 16 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 08c5e8a..461c5e3 100644
+index 80d617cf7f..8d1ba1356c 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1389,7 +1389,9 @@ bininstall: altbininstall
+@@ -1862,7 +1862,9 @@ bininstall: altbininstall
  	-rm -f $(DESTDIR)$(LIBPC)/python3-embed.pc
  	(cd $(DESTDIR)$(LIBPC); $(LN) -s python-$(VERSION)-embed.pc python3-embed.pc)
  	-rm -f $(DESTDIR)$(BINDIR)/idle3
@@ -31,15 +31,15 @@ index 08c5e8a..461c5e3 100644
  	-rm -f $(DESTDIR)$(BINDIR)/pydoc3
  ifeq (@PYDOC@,yes)
  	(cd $(DESTDIR)$(BINDIR); $(LN) -s pydoc$(VERSION) pydoc3)
-@@ -1439,7 +1441,6 @@ LIBSUBDIRS=	asyncio \
+@@ -1912,7 +1914,6 @@ LIBSUBDIRS=	asyncio \
  		ensurepip ensurepip/_bundled \
  		html \
  		http \
 -		idlelib idlelib/Icons \
- 		importlib importlib/metadata \
+ 		importlib importlib/resources importlib/metadata \
  		json \
  		logging \
-@@ -1552,6 +1553,10 @@ ifeq (@EXPAT@,yes)
+@@ -2030,6 +2031,10 @@ ifeq (@EXPAT@,yes)
  LIBSUBDIRS += $(XMLLIBSUBDIRS)
  endif
  
@@ -48,13 +48,13 @@ index 08c5e8a..461c5e3 100644
 +endif
 +
  TEST_MODULES=@TEST_MODULES@
- libinstall:	build_all $(srcdir)/Modules/xxmodule.c
+ libinstall:	all $(srcdir)/Modules/xxmodule.c
  	@for i in $(SCRIPTDIR) $(LIBDEST); \
 diff --git a/configure.ac b/configure.ac
-index e99a174..baaa743 100644
+index ba4b0e0c1c..5e6d72f7db 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -6073,6 +6073,12 @@ AC_ARG_ENABLE(lib2to3,
+@@ -7137,6 +7137,12 @@ AC_ARG_ENABLE(lib2to3,
  	AS_HELP_STRING([--disable-lib2to3], [disable lib2to3]),
  	[ LIB2TO3="${enableval}" ], [ LIB2TO3=yes ])
  
@@ -66,12 +66,12 @@ index e99a174..baaa743 100644
 +
  # generate output files
  AC_CONFIG_FILES(Makefile.pre Misc/python.pc Misc/python-embed.pc Misc/python-config.sh)
- AC_CONFIG_FILES([Modules/ld_so_aix], [chmod +x Modules/ld_so_aix])
+ AC_CONFIG_FILES([Modules/Setup.bootstrap Modules/Setup.stdlib])
 diff --git a/setup.py b/setup.py
-index e30ed52..4dff249 100644
+index c490b0b08f..4d49a792f7 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -2722,11 +2722,14 @@ def main():
+@@ -1594,11 +1594,14 @@ class DummyProcess:
      import warnings
      warnings.filterwarnings("ignore",category=DeprecationWarning)
  
@@ -88,5 +88,5 @@ index e30ed52..4dff249 100644
            name = "Python",
            version = sys.version.split()[0],
 -- 
-2.30.2
+2.34.1
 

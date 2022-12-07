@@ -29,4 +29,8 @@ else
 MEMCACHED_CONF_OPTS += --disable-tls
 endif
 
+ifeq ($(BR2_STATIC_LIBS),)
+MEMCACHED_CONF_OPTS += --disable-static
+endif
+
 $(eval $(autotools-package))

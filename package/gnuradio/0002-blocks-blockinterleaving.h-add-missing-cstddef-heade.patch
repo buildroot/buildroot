@@ -1,0 +1,33 @@
+From 901c2ad1ac88908a2e6db5615d5af39a218d826d Mon Sep 17 00:00:00 2001
+From: Gwenhael Goavec-Merou <gwenhael.goavec-merou@trabucayre.com>
+Date: Fri, 23 Sep 2022 08:41:26 +0200
+Subject: [PATCH] blocks/blockinterleaving.h: add missing cstddef header
+ (required for size_t)
+
+Fix build failure like:
+
+gnuradio/gr-blocks/lib/../include/gnuradio/blocks/blockinterleaving.h:25:36: error: ‘size_t’ was not declared in this scope
+
+This failure is due to the miss of cstddef include
+
+Signed-off-by: Gwenhael Goavec-Merou <gwenhael.goavec-merou@trabucayre.com>
+[Upstream status: https://github.com/gnuradio/gnuradio/pull/6188]
+---
+ gr-blocks/include/gnuradio/blocks/blockinterleaving.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/gr-blocks/include/gnuradio/blocks/blockinterleaving.h b/gr-blocks/include/gnuradio/blocks/blockinterleaving.h
+index df831fe5a..33c59e35b 100644
+--- a/gr-blocks/include/gnuradio/blocks/blockinterleaving.h
++++ b/gr-blocks/include/gnuradio/blocks/blockinterleaving.h
+@@ -13,6 +13,7 @@
+ 
+ #include <gnuradio/blocks/api.h>
+ #include <vector>
++#include <cstddef>
+ 
+ namespace gr {
+ namespace blocks {
+-- 
+2.35.1
+

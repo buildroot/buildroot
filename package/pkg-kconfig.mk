@@ -45,11 +45,16 @@ endef
 # only, as this can fail in complex cases.
 # $(1): the name of the package in upper-case letters
 define kconfig-package-regen-dot-config
-	$(if $(filter olddefconfig,$($(1)_KCONFIG_RULES)),
-		$(Q)$($(1)_KCONFIG_MAKE) olddefconfig,
-		$(if $(filter oldnoconfig,$($(1)_KCONFIG_RULES)),
-			$(Q)$($(1)_KCONFIG_MAKE) oldnoconfig,
-			$(Q)(yes "" | $($(1)_KCONFIG_MAKE) oldconfig)))
+	$(Q)[ -e $($(1)_DIR)/.br_regen_dot_config ] || \
+		$($(1)_KCONFIG_MAKE) -pn config 2>/dev/null \
+		| sed 's/^\([_0-9a-zA-Z]*config\):.*/\1/ p; d' >$($(1)_DIR)/.br_regen_dot_config
+	$(Q)if grep -q '\bolddefconfig\b' $($(1)_DIR)/.br_regen_dot_config; then \
+		$($(1)_KCONFIG_MAKE) olddefconfig; \
+	elif grep -q '\boldnoconfig\b' $($(1)_DIR)/.br_regen_dot_config; then \
+		$($(1)_KCONFIG_MAKE) oldnoconfig; \
+	else \
+		yes "" | $($(1)_KCONFIG_MAKE) oldconfig; \
+	fi
 endef
 
 # Macro to create a .config file where all given fragments are merged into.
@@ -146,19 +151,6 @@ $$($(2)_KCONFIG_FILE) $$($(2)_KCONFIG_FRAGMENT_FILES): | $(1)-patch
 $(2)_KCONFIG_MAKE = \
 	$$($(2)_MAKE_ENV) $$($(2)_MAKE) -C $$($(2)_DIR) \
 		$$(PKG_KCONFIG_COMMON_OPTS) $$($(2)_KCONFIG_OPTS)
-
-# $(2)_KCONFIG_MAKE may already rely on shell expansion. As the $() syntax
-# of the shell conflicts with Make's own syntax, this means that backticks
-# are used with those shell constructs. Unfortunately, the backtick syntax
-# does not nest, and we need to use Make instead of the shell to handle
-# conditions.
-
-# A recursively expanded variable is necessary, to be sure that the shell
-# command is called when the rule is processed during the build and not
-# when the rule is created when parsing all packages.
-$(2)_KCONFIG_RULES = \
-	$$(shell $$($(2)_KCONFIG_MAKE) -pn config 2>/dev/null | \
-		sed 's/^\([_0-9a-zA-Z]*config\):.*/\1/ p; d')
 
 # The specified source configuration file and any additional configuration file
 # fragments are merged together to .config, after the package has been patched.

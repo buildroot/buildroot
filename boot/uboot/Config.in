@@ -277,7 +277,19 @@ config BR2_TARGET_UBOOT_FORMAT_NAND_BIN
 	bool "u-boot-nand.bin"
 
 config BR2_TARGET_UBOOT_FORMAT_ELF
+	bool "u-boot"
+	help
+	  Install the u-boot image, which is directly the ELF binary
+	  for the main U-Boot, potentially with debugging symbols.
+
+config BR2_TARGET_UBOOT_FORMAT_REMAKE_ELF
 	bool "u-boot.elf"
+	help
+	  Install the u-boot.elf image, which is produced when
+	  CONFIG_REMAKE_ELF=y. It is an ELF image (u-boot.elf)
+	  produced from the raw U-Boot binary (u-boot.bin), which may
+	  already have been statically relocated and may already have
+	  a device-tree appended to it.
 
 config BR2_TARGET_UBOOT_FORMAT_IMG
 	bool "u-boot.img"

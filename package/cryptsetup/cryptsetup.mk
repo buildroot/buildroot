@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CRYPTSETUP_VERSION_MAJOR = 2.5
+CRYPTSETUP_VERSION_MAJOR = 2.6
 CRYPTSETUP_VERSION = $(CRYPTSETUP_VERSION_MAJOR).0
 CRYPTSETUP_SOURCE = cryptsetup-$(CRYPTSETUP_VERSION).tar.xz
 CRYPTSETUP_SITE = $(BR2_KERNEL_MIRROR)/linux/utils/cryptsetup/v$(CRYPTSETUP_VERSION_MAJOR)

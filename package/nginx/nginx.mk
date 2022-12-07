@@ -19,6 +19,9 @@ NGINX_CONF_OPTS = \
 	--with-cpp="$(TARGET_CC)" \
 	--with-ld-opt="$(TARGET_LDFLAGS)"
 
+# 0011-Mp4-disabled-duplicate-atoms.patch
+NGINX_IGNORE_CVES += CVE-2022-41741 CVE-2022-41742
+
 # www-data user and group are used for nginx. Because these user and group
 # are already set by buildroot, it is not necessary to redefine them.
 # See system/skeleton/etc/passwd

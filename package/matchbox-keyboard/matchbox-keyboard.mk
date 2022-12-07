@@ -11,7 +11,7 @@ MATCHBOX_KEYBOARD_SITE = \
 MATCHBOX_KEYBOARD_LICENSE = LGPL-2.1, GPL-2.0+ (applet.c)
 MATCHBOX_KEYBOARD_LICENSE_FILES = COPYING applet/applet.c
 MATCHBOX_KEYBOARD_DEPENDENCIES = \
-	host-pkgconf matchbox-lib matchbox-fakekey expat xlib_libXrender
+	host-pkgconf matchbox-lib matchbox-fakekey expat libpng xlib_libXrender
 # From git
 MATCHBOX_KEYBOARD_AUTORECONF = YES
 

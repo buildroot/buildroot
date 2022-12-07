@@ -144,7 +144,31 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2023.02"
+
+config BR2_PACKAGE_USBREDIR_SERVER
+	bool "usbredirserver removed"
+	select BR2_LEGACY
+	help
+	  usbredirserver has been dropped by upstream since version
+	  0.13.0. usbredir tools (which include usbredirect binary) can
+	  be used as a replacement.
+
 comment "Legacy options removed in 2022.11"
+
+config BR2_PACKAGE_RABBITMQ_SERVER
+	bool "rabbitmq-server removed"
+	select BR2_LEGACY
+	help
+	  Package was removed because it was unmaintained and had
+	  known security issues.
+
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_RC5
+	bool "libopenssl rc5 was never enabled"
+	select BR2_LEGACY
+	help
+	  The libopenssl option for rc5 never actually enabled rc5,
+	  which had always been disabled in Buildroot.
 
 config BR2_PACKAGE_LIBDCADEC
 	bool "package was deprecated upstream, use ffmpeg instead"

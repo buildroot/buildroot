@@ -1,0 +1,11 @@
+config BR2_PACKAGE_LUA_MQTT
+	bool "lua-mqtt"
+	depends on BR2_PACKAGE_LUA_5_3 || BR2_PACKAGE_LUA_5_4
+	help
+	  client library for MQTT 3.1.1 & 5.
+
+	  https://fperrad.frama.io/lua-mqtt
+
+comment "lua-mqtt needs a Lua >= 5.3"
+	depends on !BR2_PACKAGE_LUA_5_3
+	depends on !BR2_PACKAGE_LUA_5_4

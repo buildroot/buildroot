@@ -5,8 +5,8 @@
 ################################################################################
 
 # python-pymupdf's version must match mupdf's version
-MUPDF_VERSION = 1.18.0
-MUPDF_SOURCE = mupdf-$(MUPDF_VERSION)-source.tar.xz
+MUPDF_VERSION = 1.20.3
+MUPDF_SOURCE = mupdf-$(MUPDF_VERSION)-source.tar.lz
 MUPDF_SITE = https://mupdf.com/downloads/archive
 MUPDF_LICENSE = AGPL-3.0+
 MUPDF_LICENSE_FILES = COPYING
@@ -27,9 +27,6 @@ MUPDF_IGNORE_CVES += CVE-2021-3407
 
 # 0003-Bug-703791-Stay-within-hash-table-max-key-size-in-cached-color-converter.patch
 MUPDF_IGNORE_CVES += CVE-2021-37220
-
-# 0005-Bug-704834-Fix-division-by-zero-for-zero-width-pages-in-muraster.patch
-MUPDF_IGNORE_CVES += CVE-2021-4216
 
 # The pkg-config name for gumbo-parser is `gumbo`.
 MUPDF_PKG_CONFIG_PACKAGES = \
@@ -71,7 +68,7 @@ endef
 
 define MUPDF_INSTALL_STAGING_CMDS
 	$(MUPDF_MAKE_ENV) $(MAKE) -C $(@D) $(MUPDF_MAKE_OPTS) \
-		DESTDIR="$(STAGING_DIR)" install_libs
+		DESTDIR="$(STAGING_DIR)" install-libs
 endef
 
 define MUPDF_INSTALL_TARGET_CMDS

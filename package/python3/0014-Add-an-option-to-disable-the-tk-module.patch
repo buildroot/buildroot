@@ -1,4 +1,4 @@
-From ad6b66b34f71ff6b60b3be5f6fd3e781cdeecd59 Mon Sep 17 00:00:00 2001
+From bbbfe699d648a5cb191203b16e1786e8cf4ea908 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:23:42 -0800
 Subject: [PATCH] Add an option to disable the tk module
@@ -15,18 +15,18 @@ Signed-off-by: Adam Duskett <aduskett@gmail.com>
  2 files changed, 16 insertions(+), 3 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 5628860..c968113 100644
+index 9f4cdf14cf..4f83911200 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1446,7 +1446,6 @@ LIBSUBDIRS=	asyncio \
- 		logging \
+@@ -1920,7 +1920,6 @@ LIBSUBDIRS=	asyncio \
  		multiprocessing multiprocessing/dummy \
+ 		re \
  		site-packages \
 -		tkinter \
+ 		tomllib \
  		turtledemo \
  		unittest \
- 		urllib \
-@@ -1522,8 +1521,6 @@ TESTSUBDIRS=	ctypes/test \
+@@ -2001,8 +2000,6 @@ TESTSUBDIRS=	ctypes/test \
  		test/tracedmodules \
  		test/xmltestdata test/xmltestdata/c14n-20 \
  		test/ziptestdata \
@@ -35,8 +35,8 @@ index 5628860..c968113 100644
  		unittest/test unittest/test/testmock
  
  ifeq (@PYDOC@,yes)
-@@ -1543,6 +1540,13 @@ LIBSUBDIRS += sqlite3
- TESTSUBDIRS += sqlite3/test
+@@ -2021,6 +2018,13 @@ ifeq (@SQLITE3@,yes)
+ LIBSUBDIRS += sqlite3
  endif
  
 +ifeq (@TK@,yes)
@@ -47,13 +47,13 @@ index 5628860..c968113 100644
 +
 +
  TEST_MODULES=@TEST_MODULES@
- libinstall:	build_all $(srcdir)/Modules/xxmodule.c
+ libinstall:	all $(srcdir)/Modules/xxmodule.c
  	@for i in $(SCRIPTDIR) $(LIBDEST); \
 diff --git a/configure.ac b/configure.ac
-index dfee472..dc76dff 100644
+index 4cc0951ab9..f4ce506801 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3382,6 +3382,15 @@ if test "$SQLITE3" = "no" ; then
+@@ -4180,6 +4180,15 @@ if test "$SQLITE3" = "no" ; then
     DISABLED_EXTENSIONS="${DISABLED_EXTENSIONS} _sqlite3"
  fi
  
@@ -70,5 +70,5 @@ index dfee472..dc76dff 100644
  
  AC_ARG_ENABLE(pydoc,
 -- 
-2.30.2
+2.34.1
 

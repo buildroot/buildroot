@@ -4,14 +4,15 @@
 #
 ################################################################################
 
-TPM2_PKCS11_VERSION = 1.7.0
+TPM2_PKCS11_VERSION = 1.8.0
 TPM2_PKCS11_SITE = https://github.com/tpm2-software/tpm2-pkcs11/releases/download/$(TPM2_PKCS11_VERSION)
 TPM2_PKCS11_LICENSE = BSD-2-Clause
 TPM2_PKCS11_LICENSE_FILES = LICENSE
 TPM2_PKCS11_DEPENDENCIES = host-pkgconf libyaml openssl sqlite tpm2-tss
 
 TPM2_PKCS11_CONF_OPTS += \
-		--disable-hardening
+		--disable-hardening \
+		--disable-ptool-checks
 
 # Fix tpm.c:746:5: error: 'for' loop initial declarations are only allowed in C99 mode
 # Fix implicit declaration of function 'strnlen'

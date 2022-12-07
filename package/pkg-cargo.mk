@@ -20,8 +20,10 @@
 #
 ################################################################################
 
+BR_CARGO_HOME = $(DL_DIR)/br-cargo-home
+
 PKG_COMMON_CARGO_ENV = \
-	CARGO_HOME=$(HOST_DIR)/share/cargo
+	CARGO_HOME=$(BR_CARGO_HOME)
 
 # __CARGO_TEST_CHANNEL_OVERRIDE_DO_NOT_USE_THIS is needed to allow
 # passing the -Z target-applies-to-host, which is needed together with
@@ -79,7 +81,7 @@ $(2)_DOWNLOAD_DEPENDENCIES += host-rustc
 $(2)_DEPENDENCIES += host-rustc
 
 $(2)_DOWNLOAD_POST_PROCESS = cargo
-$(2)_DL_ENV += CARGO_HOME=$$(HOST_DIR)/share/cargo
+$(2)_DL_ENV += CARGO_HOME=$$(BR_CARGO_HOME)
 
 # If building in a sub directory, use that to find the Cargo.toml
 ifneq ($$($(2)_SUBDIR),)

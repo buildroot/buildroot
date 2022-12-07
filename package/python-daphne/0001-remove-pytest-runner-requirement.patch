@@ -15,13 +15,13 @@ index 64e94f1..4e3abb0 100755
 --- a/setup.py
 +++ b/setup.py
 @@ -23,7 +23,6 @@ setup(
-     packages=find_packages() + ["twisted.plugins"],
      include_package_data=True,
-     install_requires=["twisted[tls]>=18.7", "autobahn>=0.18", "asgiref~=3.2"],
+     install_requires=["twisted[tls]>=22.4", "autobahn>=22.4.2", "asgiref>=3.5.2,<4"],
+     python_requires=">=3.7",
 -    setup_requires=["pytest-runner"],
-     extras_require={
-         "tests": ["hypothesis~=3.88", "pytest~=3.10", "pytest-asyncio~=0.8"]
-     },
+     extras_require={"tests": ["hypothesis", "pytest", "pytest-asyncio", "django"]},
+     entry_points={
+         "console_scripts": ["daphne = daphne.cli:CommandLineInterface.entrypoint"]
 -- 
 2.21.0
 

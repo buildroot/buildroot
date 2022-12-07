@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-POLKIT_VERSION = 121
-POLKIT_SITE = https://www.freedesktop.org/software/polkit/releases
+POLKIT_VERSION = 122
+POLKIT_SITE = https://gitlab.freedesktop.org/polkit/polkit/-/archive/$(POLKIT_VERSION)
 POLKIT_LICENSE = GPL-2.0
 POLKIT_LICENSE_FILES = COPYING
 POLKIT_CPE_ID_VENDOR = polkit_project
