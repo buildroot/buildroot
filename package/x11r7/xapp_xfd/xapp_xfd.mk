@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XAPP_XFD_VERSION = 1.1.3
-XAPP_XFD_SOURCE = xfd-$(XAPP_XFD_VERSION).tar.bz2
-XAPP_XFD_SITE = http://xorg.freedesktop.org/releases/individual/app
+XAPP_XFD_VERSION = 1.1.4
+XAPP_XFD_SOURCE = xfd-$(XAPP_XFD_VERSION).tar.xz
+XAPP_XFD_SITE = https://xorg.freedesktop.org/archive/individual/app
 XAPP_XFD_LICENSE = MIT
 XAPP_XFD_LICENSE_FILES = COPYING
 XAPP_XFD_DEPENDENCIES = \
