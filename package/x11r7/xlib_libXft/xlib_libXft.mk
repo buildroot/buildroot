@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-XLIB_LIBXFT_VERSION = 2.3.4
-XLIB_LIBXFT_SOURCE = libXft-$(XLIB_LIBXFT_VERSION).tar.bz2
+XLIB_LIBXFT_VERSION = 2.3.6
+XLIB_LIBXFT_SOURCE = libXft-$(XLIB_LIBXFT_VERSION).tar.xz
 XLIB_LIBXFT_SITE = https://xorg.freedesktop.org/archive/individual/lib
 XLIB_LIBXFT_LICENSE = MIT
 XLIB_LIBXFT_LICENSE_FILES = COPYING
