@@ -13,6 +13,13 @@ CONNMAN_LICENSE = GPL-2.0
 CONNMAN_LICENSE_FILES = COPYING
 CONNMAN_CPE_ID_VENDOR = intel
 
+# 0001-gweb-Fix-OOB-write-in-received_data.patch
+CONNMAN_IGNORE_CVES += CVE-2022-32292
+
+# 0002-wispr-Add-reference-counter-to-portal-context.patch
+# 0003-wispr-Update-portal-context-references.patch
+CONNMAN_IGNORE_CVES += CVE-2022-32293
+
 CONNMAN_CONF_OPTS = --with-dbusconfdir=/etc
 
 ifeq ($(BR2_INIT_SYSTEMD),y)
