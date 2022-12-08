@@ -17,6 +17,7 @@ SWUPDATE_LICENSE_FILES = LICENSES/BSD-1-Clause.txt \
 	LICENSES/LGPL-2.1-or-later.txt \
 	LICENSES/MIT.txt \
 	LICENSES/OFL-1.1.txt
+SWUPDATE_INSTALL_STAGING = YES
 
 # swupdate uses $CROSS-cc instead of $CROSS-gcc, which is not
 # available in all external toolchains, and use CC for linking. Ensure
@@ -226,6 +227,11 @@ endef
 
 define SWUPDATE_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(SWUPDATE_MAKE_ENV) $(MAKE) -C $(@D) $(SWUPDATE_MAKE_OPTS)
+endef
+
+define SWUPDATE_INSTALL_STAGING_CMDS
+        $(TARGET_MAKE_ENV) $(SWUPDATE_MAKE_ENV) $(MAKE) -C $(@D) \
+                $(SWUPDATE_MAKE_OPTS) DESTDIR=$(STAGING_DIR) INCLUDEDIR=/usr/include/swupdate install
 endef
 
 define SWUPDATE_INSTALL_TARGET_CMDS
