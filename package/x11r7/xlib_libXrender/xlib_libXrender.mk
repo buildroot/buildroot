@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XLIB_LIBXRENDER_VERSION = 0.9.10
-XLIB_LIBXRENDER_SOURCE = libXrender-$(XLIB_LIBXRENDER_VERSION).tar.bz2
-XLIB_LIBXRENDER_SITE = http://xorg.freedesktop.org/releases/individual/lib
+XLIB_LIBXRENDER_VERSION = 0.9.11
+XLIB_LIBXRENDER_SOURCE = libXrender-$(XLIB_LIBXRENDER_VERSION).tar.xz
+XLIB_LIBXRENDER_SITE = https://xorg.freedesktop.org/archive/individual/lib
 XLIB_LIBXRENDER_LICENSE = MIT
 XLIB_LIBXRENDER_LICENSE_FILES = COPYING
 XLIB_LIBXRENDER_CPE_ID_VENDOR = x.org
