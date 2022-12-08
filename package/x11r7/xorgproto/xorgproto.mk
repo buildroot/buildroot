@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-XORGPROTO_VERSION = 2022.1
-XORGPROTO_SOURCE = xorgproto-$(XORGPROTO_VERSION).tar.bz2
+XORGPROTO_VERSION = 2022.2
+XORGPROTO_SOURCE = xorgproto-$(XORGPROTO_VERSION).tar.xz
 XORGPROTO_SITE = https://xorg.freedesktop.org/archive/individual/proto
 XORGPROTO_LICENSE = MIT
 XORGPROTO_LICENSE_FILES = \
