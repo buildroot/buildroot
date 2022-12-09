@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NERDCTL_VERSION = 0.17.1
+NERDCTL_VERSION = 1.0.0
 NERDCTL_SITE = $(call github,containerd,nerdctl,v$(NERDCTL_VERSION))
 
 NERDCTL_LICENSE = Apache-2.0
