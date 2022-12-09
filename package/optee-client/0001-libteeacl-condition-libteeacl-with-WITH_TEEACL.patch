@@ -1,0 +1,105 @@
+From bbdf665aba39c29a3ce7bd06e4554c62a416ebaa Mon Sep 17 00:00:00 2001
+From: Etienne Carriere <etienne.carriere@linaro.org>
+Date: Thu, 10 Nov 2022 12:05:24 +0100
+Subject: [PATCH] libteeacl: condition libteeacl with WITH_TEEACL
+
+Build and embed libteeacl upon WITH_TEEACL=1 (default configuration).
+This configuration switch allows one to build OP-TEE client without
+dependencies on pkg-config and libuuid  when OP-TEE ACL for
+PKCS11 is not needed:
+ cmake -DWITH_TEEACL=0 ...
+or
+ make WITH_TEEACL=0 ...
+
+With the comments below addressed, LGTM.
+
+Acked-by: Jerome Forissier <jerome.forissier@linaro.org>
+Acked-by: Jens Wiklander <jens.wiklander@linaro.org>
+Reviewed-by: Eero Aaltonen <eero.aaltonen@vaisala.com>
+[etienne.carriere@linaro.org: backport upstream commit]
+Signed-off-by: Etienne Carriere <etienne.carriere@linaro.org>
+[yann.morin.1998@free.fr: actually do a backport of bbdf665]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ CMakeLists.txt |  9 ++++++---
+ Makefile       | 15 ++++++++++++---
+ 2 files changed, 18 insertions(+), 6 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0786752..9fb5c6a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -5,6 +5,7 @@ project (optee_client C)
+ set (CMAKE_TOOLCHAIN_FILE CMakeToolchain.txt)
+ 
+ set (CFG_WERROR 1 CACHE BOOL "Build with -Werror")
++option (WITH_TEEACL "Build libteeacl" TRUE)
+ 
+ include(GNUInstallDirs)
+ 
+@@ -37,7 +38,9 @@ add_subdirectory (libteec)
+ add_subdirectory (tee-supplicant)
+ add_subdirectory (public)
+ add_subdirectory (libckteec)
+-find_package (PkgConfig REQUIRED)
+-pkg_check_modules(uuid REQUIRED IMPORTED_TARGET uuid)
+-add_subdirectory (libteeacl)
++if(WITH_TEEACL)
++    find_package (PkgConfig REQUIRED)
++    pkg_check_modules(uuid REQUIRED IMPORTED_TARGET uuid)
++    add_subdirectory (libteeacl)
++endif(WITH_TEEACL)
+ add_subdirectory (libseteec)
+diff --git a/Makefile b/Makefile
+index 90b487e..2ee5621 100644
+--- a/Makefile
++++ b/Makefile
+@@ -16,6 +16,8 @@ SBINDIR ?= /usr/sbin
+ LIBDIR ?= /usr/lib
+ INCLUDEDIR ?= /usr/include
+ 
++WITH_TEEACL ?= 1
++
+ .PHONY: all build build-libteec build-libckteec build-libseteec \
+ 	build-libteeacl check-libuuid install copy_export clean cscope \
+ 	clean-cscope \
+@@ -35,8 +37,10 @@ build-tee-supplicant: build-libteec
+ 	@echo "Building tee-supplicant"
+ 	$(MAKE) --directory=tee-supplicant  --no-print-directory --no-builtin-variables CFG_TEE_SUPP_LOG_LEVEL=$(CFG_TEE_SUPP_LOG_LEVEL)
+ 
+-build: build-libteec build-tee-supplicant build-libckteec build-libseteec \
+-	build-libteeacl
++build: build-libteec build-tee-supplicant build-libckteec build-libseteec
++ifeq ($(WITH_TEEACL),1)
++build: build-libteeacl
++endif
+ 
+ build-libckteec: build-libteec
+ 	@echo "Building libckteec.so"
+@@ -57,7 +61,10 @@ check-libuuid:
+ install: copy_export
+ 
+ clean: clean-libteec clean-tee-supplicant clean-cscope clean-libckteec \
+-	clean-libseteec clean-libteeacl
++	clean-libseteec
++ifeq ($(WITH_TEEACL),1)
++clean: clean-libteeacl
++endif
+ 
+ clean-libteec:
+ 	@$(MAKE) --directory=libteec --no-print-directory clean
+@@ -158,9 +165,11 @@ copy_export: build
+ 	cp libckteec/include/*.h $(DESTDIR)$(INCLUDEDIR)
+ 	cp -d ${O}/libckteec/libckteec.so* $(DESTDIR)$(LIBDIR)
+ 	cp -d ${O}/libckteec/libckteec.a $(DESTDIR)$(LIBDIR)
++ifeq ($(WITH_TEEACL),1)
+ 	cp libteeacl/include/*.h $(DESTDIR)$(INCLUDEDIR)
+ 	cp -d ${O}/libteeacl/libteeacl.so* $(DESTDIR)$(LIBDIR)
+ 	cp -d ${O}/libteeacl/libteeacl.a $(DESTDIR)$(LIBDIR)
++endif
+ 	cp libseteec/include/*.h $(DESTDIR)$(INCLUDEDIR)
+ 	cp -d ${O}/libseteec/libseteec.so* $(DESTDIR)$(LIBDIR)
+ 	cp -d ${O}/libseteec/libseteec.a $(DESTDIR)$(LIBDIR)
+-- 
+2.25.1
+

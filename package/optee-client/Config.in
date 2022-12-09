@@ -37,6 +37,14 @@ config BR2_PACKAGE_OPTEE_CLIENT_SUPP_PLUGINS
 	help
 	  Enable TEE supplicant plugin support.
 
+config BR2_PACKAGE_OPTEE_CLIENT_TEEACL
+	bool "Enable TEE Access Control List login"
+	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_LIBUUID
+	help
+	  Enable TEE ACL login identification for OP-TEE service that
+	  supports them as OP-TEE PKCS#11 services.
+
 endif
 
 comment "optee-client needs a toolchain w/ threads, headers >= 4.3"
