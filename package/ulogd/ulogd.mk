@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-ULOGD_VERSION = 2.0.7
+ULOGD_VERSION = 2.0.8
 ULOGD_SOURCE = ulogd-$(ULOGD_VERSION).tar.bz2
 ULOGD_SITE = http://www.netfilter.org/projects/ulogd/files
-ULOGD_CONF_OPTS = --without-dbi
+ULOGD_CONF_OPTS = --disable-dbi
 ULOGD_DEPENDENCIES = host-pkgconf \
 	libmnl libnetfilter_acct libnetfilter_conntrack libnetfilter_log \
 	libnfnetlink
@@ -18,39 +18,39 @@ ULOGD_SELINUX_MODULES = ulogd
 # DB backends need threads
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
 ifeq ($(BR2_PACKAGE_MYSQL),y)
-ULOGD_CONF_OPTS += --with-mysql=$(STAGING_DIR)/usr
+ULOGD_CONF_OPTS += --enable-mysql
 ULOGD_DEPENDENCIES += mysql
 else
-ULOGD_CONF_OPTS += --without-mysql
+ULOGD_CONF_OPTS += --disable-mysql
 endif
 ifeq ($(BR2_PACKAGE_POSTGRESQL),y)
-ULOGD_CONF_OPTS += --with-pgsql
+ULOGD_CONF_OPTS += --enable-pgsql
 ULOGD_DEPENDENCIES += postgresql
 else
-ULOGD_CONF_OPTS += --without-pgsql
+ULOGD_CONF_OPTS += --disable-pgsql
 endif
 ifeq ($(BR2_PACKAGE_SQLITE),y)
-ULOGD_CONF_OPTS += --with-sqlite
+ULOGD_CONF_OPTS += --enable-sqlite3
 ULOGD_DEPENDENCIES += sqlite
 else
-ULOGD_CONF_OPTS += --without-sqlite
+ULOGD_CONF_OPTS += --disable-sqlite3
 endif
 else
-ULOGD_CONF_OPTS += --without-mysql --without-pgsql --without-sqlite
+ULOGD_CONF_OPTS += --disable-mysql --disable-pgsql --disable-sqlite3
 endif
 
 ifeq ($(BR2_PACKAGE_LIBPCAP),y)
-ULOGD_CONF_OPTS += --with-pcap
+ULOGD_CONF_OPTS += --enable-pcap
 ULOGD_DEPENDENCIES += libpcap
 else
-ULOGD_CONF_OPTS += --without-pcap
+ULOGD_CONF_OPTS += --disable-pcap
 endif
 
 ifeq ($(BR2_PACKAGE_JANSSON),y)
-ULOGD_CONF_OPTS += --with-jansson
+ULOGD_CONF_OPTS += --enable-json
 ULOGD_DEPENDENCIES += jansson
 else
-ULOGD_CONF_OPTS += --without-jansson
+ULOGD_CONF_OPTS += --disable-json
 endif
 
 $(eval $(autotools-package))
