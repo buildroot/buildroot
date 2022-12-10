@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NEON_VERSION = 0.32.2
+NEON_VERSION = 0.32.4
 NEON_SITE = https://notroj.github.io/neon
 NEON_LICENSE = LGPL-2.0+ (library), GPL-2.0+ (manual and tests)
 NEON_LICENSE_FILES = src/COPYING.LIB test/COPYING README.md
