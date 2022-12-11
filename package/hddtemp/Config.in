@@ -1,0 +1,17 @@
+config BR2_PACKAGE_HDDTEMP
+	bool "hddtemp"
+	depends on BR2_USE_MMU # fork()
+	depends on !BR2_STATIC_LIBS
+	select BR2_PACKAGE_LIBEXECINFO if !BR2_TOOLCHAIN_USES_GLIBC
+	select BR2_PACKAGE_LIBICONV if !BR2_ENABLE_LOCALE
+	help
+	  hddtemp is a small utility that gives you the temperature of
+	  your hard drive by reading S.M.A.R.T. informations, for drives
+	  that support this feature.
+
+	  https://github.com/vitlav/hddtemp
+	  http://www.guzu.net/linux/hddtemp.php
+
+comment "hddtemp needs dynamic library"
+	depends on BR2_USE_MMU
+	depends on BR2_STATIC_LIBS
