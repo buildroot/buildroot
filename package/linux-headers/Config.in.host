@@ -53,10 +53,6 @@ config BR2_KERNEL_HEADERS_5_15
 	bool "Linux 5.15.x kernel headers"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_15
 
-config BR2_KERNEL_HEADERS_5_19
-	bool "Linux 5.19.x kernel headers"
-	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_19
-
 config BR2_KERNEL_HEADERS_6_0
 	bool "Linux 6.0.x kernel headers"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_0
@@ -398,7 +394,6 @@ config BR2_DEFAULT_KERNEL_HEADERS
 	default "5.4.226"	if BR2_KERNEL_HEADERS_5_4
 	default "5.10.158"	if BR2_KERNEL_HEADERS_5_10
 	default "5.15.82"	if BR2_KERNEL_HEADERS_5_15
-	default "5.19.17"	if BR2_KERNEL_HEADERS_5_19
 	default "6.0.12"	if BR2_KERNEL_HEADERS_6_0
 	default BR2_DEFAULT_KERNEL_VERSION if BR2_KERNEL_HEADERS_VERSION
 	default "custom"	if BR2_KERNEL_HEADERS_CUSTOM_TARBALL
