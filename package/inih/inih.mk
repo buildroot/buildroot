@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-INIH_VERSION = 55
+INIH_VERSION = 56
 INIH_SITE = $(call github,benhoyt,inih,r$(INIH_VERSION))
 INIH_INSTALL_STAGING = YES
 INIH_LICENSE = BSD-3-Clause
