@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-PYTHON_PYSNMP_VERSION = 4.4.12
-PYTHON_PYSNMP_SOURCE = pysnmp-$(PYTHON_PYSNMP_VERSION).tar.gz
-PYTHON_PYSNMP_SITE = https://files.pythonhosted.org/packages/4e/75/72f64c451bf5884715f84f8217b69b4025da0b67628d611cd14a5b7db217
+PYTHON_PYSNMP_VERSION = 5.0.20
+PYTHON_PYSNMP_SOURCE = pysnmplib-$(PYTHON_PYSNMP_VERSION).tar.gz
+PYTHON_PYSNMP_SITE = https://files.pythonhosted.org/packages/68/a9/e5629fa7fcd53adf6333b535165c0352b7941d1ad89e79c78f083081bb0a
 PYTHON_PYSNMP_SETUP_TYPE = setuptools
 PYTHON_PYSNMP_LICENSE = BSD-3-Clause
 PYTHON_PYSNMP_LICENSE_FILES = LICENSE.rst
