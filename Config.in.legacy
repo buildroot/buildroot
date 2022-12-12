@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2023.02"
 
+config BR2_TARGET_SUN20I_D1_SPL
+	bool "sun20-d1-spl removed"
+	select BR2_LEGACY
+	help
+	  U-Boot has gained SPL support for D1, so this temporary
+	  bootloader is no longer supported.
+
 config BR2_PACKAGE_PYTHON_M2R
 	bool "python-m2r removed"
 	select BR2_LEGACY
