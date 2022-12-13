@@ -1,0 +1,107 @@
+From 385f67eb2254edb1fb4cf523e5e3d5a8f123d72c Mon Sep 17 00:00:00 2001
+From: Jeff King <peff@peff.net>
+Date: Wed, 30 Nov 2022 16:15:14 -0500
+Subject: [PATCH] git-compat-util: avoid redefining system function names
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Our git-compat-util header defines a few noop wrappers for system
+functions if they are not available. This was originally done with a
+macro, but in 15b52a44e0 (compat-util: type-check parameters of no-op
+replacement functions, 2020-08-06) we switched to inline functions,
+because it gives us basic type-checking.
+
+This can cause compilation failures when the system _does_ declare those
+functions but we choose not to use them, since the compiler will
+complain about the redeclaration. This was seen in the real world when
+compiling against certain builds of uclibc, which may leave
+_POSIX_THREAD_SAFE_FUNCTIONS unset, but still declare flockfile() and
+funlockfile().
+
+It can also be seen on any platform that has setitimer() if you choose
+to compile without it (which plausibly could happen if the system
+implementation is buggy). E.g., on Linux:
+
+  $ make NO_SETITIMER=IWouldPreferNotTo git.o
+      CC git.o
+  In file included from builtin.h:4,
+                   from git.c:1:
+  git-compat-util.h:344:19: error: conflicting types for ‘setitimer’; have ‘int(int,  const struct itimerval *, struct itimerval *)’
+    344 | static inline int setitimer(int which UNUSED,
+        |                   ^~~~~~~~~
+  In file included from git-compat-util.h:234:
+  /usr/include/x86_64-linux-gnu/sys/time.h:155:12: note: previous declaration of ‘setitimer’ with type ‘int(__itimer_which_t,  const struct itimerval * restrict,  struct itimerval * restrict)’
+    155 | extern int setitimer (__itimer_which_t __which,
+        |            ^~~~~~~~~
+  make: *** [Makefile:2714: git.o] Error 1
+
+Here I think the compiler is complaining about the lack of "restrict"
+annotations in our version, but even if we matched it completely (and
+there is no way to match all platforms anyway), it would still complain
+about a static declaration following a non-static one. Using macros
+doesn't have this problem, because the C preprocessor rewrites the name
+in our code before we hit this level of compilation.
+
+One way to fix this would just be to revert most of 15b52a44e0. What we
+really cared about there was catching build problems with
+precompose_argv(), which most platforms _don't_ build, and which is our
+custom function. So we could just switch the system wrappers back to
+macros; most people build the real versions anyway, and they don't
+change. So the extra type-checking isn't likely to catch bugs.
+
+But with a little work, we can have our cake and eat it, too. If we
+define the type-checking wrappers with a unique name, and then redirect
+the system names to them with macros, we still get our type checking,
+but without redeclaring the system function names.
+
+Signed-off-by: Jeff King <peff@peff.net>
+Signed-off-by: Junio C Hamano <gitster@pobox.com>
+[Bagas: cherry-picked from e0c08a4f738b3dea7a4e8fe3511c323cf1f41942 on next branch]
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ git-compat-util.h | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/git-compat-util.h b/git-compat-util.h
+index a76d0526f7..e3456bdd0d 100644
+--- a/git-compat-util.h
++++ b/git-compat-util.h
+@@ -341,11 +341,12 @@ struct itimerval {
+ #endif
+ 
+ #ifdef NO_SETITIMER
+-static inline int setitimer(int which UNUSED,
+-			    const struct itimerval *value UNUSED,
+-			    struct itimerval *newvalue UNUSED) {
++static inline int git_setitimer(int which,
++				const struct itimerval *value,
++				struct itimerval *newvalue) {
+ 	return 0; /* pretend success */
+ }
++#define setitimer(which,value,ovalue) git_setitimer(which,value,ovalue)
+ #endif
+ 
+ #ifndef NO_LIBGEN_H
+@@ -1471,14 +1472,16 @@ int open_nofollow(const char *path, int flags);
+ #endif
+ 
+ #ifndef _POSIX_THREAD_SAFE_FUNCTIONS
+-static inline void flockfile(FILE *fh UNUSED)
++static inline void git_flockfile(FILE *fh)
+ {
+ 	; /* nothing */
+ }
+-static inline void funlockfile(FILE *fh UNUSED)
++static inline void git_funlockfile(FILE *fh)
+ {
+ 	; /* nothing */
+ }
++#define flockfile(fh) git_flockfile(fh)
++#define funlockfile(fh) git_funlockfile(fh)
+ #define getc_unlocked(fh) getc(fh)
+ #endif
+ 
+-- 
+An old man doll... just what I always wanted! - Clara
+
