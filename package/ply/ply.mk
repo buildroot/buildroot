@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PLY_VERSION = 2.2.0
+PLY_VERSION = 2.3.0
 PLY_SITE = $(call github,wkz,ply,$(PLY_VERSION))
 PLY_AUTORECONF = YES
 PLY_LICENSE = GPL-2.0
