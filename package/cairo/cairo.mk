@@ -16,6 +16,8 @@ CAIRO_INSTALL_STAGING = YES
 CAIRO_IGNORE_CVES += CVE-2018-19876
 # 0003-_arc_max_angle_for_tolerance_normalized-fix-infinite.patch
 CAIRO_IGNORE_CVES += CVE-2019-6462
+# 0004-Fix-mask-usage-in-image-compositor.patch
+CAIRO_IGNORE_CVES += CVE-2020-35492
 
 CAIRO_CONF_ENV = LIBS="$(CAIRO_LIBS)"
 
