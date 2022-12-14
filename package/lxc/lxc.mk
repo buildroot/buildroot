@@ -13,7 +13,6 @@ LXC_DEPENDENCIES = host-pkgconf
 LXC_INSTALL_STAGING = YES
 
 LXC_CONF_OPTS = \
-	-Dapparmor=false \
 	-Dexamples=false \
 	-Dman=false
 
