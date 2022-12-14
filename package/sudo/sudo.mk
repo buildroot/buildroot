@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-SUDO_VERSION_MAJOR = 1.9.11
-SUDO_VERSION_MINOR = p2
+SUDO_VERSION_MAJOR = 1.9.12
+SUDO_VERSION_MINOR = p1
 SUDO_VERSION = $(SUDO_VERSION_MAJOR)$(SUDO_VERSION_MINOR)
 SUDO_SITE = https://www.sudo.ws/sudo/dist
 SUDO_LICENSE = ISC, BSD-3-Clause
@@ -24,9 +24,6 @@ SUDO_CONF_OPTS = \
 	--with-logging=syslog \
 	--without-interfaces \
 	--with-env-editor
-
-# 0001-Fix-CVE-2022-43995.patch
-SUDO_IGNORE_CVES += CVE-2022-43995
 
 ifeq ($(BR2_PACKAGE_LINUX_PAM),y)
 define SUDO_INSTALL_PAM_CONF
