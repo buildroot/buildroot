@@ -14,6 +14,8 @@ CAIRO_INSTALL_STAGING = YES
 
 # 0002-ft-Use-FT_Done_MM_Var-instead-of-free-when-available-in-cairo_ft_apply_variation.patch
 CAIRO_IGNORE_CVES += CVE-2018-19876
+# 0003-_arc_max_angle_for_tolerance_normalized-fix-infinite.patch
+CAIRO_IGNORE_CVES += CVE-2019-6462
 
 CAIRO_CONF_ENV = LIBS="$(CAIRO_LIBS)"
 
