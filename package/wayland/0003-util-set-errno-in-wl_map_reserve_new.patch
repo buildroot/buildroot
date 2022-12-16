@@ -1,0 +1,92 @@
+From ddf558b9a269f24bf1a47043b942065e8f28fed0 Mon Sep 17 00:00:00 2001
+From: Aleksandr Mezin <mezin.alexander@gmail.com>
+Date: Wed, 9 Feb 2022 04:10:42 +0600
+Subject: [PATCH] util: set errno in wl_map_reserve_new()
+
+And also fix wl_connection_demarshal() to pass through that errno.
+
+Signed-off-by: Aleksandr Mezin <mezin.alexander@gmail.com>
+[Retrieved (only for clean application of next patch) from
+https://gitlab.freedesktop.org/wayland/wayland/-/commit/03e8a1f84b6a15c9531db1ca8d0a25f9fcffaf25]
+Signed-off-by: Quentin Schulz <quentin.schulz@theobroma-systems.com>
+---
+ src/connection.c   | 10 ++++++----
+ src/wayland-util.c | 14 +++++++++++---
+ 2 files changed, 17 insertions(+), 7 deletions(-)
+
+diff --git a/src/connection.c b/src/connection.c
+index d0c7d9f..6a116ad 100644
+--- a/src/connection.c
++++ b/src/connection.c
+@@ -803,10 +803,12 @@ wl_connection_demarshal(struct wl_connection *connection,
+ 			}
+ 
+ 			if (wl_map_reserve_new(objects, id) < 0) {
+-				wl_log("not a valid new object id (%u), "
+-				       "message %s(%s)\n",
+-				       id, message->name, message->signature);
+-				errno = EINVAL;
++				if (errno == EINVAL) {
++					wl_log("not a valid new object id (%u), "
++					       "message %s(%s)\n", id,
++					       message->name,
++					       message->signature);
++				}
+ 				goto err;
+ 			}
+ 
+diff --git a/src/wayland-util.c b/src/wayland-util.c
+index d5973bf..5d28531 100644
+--- a/src/wayland-util.c
++++ b/src/wayland-util.c
+@@ -24,6 +24,7 @@
+  * SOFTWARE.
+  */
+ 
++#include <errno.h>
+ #include <stdlib.h>
+ #include <stdint.h>
+ #include <stdio.h>
+@@ -257,13 +258,17 @@ wl_map_reserve_new(struct wl_map *map, uint32_t i)
+ 	struct wl_array *entries;
+ 
+ 	if (i < WL_SERVER_ID_START) {
+-		if (map->side == WL_MAP_CLIENT_SIDE)
++		if (map->side == WL_MAP_CLIENT_SIDE) {
++			errno = EINVAL;
+ 			return -1;
++		}
+ 
+ 		entries = &map->client_entries;
+ 	} else {
+-		if (map->side == WL_MAP_SERVER_SIDE)
++		if (map->side == WL_MAP_SERVER_SIDE) {
++			errno = EINVAL;
+ 			return -1;
++		}
+ 
+ 		entries = &map->server_entries;
+ 		i -= WL_SERVER_ID_START;
+@@ -271,8 +276,10 @@ wl_map_reserve_new(struct wl_map *map, uint32_t i)
+ 
+ 	count = entries->size / sizeof *start;
+ 
+-	if (count < i)
++	if (count < i) {
++		errno = EINVAL;
+ 		return -1;
++	}
+ 
+ 	if (count == i) {
+ 		wl_array_add(entries, sizeof *start);
+@@ -281,6 +288,7 @@ wl_map_reserve_new(struct wl_map *map, uint32_t i)
+ 	} else {
+ 		start = entries->data;
+ 		if (start[i].data != NULL) {
++			errno = EINVAL;
+ 			return -1;
+ 		}
+ 	}
+-- 
+2.38.1
+

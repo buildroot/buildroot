@@ -14,6 +14,10 @@ WAYLAND_INSTALL_STAGING = YES
 WAYLAND_DEPENDENCIES = host-pkgconf host-wayland expat libffi libxml2
 HOST_WAYLAND_DEPENDENCIES = host-pkgconf host-expat host-libffi host-libxml2
 
+# 0003-util-set-errno-in-wl_map_reserve_new.patch
+# 0004-util-Limit-size-of-wl_map.patch
+WAYLAND_IGNORE_CVES += CVE-2021-3782
+
 WAYLAND_CONF_OPTS = -Dtests=false -Ddocumentation=false
 HOST_WAYLAND_CONF_OPTS = -Dtests=false -Ddocumentation=false
 
