@@ -9,7 +9,7 @@ SWAP_COMPRESSOR=lzo-rle
 # User overrides.
 [ -r /usr/local/etc/swap.conf ] && . /usr/local/etc/swap.conf
 
-[ $SWAP_PERCENT_MEM -gt 0 ] || exit 0
+[ $SWAP_PERCENT_MEM -gt 0 ] || return 0
 
 psplash_write "Setup swap..."
 
