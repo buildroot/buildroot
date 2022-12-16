@@ -10,7 +10,7 @@ case "$MODEL" in
 	ylm,rs90)
 		;;
 	*)
-		exit 0
+		return 0
 		;;
 esac
 
