@@ -20,7 +20,13 @@ QEMU_CPE_ID_VENDOR = qemu
 # However, building is still done with configure and make as in previous versions of QEMU.
 
 # Target-qemu
-QEMU_DEPENDENCIES = host-meson host-pkgconf libglib2 zlib pixman host-python3
+QEMU_DEPENDENCIES = \
+	host-meson \
+	host-pkgconf \
+	libglib2 \
+	zlib \
+	pixman \
+	host-python3
 
 # Need the LIBS variable because librt and libm are
 # not automatically pulled. :-(
@@ -246,7 +252,13 @@ $(eval $(generic-package))
 #-------------------------------------------------------------
 # Host-qemu
 
-HOST_QEMU_DEPENDENCIES = host-meson host-pkgconf host-zlib host-libglib2 host-pixman host-python3
+HOST_QEMU_DEPENDENCIES = \
+	host-meson \
+	host-pkgconf \
+	host-zlib \
+	host-libglib2 \
+	host-pixman \
+	host-python3
 
 #       BR ARCH         qemu
 #       -------         ----
