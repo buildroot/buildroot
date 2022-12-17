@@ -23,10 +23,10 @@ QEMU_CPE_ID_VENDOR = qemu
 QEMU_DEPENDENCIES = \
 	host-meson \
 	host-pkgconf \
+	host-python3 \
 	libglib2 \
-	zlib \
 	pixman \
-	host-python3
+	zlib
 
 # Need the LIBS variable because librt and libm are
 # not automatically pulled. :-(
@@ -253,12 +253,12 @@ $(eval $(generic-package))
 # Host-qemu
 
 HOST_QEMU_DEPENDENCIES = \
-	host-meson \
-	host-pkgconf \
-	host-zlib \
 	host-libglib2 \
+	host-meson \
 	host-pixman \
-	host-python3
+	host-pkgconf \
+	host-python3 \
+	host-zlib
 
 #       BR ARCH         qemu
 #       -------         ----
