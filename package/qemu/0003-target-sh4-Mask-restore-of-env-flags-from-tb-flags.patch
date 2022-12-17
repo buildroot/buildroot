@@ -1,0 +1,36 @@
+From bc2331635ce18ff068d2bb1e493bc546e1f786e1 Mon Sep 17 00:00:00 2001
+From: Guenter Roeck <linux@roeck-us.net>
+Date: Mon, 12 Dec 2022 09:03:17 -0600
+Subject: [PATCH] target/sh4: Mask restore of env->flags from tb->flags
+
+The values in env->flags are a subset of tb->flags.
+Restore only the bits that belong.
+
+Cc: qemu-stable@nongnu.org
+Fixes: ab419fd8a035 ("target/sh4: Fix TB_FLAG_UNALIGN")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <20221212011345.GA2235238@roeck-us.net>
+[rth: Reduce to only the the superh_cpu_synchronize_from_tb change]
+Signed-off-by: Richard Henderson <richard.henderson@linaro.org>
+[yann.morin.1998@free.fr: backport from upstream]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ target/sh4/cpu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/target/sh4/cpu.c b/target/sh4/cpu.c
+index 951eb6b9c8..f0934b20fa 100644
+--- a/target/sh4/cpu.c
++++ b/target/sh4/cpu.c
+@@ -47,7 +47,7 @@ static void superh_cpu_synchronize_from_tb(CPUState *cs,
+     SuperHCPU *cpu = SUPERH_CPU(cs);
+ 
+     cpu->env.pc = tb_pc(tb);
+-    cpu->env.flags = tb->flags;
++    cpu->env.flags = tb->flags & TB_FLAG_ENVFLAGS_MASK;
+ }
+ 
+ static void superh_restore_state_to_opc(CPUState *cs,
+-- 
+2.25.1
+

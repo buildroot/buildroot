@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QEMU_VERSION = 7.1.0
+QEMU_VERSION = 7.2.0
 QEMU_SOURCE = qemu-$(QEMU_VERSION).tar.xz
 QEMU_SITE = http://download.qemu.org
 QEMU_LICENSE = GPL-2.0, LGPL-2.1, MIT, BSD-3-Clause, BSD-2-Clause, Others/BSD-1c
@@ -69,7 +69,7 @@ QEMU_OPTS += --enable-vhost-user
 endif
 
 ifeq ($(BR2_PACKAGE_QEMU_SLIRP),y)
-QEMU_OPTS += --enable-slirp=system
+QEMU_OPTS += --enable-slirp
 QEMU_DEPENDENCIES += slirp
 else
 QEMU_OPTS += --disable-slirp
@@ -258,6 +258,7 @@ HOST_QEMU_DEPENDENCIES = \
 	host-pixman \
 	host-pkgconf \
 	host-python3 \
+	host-slirp \
 	host-zlib
 
 #       BR ARCH         qemu
@@ -402,6 +403,7 @@ define HOST_QEMU_CONFIGURE_CMDS
 		--disable-vnc-jpeg \
 		--disable-png \
 		--disable-vnc-sasl \
+		--enable-slirp \
 		--enable-tools \
 		$(HOST_QEMU_OPTS)
 endef
