@@ -1,0 +1,10 @@
+comment "rtl8821cu needs a Linux kernel to be built"
+	depends on !BR2_LINUX_KERNEL
+
+config BR2_PACKAGE_RTL8821CU
+	bool "rtl8821cu"
+	depends on BR2_LINUX_KERNEL
+	help
+	  rtl8821cu wifi driver
+
+	  https://github.com/brektrou/rtl8821CU
