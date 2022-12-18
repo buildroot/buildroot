@@ -1,0 +1,33 @@
+From 6296d7112089a0f3bfb3056f6d9637e13ce4ce83 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 18 Dec 2022 12:27:38 +0100
+Subject: [PATCH] hardware/EnOceanRawValue.h: include stdarg.h
+
+Include stdarg.h to avoid the following build failure on uclibc:
+
+In file included from /home/fabrice/buildroot/output/build/domoticz-2022.2/hardware/EnOceanRawValue.cpp:2:
+/home/fabrice/buildroot/output/build/domoticz-2022.2/hardware/EnOceanRawValue.h:109:83: error: 'va_list' has not been declared
+  109 | uint32_t SetRawValuesNb(uint8_t * data, T_DATAFIELD * OffsetDes, int NbParameter, va_list value);
+      |                                                                                   ^~~~~~~
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/domoticz/domoticz/pull/5472]
+---
+ hardware/EnOceanRawValue.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/hardware/EnOceanRawValue.h b/hardware/EnOceanRawValue.h
+index 84f38d17a..df858f27d 100644
+--- a/hardware/EnOceanRawValue.h
++++ b/hardware/EnOceanRawValue.h
+@@ -1,6 +1,7 @@
+ #ifndef _SetGetRawValue
+ #define _SetGetRawValue
+ 
++#include <stdarg.h>
+ #include <stdint.h>
+ #include <vector>
+ #include <stdio.h>
+-- 
+2.35.1
+
