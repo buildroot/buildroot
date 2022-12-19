@@ -1,0 +1,42 @@
+From 0d828c96c373c34b201ca7ea37b61c1e3b0485cd Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 19 Dec 2022 23:55:31 +0100
+Subject: [PATCH] lib/jit_disasm.c: fix build
+
+Fix the following build failure raised since
+http://git.savannah.gnu.org/cgit/lightning.git/commit/?id=837c7a1e8d08fb9294578dc84694077f4d6106f9:
+
+jit_disasm.c: In function 'fprintf_styled':
+jit_disasm.c:57:27: error: parameter name omitted
+   57 | static int fprintf_styled(void *, enum disassembler_style, const char* fmt, ...)
+      |                           ^~~~~~
+jit_disasm.c:57:35: error: parameter name omitted
+   57 | static int fprintf_styled(void *, enum disassembler_style, const char* fmt, ...)
+      |                                   ^~~~~~~~~~~~~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/e15e01e98e0d8c873efd3f512b671d98e4daf6c0
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[yann.morin.1998@free.fr: make it a backport now it's applied upstream]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ lib/jit_disasm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/jit_disasm.c b/lib/jit_disasm.c
+index 58a269b..68c966d 100644
+--- a/lib/jit_disasm.c
++++ b/lib/jit_disasm.c
+@@ -54,7 +54,7 @@ static FILE			 *disasm_stream;
+ #endif
+ 
+ #if BINUTILS_2_38
+-static int fprintf_styled(void *, enum disassembler_style, const char* fmt, ...)
++static int fprintf_styled(void * stream, enum disassembler_style style, const char* fmt, ...)
+ {
+   va_list args;
+   int r;
+-- 
+2.25.1
+
