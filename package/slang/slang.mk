@@ -60,4 +60,13 @@ SLANG_INSTALL_STAGING_OPTS = DESTDIR=$(STAGING_DIR) install-static
 SLANG_INSTALL_TARGET_OPTS = DESTDIR=$(TARGET_DIR) install-static
 endif
 
+ifeq ($(BR2_PACKAGE_SLANG_SLSH),)
+define SLANG_REMOVE_SLSH
+	rm -rf $(TARGET_DIR)/etc/slsh.rc \
+		$(TARGET_DIR)/usr/share/slsh \
+		$(TARGET_DIR)/usr/bin/slsh
+endef
+SLANG_POST_INSTALL_TARGET_HOOKS += SLANG_REMOVE_SLSH
+endif
+
 $(eval $(autotools-package))
