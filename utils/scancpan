@@ -488,9 +488,9 @@ use Digest::SHA qw(sha256_hex);
 use Text::Wrap;
 $Text::Wrap::columns = 62;
 
-# Below, 5.032 should be aligned with the version of perl actually
+# Below, 5.034 should be aligned with the version of perl actually
 # bundled in Buildroot:
-die <<"MSG" if $] < 5.032;
+die <<"MSG" if $] < 5.034;
 This script needs a host perl with the same major version as Buildroot target perl.
 
 Your current host perl is:
@@ -498,7 +498,7 @@ Your current host perl is:
     version $]
 
 You may install a local one by running:
-    perlbrew install perl-5.32.0
+    perlbrew install perl-5.34.0
 MSG
 
 my ($help, $man, $quiet, $force, $recommend, $test, $host);
