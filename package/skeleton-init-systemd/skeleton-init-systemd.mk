@@ -23,15 +23,15 @@ endef
 
 else
 
+define SKELETON_INIT_SYSTEMD_ROOT_RO_OR_RW
+	echo "/dev/root / auto ro 0 1" >$(TARGET_DIR)/etc/fstab
+endef
+
 # On a R/O rootfs, /var is a tmpfs filesystem. So, at build time, we
 # redirect /var to the "factory settings" location. Just before the
 # filesystem gets created, the /var symlink will be replaced with
 # a real (but empty) directory, and the "factory files" will be copied
 # back there by the tmpfiles.d mechanism.
-define SKELETON_INIT_SYSTEMD_ROOT_RO_OR_RW
-	echo "/dev/root / auto ro 0 1" >$(TARGET_DIR)/etc/fstab
-endef
-
 ifeq ($(BR2_INIT_SYSTEMD_VAR_FACTORY),y)
 define SKELETON_INIT_SYSTEMD_PRE_ROOTFS_VAR
 	rm -rf $(TARGET_DIR)/usr/share/factory/var
