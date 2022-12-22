@@ -1,0 +1,32 @@
+From 8b181bf582c17cf709a62cf499f9709c94f49d33 Mon Sep 17 00:00:00 2001
+From: Neal Frager <neal.frager@amd.com>
+Date: Wed, 21 Dec 2022 07:51:42 +0000
+Subject: [PATCH v1 1/1] makefile: add multi_dtb_fit dep
+
+With certain gcc compilers, the u-boot.itb is built immediately after dtb
+generation.  If CONFIG_MULTI_DTB_FIT is used, it is possible that the
+fit-dtb.blob is not finished in time.
+
+This patch adds a necessary dependency to guarantee that the fit-dtb.blob
+is built before attempting to build the u-boot.itb.
+
+Signed-off-by: Neal Frager <neal.frager@amd.com>
+---
+ Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Makefile b/Makefile
+index b96e2ffa15..682a5d94fd 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1425,6 +1425,7 @@ MKIMAGEFLAGS_u-boot.itb += -B 0x8
+ ifdef U_BOOT_ITS
+ u-boot.itb: u-boot-nodtb.bin \
+ 		$(if $(CONFIG_OF_SEPARATE)$(CONFIG_OF_EMBED)$(CONFIG_SANDBOX),dts/dt.dtb) \
++		$(if $(CONFIG_MULTI_DTB_FIT),$(FINAL_DTB_CONTAINER)) \
+ 		$(U_BOOT_ITS) FORCE
+ 	$(call if_changed,mkfitimage)
+ 	$(BOARD_SIZE_CHECK)
+-- 
+2.17.1
+
