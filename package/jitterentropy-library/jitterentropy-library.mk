@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-JITTERENTROPY_LIBRARY_VERSION = 3.3.1
+JITTERENTROPY_LIBRARY_VERSION = 3.4.1
 JITTERENTROPY_LIBRARY_SOURCE = \
 	jitterentropy-library-$(JITTERENTROPY_LIBRARY_VERSION).tar.xz
 JITTERENTROPY_LIBRARY_SITE = http://www.chronox.de/jent
