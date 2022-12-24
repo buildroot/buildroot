@@ -52,7 +52,7 @@ class BRConfigTest(unittest.TestCase):
 
     def setUp(self):
         self.show_msg("Starting")
-        self.b = Builder(self.config, self.builddir, self.logtofile)
+        self.b = Builder(self.config, self.builddir, self.logtofile, self.jlevel)
 
         if not self.keepbuilds:
             self.b.delete()

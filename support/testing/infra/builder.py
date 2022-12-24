@@ -6,11 +6,12 @@ import infra
 
 
 class Builder(object):
-    def __init__(self, config, builddir, logtofile):
+    def __init__(self, config, builddir, logtofile, jlevel=None):
         self.config = '\n'.join([line.lstrip() for line in
                                  config.splitlines()]) + '\n'
         self.builddir = builddir
         self.logfile = infra.open_log_file(builddir, "build", logtofile)
+        self.jlevel = jlevel
 
     def is_defconfig_valid(self, configfile, defconfig):
         """Check if the .config is contains all lines present in the defconfig."""
@@ -87,6 +88,8 @@ class Builder(object):
         env.update(make_extra_env)
 
         cmd = ["make", "-C", self.builddir]
+        if "BR2_PER_PACKAGE_DIRECTORIES=y" in self.config.splitlines() and self.jlevel:
+            cmd.append(f"-j{self.jlevel}")
         cmd += make_extra_opts
 
         ret = subprocess.call(cmd, stdout=self.logfile, stderr=self.logfile,
