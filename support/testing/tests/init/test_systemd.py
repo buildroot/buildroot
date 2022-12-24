@@ -13,6 +13,7 @@ class InitSystemSystemdBase(InitSystemBase):
         BR2_INIT_SYSTEMD=y
         BR2_TARGET_GENERIC_GETTY_PORT="ttyAMA0"
         # BR2_TARGET_ROOTFS_TAR is not set
+        BR2_PER_PACKAGE_DIRECTORIES=y
         """
 
     def check_systemd(self, fs):
