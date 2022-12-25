@@ -1,0 +1,32 @@
+From f36ce55e7a0fbba11fb7e1d4107ef61a79dc95d3 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd.kuhls@t-online.de>
+Date: Sun, 25 Dec 2022 20:38:17 +0100
+Subject: [PATCH] add missing include
+
+Fixes build error:
+
+stellarium-1.2/plugins/MeteorShowers/src/MeteorShowersMgr.hpp:331:12:
+ error: field 'm_lastUpdate' has incomplete type 'QDateTime'
+
+Patch sent upstream: https://github.com/Stellarium/stellarium/pull/2933
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ plugins/MeteorShowers/src/MeteorShowersMgr.hpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/plugins/MeteorShowers/src/MeteorShowersMgr.hpp b/plugins/MeteorShowers/src/MeteorShowersMgr.hpp
+index 8096856b6d..17716a68b0 100644
+--- a/plugins/MeteorShowers/src/MeteorShowersMgr.hpp
++++ b/plugins/MeteorShowers/src/MeteorShowersMgr.hpp
+@@ -20,6 +20,7 @@
+ #ifndef METEORSHOWERSMGR_HPP
+ #define METEORSHOWERSMGR_HPP
+ 
++#include <QDateTime>
+ #include <QNetworkReply>
+ #include <QNetworkAccessManager>
+ 
+-- 
+2.34.1
+
