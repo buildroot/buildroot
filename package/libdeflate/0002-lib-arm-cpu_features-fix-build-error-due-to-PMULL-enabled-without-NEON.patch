@@ -1,0 +1,35 @@
+From 079a6dd171583c1953017b703ec63c5367a284b4 Mon Sep 17 00:00:00 2001
+From: Eric Biggers <ebiggers3@gmail.com>
+Date: Mon, 26 Dec 2022 11:32:47 -0800
+Subject: [PATCH] lib/arm/cpu_features: fix build error due to PMULL enabled
+ without NEON
+
+When building for soft float arm32, HAVE_PMULL_INTRIN is being set when
+it shouldn't be, causing a build error:
+
+    #error "NEON intrinsics not available with the soft-float ABI..."
+
+Fix this by making HAVE_PMULL_INTRIN depend on HAVE_NEON_INTRIN, as used
+to be the case, in order to get the 'defined(__ARM_FP)' dependency,
+
+Fixes https://github.com/ebiggers/libdeflate/issues/282
+Fixes: 84c76f6f2cf5 ("lib/arm: make crc32 code work with MSVC")
+[Retrieved from:
+https://github.com/ebiggers/libdeflate/commit/079a6dd171583c1953017b703ec63c5367a284b4]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ lib/arm/cpu_features.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lib/arm/cpu_features.h b/lib/arm/cpu_features.h
+index 4092eba8..edcf7359 100644
+--- a/lib/arm/cpu_features.h
++++ b/lib/arm/cpu_features.h
+@@ -97,6 +97,7 @@ static inline u32 get_arm_cpu_features(void) { return 0; }
+ #endif
+ #if HAVE_PMULL_NATIVE || \
+ 	(HAVE_DYNAMIC_ARM_CPU_FEATURES && \
++	 HAVE_NEON_INTRIN /* needed to exclude soft float arm32 case */ && \
+ 	 (GCC_PREREQ(6, 1) || __has_builtin(__builtin_neon_vmull_p64) || \
+ 	  defined(_MSC_VER)) && \
+ 	  /*
