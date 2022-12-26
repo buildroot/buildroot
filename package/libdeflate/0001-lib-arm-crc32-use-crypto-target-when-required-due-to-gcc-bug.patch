@@ -1,0 +1,90 @@
+From f8f022e5bc574088ae80327ea5f88a8fe09b48c8 Mon Sep 17 00:00:00 2001
+From: Eric Biggers <ebiggers3@gmail.com>
+Date: Sun, 25 Dec 2022 15:05:52 -0800
+Subject: [PATCH] lib/arm/crc32: use crypto target when required due to gcc bug
+
+Fixes https://github.com/ebiggers/libdeflate/issues/280
+Fixes: 6db64ab7afd2 ("lib/crc32: CRC-32 optimizations and other improvements")
+[Retrieved from:
+https://github.com/ebiggers/libdeflate/commit/f8f022e5bc574088ae80327ea5f88a8fe09b48c8]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ lib/arm/cpu_features.h | 23 +++++++++++++++++++++++
+ lib/arm/crc32_impl.h   |  9 +++++----
+ 2 files changed, 28 insertions(+), 4 deletions(-)
+
+diff --git a/lib/arm/cpu_features.h b/lib/arm/cpu_features.h
+index 204c0cd5..4092eba8 100644
+--- a/lib/arm/cpu_features.h
++++ b/lib/arm/cpu_features.h
+@@ -116,6 +116,29 @@ static inline u32 get_arm_cpu_features(void) { return 0; }
+ #else
+ #  define HAVE_PMULL_INTRIN	0
+ #endif
++/*
++ * Set USE_PMULL_TARGET_EVEN_IF_NATIVE if a workaround for a gcc bug that was
++ * fixed by commit 11a113d501ff ("aarch64: Simplify feature definitions") in gcc
++ * 13 is needed.  A minimal program that fails to build due to this bug when
++ * compiled with -mcpu=emag, at least with gcc 10 through 12, is:
++ *
++ *    static inline __attribute__((always_inline,target("+crypto"))) void f() {}
++ *    void g() { f(); }
++ *
++ * The error is:
++ *
++ *    error: inlining failed in call to ‘always_inline’ ‘f’: target specific option mismatch
++ *
++ * The workaround is to explicitly add the crypto target to the non-inline
++ * function g(), even though this should not be required due to -mcpu=emag
++ * enabling 'crypto' natively and causing __ARM_FEATURE_CRYPTO to be defined.
++ */
++#if HAVE_PMULL_NATIVE && defined(ARCH_ARM64) && \
++		GCC_PREREQ(6, 1) && !GCC_PREREQ(13, 1)
++#  define USE_PMULL_TARGET_EVEN_IF_NATIVE	1
++#else
++#  define USE_PMULL_TARGET_EVEN_IF_NATIVE	0
++#endif
+ 
+ /* CRC32 */
+ #ifdef __ARM_FEATURE_CRC32
+diff --git a/lib/arm/crc32_impl.h b/lib/arm/crc32_impl.h
+index e426a63d..b9300e4b 100644
+--- a/lib/arm/crc32_impl.h
++++ b/lib/arm/crc32_impl.h
+@@ -236,7 +236,7 @@ crc32_arm_crc(u32 crc, const u8 *p, size_t len)
+  * for implementations that use pmull for folding the data itself.
+  */
+ #if HAVE_CRC32_INTRIN && HAVE_PMULL_INTRIN
+-#  if HAVE_CRC32_NATIVE && HAVE_PMULL_NATIVE
++#  if HAVE_CRC32_NATIVE && HAVE_PMULL_NATIVE && !USE_PMULL_TARGET_EVEN_IF_NATIVE
+ #    define ATTRIBUTES
+ #  else
+ #    ifdef ARCH_ARM32
+@@ -438,7 +438,7 @@ crc32_arm_crc_pmullcombine(u32 crc, const u8 *p, size_t len)
+ #if HAVE_PMULL_INTRIN
+ #  define crc32_arm_pmullx4	crc32_arm_pmullx4
+ #  define SUFFIX			 _pmullx4
+-#  if HAVE_PMULL_NATIVE
++#  if HAVE_PMULL_NATIVE && !USE_PMULL_TARGET_EVEN_IF_NATIVE
+ #    define ATTRIBUTES
+ #  else
+ #    ifdef ARCH_ARM32
+@@ -558,7 +558,7 @@ crc32_arm_pmullx4(u32 crc, const u8 *p, size_t len)
+ #if defined(ARCH_ARM64) && HAVE_PMULL_INTRIN && HAVE_CRC32_INTRIN
+ #  define crc32_arm_pmullx12_crc	crc32_arm_pmullx12_crc
+ #  define SUFFIX				 _pmullx12_crc
+-#  if HAVE_PMULL_NATIVE && HAVE_CRC32_NATIVE
++#  if HAVE_PMULL_NATIVE && HAVE_CRC32_NATIVE && !USE_PMULL_TARGET_EVEN_IF_NATIVE
+ #    define ATTRIBUTES
+ #  else
+ #    ifdef __clang__
+@@ -584,7 +584,8 @@ crc32_arm_pmullx4(u32 crc, const u8 *p, size_t len)
+ 	(HAVE_SHA3_TARGET || HAVE_SHA3_NATIVE)
+ #  define crc32_arm_pmullx12_crc_eor3	crc32_arm_pmullx12_crc_eor3
+ #  define SUFFIX				 _pmullx12_crc_eor3
+-#  if HAVE_PMULL_NATIVE && HAVE_CRC32_NATIVE && HAVE_SHA3_NATIVE
++#  if HAVE_PMULL_NATIVE && HAVE_CRC32_NATIVE && HAVE_SHA3_NATIVE && \
++	!USE_PMULL_TARGET_EVEN_IF_NATIVE
+ #    define ATTRIBUTES
+ #  else
+ #    ifdef __clang__
