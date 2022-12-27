@@ -1,0 +1,42 @@
+From b860de9e207d8fe2ea37dad28fdd014493d87703 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 27 Dec 2022 16:29:16 +0100
+Subject: [PATCH] build: Fix CMake to use pkg-config openssl when possible
+ (#2290)
+
+In order to take into account the libraries used by openssl when
+building statically, using pkg-config is recommended. This patch
+therefore improves the CMakeLists.txt to use pkg-config to detect
+openssl when pkg-config is available. This will avoid
+static build failure when openssl needs to link with -latomic.
+
+Fixes:
+ - http://autobuild.buildroot.org/results/417c86963ffe038aa052ea3cf19fd52c3e9b7396
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/merbanan/rtl_433/commit/b860de9e207d8fe2ea37dad28fdd014493d87703]
+---
+ CMakeLists.txt | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d47a3eda2..cf30d8be2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -175,7 +175,14 @@ set(ENABLE_OPENSSL AUTO CACHE STRING "Enable OpenSSL TLS support")
+ set_property(CACHE ENABLE_OPENSSL PROPERTY STRINGS AUTO ON OFF)
+ if(ENABLE_OPENSSL) # AUTO / ON
+ 
+-find_package(OpenSSL)
++find_package(PkgConfig)
++if(PKG_CONFIG_FOUND)
++    pkg_check_modules(OPENSSL openssl)
++    set(OPENSSL_LIBRARIES ${OPENSSL_LINK_LIBRARIES})
++    set(OPENSSL_INCLUDE_DIR ${OPENSSL_INCLUDE_DIRS})
++else()
++    find_package(OpenSSL)
++endif()
+ if(OPENSSL_FOUND)
+     message(STATUS "OpenSSL TLS support will be compiled. Found version ${OPENSSL_VERSION}")
+     include_directories(${OPENSSL_INCLUDE_DIR})
