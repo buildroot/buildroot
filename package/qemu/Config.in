@@ -17,7 +17,7 @@ comment "QEMU requires a toolchain with wchar, threads, gcc >= 8"
 	depends on !(BR2_TOOLCHAIN_HAS_THREADS && BR2_USE_WCHAR) || \
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_8
 
-config BR2_PACKAGE_QEMU
+menuconfig BR2_PACKAGE_QEMU
 	bool "QEMU"
 	depends on BR2_PACKAGE_QEMU_ARCH_SUPPORTS_TARGET
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_8
@@ -27,6 +27,7 @@ config BR2_PACKAGE_QEMU
 	select BR2_PACKAGE_LIBGLIB2
 	select BR2_PACKAGE_PIXMAN
 	select BR2_PACKAGE_ZLIB
+	select BR2_PACKAGE_QEMU_SYSTEM if !BR2_PACKAGE_QEMU_LINUX_USER
 	help
 	  QEMU is a generic and open source machine emulator and
 	  virtualizer.
@@ -49,20 +50,13 @@ if BR2_PACKAGE_QEMU
 
 comment "Emulators selection"
 
-config BR2_PACKAGE_QEMU_CUSTOM_TARGETS
-	string "Enable specific targets"
+config BR2_PACKAGE_QEMU_SYSTEM
+	bool "Enable systems emulation"
+	depends on !BR2_STATIC_LIBS # dtc
 	help
-	  Enter here the list of QEMU targets you want to build. For
-	  example:
+	  Say 'y' to build system emulators/virtualisers.
 
-	    System emulation      | User-land emulation
-	    ----------------------+-----------------------
-	    i386-softmmu          | i386-linux-user
-	    arm-softmmu           | ppc-linux-user
-	    x86_64-softmmu        | sparc-bsd-user
-	    ...                   | ...
-
-comment "Networking options"
+if BR2_PACKAGE_QEMU_SYSTEM
 
 config BR2_PACKAGE_QEMU_SLIRP
 	bool "Enable user mode networking (SLIRP)"
@@ -87,69 +81,264 @@ config BR2_PACKAGE_QEMU_SLIRP
 	  Notice that this option does not disable other networking
 	  modes.
 
-if BR2_PACKAGE_QEMU_CUSTOM_TARGETS = ""
-
-comment "... or you can select emulator families to enable, below:"
-
-config BR2_PACKAGE_QEMU_SYSTEM
-	bool "Enable all systems emulation"
-	depends on !BR2_STATIC_LIBS # dtc
-	select BR2_PACKAGE_QEMU_FDT
+config BR2_PACKAGE_QEMU_SDL
+	bool "Enable SDL frontend"
+	select BR2_PACKAGE_SDL2
 	help
-	  Say 'y' to build all system emulators/virtualisers that QEMU
-	  supports.
+	  Say 'y' to enable the SDL frontend, that is, a graphical
+	  window presenting the VM's display.
+
+config BR2_PACKAGE_QEMU_FDT
+	bool "Enable FDT"
+	select BR2_PACKAGE_DTC
+	help
+	  Say 'y' here to have QEMU capable of constructing Device
+	  Trees, and passing them to the VMs.
+
+endif # BR2_PACKAGE_QEMU_SYSTEM
 
 comment "systems emulation needs a toolchain w/ dynamic library"
 	depends on BR2_STATIC_LIBS
 
 config BR2_PACKAGE_QEMU_LINUX_USER
-	bool "Enable all Linux user-land emulation"
+	bool "Enable Linux user-land emulation"
 	# Incompatible "struct sigevent" definition on musl
 	depends on !BR2_TOOLCHAIN_USES_MUSL
 	help
-	  Say 'y' to build all Linux user-land emulators that QEMU
-	  supports.
+	  Say 'y' to build Linux user-land emulators.
 
 # Note: bsd-user can not be build on Linux
 
 comment "Linux user-land emulation needs a glibc or uClibc toolchain"
 	depends on BR2_TOOLCHAIN_USES_MUSL
 
-endif # BR2_PACKAGE_QEMU_CUSTOM_TARGETS == ""
-
-config BR2_PACKAGE_QEMU_HAS_EMULS
-	def_bool y
-	depends on BR2_PACKAGE_QEMU_SYSTEM || BR2_PACKAGE_QEMU_LINUX_USER || BR2_PACKAGE_QEMU_CUSTOM_TARGETS != ""
-
-if BR2_PACKAGE_QEMU_HAS_EMULS
-
-comment "Frontends"
-
-config BR2_PACKAGE_QEMU_SDL
-	bool "Enable SDL frontend"
-	depends on !BR2_STATIC_LIBS # sdl2
-	select BR2_PACKAGE_SDL2
+config BR2_PACKAGE_QEMU_CHOOSE_TARGETS
+	bool "Select individual emulator targets"
 	help
-	  Say 'y' to enable the SDL frontend, that is, a graphical
-	  window presenting the VM's display.
+	  By default, all targets (system and/or user, subject to the
+	  corresponding options, above) are built. If you only need a
+	  subset of the emulated targets, say 'y' here and enable at
+	  least one target, below.
 
-comment "SDL frontend needs a toolchain w/ dynamic library"
-	depends on BR2_STATIC_LIBS
+if BR2_PACKAGE_QEMU_CHOOSE_TARGETS
 
-comment "Misc. features"
-
-config BR2_PACKAGE_QEMU_FDT
-	bool "Enable FDT"
-	depends on !BR2_STATIC_LIBS # dtc
-	select BR2_PACKAGE_DTC
+config BR2_PACKAGE_QEMU_TARGET_AARCH64
+	bool "aarch64"
+	select BR2_PACKAGE_QEMU_FDT if BR2_PACKAGE_QEMU_SYSTEM
 	help
-	  Say 'y' here to have QEMU capable of constructing Device
-	  Trees, and passing them to the VMs.
+	  ARM 64-bit architecture.
 
-comment "FDT support needs a toolchain w/ dynamic library"
-	depends on BR2_STATIC_LIBS
+config BR2_PACKAGE_QEMU_TARGET_AARCH64_BE
+	bool "aarch64_be (linux-user, only)"
+	depends on BR2_PACKAGE_QEMU_LINUX_USER
+	help
+	  ARM 64-bit architecture, big-endian.
 
-endif # BR2_PACKAGE_QEMU_HAS_EMULS
+config BR2_PACKAGE_QEMU_TARGET_ALPHA
+	bool "alpha"
+	help
+	  DEC Alpha 64-bit RISC architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_ARM
+	bool "arm"
+	select BR2_PACKAGE_QEMU_FDT if BR2_PACKAGE_QEMU_SYSTEM
+	help
+	  ARM EABI architecture, little-endian.
+
+config BR2_PACKAGE_QEMU_TARGET_ARMEB
+	bool "armeb (linux-user, only)"
+	depends on BR2_PACKAGE_QEMU_LINUX_USER
+	help
+	  ARM EABI architecture, big-endian.
+
+config BR2_PACKAGE_QEMU_TARGET_AVR
+	bool "avr (system, only)"
+	depends on BR2_PACKAGE_QEMU_SYSTEM
+	help
+	  AVR 8-bit microcontroller architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_CRIS
+	bool "cris"
+	help
+	  ETRAX CRIS microcontroller architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_HEXAGON
+	bool "hexagon (linux-user, only)"
+	depends on BR2_PACKAGE_QEMU_LINUX_USER
+	help
+	  Qualcomm's Hexagon VLSI DSP architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_HPPA
+	bool "hppa"
+	help
+	  HP PA-RISC architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_I386
+	bool "i386"
+	select BR2_PACKAGE_QEMU_FDT if BR2_PACKAGE_QEMU_SYSTEM
+	help
+	  Intel i386 32-bit architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_LOONGARCH64
+	bool "loongarch64"
+	select BR2_PACKAGE_QEMU_FDT if BR2_PACKAGE_QEMU_SYSTEM
+	help
+	  Loongson 64-bit RISC architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_M68K
+	bool "m68k"
+	help
+	  Motorola 68000 architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_MICROBLAZE
+	bool "microblaze"
+	select BR2_PACKAGE_QEMU_FDT if BR2_PACKAGE_QEMU_SYSTEM
+	help
+	  Xilinix MicroBlaze soft processor.
+
+config BR2_PACKAGE_QEMU_TARGET_MICROBLAZEEL
+	bool "microblazeel"
+	select BR2_PACKAGE_QEMU_FDT if BR2_PACKAGE_QEMU_SYSTEM
+	help
+	  Xilinix MicroBlaze EL soft processor.
+
+config BR2_PACKAGE_QEMU_TARGET_MIPS
+	bool "mips"
+	help
+	  MIPS 32-bit architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_MIPSEL
+	bool "mipsel"
+	help
+	  MIPS 32-bit architecture, little-endian.
+
+config BR2_PACKAGE_QEMU_TARGET_MIPS64
+	bool "mips64"
+	help
+	  MIPS 64-bit architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_MIPS64EL
+	bool "mips64el"
+	select BR2_PACKAGE_QEMU_FDT if BR2_PACKAGE_QEMU_SYSTEM
+	help
+	  MIPS 64-bit architecture, little-endian.
+
+config BR2_PACKAGE_QEMU_TARGET_MIPSN32
+	bool "mipsn32 (linux-user, only)"
+	depends on BR2_PACKAGE_QEMU_LINUX_USER
+	help
+	  MIPS N32 architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_MIPSN32EL
+	bool "mipsn32el (linux-user, only)"
+	depends on BR2_PACKAGE_QEMU_LINUX_USER
+	help
+	  MIPS N32 architecture, little-endian.
+
+config BR2_PACKAGE_QEMU_TARGET_NIOS2
+	bool "nios2"
+	help
+	  Nios II architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_OR1K
+	bool "or1k"
+	select BR2_PACKAGE_QEMU_FDT if BR2_PACKAGE_QEMU_SYSTEM
+	help
+	  OpenRISC 1000 architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_PPC
+	bool "ppc"
+	select BR2_PACKAGE_QEMU_FDT if BR2_PACKAGE_QEMU_SYSTEM
+	help
+	  PoewerPC 32-bit architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_PPC64
+	bool "ppc64"
+	select BR2_PACKAGE_QEMU_FDT if BR2_PACKAGE_QEMU_SYSTEM
+	help
+	  PoewerPC 64-bit architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_PPC64LE
+	bool "ppc64le (linux-user, only)"
+	depends on BR2_PACKAGE_QEMU_LINUX_USER
+	help
+	  PoewerPC 64-bit architecture, little-endian.
+
+config BR2_PACKAGE_QEMU_TARGET_RISCV32
+	bool "riscv32"
+	select BR2_PACKAGE_QEMU_FDT if BR2_PACKAGE_QEMU_SYSTEM
+	help
+	  RISC-V 33-bit architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_RISCV64
+	bool "riscv64"
+	select BR2_PACKAGE_QEMU_FDT if BR2_PACKAGE_QEMU_SYSTEM
+	help
+	  RISC-V 64-bit architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_RX
+	bool "rx (system-only)"
+	depends on BR2_PACKAGE_QEMU_SYSTEM
+	select BR2_PACKAGE_QEMU_FDT if BR2_PACKAGE_QEMU_SYSTEM
+	help
+	  Renesas Electronics RX 32-bit architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_S390X
+	bool "s390x"
+	help
+	  IBM z/Architecture 64-bit mainframe (s390x)
+
+config BR2_PACKAGE_QEMU_TARGET_SH4
+	bool "sh4"
+	help
+	  Super-H 32-bit RISC architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_SH4EB
+	bool "sh4eb"
+	help
+	  Super-H EB 32-bit RISC architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_SPARC
+	bool "sparc"
+	help
+	  SPARC 32-bit RISC architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_SPARC32PLUS
+	bool "sparc32plus (linux-user, only)"
+	depends on BR2_PACKAGE_QEMU_LINUX_USER
+	help
+	  SPARC 32-bit RISC architecture (Sun's v8plus).
+
+config BR2_PACKAGE_QEMU_TARGET_SPARC64
+	bool "sparc64"
+	help
+	  SPARC 64-bit RISC architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_TRICORE
+	bool "tricore (system, only)"
+	depends on BR2_PACKAGE_QEMU_SYSTEM
+	help
+	  Infineon TriCore 32-bit RISC architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_X86_64
+	bool "x86_64"
+	select BR2_PACKAGE_QEMU_FDT if BR2_PACKAGE_QEMU_SYSTEM
+	help
+	  Intel x86 64-bit architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_XTENSA
+	bool "xtensa"
+	help
+	  Xtensa 32-bit RISC architecture.
+
+config BR2_PACKAGE_QEMU_TARGET_XTENSAEB
+	bool "xtensaeb"
+	help
+	  Xtensa 32-bit RISC architecture, big-endian.
+
+endif # BR2_PACKAGE_QEMU_CHOOSE_TARGETS
+
+comment "Tools selection"
 
 config BR2_PACKAGE_QEMU_TOOLS
 	bool "Enable tools"
