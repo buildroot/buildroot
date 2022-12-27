@@ -21,7 +21,7 @@ COLLECTD_PLUGINS_DISABLE = \
 	gmond hddtemp intel_rdt java lpar \
 	madwifi mbmon mic multimeter netapp notify_desktop numa \
 	oracle perl pf pinba powerdns python routeros \
-	rrdcached sigrok tape target_v5upgrade teamspeak2 ted \
+	sigrok tape target_v5upgrade teamspeak2 ted \
 	tokyotyrant turbostat uuid varnish vserver write_kafka \
 	write_mongodb xencpu xmms zfs_arc zone
 
@@ -134,6 +134,7 @@ COLLECTD_CONF_OPTS += \
 	$(if $(BR2_PACKAGE_COLLECTD_REGEX),--enable-match_regex,--disable-match-regex) \
 	$(if $(BR2_PACKAGE_COLLECTD_REPLACE),--enable-target_replace,--disable-target_replace) \
 	$(if $(BR2_PACKAGE_COLLECTD_RIEMANN),--enable-write_riemann,--disable-write_riemann) \
+	$(if $(BR2_PACKAGE_COLLECTD_RRDCACHED),--enable-rrdcached,--disable-rrdcached) \
 	$(if $(BR2_PACKAGE_COLLECTD_RRDTOOL),--enable-rrdtool,--disable-rrdtool) \
 	$(if $(BR2_PACKAGE_COLLECTD_SCALE),--enable-target_scale,--disable-target_scale) \
 	$(if $(BR2_PACKAGE_COLLECTD_SENSORS),--enable-sensors,--disable-sensors) \

@@ -724,6 +724,15 @@ config BR2_PACKAGE_COLLECTD_RRDTOOL
 comment "rrdtool support needs a toolchain w/ wchar"
 	depends on !BR2_USE_WCHAR
 
+if BR2_PACKAGE_COLLECTD_RRDTOOL
+
+config BR2_PACKAGE_COLLECTD_RRDCACHED
+	bool "rrdcached"
+	help
+	  Use the RRDtool caching daemon.
+
+endif
+
 config BR2_PACKAGE_COLLECTD_RIEMANN
 	bool "riemann"
 	# riemann-c-client -> protobuf-c
