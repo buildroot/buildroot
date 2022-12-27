@@ -37,7 +37,7 @@ endchoice
 
 config BR2_PACKAGE_FMLIB_ARCHTYPE
 	string
-	default "e500mc" if BR2_powerpc_e500mc
+	default "ppce500mc" if BR2_powerpc_e500mc
 	default "ppc64e6500" if BR2_powerpc_e6500 && BR2_powerpc64
 	default "ppc32e6500" if BR2_powerpc_e6500 && BR2_powerpc
 
