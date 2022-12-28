@@ -1,0 +1,26 @@
+From 347c23da1ec6f19b0b0143d53edcc209e522bbf2 Mon Sep 17 00:00:00 2001
+From: Oliver Falk <oliver@linux-kernel.at>
+Date: Wed, 29 Jun 2022 13:27:45 +0200
+Subject: [PATCH] Correct path to string.h (from bsd); Fixes #74
+
+[Retrieved (and backported) from:
+https://github.com/ofalk/libdnet/commit/347c23da1ec6f19b0b0143d53edcc209e522bbf2]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ python/dnet.c   | 64 +++++++++++++++++++++++--------------------------
+ python/dnet.pyx |  2 +-
+ 2 files changed, 31 insertions(+), 35 deletions(-)
+
+diff --git a/python/dnet.pyx b/python/dnet.pyx
+index d9cbc90..af65a11 100644
+--- a/python/dnet.pyx
++++ b/python/dnet.pyx
+@@ -40,7 +40,7 @@ cdef extern from *:
+     unsigned long htonl(unsigned long n)
+     unsigned long ntohl(unsigned long n)
+ 
+-cdef extern from "string.h":
++cdef extern from "bsd/string.h":
+     int     strlcpy(char *dst, char *src, int size)
+ 
+ cdef __memcpy(char *dst, object src, int n):
