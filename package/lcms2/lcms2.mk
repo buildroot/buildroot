@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-LCMS2_VERSION_MAJOR = 2.13
-LCMS2_VERSION = $(LCMS2_VERSION_MAJOR).1
-LCMS2_SITE = http://downloads.sourceforge.net/project/lcms/lcms/$(LCMS2_VERSION_MAJOR)
+LCMS2_VERSION = 2.14
+LCMS2_SITE = http://downloads.sourceforge.net/project/lcms/lcms/$(LCMS2_VERSION)
 LCMS2_LICENSE = MIT
 LCMS2_LICENSE_FILES = COPYING
 LCMS2_CPE_ID_VENDOR = littlecms
