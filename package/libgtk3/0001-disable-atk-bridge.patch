@@ -5,21 +5,6 @@ add two new packages just for it: at-spi2-core and at-spi2-atk.
 
 Signed-off-by: Hadrien Boutteville <hadrien.boutteville@gmail.com>
 
---- a/configure.ac
-+++ b/configure.ac
-@@ -1386,11 +1386,7 @@
- # Check for Accessibility Toolkit flags
- ########################################
-
--if test x$enable_x11_backend = xyes; then
--   ATK_PACKAGES="atk atk-bridge-2.0"
--else
--   ATK_PACKAGES="atk"
--fi
-+ATK_PACKAGES="atk"
-
- PKG_CHECK_MODULES(ATK, $ATK_PACKAGES)
-
 --- a/gtk/a11y/gtkaccessibility.c
 +++ b/gtk/a11y/gtkaccessibility.c
 @@ -37,10 +37,6 @@
@@ -33,7 +18,7 @@ Signed-off-by: Hadrien Boutteville <hadrien.boutteville@gmail.com>
  static gboolean gail_focus_watcher      (GSignalInvocationHint *ihint,
                                           guint                  n_param_values,
                                           const GValue          *param_values,
-@@ -988,9 +984,5 @@
+@@ -988,9 +984,5 @@ _gtk_accessibility_init (void)
    _gtk_accessibility_override_atk_util ();
    do_window_event_initialization ();
 
@@ -43,3 +28,14 @@ Signed-off-by: Hadrien Boutteville <hadrien.boutteville@gmail.com>
 -
    atk_misc_instance = g_object_new (GTK_TYPE_MISC_IMPL, NULL);
  }
+--- a/meson.build
++++ b/meson.build
+@@ -564,7 +564,7 @@ if x11_enabled
+   xfixes_dep     = dependency('xfixes', required: false)
+   xcomposite_dep = dependency('xcomposite', required: false)
+   fontconfig_dep = dependency('fontconfig', fallback: ['fontconfig', 'fontconfig_dep'])
+-  atkbridge_dep  = dependency('atk-bridge-2.0', version: at_spi2_atk_req)
++  atkbridge_dep  = dependency('atk-bridge-2.0', version: at_spi2_atk_req, required: false)
+ 
+   backend_immodules += ['xim']
+ 

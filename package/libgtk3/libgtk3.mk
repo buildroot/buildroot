@@ -5,7 +5,7 @@
 ################################################################################
 
 LIBGTK3_VERSION_MAJOR = 3.24
-LIBGTK3_VERSION = $(LIBGTK3_VERSION_MAJOR).35
+LIBGTK3_VERSION = $(LIBGTK3_VERSION_MAJOR).36
 LIBGTK3_SOURCE = gtk+-$(LIBGTK3_VERSION).tar.xz
 LIBGTK3_SITE = https://download.gnome.org/sources/gtk+/$(LIBGTK3_VERSION_MAJOR)
 LIBGTK3_LICENSE = LGPL-2.0+
@@ -13,69 +13,42 @@ LIBGTK3_LICENSE_FILES = COPYING
 LIBGTK3_CPE_ID_VENDOR = gnome
 LIBGTK3_CPE_ID_PRODUCT = gtk
 LIBGTK3_INSTALL_STAGING = YES
-LIBGTK3_AUTORECONF = YES
-
-LIBGTK3_CONF_ENV = \
-	ac_cv_path_GTK_UPDATE_ICON_CACHE=$(HOST_DIR)/bin/gtk-update-icon-cache \
-	ac_cv_path_GDK_PIXBUF_CSOURCE=$(HOST_DIR)/bin/gdk-pixbuf-csource \
-	PKG_CONFIG_FOR_BUILD=$(HOST_DIR)/bin/pkgconf
-
-LIBGTK3_CONF_OPTS = \
-	--disable-glibtest \
-	--enable-explicit-deps=no
-HOST_LIBGTK3_CONF_OPTS = --disable-introspection
-
-# Override pkg-config pkgdatadir variable, it needs the prefix
-LIBGTK3_MAKE_OPTS = \
-	WAYLAND_PROTOCOLS_DATADIR=$(STAGING_DIR)/usr/share/wayland-protocols \
-	LIBS=$(TARGET_NLS_LIBS)
 
 LIBGTK3_DEPENDENCIES = host-pkgconf host-libgtk3 atk libglib2 cairo pango \
 	gdk-pixbuf libepoxy $(TARGET_NLS_DEPENDENCIES)
 
 ifeq ($(BR2_PACKAGE_LIBGTK3_X11),y)
-LIBGTK3_DEPENDENCIES += fontconfig xlib_libX11 xlib_libXext xlib_libXrender xlib_libXi
-
-LIBGTK3_CONF_OPTS += \
-	--enable-x11-backend \
-	--x-includes=$(STAGING_DIR)/usr/include/X11 \
-	--x-libraries=$(STAGING_DIR)/usr/lib
+LIBGTK3_DEPENDENCIES += fontconfig xlib_libX11 xlib_libXext xlib_libXrandr xlib_libXrender xlib_libXi
+LIBGTK3_CONF_OPTS += -Dx11_backend=true
 else
-LIBGTK3_CONF_OPTS += --disable-x11-backend
+LIBGTK3_CONF_OPTS += -Dx11_backend=false
 endif
 
 ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
-LIBGTK3_CONF_OPTS += --enable-introspection
+LIBGTK3_CONF_OPTS += -Dintrospection=true
 LIBGTK3_DEPENDENCIES += gobject-introspection
 else
-LIBGTK3_CONF_OPTS += --disable-introspection
+LIBGTK3_CONF_OPTS += -Dintrospection=false
 endif
 
 ifeq ($(BR2_PACKAGE_LIBGTK3_WAYLAND),y)
 LIBGTK3_DEPENDENCIES += wayland wayland-protocols libxkbcommon
-LIBGTK3_CONF_OPTS += --enable-wayland-backend
+LIBGTK3_CONF_OPTS += -Dwayland_backend=true
 else
-LIBGTK3_CONF_OPTS += --disable-wayland-backend
+LIBGTK3_CONF_OPTS += -Dwayland_backend=false
 endif
 
 ifeq ($(BR2_PACKAGE_LIBGTK3_BROADWAY),y)
-LIBGTK3_CONF_OPTS += --enable-broadway-backend
+LIBGTK3_CONF_OPTS += -Dbroadway_backend=true
 else
-LIBGTK3_CONF_OPTS += --disable-broadway-backend
+LIBGTK3_CONF_OPTS += -Dbroadway_backend=false
 endif
 
 ifeq ($(BR2_PACKAGE_XLIB_LIBXINERAMA),y)
-LIBGTK3_CONF_OPTS += --enable-xinerama
+LIBGTK3_CONF_OPTS += -Dxinerama=yes
 LIBGTK3_DEPENDENCIES += xlib_libXinerama
 else
-LIBGTK3_CONF_OPTS += --disable-xinerama
-endif
-
-ifeq ($(BR2_PACKAGE_XLIB_LIBXRANDR),y)
-LIBGTK3_CONF_OPTS += --enable-xrandr
-LIBGTK3_DEPENDENCIES += xlib_libXrandr
-else
-LIBGTK3_CONF_OPTS += --disable-xrandr
+LIBGTK3_CONF_OPTS += -Dxinerama=no
 endif
 
 ifeq ($(BR2_PACKAGE_XLIB_LIBXCURSOR),y)
@@ -83,55 +56,35 @@ LIBGTK3_DEPENDENCIES += xlib_libXcursor
 endif
 
 ifeq ($(BR2_PACKAGE_XLIB_LIBXFIXES),y)
-LIBGTK3_CONF_OPTS += --enable-xfixes
 LIBGTK3_DEPENDENCIES += xlib_libXfixes
-else
-LIBGTK3_CONF_OPTS += --disable-xfixes
 endif
 
 ifeq ($(BR2_PACKAGE_XLIB_LIBXCOMPOSITE),y)
-LIBGTK3_CONF_OPTS += --enable-xcomposite
 LIBGTK3_DEPENDENCIES += xlib_libXcomposite
-else
-LIBGTK3_CONF_OPTS += --disable-xcomposite
 endif
 
 ifeq ($(BR2_PACKAGE_XLIB_LIBXDAMAGE),y)
-LIBGTK3_CONF_OPTS += --enable-xdamage
 LIBGTK3_DEPENDENCIES += xlib_libXdamage
-else
-LIBGTK3_CONF_OPTS += --disable-xdamage
-endif
-
-ifeq ($(BR2_PACKAGE_XLIB_LIBXKBFILE),y)
-LIBGTK3_CONF_OPTS += --enable-xkb
-LIBGTK3_DEPENDENCIES += xlib_libxkbfile
-else
-LIBGTK3_CONF_OPTS += --disable-xkb
 endif
 
 ifeq ($(BR2_PACKAGE_CUPS),y)
-LIBGTK3_CONF_OPTS += --enable-cups
-LIBGTK3_CONF_ENV += ac_cv_path_CUPS_CONFIG=$(STAGING_DIR)/usr/bin/cups-config
+LIBGTK3_CONF_OPTS += -Dprint_backends=cups
 LIBGTK3_DEPENDENCIES += cups
 else
-LIBGTK3_CONF_OPTS += --disable-cups
+LIBGTK3_CONF_OPTS += -Dprint_backends=auto
 endif
 
 ifeq ($(BR2_PACKAGE_LIBGTK3_DEMO),y)
+LIBGTK3_CONF_OPTS += -Ddemos=true -Dexamples=true
 LIBGTK3_DEPENDENCIES += hicolor-icon-theme shared-mime-info
 else
-define LIBGTK3_REMOVE_DEMOS
-	$(RM) $(TARGET_DIR)/usr/bin/gtk3-demo \
-		$(TARGET_DIR)/usr/bin/gtk3-demo-application
-endef
-LIBGTK3_POST_INSTALL_TARGET_HOOKS += LIBGTK3_REMOVE_DEMOS
+LIBGTK3_CONF_OPTS += -Ddemos=false -Dexamples=false
 endif
 
 ifeq ($(BR2_PACKAGE_LIBGTK3_TESTS),y)
-LIBGTK3_CONF_OPTS += --enable-installed-tests
+LIBGTK3_CONF_OPTS += -Dtests=true -Dinstalled_tests=true
 else
-LIBGTK3_CONF_OPTS += --disable-installed-tests
+LIBGTK3_CONF_OPTS += -Dtests=false -Dinstalled_tests=false
 endif
 
 define LIBGTK3_COMPILE_GLIB_SCHEMAS
@@ -198,5 +151,5 @@ define LIBGTK3_UPDATE_ICON_CACHE
 endef
 LIBGTK3_TARGET_FINALIZE_HOOKS += LIBGTK3_UPDATE_ICON_CACHE
 
-$(eval $(autotools-package))
-$(eval $(host-autotools-package))
+$(eval $(meson-package))
+$(eval $(host-generic-package))
