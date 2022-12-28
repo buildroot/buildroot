@@ -1,0 +1,98 @@
+From a608cdd7903505217529317c04b5b58cb7e25081 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Wed, 28 Dec 2022 21:06:43 +0100
+Subject: [PATCH] cfg80211.c: fix build failure with Linux 5.19 and 6.1
+
+Starting from Linux 5.19 stop_ap() requires unsigned int link_id as
+parameter. Then from Linux 6.1 on lot of other cfg80211 APIs require
+int link_id to deal with MLO, so let's add that parameter too.
+
+[Upstream status: https://github.com/embeddedTS/wilc3000-external-module/pull/2]
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ cfg80211.c | 35 +++++++++++++++++++++++++++++------
+ 1 file changed, 29 insertions(+), 6 deletions(-)
+
+diff --git a/cfg80211.c b/cfg80211.c
+index 41edd02..57c777d 100644
+--- a/cfg80211.c
++++ b/cfg80211.c
+@@ -674,8 +674,12 @@ static int wilc_wfi_cfg_copy_wpa_info(struct wilc_wfi_key *key_info,
+ 	return 0;
+ }
+ 
+-static int add_key(struct wiphy *wiphy, struct net_device *netdev, u8 key_index,
+-		   bool pairwise, const u8 *mac_addr, struct key_params *params)
++static int add_key(struct wiphy *wiphy, struct net_device *netdev,
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,1,0))
++		   int link_id,
++#endif
++		   u8 key_index,  bool pairwise, const u8 *mac_addr,
++		   struct key_params *params)
+ 
+ {
+ 	int ret = 0, keylen = params->key_len, seqlen = params->seq_len;
+@@ -792,6 +796,9 @@ static int add_key(struct wiphy *wiphy, struct net_device *netdev, u8 key_index,
+ }
+ 
+ static int del_key(struct wiphy *wiphy, struct net_device *netdev,
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,1,0))
++		   int link_id,
++#endif
+ 		   u8 key_index,
+ 		   bool pairwise,
+ 		   const u8 *mac_addr)
+@@ -833,9 +840,13 @@ static int del_key(struct wiphy *wiphy, struct net_device *netdev,
+ 	return ret;
+ }
+ 
+-static int get_key(struct wiphy *wiphy, struct net_device *netdev, u8 key_index,
+-		   bool pairwise, const u8 *mac_addr, void *cookie,
+-		   void (*callback)(void *cookie, struct key_params *))
++static int get_key(struct wiphy *wiphy, struct net_device *netdev,
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,1,0))
++		   int link_id,
++#endif
++		   u8 key_index, bool pairwise, const u8 *mac_addr,
++		   void *cookie, void (*callback)(void *cookie,
++		   struct key_params *))
+ {
+ 	struct wilc_vif *vif = netdev_priv(netdev);
+ 	struct wilc_priv *priv = &vif->priv;
+@@ -877,12 +888,18 @@ static int get_key(struct wiphy *wiphy, struct net_device *netdev, u8 key_index,
+ 
+ /* wiphy_new() will WARN if not present*/
+ static int set_default_key(struct wiphy *wiphy, struct net_device *netdev,
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,1,0))
++			   int link_id,
++#endif
+ 			   u8 key_index, bool unicast, bool multicast)
+ {
+ 	return 0;
+ }
+ 
+ static int set_default_mgmt_key (struct wiphy *wiphy,struct net_device *netdev,
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,1,0))
++				 int link_id,
++#endif
+ 				 u8 key_index)
+ {
+     return 0;
+@@ -1814,7 +1831,13 @@ static int change_beacon(struct wiphy *wiphy, struct net_device *dev,
+ 	return wilc_add_beacon(vif, 0, 0, beacon);
+ }
+ 
+-static int stop_ap(struct wiphy *wiphy, struct net_device *dev)
++static int stop_ap(struct wiphy *wiphy, struct net_device *dev
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5,19,0))
++		   , unsigned int link_id
++#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(6,1,0))
++		   , int link_id
++#endif
++		  )
+ {
+ 	int ret;
+ 	struct wilc_vif *vif = netdev_priv(dev);
+-- 
+2.34.1
+

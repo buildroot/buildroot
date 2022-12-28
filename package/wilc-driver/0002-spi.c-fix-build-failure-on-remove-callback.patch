@@ -1,0 +1,44 @@
+From a88819bd63f977b5a33d72a2b9e264ce104726bd Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Wed, 28 Dec 2022 21:02:12 +0100
+Subject: [PATCH] spi.c: fix build failure on remove callback
+
+Starting from Linux 5.18 remove callback returns void, so let's deal with
+it depending on Linux version >= 5.18.
+
+[Upstream status: https://github.com/embeddedTS/wilc3000-external-module/pull/2]
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ spi.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/spi.c b/spi.c
+index 96c51fe..f7b43e2 100644
+--- a/spi.c
++++ b/spi.c
+@@ -211,7 +211,11 @@ free:
+ 	return ret;
+ }
+ 
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5,18,0))
++static void wilc_bus_remove(struct spi_device *spi)
++#else
+ static int wilc_bus_remove(struct spi_device *spi)
++#endif
+ {
+ 	struct wilc *wilc = spi_get_drvdata(spi);
+ 
+@@ -220,7 +224,10 @@ static int wilc_bus_remove(struct spi_device *spi)
+ 
+ 	wilc_netdev_cleanup(wilc);
+ 	wilc_bt_deinit();
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,18,0))
+ 	return 0;
++#endif
+ }
+ 
+ static int wilc_spi_suspend(struct device *dev)
+-- 
+2.34.1
+
