@@ -19,7 +19,6 @@ RSYNC_CONF_OPTS = \
 	--with-included-popt=no \
 	--disable-roll-simd \
 	--disable-openssl \
-	--disable-xxhash \
 	--disable-zstd \
 	--disable-lz4 \
 	--disable-md5-asm
@@ -28,6 +27,13 @@ ifeq ($(BR2_PACKAGE_ACL),y)
 RSYNC_DEPENDENCIES += acl
 else
 RSYNC_CONF_OPTS += --disable-acl-support
+endif
+
+ifeq ($(BR2_PACKAGE_XXHASH),y)
+RSYNC_DEPENDENCIES += xxhash
+RSYNC_CONF_OPTS += --enable-xxhash
+else
+RSYNC_CONF_OPTS += --disable-xxhash
 endif
 
 $(eval $(autotools-package))
