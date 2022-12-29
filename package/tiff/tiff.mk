@@ -14,7 +14,6 @@ TIFF_INSTALL_STAGING = YES
 
 TIFF_CONF_OPTS = \
 	--disable-contrib \
-	--disable-cxx \
 	--disable-tests \
 	--without-x
 
@@ -28,6 +27,12 @@ HOST_TIFF_CONF_OPTS = \
 	--disable-jpeg \
 	--disable-tests
 HOST_TIFF_DEPENDENCIES = host-pkgconf
+
+ifeq ($(BR2_INSTALL_LIBSTDCPP),y)
+TIFF_CONF_OPTS += --enable-cxx
+else
+TIFF_CONF_OPTS += --disable-cxx
+endif
 
 ifneq ($(BR2_PACKAGE_TIFF_CCITT),y)
 TIFF_CONF_OPTS += --disable-ccitt
