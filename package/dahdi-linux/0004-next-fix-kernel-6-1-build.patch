@@ -1,0 +1,32 @@
+From a759a578277bde98eba7ef4bf86bdf819a900de9 Mon Sep 17 00:00:00 2001
+From: John Thomson <git@johnthomson.fastmail.com.au>
+Date: Sun, 23 Oct 2022 13:42:52 +1000
+Subject: [PATCH] fix kernel 6.1 build
+
+kernel 6.1 includes b48b89f9c189 ("net: drop the weight argument from netif_napi_add") [0]
+
+[0]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b48b89f9c189d24eb5e2b4a0ac067da5a24ee86d
+
+Signed-off-by: John Thomson <git@johnthomson.fastmail.com.au>
+[Retrieved from:
+https://github.com/asterisk/dahdi-linux/pull/14/commits/a759a578277bde98eba7ef4bf86bdf819a900de9]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ include/dahdi/kernel.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/include/dahdi/kernel.h b/include/dahdi/kernel.h
+index 35e93bc4..fd64a15e 100644
+--- a/include/dahdi/kernel.h
++++ b/include/dahdi/kernel.h
+@@ -58,6 +58,10 @@
+ 
+ #include <linux/poll.h>
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
++#define netif_napi_add netif_napi_add_weight
++#endif
++
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0)
+ #include <linux/pci.h>
+ #include <linux/dma-mapping.h>
