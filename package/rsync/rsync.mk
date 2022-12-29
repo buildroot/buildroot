@@ -19,7 +19,6 @@ RSYNC_CONF_OPTS = \
 	--with-included-popt=no \
 	--disable-roll-simd \
 	--disable-openssl \
-	--disable-zstd \
 	--disable-lz4 \
 	--disable-md5-asm
 
@@ -34,6 +33,13 @@ RSYNC_DEPENDENCIES += xxhash
 RSYNC_CONF_OPTS += --enable-xxhash
 else
 RSYNC_CONF_OPTS += --disable-xxhash
+endif
+
+ifeq ($(BR2_PACKAGE_ZSTD),y)
+RSYNC_DEPENDENCIES += zstd
+RSYNC_CONF_OPTS += --enable-zstd
+else
+RSYNC_CONF_OPTS += --disable-zstd
 endif
 
 $(eval $(autotools-package))
