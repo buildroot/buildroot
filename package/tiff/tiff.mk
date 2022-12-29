@@ -100,6 +100,13 @@ else
 TIFF_CONF_OPTS += --disable-tools
 endif
 
+ifeq ($(BR2_PACKAGE_TIFF_WEBP),y)
+TIFF_CONF_OPTS += --enable-webp
+TIFF_DEPENDENCIES += webp
+else
+TIFF_CONF_OPTS += --disable-webp
+endif
+
 ifeq ($(BR2_PACKAGE_TIFF_ZSTD),y)
 TIFF_CONF_OPTS += --enable-zstd
 TIFF_DEPENDENCIES += zstd
