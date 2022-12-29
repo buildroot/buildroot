@@ -5,7 +5,7 @@
 ################################################################################
 
 IMX_LIB_VERSION = 3f777974c0c146817e2ff5cb0340ca66a1f99e57
-IMX_LIB_SITE = https://source.codeaurora.org/external/imx/imx-lib
+IMX_LIB_SITE = https://github.com/nxp-imx/imx-lib.git
 IMX_LIB_SITE_METHOD = git
 IMX_LIB_LICENSE = LGPL-2.1+
 IMX_LIB_LICENSE_FILES = COPYING-LGPL-2.1
