@@ -5,8 +5,7 @@
 ################################################################################
 
 IMX_MKIMAGE_VERSION = lf-5.10.72_2.2.0
-IMX_MKIMAGE_SITE = https://source.codeaurora.org/external/imx/imx-mkimage
-IMX_MKIMAGE_SITE_METHOD = git
+IMX_MKIMAGE_SITE = $(call github,nxp-imx,imx-mkimage,$(IMX_MKIMAGE_VERSION))
 IMX_MKIMAGE_LICENSE = GPL-2.0+
 IMX_MKIMAGE_LICENSE_FILES = COPYING
 HOST_IMX_MKIMAGE_DEPENDENCIES = host-zlib
