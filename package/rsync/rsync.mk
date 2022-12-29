@@ -19,13 +19,19 @@ RSYNC_CONF_OPTS = \
 	--with-included-popt=no \
 	--disable-roll-simd \
 	--disable-openssl \
-	--disable-lz4 \
 	--disable-md5-asm
 
 ifeq ($(BR2_PACKAGE_ACL),y)
 RSYNC_DEPENDENCIES += acl
 else
 RSYNC_CONF_OPTS += --disable-acl-support
+endif
+
+ifeq ($(BR2_PACKAGE_LZ4),y)
+RSYNC_DEPENDENCIES += lz4
+RSYNC_CONF_OPTS += --enable-lz4
+else
+RSYNC_CONF_OPTS += --disable-lz4
 endif
 
 ifeq ($(BR2_PACKAGE_XXHASH),y)
