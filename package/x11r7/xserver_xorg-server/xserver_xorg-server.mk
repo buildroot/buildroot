@@ -4,19 +4,13 @@
 #
 ################################################################################
 
-XSERVER_XORG_SERVER_VERSION = 21.1.5
+XSERVER_XORG_SERVER_VERSION = 21.1.6
 XSERVER_XORG_SERVER_SOURCE = xorg-server-$(XSERVER_XORG_SERVER_VERSION).tar.xz
 XSERVER_XORG_SERVER_SITE = https://xorg.freedesktop.org/archive/individual/xserver
 XSERVER_XORG_SERVER_LICENSE = MIT
 XSERVER_XORG_SERVER_LICENSE_FILES = COPYING
 XSERVER_XORG_SERVER_SELINUX_MODULES = xdg xserver
 XSERVER_XORG_SERVER_INSTALL_STAGING = YES
-
-# 0002-xkb-proof-GetCountedString-against-request-length-at.patch
-XSERVER_XORG_SERVER_IGNORE_CVES += CVE-2022-3550
-
-# 0003-xkb-fix-some-possible-memleaks-in-XkbGetKbdByName.patch
-XSERVER_XORG_SERVER_IGNORE_CVES += CVE-2022-3551
 
 XSERVER_XORG_SERVER_DEPENDENCIES = \
 	xutil_util-macros \
