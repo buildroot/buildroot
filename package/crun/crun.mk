@@ -26,6 +26,10 @@ else
 CRUN_CONF_OPTS += --disable-caps
 endif
 
+ifeq ($(BR2_PACKAGE_LIBGCRYPT),y)
+CRUN_DEPENDENCIES += libgcrypt
+endif
+
 ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
 CRUN_DEPENDENCIES += libseccomp
 CRUN_CONF_OPTS += --enable-seccomp
