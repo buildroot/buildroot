@@ -1,0 +1,39 @@
+From 278b9b447bec3fb81bf252eb2fe2c856892ec802 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 30 Dec 2022 18:40:15 +0100
+Subject: [PATCH] src/crun.c: fix build without dlfcn.h
+
+Fix the following build failure without dlfcn.h raised since version 1.7
+and
+https://github.com/containers/crun/commit/5837234e9840cd067edd9f6cd2ed9cae9a0e6570:
+
+src/crun.c:26:10: fatal error: dlfcn.h: No such file or directory
+   26 | #include <dlfcn.h>
+      |          ^~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/a5f52a7ee757c92c9571261c0ed884d05caeaf2f
+
+[fontaine.fabrice@gmail.com: backport upstream commit]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/crun.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/crun.c b/src/crun.c
+index cbfe900..af0cc97 100644
+--- a/src/crun.c
++++ b/src/crun.c
+@@ -23,7 +23,9 @@
+ #include <string.h>
+ #include <libgen.h>
+ 
++#ifdef HAVE_DLOPEN
+ #include <dlfcn.h>
++#endif
+ 
+ #include "crun.h"
+ #include "libcrun/utils.h"
+-- 
+2.25.1
+
