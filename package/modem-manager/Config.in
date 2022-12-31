@@ -25,6 +25,18 @@ config BR2_PACKAGE_MODEM_MANAGER_LIBQMI
 	select BR2_PACKAGE_LIBQMI
 	help
 	  This option enables support for QMI protocol
+
+config BR2_PACKAGE_MODEM_MANAGER_LIBQRTR
+	bool "QRTR support"
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_15 # libqrtr-glib
+	select BR2_PACKAGE_LIBQRTR_GLIB
+	select BR2_PACKAGE_MODEM_MANAGER_LIBQMI
+	help
+	  This option enables support for QRTR protocol
+
+comment "QRTR support needs a toolchain w/ headers >= 4.15"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_15
+
 endif
 
 comment "modemmanager needs a toolchain w/ wchar, threads"

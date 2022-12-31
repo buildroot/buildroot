@@ -37,7 +37,7 @@ else
 MODEM_MANAGER_CONF_OPTS += -Dmbim=false
 endif
 
-ifeq ($(BR2_PACKAGE_LIBQRTR_GLIB),y)
+ifeq ($(BR2_PACKAGE_MODEM_MANAGER_LIBQRTR),y)
 MODEM_MANAGER_DEPENDENCIES += libqrtr-glib
 MODEM_MANAGER_CONF_OPTS += -Dqrtr=true
 else
