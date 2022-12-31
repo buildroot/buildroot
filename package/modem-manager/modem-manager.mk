@@ -13,6 +13,7 @@ MODEM_MANAGER_SELINUX_MODULES = modemmanager
 MODEM_MANAGER_DEPENDENCIES = host-pkgconf dbus libglib2 $(TARGET_NLS_DEPENDENCIES) host-libxslt
 MODEM_MANAGER_INSTALL_STAGING = YES
 MODEM_MANAGER_CONF_OPTS = \
+	-Dman=false \
 	-Dpowerd_suspend_resume=false \
 	-Dtests=false \
 	-Dudevdir=/usr/lib/udev
