@@ -54,4 +54,4 @@ Enjoy!
 
 References
 ==========
-[1] http://cache.freescale.com/files/32bit/doc/user_guide/EVK_imx28_QuickStart.pdf
+[1] https://www.nxp.com/docs/en/user-guide/EVK_imx28_QuickStart.pdf
