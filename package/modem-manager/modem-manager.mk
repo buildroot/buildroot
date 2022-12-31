@@ -14,6 +14,7 @@ MODEM_MANAGER_DEPENDENCIES = host-pkgconf dbus libglib2 $(TARGET_NLS_DEPENDENCIE
 MODEM_MANAGER_INSTALL_STAGING = YES
 MODEM_MANAGER_CONF_OPTS = \
 	-Dpowerd_suspend_resume=false \
+	-Dtests=false \
 	-Dudevdir=/usr/lib/udev
 
 ifeq ($(BR2_PACKAGE_LIBGUDEV),y)
