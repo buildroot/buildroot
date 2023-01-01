@@ -124,6 +124,7 @@ DO_CHECK_INTREE = re.compile(r"|".join([
 DO_NOT_CHECK_INTREE = re.compile(r"|".join([
     r"boot/barebox/barebox\.mk$",
     r"fs/common\.mk$",
+    r"package/alchemy/atom.mk.in$",
     r"package/doc-asciidoc\.mk$",
     r"package/pkg-\S*\.mk$",
     r"support/dependencies/[^/]+\.mk$",
@@ -154,7 +155,7 @@ def get_lib_from_filename(fname):
         return checkpackagelib.lib_config
     if fname.endswith(".hash"):
         return checkpackagelib.lib_hash
-    if fname.endswith(".mk"):
+    if fname.endswith(".mk") or fname.endswith(".mk.in"):
         return checkpackagelib.lib_mk
     if fname.endswith(".patch"):
         return checkpackagelib.lib_patch
