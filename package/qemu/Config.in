@@ -58,6 +58,17 @@ config BR2_PACKAGE_QEMU_SYSTEM
 
 if BR2_PACKAGE_QEMU_SYSTEM
 
+config BR2_PACKAGE_QEMU_BLOBS
+	bool "Install binary blobs"
+	default y
+	help
+	  Say 'y' here (the default) to install binary blobs (such as
+	  BIOS or firmwares for the different machines simulated by
+	  QEMU). Say 'n' to not install those blobs.
+
+	  Note: Some machines may be unbootable without those blobs.
+	  If unsure, say 'y'.
+
 config BR2_PACKAGE_QEMU_SLIRP
 	bool "Enable user mode networking (SLIRP)"
 	select BR2_PACKAGE_SLIRP
