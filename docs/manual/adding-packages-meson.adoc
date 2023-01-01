@@ -76,10 +76,9 @@ packages is also available, with the +host-meson-package+ macro.
 Just like the generic infrastructure, the Meson infrastructure works by defining
 a number of variables before calling the +meson-package+ macro.
 
-First, all the package metadata information variables that exist in the generic
-infrastructure also exist in the Meson infrastructure: +FOO_VERSION+,
-+FOO_SOURCE+, +FOO_PATCH+, +FOO_SITE+, +FOO_SUBDIR+, +FOO_DEPENDENCIES+,
-+FOO_INSTALL_STAGING+, +FOO_INSTALL_TARGET+.
+All the package metadata information variables that exist in the
+xref:generic-package-reference[generic package infrastructure] also
+exist in the Meson infrastructure.
 
 A few additional variables, specific to the Meson infrastructure, can also be
 defined. Many of them are only useful in very specific cases, typical packages
