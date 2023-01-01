@@ -56,16 +56,15 @@ The main macro of the Go package infrastructure is
 ability to build host packages is also available, with the
 +host-golang-package+ macro.
 Host packages built by +host-golang-package+ macro should depend on
-BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS.
++BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS+.
 
 Just like the generic infrastructure, the Go infrastructure works
-by defining a number of variables before calling the +golang-package+.
+by defining a number of variables before calling the +golang-package+
+macro.
 
 All the package metadata information variables that exist in the
 xref:generic-package-reference[generic package infrastructure] also
-exist in the Go infrastructure: +FOO_VERSION+, +FOO_SOURCE+,
-+FOO_PATCH+, +FOO_SITE+, +FOO_SUBDIR+, +FOO_DEPENDENCIES+,
-+FOO_LICENSE+, +FOO_LICENSE_FILES+, +FOO_INSTALL_STAGING+, etc.
+exist in the Go infrastructure.
 
 Note that it is not necessary to add +host-go+ in the
 +FOO_DEPENDENCIES+ variable of a package, since this basic dependency
