@@ -25,7 +25,6 @@ menuconfig BR2_PACKAGE_QEMU
 	depends on BR2_USE_WCHAR # gettext
 	depends on BR2_USE_MMU # fork()
 	select BR2_PACKAGE_LIBGLIB2
-	select BR2_PACKAGE_PIXMAN
 	select BR2_PACKAGE_ZLIB
 	select BR2_PACKAGE_QEMU_TOOLS if !BR2_PACKAGE_QEMU_SYSTEM && !BR2_PACKAGE_QEMU_LINUX_USER
 	help
@@ -53,6 +52,7 @@ comment "Emulators selection"
 config BR2_PACKAGE_QEMU_SYSTEM
 	bool "Enable systems emulation"
 	depends on !BR2_STATIC_LIBS # dtc
+	select BR2_PACKAGE_PIXMAN
 	help
 	  Say 'y' to build system emulators/virtualisers.
 

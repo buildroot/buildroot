@@ -27,7 +27,6 @@ QEMU_DEPENDENCIES = \
 	host-pkgconf \
 	host-python3 \
 	libglib2 \
-	pixman \
 	zlib
 
 # Need the LIBS variable because librt and libm are
@@ -45,6 +44,7 @@ QEMU_VARS = LIBTOOL=$(HOST_DIR)/bin/libtool
 # checks if the specified sub-set is valid.
 
 ifeq ($(BR2_PACKAGE_QEMU_SYSTEM),y)
+QEMU_DEPENDENCIES += pixman
 QEMU_OPTS += --enable-system
 QEMU_TARGET_LIST_$(BR2_PACKAGE_QEMU_TARGET_AARCH64) += aarch64-softmmu
 QEMU_TARGET_LIST_$(BR2_PACKAGE_QEMU_TARGET_ALPHA) += alpha-softmmu
