@@ -85,12 +85,9 @@ Just like the generic infrastructure, the Perl/CPAN infrastructure
 works by defining a number of variables before calling the
 +perl-package+ macro.
 
-First, all the package metadata information variables that exist in the
-generic infrastructure also exist in the Perl/CPAN infrastructure:
-+PERL_FOO_VERSION+, +PERL_FOO_SOURCE+,
-+PERL_FOO_PATCH+, +PERL_FOO_SITE+,
-+PERL_FOO_SUBDIR+, +PERL_FOO_DEPENDENCIES+,
-+PERL_FOO_INSTALL_TARGET+.
+All the package metadata information variables that exist in the
+xref:generic-package-reference[generic package infrastructure] also
+exist in the Perl/CPAN infrastructure.
 
 Note that setting +PERL_FOO_INSTALL_STAGING+ to +YES+ has no effect
 unless a +PERL_FOO_INSTALL_STAGING_CMDS+ variable is defined. The perl
