@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-STRACE_VERSION = 6.0
+STRACE_VERSION = 6.1
 STRACE_SOURCE = strace-$(STRACE_VERSION).tar.xz
 STRACE_SITE = https://github.com/strace/strace/releases/download/v$(STRACE_VERSION)
 STRACE_LICENSE = LGPL-2.1+
