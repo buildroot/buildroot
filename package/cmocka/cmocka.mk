@@ -21,4 +21,9 @@ ifeq ($(BR2_SHARED_STATIC_LIBS),y)
 CMOCKA_CONF_OPTS += -DWITH_STATIC_LIB=ON
 endif
 
+# gcc for ARM Thumb1 doesn't implement -fstack-clash-protection
+ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
+CMOCKA_CONF_OPTS += -DWITH_STACK_CLASH_PROTECTION=OFF
+endif
+
 $(eval $(cmake-package))
