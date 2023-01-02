@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-GSTD_VERSION = 0.14.0
+GSTD_VERSION = 0.15.0
 GSTD_SITE = $(call github,RidgeRun,gstd-1.x,v$(GSTD_VERSION))
 GSTD_LICENSE_FILES = COPYING
-GSTD_LICENSE = GPL-2.0+
+GSTD_LICENSE = LGPL-2.1+
 
 GSTD_DEPENDENCIES = \
 	$(BR2_COREUTILS_HOST_DEPENDENCY) \
@@ -15,6 +15,7 @@ GSTD_DEPENDENCIES = \
 	jansson \
 	json-glib \
 	libdaemon \
+	libedit \
 	libglib2 \
 	libsoup \
 	readline
