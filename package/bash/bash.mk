@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BASH_VERSION = 5.1.16
+BASH_VERSION = 5.2.15
 BASH_SITE = $(BR2_GNU_MIRROR)/bash
 BASH_DEPENDENCIES = ncurses readline host-bison
 BASH_LICENSE = GPL-3.0+
