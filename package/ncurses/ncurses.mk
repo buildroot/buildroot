@@ -4,79 +4,22 @@
 #
 ################################################################################
 
-NCURSES_VERSION = 6.3
-NCURSES_SITE = $(BR2_GNU_MIRROR)/ncurses
+# When there is no snapshost yet for a new version, set it to the empty string
+NCURSES_VERSION_MAJOR = 6.3
+NCURSES_SNAPSHOT_DATE = 20221224
+NCURSES_VERSION = $(NCURSES_VERSION_MAJOR)$(if $(NCURSES_SNAPSHOT_DATE),-$(NCURSES_SNAPSHOT_DATE))
+NCURSES_VERSION_GIT = $(subst .,_,$(subst -,_,$(NCURSES_VERSION)))
+NCURSES_SITE = $(call github,ThomasDickey,ncurses-snapshots,v$(NCURSES_VERSION_GIT))
 NCURSES_INSTALL_STAGING = YES
 NCURSES_DEPENDENCIES = host-ncurses
 NCURSES_LICENSE = MIT with advertising clause
 NCURSES_LICENSE_FILES = COPYING
 NCURSES_CPE_ID_VENDOR = gnu
+NCURSES_CPE_ID_VERSION = $(NCURSES_VERSION_MAJOR)
 NCURSES_CONFIG_SCRIPTS = ncurses$(NCURSES_LIB_SUFFIX)6-config
-# patch 20220416
+
+# Fixed since snapshot 20220416
 NCURSES_IGNORE_CVES += CVE-2022-29458
-NCURSES_PATCH = \
-	$(addprefix https://invisible-mirror.net/archives/ncurses/$(NCURSES_VERSION)/, \
-		ncurses-6.3-20211026.patch.gz \
-		ncurses-6.3-20211030.patch.gz \
-		ncurses-6.3-20211106.patch.gz \
-		ncurses-6.3-20211113.patch.gz \
-		ncurses-6.3-20211115.patch.gz \
-		ncurses-6.3-20211120.patch.gz \
-		ncurses-6.3-20211127.patch.gz \
-		ncurses-6.3-20211204.patch.gz \
-		ncurses-6.3-20211211.patch.gz \
-		ncurses-6.3-20211219.patch.gz \
-		ncurses-6.3-20211225.patch.gz \
-		ncurses-6.3-20220101.patch.gz \
-		ncurses-6.3-20220115.patch.gz \
-		ncurses-6.3-20220122.patch.gz \
-		ncurses-6.3-20220129.patch.gz \
-		ncurses-6.3-20220205.patch.gz \
-		ncurses-6.3-20220212.patch.gz \
-		ncurses-6.3-20220219.patch.gz \
-		ncurses-6.3-20220226.patch.gz \
-		ncurses-6.3-20220305.patch.gz \
-		ncurses-6.3-20220312.patch.gz \
-		ncurses-6.3-20220319.patch.gz \
-		ncurses-6.3-20220326.patch.gz \
-		ncurses-6.3-20220402.patch.gz \
-		ncurses-6.3-20220409.patch.gz \
-		ncurses-6.3-20220416.patch.gz \
-		ncurses-6.3-20220423.patch.gz \
-		ncurses-6.3-20220430.patch.gz \
-		ncurses-6.3-20220501.patch.gz \
-		ncurses-6.3-20220507.patch.gz \
-		ncurses-6.3-20220514.patch.gz \
-		ncurses-6.3-20220521.patch.gz \
-		ncurses-6.3-20220529.patch.gz \
-		ncurses-6.3-20220604.patch.gz \
-		ncurses-6.3-20220612.patch.gz \
-		ncurses-6.3-20220618.patch.gz \
-		ncurses-6.3-20220625.patch.gz \
-		ncurses-6.3-20220703.patch.gz \
-		ncurses-6.3-20220709.patch.gz \
-		ncurses-6.3-20220716.patch.gz \
-		ncurses-6.3-20220724.patch.gz \
-		ncurses-6.3-20220729.patch.gz \
-		ncurses-6.3-20220806.patch.gz \
-		ncurses-6.3-20220813.patch.gz \
-		ncurses-6.3-20220820.patch.gz \
-		ncurses-6.3-20220827.patch.gz \
-		ncurses-6.3-20220903.patch.gz \
-		ncurses-6.3-20220910.patch.gz \
-		ncurses-6.3-20220917.patch.gz \
-		ncurses-6.3-20220924.patch.gz \
-		ncurses-6.3-20221001.patch.gz \
-		ncurses-6.3-20221008.patch.gz \
-		ncurses-6.3-20221015.patch.gz \
-		ncurses-6.3-20221023.patch.gz \
-		ncurses-6.3-20221029.patch.gz \
-		ncurses-6.3-20221105.patch.gz \
-		ncurses-6.3-20221112.patch.gz \
-		ncurses-6.3-20221119.patch.gz \
-		ncurses-6.3-20221126.patch.gz \
-		ncurses-6.3-20221203.patch.gz \
-	)
 
 NCURSES_CONF_OPTS = \
 	--without-cxx \
