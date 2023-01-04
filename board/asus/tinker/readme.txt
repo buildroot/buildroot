@@ -35,3 +35,9 @@ You can write this image directly to an SD card device (i.e. /dev/xxx):
   $ sudo sync
 
 Finally, you can insert the SD card to the Tinker RK3288 board and boot it.
+
+NOTE:
+USB power supply requires more than the standard 500mA USB current, so
+this board must be supplied from a capable port or from an external
+AC/DC adapter. Otherwise it will hang forever while loading the kernel
+image.
