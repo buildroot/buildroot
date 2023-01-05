@@ -15,6 +15,7 @@ LIBGPG_ERROR_CONFIG_SCRIPTS = gpg-error-config
 LIBGPG_ERROR_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES)
 LIBGPG_ERROR_CONF_OPTS = \
 	--host=$(BR2_PACKAGE_LIBGPG_ERROR_SYSCFG) \
+	--enable-install-gpg-error-config \
 	--disable-tests \
 	--disable-languages
 
