@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_APISPEC
+	bool "python-apispec"
+	select BR2_PACKAGE_PYTHON_PACKAGING # runtime
+	help
+	  A pluggable API specification generator. Currently supports
+	  the OpenAPI Specification (f.k.a. the Swagger
+	  specification).
+
+	  https://github.com/marshmallow-code/apispec
