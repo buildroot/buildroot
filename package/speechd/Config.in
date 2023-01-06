@@ -1,0 +1,20 @@
+config BR2_PACKAGE_SPEECHD
+	bool "speechd"
+	depends on BR2_USE_WCHAR # libglib2
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2
+	depends on BR2_USE_MMU # libglib2
+	depends on !BR2_STATIC_LIBS
+	select BR2_PACKAGE_DOTCONF
+	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_LIBSNDFILE
+	help
+	  Speech Dispatcher project provides a high-level device
+	  independent layer for access to speech synthesis through
+	  a simple, stable and well documented interface.
+
+	  https://freebsoft.org/speechd
+
+comment "speechd needs a toolchain w/ wchar, threads, dynamic library"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
+		BR2_STATIC_LIBS
