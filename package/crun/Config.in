@@ -1,6 +1,7 @@
 config BR2_PACKAGE_CRUN
 	bool "crun"
 	depends on !BR2_TOOLCHAIN_USES_UCLIBC # no fexecve
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # C11/stdatomic.h
 	select BR2_PACKAGE_ARGP_STANDALONE if BR2_TOOLCHAIN_USES_MUSL
 	select BR2_PACKAGE_YAJL # libocispec
 	help
@@ -8,5 +9,6 @@ config BR2_PACKAGE_CRUN
 
 	  https://github.com/containers/crun
 
-comment "crun needs a glibc or musl toolchain"
-	depends on BR2_TOOLCHAIN_USES_UCLIBC
+comment "crun needs a glibc or musl toolchain, gcc >= 4.9"
+	depends on BR2_TOOLCHAIN_USES_UCLIBC || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
