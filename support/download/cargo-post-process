@@ -25,25 +25,11 @@ post_process_unpack "${base_name}" "${output}"
 pushd "${base_name}" > /dev/null
 
 # Create the local .cargo/config with vendor info
-#
-# The first line of the output to stdout is empty.
-# So skip it to have the file start with the vendoring
-# configuration (`tail --lines=+2`).
-#
-# NOTE:
-#   There is  a patch for cargo to remove the first empty line:
-#   See: https://github.com/rust-lang/cargo/pull/11273
-#
-#   The patch already landed in +nightly and will end up
-#   in +stable soon.
-#
-# ->  When updating rust/cargo, the call to `tail` must be removed.
-#
 mkdir -p .cargo/
 cargo vendor \
     --manifest-path ${BR_CARGO_MANIFEST_PATH-Cargo.toml} \
     --locked VENDOR \
-    | tail --lines=+2 | tee .cargo/config
+    | tee .cargo/config
 
 popd > /dev/null
 
