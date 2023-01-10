@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2023.02"
 
+config BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_X11
+	bool "imx-gpu-viv X11 output has been removed"
+	select BR2_LEGACY
+	help
+	  The X11 output was dropped by NXP.
+
 config BR2_PACKAGE_QEMU_CUSTOM_TARGETS
 	string "the QEMU specific targets option has been removed"
 	help

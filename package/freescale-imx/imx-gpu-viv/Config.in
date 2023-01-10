@@ -27,9 +27,9 @@ config BR2_PACKAGE_IMX_GPU_VIV
 	  Userspace libraries for Vivante GPU on i.MX platforms
 
 	  It contains libraries and headers for GLES, OpenCL, and
-	  OpenVG. It also contains a DRI plugin for X11. It also
-	  contains a plugin for DirectFB-1.4.0, but that doesn't work
-	  together with buildroot's DirectFB version.
+	  OpenVG. It also contains a plugin for DirectFB-1.4.0, but
+	  that doesn't work together with buildroot's DirectFB
+	  version.
 
 	  This library is provided by Freescale as-is and doesn't have
 	  an upstream.
@@ -40,21 +40,8 @@ choice
 	prompt "Output option"
 	help
 	  There are two versions of this library: one for
-	  direct framebuffer access, one for X11 rendering.
+	  direct framebuffer access, one for wayland rendering.
 	  Choose here which version to install.
-
-config BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_X11
-	bool "X11"
-	depends on BR2_PACKAGE_XORG7
-	# The i.MX8 blob doesn't support X11 output
-	depends on !BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8M
-	select BR2_PACKAGE_XLIB_LIBXDAMAGE
-	select BR2_PACKAGE_XLIB_LIBXEXT
-	select BR2_PACKAGE_XLIB_LIBXFIXES
-
-comment "X11 backend needs Xorg package"
-	depends on !BR2_PACKAGE_XORG7
-	depends on !BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8M
 
 config BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_FB
 	bool "Framebuffer"
@@ -70,7 +57,6 @@ endchoice
 
 config BR2_PACKAGE_IMX_GPU_VIV_OUTPUT
 	string
-	default "x11" if BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_X11
 	default "fb" if BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_FB
 	default "wayland" if BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_WL
 

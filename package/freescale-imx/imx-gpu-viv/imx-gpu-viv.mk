@@ -26,14 +26,6 @@ endif
 
 IMX_GPU_VIV_LIB_TARGET = $(call qstrip,$(BR2_PACKAGE_IMX_GPU_VIV_OUTPUT))
 
-ifeq ($(IMX_GPU_VIV_LIB_TARGET),x11)
-# The libGAL.so library provided by imx-gpu-viv uses X functions. Packages
-# may want to link against libGAL.so (QT5 Base with OpenGL and X support
-# does so). For this to work we need build dependencies to libXdamage,
-# libXext and libXfixes so that X functions used in libGAL.so are referenced.
-IMX_GPU_VIV_DEPENDENCIES += xlib_libXdamage xlib_libXext xlib_libXfixes
-endif
-
 # Libraries are linked against libdrm, except framebuffer output on ARM
 ifneq ($(IMX_GPU_VIV_LIB_TARGET)$(BR2_arm),fby)
 IMX_GPU_VIV_DEPENDENCIES += libdrm
@@ -55,12 +47,6 @@ else ifeq ($(IMX_GPU_VIV_LIB_TARGET),wayland)
 define IMX_GPU_VIV_FIXUP_PKGCONFIG
 	ln -sf egl_wayland.pc $(@D)/gpu-core/usr/lib/pkgconfig/egl.pc
 endef
-else ifeq ($(IMX_GPU_VIV_LIB_TARGET),x11)
-define IMX_GPU_VIV_FIXUP_PKGCONFIG
-	$(foreach lib,egl glesv1_cm glesv2 vg, \
-		ln -sf $(lib)_x11.pc $(@D)/gpu-core/usr/lib/pkgconfig/$(lib).pc
-	)
-endef
 endif
 
 # Instead of building, we fix up the inconsistencies that exist
@@ -68,7 +54,7 @@ endif
 # Make sure these commands are idempotent.
 define IMX_GPU_VIV_BUILD_CMDS
 	cp -dpfr $(@D)/gpu-core/usr/lib/$(IMX_GPU_VIV_LIB_TARGET)/* $(@D)/gpu-core/usr/lib/
-	$(foreach backend,fb x11 wayland, \
+	$(foreach backend,fb wayland, \
 		$(RM) -r $(@D)/gpu-core/usr/lib/$(backend)
 	)
 	$(IMX_GPU_VIV_FIXUP_PKGCONFIG)
