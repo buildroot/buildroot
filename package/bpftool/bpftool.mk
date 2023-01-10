@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BPFTOOL_VERSION = v7.0.0
+BPFTOOL_VERSION = v7.1.0
 BPFTOOL_SITE = https://github.com/libbpf/bpftool
 BPFTOOL_SITE_METHOD = git
 BPFTOOL_GIT_SUBMODULES = YES
@@ -33,12 +33,12 @@ endef
 
 define BPFTOOL_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) \
-		-C $(@D)/src install DESTDIR="$(TARGET_DIR)" prefix=/usr
+		-C $(@D)/src install-bin DESTDIR="$(TARGET_DIR)" prefix=/usr
 endef
 
 define HOST_BPFTOOL_INSTALL_CMDS
 	$(HOST_MAKE_ENV) $(HOST_CONFIGURE_OPTS) $(MAKE) \
-		-C $(@D)/src install DESTDIR="$(HOST_DIR)" prefix=/usr
+		-C $(@D)/src install-bin DESTDIR="$(HOST_DIR)" prefix=
 endef
 
 $(eval $(generic-package))
