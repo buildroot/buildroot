@@ -49,6 +49,13 @@ define IMX_GPU_VIV_FIXUP_PKGCONFIG
 endef
 endif
 
+IMX_GPU_VIV_PLATFORM_DIR = $(call qstrip,$(BR2_PACKAGE_IMX_GPU_VIV_PLATFORM))
+ifneq ($(IMX_GPU_VIV_PLATFORM_DIR),)
+define IMX_GPU_VIV_COPY_PLATFORM
+	cp -dpfr $(@D)/gpu-core/usr/lib/$(IMX_GPU_VIV_PLATFORM_DIR)/* $(@D)/gpu-core/usr/lib/
+endef
+endif
+
 # Instead of building, we fix up the inconsistencies that exist
 # in the upstream archive here. We also remove unused backend files.
 # Make sure these commands are idempotent.
@@ -56,6 +63,10 @@ define IMX_GPU_VIV_BUILD_CMDS
 	cp -dpfr $(@D)/gpu-core/usr/lib/$(IMX_GPU_VIV_LIB_TARGET)/* $(@D)/gpu-core/usr/lib/
 	$(foreach backend,fb wayland, \
 		$(RM) -r $(@D)/gpu-core/usr/lib/$(backend)
+	)
+	$(IMX_GPU_VIV_COPY_PLATFORM)
+	$(foreach platform,mx8mn mx8mp mx8mq mx8qm mx8qxp mx8ulp, \
+		$(RM) -r $(@D)/gpu-core/usr/lib/$(platform)
 	)
 	$(IMX_GPU_VIV_FIXUP_PKGCONFIG)
 endef
