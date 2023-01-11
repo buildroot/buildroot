@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PARTED_VERSION = 3.4
+PARTED_VERSION = 3.5
 PARTED_SOURCE = parted-$(PARTED_VERSION).tar.xz
 PARTED_SITE = $(BR2_GNU_MIRROR)/parted
 PARTED_DEPENDENCIES = host-pkgconf util-linux
