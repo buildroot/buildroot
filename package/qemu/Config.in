@@ -122,15 +122,10 @@ comment "systems emulation needs a toolchain w/ dynamic library"
 
 config BR2_PACKAGE_QEMU_LINUX_USER
 	bool "Enable Linux user-land emulation"
-	# Incompatible "struct sigevent" definition on musl
-	depends on !BR2_TOOLCHAIN_USES_MUSL
 	help
 	  Say 'y' to build Linux user-land emulators.
 
 # Note: bsd-user can not be build on Linux
-
-comment "Linux user-land emulation needs a glibc or uClibc toolchain"
-	depends on BR2_TOOLCHAIN_USES_MUSL
 
 config BR2_PACKAGE_QEMU_CHOOSE_TARGETS
 	bool "Select individual emulator targets"
