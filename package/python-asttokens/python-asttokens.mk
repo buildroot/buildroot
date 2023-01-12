@@ -10,5 +10,6 @@ PYTHON_ASTTOKENS_SITE = https://files.pythonhosted.org/packages/c8/e3/b0b4f32162
 PYTHON_ASTTOKENS_SETUP_TYPE = setuptools
 PYTHON_ASTTOKENS_LICENSE = Apache-2.0
 PYTHON_ASTTOKENS_LICENSE_FILES = LICENSE
+PYTHON_ASTTOKENS_DEPENDENCIES = host-python-setuptools-scm
 
 $(eval $(python-package))
