@@ -5,8 +5,7 @@
 ################################################################################
 
 IPMITOOL_VERSION = 1_8_19
-IPMITOOL_SOURCE = IPMITOOL_$(IPMITOOL_VERSION).tar.gz
-IPMITOOL_SITE = https://github.com/ipmitool/ipmitool/archive/refs/tags
+IPMITOOL_SITE = $(call github,ipmitool,ipmitool,IPMITOOL_$(IPMITOOL_VERSION))
 IPMITOOL_LICENSE = BSD-3-Clause
 IPMITOOL_LICENSE_FILES = COPYING
 IPMITOOL_CPE_ID_VENDOR = ipmitool_project
