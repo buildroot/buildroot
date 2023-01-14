@@ -41,7 +41,11 @@ else
 ULOGD_CONF_OPTS += --disable-sqlite3
 endif
 else
-ULOGD_CONF_OPTS += --disable-mysql --disable-pgsql --disable-sqlite3
+ULOGD_CONF_OPTS += \
+	--disable-dbi \
+	--disable-mysql \
+	--disable-pgsql \
+	--disable-sqlite3
 endif
 
 ifeq ($(BR2_PACKAGE_LIBPCAP),y)
