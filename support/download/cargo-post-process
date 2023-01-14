@@ -26,6 +26,8 @@ pushd "${base_name}" > /dev/null
 
 # Create the local .cargo/config with vendor info
 mkdir -p .cargo/
+mkdir -p "${CARGO_HOME}"
+flock "${CARGO_HOME}"/.br-lock \
 cargo vendor \
     --manifest-path ${BR_CARGO_MANIFEST_PATH-Cargo.toml} \
     --locked VENDOR \
