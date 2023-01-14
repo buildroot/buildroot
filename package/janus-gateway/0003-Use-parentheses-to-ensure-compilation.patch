@@ -1,0 +1,27 @@
+From 51431c36cd5f2997c0f7723909195b9883ae0486 Mon Sep 17 00:00:00 2001
+From: Benson Muite <bkmgit@users.noreply.github.com>
+Date: Wed, 4 Jan 2023 13:33:36 +0300
+Subject: [PATCH] Use parentheses to ensure compilation (#3138)
+
+Compiler fails with latest Curl release. Use parenthesis to ensure compiler evaluates expression correctly.
+
+[Retrieved from:
+https://github.com/meetecho/janus-gateway/commit/51431c36cd5f2997c0f7723909195b9883ae0486]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/turnrest.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/turnrest.c b/src/turnrest.c
+index b8560d22f2..42e6114de8 100644
+--- a/src/turnrest.c
++++ b/src/turnrest.c
+@@ -165,7 +165,7 @@ janus_turnrest_response *janus_turnrest_request(const char *user) {
+ 	JANUS_LOG(LOG_VERB, "Sending request: %s\n", request_uri);
+ 	janus_mutex_unlock(&api_mutex);
+ 	curl_easy_setopt(curl, CURLOPT_URL, request_uri);
+-	curl_easy_setopt(curl, api_http_get ? CURLOPT_HTTPGET : CURLOPT_POST, 1);
++	curl_easy_setopt(curl, (api_http_get ? CURLOPT_HTTPGET : CURLOPT_POST), 1);
+ 	if(!api_http_get) {
+ 		/* FIXME Some servers don't like a POST with no data */
+ 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, query_string);
