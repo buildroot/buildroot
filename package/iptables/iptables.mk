@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-IPTABLES_VERSION = 1.8.8
-IPTABLES_SOURCE = iptables-$(IPTABLES_VERSION).tar.bz2
+IPTABLES_VERSION = 1.8.9
+IPTABLES_SOURCE = iptables-$(IPTABLES_VERSION).tar.xz
 IPTABLES_SITE = https://netfilter.org/projects/iptables/files
 IPTABLES_INSTALL_STAGING = YES
 IPTABLES_DEPENDENCIES = host-pkgconf
