@@ -621,6 +621,7 @@ define SYSTEMD_INSTALL_IMAGES_CMDS
 endef
 
 define SYSTEMD_PERMISSIONS
+	/boot d 700 0 0 - - - - -
 	/var/spool d 755 0 0 - - - - -
 	/var/lib d 755 0 0 - - - - -
 	/var/lib/private d 700 0 0 - - - - -
