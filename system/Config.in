@@ -159,10 +159,16 @@ endchoice
 
 if BR2_INIT_SYSTEMD
 
-config BR2_INIT_SYSTEMD_VAR_FACTORY
-	bool "build a factory to populate a tmpfs on /var"
-	default y  # legacy
+choice
+	bool "/var management"
+	default BR2_INIT_SYSTEMD_VAR_FACTORY  # legacy
 	depends on !BR2_TARGET_GENERIC_REMOUNT_ROOTFS_RW
+	help
+	  Select how Buildroot provides a read-write /var when the
+	  rootfs is not remounted read-write.
+
+config BR2_INIT_SYSTEMD_VAR_FACTORY
+	bool "build a factory to populate a tmpfs"
 	help
 	  Build a factory of the content of /var as installed by
 	  packages, mount a tmpfs on /var at runtime, so that
@@ -183,6 +189,16 @@ config BR2_INIT_SYSTEMD_VAR_FACTORY
 	  To use persistent storage, provide a systemd dropin for the
 	  var.mount unit, that overrides the What and Type, and possibly
 	  the Options and After, fields.
+
+config BR2_INIT_SYSTEMD_VAR_NONE
+	bool "do nothing"
+	help
+	  Choose this if you have custom dispositions (like one or more
+	  of a post-build script, a fakeroot script, systemd units, an
+	  initramfs, or something else) that prepare /var to be writable
+	  on a read-only rootfs.
+
+endchoice
 
 config BR2_INIT_SYSTEMD_POPULATE_TMPFILES
 	bool "trigger systemd-tmpfiles during build"
