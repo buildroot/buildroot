@@ -63,6 +63,7 @@ SYSTEMD_SELINUX_MODULES = systemd udev xdg
 SYSTEMD_PROVIDES = udev
 
 SYSTEMD_CONF_OPTS += \
+	-Dcreate-log-dirs=false \
 	-Ddbus=false \
 	-Ddbus-interfaces-dir=no \
 	-Ddefault-compression='auto' \
@@ -109,6 +110,10 @@ endif
 ifeq ($(BR2_nios2),y)
 # Nios2 ld emits warnings, make warnings not to be treated as errors
 SYSTEMD_LDFLAGS = $(TARGET_LDFLAGS) -Wl,--no-fatal-warnings
+endif
+
+ifeq ($(BR2_TARGET_GENERIC_REMOUNT_ROOTFS_RW),y)
+SYSTEMD_JOURNALD_PERMISSIONS = /var/log/journal d 2755 root systemd-journal - - - - -
 endif
 
 ifeq ($(BR2_PACKAGE_ACL),y)
@@ -621,6 +626,7 @@ define SYSTEMD_PERMISSIONS
 	/var/lib/private d 700 0 0 - - - - -
 	/var/log/private d 700 0 0 - - - - -
 	/var/cache/private d 700 0 0 - - - - -
+	$(SYSTEMD_JOURNALD_PERMISSIONS)
 	$(SYSTEMD_LOGIND_PERMISSIONS)
 	$(SYSTEMD_MACHINED_PERMISSIONS)
 	$(SYSTEMD_HOMED_PERMISSIONS)
@@ -800,6 +806,7 @@ HOST_SYSTEMD_CONF_OPTS = \
 	--libdir=lib \
 	--sysconfdir=/etc \
 	--localstatedir=/var \
+	-Dcreate-log-dirs=false \
 	-Dmode=release \
 	-Dutmp=false \
 	-Dhibernate=false \
