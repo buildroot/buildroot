@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FRR_VERSION = 8.3.1
+FRR_VERSION = 8.4.2
 FRR_SITE = $(call github,FRRouting,frr,frr-$(FRR_VERSION))
 FRR_LICENSE = GPL-2.0
 FRR_LICENSE_FILES = COPYING
