@@ -1,0 +1,160 @@
+From 3878b941c6bde84e29b2725e4261d85bea828752 Mon Sep 17 00:00:00 2001
+From: Michael Trimarchi <michael@amarulasolutions.com>
+Date: Sun, 22 May 2022 15:22:08 +0200
+Subject: [PATCH] include/configs: Remove rootwait=1 to all the affected boards
+
+rootwait=1 is not a valid kernel boot parameters. According
+to the documenation is only rootwait
+
+rootwait	[KNL]	Wait (indefinitely) for root device to show up.
+			Useful for devices that are detected asynchronously
+			(e.g. USB and MMC devices).
+
+Fix:
+Unknown kernel command line parameters "rootwait=1", will be passed to user space.
+
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Reviewed-by: Heiko Schocher <hs@denx.de>
+Link: https://patchwork.ozlabs.org/project/uboot/patch/20220520110013.32811-1-michael@amarulasolutions.com/
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+---
+ include/configs/am335x_evm.h           | 2 +-
+ include/configs/am43xx_evm.h           | 2 +-
+ include/configs/baltos.h               | 2 +-
+ include/configs/chiliboard.h           | 2 +-
+ include/configs/etamin.h               | 2 +-
+ include/configs/imx8mn_bsh_smm_s2.h    | 2 +-
+ include/configs/siemens-am33x-common.h | 4 ++--
+ include/configs/ti_armv7_keystone2.h   | 2 +-
+ include/environment/ti/nand.h          | 2 +-
+ 9 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/include/configs/am335x_evm.h b/include/configs/am335x_evm.h
+index fd5b209a52db..f301a6dc835b 100644
+--- a/include/configs/am335x_evm.h
++++ b/include/configs/am335x_evm.h
+@@ -34,7 +34,7 @@
+ 		"root=${nandroot} " \
+ 		"rootfstype=${nandrootfstype}\0" \
+ 	"nandroot=ubi0:rootfs rw ubi.mtd=NAND.file-system,2048\0" \
+-	"nandrootfstype=ubifs rootwait=1\0" \
++	"nandrootfstype=ubifs rootwait\0" \
+ 	"nandboot=echo Booting from nand ...; " \
+ 		"run nandargs; " \
+ 		"nand read ${fdtaddr} NAND.u-boot-spl-os; " \
+diff --git a/include/configs/am43xx_evm.h b/include/configs/am43xx_evm.h
+index 5057441f7506..1f5c3cd04e88 100644
+--- a/include/configs/am43xx_evm.h
++++ b/include/configs/am43xx_evm.h
+@@ -166,7 +166,7 @@
+ 		"root=${nandroot} " \
+ 		"rootfstype=${nandrootfstype}\0" \
+ 	"nandroot=ubi0:rootfs rw ubi.mtd=NAND.file-system,4096\0" \
+-	"nandrootfstype=ubifs rootwait=1\0" \
++	"nandrootfstype=ubifs rootwait\0" \
+ 	"nandboot=echo Booting from nand ...; " \
+ 		"run nandargs; " \
+ 		"nand read ${fdtaddr} NAND.u-boot-spl-os; " \
+diff --git a/include/configs/baltos.h b/include/configs/baltos.h
+index b881d8c03fd7..7b43741fde7c 100644
+--- a/include/configs/baltos.h
++++ b/include/configs/baltos.h
+@@ -37,7 +37,7 @@
+ 		"root=${nandroot} " \
+ 		"rootfstype=${nandrootfstype}\0" \
+ 	"nandroot=ubi0:rootfs rw ubi.mtd=5\0" \
+-	"nandrootfstype=ubifs rootwait=1\0" \
++	"nandrootfstype=ubifs rootwait\0" \
+ 	"nandboot=echo Booting from nand ...; " \
+ 		"run nandargs; " \
+ 		"setenv loadaddr 0x84000000; " \
+diff --git a/include/configs/chiliboard.h b/include/configs/chiliboard.h
+index 82acda595f09..8bad0f9ac4b6 100644
+--- a/include/configs/chiliboard.h
++++ b/include/configs/chiliboard.h
+@@ -20,7 +20,7 @@
+ 		"root=${nandroot} " \
+ 		"rootfstype=${nandrootfstype}\0" \
+ 	"nandroot=ubi0:rootfs rw ubi.mtd=NAND.file-system\0" \
+-	"nandrootfstype=ubifs rootwait=1\0" \
++	"nandrootfstype=ubifs rootwait\0" \
+ 	"nandboot=echo Booting from nand ...; " \
+ 		"run nandargs; " \
+ 		"nand read ${fdt_addr} NAND.u-boot-spl-os; " \
+diff --git a/include/configs/etamin.h b/include/configs/etamin.h
+index 9cf93924df93..1c0a86d1ed10 100644
+--- a/include/configs/etamin.h
++++ b/include/configs/etamin.h
+@@ -113,7 +113,7 @@
+ 	"nand_active_ubi_vol=rootfs_a\0" \
+ 	"rootfs_name=rootfs\0" \
+ 	"kernel_name=uImage\0"\
+-	"nand_root_fs_type=ubifs rootwait=1\0" \
++	"nand_root_fs_type=ubifs rootwait\0" \
+ 	"nand_args=run bootargs_defaults;" \
+ 		"mtdparts default;" \
+ 		"setenv ${partitionset_active} true;" \
+diff --git a/include/configs/imx8mn_bsh_smm_s2.h b/include/configs/imx8mn_bsh_smm_s2.h
+index d09c2ab01610..0dc514f00684 100644
+--- a/include/configs/imx8mn_bsh_smm_s2.h
++++ b/include/configs/imx8mn_bsh_smm_s2.h
+@@ -22,7 +22,7 @@
+ 		"root=${nandroot} " \
+ 		"rootfstype=${nandrootfstype}\0" \
+ 	"nandroot=ubi0:root rw ubi.mtd=nandrootfs\0" \
+-	"nandrootfstype=ubifs rootwait=1\0" \
++	"nandrootfstype=ubifs rootwait\0" \
+ 	"nandboot=echo Booting from nand ...; " \
+ 		"run nandargs; " \
+ 		"nand read ${fdt_addr_r} nanddtb; " \
+diff --git a/include/configs/siemens-am33x-common.h b/include/configs/siemens-am33x-common.h
+index 08c4d52d658f..9f1a6cd51b40 100644
+--- a/include/configs/siemens-am33x-common.h
++++ b/include/configs/siemens-am33x-common.h
+@@ -237,7 +237,7 @@
+ 	"nand_active_ubi_vol=rootfs_a\0" \
+ 	"nand_active_ubi_vol_A=rootfs_a\0" \
+ 	"nand_active_ubi_vol_B=rootfs_b\0" \
+-	"nand_root_fs_type=ubifs rootwait=1\0" \
++	"nand_root_fs_type=ubifs rootwait\0" \
+ 	"nand_src_addr=0x280000\0" \
+ 	"nand_src_addr_A=0x280000\0" \
+ 	"nand_src_addr_B=0x780000\0" \
+@@ -314,7 +314,7 @@
+ 	"nand_active_ubi_vol=rootfs_a\0" \
+ 	"rootfs_name=rootfs\0" \
+ 	"kernel_name=uImage\0"\
+-	"nand_root_fs_type=ubifs rootwait=1\0" \
++	"nand_root_fs_type=ubifs rootwait\0" \
+ 	"nand_args=run bootargs_defaults;" \
+ 		"mtdparts default;" \
+ 		"setenv ${partitionset_active} true;" \
+diff --git a/include/configs/ti_armv7_keystone2.h b/include/configs/ti_armv7_keystone2.h
+index 57f013cbf846..133daecf7164 100644
+--- a/include/configs/ti_armv7_keystone2.h
++++ b/include/configs/ti_armv7_keystone2.h
+@@ -180,7 +180,7 @@
+ 		"sf write ${loadaddr} 0 ${filesize}\0"		\
+ 	"burn_uboot_nand=nand erase 0 0x100000; "			\
+ 		"nand write ${loadaddr} 0 ${filesize}\0"		\
+-	"args_all=setenv bootargs console=ttyS0,115200n8 rootwait=1 "	\
++	"args_all=setenv bootargs console=ttyS0,115200n8 rootwait "	\
+ 		KERNEL_MTD_PARTS					\
+ 	"args_net=setenv bootargs ${bootargs} rootfstype=nfs "		\
+ 		"root=/dev/nfs rw nfsroot=${serverip}:${nfs_root},"	\
+diff --git a/include/environment/ti/nand.h b/include/environment/ti/nand.h
+index 11dcefcc41ca..7d00afa2b10f 100644
+--- a/include/environment/ti/nand.h
++++ b/include/environment/ti/nand.h
+@@ -14,7 +14,7 @@
+ 		"root=${nandroot} " \
+ 		"rootfstype=${nandrootfstype}\0" \
+ 	"nandroot=ubi0:rootfs rw ubi.mtd=NAND.file-system,2048\0" \
+-	"nandrootfstype=ubifs rootwait=1\0" \
++	"nandrootfstype=ubifs rootwait\0" \
+ 	"nandboot=echo Booting from nand ...; " \
+ 		"run nandargs; " \
+ 		"nand read ${fdtaddr} NAND.u-boot-spl-os; " \
+-- 
+2.32.0
+
