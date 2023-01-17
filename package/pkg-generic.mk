@@ -1155,13 +1155,20 @@ else
 endif # license files
 
 ifeq ($$($(2)_REDISTRIBUTE),YES)
-ifeq ($$($(2)_SITE_METHOD),local)
-# Packages without a tarball: don't save and warn
-	@$$(call legal-warning-nosource,$$($(2)_RAWNAME),local)
-
-else ifneq ($$($(2)_OVERRIDE_SRCDIR),)
-	@$$(call legal-warning-nosource,$$($(2)_RAWNAME),override)
-
+ifneq ($$($(2)_OVERRIDE_SRCDIR),)
+# local/override packages: copy it and archive the copy
+	@echo "Package is of type local or override, archive sources"
+	$$(Q)rm -rf  $$($(2)_BUILDDIR)/.legal-info-rsync
+	$$(Q)mkdir -p  $$($(2)_BUILDDIR)/.legal-info-rsync
+	$$(Q)rsync -au --chmod=u=rwX,go=rX $$(RSYNC_VCS_EXCLUSIONS) \
+		$(call qstrip,$$($(2)_OVERRIDE_SRCDIR))/ \
+		 $$($(2)_BUILDDIR)/.legal-info-rsync/
+	$$(Q). support/download/helpers; set -x; cd $$($(2)_BUILDDIR); TAR=$$(TAR) mk_tar_gz \
+		$$($(2)_BUILDDIR)/.legal-info-rsync/ \
+		$$($(2)_BASENAME_RAW) \
+		@0 \
+		$$($(2)_REDIST_SOURCES_DIR)/$$($(2)_BASENAME_RAW).tar.gz
+	$$(Q)rm -rf $$($(2)_BUILDDIR)/.legal-info-rsync
 else
 # Other packages
 
