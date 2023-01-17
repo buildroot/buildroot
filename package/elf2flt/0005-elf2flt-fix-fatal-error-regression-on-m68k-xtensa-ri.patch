@@ -1,8 +1,7 @@
-From 65ac5f9e69cfb989d970da74c41e478774d29be5 Mon Sep 17 00:00:00 2001
+From a8c9f650b82109abf7aa730f298ea5182ed62613 Mon Sep 17 00:00:00 2001
 From: Niklas Cassel <niklas.cassel@wdc.com>
 Date: Tue, 9 Aug 2022 21:06:05 +0200
-Subject: [PATCH] elf2flt: fix fatal error regression on m68k, xtensa,
- riscv64
+Subject: [PATCH] elf2flt: fix fatal error regression on m68k, xtensa, riscv64
 
 Commit ba379d08bb78 ("elf2flt: fix for segfault on some ARM ELFs")
 changed the condition of which input sections that should be included
@@ -12,16 +11,15 @@ to:
 ((a->flags & (SEC_DATA | SEC_READONLY | SEC_RELOC)) ==
 (SEC_DATA | SEC_READONLY | SEC_RELOC))
 
-On ARM, the .eh_frame input section does not have the SEC_RELOC flag
-set, so this specific change had no effect on ARM.
+On ARM, the .eh_frame input section does not have the SEC_RELOC flag set,
+so on ARM, this change caused .eh_frame to move from .text to .data.
 
-However, on e.g. m68k and riscv64, the .eh_frame input section does
-have the SEC_RELOC flag set, which means that after commit ba379d08bb78
-("elf2flt: fix for segfault on some ARM ELFs"), read-only relocation
-data sections were placed in .text output section, instead of .data
-output section.
+However, on e.g. m68k, xtensa and riscv64, the .eh_frame input section
+does have the SEC_RELOC flag set, which means that the change in
+commit ba379d08bb78 ("elf2flt: fix for segfault on some ARM ELFs")
+caused .eh_frame to move in an opposite way, i.e. from .data to .text.
 
-This will result in a fatal error on m68k, xtensa and riscv64:
+This resulted in a fatal error on m68k, xtensa and riscv64:
 ERROR: text=0x3bab8 overlaps data=0x33f60 ?
 
 This is because elf2flt cannot append to .text after .data has been
@@ -36,21 +34,26 @@ to .text after .data has been appended to (which will require elf2flt
 to move/relocate everything that has already been appended to .data,
 since the virtual addresses are contiguous).
 
-However, for now, add an exception for m68k, xtensa and riscv64
-(specifically for the problematic input section, .eh_frame), so that we
-get the same behavior as older elf2flt releases, where we put read-only
-relocation data in .data, which was working perfectly fine.
+However, for now, add an exception for input sections which have all
+three flags SEC_DATA, SEC_READONLY, and SEC_RELOC set, and which have a
+name equal to a problematic input section (.eh_frame, .gcc_except_table).
+That way, we get the same behavior as older elf2flt releases for m68k,
+xtensa and riscv64, where we put read-only relocation data in .data,
+which was working perfectly fine.
+
+This exception will not change any behavior on ARM, as the .eh_frame
+input section does not have flag SEC_RELOC set.
 
 Signed-off-by: Niklas Cassel <niklas.cassel@wdc.com>
 ---
- elf2flt.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ elf2flt.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/elf2flt.c b/elf2flt.c
-index 9c32f9a..a680c89 100644
+index e0d7891..39d035f 100644
 --- a/elf2flt.c
 +++ b/elf2flt.c
-@@ -340,8 +340,15 @@ compare_relocs (const void *pa, const void *pb)
+@@ -341,8 +341,13 @@ compare_relocs (const void *pa, const void *pb)
  static bool
  ro_reloc_data_section_should_be_in_text(asection *s)
  {
@@ -58,10 +61,8 @@ index 9c32f9a..a680c89 100644
 -	  (SEC_DATA | SEC_READONLY | SEC_RELOC);
 +  if ((s->flags & (SEC_DATA | SEC_READONLY | SEC_RELOC)) ==
 +      (SEC_DATA | SEC_READONLY | SEC_RELOC)) {
-+#if defined(TARGET_m68k) || defined(TARGET_riscv64) || defined(TARGET_xtensa)
-+    if (!strcmp(".eh_frame", s->name))
++    if (!strcmp(".eh_frame", s->name) || !strcmp(".gcc_except_table", s->name))
 +      return false;
-+#endif
 +    return true;
 +  }
 +  return false;
@@ -69,5 +70,5 @@ index 9c32f9a..a680c89 100644
  
  static uint32_t *
 -- 
-2.37.1
+2.39.0
 
