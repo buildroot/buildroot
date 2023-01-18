@@ -66,6 +66,12 @@ information is (assuming the document name is +foo+) :
 * +FOO_DEPENDENCIES+, optional, the list of packages (most probably,
   host-packages) that must be built before building this document.
 
+* +FOO_TOC_DEPTH+, +FOO_TOC_DEPTH_<FMT>+, optionals, the depth of the
+  table of content for this document, which can be overridden for the
+  specified format +<FMT>+  (see the list of rendered formats, above,
+  but in uppercase, and with dash replaced by underscore; see example,
+  below). By default: +1+.
+
 There are also additional hooks (see xref:hooks[] for general information
 on hooks), that a document may set to define extra actions to be done at
 various steps:
@@ -108,26 +114,30 @@ Here is a complete example that uses all variables and all hooks:
 07: FOO_SOURCES = $(sort $(wildcard $(FOO_DOCDIR)/*))
 08: FOO_RESOURCES = $(sort $(wildcard $(FOO_DOCDIR)/ressources))
 09:
-10: define FOO_GEN_EXTRA_DOC
-11:     /path/to/generate-script --outdir=$(@D)
-12: endef
-13: FOO_POST_RSYNC_HOOKS += FOO_GEN_EXTRA_DOC
-14:
-15: define FOO_CHECK_MY_PROG
-16:     if ! which my-prog >/dev/null 2>&1; then \
-17:         echo "You need my-prog to generate the foo document"; \
-18:         exit 1; \
-19:     fi
-20: endef
-21: FOO_CHECK_DEPENDENCIES_HOOKS += FOO_CHECK_MY_PROG
-22:
-23: define FOO_CHECK_MY_OTHER_PROG
-24:     if ! which my-other-prog >/dev/null 2>&1; then \
-25:         echo "You need my-other-prog to generate the foo document as PDF"; \
-26:         exit 1; \
-27:     fi
-28: endef
-29: FOO_CHECK_DEPENDENCIES_PDF_HOOKS += FOO_CHECK_MY_OTHER_PROG
-30:
-31: $(eval $(call asciidoc-document))
+10: FOO_TOC_DEPTH = 2
+11: FOO_TOC_DEPTH_HTML = 1
+12: FOO_TOC_DEPTH_SPLIT_HTML = 3
+13:
+14: define FOO_GEN_EXTRA_DOC
+15:     /path/to/generate-script --outdir=$(@D)
+16: endef
+17: FOO_POST_RSYNC_HOOKS += FOO_GEN_EXTRA_DOC
+18:
+19: define FOO_CHECK_MY_PROG
+20:     if ! which my-prog >/dev/null 2>&1; then \
+21:         echo "You need my-prog to generate the foo document"; \
+22:         exit 1; \
+23:     fi
+24: endef
+25: FOO_CHECK_DEPENDENCIES_HOOKS += FOO_CHECK_MY_PROG
+26:
+27: define FOO_CHECK_MY_OTHER_PROG
+28:     if ! which my-other-prog >/dev/null 2>&1; then \
+29:         echo "You need my-other-prog to generate the foo document as PDF"; \
+30:         exit 1; \
+31:     fi
+32: endef
+33: FOO_CHECK_DEPENDENCIES_PDF_HOOKS += FOO_CHECK_MY_OTHER_PROG
+34:
+35: $(eval $(call asciidoc-document))
 ----

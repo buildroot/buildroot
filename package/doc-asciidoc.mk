@@ -87,7 +87,7 @@ $(2)_$(3)_ASCIIDOC_OPTS += -f $$($(2)_$(3)_ASCIIDOC_CONF)
 endif
 
 $(2)_$(3)_A2X_OPTS = \
-	--xsltproc-opts "--stringparam toc.section.depth 1"
+	--xsltproc-opts "--stringparam toc.section.depth $$(or $$($(2)_TOC_DEPTH_$$(call UPPERCASE,$(4))),$$($(2)_TOC_DEPTH))"
 
 # Handle a2x warning about --destination-dir option only applicable to HTML
 # based outputs. So:
@@ -161,6 +161,7 @@ $$(BUILD_DIR)/docs/$(1)/.stamp_doc_rsynced:
 .PHONY: $(1)-prepare-sources
 $(1)-prepare-sources: $$(BUILD_DIR)/docs/$(1)/.stamp_doc_rsynced
 
+$(2)_TOC_DEPTH ?= 1
 $(2)_ASCIIDOC_CONF = $$($(2)_DOCDIR)/asciidoc.conf
 
 $(call ASCIIDOC_INNER,$(1),$(2),xhtml,html,html,HTML)
