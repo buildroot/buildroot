@@ -1,3 +1,53 @@
+2022.11.1, released January 18th, 2023
+
+	Important / security related fixes.
+
+	Br2-external: Fix make performance issue when many (> 6)
+	external trees are used together.
+
+	Erofs: Use fixed timestamp and UUID when BR2_REPRODUCIBLE is
+	used.
+
+	Go: Ensure our go build and module cache is used, even for the
+	download step.
+
+	Legal-info: Stop warning about not saving sources for local /
+	override packages if <PKG>_REDISTRIBUTE is set to NO.
+
+	Linux: Fix build of < 5.6 kernels with host-gcc >= 10.
+
+	A large number of NXP related packages and defconfigs have
+	been updated as upstream moved the git repositories to Github.
+
+	Defconfigs: zcu106, kria kv260: Fix U-Boot build
+
+	Updated/fixed packages: asterisk, bearssl, botan, cairo,
+	capnproto, check, checkpolicy, connman, containerd, crun,
+	dbus-cxx, docker-cli, docker-engine, exempi, exfat,
+	exfat-utils, falcosecurity-libs, fluidsynth, fmc, fmlib,
+	freeradius-server, gcc, glib-networking, go,
+	gobject-introspection, gperf, i2pd, ima-evm-utils,
+	imx-alsa-plugins, imx-kobs, imx-lib, imx-m4fwloader,
+	imx-mkimage, intel-microcode, janus-gateway, libcurl,
+	libdeflate, libftdi1, libkcapi, libksba, libmbim, libmng,
+	libpjsip, libtalloc, libuwsc, libxkbcommon, lpeg, lrzsz,
+	lttng-tools, lua-cqueues, mali-driver, mbedtls, mfgtools,
+	moby-buildkit, mutt, opensc, php, policycoreutils, polkit,
+	postgresql, pptp-linux, qcom-db410c-firmware, qemu, qoriq-rcw,
+	qt5virtualkeyboard, redis, rhash, rtl8189es, rtl8192eu,
+	rtl_433, ruby, sqlite, swupdate, tealdeer, tekui, tiff,
+	tinyxml, tor, webkitgtk, wireshark, wpasupplicant, wpewebkit,
+	xr819-xradio, xdriver_xf86-video-imx-viv, xserver_xorg-server,
+	xxhash, zip
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14971: Kernel 3.10.108 fail to build in Buildroot 2022.08-rc1
+	#14996: Too many directories in BR2_EXTERNAL causes hang during make
+	#15161: kernel can't support SUBDIR
+	#15196: Setting BR2_PACKAGE_RPI_FIRMWARE_CONFIG_FILE does not work
+	#15226: lsblk: not found
+
 2022.11, released December 5th, 2022
 
 	Fixes all over the tree.
