@@ -21,6 +21,8 @@ choice
 config BR2_PACKAGE_LUA_5_1
 	bool "Lua 5.1.x"
 	select BR2_PACKAGE_LUAINTERPRETER_ABI_VERSION_5_1
+	select BR2_PACKAGE_LUA_CVT_N2S
+	select BR2_PACKAGE_LUA_CVT_S2N
 
 config BR2_PACKAGE_LUA_5_3
 	bool "Lua 5.3.x"
@@ -42,6 +44,20 @@ config BR2_PACKAGE_LUA_32BITS
 	  for small machines and embedded systems.
 
 endif
+
+config BR2_PACKAGE_LUA_CVT_N2S
+	bool "automatic coercion from number to string"
+	default y  # legacy
+	help
+	  If unsure, say y, this is the default behavior of the Lua
+	  interpreter. See LUA_NOCVTN2S in luaconf.h
+
+config BR2_PACKAGE_LUA_CVT_S2N
+	bool "automatic coercion from string to number"
+	default y  # legacy
+	help
+	  If unsure, say y, this is the default behavior of the Lua
+	  interpreter. See LUA_NOCVTN2S in luaconf.h
 
 choice
 	prompt "Lua command-line editing"
