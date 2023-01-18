@@ -580,6 +580,50 @@
 	#14731: BR2_PACKAGE_IOSTAT
 	#14751: LVM2 Outdated Link
 
+2022.02.9, released January 18th, 2023
+
+	Important / security related fixes.
+
+	Br2-external: Fix make performance issue when many (> 6)
+	external trees are used together.
+
+	Erofs: Use fixed timestamp and UUID when BR2_REPRODUCIBLE is
+	used.
+
+	Go: Ensure our go build and module cache is used, even for the
+	download step.
+
+	Legal-info: Stop warning about not saving sources for local /
+	override packages if <PKG>_REDISTRIBUTE is set to NO.
+
+	Linux: Fix build of < 5.6 kernels with host-gcc >= 10.
+
+	A large number of NXP related packages and defconfigs have
+	been updated as upstream moved the git repositories to Github.
+
+	Updated/fixed packages: asterisk, bearssl, botan, cairo,
+	capnproto, check, checkpolicy, connman, containerd,
+	docker-cli, docker-engine, exempi, exfat, exfat-utils, fmc,
+	fmlib, glib-networking, go, gobject-introspection, gperf,
+	i2pd, ima-evm-utils, imx-alsa-plugins, imx-kobs, imx-lib,
+	imx-m4fwloader, imx-mkimage, intel-microcode, janus-gateway,
+	libcurl, libftdi1, libksba, libmbim, libmng, libpjsip,
+	libtalloc, libuwsc, libxkbcommon, linux, lpeg, lrzsz,
+	lttng-tools, lua-cqueues, mbedtls, mfgtools, mutt, php,
+	policycoreutils, polkit, postgresql, pptp-linux,
+	qcom-db410c-firmware, qemu, qoriq-rcw, qt5virtualkeyboard,
+	rhash, rtl_433, ruby, sqlite, swupdate, tekui, tiff, tinyxml,
+	tor, wayland, wireshark, wpa_supplicant,
+	xdriver_xf86-video-imx-viv, xserver_xorg-server, xxhash, zip
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14971: Kernel 3.10.108 fail to build in Buildroot 2022.08-rc1
+	#14996: Too many directories in BR2_EXTERNAL causes hang during make
+	#15161: kernel can't support SUBDIR
+	#15196: Setting BR2_PACKAGE_RPI_FIRMWARE_CONFIG_FILE does not work
+	#15226: lsblk: not found
+
 2022.02.8, released December 10th, 2022
 
 	Important / security related fixes.
