@@ -14,6 +14,7 @@ PHP_DEPENDENCIES = host-pkgconf pcre2
 PHP_LICENSE = PHP-3.01
 PHP_LICENSE_FILES = LICENSE
 PHP_CPE_ID_VENDOR = php
+
 PHP_CONF_OPTS = \
 	--mandir=/usr/share/man \
 	--infodir=/usr/share/info \
@@ -354,4 +355,24 @@ PHP_POST_INSTALL_TARGET_HOOKS += PHP_INSTALL_FIXUP
 
 PHP_CONF_ENV += CFLAGS="$(PHP_CFLAGS)" CXXFLAGS="$(PHP_CXXFLAGS)"
 
+HOST_PHP_CONF_OPTS = \
+	--disable-all \
+	--without-pear \
+	--with-config-file-path=$(HOST_DIR)/etc \
+	--disable-phpdbg \
+	--with-external-pcre \
+	--enable-phar \
+	--enable-json \
+	--enable-filter \
+	--enable-mbstring \
+	--enable-tokenizer \
+	--with-openssl=$(HOST_DIR)
+
+HOST_PHP_DEPENDENCIES = \
+	host-oniguruma \
+	host-openssl \
+	host-pcre2 \
+	host-pkgconf
+
 $(eval $(autotools-package))
+$(eval $(host-autotools-package))
