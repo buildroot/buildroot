@@ -14,3 +14,4 @@ ONIGURUMA_CPE_ID_VENDOR = oniguruma_project
 ONIGURUMA_INSTALL_STAGING = YES
 
 $(eval $(autotools-package))
+$(eval $(host-autotools-package))
