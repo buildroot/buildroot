@@ -7,7 +7,7 @@
 VTE_VERSION_MAJOR = 0.66
 VTE_VERSION = $(VTE_VERSION_MAJOR).2
 VTE_SOURCE = vte-$(VTE_VERSION).tar.xz
-VTE_SITE = http://ftp.gnome.org/pub/gnome/sources/vte/$(VTE_VERSION_MAJOR)
+VTE_SITE = https://download.gnome.org/sources/vte/$(VTE_VERSION_MAJOR)
 VTE_DEPENDENCIES = host-pkgconf libgtk3 pcre2 $(TARGET_NLS_DEPENDENCIES)
 VTE_LICENSE = LGPL-3.0+
 VTE_LICENSE_FILES = COPYING.LGPL3
