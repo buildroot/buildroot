@@ -6,7 +6,7 @@
 
 CANTARELL_VERSION_MAJOR = 0.0
 CANTARELL_VERSION = $(CANTARELL_VERSION_MAJOR).25
-CANTARELL_SITE = http://ftp.gnome.org/pub/gnome/sources/cantarell-fonts/$(CANTARELL_VERSION_MAJOR)
+CANTARELL_SITE = https://download.gnome.org/sources/cantarell-fonts/$(CANTARELL_VERSION_MAJOR)
 CANTARELL_SOURCE = cantarell-fonts-$(CANTARELL_VERSION).tar.xz
 CANTARELL_DEPENDENCIES = host-pkgconf
 CANTARELL_LICENSE = OFL-1.1
