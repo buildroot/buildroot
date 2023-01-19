@@ -5,7 +5,7 @@
 ################################################################################
 
 BITSTREAM_VERA_VERSION = 1.10
-BITSTREAM_VERA_SITE = http://ftp.gnome.org/pub/GNOME/sources/ttf-bitstream-vera/$(BITSTREAM_VERA_VERSION)
+BITSTREAM_VERA_SITE = https://download.gnome.org/sources/ttf-bitstream-vera/$(BITSTREAM_VERA_VERSION)
 BITSTREAM_VERA_SOURCE = ttf-bitstream-vera-$(BITSTREAM_VERA_VERSION).tar.bz2
 BITSTREAM_VERA_TARGET_DIR = $(TARGET_DIR)/usr/share/fonts/ttf-bitstream-vera
 BITSTREAM_VERA_LICENSE = BitstreamVera
