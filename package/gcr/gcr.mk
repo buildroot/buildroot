@@ -6,7 +6,7 @@
 
 GCR_VERSION_MAJOR = 3.40
 GCR_VERSION = $(GCR_VERSION_MAJOR).0
-GCR_SITE = http://ftp.acc.umu.se/pub/gnome/sources/gcr/$(GCR_VERSION_MAJOR)
+GCR_SITE = https://download.gnome.org/sources/gcr/$(GCR_VERSION_MAJOR)
 GCR_SOURCE = gcr-$(GCR_VERSION).tar.xz
 GCR_DEPENDENCIES = \
 	host-pkgconf \
