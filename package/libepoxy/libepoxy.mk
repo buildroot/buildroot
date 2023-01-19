@@ -6,7 +6,7 @@
 
 LIBEPOXY_VERSION_MAJOR = 1.5
 LIBEPOXY_VERSION = $(LIBEPOXY_VERSION_MAJOR).10
-LIBEPOXY_SITE = http://ftp.gnome.org/pub/gnome/sources/libepoxy/$(LIBEPOXY_VERSION_MAJOR)
+LIBEPOXY_SITE = https://download.gnome.org/sources/libepoxy/$(LIBEPOXY_VERSION_MAJOR)
 LIBEPOXY_SOURCE = libepoxy-$(LIBEPOXY_VERSION).tar.xz
 LIBEPOXY_INSTALL_STAGING = YES
 LIBEPOXY_DEPENDENCIES = host-pkgconf xutil_util-macros
