@@ -197,12 +197,11 @@ def print_attrs(outfile, pkg, pkg_type, pkg_version, depth, colors):
     outfile.write("%s [color=%s,style=filled]\n" % (name, color))
 
 
-done_deps = []
-
-
 # Print the dependency graph of a package
 def print_pkg_deps(outfile, dict_deps, dict_types, dict_versions, stop_list, exclude_list,
-                   arrow_dir, draw_graph, depth, max_depth, pkg, colors):
+                   arrow_dir, draw_graph, depth, max_depth, pkg, colors, done_deps=None):
+    if done_deps is None:
+        done_deps = []
     if pkg in done_deps:
         return
     done_deps.append(pkg)
@@ -234,7 +233,7 @@ def print_pkg_deps(outfile, dict_deps, dict_types, dict_versions, stop_list, exc
                 if draw_graph:
                     outfile.write("%s -> %s [dir=%s]\n" % (pkg_node_name(pkg), pkg_node_name(d), arrow_dir))
                 print_pkg_deps(outfile, dict_deps, dict_types, dict_versions, stop_list, exclude_list,
-                               arrow_dir, draw_graph, depth + 1, max_depth, d, colors)
+                               arrow_dir, draw_graph, depth + 1, max_depth, d, colors, done_deps)
 
 
 def parse_args():
