@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LXC_VERSION = 8a49476
-LXC_SITE = $(call github,lxc,lxc,$(LXC_VERSION))
+LXC_VERSION = 5.0.2
+LXC_SITE = https://linuxcontainers.org/downloads/lxc
 LXC_LICENSE = GPL-2.0 (some tools), LGPL-2.1+
 LXC_LICENSE_FILES = LICENSE.GPL2 LICENSE.LGPL2.1
 LXC_CPE_ID_VENDOR = linuxcontainers
