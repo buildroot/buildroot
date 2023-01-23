@@ -1,0 +1,49 @@
+config BR2_PACKAGE_MDNSD
+	bool "mdnsd"
+	depends on BR2_USE_MMU # fork()
+	help
+	  Small mDNS-SD daemon for advertising services and device
+	  discovery, similar to Avahi and Bonjour.
+
+	  By default, mdnsd runs on all interfaces that support
+	  multicast.  It reads services to announce from
+	  /etc/mdns.d/*.service, a few common services are included
+	  below.  To override the defaults, e.g., path to services,
+	  TTL of multicast frames, or the default interface, set
+	  MDNSD_ARGS in /etc/default/mdnsd
+
+	  Note: currently no NSS integration with GLIBC.
+
+	  https://github.com/troglobit/mdnsd
+
+if BR2_PACKAGE_MDNSD
+
+config BR2_PACKAGE_MDNSD_MQUERY
+	bool "mquery"
+	help
+	  Scan a LAN for mDNS capable devices, or query specific
+	  records, similar to the mdns-scan tool.  Useful for
+	  verifying multicast connectivity or locating neighbors with
+	  link-local address.
+
+comment "Services to advertise"
+
+config BR2_PACKAGE_MDNSD_FTP_SERVICE
+	bool "FTP service"
+
+config BR2_PACKAGE_MDNSD_HTTP_SERVICE
+	bool "HTTP service"
+
+config BR2_PACKAGE_MDNSD_IPP_SERVICE
+	bool "IPP service"
+
+config BR2_PACKAGE_MDNSD_PRINTER_SERVICE
+	bool "Printer service"
+
+config BR2_PACKAGE_MDNSD_SSH_SERVICE
+	bool "SSH service"
+	default y if BR2_PACKAGE_DROPBEAR
+	default y if BR2_PACKAGE_OPENSSH
+	default y if BR2_PACKAGE_LIBSSH_SERVER
+
+endif
