@@ -1042,6 +1042,9 @@ $(1)-graph-depends: graph-depends-requirements
 $(1)-graph-rdepends: graph-depends-requirements
 	$(call pkg-graph-depends,$(1),--reverse)
 
+$(1)-graph-both-depends: graph-depends-requirements
+	$(call pkg-graph-depends,$(1),--direct --reverse)
+
 $(1)-all-source:	$(1)-source
 $(1)-all-source:	$$(foreach p,$$($(2)_FINAL_ALL_DEPENDENCIES),$$(p)-all-source)
 
