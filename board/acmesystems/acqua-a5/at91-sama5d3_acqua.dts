@@ -4,7 +4,7 @@
  *  Copyright (C) 2014 Atmel,
  *		  2014 Nicolas Ferre <nicolas.ferre@atmel.com>
  * 
- *	2020 Sergio Tanzilli <tanzilli@acmesystems.it>
+ *	2022 Sergio Tanzilli <tanzilli@acmesystems.it>
  *
  * Licensed under GPLv2 or later.
  */
@@ -17,7 +17,7 @@
 
 	chosen {
 		stdout-path = "serial0:115200n8";
-		bootargs = "mem=256M console=ttyS0,115200 root=/dev/mmcblk0p2 rootfstype=ext4 rw rootwait consoleblank=0";
+		bootargs = "mem=256M console=ttyS0,115200 root=/dev/mmcblk0p2 rootfstype=ext4 rw rootwait net.ifnames=0";
 	};
 
 	memory {
@@ -128,15 +128,19 @@
 
 			i2c3@ {
 				compatible = "i2c-gpio";
-				gpios = <&pioE 1 0 /* SDA */
-						 &pioE 2 0 /* SCK */
-						>;
-				i2c-gpio,delay-us = <4>;    /* ~178 kHz */
+
+				sda-gpios = <&pioE 1 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
+				scl-gpios = <&pioE 2 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>; 
+				
+				pinctrl-names = "default";
+				pinctrl-0 = <&pinctrl_i2c3_gpio>;
+				
+				i2c-gpio,delay-us = <4>; /* ~178 kHz */
 				#address-cells = <1>;
 				#size-cells = <0>;
-			
+				
 				/* EEPROM contains the eth0 MAC address */
-				 
+				
 				eeprom@58 {
 					compatible = "atmel,24mac402";
 					pagesize = <256>;
@@ -149,6 +153,7 @@
 						reg = <0x0 0x06>;
 					};
 				};
+				
 			};
 
 			pwm0: pwm@f002c000 {
@@ -204,6 +209,17 @@
 			};
 
 			pinctrl@fffff200 {
+
+				atmel,mux-mask = <
+					/*   A          B          C  */
+					0xffffffff 0xc0fc0000 0xc0ff0000	/* pioA */
+					0xffffffff 0x0ff8ffff 0x00000000	/* pioB */
+					0xffffffff 0xbc00f1ff 0x7c00fc00	/* pioC */
+					0xffffffff 0xc001c0e0 0x0001c1e0	/* pioD */
+					0xfffffff9 0xbf9f8000 0x18000000 	/* pioE */
+				/*	0xffffffff 0xb8000000 0x18000000 */	/* pioE */
+					>;
+
 				board {
 					pinctrl_i2c0_pu: i2c0_pu {
 						atmel,pins =
@@ -216,6 +232,13 @@
 							<AT91_PIOA 18 AT91_PERIPH_B AT91_PINCTRL_PULL_UP>,
 							<AT91_PIOA 19 AT91_PERIPH_B AT91_PINCTRL_PULL_UP>;
 					};
+
+					pinctrl_i2c3_gpio: i2c3-gpio {
+						atmel,pins =
+							<AT91_PIOE 1 AT91_PERIPH_GPIO AT91_PINCTRL_NONE
+							 AT91_PIOE 2 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>;
+					};
+
 
 					pinctrl_key_gpio: key_gpio_0 {
 						atmel,pins =
@@ -236,12 +259,20 @@
 						atmel,pins =
 							<AT91_PIOE 9 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>;	/* PE9, conflicts with A9 */
 					};
+					
+					pinctrl_gpio_leds: gpio_leds_default {
+						atmel,pins =
+							<AT91_PIOE 3 AT91_PERIPH_GPIO AT91_PINCTRL_NONE
+							 AT91_PIOE 4 AT91_PERIPH_GPIO AT91_PINCTRL_NONE
+							 AT91_PIOE 5 AT91_PERIPH_GPIO AT91_PINCTRL_NONE
+							 AT91_PIOE 6 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>;
+					};
 				};
 			};
 		};
 
         usb0: gadget@500000 {
-            status = "okay";
+            status = "disabled";
         };
 
         usb1: ohci@600000 {
@@ -272,6 +303,8 @@
  
 	leds {
 		compatible = "gpio-leds";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_gpio_leds>;
 
 		led0 {
 			label = "led0";
