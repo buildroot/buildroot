@@ -1,0 +1,72 @@
+#!/bin/sh
+
+DAEMON="fluent-bit"
+PID_FILE="/var/run/$DAEMON.pid"
+CONF_FILE="/etc/$DAEMON/$DAEMON.conf"
+
+FLUENT_BIT_ARGS=""
+
+# shellcheck source=/dev/null
+[ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
+
+start() {
+	printf 'Starting %s: ' "$DAEMON"
+	# shellcheck disable=SC2086 # we need the word splitting
+	start-stop-daemon -S -q -b -m -p "$PID_FILE" --exec "/usr/bin/$DAEMON" \
+		-- -c "$CONF_FILE" $FLUENT_BIT_ARGS
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+stop() {
+	printf 'Stopping %s: ' "$DAEMON"
+	start-stop-daemon -K -q -p "$PID_FILE"
+	status=$?
+
+	if [ -f "$PID_FILE" ]; then
+		pid=$(cat "$PID_FILE")
+		rm -f "$PID_FILE"
+
+		# https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/yaml/configuration-file#config_section
+		# The default grace time is set to 5 seconds, so use 6 seconds to have some margin.
+		timeout=6
+		while kill -0 "$pid" 2>/dev/null; do
+			[ $timeout -eq 0 ] && status=1 && break
+			timeout=$((timeout - 1))
+			sleep 1
+		done
+	fi
+
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+start)
+	start
+	;;
+stop)
+	stop
+	;;
+restart | reload)
+	restart
+	;;
+*)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+	;;
+esac
