@@ -1,0 +1,14 @@
+comment "Oat++ needs a toolchain w/ C++, threads and Paranoid Unsafe Path compiler flag disabled"
+        depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS || BR2_COMPILER_PARANOID_UNSAFE_PATH
+
+config BR2_PACKAGE_OATPP
+	bool "Oat++"
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on !BR2_COMPILER_PARANOID_UNSAFE_PATH
+	help
+		Oat++ is an open-source C++ web framework for highly scalable and resource-efficient web applications.
+		It provides all the necessary components for production-grade development.
+		This package allows you to use oatpp to statically build this a project inside the staging directory.
+		See https://oatpp.io/docs/
+
