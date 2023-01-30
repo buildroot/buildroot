@@ -5,8 +5,7 @@
 ################################################################################
 
 LIBVA_VERSION = 2.17.0
-LIBVA_SOURCE = libva-$(LIBVA_VERSION).tar.bz2
-LIBVA_SITE = https://github.com/intel/libva/releases/download/$(LIBVA_VERSION)
+LIBVA_SITE = $(call github,intel,libva,$(LIBVA_VERSION))
 LIBVA_LICENSE = MIT
 LIBVA_LICENSE_FILES = COPYING
 LIBVA_INSTALL_STAGING = YES
@@ -14,25 +13,25 @@ LIBVA_DEPENDENCIES = host-pkgconf libdrm
 
 # libdrm is a hard-dependency
 LIBVA_CONF_OPTS = \
-	--enable-drm \
-	--with-drivers-path="/usr/lib/va"
+	-Ddisable_drm=false \
+	-Ddriverdir="/usr/lib/va"
 
 ifeq ($(BR2_PACKAGE_XORG7),y)
 LIBVA_DEPENDENCIES += xlib_libX11 xlib_libXext xlib_libXfixes
-LIBVA_CONF_OPTS += --enable-x11
+LIBVA_CONF_OPTS += -Dwith_x11=yes
 ifeq ($(BR2_PACKAGE_HAS_LIBGL),y)
 LIBVA_DEPENDENCIES += libgl
-LIBVA_CONF_OPTS += --enable-glx
+LIBVA_CONF_OPTS += -Dwith_glx=yes
 endif
 else
-LIBVA_CONF_OPTS += --disable-glx --disable-x11
+LIBVA_CONF_OPTS += -Dwith_glx=no -Dwith_x11=no
 endif
 
 ifeq ($(BR2_PACKAGE_WAYLAND),y)
 LIBVA_DEPENDENCIES += wayland
-LIBVA_CONF_OPTS += --enable-wayland
+LIBVA_CONF_OPTS += -Dwith_wayland=yes
 else
-LIBVA_CONF_OPTS += --disable-wayland
+LIBVA_CONF_OPTS += -Dwith_wayland=no
 endif
 
-$(eval $(autotools-package))
+$(eval $(meson-package))
