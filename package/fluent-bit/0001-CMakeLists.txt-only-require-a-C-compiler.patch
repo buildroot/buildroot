@@ -1,0 +1,27 @@
+From 7bcb502ebdcd647d6b83c972805e734ad522eb1a Mon Sep 17 00:00:00 2001
+From: Thomas Devoogdt <thomas.devoogdt@barco.com>
+Date: Mon, 30 Jan 2023 09:10:37 +0100
+Subject: [PATCH] CMakeLists.txt: only require a C compiler
+
+Fluent-bit is mostly written in C,
+so don't require CXX in the top-level project.
+
+Signed-off-by: Thomas Devoogdt <thomas.devoogdt@barco.com>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a7adb02de..3ff7360d8 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,5 +1,5 @@
+ cmake_minimum_required(VERSION 3.12)
+-project(fluent-bit)
++project(fluent-bit C)
+ 
+ # CMP0069 ensures that LTO is enabled for all compilers
+ cmake_policy(SET CMP0069 NEW)
+-- 
+2.30.2
+
