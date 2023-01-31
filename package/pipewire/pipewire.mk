@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PIPEWIRE_VERSION = 0.3.62
+PIPEWIRE_VERSION = 0.3.65
 PIPEWIRE_SOURCE = pipewire-$(PIPEWIRE_VERSION).tar.bz2
 PIPEWIRE_SITE = https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/$(PIPEWIRE_VERSION)
 PIPEWIRE_LICENSE = MIT, LGPL-2.1+ (libspa-alsa), GPL-2.0 (libjackserver)
@@ -122,10 +122,10 @@ PIPEWIRE_CONF_OPTS += -Dbluez5=disabled -Dbluez5-codec-opus=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_FFMPEG),y)
-PIPEWIRE_CONF_OPTS += -Dffmpeg=enabled
+PIPEWIRE_CONF_OPTS += -Dffmpeg=enabled -Dpw-cat-ffmpeg=enabled
 PIPEWIRE_DEPENDENCIES += ffmpeg
 else
-PIPEWIRE_CONF_OPTS += -Dffmpeg=disabled
+PIPEWIRE_CONF_OPTS += -Dffmpeg=disabled -Dpw-cat-ffmpeg=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_NCURSES_WCHAR),y)
@@ -213,6 +213,13 @@ PIPEWIRE_DEPENDENCIES += sdl2
 PIPEWIRE_CONF_OPTS += -Dsdl2=enabled
 else
 PIPEWIRE_CONF_OPTS += -Dsdl2=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_TINYCOMPRESS),y)
+PIPEWIRE_CONF_OPTS += -Dcompress-offload=enabled
+PIPEWIRE_DEPENDENCIES += tinycompress
+else
+PIPEWIRE_CONF_OPTS += -Dcompress-offload=disabled
 endif
 
 ifeq ($(WEBRTC_AUDIO_PROCESSING),y)
