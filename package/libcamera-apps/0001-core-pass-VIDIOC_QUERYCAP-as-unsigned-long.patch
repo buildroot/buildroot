@@ -1,0 +1,35 @@
+From a65682a97e19f96b86aeceb3ca3befb1687e3861 Mon Sep 17 00:00:00 2001
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+Date: Tue, 31 Jan 2023 09:14:15 +0100
+Subject: [PATCH] core: pass VIDIOC_QUERYCAP as unsigned long
+
+VIDIOC_QUARYCAP is an unsigned long and should be passed as one.
+
+Get rid of the following error:
+core/libcamera_app.cpp:33:22: error: overflow in conversion from 'long unsigned int' to 'int' changes value from '2154321408' to '-2140645888' [-Werror=overflow]
+   33 |  int ret = ioctl(fd, VIDIOC_QUERYCAP, &caps);
+
+Upstream: https://github.com/raspberrypi/libcamera-apps/commit/a65682a97e19f96b86aeceb3ca3befb1687e3861
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
+ core/libcamera_app.cpp | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/core/libcamera_app.cpp b/core/libcamera_app.cpp
+index 04696fb..8cb6563 100644
+--- a/core/libcamera_app.cpp
++++ b/core/libcamera_app.cpp
+@@ -30,7 +30,9 @@ static void check_camera_stack()
+ 		return;
+ 
+ 	v4l2_capability caps;
+-	int ret = ioctl(fd, VIDIOC_QUERYCAP, &caps);
++	unsigned long request = VIDIOC_QUERYCAP;
++
++	int ret = ioctl(fd, request, &caps);
+ 	close(fd);
+ 
+ 	if (ret < 0 || strcmp((char *)caps.driver, "bm2835 mmal"))
+-- 
+2.38.1
+
