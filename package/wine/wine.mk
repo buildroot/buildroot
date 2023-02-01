@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-WINE_VERSION = 7.0
+WINE_VERSION = 8.0
 WINE_SOURCE = wine-$(WINE_VERSION).tar.xz
-WINE_SITE = https://dl.winehq.org/wine/source/7.0
+WINE_SITE = https://dl.winehq.org/wine/source/8.0
 WINE_LICENSE = LGPL-2.1+
 WINE_LICENSE_FILES = COPYING.LIB LICENSE
 WINE_CPE_ID_VENDOR = winehq
@@ -27,7 +27,6 @@ WINE_CONF_OPTS = \
 	--without-mingw \
 	--without-opencl \
 	--without-oss \
-	--without-vkd3d \
 	--without-vulkan
 
 # Wine uses a wrapper around gcc, and uses the value of --host to
@@ -129,20 +128,6 @@ WINE_CONF_OPTS += --with-v4l2
 WINE_DEPENDENCIES += libv4l
 else
 WINE_CONF_OPTS += --without-v4l2
-endif
-
-ifeq ($(BR2_PACKAGE_OPENAL),y)
-WINE_CONF_OPTS += --with-openal
-WINE_DEPENDENCIES += openal
-else
-WINE_CONF_OPTS += --without-openal
-endif
-
-ifeq ($(BR2_PACKAGE_OPENLDAP),y)
-WINE_CONF_OPTS += --with-ldap
-WINE_DEPENDENCIES += openldap
-else
-WINE_CONF_OPTS += --without-ldap
 endif
 
 ifeq ($(BR2_PACKAGE_MESA3D_OSMESA_GALLIUM),y)
@@ -266,19 +251,8 @@ endif
 
 # Wine only needs the host tools to be built, so cut-down the
 # build time by building just what we need.
-HOST_WINE_TOOLS = \
-	tools \
-	tools/sfnt2fon \
-	tools/widl \
-	tools/winebuild \
-	tools/winegcc \
-	tools/wmc \
-	tools/wrc
-
 define HOST_WINE_BUILD_CMDS
-	$(foreach t, $(HOST_WINE_TOOLS),
-		$(HOST_MAKE_ENV) $(MAKE) -C $(@D)/$(t)
-	)
+	$(HOST_MAKE_ENV) $(MAKE) -C $(@D) __tooldeps__
 endef
 
 # Wine only needs its host variant to be built, not that it is
@@ -304,10 +278,8 @@ HOST_WINE_CONF_OPTS += \
 	--without-gssapi \
 	--without-gstreamer \
 	--without-krb5 \
-	--without-ldap \
 	--without-mingw \
 	--without-netapi \
-	--without-openal \
 	--without-opencl \
 	--without-opengl \
 	--without-osmesa \
@@ -318,7 +290,6 @@ HOST_WINE_CONF_OPTS += \
 	--without-sdl \
 	--without-usb \
 	--without-v4l2 \
-	--without-vkd3d \
 	--without-vulkan \
 	--without-x \
 	--without-xcomposite \
