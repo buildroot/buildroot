@@ -59,10 +59,11 @@ config BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_ENCODING
 	help
 	  various encoding-related elements
 
-config BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VIDEOCONVERT
-	bool "videoconvert"
+config BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VIDEOCONVERTSCALE
+	bool "videoconvertscale (mandatory for video playback)"
+	default y
 	help
-	  Colorspace conversion
+	  Colorspace conversion, resizes video
 
 config BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_GIO
 	bool "gio"
@@ -122,12 +123,6 @@ config BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VIDEORATE
 	bool "videorate"
 	help
 	  Adjusts video frames
-
-config BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VIDEOSCALE
-	bool "videoscale (mandatory for video playback)"
-	default y
-	help
-	  Resizes video
 
 config BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VOLUME
 	bool "volume (mandatory for audio playback)"

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_PLUGINS_BASE_VERSION = 1.20.4
+GST1_PLUGINS_BASE_VERSION = 1.22.0
 GST1_PLUGINS_BASE_SOURCE = gst-plugins-base-$(GST1_PLUGINS_BASE_VERSION).tar.xz
 GST1_PLUGINS_BASE_SITE = https://gstreamer.freedesktop.org/src/gst-plugins-base
 GST1_PLUGINS_BASE_INSTALL_STAGING = YES
@@ -147,10 +147,10 @@ else
 GST1_PLUGINS_BASE_CONF_OPTS += -Dencoding=disabled
 endif
 
-ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VIDEOCONVERT),y)
-GST1_PLUGINS_BASE_CONF_OPTS += -Dvideoconvert=enabled
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VIDEOCONVERTSCALE),y)
+GST1_PLUGINS_BASE_CONF_OPTS += -Dvideoconvertscale=enabled
 else
-GST1_PLUGINS_BASE_CONF_OPTS += -Dvideoconvert=disabled
+GST1_PLUGINS_BASE_CONF_OPTS += -Dvideoconvertscale=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_GIO),y)
@@ -217,12 +217,6 @@ ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VIDEORATE),y)
 GST1_PLUGINS_BASE_CONF_OPTS += -Dvideorate=enabled
 else
 GST1_PLUGINS_BASE_CONF_OPTS += -Dvideorate=disabled
-endif
-
-ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VIDEOSCALE),y)
-GST1_PLUGINS_BASE_CONF_OPTS += -Dvideoscale=enabled
-else
-GST1_PLUGINS_BASE_CONF_OPTS += -Dvideoscale=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VOLUME),y)

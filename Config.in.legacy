@@ -146,6 +146,20 @@ endif
 
 comment "Legacy options removed in 2023.02"
 
+config BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VIDEOSCALE
+	bool "videoscale removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VIDEOCONVERTSCALE
+	help
+	  The videoscale option has been combined with videoconvert.
+
+config BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VIDEOCONVERT
+	bool "videoconvert removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VIDEOCONVERTSCALE
+	help
+	  The videoconvert option has been combined with videoscale.
+
 config BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_X11
 	bool "imx-gpu-viv X11 output has been removed"
 	select BR2_LEGACY
