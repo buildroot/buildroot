@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_PLUGINS_GOOD_VERSION = 1.20.4
+GST1_PLUGINS_GOOD_VERSION = 1.22.0
 GST1_PLUGINS_GOOD_SOURCE = gst-plugins-good-$(GST1_PLUGINS_GOOD_VERSION).tar.xz
 GST1_PLUGINS_GOOD_SITE = https://gstreamer.freedesktop.org/src/gst-plugins-good
 GST1_PLUGINS_GOOD_LICENSE_FILES = COPYING
@@ -322,6 +322,12 @@ ifeq ($(BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_WAVPARSE),y)
 GST1_PLUGINS_GOOD_CONF_OPTS += -Dwavparse=enabled
 else
 GST1_PLUGINS_GOOD_CONF_OPTS += -Dwavparse=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_XINGMUX),y)
+GST1_PLUGINS_GOOD_CONF_OPTS += -Dxingmux=enabled
+else
+GST1_PLUGINS_GOOD_CONF_OPTS += -Dxingmux=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_Y4M),y)
