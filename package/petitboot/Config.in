@@ -1,0 +1,31 @@
+config BR2_PACKAGE_PETITBOOT
+	bool "petitboot"
+	# kexec-lite arch depends is a subset of kexec arch depends
+	depends on BR2_PACKAGE_KEXEC_ARCH_SUPPORTS
+	depends on BR2_USE_MMU # lvm2
+	depends on BR2_USE_WCHAR # elfutils
+	depends on !BR2_STATIC_LIBS # elfutils, lvm2
+	depends on BR2_TOOLCHAIN_HAS_THREADS # elfutils, lvm2
+	depends on BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_GLIBC # elfutils
+	depends on BR2_PACKAGE_HAS_UDEV
+	select BR2_PACKAGE_ELFUTILS
+	select BR2_PACKAGE_LVM2 # devmapper
+	select BR2_PACKAGE_NCURSES
+	# run-time dependency only
+	select BR2_PACKAGE_KEXEC if !BR2_PACKAGE_KEXEC_LITE
+	# run-time dependency only
+	select BR2_PACKAGE_POWERPC_UTILS if ( BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le )
+	# run-time dependency only
+	select BR2_PACKAGE_NVME if ( BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le )
+	help
+	  Petitboot is a small kexec-based bootloader
+
+	  http://www.kernel.org/pub/linux/kernel/people/geoff/petitboot/petitboot.html
+
+comment "petitboot needs a uClibc or glibc toolchain w/ wchar, dynamic library, threads, udev /dev management"
+	depends on BR2_PACKAGE_KEXEC_ARCH_SUPPORTS
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR || BR2_STATIC_LIBS || \
+		BR2_TOOLCHAIN_HAS_THREADS || \
+		!(BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_GLIBC) || \
+		!BR2_PACKAGE_HAS_UDEV
