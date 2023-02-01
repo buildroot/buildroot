@@ -1,0 +1,44 @@
+From 1f35c466aaa9444335a1b854b0b7223b0d2346c2 Mon Sep 17 00:00:00 2001
+From: Peter Pentchev <roam@ringlet.net>
+Date: Thu, 29 Dec 2022 00:04:40 +0200
+Subject: [PATCH] Only add "iconv" to the .pc file if needed (#1825)
+
+Hi,
+
+Thanks for writing and maintaining libarchive!
+
+What do you think about this trivial change that does not add "iconv" to
+the pkg-config file's list of required packages unless it is actually
+needed? On at least Debian GNU/Linux systems, the iconv(3) function is
+part of the system C library and there is no Debian package that
+installs an iconv.pc file, so I had to make this change to the Debian
+package of libarchive.
+
+Thanks again, and keep up the great work!
+
+G'luck,
+Peter
+
+Downloaded from upstream commit:
+https://github.com/libarchive/libarchive/commit/1f35c466aaa9444335a1b854b0b7223b0d2346c2
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ configure.ac | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 99bff20d1..e2715cfde 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -378,7 +378,9 @@ if test "x$with_iconv" != "xno"; then
+     AC_CHECK_HEADERS([localcharset.h])
+     am_save_LIBS="$LIBS"
+     LIBS="${LIBS} ${LIBICONV}"
+-    LIBSREQUIRED="$LIBSREQUIRED${LIBSREQUIRED:+ }iconv"
++    if test -n "$LIBICONV"; then
++      LIBSREQUIRED="$LIBSREQUIRED${LIBSREQUIRED:+ }iconv"
++    fi
+     AC_CHECK_FUNCS([locale_charset])
+     LIBS="${am_save_LIBS}"
+     if test "x$ac_cv_func_locale_charset" != "xyes"; then
