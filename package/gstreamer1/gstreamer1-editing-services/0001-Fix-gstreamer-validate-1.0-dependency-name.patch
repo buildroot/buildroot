@@ -1,0 +1,35 @@
+From c3edd999195445319ea619b6d719d7743f5b560d Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Tue, 31 Jan 2023 21:38:09 -0700
+Subject: [PATCH] Fix gstreamer-validate-1.0 dependency name
+
+The gst-devtools project generates gstreamer-validate-1.0.pc, this
+must match the dependency in gst-editing-services for detection
+to work properly.
+
+Fixes:
+Run-time dependency gst-validate-1.0 found: NO (tried pkgconfig and cmake)
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[Upstream status:
+https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/3859]
+---
+ meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index bdc47f5d8b..b949f55317 100644
+--- a/meson.build
++++ b/meson.build
+@@ -110,7 +110,7 @@ if host_machine.system() != 'windows'
+ endif
+ gstcontroller_dep = dependency('gstreamer-controller-1.0', version : gst_req,
+   fallback : ['gstreamer', 'gst_controller_dep'])
+-gstvalidate_dep = dependency('gst-validate-1.0', version : gst_req, required : get_option('validate'),
++gstvalidate_dep = dependency('gstreamer-validate-1.0', version : gst_req, required : get_option('validate'),
+   fallback : ['gst-devtools', 'validate_dep'])
+ 
+ gio_dep = dependency('gio-2.0', version: glib_req)
+-- 
+2.34.1
+
