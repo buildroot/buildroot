@@ -1,0 +1,41 @@
+config BR2_PACKAGE_PERFTEST_ARCH_SUPPORTS
+	bool
+	# Accurate cycle measurement in perftest is implemented for a
+	# limited set of architectures, see:
+	# https://github.com/linux-rdma/perftest/blob/v4.5-0.20/src/get_clock.h
+	# Note: the package has also a fallback to use "asm/timex.h"
+	# from the Kernel, in
+	# "$(LINUX_DIR)/arch/$(KERNEL_ARCH)/include". It is not
+	# reflected here as this path is not well tested.
+	default y if BR2_i386 || BR2_x86_64
+	default y if BR2_arm && !BR2_ARM_CPU_ARMV4 && !BR2_ARM_CPU_ARMV5 && !BR2_ARM_CPU_ARMV6
+	default y if BR2_aarch64
+	default y if BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le
+	default y if BR2_s390x
+	default y if BR2_sparc || BR2_sparc64
+	default y if BR2_riscv
+	depends on BR2_USE_MMU # rdma-core
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # rdma-core
+
+config BR2_PACKAGE_PERFTEST
+	bool "perftest"
+	depends on BR2_PACKAGE_PERFTEST_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on !BR2_STATIC_LIBS # rdma-core
+	# musl does not define sysconf(_SC_LEVEL1_DCACHE_LINESIZE)
+	depends on !BR2_TOOLCHAIN_USES_MUSL
+	select BR2_PACKAGE_PCIUTILS
+	select BR2_PACKAGE_RDMA_CORE
+	help
+	  Open Fabrics Performance Tests.
+
+	  This is a collection of tests written over uverbs intended
+	  for use as a performance micro-benchmark. The tests may be
+	  used for HW or SW tuning as well as for functional testing.
+
+	  https://github.com/linux-rdma/perftest
+
+comment "perftest needs a glibc or uClibc toolchain w/ threads, dynamic library"
+	depends on BR2_PACKAGE_PERFTEST_ARCH_SUPPORTS
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS \
+		|| BR2_TOOLCHAIN_USES_MUSL
