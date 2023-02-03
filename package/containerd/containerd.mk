@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CONTAINERD_VERSION = 1.6.12
+CONTAINERD_VERSION = 1.6.16
 CONTAINERD_SITE = $(call github,containerd,containerd,v$(CONTAINERD_VERSION))
 CONTAINERD_LICENSE = Apache-2.0
 CONTAINERD_LICENSE_FILES = LICENSE
@@ -40,5 +40,11 @@ CONTAINERD_DEPENDENCIES += btrfs-progs
 else
 CONTAINERD_TAGS += no_btrfs
 endif
+
+define CONTAINERD_INSTALL_INIT_SYSTEMD
+	$(INSTALL) -D -m 0644 $(@D)/containerd.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/containerd.service
+	$(SED) 's,/usr/local/bin,/usr/bin,g' $(TARGET_DIR)/usr/lib/systemd/system/containerd.service
+endef
 
 $(eval $(golang-package))
