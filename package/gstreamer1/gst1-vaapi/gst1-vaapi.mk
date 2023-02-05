@@ -43,8 +43,9 @@ else
 GST1_VAAPI_CONF_OPTS += -Dwayland=disabled
 endif
 
-ifeq ($(BR2_PACKAGE_XORG7),y)
+ifeq ($(BR2_PACKAGE_XLIB_LIBX11)$(BR2_PACKAGE_XLIB_LIBXRANDR),yy)
 GST1_VAAPI_CONF_OPTS += -Dx11=enabled
+GST1_VAAPI_DEPENDENCIES += xlib_libX11 xlib_libXrandr
 ifeq ($(BR2_PACKAGE_HAS_LIBGL),y)
 GST1_VAAPI_CONF_OPTS += -Dglx=enabled
 else
