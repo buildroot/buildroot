@@ -4,12 +4,19 @@
 #
 ################################################################################
 
-TMUX_VERSION = 3.1c
+TMUX_VERSION = 3.3a
 TMUX_SITE = https://github.com/tmux/tmux/releases/download/$(TMUX_VERSION)
 TMUX_LICENSE = ISC
 TMUX_LICENSE_FILES = COPYING
 TMUX_CPE_ID_VENDOR = tmux_project
 TMUX_DEPENDENCIES = libevent ncurses host-pkgconf
+
+ifeq ($(BR2_PACKAGE_SYSTEMD),y)
+TMUX_DEPENDENCIES += systemd
+TMUX_CONF_OPTS += --enable-systemd
+else
+TMUX_CONF_OPTS += --disable-systemd
+endif
 
 ifeq ($(BR2_PACKAGE_UTF8PROC),y)
 TMUX_DEPENDENCIES += utf8proc
