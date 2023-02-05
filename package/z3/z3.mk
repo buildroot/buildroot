@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-Z3_VERSION = 4.12.0
+Z3_VERSION = 4.12.1
 Z3_SITE = $(call github,Z3Prover,z3,z3-$(Z3_VERSION))
 Z3_LICENSE = MIT
 Z3_LICENSE_FILES = LICENSE.txt
