@@ -19,6 +19,8 @@ function display_activity(result, activity) {
         let link = document.createElement("a");
         let d = new Date(entry.updated);
         let data = '[' + d.toLocaleDateString() + '] ' + entry.title;
+        data = data.replace("Re: ","");
+        data = data.replace("[Buildroot] ","");
         let text = document.createTextNode(data);
         link.appendChild(text);
         link.title = entry.title;
