@@ -134,12 +134,13 @@ config BR2_TARGET_OPTEE_OS_CUSTOM_DTS_PATH
 	string "Device Tree Source file paths"
 	help
 	  Space-separated list of paths to device tree source files
-	  that will be copied to core/arch/arm/dts/ before starting the
-	  build.
+	  that will be copied to core/arch/arm/dts/ before starting
+	  the build.
 
-	  To use this device tree source file, the OP-TEE OS configuration
-	  must refer to it with the CFG_EMBED_DTB_SOURCE_FILE option and
-	  no platform flavor needs to be specified.
+	  To use this device tree source file, the OP-TEE OS
+	  configuration must refer to it with the
+	  CFG_EMBED_DTB_SOURCE_FILE option and no platform flavor
+	  needs to be specified.
 
 config BR2_TARGET_OPTEE_OS_ADDITIONAL_VARIABLES
 	string "Additional build variables"
