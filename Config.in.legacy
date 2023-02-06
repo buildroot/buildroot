@@ -210,6 +210,7 @@ config BR2_PACKAGE_QEMU_CUSTOM_TARGETS_WRAP
 
 config BR2_PACKAGE_XDRIVER_XF86_INPUT_KEYBOARD
 	bool "xf86-input-keyboard removed"
+	select BR2_LEGACY
 	help
 	  The X.org keyboard input driver no longer support Linux.
 
