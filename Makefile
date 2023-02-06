@@ -1257,7 +1257,8 @@ check-flake8:
 	| xargs -- python3 -m flake8 --statistics
 
 check-package:
-	$(Q)./utils/check-package `git ls-tree -r --name-only HEAD`
+	$(Q)./utils/check-package `git ls-tree -r --name-only HEAD` \
+		--ignore-list=$(TOPDIR)/.checkpackageignore
 
 .PHONY: .checkpackageignore
 .checkpackageignore:
