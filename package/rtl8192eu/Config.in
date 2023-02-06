@@ -1,5 +1,6 @@
 config BR2_PACKAGE_RTL8192EU
 	bool "rtl8192eu"
+	depends on !BR2_s390x
 	depends on BR2_LINUX_KERNEL
 	help
 	  A standalone driver for the RTL8192EU USB Wi-Fi adapter.
@@ -10,4 +11,5 @@ config BR2_PACKAGE_RTL8192EU
 	  https://github.com/clnhub/rtl8192eu-linux
 
 comment "rtl8192eu needs a Linux kernel to be built"
+	depends on !BR2_s390x
 	depends on !BR2_LINUX_KERNEL
