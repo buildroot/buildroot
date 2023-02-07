@@ -271,10 +271,6 @@ required_perl_modules="$required_perl_modules ExtUtils::MakeMaker" # Used by hos
 required_perl_modules="$required_perl_modules Thread::Queue" # Used by host-automake
 required_perl_modules="$required_perl_modules FindBin" # Used by (host-)libopenssl
 
-if grep -q ^BR2_PACKAGE_LIBXCRYPT=y $BR2_CONFIG ; then
-    required_perl_modules="$required_perl_modules open"
-fi
-
 if grep -q ^BR2_PACKAGE_MPV=y $BR2_CONFIG ; then
     required_perl_modules="$required_perl_modules Math::BigInt"
     required_perl_modules="$required_perl_modules Math::BigRat"
@@ -290,6 +286,13 @@ fi
 
 # This variable will keep the modules that are missing in your system.
 missing_perl_modules=""
+
+if grep -q ^BR2_PACKAGE_LIBXCRYPT=y $BR2_CONFIG ; then
+	# open cannot be used with require
+	if ! perl -e "use open ':std'" > /dev/null 2>&1 ; then
+		missing_perl_modules="$missing_perl_modules open"
+	fi
+fi
 
 for pm in $required_perl_modules ; do
 	if ! perl  -e "require $pm" > /dev/null 2>&1 ; then
