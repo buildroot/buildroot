@@ -1,0 +1,61 @@
+From 231add523328ad9e021d8f2b02697b6a11719430 Mon Sep 17 00:00:00 2001
+From: Vincent Fazio <vfazio@gmail.com>
+Date: Tue, 7 Feb 2023 08:51:24 -0600
+Subject: [PATCH] Detect symver attribute support
+
+On non-ELF platforms, such as microblaze, builds will fail when trying
+to add symver information because  __attribute__((symver ..)) is not
+supported even though __has_attribute(__symver__) returns true.
+
+Support for symver needs to be detected via a compile test since
+__has_attribute can report false positives [0].
+
+Add a configure compile check for __attribute__((symver ..)) to ensure
+it is supported and define a variable to advertise support.
+
+[0] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101766#c1
+
+Upstream: https://github.com/tukaani-project/xz/pull/32
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: Vincent Fazio <vfazio@gmail.com>
+---
+ configure.ac                | 9 +++++++++
+ src/liblzma/common/common.h | 2 +-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 5ad5589..08c623a 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -791,6 +791,15 @@ else
+ 				time with Libtool if neither --with-pic nor
+ 				--without-pic is used). This define must be
+ 				used together with liblzma_linux.map.])
++			OLD_CFLAGS="$CFLAGS"
++			CFLAGS="$CFLAGS -Werror"  # we need -Werror to make sure the attribute is not ignored
++			AC_COMPILE_IFELSE([AC_LANG_SOURCE(
++				[__attribute__ ((symver ("test@TEST"))) void foo(void) { }
++				])],
++				[AC_DEFINE([HAVE_SYMVER_ATTRIBUTE], [1],
++					[Define to 1 if GCC supports the symver attribute])],
++				[])
++			CFLAGS="$OLD_CFLAGS"
+ 			;;
+ 		*)
+ 			enable_symbol_versions=generic
+diff --git a/src/liblzma/common/common.h b/src/liblzma/common/common.h
+index 11fec52..1d2ef9c 100644
+--- a/src/liblzma/common/common.h
++++ b/src/liblzma/common/common.h
+@@ -76,7 +76,7 @@
+ // too (which doesn't support __symver__) so use it to detect if __symver__
+ // is available. This should be far more reliable than looking at compiler
+ // version macros as nowadays especially __GNUC__ is defined by many compilers.
+-#	if lzma_has_attribute(__symver__)
++#	if defined(HAVE_SYMVER_ATTRIBUTE) 
+ #		define LZMA_SYMVER_API(extnamever, type, intname) \
+ 			extern __attribute__((__symver__(extnamever))) \
+ 					LZMA_API(type) intname
+-- 
+2.25.1
+
