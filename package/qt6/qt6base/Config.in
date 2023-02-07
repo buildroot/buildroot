@@ -153,6 +153,14 @@ config BR2_PACKAGE_QT6BASE_WIDGETS
 	help
 	  This option enables the Qt6Widgets library.
 
+config BR2_PACKAGE_QT6BASE_PRINTSUPPORT
+	bool "printing support"
+	# yes, print support needs widgets
+	depends on BR2_PACKAGE_QT6BASE_WIDGETS
+	help
+	  This option enables printing support, optionally using CUPS
+	  if available.
+
 endif
 
 config BR2_PACKAGE_QT6BASE_NETWORK
