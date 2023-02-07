@@ -20,8 +20,8 @@ COPY apt-sources.list /etc/apt/sources.list
 
 # The container has no package lists, so need to update first
 RUN dpkg --add-architecture i386 && \
-    apt-get update -y
-RUN apt-get install -y --no-install-recommends \
+    apt-get -o APT::Retries=3 update -y
+RUN apt-get -o APT::Retries=3 install -y --no-install-recommends \
         bc \
         build-essential \
         bzr \
