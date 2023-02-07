@@ -1,3 +1,6 @@
+before_script:
+  - git config --global --add safe.directory ${CI_PROJECT_DIR}
+
 .check-check-package_base:
     script:
         - python3 -m pytest -v utils/checkpackagelib/
