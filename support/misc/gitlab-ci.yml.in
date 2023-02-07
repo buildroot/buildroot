@@ -23,9 +23,8 @@
         - utils/check-symbols
 
 .defconfig_check:
-    before_script:
-        - DEFCONFIG_NAME=$(echo ${CI_JOB_NAME} | sed -e 's,_check$,,g')
     script:
+        - DEFCONFIG_NAME=$(echo ${CI_JOB_NAME} | sed -e 's,_check$,,g')
         - echo "Configure Buildroot for ${DEFCONFIG_NAME}"
         - make ${DEFCONFIG_NAME}
         - support/scripts/check-dotconfig.py .config configs/${DEFCONFIG_NAME}
@@ -44,10 +43,9 @@
       }
 
 .defconfig_base:
-    before_script:
+    script:
         - DEFCONFIG_NAME=${CI_JOB_NAME}
         - OUTPUT_DIR=output
-    script:
         - echo "Configure Buildroot for ${DEFCONFIG_NAME}"
         - make ${DEFCONFIG_NAME}
         - ./support/scripts/check-dotconfig.py .config ./configs/${DEFCONFIG_NAME}
@@ -72,13 +70,12 @@
             - runtime-test.log
 
 .runtime_test_base:
-    before_script:
-        - TEST_CASE_NAME=${CI_JOB_NAME}
     # Keep build directories so the rootfs can be an artifact of the job. The
     # runner will clean up those files for us.
     # Multiply every emulator timeout by 10 to avoid sporadic failures in
     # elastic runners.
     script:
+        - TEST_CASE_NAME=${CI_JOB_NAME}
         - echo "Starting runtime test ${TEST_CASE_NAME}"
         - ./support/testing/run-tests -o test-output/ -d test-dl/ -k --timeout-multiplier 10 ${TEST_CASE_NAME}
     artifacts:
@@ -91,9 +88,8 @@
 
 .test_pkg:
     stage: build
-    before_script:
-        - OUTPUT_DIR=${CI_JOB_NAME}
     script:
+        - OUTPUT_DIR=${CI_JOB_NAME}
         - echo "Configure Buildroot for ${OUTPUT_DIR}"
         - make O=${OUTPUT_DIR} syncconfig
         - make O=${OUTPUT_DIR} savedefconfig
