@@ -1,0 +1,62 @@
+From 754e0d1edc1c01b18f4890de7c58f7610e589d76 Mon Sep 17 00:00:00 2001
+From: Vincent Fazio <vfazio@gmail.com>
+Date: Tue, 7 Feb 2023 03:55:28 -0600
+Subject: [PATCH] configure: invert condition for strtoimax builtin
+
+Previously, bash would attempt to build a replacement for strtoimax if
+it found that the C library had the function already declared.
+
+This caused build errors when linking against static libraries that did
+not define the function as a weak alias but, in reality, was a logic
+error since bash should only provide it's own implementation if one is
+not provided by the C library.
+
+Now, fix this by inverting the logic.
+
+Upstream:
+  https://git.savannah.gnu.org/cgit/bash.git/commit/?h=devel&id=43e861c2cd840946a81dfd0386966eb4f3a17ce9
+
+Signed-off-by: Vincent Fazio <vfazio@gmail.com>
+[yann.morin.1998@free.fr: patch configure after the m file]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ configure       | 6 +++++-
+ m4/strtoimax.m4 | 5 ++++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/m4/strtoimax.m4 b/m4/strtoimax.m4
+index 30985723..fa43ac7b 100644
+--- a/m4/strtoimax.m4
++++ b/m4/strtoimax.m4
+@@ -29,7 +29,10 @@ AC_CACHE_VAL(bash_cv_func_strtoimax,
+   fi
+ ])
+ AC_MSG_RESULT($bash_cv_func_strtoimax)
+-if test $bash_cv_func_strtoimax = yes; then
++if test "$ac_cv_have_decl_strtoimax" = "yes" ; then
++AC_DEFINE([HAVE_DECL_STRTOIMAX], [1])
++fi
++if test $bash_cv_func_strtoimax = no; then
+ AC_LIBOBJ(strtoimax)
+ fi
+ ])
+diff --git a/configure b/configure
+index 47313753..6039cee7 100755
+--- a/configure
++++ b/configure
+@@ -20443,7 +20443,11 @@ fi
+ 
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $bash_cv_func_strtoimax" >&5
+ printf "%s\n" "$bash_cv_func_strtoimax" >&6; }
+-if test $bash_cv_func_strtoimax = yes; then
++if test "$ac_cv_have_decl_strtoimax" = "yes" ; then
++printf "%s\n" "#define HAVE_DECL_STRTOIMAX 1" >>confdefs.h
++
++fi
++if test $bash_cv_func_strtoimax = no; then
+ case " $LIBOBJS " in
+   *" strtoimax.$ac_objext "* ) ;;
+   *) LIBOBJS="$LIBOBJS strtoimax.$ac_objext"
+-- 
+2.25.1
+
