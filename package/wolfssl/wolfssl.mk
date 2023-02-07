@@ -32,6 +32,12 @@ else
 WOLFSSL_CONF_OPTS += --disable-sslv3
 endif
 
+ifeq ($(BR2_PACKAGE_WOLFSSL_ASM_SUPPORTS),y)
+WOLFSSL_CONF_OPTS += --enable-asm
+else
+WOLFSSL_CONF_OPTS += --disable-asm
+endif
+
 # enable ARMv8 hardware acceleration
 ifeq ($(BR2_aarch64),y)
 WOLFSSL_CONF_OPTS += --enable-armasm
