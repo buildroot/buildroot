@@ -1250,6 +1250,13 @@ else ifeq ($$($(2)_SITE_METHOD),cvs)
 DL_TOOLS_DEPENDENCIES += cvs
 endif # SITE_METHOD
 
+# cargo/go vendoring (may) need git
+ifeq ($$($(2)_DOWNLOAD_POST_PROCESS),cargo)
+DL_TOOLS_DEPENDENCIES += git
+else ifeq ($$($(2)_DOWNLOAD_POST_PROCESS),go)
+DL_TOOLS_DEPENDENCIES += git
+endif
+
 DL_TOOLS_DEPENDENCIES += $$(call extractor-system-dependency,$$($(2)_SOURCE))
 
 # Ensure all virtual targets are PHONY. Listed alphabetically.
