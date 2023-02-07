@@ -84,6 +84,10 @@ HOST_GCC_COMMON_CONF_OPTS = \
 	--with-bugurl="http://bugs.buildroot.net/" \
 	--without-zstd
 
+ifeq ($(BR2_REPRODUCIBLE),y)
+HOST_GCC_COMMON_CONF_OPTS += --with-debug-prefix-map=$(BASE_DIR)=buildroot
+endif
+
 # Don't build documentation. It takes up extra space / build time,
 # and sometimes needs specific makeinfo versions to work
 HOST_GCC_COMMON_CONF_ENV = \
