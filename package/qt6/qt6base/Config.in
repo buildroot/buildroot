@@ -67,6 +67,19 @@ config BR2_PACKAGE_QT6BASE_EGLFS
 	depends on BR2_PACKAGE_QT6_GL_SUPPORTS
 	select BR2_PACKAGE_QT6BASE_OPENGL
 
+config BR2_PACKAGE_QT6BASE_DEFAULT_QPA
+	string "Default graphical platform"
+	help
+	  Choose the default platform abstraction to use for graphical
+	  applications (e.g xcb, linuxfb, eglfs, ...). If this is
+	  empty, the default for your architecture will be used
+	  (usually this is eglfs).
+
+	  You can get a list of supported platforms by running a Qt
+	  application with the option "-platform help" on your
+	  target. You can choose a different platform at runtime with
+	  the -platform option.
+
 config BR2_PACKAGE_QT6BASE_OPENGL
 	bool "OpenGL support"
 	depends on BR2_PACKAGE_QT6_GL_SUPPORTS
