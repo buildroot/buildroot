@@ -43,4 +43,8 @@ else
 WOLFSSL_CONF_OPTS += --disable-armasm
 endif
 
+ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
+WOLFSSL_CONF_OPTS += --with-arm-target=thumb
+endif
+
 $(eval $(autotools-package))
