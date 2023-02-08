@@ -1,0 +1,50 @@
+From c958fd5cd7d5ff03c0a023608b53b74997c514b3 Mon Sep 17 00:00:00 2001
+From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Date: Wed, 8 Feb 2023 13:43:55 +0100
+Subject: [PATCH] Makefile: use the configure-detected or user-supplied ar
+ program
+
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ Makefile.in | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index 86d3cca..089ac99 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -303,11 +303,11 @@ $(LIB_SL) : $(LIBRARY)
+ 	mv $@.t $@
+ 
+ $(LIBRARY) : $(OBJS) $(NORMAL_OBJS)
+-	ar cr $@ $?
++	$(AR) cr $@ $?
+ 	@RANLIB@ $@
+ 
+ $(LIB_TH) : $(OBJS) $(THREAD_OBJS)
+-	ar cr $@ $?
++	$(AR) cr $@ $?
+ 	@RANLIB@ $@
+ 
+ $(LIB_TH_SL) : $(LIB_TH)
+@@ -316,7 +316,7 @@ $(LIB_TH_SL) : $(LIB_TH)
+ 	mv $@.t $@
+ 
+ $(LIB_CXX) : $(OBJS) $(NORMAL_OBJS) $(CXX_OBJS)
+-	ar cr $@ $?
++	$(AR) cr $@ $?
+ 	@RANLIB@ $@
+ 
+ $(LIB_CXX_SL) : $(LIB_CXX)
+@@ -325,7 +325,7 @@ $(LIB_CXX_SL) : $(LIB_CXX)
+ 	mv $@.t $@
+ 
+ $(LIB_TH_CXX) : $(OBJS) $(THREAD_OBJS) $(CXX_OBJS)
+-	ar cr $@ $?
++	$(AR) cr $@ $?
+ 	@RANLIB@ $@
+ 
+ $(LIB_TH_CXX_SL) : $(LIB_TH_CXX)
+-- 
+2.25.1
+
