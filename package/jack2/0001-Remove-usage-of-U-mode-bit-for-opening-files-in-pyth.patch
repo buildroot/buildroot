@@ -1,0 +1,55 @@
+From 328c58967dce8be426f9208ba7717ab5afc2c4f3 Mon Sep 17 00:00:00 2001
+From: Daan De Meyer <daan.j.demeyer@gmail.com>
+Date: Mon, 11 Jul 2022 00:56:28 +0200
+Subject: [PATCH] Remove usage of 'U' mode bit for opening files in python
+
+The 'U' mode bit is removed in python 3.11. It has been
+deprecated for a long time. The 'U' mode bit has no effect
+so this change doesn't change any behavior.
+
+See https://docs.python.org/3.11/whatsnew/3.11.html#changes-in-the-python-api
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ waflib/ConfigSet.py | 2 +-
+ waflib/Context.py   | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/waflib/ConfigSet.py b/waflib/ConfigSet.py
+index b300bb56..84736c9c 100644
+--- a/waflib/ConfigSet.py
++++ b/waflib/ConfigSet.py
+@@ -312,7 +312,7 @@ class ConfigSet(object):
+ 		:type filename: string
+ 		"""
+ 		tbl = self.table
+-		code = Utils.readf(filename, m='rU')
++		code = Utils.readf(filename, m='r')
+ 		for m in re_imp.finditer(code):
+ 			g = m.group
+ 			tbl[g(2)] = eval(g(3))
+diff --git a/waflib/Context.py b/waflib/Context.py
+index 9fee3fa1..761b521f 100644
+--- a/waflib/Context.py
++++ b/waflib/Context.py
+@@ -266,7 +266,7 @@ class Context(ctx):
+ 				cache[node] = True
+ 				self.pre_recurse(node)
+ 				try:
+-					function_code = node.read('rU', encoding)
++					function_code = node.read('r', encoding)
+ 					exec(compile(function_code, node.abspath(), 'exec'), self.exec_dict)
+ 				finally:
+ 					self.post_recurse(node)
+@@ -662,7 +662,7 @@ def load_module(path, encoding=None):
+ 
+ 	module = imp.new_module(WSCRIPT_FILE)
+ 	try:
+-		code = Utils.readf(path, m='rU', encoding=encoding)
++		code = Utils.readf(path, m='r', encoding=encoding)
+ 	except EnvironmentError:
+ 		raise Errors.WafError('Could not read the file %r' % path)
+ 
+-- 
+2.30.2
+
