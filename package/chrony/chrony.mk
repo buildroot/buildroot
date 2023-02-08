@@ -10,20 +10,19 @@ CHRONY_LICENSE = GPL-2.0
 CHRONY_LICENSE_FILES = COPYING
 CHRONY_CPE_ID_VENDOR = tuxfamily
 CHRONY_SELINUX_MODULES = chronyd
-CHRONY_DEPENDENCIES = host-pkgconf
+CHRONY_DEPENDENCIES = host-pkgconf libcap
 
 CHRONY_CONF_OPTS = \
 	--host-system=Linux \
 	--host-machine=$(BR2_ARCH) \
 	--prefix=/usr \
 	--without-tomcrypt \
+	--with-user=chrony \
 	$(if $(BR2_PACKAGE_CHRONY_DEBUG_LOGGING),--enable-debug,--disable-debug)
 
-ifeq ($(BR2_PACKAGE_LIBCAP),y)
-CHRONY_DEPENDENCIES += libcap
-else
-CHRONY_CONF_OPTS += --without-libcap
-endif
+define CHRONY_USERS
+	chrony -1 chrony -1 * /run/chrony - - Time daemon
+endef
 
 ifeq ($(BR2_PACKAGE_LIBNSS),y)
 CHRONY_DEPENDENCIES += libnss
