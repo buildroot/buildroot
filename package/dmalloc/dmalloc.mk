@@ -14,6 +14,13 @@ DMALLOC_LICENSE_FILES = LICENSE.txt
 DMALLOC_INSTALL_STAGING = YES
 DMALLOC_CFLAGS = $(TARGET_CFLAGS)
 
+# dmalloc uses $(LD) to link, and thus misses the object files or libs that
+# are needed to provide the __stack_chk_fail_local and co. symbols. Changing
+# to use $(CC) is really more complex that we'd like. Since dmalloc is
+# involved in debugging memory allocation, it is not expected to be a
+# production library, so we do not care that much that it has SSP.
+DMALLOC_CFLAGS += -fno-stack-protector
+
 ifeq ($(BR2_STATIC_LIBS),y)
 DMALLOC_CONF_OPTS += --disable-shlib
 else
