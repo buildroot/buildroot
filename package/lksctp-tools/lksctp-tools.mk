@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LKSCTP_TOOLS_VERSION = 1.0.17
-LKSCTP_TOOLS_SITE = http://downloads.sourceforge.net/project/lksctp/lksctp-tools
+LKSCTP_TOOLS_VERSION = 1.0.19
+LKSCTP_TOOLS_SITE = $(call github,sctp,lksctp-tools,v$(LKSCTP_TOOLS_VERSION))
 LKSCTP_TOOLS_INSTALL_STAGING = YES
 # configure not shipped
 LKSCTP_TOOLS_AUTORECONF = YES
