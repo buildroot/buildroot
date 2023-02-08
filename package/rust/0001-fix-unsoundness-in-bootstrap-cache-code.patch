@@ -1,0 +1,43 @@
+From 6bf37780ed49846c78d6707355f1cf44790c4301 Mon Sep 17 00:00:00 2001
+From: Michael Goulet <michael@errs.io>
+Date: Mon, 12 Dec 2022 18:29:33 +0000
+Subject: [PATCH] =?UTF-8?q?=F0=9F=9A=A8=20fix=20unsoundness=20in=20bootstr?=
+ =?UTF-8?q?ap=20cache=20code?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+(cherry picked from commit 3fe64ebbce21e79adb64099984e96dfb79bdd0f9)
+Signed-off-by: Sebastian Weyer <sebastian.weyer@smile.fr>
+---
+ src/bootstrap/cache.rs | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/bootstrap/cache.rs b/src/bootstrap/cache.rs
+index be5c9bb0788..05f25af68ea 100644
+--- a/src/bootstrap/cache.rs
++++ b/src/bootstrap/cache.rs
+@@ -89,16 +89,16 @@ fn hash<H: Hasher>(&self, state: &mut H) {
+ 
+ impl<T: Internable + Deref> Deref for Interned<T> {
+     type Target = T::Target;
+-    fn deref(&self) -> &'static Self::Target {
++    fn deref(&self) -> &Self::Target {
+         let l = T::intern_cache().lock().unwrap();
+-        unsafe { mem::transmute::<&Self::Target, &'static Self::Target>(l.get(*self)) }
++        unsafe { mem::transmute::<&Self::Target, &Self::Target>(l.get(*self)) }
+     }
+ }
+ 
+ impl<T: Internable + AsRef<U>, U: ?Sized> AsRef<U> for Interned<T> {
+-    fn as_ref(&self) -> &'static U {
++    fn as_ref(&self) -> &U {
+         let l = T::intern_cache().lock().unwrap();
+-        unsafe { mem::transmute::<&U, &'static U>(l.get(*self).as_ref()) }
++        unsafe { mem::transmute::<&U, &U>(l.get(*self).as_ref()) }
+     }
+ }
+ 
+-- 
+2.25.1
+
