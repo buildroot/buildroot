@@ -1,0 +1,54 @@
+From 864d67d5cb4334f106c1ae055f0260b44f0dbb3b Mon Sep 17 00:00:00 2001
+From: Angelo Compagnucci <angelo@amarulasolutions.com>
+Date: Wed, 8 Feb 2023 10:58:20 +0100
+Subject: [PATCH] configure.ac: add option to disable tests
+
+This commit adds an option that allows to disable building tests,
+which are not useful in some situations.
+
+Upstream: https://github.com/flatmax/gtkiostream/pull/25
+Signed-off-by: Angelo Compagnucci <angelo@amarulasolutions.com>
+[Thomas: improved with a configuration option]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ Makefile.am  | 7 ++++++-
+ configure.ac | 5 +++++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 3cc0944..cd5d9e4 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -20,7 +20,12 @@ AUTOMAKE_OPTIONS = foreign subdir-objects
+ SUBDIRS = src api include
+ 
+ if !HAVE_EMSCRIPTEN
+-SUBDIRS += applications test
++SUBDIRS += applications
++
++if HAVE_TESTS
++SUBDIRS += test
++endif
++
+ endif
+ 
+ ACLOCAL_AMFLAGS = -I m4
+diff --git a/configure.ac b/configure.ac
+index 4557858..7950bf2 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -68,6 +68,11 @@ fi
+ # Checks for documentation
+ AM_CONDITIONAL([HAVE_DOXYGEN],[test -n "$DOXYGEN"])AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([api/Doxyfile])])
+ 
++AC_ARG_ENABLE(tests, AS_HELP_STRING([--disable-tests],
++	      [Disable tests (default: enabled)]),
++	      [TESTS=$enableval], [TESTS=yes])
++AM_CONDITIONAL([HAVE_TESTS],[test "x$TESTS" = xyes])
++
+ #check whether this is a cygwin system
+ AM_CONDITIONAL(CYGWIN, test "$build_os" = "cygwin")
+ 
+-- 
+2.45.2
+
