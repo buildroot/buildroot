@@ -1,11 +1,11 @@
-From 231add523328ad9e021d8f2b02697b6a11719430 Mon Sep 17 00:00:00 2001
+From f0e0e8bd08b4d4e7c89a5a3b7d9a3c083f7e5432 Mon Sep 17 00:00:00 2001
 From: Vincent Fazio <vfazio@gmail.com>
-Date: Tue, 7 Feb 2023 08:51:24 -0600
+Date: Wed, 8 Feb 2023 12:58:37 +0000
 Subject: [PATCH] Detect symver attribute support
 
-On non-ELF platforms, such as microblaze, builds will fail when trying
-to add symver information because  __attribute__((symver ..)) is not
-supported even though __has_attribute(__symver__) returns true.
+On Microblaze, builds will fail when trying to add symver information
+because  __attribute__((symver ..)) is not supported even though
+__has_attribute(__symver__) returns true.
 
 Support for symver needs to be detected via a compile test since
 __has_attribute can report false positives [0].
@@ -18,33 +18,16 @@ it is supported and define a variable to advertise support.
 Upstream: https://github.com/tukaani-project/xz/pull/32
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Signed-off-by: Vincent Fazio <vfazio@gmail.com>
+[Peter: patch configure instead of configure.ac so autoreconf isn't
+triggered at build time]
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
 ---
- configure.ac                | 9 +++++++++
- src/liblzma/common/common.h | 2 +-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ configure                   | 15 +++++++++++++++
+ src/liblzma/common/common.h |  2 +-
+ 2 files changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/configure.ac b/configure.ac
-index 5ad5589..08c623a 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -791,6 +791,15 @@ else
- 				time with Libtool if neither --with-pic nor
- 				--without-pic is used). This define must be
- 				used together with liblzma_linux.map.])
-+			OLD_CFLAGS="$CFLAGS"
-+			CFLAGS="$CFLAGS -Werror"  # we need -Werror to make sure the attribute is not ignored
-+			AC_COMPILE_IFELSE([AC_LANG_SOURCE(
-+				[__attribute__ ((symver ("test@TEST"))) void foo(void) { }
-+				])],
-+				[AC_DEFINE([HAVE_SYMVER_ATTRIBUTE], [1],
-+					[Define to 1 if GCC supports the symver attribute])],
-+				[])
-+			CFLAGS="$OLD_CFLAGS"
- 			;;
- 		*)
- 			enable_symbol_versions=generic
 diff --git a/src/liblzma/common/common.h b/src/liblzma/common/common.h
-index 11fec52..1d2ef9c 100644
+index 671d3bc..27b56ee 100644
 --- a/src/liblzma/common/common.h
 +++ b/src/liblzma/common/common.h
 @@ -76,7 +76,7 @@
@@ -52,10 +35,36 @@ index 11fec52..1d2ef9c 100644
  // is available. This should be far more reliable than looking at compiler
  // version macros as nowadays especially __GNUC__ is defined by many compilers.
 -#	if lzma_has_attribute(__symver__)
-+#	if defined(HAVE_SYMVER_ATTRIBUTE) 
++#	if defined(HAVE_SYMVER_ATTRIBUTE)
  #		define LZMA_SYMVER_API(extnamever, type, intname) \
  			extern __attribute__((__symver__(extnamever))) \
  					LZMA_API(type) intname
+diff --git a/configure b/configure
+index ff0eed5..e685b30 100755
+--- a/configure
++++ b/configure
+@@ -16687,6 +16687,21 @@ printf "%s\n" "" >&6; }
+ 
+ printf "%s\n" "#define HAVE_SYMBOL_VERSIONS_LINUX $have_symbol_versions_linux" >>confdefs.h
+ 
++			OLD_CFLAGS="$CFLAGS"
++			CFLAGS="$CFLAGS -Werror"  # we need -Werror to make sure the attribute is not ignored
++			cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++__attribute__ ((symver ("test@TEST"))) void foo(void) { }
++
++_ACEOF
++if ac_fn_c_try_compile "$LINENO"
++then :
++
++printf "%s\n" "#define HAVE_SYMVER_ATTRIBUTE 1" >>confdefs.h
++
++fi
++rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
++			CFLAGS="$OLD_CFLAGS"
+ 			;;
+ 		*)
+ 			enable_symbol_versions=generic
 -- 
-2.25.1
+2.34.1
 
