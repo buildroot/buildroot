@@ -44,18 +44,11 @@ ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_63261),y)
 DMALLOC_CFLAGS += -O0
 endif
 
-DMALLOC_CONF_ENV = CFLAGS="$(DMALLOC_CFLAGS)"
-
-define DMALLOC_POST_PATCH
-	$(SED) 's/^ac_cv_page_size=0$$/ac_cv_page_size=12/' $(@D)/configure
-	$(SED) 's/ac_cv_strdup_macro=no$$/ac_cv_strdup_macro=yes/' $(@D)/configure
-	$(SED) 's/ac_cv_strndup_macro=no$$/ac_cv_strndup_macro=yes/' $(@D)/configure
-	$(SED) 's/(ld -/($${LD-ld} -/' $(@D)/configure
-	$(SED) 's/'\''ld -/"$${LD-ld}"'\'' -/' $(@D)/configure
-	$(SED) 's/ar cr/$$(AR) cr/' $(@D)/Makefile.in
-endef
-
-DMALLOC_POST_PATCH_HOOKS += DMALLOC_POST_PATCH
+DMALLOC_CONF_ENV = \
+	CFLAGS="$(DMALLOC_CFLAGS)" \
+	ac_cv_page_size=12 \
+	ac_cv_strdup_macro=yes \
+	ac_cv_strndup_macro=yes
 
 # both DESTDIR and PREFIX are ignored..
 define DMALLOC_INSTALL_STAGING_CMDS
