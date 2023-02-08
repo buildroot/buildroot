@@ -1,0 +1,80 @@
+From 9d57d4353c82110c609f36f91986277343d4ee45 Mon Sep 17 00:00:00 2001
+From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Date: Wed, 8 Feb 2023 13:26:56 +0100
+Subject: [PATCH] configure: allow overriding some tests
+
+Some tests use AC_RUN_IFELSE, so they do not work for cross-compilation.
+
+Allow the user to provide these results from the environment.
+
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ configure    | 6 +++---
+ configure.ac | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/configure b/configure
+index c18dfb2..d165962 100755
+--- a/configure
++++ b/configure
+@@ -4540,7 +4540,7 @@ fi
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking strdup macro" >&5
+ $as_echo_n "checking strdup macro... " >&6; }
+ if test "$cross_compiling" = yes; then :
+-  ac_cv_strdup_macro=no
++  ac_cv_strdup_macro="${ac_cv_strdup_macro-no}"
+ 
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+@@ -4578,7 +4578,7 @@ $as_echo "$ac_cv_strdup_macro" >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking strndup macro" >&5
+ $as_echo_n "checking strndup macro... " >&6; }
+ if test "$cross_compiling" = yes; then :
+-  ac_cv_strndup_macro=no
++  ac_cv_strndup_macro="${ac_cv_strndup_macro-no}"
+ 
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+@@ -4753,7 +4753,7 @@ done
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking basic-block size" >&5
+ $as_echo_n "checking basic-block size... " >&6; }
+-ac_cv_page_size=0
++ac_cv_page_size="${ac_cv_page_size-0}"
+ if test $ac_cv_page_size = 0; then
+    if test "$cross_compiling" = yes; then :
+    ac_cv_page_size=0
+diff --git a/configure.ac b/configure.ac
+index 9740fdc..51bdf4d 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -292,7 +292,7 @@ int main() { return 1; }
+ ]])],
+ [ac_cv_strdup_macro=yes],
+ [ac_cv_strdup_macro=no],
+-[ac_cv_strdup_macro=no]
++[ac_cv_strdup_macro="${ac_cv_strdup_macro-no}"]
+ )
+ AC_MSG_RESULT([$ac_cv_strdup_macro])
+ 
+@@ -316,7 +316,7 @@ int main() { return 1; }
+ ]])],
+ [ac_cv_strndup_macro=yes],
+ [ac_cv_strndup_macro=no],
+-[ac_cv_strndup_macro=no]
++[ac_cv_strndup_macro="${ac_cv_strndup_macro-no}"]
+ )
+ AC_MSG_RESULT([$ac_cv_strndup_macro])
+ 
+@@ -390,7 +390,7 @@ AC_MSG_RESULT([$ac_cv_use_mmap])
+ #
+ AC_CHECK_FUNCS(getpagesize)
+ AC_MSG_CHECKING([basic-block size])
+-ac_cv_page_size=0
++ac_cv_page_size="${ac_cv_page_size-0}"
+ if test $ac_cv_page_size = 0; then
+    AC_RUN_IFELSE([AC_LANG_SOURCE([
+ #if HAVE_UNISTD_H
+-- 
+2.25.1
+
