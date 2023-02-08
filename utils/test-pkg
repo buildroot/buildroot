@@ -5,7 +5,7 @@ TOOLCHAINS_CSV='support/config-fragments/autobuild/toolchain-configs.csv'
 TEMP_CONF=""
 
 do_clean() {
-    if [ ! -z "${TEMP_CONF}" ]; then
+    if [ -n "${TEMP_CONF}" ]; then
         rm -f "${TEMP_CONF}"
     fi
 }
@@ -72,8 +72,8 @@ main() {
     if [ -z "${cfg}" ]; then
         pkg_br_name="${pkg//-/_}"
         pkg_br_name="BR2_PACKAGE_${pkg_br_name^^}"
-        TEMP_CONF=$(mktemp /tmp/test-${pkg}-config.XXXXXX)
-        echo "${pkg_br_name}=y" > ${TEMP_CONF}
+        TEMP_CONF="$(mktemp /tmp/test-"${pkg}"-config.XXXXXX)"
+        echo "${pkg_br_name}=y" > "${TEMP_CONF}"
         cfg="${TEMP_CONF}"
     fi
     if [ ! -e "${cfg}" ]; then
@@ -83,15 +83,15 @@ main() {
         dir="${HOME}/br-test-pkg"
     fi
 
-    if [ ${random} -gt 0 ]; then
+    if [ "${random}" -gt 0 ]; then
         mode=$((mode+1))
     fi
 
-    if [ ${number} -gt 0 ]; then
+    if [ "${number}" -gt 0 ]; then
         mode=$((mode+1))
     fi
 
-    if [ ${all} -eq 1 ]; then
+    if [ "${all}" -eq 1 ]; then
         mode=$((mode+1))
     fi
 
@@ -106,19 +106,18 @@ main() {
     # Extract the URLs of the toolchains; drop internal toolchains
     # E.g.: http://server/path/to/name.config,arch,libc
     #  -->  http://server/path/to/name.config
-    toolchains=($(sed -r -e 's/,.*//; /internal/d; /^#/d; /^$/d;' "${toolchains_csv}" \
-                  |if [ ${random} -gt 0 ]; then \
-                      sort -R |head -n ${random}
-                  elif [ ${number} -gt 0 ]; then \
-                      head -n ${number}
-                  else
-                      sort
-                  fi
-                 )
-               )
+    mapfile -t toolchains < <(sed -r -e 's/,.*//; /internal/d; /^#/d; /^$/d;' "${toolchains_csv}" \
+                                | if [ "${random}" -gt 0 ]; then \
+                                    sort -R | head -n "${random}"
+                                elif [ "${number}" -gt 0 ]; then \
+                                    head -n "${number}"
+                                else
+                                    sort
+                                fi
+                             )
 
     nb_tc="${#toolchains[@]}"
-    if [ ${nb_tc} -eq 0 ]; then
+    if [ "${nb_tc}" -eq 0 ]; then
         printf "error: no toolchain found (networking issue?)\n" >&2; exit 1
     fi
 
@@ -131,7 +130,7 @@ main() {
         : $((nb++))
         toolchain="$(basename "${toolchainconfig}" .config)"
         build_dir="${dir}/${toolchain}"
-        printf "%40s [%*d/%d]: " "${toolchain}" ${#nb_tc} ${nb} ${nb_tc}
+        printf "%40s [%*d/%d]: " "${toolchain}" ${#nb_tc} "${nb}" "${nb_tc}"
         build_one "${build_dir}" "${toolchainconfig}" "${cfg}" "${pkg}" "${prepare_only}" && ret=0 || ret=${?}
         case ${ret} in
         (0) printf "OK\n";;
@@ -143,7 +142,7 @@ main() {
     done
 
     printf "%d builds, %d skipped, %d build failed, %d legal-info failed, %d show-info failed\n" \
-        ${nb} ${nb_skip} ${nb_fail} ${nb_legal} ${nb_show}
+        "${nb}" "${nb_skip}" "${nb_fail}" "${nb_legal}" "${nb_show}"
 
     return $((nb_fail + nb_legal))
 }
@@ -157,7 +156,7 @@ build_one() {
 
     mkdir -p "${dir}"
 
-    CONFIG_= support/kconfig/merge_config.sh -O "${dir}" \
+    CONFIG_="" support/kconfig/merge_config.sh -O "${dir}" \
         "${toolchainconfig}" "support/config-fragments/minimal.config" "${cfg}" \
         >> "${dir}/logfile" 2>&1
     # We want all the options from the snippet to be present as-is (set
@@ -178,7 +177,7 @@ build_one() {
     rm -f "${dir}/missing.config"
 
     # Defer building the job to the caller (e.g. a gitlab pipeline)
-    if [ ${prepare_only} -eq 1 ]; then
+    if [ "${prepare_only}" -eq 1 ]; then
         return 0
     fi
 
