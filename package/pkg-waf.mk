@@ -38,6 +38,13 @@ WAF_OPTS = $(if $(VERBOSE),-v) -j $(PARALLEL_JOBS)
 
 define inner-waf-package
 
+# The version of waflib has to match with the version of waf,
+# otherwise waf errors out with:
+# Waf script 'X' and library 'Y' do not match
+define WAF_PACKAGE_REMOVE_WAF_LIB
+	$(RM) -fr $(@D)/waf $(@D)/waflib
+endef
+
 # We need host-python3 to run waf
 $(2)_DEPENDENCIES += host-python3
 
@@ -47,6 +54,7 @@ $(2)_NEEDS_EXTERNAL_WAF ?= NO
 ifeq ($$($(2)_NEEDS_EXTERNAL_WAF),YES)
 $(2)_DEPENDENCIES += host-waf
 $(2)_WAF = $$(HOST_DIR)/bin/waf
+$(2)_POST_PATCH_HOOKS += WAF_PACKAGE_REMOVE_WAF_LIB
 else
 $(2)_WAF ?= ./waf
 endif
