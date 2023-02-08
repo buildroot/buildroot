@@ -21,12 +21,6 @@ AUBIO_CONF_OPTS = \
 # https://github.com/jackaudio/jack2/issues/898
 AUBIO_NEEDS_EXTERNAL_WAF = YES
 
-# The old waf script bundled in aubio 0.4.9 need to be removed first.
-define AUBIO_REMOVE_OLD_WAF
-	$(RM) -fr $(@D)/waf $(@D)/waflib
-endef
-AUBIO_POST_EXTRACT_HOOKS = AUBIO_REMOVE_OLD_WAF
-
 # Add --notests for each build step to avoid running unit tests on the
 # build machine.
 AUBIO_WAF_OPTS = --notests
