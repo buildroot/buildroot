@@ -51,7 +51,7 @@ checkarg() {
 		usage
 	fi
 	if [ "$MUNGE_CASE" = "yes" ] ; then
-		ARG="`echo $ARG | tr a-z- A-Z_`"
+		ARG="$(echo "$ARG" | tr a-z- A-Z_)"
 	fi
 	case "$ARG" in
 	${BR2_PREFIX}*)
@@ -64,7 +64,6 @@ txt_append() {
 	local anchor="$1"
 	local insert="$2"
 	local infile="$3"
-	local tmpfile="$infile.swp"
 
 	# sed append cmd: 'a\' + newline + text + newline
 	cmd="$(printf "a\\%b$insert" "\n")"
@@ -76,7 +75,6 @@ txt_subst() {
 	local before="$1"
 	local after="$2"
 	local infile="$3"
-	local tmpfile="$infile.swp"
 
 	sed -i -e "s:$before:$after:" "$infile"
 }
@@ -84,7 +82,6 @@ txt_subst() {
 txt_delete() {
 	local text="$1"
 	local infile="$2"
-	local tmpfile="$infile.swp"
 
 	sed -i -e "/$text/d" "$infile"
 }
@@ -178,15 +175,14 @@ while [ "$1" != "" ] ; do
 		if grep -q "# ${BR2_PREFIX}$ARG is not set" $FN ; then
 			echo n
 		else
-			V="$(grep "^${BR2_PREFIX}$ARG=" $FN)"
-			if [ $? != 0 ] ; then
-				echo undef
-			else
+			if V="$(grep "^${BR2_PREFIX}$ARG=" $FN)"; then
 				V="${V/#${BR2_PREFIX}$ARG=/}"
 				V="${V/#\"/}"
 				V="${V/%\"/}"
 				V="${V//\\\"/\"}"
 				echo "${V}"
+			else
+				echo undef
 			fi
 		fi
 		;;
