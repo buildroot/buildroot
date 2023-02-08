@@ -3,7 +3,7 @@
 # License: WTFPL, https://spdx.org/licenses/WTFPL.html
 
 main() {
-    local found ret start d h m mf
+    local ret start d h m mf
 
     if ! which unbuffer >/dev/null 2>&1; then
         printf "you need to install 'unbuffer' (from package expect or expect-dev)\n" >&2
@@ -13,7 +13,7 @@ main() {
     start=${SECONDS}
 
     ( exec 2>&1; unbuffer make "${@}"; ) \
-    > >( while read line; do
+    > >( while read -r line; do
              printf "%(%Y-%m-%dT%H:%M:%S)T %s\n" -1 "${line}"
          done \
          |tee -a br.log \
