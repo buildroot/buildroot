@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PIPEWIRE_MEDIA_SESSION_VERSION = 0.4.1
+PIPEWIRE_MEDIA_SESSION_VERSION = 0.4.2
 PIPEWIRE_MEDIA_SESSION_SOURCE = media-session-$(PIPEWIRE_MEDIA_SESSION_VERSION).tar.bz2
 PIPEWIRE_MEDIA_SESSION_SITE = https://gitlab.freedesktop.org/pipewire/media-session/-/archive/$(PIPEWIRE_MEDIA_SESSION_VERSION)
 PIPEWIRE_MEDIA_SESSION_LICENSE = MIT
@@ -17,7 +17,10 @@ PIPEWIRE_MEDIA_SESSION_DEPENDENCIES = \
 	pipewire \
 	$(TARGET_NLS_DEPENDENCIES)
 
-PIPEWIRE_MEDIA_SESSION_CONF_OPTS = -Ddocs=disabled -Dtests=disabled
+PIPEWIRE_MEDIA_SESSION_CONF_OPTS = \
+	-Ddocs=disabled \
+	-Dtests=disabled \
+	-Dinstalled_tests=disabled
 
 PIPEWIRE_MEDIA_SESSION_MODULE_SETS_LIST = alsa
 
