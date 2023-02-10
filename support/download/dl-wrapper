@@ -138,9 +138,15 @@ main() {
         fi
 
         if [ -n "${post_process}" ] ; then
-            "${OLDPWD}/support/download/${post_process}-post-process" \
-                -o "${tmpf}" \
-                -n "${raw_base_name}"
+            if ! "${OLDPWD}/support/download/${post_process}-post-process" \
+                    -o "${tmpf}" \
+                    -n "${raw_base_name}"
+            then
+                # cd back to keep path coherence
+                cd "${OLDPWD}"
+                rm -rf "${tmpd}"
+                continue
+            fi
         fi
 
         # cd back to free the temp-dir, so we can remove it later
