@@ -6,6 +6,7 @@
 
 # See note below when updating Erlang
 ERLANG_VERSION = 26.0.2
+ERLANG_RELEASE = $(firstword $(subst ., ,$(ERLANG_VERSION)))
 ERLANG_SITE = \
 	https://github.com/erlang/otp/releases/download/OTP-$(ERLANG_VERSION)
 ERLANG_SOURCE = otp_src_$(ERLANG_VERSION).tar.gz
@@ -26,9 +27,9 @@ ERLANG_PRE_CONFIGURE_HOOKS += ERLANG_RUN_AUTOCONF
 HOST_ERLANG_DEPENDENCIES += host-autoconf
 HOST_ERLANG_PRE_CONFIGURE_HOOKS += ERLANG_RUN_AUTOCONF
 
-# Whenever updating Erlang, this value should be updated as well, to the
-# value of EI_VSN in the file lib/erl_interface/vsn.mk
-ERLANG_EI_VSN = 5.4
+# Return the EIV (Erlang Interface Version, EI_VSN)
+# $(1): base directory, i.e. either $(HOST_DIR) or $(STAGING_DIR)/usr
+erlang_ei_vsn = `sed -r -e '/^erl_interface-(.+)/!d; s//\1/' $(1)/lib/erlang/releases/$(ERLANG_RELEASE)/installed_application_versions`
 
 # The configure checks for these functions fail incorrectly
 ERLANG_CONF_ENV = ac_cv_func_isnan=yes ac_cv_func_isinf=yes
