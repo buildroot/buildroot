@@ -126,7 +126,7 @@ do_mk() {
         done
         printf '\n'
 
-        printf 'BR2_EXTERNAL_NAMES = \n'
+        printf 'export BR2_EXTERNAL_NAMES = \n'
         printf 'BR2_EXTERNAL_DIRS = \n'
         printf 'BR2_EXTERNAL_MKS = \n'
 
@@ -180,6 +180,14 @@ do_kconfig() {
     fi
 
     printf 'menu "External options"\n\n' >>"${outputdir}/.br2-external.in.menus"
+
+    {
+        printf 'config BR2_EXTERNAL_NAMES\n'
+        printf '\tstring\n'
+        # Use star-expansion: we really one a single arg.
+        printf '\tdefault "%s"\n' "${BR2_EXT_NAMES[*]}"
+        printf '\n'
+    } >>"${outputdir}/.br2-external.in.paths"
 
     for br2_name in "${BR2_EXT_NAMES[@]}"; do
         eval br2_desc="\"\${BR2_EXT_DESCS_${br2_name}}\""
