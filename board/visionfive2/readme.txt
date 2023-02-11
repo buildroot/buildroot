@@ -4,6 +4,8 @@ Starfive VisionFive2
 The VisionFive2 is a low-cost RISC-V 64-bit based platform, powered by a
 Starfive JH7110 processor.
 
+https://doc-en.rvspace.org/Doc_Center/visionfive_2.html
+
 How to build
 ============
 
