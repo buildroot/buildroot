@@ -1,0 +1,49 @@
+From 5691f58d1f8ce1332b02536e48f1ac5864629c6c Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 12 Feb 2023 15:27:27 +0100
+Subject: [PATCH] Fix build without C++
+
+Fix the following build failure without C++:
+
+CMake Error at CMakeLists.txt:1 (PROJECT):
+  No CMAKE_CXX_COMPILER could be found.
+
+  Tell CMake where to find the compiler by setting either the environment
+  variable "CXX" or the CMake cache entry CMAKE_CXX_COMPILER to the full path
+  to the compiler, or to the compiler name if it is in the PATH.
+
+Fixes:
+ - http://autobuild.buildroot.org/results/a7f2176d40f156c319754ef5d3b7fd0decfe754f
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/openSUSE/libsolv/pull/520]
+---
+ CMakeLists.txt     | 2 +-
+ ext/CMakeLists.txt | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3541f496..f899c49a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-PROJECT (libsolv)
++PROJECT (libsolv C)
+ 
+ CMAKE_MINIMUM_REQUIRED (VERSION 2.8.5)
+ 
+diff --git a/ext/CMakeLists.txt b/ext/CMakeLists.txt
+index f01c0238..589fa946 100644
+--- a/ext/CMakeLists.txt
++++ b/ext/CMakeLists.txt
+@@ -103,6 +103,7 @@ IF (ENABLE_CUDFREPO)
+ ENDIF (ENABLE_CUDFREPO)
+ 
+ IF (ENABLE_HAIKU)
++    enable_language(CXX)
+     SET (libsolvext_SRCS ${libsolvext_SRCS}
+ 	repo_haiku.cpp)
+     SET (libsolvext_HEADERS ${libsolvext_HEADERS}
+-- 
+2.39.0
+
