@@ -4,9 +4,10 @@
 #
 ################################################################################
 
-RTL8723DS_VERSION = a638cc8639015b8b9390af3350fab0366b6c87e7
+RTL8723DS_VERSION = ec85dc6b9f72bfe413bff464ed01a272e29c8dbe
 RTL8723DS_SITE = $(call github,lwfinger,rtl8723ds,$(RTL8723DS_VERSION))
 RTL8723DS_LICENSE = GPL-2.0
+RTL8723DS_LICENSE_FILES = COPYING
 
 RTL8723DS_USER_EXTRA_CLAGS = \
 	-DCONFIG_$(call qstrip,$(BR2_ENDIAN))_ENDIAN \
