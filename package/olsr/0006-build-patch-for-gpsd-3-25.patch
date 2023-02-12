@@ -1,0 +1,31 @@
+From 17d583258969c1d182361e0e168b3cad79ef64e6 Mon Sep 17 00:00:00 2001
+From: Rui Chen <rui@chenrui.dev>
+Date: Mon, 16 Jan 2023 18:35:32 -0500
+Subject: [PATCH] build: patch for gpsd 3.25
+
+Signed-off-by: Rui Chen <rui@chenrui.dev>
+[Retrieved from: https://github.com/OLSR/olsrd/pull/119]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ lib/pud/src/gpsdclient.h | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/lib/pud/src/gpsdclient.h b/lib/pud/src/gpsdclient.h
+index 061056b12..a51dd2211 100644
+--- a/lib/pud/src/gpsdclient.h
++++ b/lib/pud/src/gpsdclient.h
+@@ -60,14 +60,6 @@ struct GpsdConnectionState {
+     struct devconfig_t dev[MAXUSERDEVS];
+ };
+ 
+-/* describe a data source */
+-struct fixsource_t {
+-    char spec[PATH_MAX]; /* working space, will be modified */
+-    char *server; /* pointer into spec field */
+-    char *port; /* pointer into spec field */
+-    char *device; /* pointer into spec field */
+-};
+-
+ /**
+  * The gpsd daemon spec
+  */
