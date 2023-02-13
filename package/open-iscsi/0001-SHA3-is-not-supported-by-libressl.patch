@@ -1,0 +1,144 @@
+From 29a4c3a518d13bfc0a07915e7e87fbec2b66597c Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 13 Feb 2023 08:55:11 +0100
+Subject: [PATCH] SHA3 is not supported by libressl
+
+Disable SHA3 with libressl as it is not supported resulting in the
+following build failure:
+
+/home/buildroot/autobuild/instance-3/output-1/host/lib/gcc/or1k-buildroot-linux-gnu/11.3.0/../../../../or1k-buildroot-linux-gnu/bin/ld: iscsid.p/usr_auth.c.o: in function `auth_hash_init':
+auth.c:(.text+0x7bc): undefined reference to `EVP_sha3_256'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/48a4bddc355956733d712214797350cca8e111d9
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/open-iscsi/open-iscsi/pull/396]
+---
+ libopeniscsiusr/idbm.h |  2 ++
+ usr/auth.c             | 13 ++++++++++++-
+ usr/auth.h             |  4 ++++
+ usr/idbm.c             |  2 ++
+ 4 files changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/libopeniscsiusr/idbm.h b/libopeniscsiusr/idbm.h
+index be5986f..1043b27 100644
+--- a/libopeniscsiusr/idbm.h
++++ b/libopeniscsiusr/idbm.h
+@@ -56,7 +56,9 @@ enum iscsi_chap_algs {
+ 	ISCSI_AUTH_CHAP_ALG_MD5 = 5,
+ 	ISCSI_AUTH_CHAP_ALG_SHA1 = 6,
+ 	ISCSI_AUTH_CHAP_ALG_SHA256 = 7,
++#ifndef LIBRESSL_VERSION_NUMBER
+ 	ISCSI_AUTH_CHAP_ALG_SHA3_256 = 8,
++#endif
+ 	AUTH_CHAP_ALG_MAX_COUNT = 5,
+ };
+ 
+diff --git a/usr/auth.c b/usr/auth.c
+index 46c328e..5f50e26 100644
+--- a/usr/auth.c
++++ b/usr/auth.c
+@@ -181,9 +181,11 @@ static int auth_hash_init(EVP_MD_CTX **context, int chap_alg) {
+ 	case AUTH_CHAP_ALG_SHA256:
+ 		digest = EVP_sha256();
+ 		break;
++#ifndef LIBRESSL_VERSION_NUMBER
+ 	case AUTH_CHAP_ALG_SHA3_256:
+ 		digest = EVP_sha3_256();
+ 		break;
++#endif
+ 	}
+ 
+ 	if (*context == NULL)
+@@ -298,7 +300,9 @@ static int
+ acl_chk_chap_alg_optn(int chap_algorithm)
+ {
+ 	if (chap_algorithm == AUTH_OPTION_NONE ||
++#ifndef LIBRESSL_VERSION_NUMBER
+ 	    chap_algorithm == AUTH_CHAP_ALG_SHA3_256 ||
++#endif
+ 	    chap_algorithm == AUTH_CHAP_ALG_SHA256 ||
+ 	    chap_algorithm == AUTH_CHAP_ALG_SHA1 ||
+ 	    chap_algorithm == AUTH_CHAP_ALG_MD5)
+@@ -711,9 +715,11 @@ acl_chk_chap_alg_key(struct iscsi_acl *client)
+ 				case AUTH_CHAP_ALG_SHA256:
+ 					client->chap_challenge_len = AUTH_CHAP_SHA256_RSP_LEN;
+ 					break;
++#ifndef LIBRESSL_VERSION_NUMBER
+ 				case AUTH_CHAP_ALG_SHA3_256:
+ 					client->chap_challenge_len = AUTH_CHAP_SHA3_256_RSP_LEN;
+ 					break;
++#endif
+ 				}
+ 				return;
+ 			}
+@@ -862,7 +868,10 @@ acl_local_auth(struct iscsi_acl *client)
+ 			client->local_state = AUTH_LOCAL_STATE_ERROR;
+ 			client->dbg_status = AUTH_DBG_STATUS_CHAP_ALG_REJECT;
+ 			break;
+-		} else if ((client->negotiated_chap_alg != AUTH_CHAP_ALG_SHA3_256) &&
++		} else if (
++#ifndef LIBRESSL_VERSION_NUMBER
++			   (client->negotiated_chap_alg != AUTH_CHAP_ALG_SHA3_256) &&
++#endif
+ 			   (client->negotiated_chap_alg != AUTH_CHAP_ALG_SHA256) &&
+ 			   (client->negotiated_chap_alg != AUTH_CHAP_ALG_SHA1) &&
+ 			   (client->negotiated_chap_alg != AUTH_CHAP_ALG_MD5)) {
+@@ -1824,6 +1833,7 @@ acl_init_chap_digests(int *value_list, unsigned *chap_algs, int conf_count) {
+ 				            "SHA256 due to crypto lib configuration");
+ 			}
+ 			break;
++#ifndef LIBRESSL_VERSION_NUMBER
+ 		case AUTH_CHAP_ALG_SHA3_256:
+ 			if (EVP_DigestInit_ex(context, EVP_sha3_256(), NULL)) {
+ 				value_list[i++] = AUTH_CHAP_ALG_SHA3_256;
+@@ -1832,6 +1842,7 @@ acl_init_chap_digests(int *value_list, unsigned *chap_algs, int conf_count) {
+ 				            "SHA3-256 due to crypto lib configuration");
+ 			}
+ 			break;
++#endif
+ 		case ~0:
+ 			/* unset value in array, just ignore */
+ 			break;
+diff --git a/usr/auth.h b/usr/auth.h
+index 16cdb24..9357772 100644
+--- a/usr/auth.h
++++ b/usr/auth.h
+@@ -32,7 +32,9 @@ enum {
+ 	AUTH_CHAP_MD5_RSP_LEN = 16,
+ 	AUTH_CHAP_SHA1_RSP_LEN = 20,
+ 	AUTH_CHAP_SHA256_RSP_LEN = 32,
++#ifndef LIBRESSL_VERSION_NUMBER
+ 	AUTH_CHAP_SHA3_256_RSP_LEN = 32,
++#endif
+ 	AUTH_CHAP_RSP_MAX = 32,
+ };
+ 
+@@ -67,7 +69,9 @@ enum {
+ 	AUTH_CHAP_ALG_MD5 = 5,
+ 	AUTH_CHAP_ALG_SHA1 = 6,
+ 	AUTH_CHAP_ALG_SHA256 = 7,
++#ifndef LIBRESSL_VERSION_NUMBER
+ 	AUTH_CHAP_ALG_SHA3_256 = 8,
++#endif
+ 	AUTH_CHAP_ALG_MAX_COUNT = 5
+ };
+ 
+diff --git a/usr/idbm.c b/usr/idbm.c
+index 90bc142..082e1c6 100644
+--- a/usr/idbm.c
++++ b/usr/idbm.c
+@@ -200,7 +200,9 @@ static struct int_list_tbl {
+ 	{ "MD5", AUTH_CHAP_ALG_MD5 },
+ 	{ "SHA1", AUTH_CHAP_ALG_SHA1 },
+ 	{ "SHA256", AUTH_CHAP_ALG_SHA256 },
++#ifndef LIBRESSL_VERSION_NUMBER
+ 	{ "SHA3-256", AUTH_CHAP_ALG_SHA3_256 },
++#endif
+ };
+ 
+ static void
+-- 
+2.39.0
+
