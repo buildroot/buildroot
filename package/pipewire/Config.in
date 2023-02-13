@@ -15,6 +15,18 @@ config BR2_PACKAGE_PIPEWIRE
 
 if BR2_PACKAGE_PIPEWIRE
 
+config BR2_PACKAGE_PIPEWIRE_COMPRESS_OFFLOAD
+	bool "pipewire Compress-Offload"
+	depends on !BR2_STATIC_LIBS # tinycompress
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_7
+	select BR2_PACKAGE_TINYCOMPRESS
+	help
+	  Enable ALSA Compress-Offload support
+
+comment "pipewire Compress-Offload needs a toolchain w/ dynamic library, headers >= 5.7"
+	depends on BR2_STATIC_LIBS || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_7
+
 config BR2_PACKAGE_PIPEWIRE_EXAMPLES
 	bool "pipewire examples"
 	help
