@@ -96,6 +96,7 @@ endif
 ifeq ($(BR2_PACKAGE_NETWORK_MANAGER_MODEM_MANAGER),y)
 NETWORK_MANAGER_DEPENDENCIES += modem-manager mobile-broadband-provider-info
 NETWORK_MANAGER_CONF_OPTS += -Dmodem_manager=true
+NETWORK_MANAGER_CONF_OPTS += -Dmobile_broadband_provider_info_database=/usr/share/mobile-broadband-provider-info/serviceproviders.xml
 else
 NETWORK_MANAGER_CONF_OPTS += -Dmodem_manager=false
 endif

@@ -1,0 +1,60 @@
+From 03ba04d4784fa4fc7ec31455070fb5ecf25ade23 Mon Sep 17 00:00:00 2001
+From: Heiko Thiery <heiko.thiery@gmail.com>
+Date: Fri, 27 Jan 2023 22:38:42 +0100
+Subject: [PATCH] build: meson: add option to set the
+ mobile-broadband-provider-info database
+
+When building network-manager in cross-compile environment meson is not able
+to detect the right location of the mobile-broadband-provider-info
+database by using the pkg-config module.
+
+By adding the option 'mobile_broadband_provider_info_database' to set the
+correct path to the datafile this can be solved.
+
+Signed-off-by: Heiko Thiery <heiko.thiery@gmail.com>
+
+https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/merge_requests/1519
+---
+ meson.build       | 6 +++++-
+ meson_options.txt | 1 +
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 0adc42f738..84ce52c736 100644
+--- a/meson.build
++++ b/meson.build
+@@ -584,7 +584,10 @@ enable_modem_manager = get_option('modem_manager')
+ if enable_modem_manager
+   mm_glib_dep = dependency('mm-glib', version: '>= 0.7.991')
+ 
+-  mobile_broadband_provider_info_database = dependency('mobile-broadband-provider-info').get_pkgconfig_variable('database')
++  mobile_broadband_provider_info_database = get_option('mobile_broadband_provider_info_database')
++  if mobile_broadband_provider_info_database == ''
++    mobile_broadband_provider_info_database = dependency('mobile-broadband-provider-info').get_pkgconfig_variable('database')
++  endif
+   config_h.set_quoted('MOBILE_BROADBAND_PROVIDER_INFO_DATABASE', mobile_broadband_provider_info_database)
+ endif
+ 
+@@ -1054,6 +1057,7 @@ output += '  jansson: ' + jansson_msg + '\n'
+ output += '  iptables: ' + config_h.get('IPTABLES_PATH') + '\n'
+ output += '  nft: ' + config_h.get('NFT_PATH') + '\n'
+ output += '  modemmanager-1: ' + enable_modem_manager.to_string() + '\n'
++output += '  mobile-broadband-provider-info-database: ' + mobile_broadband_provider_info_database + '\n'
+ output += '  ofono: ' + enable_ofono.to_string() + '\n'
+ output += '  concheck: ' + enable_concheck.to_string() + '\n'
+ output += '  libteamdctl: ' + enable_teamdctl.to_string() + '\n'
+diff --git a/meson_options.txt b/meson_options.txt
+index 8b1d32e645..4e359f9e92 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -32,6 +32,7 @@ option('ppp', type: 'boolean', value: true, description: 'enable PPP/PPPoE suppo
+ option('pppd', type: 'string', value: '', description: 'path to pppd binary')
+ option('pppd_plugin_dir', type: 'string', value: '', description: 'path to the pppd plugins directory')
+ option('modem_manager', type: 'boolean', value: true, description: 'Enable new ModemManager1 interface support')
++option('mobile_broadband_provider_info_database', type: 'string', value: '', description: 'path to the mobile-broadband-provider-info database')
+ option('ofono', type: 'boolean', value: false, description: 'Enable oFono support (experimental)')
+ option('concheck', type: 'boolean', value: true, description: 'enable connectivity checking support')
+ option('teamdctl', type: 'boolean', value: false, description: 'enable Teamd control support')
+-- 
+2.20.1
+
