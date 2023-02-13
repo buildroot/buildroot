@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2023.02"
 
+config BR2_KERNEL_HEADERS_4_9
+	bool "kernel headers version 4.9.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 4.9.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
 config BR2_PACKAGE_DOCKER_PROXY
 	bool "docker-proxy removed"
 	select BR2_LEGACY
