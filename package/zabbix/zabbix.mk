@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-ZABBIX_VERSION_MAJOR = 5.4
-ZABBIX_VERSION = $(ZABBIX_VERSION_MAJOR).9
+ZABBIX_VERSION_MAJOR = 6.2
+ZABBIX_VERSION = $(ZABBIX_VERSION_MAJOR).7
 ZABBIX_SITE = https://cdn.zabbix.com/zabbix/sources/stable/$(ZABBIX_VERSION_MAJOR)
 ZABBIX_LICENSE = GPL-2.0+
 ZABBIX_LICENSE_FILES = README COPYING
@@ -13,9 +13,8 @@ ZABBIX_CPE_ID_VENDOR = zabbix
 # We're patching m4/netsnmp.m4
 ZABBIX_AUTORECONF = YES
 
-ZABBIX_DEPENDENCIES = pcre
+ZABBIX_DEPENDENCIES = host-pkgconf pcre2
 ZABBIX_CONF_OPTS = \
-	--with-libpcre=$(STAGING_DIR)/usr/bin/ \
 	--without-sqlite3 \
 	--enable-agent \
 	--disable-agent2 \
