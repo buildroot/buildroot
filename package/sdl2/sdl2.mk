@@ -22,6 +22,9 @@ SDL2_CONF_OPTS += \
 	--disable-pulseaudio \
 	--disable-video-wayland
 
+# 0002-Fix-potential-memory-leak-in-GLES_CreateTexture.patch
+SDL2_IGNORE_CVES += CVE-2022-4743
+
 # We are using autotools build system for sdl2, so the sdl2-config.cmake
 # include path are not resolved like for sdl2-config script.
 # Change the absolute /usr path to resolve relatively to the sdl2-config.cmake location.
