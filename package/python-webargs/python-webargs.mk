@@ -10,5 +10,7 @@ PYTHON_WEBARGS_SITE = https://files.pythonhosted.org/packages/4b/7d/fece8e6547b3
 PYTHON_WEBARGS_SETUP_TYPE = setuptools
 PYTHON_WEBARGS_LICENSE = MIT
 PYTHON_WEBARGS_LICENSE_FILES = LICENSE
+PYTHON_WEBARGS_CPE_ID_VENDOR = webargs_project
+PYTHON_WEBARGS_CPE_ID_PRODUCT = webargs
 
 $(eval $(python-package))
