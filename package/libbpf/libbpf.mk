@@ -39,26 +39,9 @@ define LIBBPF_INSTALL_TARGET_CMDS
 		-C $(@D)/src install DESTDIR=$(TARGET_DIR)
 endef
 
-# We need to install_uapi_headers so we have btf.h to compile
-# host-pahole.
-# Nonetheless, this target adds bpf.h which generates a conflict when
-# building the kernel:
-# In file included from libbpf_internal.h:17:0, from strset.c:9:
-# relo_core.h:10:6: error: nested redefinition of 'enum bpf_core_relo_kind'
-# enum bpf_core_relo_kind {
-# ^~~~~~~~~~~~~~~~~~
-# relo_core.h:10:6: error: redeclaration of 'enum bpf_core_relo_kind'
-# In file included from libbpf_legacy.h:13:0,
-# 		from libbpf_internal.h:16,
-# 		from strset.c:9:
-# /home/francis/buildroot/output/host/include/linux/bpf.h:6497:6: note: originally defined here
-# enum bpf_core_relo_kind {
-# So, better to remove remove it now since we do not need it to build
-# host-pahole, the only user of host-libbpf.
 define HOST_LIBBPF_INSTALL_CMDS
 	$(HOST_MAKE_ENV) $(HOST_CONFIGURE_OPTS) $(MAKE) \
 		-C $(@D)/src install install_uapi_headers DESTDIR=$(HOST_DIR)
-	rm $(HOST_DIR)/include/linux/bpf.h
 endef
 
 $(eval $(generic-package))
