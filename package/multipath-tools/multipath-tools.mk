@@ -22,7 +22,7 @@ MULTIPATH_TOOLS_CPE_ID_VENDOR = opensvc
 
 MULTIPATH_TOOLS_DEPENDENCIES = lvm2 json-c readline udev liburcu libaio host-pkgconf
 MULTIPATH_TOOLS_MAKE_OPTS = \
-	LINUX_HEADERS_INCDIR=$(STAGING_DIR)/usr/include \
+	kernel_incdir=$(STAGING_DIR)/usr/include \
 	LIB="lib" \
 	RUN="run" \
 	OPTFLAGS="" \
