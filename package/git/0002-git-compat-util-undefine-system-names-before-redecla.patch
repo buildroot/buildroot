@@ -1,4 +1,4 @@
-From 6d406390b870fdb2cd9d18b12ebfabc12f5096df Mon Sep 17 00:00:00 2001
+From d4a11fd215195cd1ca6a43058ef250b688ade1f4 Mon Sep 17 00:00:00 2001
 From: Jeff King <peff@peff.net>
 Date: Fri, 2 Dec 2022 06:05:38 -0500
 Subject: [PATCH] git-compat-util: undefine system names before redeclaring
@@ -29,7 +29,7 @@ Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
  1 file changed, 4 insertions(+)
 
 diff --git a/git-compat-util.h b/git-compat-util.h
-index e3456bdd0d..211861da0f 100644
+index f6882b9b50..dadb9e55cb 100644
 --- a/git-compat-util.h
 +++ b/git-compat-util.h
 @@ -346,6 +346,7 @@ static inline int git_setitimer(int which,
@@ -40,7 +40,7 @@ index e3456bdd0d..211861da0f 100644
  #define setitimer(which,value,ovalue) git_setitimer(which,value,ovalue)
  #endif
  
-@@ -1480,6 +1481,9 @@ static inline void git_funlockfile(FILE *fh)
+@@ -1488,6 +1489,9 @@ static inline void git_funlockfile(FILE *fh)
  {
  	; /* nothing */
  }

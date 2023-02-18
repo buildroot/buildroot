@@ -1,4 +1,4 @@
-From 385f67eb2254edb1fb4cf523e5e3d5a8f123d72c Mon Sep 17 00:00:00 2001
+From 86aeac96d04ae5381085c0f93acb12d3bfd06969 Mon Sep 17 00:00:00 2001
 From: Jeff King <peff@peff.net>
 Date: Wed, 30 Nov 2022 16:15:14 -0500
 Subject: [PATCH] git-compat-util: avoid redefining system function names
@@ -64,7 +64,7 @@ Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
  1 file changed, 8 insertions(+), 5 deletions(-)
 
 diff --git a/git-compat-util.h b/git-compat-util.h
-index a76d0526f7..e3456bdd0d 100644
+index af05077560..f6882b9b50 100644
 --- a/git-compat-util.h
 +++ b/git-compat-util.h
 @@ -341,11 +341,12 @@ struct itimerval {
@@ -83,7 +83,7 @@ index a76d0526f7..e3456bdd0d 100644
  #endif
  
  #ifndef NO_LIBGEN_H
-@@ -1471,14 +1472,16 @@ int open_nofollow(const char *path, int flags);
+@@ -1479,14 +1480,16 @@ int open_nofollow(const char *path, int flags);
  #endif
  
  #ifndef _POSIX_THREAD_SAFE_FUNCTIONS
@@ -102,6 +102,8 @@ index a76d0526f7..e3456bdd0d 100644
  #define getc_unlocked(fh) getc(fh)
  #endif
  
+
+base-commit: cbf04937d5b9fcf0a76c28f69e6294e9e3ecd7e6
 -- 
 An old man doll... just what I always wanted! - Clara
 
