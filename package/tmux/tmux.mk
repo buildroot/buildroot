@@ -25,6 +25,12 @@ else
 TMUX_CONF_OPTS += --disable-utf8proc
 endif
 
+# tmux uses custom --enable-static option, instead of standard libtool
+# directive resulting in a build failure with systemd or utf8proc
+ifeq ($(BR2_SHARED_STATIC_LIBS),y)
+TMUX_CONF_OPTS += --disable-static
+endif
+
 # Add /usr/bin/tmux to /etc/shells otherwise some login tools like dropbear
 # can reject the user connection. See man shells.
 define TMUX_ADD_TMUX_TO_SHELLS
