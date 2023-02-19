@@ -21,6 +21,7 @@ MODSECURITY2_CONF_OPTS = \
 	--with-apxs=$(STAGING_DIR)/usr/bin/apxs \
 	--without-curl \
 	--without-lua \
+	--without-pcre \
 	--without-yajl \
 	--without-ssdeep
 
