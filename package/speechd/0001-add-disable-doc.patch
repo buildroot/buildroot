@@ -1,0 +1,78 @@
+From d88557d3c29c33f76af20cb7a6eb798f6f598c23 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 19 Feb 2023 15:18:35 +0100
+Subject: [PATCH] add --disable-doc
+
+Allow the user to disable documentation through --disable-doc to avoid
+the following build failure without makeinfo:
+
+make[3]: Entering directory '/home/buildroot/autobuild/instance-2/output-1/build/speechd-0.11.4/doc'
+  MAKEINFO ssip.info
+  MAKEINFO spd-say.info
+/home/buildroot/autobuild/instance-2/output-1/build/speechd-0.11.4/missing: line 81: makeinfo: command not found
+/home/buildroot/autobuild/instance-2/output-1/build/speechd-0.11.4/missing: line 81: makeinfo: command not found
+WARNING: 'makeinfo' is missing on your system.
+         You should only need it if you modified a '.texi' file, or
+         any other file indirectly affecting the aspect of the manual.
+         You might want to install the Texinfo package:
+         <https://www.gnu.org/software/texinfo/>
+         The spurious makeinfo call might also be the consequence of
+         using a buggy 'make' (AIX, DU, IRIX), in which case you might
+         want to install GNU make:
+         <https://www.gnu.org/software/make/>
+WARNING: 'makeinfo' is missing on your system.
+         You should only need it if you modified a '.texi' file, or
+         any other file indirectly affecting the aspect of the manual.
+         You might want to install the Texinfo package:
+         <https://www.gnu.org/software/texinfo/>
+         The spurious makeinfo call might also be the consequence of
+         using a buggy 'make' (AIX, DU, IRIX), in which case you might
+         want to install GNU make:
+         <https://www.gnu.org/software/make/>
+make[3]: *** [Makefile:492: ssip.info] Error 127
+
+Fixes:
+ - http://autobuild.buildroot.org/results/d4f193545eb31864a9bac5a9d05bba39d3c7ff3e
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/brailcom/speechd/pull/810]
+---
+ Makefile.am  | 6 +++++-
+ configure.ac | 4 ++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 26617c78..480eb50e 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -22,7 +22,11 @@ pkgconfig_DATA = speech-dispatcher.pc
+ 
+ BUILT_SOURCES = $(top_srcdir)/.version
+ 
+-SUBDIRS= include locale src config doc po
++SUBDIRS= include locale src config po
++
++if ENABLE_DOC
++SUBDIRS += doc
++endif
+ 
+ EXTRA_DIST= config.rpath COPYING.LGPL COPYING.GPL-2 COPYING.GPL-3 ANNOUNCE BUGS FAQ README.md README.packagers README.translators README.overview.md README.style.md build.sh speech-dispatcherd.service.in speech-dispatcher.socket speech-dispatcher.service.in po/Makevars.in po/README
+ 
+diff --git a/configure.ac b/configure.ac
+index faaa8629..4f2af908 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -168,6 +168,10 @@ AC_SUBST([EXTRA_SOCKET_LIBS])
+ AC_SUBST([ERROR_CFLAGS])
+ AC_SUBST([RDYNAMIC])
+ 
++AC_ARG_ENABLE([doc],
++              [AC_HELP_STRING([--disable-doc], [turn off documentation])])
++AM_CONDITIONAL(ENABLE_DOC, test "$enable_doc" != "no")
++
+ # Check for python support.
+ # Python 3 or greater required
+ AC_ARG_ENABLE([python],
+-- 
+2.39.0
+
