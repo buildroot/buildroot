@@ -1,0 +1,44 @@
+From 504f35c8204248ae6f97278e8b7c6cc5853a1b94 Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Fri, 10 Feb 2023 21:31:30 +0100
+Subject: [PATCH] djxl: fix segmentation fault when JPEG is disabled
+
+When libjxl is compiled without JPEG support, by configuring for example
+with:
+
+    cmake -DCMAKE_DISABLE_FIND_PACKAGE_JPEG=TRUE ...
+
+djxl crashes with a segmentation fault at:
+https://github.com/libjxl/libjxl/blob/v0.8.1/tools/djxl_main.cc#L367
+
+The crash can be reproduced with the sequence:
+
+    gm convert IMAGE:LOGO ref.ppm
+    cjxl ref.ppm enc.jxl
+    djxl enc.jxl dec.ppm
+
+The crash happen because opt_jpeg_quality_id does not get
+initialized at:
+https://github.com/libjxl/libjxl/blob/v0.8.1/tools/djxl_main.cc#L107
+
+This commit fixes the crash by adding a test on opt_jpeg_quality_id.
+
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+[Retrieved from:
+https://github.com/libjxl/libjxl/pull/2178/commits/504f35c8204248ae6f97278e8b7c6cc5853a1b94]
+---
+ tools/djxl_main.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/djxl_main.cc b/tools/djxl_main.cc
+index b755301fcb..42b889e7ce 100644
+--- a/tools/djxl_main.cc
++++ b/tools/djxl_main.cc
+@@ -370,6 +370,7 @@ int main(int argc, const char* argv[]) {
+     args.color_space = force_colorspace;
+   }
+   if (codec == jxl::extras::Codec::kPNM && extension != ".pfm" &&
++      args.opt_jpeg_quality_id != -1 &&
+       !cmdline.GetOption(args.opt_jpeg_quality_id)->matched()) {
+     args.bits_per_sample = 0;
+   }
