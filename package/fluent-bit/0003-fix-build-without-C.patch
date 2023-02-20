@@ -1,0 +1,131 @@
+From 014e44808ebaf29b0c25b5a3fa2e35a99a30f628 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 21 Feb 2023 00:09:57 +0100
+Subject: [PATCH] fix build without C++
+
+Fix the following build failure without C++:
+
+-- Check for working CXX compiler: /usr/bin/c++ - broken
+CMake Error at /home/autobuild/autobuild/instance-15/output-1/per-package/fluent-bit/host/share/cmake-3.22/Modules/CMakeTestCXXCompiler.cmake:62 (message):
+  The C++ compiler
+
+    "/usr/bin/c++"
+
+  is not able to compile a simple test program.
+
+  It fails with the following output:
+
+    Change Dir: /home/autobuild/autobuild/instance-15/output-1/build/fluent-bit-2.0.9/CMakeFiles/CMakeTmp
+
+    Run Build Command(s):/home/autobuild/make/make -f Makefile cmTC_bfb29/fast && make[1]: Entering directory '/home/autobuild/autobuild/instance-15/output-1/build/fluent-bit-2.0.9/CMakeFiles/CMakeTmp'
+    /home/autobuild/make/make  -f CMakeFiles/cmTC_bfb29.dir/build.make CMakeFiles/cmTC_bfb29.dir/build
+    make[2]: Entering directory '/home/autobuild/autobuild/instance-15/output-1/build/fluent-bit-2.0.9/CMakeFiles/CMakeTmp'
+    Building CXX object CMakeFiles/cmTC_bfb29.dir/testCXXCompiler.cxx.o
+    /usr/bin/c++ --sysroot=/home/autobuild/autobuild/instance-15/output-1/per-package/fluent-bit/host/xtensa-buildroot-linux-uclibc/sysroot   -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -mlongcalls -mauto-litpools -O2 -g0  -fcommon -U_FILE_OFFSET_BITS  -g -fPIE -o CMakeFiles/cmTC_bfb29.dir/testCXXCompiler.cxx.o -c /home/autobuild/autobuild/instance-15/output-1/build/fluent-bit-2.0.9/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
+    c++: error: unrecognized command-line option '-mlongcalls'
+    c++: error: unrecognized command-line option '-mauto-litpools'
+    make[2]: *** [CMakeFiles/cmTC_bfb29.dir/build.make:78: CMakeFiles/cmTC_bfb29.dir/testCXXCompiler.cxx.o] Error 1
+    make[2]: Leaving directory '/home/autobuild/autobuild/instance-15/output-1/build/fluent-bit-2.0.9/CMakeFiles/CMakeTmp'
+    make[1]: *** [Makefile:127: cmTC_bfb29/fast] Error 2
+    make[1]: Leaving directory '/home/autobuild/autobuild/instance-15/output-1/build/fluent-bit-2.0.9/CMakeFiles/CMakeTmp'
+
+  CMake will not be able to correctly generate this project.
+Call Stack (most recent call first):
+  lib/msgpack-c/CMakeLists.txt:2 (project)
+
+Fixes:
+ - http://autobuild.buildroot.org/results/4b0f90d79d6dbbf976acf1da839260b0ee94ddda
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/fluent/fluent-bit/pull/6893]
+---
+ lib/chunkio/CMakeLists.txt          | 2 +-
+ lib/lwrb/CMakeLists.txt             | 2 +-
+ lib/msgpack-c/CMakeLists.txt        | 2 +-
+ lib/onigmo/CMakeLists.txt           | 2 +-
+ lib/snappy-fef67ac/CMakeLists.txt   | 2 +-
+ lib/tutf8e/CMakeLists.txt           | 2 +-
+ src/stream_processor/CMakeLists.txt | 2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/lib/chunkio/CMakeLists.txt b/lib/chunkio/CMakeLists.txt
+index 233bce35c..8bfe5199d 100644
+--- a/lib/chunkio/CMakeLists.txt
++++ b/lib/chunkio/CMakeLists.txt
+@@ -1,5 +1,5 @@
+ cmake_minimum_required(VERSION 3.0)
+-project(chunk-io)
++project(chunk-io C)
+ 
+ set(CIO_VERSION_MAJOR  1)
+ set(CIO_VERSION_MINOR  4)
+diff --git a/lib/lwrb/CMakeLists.txt b/lib/lwrb/CMakeLists.txt
+index 2fabd6319..031cbc1dd 100644
+--- a/lib/lwrb/CMakeLists.txt
++++ b/lib/lwrb/CMakeLists.txt
+@@ -1,7 +1,7 @@
+ cmake_minimum_required(VERSION 3.0)
+ 
+ # Setup project
+-project(LwLibPROJECT)
++project(LwLibPROJECT C)
+ 
+ # -------------------------------------------------
+ # This CMakeLists.txt is used only if it is a top-level file.
+diff --git a/lib/msgpack-c/CMakeLists.txt b/lib/msgpack-c/CMakeLists.txt
+index 810ad609a..ffbbc5ddb 100644
+--- a/lib/msgpack-c/CMakeLists.txt
++++ b/lib/msgpack-c/CMakeLists.txt
+@@ -1,5 +1,5 @@
+ cmake_minimum_required(VERSION 2.8)
+-project(msgpack-c)
++project(msgpack-c C)
+ 
+ set(src
+     src/objectc.c
+diff --git a/lib/onigmo/CMakeLists.txt b/lib/onigmo/CMakeLists.txt
+index 4a3b30d7d..66865130a 100644
+--- a/lib/onigmo/CMakeLists.txt
++++ b/lib/onigmo/CMakeLists.txt
+@@ -1,5 +1,5 @@
+ cmake_minimum_required(VERSION 3.4)
+-project(onigmo)
++project(onigmo C)
+ 
+ # Onigmo Version
+ set(ONIGMO_VERSION_MAJOR  6)
+diff --git a/lib/snappy-fef67ac/CMakeLists.txt b/lib/snappy-fef67ac/CMakeLists.txt
+index 8bb1e9598..ae9225c49 100644
+--- a/lib/snappy-fef67ac/CMakeLists.txt
++++ b/lib/snappy-fef67ac/CMakeLists.txt
+@@ -1,5 +1,5 @@
+ cmake_minimum_required(VERSION 2.8)
+-project(snappy-c)
++project(snappy-c C)
+ 
+ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+ 
+diff --git a/lib/tutf8e/CMakeLists.txt b/lib/tutf8e/CMakeLists.txt
+index 35cbe01ad..a056ef83c 100644
+--- a/lib/tutf8e/CMakeLists.txt
++++ b/lib/tutf8e/CMakeLists.txt
+@@ -1,5 +1,5 @@
+ cmake_minimum_required(VERSION 2.8)
+-project(tutf8e)
++project(tutf8e C)
+ 
+ # Not supported: -std=c90 (lacks support for inline)
+ # Supported:     -std=gnu90, -std=c99 or -std=gnu99
+diff --git a/src/stream_processor/CMakeLists.txt b/src/stream_processor/CMakeLists.txt
+index 8c5d70d13..de2c2fe38 100644
+--- a/src/stream_processor/CMakeLists.txt
++++ b/src/stream_processor/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-project(stream-processor)
++project(stream-processor C)
+ 
+ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+ 
+-- 
+2.39.0
+
