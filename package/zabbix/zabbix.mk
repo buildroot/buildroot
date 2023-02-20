@@ -15,6 +15,7 @@ ZABBIX_AUTORECONF = YES
 
 ZABBIX_DEPENDENCIES = host-pkgconf pcre2
 ZABBIX_CONF_OPTS = \
+	--with-libpcre2 \
 	--without-sqlite3 \
 	--enable-agent \
 	--disable-agent2 \
