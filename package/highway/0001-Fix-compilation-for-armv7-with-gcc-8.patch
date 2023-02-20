@@ -1,0 +1,46 @@
+From 94cda9cc8cd12345a6dbe70e40f3119d5bf7ee78 Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Fri, 10 Feb 2023 21:25:36 +0100
+Subject: [PATCH] Fix compilation for armv7 with gcc < 8
+
+Highway uses the construct __attribute__((target(+neon-vfpv4)) for
+Armv7. The target "+neon-vfpv4" was introduced in gcc 8, in commit [1].
+When using a gcc < 8 (for example, like [2]), compilation fails with
+message:
+
+    In file included from /build/highway-1.0.3/hwy/foreach_target.h:81:0,
+                     from /build/highway-1.0.3/hwy/per_target.cc:20:
+    /build/highway-1.0.3/hwy/per_target.cc: At global scope:
+    /build/highway-1.0.3/hwy/per_target.cc:23:22: error: attribute(target("+neon-vfpv4")) is unknown
+
+This commit protects the definition of HWY_TARGET_STR only when gcc
+version 8 or greater is used for armv7.
+
+[1] https://gcc.gnu.org/git/?p=gcc.git;a=commit;h=e87afe54b86c478ae63569e51e7abb67d3fe3fce
+[2] https://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/arm-linux-gnueabihf/gcc-linaro-7.3.1-2018.05-x86_64_arm-linux-gnueabihf.tar.xz
+
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ hwy/ops/set_macros-inl.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/hwy/ops/set_macros-inl.h b/hwy/ops/set_macros-inl.h
+index 051dbb3..00b4b1b 100644
+--- a/hwy/ops/set_macros-inl.h
++++ b/hwy/ops/set_macros-inl.h
+@@ -230,7 +230,12 @@
+ // Can use pragmas instead of -march compiler flag
+ #if HWY_HAVE_RUNTIME_DISPATCH
+ #if HWY_ARCH_ARM_V7
++#if HWY_COMPILER_GCC_ACTUAL >= 800
++// The __attribute__((target(+neon-vfpv4)) was introduced in gcc >= 8.
++// In case we have a gcc < 8, we can still compile by keeping
++// HWY_TARGET_STR undefined.
+ #define HWY_TARGET_STR "+neon-vfpv4"
++#endif
+ #else
+ #define HWY_TARGET_STR "+crypto"
+ #endif  // HWY_ARCH_ARM_V7
+-- 
+2.39.2
+
