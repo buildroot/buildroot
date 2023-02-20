@@ -1,3 +1,88 @@
+2023.02-rc1, released February 20th, 2023
+
+	Numerous package updates and many (62) new packages.
+
+	Toolchain:
+
+	- The check for access to "unsafe" (E.G. from the build host)
+	  header files and libraries by the cross compiler is now
+	  unconditionally enabled.
+
+	- Bootlin external toolchains updated to 2022.08
+
+	- The handling of the CCACHE_* environment variables by the
+          toolchain wrapper is now more strict, causing the variables
+          to only be exported when BR2_CCACHE is enabled.
+
+	Infrastructure:
+
+	- Br2-external: Fix make performance issue when many (> 6)
+	  external trees are used together.
+
+	- Legal-info: Stop warning about not saving sources for local
+	  / override packages if <PKG>_REDISTRIBUTE is set to NO.
+
+	- Go: Ensure our go build and module cache is used, even for the
+	  download step.
+
+	- Cargo: CARGO_HOME (the location where cargo stores it
+          downloaded artifacts) is now located under DL_DIR rather
+          than in HOST_DIR/share/cargo, ensuring it is shared between
+          builds.
+
+	Misc:
+
+	- Erofs: Use fixed timestamp and UUID when BR2_REPRODUCIBLE is
+	  used.
+
+	- Ext2: Year 2038+ compatible inodes are now used by default,
+          independently of the filesystem size.
+
+	- Linux: Fix build of < 5.6 kernels with host-gcc >= 10.
+
+	A large number of NXP related packages and defconfigs have
+	been updated as upstream moved the git repositories to Github.
+
+	New defconfigs: i.MX8mn BSH SMM S2 / pro, QEMU ARM EBBR,
+	Sipeed Lichee rv / rv dock, Starfive Visionfive2, Xilinx Versal
+	VCK190.
+
+	New packages: catch2, cli11, dotconf, edk2-non-osi,
+	fluent-bit, fxdiv, hddtemp, highway, imx-vpu-hantro-daemon,
+	libjxl, libsolv, libunibreak, neon-2-sse, open-iscsi,
+	opencv4-contrib, perftest, perl-image-exiftool,
+	python-apispec, python-async-generator, python-cppy,
+	python-dbus-fast, python-dicttoxml2, python-flask-smorest,
+	python-h11, python-hkdf, python-magic-wormhole,
+	python-magic-wormhole-mailbox-server,
+	python-magic-wormhole-transit-relay, python-marshmallow,
+	python-munch, python-outcome, python-pycrate, python-pyspnego,
+	python-reedsolo, python-selenium, python-smbprotocol,
+	python-sniffio, python-spake2, python-trio,
+	python-trio-websocket, python-uhid, python-webargs,
+	python-wsproto, qt5speech, qt6serialbus, rdma-core, reproc,
+	rtl8723ds-bt, rtl8821cu, sexpect, speechd, sscep, stb, sway,
+	termcolor, ti-k3-r5-loader, tl-expected, unifdef,
+	versal-firmware, xwayland, z3
+
+	Removed packages: docker-proxy, elixir, gummiboot,
+	python-bunch, python-m2r, sun20i-d1-spl, ucl,
+	xdriver_xf86-input-keyboard, xdriver_xf86-video-glint,
+	xdriver_xf86-video-imx-viv, xdriver_xf86-video-tga
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14971: Kernel 3.10.108 fail to build in Buildroot 2022.08-rc1
+	#14996: Too many directories in BR2_EXTERNAL causes hang during make
+	#15161: kernel can't support SUBDIR
+	#15196: Setting BR2_PACKAGE_RPI_FIRMWARE_CONFIG_FILE does not work
+	#15226: lsblk: not found
+	#15271: no start-qemu.sh
+	#15281: Error compiling GDAL library for RPi-64 if libgdal-dev install..
+	#15291: BR2_PACKAGE_GNU_EFI_ARCH_SUPPORTS without location
+	#15301: Selecting NAND Flash boot media (NAND_BOOT) breaks the uboot..
+	#15331: Warning on python-flit-core license when generating legal info
+
 2022.11.1, released January 18th, 2023
 
 	Important / security related fixes.
