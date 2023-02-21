@@ -20,7 +20,7 @@ HOST_FLEX_DEPENDENCIES = host-m4
 # 0002-build-make-it-possible-to-disable-the-build-of-the-f.patch
 # 0003-build-make-it-possible-to-disable-the-build-of-the-d.patch
 FLEX_AUTORECONF = YES
-FLEX_GETTEXTIZE = YES
+FLEX_AUTOPOINT = YES
 FLEX_CONF_ENV = ac_cv_path_M4=/usr/bin/m4 \
 	ac_cv_func_reallocarray=no
 
