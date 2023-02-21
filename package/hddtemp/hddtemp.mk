@@ -11,7 +11,7 @@ HDDTEMP_LICENSE_FILES = GPL-2
 
 # Fetched from Github with no configure script
 HDDTEMP_AUTORECONF = YES
-HDDTEMP_GETTEXTIZE = YES
+HDDTEMP_AUTOPOINT = YES
 
 HDDTEMP_DB_PATH = /usr/share/misc/hddtemp.db
 HDDTEMP_CONF_OPTS = --with-db-path=$(HDDTEMP_DB_PATH)
