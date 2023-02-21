@@ -92,7 +92,7 @@ endef
 #
 define GETTEXTIZE_HOOK
 	@$(call MESSAGE,"Gettextizing")
-	$(Q)cd $($(PKG)_SRCDIR) && $(GETTEXTIZE) $($(PKG)_GETTEXTIZE_OPTS)
+	$(Q)cd $($(PKG)_SRCDIR) && $(GETTEXTIZE)
 endef
 
 #
@@ -150,10 +150,6 @@ ifndef $(2)_GETTEXTIZE
  else
   $(2)_GETTEXTIZE ?= NO
  endif
-endif
-
-ifeq ($(4),host)
- $(2)_GETTEXTIZE_OPTS ?= $$($(3)_GETTEXTIZE_OPTS)
 endif
 
 ifeq ($(4),host)
