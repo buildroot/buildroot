@@ -4,7 +4,7 @@ config BR2_PACKAGE_RDMA_CORE
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_4  # iproute2
 	depends on !BR2_STATIC_LIBS # dlopen()
-	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
 	select BR2_PACKAGE_IPROUTE2  # runtime
 	select BR2_PACKAGE_LIBNL
 	help
@@ -13,8 +13,8 @@ config BR2_PACKAGE_RDMA_CORE
 
 	  https://github.com/linux-rdma/rdma-core
 
-comment "rdma-core needs a toolchain w/ headers >= 3.4, threads, dynamic library"
+comment "rdma-core needs a toolchain w/ headers >= 3.4, NPTL, dynamic library"
 	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_4 \
-		|| !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
+		|| !BR2_TOOLCHAIN_HAS_THREADS_NPTL || BR2_STATIC_LIBS
