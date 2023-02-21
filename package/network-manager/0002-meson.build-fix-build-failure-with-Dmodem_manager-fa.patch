@@ -1,0 +1,38 @@
+From 736a2c356c1c4871e8c4e70be622c65c87d3bca8 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 21 Feb 2023 13:03:00 +0100
+Subject: [PATCH] meson.build: fix build failure with -Dmodem_manager=false
+
+Fix the following build failure with -Dmodem_manager=false raised since
+https://gitlab.freedesktop.org/ffontaine/NetworkManager/-/commit/03ba04d4784fa4fc7ec31455070fb5ecf25ade23:
+
+../output-1/build/network-manager-1.40.10/meson.build:1060:0: ERROR: Unknown variable "mobile_broadband_provider_info_database".
+
+Fixes:
+ - http://autobuild.buildroot.org/results/896879c8e8ce022556ee834216ced2f962ff279c
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:
+https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/merge_requests/1544]
+---
+ meson.build | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 84ce52c736..b79240efc0 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1057,7 +1057,9 @@ output += '  jansson: ' + jansson_msg + '\n'
+ output += '  iptables: ' + config_h.get('IPTABLES_PATH') + '\n'
+ output += '  nft: ' + config_h.get('NFT_PATH') + '\n'
+ output += '  modemmanager-1: ' + enable_modem_manager.to_string() + '\n'
+-output += '  mobile-broadband-provider-info-database: ' + mobile_broadband_provider_info_database + '\n'
++if enable_modem_manager
++  output += '  mobile-broadband-provider-info-database: ' + mobile_broadband_provider_info_database + '\n'
++endif
+ output += '  ofono: ' + enable_ofono.to_string() + '\n'
+ output += '  concheck: ' + enable_concheck.to_string() + '\n'
+ output += '  libteamdctl: ' + enable_teamdctl.to_string() + '\n'
+-- 
+2.39.0
+
