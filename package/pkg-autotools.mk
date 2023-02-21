@@ -152,6 +152,15 @@ ifndef $(2)_GETTEXTIZE
  endif
 endif
 
+ifndef $(2)_AUTOPOINT
+ ifdef $(3)_AUTOPOINT
+  $(2)_AUTOPOINT = $$($(3)_AUTOPOINT)
+ else
+  $(2)_AUTOPOINT ?= NO
+ endif
+endif
+
+
 ifeq ($(4),host)
  $(2)_AUTORECONF_OPTS ?= $$($(3)_AUTORECONF_OPTS)
 endif
@@ -240,8 +249,14 @@ ifeq ($$($(2)_AUTORECONF),YES)
 ifeq ($$($(2)_GETTEXTIZE),YES)
 $(2)_PRE_CONFIGURE_HOOKS += GETTEXTIZE_HOOK
 $(2)_DEPENDENCIES += host-gettext
-endif
 $(2)_AUTORECONF_ENV += AUTOPOINT=/bin/true
+# autopoint is provided by gettext
+else ifeq ($$($(2)_AUTOPOINT),YES)
+$(2)_DEPENDENCIES += host-gettext
+$(2)_AUTORECONF_ENV += AUTOPOINT=$$(HOST_DIR)/bin/autopoint
+else
+$(2)_AUTORECONF_ENV += AUTOPOINT=/bin/true
+endif
 $(2)_PRE_CONFIGURE_HOOKS += AUTORECONF_HOOK
 # default values are not evaluated yet, so don't rely on this defaulting to YES
 ifneq ($$($(2)_LIBTOOL_PATCH),NO)
