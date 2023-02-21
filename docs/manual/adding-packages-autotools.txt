@@ -130,10 +130,9 @@ cases, typical packages will therefore only use a few of them.
   passed to the 'autoreconf' program if
   +LIBFOO_AUTORECONF=YES+. By default, empty.
 
-* +LIBFOO_GETTEXTIZE+, tells whether the package should be
-  gettextized or not (i.e. if the package uses a different gettext
-  version than Buildroot provides, and it is needed to run
-  'gettextize'.) Only valid when +LIBFOO_AUTORECONF=YES+. Valid
+* +LIBFOO_AUTOPOINT+, tells whether the package should be
+  autopointed or not (i.e. if the package needs I18N infrastructure
+  copied in.) Only valid when +LIBFOO_AUTORECONF=YES+. Valid
   values are +YES+ and +NO+. The default is +NO+.
 
 * +LIBFOO_LIBTOOL_PATCH+ tells whether the Buildroot
