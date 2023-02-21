@@ -10,9 +10,9 @@ RRDTOOL_LICENSE = GPL-2.0+ with FLOSS license exceptions as explained in COPYRIG
 RRDTOOL_LICENSE_FILES = COPYRIGHT LICENSE
 RRDTOOL_DEPENDENCIES = host-pkgconf libglib2 $(TARGET_NLS_DEPENDENCIES)
 # autoreconf needed to avoid link failure due to missing -lintl,
-# gettextize needed as a consequence of autoreconf
+# autopoint needed as a consequence of autoreconf
 RRDTOOL_AUTORECONF = YES
-RRDTOOL_GETTEXTIZE = YES
+RRDTOOL_AUTOPOINT = YES
 RRDTOOL_INSTALL_STAGING = YES
 RRDTOOL_CONF_OPTS = \
 	--disable-examples \
