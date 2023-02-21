@@ -1,0 +1,42 @@
+From 707b51ecbc5598eed2fb67962232bf3fe0e96f81 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 27 Dec 2022 21:30:54 +0100
+Subject: [PATCH] minor: Fix mongoose build without threads (#2291)
+
+Fix the following build failure without threads:
+
+In file included from /home/buildroot/autobuild/instance-3/output-1/build/rtl_433-22.11/src/data_tag.c:17:
+/home/buildroot/autobuild/instance-3/output-1/build/rtl_433-22.11/include/mongoose.h:407:10: fatal error: pthread.h: No such file or directory
+  407 | #include <pthread.h>
+      |          ^~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/9f1677fc5a4568be0b9c121060c5d821ac2ae21b
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/merbanan/rtl_433/commit/707b51ecbc5598eed2fb67962232bf3fe0e96f81]
+---
+ include/mongoose.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/mongoose.h b/include/mongoose.h
+index 1173b3fc7..b111ea34e 100644
+--- a/include/mongoose.h
++++ b/include/mongoose.h
+@@ -404,7 +404,6 @@ unsigned int sleep(unsigned int seconds);
+ #include <math.h>
+ #include <netdb.h>
+ #include <netinet/in.h>
+-#include <pthread.h>
+ #include <signal.h>
+ #include <stdarg.h>
+ #include <stdbool.h>
+@@ -4658,6 +4657,7 @@ size_t mg_fwrite(const void *ptr, size_t size, size_t count, FILE *f);
+ #endif /* MG_ENABLE_FILESYSTEM */
+ 
+ #if MG_ENABLE_THREADS
++#include <pthread.h>
+ /*
+  * Starts a new detached thread.
+  * Arguments and semantics are the same as pthead's `pthread_create()`.
