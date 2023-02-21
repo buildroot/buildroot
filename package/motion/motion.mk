@@ -12,7 +12,7 @@ MOTION_CPE_ID_VENDOR = motion_project
 MOTION_DEPENDENCIES = host-pkgconf jpeg libmicrohttpd $(TARGET_NLS_DEPENDENCIES)
 # From git
 MOTION_AUTORECONF = YES
-MOTION_GETTEXTIZE = YES
+MOTION_AUTOPOINT = YES
 
 MOTION_CONF_OPTS += --without-optimizecpu
 
