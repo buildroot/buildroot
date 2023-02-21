@@ -14,7 +14,7 @@ LIBUIO_LIBS = $(TARGET_NLS_LIBS)
 LIBUIO_INSTALL_STAGING = YES
 
 # Fetched from github, no pre-generated configure script provided
-LIBUIO_GETTEXTIZE = YES
+LIBUIO_AUTOPOINT = YES
 LIBUIO_AUTORECONF = YES
 
 # Avoid build issue when makeinfo is missing

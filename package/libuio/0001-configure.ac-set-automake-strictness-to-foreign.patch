@@ -1,0 +1,31 @@
+From 546e07b2405455c03b7eb0d392c331e189913bc4 Mon Sep 17 00:00:00 2001
+From: Vincent Fazio <vfazio@xes-inc.com>
+Date: Tue, 31 Jan 2023 19:06:29 -0600
+Subject: [PATCH] configure.ac: set automake strictness to foreign
+
+libuio does not conform to the GNU's strict layout requirements. [1]
+
+Set the strictness to foreign to account for this.
+
+[1] https://www.gnu.org/software/automake/manual/html_node/Strictness.html
+
+Signed-off-by: Vincent Fazio <vfazio@xes-inc.com>
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 101abd3..ef46171 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1,6 +1,6 @@
+ dnl Every other copy of the package version number gets its value from here
+ AC_INIT(libuio, 0.2.8, https://github.com/linutronix/libuio/issues)
+-AM_INIT_AUTOMAKE
++AM_INIT_AUTOMAKE([foreign])
+ 
+ AM_CONFIG_HEADER(config.h)
+ 
+-- 
+2.25.1
+
