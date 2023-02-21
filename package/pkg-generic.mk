@@ -1207,14 +1207,7 @@ $(eval $(call check-deprecated-variable,$(2)_AUTORECONF_OPT,$(2)_AUTORECONF_OPTS
 $(eval $(call check-deprecated-variable,$(2)_CONF_OPT,$(2)_CONF_OPTS))
 $(eval $(call check-deprecated-variable,$(2)_BUILD_OPT,$(2)_BUILD_OPTS))
 $(eval $(call check-deprecated-variable,$(2)_KCONFIG_OPT,$(2)_KCONFIG_OPTS))
-
-# Check for deprecated variables that have no replacement
-ifneq ($$($(2)_GETTEXTIZE_OPT),)
-$$(error "$(2)_GETTEXTIZE_OPT is no longer supported. Please fix your .mk file.")
-endif
-ifneq ($$($(2)_GETTEXTIZE_OPTS),)
-$$(error "$(2)_GETTEXTIZE_OPTS is no longer supported. Please fix your .mk file.")
-endif
+$(eval $(call check-deprecated-variable,$(2)_GETTEXTIZE,$(2)_AUTOPOINT))
 
 PACKAGES += $(1)
 
