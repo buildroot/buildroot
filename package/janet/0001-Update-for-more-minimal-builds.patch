@@ -1,0 +1,29 @@
+From 746ff5307d309536984b648460e7b5c5dac44453 Mon Sep 17 00:00:00 2001
+From: Calvin Rose <calsrose@gmail.com>
+Date: Sun, 12 Feb 2023 12:14:11 -0600
+Subject: [PATCH] Update for more minimal builds.
+
+[Retrieved (and backported) from:
+https://github.com/janet-lang/janet/commit/746ff5307d309536984b648460e7b5c5dac44453]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/core/ffi.c   | 4 ++++
+ src/core/marsh.c | 2 ++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/src/core/ffi.c b/src/core/ffi.c
+index 45a498c7..b453f1f6 100644
+--- a/src/core/ffi.c
++++ b/src/core/ffi.c
+@@ -1311,7 +1311,11 @@ JANET_CORE_FN(cfun_ffi_jitfn,
+     size_t alloc_size = ((size_t) bytes.len + FFI_PAGE_MASK) & ~FFI_PAGE_MASK;
+ 
+ #ifdef JANET_FFI_JIT
++#ifdef JANET_EV
+     JanetFFIJittedFn *fn = janet_abstract_threaded(&janet_type_ffijit, sizeof(JanetFFIJittedFn));
++#else
++    JanetFFIJittedFn *fn = janet_abstract(&janet_type_ffijit, sizeof(JanetFFIJittedFn));
++#endif
+     fn->function_pointer = NULL;
+     fn->size = 0;
+ #ifdef JANET_WINDOWS
