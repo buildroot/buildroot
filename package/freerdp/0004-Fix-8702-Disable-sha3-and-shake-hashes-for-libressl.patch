@@ -1,0 +1,38 @@
+From bd093454fe126163634c00b7484ab7fee6ffe670 Mon Sep 17 00:00:00 2001
+From: akallabeth <akallabeth@posteo.net>
+Date: Mon, 20 Feb 2023 16:23:39 +0100
+Subject: [PATCH] Fix #8702: Disable sha3 and shake hashes for libressl
+
+[Retrieved (and backported) from:
+https://github.com/FreeRDP/FreeRDP/pull/8708/commits/bd093454fe126163634c00b7484ab7fee6ffe670]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ libfreerdp/crypto/x509_utils.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libfreerdp/crypto/crypto.c b/libfreerdp/crypto/crypto.c
+index 6e87a88b8d8..62cf2939be7 100644
+--- a/libfreerdp/crypto/crypto.c
++++ b/libfreerdp/crypto/crypto.c
+@@ -748,7 +748,7 @@ WINPR_MD_TYPE x509_utils_get_signature_alg(const X509* xcert)
+ 			return WINPR_MD_SHA512;
+ 		case NID_ripemd160:
+ 			return WINPR_MD_RIPEMD160;
+-#if (OPENSSL_VERSION_NUMBER >= 0x1010101fL) || defined(LIBRESSL_VERSION_NUMBER)
++#if (OPENSSL_VERSION_NUMBER >= 0x1010101fL) && !defined(LIBRESSL_VERSION_NUMBER)
+ 		case NID_sha3_224:
+ 			return WINPR_MD_SHA3_224;
+ 		case NID_sha3_256:
+@@ -757,11 +757,11 @@ WINPR_MD_TYPE x509_utils_get_signature_alg(const X509* xcert)
+ 			return WINPR_MD_SHA3_384;
+ 		case NID_sha3_512:
+ 			return WINPR_MD_SHA3_512;
+-#endif
+ 		case NID_shake128:
+ 			return WINPR_MD_SHAKE128;
+ 		case NID_shake256:
+ 			return WINPR_MD_SHAKE256;
++#endif
+ 		case NID_undef:
+ 		default:
+ 			return WINPR_MD_NONE;
