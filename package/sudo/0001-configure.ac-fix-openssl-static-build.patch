@@ -1,0 +1,49 @@
+From 5cfc7e277d0b262a1d12e867c47a36301fb7edb7 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 22 Feb 2023 10:01:25 +0100
+Subject: [PATCH] configure.ac: fix openssl static build
+
+Do not use AX_APPEND_FLAG as it will break static builds by removing
+duplicates such as -lz or -latomic which are needed by -lssl and
+-lcrypto. This will fix the following build failure with sparc which
+needs -latomic:
+
+Checking for X509_STORE_CTX_get0_cert
+configure:21215: /home/thomas/autobuild/instance-3/output-1/host/bin/sparc-buildroot-linux-uclibc-gcc -o conftest -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -Os -g0  -static -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -DZLIB_CONST  -static conftest.c   -L/home/thomas/autobuild/instance-3/output-1/host/bin/../sparc-buildroot-linux-uclibc/sysroot/usr/lib -lssl -lz -pthread -latomic -lcrypto >&5
+/home/thomas/autobuild/instance-3/output-1/host/lib/gcc/sparc-buildroot-linux-uclibc/10.4.0/../../../../sparc-buildroot-linux-uclibc/bin/ld: /home/thomas/autobuild/instance-3/output-1/host/bin/../sparc-buildroot-linux-uclibc/sysroot/usr/lib/libcrypto.a(x509cset.o): in function `X509_CRL_up_ref':
+x509cset.c:(.text+0x108): undefined reference to `__atomic_fetch_add_4'
+
+[...]
+
+In file included from ./hostcheck.c:38:
+../../include/sudo_compat.h:342:41: error: conflicting types for 'ASN1_STRING_data'
+  342 | #  define ASN1_STRING_get0_data(x)      ASN1_STRING_data(x)
+      |                                         ^~~~~~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/8be59dd94e4916f9457cb435104e36e62a28373b
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/sudo-project/sudo/pull/244]
+---
+ configure.ac | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 8eccad7e4..523d8e56b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -3082,7 +3082,9 @@ if test "${enable_openssl-no}" != no; then
+ 		    SUDO_APPEND_LIBPATH([LIBTLS], [$f])
+ 		    ;;
+ 		*)
+-		    AX_APPEND_FLAG([$f], [LIBTLS])
++		    # Do not use AX_APPEND_FLAG as it will break static builds by removing
++		    # duplicates such as -lz or -latomic which are needed by -lssl and -lcrypto
++		    LIBTLS="$LIBTLS $f"
+ 		    ;;
+ 	    esac
+ 	done
+-- 
+2.39.0
+
