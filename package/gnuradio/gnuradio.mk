@@ -106,6 +106,12 @@ else
 GNURADIO_CONF_OPTS += -DENABLE_GR_FILTER=OFF
 endif
 
+ifeq ($(BR2_PACKAGE_GNURADIO_NETWORK),y)
+GNURADIO_CONF_OPTS += -DENABLE_GR_NETWORK=ON
+else
+GNURADIO_CONF_OPTS += -DENABLE_GR_NETWORK=OFF
+endif
+
 ifeq ($(BR2_PACKAGE_GNURADIO_PYTHON),y)
 GNURADIO_DEPENDENCIES += python3 python-pybind \
 	host-python-numpy host-python-packaging

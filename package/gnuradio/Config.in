@@ -134,6 +134,12 @@ config BR2_PACKAGE_GNURADIO_FILTER
 	help
 	  Filter signal processing blocks
 
+config BR2_PACKAGE_GNURADIO_NETWORK
+	bool "gr-network support"
+	select BR2_PACKAGE_GNURADIO_BLOCKS
+	help
+	  TCP and UDP source/sink blocks
+
 config BR2_PACKAGE_GNURADIO_QTGUI
 	bool "gr-qtgui"
 	depends on BR2_PACKAGE_GNURADIO_PYTHON
