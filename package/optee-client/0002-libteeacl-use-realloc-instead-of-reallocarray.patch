@@ -1,0 +1,34 @@
+From dde6306458331371be5df15e3ca953697d2463ef Mon Sep 17 00:00:00 2001
+From: Eero Aaltonen <eero.aaltonen@vaisala.com>
+Date: Thu, 2 Feb 2023 17:22:29 +0200
+Subject: [PATCH] libteeacl: use realloc() instead of reallocarray()
+
+Use realloc() instead of reallocarray(), since uClibc apparently does
+not implement reallocarray().
+
+Fixes: https://github.com/OP-TEE/optee_client/issues/339
+
+Signed-off-by: Eero Aaltonen <eero.aaltonen@vaisala.com>
+Reviewed-by: Jerome Forissier <jerome.forissier@linaro.org>
+
+[Retrieved from:
+https://github.com/OP-TEE/optee_client/commit/dde6306458331371be5df15e3ca953697d2463ef]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ libteeacl/src/group.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/libteeacl/src/group.c b/libteeacl/src/group.c
+index 10965dd0..bd165a11 100644
+--- a/libteeacl/src/group.c
++++ b/libteeacl/src/group.c
+@@ -72,7 +72,8 @@ enum rv_groupmember teeacl_user_is_member_of(const char *user, gid_t group)
+ 	if (ret == -1) {
+ 		p_groups = groups;
+ 
+-		groups = reallocarray(groups, grouplistsize, sizeof(gid_t));
++		/* we use realloc, since uClibc does not implement reallocarray */
++		groups = realloc(groups, grouplistsize * sizeof(gid_t));
+ 		if (!groups) {
+ 			free(p_groups);
+ 			return E_MEMORY;
