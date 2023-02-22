@@ -1,0 +1,27 @@
+config BR2_PACKAGE_OPENCSD_ARCH_SUPPORTS
+	bool
+	default y if BR2_arm
+	default y if BR2_armeb
+	default y if BR2_aarch64
+	default y if BR2_aarch64_be
+
+config BR2_PACKAGE_OPENCSD
+	bool "opencsd"
+	depends on BR2_PACKAGE_OPENCSD_ARCH_SUPPORTS
+	depends on !BR2_STATIC_LIBS
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # C++11
+	help
+	  This library provides an API suitable for the decode of
+	  ARM(r) CoreSight(tm) trace streams.
+
+	  OpenCSD is for example an optional dependency in the Linux
+	  "perf" tool, starting from kernel version 5.1.
+
+	  https://github.com/Linaro/OpenCSD
+
+comment "opencsd needs a toolchain w/ C++11, gcc >= 4.8, dynamic library"
+	depends on BR2_PACKAGE_OPENCSD_ARCH_SUPPORTS
+	depends on BR2_STATIC_LIBS \
+		|| !BR2_INSTALL_LIBSTDCPP \
+		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
