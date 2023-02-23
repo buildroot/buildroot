@@ -1,0 +1,39 @@
+From 3ab8bdc1c657f91a2a96f4e6db308d17098de0c4 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 23 Feb 2023 12:09:11 +0100
+Subject: [PATCH] src/s6-linux-utils/rngseed.c: fix build with glibc <
+
+getrandom and sys/random.h are only available since glibc 2.25 resulting
+in the following build failure since version 2.6.0.0 and
+https://github.com/skarnet/s6-linux-utils/commit/ad5973028c42d947440cdae5e4f106152c3dda28:
+
+src/minutils/rngseed.c:15:24: fatal error: sys/random.h: No such file or directory
+ #include <sys/random.h>
+                        ^
+
+Fixes:
+ - http://autobuild.buildroot.org/results/214bcecfc389cb412b68627c831300478d614a3a
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/skarnet/s6-linux-utils/pull/2]
+---
+ src/s6-linux-utils/rngseed.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/minutils/rngseed.c b/src/minutils/rngseed.c
+index 2b1772c..223f50a 100644
+--- a/src/minutils/rngseed.c
++++ b/src/minutils/rngseed.c
+@@ -12,7 +12,9 @@
+ #include <unistd.h>
+ #include <sys/stat.h>
+ #include <sys/ioctl.h>
++#ifdef SKALIBS_HASGETRANDOM
+ #include <sys/random.h>
++#endif
+ #include <linux/random.h>
+ 
+ #include <skalibs/types.h>
+-- 
+2.39.1
+
