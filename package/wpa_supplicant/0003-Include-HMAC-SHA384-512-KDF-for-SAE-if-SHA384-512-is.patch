@@ -1,0 +1,64 @@
+From c7f71fb8679c4cdd2607dbaac467a1d5efe9f0f9 Mon Sep 17 00:00:00 2001
+From: Jouni Malinen <j@w1.fi>
+Date: Sun, 17 Apr 2022 12:28:41 +0300
+Subject: [PATCH] Include HMAC-SHA384/512 KDF for SAE if SHA384/512 is included
+
+It was possible to miss the HMAC functions if some other build
+configuration parameters ended up setting NEED_SHA384/512=y.
+
+Upstream: https://w1.fi/cgit/hostap/commit/?id=c7f71fb8679c4cdd2607dbaac467a1d5efe9f0f9
+
+Signed-off-by: Jouni Malinen <j@w1.fi>
+Signed-off-by: Sergey Matyukevich <geomatsi@gmail.com>
+---
+ wpa_supplicant/Android.mk | 11 +++++++++++
+ wpa_supplicant/Makefile   | 11 +++++++++++
+ 2 files changed, 22 insertions(+)
+
+diff --git a/wpa_supplicant/Android.mk b/wpa_supplicant/Android.mk
+index 0e0ce467c..bcdbd6c90 100644
+--- a/wpa_supplicant/Android.mk
++++ b/wpa_supplicant/Android.mk
+@@ -1361,6 +1361,17 @@ endif
+ endif
+ endif
+ 
++ifdef CONFIG_SAE
++ifdef NEED_SHA384
++# Need to add HMAC-SHA384 KDF as well, if SHA384 was enabled.
++NEED_HMAC_SHA384_KDF=y
++endif
++ifdef NEED_SHA512
++# Need to add HMAC-SHA512 KDF as well, if SHA512 was enabled.
++NEED_HMAC_SHA512_KDF=y
++endif
++endif
++
+ SHA256OBJS = # none by default
+ L_CFLAGS += -DCONFIG_SHA256
+ ifneq ($(CONFIG_TLS), openssl)
+diff --git a/wpa_supplicant/Makefile b/wpa_supplicant/Makefile
+index ed49aa972..69c80121c 100644
+--- a/wpa_supplicant/Makefile
++++ b/wpa_supplicant/Makefile
+@@ -1475,6 +1475,17 @@ endif
+ endif
+ endif
+ 
++ifdef CONFIG_SAE
++ifdef NEED_SHA384
++# Need to add HMAC-SHA384 KDF as well, if SHA384 was enabled.
++NEED_HMAC_SHA384_KDF=y
++endif
++ifdef NEED_SHA512
++# Need to add HMAC-SHA512 KDF as well, if SHA512 was enabled.
++NEED_HMAC_SHA512_KDF=y
++endif
++endif
++
+ SHA256OBJS = # none by default
+ CFLAGS += -DCONFIG_SHA256
+ ifneq ($(CONFIG_TLS), openssl)
+-- 
+2.39.2
+
