@@ -1,0 +1,36 @@
+From d7b8fafbc94405c20753fed569abd8878cccde89 Mon Sep 17 00:00:00 2001
+From: Felix Yan <felixonmars@archlinux.org>
+Date: Fri, 19 Aug 2022 15:22:10 +0300
+Subject: [PATCH] Fix build with fmt 9.0
+
+Fixes #2681
+
+[Retrieved from:
+https://github.com/gerbera/gerbera/commit/d7b8fafbc94405c20753fed569abd8878cccde89]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/database/sql_format.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/database/sql_format.h b/src/database/sql_format.h
+index 32dc00efa..e4e1909a8 100644
+--- a/src/database/sql_format.h
++++ b/src/database/sql_format.h
+@@ -42,7 +42,7 @@ struct SQLIdentifier {
+ template <>
+ struct fmt::formatter<SQLIdentifier> : formatter<std::string_view> {
+     template <typename FormatContext>
+-    auto format(const SQLIdentifier& tn, FormatContext& ctx) -> decltype(ctx.out())
++    auto format(const SQLIdentifier& tn, FormatContext& ctx) const -> decltype(ctx.out())
+     {
+         return format_to(ctx.out(), "{}{}{}", tn.quote_begin, tn.name, tn.quote_end);
+     }
+@@ -61,7 +61,7 @@ struct ColumnUpdate {
+ template <>
+ struct fmt::formatter<ColumnUpdate> : formatter<std::string_view> {
+     template <typename FormatContext>
+-    auto format(const ColumnUpdate& a, FormatContext& ctx) -> decltype(ctx.out())
++    auto format(const ColumnUpdate& a, FormatContext& ctx) const -> decltype(ctx.out())
+     {
+         return format_to(ctx.out(), "{} = {}", a.column, a.value);
+     }
