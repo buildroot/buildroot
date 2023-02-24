@@ -1,0 +1,50 @@
+From 0a3ce09c14eb9c7e36aa30a4dafe40e56676d678 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 24 Feb 2023 11:33:32 +0100
+Subject: [PATCH] wscript: fix build without stack-protector
+
+-fstack-protector-all can depends on ssp library availability (e.g. on musl) so
+move the test from cc_test_flags to ld_hardening_flags, this will avoid the
+following build failure:
+
+Checking for library ssp                 : not found
+Checking for library ssp_nonshared       : not found
+Checking if C compiler supports -fstack-protector-all : yes
+
+[...]
+
+The configuration failed
+(complete log in /home/autobuild/autobuild/instance-2/output-1/build/ntpsec-1_2_2/build/config.log)
+
+Fixes:
+ - http://autobuild.buildroot.org/results/f38abc6b7f8464836231192cfe078a5b27319a8a
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/ntpsec/ntpsec/pull/6]
+---
+ wscript | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/wscript b/wscript
+index be396b33b..f301809fc 100644
+--- a/wscript
++++ b/wscript
+@@ -298,7 +298,6 @@ def configure(ctx):
+         ctx.env.LDFLAGS += ["-lssp_nonshared"]
+ 
+     cc_test_flags = [
+-        ('f_stack_protector_all', '-fstack-protector-all'),
+         ('PIC', '-fPIC'),
+         ('PIE', '-pie -fPIE'),
+         # this quiets most of macOS warnings on -fpie
+@@ -332,6 +331,7 @@ def configure(ctx):
+ 
+     # Check which linker flags are supported
+     ld_hardening_flags = [
++        ('f_stack_protector_all', '-fstack-protector-all'),
+         ("z_now", "-Wl,-z,now"),     # no deferred symbol resolution
+     ]
+ 
+-- 
+2.39.1
+
