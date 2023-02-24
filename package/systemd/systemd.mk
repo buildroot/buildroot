@@ -100,7 +100,7 @@ SYSTEMD_CONF_OPTS += \
 
 SYSTEMD_CFLAGS = $(TARGET_CFLAGS)
 ifeq ($(BR2_OPTIMIZE_FAST),y)
-SYSTEMD_CFLAGS += -O3
+SYSTEMD_CFLAGS += -O3 -fno-finite-math-only
 endif
 
 ifeq ($(BR2_nios2),y)
