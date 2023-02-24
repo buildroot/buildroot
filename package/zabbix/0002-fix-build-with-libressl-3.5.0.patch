@@ -1,0 +1,71 @@
+From 5c8511384f1d41f9c2a131604d5cb2dbc1c0aec9 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 24 Feb 2023 12:23:56 +0100
+Subject: [PATCH] fix build with libressl >= 3.5.0
+
+Fix the following build failure with libressl >= 3.5.0:
+
+tls.c:113:17: error: static declaration of 'OPENSSL_cleanup' follows non-static declaration
+  113 | static void     OPENSSL_cleanup(void)
+      |                 ^~~~~~~~~~~~~~~
+In file included from /home/thomas/autobuild/instance-3/output-1/host/mips-buildroot-linux-gnu/sysroot/usr/include/openssl/bio.h:69,
+                 from /home/thomas/autobuild/instance-3/output-1/host/mips-buildroot-linux-gnu/sysroot/usr/include/openssl/evp.h:67,
+                 from /home/thomas/autobuild/instance-3/output-1/host/mips-buildroot-linux-gnu/sysroot/usr/include/openssl/hmac.h:67,
+                 from /home/thomas/autobuild/instance-3/output-1/host/mips-buildroot-linux-gnu/sysroot/usr/include/openssl/ssl.h:150,
+                 from ../../../include/zbxcomms.h:65,
+                 from tls.c:20:
+/home/thomas/autobuild/instance-3/output-1/host/mips-buildroot-linux-gnu/sysroot/usr/include/openssl/crypto.h:565:6: note: previous declaration of 'OPENSSL_cleanup' with type 'void(void)'
+  565 | void OPENSSL_cleanup(void);
+      |      ^~~~~~~~~~~~~~~
+In file included from tls.c:20:
+tls.c: In function 'zbx_log_ciphersuites':
+../../../include/zbxcomms.h:222:75: error: invalid use of incomplete typedef 'SSL_CTX' {aka 'struct ssl_ctx_st'}
+  222 | #       define SSL_CTX_get_ciphers(ciphers)                     ((ciphers)->cipher_list)
+      |                                                                           ^~
+tls.c:1415:31: note: in expansion of macro 'SSL_CTX_get_ciphers'
+ 1415 |                 cipher_list = SSL_CTX_get_ciphers(ciphers);
+      |                               ^~~~~~~~~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/acdfcb17b39d438ccf5e4621707a10f60577d233
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: not sent (no feedback on first patch)]
+---
+ include/zbxcomms.h      | 3 ++-
+ src/libs/zbxcomms/tls.c | 5 +++--
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/include/zbxcomms.h b/include/zbxcomms.h
+index e7d74dbd0f..d6efa358fe 100644
+--- a/include/zbxcomms.h
++++ b/include/zbxcomms.h
+@@ -253,7 +253,8 @@ int	zbx_telnet_execute(ZBX_SOCKET socket_fd, const char *command, AGENT_RESULT *
+ /* TLS BLOCK */
+ #if defined(HAVE_GNUTLS) || defined(HAVE_OPENSSL)
+ 
+-#if defined(HAVE_OPENSSL) && OPENSSL_VERSION_NUMBER < 0x1010000fL || defined(LIBRESSL_VERSION_NUMBER)
++#if defined(HAVE_OPENSSL) && OPENSSL_VERSION_NUMBER < 0x1010000fL || \
++	defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x3050000fL
+ #	if !defined(LIBRESSL_VERSION_NUMBER)
+ #		define OPENSSL_INIT_LOAD_SSL_STRINGS			0
+ #		define OPENSSL_INIT_LOAD_CRYPTO_STRINGS		0
+diff --git a/src/libs/zbxcomms/tls.c b/src/libs/zbxcomms/tls.c
+index 54ab0a6ef4..bd4075b3e4 100644
+--- a/src/libs/zbxcomms/tls.c
++++ b/src/libs/zbxcomms/tls.c
+@@ -30,8 +30,9 @@
+ #include "zbxstr.h"
+ #include "zbxtime.h"
+ 
+-#if defined(HAVE_OPENSSL) && OPENSSL_VERSION_NUMBER < 0x1010000fL || defined(LIBRESSL_VERSION_NUMBER)
+-/* for OpenSSL 1.0.1/1.0.2 (before 1.1.0) or LibreSSL */
++#if defined(HAVE_OPENSSL) && OPENSSL_VERSION_NUMBER < 0x1010000fL || \
++	defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x300000fL
++/* for OpenSSL 1.0.1/1.0.2 (before 1.1.0) or LibreSSL (before 3.5.0) */
+ 
+ /* mutexes for multi-threaded OpenSSL (see "man 3ssl threads" and example in crypto/threads/mttest.c) */
+ 
+-- 
+2.39.1
+
