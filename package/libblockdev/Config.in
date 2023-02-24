@@ -5,6 +5,7 @@ config BR2_PACKAGE_LIBBLOCKDEV
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2
 	depends on BR2_USE_MMU # libglib2
 	depends on BR2_PACKAGE_HAS_UDEV
+	depends on BR2_ENABLE_LOCALE
 	select BR2_PACKAGE_KMOD
 	select BR2_PACKAGE_LIBGLIB2
 	help
@@ -66,7 +67,8 @@ config BR2_PACKAGE_LIBBLOCKDEV_SWAP
 
 endif
 
-comment "libblockdev needs udev /dev management and a toolchain w/ wchar, threads, dynamic library"
+comment "libblockdev needs udev /dev management and a toolchain w/ wchar, threads, dynamic library, locale"
 	depends on BR2_USE_MMU
 	depends on !BR2_PACKAGE_HAS_UDEV || BR2_STATIC_LIBS || \
-		!BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS
+		!BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_ENABLE_LOCALE
