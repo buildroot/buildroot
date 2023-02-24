@@ -16,12 +16,6 @@ XTABLES_ADDONS_CONF_OPTS = \
 	--with-xtables="$(STAGING_DIR)/usr" \
 	--with-xtlibdir="/usr/lib/xtables"
 
-# geoip helpers need perl with modules and unzip so disable
-define XTABLES_ADDONS_DISABLE_GEOIP_HELPERS
-	$(SED) 's/ geoip//' $(@D)/Makefile.in
-endef
-XTABLES_ADDONS_POST_PATCH_HOOKS += XTABLES_ADDONS_DISABLE_GEOIP_HELPERS
-
 define XTABLES_ADDONS_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) $(LINUX_MAKE_FLAGS)
 endef
@@ -29,6 +23,15 @@ endef
 define XTABLES_ADDONS_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) $(LINUX_MAKE_FLAGS) DESTDIR="$(TARGET_DIR)" install
 endef
+
+# geoip helpers need perl with modules and unzip so remove them
+define XTABLES_ADDONS_REMOVE_GEOIP_HELPERS
+	$(RM) $(TARGET_DIR)/usr/bin/xt_geoip*
+	$(RM) $(TARGET_DIR)/usr/libexec/xtables-addons/xt_asn*
+	$(RM) $(TARGET_DIR)/usr/libexec/xtables-addons/xt_geoip*
+endef
+
+XTABLES_ADDONS_POST_INSTALL_TARGET_HOOKS += XTABLES_ADDONS_REMOVE_GEOIP_HELPERS
 
 define XTABLES_ADDONS_LINUX_CONFIG_FIXUPS
 	$(call KCONFIG_ENABLE_OPT,CONFIG_NETFILTER_ADVANCED)
