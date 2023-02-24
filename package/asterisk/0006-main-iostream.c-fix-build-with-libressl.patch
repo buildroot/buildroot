@@ -1,0 +1,38 @@
+From 9569fa20fec49f530170a3042afb99556cf66a2e Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 17 Apr 2022 10:52:42 +0200
+Subject: [PATCH] main/iostream.c: fix build with libressl
+
+Fix the following build failure with libressl by using SSL_is_server
+which is available since version 2.7.0 and
+https://github.com/libressl-portable/openbsd/commit/d7ec516916c5eaac29b02d7a8ac6570f63b458f7:
+
+iostream.c: In function 'ast_iostream_close':
+iostream.c:559:41: error: invalid use of incomplete typedef 'SSL' {aka 'struct ssl_st'}
+  559 |                         if (!stream->ssl->server) {
+      |                                         ^~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/ce4d62d00bb77ba5b303cacf6be7e350581a62f9
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ main/iostream.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/main/iostream.c b/main/iostream.c
+index d060b6d6d4..b8ab80ec91 100644
+--- a/main/iostream.c
++++ b/main/iostream.c
+@@ -553,7 +553,7 @@ int ast_iostream_close(struct ast_iostream *stream)
+ 					ERR_error_string(sslerr, err), ssl_error_to_string(sslerr, res));
+ 			}
+ 
+-#if !defined(LIBRESSL_VERSION_NUMBER) && (OPENSSL_VERSION_NUMBER >= 0x10100000L)
++#if !(defined(LIBRESSL_VERSION_NUMBER) && (LIBRESSL_VERSION_NUMBER < 0x2070000L)) && (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+ 			if (!SSL_is_server(stream->ssl)) {
+ #else
+ 			if (!stream->ssl->server) {
+-- 
+2.35.1
+
