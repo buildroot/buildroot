@@ -4,12 +4,9 @@
 #
 ################################################################################
 
-NTPSEC_VERSION_MAJOR = 1
-NTPSEC_VERSION_MINOR = 2
-NTPSEC_VERSION_POINT = 2
-NTPSEC_VERSION = $(NTPSEC_VERSION_MAJOR)_$(NTPSEC_VERSION_MINOR)_$(NTPSEC_VERSION_POINT)
-NTPSEC_SOURCE = ntpsec-NTPsec_$(NTPSEC_VERSION).tar.bz2
-NTPSEC_SITE = https://gitlab.com/NTPsec/ntpsec/-/archive/NTPsec_$(NTPSEC_VERSION)
+NTPSEC_VERSION = 1.2.2
+NTPSEC_SOURCE = ntpsec-NTPsec_$(subst .,_,$(NTPSEC_VERSION)).tar.bz2
+NTPSEC_SITE = https://gitlab.com/NTPsec/ntpsec/-/archive/NTPsec_$(subst .,_,$(NTPSEC_VERSION))
 NTPSEC_LICENSE = BSD-2-Clause, NTP, BSD-3-Clause, MIT, CC-BY-4.0 (docs)
 NTPSEC_LICENSE_FILES = \
 	LICENSES/BSD-2 \
@@ -20,8 +17,6 @@ NTPSEC_LICENSE_FILES = \
 	docs/copyright.adoc
 
 NTPSEC_CPE_ID_VENDOR = ntpsec
-NTPSEC_CPE_ID_VERSION = $(NTPSEC_VERSION_MAJOR).$(NTPSEC_VERSION_MINOR)
-NTPSEC_CPE_ID_UPDATE = $(NTPSEC_VERSION_POINT)
 
 NTPSEC_DEPENDENCIES = \
 	host-bison \
