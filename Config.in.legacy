@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2023.02"
 
+config BR2_PACKAGE_IMX_GPU_G2D_EXAMPLES
+	bool "imx-gpu-g2d examples removed"
+	select BR2_LEGACY
+	help
+	  The examples are not provided by NXP anymore.
+
 config BR2_KERNEL_HEADERS_6_0
 	bool "kernel headers version 6.0.x are no longer supported"
 	select BR2_LEGACY

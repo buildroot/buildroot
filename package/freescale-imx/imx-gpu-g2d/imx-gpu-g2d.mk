@@ -26,15 +26,7 @@ define IMX_GPU_G2D_INSTALL_STAGING_CMDS
 	cp -a $(@D)/g2d/usr/* $(STAGING_DIR)/usr
 endef
 
-ifeq ($(BR2_PACKAGE_IMX_GPU_G2D_EXAMPLES),y)
-define IMX_GPU_G2D_INSTALL_EXAMPLES
-	mkdir -p $(TARGET_DIR)/usr/share/examples/
-	cp -a $(@D)/gpu-demos/opt/* $(TARGET_DIR)/usr/share/examples/
-endef
-endif
-
 define IMX_GPU_G2D_INSTALL_TARGET_CMDS
-	$(IMX_GPU_G2D_INSTALL_EXAMPLES)
 	cp -a $(@D)/g2d/usr/lib $(TARGET_DIR)/usr
 endef
 
