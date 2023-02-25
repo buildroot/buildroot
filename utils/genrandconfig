@@ -519,6 +519,11 @@ def fixup_config(sysinfo, configfile):
         configlines.remove('BR2_TARGET_S500_BOOTLOADER=y\n')
         configlines.remove('BR2_TARGET_S500_BOOTLOADER_BOARD=""\n')
 
+    if 'BR2_TARGET_TI_K3_R5_LOADER=y\n' in configlines and \
+       'BR2_TARGET_TI_K3_R5_LOADER_USE_DEFCONFIG=y\n' in configlines and \
+       'BR2_TARGET_TI_K3_R5_LOADER_BOARD_DEFCONFIG=""\n' in configlines:
+        return False
+
     if 'BR2_TARGET_UBOOT=y\n' in configlines and \
        'BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG=y\n' in configlines and \
        'BR2_TARGET_UBOOT_USE_CUSTOM_CONFIG=y\n' in configlines and \
