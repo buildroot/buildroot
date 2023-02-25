@@ -492,6 +492,10 @@ def fixup_config(sysinfo, configfile):
         configlines.remove('BR2_TARGET_BAREBOX_USE_DEFCONFIG=y\n')
         configlines.remove('BR2_TARGET_BAREBOX_BOARD_DEFCONFIG=""\n')
 
+    if 'BR2_TARGET_LPC32XXCDL=y\n' in configlines and \
+       'BR2_TARGET_LPC32XXCDL_BOARDNAME=""\n' in configlines:
+        return False
+
     if 'BR2_TARGET_OPTEE_OS=y\n' in configlines and \
        'BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL=y\n' in configlines and \
        'BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL_LOCATION=""\n' in configlines:
