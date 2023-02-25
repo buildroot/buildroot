@@ -92,14 +92,14 @@ POSTGRESQL_CONF_OPTS += --without-libxml
 endif
 
 ifeq ($(BR2_PACKAGE_ZSTD),y)
-POSTGRESQL_DEPENDENCIES += zstd
+POSTGRESQL_DEPENDENCIES += host-pkgconf zstd
 POSTGRESQL_CONF_OPTS += --with-zstd
 else
 POSTGRESQL_CONF_OPTS += --without-zstd
 endif
 
 ifeq ($(BR2_PACKAGE_LZ4),y)
-POSTGRESQL_DEPENDENCIES += lz4
+POSTGRESQL_DEPENDENCIES += host-pkgconf lz4
 POSTGRESQL_CONF_OPTS += --with-lz4
 else
 POSTGRESQL_CONF_OPTS += --without-lz4
