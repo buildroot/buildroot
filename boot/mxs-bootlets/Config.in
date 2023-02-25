@@ -1,6 +1,8 @@
 config BR2_TARGET_MXS_BOOTLETS
 	bool "mxs-bootlets"
 	depends on BR2_arm
+	depends on BR2_TARGET_BAREBOX || BR2_LINUX_KERNEL || \
+		BR2_TARGET_UBOOT
 	help
 	  Stage1 bootloaders for Freescale iMX23/iMX28 SoCs
 
