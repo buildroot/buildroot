@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2023.02"
 
+config BR2_PACKAGE_UCCP420WLAN
+	bool "uccp420wlan removed"
+	select BR2_LEGACY
+	help
+	  The uccp420wlan package is unmaintained and doesn't build
+	  with any "recent" kernel (e.g. >= 4.7).
+
 config BR2_PACKAGE_IMX_GPU_G2D_EXAMPLES
 	bool "imx-gpu-g2d examples removed"
 	select BR2_LEGACY
