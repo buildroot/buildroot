@@ -18,6 +18,7 @@ XWAYLAND_DEPENDENCIES = \
 	xlib_libXfont2 \
 	xlib_libxkbfile \
 	xlib_libXrandr \
+	xlib_libxshmfence \
 	xlib_xtrans \
 	xorgproto
 XWAYLAND_CONF_OPTS = \
@@ -77,9 +78,9 @@ XWAYLAND_CONF_OPTS += -Dsha1=libsha1
 XWAYLAND_DEPENDENCIES += libsha1
 endif
 
-ifeq ($(BR2_PACKAGE_XLIB_LIBXSHMFENCE)$(BR2_PACKAGE_LIBDRM),yy)
+ifeq ($(BR2_PACKAGE_LIBDRM),y)
 XWAYLAND_CONF_OPTS += -Ddri3=true
-XWAYLAND_DEPENDENCIES += xlib_libxshmfence libdrm
+XWAYLAND_DEPENDENCIES +=  libdrm
 else
 XWAYLAND_CONF_OPTS += -Ddri3=false
 endif

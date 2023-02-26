@@ -47,6 +47,8 @@ config BR2_PACKAGE_WLROOTS_XWAYLAND
 	depends on BR2_USE_MMU # xwayland
 	depends on !BR2_STATIC_LIBS # xwayland
 	depends on BR2_TOOLCHAIN_HAS_THREADS # xwayland
+	depends on !BR2_RISCV_32 # xwayland -> xlib_libxshmfence
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # xwayland -> xlib_libxshmfence
 	select BR2_PACKAGE_LIBXCB
 	select BR2_PACKAGE_XCB_UTIL_WM
 	select BR2_PACKAGE_XWAYLAND
@@ -58,6 +60,8 @@ comment "XWayland support needs X.org enabled"
 
 comment "XWayland support needs a toolchain w/ threads, dynamic library"
 	depends on BR2_USE_MMU
+	depends on !BR2_RISCV_32
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
 
 endif
