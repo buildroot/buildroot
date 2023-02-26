@@ -1,0 +1,37 @@
+From 1fc03e1fdc8bb606d1c95e9fa557a9e5f6df17ec Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 25 Feb 2023 17:26:56 +0100
+Subject: [PATCH] arch/microblaze/mm/init.c: fix build
+
+Fix the following build failure on microblaze raised since
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/commit/arch/microblaze/mm/init.c?h=v5.10.168-cip27-rt11&id=32ac92b5a39e2ef91308929bf5ed0804094b4183:
+
+arch/microblaze/mm/init.c:71:2: error: #endif without #if
+   71 | #endif /* CONFIG_HIGHMEM */
+      |  ^~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/27291870cf7539d26e45c45f34322d24a6dbca33
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: sent to
+Sebastian Andrzej Siewior <bigeasy@linutronix.de>]
+---
+ arch/microblaze/mm/init.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
+index 1f4b5b34e600..a444778e59de 100644
+--- a/arch/microblaze/mm/init.c
++++ b/arch/microblaze/mm/init.c
+@@ -49,6 +49,7 @@ unsigned long lowmem_size;
+ EXPORT_SYMBOL(min_low_pfn);
+ EXPORT_SYMBOL(max_low_pfn);
+ 
++#ifdef CONFIG_HIGHMEM
+ static void __init highmem_init(void)
+ {
+ 	pr_debug("%x\n", (u32)PKMAP_BASE);
+-- 
+2.39.1
+
