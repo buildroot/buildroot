@@ -1,0 +1,42 @@
+From: =?UTF-8?q?Florian=20B=C3=A4uerle?= <florian.baeuerle@allegion.com>
+Date: Thu, 25 Oct 2018 17:26:30 +0200
+Subject: [PATCH] allow overriding modification time
+
+This patch allows to set the mtime of the lzop archive to 
+$SOURCE_DATE_EPOCH, required for reproducible build. It was submitted to 
+pengutronix by florian Bäuerle in october 2018.
+
+https://git.pengutronix.de/cgit/ptxdist/tree/patches/lzop-1.04/0002-allow-overriding-modification-time.patch
+
+Signed-off-by: Casey Reeves <casey@xogium.me>
+---
+ src/lzop.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/src/lzop.c b/src/lzop.c
+index a540ad9c4d33..c2f877d16f92 100644
+--- a/src/lzop.c
++++ b/src/lzop.c
+@@ -712,6 +712,7 @@ void init_compress_header(header_t *h, const file_t *fip, const file_t *fop)
+     assert(opt_method > 0);
+     assert(opt_level > 0);
+     assert(fip->st.st_mode == 0 || S_ISREG(fip->st.st_mode));
++    const char *source_date_epoch = getenv("SOURCE_DATE_EPOCH");
+ 
+     memset(h,0,sizeof(header_t));
+ 
+@@ -748,7 +749,13 @@ void init_compress_header(header_t *h, const file_t *fip, const file_t *fop)
+ 
+     h->mode = fix_mode_for_header(fip->st.st_mode);
+ 
+-    if (fip->st.st_mtime > 0)
++    if (source_date_epoch)
++    {
++        time_t mtime = strtoul(source_date_epoch, NULL, 0);
++        h->mtime_low  = (lzo_uint32) (mtime);
++        h->mtime_high = (lzo_uint32) ((mtime >> 16) >> 16);
++    }
++    else if (fip->st.st_mtime > 0)
+     {
+         h->mtime_low  = (lzo_uint32) (fip->st.st_mtime);
+         h->mtime_high = (lzo_uint32) ((fip->st.st_mtime >> 16) >> 16);
