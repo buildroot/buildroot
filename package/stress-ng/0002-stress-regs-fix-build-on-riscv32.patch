@@ -1,0 +1,43 @@
+From 40309f5d313524f4189f4ef158920391e92e226d Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Thu, 23 Feb 2023 21:38:25 +0100
+Subject: [PATCH] stress-regs: fix build on riscv32
+
+RISC-V register test routine is using 64bit registers only.
+When compiling on 32bit RISC-V, compilation fails with output:
+
+    stress-regs.c: In function 'stress_regs_helper':
+    stress-regs.c:485:27: error: register specified for 's1' isn't suitable for data type
+      485 |         register uint64_t s1  __asm__("s1")  = v;
+          |                           ^~
+    stress-regs.c:495:27: error: register specified for 's11' isn't suitable for data type
+      495 |         register uint64_t s11 __asm__("s11") = s1 ^ 0xa5a5a5a5a5a5a5a5ULL;
+          |                           ^~~
+
+This patch fix this issue by protecting the stress_regs_helper()
+function with an additional test, to restrict to 64bit.
+
+Upstream-reference:
+https://github.com/ColinIanKing/stress-ng/commit/6c335ac3abba535e79ddbddf34591ef5b9ee0a96
+
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ stress-regs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/stress-regs.c b/stress-regs.c
+index 4d4d32d2..0ffac4d1 100644
+--- a/stress-regs.c
++++ b/stress-regs.c
+@@ -473,7 +473,7 @@ do {			\
+ }
+ #endif
+ 
+-#if defined(STRESS_ARCH_RISCV)
++#if defined(STRESS_ARCH_RISCV) && (__riscv_xlen == 64)
+ 
+ #define STRESS_REGS_HELPER
+ /*
+-- 
+2.39.2
+
