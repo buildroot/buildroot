@@ -14,7 +14,22 @@ SPEECHD_AUTORECONF = YES
 SPEECHD_GETTEXTIZE = YES
 SPEECHD_DEPENDENCIES = host-pkgconf dotconf libglib2 libsndfile
 SPEECHD_CONF_ENV = ac_cv_prog_HELP2MAN=""
-SPEECHD_CONF_OPTS = --without-kali
+SPEECHD_CONF_OPTS = \
+	--disable-python \
+	--without-espeak \
+	--without-espeak-ng \
+	--without-flite \
+	--without-ibmtts \
+	--without-voxin \
+	--without-ivona \
+	--without-pico \
+	--without-baratinoo \
+	--without-kali \
+	--without-pulse \
+	--without-libao \
+	--without-alsa \
+	--with-oss \
+	--without-nas
 
 # fix missing config.rpath (needed for autoreconf) in the codebase
 define SPEECHD_TOUCH_CONFIG_RPATH
