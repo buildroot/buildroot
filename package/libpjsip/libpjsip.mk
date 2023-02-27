@@ -15,6 +15,12 @@ LIBPJSIP_CPE_ID_PRODUCT = pjsip
 LIBPJSIP_INSTALL_STAGING = YES
 LIBPJSIP_MAKE = $(MAKE1)
 
+# 0001-Merge-pull-request-from-GHSA-9pfh-r8x4-w26w.patch
+LIBPJSIP_IGNORE_CVES += CVE-2022-23537
+
+# 0002-Merge-pull-request-from-GHSA-cxwq-5g9x-x7fr.patch
+LIBPJSIP_IGNORE_CVES += CVE-2022-23547
+
 LIBPJSIP_CFLAGS = $(TARGET_CFLAGS) -DPJ_HAS_IPV6=1
 
 # relocation truncated to fit: R_68K_GOT16O
