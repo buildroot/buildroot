@@ -1,6 +1,7 @@
 config BR2_PACKAGE_PROFTPD
 	bool "proftpd"
 	depends on BR2_USE_MMU # fork()
+	depends on !BR2_STATIC_LIBS
 	help
 	  ProFTPD, a highly configurable FTP server.
 
@@ -104,3 +105,7 @@ config BR2_PACKAGE_PROFTPD_BUFFER_SIZE
 	  0 uses the default size of 1024.
 
 endif
+
+comment "proftpd needs a toolchain w/ dynamic library"
+	depends on BR2_USE_MMU
+	depends on BR2_STATIC_LIBS
