@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-APR_VERSION = 1.7.0
+APR_VERSION = 1.7.2
 APR_SOURCE = apr-$(APR_VERSION).tar.bz2
 APR_SITE = https://archive.apache.org/dist/apr
 APR_LICENSE = Apache-2.0
@@ -16,8 +16,7 @@ APR_INSTALL_STAGING = YES
 # so we need to autoreconf:
 APR_AUTORECONF = YES
 
-# 0004-apr-1.7.0-CVE-2021-35940.patch
-APR_IGNORE_CVES += CVE-2021-35940
+APR_CONF_OPTS = --disable-sctp
 
 # avoid apr_hints.m4 by setting apr_preload_done=yes and set
 # the needed CFLAGS on our own (avoids '-D_REENTRANT' in case
@@ -32,6 +31,7 @@ APR_CONF_ENV = \
 	CFLAGS_FOR_BUILD="$(HOST_CFLAGS)" \
 	CFLAGS="$(APR_CFLAGS)" \
 	ac_cv_file__dev_zero=yes \
+	ac_cv_mmap__dev_zero=yes \
 	ac_cv_func_setpgrp_void=yes \
 	apr_cv_process_shared_works=yes \
 	apr_cv_mutex_robust_shared=no \
@@ -39,6 +39,7 @@ APR_CONF_ENV = \
 	ac_cv_sizeof_struct_iovec=8 \
 	ac_cv_sizeof_pid_t=4 \
 	ac_cv_struct_rlimit=yes \
+	ac_cv_strerror_r_rc_int=no \
 	ac_cv_o_nonblock_inherited=no \
 	apr_cv_mutex_recursive=yes \
 	apr_cv_epoll=yes \
