@@ -31,6 +31,13 @@ ifeq ($(BR2_PACKAGE_LIBIDN2),y)
 PROFTPD_DEPENDENCIES += libidn2
 endif
 
+ifeq ($(BR2_PACKAGE_PCRE2),y)
+PROFTPD_CONF_OPTS += --enable-pcre2
+PROFTPD_DEPENDENCIES += pcre2
+else
+PROFTPD_CONF_OPTS += --disable-pcre2
+endif
+
 ifeq ($(BR2_PACKAGE_PROFTPD_MOD_CAP),y)
 PROFTPD_CONF_OPTS += --enable-cap
 PROFTPD_DEPENDENCIES += libcap
