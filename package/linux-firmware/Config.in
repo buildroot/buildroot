@@ -449,8 +449,13 @@ config BR2_PACKAGE_LINUX_FIRMWARE_BROADCOM_TIGON3
 	  Firmware files for Broadcom Tigon3 ethernet cards
 	  (tigon)
 
-config BR2_PACKAGE_LINUX_FIRMWARE_BNX2X
+config BR2_PACKAGE_LINUX_FIRMWARE_BNX2
 	bool "Broadcom NetXtremeII"
+	help
+	  Firmware files for Broadcom NetXtreme ethernet cards (bnx2)
+
+config BR2_PACKAGE_LINUX_FIRMWARE_BNX2X
+	bool "Broadcom NetXtremeII 10Gb"
 	help
 	  Firmware files for Broadcom NetXtreme 10Gb ethernet cards
 	  (bnx2x)
