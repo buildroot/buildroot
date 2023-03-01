@@ -28,11 +28,9 @@ DOCKER_ENGINE_BUILD_TARGETS = cmd/dockerd cmd/docker-proxy
 
 ifeq ($(BR2_PACKAGE_LIBAPPARMOR),y)
 DOCKER_ENGINE_DEPENDENCIES += libapparmor
-DOCKER_ENGINE_TAGS += apparmor
 endif
 
 ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
-DOCKER_ENGINE_TAGS += seccomp
 DOCKER_ENGINE_DEPENDENCIES += libseccomp
 endif
 
