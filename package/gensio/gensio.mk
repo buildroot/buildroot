@@ -14,6 +14,13 @@ GENSIO_CONF_OPTS = \
 	--without-swig \
 	--without-python
 
+ifeq ($(BR2_PACKAGE_LIBGLIB2),y)
+GENSIO_DEPENDENCIES += host-pkgconf libglib2
+GENSIO_CONF_OPTS += --with-glib
+else
+GENSIO_CONF_OPTS += --without-glib
+endif
+
 ifeq ($(BR2_PACKAGE_OPENIPMI),y)
 GENSIO_DEPENDENCIES += openipmi
 GENSIO_CONF_OPTS += --with-openipmi
