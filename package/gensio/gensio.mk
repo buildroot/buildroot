@@ -14,6 +14,13 @@ GENSIO_CONF_OPTS = \
 	--without-swig \
 	--without-python
 
+ifeq ($(BR2_PACKAGE_ALSA_LIB_PCM),y)
+GENSIO_DEPENDENCIES += alsa-lib
+GENSIO_CONF_OPTS += --with-alsa
+else
+GENSIO_CONF_OPTS += --without-alsa
+endif
+
 ifeq ($(BR2_PACKAGE_LIBGLIB2),y)
 GENSIO_DEPENDENCIES += host-pkgconf libglib2
 GENSIO_CONF_OPTS += --with-glib
