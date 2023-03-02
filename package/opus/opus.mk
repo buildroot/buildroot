@@ -12,6 +12,13 @@ OPUS_INSTALL_STAGING = YES
 
 OPUS_CFLAGS = $(TARGET_CFLAGS)
 
+# opus has ARM assembly optimizations not compatible with thumb1:
+# Error: selected processor does not support `smull r6,ip,r5,r0' in Thumb mode
+# so force ARM mode
+ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
+OPUS_CFLAGS += -marm
+endif
+
 ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_85180),y)
 OPUS_CFLAGS += -O0
 endif
