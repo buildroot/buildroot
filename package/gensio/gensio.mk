@@ -13,6 +13,12 @@ GENSIO_CONF_OPTS = \
 	--without-swig \
 	--without-python
 
+ifeq ($(BR2_INSTALL_LIBSTDCPP),y)
+GENSIO_CONF_OPTS += --with-cplusplus
+else
+GENSIO_CONF_OPTS += --without-cplusplus
+endif
+
 ifeq ($(BR2_PACKAGE_ALSA_LIB_PCM),y)
 GENSIO_DEPENDENCIES += alsa-lib
 GENSIO_CONF_OPTS += --with-alsa
