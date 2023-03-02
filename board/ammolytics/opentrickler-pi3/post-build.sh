@@ -1,1 +1,0 @@
-../opentrickler/post-build.sh

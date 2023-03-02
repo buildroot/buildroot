@@ -23,7 +23,7 @@ jobs:
     # Define the firmware matrix to build
     strategy:
       matrix:
-        board: [pi0w_dev, pi0w_prod, pi3_dev]
+        board: [pi0w_dev, pizero2w_dev, pi0w_prod, pi3_dev]
 
     outputs:
       date: ${{ steps.date.outputs.date }}

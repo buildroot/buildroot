@@ -1,1 +1,0 @@
-../opentrickler/post-fakeroot.sh
