@@ -4,7 +4,7 @@ config BR2_PACKAGE_EXFAT
 	depends on BR2_USE_MMU # libfuse
 	depends on BR2_USE_WCHAR
 	depends on !BR2_STATIC_LIBS # libfuse
-	select BR2_PACKAGE_LIBFUSE
+	select BR2_PACKAGE_LIBFUSE3 if !BR2_PACKAGE_LIBFUSE
 	help
 	  A full-featured exFAT file system implementation for GNU/Linux
 	  and other Unix-like systems as a FUSE module.
