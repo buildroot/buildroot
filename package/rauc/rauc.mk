@@ -11,9 +11,10 @@ RAUC_LICENSE = LGPL-2.1
 RAUC_LICENSE_FILES = COPYING
 RAUC_CPE_ID_VENDOR = pengutronix
 RAUC_DEPENDENCIES = host-pkgconf openssl libglib2
+RAUC_CONF_OPTS += -Dtests=false
 
 ifeq ($(BR2_PACKAGE_RAUC_DBUS),y)
-RAUC_CONF_OPTS += --enable-service
+RAUC_CONF_OPTS += -Dservice=true
 RAUC_DEPENDENCIES += dbus
 
 # systemd service uses dbus interface
@@ -28,35 +29,35 @@ endef
 endif
 
 else
-RAUC_CONF_OPTS += --disable-service
+RAUC_CONF_OPTS += -Dservice=false
 endif
 
 ifeq ($(BR2_PACKAGE_RAUC_GPT),y)
-RAUC_CONF_OPTS += --enable-gpt
+RAUC_CONF_OPTS += -Dgpt=enabled
 RAUC_DEPENDENCIES += util-linux-libs
 else
-RAUC_CONF_OPTS += --disable-gpt
+RAUC_CONF_OPTS += -Dgpt=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_RAUC_NETWORK),y)
-RAUC_CONF_OPTS += --enable-network
+RAUC_CONF_OPTS += -Dnetwork=true
 RAUC_DEPENDENCIES += libcurl
 else
-RAUC_CONF_OPTS += --disable-network
+RAUC_CONF_OPTS += -Dnetwork=false
 endif
 
 ifeq ($(BR2_PACKAGE_RAUC_JSON),y)
-RAUC_CONF_OPTS += --enable-json
+RAUC_CONF_OPTS += -Djson=enabled
 RAUC_DEPENDENCIES += json-glib
 else
-RAUC_CONF_OPTS += --disable-json
+RAUC_CONF_OPTS += -Djson=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_RAUC_STREAMING),y)
-RAUC_CONF_OPTS += --enable-streaming
+RAUC_CONF_OPTS += -Dstreaming=true
 RAUC_DEPENDENCIES += libnl
 else
-RAUC_CONF_OPTS += --disable-streaming
+RAUC_CONF_OPTS += -Dstreaming=false
 endif
 
 HOST_RAUC_DEPENDENCIES = \
@@ -65,12 +66,13 @@ HOST_RAUC_DEPENDENCIES = \
 	host-libglib2 \
 	host-squashfs \
 	$(if $(BR2_PACKAGE_HOST_LIBP11),host-libp11)
-HOST_RAUC_CONF_OPTS += \
-	--disable-network \
-	--disable-json \
-	--disable-service \
-	--without-dbuspolicydir \
-	--with-systemdunitdir=no
 
-$(eval $(autotools-package))
-$(eval $(host-autotools-package))
+HOST_RAUC_CONF_OPTS += \
+	-Dnetwork=false \
+	-Dstreaming=false \
+	-Djson=disabled \
+	-Dservice=false \
+	-Dtests=false
+
+$(eval $(meson-package))
+$(eval $(host-meson-package))
