@@ -18,7 +18,7 @@ class TestEdk2(infra.basetest.BRTest):
         BR2_LINUX_KERNEL_CUSTOM_VERSION=y
         BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="5.10.34"
         BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG=y
-        BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE="board/qemu/aarch64-sbsa/linux.config"
+        BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE="support/testing/tests/boot/test_edk2/linux.config"
         BR2_TARGET_EDK2=y
         BR2_TARGET_EDK2_PLATFORM_QEMU_SBSA=y
         BR2_TARGET_GRUB2=y
