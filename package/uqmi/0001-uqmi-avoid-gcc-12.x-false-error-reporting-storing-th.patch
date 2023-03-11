@@ -1,10 +1,10 @@
-From 4c2eb926efb4de24af5a3b1e8c18195198827491 Mon Sep 17 00:00:00 2001
+From 63ab887be90c7fe37d537ea75e60eb95d6d87d3f Mon Sep 17 00:00:00 2001
 From: Peter Seiderer <ps.report@gmx.net>
 Date: Sun, 5 Mar 2023 22:08:13 +0100
-Subject: [PATCH] uqmi: avoid gcc false error reporting (storing the address of
- local variable 'complete' in '*req.complete')
+Subject: [PATCH] uqmi: avoid gcc-12.x false error reporting (storing the
+ address of local variable 'complete' in '*req.complete')
 
-Avoid gcc false error reporting (req->complete is later reset to NULL
+Avoid gcc-12.x false error reporting (req->complete is later reset to NULL
 in case of use of local complete):
 
   dev.c:217:23: error: storing the address of local variable 'complete' in '*req.complete' [-Werror=dangling-pointer=]
@@ -12,27 +12,30 @@ in case of use of local complete):
         |         ~~~~~~~~~~~~~~^~~~~~~~~~~
 
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
-
-[Upstream: http://lists.openwrt.org/pipermail/openwrt-devel/2023-March/040633.html]
+[Upstream: http://lists.openwrt.org/pipermail/openwrt-devel/2023-March/040667.html]
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+Changes v1 -> v2:
+  - apply pragma ignored only for gcc >= 12.x (as the warning
+    '-Wdangling-pointer' was introduced with gcc-12.x)
 ---
  dev.c | 12 ++++++++++++
  1 file changed, 12 insertions(+)
 
 diff --git a/dev.c b/dev.c
-index bd10207..b8ac273 100644
+index bd10207..dbd42d4 100644
 --- a/dev.c
 +++ b/dev.c
 @@ -203,6 +203,15 @@ void qmi_request_cancel(struct qmi_dev *qmi, struct qmi_request *req)
  	__qmi_request_complete(qmi, req, NULL);
  }
  
-+/* avoid gcc false error reporting:
++/* avoid gcc-12.x false error reporting:
 + *   dev.c:217:23: error: storing the address of local variable ‘complete’ in ‘*req.complete’ [-Werror=dangling-pointer=]
 + *     217 |         req->complete = &complete;
 + *         |         ~~~~~~~~~~~~~~^~~~~~~~~~~
 + */
-+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
++#if __GNUC__ >= 12
 +#pragma GCC diagnostic push
 +#pragma GCC diagnostic ignored "-Wdangling-pointer"
 +#endif
@@ -43,7 +46,7 @@ index bd10207..b8ac273 100644
  
  	return req->ret;
  }
-+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
++#if __GNUC__ >= 12
 +#pragma GCC diagnostic pop
 +#endif
  
