@@ -24,6 +24,10 @@ RSYNC_CONF_OPTS = \
 	--disable-lz4 \
 	--disable-md5-asm
 
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+RSYNC_CONF_ENV += LIBS=-latomic
+endif
+
 ifeq ($(BR2_PACKAGE_ACL),y)
 RSYNC_DEPENDENCIES += acl
 else
