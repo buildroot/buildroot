@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HIGHWAY_VERSION = 1.0.2
+HIGHWAY_VERSION = 1.0.3
 HIGHWAY_SITE = $(call github,google,highway,$(HIGHWAY_VERSION))
 HIGHWAY_LICENSE = Apache-2.0
 HIGHWAY_LICENSE_FILES = LICENSE
@@ -35,6 +35,9 @@ endif
 ifeq ($(BR2_ARM_FPU_VFPV4),y)
 HIGHWAY_CONF_OPTS += -DHWY_CMAKE_ARM7=ON
 else
+# Highway Armv7 Neon support requires in fact vfpv4 / neon v2. When we
+# are in a vfpv3 case (e.g. Cortex-A8, Cortex-A9) this flag need to be
+# set to off.
 HIGHWAY_CONF_OPTS += -DHWY_CMAKE_ARM7=OFF
 endif
 

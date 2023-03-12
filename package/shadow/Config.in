@@ -1,0 +1,62 @@
+menuconfig BR2_PACKAGE_SHADOW
+	bool "shadow"
+	depends on !BR2_STATIC_LIBS
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14
+	help
+	  Utilities to deal with user accounts.
+
+	  https://github.com/shadow-maint/shadow
+
+if BR2_PACKAGE_SHADOW
+
+config BR2_PACKAGE_SHADOW_SHADOWGRP
+	bool "shadowgrp"
+	help
+	  Enable shadow group support.
+
+config BR2_PACKAGE_SHADOW_ACCOUNT_TOOLS_SETUID
+	bool "account-tools-setuid"
+	depends on BR2_USE_MMU  # linux-pam
+	depends on BR2_ENABLE_LOCALE  # linux-pam
+	depends on BR2_USE_WCHAR  # linux-pam
+	depends on !BR2_STATIC_LIBS  # linux-pam
+	select BR2_PACKAGE_LINUX_PAM
+	help
+	  Install the user and group management tools (e.g. groupadd)
+	  with setuid and authenticate the callers via PAM.
+
+comment "account-tools-setuid needs a toolchain w/ dynamic library, wchar, locale"
+	depends on BR2_USE_MMU
+	depends on BR2_STATIC_LIBS || !BR2_USE_WCHAR || !BR2_ENABLE_LOCALE
+
+config BR2_PACKAGE_SHADOW_UTMPX
+	bool "utmpx"
+	help
+	  Enable loggin in utmpx / wtmpx.
+
+config BR2_PACKAGE_SHADOW_SUBORDINATE_IDS
+	bool "subordinate-ids"
+	help
+	  Support subordinate ids. Helpful to use container solution
+	  like podman without root.
+
+config BR2_PACKAGE_SHADOW_SHA_CRYPT
+	bool "sha-crypt"
+	default y
+	help
+	  Allow the SHA256 and SHA512 password encryption algorithms.
+
+config BR2_PACKAGE_SHADOW_BCRYPT
+	bool "bcrypt"
+	help
+	  Allow the bcrypt password encryption algorithm.
+
+config BR2_PACKAGE_SHADOW_YESCRYPT
+	bool "yescrypt"
+	help
+	  Allow the yescrypt password encryption algorithm.
+
+endif # BR2_PACKAGE_SHADOW
+
+comment "shadow needs a toolchain w/ headers >= 4.14, dynamic library"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14 || BR2_STATIC_LIBS

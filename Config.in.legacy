@@ -144,6 +144,15 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2023.05"
+
+config BR2_PACAKGE_OPENFPGALOADER_CMSIS
+	bool "openfpgaloader cmsis option name fixed"
+	select BR2_LEGACY
+	help
+	  A typo on BR2_PACAKGE_OPENFPGALOADER_CMSIS was fixed by
+	  renaming the option to BR2_PACKAGE_OPENFPGALOADER_CMSIS.
+
 comment "Legacy options removed in 2023.02"
 
 config BR2_PACKAGE_PUGIXML_HEADER_ONLY

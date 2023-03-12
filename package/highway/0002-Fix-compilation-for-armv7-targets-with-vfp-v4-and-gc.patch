@@ -1,0 +1,118 @@
+From 93d4579f90dd6ad26fd0dcda6420b3bb2fdcbc02 Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Mon, 20 Feb 2023 23:22:28 +0100
+Subject: [PATCH] Fix compilation for armv7 targets with vfp < v4 and gcc >= 8
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When using a armv7 gcc >= 8 toolchain (like [1]) with Highway
+configured with -DHWY_CMAKE_ARM7=OFF and HWY_ENABLE_CONTRIB=ON,
+compilation fails with error:
+
+    In file included from /build/highway-1.0.3/hwy/ops/arm_neon-inl.h:33,
+                     from /build/highway-1.0.3/hwy/highway.h:358,
+                     from /build/highway-1.0.3/hwy/contrib/sort/shared-inl.h:104,
+                     from /build/highway-1.0.3/hwy/contrib/sort/traits128-inl.h:27,
+                     from /build/highway-1.0.3/hwy/contrib/sort/vqsort_128d.cc:23,
+                     from /build/highway-1.0.3/hwy/foreach_target.h:81,
+                     from /build/highway-1.0.3/hwy/contrib/sort/vqsort_128d.cc:20:
+    /toolchain/lib/gcc/arm-buildroot-linux-gnueabihf/12.2.0/include/arm_neon.h: In function 'void hwy::N_NEON::StoreU(Vec128<long long unsigned int, 2>, Full128<long long unsigned int>, uint64_t*)':
+    /toolchain/lib/gcc/arm-buildroot-linux-gnueabihf/12.2.0/include/arm_neon.h:11052:1: error: inlining failed in call to 'always_inline' 'void vst1q_u64(uint64_t*, uint64x2_t)': target specific option mismatch
+    11052 | vst1q_u64 (uint64_t * __a, uint64x2_t __b)
+          | ^~~~~~~~~
+    /build/highway-1.0.3/hwy/ops/arm_neon-inl.h:2786:12: note: called from here
+     2786 |   vst1q_u64(unaligned, v.raw);
+          |   ~~~~~~~~~^~~~~~~~~~~~~~~~~~
+
+The same errors happen when configured with HWY_ENABLE_EXAMPLES=ON,
+or from client libraries like libjxl (at other places).
+
+The issue is that Highway Arm NEON ops have a dependency on the
+Advanced SIMD (Neon) v2 and the VFPv4 floating-point instructions.
+The SIMD (Neon) v1 and VFPv3 instructions are not supported.
+
+There was several attempts to fix variants of this issues.
+See #834 and #1032.
+
+HWY_NEON target is selected only if __ARM_NEON is defined. See:
+https://github.com/google/highway/blob/1.0.3/hwy/detect_targets.h#L251
+
+This test is not sufficient since __ARM_NEON will be predefined in
+any cases when Neon is enabled (neon-vfpv3, neon-vfpv4).
+
+The issue is that HWY_CMAKE_ARM7=ON implies VFPv4 / NEON SIMD v2.
+When setting HWY_CMAKE_ARM7=OFF, "neon-vfpv4" will not be forced,
+but the code is still using intrinsics assuming VFPv4. Gcc will fail
+with error because code cannot be generated for the selected
+architecture.
+
+This issue can be avoided by adding "-DHWY_DISABLED_TARGETS=HWY_NEON" in
+CXXFLAGS. The problem with this solution is that every client program will
+also need to do the same. This goes against the very purpose of
+"hwy/detect_targets.h".
+
+Technically, Armv7-a processors with VFPv4 can be detected using some
+ACLE (Arm C Language Extensions [2]) predefined macros:
+
+Basically, we want Highway to define HWY_NEON only when the target
+supports SIMDv2/VFPv4 or higher. An older target with vfpv3 only
+(e.g. Cortex-A8, A9, ...) would NOT define HWY_NEON, and therefore
+would fallback on HWY_SCALAR implementation.
+
+However, not all compiler completely support ACLE. There is also
+several versions too. So we cannot easily rely on macros like
+"__ARM_VFPV4__" (which clang predefine, but not gcc).
+
+The alternative solution proposed in this patch, is to declare the
+HWY_NEON target architecture as broken, when we detect the target is
+Armv7-A, but mandatory features for vfpv4 (namely half-float, FMA)
+are missing. Half-floats are tested using the macro __ARM_NEON_FP,
+and the FMA with the macro __ARM_FEATURE_FMA. See ACLE [2]. The
+intent of declaring the target as broken, rather than selecting
+HWY_NEON only if vfpv4 features are detected is to remain a bit
+conservative, since the detection is slithly inaccurate.
+
+For a given compiler/cflags, predefined macros for Arm/ACLE can be
+reviewed with commands like:
+
+    arm-linux-gnueabihf-gcc -mcpu=cortex-a9 -mfpu=neon-vfpv3 -Wp,-dM -E -c - < /dev/null | grep -Fi arm | sort
+    arm-linux-gnueabihf-gcc -mcpu=cortex-a7 -mfpu=neon-vfpv4 -Wp,-dM -E -c - < /dev/null | grep -Fi arm | sort
+    clang -target armv7a -mcpu=cortex-a9 -mfpu=neon-vfpv3 -mfloat-abi=hard -Wp,-dM -E -c - < /dev/null | grep -Fi arm | sort
+    clang -target armv7a -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -Wp,-dM -E -c - < /dev/null | grep -Fi arm | sort
+
+The different values of __ARM_NEON_FP can be seen, depending which
+"-mfpu" is passed. Same for __ARM_FEATURE_FMA.
+
+[1] https://toolchains.bootlin.com/downloads/releases/toolchains/armv7-eabihf/tarballs/armv7-eabihf--glibc--bleeding-edge-2022.08-1.tar.bz2
+[2] https://github.com/ARM-software/acle/
+
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ hwy/detect_targets.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/hwy/detect_targets.h b/hwy/detect_targets.h
+index 2beca95..40ae7fe 100644
+--- a/hwy/detect_targets.h
++++ b/hwy/detect_targets.h
+@@ -154,6 +154,16 @@
+      (defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN))
+ #define HWY_BROKEN_TARGETS (HWY_NEON)
+ 
++// armv7-a without a detected vfpv4 is not supported
++// (for example Cortex-A8, Cortex-A9)
++// vfpv4 always have neon half-float _and_ FMA.
++#elif HWY_ARCH_ARM_V7 && \
++    (__ARM_ARCH_PROFILE == 'A') && \
++    !defined(__ARM_VFPV4__) && \
++        !((__ARM_NEON_FP & 0x2 /* half-float */) && \
++          (__ARM_FEATURE_FMA == 1))
++#define HWY_BROKEN_TARGETS (HWY_NEON)
++
+ // SVE[2] require recent clang or gcc versions.
+ #elif (HWY_COMPILER_CLANG && HWY_COMPILER_CLANG < 1100) || \
+     (HWY_COMPILER_GCC_ACTUAL && HWY_COMPILER_GCC_ACTUAL < 1000)
+-- 
+2.39.2
+

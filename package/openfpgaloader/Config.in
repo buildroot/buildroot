@@ -12,7 +12,7 @@ config BR2_PACKAGE_OPENFPGALOADER
 
 if BR2_PACKAGE_OPENFPGALOADER
 
-config BR2_PACAKGE_OPENFPGALOADER_CMSIS
+config BR2_PACKAGE_OPENFPGALOADER_CMSIS
 	bool "CMSIS-DAP support"
 	depends on BR2_PACKAGE_HAS_UDEV # hidapi
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # hidapi
@@ -23,6 +23,16 @@ config BR2_PACAKGE_OPENFPGALOADER_CMSIS
 
 comment "openfpgaloader CMSIS-DAP needs udev /dev management and a toolchain w/ NPTL threads"
 	depends on !BR2_PACKAGE_HAS_UDEV || !BR2_TOOLCHAIN_HAS_THREADS_NPTL
+
+config BR2_PACKAGE_OPENFPGALOADER_LIBGPIOD
+	bool "libgpiod support"
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_8 # libgpiod
+	select BR2_PACKAGE_LIBGPIOD
+	help
+	  openfpgaloader libgpiod support
+
+comment "openfpgaloader libgpiod needs kernel headers >= 4.8"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_8
 
 endif
 

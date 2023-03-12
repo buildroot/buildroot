@@ -27,6 +27,10 @@ config BR2_TARGET_GRUB2
 	  Amongst others, GRUB2 offers EFI support, which GRUB Legacy
 	  doesn't provide.
 
+	  The file boot/grub2/grub.cfg is used by default as the Grub
+	  configuration file. It can be overridden using a rootfs
+	  overlay or post-build script.
+
 	  For additional notes on using Grub 2 with Buildroot, see
 	  boot/grub2/readme.txt
 

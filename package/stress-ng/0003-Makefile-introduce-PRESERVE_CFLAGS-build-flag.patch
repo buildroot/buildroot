@@ -1,0 +1,78 @@
+From d3ab0bad6afc2e8f4be70fe38dd24788f1b3d4be Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Fri, 24 Feb 2023 21:11:30 +0100
+Subject: [PATCH] Makefile: introduce PRESERVE_CFLAGS build flag
+
+The stress-ng Makefile includes many nice environment auto-detection
+features to adjust compilation flags. This is very convenient in
+many compilation use-cases. However, in some other specific cross
+compilation environments, those automatic CFLAGS adjustments may
+create compilation failures.
+
+For example, commit c00e695ed5 added -fstack-protector-strong if the
+compiler recognize the flag. In some situations, for example a gcc
+toolchain based on uClibc-ng without stack-protector libssp
+enabled, gcc will recognize the option. Then, the Makefile adds the
+option to CFLAGS, and the compilation/link fails at link time with an
+error like:
+
+    /toolchain/arm-buildroot-linux-uclibcgnueabi/bin/ld: cannot find -lssp_nonshared: No such file or directory
+    /toolchain/arm-buildroot-linux-uclibcgnueabi/bin/ld: cannot find -lssp: No such file or directory
+
+stress-ng is included in the Buildroot build system [1] [2], which
+supports many architectures and toolchain configurations. This build
+system carefully controls its CFLAGS. In such a case, it is
+preferable for a package to avoid changing compilation flags.
+
+This patch introduces the PRESERVE_CFLAGS Makefile variable which will
+disable those CFLAGS adjustments, if set to 1. The current build
+behavior is preserved if unset.
+
+Upstream-reference:
+https://github.com/ColinIanKing/stress-ng/commit/3d87d50561505a5a79008c01e35fc2e100000160
+
+[1] https://buildroot.org/
+[2] https://git.buildroot.org/buildroot/tree/package/stress-ng?h=2022.11.1
+
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ Makefile | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Makefile b/Makefile
+index 7a969aba..35151d74 100644
+--- a/Makefile
++++ b/Makefile
+@@ -45,6 +45,7 @@ endif
+ # Test for hardening flags and apply them if applicable
+ #
+ MACHINE = $(shell uname -m)
++ifneq ($(PRESERVE_CFLAGS),1)
+ ifneq ($(MACHINE),$(filter $(MACHINE),alpha parisc))
+ ifeq ($(shell $(CC) $(CFLAGS) -fstack-protector-strong -E -xc /dev/null > /dev/null 2>& 1 && echo 1),1)
+ CFLAGS += -fstack-protector-strong
+@@ -58,6 +59,7 @@ ifeq ($(shell $(CC) $(CFLAGS) -D_FORTIFY_SOURCE=2 -E -xc /dev/null > /dev/null 2
+ CFLAGS += -D_FORTIFY_SOURCE=2
+ endif
+ endif
++endif
+ 
+ #
+ # Expected build warnings
+@@ -83,11 +85,13 @@ PRE_V=
+ PRE_Q=@#
+ endif
+ 
++ifneq ($(PRESERVE_CFLAGS),1)
+ ifeq ($(findstring icc,$(CC)),icc)
+ CFLAGS += -no-inline-max-size -no-inline-max-total-size
+ CFLAGS += -axAVX,CORE-AVX2,CORE-AVX-I,CORE-AVX512,SSE2,SSE3,SSSE3,SSE4.1,SSE4.2,SANDYBRIDGE,SKYLAKE,SKYLAKE-AVX512,TIGERLAKE,SAPPHIRERAPIDS
+ CFLAGS += -ip -falign-loops -funroll-loops -ansi-alias -fma -qoverride-limits
+ endif
++endif
+ 
+ #ifeq ($(findstring clang,$(CC)),clang)
+ #CFLAGS += -Weverything
+-- 
+2.39.2
+
