@@ -52,4 +52,3 @@ class TestShadow(BRTest):
         self.assertRunOk(f'usermod {username} --home {new_home}')
         self.assertRunOk(f'test $(su {username} -c \'echo $HOME\') = {new_home}')
         self.assertRunOk(f'userdel {username}')
-
