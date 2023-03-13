@@ -1,0 +1,39 @@
+#! /bin/sh
+#
+# hwclock      This writes the system time to the RTC on shutdown
+#
+
+RTC_DEVICE=rtc0
+DAEMON=hwclock
+
+# shellcheck source=/dev/null
+[ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
+
+# Quietly do nothing if /dev/rtc0 does not exist
+[ -c /dev/$RTC_DEVICE ] || exit 0
+
+start(){
+	: # Nothing to do on startup
+}
+
+stop(){
+	printf "Saving the system clock to /dev/%s\n" "${RTC_DEVICE}"
+	/sbin/$DAEMON -f "/dev/${RTC_DEVICE}" -w
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	restart|reload)
+		stop
+		start
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart|reload}"
+		exit 1
+		;;
+esac

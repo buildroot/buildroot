@@ -1,0 +1,10 @@
+config BR2_PACKAGE_HWCLOCK_INITSCRIPT
+	bool "hwclock-initscript"
+	depends on !BR2_PACKAGE_SYSTEMD
+	depends on BR2_PACKAGE_BUSYBOX || BR2_PACKAGE_UTIL_LINUX_HWCLOCK
+	help
+	  Initscript to save the date and time to the hardware clock on
+	  shutdown.
+
+	  Note that the kernel already loads the time from the hwclock
+	  at boot time, no init script is needed for that.
