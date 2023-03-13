@@ -1,0 +1,12 @@
+config BR2_PACKAGE_PYTHON_HWDATA
+	bool "python-hwdata"
+	select BR2_PACKAGE_HWDATA # runtime
+	select BR2_PACKAGE_HWDATA_PCI_IDS
+	select BR2_PACKAGE_HWDATA_PNP_IDS
+	select BR2_PACKAGE_HWDATA_USB_IDS
+	help
+	  Provides python interface to database stored in hwdata
+	  package. It allows you to get human readable description of
+	  USB and PCI devices.
+
+	  https://github.com/xsuchy/python-hwdata
