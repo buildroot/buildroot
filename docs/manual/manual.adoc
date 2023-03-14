@@ -1,0 +1,75 @@
+// -*- mode:doc; -*-
+// vim: set syntax=asciidoc:
+
+= The Buildroot user manual
+:toc:
+
+Buildroot {sys:echo $\{BR2_VERSION%%-git*\}} manual generated on {localdate}
+{localtime} from git revision {sys:git rev-parse --short HEAD}
+
+The Buildroot manual is written by the Buildroot developers.
+It is licensed under the GNU General Public License, version 2. Refer to the
+http://git.buildroot.org/buildroot/tree/COPYING?id={sys:git rev-parse HEAD}[COPYING]
+file in the Buildroot sources for the full text of this license.
+
+Copyright (C) The Buildroot developers <buildroot@buildroot.org>
+
+image::logo.png[]
+
+= Getting started
+
+include::introduction.adoc[]
+
+include::prerequisite.adoc[]
+
+include::getting.adoc[]
+
+include::quickstart.adoc[]
+
+include::resources.adoc[]
+
+= User guide
+
+include::configure.adoc[]
+
+include::configure-other-components.adoc[]
+
+include::common-usage.adoc[]
+
+include::customize.adoc[]
+
+include::integration.adoc[]
+
+include::faq-troubleshooting.adoc[]
+
+include::known-issues.adoc[]
+
+include::legal-notice.adoc[]
+
+include::beyond-buildroot.adoc[]
+
+= Developer guide
+
+include::how-buildroot-works.adoc[]
+
+include::writing-rules.adoc[]
+
+include::adding-board-support.adoc[]
+
+include::adding-packages.adoc[]
+
+include::patch-policy.adoc[]
+
+include::download-infra.adoc[]
+
+include::debugging-buildroot.adoc[]
+
+include::contribute.adoc[]
+
+include::developers.adoc[]
+
+include::release-engineering.adoc[]
+
+= Appendix
+
+include::appendix.adoc[]

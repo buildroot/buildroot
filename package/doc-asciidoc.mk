@@ -124,7 +124,7 @@ $$(O)/docs/$(1)/$(1).$(5): $$($(2)_SOURCES) \
 			--resource="$$(abspath $$(r))") \
 		$$($(2)_$(3)_A2X_OPTS) \
 		--asciidoc-opts="$$($(2)_$(3)_ASCIIDOC_OPTS)" \
-		$$(BUILD_DIR)/docs/$(1)/$(1).txt
+		$$(BUILD_DIR)/docs/$(1)/$(1).adoc
 # install the generated document
 	$$($(2)_$(3)_INSTALL_CMDS)
 endif

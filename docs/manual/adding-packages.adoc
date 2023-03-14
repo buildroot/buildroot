@@ -1,0 +1,58 @@
+// -*- mode:doc; -*-
+// vim: set syntax=asciidoc:
+
+[[adding-packages]]
+== Adding new packages to Buildroot
+
+This section covers how new packages (userspace libraries or
+applications) can be integrated into Buildroot. It also shows how
+existing packages are integrated, which is needed for fixing issues or
+tuning their configuration.
+
+When you add a new package, be sure to test it in various conditions
+(see xref:testing-package[]) and also check it for coding style (see
+xref:check-package[]).
+
+include::adding-packages-directory.adoc[]
+
+include::adding-packages-generic.adoc[]
+
+include::adding-packages-autotools.adoc[]
+
+include::adding-packages-cmake.adoc[]
+
+include::adding-packages-python.adoc[]
+
+include::adding-packages-luarocks.adoc[]
+
+include::adding-packages-perl.adoc[]
+
+include::adding-packages-virtual.adoc[]
+
+include::adding-packages-kconfig.adoc[]
+
+include::adding-packages-rebar.adoc[]
+
+include::adding-packages-waf.adoc[]
+
+include::adding-packages-meson.adoc[]
+
+include::adding-packages-cargo.adoc[]
+
+include::adding-packages-golang.adoc[]
+
+include::adding-packages-qmake.adoc[]
+
+include::adding-packages-kernel-module.adoc[]
+
+include::adding-packages-asciidoc.adoc[]
+
+include::adding-packages-linux-kernel-spec-infra.adoc[]
+
+include::adding-packages-hooks.adoc[]
+
+include::adding-packages-gettext.adoc[]
+
+include::adding-packages-tips.adoc[]
+
+include::adding-packages-conclusion.adoc[]
