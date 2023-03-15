@@ -41,7 +41,6 @@ XENOMAI_INSTALL_STAGING_OPTS = DESTDIR=$(STAGING_DIR) install-user
 
 XENOMAI_CONF_OPTS += \
 	--disable-demo \
-	--disable-testsuite \
 	--includedir=/usr/include/xenomai/
 
 ifeq ($(BR2_PACKAGE_XENOMAI_MERCURY),y)
@@ -87,17 +86,10 @@ endef
 
 XENOMAI_POST_INSTALL_TARGET_HOOKS += XENOMAI_REMOVE_UNNEEDED_FILES
 
-ifeq ($(BR2_PACKAGE_XENOMAI_TESTSUITE),)
-define XENOMAI_REMOVE_TESTSUITE
-	rm -rf $(TARGET_DIR)/usr/share/xenomai/
-	for i in clocktest gpiotest latency smokey spitest switchtest \
-		xeno-test-run-wrapper dohell xeno-test-run xeno-test ; do \
-		rm -f $(TARGET_DIR)/usr/bin/$$i ; \
-	done
-	rm -rf $(TARGET_DIR)/usr/demo/
-endef
-
-XENOMAI_POST_INSTALL_TARGET_HOOKS += XENOMAI_REMOVE_TESTSUITE
+ifeq ($(BR2_PACKAGE_XENOMAI_TESTSUITE),y)
+XENOMAI_CONF_OPTS += --enable-testsuite
+else
+XENOMAI_CONF_OPTS += --disable-testsuite
 endif
 
 ifeq ($(BR2_PACKAGE_XENOMAI_RTCAN),)
