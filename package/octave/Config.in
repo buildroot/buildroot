@@ -13,8 +13,7 @@ config BR2_PACKAGE_OCTAVE
 	# used by the "utils/test-pkg" script.
 	depends on !BR2_TOOLCHAIN_EXTERNAL_BOOTLIN || !BR2_x86_64
 	select BR2_PACKAGE_OPENBLAS
-	select BR2_PACKAGE_PCRE
-	select BR2_PACKAGE_PCRE_UTF
+	select BR2_PACKAGE_PCRE2
 	help
 	  GNU Octave is a high-level language, primarily intended for
 	  numerical computations. It provides a convenient command

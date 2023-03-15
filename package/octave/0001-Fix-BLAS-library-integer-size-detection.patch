@@ -1,4 +1,4 @@
-From e4dcfefac4215ee66c3dda5b067dd6d06066b0a2 Mon Sep 17 00:00:00 2001
+From 75b973373ed2e9a7a30f62dfe330299306ecff75 Mon Sep 17 00:00:00 2001
 From: Julien Olivain <ju.o@free.fr>
 Date: Sat, 5 Mar 2022 12:36:09 +0100
 Subject: [PATCH] Fix BLAS library integer size detection
@@ -19,22 +19,22 @@ Signed-off-by: Julien Olivain <ju.o@free.fr>
  1 file changed, 6 insertions(+)
 
 diff --git a/configure.ac b/configure.ac
-index de7a00a330..383ce27b06 100644
+index 4092e5915d..f4ea2c1987 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -781,6 +781,12 @@ if test $ax_blas_ok = no || test $ax_lapack_ok = no; then
+@@ -757,6 +757,12 @@ if test $ax_blas_ok = no || test $ax_lapack_ok = no; then
    AC_MSG_ERROR([BLAS and LAPACK libraries are required])
  fi
  
 +if ac_fn_f77_try_run "$LINENO"; then :
-+  ax_blas_integer_size=8
++  ax_cv_blas_integer_size=8
 +else
-+  ax_blas_integer_size=4
++  ax_cv_blas_integer_size=4
 +fi
 +
- case $ax_blas_integer_size in
+ case $ax_cv_blas_integer_size in
    4)
      HAVE_64_BIT_BLAS=no
 -- 
-2.36.0
+2.39.2
 
