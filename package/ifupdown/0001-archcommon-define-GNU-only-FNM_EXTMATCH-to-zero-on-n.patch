@@ -1,0 +1,41 @@
+From e27fe4b483194ee57736c228b7a6c56696ae8a06 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>
+Date: Thu, 16 Mar 2023 09:29:20 +0100
+Subject: [PATCH] archcommon: define GNU-only FNM_EXTMATCH to zero on non-glibc
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+FNM_EXTMATCH is a GNU extension that enables extended pattern matching
+for fnmatch(3). Defining it to zero on non-glibc builds makes ifupdown
+usable, albeit with a sligthy reduced pattern matching feature set.
+
+Signed-off-by: Martin Hundebøll <martin@geanix.com>
+Upstream-status: Denied [https://salsa.debian.org/debian/ifupdown/-/merge_requests/5]
+---
+ archcommon.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/archcommon.h b/archcommon.h
+index 818b0b6..981e84f 100644
+--- a/archcommon.h
++++ b/archcommon.h
+@@ -1,5 +1,15 @@
+ #include "header.h"
+ 
++/*
++ * FNM_EXTMATCH is a GNU extension, so it isn't available when compiling
++ * with MUSL. Defining FNM_EXTMATCH to zero is safe, as the flag merely
++ * enables extended pattern matching, which MUSL users should be able to
++ * live without.
++ */
++#ifndef FNM_EXTMATCH
++#define FNM_EXTMATCH 0
++#endif
++
+ bool execable(const char *);
+ 
+ #define iface_is_link() (!_iface_has(ifd->real_iface, ":."))
+-- 
+2.39.2
+
