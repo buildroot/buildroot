@@ -165,6 +165,7 @@ endif
 
 config BR2_PACKAGE_QT6BASE_NETWORK
 	bool "network module"
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_PSK if BR2_PACKAGE_LIBOPENSSL
 	help
 	  This options enables the Qt6Network library.
 
