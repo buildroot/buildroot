@@ -24,7 +24,7 @@ start() {
 	for prog in ${PROGS}; do
 		start_one "${prog}" || ret=$?
 	done
-    return $ret
+	return "$ret"
 }
 
 stop_one() {
@@ -45,7 +45,7 @@ stop() {
 	for prog in ${PROGS}; do
 		stop_one "${prog}" || ret=$?
 	done
-    return $ret
+	return "$ret"
 }
 
 restart() {
