@@ -87,7 +87,7 @@ else
 SHADOW_CONF_OPTS += --without-libcrack
 endif
 
-ifeq ($(BR2_PACKAGE_LIBSELINUX),y)
+ifeq ($(BR2_PACKAGE_LIBSELINUX)$(BR2_PACKAGE_LIBSEMANAGE),yy)
 SHADOW_CONF_OPTS += --with-selinux
 SHADOW_DEPENDENCIES += libselinux libsemanage
 else
