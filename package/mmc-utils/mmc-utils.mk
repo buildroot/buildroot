@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-MMC_UTILS_VERSION = dfc3b6ecda84d21418fb4408b39c5c71db4c6458
-MMC_UTILS_SITE = https://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc-utils.git
+MMC_UTILS_VERSION = d4c2910981ff99b983734426dfa99632fb81ac6b
+MMC_UTILS_SITE = https://git.kernel.org/pub/scm/utils/mmc/mmc-utils.git
 MMC_UTILS_SITE_METHOD = git
 MMC_UTILS_LICENSE = GPL-2.0
-MMC_UTILS_LICENSE_FILES = mmc.h
+MMC_UTILS_LICENSE_FILES = README
 
 MMC_UTILS_CFLAGS = $(TARGET_CFLAGS)
 
