@@ -1,6 +1,6 @@
-From 5cfc7e277d0b262a1d12e867c47a36301fb7edb7 Mon Sep 17 00:00:00 2001
+From 1fed5adc166d5f2190a6b6ad048ec2d803316327 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
-Date: Wed, 22 Feb 2023 10:01:25 +0100
+Date: Wed, 22 Feb 2023 10:13:30 +0100
 Subject: [PATCH] configure.ac: fix openssl static build
 
 Do not use AX_APPEND_FLAG as it will break static builds by removing
@@ -24,26 +24,24 @@ Fixes:
  - http://autobuild.buildroot.org/results/8be59dd94e4916f9457cb435104e36e62a28373b
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
-[Upstream status: https://github.com/sudo-project/sudo/pull/244]
+[Retrieved from:
+https://github.com/sudo-project/sudo/commit/1fed5adc166d5f2190a6b6ad048ec2d803316327]
 ---
- configure.ac | 4 +++-
+ m4/openssl.m4 | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/configure.ac b/configure.ac
-index 8eccad7e4..523d8e56b 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -3082,7 +3082,9 @@ if test "${enable_openssl-no}" != no; then
- 		    SUDO_APPEND_LIBPATH([LIBTLS], [$f])
- 		    ;;
- 		*)
--		    AX_APPEND_FLAG([$f], [LIBTLS])
-+		    # Do not use AX_APPEND_FLAG as it will break static builds by removing
-+		    # duplicates such as -lz or -latomic which are needed by -lssl and -lcrypto
-+		    LIBTLS="$LIBTLS $f"
- 		    ;;
- 	    esac
- 	done
--- 
-2.39.0
-
+diff --git a/m4/openssl.m4 b/m4/openssl.m4
+index a2e4941ae8..b4cbd821db 100644
+--- a/m4/openssl.m4
++++ b/m4/openssl.m4
+@@ -44,7 +44,9 @@ AC_DEFUN([SUDO_CHECK_OPENSSL], [
+ 			SUDO_APPEND_LIBPATH([LIBTLS], [$f])
+ 			;;
+ 		    *)
+-			AX_APPEND_FLAG([$f], [LIBTLS])
++			# Do not use AX_APPEND_FLAG as it will break static builds by removing
++			# duplicates such as -lz or -latomic which are needed by -lssl and -lcrypto
++		        LIBTLS="$LIBTLS $f"
+ 			;;
+ 		esac
+ 	    done
