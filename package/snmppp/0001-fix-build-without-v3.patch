@@ -1,0 +1,43 @@
+fix build without v3
+
+Fix the following build failure without version3 raised since version
+3.5.0:
+
+msgqueue.cpp: In member function 'int Snmp_pp::CSNMPMessage::ResendMessage()':
+msgqueue.cpp:263:34: error: 'version3' was not declared in this scope; did you mean 'version1'?
+  263 |   if (m_target->get_version() == version3) {
+      |                                  ^~~~~~~~
+      |                                  version1
+
+Fixes:
+ - http://autobuild.buildroot.org/results/8ef3e4407a51c53c15e530606227338761dd905b
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: sent to katz.agentpp.com@magenta.de]
+
+diff -Nura snmp++-3.5.0.orig/src/msgqueue.cpp snmp++-3.5.0/src/msgqueue.cpp
+--- snmp++-3.5.0.orig/src/msgqueue.cpp	2023-03-20 10:49:30.629000853 +0100
++++ snmp++-3.5.0/src/msgqueue.cpp	2023-03-20 10:51:36.880664304 +0100
+@@ -260,18 +260,20 @@
+   m_target->set_retry(m_target->get_retry() - 1);
+   SetSendTime();
+   int status;
+-  if (m_target->get_version() == version3) {
+ #ifdef _SNMPv3
++  if (m_target->get_version() == version3) {
+     // delete entry in cache
+     if (m_snmp->get_mpv3())
+ 	    m_snmp->get_mpv3()->delete_from_cache(m_pdu.get_request_id());
+-#endif
+     status = m_snmp->snmp_engine(m_pdu, m_pdu.get_error_status(), m_pdu.get_error_index(),
+ 		    *m_target, m_callBack, m_callData, m_socket, 0, this);
+   }
+   else {
++#endif
+     status = send_snmp_request(m_socket, m_rawPdu, m_rawPduLen, *m_address);
++#ifdef _SNMPv3
+   }
++#endif
+   if (status != 0)
+     return SNMP_CLASS_TL_FAILED;
+ 
