@@ -1,6 +1,7 @@
 config BR2_PACKAGE_MUSL_ARCH_SUPPORTS
 	bool
 	default y if BR2_aarch64
+	default y if BR2_aarch64_be
 	default y if BR2_arm
 	default y if BR2_armeb
 	default y if BR2_i386
