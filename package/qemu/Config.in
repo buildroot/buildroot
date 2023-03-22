@@ -26,7 +26,6 @@ menuconfig BR2_PACKAGE_QEMU
 	depends on BR2_USE_MMU # fork()
 	select BR2_PACKAGE_LIBGLIB2
 	select BR2_PACKAGE_ZLIB
-	select BR2_PACKAGE_QEMU_TOOLS if !BR2_PACKAGE_QEMU_SYSTEM && !BR2_PACKAGE_QEMU_LINUX_USER
 	help
 	  QEMU is a generic and open source machine emulator and
 	  virtualizer.
@@ -357,5 +356,12 @@ config BR2_PACKAGE_QEMU_TOOLS
 	help
 	  Say 'y' here to include tools packaged with QEMU
 	  (e.g. qemu-img).
+
+config BR2_PACKAGE_QEMU_GUEST_AGENT
+	bool "Enable guest agent"
+	help
+	  Say 'y' here to include an agent to run on guests, which
+	  communicates with the host over a virtio-serial channel
+	  named "org.qemu.guest_agent.0".
 
 endif # BR2_PACKAGE_QEMU
