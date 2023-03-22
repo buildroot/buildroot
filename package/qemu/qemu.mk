@@ -474,6 +474,7 @@ define HOST_QEMU_CONFIGURE_CMDS
 		--disable-vnc-sasl \
 		--enable-slirp \
 		--enable-tools \
+		--disable-guest-agent \
 		$(HOST_QEMU_OPTS)
 endef
 
