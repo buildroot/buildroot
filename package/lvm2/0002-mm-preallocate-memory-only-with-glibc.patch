@@ -1,0 +1,34 @@
+From b668022f9b8aecf52109c9e0b7e5847054231361 Mon Sep 17 00:00:00 2001
+From: Zdenek Kabelac <zkabelac@redhat.com>
+Date: Fri, 19 Aug 2022 16:15:17 +0200
+Subject: [PATCH] mm: preallocate memory only with glibc
+
+Use mallinfo() only with glibc.
+
+Backported from: https://sourceware.org/git/?p=lvm2.git;a=commitdiff;h=8370d117d7ef8a472c95315a3cd085696c90b3be
+Signed-off-by: Simon Rowe <simon.rowe@nutanix.com>
+---
+ lib/mm/memlock.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/lib/mm/memlock.c b/lib/mm/memlock.c
+index 3d1a3927c..efcc6d91f 100644
+--- a/lib/mm/memlock.c
++++ b/lib/mm/memlock.c
+@@ -160,7 +160,12 @@ static void _touch_memory(void *mem, size_t size)
+ 
+ static void _allocate_memory(void)
+ {
+-#ifndef VALGRIND_POOL
++#if defined(__GLIBC__) && !defined(VALGRIND_POOL)
++	/* Memory allocation is currently only tested with glibc
++	 * for different C libraries, some other mechanisms might be needed
++	 * meanwhile let users use lvm2 code without memory preallocation.
++	 * Compilation for VALGRIND tracing also goes without preallocation.
++	 */
+ 	void *stack_mem;
+ 	struct rlimit limit;
+ 	int i, area = 0, missing = _size_malloc_tmp, max_areas = 32, hblks;
+-- 
+2.22.3
+

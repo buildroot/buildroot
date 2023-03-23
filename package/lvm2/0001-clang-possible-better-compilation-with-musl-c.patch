@@ -1,0 +1,30 @@
+From bac596b3685520acaa404dc3ebd2131e6de96d47 Mon Sep 17 00:00:00 2001
+From: Zdenek Kabelac <zkabelac@redhat.com>
+Date: Wed, 16 Feb 2022 00:48:49 +0100
+Subject: [PATCH] clang: possible better compilation with musl c
+
+Try to help resolving reported compilation problem with
+clang & musl C.
+https://github.com/lvmteam/lvm2/issues/61
+
+Backported from: https://sourceware.org/git/?p=lvm2.git;a=commitdiff;h=4fd76de4b69f8e5e6d5afa03d54cb4b8986c4bcc
+Signed-off-by: Simon Rowe <simon.rowe@nutanix.com>
+---
+ libdaemon/server/daemon-server.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/libdaemon/server/daemon-server.c b/libdaemon/server/daemon-server.c
+index 88905a7dd..96cfc392e 100644
+--- a/libdaemon/server/daemon-server.c
++++ b/libdaemon/server/daemon-server.c
+@@ -18,6 +18,7 @@
+ 
+ #include <dlfcn.h>
+ #include <errno.h>
++#include <fcntl.h> /* help musl C */
+ #include <pthread.h>
+ #include <sys/file.h>
+ #include <sys/stat.h>
+-- 
+2.22.3
+

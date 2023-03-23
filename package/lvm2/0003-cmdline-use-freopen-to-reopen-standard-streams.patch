@@ -1,0 +1,68 @@
+From 7c74ad9c349e381decc84c218112ea8e7bcc0b9c Mon Sep 17 00:00:00 2001
+From: Simon Rowe <simon.rowe@nutanix.com>
+Date: Thu, 23 Mar 2023 09:57:59 +0000
+Subject: [PATCH] cmdline: use freopen() to reopen standard streams
+
+In glibc stdin, stdout & stderr are variables that can be assigned to
+(https://www.gnu.org/software/libc/manual/html_node/Standard-Streams.html)
+however this not necessarily true of other C libraries.
+
+The gentoo musl porting notes
+(https://wiki.gentoo.org/wiki/Musl_porting_notes)
+recommend the substitution of
+
+    stdX = fopen(...)
+
+with
+
+    freopen(..., stdX)
+
+Taken from: https://github.com/gentoo/gentoo/blob/master/sys-fs/lvm2/files/lvm2-2.03.14-r1-fopen-to-freopen.patch
+Signed-off-by: Simon Rowe <simon.rowe@nutanix.com>
+---
+ tools/lvmcmdline.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/tools/lvmcmdline.c b/tools/lvmcmdline.c
+index 1e12bedca..534368575 100644
+--- a/tools/lvmcmdline.c
++++ b/tools/lvmcmdline.c
+@@ -3384,7 +3384,11 @@ static int _check_standard_fds(void)
+ 	int err = is_valid_fd(STDERR_FILENO);
+ 
+ 	if (!is_valid_fd(STDIN_FILENO) &&
++#ifdef __GLIBC__
+ 	    !(stdin = fopen(_PATH_DEVNULL, "r"))) {
++#else
++	    !freopen(_PATH_DEVNULL, "r", stdin)) {
++#endif
+ 		if (err)
+ 			perror("stdin stream open");
+ 		else
+@@ -3394,7 +3398,11 @@ static int _check_standard_fds(void)
+ 	}
+ 
+ 	if (!is_valid_fd(STDOUT_FILENO) &&
++#ifdef __GLIBC__
+ 	    !(stdout = fopen(_PATH_DEVNULL, "w"))) {
++#else
++	    !freopen(_PATH_DEVNULL, "w", stdout)) {
++#endif
+ 		if (err)
+ 			perror("stdout stream open");
+ 		/* else no stdout */
+@@ -3402,7 +3410,11 @@ static int _check_standard_fds(void)
+ 	}
+ 
+ 	if (!is_valid_fd(STDERR_FILENO) &&
++#ifdef __GLIBC__
+ 	    !(stderr = fopen(_PATH_DEVNULL, "w"))) {
++#else
++	    !freopen(_PATH_DEVNULL, "w", stderr)) {
++#endif
+ 		printf("stderr stream open: %s\n",
+ 		       strerror(errno));
+ 		return 0;
+-- 
+2.22.3
+
