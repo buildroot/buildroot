@@ -78,7 +78,7 @@ Do not align the +=+ signs.
 +
 ---------------------
 define LIBFOO_REMOVE_DOC
-	$(RM) -fr $(TARGET_DIR)/usr/share/libfoo/doc \
+	$(RM) -r $(TARGET_DIR)/usr/share/libfoo/doc \
 		$(TARGET_DIR)/usr/share/man/man3/libfoo*
 endef
 ---------------------
@@ -118,7 +118,7 @@ YES:
 ---------------------
 ifneq ($(BR2_LIBFOO_INSTALL_DATA),y)
 define LIBFOO_REMOVE_DATA
-	$(RM) -fr $(TARGET_DIR)/usr/share/libfoo/data
+	$(RM) -r $(TARGET_DIR)/usr/share/libfoo/data
 endef
 LIBFOO_POST_INSTALL_TARGET_HOOKS += LIBFOO_REMOVE_DATA
 endif
@@ -128,7 +128,7 @@ NO:
 +
 ---------------------
 define LIBFOO_REMOVE_DATA
-	$(RM) -fr $(TARGET_DIR)/usr/share/libfoo/data
+	$(RM) -r $(TARGET_DIR)/usr/share/libfoo/data
 endef
 
 ifneq ($(BR2_LIBFOO_INSTALL_DATA),y)
