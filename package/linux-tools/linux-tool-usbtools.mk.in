@@ -1,0 +1,34 @@
+################################################################################
+#
+# usbtools
+#
+################################################################################
+
+LINUX_TOOLS += usbtools
+
+USBTOOLS_MAKE_OPTS = $(LINUX_MAKE_FLAGS) LDFLAGS="$(TARGET_LDFLAGS)"
+
+LINUX_TOOLS_USBTOOLS_LIST = \
+	$(if $(BR2_PACKAGE_LINUX_TOOLS_USBTOOLS_TESTUSB),testusb) \
+	$(if $(BR2_PACKAGE_LINUX_TOOLS_USBTOOLS_FFSTEST),ffs-test)
+
+define USBTOOLS_BUILD_CMDS
+	$(Q)if ! grep install $(LINUX_DIR)/tools/usb/Makefile >/dev/null 2>&1 ; then \
+		echo "Your kernel version is too old to build the USB tools." ; \
+		echo "At least kernel 5.9 must be used." ; \
+		exit 1 ; \
+	fi
+
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(LINUX_DIR)/tools/usb \
+		ALL_TARGETS="$(LINUX_TOOLS_USBTOOLS_LIST)" \
+		$(USBTOOLS_MAKE_OPTS) \
+		all
+endef
+
+define USBTOOLS_INSTALL_TARGET_CMDS
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(LINUX_DIR)/tools/usb \
+		ALL_TARGETS="$(LINUX_TOOLS_USBTOOLS_LIST)" \
+		$(USBTOOLS_MAKE_OPTS) \
+		DESTDIR=$(TARGET_DIR) \
+		install
+endef

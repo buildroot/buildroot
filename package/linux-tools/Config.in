@@ -135,6 +135,32 @@ comment "selftests needs BR2_PACKAGE_BUSYBOX_SHOW_OTHERS and a toolchain w/ dyna
 	depends on !BR2_PACKAGE_BUSYBOX_SHOW_OTHERS || \
 		BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_14
 
+config BR2_PACKAGE_LINUX_TOOLS_USBTOOLS
+	bool "USB test programs"
+	select BR2_PACKAGE_LINUX_TOOLS
+	help
+	  Build and install the USB test tools.
+
+	  These tools exist since Linux 2.6.35, but Buildroot can build
+	  them only with kernel versions 5.9 and later.
+
+if BR2_PACKAGE_LINUX_TOOLS_USBTOOLS
+
+config BR2_PACKAGE_LINUX_TOOLS_USBTOOLS_TESTUSB
+	bool "testusb"
+	help
+	  testusb issues ioctls to perform the tests implemented by the
+	  kernel driver.  It can generate a variety of transfer
+	  patterns.
+
+	  See http://www.linux-usb.org/usbtest/
+
+config BR2_PACKAGE_LINUX_TOOLS_USBTOOLS_FFSTEST
+	bool "ffs-test"
+	help
+	  User mode filesystem api for usb composite function
+endif
+
 config BR2_PACKAGE_LINUX_TOOLS_TMON
 	bool "tmon"
 	depends on BR2_TOOLCHAIN_HAS_THREADS
