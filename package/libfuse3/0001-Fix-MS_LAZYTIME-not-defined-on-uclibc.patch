@@ -1,0 +1,48 @@
+From 56038446952516da5d4cf09e1192824031082943 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Mon, 27 Mar 2023 21:08:57 +0200
+Subject: [PATCH] Fix MS_LAZYTIME not defined on uclibc
+
+[Upstream status: https://github.com/libfuse/libfuse/pull/753]
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ lib/mount.c       | 5 +++++
+ util/fusermount.c | 6 ++++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/lib/mount.c b/lib/mount.c
+index 1f1ee86..84e5c73 100644
+--- a/lib/mount.c
++++ b/lib/mount.c
+@@ -27,6 +27,11 @@
+ #include <sys/wait.h>
+ #include <sys/mount.h>
+ 
++/* uclibc doesn't define MS_LAZYTIME */
++#ifndef MS_LAZYTIME
++#define MS_LAZYTIME	(1<<25)
++#endif
++
+ #ifdef __NetBSD__
+ #include <perfuse.h>
+ 
+diff --git a/util/fusermount.c b/util/fusermount.c
+index 6e72f0d..82cc420 100644
+--- a/util/fusermount.c
++++ b/util/fusermount.c
+@@ -25,6 +25,12 @@
+ #include <sys/wait.h>
+ #include <sys/stat.h>
+ #include <sys/mount.h>
++
++/* uclibc doesn't define MS_LAZYTIME */
++#ifndef MS_LAZYTIME
++#define MS_LAZYTIME	(1<<25)
++#endif
++
+ #include <sys/fsuid.h>
+ #include <sys/socket.h>
+ #include <sys/utsname.h>
+-- 
+2.34.1
+
