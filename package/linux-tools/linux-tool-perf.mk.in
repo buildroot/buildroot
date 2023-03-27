@@ -166,8 +166,8 @@ endef
 # target unless BR2_PACKAGE_LINUX_TOOLS_PERF_SCRIPTS is enabled
 ifeq ($(BR2_PACKAGE_LINUX_TOOLS_PERF_SCRIPTS),)
 define PERF_INSTALL_REMOVE_SCRIPTS
-	$(RM) -rf $(TARGET_DIR)/usr/libexec/perf-core/scripts/
-	$(RM) -rf $(TARGET_DIR)/usr/libexec/perf-core/tests/
+	$(RM) -r $(TARGET_DIR)/usr/libexec/perf-core/scripts/
+	$(RM) -r $(TARGET_DIR)/usr/libexec/perf-core/tests/
 endef
 endif
 
