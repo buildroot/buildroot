@@ -1,0 +1,30 @@
+From 1d530107a24d71e798727d7f0afa0833473d1074 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Matej=20Mu=C5=BEila?= <mmuzila@gmail.com>
+Date: Wed, 11 Jan 2023 08:55:58 +0100
+Subject: [PATCH] Fix savannah bug #62387
+
+* src/list.c (from_header): Check for the end of field after leading byte
+  (0x80 or 0xff) of base-256 encoded header value
+---
+ src/list.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/list.c b/src/list.c
+index 9fafc425..bf41b581 100644
+--- a/src/list.c
++++ b/src/list.c
+@@ -895,6 +895,12 @@ from_header (char const *where0, size_t digs, char const *type,
+ 			   << (CHAR_BIT * sizeof (uintmax_t)
+ 			       - LG_256 - (LG_256 - 2)));
+       value = (*where++ & ((1 << (LG_256 - 2)) - 1)) - signbit;
++      if (where == lim)
++        {
++          if (type && !silent)
++            ERROR ((0, 0, _("Archive base-256 value is invalid")));
++          return -1;
++        }
+       for (;;)
+ 	{
+ 	  value = (value << LG_256) + (unsigned char) *where++;
+-- 
+2.38.1
