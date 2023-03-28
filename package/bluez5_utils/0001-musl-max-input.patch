@@ -1,0 +1,37 @@
+From ca6546fe521360fcf905bc115b893f322e706cb2 Mon Sep 17 00:00:00 2001
+From: Sam James <sam@gentoo.org>
+Date: Tue, 31 Jan 2023 05:52:58 +0000
+Subject: shared: define MAX_INPUT for musl
+
+musl systems don't have MAX_INPUT. Just define it to _POSIX_MAX_INPUT
+which musl does have if it's not already defined.
+
+Note that on glibc, the values match anyway (as of glibc-2.36), and
+indeed POSIX_MAX_INPUT has the same value on musl too.
+
+Bug: https://bugs.gentoo.org/888467
+Upstream: https://git.kernel.org/pub/scm/bluetooth/bluez.git/commit/?id=ca6546fe521360fcf905bc115b893f322e706cb2
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ src/shared/util.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/src/shared/util.c b/src/shared/util.c
+index 2f0ae0e86..b466fb001 100644
+--- a/src/shared/util.c
++++ b/src/shared/util.c
+@@ -28,6 +28,11 @@
+ #include <sys/random.h>
+ #endif
+ 
++/* define MAX_INPUT for musl */
++#ifndef MAX_INPUT
++#define MAX_INPUT _POSIX_MAX_INPUT
++#endif
++
+ #include "src/shared/util.h"
+ 
+ void *util_malloc(size_t size)
+-- 
+cgit 
+
