@@ -4,22 +4,19 @@
 #
 ################################################################################
 
-AVRDUDE_VERSION = 6.4
+AVRDUDE_VERSION = 7.1
 AVRDUDE_SITE = $(call github,avrdudes,avrdude,v$(AVRDUDE_VERSION))
 AVRDUDE_LICENSE = GPL-2.0+
 AVRDUDE_LICENSE_FILES = COPYING
 
-# Sources coming from git, without generated configure and Makefile.in
-# files.
-AVRDUDE_AUTORECONF = YES
-AVRDUDE_CONF_OPTS = --enable-linuxgpio
+AVRDUDE_CONF_OPTS = -DHAVE_LINUXGPIO=ON
 AVRDUDE_DEPENDENCIES = elfutils libusb libusb-compat ncurses \
 	host-flex host-bison
 
 ifeq ($(BR2_PACKAGE_AVRDUDE_SPI),y)
-AVRDUDE_CONF_OPTS += --enable-linuxspi
+AVRDUDE_CONF_OPTS += -DHAVE_LINUXSPI=ON
 else
-AVRDUDE_CONF_OPTS += --disable-linuxspi
+AVRDUDE_CONF_OPTS += -DHAVE_LINUXSPI=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_LIBFTDI1),y)
@@ -40,4 +37,4 @@ endef
 
 AVRDUDE_POST_INSTALL_TARGET_HOOKS += AVRDUDE_REMOVE_BACKUP_FILE
 
-$(eval $(autotools-package))
+$(eval $(cmake-package))
