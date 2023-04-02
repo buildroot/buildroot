@@ -5,7 +5,7 @@
 ################################################################################
 
 IRRLICHT_VERSION_MAJOR = 1.8
-IRRLICHT_VERSION = $(IRRLICHT_VERSION_MAJOR).4
+IRRLICHT_VERSION = $(IRRLICHT_VERSION_MAJOR).5
 IRRLICHT_SOURCE = irrlicht-$(IRRLICHT_VERSION).zip
 IRRLICHT_SITE = https://downloads.sourceforge.net/project/irrlicht/Irrlicht%20SDK/$(IRRLICHT_VERSION_MAJOR)/$(IRRLICHT_VERSION)
 IRRLICHT_INSTALL_STAGING = YES
