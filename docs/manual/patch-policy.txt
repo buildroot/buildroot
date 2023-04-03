@@ -144,24 +144,37 @@ AC_PROG_MAKE_SET
 +AM_CONDITIONAL([CXX_WORKS], [test "x$rw_cv_prog_cxx_works" = "xyes"])
 ---------------
 
-=== Integrating patches found on the Web
+=== Additional patch documentation
 
-When integrating a patch of which you are not the author, you have to
-add a few things in the header of the patch itself.
+Ideally, all patches should document an upstream patch or patch submission, when
+applicable, via the +Upstream+ trailer.
 
-Depending on whether the patch has been obtained from the project
-repository itself, or from somewhere on the web, add one of the
-following tags:
-
----------------
-Backported from: <some commit id>
----------------
-
-or
+When backporting an upstream patch that has been accepted into mainline, it is
+preferred that the URL to the commit is referenced:
 
 ---------------
-Fetch from: <some url>
+Upstream: <URL to upstream commit>
 ---------------
 
-It is also sensible to add a few words about any changes to the patch
-that may have been necessary.
+If a new issue is identified in Buildroot and upstream is generally affected by 
+the issue (it's not a Buildroot specific issue), users should submit the patch
+upstream and provide a link to that submission when possible:
+
+---------------
+Upstream: <URL to upstream mailing list submission or merge request>
+---------------
+
+Patches that have been submitted but were denied upstream should note that and
+include comments about why the patch is being used despite the upstream status.
+
+Note: in any of the above scenarios, it is also sensible to add a few words
+about any changes to the patch that may have been necessary.
+
+If a patch does not apply upstream then this should be noted with a comment:
+
+---------------
+Upstream: N/A <additional information about why patch is Buildroot specific>
+---------------
+
+Adding this documentation helps streamline the patch review process during
+package version updates.
