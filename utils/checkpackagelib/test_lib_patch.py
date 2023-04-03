@@ -94,3 +94,25 @@ Sob = [
 def test_Sob(testname, filename, string, expected):
     warnings = util.check_file(m.Sob, filename, string)
     assert warnings == expected
+
+
+Upstream = [
+    ('good',
+     'patch',
+     'Upstream: https://some/amazing/patch/submission\n',
+     []),
+    ('empty',
+     'patch',
+     '',
+     [['patch:0: missing Upstream in the header (url#_additional_patch_documentation)']]),
+    ('bad',
+     'patch',
+     'Subject: [PATCH 24/105] text\n',
+     [['patch:0: missing Upstream in the header (url#_additional_patch_documentation)']]),
+    ]
+
+
+@pytest.mark.parametrize('testname,filename,string,expected', Upstream)
+def test_Upstream(testname, filename, string, expected):
+    warnings = util.check_file(m.Upstream, filename, string)
+    assert warnings == expected
