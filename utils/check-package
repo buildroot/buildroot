@@ -6,7 +6,6 @@ import inspect
 import magic
 import os
 import re
-import six
 import sys
 
 import checkpackagelib.base
@@ -218,12 +217,9 @@ def check_file_using_lib(fname):
         if fail > 0:
             failed.add(name)
         nwarnings += warn
-    if six.PY3:
-        f = open(fname, "r", errors="surrogateescape")
-    else:
-        f = open(fname, "r")
+
     lastline = ""
-    for lineno, text in enumerate(f.readlines()):
+    for lineno, text in enumerate(open(fname, "r", errors="surrogateescape").readlines()):
         nlines += 1
         for name, cf in objects:
             if cf.disable.search(lastline):
@@ -233,7 +229,7 @@ def check_file_using_lib(fname):
                 failed.add(name)
             nwarnings += warn
         lastline = text
-    f.close()
+
     for name, cf in objects:
         warn, fail = print_warnings(cf.after(), name in xfail)
         if fail > 0:
