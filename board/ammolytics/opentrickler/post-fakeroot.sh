@@ -31,6 +31,7 @@ echo "BASE_DIR: ${BASE_DIR}"
 
 which python3 || true
 python3 --version || true
+python3 -m ensurepip --upgrade || true
 which pip3 || true
 pip3 --version || true
 python3 -m pip --version || true
