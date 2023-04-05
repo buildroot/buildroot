@@ -1,0 +1,141 @@
+$Id: INSTALL,v 1.1.1.1 2004/05/18 01:50:44 kgibbs Exp $
+
+Briefly:
+
+Do one-time if needed, e.g. for systems with dnf
+  dnf install gcc
+  dnf install gcc-c++
+  dnf install make
+  dnf install automake
+
+then to build do:
+  ./configure      -- configure for your machine
+  make             -- compile Iperf
+  make install     -- install Iperf, if desired, from root
+
+and to use:
+  iperf -s               (on machine "foo.bar.edu")
+  iperf -c foo.bar.edu   (on some other machine)
+  iperf -h               (for help screen)
+  iperf -v               (for version information)
+
+
+Platform Specific Notes
+
+FreeBSD
+
+  If you use a cc or c++ other than the system one, threads may not be
+  detected properly.  To work around this set the following environment
+  variables:
+
+    setenv CC /usr/bin/cc
+    setenv CXX /usr/bin/c++
+
+---
+
+Windows (cross compile from Linux)
+
+# dnf install mingw32-gcc mingw32-gcc-c++ mingw32-winpthreads-static
+
+$ ../iperf2-code/configure --host=i686-w64-mingw32
+$ make
+
+---
+
+Windows (Cygwin)
+
+  configure / make as normal:
+
+  $ ../iperf2-code/configure
+  $ make
+
+  The result requires Cygwin on client machines.
+
+---
+
+Windows (Cygwin + i686-w64-mingw32)
+
+  Use Cygwin Setup to install i686-w64-mingw32 and related packages
+
+  Configure as a cross-compile:
+
+  $ ../iperf2-code/configure -host i686-w64-mingw32
+  $ make
+
+  The result runs natively on WinXP and above without requiring Cygwin
+
+---
+
+Windows (MinGW + Msys)
+
+  Install MinGW+Msys
+  	  https://sourceforge.net/projects/mingw/
+	  http://www.mingw.org/wiki/MinGW
+	  http://www.mingw.org/wiki/MSYS
+
+  configure / make as normal:
+
+  $ ../iperf2-code/configure
+  $ make
+
+  The result runs natively on WinXP and above without requiring
+  MinGW+Msys on client machines.
+
+---
+
+OpenWRT cross compile (example only)
+
+  Setup buildroot (not fully described here, link https://electrosome.com/cross-compile-openwrt-c-program/)
+      determine the target environment from the openwrt banner (this example is openwrt)
+      get the build environment, e.g. git clone https://github.com/openwrt/openwrt.git
+      update feeds
+          $ ./scripts/feeds update -a
+	  $ ./scripts/feeds install -a
+      configure target
+          $ make menuconfig
+      Then select Target System, Subtarget and Target Profile as per your target environment, e.g.
+          Target System: MediaTek Ralink MIPS
+	  Subtarget system: MT7620 based boards
+	  Target profile: NETGEAR R6350
+
+  Set environment variables (via any editor or manual exports to get)
+      [rjmcmahon@localhost iperf2-code]$ more ../openwrt.config
+      export STAGING_DIR=/home/usernmae/Code/openwrt/staging_dir
+      export TOOLCHAIN_DIR=$STAGING_DIR/toolchain-mipsel_24kc_gcc-8.4.0_musl (this is target dependent)
+      export LDCFLAGS=$TOOLCHAIN_DIR/usr/lib
+      export LD_LIBRARY_PATH=$TOOLCHAIN_DIR/usr/lib
+      export PATH=$TOOLCHAIN_DIR/bin:$PATH
+      $ source ../openwrt.config
+
+  Download iperf 2 source
+      $ cd iperf2-code
+  Run configure, e.g. (replace /home/rjmcmahon/Code with your directory)
+      $ ./configure --target=mips-buildroot-linux-gnu --host=mips-buildroot-linux-gnu CC=/home/rjmcmahon/Code/openwrt/staging_dir/toolchain-mipsel_24kc_gcc-8.4.0_musl/bin/mipsel-openwrt-linux-gcc CXX=/home/rjmcmahon/Code/openwrt/staging_dir/toolchain-mipsel_24kc_gcc-8.4.0_musl/bin/mipsel-openwrt-linux-g++
+
+  Cross compile (binary in the src/ directory)
+      $ make
+
+  Install iperf and shared libraries onto openwrt device
+      ssh into openwrt device, $ opkg install libstdcpp
+      $ scp src/iperf user@host:/usr/bin
+
+---
+Other configure and compile options
+
+      ./configure --enable-thread-debug - used for tool debug
+      ./configure --enable-fastsampling - sub millisecond timestamping
+      ./configure --enable-packet-debug - show packet sequence numbers - very chatty
+      ./configure --enable-checkprograms - compile supplmentary test programs
+      ./configure --disable-ipv6
+      ./configure --disable-multicast
+      ./configure --disable-threads
+      ./configure --enable-debuginfo
+      ./configure --enable-debug-symbols - enable debugging with symbols
+      ./configure --enable-default-localonly - limit test traffic to the local network (off by default)
+---
+
+dnf installs needed for build:
+
+       dnf install gcc
+       dnf install gcc-c++
+       dnf install automake

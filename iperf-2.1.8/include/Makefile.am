@@ -1,0 +1,2 @@
+EXTRA_DIST = Client.hpp Condition.h Extractor.h active_hosts.h packet_ring.h Listener.hpp Locale.h Makefile.am Mutex.h PerfSocket.hpp Reporter.h Server.hpp Settings.hpp SocketAddr.h Thread.h Timestamp.hpp config.win32.h delay.h gettimeofday.h gnu_getopt.h headers.h inet_aton.h service.h snprintf.h util.h version.h histogram.h isochronous.hpp pdfs.h checksums.h payloads.h gettcpinfo.h dscp.h
+DISTCLEANFILES = $(top_builddir)/include/iperf-int.h

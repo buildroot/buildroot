@@ -1,0 +1,297 @@
+See doc/DESIGN_NOTES for some description around the software design
+See doc/CLOCKSYNC_NOTES for some description around synchronizing the realtime clocks
+
+2.1.8 (as of August 5th, 2022)
+------------------------------
+o Add support for --bounceback to perform a repsonsiveness test (see man page for other options)
+o add support for working loads with --bounceback
+o Fix to wait_tick with Mac OS X
+o Various python pyflows commits
+o add support for client side tcp-write-time histograms and mean/min/max
+o add support for human readable dscp or -T values (see man page)
+o udp_accept no longer accepts packets from a previous run as a new connection, this can occur with long network delays
+o multiple isoch bug fixes for both UDP and TCP
+o isoch server provides mean/min/max/stdev for both frames and packets
+o UDP max MTU discovery, requires configure.ac will support --enable-discover-defaultlen prior to compile
+
+
+2.1.7 (as of April 5th, 2022)
+----------------------------
+o Support for tcp bounceback test
+o Code clean up
+o Regression fixes (see git-log)
+
+2.1.6
+-----
+o Fix to major 2.1.5 regeressions
+
+2.1.5 change set as of (December 3, 2021)
+--------------------------------------
+o fix some HAVE_IPV6 conditional changes
+o fix SO_TIMEOUT regressiony
+o ren sockets.c to socket_io.c
+o fix compile breakage per abs() returning an int instead of float
+o support for gettcpinfo on Mac OS X (tested on both M1 and x86 silicon)
+o move setsock_blocking from sockets into PerfSocket.cpp
+o don't require -V for v6, instead try v6 when v4 hostname lookup fails, client only
+o add assert in writen
+o add tcp RTT variance to client output
+o use setsockopt to get the nagle status
+o show Nagle and TOS settings on client
+o more on connect-only testing
+o sample and output the initial rtt and cwnd in the connect report
+o fix multiple fullduplex regressions
+o fix for HAVE_TCP_STATS in configure, then linux compile
+o writen can have more than one write, fix accounting when this occurs
+o fix tos with --reverse and --full-duplex
+o add support for --tos-override <value> on server
+o add support for  --tcp-drain, add mmm stats, histograms - experimental feature
+o multiple man page updates
+o fix partial histogram print to not show (f)
+o some new scripts in python flows
+o fixes to incr-srcport
+o fixes for --incr-dstport
+o fix regression on very first UDP packet having transit latency of zero
+o fix --reverse and --isochronous when --trip-times not set
+o fix client_init regression, pull out tcp_shutdown
+o fix reporter startup race and one second delay by setting the threads ready predicate and issuing the signal under a lock
+o fix first send accounting for small -n
+o fix configure.ac to use '=' instead of '=='
+
+
+2.1.4 change set as of (August 12, 2021)
+--------------------------------------
+o fix TCP isoch regression
+o fix regression in UDP header exchange for tests like --reverse
+o Add support for TCP_NOTSENT_LOWAT vi --tcp-write-prefetch and select() before write()
+o Add support for TCP_WINDOW_CLAMP
+o Rework recvn() and writen() for when SO_SNDTIMEO and SO_RCVTIMEO are enabled
+o Add support for --histograms on select with --tcp-write-prefetch
+o Add support for bind to device on the listener, i.e. iperf -s -i 1 -e -B 0.0.0.0%eth0, will only accept/receive on the eth0 interface
+o Add support for virtual/tap interfaces
+o Add support for --hide-ips (don't show the ip addresses in the report outputs)
+o Fix units of -pps with --reverse, --fullduplex, -r and -d
+o Remove use of MSG_PEEK by moving the mBuf buffer from client/server object to settings context
+o Use MSG_WAITALL in recvn (collided with MSG_PEEK on Windows)
+
+2.1.3 change set as of (July 13, 2021)
+--------------------------------------
+o relax cli errors a bit to WARN instead of ERROR
+o fix TCP read fatal error macro
+o fix UDP server to not fatal error on EINTR, use macro
+o handle and warn on failed read of tcp test flags
+o redesign of tcp retry (2.1.2 fix was incomplete)
+o thread exit signals reporter thread condition var for timely exits of the tool
+
+
+2.1.2 change set (as of June 25th, 2021)
+----------------------------------------
+o fix TCP retry regression per interval reporting
+
+2.1.1 change set (as of June 23rd, 2021)
+----------------------------------------
+o isochronous bug fix
+o -P and -B src port will increment for unique quintuple
+o support for port ranges, e.g. -p 6000-6008
+o double free fix per memory corruption when -l is less than 244
+o don't use pthread_join on the client --reverse, symptom hung client
+o fixes for --trip-times and small 64 byte packets
+o udp fail on reverse should exit
+o support for low duty cycle bursts (--burst-period and --burst-size)
+o final report fixes
+o full duplex ouput fixex
+o support for --incr-scrip
+o multicast setsockopt fixes
+
+
+2.1.0 change set (as of January 5th, 2021)
+----------------------------------------
+o scaling improvements for -P, i.e. improved support for large numbers of traffic threads
+o major code refactoring (see doc/DESIGN_NOTES) for maintainability, extensibilty, performance, scaling, memory usage
+o support for full duplex traffic using --full-duplex
+o support for reverse traffic using --reverse
+o support for role-reversal character of asterisk in the transfer id
+o transfer id now an incrementing integer and no longer the socket id
+o support for TCP connect only tests with --connect-only
+o isochronous support compiled in by default, must use config to disable
+o support --isochronous for both UDP or TCP traffic to simulate video streams
+o support for low duty cycle traffic patterns via --burst-period and --burst-size
+o use of clock_nanosleep when supported to schedule isochronous burst starts, otherwise use nanosleep delay
+o support for --trip-times indicating the client and server clocks are synchronized to an accuracy sufficient, note: consider the use of precision time protocol as well as ask your data center to provide access to a GPS disciplined reference time source
+o support for --trip-times with -d and -r bidirectional tests
+o output TCP connect times (3WHS) in connect reports
+o support for application level tcp connect retries via --connect-retries n
+o rate-limited options of -b and --fq-rate supported for unidirectional, full duplex and reverse traffic
+o reporter thread designed to automatically cause packet reports to aggregate - mitigating and hopefully removing thread thrashing
+o support for frame or burst based reporting or sampling vs time based via -i [f|F] (experimental)
+o support for UDP traffic only from client to server with --no-udp-fin
+o support for write to read latencies (UDP and TCP) with --trip-times
+o support for sum only outputs with --sum-only
+o support for little's law calculations in --trip-time outputs
+o support for --txstart-time <epoch-time> to schedule client traffic start, timestamp support microseconds, e.g. unix $(expr $(date +%s) + 1).$(date +%N)
+o support for --txdelay-time to insert delay between TCP three way handshake (3WHS) and data transfer
+o support for --no-connect-sync which disables transmit traffic start synchronization when -P is used, defaults to synchronized
+o option of --full-duplex implementation uses a barrier on the client side to synchronize full duplex traffic
+o no limits to group sum reports, i.e. all clients will get its own sum report per a server
+o improved report timestamps, e.g. end to end or client and server based timestamps with --trip-times
+o improved settings messaging
+o improved messaging for --tcp-congestion or -Z
+o re-implemented -U for single UDP server with minimal threading interactions
+o re-implemented -1 or --singleclient where server will serialize traffic runs
+o warning message if the test were likely CPU bound instead of network i/o bound
+o fix the case when -P <value> is set on the server such that summing output is displayed
+o multicast listener will autoset -U (single server), e.g -P > 1 not supported for multicast
+o multicast listener no longer busy drops multicast packets during traffic test, i.e. only server thread receives them
+o immediate bail out on mutually exclusive command line options
+o getaddrinfo bug with -static linkage workaround and DNS lookup one time in setttings context vs twice in Settings and client traffic thread
+o fix -o or --output using freopen to redirect stdout and stderr to a file
+o support for --local-only which sets SO_DONTROUTE on a socket to limit traffic to local hosts (default is off)
+o support compile time option of --local-only to set on by default via ./configure --enable-default-localonly
+o support for date and time of in connect messages,
+  e.g. [  0] local 192.168.1.108%eth0 port 5001 connected with 192.168.1.62 port 36724 (MSS=453) (sock=5) on 2020-12-22 19:43:42 (PST)
+o support for feature of --permit-key and permit-key-timeout (defaults to 20 seconds.) The permit-key must match for the server to accpet the client's traffic. It also sets the transfer id. TCP only.
+o support for experimental feature of --near-congestion (tcp only)
+o man page updates with examples
+o tested with 1000's of traffic streams, WiFi, 10G and 100G
+
+2.0.13 change set (as of January 22, 2019)
+----------------------------------------
+o Set the listening socket backlog to a large value, let os control the max, better operations with FreeBSD
+o Fix breakage to -r and -d options
+o Fix so ctrl-c works with -r and -d
+o Fix ctrl-c on server to have a graceful exit including print report
+o Fix freebsd compile breakage per multicast support
+o The UDP final server report may be larger than the client's -l length, fix the client to read maximum packet length for that instead of using -l as the read size
+o Minor code clean up around write errors
+o Added netpower to TCP client enhanced output (throughput/RTT)
+o Display TCP client connect time in the connected to message
+o use IPV6_TCLASS for ipv6 (-V) dscp/tos (-S) if available
+o Add support for --txstart-time <value> where value is epoch/unix format, e.g. iperf -c 192.168.100.33 --txstart-time 1536090358.515
+o Add support for socket option SO_MAX_PACING_RATE using --fq-rate
+o Add configure support for --enable-fastsampling, allowing 100 microsecond report intervals
+o Add support for --trip-time on the client.  Measures client's 3WHS done to client's fin+fin-ack, reported on the server requires -e and synchronized clocks
+o Support for 64 bit sequence numbers on by default, no longer requires --udp-counters-64bit, inter-operates with 2.0.5 32 bit sequence numbers
+o Integer fixes for 64 bit, int max, printf,  etc.
+o Obsolete the need for include/slim_headers.h
+o Update man page to have some example usages
+
+2.0.12 change set (as of June 25th 2018)
+----------------------------------------
+o Change the unicast TTL default value from 1 to the system default (to be compatible with previous versions.)   Multicast still defaults to 1.
+o adaptive formatting bug fix: crash occurs when values exceed 1 Tera.  Add support for Tera and Peta and eliminate the potential crash condition
+o configure default compile to include isochronous support (use configure --disable-isochronous to remove support)
+o replace 2.0.11's --vary-load option with a more general -b option to include <mean>,<stdev>, e.g. -b 100m,40m, which will pull from a log normal distribution every 0.1 seconds
+o fixes for windows cross compile (using mingw32)
+o compile flags of -fPIE for android
+o configure --enable-checkprograms to compile ancillary binaries used to test things such as delay, isoch, pdf generation
+o compile tests when trying to use 64b seq numbers on a 32b platform
+o Fix GCC ver 8 warnings
+
+
+2.0.11 change set (as of May 24th, 2018)
+----------------------------------------
+o support for -b on server (read rate limiting)
+o honor -T (ttl) for unicast.  (Note: the default value is 1 so this will impact unicast tests that require routing)
+o support for --isochronous traffic with optional frames per second, mean and variance uses a log normal distribution (requires configure w/-enable-isochronous and compile)
+o support for --udp triggers (requires configure w/ --enable-udptriggers, early code with very limited support)
+o support for --udp-histogram with optional bin width and number of bins (default is 1 millisecond bin width and 1000 bins)
+o support for  frame (burst) latency histograms when --isochronous is set
+o support for --tx-sync with -P for synchonrized writes.  Initial use is for WiFi OFDMA latency testing.
+o support for --incr-dstip with -P for simultaneous flows to multiple destinations (use case is for OFDMA)
+o support for --vary-load with optional weight, uses log normal distribution (requires -b to set the mean)
+o support for --l2checks to detect L2 length errors not detected by v4 or v6 payload length errors (requires linux, berkeley packet filters BPFs and AF_PACKET socket support)
+o support for server joining mulitcast source specific multicast (S,G) and (*,G) for both v4 and v6 on platforms that support it
+o improved write counters (requires -e)
+o accounting bug fix on client when write fails, this bug was introduced in 2.0.10
+o slight restructure client/server traffic thread code for maintainability
+o python: flow example script updates
+o python: ssh node object using asyncio
+o python: histograms in flows with plotting (assumed gnuplot available)
+o python: hierarchical clustering of latency histograms (early code)
+o man pages updates
+o Note: latency histograms require client and server system clock synchronization.   A GPS disciplined oscillator using Precision Time Protocol works well for this.
+
+2.0.10 change set (as of August 11, 2017)
+-----------------------------------------
+o clean up help and man page for -V option
+o UDP IPv6 : Default the mBuf size to 1450 for the client, default the Listener/server to 1470
+o Display read/write buffer size in the report header (only when -e enhanced)
+o Add -S and --tos to man page and help, and format options to same
+o Reject --ipv6_domain (-V) option if HAVE_IPV6 is not defined, rather than silently ignoring it.
+o Clean up settings/command line parsing code including removing oder dependencies
+o Use strtok (instead of strtok_r) for better portability
+o Fix 'format string is not a string literal' warnings on Mac OS X
+o Use SOCKET type on Windows instead of int to clean up signed/unsigned warnings
+o Fix WIN32 timeout paste errors
+o man page updates to describe format characters, improve BUGS sections
+o Fix autoconf IPV6 check for case where configure is not called from srcdir
+o Add support for v6 link local, e.g. 'iperf -V -c fe80::428d:5cff:fef7:5a73%eno1'
+o Fix ClientHdrXchange when gettimeofday() is used
+o Fix for -l, -W and -n to support format characters, also fix -n for -d and -r
+o Fixes -for -d (dual) honoring -b on remote
+o Fix for -t and -r
+o Support for 64 bit sequence numbers (--udp-counters-64bit)
+o Update config to support new platforms, eg --host=aarch64-linux
+o Fixes to header xchange, length messages, and packing
+o Server thread mbuf length checks
+o remove trailing whitespace across all files in the git repository
+o Support peer version detection and exchange with -X option
+o Add UDP buffer size minimum checks and warnings prior to peer test exchange
+o 2.0.5 interop testing and fixes (assume lots of 2.0.5 servers in the field)
+o Fix thread settings per hdr xhcange fixes
+o Fix for -P and -d used together
+o Error on client and -D
+o Fix local port binding on client to support both v4 and v6
+o Fix more on use clock_gettime() over gettimeofday() when available
+o Treat ENOBUFS as transient, i.e. don't exit on this error
+o Python: add flows directory and skeleton flows code using asyncio
+o Python: Support flows stats in dictionary for pandas
+
+2.0.9 change set (as of June 2016)
+----------------------------------
+o Apply SO_SNDTIMEO for both UDP and TCP per both -t and -i
+o Server (and listener) threads won't block forever when -t set (uses select() with non-blocking accept())
+o Remove need for <cmath> to improve portability
+o Fix report interval bug so single threaded mode no works
+o Skeleton code for Python based flows which will be use Pythnon 3's asyncio module
+o configure script check for struct tcp_info code fix and uses netinet/tcp.h
+
+2.0.8 change set (as of 1/12/2015)
+----------------------------------
+o Fix portability, compile and test with Linux, Win10, Win7, WinXP, MacOS and Android
+o Client now requires -u for UDP (no longer defaults to UDP with -b)
+o Maintain legacy report formats
+o Support for -e to get enhanced reports
+o Support TCP rate limited streams (via the -b) using token bucket
+o Support packets per second (UDP) via pps as units, (e.g. -b 1000pps)
+o Display PPS in both client and server reports (UDP)
+o Support realtime scheduler as a command line option (--realtime or -z)
+o Improve client tx code path so actual tx offerred rate will converge to the -b value
+o Improve accuracy of microsecond delay calls (in platform independent manner)
+o (Use of Kalman filter to predict delay errors and adjust delays per predicted error)
+o Display target loop time in initial client header (UDP)
+o Fix final latency report sent from server to client (UDP)
+o Include standard deviation in latency output
+o Suppress unrealistic latency output (-/-/-/-)
+o Support SO_SNDTIMEO on send so socket write won't block beyond -t (TCP)
+o Use clock_gettime if available (preferred over gettimeofday())
+o TCP write and error counts (TCP retries and CWND for linux)
+o TCP read count, TCP read histogram (8 bins)
+o Server will close the socket after -t seconds of no traffic
+
+2.0.7 change set (rjmcmahon@rjmcmahon.com) August 2014
+------------------------------------------------------
+o Linux only version which supports end/end latency (assumes clocks synched)
+o Support for smaller report interval  (5 milliseconds or greater)
+o End/end latency with UDP (mean/min/max), display in milliseconds with resolution of microseconds
+o Socket read timeouts (server only) so iperf reports occur regardless of no received packets
+o Report timestamps now display millisecond resolution
+o Local bind supports port value using colon as delimeter (-B 10.10.10.1:60001)
+o Use linux realtime scheduler and packet level timestamps for improved latency accuracy
+o Suggest PTP on client and server to synch clocks to microsecond
+o Suggest a quality reference for the PTP grandmaster such as a GPS disciplined oscillator from companies like Spectracom
+
+
+2.0.6 change set (rjmcmahon@rjmcmahon.com) March 2014
+-----------------------------------------------------
+o Increase the shared memory for report headers reducing mutex contention.  Needed to increase performance.  Minor code change that should be platform/os independent
