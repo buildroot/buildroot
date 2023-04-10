@@ -34,7 +34,10 @@ PKG_COMMON_CARGO_ENV = \
 # using nighly features on stable releases, i.e features that are not
 # yet considered stable.
 #
-# CARGO_UNSTABLE_TARGET_APPLIES_TO_HOST="true" "enables the nightly
+# CARGO_UNSTABLE_HOST_CONFIG="true" enables the host specific
+# configuration feature
+#
+# CARGO_UNSTABLE_TARGET_APPLIES_TO_HOST="true" enables the nightly
 # configuration option target-applies-to-host value to be set
 #
 # CARGO_TARGET_APPLIES_TO_HOST="false" is actually setting the value
@@ -43,9 +46,11 @@ PKG_COMMON_CARGO_ENV = \
 PKG_CARGO_ENV = \
 	$(PKG_COMMON_CARGO_ENV) \
 	__CARGO_TEST_CHANNEL_OVERRIDE_DO_NOT_USE_THIS="nightly" \
+	CARGO_UNSTABLE_HOST_CONFIG="true" \
 	CARGO_UNSTABLE_TARGET_APPLIES_TO_HOST="true" \
 	CARGO_TARGET_APPLIES_TO_HOST="false" \
 	CARGO_BUILD_TARGET="$(RUSTC_TARGET_NAME)" \
+	CARGO_HOST_RUSTFLAGS="$(addprefix -C link-args=,$(HOST_LDFLAGS))" \
 	CARGO_TARGET_$(call UPPERCASE,$(RUSTC_TARGET_NAME))_LINKER=$(notdir $(TARGET_CROSS))gcc
 
 #
@@ -53,7 +58,8 @@ PKG_CARGO_ENV = \
 # and should be removed when fixed upstream
 #
 ifeq ($(NORMALIZED_ARCH),arm)
-	PKG_CARGO_ENV += RUSTFLAGS="-Clink-arg=-Wl,--allow-multiple-definition"
+	PKG_CARGO_ENV += \
+		CARGO_TARGET_$(call UPPERCASE,$(RUSTC_TARGET_NAME))_RUSTFLAGS="-Clink-arg=-Wl,--allow-multiple-definition"
 endif
 
 HOST_PKG_CARGO_ENV = \
