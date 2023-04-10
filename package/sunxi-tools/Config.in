@@ -25,6 +25,7 @@ config BR2_PACKAGE_SUNXI_TOOLS_FEL
 	bool "sunxi-fel"
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libusb
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
+	select BR2_PACKAGE_DTC
 	select BR2_PACKAGE_LIBUSB
 	help
 	  The sunxi-fel command can interact with a sunxi device in

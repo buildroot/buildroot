@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SUNXI_TOOLS_VERSION = 1.4.2
+SUNXI_TOOLS_VERSION = 1.4.2-168-ged3039cdbeeb28fc0011c3585d8f7dfb91038292
 SUNXI_TOOLS_SITE = $(call github,linux-sunxi,sunxi-tools,v$(SUNXI_TOOLS_VERSION))
 SUNXI_TOOLS_LICENSE = GPL-2.0+
 SUNXI_TOOLS_LICENSE_FILES = LICENSE.md
@@ -26,7 +26,7 @@ SUNXI_TOOLS_FEXC_LINKS += fex2bin bin2fex
 endif
 
 ifeq ($(BR2_PACKAGE_SUNXI_TOOLS_FEL),y)
-SUNXI_TOOLS_DEPENDENCIES += libusb host-pkgconf
+SUNXI_TOOLS_DEPENDENCIES += dtc libusb host-pkgconf
 endif
 
 define HOST_SUNXI_TOOLS_BUILD_CMDS
