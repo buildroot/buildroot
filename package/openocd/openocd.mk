@@ -4,12 +4,37 @@
 #
 ################################################################################
 
-OPENOCD_VERSION = 0.11.0
+OPENOCD_VERSION = 0.12.0
 OPENOCD_SOURCE = openocd-$(OPENOCD_VERSION).tar.bz2
 OPENOCD_SITE = http://sourceforge.net/projects/openocd/files/openocd/$(OPENOCD_VERSION)
-OPENOCD_LICENSE = GPL-2.0+
-OPENOCD_LICENSE_FILES = COPYING
-# 0002-configure-enable-build-on-uclinux.patch patches configure.ac
+OPENOCD_LICENSE = \
+	eCos-exception-2.0, \
+	BSD-1-clause, \
+	BSD-2-clause, \
+	BSD-2-Clause-Views, \
+	BSD-3-clause, \
+	BSD-Source-Code, \
+	GFDL-1.2-no-invariants-or-later (docs), \
+	GPL-2.0+ (code), \
+	GPL-3.0+ (stand-alone code), \
+	MIT
+
+OPENOCD_LICENSE_FILES = \
+	COPYING \
+	LICENSES/license-rules.txt \
+	LICENSES/exceptions/eCos-exception-2.0 \
+	LICENSES/preferred/BSD-1-Clause \
+	LICENSES/preferred/BSD-2-Clause \
+	LICENSES/preferred/BSD-2-Clause-Views \
+	LICENSES/preferred/BSD-3-Clause \
+	LICENSES/preferred/BSD-Source-Code \
+	LICENSES/preferred/GFDL-1.2 \
+	LICENSES/preferred/gfdl-1.2.texi.readme \
+	LICENSES/preferred/GPL-2.0 \
+	LICENSES/preferred/MIT \
+	LICENSES/stand-alone/GPL-3.0
+
+# 0001-configure-enable-build-on-uclinux.patch patches configure.ac
 OPENOCD_AUTORECONF = YES
 OPENOCD_CONF_ENV = CFLAGS="$(TARGET_CFLAGS) -std=gnu99"
 
