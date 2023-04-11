@@ -41,10 +41,10 @@ case ${DEFCONFIG_NAME} in
     ;;
 esac
 
-sed "s|@SERIAL_ARGS@|${SERIAL_ARGS}|g" \
-    "s|@DEFAULT_ARGS@|${DEFAULT_ARGS}|g" \
-    "s|@QEMU_CMD_LINE@|${QEMU_CMD_LINE}|g" \
-    "s|@HOST_DIR@|${HOST_DIR}|g" \
+sed -e "s|@SERIAL_ARGS@|${SERIAL_ARGS}|g" \
+    -e "s|@DEFAULT_ARGS@|${DEFAULT_ARGS}|g" \
+    -e "s|@QEMU_CMD_LINE@|${QEMU_CMD_LINE}|g" \
+    -e "s|@HOST_DIR@|${HOST_DIR}|g" \
     <"${QEMU_BOARD_DIR}/start-qemu.sh.in" \
     >"${START_QEMU_SCRIPT}"
 chmod +x "${START_QEMU_SCRIPT}"
