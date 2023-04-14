@@ -5,7 +5,7 @@
 ################################################################################
 
 NGINX_VERSION = 1.22.1
-NGINX_SITE = http://nginx.org/download
+NGINX_SITE = https://nginx.org/download
 NGINX_LICENSE = BSD-2-Clause
 NGINX_LICENSE_FILES = LICENSE
 NGINX_CPE_ID_VENDOR = f5
