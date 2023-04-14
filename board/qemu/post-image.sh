@@ -2,7 +2,7 @@
 
 QEMU_BOARD_DIR="$(dirname "$0")"
 DEFCONFIG_NAME="$(basename "$2")"
-README_FILE="${QEMU_BOARD_DIR}/*/readme.txt"
+README_FILES="${QEMU_BOARD_DIR}/*/readme.txt"
 START_QEMU_SCRIPT="${BINARIES_DIR}/start-qemu.sh"
 
 if [[ "${DEFCONFIG_NAME}" =~ ^"qemu_*" ]]; then
@@ -12,7 +12,8 @@ fi
 
 # Search for "# qemu_*_defconfig" tag in all readme.txt files.
 # Qemu command line on multilines using back slash are accepted.
-QEMU_CMD_LINE="$(sed -r ':a; /\\$/N; s/\\\n//; s/\t/ /; ta; /# '"${DEFCONFIG_NAME}"'$/!d; s/#.*//' \ "${README_FILE}")"
+# shellcheck disable=SC2086 # glob over each readme file
+QEMU_CMD_LINE="$(sed -r ':a; /\\$/N; s/\\\n//; s/\t/ /; ta; /# '"${DEFCONFIG_NAME}"'$/!d; s/#.*//' ${README_FILES})"
 
 if [ -z "${QEMU_CMD_LINE}" ]; then
     # No Qemu cmd line found, can't test.
