@@ -1,0 +1,54 @@
+From 30353a1eb3ee8940f38d6a0e8f5f39352fd8a179 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 26 Feb 2023 20:25:54 +0100
+Subject: [PATCH] configure.ac: fix mount_attr detection
+Upstream: https://github.com/linux-test-project/ltp/commit/30353a1eb3ee8940f38d6a0e8f5f39352fd8a179
+
+Commit b857f8723f30a4b9554bf6b0ff8fa52fd07e8b60 tried to fix build with
+latest glibc which provides mount_attr in sys/mount.h. Unfortunately,
+the following build failure is still raised because sys/mount is now
+unconditionally included in include/lapi/fsmount.h:
+
+In file included from fsconfig01.c:9:
+../../../../include/lapi/fsmount.h:55:8: error: redefinition of 'struct mount_attr'
+   55 | struct mount_attr {
+      |        ^~~~~~~~~~
+In file included from ../../../../include/lapi/fsmount.h:14:
+/home/autobuild/autobuild/instance-4/output-1/host/armeb-buildroot-linux-gnueabi/sysroot/usr/include/sys/mount.h:210:8: note: originally defined here
+  210 | struct mount_attr
+      |        ^~~~~~~~~~
+
+Fixes: b857f8723 ("lapi/fsmount: resolve conflict in different header files")
+Fixes: http://autobuild.buildroot.org/results/4dbb72e1bf081afd3cd944571b9beeefc7608865
+Link: https://lore.kernel.org/ltp/20230226192554.669332-1-fontaine.fabrice@gmail.com/
+Reviewed-by: Li Wang <liwang@redhat.com>
+[ pvorel: fix from b857f8723 is needed for glibc before glibc-2.37~426,
+i.e. without fix 774058d729 ("linux: Fix sys/mount.h usage with kernel headers")
+(which was backported to 2.35 and 2.34 maintenance). ]
+Reviewed-by: Petr Vorel <pvorel@suse.cz>
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ configure.ac | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 114468ae3..4c8763376 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -224,10 +224,10 @@ AC_CHECK_TYPES([struct __kernel_old_timeval, struct __kernel_old_timespec, struc
+ 
+ AC_CHECK_TYPES([struct futex_waitv],,,[#include <linux/futex.h>])
+ AC_CHECK_TYPES([struct mount_attr],,,[
+-#ifdef HAVE_LINUX_MOUNT_H
+-# include <linux/mount.h>
+-#else
++#ifdef HAVE_MOUNT_SETATTR
+ # include <sys/mount.h>
++#elif HAVE_LINUX_MOUNT_H
++# include <linux/mount.h>
+ #endif
+ ])
+ 
+-- 
+2.40.0
+
