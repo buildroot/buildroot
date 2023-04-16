@@ -49,9 +49,10 @@ Buildroot configuration. Refer to xref:customize[] for more details.
 
 Before submitting patches for new boards it is recommended to test it by
 building it using latest gitlab-CI docker container. To do this use
-utils/docker-run script and inside it issue these commands:
++utils/docker-run+ script and inside it issue these commands:
+
 --------------------
- $ make +<boardname>_defconfig+
+ $ make <boardname>_defconfig
  $ make
 --------------------
 
