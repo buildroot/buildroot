@@ -1,0 +1,10 @@
+config BR2_PACKAGE_PYTHON_EVDEV
+	bool "python-evdev"
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_4
+	help
+	  Bindings to the Linux input handling subsystem.
+
+	  https://github.com/gvalkov/python-evdev
+
+comment "python-evdev needs a toolchain w/ headers >= 4.4"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_4
