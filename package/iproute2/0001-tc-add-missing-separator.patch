@@ -1,0 +1,32 @@
+From 4e0e56e0ef05387f7f5d8ab41fe6ec6a1897b26d Mon Sep 17 00:00:00 2001
+From: Christian Hesse <mail@eworm.de>
+Date: Thu, 23 Feb 2023 11:15:03 +0100
+Subject: [PATCH] tc: add missing separator
+Upstream: https://git.kernel.org/pub/scm/network/iproute2/iproute2.git/commit/?id=4e0e56e0ef05387f7f5d8ab41fe6ec6a1897b26d
+
+This is missing a separator, that was accidently removed
+when JSON was added.
+
+Fixes: 010a8388aea1 ("tc: Add JSON output to tc-class")
+Signed-off-by: Christian Hesse <mail@eworm.de>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ tc/tc_class.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tc/tc_class.c b/tc/tc_class.c
+index c1feb009..096fa2ec 100644
+--- a/tc/tc_class.c
++++ b/tc/tc_class.c
+@@ -356,7 +356,7 @@ int print_class(struct nlmsghdr *n, void *arg)
+ 		print_string(PRINT_ANY, "parent", "parent %s ", abuf);
+ 	}
+ 	if (t->tcm_info)
+-		print_0xhex(PRINT_ANY, "leaf", "leaf %x", t->tcm_info>>16);
++		print_0xhex(PRINT_ANY, "leaf", "leaf %x: ", t->tcm_info>>16);
+ 
+ 	q = get_qdisc_kind(RTA_DATA(tb[TCA_KIND]));
+ 	if (tb[TCA_OPTIONS]) {
+-- 
+2.40.0
+

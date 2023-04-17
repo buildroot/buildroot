@@ -1,0 +1,134 @@
+From 6637a6d512a940c3d9c101f4eaca3c1c7a36517c Mon Sep 17 00:00:00 2001
+From: Hangbin Liu <liuhangbin@gmail.com>
+Date: Tue, 28 Feb 2023 15:31:46 +0800
+Subject: [PATCH] tc: f_u32: fix json object leak
+Upstream: https://git.kernel.org/pub/scm/network/iproute2/iproute2.git/commit/?id=6637a6d512a940c3d9c101f4eaca3c1c7a36517c
+
+Previously, the code returned directly within the switch statement in
+the functions print_{ipv4, ipv6}. While this approach was functional,
+after the commit 721435dc, we can no longer return directly because we
+need to close the match object. To resolve this issue, replace the return
+statement with break.
+
+Fixes: 721435dcfd92 ("tc: u32: add json support in `print_raw`, `print_ipv4`, `print_ipv6`")
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ tc/f_u32.c | 24 ++++++++++--------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
+
+diff --git a/tc/f_u32.c b/tc/f_u32.c
+index de2d0c9e..936dbd65 100644
+--- a/tc/f_u32.c
++++ b/tc/f_u32.c
+@@ -828,12 +828,12 @@ static void print_ipv4(FILE *f, const struct tc_u32_key *key)
+ 			print_nl();
+ 			print_uint(PRINT_ANY, "ip_ihl", "  match IP ihl %u",
+ 				   ntohl(key->val) >> 24);
+-			return;
++			break;
+ 		case 0x00ff0000:
+ 			print_nl();
+ 			print_0xhex(PRINT_ANY, "ip_dsfield", "  match IP dsfield %#x",
+ 				    ntohl(key->val) >> 16);
+-			return;
++			break;
+ 		}
+ 		break;
+ 	case 8:
+@@ -841,7 +841,6 @@ static void print_ipv4(FILE *f, const struct tc_u32_key *key)
+ 			print_nl();
+ 			print_int(PRINT_ANY, "ip_protocol", "  match IP protocol %d",
+ 				  ntohl(key->val) >> 16);
+-			return;
+ 		}
+ 		break;
+ 	case 12:
+@@ -864,7 +863,6 @@ static void print_ipv4(FILE *f, const struct tc_u32_key *key)
+ 				print_string(PRINT_ANY, "address", "%s", addr);
+ 				print_int(PRINT_ANY, "prefixlen", "/%d", bits);
+ 				close_json_object();
+-				return;
+ 			}
+ 		}
+ 		break;
+@@ -874,19 +872,19 @@ static void print_ipv4(FILE *f, const struct tc_u32_key *key)
+ 		case 0x0000ffff:
+ 			print_uint(PRINT_ANY, "dport", "match dport %u",
+ 				   ntohl(key->val) & 0xffff);
+-			return;
++			break;
+ 		case 0xffff0000:
+ 			print_nl();
+ 			print_uint(PRINT_ANY, "sport", "  match sport %u",
+ 				   ntohl(key->val) >> 16);
+-			return;
++			break;
+ 		case 0xffffffff:
+ 			print_nl();
+ 			print_uint(PRINT_ANY, "dport", "  match dport %u, ",
+ 				   ntohl(key->val) & 0xffff);
+ 			print_uint(PRINT_ANY, "sport", "match sport %u",
+ 				   ntohl(key->val) >> 16);
+-			return;
++			break;
+ 		}
+ 		/* XXX: Default print_raw */
+ 	}
+@@ -905,12 +903,12 @@ static void print_ipv6(FILE *f, const struct tc_u32_key *key)
+ 			print_nl();
+ 			print_uint(PRINT_ANY, "ip_ihl", "  match IP ihl %u",
+ 				   ntohl(key->val) >> 24);
+-			return;
++			break;
+ 		case 0x00ff0000:
+ 			print_nl();
+ 			print_0xhex(PRINT_ANY, "ip_dsfield", "  match IP dsfield %#x",
+ 				    ntohl(key->val) >> 16);
+-			return;
++			break;
+ 		}
+ 		break;
+ 	case 8:
+@@ -918,7 +916,6 @@ static void print_ipv6(FILE *f, const struct tc_u32_key *key)
+ 			print_nl();
+ 			print_int(PRINT_ANY, "ip_protocol", "  match IP protocol %d",
+ 				  ntohl(key->val) >> 16);
+-			return;
+ 		}
+ 		break;
+ 	case 12:
+@@ -941,7 +938,6 @@ static void print_ipv6(FILE *f, const struct tc_u32_key *key)
+ 				print_string(PRINT_ANY, "address", "%s", addr);
+ 				print_int(PRINT_ANY, "prefixlen", "/%d", bits);
+ 				close_json_object();
+-				return;
+ 			}
+ 		}
+ 		break;
+@@ -952,11 +948,11 @@ static void print_ipv6(FILE *f, const struct tc_u32_key *key)
+ 			print_nl();
+ 			print_uint(PRINT_ANY, "sport", "  match sport %u",
+ 				   ntohl(key->val) & 0xffff);
+-			return;
++			break;
+ 		case 0xffff0000:
+ 			print_uint(PRINT_ANY, "dport", "match dport %u",
+ 				   ntohl(key->val) >> 16);
+-			return;
++			break;
+ 		case 0xffffffff:
+ 			print_nl();
+ 			print_uint(PRINT_ANY, "sport", "  match sport %u, ",
+@@ -964,7 +960,7 @@ static void print_ipv6(FILE *f, const struct tc_u32_key *key)
+ 			print_uint(PRINT_ANY, "dport", "match dport %u",
+ 				   ntohl(key->val) >> 16);
+ 
+-			return;
++			break;
+ 		}
+ 		/* XXX: Default print_raw */
+ 	}
+-- 
+2.40.0
+
