@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GRANITE_VERSION = 6.0.0
+GRANITE_VERSION = 6.2.0
 GRANITE_SITE = $(call github,elementary,granite,$(GRANITE_VERSION))
 GRANITE_DEPENDENCIES = \
 	host-pkgconf \
