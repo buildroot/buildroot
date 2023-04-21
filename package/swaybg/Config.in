@@ -1,0 +1,13 @@
+config BR2_PACKAGE_SWAYBG
+	bool "swaybg"
+	default y if BR2_PACKAGE_SWAY
+	depends on !BR2_STATIC_LIBS # wayland -> dlfcn.h
+	depends on BR2_TOOLCHAIN_HAS_THREADS # wayland
+	select BR2_PACKAGE_CAIRO
+	select BR2_PACKAGE_CAIRO_PNG
+	select BR2_PACKAGE_WAYLAND
+	select BR2_PACKAGE_WAYLAND_PROTOCOLS
+	help
+	  Wallpaper tool for Wayland compositors.
+
+	  https://github.com/swaywm/swaybg
