@@ -1,0 +1,93 @@
+From 4ae8606b6f80f9764e1f0a82cea7e23c8af487ae Mon Sep 17 00:00:00 2001
+From: James Knight <james.d.knight@live.com>
+Date: Thu, 20 Apr 2023 23:41:32 -0400
+Subject: [PATCH] Fix error format in gio/gunixconnection.c (part 2)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Update a series of error messages to use `g_set_error_literal` instead
+of `g_set_error`. This should prevent `format-nonliteral` compiler
+issues when `-Werror` is configured:
+
+    ../gio/gunixconnection.c: In function ‘g_unix_connection_receive_fd’:
+    ../gio/gunixconnection.c:183:9: error: format not a string literal, argument types not checked [-Werror=format-nonliteral]
+      183 |         nscm);
+          |         ^~~~
+    ../gio/gunixconnection.c:217:20: error: format not a string literal, argument types not checked [-Werror=format-nonliteral]
+      217 |                    nfd);
+          |                    ^~~
+    ../gio/gunixconnection.c: In function ‘g_unix_connection_receive_credentials’:
+    ../gio/gunixconnection.c:601:24: error: format not a string literal, argument types not checked [-Werror=format-nonliteral]
+      601 |                        nscm);
+          |                        ^~~~
+
+This is similar to a previous change [1] made to `gunixconnection.c`.
+
+[1]: 44b3d5d80445234041f6c59feb89645f7102c3a4
+
+Signed-off-by: James Knight <james.d.knight@live.com>
+Upstream: backport from upstream https://gitlab.gnome.org/GNOME/glib/-/commit/4ae8606b6f80f9764e1f0a82cea7e23c8af487ae
+---
+ gio/gunixconnection.c | 31 ++++++++++++++-----------------
+ 1 file changed, 14 insertions(+), 17 deletions(-)
+
+diff --git a/gio/gunixconnection.c b/gio/gunixconnection.c
+index b3f2b1c04b0abdf7136918585ae4cea8970a88bb..c012fcbfe00b69e9da609c7b626229db98e931ac 100644
+--- a/gio/gunixconnection.c
++++ b/gio/gunixconnection.c
+@@ -176,11 +176,10 @@ g_unix_connection_receive_fd (GUnixConnection  *connection,
+     {
+       gint i;
+ 
+-      g_set_error (error, G_IO_ERROR, G_IO_ERROR_FAILED,
+-        ngettext("Expecting 1 control message, got %d",
+-                 "Expecting 1 control message, got %d",
+-                 nscm),
+-        nscm);
++      g_set_error_literal (error, G_IO_ERROR, G_IO_ERROR_FAILED,
++                           ngettext ("Expecting 1 control message, got %d",
++                                     "Expecting 1 control message, got %d",
++                                     nscm));
+ 
+       for (i = 0; i < nscm; i++)
+         g_object_unref (scms[i]);
+@@ -210,11 +209,10 @@ g_unix_connection_receive_fd (GUnixConnection  *connection,
+     {
+       gint i;
+ 
+-      g_set_error (error, G_IO_ERROR, G_IO_ERROR_FAILED,
+-                   ngettext("Expecting one fd, but got %d\n",
+-                            "Expecting one fd, but got %d\n",
+-                            nfd),
+-                   nfd);
++      g_set_error_literal (error, G_IO_ERROR, G_IO_ERROR_FAILED,
++                           ngettext ("Expecting one fd, but got %d\n",
++                                     "Expecting one fd, but got %d\n",
++                                     nfd));
+ 
+       for (i = 0; i < nfd; i++)
+         close (fds[i]);
+@@ -592,13 +590,12 @@ g_unix_connection_receive_credentials (GUnixConnection      *connection,
+     {
+       if (nscm != 1)
+         {
+-          g_set_error (error,
+-                       G_IO_ERROR,
+-                       G_IO_ERROR_FAILED,
+-                       ngettext("Expecting 1 control message, got %d",
+-                                "Expecting 1 control message, got %d",
+-                                nscm),
+-                       nscm);
++          g_set_error_literal (error,
++                               G_IO_ERROR,
++                               G_IO_ERROR_FAILED,
++                               ngettext ("Expecting 1 control message, got %d",
++                                         "Expecting 1 control message, got %d",
++                                         nscm));
+           goto out;
+         }
+ 
+-- 
+2.39.1.windows.1
+
