@@ -1,0 +1,82 @@
+From e07973ca745958da739f8ece80273da48f94f031 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Daniel=20P=2E=20Berrang=C3=A9?= <berrange@redhat.com>
+Date: Tue, 10 Jan 2023 12:49:01 -0500
+Subject: [PATCH] Revert "linux-user: fix compat with glibc >= 2.36
+ sys/mount.h"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This reverts commit 3cd3df2a9584e6f753bb62a0028bd67124ab5532.
+
+glibc has fixed (in 2.36.9000-40-g774058d729) the problem
+that caused a clash when both sys/mount.h annd linux/mount.h
+are included, and backported this to the 2.36 stable release
+too:
+
+  https://sourceware.org/glibc/wiki/Release/2.36#Usage_of_.3Clinux.2Fmount.h.3E_and_.3Csys.2Fmount.h.3E
+
+It is saner for QEMU to remove the workaround it applied for
+glibc 2.36 and expect distros to ship the 2.36 maint release
+with the fix. This avoids needing to add a further workaround
+to QEMU to deal with the fact that linux/brtfs.h now also pulls
+in linux/mount.h via linux/fs.h since Linux 6.1
+
+Signed-off-by: Daniel P. Berrangé <berrange@redhat.com>
+Reviewed-by: Marc-André Lureau <marcandre.lureau@redhat.com>
+Message-Id: <20230110174901.2580297-3-berrange@redhat.com>
+Signed-off-by: Laurent Vivier <laurent@vivier.eu>
+
+Upstream: https://gitlab.com/qemu-project/qemu/-/commit/6003159ce18faad4e1bc7bf9c85669019cd4950e
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ linux-user/syscall.c | 18 ------------------
+ meson.build          |  2 --
+ 2 files changed, 20 deletions(-)
+
+diff --git a/linux-user/syscall.c b/linux-user/syscall.c
+index 10af5e0d8e..d974c76b60 100644
+--- a/linux-user/syscall.c
++++ b/linux-user/syscall.c
+@@ -95,25 +95,7 @@
+ #include <linux/soundcard.h>
+ #include <linux/kd.h>
+ #include <linux/mtio.h>
+-
+-#ifdef HAVE_SYS_MOUNT_FSCONFIG
+-/*
+- * glibc >= 2.36 linux/mount.h conflicts with sys/mount.h,
+- * which in turn prevents use of linux/fs.h. So we have to
+- * define the constants ourselves for now.
+- */
+-#define FS_IOC_GETFLAGS                _IOR('f', 1, long)
+-#define FS_IOC_SETFLAGS                _IOW('f', 2, long)
+-#define FS_IOC_GETVERSION              _IOR('v', 1, long)
+-#define FS_IOC_SETVERSION              _IOW('v', 2, long)
+-#define FS_IOC_FIEMAP                  _IOWR('f', 11, struct fiemap)
+-#define FS_IOC32_GETFLAGS              _IOR('f', 1, int)
+-#define FS_IOC32_SETFLAGS              _IOW('f', 2, int)
+-#define FS_IOC32_GETVERSION            _IOR('v', 1, int)
+-#define FS_IOC32_SETVERSION            _IOW('v', 2, int)
+-#else
+ #include <linux/fs.h>
+-#endif
+ #include <linux/fd.h>
+ #if defined(CONFIG_FIEMAP)
+ #include <linux/fiemap.h>
+diff --git a/meson.build b/meson.build
+index b88867ca9d..39e83bbafe 100644
+--- a/meson.build
++++ b/meson.build
+@@ -2032,8 +2032,6 @@ config_host_data.set('HAVE_OPTRESET',
+                      cc.has_header_symbol('getopt.h', 'optreset'))
+ config_host_data.set('HAVE_IPPROTO_MPTCP',
+                      cc.has_header_symbol('netinet/in.h', 'IPPROTO_MPTCP'))
+-config_host_data.set('HAVE_SYS_MOUNT_FSCONFIG',
+-                     cc.has_header_symbol('sys/mount.h', 'FSCONFIG_SET_FLAG'))
+ 
+ # has_member
+ config_host_data.set('HAVE_SIGEV_NOTIFY_THREAD_ID',
+-- 
+2.25.1
+

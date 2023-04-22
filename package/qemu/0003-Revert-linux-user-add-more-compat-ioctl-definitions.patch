@@ -1,0 +1,73 @@
+From 274f00f33411caee51973a9f7701daf194da5a0a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Daniel=20P=2E=20Berrang=C3=A9?= <berrange@redhat.com>
+Date: Tue, 10 Jan 2023 12:49:00 -0500
+Subject: [PATCH] Revert "linux-user: add more compat ioctl definitions"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This reverts commit c5495f4ecb0cdaaf2e9dddeb48f1689cdb520ca0.
+
+glibc has fixed (in 2.36.9000-40-g774058d729) the problem
+that caused a clash when both sys/mount.h annd linux/mount.h
+are included, and backported this to the 2.36 stable release
+too:
+
+  https://sourceware.org/glibc/wiki/Release/2.36#Usage_of_.3Clinux.2Fmount.h.3E_and_.3Csys.2Fmount.h.3E
+
+It is saner for QEMU to remove the workaround it applied for
+glibc 2.36 and expect distros to ship the 2.36 maint release
+with the fix. This avoids needing to add a further workaround
+to QEMU to deal with the fact that linux/brtfs.h now also pulls
+in linux/mount.h via linux/fs.h since Linux 6.1
+
+Signed-off-by: Daniel P. Berrangé <berrange@redhat.com>
+Reviewed-by: Marc-André Lureau <marcandre.lureau@redhat.com>
+Message-Id: <20230110174901.2580297-2-berrange@redhat.com>
+Signed-off-by: Laurent Vivier <laurent@vivier.eu>
+
+Upstream: https://gitlab.com/qemu-project/qemu/-/commit/9f0246539ae84a5e21efd1cc4516fc343f08115a
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ linux-user/syscall.c | 25 -------------------------
+ 1 file changed, 25 deletions(-)
+
+diff --git a/linux-user/syscall.c b/linux-user/syscall.c
+index 24b25759be..10af5e0d8e 100644
+--- a/linux-user/syscall.c
++++ b/linux-user/syscall.c
+@@ -111,31 +111,6 @@
+ #define FS_IOC32_SETFLAGS              _IOW('f', 2, int)
+ #define FS_IOC32_GETVERSION            _IOR('v', 1, int)
+ #define FS_IOC32_SETVERSION            _IOW('v', 2, int)
+-
+-#define BLKGETSIZE64 _IOR(0x12,114,size_t)
+-#define BLKDISCARD _IO(0x12,119)
+-#define BLKIOMIN _IO(0x12,120)
+-#define BLKIOOPT _IO(0x12,121)
+-#define BLKALIGNOFF _IO(0x12,122)
+-#define BLKPBSZGET _IO(0x12,123)
+-#define BLKDISCARDZEROES _IO(0x12,124)
+-#define BLKSECDISCARD _IO(0x12,125)
+-#define BLKROTATIONAL _IO(0x12,126)
+-#define BLKZEROOUT _IO(0x12,127)
+-
+-#define FIBMAP     _IO(0x00,1)
+-#define FIGETBSZ   _IO(0x00,2)
+-
+-struct file_clone_range {
+-        __s64 src_fd;
+-        __u64 src_offset;
+-        __u64 src_length;
+-        __u64 dest_offset;
+-};
+-
+-#define FICLONE         _IOW(0x94, 9, int)
+-#define FICLONERANGE    _IOW(0x94, 13, struct file_clone_range)
+-
+ #else
+ #include <linux/fs.h>
+ #endif
+-- 
+2.25.1
+
