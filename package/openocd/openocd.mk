@@ -8,14 +8,13 @@ OPENOCD_VERSION = 0.12.0
 OPENOCD_SOURCE = openocd-$(OPENOCD_VERSION).tar.bz2
 OPENOCD_SITE = http://sourceforge.net/projects/openocd/files/openocd/$(OPENOCD_VERSION)
 OPENOCD_LICENSE = \
-	eCos-exception-2.0, \
 	BSD-1-clause, \
 	BSD-2-clause, \
 	BSD-2-Clause-Views, \
 	BSD-3-clause, \
 	BSD-Source-Code, \
 	GFDL-1.2-no-invariants-or-later (docs), \
-	GPL-2.0+ (code), \
+	GPL-2.0+ with eCos-exception-2.0 (code), \
 	GPL-3.0+ (stand-alone code), \
 	MIT
 
