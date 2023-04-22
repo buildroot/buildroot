@@ -6,7 +6,7 @@
 
 # When updating the version, check whether the list of supported targets
 # needs to be updated.
-QEMU_VERSION = 7.2.1
+QEMU_VERSION = 8.0.0
 QEMU_SOURCE = qemu-$(QEMU_VERSION).tar.xz
 QEMU_SITE = https://download.qemu.org
 QEMU_LICENSE = GPL-2.0, LGPL-2.1, MIT, BSD-3-Clause, BSD-2-Clause, Others/BSD-1c
@@ -302,13 +302,13 @@ define QEMU_CONFIGURE_CMDS
 			--disable-vhost-crypto \
 			--disable-vhost-user-blk-server \
 			--disable-virtfs \
-			--disable-virtiofsd \
 			--disable-whpx \
 			--disable-xen \
 			--enable-attr \
 			--enable-kvm \
 			--enable-vhost-net \
 			--with-git-submodules=ignore \
+			--disable-hexagon-idef-parser \
 			$(QEMU_OPTS)
 endef
 
@@ -474,7 +474,6 @@ define HOST_QEMU_CONFIGURE_CMDS
 		--disable-selinux \
 		--disable-vde \
 		--disable-vhost-user-blk-server \
-		--disable-virtiofsd \
 		--disable-vnc-jpeg \
 		--disable-png \
 		--disable-vnc-sasl \
