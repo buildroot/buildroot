@@ -228,9 +228,9 @@ class TestCheckPackage(unittest.TestCase):
                            self.WITH_UTILS_IN_PATH, subdir_path)
         self.assert_file_was_processed(m)
         self.assert_warnings_generated_for_file(m)
-        self.assertIn("{}:0: Indent was expected to fail, did you fixed the file and forgot to update .checkpackageignore_outdated?"
+        self.assertIn("{}:0: Indent was expected to fail, did you fix the file and forgot to update .checkpackageignore_outdated?"
                       .format(subdir_file), w)
-        self.assertIn("{}:0: NewlineAtEof was expected to fail, did you fixed the file and forgot to update "
+        self.assertIn("{}:0: NewlineAtEof was expected to fail, did you fix the file and forgot to update "
                       ".checkpackageignore_outdated?"
                       .format(subdir_file), w)
 
