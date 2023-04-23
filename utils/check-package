@@ -246,7 +246,7 @@ def check_file_using_lib(fname):
 
     for should_fail in xfail:
         if should_fail not in failed:
-            print("{}:0: {} was expected to fail, did you fixed the file and forgot to update {}?"
+            print("{}:0: {} was expected to fail, did you fix the file and forget to update {}?"
                   .format(fname, should_fail, flags.ignore_filename))
             nwarnings += 1
 
