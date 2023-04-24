@@ -14,6 +14,7 @@ SUNXI_MALI_UTGARD_EULA_NO_SPACES = EULA_for_Mali_400MP_AW.pdf
 SUNXI_MALI_UTGARD_LICENSE_FILES = $(SUNXI_MALI_UTGARD_EULA_NO_SPACES)
 
 SUNXI_MALI_UTGARD_REV = $(call qstrip,$(BR2_PACKAGE_SUNXI_MALI_UTGARD_REVISION))
+SUNXI_MALI_UTGARD_PLATFORM = $(call qstrip,$(BR2_PACKAGE_SUNXI_MALI_UTGARD_PLATFORM))
 
 ifeq ($(BR2_arm),y)
 SUNXI_MALI_UTGARD_ARCH=arm
@@ -24,9 +25,9 @@ endif
 define SUNXI_MALI_UTGARD_INSTALL_STAGING_CMDS
 	mkdir -p $(STAGING_DIR)/usr/lib $(STAGING_DIR)/usr/include
 
-	cp -rf $(@D)/$(SUNXI_MALI_UTGARD_REV)/$(SUNXI_MALI_UTGARD_ARCH)/fbdev/*.so* \
+	cp -rf $(@D)/$(SUNXI_MALI_UTGARD_REV)/$(SUNXI_MALI_UTGARD_ARCH)/$(SUNXI_MALI_UTGARD_PLATFORM)/*.so* \
 		$(STAGING_DIR)/usr/lib/
-	cp -rf $(@D)/include/fbdev/* $(STAGING_DIR)/usr/include/
+	cp -rf $(@D)/include/$(SUNXI_MALI_UTGARD_PLATFORM)/* $(STAGING_DIR)/usr/include/
 
 	$(INSTALL) -D -m 0644 package/sunxi-mali-utgard/egl.pc \
 		$(STAGING_DIR)/usr/lib/pkgconfig/egl.pc
@@ -34,9 +35,21 @@ define SUNXI_MALI_UTGARD_INSTALL_STAGING_CMDS
 		$(STAGING_DIR)/usr/lib/pkgconfig/glesv2.pc
 endef
 
+ifeq ($(BR2_PACKAGE_SUNXI_MALI_UTGARD_WAYLAND),y)
+define SUNXI_MALI_UTGARD_INSTALL_FIXUP_STAGING_PC_FILES
+	sed -e '/^Cflags:/s/$$/ -DWL_EGL_PLATFORM/' \
+		-e '/^Requires:/s/$$/ wayland-client wayland-server/' \
+		-i $(STAGING_DIR)/usr/lib/pkgconfig/egl.pc
+	sed -e '/^Requires:/s/$$/ wayland-client wayland-server/' \
+		-i $(STAGING_DIR)/usr/lib/pkgconfig/glesv2.pc
+endef
+SUNXI_MALI_UTGARD_POST_INSTALL_TARGET_HOOKS += SUNXI_MALI_UTGARD_INSTALL_FIXUP_STAGING_PC_FILES
+SUNXI_MALI_UTGARD_DEPENDENCIES += wayland
+endif
+
 define SUNXI_MALI_UTGARD_INSTALL_TARGET_CMDS
 	mkdir -p $(TARGET_DIR)/usr/lib
-	cp -rf $(@D)/$(SUNXI_MALI_UTGARD_REV)/$(SUNXI_MALI_UTGARD_ARCH)/fbdev/*.so* \
+	cp -rf $(@D)/$(SUNXI_MALI_UTGARD_REV)/$(SUNXI_MALI_UTGARD_ARCH)/$(SUNXI_MALI_UTGARD_PLATFORM)/*.so* \
 		$(TARGET_DIR)/usr/lib/
 endef
 
