@@ -1,0 +1,33 @@
+From 6c6be65ccf0891391681d4662cc11f508c0f4aeb Mon Sep 17 00:00:00 2001
+From: Adam Duskett <aduskett@gmail.com>
+Date: Mon, 24 Apr 2023 14:24:49 -0700
+Subject: [PATCH] mount: dbus interface must be optional
+
+If DBus isn't built, the build process fails due to mount.te always using a
+dbus interface even if the dbus module. Fix this by setting the dbus interface
+as optional.
+
+Signed-off-by: Adam Duskett <aduskett@gmail.com>
+Upstream: https://github.com/SELinuxProject/refpolicy/commit/207b09a656c2c3ac5c286d3f7eef085325e35408
+---
+ policy/modules/system/mount.te | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/policy/modules/system/mount.te b/policy/modules/system/mount.te
+index d028723..af84af0 100644
+--- a/policy/modules/system/mount.te
++++ b/policy/modules/system/mount.te
+@@ -145,7 +145,9 @@ selinux_getattr_fs(mount_t)
+ 
+ userdom_use_all_users_fds(mount_t)
+ 
+-dbus_dontaudit_write_system_bus_runtime_named_sockets(mount_t)
++optional_policy(`
++	dbus_dontaudit_write_system_bus_runtime_named_sockets(mount_t)
++')
+ 
+ ifdef(`distro_redhat',`
+ 	optional_policy(`
+-- 
+2.40.0
+
