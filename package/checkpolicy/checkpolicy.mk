@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-CHECKPOLICY_VERSION = 3.3
+CHECKPOLICY_VERSION = 3.5
 CHECKPOLICY_SITE = https://github.com/SELinuxProject/selinux/releases/download/$(CHECKPOLICY_VERSION)
 CHECKPOLICY_LICENSE = GPL-2.0
-CHECKPOLICY_LICENSE_FILES = COPYING
+CHECKPOLICY_LICENSE_FILES = LICENSE
 
 CHECKPOLICY_DEPENDENCIES = libselinux flex host-flex host-bison
 
