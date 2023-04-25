@@ -14,3 +14,4 @@ PYTHON_PIP_CPE_ID_VENDOR = pypa
 PYTHON_PIP_CPE_ID_PRODUCT = pip
 
 $(eval $(python-package))
+$(eval $(host-python-package))
