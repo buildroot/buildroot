@@ -1,0 +1,63 @@
+From 8610efc1610a4e9d4cbfa19ed4a519a6425aee70 Mon Sep 17 00:00:00 2001
+From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Date: Tue, 9 May 2023 22:28:36 +0200
+Subject: [PATCH] python?sepolgen: fix ausearch path
+
+ausearch is not always isntalled in /sbin; some systems install it in
+/usr/sbin, or it can also be locally installed in /usr/local/sbin.
+
+The python doc [0] suggests using shutil.which() to find the path where
+a command is. which() returns None if the command is not found. If
+ausearch is not found, that would result in an exception being raised by
+Popen():
+    TypeError: expected str, bytes or os.PathLike object, not NoneType
+
+This is not very informative of what actually failed...
+
+However, the doc suggests so for portability. In our case, the python
+tools are only ever going to run on a Linux host (by their virtue of
+dealing with SELinux), so the search will be reliably done by looking in
+PATH, so we can let Popen() bubble the resolving of an unqualified
+command, down to execvpe() (or the similar actual syscall of the exec*()
+familly). If ausearch is then not found, Popen() raises an exception
+that is wy more informative then:
+    FileNotFoundError: [Errno 2] No such file or directory: 'ausearch'
+
+[0] https://docs.python.org/3/library/subprocess.html#subprocess.Popen
+
+Signed-off-by: Adam Duskett <aduskett@gmail.com>
+[yann.morin.1998@free.fr:
+  - let Popen() resolve from PATH
+  - rewrite commit log
+]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+Upstream: not submitted
+---
+ python/sepolgen/src/sepolgen/audit.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/python/sepolgen/src/sepolgen/audit.py b/python/sepolgen/src/sepolgen/audit.py
+index 4adb851f..5eafa587 100644
+--- a/sepolgen/src/sepolgen/audit.py
++++ b/sepolgen/src/sepolgen/audit.py
+@@ -41,7 +41,7 @@ def get_audit_boot_msgs():
+     s = time.localtime(time.time() - off)
+     bootdate = time.strftime("%x", s)
+     boottime = time.strftime("%X", s)
+-    output = subprocess.Popen(["/sbin/ausearch", "-m", "AVC,USER_AVC,MAC_POLICY_LOAD,DAEMON_START,SELINUX_ERR", "-ts", bootdate, boottime],
++    output = subprocess.Popen(["ausearch", "-m", "AVC,USER_AVC,MAC_POLICY_LOAD,DAEMON_START,SELINUX_ERR", "-ts", bootdate, boottime],
+                               stdout=subprocess.PIPE).communicate()[0]
+     if util.PY3:
+         output = util.decode_input(output)
+@@ -56,7 +56,7 @@ def get_audit_msgs():
+        string contain all of the audit messages returned by ausearch.
+     """
+     import subprocess
+-    output = subprocess.Popen(["/sbin/ausearch", "-m", "AVC,USER_AVC,MAC_POLICY_LOAD,DAEMON_START,SELINUX_ERR"],
++    output = subprocess.Popen(["ausearch", "-m", "AVC,USER_AVC,MAC_POLICY_LOAD,DAEMON_START,SELINUX_ERR"],
+                               stdout=subprocess.PIPE).communicate()[0]
+     if util.PY3:
+         output = util.decode_input(output)
+-- 
+2.25.1
+
