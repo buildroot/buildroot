@@ -27,6 +27,7 @@ config BR2_PACKAGE_SUNXI_TOOLS_FEL
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
 	select BR2_PACKAGE_DTC
 	select BR2_PACKAGE_LIBUSB
+	select BR2_PACKAGE_ZLIB
 	help
 	  The sunxi-fel command can interact with a sunxi device in
 	  fel mode. This allows do download code to memory and execute
