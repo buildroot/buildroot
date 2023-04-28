@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-DHCPCD_VERSION = 9.4.1
+DHCPCD_VERSION = 10.0.1
 DHCPCD_SOURCE = dhcpcd-$(DHCPCD_VERSION).tar.xz
-DHCPCD_SITE = http://roy.marples.name/downloads/dhcpcd
+DHCPCD_SITE = https://github.com/NetworkConfiguration/dhcpcd/releases/download/v$(DHCPCD_VERSION)
 DHCPCD_DEPENDENCIES = host-pkgconf
 DHCPCD_LICENSE = BSD-2-Clause
 DHCPCD_LICENSE_FILES = LICENSE
