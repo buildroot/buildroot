@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CRUN_VERSION = 1.7.2
+CRUN_VERSION = 1.8.4
 CRUN_SITE = https://github.com/containers/crun/releases/download/$(CRUN_VERSION)
 CRUN_DEPENDENCIES = host-pkgconf yajl
 
