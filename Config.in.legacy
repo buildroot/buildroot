@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2023.05"
 
+config BR2_PACKAGE_AT_SPI2_ATK
+	bool "at-spi2-atk removed"
+	select BR2_LEGACY
+	help
+	  at-spi2-atk is now part of at-spi2-core.
+
 config BR2_PACKAGE_OPTEE_BENCHMARK
 	bool "optee-benchmark has been removed"
 	select BR2_LEGACY
