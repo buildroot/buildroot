@@ -1,0 +1,93 @@
+From aeb14ffccaabe65a64e976576d71f30eb2165f43 Mon Sep 17 00:00:00 2001
+From: Adrian Perez de Castro <aperez@igalia.com>
+Date: Mon, 24 Apr 2023 12:09:50 +0300
+Subject: [PATCH] meson: Avoid requiring libsystemd when configured to use
+ dbus-daemon
+
+Checks for dbus-daemon and dbus-broker only when they are chosen
+with default_bus. This avoids requiring the systemd libraries if
+one wants the built at-spi2-core to use dbus-daemon, but dbus-worker
+is somehow available in the $PATH. A typical scenario is cross
+compilation, where the build host may have a dbus-broker program
+available, but the target system may not have it (or may not have
+nor want to use the systemd libraries).
+
+Upstream: https://gitlab.gnome.org/GNOME/at-spi2-core/-/merge_requests/134
+Signed-off-by: Thomas Devoogdt <thomas.devoogdt@barco.com>
+---
+ bus/meson.build | 53 ++++++++++++++++++++++++-------------------------
+ 1 file changed, 26 insertions(+), 27 deletions(-)
+
+diff --git a/bus/meson.build b/bus/meson.build
+index 22a1bce6..2f3c5621 100644
+--- a/bus/meson.build
++++ b/bus/meson.build
+@@ -46,39 +46,38 @@ launcher_args = [
+              '-DDATADIR="@0@"'.format(atspi_datadir),
+            ]
+ 
+-if get_option('dbus_daemon') != 'default'
+-  launcher_args += '-DDBUS_DAEMON="@0@"'.format(get_option('dbus_daemon'))
+-else
+-  dbus_daemon = find_program('dbus-daemon',
+-                             '/sbin/dbus-daemon',
+-                             '/usr/sbin/dbus-daemon',
+-                             '/libexec/dbus-daemon',
+-                             '/usr/libexec/dbus-daemon',
+-                             '/usr/lib/dbus-daemon',
+-                             '/usr/pkg/bin/dbus-daemon',
+-                             required: false)
+-  if dbus_daemon.found()
+-    launcher_args += '-DDBUS_DAEMON="@0@"'.format(dbus_daemon.full_path())
+-  endif
+-endif
+-
+ needs_systemd = false
+-if get_option('dbus_broker') != 'default'
+-  launcher_args += '-DDBUS_BROKER="@0@"'.format(get_option('dbus_broker'))
+-  needs_systemd = true
++if get_option('default_bus') == 'dbus-daemon'
++  if get_option('dbus_daemon') != 'default'
++    launcher_args += '-DDBUS_DAEMON="@0@"'.format(get_option('dbus_daemon'))
++  else
++    dbus_daemon = find_program('dbus-daemon',
++                               '/sbin/dbus-daemon',
++                               '/usr/sbin/dbus-daemon',
++                               '/libexec/dbus-daemon',
++                               '/usr/libexec/dbus-daemon',
++                               '/usr/lib/dbus-daemon',
++                               '/usr/pkg/bin/dbus-daemon',
++                               required: false)
++    if dbus_daemon.found()
++      launcher_args += '-DDBUS_DAEMON="@0@"'.format(dbus_daemon.full_path())
++    endif
++  endif
+ else
+-  dbus_broker = find_program('dbus-broker-launch',
+-                             required: false)
+-  if dbus_broker.found()
+-    launcher_args += '-DDBUS_BROKER="@0@"'.format(dbus_broker.full_path())
++  launcher_args += '-DWANT_DBUS_BROKER'
++  if get_option('dbus_broker') != 'default'
++    launcher_args += '-DDBUS_BROKER="@0@"'.format(get_option('dbus_broker'))
+     needs_systemd = true
++  else
++    dbus_broker = find_program('dbus-broker-launch',
++                               required: false)
++    if dbus_broker.found()
++      launcher_args += '-DDBUS_BROKER="@0@"'.format(dbus_broker.full_path())
++      needs_systemd = true
++    endif
+   endif
+ endif
+ 
+-if get_option('default_bus') == 'dbus-broker'
+-  launcher_args += '-DWANT_DBUS_BROKER'
+-endif
+-
+ if needs_systemd
+   systemd_dep = dependency('libsystemd')
+ else
+-- 
+2.34.1
+
