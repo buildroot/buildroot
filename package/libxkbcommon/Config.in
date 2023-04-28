@@ -12,6 +12,7 @@ if BR2_PACKAGE_LIBXKBCOMMON
 
 config BR2_PACKAGE_LIBXKBCOMMON_TOOLS
 	bool "tools"
+	select BR2_PACKAGE_WAYLAND_PROTOCOLS if BR2_PACKAGE_WAYLAND
 	help
 	  Tools: xkbcli, xkbcli-compile-keymap, xkbcli-how-to-type,
 	  xkbcli-interactive-evdev, xkbcli-interactive-x11,
