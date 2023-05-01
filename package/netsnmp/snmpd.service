@@ -6,7 +6,7 @@ ConditionPathExists=/etc/snmp/snmpd.conf
 [Service]
 Type=simple
 Environment=MIBDIRS=/usr/share/snmp/mibs
-Environment=SNMPDOPTS='-Lsd -Lf /dev/null -p /var/run/snmpd.pid 127.0.0.1'
+Environment=SNMPDOPTS='-Lsd -Lf /dev/null -p /var/run/snmpd.pid -u snmp -g snmp 127.0.0.1'
 EnvironmentFile=-/etc/default/snmpd
 PassEnvironment=MIBDIRS
 ExecStart=/usr/sbin/snmpd -f $SNMPDOPTS
