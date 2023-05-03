@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SAMBA4_VERSION = 4.15.13
+SAMBA4_VERSION = 4.18.2
 SAMBA4_SITE = https://download.samba.org/pub/samba/stable
 SAMBA4_SOURCE = samba-$(SAMBA4_VERSION).tar.gz
 SAMBA4_INSTALL_STAGING = YES
@@ -120,7 +120,7 @@ define SAMBA4_CONFIGURE_CMDS
 		PERL="$(HOST_DIR)/bin/perl" \
 		$(TARGET_CONFIGURE_OPTS) \
 		$(SAMBA4_CONF_ENV) \
-		./buildtools/bin/waf configure \
+		./configure \
 			--prefix=/usr \
 			--sysconfdir=/etc \
 			--localstatedir=/var \
