@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-BENTO4_VERSION = 1.6.0-639
-BENTO4_SITE = $(call github,axiomatic-systems,Bento4,v$(BENTO4_VERSION))
+BENTO4_VERSION = 1.6.0-639-6-Nexus
+BENTO4_SITE = $(call github,xbmc,Bento4,$(BENTO4_VERSION))
 BENTO4_INSTALL_STAGING = YES
 BENTO4_LICENSE = GPL-2.0+
 BENTO4_LICENSE_FILES = Documents/LICENSE.txt
