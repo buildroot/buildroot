@@ -219,6 +219,7 @@ comment "boost-log needs a toolchain not affected by GCC bug 64735"
 
 config BR2_PACKAGE_BOOST_MATH
 	bool "boost-math"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # C++14
 	help
 	  Boost.Math includes several contributions in the domain of
 	  mathematics:
@@ -340,6 +341,19 @@ config BR2_PACKAGE_BOOST_TYPE_ERASURE
 
 comment "boost-type_erasure needs a toolchain not affected by GCC bug 64735"
 	depends on BR2_TOOLCHAIN_HAS_GCC_BUG_64735
+
+config BR2_PACKAGE_BOOST_URL
+	bool "boost-url"
+	help
+	  Boost.URL is a portable C++ library which provides containers
+	  and algorithms which model a "URL," more formally described
+	  using the Uniform Resource Identifier (URI) specification.
+
+	  This library understands the grammars related to URLs and
+	  provides functionality to validate, parse, examine, and
+	  modify urls, and apply normalization or resolution algorithms.
+
+	  To use the library "header-only" this option is not needed.
 
 config BR2_PACKAGE_BOOST_WAVE
 	bool "boost-wave"
