@@ -127,7 +127,7 @@ ifeq ($(BR2_LINUX_KERNEL_NEEDS_HOST_PAHOLE),y)
 LINUX_DEPENDENCIES += host-pahole
 else
 define LINUX_FIXUP_CONFIG_PAHOLE_CHECK
-	if grep -q "^CONFIG_DEBUG_INFO_BTF=y" $(KCONFIG_DOT_CONFIG); then \
+	$(Q)if grep -q "^CONFIG_DEBUG_INFO_BTF=y" $(KCONFIG_DOT_CONFIG); then \
 		echo "To use CONFIG_DEBUG_INFO_BTF, enable host-pahole (BR2_LINUX_KERNEL_NEEDS_HOST_PAHOLE)" 1>&2; \
 		exit 1; \
 	fi
@@ -366,7 +366,22 @@ define LINUX_FIXUP_CONFIG_ENDIANNESS
 endef
 endif
 
+# As the kernel gets compiled before root filesystems are
+# built, we create a fake cpio file. It'll be
+# replaced later by the real cpio archive, and the kernel will be
+# rebuilt using the linux-rebuild-with-initramfs target.
+ifneq ($(BR2_TARGET_ROOTFS_INITRAMFS),)
+define LINUX_KCONFIG_FIXUP_CMDS_ROOTFS_CPIO
+	@mkdir -p $(BINARIES_DIR)
+	$(Q)touch $(BINARIES_DIR)/rootfs.cpio
+	$(call KCONFIG_SET_OPT,CONFIG_INITRAMFS_SOURCE,"$${BR_BINARIES_DIR}/rootfs.cpio")
+	$(call KCONFIG_SET_OPT,CONFIG_INITRAMFS_ROOT_UID,0)
+	$(call KCONFIG_SET_OPT,CONFIG_INITRAMFS_ROOT_GID,0))
+endef
+endif
+
 define LINUX_KCONFIG_FIXUP_CMDS
+	@$(call MESSAGE,"Updating kernel config with fixups")
 	$(if $(LINUX_NEEDS_MODULES),
 		$(call KCONFIG_ENABLE_OPT,CONFIG_MODULES))
 	$(call KCONFIG_ENABLE_OPT,$(strip $(LINUX_COMPRESSION_OPT_y)))
@@ -401,16 +416,7 @@ define LINUX_KCONFIG_FIXUP_CMDS
 		$(call KCONFIG_ENABLE_OPT,CONFIG_ARM64_64K_PAGES))
 	$(if $(BR2_TARGET_ROOTFS_CPIO),
 		$(call KCONFIG_ENABLE_OPT,CONFIG_BLK_DEV_INITRD))
-	# As the kernel gets compiled before root filesystems are
-	# built, we create a fake cpio file. It'll be
-	# replaced later by the real cpio archive, and the kernel will be
-	# rebuilt using the linux-rebuild-with-initramfs target.
-	$(if $(BR2_TARGET_ROOTFS_INITRAMFS),
-		mkdir -p $(BINARIES_DIR)
-		touch $(BINARIES_DIR)/rootfs.cpio
-		$(call KCONFIG_SET_OPT,CONFIG_INITRAMFS_SOURCE,"$${BR_BINARIES_DIR}/rootfs.cpio")
-		$(call KCONFIG_SET_OPT,CONFIG_INITRAMFS_ROOT_UID,0)
-		$(call KCONFIG_SET_OPT,CONFIG_INITRAMFS_ROOT_GID,0))
+	$(LINUX_KCONFIG_FIXUP_CMDS_ROOTFS_CPIO)
 	$(if $(BR2_ROOTFS_DEVICE_CREATION_STATIC),,
 		$(call KCONFIG_ENABLE_OPT,CONFIG_DEVTMPFS)
 		$(call KCONFIG_ENABLE_OPT,CONFIG_DEVTMPFS_MOUNT))
