@@ -1,27 +1,29 @@
 config BR2_PACKAGE_TRANSMISSION
 	bool "transmission"
+	depends on !BR2_BINFMT_FLAT # libnatpmp
+	depends on BR2_INSTALL_LIBSTDCPP # libutp
+	depends on !BR2_STATIC_LIBS # libnatpmp
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 # C++17
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_USE_MMU # fork()
-	select BR2_PACKAGE_ZLIB
-	select BR2_PACKAGE_OPENSSL
-	select BR2_PACKAGE_LIBOPENSSL_ENABLE_RC4 if BR2_PACKAGE_LIBOPENSSL
+	depends on BR2_USE_WCHAR # libpsl
+	select BR2_PACKAGE_DHT
+	select BR2_PACKAGE_LIBB64
 	select BR2_PACKAGE_LIBCURL
+	select BR2_PACKAGE_LIBDEFLATE
 	select BR2_PACKAGE_LIBEVENT
+	select BR2_PACKAGE_LIBMINIUPNPC
+	select BR2_PACKAGE_LIBNATPMP
+	select BR2_PACKAGE_LIBPSL
+	select BR2_PACKAGE_LIBUTP
+	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_ZLIB
 	help
 	  Transmission is a cross-platform BitTorrent client.
 
 	  http://www.transmissionbt.com/
 
 if BR2_PACKAGE_TRANSMISSION
-
-config BR2_PACKAGE_TRANSMISSION_UTP
-	bool "Transmission uTP support"
-	depends on BR2_INSTALL_LIBSTDCPP
-	help
-	  Install support for uTorrent Transport Protocol
-
-comment "uTP needs a toolchain w/ C++"
-	depends on !BR2_INSTALL_LIBSTDCPP
 
 config BR2_PACKAGE_TRANSMISSION_CLI
 	bool "transmission-cli"
@@ -43,6 +45,8 @@ comment "transmission-gtk needs NLS enabled"
 	depends on BR2_PACKAGE_LIBGTK3 && !BR2_SYSTEM_ENABLE_NLS
 endif
 
-comment "transmission needs a toolchain w/ threads"
+comment "transmission needs a toolchain w/ dynamic library, threads, C++, gcc >= 7"
 	depends on BR2_USE_MMU
-	depends on !BR2_TOOLCHAIN_HAS_THREADS
+	depends on !BR2_BINFMT_FLAT
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || !BR2_INSTALL_LIBSTDCPP || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_7 || !BR2_STATIC_LIBS
