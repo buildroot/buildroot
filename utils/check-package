@@ -11,6 +11,7 @@ import sys
 import checkpackagelib.base
 import checkpackagelib.lib_config
 import checkpackagelib.lib_hash
+import checkpackagelib.lib_ignore
 import checkpackagelib.lib_mk
 import checkpackagelib.lib_patch
 import checkpackagelib.lib_shellscript
@@ -104,6 +105,7 @@ def get_lib_from_filetype(fname):
 
 CONFIG_IN_FILENAME = re.compile(r"Config\.\S*$")
 DO_CHECK_INTREE = re.compile(r"|".join([
+    r".checkpackageignore",
     r"Config.in",
     r"arch/",
     r"boot/",
@@ -136,6 +138,8 @@ def get_lib_from_filename(fname):
         if os.path.basename(fname) == "external.mk" and \
            os.path.exists(fname[:-2] + "desc"):
             return None
+    if fname == ".checkpackageignore":
+        return checkpackagelib.lib_ignore
     if CONFIG_IN_FILENAME.search(fname):
         return checkpackagelib.lib_config
     if fname.endswith(".hash"):
