@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XLIB_LIBXI_VERSION = 1.8
-XLIB_LIBXI_SOURCE = libXi-$(XLIB_LIBXI_VERSION).tar.bz2
-XLIB_LIBXI_SITE = https://xorg.freedesktop.org/releases/individual/lib
+XLIB_LIBXI_VERSION = 1.8.1
+XLIB_LIBXI_SOURCE = libXi-$(XLIB_LIBXI_VERSION).tar.xz
+XLIB_LIBXI_SITE = https://xorg.freedesktop.org/archive/individual/lib
 XLIB_LIBXI_LICENSE = MIT
 XLIB_LIBXI_LICENSE_FILES = COPYING
 XLIB_LIBXI_CPE_ID_VENDOR = x.org
