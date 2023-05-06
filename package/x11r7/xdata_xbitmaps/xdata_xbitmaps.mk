@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XDATA_XBITMAPS_VERSION = 1.1.2
-XDATA_XBITMAPS_SOURCE = xbitmaps-$(XDATA_XBITMAPS_VERSION).tar.bz2
-XDATA_XBITMAPS_SITE = http://xorg.freedesktop.org/releases/individual/data
+XDATA_XBITMAPS_VERSION = 1.1.3
+XDATA_XBITMAPS_SOURCE = xbitmaps-$(XDATA_XBITMAPS_VERSION).tar.xz
+XDATA_XBITMAPS_SITE = https://xorg.freedesktop.org/archive/individual/data
 XDATA_XBITMAPS_LICENSE = MIT
 XDATA_XBITMAPS_LICENSE_FILES = COPYING
 
