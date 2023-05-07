@@ -1,0 +1,31 @@
+From 8fb9f5feaf738f69b278d2cac15baada1447aae8 Mon Sep 17 00:00:00 2001
+From: Sergei Trofimovich <slyich@gmail.com>
+Date: Mon, 28 Nov 2022 23:31:29 +0000
+Subject: [PATCH] add missing <stdint.h> to mfxparser.cpp
+
+Without the change build fails on `gcc-13` as:
+
+    MediaSDK/api/mfx_dispatch/linux/mfxparser.cpp: In function 'std::string MFX::printCodecId(mfxU32)':
+    MediaSDK/api/mfx_dispatch/linux/mfxparser.cpp:60:3: error: 'uint8_t' was not declared in this scope
+       60 |   uint8_t* data = reinterpret_cast<uint8_t*>(&id);
+          |   ^~~~~~~
+
+Upstream: https://github.com/Intel-Media-SDK/MediaSDK/pull/2998
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ api/mfx_dispatch/linux/mfxparser.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/api/mfx_dispatch/linux/mfxparser.cpp b/api/mfx_dispatch/linux/mfxparser.cpp
+index 9d3823ec3e..12e46d1881 100644
+--- a/api/mfx_dispatch/linux/mfxparser.cpp
++++ b/api/mfx_dispatch/linux/mfxparser.cpp
+@@ -20,6 +20,7 @@
+ 
+ #include <ctype.h>
+ #include <stdio.h>
++#include <stdint.h>
+ #include <stdlib.h>
+ #include <string.h>
+ 
