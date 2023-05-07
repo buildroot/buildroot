@@ -370,7 +370,7 @@ endif
 # built, we create a fake cpio file. It'll be
 # replaced later by the real cpio archive, and the kernel will be
 # rebuilt using the linux-rebuild-with-initramfs target.
-ifneq ($(BR2_TARGET_ROOTFS_INITRAMFS),)
+ifeq ($(BR2_TARGET_ROOTFS_INITRAMFS),y)
 define LINUX_KCONFIG_FIXUP_CMDS_ROOTFS_CPIO
 	@mkdir -p $(BINARIES_DIR)
 	$(Q)touch $(BINARIES_DIR)/rootfs.cpio
