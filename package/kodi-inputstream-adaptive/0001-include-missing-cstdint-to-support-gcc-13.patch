@@ -1,0 +1,103 @@
+From 7b5c284e63c1d6327db7551a0646cffcbaf9410f Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Wed, 26 Apr 2023 15:47:17 +0000
+Subject: [PATCH] include missing <cstdint> to support gcc-13
+
+gcc 13 moved some includes around and as a result <cstdint> is no longer transitively
+included [1]. Explicitly include it for uint{32,64}_t.
+
+[1] https://gcc.gnu.org/gcc-13/porting_to.html#header-dep-changes
+
+Signed-off-by: Rudi Heitbaum <rudi@heitbaum.com>
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+Upstream: https://github.com/xbmc/inputstream.adaptive/commit/7b5c284e63c1d6327db7551a0646cffcbaf9410f
+[Bernd: backported from Omega branch]
+---
+ src/Iaes_decrypter.h        | 3 ++-
+ src/SSD_dll.h               | 1 +
+ src/utils/FileUtils.h       | 1 +
+ src/utils/PropertiesUtils.h | 1 +
+ src/utils/StringUtils.h     | 1 +
+ src/utils/Utils.h           | 1 +
+ src/utils/XMLUtils.h        | 1 +
+ 7 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/src/Iaes_decrypter.h b/src/Iaes_decrypter.h
+index 7fdf6046d..da992be95 100644
+--- a/src/Iaes_decrypter.h
++++ b/src/Iaes_decrypter.h
+@@ -10,6 +10,7 @@
+ 
+ #include <bento4/Ap4Types.h>
+ 
++#include <cstdint>
+ #include <string>
+ 
+ class IAESDecrypter
+@@ -31,4 +32,4 @@ class IAESDecrypter
+ 
+ private:
+   std::string m_licenseKey;
+-};
+\ No newline at end of file
++};
+diff --git a/src/SSD_dll.h b/src/SSD_dll.h
+index 4b2b70c1a..d23fcbe45 100644
+--- a/src/SSD_dll.h
++++ b/src/SSD_dll.h
+@@ -8,6 +8,7 @@
+ 
+ #pragma once
+ 
++#include <cstdint>
+ #include <stdarg.h> // va_list, va_start, va_arg, va_end
+ #include <string_view>
+ 
+diff --git a/src/utils/FileUtils.h b/src/utils/FileUtils.h
+index 40745b0d4..0924d8ff7 100644
+--- a/src/utils/FileUtils.h
++++ b/src/utils/FileUtils.h
+@@ -8,6 +8,7 @@
+ 
+ #pragma once
+ 
++#include <cstdint>
+ #include <string>
+ #include <string_view>
+ 
+diff --git a/src/utils/PropertiesUtils.h b/src/utils/PropertiesUtils.h
+index dee3e0a16..a658b835c 100644
+--- a/src/utils/PropertiesUtils.h
++++ b/src/utils/PropertiesUtils.h
+@@ -8,6 +8,7 @@
+ 
+ #pragma once
+ 
++#include <cstdint>
+ #include <map>
+ #include <string>
+ #include <utility>
+diff --git a/src/utils/StringUtils.h b/src/utils/StringUtils.h
+index 3f841a274..f209546fa 100644
+--- a/src/utils/StringUtils.h
++++ b/src/utils/StringUtils.h
+@@ -8,6 +8,7 @@
+ 
+ #pragma once
+ 
++#include <cstdint>
+ #include <string>
+ #include <string_view>
+ #include <vector>
+diff --git a/src/utils/Utils.h b/src/utils/Utils.h
+index 4966ece63..472a328c4 100644
+--- a/src/utils/Utils.h
++++ b/src/utils/Utils.h
+@@ -8,6 +8,7 @@
+ 
+ #pragma once
+ 
++#include <cstdint>
+ #include <map>
+ #include <string>
+ #include <string_view>
