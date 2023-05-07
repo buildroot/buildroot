@@ -29,7 +29,10 @@ RPM_SELINUX_MODULES = rpm
 RPM_CONF_OPTS = \
 	--disable-python \
 	--disable-rpath \
-	--with-gnu-ld
+	--with-gnu-ld \
+	--without-fapolicyd \
+	--without-fsverity \
+	--without-imaevm
 
 ifeq ($(BR2_PACKAGE_ACL),y)
 RPM_DEPENDENCIES += acl
