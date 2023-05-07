@@ -1,4 +1,4 @@
-From d8ec4e4c6ef69165179f376e365034de10e6fee3 Mon Sep 17 00:00:00 2001
+From 89648b76e35dc4657942c861ed9dbfbfe5a3df28 Mon Sep 17 00:00:00 2001
 From: Thomas De Schampheleire <thomas.de_schampheleire@nokia.com>
 Date: Fri, 5 Mar 2021 14:09:23 +0100
 Subject: [PATCH] Makefile.system: don't specify optimization level
@@ -11,16 +11,17 @@ The CFLAGS/FFLAGS would e.g. contain '-Os -O2' in which -O2 survives.
 
 Remove the optimization level specified in openblas itself.
 
+Upstream: N/A, not upstreamable
 Signed-off-by: Thomas De Schampheleire <thomas.de_schampheleire@nokia.com>
 ---
  Makefile.system | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile.system b/Makefile.system
-index 438a8148..9de1bbd5 100644
+index 343b94bb3..c355ca5d9 100644
 --- a/Makefile.system
 +++ b/Makefile.system
-@@ -1519,11 +1519,11 @@ FCOMMON_OPT += -g
+@@ -1585,11 +1585,11 @@ FCOMMON_OPT += -g
  endif
  
  ifndef COMMON_OPT
@@ -35,5 +36,5 @@ index 438a8148..9de1bbd5 100644
  
  override CFLAGS     += $(COMMON_OPT) $(CCOMMON_OPT) -I$(TOPDIR)
 -- 
-2.35.1
+2.40.1
 
