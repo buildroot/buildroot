@@ -1,0 +1,36 @@
+From 491439a5c55b18dce96b522f3a603faaf1908ede Mon Sep 17 00:00:00 2001
+From: Laurent Vivier <laurent@vivier.eu>
+Date: Fri, 21 Apr 2023 18:22:07 +0200
+Subject: [PATCH] m68k: fix getrandom() use with uclibc
+
+With uclibc, getrandom() is only defined with _GNU_SOURCE, fix that:
+
+kexec/arch/m68k/bootinfo.c: In function 'bootinfo_add_rng_seed':
+kexec/arch/m68k/bootinfo.c:231:13: warning: implicit declaration of function 'getrandom'; did you mean 'srandom'? [-Wimplicit-function-declaration]
+  231 |         if (getrandom(bi->rng_seed.data, RNG_SEED_LEN, GRND_NONBLOCK) != RNG_SEED_LEN) {
+      |             ^~~~~~~~~
+      |             srandom
+kexec/arch/m68k/bootinfo.c:231:56: error: 'GRND_NONBLOCK' undeclared (first use in this function)
+  231 |         if (getrandom(bi->rng_seed.data, RNG_SEED_LEN, GRND_NONBLOCK) != RNG_SEED_LEN) {
+      |                                                        ^~~~~~~~~~~~~
+
+Fixes:  b9de05184816 ("m68k: pass rng seed via BI_RNG_SEED")
+Upstream: https://lore.kernel.org/kexec/20230422095904.1303434-1-laurent@vivier.eu/
+Cc: Jason@zx2c4.com
+Signed-off-by: Laurent Vivier <laurent@vivier.eu>
+---
+ kexec/arch/m68k/bootinfo.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/kexec/arch/m68k/bootinfo.c b/kexec/arch/m68k/bootinfo.c
+index 086a34bdfdeb..5afd212d9d34 100644
+--- a/kexec/arch/m68k/bootinfo.c
++++ b/kexec/arch/m68k/bootinfo.c
+@@ -1,3 +1,4 @@
++#define _GNU_SOURCE
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+-- 
+2.40.0
+
