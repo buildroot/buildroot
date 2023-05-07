@@ -27,7 +27,6 @@ RPM_SELINUX_MODULES = rpm
 # --enable-openmp is provided and OpenMP is < 4.5:
 # https://github.com/rpm-software-management/rpm/pull/1433
 RPM_CONF_OPTS = \
-	--disable-python \
 	--disable-rpath \
 	--with-gnu-ld \
 	--without-fapolicyd \
@@ -81,6 +80,13 @@ RPM_DEPENDENCIES += libselinux
 RPM_CONF_OPTS += --with-selinux
 else
 RPM_CONF_OPTS += --without-selinux
+endif
+
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
+RPM_DEPENDENCIES += python3
+RPM_CONF_OPTS += --enable-python
+else
+RPM_CONF_OPTS += --disable-python
 endif
 
 ifeq ($(BR2_PACKAGE_SQLITE),y)
