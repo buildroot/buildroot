@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2023.05"
 
+config BR2_PACKAGE_OPTEE_BENCHMARK
+	bool "optee-benchmark has been removed"
+	select BR2_LEGACY
+	help
+	  optee-benchmark is no longer maintained upstream.
+
 config BR2_PACAKGE_OPENFPGALOADER_CMSIS
 	bool "openfpgaloader cmsis option name fixed"
 	select BR2_LEGACY
