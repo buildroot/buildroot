@@ -4,29 +4,37 @@
 #
 ################################################################################
 
-CLAMAV_VERSION = 0.103.8
+CLAMAV_VERSION = 1.0.1
 CLAMAV_SITE = https://www.clamav.net/downloads/production
 CLAMAV_LICENSE = GPL-2.0
-CLAMAV_LICENSE_FILES = COPYING COPYING.bzip2 COPYING.file COPYING.getopt \
-	COPYING.LGPL COPYING.llvm COPYING.lzma COPYING.pcre COPYING.regex \
-	COPYING.unrar COPYING.zlib
+CLAMAV_LICENSE_FILES = \
+	COPYING.txt \
+	COPYING/COPYING.bzip2 \
+	COPYING/COPYING.file \
+	COPYING/COPYING.getopt \
+	COPYING/COPYING.LGPL \
+	COPYING/COPYING.llvm \
+	COPYING/COPYING.lzma \
+	COPYING/COPYING.pcre \
+	COPYING/COPYING.regex \
+	COPYING/COPYING.unrar \
+	COPYING/COPYING.zlib
 CLAMAV_CPE_ID_VENDOR = clamav
 CLAMAV_SELINUX_MODULES = clamav
 # affects only Cisco devices
 CLAMAV_IGNORE_CVES += CVE-2016-1405
 CLAMAV_DEPENDENCIES = \
+	bzip2 \
 	host-pkgconf \
+	host-rustc \
+	json-c \
 	libcurl \
 	libmspack \
+	libxml2 \
 	openssl \
+	pcre2 \
 	zlib \
 	$(TARGET_NLS_DEPENDENCIES)
-
-# mmap cannot be detected when cross-compiling, needed for mempool support
-CLAMAV_CONF_ENV = \
-	ac_cv_c_mmap_private=yes \
-	have_cv_ipv6=yes \
-	OBJC=$(TARGET_CC)
 
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 CLAMAV_LIBS += -latomic
@@ -40,66 +48,27 @@ endif
 CLAMAV_CONF_ENV += LIBS="$(CLAMAV_LIBS)"
 
 CLAMAV_CONF_OPTS = \
-	--with-dbdir=/var/lib/clamav \
-	--with-libcurl=$(STAGING_DIR)/usr \
-	--with-openssl=$(STAGING_DIR)/usr \
-	--with-system-libmspack=$(STAGING_DIR)/usr \
-	--with-zlib=$(STAGING_DIR)/usr \
-	--disable-zlib-vcheck \
-	--disable-rpath \
-	--disable-clamav \
-	--disable-milter \
-	--disable-llvm \
-	--disable-clamdtop \
-	--enable-mempool
+	-DCMAKE_SKIP_INSTALL_RPATH=ON \
+	-DENABLE_JSON_SHARED=ON \
+	-DENABLE_MAN_PAGES=OFF \
+	-DENABLE_MILTER=OFF \
+	-DENABLE_TESTS=OFF \
+	-DHAVE_SYSTEM_LFS_FTS=ON \
+	-DRUST_COMPILER_TARGET=$(ARCH)-unknown-$(TARGET_OS)-$(LIBC)$(ABI) \
+	-Dtest_run_result=ON \
+	-Dtest_run_result__TRYRUN_OUTPUT=ON
 
-ifeq ($(BR2_PACKAGE_BZIP2),y)
-CLAMAV_DEPENDENCIES += bzip2
-# autodetection gets confused if host has bzip2, so force it
-CLAMAV_CONF_ENV += \
-	ac_cv_libbz2_libs=-lbz2 \
-	ac_cv_libbz2_ltlibs=-lbz2
-else
-CLAMAV_CONF_OPTS += --disable-bzip2
-endif
-
-ifeq ($(BR2_PACKAGE_JSON_C),y)
-CLAMAV_CONF_OPTS += --with-libjson=$(STAGING_DIR)/usr
-CLAMAV_DEPENDENCIES += json-c
-else
-CLAMAV_CONF_OPTS += --without-libjson
-endif
-
-ifeq ($(BR2_PACKAGE_LIBXML2),y)
-CLAMAV_CONF_ENV += ac_cv_path_xmlconfig=$(STAGING_DIR)/usr/bin/xml2-config
-CLAMAV_CONF_OPTS += --with-xml=$(STAGING_DIR)/usr
-CLAMAV_DEPENDENCIES += libxml2
-else
-CLAMAV_CONF_OPTS += --disable-xml
-endif
-
-ifeq ($(BR2_PACKAGE_LIBICONV),y)
-CLAMAV_CONF_OPTS += --with-iconv
-CLAMAV_DEPENDENCIES += libiconv
-else
-CLAMAV_CONF_OPTS += --without-iconv
-endif
-
-ifeq ($(BR2_PACKAGE_PCRE2),y)
-CLAMAV_CONF_OPTS += --with-pcre=$(STAGING_DIR)/usr
-CLAMAV_DEPENDENCIES += pcre2
-else ifeq ($(BR2_PACKAGE_PCRE),y)
-CLAMAV_CONF_OPTS += --with-pcre=$(STAGING_DIR)/usr
-CLAMAV_DEPENDENCIES += pcre
-else
-CLAMAV_CONF_OPTS += --without-pcre
-endif
-
+ifeq ($(BR2_PACKAGE_NCURSES),y)
+CLAMAV_CONF_OPTS += -DENABLE_APP=ON
+CLAMAV_DEPENDENCIES += ncurses
 ifeq ($(BR2_INIT_SYSTEMD),y)
-CLAMAV_CONF_OPTS += --with-systemdsystemunitdir=/usr/lib/systemd/system
+CLAMAV_CONF_OPTS += -DENABLE_SYSTEMD=ON
 CLAMAV_DEPENDENCIES += systemd
 else
-CLAMAV_CONF_OPTS += --with-systemdsystemunitdir=no
+CLAMAV_CONF_OPTS += -DENABLE_SYSTEMD=OFF
+endif
+else
+CLAMAV_CONF_OPTS += -DENABLE_APP=OFF -DENABLE_SYSTEMD=OFF
 endif
 
-$(eval $(autotools-package))
+$(eval $(cmake-package))
