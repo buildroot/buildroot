@@ -94,4 +94,9 @@ config BR2_PACKAGE_OPENBLAS_USE_LOCKING
 	  function calls from multiple threads, then locking is
 	  mandatory for correct operation.
 
+config BR2_PACKAGE_OPENBLAS_INSTALL_TESTS
+	bool "install tests"
+	help
+	  Install C test programs on target.
+
 endif
