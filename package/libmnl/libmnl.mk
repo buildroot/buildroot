@@ -11,6 +11,8 @@ LIBMNL_INSTALL_STAGING = YES
 LIBMNL_LICENSE = LGPL-2.1+
 LIBMNL_LICENSE_FILES = COPYING
 LIBMNL_CPE_ID_VENDOR = netfilter
+# 0001-examples-add-rtnl-link-can.patch patches Makefile.am
+LIBMNL_AUTORECONF = YES
 
 ifeq ($(BR2_PACKAGE_LIBMNL_EXAMPLES),y)
 define LIBMNL_EXAMPLES_BUILD_CMDS
@@ -28,7 +30,7 @@ LIBMNL_EXAMPLES_INSTALL_TARGETS += \
 		nf-queue)
 LIBMNL_EXAMPLES_INSTALL_TARGETS += \
 	$(addprefix examples/rtnl/, rtnl-addr-add rtnl-addr-dump \
-		rtnl-link-dump rtnl-link-dump2 rtnl-link-dump3 \
+		rtnl-link-can rtnl-link-dump rtnl-link-dump2 rtnl-link-dump3 \
 		rtnl-link-event rtnl-link-set rtnl-neigh-dump \
 		rtnl-route-add rtnl-route-dump rtnl-route-event)
 
