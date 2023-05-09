@@ -20,15 +20,12 @@ define LIBMNL_EXAMPLES_BUILD_CMDS
 endef
 LIBMNL_POST_BUILD_HOOKS += LIBMNL_EXAMPLES_BUILD_CMDS
 
-LIBMNL_EXAMPLES_INSTALL_TARGETS += \
-	$(addprefix examples/genl/, genl-family-get genl-group-events)
-LIBMNL_EXAMPLES_INSTALL_TARGETS += \
-	$(addprefix examples/kobject/, kobject-event)
-LIBMNL_EXAMPLES_INSTALL_TARGETS += \
+LIBMNL_EXAMPLES_INSTALL_TARGETS = \
+	$(addprefix examples/genl/, genl-family-get genl-group-events) \
+	$(addprefix examples/kobject/, kobject-event) \
 	$(addprefix examples/netfilter/, nfct-create-batch \
 		nfct-daemon nfct-dump nfct-event nf-log \
-		nf-queue)
-LIBMNL_EXAMPLES_INSTALL_TARGETS += \
+		nf-queue) \
 	$(addprefix examples/rtnl/, rtnl-addr-add rtnl-addr-dump \
 		rtnl-link-can rtnl-link-dump rtnl-link-dump2 rtnl-link-dump3 \
 		rtnl-link-event rtnl-link-set rtnl-neigh-dump \
