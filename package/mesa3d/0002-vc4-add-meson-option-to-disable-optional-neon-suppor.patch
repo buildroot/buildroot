@@ -7,10 +7,10 @@ Not all toolchains are able to compile the runtime
 optional vc4 neon support, so add an meson option
 to force disabling it at compile time.
 
-[Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4114]
+Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4114
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
-[rebased for 20.2.0, 20.3.0 & 21.1.0]
+[rebased for 20.2.0, 20.3.0, 21.1.0 & 23.1.0]
 ---
  meson_options.txt                    | 7 +++++++
  src/gallium/drivers/vc4/meson.build  | 4 ++--
@@ -21,20 +21,20 @@ diff --git a/meson_options.txt b/meson_options.txt
 index a39596a6f19..0f6b6c62b55 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
-@@ -123,6 +123,13 @@ option(
-   choices : ['auto', 'true', 'false', 'enabled', 'disabled'],
-   description : 'enable gallium va frontend.',
+@@ -117,6 +117,13 @@
  )
-+option(
+ 
+ option(
 +  'gallium-vc4-neon',
-+  type : 'combo',
-+  value : 'auto',
-+  choices : ['auto', 'disabled'],
++  type : 'feature',
++  deprecated: {'true': 'enabled', 'false': 'disabled'},
 +  description : 'enable gallium vc4 optional neon support.',
 +)
- option(
++
++option(
    'va-libs-path',
    type : 'string',
+   value : '',
 diff --git a/src/gallium/drivers/vc4/meson.build b/src/gallium/drivers/vc4/meson.build
 index 5ce5af5f6b4..e3f7d8d62ae 100644
 --- a/src/gallium/drivers/vc4/meson.build

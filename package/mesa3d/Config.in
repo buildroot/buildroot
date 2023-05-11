@@ -283,7 +283,6 @@ config BR2_PACKAGE_MESA3D_VDPAU
 	bool "Gallium VDPAU state tracker"
 	depends on BR2_PACKAGE_XORG7
 	depends on BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_NOUVEAU \
-		|| BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_R300 \
 		|| BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_R600 \
 		|| BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_RADEONSI
 	select BR2_PACKAGE_MESA3D_NEEDS_X11
@@ -292,10 +291,9 @@ config BR2_PACKAGE_MESA3D_VDPAU
 	  VDPAU state tracker (needs r300, r600, radeonsi or nouveau
 	  gallium drivers).
 
-comment "Gallium VDPAU state tracker needs X.org and gallium drivers r300, r600, radeonsi or nouveau"
+comment "Gallium VDPAU state tracker needs X.org and gallium drivers r600, radeonsi or nouveau"
 	depends on !BR2_PACKAGE_XORG7 || \
 		!(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_NOUVEAU \
-		|| BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_R300 \
 		|| BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_R600 \
 		|| BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_RADEONSI)
 
