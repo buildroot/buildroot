@@ -1,3 +1,35 @@
+2023.05-rc1, released May 15th, 2023
+
+	Fixes all over the tree and new features.
+
+	Toolchain:
+	- glibc update to 2.37, uClibc-ng updated to 1.0.43
+	- suppoert 6.2.x / 6.3.x kernel headers
+
+	Infrastucture:
+	- go: Ensure go versions of os/user and net are used for
+          static builds so CGO is not used
+
+	- rust / cargo: Correctly split up rust flags for host and
+          target builds
+
+	New defconfigs: STM32F769 discovery
+
+	New packages: petitboot, python-evdev, python-hwdata,
+	python-pyproject-hooks, shadow
+
+	Removed packages: atk, at-spi2-atk, optee-benchmark,
+	python-pep517
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14356: cronstamp jobs are not performed with bumped version of...
+	#15191: pc_x86_64_efi_defconfig doesn't run on real hardware
+	#15306: glibc build fails in Docker container
+	#15321: docker-engine now requires libseccomp by default
+	#15376: Libiconv config
+	#15461: QtVirtualKeyboard segfaults
+
 2023.02.1, released May 9th, 2023
 
 	Important / security related fixes.
