@@ -1,12 +1,28 @@
-Fix musl build
+From fb44386acc2497ac250364bc08cebc26ded816cf Mon Sep 17 00:00:00 2001
+From: Carlo Landmeter <clandmeter@gmail.com>
+Date: Tue, 16 May 2023 19:57:39 +0200
+Subject: [PATCH] Fix musl build
 
 Downloaded from
 https://git.alpinelinux.org/aports/tree/community/vdr/musl-compat.patch
 
+Initial commit:
+https://git.alpinelinux.org/aports/commit/?id=140248605cee4a0160f80b47ce77a823be2f740a
+
+Upstream: https://www.linuxtv.org/pipermail/vdr/2023-May/029744.html
+
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ i18n.h   |  2 +-
+ osd.c    |  2 +-
+ thread.c |  4 +++-
+ tools.c  |  4 ++--
+ tools.h  | 14 ++++++++++++--
+ vdr.c    |  6 ++++++
+ 6 files changed, 25 insertions(+), 7 deletions(-)
 
 diff --git a/i18n.h b/i18n.h
-index f8ad9de..b002bbf 100644
+index 03deb6f2..85ce4077 100644
 --- a/i18n.h
 +++ b/i18n.h
 @@ -46,7 +46,7 @@ const cStringList *I18nLanguages(void);
@@ -19,7 +35,7 @@ index f8ad9de..b002bbf 100644
     ///< the current language. If no translation is available, the original
     ///< string will be returned.
 diff --git a/osd.c b/osd.c
-index 524700a..ef975f5 100644
+index 47bda686..0d360c81 100644
 --- a/osd.c
 +++ b/osd.c
 @@ -12,7 +12,7 @@
@@ -32,10 +48,10 @@ index 524700a..ef975f5 100644
  #include "tools.h"
  
 diff --git a/thread.c b/thread.c
-index 47eb977..58dba43 100644
+index 93eb8c0d..6e854541 100644
 --- a/thread.c
 +++ b/thread.c
-@@ -155,7 +155,9 @@ cRwLock::cRwLock(bool PreferWriter)
+@@ -160,7 +160,9 @@ cRwLock::cRwLock(bool PreferWriter)
    writeLockThreadId = 0;
    pthread_rwlockattr_t attr;
    pthread_rwlockattr_init(&attr);
@@ -45,7 +61,7 @@ index 47eb977..58dba43 100644
    pthread_rwlock_init(&rwlock, &attr);
  }
  
-@@ -205,7 +207,7 @@ cMutex::cMutex(void)
+@@ -210,7 +212,7 @@ cMutex::cMutex(void)
    locked = 0;
    pthread_mutexattr_t attr;
    pthread_mutexattr_init(&attr);
@@ -55,10 +71,10 @@ index 47eb977..58dba43 100644
  }
  
 diff --git a/tools.c b/tools.c
-index 754673d..fef9d2d 100644
+index d04033b1..8b161eec 100644
 --- a/tools.c
 +++ b/tools.c
-@@ -640,7 +640,7 @@ char *ReadLink(const char *FileName)
+@@ -672,7 +672,7 @@ char *ReadLink(const char *FileName)
  {
    if (!FileName)
       return NULL;
@@ -67,7 +83,7 @@ index 754673d..fef9d2d 100644
    if (!TargetName) {
       if (errno == ENOENT) // file doesn't exist
          TargetName = strdup(FileName);
-@@ -1528,7 +1528,7 @@
+@@ -1562,7 +1562,7 @@ cReadDir::~cReadDir()
  struct dirent *cReadDir::Next(void)
  {
    if (directory) {
@@ -77,7 +93,7 @@ index 754673d..fef9d2d 100644
  #else
       while ((result = readdir(directory)) != NULL) {
 diff --git a/tools.h b/tools.h
-index 73cca5a..03f5fd1 100644
+index ff6169ee..60eda179 100644
 --- a/tools.h
 +++ b/tools.h
 @@ -28,6 +28,16 @@
@@ -97,7 +113,7 @@ index 73cca5a..03f5fd1 100644
  typedef unsigned char uchar;
  
  extern int SysLogLevel;
-@@ -400,7 +410,7 @@
+@@ -444,7 +454,7 @@ class cReadDir {
  private:
    DIR *directory;
    struct dirent *result;
@@ -106,7 +122,7 @@ index 73cca5a..03f5fd1 100644
    union { // according to "The GNU C Library Reference Manual"
      struct dirent d;
      char b[offsetof(struct dirent, d_name) + NAME_MAX + 1];
-@@ -738,7 +748,7 @@ public:
+@@ -818,7 +828,7 @@ public:
          data[i] = T(0);
      size = 0;
    }
@@ -116,10 +132,10 @@ index 73cca5a..03f5fd1 100644
      qsort(data, size, sizeof(T), Compare);
    }
 diff --git a/vdr.c b/vdr.c
-index 8a49471..c2a82aa 100644
+index 1bdc51ab..0f426e61 100644
 --- a/vdr.c
 +++ b/vdr.c
-@@ -670,12 +670,18 @@ int main(int argc, char *argv[])
+@@ -661,12 +661,18 @@ int main(int argc, char *argv[])
          }
       }
    else if (Terminal) {
@@ -137,4 +153,7 @@ index 8a49471..c2a82aa 100644
 +#endif
       }
  
-   isyslog("VDR version %s started", VDRVERSION);
+   // Set user id in case we were started as root:
+-- 
+2.39.2
+
