@@ -1,0 +1,37 @@
+From 075472ec580e03cc89971f0c118cb363776a304d Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd.kuhls@t-online.de>
+Date: Tue, 16 May 2023 20:22:12 +0200
+Subject: [PATCH] Fix musl build
+
+malloc_trim is a GNU extension and therefore not present in non-glibc C
+libraries such as musl. Wrapping this in an ifdef fixes musl builds.
+
+Upstream: https://www.linuxtv.org/pipermail/vdr/2023-May/029742.html
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ vdr.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/vdr.c b/vdr.c
+index 0f426e61..bc4902de 100644
+--- a/vdr.c
++++ b/vdr.c
+@@ -1588,12 +1588,14 @@ int main(int argc, char *argv[])
+               cSchedules::Cleanup();
+               // Plugins housekeeping:
+               PluginManager.Housekeeping();
++#if defined(__GLIBC__)
+               // Memory cleanup:
+               static time_t LastMemoryCleanup = 0;
+               if ((Now - LastMemoryCleanup) > MEMCLEANUPDELTA) {
+                  malloc_trim(0);
+                  LastMemoryCleanup = Now;
+                  }
++#endif
+               }
+            }
+ 
+-- 
+2.39.2
+
