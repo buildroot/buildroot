@@ -1,0 +1,50 @@
+From 2a6908ff4c94284b39c3cd4c97e1069876720eb7 Mon Sep 17 00:00:00 2001
+From: Jordan Justen <jordan.l.justen@intel.com>
+Date: Tue, 16 May 2023 18:46:50 -0700
+Subject: [PATCH] mesa/main: Exit early when trying to create an unsupported
+ context API
+
+Fixes: adbe8b6c17a ("mesa: optimize out _mesa_is_desktop_gl*() and _mesa_is_gles*() calls when not built")
+Closes: https://gitlab.freedesktop.org/mesa/mesa/-/issues/9038
+Signed-off-by: Jordan Justen <jordan.l.justen@intel.com>
+Reviewed-by: Eric Engestrom <eric@engestrom.ch>
+Part-of: <https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/23068>
+Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/commit/8bb1ecaa02177720758255bdd7ec34a5d15feca4
+[Romain: backport to 23.1]
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+---
+ src/mesa/main/context.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/src/mesa/main/context.c b/src/mesa/main/context.c
+index d8eea2ea867..2b810b0d863 100644
+--- a/src/mesa/main/context.c
++++ b/src/mesa/main/context.c
+@@ -996,6 +996,24 @@ _mesa_initialize_context(struct gl_context *ctx,
+    struct gl_shared_state *shared;
+    int i;
+ 
++   switch (api) {
++   case API_OPENGL_COMPAT:
++   case API_OPENGL_CORE:
++      if (!HAVE_OPENGL)
++         return GL_FALSE;
++      break;
++   case API_OPENGLES2:
++      if (!HAVE_OPENGL_ES_2)
++         return GL_FALSE;
++      break;
++   case API_OPENGLES:
++      if (!HAVE_OPENGL_ES_1)
++         return GL_FALSE;
++      break;
++   default:
++      return GL_FALSE;
++   }
++
+    ctx->API = api;
+    ctx->DrawBuffer = NULL;
+    ctx->ReadBuffer = NULL;
+-- 
+2.40.1
+
