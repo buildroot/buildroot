@@ -1,3 +1,39 @@
+2023.02.1, released May 9th, 2023
+
+	Important / security related fixes.
+
+	Infrastucture:
+	- go: Ensure go versions of os/user and net are used for
+          static builds so CGO is not used
+
+	- rust / cargo: Correctly split up rust flags for host and
+          target builds
+
+	Defconfigs: Olimex a20 olinuxino lime*: Bring up network at
+	boot, stmf469 disco sd: Lock U-Boot version
+
+	Updated/fixed packages: agentpp, apache, bluez5_utils,
+	ca-certificates, containerd, coremark, dcron, dnsmasq,
+	docker-cli, docker-engine, efivar, eudev, ffmpeg, flann,
+	fluidsynth, git, go, gst-omx, gst1-devtools, gst1-libav,
+	gst1-plugins-bad, gst1-plugins-base, gst1-plugins-good,
+	gst1-plugins-ugly, gst1-python, gst1-rtsp-server, gst1-vaapi,
+	gstreamer1, gstreamer1-editing-services, intel-microcode,
+	kexec, libcurl, libite, libgtk3, libmicrohttpd, libxml2,
+	linux-tools, lua, mali-driver, matio, mdadm, nginx, openocd,
+	openssh, php, poppler, postgresql, python-web2py, qt6base,
+	readline, rtl8189fs, rtl8723ds, rtl8812au-aircrack-ng, runc,
+	rust, rust-bin, s390-tools, samba4, sdl2, snmppp, sudo,
+	systemd, tcpdump, uclibc, vim, webkitgtk, wireshark,
+	wpewebkit, xr819-radio, xserver_xorg-server, zeek
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14356: cronstamp jobs are not performed with bumped version of...
+	#15306: glibc build fails in Docker container
+	#15376: Libiconv config
+	#15461: QtVirtualKeyboard segfaults
+
 2023.02, released March 12th, 2023
 
 	Fixes all over the tree.

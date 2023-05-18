@@ -325,6 +325,12 @@ config BR2_PACKAGE_USBREDIR_SERVER
 
 comment "Legacy options removed in 2022.11"
 
+config BR2_BINUTILS_VERSION_2_36_X
+	bool "binutils 2.36.x has been removed"
+	select BR2_LEGACY
+	help
+	  binutils 2.36 has been removed, use a newer version.
+
 config BR2_PACKAGE_RABBITMQ_SERVER
 	bool "rabbitmq-server removed"
 	select BR2_LEGACY
