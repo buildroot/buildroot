@@ -1,0 +1,46 @@
+From cd861b7f38e448822ce765aee61304d1e0a3a8b5 Mon Sep 17 00:00:00 2001
+From: James Knight <james.d.knight@live.com>
+Date: Thu, 13 Apr 2023 16:38:51 -0400
+Subject: meson: ensure i915 Gallium driver includes Intel sources
+
+Ensure builds flag the use of Intel sources when the i915 Gallium driver
+is configured (`-Dgallium-drivers=i915`). Otherwise, a build may fail if
+other Intel-based configuration options are not enabled:
+
+    ./src/gallium/winsys/i915/drm/meson.build:21:0: ERROR: Unknown variable "libintel_common".
+
+Signed-off-by: James Knight <james.d.knight@live.com>
+Part-of: <https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/22490>
+
+Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/commit/cd861b7f38e448822ce765aee61304d1e0a3a8b5
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ meson.build | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+(limited to 'meson.build')
+
+diff --git a/meson.build b/meson.build
+index 23d2d965b37..a3e3c5478a8 100644
+--- a/meson.build
++++ b/meson.build
+@@ -245,7 +245,14 @@ with_microsoft_vk = _vulkan_drivers.contains('microsoft-experimental')
+ with_any_vk = _vulkan_drivers.length() != 0
+ 
+ with_any_broadcom = with_gallium_vc4 or with_gallium_v3d or with_broadcom_vk
+-with_any_intel = with_intel_vk or with_intel_hasvk or with_gallium_iris or with_gallium_crocus or with_intel_tools
++with_any_intel = [
++  with_gallium_crocus,
++  with_gallium_i915,
++  with_gallium_iris,
++  with_intel_hasvk,
++  with_intel_tools,
++  with_intel_vk,
++].contains(true)
+ 
+ if with_swrast_vk and not with_gallium_softpipe
+   error('swrast vulkan requires gallium swrast')
+-- 
+cgit v1.2.1
+
