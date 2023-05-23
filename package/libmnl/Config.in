@@ -10,7 +10,11 @@ if BR2_PACKAGE_LIBMNL
 
 config BR2_PACKAGE_LIBMNL_EXAMPLES
 	bool "install examples"
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_11
 	help
 	  Install binary examples.
+
+comment "examples needs a toolchain w/ headers >= 4.11"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_11
 
 endif
