@@ -1,0 +1,53 @@
+From fecdd9895894b3afe903021b0843a422eb4d3308 Mon Sep 17 00:00:00 2001
+From: Alexey Sokolov <alexey+znc@asokolov.org>
+Date: Sat, 5 Nov 2022 12:54:40 +0000
+Subject: [PATCH] Add support SWIG 4.1.0, drop support for < 4.0.1
+
+https://bugs.gentoo.org/878587
+
+Upstream: https://github.com/znc/znc/commit/fecdd9895894b3afe903021b0843a422eb4d3308
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ CMakeLists.txt                   | 2 +-
+ modules/modperl/CMakeLists.txt   | 1 -
+ modules/modpython/CMakeLists.txt | 1 -
+ 3 files changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9d43578e0e..efab0ee1ee 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -173,7 +173,7 @@ if(WANT_PYTHON AND NOT EXISTS
+ 	endif()
+ endif()
+ if(search_swig)
+-	find_package(SWIG 3.0.0)
++	find_package(SWIG 4.0.1)
+ 	if(NOT SWIG_FOUND)
+ 		message(FATAL_ERROR
+ 			"Can't find SWIG, therefore Perl and Python aren't supported. "
+diff --git a/modules/modperl/CMakeLists.txt b/modules/modperl/CMakeLists.txt
+index e18fe47644..a87f74e478 100644
+--- a/modules/modperl/CMakeLists.txt
++++ b/modules/modperl/CMakeLists.txt
+@@ -53,7 +53,6 @@ if(SWIG_FOUND)
+ 		"-I${PROJECT_SOURCE_DIR}/include"
+ 		"-I${CMAKE_CURRENT_SOURCE_DIR}/.."
+ 		"-I${CMAKE_CURRENT_SOURCE_DIR}/include"
+-		-DZNC_EXPORT_LIB_EXPORT
+ 		-outdir "${CMAKE_CURRENT_BINARY_DIR}"
+ 		-o "${CMAKE_CURRENT_BINARY_DIR}/modperl_biglib.cpp"
+ 		"${CMAKE_CURRENT_SOURCE_DIR}/modperl.i"
+diff --git a/modules/modpython/CMakeLists.txt b/modules/modpython/CMakeLists.txt
+index edbeb41ed5..36a2e649f0 100644
+--- a/modules/modpython/CMakeLists.txt
++++ b/modules/modpython/CMakeLists.txt
+@@ -50,7 +50,6 @@ if(SWIG_FOUND)
+ 		"-I${PROJECT_BINARY_DIR}/include"
+ 		"-I${PROJECT_SOURCE_DIR}/include"
+ 		"-I${CMAKE_CURRENT_SOURCE_DIR}/.."
+-		-DZNC_EXPORT_LIB_EXPORT
+ 		-outdir "${CMAKE_CURRENT_BINARY_DIR}"
+ 		-o "${CMAKE_CURRENT_BINARY_DIR}/modpython_biglib.cpp"
+ 		"${CMAKE_CURRENT_SOURCE_DIR}/modpython.i"
