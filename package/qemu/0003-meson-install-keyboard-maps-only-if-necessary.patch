@@ -1,0 +1,38 @@
+From 9d9b74f806f5dbca53df6630c1a0591eaedd4500 Mon Sep 17 00:00:00 2001
+From: Carlos Santos <casantos@redhat.com>
+Date: Sun, 1 Jan 2023 21:00:57 -0300
+Subject: [PATCH] meson: install keyboard maps only if necessary
+
+They are required only for system emulation (i.e. have_system is true).
+
+Upstream: https://patchwork.kernel.org/project/qemu-devel/patch/20230327172147.196607-1-casantos@redhat.com/
+Signed-off-by: Carlos Santos <casantos@redhat.com>
+Signed-off-by: Carlos Santos <unixmania@gmail.com>
+---
+ pc-bios/keymaps/meson.build | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/pc-bios/keymaps/meson.build b/pc-bios/keymaps/meson.build
+index 158a3b410c..bff3083313 100644
+--- a/pc-bios/keymaps/meson.build
++++ b/pc-bios/keymaps/meson.build
+@@ -47,7 +47,7 @@ if native_qemu_keymap.found()
+                        build_by_default: true,
+                        output: km,
+                        command: [native_qemu_keymap, '-f', '@OUTPUT@', args.split()],
+-                       install: true,
++                       install: have_system,
+                        install_dir: qemu_datadir / 'keymaps')
+   endforeach
+ 
+@@ -56,4 +56,6 @@ else
+   install_data(keymaps.keys(), install_dir: qemu_datadir / 'keymaps')
+ endif
+ 
+-install_data(['sl', 'sv'], install_dir: qemu_datadir / 'keymaps')
++if have_system
++  install_data(['sl', 'sv'], install_dir: qemu_datadir / 'keymaps')
++endif
+-- 
+2.31.1
+
