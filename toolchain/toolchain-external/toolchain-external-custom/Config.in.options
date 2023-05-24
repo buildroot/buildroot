@@ -24,6 +24,21 @@ config BR2_TOOLCHAIN_EXTERNAL_REL_BIN_PATH
 config BR2_TOOLCHAIN_EXTERNAL_CUSTOM_PREFIX
 	string "Toolchain prefix"
 	default "$(ARCH)-linux"
+	help
+	  Component name prefix used by your external toolchain.
+
+	  Typically, this is the target tuple, e.g. something that
+	  looks like: $(ARCH)-unknown-linux-gnu.
+
+	  If unsure, look at the "bin" directory of your toolchain and
+	  note the part of component name before the last dash, i.e. if
+	  you call the toolchain's gcc as $(ARCH)-unknown-linux-gnu-gcc,
+	  the prefix is $(ARCH)-unknown-linux-gnu.
+
+	  Note that Buildroot toolchains have shorter aliases that look
+	  like $(ARCH)-linux, as symlinks to the full-tuple components,
+	  so you can leave this option at default value if you use them
+	  as external toolchain.
 
 choice
 	bool "External toolchain gcc version"
