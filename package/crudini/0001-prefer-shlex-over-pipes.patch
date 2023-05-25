@@ -1,0 +1,41 @@
+From d81b703f3e8e29c1547386135c7e9ca539c1f054 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?P=C3=A1draig=20Brady?= <P@draigBrady.com>
+Date: Tue, 2 Aug 2022 14:40:37 +0100
+Subject: [PATCH] prefer shlex over pipes
+
+pipes is deprecated since python 3.10
+and slated for removal in python 3.13
+
+[Romain backport to 0.9.3]
+Upstream: https://github.com/pixelb/crudini/commit/e1650941054822faad4cda788bff6fe364eb4ca3
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ crudini | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/crudini b/crudini
+index 669596b..a136241 100755
+--- a/crudini
++++ b/crudini
+@@ -17,15 +17,17 @@ import getopt
+ import hashlib
+ import iniparse
+ import os
+-import pipes
++import re
+ import shutil
+ import string
+ import tempfile
+ 
+ if sys.version_info[0] >= 3:
++    import shlex as pipes
+     from io import StringIO
+     import configparser
+ else:
++    import pipes
+     from cStringIO import StringIO
+     import ConfigParser as configparser
+ 
+-- 
+2.34.3
+
