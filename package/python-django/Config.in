@@ -2,6 +2,7 @@ config BR2_PACKAGE_PYTHON_DJANGO
 	bool "python-django"
 	select BR2_PACKAGE_PYTHON3_UNICODEDATA
 	select BR2_PACKAGE_PYTHON3_PYEXPAT
+	select BR2_PACKAGE_PYTHON3_ZLIB # runtime
 	select BR2_PACKAGE_PYTHON_ASGIREF # runtime
 	select BR2_PACKAGE_PYTHON_SQLPARSE # runtime
 	help
