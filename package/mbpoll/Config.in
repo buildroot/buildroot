@@ -1,0 +1,8 @@
+config BR2_PACKAGE_MBPOLL
+	bool "mbpoll"
+	select BR2_PACKAGE_LIBMODBUS
+	help
+	  mbpoll is a command line utility to communicate with ModBus
+	  slave (RTU or TCP).
+
+	  https://github.com/epsilonrt/mbpoll
