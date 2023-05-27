@@ -24,6 +24,8 @@ class TestKexec(infra.basetest.BRTest):
         BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG=y
         BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE="board/qemu/aarch64-virt/linux.config"
         BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES="{}"
+        BR2_LINUX_KERNEL_DTS_SUPPORT=y
+        BR2_LINUX_KERNEL_CUSTOM_DTS_PATH="{}"
         BR2_LINUX_KERNEL_INSTALL_TARGET=y
         BR2_LINUX_KERNEL_NEEDS_HOST_OPENSSL=y
         BR2_PACKAGE_KEXEC=y
@@ -31,20 +33,25 @@ class TestKexec(infra.basetest.BRTest):
         BR2_TARGET_ROOTFS_EXT2_4=y
         # BR2_TARGET_ROOTFS_TAR is not set
         """.format(
-            infra.filepath("tests/package/test_kexec/linux-kexec.fragment")
+            infra.filepath("tests/package/test_kexec/linux-kexec.fragment"),
+            infra.filepath("tests/package/test_kexec/qemu-aarch64-virt-5.2-machine.dts")
         )
 
     def test_run(self):
         hda = os.path.join(self.builddir, "images", "rootfs.ext4")
         kern = os.path.join(self.builddir, "images", "Image")
+        dtb = os.path.join(self.builddir, "images", "qemu-aarch64-virt-5.2-machine.dtb")
         # Notes:
         # Sufficient memory is needed to load the kernel: having at
         # least 512MB works. kexec could silently fail if not enough
         # memory is present. KASLR needs to be disabled for the test:
-        # we pass "nokaslr" to kernel bootargs, and also pass
-        # "dtb-kaslr-seed=off" to qemu virt machine.
+        # we pass "nokaslr" to kernel bootargs, and also pass a custom
+        # devicetree to qemu virt machine. This devicetree is based on
+        # qemu aarch64 5.2 dts with kaslr-seed set 0.
+        # With newer qemu >= 7.0 we can disable KASLR from the qemu
+        # command line using "dtb-kaslr-seed=off".
         bootargs = ["root=/dev/vda console=ttyAMA0 nokaslr"]
-        qemu_opts = ["-M", "virt,dtb-kaslr-seed=off", "-cpu", "cortex-a57", "-m", "512M",
+        qemu_opts = ["-M", "virt", "-dtb", dtb, "-cpu", "cortex-a57", "-m", "512M",
                      "-drive", f"file={hda},if=virtio,format=raw"]
         self.emulator.boot(arch="aarch64",
                            kernel=kern,
