@@ -1,0 +1,103 @@
+From 93e0898c663a533082b5f3c2e7dcce93ec47076d Mon Sep 17 00:00:00 2001
+From: Denys Vlasenko <vda.linux@googlemail.com>
+Date: Thu, 26 Jan 2023 12:56:33 +0100
+Subject: [PATCH] shell: fix SIGWINCH and SIGCHLD (in hush) interrupting line
+ input, closes 15256
+
+function                                             old     new   delta
+record_pending_signo                                  32      63     +31
+lineedit_read_key                                    231     224      -7
+------------------------------------------------------------------------------
+(add/remove: 0/0 grow/shrink: 1/1 up/down: 31/-7)              Total: 24 bytes
+
+Signed-off-by: Denys Vlasenko <vda.linux@googlemail.com>
+Upstream: https://git.busybox.net/busybox/commit/?id=93e0898c663a533082b5f3c2e7dcce93ec47076d
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+---
+ libbb/lineedit.c | 17 ++++++++++-------
+ shell/ash.c      |  3 ++-
+ shell/hush.c     | 10 ++++++++--
+ 3 files changed, 20 insertions(+), 10 deletions(-)
+
+diff --git a/libbb/lineedit.c b/libbb/lineedit.c
+index d6b2e76ff..b942f540a 100644
+--- a/libbb/lineedit.c
++++ b/libbb/lineedit.c
+@@ -2180,7 +2180,8 @@ static int lineedit_read_key(char *read_key_buffer, int timeout)
+ 		 * "\xff\n",pause,"ls\n" invalid and thus won't lose "ls".
+ 		 *
+ 		 * If LI_INTERRUPTIBLE, return -1 if got EINTR in poll()
+-		 * inside read_key, or if bb_got_signal != 0 (IOW: if signal
++		 * inside read_key and bb_got_signal became != 0,
++		 * or if bb_got_signal != 0 (IOW: if signal
+ 		 * arrived before poll() is reached).
+ 		 *
+ 		 * Note: read_key sets errno to 0 on success.
+@@ -2197,14 +2198,16 @@ static int lineedit_read_key(char *read_key_buffer, int timeout)
+ 			IF_FEATURE_EDITING_WINCH(S.ok_to_redraw = 0;)
+ 			if (errno != EINTR)
+ 				break;
++			/* It was EINTR. Repeat read_key() unless... */
+ 			if (state->flags & LI_INTERRUPTIBLE) {
+-				/* LI_INTERRUPTIBLE bails out on EINTR,
+-				 * but nothing really guarantees that bb_got_signal
+-				 * is nonzero. Follow the least surprise principle:
++				/* LI_INTERRUPTIBLE bails out on EINTR
++				 * if bb_got_signal became nonzero.
++				 * (It may stay zero: for example, our SIGWINCH
++				 * handler does not set it. This is used for signals
++				 * which should not interrupt line editing).
+ 				 */
+-				if (bb_got_signal == 0)
+-					bb_got_signal = 255;
+-				goto ret;
++				if (bb_got_signal != 0)
++					goto ret; /* will return -1 */
+ 			}
+ 		}
+ 
+diff --git a/shell/ash.c b/shell/ash.c
+index 18ccc1329..5f8c8ea19 100644
+--- a/shell/ash.c
++++ b/shell/ash.c
+@@ -10821,7 +10821,8 @@ preadfd(void)
+  again:
+ 		/* For shell, LI_INTERRUPTIBLE is set:
+ 		 * read_line_input will abort on either
+-		 * getting EINTR in poll(), or if it sees bb_got_signal != 0
++		 * getting EINTR in poll() and bb_got_signal became != 0,
++		 * or if it sees bb_got_signal != 0
+ 		 * (IOW: if signal arrives before poll() is reached).
+ 		 * Interactive testcases:
+ 		 * (while kill -INT $$; do sleep 1; done) &
+diff --git a/shell/hush.c b/shell/hush.c
+index d111f0cc5..f064b8fd2 100644
+--- a/shell/hush.c
++++ b/shell/hush.c
+@@ -1946,7 +1946,12 @@ static void record_pending_signo(int sig)
+ {
+ 	sigaddset(&G.pending_set, sig);
+ #if ENABLE_FEATURE_EDITING
+-	bb_got_signal = sig; /* for read_line_input: "we got a signal" */
++	if (sig != SIGCHLD
++	 || (G_traps && G_traps[SIGCHLD] && G_traps[SIGCHLD][0])
++	 /* ^^^ if SIGCHLD, interrupt line reading only if it has a trap */
++	) {
++		bb_got_signal = sig; /* for read_line_input: "we got a signal" */
++	}
+ #endif
+ #if ENABLE_HUSH_FAST
+ 	if (sig == SIGCHLD) {
+@@ -2669,7 +2674,8 @@ static int get_user_input(struct in_str *i)
+ 		} else {
+ 			/* For shell, LI_INTERRUPTIBLE is set:
+ 			 * read_line_input will abort on either
+-			 * getting EINTR in poll(), or if it sees bb_got_signal != 0
++			 * getting EINTR in poll() and bb_got_signal became != 0,
++			 * or if it sees bb_got_signal != 0
+ 			 * (IOW: if signal arrives before poll() is reached).
+ 			 * Interactive testcases:
+ 			 * (while kill -INT $$; do sleep 1; done) &
+-- 
+2.30.2
+
