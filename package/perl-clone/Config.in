@@ -1,0 +1,10 @@
+config BR2_PACKAGE_PERL_CLONE
+	bool "perl-clone"
+	depends on !BR2_STATIC_LIBS
+	help
+	  recursively copy Perl datatypes.
+
+	  https://metacpan.org/release/Clone
+
+comment "perl-clone needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
