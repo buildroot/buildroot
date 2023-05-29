@@ -9,7 +9,7 @@ EARLYOOM_ARGS=""
 
 start() {
 	printf() 'Starting %s: ' "$DAEMON"
-	start-stop-daemon -b -m -S -q -p "$PIDFILE" -x "/bin/$DAEMON" \
+	start-stop-daemon -b -m -S -q -p "$PIDFILE" -x "/usr/bin/$DAEMON" \
 	       -- $EARLYOOM_ARGS
 	status=$?
 	if [ "$status" -eq 0 ]; then
