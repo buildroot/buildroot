@@ -1,4 +1,4 @@
-From 7a20b4574f06472086c786bd1b078ee962cdb02c Mon Sep 17 00:00:00 2001
+From 35c0801efa26bf248d278b5711b77a19e95b2f57 Mon Sep 17 00:00:00 2001
 From: Stafford Horne <shorne@gmail.com>
 Date: Tue, 6 Apr 2021 05:47:17 +0900
 Subject: [PATCH] or1k: Add mcmodel option to handle large GOTs
@@ -28,7 +28,11 @@ gcc/ChangeLog:
 	* config/or1k/or1k.opt (mcmodel=): New option.
 	* doc/invoke.texi (OpenRISC Options): Document mcmodel.
 
+Uptream: eff8110674ef193481d3657456a262beeb9951ff
+
 Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+[Romain: add Upstream tag]
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
 ---
  gcc/config/or1k/or1k-opts.h | 30 ++++++++++++++++++++++++++++++
  gcc/config/or1k/or1k.c      | 11 +++++++++--
@@ -166,7 +170,7 @@ index 6bd0f3eee6d..cc23e3b8856 100644
  Target RejectNegative Mask(CMOV)
  Enable generation of conditional move (l.cmov) instructions.  By default the
 diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
-index 35508efb4ef..a1b7608a3aa 100644
+index f1217812280..90c6186fc14 100644
 --- a/gcc/doc/invoke.texi
 +++ b/gcc/doc/invoke.texi
 @@ -1136,7 +1136,8 @@ Objective-C and Objective-C++ Dialects}.
@@ -179,7 +183,7 @@ index 35508efb4ef..a1b7608a3aa 100644
  
  @emph{PDP-11 Options}
  @gccoptlist{-mfpu  -msoft-float  -mac0  -mno-ac0  -m40  -m45  -m10 @gol
-@@ -26443,6 +26444,15 @@ Enable generation of shift with immediate (@code{l.srai}, @code{l.srli},
+@@ -26444,6 +26445,15 @@ Enable generation of shift with immediate (@code{l.srai}, @code{l.srli},
  @code{l.slli}) instructions.  By default extra instructions will be generated
  to store the immediate to a register first.
  
@@ -196,5 +200,5 @@ index 35508efb4ef..a1b7608a3aa 100644
  @end table
  
 -- 
-2.35.1
+2.34.3
 

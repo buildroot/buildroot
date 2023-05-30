@@ -1,4 +1,4 @@
-From de3f4ee9a5bd2adcb5ff2e1690db2567fda1473c Mon Sep 17 00:00:00 2001
+From 3e878f9d1c473f91a1377193d4d8d2616357bed1 Mon Sep 17 00:00:00 2001
 From: Xi Ruoyao <xry111@mengyan1223.wang>
 Date: Mon, 28 Jun 2021 13:54:58 +0800
 Subject: [PATCH] fixinc: don't "fix" machine names in __has_include(...)
@@ -93,10 +93,10 @@ index 5b23a8b640d..404b420f302 100644
               with the appropriate underscores, then leave it alone.
               We want exactly two leading and trailing underscores.  */
 diff --git a/fixincludes/inclhack.def b/fixincludes/inclhack.def
-index 066bef99162..b7ad6982e96 100644
+index c2f54d1189a..b2841d384f3 100644
 --- a/fixincludes/inclhack.def
 +++ b/fixincludes/inclhack.def
-@@ -3154,7 +3154,8 @@ fix = {
+@@ -3201,7 +3201,8 @@ fix = {
      c_fix     = machine_name;
  
      test_text = "/* MACH_DIFF: */\n"
@@ -120,5 +120,5 @@ index cf95321fb86..8b3accaf04e 100644
  #endif  /* MACHINE_NAME_CHECK */
  
 -- 
-2.37.3
+2.34.3
 

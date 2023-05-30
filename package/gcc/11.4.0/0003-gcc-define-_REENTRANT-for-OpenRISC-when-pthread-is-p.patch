@@ -1,4 +1,4 @@
-From 8ef5787701f4d7cf46a27771d38ab54af2499e25 Mon Sep 17 00:00:00 2001
+From 48ced46a5f81f49737ea13d11a099e03062cf141 Mon Sep 17 00:00:00 2001
 From: Bernd Kuhls <bernd.kuhls@t-online.de>
 Date: Fri, 27 Mar 2020 21:23:53 +0100
 Subject: [PATCH] gcc: define _REENTRANT for OpenRISC when -pthread is passed
@@ -8,7 +8,11 @@ is defined. Added the CPP_SPEC definition to correct this.
 
 Patch sent upstream: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94372
 
+Upstream: cac2f69cdad434ad5cb60f5fe931d45cd82ef476
+
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Romain: add Upstream tag]
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
 ---
  gcc/config/or1k/linux.h | 2 ++
  1 file changed, 2 insertions(+)
@@ -27,5 +31,5 @@ index 196f3f3c8f0..0cbdc934af1 100644
  #define LINK_SPEC "%{h*}			\
     %{static:-Bstatic}				\
 -- 
-2.35.1
+2.34.3
 

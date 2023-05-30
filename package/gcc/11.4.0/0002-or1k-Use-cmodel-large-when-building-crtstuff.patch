@@ -1,4 +1,4 @@
-From c544a63928406b706b8493fd9b8ca2136b433cf0 Mon Sep 17 00:00:00 2001
+From f75178ccd2f5e4d73e27cccffffada859b87be7d Mon Sep 17 00:00:00 2001
 From: Stafford Horne <shorne@gmail.com>
 Date: Wed, 21 Apr 2021 05:33:15 +0900
 Subject: [PATCH] or1k: Use cmodel=large when building crtstuff
@@ -21,7 +21,11 @@ libgcc/ChangeLog:
 	* config.host (or1k-*, tmake_file): Add or1k/t-crtstuff.
 	* config/or1k/t-crtstuff: New file.
 
+Upstream: da8a9d695b3c4b9397b5d9a27660bfa48af8d707
+
 Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+[Romain: add Upstream tag]
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
 ---
  libgcc/config.host            | 4 ++--
  libgcc/config/or1k/t-crtstuff | 2 ++
@@ -29,10 +33,10 @@ Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
  create mode 100644 libgcc/config/or1k/t-crtstuff
 
 diff --git a/libgcc/config.host b/libgcc/config.host
-index f2dc7e266f4..6f193c32fbd 100644
+index 45f8e19ada4..5523345abb0 100644
 --- a/libgcc/config.host
 +++ b/libgcc/config.host
-@@ -1132,12 +1132,12 @@ nios2-*-*)
+@@ -1150,12 +1150,12 @@ nios2-*-*)
  	extra_parts="$extra_parts crti.o crtn.o"
  	;;
  or1k-*-linux*)
@@ -56,5 +60,5 @@ index 00000000000..dcae7f3498e
 +# Compile crtbeginS.o and crtendS.o with -mcmodel=large
 +CRTSTUFF_T_CFLAGS_S += -mcmodel=large
 -- 
-2.35.1
+2.34.3
 
