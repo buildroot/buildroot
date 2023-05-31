@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-OPENVPN_VERSION = 2.5.7
+OPENVPN_VERSION = 2.6.4
 OPENVPN_SITE = https://swupdate.openvpn.net/community/releases
-OPENVPN_DEPENDENCIES = host-pkgconf
+OPENVPN_DEPENDENCIES = host-pkgconf libcap-ng
 OPENVPN_LICENSE = GPL-2.0
 OPENVPN_LICENSE_FILES = COPYRIGHT.GPL
 OPENVPN_CPE_ID_VENDOR = openvpn
@@ -15,6 +15,13 @@ OPENVPN_CONF_OPTS = \
 	--disable-unit-tests \
 	$(if $(BR2_STATIC_LIBS),--disable-plugins)
 OPENVPN_CONF_ENV = NETSTAT=/bin/netstat
+
+ifeq ($(BR2_PACKAGE_LIBNL),y)
+OPENVPN_CONF_OPTS += --enable-dco
+OPENVPN_DEPENDENCIES += libnl
+else
+OPENVPN_CONF_OPTS += --disable-dco
+endif
 
 ifeq ($(BR2_PACKAGE_OPENVPN_SMALL),y)
 OPENVPN_CONF_OPTS += \
