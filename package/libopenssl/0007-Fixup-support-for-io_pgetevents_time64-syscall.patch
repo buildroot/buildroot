@@ -23,7 +23,7 @@ diff --git a/engines/e_afalg.c b/engines/e_afalg.c
 index 9480d7c24b..4e9d67db2d 100644
 --- a/engines/e_afalg.c
 +++ b/engines/e_afalg.c
-@@ -124,27 +124,56 @@ static ossl_inline int io_read(aio_context_t ctx, long n, struct iocb **iocb)
+@@ -121,27 +121,56 @@ static ossl_inline int io_read(aio_context_t ctx, long n, struct iocb **iocb)
      return syscall(__NR_io_submit, ctx, n, iocb);
  }
  
