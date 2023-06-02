@@ -12,6 +12,7 @@ LIBMNL_LICENSE = LGPL-2.1+
 LIBMNL_LICENSE_FILES = COPYING
 LIBMNL_CPE_ID_VENDOR = netfilter
 # 0001-examples-add-rtnl-link-can.patch patches Makefile.am
+# 0002-include-cache-copy-of-can.h-and-can-netlink.h.patch patches configure.ac
 LIBMNL_AUTORECONF = YES
 
 ifeq ($(BR2_PACKAGE_LIBMNL_EXAMPLES),y)
