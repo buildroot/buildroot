@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PERL_PLACK
 	bool "perl-plack"
+	depends on !BR2_STATIC_LIBS # perl-http-message -> perl-clone
 	select BR2_PACKAGE_PERL_APACHE_LOGFORMAT_COMPILER # runtime
 	select BR2_PACKAGE_PERL_COOKIE_BAKER # runtime
 	select BR2_PACKAGE_PERL_DEVEL_STACKTRACE # runtime
@@ -19,3 +20,6 @@ config BR2_PACKAGE_PERL_PLACK
 	  toolkit).
 
 	  https://github.com/plack/Plack
+
+comment "perl-plack needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
