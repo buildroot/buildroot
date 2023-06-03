@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PERL_HTTP_DAEMON
 	bool "perl-http-daemon"
+	depends on !BR2_STATIC_LIBS # perl-http-message -> perl-clone
 	select BR2_PACKAGE_PERL_HTTP_DATE # runtime
 	select BR2_PACKAGE_PERL_HTTP_MESSAGE # runtime
 	select BR2_PACKAGE_PERL_LWP_MEDIATYPES # runtime
@@ -7,3 +8,6 @@ config BR2_PACKAGE_PERL_HTTP_DAEMON
 	  A simple http server class.
 
 	  https://github.com/libwww-perl/HTTP-Daemon
+
+comment "perl-http-daemon needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
