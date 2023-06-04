@@ -1,0 +1,66 @@
+#!/bin/sh
+
+DAEMON=firewalld
+PIDFILE=/var/run/$DAEMON.pid
+
+start() {
+	printf "Starting firewalld: "
+	start-stop-daemon -S -q --exec $DAEMON
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+}
+stop() {
+	printf "Stopping firewalld: "
+	start-stop-daemon --stop --quiet --pidfile $PIDFILE
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+}
+
+reload(){
+	printf "Reloading firewalld: "
+	firewall-cmd --reload
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+}
+
+restart() {
+	stop
+	start
+}
+
+status(){
+	firewall-cmd --state
+}
+
+case "$1" in
+		start)
+			start
+			;;
+		stop)
+			stop
+			;;
+		restart)
+			restart
+			;;
+		reload)
+			reload
+			;;
+		status)
+			status
+			;;
+		*)
+			echo "Usage: $0 {start|stop|restart|reload|status}"
+			exit 1
+esac
