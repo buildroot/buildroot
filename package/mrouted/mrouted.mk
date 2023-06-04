@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MROUTED_VERSION = 4.4
+MROUTED_VERSION = 4.5
 MROUTED_SITE = \
 	https://github.com/troglobit/mrouted/releases/download/$(MROUTED_VERSION)
 MROUTED_DEPENDENCIES = host-bison
