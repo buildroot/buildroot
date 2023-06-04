@@ -18,6 +18,7 @@ define MROUTED_INSTALL_INIT_SYSV
 endef
 
 define MROUTED_INSTALL_INIT_SYSTEMD
+	mkdir -p $(TARGET_DIR)/var/lib/misc/
 	$(INSTALL) -D -m 644 $(@D)/mrouted.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/mrouted.service
 endef
