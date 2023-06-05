@@ -20,7 +20,7 @@ class Emulator(object):
     #
     # kernel: path to the kernel image, or the special string
     # 'builtin'. 'builtin' means a pre-built kernel image will be
-    # downloaded from ARTEFACTS_URL and suitable options are
+    # downloaded from ARTIFACTS_URL and suitable options are
     # automatically passed to qemu and added to the kernel cmdline. So
     # far only armv5, armv7 and i386 builtin kernels are available.
     # If None, then no kernel is used, and we assume a bootable device
