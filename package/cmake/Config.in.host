@@ -9,3 +9,30 @@ config BR2_PACKAGE_HOST_CMAKE
 	  the compiler environment of your choice.
 
 	  http://www.cmake.org/
+
+# The minimum system cmake version we expect if 3.18 as provided by
+# Debian bullseye, that we use in our reference build docker image.
+config BR2_HOST_CMAKE_AT_LEAST_3_19
+	bool
+
+config BR2_HOST_CMAKE_AT_LEAST_3_20
+	bool
+	select BR2_HOST_CMAKE_AT_LEAST_3_19
+
+config BR2_HOST_CMAKE_AT_LEAST_3_21
+	bool
+	select BR2_HOST_CMAKE_AT_LEAST_3_20
+
+config BR2_HOST_CMAKE_AT_LEAST_3_22
+	bool
+	select BR2_HOST_CMAKE_AT_LEAST_3_21
+
+# This order guarantees that the highest version is set, as kconfig
+# stops affecting a value on the first matching default.
+config BR2_HOST_CMAKE_AT_LEAST
+	string
+	default "3.22"	if BR2_HOST_CMAKE_AT_LEAST_3_22
+	default "3.21"	if BR2_HOST_CMAKE_AT_LEAST_3_21
+	default "3.20"	if BR2_HOST_CMAKE_AT_LEAST_3_20
+	default "3.19"	if BR2_HOST_CMAKE_AT_LEAST_3_19
+	default "3.18"
