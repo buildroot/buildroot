@@ -7,6 +7,7 @@ config BR2_PACKAGE_LIBJXL
 	# libjxl fail to link statically due to libatomic issue
 	depends on !BR2_STATIC_LIBS
 	depends on !BR2_TOOLCHAIN_HAS_GCC_BUG_81426
+	select BR2_HOST_CMAKE_AT_LEAST_3_19
 	select BR2_PACKAGE_BROTLI
 	select BR2_PACKAGE_HIGHWAY
 	select BR2_PACKAGE_LCMS2
