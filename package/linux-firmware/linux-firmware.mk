@@ -364,6 +364,15 @@ LINUX_FIRMWARE_FILES += mt7662.bin mt7662_rom_patch.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.ralink_a_mediatek_company_firmware
 endif
 
+# MT7915e
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7915E),y)
+LINUX_FIRMWARE_FILES += \
+		mediatek/mt7915_eeprom.bin mediatek/mt7915_eeprom_dbdc.bin \
+		mediatek/mt7915_wa.bin mediatek/mt7915_wm.bin \
+		mediatek/mt7915_rom_patch.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.ralink_a_mediatek_company_firmware
+endif
+
 # qca6174
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_6174),y)
 LINUX_FIRMWARE_FILES += ath10k/QCA6174
