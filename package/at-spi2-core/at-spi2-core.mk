@@ -5,7 +5,7 @@
 ################################################################################
 
 AT_SPI2_CORE_VERSION_MAJOR = 2.48
-AT_SPI2_CORE_VERSION = $(AT_SPI2_CORE_VERSION_MAJOR).2
+AT_SPI2_CORE_VERSION = $(AT_SPI2_CORE_VERSION_MAJOR).3
 AT_SPI2_CORE_SOURCE = at-spi2-core-$(AT_SPI2_CORE_VERSION).tar.xz
 AT_SPI2_CORE_SITE = https://download.gnome.org/sources/at-spi2-core/$(AT_SPI2_CORE_VERSION_MAJOR)
 AT_SPI2_CORE_LICENSE = LGPL-2.1+
@@ -27,6 +27,13 @@ AT_SPI2_CORE_CONF_OPTS += -Dintrospection=enabled
 AT_SPI2_CORE_DEPENDENCIES += gobject-introspection
 else
 AT_SPI2_CORE_CONF_OPTS += -Dintrospection=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_SYSTEMD),y)
+AT_SPI2_CORE_CONF_OPTS += -Duse_systemd=true
+AT_SPI2_CORE_DEPENDENCIES += systemd
+else
+AT_SPI2_CORE_CONF_OPTS += -Duse_systemd=false
 endif
 
 AT_SPI2_CORE_LDFLAGS = $(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)
