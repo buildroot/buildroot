@@ -9,6 +9,8 @@ Signed-off-by: Samuel Martin <s.martin49@gmail.com>
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 [ Adam Duskett: ported to Python 3.10.0 ]
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
+[ Bernd Kuhls: ported to Python 3.11.4]
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 ---
  Makefile.pre.in | 10 +++++++---
  configure.ac    |  9 +++++++++
@@ -26,14 +28,15 @@ index 9f4cdf14cf..4f83911200 100644
  		tomllib \
  		turtledemo \
  		unittest \
-@@ -2001,8 +2000,6 @@ TESTSUBDIRS=	ctypes/test \
- 		test/tracedmodules \
- 		test/xmltestdata test/xmltestdata/c14n-20 \
+@@ -2038,9 +2038,6 @@
+ 		test/xmltestdata \
+ 		test/xmltestdata/c14n-20 \
  		test/ziptestdata \
--		tkinter/test tkinter/test/test_tkinter \
+-		tkinter/test \
+-		tkinter/test/test_tkinter \
 -		tkinter/test/test_ttk \
- 		unittest/test unittest/test/testmock
- 
+ 		unittest/test \
+ 		unittest/test/testmock
  ifeq (@PYDOC@,yes)
 @@ -2021,6 +2018,13 @@ ifeq (@SQLITE3@,yes)
  LIBSUBDIRS += sqlite3
