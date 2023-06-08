@@ -5,9 +5,14 @@ from infra.basetest import BRTest, BASIC_TOOLCHAIN_CONFIG
 
 class TestShadow(BRTest):
     username = 'user_test'
-    config = BASIC_TOOLCHAIN_CONFIG + \
+    # Need to use a different toolchain than the default due to
+    # shadow package requiring a toolchain w/ headers >= 4.14
+    config = \
         """
         BR2_arm=y
+        BR2_TOOLCHAIN_EXTERNAL=y
+        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
+        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_ARMV5_EABI_GLIBC_BLEEDING_EDGE=y
         BR2_PACKAGE_SHADOW=y
         BR2_TARGET_ROOTFS_EXT2=y
         BR2_TARGET_ROOTFS_EXT2_4=y
