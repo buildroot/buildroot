@@ -12,6 +12,8 @@ Signed-off-by: Samuel Martin <s.martin49@gmail.com>
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 [ Adam Duskett: ported to Python 3.10.0 ]
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
+[ Bernd Kuhls: ported to Python 3.11.4]
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 ---
  Makefile.pre.in | 17 ++++++++++++-----
  configure.ac    |  6 ++++++
@@ -48,9 +50,9 @@ index 403380e181..f5d0573067 100644
 -		lib2to3/tests/data \
 -		lib2to3/tests/data/fixers \
 -		lib2to3/tests/data/fixers/myfixes \
- 		test test/audiodata \
- 		test/capath test/cjkencodings \
- 		test/data test/decimaltestdata \
+ 		test \
+ 		test/audiodata \
+ 		test/capath \
 @@ -2013,6 +2010,14 @@ ifeq (@PYDOC@,yes)
  LIBSUBDIRS += pydoc_data
  endif
