@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBXML2_VERSION_MAJOR = 2.10
+LIBXML2_VERSION_MAJOR = 2.11
 LIBXML2_VERSION = $(LIBXML2_VERSION_MAJOR).4
 LIBXML2_SOURCE = libxml2-$(LIBXML2_VERSION).tar.xz
 LIBXML2_SITE = \
