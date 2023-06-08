@@ -15,7 +15,7 @@ ZFS_CPE_ID_PRODUCT = openzfs
 # 0001-removal-of-LegacyVersion-broke-ax_python_dev.m4.patch
 ZFS_AUTORECONF = YES
 
-ZFS_DEPENDENCIES = libaio openssl udev util-linux zlib libcurl
+ZFS_DEPENDENCIES = libaio openssl udev util-linux zlib libcurl linux
 
 # sysvinit installs only a commented-out modules-load.d/ config file
 ZFS_CONF_OPTS = \
@@ -79,5 +79,7 @@ define ZFS_LINUX_CONFIG_FIXUPS
 	$(call KCONFIG_ENABLE_OPT,CONFIG_ZLIB_INFLATE)
 endef
 
-$(eval $(kernel-module))
+# Even though zfs builds a kernel module, it gets built directly by
+# the autotools logic, so we don't use the kernel-module
+# infrastructure.
 $(eval $(autotools-package))
