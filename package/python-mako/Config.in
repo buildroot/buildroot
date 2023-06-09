@@ -7,3 +7,14 @@ config BR2_PACKAGE_PYTHON_MAKO
 	  for maximum performance.
 
 	  https://pypi.python.org/pypi/Mako
+
+if BR2_PACKAGE_PYTHON_MAKO
+
+config BR2_PACKAGE_PYTHON_MAKO_EXT_PYGMENTPLUGIN
+	bool "mako extension pygmentplugin"
+	select BR2_PACKAGE_PYTHON_PYGMENTS # runtime
+	help
+	  Provide python-pygments support for
+	  mako.ext.pygmentplugin
+
+endif
