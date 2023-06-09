@@ -9,5 +9,17 @@ config BR2_PACKAGE_LIBWEBSOCKETS
 
 	  https://libwebsockets.org/
 
+if BR2_PACKAGE_LIBWEBSOCKETS
+
+config BR2_PACKAGE_LIBWEBSOCKETS_EXT_POLL
+	bool "enable external poll loop support"
+	default y  # legacy, was previously always enabled
+	help
+	  Enable external poll loop support code. This was
+	  unconditionally compiled in for library versions
+	  prior to 3.2.0.
+
+endif
+
 comment "libwebsockets needs a toolchain w/ dynamic library"
 	depends on BR2_STATIC_LIBS
