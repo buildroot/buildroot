@@ -17,4 +17,11 @@ config BR2_PACKAGE_PYTHON_MAKO_EXT_PYGMENTPLUGIN
 	  Provide python-pygments support for
 	  mako.ext.pygmentplugin
 
+config BR2_PACKAGE_PYTHON_MAKO_EXT_BABELPLUGIN
+	bool "mako extension babelplugin"
+	select BR2_PACKAGE_PYTHON_BABEL # runtime
+	help
+	  Provide python-babel support for
+	  mako.ext.babelplugin
+
 endif
