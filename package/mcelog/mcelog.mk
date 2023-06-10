@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MCELOG_VERSION = 191
+MCELOG_VERSION = 194
 MCELOG_SITE = $(call github,andikleen,mcelog,v$(MCELOG_VERSION))
 MCELOG_LICENSE = GPL-2.0
 MCELOG_LICENSE_FILES = LICENSE
