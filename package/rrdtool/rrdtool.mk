@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-RRDTOOL_VERSION = 1.7.2
-RRDTOOL_SITE = http://oss.oetiker.ch/rrdtool/pub
+RRDTOOL_VERSION = 1.8.0
+RRDTOOL_SITE = https://github.com/oetiker/rrdtool-1.x/releases/download/v$(RRDTOOL_VERSION)
 RRDTOOL_LICENSE = GPL-2.0+ with FLOSS license exceptions as explained in COPYRIGHT
 RRDTOOL_LICENSE_FILES = COPYRIGHT LICENSE
 RRDTOOL_DEPENDENCIES = host-pkgconf libglib2 $(TARGET_NLS_DEPENDENCIES)
