@@ -5,8 +5,8 @@
 ################################################################################
 
 # When bumping, make sure *all* --without-libfoo-prefix options are in GNUTLS_CONF_OPTS
-GNUTLS_VERSION_MAJOR = 3.7
-GNUTLS_VERSION = $(GNUTLS_VERSION_MAJOR).8
+GNUTLS_VERSION_MAJOR = 3.8
+GNUTLS_VERSION = $(GNUTLS_VERSION_MAJOR).0
 GNUTLS_SOURCE = gnutls-$(GNUTLS_VERSION).tar.xz
 GNUTLS_SITE = https://www.gnupg.org/ftp/gcrypt/gnutls/v$(GNUTLS_VERSION_MAJOR)
 GNUTLS_LICENSE = LGPL-2.1+ (core library)
@@ -16,7 +16,6 @@ GNUTLS_DEPENDENCIES = host-pkgconf libtasn1 libunistring nettle
 GNUTLS_CPE_ID_VENDOR = gnu
 GNUTLS_CONF_OPTS = \
 	--disable-doc \
-	--disable-guile \
 	--disable-libdane \
 	--disable-rpath \
 	--disable-tests \
@@ -44,7 +43,6 @@ GNUTLS_INSTALL_STAGING = YES
 HOST_GNUTLS_DEPENDENCIES = host-pkgconf host-libtasn1 host-libunistring host-nettle
 HOST_GNUTLS_CONF_OPTS = \
 	--disable-doc \
-	--disable-guile \
 	--disable-libdane \
 	--disable-rpath \
 	--disable-tests \
