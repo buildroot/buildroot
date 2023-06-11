@@ -1,0 +1,44 @@
+From 274e4d212c30183242e48b639889865819f3ac33 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd.kuhls@t-online.de>
+Date: Sun, 11 Jun 2023 08:57:11 +0200
+Subject: [PATCH] support/reexport: guard dlfcn.h include with HAVE_DLFCN_H
+
+Upstream: http://git.linux-nfs.org/?p=steved/nfs-utils.git;a=commitdiff;h=8125c6f4ad156a9bad0dc2cc42e0243380fc478d
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ support/reexport/fsidd.c    | 2 ++
+ support/reexport/reexport.c | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/support/reexport/fsidd.c b/support/reexport/fsidd.c
+index 37649d06..d4b245e8 100644
+--- a/support/reexport/fsidd.c
++++ b/support/reexport/fsidd.c
+@@ -3,7 +3,9 @@
+ #endif
+ 
+ #include <assert.h>
++#ifdef HAVE_DLFCN_H
+ #include <dlfcn.h>
++#endif
+ #include <event2/event.h>
+ #include <limits.h>
+ #include <stdint.h>
+diff --git a/support/reexport/reexport.c b/support/reexport/reexport.c
+index d597a2f7..d9a700af 100644
+--- a/support/reexport/reexport.c
++++ b/support/reexport/reexport.c
+@@ -2,7 +2,9 @@
+ #include <config.h>
+ #endif
+ 
++#ifdef HAVE_DLFCN_H
+ #include <dlfcn.h>
++#endif
+ #include <stdint.h>
+ #include <stdio.h>
+ #include <sys/random.h>
+-- 
+2.39.2
+
