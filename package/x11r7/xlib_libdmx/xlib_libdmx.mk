@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XLIB_LIBDMX_VERSION = 1.1.4
-XLIB_LIBDMX_SOURCE = libdmx-$(XLIB_LIBDMX_VERSION).tar.bz2
-XLIB_LIBDMX_SITE = http://xorg.freedesktop.org/releases/individual/lib
+XLIB_LIBDMX_VERSION = 1.1.5
+XLIB_LIBDMX_SOURCE = libdmx-$(XLIB_LIBDMX_VERSION).tar.xz
+XLIB_LIBDMX_SITE = https://xorg.freedesktop.org/archive/individual/lib
 XLIB_LIBDMX_LICENSE = MIT
 XLIB_LIBDMX_LICENSE_FILES = COPYING
 XLIB_LIBDMX_CPE_ID_VENDOR = x
