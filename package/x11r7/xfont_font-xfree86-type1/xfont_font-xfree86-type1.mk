@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XFONT_FONT_XFREE86_TYPE1_VERSION = 1.0.4
-XFONT_FONT_XFREE86_TYPE1_SOURCE = font-xfree86-type1-$(XFONT_FONT_XFREE86_TYPE1_VERSION).tar.bz2
-XFONT_FONT_XFREE86_TYPE1_SITE = http://xorg.freedesktop.org/releases/individual/font
+XFONT_FONT_XFREE86_TYPE1_VERSION = 1.0.5
+XFONT_FONT_XFREE86_TYPE1_SOURCE = font-xfree86-type1-$(XFONT_FONT_XFREE86_TYPE1_VERSION).tar.xz
+XFONT_FONT_XFREE86_TYPE1_SITE = https://xorg.freedesktop.org/archive/individual/font
 XFONT_FONT_XFREE86_TYPE1_LICENSE = MIT
 XFONT_FONT_XFREE86_TYPE1_LICENSE_FILES = COPYING
 
