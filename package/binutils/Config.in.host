@@ -12,12 +12,6 @@ choice
 	help
 	  Select the version of binutils you wish to use.
 
-config BR2_BINUTILS_VERSION_2_37_X
-	bool "binutils 2.37"
-	# AVX512FP16 instructions were not supported before binutils
-	# 2.38
-	depends on !BR2_X86_CPU_HAS_AVX512
-
 config BR2_BINUTILS_VERSION_2_38_X
 	bool "binutils 2.38"
 
@@ -36,7 +30,6 @@ endchoice
 config BR2_BINUTILS_VERSION
 	string
 	default "arc-2020.09-release"	if BR2_BINUTILS_VERSION_ARC
-	default "2.37"		if BR2_BINUTILS_VERSION_2_37_X
 	default "2.38"		if BR2_BINUTILS_VERSION_2_38_X
 	default "2.39"		if BR2_BINUTILS_VERSION_2_39_X
 	default "2.40"		if BR2_BINUTILS_VERSION_2_40_X
@@ -44,7 +37,6 @@ config BR2_BINUTILS_VERSION
 config BR2_BINUTILS_GPROFNG
 	bool "gprofng support"
 	depends on !BR2_BINUTILS_VERSION_ARC
-	depends on !BR2_BINUTILS_VERSION_2_37_X
 	depends on !BR2_BINUTILS_VERSION_2_38_X
 	help
 	  This option enables support for gprofng, a new profiler.
