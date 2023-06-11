@@ -54,7 +54,8 @@ BINUTILS_CONF_OPTS = \
 	--with-system-zlib \
 	--disable-gprofng \
 	$(BINUTILS_DISABLE_GDB_CONF_OPTS) \
-	$(BINUTILS_EXTRA_CONFIG_OPTIONS)
+	$(BINUTILS_EXTRA_CONFIG_OPTIONS) \
+	--without-zstd
 
 ifeq ($(BR2_STATIC_LIBS),y)
 BINUTILS_CONF_OPTS += --disable-plugins
@@ -90,7 +91,8 @@ HOST_BINUTILS_CONF_OPTS = \
 	--enable-plugins \
 	--enable-lto \
 	$(BINUTILS_DISABLE_GDB_CONF_OPTS) \
-	$(BINUTILS_EXTRA_CONFIG_OPTIONS)
+	$(BINUTILS_EXTRA_CONFIG_OPTIONS) \
+	--without-zstd
 
 ifeq ($(BR2_BINUTILS_GPROFNG),y)
 HOST_BINUTILS_DEPENDENCIES += host-bison
