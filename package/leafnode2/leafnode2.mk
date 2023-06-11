@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-LEAFNODE2_VERSION = 2.0.0.alpha20140727b
-LEAFNODE2_SOURCE = leafnode-$(LEAFNODE2_VERSION).tar.bz2
-LEAFNODE2_SITE = http://krusty.dt.e-technik.tu-dortmund.de/~ma/leafnode/beta
+LEAFNODE2_VERSION = ce7d3b13fb285c9fb7bffc382ea10fd41e12582d
+LEAFNODE2_SITE = $(call gitlab,leafnode-2,leafnode-2,$(LEAFNODE2_VERSION))
 LEAFNODE2_LICENSE = LGPL-2.1
 LEAFNODE2_LICENSE_FILES = COPYING COPYING.LGPL
 LEAFNODE2_DEPENDENCIES = host-pcre pcre
+LEAFNODE2_AUTORECONF = YES
 
 LEAFNODE2_CONF_ENV = \
 	PCRECONFIG="$(STAGING_DIR)/usr/bin/pcre-config"

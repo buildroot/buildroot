@@ -10,11 +10,11 @@ Fix cross-compilation issues
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-Index: b/Makefile.in
+Index: b/Makefile.am
 ===================================================================
---- a/Makefile.in
-+++ b/Makefile.in
-@@ -1853,7 +1853,7 @@
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -311,7 +311,7 @@
  
  configparam_data.c: $(srcdir)/config.table b_sortnl$(EXEEXT) genconfigparam_data.awk
  	rm -f config.table.sorted
@@ -23,7 +23,7 @@ Index: b/Makefile.in
  	$(AWK) -f $(srcdir)/genconfigparam_data.awk <config.table.sorted >$@ \
  	|| { rm -f $@ ; false ; }
  
-@@ -1868,13 +1868,7 @@
+@@ -326,13 +326,7 @@
  install-data-hook:
  	$(INSTALL) -d -m 02770 $(DESTDIR)$(SPOOLDIR)
  	$(INSTALL) -d -m 02770 $(DESTDIR)$(SPOOLDIR)/leaf.node
