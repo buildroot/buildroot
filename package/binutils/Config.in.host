@@ -39,7 +39,9 @@ config BR2_BINUTILS_VERSION
 
 config BR2_BINUTILS_GPROFNG
 	bool "gprofng support"
-	depends on BR2_BINUTILS_VERSION_2_39_X
+	depends on !BR2_BINUTILS_VERSION_ARC
+	depends on !BR2_BINUTILS_VERSION_2_37_X
+	depends on !BR2_BINUTILS_VERSION_2_38_X
 	help
 	  This option enables support for gprofng, a new profiler.
 
