@@ -1,0 +1,36 @@
+From 5ab3c61932af7619518169da744ba6346f060405 Mon Sep 17 00:00:00 2001
+From: Willy Tarreau <w@1wt.eu>
+Date: Thu, 8 Dec 2022 08:32:57 +0100
+Subject: [PATCH] BUILD: atomic: atomic.h may need compiler.h on ARMv8.2-a
+
+We get a build error in ncbuf.c when building for ARMv8.2-a because ncbuf
+has minimal includes and among them bug.h which includes atomic.h. Atomic.h
+may use "forceinline" without including compiler.h, hence the build error.
+It was verified that adding it doesn't inflate the total headers.
+
+Since all other C files include api.h which already covers this, there's
+no real need to bapkport this. The issue was already there in 2.3 though.
+
+Upstream: https://git.haproxy.org/?p=haproxy.git;a=commitdiff;h=5ab3c61932af7619518169da744ba6346f060405#patch1
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ include/haproxy/atomic.h |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/haproxy/atomic.h b/include/haproxy/atomic.h
+index f60be95..7e3c826 100644
+--- a/include/haproxy/atomic.h
++++ b/include/haproxy/atomic.h
+@@ -23,6 +23,8 @@
+ #ifndef _HAPROXY_ATOMIC_H
+ #define _HAPROXY_ATOMIC_H
+ 
++#include <haproxy/compiler.h>
++
+ /* A few notes for the macros and functions here:
+  *  - this file is painful to edit, most operations exist in 3 variants,
+  *    no-thread, threads with gcc<4.7, threads with gcc>=4.7. Be careful when
+-- 
+1.7.10.4
+
