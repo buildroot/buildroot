@@ -1,0 +1,43 @@
+From b58a0014bff619f1810af49441d987d732c4244e Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Tue, 13 Jun 2023 20:02:01 +1000
+Subject: [PATCH] Wrapper around test applications for cross compiler
+ environment in meson.build (#804)
+
+This enhances commit 7be56c57f93e3436b1fbd9ecc320de5c03a3e4b8 to allow build
+fuse to be built using a cross compiler
+
+Fixes:
+../meson.build:180:12: ERROR: Can not run test applications in this cross environment.
+
+Upstream: https://github.com/libfuse/libfuse/commit/b58a0014bff619f1810af49441d987d732c4244e
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ meson.build | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 7aa4e0d..9707ea3 100644
+--- a/meson.build
++++ b/meson.build
+@@ -177,10 +177,12 @@ int main()
+ }
+ '''
+ 
+-result = cc.run(detect_getmntent_needs_unescape)
+-if result.compiled() and result.returncode() == 0 and result.stdout().strip() == 'needs escaping'
+-  message('getmntent does not unescape')
+-  add_project_arguments('-DGETMNTENT_NEEDS_UNESCAPING', language: 'c')
++if not meson.is_cross_build()
++  result = cc.run(detect_getmntent_needs_unescape)
++  if result.compiled() and result.returncode() == 0 and result.stdout().strip() == 'needs escaping'
++    message('getmntent does not unescape')
++    add_project_arguments('-DGETMNTENT_NEEDS_UNESCAPING', language: 'c')
++  endif
+ endif
+ 
+ # Write private test results into fuse_config.h (stored in build directory)
+-- 
+2.34.1
+
