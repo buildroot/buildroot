@@ -1,0 +1,17 @@
+config BR2_PACKAGE_DFU_PROGRAMMER
+	bool "dfu-programmer"
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libusb
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
+	select BR2_PACKAGE_LIBUSB
+	help
+	  Dfu-programmer is a multi-platform command-line programmer
+	  for Atmel (8051, AVR, XMEGA & AVR32) chips with a USB
+	  bootloader supporting ISP. Most Atmel devices having a USB
+	  port come pre-programmed with the bootloader, and this is a
+	  lightweight alternative to Atmel's own FLIP/BatchISP program.
+
+	  http://dfu-programmer.github.io/
+
+comment "dfu-programmer needs a toolchain w/ threads, gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
