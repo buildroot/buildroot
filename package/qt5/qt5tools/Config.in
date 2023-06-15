@@ -29,7 +29,7 @@ config BR2_PACKAGE_QT5TOOLS_QDOC_TOOL
 	depends on !BR2_TOOLCHAIN_HAS_GCC_BUG_64735 # llvm, clang
 	depends on !BR2_STATIC_LIBS # llvm, clang
 	depends on BR2_USE_WCHAR # llvm, clang
-	depends on BR2_HOST_GCC_AT_LEAST_5 # llvm, clang
+	depends on BR2_HOST_GCC_AT_LEAST_7 # llvm, clang
 	help
 	  This option enables the qdoc host tool.
 

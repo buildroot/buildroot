@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LLVM_LIBUNWIND_VERSION = 15.0.3
+LLVM_LIBUNWIND_VERSION = $(LLVM_PROJECT_VERSION)
 LLVM_LIBUNWIND_SITE = $(LLVM_PROJECT_SITE)
 LLVM_LIBUNWIND_SOURCE = libunwind-$(LLVM_LIBUNWIND_VERSION).src.tar.xz
 LLVM_LIBUNWIND_LICENSE = Apache-2.0 with exceptions
