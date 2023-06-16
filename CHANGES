@@ -1,3 +1,43 @@
+2023.02.2, released June 16th, 2023
+
+	Important / security related fixes.
+
+	Infrastructure: Add BR2_HOST_CMAKE_AT_LEAST_* for packages
+	needing a newer host-cmake than what is currently enforced
+	(3.18) - Up to the version provided by the cmake package (3.22).
+
+	utils/docker-run: Now correctly handles git
+	workdirs/worktrees.
+
+	Defconfigs: QEMU s390x: Bump rootfs size to make room for
+	kernel modules, Stm32f4xx: Tweak config to save RAM, Xilinx
+	Versal vck190: Use correct (A72) CPU variant
+
+	Updated/fixed packages: atkmm, bird, busybox, cairomm1_14,
+	cmake, containerd, crudini, cups, delve, docker-cli,
+	docker-engine, earlyoom, edid-decode, fluent-bit, freeswitch,
+	gcc, gdb, glibmm_2_66, gnupg2, go, gptfdisk, graphicsmagick,
+	intel-microcode, libass, libcurl, libdeflate, libgeos,
+	libgtk3, libjxl, libnftl, libopenssl, libressl, libssh, llvm,
+	lua, mesa3d, micropython, minidlna, moby-buildkit, mpd, mupdf,
+	ncurses, nftables, openjdk, openjdk-bin, php, postgresql,
+	python-can, python-django, python-django, python-ipython,
+	python-matplotlib, python-mupdf, python-requests, python3,
+	qemu, redis, rpm, runc, sdl2_mixer, tzdata, uclibc, vdr,
+	wilc-firmware, xapp_xcalc, xapp_xdpyinfo, xapp_xinput,
+	xapp_xwininfo, xdata_xbitmaps, xdata_xcursor-themes,
+	xdriver_xf86-input-mouse, xdriver_xf86-video-ark,
+	xdriver_xf86-video-geode, xdriver_xf86-video-neomagic,
+	xfont_encodings, xlib_libX11, xlib_libXaw, xlib_libXi,
+	xlib_libXfixes, xlib_libXft, xlib_libXpm, zfs, znc
+
+	New packages: perl-clone, perl-http-message, python-asttokens,
+	python-executing, python-pure-eval, python-stack-data
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#15421: qemu_aarch64_ebbr_defconfig: Missing Linux kernel source code
+
 2023.02.1, released May 9th, 2023
 
 	Important / security related fixes.
