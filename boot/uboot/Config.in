@@ -240,6 +240,25 @@ config BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE
 	  U-Boot, and that the TEE variable pointing to OPTEE's
 	  tee.elf, is passed during the Buildroot build.
 
+config BR2_TARGET_UBOOT_NEEDS_TI_K3_DM
+	bool "U-Boot needs TI K3 Device Manager (DM)"
+	# We use the SoC selection defined for the ti-k3-image-gen
+	# package
+	depends on BR2_TARGET_TI_K3_IMAGE_GEN
+	depends on BR2_TARGET_TI_K3_IMAGE_GEN_SOC_AM62AX || BR2_TARGET_TI_K3_IMAGE_GEN_SOC_AM62X
+	help
+	  Some TI K3 devices need the Device Manager (DM) firmware to
+	  be available for the U-Boot build.
+
+if BR2_TARGET_UBOOT_NEEDS_TI_K3_DM
+
+config BR2_TARGET_UBOOT_TI_K3_DM_SOCNAME
+	string
+	default "am62axx" if BR2_TARGET_TI_K3_IMAGE_GEN_SOC_AM62AX
+	default "am62xx"  if BR2_TARGET_TI_K3_IMAGE_GEN_SOC_AM62X
+
+endif
+
 config BR2_TARGET_UBOOT_NEEDS_OPENSBI
 	bool "U-Boot needs OpenSBI"
 	depends on BR2_TARGET_OPENSBI
