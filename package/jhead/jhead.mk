@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-JHEAD_VERSION = 3.06.0.1
+JHEAD_VERSION = 3.08
 JHEAD_SITE = $(call github,Matthias-Wandel,jhead,$(JHEAD_VERSION))
 JHEAD_LICENSE = Public Domain
 JHEAD_LICENSE_FILES = readme.txt
