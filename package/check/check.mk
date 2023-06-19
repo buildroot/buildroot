@@ -10,12 +10,6 @@ CHECK_INSTALL_STAGING = YES
 CHECK_DEPENDENCIES = host-pkgconf
 CHECK_LICENSE = LGPL-2.1+
 CHECK_LICENSE_FILES = COPYING.LESSER
-CHECK_CONF_OPTS = --disable-build-docs
+CHECK_CONF_OPTS = -DBUILD_TESTING=OFF -DINSTALL_CHECKMK=OFF
 
-# Having checkmk in the target makes no sense
-define CHECK_REMOVE_CHECKMK
-	rm -f $(TARGET_DIR)/usr/bin/checkmk
-endef
-CHECK_POST_INSTALL_TARGET_HOOKS += CHECK_REMOVE_CHECKMK
-
-$(eval $(autotools-package))
+$(eval $(cmake-package))
