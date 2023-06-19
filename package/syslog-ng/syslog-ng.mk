@@ -16,7 +16,8 @@ SYSLOG_NG_DEPENDENCIES = host-bison host-flex host-pkgconf \
 # We're patching configure.ac
 SYSLOG_NG_AUTORECONF = YES
 SYSLOG_NG_CONF_OPTS = --disable-manpages --localstatedir=/var/run \
-	--disable-java --disable-java-modules --disable-mongodb
+	--disable-java --disable-java-modules --disable-mongodb \
+	--disable-python
 SYSLOG_NG_CFLAGS = $(TARGET_CFLAGS)
 
 ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_101915),y)
@@ -37,15 +38,6 @@ SYSLOG_NG_DEPENDENCIES += libcap
 SYSLOG_NG_CONF_OPTS += --enable-linux-caps
 else
 SYSLOG_NG_CONF_OPTS += --disable-linux-caps
-endif
-
-ifeq ($(BR2_PACKAGE_PYTHON3),y)
-SYSLOG_NG_DEPENDENCIES += python3
-SYSLOG_NG_CONF_OPTS += \
-	--enable-python \
-	--with-python=$(PYTHON3_VERSION_MAJOR)
-else
-SYSLOG_NG_CONF_OPTS += --disable-python
 endif
 
 ifeq ($(BR2_PACKAGE_LIBESMTP),y)
