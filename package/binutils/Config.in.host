@@ -7,8 +7,9 @@ config BR2_PACKAGE_HOST_BINUTILS_SUPPORTS_CFI
 
 choice
 	prompt "Binutils Version"
-	default BR2_BINUTILS_VERSION_2_38_X if !BR2_arc
 	default BR2_BINUTILS_VERSION_ARC if BR2_arc
+	default BR2_BINUTILS_VERSION_REVYOS if BR2_riscv
+	default BR2_BINUTILS_VERSION_2_38_X if !BR2_arc
 	help
 	  Select the version of binutils you wish to use.
 
@@ -28,6 +29,10 @@ config BR2_BINUTILS_VERSION_ARC
 	bool "binutils arc (2.34.50)"
 	depends on BR2_arc
 
+config BR2_BINUTILS_VERSION_REVYOS
+	bool "binutils riscv (2.40)"
+	depends on BR2_riscv
+
 endchoice
 
 config BR2_BINUTILS_VERSION
@@ -36,6 +41,7 @@ config BR2_BINUTILS_VERSION
 	default "2.37"		if BR2_BINUTILS_VERSION_2_37_X
 	default "2.38"		if BR2_BINUTILS_VERSION_2_38_X
 	default "2.39"		if BR2_BINUTILS_VERSION_2_39_X
+	default "revyos-2.40"	if BR2_BINUTILS_VERSION_REVYOS
 
 config BR2_BINUTILS_GPROFNG
 	bool "gprofng support"
