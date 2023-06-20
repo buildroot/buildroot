@@ -22,11 +22,15 @@ choice
 
 config BR2_PACKAGE_IMX_SECO_MX8DXLA0
 	bool "imx-seco-mx8dxla0"
-	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8
+	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X
 
 config BR2_PACKAGE_IMX_SECO_MX8DXLA1
 	bool "imx-seco-mx8dxla1"
-	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8
+	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X
+
+config BR2_PACKAGE_IMX_SECO_MX8DXLB0
+	bool "imx-seco-mx8dxlb0"
+	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X
 
 config BR2_PACKAGE_IMX_SECO_MX8QMB0
 	bool "imx-seco-mx8qmb0"
@@ -46,6 +50,7 @@ config BR2_PACKAGE_IMX_SECO_AHAB_CONTAINER_IMAGE
 	string
 	default "mx8dxla0-ahab-container.img" if BR2_PACKAGE_IMX_SECO_MX8DXLA0
 	default "mx8dxla1-ahab-container.img" if BR2_PACKAGE_IMX_SECO_MX8DXLA1
+	default "mx8dxlb0-ahab-container.img" if BR2_PACKAGE_IMX_SECO_MX8DXLB0
 	default "mx8qmb0-ahab-container.img" if BR2_PACKAGE_IMX_SECO_MX8QMB0
 	default "mx8qxb0-ahab-container.img" if BR2_PACKAGE_IMX_SECO_MX8QXB0
 	default "mx8qxc0-ahab-container.img" if BR2_PACKAGE_IMX_SECO_MX8QXC0
