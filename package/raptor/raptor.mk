@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RAPTOR_VERSION = 2.0.15
+RAPTOR_VERSION = 2.0.16
 RAPTOR_SOURCE = raptor2-$(RAPTOR_VERSION).tar.gz
 RAPTOR_SITE = http://download.librdf.org/source
 RAPTOR_DEPENDENCIES = libxml2 libxslt
@@ -16,12 +16,6 @@ RAPTOR_INSTALL_STAGING = YES
 
 # Flag is added to make sure the patch is applied for the configure.ac of raptor.
 RAPTOR_AUTORECONF = YES
-
-# 0002-Calcualte-max-nspace-declarations-correctly-for-XML-.patch
-RAPTOR_IGNORE_CVES += CVE-2017-18926
-
-# 0003-XML-Writer-compare-namespace-declarations-correctly.patch
-RAPTOR_IGNORE_CVES += CVE-2020-25713
 
 RAPTOR_CONF_OPTS =\
 	--with-xml2-config=$(STAGING_DIR)/usr/bin/xml2-config \
