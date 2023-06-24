@@ -1,0 +1,106 @@
+From d51c10dae5a06709983b929fc6f9fb18eec41951 Mon Sep 17 00:00:00 2001
+From: Brahmajit Das <brahmajit.xyz@gmail.com>
+Date: Thu, 22 Jun 2023 15:52:18 +0000
+Subject: [PATCH] drivers/dahdi: fix build with clang-16
+
+clang-16 enables -Werror=incompatible-pointer-types (along with buch of
+other warnings) by default, thus resulting in errors such as:
+
+/var/tmp/portage/net-misc/dahdi-3.2.0/work/dahdi-linux-3.2.0/drivers/dahdi/dahdi-sysfs.c:272:20: error: incompatible function
+      pointer types initializing 'int (*)(const struct device *, struct kobj_uevent_env *)' with an expression of type
+      'int (struct device *, struct kobj_uevent_env *)' [-Wincompatible-function-pointer-types]
+        .uevent         = span_uevent,
+                          ^~~~~~~~~~~
+/var/tmp/portage/net-misc/dahdi-3.2.0/work/dahdi-linux-3.2.0/drivers/dahdi/dahdi-sysfs.c:709:20: error: incompatible function
+      pointer types initializing 'int (*)(const struct device *, struct kobj_uevent_env *)' with an expression of type
+      'int (struct device *, struct kobj_uevent_env *)' [-Wincompatible-function-pointer-types]
+        .uevent         = device_uevent,
+                          ^~~~~~~~~~~~~
+2 errors generated.
+
+This is due the change in bus_type strcut made in upstream commit
+https://github.com/torvalds/linux/commit/2a81ada32f0e584fc0c943e0d3a8c9f4fae411d6.
+Where they make uevent take a const *, as the strcut should not be
+modifying the device that is passed into it.
+
+This patch modifes some of the fucntions parameter types, making dahdi
+possible to be built with clang-16.
+
+Bug: https://bugs.gentoo.org/906179
+Signed-off-by: Brahmajit Das <brahmajit.xyz@gmail.com>
+
+Upstream: https://github.com/asterisk/dahdi-linux/pull/21
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ drivers/dahdi/dahdi-sysfs.c    | 8 ++++----
+ drivers/dahdi/wctc4xxp/base.c  | 2 +-
+ drivers/dahdi/xpp/xbus-sysfs.c | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/dahdi/dahdi-sysfs.c b/drivers/dahdi/dahdi-sysfs.c
+index ca29ddba..0c5bd982 100644
+--- a/drivers/dahdi/dahdi-sysfs.c
++++ b/drivers/dahdi/dahdi-sysfs.c
+@@ -47,7 +47,7 @@ static int span_match(struct device *dev, struct device_driver *driver)
+ 	return 1;
+ }
+ 
+-static inline struct dahdi_span *dev_to_span(struct device *dev)
++static inline struct dahdi_span *dev_to_span(const struct device *dev)
+ {
+ 	return dev_get_drvdata(dev);
+ }
+@@ -68,7 +68,7 @@ static inline struct dahdi_span *dev_to_span(struct device *dev)
+ 			return err;				\
+ 	} while (0)
+ 
+-static int span_uevent(struct device *dev, struct kobj_uevent_env *kenv)
++static int span_uevent(const struct device *dev, struct kobj_uevent_env *kenv)
+ {
+ 	struct dahdi_span *span;
+ 
+@@ -415,7 +415,7 @@ static struct {
+ 	unsigned int clean_chardev:1;
+ } should_cleanup;
+ 
+-static inline struct dahdi_device *to_ddev(struct device *dev)
++static inline struct dahdi_device *to_ddev(const struct device *dev)
+ {
+ 	return container_of(dev, struct dahdi_device, dev);
+ }
+@@ -438,7 +438,7 @@ static inline struct dahdi_device *to_ddev(struct device *dev)
+ 			return err;				\
+ 	} while (0)
+ 
+-static int device_uevent(struct device *dev, struct kobj_uevent_env *kenv)
++static int device_uevent(const struct device *dev, struct kobj_uevent_env *kenv)
+ {
+ 	struct dahdi_device *ddev;
+ 
+diff --git a/drivers/dahdi/wctc4xxp/base.c b/drivers/dahdi/wctc4xxp/base.c
+index ec6fc436..db70ea7e 100644
+--- a/drivers/dahdi/wctc4xxp/base.c
++++ b/drivers/dahdi/wctc4xxp/base.c
+@@ -643,7 +643,7 @@ wctc4xxp_net_register(struct wcdte *wc)
+ 		return -ENOMEM;
+ 	priv = netdev_priv(netdev);
+ 	priv->wc = wc;
+-	memcpy(netdev->dev_addr, our_mac, sizeof(our_mac));
++	memcpy((void *)netdev->dev_addr, our_mac, sizeof(our_mac));
+ 
+ #	ifdef HAVE_NET_DEVICE_OPS
+ 	netdev->netdev_ops = &wctc4xxp_netdev_ops;
+diff --git a/drivers/dahdi/xpp/xbus-sysfs.c b/drivers/dahdi/xpp/xbus-sysfs.c
+index d8c11dc3..29ad3619 100644
+--- a/drivers/dahdi/xpp/xbus-sysfs.c
++++ b/drivers/dahdi/xpp/xbus-sysfs.c
+@@ -418,7 +418,7 @@ static int astribank_match(struct device *dev, struct device_driver *driver)
+ 			return err;				\
+ 	} while (0)
+ 
+-static int astribank_uevent(struct device *dev, struct kobj_uevent_env *kenv)
++static int astribank_uevent(const struct device *dev, struct kobj_uevent_env *kenv)
+ {
+ 	xbus_t *xbus;
+ 	extern char *initdir;
