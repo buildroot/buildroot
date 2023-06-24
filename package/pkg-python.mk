@@ -233,7 +233,7 @@ endif # ($(4),target)
 # interpreter (both host and target).
 #
 ifeq ($$($(2)_SETUP_TYPE),setuptools)
-$(2)_DEPENDENCIES += $$(if $$(filter host-python-setuptools,$(1)),,host-python-setuptools)
+$(2)_DEPENDENCIES += host-python-setuptools
 else ifneq ($$(filter flit pep517,$$($(2)_SETUP_TYPE)),)
 $(2)_DEPENDENCIES += host-python-pypa-build host-python-installer
 ifeq ($$($(2)_SETUP_TYPE),flit)
