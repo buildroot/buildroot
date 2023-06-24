@@ -1,0 +1,42 @@
+From 07d8c98a0a65e005b85ef70e06eb1b9bbe7f764c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Markus=20H=C3=A4rer?= <markus.haerer@gmx.net>
+Date: Sun, 28 May 2023 00:49:40 +0200
+Subject: [PATCH] SavestateFlatBuffer: Remove forward declararion of
+ FlatBufferBuilder
+
+This caused a compiler error with recent faltbuffers because the type changed:
+
+In file included from xbmc/cores/RetroPlayer/savestates/SavestateDatabase.cpp:12:
+xbmc/cores/RetroPlayer/savestates/SavestateFlatBuffer.h:19:7: error: definition of type 'FlatBufferBuilder' conflicts with type alias of the same name
+class FlatBufferBuilder;
+      ^
+/usr/include/flatbuffers/flatbuffer_builder.h:1414:7: note: 'FlatBufferBuilder' declared here
+using FlatBufferBuilder = FlatBufferBuilderImpl<false>;
+      ^
+1 error generated.
+
+(cherry picked from commit 351184d7e4e3edc447d04a297769eb41a477ba68)
+
+Upstream: https://github.com/xbmc/xbmc/commit/07d8c98a0a65e005b85ef70e06eb1b9bbe7f764c
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ xbmc/cores/RetroPlayer/savestates/SavestateFlatBuffer.h | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/xbmc/cores/RetroPlayer/savestates/SavestateFlatBuffer.h b/xbmc/cores/RetroPlayer/savestates/SavestateFlatBuffer.h
+index cb93e6bbc2e12..fa42a9bad7034 100644
+--- a/xbmc/cores/RetroPlayer/savestates/SavestateFlatBuffer.h
++++ b/xbmc/cores/RetroPlayer/savestates/SavestateFlatBuffer.h
+@@ -14,11 +14,6 @@
+ 
+ #include <flatbuffers/flatbuffers.h>
+ 
+-namespace flatbuffers
+-{
+-class FlatBufferBuilder;
+-}
+-
+ namespace KODI
+ {
+ namespace RETRO
