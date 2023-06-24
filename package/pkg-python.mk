@@ -55,8 +55,7 @@ HOST_PKG_PYTHON_ENV = \
 # Target distutils-based packages
 PKG_PYTHON_DISTUTILS_ENV = \
 	$(PKG_PYTHON_ENV) \
-	LDSHARED="$(TARGET_CROSS)gcc -shared" \
-	SETUPTOOLS_USE_DISTUTILS=stdlib \
+	LDSHARED="$(TARGET_CROSS)gcc -shared"
 
 PKG_PYTHON_DISTUTILS_BUILD_OPTS = \
 	--executable=/usr/bin/python
@@ -75,16 +74,14 @@ PKG_PYTHON_DISTUTILS_INSTALL_STAGING_OPTS = \
 
 # Host distutils-based packages
 HOST_PKG_PYTHON_DISTUTILS_ENV = \
-	$(HOST_PKG_PYTHON_ENV) \
-	SETUPTOOLS_USE_DISTUTILS=stdlib
+	$(HOST_PKG_PYTHON_ENV)
 
 HOST_PKG_PYTHON_DISTUTILS_INSTALL_OPTS = \
 	--prefix=$(HOST_DIR)
 
 # Target setuptools-based packages
 PKG_PYTHON_SETUPTOOLS_ENV = \
-	$(PKG_PYTHON_ENV) \
-	SETUPTOOLS_USE_DISTUTILS=stdlib
+	$(PKG_PYTHON_ENV)
 
 PKG_PYTHON_SETUPTOOLS_CMD = \
 	$(if $(wildcard $($(PKG)_BUILDDIR)/setup.py),setup.py,-c 'from setuptools import setup;setup()')
@@ -105,8 +102,7 @@ PKG_PYTHON_SETUPTOOLS_INSTALL_STAGING_OPTS = \
 
 # Host setuptools-based packages
 HOST_PKG_PYTHON_SETUPTOOLS_ENV = \
-	$(HOST_PKG_PYTHON_ENV) \
-	SETUPTOOLS_USE_DISTUTILS=stdlib
+	$(HOST_PKG_PYTHON_ENV)
 
 HOST_PKG_PYTHON_SETUPTOOLS_INSTALL_OPTS = \
 	--prefix=$(HOST_DIR) \
