@@ -1,0 +1,54 @@
+From da01e5fab9be9865db1aac203e574e0edbfd6584 Mon Sep 17 00:00:00 2001
+From: Frank Morgner <frankmorgner@gmail.com>
+Date: Wed, 14 Dec 2022 09:31:29 +0100
+Subject: [PATCH] fixed compatibility with LibreSSL >= 3.5.0
+
+fixes https://github.com/OpenSC/OpenSC/issues/2664
+
+Upstream: https://github.com/OpenSC/OpenSC/commit/da01e5fab9be9865db1aac203e574e0edbfd6584
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/libopensc/card-iasecc.c    | 12 +-----------
+ src/libopensc/sc-ossl-compat.h |  1 +
+ 2 files changed, 2 insertions(+), 11 deletions(-)
+
+diff --git a/src/libopensc/card-iasecc.c b/src/libopensc/card-iasecc.c
+index 480c1cf87b..1347ed2393 100644
+--- a/src/libopensc/card-iasecc.c
++++ b/src/libopensc/card-iasecc.c
+@@ -38,21 +38,11 @@
+ #include <openssl/pkcs12.h>
+ #include <openssl/x509v3.h>
+ 
+-/*
+- * OpenSSL-3.0.0 does not allow access to the SHA data
+- * so this driver can not produces signatures
+- * OpenSSL 1.1.1 uses EVP_MD_CTX_md_data
+- * LibreSSL
+- */
+-
+-#if defined(LIBRESSL_VERSION_NUMBER)
+-# define  EVP_MD_CTX_md_data(x)  (x->md_data)
+-#endif
+-
+ #include "internal.h"
+ #include "asn1.h"
+ #include "cardctl.h"
+ #include "opensc.h"
++#include "sc-ossl-compat.h"
+ /* #include "sm.h" */
+ #include "pkcs15.h"
+ /* #include "hash-strings.h" */
+diff --git a/src/libopensc/sc-ossl-compat.h b/src/libopensc/sc-ossl-compat.h
+index da53ca8cee..8c0f96701c 100644
+--- a/src/libopensc/sc-ossl-compat.h
++++ b/src/libopensc/sc-ossl-compat.h
+@@ -42,6 +42,7 @@ extern "C" {
+ #define X509_get_extension_flags(x)	(x->ex_flags)
+ #define X509_get_key_usage(x)		(x->ex_kusage)
+ #define X509_get_extended_key_usage(x)	(x->ex_xkusage)
++#define EVP_MD_CTX_md_data(x)          (x->md_data)
+ #endif
+ 
+ #if defined(LIBRESSL_VERSION_NUMBER)
