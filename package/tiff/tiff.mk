@@ -4,16 +4,13 @@
 #
 ################################################################################
 
-TIFF_VERSION = 4.5.0
+TIFF_VERSION = 4.5.1
 TIFF_SITE = http://download.osgeo.org/libtiff
 TIFF_LICENSE = tiff license
 TIFF_LICENSE_FILES = LICENSE.md
 TIFF_CPE_ID_VENDOR = libtiff
 TIFF_CPE_ID_PRODUCT = libtiff
 TIFF_INSTALL_STAGING = YES
-
-# 0001-tiffcrop-Correct-simple-copy-paste-error-Fix-488.patch
-TIFF_IGNORE_CVES += CVE-2022-48281
 
 # webp has a (optional) dependency on tiff, so we can't have webp
 # support in tiff, or that would create a circular dependency.
