@@ -36,4 +36,8 @@ else
 LIBCGROUP_CONF_OPTS += --disable-pam
 endif
 
+ifeq ($(BR2_TOOLCHAIN_USES_GLIBC),)
+LIBCGROUP_DEPENDENCIES += musl-fts
+endif
+
 $(eval $(autotools-package))
