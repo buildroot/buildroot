@@ -113,3 +113,20 @@ Booting the SPI flash on the board
 
 Make sure that the all DIP switches are set to the off position for
 default boot mode (MSEL mode = 0110) to boot from SPI flash.
+
+Testing under QEMU
+==================
+
+The SD card image can be tested using QEMU:
+
+$ qemu-system-riscv64 -M sifive_u,msel=11 -smp 5 -m 8G \
+    -display none -serial stdio -nic user \
+    -bios output/images/u-boot-spl.bin \
+    -drive file=output/images/sdcard.img,if=sd
+
+The SPI flash image can be tested with a slightly different command:
+
+$ qemu-system-riscv64 -M sifive_u,msel=6 -smp 5 -m 8G \
+    -display none -serial stdio -nic user \
+    -bios output/images/u-boot-spl.bin \
+    -drive file=output/images/spi-nor.img,if=mtd
