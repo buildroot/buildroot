@@ -1,0 +1,35 @@
+From cf93d8579d5cec0b1ba585bd661776f03c2743ba Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Tue, 27 Jun 2023 20:19:13 +0200
+Subject: [PATCH] Define __attribute_malloc__ when needed
+
+attribute_malloc is not available on musl
+
+auparse.h: In function 'auparse_init':
+auparse.h:54:2: error: expected declaration specifiers before '__attribute_malloc__'
+   54 |  __attribute_malloc__ __attr_dealloc (auparse_destroy, 1);
+
+Upstream: https://github.com/linux-audit/audit-userspace/pull/311
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ auparse/auparse.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/auparse/auparse.h b/auparse/auparse.h
+index 95cf256d..5cb7402e 100644
+--- a/auparse/auparse.h
++++ b/auparse/auparse.h
+@@ -32,6 +32,9 @@
+ # define __attr_dealloc(dealloc, argno)
+ # define __attr_dealloc_free
+ #endif
++#ifndef __attribute_malloc__
++#  define __attribute_malloc__
++#endif
+ 
+ #ifdef __cplusplus
+ extern "C" {
+-- 
+2.39.2
+
