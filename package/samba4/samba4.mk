@@ -93,6 +93,13 @@ else
 SAMBA4_CONF_OPTS += --without-libarchive
 endif
 
+ifeq ($(BR2_PACKAGE_LIBUNWIND),y)
+SAMBA4_CONF_OPTS += --with-libunwind
+SAMBA4_DEPENDENCIES += libunwind
+else
+SAMBA4_CONF_OPTS += --without-libunwind
+endif
+
 ifeq ($(BR2_PACKAGE_NCURSES),y)
 SAMBA4_CONF_ENV += NCURSES_CONFIG="$(STAGING_DIR)/usr/bin/$(NCURSES_CONFIG_SCRIPTS)"
 SAMBA4_DEPENDENCIES += ncurses
