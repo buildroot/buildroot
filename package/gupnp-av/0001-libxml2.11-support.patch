@@ -1,0 +1,41 @@
+From 4dbc4c1da2a033c497d84a1291c46f416a9cac51 Mon Sep 17 00:00:00 2001
+From: David Anes <david.anes@suse.com>
+Date: Thu, 4 May 2023 11:54:02 +0200
+Subject: use xmlReadMemory instead of xmlRecoverMemory, as it's been
+ deprecated in libxml2 2.11.0
+
+Since version 2.11.0, some private symbols have been removed.
+
+Downloaded from
+https://code.opensuse.org/package/gupnp-av/blob/master/f/gupnp-av-libxml2.11-support.patch
+
+Upstream: https://gitlab.gnome.org/GNOME/gupnp-av/-/issues/10
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+Index: gupnp-av-0.14.1/libgupnp-av/gupnp-didl-lite-parser.c
+===================================================================
+--- gupnp-av-0.14.1.orig/libgupnp-av/gupnp-didl-lite-parser.c
++++ gupnp-av-0.14.1/libgupnp-av/gupnp-didl-lite-parser.c
+@@ -230,7 +230,7 @@ gupnp_didl_lite_parser_parse_didl_recurs
+         GUPnPAVXMLDoc *xml_doc = NULL;
+         gboolean       result;
+ 
+-        doc = xmlRecoverMemory (didl, strlen (didl));
++        doc = xmlReadMemory (didl, strlen (didl), NULL, NULL, XML_PARSE_RECOVER);
+         if (doc == NULL) {
+                 g_set_error (error,
+                              G_MARKUP_ERROR,
+Index: gupnp-av-0.14.1/libgupnp-av/gupnp-feature-list-parser.c
+===================================================================
+--- gupnp-av-0.14.1.orig/libgupnp-av/gupnp-feature-list-parser.c
++++ gupnp-av-0.14.1/libgupnp-av/gupnp-feature-list-parser.c
+@@ -114,7 +114,7 @@ gupnp_feature_list_parser_parse_text
+         xmlNode      *element;
+         GList        *feature_list = NULL;
+ 
+-        doc = xmlRecoverMemory (text, strlen (text));
++        doc = xmlReadMemory (text, strlen (text), NULL, NULL, XML_PARSE_RECOVER);
+         if (doc == NULL) {
+                 g_set_error (error,
+                              G_MARKUP_ERROR,
