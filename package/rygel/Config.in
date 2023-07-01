@@ -52,12 +52,12 @@ comment "gstreamer1 needs gst1-editing-services"
 
 endchoice
 
-comment "rygel needs a glibc toolchain w/ wchar, threads, gcc >= 4.9, host gcc >= 8"
+endif # BR2_PACKAGE_RYGEL
+
+comment "rygel needs python3 and a glibc toolchain w/ wchar, threads, gcc >= 4.9, host gcc >= 8"
 	depends on BR2_USE_MMU
 	depends on BR2_PACKAGE_GOBJECT_INTROSPECTION_ARCH_SUPPORTS
 	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
 		!BR2_TOOLCHAIN_USES_GLIBC || \
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || \
-		!BR2_HOST_GCC_AT_LEAST_8
-
-endif # BR2_PACKAGE_RYGEL
+		!BR2_HOST_GCC_AT_LEAST_8 || !BR2_PACKAGE_PYTHON3
