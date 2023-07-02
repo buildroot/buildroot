@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-STELLARIUM_VERSION = 1.2
+STELLARIUM_VERSION = 23.2
 STELLARIUM_SOURCE = stellarium-$(STELLARIUM_VERSION).tar.xz
 STELLARIUM_SITE = https://github.com/Stellarium/stellarium/releases/download/v$(STELLARIUM_VERSION)
 STELLARIUM_LICENSE = GPL-2.0+
