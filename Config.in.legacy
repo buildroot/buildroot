@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2023.08"
 
+config BR2_PACKAGE_LIBASPLIB
+	bool "libasplib removed"
+	select BR2_LEGACY
+	help
+	  libasplib is no longer needed.
+
 config BR2_BINUTILS_VERSION_2_37_X
 	bool "binutils 2.37.x has been removed"
 	select BR2_LEGACY
