@@ -133,7 +133,9 @@ endif
 
 ifeq ($(BR2_TARGET_UBOOT_FORMAT_STM32),y)
 UBOOT_BINS += u-boot.stm32
+ifeq ($(BR2_TARGET_UBOOT_BUILD_FORMAT_STM32_LEGACY),y)
 UBOOT_MAKE_TARGET += u-boot.stm32
+endif
 endif
 
 ifeq ($(BR2_TARGET_UBOOT_FORMAT_CUSTOM),y)

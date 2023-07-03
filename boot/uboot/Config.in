@@ -395,6 +395,16 @@ config BR2_TARGET_UBOOT_FORMAT_STM32
 	bool "u-boot.stm32"
 	depends on BR2_arm
 
+if BR2_TARGET_UBOOT_FORMAT_STM32
+config BR2_TARGET_UBOOT_BUILD_FORMAT_STM32_LEGACY
+	bool "Legacy build (u-boot.stm32 target)"
+	help
+	  Select this option if you use U-Boot with version older than
+	  2022.01), so that we use the old build target. Otherwise,
+	  binman application is called to create the stm32 binary
+	  format.
+endif
+
 config BR2_TARGET_UBOOT_FORMAT_CUSTOM
 	bool "Custom (specify below)"
 	help
