@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBNATPMP_VERSION = 20150609
+LIBNATPMP_VERSION = 20230423
 LIBNATPMP_SITE = http://miniupnp.free.fr/files
 LIBNATPMP_INSTALL_STAGING = YES
 LIBNATPMP_LICENSE = BSD-3-Clause
