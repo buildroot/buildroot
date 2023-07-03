@@ -18,7 +18,7 @@ endef
 define LIBNATPMP_INSTALL_STAGING_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) \
 		PREFIX=$(STAGING_DIR) \
-		HEADERS='declspec.h natpmp.h' \
+		HEADERS='natpmp_declspec.h natpmp.h' \
 		$(TARGET_CONFIGURE_OPTS) install
 endef
 
