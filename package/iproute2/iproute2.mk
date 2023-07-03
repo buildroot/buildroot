@@ -38,8 +38,16 @@ ifeq ($(BR2_PACKAGE_BERKELEYDB_COMPAT185),y)
 IPROUTE2_DEPENDENCIES += berkeleydb
 endif
 
+ifeq ($(BR2_PACKAGE_LIBBPF),y)
+IPROUTE2_DEPENDENCIES += libbpf
+IPROUTE2_CONFIGURE_OPTS += --libbpf_force on
+else
+IPROUTE2_CONFIGURE_OPTS += --libbpf_force off
+endif
+
 define IPROUTE2_CONFIGURE_CMDS
-	cd $(@D) && $(TARGET_CONFIGURE_OPTS) ./configure
+	cd $(@D) && $(TARGET_CONFIGURE_OPTS) ./configure \
+		$(IPROUTE2_CONFIGURE_OPTS)
 	$(IPROUTE2_DISABLE_IPTABLES)
 endef
 
