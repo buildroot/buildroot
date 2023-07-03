@@ -1,0 +1,84 @@
+From 317aafb133ed797c4cd62599565a77ecc595daea Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Thu, 29 Jun 2023 07:57:21 +0200
+Subject: [PATCH] Fix symver build error on non-ELF platforms
+
+The following error is observed on Microblaze [1] build:
+
+    error: symver is only supported on ELF platforms
+
+due to using __attribute__((symver)) on non-ELF platform.
+
+[1] http://autobuild.buildroot.net/results/1e9/1e965d83d75615f35308440c5db044314a349357/build-end.log
+
+ac_check_attribute_symver.m4 was downloaded from
+https://github.com/smuellerDD/libkcapi/blob/master/m4/ac_check_attribute_symver.m4
+
+Upstream: https://github.com/alsa-project/alsa-lib/pull/334
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ configure.ac                    |  1 +
+ include/alsa-symbols.h          |  2 +-
+ m4/ac_check_attribute_symver.m4 | 24 ++++++++++++++++++++++++
+ 3 files changed, 26 insertions(+), 1 deletion(-)
+ create mode 100644 m4/ac_check_attribute_symver.m4
+
+diff --git a/configure.ac b/configure.ac
+index 0588eec3..71ec0b15 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -46,6 +46,7 @@ dnl Checks for typedefs, structures, and compiler characteristics.
+ AC_C_CONST
+ AC_C_INLINE
+ AC_HEADER_TIME
++AC_CHECK_ATTRIBUTE_SYMVER
+ 
+ dnl Checks for library functions.
+ AC_PROG_GCC_TRADITIONAL
+diff --git a/include/alsa-symbols.h b/include/alsa-symbols.h
+index f8c49103..521e5956 100644
+--- a/include/alsa-symbols.h
++++ b/include/alsa-symbols.h
+@@ -29,7 +29,7 @@
+ #define INTERNAL_CONCAT2_2(Pre, Post) Pre##Post
+ #define INTERNAL(Name) INTERNAL_CONCAT2_2(__, Name)
+ 
+-#if __GNUC__ > 10
++#if HAVE_ATTRIBUTE_SYMVER && __GNUC__ > 10
+ #define symbol_version(real, name, version) \
+ 	extern __typeof (real) real __attribute__((symver (#name "@" #version)))
+ #define default_symbol_version(real, name, version) \
+diff --git a/m4/ac_check_attribute_symver.m4 b/m4/ac_check_attribute_symver.m4
+new file mode 100644
+index 00000000..b484c5eb
+--- /dev/null
++++ b/m4/ac_check_attribute_symver.m4
+@@ -0,0 +1,24 @@
++dnl Check compiler support for symver function attribute
++AC_DEFUN([AC_CHECK_ATTRIBUTE_SYMVER], [
++	saved_CFLAGS=$CFLAGS
++	CFLAGS="-O0 -Werror"
++	AC_COMPILE_IFELSE(
++		[AC_LANG_PROGRAM(
++			[[
++				void _test_attribute_symver(void);
++				__attribute__((__symver__("sym@VER_1.2.3"))) void _test_attribute_symver(void) {}
++			]],
++			[[ 
++				_test_attribute_symver()
++			]]
++		)],
++		[
++			AC_DEFINE([HAVE_ATTRIBUTE_SYMVER], 1, [Define to 1 if __attribute__((symver)) is supported])
++		],
++		[
++			AC_DEFINE([HAVE_ATTRIBUTE_SYMVER], 0, [Define to 0 if __attribute__((symver)) is not supported])
++		]
++	)
++	CFLAGS=$saved_CFLAGS
++])
++
+-- 
+2.39.2
+
