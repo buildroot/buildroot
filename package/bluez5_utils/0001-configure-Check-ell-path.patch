@@ -1,0 +1,35 @@
+From 124187ef9abed60a7c40f751153e9c4516cd1f91 Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Sat, 1 Jul 2023 01:31:20 +0000
+Subject: [PATCH] configure: Check ell path
+
+Use of AC_CHECK_FILE prevents cross compilation.
+Instead use test to support cross compiling.
+
+Signed-off-by: Rudi Heitbaum <rudi@heitbaum.com>
+
+Upstream: https://github.com/bluez/bluez/pull/546
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ configure.ac | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index eff297960..bc7edfcd3 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -298,9 +298,10 @@ if (test "${enable_external_ell}" = "yes"); then
+ 	AC_SUBST(ELL_LIBS)
+ fi
+ if (test "${enable_external_ell}" != "yes"); then
+-	AC_CHECK_FILE(${srcdir}/ell/ell.h, dummy=yes,
+-			AC_CHECK_FILE(${srcdir}/../ell/ell/ell.h, dummy=yes,
+-				AC_MSG_ERROR(ELL source is required or use --enable-external-ell)))
++	if (test ! -f ${srcdir}/ell/ell.h) &&
++			(test ! -f ${srcdir}/../ell/ell/ell.h); then
++				AC_MSG_ERROR(ELL source is required or use --enable-external-ell)
++	fi
+ fi
+ AM_CONDITIONAL(EXTERNAL_ELL, test "${enable_external_ell}" = "yes" ||
+ 				(test "${enable_btpclient}" != "yes" &&
