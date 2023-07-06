@@ -1,0 +1,14 @@
+config BR2_PACKAGE_CRYPTODEV_LINUX
+	bool "cryptodev-linux"
+	depends on !BR2_microblaze
+	depends on BR2_LINUX_KERNEL
+	help
+	  Cryptodev-linux is a device that allows access to Linux kernel
+	  cryptographic drivers; thus allowing userspace applications
+	  to take advantage of hardware accelerators.
+
+	  http://cryptodev-linux.org/index.html
+
+comment "cryptodev-linux needs a Linux kernel to be built"
+	depends on !BR2_microblaze
+	depends on !BR2_LINUX_KERNEL
