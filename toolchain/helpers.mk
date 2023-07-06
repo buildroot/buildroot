@@ -343,11 +343,14 @@ check_arm_abi = \
 #
 check_cplusplus = \
 	__CROSS_CXX=$(strip $1) ; \
-	$${__CROSS_CXX} -v > /dev/null 2>&1 ; \
-	if test $$? -ne 0 ; then \
+	__HAS_CXX=`$${__CROSS_CXX} -v > /dev/null 2>&1 && echo y`; \
+	if [ "$${__HAS_CXX}" != "y" -a "$(BR2_INSTALL_LIBSTDCPP)" = y ] ; then \
 		echo "C++ support is selected but is not available in external toolchain" ; \
 		exit 1 ; \
-	fi
+	elif [ "$${__HAS_CXX}" = "y" -a "$(BR2_INSTALL_LIBSTDCPP)" != y ] ; then \
+		echo "C++ support is not selected but is available in external toolchain" ; \
+		exit 1 ; \
+	fi \
 
 #
 #
@@ -358,14 +361,16 @@ check_cplusplus = \
 check_dlang = \
 	__CROSS_GDC=$(strip $1) ; \
 	__o=$(BUILD_DIR)/.br-toolchain-test-dlang.tmp ; \
-	printf 'import std.stdio;\nvoid main() { writeln("Hello World!"); }\n' | \
-	$${__CROSS_GDC} -x d -o $${__o} - ; \
-	if test $$? -ne 0 ; then \
-		rm -f $${__o}* ; \
+	__HAS_DLANG=`printf 'import std.stdio;\nvoid main() { writeln("Hello World!"); }\n' | \
+		$${__CROSS_GDC} -x d -o $${__o} - >/dev/null 2>&1 && echo y`; \
+	rm -f $${__o}* ; \
+	if [ "$${__HAS_DLANG}" != "y" -a "$(BR2_TOOLCHAIN_HAS_DLANG)" = y ] ; then \
 		echo "D language support is selected but is not available in external toolchain" ; \
 		exit 1 ; \
-	fi ; \
-	rm -f $${__o}* \
+	elif [ "$${__HAS_DLANG}" = "y" -a "$(BR2_TOOLCHAIN_HAS_DLANG)" != y ] ; then \
+		echo "D language support is not selected but is available in external toolchain" ; \
+		exit 1 ; \
+	fi \
 
 #
 #
@@ -376,14 +381,16 @@ check_dlang = \
 check_fortran = \
 	__CROSS_FC=$(strip $1) ; \
 	__o=$(BUILD_DIR)/.br-toolchain-test-fortran.tmp ; \
-	printf 'program hello\n\tprint *, "Hello Fortran!\\n"\nend program hello\n' | \
-	$${__CROSS_FC} -x f95 -o $${__o} - ; \
-	if test $$? -ne 0 ; then \
-		rm -f $${__o}* ; \
+	__HAS_FORTRAN=`printf 'program hello\n\tprint *, "Hello Fortran!\\\n"\nend program hello\n' | \
+		$${__CROSS_FC} -x f95 -ffree-form -o $${__o} - && echo y`; \
+	rm -f $${__o}* ; \
+	if [ "$${__HAS_FORTRAN}" != "y" -a "$(BR2_TOOLCHAIN_HAS_FORTRAN)" = y ] ; then \
 		echo "Fortran support is selected but is not available in external toolchain" ; \
 		exit 1 ; \
-	fi ; \
-	rm -f $${__o}* \
+	elif [ "$${__HAS_FORTRAN}" = "y" -a "$(BR2_TOOLCHAIN_HAS_FORTRAN)" != y ] ; then \
+		echo "Fortran support is not selected but is available in external toolchain" ; \
+		exit 1 ; \
+	fi \
 
 #
 #
@@ -394,14 +401,16 @@ check_fortran = \
 check_openmp = \
 	__CROSS_CC=$(strip $1) ; \
 	__o=$(BUILD_DIR)/.br-toolchain-test-openmp.tmp ; \
-	printf '\#include <omp.h>\nint main(void) { return omp_get_thread_num(); }' | \
-	$${__CROSS_CC} -fopenmp -x c -o $${__o} - ; \
-	if test $$? -ne 0 ; then \
-		rm -f $${__o}* ; \
+	__HAS_OPENMP=`printf '\#include <omp.h>\nint main(void) { return omp_get_thread_num(); }' | \
+		$${__CROSS_CC} -fopenmp -x c -o $${__o} - >/dev/null 2>&1 && echo y` ; \
+	rm -f $${__o}* ; \
+	if [ "$${__HAS_OPENMP}" != "y" -a "$(BR2_TOOLCHAIN_HAS_OPENMP)" = y ] ; then \
 		echo "OpenMP support is selected but is not available in external toolchain"; \
 		exit 1 ; \
-	fi ; \
-	rm -f $${__o}* \
+	elif [ "$${__HAS_OPENMP}" = "y" -a "$(BR2_TOOLCHAIN_HAS_OPENMP)" != y ] ; then \
+		echo "OpenMP support is not selected but is available in external toolchain"; \
+		exit 1 ; \
+	fi \
 
 #
 # Check that the cross-compiler given in the configuration exists
