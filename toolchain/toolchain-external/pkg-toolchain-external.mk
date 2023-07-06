@@ -576,18 +576,10 @@ define $(2)_CONFIGURE_CMDS
 		$$(call check_arm_abi,\
 			"$$(TOOLCHAIN_EXTERNAL_CC) $$(TOOLCHAIN_EXTERNAL_CFLAGS)") ; \
 	fi ; \
-	if test "$$(BR2_INSTALL_LIBSTDCPP)" = "y" ; then \
-		$$(call check_cplusplus,$$(TOOLCHAIN_EXTERNAL_CXX)) ; \
-	fi ; \
-	if test "$$(BR2_TOOLCHAIN_HAS_DLANG)" = "y" ; then \
-		$$(call check_dlang,$$(TOOLCHAIN_EXTERNAL_GDC)) ; \
-	fi ; \
-	if test "$$(BR2_TOOLCHAIN_HAS_FORTRAN)" = "y" ; then \
-		$$(call check_fortran,$$(TOOLCHAIN_EXTERNAL_FC)) ; \
-	fi ; \
-	if test "$$(BR2_TOOLCHAIN_HAS_OPENMP)" = "y" ; then \
-		$$(call check_openmp,$$(TOOLCHAIN_EXTERNAL_CC)) ; \
-	fi ; \
+	$$(call check_cplusplus,$$(TOOLCHAIN_EXTERNAL_CXX)) ; \
+	$$(call check_dlang,$$(TOOLCHAIN_EXTERNAL_GDC)) ; \
+	$$(call check_fortran,$$(TOOLCHAIN_EXTERNAL_FC)) ; \
+	$$(call check_openmp,$$(TOOLCHAIN_EXTERNAL_CC)) ; \
 	if test "$$(BR2_TOOLCHAIN_EXTERNAL_UCLIBC)" = "y" ; then \
 		$$(call check_uclibc,$$$${SYSROOT_DIR}) ; \
 	elif test "$$(BR2_TOOLCHAIN_EXTERNAL_MUSL)" = "y" ; then \
