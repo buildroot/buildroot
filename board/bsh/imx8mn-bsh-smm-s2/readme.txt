@@ -2,7 +2,7 @@ i.MX8MN BSH SMM S2
 ==================
 
 This tutorial describes how to use the predefined Buildroot
-configuration for the i.MX8MN BSH SMM S2 PRO board.
+configuration for the i.MX8MN BSH SMM S2 board.
 
 Building
 --------
