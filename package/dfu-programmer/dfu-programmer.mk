@@ -18,4 +18,8 @@ endef
 
 DFU_PROGRAMMER_POST_PATCH_HOOKS == DFU_PROGRAMMER_ADD_MISSING_FILE
 
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+DFU_PROGRAMMER_CONF_OPTS += LIBS=-latomic
+endif
+
 $(eval $(autotools-package))
