@@ -1,0 +1,15 @@
+config BR2_PACKAGE_KODI_IMAGEDECODER_RAW
+	bool "kodi-imagedecoder-raw"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on BR2_INSTALL_LIBSTDCPP
+	select BR2_PACKAGE_JPEG
+	select BR2_PACKAGE_LCMS2
+	select BR2_PACKAGE_LIBRAW
+	help
+	  RAW image decoder add-on for Kodi
+
+	  https://github.com/xbmc/imagedecoder.raw
+
+comment "kodi-imagedecoder-raw needs a toolchain w/ C++"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_INSTALL_LIBSTDCPP
