@@ -132,6 +132,13 @@ else
 LIBVIPS_CONF_OPTS += --without-libexif
 endif
 
+ifeq ($(BR2_PACKAGE_LIBHEIF),y)
+LIBVIPS_CONF_OPTS += --with-heif
+LIBVIPS_DEPENDENCIES += libheif
+else
+LIBVIPS_CONF_OPTS += --without-heif
+endif
+
 ifeq ($(BR2_PACKAGE_WEBP_DEMUX)$(BR2_PACKAGE_WEBP_MUX),yy)
 LIBVIPS_CONF_OPTS += --with-libwebp
 LIBVIPS_DEPENDENCIES += webp
