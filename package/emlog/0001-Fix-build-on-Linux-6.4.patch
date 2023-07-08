@@ -1,0 +1,34 @@
+From 32ec7f7b4eb1466100d59aaea8855d770af54327 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sat, 8 Jul 2023 13:10:24 +0200
+Subject: [PATCH] Fix build on Linux 6.4
+
+Needed after upstream changes in kernel 6.4:
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/diff/include/linux/device/class.h?id=1aaba11da9aa
+
+Upstream: https://github.com/nicupavel/emlog/pull/15
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ emlog.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/emlog.c b/emlog.c
+index 4462466..2ead738 100644
+--- a/emlog.c
++++ b/emlog.c
+@@ -500,7 +500,11 @@ static int __init emlog_init(void)
+ 
+     pr_info("version %s running, major is %u, MINOR is %u, max size %d K.\n", EMLOG_VERSION, (unsigned)MAJOR(emlog_dev_type), (unsigned)MINOR(emlog_dev_type), emlog_max_size);
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
+     emlog_class = class_create(THIS_MODULE, DEVICE_NAME);
++#else
++    emlog_class = class_create(DEVICE_NAME);
++#endif
+     if (emlog_class == NULL) {
+         pr_err("Can not class_create.\n");
+         ret_val = -4; goto emlog_init_error;
+-- 
+2.39.2
+
