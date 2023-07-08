@@ -44,6 +44,13 @@ GD_DEPENDENCIES += jpeg
 GD_CONF_OPTS += --with-jpeg
 endif
 
+ifeq ($(BR2_PACKAGE_LIBHEIF),y)
+GD_DEPENDENCIES += libheif
+GD_CONF_OPTS += --with-heif
+else
+GD_CONF_OPTS += --without-heif
+endif
+
 ifeq ($(BR2_PACKAGE_LIBPNG),y)
 GD_DEPENDENCIES += libpng
 GD_CONF_OPTS += --with-png
