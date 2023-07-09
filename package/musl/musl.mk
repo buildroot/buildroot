@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-MUSL_VERSION = 1.2.3
-MUSL_SITE = http://www.musl-libc.org/releases
+MUSL_VERSION = 1.2.4
+MUSL_SITE = http://musl.libc.org/releases
 MUSL_LICENSE = MIT
 MUSL_LICENSE_FILES = COPYRIGHT
 MUSL_CPE_ID_VENDOR = musl-libc
