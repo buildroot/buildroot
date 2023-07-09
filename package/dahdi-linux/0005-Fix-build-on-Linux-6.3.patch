@@ -1,4 +1,4 @@
-From d51c10dae5a06709983b929fc6f9fb18eec41951 Mon Sep 17 00:00:00 2001
+From c4969d756eac041758856b99a1084158c06beb7e Mon Sep 17 00:00:00 2001
 From: Brahmajit Das <brahmajit.xyz@gmail.com>
 Date: Thu, 22 Jun 2023 15:52:18 +0000
 Subject: [PATCH] drivers/dahdi: fix build with clang-16
@@ -31,15 +31,16 @@ Signed-off-by: Brahmajit Das <brahmajit.xyz@gmail.com>
 
 Upstream: https://github.com/asterisk/dahdi-linux/pull/21
 
-Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Bernd: updated patch for compatibility with kernel < 6.3]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
- drivers/dahdi/dahdi-sysfs.c    | 8 ++++----
- drivers/dahdi/wctc4xxp/base.c  | 2 +-
- drivers/dahdi/xpp/xbus-sysfs.c | 2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/dahdi/dahdi-sysfs.c    | 12 ++++++++++--
+ drivers/dahdi/wctc4xxp/base.c  |  2 +-
+ drivers/dahdi/xpp/xbus-sysfs.c |  4 ++++
+ 3 files changed, 15 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/dahdi/dahdi-sysfs.c b/drivers/dahdi/dahdi-sysfs.c
-index ca29ddba..0c5bd982 100644
+index ca29ddba..38236929 100644
 --- a/drivers/dahdi/dahdi-sysfs.c
 +++ b/drivers/dahdi/dahdi-sysfs.c
 @@ -47,7 +47,7 @@ static int span_match(struct device *dev, struct device_driver *driver)
@@ -51,16 +52,19 @@ index ca29ddba..0c5bd982 100644
  {
  	return dev_get_drvdata(dev);
  }
-@@ -68,7 +68,7 @@ static inline struct dahdi_span *dev_to_span(struct device *dev)
+@@ -68,7 +68,11 @@ static inline struct dahdi_span *dev_to_span(struct device *dev)
  			return err;				\
  	} while (0)
  
--static int span_uevent(struct device *dev, struct kobj_uevent_env *kenv)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 3, 0)
+ static int span_uevent(struct device *dev, struct kobj_uevent_env *kenv)
++#else
 +static int span_uevent(const struct device *dev, struct kobj_uevent_env *kenv)
++#endif
  {
  	struct dahdi_span *span;
  
-@@ -415,7 +415,7 @@ static struct {
+@@ -415,7 +419,7 @@ static struct {
  	unsigned int clean_chardev:1;
  } should_cleanup;
  
@@ -69,12 +73,15 @@ index ca29ddba..0c5bd982 100644
  {
  	return container_of(dev, struct dahdi_device, dev);
  }
-@@ -438,7 +438,7 @@ static inline struct dahdi_device *to_ddev(struct device *dev)
+@@ -438,7 +442,11 @@ static inline struct dahdi_device *to_ddev(struct device *dev)
  			return err;				\
  	} while (0)
  
--static int device_uevent(struct device *dev, struct kobj_uevent_env *kenv)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 3, 0)
+ static int device_uevent(struct device *dev, struct kobj_uevent_env *kenv)
++#else
 +static int device_uevent(const struct device *dev, struct kobj_uevent_env *kenv)
++#endif
  {
  	struct dahdi_device *ddev;
  
@@ -92,15 +99,18 @@ index ec6fc436..db70ea7e 100644
  #	ifdef HAVE_NET_DEVICE_OPS
  	netdev->netdev_ops = &wctc4xxp_netdev_ops;
 diff --git a/drivers/dahdi/xpp/xbus-sysfs.c b/drivers/dahdi/xpp/xbus-sysfs.c
-index d8c11dc3..29ad3619 100644
+index d8c11dc3..11b3ed3e 100644
 --- a/drivers/dahdi/xpp/xbus-sysfs.c
 +++ b/drivers/dahdi/xpp/xbus-sysfs.c
-@@ -418,7 +418,7 @@ static int astribank_match(struct device *dev, struct device_driver *driver)
+@@ -418,7 +418,11 @@ static int astribank_match(struct device *dev, struct device_driver *driver)
  			return err;				\
  	} while (0)
  
--static int astribank_uevent(struct device *dev, struct kobj_uevent_env *kenv)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 3, 0)
+ static int astribank_uevent(struct device *dev, struct kobj_uevent_env *kenv)
++#else
 +static int astribank_uevent(const struct device *dev, struct kobj_uevent_env *kenv)
++#endif
  {
  	xbus_t *xbus;
  	extern char *initdir;
