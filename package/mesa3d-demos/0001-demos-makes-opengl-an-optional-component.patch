@@ -9,6 +9,8 @@ This patch is a port of [1] for the new meson build system.
 https://git.busybox.net/buildroot/tree/package/mesa3d-demos/0001-demos-makes-opengl-an-optional-component.patch?h=2022.08
 
 Signed-off-by: Julien Olivain <ju.o@free.fr>
+[Bernd: rebased for version 9.0.0]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  meson.build         | 19 ++++++++++++-------
  meson_options.txt   |  1 +
@@ -20,7 +22,7 @@ diff --git a/meson.build b/meson.build
 index e1968fab..a15699d6 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -38,7 +38,10 @@ add_project_arguments(
+@@ -39,7 +39,10 @@ add_project_arguments(
  dep_m = cc.find_library('m', required : false)
  dep_winmm = cc.find_library('winmm', required : false)
  
@@ -30,30 +32,34 @@ index e1968fab..a15699d6 100644
 +  add_project_arguments('-DEGL_NO_X11=1', language: 'c')
 +endif
  
+ dep_epoll = dependency('epoll-shim', required : false)
  dep_gles1 = dependency('glesv1_cm', required : get_option('gles1'))
- dep_gles2 = dependency('glesv2', required : get_option('gles2'))
-@@ -75,13 +78,15 @@ endif
+@@ -87,15 +87,17 @@
  
  dep_threads = dependency('threads')
  
--dep_glu = dependency('glu', required : dep_x11.found())
--if not dep_glu.found()
+-dep_glu = dependency('glu', required : false)
+-# GLU is part of OpenGL.Framework
+-if not dep_glu.found() and host_machine.system() != 'darwin'
 -  _glu_name = 'GLU'
 -  if host_machine.system() == 'windows'
 -    _glu_name = 'glu32'
 +if dep_gl.found()
-+  dep_glu = dependency('glu', required : dep_x11.found())
-+  if not dep_glu.found()
++  dep_glu = dependency('glu', required : false)
++  # GLU is part of OpenGL.Framework
++  if not dep_glu.found() and host_machine.system() != 'darwin'
 +    _glu_name = 'GLU'
 +    if host_machine.system() == 'windows'
 +      _glu_name = 'glu32'
 +    endif
-+    dep_glu = cc.find_library(_glu_name, has_headers: 'GL/glu.h')
++    dep_glu = cc.find_library(_glu_name, has_headers: 'GL/glu.h',
++      required : dep_x11.found())
    endif
--  dep_glu = cc.find_library(_glu_name, has_headers: 'GL/glu.h')
+-  dep_glu = cc.find_library(_glu_name, has_headers: 'GL/glu.h',
+-    required : dep_x11.found())
  endif
  
- # GBM is needed for EGL on KMS
+ dep_glx = dependency('glx', required: false, disabler : true)
 diff --git a/meson_options.txt b/meson_options.txt
 index ddadd2e3..f5405698 100644
 --- a/meson_options.txt
@@ -64,7 +70,7 @@ index ddadd2e3..f5405698 100644
 +option('gl',                     type : 'feature')
  option('gles1',                  type : 'feature')
  option('gles2',                  type : 'feature')
- option('osmesa',                 type : 'feature')
+ option('glut',                   type : 'feature')
 diff --git a/src/egl/meson.build b/src/egl/meson.build
 index d1846921..42bf8ecd 100644
 --- a/src/egl/meson.build
