@@ -1,0 +1,38 @@
+From 7a63017b3c873a59e3482322b7824160a8c8ca67 Mon Sep 17 00:00:00 2001
+11;rgb:f6f6/f5f5/f4f4From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 9 Jul 2023 10:55:03 +0200
+Subject: [PATCH] Fix yescrypt support
+
+Fixes build error:
+newusers.c: In function 'update_passwd':
+newusers.c:433:21: error: 'sflg' undeclared (first use in this function); did you mean 'rflg'?
+
+introduced by
+https://github.com/shadow-maint/shadow/commit/5cd04d03f94622c12220d4a6352824af081b8531
+which forgot to define sflg for these configure options:
+
+--without-sha-crypt --without-bcrypt --with-yescrypt
+
+Upstream: https://github.com/shadow-maint/shadow/commit/29da702491eea314b915ea9c7a83c9af80cf5797
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/newusers.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/newusers.c b/src/newusers.c
+index 7cb8434b..08f79798 100644
+--- a/src/newusers.c
++++ b/src/newusers.c
+@@ -60,7 +60,7 @@ static bool rflg = false;	/* create a system account */
+ #ifndef USE_PAM
+ static /*@null@*//*@observer@*/char *crypt_method = NULL;
+ #define cflg (NULL != crypt_method)
+-#if defined(USE_SHA_CRYPT) || defined(USE_BCRYPT)
++#if defined(USE_SHA_CRYPT) || defined(USE_BCRYPT) || defined(USE_YESCRYPT)
+ static bool sflg = false;
+ #endif
+ #ifdef USE_SHA_CRYPT
+-- 
+2.39.2
+
