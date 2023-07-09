@@ -1,0 +1,69 @@
+From b393e59d7eb2951e2fb279fca1c4756ea165aeee Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 9 Jul 2023 17:14:31 +0200
+Subject: [PATCH] Fix build on Linux 6.4
+
+Needed after upstream changes in kernel 6.4:
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/diff/include/linux/device/class.h?id=1aaba11da9aa
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=48380368dec14859723b9e3fbd43e042638d9a76
+
+Upstream: https://github.com/asterisk/dahdi-linux/pull/22
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ drivers/dahdi/dahdi-sysfs-chan.c  | 4 ++++
+ drivers/dahdi/voicebus/voicebus.c | 4 ++++
+ drivers/dahdi/wctdm24xxp/base.c   | 4 ++++
+ 3 files changed, 12 insertions(+)
+
+diff --git a/drivers/dahdi/dahdi-sysfs-chan.c b/drivers/dahdi/dahdi-sysfs-chan.c
+index a91e6ed..b18b5f9 100644
+--- a/drivers/dahdi/dahdi-sysfs-chan.c
++++ b/drivers/dahdi/dahdi-sysfs-chan.c
+@@ -482,7 +482,11 @@ int __init dahdi_sysfs_chan_init(const struct file_operations *fops)
+ 	}
+ 	should_cleanup.channel_driver = 1;
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
+ 	dahdi_class = class_create(THIS_MODULE, "dahdi");
++#else
++	dahdi_class = class_create("dahdi");
++#endif
+ 	if (IS_ERR(dahdi_class)) {
+ 		res = PTR_ERR(dahdi_class);
+ 		dahdi_err("%s: class_create(dahi_chan) failed. Error: %d\n",
+diff --git a/drivers/dahdi/voicebus/voicebus.c b/drivers/dahdi/voicebus/voicebus.c
+index 8a1f7a6..d141aaf 100644
+--- a/drivers/dahdi/voicebus/voicebus.c
++++ b/drivers/dahdi/voicebus/voicebus.c
+@@ -1135,7 +1135,11 @@ static void vb_stop_txrx_processors(struct voicebus *vb)
+  */
+ void voicebus_stop(struct voicebus *vb)
+ {
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
+ 	static DEFINE_SEMAPHORE(stop);
++#else
++	static DEFINE_SEMAPHORE(stop, 1);
++#endif
+ 
+ 	down(&stop);
+ 
+diff --git a/drivers/dahdi/wctdm24xxp/base.c b/drivers/dahdi/wctdm24xxp/base.c
+index a28e249..4392b45 100644
+--- a/drivers/dahdi/wctdm24xxp/base.c
++++ b/drivers/dahdi/wctdm24xxp/base.c
+@@ -224,7 +224,11 @@ mod_hooksig(struct wctdm *wc, struct wctdm_module *mod, enum dahdi_rxsig rxsig)
+ }
+ 
+ struct wctdm *ifaces[WC_MAX_IFACES];
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
+ DEFINE_SEMAPHORE(ifacelock);
++#else
++DEFINE_SEMAPHORE(ifacelock, 1);
++#endif
+ 
+ static void wctdm_release(struct wctdm *wc);
+ 
+-- 
+2.39.2
+
