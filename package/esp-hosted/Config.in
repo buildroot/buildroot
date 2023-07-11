@@ -1,0 +1,29 @@
+comment "esp-hosted needs a Linux kernel to be built"
+	depends on !BR2_LINUX_KERNEL
+
+config BR2_PACKAGE_ESP_HOSTED
+	bool "esp-hosted"
+	depends on BR2_LINUX_KERNEL
+	help
+	  This package builds and installs the Linux kernel driver for
+	  the Esp32-* Linux Wi-Fi driver. It supports both SDIO and SPI
+	  busses that is selectable. It is compatible with recent Linux
+	  kernels (>= 5.4).
+
+if BR2_PACKAGE_ESP_HOSTED
+
+choice
+	prompt "HW interface"
+	default BR2_PACKAGE_ESP_HOSTED_SDIO
+	help
+	  Select which bus type esp is attached to
+
+config BR2_PACKAGE_ESP_HOSTED_SDIO
+	bool "SDIO"
+
+config BR2_PACKAGE_ESP_HOSTED_SPI
+	bool "SPI"
+
+endchoice
+
+endif
