@@ -1,6 +1,6 @@
 import os
 
-from infra.basetest import BRTest, BASIC_TOOLCHAIN_CONFIG
+from infra.basetest import BRTest
 
 
 class TestShadow(BRTest):
