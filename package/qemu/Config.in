@@ -106,6 +106,15 @@ config BR2_PACKAGE_QEMU_FDT
 	  Say 'y' here to have QEMU capable of constructing Device
 	  Trees, and passing them to the VMs.
 
+config BR2_PACKAGE_QEMU_TRACING
+	bool "Enable tracing"
+	help
+	  Say 'y' to enable the "log" tracing infrastructure in QEMU,
+	  used for debugging, profiling, and observing execution. For
+	  detailed documentation, see
+
+	  https://www.qemu.org/docs/master/devel/tracing.html
+
 endif # BR2_PACKAGE_QEMU_SYSTEM
 
 comment "systems emulation needs a toolchain w/ dynamic library"
