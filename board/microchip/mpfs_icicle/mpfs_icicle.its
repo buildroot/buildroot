@@ -1,0 +1,53 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Flattened Image Tree file for Icicle Kit
+ *
+ */
+
+/dts-v1/;
+
+/ {
+	description = "U-Boot fitImage for the MPFS";
+	address-cells = <1>;
+
+		images {
+			kernel {
+				description = "Linux kernel";
+				data = /incbin/("./Image");
+				type = "kernel";
+				arch = "riscv";
+				os = "linux";
+				compression = "none";
+				load = <0x80200000>;
+				entry = <0x80200000>;
+				hash-1 {
+					algo = "sha256";
+				};
+			};
+			base_fdt {
+				description = "Flattened Device Tree blob";
+				data = /incbin/("./mpfs-icicle-kit.dtb");
+				type = "flat_dt";
+				arch = "riscv";
+				compression = "none";
+				load = <0x8a000000>;
+				hash-1 {
+					algo = "sha256";
+				};
+			};
+		};
+
+		configurations {
+			default = "kernel_dtb";
+			kernel_dtb {
+				description = "1 Linux kernel, FDT blob";
+				kernel = "kernel";
+				fdt = "base_fdt";
+			};
+
+			base_dtb {
+				description = "Base FDT blob for MPFS Icicle board";
+				fdt = "base_fdt";
+			};
+		};
+};
