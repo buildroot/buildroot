@@ -525,6 +525,11 @@ def fixup_config(sysinfo, configfile):
         configlines.remove('BR2_TARGET_ROOTFS_F2FS_SIZE="100M"\n')
         configlines.append('BR2_TARGET_ROOTFS_F2FS_SIZE="%s"\n' % ROOTFS_SIZE)
 
+    if 'BR2_TARGET_ROOTFS_UBIFS=y\n' in configlines and \
+       'BR2_TARGET_ROOTFS_UBIFS_MAXLEBCNT=2048\n' in configlines:
+        configlines.remove('BR2_TARGET_ROOTFS_UBIFS_MAXLEBCNT=2048\n')
+        configlines.append('BR2_TARGET_ROOTFS_UBIFS_MAXLEBCNT=41610\n')
+
     if 'BR2_TARGET_S500_BOOTLOADER=y\n' in configlines and \
        'BR2_TARGET_S500_BOOTLOADER_BOARD=""\n' in configlines:
         configlines.remove('BR2_TARGET_S500_BOOTLOADER=y\n')
