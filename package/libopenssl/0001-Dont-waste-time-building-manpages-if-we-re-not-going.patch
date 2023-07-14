@@ -19,14 +19,14 @@ diff --git a/Configurations/unix-Makefile.tmpl b/Configurations/unix-Makefile.tm
 index 40cf2c3..777d9ca 100644
 --- a/Configurations/unix-Makefile.tmpl
 +++ b/Configurations/unix-Makefile.tmpl
-@@ -491,7 +491,7 @@ list-tests:
+@@ -546,7 +546,7 @@ list-tests:
  	@echo "Tests are not supported with your chosen Configure options"
  	@ : {- output_on() if !$disabled{tests}; "" -}
  
--install: install_sw install_ssldirs install_docs
-+install: install_sw install_ssldirs
+-install: install_sw install_ssldirs install_docs {- $disabled{fips} ? "" : "install_fips" -}
++install: install_sw install_ssldirs {- $disabled{fips} ? "" : "install_fips" -}
  
- uninstall: uninstall_docs uninstall_sw
+ uninstall: uninstall_docs uninstall_sw {- $disabled{fips} ? "" : "uninstall_fips" -}
  
 -- 
 2.16.3
