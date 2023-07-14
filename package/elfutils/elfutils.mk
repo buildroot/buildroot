@@ -66,6 +66,12 @@ ELFUTILS_DEPENDENCIES += argp-standalone
 ELFUTILS_CONF_OPTS += --disable-symbol-versioning
 endif
 
+ifeq ($(BR2_INSTALL_LIBSTDCPP),y)
+ELFUTILS_CONF_OPTS += --enable-demangler
+else
+ELFUTILS_CONF_OPTS += --disable-demangler
+endif
+
 ifeq ($(BR2_PACKAGE_BZIP2),y)
 ELFUTILS_DEPENDENCIES += bzip2
 ELFUTILS_CONF_OPTS += --with-bzlib
