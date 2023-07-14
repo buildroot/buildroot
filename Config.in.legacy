@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2023.08"
 
+config BR2_PACKAGE_TOVID
+	bool "tovid removed"
+	select BR2_LEGACY
+	help
+	  tovid was removed
+
 config BR2_PACKAGE_LIBASPLIB
 	bool "libasplib removed"
 	select BR2_LEGACY
