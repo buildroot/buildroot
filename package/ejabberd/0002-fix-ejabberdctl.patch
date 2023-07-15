@@ -6,6 +6,8 @@ Subject: [PATCH] fix ejabberdctl
 Change default values so ejabberdctl run commands as ejabberd user.
 
 Signed-off-by: Johan Oudinet <johan.oudinet@gmail.com>
+[Bernd: updated for version 23.04]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  ejabberdctl.template | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -14,7 +16,7 @@ diff --git a/ejabberdctl.template b/ejabberdctl.template
 index a940c3df7..5166e5a27 100755
 --- a/ejabberdctl.template
 +++ b/ejabberdctl.template
-@@ -15,7 +15,7 @@ SCRIPT_DIR=$(cd "${0%/*}" && pwd)
+@@ -17,7 +17,7 @@ SCRIPT_DIR=$(cd "${0%/*}" && pwd)
  ERL="{{erl}}"
  IEX="{{bindir}}/iex"
  EPMD="{{epmd}}"

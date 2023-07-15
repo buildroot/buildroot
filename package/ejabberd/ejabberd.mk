@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-EJABBERD_VERSION = 21.12
-EJABBERD_SOURCE = ejabberd-$(EJABBERD_VERSION).tgz
+EJABBERD_VERSION = 23.04
+EJABBERD_SOURCE = ejabberd-$(EJABBERD_VERSION).tar.gz
 EJABBERD_SITE = https://static.process-one.net/ejabberd/downloads/$(EJABBERD_VERSION)
 EJABBERD_LICENSE = GPL-2.0+ with OpenSSL exception
 EJABBERD_LICENSE_FILES = COPYING
@@ -40,7 +40,7 @@ EJABBERD_CONF_OPTS = \
 	--disable-erlang-version-check
 
 define EJABBERD_INSTALL_TARGET_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) DESTDIR=$(TARGET_DIR) install -C $(@D)
+	$(TARGET_MAKE_ENV) $(MAKE) DESTDIR=$(TARGET_DIR) all install -C $(@D)
 endef
 
 # Replace HOST_DIR prefix to /usr in environment variables of

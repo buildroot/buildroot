@@ -4,6 +4,8 @@ Date: Fri, 13 May 2022 14:22:37 +0200
 Subject: [PATCH] Makefile.in: do not download or compile dependencies
 
 Signed-off-by: Johan Oudinet <johan.oudinet@gmail.com>
+[Bernd: updated for version 23.04]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  Makefile.in | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
@@ -12,17 +14,17 @@ diff --git a/Makefile.in b/Makefile.in
 index ab0e9d967..6e54168a7 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -139,7 +139,7 @@ else
+@@ -155,7 +155,7 @@ else
  endif
  endif
  
--all: deps src
-+all: src
+-all: scripts deps src
++all: scripts src
  
  deps: $(DEPSDIR)/.got
  
-@@ -153,7 +153,7 @@ $(DEPSDIR)/.built: $(DEPSDIR)/.got
- 	$(CONFIGURE_DEPS)
+@@ -169,7 +169,7 @@ $(DEPSDIR)/.built: $(DEPSDIR)/.got
+ $(DEPSDIR)/.built: $(DEPSDIR)/.got
  	$(REBAR) compile && :> $(DEPSDIR)/.built
  
 -src: $(DEPSDIR)/.built
