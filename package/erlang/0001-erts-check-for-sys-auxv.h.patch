@@ -1,0 +1,44 @@
+From ede1e17794c2caf091e810bdfa49040c75f513eb Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sat, 15 Jul 2023 18:36:48 +0200
+Subject: [PATCH] erts: check for sys/auxv.h
+
+Upstream: https://github.com/erlang/otp/pull/7500
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ erts/configure.ac                     | 2 +-
+ erts/emulator/asmjit/core/cpuinfo.cpp | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/erts/configure.ac b/erts/configure.ac
+index a63d391fb3..9d3e338633 100644
+--- a/erts/configure.ac
++++ b/erts/configure.ac
+@@ -1655,7 +1655,7 @@ AC_CHECK_HEADERS(fcntl.h limits.h unistd.h syslog.h dlfcn.h ieeefp.h \
+                  sys/socket.h sys/sockio.h sys/socketio.h \
+                  net/errno.h malloc.h arpa/nameser.h libdlpi.h \
+ 		 pty.h util.h libutil.h utmp.h langinfo.h poll.h sdkddkver.h \
+-                 elf.h)
++                 elf.h sys/auxv.h)
+ 
+ AC_CHECK_MEMBERS([struct ifreq.ifr_hwaddr], [], [],
+ 	[#ifdef __WIN32__
+diff --git a/erts/emulator/asmjit/core/cpuinfo.cpp b/erts/emulator/asmjit/core/cpuinfo.cpp
+index fb2acfc09b..d8b72697ab 100644
+--- a/erts/emulator/asmjit/core/cpuinfo.cpp
++++ b/erts/emulator/asmjit/core/cpuinfo.cpp
+@@ -15,8 +15,10 @@
+ 
+ // Required by `getauxval()` on Linux.
+ #if defined(__linux__)
++#if defined(HAVE_SYS_AUXV_H)
+   #include <sys/auxv.h>
+ #endif
++#endif
+ 
+ //! Required to detect CPU and features on Apple platforms.
+ #if defined(__APPLE__)
+-- 
+2.39.2
+
