@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PIPEWIRE_VERSION = 0.3.65
+PIPEWIRE_VERSION = 0.3.74
 PIPEWIRE_SOURCE = pipewire-$(PIPEWIRE_VERSION).tar.bz2
 PIPEWIRE_SITE = https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/$(PIPEWIRE_VERSION)
 PIPEWIRE_LICENSE = MIT, LGPL-2.1+ (libspa-alsa), GPL-2.0 (libjackserver)
@@ -35,6 +35,8 @@ PIPEWIRE_CONF_OPTS += \
 	-Dlegacy-rtkit=false \
 	-Davb=disabled \
 	-Dlibcanberra=disabled \
+	-Dlibmysofa=disabled \
+	-Dlibffado=disabled \
 	-Dflatpak=disabled
 
 ifeq ($(BR2_PACKAGE_DBUS),y)
@@ -187,6 +189,13 @@ PIPEWIRE_CONF_OPTS += -Dpw-cat=enabled -Dsndfile=enabled
 PIPEWIRE_DEPENDENCIES += libsndfile
 else
 PIPEWIRE_CONF_OPTS += -Dpw-cat=disabled -Dsndfile=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_OPUS),y)
+PIPEWIRE_CONF_OPTS += -Dopus=enabled
+PIPEWIRE_DEPENDENCIES += opus
+else
+PIPEWIRE_CONF_OPTS += -Dopus=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_PULSEAUDIO),y)
