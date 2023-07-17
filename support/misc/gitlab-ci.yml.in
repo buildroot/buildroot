@@ -1,27 +1,36 @@
+stages:
+  - test
+
 before_script:
   - git config --global --add safe.directory ${CI_PROJECT_DIR}
 
 .check-check-package_base:
+    stage: test
     script:
         - python3 -m pytest -v utils/checkpackagelib/
 
 .check-check-symbol_base:
+    stage: test
     script:
         - python3 -m pytest -v utils/checksymbolslib/
 
 .check-DEVELOPERS_base:
+    stage: test
     script:
         - utils/get-developers -v
 
 .check-package_base:
+    stage: test
     script:
         - make check-package
 
 .check-symbol_base:
+    stage: test
     script:
         - utils/check-symbols
 
 .defconfig_check:
+    stage: test
     script:
         - DEFCONFIG_NAME=$(echo ${CI_JOB_NAME} | sed -e 's,_check$,,g')
         - echo "Configure Buildroot for ${DEFCONFIG_NAME}"
@@ -42,6 +51,7 @@ before_script:
       }
 
 .defconfig_base:
+    stage: test
     script:
         - DEFCONFIG_NAME=${CI_JOB_NAME}
         - OUTPUT_DIR=output
@@ -69,6 +79,7 @@ before_script:
             - runtime-test.log
 
 .runtime_test_base:
+    stage: test
     # Keep build directories so the rootfs can be an artifact of the job. The
     # runner will clean up those files for us.
     # Multiply every emulator timeout by 10 to avoid sporadic failures in
@@ -86,7 +97,7 @@ before_script:
             - test-output/*/images/*
 
 .test_pkg:
-    stage: build
+    stage: test
     script:
         - OUTPUT_DIR=${CI_JOB_NAME}
         - echo "Configure Buildroot for ${OUTPUT_DIR}"
