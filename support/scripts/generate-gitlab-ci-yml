@@ -132,6 +132,7 @@ gen_tests() {
     fi
 
     if ${do_runtime:-false}; then
+        printf 'runtime_test_download: { extends: .runtime_test_download }\n'
         printf '%s: { extends: .runtime_test_base }\n' "${runtimes[@]}"
     fi
 

@@ -1,4 +1,5 @@
 stages:
+  - download
   - test
 
 before_script:
@@ -77,6 +78,16 @@ before_script:
             - output/build/packages-file-list.txt
             - output/build/*/.config
             - runtime-test.log
+
+.runtime_test_download:
+    stage: download
+    # Keep test-dl directory so the downloaded files can be an artifact of
+    # the job passed to all jobs of next stages.
+    script: ./support/testing/run-tests -d test-dl/ --prepare-only
+    artifacts:
+        when: always
+        paths:
+            - test-dl/
 
 .runtime_test_base:
     stage: test
