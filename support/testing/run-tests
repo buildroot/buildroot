@@ -8,6 +8,8 @@ import nose2
 
 from infra.basetest import BRConfigTest
 
+import infra
+
 
 def main():
     parser = argparse.ArgumentParser(description='Run Buildroot tests')
@@ -23,6 +25,8 @@ def main():
                         help='output directory')
     parser.add_argument('-d', '--download',
                         help='download directory')
+    parser.add_argument('-p', '--prepare-only', action='store_true',
+                        help='download emulator builtin binaries')
     parser.add_argument('-k', '--keep',
                         help='keep build directories',
                         action='store_true')
@@ -59,6 +63,16 @@ def main():
             return 1
 
     BRConfigTest.downloaddir = os.path.abspath(args.download)
+
+    if args.prepare_only:
+        emulator_builtin_binaries = ["kernel-vexpress-5.10.7",
+                                     "vexpress-v2p-ca9-5.10.7.dtb",
+                                     "kernel-versatile-5.10.7",
+                                     "versatile-pb-5.10.7.dtb"]
+        print("Downloading emulator builtin binaries")
+        for binary in emulator_builtin_binaries:
+            infra.download(BRConfigTest.downloaddir, binary)
+        return 0
 
     if args.output is None:
         print("Missing output directory, please use -o/--output")
