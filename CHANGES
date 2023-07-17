@@ -1,3 +1,34 @@
+2023.05.1, released July 17th, 2023
+
+	Important / security related fixes.
+
+	Defconfigs: Chiliboard, mx53loco: fix build on hosts without
+	openssl development headers.
+	Nitrogen*: fix build on hosts without openssl or pylibfdt.
+	Hifive unleased: Bump OpenSBI to 1.2 to fix a build issue.
+	Raspberrypi: Handle DTB overlays for all variants
+
+	Updated/fixed packages: agentpp, alsa-plugins, assimp, audit,
+	bind, busybox, c-ares, check, cups, dav1d, dbus, fftw,
+	fluidsynth, freetype, fwts, ghostscript, gnupg2, gnuradio,
+	graphicsmagick, gupnp, haproxy, heimdal, hwdata, jhead, kodi,
+	libcap, libgcrypt, libgpg-error, libgtk3, libmdbx, libxslt,
+	mesa3d, mesa3d-demos, mpir, nodejs, php, pkgconf,
+	python-cryptography, python-dbus-fast, python-django,
+	python-docker, python-pyicu, python-requests, python3, qemu,
+	qt6, quickjs, rtl8192eu, samba4, sconeserver, syslog-ng,
+	taglib, tiff, wine, wireshark, xdriver_xf86-video-dummy,
+	xlib_libX11,
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#15643: ERROR: No hash found for linux-6.3.8.tar.xz
+	#15658: hifive_unleashed_defconfig: Linker errors in opensbi-0.9
+	#15661: mx53loco_defconfig: Dependency on OpenSSL missing
+	#15664: Can't compile mesa3d with v3d driver
+	#15673: PKGCONF_SITE in pkgconf.mk points to parked domain
+	#15682: pkgconf: no longer able to download source from...
+
 2023.05, released June 7th, 2023
 
 	Fixes all over the tree.
