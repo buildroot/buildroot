@@ -18,6 +18,8 @@ POUND_CONF_OPTS = \
 
 ifeq ($(BR2_PACKAGE_PCRE2),y)
 POUND_CONF_OPTS += --enable-pcreposix=pcre2
+POUND_CONF_ENV += \
+	ac_cv_path_PCRE2_CONFIG=$(STAGING_DIR)/usr/bin/pcre2-config
 POUND_DEPENDENCIES += pcre2
 else ifeq ($(BR2_PACKAGE_PCRE),y)
 POUND_CONF_OPTS += --enable-pcreposix=pcre1
