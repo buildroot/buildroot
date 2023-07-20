@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2023.08"
 
+config BR2_KERNEL_HEADERS_6_3
+	bool "kernel headers version 6.3.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 6.3.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
 config BR2_PACKAGE_TOVID
 	bool "tovid removed"
 	select BR2_LEGACY
