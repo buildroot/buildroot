@@ -436,6 +436,17 @@ config BR2_PACKAGE_UTIL_LINUX_VIPW
 	help
 	  Edit the password, group, shadow-password or shadow-group file
 
+config BR2_PACKAGE_UTIL_LINUX_WAITPID
+	bool "waitpid"
+	depends on BR2_USE_MMU # fork()
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_3 # pidfd_open
+	help
+	  Utility to wait for arbitrary processes
+
+comment "waitpid needs a toolchain w/ headers >= 5.3"
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_3
+
 config BR2_PACKAGE_UTIL_LINUX_WALL
 	bool "wall"
 	depends on BR2_USE_MMU # fork()
