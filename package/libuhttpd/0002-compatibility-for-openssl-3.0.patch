@@ -1,0 +1,31 @@
+From d93e6426ec1d8c019bd302e4599f3b91ba95fb3b Mon Sep 17 00:00:00 2001
+From: Jianhui Zhao <zhaojh329@gmail.com>
+Date: Fri, 29 Apr 2022 23:47:31 +0800
+Subject: [PATCH] compatibility for openssl >= 3.0
+
+Signed-off-by: Jianhui Zhao <zhaojh329@gmail.com>
+
+Upstream: https://github.com/zhaojh329/ssl/commit/d93e6426ec1d8c019bd302e4599f3b91ba95fb3b
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ openssl.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/openssl.c b/openssl.c
+index 278bab5..2169db1 100644
+--- a/src/ssl/openssl.c
++++ b/src/ssl/openssl.c
+@@ -139,8 +139,11 @@ const char *ssl_last_error_string(char *buf, int len)
+ 
+     if (ssl_err_code == SSL_ERROR_SSL) {
+         int used;
+-
++#if OPENSSL_VERSION_MAJOR < 3
+         ssl_err_code = ERR_peek_error_line_data(&file, &line, &data, &flags);
++#else
++        ssl_err_code = ERR_peek_error_all(&file, &line, NULL, &data, &flags);
++#endif
+         ERR_error_string_n(ssl_err_code, buf, len);
+ 
+         used = strlen(buf);
