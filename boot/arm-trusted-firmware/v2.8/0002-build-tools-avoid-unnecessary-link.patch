@@ -1,0 +1,77 @@
+From aa57ce632c629fe72ff417e261e0f5bfd8db6bab Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@arm.com>
+Date: Tue, 4 Jul 2023 16:14:02 +0200
+Subject: [PATCH] build(tools): avoid unnecessary link
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+In their respective makefiles, cert_create, encrypt_fw and fiptool
+depend on the --openssl phony target as a prerequisite. This forces
+those tools to be re-linked each time.
+
+Move the dependencies on the --openssl target from the tools to their
+makefiles all targets, to avoid unnecessary linking while preserving the
+OpenSSL version printing done in the --openssl targets when in debug.
+
+Fixes: cf2dd17ddda2 ("refactor(security): add OpenSSL 1.x compatibility")
+Signed-off-by: Vincent Stehlé <vincent.stehle@arm.com>
+Change-Id: I98a3ab30f36dffc253cecaaf3a57d2712522135d
+Upstream: https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/commit/?id=aa57ce632c629fe72ff417e261e0f5bfd8db6bab
+---
+ tools/cert_create/Makefile | 4 ++--
+ tools/encrypt_fw/Makefile  | 4 ++--
+ tools/fiptool/Makefile     | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/tools/cert_create/Makefile b/tools/cert_create/Makefile
+index 042e844626..b911d19d2b 100644
+--- a/tools/cert_create/Makefile
++++ b/tools/cert_create/Makefile
+@@ -85,9 +85,9 @@ HOSTCC ?= gcc
+ 
+ .PHONY: all clean realclean --openssl
+ 
+-all: ${BINARY}
++all: --openssl ${BINARY}
+ 
+-${BINARY}: --openssl ${OBJECTS} Makefile
++${BINARY}: ${OBJECTS} Makefile
+ 	@echo "  HOSTLD  $@"
+ 	@echo 'const char build_msg[] = "Built : "__TIME__", "__DATE__; \
+                 const char platform_msg[] = "${PLAT_MSG}";' | \
+diff --git a/tools/encrypt_fw/Makefile b/tools/encrypt_fw/Makefile
+index 2939b142be..924e5febab 100644
+--- a/tools/encrypt_fw/Makefile
++++ b/tools/encrypt_fw/Makefile
+@@ -65,9 +65,9 @@ HOSTCC ?= gcc
+ 
+ .PHONY: all clean realclean --openssl
+ 
+-all: ${BINARY}
++all: --openssl ${BINARY}
+ 
+-${BINARY}: --openssl ${OBJECTS} Makefile
++${BINARY}: ${OBJECTS} Makefile
+ 	@echo "  HOSTLD  $@"
+ 	@echo 'const char build_msg[] = "Built : "__TIME__", "__DATE__;' | \
+                 ${HOSTCC} -c ${HOSTCCFLAGS} -xc - -o src/build_msg.o
+diff --git a/tools/fiptool/Makefile b/tools/fiptool/Makefile
+index 2ebee33931..4bdebd9235 100644
+--- a/tools/fiptool/Makefile
++++ b/tools/fiptool/Makefile
+@@ -68,9 +68,9 @@ DEPS := $(patsubst %.o,%.d,$(OBJECTS))
+ 
+ .PHONY: all clean distclean --openssl
+ 
+-all: ${PROJECT}
++all: --openssl ${PROJECT}
+ 
+-${PROJECT}: --openssl ${OBJECTS} Makefile
++${PROJECT}: ${OBJECTS} Makefile
+ 	@echo "  HOSTLD  $@"
+ 	${Q}${HOSTCC} ${OBJECTS} -o $@ ${LDLIBS}
+ 	@${ECHO_BLANK_LINE}
+-- 
+2.25.1
+
