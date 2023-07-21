@@ -108,6 +108,21 @@ comment "QEMU SBSA depends on ATF not using EDK2 as BL33"
 
 endchoice
 
+config BR2_TARGET_EDK2_OVMF_DEBUG_ON_SERIAL
+	bool "OVMF Debug on Serial"
+	depends on BR2_ENABLE_DEBUG
+	depends on BR2_TARGET_EDK2_PLATFORM_OVMF_I386 || \
+		BR2_TARGET_EDK2_PLATFORM_OVMF_X64
+	help
+	  When EDK2 OVMF is built with debug, messages are printed to
+	  IO port 0x402. Those messages are not shown in the normal
+	  Qemu emulated serial port. Enabling this option will print
+	  debug messages on the emulated serial port, potentially
+	  mixing messages with UEFI serial console output.
+
+	  See OVMF README:
+	  https://github.com/tianocore/edk2/blob/master/OvmfPkg/README
+
 config BR2_TARGET_EDK2_FD_NAME
 	string
 	default "OVMF" if BR2_TARGET_EDK2_PLATFORM_OVMF_I386

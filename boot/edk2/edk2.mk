@@ -16,8 +16,15 @@ EDK2_INSTALL_IMAGES = YES
 
 ifeq ($(BR2_ENABLE_DEBUG),y)
 EDK2_BUILD_TYPE = DEBUG
+ifeq ($(BR2_TARGET_EDK2_OVMF_DEBUG_ON_SERIAL),y)
+# DEBUG_ON_SERIAL_PORT is only tested to be set, so don't disable it, as
+# it would still be set.
+EDK2_BUILD_OPTS += -DDEBUG_ON_SERIAL_PORT=TRUE
+endif
 else
 EDK2_BUILD_TYPE = RELEASE
+# DEBUG_ON_SERIAL_PORT is only valid in debug builds, so useless to set
+# it (enabled or disabled) on a relase build.
 endif
 
 # Build system notes.
