@@ -1,0 +1,43 @@
+From 847a7b744e31b9f57d2a3de495187db1dc0ee6d7 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Fri, 21 Jul 2023 19:30:40 +0200
+Subject: [PATCH] Revert "Fix -static builds"
+
+This reverts commit cfd7225fbb9507b2e443a494459bdaab5236d29d.
+
+Upstream: https://github.com/openssl/openssl/issues/14574#issuecomment-817209126
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ Configure | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/Configure b/Configure
+index 2c17f4186b..94cab4c3c4 100755
+--- a/Configure
++++ b/Configure
+@@ -1438,10 +1438,6 @@ foreach (keys %useradd) {
+ # At this point, we can forget everything about %user and %useradd,
+ # because it's now all been merged into the corresponding $config entry
+ 
+-if (grep { $_ =~ /(?:^|\s)-static(?:\s|$)/ } @{$config{LDFLAGS}}) {
+-    disable('static', 'pic', 'threads');
+-}
+-
+ # Allow overriding the build file name
+ $config{build_file} = env('BUILDFILE') || $target{build_file} || "Makefile";
+ 
+@@ -1728,6 +1724,10 @@ if ($strict_warnings)
+                 }
+         }
+ 
++if (grep { $_ =~ /(?:^|\s)-static(?:\s|$)/ } @{$config{LDFLAGS}}) {
++    disable('static', 'pic', 'threads');
++}
++
+ $config{CFLAGS} = [ map { $_ eq '--ossl-strict-warnings'
+                               ? @strict_warnings_collection
+                               : ( $_ ) }
+-- 
+2.39.2
+
