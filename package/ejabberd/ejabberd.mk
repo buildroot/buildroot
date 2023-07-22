@@ -5,7 +5,6 @@
 ################################################################################
 
 EJABBERD_VERSION = 23.04
-EJABBERD_SOURCE = ejabberd-$(EJABBERD_VERSION).tar.gz
 EJABBERD_SITE = https://static.process-one.net/ejabberd/downloads/$(EJABBERD_VERSION)
 EJABBERD_LICENSE = GPL-2.0+ with OpenSSL exception
 EJABBERD_LICENSE_FILES = COPYING
