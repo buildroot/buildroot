@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BITWISE_VERSION = 0.43
+BITWISE_VERSION = 0.50
 BITWISE_SITE = https://github.com/mellowcandle/bitwise/releases/download/v$(BITWISE_VERSION)
 BITWISE_SOURCE = bitwise-v$(BITWISE_VERSION).tar.gz
 BITWISE_DEPENDENCIES = ncurses readline
