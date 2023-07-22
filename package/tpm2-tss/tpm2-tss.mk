@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TPM2_TSS_VERSION = 3.1.0
+TPM2_TSS_VERSION = 3.2.2
 TPM2_TSS_SITE = https://github.com/tpm2-software/tpm2-tss/releases/download/$(TPM2_TSS_VERSION)
 TPM2_TSS_LICENSE = BSD-2-Clause
 TPM2_TSS_LICENSE_FILES = LICENSE
@@ -26,7 +26,8 @@ TPM2_TSS_CONF_OPTS = \
 	ac_cv_prog_result_setfacl=yes \
 	ac_cv_prog_systemd_sysusers=no \
 	ac_cv_prog_systemd_tmpfiles=no \
-	ac_cv_prog_result_useradd=yes \
+	ac_cv_prog_useradd=yes \
+	ac_cv_prog_groupadd=yes \
 	--with-crypto=ossl \
 	--disable-doxygen-doc \
 	--disable-defaultflags
