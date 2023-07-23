@@ -13,7 +13,6 @@ FLUENT_BIT_CPE_ID_PRODUCT = fluent_bit
 FLUENT_BIT_DEPENDENCIES = host-bison host-flex libyaml openssl
 
 FLUENT_BIT_CFLAGS = $(TARGET_CFLAGS)
-FLUENT_BIT_CXXFLAGS = $(TARGET_CXXFLAGS)
 
 FLUENT_BIT_CONF_OPTS += \
 	-DFLB_DEBUG=No \
@@ -49,13 +48,11 @@ FLUENT_BIT_CONF_OPTS += \
 # Fix multiple definition of `mk_tls_*'.
 # https://github.com/fluent/fluent-bit/issues/5537
 FLUENT_BIT_CFLAGS += -fcommon
-FLUENT_BIT_CXXFLAGS += -fcommon
 
 # Undefining _FILE_OFFSET_BITS here because of a "bug" with glibc fts.h
 # large file support.
 # https://bugzilla.redhat.com/show_bug.cgi?id=574992
 FLUENT_BIT_CFLAGS += -U_FILE_OFFSET_BITS
-FLUENT_BIT_CXXFLAGS += -U_FILE_OFFSET_BITS
 
 ifeq ($(BR2_PACKAGE_LIBEXECINFO),y)
 FLUENT_BIT_DEPENDENCIES += libexecinfo
@@ -74,8 +71,7 @@ endif
 
 FLUENT_BIT_CONF_OPTS += \
 	-DCMAKE_EXE_LINKER_FLAGS="$(FLUENT_BIT_LDFLAGS)" \
-	-DCMAKE_C_FLAGS="$(FLUENT_BIT_CFLAGS)" \
-	-DCMAKE_CXX_FLAGS="$(FLUENT_BIT_CXXFLAGS)"
+	-DCMAKE_C_FLAGS="$(FLUENT_BIT_CFLAGS)"
 
 define FLUENT_BIT_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 0755 package/fluent-bit/S99fluent-bit \
