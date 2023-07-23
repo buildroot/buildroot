@@ -1,0 +1,62 @@
+From 4f8eb7bb5a39d83374806928b7a5b622136ef055 Mon Sep 17 00:00:00 2001
+From: Thomas Devoogdt <thomas@devoogdt.com>
+Date: Fri, 28 Apr 2023 10:25:16 +0200
+Subject: [PATCH] build: use the system provided LuaJIT if found
+
+e.g. buildroot has logic to build luajit,
+so if pkg_check_modules can find a suitable version,
+then use that one if -DFLB_PREFER_SYSTEM_LIBS=Yes.
+
+Upstream: https://github.com/fluent/fluent-bit/pull/7286
+Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
+---
+ CMakeLists.txt     | 12 +++++++++++-
+ src/CMakeLists.txt |  2 +-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9af783c79..0601b7c18 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -123,6 +123,7 @@ option(FLB_TESTS_INTERNAL_FUZZ "Enable internal fuzz tests"    No)
+ option(FLB_TESTS_OSSFUZZ       "Enable OSS-Fuzz build"         No)
+ option(FLB_MTRACE              "Enable mtrace support"         No)
+ option(FLB_POSIX_TLS           "Force POSIX thread storage"    No)
++option(FLB_PREFER_SYSTEM_LIBS  "Prefer system installed libraries" No)
+ option(FLB_INOTIFY             "Enable inotify support"       Yes)
+ option(FLB_SQLDB               "Enable SQL embedded DB"       Yes)
+ option(FLB_HTTP_SERVER         "Enable HTTP Server"           Yes)
+@@ -1003,7 +1004,16 @@ endif()
+ # LuaJIT (Scripting Support)
+ # ==========================
+ if(FLB_LUAJIT)
+-  include(cmake/luajit.cmake)
++  if(FLB_PREFER_SYSTEM_LIBS)
++    find_package(PkgConfig)
++    pkg_check_modules(LUAJIT luajit>=2.1.0)
++  endif()
++  if(LUAJIT_FOUND)
++    include_directories(${LUAJIT_INCLUDE_DIRS})
++  else()
++    include(cmake/luajit.cmake)
++    set(LUAJIT_LIBRARIES "libluajit")
++  endif()
+   FLB_DEFINITION(FLB_HAVE_LUAJIT)
+ endif()
+ 
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 06a206dd4..8b66ddd22 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -220,7 +220,7 @@ endif()
+ if(FLB_LUAJIT)
+   set(extra_libs
+     ${extra_libs}
+-    "libluajit")
++    ${LUAJIT_LIBRARIES})
+ endif()
+ 
+ if(FLB_SQLDB)
+-- 
+2.34.1
+
