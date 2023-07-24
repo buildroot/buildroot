@@ -13,15 +13,21 @@ config BR2_PACKAGE_FLUENT_BIT
 
 if BR2_PACKAGE_FLUENT_BIT
 
+config BR2_PACKAGE_FLUENT_BIT_WASM_ARCH
+	string
+	default "AARCH64"    if BR2_aarch64 || BR2_aarch64be
+	default "ARC"        if BR2_arcle || BR2_arceb
+	default "ARM"        if BR2_arm || BR2_armeb
+	default "MIPS"       if BR2_mips || BR2_mipsel || BR2_mips64 || BR2_mips64el
+	default "RISCV32"    if BR2_riscv && BR2_RISCV_32
+	default "RISCV64"    if BR2_riscv && BR2_RISCV_64
+	default "X86_32"     if BR2_i386
+	default "X86_64"     if BR2_x86_64
+	default "XTENSA"     if BR2_xtensa
+
 config BR2_PACKAGE_FLUENT_BIT_WASM_ARCH_SUPPORTS
 	bool
-	# see lib/wasm-micro-runtime-WAMR-1.1.1/README.md#supported-architectures-and-platforms
-	default y if BR2_arc
-	default y if BR2_arm || BR2_armeb
-	default y if BR2_aarch64 || BR2_aarch64_be
-	default y if BR2_i386 || BR2_x86_64
-	default y if BR2_RISCV_64
-	default y if BR2_xtensa
+	default y if BR2_PACKAGE_FLUENT_BIT_WASM_ARCH != ""
 
 config BR2_PACKAGE_FLUENT_BIT_WASM
 	bool "wasm runtime support"

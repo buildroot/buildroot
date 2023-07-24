@@ -23,7 +23,17 @@ FLUENT_BIT_CONF_OPTS += \
 	-DFLB_BACKTRACE=No
 
 ifeq ($(BR2_PACKAGE_FLUENT_BIT_WASM),y)
-FLUENT_BIT_CONF_OPTS += -DFLB_WASM=Yes
+FLUENT_BIT_WAMR_ARCH = $(call qstrip,$(BR2_PACKAGE_FLUENT_BIT_WASM_ARCH))
+
+# https://github.com/bytecodealliance/wasm-micro-runtime/issues/625
+# Fix unknown opcode 'ldc1', seen on mips32r2 and mips64r2.
+ifeq ($(FLUENT_BIT_WAMR_ARCH),MIPS)
+FLUENT_BIT_CONF_OPTS += \
+	-DWAMR_BUILD_INVOKE_NATIVE_GENERAL=1
+endif
+
+FLUENT_BIT_CONF_OPTS += -DFLB_WASM=Yes \
+	-DWAMR_BUILD_TARGET=$(FLUENT_BIT_WAMR_ARCH)
 else
 FLUENT_BIT_CONF_OPTS += -DFLB_WASM=No
 endif
