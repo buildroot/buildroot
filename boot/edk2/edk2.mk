@@ -19,7 +19,7 @@ EDK2_BUILD_TYPE = DEBUG
 ifeq ($(BR2_TARGET_EDK2_OVMF_DEBUG_ON_SERIAL),y)
 # DEBUG_ON_SERIAL_PORT is only tested to be set, so don't disable it, as
 # it would still be set.
-EDK2_BUILD_OPTS += -DDEBUG_ON_SERIAL_PORT=TRUE
+EDK2_BUILD_OPTS += -DDEBUG_ON_SERIAL_PORT
 endif
 else
 EDK2_BUILD_TYPE = RELEASE
