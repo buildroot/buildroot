@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IPERF3_VERSION = 3.13
+IPERF3_VERSION = 3.14
 IPERF3_SITE = https://downloads.es.net/pub/iperf
 IPERF3_SOURCE = iperf-$(IPERF3_VERSION).tar.gz
 IPERF3_LICENSE = BSD-3-Clause, BSD-2-Clause, MIT
