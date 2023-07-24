@@ -54,6 +54,18 @@ config BR2_TARGET_BAREBOX_CUSTOM_PATCH_DIR
 
 	  Most users may leave this empty
 
+config BR2_TARGET_BAREBOX_NEEDS_OPENSSL
+	bool "Barebox needs OpenSSL"
+	help
+	  Select this option if your Barebox board configuration
+	  requires OpenSSL to be available on the host.
+
+config BR2_TARGET_BAREBOX_NEEDS_LIBUSB
+	bool "Barebox needs LibUSB"
+	help
+	  Select this option if your Barebox board configuration
+	  requires libUSB to be available on the host.
+
 if BR2_TARGET_BAREBOX_CUSTOM_GIT
 
 config BR2_TARGET_BAREBOX_CUSTOM_GIT_REPO_URL
