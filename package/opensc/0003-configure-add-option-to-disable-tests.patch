@@ -1,0 +1,67 @@
+From 3c3ed2ecbf31d41b6e5406da55971b9d9eaa3388 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Mon, 24 Jul 2023 22:28:11 +0200
+Subject: [PATCH] configure: add option to disable tests
+
+Upstream: https://github.com/OpenSC/OpenSC/pull/2822
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ configure.ac    | 9 +++++++++
+ src/Makefile.am | 6 +++++-
+ 2 files changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 0a90445b..9b7543da 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -272,6 +272,13 @@ AC_ARG_ENABLE(
+ 	[enable_doc="no"]
+ )
+ 
++AC_ARG_ENABLE(
++	[tests],
++	[AS_HELP_STRING([--enable-tests],[enable tests @<:@enabled@:>@])],
++	,
++	[enable_tests="yes"]
++)
++
+ AC_ARG_ENABLE(
+ 	[dnie-ui],
+ 	[AS_HELP_STRING([--enable-dnie-ui],[enable use of external user interface program to request DNIe pin@<:@disabled@:>@])],
+@@ -1119,6 +1126,7 @@ AM_CONDITIONAL([ENABLE_NOTIFY], [test "${enable_notify}" = "yes"])
+ AM_CONDITIONAL([ENABLE_CRYPTOTOKENKIT], [test "${enable_cryptotokenkit}" = "yes"])
+ AM_CONDITIONAL([ENABLE_OPENCT], [test "${enable_openct}" = "yes"])
+ AM_CONDITIONAL([ENABLE_DOC], [test "${enable_doc}" = "yes"])
++AM_CONDITIONAL([ENABLE_TESTS], [test "${enable_tests}" = "yes"])
+ AM_CONDITIONAL([WIN32], [test "${WIN32}" = "yes"])
+ AM_CONDITIONAL([CYGWIN], [test "${CYGWIN}" = "yes"])
+ AM_CONDITIONAL([ENABLE_MINIDRIVER], [test "${enable_minidriver}" = "yes"])
+@@ -1213,6 +1221,7 @@ XSL stylesheets:         ${xslstylesheetsdir}
+ 
+ man support:             ${enable_man}
+ doc support:             ${enable_doc}
++tests:                   ${enable_tests}
+ thread locking support:  ${enable_thread_locking}
+ zlib support:            ${enable_zlib}
+ readline support:        ${enable_readline}
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 3ce465bf..bf71b61f 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -3,7 +3,11 @@ EXTRA_DIST = Makefile.mak
+ 
+ # Order IS important
+ SUBDIRS = common scconf ui pkcs15init sm \
+-		  libopensc pkcs11 tools minidriver tests
++		  libopensc pkcs11 tools minidriver
++
++if ENABLE_TESTS
++SUBDIRS += tests
++endif
+ 
+ if ENABLE_SM
+ SUBDIRS += smm
+-- 
+2.39.2
+
