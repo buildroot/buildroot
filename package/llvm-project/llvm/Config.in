@@ -57,6 +57,12 @@ config BR2_PACKAGE_LLVM_BPF
 	  Build BPF target. Select this option if you are going
 	  to install bcc on the target.
 
+config BR2_PACKAGE_LLVM_DUMP
+	bool "enable dump"
+	help
+	  Build LLVM with dump functions even when assertions are
+	  disabled.
+
 endif
 
 comment "llvm needs a toolchain w/ wchar, threads, C++, gcc >= 7, dynamic library, host gcc >= 7"

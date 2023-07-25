@@ -228,6 +228,13 @@ HOST_LLVM_CONF_OPTS += -DLLVM_ENABLE_RTTI=OFF
 LLVM_CONF_OPTS += -DLLVM_ENABLE_RTTI=OFF
 endif
 
+HOST_LLVM_CONF_OPTS += -DLLVM_ENABLE_DUMP=OFF
+ifeq ($(BR2_PACKAGE_LLVM_DUMP),y)
+LLVM_CONF_OPTS += -DLLVM_ENABLE_DUMP=ON
+else
+LLVM_CONF_OPTS += -DLLVM_ENABLE_DUMP=OFF
+endif
+
 # Compiler-rt not in the source tree.
 # llvm runtime libraries are not in the source tree.
 # Polly is not in the source tree.
