@@ -1,7 +1,7 @@
 config BR2_PACKAGE_WOLFSSL_ASM_SUPPORTS
 	bool
 	default y if BR2_aarch64
-	default y if BR2_arm || BR2_armeb
+	default y if (BR2_arm || BR2_armeb) && !BR2_ARM_CPU_ARMV4 # clz
 	default y if BR2_powerpc
 	default y if BR2_powerpc64 || BR2_powerpc64le
 	default y if BR2_mips64 && !BR2_MIPS_CPU_MIPS32R6
