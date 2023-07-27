@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_RPDS_PY
+	bool "python-rpds-py"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	help
+	  Python bindings to the Rust rpds crate for persistent
+	  data structures.
+
+	  https://github.com/crate-py/rpds
