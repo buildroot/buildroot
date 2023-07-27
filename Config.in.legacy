@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2023.08"
 
+config BR2_GCC_VERSION_10_X
+	bool "gcc 10.x support removed"
+	select BR2_LEGACY
+	help
+	  Support for gcc version 10.x has been removed. The current
+	  default version (12.x or later) has been selected instead.
+
 config BR2_KERNEL_HEADERS_6_3
 	bool "kernel headers version 6.3.x are no longer supported"
 	select BR2_LEGACY
