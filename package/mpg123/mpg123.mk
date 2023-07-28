@@ -13,6 +13,13 @@ MPG123_LICENSE_FILES = COPYING
 MPG123_CPE_ID_VENDOR = mpg123
 MPG123_DEPENDENCIES = host-pkgconf
 
+# mpg123 has some assembly function that is not present in Thumb mode:
+# Error: selected processor does not support `smull r3,ip,r2,r10' in Thumb mode
+# so, we desactivate Thumb mode
+ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
+MPG123_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -marm"
+endif
+
 MPG123_CPU = $(if $(BR2_SOFT_FLOAT),generic_nofpu,generic_fpu)
 
 ifeq ($(BR2_aarch64),y)
