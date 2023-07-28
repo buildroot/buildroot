@@ -1,0 +1,71 @@
+From 35bbc4d8155ed86ca7200e060dad98bdfbce684d Mon Sep 17 00:00:00 2001
+From: Stefano Babic <sbabic@denx.de>
+Date: Thu, 15 Jun 2023 16:54:46 +0200
+Subject: [PATCH] Revert "fw_setenv: fix bug when SPI flash write size !=
+ sector size"
+
+This reverts commit 44ecc1c216007272a6f99a104a71c9d410969d9e.
+
+mtd writesize was errouneously interpreted as maximum allowed size, but
+it is the minimum size. The patch raises performance issues because on
+NOR flashes single bytes are written.
+
+Signed-off-by: Stefano Babic <sbabic@denx.de>
+Upstream: https://github.com/sbabic/libubootenv/commit/9f17a00ee56dc5cfb1d9b51e6639d67b64cb3309
+Signed-off-by: Brandon Maier <brandon.maier@collins.com>
+---
+ src/uboot_env.c | 29 +++++++++--------------------
+ 1 file changed, 9 insertions(+), 20 deletions(-)
+
+diff --git a/src/uboot_env.c b/src/uboot_env.c
+index c5eefe7..76e2619 100644
+--- a/src/uboot_env.c
++++ b/src/uboot_env.c
+@@ -712,8 +712,6 @@ static int mtdwrite(struct uboot_flash_env *dev, void *data)
+ 		sectors = dev->envsectors ? dev->envsectors : 1;
+ 		buf = data;
+ 		while (count > 0) {
+-			int blockcount;
+-
+ 			erase.start = start;
+ 
+ 			skip = is_nand_badblock(dev, start);
+@@ -744,26 +742,17 @@ static int mtdwrite(struct uboot_flash_env *dev, void *data)
+ 				ret =-EIO;
+ 				goto devwrite_out;
+ 			}
+-
+-			blockcount = blocksize;
+-
+-			/* writesize can be different than the sector size. */
+-
+-			while (blockcount > 0) {
+-				if (lseek(dev->fd, start, SEEK_SET) < 0) {
+-					ret =-EIO;
+-					goto devwrite_out;
+-				}
+-				if (write(dev->fd, buf, dev->mtdinfo.writesize) != dev->mtdinfo.writesize) {
+-					ret =-EIO;
+-					goto devwrite_out;
+-				}
+-
+-				blockcount -= dev->mtdinfo.writesize;
+-				start += dev->mtdinfo.writesize;
+-				buf += dev->mtdinfo.writesize;
++			if (lseek(dev->fd, start, SEEK_SET) < 0) {
++				ret =-EIO;
++				goto devwrite_out;
++			}
++			if (write(dev->fd, buf, blocksize) != blocksize) {
++				ret =-EIO;
++				goto devwrite_out;
+ 			}
+ 			MTDLOCK(dev, &erase);
++			start += dev->sectorsize;
++			buf += blocksize;
+ 			count -= blocksize;
+ 			ret += blocksize;
+ 		}
+-- 
+2.41.0
+
