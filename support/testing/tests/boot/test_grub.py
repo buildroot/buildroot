@@ -61,7 +61,15 @@ class TestGrubi386EFI(infra.basetest.BRTest):
     def test_run(self):
         hda = os.path.join(self.builddir, "images", "disk.img")
         bios = os.path.join(self.builddir, "images", "OVMF.fd")
-        self.emulator.boot(arch="i386", options=["-bios", bios, "-hda", hda])
+        # In QEMU v5.1.0 up to v7.2.0, the CPU hotplug register block misbehaves.
+        # EDK2 hang if the bug is detected in Qemu after printing errors to IO port 0x402
+        # (requires BR2_TARGET_EDK2_OVMF_DEBUG_ON_SERIAL to see them)
+        # The Docker image used by the Buildroot gitlab-ci uses Qemu 5.2.0, the workaround
+        # can be removed as soon as the Docker image is updated to provided Qemu >= 8.0.0.
+        # https://github.com/tianocore/edk2/commit/bf5678b5802685e07583e3c7ec56d883cbdd5da3
+        # http://lists.busybox.net/pipermail/buildroot/2023-July/670825.html
+        qemu_fw_cfg = "name=opt/org.tianocore/X-Cpuhp-Bugcheck-Override,string=yes"
+        self.emulator.boot(arch="i386", options=["-bios", bios, "-hda", hda, "-fw_cfg", qemu_fw_cfg])
         self.emulator.login()
 
         cmd = "modprobe efivarfs"
@@ -104,7 +112,15 @@ class TestGrubX8664EFI(infra.basetest.BRTest):
     def test_run(self):
         hda = os.path.join(self.builddir, "images", "disk.img")
         bios = os.path.join(self.builddir, "images", "OVMF.fd")
-        self.emulator.boot(arch="x86_64", options=["-bios", bios, "-hda", hda])
+        # In QEMU v5.1.0 up to v7.2.0, the CPU hotplug register block misbehaves.
+        # EDK2 hang if the bug is detected in Qemu after printing errors to IO port 0x402
+        # (requires BR2_TARGET_EDK2_OVMF_DEBUG_ON_SERIAL to see them)
+        # The Docker image used by the Buildroot gitlab-ci uses Qemu 5.2.0, the workaround
+        # can be removed as soon as the Docker image is updated to provided Qemu >= 8.0.0.
+        # https://github.com/tianocore/edk2/commit/bf5678b5802685e07583e3c7ec56d883cbdd5da3
+        # http://lists.busybox.net/pipermail/buildroot/2023-July/670825.html
+        qemu_fw_cfg = "name=opt/org.tianocore/X-Cpuhp-Bugcheck-Override,string=yes"
+        self.emulator.boot(arch="x86_64", options=["-bios", bios, "-hda", hda, "-fw_cfg", qemu_fw_cfg])
         self.emulator.login()
 
         cmd = "modprobe efivarfs"
