@@ -1,0 +1,49 @@
+From ca01d2526917ec6e54b30472d3aedfd46d4ca585 Mon Sep 17 00:00:00 2001
+From: Stafford Horne <shorne@gmail.com>
+Date: Thu, 29 Sep 2022 15:32:39 +0100
+Subject: [PATCH] or1k: Only define TARGET_HAVE_TLS when HAVE_AS_TLS
+
+This was found when testing buildroot with linuxthreads enabled.  In
+this case, the build passes --disable-tls to the toolchain during
+configuration.  After building the OpenRISC toolchain it was still
+generating TLS code sequences and causing linker failures such as:
+
+ ..../or1k-buildroot-linux-uclibc-gcc -o gpsd-3.24/gpsctl .... -lusb-1.0 -lm -lrt -lnsl
+ ..../ld: ..../sysroot/usr/lib/libusb-1.0.so: undefined reference to `__tls_get_addr'
+
+This patch fixes this by disabling tls for the OpenRISC target when requested
+via --disable-tls.
+
+gcc/ChangeLog:
+
+	* config/or1k/or1k.c (TARGET_HAVE_TLS): Only define if
+	HAVE_AS_TLS is defined.
+
+Tested-by: Yann E. MORIN <yann.morin@orange.com>
+
+Upstream: https://gcc.gnu.org/git/?p=gcc.git;a=commit;h=ca01d2526917ec6e54b30472d3aedfd46d4ca585
+
+[Bernd: backported to 11.4.0]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ gcc/config/or1k/or1k.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/gcc/config/or1k/or1k.c b/gcc/config/or1k/or1k.c
+index da2f59062ba..0ce7b234417 100644
+--- a/gcc/config/or1k/or1k.c
++++ b/gcc/config/or1k/or1k.c
+@@ -2175,8 +2175,10 @@ or1k_output_mi_thunk (FILE *file, tree thunk_fndecl,
+ #undef  TARGET_LEGITIMATE_ADDRESS_P
+ #define TARGET_LEGITIMATE_ADDRESS_P or1k_legitimate_address_p
+ 
++#ifdef HAVE_AS_TLS
+ #undef  TARGET_HAVE_TLS
+ #define TARGET_HAVE_TLS true
++#endif
+ 
+ #undef  TARGET_HAVE_SPECULATION_SAFE_VALUE
+ #define TARGET_HAVE_SPECULATION_SAFE_VALUE speculation_safe_value_not_needed
+-- 
+2.39.3
+
