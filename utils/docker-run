@@ -2,8 +2,13 @@
 set -o errexit -o pipefail
 DIR=$(dirname "${0}")
 MAIN_DIR=$(readlink -f "${DIR}/..")
-# GIT_DIR to support workdirs/worktrees
-GIT_DIR="$(dirname "$(realpath "${MAIN_DIR}/.git/config")")"
+if [ -L "${MAIN_DIR}/.git/config" ]; then
+    # Support git-new-workdir
+    GIT_DIR="$(dirname "$(realpath "${MAIN_DIR}/.git/config")")"
+else
+    # Support git-worktree
+    GIT_DIR="$(cd "${MAIN_DIR}" && git rev-parse --no-flags --git-common-dir)"
+fi
 # shellcheck disable=SC2016
 IMAGE=$(grep ^image: "${MAIN_DIR}/.gitlab-ci.yml" | \
         sed -e 's,^image: ,,g' | sed -e 's,\$CI_REGISTRY,registry.gitlab.com,g')
@@ -13,9 +18,21 @@ declare -a docker_opts=(
     --rm
     --user "$(id -u):$(id -g)"
     --mount "type=bind,src=${MAIN_DIR},dst=${MAIN_DIR}"
-    --mount "type=bind,src=${GIT_DIR},dst=${GIT_DIR}"
     --workdir "${MAIN_DIR}"
 )
+
+# Empty GIT_DIR means that we are not in a workdir, *and* git is too old
+# to know about worktrees, so we're not in a worktree either. So it means
+# we're in the main git working copy, and thus we don't need to mount the
+# .git directory.
+if [ "${GIT_DIR}" ]; then
+    # GIT_DIR in the main working copy (when git supports worktrees) will
+    # be just '.git', but 'docker run' needs an absolute path. If it's an
+    # absolute path already (in a wordir), then that's a noop.
+    GIT_DIR="$(readlink -e "${GIT_DIR}")"
+    docker_opts+=( --mount "type=bind,src=${GIT_DIR},dst=${GIT_DIR}" )
+fi
+
 if tty -s; then
     docker_opts+=( -t )
 fi
