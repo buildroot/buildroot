@@ -1,0 +1,34 @@
+From c187efa907fd64ea2c7b7d699c5c97f9d5b79960 Mon Sep 17 00:00:00 2001
+From: fanquake <fanquake@gmail.com>
+Date: Thu, 9 Jun 2022 16:26:55 +0100
+Subject: [PATCH] refactor: add most of src/util to iwyu
+
+These files change infrequently, and not much header shuffling is required.
+
+We don't add everything in src/util/ yet, because IWYU makes some
+dubious suggestions, which I'm going to follow up with upstream.
+
+Upstream: https://github.com/bitcoin/bitcoin/commit/07f2c25d04c39a0074e1d9ee1b24b3e359c8153f
+
+[Bernd: backported relevant part from upstream commit to version 0.21.2
+        to fix build error with gcc 13.x]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/util/bip32.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/util/bip32.h b/src/util/bip32.h
+index 347e83db9..6ef051c48 100644
+--- a/src/util/bip32.h
++++ b/src/util/bip32.h
+@@ -6,6 +6,7 @@
+ #define BITCOIN_UTIL_BIP32_H
+ 
+ #include <attributes.h>
++#include <cstdint>
+ #include <string>
+ #include <vector>
+ 
+-- 
+2.39.2
+
