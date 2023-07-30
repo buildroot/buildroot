@@ -1,0 +1,32 @@
+From 8b1673044971cae84de7d34015230b9503f292f4 Mon Sep 17 00:00:00 2001
+From: Lukas Rusak <lorusak@gmail.com>
+Date: Tue, 27 Jun 2023 11:22:32 -0700
+Subject: [PATCH] CGUIColorButtonControl: use explicit cast to
+ UTILS::COLOR::Color when formatting
+
+Upstream: https://github.com/xbmc/xbmc/commit/c82006b575b78efbb3f5aff40a159b90f245ea9d
+Upstream: https://github.com/xbmc/xbmc/pull/23571
+
+Signed-off-by: Lukas Rusak <lorusak@gmail.com>
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ xbmc/guilib/GUIColorButtonControl.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/xbmc/guilib/GUIColorButtonControl.cpp b/xbmc/guilib/GUIColorButtonControl.cpp
+index 940834cb68..67597d7ab5 100644
+--- a/xbmc/guilib/GUIColorButtonControl.cpp
++++ b/xbmc/guilib/GUIColorButtonControl.cpp
+@@ -188,7 +188,8 @@ void CGUIColorButtonControl::RenderInfoText()
+ void CGUIColorButtonControl::ProcessInfoText(unsigned int currentTime)
+ {
+   CRect labelRenderRect = m_labelInfo.GetRenderRect();
+-  bool changed = m_labelInfo.SetText(StringUtils::Format("#{:08X}", m_imgBoxColor));
++  bool changed = m_labelInfo.SetText(
++      StringUtils::Format("#{:08X}", static_cast<UTILS::COLOR::Color>(m_imgBoxColor)));
+   // Set Label X position based on image mask control position
+   float textWidth = m_labelInfo.GetTextWidth() + 2 * m_labelInfo.GetLabelInfo().offsetX;
+   float textPosX = m_imgColorMask->GetXPosition() - textWidth;
+-- 
+2.39.2
+

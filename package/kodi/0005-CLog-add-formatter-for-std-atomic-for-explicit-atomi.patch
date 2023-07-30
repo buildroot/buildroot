@@ -1,0 +1,37 @@
+From 46f6d97f46254600bd34f77f335a475178d7aaa5 Mon Sep 17 00:00:00 2001
+From: Lukas Rusak <lorusak@gmail.com>
+Date: Tue, 27 Jun 2023 11:24:34 -0700
+Subject: [PATCH] CLog: add formatter for std::atomic for explicit atomic
+ conversion when using libfmt>=10
+
+Upstream: https://github.com/xbmc/xbmc/commit/26c164a28cfd18ceef7a1f2bbba5bf8a4a5a750c
+Upstream: https://github.com/xbmc/xbmc/pull/23571
+
+Signed-off-by: Lukas Rusak <lorusak@gmail.com>
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ xbmc/utils/log.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/xbmc/utils/log.h b/xbmc/utils/log.h
+index adf46905a8..1c42c888cb 100644
+--- a/xbmc/utils/log.h
++++ b/xbmc/utils/log.h
+@@ -48,6 +48,14 @@ class dist_sink;
+ 
+ #if FMT_VERSION >= 100000
+ using fmt::enums::format_as;
++
++namespace fmt
++{
++template<typename T, typename Char>
++struct formatter<std::atomic<T>, Char> : formatter<T, Char>
++{
++};
++} // namespace fmt
+ #endif
+ 
+ class CLog : public ISettingsHandler, public ISettingCallback
+-- 
+2.39.2
+

@@ -1,0 +1,33 @@
+From ec1fd134e31b8c667ff06e02e21a75c4c3e87dfd Mon Sep 17 00:00:00 2001
+From: Lukas Rusak <lorusak@gmail.com>
+Date: Tue, 27 Jun 2023 11:24:02 -0700
+Subject: [PATCH] CLog: allow using fmt::enums::format_as for explicit enum
+ conversion when using libfmt>=10
+
+Upstream: https://github.com/xbmc/xbmc/commit/e4b1aa8450fabfb41379953c8ccec0a512421531
+Upstream: https://github.com/xbmc/xbmc/pull/23571
+
+Signed-off-by: Lukas Rusak <lorusak@gmail.com>
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ xbmc/utils/log.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/xbmc/utils/log.h b/xbmc/utils/log.h
+index 9fc4aae368..adf46905a8 100644
+--- a/xbmc/utils/log.h
++++ b/xbmc/utils/log.h
+@@ -46,6 +46,10 @@ class dist_sink;
+ } // namespace sinks
+ } // namespace spdlog
+ 
++#if FMT_VERSION >= 100000
++using fmt::enums::format_as;
++#endif
++
+ class CLog : public ISettingsHandler, public ISettingCallback
+ {
+ public:
+-- 
+2.39.2
+
