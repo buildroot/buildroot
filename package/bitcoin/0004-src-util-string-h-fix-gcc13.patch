@@ -1,0 +1,23 @@
+From fa2deae2a86417d7e0d4cd33fb933b1000d20313 Mon Sep 17 00:00:00 2001
+From: MacroFake <falke.marco@gmail.com>
+Date: Thu, 5 May 2022 08:28:29 +0200
+Subject: [PATCH] Wrap boost::replace_all
+
+Upstream: https://github.com/bitcoin/bitcoin/commit/fa2deae2a86417d7e0d4cd33fb933b1000d20313
+
+[Bernd: backported relevant part from upstream commit to version 0.21.2
+        to fix build error with gcc 13.x]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+diff --git a/src/util/string.h b/src/util/string.h
+index 2e91347b27a10..df20e34ae9aaa 100644
+--- a/src/util/string.h
++++ b/src/util/string.h
+@@ -9,6 +9,7 @@
+ 
+ #include <algorithm>
+ #include <array>
++#include <cstdint>
+ #include <cstring>
+ #include <locale>
+ #include <sstream>
