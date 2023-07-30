@@ -1,0 +1,40 @@
+From 5374f677e4cae669eb9accf2449178b602e8a40a Mon Sep 17 00:00:00 2001
+From: Violet Purcell <vimproved@inventati.org>
+Date: Thu, 11 May 2023 12:50:34 -0400
+Subject: [PATCH] examples/tty_conv: fix build on musl
+
+termio.h is the old System V version of the interface header, and is
+only provided in glibc and dietlibc as far as I can tell.
+This fixes it to use the POSIX termios.h instead.
+
+Upstream: https://github.com/linux-pam/linux-pam/commit/5374f677e4cae669eb9accf2449178b602e8a40a
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ examples/tty_conv.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/examples/tty_conv.c b/examples/tty_conv.c
+index 23f0684cc..9a0e1ad99 100644
+--- a/examples/tty_conv.c
++++ b/examples/tty_conv.c
+@@ -6,8 +6,9 @@
+ #include <string.h>
+ #include <errno.h>
+ #include <unistd.h>
+-#include <termio.h>
++#include <termios.h>
+ #include <security/pam_appl.h>
++#include <sys/ioctl.h>
+ 
+ /***************************************
+  * @brief echo off/on
+@@ -16,7 +17,7 @@
+  ***************************************/
+ static void echoOff(int fd, int off)
+ {
+-    struct termio tty;
++    struct termios tty;
+     if (ioctl(fd, TCGETA, &tty) < 0)
+     {
+         fprintf(stderr, "TCGETA failed: %s\n", strerror(errno));
