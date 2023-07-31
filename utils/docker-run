@@ -27,9 +27,10 @@ declare -a docker_opts=(
 # .git directory.
 if [ "${GIT_DIR}" ]; then
     # GIT_DIR in the main working copy (when git supports worktrees) will
-    # be just '.git', but 'docker run' needs an absolute path. If it's an
-    # absolute path already (in a wordir), then that's a noop.
-    GIT_DIR="$(readlink -e "${GIT_DIR}")"
+    # be just '.git', but 'docker run' needs an absolute path. If it is
+    # not absolute, GIT_DIR is relative to MAIN_DIR. If it's an absolute
+    # path already (in a wordir), then that's a noop.
+    GIT_DIR="$(cd "${MAIN_DIR}"; readlink -e "${GIT_DIR}")"
     docker_opts+=( --mount "type=bind,src=${GIT_DIR},dst=${GIT_DIR}" )
 fi
 
