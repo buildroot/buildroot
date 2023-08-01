@@ -16,6 +16,7 @@ set -e
 #   -u URI      Checkout from repository at URI.
 #   -c REV      Use revision REV.
 #   -n NAME     Use basename NAME.
+#   -r          Recursive, i.e. use externals
 #
 # Environment:
 #   SVN      : the svn command to call
@@ -24,6 +25,7 @@ set -e
 . "${0%/*}/helpers"
 
 quiet=
+externals=--ignore-externals
 while getopts "${BR_BACKEND_DL_GETOPTS}" OPT; do
     case "${OPT}" in
     q)  quiet=-q;;
@@ -31,6 +33,7 @@ while getopts "${BR_BACKEND_DL_GETOPTS}" OPT; do
     u)  uri="${OPTARG}";;
     c)  rev="${OPTARG}";;
     n)  basename="${OPTARG}";;
+    r)  externals=;;
     :)  printf "option '%s' expects a mandatory argument\n" "${OPTARG}"; exit 1;;
     \?) printf "unknown option '%s'\n" "${OPTARG}" >&2; exit 1;;
     esac
@@ -52,7 +55,8 @@ _plain_svn() {
     eval ${SVN} "${@}"
 }
 
-_svn export --ignore-keywords ${quiet} "${@}" "'${uri}@${rev}'" "'${basename}'"
+# shellcheck disable=SC2086 # externals and quiet may be empty
+_svn export --ignore-keywords ${quiet} ${externals} "${@}" "'${uri}@${rev}'" "'${basename}'"
 
 # For 'svn info', we only need the credentials, if any; other options
 # would be invalid, as they are intended for 'svn export'.
