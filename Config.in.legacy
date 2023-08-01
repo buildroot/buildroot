@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2023.08"
 
+config BR2_BINUTILS_VERSION_2_38_X
+	bool "binutils 2.38.x has been removed"
+	select BR2_LEGACY
+	help
+	  binutils 2.38 has been removed, use a newer version.
+
 config BR2_GCC_VERSION_10_X
 	bool "gcc 10.x support removed"
 	select BR2_LEGACY
