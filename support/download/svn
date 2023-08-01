@@ -54,12 +54,28 @@ _plain_svn() {
 
 _svn export --ignore-keywords ${quiet} "${@}" "'${uri}@${rev}'" "'${basename}'"
 
+# For 'svn info', we only need the credentials, if any; other options
+# would be invalid, as they are intended for 'svn export'.
+# We can also consume the positional parameters, as we'll no longer
+# be calling any other remote-reaching svn command.
+creds=
+while [ ${#} -gt 0 ]; do
+    case "${1}" in
+    --username=*)   creds+=" ${1}"; shift;;
+    --password=*)   creds+=" ${1}"; shift;;
+    --username)     creds+=" ${1} ${2}"; shift 2;;
+    --password)     creds+=" ${1} ${2}"; shift 2;;
+    *)              shift;;
+    esac
+done
+
 # Get the date of the revision, to generate reproducible archives.
 # The output format is YYYY-MM-DDTHH:MM:SS.mmmuuuZ (i.e. always in the
 # UTC timezone), which we can feed as-is to the --mtime option for tar.
 # In case there is a redirection (e.g. http -> https), just keep the
 # last line (svn outputs everything on stdout)
-date="$( _plain_svn info "'${uri}@${rev}'" \
+# shellcheck disable=SC2086 # creds may be empty
+date="$( _plain_svn info ${creds} "'${uri}@${rev}'" \
         |sed -r -e '/^Last Changed Date: /!d; s///'
        )"
 
