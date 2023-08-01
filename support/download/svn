@@ -20,6 +20,7 @@ set -e
 # Environment:
 #   SVN      : the svn command to call
 
+# shellcheck disable=SC1090 # Only provides mk_tar_gz()
 . "${0%/*}/helpers"
 
 quiet=
@@ -41,12 +42,13 @@ shift $((OPTIND-1)) # Get rid of our options
 # being expanded a second time (in case there are spaces in them)
 _svn() {
     if [ -z "${quiet}" ]; then
-        printf '%s ' ${SVN} "${@}"; printf '\n'
+        printf '%s ' "${SVN}" "${@}"; printf '\n'
     fi
     _plain_svn "$@"
 }
 # Note: please keep command below aligned with what is printed above
 _plain_svn() {
+    # shellcheck disable=SC2086 # We want word-splitting for SVN
     eval ${SVN} "${@}"
 }
 
