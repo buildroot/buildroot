@@ -705,22 +705,10 @@ config BR2_x86_zen4
 	select BR2_X86_CPU_HAS_AVX512
 	select BR2_ARCH_NEEDS_GCC_AT_LEAST_13
 config BR2_x86_geode
-	bool "geode (no mmx)"
-	depends on !BR2_x86_64
-	help
-	  For several variant of geode which have not MMX support.
-	  See https://en.wikipedia.org/wiki/Geode_%28processor%29 to
-	  determine if your particular Geode processor supports MMX or
-	  not.
-config BR2_x86_geode_mmx
-	bool "geode (with mmx)"
+	bool "AMD Geode"
 	depends on !BR2_x86_64
 	select BR2_X86_CPU_HAS_MMX
-	help
-	  For several variant of geode which have MMX support.
-	  See https://en.wikipedia.org/wiki/Geode_%28processor%29 to
-	  determine if your particular Geode processor supports MMX or
-	  not.
+	select BR2_X86_CPU_HAS_3DNOW
 config BR2_x86_c3
 	bool "Via/Cyrix C3 (Samuel/Ezra cores)"
 	depends on !BR2_x86_64
