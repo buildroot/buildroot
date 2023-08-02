@@ -10,6 +10,7 @@ class TestLxc(infra.basetest.BRTest):
             BR2_cortex_a9=y
             BR2_ARM_ENABLE_VFP=y
             BR2_TOOLCHAIN_EXTERNAL=y
+            BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
             BR2_LINUX_KERNEL=y
             BR2_LINUX_KERNEL_CUSTOM_VERSION=y
             BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="5.15.38"
