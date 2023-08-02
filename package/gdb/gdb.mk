@@ -59,7 +59,7 @@ endif
 
 # All newer versions of GDB need host-gmp, so it's only for older
 # versions that the dependency can be avoided.
-ifeq ($(BR2_GDB_VERSION_10)$(BR2_arc),)
+ifeq ($(BR2_arc),)
 HOST_GDB_DEPENDENCIES += host-gmp
 endif
 
@@ -149,9 +149,9 @@ GDB_CONF_OPTS += \
 endif
 
 # Starting from GDB 11.x, gmp is needed as a dependency to build full
-# gdb. So we avoid the dependency only for GDB 10.x and the special
-# version used on ARC.
-ifeq ($(BR2_GDB_VERSION_10)$(BR2_arc):$(BR2_PACKAGE_GDB_DEBUGGER),:y)
+# gdb. So we avoid the dependency only for the special version used on
+# ARC.
+ifeq ($(BR2_arc):$(BR2_PACKAGE_GDB_DEBUGGER),:y)
 GDB_CONF_OPTS += \
 	--with-libgmp-prefix=$(STAGING_DIR)/usr
 GDB_DEPENDENCIES += gmp
