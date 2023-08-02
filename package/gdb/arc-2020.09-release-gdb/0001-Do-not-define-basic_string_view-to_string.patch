@@ -1,0 +1,114 @@
+From 5ac588997c3c2d032d5d5145d9245eb37354c23b Mon Sep 17 00:00:00 2001
+From: Tom Tromey <tromey@adacore.com>
+Date: Tue, 30 Jun 2020 07:53:03 -0600
+Subject: [PATCH] Do not define basic_string_view::to_string
+
+gdb's copy of basic_string_view includes a to_string method.  However,
+according to cppreference, this is not a method on the real
+std::basic_string_view:
+
+https://en.cppreference.com/w/cpp/string/basic_string_view
+
+This difference matters because gdb_string_view.h will use the
+standard implementation when built with a C++17 or later.  This caused
+PR build/26183.
+
+This patch fixes the problem by changing the method to be a standalone
+helper function, and then rewriting the uses.  Tested by rebuilding
+with a version of GCC that defaults to C++17.
+
+(Note that the build still is not clean; and also I noticed that the
+libstdc++ string_view forbids the use of nullptr ... I wonder if gdb
+violates that.)
+
+gdb/ChangeLog
+2020-06-30  Tom Tromey  <tromey@adacore.com>
+
+	PR build/26183:
+	* ada-lang.c (ada_lookup_name_info::ada_lookup_name_info): Use
+	gdb::to_string.
+
+gdbsupport/ChangeLog
+2020-06-30  Tom Tromey  <tromey@adacore.com>
+
+	PR build/26183:
+	* gdb_string_view.h (basic_string_view::to_string): Remove.
+	(gdb::to_string): New function.
+
+Upstream: https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=5ac588997c3c2d032d5d5145d9245eb37354c23b
+Bug report: https://sourceware.org/bugzilla/show_bug.cgi?id=26183
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ gdb/ChangeLog                |  6 ++++++
+ gdb/ada-lang.c               |  8 ++++----
+ gdbsupport/ChangeLog         |  6 ++++++
+ gdbsupport/gdb_string_view.h | 17 ++++++++++-------
+ 4 files changed, 26 insertions(+), 11 deletions(-)
+
+diff --git a/gdb/ada-lang.c b/gdb/ada-lang.c
+index 9b0c2efbfe2..98508c168bc 100644
+--- a/gdb/ada-lang.c
++++ b/gdb/ada-lang.c
+@@ -13553,10 +13553,10 @@ ada_lookup_name_info::ada_lookup_name_info (const lookup_name_info &lookup_name)
+     {
+       if (user_name.back () == '>')
+ 	m_encoded_name
+-	  = user_name.substr (1, user_name.size () - 2).to_string ();
++	  = gdb::to_string (user_name.substr (1, user_name.size () - 2));
+       else
+ 	m_encoded_name
+-	  = user_name.substr (1, user_name.size () - 1).to_string ();
++	  = gdb::to_string (user_name.substr (1, user_name.size () - 1));
+       m_encoded_p = true;
+       m_verbatim_p = true;
+       m_wild_match_p = false;
+@@ -13575,10 +13575,10 @@ ada_lookup_name_info::ada_lookup_name_info (const lookup_name_info &lookup_name)
+ 	  if (encoded != NULL)
+ 	    m_encoded_name = encoded;
+ 	  else
+-	    m_encoded_name = user_name.to_string ();
++	    m_encoded_name = gdb::to_string (user_name);
+ 	}
+       else
+-	m_encoded_name = user_name.to_string ();
++	m_encoded_name = gdb::to_string (user_name);
+ 
+       /* Handle the 'package Standard' special case.  See description
+ 	 of m_standard_p.  */
+diff --git a/gdbsupport/gdb_string_view.h b/gdbsupport/gdb_string_view.h
+index c0ae7a8a2d9..65124e67e54 100644
+--- a/gdbsupport/gdb_string_view.h
++++ b/gdbsupport/gdb_string_view.h
+@@ -245,13 +245,6 @@ namespace gdb {
+ 	  return { this->_M_str, this->_M_len };
+ 	}
+ 
+-      template<typename _Allocator = std::allocator<_CharT>>
+-	std::basic_string<_CharT, _Traits, _Allocator>
+-	to_string(const _Allocator& __alloc = _Allocator()) const
+-	{
+-	  return { this->_M_str, this->_M_len, __alloc };
+-	}
+-
+       size_type
+       copy(_CharT* __str, size_type __n, size_type __pos = 0) const
+       {
+@@ -560,4 +553,14 @@ namespace gdb {
+ 
+ #endif // __cplusplus < 201703L
+ 
++namespace gdb {
++
++static inline std::string
++to_string(const gdb::string_view &view)
++{
++  return { view.data (), view.size () };
++}
++
++}
++
+ #endif /* COMMON_GDB_STRING_VIEW_H */
+-- 
+2.39.3
+
