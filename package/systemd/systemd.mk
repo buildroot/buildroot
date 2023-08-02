@@ -348,7 +348,9 @@ SYSTEMD_CONF_OPTS += -Dutmp=false
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD_VCONSOLE),y)
-SYSTEMD_CONF_OPTS += -Dvconsole=true
+SYSTEMD_CONF_OPTS += \
+	-Dvconsole=true \
+	-Ddefault-keymap=$(call qstrip,$(BR2_PACKAGE_SYSTEMD_VCONSOLE_DEFAULT_KEYMAP))
 else
 SYSTEMD_CONF_OPTS += -Dvconsole=false
 endif

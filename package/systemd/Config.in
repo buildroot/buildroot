@@ -563,10 +563,19 @@ config BR2_PACKAGE_SYSTEMD_UTMP
 config BR2_PACKAGE_SYSTEMD_VCONSOLE
 	bool "enable vconsole tool"
 	default y
+	select BR2_PACKAGE_KBD if BR2_PACKAGE_SYSTEMD_VCONSOLE_DEFAULT_KEYMAP != ""
 	help
 	  systemd-vconsole-setup is an early boot service that
 	  configures the virtual console font and console keymap.
 
 	  https://www.freedesktop.org/software/systemd/man/systemd-vconsole-setup.service.html
+
+config BR2_PACKAGE_SYSTEMD_VCONSOLE_DEFAULT_KEYMAP
+	string "default keymap"
+	default "us"
+	depends on BR2_PACKAGE_SYSTEMD_VCONSOLE
+	help
+	  Default keymap for the system. Leave empty to not set a
+	  default keymap.
 
 endif
