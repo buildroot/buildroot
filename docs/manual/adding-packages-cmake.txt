@@ -91,6 +91,10 @@ typical packages will therefore only use a few of them.
   the tree extracted by the tarball. If +HOST_LIBFOO_SUBDIR+ is not
   specified, it defaults to +LIBFOO_SUBDIR+.
 
+* +LIBFOO_CMAKE_BACKEND+ specifies the cmake backend to use, one of
+  `make` (to use the GNU Makefiles generator, the default) or `ninja`
+  (to use the Ninja generator).
+
 * +LIBFOO_CONF_ENV+, to specify additional environment variables to
   pass to CMake. By default, empty.
 
@@ -106,6 +110,10 @@ typical packages will therefore only use a few of them.
 ** +BUILD_DOC+, +BUILD_DOCS+ are disabled;
 ** +BUILD_EXAMPLE+, +BUILD_EXAMPLES+ are disabled;
 ** +BUILD_TEST+, +BUILD_TESTS+, +BUILD_TESTING+ are disabled.
+
+* +LIBFOO_BUILD_ENV+ and +LIBFOO_BUILD_OPTS+ to specify additional
+  environment variables, or command line options, to pass to the backend
+  at build time.
 
 * +LIBFOO_SUPPORTS_IN_SOURCE_BUILD = NO+ should be set when the package
   cannot be built inside the source tree but needs a separate build
