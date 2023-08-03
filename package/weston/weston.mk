@@ -22,6 +22,7 @@ WESTON_CONF_OPTS = \
 	-Dlauncher-libseat=true \
 	-Dtools=calibrator,debug,info,terminal,touch-calibrator
 
+ifeq ($(BR2_PACKAGE_WESTON_SIMPLE_CLIENTS),y)
 WESTON_SIMPLE_CLIENTS = \
 	damage \
 	dmabuf-egl \
@@ -35,6 +36,7 @@ ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_8),y)
 # dmabuf-v4l uses VIDIOC_EXPBUF, only available from 3.8+
 WESTON_SIMPLE_CLIENTS += dmabuf-v4l
 endif
+endif # BR2_PACKAGE_WESTON_SIMPLE_CLIENTS
 
 WESTON_CONF_OPTS += -Dsimple-clients=$(subst $(space),$(comma),$(strip $(WESTON_SIMPLE_CLIENTS)))
 

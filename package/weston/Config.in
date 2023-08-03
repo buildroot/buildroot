@@ -174,6 +174,18 @@ config BR2_PACKAGE_WESTON_SCREENSHARE
 	bool "screenshare"
 	default y
 
+config BR2_PACKAGE_WESTON_SIMPLE_CLIENTS
+	bool "simple clients"
+	help
+	  Simple clients includes application such as:
+	  damage, dmabuf-feedback, dmabuf-egl, dmabuf-v4l, egl
+
+	  In the target filesystem, simple client program binaries are
+	  prefixed with "weston-simple-".
+
+	  Note: Weston has two sets of clients. See also the weston
+	  "demo clients" option.
+
 config BR2_PACKAGE_WESTON_DEMO_CLIENTS
 	bool "demo clients"
 	depends on BR2_USE_MMU # pango
@@ -187,6 +199,18 @@ config BR2_PACKAGE_WESTON_DEMO_CLIENTS
 	select BR2_PACKAGE_PANGO
 	help
 	  This enables the installation of Weston's demo clients.
+
+	  Demo clients includes application such as:
+	  clickdot, confine, content_protection, dnd, editor,
+	  eventdemo, flower, fullscreen, image, multi-resource,
+	  presentation-shm, resizor, scaler, smoke, stacking,
+	  subsurfaces, tablet, transformed...
+
+	  In the target filesystem, demo client program binaries are
+	  prefixed with "weston-".
+
+	  Note: Weston has two sets of clients. See also the weston
+	  "simple clients" option.
 
 comment "demo clients needs an OpenGL ES provider, an OpenEGL-capable Wayland backend and a toolchain w/ wchar, threads, C++, gcc >= 4.9"
 	depends on BR2_USE_MMU
