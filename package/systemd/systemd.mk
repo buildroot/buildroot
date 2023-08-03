@@ -683,15 +683,15 @@ ifneq ($(call qstrip,$(BR2_TARGET_GENERIC_GETTY_PORT)),)
 # Systemd defaults to enabling getty@tty1.service
 #
 # What we want to do
-# * Enable a getty on $BR2_TARGET_GENERIC_TTY_PATH
+# * Enable a getty on $BR2_TARGET_GENERIC_GETTY_PORT
 # * Set the baudrate for all units according to BR2_TARGET_GENERIC_GETTY_BAUDRATE
 # * Always enable a getty on the console using systemd-getty-generator
 #   (backward compatibility with previous releases of buildroot)
 #
 # What we do
 # * disable getty@tty1 (enabled by upstream systemd)
-# * enable getty@xxx if  $BR2_TARGET_GENERIC_TTY_PATH is a tty
-# * enable serial-getty@xxx for other $BR2_TARGET_GENERIC_TTY_PATH
+# * enable getty@xxx if  $BR2_TARGET_GENERIC_GETTY_PORT is a tty
+# * enable serial-getty@xxx for other $BR2_TARGET_GENERIC_GETTY_PORT
 # * rewrite baudrates if a baudrate is provided
 define SYSTEMD_INSTALL_SERVICE_TTY
 	mkdir -p $(TARGET_DIR)/usr/lib/systemd/system/getty@.service.d; \
