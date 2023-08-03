@@ -670,9 +670,9 @@ SYSTEMD_TARGET_FINALIZE_HOOKS += \
 	SYSTEMD_INSTALL_RESOLVCONF_HOOK
 
 ifneq ($(call qstrip,$(BR2_TARGET_GENERIC_GETTY_PORT)),)
-# systemd provides multiple units to autospawn getty as neede
+# systemd provides multiple units to autospawn getty as needed
 # * getty@.service to start a getty on normal TTY
-# * sertial-getty@.service to start a getty on serial lines
+# * serial-getty@.service to start a getty on serial lines
 # * console-getty.service for generic /dev/console
 # * container-getty@.service for a getty on /dev/pts/*
 #
@@ -680,7 +680,7 @@ ifneq ($(call qstrip,$(BR2_TARGET_GENERIC_GETTY_PORT)),)
 # * read the console= kernel command line parameter
 # * enable one of the above units depending on what it finds
 #
-# Systemd defaults to enablinb getty@tty1.service
+# Systemd defaults to enabling getty@tty1.service
 #
 # What we want to do
 # * Enable a getty on $BR2_TARGET_GENERIC_TTY_PATH
