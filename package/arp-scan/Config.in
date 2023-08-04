@@ -8,3 +8,14 @@ config BR2_PACKAGE_ARP_SCAN
 	  discover and fingerprint IP hosts on the local network.
 
 	  https://github.com/royhills/arp-scan
+
+if BR2_PACKAGE_ARP_SCAN
+
+config BR2_PACKAGE_ARP_SCAN_DATA
+	bool "install data (OUI)"
+	default y  # legacy
+	help
+	  Say 'y' here (the default) to install the data along the
+	  binaries.
+
+endif # BR2_PACKAGE_ARP_SCAN

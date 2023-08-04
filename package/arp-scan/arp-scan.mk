@@ -23,4 +23,8 @@ else
 ARP_SCAN_CONF_OPTS += --without-libcap
 endif
 
+ifeq ($(BR2_PACKAGE_ARP_SCAN_DATA),)
+ARP_SCAN_INSTALL_TARGET_OPTS = DESTDIR=$(TARGET_DIR) install-exec
+endif
+
 $(eval $(autotools-package))
