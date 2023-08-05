@@ -1,3 +1,36 @@
+2023.08-rc1, released August 5, 2023
+
+	Numerous package updates and fixes, additional runtime tests.
+
+	Toolchain:
+	- Toolchains from ARM (for ARM, AArch64 and AArch64 BE)
+          updated to 12.2.
+	- Support for binutils 2.40 and 2.41 added, binutils 2.37 and
+          2.38 removed, binutils 2.40 is now the default
+	- Support for gcc 13 added, gcc 10 removed, gcc 12 is now the
+          default
+
+	Architectures:
+	- Additional x86-64 variants added
+	- RISC-V vector extension support added
+
+	Infrastructure:
+	- Go now built in 3 stages to be able to update to Go 1.20.x.
+
+	New defconfigs: rock5b
+
+	Removed defconfigs: qemu_sparc_ss10
+
+	New packages: composer, conmon, dfu-programmer, esp-hosted,
+	kodi-imagedecoder-heif, kodi-imagedecoder-raw, libde2654,
+	libdisplay-info, libheif, llvm-cmake, llvm-libunwind,
+	lua-dkjson, mbpoll, mdnsd, mhz, opencsd, python-libconf,
+	python-blinker, python-midiutil, python-rdps-py, python-wheel,
+	qt6svg, redis-plus-plus, rockchip-rkbin, rtl8822cs, swaybg,
+	swugenerator
+
+	Removed packages: libasplib, ocf-linux, tovid
+
 2023.05.1, released July 17th, 2023
 
 	Important / security related fixes.
