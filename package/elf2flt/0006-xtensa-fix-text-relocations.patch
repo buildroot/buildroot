@@ -1,4 +1,4 @@
-From e248d9774506fdd8698b14a7edead113f19ecdb0 Mon Sep 17 00:00:00 2001
+From 7e1c17d7fe72a0889d56d5e6a1390d493d1de144 Mon Sep 17 00:00:00 2001
 From: Max Filippov <jcmvbkbc@gmail.com>
 Date: Tue, 29 Nov 2022 17:47:54 -0800
 Subject: [PATCH] xtensa: fix text relocations
@@ -21,10 +21,10 @@ Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
  1 file changed, 14 insertions(+), 1 deletion(-)
 
 diff --git a/elf2flt.c b/elf2flt.c
-index b93aecdaced3..cec3f4a22239 100644
+index 60bfa57..0fcb747 100644
 --- a/elf2flt.c
 +++ b/elf2flt.c
-@@ -808,7 +808,20 @@ output_relocs (
+@@ -833,7 +833,20 @@ output_relocs (
  					continue;
  				case R_XTENSA_32:
  				case R_XTENSA_PLT:
@@ -45,7 +45,7 @@ index b93aecdaced3..cec3f4a22239 100644
 +					break;
  				default:
  					goto bad_resolved_reloc;
- #else
+ #elif defined(TARGET_riscv64)
 -- 
-2.30.2
+2.41.0
 

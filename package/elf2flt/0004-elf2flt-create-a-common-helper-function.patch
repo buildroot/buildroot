@@ -1,4 +1,4 @@
-From 37e1e0ace8ccebf54ec2f5522bfc1f9db86946ad Mon Sep 17 00:00:00 2001
+From 4f28e4329897b7f23d828b375fb365d0e30c9cb5 Mon Sep 17 00:00:00 2001
 From: Niklas Cassel <niklas.cassel@wdc.com>
 Date: Tue, 9 Aug 2022 12:13:50 +0200
 Subject: [PATCH] elf2flt: create a common helper function
@@ -14,10 +14,10 @@ Signed-off-by: Niklas Cassel <niklas.cassel@wdc.com>
  1 file changed, 11 insertions(+), 8 deletions(-)
 
 diff --git a/elf2flt.c b/elf2flt.c
-index 669591e..9c32f9a 100644
+index c2816b6..8cd48d9 100644
 --- a/elf2flt.c
 +++ b/elf2flt.c
-@@ -337,6 +337,13 @@ compare_relocs (const void *pa, const void *pb)
+@@ -346,6 +346,13 @@ compare_relocs (const void *pa, const void *pb)
  }
  #endif
  
@@ -31,7 +31,7 @@ index 669591e..9c32f9a 100644
  static uint32_t *
  output_relocs (
    bfd *abs_bfd,
-@@ -428,8 +435,7 @@ output_relocs (
+@@ -437,8 +444,7 @@ output_relocs (
  	 */
  	if ((!pic_with_got || ALWAYS_RELOC_TEXT) &&
  	    ((a->flags & SEC_CODE) ||
@@ -41,7 +41,7 @@ index 669591e..9c32f9a 100644
  		sectionp = text + (a->vma - text_vma);
  	else if (a->flags & SEC_DATA)
  		sectionp = data + (a->vma - data_vma);
-@@ -1893,8 +1899,7 @@ int main(int argc, char *argv[])
+@@ -1902,8 +1908,7 @@ int main(int argc, char *argv[])
      bfd_vma sec_vma;
  
      if ((s->flags & SEC_CODE) ||
@@ -51,7 +51,7 @@ index 669591e..9c32f9a 100644
        vma = &text_vma;
        len = &text_len;
      } else if (s->flags & SEC_DATA) {
-@@ -1932,8 +1937,7 @@ int main(int argc, char *argv[])
+@@ -1941,8 +1946,7 @@ int main(int argc, char *argv[])
     * data sections.*/
    for (s = abs_bfd->sections; s != NULL; s = s->next)
      if ((s->flags & SEC_CODE) ||
@@ -60,8 +60,8 @@ index 669591e..9c32f9a 100644
 +	ro_reloc_data_section_should_be_in_text(s))
        if (!bfd_get_section_contents(abs_bfd, s,
  				   text + (s->vma - text_vma), 0,
- 				   bfd_section_size(abs_bfd, s)))
-@@ -1962,8 +1966,7 @@ int main(int argc, char *argv[])
+ 				   elf2flt_bfd_section_size(s)))
+@@ -1971,8 +1975,7 @@ int main(int argc, char *argv[])
     * data sections already included in the text output section.*/
    for (s = abs_bfd->sections; s != NULL; s = s->next)
      if ((s->flags & SEC_DATA) &&
@@ -70,7 +70,7 @@ index 669591e..9c32f9a 100644
 +	!ro_reloc_data_section_should_be_in_text(s))
        if (!bfd_get_section_contents(abs_bfd, s,
  				   data + (s->vma - data_vma), 0,
- 				   bfd_section_size(abs_bfd, s)))
+ 				   elf2flt_bfd_section_size(s)))
 -- 
-2.37.1
+2.41.0
 

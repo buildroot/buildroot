@@ -1,4 +1,4 @@
-From a8c9f650b82109abf7aa730f298ea5182ed62613 Mon Sep 17 00:00:00 2001
+From 87d45736a6855f2147ef9c88d2bce2cabc84cb52 Mon Sep 17 00:00:00 2001
 From: Niklas Cassel <niklas.cassel@wdc.com>
 Date: Tue, 9 Aug 2022 21:06:05 +0200
 Subject: [PATCH] elf2flt: fix fatal error regression on m68k, xtensa, riscv64
@@ -50,10 +50,10 @@ Signed-off-by: Niklas Cassel <niklas.cassel@wdc.com>
  1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/elf2flt.c b/elf2flt.c
-index e0d7891..39d035f 100644
+index 8cd48d9..60bfa57 100644
 --- a/elf2flt.c
 +++ b/elf2flt.c
-@@ -341,8 +341,13 @@ compare_relocs (const void *pa, const void *pb)
+@@ -349,8 +349,13 @@ compare_relocs (const void *pa, const void *pb)
  static bool
  ro_reloc_data_section_should_be_in_text(asection *s)
  {
@@ -70,5 +70,5 @@ index e0d7891..39d035f 100644
  
  static uint32_t *
 -- 
-2.39.0
+2.41.0
 
