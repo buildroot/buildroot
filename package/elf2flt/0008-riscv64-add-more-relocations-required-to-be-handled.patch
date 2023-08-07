@@ -1,0 +1,40 @@
+From 5acfed0012f2fff9801b25403bd8a5e1c2ccfea2 Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Mon, 7 Aug 2023 09:30:34 +0200
+Subject: [PATCH] riscv64: add more relocations required to be handled
+
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://github.com/uclinux-dev/elf2flt/pull/24
+---
+ elf2flt.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/elf2flt.c b/elf2flt.c
+index 6685bff..6b3bea4 100644
+--- a/elf2flt.c
++++ b/elf2flt.c
+@@ -850,11 +850,21 @@ output_relocs (
+ 				default:
+ 					goto bad_resolved_reloc;
+ #elif defined(TARGET_riscv64)
++				case R_RISCV_NONE:
+ 				case R_RISCV_32_PCREL:
++				case R_RISCV_ADD8:
++				case R_RISCV_ADD16:
+ 				case R_RISCV_ADD32:
+ 				case R_RISCV_ADD64:
++				case R_RISCV_SUB6:
++				case R_RISCV_SUB8:
++				case R_RISCV_SUB16:
+ 				case R_RISCV_SUB32:
+ 				case R_RISCV_SUB64:
++				case R_RISCV_SET6:
++				case R_RISCV_SET8:
++				case R_RISCV_SET16:
++				case R_RISCV_SET32:
+ 					continue;
+ 				case R_RISCV_32:
+ 				case R_RISCV_64:
+-- 
+2.39.2
+
