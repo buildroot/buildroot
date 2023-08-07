@@ -65,7 +65,7 @@ endif
 ifeq ($$($(3)_CMAKE_BACKEND),make)
 $(2)_GENERATOR = "Unix Makefiles"
 # $$(MAKE) can be 'make -jN', we just want 'make'  (possibly with a full path)
-$(2)_GENERATOR_PROGRAM = $(firstword $$(MAKE))
+$(2)_GENERATOR_PROGRAM = $$(firstword $$(MAKE))
 # Generator specific code (make) should be avoided,
 # but for now, copy them to the new variables.
 $(2)_BUILD_ENV ?= $$($(2)_MAKE_ENV)
@@ -74,7 +74,7 @@ $(2)_BUILD_OPTS ?= -- $$($(2)_MAKE_OPTS)
 else ifeq ($$($(3)_CMAKE_BACKEND),ninja)
 $(2)_DEPENDENCIES += host-ninja
 $(2)_GENERATOR = "Ninja"
-$(2)_GENERATOR_PROGRAM = $(HOST_DIR)/bin/ninja
+$(2)_GENERATOR_PROGRAM = $$(HOST_DIR)/bin/ninja
 
 else
 $$(error Unsupported cmake backend "$$($(3)_CMAKE_BACKEND)")
