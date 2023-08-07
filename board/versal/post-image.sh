@@ -11,16 +11,15 @@ FIRST_DT=$(sed -nr \
 [ -z "${FIRST_DT}" ] || ln -fs "${FIRST_DT}.dtb" "${BINARIES_DIR}/system.dtb"
 
 BOARD_DIR="$(dirname "$0")"
-BOARD_NAME="$4"
 
 mkdir -p "${BINARIES_DIR}"
 cat <<-__HEADER_EOF > "${BINARIES_DIR}/bootgen.bif"
 	the_ROM_image:
 	{
 	  image {
-	    { type=bootimage, file=${BINARIES_DIR}/${BOARD_NAME}_vpl_gen_fixed.pdi }
-	    { type=bootloader, file=${BINARIES_DIR}/${BOARD_NAME}_plm.elf }
-	    { core=psm, file=${BINARIES_DIR}/${BOARD_NAME}_psmfw.elf }
+	    { type=bootimage, file=${BINARIES_DIR}/vpl_gen_fixed.pdi }
+	    { type=bootloader, file=${BINARIES_DIR}/plm.elf }
+	    { core=psm, file=${BINARIES_DIR}/psmfw.elf }
 	  }
 	  image {
 	    id = 0x1c000000, name=apu_subsystem
