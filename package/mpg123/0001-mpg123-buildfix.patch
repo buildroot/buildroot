@@ -1,0 +1,24 @@
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://sourceforge.net/p/mpg123/bugs/353/
+
+diff -Nur mpg123-1.31.3.orig/src/libmpg123/getcpuflags.h mpg123-1.31.3/src/libmpg123/getcpuflags.h
+--- mpg123-1.31.3.orig/src/libmpg123/getcpuflags.h	2023-03-15 09:02:58.000000000 +0100
++++ mpg123-1.31.3/src/libmpg123/getcpuflags.h	2023-08-07 15:57:19.444106173 +0200
+@@ -44,6 +44,8 @@
+ 
+ unsigned int getcpuflags(struct cpuflags* cf);
+ 
++#if ((defined OPT_X86) || (defined OPT_X86_64) || (defined OPT_NEON) || (defined OPT_NEON64)) && (defined OPT_MULTI)
++
+ #ifdef WANT_GETCPUFLAGS
+ #include <string.h>
+ // Wrapper needed for ignorant clang memory sanitizer that chokes
+@@ -55,8 +57,6 @@
+ }
+ #endif
+ 
+-#if ((defined OPT_X86) || (defined OPT_X86_64) || (defined OPT_NEON) || (defined OPT_NEON64)) && (defined OPT_MULTI)
+-
+ // We really evaluate the CPU flags.
+ #define OPT_CPU_FLAGS
+ 
