@@ -40,8 +40,8 @@ choice
 	help
 	  Specific CPU variant to use
 
-	  64bit capable: 64, 64r2, 64r3, 64r5, 64r6
-	  non-64bit capable: 32, 32r2, 32r3, 32r5, 32r6
+	  64bit capable: mips4, 64, 64r2, 64r3, 64r5, 64r6
+	  non-64bit capable: mips4, 32, 32r2, 32r3, 32r5, 32r6
 
 config BR2_mips_32
 	bool "Generic MIPS32"
@@ -97,6 +97,8 @@ config BR2_mips_xburst
 	  to be used in order to prevent emitting these instructions.
 
 	  See http://www.ingenic.com/en/?xburst.html
+config BR2_mips4
+	bool "MIPS IV"
 config BR2_mips_64
 	bool "Generic MIPS64"
 	depends on BR2_ARCH_IS_64
@@ -262,6 +264,7 @@ config BR2_GCC_TARGET_ARCH
 	default "octeon2"	if BR2_mips_octeon2
 	default "octeon3"	if BR2_mips_octeon3
 	default "p6600"		if BR2_mips_p6600
+	default "mips4"		if BR2_mips4
 
 config BR2_MIPS_OABI32
 	bool
