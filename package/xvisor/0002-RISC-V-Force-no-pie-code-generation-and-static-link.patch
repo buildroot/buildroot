@@ -1,0 +1,46 @@
+From 8491908238c4b3397571e9cff55765d59da03a45 Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Wed, 2 Aug 2023 23:57:17 +0200
+Subject: [PATCH] RISC-V: Force no-pie code generation and static link
+
+Some toolchains are now enabling PIE for security reasons by default.
+When XVisor is built with such a RISC-V toolchain, it is crashing
+just after OpenSBI, in early Xvisor startup (before any message is
+printed on the console).
+
+Hangs looks like those described in:
+
+https://github.com/xvisor/xvisor/issues/144
+https://github.com/xvisor/xvisor/issues/159
+
+Forcing -fno-pie code generation and -static link will explicitly disable
+PIE with those toolchains, hence fixing those issues.
+
+This issue was observed while using a riscv64 gcc toolchain from:
+https://toolchains.bootlin.com/downloads/releases/toolchains/riscv64-lp64d/tarballs/riscv64-lp64d--glibc--bleeding-edge-2022.08-1.tar.bz2
+
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+Upstream: https://github.com/xvisor/xvisor/pull/170
+---
+ arch/riscv/cpu/generic/objects.mk | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/riscv/cpu/generic/objects.mk b/arch/riscv/cpu/generic/objects.mk
+index 230da2a1..576603f6 100644
+--- a/arch/riscv/cpu/generic/objects.mk
++++ b/arch/riscv/cpu/generic/objects.mk
+@@ -67,6 +67,11 @@ cpu-cflags += -fno-strict-aliasing -O2
+ cpu-asflags += $(arch-cflags-y) -march=$(march-nonld-isa-y)
+ cpu-ldflags += $(arch-ldflags-y) -march=$(march-ld-isa-y)
+ 
++cpu-cflags += -fno-pie
++cpu-asflags += -fno-pie
++cpu-ldflags += -static
++cpu-mergeflags += -static
++
+ cpu-objs-y+= cpu_entry.o
+ cpu-objs-y+= cpu_proc.o
+ cpu-objs-y+= cpu_tlb.o
+-- 
+2.41.0
+
