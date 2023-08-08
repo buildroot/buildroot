@@ -646,10 +646,6 @@ endif
 ifndef $(2)_SVN_EXTERNALS
  ifdef $(3)_SVN_EXTERNALS
   $(2)_SVN_EXTERNALS = $$($(3)_SVN_EXTERNALS)
- else
-  # Legacy: we used to always use externals by default
-  # Only set it when the package is actually hosted on svn
-  $(2)_SVN_EXTERNALS = $$(if $$(filter svn,$$($(2)_SITE_METHOD)),YES)
  endif
 endif
 

@@ -86,3 +86,17 @@ Whenever a package installs an executable that is linked with a library
 in +$(HOST_DIR)/lib+, it must have an RPATH pointing to that directory.
 
 An RPATH pointing to +$(HOST_DIR)/usr/lib+ is no longer accepted.
+
+[[migrating-svn-externals]]
+=== Migrating to 2023.11
+
+Before Buildroot 2023.11, the subversion download backend unconditionally
+retrieved the external references (objects with an `svn:externals`
+property). Starting with 2023.11, externals are no longer retrieved by
+default; if you need them, set +LIBFOO_SVN_EXTERNALS+ to +YES+. This
+change implies that:
+
+* the generated archive content may change, and thus the hashes may need
+  to be updated appropriately;
+* the archive version suffix has been updated to +-br3+, so the hash
+  files must be updated appropriately.

@@ -347,11 +347,9 @@ not and can not work as people would expect it should:
   Git LFS to store large files out of band.  This is only available for
   packages downloaded with git (i.e. when +LIBFOO_SITE_METHOD=git+).
 
-+ +LIBFOO_SVN_EXTERNAL+ can be set to +YES+ (the default) to specify
-  whether to retrieve the svn external references, or to +NO+ to avoid
-  retrieving those externals. Note that, contrary to other similar
-  options like +LIBFOO_GIT_SUBMODULES+ or +LIBFOO_GIT_LFS+, the default
-  here is to actually retrieve the externals; this is a legacy heritage.
++ +LIBFOO_SVN_EXTERNALS+ can be set to +YES+ to create an archive with
+  the svn external references. This is only available for packages
+  downloaded with subversion.
 
 * +LIBFOO_STRIP_COMPONENTS+ is the number of leading components
   (directories) that tar must strip from file names on extraction.
