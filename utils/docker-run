@@ -33,6 +33,14 @@ if [ "${GIT_DIR}" ]; then
     # path already (in a wordir), then that's a noop.
     GIT_DIR="$(cd "${MAIN_DIR}"; readlink -e "${GIT_DIR}")"
     mountpoints+=( "${GIT_DIR}" )
+
+    # 'repo' stores .git/objects separately.
+    if [ -L "${GIT_DIR}/objects" ]; then
+        # GITDIR is already an absolute path, but for symetry
+        # with the above, keep the same cd+readlink construct.
+        OBJECTS_DIR="$(cd "${MAIN_DIR}"; readlink -e "${GIT_DIR}/objects")"
+        mountpoints+=( "${OBJECTS_DIR}" )
+    fi
 fi
 
 if [ "${BR2_DL_DIR}" ]; then
