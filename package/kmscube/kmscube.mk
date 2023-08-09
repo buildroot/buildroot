@@ -10,6 +10,13 @@ KMSCUBE_LICENSE = MIT
 KMSCUBE_LICENSE_FILES = COPYING
 KMSCUBE_DEPENDENCIES = host-pkgconf libdrm libegl libgbm libgles
 
+ifeq ($(BR2_PACKAGE_KMSCUBE_GSTREAMER),y)
+KMSCUBE_DEPENDENCIES += gst1-plugins-base gstreamer1 libglib2
+KMSCUBE_CONF_OPTS += -Dgstreamer=enabled
+else
+KMSCUBE_CONF_OPTS += -Dgstreamer=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_LIBPNG),y)
 KMSCUBE_DEPENDENCIES += libpng
 # libpng is automatically detected in meson, there is no build
