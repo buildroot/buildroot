@@ -1,0 +1,33 @@
+From 56920e3ce04aa2eadb529a6787200789bf1c3925 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Wed, 9 Aug 2023 23:16:52 +0200
+Subject: [PATCH] esp_hosted_ng: host: fix build failure when CONFIG_PM is not
+ defined
+
+wiphy->wowlan is not defined when CONFIG_PM is not enabled so let's
+guard the assignment to wiphy->wowlan according to option CONFIG_PM.
+
+Upstream: https://github.com/espressif/esp-hosted/pull/254
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ esp_hosted_ng/host/esp_cfg80211.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/esp_hosted_ng/host/esp_cfg80211.c b/esp_hosted_ng/host/esp_cfg80211.c
+index 70fdbb9773..d3c4108c29 100644
+--- a/esp_hosted_ng/host/esp_cfg80211.c
++++ b/esp_hosted_ng/host/esp_cfg80211.c
+@@ -638,7 +638,9 @@ int esp_cfg80211_register(struct esp_adapter *adapter)
+ 	wiphy->max_scan_ie_len = 1000;
+ 	wiphy->max_sched_scan_ssids = 10;
+ 	wiphy->signal_type = CFG80211_SIGNAL_TYPE_MBM;
++#ifdef CONFIG_PM
+ 	wiphy->wowlan = &esp_wowlan_support;
++#endif
+ 
+ 	/* Advertise SAE support */
+ 	wiphy->features |= NL80211_FEATURE_SAE;
+-- 
+2.34.1
+
