@@ -1,0 +1,12 @@
+config BR2_PACKAGE_QT6CORE5COMPAT
+	bool "qt6core5compat"
+	select BR2_PACKAGE_QT6BASE_XML
+	help
+	  Qt is a cross-platform application and UI framework for
+	  developers using C++.
+
+	  The Qt 5 Core Compat module contains the Qt 5 Core APIs that
+	  were removed in Qt 6. The module facilitates the transition
+	  to Qt 6.
+
+	  https://doc.qt.io/qt-6/qtcore5-index.html
