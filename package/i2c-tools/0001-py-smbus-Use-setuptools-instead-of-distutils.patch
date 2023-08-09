@@ -1,0 +1,38 @@
+From cf3541b8a7ed50782edd05836020d31230fb86c6 Mon Sep 17 00:00:00 2001
+From: Ross Burton <ross.burton@arm.com>
+Date: Wed, 19 Jan 2022 12:08:53 +0100
+Subject: py-smbus: Use setuptools instead of distutils
+
+As per [1], distutils is deprecated in Python 3.10 and will be removed
+entirely in Python 3.12.
+
+As setuptools is essentially an enhanced version of distutils, it's
+trivial to port to that.
+
+[1] https://docs.python.org/3/whatsnew/3.10.html#distutils-deprecated
+
+Signed-off-by: Ross Burton <ross.burton@arm.com>
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+
+Upstream: https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/commit/?id=cf3541b8a7ed50782edd05836020d31230fb86c6
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ py-smbus/setup.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/py-smbus/setup.py b/py-smbus/setup.py
+index 28a4500..26db33a 100644
+--- a/py-smbus/setup.py
++++ b/py-smbus/setup.py
+@@ -1,6 +1,6 @@
+ #!/usr/bin/env python
+ 
+-from distutils.core import setup, Extension
++from setuptools import setup, Extension
+ 
+ setup(	name="smbus",
+ 	version="1.1",
+-- 
+cgit 
+
