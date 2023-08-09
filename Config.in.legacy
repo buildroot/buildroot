@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2023.08"
 
+config BR2_TARGET_LPC32XXCDL
+	bool "lpc32xxcdl has been removed"
+	select BR2_LEGACY
+	help
+	  lpc32xxcdl has been removed, due to licensing concerns.
+
 config BR2_BINUTILS_VERSION_2_38_X
 	bool "binutils 2.38.x has been removed"
 	select BR2_LEGACY
