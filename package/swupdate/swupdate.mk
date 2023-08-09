@@ -230,7 +230,7 @@ endef
 define SWUPDATE_INSTALL_STAGING_CMDS
 	$(TARGET_MAKE_ENV) $(SWUPDATE_MAKE_ENV) $(MAKE) -C $(@D) \
 		$(SWUPDATE_MAKE_OPTS) DESTDIR=$(STAGING_DIR) \
-		INCLUDEDIR=/usr/include/swupdate install
+		install
 endef
 
 define SWUPDATE_INSTALL_TARGET_CMDS
