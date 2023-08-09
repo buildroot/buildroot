@@ -18,6 +18,7 @@ declare -a docker_opts=(
     --rm
     --user "$(id -u):$(id -g)"
     --workdir "$(pwd)"
+    --security-opt label=disable
 )
 
 declare -a mountpoints=(
