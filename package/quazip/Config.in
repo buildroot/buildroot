@@ -1,8 +1,9 @@
 config BR2_PACKAGE_QUAZIP
 	bool "quazip"
-	depends on BR2_PACKAGE_QT5
+	depends on BR2_PACKAGE_QT5 || BR2_PACKAGE_QT6
 	select BR2_PACKAGE_ZLIB
 	select BR2_PACKAGE_ZLIB_FORCE_LIBZLIB
+	select BR2_PACKAGE_QT6CORE5COMPAT if BR2_PACKAGE_QT6
 	help
 	  QuaZIP is a simple C++ wrapper over Gilles Vollant's
 	  ZIP/UNZIP package that can be used to access ZIP
