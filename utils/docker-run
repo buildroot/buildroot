@@ -17,10 +17,13 @@ declare -a docker_opts=(
     -i
     --rm
     --user "$(id -u):$(id -g)"
-    --workdir "${MAIN_DIR}"
+    --workdir "$(pwd)"
 )
 
-declare -a mountpoints=( "${MAIN_DIR}" )
+declare -a mountpoints=(
+    "${MAIN_DIR}"
+    "$(pwd)"
+)
 
 # Empty GIT_DIR means that we are not in a workdir, *and* git is too old
 # to know about worktrees, so we're not in a worktree either. So it means
