@@ -10,4 +10,10 @@ KMSCUBE_LICENSE = MIT
 KMSCUBE_LICENSE_FILES = COPYING
 KMSCUBE_DEPENDENCIES = host-pkgconf libdrm libegl libgbm libgles
 
+ifeq ($(BR2_PACKAGE_LIBPNG),y)
+KMSCUBE_DEPENDENCIES += libpng
+# libpng is automatically detected in meson, there is no build
+# configuration option to pass.
+endif
+
 $(eval $(meson-package))
