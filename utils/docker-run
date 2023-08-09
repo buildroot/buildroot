@@ -35,6 +35,11 @@ if [ "${GIT_DIR}" ]; then
     mountpoints+=( "${GIT_DIR}" )
 fi
 
+if [ "${BR2_DL_DIR}" ]; then
+    mountpoints+=( "${BR2_DL_DIR}" )
+    docker_opts+=( --env BR2_DL_DIR )
+fi
+
 # shellcheck disable=SC2013 # can't use while-read because of the assignment
 for dir in $(printf '%s\n' "${mountpoints[@]}" |LC_ALL=C sort -u); do
     docker_opts+=( --mount "type=bind,src=${dir},dst=${dir}" )
