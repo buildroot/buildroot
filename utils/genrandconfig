@@ -496,10 +496,6 @@ def fixup_config(sysinfo, configfile):
        'BR2_TARGET_BOOT_WRAPPER_AARCH64_DTS=""\n' in configlines:
         return False
 
-    if 'BR2_TARGET_LPC32XXCDL=y\n' in configlines and \
-       'BR2_TARGET_LPC32XXCDL_BOARDNAME=""\n' in configlines:
-        return False
-
     if 'BR2_TARGET_OPTEE_OS=y\n' in configlines and \
        'BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL=y\n' in configlines and \
        'BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL_LOCATION=""\n' in configlines:
