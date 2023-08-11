@@ -1,0 +1,57 @@
+From c0136ac0c98b18208508fbcfac31a843e0bb8a37 Mon Sep 17 00:00:00 2001
+From: Karel Zak <kzak@redhat.com>
+Date: Thu, 3 Aug 2023 12:39:19 +0200
+Subject: [PATCH] libmount: ifdef statx() call
+
+In this case the statx() is use to get mount ID. It's optional and not
+required. Let's #ifdef the statx() call and also check for stx_mnt_id
+struct member.
+
+Fixes: https://github.com/util-linux/util-linux/issues/2415
+Signed-off-by: Karel Zak <kzak@redhat.com>
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://github.com/util-linux/util-linux/commit/c0136ac0c98b18208508fbcfac31a843e0bb8a37
+---
+ configure.ac              | 5 ++++-
+ libmount/src/hook_mount.c | 2 ++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index a3cf330b5..ae721c7ac 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -525,7 +525,10 @@ AC_CHECK_MEMBERS([struct termios.c_line],,,
+     [[#include <termios.h>]])
+ 
+ AC_CHECK_MEMBERS([struct stat.st_mtim.tv_nsec],,,
+-	[#include <sys/stat.h>])
++    [[#include <sys/stat.h>]])
++
++AC_CHECK_MEMBERS([struct statx.stx_mnt_id],,,
++    [[#include <linux/stat.h>]])
+ 
+ AC_CHECK_DECLS([_NL_TIME_WEEK_1STDAY],[],[],[[#include <langinfo.h>]])
+ 
+diff --git a/libmount/src/hook_mount.c b/libmount/src/hook_mount.c
+index d69a018ec..056338c49 100644
+--- a/libmount/src/hook_mount.c
++++ b/libmount/src/hook_mount.c
+@@ -294,6 +294,7 @@ static int hook_create_mount(struct libmnt_context *cxt,
+ 		/* cleanup after fail (libmount may only try the FS type) */
+ 		close_sysapi_fds(api);
+ 
++#if defined(HAVE_STRUCT_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
+ 	if (!rc && cxt->fs) {
+ 		struct statx st;
+ 
+@@ -306,6 +307,7 @@ static int hook_create_mount(struct libmnt_context *cxt,
+ 				fs->id = cxt->fs->id;
+ 		}
+ 	}
++#endif
+ 
+ done:
+ 	DBG(HOOK, ul_debugobj(hs, "create FS done [rc=%d, id=%d]", rc, cxt->fs ? cxt->fs->id : -1));
+-- 
+2.39.2
+
