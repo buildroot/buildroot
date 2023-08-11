@@ -10,25 +10,24 @@ routines.
 The mv-ddr-marvell Makefile provides no way to add custom CFLAGS. Patch
 Makefile to disable stack protection.
 
+Upstream: not applicable; Buildroot specific
 Signed-off-by: Baruch Siach <baruch@tkos.co.il>
----
-Upstream status: not applicable; Buildroot specific
 ---
  Makefile | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/Makefile b/Makefile
-index 3f0dd89a7381..feae75cc16e4 100644
+index 045284c30cbc..9641354bcf86 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -331,6 +331,7 @@ OBJ_DIR ?= $(MV_DDR_ROOT)
- CFLAGS = -DMV_DDR_ATF -DCONFIG_DDR4
+@@ -336,6 +336,7 @@ CFLAGS = -DMV_DDR_ATF -DCONFIG_DDR4
  CFLAGS += -Wall -Werror -Os -ffreestanding -mlittle-endian -g -gdwarf-2 -nostdinc
  CFLAGS += -march=armv8-a -fpie
+ CFLAGS += $(call cc_option, --param=min-pagesize=0)
 +CFLAGS += -fno-stack-protector
  
  # PLATFORM is set in ble/ble.mk
  ifneq ($(findstring a80x0,$(PLATFORM)),)
 -- 
-2.35.1
+2.40.1
 
