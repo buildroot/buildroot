@@ -1,0 +1,26 @@
+From e28634a0e847a14c58482f962bc9b1d69937387f Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Sat, 12 Aug 2023 12:53:37 +0200
+Subject: [PATCH] remove unused dlfcn.h header file
+
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://github.com/containers/conmon/issues/443
+---
+ src/seccomp_notify.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/src/seccomp_notify.c b/src/seccomp_notify.c
+index 8d34d9d..2a8371d 100644
+--- a/src/seccomp_notify.c
++++ b/src/seccomp_notify.c
+@@ -7,7 +7,6 @@
+ 
+ #include <errno.h>
+ #include <sys/ioctl.h>
+-#include <dlfcn.h>
+ #include <sys/wait.h>
+ #include <sys/mount.h>
+ #include <signal.h>
+-- 
+2.39.2
+
