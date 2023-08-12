@@ -13,12 +13,10 @@ FFT_EVAL_LICENSE_FILES = \
 	LICENSES/OFL-1.1.txt
 
 FFT_EVAL_CONV_OPTS = CONFIG_fft_eval_json=y
-FFT_EVAL_TARGETS = fft_eval_json
 
 ifeq ($(BR2_PACKAGE_SDL2)$(BR2_PACKAGE_SDL2_TTF),yy)
 FFT_EVAL_CONV_OPTS += CONFIG_fft_eval_sdl=y
 FFT_EVAL_DEPENDENCIES += sdl2 sdl2_ttf
-FFT_EVAL_TARGETS += fft_eval_sdl
 else
 FFT_EVAL_CONV_OPTS += CONFIG_fft_eval_sdl=n
 endif
