@@ -1,0 +1,57 @@
+From a0db2b60b9f5c14e9f69c0e06e1a8d35f9fb1b5a Mon Sep 17 00:00:00 2001
+From: Jerome Forissier <jerome.forissier@linaro.org>
+Date: Tue, 25 Jul 2023 14:39:25 +0200
+Subject: [PATCH] xtest: add -DOPENSSL_API_COMPAT=10100
+
+regression_1000.c uses OpenSSL functions that have been deprecated
+after version 1.1. In particular, building with version 3.0 causes the
+following error (and other similar ones not pasted here):
+
+ optee_test/host/xtest/regression_1000.c: In function 'check_signature':
+ optee_test/host/xtest/regression_1000.c:2735:9: error: 'SHA256_Init' is deprecated: Since OpenSSL 3.0 [-Werror=deprecated-declarations]
+  2735 |         SHA256_Init(&ctx);
+       |         ^~~~~~~~~~~
+
+Add -DOPENSSL_API_COMPAT=10100 to the build flags to avoid this and be
+flexible with regards to which version of OpenSSL build environment has
+to provide.
+
+Signed-off-by: Jerome Forissier <jerome.forissier@linaro.org>
+Acked-by: Jens Wiklander <jens.wiklander@linaro.org>
+(cherry picked from commit cf111604c4c32a76be90f29aab25fa9b882c8715)
+Upstream: https://github.com/OP-TEE/optee_test/commit/cf111604c4c32a76be90f29aab25fa9b882c8715
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+---
+ host/xtest/CMakeLists.txt | 2 +-
+ host/xtest/Makefile       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/host/xtest/CMakeLists.txt b/host/xtest/CMakeLists.txt
+index 776787b..ae0f4e0 100644
+--- a/host/xtest/CMakeLists.txt
++++ b/host/xtest/CMakeLists.txt
+@@ -12,7 +12,7 @@ endif()
+ 
+ find_package(OpenSSL)
+ if(OPENSSL_FOUND)
+-	add_compile_options(-DOPENSSL_FOUND=1)
++	add_compile_options(-DOPENSSL_FOUND=1 -DOPENSSL_API_COMPAT=10100)
+ 	set (OPENSSL_PRIVATE_LINK OpenSSL::Crypto)
+ endif()
+ 
+diff --git a/host/xtest/Makefile b/host/xtest/Makefile
+index 8505629..2497850 100644
+--- a/host/xtest/Makefile
++++ b/host/xtest/Makefile
+@@ -39,7 +39,7 @@ endef
+ # - User/group login tests 1027 and 1028
+ WITH_OPENSSL ?= y
+ ifeq ($(WITH_OPENSSL),y)
+-CFLAGS += -DOPENSSL_FOUND=1
++CFLAGS += -DOPENSSL_FOUND=1 -DOPENSSL_API_COMPAT=10100
+ ifneq ($(OPTEE_OPENSSL_EXPORT),)
+ LDFLAGS += -lcrypto
+ CFLAGS += -I$(OPTEE_OPENSSL_EXPORT)
+-- 
+2.41.0
+
