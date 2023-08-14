@@ -35,4 +35,10 @@ else
 ZLIB_NG_CONF_OPTS += -DWITH_POWER8=OFF
 endif
 
+ifeq ($(BR2_powerpc_power9),y)
+ZLIB_NG_CONF_OPTS += -DWITH_POWER9=ON
+else
+ZLIB_NG_CONF_OPTS += -DWITH_POWER9=OFF
+endif
+
 $(eval $(cmake-package))
