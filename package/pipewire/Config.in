@@ -60,7 +60,7 @@ comment "pipewire v4l2 support needs udev and a toolchain w/ headers >= 3.18"
 
 endif
 
-comment "pipewire needs a toolchain w/ dynamic library, NTPL, gcc >= 5"
+comment "pipewire needs a toolchain w/ dynamic library, NPTL, gcc >= 5"
 	depends on BR2_USE_MMU
 	depends on BR2_STATIC_LIBS || \
 		!BR2_TOOLCHAIN_HAS_THREADS_NPTL || \
