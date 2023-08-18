@@ -1,0 +1,7 @@
+config BR2_TARGET_TI_K3_BOOT_FIRMWARE
+	bool "ti-k3-boot-firmware"
+	depends on BR2_aarch64
+	help
+	  This package downloads and installs the TI-specific ti-sysfw
+	  and ti-dm firmware needed to boot TI K3 platforms (which
+	  include AM62x, AM64x, AM65x and more).
