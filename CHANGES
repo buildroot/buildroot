@@ -1,3 +1,35 @@
+2023.08-rc2, released August 20th, 2023
+
+	Fixes all over the tree.
+
+	Toolchains: Only show external toolchains based on a GCC
+	version supporting the selected architecture
+	variant. Correctly mark Codescape MIPS external toolchains as
+	not providing a gdbserver.
+
+	Defconfigs: Andes ae350_45: Drop custom U-Boot march setting,
+	breaking builds with GCC 12. Nitrogen*: Bump
+	U-Boot/Linux. Nitrogen8*: Use ATF 2.8, fixing array bounds
+	errors. QEMU m68k: Add Linux patch to fix build issue with
+	binutils >= 2.41. Raspberrypi*: Enable console on HDMI when
+	using systemd as well.
+
+	Updated/fixed packages: at91dataflashboot, aubio, berkeleydb,
+	bwm-ng, ccache, check, chocolate-doom, compiler-rt, composer,
+	conmon, connman, dav1d, diffutils, dracut, e2fsprogs, elf2flt,
+	esp-hosted, flite, gcc, gdb, go-bootstrap-stage2,
+	intel-microcode, kodi-imagedecoder-heif, less, libcoap,
+	libedit, libglib2, libksba, liblo, libserial, log4cxx, lsof,
+	luvi, meson, mosquitto, mpd, mpv, mv-ddr-marvell, nftables,
+	ntpsec, openssh, optee-test, perftest, python-botocore,
+	python-docker, python-pylibfdt, python3, screenfetch,
+	sentry-cli, sngrep, stellarium, trinity, tvheadend, uboot,
+	uclibc, util-linux, xfsprogs, yajl
+
+	New packages: nftables-python, xlib_libXpresent
+
+	Removed packages: lpc32xxcdl
+
 2023.08-rc1, released August 5, 2023
 
 	Numerous package updates and fixes, additional runtime tests.
