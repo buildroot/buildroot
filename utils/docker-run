@@ -9,9 +9,11 @@ else
     # Support git-worktree
     GIT_DIR="$(cd "${MAIN_DIR}" && git rev-parse --no-flags --git-common-dir)"
 fi
-# shellcheck disable=SC2016
-IMAGE=$(grep ^image: "${MAIN_DIR}/.gitlab-ci.yml" | \
-        sed -e 's,^image: ,,g' | sed -e 's,\$CI_REGISTRY,registry.gitlab.com,g')
+if test -z "${IMAGE}" ; then
+    # shellcheck disable=SC2016
+    IMAGE=$(grep ^image: "${MAIN_DIR}/.gitlab-ci.yml" | \
+            sed -e 's,^image: ,,g' | sed -e 's,\$CI_REGISTRY,registry.gitlab.com,g')
+fi
 
 declare -a docker_opts=(
     -i
