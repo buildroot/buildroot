@@ -1,0 +1,44 @@
+From b9f454cd29b6b5a0927b3c1e98807d54ffacd73e Mon Sep 17 00:00:00 2001
+From: Maksim Kiselev <bigunclemax@gmail.com>
+Date: Mon, 15 May 2023 19:29:45 +0300
+Subject: [PATCH] Fix unknown type name ‘ssize_t’ error
+
+This error occurs for builds with musl libc.
+Move include <sys/types.h> to utils header to
+resolve this issue.
+
+Upstream: https://github.com/intel/ledmon/pull/139
+
+Signed-off-by: Maksim Kiselev <bigunclemax@gmail.com>
+---
+ src/utils.c | 1 -
+ src/utils.h | 1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/utils.c b/src/utils.c
+index 86b9593..0b83d5a 100644
+--- a/src/utils.c
++++ b/src/utils.c
+@@ -33,7 +33,6 @@
+ #include <string.h>
+ #include <sys/stat.h>
+ #include <sys/time.h>
+-#include <sys/types.h>
+ #include <time.h>
+ #include <unistd.h>
+ #include <assert.h>
+diff --git a/src/utils.h b/src/utils.h
+index 5d590b9..d02da8f 100644
+--- a/src/utils.h
++++ b/src/utils.h
+@@ -22,6 +22,7 @@
+ #define _UTILS_H_INCLUDED_
+ 
+ #include <getopt.h>
++#include <sys/types.h>
+ #include "config_file.h"
+ #include "stdlib.h"
+ #include "stdint.h"
+-- 
+2.39.2
+
