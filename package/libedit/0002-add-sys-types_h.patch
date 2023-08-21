@@ -1,0 +1,15 @@
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: N/A only reachable via mail
+
+diff -Nur libedit-20221030-3.1.orig/src/sys.h libedit-20221030-3.1/src/sys.h
+--- libedit-20221030-3.1.orig/src/sys.h	2022-10-30 06:35:40.000000000 +0100
++++ libedit-20221030-3.1/src/sys.h	2023-08-12 09:52:28.137223311 +0200
+@@ -40,7 +40,7 @@
+ #ifndef _h_sys
+ #define	_h_sys
+ 
+-#if defined(HAVE_SYS_TYPES_H) && defined(__sun)
++#if defined(HAVE_SYS_TYPES_H)
+ #include <sys/types.h>
+ #endif
+ 

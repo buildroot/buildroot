@@ -144,7 +144,7 @@ endif
 
 ###############################################################################
 
-comment "Legacy options removed in 2023.08"
+comment "Legacy options removed in 2023.11"
 
 config BR2_PACKAGE_GOOGLE_MATERIAL_DESIGN_ICONS
 	bool "google-material-design-icons removed"
@@ -157,6 +157,14 @@ config BR2_GDB_VERSION_10
 	select BR2_LEGACY
 	help
 	  gdb 10.x has been removed, use a newer version.
+
+comment "Legacy options removed in 2023.08"
+
+config BR2_TARGET_LPC32XXCDL
+	bool "lpc32xxcdl has been removed"
+	select BR2_LEGACY
+	help
+	  lpc32xxcdl has been removed, due to licensing concerns.
 
 config BR2_BINUTILS_VERSION_2_38_X
 	bool "binutils 2.38.x has been removed"

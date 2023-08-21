@@ -1,0 +1,43 @@
+From ca831f29f8f25c97182e726429b38c0802200c8f Mon Sep 17 00:00:00 2001
+From: Xiongwei Song <sxwjean@gmail.com>
+Date: Fri, 14 Jan 2022 14:07:24 -0800
+Subject: mm: page_alloc: fix building error on -Werror=array-compare
+
+Arthur Marsh reported we would hit the error below when building kernel
+with gcc-12:
+
+  CC      mm/page_alloc.o
+  mm/page_alloc.c: In function `mem_init_print_info':
+  mm/page_alloc.c:8173:27: error: comparison between two arrays [-Werror=array-compare]
+   8173 |                 if (start <= pos && pos < end && size > adj) \
+        |
+
+In C++20, the comparision between arrays should be warned.
+
+Link: https://lkml.kernel.org/r/20211125130928.32465-1-sxwjean@me.com
+Signed-off-by: Xiongwei Song <sxwjean@gmail.com>
+Reported-by: Arthur Marsh <arthur.marsh@internode.on.net>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Upstream: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ca831f29f8f25c97182e726429b38c0802200c8f
+Signed-off-by: Kilian Zinnecker <kilian.zinnecker@mail.de>
+---
+ mm/page_alloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 806f317c2e7e2..c4ef450ac4428 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -8228,7 +8228,7 @@ void __init mem_init_print_info(void)
+ 	 */
+ #define adj_init_size(start, end, size, pos, adj) \
+ 	do { \
+-		if (start <= pos && pos < end && size > adj) \
++		if (&start[0] <= &pos[0] && &pos[0] < &end[0] && size > adj) \
+ 			size -= adj; \
+ 	} while (0)
+ 
+-- 
+cgit 
+

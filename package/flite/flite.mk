@@ -8,6 +8,7 @@ FLITE_VERSION = 2.2
 FLITE_SITE = $(call github,festvox,flite,v$(FLITE_VERSION))
 FLITE_LICENSE = BSD-4-Clause
 FLITE_LICENSE_FILES = COPYING
+FLITE_CPE_ID_VENDOR = cmu
 
 FLITE_INSTALL_STAGING = YES
 # Patching configure.in

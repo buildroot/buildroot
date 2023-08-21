@@ -5,7 +5,7 @@
 ################################################################################
 
 CHECK_VERSION = 0.15.2
-CHECK_SITE = https://github.com/libcheck/check/releases/download/$(CHECK_VERSION)
+CHECK_SITE = $(call github,libcheck,check,$(CHECK_VERSION))
 CHECK_INSTALL_STAGING = YES
 CHECK_DEPENDENCIES = host-pkgconf
 CHECK_LICENSE = LGPL-2.1+

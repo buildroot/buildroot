@@ -44,7 +44,7 @@ class TestPolkitSystemd(TestPolkitInfra):
         for rule_path in TestPolkitInfra.rule_paths:
             cmd = "su brtest -c '/bin/systemctl restart systemd-timesyncd.service'"
             _, exit_code = self.emulator.run(cmd, 10)
-            self.assertEqual(exit_code, 1)
+            self.assertNotEqual(exit_code, 0)
 
             cmd = "cp /root/{file} {path}".format(file=rule_file, path=rule_path)
             _, exit_code = self.emulator.run(cmd, 10)

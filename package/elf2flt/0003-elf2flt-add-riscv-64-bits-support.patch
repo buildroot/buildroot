@@ -1,4 +1,4 @@
-From 3f1f323feb5cf25d8c80861991d0360784f4d2e6 Mon Sep 17 00:00:00 2001
+From 1498503bde2a6055a83f1e9f3eaa6f2a104bd597 Mon Sep 17 00:00:00 2001
 From: Damien Le Moal <damien.lemoal@wdc.com>
 Date: Wed, 9 Sep 2020 17:31:33 +0900
 Subject: [PATCH] elf2flt: add riscv 64-bits support
@@ -27,7 +27,7 @@ Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
  3 files changed, 25 insertions(+)
 
 diff --git a/elf2flt.c b/elf2flt.c
-index da25e93..a03ea3a 100644
+index ea6b5a1..c2816b6 100644
 --- a/elf2flt.c
 +++ b/elf2flt.c
 @@ -81,6 +81,8 @@ const char *elf2flt_progname;
@@ -48,7 +48,7 @@ index da25e93..a03ea3a 100644
  #else
  #error "Don't know how to support your CPU architecture??"
  #endif
-@@ -812,6 +816,18 @@ output_relocs (
+@@ -821,6 +825,18 @@ output_relocs (
  					goto good_32bit_resolved_reloc;
  				default:
  					goto bad_resolved_reloc;
@@ -99,5 +99,5 @@ index 7cb02d5..75ee1bb 100644
  	if (!linker_script)
  		linker_script = concat(ldscriptpath, "/elf2flt.ld", NULL);
 -- 
-2.36.1
+2.41.0
 

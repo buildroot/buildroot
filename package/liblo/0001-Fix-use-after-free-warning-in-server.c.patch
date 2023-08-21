@@ -1,0 +1,29 @@
+From 8187a8456c14eeb3af08c86ffa1228823c9ef1c5 Mon Sep 17 00:00:00 2001
+From: Guido Aulisi <guido.aulisi@gmail.com>
+Date: Sun, 25 Jun 2023 15:58:30 +0200
+Subject: [PATCH] Fix use-after-free warning in server.c
+
+That assignment is not necessary before returning
+
+Upstream: https://sourceforge.net/p/liblo/git/ci/8187a8456c14eeb3af08c86ffa1228823c9ef1c5/
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/server.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/src/server.c b/src/server.c
+index ba02d8e..35c9ba5 100644
+--- a/src/server.c
++++ b/src/server.c
+@@ -2289,7 +2289,6 @@ int lo_server_del_lo_method(lo_server s, lo_method m)
+             free((void *) it->path);
+             free((void *) it->typespec);
+             free(it);
+-            it = prev;
+             return 0;
+         }
+         prev = it;
+-- 
+2.39.2
+

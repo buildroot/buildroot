@@ -1,0 +1,113 @@
+From 6823bacb3c2564bff5da3175c574fd6a6af4d8b2 Mon Sep 17 00:00:00 2001
+From: chuhu <chuhu@redhat.com>
+Date: Sat, 1 Jul 2023 01:02:37 +0800
+Subject: [PATCH] ioctls/drm: check i810,mga,r128 and savage support (#44)
+
+kernel v6.3-rc1 removed some drm drivers, so add the extra check to make
+the compile succeed.
+
+7872bc2cb13e drm: Remove the obsolete driver-savage
+28483b8666bf drm: Remove the obsolete driver-r128
+96ed7db55bef drm: Remove the obsolete driver-mga
+cab18866fead drm: Remove the obsolete driver-i810
+
+Signed-off-by: Chunyu Hu <chuhu@redhat.com>
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://github.com/kernelslacker/trinity/commit/6823bacb3c2564bff5da3175c574fd6a6af4d8b2
+---
+ configure    |  4 ++++
+ ioctls/drm.c | 14 ++++++++++++++
+ 2 files changed, 18 insertions(+)
+
+diff --git a/configure b/configure
+index 944c8cf7..bbaf9afc 100755
+--- a/configure
++++ b/configure
+@@ -320,6 +320,10 @@ check_header linux/irda.h USE_IRDA
+ check_header linux/rds.h USE_RDS
+ check_header linux/vfio.h USE_VFIO
+ check_header drm/drm.h USE_DRM
++check_header drm/i810_drm.h USE_DRM_I810
++check_header drm/mga_drm.h USE_DRM_MGA
++check_header drm/r128_drm.h USE_DRM_R128
++check_header drm/savage_drm.h USE_DRM_SAVAGE
+ check_header drm/exynos_drm.h USE_DRM_EXYNOS
+ check_header sound/compress_offload.h USE_SNDDRV_COMPRESS_OFFLOAD
+ check_header linux/kvm.h USE_KVM
+diff --git a/ioctls/drm.c b/ioctls/drm.c
+index 81ed3682..a07a8436 100644
+--- a/ioctls/drm.c
++++ b/ioctls/drm.c
+@@ -8,13 +8,21 @@
+ #ifdef USE_DRM_EXYNOS
+ #include <drm/exynos_drm.h>
+ #endif
++#ifdef USE_DRM_I810
+ #include <drm/i810_drm.h>
++#endif
+ #include <drm/i915_drm.h>
++#ifdef USE_DRM_MGA
+ #include <drm/mga_drm.h>
++#endif
+ #include <drm/nouveau_drm.h>
++#ifdef USE_DRM_R128
+ #include <drm/r128_drm.h>
++#endif
+ #include <drm/radeon_drm.h>
++#ifdef USE_DRM_SAVAGE
+ #include <drm/savage_drm.h>
++#endif
+ 
+ #include "ioctls.h"
+ #include "utils.h"
+@@ -293,6 +301,7 @@ static const struct ioctl drm_ioctls[] = {
+ #endif
+ #endif
+ 
++#ifdef USE_DRM_I810
+ 	/* i810_drm.h */
+ 	IOCTL(DRM_IOCTL_I810_INIT),
+ 	IOCTL(DRM_IOCTL_I810_VERTEX),
+@@ -309,6 +318,7 @@ static const struct ioctl drm_ioctls[] = {
+ 	IOCTL(DRM_IOCTL_I810_MC),
+ 	IOCTL(DRM_IOCTL_I810_RSTATUS),
+ 	IOCTL(DRM_IOCTL_I810_FLIP),
++#endif
+ 
+ 	/* i915_drm.h */
+ 	IOCTL(DRM_IOCTL_I915_INIT),
+@@ -378,6 +388,7 @@ static const struct ioctl drm_ioctls[] = {
+ 	IOCTL(DRM_IOCTL_I915_REG_READ),
+ #endif
+ 
++#ifdef USE_DRM_MGA
+ 	/* mga_drm.h */
+ 	IOCTL(DRM_IOCTL_MGA_INIT),
+ 	IOCTL(DRM_IOCTL_MGA_FLUSH),
+@@ -401,6 +412,7 @@ static const struct ioctl drm_ioctls[] = {
+ 	IOCTL(DRM_IOCTL_NOUVEAU_GROBJ_ALLOC),
+ 	IOCTL(DRM_IOCTL_NOUVEAU_NOTIFIEROBJ_ALLOC),
+ 	IOCTL(DRM_IOCTL_NOUVEAU_GPUOBJ_FREE),
++#endif
+ #ifdef DRM_IOCTL_NOUVEAU_GEM_NEW
+ 	IOCTL(DRM_IOCTL_NOUVEAU_GEM_NEW),
+ #endif
+@@ -417,6 +429,7 @@ static const struct ioctl drm_ioctls[] = {
+ 	IOCTL(DRM_IOCTL_NOUVEAU_GEM_INFO),
+ #endif
+ 
++#ifdef USE_DRM_R128
+ 	/* r128_drm.h */
+ 	IOCTL(DRM_IOCTL_R128_INIT),
+ 	IOCTL(DRM_IOCTL_R128_CCE_START),
+@@ -435,6 +448,7 @@ static const struct ioctl drm_ioctls[] = {
+ 	IOCTL(DRM_IOCTL_R128_FULLSCREEN),
+ 	IOCTL(DRM_IOCTL_R128_GETPARAM),
+ 	IOCTL(DRM_IOCTL_R128_FLIP),
++#endif
+ 
+ 	/* radeon_drm.h */
+ 	IOCTL(DRM_IOCTL_RADEON_CP_INIT),
+-- 
+2.39.2
+
