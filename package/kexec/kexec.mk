@@ -16,6 +16,14 @@ KEXEC_SELINUX_MODULES = kdump
 # Makefile expects $STRIP -o to work, so needed for !BR2_STRIP_strip
 KEXEC_MAKE_OPTS = STRIP="$(TARGET_CROSS)strip"
 
+# kexec requires at least -O1 optimization level. Its code uses a
+# trick to detect unaligned accesses at link time which needs at least
+# dead-code-removal to work. See put/get_unaligned() macros in
+# kexec/kexec.h
+ifeq ($(BR2_OPTIMIZE_0),y)
+KEXEC_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -O1"
+endif
+
 ifeq ($(BR2_PACKAGE_KEXEC_ZLIB),y)
 KEXEC_CONF_OPTS += --with-zlib
 KEXEC_DEPENDENCIES += zlib
