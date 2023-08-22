@@ -1,4 +1,4 @@
-From b719314d201a3e9e1e57c65746a468c47bfc847f Mon Sep 17 00:00:00 2001
+From 8d8899b3ffd26d5049f8a9ccf12ff9ac65c352b4 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Wed, 3 Oct 2018 22:29:32 +0200
 Subject: [PATCH] comm.h needed for list_{display,generic}.o
@@ -12,15 +12,17 @@ Fixes:
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 [Upstream status: https://savannah.gnu.org/bugs/index.php?54776]
+[Julien: rebase on top of 4.9.1]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
 ---
  Makefile.in | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index af5938b..e6d5247 100644
+index 7082a3e..cd363b7 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -265,7 +265,7 @@  braille.h
+@@ -349,7 +349,7 @@ layout.o: layout.h viewport.h canvas.h layout.c config.h screen.h os.h osdef.h a
  viewport.o: layout.h viewport.h canvas.h viewport.c config.h screen.h os.h osdef.h ansi.h acls.h \
   comm.h layer.h term.h image.h display.h window.h extern.h \
   braille.h
@@ -31,5 +33,5 @@ index af5938b..e6d5247 100644
  list_window.o: list_generic.h list_window.c window.h layer.h screen.h osdef.h comm.h
  
 -- 
-2.17.1
+2.41.0
 
