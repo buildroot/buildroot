@@ -1,18 +1,21 @@
+From 86b5c7677c5bef780bd4c28cbbdaa97eda938230 Mon Sep 17 00:00:00 2001
 From: Maarten ter Huurne <maarten@treewalker.org>
 Date: Sun, 14 Sep 2014 23:58:34 +0200
-Subject: Do not create backup of old installed binary
+Subject: [PATCH] Do not create backup of old installed binary
 
 This is a rather unusual feature that packagers will not expect.
 
 Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
 [baruch: update for 4.6.2]
 Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+[Julien: rebase on top of 4.9.1]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
 ---
  Makefile.in | 4 ----
  1 file changed, 4 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index 187a69b..65549e9 100644
+index 26ec404..3efbbfd 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -83,12 +83,9 @@ screen: $(OFILES)
@@ -37,5 +40,5 @@ index 187a69b..65549e9 100644
  	cd doc; $(MAKE) uninstall
  
 -- 
-1.8.4.5
+2.41.0
 

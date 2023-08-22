@@ -1,6 +1,7 @@
+From 545875ad0b6c9697fae41ae8770e95d117fe3cca Mon Sep 17 00:00:00 2001
 From: Maarten ter Huurne <maarten@treewalker.org>
 Date: Sat, 13 Sep 2014 11:37:59 +0200
-Subject: Do not use memcpy as an alternative for bcopy/memmove
+Subject: [PATCH] Do not use memcpy as an alternative for bcopy/memmove
 
 The configure script runs a small test program to check whether
 memcpy can handle overlapping memory areas. However, it is not valid
@@ -16,15 +17,17 @@ Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
 Signed-off-by: Ricardo Martincoski <ricardo.martincoski@gmail.com>
 [Bernd: rebase on top of 4.7.0]
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Julien: rebase on top of 4.9.1]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
 ---
  acconfig.h   |  3 +--
- configure.ac | 18 +-----------------
+ configure.ac | 22 +---------------------
  os.h         |  8 ++------
  osdef.h.in   | 10 +---------
- 4 files changed, 5 insertions(+), 34 deletions(-)
+ 4 files changed, 5 insertions(+), 38 deletions(-)
 
 diff --git a/acconfig.h b/acconfig.h
-index 2e46985..9b0b9d4 100644
+index 46d62b0..f83572c 100644
 --- a/acconfig.h
 +++ b/acconfig.h
 @@ -476,7 +476,7 @@
@@ -45,43 +48,47 @@ index 2e46985..9b0b9d4 100644
  
  /*
 diff --git a/configure.ac b/configure.ac
-index 27690a6..b8e3bec 100644
+index 1a12c04..6f6c2da 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1145,7 +1145,7 @@ AC_TRY_LINK(,[getttyent();], AC_DEFINE(GETTTYENT))
- AC_CHECKING(fdwalk)
- AC_TRY_LINK([#include <stdlib.h>], [fdwalk(NULL, NULL);],AC_DEFINE(HAVE_FDWALK))
+@@ -1278,7 +1278,7 @@ AC_TRY_LINK([
+     fdwalk(NULL, NULL);
+ ],AC_DEFINE(HAVE_FDWALK))
  
 -AC_CHECKING(whether memcpy/memmove/bcopy handles overlapping arguments)
 +AC_CHECKING(whether memmove/bcopy handles overlapping arguments)
  AC_TRY_RUN([
- main() {
-   char buf[10];
-@@ -1175,22 +1175,6 @@ main() {
-   exit(0); /* libc version works properly.  */
- }], AC_DEFINE(USEMEMMOVE))
+ #include <string.h>
+ #include <stdlib.h>
+@@ -1319,26 +1319,6 @@ main() {
+ }], AC_DEFINE(USEMEMMOVE),,
+   AC_NOTE(- skipping check because we are cross compiling; use memmove) AC_DEFINE(USEMEMMOVE))
  
--
 -AC_TRY_RUN([
+-#include <string.h>
+-#include <stdlib.h>
+-
 -#define bcopy(s,d,l) memcpy(d,s,l)
+-
+-int
 -main() {
 -  char buf[10];
 -  strcpy(buf, "abcdefghi");
 -  bcopy(buf, buf + 2, 3);
 -  if (strncmp(buf, "ababcf", 6))
--    exit(1);
+-    return 1;
 -  strcpy(buf, "abcdefghi");
 -  bcopy(buf + 2, buf, 3);
 -  if (strncmp(buf, "cdedef", 6))
--    exit(1);
--  exit(0); /* libc version works properly.  */
+-    return 1;
+-  return 0; /* libc version works properly.  */
 -}], AC_DEFINE(USEMEMCPY),,:)
 -
  AC_SYS_LONG_FILE_NAMES
  
  AC_MSG_CHECKING(for vsprintf)
 diff --git a/os.h b/os.h
-index e827ac9..0b41fb9 100644
+index 2a1c2ca..d1ac87e 100644
 --- a/os.h
 +++ b/os.h
 @@ -142,12 +142,8 @@ extern int errno;
@@ -100,7 +107,7 @@ index e827ac9..0b41fb9 100644
  #endif
  
 diff --git a/osdef.h.in b/osdef.h.in
-index 8687b60..e4057a0 100644
+index 6ddbd66..abdacf7 100644
 --- a/osdef.h.in
 +++ b/osdef.h.in
 @@ -58,16 +58,8 @@ extern int   bcmp __P((char *, char *, int));
@@ -122,5 +129,5 @@ index 8687b60..e4057a0 100644
  extern void  bcopy __P((char *, char *, int));
  #endif
 -- 
-1.8.4.5
+2.41.0
 
