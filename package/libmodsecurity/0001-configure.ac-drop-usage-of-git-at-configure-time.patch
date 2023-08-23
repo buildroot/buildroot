@@ -1,4 +1,4 @@
-From a2116312068b6b2c5732dfebde19b751cc81d4f3 Mon Sep 17 00:00:00 2001
+From d242b011a8f0d84781bbf7667a44a12646903ca4 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Date: Sun, 1 Aug 2021 23:21:35 +0200
 Subject: [PATCH] configure.ac: drop usage of git at configure time
@@ -8,12 +8,13 @@ which is not very useful, and causes a significant number of warning
 when regenerating the configure script.
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: Frank Vanbever <frank.vanbever@mind.be>
 ---
  configure.ac | 23 -----------------------
  1 file changed, 23 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 20163e1e..14e5892a 100644
+index 66d6f4f2..746b1fb4 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -3,7 +3,6 @@
@@ -46,7 +47,7 @@ index 20163e1e..14e5892a 100644
  
  
  # Check for yajl
-@@ -217,10 +208,6 @@ AC_SUBST([MSC_VERSION_WITH_PATCHLEVEL])
+@@ -224,10 +215,6 @@ AC_SUBST([MSC_VERSION_WITH_PATCHLEVEL])
  MSC_VERSION=msc_version
  AC_SUBST([MSC_VERSION])
  
@@ -55,9 +56,9 @@ index 20163e1e..14e5892a 100644
 -
 -
  AC_ARG_ENABLE(debug-logs,
-     [AC_HELP_STRING([--disable-debug-logs],[Turn off the SecDebugLog feature])],
+     [AS_HELP_STRING([--disable-debug-logs],[Turn off the SecDebugLog feature])],
  
-@@ -412,16 +399,6 @@ AC_OUTPUT
+@@ -419,16 +406,6 @@ AC_OUTPUT
  
  
  # Print a fancy summary
@@ -66,14 +67,14 @@ index 20163e1e..14e5892a 100644
 -echo "ModSecurity - ${MSC_GIT_VERSION} for $PLATFORM"
 -echo " "
 -echo " Mandatory dependencies"
--echo -n "   + libInjection                                  ...."
+-AS_ECHO_N("   + libInjection                                  ....")
 -echo LIBINJECTION_VERSION
--echo -n "   + SecLang tests                                 ...."
+-AS_ECHO_N("   + SecLang tests                                 ....")
 -echo SECLANG_TEST_VERSION
 -
  echo " "
  echo " Optional dependencies"
  
 -- 
-2.31.1
+2.39.2
 
