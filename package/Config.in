@@ -372,7 +372,8 @@ comment "Graphic libraries"
 
 comment "Other GUIs"
 	source "package/qt5/Config.in"
-if BR2_PACKAGE_QT5
+	source "package/qt6/Config.in"
+if BR2_PACKAGE_QT5 || BR2_PACKAGE_QT6
 comment "QT libraries and helper libraries"
 	source "package/cutelyst/Config.in"
 	source "package/grantlee/Config.in"
@@ -383,7 +384,6 @@ comment "QT libraries and helper libraries"
 	source "package/qwt/Config.in"
 	source "package/simple-mail/Config.in"
 endif
-	source "package/qt6/Config.in"
 	source "package/tekui/Config.in"
 	source "package/weston/Config.in"
 	source "package/x11r7/Config.in"
