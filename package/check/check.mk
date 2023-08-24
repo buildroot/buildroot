@@ -4,7 +4,9 @@
 #
 ################################################################################
 
-CHECK_VERSION = 0.15.2
+# This is the same as tag 0.15.2, but we can't use it, as to avoid conflict
+# with the released tarball that was incomplete
+CHECK_VERSION = 11970a7e112dfe243a2e68773f014687df2900e8
 CHECK_SITE = $(call github,libcheck,check,$(CHECK_VERSION))
 CHECK_INSTALL_STAGING = YES
 CHECK_DEPENDENCIES = host-pkgconf
