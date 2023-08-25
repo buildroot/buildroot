@@ -22,7 +22,6 @@ HOST_PYTHON3_CONF_OPTS += \
 	--disable-sqlite3 \
 	--disable-tk \
 	--with-expat=system \
-	--disable-curses \
 	--disable-codecs-cjk \
 	--disable-nis \
 	--enable-unicodedata \
@@ -53,6 +52,12 @@ ifeq ($(BR2_PACKAGE_HOST_PYTHON3_BZIP2),y)
 HOST_PYTHON3_DEPENDENCIES += host-bzip2
 else
 HOST_PYTHON3_CONF_OPTS += --disable-bzip2
+endif
+
+ifeq ($(BR2_PACKAGE_HOST_PYTHON3_CURSES),y)
+HOST_PYTHON3_DEPENDENCIES += host-ncurses
+else
+HOST_PYTHON3_CONF_OPTS += --disable-curses
 endif
 
 ifeq ($(BR2_PACKAGE_HOST_PYTHON3_SSL),y)
