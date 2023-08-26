@@ -60,6 +60,11 @@ before_script:
                 tail -200 runtime-test.log
                 exit 1
             }
+    retry:
+        max: 2
+        when:
+            - runner_system_failure
+            - stuck_or_timeout_failure
     artifacts:
         when: always
         expire_in: 2 weeks
@@ -81,6 +86,11 @@ before_script:
         - TEST_CASE_NAME=${CI_JOB_NAME}
         - echo "Starting runtime test ${TEST_CASE_NAME}"
         - ./support/testing/run-tests -o test-output/ -d test-dl/ -k --timeout-multiplier 10 ${TEST_CASE_NAME}
+    retry:
+        max: 2
+        when:
+            - runner_system_failure
+            - stuck_or_timeout_failure
     artifacts:
         when: always
         expire_in: 2 weeks
@@ -101,6 +111,11 @@ before_script:
     needs:
         - pipeline: $PARENT_PIPELINE_ID
           job: generate-gitlab-ci-yml
+    retry:
+        max: 2
+        when:
+            - runner_system_failure
+            - stuck_or_timeout_failure
     artifacts:
         when: always
         expire_in: 2 weeks
