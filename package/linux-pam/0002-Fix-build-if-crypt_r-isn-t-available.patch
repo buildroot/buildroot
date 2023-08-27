@@ -1,0 +1,37 @@
+From b82acc21f1e2f76d4cb0c75bb4958751562039ab Mon Sep 17 00:00:00 2001
+From: Bernhard Rosenkränzer <bero@lindev.ch>
+Date: Wed, 7 Jun 2023 19:49:01 +0200
+Subject: [PATCH] Fix build if crypt_r isn't available
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+retval was being defined only in #ifdef HAVE_CRYPT_R, but used
+unconditionally.
+
+Signed-off-by: Bernhard Rosenkränzer <bero@lindev.ch>
+Fixes: bcba17939e1b ("modules: make use of secure memory erasure")
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://github.com/linux-pam/linux-pam/commit/b82acc21f1e2f76d4cb0c75bb4958751562039ab
+---
+ modules/pam_pwhistory/opasswd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/modules/pam_pwhistory/opasswd.c b/modules/pam_pwhistory/opasswd.c
+index 479e3fc4..fc610e2f 100644
+--- a/modules/pam_pwhistory/opasswd.c
++++ b/modules/pam_pwhistory/opasswd.c
+@@ -128,9 +128,9 @@ static int
+ compare_password(const char *newpass, const char *oldpass)
+ {
+   char *outval;
++  int retval;
+ #ifdef HAVE_CRYPT_R
+   struct crypt_data output;
+-  int retval;
+ 
+   output.initialized = 0;
+ 
+-- 
+2.39.2
+
