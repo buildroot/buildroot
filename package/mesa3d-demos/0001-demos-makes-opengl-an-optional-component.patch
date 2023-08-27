@@ -1,25 +1,44 @@
-From 9ec9f7b4d0ef5e799ca4cc5103163e4630d184d8 Mon Sep 17 00:00:00 2001
+From 5b45f98255b74589015d5cb0d8ca31d7169c9f34 Mon Sep 17 00:00:00 2001
 From: Julien Olivain <ju.o@free.fr>
 Date: Fri, 16 Sep 2022 22:30:59 +0200
 Subject: [PATCH] demos: makes opengl an optional component
 
 This patch is a port of [1] for the new meson build system.
 
+matrix-code from es2gears has been moved to util in version 9.0.0 [2]
+so now es2gears is linked with mesa3d-demo libutil (idep_util).
+But at the same time the dependency on glu (dep_glu) has been added
+to libutil [3]. dep_glu requires opengl (FULL_GL) to build.
+
+In order to keep the es2gears for egl only builds we have to
+split the libutil files list to build readtex.c and showbuffer.c
+only if opengl is available.
+
+Add back dep_glu since it's used in util's meson.
+
+Fixes:
+https://gitlab.com/buildroot.org/buildroot/-/jobs/4936948236
+https://gitlab.com/buildroot.org/buildroot/-/jobs/4936948042
+
 [1].
 https://git.busybox.net/buildroot/tree/package/mesa3d-demos/0001-demos-makes-opengl-an-optional-component.patch?h=2022.08
+[2] https://gitlab.freedesktop.org/mesa/demos/-/commit/c33e2f731c2eab86bbad7b6a028f8a90ea40a00c
+[3] https://gitlab.freedesktop.org/mesa/demos/-/commit/ef24aae22978d4d357340074ca9a1c04d9cf81e6
 
 Signed-off-by: Julien Olivain <ju.o@free.fr>
 [Bernd: rebased for version 9.0.0]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[Romain: fix egl only builds in util]
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
 ---
- meson.build         | 19 ++++++++++++-------
- meson_options.txt   |  1 +
- src/egl/meson.build |  5 ++++-
- src/meson.build     |  4 +++-
- 4 files changed, 20 insertions(+), 9 deletions(-)
+ meson.build          |  5 ++++-
+ meson_options.txt    |  1 +
+ src/egl/meson.build  |  5 ++++-
+ src/util/meson.build | 12 +++++++++---
+ 4 files changed, 18 insertions(+), 5 deletions(-)
 
 diff --git a/meson.build b/meson.build
-index e1968fab..a15699d6 100644
+index 3e39b5a2..f27e1a18 100644
 --- a/meson.build
 +++ b/meson.build
 @@ -39,7 +39,10 @@ add_project_arguments(
@@ -34,34 +53,8 @@ index e1968fab..a15699d6 100644
  
  dep_epoll = dependency('epoll-shim', required : false)
  dep_gles1 = dependency('glesv1_cm', required : get_option('gles1'))
-@@ -87,15 +87,17 @@
- 
- dep_threads = dependency('threads')
- 
--dep_glu = dependency('glu', required : false)
--# GLU is part of OpenGL.Framework
--if not dep_glu.found() and host_machine.system() != 'darwin'
--  _glu_name = 'GLU'
--  if host_machine.system() == 'windows'
--    _glu_name = 'glu32'
-+if dep_gl.found()
-+  dep_glu = dependency('glu', required : false)
-+  # GLU is part of OpenGL.Framework
-+  if not dep_glu.found() and host_machine.system() != 'darwin'
-+    _glu_name = 'GLU'
-+    if host_machine.system() == 'windows'
-+      _glu_name = 'glu32'
-+    endif
-+    dep_glu = cc.find_library(_glu_name, has_headers: 'GL/glu.h',
-+      required : dep_x11.found())
-   endif
--  dep_glu = cc.find_library(_glu_name, has_headers: 'GL/glu.h',
--    required : dep_x11.found())
- endif
- 
- dep_glx = dependency('glx', required: false, disabler : true)
 diff --git a/meson_options.txt b/meson_options.txt
-index ddadd2e3..f5405698 100644
+index 832b916a..c954a710 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
 @@ -1,5 +1,6 @@
@@ -87,21 +80,33 @@ index d1846921..42bf8ecd 100644
  
  if dep_gles1.found()
    subdir('opengles1')
-diff --git a/src/meson.build b/src/meson.build
-index 39cac78d..7607c6de 100644
---- a/src/meson.build
-+++ b/src/meson.build
-@@ -20,7 +20,9 @@
+diff --git a/src/util/meson.build b/src/util/meson.build
+index b4fe614f..4420f28a 100644
+--- a/src/util/meson.build
++++ b/src/util/meson.build
+@@ -22,13 +22,19 @@ inc_util = include_directories('.')
  
- subdir('glad')
+ files_libutil = files(
+   'glinfo_common.c',
+-  'readtex.c',
+-  'showbuffer.c',
+   'trackball.c',
+   'matrix.c',
+ )
  
--subdir('util')
+-_deps = [dep_glu, dep_m]
++_deps = [dep_m]
 +if dep_gl.found()
-+  subdir('util')
++  files_libutil += files(
++    'readtex.c',
++    'showbuffer.c',
++  )
++  _deps += dep_glu
 +endif
- 
++
  if dep_glut.found()
-   subdir('demos')
+   files_libutil += files('shaderutil.c')
+   _deps += dep_glut
 -- 
-2.37.3
+2.41.0
 
