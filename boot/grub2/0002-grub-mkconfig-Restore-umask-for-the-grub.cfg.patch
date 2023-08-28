@@ -1,4 +1,4 @@
-From 8418defaf0902bdd8af188221ae54c5a3d6ad05d Mon Sep 17 00:00:00 2001
+From 4c1ad500e73d46c83dec369da85db39ae2fe62dd Mon Sep 17 00:00:00 2001
 From: Michael Chang <mchang@suse.com>
 Date: Fri, 3 Dec 2021 16:13:28 +0800
 Subject: [PATCH] grub-mkconfig: Restore umask for the grub.cfg
@@ -17,7 +17,7 @@ Fixes: CVE-2021-3981
 
 Signed-off-by: Michael Chang <mchang@suse.com>
 Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
-[Upstream: https://git.savannah.gnu.org/gitweb/?p=grub.git;a=commit;h=0adec29674561034771c13e446069b41ef41e4d4]
+Upstream: https://git.savannah.gnu.org/gitweb/?p=grub.git;a=commit;h=0adec29674561034771c13e446069b41ef41e4d4
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 ---
  util/grub-mkconfig.in | 3 +++
@@ -39,5 +39,5 @@ index f8cbb8d7a..84f356ea4 100644
    fi
  fi
 -- 
-2.37.2
+2.41.0
 

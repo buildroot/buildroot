@@ -34,6 +34,25 @@ GRUB2_IGNORE_CVES += CVE-2020-15705
 GRUB2_IGNORE_CVES += CVE-2021-3981
 # vulnerability is specific to the SUSE distribution
 GRUB2_IGNORE_CVES += CVE-2021-46705
+# 0005-loader-efi-chainloader-Use-grub_loader_set_ex.patch
+GRUB2_IGNORE_CVES += CVE-2022-28736
+# 0006-kern-efi-sb-Reject-non-kernel-files-in-the-shim_lock.patch
+GRUB2_IGNORE_CVES += CVE-2022-28735
+# 0010-video-readers-png-Drop-greyscale-support-to-fix-heap.patch
+GRUB2_IGNORE_CVES += CVE-2021-3695
+# 0011-video-readers-png-Avoid-heap-OOB-R-W-inserting-huff-.patch
+GRUB2_IGNORE_CVES += CVE-2021-3696
+# 0012-video-readers-jpeg-Block-int-underflow-wild-pointer-.patch
+GRUB2_IGNORE_CVES += CVE-2021-3697
+# 0013-net-ip-Do-IP-fragment-maths-safely.patch
+GRUB2_IGNORE_CVES += CVE-2022-28733
+# 0014-net-http-Fix-OOB-write-for-split-http-headers.patch
+# 0015-net-http-Error-out-on-headers-with-LF-without-CR.patch
+GRUB2_IGNORE_CVES += CVE-2022-28734
+# 0017-font-Fix-several-integer-overflows-in-grub_font_cons.patch
+GRUB2_IGNORE_CVES += CVE-2022-2601
+# 0018-font-Fix-an-integer-underflow-in-blit_comb.patch
+GRUB2_IGNORE_CVES += CVE-2022-3775
 
 ifeq ($(BR2_TARGET_GRUB2_INSTALL_TOOLS),y)
 GRUB2_INSTALL_TARGET = YES
