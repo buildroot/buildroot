@@ -1,0 +1,73 @@
+From 4900c27cc284ba2f671ae92e6ffb4ab391f9507a Mon Sep 17 00:00:00 2001
+From: Robert Middleton <rm5248@users.noreply.github.com>
+Date: Mon, 6 Feb 2023 20:39:02 -0500
+Subject: [PATCH] Make ODBC and SMTP opt-in (#191)
+
+See #189
+
+Upstream: afeaab6d0f0107c77dfadcbe3708f170c48d5ed9
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/main/include/CMakeLists.txt | 40 ++++++++++++++++++++++++---------
+ 1 file changed, 30 insertions(+), 10 deletions(-)
+
+diff --git a/src/main/include/CMakeLists.txt b/src/main/include/CMakeLists.txt
+index e31443fb..d6835293 100644
+--- a/src/main/include/CMakeLists.txt
++++ b/src/main/include/CMakeLists.txt
+@@ -85,22 +85,42 @@ include(CheckIncludeFiles)
+ include(CheckIncludeFileCXX)
+ include(CheckLibraryExists)
+ 
+-if(WIN32)
+-	CHECK_INCLUDE_FILES(sqlext.h HAS_ODBC)
++option(LOG4CXX_ENABLE_ODBC "Support logging via ODBC" OFF)
++if(LOG4CXX_ENABLE_ODBC)
++    if(WIN32)
++            CHECK_INCLUDE_FILES(sqlext.h HAS_ODBC)
++    else()
++            include(FindPkgConfig)
++
++            pkg_check_modules( odbc odbc )
++            if(${odbc_FOUND})
++                    set(HAS_ODBC 1)
++            else()
++                    set(HAS_ODBC 0)
++            endif(${odbc_FOUND})
++    endif(WIN32)
++
++    if(NOT ${HAS_ODBC})
++        message(SEND_ERROR "ODBC not found but requested")
++    endif()
+ else()
+-	include(FindPkgConfig)
+-
+-	pkg_check_modules( odbc QUIET odbc )
+-	if(${odbc_FOUND})
+-		set(HAS_ODBC 1)
+-	endif(${odbc_FOUND})
+-endif(WIN32)
++    set(HAS_ODBC 0)
++endif(LOG4CXX_ENABLE_ODBC)
++
++option(LOG4CXX_ENABLE_ESMTP "Support logging via libesmtp" OFF)
++if(LOG4CXX_ENABLE_ESMTP)
++    CHECK_LIBRARY_EXISTS(esmtp smtp_create_session "" HAS_LIBESMTP)
++    if(NOT HAS_LIBESMTP)
++        message(SEND_ERROR "SMTP support with libesmtp not found but requested")
++    endif()
++else()
++    set(HAS_LIBESMTP 0)
++endif(LOG4CXX_ENABLE_ESMTP)
+ 
+ CHECK_INCLUDE_FILE_CXX(locale HAS_STD_LOCALE)
+ CHECK_FUNCTION_EXISTS(mbsrtowcs HAS_MBSRTOWCS)
+ CHECK_FUNCTION_EXISTS(wcstombs HAS_WCSTOMBS)
+ CHECK_FUNCTION_EXISTS(fwide HAS_FWIDE)
+-CHECK_LIBRARY_EXISTS(esmtp smtp_create_session "" HAS_LIBESMTP)
+ CHECK_FUNCTION_EXISTS(syslog HAS_SYSLOG)
+ if(UNIX)
+     set(CMAKE_REQUIRED_LIBRARIES "pthread")
+-- 
+2.41.0
+
