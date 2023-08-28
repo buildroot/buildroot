@@ -1,0 +1,689 @@
+From 1faa412c502c7c4ca1230fc152be30b88847fdd2 Mon Sep 17 00:00:00 2001
+From: Elyes Haouas <ehaouas@noos.fr>
+Date: Fri, 4 Mar 2022 07:42:13 +0100
+Subject: [PATCH] video: Remove trailing whitespaces
+
+Signed-off-by: Elyes Haouas <ehaouas@noos.fr>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Upstream: 1f48917d8ddb490dcdc70176e0f58136b7f7811a
+[Thomas: needed to backport patches fixing CVEs in the video code]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ grub-core/video/bochs.c             |  2 +-
+ grub-core/video/capture.c           |  2 +-
+ grub-core/video/cirrus.c            |  4 ++--
+ grub-core/video/coreboot/cbfb.c     |  2 +-
+ grub-core/video/efi_gop.c           | 22 +++++++++----------
+ grub-core/video/fb/fbblit.c         |  8 +++----
+ grub-core/video/fb/video_fb.c       | 10 ++++-----
+ grub-core/video/i386/pc/vbe.c       | 34 ++++++++++++++---------------
+ grub-core/video/i386/pc/vga.c       |  6 ++---
+ grub-core/video/ieee1275.c          |  4 ++--
+ grub-core/video/radeon_fuloong2e.c  |  6 ++---
+ grub-core/video/radeon_yeeloong3a.c |  6 ++---
+ grub-core/video/readers/png.c       |  2 +-
+ grub-core/video/readers/tga.c       |  2 +-
+ grub-core/video/sis315_init.c       |  2 +-
+ grub-core/video/sis315pro.c         |  8 +++----
+ grub-core/video/sm712.c             | 10 ++++-----
+ grub-core/video/video.c             |  8 +++----
+ 18 files changed, 69 insertions(+), 69 deletions(-)
+
+diff --git a/grub-core/video/bochs.c b/grub-core/video/bochs.c
+index 30ea1bd82..edc651697 100644
+--- a/grub-core/video/bochs.c
++++ b/grub-core/video/bochs.c
+@@ -212,7 +212,7 @@ find_card (grub_pci_device_t dev, grub_pci_id_t pciid, void *data)
+ 
+   if (((class >> 16) & 0xffff) != 0x0300 || pciid != 0x11111234)
+     return 0;
+-  
++
+   addr = grub_pci_make_address (dev, GRUB_PCI_REG_ADDRESS_REG0);
+   framebuffer.base = grub_pci_read (addr) & GRUB_PCI_ADDR_MEM_MASK;
+   if (!framebuffer.base)
+diff --git a/grub-core/video/capture.c b/grub-core/video/capture.c
+index 4d3195e01..c653d89f9 100644
+--- a/grub-core/video/capture.c
++++ b/grub-core/video/capture.c
+@@ -92,7 +92,7 @@ grub_video_capture_start (const struct grub_video_mode_info *mode_info,
+   framebuffer.ptr = grub_calloc (framebuffer.mode_info.height, framebuffer.mode_info.pitch);
+   if (!framebuffer.ptr)
+     return grub_errno;
+-  
++
+   err = grub_video_fb_create_render_target_from_pointer (&framebuffer.render_target,
+ 							 &framebuffer.mode_info,
+ 							 framebuffer.ptr);
+diff --git a/grub-core/video/cirrus.c b/grub-core/video/cirrus.c
+index e2149e8ce..f5542ccdc 100644
+--- a/grub-core/video/cirrus.c
++++ b/grub-core/video/cirrus.c
+@@ -354,11 +354,11 @@ grub_video_cirrus_setup (unsigned int width, unsigned int height,
+     grub_uint8_t sr_ext = 0, hidden_dac = 0;
+ 
+     grub_vga_set_geometry (&config, grub_vga_cr_write);
+-    
++
+     grub_vga_gr_write (GRUB_VGA_GR_MODE_256_COLOR | GRUB_VGA_GR_MODE_READ_MODE1,
+ 		       GRUB_VGA_GR_MODE);
+     grub_vga_gr_write (GRUB_VGA_GR_GR6_GRAPHICS_MODE, GRUB_VGA_GR_GR6);
+-    
++
+     grub_vga_sr_write (GRUB_VGA_SR_MEMORY_MODE_NORMAL, GRUB_VGA_SR_MEMORY_MODE);
+ 
+     grub_vga_cr_write ((config.pitch >> CIRRUS_CR_EXTENDED_DISPLAY_PITCH_SHIFT)
+diff --git a/grub-core/video/coreboot/cbfb.c b/grub-core/video/coreboot/cbfb.c
+index 9af81fa5b..986003c51 100644
+--- a/grub-core/video/coreboot/cbfb.c
++++ b/grub-core/video/coreboot/cbfb.c
+@@ -106,7 +106,7 @@ grub_video_cbfb_setup (unsigned int width, unsigned int height,
+ 
+   grub_video_fb_set_palette (0, GRUB_VIDEO_FBSTD_NUMCOLORS,
+ 			     grub_video_fbstd_colors);
+-    
++
+   return err;
+ }
+ 
+diff --git a/grub-core/video/efi_gop.c b/grub-core/video/efi_gop.c
+index b7590dc6c..7a5054631 100644
+--- a/grub-core/video/efi_gop.c
++++ b/grub-core/video/efi_gop.c
+@@ -273,7 +273,7 @@ grub_video_gop_iterate (int (*hook) (const struct grub_video_mode_info *info, vo
+       grub_efi_status_t status;
+       struct grub_efi_gop_mode_info *info = NULL;
+       struct grub_video_mode_info mode_info;
+-	 
++
+       status = efi_call_4 (gop->query_mode, gop, mode, &size, &info);
+ 
+       if (status)
+@@ -390,7 +390,7 @@ grub_video_gop_setup (unsigned int width, unsigned int height,
+ 	  found = 1;
+ 	}
+     }
+- 
++
+   if (!found)
+     {
+       unsigned mode;
+@@ -399,7 +399,7 @@ grub_video_gop_setup (unsigned int width, unsigned int height,
+ 	{
+ 	  grub_efi_uintn_t size;
+ 	  grub_efi_status_t status;
+-	 
++
+ 	  status = efi_call_4 (gop->query_mode, gop, mode, &size, &info);
+ 	  if (status)
+ 	    {
+@@ -472,11 +472,11 @@ grub_video_gop_setup (unsigned int width, unsigned int height,
+   framebuffer.ptr = (void *) (grub_addr_t) gop->mode->fb_base;
+   framebuffer.offscreen
+     = grub_malloc (framebuffer.mode_info.height
+-		   * framebuffer.mode_info.width 
++		   * framebuffer.mode_info.width
+ 		   * sizeof (struct grub_efi_gop_blt_pixel));
+ 
+   buffer = framebuffer.offscreen;
+-      
++
+   if (!buffer)
+     {
+       grub_dprintf ("video", "GOP: couldn't allocate shadow\n");
+@@ -485,11 +485,11 @@ grub_video_gop_setup (unsigned int width, unsigned int height,
+ 				     &framebuffer.mode_info);
+       buffer = framebuffer.ptr;
+     }
+-    
++
+   grub_dprintf ("video", "GOP: initialising FB @ %p %dx%dx%d\n",
+ 		framebuffer.ptr, framebuffer.mode_info.width,
+ 		framebuffer.mode_info.height, framebuffer.mode_info.bpp);
+- 
++
+   err = grub_video_fb_create_render_target_from_pointer
+     (&framebuffer.render_target, &framebuffer.mode_info, buffer);
+ 
+@@ -498,15 +498,15 @@ grub_video_gop_setup (unsigned int width, unsigned int height,
+       grub_dprintf ("video", "GOP: Couldn't create FB target\n");
+       return err;
+     }
+- 
++
+   err = grub_video_fb_set_active_render_target (framebuffer.render_target);
+- 
++
+   if (err)
+     {
+       grub_dprintf ("video", "GOP: Couldn't set FB target\n");
+       return err;
+     }
+- 
++
+   err = grub_video_fb_set_palette (0, GRUB_VIDEO_FBSTD_NUMCOLORS,
+ 				   grub_video_fbstd_colors);
+ 
+@@ -514,7 +514,7 @@ grub_video_gop_setup (unsigned int width, unsigned int height,
+     grub_dprintf ("video", "GOP: Couldn't set palette\n");
+   else
+     grub_dprintf ("video", "GOP: Success\n");
+- 
++
+   return err;
+ }
+ 
+diff --git a/grub-core/video/fb/fbblit.c b/grub-core/video/fb/fbblit.c
+index d55924837..1010ef393 100644
+--- a/grub-core/video/fb/fbblit.c
++++ b/grub-core/video/fb/fbblit.c
+@@ -466,7 +466,7 @@ grub_video_fbblit_replace_24bit_indexa (struct grub_video_fbblit_info *dst,
+       for (i = 0; i < width; i++)
+         {
+ 	  register grub_uint32_t col;
+-	  if (*srcptr == 0xf0)	      
++	  if (*srcptr == 0xf0)
+ 	    col = palette[16];
+ 	  else
+ 	    col = palette[*srcptr & 0xf];
+@@ -478,7 +478,7 @@ grub_video_fbblit_replace_24bit_indexa (struct grub_video_fbblit_info *dst,
+ 	  *dstptr++ = col >> 0;
+ 	  *dstptr++ = col >> 8;
+ 	  *dstptr++ = col >> 16;
+-#endif	  
++#endif
+ 	  srcptr++;
+         }
+ 
+@@ -651,7 +651,7 @@ grub_video_fbblit_blend_24bit_indexa (struct grub_video_fbblit_info *dst,
+       for (i = 0; i < width; i++)
+         {
+ 	  register grub_uint32_t col;
+-	  if (*srcptr != 0xf0)	      
++	  if (*srcptr != 0xf0)
+ 	    {
+ 	      col = palette[*srcptr & 0xf];
+ #ifdef GRUB_CPU_WORDS_BIGENDIAN
+@@ -662,7 +662,7 @@ grub_video_fbblit_blend_24bit_indexa (struct grub_video_fbblit_info *dst,
+ 	      *dstptr++ = col >> 0;
+ 	      *dstptr++ = col >> 8;
+ 	      *dstptr++ = col >> 16;
+-#endif	  
++#endif
+ 	    }
+ 	  else
+ 	    dstptr += 3;
+diff --git a/grub-core/video/fb/video_fb.c b/grub-core/video/fb/video_fb.c
+index ae6b89f9a..fa4ebde26 100644
+--- a/grub-core/video/fb/video_fb.c
++++ b/grub-core/video/fb/video_fb.c
+@@ -754,7 +754,7 @@ grub_video_fb_unmap_color_int (struct grub_video_fbblit_info * source,
+           *alpha = 0;
+           return;
+         }
+-	
++
+       /* If we have an out-of-bounds color, return transparent black.  */
+       if (color > 255)
+         {
+@@ -1141,7 +1141,7 @@ grub_video_fb_scroll (grub_video_color_t color, int dx, int dy)
+       /* If everything is aligned on 32-bit use 32-bit copy.  */
+       if ((grub_addr_t) grub_video_fb_get_video_ptr (&target, src_x, src_y)
+ 	  % sizeof (grub_uint32_t) == 0
+-	  && (grub_addr_t) grub_video_fb_get_video_ptr (&target, dst_x, dst_y) 
++	  && (grub_addr_t) grub_video_fb_get_video_ptr (&target, dst_x, dst_y)
+ 	  % sizeof (grub_uint32_t) == 0
+ 	  && linelen % sizeof (grub_uint32_t) == 0
+ 	  && linedelta % sizeof (grub_uint32_t) == 0)
+@@ -1155,7 +1155,7 @@ grub_video_fb_scroll (grub_video_color_t color, int dx, int dy)
+       else if ((grub_addr_t) grub_video_fb_get_video_ptr (&target, src_x, src_y)
+ 	       % sizeof (grub_uint16_t) == 0
+ 	       && (grub_addr_t) grub_video_fb_get_video_ptr (&target,
+-							     dst_x, dst_y) 
++							     dst_x, dst_y)
+ 	       % sizeof (grub_uint16_t) == 0
+ 	       && linelen % sizeof (grub_uint16_t) == 0
+ 	       && linedelta % sizeof (grub_uint16_t) == 0)
+@@ -1170,7 +1170,7 @@ grub_video_fb_scroll (grub_video_color_t color, int dx, int dy)
+ 	{
+ 	  grub_uint8_t *src, *dst;
+ 	  DO_SCROLL
+-	}	
++	}
+     }
+ 
+   /* 4. Fill empty space with specified color.  In this implementation
+@@ -1615,7 +1615,7 @@ grub_video_fb_setup (unsigned int mode_type, unsigned int mode_mask,
+ 	  framebuffer.render_target = framebuffer.back_target;
+ 	  return GRUB_ERR_NONE;
+ 	}
+-      
++
+       mode_info->mode_type &= ~(GRUB_VIDEO_MODE_TYPE_DOUBLE_BUFFERED
+ 				| GRUB_VIDEO_MODE_TYPE_UPDATING_SWAP);
+ 
+diff --git a/grub-core/video/i386/pc/vbe.c b/grub-core/video/i386/pc/vbe.c
+index b7f911926..0e65b5206 100644
+--- a/grub-core/video/i386/pc/vbe.c
++++ b/grub-core/video/i386/pc/vbe.c
+@@ -219,7 +219,7 @@ grub_vbe_disable_mtrr (int mtrr)
+ }
+ 
+ /* Call VESA BIOS 0x4f09 to set palette data, return status.  */
+-static grub_vbe_status_t 
++static grub_vbe_status_t
+ grub_vbe_bios_set_palette_data (grub_uint32_t color_count,
+ 				grub_uint32_t start_index,
+ 				struct grub_vbe_palette_data *palette_data)
+@@ -237,7 +237,7 @@ grub_vbe_bios_set_palette_data (grub_uint32_t color_count,
+ }
+ 
+ /* Call VESA BIOS 0x4f00 to get VBE Controller Information, return status.  */
+-grub_vbe_status_t 
++grub_vbe_status_t
+ grub_vbe_bios_get_controller_info (struct grub_vbe_info_block *ci)
+ {
+   struct grub_bios_int_registers regs;
+@@ -251,7 +251,7 @@ grub_vbe_bios_get_controller_info (struct grub_vbe_info_block *ci)
+ }
+ 
+ /* Call VESA BIOS 0x4f01 to get VBE Mode Information, return status.  */
+-grub_vbe_status_t 
++grub_vbe_status_t
+ grub_vbe_bios_get_mode_info (grub_uint32_t mode,
+ 			     struct grub_vbe_mode_info_block *mode_info)
+ {
+@@ -285,7 +285,7 @@ grub_vbe_bios_set_mode (grub_uint32_t mode,
+ }
+ 
+ /* Call VESA BIOS 0x4f03 to return current VBE Mode, return status.  */
+-grub_vbe_status_t 
++grub_vbe_status_t
+ grub_vbe_bios_get_mode (grub_uint32_t *mode)
+ {
+   struct grub_bios_int_registers regs;
+@@ -298,7 +298,7 @@ grub_vbe_bios_get_mode (grub_uint32_t *mode)
+   return regs.eax & 0xffff;
+ }
+ 
+-grub_vbe_status_t 
++grub_vbe_status_t
+ grub_vbe_bios_getset_dac_palette_width (int set, int *dac_mask_size)
+ {
+   struct grub_bios_int_registers regs;
+@@ -346,7 +346,7 @@ grub_vbe_bios_get_memory_window (grub_uint32_t window,
+ }
+ 
+ /* Call VESA BIOS 0x4f06 to set scanline length (in bytes), return status.  */
+-grub_vbe_status_t 
++grub_vbe_status_t
+ grub_vbe_bios_set_scanline_length (grub_uint32_t length)
+ {
+   struct grub_bios_int_registers regs;
+@@ -354,14 +354,14 @@ grub_vbe_bios_set_scanline_length (grub_uint32_t length)
+   regs.ecx = length;
+   regs.eax = 0x4f06;
+   /* BL = 2, Set Scan Line in Bytes.  */
+-  regs.ebx = 0x0002;	
++  regs.ebx = 0x0002;
+   regs.flags = GRUB_CPU_INT_FLAGS_DEFAULT;
+   grub_bios_interrupt (0x10, &regs);
+   return regs.eax & 0xffff;
+ }
+ 
+ /* Call VESA BIOS 0x4f06 to return scanline length (in bytes), return status.  */
+-grub_vbe_status_t 
++grub_vbe_status_t
+ grub_vbe_bios_get_scanline_length (grub_uint32_t *length)
+ {
+   struct grub_bios_int_registers regs;
+@@ -377,7 +377,7 @@ grub_vbe_bios_get_scanline_length (grub_uint32_t *length)
+ }
+ 
+ /* Call VESA BIOS 0x4f07 to set display start, return status.  */
+-static grub_vbe_status_t 
++static grub_vbe_status_t
+ grub_vbe_bios_set_display_start (grub_uint32_t x, grub_uint32_t y)
+ {
+   struct grub_bios_int_registers regs;
+@@ -390,7 +390,7 @@ grub_vbe_bios_set_display_start (grub_uint32_t x, grub_uint32_t y)
+   regs.edx = y;
+   regs.eax = 0x4f07;
+   /* BL = 80h, Set Display Start during Vertical Retrace.  */
+-  regs.ebx = 0x0080;	
++  regs.ebx = 0x0080;
+   regs.flags = GRUB_CPU_INT_FLAGS_DEFAULT;
+   grub_bios_interrupt (0x10, &regs);
+ 
+@@ -401,7 +401,7 @@ grub_vbe_bios_set_display_start (grub_uint32_t x, grub_uint32_t y)
+ }
+ 
+ /* Call VESA BIOS 0x4f07 to get display start, return status.  */
+-grub_vbe_status_t 
++grub_vbe_status_t
+ grub_vbe_bios_get_display_start (grub_uint32_t *x,
+ 				 grub_uint32_t *y)
+ {
+@@ -419,7 +419,7 @@ grub_vbe_bios_get_display_start (grub_uint32_t *x,
+ }
+ 
+ /* Call VESA BIOS 0x4f0a.  */
+-grub_vbe_status_t 
++grub_vbe_status_t
+ grub_vbe_bios_get_pm_interface (grub_uint16_t *segment, grub_uint16_t *offset,
+ 				grub_uint16_t *length)
+ {
+@@ -896,7 +896,7 @@ vbe2videoinfo (grub_uint32_t mode,
+     case GRUB_VBE_MEMORY_MODEL_YUV:
+       mode_info->mode_type |= GRUB_VIDEO_MODE_TYPE_YUV;
+       break;
+-      
++
+     case GRUB_VBE_MEMORY_MODEL_DIRECT_COLOR:
+       mode_info->mode_type |= GRUB_VIDEO_MODE_TYPE_RGB;
+       break;
+@@ -923,10 +923,10 @@ vbe2videoinfo (grub_uint32_t mode,
+       break;
+     case 8:
+       mode_info->bytes_per_pixel = 1;
+-      break;  
++      break;
+     case 4:
+       mode_info->bytes_per_pixel = 0;
+-      break;  
++      break;
+     }
+ 
+   if (controller_info.version >= 0x300)
+@@ -976,7 +976,7 @@ grub_video_vbe_iterate (int (*hook) (const struct grub_video_mode_info *info, vo
+ 
+ static grub_err_t
+ grub_video_vbe_setup (unsigned int width, unsigned int height,
+-                      grub_video_mode_type_t mode_type, 
++                      grub_video_mode_type_t mode_type,
+ 		      grub_video_mode_type_t mode_mask)
+ {
+   grub_uint16_t *p;
+@@ -1193,7 +1193,7 @@ grub_video_vbe_print_adapter_specific_info (void)
+ 		controller_info.version & 0xFF,
+ 		controller_info.oem_software_rev >> 8,
+ 		controller_info.oem_software_rev & 0xFF);
+-  
++
+   /* The total_memory field is in 64 KiB units.  */
+   grub_printf_ (N_("              total memory: %d KiB\n"),
+ 		(controller_info.total_memory << 6));
+diff --git a/grub-core/video/i386/pc/vga.c b/grub-core/video/i386/pc/vga.c
+index b2f776c99..50d0b5e02 100644
+--- a/grub-core/video/i386/pc/vga.c
++++ b/grub-core/video/i386/pc/vga.c
+@@ -48,7 +48,7 @@ static struct
+   int back_page;
+ } framebuffer;
+ 
+-static unsigned char 
++static unsigned char
+ grub_vga_set_mode (unsigned char mode)
+ {
+   struct grub_bios_int_registers regs;
+@@ -182,10 +182,10 @@ grub_video_vga_setup (unsigned int width, unsigned int height,
+ 
+   is_target = 1;
+   err = grub_video_fb_set_active_render_target (framebuffer.render_target);
+- 
++
+   if (err)
+     return err;
+- 
++
+   err = grub_video_fb_set_palette (0, GRUB_VIDEO_FBSTD_NUMCOLORS,
+ 				   grub_video_fbstd_colors);
+ 
+diff --git a/grub-core/video/ieee1275.c b/grub-core/video/ieee1275.c
+index 17a3dbbb5..f8cf94d96 100644
+--- a/grub-core/video/ieee1275.c
++++ b/grub-core/video/ieee1275.c
+@@ -234,7 +234,7 @@ grub_video_ieee1275_setup (unsigned int width, unsigned int height,
+       /* TODO. */
+       return grub_error (GRUB_ERR_IO, "can't set mode %dx%d", width, height);
+     }
+-  
++
+   err = grub_video_ieee1275_fill_mode_info (dev, &framebuffer.mode_info);
+   if (err)
+     {
+@@ -261,7 +261,7 @@ grub_video_ieee1275_setup (unsigned int width, unsigned int height,
+ 
+   grub_video_ieee1275_set_palette (0, framebuffer.mode_info.number_of_colors,
+ 				   grub_video_fbstd_colors);
+-    
++
+   return err;
+ }
+ 
+diff --git a/grub-core/video/radeon_fuloong2e.c b/grub-core/video/radeon_fuloong2e.c
+index b4da34b5e..40917acb7 100644
+--- a/grub-core/video/radeon_fuloong2e.c
++++ b/grub-core/video/radeon_fuloong2e.c
+@@ -75,7 +75,7 @@ find_card (grub_pci_device_t dev, grub_pci_id_t pciid, void *data)
+   if (((class >> 16) & 0xffff) != GRUB_PCI_CLASS_SUBCLASS_VGA
+       || pciid != 0x515a1002)
+     return 0;
+-  
++
+   *found = 1;
+ 
+   addr = grub_pci_make_address (dev, GRUB_PCI_REG_ADDRESS_REG0);
+@@ -139,7 +139,7 @@ grub_video_radeon_fuloong2e_setup (unsigned int width, unsigned int height,
+   framebuffer.mapped = 1;
+ 
+   /* Prevent garbage from appearing on the screen.  */
+-  grub_memset (framebuffer.ptr, 0x55, 
++  grub_memset (framebuffer.ptr, 0x55,
+ 	       framebuffer.mode_info.height * framebuffer.mode_info.pitch);
+ 
+ #ifndef TEST
+@@ -152,7 +152,7 @@ grub_video_radeon_fuloong2e_setup (unsigned int width, unsigned int height,
+     return err;
+ 
+   err = grub_video_fb_set_active_render_target (framebuffer.render_target);
+-  
++
+   if (err)
+     return err;
+ 
+diff --git a/grub-core/video/radeon_yeeloong3a.c b/grub-core/video/radeon_yeeloong3a.c
+index 52614feb6..48631c181 100644
+--- a/grub-core/video/radeon_yeeloong3a.c
++++ b/grub-core/video/radeon_yeeloong3a.c
+@@ -74,7 +74,7 @@ find_card (grub_pci_device_t dev, grub_pci_id_t pciid, void *data)
+   if (((class >> 16) & 0xffff) != GRUB_PCI_CLASS_SUBCLASS_VGA
+       || pciid != 0x96151002)
+     return 0;
+-  
++
+   *found = 1;
+ 
+   addr = grub_pci_make_address (dev, GRUB_PCI_REG_ADDRESS_REG0);
+@@ -137,7 +137,7 @@ grub_video_radeon_yeeloong3a_setup (unsigned int width, unsigned int height,
+ #endif
+ 
+   /* Prevent garbage from appearing on the screen.  */
+-  grub_memset (framebuffer.ptr, 0, 
++  grub_memset (framebuffer.ptr, 0,
+ 	       framebuffer.mode_info.height * framebuffer.mode_info.pitch);
+ 
+ #ifndef TEST
+@@ -150,7 +150,7 @@ grub_video_radeon_yeeloong3a_setup (unsigned int width, unsigned int height,
+     return err;
+ 
+   err = grub_video_fb_set_active_render_target (framebuffer.render_target);
+-  
++
+   if (err)
+     return err;
+ 
+diff --git a/grub-core/video/readers/png.c b/grub-core/video/readers/png.c
+index 0157ff742..54dfedf43 100644
+--- a/grub-core/video/readers/png.c
++++ b/grub-core/video/readers/png.c
+@@ -916,7 +916,7 @@ grub_png_convert_image (struct grub_png_data *data)
+ 	}
+       return;
+     }
+-  
++
+   if (data->is_gray)
+     {
+       switch (data->bpp)
+diff --git a/grub-core/video/readers/tga.c b/grub-core/video/readers/tga.c
+index 7cb9d1d2a..a9ec3a1b6 100644
+--- a/grub-core/video/readers/tga.c
++++ b/grub-core/video/readers/tga.c
+@@ -127,7 +127,7 @@ tga_load_palette (struct tga_data *data)
+ 
+   if (len > sizeof (data->palette))
+     len = sizeof (data->palette);
+-  
++
+   if (grub_file_read (data->file, &data->palette, len)
+       != (grub_ssize_t) len)
+     return grub_errno;
+diff --git a/grub-core/video/sis315_init.c b/grub-core/video/sis315_init.c
+index ae5c1419c..09c3c7bbe 100644
+--- a/grub-core/video/sis315_init.c
++++ b/grub-core/video/sis315_init.c
+@@ -1,4 +1,4 @@
+-static const struct { grub_uint8_t reg; grub_uint8_t val; } sr_dump [] = 
++static const struct { grub_uint8_t reg; grub_uint8_t val; } sr_dump [] =
+ {
+   { 0x28, 0x81 },
+   { 0x2a, 0x00 },
+diff --git a/grub-core/video/sis315pro.c b/grub-core/video/sis315pro.c
+index 22a0c85a6..4d2f9999a 100644
+--- a/grub-core/video/sis315pro.c
++++ b/grub-core/video/sis315pro.c
+@@ -103,7 +103,7 @@ find_card (grub_pci_device_t dev, grub_pci_id_t pciid, void *data)
+   if (((class >> 16) & 0xffff) != GRUB_PCI_CLASS_SUBCLASS_VGA
+       || pciid != GRUB_SIS315PRO_PCIID)
+     return 0;
+-  
++
+   *found = 1;
+ 
+   addr = grub_pci_make_address (dev, GRUB_PCI_REG_ADDRESS_REG0);
+@@ -218,7 +218,7 @@ grub_video_sis315pro_setup (unsigned int width, unsigned int height,
+ 
+ #ifndef TEST
+   /* Prevent garbage from appearing on the screen.  */
+-  grub_memset (framebuffer.ptr, 0, 
++  grub_memset (framebuffer.ptr, 0,
+ 	       framebuffer.mode_info.height * framebuffer.mode_info.pitch);
+   grub_arch_sync_dma_caches (framebuffer.ptr,
+ 			     framebuffer.mode_info.height
+@@ -231,7 +231,7 @@ grub_video_sis315pro_setup (unsigned int width, unsigned int height,
+ 	     | GRUB_VGA_IO_MISC_EXTERNAL_CLOCK_0
+ 	     | GRUB_VGA_IO_MISC_28MHZ
+ 	     | GRUB_VGA_IO_MISC_ENABLE_VRAM_ACCESS
+-	     | GRUB_VGA_IO_MISC_COLOR, 
++	     | GRUB_VGA_IO_MISC_COLOR,
+ 	     GRUB_VGA_IO_MISC_WRITE + GRUB_MACHINE_PCI_IO_BASE);
+ 
+   grub_vga_sr_write (0x86, 5);
+@@ -335,7 +335,7 @@ grub_video_sis315pro_setup (unsigned int width, unsigned int height,
+   {
+     if (read_sis_cmd (0x5) != 0xa1)
+       write_sis_cmd (0x86, 0x5);
+-    
++
+     write_sis_cmd (read_sis_cmd (0x20) | 0xa1, 0x20);
+     write_sis_cmd (read_sis_cmd (0x1e) | 0xda, 0x1e);
+ 
+diff --git a/grub-core/video/sm712.c b/grub-core/video/sm712.c
+index 10c46eb65..65f59f84b 100644
+--- a/grub-core/video/sm712.c
++++ b/grub-core/video/sm712.c
+@@ -167,7 +167,7 @@ enum
+     GRUB_SM712_CR_SHADOW_VGA_VBLANK_START = 0x46,
+     GRUB_SM712_CR_SHADOW_VGA_VBLANK_END = 0x47,
+     GRUB_SM712_CR_SHADOW_VGA_VRETRACE_START = 0x48,
+-    GRUB_SM712_CR_SHADOW_VGA_VRETRACE_END = 0x49,    
++    GRUB_SM712_CR_SHADOW_VGA_VRETRACE_END = 0x49,
+     GRUB_SM712_CR_SHADOW_VGA_OVERFLOW = 0x4a,
+     GRUB_SM712_CR_SHADOW_VGA_CELL_HEIGHT = 0x4b,
+     GRUB_SM712_CR_SHADOW_VGA_HDISPLAY_END = 0x4c,
+@@ -375,7 +375,7 @@ find_card (grub_pci_device_t dev, grub_pci_id_t pciid, void *data)
+   if (((class >> 16) & 0xffff) != GRUB_PCI_CLASS_SUBCLASS_VGA
+       || pciid != GRUB_SM712_PCIID)
+     return 0;
+-  
++
+   *found = 1;
+ 
+   addr = grub_pci_make_address (dev, GRUB_PCI_REG_ADDRESS_REG0);
+@@ -471,7 +471,7 @@ grub_video_sm712_setup (unsigned int width, unsigned int height,
+ 
+ #if !defined (TEST) && !defined(GENINIT)
+   /* Prevent garbage from appearing on the screen.  */
+-  grub_memset ((void *) framebuffer.cached_ptr, 0, 
++  grub_memset ((void *) framebuffer.cached_ptr, 0,
+ 	       framebuffer.mode_info.height * framebuffer.mode_info.pitch);
+ #endif
+ 
+@@ -482,7 +482,7 @@ grub_video_sm712_setup (unsigned int width, unsigned int height,
+   grub_sm712_sr_write (0x2, 0x6b);
+   grub_sm712_write_reg (0, GRUB_VGA_IO_PIXEL_MASK);
+   grub_sm712_sr_write (GRUB_VGA_SR_RESET_ASYNC, GRUB_VGA_SR_RESET);
+-  grub_sm712_write_reg (GRUB_VGA_IO_MISC_NEGATIVE_VERT_POLARITY 
++  grub_sm712_write_reg (GRUB_VGA_IO_MISC_NEGATIVE_VERT_POLARITY
+ 			| GRUB_VGA_IO_MISC_NEGATIVE_HORIZ_POLARITY
+ 			| GRUB_VGA_IO_MISC_UPPER_64K
+ 			| GRUB_VGA_IO_MISC_EXTERNAL_CLOCK_0
+@@ -694,7 +694,7 @@ grub_video_sm712_setup (unsigned int width, unsigned int height,
+   for (i = 0; i < ARRAY_SIZE (dda_lookups); i++)
+     grub_sm712_write_dda_lookup (i, dda_lookups[i].compare, dda_lookups[i].dda,
+ 				 dda_lookups[i].vcentering);
+-  
++
+   /* Undocumented  */
+   grub_sm712_cr_write (0, 0x9c);
+   grub_sm712_cr_write (0, 0x9d);
+diff --git a/grub-core/video/video.c b/grub-core/video/video.c
+index 983424107..8937da745 100644
+--- a/grub-core/video/video.c
++++ b/grub-core/video/video.c
+@@ -491,13 +491,13 @@ parse_modespec (const char *current_mode, int *width, int *height, int *depth)
+ 		       current_mode);
+ 
+   param++;
+-  
++
+   *width = grub_strtoul (value, 0, 0);
+   if (grub_errno != GRUB_ERR_NONE)
+       return grub_error (GRUB_ERR_BAD_ARGUMENT,
+ 			 N_("invalid video mode specification `%s'"),
+ 			 current_mode);
+-  
++
+   /* Find height value.  */
+   value = param;
+   param = grub_strchr(param, 'x');
+@@ -513,13 +513,13 @@ parse_modespec (const char *current_mode, int *width, int *height, int *depth)
+     {
+       /* We have optional color depth value.  */
+       param++;
+-      
++
+       *height = grub_strtoul (value, 0, 0);
+       if (grub_errno != GRUB_ERR_NONE)
+ 	return grub_error (GRUB_ERR_BAD_ARGUMENT,
+ 			   N_("invalid video mode specification `%s'"),
+ 			   current_mode);
+-      
++
+       /* Convert color depth value.  */
+       value = param;
+       *depth = grub_strtoul (value, 0, 0);
+-- 
+2.41.0
+
