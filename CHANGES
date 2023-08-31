@@ -80,6 +80,38 @@
 
 	Removed packages: libasplib, ocf-linux, tovid
 
+2023.05.2, released August 31th, 2023
+
+	Important / security related fixes.
+
+	Toolchains: Correctly mark Bootlin external toolchains as
+	having OpenMP support.
+
+	Arch: Mark Alderlake x86 variants as no AVX512 support.
+
+	Utils: Ensure utils/docker-run correctly supports git
+	worktrees.
+
+	Defconfigs: Beaglebone: U-Boot needs OpenSSL. Beaglebone qt5:
+	Enable support for green wireless variant.
+
+	Updated/fixed packages: arm-trusted-firmware, bind, cairo,
+	cmocka, containerd, crudini, cryptodev-linux, dmidecode,
+	ffmpeg, firmware-imx, gcc, gdb, ghostscript, gkrellm,
+	gnuradio, go, igh-ethercat, iperf3, kodi, libcurl, libopenssl,
+	libssh, libubootenv, libuhttpd, linux-tools, mali-driver,
+	nfs-utils, ntp, openssh, php, pipewire, python-pysmb,
+	python-iniparse, python-iptables, rtl8189es, rtl8189fs,
+	sam-ba, samba4, seatd, shadow, speex,
+	sunxi-mali-utgard-driver, supertuxkart, sysdig, systemd, tor,
+	tpm2-tss, transmission, uboot, unzip, webkitgtk,
+	wireless-regdb, wolfssl, wpebackend-fdo, wpewebkit, xenomai,
+	yaml-cpp, yavta
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#15634: fluidsynths refers to missing libgomp.so.1
+
 2023.05.1, released July 17th, 2023
 
 	Important / security related fixes.
