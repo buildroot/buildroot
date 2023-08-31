@@ -56,7 +56,9 @@ class TestPythonPy3MagicWormhole(TestPythonPackageBase):
         cmd += "sleep 25"
         self.assertRunOk(cmd, timeout=30)
 
-        cmd = wormhole_cmd + " receive {}".format(code)
+        wormhole_env = "_MAGIC_WORMHOLE_TEST_KEY_TIMER=100 "
+        wormhole_env += "_MAGIC_WORMHOLE_TEST_VERIFY_TIMER=100 "
+        cmd = wormhole_env + wormhole_cmd + " receive {}".format(code)
         output, exit_code = self.emulator.run(cmd, timeout=35)
         self.assertEqual(exit_code, 0)
         self.assertEqual(output[0], text)
