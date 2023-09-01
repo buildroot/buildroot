@@ -272,8 +272,7 @@ class Package:
         self.status['pkg-check'] = ("error", "Missing")
         for root, dirs, files in os.walk(pkgdir):
             for f in files:
-                if f.endswith(".mk") or f.endswith(".hash") or f == "Config.in" or f == "Config.in.host":
-                    cmd.append(os.path.join(root, f))
+                cmd.append(os.path.join(root, f))
         o = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[1]
         lines = o.splitlines()
         for line in lines:
@@ -876,7 +875,7 @@ function expandField(fieldId){
  .wrong, .lotsofpatches, .invalid_url, .version-needs-update, .cpe-nok, .cve-nok {
    background: #ff9a69;
  }
- .somepatches, .missing_url, .version-unknown, .cpe-unknown, .cve-unknown {
+ .somepatches, .somewarnings, .missing_url, .version-unknown, .cpe-unknown, .cve-unknown {
    background: #ffd870;
  }
  .cve_ignored, .version-error {
@@ -1033,6 +1032,8 @@ def dump_html_pkg(f, pkg):
     div_class.append(f'_{pkg_css_class}')
     if pkg.warnings == 0:
         div_class.append("correct")
+    elif pkg.warnings < 5:
+        div_class.append("somewarnings")
     else:
         div_class.append("wrong")
     f.write(f'  <div id="{data_field_id}" class="{" ".join(div_class)}">{pkg.warnings}</div>\n')
