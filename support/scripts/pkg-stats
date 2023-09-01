@@ -338,16 +338,21 @@ def get_pkglist(npackages, package_list):
     package_list: limit to those packages in this list
     """
     WALK_USEFUL_SUBDIRS = ["boot", "linux", "package", "toolchain"]
-    WALK_EXCLUDES = ["boot/common.mk",
+    WALK_EXCLUDES = ["boot/barebox/barebox.mk",
+                     "boot/common.mk",
                      "linux/linux-ext-.*.mk",
+                     "package/fftw/fftw.mk",
                      "package/freescale-imx/freescale-imx.mk",
                      "package/gcc/gcc.mk",
                      "package/gstreamer/gstreamer.mk",
                      "package/gstreamer1/gstreamer1.mk",
                      "package/gtk2-themes/gtk2-themes.mk",
+                     "package/kf5/kf5.mk",
+                     "package/llvm-project/llvm-project.mk",
                      "package/matchbox/matchbox.mk",
                      "package/opengl/opengl.mk",
                      "package/qt5/qt5.mk",
+                     "package/qt6/qt6.mk",
                      "package/x11r7/x11r7.mk",
                      "package/doc-asciidoc.mk",
                      "package/pkg-.*.mk",
