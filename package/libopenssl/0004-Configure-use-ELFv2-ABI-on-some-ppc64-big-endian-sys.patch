@@ -21,9 +21,9 @@ diff --git a/Configure b/Configure
 index 5a699836f3..f9152b1702 100755
 --- a/Configure
 +++ b/Configure
-@@ -1424,6 +1424,10 @@ my %predefined_CXX = $config{CXX}
-     ? compiler_predefined($config{CROSS_COMPILE}.$config{CXX})
-     : ();
+@@ -1549,6 +1549,10 @@ unless ($disabled{asm}) {
+     }
+ }
  
 +if ($target eq "linux-ppc64" && !$disabled{asm}) {
 +       $target{perlasm_scheme} = "linux64v2" if ($predefined_C{_CALL_ELF} == 2);
@@ -31,7 +31,7 @@ index 5a699836f3..f9152b1702 100755
 +
  # Check for makedepend capabilities.
  if (!$disabled{makedepend}) {
-     if ($config{target} =~ /^(VC|vms)-/) {
+     # If the attribute makedep_scheme is defined, then we assume that the
 -- 
 2.25.0
 
