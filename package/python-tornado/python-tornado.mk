@@ -12,5 +12,7 @@ PYTHON_TORNADO_LICENSE_FILES = LICENSE
 PYTHON_TORNADO_CPE_ID_VENDOR = tornadoweb
 PYTHON_TORNADO_CPE_ID_PRODUCT = tornado
 PYTHON_TORNADO_SETUP_TYPE = setuptools
+# 0001-web-Fix-an-open-redirect-in-StaticFileHandler.patch
+PYTHON_TORNADO_IGNORE_CVES += CVE-2023-28370
 
 $(eval $(python-package))
