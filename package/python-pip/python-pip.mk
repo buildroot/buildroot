@@ -12,5 +12,8 @@ PYTHON_PIP_LICENSE = MIT
 PYTHON_PIP_LICENSE_FILES = LICENSE.txt
 PYTHON_PIP_CPE_ID_VENDOR = pypa
 PYTHON_PIP_CPE_ID_PRODUCT = pip
+# Disputed CVE: things work as designed, and only affects the
+# --extra-index-url option. This CVE will never be fixed.
+PYTHON_PIP_IGNORE_CVES += CVE-2018-20225
 
 $(eval $(python-package))
