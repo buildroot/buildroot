@@ -50,7 +50,6 @@ $(2)_DEPENDENCIES 		+= qt5base
 endif
 
 ifeq ($$($(2)_SYNC_QT_HEADERS),YES)
-$(2)_DEPENDENCIES 		+= host-perl
 $(2)_PRE_CONFIGURE_HOOKS        += QT_HEADERS_SYNC_HOOK
 endif
 
