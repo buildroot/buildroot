@@ -1,0 +1,42 @@
+From ac79778c91bd9a4a92111f7e06d4b12674571113 Mon Sep 17 00:00:00 2001
+From: Ben Darnell <ben@bendarnell.com>
+Date: Sat, 13 May 2023 20:58:52 -0400
+Subject: [PATCH] web: Fix an open redirect in StaticFileHandler
+
+Under some configurations the default_filename redirect could be exploited
+to redirect to an attacker-controlled site. This change refuses to redirect
+to URLs that could be misinterpreted.
+
+A test case for the specific vulnerable configuration will follow after the
+patch has been available.
+
+Upstream: https://github.com/tornadoweb/tornado/commit/32ad07c54e607839273b4e1819c347f5c8976b2f
+[Thomas: backported to fix CVE-2023-28370]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ tornado/web.py | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/tornado/web.py b/tornado/web.py
+index cd6a81b4..05b571eb 100644
+--- a/tornado/web.py
++++ b/tornado/web.py
+@@ -2806,6 +2806,15 @@ class StaticFileHandler(RequestHandler):
+             # but there is some prefix to the path that was already
+             # trimmed by the routing
+             if not self.request.path.endswith("/"):
++                if self.request.path.startswith("//"):
++                    # A redirect with two initial slashes is a "protocol-relative" URL.
++                    # This means the next path segment is treated as a hostname instead
++                    # of a part of the path, making this effectively an open redirect.
++                    # Reject paths starting with two slashes to prevent this.
++                    # This is only reachable under certain configurations.
++                    raise HTTPError(
++                        403, "cannot redirect path with two initial slashes"
++                    )
+                 self.redirect(self.request.path + "/", permanent=True)
+                 return None
+             absolute_path = os.path.join(absolute_path, self.default_filename)
+-- 
+2.41.0
+
