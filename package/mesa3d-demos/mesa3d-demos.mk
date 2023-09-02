@@ -63,7 +63,7 @@ MESA3D_DEMOS_CONF_OPTS += -Dosmesa=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_WAYLAND),y)
-MESA3D_DEMOS_DEPENDENCIES += wayland
+MESA3D_DEMOS_DEPENDENCIES += libxkbcommon wayland
 MESA3D_DEMOS_CONF_OPTS += -Dwayland=enabled
 else
 MESA3D_DEMOS_CONF_OPTS += -Dwayland=disabled
