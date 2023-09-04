@@ -1,0 +1,31 @@
+From 97611ce8279341205463ace6a5f2ff93c52fc417 Mon Sep 17 00:00:00 2001
+From: Alistair Francis <alistair.francis@wdc.com>
+Date: Wed, 30 Aug 2023 13:37:07 +1000
+Subject: [PATCH] CMakeLists.txt: Allow disabling EDDSA support from command
+ line
+
+Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+Upstream: https://github.com/DMTF/libspdm/pull/2330
+---
+ CMakeLists.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8a18c467a5..47b93f8bb7 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -155,6 +155,11 @@ else()
+     MESSAGE(FATAL_ERROR "Unknown CRYPTO")
+ endif()
+ 
++if(DISABLE_EDDSA STREQUAL "1")
++    add_definitions(-DLIBSPDM_EDDSA_ED25519_SUPPORT=0)
++    add_definitions(-DLIBSPDM_EDDSA_ED448_SUPPORT=0)
++endif()
++
+ if(ENABLE_BINARY_BUILD STREQUAL "1")
+     if(NOT CRYPTO STREQUAL "openssl")
+         MESSAGE(FATAL_ERROR "enabling binary build not supported for non-openssl")
+-- 
+2.40.1
+

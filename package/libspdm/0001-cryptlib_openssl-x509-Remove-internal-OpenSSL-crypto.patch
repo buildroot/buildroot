@@ -1,0 +1,44 @@
+From 7db883cdb3369cfaf9f0890b0eda503f47a5ffa3 Mon Sep 17 00:00:00 2001
+From: Alistair Francis <alistair.francis@wdc.com>
+Date: Fri, 11 Aug 2023 16:26:53 -0400
+Subject: [PATCH] cryptlib_openssl: x509: Remove internal OpenSSL crypto
+ include
+
+The OpenSSL source code describes the crypto include as:
+"Internal EC functions for other submodules: not for application use"
+ - https://github.com/openssl/openssl/blob/master/include/crypto/ec.h
+
+Using the internal APIS makes it difficult to use libspdm as a library
+with other packages. So let's remove the uses of the internal API and
+instead use the public API.
+
+Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+Upstream: https://github.com/DMTF/libspdm/commit/7db883cdb3369cfaf9f0890b0eda503f47a5ffa3
+---
+ os_stub/cryptlib_openssl/pk/x509.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/os_stub/cryptlib_openssl/pk/x509.c b/os_stub/cryptlib_openssl/pk/x509.c
+index c067f3d0ca..1a2736132b 100644
+--- a/os_stub/cryptlib_openssl/pk/x509.c
++++ b/os_stub/cryptlib_openssl/pk/x509.c
+@@ -17,7 +17,6 @@
+ #include <openssl/bn.h>
+ #include <openssl/pem.h>
+ #include <openssl/bio.h>
+-#include <crypto/x509.h>
+ 
+ #if LIBSPDM_CERT_PARSE_SUPPORT
+ 
+@@ -2318,7 +2317,7 @@ bool libspdm_set_attribute_for_req(X509_REQ *req, uint8_t *req_info, size_t req_
+     /*get subject name from req_info and set it to CSR*/
+     x509_req_info = d2i_X509_REQ_INFO(NULL, (const unsigned char **)(&req_info), req_info_len);
+     if (x509_req_info) {
+-        X509_REQ_set_subject_name(req, x509_req_info->subject);
++        X509_REQ_set_subject_name(req, X509_REQ_get_subject_name((X509_REQ *)x509_req_info));
+         X509_REQ_INFO_free(x509_req_info);
+     } else {
+         return false;
+-- 
+2.40.1
+
