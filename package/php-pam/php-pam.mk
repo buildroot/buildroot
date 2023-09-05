@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PHP_PAM_VERSION = 2.2.3
+PHP_PAM_VERSION = 2.2.4
 PHP_PAM_SITE = http://pecl.php.net/get
 PHP_PAM_SOURCE = pam-$(PHP_PAM_VERSION).tgz
 PHP_PAM_LICENSE = PHP-3.01
