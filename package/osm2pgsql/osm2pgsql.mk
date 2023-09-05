@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-OSM2PGSQL_VERSION = 1.8.1
+OSM2PGSQL_VERSION = 1.9.2
 OSM2PGSQL_SITE = $(call github,openstreetmap,osm2pgsql,$(OSM2PGSQL_VERSION))
 OSM2PGSQL_LICENSE = GPL-2.0+
 OSM2PGSQL_LICENSE_FILES = COPYING
 OSM2PGSQL_SUPPORTS_IN_SOURCE_BUILD = NO
 
-OSM2PGSQL_DEPENDENCIES = boost bzip2 expat libosmium postgresql protozero zlib
+OSM2PGSQL_DEPENDENCIES = boost bzip2 expat json-for-modern-cpp libosmium postgresql protozero zlib
 
 # fmt > 8.0 is not yet supported
 OSM2PGSQL_CONF_OPTS = \
