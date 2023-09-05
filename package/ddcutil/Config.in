@@ -1,0 +1,12 @@
+config BR2_PACKAGE_DDCUTIL
+  bool "ddcutil"
+	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_LIBBLKID
+  select BR2_PACKAGE_EUDEV
+  select BR2_PACKAGE_JANSSON
+  select BR2_PACKAGE_LIBGLIB2
+  select BR2_PACKAGE_KMOD
+  select BR2_PACKAGE_UTIL_LINUX_LIBS
+  help
+  This is the ddcutil library https://www.ddcutil.com/
+
