@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PHP_APCU_VERSION = 5.1.20
+PHP_APCU_VERSION = 5.1.22
 PHP_APCU_SITE = http://pecl.php.net/get
 PHP_APCU_SOURCE = apcu-$(PHP_APCU_VERSION).tgz
 PHP_APCU_LICENSE = PHP-3.01
