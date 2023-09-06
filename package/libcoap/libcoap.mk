@@ -14,6 +14,8 @@ LIBCOAP_DEPENDENCIES = host-pkgconf
 LIBCOAP_CONF_OPTS = \
 	--disable-examples --disable-examples-source --without-tinydtls
 LIBCOAP_AUTORECONF = YES
+# 0001-Backport-fix-for-CVE-2023-30362.patch
+LIBCOAP_IGNORE_CVES += CVE-2023-30362
 
 ifeq ($(BR2_PACKAGE_GNUTLS),y)
 LIBCOAP_DEPENDENCIES += gnutls
