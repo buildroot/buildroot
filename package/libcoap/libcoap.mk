@@ -16,6 +16,8 @@ LIBCOAP_CONF_OPTS = \
 LIBCOAP_AUTORECONF = YES
 # 0001-Backport-fix-for-CVE-2023-30362.patch
 LIBCOAP_IGNORE_CVES += CVE-2023-30362
+# Doesn't affect 4.3.1, see https://github.com/obgm/libcoap/issues/1117
+LIBCOAP_IGNORE_CVES += CVE-2023-35862
 
 ifeq ($(BR2_PACKAGE_GNUTLS),y)
 LIBCOAP_DEPENDENCIES += gnutls
