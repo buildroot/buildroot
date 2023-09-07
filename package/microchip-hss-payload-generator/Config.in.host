@@ -1,0 +1,11 @@
+config BR2_PACKAGE_HOST_MICROCHIP_HSS_PAYLOAD_GENERATOR
+	bool "host microchip-hss-payload-generator"
+	help
+	  Microchip PolarFire SoC Payload Generator. This tool creates
+	  a formatted payload image for the HSS zero-stage bootloader
+	  on PolarFire SoC, given a configuration file and a set of
+	  ELF binaries. The configuration file is used to map the ELF
+	  binaries or binary blobs to the individual application harts
+	  (U54s).
+
+	  https://github.com/polarfire-soc/hart-software-services.git

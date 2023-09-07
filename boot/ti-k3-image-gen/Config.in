@@ -1,0 +1,77 @@
+config BR2_TARGET_TI_K3_IMAGE_GEN
+	bool "ti-k3-image-gen"
+	depends on BR2_TARGET_TI_K3_R5_LOADER
+	select BR2_TARGET_TI_K3_BOOT_FIRMWARE
+	# We need FIT support in uboot-tools, which is why we select a
+	# host package
+	select BR2_PACKAGE_HOST_UBOOT_TOOLS
+	select BR2_PACKAGE_HOST_UBOOT_TOOLS_FIT_SUPPORT
+	help
+	  Use TI's k3-image-gen to build a separate bare metal boot
+	  binary from a separate SPL that is running on the R5 core.
+
+	  https://git.ti.com/cgit/k3-image-gen/k3-image-gen/
+
+if BR2_TARGET_TI_K3_IMAGE_GEN
+choice
+	prompt "SoC family"
+
+config BR2_TARGET_TI_K3_IMAGE_GEN_SOC_AM62AX
+	bool "am62ax"
+
+config BR2_TARGET_TI_K3_IMAGE_GEN_SOC_AM62X
+	bool "am62x"
+
+config BR2_TARGET_TI_K3_IMAGE_GEN_SOC_AM64X
+	bool "am64x"
+
+config BR2_TARGET_TI_K3_IMAGE_GEN_SOC_AM65X
+	bool "am65x"
+
+endchoice
+
+choice
+	prompt "Security type"
+	help
+	  The target SoC security type option for image gen.  Valid
+	  options are "gp" for General Purpose devices, "hs-fs" for
+	  High Security - Field Securable devices, or "hs" for High
+	  Security - Security Enforcing devices.  Note for all High
+	  Security device variants the TI_SECURE_DEV_PKG environmental
+	  variable must be defined at build time pointing to a valid
+	  core-secdev-k3 folder location, otherwise the build will
+	  fail, see
+	  https://git.ti.com/cgit/security-development-tools/core-secdev-k3
+
+config BR2_TARGET_TI_K3_IMAGE_GEN_SECTYPE_GP
+	bool "gp"
+
+config BR2_TARGET_TI_K3_IMAGE_GEN_SECTYPE_HS_FS
+	bool "hs-fs"
+
+config BR2_TARGET_TI_K3_IMAGE_GEN_SECTYPE_HS
+	bool "hs"
+
+endchoice
+
+config BR2_TARGET_TI_K3_IMAGE_GEN_SOC
+	string
+	default "am62ax" if BR2_TARGET_TI_K3_IMAGE_GEN_SOC_AM62AX
+	default "am62x"  if BR2_TARGET_TI_K3_IMAGE_GEN_SOC_AM62X
+	default "am64x"  if BR2_TARGET_TI_K3_IMAGE_GEN_SOC_AM64X
+	default "am65x"  if BR2_TARGET_TI_K3_IMAGE_GEN_SOC_AM65X
+
+config BR2_TARGET_TI_K3_IMAGE_GEN_FW_TYPE
+	string
+	default "ti-fs"  if BR2_TARGET_TI_K3_IMAGE_GEN_SOC_AM62AX
+	default "ti-fs"  if BR2_TARGET_TI_K3_IMAGE_GEN_SOC_AM62X
+	default "ti-sci" if BR2_TARGET_TI_K3_IMAGE_GEN_SOC_AM64X
+	default "ti-sci" if BR2_TARGET_TI_K3_IMAGE_GEN_SOC_AM65X
+
+config BR2_TARGET_TI_K3_IMAGE_GEN_SECTYPE
+	string
+	default "gp"    if BR2_TARGET_TI_K3_IMAGE_GEN_SECTYPE_GP
+	default "hs-fs" if BR2_TARGET_TI_K3_IMAGE_GEN_SECTYPE_HS_FS
+	default "hs"    if BR2_TARGET_TI_K3_IMAGE_GEN_SECTYPE_HS
+
+endif

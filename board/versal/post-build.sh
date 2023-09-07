@@ -11,5 +11,5 @@ cat <<-__HEADER_EOF > "${BINARIES_DIR}/extlinux.conf"
 	label linux
 	  kernel /Image
 	  devicetree /system.dtb
-	  append console=${CONSOLE} clk_ignore_unused root=/dev/${ROOT} rw rootwait
+	  append console=${CONSOLE} root=/dev/${ROOT} rw rootwait
 	__HEADER_EOF

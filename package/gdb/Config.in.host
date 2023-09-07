@@ -41,15 +41,10 @@ config BR2_PACKAGE_HOST_GDB_SIM
 
 choice
 	prompt "GDB debugger Version"
-	default BR2_GDB_VERSION_11
+	default BR2_GDB_VERSION_12
 	depends on !BR2_arc
 	help
 	  Select the version of gdb you wish to use.
-
-config BR2_GDB_VERSION_10
-	bool "gdb 10.x"
-	# gdbserver support missing
-	depends on !BR2_or1k
 
 config BR2_GDB_VERSION_11
 	bool "gdb 11.x"
@@ -59,6 +54,9 @@ config BR2_GDB_VERSION_11
 config BR2_GDB_VERSION_12
 	bool "gdb 12.x"
 
+config BR2_GDB_VERSION_13
+	bool "gdb 13.x"
+
 endchoice
 
 endif
@@ -67,7 +65,7 @@ endif
 config BR2_GDB_VERSION
 	string
 	default "arc-2020.09-release-gdb" if BR2_arc
-	default "10.2"	   if BR2_GDB_VERSION_10
-	default "11.2"     if BR2_GDB_VERSION_11 || (!BR2_PACKAGE_HOST_GDB && !BR2_or1k)
-	default "12.1"     if BR2_GDB_VERSION_12 || (!BR2_PACKAGE_HOST_GDB && BR2_or1k)
+	default "11.2"     if BR2_GDB_VERSION_11
+	default "12.1"     if BR2_GDB_VERSION_12 || !BR2_PACKAGE_HOST_GDB
+	default "13.2"     if BR2_GDB_VERSION_13
 	depends on BR2_PACKAGE_GDB || BR2_PACKAGE_HOST_GDB

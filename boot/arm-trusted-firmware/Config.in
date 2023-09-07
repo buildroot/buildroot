@@ -129,8 +129,17 @@ config BR2_TARGET_ARM_TRUSTED_FIRMWARE_BL32_OPTEE
 
 endchoice
 
+choice
+	prompt "BL33"
+	default BR2_TARGET_ARM_TRUSTED_FIRMWARE_NONE_AS_BL33
+	help
+	  Select the image to include as BL33.
+
+config BR2_TARGET_ARM_TRUSTED_FIRMWARE_NONE_AS_BL33
+	bool "None"
+
 config BR2_TARGET_ARM_TRUSTED_FIRMWARE_BAREBOX_AS_BL33
-	bool "Use Barebox as BL33"
+	bool "Barebox"
 	depends on BR2_TARGET_BAREBOX
 	help
 	  This option allows to embed the Barebox generic BL33 image in
@@ -138,6 +147,30 @@ config BR2_TARGET_ARM_TRUSTED_FIRMWARE_BAREBOX_AS_BL33
 	  gets built before ATF, and that the appropriate BL33
 	  variable pointing to the generic bl33 image is passed
 	  when building ATF.
+
+config BR2_TARGET_ARM_TRUSTED_FIRMWARE_UBOOT_AS_BL33
+	bool "U-Boot"
+	depends on BR2_TARGET_UBOOT
+	help
+	  This option allows to embed u-boot.bin as the BL33 part of
+	  the ARM Trusted Firmware. It ensures that the u-boot package
+	  gets built before ATF, and that the appropriate BL33
+	  variable pointing to u-boot.bin is passed when building ATF.
+
+config BR2_TARGET_ARM_TRUSTED_FIRMWARE_EDK2_AS_BL33
+	bool "EDK2"
+	depends on BR2_TARGET_EDK2
+	help
+	  This option allows to embed EDK2 as the BL33 part of
+	  the ARM Trusted Firmware. It ensures that the EDK2 package
+	  gets built before ATF, and that the appropriate BL33
+	  variable pointing to the EDK2 is passed when building ATF.
+
+	  Do not choose this option if you intend to build ATF and EDK2
+	  for the 'qemu_sbsa' platform. In this case, due to the EDK2
+	  build system, the dependency between ATF and EDK is reversed.
+
+endchoice
 
 if BR2_TARGET_ARM_TRUSTED_FIRMWARE_BAREBOX_AS_BL33
 
@@ -150,15 +183,6 @@ config BR2_TARGET_ARM_TRUSTED_FIRMWARE_BAREBOX_BL33_IMAGE
 
 endif
 
-config BR2_TARGET_ARM_TRUSTED_FIRMWARE_UBOOT_AS_BL33
-	bool "Use U-Boot as BL33"
-	depends on BR2_TARGET_UBOOT
-	help
-	  This option allows to embed u-boot.bin as the BL33 part of
-	  the ARM Trusted Firmware. It ensures that the u-boot package
-	  gets built before ATF, and that the appropriate BL33
-	  variable pointing to u-boot.bin is passed when building ATF.
-
 if BR2_TARGET_ARM_TRUSTED_FIRMWARE_UBOOT_AS_BL33
 
 config BR2_TARGET_ARM_TRUSTED_FIRMWARE_UBOOT_BL33_IMAGE
@@ -169,19 +193,6 @@ config BR2_TARGET_ARM_TRUSTED_FIRMWARE_UBOOT_BL33_IMAGE
 	  have been installed to BINARIES_DIR by the U-Boot package.
 
 endif
-
-config BR2_TARGET_ARM_TRUSTED_FIRMWARE_EDK2_AS_BL33
-	bool "Use EDK2 as BL33"
-	depends on BR2_TARGET_EDK2
-	help
-	  This option allows to embed EDK2 as the BL33 part of
-	  the ARM Trusted Firmware. It ensures that the EDK2 package
-	  gets built before ATF, and that the appropriate BL33
-	  variable pointing to the EDK2 is passed when building ATF.
-
-	  Do not choose this option if you intend to build ATF and EDK2
-	  for the 'qemu_sbsa' platform. In this case, due to the EDK2
-	  build system, the dependency between ATF and EDK is reversed.
 
 config BR2_TARGET_ARM_TRUSTED_FIRMWARE_RCW
 	bool "Include NXP RCW in BL2"

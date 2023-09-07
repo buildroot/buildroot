@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IMX_SC_FIRMWARE_VERSION = 1.8.0
+IMX_SC_FIRMWARE_VERSION = 1.15.0
 IMX_SC_FIRMWARE_SITE = $(FREESCALE_IMX_SITE)
 IMX_SC_FIRMWARE_SOURCE = imx-sc-firmware-$(IMX_SC_FIRMWARE_VERSION).bin
 
@@ -24,6 +24,10 @@ ifeq ($(BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X),y)
 define IMX_SC_FIRMWARE_INSTALL_IMAGES_CMDS
 	cp $(@D)/mx8qx-mek-scfw-tcm.bin $(BINARIES_DIR)/mx8qx-mek-scfw-tcm.bin
 	cp $(@D)/mx8qx-val-scfw-tcm.bin $(BINARIES_DIR)/mx8qx-val-scfw-tcm.bin
+endef
+else ifeq ($(BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8DXL),y)
+define IMX_SC_FIRMWARE_INSTALL_IMAGES_CMDS
+	cp $(@D)/mx8dxl-evk-scfw-tcm.bin $(BINARIES_DIR)/
 endef
 else ifeq ($(BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8),y)
 define IMX_SC_FIRMWARE_INSTALL_IMAGES_CMDS

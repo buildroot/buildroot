@@ -1,7 +1,8 @@
 config BR2_PACKAGE_IMX_SECO
 	bool "imx-seco"
 	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8 || \
-		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X
+		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X || \
+		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8DXL
 	help
 	  Firmware file for the i.MX8 and i.MX8X Security Controller.
 
@@ -14,6 +15,7 @@ choice
 	prompt "i.MX Seco Firmware Release"
 	default BR2_PACKAGE_IMX_SECO_MX8QMB0 if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8
 	default BR2_PACKAGE_IMX_SECO_MX8QXC0 if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X
+	default BR2_PACKAGE_IMX_SECO_MX8DXLB0 if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8DXL
 	help
 	  Select the appropriate ahab container image to install
 	  to match the iMX asics revision.
@@ -30,7 +32,7 @@ config BR2_PACKAGE_IMX_SECO_MX8DXLA1
 
 config BR2_PACKAGE_IMX_SECO_MX8DXLB0
 	bool "imx-seco-mx8dxlb0"
-	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X
+	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8DXL
 
 config BR2_PACKAGE_IMX_SECO_MX8QMB0
 	bool "imx-seco-mx8qmb0"

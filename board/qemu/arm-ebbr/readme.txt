@@ -68,4 +68,4 @@ Firmware update is currently not supported.
 [1]: https://github.com/ARM-software/ebbr
 [2]: https://developer.arm.com/Architectures/Arm%20SystemReady%20IR
 [3]: https://github.com/ARM-software/arm-systemready/tree/main/IR/prebuilt_images
-[4]: https://developer.arm.com/documentation/DUI1101/1-1/?lang=en
+[4]: https://developer.arm.com/documentation/DUI1101/latest/

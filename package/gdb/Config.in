@@ -59,7 +59,7 @@ config BR2_PACKAGE_GDB_DEBUGGER
 	bool "full debugger"
 	depends on BR2_USE_WCHAR
 	depends on !BR2_sh
-	select BR2_PACKAGE_GMP if !BR2_GDB_VERSION_10 && !BR2_arc
+	select BR2_PACKAGE_GMP if !BR2_arc
 	select BR2_PACKAGE_NCURSES
 
 comment "full gdb on target needs a toolchain w/ wchar"

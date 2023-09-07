@@ -14,7 +14,7 @@ I2C_TOOLS_MAKE_OPTS = EXTRA=eeprog
 I2C_TOOLS_INSTALL_STAGING = YES
 
 ifeq ($(BR2_PACKAGE_PYTHON3),y)
-I2C_TOOLS_DEPENDENCIES += python3
+I2C_TOOLS_DEPENDENCIES += host-python-setuptools python3
 endif
 
 ifeq ($(BR2_STATIC_LIBS),y)
@@ -28,23 +28,23 @@ endif
 # Build/install steps mirror the distutil python package type in the python package
 # infrastructure
 ifeq ($(BR2_PACKAGE_PYTHON3),y)
-# BASE_ENV taken from PKG_PYTHON_DISTUTILS_ENV in package/pkg-python.mk
+# BASE_ENV taken from PKG_PYTHON_SETUPTOOLS_ENV in package/pkg-python.mk
 I2C_TOOLS_PYTHON_BASE_ENV = \
-	$(PKG_PYTHON_DISTUTILS_ENV) \
+	$(PKG_PYTHON_SETUPTOOLS_ENV) \
 	CFLAGS="$(TARGET_CFLAGS) -I../include"
 
 define I2C_TOOLS_BUILD_PYSMBUS
 	(cd $(@D)/py-smbus; \
 	$(I2C_TOOLS_PYTHON_BASE_ENV) \
 		$(HOST_DIR)/bin/python setup.py build \
-		$(PKG_PYTHON_DISTUTILS_BUILD_OPTS))
+		$(PKG_PYTHON_SETUPTOOLS_BUILD_OPTS))
 endef
 
 define I2C_TOOLS_INSTALL_PYSMBUS
 	(cd $(@D)/py-smbus; \
 	$(I2C_TOOLS_PYTHON_BASE_ENV) \
 		$(HOST_DIR)/bin/python setup.py install \
-		$(PKG_PYTHON_DISTUTILS_INSTALL_TARGET_OPTS))
+		$(PKG_PYTHON_SETUPTOOLS_INSTALL_TARGET_OPTS))
 endef
 
 endif # BR2_PACKAGE_PYTHON3

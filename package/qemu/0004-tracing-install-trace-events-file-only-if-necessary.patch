@@ -1,0 +1,30 @@
+From 5c43da1e4983cc3c209b325a5228b6149e0a0ccf Mon Sep 17 00:00:00 2001
+From: Carlos Santos <casantos@redhat.com>
+Date: Fri, 24 Mar 2023 21:40:22 -0300
+Subject: [PATCH] tracing: install trace events file only if necessary
+
+It is not useful when configuring with --enable-trace-backends=nop.
+
+Upstream: https://patchwork.kernel.org/project/qemu-devel/patch/20230408010410.281263-1-casantos@redhat.com/
+Signed-off-by: Carlos Santos <casantos@redhat.com>
+Signed-off-by: Carlos Santos <unixmania@gmail.com>
+---
+ trace/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/trace/meson.build b/trace/meson.build
+index 8e80be895c..30b1d942eb 100644
+--- a/trace/meson.build
++++ b/trace/meson.build
+@@ -64,7 +64,7 @@ trace_events_all = custom_target('trace-events-all',
+                                  input: trace_events_files,
+                                  command: [ 'cat', '@INPUT@' ],
+                                  capture: true,
+-                                 install: true,
++                                 install: get_option('trace_backends') != [ 'nop' ],
+                                  install_dir: qemu_datadir)
+ 
+ if 'ust' in get_option('trace_backends')
+-- 
+2.31.1
+

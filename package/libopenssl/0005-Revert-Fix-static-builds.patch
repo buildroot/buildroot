@@ -16,7 +16,7 @@ diff --git a/Configure b/Configure
 index 2c17f4186b..94cab4c3c4 100755
 --- a/Configure
 +++ b/Configure
-@@ -1438,10 +1438,6 @@ foreach (keys %useradd) {
+@@ -1377,10 +1377,6 @@ foreach (keys %useradd) {
  # At this point, we can forget everything about %user and %useradd,
  # because it's now all been merged into the corresponding $config entry
  
@@ -27,7 +27,7 @@ index 2c17f4186b..94cab4c3c4 100755
  # Allow overriding the build file name
  $config{build_file} = env('BUILDFILE') || $target{build_file} || "Makefile";
  
-@@ -1728,6 +1724,10 @@ if ($strict_warnings)
+@@ -1671,6 +1667,10 @@ if ($strict_warnings)
                  }
          }
  

@@ -11,6 +11,20 @@ config BR2_PACKAGE_KMSCUBE
 
 	  https://cgit.freedesktop.org/mesa/kmscube/
 
+if BR2_PACKAGE_KMSCUBE
+
+config BR2_PACKAGE_KMSCUBE_GSTREAMER
+	bool "Enable gstreamer video support"
+	depends on BR2_USE_WCHAR # glib2
+	depends on BR2_TOOLCHAIN_HAS_THREADS # glib2
+	depends on BR2_USE_MMU # glib2
+	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_GST1_PLUGINS_BASE
+	select BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_APP
+	select BR2_PACKAGE_GSTREAMER1
+
+endif
+
 comment "kmscube needs EGL, GBM and OpenGL ES, and a toolchain w/ thread support"
 	depends on \
 		!BR2_PACKAGE_HAS_LIBEGL || \
