@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CONMON_VERSION = 2.1.7
+CONMON_VERSION = 2.1.8
 CONMON_SITE = $(call github,containers,conmon,v$(CONMON_VERSION))
 CONMON_LICENSE = Apache-2.0
 CONMON_LICENSE_FILES = LICENSE
