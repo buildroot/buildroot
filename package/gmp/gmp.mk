@@ -21,7 +21,7 @@ GMP_CONF_OPTS += --disable-assembly
 endif
 
 # GMP needs M extension for riscv assembly
-ifeq ($(BR2_riscv):$(BR2_RISCV_ISA_CUSTOM_RVM),y:)
+ifeq ($(BR2_riscv):$(BR2_RISCV_ISA_RVM),y:)
 GMP_CONF_OPTS += --disable-assembly
 endif
 
