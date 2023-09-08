@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-COG_VERSION = 0.16.1
+COG_VERSION = 0.18.0
 COG_SITE = https://wpewebkit.org/releases
 COG_SOURCE = cog-$(COG_VERSION).tar.xz
 COG_INSTALL_STAGING = YES
@@ -15,7 +15,7 @@ COG_CONF_OPTS = \
 	-Ddocumentation=false \
 	-Dmanpages=false \
 	-Dprograms=true \
-	-Dsoup2=enabled \
+	-Dwpe_api=2.0 \
 	-Dcog_home_uri='$(call qstrip,$(BR2_PACKAGE_COG_PROGRAMS_HOME_URI))' \
 	-Dplatforms='$(subst $(space),$(comma),$(strip $(COG_PLATFORMS_LIST)))'
 
