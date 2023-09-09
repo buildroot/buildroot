@@ -1,0 +1,36 @@
+From 9b31965cdf362768e86f7e592e59e68fb3351261 Mon Sep 17 00:00:00 2001
+From: Matt Turner <mattst88@gmail.com>
+Date: Tue, 8 Aug 2023 16:51:25 -0700
+Subject: [PATCH] Fix build failure when gstreamer support is disabled
+ https://bugs.webkit.org/show_bug.cgi?id=259931 https://bugs.gentoo.org/911663
+
+Reviewed by Carlos Alberto Lopez Perez.
+
+* Source/WebCore/loader/MixedContentChecker.cpp:
+
+Canonical link: https://commits.webkit.org/260527.429@fix-build
+
+(cherry picked from commit f5ceef5bf2e3c4d7203a37b9e2d2fdd9b1bb2732)
+
+Upstream: https://github.com/WebKit/WebKit/commit/f5ceef5bf2e3c4d7203a37b9e2d2fdd9b1bb2732
+Signed-off-by: Thomas Devoogdt <thomas.devoogdt@barco.com>
+---
+ Source/WebCore/loader/MixedContentChecker.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Source/WebCore/loader/MixedContentChecker.cpp b/Source/WebCore/loader/MixedContentChecker.cpp
+index 9b4c7fe62020..ac4733bc08bc 100644
+--- a/Source/WebCore/loader/MixedContentChecker.cpp
++++ b/Source/WebCore/loader/MixedContentChecker.cpp
+@@ -33,6 +33,8 @@
+ #include "ContentSecurityPolicy.h"
+ #include "Document.h"
+ #include "Frame.h"
++#include "FrameLoader.h"
++#include "FrameLoaderClient.h"
+ #include "SecurityOrigin.h"
+ 
+ namespace WebCore {
+-- 
+2.42.0
+
