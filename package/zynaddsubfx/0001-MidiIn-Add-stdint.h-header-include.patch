@@ -1,0 +1,26 @@
+From 4f1565f18cf71867f25f31c50c3a5e6995f49ae6 Mon Sep 17 00:00:00 2001
+From: fundamental <mark.d.mccurry@gmail.com>
+Date: Sat, 22 Apr 2023 10:21:09 -0400
+Subject: [PATCH] MidiIn: Add stdint.h header include
+
+Upstream: https://github.com/zynaddsubfx/zynaddsubfx/commit/70905c96fe7b9ffde19bc4bc05b0dc53a1ed1707
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ src/Nio/MidiIn.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/Nio/MidiIn.h b/src/Nio/MidiIn.h
+index ce0bcfec..c6b30c61 100644
+--- a/src/Nio/MidiIn.h
++++ b/src/Nio/MidiIn.h
+@@ -17,6 +17,7 @@
+ #define MIDI_IN_H
+ 
+ #include "Engine.h"
++#include <stdint.h>//uint8_t
+ 
+ namespace zyn {
+ 
+-- 
+2.41.0
+
