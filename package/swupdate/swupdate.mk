@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SWUPDATE_VERSION = 2022.12
+SWUPDATE_VERSION = 2023.05
 SWUPDATE_SITE = $(call github,sbabic,swupdate,$(SWUPDATE_VERSION))
 SWUPDATE_LICENSE = GPL-2.0, GPL-2.0+, LGPL-2.1+, MIT, ISC, BSD-1-Clause, BSD-3-Clause, CC0-1.0, CC-BY-SA-4.0, OFL-1.1
 SWUPDATE_LICENSE_FILES = LICENSES/BSD-1-Clause.txt \
@@ -23,6 +23,9 @@ SWUPDATE_INSTALL_STAGING = YES
 # available in all external toolchains, and use CC for linking. Ensure
 # TARGET_CC is used for both.
 SWUPDATE_MAKE_ENV = CC="$(TARGET_CC)" LD="$(TARGET_CC)" SKIP_STRIP=y
+
+# we don't package EFI Boot Guard/libebgenv
+SWUPDATE_MAKE_ENV += HAVE_LIBEBGENV=n
 
 # swupdate bundles its own version of mongoose (version 6.16)
 
@@ -84,6 +87,9 @@ endif
 
 ifeq ($(BR2_PACKAGE_LIBUBOOTENV),y)
 SWUPDATE_DEPENDENCIES += libubootenv
+SWUPDATE_MAKE_ENV += HAVE_LIBUBOOTENV=y
+else
+SWUPDATE_MAKE_ENV += HAVE_LIBUBOOTENV=n
 endif
 
 ifeq ($(BR2_PACKAGE_LIBURIPARSER),y)
