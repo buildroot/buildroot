@@ -1,0 +1,82 @@
+menuconfig BR2_PACKAGE_USER_INITRD
+	bool "customizable user INITRD"
+	default n
+	help
+	  This option allows to create customizable user INITRD.
+	  As a C library currently only glibc can be used.
+
+	  Resulting initrd.gz file will be located in "output/images"
+	  directory.
+
+if BR2_PACKAGE_USER_INITRD
+
+if BR2_TOOLCHAIN_BUILDROOT_UCLIBC
+comment "Currently only glibc can be used as a C library for INITRD."
+comment "But currently uClibc C library is selected in toolchain options."
+comment "Enable glibc to see options below."
+endif
+
+if BR2_TOOLCHAIN_BUILDROOT_GLIBC
+comment "glibc will be used as a C library"
+endif
+
+if BR2_TOOLCHAIN_BUILDROOT_MUSL
+comment "Currently only glibc can be used as a C library for INITRD."
+comment "But currently musl C library is selected in toolchain options."
+comment "Enable glibc to see options below."
+endif
+
+config BR2_PACKAGE_USER_INITRD_BASH
+	bool "bash"
+	default n
+	depends on BR2_PACKAGE_BASH
+	depends on BR2_TOOLCHAIN_BUILDROOT_GLIBC
+
+config BR2_PACKAGE_USER_INITRD_CRYPTSETUP
+	bool "cryptsetup"
+	default n
+	depends on BR2_PACKAGE_CRYPTSETUP
+	depends on BR2_TOOLCHAIN_BUILDROOT_GLIBC
+
+config BR2_PACKAGE_USER_INITRD_BUSYBOX
+	bool "busybox"
+	default n
+	depends on BR2_PACKAGE_BUSYBOX
+	depends on BR2_TOOLCHAIN_BUILDROOT_GLIBC
+
+config BR2_PACKAGE_USER_INITRD_COREUTILS
+	bool "coreutils"
+	default n
+	depends on BR2_PACKAGE_COREUTILS
+	depends on BR2_TOOLCHAIN_BUILDROOT_GLIBC
+
+config BR2_PACKAGE_USER_INITRD_PROCPS_NG
+	bool "procps-ng"
+	default n
+	depends on BR2_PACKAGE_PROCPS_NG
+	depends on BR2_TOOLCHAIN_BUILDROOT_GLIBC
+
+if BR2_TOOLCHAIN_BUILDROOT_GLIBC
+
+if !BR2_PACKAGE_BASH
+comment "bash must be enabled to be able to select it to INITRD"
+endif
+
+if !BR2_PACKAGE_CRYPTSETUP
+comment "cryptsetup must be enabled to be able to select it to INITRD"
+endif
+
+if !BR2_PACKAGE_BUSYBOX
+comment "busybox must be enabled to be able to select it to INITRD"
+endif
+
+if !BR2_PACKAGE_COREUTILS
+comment "coreutils must be enabled to be able to select it to INITRD"
+endif
+
+if !BR2_PACKAGE_PROCPS_NG
+comment "procps-ng must be enabled to be able to select it to INITRD"
+endif
+
+endif
+endif

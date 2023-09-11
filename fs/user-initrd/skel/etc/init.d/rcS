@@ -1,0 +1,8 @@
+#!/bin/sh
+
+mount -t devtmpfs none /dev
+mount /dev/sda1 /mnt
+
+# Here is the place for some other actions.
+
+exec switch_root /mnt /usr/lib/systemd/systemd --system
