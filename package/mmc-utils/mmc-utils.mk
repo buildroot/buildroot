@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MMC_UTILS_VERSION = d4c2910981ff99b983734426dfa99632fb81ac6b
+MMC_UTILS_VERSION = 613495ecaca97a19fa7f8f3ea23306472b36453c
 MMC_UTILS_SITE = https://git.kernel.org/pub/scm/utils/mmc/mmc-utils.git
 MMC_UTILS_SITE_METHOD = git
 MMC_UTILS_LICENSE = GPL-2.0
@@ -19,11 +19,15 @@ endif
 # override AM_CFLAGS as the project Makefile uses it to pass
 # -D_FILE_OFFSET_BITS=64 -D_FORTIFY_SOURCE=2, and the latter conflicts
 # with the _FORTIFY_SOURCE that we pass when hardening options are
-# enabled.
+# enabled. Starting from commit:
+# https://git.kernel.org/pub/scm/utils/mmc/mmc-utils.git/commit/?id=958227890690290ee766aaad1b92f3413f67048c
+# they use AM_CFLAGS to set VERSION to first 6 digit of git SHA1, so
+# let's do this here otherwise it won't be automatically set and build
+# will fail
 define MMC_UTILS_BUILD_CMDS
 	$(MAKE) -C $(@D) $(TARGET_CONFIGURE_OPTS) \
 		CFLAGS="$(MMC_UTILS_CFLAGS)" \
-		AM_CFLAGS=
+		AM_CFLAGS='-DVERSION=\"$(shell echo $(MMC_UTILS_VERSION) | head -c 6)\"'
 endef
 
 define MMC_UTILS_INSTALL_TARGET_CMDS
