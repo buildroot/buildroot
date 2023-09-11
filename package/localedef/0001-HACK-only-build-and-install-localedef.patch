@@ -1,4 +1,4 @@
-From 442e9a3f262c49cf61f9e7bdf12882f0a427666b Mon Sep 17 00:00:00 2001
+From bd5a87ea4a0cc0ba393a16bbeb166903e4085e8b Mon Sep 17 00:00:00 2001
 From: Michael Olbrich <m.olbrich@pengutronix.de>
 Date: Mon, 21 May 2018 16:45:02 +0200
 Subject: [PATCH] HACK: only build and install localedef
@@ -7,16 +7,18 @@ Signed-off-by: Michael Olbrich <m.olbrich@pengutronix.de>
 
 Upstream: https://git.pengutronix.de/cgit/ptxdist/plain/patches/localedef-glibc-2.27/0001-HACK-only-build-and-install-localedef.patch?id=47116f66f411d4dadfce42c2fdd6d41b351ccfd4
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+[Romain: rebase on 2.38]
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
 ---
  Rules           | 14 ++++++++++----
  locale/Makefile |  6 +++---
  2 files changed, 13 insertions(+), 7 deletions(-)
 
 diff --git a/Rules b/Rules
-index b1137afe71..2aeac31922 100644
+index 279ae490ac..1321956be6 100644
 --- a/Rules
 +++ b/Rules
-@@ -216,10 +216,16 @@ binaries-shared-notests = $(filter-out $(binaries-pie) $(binaries-static), \
+@@ -221,10 +221,16 @@ binaries-shared-notests = $(filter-out $(binaries-pie) $(binaries-static), \
  				       $(binaries-all-notests))
  
  ifneq "$(strip $(binaries-shared-notests))" ""
@@ -38,7 +40,7 @@ index b1137afe71..2aeac31922 100644
  
  ifneq "$(strip $(binaries-shared-tests))" ""
 diff --git a/locale/Makefile b/locale/Makefile
-index b7c60681fa..de4cf4003f 100644
+index d7036b0855..68afdddc7f 100644
 --- a/locale/Makefile
 +++ b/locale/Makefile
 @@ -33,15 +33,15 @@ categories	= ctype messages monetary numeric time paper name \
@@ -61,5 +63,5 @@ index b7c60681fa..de4cf4003f 100644
  
  libBrokenLocale-routines = broken_cur_max
 -- 
-2.33.0
+2.41.0
 

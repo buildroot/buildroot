@@ -1,4 +1,4 @@
-From 85412262460f6ba9f6e2cf8da74fc1904c54c854 Mon Sep 17 00:00:00 2001
+From add730a680075ed611797b9ea771bf977667a7de Mon Sep 17 00:00:00 2001
 From: Matt Weber <matthew.weber@rockwellcollins.com>
 Date: Thu, 6 Feb 2020 14:36:21 -0600
 Subject: [PATCH] relax dependency on GCC to 4.8 and binutils to 2.24
@@ -26,15 +26,17 @@ GCC 6.2+
 Signed-off-by: Matthew Weber <matthew.weber@rockwellcollins.com>
 [yann.morin.1998@free.fr: update for 2.37]
 Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+[Romain: rebase on 2.38]
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
 ---
- configure | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ configure | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/configure b/configure
-index 9619c10991..0c481d2339 100755
+index 4ef387146d..4c6f91117d 100755
 --- a/configure
 +++ b/configure
-@@ -4178,7 +4178,7 @@ $as_echo_n "checking version of $LD... " >&6; }
+@@ -5293,7 +5293,7 @@ printf %s "checking version of $LD... " >&6; }
    ac_prog_version=`$LD --version 2>&1 | sed -n 's/^.*GNU ld.* \([0-9][0-9]*\.[0-9.]*\).*$/\1/p'`
    case $ac_prog_version in
      '') ac_prog_version="v. ?.??, bad"; ac_verc_fail=yes;;
@@ -43,8 +45,8 @@ index 9619c10991..0c481d2339 100755
         ac_prog_version="$ac_prog_version, ok"; ac_verc_fail=no;;
      *) ac_prog_version="$ac_prog_version, bad"; ac_verc_fail=yes;;
  
-@@ -4589,7 +4589,7 @@ int
- main ()
+@@ -5735,7 +5735,7 @@ int
+ main (void)
  {
  
 -#if !defined __GNUC__ || __GNUC__ < 6 || (__GNUC__ == 6 && __GNUC_MINOR__ < 2)
@@ -53,4 +55,5 @@ index 9619c10991..0c481d2339 100755
  #endif
    ;
 -- 
-2.33.0
+2.41.0
+
