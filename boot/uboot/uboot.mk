@@ -138,6 +138,14 @@ UBOOT_MAKE_TARGET += u-boot.stm32
 endif
 endif
 
+ifeq ($(BR2_TARGET_UBOOT_INITIAL_ENV),y)
+UBOOT_MAKE_TARGET += u-boot-initial-env
+define UBOOT_INSTALL_UBOOT_INITIAL_ENV
+	$(INSTALL) -D -m 0644 $(@D)/u-boot-initial-env $(TARGET_DIR)/etc/u-boot-initial-env
+endef
+UBOOT_POST_INSTALL_TARGET_HOOKS += UBOOT_INSTALL_UBOOT_INITIAL_ENV
+endif
+
 ifeq ($(BR2_TARGET_UBOOT_FORMAT_CUSTOM),y)
 UBOOT_BINS += $(call qstrip,$(BR2_TARGET_UBOOT_FORMAT_CUSTOM_NAME))
 endif

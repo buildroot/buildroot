@@ -506,6 +506,13 @@ config BR2_TARGET_UBOOT_SPL_NAME
 	  and TPL name is tpl/u-boot-tpl.bin but not always. SPL name is
 	  MLO on OMAP and SPL on i.MX6 for example.
 
+config BR2_TARGET_UBOOT_INITIAL_ENV
+	bool "Install u-boot-initial-env"
+	help
+	  Install the U-Boot u-boot-initial-env on the target.
+
+	  This file is typically required by libubootenv.
+
 config BR2_TARGET_UBOOT_ZYNQMP
 	bool "Boot on the Xilinx ZynqMP SoCs"
 	depends on BR2_aarch64
