@@ -5,8 +5,8 @@
 # (e.g. tar options, compression ratio or method)), we MUST update the format
 # version in the variable BR_FMT_VERSION_git, in package/pkg-download.mk.
 
-# We want to catch any unexpected failure, and exit immediately
-set -E
+# We want to catch any unexpected failure
+set -e
 
 # Download helper for git, to be called from the download wrapper script
 #
@@ -77,6 +77,7 @@ pushd "${git_cache}" >/dev/null
 
 # Any error now should try to recover
 trap _on_error ERR
+set -E
 
 # Caller needs to single-quote its arguments to prevent them from
 # being expanded a second time (in case there are spaces in them)
