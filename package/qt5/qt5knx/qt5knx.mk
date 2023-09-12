@@ -5,7 +5,7 @@
 ################################################################################
 
 QT5KNX_VERSION = 5.15.2
-QT5KNX_SITE = https://code.qt.io/cgit/qt/qtknx.git
+QT5KNX_SITE = https://code.qt.io/qt/qtknx.git
 QT5KNX_SITE_METHOD = git
 QT5KNX_INSTALL_STAGING = YES
 QT5KNX_LICENSE = GPL-3.0 with exception
