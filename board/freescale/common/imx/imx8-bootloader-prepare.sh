@@ -73,4 +73,5 @@ main ()
 	exit $?
 }
 
+set -e
 main $@
