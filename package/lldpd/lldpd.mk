@@ -16,6 +16,9 @@ LLDPD_LICENSE = ISC
 LLDPD_LICENSE_FILES = LICENSE
 LLDPD_CPE_ID_VENDOR = lldpd_project
 
+# 0001-daemon-fix-read-overflow-when-parsing-CDP-addresses.patch
+LLDPD_IGNORE_CVES += CVE-2023-41910
+
 # Detection of c99 support in configure fails without WCHAR. To enable
 # automatic detection of c99 support by configure, we need to enable
 # WCHAR in toolchain. But actually we do not need WCHAR at lldpd
