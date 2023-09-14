@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBQB_VERSION = 2.0.6
+LIBQB_VERSION = 2.0.8
 LIBQB_SOURCE = libqb-$(LIBQB_VERSION).tar.xz
 LIBQB_SITE = \
 	https://github.com/ClusterLabs/libqb/releases/download/v$(LIBQB_VERSION)
@@ -12,8 +12,6 @@ LIBQB_LICENSE = LGPL-2.1+
 LIBQB_LICENSE_FILES = COPYING
 LIBQB_CPE_ID_VENDOR = clusterlabs
 LIBQB_INSTALL_STAGING = YES
-# We're patching configure.ac
-LIBQB_AUTORECONF = YES
 LIBQB_CONF_OPTS = --disable-tests
 LIBQB_DEPENDENCIES = libxml2
 
