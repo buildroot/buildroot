@@ -1,0 +1,22 @@
+Upstream Patch for Unordered
+
+Prevent erroneous copying of groups data, update max load to properly propagate
+
+Signed-off-by: Michael Nosthoff <buildroot@heine.tech>
+Upstream: https://github.com/boostorg/unordered/commit/067884a4e213352e7c81c441f1453c54735c39f3
+diff --git a/include/boost/unordered/detail/foa/core.hpp b/include/boost/unordered/detail/foa/core.hpp
+index 239d05d3..7ae9f2c8 100644
+--- a/boost/unordered/detail/foa/core.hpp
++++ b/boost/unordered/detail/foa/core.hpp
+@@ -1870,9 +1870,10 @@ private:
+ 
+   void fast_copy_elements_from(const table_core& x)
+   {
+-    if(arrays.elements){
++    if(arrays.elements&&x.arrays.elements){
+       copy_elements_array_from(x);
+       copy_groups_array_from(x);
++      size_ctrl.ml=std::size_t(x.size_ctrl.ml);
+       size_ctrl.size=std::size_t(x.size_ctrl.size);
+     }
+   }
