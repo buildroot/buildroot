@@ -1,0 +1,47 @@
+From 42e944a471672dae8522fbcf161941895ba16632 Mon Sep 17 00:00:00 2001
+From: Eastdong <31920925+IEAST@users.noreply.github.com>
+Date: Thu, 23 Feb 2023 06:08:36 +0800
+Subject: [PATCH] Add missing <atomic> content to fix gcc compilation for RISCV
+ architecture. (#2211)
+
+* Add missing <atomic> content to fix gcc compilation for RISCV architecture.
+
+* add name to AUTHORS
+
+* lint fix
+
+Co-authored-by: Moritz Firsching <firsching@google.com>
+Upstream: https://github.com/libjxl/libjxl/commit/22d12d74e7bc56b09cfb1973aa89ec8d714fa3fc
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ AUTHORS            | 1 +
+ lib/jxl/enc_xyb.cc | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/AUTHORS b/AUTHORS
+index 44dcc409..3340422d 100644
+--- a/AUTHORS
++++ b/AUTHORS
+@@ -30,6 +30,7 @@ Daniel Novomeský <dnovomesky@gmail.com>
+ David Burnett <vargolsoft@gmail.com>
+ Dirk Lemstra <dirk@lemstra.org>
+ Don Olmstead <don.j.olmstead@gmail.com>
++Dong Xu <xdong181@gmail.com>
+ Even Rouault <even.rouault@spatialys.com>
+ Fred Brennan <copypaste@kittens.ph>
+ Heiko Becker <heirecka@exherbo.org>
+diff --git a/lib/jxl/enc_xyb.cc b/lib/jxl/enc_xyb.cc
+index c7310765..2fd5d025 100644
+--- a/lib/jxl/enc_xyb.cc
++++ b/lib/jxl/enc_xyb.cc
+@@ -6,6 +6,7 @@
+ #include "lib/jxl/enc_xyb.h"
+ 
+ #include <algorithm>
++#include <atomic>
+ #include <cstdlib>
+ 
+ #undef HWY_TARGET_INCLUDE
+-- 
+2.41.0
+
