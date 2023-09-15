@@ -49,6 +49,12 @@ ifeq ($(BR2_STATIC_LIBS),y)
 OPENBLAS_MAKE_OPTS += NO_SHARED=1
 endif
 
+ifeq ($(BR2_ARCH_IS_64),y)
+OPENBLAS_MAKE_OPTS += BINARY=64
+else
+OPENBLAS_MAKE_OPTS += BINARY=32
+endif
+
 # binutils version <= 2.23.2 has a bug
 # (https://sourceware.org/bugzilla/show_bug.cgi?id=14887) where
 # whitespaces in ARM register specifications such as [ r1, #12 ] or [
