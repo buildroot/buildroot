@@ -18,6 +18,9 @@ config BR2_PACKAGE_MULTIPATH_TOOLS
 	select BR2_PACKAGE_LVM2
 	select BR2_PACKAGE_LVM2_STANDARD_INSTALL
 	select BR2_PACKAGE_READLINE
+	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_LIBS
+	select BR2_PACKAGE_UTIL_LINUX_LIBMOUNT
 	help
 	  This package provides the following binaries to drive
 	  the Device Mapper multipathing driver:
