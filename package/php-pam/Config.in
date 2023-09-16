@@ -4,13 +4,14 @@ config BR2_PACKAGE_PHP_PAM
 	depends on BR2_USE_WCHAR # linux-pam
 	depends on BR2_USE_MMU # linux-pam
 	depends on !BR2_STATIC_LIBS # linux-pam
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # linux-pam
 	select BR2_PACKAGE_LINUX_PAM
 	help
 	  PHP PAM (Pluggable Authentication Modules) integration
 
 	  https://pecl.php.net/package/PAM
 
-comment "php-pam needs a toolchain w/ wchar, locale, dynamic library"
+comment "php-pam needs a toolchain w/ wchar, locale, dynamic library, gcc >= 4.9"
 	depends on BR2_USE_MMU
 	depends on !BR2_ENABLE_LOCALE || !BR2_USE_WCHAR \
-		|| BR2_STATIC_LIBS
+		|| BR2_STATIC_LIBS || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9

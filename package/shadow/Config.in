@@ -20,14 +20,16 @@ config BR2_PACKAGE_SHADOW_ACCOUNT_TOOLS_SETUID
 	depends on BR2_ENABLE_LOCALE  # linux-pam
 	depends on BR2_USE_WCHAR  # linux-pam
 	depends on !BR2_STATIC_LIBS  # linux-pam
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # linux-pam
 	select BR2_PACKAGE_LINUX_PAM
 	help
 	  Install the user and group management tools (e.g. groupadd)
 	  with setuid and authenticate the callers via PAM.
 
-comment "account-tools-setuid needs a toolchain w/ dynamic library, wchar, locale"
+comment "account-tools-setuid needs a toolchain w/ dynamic library, wchar, locale, gcc >= 4.9"
 	depends on BR2_USE_MMU
-	depends on BR2_STATIC_LIBS || !BR2_USE_WCHAR || !BR2_ENABLE_LOCALE
+	depends on BR2_STATIC_LIBS || !BR2_USE_WCHAR || \
+		!BR2_ENABLE_LOCALE || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 
 config BR2_PACKAGE_SHADOW_UTMPX
 	bool "utmpx"
