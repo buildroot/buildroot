@@ -75,7 +75,8 @@ TCL_POST_INSTALL_TARGET_HOOKS += TCL_REMOVE_EXTRA
 
 TCL_DEPENDENCIES = $(if $(BR2_PACKAGE_SQLITE),sqlite) \
 	$(if $(BR2_PACKAGE_MYSQL),mysql) \
-	$(if $(BR2_PACKAGE_POSTGRESQL),postgresql)
+	$(if $(BR2_PACKAGE_POSTGRESQL),postgresql) \
+	zlib
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
