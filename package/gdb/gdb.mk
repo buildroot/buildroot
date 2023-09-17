@@ -32,7 +32,6 @@ GDB_PRE_CONFIGURE_HOOKS += GDB_CONFIGURE_SYMLINK
 # also need ncurses.
 # As for libiberty, gdb may use a system-installed one if present, so
 # we must ensure ours is installed first.
-GDB_DEPENDENCIES = zlib
 HOST_GDB_DEPENDENCIES = host-expat host-libiberty host-ncurses host-zlib
 
 # Disable building documentation
@@ -131,22 +130,29 @@ GDB_CONF_OPTS = \
 	--disable-sim \
 	$(GDB_DISABLE_BINUTILS_CONF_OPTS) \
 	--without-included-gettext \
-	--with-system-zlib \
 	--disable-werror \
 	--enable-static \
 	--without-mpfr \
 	--disable-source-highlight
 
 ifeq ($(BR2_PACKAGE_GDB_DEBUGGER),y)
+GDB_DEPENDENCIES += zlib
 GDB_CONF_OPTS += \
 	--enable-gdb \
-	--with-curses
+	--with-curses \
+	--with-system-zlib
 GDB_DEPENDENCIES += ncurses \
 	$(if $(BR2_PACKAGE_LIBICONV),libiconv)
 else
+# When only building gdbserver, we don't need zlib. But we have no way to
+# tell the top-level configure that we don't need zlib: it either wants to
+# build the bundled one, or use the system one.
+# Since we're going to only install the gdbserver to the target, we don't
+# care that the bundled zlib is built, as it is not used.
 GDB_CONF_OPTS += \
 	--disable-gdb \
-	--without-curses
+	--without-curses \
+	--without-system-zlib
 endif
 
 # Starting from GDB 11.x, gmp is needed as a dependency to build full
