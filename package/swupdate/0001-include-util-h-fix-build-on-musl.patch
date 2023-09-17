@@ -1,0 +1,41 @@
+From 1999685830d6e9b57014666b9e53e46de17a471c Mon Sep 17 00:00:00 2001
+From: Dominique Martinet <dominique.martinet@atmark-techno.com>
+Date: Fri, 15 Sep 2023 18:14:57 +0900
+Subject: [PATCH] include/util.h: fix build on musl
+
+Building on musl 1.2.4 fails with the following error/warnings:
+
+include/util.h:211:23: error: unknown type name 'mode_t'
+  211 | int mkpath(char *dir, mode_t mode);
+include/util.h:269:36: warning: 'struct timeval' declared inside parameter list will not be visible outside of this definition or declaration
+  269 | char *swupdate_time_iso8601(struct timeval *tv);
+
+These were caused by a recent reorganization of the headers and glibc
+appears more tolerant here.
+
+Fixes: 8228b1390632 ("Reorganize includes to have smaller files")
+Signed-off-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
+Upstream: https://github.com/sbabic/swupdate/commit/1999685830d6e9b57014666b9e53e46de17a471c
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ include/util.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/util.h b/include/util.h
+index 2f5c7adc..5f4cdc01 100644
+--- a/include/util.h
++++ b/include/util.h
+@@ -8,11 +8,13 @@
+ #ifndef _UTIL_H
+ #define _UTIL_H
+ 
++#include <fcntl.h>
+ #include <stdint.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdio.h>
+ #include <stdbool.h>
++#include <sys/time.h>
+ #if defined(__linux__)
+ #include <linux/types.h>
+ #endif
