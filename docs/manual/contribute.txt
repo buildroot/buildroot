@@ -247,6 +247,23 @@ which have the upstream license), and that you are allowed to do so.
 See http://developercertificate.org/[the Developer Certificate of
 Origin] for details.
 
+To give credits to who sponsored the creation of a patch or the process of
+upstreaming it, you may use
+https://datatracker.ietf.org/doc/html/rfc5233[email subaddressing] for
+your git identity (i.e. what is used as commit author and email +From:+
+field, as well as your Signed-off-by tag); add suffix to the local part,
+separated from it by a plus `+` sign. E.g.:
+
+* for a company which sponsored the submitted work, use the company name
+  as the detail (suffix) part:
++
+`Your-Name Your-Surname <your-name.your-surname+companyname@mail.com>`
+
+* for an individual who sponsored who sponsored the submitted work, use
+  their name and surname:
++
+`Your-Name Your-Surname <your-name.your-surname+their-name.their-surname@mail.com>`
+
 When adding new packages, you should submit every package in a
 separate patch. This patch should have the update to
 +package/Config.in+, the package +Config.in+ file, the +.mk+ file, the
