@@ -26,7 +26,8 @@ FIO_DEPENDENCIES += zlib
 endif
 
 define FIO_CONFIGURE_CMDS
-	(cd $(@D); $(TARGET_MAKE_ENV) ./configure --cc="$(TARGET_CC)" --extra-cflags="$(TARGET_CFLAGS)")
+	(cd $(@D); $(TARGET_MAKE_ENV) ./configure --disable-native \
+		--cc="$(TARGET_CC)" --extra-cflags="$(TARGET_CFLAGS)")
 endef
 
 define FIO_BUILD_CMDS
