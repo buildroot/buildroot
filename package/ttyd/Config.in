@@ -4,6 +4,7 @@ config BR2_PACKAGE_TTYD
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # libuv
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libuv, json-c
 	depends on BR2_USE_MMU # libuv
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libuv
 	select BR2_PACKAGE_JSON_C
 	select BR2_PACKAGE_LIBUV
 	select BR2_PACKAGE_LIBWEBSOCKETS
@@ -15,7 +16,8 @@ config BR2_PACKAGE_TTYD
 
 	  https://github.com/tsl0922/ttyd
 
-comment "ttyd needs a toolchain w/ NPTL, dynamic library"
-	depends on !BR2_TOOLCHAIN_HAS_THREADS_NPTL || BR2_STATIC_LIBS
+comment "ttyd needs a toolchain w/ NPTL, dynamic library, gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS_NPTL || BR2_STATIC_LIBS \
+		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
