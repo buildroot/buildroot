@@ -1,0 +1,45 @@
+From d1814dbd3a88c95a43d4c9805bb4a523cf62d97b Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 17 Sep 2023 20:42:00 +0200
+Subject: [PATCH] link with -latomic when needed
+
+Some architecture such as sparc and some flavors of arm needs -latomic
+to avoid the following build failure:
+
+gthread-posix.c:(.text+0xda8): undefined reference to `__atomic_compare_exchange_4'
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://gitlab.gnome.org/GNOME/glib/-/merge_requests/3586
+---
+ glib/meson.build | 1 +
+ meson.build      | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/glib/meson.build b/glib/meson.build
+index c26a35e42..7a761306b 100644
+--- a/glib/meson.build
++++ b/glib/meson.build
+@@ -426,6 +426,7 @@ libglib = library('glib-2.0',
+     pcre2,
+     platform_deps,
+     thread_dep,
++    atomic_dep
+   ],
+   c_args : glib_c_args,
+   objc_args : glib_c_args,
+diff --git a/meson.build b/meson.build
+index 25ae10fc2..5ae84b3b3 100644
+--- a/meson.build
++++ b/meson.build
+@@ -2130,6 +2130,8 @@ libffi_dep = dependency('libffi', version : '>= 3.0.0')
+ 
+ libz_dep = dependency('zlib')
+ 
++atomic_dep = cc.find_library('atomic', required: false)
++
+ # First check in libc, fallback to libintl, and as last chance build
+ # proxy-libintl subproject.
+ # FIXME: glib-gettext.m4 has much more checks to detect broken/uncompatible
+-- 
+2.40.1
+

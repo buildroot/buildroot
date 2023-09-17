@@ -64,11 +64,6 @@ ifeq ($(BR2_PACKAGE_ELFUTILS),y)
 LIBGLIB2_DEPENDENCIES += elfutils
 endif
 
-# Uses __atomic_compare_exchange_4
-ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
-LIBGLIB2_LDFLAGS += -latomic
-endif
-
 ifeq ($(BR2_PACKAGE_LIBICONV),y)
 LIBGLIB2_DEPENDENCIES += libiconv
 endif
