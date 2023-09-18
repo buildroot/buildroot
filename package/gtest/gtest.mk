@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-GTEST_VERSION = 1.12.1
-GTEST_SITE = $(call github,google,googletest,release-$(GTEST_VERSION))
+GTEST_VERSION = 1.14.0
+GTEST_SITE = $(call github,google,googletest,v$(GTEST_VERSION))
 GTEST_INSTALL_STAGING = YES
 GTEST_INSTALL_TARGET = NO
 GTEST_LICENSE = BSD-3-Clause
