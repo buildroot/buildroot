@@ -4,11 +4,9 @@
 #
 ################################################################################
 
-NETATALK_VERSION = 3.1.13
-NETATALK_SITE = http://downloads.sourceforge.net/project/netatalk/netatalk/$(NETATALK_VERSION)
-NETATALK_SOURCE = netatalk-$(NETATALK_VERSION).tar.bz2
-# For 0001-Fix-setting-of-LD_LIBRARY_FLAGS-shlibpath_var.patch
-NETATALK_AUTORECONF = YES
+NETATALK_VERSION = 3.1.17
+NETATALK_SITE = http://downloads.sourceforge.net/project/netatalk/netatalk-$(subst .,-,$(NETATALK_VERSION))
+NETATALK_SOURCE = netatalk-$(NETATALK_VERSION).tar.xz
 NETATALK_CONFIG_SCRIPTS = netatalk-config
 NETATALK_DEPENDENCIES = host-pkgconf openssl berkeleydb libgcrypt libgpg-error \
 	libevent
