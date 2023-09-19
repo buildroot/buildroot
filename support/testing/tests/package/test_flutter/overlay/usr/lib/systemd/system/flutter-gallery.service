@@ -1,0 +1,11 @@
+[Unit]
+Description=flutter-gallery daemon
+After=dbus.service systemd-udevd.service
+
+[Service]
+ExecStart=/usr/bin/flutter-pi --release /usr/share/flutter/gallery/release/
+Restart=always
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
