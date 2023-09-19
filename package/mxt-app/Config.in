@@ -1,0 +1,15 @@
+config BR2_PACKAGE_MXT_APP
+	bool "mxt-app"
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libusb
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
+	select BR2_PACKAGE_LIBUSB
+	help
+	  mxt-app is a utility for managing Atmel maXTouch touch
+	  controllers and other devices that support Atmel Object Based
+	  Protocol.
+
+	  https://github.com/atmel-maxtouch/mxt-app/
+
+comment "mxt-app needs a toolchain w/ threads, gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
