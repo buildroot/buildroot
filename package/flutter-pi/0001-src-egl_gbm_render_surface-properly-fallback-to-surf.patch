@@ -1,0 +1,59 @@
+From 856f9849763535d62ed01b538ba23905875c93f4 Mon Sep 17 00:00:00 2001
+From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Date: Tue, 26 Sep 2023 20:31:17 +0200
+Subject: [PATCH] src/egl_gbm_render_surface: properly fallback to surface with
+ no modifier
+
+In 869fa7fcfbeb, we added a fallback to be able to create an EGL sruface
+when the driver do not support modifiers, like the llvmpipe software
+renderer (or like some proprietary drivers, like the MALI ones), as
+reported in #269 [0].
+
+However, in c6537673c9b6, there was a big overhaul of renderer
+infrastructure. That commit lost the with-modifiers code path and only
+kept the without-modifiers fallback one (i.e. it only kept the call to
+gbm_surface_create(), not to gbm_surface_create_with_modifiers()).
+
+Then in b0d09f5032a4, the with-modifier code path was re-instated, but
+in a way that made it exclusive with the without-modifiers one. That is,
+the without-modifiers code path was not a fallback to when the other
+failed.
+
+Re-instate the fallback mechanism as intiially implemented.
+
+[0] https://github.com/ardera/flutter-pi/issues/269
+
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+Upstream: https://github.com/ardera/flutter-pi/pull/367
+---
+ src/egl_gbm_render_surface.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/egl_gbm_render_surface.c b/src/egl_gbm_render_surface.c
+index ce9e5e7..8a58667 100644
+--- a/src/egl_gbm_render_surface.c
++++ b/src/egl_gbm_render_surface.c
+@@ -146,6 +146,7 @@ static int egl_gbm_render_surface_init(
+     }
+ #endif
+ 
++    gbm_surface = NULL;
+     if (allowed_modifiers != NULL) {
+         gbm_surface = gbm_surface_create_with_modifiers(
+             gbm_device,
+@@ -158,9 +159,10 @@ static int egl_gbm_render_surface_init(
+         if (gbm_surface == NULL) {
+             ok = errno;
+             LOG_ERROR("Couldn't create GBM surface for rendering. gbm_surface_create_with_modifiers: %s\n", strerror(ok));
+-            return ok;
++            LOG_ERROR("Will retry without modifiers\n");
+         }
+-    } else {
++    }
++    if (gbm_surface == NULL) {
+         gbm_surface = gbm_surface_create(
+             gbm_device,
+             size.x,
+-- 
+2.25.1
+
