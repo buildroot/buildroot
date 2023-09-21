@@ -42,8 +42,10 @@ define NE10_INSTALL_STAGING_CMDS
 	$(NE10_INSTALL_STAGING_SHARED_LIB)
 endef
 
+ifeq ($(BR2_STATIC_LIBS),)
 define NE10_INSTALL_TARGET_CMDS
 	cp -dpf $(@D)/modules/libNE10*.so* $(TARGET_DIR)/usr/lib/
 endef
+endif
 
 $(eval $(cmake-package))
