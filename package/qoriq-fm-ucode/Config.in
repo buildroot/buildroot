@@ -1,0 +1,22 @@
+config BR2_PACKAGE_QORIQ_FM_UCODE
+	bool "qoriq-fm-ucode"
+	help
+	  These are the microcode families of the Frame Manager
+	  hardware block in QorIQ products. Specific platforms require
+	  specific binaries, and those also have to further match
+	  specific software versions (Frame Manager Driver -- FMD).
+
+	  https://github.com/nxp-qoriq/qoriq-fm-ucode
+
+if BR2_PACKAGE_QORIQ_FM_UCODE
+
+config BR2_PACKAGE_QORIQ_FM_UCODE_PLATFORM
+	string "platform"
+	default "ls1046"
+	help
+	  This option specifies which platform's microcode to use.
+
+	  This string should match a file in qoriq-fm-ucode of the form
+	  "fsl_fman_ucode_${PLATFORM}*.bin".
+
+endif
