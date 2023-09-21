@@ -2,6 +2,9 @@
 BR2_aarch64=y
 BR2_cortex_a72=y
 
+# patches
+BR2_GLOBAL_PATCH_DIR="board/freescale/common/patches"
+
 # Toolchain
 # Linux headers same as kernel, a 5.10 series
 BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_10=y
