@@ -17,9 +17,6 @@ ICU_CPE_ID_VENDOR = icu-project
 ICU_CPE_ID_PRODUCT = international_components_for_unicode
 ICU_CPE_ID_VERSION = $(subst -,.,$(ICU_VERSION))
 
-# 0005-ICU-21587-Fix-memory-bug-w-baseName.patch
-ICU_IGNORE_CVES += CVE-2021-30535
-
 ICU_DEPENDENCIES = host-icu
 ICU_INSTALL_STAGING = YES
 ICU_CONFIG_SCRIPTS = icu-config
