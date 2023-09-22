@@ -1,0 +1,60 @@
+From 2e9fa73a040462b81bfbfe56c0bc7ad2d30b446b Mon Sep 17 00:00:00 2001
+From: Theodore Ts'o <tytso@mit.edu>
+Date: Tue, 30 Aug 2022 22:41:59 -0400
+Subject: [PATCH] fs/ext2: Ignore the large_dir incompat feature
+
+Recently, ext4 added the large_dir feature, which adds support for
+a 3 level htree directory support.
+
+The GRUB supports existing file systems with htree directories by
+ignoring their existence, and since the index nodes for the hash tree
+look like deleted directory entries (by design), the GRUB can simply do
+a brute force O(n) linear search of directories. The same is true for
+3 level deep htrees indicated by large_dir feature flag.
+
+Hence, it is safe for the GRUB to ignore the large_dir incompat feature.
+
+Fixes: https://savannah.gnu.org/bugs/?61606
+
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Upstream: 2e9fa73a040462b81bfbfe56c0bc7ad2d30b446b
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+---
+ grub-core/fs/ext2.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/grub-core/fs/ext2.c b/grub-core/fs/ext2.c
+index 0989e26e1..e1cc5e62a 100644
+--- a/grub-core/fs/ext2.c
++++ b/grub-core/fs/ext2.c
+@@ -104,6 +104,7 @@ GRUB_MOD_LICENSE ("GPLv3+");
+ #define EXT4_FEATURE_INCOMPAT_MMP		0x0100
+ #define EXT4_FEATURE_INCOMPAT_FLEX_BG		0x0200
+ #define EXT4_FEATURE_INCOMPAT_CSUM_SEED		0x2000
++#define EXT4_FEATURE_INCOMPAT_LARGEDIR		0x4000 /* >2GB or 3 level htree */
+ #define EXT4_FEATURE_INCOMPAT_ENCRYPT          0x10000
+ 
+ /* The set of back-incompatible features this driver DOES support. Add (OR)
+@@ -129,10 +130,17 @@ GRUB_MOD_LICENSE ("GPLv3+");
+  *                 checksummed filesystem. Safe to ignore for now since the
+  *                 driver doesn't support checksum verification. However, it
+  *                 has to be removed from this list if the support is added later.
++ * large_dir:      Not back-incompatible given that the GRUB ext2 driver does
++ *                 not implement EXT2_FEATURE_COMPAT_DIR_INDEX. If the GRUB
++ *                 eventually supports the htree feature (aka dir_index)
++ *                 it should support 3 level htrees and then move
++ *                 EXT4_FEATURE_INCOMPAT_LARGEDIR to
++ *                 EXT2_DRIVER_SUPPORTED_INCOMPAT.
+  */
+ #define EXT2_DRIVER_IGNORED_INCOMPAT ( EXT3_FEATURE_INCOMPAT_RECOVER \
+ 				     | EXT4_FEATURE_INCOMPAT_MMP \
+-				     | EXT4_FEATURE_INCOMPAT_CSUM_SEED)
++				     | EXT4_FEATURE_INCOMPAT_CSUM_SEED \
++				     | EXT4_FEATURE_INCOMPAT_LARGEDIR)
+ 
+ #define EXT3_JOURNAL_MAGIC_NUMBER	0xc03b3998U
+ 
+-- 
+2.34.1
+
