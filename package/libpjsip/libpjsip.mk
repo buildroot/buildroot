@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBPJSIP_VERSION = 2.13
+LIBPJSIP_VERSION = 2.13.1
 LIBPJSIP_SOURCE = pjproject-$(LIBPJSIP_VERSION).tar.gz
 LIBPJSIP_SITE = $(call github,pjsip,pjproject,$(LIBPJSIP_VERSION))
 
@@ -14,12 +14,6 @@ LIBPJSIP_CPE_ID_VENDOR = teluu
 LIBPJSIP_CPE_ID_PRODUCT = pjsip
 LIBPJSIP_INSTALL_STAGING = YES
 LIBPJSIP_MAKE = $(MAKE1)
-
-# 0001-Merge-pull-request-from-GHSA-9pfh-r8x4-w26w.patch
-LIBPJSIP_IGNORE_CVES += CVE-2022-23537
-
-# 0002-Merge-pull-request-from-GHSA-cxwq-5g9x-x7fr.patch
-LIBPJSIP_IGNORE_CVES += CVE-2022-23547
 
 LIBPJSIP_CFLAGS = $(TARGET_CFLAGS) -DPJ_HAS_IPV6=1
 
