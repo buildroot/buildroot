@@ -4,11 +4,13 @@
 #
 ################################################################################
 
-KEXEC_VERSION = 2.0.26
+KEXEC_VERSION = 2.0.27
 KEXEC_SOURCE = kexec-tools-$(KEXEC_VERSION).tar.xz
 KEXEC_SITE = $(BR2_KERNEL_MIRROR)/linux/utils/kernel/kexec
 KEXEC_LICENSE = GPL-2.0
 KEXEC_LICENSE_FILES = COPYING
+# 0002-kexec-provide-a-memfd_create-wrapper-if-not-present-.patch
+KEXEC_AUTORECONF = YES
 KEXEC_CPE_ID_PRODUCT = kexec-tools
 KEXEC_CPE_ID_VENDOR = kexec-tools_project
 KEXEC_SELINUX_MODULES = kdump
