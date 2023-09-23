@@ -24,7 +24,9 @@ NUT_POST_PATCH_HOOKS += NUT_FIX_CONFIGURE
 NUT_CONF_OPTS = \
 	--with-altpidpath=/var/run/upsd \
 	--with-dev \
-	--without-doc
+	--without-doc \
+	--with-user=nut \
+	--with-group=nut
 
 NUT_CONF_ENV = \
 	ax_cv_check_cflags__Werror__Wno_unknown_warning_option=no \
@@ -33,6 +35,10 @@ NUT_CONF_ENV = \
 	ac_cv_func_strdup=yes \
 	ac_cv_func_strncasecmp=yes \
 	ax_cv__printf_string_null=yes
+
+define NUT_USERS
+	nut -1 nut -1 * - - - NUT user
+endef
 
 ifeq ($(call qstrip,$(BR2_PACKAGE_NUT_DRIVERS)),)
 NUT_CONF_OPTS += --with-drivers=auto
