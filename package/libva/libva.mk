@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBVA_VERSION = 2.19.0
+LIBVA_VERSION = 2.20.0
 LIBVA_SITE = $(call github,intel,libva,$(LIBVA_VERSION))
 LIBVA_LICENSE = MIT
 LIBVA_LICENSE_FILES = COPYING
