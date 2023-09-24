@@ -32,14 +32,15 @@ endif
 
 # LUAJIT_VERSION and the luajit installation path may not use the
 # same value. Use the value from luajit.pc file.
-LUVI_LUAJIT_VERSION = `$(PKG_CONFIG_HOST_BINARY) --variable=version luajit`
+LUVI_LUAJIT_MAJVER = `$(PKG_CONFIG_HOST_BINARY) --variable=majver luajit`
+LUVI_LUAJIT_MINVER = `$(PKG_CONFIG_HOST_BINARY) --variable=minver luajit`
 
 # Bundled lua bindings have to be linked statically into the luvi executable
 LUVI_CONF_OPTS = \
 	-DBUILD_SHARED_LIBS=OFF \
 	-DWithSharedLibluv=ON \
 	-DTARGET_ARCH=$(LUVI_TARGET_ARCH) \
-	-DLUA_PATH=$(HOST_DIR)/share/luajit-$(LUVI_LUAJIT_VERSION)/?.lua
+	-DLUA_PATH=$(HOST_DIR)/share/luajit-$(LUVI_LUAJIT_MAJVER).$(LUVI_LUAJIT_MINVER)/?.lua
 
 # Add "rex" module (PCRE via bundled lrexlib)
 ifeq ($(BR2_PACKAGE_PCRE),y)
