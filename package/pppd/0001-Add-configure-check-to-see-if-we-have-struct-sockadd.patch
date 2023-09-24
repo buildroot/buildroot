@@ -1,0 +1,44 @@
+From 9d6d326b2530cffb1414e4c401675117c42d43ce Mon Sep 17 00:00:00 2001
+From: Eivind Naess <eivnaes@yahoo.com>
+Date: Sun, 23 Apr 2023 11:30:43 -0700
+Subject: [PATCH] Add configure check to see if we have struct sockaddr_ll
+
+Fixes issue #411.
+
+Signed-off-by: Eivind Naess <eivnaes@yahoo.com>
+
+Upstream: https://github.com/ppp-project/ppp/commit/9d6d326b2530cffb1414e4c401675117c42d43ce
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ configure.ac                   | 3 ++-
+ pppd/plugins/pppoe/config.h.in | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 1180f64..38b24af 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -75,7 +75,8 @@ AM_COND_IF([LINUX], [
+         linux/if_ether.h        \
+         linux/if_packet.h       \
+         netinet/if_ether.h      \
+-        netpacket/packet.h])])
++        netpacket/packet.h])
++    AC_CHECK_TYPES([struct sockaddr_ll], [], [], [#include <linux/if_packet.h>])])
+ 
+ AC_CHECK_SIZEOF(unsigned int)
+ AC_CHECK_SIZEOF(unsigned long)
+diff --git a/pppd/plugins/pppoe/config.h.in b/pppd/plugins/pppoe/config.h.in
+index d447f5e..d7d61c0 100644
+--- a/pppd/plugins/pppoe/config.h.in
++++ b/pppd/plugins/pppoe/config.h.in
+@@ -69,3 +69,5 @@
+ /* The size of `unsigned short', as computed by sizeof. */
+ #undef SIZEOF_UNSIGNED_SHORT
+ 
++/* Define to 1 if the system has the type `struct sockaddr_ll'. */
++#undef HAVE_STRUCT_SOCKADDR_LL
+-- 
+2.39.2
+
