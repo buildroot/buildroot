@@ -1,4 +1,4 @@
-From ccf93148aa3587dd98a02e253cdc42a7af14df1e Mon Sep 17 00:00:00 2001
+From 425d9ad320746298bd52b74ea3f38ad3c0468ff0 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Date: Sat, 29 Aug 2020 16:04:15 +0200
 Subject: [PATCH] Provide replacement function for strerror_l()
@@ -7,33 +7,36 @@ strerror_l() is not implemented in some C libraries, such as uClibc,
 so let's provide a simple replacement function that falls back on
 strerror().
 
+Upstream status: Not Applicable since it's due uclibc only
+
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-[Upstream status:
-https://github.com/storaged-project/libblockdev/pull/701]
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+[Giulio: ported to version 3.0]
 ---
  configure.ac         | 2 ++
  src/plugins/crypto.c | 7 +++++++
- src/utils/module.c   | 8 ++++++++
- 3 files changed, 17 insertions(+)
+ src/plugins/part.c   | 9 +++++++++
+ src/utils/module.c   | 8 +++++++-
+ 4 files changed, 25 insertions(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index c2d22c2..36aeb51 100644
+index 88fa835a..4fba7b7d 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -137,6 +137,8 @@ AC_CHECK_HEADERS([dlfcn.h string.h unistd.h sys/fcntl.h sys/ioctl.h linux/random
+@@ -120,6 +120,8 @@ AC_CHECK_HEADERS([dlfcn.h string.h unistd.h sys/fcntl.h sys/ioctl.h linux/random
                   [LIBBLOCKDEV_SOFT_FAILURE([Header file $ac_header not found.])],
                   [])
  
 +AC_CHECK_FUNCS([strerror_l])
 +
- AC_ARG_WITH([bcache],
-     AS_HELP_STRING([--with-bcache], [support bcache @<:@default=yes@:>@]),
+ AC_ARG_WITH([escrow],
+     AS_HELP_STRING([--with-escrow], [support escrow @<:@default=yes@:>@]),
      [],
 diff --git a/src/plugins/crypto.c b/src/plugins/crypto.c
-index f4a2e8f..c1bd7b5 100644
+index 503e1207..5896d211 100644
 --- a/src/plugins/crypto.c
 +++ b/src/plugins/crypto.c
-@@ -52,6 +52,13 @@
+@@ -62,6 +62,13 @@
  
  #define UNUSED __attribute__((unused))
  
@@ -47,13 +50,13 @@ index f4a2e8f..c1bd7b5 100644
  /**
   * SECTION: crypto
   * @short_description: plugin for operations with encrypted devices
-diff --git a/src/utils/module.c b/src/utils/module.c
-index 9750e24..086bec0 100644
---- a/src/utils/module.c
-+++ b/src/utils/module.c
-@@ -27,6 +27,14 @@
+diff --git a/src/plugins/part.c b/src/plugins/part.c
+index d75bb791..ba34bb93 100644
+--- a/src/plugins/part.c
++++ b/src/plugins/part.c
+@@ -26,6 +26,15 @@
  
- #include "module.h"
+ #include "part.h"
  
 +#define UNUSED __attribute__((unused))
 +
@@ -63,9 +66,36 @@ index 9750e24..086bec0 100644
 +	return strerror(errnum);
 +}
 +#endif
- 
++
  /**
-  * bd_utils_module_error_quark: (skip)
+  * SECTION: part
+  * @short_description: plugin for operations with partition tables
+diff --git a/src/utils/module.c b/src/utils/module.c
+index 6557c3ab..69dd4731 100644
+--- a/src/utils/module.c
++++ b/src/utils/module.c
+@@ -74,6 +74,13 @@ static void set_kmod_logging (struct kmod_ctx *ctx) {
+     kmod_set_log_fn (ctx, utils_kmod_log_redirect, NULL);
+ }
+ 
++#if !defined(HAVE_STRERROR_L)
++static char *strerror_l(int errnum, locale_t locale UNUSED)
++{
++	return strerror(errnum);
++}
++#endif
++
+ /**
+  * bd_utils_have_kernel_module:
+  * @module_name: name of the kernel module to check
+@@ -259,7 +266,6 @@ gboolean bd_utils_unload_kernel_module (const gchar *module_name, GError **error
+     return TRUE;
+ }
+ 
+-
+ static BDUtilsLinuxVersion detected_linux_ver;
+ static gboolean have_linux_ver = FALSE;
+ 
 -- 
-2.26.2
+2.34.1
 
