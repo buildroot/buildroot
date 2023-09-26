@@ -78,6 +78,7 @@ class TestWeston(infra.basetest.BRTest):
         wayland_socket = "${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY}"
         cmd = f"while [ ! -e \"{wayland_socket}\" ] ; do sleep 1 ; done"
         self.assertRunOk(cmd, timeout=10)
+        time.sleep(4)
 
     def stop_weston(self):
         cmd = "killall weston && sleep 3"
