@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MMC_UTILS_VERSION = 613495ecaca97a19fa7f8f3ea23306472b36453c
+MMC_UTILS_VERSION = 80271e9a6fd0db9cb3a85d024664da886e94315c
 MMC_UTILS_SITE = https://git.kernel.org/pub/scm/utils/mmc/mmc-utils.git
 MMC_UTILS_SITE_METHOD = git
 MMC_UTILS_LICENSE = GPL-2.0
