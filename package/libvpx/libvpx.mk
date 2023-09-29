@@ -11,6 +11,9 @@ LIBVPX_LICENSE_FILES = LICENSE PATENTS
 LIBVPX_CPE_ID_VENDOR = webmproject
 LIBVPX_INSTALL_STAGING = YES
 
+# 0002-VP8-disallow-thread-count-changes.patch
+LIBVPX_IGNORE_CVES += CVE-2023-5217
+
 # ld is being used with cc options. therefore, pretend ld is cc.
 LIBVPX_CONF_ENV = \
 	LD="$(TARGET_CC)" \
