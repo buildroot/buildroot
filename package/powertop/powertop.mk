@@ -6,10 +6,16 @@
 
 POWERTOP_VERSION = 2.13
 POWERTOP_SITE = https://01.org/sites/default/files/downloads
-POWERTOP_DEPENDENCIES = pciutils ncurses libnl host-pkgconf \
-	$(TARGET_NLS_DEPENDENCIES)
 POWERTOP_LICENSE = GPL-2.0
 POWERTOP_LICENSE_FILES = COPYING
+
+POWERTOP_DEPENDENCIES = \
+	host-pkgconf \
+	libnl \
+	ncurses \
+	$(if $(BR2_PACKAGE_PCIUTILS),pciutils) \
+	$(TARGET_NLS_DEPENDENCIES)
+
 POWERTOP_CONF_ENV = LIBS=$(TARGET_NLS_LIBS)
 # 0001-dont-force-stack-smashing-protection.patch
 POWERTOP_AUTORECONF = YES
