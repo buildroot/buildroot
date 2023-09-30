@@ -135,15 +135,6 @@ HOST_GCC_FINAL_POST_INSTALL_HOOKS += TOOLCHAIN_WRAPPER_INSTALL
 # -cc symlink to the wrapper is not created.
 HOST_GCC_FINAL_POST_INSTALL_HOOKS += HOST_GCC_INSTALL_WRAPPER_AND_SIMPLE_SYMLINKS
 
-# coldfire is not working without removing these object files from libgcc.a
-ifeq ($(BR2_m68k_cf),y)
-define HOST_GCC_FINAL_M68K_LIBGCC_FIXUP
-	find $(STAGING_DIR) -name libgcc.a -print | \
-		while read t; do $(GNU_TARGET_NAME)-ar dv "$t" _ctors.o; done
-endef
-HOST_GCC_FINAL_POST_INSTALL_HOOKS += HOST_GCC_FINAL_M68K_LIBGCC_FIXUP
-endif
-
 HOST_GCC_FINAL_LIBS = libgcc_s libatomic
 
 ifeq ($(BR2_INSTALL_LIBSTDCPP),y)
@@ -198,5 +189,14 @@ define HOST_GCC_FINAL_INSTALL_LIBS
 	$(HOST_GCC_FINAL_INSTALL_TARGET_LIBS)
 endef
 HOST_GCC_FINAL_POST_INSTALL_HOOKS += HOST_GCC_FINAL_INSTALL_LIBS
+
+# coldfire is not working without removing these object files from libgcc.a
+ifeq ($(BR2_m68k_cf),y)
+define HOST_GCC_FINAL_M68K_LIBGCC_FIXUP
+	find $(STAGING_DIR) -name libgcc.a -print | \
+		while read t; do $(GNU_TARGET_NAME)-ar dv "$t" _ctors.o; done
+endef
+HOST_GCC_FINAL_POST_INSTALL_HOOKS += HOST_GCC_FINAL_M68K_LIBGCC_FIXUP
+endif
 
 $(eval $(host-autotools-package))
