@@ -198,8 +198,7 @@ endif
 ifeq ($$($(2)_SETUP_TYPE),distutils)
 ifeq ($(4),target)
 $(2)_BASE_ENV = $$(PKG_PYTHON_DISTUTILS_ENV)
-$(2)_BASE_BUILD_CMD = setup.py build
-$(2)_BASE_BUILD_OPTS = $$(PKG_PYTHON_DISTUTILS_BUILD_OPTS)
+$(2)_BASE_BUILD_CMD = setup.py build $$(PKG_PYTHON_DISTUTILS_BUILD_OPTS)
 $(2)_BASE_INSTALL_TARGET_CMD  = setup.py install --no-compile $$(PKG_PYTHON_DISTUTILS_INSTALL_TARGET_OPTS)
 $(2)_BASE_INSTALL_STAGING_CMD = setup.py install $$(PKG_PYTHON_DISTUTILS_INSTALL_STAGING_OPTS)
 else
@@ -335,7 +334,7 @@ define $(2)_BUILD_CMDS
 		$$($$(PKG)_BASE_ENV) $$($$(PKG)_ENV) \
 		$$(HOST_DIR)/bin/python3 \
 		$$($$(PKG)_BASE_BUILD_CMD) \
-		$$($$(PKG)_BASE_BUILD_OPTS) $$($$(PKG)_BUILD_OPTS))
+		$$($$(PKG)_BUILD_OPTS))
 endef
 endif
 
