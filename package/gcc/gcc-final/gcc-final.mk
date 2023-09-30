@@ -168,28 +168,25 @@ endif
 
 HOST_GCC_FINAL_USR_LIBS += $(call qstrip,$(BR2_TOOLCHAIN_EXTRA_LIBS))
 
-define HOST_GCC_FINAL_INSTALL_STATIC_LIBS
+define HOST_GCC_FINAL_INSTALL_STAGING_LIBS
 	$(foreach lib,$(HOST_GCC_FINAL_LIBS), \
-		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$(lib).a \
+		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$(lib)* \
 			$(STAGING_DIR)/lib/
 	)
 	$(foreach lib,$(HOST_GCC_FINAL_USR_LIBS), \
-		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$(lib).a \
+		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$(lib)* \
 			$(STAGING_DIR)/usr/lib/
 	)
 endef
 
 ifeq ($(BR2_STATIC_LIBS),)
-define HOST_GCC_FINAL_INSTALL_SHARED_LIBS
+define HOST_GCC_FINAL_INSTALL_TARGET_LIBS
+	mkdir -p $(TARGET_DIR)/lib $(TARGET_DIR)/usr/lib
 	$(foreach lib,$(HOST_GCC_FINAL_LIBS), \
-		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$(lib).so* \
-			$(STAGING_DIR)/lib/ && \
 		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$(lib).so* \
 			$(TARGET_DIR)/lib/
 	)
 	$(foreach lib,$(HOST_GCC_FINAL_USR_LIBS), \
-		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$(lib).so* \
-			$(STAGING_DIR)/usr/lib/ && \
 		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$(lib).so* \
 			$(TARGET_DIR)/usr/lib/
 	)
@@ -197,9 +194,8 @@ endef
 endif
 
 define HOST_GCC_FINAL_INSTALL_LIBS
-	mkdir -p $(TARGET_DIR)/lib $(TARGET_DIR)/usr/lib
-	$(HOST_GCC_FINAL_INSTALL_STATIC_LIBS)
-	$(HOST_GCC_FINAL_INSTALL_SHARED_LIBS)
+	$(HOST_GCC_FINAL_INSTALL_STAGING_LIBS)
+	$(HOST_GCC_FINAL_INSTALL_TARGET_LIBS)
 endef
 HOST_GCC_FINAL_POST_INSTALL_HOOKS += HOST_GCC_FINAL_INSTALL_LIBS
 
