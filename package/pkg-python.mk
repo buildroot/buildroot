@@ -65,11 +65,13 @@ PKG_PYTHON_DISTUTILS_INSTALL_OPTS = \
 	--install-headers=/usr/include/python$(PYTHON3_VERSION_MAJOR) \
 	--prefix=/usr
 
-PKG_PYTHON_DISTUTILS_INSTALL_TARGET_OPTS = \
+PKG_PYTHON_DISTUTILS_INSTALL_TARGET_CMD = \
+	setup.py install --no-compile \
 	$(PKG_PYTHON_DISTUTILS_INSTALL_OPTS) \
 	--root=$(TARGET_DIR)
 
-PKG_PYTHON_DISTUTILS_INSTALL_STAGING_OPTS = \
+PKG_PYTHON_DISTUTILS_INSTALL_STAGING_CMD = \
+	setup.py install \
 	$(PKG_PYTHON_DISTUTILS_INSTALL_OPTS) \
 	--root=$(STAGING_DIR)
 
@@ -80,7 +82,8 @@ HOST_PKG_PYTHON_DISTUTILS_ENV = \
 HOST_PKG_PYTHON_DISTUTILS_BUILD_CMD = \
 	setup.py build \
 
-HOST_PKG_PYTHON_DISTUTILS_INSTALL_OPTS = \
+HOST_PKG_PYTHON_DISTUTILS_INSTALL_CMD = \
+	setup.py install \
 	--prefix=$(HOST_DIR)
 
 # Target setuptools-based packages
@@ -99,11 +102,15 @@ PKG_PYTHON_SETUPTOOLS_INSTALL_OPTS = \
 	--executable=/usr/bin/python \
 	--single-version-externally-managed
 
-PKG_PYTHON_SETUPTOOLS_INSTALL_TARGET_OPTS = \
+PKG_PYTHON_SETUPTOOLS_INSTALL_TARGET_CMD = \
+	$(PKG_PYTHON_SETUPTOOLS_CMD) \
+	install --no-compile \
 	$(PKG_PYTHON_SETUPTOOLS_INSTALL_OPTS) \
 	--root=$(TARGET_DIR)
 
-PKG_PYTHON_SETUPTOOLS_INSTALL_STAGING_OPTS = \
+PKG_PYTHON_SETUPTOOLS_INSTALL_STAGING_CMD = \
+	$(PKG_PYTHON_SETUPTOOLS_CMD) \
+	install \
 	$(PKG_PYTHON_SETUPTOOLS_INSTALL_OPTS) \
 	--root=$(STAGING_DIR)
 
@@ -114,7 +121,9 @@ HOST_PKG_PYTHON_SETUPTOOLS_ENV = \
 HOST_PKG_PYTHON_SETUPTOOLS_BUILD_CMD = \
 	$(PKG_PYTHON_SETUPTOOLS_CMD) build
 
-HOST_PKG_PYTHON_SETUPTOOLS_INSTALL_OPTS = \
+HOST_PKG_PYTHON_SETUPTOOLS_INSTALL_CMD = \
+	$(PKG_PYTHON_SETUPTOOLS_CMD) \
+	install \
 	--prefix=$(HOST_DIR) \
 	--root=/ \
 	--single-version-externally-managed
@@ -128,6 +137,12 @@ PKG_PYTHON_SETUPTOOLS_RUST_ENV = \
 PKG_PYTHON_SETUPTOOLS_RUST_BUILD_CMD = \
 	$(PKG_PYTHON_SETUPTOOLS_BUILD_CMD)
 
+PKG_PYTHON_SETUPTOOLS_RUST_INSTALL_TARGET_CMD = \
+	$(PKG_PYTHON_SETUPTOOLS_INSTALL_TARGET_CMD)
+
+PKG_PYTHON_SETUPTOOLS_RUST_INSTALL_STAGING_CMD = \
+	$(PKG_PYTHON_SETUPTOOLS_INSTALL_STAGING_CMD)
+
 # Host setuptools-rust-based packages
 HOST_PKG_PYTHON_SETUPTOOLS_RUST_ENV = \
 	$(HOST_PKG_PYTHON_SETUPTOOLS_ENV) \
@@ -136,6 +151,9 @@ HOST_PKG_PYTHON_SETUPTOOLS_RUST_ENV = \
 
 HOST_PKG_PYTHON_SETUPTOOLS_RUST_BUILD_CMD = \
 	$(HOST_PKG_PYTHON_SETUPTOOLS_BUILD_CMD)
+
+HOST_PKG_PYTHON_SETUPTOOLS_RUST_INSTALL_CMD = \
+	$(HOST_PKG_PYTHON_SETUPTOOLS_INSTALL_CMD)
 
 # Target pep517-based packages
 PKG_PYTHON_PEP517_ENV = \
@@ -148,14 +166,18 @@ PKG_PYTHON_PEP517_INSTALL_OPTS = \
 	--interpreter=/usr/bin/python \
 	--script-kind=posix
 
-PKG_PYTHON_PEP517_INSTALL_TARGET_OPTS = \
+PKG_PYTHON_PEP517_INSTALL_TARGET_CMD = \
+	$(TOPDIR)/support/scripts/pyinstaller.py \
+	dist/* \
 	$(PKG_PYTHON_PEP517_INSTALL_OPTS) \
 	--purelib=$(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages \
 	--headers=$(TARGET_DIR)/usr/include/python$(PYTHON3_VERSION_MAJOR) \
 	--scripts=$(TARGET_DIR)/usr/bin \
 	--data=$(TARGET_DIR)/usr
 
-PKG_PYTHON_PEP517_INSTALL_STAGING_OPTS = \
+PKG_PYTHON_PEP517_INSTALL_STAGING_CMD = \
+	$(TOPDIR)/support/scripts/pyinstaller.py \
+	dist/* \
 	$(PKG_PYTHON_PEP517_INSTALL_OPTS) \
 	--purelib=$(STAGING_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages \
 	--headers=$(STAGING_DIR)/usr/include/python$(PYTHON3_VERSION_MAJOR) \
@@ -169,7 +191,9 @@ HOST_PKG_PYTHON_PEP517_ENV = \
 HOST_PKG_PYTHON_PEP517_BUILD_CMD = \
 	-m build -n -w
 
-HOST_PKG_PYTHON_PEP517_INSTALL_OPTS = \
+HOST_PKG_PYTHON_PEP517_INSTALL_CMD = \
+	$(TOPDIR)/support/scripts/pyinstaller.py \
+	dist/* \
 	--interpreter=$(HOST_DIR)/bin/python \
 	--script-kind=posix \
 	--purelib=$(HOST_DIR)/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages \
@@ -184,6 +208,12 @@ PKG_PYTHON_FLIT_ENV = \
 PKG_PYTHON_FLIT_BUILD_CMD = \
 	$(PKG_PYTHON_PEP517_BUILD_CMD)
 
+PKG_PYTHON_FLIT_INSTALL_TARGET_CMD = \
+	$(PKG_PYTHON_PEP517_INSTALL_TARGET_CMD)
+
+PKG_PYTHON_FLIT_INSTALL_STAGING_CMD = \
+	$(PKG_PYTHON_PEP517_INSTALL_STAGING_CMD)
+
 # Host flit packages
 HOST_PKG_PYTHON_FLIT_ENV = \
 	$(HOST_PKG_PYTHON_PEP517_ENV)
@@ -191,12 +221,18 @@ HOST_PKG_PYTHON_FLIT_ENV = \
 HOST_PKG_PYTHON_FLIT_BUILD_CMD = \
 	$(HOST_PKG_PYTHON_PEP517_BUILD_CMD)
 
+HOST_PKG_PYTHON_FLIT_INSTALL_CMD = \
+	$(HOST_PKG_PYTHON_PEP517_INSTALL_CMD)
+
 # Host flit-bootstrap packages
 HOST_PKG_PYTHON_FLIT_BOOTSTRAP_ENV = \
 	$(HOST_PKG_PYTHON_PEP517_ENV)
 
 HOST_PKG_PYTHON_FLIT_BOOTSTRAP_BUILD_CMD = \
 	-m flit_core.wheel
+
+HOST_PKG_PYTHON_FLIT_BOOTSTRAP_INSTALL_CMD = \
+	$(HOST_PKG_PYTHON_PEP517_INSTALL_CMD)
 
 # Target maturin packages
 PKG_PYTHON_MATURIN_ENV = \
@@ -207,6 +243,12 @@ PKG_PYTHON_MATURIN_ENV = \
 PKG_PYTHON_MATURIN_BUILD_CMD = \
 	$(PKG_PYTHON_PEP517_BUILD_CMD)
 
+PKG_PYTHON_MATURIN_INSTALL_TARGET_CMD = \
+	$(PKG_PYTHON_PEP517_INSTALL_TARGET_CMD)
+
+PKG_PYTHON_MATURIN_INSTALL_STAGING_CMD = \
+	$(PKG_PYTHON_PEP517_INSTALL_STAGING_CMD)
+
 # Host maturin packages
 HOST_PKG_PYTHON_MATURIN_ENV = \
 	$(HOST_PKG_PYTHON_PEP517_ENV) \
@@ -215,6 +257,9 @@ HOST_PKG_PYTHON_MATURIN_ENV = \
 
 HOST_PKG_PYTHON_MATURIN_BUILD_CMD = \
 	$(HOST_PKG_PYTHON_PEP517_BUILD_CMD)
+
+PKG_PYTHON_MATURIN_INSTALL_CMD = \
+	$(PKG_PYTHON_PEP517_INSTALL_CMD)
 
 ################################################################################
 # inner-python-package -- defines how the configuration, compilation
@@ -242,37 +287,11 @@ endif
 
 $(2)_SETUP_TYPE_UPPER = $$(call UPPERCASE,$$($(2)_SETUP_TYPE))
 
-# Distutils
-ifeq ($$($(2)_SETUP_TYPE),distutils)
-ifeq ($(4),target)
-$(2)_BASE_INSTALL_TARGET_CMD  = setup.py install --no-compile $$(PKG_PYTHON_DISTUTILS_INSTALL_TARGET_OPTS)
-$(2)_BASE_INSTALL_STAGING_CMD = setup.py install $$(PKG_PYTHON_DISTUTILS_INSTALL_STAGING_OPTS)
-else
-$(2)_BASE_INSTALL_CMD = setup.py install $$(HOST_PKG_PYTHON_DISTUTILS_INSTALL_OPTS)
-endif
-# Setuptools
-else ifneq ($$(filter setuptools setuptools-rust,$$($(2)_SETUP_TYPE)),)
-ifeq ($(4),target)
-$(2)_BASE_INSTALL_TARGET_CMD = $$(PKG_PYTHON_SETUPTOOLS_CMD) install --no-compile $$(PKG_PYTHON_SETUPTOOLS_INSTALL_TARGET_OPTS)
-$(2)_BASE_INSTALL_STAGING_CMD = $$(PKG_PYTHON_SETUPTOOLS_CMD) install $$(PKG_PYTHON_SETUPTOOLS_INSTALL_STAGING_OPTS)
-else
-$(2)_BASE_INSTALL_CMD = $$(PKG_PYTHON_SETUPTOOLS_CMD) install $$(HOST_PKG_PYTHON_SETUPTOOLS_INSTALL_OPTS)
-endif
-else ifneq ($$(filter flit maturin pep517,$$($(2)_SETUP_TYPE)),)
-ifeq ($(4),target)
-$(2)_BASE_INSTALL_TARGET_CMD = $(TOPDIR)/support/scripts/pyinstaller.py dist/* $$(PKG_PYTHON_PEP517_INSTALL_TARGET_OPTS)
-$(2)_BASE_INSTALL_STAGING_CMD = $(TOPDIR)/support/scripts/pyinstaller.py dist/* $$(PKG_PYTHON_PEP517_INSTALL_STAGING_OPTS)
-else
-$(2)_BASE_INSTALL_CMD = $(TOPDIR)/support/scripts/pyinstaller.py dist/* $$(HOST_PKG_PYTHON_PEP517_INSTALL_OPTS)
-endif
-else ifeq ($$($(2)_SETUP_TYPE),flit-bootstrap)
-ifeq ($(4),target)
-$$(error flit-bootstrap setup type only supported for host packages)
-else
-$(2)_BASE_INSTALL_CMD ?= $(TOPDIR)/support/scripts/pyinstaller.py dist/* $$(HOST_PKG_PYTHON_PEP517_INSTALL_OPTS)
-endif
-else
+ifneq ($$(filter-out distutils setuptools setuptools-rust pep517 flit flit-bootstrap maturin,$$($(2)_SETUP_TYPE)),)
 $$(error "Invalid $(2)_SETUP_TYPE. Valid options are 'distutils', 'maturin', 'setuptools', 'setuptools-rust', 'pep517' or 'flit'.")
+endif
+ifeq ($(4)-$$($(2)_SETUP_TYPE),target-flit-bootstrap)
+$$(error flit-bootstrap setup type only supported for host packages)
 endif
 
 # We need to vendor the Cargo crates at download time for pyo3 based
@@ -368,7 +387,7 @@ define $(2)_INSTALL_TARGET_CMDS
 		$$(PKG_PYTHON_$$($$(PKG)_SETUP_TYPE_UPPER)_ENV) \
 		$$($$(PKG)_ENV) \
 		$$(HOST_DIR)/bin/python3 \
-		$$($$(PKG)_BASE_INSTALL_TARGET_CMD) \
+		$$(PKG_PYTHON_$$($$(PKG)_SETUP_TYPE_UPPER)_INSTALL_TARGET_CMD) \
 		$$($$(PKG)_INSTALL_TARGET_OPTS))
 endef
 endif
@@ -383,7 +402,7 @@ define $(2)_INSTALL_STAGING_CMDS
 		$$(PKG_PYTHON_$$($$(PKG)_SETUP_TYPE_UPPER)_ENV) \
 		$$($$(PKG)_ENV) \
 		$$(HOST_DIR)/bin/python3 \
-		$$($$(PKG)_BASE_INSTALL_STAGING_CMD) \
+		$$(PKG_PYTHON_$$($$(PKG)_SETUP_TYPE_UPPER)_INSTALL_STAGING_CMD) \
 		$$($$(PKG)_INSTALL_STAGING_OPTS))
 endef
 endif
@@ -415,7 +434,7 @@ define $(2)_INSTALL_CMDS
 		$$(HOST_PKG_PYTHON_$$($$(PKG)_SETUP_TYPE_UPPER)_ENV) \
 		$$($$(PKG)_ENV) \
 		$$(HOST_DIR)/bin/python3 \
-		$$($$(PKG)_BASE_INSTALL_CMD) \
+		$$(HOST_PKG_PYTHON_$$($$(PKG)_SETUP_TYPE_UPPER)_INSTALL_CMD) \
 		$$($$(PKG)_INSTALL_OPTS))
 endef
 endif
