@@ -324,6 +324,7 @@ $(2)_DOWNLOAD_POST_PROCESS = cargo
 $(2)_DOWNLOAD_DEPENDENCIES = host-rustc
 endif # SETUP_TYPE
 
+ifeq ($(4),target)
 #
 # Build step. Only define it if not already defined by the package .mk
 # file.
@@ -335,20 +336,6 @@ define $(2)_BUILD_CMDS
 		$$(HOST_DIR)/bin/python3 \
 		$$($$(PKG)_BASE_BUILD_CMD) \
 		$$($$(PKG)_BUILD_OPTS))
-endef
-endif
-
-#
-# Host installation step. Only define it if not already defined by the
-# package .mk file.
-#
-ifndef $(2)_INSTALL_CMDS
-define $(2)_INSTALL_CMDS
-	(cd $$($$(PKG)_BUILDDIR)/; \
-		$$($$(PKG)_BASE_ENV) $$($$(PKG)_ENV) \
-		$$(HOST_DIR)/bin/python3 \
-		$$($$(PKG)_BASE_INSTALL_CMD) \
-		$$($$(PKG)_INSTALL_OPTS))
 endef
 endif
 
@@ -379,6 +366,38 @@ define $(2)_INSTALL_STAGING_CMDS
 		$$($$(PKG)_INSTALL_STAGING_OPTS))
 endef
 endif
+
+else # host
+
+#
+# Host build step. Only define it if not already defined by the package .mk
+# file.
+#
+ifndef $(2)_BUILD_CMDS
+define $(2)_BUILD_CMDS
+	(cd $$($$(PKG)_BUILDDIR)/; \
+		$$($$(PKG)_BASE_ENV) $$($$(PKG)_ENV) \
+		$$(HOST_DIR)/bin/python3 \
+		$$($$(PKG)_BASE_BUILD_CMD) \
+		$$($$(PKG)_BUILD_OPTS))
+endef
+endif
+
+#
+# Host installation step. Only define it if not already defined by the
+# package .mk file.
+#
+ifndef $(2)_INSTALL_CMDS
+define $(2)_INSTALL_CMDS
+	(cd $$($$(PKG)_BUILDDIR)/; \
+		$$($$(PKG)_BASE_ENV) $$($$(PKG)_ENV) \
+		$$(HOST_DIR)/bin/python3 \
+		$$($$(PKG)_BASE_INSTALL_CMD) \
+		$$($$(PKG)_INSTALL_OPTS))
+endef
+endif
+
+endif # host / target
 
 # Call the generic package infrastructure to generate the necessary
 # make targets
