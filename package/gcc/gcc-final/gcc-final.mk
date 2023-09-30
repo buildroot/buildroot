@@ -146,9 +146,6 @@ endif
 
 HOST_GCC_FINAL_LIBS = libgcc_s libatomic
 
-# Handle the installation of libraries in /usr/lib
-HOST_GCC_FINAL_USR_LIBS =
-
 ifeq ($(BR2_INSTALL_LIBSTDCPP),y)
 HOST_GCC_FINAL_USR_LIBS += libstdc++
 endif
