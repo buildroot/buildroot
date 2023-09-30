@@ -1,0 +1,40 @@
+From dbe342545b7bee42107e09d0da59bb42c50903cb Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 30 Sep 2023 14:54:15 +0200
+Subject: [PATCH] usr/idbm.c: fix musl build
+
+Fix the following musl build failure raised since version 2.1.9 and
+https://github.com/open-iscsi/open-iscsi/commit/7b571d76d6937a78c141630fc38c3c57c532466c:
+
+../usr/idbm.c: In function 'idbm_rec_write_old':
+../usr/idbm.c:2230:27: error: 'GLOB_ONLYDIR' undeclared (first use in this function)
+ 2230 |         rc = glob(portal, GLOB_ONLYDIR, NULL, &globbuf);
+      |                           ^~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/14fc1c139f055b5b1eaa6e04e327863c06176a7b
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/open-iscsi/open-iscsi/commit/11bdc17938ba648c81a853355a6bbddad69a9fc7
+---
+ usr/idbm.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/usr/idbm.c b/usr/idbm.c
+index ca4a4ec..fbaa132 100644
+--- a/usr/idbm.c
++++ b/usr/idbm.c
+@@ -45,6 +45,10 @@
+ #include "fw_context.h"
+ #include "iscsi_err.h"
+ 
++#ifndef GLOB_ONLYDIR
++#define GLOB_ONLYDIR	0x100
++#endif
++
+ #define IDBM_HIDE	0    /* Hide parameter when print. */
+ #define IDBM_SHOW	1    /* Show parameter when print. */
+ #define IDBM_MASKED	2    /* Show "stars" instead of real value when print */
+-- 
+2.40.1
+
