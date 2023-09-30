@@ -4,7 +4,15 @@
 #
 ################################################################################
 
-ROCKCHIP_MALI_VERSION = 721653b5b3b525a4f80d15aa7e2f9df7b7e60427
+# Full sha1 is 721653b5b3b525a4f80d15aa7e2f9df7b7e60427, but we use the
+# "mirrors" repository, which names the top-level directory "mirrors-VERSION"
+# while the original was the "libmali" repository which named the top-level
+# directory "libmali-VERSION". Hence the content changes, and thus the hash
+# changes.
+# To avoid conflict with the old tarball on s.b.o. used by older versions of
+# Buildroot, we can't use the same filename for the generated archive, so we
+# drop the last char in the commit hash.
+ROCKCHIP_MALI_VERSION = 721653b5b3b525a4f80d15aa7e2f9df7b7e6042
 ROCKCHIP_MALI_SITE = $(call github,JeffyCN,mirrors,$(ROCKCHIP_MALI_VERSION))
 ROCKCHIP_MALI_LICENSE = Proprietary
 ROCKCHIP_MALI_LICENSE_FILES = END_USER_LICENCE_AGREEMENT.txt
