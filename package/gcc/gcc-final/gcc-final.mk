@@ -144,25 +144,7 @@ endef
 HOST_GCC_FINAL_POST_INSTALL_HOOKS += HOST_GCC_FINAL_M68K_LIBGCC_FIXUP
 endif
 
-# Cannot use the HOST_GCC_FINAL_USR_LIBS mechanism below, because we want
-# libgcc_s to be installed in /lib and not /usr/lib.
-define HOST_GCC_FINAL_INSTALL_LIBGCC
-	-cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/libgcc_s* \
-		$(STAGING_DIR)/lib/
-	-cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/libgcc_s* \
-		$(TARGET_DIR)/lib/
-endef
-
-HOST_GCC_FINAL_POST_INSTALL_HOOKS += HOST_GCC_FINAL_INSTALL_LIBGCC
-
-define HOST_GCC_FINAL_INSTALL_LIBATOMIC
-	-cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/libatomic* \
-		$(STAGING_DIR)/lib/
-	-cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/libatomic* \
-		$(TARGET_DIR)/lib/
-endef
-
-HOST_GCC_FINAL_POST_INSTALL_HOOKS += HOST_GCC_FINAL_INSTALL_LIBATOMIC
+HOST_GCC_FINAL_LIBS = libgcc_s libatomic
 
 # Handle the installation of libraries in /usr/lib
 HOST_GCC_FINAL_USR_LIBS =
@@ -189,8 +171,11 @@ endif
 
 HOST_GCC_FINAL_USR_LIBS += $(call qstrip,$(BR2_TOOLCHAIN_EXTRA_LIBS))
 
-ifneq ($(HOST_GCC_FINAL_USR_LIBS),)
 define HOST_GCC_FINAL_INSTALL_STATIC_LIBS
+	for i in $(HOST_GCC_FINAL_LIBS) ; do \
+		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$${i}.a \
+			$(STAGING_DIR)/lib/ ; \
+	done
 	for i in $(HOST_GCC_FINAL_USR_LIBS) ; do \
 		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$${i}.a \
 			$(STAGING_DIR)/usr/lib/ ; \
@@ -199,6 +184,12 @@ endef
 
 ifeq ($(BR2_STATIC_LIBS),)
 define HOST_GCC_FINAL_INSTALL_SHARED_LIBS
+	for i in $(HOST_GCC_FINAL_LIBS) ; do \
+		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$${i}.so* \
+			$(STAGING_DIR)/lib/ ; \
+		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$${i}.so* \
+			$(TARGET_DIR)/lib/ ; \
+	done
 	for i in $(HOST_GCC_FINAL_USR_LIBS) ; do \
 		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$${i}.so* \
 			$(STAGING_DIR)/usr/lib/ ; \
@@ -208,12 +199,11 @@ define HOST_GCC_FINAL_INSTALL_SHARED_LIBS
 endef
 endif
 
-define HOST_GCC_FINAL_INSTALL_USR_LIBS
-	mkdir -p $(TARGET_DIR)/usr/lib
+define HOST_GCC_FINAL_INSTALL_LIBS
+	mkdir -p $(TARGET_DIR)/lib $(TARGET_DIR)/usr/lib
 	$(HOST_GCC_FINAL_INSTALL_STATIC_LIBS)
 	$(HOST_GCC_FINAL_INSTALL_SHARED_LIBS)
 endef
-HOST_GCC_FINAL_POST_INSTALL_HOOKS += HOST_GCC_FINAL_INSTALL_USR_LIBS
-endif
+HOST_GCC_FINAL_POST_INSTALL_HOOKS += HOST_GCC_FINAL_INSTALL_LIBS
 
 $(eval $(host-autotools-package))
