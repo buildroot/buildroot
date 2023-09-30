@@ -135,25 +135,13 @@ therefore only use a few of them, or none.
   makes sense to use for distutils/setuptools based packages as
   flit/pep517 based packages do not pass these options to a +setup.py+
   script but instead pass them to +support/scripts/pyinstaller.py+.
-  For target distutils packages, the +PKG_PYTHON_DISTUTILS_BUILD_OPTS+
-  options are already passed automatically by the infrastructure.
 
 * +PYTHON_FOO_INSTALL_TARGET_OPTS+, +PYTHON_FOO_INSTALL_STAGING_OPTS+,
   +HOST_PYTHON_FOO_INSTALL_OPTS+ to specify additional options to pass
   to the Python +setup.py+ script (for distutils/setuptools packages)
   or +support/scripts/pyinstaller.py+ (for flit/pep517 packages) during
   the target installation step, the staging installation step or the
-  host installation, respectively. Note that the infrastructure is
-  automatically passing some options, defined in
-  +PKG_PYTHON_DISTUTILS_INSTALL_TARGET_OPTS+ or
-  +PKG_PYTHON_DISTUTILS_INSTALL_STAGING_OPTS+ (for target distutils
-  packages), +HOST_PKG_PYTHON_DISTUTILS_INSTALL_OPTS+ (for host
-  distutils packages), +PKG_PYTHON_SETUPTOOLS_INSTALL_TARGET_OPTS+ or
-  +PKG_PYTHON_SETUPTOOLS_INSTALL_STAGING_OPTS+ (for target setuptools
-  packages), +HOST_PKG_PYTHON_SETUPTOOLS_INSTALL_OPTS+ (for host
-  setuptools packages) and +PKG_PYTHON_PEP517_INSTALL_TARGET_OPTS+ or
-  +PKG_PYTHON_PEP517_INSTALL_STAGING_OPTS+ (for target flit/pep517
-  packages).
+  host installation, respectively.
 
 With the Python infrastructure, all the steps required to build and
 install the packages are already defined, and they generally work well
