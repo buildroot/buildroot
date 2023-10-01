@@ -1,0 +1,51 @@
+From 84002a5bd7f4cb10e9beffab88ae55b4e982bcea Mon Sep 17 00:00:00 2001
+From: Peter Korsgaard <peter@korsgaard.com>
+Date: Sun, 1 Oct 2023 10:20:31 +0200
+Subject: [PATCH] term/post.trm: unbreak !HAVE_DEFLATE_ENCODER builds
+
+Commit 2f2cf617808 (post: handle RGBA images (only current use is to render
+a pixmap)) added an extra '}' outside the HAVE_DEFLATE_ENCODER (gd support)
+conditional, leading to build breakage:
+
+In file included from term.h:298,
+                 from term.c:1211:
+../term/post.trm:4016:11: error: expected declaration specifiers or '...' before string constant
+ 4016 |     fputs("%%%%BeginImage\n", gppsfile);
+
+http://autobuild.buildroot.net/results/5676609b6331b645f2e557aca67afe4c3a087433/build-end.log
+
+Fix it by dropping the extra { } added by the above commit.
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+Upstream: https://sourceforge.net/p/gnuplot/gnuplot-main/merge-requests/28/
+---
+ term/post.trm | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/term/post.trm b/term/post.trm
+index 186eb9d3c..100811b86 100644
+--- a/term/post.trm
++++ b/term/post.trm
+@@ -4000,17 +4000,16 @@ PS_image (unsigned int M, unsigned int N, coordval *image, gpiPoint *corner, t_i
+ 	cscale = 1.0;
+ 
+ #ifdef HAVE_DEFLATE_ENCODER
+-    if (ps_params->level3) {
++    if (ps_params->level3)
+ 	encoded_image = (void *)PS_encode_png_image(M, N, image, color_mode,
+ 					    bits_per_component, max_colors, cscale,
+ 					    &num_encoded_bytes);
+-    } else {
++    else
+ #endif
+ 	encoded_image = PS_encode_image(M, N, image, color_mode,
+ 					bits_per_component, max_colors, cscale,
+ 					(ps_params->level1 ? PS_ASCII_HEX : PS_ASCII85),
+ 					&num_encoded_bytes);
+-    }
+ 
+ 
+     fputs("%%%%BeginImage\n", gppsfile);
+-- 
+2.30.2
+
