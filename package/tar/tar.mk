@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TAR_VERSION = 1.34
+TAR_VERSION = 1.35
 TAR_SOURCE = tar-$(TAR_VERSION).tar.xz
 TAR_SITE = $(BR2_GNU_MIRROR)/tar
 # busybox installs in /bin, so we need tar to install as well in /bin
