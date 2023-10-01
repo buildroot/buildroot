@@ -1,0 +1,23 @@
+From 104044848ffb0a283e1f1bf3466693fa4af450e9 Mon Sep 17 00:00:00 2001
+From: Pawel Krawczyk <p+github@krvtz.net>
+Date: Mon, 7 Nov 2022 22:10:52 +0000
+Subject: [PATCH] Remove conflicting man flag
+
+Upstream: https://github.com/kravietz/pam_tacplus/commit/104044848ffb0a283e1f1bf3466693fa4af450e9
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ Makefile.am | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index a481d7a..ef2b92b 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -15,7 +15,6 @@ bin_PROGRAMS = tacc
+ tacc_SOURCES = tacc.c
+ tacc_LDADD = libtac.la $(LTLIBINTL) $(LIB_CRYPTO)  $(LIB_GETRANDOM)
+ tacc_CFLAGS = $(AM_CFLAGS) -I $(top_srcdir)/libtac/include @rt_debug_defines@ -I $(top_srcdir)/lib
+-dist_man_MANS = tacc.1
+ man1_MANS = tacc.1
+ 
+ lib_LTLIBRARIES = libtac.la
