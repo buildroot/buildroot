@@ -242,3 +242,31 @@ help reduce the build time:
 
  * Experiment with top-level parallel build, see
    xref:top-level-parallel-build[].
+
+[[faq-2038]]
+=== How does Buildroot support Y2038?
+
+There are multiple situations to consider:
+
+ * On 64-bit architectures, there is no problem, as +time_t+ has
+   always been 64-bit.
+
+ * On 32-bit architectures, the situation depends on the C library:
+
+ ** With _uclibc-ng_, there is no support for 64-bit +time_t+ on
+    32-bit architectures, so systems using _uclibc-ng_ on 32-bit
+    platforms will not be Y2038 compatible.
+
+ ** With _musl_, 64-bit +time_t+ has always been used on 32-bit
+    architectures, so systems using _musl_ on 32-bit platforms are
+    Y2038 compatible.
+
+ ** With _glibc_, 64-bit +time_t+ on 32-bit architectures is enabled
+    by the Buildroot option +BR2_TIME_BITS_64+. With this option
+    enabled, systems using _glibc_ on 32-bit platforms are Y2038
+    compatible.
+
+Note that the above only comments about the capabilities of the C
+library. Individual user-space libraries or applications, even when
+built in a Y2038-compatible setup, can exhibit incorrect behavior if
+they do not make correct use of the time APIs and types.
