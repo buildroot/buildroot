@@ -1270,4 +1270,7 @@ include docs/manual/manual.mk
 
 .PHONY: $(noconfig_targets)
 
+# .WAIT was introduced in make 4.4. For older make, define it as phony.
+.PHONY: .WAIT
+
 endif #umask / $(CURDIR) / $(O)
