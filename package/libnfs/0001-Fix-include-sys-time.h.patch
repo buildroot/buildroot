@@ -11,10 +11,11 @@ POSIX says `struct timeval` is defined if <sys/time.h> is included.
 Instead of the mess that is currently done based on the system on which
 the stuff is being compiled, include it unconditionally.
 
-Reported upstream:
-https://github.com/sahlberg/libnfs/issues/272
+Upstream: https://github.com/sahlberg/libnfs/issues/272
 
 Signed-off-by: Jörg Krause <joerg.krause@embedded.rocks>
+[Fabrice: update for 5.0.2]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  include/nfsc/libnfs.h | 5 -----
  1 file changed, 5 deletions(-)
@@ -27,8 +28,8 @@ index 09dcf1c..b6db58c 100755
  #define _LIBNFS_H_
  
  #include <stdint.h>
--#if defined(__ANDROID__) || defined(AROS) \
-- || ( defined(__APPLE__) && defined(__MACH__) )
+-#if defined(__ANDROID__) || defined(AROS) || defined(__PPU__) \
+- || ( defined(__APPLE__) && defined(__MACH__) ) || defined(__FreeBSD__) || defined(__OpenBSD__)
  #include <sys/time.h>
 -#else
 -#include <time.h>
