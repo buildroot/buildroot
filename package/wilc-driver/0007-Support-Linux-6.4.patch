@@ -1,0 +1,36 @@
+From 94fc4594659494b8c5cbdf1a719aea4d66d3398d Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Wed, 27 Sep 2023 11:20:50 +0200
+Subject: [PATCH] Support Linux 6.4
+
+With Linux 6.4 commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=1aaba11da9aa7d7d6b52a74d45b31cac118295a1
+class_create() doesn't require first argument THIS_MODULE anymore so let's
+drop first argument if Linux version >= 6.4
+
+Upstream: https://github.com/embeddedTS/wilc3000-external-module/pull/5
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ bt.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/bt.c b/bt.c
+index 48a5302..a752457 100644
+--- a/bt.c
++++ b/bt.c
+@@ -135,7 +135,11 @@ static void wilc_bt_create_device(void)
+ 	ret = alloc_chrdev_region(&chc_dev_no, 0, 1, "atmel");
+ 	if (ret < 0)
+ 		return;
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 4, 0)
++	chc_dev_class = class_create("atmel");
++#else
+ 	chc_dev_class = class_create(THIS_MODULE, "atmel");
++#endif
+ 	if (IS_ERR(chc_dev_class)) {
+ 		unregister_chrdev_region(chc_dev_no, 1);
+ 		return;
+-- 
+2.34.1
+
