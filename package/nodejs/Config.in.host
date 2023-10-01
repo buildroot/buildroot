@@ -28,4 +28,8 @@ config BR2_PACKAGE_HOST_NODEJS_COREPACK
 	  what currently happens with npm, which is shipped by Node.js
 	  by default.
 
+config BR2_PACKAGE_PROVIDES_HOST_NODEJS
+	string
+	default "host-nodejs-src"
+
 endif

@@ -4,9 +4,10 @@
 #
 ################################################################################
 
-NODEJS_VERSION = 16.20.0
-NODEJS_SOURCE = node-v$(NODEJS_VERSION).tar.xz
-NODEJS_SITE = http://nodejs.org/dist/v$(NODEJS_VERSION)
+# _VERSION, _SOURCE and _SITE must be kept empty to avoid downloading anything
+NODEJS_COMMON_VERSION = 16.20.0
+NODEJS_COMMON_SOURCE = node-v$(NODEJS_COMMON_VERSION).tar.xz
+NODEJS_COMMON_SITE = http://nodejs.org/dist/v$(NODEJS_COMMON_VERSION)
 
 NODEJS_LICENSE = MIT (core code); MIT, Apache and BSD family licenses (Bundled components)
 NODEJS_LICENSE_FILES = LICENSE
@@ -30,5 +31,9 @@ COREPACK = $(NODEJS_BIN_ENV) $(HOST_DIR)/bin/corepack
 PNPM = $(NODEJS_BIN_ENV) $(HOST_DIR)/bin/pnpm
 YARN = $(NODEJS_BIN_ENV) $(HOST_DIR)/bin/yarn
 endif
+
+NODEJS_DEPENDENCIES = nodejs-src
+$(eval $(generic-package))
+$(eval $(host-virtual-package))
 
 include $(sort $(wildcard package/nodejs/*/*.mk))
