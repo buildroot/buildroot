@@ -14,3 +14,4 @@ SPIRV_HEADERS_INSTALL_STAGING = YES
 SPIRV_HEADERS_INSTALL_TARGET = NO
 
 $(eval $(cmake-package))
+$(eval $(host-cmake-package))
