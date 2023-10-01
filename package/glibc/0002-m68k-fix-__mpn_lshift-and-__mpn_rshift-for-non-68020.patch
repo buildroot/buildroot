@@ -1,0 +1,47 @@
+From 464fd8249e8b791248cab7b0e0cd91757435fa9e Mon Sep 17 00:00:00 2001
+From: Andreas Schwab <schwab@linux-m68k.org>
+Date: Thu, 17 Aug 2023 17:15:34 +0200
+Subject: [PATCH] m68k: fix __mpn_lshift and __mpn_rshift for non-68020
+
+From revision 03f3d275d0d6 in the gmp repository.
+
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=464fd8249e8b791248cab7b0e0cd91757435fa9e
+---
+ sysdeps/m68k/m680x0/lshift.S | 4 ++--
+ sysdeps/m68k/m680x0/rshift.S | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/sysdeps/m68k/m680x0/lshift.S b/sysdeps/m68k/m680x0/lshift.S
+index 2aee10348e..4240738959 100644
+--- a/sysdeps/m68k/m680x0/lshift.S
++++ b/sysdeps/m68k/m680x0/lshift.S
+@@ -77,8 +77,8 @@ L(Lnormal:)
+ #else /* not mc68000 */
+ 	movel	R(s_size),R(d0)
+ 	asll	#2,R(d0)
+-	addl	R(s_size),R(s_ptr)
+-	addl	R(s_size),R(res_ptr)
++	addl	R(d0),R(s_ptr)
++	addl	R(d0),R(res_ptr)
+ #endif
+ 	movel	MEM_PREDEC(s_ptr),R(d2)
+ 	movel	R(d2),R(d0)
+diff --git a/sysdeps/m68k/m680x0/rshift.S b/sysdeps/m68k/m680x0/rshift.S
+index d16bca9307..d56a2b4a44 100644
+--- a/sysdeps/m68k/m680x0/rshift.S
++++ b/sysdeps/m68k/m680x0/rshift.S
+@@ -127,8 +127,8 @@ L(Lspecial:)
+ #else /* not mc68000 */
+ 	movel	R(s_size),R(d0)
+ 	asll	#2,R(d0)
+-	addl	R(s_size),R(s_ptr)
+-	addl	R(s_size),R(res_ptr)
++	addl	R(d0),R(s_ptr)
++	addl	R(d0),R(res_ptr)
+ #endif
+ 
+ 	clrl	R(d0)			/* initialize carry */
+-- 
+2.39.2
+

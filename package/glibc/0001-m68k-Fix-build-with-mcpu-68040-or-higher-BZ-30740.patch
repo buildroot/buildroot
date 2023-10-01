@@ -1,0 +1,57 @@
+From b85880633f69b737050c22eede858f8c13bb2248 Mon Sep 17 00:00:00 2001
+From: Adhemerval Zanella <adhemerval.zanella@linaro.org>
+Date: Fri, 18 Aug 2023 14:59:51 -0300
+Subject: [PATCH] m68k: Fix build with -mcpu=68040 or higher (BZ 30740)
+
+GCC currently does not define __mc68020__ for -mcpu=68040 or higher,
+which memcpy/memmove assumptions.  Since this memory copy optimization
+seems only intended for m68020, disable for other m680X0 variants.
+
+Checked on a build for m68k-linux-gnu target mc68020 and mc68040.
+
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=b85880633f69b737050c22eede858f8c13bb2248
+---
+ sysdeps/m68k/m680x0/m68020/wordcopy.S |  1 -
+ sysdeps/m68k/wordcopy.c               | 21 +++++++++++++++++++++
+ 2 files changed, 21 insertions(+), 1 deletion(-)
+ delete mode 100644 sysdeps/m68k/m680x0/m68020/wordcopy.S
+ create mode 100644 sysdeps/m68k/wordcopy.c
+
+diff --git a/sysdeps/m68k/m680x0/m68020/wordcopy.S b/sysdeps/m68k/m680x0/m68020/wordcopy.S
+deleted file mode 100644
+index 4fb1a4518f..0000000000
+--- a/sysdeps/m68k/m680x0/m68020/wordcopy.S
++++ /dev/null
+@@ -1 +0,0 @@
+-/* Empty, not needed.  */
+diff --git a/sysdeps/m68k/wordcopy.c b/sysdeps/m68k/wordcopy.c
+new file mode 100644
+index 0000000000..f12d5b7803
+--- /dev/null
++++ b/sysdeps/m68k/wordcopy.c
+@@ -0,0 +1,21 @@
++/* Definitions for memory copy functions.  Motorola 680X0 version
++   Copyright (C) 2023 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library.  If not, see
++   <https://www.gnu.org/licenses/>.  */
++
++#ifndef __mc68020__
++# include <string/wordcopy.c>
++#endif
+-- 
+2.39.2
+

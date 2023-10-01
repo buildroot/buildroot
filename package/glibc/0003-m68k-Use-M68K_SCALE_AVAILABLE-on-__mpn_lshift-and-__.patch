@@ -1,0 +1,93 @@
+From 87ced255bdf2681f5bf6c89d7121e59f6f342161 Mon Sep 17 00:00:00 2001
+From: Adhemerval Zanella <adhemerval.zanella@linaro.org>
+Date: Fri, 18 Aug 2023 14:49:31 -0300
+Subject: [PATCH] m68k: Use M68K_SCALE_AVAILABLE on __mpn_lshift and
+ __mpn_rshift
+
+This patch adds a new macro, M68K_SCALE_AVAILABLE, similar to gmp
+scale_available_p (mpn/m68k/m68k-defs.m4) that expand to 1 if a
+scale factor can be used in addressing modes.  This is used
+instead of __mc68020__ for some optimization decisions.
+
+Checked on a build for m68k-linux-gnu target mc68020 and mc68040.
+
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=87ced255bdf2681f5bf6c89d7121e59f6f342161
+---
+ sysdeps/m68k/m680x0/lshift.S | 6 +++---
+ sysdeps/m68k/m680x0/rshift.S | 8 ++++----
+ sysdeps/m68k/m680x0/sysdep.h | 7 +++++++
+ 3 files changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/sysdeps/m68k/m680x0/lshift.S b/sysdeps/m68k/m680x0/lshift.S
+index 4240738959..74de90380b 100644
+--- a/sysdeps/m68k/m680x0/lshift.S
++++ b/sysdeps/m68k/m680x0/lshift.S
+@@ -57,9 +57,9 @@ ENTRY(__mpn_lshift)
+ 	bne	L(Lnormal)
+ 	cmpl	R(s_ptr),R(res_ptr)
+ 	bls	L(Lspecial)		/* jump if s_ptr >= res_ptr */
+-#if (defined (__mc68020__) || defined (__NeXT__) || defined(mc68020))
++#if M68K_SCALE_AVAILABLE
+ 	lea	MEM_INDX1(s_ptr,s_size,l,4),R(a2)
+-#else /* not mc68020 */
++#else
+ 	movel	R(s_size),R(d0)
+ 	asll	#2,R(d0)
+ 	lea	MEM_INDX(s_ptr,d0,l),R(a2)
+@@ -71,7 +71,7 @@ L(Lnormal:)
+ 	moveql	#32,R(d5)
+ 	subl	R(cnt),R(d5)
+ 
+-#if (defined (__mc68020__) || defined (__NeXT__) || defined(mc68020))
++#if M68K_SCALE_AVAILABLE
+ 	lea	MEM_INDX1(s_ptr,s_size,l,4),R(s_ptr)
+ 	lea	MEM_INDX1(res_ptr,s_size,l,4),R(res_ptr)
+ #else /* not mc68000 */
+diff --git a/sysdeps/m68k/m680x0/rshift.S b/sysdeps/m68k/m680x0/rshift.S
+index d56a2b4a44..d398d0287e 100644
+--- a/sysdeps/m68k/m680x0/rshift.S
++++ b/sysdeps/m68k/m680x0/rshift.S
+@@ -56,9 +56,9 @@ ENTRY(__mpn_rshift)
+ 	bne	L(Lnormal)
+ 	cmpl	R(res_ptr),R(s_ptr)
+ 	bls	L(Lspecial)		/* jump if res_ptr >= s_ptr */
+-#if (defined (__mc68020__) || defined (__NeXT__) || defined(mc68020))
++#if M68K_SCALE_AVAILABLE
+ 	lea	MEM_INDX1(res_ptr,s_size,l,4),R(a2)
+-#else /* not mc68020 */
++#else
+ 	movel	R(s_size),R(d0)
+ 	asll	#2,R(d0)
+ 	lea	MEM_INDX(res_ptr,d0,l),R(a2)
+@@ -121,10 +121,10 @@ L(Lend:)
+ 
+ 	cfi_restore_state
+ L(Lspecial:)
+-#if (defined (__mc68020__) || defined (__NeXT__) || defined(mc68020))
++#if M68K_SCALE_AVAILABLE
+ 	lea	MEM_INDX1(s_ptr,s_size,l,4),R(s_ptr)
+ 	lea	MEM_INDX1(res_ptr,s_size,l,4),R(res_ptr)
+-#else /* not mc68000 */
++#else
+ 	movel	R(s_size),R(d0)
+ 	asll	#2,R(d0)
+ 	addl	R(d0),R(s_ptr)
+diff --git a/sysdeps/m68k/m680x0/sysdep.h b/sysdeps/m68k/m680x0/sysdep.h
+index b31e101273..bee5b3391c 100644
+--- a/sysdeps/m68k/m680x0/sysdep.h
++++ b/sysdeps/m68k/m680x0/sysdep.h
+@@ -37,3 +37,10 @@
+   OP " " SRC "(" PC "), " DST
+ 
+ #endif	/* __ASSEMBLER__ */
++
++# if defined __mc68020__ || defined __mc68030__ || defined __mc68040__	      \
++     || defined __mc68060__
++#  define M68K_SCALE_AVAILABLE 1
++# else
++#  define M68K_SCALE_AVAILABLE 0
++# endif
+-- 
+2.39.2
+
