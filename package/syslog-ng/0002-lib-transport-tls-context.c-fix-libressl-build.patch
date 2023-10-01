@@ -1,0 +1,97 @@
+From ede106afd7d70a8f962acf10a4e3f4a50a70cb15 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 1 Oct 2023 11:27:09 +0200
+Subject: [PATCH] lib/transport/tls-context.c: fix libressl build
+
+Fix the following build failure with libressl raised since version 4.0.0
+and
+https://github.com/syslog-ng/syslog-ng/commit/bc05f28a4b511ac9090195280163a7f822712ceb:
+
+lib/transport/tls-context.c: In function 'tls_context_setup_cmd_context':
+lib/transport/tls-context.c:320:3: error: unknown type name 'SSL_CONF_CTX'; did you mean 'SSL_AEAD_CTX'?
+  320 |   SSL_CONF_CTX *ssl_conf_ctx = SSL_CONF_CTX_new();
+      |   ^~~~~~~~~~~~
+      |   SSL_AEAD_CTX
+
+Fixes:
+ - http://autobuild.buildroot.org/results/dc4d60d752e579ef054915eee3d7e3e73c25929b
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/syslog-ng/syslog-ng/pull/4655
+---
+ cmake/openssl_functions.cmake | 1 +
+ configure.ac                  | 1 +
+ lib/transport/tls-context.c   | 4 ++++
+ syslog-ng-config.h.in         | 1 +
+ 4 files changed, 7 insertions(+)
+
+diff --git a/cmake/openssl_functions.cmake b/cmake/openssl_functions.cmake
+index 5afbd7f12..da06ca59a 100644
+--- a/cmake/openssl_functions.cmake
++++ b/cmake/openssl_functions.cmake
+@@ -41,6 +41,7 @@ function (openssl_set_defines)
+     X509_get_extension_flags
+     DH_set0_pqg
+     BN_get_rfc3526_prime_2048
++    SSL_CONF_CTX_new
+     SSL_CTX_set_num_tickets
+     SSL_CTX_set_ciphersuites
+     SSL_CTX_set1_sigalgs_list
+diff --git a/configure.ac b/configure.ac
+index d636bbefa..46e43db7b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1136,6 +1136,7 @@ AC_CHECK_DECLS([EVP_MD_CTX_reset], [], [], [[#include <openssl/evp.h>]])
+ AC_CHECK_DECLS([ASN1_STRING_get0_data], [], [], [[#include <openssl/asn1.h>]])
+ AC_CHECK_DECLS([DH_set0_pqg], [], [], [[#include <openssl/dh.h>]])
+ AC_CHECK_DECLS([BN_get_rfc3526_prime_2048], [], [], [[#include <openssl/bn.h>]])
++AC_CHECK_DECLS([SSL_CONF_CTX_new],[], [], [[#include <openssl/ssl.h>]])
+ AC_CHECK_DECLS([SSL_CTX_set_num_tickets],[], [], [[#include <openssl/ssl.h>]])
+ AC_CHECK_DECLS([SSL_CTX_set1_sigalgs_list],[], [], [[#include <openssl/ssl.h>]])
+ AC_CHECK_DECLS([SSL_CTX_set1_client_sigalgs_list],[], [], [[#include <openssl/ssl.h>]])
+diff --git a/lib/transport/tls-context.c b/lib/transport/tls-context.c
+index be2fea68d..713b63f31 100644
+--- a/lib/transport/tls-context.c
++++ b/lib/transport/tls-context.c
+@@ -314,6 +314,7 @@ tls_context_setup_sigalgs(TLSContext *self)
+   return TRUE;
+ }
+ 
++#if SYSLOG_NG_HAVE_DECL_SSL_CONF_CTX_new
+ static gboolean
+ tls_context_setup_cmd_context(TLSContext *self)
+ {
+@@ -347,6 +348,7 @@ tls_context_setup_cmd_context(TLSContext *self)
+   SSL_CONF_CTX_free(ssl_conf_ctx);
+   return result;
+ }
++#endif
+ 
+ static PKCS12 *
+ _load_pkcs12_file(TLSContext *self, const gchar *pkcs12_file)
+@@ -593,8 +595,10 @@ tls_context_setup_context(TLSContext *self)
+   if (!tls_context_setup_sigalgs(self))
+     goto error;
+ 
++#if SYSLOG_NG_HAVE_DECL_SSL_CONF_CTX_new
+   if (!tls_context_setup_cmd_context(self))
+     goto error;
++#endif
+ 
+   return TLS_CONTEXT_SETUP_OK;
+ 
+diff --git a/syslog-ng-config.h.in b/syslog-ng-config.h.in
+index 412294d2a..6d01b84a0 100644
+--- a/syslog-ng-config.h.in
++++ b/syslog-ng-config.h.in
+@@ -60,6 +60,7 @@
+ #cmakedefine ENV_LD_LIBRARY_PATH @ENV_LD_LIBRARY_PATH@
+ #cmakedefine01 SYSLOG_NG_HAVE_DECL_EVP_MD_CTX_RESET
+ #cmakedefine01 SYSLOG_NG_HAVE_DECL_ASN1_STRING_GET0_DATA
++#cmakedefine01 SYSLOG_NG_HAVE_DECL_SSL_CONF_CTX_new
+ #cmakedefine01 SYSLOG_NG_HAVE_DECL_SSL_CTX_GET0_PARAM
+ #cmakedefine01 SYSLOG_NG_HAVE_DECL_SSL_CTX_SET_CIPHERSUITES
+ #cmakedefine01 SYSLOG_NG_HAVE_DECL_SSL_CTX_SET1_SIGALGS_LIST
+-- 
+2.40.1
+
