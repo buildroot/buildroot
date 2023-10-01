@@ -13,6 +13,9 @@ CUPS_CPE_ID_VENDOR = openprinting
 CUPS_SELINUX_MODULES = cups
 CUPS_INSTALL_STAGING = YES
 
+# 0005-raster-interpret.c-Fix-CVE-2023-4504.patch
+CUPS_IGNORE_CVES += CVE-2023-4504
+
 # Using autoconf, not autoheader, so we cannot use AUTORECONF = YES.
 define CUPS_RUN_AUTOCONF
 	cd $(@D); $(AUTOCONF) -f
