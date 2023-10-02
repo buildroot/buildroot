@@ -1,0 +1,8 @@
+config BR2_PACKAGE_EZA
+	bool "eza"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_RUSTC
+	help
+	  eza is a modern, maintained replacement for ls, built on exa.
+
+	  https://github.com/eza-community/eza.git
