@@ -1,0 +1,21 @@
+comment "libcanberra needs a toolchain w/ wchar, threads, dynamic library"
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
+		BR2_STATIC_LIBS
+
+config BR2_PACKAGE_LIBCANBERRA
+	bool "libcanberra"
+	depends on BR2_USE_WCHAR
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on !BR2_STATIC_LIBS
+	# We need at least one audio backend
+	select BR2_PACKAGE_ALSA_LIB if \
+	       !BR2_PACKAGE_PULSEAUDIO && \
+	       !BR2_PACKAGE_GSTREAMER1
+	# We need libltdl
+	select BR2_PACKAGE_LIBTOOL
+	select BR2_PACKAGE_LIBVORBIS
+	help
+	  libcanberra defines a simple abstract interface for playing
+	  event sounds.
+
+	  http://0pointer.de/lennart/projects/libcanberra/
