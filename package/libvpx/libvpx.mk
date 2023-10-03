@@ -4,15 +4,12 @@
 #
 ################################################################################
 
-LIBVPX_VERSION = 1.13.0
+LIBVPX_VERSION = 1.13.1
 LIBVPX_SITE = $(call github,webmproject,libvpx,v$(LIBVPX_VERSION))
 LIBVPX_LICENSE = BSD-3-Clause
 LIBVPX_LICENSE_FILES = LICENSE PATENTS
 LIBVPX_CPE_ID_VENDOR = webmproject
 LIBVPX_INSTALL_STAGING = YES
-
-# 0002-VP8-disallow-thread-count-changes.patch
-LIBVPX_IGNORE_CVES += CVE-2023-5217
 
 # ld is being used with cc options. therefore, pretend ld is cc.
 LIBVPX_CONF_ENV = \
