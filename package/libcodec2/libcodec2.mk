@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBCODEC2_VERSION = 1.1.1
-LIBCODEC2_SITE = $(call github,drowe67,codec2,v$(LIBCODEC2_VERSION))
+LIBCODEC2_VERSION = 1.2.0
+LIBCODEC2_SITE = $(call github,drowe67,codec2,$(LIBCODEC2_VERSION))
 LIBCODEC2_LICENSE = LGPL-2.1
 LIBCODEC2_LICENSE_FILES = COPYING
 LIBCODEC2_INSTALL_STAGING = YES
