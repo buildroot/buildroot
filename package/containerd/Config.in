@@ -26,6 +26,39 @@ config BR2_PACKAGE_CONTAINERD_DRIVER_BTRFS
 	help
 	  Build the btrfs snapshot driver for containerd.
 
+config BR2_PACKAGE_CONTAINERD_DRIVER_DEVMAPPER
+	bool "devmapper snapshot driver"
+	depends on BR2_TOOLCHAIN_HAS_THREADS # lvm2
+	depends on BR2_USE_MMU # lvm2
+	depends on !BR2_STATIC_LIBS # lvm2
+	select BR2_PACKAGE_LVM2
+	help
+	  Build the devmapper snapshot driver for containerd.
+
+comment "devmapper snapshot driver needs a toolchain w/ threads, dynamic library"
+	depends on BR2_USE_MMU
+	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS
+
+config BR2_PACKAGE_CONTAINERD_DRIVER_ZFS
+	bool "zfs snapshot driver"
+	depends on BR2_LINUX_KERNEL # zfs
+	depends on BR2_PACKAGE_HAS_UDEV # zfs
+	depends on BR2_USE_MMU  # zfs
+	depends on BR2_TOOLCHAIN_HAS_THREADS  # zfs
+	select BR2_PACKAGE_ZFS
+	help
+	  Build the zfs snapshot driver for containerd.
+
+comment "zfs snapshot driver needs a Linux kernel, udev, toolchain w/ threads"
+	depends on BR2_USE_MMU
+	depends on !BR2_LINUX_KERNEL || !BR2_PACKAGE_HAS_UDEV || \
+		!BR2_TOOLCHAIN_HAS_THREADS
+
+config BR2_PACKAGE_CONTAINERD_CRI
+	bool "Kubernetes CRI support"
+	help
+	  Build containerd with Kubernetes CRI support.
+
 endif
 
 comment "containerd needs a glibc or musl toolchain w/ threads"
