@@ -34,7 +34,7 @@ ifeq ($(BR2_PACKAGE_FILE),y)
 NANO_DEPENDENCIES += file
 NANO_CONF_OPTS += --enable-libmagic --enable-color --enable-nanorc
 else
-NANO_CONF_OPTS += --disable-libmagic --disable-libmagic --disable-color
+NANO_CONF_OPTS += --disable-libmagic --disable-color --disable-nanorc
 endif # BR2_PACKAGE_FILE
 endif # BR2_PACKAGE_NANO_TINY
 
