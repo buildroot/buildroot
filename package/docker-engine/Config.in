@@ -19,9 +19,6 @@ config BR2_PACKAGE_DOCKER_ENGINE
 
 if BR2_PACKAGE_DOCKER_ENGINE
 
-config BR2_PACKAGE_DOCKER_ENGINE_EXPERIMENTAL
-	bool "build experimental features"
-
 config BR2_PACKAGE_DOCKER_ENGINE_DRIVER_BTRFS
 	bool "btrfs filesystem driver"
 	depends on BR2_USE_MMU # btrfs-progs
