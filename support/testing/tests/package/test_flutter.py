@@ -1,8 +1,11 @@
 import os
+import time
 import infra.basetest
 
+from ..graphics_base import GraphicsBase
 
-class TestFlutter(infra.basetest.BRTest):
+
+class TestFlutter(infra.basetest.BRTest, GraphicsBase):
     config = f"""
         BR2_aarch64=y
         BR2_TOOLCHAIN_EXTERNAL=y
@@ -40,7 +43,7 @@ class TestFlutter(infra.basetest.BRTest):
         self.emulator.boot(
             arch="aarch64",
             kernel=kern,
-            kernel_cmdline=["root=/dev/vda console=ttyAMA0"],
+            kernel_cmdline=["root=/dev/vda console=ttyAMA0 vt.global_cursor_default=0"],
             options=["-M", "virt",
                      "-cpu", "cortex-a57",
                      "-m", "512M",
@@ -49,7 +52,27 @@ class TestFlutter(infra.basetest.BRTest):
                      "-vnc", "none",
                      "-drive", f"file={img},if=virtio,format=raw"])
         self.emulator.login()
-        cmd = "systemctl is-active flutter-markdown-example"
-        output, exit_code = self.emulator.run(cmd, 10)
-        self.assertEqual(exit_code, 0)
-        self.assertEqual(output[0], "active")
+
+        # Get the CRC from the current ramebuffer
+        empty_crc = self.get_n_fb_crc(count=1)[0]
+
+        # Start the example App. It can take a bit of time to start,
+        # so lets try a few times. 600 samples should cover about 10s
+        # @60Hz (although, the rendering could be much slower on slow
+        # machines)
+        self.assertRunOk("systemctl start flutter-markdown-example", timeout=10)
+        for i in range(600):
+            gallery_crc = self.get_n_fb_crc(count=1)[0]
+            if gallery_crc != empty_crc:
+                break
+            time.sleep(1)
+        self.assertNotEqual(gallery_crc, empty_crc, "gallery app did not render anything on screen")
+
+        # Stop the application, and check it restored the framebuffer content
+        self.assertRunOk("systemctl stop flutter-markdown-example", timeout=10)
+        for i in range(600):
+            gallery_crc = self.get_n_fb_crc(count=1)[0]
+            if gallery_crc == empty_crc:
+                break
+            time.sleep(1)
+        self.assertEqual(gallery_crc, empty_crc, "gallery app did not stop rendering")
