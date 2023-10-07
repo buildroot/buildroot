@@ -1,0 +1,65 @@
+From 90f5c78f47dfb1ae4b953b0e30c7ef72a6438396 Mon Sep 17 00:00:00 2001
+From: Paul Cercueil <paul@crapouillou.net>
+Date: Thu, 5 Oct 2023 14:24:13 +0200
+Subject: [PATCH] Fix build on mips64el
+
+The "cvt_offset" field may be used for anything non-ARM in
+jit_fallback.c, so enable this field on anything non-ARM. Worst case
+scenario, this field is not used and it only occupies 4 bytes of RAM.
+
+Besides, when building for mips64el with the N32 ABI, the __WORDSIZE
+ends up being 32 and not 64 (which may be a problem in itself), which
+caused some more issues as the movi_d_w() macro referenced by
+jit_mips.c was not defined anywhere.
+
+This caused Buildroot's CI to fail when building on mips64el:
+http://autobuild.buildroot.net/results/f951d91d2ca4647170a52499a243d45d13d3bced/
+
+Upstream: http://git.savannah.gnu.org/cgit/lightning.git/commit/?id=90f5c78f47dfb1ae4b953b0e30c7ef72a6438396
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ include/lightning/jit_private.h | 5 +----
+ lib/lightning.c                 | 4 ++--
+ 2 files changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/include/lightning/jit_private.h b/include/lightning/jit_private.h
+index 5052a36..9f8caf6 100644
+--- a/include/lightning/jit_private.h
++++ b/include/lightning/jit_private.h
+@@ -555,10 +555,7 @@ struct jit_function {
+     jit_int32_t		*regoff;
+     jit_regset_t	 regset;
+     jit_int32_t		 stack;
+-#if defined(__i386__) || defined(__x86_64__) || \
+-    defined(__powerpc__) || defined(__sparc__) || \
+-    defined(__s390__) || defined(__s390x__) || \
+-    defined(__hppa__) || defined(__alpha__)
++#if !defined(__arm__)
+     jit_int32_t		 cvt_offset;	/* allocai'd offset for x87<->xmm or
+ 					 * fpr<->gpr transfer using the stack */
+ #endif
+diff --git a/lib/lightning.c b/lib/lightning.c
+index d5ea330..39c4fc2 100644
+--- a/lib/lightning.c
++++ b/lib/lightning.c
+@@ -4285,7 +4285,7 @@ static void _htoni_ul(jit_state_t*, jit_int32_t, jit_word_t);
+ #endif
+ #  define movi_f_w(r0, i0)		_movi_f_w(_jit, r0, i0)
+ static void _movi_f_w(jit_state_t*, jit_int32_t, jit_float32_t);
+-#if __WORDSIZE == 32
++#if __WORDSIZE == 32 && !(defined(__mips__) && NEW_ABI)
+ #  define movi_d_ww(r0, r1, i0)		_movi_d_ww(_jit, r0, r1, i0)
+ static void _movi_d_ww(jit_state_t*, jit_int32_t, jit_int32_t, jit_float64_t);
+ #else
+@@ -4569,7 +4569,7 @@ _movi_f_w(jit_state_t *_jit, jit_int32_t r0, jit_float32_t i0)
+     movi(r0, data.i);
+ }
+ 
+-#if __WORDSIZE == 32
++#if __WORDSIZE == 32 && !(defined(__mips__) && NEW_ABI)
+ static void
+ _movi_d_ww(jit_state_t *_jit, jit_int32_t r0, jit_int32_t r1, jit_float64_t i0)
+ {
+-- 
+2.40.1
+
