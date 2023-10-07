@@ -11,7 +11,7 @@ How to Build
 
 Select the default configuration for the target:
 
-$ make am62x_sk_defconfig
+$ make ti_am62x_sk_defconfig
 
 Optional: modify the configuration:
 
