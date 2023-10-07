@@ -1,0 +1,62 @@
+#!/bin/sh
+
+MODULES_DIR="/etc/modules-load.d/"
+
+[ -z "$(ls -A ${MODULES_DIR} 2> /dev/null)" ] && exit 0
+
+load_unload() {
+	for module_file in "${MODULES_DIR}"/*.conf; do
+		while read -r module args; do
+
+			case "$module" in
+				""|"#"*) continue ;;
+			esac
+
+			if [ "$1" = "load" ]; then
+				# shellcheck disable=SC2086  # We need word splitting for args
+				modprobe -q "${module}" ${args} >/dev/null && \
+					printf '%s ' "$module" || RET='FAIL'
+			else
+				rmmod "${module}" >/dev/null
+			fi
+
+		done < "${module_file}"
+	done
+
+	RET='OK'
+}
+
+start() {
+	printf 'Starting modules: '
+
+	load_unload load
+
+	echo $RET
+}
+
+stop() {
+	printf 'Stopping modules: '
+
+	load_unload unload
+
+	echo $RET
+}
+
+restart() {
+	stop
+	sleep 1
+	start
+}
+
+case "$1" in
+	start|stop|restart)
+		"$1";;
+	reload)
+		# Restart, since there is no true "reload" feature.
+		restart;;
+	*)
+		echo "Usage: $0 {start|stop|restart|reload}"
+		exit 1
+esac
+
+# check-package Ignore missing DAEMON Variables
