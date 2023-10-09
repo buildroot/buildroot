@@ -23,6 +23,8 @@ FIREWALLD_DEPENDENCIES = \
 	python3 \
 	python-gobject
 
+FIREWALLD_SELINUX_MODULES = firewalld
+
 # Firewalld hard codes the python shebangs to the full path of the
 # python-interpreter. IE: #!/home/buildroot/output/host/bin/python.
 # Force the proper python path.
