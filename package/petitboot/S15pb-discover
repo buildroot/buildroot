@@ -2,12 +2,9 @@
 
 DAEMON="pb-discover"
 PIDFILE="/var/run/$DAEMON.pid"
-LOGFILE="/var/log/$DAEMON.log"
-
-PB_DISCOVER_ARGS="-l $LOGFILE"
 
 # shellcheck source=/dev/null
-[ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
+[ -r "/etc/default/petitboot" ] && . "/etc/default/petitboot"
 
 if [ "$(pb-config debug)" = "enabled" ] ; then
 	PB_DISCOVER_ARGS="$PB_DISCOVER_ARGS --verbose"
@@ -15,6 +12,8 @@ fi
 
 start() {
 	printf 'Starting %s: ' "$DAEMON"
+	mkdir -p /var/log/petitboot
+
 	# shellcheck disable=SC2086 # we need the word splitting
 	start-stop-daemon -S -q -b -p "$PIDFILE" -x "/usr/sbin/$DAEMON" \
 		-- $PB_DISCOVER_ARGS
