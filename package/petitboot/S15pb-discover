@@ -15,7 +15,7 @@ start() {
 	mkdir -p /var/log/petitboot
 
 	# shellcheck disable=SC2086 # we need the word splitting
-	start-stop-daemon -S -q -b -p "$PIDFILE" -x "/usr/sbin/$DAEMON" \
+	start-stop-daemon -S -q -b -m -p "$PIDFILE" -x "/usr/sbin/$DAEMON" \
 		-- $PB_DISCOVER_ARGS
 	status=$?
 	if [ "$status" -eq 0 ]; then
@@ -31,6 +31,7 @@ stop() {
 	start-stop-daemon -K -q -p "$PIDFILE"
 	status=$?
 	if [ "$status" -eq 0 ]; then
+		rm -f "$PIDFILE"
 		echo "OK"
 	else
 		echo "FAIL"
