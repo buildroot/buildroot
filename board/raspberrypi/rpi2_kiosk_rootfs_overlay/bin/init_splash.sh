@@ -1,5 +1,6 @@
 #! /bin/sh
 
 # The call to fbv must be backgrounded
-fbv /splash.png &
+/usr/bin/fbv /splash.png &
+/bin/sleep 5
 exec /sbin/init
