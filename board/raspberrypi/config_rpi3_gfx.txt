@@ -16,6 +16,14 @@ kernel=Image
 # If the text shown on the screen disappears off the edge, comment this out
 disable_overscan=1
 
+# Touchscreen config for EP-0081
+framebuffer_width=800
+framebuffer_height=480
+hdmi_force_hotplug=1
+hdmi_group=2
+hdmi_mode=87
+hdmi_cvt  800  480  60  6  0  0  0
+
 # How much memory in MB to assign to the GPU on Pi models having
 # 256, 512 or 1024 MB total memory
 gpu_mem_256=100
