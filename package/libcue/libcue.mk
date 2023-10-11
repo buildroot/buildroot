@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBCUE_VERSION = 2.2.1
+LIBCUE_VERSION = 2.3.0
 LIBCUE_SITE = $(call github,lipnitsk,libcue,v$(LIBCUE_VERSION))
 LIBCUE_LICENSE = GPL-2.0, BSD-2-Clause (rem.c)
 LIBCUE_LICENSE_FILES = LICENSE
