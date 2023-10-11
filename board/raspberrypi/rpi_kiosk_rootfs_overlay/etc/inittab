@@ -32,7 +32,7 @@ null::sysinit:/bin/ln -sf /proc/self/fd/2 /dev/stderr
 console::respawn:/sbin/getty -L  console 0 vt100 # GENERIC_SERIAL
 # JRK: commenting out getty on tty1, instead let's launch that browser.
 #tty1::respawn:/sbin/getty -L  tty1 0 vt100 # HDMI console
-tty1::respawn:/bin/su -c XDG_RUNTIME_DIR=/tmp cage -- cog --ignore-tls-errors http://localhost wanco
+tty1::respawn:/bin/su -c 'XDG_RUNTIME_DIR=/tmp cage -- cog --ignore-tls-errors http://localhost' wanco
 
 # Stuff to do for the 3-finger salute
 #::ctrlaltdel:/sbin/reboot
