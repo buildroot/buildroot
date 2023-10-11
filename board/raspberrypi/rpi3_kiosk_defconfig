@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Buildroot 2023.08-673-g9b7741fd9c-dirty Configuration
+# Buildroot 2023.08-678-g6bfa8088a2 Configuration
 #
 BR2_HAVE_DOT_CONFIG=y
 BR2_HOST_GCC_AT_LEAST_4_9=y
@@ -490,7 +490,7 @@ BR2_GENERATE_LOCALE=""
 # BR2_SYSTEM_ENABLE_NLS is not set
 # BR2_TARGET_TZ_INFO is not set
 BR2_ROOTFS_USERS_TABLES="board/raspberrypi/usertable.txt"
-BR2_ROOTFS_OVERLAY=""
+BR2_ROOTFS_OVERLAY="board/raspberrypi/rpi_kiosk_rootfs_overlay"
 BR2_ROOTFS_PRE_BUILD_SCRIPT=""
 BR2_ROOTFS_POST_BUILD_SCRIPT="board/raspberrypi3-64/post-build.sh"
 BR2_ROOTFS_POST_FAKEROOT_SCRIPT=""
@@ -968,7 +968,10 @@ BR2_PACKAGE_NETSURF_ARCH_SUPPORTS=y
 # BR2_PACKAGE_FBGRAB is not set
 # BR2_PACKAGE_FBSET is not set
 # BR2_PACKAGE_FBTERM is not set
-# BR2_PACKAGE_FBV is not set
+BR2_PACKAGE_FBV=y
+BR2_PACKAGE_FBV_PNG=y
+BR2_PACKAGE_FBV_JPEG=y
+BR2_PACKAGE_FBV_GIF=y
 
 #
 # flutter-gallery needs flutter-engine
@@ -1089,8 +1092,8 @@ BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI=y
 # BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4_X is not set
 # BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4_CD is not set
 # BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4_DB is not set
-BR2_PACKAGE_RPI_FIRMWARE_CONFIG_FILE="board/raspberrypi/config_rpi3_gfx.txt"
-BR2_PACKAGE_RPI_FIRMWARE_CMDLINE_FILE="board/raspberrypi/cmdline.txt"
+BR2_PACKAGE_RPI_FIRMWARE_CONFIG_FILE="board/raspberrypi/rpi3_kiosk_config.txt"
+BR2_PACKAGE_RPI_FIRMWARE_CMDLINE_FILE="board/raspberrypi/rpi3_kiosk_cmdline.txt"
 BR2_PACKAGE_RPI_FIRMWARE_INSTALL_DTB_OVERLAYS=y
 # BR2_PACKAGE_UX500_FIRMWARE is not set
 # BR2_PACKAGE_VERSAL_FIRMWARE is not set
@@ -1573,7 +1576,7 @@ BR2_PACKAGE_FONTCONFIG=y
 BR2_PACKAGE_FREETYPE=y
 # BR2_PACKAGE_GD is not set
 BR2_PACKAGE_GDK_PIXBUF=y
-# BR2_PACKAGE_GIFLIB is not set
+BR2_PACKAGE_GIFLIB=y
 
 #
 # granite needs libgtk3 and a toolchain w/ wchar, threads, gcc >= 4.9
