@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5GRAPHICALEFFECTS_VERSION = e6e1e58ec28fd0f2e6426e6962cc4ccddb493349
+QT5GRAPHICALEFFECTS_VERSION = cce7d784237cd2dd4af1abe2757d048e34e02685
 QT5GRAPHICALEFFECTS_SITE = $(QT5_SITE)/qtgraphicaleffects/-/archive/$(QT5GRAPHICALEFFECTS_VERSION)
 QT5GRAPHICALEFFECTS_SOURCE = qtgraphicaleffects-$(QT5GRAPHICALEFFECTS_VERSION).tar.bz2
 QT5GRAPHICALEFFECTS_DEPENDENCIES = qt5declarative
