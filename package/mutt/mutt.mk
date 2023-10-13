@@ -40,7 +40,11 @@ MUTT_CONF_OPTS += \
 
 # Force the path to "gpgrt-config" (from the libgpg-error package) to
 # avoid using the one on host, if present.
-MUTT_CONF_ENV += GPGRT_CONFIG=$(STAGING_DIR)/usr/bin/gpgrt-config
+MUTT_GPGRT_CONFIG = $(STAGING_DIR)/usr/bin/gpgrt-config
+ifeq ($(BR2_STATIC_LIBS),y)
+MUTT_GPGRT_CONFIG += --static
+endif
+MUTT_CONF_ENV += GPGRT_CONFIG="$(MUTT_GPGRT_CONFIG)"
 else
 MUTT_CONF_OPTS += --disable-gpgme
 endif
