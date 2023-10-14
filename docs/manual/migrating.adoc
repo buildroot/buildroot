@@ -100,3 +100,26 @@ change implies that:
   to be updated appropriately;
 * the archive version suffix has been updated to +-br3+, so the hash
   files must be updated appropriately.
+
+Before Buildroot 2023.11, it was possible (but undocumented and unused)
+to apply architecture-specific patches, by prefixing the patch filename
+with the architecture, e.g. `0001-some-changes.patch.arm` and such a
+patch would only be applied for that architecture. With Buildroot 2023.11,
+this is no longer supported, and such patches are now longer applied at
+all.
+
+If you still need per-architecture patches, then you may provide a
+xref:hooks[pre-patch hook] that copies the patches applicable to the
+configured architecture, e.g.:
+
+----
+define LIBFOO_ARCH_PATCHES
+    $(foreach p,$(wildcard $(LIBFOO_PKGDIR)/*.patch.$(ARCH)), \
+        cp -f $(p) $(patsubst %.$(ARCH),%,$(p))
+    )
+endef
+LIBFOO_PRE_PATCH_HOOKS += LIBFOO_ARCH_PATCHES
+----
+
+Note that no package in Buildroot has architecture-specific patches, and
+that such patches will most probably not be accepted.
