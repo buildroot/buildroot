@@ -1,0 +1,70 @@
+From ca47ba3119365eafac0ab25a86cab9d9a1b29bd4 Mon Sep 17 00:00:00 2001
+From: Sam James <sam@gentoo.org>
+Date: Sat, 30 Sep 2023 06:38:53 +0100
+Subject: [PATCH] test: handle POSIX ioctl prototype
+
+glibc has the following prototype for ioctl: int ioctl(int fd, unsigned long request, ...)
+POSIX (inc. musl) has the following for ioctl: int ioctl(int fd, int request, ...)
+
+Check which prototype is used in <sys/ioctl.h> to avoid a conflict and conditionally
+define the right one for the system.
+
+Upstream: https://github.com/linux-nvme/libnvme/commit/ca47ba3119365eafac0ab25a86cab9d9a1b29bd4
+
+Bug: https://bugs.gentoo.org/914921
+Signed-off-by: Sam James <sam@gentoo.org>
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ meson.build       | 10 ++++++++++
+ test/ioctl/mock.c |  6 +++++-
+ 2 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 6fcf1da..2c979cc 100644
+--- a/meson.build
++++ b/meson.build
+@@ -230,6 +230,16 @@ conf.set(
+     ),
+     description: 'Is network address and service translation available'
+ )
++conf.set(
++    'HAVE_GLIBC_IOCTL',
++    cc.compiles(
++        '''#include <sys/ioctl.h>
++        int ioctl(int fd, unsigned long request, ...);
++        ''',
++        name: 'ioctl has glibc-style prototype'
++    ),
++    description: 'Is ioctl the glibc interface (rather than POSIX)'
++)
+ 
+ if cc.has_function_attribute('fallthrough')
+   conf.set('fallthrough', '__attribute__((__fallthrough__))')
+diff --git a/test/ioctl/mock.c b/test/ioctl/mock.c
+index e917244..5d2ac94 100644
+--- a/test/ioctl/mock.c
++++ b/test/ioctl/mock.c
+@@ -114,7 +114,11 @@ void end_mock_cmds(void)
+ 	} \
+ })
+ 
++#ifdef HAVE_GLIBC_IOCTL
+ int ioctl(int fd, unsigned long request, ...)
++#else
++int ioctl(int fd, int request, ...)
++#endif
+ {
+ 	struct mock_cmds *mock_cmds;
+ 	bool result64;
+@@ -141,7 +145,7 @@ int ioctl(int fd, unsigned long request, ...)
+ 		result64 = true;
+ 		break;
+ 	default:
+-		fail("unexpected %s %lu", __func__, request);
++		fail("unexpected %s %lu", __func__, (unsigned long) request);
+ 	}
+ 	check(mock_cmds->remaining_cmds,
+ 	      "unexpected %s command", mock_cmds->name);
+-- 
+2.34.1
+

@@ -1,0 +1,46 @@
+From ff742e792725c316ba6de0800188bf36751bd1d1 Mon Sep 17 00:00:00 2001
+From: Sam James <sam@gentoo.org>
+Date: Sat, 30 Sep 2023 06:43:39 +0100
+Subject: [PATCH] meson: make building tests conditional
+
+Just like we do for docs.
+
+Upstream: https://github.com/linux-nvme/libnvme/commit/ff742e792725c316ba6de0800188bf36751bd1d1
+
+Signed-off-by: Sam James <sam@gentoo.org>
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ meson.build       | 4 +++-
+ meson_options.txt | 1 +
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 2c979cc..a9263b5 100644
+--- a/meson.build
++++ b/meson.build
+@@ -273,7 +273,9 @@ subdir('internal')
+ subdir('ccan')
+ subdir('src')
+ subdir('libnvme')
+-subdir('test')
++if get_option('tests')
++    subdir('test')
++endif
+ subdir('examples')
+ subdir('doc')
+ 
+diff --git a/meson_options.txt b/meson_options.txt
+index a1ed79f..251ae11 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -6,6 +6,7 @@ option('rstdir', type : 'string', value : '', description : 'directory for ReST
+ 
+ option('docs', type : 'combo', choices : ['false', 'html', 'man', 'rst', 'all'], description : 'install documentation')
+ option('docs-build', type : 'boolean', value : false,  description : 'build documentation')
++option('tests', type : 'boolean', value : true, description : 'build tests')
+ 
+ option('python', type : 'feature', value: 'auto', description : 'Generate libnvme python bindings')
+ option('openssl', type : 'feature', value: 'auto', description : 'OpenSSL support')
+-- 
+2.34.1
+
