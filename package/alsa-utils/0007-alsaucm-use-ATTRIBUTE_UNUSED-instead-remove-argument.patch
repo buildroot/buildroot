@@ -1,0 +1,109 @@
+From 9e5e9a6d70de63bea01f0669b01319952f2cfdea Mon Sep 17 00:00:00 2001
+From: Jaroslav Kysela <perex@perex.cz>
+Date: Mon, 4 Sep 2023 16:57:47 +0200
+Subject: [PATCH] alsaucm: use ATTRIBUTE_UNUSED instead remove argument name
+
+We need to support older compilers than GCC 11.
+
+Link: https://github.com/alsa-project/alsa-utils/issues/233
+Fixes: d7bbc26 ("alsaucm: fix the verbose compilation warnings for latest gcc")
+Signed-off-by: Jaroslav Kysela <perex@perex.cz>
+
+Upstream: https://github.com/alsa-project/alsa-utils/commit/9e5e9a6d70de63bea01f0669b01319952f2cfdea
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ alsaucm/dump.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
+
+diff --git a/alsaucm/dump.c b/alsaucm/dump.c
+index 102ac4d..a5c57f2 100644
+--- a/alsaucm/dump.c
++++ b/alsaucm/dump.c
+@@ -93,7 +93,8 @@ static char *tesc(const char *s, char *buf, size_t buf_len)
+ 
+ #define ESC(s, esc) tesc((s), (esc), sizeof(esc))
+ 
+-static int text_verb_start(struct renderer *, const char *verb, const char *comment)
++static int text_verb_start(struct renderer *r ATTRIBUTE_UNUSED,
++			   const char *verb, const char *comment)
+ {
+ 	char buf1[128], buf2[128];
+ 	printf("Verb.%s {\n", ESC(verb, buf1));
+@@ -102,13 +103,13 @@ static int text_verb_start(struct renderer *, const char *verb, const char *comm
+ 	return 0;
+ }
+ 
+-static int text_verb_end(struct renderer *)
++static int text_verb_end(struct renderer *r ATTRIBUTE_UNUSED)
+ {
+ 	printf("}\n");
+ 	return 0;
+ }
+ 
+-static int text_2nd_level_begin(struct renderer *,
++static int text_2nd_level_begin(struct renderer *r ATTRIBUTE_UNUSED,
+ 				const char *key,
+ 				const char *val,
+ 				const char *comment)
+@@ -120,19 +121,19 @@ static int text_2nd_level_begin(struct renderer *,
+ 	return 0;
+ }
+ 
+-static int text_2nd_level_end(struct renderer *)
++static int text_2nd_level_end(struct renderer *r ATTRIBUTE_UNUSED)
+ {
+ 	printf("\t}\n");
+ 	return 0;
+ }
+ 
+-static int text_2nd_level(struct renderer *, const char *txt)
++static int text_2nd_level(struct renderer *r ATTRIBUTE_UNUSED, const char *txt)
+ {
+ 	printf("\t\t%s", txt);
+ 	return 0;
+ }
+ 
+-static int text_3rd_level(struct renderer *, const char *txt)
++static int text_3rd_level(struct renderer *r ATTRIBUTE_UNUSED, const char *txt)
+ {
+ 	printf("\t\t\t%s", txt);
+ 	return 0;
+@@ -266,7 +267,7 @@ static void json_block(struct renderer *r, int level, int last)
+ 	j->block[level] = last ? 0 : 1;
+ }
+ 
+-static int json_init(struct renderer *)
++static int json_init(struct renderer *r ATTRIBUTE_UNUSED)
+ {
+ 	printf("{\n  \"Verbs\": {");
+ 	return 0;
+@@ -325,13 +326,13 @@ static int json_2nd_level_end(struct renderer *r)
+ 	return 0;
+ }
+ 
+-static int json_2nd_level(struct renderer *, const char *txt)
++static int json_2nd_level(struct renderer *r ATTRIBUTE_UNUSED, const char *txt)
+ {
+ 	printf("          %s", txt);
+ 	return 0;
+ }
+ 
+-static int json_3rd_level(struct renderer *, const char *txt)
++static int json_3rd_level(struct renderer *r ATTRIBUTE_UNUSED, const char *txt)
+ {
+ 	printf("            %s", txt);
+ 	return 0;
+@@ -360,7 +361,8 @@ static int json_supcon_start(struct renderer *r, const char *key)
+ 	return 0;
+ }
+ 
+-static int json_supcon_value(struct renderer *r, const char *value, int)
++static int json_supcon_value(struct renderer *r, const char *value,
++			     int last ATTRIBUTE_UNUSED)
+ {
+ 	char buf[256];
+ 	JESC(value, buf);
+-- 
+2.39.2
+

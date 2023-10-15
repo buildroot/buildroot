@@ -1,0 +1,67 @@
+From 94eeb5a40f77e92624eb32d2e9c50b1cd9e4f837 Mon Sep 17 00:00:00 2001
+From: Jaroslav Kysela <perex@perex.cz>
+Date: Mon, 4 Sep 2023 16:49:03 +0200
+Subject: [PATCH] bat: use ATTRIBUTE_UNUSED instead remove argument name
+
+We need to support older compilers than GCC 11.
+
+Link: https://github.com/alsa-project/alsa-utils/issues/233
+Fixes: b366875 ("bat: fix the verbose compilation warnings for latest gcc")
+Signed-off-by: Jaroslav Kysela <perex@perex.cz>
+
+Upstream: https://github.com/alsa-project/alsa-utils/commit/94eeb5a40f77e92624eb32d2e9c50b1cd9e4f837
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ bat/bat.c    | 3 ++-
+ bat/common.c | 3 ++-
+ bat/common.h | 5 +++++
+ 3 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/bat/bat.c b/bat/bat.c
+index e88c65f..ea04ed9 100644
+--- a/bat/bat.c
++++ b/bat/bat.c
+@@ -158,7 +158,8 @@ static void get_format(struct bat *bat, char *optarg)
+ 	}
+ }
+ 
+-static inline int thread_wait_completion(struct bat *, pthread_t id, int **val)
++static inline int thread_wait_completion(struct bat *bat ATTRIBUTE_UNUSED,
++					 pthread_t id, int **val)
+ {
+ 	int err;
+ 
+diff --git a/bat/common.c b/bat/common.c
+index 9ff9405..470a7e6 100644
+--- a/bat/common.c
++++ b/bat/common.c
+@@ -47,7 +47,8 @@ static int update_fmt_to_bat(struct bat *bat, struct chunk_fmt *fmt)
+ }
+ 
+ /* calculate frames and update to bat */
+-static int update_frames_to_bat(struct bat *bat, struct wav_chunk_header *header, FILE *)
++static int update_frames_to_bat(struct bat *bat, struct wav_chunk_header *header,
++				FILE *file ATTRIBUTE_UNUSED)
+ {
+ 	/* The number of analyzed captured frames is arbitrarily set to half of
+ 	   the number of frames of the wav file or the number of frames of the
+diff --git a/bat/common.h b/bat/common.h
+index a9bae5d..bb51b0d 100644
+--- a/bat/common.h
++++ b/bat/common.h
+@@ -13,6 +13,11 @@
+  *
+  */
+ 
++#ifndef ATTRIBUTE_UNUSED
++/** do not print warning (gcc) when function parameter is not used */
++#define ATTRIBUTE_UNUSED __attribute__ ((__unused__))
++#endif
++
+ #define TEMP_RECORD_FILE_NAME		"/tmp/bat.wav.XXXXXX"
+ #define DEFAULT_DEV_NAME		"default"
+ 
+-- 
+2.39.2
+

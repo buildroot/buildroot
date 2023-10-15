@@ -1,0 +1,312 @@
+From dfe1c7143ab6ea01789e276b1ba361a00e545997 Mon Sep 17 00:00:00 2001
+From: Jaroslav Kysela <perex@perex.cz>
+Date: Mon, 4 Sep 2023 17:11:05 +0200
+Subject: [PATCH] topology: use ATTRIBUTE_UNUSED instead remove argument name
+
+We need to support older compilers than GCC 11.
+
+Link: https://github.com/alsa-project/alsa-utils/issues/233
+Fixes: 153d185 ("topology: fix the verbose compilation warnings for latest gcc")
+Signed-off-by: Jaroslav Kysela <perex@perex.cz>
+
+Upstream: https://github.com/alsa-project/alsa-utils/commit/dfe1c7143ab6ea01789e276b1ba361a00e545997
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ topology/nhlt/intel/dmic-nhlt.c       |  3 ++-
+ topology/nhlt/intel/dmic/dmic-debug.c |  7 ++++---
+ topology/nhlt/intel/ssp/ssp-debug.c   |  5 +++--
+ topology/nhlt/intel/ssp/ssp-process.c |  4 +++-
+ topology/nhlt/nhlt-processor.c        |  7 +++++--
+ topology/pre-process-class.c          | 10 +++++-----
+ topology/pre-process-object.c         | 21 +++++++++++----------
+ topology/pre-processor.c              | 10 ++++++----
+ 8 files changed, 39 insertions(+), 28 deletions(-)
+
+diff --git a/topology/nhlt/intel/dmic-nhlt.c b/topology/nhlt/intel/dmic-nhlt.c
+index 70a22e3..de659cf 100644
+--- a/topology/nhlt/intel/dmic-nhlt.c
++++ b/topology/nhlt/intel/dmic-nhlt.c
+@@ -10,6 +10,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <alsa/global.h>
+ #include <alsa/input.h>
+ #include <alsa/output.h>
+ #include <alsa/conf.h>
+@@ -155,7 +156,7 @@ static int set_vendor_mic_data(struct intel_nhlt_params *nhlt, snd_config_t *cfg
+ 				   horizontal_angle_end);
+ }
+ 
+-static int set_bytes_data(struct intel_nhlt_params *, snd_config_t *cfg)
++static int set_bytes_data(struct intel_nhlt_params *nhlt ATTRIBUTE_UNUSED, snd_config_t *cfg)
+ {
+ 	snd_config_iterator_t i, next;
+ 	snd_config_t *n;
+diff --git a/topology/nhlt/intel/dmic/dmic-debug.c b/topology/nhlt/intel/dmic/dmic-debug.c
+index f99d308..a977c93 100644
+--- a/topology/nhlt/intel/dmic/dmic-debug.c
++++ b/topology/nhlt/intel/dmic/dmic-debug.c
+@@ -8,6 +8,7 @@
+ #include "aconfig.h"
+ #include <stdio.h>
+ #include <stdint.h>
++#include <alsa/global.h>
+ #include "dmic-debug.h"
+ 
+ #ifdef NHLT_DEBUG
+@@ -181,7 +182,7 @@ void dmic_print_internal(struct intel_dmic_params *dmic)
+ }
+ 
+ #else /* NHLT_DEBUG */
+-void dmic_print_bytes_as_hex(uint8_t *, size_t) {}
+-void dmic_print_integers_as_hex(uint32_t *, size_t) {}
+-void dmic_print_internal(struct intel_dmic_params *) {}
++void dmic_print_bytes_as_hex(uint8_t *src ATTRIBUTE_UNUSED, size_t size ATTRIBUTE_UNUSED) {}
++void dmic_print_integers_as_hex(uint32_t *src ATTRIBUTE_UNUSED, size_t size ATTRIBUTE_UNUSED) {}
++void dmic_print_internal(struct intel_dmic_params *dmic ATTRIBUTE_UNUSED) {}
+ #endif
+diff --git a/topology/nhlt/intel/ssp/ssp-debug.c b/topology/nhlt/intel/ssp/ssp-debug.c
+index 8c64675..2d2f6b0 100644
+--- a/topology/nhlt/intel/ssp/ssp-debug.c
++++ b/topology/nhlt/intel/ssp/ssp-debug.c
+@@ -7,6 +7,7 @@
+ #include "aconfig.h"
+ #include <stdio.h>
+ #include <stdint.h>
++#include <alsa/global.h>
+ #include "ssp-debug.h"
+ #include "../intel-nhlt.h"
+ 
+@@ -252,6 +253,6 @@ void ssp_print_internal(struct intel_ssp_params *ssp)
+ }
+ 
+ #else /* NHLT_DEBUG */
+-void ssp_print_internal(struct intel_ssp_params *) {}
+-void ssp_print_calculated(struct intel_ssp_params *) {}
++void ssp_print_internal(struct intel_ssp_params *ssp ATTRIBUTE_UNUSED) {}
++void ssp_print_calculated(struct intel_ssp_params *ssp ATTRIBUTE_UNUSED) {}
+ #endif
+diff --git a/topology/nhlt/intel/ssp/ssp-process.c b/topology/nhlt/intel/ssp/ssp-process.c
+index 9cda5c3..17b88d2 100644
+--- a/topology/nhlt/intel/ssp/ssp-process.c
++++ b/topology/nhlt/intel/ssp/ssp-process.c
+@@ -14,6 +14,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdbool.h>
++#include <alsa/global.h>
+ #include <alsa/input.h>
+ #include <alsa/output.h>
+ #include <alsa/conf.h>
+@@ -952,7 +953,8 @@ int ssp_set_params(struct intel_nhlt_params *nhlt, const char *dir, int dai_inde
+ 	return 0;
+ }
+ 
+-int ssp_hw_set_params(struct intel_nhlt_params *nhlt, const char *format, const char *,
++int ssp_hw_set_params(struct intel_nhlt_params *nhlt, const char *format,
++		      const char *mclk ATTRIBUTE_UNUSED,
+ 		      const char *bclk, const char *bclk_invert, const char *fsync,
+ 		      const char *fsync_invert, int mclk_freq, int bclk_freq, int fsync_freq,
+ 		      int tdm_slots, int tdm_slot_width, int tx_slots, int rx_slots)
+diff --git a/topology/nhlt/nhlt-processor.c b/topology/nhlt/nhlt-processor.c
+index 567fa5c..ca539c3 100644
+--- a/topology/nhlt/nhlt-processor.c
++++ b/topology/nhlt/nhlt-processor.c
+@@ -11,6 +11,7 @@
+ #include <string.h>
+ #include <stdbool.h>
+ #include <inttypes.h>
++#include <alsa/global.h>
+ #include <alsa/input.h>
+ #include <alsa/output.h>
+ #include <alsa/conf.h>
+@@ -87,7 +88,8 @@ static void debug_print_nhlt(struct nhlt *blob, struct endpoint_descriptor **eps
+ 	fprintf(stdout, "\n");
+ }
+ #else
+-static void debug_print_nhlt(struct nhlt *, struct endpoint_descriptor **) {}
++static void debug_print_nhlt(struct nhlt *blob ATTRIBUTE_UNUSED,
++			     struct endpoint_descriptor **eps ATTRIBUTE_UNUSED) {}
+ #endif
+ 
+ static int print_as_hex_bytes(uint8_t *manifest_buffer, uint32_t manifest_size,
+@@ -313,7 +315,8 @@ static int nhlt_get_flat_buffer(struct nhlt *blob, struct endpoint_descriptor **
+ }
+ 
+ /* called at the end of topology pre-processing, create flat buffer from variable size nhlt */
+-static int nhlt_create(struct intel_nhlt_params *nhlt, snd_config_t *input, snd_config_t *,
++static int nhlt_create(struct intel_nhlt_params *nhlt, snd_config_t *input,
++		       snd_config_t *output ATTRIBUTE_UNUSED,
+ 		       uint8_t **nhlt_buffer, uint32_t *nhlt_size)
+ {
+ 	struct endpoint_descriptor *eps[MAX_ENDPOINT_COUNT];
+diff --git a/topology/pre-process-class.c b/topology/pre-process-class.c
+index d883d05..bedcebe 100644
+--- a/topology/pre-process-class.c
++++ b/topology/pre-process-class.c
+@@ -127,7 +127,7 @@ snd_config_t *tplg_class_lookup(struct tplg_pre_processor *tplg_pp, snd_config_t
+ }
+ 
+ /* find the attribute config by name in the class definition */
+-snd_config_t *tplg_class_find_attribute_by_name(struct tplg_pre_processor *,
++snd_config_t *tplg_class_find_attribute_by_name(struct tplg_pre_processor *tplg_p ATTRIBUTE_UNUSED,
+ 						snd_config_t *class, const char *name)
+ {
+ 	snd_config_t *attr = NULL;
+@@ -152,7 +152,7 @@ snd_config_t *tplg_class_find_attribute_by_name(struct tplg_pre_processor *,
+ }
+ 
+ /* get the name of the attribute that must have a unique value in the object instance */
+-const char *tplg_class_get_unique_attribute_name(struct tplg_pre_processor *,
++const char *tplg_class_get_unique_attribute_name(struct tplg_pre_processor *tplg_pp ATTRIBUTE_UNUSED,
+ 						 snd_config_t *class)
+ {
+ 	snd_config_t *unique;
+@@ -177,7 +177,7 @@ const char *tplg_class_get_unique_attribute_name(struct tplg_pre_processor *,
+ }
+ 
+ /* get attribute type from the definition */
+-snd_config_type_t tplg_class_get_attribute_type(struct tplg_pre_processor *,
++snd_config_type_t tplg_class_get_attribute_type(struct tplg_pre_processor *tplg_pp ATTRIBUTE_UNUSED,
+ 						snd_config_t *attr)
+ {
+ 	snd_config_t *type;
+@@ -208,7 +208,7 @@ snd_config_type_t tplg_class_get_attribute_type(struct tplg_pre_processor *,
+ }
+ 
+ /* get token_ref for attribute with name attr_name in the class */
+-const char *tplg_class_get_attribute_token_ref(struct tplg_pre_processor *,
++const char *tplg_class_get_attribute_token_ref(struct tplg_pre_processor *tplg_pp ATTRIBUTE_UNUSED,
+ 					       snd_config_t *class, const char *attr_name)
+ {
+ 	snd_config_t *attributes, *attr, *token_ref;
+@@ -235,7 +235,7 @@ const char *tplg_class_get_attribute_token_ref(struct tplg_pre_processor *,
+ }
+ 
+ /* convert a valid attribute string value to the corresponding tuple value */
+-long tplg_class_attribute_valid_tuple_value(struct tplg_pre_processor *,
++long tplg_class_attribute_valid_tuple_value(struct tplg_pre_processor *tplg_pp ATTRIBUTE_UNUSED,
+ 					    snd_config_t *class, snd_config_t *attr)
+ {
+ 
+diff --git a/topology/pre-process-object.c b/topology/pre-process-object.c
+index 48555e7..61cc85f 100644
+--- a/topology/pre-process-object.c
++++ b/topology/pre-process-object.c
+@@ -31,7 +31,8 @@
+ 
+ /* Parse VendorToken object, create the "SectionVendorToken" and save it */
+ int tplg_build_vendor_token_object(struct tplg_pre_processor *tplg_pp,
+-				   snd_config_t *obj_cfg, snd_config_t *)
++				   snd_config_t *obj_cfg,
++				   snd_config_t *parent ATTRIBUTE_UNUSED)
+ {
+ 	snd_config_iterator_t i, next;
+ 	snd_config_t *vtop, *n, *obj;
+@@ -196,7 +197,7 @@ int tplg_build_data_object(struct tplg_pre_processor *tplg_pp, snd_config_t *obj
+ 	return tplg_parent_update(tplg_pp, parent, "data", name);
+ }
+ 
+-static int tplg_create_config_template(struct tplg_pre_processor *,
++static int tplg_create_config_template(struct tplg_pre_processor *tplg_pp ATTRIBUTE_UNUSED,
+ 				       snd_config_t **template,
+ 				       const struct config_template_items *items)
+ {
+@@ -499,7 +500,7 @@ min_max_check:
+ }
+ 
+ /* get object's name attribute value */
+-const char *tplg_object_get_name(struct tplg_pre_processor *,
++const char *tplg_object_get_name(struct tplg_pre_processor *tplg_pp ATTRIBUTE_UNUSED,
+ 				 snd_config_t *object)
+ {
+ 	snd_config_t *cfg;
+@@ -518,7 +519,7 @@ const char *tplg_object_get_name(struct tplg_pre_processor *,
+ }
+ 
+ /* look up the instance of object in a config */
+-static snd_config_t *tplg_object_lookup_in_config(struct tplg_pre_processor *,
++static snd_config_t *tplg_object_lookup_in_config(struct tplg_pre_processor *tplg_pp ATTRIBUTE_UNUSED,
+ 						  snd_config_t *class, const char *type,
+ 						  const char *class_name, const char *id)
+ {
+@@ -977,7 +978,7 @@ template:
+ }
+ 
+ static int tplg_build_generic_object(struct tplg_pre_processor *tplg_pp, snd_config_t *obj_cfg,
+-				     snd_config_t *)
++				     snd_config_t *parent ATTRIBUTE_UNUSED)
+ {
+ 	snd_config_t *wtop;
+ 	const char *name;
+@@ -1090,7 +1091,7 @@ const struct build_function_map object_build_map[] = {
+ 	 NULL, &pcm_caps_config},
+ };
+ 
+-static const struct build_function_map *tplg_object_get_map(struct tplg_pre_processor *,
++static const struct build_function_map *tplg_object_get_map(struct tplg_pre_processor *tplg_pp ATTRIBUTE_UNUSED,
+ 							    snd_config_t *obj)
+ {
+ 	snd_config_iterator_t first;
+@@ -1145,7 +1146,7 @@ snd_config_t *tplg_object_get_section(struct tplg_pre_processor *tplg_pp, snd_co
+ }
+ 
+ /* return 1 if attribute not found in search_config, 0 on success and negative value on error */
+-static int tplg_object_copy_and_add_param(struct tplg_pre_processor *,
++static int tplg_object_copy_and_add_param(struct tplg_pre_processor *tplg_pp ATTRIBUTE_UNUSED,
+ 					  snd_config_t *obj,
+ 					  snd_config_t *attr_cfg,
+ 					  snd_config_t *search_config)
+@@ -1351,8 +1352,8 @@ static int tplg_object_pre_process_children(struct tplg_pre_processor *tplg_pp,
+ 	return 0;
+ }
+ 
+-static int tplg_construct_object_name(struct tplg_pre_processor *, snd_config_t *obj,
+-				      snd_config_t *class_cfg)
++static int tplg_construct_object_name(struct tplg_pre_processor *tplg_pp ATTRIBUTE_UNUSED,
++				      snd_config_t *obj, snd_config_t *class_cfg)
+ {
+ 	snd_config_iterator_t i, next;
+ 	snd_config_t *args, *n;
+@@ -1547,7 +1548,7 @@ static int tplg_object_set_unique_attribute(struct tplg_pre_processor *tplg_pp,
+  * Helper function to get object instance config which is 2 nodes down from class_type config.
+  * ex: Get the pointer to the config node with ID "0" from the input config Widget.pga.0 {}
+  */
+-snd_config_t *tplg_object_get_instance_config(struct tplg_pre_processor *,
++snd_config_t *tplg_object_get_instance_config(struct tplg_pre_processor *tplg_pp ATTRIBUTE_UNUSED,
+ 					snd_config_t *class_type)
+ {
+ 	snd_config_iterator_t first;
+diff --git a/topology/pre-processor.c b/topology/pre-processor.c
+index 3903dee..01f8a5d 100644
+--- a/topology/pre-processor.c
++++ b/topology/pre-processor.c
+@@ -231,8 +231,9 @@ void tplg_pp_config_debug(struct tplg_pre_processor *tplg_pp, snd_config_t *cfg)
+ 	snd_config_save(cfg, tplg_pp->dbg_output);
+ }
+ #else
+-void tplg_pp_debug(char *, ...) {}
+-void tplg_pp_config_debug(struct tplg_pre_processor *, snd_config_t *){}
++void tplg_pp_debug(char *fmt ATTRIBUTE_UNUSED, ...) {}
++void tplg_pp_config_debug(struct tplg_pre_processor *tplg_pp ATTRIBUTE_UNUSED,
++			  snd_config_t *cfg ATTRIBUTE_UNUSED) {}
+ #endif
+ 
+ static int pre_process_config(struct tplg_pre_processor *tplg_pp, snd_config_t *cfg)
+@@ -640,8 +641,9 @@ static int pre_process_includes_all(struct tplg_pre_processor *tplg_pp, snd_conf
+ }
+ 
+ /* duplicate the existing objects in src into dest and update with new attribute */
+-static int pre_process_add_objects(struct tplg_pre_processor *, int *object_count,
+-				   snd_config_t *src, snd_config_t *dest, snd_config_t *attr_cfg)
++static int pre_process_add_objects(struct tplg_pre_processor *tplg_pp ATTRIBUTE_UNUSED,
++				   int *object_count, snd_config_t *src,
++				   snd_config_t *dest, snd_config_t *attr_cfg)
+ {
+ 	snd_config_iterator_t i, next;
+ 	int ret;
+-- 
+2.39.2
+

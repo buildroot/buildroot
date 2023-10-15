@@ -1,0 +1,34 @@
+From 2db896afd475b0b3ad07e97ba74ec9680b4f7f6d Mon Sep 17 00:00:00 2001
+From: Jaroslav Kysela <perex@perex.cz>
+Date: Mon, 4 Sep 2023 16:37:24 +0200
+Subject: [PATCH] amidi: use ATTRIBUTE_UNUSED instead remove argument name
+
+We need to support older compilers than GCC 11.
+
+Link: https://github.com/alsa-project/alsa-utils/issues/233
+Fixes: 1843540 ("amidi: fix the verbose compilation warnings for latest gcc")
+Signed-off-by: Jaroslav Kysela <perex@perex.cz>
+
+Upstream: https://github.com/alsa-project/alsa-utils/commit/2db896afd475b0b3ad07e97ba74ec9680b4f7f6d
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ amidi/amidi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/amidi/amidi.c b/amidi/amidi.c
+index f930ca8..75fb8c0 100644
+--- a/amidi/amidi.c
++++ b/amidi/amidi.c
+@@ -446,7 +446,7 @@ static void print_byte(unsigned char byte, struct timespec *ts)
+ 	printf("%02X", byte);
+ }
+ 
+-static void sig_handler(int)
++static void sig_handler(int sig ATTRIBUTE_UNUSED)
+ {
+ 	stop = 1;
+ }
+-- 
+2.39.2
+

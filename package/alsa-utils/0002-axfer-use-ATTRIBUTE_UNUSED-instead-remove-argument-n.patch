@@ -1,0 +1,233 @@
+From a90faa2dd644af585d6a00f0aaf297c15ea0aa7b Mon Sep 17 00:00:00 2001
+From: Jaroslav Kysela <perex@perex.cz>
+Date: Mon, 4 Sep 2023 16:33:47 +0200
+Subject: [PATCH] axfer: use ATTRIBUTE_UNUSED instead remove argument name
+
+We need to support older compilers than GCC 11.
+
+Link: https://github.com/alsa-project/alsa-utils/issues/233
+Fixes: ad5a1c0 ("axfer: fix the verbose compilation warnings for latest gcc")
+Signed-off-by: Jaroslav Kysela <perex@perex.cz>
+
+Upstream: https://github.com/alsa-project/alsa-utils/commit/a90faa2dd644af585d6a00f0aaf297c15ea0aa7b
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ axfer/container-raw.c         | 14 +++++++-------
+ axfer/mapper-single.c         |  6 +++---
+ axfer/subcmd-list.c           |  2 +-
+ axfer/subcmd-transfer.c       |  4 ++--
+ axfer/waiter-poll.c           |  4 ++--
+ axfer/waiter-select.c         |  4 ++--
+ axfer/waiter.h                |  1 +
+ axfer/xfer-libasound-irq-rw.c |  2 +-
+ axfer/xfer-libasound.c        |  4 ++--
+ axfer/xfer-options.c          |  3 ++-
+ 10 files changed, 23 insertions(+), 21 deletions(-)
+
+diff --git a/axfer/container-raw.c b/axfer/container-raw.c
+index 071f94c..1886045 100644
+--- a/axfer/container-raw.c
++++ b/axfer/container-raw.c
+@@ -13,10 +13,10 @@
+ #include <sys/stat.h>
+ #include <unistd.h>
+ 
+-static int raw_builder_pre_process(struct container_context *,
+-				   snd_pcm_format_t *,
+-				   unsigned int *,
+-				   unsigned int *,
++static int raw_builder_pre_process(struct container_context *cntr ATTRIBUTE_UNUSED,
++				   snd_pcm_format_t *format ATTRIBUTE_UNUSED,
++				   unsigned int *samples_per_frame ATTRIBUTE_UNUSED,
++				   unsigned int *frames_per_second ATTRIBUTE_UNUSED,
+ 				   uint64_t *byte_count)
+ {
+ 	*byte_count = UINT64_MAX;
+@@ -25,9 +25,9 @@ static int raw_builder_pre_process(struct container_context *,
+ }
+ 
+ static int raw_parser_pre_process(struct container_context *cntr,
+-				  snd_pcm_format_t *,
+-				  unsigned int *,
+-				  unsigned int *,
++				  snd_pcm_format_t *format ATTRIBUTE_UNUSED,
++				  unsigned int *samples_per_frame ATTRIBUTE_UNUSED,
++				  unsigned int *frames_per_second ATTRIBUTE_UNUSED,
+ 				  uint64_t *byte_count)
+ {
+ 	struct stat buf = {0};
+diff --git a/axfer/mapper-single.c b/axfer/mapper-single.c
+index 13e7fc5..f669f7f 100644
+--- a/axfer/mapper-single.c
++++ b/axfer/mapper-single.c
+@@ -62,7 +62,7 @@ static void align_from_vector(void *frame_buf, unsigned int frame_count,
+ 
+ static int single_pre_process(struct mapper_context *mapper,
+ 			      struct container_context *cntrs,
+-			      unsigned int)
++			      unsigned int cntr_count ATTRIBUTE_UNUSED)
+ {
+ 	struct single_state *state = mapper->private_data;
+ 	unsigned int bytes_per_buffer;
+@@ -110,7 +110,7 @@ static int single_muxer_process_frames(struct mapper_context *mapper,
+ 				       void *frame_buf,
+ 				       unsigned int *frame_count,
+ 				       struct container_context *cntrs,
+-				       unsigned int)
++				       unsigned int cntr_count ATTRIBUTE_UNUSED)
+ {
+ 	struct single_state *state = mapper->private_data;
+ 	void *src;
+@@ -141,7 +141,7 @@ static int single_demuxer_process_frames(struct mapper_context *mapper,
+ 					 void *frame_buf,
+ 					 unsigned int *frame_count,
+ 					 struct container_context *cntrs,
+-					 unsigned int)
++					 unsigned int cntr_count ATTRIBUTE_UNUSED)
+ {
+ 	struct single_state *state = mapper->private_data;
+ 	void *dst;
+diff --git a/axfer/subcmd-list.c b/axfer/subcmd-list.c
+index f9c8e0f..187e1d7 100644
+--- a/axfer/subcmd-list.c
++++ b/axfer/subcmd-list.c
+@@ -19,7 +19,7 @@ enum list_op {
+ };
+ 
+ static int dump_device(snd_ctl_t *handle, const char *id, const char *name,
+-		       snd_pcm_stream_t, snd_pcm_info_t *info)
++		       snd_pcm_stream_t stream ATTRIBUTE_UNUSED, snd_pcm_info_t *info)
+ {
+ 	unsigned int i, count;
+ 	int err;
+diff --git a/axfer/subcmd-transfer.c b/axfer/subcmd-transfer.c
+index b39fde8..8d63043 100644
+--- a/axfer/subcmd-transfer.c
++++ b/axfer/subcmd-transfer.c
+@@ -40,7 +40,7 @@ static void handle_unix_signal_for_finish(int sig)
+ 	ctx_ptr->interrupted = true;
+ }
+ 
+-static void handle_unix_signal_for_suspend(int)
++static void handle_unix_signal_for_suspend(int sig ATTRIBUTE_UNUSED)
+ {
+ 	sigset_t curr, prev;
+ 	struct sigaction sa = {0};
+@@ -439,7 +439,7 @@ static int context_process_frames(struct context *ctx,
+ }
+ 
+ static void context_post_process(struct context *ctx,
+-				 uint64_t)
++				 uint64_t accumulated_frame_count ATTRIBUTE_UNUSED)
+ {
+ 	uint64_t total_frame_count;
+ 	unsigned int i;
+diff --git a/axfer/waiter-poll.c b/axfer/waiter-poll.c
+index 31fab88..b81300c 100644
+--- a/axfer/waiter-poll.c
++++ b/axfer/waiter-poll.c
+@@ -13,7 +13,7 @@
+ #include <errno.h>
+ #include <poll.h>
+ 
+-static int poll_prepare(struct waiter_context *)
++static int poll_prepare(struct waiter_context *waiter ATTRIBUTE_UNUSED)
+ {
+ 	// Nothing to do because an instance of waiter has required data.
+ 	return 0;
+@@ -30,7 +30,7 @@ static int poll_wait_event(struct waiter_context *waiter, int timeout_msec)
+ 	return err;
+ }
+ 
+-static void poll_release(struct waiter_context *)
++static void poll_release(struct waiter_context *waiter ATTRIBUTE_UNUSED)
+ {
+ 	// Nothing to do because an instance of waiter has required data.
+ 	return;
+diff --git a/axfer/waiter-select.c b/axfer/waiter-select.c
+index 164c9c8..fe19776 100644
+--- a/axfer/waiter-select.c
++++ b/axfer/waiter-select.c
+@@ -34,7 +34,7 @@ struct select_state {
+ 	fd_set rfds_ex;
+ };
+ 
+-static int select_prepare(struct waiter_context *)
++static int select_prepare(struct waiter_context *waiter ATTRIBUTE_UNUSED)
+ {
+ 	return 0;
+ }
+@@ -94,7 +94,7 @@ static int select_wait_event(struct waiter_context *waiter, int timeout_msec)
+ 	return err;
+ }
+ 
+-static void select_release(struct waiter_context *)
++static void select_release(struct waiter_context *waiter ATTRIBUTE_UNUSED)
+ {
+ 	return;
+ }
+diff --git a/axfer/waiter.h b/axfer/waiter.h
+index db18e33..0f4e9b9 100644
+--- a/axfer/waiter.h
++++ b/axfer/waiter.h
+@@ -9,6 +9,7 @@
+ #ifndef __ALSA_UTILS_AXFER_WAITER__H_
+ #define __ALSA_UTILS_AXFER_WAITER__H_
+ 
++#include <alsa/global.h>
+ #include <poll.h>
+ 
+ enum waiter_type {
+diff --git a/axfer/xfer-libasound-irq-rw.c b/axfer/xfer-libasound-irq-rw.c
+index b7f0645..45fb6d5 100644
+--- a/axfer/xfer-libasound-irq-rw.c
++++ b/axfer/xfer-libasound-irq-rw.c
+@@ -313,7 +313,7 @@ error:
+ }
+ 
+ static int w_process_frames_nonblocking(struct libasound_state *state,
+-					snd_pcm_state_t,
++					snd_pcm_state_t pcm_state ATTRIBUTE_UNUSED,
+ 					unsigned int *frame_count,
+ 					struct mapper_context *mapper,
+ 					struct container_context *cntrs)
+diff --git a/axfer/xfer-libasound.c b/axfer/xfer-libasound.c
+index 9713533..36ee08d 100644
+--- a/axfer/xfer-libasound.c
++++ b/axfer/xfer-libasound.c
+@@ -60,7 +60,7 @@ static const struct option l_opts[] = {
+ };
+ 
+ static int xfer_libasound_init(struct xfer_context *xfer,
+-			       snd_pcm_stream_t)
++			       snd_pcm_stream_t stream ATTRIBUTE_UNUSED)
+ {
+ 	struct libasound_state *state = xfer->private_data;
+ 	int err;
+@@ -887,7 +887,7 @@ static void xfer_libasound_destroy(struct xfer_context *xfer)
+ 	state->log = NULL;
+ }
+ 
+-static void xfer_libasound_help(struct xfer_context *)
++static void xfer_libasound_help(struct xfer_context *xfer ATTRIBUTE_UNUSED)
+ {
+ 	printf(
+ "      [BASICS]\n"
+diff --git a/axfer/xfer-options.c b/axfer/xfer-options.c
+index 974570c..e716ded 100644
+--- a/axfer/xfer-options.c
++++ b/axfer/xfer-options.c
+@@ -447,7 +447,8 @@ static int generate_path_with_suffix(struct xfer_context *xfer,
+ 
+ static int generate_path_without_suffix(struct xfer_context *xfer,
+ 				        const char *template,
+-					unsigned int index, const char *)
++					unsigned int index,
++					const char *suffix ATTRIBUTE_UNUSED)
+ {
+ 	static const char *const single_format = "%s";
+ 	static const char *const multiple_format = "%s-%i";
+-- 
+2.39.2
+

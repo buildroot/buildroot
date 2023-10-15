@@ -1,0 +1,57 @@
+From 7552aef6e08b5b1fd8c1704e21cb9f6f15017bfa Mon Sep 17 00:00:00 2001
+From: Jaroslav Kysela <perex@perex.cz>
+Date: Mon, 4 Sep 2023 16:45:09 +0200
+Subject: [PATCH] alsaloop: use ATTRIBUTE_UNUSED instead remove argument name
+
+We need to support older compilers than GCC 11.
+
+Link: https://github.com/alsa-project/alsa-utils/issues/233
+Fixes: d609a58 ("alsaloop: fix the verbose compilation warnings for latest gcc")
+Signed-off-by: Jaroslav Kysela <perex@perex.cz>
+
+Upstream: https://github.com/alsa-project/alsa-utils/commit/7552aef6e08b5b1fd8c1704e21cb9f6f15017bfa
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ alsaloop/alsaloop.c | 2 +-
+ alsaloop/pcmjob.c   | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/alsaloop/alsaloop.c b/alsaloop/alsaloop.c
+index b10733e..51fb646 100644
+--- a/alsaloop/alsaloop.c
++++ b/alsaloop/alsaloop.c
+@@ -821,7 +821,7 @@ static void send_to_all(int sig)
+ 	}
+ }
+ 
+-static void signal_handler(int)
++static void signal_handler(int sig ATTRIBUTE_UNUSED)
+ {
+ 	quit = 1;
+ 	send_to_all(SIGUSR2);
+diff --git a/alsaloop/pcmjob.c b/alsaloop/pcmjob.c
+index be71971..ffb439b 100644
+--- a/alsaloop/pcmjob.c
++++ b/alsaloop/pcmjob.c
+@@ -625,7 +625,7 @@ static void buf_add_src(struct loopback *loop)
+ 	}
+ }
+ #else
+-static void buf_add_src(struct loopback *)
++static void buf_add_src(struct loopback *loop ATTRIBUTE_UNUSED)
+ {
+ }
+ #endif
+@@ -1794,7 +1794,7 @@ static int ctl_event_check(snd_ctl_elem_value_t *val, snd_ctl_event_t *ev)
+ }
+ 
+ static int handle_ctl_events(struct loopback_handle *lhandle,
+-			     unsigned short)
++			     unsigned short events ATTRIBUTE_UNUSED)
+ {
+ 	struct loopback *loop = lhandle->loopback;
+ 	snd_ctl_event_t *ev;
+-- 
+2.39.2
+

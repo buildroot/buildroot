@@ -1,0 +1,93 @@
+From 66112d60e4ce68720022eaf26080c0f1a2caf81f Mon Sep 17 00:00:00 2001
+From: Jaroslav Kysela <perex@perex.cz>
+Date: Mon, 4 Sep 2023 16:52:46 +0200
+Subject: [PATCH] seq: use ATTRIBUTE_UNUSED instead remove argument name
+
+We need to support older compilers than GCC 11.
+
+Link: https://github.com/alsa-project/alsa-utils/issues/233
+Fixes: 181e190 ("aplaymidi: fix the verbose compilation warnings for latest gcc")
+Fixes: a03377a ("aseqnet: fix the verbose compilation warnings for latest gcc")
+Fixes: 429c32a ("aseqdump: fix the verbose compilation warnings for latest gcc")
+Fixes: 0b48dd6 ("aconnect: fix the verbose compilation warnings for latest gcc")
+Signed-off-by: Jaroslav Kysela <perex@perex.cz>
+
+Upstream: https://github.com/alsa-project/alsa-utils/commit/66112d60e4ce68720022eaf26080c0f1a2caf81f
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ seq/aconnect/aconnect.c     | 9 ++++++---
+ seq/aplaymidi/arecordmidi.c | 2 +-
+ seq/aseqdump/aseqdump.c     | 2 +-
+ seq/aseqnet/aseqnet.c       | 2 +-
+ 4 files changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/seq/aconnect/aconnect.c b/seq/aconnect/aconnect.c
+index 3a10de9..7096feb 100644
+--- a/seq/aconnect/aconnect.c
++++ b/seq/aconnect/aconnect.c
+@@ -193,7 +193,8 @@ static void do_search_port(snd_seq_t *seq, int perm, action_func_t do_action)
+ }
+ 
+ 
+-static void print_port(snd_seq_t *, snd_seq_client_info_t *cinfo,
++static void print_port(snd_seq_t *seq ATTRIBUTE_UNUSED,
++		       snd_seq_client_info_t *cinfo,
+ 		       snd_seq_port_info_t *pinfo, int count)
+ {
+ 	if (! count) {
+@@ -247,8 +248,10 @@ static void print_port_and_subs(snd_seq_t *seq, snd_seq_client_info_t *cinfo,
+ /*
+  * remove all (exported) connections
+  */
+-static void remove_connection(snd_seq_t *seq, snd_seq_client_info_t *,
+-			      snd_seq_port_info_t *pinfo, int)
++static void remove_connection(snd_seq_t *seq,
++			      snd_seq_client_info_t *info ATTRIBUTE_UNUSED,
++			      snd_seq_port_info_t *pinfo,
++			      int count ATTRIBUTE_UNUSED)
+ {
+ 	snd_seq_query_subscribe_t *query;
+ 	snd_seq_port_info_t *port;
+diff --git a/seq/aplaymidi/arecordmidi.c b/seq/aplaymidi/arecordmidi.c
+index ce71472..a4c1181 100644
+--- a/seq/aplaymidi/arecordmidi.c
++++ b/seq/aplaymidi/arecordmidi.c
+@@ -719,7 +719,7 @@ static void version(void)
+ 	fputs("arecordmidi version " SND_UTIL_VERSION_STR "\n", stderr);
+ }
+ 
+-static void sighandler(int)
++static void sighandler(int sig ATTRIBUTE_UNUSED)
+ {
+ 	stop = 1;
+ }
+diff --git a/seq/aseqdump/aseqdump.c b/seq/aseqdump/aseqdump.c
+index 8455ecb..af4ca21 100644
+--- a/seq/aseqdump/aseqdump.c
++++ b/seq/aseqdump/aseqdump.c
+@@ -676,7 +676,7 @@ static void version(void)
+ 	puts("aseqdump version " SND_UTIL_VERSION_STR);
+ }
+ 
+-static void sighandler(int)
++static void sighandler(int sig ATTRIBUTE_UNUSED)
+ {
+ 	stop = 1;
+ }
+diff --git a/seq/aseqnet/aseqnet.c b/seq/aseqnet/aseqnet.c
+index f40de7d..aa70b50 100644
+--- a/seq/aseqnet/aseqnet.c
++++ b/seq/aseqnet/aseqnet.c
+@@ -334,7 +334,7 @@ static void get_net_addr(struct addrinfo *rp, char *buf, size_t buflen)
+ /*
+  * signal handler
+  */
+-static void sigterm_exit(int)
++static void sigterm_exit(int sig ATTRIBUTE_UNUSED)
+ {
+ 	close_files();
+ 	exit(1);
+-- 
+2.39.2
+
