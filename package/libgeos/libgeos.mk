@@ -19,10 +19,6 @@ ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_68485),y)
 LIBGEOS_CXXFLAGS += -O0
 endif
 
-ifeq ($(BR2_arm)$(BR2_armeb),y)
-LIBGEOS_CONF_OPTS += -DDISABLE_GEOS_INLINE=ON
-endif
-
 ifeq ($(BR2_or1k),y)
 LIBGEOS_CXXFLAGS += -mcmodel=large
 endif
