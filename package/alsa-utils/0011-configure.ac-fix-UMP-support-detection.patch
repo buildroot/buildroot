@@ -1,0 +1,38 @@
+From 8a0da6d4484cd2ca4f1939a6c44941e070db2147 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Fri, 13 Oct 2023 20:32:32 +0200
+Subject: [PATCH] configure.ac: fix UMP support detection
+
+https://github.com/alsa-project/alsa-utils/commit/b399fb85a919636b7da34e8bcf17f484dd9046f7
+added usage of alsa/ump_msg.h without checking whether alsa-lib was
+compiled with rawmidi support:
+https://github.com/alsa-project/alsa-lib/blob/master/include/Makefile.am#L37
+
+Fixes a build error when alsa-lib was compiled with --disable-rawmidi
+
+aplaymidi.c:34:10: fatal error: alsa/ump_msg.h: No such file or directory
+   34 | #include <alsa/ump_msg.h>
+
+Upstream: https://github.com/alsa-project/alsa-utils/pull/240
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index beb4963..4217741 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -55,7 +55,7 @@ if test "$HAVE_SEQ_CLIENT_INFO_GET_PID" = "yes" ; then
+     AC_DEFINE([HAVE_SEQ_CLIENT_INFO_GET_PID], 1, [alsa-lib supports snd_seq_client_info_get_pid])
+ fi
+ AC_CHECK_LIB([asound], [snd_seq_client_info_get_midi_version], [HAVE_SEQ_CLIENT_INFO_GET_MIDI_VERSION="yes"])
+-if test "$HAVE_SEQ_CLIENT_INFO_GET_MIDI_VERSION" = "yes" ; then
++if test "$HAVE_SEQ_CLIENT_INFO_GET_MIDI_VERSION" = "yes" -a "$have_rawmidi" = "yes"; then
+     AC_DEFINE([HAVE_SEQ_CLIENT_INFO_GET_MIDI_VERSION], 1, [alsa-lib supports snd_seq_client_info_get_midi_version])
+ fi
+ AC_CHECK_LIB([atopology], [snd_tplg_save], [have_topology="yes"], [have_topology="no"])
+-- 
+2.39.2
+
