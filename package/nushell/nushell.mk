@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NUSHELL_VERSION = 0.76.0
+NUSHELL_VERSION = 0.85.0
 NUSHELL_SITE = $(call github,nushell,nushell,$(NUSHELL_VERSION))
 NUSHELL_LICENSE = MIT
 NUSHELL_LICENSE_FILES = LICENSE
