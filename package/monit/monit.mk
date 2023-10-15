@@ -26,8 +26,9 @@ MONIT_CONF_OPTS += \
 	--with-largefiles
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
+MONIT_CONF_ENV += LIBS=`$(PKG_CONFIG_HOST_BINARY) --libs openssl`
 MONIT_CONF_OPTS += --with-ssl --with-ssl-dir=$(STAGING_DIR)/usr
-MONIT_DEPENDENCIES += openssl
+MONIT_DEPENDENCIES += host-pkgconf openssl
 else
 MONIT_CONF_OPTS += --without-ssl
 endif
