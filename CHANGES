@@ -1,3 +1,39 @@
+2023.02.6, released October 16th, 2023
+
+	Important / security related fixes.
+
+	Per-package builds: Do not use hard links for host / target
+	dirs, fixing issues with package rebuilds or post-build
+	scripts modifications.
+
+	Infrastructure: Explicitly disable shuffle mode for Make >=
+	4.4 where needed.
+
+	Urandom-scripts: Move seedrng init script to S01 for earlier
+	random number entrophy initialization.
+
+	Go: Bump to 1.20.x as 1.19.x is now EOL and affected by
+	security issues.
+
+	Updated/fixed packages: at91bootstrap, bind, cups, efl,
+	enlightenment, exim, gcc, glibc, gnu-efi, go, go-bootstrap,
+	gptfdisk, gst-omx, gst1-devtools, gst1-libav,
+	gst1-plugins-bad, gst1-plugins-base, gst1-plugins-good,
+	gst1-plugins-ugly, gst1-python, gst1-rstp-server,
+	gst1-rtsp-vaapi, gstreamer1, gstreamer1-editing-services,
+	libcue, libcurl, libfastjson, libhtp, libmodplug, librsvg,
+	libvpx, libyang, linux-tools, mbedtls, mosquitto, mutt, neon,
+	netsnmp, nmap, nodejs, olsr, openblas, opkg-utils, php,
+	powertop, python-mako, python3, rockchip-mali, samba4, sslh,
+	suricata, tar, unifdef, unrandom-scripts, webkitgtk,
+	wireless-regdb, wpewebkit
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#15628: Missing dependencies in BR2_PACKAGE_PYTHON_MAKO
+	#15808: connman is not supported on musl
+	#15814: C++ not supported by bootlin toolchain
+
 2023.02.5, released September 27th, 2023
 
 	Important / security related fixes.
