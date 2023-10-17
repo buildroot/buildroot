@@ -214,10 +214,19 @@ ifeq ($(BR2_PER_PACKAGE_DIRECTORIES),y)
 # $1: space-separated list of packages to rsync from
 # $2: 'host' or 'target'
 # $3: destination directory
+# $4: literal "copy" or "hardlink" to copy or hardlink files from src to dest
 define per-package-rsync
 	mkdir -p $(3)
 	$(foreach pkg,$(1),\
-		rsync -a --link-dest=$(PER_PACKAGE_DIR)/$(pkg)/$(2)/ \
+		rsync -a \
+			--hard-links \
+			$(if $(filter hardlink,$(4)), \
+				--link-dest=$(PER_PACKAGE_DIR)/$(pkg)/$(2)/, \
+				$(if $(filter copy,$(4)), \
+					$(empty), \
+					$(error per-package-rsync can only "copy" or "hardlink", not "$(4)") \
+				) \
+			) \
 			$(PER_PACKAGE_DIR)/$(pkg)/$(2)/ \
 			$(3)$(sep))
 endef
@@ -230,8 +239,8 @@ endef
 #
 # $1: space-separated list of packages to rsync from
 define prepare-per-package-directory
-	$(call per-package-rsync,$(1),host,$(HOST_DIR))
-	$(call per-package-rsync,$(1),target,$(TARGET_DIR))
+	$(call per-package-rsync,$(1),host,$(HOST_DIR),hardlink)
+	$(call per-package-rsync,$(1),target,$(TARGET_DIR),hardlink)
 endef
 
 # Ensure files like .la, .pc, .pri, .cmake, and so on, point to the
