@@ -14,7 +14,6 @@ OPENRC_DEPENDENCIES = ncurses
 
 OPENRC_CONF_OPTS = \
 	-Dos=Linux \
-	-Dpam=false \
 	-Dlibrcdir=/usr/libexec/rc \
 	-Dpkgconfig=false \
 	-Dsysvinit=true \
@@ -26,6 +25,13 @@ OPENRC_CONF_OPTS += -Dselinux=enabled
 OPENRC_DEPENDENCIES += libselinux
 else
 OPENRC_CONF_OPTS += -Dselinux=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_LINUX_PAM),y)
+OPENRC_CONF_OPTS += -Dpam=true
+OPENRC_DEPENDENCIES += linux-pam
+else
+OPENRC_CONF_OPTS += -Dpam=false
 endif
 
 define OPENRC_INSTALL_SYSV_RCS_SCRIPT
