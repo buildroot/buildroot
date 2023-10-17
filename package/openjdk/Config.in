@@ -57,19 +57,17 @@ if BR2_PACKAGE_OPENJDK
 
 choice
 	prompt "openjdk version"
-	default BR2_PACKAGE_OPENJDK_VERSION_11 if BR2_OPENJDK_VERSION_LTS # legacy
-	default BR2_PACKAGE_OPENJDK_VERSION_17 if BR2_OPENJDK_VERSION_LATEST # legacy
-	default BR2_PACKAGE_OPENJDK_VERSION_17
+	default BR2_PACKAGE_OPENJDK_VERSION_17 if BR2_OPENJDK_VERSION_LTS # legacy
+	default BR2_PACKAGE_OPENJDK_VERSION_21 if BR2_OPENJDK_VERSION_LATEST # legacy
+	default BR2_PACKAGE_OPENJDK_VERSION_21
 	help
 	  Select the version of OpenJDK you wish to use.
 
-config BR2_PACKAGE_OPENJDK_VERSION_11
-	bool "OpenJDK 11"
-	# The ARC-specific OpenJDK patch only applies to OpenJDK 17.
-	depends on !BR2_arc
-
 config BR2_PACKAGE_OPENJDK_VERSION_17
 	bool "OpenJDK 17"
+
+config BR2_PACKAGE_OPENJDK_VERSION_21
+	bool "OpenJDK 21"
 
 endchoice
 

@@ -33,7 +33,7 @@ public class JniTest
 	public static void main(String[] args)
 	{
 		var actualVersion = JniWrapper.get_jni_version();
-		var expectedVersion = 0x000A0000;
+		var expectedVersion = 0x00150000;
 		JniTest.Test(
 			"Get JNI Version",
 			actualVersion,
