@@ -1,0 +1,60 @@
+From 154cf0312b3652bdfdf241e6883d7c6de9b85e01 Mon Sep 17 00:00:00 2001
+From: "Maya Dagon (mdagon)" <mdagon@cisco.com>
+Date: Mon, 24 Jul 2023 08:06:50 +0000
+Subject: [PATCH] Pull request #3925: build: fix cstdint related clearlinux
+ errors
+
+Merge in SNORT/snort3 from ~MDAGON/snort3:clearlinux to master
+
+Squashed commit of the following:
+
+commit 7ef2bc13851ffa2bf7908964242859a8c05ddd96
+Author: maya dagon <mdagon@cisco.com>
+Date:   Thu Jul 20 14:34:01 2023 -0400
+
+    build: fix cstdint related clearlinux errors
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/snort3/snort3/commit/154cf0312b3652bdfdf241e6883d7c6de9b85e01
+---
+ src/js_norm/js_identifier_ctx.h       | 1 +
+ src/packet_io/sfdaq_config.h          | 1 +
+ src/service_inspectors/wizard/magic.h | 1 +
+ 3 files changed, 3 insertions(+)
+
+diff --git a/src/utils/js_identifier_ctx.h b/src/utils/js_identifier_ctx.h
+index b8d5121a2c..6ef1ce2b23 100644
+--- a/src/utils/js_identifier_ctx.h
++++ b/src/utils/js_identifier_ctx.h
+@@ -20,6 +20,7 @@
+ #ifndef JS_IDENTIFIER_CTX
+ #define JS_IDENTIFIER_CTX
+ 
++#include <cstdint>
+ #include <list>
+ #include <string>
+ #include <unordered_map>
+diff --git a/src/packet_io/sfdaq_config.h b/src/packet_io/sfdaq_config.h
+index 990c45785b..f4c1042bc3 100644
+--- a/src/packet_io/sfdaq_config.h
++++ b/src/packet_io/sfdaq_config.h
+@@ -21,6 +21,7 @@
+ #ifndef SFDAQ_CONFIG_H
+ #define SFDAQ_CONFIG_H
+ 
++#include <cstdint>
+ #include <string>
+ #include <vector>
+ 
+diff --git a/src/service_inspectors/wizard/magic.h b/src/service_inspectors/wizard/magic.h
+index fa24d0b5a4..b9477eb95c 100644
+--- a/src/service_inspectors/wizard/magic.h
++++ b/src/service_inspectors/wizard/magic.h
+@@ -21,6 +21,7 @@
+ #define MAGIC_H
+ 
+ #include <cassert>
++#include <cstdint>
+ #include <string>
+ #include <vector>
+ 
