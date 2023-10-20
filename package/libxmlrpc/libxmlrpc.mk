@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-# 1.58.02 (code/advanced@r3119)
-LIBXMLRPC_VERSION = r3119
+# 1.60.01 (code/advanced@r3176)
+LIBXMLRPC_VERSION = r3176
 LIBXMLRPC_SITE = https://svn.code.sf.net/p/xmlrpc-c/code/advanced
 LIBXMLRPC_SITE_METHOD = svn
 LIBXMLRPC_LICENSE = BSD-3-Clause (xml-rpc main code and abyss web server), BSD like (lib/expat), Python 1.5.2 license (parts of xmlrpc_base64.c)
