@@ -201,7 +201,6 @@ config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_RADEONSI
 	depends on BR2_USE_MMU # libdrm
 	depends on BR2_i386 || BR2_x86_64
 	depends on BR2_PACKAGE_MESA3D_LLVM
-	depends on BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_GLIBC # elfutils
 	select BR2_PACKAGE_MESA3D_GALLIUM_DRIVER
 	select BR2_PACKAGE_LIBDRM_AMDGPU
 	select BR2_PACKAGE_LIBDRM_RADEON
@@ -210,13 +209,6 @@ config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_RADEONSI
 	select BR2_PACKAGE_MESA3D_NEEDS_ELFUTILS
 	help
 	  Driver for ATI/AMD Radeon HD7000/HD8000/Rx200 GPUs.
-
-# Radeon SI needs libelf
-# musl is not currently compatible with elfutils
-comment "Radeon SI driver needs a uClibc or glibc toolchain"
-	depends on BR2_USE_MMU
-	depends on BR2_PACKAGE_MESA3D_LLVM
-	depends on !(BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_GLIBC)
 
 config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_SVGA
 	bool "Gallium vmware svga driver"
