@@ -10,7 +10,6 @@ OPKG_DEPENDENCIES = host-pkgconf libarchive
 OPKG_LICENSE = GPL-2.0+
 OPKG_LICENSE_FILES = COPYING
 OPKG_INSTALL_STAGING = YES
-OPKG_CONF_OPTS = --disable-curl
 
 ifeq ($(BR2_PACKAGE_OPKG_GPG_SIGN),y)
 OPKG_CONF_OPTS += --enable-gpg
@@ -20,6 +19,18 @@ OPKG_CONF_ENV += \
 OPKG_DEPENDENCIES += libgpgme libgpg-error
 else
 OPKG_CONF_OPTS += --disable-gpg
+endif
+
+ifeq ($(BR2_PACKAGE_LIBCURL),y)
+OPKG_DEPENDENCIES += libcurl
+OPKG_CONF_OPTS += --enable-curl
+ifeq ($(BR2_PACKAGE_OPENSSL),y)
+OPKG_CONF_OPTS += --enable-ssl-curl
+else
+OPKG_CONF_OPTS += --disable-ssl-curl
+endif
+else
+OPKG_CONF_OPTS += --disable-curl --disable-ssl-curl
 endif
 
 ifeq ($(BR2_PACKAGE_BZIP2),y)
