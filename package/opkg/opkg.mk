@@ -12,11 +12,6 @@ OPKG_LICENSE_FILES = COPYING
 OPKG_INSTALL_STAGING = YES
 OPKG_CONF_OPTS = --disable-curl --disable-zstd
 
-# Ensure directory for lockfile exists
-define OPKG_CREATE_LOCKDIR
-	mkdir -p $(TARGET_DIR)/usr/lib/opkg
-endef
-
 ifeq ($(BR2_PACKAGE_OPKG_GPG_SIGN),y)
 OPKG_CONF_OPTS += --enable-gpg
 OPKG_CONF_ENV += \
@@ -27,6 +22,10 @@ else
 OPKG_CONF_OPTS += --disable-gpg
 endif
 
+# Ensure directory for lockfile exists
+define OPKG_CREATE_LOCKDIR
+	mkdir -p $(TARGET_DIR)/usr/lib/opkg
+endef
 OPKG_POST_INSTALL_TARGET_HOOKS += OPKG_CREATE_LOCKDIR
 
 $(eval $(autotools-package))
