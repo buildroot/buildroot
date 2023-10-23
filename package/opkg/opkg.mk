@@ -10,7 +10,7 @@ OPKG_DEPENDENCIES = host-pkgconf libarchive
 OPKG_LICENSE = GPL-2.0+
 OPKG_LICENSE_FILES = COPYING
 OPKG_INSTALL_STAGING = YES
-OPKG_CONF_OPTS = --disable-curl --disable-zstd
+OPKG_CONF_OPTS = --disable-curl
 
 ifeq ($(BR2_PACKAGE_OPKG_GPG_SIGN),y)
 OPKG_CONF_OPTS += --enable-gpg
@@ -20,6 +20,13 @@ OPKG_CONF_ENV += \
 OPKG_DEPENDENCIES += libgpgme libgpg-error
 else
 OPKG_CONF_OPTS += --disable-gpg
+endif
+
+ifeq ($(BR2_PACKAGE_ZSTD),y)
+OPKG_DEPENDENCIES += zstd
+OPKG_CONF_OPTS += --enable-zstd
+else
+OPKG_CONF_OPTS += --disable-zstd
 endif
 
 # Ensure directory for lockfile exists
