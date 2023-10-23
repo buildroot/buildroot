@@ -22,6 +22,13 @@ else
 OPKG_CONF_OPTS += --disable-gpg
 endif
 
+ifeq ($(BR2_PACKAGE_XZ),y)
+OPKG_DEPENDENCIES += xz
+OPKG_CONF_OPTS += --enable-xz
+else
+OPKG_CONF_OPTS += --disable-xz
+endif
+
 ifeq ($(BR2_PACKAGE_ZSTD),y)
 OPKG_DEPENDENCIES += zstd
 OPKG_CONF_OPTS += --enable-zstd
