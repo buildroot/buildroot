@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-OPKG_VERSION = 0.4.5
+OPKG_VERSION = 0.6.2
 OPKG_SITE = https://downloads.yoctoproject.org/releases/opkg
 OPKG_DEPENDENCIES = host-pkgconf libarchive
 OPKG_LICENSE = GPL-2.0+
 OPKG_LICENSE_FILES = COPYING
 OPKG_INSTALL_STAGING = YES
-OPKG_CONF_OPTS = --disable-curl
+OPKG_CONF_OPTS = --disable-curl --disable-zstd
 
 # Ensure directory for lockfile exists
 define OPKG_CREATE_LOCKDIR
