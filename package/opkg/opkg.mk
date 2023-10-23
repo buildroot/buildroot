@@ -22,6 +22,13 @@ else
 OPKG_CONF_OPTS += --disable-gpg
 endif
 
+ifeq ($(BR2_PACKAGE_BZIP2),y)
+OPKG_DEPENDENCIES += bzip2
+OPKG_CONF_OPTS += --enable-bzip2
+else
+OPKG_CONF_OPTS += --disable-bzip2
+endif
+
 ifeq ($(BR2_PACKAGE_LZ4),y)
 OPKG_DEPENDENCIES += lz4
 OPKG_CONF_OPTS += --enable-lz4
