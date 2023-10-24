@@ -1,6 +1,7 @@
 config BR2_PACKAGE_WIRELESS_TOOLS
 	bool "wireless tools"
 	select BR2_PACKAGE_WIRELESS_TOOLS_IWCONFIG if \
+		!BR2_PACKAGE_WIRELESS_TOOLS_IFRENAME && \
 		!BR2_PACKAGE_WIRELESS_TOOLS_LIB
 	help
 	  A collection of tools to configure wireless lan cards.
@@ -15,6 +16,11 @@ config BR2_PACKAGE_WIRELESS_TOOLS_IWCONFIG
 	help
 	  Build and install the iwconfig, iwlist, iwspy, iwpriv, and
 	  iwgetid tools.
+
+config BR2_PACKAGE_WIRELESS_TOOLS_IFRENAME
+	bool "Install ifrename"
+	help
+	  Build and install the ifrename tool
 
 config BR2_PACKAGE_WIRELESS_TOOLS_LIB
 	bool "Install shared library"
