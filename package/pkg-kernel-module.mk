@@ -50,11 +50,13 @@ LINUX_NEEDS_MODULES = y
 endif
 
 # The kernel must be built first.
-$(2)_DEPENDENCIES += linux
+$(2)_DEPENDENCIES += \
+	linux \
+	$$(BR2_MAKE_HOST_DEPENDENCY)
 
 # This is only defined in some infrastructures (e.g. autotools, cmake),
 # but not in others (e.g. generic). So define it here as well.
-$(2)_MAKE ?= $$(MAKE)
+$(2)_MAKE ?= $$(BR2_MAKE)
 
 # If not specified, consider the source of the kernel module to be at
 # the root of the package.
