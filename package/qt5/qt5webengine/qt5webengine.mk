@@ -61,7 +61,6 @@ QT5WEBENGINE_DEPENDENCIES += \
 	host-freetype \
 	host-gperf \
 	host-harfbuzz \
-	host-icu \
 	host-ninja \
 	host-nodejs \
 	host-pkgconf \
@@ -87,7 +86,6 @@ QT5WEBENGINE_DEPENDENCIES += \
 QT5WEBENGINE_CONF_OPTS += \
 	-webengine-embedded-build \
 	-webengine-ffmpeg \
-	-webengine-icu \
 	-webengine-opus \
 	-webengine-webchannel \
 	-webengine-webp \
