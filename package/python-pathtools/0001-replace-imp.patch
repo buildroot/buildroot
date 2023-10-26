@@ -1,0 +1,55 @@
+From e2372bbecdf46a100b09126f2951431c1929637b Mon Sep 17 00:00:00 2001
+From: Adam Duskett <adam.duskett@amarulasolutions.com>
+Date: Tue, 24 Oct 2023 08:59:21 +0200
+Subject: [PATCH] Replace imp
+
+The imp module has been removed in python 3.12.0.
+
+This change has also been tested with Python 3.9.2 on Debian 11.
+
+From: https://docs.python.org/3.12/whatsnew/3.12.html#removed, follow the
+instructions to add the load_source method back into setup.py.
+
+Upstream: https://github.com/gorakhargosh/pathtools/pull/14
+
+Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
+---
+ setup.py | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/setup.py b/setup.py
+index 4718885..1be0315 100644
+--- a/setup.py
++++ b/setup.py
+@@ -22,12 +22,25 @@
+ # THE SOFTWARE.
+ 
+ import os
+-import imp
++import importlib.util
++import importlib.machinery
+ from setuptools import setup
+ 
+ PKG_DIR = 'pathtools'
+-version = imp.load_source('version',
+-                          os.path.join(PKG_DIR, 'version.py'))
++
++# From: https://docs.python.org/3.12/whatsnew/3.12.html#removed
++def load_source(modname, filename):
++    loader = importlib.machinery.SourceFileLoader(modname, filename)
++    spec = importlib.util.spec_from_file_location(modname, filename, loader=loader)
++    module = importlib.util.module_from_spec(spec)
++    # The module is always executed and not cached in sys.modules.
++    # Uncomment the following line to cache the module.
++    # sys.modules[module.__name__] = module
++    loader.exec_module(module)
++    return module
++
++version = load_source('version',
++                      os.path.join(PKG_DIR, 'version.py'))
+ 
+ def read_file(filename):
+     """
+-- 
+2.41.0
+
