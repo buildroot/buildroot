@@ -15,7 +15,7 @@ NETTLE_CPE_ID_VENDOR = nettle_project
 # with static linking
 NETTLE_CONF_OPTS = --disable-openssl
 
-HOST_NETTLE_DEPENDENCIES = host-m4
+HOST_NETTLE_DEPENDENCIES = host-m4 host-gmp
 
 # ARM assembly requires v6+ ISA
 ifeq ($(BR2_ARM_CPU_ARMV4)$(BR2_ARM_CPU_ARMV5)$(BR2_ARM_CPU_ARMV7M),y)
