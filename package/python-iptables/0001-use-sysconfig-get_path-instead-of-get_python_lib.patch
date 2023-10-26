@@ -1,0 +1,40 @@
+From fd415a3613fad872062fb7cb4e271ac1476402ef Mon Sep 17 00:00:00 2001
+From: Adam Duskett <adam.duskett@amarulasolutions.com>
+Date: Tue, 24 Oct 2023 08:47:12 +0200
+Subject: [PATCH] use sysconfig.get_path instead of get_python_lib
+
+Distutils has been removed from python 3.12.0. Use sysconfig.get_path instead
+of get_python_lib.
+
+Upstream: https://github.com/ldx/python-iptables/pull/340
+
+Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
+---
+ iptc/util.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/iptc/util.py b/iptc/util.py
+index 04fe905..94befc5 100644
+--- a/iptc/util.py
++++ b/iptc/util.py
+@@ -3,7 +3,7 @@ import os
+ import sys
+ import ctypes
+ import ctypes.util
+-from distutils.sysconfig import get_python_lib
++import sysconfig
+ from itertools import product
+ from subprocess import Popen, PIPE
+ from sys import version_info
+@@ -64,7 +64,7 @@ def _do_find_library(name):
+ 
+     # probably we have been installed in a virtualenv
+     try:
+-        lib = ctypes.CDLL(os.path.join(get_python_lib(), name),
++        lib = ctypes.CDLL(os.path.join(sysconfig.get_path("purelib"), name),
+                           mode=ctypes.RTLD_GLOBAL)
+         return lib
+     except:
+-- 
+2.41.0
+
