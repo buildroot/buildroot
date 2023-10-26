@@ -1,0 +1,59 @@
+From cbfee0e6add2b57c6a2a8641a60b4322543f4675 Mon Sep 17 00:00:00 2001
+From: Lukas Rusak <lorusak@gmail.com>
+Date: Wed, 12 Jul 2023 19:58:08 -0700
+Subject: [PATCH] PythonBindings: TypeInfo: add initialization of
+ tp_watched for PyTypeObject
+
+This member was added in upstream commit https://github.com/python/cpython/commit/82ccbf69a842db25d8117f1c41b47aa5b4ed96ab
+
+This change first appeared in Python v3.12.0a1
+
+Signed-off-by: Lukas Rusak <lorusak@gmail.com>
+
+Upstream: https://github.com/xbmc/xbmc/commit/2c84ee54a75770e291f38d4ebb2c31c8f2c3b8c5
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ xbmc/interfaces/python/swig.cpp | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/xbmc/interfaces/python/swig.cpp b/xbmc/interfaces/python/swig.cpp
+index 5a2599a84ea0f..74baa72ee5c4c 100644
+--- a/xbmc/interfaces/python/swig.cpp
++++ b/xbmc/interfaces/python/swig.cpp
+@@ -71,6 +71,9 @@ namespace PythonBindings
+ #endif
+ #if PY_VERSION_HEX < 0x03090000
+       0,
++#endif
++#if PY_VERSION_HEX >= 0x030C00A1
++      0,
+ #endif
+     };
+ 
+
+From e3ba40936cc10de05c46d507851568ee3e351f43 Mon Sep 17 00:00:00 2001
+From: Lukas Rusak <lorusak@gmail.com>
+Date: Thu, 13 Jul 2023 08:57:38 -0700
+Subject: [PATCH] swig.cpp: add clang-format formatting
+
+Signed-off-by: Lukas Rusak <lorusak@gmail.com>
+---
+ xbmc/interfaces/python/swig.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/xbmc/interfaces/python/swig.cpp b/xbmc/interfaces/python/swig.cpp
+index 74baa72ee5c4c..0c49f87ca84e1 100644
+--- a/xbmc/interfaces/python/swig.cpp
++++ b/xbmc/interfaces/python/swig.cpp
+@@ -18,8 +18,8 @@ namespace PythonBindings
+ {
+   TypeInfo::TypeInfo(const std::type_info& ti) : swigType(NULL), parentType(NULL), typeIndex(ti)
+   {
+-    static PyTypeObject py_type_object_header =
+-    { PyVarObject_HEAD_INIT(nullptr, 0) 0,
++    static PyTypeObject py_type_object_header = {
++      PyVarObject_HEAD_INIT(nullptr, 0) 0,
+       0,
+       0,
+       0,
