@@ -1,0 +1,33 @@
+From abd19b721f7e9b4d514ed319ece173ebc7b1ea72 Mon Sep 17 00:00:00 2001
+From: =?utf8?q?Dan=20Hor=C3=A1k?= <dan@danny.cz>
+Date: Mon, 19 Dec 2022 17:40:43 +0100
+Subject: [PATCH] python: move from distutils to sysconfig
+
+The distutils module was deprecated in Python 3.10, and will be removed
+in 3.12 [1], thus switch to the sysconfig module instead.
+
+[1] https://peps.python.org/pep-0632/
+
+Upstream: http://developer.intra2net.com/git/?p=libftdi;a=commit;h=abd19b721f7e9b4d514ed319ece173ebc7b1ea72
+Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
+Signed-off-by: Arnout Vandecappelle <arnout@mind.be>
+---
+ python/CMakeLists.txt |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/python/CMakeLists.txt b/python/CMakeLists.txt
+index 5e406ff..9358419 100644
+--- a/python/CMakeLists.txt
++++ b/python/CMakeLists.txt
+@@ -42,7 +42,7 @@ endif ()
+ 
+ set_target_properties ( ${SWIG_MODULE_ftdi1_REAL_NAME} PROPERTIES NO_SONAME ON )
+ 
+-execute_process ( COMMAND ${PYTHON_EXECUTABLE} -c "from distutils import sysconfig; print( sysconfig.get_python_lib( plat_specific=True, prefix='${CMAKE_INSTALL_PREFIX}' ) )"
++execute_process ( COMMAND ${PYTHON_EXECUTABLE} -c "import sysconfig; print( sysconfig.get_path( 'platlib', vars={'platbase': '${CMAKE_INSTALL_PREFIX}'} ) )"
+                   OUTPUT_VARIABLE _ABS_PYTHON_MODULE_PATH
+                   OUTPUT_STRIP_TRAILING_WHITESPACE )
+ 
+-- 
+1.7.1
+
