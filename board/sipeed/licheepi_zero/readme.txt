@@ -10,7 +10,7 @@ How to build it
 Configure Buildroot
 -------------------
 
-  $ make licheepi_zero_defconfig
+  $ make sipeed_licheepi_zero_defconfig
 
 Build the rootfs
 ----------------
