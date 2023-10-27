@@ -6,7 +6,7 @@
 
 # linux-headers
 AUFS_UTIL_VERSION = $(call qstrip,$(BR2_PACKAGE_AUFS_UTIL_VERSION))
-AUFS_UTIL_SITE = http://git.code.sf.net/p/aufs/aufs-util
+AUFS_UTIL_SITE = https://git.code.sf.net/p/aufs/aufs-util
 AUFS_UTIL_SITE_METHOD = git
 AUFS_UTIL_LICENSE = GPL-2.0
 AUFS_UTIL_LICENSE_FILES = COPYING
