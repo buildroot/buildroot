@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TIFF_VERSION = 4.5.1
+TIFF_VERSION = 4.6.0
 TIFF_SITE = http://download.osgeo.org/libtiff
 TIFF_LICENSE = tiff license
 TIFF_LICENSE_FILES = LICENSE.md
@@ -17,14 +17,12 @@ TIFF_INSTALL_STAGING = YES
 TIFF_CONF_OPTS = \
 	--disable-contrib \
 	--disable-tests \
-	--disable-webp \
-	--without-x
+	--disable-webp
 
 TIFF_DEPENDENCIES = host-pkgconf
 
 HOST_TIFF_CONF_OPTS = \
 	--disable-cxx \
-	--without-x \
 	--disable-zlib \
 	--disable-libdeflate \
 	--disable-lzma \
