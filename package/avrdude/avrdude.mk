@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-AVRDUDE_VERSION = 7.1
+AVRDUDE_VERSION = 7.2
 AVRDUDE_SITE = $(call github,avrdudes,avrdude,v$(AVRDUDE_VERSION))
 AVRDUDE_LICENSE = GPL-2.0+
 AVRDUDE_LICENSE_FILES = COPYING
