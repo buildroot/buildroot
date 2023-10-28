@@ -534,9 +534,9 @@ typically indicates that the +.hash+ file is wrong but the downloaded
 file is probably OK.
 
 Hashes are currently checked for files fetched from http/ftp servers,
-Git repositories, files copied using scp and local files. Hashes are
-not checked for other version control systems (such as Subversion,
-CVS, etc.) because Buildroot currently does not generate reproducible
+Git or subversion repositories, files copied using scp and local files.
+Hashes are not checked for other version control systems (such as CVS,
+mercurial) because Buildroot currently does not generate reproducible
 tarballs when source code is fetched from such version control
 systems.
 
