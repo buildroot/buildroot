@@ -1,0 +1,40 @@
+From e93dbd66973040f1e0afcba0dc7c712c27d75d59 Mon Sep 17 00:00:00 2001
+From: Matthias Clasen <mclasen@redhat.com>
+Date: Mon, 1 May 2023 23:27:52 -0400
+Subject: [PATCH] Drop -Werror=array-bounds
+
+gcc has strange issues with this and produces false
+positives that recently started breaking the build of
+pango as a subproject in gtk.
+
+See e.g. https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105523
+
+Upstream: https://gitlab.gnome.org/GNOME/pango/-/commit/e93dbd66973040f1e0afcba0dc7c712c27d75d59
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ meson.build | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 930f41082..2d30c0141 100644
+--- a/meson.build
++++ b/meson.build
+@@ -89,7 +89,6 @@ elif cc.get_id() == 'gcc' or cc.get_id() == 'clang'
+     '-Wuninitialized',
+     '-Wunused',
+     '-Werror=address',
+-    '-Werror=array-bounds',
+     '-Werror=empty-body',
+     '-Werror=implicit',
+     '-Werror=implicit-fallthrough',
+@@ -132,7 +131,6 @@ elif cc.get_id() == 'gcc' or cc.get_id() == 'clang'
+     '-Werror=sequence-point',
+     '-Werror=return-type',
+     '-Werror=trigraphs',
+-    '-Werror=array-bounds',
+     '-Werror=write-strings',
+     '-Werror=address',
+     '-Werror=int-to-pointer-cast',
+-- 
+GitLab
+
