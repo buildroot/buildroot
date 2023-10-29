@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ACE_VERSION = 7.0.6
+ACE_VERSION = 7.1.1
 ACE_SOURCE = ACE-$(ACE_VERSION).tar.bz2
 ACE_SITE = http://download.dre.vanderbilt.edu/previous_versions
 ACE_LICENSE = DOC
@@ -17,7 +17,7 @@ ACE_CPE_ID_PRODUCT = adaptive_communication_environment
 # Only compiling ACE libraries (no TAO)
 ACE_LIBRARIES = ace ACEXML Kokyu netsvcs protocols/ace
 
-ACE_CPPFLAGS = $(TARGET_CPPFLAGS) -std=c++11
+ACE_CPPFLAGS = $(TARGET_CPPFLAGS) -std=c++14
 
 ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_101915),y)
 ACE_CPPFLAGS += -O0
