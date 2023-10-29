@@ -14,7 +14,7 @@ LIBNVME_CONF_OPTS += \
 	-Dtests=false
 
 ifeq ($(BR2_PACKAGE_PYTHON3),y)
-LIBNVME_DEPENDENCIES += python3
+LIBNVME_DEPENDENCIES += python3 host-swig
 LIBNVME_CONF_OPTS += -Dpython=enabled
 else
 LIBNVME_CONF_OPTS += -Dpython=disabled
