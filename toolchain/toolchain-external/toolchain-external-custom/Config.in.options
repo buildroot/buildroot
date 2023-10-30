@@ -162,8 +162,12 @@ choice
 	  If your toolchain uses headers newer than the latest version
 	  in the choice, then select the latest version.
 
+config BR2_TOOLCHAIN_EXTERNAL_HEADERS_6_6
+	bool "6.6.x or later"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_6
+
 config BR2_TOOLCHAIN_EXTERNAL_HEADERS_6_5
-	bool "6.5.x or later"
+	bool "6.5.x"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_5
 
 config BR2_TOOLCHAIN_EXTERNAL_HEADERS_6_4
