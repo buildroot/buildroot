@@ -1,0 +1,31 @@
+From 927cd88cad7bea94c2eebecc18f7881f0defaccb Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Thu, 26 Jan 2023 23:36:29 -0800
+Subject: [PATCH] include missing <cstdint>
+
+gcc 13 moved some includes around and as a result <cstdint>
+is no longer transitively included [1]. Explicitly include
+it for uint{32,64}_t.
+
+[1] https://gcc.gnu.org/gcc-13/porting_to.html#header-dep-changes
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+
+Upstream: https://github.com/Drive-Trust-Alliance/sedutil/pull/425
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ Common/DtaOptions.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Common/DtaOptions.h b/Common/DtaOptions.h
+index c012af1d..7530a0b7 100644
+--- a/Common/DtaOptions.h
++++ b/Common/DtaOptions.h
+@@ -21,6 +21,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
+ #ifndef _DTAOPTIONS_H
+ #define	_DTAOPTIONS_H
+ 
++#include <cstdint>
+ /** Output modes */
+ typedef enum _sedutiloutput {
+ 	sedutilNormal,
