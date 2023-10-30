@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-SWAY_VERSION = 1.7
-SWAY_SITE = $(call github,swaywm,sway,v$(SWAY_VERSION))
+SWAY_VERSION = 1.8.1
+SWAY_SITE = https://github.com/swaywm/sway/releases/download/$(SWAY_VERSION)
 SWAY_LICENSE = MIT
 SWAY_LICENSE_FILES = LICENSE
 SWAY_DEPENDENCIES = systemd host-pkgconf wlroots json-c pcre cairo pango
