@@ -29,6 +29,26 @@ declare -a mountpoints=(
     "$(pwd)"
 )
 
+# curl lists (and recognises and uses) other types of *_proxy variables,
+# but only those make sense for Buildroot:
+for env in all_proxy http_proxy https_proxy ftp_proxy no_proxy; do
+    if [ "${!env}" ]; then
+        docker_opts+=( --env "${env}" )
+        # The lower-case variant takes precedence on the upper-case one
+        # (dixit curl)
+        continue
+    fi
+    # http_proxy is only lower-case (dixit curl)
+    if [ "${env}" = http_proxy ]; then
+        continue
+    fi
+    # All the others also exist in the upper-case variant
+    env="${env^^}"
+    if [ "${!env}" ]; then
+        docker_opts+=( --env "${env}" )
+    fi
+done
+
 # Empty GIT_DIR means that we are not in a workdir, *and* git is too old
 # to know about worktrees, so we're not in a worktree either. So it means
 # we're in the main git working copy, and thus we don't need to mount the
