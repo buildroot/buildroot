@@ -154,6 +154,12 @@ else
 LIBCURL_CONF_OPTS += --disable-proxy
 endif
 
+ifeq ($(BR2_PACKAGE_LIBCURL_WEBSOCKETS_SUPPORT),y)
+LIBCURL_CONF_OPTS += --enable-websockets
+else
+LIBCURL_CONF_OPTS += --disable-websockets
+endif
+
 ifeq ($(BR2_PACKAGE_LIBCURL_EXTRA_PROTOCOLS_FEATURES),y)
 LIBCURL_CONF_OPTS += \
 	--enable-dict \
