@@ -1,0 +1,40 @@
+From a5d71d076168f8ad1e7dd30b35f1569f180f429c Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 2 Nov 2023 23:03:15 +0100
+Subject: [PATCH] src/osflags: fully fix cross-compilation
+
+Cross-compilation was only partially fixed by
+https://github.com/yarrick/iodine/commit/024481c94b97ef37981621cdc38f8b20f8919418
+as selinux was still enabled depending on host file existence
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/yarrick/iodine/pull/93
+---
+ src/osflags | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/osflags b/src/osflags
+index 9a437bd..39ca5fa 100755
+--- a/src/osflags
++++ b/src/osflags
+@@ -20,7 +20,7 @@ link)
+ 		;;
+ 		Linux)
+ 			FLAGS="";
+-			[ -e /usr/include/selinux/selinux.h ] && FLAGS="$FLAGS -lselinux";
++			"$PKG_CONFIG" --exists libselinux && FLAGS="$FLAGS $($PKG_CONFIG --libs libselinux)";
+ 			"$PKG_CONFIG" --exists libsystemd-daemon && FLAGS="$FLAGS $($PKG_CONFIG --libs libsystemd-daemon)";
+ 			"$PKG_CONFIG" --exists libsystemd && FLAGS="$FLAGS $($PKG_CONFIG --libs libsystemd)";
+ 			echo $FLAGS;
+@@ -40,7 +40,7 @@ cflags)
+ 		;;
+ 		Linux)
+ 			FLAGS="-D_GNU_SOURCE"
+-			[ -e /usr/include/selinux/selinux.h ] && FLAGS="$FLAGS -DHAVE_SETCON";
++			"$PKG_CONFIG" --exists libselinux && FLAGS="$FLAGS -DHAVE_SETCON";
+ 			"$PKG_CONFIG" --exists libsystemd-daemon && FLAGS="$FLAGS -DHAVE_SYSTEMD";
+ 			"$PKG_CONFIG" --exists libsystemd && FLAGS="$FLAGS -DHAVE_SYSTEMD";
+ 			echo $FLAGS;
+-- 
+2.42.0
+
