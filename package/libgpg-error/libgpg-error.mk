@@ -26,4 +26,10 @@ else
 LIBGPG_ERROR_CONF_OPTS += --disable-threads
 endif
 
+HOST_LIBGPG_ERROR_CONF_OPTS = \
+	--enable-threads \
+	--enable-install-gpg-error-config \
+	--disable-tests
+
 $(eval $(autotools-package))
+$(eval $(host-autotools-package))
