@@ -40,8 +40,6 @@ NODEJS_SRC_CONF_OPTS = \
 	--shared-cares \
 	--shared-libuv \
 	--shared-nghttp2 \
-	--without-dtrace \
-	--without-etw \
 	--cross-compiling \
 	--dest-os=linux \
 	--ninja
@@ -97,8 +95,6 @@ define HOST_NODEJS_SRC_CONFIGURE_CMDS
 		PYTHON=$(HOST_DIR)/bin/python3 \
 		$(HOST_DIR)/bin/python3 configure.py \
 		--prefix=$(HOST_DIR) \
-		--without-dtrace \
-		--without-etw \
 		--shared-openssl \
 		--shared-openssl-includes=$(HOST_DIR)/include \
 		--shared-openssl-libpath=$(HOST_DIR)/lib \

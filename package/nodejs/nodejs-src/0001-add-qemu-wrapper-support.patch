@@ -15,26 +15,18 @@ qemu-wrapper, so add @MAYBE_WRAPPER@ to the needed files and sed the path to
 the qemu-wrapper on target builds, and remove @MAYBE_WRAPPER@ entirely on
 host-builds.
 
+[Adam: Update for 20.9.0]
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
 ---
- node.gyp                 |  4 ++--
+ node.gyp                 |  6 ++++--
  tools/v8_gypfiles/v8.gyp | 10 +++++-----
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ 2 files changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/node.gyp b/node.gyp
 index 97cdbb531d..db5cf51ce6 100644
 --- a/node.gyp
 +++ b/node.gyp
-@@ -319,7 +319,7 @@
-               'action_name': 'run_mkcodecache',
-               'process_outputs_as_sources': 1,
-               'inputs': [
--                '<(mkcodecache_exec)',
-+                @MAYBE_WRAPPER@ '<(mkcodecache_exec)',
-               ],
-               'outputs': [
-                 '<(SHARED_INTERMEDIATE_DIR)/node_code_cache.cc',
-@@ -346,7 +346,7 @@
+@@ -662,7 +662,7 @@
                    'action_name': 'node_mksnapshot',
                    'process_outputs_as_sources': 1,
                    'inputs': [
@@ -43,11 +35,36 @@ index 97cdbb531d..db5cf51ce6 100644
                      '<(node_snapshot_main)',
                    ],
                    'outputs': [
+@@ -682,7 +682,7 @@
+                   'action_name': 'node_mksnapshot',
+                   'process_outputs_as_sources': 1,
+                   'inputs': [
+-                    '<(node_mksnapshot_exec)',
++                    @MAYBE_WRAPPER@ '<(node_mksnapshot_exec)',
+                   ],
+                   'outputs': [
+                     '<(SHARED_INTERMEDIATE_DIR)/node_snapshot.cc',
+@@ -966,6 +966,7 @@
+           'action_name': 'node_js2c',
+           'process_outputs_as_sources': 1,
+           'inputs': [
++            @MAYBE_WRAPPER@
+             '<(node_js2c_exec)',
+             '<@(library_files)',
+             '<@(deps_files)',
+@@ -975,6 +976,7 @@
+             '<(SHARED_INTERMEDIATE_DIR)/node_javascript.cc',
+           ],
+           'action': [
++            @MAYBE_WRAPPER@
+             '<(node_js2c_exec)',
+             '<@(_outputs)',
+             'lib',
 diff --git a/tools/v8_gypfiles/v8.gyp b/tools/v8_gypfiles/v8.gyp
 index 73099a03e4..88ca91efb4 100644
 --- a/tools/v8_gypfiles/v8.gyp
 +++ b/tools/v8_gypfiles/v8.gyp
-@@ -68,7 +68,7 @@
+@@ -81,7 +81,7 @@
          {
            'action_name': 'run_torque_action',
            'inputs': [  # Order matters.
@@ -56,7 +73,7 @@ index 73099a03e4..88ca91efb4 100644
              '<@(torque_files)',
            ],
            'outputs': [
-@@ -99,7 +99,7 @@
+@@ -112,7 +112,7 @@
              '<@(torque_outputs_inc)',
            ],
            'action': [
@@ -65,7 +82,7 @@ index 73099a03e4..88ca91efb4 100644
              '-o', '<(SHARED_INTERMEDIATE_DIR)/torque-generated',
              '-v8-root', '<(V8_ROOT)',
              '<@(torque_files_without_v8_root)',
-@@ -211,7 +211,7 @@
+@@ -224,7 +224,7 @@
          {
            'action_name': 'generate_bytecode_builtins_list_action',
            'inputs': [
@@ -74,7 +91,7 @@ index 73099a03e4..88ca91efb4 100644
            ],
            'outputs': [
              '<(generate_bytecode_builtins_list_output)',
-@@ -395,7 +395,7 @@
+@@ -401,7 +401,7 @@
              ],
            },
            'inputs': [
@@ -83,7 +100,7 @@ index 73099a03e4..88ca91efb4 100644
            ],
            'outputs': [
              '<(INTERMEDIATE_DIR)/snapshot.cc',
-@@ -1505,7 +1505,7 @@
+@@ -1660,7 +1660,7 @@
          {
            'action_name': 'run_gen-regexp-special-case_action',
            'inputs': [
