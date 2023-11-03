@@ -9,6 +9,8 @@ Patch from:
 Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
 Refresh for 1.0.17
+[Fabrice: refresh for 1.0.22]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  Makefile | 84 ++++++++++++++++++++++++++++++++--------------------------------
  1 file changed, 42 insertions(+), 42 deletions(-)
@@ -26,7 +28,7 @@ index d5c0c90..ef61bd5 100644
  
  LD 		= $(CC)
  
-@@ -96,11 +96,11 @@ TOAST_INSTALL_MAN = $(TOAST_INSTALL_ROOT)/man/man1
+@@ -96,7 +96,7 @@ TOAST_INSTALL_MAN = $(TOAST_INSTALL_ROOT)/man/man1
  #  Other tools
  
  SHELL		= /bin/sh
@@ -34,12 +36,7 @@ index d5c0c90..ef61bd5 100644
 +LN		= ln -s -f
  BASENAME 	= basename
  AR		= ar
- ARFLAGS		= cr
--RMFLAGS		=
-+RMFLAGS		= -f
- FIND		= find
- COMPRESS 	= compress
- COMPRESSFLAGS 	= 
+ ARFLAGS	= cr
 @@ -139,7 +139,7 @@ LFLAGS	= $(LDFLAGS) $(LDINC)
  
  # Targets
@@ -100,77 +97,6 @@ index d5c0c90..ef61bd5 100644
  
  
  # The local bin and lib directories
-@@ -351,53 +350,54 @@ toastuninstall:
- 		fi
- 
- $(TOAST_INSTALL_BIN)/toast:	$(TOAST)
--		-rm $@
-+		-rm $(RMFLAGS) $@
- 		cp $(TOAST) $@
- 		chmod 755 $@
- 
- $(TOAST_INSTALL_BIN)/untoast:	$(TOAST_INSTALL_BIN)/toast
--		-rm $@
--		ln $? $@
-+		-rm $(RMFLAGS) $@
-+		$(LN) toast $@
- 
- $(TOAST_INSTALL_BIN)/tcat:	$(TOAST_INSTALL_BIN)/toast
--		-rm $@
--		ln $? $@
-+		-rm $(RMFLAGS) $@
-+		$(LN) toast $@
- 
- $(TOAST_INSTALL_MAN)/toast.1:	$(MAN)/toast.1
--		-rm $@
-+		-rm $(RMFLAGS) $@
- 		cp $? $@
- 		chmod 444 $@
- 
- $(GSM_INSTALL_MAN)/gsm.3:	$(MAN)/gsm.3
--		-rm $@
-+		-rm $(RMFLAGS) $@
- 		cp $? $@
- 		chmod 444 $@
- 
- $(GSM_INSTALL_MAN)/gsm_option.3:	$(MAN)/gsm_option.3
--		-rm $@
-+		-rm $(RMFLAGS) $@
- 		cp $? $@
- 		chmod 444 $@
- 
- $(GSM_INSTALL_MAN)/gsm_explode.3:	$(MAN)/gsm_explode.3
--		-rm $@
-+		-rm $(RMFLAGS) $@
- 		cp $? $@
- 		chmod 444 $@
- 
- $(GSM_INSTALL_MAN)/gsm_print.3:	$(MAN)/gsm_print.3
--		-rm $@
-+		-rm $(RMFLAGS) $@
- 		cp $? $@
- 		chmod 444 $@
- 
- $(GSM_INSTALL_INC)/gsm.h:	$(INC)/gsm.h
--		-rm $@
--		cp $? $@
--		chmod 444 $@
--
--$(GSM_INSTALL_LIB)/libgsm.a:	$(LIBGSM)
--		-rm $@
-+		-rm $(RMFLAGS) $@
- 		cp $? $@
- 		chmod 444 $@
- 
-+$(GSM_INSTALL_LIB)/libgsm.so:	$(LIBGSMSO)
-+		-rm $(RMFLAGS) $@ $@.1 $@.1.0.13
-+		cp $?.1.0.13 $@.1.0.13
-+		chmod 755 $@.1.0.13
-+		$(LN) libgsm.so.1.0.13 $@
-+		$(LN) libgsm.so.1.0.13 $@.1
- 
- # Distribution
- 
 @@ -425,7 +425,7 @@ semi-clean:
  			-print | xargs rm $(RMFLAGS)
  
