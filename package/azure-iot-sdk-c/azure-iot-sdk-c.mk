@@ -14,4 +14,10 @@ AZURE_IOT_SDK_C_INSTALL_STAGING = YES
 AZURE_IOT_SDK_C_DEPENDENCIES = libxml2 openssl libcurl util-linux
 AZURE_IOT_SDK_C_CONF_OPTS = -Dskip_samples=ON
 
+ifeq ($(BR2_STATIC_LIBS),y)
+AZURE_IOT_SDK_C_CONF_OPTS += -Duse_prov_client=OFF
+else
+AZURE_IOT_SDK_C_CONF_OPTS += -Duse_prov_client=ON
+endif
+
 $(eval $(cmake-package))
