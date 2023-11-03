@@ -124,6 +124,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_HAS_LIBGLES),y)
 FLUTTER_ENGINE_DEPENDENCIES += libgles
+FLUTTER_ENGINE_CONF_OPTS += --enable-impeller-opengles
 endif
 
 ifeq ($(BR2_PACKAGE_LIBGLFW),y)
@@ -142,7 +143,7 @@ endif
 
 # There is no --disable-vulkan option
 ifeq ($(BR2_PACKAGE_MESA3D_VULKAN_DRIVER),y)
-FLUTTER_ENGINE_CONF_OPTS += --enable-vulkan
+FLUTTER_ENGINE_CONF_OPTS += --enable-vulkan --enable-impeller-vulkan
 endif
 
 ifeq ($(BR2_PACKAGE_XORG7)$(BR2_PACKAGE_LIBXCB),yy)
