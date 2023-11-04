@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FREERADIUS_SERVER_VERSION = 3.2.0
+FREERADIUS_SERVER_VERSION = 3.2.3
 FREERADIUS_SERVER_SOURCE = \
 	freeradius-server-$(FREERADIUS_SERVER_VERSION).tar.bz2
 FREERADIUS_SERVER_SITE = ftp://ftp.freeradius.org/pub/freeradius
@@ -16,10 +16,10 @@ FREERADIUS_SERVER_DEPENDENCIES = libtalloc
 FREERADIUS_SERVER_AUTORECONF = YES
 
 # We're patching src/modules/rlm_krb5/configure.ac
-define FREERADIUS_SERVER_RUN_KRB5_AUTOCONF
-	cd $(@D)/src/modules/rlm_krb5; $(AUTOCONF) -I$(@D)
+define FREERADIUS_SERVER_RUN_KRB5_AUTORECONF
+	cd $(@D)/src/modules/rlm_krb5; $(AUTORECONF) -I$(@D)/m4
 endef
-FREERADIUS_SERVER_PRE_CONFIGURE_HOOKS += FREERADIUS_SERVER_RUN_KRB5_AUTOCONF
+FREERADIUS_SERVER_PRE_CONFIGURE_HOOKS += FREERADIUS_SERVER_RUN_KRB5_AUTORECONF
 
 # some compiler checks are not supported while cross compiling.
 # instead of removing those checks, we cache the answers
@@ -73,11 +73,13 @@ endif
 
 ifeq ($(BR2_PACKAGE_HIREDIS),y)
 FREERADIUS_SERVER_CONF_OPTS += \
+	--with-rlm_cache_redis \
 	--with-rlm_redis \
 	--with-rlm_rediswho
 FREERADIUS_SERVER_DEPENDENCIES += hiredis
 else
 FREERADIUS_SERVER_CONF_OPTS += \
+	--without-rlm_cache_redis \
 	--without-rlm_redis \
 	--without-rlm_rediswho
 endif
