@@ -149,7 +149,9 @@ FREERADIUS_SERVER_CONF_OPTS += --without-pcre
 endif
 
 ifeq ($(BR2_PACKAGE_PYTHON3),y)
-FREERADIUS_SERVER_CONF_OPTS += --with-rlm_python3
+FREERADIUS_SERVER_CONF_OPTS += \
+	--with-rlm_python3 \
+	--with-rlm-python3-config-bin=$(STAGING_DIR)/usr/bin/python3-config
 FREERADIUS_SERVER_DEPENDENCIES += python3
 else
 FREERADIUS_SERVER_CONF_OPTS += --without-rlm_python3
