@@ -84,11 +84,11 @@ class Emulator(object):
 
     # Wait for the login prompt to appear, and then login as root with
     # the provided password, or no password if not specified.
-    def login(self, password=None):
+    def login(self, password=None, timeout=60):
         # The login prompt can take some time to appear when running multiple
         # instances in parallel, so set the timeout to a large value
         index = self.qemu.expect(["buildroot login:", pexpect.TIMEOUT],
-                                 timeout=60 * self.timeout_multiplier)
+                                 timeout=timeout * self.timeout_multiplier)
         if index != 0:
             self.logfile.write("==> System does not boot")
             raise SystemError("System does not boot")
