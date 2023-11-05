@@ -6,7 +6,7 @@ class TestPythonDjango(TestPythonPackageBase):
     sample_scripts = ["tests/package/sample_python_django.py"]
 
     def run_sample_scripts(self):
-        timeout = 35 * self.emulator.timeout_multiplier
+        timeout = 35
 
         cmd = "cd /opt && /usr/bin/django-admin startproject testsite"
         self.assertRunOk(cmd, timeout=timeout)
