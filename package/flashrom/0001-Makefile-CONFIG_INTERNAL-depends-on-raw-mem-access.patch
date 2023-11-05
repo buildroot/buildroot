@@ -1,0 +1,35 @@
+From aac91025386aa9d7b8214f8ad1746ef5c02f2d8d Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 5 Nov 2023 10:38:32 +0100
+Subject: [PATCH] Makefile: CONFIG_INTERNAL depends on raw mem access
+
+CONFIG_INTERNAL depends on raw mem access resulting in the following
+build failure on sh4 since version 1.3.0:
+
+/home/thomas/autobuild/instance-3/output-1/per-package/flashrom/host/bin/../lib/gcc/sh4a-buildroot-linux-gnu/12.3.0/../../../../sh4a-buildroot-linux-gnu/bin/ld: libflashrom.a(internal.o): in function `internal_chip_readn':
+internal.c:(.text+0x8): undefined reference to `mmio_readn'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/f74a9d315fb519f284428234713f43fcf4e35fd0
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://review.coreboot.org/c/flashrom/+/78930
+---
+ Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Makefile b/Makefile
+index bf01d0f8..cd21f22f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -115,6 +115,7 @@ DEPENDS_ON_RAW_MEM_ACCESS := \
+ 	CONFIG_ATAPROMISE \
+ 	CONFIG_DRKAISER \
+ 	CONFIG_GFXNVIDIA \
++	CONFIG_INTERNAL \
+ 	CONFIG_INTERNAL_X86 \
+ 	CONFIG_IT8212 \
+ 	CONFIG_NICINTEL \
+-- 
+2.42.0
+
