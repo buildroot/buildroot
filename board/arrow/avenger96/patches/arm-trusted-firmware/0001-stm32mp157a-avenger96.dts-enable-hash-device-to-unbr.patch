@@ -1,0 +1,51 @@
+From 336dc301e02d64507447f82020ce7a349797bef3 Mon Sep 17 00:00:00 2001
+From: Peter Korsgaard <peter@korsgaard.com>
+Date: Sun, 5 Nov 2023 14:59:16 +0100
+Subject: [PATCH] stm32mp157a-avenger96.dts: enable hash device to unbreak boot
+ issue
+
+The avenger96 board was forgotten when authentication support was added with
+commit 4bdb1a7a6a1325343 (stm32mp1: add authentication support for
+stm32image), causing a panic when stm32mp_init_auth() is called, so fix it
+similar to how it was done for the STM32MP157C-ED1 board with:
+
+commit b37b52ef8bc05bfd8dcca992d4ba84cd7c5d23bb
+Author: Yann Gautier <yann.gautier@st.com>
+Date:   Tue Oct 13 18:05:06 2020 +0200
+
+    fdts: add missing hash node in STM32MP157C-ED1 board DT
+
+    Without this node, the board fails to boot and panics in the function
+    stm32mp_init_auth().
+
+    Change-Id: Ia54924410dac2a8c94dd6e45d7e93977fe7d87e2
+    Signed-off-by: Yann Gautier <yann.gautier@st.com>
+
+Upstream: N/A - Upstream reworked authentication to skip it for MP157A
+ variant since v2.7, see "feat(st): disable authentication based on
+ part_number"
+ (https://github.com/ARM-software/arm-trusted-firmware/commit/49abdfd8cececb91a4bc7e7b29a30c09dce461c7)
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ fdts/stm32mp157a-avenger96.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fdts/stm32mp157a-avenger96.dts b/fdts/stm32mp157a-avenger96.dts
+index b967736e4..76edecb83 100644
+--- a/fdts/stm32mp157a-avenger96.dts
++++ b/fdts/stm32mp157a-avenger96.dts
+@@ -271,6 +271,10 @@
+ 	};
+ };
+ 
++&hash1 {
++	status = "okay";
++};
++
+ &rng1 {
+ 	status = "okay";
+ };
+-- 
+2.39.2
+
