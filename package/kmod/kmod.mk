@@ -62,11 +62,6 @@ else
 KMOD_CONF_OPTS += --without-openssl
 endif
 
-ifeq ($(BR2_PACKAGE_PYTHON3),y)
-KMOD_DEPENDENCIES += python3
-KMOD_CONF_OPTS += --enable-python
-endif
-
 ifeq ($(BR2_PACKAGE_KMOD_TOOLS),y)
 
 # add license info for kmod tools
