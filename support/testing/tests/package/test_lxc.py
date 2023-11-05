@@ -33,9 +33,9 @@ class TestLxc(infra.basetest.BRTest):
         self.assertRunOk(cmd, 120)
 
     def wait_boot(self):
-        # the complete boot with systemd takes more time than what the default multipler permits
-        self.emulator.timeout_multiplier *= 10
-        self.emulator.login()
+        # the complete boot with systemd takes more time than what the
+        # default typically allows
+        self.emulator.login(timeout=600)
 
     def setup_run_test_container(self):
         self.run_ok("lxc-create -n lxc_iperf3 -t none -f /usr/share/lxc/config/minimal-iperf3.conf")
