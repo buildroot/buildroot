@@ -21,9 +21,9 @@ class TestSELinuxSystemd(infra.basetest.BRTest):
         """
 
     def wait_boot(self):
-        # The complete boot with systemd takes more time than what the default multipler permits
-        self.emulator.timeout_multiplier *= 10
-        self.emulator.login()
+        # The complete boot with systemd takes more time than what the
+        # default typically allows
+        self.emulator.login(timeout=600)
 
     def run_tests(self, fstype):
         kernel = os.path.join(self.builddir, "images", "bzImage")
