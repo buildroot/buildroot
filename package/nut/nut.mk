@@ -12,6 +12,7 @@ NUT_SELINUX_MODULES = apache nut
 NUT_INSTALL_STAGING = YES
 NUT_DEPENDENCIES = host-pkgconf
 # We're patching m4/nut_compiler_family.m4
+# We're patching m4/nut_check_python.m4
 NUT_AUTORECONF = YES
 
 # Put the PID files in a read-write place (/var/run is a tmpfs)
@@ -20,6 +21,8 @@ NUT_CONF_OPTS = \
 	--with-altpidpath=/var/run/upsd \
 	--with-dev \
 	--without-doc \
+	--without-python \
+	--without-python2 \
 	--with-user=nut \
 	--with-group=nut
 
@@ -105,6 +108,18 @@ NUT_DEPENDENCIES += openssl
 NUT_CONF_OPTS += --with-ssl
 else
 NUT_CONF_OPTS += --without-ssl
+endif
+
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
+NUT_DEPENDENCIES += python3
+NUT_CONF_ENV += nut_cv_PYTHON3_SITE_PACKAGES=/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages
+NUT_CONF_OPTS += \
+	--with-pynut \
+	--with-python3
+else
+NUT_CONF_OPTS += \
+	--without-pynut \
+	--without-python3
 endif
 
 $(eval $(autotools-package))
