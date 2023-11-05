@@ -1,6 +1,11 @@
+config BR2_PACKAGE_KEXEC_LITE_ARCH_SUPPORTS
+	bool
+	default y
+	depends on BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le
+
 config BR2_PACKAGE_KEXEC_LITE
 	bool "kexec-lite"
-	depends on BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le
+	depends on BR2_PACKAGE_KEXEC_LITE_ARCH_SUPPORTS
 	depends on !BR2_STATIC_LIBS # dtc, elfutils
 	depends on BR2_USE_WCHAR # elfutils
 	depends on BR2_TOOLCHAIN_HAS_THREADS # elfutils
@@ -18,6 +23,6 @@ config BR2_PACKAGE_KEXEC_LITE
 	  https://github.com/antonblanchard/kexec-lite
 
 comment "kexec-lite needs a toolchain w/ wchar, dynamic library, threads"
-	depends on BR2_powerpc || BR2_powerpc64
+	depends on BR2_PACKAGE_KEXEC_LITE_ARCH_SUPPORTS
 	depends on BR2_STATIC_LIBS || !BR2_USE_WCHAR \
 		|| !BR2_TOOLCHAIN_HAS_THREADS
