@@ -24,10 +24,9 @@ diff -durN openldap-2.4.40.orig/configure openldap-2.4.40/configure
  		ol_with_mp=bignum
  
  $as_echo "#define USE_MP_BIGNUM 1" >>confdefs.h
-diff -durN openldap-2.4.40.orig/configure.in openldap-2.4.40/configure.in
---- openldap-2.4.40.orig/configure.in	2014-09-19 03:48:49.000000000 +0200
-+++ openldap-2.4.40/configure.in	2015-01-25 18:44:37.628676446 +0100
-@@ -2383,7 +2383,7 @@
+--- openldap-2.5.15.orig/configure.ac	2023-10-23 11:03:46.292215101 +0200
++++ openldap-2.5.16/configure.ac	2023-10-23 11:05:07.245355497 +0200
+@@ -2323,7 +2323,7 @@
  	AC_CHECK_HEADERS(openssl/crypto.h)
  	if test "$ac_cv_header_openssl_bn_h" = "yes" &&
  		test "$ac_cv_header_openssl_crypto_h" = "yes" &&
