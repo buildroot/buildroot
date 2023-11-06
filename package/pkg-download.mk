@@ -66,9 +66,7 @@ github = https://github.com/$(1)/$(2)/archive/$(3)
 gitlab = https://gitlab.com/$(1)/$(2)/-/archive/$(3)
 
 # Expressly do not check hashes for those files
-# Exported variables default to immediately expanded in some versions of
-# make, but we need it to be recursively-epxanded, so explicitly assign it.
-export BR_NO_CHECK_HASH_FOR =
+BR_NO_CHECK_HASH_FOR =
 
 ################################################################################
 # DOWNLOAD_URIS - List the candidates URIs where to get the package from:
@@ -110,6 +108,7 @@ endif
 define DOWNLOAD
 	$(Q)mkdir -p $($(2)_DL_DIR)
 	$(Q)$(EXTRA_ENV) $($(2)_DL_ENV) \
+	BR_NO_CHECK_HASH_FOR="$(if $(BR2_DOWNLOAD_FORCE_CHECK_HASHES),,$(BR_NO_CHECK_HASH_FOR))" \
 		flock $($(2)_DL_DIR)/.lock $(DL_WRAPPER) \
 		-c '$($(2)_DL_VERSION)' \
 		-d '$($(2)_DL_DIR)' \
