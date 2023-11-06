@@ -21,8 +21,8 @@ export BR_BACKEND_DL_GETOPTS=":hc:d:o:n:N:H:lru:qf:e"
 
 main() {
     local OPT OPTARG
-    local backend output hfile large_file recurse quiet rc
-    local -a uris
+    local backend output large_file recurse quiet rc
+    local -a uris hfiles
 
     # Parse our options; anything after '--' is for the backend
     while getopts ":c:d:D:o:n:N:H:lrf:u:qp:" OPT; do
@@ -33,7 +33,7 @@ main() {
         o)  output="${OPTARG}";;
         n)  raw_base_name="${OPTARG}";;
         N)  base_name="${OPTARG}";;
-        H)  hfile="${OPTARG}";;
+        H)  hfiles+=( "${OPTARG}" );;
         l)  large_file="-l";;
         r)  recurse="-r";;
         f)  filename="${OPTARG}";;
@@ -70,7 +70,7 @@ main() {
     # - fails at least one of its hashes: force a re-download
     # - there's no hash (but a .hash file): consider it a hard error
     if [ -e "${output}" ]; then
-        if support/download/check-hash ${quiet} "${hfile}" "${output}" "${output##*/}"; then
+        if support/download/check-hash ${quiet} "${output}" "${output##*/}" "${hfiles[@]}"; then
             exit 0
         elif [ ${?} -ne 2 ]; then
             # Do not remove the file, otherwise it might get re-downloaded
@@ -154,7 +154,7 @@ main() {
 
         # Check if the downloaded file is sane, and matches the stored hashes
         # for that file
-        if support/download/check-hash ${quiet} "${hfile}" "${tmpf}" "${output##*/}"; then
+        if support/download/check-hash ${quiet} "${tmpf}" "${output##*/}" "${hfiles[@]}"; then
             rc=0
         else
             if [ ${?} -ne 3 ]; then

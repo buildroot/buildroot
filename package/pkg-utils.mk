@@ -280,13 +280,13 @@ define legal-manifest # {HOST|TARGET}, pkg, version, license, license-files, sou
 	echo '"$(2)","$(3)","$(4)","$(5)","$(6)","$(7)","$(8)"' >>$(LEGAL_MANIFEST_CSV_$(1))
 endef
 
-define legal-license-file # pkgname, pkgname-pkgver, pkg-hashfile, filename, file-fullpath, {HOST|TARGET}
-	mkdir -p $(LICENSE_FILES_DIR_$(6))/$(2)/$(dir $(4)) && \
+define legal-license-file # {HOST|TARGET}, pkgname, pkgname-pkgver, filename, file-fullpath, pkg-hashfile
+	mkdir -p $(LICENSE_FILES_DIR_$(1))/$(3)/$(dir $(4)) && \
 	{ \
-		support/download/check-hash $(3) $(5) $(4); \
+		support/download/check-hash $(5) $(4) $(6); \
 		case $${?} in (0|3) ;; (*) exit 1;; esac; \
 	} && \
-	cp $(5) $(LICENSE_FILES_DIR_$(6))/$(2)/$(4)
+	cp $(5) $(LICENSE_FILES_DIR_$(1))/$(3)/$(4)
 endef
 
 non-virtual-deps = $(foreach p,$(1),$(if $($(call UPPERCASE,$(p))_IS_VIRTUAL),,$(p)))
