@@ -3,12 +3,12 @@ set -e
 
 # Helper to check a file matches its known hash
 # Call it with:
-#   $1: the path of the file containing all the expected hashes
-#   $2: the full path to the temporary file that was downloaded, and
+#   $1: the full path to the temporary file that was downloaded, and
 #       that is to be checked
-#   $3: the final basename of the file, to which it will be ultimately
+#   $2: the final basename of the file, to which it will be ultimately
 #       saved as, to be able to match it to the corresponding hashes
 #       in the .hash file
+#   $*: the paths of the files containing all the expected hashes
 #
 # Exit codes:
 #   0:  the hash file exists and the file to check matches all its hashes,
@@ -27,28 +27,21 @@ while getopts :q OPT; do
 done
 shift $((OPTIND-1))
 
-h_file="${1}"
-file="${2}"
-base="${3}"
-
-# Bail early if no hash to check
-if [ -z "${h_file}" ]; then
-    exit 0
-fi
-# Does the hash-file exist?
-if [ ! -f "${h_file}" ]; then
-    printf "WARNING: no hash file for %s\n" "${base}" >&2
-    exit 0
-fi
+file="${1}"
+base="${2}"
+shift 2
+declare -a h_files=( "${@}" )
 
 # Check one hash for a file
 # $1: algo hash
 # $2: known hash
 # $3: file (full path)
+# $4: hash file (full path)
 check_one_hash() {
     _h="${1}"
     _known="${2}"
     _file="${3}"
+    _h_file="${4}"
 
     # Note: md5 is supported, but undocumented on purpose.
     # Note: sha3 is not supported, since there is currently no implementation
@@ -70,6 +63,7 @@ check_one_hash() {
         return 0
     fi
 
+    printf "ERROR: while checking hashes from %s\n" "${_h_file}" >&2
     printf "ERROR: %s has wrong %s hash:\n" "${base}" "${_h}" >&2
     printf "ERROR: expected: %s\n" "${_known}" >&2
     printf "ERROR: got     : %s\n" "${_hash}" >&2
@@ -79,21 +73,31 @@ check_one_hash() {
 }
 
 # Do we know one or more hashes for that file?
+nb_h_files=0
 nb_checks=0
-while read t h f; do
-    case "${t}" in
-        ''|'#'*)
-            # Skip comments and empty lines
-            continue
-            ;;
-        *)
-            if [ "${f}" = "${base}" ]; then
-                check_one_hash "${t}" "${h}" "${file}"
-                : $((nb_checks++))
-            fi
-            ;;
-    esac
-done <"${h_file}"
+for h_file in "${h_files[@]}"; do
+    [ -f "${h_file}" ] || continue
+    : $((nb_h_files++))
+    while read t h f; do
+        case "${t}" in
+            ''|'#'*)
+                # Skip comments and empty lines
+                continue
+                ;;
+            *)
+                if [ "${f}" = "${base}" ]; then
+                    check_one_hash "${t}" "${h}" "${file}" "${h_file}"
+                    : $((nb_checks++))
+                fi
+                ;;
+        esac
+    done <"${h_file}"
+done
+
+if [ ${nb_h_files} -eq 0 ]; then
+    printf "WARNING: no hash file for %s\n" "${base}" >&2
+    exit 0
+fi
 
 if [ ${nb_checks} -eq 0 ]; then
     case " ${BR_NO_CHECK_HASH_FOR} " in
