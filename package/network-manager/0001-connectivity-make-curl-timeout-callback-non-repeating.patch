@@ -1,0 +1,44 @@
+From abc6e1cf258ab332bed161036a358bbe9c2d1e90 Mon Sep 17 00:00:00 2001
+From: Tatsuyuki Ishi <ishitatsuyuki@gmail.com>
+Date: Fri, 13 Oct 2023 16:46:09 +0000
+Subject: [PATCH] connectivity: Make curl timeout callback non-repeating.
+
+This reverts commit 05c31da4d9.
+
+In the linked commit the callback was made repeating on the assumption
+that forward progress would result in the callback getting canceled in
+cb_data_complete. However, this assumption does not hold since a timeout
+callback does not guarantee completion (or error out) of a request.
+
+curl tweaked some internals in v8.4.0 and started giving 0 timeouts, and
+a repeating callback is firing back-to-back without making any progress
+in doing so.
+
+Revert the change and make the callback non-repeating again.
+
+Fixes: 05c31da4d9cb ('connectivity: don't cancel curl timerfunction from timeout')
+Upstream: https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/commit/abc6e1cf258ab332bed161036a358bbe9c2d1e90
+Signed-off-by: Christian Hitz <christian.hitz@bbv.ch>
+---
+ src/core/nm-connectivity.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/core/nm-connectivity.c b/src/core/nm-connectivity.c
+index 92de44f17d..d8b0004c38 100644
+--- a/src/core/nm-connectivity.c
++++ b/src/core/nm-connectivity.c
+@@ -406,9 +406,10 @@ _con_curl_timeout_cb(gpointer user_data)
+ {
+     NMConnectivityCheckHandle *cb_data = user_data;
+ 
++    cb_data->concheck.curl_timer = 0;
+     _con_curl_check_connectivity(cb_data->concheck.curl_mhandle, CURL_SOCKET_TIMEOUT, 0);
+     _complete_queued(cb_data->self);
+-    return G_SOURCE_CONTINUE;
++    return G_SOURCE_REMOVE;
+ }
+ 
+ static int
+-- 
+GitLab
+
