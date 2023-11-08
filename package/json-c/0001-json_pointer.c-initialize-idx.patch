@@ -1,0 +1,37 @@
+From 7ff7eab603611c65b3110dcb1b0caf5cc68b07a3 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 8 Nov 2023 22:42:48 +0100
+Subject: [PATCH] json_pointer.c: initialize idx
+
+Fix the following build failure with gcc 5:
+
+/home/thomas/autobuild/instance-2/output-1/build/json-c-0.17/json_pointer.c: In function 'json_pointer_result_get_recursive':
+/home/thomas/autobuild/instance-2/output-1/build/json-c-0.17/json_pointer.c:193:25: error: 'idx' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+    res->index_in_parent = idx;
+                         ^
+
+Fixes:
+ - http://autobuild.buildroot.org/results/523b35a979d59121fe4e18c38171792b06233940/
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/json-c/json-c/pull/839
+---
+ json_pointer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/json_pointer.c b/json_pointer.c
+index 89e9e21..0ac8aaa 100644
+--- a/json_pointer.c
++++ b/json_pointer.c
+@@ -158,7 +158,7 @@ static int json_pointer_result_get_recursive(struct json_object *obj, char *path
+                                              struct json_pointer_get_result *res)
+ {
+ 	struct json_object *parent_obj = obj;
+-	size_t idx;
++	size_t idx = 0;
+ 	char *endp;
+ 	int rc;
+ 
+-- 
+2.42.0
+
