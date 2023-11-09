@@ -33,6 +33,13 @@ config BR2_PACKAGE_LIBCAMERA_V4L2
 config BR2_PACKAGE_LIBCAMERA_HAS_PIPELINE
 	bool
 
+config BR2_PACKAGE_LIBCAMERA_PIPELINE_IMX8_ISI
+	bool "imx8-isi pipeline"
+	depends on BR2_arm || BR2_aarch64
+	select BR2_PACKAGE_LIBCAMERA_HAS_PIPELINE
+	help
+	  Pipeline for i.MX8 SoC ISI capture interface.
+
 config BR2_PACKAGE_LIBCAMERA_PIPELINE_IPU3
 	bool "ipu3 pipeline"
 	depends on BR2_i386 || BR2_x86_64
