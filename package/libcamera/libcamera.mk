@@ -98,7 +98,10 @@ LIBCAMERA_DEPENDENCIES += tiff
 endif
 
 ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
+LIBCAMERA_CONF_OPTS += -Dudev=enabled
 LIBCAMERA_DEPENDENCIES += udev
+else
+LIBCAMERA_CONF_OPTS += -Dudev=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LTTNG_LIBUST),y)
