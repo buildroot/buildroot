@@ -40,21 +40,21 @@ config BR2_PACKAGE_LIBCAMERA_PIPELINE_IPU3
 	help
 	  Pipeline for Intel IPU3.
 
-config BR2_PACKAGE_LIBCAMERA_PIPELINE_RASPBERRYPI
-	bool "raspberrypi pipeline"
-	depends on BR2_arm || BR2_aarch64
-	depends on BR2_USE_WCHAR # boost (already enforced for gnutls)
-	select BR2_PACKAGE_BOOST
-	select BR2_PACKAGE_LIBCAMERA_HAS_PIPELINE
-	help
-	  Pipeline for Raspberry Pi devices.
-
 config BR2_PACKAGE_LIBCAMERA_PIPELINE_RKISP1
 	bool "rkisp1 pipeline"
 	depends on BR2_arm || BR2_aarch64
 	select BR2_PACKAGE_LIBCAMERA_HAS_PIPELINE
 	help
 	  Pipeline for Rockchip ISP1.
+
+config BR2_PACKAGE_LIBCAMERA_PIPELINE_RPI_VC4
+	bool "rpi/vc4 pipeline"
+	depends on BR2_arm || BR2_aarch64
+	depends on BR2_USE_WCHAR # boost (already enforced for gnutls)
+	select BR2_PACKAGE_BOOST
+	select BR2_PACKAGE_LIBCAMERA_HAS_PIPELINE
+	help
+	  Pipeline for Raspberry Pi devices.
 
 config BR2_PACKAGE_LIBCAMERA_PIPELINE_SIMPLE
 	bool "simple pipeline"

@@ -146,6 +146,16 @@ endif
 
 comment "Legacy options removed in 2024.02"
 
+config BR2_PACKAGE_LIBCAMERA_PIPELINE_RASPBERRYPI
+	bool "libcamera pipeline 'raspberrypi' was renamed to 'rpi/vc4'"
+	depends on BR2_arm || BR2_aarch64
+	depends on BR2_USE_WCHAR
+	select BR2_LEGACY
+	select BR2_PACKAGE_LIBCAMERA_PIPELINE_RPI_VC4
+	help
+	  Since version ... the libcamera pipeline option 'raspberrypi' was
+	  renamed to 'rpi/vc4'.
+
 config BR2_GDB_VERSION_11
 	bool "gdb 11.x removed"
 	select BR2_LEGACY
