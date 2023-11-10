@@ -14,14 +14,33 @@ config BR2_PACKAGE_MEMTEST86
 	  back again and verifies whether the result of the read is the
 	  same as what was written to memory.
 
-	  Memtest86+ will only work on 32-bit or 64-bit x86 targets.
-	  It boots as an i486 program and autodetects hardware. It can
-	  be added to the grub2 boot menu by adding the following
-	  lines to the bottom of /boot/grub/grub.cfg - note the use of
-	  linux16.
+	  Memtest86+ will only work on 32-bit or 64-bit x86 targets. It
+	  boots and autodetects hardware. Refer README.md for boot
+	  options.
 
-	  menuentry "Memtest86+" {
-	    linux16 /boot/memtest86+.bin
+	  It can be loaded and run either directly by a PC BIOS (legacy
+	  or UEFI) or via an intermediate bootloader that supports the
+	  Linux 16-bit, 32-bit, 64-bit, or EFI handover boot protocol.
+
+	  It can be added to the grub2 boot menu by adding the following
+	  lines to the bottom of grub.cfg
+
+	  Example for legacy BIOS using the Linux 16-bit boot protocol,
+	  with built-in support for USB keyboards or running on a serial
+	  line:
+
+	  menuentry "Start Memtest86+ (USB keyboards)" {
+	      linux16 /boot/memtest.bin keyboard=both
+	  }
+	  menuentry "Start Memtest86+ (serial line)" {
+	      linux16 /boot/memtest.bin console=ttyS0,115200
+	  }
+
+	  Or for UEFI BIOS using the Linux 32-bit or 64-bit boot
+	  protocols, using USB keyboard:
+
+	  menuentry "Start Memtest86+ (USB keyboards)" {
+	      linux /EFI/BOOT/memtest.efi keyboard=both
 	  }
 
 	  Other boot loaders will have similar requirements.
