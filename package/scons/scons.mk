@@ -4,14 +4,15 @@
 #
 ################################################################################
 
-SCONS_VERSION = 3.1.2
+SCONS_VERSION = 4.5.2
+SCONS_SOURCE = SCons-$(SCONS_VERSION).tar.gz
 SCONS_SITE = http://downloads.sourceforge.net/project/scons/scons/$(SCONS_VERSION)
 SCONS_LICENSE = MIT
-SCONS_LICENSE_FILES = LICENSE.txt
-SCONS_SETUP_TYPE = distutils
+SCONS_LICENSE_FILES = LICENSE
+SCONS_SETUP_TYPE = setuptools
 
 HOST_SCONS_INSTALL_OPTS = \
-	--install-lib=$(HOST_DIR)/lib/scons-$(SCONS_VERSION)
+	--install-lib=$(HOST_DIR)/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages
 
 $(eval $(host-python-package))
 
