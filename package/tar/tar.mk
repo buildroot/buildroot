@@ -14,6 +14,9 @@ TAR_LICENSE = GPL-3.0+
 TAR_LICENSE_FILES = COPYING
 TAR_CPE_ID_VENDOR = gnu
 
+# 0002-Fix-boundary-checking-in-base-256-decoder.patch
+TAR_IGNORE_CVES += CVE-2022-48303
+
 ifeq ($(BR2_PACKAGE_ACL),y)
 TAR_DEPENDENCIES += acl
 TAR_CONF_OPTS += --with-posix-acls
