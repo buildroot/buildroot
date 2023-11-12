@@ -57,6 +57,14 @@ else
 ZFS_CONF_OPTS += --disable-pam
 endif
 
+# Sets the environment for the `make` that will be run ZFS autotools checks.
+ZFS_CONF_ENV += \
+	ARCH=$(KERNEL_ARCH) \
+	CROSS_COMPILE="$(TARGET_CROSS)"
+ZFS_MAKE_ENV += \
+	ARCH=$(KERNEL_ARCH) \
+	CROSS_COMPILE="$(TARGET_CROSS)"
+
 # ZFS userland tools are unfunctional without the Linux kernel modules.
 ZFS_MODULE_SUBDIRS = \
 	module/avl \
