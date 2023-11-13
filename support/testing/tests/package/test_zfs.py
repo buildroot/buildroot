@@ -40,11 +40,11 @@ class TestZfsBase(infra.basetest.BRTest):
 
         cmds = [
             # Init
-            "modprobe zfs",
+            "modprobe zfs && sleep 2",
             "mount -o remount,size=132M /tmp",
             "fallocate -l 64M /tmp/container1.raw",
             "fallocate -l 64M /tmp/container2.raw",
-            "zpool create -m /pool pool raidz /tmp/container1.raw /tmp/container2.raw",
+            "zpool create pool raidz /tmp/container1.raw /tmp/container2.raw",
             "dd if=/dev/urandom bs=1M count=8 of=/pool/urandom",
             "sha256sum /pool/urandom > /tmp/urandom.sha256",
             # Check ZFS
