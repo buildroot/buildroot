@@ -1,3 +1,91 @@
+2023.11-rc1, released November 14th, 2023
+
+	Fixes all over the tree and new features.
+
+	Architecture: MIPS IV (re-)added. The mutually exclusive ABI
+	selection dropped for PowerPC.
+
+	Toolchain:
+
+	- Support for GDB 13.2, make GDB 12.x the default
+
+	- Glibc bumped to 2.38
+
+	- Bootlin external toolchains updated to 2023.08, bringing
+          support for Aarch64 BE with musl.
+
+	- Motorola 68K w/MMU support added for glibc and musl.
+
+	- License info added for GCC
+
+	Infrastructure:
+
+	- The CMake infrastructure now supports building packages with
+          ninja instead of make (based on <pkg>_CMAKE_BACKEND).
+
+	- The RPATH fixup done at the end of the build is now done in
+          parallel (according to BR2_JLEVEL).
+
+	- Packages downloaded from Subversion repos no longer
+          retrieves svn:externals unless <pkg>_SVN_EXTERNALS is set to
+          YES.
+
+	- Packages where a free-form version/site can be specified
+          (E.G. Linux, U-Boot, ..) can now have the corresponding
+          tarballs of these custom downloads checked by the download
+          infrastructure based on .hash files in the global patch
+          directory. These hashes are optional unless
+          BR2_DOWNLOAD_FORCE_CHECK_HASHES is enabled.
+
+	  A utils/add-custom-hashes helper script has been added to
+          assist in managing such hash files.
+
+	- Various improvements to utils/docker-run to handle external
+          (BR2_DL_DIR defined in environment) download directory,
+          proxy configuration, SELinux and out of tree (O=) builds.
+
+	New defconfigs: AMD Zynq ZC702, ASUS Tinker-s rk3288, ICnova
+	A20-adb4006, Khadas vim3, Libre Computer ROC-RK3399-PC,
+	Microchip PolarFire SoC Icicle Kit, NXP imxrt1050-evk, Pine64
+	pinecube, Sipeed LicheePi Nano, Synopsys ARC700 nSIM, TI
+	SK-AM62 and TI SK-AM64
+
+	New packages: ti-k3-boot-firmware, ti-k3-image-gen,
+	amlogic-boot-fip, criu, cutekeyboard, depot-tools, fft-eval,
+	firewalld, flutter-engine, flutter-gallery, flutter-pi,
+	flutter-sdk-bin, ledmon, libcanberra, libnvme, libsoup3,
+	libspdm, libucontext, libzenoh-pico,
+	microchip-hss-payload-generator, nodejs-bin, nushell,
+	nvidia-persistenced, oatpp, onevpl-intel-gpu, onevpl,
+	python-calver, python-distlib, python-jeepney,
+	python-jsonschema-specifications, python-kmod,
+	python-pysensors, python-referencing, python-segno,
+	python-tftpy, python-trove-classifiers,
+	python-types-python-dateutil, python-versioneer,
+	qoriq-fm-ucode, qt6core5compat, rauc-hawkbit-updater,
+	rust-bindgen, spirv-headers, spirv-tools, vulkan-loader,
+	vulkan-tools
+
+	Removed packages: google-material-design-icons, libtextstyle,
+	python-pyxb
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14366: Nodejs fails with "version `GLIBC_2.34' not found"..
+	#14741: e2fsck is failing during cronjob build where fail...
+	#15628: Missing dependencies in BR2_PACKAGE_PYTHON_MAKO
+	#15733: xfsprogs outdated
+	#15772: lz4 failed to compile with gcc 10.4.0
+	#15778: strace comilation fails on Fedora39/gcc13
+	#15787: atmel_sama5d3_xplained_mmc_defconfig: Missing...
+	#15790: at91sam9x5ek_dev_defconfig: Missing...
+	#15808: connman is not supported on musl
+	#15814: C++ not supported by bootlin toolchain
+	#15820: make linux-menuconfig does not modify correct .config..
+	#15823: Installing nodejs modules with native extensions ...
+	#15826: nodejs modules with native extensions fail to install
+	#15835: Incompatibility between network-manager and libcurl 8.4
+
 2023.08.2, released October 15th, 2023
 
 	Important / security related fixes.
