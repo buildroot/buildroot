@@ -459,6 +459,51 @@
 	#15376: Libiconv config
 	#15461: QtVirtualKeyboard segfaults
 
+2023.02.7, released November 14th, 2023
+
+	Important / security related fixes.
+
+	Per-package builds: Unbreak SDK relocation logic. Only drop
+	the hard links for the final host / target directory, fixing a
+	build time / size regression in 2023.02.6.
+
+	Packages where a free-form version/site can be specified
+	(E.G. Linux, U-Boot, ..) can now have the corresponding
+	tarballs of these custom downloads checked by the download
+	infrastructure based on .hash files in the global patch
+	directory. These hashes are optional unless
+	BR2_DOWNLOAD_FORCE_CHECK_HASHES is enabled.
+
+	A utils/add-custom-hashes helper script has been added to
+	assist in managing such hash files.
+
+	Defconfigs: stm32mp157a-dk1, stm32mp157c-dk2: Unbreak TF-A
+	build, stm32mp157c-odessey: Use a fixed TF-A version for
+	reproducibility
+
+	Updated/fixed packages: apache, arm-trusted-firmware, aufs,
+	aufs-util, azure-iot-sdk, cjson, cups-filters, clamav, dhcpcd,
+	freeradius-server, go, htop, ksmbd-tools, kvmtool, libgdiplus,
+	libopenssl, libosmium, libtommath, libupnp, libzlib, lxc,
+	mender, minizip-zlib, mpd, mxsldr, nano, nettle,
+	network-manager, nghttp2, nodejs, opencv4, opencv4-contrib,
+	openjdk-bin, openvpn, opusfile, paho-mqtt-c,
+	perl-lwp-protocol-https, php, python-django, python-urllib3,
+	python-web2py, rabbitmq-c, redis, riscv64-elf-toolchain,
+	suricata, tar, tiff, tor, traceroute, vim, websocketpp,
+	wireshark, wolfssl, xdg-dbus-proxy, xen, xlib_libX11,
+	xlib_libXpm, zabbix, zchunk
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#14741: e2fsck is failing during cronjob build where fail...
+	#15772: lz4 failed to compile with gcc 10.4.0
+	#15787: atmel_sama5d3_xplained_mmc_defconfig: Missing...
+	#15790: at91sam9x5ek_dev_defconfig: Missing...
+	#15820: make linux-menuconfig does not modify correct .config..
+	#15823: Installing nodejs modules with native extensions ...
+	#15835: Incompatibility between network-manager and libcurl 8.4
+
 2023.02.6, released October 16th, 2023
 
 	Important / security related fixes.
