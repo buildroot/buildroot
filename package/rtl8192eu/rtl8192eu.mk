@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RTL8192EU_VERSION = ac8517206e14f70babbeed68e136ee23c85cba3d
+RTL8192EU_VERSION = a928f08c1dd4f9a1e84d85811a543e974551bc4f
 RTL8192EU_SITE = $(call github,clnhub,rtl8192eu-linux,$(RTL8192EU_VERSION))
 RTL8192EU_LICENSE = GPL-2.0
 
