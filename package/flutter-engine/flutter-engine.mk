@@ -185,11 +185,14 @@ define FLUTTER_ENGINE_EXTRACT_CMDS
 	| $(TAR) --strip-components=1 -C $(@D) $(TAR_OPTIONS) -
 endef
 
+# We must set the home directory to the sdk directory or else flutter will
+# place .dart, and .flutter in ~/.
 define FLUTTER_ENGINE_CONFIGURE_CMDS
 	cd $(@D) && \
 		rm -rf $(FLUTTER_ENGINE_BUILD_DIR) && \
 		PATH=$(HOST_DIR)/share/depot_tools:$(BR_PATH) \
 		PUB_CACHE=$(FLUTTER_SDK_BIN_PUB_CACHE) \
+		HOME=$(HOST_FLUTTER_SDK_BIN_SDK) \
 		./flutter/tools/gn \
 			$(FLUTTER_ENGINE_CONF_OPTS)
 endef
@@ -198,6 +201,7 @@ define FLUTTER_ENGINE_BUILD_CMDS
 	cd $(@D) && \
 		PATH=$(HOST_DIR)/share/depot_tools:$(BR_PATH) \
 		PUB_CACHE=$(FLUTTER_SDK_BIN_PUB_CACHE) \
+		HOME=$(HOST_FLUTTER_SDK_BIN_SDK) \
 		$(HOST_DIR)/bin/ninja \
 			-j $(PARALLEL_JOBS) \
 			-C $(FLUTTER_ENGINE_BUILD_DIR)
