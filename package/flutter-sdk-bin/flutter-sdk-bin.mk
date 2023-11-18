@@ -77,6 +77,7 @@ HOST_FLUTTER_SDK_BIN_DART_ARGS = \
 	-Ddart.vm.product=$(HOST_FLUTTER_SDK_BIN_SDK_PRODUCT) \
 	--aot \
 	--tfa \
+	--target-os linux \
 	--packages .dart_tool/package_config.json \
 	--output-dill .dart_tool/flutter_build/*/app.dill \
 	--depfile .dart_tool/flutter_build/*/kernel_snapshot.d
