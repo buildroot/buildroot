@@ -13,7 +13,8 @@ ATTR_CPE_ID_VENDOR = attr_project
 
 ATTR_INSTALL_STAGING = YES
 
-ATTR_CONF_OPTS = --disable-nls
-
+ATTR_CONF_OPTS = \
+	--disable-nls \
+	--enable-multilib
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
