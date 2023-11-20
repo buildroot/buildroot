@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TBB_VERSION = 2021.10.0
+TBB_VERSION = 2021.11.0
 TBB_SITE = $(call github,01org,tbb,v$(TBB_VERSION))
 TBB_INSTALL_STAGING = YES
 TBB_LICENSE = Apache-2.0
