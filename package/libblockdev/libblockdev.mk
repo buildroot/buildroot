@@ -16,20 +16,15 @@ LIBBLOCKDEV_AUTORECONF = YES
 LIBBLOCKDEV_CONF_OPTS = \
 	--disable-introspection \
 	--with-loop \
-	--without-bcache \
 	--without-btrfs \
 	--without-dm \
-	--without-dmraid \
 	--without-escrow \
-	--without-kbd \
 	--without-lvm_dbus \
 	--without-mpath \
 	--without-nvdimm \
-	--without-python2 \
 	--without-python3 \
 	--without-s390 \
-	--without-tools \
-	--without-vdo
+	--without-tools
 
 ifeq ($(BR2_PACKAGE_LIBBLOCKDEV_CRYPTO),y)
 LIBBLOCKDEV_DEPENDENCIES += cryptsetup keyutils
