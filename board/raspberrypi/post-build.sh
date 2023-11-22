@@ -14,6 +14,3 @@ elif [ -d ${TARGET_DIR}/etc/systemd ]; then
     ln -sf /lib/systemd/system/getty@.service \
        "${TARGET_DIR}/etc/systemd/system/getty.target.wants/getty@tty1.service"
 fi
-
-# ensure overlays exists for genimage
-mkdir -p "${BINARIES_DIR}/rpi-firmware/overlays"
