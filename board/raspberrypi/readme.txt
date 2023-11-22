@@ -17,8 +17,8 @@ How to build it
 Configure Buildroot
 -------------------
 
-There are two RaspberryPi defconfig files in Buildroot, one for each
-major variant, which you should base your work on:
+There are several Raspberry Pi defconfig files in Buildroot, one for
+each major variant, which you should base your work on:
 
 For models A, B, A+ or B+:
 
@@ -133,7 +133,7 @@ How to write to CM4 eMMC memory
 ===============================
 
 For CM4 modules without eMMC memory see above for booting from SD card,
-for CM4 moduels with eMMC memory proceed as following:
+for CM4 modules with eMMC memory proceed as following:
 
 - fit jumper on IO Board header J2 to disable eMMC boot
 - connect IO Board micro USB port (J11 USB slave) to your host linux system
