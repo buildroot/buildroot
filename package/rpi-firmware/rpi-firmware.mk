@@ -59,12 +59,6 @@ define RPI_FIRMWARE_INSTALL_DTB_OVERLAYS
 	$(INSTALL) -D -m 0644 $(@D)/boot/overlays/overlay_map.dtb $(BINARIES_DIR)/rpi-firmware/overlays/
 	touch $(BINARIES_DIR)/rpi-firmware/overlays/README
 endef
-else
-# Still create the directory, so a genimage.cfg can include it independently of
-# whether _INSTALL_DTB_OVERLAYS is selected or not.
-define RPI_FIRMWARE_INSTALL_DTB_OVERLAYS
-	$(INSTALL) -d $(BINARIES_DIR)/rpi-firmware/overlays
-endef
 endif
 
 # Install prebuilt libraries if RPI_USERLAND not enabled
