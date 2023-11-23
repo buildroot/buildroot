@@ -1,5 +1,6 @@
 config BR2_PACKAGE_LIBZENOH_PICO
 	bool "libzenoh-pico"
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 	help
 	  zenoh-pico is the Eclipse zenoh implementation that targets
 	  constrained devices and offers a native C API. It is fully
