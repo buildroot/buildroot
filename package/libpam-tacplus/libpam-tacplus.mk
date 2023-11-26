@@ -17,8 +17,6 @@ LIBPAM_TACPLUS_DEPENDENCIES = \
 # We're patching Makefile.am
 LIBPAM_TACPLUS_AUTORECONF = YES
 LIBPAM_TACPLUS_INSTALL_STAGING = YES
-LIBPAM_TACPLUS_CONF_ENV = \
-	ax_cv_check_cflags___fstack_protector_all=$(if $(BR2_TOOLCHAIN_HAS_SSP),yes,no)
-LIBPAM_TACPLUS_CONF_OPTS = --disable-werror
+LIBPAM_TACPLUS_CONF_OPTS = --disable-am-ldcflags --disable-werror
 
 $(eval $(autotools-package))
