@@ -1,37 +1,53 @@
-socat: disable documentation build/installation
+From 01463f5dbe19501948dec26160e0cc3b4e9167b4 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Date: Mon, 27 Nov 2023 18:09:57 +0200
+Subject: [PATCH] socat: disable documentation build/installation
 
 The documentation generation process requires a special yold2man
 program, for which we don't have a package in Buildroot. Since we
 generally don't care much about documentation of packages, just adjust
 the package Makefile.in to not build/install its documentation.
 
+Upstream: N/A
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+[baruch: update for 1.8.0.0; git patch format]
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+ Makefile.in | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-Index: b/Makefile.in
-===================================================================
+diff --git a/Makefile.in b/Makefile.in
+index c01b1a4a2306..fd89acb06f3c 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -93,7 +93,7 @@
- 	Config/Makefile.Cygwin-1-5-25 Config/config.Cygwin-1-5-25.h \
- 	Config/Makefile.MacOSX-10-5 Config/config.MacOSX-10-5.h
+@@ -82,7 +82,7 @@ SHFILES = socat-chain.sh socat-mux.sh socat-broker.sh \
+ TESTFILES = test.sh socks4echo.sh proxyecho.sh readline-test.sh \
+ 	proxy.sh socks4a-echo.sh
  
 -all: progs doc
 +all: progs
  
  scmclean: gitclean
  
-@@ -136,13 +136,11 @@
+@@ -128,7 +128,7 @@ libxio.a: $(XIOOBJS) $(UTLOBJS)
  strip: progs
  	strip $(PROGS)
  
 -install: progs $(srcdir)/doc/socat.1
 +install: progs
  	mkdir -p $(DESTDIR)$(BINDEST)
- 	$(INSTALL) -m 755 socat $(DESTDIR)$(BINDEST)
+ 	$(INSTALL) -m 755 socat $(DESTDIR)$(BINDEST)/socat1
+ 	ln -sf socat1 $(DESTDIR)$(BINDEST)/socat
+@@ -137,9 +137,6 @@ install: progs $(srcdir)/doc/socat.1
+ 	$(INSTALL) -m 755 socat-broker.sh $(DESTDIR)$(BINDEST)
  	$(INSTALL) -m 755 procan $(DESTDIR)$(BINDEST)
  	$(INSTALL) -m 755 filan $(DESTDIR)$(BINDEST)
 -	mkdir -p $(DESTDIR)$(MANDEST)/man1
--	$(INSTALL) -m 644 $(srcdir)/doc/socat.1 $(DESTDIR)$(MANDEST)/man1/
+-	$(INSTALL) -m 644 $(srcdir)/doc/socat.1 $(DESTDIR)$(MANDEST)/man1/socat1.1
+-	ln -sf socat1.1 $(DESTDIR)$(MANDEST)/man1/socat.1
  
  uninstall:
  	rm -f $(DESTDIR)$(BINDEST)/socat
+-- 
+2.42.0
+
