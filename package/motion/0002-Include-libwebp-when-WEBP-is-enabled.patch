@@ -1,0 +1,26 @@
+From 40ecd71ff361442f1579089481619dd7cae90ffd Mon Sep 17 00:00:00 2001
+From: Piotr Mionskowski <piotr.mionskowski@gmail.com>
+Date: Sun, 9 Jul 2023 01:44:49 +0200
+Subject: [PATCH] Include libwebp when WEBP is enabled
+
+Upstream: https://github.com/Motion-Project/motion/commit/40ecd71ff361442f1579089481619dd7cae90ffd
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index ce588f65..ee45ac37 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -191,8 +191,8 @@ AS_IF([test "${WEBP}" = "yes" ], [
+     AS_IF([pkg-config libwebpmux ], [
+         AC_MSG_RESULT(yes)
+         AC_DEFINE([HAVE_WEBP], [1], [Define to 1 if WEBP is around])
+-        TEMP_CFLAGS="$TEMP_CFLAGS "`pkg-config --cflags libwebpmux`
+-        TEMP_LIBS="$TEMP_LIBS "`pkg-config --libs libwebpmux`
++        TEMP_CFLAGS="$TEMP_CFLAGS "`pkg-config --cflags libwebpmux libwebp`
++        TEMP_LIBS="$TEMP_LIBS "`pkg-config --libs libwebpmux libwebp`
+       ],[
+         AC_MSG_RESULT(no)
+       ]
