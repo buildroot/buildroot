@@ -1,9 +1,9 @@
 From 84e62d57b90b41a0c96bb9fb6ec61ecaac76a1ab Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Sat, 5 Nov 2022 21:31:36 +0100
-Subject: [PATCH] configure.ac: fix build on powerpc
+Subject: [PATCH] configure.ac: fix build on powerpc and m68k
 
-Fix the following powerpc build failures on:
+Fix the following powerpc and m68k build failures on:
  - musl raised because fpu_control.h is not available:
 
 In file included from fp.c:8:
@@ -25,6 +25,7 @@ Fixes:
  - http://autobuild.buildroot.org/results/48403946bb4cda9013e51db59c1b2ffdcf4e2854
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://lists.gnu.org/archive/html/bug-gsl/2022-11/msg00000.html
 ---
  configure.ac | 8 ++++++++
  1 file changed, 8 insertions(+)
@@ -37,7 +38,7 @@ index bfd9ca30..1ee6dca0 100644
     fi
  fi
  
-+if test "$ac_cv_c_ieee_interface" = "gnuppc" ; then
++if test "$ac_cv_c_ieee_interface" = "gnuppc" -o "$ac_cv_c_ieee_interface" = "gnum68k" ; then
 +    AC_CACHE_CHECK([for _FPU_RC_NEAREST], ac_cv_c__fpu_rc_nearest,
 +    [ac_cv_c__fpu_rc_nearest=no
 +    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <fpu_control.h>
