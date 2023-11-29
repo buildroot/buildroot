@@ -105,13 +105,13 @@ config BR2_INIT_OPENRC
 	bool "OpenRC"
 	depends on BR2_USE_MMU
 	depends on !BR2_STATIC_LIBS
-	depends on !BR2_TOOLCHAIN_BUILDROOT_UCLIBC
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC # openrc
 	select BR2_PACKAGE_OPENRC
 	select BR2_PACKAGE_SKELETON_INIT_OPENRC if BR2_ROOTFS_SKELETON_DEFAULT
 
 comment "openrc needs a glibc or musl toolchain w/ dynamic library"
 	depends on BR2_USE_MMU
-	depends on BR2_STATIC_LIBS && BR2_TOOLCHAIN_BUILDROOT_UCLIBC
+	depends on BR2_STATIC_LIBS && BR2_TOOLCHAIN_USES_UCLIBC
 
 # In Buildroot, we decided not to support a split-usr when systemd is
 # used as an init system. This is a design decision, not a systemd
