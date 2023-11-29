@@ -151,6 +151,13 @@ RSYSLOG_CONF_OPTS += \
 	--disable-omjournal
 endif
 
+ifeq ($(BR2_PACKAGE_LIBDBI_DRIVERS),y)
+RSYSLOG_CONF_OPTS += --enable-libdbi
+RSYSLOG_DEPENDENCIES += libdbi-drivers
+else
+RSYSLOG_CONF_OPTS += --disable-libdbi
+endif
+
 define RSYSLOG_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -m 0644 -D package/rsyslog/rsyslog.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/rsyslog.service
