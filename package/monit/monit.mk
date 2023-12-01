@@ -27,7 +27,11 @@ MONIT_CONF_OPTS += \
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 MONIT_CONF_ENV += LIBS=`$(PKG_CONFIG_HOST_BINARY) --libs openssl`
+ifeq ($(BR2_STATIC_LIBS),y)
+MONIT_CONF_OPTS += --with-ssl-static=$(STAGING_DIR)/usr
+else
 MONIT_CONF_OPTS += --with-ssl --with-ssl-dir=$(STAGING_DIR)/usr
+endif
 MONIT_DEPENDENCIES += host-pkgconf openssl
 else
 MONIT_CONF_OPTS += --without-ssl
