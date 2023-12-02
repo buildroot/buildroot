@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LEPTONICA_VERSION = 1.82.0
-LEPTONICA_SITE = http://www.leptonica.org/source
+LEPTONICA_VERSION = 1.83.1
+LEPTONICA_SITE = https://github.com/DanBloomberg/leptonica/releases/download/$(LEPTONICA_VERSION)
 LEPTONICA_LICENSE = BSD-2-Clause
 LEPTONICA_LICENSE_FILES = leptonica-license.txt
 LEPTONICA_CPE_ID_VENDOR = leptonica
