@@ -16,7 +16,9 @@ LIBMEMCACHED_CPE_ID_VENDOR = awesome
 
 # Force Release otherwise libraries will be suffixed by -dbg which will raise
 # unexpected build failures with packages that use libmemcached (e.g. c-icap)
-LIBMEMCACHED_CONF_OPTS += -DCMAKE_BUILD_TYPE=Release
+LIBMEMCACHED_CONF_OPTS += \
+	-DCMAKE_BUILD_TYPE=Release \
+	-DCMAKE_C_FLAGS="$(TARGET_CFLAGS) -std=c99"
 
 ifeq ($(BR2_PACKAGE_LIBEVENT),y)
 LIBMEMCACHED_DEPENDENCIES += libevent
