@@ -18,7 +18,8 @@ LIBMEMCACHED_CPE_ID_VENDOR = awesome
 # unexpected build failures with packages that use libmemcached (e.g. c-icap)
 LIBMEMCACHED_CONF_OPTS += \
 	-DCMAKE_BUILD_TYPE=Release \
-	-DCMAKE_C_FLAGS="$(TARGET_CFLAGS) -std=c99"
+	-DCMAKE_C_FLAGS="$(TARGET_CFLAGS) -std=c99" \
+	-DCMAKE_SKIP_RPATH=ON
 
 ifeq ($(BR2_PACKAGE_LIBEVENT),y)
 LIBMEMCACHED_DEPENDENCIES += libevent
