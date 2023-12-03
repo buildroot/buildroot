@@ -14,7 +14,7 @@ error() {
     exit 1
 }
 
-for FILE in ${@}; do
+for FILE in "${@}"; do
     f="${TARGET_DIR}${FILE}"
     if [ ! -e "${f}" ]; then
         error "%s: No such file or directory\n" "${FILE}"
