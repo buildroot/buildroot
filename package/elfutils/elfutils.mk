@@ -51,7 +51,6 @@ endif
 
 ifeq ($(BR2_TOOLCHAIN_USES_GLIBC),)
 ELFUTILS_DEPENDENCIES += musl-fts argp-standalone
-ELFUTILS_LDFLAGS += -lfts
 endif
 
 ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
