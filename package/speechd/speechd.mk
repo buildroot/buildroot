@@ -12,8 +12,11 @@ SPEECHD_INSTALL_STAGING = YES
 # speechd source code is released without configure script
 SPEECHD_AUTORECONF = YES
 SPEECHD_AUTOPOINT = YES
-SPEECHD_DEPENDENCIES = host-pkgconf dotconf libglib2 libsndfile
-SPEECHD_CONF_ENV = ac_cv_prog_HELP2MAN=""
+SPEECHD_DEPENDENCIES = \
+	host-pkgconf dotconf libglib2 libsndfile $(TARGET_NLS_DEPENDENCIES)
+SPEECHD_CONF_ENV = \
+	ac_cv_prog_HELP2MAN="" \
+	LIBS=$(TARGET_NLS_LIBS)
 SPEECHD_CONF_OPTS = \
 	--disable-python \
 	--without-espeak \
