@@ -1,0 +1,28 @@
+From 37b849dca4dfd855212a763662825e967a4d77b1 Mon Sep 17 00:00:00 2001
+From: Jeremy Harris <jgh146exb@wizmail.org>
+Date: Tue, 7 Nov 2023 15:02:18 +0000
+Subject: [PATCH] OpenSSL: fix non-DANE build
+
+Upstream: https://git.exim.org/exim.git/commitdiff/37b849dca4dfd855212a763662825e967a4d77b1
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/tls-openssl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/src/tls-openssl.c b/src/src/tls-openssl.c
+index ef11de593..851ac77c5 100644
+--- a/src/tls-openssl.c
++++ b/src/tls-openssl.c
+@@ -2605,7 +2605,7 @@ if (!(bs = OCSP_response_get1_basic(rsp)))
+     asking for certificate-status under DANE, so this callback won't run for
+     that combination. It still will for non-DANE. */
+ 
+-#ifdef EXIM_HAVE_OPENSSL_OCSP_RESP_GET0_SIGNER
++#if defined(EXIM_HAVE_OPENSSL_OCSP_RESP_GET0_SIGNER) && defined(SUPPORT_DANE)
+     X509 * signer;
+ 
+     if (  tls_out.dane_verified
+-- 
+2.30.2
+
