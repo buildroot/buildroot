@@ -4,12 +4,9 @@
 #
 ################################################################################
 
-ETHTOOL_VERSION = 6.5
-ETHTOOL_SITE = https://git.kernel.org/pub/scm/network/ethtool/ethtool.git/snapshot
-# needed only for autoreconf
-ETHTOOL_DEPENDENCIES = host-pkgconf
-# GIT version, shipped without configure
-ETHTOOL_AUTORECONF = YES
+ETHTOOL_VERSION = 6.6
+ETHTOOL_SOURCE = ethtool-$(ETHTOOL_VERSION).tar.xz
+ETHTOOL_SITE = $(BR2_KERNEL_MIRROR)/software/network/ethtool
 ETHTOOL_LICENSE = GPL-2.0
 ETHTOOL_LICENSE_FILES = LICENSE COPYING
 ETHTOOL_CPE_ID_VENDOR = kernel
