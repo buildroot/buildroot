@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ONEVPL_VERSION = 2023.3.1
+ONEVPL_VERSION = 2023.4.0
 ONEVPL_SITE = $(call github,oneapi-src,oneVPL,v$(ONEVPL_VERSION))
 ONEVPL_LICENSE = MIT
 ONEVPL_LICENSE_FILES = LICENSE
