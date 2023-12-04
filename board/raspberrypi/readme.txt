@@ -28,6 +28,10 @@ For model Zero (model A+ in smaller form factor):
 
   $ make raspberrypi0_defconfig
 
+or for model Zero W (model Zero with wireless LAN and Bluetooth):
+
+  $ make raspberrypi0w_defconfig
+
 For model Zero 2 W (model B3 in smaller form factor):
 
   $ make raspberrypizero2w_defconfig

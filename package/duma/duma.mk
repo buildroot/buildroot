@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-DUMA_VERSION = 2.5.15
-DUMA_SOURCE = duma_$(subst .,_,$(DUMA_VERSION)).tar.gz
-DUMA_SITE = http://downloads.sourceforge.net/project/duma/duma/$(DUMA_VERSION)
+DUMA_VERSION = 2.5.21
+DUMA_SITE = $(call github,johnsonjh,duma,VERSION_$(subst .,_,$(DUMA_VERSION)))
 DUMA_LICENSE = GPL-2.0+, LGPL-2.1+
 DUMA_LICENSE_FILES = COPYING-GPL COPYING-LGPL
 
@@ -25,11 +24,13 @@ define DUMA_BUILD_CMDS
 endef
 
 define DUMA_INSTALL_STAGING_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) OS=linux prefix=$(STAGING_DIR)/usr install -C $(@D)
+	$(TARGET_MAKE_ENV) $(MAKE) $(TARGET_CONFIGURE_OPTS) \
+		OS=linux prefix=$(STAGING_DIR)/usr install -C $(@D)
 endef
 
 define DUMA_INSTALL_TARGET_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) OS=linux prefix=$(TARGET_DIR)/usr install -C $(@D)
+	$(TARGET_MAKE_ENV) $(MAKE) $(TARGET_CONFIGURE_OPTS) \
+		OS=linux prefix=$(TARGET_DIR)/usr install -C $(@D)
 endef
 
 $(eval $(generic-package))

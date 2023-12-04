@@ -36,15 +36,15 @@ I2C_TOOLS_PYTHON_BASE_ENV = \
 define I2C_TOOLS_BUILD_PYSMBUS
 	(cd $(@D)/py-smbus; \
 	$(I2C_TOOLS_PYTHON_BASE_ENV) \
-		$(HOST_DIR)/bin/python setup.py build \
-		$(PKG_PYTHON_SETUPTOOLS_BUILD_OPTS))
+		$(HOST_DIR)/bin/python setup.py build)
 endef
 
 define I2C_TOOLS_INSTALL_PYSMBUS
 	(cd $(@D)/py-smbus; \
 	$(I2C_TOOLS_PYTHON_BASE_ENV) \
 		$(HOST_DIR)/bin/python setup.py install \
-		$(PKG_PYTHON_SETUPTOOLS_INSTALL_TARGET_OPTS))
+		$(PKG_PYTHON_SETUPTOOLS_INSTALL_OPTS) \
+		--root=$(TARGET_DIR))
 endef
 
 endif # BR2_PACKAGE_PYTHON3

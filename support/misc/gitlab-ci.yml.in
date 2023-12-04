@@ -103,7 +103,16 @@ before_script:
     script:
         - TEST_CASE_NAME=${CI_JOB_NAME}
         - echo "Starting runtime test ${TEST_CASE_NAME}"
-        - ./support/testing/run-tests -o test-output/ -d test-dl/ -k --timeout-multiplier 10 ${TEST_CASE_NAME}
+        - |
+            ./support/testing/run-tests -o test-output/ -d test-dl/ -k --timeout-multiplier 10 ${TEST_CASE_NAME} || {
+                echo 'Failed runtime test last output'
+                if [ -f test-output/*-run.log ]; then
+                    tail -200 test-output/*-run.log | sed 's/\r\r$//'
+                else
+                    tail -200 test-output/*-build.log
+                fi
+                exit 1
+            }
     retry:
         max: 2
         when:

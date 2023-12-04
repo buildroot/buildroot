@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_PYDANTIC_CORE
+	bool "python-pydantic-core"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS # runtime
+	help
+	  Core validation logic for pydantic written in rust.
+
+	  https://github.com/pydantic/pydantic-core

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RSYSLOG_VERSION = 8.2204.1
+RSYSLOG_VERSION = 8.2310.0
 RSYSLOG_SITE = http://rsyslog.com/files/download/rsyslog
 RSYSLOG_LICENSE = GPL-3.0, LGPL-3.0, Apache-2.0
 RSYSLOG_LICENSE_FILES = COPYING COPYING.LESSER COPYING.ASL20
@@ -149,6 +149,13 @@ else
 RSYSLOG_CONF_OPTS += \
 	--disable-imjournal \
 	--disable-omjournal
+endif
+
+ifeq ($(BR2_PACKAGE_LIBDBI_DRIVERS),y)
+RSYSLOG_CONF_OPTS += --enable-libdbi
+RSYSLOG_DEPENDENCIES += libdbi-drivers
+else
+RSYSLOG_CONF_OPTS += --disable-libdbi
 endif
 
 define RSYSLOG_INSTALL_INIT_SYSTEMD

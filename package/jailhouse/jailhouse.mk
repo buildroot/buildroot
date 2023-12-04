@@ -30,11 +30,27 @@ JAILHOUSE_MAKE_OPTS += \
 	PYTHON_PIP_USABLE="no"
 endif
 
+ifeq ($(BR2_PACKAGE_JAILHOUSE_HELPER_SCRIPTS),y)
+define JAILHOUSE_BUILD_HELPER_SCRIPTS
+	cd $(@D) && \
+	$(PKG_PYTHON_SETUPTOOLS_ENV) \
+	$(HOST_DIR)/bin/python setup.py \
+		build
+endef
+define JAILHOUSE_INSTALL_HELPER_SCRIPTS
+	cd $(@D) && \
+	$(PKG_PYTHON_SETUPTOOLS_ENV) \
+	$(HOST_DIR)/bin/python setup.py \
+		install --no-compile \
+		$(PKG_PYTHON_SETUPTOOLS_INSTALL_OPTS) \
+		--root=$(TARGET_DIR))
+endef
+endif
+
 define JAILHOUSE_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) $(JAILHOUSE_MAKE_OPTS) -C $(@D)
 
-	$(if $(BR2_PACKAGE_JAILHOUSE_HELPER_SCRIPTS), \
-		cd $(@D) && $(PKG_PYTHON_SETUPTOOLS_ENV) $(HOST_DIR)/bin/python setup.py build)
+	$(JAILHOUSE_BUILD_HELPER_SCRIPTS)
 endef
 
 define JAILHOUSE_INSTALL_TARGET_CMDS
@@ -47,8 +63,7 @@ define JAILHOUSE_INSTALL_TARGET_CMDS
 	$(INSTALL) -d -m 0755 $(TARGET_DIR)/usr/local/libexec/jailhouse/demos
 	$(INSTALL) -D -m 0755 $(@D)/inmates/demos/*/*.bin $(TARGET_DIR)/usr/local/libexec/jailhouse/demos
 
-	$(if $(BR2_PACKAGE_JAILHOUSE_HELPER_SCRIPTS), \
-		cd $(@D) && $(PKG_PYTHON_SETUPTOOLS_ENV) $(HOST_DIR)/bin/python setup.py install --no-compile $(PKG_PYTHON_SETUPTOOLS_INSTALL_TARGET_OPTS))
+	$(JAILHOUSE_INSTALL_HELPER_SCRIPTS)
 endef
 
 $(eval $(generic-package))
