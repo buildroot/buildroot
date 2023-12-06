@@ -65,10 +65,10 @@ def main():
     BRConfigTest.downloaddir = os.path.abspath(args.download)
 
     if args.prepare_only:
-        emulator_builtin_binaries = ["kernel-vexpress-5.10.7",
-                                     "vexpress-v2p-ca9-5.10.7.dtb",
-                                     "kernel-versatile-5.10.7",
-                                     "versatile-pb-5.10.7.dtb"]
+        emulator_builtin_binaries = ["kernel-vexpress-5.10.202",
+                                     "vexpress-v2p-ca9-5.10.202.dtb",
+                                     "kernel-versatile-5.10.202",
+                                     "versatile-pb-5.10.202.dtb"]
         print("Downloading emulator builtin binaries")
         for binary in emulator_builtin_binaries:
             infra.download(BRConfigTest.downloaddir, binary)
