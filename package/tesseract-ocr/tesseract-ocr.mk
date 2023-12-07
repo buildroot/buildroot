@@ -4,15 +4,13 @@
 #
 ################################################################################
 
-TESSERACT_OCR_VERSION = 5.0.1
+TESSERACT_OCR_VERSION = 5.3.3
 TESSERACT_OCR_DATA_VERSION = 4.1.0
 TESSERACT_OCR_SITE = $(call github,tesseract-ocr,tesseract,$(TESSERACT_OCR_VERSION))
 TESSERACT_OCR_LICENSE = Apache-2.0
 TESSERACT_OCR_LICENSE_FILES = LICENSE
 
 # Source from github, no configure script provided
-# 0001-Check-if-platform-supports-feenableexcept.patch
-# 0002-configure.ac-fix-build-on-aarch64_be.patch
 TESSERACT_OCR_AUTORECONF = YES
 
 # cairo, pango and icu are optional dependencies, but only needed for
