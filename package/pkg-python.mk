@@ -258,8 +258,8 @@ HOST_PKG_PYTHON_MATURIN_ENV = \
 HOST_PKG_PYTHON_MATURIN_BUILD_CMD = \
 	$(HOST_PKG_PYTHON_PEP517_BUILD_CMD)
 
-PKG_PYTHON_MATURIN_INSTALL_CMD = \
-	$(PKG_PYTHON_PEP517_INSTALL_CMD)
+HOST_PKG_PYTHON_MATURIN_INSTALL_CMD = \
+	$(HOST_PKG_PYTHON_PEP517_INSTALL_CMD)
 
 ################################################################################
 # inner-python-package -- defines how the configuration, compilation
