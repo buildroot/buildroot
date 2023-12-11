@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QUICKJS_VERSION = 2021-03-27
+QUICKJS_VERSION = 2023-12-09
 QUICKJS_SOURCE = quickjs-$(QUICKJS_VERSION).tar.xz
 QUICKJS_SITE = https://bellard.org/quickjs
 QUICKJS_LICENSE = MIT
