@@ -12,6 +12,7 @@ XWAYLAND_LICENSE_FILES = COPYING
 XWAYLAND_CPE_ID_VENDOR = x.org
 XWAYLAND_INSTALL_STAGING = YES
 XWAYLAND_DEPENDENCIES = \
+	libdrm \
 	pixman \
 	wayland \
 	wayland-protocols \
@@ -23,15 +24,16 @@ XWAYLAND_DEPENDENCIES = \
 	xlib_xtrans \
 	xorgproto
 XWAYLAND_CONF_OPTS = \
+	-Ddri3=true \
 	-Dxwayland_eglstream=false \
 	-Dxvfb=false \
 	-Ddefault_font_path=/usr/share/fonts/X11/ \
 	-Ddtrace=false \
 	-Ddocs=false
 
-ifeq ($(BR2_PACKAGE_LIBDRM)$(BR2_PACKAGE_LIBEPOXY),yy)
+ifeq ($(BR2_PACKAGE_LIBEPOXY),y)
 XWAYLAND_CONF_OPTS += -Dglamor=true
-XWAYLAND_DEPENDENCIES += libdrm libepoxy
+XWAYLAND_DEPENDENCIES += libepoxy
 else
 XWAYLAND_CONF_OPTS += -Dglamor=false
 endif
@@ -77,13 +79,6 @@ XWAYLAND_DEPENDENCIES += libgcrypt
 else
 XWAYLAND_CONF_OPTS += -Dsha1=libsha1
 XWAYLAND_DEPENDENCIES += libsha1
-endif
-
-ifeq ($(BR2_PACKAGE_LIBDRM),y)
-XWAYLAND_CONF_OPTS += -Ddri3=true
-XWAYLAND_DEPENDENCIES +=  libdrm
-else
-XWAYLAND_CONF_OPTS += -Ddri3=false
 endif
 
 ifeq ($(BR2_PACKAGE_LIBUNWIND),y)
