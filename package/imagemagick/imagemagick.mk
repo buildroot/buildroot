@@ -238,22 +238,26 @@ HOST_IMAGEMAGICK_DEPENDENCIES += \
 	host-fontconfig \
 	host-freetype \
 	host-librsvg \
-	host-libxml2 \
 	host-pango
 HOST_IMAGEMAGICK_CONF_ENV += ac_cv_path_xml2_config=$(HOST_DIR)/bin/xml2-config
 HOST_IMAGEMAGICK_CONF_OPTS += \
 	--with-fontconfig \
 	--with-freetype \
 	--with-pango \
-	--with-rsvg \
-	--with-xml
+	--with-rsvg
 else
 HOST_IMAGEMAGICK_CONF_OPTS += \
 	--without-fontconfig \
 	--without-freetype \
 	--without-pango \
-	--without-rsvg \
-	--without-xml
+	--without-rsvg
+endif
+
+ifeq ($(BR2_PACKAGE_HOST_IMAGEMAGICK_XML),y)
+HOST_IMAGEMAGICK_CONF_OPTS += --with-xml
+HOST_IMAGEMAGICK_DEPENDENCIES += host-libxml2
+else
+HOST_IMAGEMAGICK_CONF_OPTS += --without-xml
 endif
 
 $(eval $(autotools-package))
