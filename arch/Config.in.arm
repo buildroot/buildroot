@@ -781,6 +781,9 @@ choice
 config BR2_ARM64_PAGE_SIZE_4K
 	bool "4KB"
 
+config BR2_ARM64_PAGE_SIZE_16K
+	bool "16KB"
+
 config BR2_ARM64_PAGE_SIZE_64K
 	bool "64KB"
 
@@ -789,6 +792,7 @@ endchoice
 config BR2_ARM64_PAGE_SIZE
 	string
 	default "4K" if BR2_ARM64_PAGE_SIZE_4K
+	default "16K" if BR2_ARM64_PAGE_SIZE_16K
 	default "64K" if BR2_ARM64_PAGE_SIZE_64K
 
 config BR2_ARCH

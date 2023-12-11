@@ -23,7 +23,7 @@ ifeq ($(BR2_ARC_PAGE_SIZE_4K)$(BR2_ARM64_PAGE_SIZE_4K),y)
 ARCH_TOOLCHAIN_WRAPPER_OPTS += -Wl,-z,max-page-size=4096 -Wl,-z,common-page-size=4096
 else ifeq ($(BR2_ARC_PAGE_SIZE_8K),y)
 ARCH_TOOLCHAIN_WRAPPER_OPTS += -Wl,-z,max-page-size=8192 -Wl,-z,common-page-size=8192
-else ifeq ($(BR2_ARC_PAGE_SIZE_16K),y)
+else ifeq ($(BR2_ARC_PAGE_SIZE_16K)$(BR2_ARM64_PAGE_SIZE_16K),y)
 ARCH_TOOLCHAIN_WRAPPER_OPTS += -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384
 else ifeq ($(BR2_ARM64_PAGE_SIZE_64K),y)
 ARCH_TOOLCHAIN_WRAPPER_OPTS += -Wl,-z,max-page-size=65536 -Wl,-z,common-page-size=65536
