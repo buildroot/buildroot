@@ -1,0 +1,66 @@
+From e8bbb7844c141b339ef0598decf2a808faa50f5e Mon Sep 17 00:00:00 2001
+From: Ralf Dragon <hypnotoad@lindra.de>
+Date: Sun, 17 Dec 2023 22:55:17 +0100
+Subject: [PATCH] siplib: fix build with python >= 3.11
+
+With python 3.11, the PyFrameObject structure members have been
+removed from the public C API:
+
+https://docs.python.org/3.11/whatsnew/3.11.html#whatsnew311-c-api-porting
+https://docs.python.org/3.11/whatsnew/3.11.html#pyframeobject-3-11-hiding
+
+This patch migrates to the opaque PyFrameObject.
+
+Upstream: Not Applicable, SIP 4.x is no longer maintained
+Signed-off-by: Ralf Dragon <hypnotoad@lindra.de>
+---
+ siplib/sip.h    | 2 +-
+ siplib/siplib.c | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/siplib/sip.h b/siplib/sip.h
+index 251b122..b9d8ea2 100644
+--- a/siplib/sip.h
++++ b/siplib/sip.h
+@@ -1799,7 +1799,7 @@ typedef struct _sipAPIDef {
+     int (*api_get_time)(PyObject *, sipTimeDef *);
+     PyObject *(*api_from_time)(const sipTimeDef *);
+     int (*api_is_user_type)(const sipWrapperType *);
+-    struct _frame *(*api_get_frame)(int);
++    PyFrameObject *(*api_get_frame)(int);
+     int (*api_check_plugin_for_type)(const sipTypeDef *, const char *);
+     PyObject *(*api_unicode_new)(SIP_SSIZE_T, unsigned, int *, void **);
+     void (*api_unicode_write)(int, void *, int, unsigned);
+diff --git a/siplib/siplib.c b/siplib/siplib.c
+index db52b68..a297855 100644
+--- a/siplib/siplib.c
++++ b/siplib/siplib.c
+@@ -448,7 +448,7 @@ static PyObject *sip_api_from_datetime(const sipDateDef *date,
+ static int sip_api_get_time(PyObject *obj, sipTimeDef *time);
+ static PyObject *sip_api_from_time(const sipTimeDef *time);
+ static int sip_api_is_user_type(const sipWrapperType *wt);
+-static struct _frame *sip_api_get_frame(int);
++static PyFrameObject *sip_api_get_frame(int);
+ static int sip_api_check_plugin_for_type(const sipTypeDef *td,
+         const char *name);
+ static PyObject *sip_api_unicode_new(SIP_SSIZE_T len, unsigned maxchar,
+@@ -13741,13 +13741,13 @@ static int sip_api_is_user_type(const sipWrapperType *wt)
+ /*
+  * Return a frame from the execution stack.
+  */
+-static struct _frame *sip_api_get_frame(int depth)
++static PyFrameObject *sip_api_get_frame(int depth)
+ {
+-    struct _frame *frame = PyEval_GetFrame();
++    PyFrameObject *frame = PyEval_GetFrame();
+ 
+     while (frame != NULL && depth > 0)
+     {
+-        frame = frame->f_back;
++        frame = PyFrame_GetBack(frame);
+         --depth;
+     }
+ 
+-- 
+2.43.0
+
