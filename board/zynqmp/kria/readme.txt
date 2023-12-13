@@ -2,24 +2,29 @@
 Xilinx Kria SOM Starter Kits - ZynqMP SoC
 **************************************************
 
-This document describes the Buildroot support for the Kria 
-KV260 and KR260 starter kits by Xilinx, based on Kria SOM including the 
+This document describes the Buildroot support for the Kria KD240,
+KR260 and KV260 starter kits by Xilinx, based on Kria SOM including the
 Zynq UltraScale+ MPSoC (aka ZynqMP).  It has been tested with 
-the KV260 and KR260 production boards.
+the KD240, KR260 and KV260 production boards.
 
 Evaluation board features can be found here with the links below.
 
-KV260:
-https://www.xilinx.com/products/som/kria/kv260-vision-starter-kit.html
+KD240:
+https://www.xilinx.com/products/som/kria/kd240-drives-starter-kit.html
 
 KR260:
 https://www.xilinx.com/products/som/kria/kr260-robotics-starter-kit.html
 
+KV260:
+https://www.xilinx.com/products/som/kria/kv260-vision-starter-kit.html
+
 How to build it
 ===============
 
-Configure Buildroot:
+Configure Buildroot: (use the command for the specific board)
 
+    $ make zynqmp_kria_kd240_defconfig
+    $ make zynqmp_kria_kr260_defconfig
     $ make zynqmp_kria_kv260_defconfig
 
 Compile everything and build the rootfs image:
@@ -68,7 +73,7 @@ in that the boot.bin and u-boot.itb files need to be flashed
 into the QSPI boot flash such that U-Boot can then load all
 of the remaining images from the SD card.
 
-In addition, the KV260 and KR260 Starter Kits QSPI comes pre-flashed with
+In addition, the Kria Starter Kits QSPI comes pre-flashed with
 a utility designed to make updating the QSPI flash memory
 easier.
 
@@ -94,7 +99,7 @@ Flashing boot.bin:
     $ sf erase 0x200000 +$filesize
     $ sf write 0x1000000 0x200000 $filesize
 
-KR260 Flashing Instructions:
+KD240 / KR260 Flashing Instructions:
 Flashing u-boot.itb:
     $ sf probe
     $ fatload usb 0 0x1000000 u-boot.itb
