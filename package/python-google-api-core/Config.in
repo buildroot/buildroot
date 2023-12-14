@@ -1,0 +1,10 @@
+config BR2_PACKAGE_PYTHON_GOOGLE_API_CORE
+	bool "python-google-api-core"
+	select BR2_PACKAGE_PYTHON_GOOGLE_AUTH # runtime
+	select BR2_PACKAGE_PYTHON_GOOGLEAPIS_COMMON_PROTOS # runtime
+	select BR2_PACKAGE_PYTHON_PROTOBUF # runtime
+	select BR2_PACKAGE_PYTHON_REQUESTS # runtime
+	help
+	  Google API client core library.
+
+	  https://github.com/googleapis/python-api-core
