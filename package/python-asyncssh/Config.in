@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_ASYNCSSH
+	bool "python-asyncssh"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-cryptography
+	select BR2_PACKAGE_PYTHON_CRYPTOGRAPHY # runtime
+	select BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS # runtime
+	help
+	  AsyncSSH: Asynchronous SSHv2 client and server library.
+
+	  http://asyncssh.timeheart.net
