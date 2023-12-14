@@ -1,0 +1,10 @@
+config BR2_PACKAGE_PYTHON_FASTAPI_SESSIONS
+	bool "python-fastapi-sessions"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-pydantic -> python-pydantic-core
+	select BR2_PACKAGE_PYTHON_FASTAPI # runtime
+	select BR2_PACKAGE_PYTHON_ITSDANGEROUS # runtime
+	select BR2_PACKAGE_PYTHON_PYDANTIC # runtime
+	help
+	  Ready-to-use session library for FastAPI.
+
+	  https://github.com/jordanisaacs/fastapi-sessions
