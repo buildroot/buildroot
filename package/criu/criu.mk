@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CRIU_VERSION = 3.18
+CRIU_VERSION = 3.19
 CRIU_SITE = $(call github,checkpoint-restore,criu,v$(CRIU_VERSION))
 
 CRIU_LICENSE = GPL-2.0, LGPL-2.1 (for lib/), MIT (for images/)
