@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2024.02"
 
+config BR2_PACKAGE_PYTHON_PYGAME
+	bool "python-pygame removed"
+	select BR2_LEGACY
+	help
+	  python-pygame has been removed due to being abandoned and
+	  the old version no longer building with python 3.12.0.
+
 config BR2_KERNEL_HEADERS_4_14
 	bool "kernel headers version 4.14.x are no longer supported"
 	select BR2_LEGACY
