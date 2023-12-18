@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-JQ_VERSION = 1.7
+JQ_VERSION = 1.7.1
 JQ_SITE = https://github.com/jqlang/jq/releases/download/jq-$(JQ_VERSION)
 JQ_LICENSE = MIT (code), ICU (decNumber), CC-BY-3.0 (documentation)
 JQ_LICENSE_FILES = COPYING
