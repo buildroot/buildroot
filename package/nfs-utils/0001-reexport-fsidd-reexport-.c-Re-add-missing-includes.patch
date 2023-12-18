@@ -1,0 +1,44 @@
+From 4710e469cd0f512ac5e2c3c4335d8e21b97f21b0 Mon Sep 17 00:00:00 2001
+From: Petr Vorel <pvorel@suse.cz>
+Date: Tue, 5 Dec 2023 20:40:36 +0100
+Subject: [PATCH] reexport/{fsidd,reexport}.c: Re-add missing includes
+
+Older uClibc-ng requires <unistd.h> for close(2), unlink(2) and write(2),
+<sys/un.h> for struct sockaddr_un.
+
+Fixes: 1a4edb2a ("reexport/fsidd.c: Remove unused headers")
+Fixes: bdc79f02 ("support/reexport.c: Remove unused headers")
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+Upstream: https://lore.kernel.org/linux-nfs/20231205223543.31443-1-pvorel@suse.cz/
+---
+ support/reexport/fsidd.c    | 2 ++
+ support/reexport/reexport.c | 1 +
+ 2 files changed, 3 insertions(+)
+
+diff --git a/support/reexport/fsidd.c b/support/reexport/fsidd.c
+index 3e62b3fc..814fb48e 100644
+--- a/support/reexport/fsidd.c
++++ b/support/reexport/fsidd.c
+@@ -7,6 +7,8 @@
+ #include <dlfcn.h>
+ #endif
+ #include <event2/event.h>
++#include <sys/un.h>
++#include <unistd.h>
+
+ #include "conffile.h"
+ #include "reexport_backend.h"
+diff --git a/support/reexport/reexport.c b/support/reexport/reexport.c
+index 78516586..1900b336 100644
+--- a/support/reexport/reexport.c
++++ b/support/reexport/reexport.c
+@@ -7,6 +7,7 @@
+ #endif
+ #include <sys/types.h>
+ #include <sys/vfs.h>
++#include <unistd.h>
+ #include <errno.h>
+
+ #include "nfsd_path.h"
+--
+2.43.0
