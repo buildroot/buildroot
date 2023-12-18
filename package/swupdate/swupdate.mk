@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SWUPDATE_VERSION = 2023.05
+SWUPDATE_VERSION = 2023.12
 SWUPDATE_SITE = $(call github,sbabic,swupdate,$(SWUPDATE_VERSION))
 SWUPDATE_LICENSE = GPL-2.0, GPL-2.0+, LGPL-2.1+, MIT, ISC, BSD-1-Clause, BSD-3-Clause, CC0-1.0, CC-BY-SA-4.0, OFL-1.1
 SWUPDATE_LICENSE_FILES = LICENSES/BSD-1-Clause.txt \
@@ -18,6 +18,7 @@ SWUPDATE_LICENSE_FILES = LICENSES/BSD-1-Clause.txt \
 	LICENSES/MIT.txt \
 	LICENSES/OFL-1.1.txt
 SWUPDATE_INSTALL_STAGING = YES
+SWUPDATE_DEPENDENCIES = json-c libubootenv
 
 # swupdate uses $CROSS-cc instead of $CROSS-gcc, which is not
 # available in all external toolchains, and use CC for linking. Ensure
@@ -34,13 +35,6 @@ SWUPDATE_DEPENDENCIES += e2fsprogs
 SWUPDATE_MAKE_ENV += HAVE_LIBEXT2FS=y
 else
 SWUPDATE_MAKE_ENV += HAVE_LIBEXT2FS=n
-endif
-
-ifeq ($(BR2_PACKAGE_JSON_C),y)
-SWUPDATE_DEPENDENCIES += json-c
-SWUPDATE_MAKE_ENV += HAVE_JSON_C=y
-else
-SWUPDATE_MAKE_ENV += HAVE_JSON_C=n
 endif
 
 ifeq ($(BR2_PACKAGE_LIBARCHIVE),y)
@@ -83,13 +77,6 @@ SWUPDATE_DEPENDENCIES += libgpiod
 SWUPDATE_MAKE_ENV += HAVE_LIBGPIOD=y
 else
 SWUPDATE_MAKE_ENV += HAVE_LIBGPIOD=n
-endif
-
-ifeq ($(BR2_PACKAGE_LIBUBOOTENV),y)
-SWUPDATE_DEPENDENCIES += libubootenv
-SWUPDATE_MAKE_ENV += HAVE_LIBUBOOTENV=y
-else
-SWUPDATE_MAKE_ENV += HAVE_LIBUBOOTENV=n
 endif
 
 ifeq ($(BR2_PACKAGE_LIBURIPARSER),y)
