@@ -146,6 +146,22 @@ endif
 
 comment "Legacy options removed in 2024.02"
 
+config BR2_PACKAGE_PYTHON_CROSSBAR
+	bool "python-crossbar removed"
+	select BR2_LEGACY
+	help
+	  python-crossbar has been removed. The current package has
+	  not received an update since Sat Oct 9 13:55:06 2021 commit:
+	  33ece2446e25e20929d1c7eefa9f3244a3b79a92 and is not python
+	  3.12.0 compatible.
+
+	  Furthermore, the current version requires at least 42 new
+	  packages worth of depedencies of which several require
+	  patches to be python 3.12.0 compatible. As nobody has
+	  stepped up to maintain the package and its ever-growing list
+	  of dependencies, along with the other problems, it was time
+	  to drop the package.
+
 config BR2_PACKAGE_PYTHON_PYGAME
 	bool "python-pygame removed"
 	select BR2_LEGACY
