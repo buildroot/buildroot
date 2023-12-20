@@ -20,6 +20,30 @@ GLIBC_LICENSE = GPL-2.0+ (programs), LGPL-2.1+, BSD-3-Clause, MIT (library)
 GLIBC_LICENSE_FILES = COPYING COPYING.LIB LICENSES
 GLIBC_CPE_ID_VENDOR = gnu
 
+# Extract the base version (e.g. 2.36) from GLIBC_VERSION in order to
+# allow proper matching with the CPE database.
+GLIBC_CPE_ID_VERSION = $(word 1, $(subst -,$(space),$(GLIBC_VERSION)))
+
+# Fixed by b0e7888d1fa2dbd2d9e1645ec8c796abf78880b9, which is between
+# 2.36 and the version we're really using
+GLIBC_IGNORE_CVES += CVE-2022-39046
+
+# Fixed by 4ea972b7edd7e36610e8cde18bf7a8149d7bac4f, which is between
+# 2.36 and the version we're really using
+GLIBC_IGNORE_CVES += CVE-2023-4527
+
+# Fixed by a9728f798ec7f05454c95637ee6581afaa9b487d, which is between
+# 2.36 and the version we're really using
+GLIBC_IGNORE_CVES += CVE-2023-4806
+
+# Fixed by 22955ad85186ee05834e47e665056148ca07699c, which is between
+# 2.36 and the version we're really using.
+GLIBC_IGNORE_CVES += CVE-2023-4911
+
+# Fixed by 856bac55f98dc840e7c27cfa82262b933385de90, which is between
+# 2.36 and the version we're really using.
+GLIBC_IGNORE_CVES += CVE-2023-5156
+
 # glibc is part of the toolchain so disable the toolchain dependency
 GLIBC_ADD_TOOLCHAIN_DEPENDENCY = NO
 
