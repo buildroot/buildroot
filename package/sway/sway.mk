@@ -13,7 +13,6 @@ SWAY_CONF_OPTS = \
 	-Dwerror=false \
 	-Dzsh-completions=false \
 	-Dfish-completions=false \
-	-Dswaynag=false \
 	-Dman-pages=disabled \
 	-Dsd-bus-provider=libsystemd
 
@@ -46,6 +45,12 @@ ifeq ($(BR2_PACKAGE_SWAY_SWAYBAR),y)
 SWAY_CONF_OPTS += -Dswaybar=true
 else
 SWAY_CONF_OPTS += -Dswaybar=false
+endif
+
+ifeq ($(BR2_PACKAGE_SWAY_SWAYNAG),y)
+SWAY_CONF_OPTS += -Dswaynag=true
+else
+SWAY_CONF_OPTS += -Dswaynag=false
 endif
 
 ifeq ($(BR2_PACKAGE_SWAY_SWAYBAR_TRAY),y)
