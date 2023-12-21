@@ -1,0 +1,32 @@
+From cd72cade6250a3ec46dd402b25a0bd55bbb97a88 Mon Sep 17 00:00:00 2001
+From: Rick van Schijndel <rol3517@gmail.com>
+Date: Wed, 20 Dec 2023 16:44:12 -0700
+Subject: [PATCH] support cross-compilation
+
+Marking wayland-scanner as native dependency fixes the path check for
+wayland-scanner.
+
+Upstream: https://github.com/nyyManni/dmenu-wayland/pull/23
+
+Signed-off-by: Rick van Schijndel <rol3517@gmail.com>
+Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
+---
+ meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 3ae6f69..8d401ff 100644
+--- a/meson.build
++++ b/meson.build
+@@ -26,7 +26,7 @@ pangocairo          = dependency('pangocairo')
+ rt                  = cc.find_library('rt')
+ wayland_client      = dependency('wayland-client')
+ wayland_protos      = dependency('wayland-protocols')
+-wayland_scanner_dep = dependency('wayland-scanner')
++wayland_scanner_dep = dependency('wayland-scanner', native: true)
+ wayland_scanner     = find_program(
+   wayland_scanner_dep.get_pkgconfig_variable('wayland_scanner')
+ )
+-- 
+2.43.0
+
