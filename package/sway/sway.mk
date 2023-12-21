@@ -14,7 +14,6 @@ SWAY_CONF_OPTS = \
 	-Dzsh-completions=false \
 	-Dfish-completions=false \
 	-Dswaynag=false \
-	-Dtray=disabled \
 	-Dman-pages=disabled \
 	-Dsd-bus-provider=libsystemd
 
@@ -47,6 +46,12 @@ ifeq ($(BR2_PACKAGE_SWAY_SWAYBAR),y)
 SWAY_CONF_OPTS += -Dswaybar=true
 else
 SWAY_CONF_OPTS += -Dswaybar=false
+endif
+
+ifeq ($(BR2_PACKAGE_SWAY_SWAYBAR_TRAY),y)
+SWAY_CONF_OPTS += -Dtray=enabled
+else
+SWAY_CONF_OPTS += -Dtray=disabled
 endif
 
 $(eval $(meson-package))
