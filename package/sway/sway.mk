@@ -13,7 +13,6 @@ SWAY_CONF_OPTS = \
 	-Dwerror=false \
 	-Dzsh-completions=false \
 	-Dfish-completions=false \
-	-Dswaybar=false \
 	-Dswaynag=false \
 	-Dtray=disabled \
 	-Dman-pages=disabled \
@@ -42,6 +41,12 @@ ifeq ($(BR2_PACKAGE_SWAYBG),y)
 SWAY_CONF_OPTS += -Ddefault-wallpaper=true
 else
 SWAY_CONF_OPTS += -Ddefault-wallpaper=false
+endif
+
+ifeq ($(BR2_PACKAGE_SWAY_SWAYBAR),y)
+SWAY_CONF_OPTS += -Dswaybar=true
+else
+SWAY_CONF_OPTS += -Dswaybar=false
 endif
 
 $(eval $(meson-package))
