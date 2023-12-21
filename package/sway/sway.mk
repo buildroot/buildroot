@@ -13,7 +13,6 @@ SWAY_CONF_OPTS = \
 	-Dwerror=false \
 	-Ddefault-wallpaper=false \
 	-Dzsh-completions=false \
-	-Dbash-completions=false \
 	-Dfish-completions=false \
 	-Dswaybar=false \
 	-Dswaynag=false \
@@ -32,6 +31,12 @@ SWAY_CONF_OPTS += -Dgdk-pixbuf=enabled
 SWAY_DEPENDENCIES += gdk-pixbuf
 else
 SWAY_CONF_OPTS += -Dgdk-pixbuf=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_BASH_COMPLETION),y)
+SWAY_CONF_OPTS += -Dbash-completions=true
+else
+SWAY_CONF_OPTS += -Dbash-completions=false
 endif
 
 $(eval $(meson-package))
