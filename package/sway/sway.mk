@@ -11,7 +11,6 @@ SWAY_LICENSE_FILES = LICENSE
 SWAY_DEPENDENCIES = systemd host-pkgconf wlroots json-c pcre cairo pango
 SWAY_CONF_OPTS = \
 	-Dwerror=false \
-	-Ddefault-wallpaper=false \
 	-Dzsh-completions=false \
 	-Dfish-completions=false \
 	-Dswaybar=false \
@@ -37,6 +36,12 @@ ifeq ($(BR2_PACKAGE_BASH_COMPLETION),y)
 SWAY_CONF_OPTS += -Dbash-completions=true
 else
 SWAY_CONF_OPTS += -Dbash-completions=false
+endif
+
+ifeq ($(BR2_PACKAGE_SWAYBG),y)
+SWAY_CONF_OPTS += -Ddefault-wallpaper=true
+else
+SWAY_CONF_OPTS += -Ddefault-wallpaper=false
 endif
 
 $(eval $(meson-package))
