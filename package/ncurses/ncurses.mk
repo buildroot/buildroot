@@ -73,6 +73,13 @@ NCURSES_TERMINFO_FILES = \
 	x/xterm-xfree86 \
 	$(call qstrip,$(BR2_PACKAGE_NCURSES_ADDITIONAL_TERMINFO))
 
+ifeq ($(BR2_PACKAGE_FOOT),y)
+NCURSES_TERMINFO_FILES += \
+	f/foot \
+	f/foot+base \
+	f/foot-direct
+endif
+
 ifeq ($(BR2_PACKAGE_NCURSES_WCHAR),y)
 NCURSES_CONF_OPTS += --enable-widec
 NCURSES_LIB_SUFFIX = w
