@@ -2,6 +2,7 @@ config BR2_TARGET_EDK2_ARCH_SUPPORTS
 	bool
 	default y if BR2_aarch64
 	default y if BR2_i386
+	default y if BR2_RISCV_64
 	default y if BR2_x86_64
 
 config BR2_TARGET_EDK2
@@ -20,6 +21,7 @@ if BR2_TARGET_EDK2
 choice
 	prompt "Platform"
 	default BR2_TARGET_EDK2_PLATFORM_OVMF_I386 if BR2_i386
+	default BR2_TARGET_EDK2_PLATFORM_OVMF_RISCV if BR2_RISCV_64
 	default BR2_TARGET_EDK2_PLATFORM_OVMF_X64 if BR2_x86_64
 	default BR2_TARGET_EDK2_PLATFORM_ARM_VIRT_QEMU if BR2_aarch64
 
@@ -30,6 +32,14 @@ config BR2_TARGET_EDK2_PLATFORM_OVMF_I386
 	  Platform configuration for a generic i386 target.
 	  This platform will boot from flash address 0x0.
 	  It should therefore be used as the first bootloader.
+
+config BR2_TARGET_EDK2_PLATFORM_OVMF_RISCV
+	bool "RISC-V"
+	depends on BR2_RISCV_64
+	help
+	  Platform configuration for RISC-V QEMU targeting the Virt
+	  machine. This platform will only boot from flash address
+	  0x0. It should therefore be used as the first bootloader.
 
 config BR2_TARGET_EDK2_PLATFORM_OVMF_X64
 	bool "x86-64"
