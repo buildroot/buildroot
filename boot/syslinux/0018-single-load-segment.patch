@@ -1,0 +1,313 @@
+From: Lukas Schwaighofer <lukas@schwaighofer.name>
+Date: Sat, 18 Aug 2018 16:56:35 +0200
+Subject: Force the linker to put all sections into a single PT_LOAD segment
+
+This is required when using binutils >= 2.31 which writes two PT_LOAD segments
+by default. This is not supported by the wrapper.c script used to convert the
+shared object into an elf binary.
+
+Forwarded: https://www.syslinux.org/archives/2018-August/026167.html
+[yann.morin.1998@free.fr:
+  - grab from the Debian package
+  - https://salsa.debian.org/images-team/syslinux/-/blob/fa1349f1f8e5f5d6307e589f02c0a679031d1c7f/debian/patches/0017-single-load-segment.patch
+]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+Upstream: reported https://www.syslinux.org/archives/2018-August/026167.html
+Upstream: acknowledged https://wiki.syslinux.org/wiki/index.php?title=Building
+---
+ efi/i386/syslinux.ld   | 37 +++++++++++++++++++++----------------
+ efi/x86_64/syslinux.ld | 37 +++++++++++++++++++++----------------
+ 2 files changed, 42 insertions(+), 32 deletions(-)
+
+diff --git a/efi/i386/syslinux.ld b/efi/i386/syslinux.ld
+index bab3fc7..19c1647 100644
+--- a/efi/i386/syslinux.ld
++++ b/efi/i386/syslinux.ld
+@@ -19,6 +19,11 @@ OUTPUT_FORMAT("elf32-i386", "elf32-i386", "elf32-i386")
+ OUTPUT_ARCH(i386)
+ ENTRY(_start)
+
++PHDRS
++{
++	all PT_LOAD ;
++}
++
+ SECTIONS
+ {
+ 	. = 0;
+@@ -31,7 +36,7 @@ SECTIONS
+ 		*(.text)
+ 		*(.text.*)
+ 		__text_end = .;
+-	}
++	} :all
+
+ 	. = ALIGN(16);
+
+@@ -40,7 +45,7 @@ SECTIONS
+ 		*(.rodata)
+ 		*(.rodata.*)
+ 		__rodata_end = .;
+-	}
++	} :all
+
+ 	. = ALIGN(4);
+
+@@ -49,14 +54,14 @@ SECTIONS
+ 		KEEP (*(SORT(.ctors.*)))
+ 		KEEP (*(.ctors))
+ 		__ctors_end = .;
+-	}
++	} :all
+
+ 	.dtors : {
+ 		__dtors_start = .;
+ 		KEEP (*(SORT(.dtors.*)))
+ 		KEEP (*(.dtors))
+ 		__dtors_end = .;
+-	}
++	} :all
+
+ 	. = ALIGN(4096);
+ 	.rel : {
+@@ -64,7 +69,7 @@ SECTIONS
+ 		*(.rel.data)
+ 		*(.rel.data.*)
+ 		*(.rel.ctors)
+-	}
++	} :all
+
+ 	. = ALIGN(4);
+
+@@ -72,14 +77,14 @@ SECTIONS
+ 		__gnu_hash_start = .;
+ 		*(.gnu.hash)
+ 		__gnu_hash_end = .;
+-	}
++	} :all
+
+
+ 	.dynsym : {
+ 		__dynsym_start = .;
+ 		*(.dynsym)
+ 		__dynsym_end = .;
+-	}
++	} :all
+
+ 	. = ALIGN(4);
+
+@@ -87,7 +92,7 @@ SECTIONS
+ 		__dynstr_start = .;
+ 		*(.dynstr)
+ 		__dynstr_end = .;
+-	}
++	} :all
+
+ 	. = ALIGN(4);
+
+@@ -104,7 +109,7 @@ SECTIONS
+ 		KEEP (*(.got.plt))
+ 		KEEP (*(.got))
+ 		__got_end = .;
+-	}
++	} :all
+
+ 	. = ALIGN(4);
+
+@@ -112,7 +117,7 @@ SECTIONS
+ 		__dynamic_start = .;
+ 		*(.dynamic)
+ 		__dynamic_end = .;
+-	}
++	} :all
+
+ 	. = ALIGN(16);
+
+@@ -122,19 +127,19 @@ SECTIONS
+ 		*(.data.*)
+ 		*(.lowmem)
+ 		__data_end = .;
+-	}
++	} :all
+
+ 	.reloc : {
+ 		*(.reloc)
+-	}
++	} :all
+
+ 	.symtab : {
+ 		*(.symtab)
+-	}
++	} :all
+
+ 	.strtab : {
+ 		*(.strtab)
+-	}
++	} :all
+
+ 	.bss (NOLOAD) : {
+ 		/* the EFI loader doesn't seem to like a .bss section,
+@@ -148,7 +153,7 @@ SECTIONS
+ 		__bss_end = .;
+ 		*(.sbss)
+ 		*(.scommon)
+-	}
++	} :all
+ 	__bss_len = ABSOLUTE(__bss_end) - ABSOLUTE(__bss_start);
+ 	__bss_dwords = (__bss_len + 3) >> 2;
+
+@@ -161,7 +166,7 @@ SECTIONS
+ 		*(.hugebss)
+ 		*(.hugebss.*)
+ 		__hugebss_end = .;
+-	}
++	} :all
+
+ 	_end = .;
+
+diff --git a/efi/x86_64/syslinux.ld b/efi/x86_64/syslinux.ld
+index 450641c..a2c124f 100644
+--- a/efi/x86_64/syslinux.ld
++++ b/efi/x86_64/syslinux.ld
+@@ -19,6 +19,11 @@ OUTPUT_FORMAT("elf64-x86-64", "elf64-x86-64", "elf64-x86-64")
+ OUTPUT_ARCH(i386:x86-64)
+ ENTRY(_start)
+
++PHDRS
++{
++	all PT_LOAD ;
++}
++
+ SECTIONS
+ {
+ 	. = 0;
+@@ -31,7 +36,7 @@ SECTIONS
+ 		*(.text)
+ 		*(.text.*)
+ 		__text_end = .;
+-	}
++	} :all
+
+ 	. = ALIGN(16);
+
+@@ -40,7 +45,7 @@ SECTIONS
+ 		*(.rodata)
+ 		*(.rodata.*)
+ 		__rodata_end = .;
+-	}
++	} :all
+
+ 	. = ALIGN(4);
+
+@@ -49,14 +54,14 @@ SECTIONS
+ 		KEEP (*(SORT(.ctors.*)))
+ 		KEEP (*(.ctors))
+ 		__ctors_end = .;
+-	}
++	} :all
+
+ 	.dtors : {
+ 		__dtors_start = .;
+ 		KEEP (*(SORT(.dtors.*)))
+ 		KEEP (*(.dtors))
+ 		__dtors_end = .;
+-	}
++	} :all
+
+ 	. = ALIGN(4096);
+ 	.rel : {
+@@ -64,7 +69,7 @@ SECTIONS
+ 		*(.rel.data)
+ 		*(.rel.data.*)
+ 		*(.rel.ctors)
+-	}
++	} :all
+
+ 	. = ALIGN(4);
+
+@@ -72,14 +77,14 @@ SECTIONS
+ 		__gnu_hash_start = .;
+ 		*(.gnu.hash)
+ 		__gnu_hash_end = .;
+-	}
++	} :all
+
+
+ 	.dynsym : {
+ 		__dynsym_start = .;
+ 		*(.dynsym)
+ 		__dynsym_end = .;
+-	}
++	} :all
+
+ 	. = ALIGN(4);
+
+@@ -87,7 +92,7 @@ SECTIONS
+ 		__dynstr_start = .;
+ 		*(.dynstr)
+ 		__dynstr_end = .;
+-	}
++	} :all
+
+ 	. = ALIGN(4);
+
+@@ -104,7 +109,7 @@ SECTIONS
+ 		KEEP (*(.got.plt))
+ 		KEEP (*(.got))
+ 		__got_end = .;
+-	}
++	} :all
+
+ 	. = ALIGN(4);
+
+@@ -112,7 +117,7 @@ SECTIONS
+ 		__dynamic_start = .;
+ 		*(.dynamic)
+ 		__dynamic_end = .;
+-	}
++	} :all
+
+ 	. = ALIGN(16);
+
+@@ -122,19 +127,19 @@ SECTIONS
+ 		*(.data.*)
+ 		*(.lowmem)
+ 		__data_end = .;
+-	}
++	} :all
+
+ 	.reloc : {
+ 		*(.reloc)
+-	}
++	} :all
+
+ 	.symtab : {
+ 		*(.symtab)
+-	}
++	} :all
+
+ 	.strtab : {
+ 		*(.strtab)
+-	}
++	} :all
+
+ 	.bss (NOLOAD) : {
+ 		/* the EFI loader doesn't seem to like a .bss section,
+@@ -148,7 +153,7 @@ SECTIONS
+ 		__bss_end = .;
+ 		*(.sbss)
+ 		*(.scommon)
+-	}
++	} :all
+ 	__bss_len = ABSOLUTE(__bss_end) - ABSOLUTE(__bss_start);
+ 	__bss_dwords = (__bss_len + 3) >> 2;
+
+@@ -161,7 +166,7 @@ SECTIONS
+ 		*(.hugebss)
+ 		*(.hugebss.*)
+ 		__hugebss_end = .;
+-	}
++	} :all
+
+ 	_end = .;
+
