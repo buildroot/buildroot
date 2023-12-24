@@ -1,11 +1,11 @@
-config BR2_PACKAGE_ONEVPL_ARCH_SUPPORTS
+config BR2_PACKAGE_LIBVPL_ARCH_SUPPORTS
 	bool
 	default y if BR2_ARCH_IS_64
 	default y if BR2_arm
 
-config BR2_PACKAGE_ONEVPL
-	bool "onevpl"
-	depends on BR2_PACKAGE_ONEVPL_ARCH_SUPPORTS
+config BR2_PACKAGE_LIBVPL
+	bool "libvpl"
+	depends on BR2_PACKAGE_LIBVPL_ARCH_SUPPORTS
 	depends on BR2_INSTALL_LIBSTDCPP
 	depends on !BR2_STATIC_LIBS # dlfcn.h
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7
@@ -21,7 +21,7 @@ config BR2_PACKAGE_ONEVPL
 
 	  https://github.com/oneapi-src/oneVPL
 
-comment "onevpl needs a toolchain w/ dynamic library, gcc >= 7, C++, threads"
-	depends on BR2_PACKAGE_ONEVPL_ARCH_SUPPORTS
+comment "libvpl needs a toolchain w/ dynamic library, gcc >= 7, C++, threads"
+	depends on BR2_PACKAGE_LIBVPL_ARCH_SUPPORTS
 	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_GCC_AT_LEAST_7 || \
 		!BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS

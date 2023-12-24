@@ -146,6 +146,11 @@ endif
 
 comment "Legacy options removed in 2023.11"
 
+config BR2_PACKAGE_ONEVPL
+	bool "onevpl package was renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_LIBVPL
+
 config BR2_KERNEL_HEADERS_6_5
 	bool "kernel headers version 6.5.x are no longer supported"
 	select BR2_LEGACY
