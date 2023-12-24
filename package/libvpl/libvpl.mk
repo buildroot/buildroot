@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBVPL_VERSION = 2023.4.0
+LIBVPL_VERSION = 2.10.1
 LIBVPL_SITE = $(call github,intel,libvpl,v$(LIBVPL_VERSION))
 LIBVPL_LICENSE = MIT
 LIBVPL_LICENSE_FILES = LICENSE
