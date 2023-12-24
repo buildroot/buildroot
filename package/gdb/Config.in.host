@@ -41,7 +41,7 @@ config BR2_PACKAGE_HOST_GDB_SIM
 
 choice
 	prompt "GDB debugger Version"
-	default BR2_GDB_VERSION_12
+	default BR2_GDB_VERSION_13
 	depends on !BR2_arc
 	help
 	  Select the version of gdb you wish to use.
@@ -69,8 +69,8 @@ config BR2_GDB_VERSION
 	string
 	default "arc-2020.09-release-gdb" if BR2_arc
 	default "11.2"     if BR2_GDB_VERSION_11
-	default "12.1"     if BR2_GDB_VERSION_12 || !BR2_PACKAGE_HOST_GDB
-	default "13.2"     if BR2_GDB_VERSION_13
+	default "12.1"     if BR2_GDB_VERSION_12
+	default "13.2"     if BR2_GDB_VERSION_13 || !BR2_PACKAGE_HOST_GDB
 	# When making 14.x the default, or 14.x becomes the oldest version,
 	# be sure to update the target variant to properly select mpfr.
 	default "14.1"     if BR2_GDB_VERSION_14
