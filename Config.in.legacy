@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2024.02"
 
+config BR2_GDB_VERSION_11
+	bool "gdb 11.x removed"
+	select BR2_LEGACY
+	help
+	  GDB 11.x has been removed, use a newer version.
+
 config BR2_PACKAGE_LIBMPD
 	bool "libmpd package was removed"
 	select BR2_LEGACY

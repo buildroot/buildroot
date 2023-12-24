@@ -46,11 +46,6 @@ choice
 	help
 	  Select the version of gdb you wish to use.
 
-config BR2_GDB_VERSION_11
-	bool "gdb 11.x"
-	# gdbserver support missing
-	depends on !BR2_or1k
-
 config BR2_GDB_VERSION_12
 	bool "gdb 12.x"
 
@@ -68,7 +63,6 @@ endif
 config BR2_GDB_VERSION
 	string
 	default "arc-2020.09-release-gdb" if BR2_arc
-	default "11.2"     if BR2_GDB_VERSION_11
 	default "12.1"     if BR2_GDB_VERSION_12
 	default "13.2"     if BR2_GDB_VERSION_13 || !BR2_PACKAGE_HOST_GDB
 	# When making 14.x the default, or 14.x becomes the oldest version,
