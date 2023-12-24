@@ -1,0 +1,47 @@
+From 27a68e54b7c6d2ae80dca396fd2727852897dab1 Mon Sep 17 00:00:00 2001
+From: Eric Covener <covener@apache.org>
+Date: Tue, 21 Nov 2023 12:58:47 +0000
+Subject: [PATCH] mod_xml2enc: remove dependency on xmlstring header
+
+Submitted by: ttachi <tachihara@hotmail.com>
+
+Github: closes #393
+
+git-svn-id: https://svn.apache.org/repos/asf/httpd/httpd/trunk@1914013 13f79535-47bb-0310-9956-ffa450edef68
+
+Upstream: https://github.com/apache/httpd/commit/27a68e54b7c6d2ae80dca396fd2727852897dab1
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ changes-entries/xmlchar.txt   | 2 ++
+ modules/filters/mod_xml2enc.c | 6 +++---
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+ create mode 100644 changes-entries/xmlchar.txt
+
+diff --git a/changes-entries/xmlchar.txt b/changes-entries/xmlchar.txt
+new file mode 100644
+index 00000000000..d0e06300411
+--- /dev/null
++++ b/changes-entries/xmlchar.txt
+@@ -0,0 +1,2 @@
++ *) mod_xml2enc: Tolerate libxml2 2.12.0 and later.
++    [ttachi <tachihara AT hotmail.com>]
+diff --git a/modules/filters/mod_xml2enc.c b/modules/filters/mod_xml2enc.c
+index 34f8e8ee090..e8ee2647955 100644
+--- a/modules/filters/mod_xml2enc.c
++++ b/modules/filters/mod_xml2enc.c
+@@ -206,11 +206,11 @@ static void sniff_encoding(request_rec* r, xml2ctx* ctx)
+             }
+         }
+     }
+-  
++
+     /* to sniff, first we look for BOM */
+     if (ctx->xml2enc == XML_CHAR_ENCODING_NONE) {
+-        ctx->xml2enc = xmlDetectCharEncoding((const xmlChar*)ctx->buf,
+-                                             ctx->bytes); 
++        ctx->xml2enc = xmlDetectCharEncoding((const unsigned char*)ctx->buf,
++                                             ctx->bytes);
+         if (HAVE_ENCODING(ctx->xml2enc)) {
+             ap_log_rerror(APLOG_MARK, APLOG_INFO, 0, r, APLOGNO(01432)
+                           "Got charset from XML rules.") ;
