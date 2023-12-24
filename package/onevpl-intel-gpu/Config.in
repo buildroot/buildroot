@@ -1,5 +1,6 @@
 config BR2_PACKAGE_ONEVPL_INTEL_GPU
 	bool "onevpl-intel-gpu"
+	depends on BR2_x86_64 # intel-mediadriver
 	depends on BR2_PACKAGE_ONEVPL_ARCH_SUPPORTS # onevpl
 	depends on BR2_INSTALL_LIBSTDCPP # onevpl
 	depends on !BR2_STATIC_LIBS # onevpl
@@ -17,6 +18,7 @@ config BR2_PACKAGE_ONEVPL_INTEL_GPU
 	  https://github.com/oneapi-src/oneVPL-intel-gpu
 
 comment "onevpl-intel-gpu needs a toolchain w/ dynamic library, gcc >= 7, C++, NPTL"
+	depends on BR2_x86_64
 	depends on BR2_PACKAGE_ONEVPL_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_HAS_SYNC_1
 	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_GCC_AT_LEAST_7 || \
