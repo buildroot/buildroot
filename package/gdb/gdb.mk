@@ -135,7 +135,6 @@ GDB_CONF_OPTS = \
 	--disable-werror \
 	--enable-static \
 	--disable-shared \
-	--without-mpfr \
 	--disable-source-highlight
 
 ifeq ($(BR2_PACKAGE_GDB_DEBUGGER),y)
@@ -165,6 +164,15 @@ ifeq ($(BR2_arc):$(BR2_PACKAGE_GDB_DEBUGGER),:y)
 GDB_CONF_OPTS += \
 	--with-libgmp-prefix=$(STAGING_DIR)/usr
 GDB_DEPENDENCIES += gmp
+endif
+
+# Starting from GDB 14.x, mpfr is needed as a dependency to build full
+# gdb.
+ifeq ($(BR2_GDB_VERSION_14)$(BR2_PACKAGE_GDB_DEBUGGER),yy)
+GDB_DEPENDENCIES += mpfr
+GDB_CONF_OPTS += --with-mpfr=$(STAGING_DIR)
+else
+GDB_CONF_OPTS += --without-mpfr
 endif
 
 ifeq ($(BR2_PACKAGE_GDB_SERVER),y)
@@ -267,9 +275,16 @@ HOST_GDB_CONF_OPTS = \
 	--without-included-gettext \
 	--with-system-zlib \
 	--with-curses \
-	--without-mpfr \
 	--disable-source-highlight \
 	$(GDB_DISABLE_BINUTILS_CONF_OPTS)
+
+# GDB newer than 14.x need host-mpfr
+ifeq ($(BR2_GDB_VERSION_14),y)
+HOST_GDB_DEPENDENCIES += host-mpfr
+HOST_GDB_CONF_OPTS += --with-mpfr=$(HOST_DIR)
+else
+HOST_GDB_CONF_OPTS += --without-mpfr
+endif
 
 ifeq ($(BR2_PACKAGE_HOST_GDB_TUI),y)
 HOST_GDB_CONF_OPTS += --enable-tui
