@@ -121,8 +121,10 @@ GDB_MAKE_ENV += \
 GDB_CONF_ENV += gdb_cv_prfpregset_t_broken=no
 GDB_MAKE_ENV += gdb_cv_prfpregset_t_broken=no
 
-# The shared only build is not supported by gdb, so enable static build for
-# build-in libraries with --enable-static.
+# We want the built-in libraries of gdb (libbfd, libopcodes) to be
+# built and linked statically, as we do not install them on the
+# target, to not clash with the ones potentially installed by
+# binutils. This is why we pass --enable-static --disable-shared.
 GDB_CONF_OPTS = \
 	--without-uiout \
 	--disable-gdbtk \
@@ -132,6 +134,7 @@ GDB_CONF_OPTS = \
 	--without-included-gettext \
 	--disable-werror \
 	--enable-static \
+	--disable-shared \
 	--without-mpfr \
 	--disable-source-highlight
 
@@ -248,10 +251,14 @@ endif
 # A few notes:
 #  * --target, because we're doing a cross build rather than a real
 #    host build.
-#  * --enable-static because gdb really wants to use libbfd.a
+#  * --enable-static --disable-shared because we want host gdb to
+#    build and link against a static version of libbfd and
+#    libopcodes, because we don't install the shared variants of
+#    those libraries in $(HOST_DIR), as it might clash with binutils
 HOST_GDB_CONF_OPTS = \
 	--target=$(GNU_TARGET_NAME) \
 	--enable-static \
+	--disable-shared \
 	--without-uiout \
 	--disable-gdbtk \
 	--without-x \
