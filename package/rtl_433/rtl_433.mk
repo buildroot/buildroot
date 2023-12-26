@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RTL_433_VERSION = 22.11
+RTL_433_VERSION = 23.11
 RTL_433_SITE = $(call github,merbanan,rtl_433,$(RTL_433_VERSION))
 RTL_433_LICENSE = GPL-2.0+
 RTL_433_LICENSE_FILES = COPYING
