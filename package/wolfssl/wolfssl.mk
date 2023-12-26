@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-WOLFSSL_VERSION = 5.6.4
-WOLFSSL_SITE = $(call github,wolfSSL,wolfssl,v$(WOLFSSL_VERSION)-stable)
+WOLFSSL_VERSION = 5.6.6
+WOLFSSL_SITE = https://github.com/wolfSSL/wolfssl/releases/download/v$(WOLFSSL_VERSION)-stable
 WOLFSSL_INSTALL_STAGING = YES
 
 WOLFSSL_LICENSE = GPL-2.0+
@@ -13,10 +13,6 @@ WOLFSSL_LICENSE_FILES = COPYING LICENSING
 WOLFSSL_CPE_ID_VENDOR = wolfssl
 WOLFSSL_CONFIG_SCRIPTS = wolfssl-config
 WOLFSSL_DEPENDENCIES = host-pkgconf
-
-# wolfssl's source code is released without a configure
-# script, so we need autoreconf
-WOLFSSL_AUTORECONF = YES
 
 WOLFSSL_CONF_OPTS = --disable-examples --disable-crypttests
 
