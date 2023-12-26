@@ -1,0 +1,47 @@
+From 786ec9231e402cd4e7621483be6f1837de724e3c Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 26 Dec 2023 22:38:18 +0100
+Subject: [PATCH] lib/tls/CMakeLists.txt: fix build with pkg-config
+
+Fix the following wolfssl build failure raised since
+https://github.com/warmcat/libwebsockets/commit/079726c4b252e795b208209752077c1ae4504b5b:
+
+-- Checking for one of the modules 'wolfssl'
+CMake Error at lib/tls/CMakeLists.txt:79 (message):
+  You must set LWS_WOLFSSL_LIBRARIES and LWS_WOLFSSL_INCLUDE_DIRS when
+  LWS_WITH_WOLFSSL is turned on.
+
+Fixes:
+ - http://autobuild.buildroot.org/results/fe062b9f0b330e71309334d7605d64ea73761b59
+
+Upstream: https://github.com/warmcat/libwebsockets/commit/f18fc2316f9743624ced9ba934595f7b9ba8cd05
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ lib/tls/CMakeLists.txt | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/lib/tls/CMakeLists.txt b/lib/tls/CMakeLists.txt
+index 80b46203..230b0d29 100644
+--- a/lib/tls/CMakeLists.txt
++++ b/lib/tls/CMakeLists.txt
+@@ -72,12 +72,16 @@ if (LWS_WITH_SSL AND LWS_WITH_WOLFSSL)
+ 		include (FindPkgConfig)
+ 		PKG_SEARCH_MODULE(LWS_WOLFSSL wolfssl)
+ 
+-		if (NOT WOLFSSL_FOUND)
++		if (NOT LWS_WOLFSSL_FOUND)
+ 			if (LWS_WITH_CYASSL)
+ 				message(FATAL_ERROR "You must set LWS_CYASSL_LIBRARIES and LWS_CYASSL_INCLUDE_DIRS when LWS_WITH_CYASSL is turned on.")
+ 			else()
+ 				message(FATAL_ERROR "You must set LWS_WOLFSSL_LIBRARIES and LWS_WOLFSSL_INCLUDE_DIRS when LWS_WITH_WOLFSSL is turned on.")
+ 			endif()
++		else()
++			set(WOLFSSL_LIBRARIES ${LWS_WOLFSSL_LIBRARIES})
++			set(WOLFSSL_INCLUDE_DIRS ${LWS_WOLFSSL_INCLUDE_DIRS})
++			set(WOLFSSL_FOUND 1)
+ 		endif()
+ 	else()
+ 		set(WOLFSSL_LIBRARIES ${LWS_WOLFSSL_LIBRARIES})
+-- 
+2.43.0
+
