@@ -12,10 +12,10 @@ LIBCAP_NG_CPE_ID_VENDOR = libcap-ng_project
 LIBCAP_NG_INSTALL_STAGING = YES
 
 LIBCAP_NG_CONF_ENV = ac_cv_prog_swig_found=no
-LIBCAP_NG_CONF_OPTS = --without-python
+LIBCAP_NG_CONF_OPTS = --without-python --without-python3
 
 HOST_LIBCAP_NG_CONF_ENV = ac_cv_prog_swig_found=no
-HOST_LIBCAP_NG_CONF_OPTS = --without-python
+HOST_LIBCAP_NG_CONF_OPTS = --without-python --without-python3
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
