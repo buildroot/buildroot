@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LLDPD_VERSION = 1.0.15
+LLDPD_VERSION = 1.0.17
 LLDPD_SITE = https://media.luffy.cx/files/lldpd
 LLDPD_DEPENDENCIES = \
 	$(if $(BR2_PACKAGE_CHECK),check) \
@@ -15,9 +15,6 @@ LLDPD_DEPENDENCIES = \
 LLDPD_LICENSE = ISC
 LLDPD_LICENSE_FILES = LICENSE
 LLDPD_CPE_ID_VENDOR = lldpd_project
-
-# 0001-daemon-fix-read-overflow-when-parsing-CDP-addresses.patch
-LLDPD_IGNORE_CVES += CVE-2023-41910
 
 # Detection of c99 support in configure fails without WCHAR. To enable
 # automatic detection of c99 support by configure, we need to enable
