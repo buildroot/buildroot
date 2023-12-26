@@ -10,6 +10,8 @@ PYTHON_UVICORN_SITE = https://files.pythonhosted.org/packages/e5/84/d43ce8fe6b31
 PYTHON_UVICORN_SETUP_TYPE = pep517
 PYTHON_UVICORN_LICENSE = BSD-3-Clause
 PYTHON_UVICORN_LICENSE_FILES = LICENSE.md
+PYTHON_UVICORN_CPE_ID_VENDOR = encode
+PYTHON_UVICORN_CPE_ID_PRODUCT = uvicorn
 PYTHON_UVICORN_DEPENDENCIES = host-python-hatchling
 
 $(eval $(python-package))
