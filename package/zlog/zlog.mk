@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-ZLOG_VERSION = 1.2.16
+ZLOG_VERSION = 1.2.17
 ZLOG_SITE = $(call github,HardySimpson,zlog,$(ZLOG_VERSION))
-ZLOG_LICENSE = LGPL-2.1
-ZLOG_LICENSE_FILES = COPYING
+ZLOG_LICENSE = Apache-2.0
+ZLOG_LICENSE_FILES = LICENSE
 ZLOG_CPE_ID_VENDOR = zlog_project
 ZLOG_INSTALL_STAGING = YES
 
