@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2023.11"
 
+config BR2_PACKAGE_LIBMPD
+	bool "libmpd package was removed"
+	select BR2_LEGACY
+	help
+	  The libmpd package was only used by gmpc, both of which are
+	  no longer maintained upstream.
+
 config BR2_PACKAGE_GMPC
 	bool "gmpc package was removed"
 	select BR2_LEGACY
