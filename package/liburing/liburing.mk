@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBURING_VERSION = 2.4
+LIBURING_VERSION = 2.5
 LIBURING_SOURCE = liburing-$(LIBURING_VERSION).tar.bz2
 LIBURING_SITE = https://git.kernel.dk/cgit/liburing/snapshot
 LIBURING_LICENSE = (GPL-2.0 with exceptions and LGPL-2.1+) or MIT
