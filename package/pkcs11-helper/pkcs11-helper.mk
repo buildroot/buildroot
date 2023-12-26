@@ -4,15 +4,13 @@
 #
 ################################################################################
 
-PKCS11_HELPER_VERSION = 1.29.0
+PKCS11_HELPER_VERSION = 1.30.0
 PKCS11_HELPER_SOURCE = pkcs11-helper-$(PKCS11_HELPER_VERSION).tar.bz2
 PKCS11_HELPER_SITE = https://github.com/OpenSC/pkcs11-helper/releases/download/pkcs11-helper-$(PKCS11_HELPER_VERSION)
 PKCS11_HELPER_LICENSE = GPL-2.0 or BSD-3-Clause
 PKCS11_HELPER_LICENSE_FILES = COPYING COPYING.BSD COPYING.GPL
 PKCS11_HELPER_DEPENDENCIES = host-pkgconf
 PKCS11_HELPER_INSTALL_STAGING = YES
-# We're patching configure.ac
-PKCS11_HELPER_AUTORECONF = YES
 
 PKCS11_HELPER_CONF_OPTS = \
 	--disable-crypto-engine-polarssl \
