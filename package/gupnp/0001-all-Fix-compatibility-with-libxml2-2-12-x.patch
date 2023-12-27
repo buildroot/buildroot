@@ -1,0 +1,84 @@
+From 00514fb62ebd341803fa44e26a6482a8c25dbd34 Mon Sep 17 00:00:00 2001
+From: Jens Georg <mail@jensge.org>
+Date: Sat, 25 Nov 2023 17:56:02 +0100
+Subject: [PATCH] all: Fix compatibility with libxml2 2.12.x
+
+Upstream: https://gitlab.gnome.org/GNOME/gupnp/-/commit/00514fb62ebd341803fa44e26a6482a8c25dbd34
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ libgupnp/gupnp-control-point.c        | 2 ++
+ libgupnp/gupnp-service-proxy-action.c | 2 ++
+ libgupnp/gupnp-service-proxy.c        | 2 ++
+ libgupnp/gupnp-xml-doc.c              | 3 +++
+ libgupnp/xml-util.h                   | 2 ++
+ 5 files changed, 11 insertions(+)
+
+diff --git a/libgupnp/gupnp-control-point.c b/libgupnp/gupnp-control-point.c
+index d4b44721..4374f726 100644
+--- a/libgupnp/gupnp-control-point.c
++++ b/libgupnp/gupnp-control-point.c
+@@ -27,6 +27,8 @@
+ #include <config.h>
+ #include <string.h>
+ 
++#include <libxml/parser.h>
++
+ #include "gupnp-control-point.h"
+ #include "gupnp-context-private.h"
+ #include "gupnp-resource-factory-private.h"
+diff --git a/libgupnp/gupnp-service-proxy-action.c b/libgupnp/gupnp-service-proxy-action.c
+index b241d86c..6ea241ad 100644
+--- a/libgupnp/gupnp-service-proxy-action.c
++++ b/libgupnp/gupnp-service-proxy-action.c
+@@ -9,6 +9,8 @@
+ 
+ #include <config.h>
+ 
++#include <libxml/parser.h>
++
+ #include "gupnp-error.h"
+ #include "gupnp-service-proxy.h"
+ #include "gvalue-util.h"
+diff --git a/libgupnp/gupnp-service-proxy.c b/libgupnp/gupnp-service-proxy.c
+index adba5ab0..3f1a4454 100644
+--- a/libgupnp/gupnp-service-proxy.c
++++ b/libgupnp/gupnp-service-proxy.c
+@@ -16,6 +16,8 @@
+ #include <locale.h>
+ #include <errno.h>
+ 
++#include <libxml/globals.h>
++
+ #include "gena-protocol.h"
+ #include "gupnp-context-private.h"
+ #include "gupnp-error-private.h"
+diff --git a/libgupnp/gupnp-xml-doc.c b/libgupnp/gupnp-xml-doc.c
+index 627f1a28..66f9b3dd 100644
+--- a/libgupnp/gupnp-xml-doc.c
++++ b/libgupnp/gupnp-xml-doc.c
+@@ -15,6 +15,9 @@
+ #include <config.h>
+ #include <string.h>
+ #include <gio/gio.h>
++
++#include <libxml/parser.h>
++
+ #include "gupnp-xml-doc.h"
+ #include "gupnp-error.h"
+ 
+diff --git a/libgupnp/xml-util.h b/libgupnp/xml-util.h
+index a02eb3d4..d0dcaeba 100644
+--- a/libgupnp/xml-util.h
++++ b/libgupnp/xml-util.h
+@@ -10,6 +10,8 @@
+ #define GUPNP_XML_UTIL_H
+ 
+ #include <libxml/tree.h>
++#include <libxml/parser.h>
++
+ #include <stdarg.h>
+ #include <glib-object.h>
+ 
+-- 
+GitLab
+
