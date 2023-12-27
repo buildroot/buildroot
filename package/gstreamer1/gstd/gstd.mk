@@ -17,8 +17,7 @@ GSTD_DEPENDENCIES = \
 	libdaemon \
 	libedit \
 	libglib2 \
-	libsoup \
-	readline
+	libsoup
 
 GSTD_CONF_OPTS = \
 	-Denable-tests=disabled \
