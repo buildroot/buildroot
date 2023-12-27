@@ -711,20 +711,18 @@ config BR2_FORCE_HOST_BUILD
 
 config BR2_DOWNLOAD_FORCE_CHECK_HASHES
 	bool "Force all downloads to have a valid hash"
-	depends on BR2_GLOBAL_PATCH_DIR != ""
 	help
-	  For packages where a custom version or location can be set,
-	  Buildroot does not carry a hash for those custom versions or
-	  locations, so the integrity of such downloads is not verified.
-
 	  Say 'y' here to enforce downloads to have at least one valid
 	  hash (and of course, that all hashes be valid).
 
-	  Those hashes are looked in files in BR2_GLOBAL_PATCH_DIR,
-	  see above.
+	  By default, Buildroot checks hashes of all packages
+	  downloaded, except those for which a custom version is
+	  used.
 
-comment "Forcing all downloads to have a valid hash needs a global patch and hash directory"
-	depends on BR2_GLOBAL_PATCH_DIR = ""
+	  With this option turned on, Buildroot will check hashes of
+	  all packages, including those that use a custom version. In
+	  order to provide hashes for such packages, place additional
+	  hash files in BR2_GLOBAL_PATCH_DIR directories.
 
 config BR2_REPRODUCIBLE
 	bool "Make the build reproducible (experimental)"
