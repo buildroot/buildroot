@@ -1,0 +1,48 @@
+From 93865bad4c00e7d3c867965663fdb9a1a0448db8 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 1 Jan 2023 16:53:23 +0100
+Subject: [PATCH] configure.ac: use pkg-config to retrieve openssl dependencies
+
+Use pkg-config to retrieve openssl dependencies such as -latomic and
+avoids the following build failure when building statically on
+architectures such as sparc:
+
+/home/autobuild/autobuild/instance-1/output-1/host/lib/gcc/sparc-buildroot-linux-uclibc/10.4.0/../../../../sparc-buildroot-linux-uclibc/bin/ld: /home/autobuild/autobuild/instance-1/output-1/host/sparc-buildroot-linux-uclibc/sysroot/usr/lib/libcrypto.a(threads_pthread.o): in function `CRYPTO_atomic_add':
+threads_pthread.c:(.text+0x208): undefined reference to `__atomic_is_lock_free'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/49abbaa1eab94b248bff434b40728065d687e278
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/WayneD/rsync/pull/426
+---
+ configure.ac | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index ccad7f13..b9591866 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -432,11 +432,15 @@ AH_TEMPLATE([USE_OPENSSL],
+ if test x"$enable_openssl" != x"no"; then
+     if test x"$ac_cv_header_openssl_md4_h" = x"yes" && test x"$ac_cv_header_openssl_md5_h" = x"yes"; then
+       AC_MSG_RESULT(yes)
+-      AC_SEARCH_LIBS(EVP_MD_CTX_copy, crypto,
++      PKG_CHECK_MODULES(LIBCRYPTO, libcrypto,
+           [AC_DEFINE(USE_OPENSSL)
+-	   enable_openssl=yes],
+-          [err_msg="$err_msg$nl- Failed to find EVP_MD_CTX_copy function in openssl crypto lib.";
+-	   no_lib="$no_lib openssl"])
++           enable_openssl=yes
++           LIBS="$LIBS $LIBCRYPTO_LIBS"],
++          [AC_SEARCH_LIBS(EVP_MD_CTX_copy, crypto,
++              [AC_DEFINE(USE_OPENSSL)
++	       enable_openssl=yes],
++              [err_msg="$err_msg$nl- Failed to find EVP_MD_CTX_copy function in openssl crypto lib.";
++	       no_lib="$no_lib openssl"])])
+     else
+         AC_MSG_RESULT(no)
+ 	err_msg="$err_msg$nl- Failed to find openssl/md4.h and openssl/md5.h for openssl crypto lib support."
+-- 
+2.35.1
+
