@@ -1,0 +1,26 @@
+From 1e10a41fcef6ae0d3e89958db89bc22398f3b4f1 Mon Sep 17 00:00:00 2001
+From: Jens Georg <mail@jensge.org>
+Date: Sat, 25 Nov 2023 17:58:49 +0100
+Subject: [PATCH] xml: Fix compatibility with libxml2 2.12.x
+
+Upstream: https://gitlab.gnome.org/GNOME/gupnp-av/-/commit/1e10a41fcef6ae0d3e89958db89bc22398f3b4f1
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ libgupnp-av/xml-util.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/libgupnp-av/xml-util.h b/libgupnp-av/xml-util.h
+index e0e49f7..0bbe0f8 100644
+--- a/libgupnp-av/xml-util.h
++++ b/libgupnp-av/xml-util.h
+@@ -16,6 +16,7 @@
+ 
+ #include <glib.h>
+ #include <libxml/tree.h>
++#include <libxml/parser.h>
+ #include <stdarg.h>
+ #include <glib-object.h>
+ 
+-- 
+GitLab
+
