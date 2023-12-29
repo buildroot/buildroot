@@ -1,0 +1,28 @@
+From 556a2c5bc2f6244f140a96302d4df92cfc25af8b Mon Sep 17 00:00:00 2001
+From: Wayne Davison <wayne@opencoder.net>
+Date: Tue, 25 Oct 2022 21:55:53 -0700
+Subject: [PATCH] Check for EVP_MD_CTX_copy in crypto lib instead of MD5_Init.
+
+Upstream: https://github.com/WayneD/rsync/commit/556a2c5bc2f6244f140a96302d4df92cfc25af8b
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index a2c99558..ccad7f13 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -432,10 +432,10 @@ AH_TEMPLATE([USE_OPENSSL],
+ if test x"$enable_openssl" != x"no"; then
+     if test x"$ac_cv_header_openssl_md4_h" = x"yes" && test x"$ac_cv_header_openssl_md5_h" = x"yes"; then
+       AC_MSG_RESULT(yes)
+-      AC_SEARCH_LIBS(MD5_Init, crypto,
++      AC_SEARCH_LIBS(EVP_MD_CTX_copy, crypto,
+           [AC_DEFINE(USE_OPENSSL)
+ 	   enable_openssl=yes],
+-          [err_msg="$err_msg$nl- Failed to find MD5_Init function in openssl crypto lib.";
++          [err_msg="$err_msg$nl- Failed to find EVP_MD_CTX_copy function in openssl crypto lib.";
+ 	   no_lib="$no_lib openssl"])
+     else
+         AC_MSG_RESULT(no)
