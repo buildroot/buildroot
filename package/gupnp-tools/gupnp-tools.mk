@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-GUPNP_TOOLS_VERSION_MAJOR = 0.10
-GUPNP_TOOLS_VERSION = $(GUPNP_TOOLS_VERSION_MAJOR).3
+GUPNP_TOOLS_VERSION_MAJOR = 0.12
+GUPNP_TOOLS_VERSION = $(GUPNP_TOOLS_VERSION_MAJOR).1
 GUPNP_TOOLS_SOURCE = gupnp-tools-$(GUPNP_TOOLS_VERSION).tar.xz
 GUPNP_TOOLS_SITE = \
 	https://download.gnome.org/sources/gupnp-tools/$(GUPNP_TOOLS_VERSION_MAJOR)
@@ -18,7 +18,7 @@ GUPNP_TOOLS_DEPENDENCIES = \
 	libxml2 \
 	gssdp \
 	gupnp \
-	libsoup \
+	libsoup3 \
 	libgtk3 \
 	$(TARGET_NLS_DEPENDENCIES)
 

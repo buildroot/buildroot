@@ -1,0 +1,28 @@
+From 4e06104df81fba2cda06d4747b33e75f4cade458 Mon Sep 17 00:00:00 2001
+From: Jens Georg <mail@jensge.org>
+Date: Fri, 24 Nov 2023 18:12:50 +0100
+Subject: [PATCH] common: Fix compatibility with libxml2 2.12
+
+Fixes #28
+
+Upstream: https://gitlab.gnome.org/GNOME/gupnp-tools/-/commit/4e06104df81fba2cda06d4747b33e75f4cade458
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/common/pretty-print.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/common/pretty-print.c b/src/common/pretty-print.c
+index c8ebc9a..1519cb0 100644
+--- a/src/common/pretty-print.c
++++ b/src/common/pretty-print.c
+@@ -22,6 +22,7 @@
+ 
+ #include "pretty-print.h"
+ 
++#include <libxml/globals.h>
+ #include <libxml/xmlreader.h>
+ 
+ #include <string.h>
+-- 
+GitLab
+
