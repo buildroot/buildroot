@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NEARD_VERSION = 0.18
+NEARD_VERSION = 0.19
 NEARD_SITE = https://git.kernel.org/pub/scm/network/nfc/neard.git/snapshot
 NEARD_LICENSE = GPL-2.0
 NEARD_LICENSE_FILES = COPYING
