@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ATEST_VERSION = 895b0183a89c15f5e2305a6795bb1667753cd3f0
+ATEST_VERSION = 9ff52ee5d7764984e21fe40a381b41ecd2d63548
 ATEST_SITE = $(call github,amouiche,atest,$(ATEST_VERSION))
 ATEST_LICENSE = GPL-2.0+
 ATEST_LICENSE_FILES = COPYING
