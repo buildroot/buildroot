@@ -28,8 +28,7 @@ LIBSOUP3_CONF_OPTS = \
 	-Dntlm=disabled \
 	-Dsysprof=disabled \
 	-Dtests=false \
-	-Dtls_check=false \
-	-Dvapi=disabled
+	-Dtls_check=false
 
 ifeq ($(BR2_PACKAGE_BROTLI),y)
 LIBSOUP3_CONF_OPTS += -Dbrotli=enabled
@@ -39,10 +38,10 @@ LIBSOUP3_CONF_OPTS += -Dbrotli=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
-LIBSOUP3_CONF_OPTS += -Dintrospection=enabled
-LIBSOUP3_DEPENDENCIES += gobject-introspection
+LIBSOUP3_CONF_OPTS += -Dintrospection=enabled -Dvapi=enabled
+LIBSOUP3_DEPENDENCIES += host-vala gobject-introspection
 else
-LIBSOUP3_CONF_OPTS += -Dintrospection=disabled
+LIBSOUP3_CONF_OPTS += -Dintrospection=disabled -Dvapi=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBKRB5),y)
