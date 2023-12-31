@@ -150,7 +150,13 @@ EDK2_BASETOOLS_OPTS = \
 
 EDK2_PACKAGES_PATH = $(subst $(space),:,$(strip $(EDK2_PACKAGES_PATHS)))
 
+# EDK2 "build" script internally uses and calls "make", which controls
+# its own flags. It is mainly tested while not being a sub-make. In
+# order to stay in that configuration, we avoid leaking top-level
+# Buildroot make flags into EDK2 build by clearing the MAKEFLAGS
+# environment variable.
 EDK2_BUILD_ENV += \
+	MAKEFLAGS= \
 	WORKSPACE=$(@D) \
 	PACKAGES_PATH=$(EDK2_PACKAGES_PATH) \
 	PYTHON_COMMAND=$(HOST_DIR)/bin/python3 \
