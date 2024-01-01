@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HIGHWAY_VERSION = 1.0.3
+HIGHWAY_VERSION = 1.0.7
 HIGHWAY_SITE = $(call github,google,highway,$(HIGHWAY_VERSION))
 HIGHWAY_LICENSE = Apache-2.0
 HIGHWAY_LICENSE_FILES = LICENSE
