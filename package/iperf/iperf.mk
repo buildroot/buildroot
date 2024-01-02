@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-IPERF_VERSION = 2.1.8
-IPERF_SITE = http://downloads.sourceforge.net/project/iperf2
+IPERF_VERSION = 2.1.9
+IPERF_SITE = https://downloads.sourceforge.net/project/iperf2
 IPERF_LICENSE = MIT-like
 IPERF_LICENSE_FILES = COPYING
 IPERF_CPE_ID_VENDOR = iperf2_project
