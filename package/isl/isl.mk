@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ISL_VERSION = 0.25
+ISL_VERSION = 0.26
 ISL_SOURCE = isl-$(ISL_VERSION).tar.xz
 ISL_SITE = https://libisl.sourceforge.io
 ISL_LICENSE = MIT
