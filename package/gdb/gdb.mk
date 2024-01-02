@@ -182,13 +182,6 @@ else
 GDB_CONF_OPTS += --disable-gdbserver
 endif
 
-# When gdb is built as C++ application for ARC it segfaults at runtime
-# So we pass --disable-build-with-cxx config option to force gdb not to
-# be built as C++ app.
-ifeq ($(BR2_arc),y)
-GDB_CONF_OPTS += --disable-build-with-cxx
-endif
-
 # gdb 7.12+ by default builds with a C++ compiler, which doesn't work
 # when we don't have C++ support in the toolchain
 ifneq ($(BR2_INSTALL_LIBSTDCPP),y)
