@@ -422,7 +422,13 @@ config BR2_PACKAGE_LINUX_FIRMWARE_RTL_RTW88
 	bool "Realtek rtw88"
 	help
 	  Firmware images supported by Realtek's wireless
-	  driver rtw88.
+	  driver rtw88 (802.11n/ac chipsets).
+
+config BR2_PACKAGE_LINUX_FIRMWARE_RTL_RTW89
+	bool "Realtek rtw89"
+	help
+	  Firmware images supported by Realtek's wireless
+	  driver rtw89 (802.11ax chipsets).
 
 config BR2_PACKAGE_LINUX_FIRMWARE_REDPINE_RS9113
 	bool "Redpine rs9113"
