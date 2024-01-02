@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-VALA_VERSION_MAJOR = 0.52
-VALA_VERSION = $(VALA_VERSION_MAJOR).4
+VALA_VERSION_MAJOR = 0.56
+VALA_VERSION = $(VALA_VERSION_MAJOR).14
 VALA_SITE = http://download.gnome.org/sources/vala/$(VALA_VERSION_MAJOR)
 VALA_SOURCE = vala-$(VALA_VERSION).tar.xz
 VALA_LICENSE = LGPL-2.1+
