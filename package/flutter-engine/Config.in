@@ -39,6 +39,31 @@ config BR2_PACKAGE_FLUTTER_ENGINE
 
 	  https://github.com/flutter/engine
 
+if BR2_PACKAGE_FLUTTER_ENGINE
+
+config FLUTTER_ENGINE_RUNTIME_MODE_PROFILE
+	bool "enable profiling"
+	help
+	  Some debugging ability is maintained—enough to profile your
+	  apps performance. Profile mode is disabled on the emulator
+	  and simulator, because their behavior is not representative
+	  of real performance. Profile mode is similar to release mode,
+	  with the following differences:
+
+	  - Some service extensions, such as the one that enables the
+	    performance overlay, are enabled.
+
+	  - Tracing is enabled, and tools supporting source-level
+	    debugging (such as DevTools) can connect to the process.
+
+	  If this option is left unselected, the global option
+	  BR2_ENABLE_RUNTIME_DEBUG determines whether to build Flutter
+	  in release or debug mode.
+
+	  https://docs.flutter.dev/testing/build-modes#profile
+
+endif
+
 comment "flutter-engine needs an OpenGL or OpenGLES backend"
 	depends on BR2_PACKAGE_FLUTTER_ENGINE_ARCH_SUPPORTS
 	depends on !BR2_PACKAGE_HAS_LIBGL && !BR2_PACKAGE_HAS_LIBGLES
