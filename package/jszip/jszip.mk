@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-JSZIP_VERSION = 3.10.0
+JSZIP_VERSION = 3.10.1
 JSZIP_SITE = $(call github,Stuk,jszip,v$(JSZIP_VERSION))
 JSZIP_LICENSE = MIT or GPL-3.0
 JSZIP_LICENSE_FILES = LICENSE.markdown
