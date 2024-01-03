@@ -27,8 +27,9 @@ build_trx() {
 	rm -f $images/zImage.$device.lzma
 }
 
-devices="$(sed -n 's/^BR2_LINUX_KERNEL_INTREE_DTS_NAME="\([a-z0-9 \-]*\)"$/\1/p' ${BR2_CONFIG})"
+devices="$(sed -n 's/^BR2_LINUX_KERNEL_INTREE_DTS_NAME="\([^"]*\)"$/\1/p' ${BR2_CONFIG})"
 for device in $devices; do
+	device="${device#broadcom/}"
 	case "$device" in
 		"bcm4708-smartrg-sr400ac")
 			build_trx "$1" "$device"
