@@ -4,12 +4,11 @@
 #
 ################################################################################
 
-STRESS_VERSION = 1.0.5
-STRESS_SITE = $(call github,resurrecting-open-source-projects,stress,$(STRESS_VERSION))
+STRESS_VERSION = 1.0.7
+STRESS_SOURCE = stress-$(STRESS_VERSION).tar.bz2
+STRESS_SITE = https://github.com/resurrecting-open-source-projects/stress/releases/download/$(STRESS_VERSION)
 STRESS_LICENSE = GPL-2.0+
 STRESS_LICENSE_FILES = COPYING
-# From git
-STRESS_AUTORECONF = YES
 
 # Stress is linked statically if the --enable-static is specified.
 # However, this option is always specified in the global
