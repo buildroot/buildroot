@@ -53,6 +53,11 @@ endmenu # Video
 
 menu "Bluetooth firmware"
 
+config BR2_PACKAGE_LINUX_FIRMWARE_AMLOGIC
+	bool "Amlogic SOC Bluetooth"
+	help
+	  Firmware files for Conexant Amlogic SOC bluetooth support.
+
 config BR2_PACKAGE_LINUX_FIRMWARE_IBT
 	bool "Intel Wireless Bluetooth"
 	help

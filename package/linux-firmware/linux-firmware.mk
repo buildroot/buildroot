@@ -53,6 +53,12 @@ LINUX_FIRMWARE_FILES += \
 # which is installed unconditionally
 endif
 
+# Amlogic SoC Bluetooth
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_AMLOGIC),y)
+LINUX_FIRMWARE_FILES += amlogic/bluetooth/*.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENSE.amlogic
+endif
+
 # Intel Wireless Bluetooth
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IBT),y)
 LINUX_FIRMWARE_FILES += intel/ibt-*
