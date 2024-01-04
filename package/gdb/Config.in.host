@@ -62,7 +62,7 @@ endif
 # If cross-gdb is not enabled, the latest stable version is chosen.
 config BR2_GDB_VERSION
 	string
-	default "arc-2020.09-release-gdb" if BR2_arc
+	default "arc-2023.09-release" if BR2_arc
 	default "12.1"     if BR2_GDB_VERSION_12
 	default "13.2"     if BR2_GDB_VERSION_13 || !BR2_PACKAGE_HOST_GDB
 	# When making 14.x the default, or 14.x becomes the oldest version,

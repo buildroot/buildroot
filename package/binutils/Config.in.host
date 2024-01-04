@@ -26,15 +26,14 @@ config BR2_BINUTILS_VERSION_2_41_X
 	bool "binutils 2.41"
 
 config BR2_BINUTILS_VERSION_ARC
-	bool "binutils arc (2.34.50)"
+	bool "binutils arc (2.41)"
 	depends on BR2_arc
-	select BR2_PACKAGE_BINUTILS_HAS_NO_LIBSFRAME
 
 endchoice
 
 config BR2_BINUTILS_VERSION
 	string
-	default "arc-2020.09-release"	if BR2_BINUTILS_VERSION_ARC
+	default "arc-2023.09-release"	if BR2_BINUTILS_VERSION_ARC
 	default "2.39"		if BR2_BINUTILS_VERSION_2_39_X
 	default "2.40"		if BR2_BINUTILS_VERSION_2_40_X
 	default "2.41"		if BR2_BINUTILS_VERSION_2_41_X
