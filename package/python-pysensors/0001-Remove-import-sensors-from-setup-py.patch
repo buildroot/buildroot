@@ -1,0 +1,55 @@
+Remove import sensors from setup.py
+
+Don't import sensors in setup.py to avoid adding a dependency on host
+lm-sensors. Instead, move __version__, __author__, __contact__ and
+__license__ to setup.py
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: upstream is dead since 2019
+
+diff '--color=auto' -Nura PySensors-0.0.4.orig/sensors/__init__.py PySensors-0.0.4/sensors/__init__.py
+--- PySensors-0.0.4.orig/sensors/__init__.py	2024-01-04 13:47:07.114179107 +0100
++++ PySensors-0.0.4/sensors/__init__.py	2024-01-04 14:07:24.701178768 +0100
+@@ -6,12 +6,6 @@
+ 
+ from sensors import stdc
+ 
+-__version__ = "0.0.4"
+-__date__ = "2019-09-19"
+-__author__ = "Marc 'BlackJack' Rintsch"
+-__contact__ = 'marc@rintsch.de'
+-__license__ = 'LGPL v2.1'
+-
+ API_VERSION = 4
+ DEFAULT_CONFIG_FILENAME = b"/etc/sensors3.conf"
+ 
+diff '--color=auto' -Nura PySensors-0.0.4.orig/setup.py PySensors-0.0.4/setup.py
+--- PySensors-0.0.4.orig/setup.py	2024-01-04 13:47:07.114179107 +0100
++++ PySensors-0.0.4/setup.py	2024-01-04 14:07:04.657260411 +0100
+@@ -1,17 +1,21 @@
+ #!/usr/bin/env python3
+ from setuptools import setup
+-import sensors
++
++__version__ = "0.0.4"
++__author__ = "Marc 'BlackJack' Rintsch"
++__contact__ = 'marc@rintsch.de'
++__license__ = 'LGPL v2.1'
+ 
+ setup(
+     name='PySensors',
+-    version=sensors.__version__,
+-    author=sensors.__author__,
+-    author_email=sensors.__contact__,
++    version=__version__,
++    author=__author__,
++    author_email=__contact__,
+     packages=['sensors'],
+     # scripts=[],
+     url='http://pypi.python.org/pypi/PySensors/',
+     # download_url='',
+-    license=sensors.__license__,
++    license=__license__,
+     description='Python bindings to libsensors (via ctypes)',
+     long_description=open('README.rst').read(),
+     long_description_content_type="text/x-rst",
