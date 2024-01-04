@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DAHDI_LINUX_VERSION = 3.2.0
+DAHDI_LINUX_VERSION = 3.3.0
 DAHDI_LINUX_SITE = \
 	http://downloads.asterisk.org/pub/telephony/dahdi-linux/releases
 
