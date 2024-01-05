@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BULLET_VERSION = 3.21
+BULLET_VERSION = 3.25
 BULLET_SITE = $(call github,bulletphysics,bullet3,$(BULLET_VERSION))
 BULLET_INSTALL_STAGING = YES
 BULLET_LICENSE = Zlib
