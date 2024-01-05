@@ -54,8 +54,11 @@ CUPS_CONF_OPTS += --disable-dbus
 endif
 
 ifeq ($(BR2_PACKAGE_GNUTLS),y)
-CUPS_CONF_OPTS += --with-tls=yes
+CUPS_CONF_OPTS += --with-tls=gnutls
 CUPS_DEPENDENCIES += gnutls
+else ifeq ($(BR2_PACKAGE_OPENSSL),y)
+CUPS_CONF_OPTS += --with-tls=openssl
+CUPS_DEPENDENCIES += openssl
 else
 CUPS_CONF_OPTS += --with-tls=no
 endif
