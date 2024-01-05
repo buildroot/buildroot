@@ -38,7 +38,7 @@ config BR2_PACKAGE_AVAHI_DAEMON
 # more easily determine if it's available or not.
 config BR2_PACKAGE_AVAHI_LIBAVAHI_CLIENT
 	bool
-	default y if BR2_PACKAGE_AVAHI_DAEMON && BR2_PACKAGE_DBUS
+	default y if BR2_PACKAGE_DBUS
 
 config BR2_PACKAGE_AVAHI_LIBDNSSD_COMPATIBILITY
 	bool "libdns_sd compatibility (Bonjour)"
