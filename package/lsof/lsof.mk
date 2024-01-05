@@ -16,14 +16,14 @@ endif
 
 ifeq ($(BR2_USE_WCHAR),)
 define LSOF_CONFIGURE_WCHAR_FIXUPS
-	$(SED) 's,^#define[[:space:]]*HASWIDECHAR.*,#undef HASWIDECHAR,' \
+	$(SED) 's,^#[[:space:]]*define HASWIDECHAR.*,#undef HASWIDECHAR,' \
 		$(@D)/machine.h
 endef
 endif
 
 ifeq ($(BR2_ENABLE_LOCALE),)
 define LSOF_CONFIGURE_LOCALE_FIXUPS
-	$(SED) 's,^#define[[:space:]]*HASSETLOCALE.*,#undef HASSETLOCALE,' \
+	$(SED) 's,^#[[:space:]]*define HASSETLOCALE.*,#undef HASSETLOCALE,' \
 		$(@D)/machine.h
 endef
 endif
