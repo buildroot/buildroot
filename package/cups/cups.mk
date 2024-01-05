@@ -68,11 +68,11 @@ else
 CUPS_CONF_OPTS += --disable-libusb
 endif
 
-ifeq ($(BR2_PACKAGE_AVAHI),y)
+ifeq ($(BR2_PACKAGE_AVAHI_LIBAVAHI_CLIENT),y)
 CUPS_DEPENDENCIES += avahi
-CUPS_CONF_OPTS += --enable-avahi
+CUPS_CONF_OPTS += --with-dnssd=avahi
 else
-CUPS_CONF_OPTS += --disable-avahi
+CUPS_CONF_OPTS += --with-dnssd=no
 endif
 
 ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
