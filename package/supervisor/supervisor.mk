@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-SUPERVISOR_VERSION = 4.2.2
-SUPERVISOR_SITE = https://files.pythonhosted.org/packages/d3/7f/c780b7471ba0ff4548967a9f7a8b0bfce222c3a496c3dfad0164172222b0
+SUPERVISOR_VERSION = 4.2.5
+SUPERVISOR_SITE = https://files.pythonhosted.org/packages/ce/37/517989b05849dd6eaa76c148f24517544704895830a50289cbbf53c7efb9
 SUPERVISOR_LICENSE = BSD-like, rdflib (http_client.py), PSF (medusa)
-SUPERVISOR_LICENSE_FILES = COPYRIGHT.txt LICENSES.txt
+SUPERVISOR_LICENSE_FILES = LICENSES.txt
 SUPERVISOR_CPE_ID_VENDOR = supervisord
 SUPERVISOR_SETUP_TYPE = setuptools
 
