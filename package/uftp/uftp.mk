@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-UFTP_VERSION = 5.0.1
-UFTP_SITE = http://sourceforge.net/projects/uftp-multicast/files/source-tar
+UFTP_VERSION = 5.0.3
+UFTP_SITE = https://downloads.sourceforge.net/project/uftp-multicast/source-tar
 UFTP_LICENSE = GPL-3.0+
 UFTP_LICENSE_FILES = LICENSE.txt
 
