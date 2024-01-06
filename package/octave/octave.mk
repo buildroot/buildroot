@@ -20,7 +20,9 @@ OCTAVE_DEPENDENCIES = \
 	pcre2
 
 ifeq ($(BR2_PACKAGE_READLINE),y)
-OCTAVE_CONF_OPTS += --enable-readline
+OCTAVE_CONF_OPTS += \
+	--enable-readline \
+	--with-libreadline-prefix=$(STAGING_DIR)/usr
 OCTAVE_DEPENDENCIES += readline
 else
 OCTAVE_CONF_OPTS += --disable-readline
