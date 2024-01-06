@@ -1,0 +1,57 @@
+From 9f4330f94cc471d880df7d9089ee1105b27fd321 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 6 Jan 2024 10:26:54 +0100
+Subject: [PATCH] uucore: add support for sparc64
+
+Add support for sparc64 in uucore to avoid the following build failure
+with nushell:
+
+error[E0308]: mismatched types
+   --> /home/autobuild/autobuild/instance-7/output-1/build/nushell-0.85.0/VENDOR/uucore/src/lib/features/fs.rs:121:16
+    |
+111 |     pub fn number_of_links(&self) -> u64 {
+    |                                      --- expected `u64` because of return type
+...
+121 |         return self.0.st_nlink;
+    |                ^^^^^^^^^^^^^^^ expected `u64`, found `u32`
+    |
+help: you can convert a `u32` to a `u64`
+    |
+121 |         return self.0.st_nlink.into();
+    |                               +++++++
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `uucore` (lib) due to previous error
+
+Fixes:
+ - http://autobuild.buildroot.org/results/f9f0287a8e39c65895014ca513ed25071f020add
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/uutils/coreutils/commit/d158f1a396d19cc2aed68131b80ec3b7325d108e
+---
+ src/uucore/src/lib/features/fs.rs | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/VENDOR/uucore/src/lib/features/fs.rs b/VENDOR/uucore/src/lib/features/fs.rs
+index 20cc9e13d..3b9170bc3 100644
+--- a/VENDOR/uucore/src/lib/features/fs.rs
++++ b/VENDOR/uucore/src/lib/features/fs.rs
+@@ -121,6 +121,7 @@ impl FileInformation {
+             not(target_os = "solaris"),
+             not(target_arch = "aarch64"),
+             not(target_arch = "riscv64"),
++            not(target_arch = "sparc64"),
+             target_pointer_width = "64"
+         ))]
+         return self.0.st_nlink;
+@@ -137,6 +138,7 @@ impl FileInformation {
+                 target_os = "solaris",
+                 target_arch = "aarch64",
+                 target_arch = "riscv64",
++                target_arch = "sparc64",
+                 not(target_pointer_width = "64")
+             )
+         ))]
+-- 
+2.43.0
+
