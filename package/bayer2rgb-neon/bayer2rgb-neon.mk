@@ -19,6 +19,14 @@ ifeq ($(BR2_arm),y)
 BAYER2RGB_NEON_CFLAGS += -mfpu=neon
 endif
 
+# __builtin_prefetch() third argument must be a constant, but
+# bayer2rgb-neon uses a variable, derived from a constant, so some
+# optimization is needed to allow the compiler to turn it into a
+# constant, otherwise the build fails
+ifeq ($(BR2_OPTIMIZE_0),y)
+BAYER2RGB_NEON_CFLAGS += -O1
+endif
+
 BAYER2RGB_NEON_CONF_ENV = CFLAGS="$(BAYER2RGB_NEON_CFLAGS)"
 
 $(eval $(autotools-package))
