@@ -1,0 +1,31 @@
+From 3879afd473a256173cc626e16293f3fe8875f2d6 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 6 Jan 2024 09:53:23 +0100
+Subject: [PATCH] Revert "Only add "iconv" to the .pc file if needed (#1825)"
+
+This reverts commit 1f35c466aaa9444335a1b854b0b7223b0d2346c2.
+
+Upstream: no dedicated PR for this revert but there is already plenty of PRs/issues to fix iconv build ...
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ configure.ac | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 93f7af94..204a4e69 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -434,9 +434,7 @@ if test "x$with_iconv" != "xno"; then
+     AC_CHECK_HEADERS([localcharset.h])
+     am_save_LIBS="$LIBS"
+     LIBS="${LIBS} ${LIBICONV}"
+-    if test -n "$LIBICONV"; then
+-      LIBSREQUIRED="$LIBSREQUIRED${LIBSREQUIRED:+ }iconv"
+-    fi
++    LIBSREQUIRED="$LIBSREQUIRED${LIBSREQUIRED:+ }iconv"
+     AC_CHECK_FUNCS([locale_charset])
+     LIBS="${am_save_LIBS}"
+     if test "x$ac_cv_func_locale_charset" != "xyes"; then
+-- 
+2.43.0
+
