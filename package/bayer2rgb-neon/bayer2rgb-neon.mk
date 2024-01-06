@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BAYER2RGB_NEON_VERSION = 15feb1115b4828488cc36d09f625e23e8b6a0ec5
+BAYER2RGB_NEON_VERSION = bc950b3398ba034fe5cc39f625796a6111cdb87f
 BAYER2RGB_NEON_SITE = https://gitlab-ext.sigma-chemnitz.de/ensc/bayer2rgb.git
 BAYER2RGB_NEON_SITE_METHOD = git
 BAYER2RGB_NEON_LICENSE = GPL-3.0
