@@ -282,6 +282,10 @@ required_perl_modules="$required_perl_modules Thread::Queue" # Used by host-auto
 required_perl_modules="$required_perl_modules FindBin" # Used by (host-)libopenssl
 required_perl_modules="$required_perl_modules IPC::Cmd" # Used by (host-)libopenssl
 
+if grep -q ^BR2_PACKAGE_LIBOPENSSL=y $BR2_CONFIG && grep -q ^BR2_s390x=y $BR2_CONFIG ; then
+    required_perl_modules="$required_perl_modules Math::BigInt"
+fi
+
 if grep -q ^BR2_PACKAGE_MOSH=y $BR2_CONFIG ; then
     required_perl_modules="$required_perl_modules diagnostics"
 fi
