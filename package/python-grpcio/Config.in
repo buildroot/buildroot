@@ -1,6 +1,10 @@
 config BR2_PACKAGE_PYTHON_GRPCIO
 	bool "python-grpcio"
+	depends on BR2_INSTALL_LIBSTDCPP
 	help
 	  HTTP/2-based RPC framework.
 
 	  https://grpc.io
+
+comment "python-grpcio needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP
