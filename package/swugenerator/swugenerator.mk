@@ -9,6 +9,10 @@ SWUGENERATOR_SITE = $(call github,sbabic,swugenerator,v$(SWUGENERATOR_VERSION))
 SWUGENERATOR_LICENSE = GPL-3.0
 SWUGENERATOR_LICENSE_FILES = LICENSE
 HOST_SWUGENERATOR_SETUP_TYPE = setuptools
-HOST_SWUGENERATOR_DEPENDENCIES = host-python-libconf
+HOST_SWUGENERATOR_DEPENDENCIES = \
+	host-gzip \
+	host-openssl \
+	host-python-libconf \
+	host-zstd
 
 $(eval $(host-python-package))
