@@ -37,7 +37,18 @@ endif
 
 # disable altivec, it has build issues
 ifeq ($(BR2_powerpc)$(BR2_powerpc64)$(BR2_powerpc64le),y)
+LIQUID_DSP_SIMDOVERRIDE = y
+endif
+
+# Upstream expects NEON on all ARM CPUs by default
+ifeq ($(BR2_arm):$(BR2_ARM_FPU_NEON),y:)
+LIQUID_DSP_SIMDOVERRIDE = y
+endif
+
+ifeq ($(LIQUID_DSP_SIMDOVERRIDE),y)
 LIQUID_DSP_CONF_OPTS += --enable-simdoverride
+# Do not add an else-clause to pass --disable-simdoverride, as it is
+# non-functional, and behaves as --enable-simdoverride
 endif
 
 LIQUID_DSP_CONF_OPTS += \
