@@ -1,5 +1,6 @@
 config BR2_PACKAGE_RYGEL
 	bool "rygel"
+	depends on BR2_PACKAGE_XORG7
 	depends on BR2_USE_WCHAR # gupnp-av
 	depends on BR2_TOOLCHAIN_HAS_THREADS # gupnp-av
 	depends on BR2_USE_MMU # gupnp-av, gobject-introspection
@@ -15,6 +16,7 @@ config BR2_PACKAGE_RYGEL
 	select BR2_PACKAGE_LIBGEE
 	select BR2_PACKAGE_LIBMEDIAART
 	select BR2_PACKAGE_SQLITE
+	select BR2_PACKAGE_XLIB_LIBX11
 	help
 	  Rygel is a home media solution (UPnP AV MediaServer) that
 	  allows you to easily share audio, video and pictures to other
@@ -57,6 +59,7 @@ endif # BR2_PACKAGE_RYGEL
 comment "rygel needs python3 and a glibc toolchain w/ wchar, threads, gcc >= 4.9, host gcc >= 8"
 	depends on BR2_USE_MMU
 	depends on BR2_PACKAGE_GOBJECT_INTROSPECTION_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_XORG7
 	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
 		!BR2_TOOLCHAIN_USES_GLIBC || \
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || \

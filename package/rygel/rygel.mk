@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-RYGEL_VERSION_MAJOR = 0.40
-RYGEL_VERSION = $(RYGEL_VERSION_MAJOR).2
+RYGEL_VERSION_MAJOR = 0.42
+RYGEL_VERSION = $(RYGEL_VERSION_MAJOR).5
 RYGEL_SOURCE = rygel-$(RYGEL_VERSION).tar.xz
 RYGEL_SITE = https://download.gnome.org/sources/rygel/$(RYGEL_VERSION_MAJOR)
 RYGEL_LICENSE = LGPL-2.1+, CC-BY-SA-3.0 (logo)
@@ -18,6 +18,7 @@ RYGEL_DEPENDENCIES = \
 	libgee \
 	libmediaart \
 	sqlite \
+	xlib_libX11 \
 	$(TARGET_NLS_DEPENDENCIES)
 RYGEL_INSTALL_STAGING = YES
 
