@@ -1,0 +1,45 @@
+From 93e5cdd68b13cc3161d9b0094b0f331bdaf07cbc Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 6 Jan 2024 17:28:20 +0100
+Subject: [PATCH] src/ocsp.c: fix build with OPENSSL_NO_PSK
+
+Fix the following build failure with OPENSSL_NO_PSK:
+
+ocsp.c: In function 'ocsp_init':
+ocsp.c:112:20: error: 'SERVICE_OPTIONS' {aka 'struct service_options_struct'} has no member named 'psk_keys'
+  112 |         if(!section->psk_keys) {
+      |                    ^~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/1707beea413a8da8713ad2dc59db947329da45d2
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/mtrojnar/stunnel/pull/18
+---
+ src/ocsp.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/ocsp.c b/src/ocsp.c
+index 5073ded..12792af 100644
+--- a/src/ocsp.c
++++ b/src/ocsp.c
+@@ -109,12 +109,16 @@ int ocsp_init(SERVICE_OPTIONS *section) {
+         s_log(LOG_DEBUG, "OCSP: Client OCSP stapling enabled");
+     } else {
+ #if OPENSSL_VERSION_NUMBER>=0x10002000L
++#ifndef OPENSSL_NO_PSK
+         if(!section->psk_keys) {
++#endif
+             if(SSL_CTX_set_tlsext_status_cb(section->ctx, ocsp_server_cb)==TLSEXT_STATUSTYPE_ocsp)
+                 s_log(LOG_DEBUG, "OCSP: Server OCSP stapling enabled");
++#ifndef OPENSSL_NO_PSK
+         } else {
+             s_log(LOG_NOTICE, "OCSP: Server OCSP stapling is incompatible with PSK");
+         }
++#endif
+ #else /* OpenSSL version 1.0.2 or later */
+         s_log(LOG_NOTICE, "OCSP: Server OCSP stapling not supported");
+ #endif /* OpenSSL version 1.0.2 or later */
+-- 
+2.43.0
+
