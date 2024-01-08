@@ -1,5 +1,8 @@
 config BR2_PACKAGE_PYTHON_ALEMBIC
 	bool "python-alembic"
+	select BR2_PACKAGE_PYTHON_MAKO # runtime
+	select BR2_PACKAGE_PYTHON_SQLALCHEMY # runtime
+	select BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS # runtime
 	help
 	  Alembic is a database migrations tool written by the author
 	  of SQLAlchemy.
