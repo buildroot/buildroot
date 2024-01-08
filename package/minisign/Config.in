@@ -1,0 +1,9 @@
+config BR2_PACKAGE_MINISIGN
+	bool "minisign"
+	select BR2_PACKAGE_LIBSODIUM
+	select BR2_PACKAGE_LIBSODIUM_FULL
+	help
+	  Minisign is a dead simple tool to sign files and verify
+	  signatures.
+
+	  https://github.com/jedisct1/minisign
