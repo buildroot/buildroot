@@ -1,8 +1,12 @@
 config BR2_PACKAGE_LIBTRACEFS
 	bool "libtracefs"
+	depends on !BR2_STATIC_LIBS # libtraceevent
 	select BR2_PACKAGE_LIBTRACEEVENT
 	help
 	  libtracefs is used to easily interface with the ftrace
 	  interface through the tracefs virtual filesystem.
 
 	  https://git.kernel.org/pub/scm/libs/libtrace/libtraceevent.git/
+
+comment "libtracefs needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
