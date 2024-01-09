@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_JARACO_COLLECTIONS
+	bool "python-jaraco-collections"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-jaraco-text -> python-inflect -> python-pydantic -> python-pydantic-core
+	select BR2_PACKAGE_PYTHON_JARACO_TEXT # runtime
+	help
+	  Collection objects similar to those in stdlib by jaraco.
+
+	  https://github.com/jaraco/jaraco.collections
