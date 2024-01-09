@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ZBAR_VERSION = 0.23.90
+ZBAR_VERSION = 0.23.93
 ZBAR_SOURCE = zbar-$(ZBAR_VERSION).tar.bz2
 ZBAR_SITE = https://www.linuxtv.org/downloads/zbar
 ZBAR_LICENSE = LGPL-2.1+
