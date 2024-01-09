@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_MATPLOTLIB_INLINE
+	bool "python-matplotlib-inline"
+	select BR2_PACKAGE_PYTHON_TRAITLETS # runtime
+	help
+	  Inline Matplotlib backend for Jupyter.
+
+	  https://github.com/ipython/matplotlib-inline
