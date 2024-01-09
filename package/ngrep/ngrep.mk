@@ -22,7 +22,7 @@ NGREP_CONF_OPTS = \
 	--disable-dropprivs \
 	--disable-pcap-restart
 
-NGREP_DEPENDENCIES = libpcap pcre
+NGREP_DEPENDENCIES = host-pkgconf libpcap pcre
 
 ifeq ($(BR2_PACKAGE_LIBNET),y)
 NGREP_DEPENDENCIES += libnet
