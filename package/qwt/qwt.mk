@@ -58,6 +58,7 @@ endef
 
 define QWT_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) install INSTALL_ROOT=$(TARGET_DIR)
+	rm -Rf $(TARGET_DIR)/usr/mkspecs
 endef
 
 $(eval $(qmake-package))
