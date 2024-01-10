@@ -1,0 +1,37 @@
+From fdba1f12843d0fdbd5094144a8081244b71b2cf0 Mon Sep 17 00:00:00 2001
+From: Arno Messiaen <arnomessiaen@gmail.com>
+Date: Wed, 22 Nov 2023 08:12:08 +0100
+Subject: [PATCH] setup.py: remove pytest-runner requirement
+
+setup.py: pytest-runner is not required to install the package
+
+Upstream: N/A, Buildroot packaging related
+Signed-off-by: Arno Messiaen <arnomessiaen@gmail.com>
+---
+ setup.py | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/setup.py b/setup.py
+index 062bb08..f19bc0a 100644
+--- a/setup.py
++++ b/setup.py
+@@ -13,8 +13,6 @@ with open('HISTORY.rst') as history_file:
+ 
+ requirements = ['aiohttp>=3', 'attrs', 'multidict', 'yarl', ]
+ 
+-setup_requirements = ['pytest-runner', ]
+-
+ test_requirements = ['pytest', ]
+ 
+ setup(
+@@ -41,7 +39,6 @@ setup(
+     keywords='aiohttp_sse_client',
+     name='aiohttp-sse-client',
+     packages=find_packages(include=['aiohttp_sse_client']),
+-    setup_requires=setup_requirements,
+     test_suite='tests',
+     tests_require=test_requirements,
+     url='https://github.com/rtfol/aiohttp-sse-client',
+-- 
+2.40.1
+
