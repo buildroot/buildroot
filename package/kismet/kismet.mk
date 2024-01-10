@@ -4,13 +4,14 @@
 #
 ################################################################################
 
-KISMET_VERSION = 2022-08-R1
+KISMET_VERSION = 2023-07-R1
 KISMET_SOURCE = kismet-$(KISMET_VERSION).tar.xz
 KISMET_SITE = http://www.kismetwireless.net/code
 KISMET_DEPENDENCIES = \
 	host-pkgconf \
 	libpcap \
 	$(if $(BR2_PACKAGE_LIBNL),libnl) \
+	$(if $(BR2_PACKAGE_OPENSSL),openssl) \
 	$(if $(BR2_PACKAGE_PROTOBUF),protobuf) \
 	protobuf-c \
 	sqlite \
@@ -19,7 +20,7 @@ KISMET_LICENSE = GPL-2.0+
 KISMET_LICENSE_FILES = LICENSE
 KISMET_SELINUX_MODULES = kismet
 
-KISMET_CONF_OPTS = --disable-debuglibs
+KISMET_CONF_OPTS = --disable-debuglibs --disable-wifi-coconut
 
 KISMET_CXXFLAGS = $(TARGET_CXXFLAGS)
 
@@ -57,9 +58,12 @@ else
 KISMET_CONF_OPTS += --disable-lmsensors
 endif
 
-ifeq ($(BR2_PACKAGE_PCRE),y)
+ifeq ($(BR2_PACKAGE_PCRE2),y)
+KISMET_DEPENDENCIES += pcre2
+KISMET_CONF_OPTS += --enable-pcre --enable-require-pcre2
+else ifeq ($(BR2_PACKAGE_PCRE),y)
 KISMET_DEPENDENCIES += pcre
-KISMET_CONF_OPTS += --enable-pcre
+KISMET_CONF_OPTS += --enable-pcre --disable-require-pcre2
 else
 KISMET_CONF_OPTS += --disable-pcre
 endif
