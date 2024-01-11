@@ -21,6 +21,12 @@ define FREERADIUS_SERVER_RUN_KRB5_AUTORECONF
 endef
 FREERADIUS_SERVER_PRE_CONFIGURE_HOOKS += FREERADIUS_SERVER_RUN_KRB5_AUTORECONF
 
+# We're patching src/modules/rlm_python3/configure.ac
+define FREERADIUS_SERVER_RUN_PYTHON3_AUTORECONF
+	cd $(@D)/src/modules/rlm_python3; $(AUTORECONF) -I$(@D)/m4
+endef
+FREERADIUS_SERVER_PRE_CONFIGURE_HOOKS += FREERADIUS_SERVER_RUN_PYTHON3_AUTORECONF
+
 # some compiler checks are not supported while cross compiling.
 # instead of removing those checks, we cache the answers
 FREERADIUS_SERVER_CONF_OPTS += \
