@@ -20,5 +20,7 @@ SYSSTAT_CONF_OPTS += --enable-sensors
 else
 SYSSTAT_CONF_OPTS += --disable-sensors
 endif
+# do not look at host's /usr/lib64
+SYSSTAT_CONF_OPTS += sa_lib_dir=/usr/lib/sa
 
 $(eval $(autotools-package))
