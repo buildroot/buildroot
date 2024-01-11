@@ -26,7 +26,7 @@ Running under Qemu
 Run the emulation with:
 
   qemu-system-arm \
-      -M virt,secure=on \
+      -M virt,secure=on,acpi=off \
       -bios output/images/flash.bin \
       -cpu cortex-a15 \
       -device virtio-blk-device,drive=hd0 \
@@ -35,7 +35,6 @@ Run the emulation with:
       -drive file=output/images/disk.img,if=none,format=raw,id=hd0 \
       -m 1024 \
       -netdev user,id=eth0 \
-      -no-acpi \
       -nographic \
       -object rng-random,filename=/dev/urandom,id=rng0 \
       -rtc base=utc,clock=host \

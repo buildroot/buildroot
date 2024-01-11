@@ -26,7 +26,7 @@ Running under Qemu
 Run the emulation with:
 
   qemu-system-aarch64 \
-      -M virt,secure=on \
+      -M virt,secure=on,acpi=off \
       -bios output/images/flash.bin \
       -cpu cortex-a53 \
       -device virtio-blk-device,drive=hd0 \
@@ -35,7 +35,6 @@ Run the emulation with:
       -drive file=output/images/disk.img,if=none,format=raw,id=hd0 \
       -m 2048 \
       -netdev user,id=eth0 \
-      -no-acpi \
       -nographic \
       -object rng-random,filename=/dev/urandom,id=rng0 \
       -rtc base=utc,clock=host \
@@ -63,7 +62,7 @@ image first with:
 Then run the OS installer iso image on emulation with:
 
   qemu-system-aarch64 \
-      -M virt,secure=on \
+      -M virt,secure=on,acpi=off \
       -bios output/images/flash.bin \
       -cpu cortex-a53 \
       -device virtio-blk-device,drive=hd1 \
@@ -74,7 +73,6 @@ Then run the OS installer iso image on emulation with:
       -drive file=disk.qcow2,if=none,id=hd1 \
       -m 2048 \
       -netdev user,id=eth0 \
-      -no-acpi \
       -nographic \
       -object rng-random,filename=/dev/urandom,id=rng0 \
       -rtc base=utc,clock=host \
