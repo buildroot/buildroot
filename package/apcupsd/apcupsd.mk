@@ -71,8 +71,8 @@ APCUPSD_CONF_OPTS += --disable-usb
 endif
 
 define APCUPSD_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/src
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/platforms
+	$(TARGET_MAKE_ENV) $(MAKE) LD="$(TARGET_CXX)" -C $(@D)/src
+	$(TARGET_MAKE_ENV) $(MAKE) LD="$(TARGET_CXX)" -C $(@D)/platforms
 endef
 
 define APCUPSD_INSTALL_TARGET_CMDS
