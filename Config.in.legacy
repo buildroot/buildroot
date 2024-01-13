@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2024.02"
 
+config BR2_KERNEL_HEADERS_4_14
+	bool "kernel headers version 4.14.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 4.14.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
 config BR2_PACKAGE_LIBCAMERA_PIPELINE_RASPBERRYPI
 	bool "libcamera pipeline 'raspberrypi' was renamed to 'rpi/vc4'"
 	depends on BR2_arm || BR2_aarch64
