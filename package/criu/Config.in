@@ -4,7 +4,7 @@ config BR2_PACKAGE_CRIU_ARCH_SUPPORTS
 	default y if BR2_ARM_CPU_ARMV6
 	default y if BR2_ARM_CPU_ARMV7A
 	default y if BR2_ARM_CPU_ARMV7M
-	default y if BR2_ARM_CPU_ARMV8A
+	default y if BR2_ARM_CPU_ARMV8A && !BR2_aarch64_be
 	default y if BR2_aarch64
 	default y if BR2_x86_64
 	default y if BR2_powerpc64le # Only support powerpc64 with LE
