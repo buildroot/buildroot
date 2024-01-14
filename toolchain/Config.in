@@ -34,7 +34,6 @@ config BR2_TOOLCHAIN_USES_MUSL
 	select BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_TOOLCHAIN_HAS_THREADS_DEBUG
 	select BR2_TOOLCHAIN_HAS_THREADS_NPTL
-	select BR2_TOOLCHAIN_HAS_UCONTEXT
 	select BR2_TOOLCHAIN_SUPPORTS_PIE if !BR2_STATIC_LIBS
 
 choice
@@ -302,6 +301,8 @@ config BR2_TOOLCHAIN_HAS_SSP_STRONG
 	bool
 	default y if BR2_TOOLCHAIN_HAS_SSP && BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 
+# This boolean is true if the toolchain provides a full featured
+# ucontext implementation with ucontext_t and {get,make,set}context
 config BR2_TOOLCHAIN_HAS_UCONTEXT
 	bool
 
