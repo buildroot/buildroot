@@ -1,0 +1,53 @@
+From fe7f54d4f339b7948c961b60729f620f2eaec716 Mon Sep 17 00:00:00 2001
+From: Jan200101 <sentrycraft123@gmail.com>
+Date: Tue, 23 May 2023 23:42:37 +0200
+Subject: [PATCH] meson: try iconv in libintl lookup
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This was originally removed in !2734 but still appears to be required for
+some MinGW setups, such as the `x86_64-w64-mingw32.static` target in
+[mxe](https://github.com/mxe/mxe).
+
+Currently, this configuration fails the libintl internal assert on line
+2128, as on this platform `ngettext()` is only found inside libiconv.
+
+This commit will look up iconv potentially twice, once as `libiconv` and
+potentially once as `libintl_iconv`. This is what the code did before
+!2734 landed, so it’s known to work reliably on a number of platforms.
+
+Upstream: https://gitlab.gnome.org/GNOME/glib/-/commit/a497d5be122f193dcf8679334308333bbbc14a71
+Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
+---
+ meson.build | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index de0bee5a3..653f9eddf 100644
+--- a/meson.build
++++ b/meson.build
+@@ -2104,11 +2104,16 @@ if libintl.found()
+   if cc.has_function('ngettext', dependencies : libintl, prefix: libintl_prefix)
+     libintl_deps += [libintl]
+   else
+-    libintl_pthread = cc.find_library('pthread', required : false)
+-    if libintl_pthread.found() and cc.has_function('ngettext', dependencies : [libintl, libintl_pthread], prefix: libintl_prefix)
+-      libintl_deps += [libintl, libintl_pthread]
++    libintl_iconv = cc.find_library('iconv', required : false)
++    if libintl_iconv.found() and cc.has_function('ngettext', dependencies : [libintl, libintl_iconv])
++      libintl_deps += [libintl, libintl_iconv]
+     else
+-      libintl = disabler()
++      libintl_pthread = cc.find_library('pthread', required : false)
++      if libintl_pthread.found() and cc.has_function('ngettext', dependencies : [libintl, libintl_pthread], prefix: libintl_prefix)
++        libintl_deps += [libintl, libintl_pthread]
++      else
++        libintl = disabler()
++      endif
+     endif
+   endif
+ endif
+-- 
+2.34.1
+
