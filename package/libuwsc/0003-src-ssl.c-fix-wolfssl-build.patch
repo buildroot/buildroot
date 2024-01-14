@@ -1,0 +1,37 @@
+From 1c3579e99163a13d622c3ef44088c23d5eea306d Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 14 Jan 2024 16:44:13 +0100
+Subject: [PATCH] src/ssl.c: fix wolfssl build
+
+wolfssl/options.h must also be included by clients to avoid the
+following build failure because OPENSSL_ALL won't be defined:
+
+/home/autobuild/autobuild/instance-6/output-1/build/libuwsc-3.3.5/src/ssl.c:62:5: error: unknown type name 'SSL_CTX'
+   62 |     SSL_CTX *ctx;
+      |     ^~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/edc49cce5b1f456d980841f4c315e7cd784b1561
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: N/A (already fixed by
+https://github.com/zhaojh329/ssl/commit/c40ebcd7b4277321acbbd4b00b4b10fd363c7a97)
+---
+ src/ssl.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/ssl.c b/src/ssl.c
+index 3640022..6a3d250 100644
+--- a/src/ssl.c
++++ b/src/ssl.c
+@@ -54,6 +54,7 @@ struct uwsc_ssl_ctx {
+ #include <openssl/err.h>
+ #elif UWSC_HAVE_WOLFSSL
+ #define WC_NO_HARDEN
++#include <wolfssl/options.h>
+ #include <wolfssl/openssl/ssl.h>
+ #include <wolfssl/openssl/err.h>
+ #endif
+-- 
+2.43.0
+
