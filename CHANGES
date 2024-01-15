@@ -1,3 +1,35 @@
+2023.02.9, released January 15th, 2024
+
+	Important / security related fixes.
+
+	Infrastructure:
+
+	- Download: Revert a permission fixup step in the tarball
+	  creation logic, which lead to a hash mismatch issue in two
+	  cargo-vendored packages, ripgrep and sentry-cli.
+
+	- Build: Pass GIT_DIR=. in the environment (through
+	  HOST_MAKE_ENV/TARGET_MAKE_ENV) to the build steps to
+	  workaround packages trying to detect if they are building in
+	  a git checkout and getting confused when building in a sub
+	  directory of a Buildroot git checkout.
+
+	Updated/fixed packages: apcupsd, arm-trusted-firmware, botan,
+	cjson, cups, dropbear, duktape, edk2, exim, faad2, freeswitch,
+	gcc, gdal, gdb, giflib, glibc, go, google-breakpad, gst-omx,
+	gstd, gst1-devtools, gst1-libav, gst1-plugins-bad,
+	gst1-plugins-base, gst1-plugins-good, gst1-plugins-ugly,
+	gst1-python, gst1-rtsp-server, gst1-vaapi, gstreamer1,
+	gstreamer1-editing-services, ipcalc, jq, json-for-modern-cpp,
+	ksmbd-tools, libaio, libcamera, libcap-ng, libcurl, libebml,
+	libgtk3, libiec61850, libraw, libsigsegv, libssh, libssh2,
+	libuev, libwebsockets, liquid-dsp, lvm2, madplay, mesa3d,
+	micropython, mp4v2, opensc, openssh, orc, php, pipewire,
+	postgis, postgresql, proftpd, putty, python-sip,
+	python-werkzeug, rng-tools, shim, squid, strongswan, sway,
+	tinyssh, tor, tree, uftp, valijson, wireshark, wolfssl,
+	xserver_xorg-server, xwayland
+
 2023.02.8, released December 4th, 2023
 
 	Important / security related fixes.
