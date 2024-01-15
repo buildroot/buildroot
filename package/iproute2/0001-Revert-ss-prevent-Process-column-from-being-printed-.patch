@@ -1,0 +1,45 @@
+From f22c49730c3691c25a1147081363eb35aa9d1048 Mon Sep 17 00:00:00 2001
+From: Stephen Hemminger <stephen@networkplumber.org>
+Date: Sat, 13 Jan 2024 08:51:55 -0800
+Subject: [PATCH] Revert "ss: prevent "Process" column from being printed
+ unless requested"
+
+This reverts commit 1607bf531fd2f984438d227ea97312df80e7cf56.
+
+This commit is being reverted because it breaks output of tcp info.
+The order of the columns enum is order sensistive.
+
+Bug: https://bugzilla.kernel.org/show_bug.cgi?id=218372
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Upstream: https://git.kernel.org/pub/scm/network/iproute2/iproute2.git/commit/?id=f22c49730c3691c25a1147081363eb35aa9d1048
+---
+ misc/ss.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/misc/ss.c b/misc/ss.c
+index 09dc1f37..9438382b 100644
+--- a/misc/ss.c
++++ b/misc/ss.c
+@@ -100,8 +100,8 @@ enum col_id {
+ 	COL_SERV,
+ 	COL_RADDR,
+ 	COL_RSERV,
+-	COL_PROC,
+ 	COL_EXT,
++	COL_PROC,
+ 	COL_MAX
+ };
+
+@@ -5795,9 +5795,6 @@ int main(int argc, char *argv[])
+ 	if (ssfilter_parse(&current_filter.f, argc, argv, filter_fp))
+ 		usage();
+
+-	if (!show_processes)
+-		columns[COL_PROC].disabled = 1;
+-
+ 	if (!(current_filter.dbs & (current_filter.dbs - 1)))
+ 		columns[COL_NETID].disabled = 1;
+
+--
+2.43.0
+
