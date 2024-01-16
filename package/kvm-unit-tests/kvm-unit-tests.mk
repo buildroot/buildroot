@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-KVM_UNIT_TESTS_VERSION = 2023-01-05
+KVM_UNIT_TESTS_VERSION = 2024-01-08
 KVM_UNIT_TESTS_SOURCE = kvm-unit-tests-v$(KVM_UNIT_TESTS_VERSION).tar.bz2
 KVM_UNIT_TESTS_SITE = https://gitlab.com/kvm-unit-tests/kvm-unit-tests/-/archive/v$(KVM_UNIT_TESTS_VERSION)
 KVM_UNIT_TESTS_LICENSE = GPL-2.0, LGPL-2.0
-KVM_UNIT_TESTS_LICENSE_FILES = COPYRIGHT
+KVM_UNIT_TESTS_LICENSE_FILES = COPYRIGHT LICENSE
 
 ifeq ($(BR2_aarch64)$(BR2_aarch64_be),y)
 KVM_UNIT_TESTS_ARCH = aarch64
