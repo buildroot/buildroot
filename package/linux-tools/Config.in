@@ -104,6 +104,7 @@ endif
 
 config BR2_PACKAGE_LINUX_TOOLS_RTLA
 	bool "rtla"
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libtracefs
 	depends on !BR2_STATIC_LIBS # libtracefs
 	select BR2_PACKAGE_LINUX_TOOLS
 	select BR2_PACKAGE_LIBTRACEFS
@@ -124,8 +125,8 @@ config BR2_PACKAGE_LINUX_TOOLS_RTLA
 	  not available in Buildroot, so only rtla in kernels 5.19
 	  onwards is actually supported in Buildroot.
 
-comment "rtla needs a toolchain w/ dynamic library"
-	depends on BR2_STATIC_LIBS
+comment "rtla needs a toolchain w/ threads, dynamic library"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
 
 config BR2_PACKAGE_LINUX_TOOLS_SELFTESTS
 	bool"selftests"
