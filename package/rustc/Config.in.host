@@ -149,6 +149,8 @@ config BR2_PACKAGE_HOST_RUST
 	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
 	# triggers ICE on trunc_int_for_mode, at explow.c:56
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 || !BR2_aarch64
+	# rust uses llvm >= 17 since 1.73.0
+	select BR2_HOST_CMAKE_AT_LEAST_3_20
 	help
 	  This package will build the compiler for the host as well as
 	  two flavors of the standard library: one for the host, another
