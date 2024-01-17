@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SHADOW_VERSION = 4.13
+SHADOW_VERSION = 4.14.3
 SHADOW_SITE = https://github.com/shadow-maint/shadow/releases/download/$(SHADOW_VERSION)
 SHADOW_SOURCE = shadow-$(SHADOW_VERSION).tar.xz
 SHADOW_LICENSE = BSD-3-Clause
@@ -118,6 +118,13 @@ ifeq ($(BR2_PACKAGE_SHADOW_YESCRYPT),y)
 SHADOW_CONF_OPTS += --with-yescrypt
 else
 SHADOW_CONF_OPTS += --without-yescrypt
+endif
+
+ifeq ($(BR2_PACKAGE_LIBBSD),y)
+SHADOW_CONF_OPTS += --with-libbsd
+SHADOW_DEPENDENCIES += libbsd
+else
+SHADOW_CONF_OPTS += --without-libbsd
 endif
 
 define SHADOW_PERMISSIONS
