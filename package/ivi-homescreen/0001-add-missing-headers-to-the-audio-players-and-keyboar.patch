@@ -1,7 +1,8 @@
 From 7e35ea4fbd94a1604907069bb9cc2e2dff4b43c7 Mon Sep 17 00:00:00 2001
 From: Adam Duskett <adam.duskett@amarulasolutions.com>
 Date: Sat, 6 Jan 2024 14:18:56 -0700
-Subject: [PATCH] add missing headers to the audio-players plugin
+Subject: [PATCH] add missing headers to the audio-players and keyboard_manager
+ plugin
 
 Fixes flutter::StandardMethodCodec not being declared on the following lines:
 plugins/audio_players/audio_players_registry.cc:83
@@ -9,6 +10,7 @@ plugins/audio_players/audio_players_registry.cc:94
 plugins/audio_players/audio_players_registry.cc:152
 plugins/audio_players/audio_player.cc:257
 plugins/audio_players/audio_player.cc:623
+plugins/keyboard_manager/keyboard_manager.cc:25
 
 Upstream: https://github.com/toyota-connected/ivi-homescreen/pull/133
 
@@ -17,7 +19,8 @@ Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
  shell/plugins/audio_players/audio_player.cc           | 3 ++-
  shell/plugins/audio_players/audio_players.cc          | 4 +++-
  shell/plugins/audio_players/audio_players_registry.cc | 3 ++-
- 3 files changed, 7 insertions(+), 3 deletions(-)
+ shell/plugins/keyboard_manager/keyboard_manager.h     | 3 ++-
+ 4 files changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/shell/plugins/audio_players/audio_player.cc b/shell/plugins/audio_players/audio_player.cc
 index 56027eb..a85e9ae 100644
@@ -77,6 +80,25 @@ index 6c9ef33..00c4f45 100644
 -}  // namespace Plugins
 \ No newline at end of file
 +}  // namespace Plugins
+diff --git a/shell/plugins/keyboard_manager/keyboard_manager.h b/shell/plugins/keyboard_manager/keyboard_manager.h
+index 74b4e8d..cae1954 100644
+--- a/shell/plugins/keyboard_manager/keyboard_manager.h
++++ b/shell/plugins/keyboard_manager/keyboard_manager.h
+@@ -17,6 +17,7 @@
+ #pragma once
+ 
+ #include "flutter/fml/macros.h"
++#include <flutter/standard_method_codec.h>
+ 
+ #include <shell/platform/embedder/embedder.h>
+ 
+@@ -45,4 +46,4 @@ class KeyboardManager {
+ 
+  private:
+   static constexpr char kGetKeyboardState[] = "getKeyboardState";
+-};
+\ No newline at end of file
++};
 -- 
 2.43.0
 
