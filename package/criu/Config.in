@@ -18,6 +18,7 @@ config BR2_PACKAGE_CRIU_ARCH_SUPPORTS
 config BR2_PACKAGE_CRIU
 	bool "criu"
 	depends on BR2_PACKAGE_CRIU_ARCH_SUPPORTS
+	depends on BR2_HOST_GCC_AT_LEAST_7 # protobuf-c
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_8 # -march=armv7-a+fp
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_18 # rseq.h
 	depends on !BR2_TOOLCHAIN_USES_UCLIBC # no aio.h
@@ -43,9 +44,10 @@ config BR2_PACKAGE_CRIU
 
 	  https://criu.org/Main_Page
 
-comment "criu needs a glibc or musl toolchain w/ threads, gcc >= 8, headers >= 4.18, C++, dynamic library, wchar"
+comment "criu needs a glibc or musl toolchain w/ threads, host gcc >= 7, gcc >= 8, headers >= 4.18, C++, dynamic library, wchar"
 	depends on BR2_PACKAGE_CRIU_ARCH_SUPPORTS
 	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_8 || !BR2_TOOLCHAIN_HAS_THREADS \
 		|| !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_18 \
 		|| BR2_TOOLCHAIN_USES_UCLIBC || !BR2_INSTALL_LIBSTDCPP \
-		|| BR2_STATIC_LIBS || !BR2_USE_WCHAR
+		|| BR2_STATIC_LIBS || !BR2_USE_WCHAR \
+		|| BR2_HOST_GCC_AT_LEAST_7
