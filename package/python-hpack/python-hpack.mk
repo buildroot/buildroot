@@ -10,5 +10,7 @@ PYTHON_HPACK_SITE = https://files.pythonhosted.org/packages/3e/9b/fda93fb4d957db
 PYTHON_HPACK_SETUP_TYPE = setuptools
 PYTHON_HPACK_LICENSE = MIT
 PYTHON_HPACK_LICENSE_FILES = LICENSE
+PYTHON_HPACK_CPE_ID_VENDOR = python
+PYTHON_HPACK_CPE_ID_PRODUCT = hpack
 
 $(eval $(python-package))
