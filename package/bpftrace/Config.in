@@ -1,0 +1,56 @@
+config BR2_PACKAGE_BPFTRACE_ARCH_SUPPORTS
+	bool
+	default y if BR2_aarch64 || BR2_aarch64_be
+	default y if BR2_x86_64
+	depends on BR2_PACKAGE_LLVM_ARCH_SUPPORTS
+
+config BR2_PACKAGE_BPFTRACE
+	bool "bpftrace"
+	depends on BR2_PACKAGE_BPFTRACE_ARCH_SUPPORTS
+	depends on BR2_USE_MMU # bcc -> python3
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libbpf
+	depends on BR2_PACKAGE_LLVM_ARCH_SUPPORTS # bcc
+	depends on BR2_TOOLCHAIN_USES_GLIBC # bcc
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 # bcc -> clang
+	depends on BR2_INSTALL_LIBSTDCPP # bcc -> clang
+	depends on BR2_HOST_GCC_AT_LEAST_7 # bcc -> clang
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_13 # libbpf
+	depends on BR2_USE_WCHAR # bcc -> clang, bcc -> python3, libbpf
+	depends on BR2_TOOLCHAIN_HAS_THREADS # bcc -> clang, bcc -> python3, libbpf
+	depends on !BR2_STATIC_LIBS # bcc -> clang, bcc -> python3, libbpf
+	select BR2_PACKAGE_BCC
+	select BR2_PACKAGE_BZIP2
+	select BR2_PACKAGE_CEREAL
+	select BR2_PACKAGE_ELFUTILS
+	select BR2_PACKAGE_LIBBPF
+	select BR2_PACKAGE_LLVM
+	# LLVM RTTI mendatory: https://github.com/iovisor/bpftrace/issues/1156
+	select BR2_PACKAGE_LLVM_RTTI
+	select BR2_PACKAGE_XZ
+	help
+	  bpftrace is a high-level tracing language for Linux enhanced
+	  Berkeley Packet Filter (eBPF) available in recent Linux
+	  kernels (4.x).
+
+	  bpftrace uses LLVM as a backend to compile scripts to
+	  BPF-bytecode and makes use of BCC for interacting with the
+	  Linux BPF system, as well as existing Linux tracing
+	  capabilities: kernel dynamic tracing (kprobes), user-level
+	  dynamic tracing (uprobes), and tracepoints. The bpftrace
+	  language is inspired by awk and C, and predecessor tracers
+	  such as DTrace and SystemTap.
+
+	  It's highly recommended to NOT strip bpftrace binary.
+	  To do so, add "bpftrace" to BR2_STRIP_EXCLUDE_FILES.
+	  See:
+	    https://bugzilla.redhat.com/show_bug.cgi?id=1865787
+
+	  https://www.github.com/iovisor/bpftrace
+
+comment "bpftrace needs a glibc toolchain w/ C++, gcc >= 7, host gcc >= 7, kernel headers >= 4.13"
+	depends on BR2_PACKAGE_BPFTRACE_ARCH_SUPPORTS
+	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_TOOLCHAIN_USES_GLIBC || !BR2_INSTALL_LIBSTDCPP \
+		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_7 || !BR2_HOST_GCC_AT_LEAST_7 \
+		|| !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_13
