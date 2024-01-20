@@ -1,0 +1,51 @@
+From ff7a064490e0aacf718a5263b25b2ddaad0d245e Mon Sep 17 00:00:00 2001
+From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Date: Sat, 20 Jan 2024 13:53:39 +0100
+Subject: [PATCH] CMakeList: add option to not install NuGet packaging
+
+The NuGet hiredis.target packaging description file is of no use on
+systems that are not using NuGet, like Linux systems, and the spurious
+presence of that file is not "clean".
+
+Add a cmake option to allow users to disable installation of that file.
+As some people may have relied on that file to be installed, continue to
+install it by default.
+
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+Upstream: https://github.com/redis/hiredis/commit/ff7a064490e0aacf718a5263b25b2ddaad0d245e
+---
+ CMakeLists.txt | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b7d6ee8..0fcf29b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -6,6 +6,9 @@ OPTION(DISABLE_TESTS "If tests should be compiled or not" OFF)
+ OPTION(ENABLE_SSL_TESTS "Should we test SSL connections" OFF)
+ OPTION(ENABLE_EXAMPLES "Enable building hiredis examples" OFF)
+ OPTION(ENABLE_ASYNC_TESTS "Should we run all asynchronous API tests" OFF)
++# Historically, the NuGet file was always install; default
++# to ON for those who rely on that historical behaviour.
++OPTION(ENABLE_NUGET "Install NuGET packaging details" ON)
+
+ MACRO(getVersionBit name)
+   SET(VERSION_REGEX "^#define ${name} (.+)$")
+@@ -105,9 +108,11 @@ if (MSVC AND BUILD_SHARED_LIBS)
+         CONFIGURATIONS Debug RelWithDebInfo)
+ endif()
+
+-# For NuGet packages
+-INSTALL(FILES hiredis.targets
+-    DESTINATION build/native)
++if (ENABLE_NUGET)
++    # For NuGet packages
++    INSTALL(FILES hiredis.targets
++        DESTINATION build/native)
++endif()
+
+ INSTALL(FILES hiredis.h read.h sds.h async.h alloc.h sockcompat.h
+     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hiredis)
+--
+2.43.0
+
