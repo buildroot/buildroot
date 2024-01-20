@@ -12,6 +12,8 @@ PYTHON_PYCRYPTODOMEX_LICENSE = \
 	BSD-2-Clause, \
 	Public Domain (pycrypto original code)
 PYTHON_PYCRYPTODOMEX_LICENSE_FILES = LICENSE.rst Doc/LEGAL/COPYRIGHT.pycrypto
+PYTHON_PYCRYPTODOMEX_CPE_ID_VENDOR = pycryptodome
+PYTHON_PYCRYPTODOMEX_CPE_ID_PRODUCT = pycryptodomex
 
 $(eval $(python-package))
 $(eval $(host-python-package))
