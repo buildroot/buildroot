@@ -41,6 +41,10 @@ else
 HIGHWAY_CONF_OPTS += -DHWY_CMAKE_ARM7=OFF
 endif
 
+ifeq ($(BR2_RISCV_32),y)
+HIGHWAY_CONF_OPTS += -DHWY_CMAKE_RVV=OFF
+endif
+
 # Workaround for gcc bug 104028 on m68k.
 # See: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=104028
 ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_104028),y)
