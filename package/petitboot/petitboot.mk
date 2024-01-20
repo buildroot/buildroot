@@ -7,10 +7,18 @@
 PETITBOOT_VERSION = 1.14
 PETITBOOT_SOURCE = petitboot-v$(PETITBOOT_VERSION).tar.gz
 PETITBOOT_SITE = https://github.com/open-power/petitboot/releases/download/v$(PETITBOOT_VERSION)
-PETITBOOT_DEPENDENCIES = elfutils ncurses udev host-bison host-flex lvm2
+PETITBOOT_DEPENDENCIES = \
+	elfutils \
+	ncurses \
+	udev \
+	host-bison \
+	host-flex \
+	lvm2 \
+	$(TARGET_NLS_DEPENDENCIES)
 PETITBOOT_LICENSE = GPL-2.0
 PETITBOOT_LICENSE_FILES = COPYING
 
+PETITBOOT_CONF_ENV = LDFLAGS="$(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)"
 PETITBOOT_CONF_OPTS = \
 	--enable-crypt \
 	--enable-platform-auto \
