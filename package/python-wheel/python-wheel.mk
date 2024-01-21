@@ -10,5 +10,7 @@ PYTHON_WHEEL_SITE = https://files.pythonhosted.org/packages/fc/ef/0335f7217dd1e8
 PYTHON_WHEEL_SETUP_TYPE = flit
 PYTHON_WHEEL_LICENSE = MIT
 PYTHON_WHEEL_LICENSE_FILES = LICENSE.txt
+PYTHON_WHEEL_CPE_ID_VENDOR = wheel_project
+PYTHON_WHEEL_CPE_ID_PRODUCT = wheel
 
 $(eval $(host-python-package))
