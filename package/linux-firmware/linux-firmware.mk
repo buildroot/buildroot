@@ -134,6 +134,7 @@ LINUX_FIRMWARE_FILES += \
 	rtlwifi/rtl8192sefw.bin \
 	rtlwifi/rtl8188efw.bin \
 	rtlwifi/rtl8188eufw.bin \
+	rtlwifi/rtl8188fufw.bin \
 	rtlwifi/rtl8192cufw_A.bin \
 	rtlwifi/rtl8192cufw_B.bin \
 	rtlwifi/rtl8192cufw_TMSC.bin \
