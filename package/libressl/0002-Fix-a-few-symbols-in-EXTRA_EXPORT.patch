@@ -1,0 +1,133 @@
+From c54bd8ba318dec4b4fbf4df1d92acbe2c032f3fd Mon Sep 17 00:00:00 2001
+From: Theo Buehler <tb@openbsd.org>
+Date: Mon, 11 Dec 2023 17:56:33 +0100
+Subject: [PATCH] Fix a few symbols in EXTRA_EXPORT
+
+I thought we stopped doing this, but that's for a separate thread.
+
+Upstream: https://github.com/libressl/portable/commit/c54bd8ba318dec4b4fbf4df1d92acbe2c032f3fd
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ crypto/CMakeLists.txt | 37 +++++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
+
+diff --git a/crypto/CMakeLists.txt b/crypto/CMakeLists.txt
+index 605647151..8046efe87 100644
+--- a/crypto/CMakeLists.txt
++++ b/crypto/CMakeLists.txt
+@@ -767,13 +767,13 @@ endif()
+ 
+ if(NOT HAVE_ASPRINTF)
+ 	set(CRYPTO_SRC ${CRYPTO_SRC} compat/bsd-asprintf.c)
+-	set(EXTRA_EXPORT ${EXTRA_EXPORT} asprintf)
+-	set(EXTRA_EXPORT ${EXTRA_EXPORT} vasprintf)
++	set(EXTRA_EXPORT ${EXTRA_EXPORT} libressl_asprintf)
++	set(EXTRA_EXPORT ${EXTRA_EXPORT} libressl_vasprintf)
+ endif()
+ 
+ if(NOT HAVE_FREEZERO)
+ 	set(CRYPTO_SRC ${CRYPTO_SRC} compat/freezero.c)
+-	set(EXTRA_EXPORT ${EXTRA_EXPORT} freezero)
++	set(EXTRA_EXPORT ${EXTRA_EXPORT} libressl_freezero)
+ endif()
+ 
+ if(NOT HAVE_GETOPT)
+@@ -799,46 +799,46 @@ endif()
+ 
+ if(NOT HAVE_REALLOCARRAY)
+ 	set(CRYPTO_SRC ${CRYPTO_SRC} compat/reallocarray.c)
+-	set(EXTRA_EXPORT ${EXTRA_EXPORT} reallocarray)
++	set(EXTRA_EXPORT ${EXTRA_EXPORT} libressl_reallocarray)
+ endif()
+ 
+ if(NOT HAVE_RECALLOCARRAY)
+ 	set(CRYPTO_SRC ${CRYPTO_SRC} compat/recallocarray.c)
+-	set(EXTRA_EXPORT ${EXTRA_EXPORT} recallocarray)
++	set(EXTRA_EXPORT ${EXTRA_EXPORT} libressl_recallocarray)
+ endif()
+ 
+ if(NOT HAVE_STRCASECMP)
+ 	set(CRYPTO_SRC ${CRYPTO_SRC} compat/strcasecmp.c)
+-	set(EXTRA_EXPORT ${EXTRA_EXPORT} strcasecmp)
++	set(EXTRA_EXPORT ${EXTRA_EXPORT} libressl_strcasecmp)
+ endif()
+ 
+ if(NOT HAVE_STRLCAT)
+ 	set(CRYPTO_SRC ${CRYPTO_SRC} compat/strlcat.c)
+-	set(EXTRA_EXPORT ${EXTRA_EXPORT} strlcat)
++	set(EXTRA_EXPORT ${EXTRA_EXPORT} libressl_strlcat)
+ endif()
+ 
+ if(NOT HAVE_STRLCPY)
+ 	set(CRYPTO_SRC ${CRYPTO_SRC} compat/strlcpy.c)
+-	set(EXTRA_EXPORT ${EXTRA_EXPORT} strlcpy)
++	set(EXTRA_EXPORT ${EXTRA_EXPORT} libressl_strlcpy)
+ endif()
+ 
+ if(NOT HAVE_STRNDUP)
+ 	set(CRYPTO_SRC ${CRYPTO_SRC} compat/strndup.c)
+-	set(EXTRA_EXPORT ${EXTRA_EXPORT} strndup)
++	set(EXTRA_EXPORT ${EXTRA_EXPORT} libressl_strndup)
+ 	if(NOT HAVE_STRNLEN)
+ 		set(CRYPTO_SRC ${CRYPTO_SRC} compat/strnlen.c)
+-		set(EXTRA_EXPORT ${EXTRA_EXPORT} strnlen)
++		set(EXTRA_EXPORT ${EXTRA_EXPORT} libressl_strnlen)
+ 	endif()
+ endif()
+ 
+ if(NOT HAVE_STRSEP)
+ 	set(CRYPTO_SRC ${CRYPTO_SRC} compat/strsep.c)
+-	set(EXTRA_EXPORT ${EXTRA_EXPORT} strsep)
++	set(EXTRA_EXPORT ${EXTRA_EXPORT} libressl_strsep)
+ endif()
+ 
+ if(NOT HAVE_STRTONUM)
+ 	set(CRYPTO_SRC ${CRYPTO_SRC} compat/strtonum.c)
+-	set(EXTRA_EXPORT ${EXTRA_EXPORT} strtonum)
++	set(EXTRA_EXPORT ${EXTRA_EXPORT} libressl_strtonum)
+ endif()
+ 
+ if(NOT HAVE_SYSLOG_R)
+@@ -857,15 +857,15 @@ if(NOT HAVE_EXPLICIT_BZERO)
+ 		set(CRYPTO_SRC ${CRYPTO_SRC} compat/explicit_bzero.c)
+ 		set_source_files_properties(compat/explicit_bzero.c PROPERTIES COMPILE_FLAGS -O0)
+ 	endif()
+-	set(EXTRA_EXPORT ${EXTRA_EXPORT} explicit_bzero)
++	set(EXTRA_EXPORT ${EXTRA_EXPORT} libressl_explicit_bzero)
+ endif()
+ 
+ if(NOT HAVE_ARC4RANDOM_BUF)
+ 	set(CRYPTO_SRC ${CRYPTO_SRC} compat/arc4random.c)
+ 	set(CRYPTO_SRC ${CRYPTO_SRC} compat/arc4random_uniform.c)
+-	set(EXTRA_EXPORT ${EXTRA_EXPORT} arc4random)
+-	set(EXTRA_EXPORT ${EXTRA_EXPORT} arc4random_buf)
+-	set(EXTRA_EXPORT ${EXTRA_EXPORT} arc4random_uniform)
++	set(EXTRA_EXPORT ${EXTRA_EXPORT} libressl_arc4random)
++	set(EXTRA_EXPORT ${EXTRA_EXPORT} libressl_arc4random_buf)
++	set(EXTRA_EXPORT ${EXTRA_EXPORT} libressl_arc4random_uniform)
+ 
+ 	if(NOT HAVE_GETENTROPY)
+ 		if(WIN32)
+@@ -891,12 +891,12 @@ endif()
+ 
+ if(NOT HAVE_TIMINGSAFE_BCMP)
+ 	set(CRYPTO_SRC ${CRYPTO_SRC} compat/timingsafe_bcmp.c)
+-	set(EXTRA_EXPORT ${EXTRA_EXPORT} timingsafe_bcmp)
++	set(EXTRA_EXPORT ${EXTRA_EXPORT} libressl_timingsafe_bcmp)
+ endif()
+ 
+ if(NOT HAVE_TIMINGSAFE_MEMCMP)
+ 	set(CRYPTO_SRC ${CRYPTO_SRC} compat/timingsafe_memcmp.c)
+-	set(EXTRA_EXPORT ${EXTRA_EXPORT} timingsafe_memcmp)
++	set(EXTRA_EXPORT ${EXTRA_EXPORT} libressl_timingsafe_memcmp)
+ endif()
+ 
+ if(NOT ENABLE_ASM)
+@@ -919,6 +919,7 @@ foreach(SYM IN LISTS CRYPTO_UNEXPORT)
+ 	string(REPLACE "${SYM}\n" "" SYMS ${SYMS})
+ endforeach()
+ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/crypto_p.sym ${SYMS})
++# XXX should we still be doing this?
+ if(EXTRA_EXPORT)
+ 	list(SORT EXTRA_EXPORT)
+ 	foreach(SYM IN LISTS EXTRA_EXPORT)
