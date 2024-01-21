@@ -37,13 +37,13 @@ MICROPYTHON_MAKE_OPTS += \
 	CWARN=
 
 define MICROPYTHON_BUILD_CMDS
-	$(MICROPYTHON_MAKE_ENV) $(MAKE) -C $(@D)/mpy-cross
-	$(MICROPYTHON_MAKE_ENV) $(MAKE) -C $(@D)/ports/unix \
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/mpy-cross
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/ports/unix \
 		$(MICROPYTHON_MAKE_OPTS)
 endef
 
 define MICROPYTHON_INSTALL_TARGET_CMDS
-	$(MICROPYTHON_MAKE_ENV) $(MAKE) -C $(@D)/ports/unix \
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/ports/unix \
 		$(MICROPYTHON_MAKE_OPTS) \
 		DESTDIR=$(TARGET_DIR) \
 		PREFIX=/usr \
