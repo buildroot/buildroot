@@ -1,0 +1,56 @@
+From 1b1ca539f6e1f0b774e989f1022477686e4fc77f Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 21 Jan 2024 18:55:34 +0100
+Subject: [PATCH] util/udma_barrier.h: fix mips4 build
+
+The 'sync' instruction for MIPS was defined in MIPS-II as taking no
+operands. MIPS32 extended the define of 'sync' as taking an optional
+unsigned 5 bit immediate.
+
+As a result, replace "sync 0" by "sync" to fix the following build
+failure on mips4 raised since version 43.0 and
+https://github.com/linux-rdma/rdma-core/commit/b7c428344ea96d446f6ffe31c620a238a7f25c9e:
+
+/tmp/ccrBy9fV.s: Assembler messages:
+/tmp/ccrBy9fV.s:994: Error: invalid operands `sync 0'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/2ab22a3ec4287fc15ff6a90d8715b4897b32a933
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/linux-rdma/rdma-core/commit/f3f0c06014c6de845032e6fe9f152674919b3ec6
+---
+ util/udma_barrier.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/util/udma_barrier.h b/util/udma_barrier.h
+index 0a1f8a45b..3793d2f18 100644
+--- a/util/udma_barrier.h
++++ b/util/udma_barrier.h
+@@ -101,7 +101,7 @@
+ #elif defined(__riscv)
+ #define udma_to_device_barrier() asm volatile("fence ow,ow" ::: "memory")
+ #elif defined(__mips__)
+-#define udma_to_device_barrier() asm volatile("sync 0" ::: "memory")
++#define udma_to_device_barrier() asm volatile("sync" ::: "memory")
+ #else
+ #error No architecture specific memory barrier defines found!
+ #endif
+@@ -139,7 +139,7 @@
+ #elif defined(__riscv)
+ #define udma_from_device_barrier() asm volatile("fence ir,ir" ::: "memory")
+ #elif defined(__mips__)
+-#define udma_from_device_barrier() asm volatile("sync 0" ::: "memory")
++#define udma_from_device_barrier() asm volatile("sync" ::: "memory")
+ #else
+ #error No architecture specific memory barrier defines found!
+ #endif
+@@ -212,7 +212,7 @@
+ #include "s390_mmio_insn.h"
+ #define mmio_flush_writes() s390_pciwb()
+ #elif defined(__mips__)
+-#define mmio_flush_writes() asm volatile("sync 0" ::: "memory")
++#define mmio_flush_writes() asm volatile("sync" ::: "memory")
+ #else
+ #error No architecture specific memory barrier defines found!
+ #endif
