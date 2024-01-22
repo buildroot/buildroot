@@ -1,0 +1,40 @@
+From 24fd043225903247f71ac10666d820277c0b10b1 Mon Sep 17 00:00:00 2001
+From: nixgnauhcuy <nixgnauhcuy@gmail.com>
+Date: Tue, 9 May 2023 14:32:33 +0800
+Subject: [PATCH] Fix missing references
+
+Upstream: https://github.com/nxp-imx/mfgtools/commit/24fd043225903247f71ac10666d820277c0b10b1
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ libuuu/libcomm.h | 1 +
+ uuu/buildincmd.h | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/libuuu/libcomm.h b/libuuu/libcomm.h
+index 0afdfa3..38d622d 100644
+--- a/libuuu/libcomm.h
++++ b/libuuu/libcomm.h
+@@ -28,6 +28,7 @@
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
++#include <stdint.h>
+ #include <string>
+ #include <stdarg.h>
+ #include <locale>
+diff --git a/uuu/buildincmd.h b/uuu/buildincmd.h
+index 9415117..46286cc 100644
+--- a/uuu/buildincmd.h
++++ b/uuu/buildincmd.h
+@@ -31,6 +31,7 @@
+ 
+ #pragma once
+ 
++#include <stdint.h>
+ #include <map>
+ #include <string>
+ #include <vector>
+-- 
+2.34.1
+
