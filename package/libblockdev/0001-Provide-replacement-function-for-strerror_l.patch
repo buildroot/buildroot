@@ -1,29 +1,25 @@
-From 2acf5a8d4858035396ee45d96c824e0481644d36 Mon Sep 17 00:00:00 2001
+From 01883cc14904e55d90955ad7cd9fc55bc18364ac Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Date: Sat, 29 Aug 2020 16:04:15 +0200
+Date: Sat, 20 Jan 2024 13:29:28 +0100
 Subject: [PATCH] Provide replacement function for strerror_l()
 
 strerror_l() is not implemented in some C libraries, such as uClibc,
-so let's provide a simple replacement function that falls back on
-strerror().
+so let's provide a simple replacement define that falls back on
+strerror() in utils.h header and include it where missing.
 
-Upstream status: Not Applicable since it's due uclibc only
+Upstream: N/A since it's due uclibc only
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
-[Giulio: ported to version 3.0+]
+[Giulio: ported to version 3.0 and 3.1]
 ---
- configure.ac                    | 2 ++
- src/plugins/crypto.c            | 7 +++++++
- src/plugins/nvme/nvme-error.c   | 8 ++++++++
- src/plugins/nvme/nvme-fabrics.c | 8 ++++++++
- src/plugins/nvme/nvme-op.c      | 8 ++++++++
- src/plugins/part.c              | 9 +++++++++
- src/utils/module.c              | 8 +++++++-
- 7 files changed, 49 insertions(+), 1 deletion(-)
+ configure.ac       | 2 ++
+ src/utils/module.c | 1 +
+ src/utils/utils.h  | 4 ++++
+ 3 files changed, 7 insertions(+)
 
 diff --git a/configure.ac b/configure.ac
-index 0a8ce4a7..dfbddb39 100644
+index 02b26e3e..67341134 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -120,6 +120,8 @@ AC_CHECK_HEADERS([dlfcn.h string.h unistd.h sys/fcntl.h sys/ioctl.h linux/random
@@ -35,127 +31,33 @@ index 0a8ce4a7..dfbddb39 100644
  AC_ARG_WITH([escrow],
      AS_HELP_STRING([--with-escrow], [support escrow @<:@default=yes@:>@]),
      [],
-diff --git a/src/plugins/crypto.c b/src/plugins/crypto.c
-index c5f719ca..b2ae3f56 100644
---- a/src/plugins/crypto.c
-+++ b/src/plugins/crypto.c
-@@ -62,6 +62,13 @@
+diff --git a/src/utils/module.c b/src/utils/module.c
+index 6557c3ab..5893f0ac 100644
+--- a/src/utils/module.c
++++ b/src/utils/module.c
+@@ -28,6 +28,7 @@
+ #include "module.h"
+ #include "exec.h"
+ #include "logging.h"
++#include "utils.h"
  
  #define UNUSED __attribute__((unused))
  
+diff --git a/src/utils/utils.h b/src/utils/utils.h
+index 801a8b6e..b2bdf0d0 100644
+--- a/src/utils/utils.h
++++ b/src/utils/utils.h
+@@ -9,6 +9,10 @@
+ #include "dbus.h"
+ #include "logging.h"
+ 
 +#if !defined(HAVE_STRERROR_L)
-+static char *strerror_l(int errnum, locale_t locale UNUSED)
-+{
-+	return strerror(errnum);
-+}
++#define strerror_l(errnum, locale)      strerror(errnum)
 +#endif
 +
  /**
-  * SECTION: crypto
-  * @short_description: plugin for operations with encrypted devices
-diff --git a/src/plugins/nvme/nvme-error.c b/src/plugins/nvme/nvme-error.c
-index 4bd4d771..618b6aef 100644
---- a/src/plugins/nvme/nvme-error.c
-+++ b/src/plugins/nvme/nvme-error.c
-@@ -34,6 +34,14 @@
- #include "nvme.h"
- #include "nvme-private.h"
- 
-+#define UNUSED __attribute__((unused))
-+
-+#if !defined(HAVE_STRERROR_L)
-+static char *strerror_l(int errnum, locale_t locale UNUSED)
-+{
-+    return strerror(errnum);
-+}
-+#endif
- 
- /**
-  * bd_nvme_error_quark: (skip)
-diff --git a/src/plugins/nvme/nvme-fabrics.c b/src/plugins/nvme/nvme-fabrics.c
-index 1877845f..5fcbeddc 100644
---- a/src/plugins/nvme/nvme-fabrics.c
-+++ b/src/plugins/nvme/nvme-fabrics.c
-@@ -36,6 +36,14 @@
- #include "nvme.h"
- #include "nvme-private.h"
- 
-+#define UNUSED __attribute__((unused))
-+
-+#if !defined(HAVE_STRERROR_L)
-+static char *strerror_l(int errnum, locale_t locale UNUSED)
-+{
-+    return strerror(errnum);
-+}
-+#endif
- 
- /* nvme-cli defaults */
- #define PATH_NVMF_CONFIG  "/etc/nvme/config.json"
-diff --git a/src/plugins/nvme/nvme-op.c b/src/plugins/nvme/nvme-op.c
-index dbef4f3a..7bafd7a3 100644
---- a/src/plugins/nvme/nvme-op.c
-+++ b/src/plugins/nvme/nvme-op.c
-@@ -35,6 +35,14 @@
- #include "nvme.h"
- #include "nvme-private.h"
- 
-+#define UNUSED __attribute__((unused))
-+
-+#if !defined(HAVE_STRERROR_L)
-+static char *strerror_l(int errnum, locale_t locale UNUSED)
-+{
-+    return strerror(errnum);
-+}
-+#endif
- 
- /**
-  * bd_nvme_device_self_test:
-diff --git a/src/plugins/part.c b/src/plugins/part.c
-index 46d31137..6234e013 100644
---- a/src/plugins/part.c
-+++ b/src/plugins/part.c
-@@ -26,6 +26,15 @@
- 
- #include "part.h"
- 
-+#define UNUSED __attribute__((unused))
-+
-+#if !defined(HAVE_STRERROR_L)
-+static char *strerror_l(int errnum, locale_t locale UNUSED)
-+{
-+	return strerror(errnum);
-+}
-+#endif
-+
- /**
-  * SECTION: part
-  * @short_description: plugin for operations with partition tables
-diff --git a/src/utils/module.c b/src/utils/module.c
-index 6557c3ab..69dd4731 100644
---- a/src/utils/module.c
-+++ b/src/utils/module.c
-@@ -74,6 +74,13 @@ static void set_kmod_logging (struct kmod_ctx *ctx) {
-     kmod_set_log_fn (ctx, utils_kmod_log_redirect, NULL);
- }
- 
-+#if !defined(HAVE_STRERROR_L)
-+static char *strerror_l(int errnum, locale_t locale UNUSED)
-+{
-+	return strerror(errnum);
-+}
-+#endif
-+
- /**
-  * bd_utils_have_kernel_module:
-  * @module_name: name of the kernel module to check
-@@ -259,7 +266,6 @@ gboolean bd_utils_unload_kernel_module (const gchar *module_name, GError **error
-     return TRUE;
- }
- 
--
- static BDUtilsLinuxVersion detected_linux_ver;
- static gboolean have_linux_ver = FALSE;
- 
+  * SECTION: utils
+  * @short_description: library providing utility functions used by the blockdev library and its plugins
 -- 
 2.34.1
 
