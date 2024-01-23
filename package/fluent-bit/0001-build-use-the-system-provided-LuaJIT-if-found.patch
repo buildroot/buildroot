@@ -1,4 +1,4 @@
-From 4f8eb7bb5a39d83374806928b7a5b622136ef055 Mon Sep 17 00:00:00 2001
+From 8d6f6cfb07a8fe32dc0b9577e1b2f1ee1b67b736 Mon Sep 17 00:00:00 2001
 From: Thomas Devoogdt <thomas@devoogdt.com>
 Date: Fri, 28 Apr 2023 10:25:16 +0200
 Subject: [PATCH] build: use the system provided LuaJIT if found
@@ -15,10 +15,10 @@ Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
  2 files changed, 12 insertions(+), 2 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 9af783c79..0601b7c18 100644
+index 2da792d53..3229420c6 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -123,6 +123,7 @@ option(FLB_TESTS_INTERNAL_FUZZ "Enable internal fuzz tests"    No)
+@@ -128,6 +128,7 @@ option(FLB_TESTS_INTERNAL_FUZZ "Enable internal fuzz tests"    No)
  option(FLB_TESTS_OSSFUZZ       "Enable OSS-Fuzz build"         No)
  option(FLB_MTRACE              "Enable mtrace support"         No)
  option(FLB_POSIX_TLS           "Force POSIX thread storage"    No)
@@ -26,7 +26,7 @@ index 9af783c79..0601b7c18 100644
  option(FLB_INOTIFY             "Enable inotify support"       Yes)
  option(FLB_SQLDB               "Enable SQL embedded DB"       Yes)
  option(FLB_HTTP_SERVER         "Enable HTTP Server"           Yes)
-@@ -1003,7 +1004,16 @@ endif()
+@@ -1023,7 +1024,16 @@ endif()
  # LuaJIT (Scripting Support)
  # ==========================
  if(FLB_LUAJIT)
@@ -45,10 +45,10 @@ index 9af783c79..0601b7c18 100644
  endif()
  
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 06a206dd4..8b66ddd22 100644
+index b6233d9f7..67baec456 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -220,7 +220,7 @@ endif()
+@@ -221,7 +221,7 @@ endif()
  if(FLB_LUAJIT)
    set(extra_libs
      ${extra_libs}

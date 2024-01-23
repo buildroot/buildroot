@@ -1,0 +1,43 @@
+From 4a6c5f56cd1a979b91c168fb8e245587c2927aca Mon Sep 17 00:00:00 2001
+From: Thomas Devoogdt <thomas@devoogdt.com>
+Date: Mon, 22 Jan 2024 19:27:56 +0100
+Subject: [PATCH] wasm: restore support for some targets (#8401)
+
+Somehow, support for ARC, MIPS, and XTENSA got dropped by bumping to v1.3.0,
+so restore it now. Remark that those targets are mentioned in the section above.
+
+See commit fa6a248746f9f481b5f6aef49716141fa0222650.
+
+Upstream: https://github.com/fluent/fluent-bit/pull/8401
+Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
+---
+ src/wasm/CMakeLists.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/wasm/CMakeLists.txt b/src/wasm/CMakeLists.txt
+index a258dc063..4ea7eba65 100644
+--- a/src/wasm/CMakeLists.txt
++++ b/src/wasm/CMakeLists.txt
+@@ -51,6 +51,10 @@ elseif (WAMR_BUILD_TARGET MATCHES "AARCH64.*")
+ elseif (WAMR_BUILD_TARGET MATCHES "ARM.*")
+   add_definitions(-DBUILD_TARGET_ARM)
+   add_definitions(-DBUILD_TARGET="${WAMR_BUILD_TARGET}")
++elseif (WAMR_BUILD_TARGET STREQUAL "MIPS")
++  add_definitions(-DBUILD_TARGET_MIPS)
++elseif (WAMR_BUILD_TARGET STREQUAL "XTENSA")
++  add_definitions(-DBUILD_TARGET_XTENSA)
+ elseif (WAMR_BUILD_TARGET STREQUAL "RISCV64" OR WAMR_BUILD_TARGET STREQUAL "RISCV64_LP64D")
+   add_definitions(-DBUILD_TARGET_RISCV64_LP64D)
+ elseif (WAMR_BUILD_TARGET STREQUAL "RISCV64_LP64")
+@@ -59,6 +63,8 @@ elseif (WAMR_BUILD_TARGET STREQUAL "RISCV32" OR WAMR_BUILD_TARGET STREQUAL "RISC
+   add_definitions(-DBUILD_TARGET_RISCV32_ILP32D)
+ elseif (WAMR_BUILD_TARGET STREQUAL "RISCV32_ILP32")
+   add_definitions(-DBUILD_TARGET_RISCV32_ILP32)
++elseif (WAMR_BUILD_TARGET STREQUAL "ARC")
++  add_definitions(-DBUILD_TARGET_ARC)
+ else ()
+   message (FATAL_ERROR "-- Build target isn't set")
+ endif ()
+-- 
+2.34.1
+

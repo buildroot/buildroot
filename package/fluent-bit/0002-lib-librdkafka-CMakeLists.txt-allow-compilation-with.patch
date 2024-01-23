@@ -1,4 +1,4 @@
-From d5492ae7a0fa4e2c19b1d091ad28133fed53d8e2 Mon Sep 17 00:00:00 2001
+From 29be5275f6f7e15aca768e9b235998abc5a604e2 Mon Sep 17 00:00:00 2001
 From: Thomas Devoogdt <thomas.devoogdt@barco.com>
 Date: Tue, 25 Jul 2023 09:10:41 +0200
 Subject: [PATCH] lib: librdkafka: CMakeLists.txt: allow compilation without
@@ -10,14 +10,14 @@ Upstream: https://github.com/confluentinc/librdkafka/pull/4366
 Upstream: https://github.com/fluent/fluent-bit/pull/7765
 Signed-off-by: Thomas Devoogdt <thomas.devoogdt@barco.com>
 ---
- lib/librdkafka-2.1.0/CMakeLists.txt          | 18 ++++++++++--
- lib/librdkafka-2.1.0/examples/CMakeLists.txt | 30 +++++++++++++-------
- 2 files changed, 35 insertions(+), 13 deletions(-)
+ lib/librdkafka-2.3.0/CMakeLists.txt          | 18 ++++++++++--
+ lib/librdkafka-2.3.0/examples/CMakeLists.txt | 31 +++++++++++++-------
+ 2 files changed, 35 insertions(+), 14 deletions(-)
 
-diff --git a/lib/librdkafka-2.1.0/CMakeLists.txt b/lib/librdkafka-2.1.0/CMakeLists.txt
+diff --git a/lib/librdkafka-2.3.0/CMakeLists.txt b/lib/librdkafka-2.3.0/CMakeLists.txt
 index 7f3dd0fc6..c1ee93062 100644
---- a/lib/librdkafka-2.1.0/CMakeLists.txt
-+++ b/lib/librdkafka-2.1.0/CMakeLists.txt
+--- a/lib/librdkafka-2.3.0/CMakeLists.txt
++++ b/lib/librdkafka-2.3.0/CMakeLists.txt
 @@ -3,7 +3,12 @@ cmake_minimum_required(VERSION 3.2)
  include("packaging/cmake/parseversion.cmake")
  parseversion("src/rdkafka.h")
@@ -57,10 +57,10 @@ index 7f3dd0fc6..c1ee93062 100644
  
  if(RDKAFKA_BUILD_EXAMPLES)
    add_subdirectory(examples)
-diff --git a/lib/librdkafka-2.1.0/examples/CMakeLists.txt b/lib/librdkafka-2.1.0/examples/CMakeLists.txt
-index bbbb89ad9..51b8b04be 100644
---- a/lib/librdkafka-2.1.0/examples/CMakeLists.txt
-+++ b/lib/librdkafka-2.1.0/examples/CMakeLists.txt
+diff --git a/lib/librdkafka-2.3.0/examples/CMakeLists.txt b/lib/librdkafka-2.3.0/examples/CMakeLists.txt
+index 8c0079abe..c9336b729 100644
+--- a/lib/librdkafka-2.3.0/examples/CMakeLists.txt
++++ b/lib/librdkafka-2.3.0/examples/CMakeLists.txt
 @@ -5,8 +5,10 @@ endif(WIN32)
  add_executable(producer producer.c ${win32_sources})
  target_link_libraries(producer PUBLIC rdkafka)
@@ -101,12 +101,13 @@ index bbbb89ad9..51b8b04be 100644
  
  add_executable(misc misc.c ${win32_sources})
  target_link_libraries(misc PUBLIC rdkafka)
-@@ -35,6 +43,8 @@ if(NOT WIN32)
+@@ -70,7 +78,8 @@ if(NOT WIN32)
      add_executable(rdkafka_complex_consumer_example rdkafka_complex_consumer_example.c)
      target_link_libraries(rdkafka_complex_consumer_example PUBLIC rdkafka)
  
 -    add_executable(kafkatest_verifiable_client kafkatest_verifiable_client.cpp)
 -    target_link_libraries(kafkatest_verifiable_client PUBLIC rdkafka++)
+-
 +    if(RDKAFKA_BUILD_CXX)
 +        add_executable(kafkatest_verifiable_client kafkatest_verifiable_client.cpp)
 +        target_link_libraries(kafkatest_verifiable_client PUBLIC rdkafka++)

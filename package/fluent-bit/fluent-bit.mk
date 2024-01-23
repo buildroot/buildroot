@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FLUENT_BIT_VERSION = 2.1.7
+FLUENT_BIT_VERSION = 2.2.2
 FLUENT_BIT_SITE = $(call github,fluent,fluent-bit,v$(FLUENT_BIT_VERSION))
 FLUENT_BIT_LICENSE = Apache-2.0
 FLUENT_BIT_LICENSE_FILES = LICENSE
@@ -54,10 +54,6 @@ FLUENT_BIT_CONF_OPTS += \
 # https://github.com/fluent/fluent-bit/issues/6619
 FLUENT_BIT_CONF_OPTS += \
 	-DCMAKE_INSTALL_SYSCONFDIR="/etc/"
-
-# Fix multiple definition of `mk_tls_*'.
-# https://github.com/fluent/fluent-bit/issues/5537
-FLUENT_BIT_CFLAGS += -fcommon
 
 # Undefining _FILE_OFFSET_BITS here because of a "bug" with glibc fts.h
 # large file support.
