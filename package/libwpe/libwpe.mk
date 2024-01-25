@@ -4,7 +4,8 @@
 #
 ################################################################################
 
-LIBWPE_VERSION = 1.15.1
+# The middle number is even for stable releases, odd for development ones.
+LIBWPE_VERSION = 1.14.2
 LIBWPE_SITE = https://wpewebkit.org/releases
 LIBWPE_SOURCE = libwpe-$(LIBWPE_VERSION).tar.xz
 LIBWPE_INSTALL_STAGING = YES
