@@ -23,8 +23,10 @@ BRLTTY_CONF_ENV = \
 	PKG_CONFIG_FOR_BUILD=$(HOST_DIR)/bin/pkgconf
 
 BRLTTY_CONF_OPTS = \
+	--disable-emacs-bindings \
 	--disable-java-bindings \
 	--disable-lisp-bindings \
+	--disable-lua-bindings \
 	--disable-ocaml-bindings \
 	--disable-python-bindings \
 	--disable-tcl-bindings \
