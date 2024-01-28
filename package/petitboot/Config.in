@@ -19,17 +19,20 @@ config BR2_PACKAGE_PETITBOOT
 
 	  http://www.kernel.org/pub/linux/kernel/people/geoff/petitboot/petitboot.html
 
+if BR2_PACKAGE_PETITBOOT
+
+config BR2_PACKAGE_PETITBOOT_GETTY_PORT
+	string "TTY port(s)"
+	default "console"
+	help
+	  Specify a space-separated list of ports to run the petitboot
+	  UI on. Wildcards are allowed. Example: "hvc* ttys0 ttyS*"
+
+endif # BR2_PACKAGE_PETITBOOT
+
 comment "petitboot needs a toolchain w/ wchar, dynamic library, threads, udev /dev management"
 	depends on BR2_PACKAGE_KEXEC_ARCH_SUPPORTS
 	depends on BR2_USE_MMU
 	depends on !BR2_USE_WCHAR || BR2_STATIC_LIBS || \
 		!BR2_TOOLCHAIN_HAS_THREADS || \
 		!BR2_PACKAGE_HAS_UDEV
-
-config BR2_PACKAGE_PETITBOOT_GETTY_PORT
-	string "TTY port(s)"
-	default "console"
-	depends on BR2_PACKAGE_PETITBOOT
-	help
-	  Specify a space-separated list of ports to run the petitboot
-	  UI on. Wildcards are allowed. Example: "hvc* ttys0 ttyS*"
