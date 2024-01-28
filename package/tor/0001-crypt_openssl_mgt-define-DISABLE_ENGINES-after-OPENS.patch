@@ -1,0 +1,58 @@
+From 48f8d6918977673125d53a85d19d709136106739 Mon Sep 17 00:00:00 2001
+From: orbea <orbea@riseup.net>
+Date: Thu, 31 Aug 2023 14:35:52 -0700
+Subject: [PATCH] crypt_openssl_mgt: define DISABLE_ENGINES after
+ OPENSSL_NO_ENGINE
+
+With LibreSSL-3.8.1 these engines are no long available causing a build
+failure, but LibreSSL correctly defines OPENSSL_NO_ENGINE as part of its
+opensslfeatures.h. However Tor includes crypto_openssl_mgt.h before any
+of the openssl includes which would define OPENSSL_NO_ENGINE and then
+fails to define DISABLE_ENGINES.
+
+As the define is used in only a single .c file it is best to move it
+there.
+
+Signed-off-by: orbea <orbea@riseup.net>
+Upstream: https://gitlab.torproject.org/tpo/core/tor/-/commit/48f8d6918977673125d53a85d19d709136106739
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/lib/crypt_ops/crypto_openssl_mgt.c | 5 +++++
+ src/lib/crypt_ops/crypto_openssl_mgt.h | 5 -----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/src/lib/crypt_ops/crypto_openssl_mgt.c b/src/lib/crypt_ops/crypto_openssl_mgt.c
+index 6c01cb6aa8..ca12a82518 100644
+--- a/src/lib/crypt_ops/crypto_openssl_mgt.c
++++ b/src/lib/crypt_ops/crypto_openssl_mgt.c
+@@ -40,6 +40,11 @@ ENABLE_GCC_WARNING("-Wredundant-decls")
+
+ #include <string.h>
+
++#ifdef OPENSSL_NO_ENGINE
++/* Android's OpenSSL seems to have removed all of its Engine support. */
++#define DISABLE_ENGINES
++#endif
++
+ #ifndef NEW_THREAD_API
+ /** A number of preallocated mutexes for use by OpenSSL. */
+ static tor_mutex_t **openssl_mutexes_ = NULL;
+diff --git a/src/lib/crypt_ops/crypto_openssl_mgt.h b/src/lib/crypt_ops/crypto_openssl_mgt.h
+index 96a37721dd..eac0ec1977 100644
+--- a/src/lib/crypt_ops/crypto_openssl_mgt.h
++++ b/src/lib/crypt_ops/crypto_openssl_mgt.h
+@@ -49,11 +49,6 @@
+ #define OPENSSL_V_SERIES(a,b,c) \
+   OPENSSL_VER((a),(b),(c),0,0)
+
+-#ifdef OPENSSL_NO_ENGINE
+-/* Android's OpenSSL seems to have removed all of its Engine support. */
+-#define DISABLE_ENGINES
+-#endif
+-
+ #if OPENSSL_VERSION_NUMBER >= OPENSSL_VER(1,1,0,0,5)
+ /* OpenSSL as of 1.1.0pre4 has an "new" thread API, which doesn't require
+  * setting up various callbacks.
+--
+GitLab
+
