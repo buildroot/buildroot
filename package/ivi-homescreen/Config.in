@@ -222,10 +222,8 @@ config BR2_PACKAGE_IVI_HOMESCREEN_GSTREAMER_EGL_PLUGIN
 	bool "GStreamer EGL"
 	depends on BR2_PACKAGE_FFMPEG_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_HAS_LIBEGL
+	depends on BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_HAS_API # GST1_PLUGINS_BASE_LIB_OPENGL_EGL
 	select BR2_PACKAGE_FFMPEG
-	select BR2_PACKAGE_GSTREAMER1
-	select BR2_PACKAGE_GST1_PLUGINS_BASE
-	select BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL
 	select BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_EGL
 	help
 	  A GStreamer-powered alternative to Flutter's video_player that
@@ -233,9 +231,10 @@ config BR2_PACKAGE_IVI_HOMESCREEN_GSTREAMER_EGL_PLUGIN
 
 	  https://pub.dev/packages/flutter_gstreamer_player
 
-comment "GStreamer plugin needs an EGL backend"
+comment "GStreamer plugin needs gst1-plugins-base with an EGL backend"
 	depends on BR2_PACKAGE_FFMPEG_ARCH_SUPPORTS
-	depends on !BR2_PACKAGE_HAS_LIBEGL
+	depends on !BR2_PACKAGE_HAS_LIBEGL \
+		|| !BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_HAS_API
 
 config BR2_PACKAGE_IVI_HOMESCREEN_OPENGL_TEXTURE_PLUGIN
 	bool "OpenGL Texture"
