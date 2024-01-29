@@ -38,6 +38,10 @@ else
 PYTHON_NUMPY_CONF_OPTS += -Dblas=""
 endif
 
+# Rather than add a host-blas or host-lapack dependencies, just use unoptimized,
+# in-tree code.
+HOST_PYTHON_NUMPY_CONF_OPTS = -Dblas="" -Dlapack=""
+
 # Fixup the npymath.ini prefix path with actual target staging area where
 # numpy core was built. Without this, target builds using numpy distutils
 # extensions like python-scipy, python-numba cannot find -lnpymath since
