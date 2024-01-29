@@ -57,4 +57,20 @@ define MICROPYTHON_INSTALL_TARGET_CMDS
 		install
 endef
 
+ifeq ($(BR2_PACKAGE_MICROPYTHON_LIB),y)
+define MICROPYTHON_COLLECT_LIBS
+	$(EXTRA_ENV) PYTHONPATH=$(@D)/tools \
+		package/micropython/collect_micropython_lib.py \
+		$(@D) $(@D)/.built_pylib
+endef
+
+define MICROPYTHON_INSTALL_LIBS
+	$(INSTALL) -d -m 0755 $(TARGET_DIR)/usr/lib/micropython
+	cp -a $(@D)/.built_pylib/* $(TARGET_DIR)/usr/lib/micropython
+endef
+
+MICROPYTHON_POST_BUILD_HOOKS += MICROPYTHON_COLLECT_LIBS
+MICROPYTHON_POST_INSTALL_TARGET_HOOKS += MICROPYTHON_INSTALL_LIBS
+endif
+
 $(eval $(generic-package))
