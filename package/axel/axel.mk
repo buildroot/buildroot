@@ -19,8 +19,11 @@ AXEL_CONF_OPTS = \
 	CFLAGS="$(TARGET_CFLAGS)"
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
-AXEL_CONF_OPTS += --with-ssl
+AXEL_CONF_OPTS += --with-ssl=openssl
 AXEL_DEPENDENCIES += openssl
+else ifeq ($(BR2_PACKAGE_WOLFSSL_ALL),y)
+AXEL_CONF_OPTS += --with-ssl=wolfssl
+AXEL_DEPENDENCIES += wolfssl
 else
 AXEL_CONF_OPTS += --without-ssl
 endif
