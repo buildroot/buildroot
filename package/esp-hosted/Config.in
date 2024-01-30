@@ -28,4 +28,18 @@ config BR2_PACKAGE_ESP_HOSTED_SPI
 
 endchoice
 
+choice
+	prompt "Target"
+	default BR2_PACKAGE_ESP_HOSTED_TARGET_ESP32
+	help
+	  Select which SoC Target driver is used for
+
+config BR2_PACKAGE_ESP_HOSTED_TARGET_ESP32
+	bool "ESP32"
+
+config BR2_PACKAGE_ESP_HOSTED_TARGET_ESP32C6
+	bool "ESP32C6"
+
+endchoice
+
 endif
