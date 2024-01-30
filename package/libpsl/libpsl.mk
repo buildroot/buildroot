@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBPSL_VERSION = 0.21.2
+LIBPSL_VERSION = 0.21.5
 LIBPSL_SITE = https://github.com/rockdaboot/libpsl/releases/download/$(LIBPSL_VERSION)
 LIBPSL_LICENSE = MIT, BSD-3-Clause
 LIBPSL_LICENSE_FILES = COPYING src/LICENSE.chromium
