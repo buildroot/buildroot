@@ -16,9 +16,7 @@ WATCHDOGD_SELINUX_MODULES = watchdog
 WATCHDOGD_CONF_OPTS = \
 	--disable-compat \
 	--disable-examples \
-	--disable-test-mode \
-	--without-fsmon \
-	--without-tempmon
+	--disable-test-mode
 
 ifneq ($(BR2_PACKAGE_WATCHDOGD_TEST_SUITE),y)
 WATCHDOGD_CONF_OPTS += --disable-builtin-tests
@@ -49,6 +47,17 @@ WATCHDOGD_CONF_OPTS += --without-meminfo
 else
 WATCHDOGD_CONF_OPTS += --with-meminfo
 endif
+
+ifneq ($(BR2_PACKAGE_WATCHDOGD_FSMON),y)
+WATCHDOGD_CONF_OPTS += --without-fsmon
+else
+WATCHDOGD_CONF_OPTS += --with-fsmon
+endif
+
+ifneq ($(BR2_PACKAGE_WATCHDOGD_TEMPMON),y)
+WATCHDOGD_CONF_OPTS += --without-tempmon
+else
+WATCHDOGD_CONF_OPTS += --with-tempmon
 endif
 
 define WATCHDOGD_INSTALL_INIT_SYSV
