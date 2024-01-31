@@ -28,6 +28,10 @@ GLIBC_CPE_ID_VERSION = $(word 1, $(subst -,$(space),$(GLIBC_VERSION)))
 # 2.38 and the version we're really using
 GLIBC_IGNORE_CVES += CVE-2023-4527
 
+# Fixed by 5ee59ca371b99984232d7584fe2b1a758b4421d3, which is between
+# 2.38 and the version we're really using
+GLIBC_IGNORE_CVES += CVE-2023-4806
+
 # Fixed by 750a45a783906a19591fb8ff6b7841470f1f5710, which is between
 # 2.38 and the version we're really using.
 GLIBC_IGNORE_CVES += CVE-2023-4911
