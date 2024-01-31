@@ -923,4 +923,14 @@ config BR2_TOOLCHAIN_HAS_LIBQUADMATH
 	default y if BR2_i386 || BR2_x86_64
 	default y if BR2_POWERPC_CPU_HAS_VSX
 
+comment "Bare metal toolchain"
+
+config BR2_TOOLCHAIN_BARE_METAL_BUILDROOT
+	bool "Build a bare metal toolchain"
+	help
+	  Select if you need a bare-metal toolchain for building
+	  platform specific firmware images.
+
+source "toolchain/toolchain-bare-metal-buildroot/Config.in"
+
 endmenu

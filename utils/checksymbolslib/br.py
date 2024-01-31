@@ -36,11 +36,14 @@ symbols_defined_only_for_barebox_variant = [
 ]
 # toolchain/toolchain/toolchain.mk
 # toolchain/toolchain-buildroot/toolchain-buildroot.mk
+# toolchain/toolchain-bare-metal-buildroot/toolchain-bare-metal-buildroot.mk
 symbols_not_defined_for_fake_virtual_packages = [
     'BR2_PACKAGE_HAS_TOOLCHAIN',
     'BR2_PACKAGE_HAS_TOOLCHAIN_BUILDROOT',
+    'BR2_PACKAGE_HAS_TOOLCHAIN_BARE_METAL_BUILDROOT',
     'BR2_PACKAGE_PROVIDES_TOOLCHAIN',
     'BR2_PACKAGE_PROVIDES_TOOLCHAIN_BUILDROOT',
+    'BR2_PACKAGE_PROVIDES_TOOLCHAIN_BARE_METAL_BUILDROOT',
 ]
 # fs/common.mk
 suffixes_not_defined_for_all_rootfs_types = [
