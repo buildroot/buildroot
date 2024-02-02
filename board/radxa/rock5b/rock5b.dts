@@ -1,0 +1,12 @@
+/dts-v1/;
+
+#include "rockchip/rk3588-rock-5b.dts"
+
+&fiq_debugger {
+	status = "disabled";
+};
+
+&uart2 {
+	pinctrl-0 = <&uart2m0_xfer>;
+	status = "okay";
+};

@@ -20,6 +20,7 @@ output/images
 ├── rk3588-rock-5b.dtb
 ├── rk3588_bl31_v1.40.elf
 ├── rk3588_ddr_lp4_2112MHz_lp5_2736MHz_v1.12.bin
+├── rock5b.dts
 ├── rock5b.its
 ├── rootfs.ext2
 ├── rootfs.ext4
@@ -64,6 +65,8 @@ https://forum.radxa.com/c/rock5
 Issues:
 =======
 
+WiFi
+----
 The custom Radxa kernel provides custom code to support WiFi. However,
 that code does not compile with GCC 12, which is the current default
 version in buildroot. Hence, the WiFi kernel drivers are disabled, until
@@ -80,3 +83,20 @@ BR2_GCC_VERSION_11_X=y
 board/radxa/rock5b/linux.fragment:
 
 # CONFIG_WL_ROCKCHIP is not set
+
+Rockchip FIQ Debugger
+---------------------
+The custom kernel used for this board features an FIQ debugger, which
+can be activated by typing "fiq" on the serial interface. As this can be
+annoying if a user wants to type these charakters and it is not needed
+for most users, this board support disables the FIQ debugger by default.
+To re-enable the FIQ debugger follow the steps:
+
+1. In board/radxa/rock5b/rock5b.dts set the status property of the
+fiq_debugger node to "okay" and set the status property of the uart2
+node to "disabled"
+
+2. Re-enable the fiq debugger module  by removing the following line
+from board/radxa/rock5b/linux.fragment:
+
+# CONFIG_ROCKCHIP_FIQ_DEBUGGER is not set
