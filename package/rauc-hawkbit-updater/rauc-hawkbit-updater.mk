@@ -9,7 +9,6 @@ RAUC_HAWKBIT_UPDATER_SITE = https://github.com/rauc/rauc-hawkbit-updater/release
 RAUC_HAWKBIT_UPDATER_SOURCE = rauc-hawkbit-updater-$(RAUC_HAWKBIT_UPDATER_VERSION).tar.xz
 RAUC_HAWKBIT_UPDATER_LICENSE = LGPL-2.1
 RAUC_HAWKBIT_UPDATER_LICENSE_FILES = LICENSE
-RAUC_HAWKBIT_UPDATER_CPE_ID_VENDOR = pengutronix
 RAUC_HAWKBIT_UPDATER_DEPENDENCIES = json-glib libcurl
 
 $(eval $(meson-package))
