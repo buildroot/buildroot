@@ -7,6 +7,7 @@ class TestMicroPython(infra.basetest.BRTest):
     config = infra.basetest.BASIC_TOOLCHAIN_CONFIG + \
         f"""
         BR2_PACKAGE_MICROPYTHON=y
+        BR2_PACKAGE_MICROPYTHON_LIB=y
         BR2_ROOTFS_OVERLAY="{infra.filepath("tests/package/test_micropython/rootfs-overlay")}"
         BR2_TARGET_ROOTFS_CPIO=y
         # BR2_TARGET_ROOTFS_TAR is not set
@@ -64,5 +65,15 @@ class TestMicroPython(infra.basetest.BRTest):
         output = self.run_upy_code(py_code)
         self.assertEqual(output[0], expected_output)
 
-        # Finally, Check a small script can execute.
+        # Check a small script can execute.
         self.assertRunOk("/root/mandel.py", timeout=10)
+
+        # Check we can use a micropython-lib module.
+        msg = "Hello Buildroot!"
+        filename = "file.txt"
+        gz_filename = f"{filename}.gz"
+        self.assertRunOk(f"echo '{msg}' > {filename}")
+        self.assertRunOk(f"gzip {filename}")
+        out, ret = self.emulator.run(f"/root/zcat.py {gz_filename}")
+        self.assertEqual(ret, 0)
+        self.assertEqual(out[0], msg)
