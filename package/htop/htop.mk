@@ -17,6 +17,16 @@ HTOP_LICENSE_FILES = COPYING
 # provided by autoconf relies on wchar_t.
 HTOP_CONF_ENV += ac_cv_prog_cc_c99=-std=gnu99
 
+# --enable-static has a non-standard semantic in htop, and causes the
+# main binary to be linked statically, not just the production of
+# static libraries. This causes issues with BR2_SHARED_STATIC_LIBS as
+# htop is linked statically, but pkg-config returns results relevant
+# for a shared library build. Since htop is only building an
+# application, let's disable this bogus behavior.
+ifeq ($(BR2_SHARED_STATIC_LIBS),y)
+HTOP_CONF_OPTS += --disable-static
+endif
+
 ifeq ($(BR2_PACKAGE_HWLOC),y)
 HTOP_CONF_OPTS += --enable-hwloc
 HTOP_DEPENDENCIES += hwloc
