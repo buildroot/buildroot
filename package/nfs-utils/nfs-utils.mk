@@ -11,7 +11,6 @@ NFS_UTILS_LICENSE = GPL-2.0+
 NFS_UTILS_LICENSE_FILES = COPYING
 NFS_UTILS_DEPENDENCIES = host-nfs-utils host-pkgconf libevent libtirpc sqlite util-linux
 NFS_UTILS_CPE_ID_VENDOR = linux-nfs
-NFS_UTILS_AUTORECONF = YES
 
 NFS_UTILS_CONF_ENV = knfsd_cv_bsd_signals=no
 
