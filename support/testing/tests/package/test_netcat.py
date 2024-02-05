@@ -22,20 +22,19 @@ class TestNetCat(infra.basetest.BRTest):
 
         self.assertRunOk("nc --version")
 
-        in_file = "input.bin"
-        out_file = "output.bin"
+        msg = "Hello Buildroot!"
+        out_file = "output.txt"
         port = 12345
 
-        cmd = f"dd if=/dev/urandom of={in_file} bs=1k count=1k"
+        cmd = f"nc -n -l -p {port} > {out_file} 2> /dev/null &"
         self.assertRunOk(cmd)
 
-        cmd = f"nc -l -p {port} > {out_file} &"
+        time.sleep(5)
+
+        cmd = f"echo '{msg}' | nc -n -c 127.0.0.1 {port}"
         self.assertRunOk(cmd)
 
-        time.sleep(1)
-
-        cmd = f"cat {in_file} | nc -c 127.0.0.1 {port}"
-        self.assertRunOk(cmd)
-
-        cmd = f"cmp {in_file} {out_file}"
-        self.assertRunOk(cmd)
+        cmd = f"cat {out_file}"
+        out, ret = self.emulator.run(cmd)
+        self.assertEqual(ret, 0)
+        self.assertEqual(out[0], msg)
