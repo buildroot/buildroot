@@ -22,9 +22,14 @@ RUBY_CPE_ID_VENDOR = ruby-lang
 RUBY_DEPENDENCIES = host-pkgconf host-ruby
 HOST_RUBY_DEPENDENCIES = host-pkgconf host-openssl
 RUBY_MAKE_ENV = $(TARGET_MAKE_ENV)
-RUBY_CONF_OPTS = --disable-install-doc --disable-rpath --disable-rubygems
+RUBY_CONF_OPTS = \
+	--disable-install-doc \
+	--disable-rpath \
+	--disable-rubygems \
+	--disable-yjit
 HOST_RUBY_CONF_OPTS = \
 	--disable-install-doc \
+	--disable-yjit \
 	--with-out-ext=curses,readline \
 	--without-gmp
 
