@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CPIO_VERSION = 2.14
+CPIO_VERSION = 2.15
 CPIO_SOURCE = cpio-$(CPIO_VERSION).tar.bz2
 CPIO_SITE = $(BR2_GNU_MIRROR)/cpio
 CPIO_CONF_OPTS = --bindir=/bin
