@@ -10,5 +10,7 @@ PYTHON_ESPTOOL_SITE = https://files.pythonhosted.org/packages/1b/8b/f0d1e75879de
 PYTHON_ESPTOOL_SETUP_TYPE = setuptools
 PYTHON_ESPTOOL_LICENSE = GPL-2.0+
 PYTHON_ESPTOOL_LICENSE_FILES = LICENSE
+PYTHON_ESPTOOL_CPE_ID_VENDOR = espressif
+PYTHON_ESPTOOL_CPE_ID_PRODUCT = esptool
 
 $(eval $(python-package))
