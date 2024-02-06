@@ -5,7 +5,6 @@ config BR2_PACKAGE_PYTHON_ML_DTYPES
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_9 # python-numpy
 	depends on BR2_HOST_GCC_AT_LEAST_9 # host-python-numpy
 	select BR2_PACKAGE_PYTHON_NUMPY
-	select BR2_PACKAGE_PYTHON_PYBIND
 	help
 	  ml_dtypes is a stand-alone implementation of several NumPy
 	  dtype extensions used in machine learning libraries.
