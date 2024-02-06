@@ -375,6 +375,15 @@ If you do not use +git send-email+, make sure posted *patches are not
 line-wrapped*, otherwise they cannot easily be applied. In such a case,
 fix your e-mail client, or better yet, learn to use +git send-email+.
 
+https://sr.ht also has a light-weight UI for
+https://man.sr.ht/git.sr.ht/#sending-patches-upstream[preparing patchseries]
+and can also send out the patches for you. There are a few drawbacks to
+this, as you cannot edit your patches' status in Patchwork and you
+currently can't edit your display name with which the match emails are
+sent out but it is an option if you cannot get git send-email to work
+with your mail provider (i.e. O365); it shall not be considered the
+official way of sending patches, but just a fallback.
+
 ==== Cover letter
 
 If you want to present the whole patch set in a separate mail, add
