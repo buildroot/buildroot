@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GLM_VERSION = 0.9.9.8
+GLM_VERSION = 1.0.0
 GLM_SITE = $(call github,g-truc,glm,$(GLM_VERSION))
 GLM_LICENSE = MIT
 GLM_LICENSE_FILES = copying.txt
@@ -17,7 +17,6 @@ GLM_INSTALL_TARGET = NO
 # Don't build libraries as GLM is header-only
 GLM_CONF_OPTS = \
 	-DGLM_TEST_ENABLE=OFF \
-	-DBUILD_SHARED_LIBS=OFF \
-	-DBUILD_STATIC_LIBS=OFF
+	-DGLM_BUILD_LIBRARY=OFF
 
 $(eval $(cmake-package))
