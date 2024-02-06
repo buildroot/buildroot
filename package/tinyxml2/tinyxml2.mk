@@ -16,3 +16,4 @@ TINYXML2_CONF_OPTS += -DBUILD_STATIC_LIBS=ON
 endif
 
 $(eval $(cmake-package))
+$(eval $(host-cmake-package))
