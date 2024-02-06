@@ -42,7 +42,8 @@ class TestGlxinfo(infra.basetest.BRTest):
         self.emulator.boot(arch="i386",
                            kernel=kern,
                            kernel_cmdline=["root=/dev/vda console=ttyS0"],
-                           options=["-M", "pc", "-m", "512", "-drive", "file={},if=virtio,format=raw".format(img)])
+                           options=["-M", "pc", "-cpu", "core2duo", "-m", "512",
+                                    "-drive", "file={},if=virtio,format=raw".format(img)])
         self.emulator.login()
 
     def test_run(self):
