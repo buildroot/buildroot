@@ -3,6 +3,7 @@ config BR2_PACKAGE_LIBP11
 	depends on !BR2_STATIC_LIBS # dlopen
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL
 	help
 	  OpenSSL engine for PKCS#11 modules. Part of the OpenSC
 	  project.
