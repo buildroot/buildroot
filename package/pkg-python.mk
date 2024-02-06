@@ -52,40 +52,6 @@ HOST_PKG_PYTHON_ENV = \
 	PYTHONNOUSERSITE=1 \
 	$(HOST_CONFIGURE_OPTS)
 
-# Target distutils-based packages
-PKG_PYTHON_DISTUTILS_ENV = \
-	$(PKG_PYTHON_ENV) \
-	LDSHARED="$(TARGET_CROSS)gcc -shared"
-
-PKG_PYTHON_DISTUTILS_BUILD_CMD = \
-	setup.py build \
-	--executable=/usr/bin/python
-
-PKG_PYTHON_DISTUTILS_INSTALL_OPTS = \
-	--install-headers=/usr/include/python$(PYTHON3_VERSION_MAJOR) \
-	--prefix=/usr
-
-PKG_PYTHON_DISTUTILS_INSTALL_TARGET_CMD = \
-	setup.py install --no-compile \
-	$(PKG_PYTHON_DISTUTILS_INSTALL_OPTS) \
-	--root=$(TARGET_DIR)
-
-PKG_PYTHON_DISTUTILS_INSTALL_STAGING_CMD = \
-	setup.py install \
-	$(PKG_PYTHON_DISTUTILS_INSTALL_OPTS) \
-	--root=$(STAGING_DIR)
-
-# Host distutils-based packages
-HOST_PKG_PYTHON_DISTUTILS_ENV = \
-	$(HOST_PKG_PYTHON_ENV)
-
-HOST_PKG_PYTHON_DISTUTILS_BUILD_CMD = \
-	setup.py build \
-
-HOST_PKG_PYTHON_DISTUTILS_INSTALL_CMD = \
-	setup.py install \
-	--prefix=$(HOST_DIR)
-
 # Target setuptools-based packages
 PKG_PYTHON_SETUPTOOLS_ENV = \
 	$(PKG_PYTHON_ENV)
@@ -287,8 +253,8 @@ endif
 
 $(2)_SETUP_TYPE_UPPER = $$(call UPPERCASE,$$($(2)_SETUP_TYPE))
 
-ifneq ($$(filter-out distutils setuptools setuptools-rust pep517 flit flit-bootstrap maturin,$$($(2)_SETUP_TYPE)),)
-$$(error "Invalid $(2)_SETUP_TYPE. Valid options are 'distutils', 'maturin', 'setuptools', 'setuptools-rust', 'pep517' or 'flit'.")
+ifneq ($$(filter-out setuptools setuptools-rust pep517 flit flit-bootstrap maturin,$$($(2)_SETUP_TYPE)),)
+$$(error "Invalid $(2)_SETUP_TYPE. Valid options are 'maturin', 'setuptools', 'setuptools-rust', 'pep517' or 'flit'.")
 endif
 ifeq ($(4)-$$($(2)_SETUP_TYPE),target-flit-bootstrap)
 $$(error flit-bootstrap setup type only supported for host packages)

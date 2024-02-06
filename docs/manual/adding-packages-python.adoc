@@ -29,7 +29,7 @@ with an example :
 11: PYTHON_FOO_LICENSE_FILES = LICENSE
 12: PYTHON_FOO_ENV = SOME_VAR=1
 13: PYTHON_FOO_DEPENDENCIES = libmad
-14: PYTHON_FOO_SETUP_TYPE = distutils
+14: PYTHON_FOO_SETUP_TYPE = setuptools
 15:
 16: $(eval $(python-package))
 ------------------------
@@ -51,8 +51,8 @@ On line 13, we declare our dependencies, so that they are built
 before the build process of our package starts.
 
 On line 14, we declare the specific Python build system being used. In
-this case the +distutils+ Python build system is used. The four
-supported ones are +distutils+, +flit+, +pep517+ and +setuptools+.
+this case the +setuptools+ Python build system is used. The three
+supported ones are +flit+, +pep517+ and +setuptools+.
 
 Finally, on line 16, we invoke the +python-package+ macro that
 generates all the Makefile rules that actually allow the package to be
@@ -98,13 +98,13 @@ Note that:
 One variable specific to the Python infrastructure is mandatory:
 
 * +PYTHON_FOO_SETUP_TYPE+, to define which Python build system is used
-  by the package. The four supported values are +distutils+, +flit+,
-  +pep517+ and +setuptools+. If you don't know which one is used in
-  your package, look at the +setup.py+ or +pyproject.toml+ file in your
-  package source code, and see whether it imports things from the
-  +distutils+, +flit+ module or the +setuptools+ module. If the package
-  is using a +pyproject.toml+ file without any build-system requires
-  and with a local in-tree backend-path one should use +pep517+.
+  by the package. The three supported values are +flit+, +pep517+ and
+  +setuptools+. If you don't know which one is used in your package,
+  look at the +setup.py+ or +pyproject.toml+ file in your package
+  source code, and see whether it imports things from the +flit+
+  module or the +setuptools+ module. If the package is using a
+  +pyproject.toml+ file without any build-system requires and with a
+  local in-tree backend-path one should use +pep517+.
 
 A few additional variables, specific to the Python infrastructure, can
 optionally be defined, depending on the package's needs. Many of them
@@ -119,27 +119,25 @@ therefore only use a few of them, or none.
   +PYTHON_FOO_SUBDIR+.
 
 * +PYTHON_FOO_ENV+, to specify additional environment variables to
-  pass to the Python +setup.py+ script (for distutils/setuptools
-  packages) or the +support/scripts/pyinstaller.py+ script (for
-  flit/pep517 packages) for both the build and install steps. Note
-  that the infrastructure is automatically passing several standard
-  variables, defined in +PKG_PYTHON_DISTUTILS_ENV+ (for distutils
-  target packages), +HOST_PKG_PYTHON_DISTUTILS_ENV+ (for distutils
-  host packages), +PKG_PYTHON_SETUPTOOLS_ENV+ (for setuptools target
+  pass to the Python +setup.py+ script (for setuptools packages) or
+  the +support/scripts/pyinstaller.py+ script (for flit/pep517
+  packages) for both the build and install steps. Note that the
+  infrastructure is automatically passing several standard variables,
+  defined in +PKG_PYTHON_SETUPTOOLS_ENV+ (for setuptools target
   packages), +HOST_PKG_PYTHON_SETUPTOOLS_ENV+ (for setuptools host
   packages), +PKG_PYTHON_PEP517_ENV+ (for flit/pep517 target packages)
   and +HOST_PKG_PYTHON_PEP517_ENV+ (for flit/pep517 host packages).
 
-* +PYTHON_FOO_BUILD_OPTS+, to specify additional options to pass to the
-  Python +setup.py+ script during the build step, this generally only
-  makes sense to use for distutils/setuptools based packages as
-  flit/pep517 based packages do not pass these options to a +setup.py+
-  script but instead pass them to +support/scripts/pyinstaller.py+.
+* +PYTHON_FOO_BUILD_OPTS+, to specify additional options to pass to
+  the Python +setup.py+ script during the build step, this generally
+  only makes sense to use for setuptools based packages as flit/pep517
+  based packages do not pass these options to a +setup.py+ script but
+  instead pass them to +support/scripts/pyinstaller.py+.
 
 * +PYTHON_FOO_INSTALL_TARGET_OPTS+, +PYTHON_FOO_INSTALL_STAGING_OPTS+,
   +HOST_PYTHON_FOO_INSTALL_OPTS+ to specify additional options to pass
-  to the Python +setup.py+ script (for distutils/setuptools packages)
-  or +support/scripts/pyinstaller.py+ (for flit/pep517 packages) during
+  to the Python +setup.py+ script (for setuptools packages) or
+  +support/scripts/pyinstaller.py+ (for flit/pep517 packages) during
   the target installation step, the staging installation step or the
   host installation, respectively.
 
