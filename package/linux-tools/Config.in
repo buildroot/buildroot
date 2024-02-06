@@ -38,6 +38,25 @@ config BR2_PACKAGE_LINUX_TOOLS_IIO
 
 	  These tools are available only from kernel version 4.7.
 
+config BR2_PACKAGE_LINUX_TOOLS_MM
+	bool "mm"
+	select BR2_PACKAGE_LINUX_TOOLS
+	help
+	  mm is a toolset for testing/monitoring/tracing vm/pages/slabs
+	  objects.
+
+	  - page_owner_sort: userspace helper to sort the output of
+	  /sys/kernel/debug/page_owner, which helps to know who
+	  allocates the page from kernel context
+
+	  - slabinfo: the tool which gets reports about slabs, for
+	  example show empty slabs, modify of slab debug options at
+	  runtime, display all information about a slabcache
+
+	  - page-types: a handy tool for querying page flags
+
+	  These tools are available only from kernel version 3.4.
+
 config BR2_PACKAGE_LINUX_TOOLS_PCI
 	bool "pci"
 	select BR2_PACKAGE_LINUX_TOOLS
