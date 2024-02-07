@@ -40,7 +40,7 @@ except ImportError:
 
 sys.path.append('utils/')
 
-NVD_START_YEAR = 2002
+NVD_START_YEAR = 1999
 NVD_BASE_URL = "https://github.com/fkie-cad/nvd-json-data-feeds/releases/latest/download"
 
 ops = {
