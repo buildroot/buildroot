@@ -28,7 +28,7 @@ diff --git a/meson.build b/meson.build
 index 9efe91978..6a670bf94 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -267,7 +267,7 @@ if x11_dep.found() and xext_dep.found()
+@@ -369,7 +369,7 @@ if x11_dep.found() and xext_dep.found()
  
    # Can skip the run check by providing the result in a cross file or
    # native file as bool property value.
@@ -36,6 +36,6 @@ index 9efe91978..6a670bf94 100644
 +  prop = meson.get_external_property('ipc_rmid_deferred_release', meson.is_cross_build() ? 'false' : 'auto')
    # We don't know the type of prop (bool, string) but need to differentiate
    # between a set value (bool) or the fallback value (string), so convert to
-   # a string and chec the string value.
+   # a string and check the string value.
 --
 2.34.1
