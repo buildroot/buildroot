@@ -21,9 +21,13 @@ class TestPythonPy3Flask(TestPythonPackageBase):
         _, exit_code = self.emulator.run(cmd, timeout=self.timeout)
 
         # Give enough time for the flask server to start up
-        time.sleep(30)
+        for attempt in range(30):
+            time.sleep(1)
 
-        cmd = "wget -q -O - http://127.0.0.1:5000/"
-        output, exit_code = self.emulator.run(cmd, timeout=self.timeout)
-        self.assertEqual(exit_code, 0)
-        self.assertEqual(output[0], "Hello, World!")
+            cmd = "wget -q -O - http://127.0.0.1:5000/"
+            output, exit_code = self.emulator.run(cmd, timeout=self.timeout)
+            if exit_code == 0:
+                self.assertEqual(output[0], 'Hello, World!')
+                break
+        else:
+            self.assertTrue(False, "Timeout while waiting for flask server")
