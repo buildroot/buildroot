@@ -37,7 +37,7 @@ class TestGnupg2(infra.basetest.BRTest):
         # Test symmetric encrypt
         cmd = "gpg --batch --symmetric"
         cmd += " --passphrase '{}' {}".format(good_passphrase, plain_file)
-        self.assertRunOk(cmd)
+        self.assertRunOk(cmd, timeout=10)
 
         # Test symmetric decrypt
         cmd = "gpg --batch --decrypt"
