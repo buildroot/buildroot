@@ -30,6 +30,7 @@ PETITBOOT_CONF_OPTS = \
 	--without-twin-x11 \
 	$(if $(BR2_PACKAGE_BUSYBOX),--enable-busybox,--disable-busybox) \
 	HOST_PROG_KEXEC=/usr/sbin/kexec \
+	HOST_PROG_SH=/usr/libexec/petitboot/pb-shell \
 	HOST_PROG_SHUTDOWN=/usr/libexec/petitboot/kexec-restart
 
 # HPA and Busybox tftp are supported. HPA tftp is part of Buildroot's tftpd
@@ -94,6 +95,8 @@ define PETITBOOT_POST_INSTALL
 		$(TARGET_DIR)/etc/init.d/S15pb-discover
 	$(INSTALL) -D -m 0755 $(PETITBOOT_PKGDIR)/pb-console \
 		$(TARGET_DIR)/etc/init.d/pb-console
+	$(INSTALL) -D -m 0755 $(PETITBOOT_PKGDIR)/pb-shell \
+		$(TARGET_DIR)/usr/libexec/petitboot/pb-shell
 
 	mkdir -p $(TARGET_DIR)/etc/udev/rules.d
 	for port in $(PETITBOOT_GETTY_PORT); do \

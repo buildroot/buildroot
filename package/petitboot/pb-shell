@@ -1,0 +1,10 @@
+#!/bin/sh
+
+reset
+
+cat <<EOM
+Exiting petitboot. Type 'exit' to return.
+You may run 'pb-sos' to gather diagnostic data.
+EOM
+
+exec /bin/sh
