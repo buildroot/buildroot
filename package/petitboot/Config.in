@@ -1,7 +1,7 @@
 config BR2_PACKAGE_PETITBOOT
 	bool "petitboot"
 	depends on BR2_PACKAGE_KEXEC_ARCH_SUPPORTS || BR2_PACKAGE_KEXEC_LITE_ARCH_SUPPORTS
-	depends on BR2_USE_MMU # lvm2
+	depends on BR2_USE_MMU # lvm2, agetty
 	depends on BR2_USE_WCHAR # elfutils, kexec-lite
 	depends on !BR2_STATIC_LIBS # elfutils, kexec-lite, lvm2
 	depends on BR2_TOOLCHAIN_HAS_THREADS # elfutils, kexec-lite, lvm2
@@ -17,6 +17,8 @@ config BR2_PACKAGE_PETITBOOT
 	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	select BR2_PACKAGE_NVME if ( BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le )
 	select BR2_PACKAGE_POWERPC_UTILS if ( BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le )
+	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_AGETTY
 	help
 	  Petitboot is a small kexec-based bootloader
 

@@ -97,6 +97,8 @@ define PETITBOOT_POST_INSTALL
 		$(TARGET_DIR)/etc/init.d/pb-console
 	$(INSTALL) -D -m 0755 $(PETITBOOT_PKGDIR)/pb-shell \
 		$(TARGET_DIR)/usr/libexec/petitboot/pb-shell
+	$(INSTALL) -D -m 0755 $(PETITBOOT_PKGDIR)/shell_profile \
+		$(TARGET_DIR)/home/petituser/.profile
 
 	mkdir -p $(TARGET_DIR)/etc/udev/rules.d
 	for port in $(PETITBOOT_GETTY_PORT); do \
@@ -110,5 +112,9 @@ define PETITBOOT_POST_INSTALL
 endef
 
 PETITBOOT_POST_INSTALL_TARGET_HOOKS += PETITBOOT_POST_INSTALL
+
+define PETITBOOT_USERS
+	petituser -1 petitgroup -1 * /home/petituser /bin/sh - petitboot user
+endef
 
 $(eval $(autotools-package))
