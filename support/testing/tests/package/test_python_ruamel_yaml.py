@@ -7,6 +7,7 @@ class TestPythonPy3RuamelYaml(TestPythonPackageBase):
         """
         BR2_PACKAGE_PYTHON3=y
         BR2_PACKAGE_PYTHON_RUAMEL_YAML=y
+        BR2_PACKAGE_PYTHON_RUAMEL_YAML_CLIB=y
         """
     sample_scripts = ["tests/package/sample_python_ruamel_yaml.py"]
     timeout = 40
