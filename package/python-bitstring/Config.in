@@ -1,5 +1,7 @@
 config BR2_PACKAGE_PYTHON_BITSTRING
 	bool "python-bitstring"
+	select BR2_PACKAGE_PYTHON_BITARRAY # runtime
+	select BR2_PACKAGE_PYTHON3_ZLIB # runtime
 	help
 	  Simple construction, analysis and modification of binary data.
 
