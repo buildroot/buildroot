@@ -1,0 +1,62 @@
+From 39cbc3c1f1caf558188bd2203c976bae8de2f6a7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tim-Philipp=20M=C3=BCller?= <tim@centricular.com>
+Date: Thu, 25 Feb 2021 10:52:45 +0000
+Subject: [PATCH] meson: allow skipping of run check for
+ IPC_RMID_DEFERRED_RELEASE
+
+The run check is particularly annoying in cross-compile scenarios,
+so allow bypassing the check by having the user provide the value
+via a cross file or native file:
+
+  [properties]
+  ipc_rmid_deferred_release = true
+
+Closes #408
+
+Upstream: https://gitlab.freedesktop.org/cairo/cairo/-/commit/1bec56ea8a931e1ae1c74cc740134497ec365267
+Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
+---
+ meson.build | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index b159b4071..5f593e54d 100644
+--- a/meson.build
++++ b/meson.build
+@@ -264,13 +264,28 @@ if x11_dep.found() and xext_dep.found()
+     ['X11/extensions/shmstr.h', {'extra-headers': extra_headers}],
+   ]
+   deps += [x11_dep, xext_dep]
+-  res = cc.run(files('meson-cc-tests/ipc_rmid_deferred_release.c'),
+-    dependencies: [x11_dep, xext_dep],
+-    name: 'shmctl IPC_RMID allowes subsequent attaches')
+ 
+-  if res.returncode() == 0
+-    conf.set('IPC_RMID_DEFERRED_RELEASE', 1)
++  # Can skip the run check by providing the result in a cross file or
++  # native file as bool property value.
++  prop = meson.get_external_property('ipc_rmid_deferred_release', 'auto')
++  # We don't know the type of prop (bool, string) but need to differentiate
++  # between a set value (bool) or the fallback value (string), so convert to
++  # a string and chec the string value.
++  prop_str = '@0@'.format(prop)
++  if prop_str in ['true', 'false']
++    ipc_rmid_deferred_release = (prop_str == 'true')
++    message('IPC_RMID_DEFERRED_RELEASE:', ipc_rmid_deferred_release)
++  elif prop_str == 'auto'
++    res = cc.run(files('meson-cc-tests/ipc_rmid_deferred_release.c'),
++      dependencies: [x11_dep, xext_dep],
++      name: 'shmctl IPC_RMID allowes subsequent attaches')
++
++    ipc_rmid_deferred_release = (res.returncode() == 0)
++  else
++    error('Unexpected value for external property ipc_rmid_deferred_release: @0@'.format(prop_str))
+   endif
++
++  conf.set10('IPC_RMID_DEFERRED_RELEASE', ipc_rmid_deferred_release)
+ endif
+ 
+ if feature_conf.get('CAIRO_HAS_XLIB_SURFACE', 0) == 1
+-- 
+2.34.1
+
