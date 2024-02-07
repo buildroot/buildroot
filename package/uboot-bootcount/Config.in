@@ -1,0 +1,9 @@
+config BR2_PACKAGE_UBOOT_BOOTCOUNT
+	bool "uboot-bootcount"
+	help
+	  U-Boot implements a boot count scheme that can be used to
+	  detect multiple failed attempts to boot Linux. This tool
+	  allows to read and write bootcount from userspace for some
+	  platforms (TI AM335X or STM32MP1) or from I2C EEPROM.
+
+	  https://github.com/VoltServer/uboot-bootcount

@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2024.02"
 
+config BR2_PACKAGE_DAVINCI_BOOTCOUNT
+	bool "davinci-bootcount has been renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_UBOOT_BOOTCOUNT
+	help
+	  The davinci-bootcount package has been renamed to
+	  uboot-bootcount.
+
 config BR2_PACKAGE_PYTHON_CROSSBAR
 	bool "python-crossbar removed"
 	select BR2_LEGACY
