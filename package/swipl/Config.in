@@ -1,0 +1,43 @@
+# swipl supports arch for which libc fenv.h provides all four macros:
+# FE_DOWNWARD, FE_TONEAREST, FE_TOWARDZERO, FE_UPWARD
+# See for example in glibc https://sourceware.org/git/glibc.git
+# git grep -E '^[[:space:]]*#[[:space:]]*define[[:space:]]+FE_(TONEAREST|UPWARD|DOWNWARD|TOWARDZERO)' sysdeps/
+config BR2_PACKAGE_SWIPL_ARCH_SUPPORTS
+	bool
+	default y if BR2_aarch64 || BR2_aarch64_be
+	default y if BR2_arceb || BR2_arcle
+	default y if BR2_arm || BR2_armeb
+	default y if BR2_i386
+	default y if BR2_m68k
+	# BR2_microblaze has only FE_TONEAREST
+	default y if BR2_mips || BR2_mipsel || BR2_mips64 || BR2_mips64el
+	# BR2_nios2 has only FE_TONEAREST
+	default y if BR2_or1k
+	default y if BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le
+	default y if BR2_riscv
+	default y if BR2_s390x
+	# BR2_sh has only FE_{TONEAREST,TOWARDZERO}
+	default y if BR2_sparc || BR2_sparc64
+	default y if BR2_x86_64
+	# BR2_xtensa supports only uclibc which does not have fenv.h
+
+config BR2_PACKAGE_SWIPL
+	bool "swipl"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # __has_attribute()
+	depends on BR2_PACKAGE_SWIPL_ARCH_SUPPORTS
+	# swipl needs fenv.h which is not provided by uclibc
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC
+	select BR2_PACKAGE_ZLIB
+	help
+	  SWI-Prolog offers a comprehensive free Prolog
+	  environment. Since its start in 1987, SWI-Prolog development
+	  has been driven by the needs of real world
+	  applications. SWI-Prolog is widely used in research and
+	  education as well as commercial applications.
+
+	  https://www.swi-prolog.org
+
+comment "swipl needs a glibc or musl toolchain w/ gcc >= 5"
+	depends on BR2_PACKAGE_SWIPL_ARCH_SUPPORTS
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_5 || \
+		BR2_TOOLCHAIN_USES_UCLIBC
