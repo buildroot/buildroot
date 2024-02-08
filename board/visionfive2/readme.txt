@@ -27,6 +27,10 @@ Preparing the board
 
 Connect a TTL UART cable to pin 6 (GND), 8 (TX) and 10 (RX).
 
+Change the boot mode pins to SD card booting (RGPIO_0=1, GRPIO_1=0):
+
+https://doc-en.rvspace.org/VisionFive2/Quick_Start_Guide/VisionFive2_SDK_QSG/boot_mode_settings.html
+
 Insert your SD card.
 
 Power-up the board using an USB-C cable.
