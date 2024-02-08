@@ -61,6 +61,30 @@ config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X
 config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8DXL
 	bool "imx8dxl"
 
+config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX91
+	bool "imx91"
+
+config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93
+	bool "imx93"
+
+endchoice
+
+choice
+	prompt "i.MX Silicon Revision"
+	default BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93A1
+	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93
+	help
+	  Some packages related to the selected i.MX platform need to
+	  know the silicon revision of the platform they will run on.
+
+	  Note - mismatches may result in a failure to boot!
+
+config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93A0
+	bool "imx93a0"
+
+config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93A1
+	bool "imx93a1"
+
 endchoice
 
 config BR2_PACKAGE_FREESCALE_IMX_PLATFORM
@@ -80,6 +104,8 @@ config BR2_PACKAGE_FREESCALE_IMX_PLATFORM
 	default "IMX8MM" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MM
 	default "IMX8MN" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MN
 	default "IMX8MP" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MP
+	default "IMX91" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX91
+	default "IMX93" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93
 
 config BR2_PACKAGE_FREESCALE_IMX_HAS_VPU
 	bool
