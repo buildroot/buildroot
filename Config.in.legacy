@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2024.02"
 
+config BR2_PACKAGE_TINYMEMBENCH
+	bool "tinymembench removed"
+	select BR2_LEGACY
+	help
+	  tinymembench has been removed due to being abandoned.
+
 config BR2_PACKAGE_DAVINCI_BOOTCOUNT
 	bool "davinci-bootcount has been renamed"
 	select BR2_LEGACY
