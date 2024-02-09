@@ -1,0 +1,36 @@
+From dd9d68259c1fb79bcf40fcdf6aa1e6026edec9b2 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 9 Feb 2024 21:16:39 +0100
+Subject: [PATCH] src/libqrtr-lib/meson.build: fix static build
+
+Replace shared_library by library to avoid the following static build
+failure:
+
+[5/5] Linking target src/libqrtr-glib/libqrtr-glib.so.0.0.0
+FAILED: src/libqrtr-glib/libqrtr-glib.so.0.0.0
+
+Fixes:
+ - http://autobuild.buildroot.org/results/e0442e97279a07f33a14ec52840f98b7ec0fe32d
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://gitlab.freedesktop.org/mobile-broadband/libqrtr-glib/-/merge_requests/24
+---
+ src/libqrtr-glib/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/libqrtr-glib/meson.build b/src/libqrtr-glib/meson.build
+index bbdd869..0cddcc7 100644
+--- a/src/libqrtr-glib/meson.build
++++ b/src/libqrtr-glib/meson.build
+@@ -39,7 +39,7 @@ c_flags = [
+   '-DLIBEXEC_PATH="@0@"'.format(qrtr_prefix / qrtr_libexecdir),
+ ]
+ 
+-libqrtr_glib = shared_library(
++libqrtr_glib = library(
+   libname,
+   version: qrtr_glib_version,
+   sources: sources + [version_header],
+-- 
+2.43.0
+
