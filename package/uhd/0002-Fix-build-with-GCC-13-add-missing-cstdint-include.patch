@@ -1,0 +1,117 @@
+From 3acf784e988608cbce34cd0be0a8703ba53ea515 Mon Sep 17 00:00:00 2001
+From: Sam James <sam@gentoo.org>
+Date: Tue, 3 Jan 2023 23:04:52 +0000
+Subject: [PATCH] Fix build with GCC 13 (add missing <cstdint> include)
+
+GCC 13 (as usual for new compiler releases) shuffles around some
+internal includes and so <cstdint> is no longer transitively included.
+
+Explicitly include <cstdint> for uint8_t.
+
+```
+/var/tmp/portage/net-wireless/uhd-4.3.0.0/work/uhd-4.3.0.0/host/include/uhd/rfnoc/defaults.hpp:43:14: error: 'uint32_t' does not name a type
+   43 | static const uint32_t DEFAULT_NOC_ID  = 0xFFFFFFFF;
+      |              ^~~~~~~~
+/var/tmp/portage/net-wireless/uhd-4.3.0.0/work/uhd-4.3.0.0/host/include/uhd/rfnoc/defaults.hpp:1:1: note: 'uint32_t' is defined in header '<cstdint>'; did you forget to '#include <cstdint>'?
+  +++ |+#include <cstdint>
+    1 | //
+```
+
+Signed-off-by: Sam James <sam@gentoo.org>
+
+Upstream: https://github.com/EttusResearch/uhd/commit/3acf784e988608cbce34cd0be0a8703ba53ea515
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ host/include/uhd/cal/database.hpp                      | 1 +
+ host/include/uhd/rfnoc/defaults.hpp                    | 1 +
+ host/include/uhd/types/eeprom.hpp                      | 1 +
+ host/include/uhd/usrp/zbx_tune_map_item.hpp            | 1 +
+ host/lib/usrp/dboard/magnesium/magnesium_constants.hpp | 1 +
+ host/lib/usrp/dboard/rhodium/rhodium_constants.hpp     | 1 +
+ host/lib/utils/serial_number.cpp                       | 1 +
+ 7 files changed, 7 insertions(+)
+
+diff --git a/host/include/uhd/cal/database.hpp b/host/include/uhd/cal/database.hpp
+index b6abbb6df7..9d47febedd 100644
+--- a/host/include/uhd/cal/database.hpp
++++ b/host/include/uhd/cal/database.hpp
+@@ -8,6 +8,7 @@
+ 
+ #include <uhd/config.hpp>
+ #include <stddef.h>
++#include <cstdint>
+ #include <string>
+ #include <vector>
+ #include <functional>
+diff --git a/host/include/uhd/rfnoc/defaults.hpp b/host/include/uhd/rfnoc/defaults.hpp
+index aa7778aacf..6c878a8d70 100644
+--- a/host/include/uhd/rfnoc/defaults.hpp
++++ b/host/include/uhd/rfnoc/defaults.hpp
+@@ -8,6 +8,7 @@
+ 
+ #pragma once
+ 
++#include <cstdint>
+ #include <string>
+ 
+ namespace uhd { namespace rfnoc {
+diff --git a/host/include/uhd/types/eeprom.hpp b/host/include/uhd/types/eeprom.hpp
+index 3a7605d3cb..420440aa64 100644
+--- a/host/include/uhd/types/eeprom.hpp
++++ b/host/include/uhd/types/eeprom.hpp
+@@ -6,6 +6,7 @@
+ 
+ #pragma once
+ 
++#include <cstdint>
+ #include <map>
+ #include <string>
+ #include <vector>
+diff --git a/host/include/uhd/usrp/zbx_tune_map_item.hpp b/host/include/uhd/usrp/zbx_tune_map_item.hpp
+index e49f49f785..ce95623de2 100644
+--- a/host/include/uhd/usrp/zbx_tune_map_item.hpp
++++ b/host/include/uhd/usrp/zbx_tune_map_item.hpp
+@@ -6,6 +6,7 @@
+ 
+ #pragma once
+ #include <uhd/config.hpp>
++#include <cstdint>
+ #include <cstring>
+ #include <string>
+ #include <vector>
+diff --git a/host/lib/usrp/dboard/magnesium/magnesium_constants.hpp b/host/lib/usrp/dboard/magnesium/magnesium_constants.hpp
+index 99f2b910c6..99f5a4933f 100644
+--- a/host/lib/usrp/dboard/magnesium/magnesium_constants.hpp
++++ b/host/lib/usrp/dboard/magnesium/magnesium_constants.hpp
+@@ -9,6 +9,7 @@
+ 
+ #include <uhd/types/ranges.hpp>
+ #include <cstddef>
++#include <cstdint>
+ #include <string>
+ #include <vector>
+ 
+diff --git a/host/lib/usrp/dboard/rhodium/rhodium_constants.hpp b/host/lib/usrp/dboard/rhodium/rhodium_constants.hpp
+index 591d02d305..1577e02d9e 100644
+--- a/host/lib/usrp/dboard/rhodium/rhodium_constants.hpp
++++ b/host/lib/usrp/dboard/rhodium/rhodium_constants.hpp
+@@ -9,6 +9,7 @@
+ 
+ #include <array>
+ #include <cstddef>
++#include <cstdint>
+ #include <string>
+ #include <vector>
+ 
+diff --git a/host/lib/utils/serial_number.cpp b/host/lib/utils/serial_number.cpp
+index 61296a9139..c07730e24d 100644
+--- a/host/lib/utils/serial_number.cpp
++++ b/host/lib/utils/serial_number.cpp
+@@ -5,6 +5,7 @@
+ //
+ 
+ #include <uhdlib/utils/serial_number.hpp>
++#include <cstdint>
+ #include <stdexcept>
+ #include <string>
+ 
