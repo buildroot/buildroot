@@ -34,6 +34,7 @@ GST1_PYTHON_CONF_ENV += \
 # the correct .so file, and the resulting compiled library has the appropriate
 # path of /usr/lib/python3.$(PYTHON3_VERSION_MAJOR).so
 GST1_PYTHON_CONF_OPTS += \
-	-Dlibpython-dir=/usr/lib/
+	-Dlibpython-dir=/usr/lib/ \
+	-Dtests=disabled
 
 $(eval $(meson-package))
