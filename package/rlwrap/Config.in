@@ -1,5 +1,6 @@
 config BR2_PACKAGE_RLWRAP
 	bool "rlwrap"
+	depends on BR2_USE_MMU # fork()
 	select BR2_PACKAGE_READLINE
 	help
 	  rlwrap is a 'readline wrapper', a small utility that uses the
