@@ -37,7 +37,7 @@ class TestLibGpgme(infra.basetest.BRTest):
         # We now create our gpg key.
         cmd = "gpg --batch --passphrase ''"
         cmd += f" --quick-generate-key {gpg_userid} default default"
-        self.assertRunOk(cmd)
+        self.assertRunOk(cmd, timeout=30)
 
         # We should now see our key in the list.
         self.assertRunOk(gpgme_listkey)
