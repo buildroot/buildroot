@@ -8,7 +8,7 @@ GPSD_VERSION = 3.25
 GPSD_SITE = http://download-mirror.savannah.gnu.org/releases/gpsd
 GPSD_LICENSE = BSD-2-Clause
 GPSD_LICENSE_FILES = COPYING
-GPSD_CPE_ID_VENDOR = gpsd_project
+GPSD_CPE_ID_VALID = YES
 GPSD_SELINUX_MODULES = gpsd
 GPSD_INSTALL_STAGING = YES
 

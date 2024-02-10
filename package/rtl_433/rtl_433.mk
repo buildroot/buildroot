@@ -8,7 +8,7 @@ RTL_433_VERSION = 23.11
 RTL_433_SITE = $(call github,merbanan,rtl_433,$(RTL_433_VERSION))
 RTL_433_LICENSE = GPL-2.0+
 RTL_433_LICENSE_FILES = COPYING
-RTL_433_CPE_ID_VENDOR = rtl_433_project
+RTL_433_CPE_ID_VALID = YES
 
 # Force Release build to remove ASAN.
 RTL_433_CONF_OPTS = \

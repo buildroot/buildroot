@@ -18,6 +18,6 @@ endif
 
 QUAZIP_LICENSE = LGPL-2.1
 QUAZIP_LICENSE_FILES = COPYING
-QUAZIP_CPE_ID_VENDOR = quazip_project
+QUAZIP_CPE_ID_VALID = YES
 
 $(eval $(cmake-package))

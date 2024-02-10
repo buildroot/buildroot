@@ -8,7 +8,7 @@ OPEN_ISCSI_VERSION = 2.1.9
 OPEN_ISCSI_SITE = $(call github,open-iscsi,open-iscsi,$(OPEN_ISCSI_VERSION))
 OPEN_ISCSI_LICENSE = GPL-2.0+, GPL-3.0+, LGPL-3.0+
 OPEN_ISCSI_LICENSE_FILES = COPYING README libopeniscsiusr/COPYING
-OPEN_ISCSI_CPE_ID_VENDOR = open-iscsi_project
+OPEN_ISCSI_CPE_ID_VALID = YES
 OPEN_ISCSI_DEPENDENCIES = kmod open-isns openssl util-linux
 
 OPEN_ISCSI_CONF_OPTS = -Ddbroot=/var/lib/iscsi

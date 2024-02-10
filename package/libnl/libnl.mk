@@ -8,7 +8,7 @@ LIBNL_VERSION = 3.9.0
 LIBNL_SITE = https://github.com/thom311/libnl/releases/download/libnl$(subst .,_,$(LIBNL_VERSION))
 LIBNL_LICENSE = LGPL-2.1+
 LIBNL_LICENSE_FILES = COPYING
-LIBNL_CPE_ID_VENDOR = libnl_project
+LIBNL_CPE_ID_VALID = YES
 
 LIBNL_INSTALL_STAGING = YES
 LIBNL_DEPENDENCIES = host-bison host-flex host-pkgconf

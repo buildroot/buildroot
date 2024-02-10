@@ -10,6 +10,6 @@ PYTHON_ECDSA_SITE = https://files.pythonhosted.org/packages/ff/7b/ba6547a76c468a
 PYTHON_ECDSA_SETUP_TYPE = setuptools
 PYTHON_ECDSA_LICENSE = MIT
 PYTHON_ECDSA_LICENSE_FILES = LICENSE
-PYTHON_ECDSA_CPE_ID_VENDOR = python-ecdsa_project
+PYTHON_ECDSA_CPE_ID_VALID = YES
 
 $(eval $(python-package))

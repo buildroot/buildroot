@@ -13,7 +13,7 @@ PROTOBUF_C_CONF_OPTS = --disable-protoc
 PROTOBUF_C_INSTALL_STAGING = YES
 PROTOBUF_C_LICENSE = BSD-2-Clause
 PROTOBUF_C_LICENSE_FILES = LICENSE
-PROTOBUF_C_CPE_ID_VENDOR = protobuf-c_project
+PROTOBUF_C_CPE_ID_VALID = YES
 
 # when building with protoc (from host-protobuf) c++17 is now required
 HOST_PROTOBUF_C_CONF_ENV += CXXFLAGS="$(HOST_CXXFLAGS) -std=c++17"

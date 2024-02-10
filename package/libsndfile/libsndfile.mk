@@ -10,7 +10,7 @@ LIBSNDFILE_SITE = https://github.com/libsndfile/libsndfile/releases/download/$(L
 LIBSNDFILE_INSTALL_STAGING = YES
 LIBSNDFILE_LICENSE = LGPL-2.1+
 LIBSNDFILE_LICENSE_FILES = COPYING
-LIBSNDFILE_CPE_ID_VENDOR = libsndfile_project
+LIBSNDFILE_CPE_ID_VALID = YES
 LIBSNDFILE_DEPENDENCIES = host-pkgconf
 
 LIBSNDFILE_CONF_ENV = ac_cv_prog_cc_c99='-std=gnu99'

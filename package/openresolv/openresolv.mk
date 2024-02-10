@@ -9,7 +9,7 @@ OPENRESOLV_SITE = https://github.com/rsmarples/openresolv/releases/download/v$(O
 OPENRESOLV_SOURCE = openresolv-$(OPENRESOLV_VERSION).tar.xz
 OPENRESOLV_LICENSE = BSD-2-Clause
 OPENRESOLV_LICENSE_FILES = LICENSE
-OPENRESOLV_CPE_ID_VENDOR = openresolv_project
+OPENRESOLV_CPE_ID_VALID = YES
 
 define OPENRESOLV_CONFIGURE_CMDS
 	cd $(@D) && $(TARGET_CONFIGURE_OPTS) ./configure --sysconfdir=/etc

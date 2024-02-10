@@ -8,7 +8,7 @@ LSOF_VERSION = 4.99.3
 LSOF_SITE = $(call github,lsof-org,lsof,$(LSOF_VERSION))
 LSOF_LICENSE = lsof license
 LSOF_LICENSE_FILES = COPYING
-LSOF_CPE_ID_VENDOR = lsof_project
+LSOF_CPE_ID_VALID = YES
 
 ifeq ($(BR2_PACKAGE_LIBTIRPC),y)
 LSOF_DEPENDENCIES += libtirpc

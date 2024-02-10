@@ -17,7 +17,7 @@ KVMTOOL_DEPENDENCIES = \
 	$(if $(BR2_PACKAGE_ZLIB),zlib)
 KVMTOOL_LICENSE = GPL-2.0
 KVMTOOL_LICENSE_FILES = COPYING
-KVMTOOL_CPE_ID_VENDOR = kvmtool_project
+KVMTOOL_CPE_ID_VALID = YES
 
 # Disable -Werror, otherwise musl is not happy
 KVMTOOL_MAKE_OPTS = \

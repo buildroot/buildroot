@@ -10,7 +10,7 @@ LIBEVENT_SOURCE = libevent-$(LIBEVENT_VERSION)-stable.tar.gz
 LIBEVENT_INSTALL_STAGING = YES
 LIBEVENT_LICENSE = BSD-3-Clause, OpenBSD
 LIBEVENT_LICENSE_FILES = LICENSE
-LIBEVENT_CPE_ID_VENDOR = libevent_project
+LIBEVENT_CPE_ID_VALID = YES
 LIBEVENT_CONF_OPTS = \
 	--disable-libevent-regress \
 	--disable-samples

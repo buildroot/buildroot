@@ -10,6 +10,6 @@ PYTHON_RSA_SITE = https://files.pythonhosted.org/packages/aa/65/7d973b89c4d2351d
 PYTHON_RSA_SETUP_TYPE = setuptools
 PYTHON_RSA_LICENSE = Apache-2.0
 PYTHON_RSA_LICENSE_FILES = LICENSE
-PYTHON_RSA_CPE_ID_VENDOR = python-rsa_project
+PYTHON_RSA_CPE_ID_VALID = YES
 
 $(eval $(python-package))

@@ -8,7 +8,7 @@ ATFTP_VERSION = 0.8.0
 ATFTP_SITE = http://sourceforge.net/projects/atftp/files
 ATFTP_LICENSE = GPL-2.0+
 ATFTP_LICENSE_FILES = LICENSE
-ATFTP_CPE_ID_VENDOR = atftp_project
+ATFTP_CPE_ID_VALID = YES
 ATFTP_SELINUX_MODULES = tftp
 # No configure in tarball
 ATFTP_AUTORECONF = YES

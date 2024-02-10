@@ -14,7 +14,7 @@ LIBNET_CONF_OPTS = \
 	--disable-doxygen-doc
 LIBNET_LICENSE = BSD-2-Clause, BSD-3-Clause
 LIBNET_LICENSE_FILES = LICENSE
-LIBNET_CPE_ID_VENDOR = libnet_project
+LIBNET_CPE_ID_VALID = YES
 LIBNET_CONFIG_SCRIPTS = libnet-config
 
 $(eval $(autotools-package))

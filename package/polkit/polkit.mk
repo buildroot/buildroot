@@ -8,7 +8,7 @@ POLKIT_VERSION = 123
 POLKIT_SITE = https://gitlab.freedesktop.org/polkit/polkit/-/archive/$(POLKIT_VERSION)
 POLKIT_LICENSE = GPL-2.0
 POLKIT_LICENSE_FILES = COPYING
-POLKIT_CPE_ID_VENDOR = polkit_project
+POLKIT_CPE_ID_VALID = YES
 POLKIT_INSTALL_STAGING = YES
 POLKIT_DEPENDENCIES = \
 	duktape libglib2 host-intltool expat $(TARGET_NLS_DEPENDENCIES)

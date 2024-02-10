@@ -9,6 +9,6 @@ PYTHON_ENGINEIO_SITE = https://files.pythonhosted.org/packages/e2/24/4a69dd119d1
 PYTHON_ENGINEIO_SETUP_TYPE = setuptools
 PYTHON_ENGINEIO_LICENSE = MIT
 PYTHON_ENGINEIO_LICENSE_FILES = LICENSE
-PYTHON_ENGINEIO_CPE_ID_VENDOR = python-engineio_project
+PYTHON_ENGINEIO_CPE_ID_VALID = YES
 
 $(eval $(python-package))

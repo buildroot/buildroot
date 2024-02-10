@@ -10,7 +10,7 @@ UNZIP_PATCH = unzip_$(UNZIP_VERSION)-27.debian.tar.xz
 UNZIP_SITE = https://snapshot.debian.org/archive/debian/20220916T090657Z/pool/main/u/unzip
 UNZIP_LICENSE = Info-ZIP
 UNZIP_LICENSE_FILES = LICENSE
-UNZIP_CPE_ID_VENDOR = unzip_project
+UNZIP_CPE_ID_VALID = YES
 
 # unzip_$(UNZIP_VERSION)-27.debian.tar.xz has patches to fix:
 UNZIP_IGNORE_CVES = \

@@ -8,7 +8,7 @@ TMUX_VERSION = 3.3a
 TMUX_SITE = https://github.com/tmux/tmux/releases/download/$(TMUX_VERSION)
 TMUX_LICENSE = ISC
 TMUX_LICENSE_FILES = COPYING
-TMUX_CPE_ID_VENDOR = tmux_project
+TMUX_CPE_ID_VALID = YES
 TMUX_DEPENDENCIES = libevent ncurses host-pkgconf
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
