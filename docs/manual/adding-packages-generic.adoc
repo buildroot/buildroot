@@ -516,6 +516,10 @@ LIBFOO_IGNORE_CVES += CVE-2020-54321
   identifier]. The available variables are:
 +
 --
+** +LIBFOO_CPE_ID_VALID+, if set to +YES+, specifies that the default
+   values for each of the following variables is appropriate, and
+   generates a valid CPE ID.
+
 ** +LIBFOO_CPE_ID_PREFIX+, specifies the prefix of the CPE identifier,
    i.e the first three fields. When not defined, the default value is
    +cpe:2.3:a+.
