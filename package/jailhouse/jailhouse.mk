@@ -15,7 +15,8 @@ JAILHOUSE_MAKE_OPTS = \
 	CROSS_COMPILE="$(TARGET_CROSS)" \
 	ARCH="$(KERNEL_ARCH)" \
 	KDIR="$(LINUX_DIR)" \
-	DESTDIR="$(TARGET_DIR)"
+	DESTDIR="$(TARGET_DIR)" \
+	prefix=/usr
 
 ifeq ($(BR2_PACKAGE_JAILHOUSE_HELPER_SCRIPTS),y)
 JAILHOUSE_DEPENDENCIES += \
@@ -60,8 +61,8 @@ define JAILHOUSE_INSTALL_TARGET_CMDS
 	$(INSTALL) -d -m 0755 $(TARGET_DIR)/etc/jailhouse
 	$(INSTALL) -D -m 0644 $(@D)/configs/*/*.cell $(TARGET_DIR)/etc/jailhouse
 
-	$(INSTALL) -d -m 0755 $(TARGET_DIR)/usr/local/libexec/jailhouse/demos
-	$(INSTALL) -D -m 0755 $(@D)/inmates/demos/*/*.bin $(TARGET_DIR)/usr/local/libexec/jailhouse/demos
+	$(INSTALL) -d -m 0755 $(TARGET_DIR)/usr/libexec/jailhouse/demos
+	$(INSTALL) -D -m 0755 $(@D)/inmates/demos/*/*.bin $(TARGET_DIR)/usr/libexec/jailhouse/demos
 
 	$(JAILHOUSE_INSTALL_HELPER_SCRIPTS)
 endef
