@@ -1,0 +1,58 @@
+From caf57fe7eb5018b8df196e6d9f99586232798eb3 Mon Sep 17 00:00:00 2001
+From: Jeremy Harris <jgh146exb@wizmail.org>
+Date: Wed, 8 Nov 2023 14:22:37 +0000
+Subject: [PATCH] typoes
+
+Upstream: https://git.exim.org/exim.git/commit/caf57fe7eb5018b8df196e6d9f99586232798eb3
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/src/tls-openssl.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/src/tls-openssl.c b/src/tls-openssl.c
+index 851ac77c5..237303ba9 100644
+--- a/src/tls-openssl.c
++++ b/src/tls-openssl.c
+@@ -77,9 +77,9 @@ change this guard and punt the issue for a while longer. */
+ #  define EXIM_HAVE_OPENSSL_KEYLOG
+ #  define EXIM_HAVE_OPENSSL_CIPHER_GET_ID
+ #  define EXIM_HAVE_SESSION_TICKET
+-#  define EXIM_HAVE_OPESSL_TRACE
+-#  define EXIM_HAVE_OPESSL_GET0_SERIAL
+-#  define EXIM_HAVE_OPESSL_OCSP_RESP_GET0_CERTS
++#  define EXIM_HAVE_OPENSSL_TRACE
++#  define EXIM_HAVE_OPENSSL_GET0_SERIAL
++#  define EXIM_HAVE_OPENSSL_OCSP_RESP_GET0_CERTS
+ #  define EXIM_HAVE_SSL_GET0_VERIFIED_CHAIN
+ #  ifndef DISABLE_OCSP
+ #   define EXIM_HAVE_OCSP
+@@ -1756,7 +1756,7 @@ level. */
+ DEBUG(D_tls)
+   {
+   SSL_CTX_set_info_callback(ctx, info_callback);
+-#if defined(EXIM_HAVE_OPESSL_TRACE) && !defined(OPENSSL_NO_SSL_TRACE)
++#if defined(EXIM_HAVE_OPENSSL_TRACE) && !defined(OPENSSL_NO_SSL_TRACE)
+   /* this needs a debug build of OpenSSL */
+   SSL_CTX_set_msg_callback(ctx, SSL_trace);
+ #endif
+@@ -2442,7 +2442,7 @@ tls_in.ocsp = OCSP_NOT_RESP;
+ if (!olist)
+   return SSL_TLSEXT_ERR_NOACK;
+ 
+-#ifdef EXIM_HAVE_OPESSL_GET0_SERIAL
++#ifdef EXIM_HAVE_OPENSSL_GET0_SERIAL
+  {
+   const X509 * cert_sent = SSL_get_certificate(s);
+   const ASN1_INTEGER * cert_serial = X509_get0_serialNumber(cert_sent);
+@@ -2646,7 +2646,7 @@ if (!(bs = OCSP_response_get1_basic(rsp)))
+ 
+       debug_printf("certs contained in basicresp:\n");
+       x509_stack_dump_cert_s_names(
+-#ifdef EXIM_HAVE_OPESSL_OCSP_RESP_GET0_CERTS
++#ifdef EXIM_HAVE_OPENSSL_OCSP_RESP_GET0_CERTS
+ 	OCSP_resp_get0_certs(bs)
+ #else
+ 	bs->certs
+-- 
+2.30.2
+
