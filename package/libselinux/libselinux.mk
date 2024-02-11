@@ -54,7 +54,7 @@ endif # python3
 
 # Filter out D_FILE_OFFSET_BITS=64. This fixes errors caused by glibc 2.22. We
 # set CFLAGS, CPPFLAGS and LDFLAGS here because we want to win over the
-# CFLAGS/CPPFLAGS/LDFLAGS definitions passed by $(PKG_PYTHON_DISTUTILS_ENV)
+# CFLAGS/CPPFLAGS/LDFLAGS definitions passed by $(PKG_PYTHON_SETUPTOOLS_ENV)
 # when the python binding is enabled.
 LIBSELINUX_MAKE_OPTS += \
 	CFLAGS="$(filter-out -D_FILE_OFFSET_BITS=64,$(TARGET_CFLAGS))" \
