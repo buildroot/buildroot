@@ -31,11 +31,6 @@ comment "account-tools-setuid needs a toolchain w/ dynamic library, wchar, local
 	depends on BR2_STATIC_LIBS || !BR2_USE_WCHAR || \
 		!BR2_ENABLE_LOCALE || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 
-config BR2_PACKAGE_SHADOW_UTMPX
-	bool "utmpx"
-	help
-	  Enable loggin in utmpx / wtmpx.
-
 config BR2_PACKAGE_SHADOW_SUBORDINATE_IDS
 	bool "subordinate-ids"
 	help

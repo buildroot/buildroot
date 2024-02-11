@@ -43,12 +43,6 @@ else
 SHADOW_CONF_OPTS += --disable-account-tools-setuid
 endif
 
-ifeq ($(BR2_PACKAGE_SHADOW_UTMPX),y)
-SHADOW_CONF_OPTS += --enable-utmpx
-else
-SHADOW_CONF_OPTS += --disable-utmpx
-endif
-
 ifeq ($(BR2_PACKAGE_SHADOW_SUBORDINATE_IDS),y)
 SHADOW_CONF_OPTS += --enable-subordinate-ids
 define SHADOW_SUBORDINATE_IDS_PERMISSIONS
