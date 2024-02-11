@@ -122,13 +122,21 @@ class TestMdadm(infra.basetest.BRTest):
         # We add back this blank drive to the array.
         self.assertRunOk(f"mdadm {md_dev} --add {failing_dev}")
 
-        # We wait few seconds to let the device rebuild.
-        time.sleep(3)
+        # Device rebuild can take a variable amount of time, depending
+        # on the load of the test controller host. So we will allow
+        # several attempts, before failing.
+        for attempt in range(10):
+            # We wait few seconds to let the device rebuild.
+            time.sleep(3 * self.timeout_multiplier)
 
-        # The array should no longer be marked as degraded.
-        out, ret = self.emulator.run(monitor_cmd)
-        self.assertEqual(ret, 0)
-        self.assertNotIn("DegradedArray", "\n".join(out))
+            # Once rebuilt, the array should no longer be marked as
+            # degraded.
+            out, ret = self.emulator.run(monitor_cmd)
+            self.assertEqual(ret, 0)
+            if "DegradedArray" not in "\n".join(out):
+                break
+        else:
+            self.fail("Timeout while waiting for the array to rebuild.")
 
         # With all those array manipulations, the data file should not
         # be corrupted. We should be able to recompute the same hash
