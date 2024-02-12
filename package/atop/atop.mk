@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-ATOP_VERSION = 2.9.0
+ATOP_VERSION = 2.10.0
 ATOP_SITE = http://www.atoptool.nl/download
 ATOP_LICENSE = GPL-2.0+
 ATOP_LICENSE_FILES = COPYING
 ATOP_CPE_ID_VALID = YES
-ATOP_DEPENDENCIES = ncurses zlib
+ATOP_DEPENDENCIES = ncurses zlib libglib2 host-pkgconf
 
 ATOP_CFLAGS = $(TARGET_CFLAGS)
 
