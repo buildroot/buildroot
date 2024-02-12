@@ -4,7 +4,8 @@
 #
 ################################################################################
 
-WPEWEBKIT_VERSION = 2.42.4
+# The middle number is even for stable releases, odd for development ones.
+WPEWEBKIT_VERSION = 2.42.5
 WPEWEBKIT_SITE = https://wpewebkit.org/releases
 WPEWEBKIT_SOURCE = wpewebkit-$(WPEWEBKIT_VERSION).tar.xz
 WPEWEBKIT_INSTALL_STAGING = YES
