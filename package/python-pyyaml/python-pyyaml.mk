@@ -14,7 +14,8 @@ PYTHON_PYYAML_CPE_ID_VENDOR = pyyaml
 PYTHON_PYYAML_CPE_ID_PRODUCT = pyyaml
 PYTHON_PYYAML_DEPENDENCIES = host-python-cython libyaml
 PYTHON_PYYAML_ENV = PYYAML_FORCE_CYTHON=1
-HOST_PYTHON_PYYAML_DEPENDENCIES = host-libyaml
+HOST_PYTHON_PYYAML_DEPENDENCIES = host-libyaml host-python-cython
+HOST_PYTHON_PYYAML_ENV = PYYAML_FORCE_CYTHON=1
 
 $(eval $(python-package))
 $(eval $(host-python-package))
