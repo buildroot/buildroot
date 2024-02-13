@@ -11,4 +11,10 @@ TIO_LICENSE = GPL-2.0+
 TIO_LICENSE_FILES = LICENSE
 TIO_DEPENDENCIES = inih
 
+ifeq ($(BR2_PACKAGE_BASH_COMPLETION),y)
+TIO_CONF_OPTS +=-Dbashcompletiondir=/usr/share/bash-completion/completions
+else
+TIO_CONF_OPTS +=-Dbashcompletiondir=no
+endif
+
 $(eval $(meson-package))
