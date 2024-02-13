@@ -1,0 +1,10 @@
+config BR2_PACKAGE_NETHOGS
+	bool "nethogs"
+	select BR2_PACKAGE_LIBPCAP
+	select BR2_PACKAGE_NCURSES
+	help
+	  NetHogs is a small 'net top' tool. Instead of breaking the
+	  traffic down per protocol or per subnet, like most tools
+	  do, it groups bandwidth by process.
+
+          https://github.com/raboof/nethogs
