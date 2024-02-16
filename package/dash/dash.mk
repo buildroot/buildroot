@@ -8,6 +8,8 @@ DASH_VERSION = 0.5.11.5
 DASH_SITE = http://gondor.apana.org.au/~herbert/dash/files
 DASH_LICENSE = BSD-3-Clause, GPL-2.0+ (mksignames.c)
 DASH_LICENSE_FILES = COPYING
+# We're patching configure.ac
+DASH_AUTORECONF = YES
 
 # dash does not build in parallel
 DASH_MAKE = $(MAKE1)
