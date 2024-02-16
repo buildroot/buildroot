@@ -67,6 +67,13 @@ config BR2_PACKAGE_UTIL_LINUX_BINARIES
 	  The setarch utility also installs architecture-specific
 	  symlinks like linux32, linux64, uname26, i386 and x86_64.
 
+if BR2_PACKAGE_UTIL_LINUX_BINARIES
+
+comment "cfdisk needs either ncurses or slang"
+	depends on !BR2_PACKAGE_NCURSES && !BR2_PACKAGE_SLANG
+
+endif
+
 config BR2_PACKAGE_UTIL_LINUX_AGETTY
 	bool "agetty"
 	depends on BR2_USE_MMU # fork()
