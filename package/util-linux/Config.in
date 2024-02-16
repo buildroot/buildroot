@@ -177,7 +177,7 @@ config BR2_PACKAGE_UTIL_LINUX_IPCS
 config BR2_PACKAGE_UTIL_LINUX_IRQTOP
 	bool "irqtop"
 	depends on BR2_USE_MMU # libsmartcols
-	select BR2_PACKAGE_NCURSES
+	select BR2_PACKAGE_SLANG if !BR2_PACKAGE_NCURSES
 	select BR2_PACKAGE_UTIL_LINUX_LIBSMARTCOLS
 	help
 	  Show information on IRQs

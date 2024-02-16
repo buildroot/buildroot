@@ -127,6 +127,14 @@ endif
 UTIL_LINUX_CONF_OPTS += --without-ncursesw --without-ncurses
 endif
 
+# if ncurses is not available, try to fallback onto slang
+ifeq ($(BR2_PACKAGE_SLANG):$(BR2_PACKAGE_NCURSES),y:)
+UTIL_LINUX_DEPENDENCIES += slang
+UTIL_LINUX_CONF_OPTS += --with-slang
+else
+UTIL_LINUX_CONF_OPTS += --without-slang
+endif
+
 # workaround for static_assert on uclibc-ng < 1.0.42
 UTIL_LINUX_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -Dstatic_assert=_Static_assert"
 
