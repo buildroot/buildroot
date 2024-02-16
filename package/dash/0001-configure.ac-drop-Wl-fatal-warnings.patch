@@ -1,0 +1,45 @@
+From 7d07f683b83ef9fbdf258ce61b022b32f06f253a Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 16 Feb 2024 17:26:28 +0100
+Subject: [PATCH] configure.ac: drop -Wl,--fatal-warnings
+
+Drop -Wl,--fatal-warnings with --enable-static to avoid the following
+static build failure:
+
+configure:4778: checking for strtod
+configure:4778: /home/autobuild/autobuild/instance-8/output-1/host/bin/powerpc-buildroot-linux-uclibcspe-gcc -o conftest -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -mabi=spe -mfloat-gprs=single -Wa,-me500 -Os -g0  -static -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -static -Wl,--fatal-warnings conftest.c  >&5
+/home/autobuild/autobuild/instance-8/output-1/host/lib/gcc/powerpc-buildroot-linux-uclibcspe/8.4.0/../../../../powerpc-buildroot-linux-uclibcspe/bin/ld: warning: conftest has a LOAD segment with RWX permissions
+collect2: error: ld returned 1 exit status
+
+[...]
+
+In file included from arith_yylex.c:44:
+system.h:74:22: error: static declaration of 'strtod' follows non-static declaration
+ static inline double strtod(const char *nptr, char **endptr)
+                      ^~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/a54fdc7d1b94beb47203373ae35b08d9cea8d42c
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://lore.kernel.org/dash/20240216163319.860768-1-fontaine.fabrice@gmail.com
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 5524650..6993364 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -34,7 +34,7 @@ fi
+ AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static, \
+ 				     [Build statical linked program]))
+ if test "$enable_static" = "yes"; then
+-	export LDFLAGS="-static -Wl,--fatal-warnings"
++	export LDFLAGS="-static"
+ fi
+ 
+ AC_ARG_ENABLE(fnmatch, AS_HELP_STRING(--disable-fnmatch, \
+-- 
+2.43.0
+
