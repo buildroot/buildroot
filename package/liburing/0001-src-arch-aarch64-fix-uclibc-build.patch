@@ -1,0 +1,39 @@
+From f03f8da34fe96ac35a916ca3058b0f41971eae3b Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 16 Feb 2024 18:59:42 +0100
+Subject: [PATCH] src/arch/aarch64: fix uclibc build
+
+Fix the following build failure with uclibc-ng raised since version 2.3
+and
+https://github.com/axboe/liburing/commit/c6bc86e2125bcd6fa10ff2b128cd86486acadff6:
+
+In file included from lib.h:12,
+                 from setup.c:4:
+arch/aarch64/lib.h:7:10: fatal error: sys/auxv.h: No such file or directory
+    7 | #include <sys/auxv.h>
+      |          ^~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/cc44d714c9267dd7a98debeb8c81c4ee1efe4ebb
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/axboe/liburing/commit/32f9c27a76c43627f79bb77469d2da8583e4d3df
+---
+ src/arch/aarch64/lib.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/src/arch/aarch64/lib.h b/src/arch/aarch64/lib.h
+index 3b701b1..41bcfc9 100644
+--- a/src/arch/aarch64/lib.h
++++ b/src/arch/aarch64/lib.h
+@@ -4,7 +4,6 @@
+ #define LIBURING_ARCH_AARCH64_LIB_H
+ 
+ #include <elf.h>
+-#include <sys/auxv.h>
+ #include "../../syscall.h"
+ 
+ static inline long __get_page_size(void)
+-- 
+2.43.0
+
