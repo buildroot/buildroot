@@ -1,0 +1,41 @@
+From 5bbfaa8e68b5ee6f27d4fbfa3c4e789341724f9c Mon Sep 17 00:00:00 2001
+From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Date: Sat, 17 Feb 2024 17:52:45 +0100
+Subject: [PATCH] src/exec_ptrace: fix build without precess_vm_readv()
+
+Commit 32f4b98f6b4a (sudo frontend: silence most -Wconversion warnings.)
+broke the build on C libraries that miss process_vm_readv(), like
+uClibc-ng.
+
+Indeed, the ssize_t nwritten is declared guarded by HAVE_PROCESS_VM_READV,
+but is then re-assigned and used a few lines below, outside any guard.
+
+Fix that by always declaring the object, as it is always needed.
+
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+Upstream: https://github.com/sudo-project/sudo/commit/5bbfaa8e68b5ee6f27d4fbfa3c4e789341724f9c
+---
+ src/exec_ptrace.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/exec_ptrace.c b/src/exec_ptrace.c
+index 9dd36c275..3d44b82e2 100644
+--- a/src/exec_ptrace.c
++++ b/src/exec_ptrace.c
+@@ -878,11 +878,12 @@ ptrace_write_vec(pid_t pid, struct sudo_ptrace_regs *regs, char **vec,
+     unsigned long addr, unsigned long strtab)
+ {
+     const unsigned long strtab0 = strtab;
++    ssize_t nwritten;
+     size_t i;
+     debug_decl(ptrace_write_vec, SUDO_DEBUG_EXEC);
+
+ #ifdef HAVE_PROCESS_VM_READV
+-    ssize_t nwritten = ptrace_writev_vec(pid, regs, vec, addr, strtab);
++    nwritten = ptrace_writev_vec(pid, regs, vec, addr, strtab);
+     if (nwritten != -1 || errno != ENOSYS)
+ 	debug_return_ssize_t(nwritten);
+ #endif /* HAVE_PROCESS_VM_READV */
+--
+2.43.0
+
