@@ -1,0 +1,75 @@
+From 365426c28f8bf73d34d77cc06b7d5ffeae17f13a Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Tue, 6 Feb 2024 15:33:15 +0100
+Subject: [PATCH] configure.ac: add detection of symver gcc attribute
+
+On non-ELF platforms, such as microblaze, builds will fail when trying
+to add symver information because  __attribute__((symver ..)) is not
+supported even though __has_attribute(__symver__) returns true.
+
+Support for symver needs to be detected via a compile test since
+__has_attribute can report false positives [0].
+
+Add a configure compile check for __attribute__((symver ..)) to ensure
+it is supported and define a variable to advertise support.
+
+[0] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101766#c1
+
+Upstream: https://git.savannah.nongnu.org/cgit/attr.git/commit/?id=943c776089dbb24ebbfb7432ba9841f1845bf95a
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+[Giulio: rework local patch for #if nesting]
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ configure.ac       | 15 +++++++++++++++
+ libattr/syscalls.c |  8 ++++----
+ 2 files changed, 19 insertions(+), 4 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 7e362e9..98477b5 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -57,6 +57,21 @@ AS_CASE([$host_os],
+ 	[linux*], [os_linux=yes])
+ AM_CONDITIONAL([OS_LINUX], [test "x$os_linux" = "xyes"])
+ 
++AC_CACHE_CHECK(whether __attribute__((__symver__())) is supported,
++	gcc_cv_symver_attribute,
++	[cat > conftest.c <<EOF
++void foo (void) {}
++__typeof(foo) foo __attribute__ ((__symver__("foo@foo")));
++EOF
++	gcc_cv_symver_attribute=no
++	if ${CC-cc} -Werror -S conftest.c -o conftest.s >/dev/null 2>&1; then \
++	    gcc_cv_symver_attribute=yes
++	fi
++	rm -f conftest.[cs]
++])
++AS_IF([test $gcc_cv_symver_attribute = yes],
++      [AC_DEFINE(HAVE_SYMVER_ATTRIBUTE, [], [GCC supports symver attribute])])
++
+ AC_CONFIG_COMMANDS([include/attr],
+ 	[dnl
+ 	rm -rf include/attr
+diff --git a/libattr/syscalls.c b/libattr/syscalls.c
+index 907560a..7ee6d39 100644
+--- a/libattr/syscalls.c
++++ b/libattr/syscalls.c
+@@ -31,10 +31,10 @@
+  * prefer symver attribute if available (since gcc 10),
+  * fall back to traditional .symver asm directive otherwise.
+  */
+-#ifdef __has_attribute
+-# if __has_attribute(__symver__)
+-#  define SYMVER(cn, vn) __typeof(cn) cn __attribute__((__symver__(vn)))
+-# elif __has_attribute(__no_reorder__)
++#if defined(HAVE_SYMVER_ATTRIBUTE)
++# define SYMVER(cn, vn) __typeof(cn) cn __attribute__((__symver__(vn)))
++#elif defined(__has_attribute)
++# if __has_attribute(__no_reorder__)
+    /*
+     * Avoid wrong partitioning with older gcc and LTO. May not work reliably
+     * with all versions; use -flto-partition=none if you encounter problems.
+-- 
+2.34.1
+
