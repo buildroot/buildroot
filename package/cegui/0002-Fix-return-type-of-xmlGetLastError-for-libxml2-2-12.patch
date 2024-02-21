@@ -1,0 +1,29 @@
+From 285ba5a2c0c435ed865c6e86afe314a822fd1e3f Mon Sep 17 00:00:00 2001
+From: oreo639 <oreo6391@gmail.com>
+Date: Sun, 18 Feb 2024 14:16:21 -0800
+Subject: [PATCH] Fix return type of xmlGetLastError for libxml2 2.12
+
+https://gitlab.gnome.org/GNOME/libxml2/-/commit/45470611b047db78106dcb2fdbd4164163c15ab7
+
+Upstream: https://github.com/cegui/cegui/commit/285ba5a2c0c435ed865c6e86afe314a822fd1e3f
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ cegui/src/XMLParserModules/Libxml2/XMLParser.cpp | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/cegui/src/XMLParserModules/Libxml2/XMLParser.cpp b/cegui/src/XMLParserModules/Libxml2/XMLParser.cpp
+index 74a3dbddd..a408f9305 100644
+--- a/cegui/src/XMLParserModules/Libxml2/XMLParser.cpp
++++ b/cegui/src/XMLParserModules/Libxml2/XMLParser.cpp
+@@ -109,7 +109,11 @@ void LibxmlParser::parseXML(XMLHandler& handler,
+ 
+     if (!doc)
+     {
++#if LIBXML_VERSION >= 21200
++        const xmlError* err = xmlGetLastError();
++#else
+         xmlError* err = xmlGetLastError();
++#endif
+ 
+         throw GenericException(
+             String("xmlParseMemory failed in file: '") +
