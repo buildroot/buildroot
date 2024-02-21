@@ -200,13 +200,13 @@ class TestCheckPackage(unittest.TestCase):
                            self.WITH_UTILS_IN_PATH, abs_path)
         self.assert_file_was_processed(m)
         self.assert_warnings_generated_for_file(m)
-        self.assertIn("{}:1: should be 80 hashes (http://nightly.buildroot.org/#writing-rules-mk)".format(rel_file), w)
+        self.assertIn("{}:1: should be 80 hashes (https://nightly.buildroot.org/#writing-rules-mk)".format(rel_file), w)
 
         w, m = call_script(["check-package", "-b", abs_file],
                            self.WITH_UTILS_IN_PATH, infra.basepath())
         self.assert_file_was_processed(m)
         self.assert_warnings_generated_for_file(m)
-        self.assertIn("{}:1: should be 80 hashes (http://nightly.buildroot.org/#writing-rules-mk)".format(abs_file), w)
+        self.assertIn("{}:1: should be 80 hashes (https://nightly.buildroot.org/#writing-rules-mk)".format(abs_file), w)
 
         # br2-external with ignore list
         topdir_path = infra.filepath("tests/utils/br2-external")
