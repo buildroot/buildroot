@@ -1,4 +1,4 @@
-From f478c8d19d259272294f8502239dfe3fee9fb7e7 Mon Sep 17 00:00:00 2001
+From 3edeed879871a10acbe802f4a68cff3d4869dbde Mon Sep 17 00:00:00 2001
 From: Romain Naour <romain.naour@gmail.com>
 Date: Thu, 12 Nov 2020 00:16:18 +0100
 Subject: [PATCH] lib/crypt: uClibc-ng doesn't set errno when encryption method
@@ -23,7 +23,7 @@ Signed-off-by: Daniel Lang <d.lang@abatec.at>
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/Lib/crypt.py b/Lib/crypt.py
-index de4a14a3884..ba482487a7a 100644
+index de4a14a388..ba482487a7 100644
 --- a/Lib/crypt.py
 +++ b/Lib/crypt.py
 @@ -98,7 +98,9 @@ def _add_method(name, *args, rounds=None):
@@ -38,5 +38,5 @@ index de4a14a3884..ba482487a7a 100644
          raise
      if result and len(result) == method.total_size:
 -- 
-2.43.0
+2.34.1
 

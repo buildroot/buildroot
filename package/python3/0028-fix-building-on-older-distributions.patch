@@ -1,4 +1,4 @@
-From 56d4b5976a5ba57ccbb2e00c7bdfaa3a57384224 Mon Sep 17 00:00:00 2001
+From e52e2c5e3df4bc3d2ff07ecb3b8e2a9099ea1631 Mon Sep 17 00:00:00 2001
 From: Adam Duskett <aduskett@gmail.com>
 Date: Thu, 16 Aug 2018 14:52:37 -0700
 Subject: [PATCH] fix building on older distributions
@@ -16,16 +16,14 @@ This change fixes building on older systems such as CentOS7, that only come
 with python 2.
 
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
-[ Adam Duskett: ported to Python 3.12.1 ]
-Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
 ---
- Tools/build/update_file.py | 4 ++--
+ Tools/scripts/update_file.py | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Tools/build/update_file.py b/Tools/build/update_file.py
-index b4182c1d0cb..ab443cb1a60 100644
---- a/Tools/build/update_file.py
-+++ b/Tools/build/update_file.py
+diff --git a/Tools/scripts/update_file.py b/Tools/scripts/update_file.py
+index b4182c1d0c..ab443cb1a6 100644
+--- a/Tools/scripts/update_file.py
++++ b/Tools/scripts/update_file.py
 @@ -53,7 +53,7 @@ def update_file_with_tmpfile(filename, tmpfile, *, create=False):
          if not create:
              raise  # re-raise
@@ -45,5 +43,5 @@ index b4182c1d0cb..ab443cb1a60 100644
              outcome = 'same'
              os.unlink(tmpfile)
 -- 
-2.43.0
+2.34.1
 

@@ -1,4 +1,4 @@
-From 5996962c00f263612e1b1f70654cee5f227267a5 Mon Sep 17 00:00:00 2001
+From 07b950aadd570b9f96a1f128505a959b32f40962 Mon Sep 17 00:00:00 2001
 From: Peter Korsgaard <peter@korsgaard.com>
 Date: Fri, 2 Aug 2019 15:53:16 +0200
 Subject: [PATCH] configure.ac: fixup $CC --print-multiarch output for
@@ -30,10 +30,10 @@ Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index 1c902de8af3..06df165ccc8 100644
+index ed03b27fb1..841fd6732c 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1128,7 +1128,11 @@ AC_MSG_CHECKING([for multiarch])
+@@ -1086,7 +1086,11 @@ AC_MSG_CHECKING([for multiarch])
  AS_CASE([$ac_sys_system],
    [Darwin*], [MULTIARCH=""],
    [FreeBSD*], [MULTIARCH=""],
@@ -47,5 +47,5 @@ index 1c902de8af3..06df165ccc8 100644
  AC_SUBST([MULTIARCH])
  AC_MSG_RESULT([$MULTIARCH])
 -- 
-2.43.0
+2.34.1
 

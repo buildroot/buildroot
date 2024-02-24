@@ -1,0 +1,77 @@
+From bbbfe699d648a5cb191203b16e1786e8cf4ea908 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Date: Wed, 22 Feb 2017 17:23:42 -0800
+Subject: [PATCH] Add an option to disable the tk module
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: Samuel Martin <s.martin49@gmail.com>
+[ Andrey Smirnov: ported to Python 3.6 ]
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+[ Adam Duskett: ported to Python 3.10.0 ]
+Signed-off-by: Adam Duskett <aduskett@gmail.com>
+[ Bernd Kuhls: ported to Python 3.11.4]
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ Makefile.pre.in | 10 +++++++---
+ configure.ac    |  9 +++++++++
+ 2 files changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/Makefile.pre.in b/Makefile.pre.in
+index 9f4cdf14cf..4f83911200 100644
+--- a/Makefile.pre.in
++++ b/Makefile.pre.in
+@@ -1920,7 +1920,6 @@ LIBSUBDIRS=	asyncio \
+ 		multiprocessing multiprocessing/dummy \
+ 		re \
+ 		site-packages \
+-		tkinter \
+ 		tomllib \
+ 		turtledemo \
+ 		unittest \
+@@ -2038,9 +2038,6 @@
+ 		test/xmltestdata \
+ 		test/xmltestdata/c14n-20 \
+ 		test/ziptestdata \
+-		tkinter/test \
+-		tkinter/test/test_tkinter \
+-		tkinter/test/test_ttk \
+ 		unittest/test \
+ 		unittest/test/testmock
+ ifeq (@PYDOC@,yes)
+@@ -2021,6 +2018,13 @@ ifeq (@SQLITE3@,yes)
+ LIBSUBDIRS += sqlite3
+ endif
+ 
++ifeq (@TK@,yes)
++LIBSUBDIRS += tkinter
++TESTSUBDIRS += tkinter/test tkinter/test/test_tkinter \
++	tkinter/test/test_ttk
++endif
++
++
+ TEST_MODULES=@TEST_MODULES@
+ libinstall:	all $(srcdir)/Modules/xxmodule.c
+ 	@for i in $(SCRIPTDIR) $(LIBDEST); \
+diff --git a/configure.ac b/configure.ac
+index 4cc0951ab9..f4ce506801 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -4180,6 +4180,15 @@ if test "$SQLITE3" = "no" ; then
+    DISABLED_EXTENSIONS="${DISABLED_EXTENSIONS} _sqlite3"
+ fi
+ 
++AC_SUBST(TK)
++AC_ARG_ENABLE(tk,
++	AS_HELP_STRING([--disable-tk], [disable tk]),
++	[ TK="${enableval}" ], [ TK=yes ])
++
++if test "$TK" = "no"; then
++   DISABLED_EXTENSIONS="${DISABLED_EXTENSIONS} _tkinter"
++fi
++
+ AC_SUBST(PYDOC)
+ 
+ AC_ARG_ENABLE(pydoc,
+-- 
+2.34.1
+
