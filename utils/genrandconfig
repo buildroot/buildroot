@@ -315,9 +315,9 @@ def fixup_config(sysinfo, configfile):
        'BR2_TOOLCHAIN_BUILDROOT=y' in configlines:
         return False
 
-    if 'BR2_TOOLCHAIN_BARE_METAL_BUILDROOT=y' in configlines:
-        configlines.remove('BR2_TOOLCHAIN_BARE_METAL_BUILDROOT_ARCH=""')
-        configlines.add('BR2_TOOLCHAIN_BARE_METAL_BUILDROOT_ARCH="microblazeel-xilinx-elf"')
+    if 'BR2_TOOLCHAIN_BARE_METAL_BUILDROOT=y\n' in configlines:
+        configlines.remove('BR2_TOOLCHAIN_BARE_METAL_BUILDROOT_ARCH=""\n')
+        configlines.append('BR2_TOOLCHAIN_BARE_METAL_BUILDROOT_ARCH="microblazeel-xilinx-elf"\n')
 
     if 'BR2_PACKAGE_AUFS_UTIL=y\n' in configlines and \
        'BR2_PACKAGE_AUFS_UTIL_VERSION=""\n' in configlines:
