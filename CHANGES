@@ -1,3 +1,62 @@
+2024.02-rc1, released February 25th, 2024
+
+	Fixes all over the tree and new features.
+
+	Toolchain:
+
+	- GDB: Add version 14.1, default to 13.2.
+
+	- uClibc-ng updated to 1.0.45
+
+	- Bootlin external toolchains updated to 2023.11-1, moving the
+          stable toolchains to GCC 12.3 / binutils 2.40 / GDB 13.2 /
+          glibc 2.38 / musl 1.2.4 / uClibc-ng 1.0.45
+
+	- Add support for building a bare metal toolchain suitable for
+	  building firmware for certain (co-)processors, possibly
+	  using a different CPU architecture than the main Buildroot
+	  configuration.
+
+	Default optimization level changed from optimize for size
+        (-Os) to optimize for speed (-O2).
+
+	Support: Use the Fraunhofer FKIE JSON files for CVE matching
+	now that NVD is about to deprecate its feeds.
+
+	New defconfigs: AMD Zynqmp kria kd240 and kr260, zcu104, Avnet
+	RZBoard V2L, Mangopi MQ1RDW2, NXP i.MX 93 11x11 EVK, QEMU
+	Riscv64 virt-efi, TI AM574x Industrial Development Kit
+
+	Removed defconfigs: Zynq qmtech
+
+	New packages: binutils-bare-metal, dmenu-wayland, fcft, foot,
+	firmware-ele-imx, ivi-homescreen, libjwt, libtraceevent,
+	libtracefs, libutempter, lua-ansicolors, lua-argparse,
+	lua-conciseserialization, lua-ubjson, minisign,
+	newlib-bare-metal, python-aiosqlite, python-annotated-types,
+	python-anyio, python-asyncssh, python-bitarray,
+	python-cachetools, python-contourpy, python-decouple,
+	python-fastapi-sessions, python-fastapi,
+	python-google-api-core, python-google-auth,
+	python-googleapis-common-protos, python-grpc-requests,
+	python-grpcio-reflection, python-grpcio, python-httpcore,
+	python-httpx, python-matplotlib-inline, python-ml-dtypes,
+	python-multipart, python-pydantic-core, python-pypng,
+	python-starlette, python-tcolorpy, python-trafaret,
+	python-urwid-readline, python-uvicorn, rlwrap, tllist
+
+	Removed packages: davinci-bootcount (renamed to
+	uboot-bootcount), flickcurl, gmpc, libmpd, micropython-lib,
+	python-crossbar, python-pygame, tinymembench
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#10096: SH4 toolchain does not build Linux kernel magicpanelr2_..
+	#15889: please update meson
+	#15898: Unable to boot syslinux.efi produced by buildroot (EFI 64-..
+	#15910: USB keyboard is not working by default "raspberrypicm4io_..
+	#15952: Grub fails to load large rootfs files
+
 2023.11.1, released January 15th, 2024
 
 	Important / security related fixes.
