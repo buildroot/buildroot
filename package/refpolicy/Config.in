@@ -36,6 +36,13 @@ choice
 
 config BR2_PACKAGE_REFPOLICY_UPSTREAM_VERSION
 	bool "Upstream version"
+	# Consider reworking the following when adding new entries:
+	# Upstream refpolicy for openssh expects linux-pam to be used
+	select BR2_PACKAGE_LINUX_PAM if BR2_PACKAGE_OPENSSH \
+		&& BR2_USE_MMU \
+		&& BR2_ENABLE_LOCALE \
+		&& BR2_USE_WCHAR \
+		&& !BR2_STATIC_LIBS
 	help
 	  Use the refpolicy as provided by Buildroot.
 
