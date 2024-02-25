@@ -1055,9 +1055,9 @@ def dump_html_pkg(f, pkg):
         f.write(f' <div onclick="expandField(\'{data_field_id}\')" \
         class="see-more centered cve_ignored">see all ({cve_total}) &#9662;</div>\n')
     if pkg.is_status_error("cve"):
-        for cve in pkg.cves:
+        for cve in cvecheck.CVE.sort_id(pkg.cves):
             f.write(f'   <a href="https://security-tracker.debian.org/tracker/{cve}">{cve}</a><br/>\n')
-        for cve in pkg.unsure_cves:
+        for cve in cvecheck.CVE.sort_id(pkg.unsure_cves):
             f.write(f'   <a href="https://security-tracker.debian.org/tracker/{cve}">{cve} <i>(unsure)</i></a><br/>\n')
     elif pkg.is_status_na("cve"):
         f.write(f"""    {pkg.status['cve'][1]}""")

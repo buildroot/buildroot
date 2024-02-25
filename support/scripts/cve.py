@@ -117,6 +117,13 @@ class CVE:
         open(path_metaf, "w").write(page_meta.text)
         return path_jsonf_xz
 
+    @staticmethod
+    def sort_id(cve_ids):
+        def cve_key(cve_id):
+            year, id_ = cve_id.split('-')[1:]
+            return (int(year), int(id_))
+        return sorted(cve_ids, key=cve_key)
+
     @classmethod
     def read_nvd_dir(cls, nvd_dir):
         """
