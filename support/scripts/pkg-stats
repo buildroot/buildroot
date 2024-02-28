@@ -1290,7 +1290,7 @@ def __main__():
         package_list = set([v["name"] for v in show_info_js.values() if 'name' in v])
     else:
         package_list = None
-    date = datetime.datetime.now(datetime.UTC)
+    date = datetime.datetime.now(datetime.timezone.utc)
     commit = subprocess.check_output(['git', '-C', brpath,
                                       'rev-parse',
                                       'HEAD']).splitlines()[0].decode()
