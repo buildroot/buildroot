@@ -1,0 +1,47 @@
+From 33eb948240365434c845b618854403e82a229012 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 31 Jan 2024 21:04:37 +0100
+Subject: [PATCH] libheif/plugins/encoder_jpeg.cc: fix libjpeg build
+
+Fix the following libjpeg build failure raised since version 1.17.0 and
+https://github.com/strukturag/libheif/commit/ebd13a20b8b7f1964939642b08b662ef7e483f39
+because third argument of jpeg_mem_dest is defined as size_t* on libjpeg
+instead of unsigned long* on jpeg-turbo:
+
+/home/buildroot/autobuild/instance-3/output-1/build/libheif-1.17.5/libheif/plugins/encoder_jpeg.cc: In function 'heif_error jpeg_encode_image(void*, const heif_image*, heif_image_input_class)':
+/home/buildroot/autobuild/instance-3/output-1/build/libheif-1.17.5/libheif/plugins/encoder_jpeg.cc:366:37: error: invalid conversion from 'long unsigned int*' to 'size_t*' {aka 'unsigned int*'} [-fpermissive]
+  366 |   jpeg_mem_dest(&cinfo, &outbuffer, &outlength);
+      |                                     ^~~~~~~~~~
+      |                                     |
+      |                                     long unsigned int*
+
+Fix #1008 and #1086
+
+Fixes:
+ - http://autobuild.buildroot.org/results/8ca909564c8dabe28ad08c96ebbc04b25592e727
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/strukturag/libheif/pull/1120
+---
+ libheif/plugins/encoder_jpeg.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/libheif/plugins/encoder_jpeg.cc b/libheif/plugins/encoder_jpeg.cc
+index d6c7854..21a5541 100644
+--- a/libheif/plugins/encoder_jpeg.cc
++++ b/libheif/plugins/encoder_jpeg.cc
+@@ -360,7 +360,11 @@ struct heif_error jpeg_encode_image(void* encoder_raw, const struct heif_image*
+   }
+ 
+   uint8_t* outbuffer = nullptr;
++#ifdef LIBJPEG_TURBO_VERSION
+   unsigned long outlength = 0;
++#else
++  size_t outlength = 0;
++#endif
+ 
+   jpeg_create_compress(&cinfo);
+   jpeg_mem_dest(&cinfo, &outbuffer, &outlength);
+-- 
+2.43.0
+
