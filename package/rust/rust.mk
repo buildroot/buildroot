@@ -65,6 +65,7 @@ define HOST_RUST_CONFIGURE_CMDS
 		echo 'cc = "$(TARGET_CROSS)gcc"'; \
 		echo '[llvm]'; \
 		echo 'ninja = false'; \
+		echo 'ldflags = "$(HOST_LDFLAGS)"'; \
 	) > $(@D)/config.toml
 endef
 
