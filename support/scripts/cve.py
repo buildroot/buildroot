@@ -21,8 +21,8 @@ import datetime
 import os
 import requests  # URL checking
 import distutils.version
+import lzma
 import time
-import subprocess
 import sys
 import operator
 
@@ -134,8 +134,7 @@ class CVE:
         for year in range(NVD_START_YEAR, datetime.datetime.now().year + 1):
             filename = CVE.download_nvd_year(nvd_dir, year)
             try:
-                uncompressed = subprocess.check_output(["xz", "-d", "-c", filename])
-                content = ijson.items(uncompressed, 'cve_items.item')
+                content = ijson.items(lzma.LZMAFile(filename), 'cve_items.item')
             except:  # noqa: E722
                 print("ERROR: cannot read %s. Please remove the file then rerun this script" % filename)
                 raise
