@@ -20,6 +20,7 @@ HOST_RUST_DEPENDENCIES = \
 	host-python3 \
 	host-rust-bin \
 	host-openssl \
+	host-zlib \
 	$(BR2_CMAKE_HOST_DEPENDENCY)
 
 HOST_RUST_VERBOSITY = $(if $(VERBOSE),2,0)
