@@ -1,8 +1,8 @@
 config BR2_PACKAGE_NGINX_NAXSI
 	bool "nginx-naxsi"
 	depends on BR2_PACKAGE_NGINX_HTTP
-	# uses pcre, so nginx needs to be built with pcre support
-	select BR2_PACKAGE_PCRE
+	# uses pcre2, so nginx needs to be built with pcre2 support
+	select BR2_PACKAGE_PCRE2
 	help
 	  NAXSI means Nginx Anti XSS & SQL Injection.
 
