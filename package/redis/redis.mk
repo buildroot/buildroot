@@ -30,7 +30,7 @@ endif
 # https://github.com/antirez/redis/pull/609).  We set PREFIX
 # instead.
 REDIS_BUILDOPTS = $(TARGET_CONFIGURE_OPTS) \
-	PREFIX=$(TARGET_DIR)/usr MALLOC=libc
+	PREFIX=$(TARGET_DIR)/usr MALLOC=libc WARNINGS=
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 REDIS_DEPENDENCIES += systemd
