@@ -1,0 +1,24 @@
+From c804982d1b24c6533118b3068d2cfdca685076f3 Mon Sep 17 00:00:00 2001
+From: Aleksey Kravchenko <rhash.admin@gmail.com>
+Date: Mon, 7 Aug 2023 01:00:37 +0300
+Subject: [PATCH] Fix #243: Incorrect assigment in the configure script
+
+Upstream: https://github.com/rhash/RHash/commit/c804982d1b24c6533118b3068d2cfdca685076f3
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ configure | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure b/configure
+index 39ef8c1..63cbd8d 100755
+--- a/configure
++++ b/configure
+@@ -877,7 +877,7 @@ if test "$OPT_STATIC" = "no"; then
+   RHASH_TEST_OPTIONS=--shared
+   test "$INSTALL_LIB_SHARED" = "auto" && INSTALL_LIB_SHARED=yes
+   test "$INSTALL_LIB_STATIC" = "yes"  && RHASH_BUILD_TARGETS="$RHASH_BUILD_TARGETS \$(LIBRHASH_STATIC)"
+-  RHASH_LDFLAGS=$RHASH_LDFLAGS $GETTEXT_LDFLAGS
++  RHASH_LDFLAGS=$(join_params $RHASH_LDFLAGS $GETTEXT_LDFLAGS)
+ else
+   LIBRHASH_TYPE=static
+   LIBRHASH_PATH="\$(LIBRHASH_STATIC)"
