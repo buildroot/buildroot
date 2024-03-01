@@ -1,0 +1,60 @@
+From 0a847ca035113540ee44d17f364bf4701fe78355 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 1 Mar 2024 22:31:05 +0100
+Subject: [PATCH] agent/tcf/services/tcf_elf.c: fix x86 build
+
+Fix the following x86 build failure raised since version 1.8.0 and
+https://gitlab.eclipse.org/eclipse/tcf/tcf.agent/-/commit/8df5540c53b862d516ac25f908c2fff4a547b4a6:
+
+/home/buildroot/autobuild/run/instance-1/output-1/build/tcf-agent-1.8.0/agent/tcf/services/tcf_elf.c: In function 'unpack_elf_symbol_info':
+/home/buildroot/autobuild/run/instance-1/output-1/build/tcf-agent-1.8.0/agent/tcf/services/tcf_elf.c:2079:27: error: 'STT_ARM_16BIT' undeclared (first use in this function)
+ 2079 |         if (info->type == STT_ARM_16BIT) {
+      |                           ^~~~~~~~~~~~~
+/home/buildroot/autobuild/run/instance-1/output-1/build/tcf-agent-1.8.0/agent/tcf/services/tcf_elf.c:2079:27: note: each undeclared identifier is reported only once for each function it appears in
+/home/buildroot/autobuild/run/instance-1/output-1/build/tcf-agent-1.8.0/agent/tcf/services/tcf_elf.c: In function 'create_symbol_addr_search_index':
+/home/buildroot/autobuild/run/instance-1/output-1/build/tcf-agent-1.8.0/agent/tcf/services/tcf_elf.c:2228:78: error: 'STT_ARM_16BIT' undeclared (first use in this function)
+ 2228 |                     if (type == STT_FUNC || type == STT_ARM_TFUNC || type == STT_ARM_16BIT) {
+      |                                                                              ^~~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/8388acf59689ed7e621bdf158483e3df1cf9bef7
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://gitlab.eclipse.org/eclipse/tcf/tcf.agent/-/merge_requests/1
+---
+ agent/tcf/services/tcf_elf.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/agent/tcf/services/tcf_elf.c b/agent/tcf/services/tcf_elf.c
+index 1b3900ec..b0b948e4 100644
+--- a/agent/tcf/services/tcf_elf.c
++++ b/agent/tcf/services/tcf_elf.c
+@@ -2076,10 +2076,12 @@ void unpack_elf_symbol_info(ELF_Section * sym_sec, U4_T index, ELF_SymbolInfo *
+     }
+ 
+     if (file->machine == EM_ARM) {
++#ifdef STT_ARM_16BIT
+         if (info->type == STT_ARM_16BIT) {
+             info->type = STT_OBJECT;
+             info->type16bit = 1;
+         }
++#endif
+         if (info->type == STT_ARM_TFUNC) {
+             info->type = STT_FUNC;
+             info->type16bit = 1;
+@@ -2225,7 +2227,11 @@ static void create_symbol_addr_search_index(ELF_Section * sec) {
+                 }
+                 add = add && type != STT_GNU_IFUNC;
+                 if (add && file->machine == EM_ARM) {
+-                    if (type == STT_FUNC || type == STT_ARM_TFUNC || type == STT_ARM_16BIT) {
++                    if (type == STT_FUNC || type == STT_ARM_TFUNC
++#ifdef STT_ARM_16BIT
++                     || type == STT_ARM_16BIT
++#endif
++                     ) {
+                         addr = addr & ~(U8_T)1;
+                     }
+                 }
+-- 
+2.43.0
+
