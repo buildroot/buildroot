@@ -15,6 +15,9 @@ LIBCOAP_CONF_OPTS = \
 	--disable-examples --disable-examples-source --without-tinydtls
 LIBCOAP_AUTORECONF = YES
 
+# 0001-coap_oscore-c-Fix-parsing-OSCORE-configuration-information.patch
+LIBCOAP_IGNORE_CVES += CVE-2024-0962
+
 ifeq ($(BR2_PACKAGE_GNUTLS),y)
 LIBCOAP_DEPENDENCIES += gnutls
 LIBCOAP_CONF_OPTS += \

@@ -1,0 +1,38 @@
+From 2b28d8b0e9607e71a145345b4fe49517e052b7d9 Mon Sep 17 00:00:00 2001
+From: Jon Shallow <supjps-libcoap@jpshallow.com>
+Date: Thu, 25 Jan 2024 18:03:17 +0000
+Subject: [PATCH] coap_oscore.c: Fix parsing OSCORE configuration information
+
+Upstream: https://github.com/obgm/libcoap/commit/2b28d8b0e9607e71a145345b4fe49517e052b7d9
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/coap_oscore.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/src/coap_oscore.c b/src/coap_oscore.c
+index 83f785c92..e0fb22947 100644
+--- a/src/coap_oscore.c
++++ b/src/coap_oscore.c
+@@ -1678,11 +1678,12 @@ get_split_entry(const char **start,
+                 oscore_value_t *value) {
+   const char *begin = *start;
+   const char *end;
++  const char *kend;
+   const char *split;
+   size_t i;
+ 
+ retry:
+-  end = memchr(begin, '\n', size);
++  kend = end = memchr(begin, '\n', size);
+   if (end == NULL)
+     return 0;
+ 
+@@ -1693,7 +1694,7 @@ get_split_entry(const char **start,
+ 
+   if (begin[0] == '#' || (end - begin) == 0) {
+     /* Skip comment / blank line */
+-    size -= end - begin + 1;
++    size -= kend - begin + 1;
+     begin = *start;
+     goto retry;
+   }
