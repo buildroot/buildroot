@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2024.05"
 
+config BR2_TARGET_TI_K3_IMAGE_GEN
+	bool "ti-k3-image-gen removed"
+	select BR2_LEGACY
+	help
+	  ti-k3-image-gen tool  has been removed and replaced by
+	  U-Boot binman tool (requires U-boot >= 2023.10).
+
 config BR2_TARGET_UBOOT_NEEDS_TI_K3_DM
 	bool "u-boot TI K3 DM option has been renamed."
 	select BR2_LEGACY
