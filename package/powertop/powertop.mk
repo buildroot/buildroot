@@ -17,11 +17,12 @@ POWERTOP_DEPENDENCIES = \
 	$(if $(BR2_PACKAGE_PCIUTILS),pciutils) \
 	$(TARGET_NLS_DEPENDENCIES)
 
-POWERTOP_CONF_ENV = LIBS=$(TARGET_NLS_LIBS)
 # 0001-add-disable-stack-protector-option.patch
-POWERTOP_AUTORECONF = YES
 POWERTOP_AUTOPOINT = YES
+POWERTOP_AUTORECONF = YES
 POWERTOP_AUTORECONF_OPTS = --include=$(HOST_DIR)/share/autoconf-archive
+
+POWERTOP_CONF_ENV = LIBS=$(TARGET_NLS_LIBS)
 POWERTOP_CONF_OPTS = --disable-stack-protector
 
 # fix missing config.rpath (needed for autoreconf) in the codebase
