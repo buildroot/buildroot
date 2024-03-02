@@ -70,7 +70,8 @@ define HOST_RUST_CONFIGURE_CMDS
 endef
 
 define HOST_RUST_BUILD_CMDS
-	cd $(@D); $(HOST_MAKE_ENV) $(HOST_DIR)/bin/python$(PYTHON3_VERSION_MAJOR) x.py build
+	cd $(@D); $(HOST_MAKE_ENV) $(HOST_PKG_CARGO_ENV) \
+		$(HOST_DIR)/bin/python$(PYTHON3_VERSION_MAJOR) x.py build
 endef
 
 HOST_RUST_INSTALL_OPTS = \
