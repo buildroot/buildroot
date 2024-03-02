@@ -1,0 +1,11 @@
+config BR2_PACKAGE_ZOXIDE
+	bool "zoxide"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_RUSTC
+	help
+	  zoxide is a smarter cd command, inspired by z and autojump.
+	  It remembers which directories you use most frequently, so
+	  you can "jump" to them in just a few keystrokes.
+	  zoxide works on all major shells.
+
+	  https://github.com/ajeetdsouza/zoxide.git
