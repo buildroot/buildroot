@@ -29,12 +29,13 @@ config BR2_PACKAGE_LIBBLOCKDEV_CRYPTO
 config BR2_PACKAGE_LIBBLOCKDEV_FS
 	bool "filesystem"
 	depends on BR2_ENABLE_LOCALE # parted
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # parted
 	select BR2_PACKAGE_UTIL_LINUX
 	select BR2_PACKAGE_UTIL_LINUX_LIBMOUNT
 	select BR2_PACKAGE_PARTED
 
-comment "filesystem plugin needs a toolchain w/ locale"
-	depends on !BR2_ENABLE_LOCALE
+comment "filesystem plugin needs a toolchain w/ locale, gcc >= 5"
+	depends on !BR2_ENABLE_LOCALE || !BR2_TOOLCHAIN_GCC_AT_LEAST_5
 
 config BR2_PACKAGE_LIBBLOCKDEV_LOOP
 	bool "loop"
@@ -42,11 +43,12 @@ config BR2_PACKAGE_LIBBLOCKDEV_LOOP
 config BR2_PACKAGE_LIBBLOCKDEV_LVM2
 	bool "lvm2"
 	depends on BR2_ENABLE_LOCALE # parted
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # parted
 	select BR2_PACKAGE_PARTED
 	select BR2_PACKAGE_LVM2
 
-comment "lvm2 support needs a toolchain w/ locale"
-	depends on !BR2_ENABLE_LOCALE
+comment "lvm2 support needs a toolchain w/ locale, gcc >= 5"
+	depends on !BR2_ENABLE_LOCALE || !BR2_TOOLCHAIN_GCC_AT_LEAST_5
 
 config BR2_PACKAGE_LIBBLOCKDEV_MDRAID
 	bool "mdraid"
@@ -55,10 +57,11 @@ config BR2_PACKAGE_LIBBLOCKDEV_MDRAID
 config BR2_PACKAGE_LIBBLOCKDEV_PART
 	bool "part"
 	depends on BR2_ENABLE_LOCALE # parted
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # parted
 	select BR2_PACKAGE_PARTED
 
-comment "part plugin needs a toolchain w/ locale"
-	depends on !BR2_ENABLE_LOCALE
+comment "part plugin needs a toolchain w/ locale, gcc >= 5"
+	depends on !BR2_ENABLE_LOCALE || !BR2_TOOLCHAIN_GCC_AT_LEAST_5
 
 config BR2_PACKAGE_LIBBLOCKDEV_SWAP
 	bool "swap"
