@@ -11,6 +11,7 @@ config BR2_PACKAGE_OPENVMTOOLS
 	depends on BR2_USE_WCHAR # libglib2
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2
 	depends on BR2_ENABLE_LOCALE
+	depends on !BR2_STATIC_LIBS
 	depends on !BR2_TOOLCHAIN_USES_UCLIBC
 	select BR2_PACKAGE_LIBGLIB2
 	select BR2_PACKAGE_LIBDNET
@@ -30,15 +31,11 @@ if BR2_PACKAGE_OPENVMTOOLS
 
 config BR2_PACKAGE_OPENVMTOOLS_PAM
 	bool "PAM support"
-	# linux-pam needs locale and wchar, but we already have this
-	# dependency on the main symbol, above.
-	depends on !BR2_STATIC_LIBS
+	# linux-pam needs locale, dynamic library and wchar, but we
+	# already have these dependencies on the main symbol, above.
 	select BR2_PACKAGE_LINUX_PAM
 	help
 	  Support for PAM in openvmtools
-
-comment "PAM support needs a toolchain w/ dynamic library"
-	depends on BR2_STATIC_LIBS
 
 config BR2_PACKAGE_OPENVMTOOLS_RESOLUTIONKMS
 	bool "resolutionkms support"
@@ -56,9 +53,9 @@ comment "resolutionkms needs udev, a toolchain w/ threads"
 
 endif
 
-comment "openvmtools needs a glibc or musl toolchain w/ wchar, threads, locale"
+comment "openvmtools needs a glibc or musl toolchain w/ wchar, threads, locale, dynamic library"
 	depends on BR2_PACKAGE_OPENVMTOOLS_ARCH_SUPPORTS
 	depends on BR2_USE_MMU
 	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
-		!BR2_ENABLE_LOCALE || \
+		!BR2_ENABLE_LOCALE || BR2_STATIC_LIBS || \
 		BR2_TOOLCHAIN_USES_UCLIBC
