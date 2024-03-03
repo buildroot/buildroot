@@ -29,6 +29,9 @@ config BR2_BINUTILS_VERSION_ARC
 	bool "binutils arc (2.41)"
 	depends on BR2_arc
 
+config BR2_BINUTILS_VERSION_2_42_X
+	bool "binutils 2.42"
+
 endchoice
 
 config BR2_BINUTILS_VERSION
@@ -37,6 +40,7 @@ config BR2_BINUTILS_VERSION
 	default "2.39"		if BR2_BINUTILS_VERSION_2_39_X
 	default "2.40"		if BR2_BINUTILS_VERSION_2_40_X
 	default "2.41"		if BR2_BINUTILS_VERSION_2_41_X
+	default "2.42"		if BR2_BINUTILS_VERSION_2_42_X
 
 config BR2_BINUTILS_GPROFNG
 	bool "gprofng support"
