@@ -5,6 +5,7 @@ config BR2_PACKAGE_FLUENT_BIT
 	depends on !BR2_STATIC_LIBS # dlfcn.h
 	select BR2_PACKAGE_MUSL_FTS if !BR2_TOOLCHAIN_USES_GLIBC
 	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL
 	select BR2_PACKAGE_LIBYAML
 	help
 	  Fast and Lightweight Logs and Metrics processor.
