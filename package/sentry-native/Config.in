@@ -1,7 +1,7 @@
 config BR2_PACKAGE_SENTRY_NATIVE
 	bool "sentry-native"
 	depends on BR2_INSTALL_LIBSTDCPP # google-breakpad
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # google-breakpad
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 # google-breakpad
 	depends on BR2_USE_WCHAR # google-breakpad
 	depends on BR2_TOOLCHAIN_HAS_THREADS # google-breakpad
 	# google-breakpad is restricted to glibc or uClibc, but
@@ -19,10 +19,10 @@ config BR2_PACKAGE_SENTRY_NATIVE
 
 	  https://github.com/getsentry/sentry-native
 
-comment "sentry-native needs a glibc toolchain with w/ wchar, thread, C++, gcc >= 4.8"
+comment "sentry-native needs a glibc toolchain with w/ wchar, threads, C++, gcc >= 7"
 	depends on BR2_PACKAGE_GOOGLE_BREAKPAD_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_HOST_GOOGLE_BREAKPAD_ARCH_SUPPORTS
 	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_USE_WCHAR || \
 		!BR2_TOOLCHAIN_HAS_THREADS || \
 		!BR2_TOOLCHAIN_USES_GLIBC || \
-		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_7
