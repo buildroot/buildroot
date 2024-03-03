@@ -146,6 +146,16 @@ endif
 
 comment "Legacy options removed in 2023.02"
 
+config BR2_PACKAGE_STRONGSWAN_SCEP
+	bool "strongswan SCEP client tool removed"
+	select BR2_LEGACY
+	help
+	  "ipsec scepclient" tool has been removed and replaced by the
+	  pki subcommands "pki --scep" and "pki --scepca" which
+	  implement the new SCEP RFC 8894 standard that was released in
+	  September 2020 and which supports trusted "certificate
+	  renewal" based on the existing client certificate.
+
 config BR2_PACKAGE_PUGIXML_HEADER_ONLY
 	bool "pugixml header-only removed"
 	select BR2_LEGACY
