@@ -28,6 +28,8 @@ Signed-off-by: Matthew Weber <matthew.weber@rockwellcollins.com>
 Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
 [Romain: rebase on 2.38]
 Signed-off-by: Romain Naour <romain.naour@gmail.com>
+[yann.morin.1998@free.fr: rebase for 2.39]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
 ---
  configure | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
@@ -36,7 +38,7 @@ diff --git a/configure b/configure
 index 4ef387146d..4c6f91117d 100755
 --- a/configure
 +++ b/configure
-@@ -5293,7 +5293,7 @@ printf %s "checking version of $LD... " >&6; }
+@@ -5157,7 +5157,7 @@ printf %s "checking version of $LD... " >&6; }
    ac_prog_version=`$LD --version 2>&1 | sed -n 's/^.*GNU ld.* \([0-9][0-9]*\.[0-9.]*\).*$/\1/p'`
    case $ac_prog_version in
      '') ac_prog_version="v. ?.??, bad"; ac_verc_fail=yes;;
@@ -44,16 +46,16 @@ index 4ef387146d..4c6f91117d 100755
 +    2.1[0-9][0-9]*|2.2[4-9]*|2.[3-9][0-9]*|[3-9].*|[1-9][0-9]*)
         ac_prog_version="$ac_prog_version, ok"; ac_verc_fail=no;;
      *) ac_prog_version="$ac_prog_version, bad"; ac_verc_fail=yes;;
- 
-@@ -5735,7 +5735,7 @@ int
+
+@@ -5599,7 +5599,7 @@ int
  main (void)
  {
- 
+
 -#if !defined __GNUC__ || __GNUC__ < 6 || (__GNUC__ == 6 && __GNUC_MINOR__ < 2)
 +#if !defined __GNUC__ || __GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 8)
  #error insufficient compiler
  #endif
    ;
--- 
+--
 2.41.0
 
