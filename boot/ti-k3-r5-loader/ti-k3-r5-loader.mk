@@ -35,11 +35,21 @@ TI_K3_R5_LOADER_LICENSE_FILES = Licenses/gpl-2.0.txt
 TI_K3_R5_LOADER_CPE_ID_VENDOR = denx
 TI_K3_R5_LOADER_CPE_ID_PRODUCT = u-boot
 TI_K3_R5_LOADER_INSTALL_IMAGES = YES
+# https://source.denx.de/u-boot/u-boot/-/blob/v2024.01/tools/binman/binman.rst?plain=1#L377
+# https://source.denx.de/u-boot/u-boot/-/blob/v2024.01/tools/buildman/requirements.txt
+# Make sure that all binman requirements are built before ti-k3-r5-loader.
 TI_K3_R5_LOADER_DEPENDENCIES = \
 	host-pkgconf \
 	$(BR2_MAKE_HOST_DEPENDENCY) \
 	host-arm-gnu-toolchain \
-	host-openssl
+	host-openssl \
+	host-python3 \
+	host-python-jsonschema \
+	host-python-pyelftools \
+	host-python-pylibfdt \
+	host-python-pyyaml \
+	host-python-setuptools \
+	ti-k3-boot-firmware
 
 TI_K3_R5_LOADER_MAKE = $(BR2_MAKE)
 TI_K3_R5_LOADER_MAKE_ENV = $(TARGET_MAKE_ENV)
@@ -58,21 +68,8 @@ TI_K3_R5_LOADER_MAKE_OPTS = \
 	CROSS_COMPILE=$(HOST_DIR)/bin/arm-none-eabi- \
 	ARCH=arm \
 	HOSTCC="$(HOSTCC) $(subst -I/,-isystem /,$(subst -I /,-isystem /,$(HOST_CFLAGS)))" \
-	HOSTLDFLAGS="$(HOST_LDFLAGS)"
-
-ifeq ($(BR2_TARGET_TI_K3_R5_LOADER_USE_BINMAN),y)
-# https://source.denx.de/u-boot/u-boot/-/blob/v2024.01/tools/buildman/requirements.txt
-TI_K3_R5_LOADER_DEPENDENCIES += \
-	host-python-jsonschema \
-	host-python-pyyaml \
-	ti-k3-boot-firmware
-# Make sure that all binman requirements are build before ti-k3-r5-loader.
-TI_K3_R5_LOADER_DEPENDENCIES += \
-	host-python3 \
-	host-python-pyelftools \
-	host-python-pylibfdt \
-	host-python-setuptools
-TI_K3_R5_LOADER_MAKE_OPTS += BINMAN_INDIRS=$(BINARIES_DIR)
+	HOSTLDFLAGS="$(HOST_LDFLAGS)" \
+	BINMAN_INDIRS=$(BINARIES_DIR)
 
 TI_K3_R5_LOADER_TIBOOT3_BIN = $(call qstrip,$(BR2_TARGET_TI_K3_R5_LOADER_TIBOOT3_BIN))
 
@@ -89,8 +86,6 @@ define TI_K3_R5_LOADER_INSTALL_SWSFW_ITB
 		cp $(@D)/$(TI_K3_R5_LOADER_SYSFW_ITB) $(BINARIES_DIR)/sysfw.itb ; \
 	fi
 endef
-
-endif # BR2_TARGET_TI_K3_R5_LOADER_USE_BINMAN
 
 define TI_K3_R5_LOADER_BUILD_CMDS
 	$(TARGET_CONFIGURE_OPTS) $(TI_K3_R5_LOADER_MAKE) -C $(@D) $(TI_K3_R5_LOADER_MAKE_OPTS)

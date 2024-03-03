@@ -1,6 +1,8 @@
 config BR2_TARGET_TI_K3_R5_LOADER
 	bool "ti-k3-r5-loader"
 	depends on BR2_aarch64
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-rpds-py -> python-jsonschema
+	select BR2_TARGET_TI_K3_BOOT_FIRMWARE # binman
 	help
 	  Separate U-Boot SPL build for R5 core on TI's K3 processors.
 	  Usually used to build tiboot3.bin with k3-image-gen.
@@ -92,15 +94,6 @@ config BR2_TARGET_TI_K3_R5_LOADER_CUSTOM_CONFIG_FILE
 	depends on BR2_TARGET_TI_K3_R5_LOADER_USE_CUSTOM_CONFIG
 	help
 	  Path to the TI K3 R5 Loader configuration file.
-
-config BR2_TARGET_TI_K3_R5_LOADER_USE_BINMAN
-	bool "ti-k3-r5-loader use binman"
-	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-rpds-py -> python-jsonschema
-	select BR2_TARGET_TI_K3_BOOT_FIRMWARE
-	help
-	  Use binman tool for generation and signing of boot images.
-
-	  https://docs.u-boot.org/en/v2024.01/develop/package/binman.html
 
 config BR2_TARGET_TI_K3_R5_LOADER_TIBOOT3_BIN
 	string "tiboot3.bin binary name"
