@@ -10,7 +10,6 @@ if BR2_PACKAGE_MYSQL
 
 choice
 	prompt "mysql variant"
-	default BR2_PACKAGE_ORACLE_MYSQL
 	help
 	  Select either the oracle mysql server or the mariadb server
 
@@ -39,15 +38,6 @@ comment "mariadb needs a toolchain w/ dynamic library, C++, wchar"
 		|| !BR2_USE_WCHAR
 	depends on BR2_TOOLCHAIN_HAS_ATOMIC || BR2_TOOLCHAIN_HAS_SYNC_8
 
-config BR2_PACKAGE_ORACLE_MYSQL
-	bool "oracle mysql"
-	select BR2_PACKAGE_NCURSES
-	select BR2_PACKAGE_HAS_MYSQL
-	help
-	  The MySQL Open Source Database System
-
-	  http://www.mysql.com/
-
 endchoice
 
 if BR2_PACKAGE_MARIADB
@@ -65,22 +55,12 @@ config BR2_PACKAGE_MARIADB_SERVER_EMBEDDED
 
 endif
 
-if BR2_PACKAGE_ORACLE_MYSQL
-
-config BR2_PACKAGE_ORACLE_MYSQL_SERVER
-	bool "oracle mysql server"
-	help
-	  Install the MySQL server on the target.
-
-endif
-
 config BR2_PACKAGE_HAS_MYSQL
 	bool
 
 config BR2_PACKAGE_PROVIDES_MYSQL
 	string
 	default "mariadb"      if BR2_PACKAGE_MARIADB
-	default "oracle-mysql" if BR2_PACKAGE_ORACLE_MYSQL
 
 endif
 
