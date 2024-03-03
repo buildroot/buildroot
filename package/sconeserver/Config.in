@@ -67,7 +67,7 @@ config BR2_PACKAGE_SCONESERVER_MATHS
 config BR2_PACKAGE_SCONESERVER_MYSQL
 	bool "mysql"
 	depends on BR2_USE_MMU # mysql
-	select BR2_PACKAGE_MYSQL
+	select BR2_PACKAGE_MARIADB
 	help
 	  MySQL module for Sconeserver
 

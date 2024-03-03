@@ -194,7 +194,7 @@ COLLECTD_DEPENDENCIES = \
 	$(if $(BR2_PACKAGE_COLLECTD_MEMCACHEC),libmemcached) \
 	$(if $(BR2_PACKAGE_COLLECTD_MODBUS),libmodbus) \
 	$(if $(BR2_PACKAGE_COLLECTD_MQTT),mosquitto) \
-	$(if $(BR2_PACKAGE_COLLECTD_MYSQL),mysql) \
+	$(if $(BR2_PACKAGE_COLLECTD_MYSQL),mariadb) \
 	$(if $(BR2_PACKAGE_COLLECTD_NETLINK),libmnl) \
 	$(if $(BR2_PACKAGE_COLLECTD_NGINX),libcurl) \
 	$(if $(BR2_PACKAGE_COLLECTD_NOTIFY_EMAIL),libesmtp) \
@@ -224,7 +224,7 @@ endif
 ifeq ($(BR2_PACKAGE_LUAJIT),y)
 COLLECTD_CONF_ENV += LIBLUA_PKG_CONFIG_NAME=luajit
 endif
-ifeq ($(BR2_PACKAGE_MYSQL),y)
+ifeq ($(BR2_PACKAGE_MARIADB),y)
 COLLECTD_CONF_OPTS += --with-libmysql=$(STAGING_DIR)/usr
 endif
 ifeq ($(BR2_PACKAGE_NETSNMP),y)

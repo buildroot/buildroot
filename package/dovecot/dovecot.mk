@@ -83,7 +83,7 @@ endif
 ifeq ($(BR2_PACKAGE_DOVECOT_MYSQL),y)
 DOVECOT_CONF_ENV += MYSQL_CONFIG="$(STAGING_DIR)/usr/bin/mysql_config"
 DOVECOT_CONF_OPTS += --with-mysql
-DOVECOT_DEPENDENCIES += mysql
+DOVECOT_DEPENDENCIES += mariadb
 else
 DOVECOT_CONF_OPTS += --without-mysql
 endif

@@ -23,8 +23,8 @@ else
 MOTION_CONF_OPTS += --without-ffmpeg
 endif
 
-ifeq ($(BR2_PACKAGE_MYSQL),y)
-MOTION_DEPENDENCIES += mysql
+ifeq ($(BR2_PACKAGE_MARIADB),y)
+MOTION_DEPENDENCIES += mariadb
 MOTION_CONF_OPTS += --with-mysql
 else
 MOTION_CONF_OPTS += --without-mysql

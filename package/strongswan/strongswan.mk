@@ -80,7 +80,7 @@ STRONGSWAN_DEPENDENCIES += \
 ifeq ($(BR2_PACKAGE_STRONGSWAN_SQL),y)
 STRONGSWAN_DEPENDENCIES += \
 	$(if $(BR2_PACKAGE_SQLITE),sqlite) \
-	$(if $(BR2_PACKAGE_MYSQL),mysql)
+	$(if $(BR2_PACKAGE_MARIADB),mariadb)
 endif
 
 # disable connmark/forecast until net/if.h vs. linux/if.h conflict resolved

@@ -31,9 +31,9 @@ ifeq ($(BR2_PACKAGE_LIBSODIUM),y)
 PURE_FTPD_DEPENDENCIES += libsodium
 endif
 
-ifeq ($(BR2_PACKAGE_MYSQL),y)
+ifeq ($(BR2_PACKAGE_MARIADB),y)
 PURE_FTPD_CONF_OPTS += --with-mysql=$(STAGING_DIR)/usr
-PURE_FTPD_DEPENDENCIES += mysql
+PURE_FTPD_DEPENDENCIES += mariadb
 else
 PURE_FTPD_CONF_OPTS += --without-mysql
 endif

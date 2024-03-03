@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2024.02"
 
+config BR2_PACKAGE_MYSQL
+	bool "mysql virtual package removed"
+	select BR2_LEGACY
+	help
+	  The mysql virtual package has been removed as mariadb is the
+	  only supported mysql variant. Use the mariadb package
+	  instead.
+
 config BR2_PACKAGE_ORACLE_MYSQL
 	bool "oracle mysql removed"
 	select BR2_LEGACY

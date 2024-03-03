@@ -39,7 +39,7 @@ config BR2_PACKAGE_ZABBIX_SERVER_MYSQL
 	bool "mysql"
 	depends on BR2_INSTALL_LIBSTDCPP # mysql
 	depends on BR2_TOOLCHAIN_HAS_THREADS # mysql
-	select BR2_PACKAGE_MYSQL
+	select BR2_PACKAGE_MARIADB
 
 config BR2_PACKAGE_ZABBIX_SERVER_POSTGRESQL
 	bool "postgresql"

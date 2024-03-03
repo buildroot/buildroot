@@ -140,9 +140,9 @@ else
 FREERADIUS_SERVER_CONF_OPTS += --without-rlm_cache_memcached
 endif
 
-ifeq ($(BR2_PACKAGE_MYSQL),y)
+ifeq ($(BR2_PACKAGE_MARIADB),y)
 FREERADIUS_SERVER_CONF_OPTS += --with-rlm_sql_mysql
-FREERADIUS_SERVER_DEPENDENCIES += mysql
+FREERADIUS_SERVER_DEPENDENCIES += mariadb
 else
 FREERADIUS_SERVER_CONF_OPTS += --without-rlm_sql_mysql
 endif

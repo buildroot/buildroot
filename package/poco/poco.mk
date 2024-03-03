@@ -15,7 +15,7 @@ POCO_DEPENDENCIES = \
 	pcre2 \
 	zlib \
 	$(if $(BR2_PACKAGE_POCO_CRYPTO),openssl) \
-	$(if $(BR2_PACKAGE_POCO_DATA_MYSQL),mysql) \
+	$(if $(BR2_PACKAGE_POCO_DATA_MYSQL),mariadb) \
 	$(if $(BR2_PACKAGE_POCO_DATA_SQLITE),sqlite) \
 	$(if $(BR2_PACKAGE_POCO_DATA_PGSQL),postgresql) \
 	$(if $(BR2_PACKAGE_POCO_NETSSL_OPENSSL),openssl) \

@@ -129,7 +129,7 @@ endif
 ifeq ($(BR2_PACKAGE_QT5BASE_SQL),y)
 ifeq ($(BR2_PACKAGE_QT5BASE_MYSQL),y)
 QT5BASE_CONFIGURE_OPTS += -plugin-sql-mysql -mysql_config $(STAGING_DIR)/usr/bin/mysql_config
-QT5BASE_DEPENDENCIES   += mysql
+QT5BASE_DEPENDENCIES   += mariadb
 else
 QT5BASE_CONFIGURE_OPTS += -no-sql-mysql
 endif

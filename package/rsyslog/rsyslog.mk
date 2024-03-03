@@ -102,8 +102,8 @@ else
 RSYSLOG_CONF_OPTS += --disable-impcap
 endif
 
-ifeq ($(BR2_PACKAGE_MYSQL),y)
-RSYSLOG_DEPENDENCIES += mysql
+ifeq ($(BR2_PACKAGE_MARIADB),y)
+RSYSLOG_DEPENDENCIES += mariadb
 RSYSLOG_CONF_OPTS += --enable-mysql
 RSYSLOG_CONF_ENV += ac_cv_prog_MYSQL_CONFIG=$(STAGING_DIR)/usr/bin/mysql_config
 else

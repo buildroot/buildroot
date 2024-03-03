@@ -73,7 +73,7 @@ LIGHTTPD_CONF_OPTS += -Dwith_maxminddb=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIGHTTPD_MYSQL),y)
-LIGHTTPD_DEPENDENCIES += mysql
+LIGHTTPD_DEPENDENCIES += mariadb
 LIGHTTPD_CONF_OPTS += -Dwith_mysql=enabled
 else
 LIGHTTPD_CONF_OPTS += -Dwith_mysql=disabled
