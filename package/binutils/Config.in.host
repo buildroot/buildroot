@@ -5,9 +5,6 @@ config BR2_PACKAGE_HOST_BINUTILS_SUPPORTS_CFI
 	default y
 	depends on !BR2_microblaze
 
-config BR2_PACKAGE_BINUTILS_HAS_NO_LIBSFRAME
-	bool
-
 choice
 	prompt "Binutils Version"
 	default BR2_BINUTILS_VERSION_2_41_X if !BR2_arc
