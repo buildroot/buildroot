@@ -23,7 +23,7 @@ HOST_ELF2FLT_AUTORECONF = YES
 # considered because Buildroot only supports ARC CPUs with a MMU and
 # therefore host-elf2flt is never used on ARC. libiberty.a has
 # remained at the same location.
-ifeq ($(BR2_BINUTILS_VERSION_2_39_X)$(BR2_BINUTILS_VERSION_2_40_X),y)
+ifeq ($(BR2_BINUTILS_VERSION_2_40_X),y)
 HOST_ELF2FLT_LIBBFD_PATH = $(HOST_BINUTILS_DIR)/bfd/libbfd.a
 else
 HOST_ELF2FLT_LIBBFD_PATH = $(HOST_BINUTILS_DIR)/bfd/.libs/libbfd.a
