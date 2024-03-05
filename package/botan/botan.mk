@@ -48,6 +48,12 @@ else
 BOTAN_CONF_OPTS += --without-stack-protector
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS_NPTL),y)
+BOTAN_CONF_OPTS += --with-os-feature=threads
+else
+BOTAN_CONF_OPTS += --without-os-feature=threads
+endif
+
 ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
 BOTAN_CONF_OPTS += --without-os-feature=explicit_bzero,getauxval,getentropy
 endif
