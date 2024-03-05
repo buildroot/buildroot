@@ -741,6 +741,7 @@ addedCSSRules.forEach(rule => styleSheet.insertRule(rule));
 function sortGrid(sortLabel){
 	let i = 0;
 	let pkgSortArray = [], sortedPkgArray = [], pkgStringSortArray = [], pkgNumSortArray = [];
+	const git_hash_regex = /[a-f,0-9]/gi;
 	const columnValues = Array.from(document.getElementsByClassName(sortLabel));
 	const columnName = document.getElementById(sortLabel);
 	let lastStyle = document.getElementById("sort-css");
@@ -765,7 +766,9 @@ function sortGrid(sortLabel){
                 pkgSortArray.push(sortArr);
         });
         pkgSortArray.forEach((listing) => {
-                if ( isNaN(parseInt(listing[1], 10)) ){
+                if ( listing[1].length >= 39 && listing[1].match(git_hash_regex).length >= 39){
+                        pkgStringSortArray.push(listing);
+		} else if ( isNaN(parseInt(listing[1], 10)) ){
                         pkgStringSortArray.push(listing);
                 } else {
                         listing[1] = parseFloat(listing[1]);
