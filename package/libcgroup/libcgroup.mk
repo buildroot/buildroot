@@ -12,13 +12,6 @@ LIBCGROUP_CPE_ID_VALID = YES
 LIBCGROUP_DEPENDENCIES = host-bison host-flex
 LIBCGROUP_INSTALL_STAGING = YES
 
-# Undefining _FILE_OFFSET_BITS here because of a "bug" with glibc fts.h
-# large file support. See https://bugzilla.redhat.com/show_bug.cgi?id=574992
-# for more information.
-LIBCGROUP_CONF_ENV = \
-	CXXFLAGS="$(TARGET_CXXFLAGS) -U_FILE_OFFSET_BITS" \
-	CFLAGS="$(TARGET_CFLAGS) -U_FILE_OFFSET_BITS"
-
 LIBCGROUP_CONF_OPTS = \
 	--disable-daemon \
 	--disable-initscript-install
