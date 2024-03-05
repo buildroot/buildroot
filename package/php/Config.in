@@ -9,6 +9,7 @@ config BR2_PACKAGE_PHP_ARCH_SUPPORTS
 	default y if BR2_RISCV_64
 	default y if BR2_s390x
 	default y if BR2_TOOLCHAIN_HAS_UCONTEXT
+	default y if BR2_PACKAGE_LIBUCONTEXT_ARCH_SUPPORTS
 
 config BR2_PACKAGE_PHP
 	bool "php"
@@ -25,6 +26,8 @@ config BR2_PACKAGE_PHP
 	       BR2_USE_MMU
 	select BR2_PACKAGE_PHP_SAPI_CLI if !BR2_USE_MMU
 	select BR2_PACKAGE_PCRE2
+	select BR2_PACKAGE_LIBUCONTEXT if \
+		BR2_PACKAGE_LIBUCONTEXT_ARCH_SUPPORTS
 	help
 	  PHP  is a widely-used general-purpose scripting
 	  language that is especially suited for Web development
