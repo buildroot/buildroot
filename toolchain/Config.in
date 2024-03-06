@@ -70,12 +70,6 @@ source "package/gdb/Config.in.host"
 
 comment "Toolchain Generic Options"
 
-# https://sourceware.org/bugzilla/show_bug.cgi?id=27597
-# Affect toolchains built with binutils 2.36.1, still not fixed.
-config BR2_TOOLCHAIN_HAS_BINUTILS_BUG_27597
-	bool
-	default y if BR2_nios2
-
 # https://sourceware.org/bugzilla/show_bug.cgi?id=30730
 # Affect toolchains built with binutils 2.40, still not fixed.
 config BR2_TOOLCHAIN_HAS_BINUTILS_BUG_30730
