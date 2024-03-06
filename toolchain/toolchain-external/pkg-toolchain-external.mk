@@ -13,7 +13,7 @@
 #  * Toolchains provided by Linaro for the ARM and AArch64
 #    architectures
 #  * Sourcery CodeBench toolchains (from Mentor Graphics) for the ARM,
-#    MIPS, PowerPC, x86_64 and NIOS 2 architectures. For the MIPS
+#    MIPS, PowerPC, and x86_64 architectures. For the MIPS
 #    toolchain, the -muclibc variant isn't supported yet, only the
 #    default glibc-based variant is.
 #  * Synopsys DesignWare toolchains for ARC cores
