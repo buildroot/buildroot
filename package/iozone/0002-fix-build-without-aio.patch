@@ -1,0 +1,176 @@
+Fix build without ASYNC_IO
+
+Fix the following build failure without ASYNC_IO:
+
+/home/buildroot/autobuild/run/instance-1/output-1/host/opt/ext-toolchain/bin/../lib/gcc/mipsel-buildroot-linux-uclibc/12.3.0/../../../../mipsel-buildroot-linux-uclibc/bin/ld: iozone_linux-noaio.o: in function `read_perf_test':
+iozone.c:(.text+0x11a74): undefined reference to `end_async'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/31a4f0ac9eeb71df5d2f40ffe9f1f256cb58e399
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: sent to capps@iozone.org
+
+diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/current/iozone.c
+--- iozone3_506.orig/src/current/iozone.c	2024-03-06 12:28:16.734023725 +0100
++++ iozone3_506/src/current/iozone.c	2024-03-06 12:39:14.453991162 +0100
+@@ -9153,6 +9153,7 @@
+ 				}
+ 			  }
+ 			}
++#ifdef ASYNC_IO
+ 			if(async_flag)
+ 			{
+ 				if(no_copy_flag)
+@@ -9160,6 +9161,7 @@
+ 				end_async(gc);
+ 				gc=0;
+ 			}
++#endif
+ 			buffer1=0;
+ 			if(hist_summary)
+ 			{
+@@ -9634,6 +9636,7 @@
+ 				}
+ 			  }
+ 			}
++#ifdef ASYNC_IO
+ 			if(async_flag)
+ 			{
+ 				if(no_copy_flag)
+@@ -9641,6 +9644,7 @@
+ 				end_async(gc);
+ 				gc=0;
+ 			}
++#endif
+ 			if(rlocking)
+ 			{
+ 				lock_offset=I_LSEEK(fd,0,SEEK_CUR);
+@@ -10097,6 +10101,7 @@
+ 				}
+ 			   }
+ 			}
++#ifdef ASYNC_IO
+ 			if(async_flag)
+ 			{
+ 				if(no_copy_flag)
+@@ -10104,6 +10109,7 @@
+ 				end_async(gc);
+ 				gc=0;
+ 			}
++#endif
+ 			if(rlocking)
+ 			{
+ 				mylockr((int) fd, (int) 0, (int)1,
+@@ -10749,6 +10755,7 @@
+ 			   }
+ 			}
+ 		}
++#ifdef ASYNC_IO
+ 		if(async_flag)
+ 		{
+ 			if(no_copy_flag)
+@@ -10756,6 +10763,7 @@
+ 			end_async(gc);
+ 			gc=0;
+ 		}
++#endif
+ 			
+ 		/* This is a bit tricky.  The goal is to read with a stride through
+ 		   the file. The problem is that you need to touch all of the file
+@@ -15485,6 +15493,7 @@
+ 			   }
+ 		   }
+ 		}
++#ifdef ASYNC_IO
+ 		if(async_flag)
+ 		{
+ 			if(no_copy_flag)
+@@ -15492,6 +15501,7 @@
+ 			end_async(gc);
+ 			gc=0;
+ 		}
++#endif
+ 		read_so_far+=reclen/1024;
+ 		r_traj_bytes_completed+=reclen;
+ 		r_traj_ops_completed++;
+@@ -16050,6 +16060,7 @@
+ 			   }
+ 		   }
+ 		}
++#ifdef ASYNC_IO
+ 		if(async_flag)
+ 		{
+ 			if(no_copy_flag)
+@@ -16057,6 +16068,7 @@
+ 			end_async(gc);
+ 			gc=0;
+ 		}
++#endif
+ 		read_so_far+=reclen/1024;
+ 		r_traj_bytes_completed+=reclen;
+ 		r_traj_ops_completed++;
+@@ -16665,6 +16677,7 @@
+ 			}
+ 		   }
+ 		}
++#ifdef ASYNC_IO
+ 		if(async_flag)
+ 		{
+ 			if(no_copy_flag)
+@@ -16672,6 +16685,7 @@
+ 			end_async(gc);
+ 			gc=0;
+ 		}
++#endif
+ 		re_read_so_far+=reclen/1024;
+ 		r_traj_bytes_completed+=reclen;
+ 		r_traj_ops_completed++;
+@@ -17244,6 +17258,7 @@
+ 			  lock_offset, reclen);
+ 		}
+ 		current_position+=reclen;
++#ifdef ASYNC_IO
+ 		if(async_flag)
+ 		{
+ 			if(no_copy_flag)
+@@ -17251,6 +17266,7 @@
+ 			end_async(gc);
+ 			gc=0;
+ 		}
++#endif
+ 		t_offset = (off64_t)reclen*2;
+ 		if (!(h_flag || k_flag || mmapflag))
+ 		{
+@@ -17778,6 +17794,7 @@
+ 			}
+ 		   }
+ 		}
++#ifdef ASYNC_IO
+ 		if(async_flag)
+ 		{
+ 			if(no_copy_flag)
+@@ -17785,6 +17802,7 @@
+ 			end_async(gc);
+ 			gc=0;
+ 		}
++#endif
+ 		if(current_position + (stride * reclen) >= (numrecs64 * reclen)-reclen) 
+ 		{
+ 			current_position=0;
+@@ -18528,6 +18546,7 @@
+ 			}
+ 		   }
+ 		}
++#ifdef ASYNC_IO
+ 		if(async_flag)
+ 		{
+ 			if(no_copy_flag)
+@@ -18535,6 +18554,7 @@
+ 			end_async(gc);
+ 			gc=0;
+ 		}
++#endif
+ 		ranread_so_far+=reclen/1024;
+ 		if(*stop_flag)
+ 		{
