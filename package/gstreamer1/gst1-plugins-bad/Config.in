@@ -746,11 +746,12 @@ config BR2_PACKAGE_GST1_PLUGINS_BAD_ZXING
 	depends on !BR2_STATIC_LIBS # zxing-cpp
 	depends on BR2_USE_WCHAR # zxing-cpp
 	depends on BR2_INSTALL_LIBSTDCPP # zxing-cpp
+	depends on BR2_TOOLCHAIN_HAS_THREADS # zxing-cpp
 	select BR2_PACKAGE_ZXING_CPP
 
-comment "zxing plugin needs a toolchain w/ C++, wchar, dynamic library"
+comment "zxing plugin needs a toolchain w/ C++, wchar, dynamic library, threads"
 	depends on BR2_STATIC_LIBS || !BR2_USE_WCHAR || \
-		!BR2_INSTALL_LIBSTDCPP
+		!BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS
 
 endif
 
