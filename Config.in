@@ -318,8 +318,12 @@ config BR2_JLEVEL
 	  Number of jobs to run simultaneously. If 0, determine
 	  automatically according to number of CPUs on the host system.
 
+comment "ccache needs a host gcc >= 8"
+	depends on !BR2_HOST_GCC_AT_LEAST_8
+
 config BR2_CCACHE
 	bool "Enable compiler cache"
+	depends on BR2_HOST_GCC_AT_LEAST_8
 	help
 	  This option will enable the use of ccache, a compiler cache.
 	  It will cache the result of previous builds to speed up future
