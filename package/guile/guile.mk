@@ -44,11 +44,6 @@ ifeq ($(BR2_STATIC_LIBS),y)
 GUILE_CFLAGS += -DGC_NO_DLOPEN
 endif
 
-# Triggers assembler error with -Os
-ifeq ($(BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_ARM)$(BR2_OPTIMIZE_S),yy)
-GUILE_CFLAGS += -O2
-endif
-
 # jit triggers build failures with gcc < 5
 ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_5),)
 GUILE_CONF_OPTS += --disable-jit
