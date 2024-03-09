@@ -57,7 +57,7 @@ check_one_hash() {
     esac
 
     # Do the hashes match?
-    _hash=$( ${_h}sum "${_file}" |cut -d ' ' -f 1 )
+    _hash="$( "${_h}sum" "${_file}" |cut -d ' ' -f 1 )"
     if [ "${_hash}" = "${_known}" ]; then
         printf "%s: OK (%s: %s)\n" "${base}" "${_h}" "${_hash}"
         return 0
@@ -78,7 +78,8 @@ nb_checks=0
 for h_file in "${h_files[@]}"; do
     [ -f "${h_file}" ] || continue
     : $((nb_h_files++))
-    while read t h f; do
+    # shellcheck disable=SC2094  # we're really reading it only once
+    while read -r t h f; do
         case "${t}" in
             ''|'#'*)
                 # Skip comments and empty lines
@@ -86,6 +87,7 @@ for h_file in "${h_files[@]}"; do
                 ;;
             *)
                 if [ "${f}" = "${base}" ]; then
+                    # shellcheck disable=SC2094  # we're only printing the h_file filename
                     check_one_hash "${t}" "${h}" "${file}" "${h_file}"
                     : $((nb_checks++))
                 fi
@@ -94,11 +96,13 @@ for h_file in "${h_files[@]}"; do
     done <"${h_file}"
 done
 
+# shellcheck disable=SC2086  # nb_h_files is a non-empty int
 if [ ${nb_h_files} -eq 0 ]; then
     printf "WARNING: no hash file for %s\n" "${base}" >&2
     exit 0
 fi
 
+# shellcheck disable=SC2086  # nb_checks is a non-empty int
 if [ ${nb_checks} -eq 0 ]; then
     case " ${BR_NO_CHECK_HASH_FOR} " in
     *" ${base} "*)
