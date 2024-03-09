@@ -409,9 +409,8 @@ main() {
     fi
 
     # Read in all the file in memory, exclude empty lines and comments
-    while read -r line; do
-        ENTRIES+=( "${line}" )
-    done < <( sed -r -e 's/#.*//; /^[[:space:]]*$/d;' "${USERS_TABLE}" )
+    # mapfile reads all lines, even the last one if it is missing a \n
+    mapfile -t ENTRIES < <( sed -r -e 's/#.*//; /^[[:space:]]*$/d;' "${USERS_TABLE}" )
 
     # We first create groups whose gid is positive, and then we create groups
     # whose gid is automatic, so that, if a group is defined both with
