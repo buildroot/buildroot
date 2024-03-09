@@ -324,9 +324,9 @@ add_one_user() {
 
     # Generate a new UID if needed
     if [ ${uid} -eq ${AUTO_USER_ID} ]; then
-        uid="$( generate_uid "${username}" $FIRST_USER_GID $LAST_USER_GID )"
+        uid="$( generate_uid "${username}" $FIRST_USER_UID $LAST_USER_UID )"
     elif [ ${uid} -eq ${AUTO_SYSTEM_ID} ]; then
-        uid="$( generate_uid "${username}" $FIRST_SYSTEM_GID $LAST_SYSTEM_GID )"
+        uid="$( generate_uid "${username}" $FIRST_SYSTEM_UID $LAST_SYSTEM_UID )"
     fi
 
     # Remove any previous instance of this user
