@@ -78,8 +78,10 @@ nb_checks=0
 for h_file in "${h_files[@]}"; do
     [ -f "${h_file}" ] || continue
     : $((nb_h_files++))
-    # shellcheck disable=SC2094  # we're really reading it only once
-    while read -r t h f; do
+    # mapfile reads all lines, even the last one if it is missing a \n
+    mapfile -t hash_lines <"${h_file}"
+    for hash_line in "${hash_lines[@]}"; do
+        read -r t h f <<<"${hash_line}"
         case "${t}" in
             ''|'#'*)
                 # Skip comments and empty lines
@@ -87,13 +89,12 @@ for h_file in "${h_files[@]}"; do
                 ;;
             *)
                 if [ "${f}" = "${base}" ]; then
-                    # shellcheck disable=SC2094  # we're only printing the h_file filename
                     check_one_hash "${t}" "${h}" "${file}" "${h_file}"
                     : $((nb_checks++))
                 fi
                 ;;
         esac
-    done <"${h_file}"
+    done
 done
 
 # shellcheck disable=SC2086  # nb_h_files is a non-empty int
