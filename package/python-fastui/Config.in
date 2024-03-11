@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_FASTUI
+	bool "python-fastui"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-pydantic -> python-pydantic-core
+	select BR2_PACKAGE_PYTHON_EMAIL_VALIDATOR # runtime
+	select BR2_PACKAGE_PYTHON_PYDANTIC # runtime
+	help
+	  Build better UIs faster.
+
+	  https://github.com/pydantic/FastUI
