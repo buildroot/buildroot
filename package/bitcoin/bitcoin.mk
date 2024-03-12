@@ -13,13 +13,26 @@ BITCOIN_CPE_ID_VENDOR = bitcoin
 BITCOIN_CPE_ID_PRODUCT = bitcoin_core
 BITCOIN_DEPENDENCIES = host-pkgconf boost libevent
 BITCOIN_MAKE_ENV = BITCOIN_GENBUILD_NO_GIT=1
+# Berkeley Database (bdb) support is always disabled. It is only
+# needed for legacy wallet format. New wallets are using SQLite.
 BITCOIN_CONF_OPTS = \
 	--disable-bench \
-	--disable-wallet \
 	--disable-tests \
 	--with-boost-libdir=$(STAGING_DIR)/usr/lib/ \
 	--disable-hardening \
+	--without-bdb \
 	--without-gui
+
+ifeq ($(BR2_PACKAGE_BITCOIN_WALLET),y)
+BITCOIN_DEPENDENCIES += sqlite
+BITCOIN_CONF_OPTS += \
+	--enable-wallet \
+	--with-sqlite
+else
+BITCOIN_CONF_OPTS += \
+	--disable-wallet \
+	--without-sqlite
+endif
 
 ifeq ($(BR2_PACKAGE_LIBMINIUPNPC),y)
 BITCOIN_DEPENDENCIES += libminiupnpc
