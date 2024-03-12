@@ -36,6 +36,16 @@ config BR2_PACKAGE_BITCOIN
 
 	  https://bitcoincore.org
 
+if BR2_PACKAGE_BITCOIN
+
+config BR2_PACKAGE_BITCOIN_WALLET
+	bool "wallet support"
+	select BR2_PACKAGE_SQLITE
+	help
+	  Enable bitcoin wallet support.
+
+endif
+
 comment "bitcoin needs a toolchain w/ C++, threads, wchar, gcc >= 9"
 	depends on BR2_PACKAGE_BITCOIN_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_SUPPORTS_ALWAYS_LOCKFREE_ATOMIC_INTS
