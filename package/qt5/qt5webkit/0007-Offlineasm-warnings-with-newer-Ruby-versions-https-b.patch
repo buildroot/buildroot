@@ -1,0 +1,48 @@
+From 47e03d4af292805bf304f09e34333b38a94c1789 Mon Sep 17 00:00:00 2001
+From: "aperez@igalia.com" <aperez@igalia.com>
+Date: Wed, 15 Jan 2020 22:15:38 +0000
+Subject: [PATCH] Offlineasm warnings with newer Ruby versions
+ https://bugs.webkit.org/show_bug.cgi?id=206233
+
+Reviewed by Yusuke Suzuki.
+
+Avoid a warning about using Object#=~ on Annotation instances, which
+has been deprecated in Ruby 2.7.
+
+* offlineasm/parser.rb: Swap checks to prevent applying the =~ operator
+to Annotation instances, which do not define it.
+
+git-svn-id: http://svn.webkit.org/repository/webkit/trunk@254637 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+Upstream: https://github.com/WebKit/WebKit/commit/c7d19a492d97f9282a546831beb918e03315f6ef
+Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+---
+ Source/JavaScriptCore/offlineasm/parser.rb | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Source/JavaScriptCore/offlineasm/parser.rb b/Source/JavaScriptCore/offlineasm/parser.rb
+index b4451124521f..cd1cffaec6ed 100644
+--- a/Source/JavaScriptCore/offlineasm/parser.rb
++++ b/Source/JavaScriptCore/offlineasm/parser.rb
+@@ -584,9 +584,7 @@ class Parser
+         firstCodeOrigin = @tokens[@idx].codeOrigin
+         list = []
+         loop {
+-            if (@idx == @tokens.length and not final) or (final and @tokens[@idx] =~ final)
+-                break
+-            elsif @tokens[@idx].is_a? Annotation
++            if @tokens[@idx].is_a? Annotation
+                 # This is the only place where we can encounter a global
+                 # annotation, and hence need to be able to distinguish between
+                 # them.
+@@ -600,6 +598,8 @@ class Parser
+                 list << Instruction.new(codeOrigin, annotationOpcode, [], @tokens[@idx].string)
+                 @annotation = nil
+                 @idx += 2 # Consume the newline as well.
++            elsif (@idx == @tokens.length and not final) or (final and @tokens[@idx] =~ final)
++                break
+             elsif @tokens[@idx] == "\n"
+                 # ignore
+                 @idx += 1
+-- 
+2.43.1
+
