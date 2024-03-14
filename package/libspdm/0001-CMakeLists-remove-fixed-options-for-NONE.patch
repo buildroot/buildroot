@@ -1,0 +1,52 @@
+From d4d6b138d727e484fa9d0fef476ca181681d0695 Mon Sep 17 00:00:00 2001
+From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+Date: Mon, 19 Feb 2024 09:56:14 +1000
+Subject: [PATCH] CMakeLists: remove fixed options for NONE
+
+The use of the NONE toolchain option is such that we can provide at the
+build project level (buildroot etc...). However, the changes introduced
+in 811f2b596def04b3a36368cf2098546d7907767f set certain compiler/linker
+option that does not comply with the definition of the options as
+specified in [1]. This change removes those options.
+
+[1] https://github.com/DMTF/libspdm/blob/main/doc/build.md#linux-builds-inside-build-environments
+
+Upstream: https://github.com/DMTF/libspdm/commit/d4d6b138d727e484fa9d0fef476ca181681d0695
+Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+---
+ CMakeLists.txt | 19 -------------------
+ 1 file changed, 19 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9c300cc817..f6cf17d269 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -618,25 +618,6 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+         SET(CMAKE_EXE_LINKER_FLAGS "")
+ 
+         SET(CMAKE_C_LINK_EXECUTABLE "")
+-
+-    elseif(TOOLCHAIN STREQUAL "NONE")
+-        ADD_COMPILE_OPTIONS(-fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-array-bounds -ffunction-sections -fdata-sections -fno-common -Wno-address -fpie -fno-asynchronous-unwind-tables -flto -DUSING_LTO  -Wno-maybe-uninitialized -Wno-uninitialized  -Wno-builtin-declaration-mismatch -Wno-nonnull-compare -Werror-implicit-function-declaration)
+-        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+-            ADD_COMPILE_OPTIONS(-g)
+-        endif()
+-        if(GCOV STREQUAL "ON")
+-        ADD_COMPILE_OPTIONS(--coverage -fprofile-arcs -ftest-coverage)
+-        endif()
+-        SET(OPENSSL_FLAGS -include base.h -Wno-error=maybe-uninitialized -Wno-error=format -Wno-format -Wno-error=unused-but-set-variable -Wno-cast-qual -Wno-error=implicit-function-declaration)
+-        SET(CMOCKA_FLAGS -std=gnu99 -Wpedantic -Wall -Wshadow -Wmissing-prototypes -Wcast-align -Werror=address -Wstrict-prototypes -Werror=strict-prototypes -Wwrite-strings -Werror=write-strings -Werror-implicit-function-declaration -Wpointer-arith -Werror=pointer-arith -Wdeclaration-after-statement -Werror=declaration-after-statement -Wreturn-type -Werror=return-type -Wuninitialized -Werror=uninitialized -Werror=strict-overflow -Wstrict-overflow=2 -Wno-format-zero-length -Wmissing-field-initializers -Wformat-security -Werror=format-security -fno-common -Wformat -fno-common -fstack-protector-strong -Wno-cast-qual)
+-
+-        SET(CMAKE_LINKER ${CMAKE_C_COMPILER})
+-        SET(CMAKE_EXE_LINKER_FLAGS "-flto -Wno-error -no-pie" )
+-        if(GCOV STREQUAL "ON")
+-        SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}  --coverage -lgcov -fprofile-arcs -ftest-coverage")
+-        endif()
+-        SET(CMAKE_C_LINK_EXECUTABLE "<CMAKE_LINKER> <CMAKE_C_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> -Wl,--start-group <LINK_LIBRARIES> -Wl,--end-group")
+-
+     endif()
+ 
+     if(NOT TOOLCHAIN STREQUAL "NIOS2_GCC")
+-- 
+2.43.2
+
