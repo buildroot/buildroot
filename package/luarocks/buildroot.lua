@@ -350,8 +350,11 @@ function buildroot.command(args)
       return nil, "Error loading rockspec: " .. err
    end
    if rockspec.source.file then
+      rockspec.source.dir = rockspec.source.dir or dir.deduce_base_dir(rockspec.source.file)
       ok, err = fs.unpack_archive(rockspec.source.file)
       if not ok then return nil, err end
+   else
+      rockspec.source.dir = rockspec.source.dir or '.'
    end
 
    if rockspec.source.dir ~= '.' then
