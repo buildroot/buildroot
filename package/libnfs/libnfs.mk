@@ -17,9 +17,9 @@ LIBNFS_DEPENDENCIES += libtirpc
 endif
 
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
-LIBNFS_CONF_OPTS += --enable-threads
+LIBNFS_CONF_OPTS += --enable-pthread
 else
-LIBNFS_CONF_OPTS += --disable-threads
+LIBNFS_CONF_OPTS += --disable-pthread
 endif
 
 $(eval $(autotools-package))
