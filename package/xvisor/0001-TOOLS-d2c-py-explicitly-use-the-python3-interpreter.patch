@@ -1,0 +1,35 @@
+From 888c94e7a121d96aa88f84c58fe7e2bd771fc5ac Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Fri, 25 Aug 2023 21:56:37 +0200
+Subject: [PATCH] TOOLS: d2c.py: explicitly use the python3 interpreter
+
+When compiling Xvisor on a system not providing the "python"
+interpreter binary, compilation fails with output:
+
+    (d2c)       core/vio/keymaps/modifiers.c
+    /bin/sh: 1: /build/xvisor-0.3.2/tools/scripts/d2c.py: not found
+
+This commit fixes the issue following the PEP 394 recommendation:
+https://peps.python.org/pep-0394/
+
+It sets the "shebang" to `#! /usr/bin/env python3` to allow using other
+interpreters in the PATH, or virtual environment.
+
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+
+Upstream: https://github.com/xvisor/xvisor/commit/888c94e7a121d96aa88f84c58fe7e2bd771fc5ac
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ tools/scripts/d2c.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/scripts/d2c.py b/tools/scripts/d2c.py
+index b46a7bc468..daac4a5450 100755
+--- a/tools/scripts/d2c.py
++++ b/tools/scripts/d2c.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#! /usr/bin/env python3
+ #/**
+ # Copyright (c) 2013 Anup Patel.
+ # All rights reserved.
