@@ -21,7 +21,7 @@ SQUID_CONF_ENV = \
 	ac_cv_func_strnstr=no \
 	ac_cv_have_squid=yes \
 	BUILDCXX="$(HOSTCXX)" \
-	BUILDCXXFLAGS="$(HOST_CXXFLAGS)"
+	BUILDCXXFLAGS="$(HOST_CXXFLAGS) -std=c++17"
 SQUID_CONF_OPTS = \
 	--enable-async-io=8 \
 	--enable-linux-netfilter \
