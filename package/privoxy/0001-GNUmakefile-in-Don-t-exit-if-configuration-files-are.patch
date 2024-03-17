@@ -1,0 +1,30 @@
+From 4b3b267db159dc23314de3062859481b7c397e32 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 17 Mar 2024 12:36:31 +0100
+Subject: [PATCH] GNUmakefile.in: Don't exit if configuration files are
+ installed as root
+
+... as this can be considered acceptable when cross-compiling
+Privoxy inside an autobuilder with only a root user.
+
+Upstream: https://www.privoxy.org/gitweb/?p=privoxy.git;a=commit;h=4b3b267db159dc23314de3062859481b7c397e32
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ GNUmakefile.in | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/GNUmakefile.in b/GNUmakefile.in
+index 04cceb15..cf79aae1 100644
+--- a/GNUmakefile.in
++++ b/GNUmakefile.in
+@@ -927,7 +927,6 @@ install: CONF_DEST LOG_DEST PID_DEST check_doc GROUP_T
+ 					$(ECHO)  " and to install the config files as that user and/or group!" ;\
+ 					$(ECHO)  " Please read INSTALL, and create a privoxy user and group!" ;\
+ 					$(ECHO)  "*******************************************************************" ;\
+-					exit 1 ;\
+ 				fi ;\
+ 			else \
+ 				GROUP_T=$(GROUP) ;\
+-- 
+2.39.2
+
