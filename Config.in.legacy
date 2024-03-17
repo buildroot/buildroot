@@ -146,8 +146,22 @@ endif
 
 comment "Legacy options removed in 2024.05"
 
+config BR2_TOOLCHAIN_EXTERNAL_CODESCAPE_IMG_MIPS
+	bool "Codescape IMG GNU Linux Toolchain 2018.09 has been removed"
+	select BR2_LEGACY
+	help
+	  The Codescape IMG GNU Linux toolchain has been removed, use a
+	  Bootlin toolchain instead.
+
+config BR2_TOOLCHAIN_EXTERNAL_CODESCAPE_MTI_MIPS
+	bool "Codescape MTI GNU Linux Toolchain 2018.09 has been removed"
+	select BR2_LEGACY
+	help
+	  The Codescape MTI GNU Linux toolchain has been removed, use a
+	  Bootlin toolchain instead.
+
 config BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_AARCH64
-	bool "CodeSourcery AArch64 2014.11"
+	bool "CodeSourcery AArch64 2014.11 has been removed"
 	select BR2_LEGACY
 	help
 	  The Sourcery CodeBench AArch64 toolchain has been removed,
