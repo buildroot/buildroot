@@ -19,29 +19,16 @@
 
 import datetime
 import os
-import requests  # URL checking
 import distutils.version
-import lzma
-import time
+import json
+import subprocess
 import sys
 import operator
-
-try:
-    import ijson
-    # backend is a module in < 2.5, a string in >= 2.5
-    if 'python' in getattr(ijson.backend, '__name__', ijson.backend):
-        try:
-            import ijson.backends.yajl2_cffi as ijson
-        except ImportError:
-            sys.stderr.write('Warning: Using slow ijson python backend\n')
-except ImportError:
-    sys.stderr.write("You need ijson to parse NVD for CVE check\n")
-    exit(1)
 
 sys.path.append('utils/')
 
 NVD_START_YEAR = 1999
-NVD_BASE_URL = "https://github.com/fkie-cad/nvd-json-data-feeds/releases/latest/download"
+NVD_BASE_URL = "https://github.com/fkie-cad/nvd-json-data-feeds/"
 
 ops = {
     '>=': operator.ge,
@@ -81,41 +68,24 @@ class CVE:
         self.nvd_cve = nvd_cve
 
     @staticmethod
-    def download_nvd_year(nvd_path, year):
-        metaf = "CVE-%s.meta" % year
-        path_metaf = os.path.join(nvd_path, metaf)
-        jsonf_xz = "CVE-%s.json.xz" % year
-        path_jsonf_xz = os.path.join(nvd_path, jsonf_xz)
-
-        # If the database file is less than a day old, we assume the NVD data
-        # locally available is recent enough.
-        if os.path.exists(path_jsonf_xz) and os.stat(path_jsonf_xz).st_mtime >= time.time() - 86400:
-            return path_jsonf_xz
-
-        # If not, we download the meta file
-        url = "%s/%s" % (NVD_BASE_URL, metaf)
-        print("Getting %s" % url)
-        page_meta = requests.get(url)
-        page_meta.raise_for_status()
-
-        # If the meta file already existed, we compare the existing
-        # one with the data newly downloaded. If they are different,
-        # we need to re-download the database.
-        # If the database does not exist locally, we need to redownload it in
-        # any case.
-        if os.path.exists(path_metaf) and os.path.exists(path_jsonf_xz):
-            meta_known = open(path_metaf, "r").read()
-            if page_meta.text == meta_known:
-                return path_jsonf_xz
-
-        # Grab the compressed JSON NVD, and write files to disk
-        url = "%s/%s" % (NVD_BASE_URL, jsonf_xz)
-        print("Getting %s" % url)
-        page_json = requests.get(url)
-        page_json.raise_for_status()
-        open(path_jsonf_xz, "wb").write(page_json.content)
-        open(path_metaf, "w").write(page_meta.text)
-        return path_jsonf_xz
+    def download_nvd(nvd_git_dir):
+        print(f"Updating from {NVD_BASE_URL}")
+        if os.path.exists(nvd_git_dir):
+            subprocess.check_call(
+                ["git", "pull"],
+                cwd=nvd_git_dir,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        else:
+            # Create the directory and its parents; git
+            # happily clones into an empty directory.
+            os.makedirs(nvd_git_dir)
+            subprocess.check_call(
+                ["git", "clone", NVD_BASE_URL, nvd_git_dir],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
 
     @staticmethod
     def sort_id(cve_ids):
@@ -131,15 +101,15 @@ class CVE:
         feeds since NVD_START_YEAR. If the files are missing or outdated in
         nvd_dir, a fresh copy will be downloaded, and kept in .json.gz
         """
+        nvd_git_dir = os.path.join(nvd_dir, "git")
+        CVE.download_nvd(nvd_git_dir)
         for year in range(NVD_START_YEAR, datetime.datetime.now().year + 1):
-            filename = CVE.download_nvd_year(nvd_dir, year)
-            try:
-                content = ijson.items(lzma.LZMAFile(filename), 'cve_items.item')
-            except:  # noqa: E722
-                print("ERROR: cannot read %s. Please remove the file then rerun this script" % filename)
-                raise
-            for cve in content:
-                yield cls(cve)
+            for dirpath, _, filenames in os.walk(os.path.join(nvd_git_dir, f"CVE-{year}")):
+                for filename in filenames:
+                    if filename[-5:] != ".json":
+                        continue
+                    with open(os.path.join(dirpath, filename), "rb") as f:
+                        yield cls(json.load(f))
 
     def each_product(self):
         """Iterate over each product section of this cve"""
