@@ -1,0 +1,41 @@
+From 2631c745f986b356fbe5e1d418cff63b46134df6 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 19 Mar 2024 20:37:33 +0100
+Subject: [PATCH] unix/utils/arm_arch_queries.h: fix uclibc build
+
+Build on uclibc is broken since version 0.75 and commit
+65383082bf0c49cec63f4b36001a40bd9b13edf6 because AT_HWCAP2 is used
+even if <sys/auxv.h> is not available:
+
+/home/buildroot/autobuild/run/instance-3/output-1/build/putty-0.80/unix/utils/arm_arch_queries.c: In function 'platform_aes_neon_available':
+/home/buildroot/autobuild/run/instance-3/output-1/build/putty-0.80/unix/utils/arm_arch_queries.c:18:22: error: 'AT_HWCAP2' undeclared (first use in this function)
+   18 |     return getauxval(AT_HWCAP2) & HWCAP2_AES;
+      |                      ^~~~~~~~~
+
+To fix this build failure, include <elf.h>
+
+Fixes:
+ - http://autobuild.buildroot.org/results/547d1c0e8a89e1e4b601aa756d26886bfc3d586f
+
+Upstream: Rejected after sending to Simon Tatham <anakin@pobox.com>
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ unix/utils/arm_arch_queries.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/unix/utils/arm_arch_queries.h b/unix/utils/arm_arch_queries.h
+index fa46c622..5cce7f31 100644
+--- a/unix/utils/arm_arch_queries.h
++++ b/unix/utils/arm_arch_queries.h
+@@ -18,6 +18,8 @@
+ 
+ #if defined __arm__ || defined __aarch64__
+ 
++#include <elf.h>
++
+ #if HAVE_SYS_TYPES_H
+ #include <sys/types.h>
+ #endif
+-- 
+2.43.0
+
