@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CCTZ_VERSION = 2.3
+CCTZ_VERSION = 2.4
 CCTZ_SITE = $(call github,google,cctz,v$(CCTZ_VERSION))
 CCTZ_LICENSE = Apache-2.0
 CCTZ_LICENSE_FILES = LICENSE.txt
