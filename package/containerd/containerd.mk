@@ -35,9 +35,7 @@ CONTAINERD_DEPENDENCIES += libseccomp host-pkgconf
 CONTAINERD_TAGS += seccomp
 endif
 
-ifeq ($(BR2_PACKAGE_CONTAINERD_DRIVER_BTRFS),y)
-CONTAINERD_DEPENDENCIES += btrfs-progs
-else
+ifneq ($(BR2_PACKAGE_CONTAINERD_DRIVER_BTRFS),y)
 CONTAINERD_TAGS += no_btrfs
 endif
 
