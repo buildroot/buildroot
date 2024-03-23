@@ -42,7 +42,7 @@ KCONFIG_DISABLE_OPT = $(Q)$(call KCONFIG_MUNGE_DOT_CONFIG, $(1), $(SHARP_SIGN) $
 # directory from its makefile directory, using the $(MAKEFILE_LIST)
 # variable provided by make. This is used by the *-package macros to
 # automagically find where the package is located.
-pkgdir = $(dir $(lastword $(MAKEFILE_LIST)))
+pkgdir = $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
 pkgname = $(lastword $(subst /, ,$(pkgdir)))
 
 # Helper to build the extension for a package archive, based on various
