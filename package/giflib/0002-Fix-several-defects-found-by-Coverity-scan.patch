@@ -1,0 +1,59 @@
+From a1c48b91cd1cf1e9bf7077709b69f4bfd4c4abc7 Mon Sep 17 00:00:00 2001
+From: Sandro Mani <manisandro@gmail.com>
+Date: Tue, 5 Dec 2023 16:38:48 -0700
+Subject: [PATCH] Fix several defects found by Coverity scan
+
+From: giflib-5.2.1-17.fc39.src.rpm
+Upstream: Not submitted
+
+Signed-off-by: Sandro Mani <manisandro@gmail.com>
+Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
+[Fabrice: updated for 5.2.2]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ gif2rgb.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/gif2rgb.c b/gif2rgb.c
+index d9a469f..02cea41 100644
+--- a/gif2rgb.c
++++ b/gif2rgb.c
+@@ -170,6 +170,8 @@ static void SaveGif(GifByteType *OutputBuffer,
+ 	/* Open stdout for the output file: */
+ 	if ((GifFile = EGifOpenFileHandle(1, &Error)) == NULL) {
+ 		PrintGifError(Error);
++		free(OutputBuffer);
++		GifFreeMapObject(OutputColorMap);
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
+@@ -179,6 +181,8 @@ static void SaveGif(GifByteType *OutputBuffer,
+ 	     EGifPutImageDesc(GifFile, 0, 0, Width, Height, false, NULL) ==
+ 	        GIF_ERROR) {
+ 		PrintGifError(Error);
++		free(OutputBuffer);
++		GifFreeMapObject(OutputColorMap);
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
+@@ -187,6 +191,8 @@ static void SaveGif(GifByteType *OutputBuffer,
+ 
+ 	for (i = 0; i < Height; i++) {
+ 		if (EGifPutLine(GifFile, Ptr, Width) == GIF_ERROR) {
++			free(OutputBuffer);
++			GifFreeMapObject(OutputColorMap);
+ 			exit(EXIT_FAILURE);
+ 		}
+ 		GifQprintf("\b\b\b\b%-4d", Height - i - 1);
+@@ -196,6 +203,8 @@ static void SaveGif(GifByteType *OutputBuffer,
+ 
+ 	if (EGifCloseFile(GifFile, &Error) == GIF_ERROR) {
+ 		PrintGifError(Error);
++		free(OutputBuffer);
++		GifFreeMapObject(OutputColorMap);
+ 		exit(EXIT_FAILURE);
+ 	}
+ }
+-- 
+2.43.0
+
