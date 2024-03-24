@@ -6,10 +6,11 @@ comment "policycoreutils needs a toolchain w/ threads, dynamic library, gcc >= 5
 config BR2_PACKAGE_POLICYCOREUTILS
 	bool "policycoreutils"
 	depends on BR2_PACKAGE_AUDIT_ARCH_SUPPORTS # libsemanage
-	depends on BR2_TOOLCHAIN_HAS_THREADS # libsemanage
-	depends on !BR2_STATIC_LIBS # libsemanage
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libsemanage, libsepol
+	depends on !BR2_STATIC_LIBS # libsemanage, libsepol
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # libsemanage -> libselinux -> libsepol
 	select BR2_PACKAGE_LIBSEMANAGE
+	select BR2_PACKAGE_LIBSEPOL
 	select BR2_PACKAGE_LIBCAP_NG
 	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	help
