@@ -1,0 +1,8 @@
+config BR2_PACKAGE_FLUTTER_IMAGE_EXAMPLE
+	bool "flutter image example"
+	select BR2_PACKAGE_CA_CERTIFICATES # runtime
+	help
+	  Use NetworkImageWithRetry instead of Image.network to
+	  load images from the network with a retry mechanism.
+
+	  https://github.com/flutter/packages/tree/main/packages/flutter_image/example
