@@ -146,6 +146,15 @@ endif
 
 comment "Legacy options removed in 2024.05"
 
+config BR2_PACKAGE_FLUTTER_GALLERY
+	bool "flutter-gallery removed"
+	select BR2_LEGACY
+	help
+	  flutter-gallery has been removed due to being abandoned
+	  and no longer working with flutter 3.19+. It is replaced by
+	  flutter-packages, where individual sub-packages (examples)
+	  must be selected for the build.
+
 config BR2_TOOLCHAIN_EXTERNAL_CODESCAPE_IMG_MIPS
 	bool "Codescape IMG GNU Linux Toolchain 2018.09 has been removed"
 	select BR2_LEGACY
