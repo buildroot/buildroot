@@ -1,0 +1,11 @@
+[Unit]
+Description=flutter-markdown-example daemon
+After=dbus.service systemd-udevd.service
+
+[Service]
+ExecStart=/usr/bin/flutter-pi --release /usr/share/flutter/flutter_markdown_example/release/
+Restart=always
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

@@ -25,7 +25,8 @@ class TestFlutter(infra.basetest.BRTest):
         BR2_PACKAGE_FLUTTER_PI=y
         BR2_PACKAGE_FLUTTER_PI_RAW_KEYBOARD_PLUGIN=y
         BR2_PACKAGE_FLUTTER_PI_TEXT_INPUT_PLUGIN=y
-        BR2_PACKAGE_FLUTTER_GALLERY=y
+        BR2_PACKAGE_FLUTTER_PACKAGES=y
+        BR2_PACKAGE_FLUTTER_MARKDOWN_EXAMPLE=y
         BR2_PACKAGE_FLUTTER_ENGINE=y
         BR2_TARGET_ROOTFS_EXT2=y
         BR2_TARGET_ROOTFS_EXT2_4=y
@@ -48,7 +49,7 @@ class TestFlutter(infra.basetest.BRTest):
                      "-vnc", "none",
                      "-drive", f"file={img},if=virtio,format=raw"])
         self.emulator.login()
-        cmd = "systemctl is-active flutter-gallery"
+        cmd = "systemctl is-active flutter-markdown-example"
         output, exit_code = self.emulator.run(cmd, 10)
         self.assertEqual(exit_code, 0)
         self.assertEqual(output[0], "active")
