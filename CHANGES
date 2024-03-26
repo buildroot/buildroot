@@ -1,3 +1,36 @@
+2024.02.1, released March 26th, 2024
+
+	Important / security related fixes.
+
+	Toolchain: Dropped old Codesourcery ARM / AARCH64 and
+	Codescape MIPS external toolchains as they use old Glibc
+	versions not compatible with 64-bit time_t
+
+	Defconfigs: Starfive visionfive2: Use correct genimage
+	configuration. TI am62x_sk / am64_sk: Use correct optee-os
+	platform setting and use a fixed ti-k3-r5-loader version.
+
+	Infrastructure: Use git to fetch CVE data from the FKIE
+	repository to work around an issue with missing meta files in
+	the releases.
+
+	Updated/fixed packages: axel, bash, bitcoin, botan, busybox,
+	containerd, cryptsetup, cvs, docker-compose, docker-engine,
+	ell, expat, giflib, gmp, go, harfbuzz, intel-gmmlib,
+	intel-mediadriver, iwd, kodi, kodi-pvr-hts, libcgroup, libdrm,
+	libgit2, libkrb5, libnfs, libunwind, libvpl,
+	libtorrent-rasterbar, libxml2, linux, mariadb, mesa3d,
+	mmc-utils, msmtp, multipath-tools, neon, onevpl-intel-gpu,
+	openssh, openvpn, osm2pgsql, owfs, php, poco, policycoreutils,
+	postgis, privoxy, pulseaudio, pure-ftpd, putty,
+	python-configshell-fb, python-rtslib-fb, rauc, restorecond,
+	spice, squid, targetcli-fb, tzdata, util-linux, vdr, xmrig,
+	xvisor, zic
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#15997: Build Squid with GCC12.3 in Buildroot 2024.02 will fail
+
 2024.02, released March 5th, 2024
 
 	Various fixes.
