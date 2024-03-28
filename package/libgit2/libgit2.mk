@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBGIT2_VERSION = 1.7.2
+LIBGIT2_VERSION = 1.8.0
 LIBGIT2_SITE = $(call github,libgit2,libgit2,v$(LIBGIT2_VERSION))
 LIBGIT2_LICENSE = \
 	GPL-2.0 with linking exception, \
@@ -42,7 +42,9 @@ endif
 
 ifeq ($(BR2_PACKAGE_LIBSSH2),y)
 LIBGIT2_DEPENDENCIES += libssh2
-LIBGIT2_CONF_OPTS += -DUSE_SSH=ON
+LIBGIT2_CONF_OPTS += -DUSE_SSH=libssh2
+else ifeq ($(BR2_PACKAGE_OPENSSH_CLIENT),y)
+LIBGIT2_CONF_OPTS += -DUSE_SSH=exec
 else
 LIBGIT2_CONF_OPTS += -DUSE_SSH=OFF
 endif
