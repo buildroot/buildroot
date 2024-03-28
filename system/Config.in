@@ -708,8 +708,56 @@ config BR2_ROOTFS_POST_SCRIPT_ARGS
 	  arguments to each script.
 
 	  Note also, as stated in their respective help text, that the
-	  first argument to each post-build or post-image script is the
-	  target directory / images directory. The arguments in this
-	  option will be passed *after* those.
+	  first argument to each script is the target directory / images
+	  directory. The arguments in this option will be passed *after*
+	  those.
+
+config BR2_ROOTFS_PRE_BUILD_SCRIPT_ARGS
+	string "Extra arguments passed to BR2_ROOTFS_PRE_BUILD_SCRIPT"
+	depends on BR2_ROOTFS_PRE_BUILD_SCRIPT != ""
+	help
+	  Pass these additional arguments to the pre-build script.
+
+	  Note also, as stated in the respective help text, that the
+	  first argument to each script is the target directory, then
+	  the common arguments specified in BR2_ROOTFS_POST_SCRIPT_ARGS
+	  above, and then the arguments in this option will be passed
+	  *after* those.
+
+config BR2_ROOTFS_POST_BUILD_SCRIPT_ARGS
+	string "Extra arguments passed to BR2_ROOTFS_POST_BUILD_SCRIPT"
+	depends on BR2_ROOTFS_POST_BUILD_SCRIPT != ""
+	help
+	  Pass these additional arguments to the post-build script.
+
+	  Note also, as stated in the respective help text, that the
+	  first argument to each script is the target directory, then
+	  the common arguments specified in BR2_ROOTFS_POST_SCRIPT_ARGS
+	  above, and then the arguments in this option will be passed
+	  *after* those.
+
+config BR2_ROOTFS_POST_FAKEROOT_SCRIPT_ARGS
+	string "Extra arguments passed to BR2_ROOTFS_POST_FAKEROOT_SCRIPT"
+	depends on BR2_ROOTFS_POST_FAKEROOT_SCRIPT != ""
+	help
+	  Pass these additional arguments to the post-fakeroot script.
+
+	  Note also, as stated in the respective help text, that the
+	  first argument to each script is the target directory, then
+	  the common arguments specified in BR2_ROOTFS_POST_SCRIPT_ARGS
+	  above, and then the arguments in this option will be passed
+	  *after* those.
+
+config BR2_ROOTFS_POST_IMAGE_SCRIPT_ARGS
+	string "Extra arguments passed to POST_IMAGE_SCRIPT"
+	depends on BR2_ROOTFS_POST_IMAGE_SCRIPT != ""
+	help
+	  Pass these additional arguments to the post-image script.
+
+	  Note also, as stated in the respective help text, that the
+	  first argument to each script is the images directory, then
+	  the common arguments specified in BR2_ROOTFS_POST_SCRIPT_ARGS
+	  above, and then the arguments in this option will be passed
+	  *after* those.
 
 endmenu

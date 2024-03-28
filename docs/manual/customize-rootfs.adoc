@@ -56,6 +56,12 @@ The post-build scripts are run with the main Buildroot tree as current
   passed to the script too. All the scripts will be passed the exact
   same set of arguments, it is not possible to pass different sets of
   arguments to each script.
+
+  Note that the arguments from +BR2_ROOTFS_POST_SCRIPT_ARGS+ will also be
+  passed to post-image and post-fakeroot scripts. If you want to use
+  arguments that are only used for the post-build scripts you can use
+  +BR2_ROOTFS_POST_BUILD_SCRIPT_ARGS+.
+
 +
 In addition, you may also use these environment variables:
 

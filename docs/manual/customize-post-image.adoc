@@ -26,6 +26,11 @@ arguments will be passed to the script too. All the scripts will be
 passed the exact same set of arguments, it is not possible to pass
 different sets of arguments to each script.
 
+Note that the arguments from +BR2_ROOTFS_POST_SCRIPT_ARGS+ will also be
+passed to post-build and post-fakeroot scripts. If you want to use
+arguments that are only used for the post-image scripts you can use
++BR2_ROOTFS_POST_IMAGE_SCRIPT_ARGS+.
+
 Again just like for the post-build scripts, the scripts have access to
 the environment variables +BR2_CONFIG+, +HOST_DIR+, +STAGING_DIR+,
 +TARGET_DIR+, +BUILD_DIR+, +BINARIES_DIR+, +CONFIG_DIR+ and
