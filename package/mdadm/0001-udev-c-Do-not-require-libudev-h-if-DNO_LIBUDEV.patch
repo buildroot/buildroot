@@ -1,0 +1,34 @@
+From 1750758c7ff526e3560433f6235e5cfa35cf646a Mon Sep 17 00:00:00 2001
+From: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
+Date: Wed, 6 Mar 2024 15:50:55 +0100
+Subject: udev.c: Do not require libudev.h if DNO_LIBUDEV
+
+libudev may not be presented at all, do not require it.
+
+Reported-by: Boian Bonev <bbonev@ipacct.com>
+Signed-off-by: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
+
+Upstream: https://git.kernel.org/pub/scm/utils/mdadm/mdadm.git/commit/?id=1750758c7ff526e3560433f6235e5cfa35cf646a
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ udev.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/udev.c b/udev.c
+index bc4722b0..066e6ab1 100644
+--- a/udev.c
++++ b/udev.c
+@@ -26,7 +26,10 @@
+ #include	<signal.h>
+ #include	<limits.h>
+ #include	<syslog.h>
++
++#ifndef NO_LIBUDEV
+ #include	<libudev.h>
++#endif
+ 
+ static char *unblock_path;
+ 
+-- 
+cgit 1.2.3-korg
+
