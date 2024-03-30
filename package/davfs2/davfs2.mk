@@ -9,6 +9,8 @@ DAVFS2_SITE = http://download.savannah.nongnu.org/releases/davfs2
 DAVFS2_LICENSE = GPL-3.0+
 DAVFS2_LICENSE_FILES = COPYING
 DAVFS2_CPE_ID_VENDOR = werner_baumann
+# 0002-configure.ac-add-neon-version-0.33.patch
+DAVFS2_AUTORECONF = YES
 
 DAVFS2_DEPENDENCIES = \
 	neon \
