@@ -25,4 +25,11 @@ endef
 
 PHP_XDEBUG_PRE_CONFIGURE_HOOKS += PHP_XDEBUG_PHPIZE
 
+ifeq ($(BR2_PACKAGE_ZLIB),y)
+PHP_XDEBUG_CONF_OPTS += --with-xdebug-compression
+PHP_XDEBUG_DEPENDENCIES += zlib
+else
+PHP_XDEBUG_CONF_OPTS += --without-xdebug-compression
+endif
+
 $(eval $(autotools-package))
