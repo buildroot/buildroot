@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-PHP_XDEBUG_VERSION = 3.2.2
+PHP_XDEBUG_VERSION = 3.3.1
 PHP_XDEBUG_SOURCE = xdebug-$(PHP_XDEBUG_VERSION).tgz
 PHP_XDEBUG_SITE = https://xdebug.org/files
 PHP_XDEBUG_INSTALL_STAGING = YES
-PHP_XDEBUG_LICENSE = Xdebug License (PHP-3.0-like)
+PHP_XDEBUG_LICENSE = Xdebug License (PHP-3.01-like)
 PHP_XDEBUG_LICENSE_FILES = LICENSE
 # phpize does the autoconf magic
 PHP_XDEBUG_DEPENDENCIES = php host-autoconf
