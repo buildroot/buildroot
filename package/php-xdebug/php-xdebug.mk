@@ -14,8 +14,7 @@ PHP_XDEBUG_LICENSE_FILES = LICENSE
 PHP_XDEBUG_DEPENDENCIES = php host-autoconf
 PHP_XDEBUG_CONF_OPTS = \
 	--enable-xdebug \
-	--with-php-config=$(STAGING_DIR)/usr/bin/php-config \
-	--with-xdebug=$(STAGING_DIR)/usr
+	--with-php-config=$(STAGING_DIR)/usr/bin/php-config
 
 define PHP_XDEBUG_PHPIZE
 	(cd $(@D); \
