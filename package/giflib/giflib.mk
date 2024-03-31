@@ -27,7 +27,7 @@ define GIFLIB_BUILD_CMDS
 endef
 
 define HOST_GIFLIB_BUILD_CMDS
-	$(HOST_CONFIGURE_OPTS) $(MAKE) -C $(@D)
+	$(HOST_CONFIGURE_OPTS) $(MAKE) -C $(@D) shared-lib
 endef
 
 define GIFLIB_INSTALL_STAGING_CMDS
@@ -42,7 +42,7 @@ endef
 
 define HOST_GIFLIB_INSTALL_CMDS
 	$(HOST_CONFIGURE_OPTS) $(MAKE) -C $(@D) DESTDIR=$(HOST_DIR) \
-		PREFIX=/usr install
+		PREFIX=/usr install-include install-shared-lib
 endef
 
 $(eval $(generic-package))
