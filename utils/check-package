@@ -224,7 +224,7 @@ def check_file_using_lib(fname):
         print("{}: would run: {}".format(fname, functions_to_run))
         return nwarnings, nlines
 
-    objects = [[c[0], c[1](fname, flags.manual_url)] for c in internal_functions]
+    objects = [[f"{lib.__name__[16:]}.{c[0]}", c[1](fname, flags.manual_url)] for c in internal_functions]
 
     for name, cf in objects:
         warn, fail = print_warnings(cf.before(), name in xfail)
