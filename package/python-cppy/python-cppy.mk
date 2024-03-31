@@ -10,5 +10,6 @@ PYTHON_CPPY_SITE = https://files.pythonhosted.org/packages/c5/7e/6cc5acd93752ee5
 PYTHON_CPPY_LICENSE = BSD-3-Clause
 PYTHON_CPPY_LICENSE_FILES = LICENSE
 PYTHON_CPPY_SETUP_TYPE = setuptools
+HOST_PYTHON_CPPY_DEPENDENCIES = host-python-setuptools-scm
 
 $(eval $(host-python-package))
