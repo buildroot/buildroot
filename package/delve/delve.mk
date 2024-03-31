@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DELVE_VERSION = 1.20.2
+DELVE_VERSION = 1.22.1
 DELVE_SITE = $(call github,go-delve,delve,v$(DELVE_VERSION))
 DELVE_LICENSE = MIT
 DELVE_LICENSE_FILES = LICENSE
