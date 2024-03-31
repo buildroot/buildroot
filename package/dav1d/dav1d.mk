@@ -24,6 +24,11 @@ ifeq ($(BR2_ARM_CPU_ARMV4)$(BR2_ARM_CPU_ARMV5)$(BR2_ARM_CPU_ARMV7M),y)
 DAV1D_CONF_OPTS += -Denable_asm=false
 endif
 
+# riscv assembly requires riscv64
+ifeq ($(BR2_riscv):$(BR2_RISCV_64),y:)
+DAV1D_CONF_OPTS += -Denable_asm=false
+endif
+
 # Uses __atomic_fetch_add_4
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 DAV1D_LDFLAGS += $(TARGET_LDFLAGS) -latomic
