@@ -1,0 +1,31 @@
+From 76c1c545bad28f592405ca1e5bcf6081051c946a Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Tue, 13 Feb 2024 13:37:00 -0700
+Subject: [PATCH] Switch build-backend to poetry-core
+
+poetry-core is the lightweight counterpart of poetry that is intended
+to be used as a build-backend. Unlike poetry, it does not require
+installing all the dependencies of the package manager, making
+the builds much faster. The generated artifacts are the same.
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Upstream: https://github.com/vpoulailleau/simplelogging/pull/230
+---
+ pyproject.toml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/pyproject.toml b/pyproject.toml
+index a89ab64..79403cb 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -55,5 +55,5 @@ commands =
+ """
+ 
+ [build-system]
+-requires = ["poetry>=0.12"]
+-build-backend = "poetry.masonry.api"
++requires = ["poetry-core>=1.0.0"]
++build-backend = "poetry.core.masonry.api"
+-- 
+2.34.1
+
