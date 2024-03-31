@@ -10,6 +10,7 @@ import sys
 
 import checkpackagelib.base
 import checkpackagelib.lib_config
+import checkpackagelib.lib_defconfig
 import checkpackagelib.lib_hash
 import checkpackagelib.lib_ignore
 import checkpackagelib.lib_mk
@@ -113,6 +114,7 @@ DO_CHECK_INTREE = re.compile(r"|".join([
     r"arch/",
     r"board/",
     r"boot/",
+    r"configs/",
     r"fs/",
     r"linux/",
     r"package/",
@@ -137,6 +139,11 @@ DO_NOT_CHECK_INTREE = re.compile(r"|".join([
 
 SYSV_INIT_SCRIPT_FILENAME = re.compile(r"/S\d\d[^/]+$")
 
+# For defconfigs: avoid matching kernel, uboot... defconfig files, so
+# limit to defconfig files in a configs/ directory, either in-tree or
+# in a br2-external tree.
+BR_DEFCONFIG_FILENAME = re.compile(r"^(.+/)?configs/[^/]+_defconfig$")
+
 
 def get_lib_from_filename(fname):
     if flags.intree_only:
@@ -152,6 +159,8 @@ def get_lib_from_filename(fname):
         return checkpackagelib.lib_ignore
     if CONFIG_IN_FILENAME.search(fname):
         return checkpackagelib.lib_config
+    if BR_DEFCONFIG_FILENAME.search(fname):
+        return checkpackagelib.lib_defconfig
     if fname.endswith(".hash"):
         return checkpackagelib.lib_hash
     if fname.endswith(".mk"):
