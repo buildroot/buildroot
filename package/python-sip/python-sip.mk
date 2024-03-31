@@ -9,8 +9,8 @@ PYTHON_SIP_SOURCE = sip-$(PYTHON_SIP_VERSION).tar.gz
 PYTHON_SIP_SITE = https://www.riverbankcomputing.com/static/Downloads/sip/$(PYTHON_SIP_VERSION)
 PYTHON_SIP_LICENSE = SIP license or GPL-2.0 or GPL-3.0
 PYTHON_SIP_LICENSE_FILES = LICENSE LICENSE-GPL2 LICENSE-GPL3
-PYTHON_SIP_DEPENDENCIES = python3 qt5base
-HOST_PYTHON_SIP_DEPENDENCIES = host-python3
+PYTHON_SIP_DEPENDENCIES = host-python-setuptools python3 qt5base
+HOST_PYTHON_SIP_DEPENDENCIES = host-python3 host-python-setuptools
 
 define HOST_PYTHON_SIP_CONFIGURE_CMDS
 	(cd $(@D); \
