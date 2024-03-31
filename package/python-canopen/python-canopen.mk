@@ -10,5 +10,6 @@ PYTHON_CANOPEN_SITE = https://files.pythonhosted.org/packages/49/55/67e555f6f4ea
 PYTHON_CANOPEN_SETUP_TYPE = setuptools
 PYTHON_CANOPEN_LICENSE = MIT
 PYTHON_CANOPEN_LICENSE_FILES = LICENSE.txt
+PYTHON_CANOPEN_DEPENDENCIES = host-python-setuptools-scm
 
 $(eval $(python-package))
