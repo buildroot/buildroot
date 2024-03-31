@@ -10,6 +10,7 @@ PYTHON_MSGPACK_SITE = https://files.pythonhosted.org/packages/c2/d5/5662032db157
 PYTHON_MSGPACK_LICENSE = Apache-2.0
 PYTHON_MSGPACK_LICENSE_FILES = COPYING
 PYTHON_MSGPACK_SETUP_TYPE = setuptools
+PYTHON_MSGPACK_BUILD_OPTS = --skip-dependency-check
 
 # When set in the environment, whatever the value, MSGPACK_PUREPYTHON drives
 # using the pure python implementation rather than rely on the C++ native code.

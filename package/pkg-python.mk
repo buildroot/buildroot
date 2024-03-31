@@ -52,75 +52,6 @@ HOST_PKG_PYTHON_ENV = \
 	PYTHONNOUSERSITE=1 \
 	$(HOST_CONFIGURE_OPTS)
 
-# Target setuptools-based packages
-PKG_PYTHON_SETUPTOOLS_ENV = \
-	$(PKG_PYTHON_ENV)
-
-PKG_PYTHON_SETUPTOOLS_CMD = \
-	$(if $(wildcard $($(PKG)_BUILDDIR)/setup.py),setup.py,-c 'from setuptools import setup;setup()')
-
-PKG_PYTHON_SETUPTOOLS_BUILD_CMD = \
-	$(PKG_PYTHON_SETUPTOOLS_CMD) build
-
-PKG_PYTHON_SETUPTOOLS_INSTALL_OPTS = \
-	--install-headers=/usr/include/python$(PYTHON3_VERSION_MAJOR) \
-	--prefix=/usr \
-	--executable=/usr/bin/python \
-	--single-version-externally-managed
-
-PKG_PYTHON_SETUPTOOLS_INSTALL_TARGET_CMD = \
-	$(PKG_PYTHON_SETUPTOOLS_CMD) \
-	install --no-compile \
-	$(PKG_PYTHON_SETUPTOOLS_INSTALL_OPTS) \
-	--root=$(TARGET_DIR)
-
-PKG_PYTHON_SETUPTOOLS_INSTALL_STAGING_CMD = \
-	$(PKG_PYTHON_SETUPTOOLS_CMD) \
-	install \
-	$(PKG_PYTHON_SETUPTOOLS_INSTALL_OPTS) \
-	--root=$(STAGING_DIR)
-
-# Host setuptools-based packages
-HOST_PKG_PYTHON_SETUPTOOLS_ENV = \
-	$(HOST_PKG_PYTHON_ENV)
-
-HOST_PKG_PYTHON_SETUPTOOLS_BUILD_CMD = \
-	$(PKG_PYTHON_SETUPTOOLS_CMD) build
-
-HOST_PKG_PYTHON_SETUPTOOLS_INSTALL_CMD = \
-	$(PKG_PYTHON_SETUPTOOLS_CMD) \
-	install \
-	--prefix=$(HOST_DIR) \
-	--root=/ \
-	--single-version-externally-managed
-
-# Target setuptools-rust-based packages
-PKG_PYTHON_SETUPTOOLS_RUST_ENV = \
-	$(PKG_PYTHON_SETUPTOOLS_ENV) \
-	$(PKG_CARGO_ENV) \
-	PYO3_CROSS_LIB_DIR="$(STAGING_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)"
-
-PKG_PYTHON_SETUPTOOLS_RUST_BUILD_CMD = \
-	$(PKG_PYTHON_SETUPTOOLS_BUILD_CMD)
-
-PKG_PYTHON_SETUPTOOLS_RUST_INSTALL_TARGET_CMD = \
-	$(PKG_PYTHON_SETUPTOOLS_INSTALL_TARGET_CMD)
-
-PKG_PYTHON_SETUPTOOLS_RUST_INSTALL_STAGING_CMD = \
-	$(PKG_PYTHON_SETUPTOOLS_INSTALL_STAGING_CMD)
-
-# Host setuptools-rust-based packages
-HOST_PKG_PYTHON_SETUPTOOLS_RUST_ENV = \
-	$(HOST_PKG_PYTHON_SETUPTOOLS_ENV) \
-	$(HOST_PKG_CARGO_ENV) \
-	PYO3_CROSS_LIB_DIR="$(HOST_DIR)/lib/python$(PYTHON3_VERSION_MAJOR)"
-
-HOST_PKG_PYTHON_SETUPTOOLS_RUST_BUILD_CMD = \
-	$(HOST_PKG_PYTHON_SETUPTOOLS_BUILD_CMD)
-
-HOST_PKG_PYTHON_SETUPTOOLS_RUST_INSTALL_CMD = \
-	$(HOST_PKG_PYTHON_SETUPTOOLS_INSTALL_CMD)
-
 # Target pep517-based packages
 PKG_PYTHON_PEP517_ENV = \
 	$(PKG_PYTHON_ENV)
@@ -150,6 +81,10 @@ PKG_PYTHON_PEP517_INSTALL_STAGING_CMD = \
 	--scripts=$(STAGING_DIR)/usr/bin \
 	--data=$(STAGING_DIR)/usr
 
+PKG_PYTHON_PEP517_DEPENDENCIES = \
+	host-python-pypa-build \
+	host-python-installer
+
 # Host pep517-based packages
 HOST_PKG_PYTHON_PEP517_ENV = \
 	$(HOST_PKG_PYTHON_ENV)
@@ -167,6 +102,70 @@ HOST_PKG_PYTHON_PEP517_INSTALL_CMD = \
 	--scripts=$(HOST_DIR)/bin \
 	--data=$(HOST_DIR)
 
+# Target setuptools-based packages
+PKG_PYTHON_SETUPTOOLS_ENV = \
+	$(PKG_PYTHON_PEP517_ENV)
+
+PKG_PYTHON_SETUPTOOLS_BUILD_CMD = \
+	$(PKG_PYTHON_PEP517_BUILD_CMD)
+
+PKG_PYTHON_SETUPTOOLS_INSTALL_OPTS = \
+	--install-headers=/usr/include/python$(PYTHON3_VERSION_MAJOR) \
+	--prefix=/usr \
+	--executable=/usr/bin/python \
+	--single-version-externally-managed
+
+PKG_PYTHON_SETUPTOOLS_INSTALL_TARGET_CMD = \
+	$(PKG_PYTHON_PEP517_INSTALL_TARGET_CMD)
+
+PKG_PYTHON_SETUPTOOLS_INSTALL_STAGING_CMD = \
+	$(PKG_PYTHON_PEP517_INSTALL_STAGING_CMD)
+
+PKG_PYTHON_SETUPTOOLS_DEPENDENCIES = \
+	$(PKG_PYTHON_PEP517_DEPENDENCIES) \
+	host-python-setuptools
+
+# Host setuptools-based packages
+HOST_PKG_PYTHON_SETUPTOOLS_ENV = \
+	$(HOST_PKG_PYTHON_PEP517_ENV)
+
+HOST_PKG_PYTHON_SETUPTOOLS_BUILD_CMD = \
+	$(HOST_PKG_PYTHON_PEP517_BUILD_CMD)
+
+HOST_PKG_PYTHON_SETUPTOOLS_INSTALL_CMD = \
+	$(HOST_PKG_PYTHON_PEP517_INSTALL_CMD)
+
+# Target setuptools-rust-based packages
+PKG_PYTHON_SETUPTOOLS_RUST_ENV = \
+	$(PKG_PYTHON_SETUPTOOLS_ENV) \
+	$(PKG_CARGO_ENV) \
+	PYO3_CROSS_LIB_DIR="$(STAGING_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)"
+
+PKG_PYTHON_SETUPTOOLS_RUST_BUILD_CMD = \
+	$(PKG_PYTHON_SETUPTOOLS_BUILD_CMD)
+
+PKG_PYTHON_SETUPTOOLS_RUST_INSTALL_TARGET_CMD = \
+	$(PKG_PYTHON_SETUPTOOLS_INSTALL_TARGET_CMD)
+
+PKG_PYTHON_SETUPTOOLS_RUST_INSTALL_STAGING_CMD = \
+	$(PKG_PYTHON_SETUPTOOLS_INSTALL_STAGING_CMD)
+
+PKG_PYTHON_SETUPTOOLS_RUST_DEPENDENCIES = \
+	$(PKG_PYTHON_SETUPTOOLS_DEPENDENCIES) \
+	host-python-setuptools-rust
+
+# Host setuptools-rust-based packages
+HOST_PKG_PYTHON_SETUPTOOLS_RUST_ENV = \
+	$(HOST_PKG_PYTHON_SETUPTOOLS_ENV) \
+	$(HOST_PKG_CARGO_ENV) \
+	PYO3_CROSS_LIB_DIR="$(HOST_DIR)/lib/python$(PYTHON3_VERSION_MAJOR)"
+
+HOST_PKG_PYTHON_SETUPTOOLS_RUST_BUILD_CMD = \
+	$(HOST_PKG_PYTHON_SETUPTOOLS_BUILD_CMD)
+
+HOST_PKG_PYTHON_SETUPTOOLS_RUST_INSTALL_CMD = \
+	$(HOST_PKG_PYTHON_SETUPTOOLS_INSTALL_CMD)
+
 # Target flit packages
 PKG_PYTHON_FLIT_ENV = \
 	$(PKG_PYTHON_PEP517_ENV)
@@ -179,6 +178,10 @@ PKG_PYTHON_FLIT_INSTALL_TARGET_CMD = \
 
 PKG_PYTHON_FLIT_INSTALL_STAGING_CMD = \
 	$(PKG_PYTHON_PEP517_INSTALL_STAGING_CMD)
+
+PKG_PYTHON_FLIT_DEPENDENCIES = \
+	$(PKG_PYTHON_PEP517_DEPENDENCIES) \
+	host-python-flit-core
 
 # Host flit packages
 HOST_PKG_PYTHON_FLIT_ENV = \
@@ -214,6 +217,10 @@ PKG_PYTHON_MATURIN_INSTALL_TARGET_CMD = \
 
 PKG_PYTHON_MATURIN_INSTALL_STAGING_CMD = \
 	$(PKG_PYTHON_PEP517_INSTALL_STAGING_CMD)
+
+PKG_PYTHON_MATURIN_DEPENDENCIES = \
+	$(PKG_PYTHON_PEP517_DEPENDENCIES) \
+	host-python-maturin
 
 # Host maturin packages
 HOST_PKG_PYTHON_MATURIN_ENV = \
@@ -293,28 +300,17 @@ else
 $(2)_DEPENDENCIES += host-python3
 endif # ($(4),target)
 
-# Setuptools based packages will need setuptools for the host Python
-# interpreter (both host and target).
+# Setup type specific dependencies are the same whether we are
+# building for the host or the target.
 #
-ifneq ($$(filter setuptools setuptools-rust,$$($(2)_SETUP_TYPE)),)
-$(2)_DEPENDENCIES += host-python-setuptools
-ifeq ($$($(2)_SETUP_TYPE),setuptools-rust)
-$(2)_DEPENDENCIES += host-python-setuptools-rust
-endif
-else ifneq ($$(filter flit maturin pep517,$$($(2)_SETUP_TYPE)),)
-$(2)_DEPENDENCIES += host-python-pypa-build host-python-installer
-ifeq ($$($(2)_SETUP_TYPE),flit)
-$(2)_DEPENDENCIES += host-python-flit-core
-endif
-ifeq ($$($(2)_SETUP_TYPE),maturin)
-$(2)_DEPENDENCIES += host-python-maturin
-endif
-else ifeq ($$($(2)_SETUP_TYPE),flit-bootstrap)
+ifeq ($$($(2)_SETUP_TYPE),flit-bootstrap)
 # Don't add dependency on host-python-installer for
 # host-python-installer itself, and its dependencies.
 ifeq ($$(filter host-python-flit-core host-python-installer,$(1)),)
 $(2)_DEPENDENCIES += host-python-installer
 endif
+else
+$(2)_DEPENDENCIES += $$(PKG_PYTHON_$$($(2)_SETUP_TYPE_UPPER)_DEPENDENCIES)
 endif
 
 # Pyo3 based packages(setuptools-rust and maturin) will need rust
