@@ -62,6 +62,7 @@ class Sob(_CheckFunction):
                     "({}#_format_and_licensing_of_the_package_patches)"
                     .format(self.filename, self.url_to_manual)]
 
+
 class Upstream(_CheckFunction):
     UPSTREAM_ENTRY = re.compile(r"^Upstream: .*$")
 
