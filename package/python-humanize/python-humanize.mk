@@ -10,5 +10,6 @@ PYTHON_HUMANIZE_SITE = https://files.pythonhosted.org/packages/51/19/3e1adf0e7a8
 PYTHON_HUMANIZE_SETUP_TYPE = setuptools
 PYTHON_HUMANIZE_LICENSE = MIT
 PYTHON_HUMANIZE_LICENSE_FILES = LICENCE
+PYTHON_HUMANIZE_DEPENDENCIES = host-python-setuptools-scm
 
 $(eval $(python-package))
