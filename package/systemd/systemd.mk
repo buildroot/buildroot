@@ -55,6 +55,7 @@ SYSTEMD_DEPENDENCIES = \
 	host-python-jinja2 \
 	kmod \
 	libcap \
+	libxcrypt \
 	util-linux-libs \
 	$(TARGET_NLS_DEPENDENCIES)
 
@@ -882,6 +883,7 @@ HOST_SYSTEMD_DEPENDENCIES = \
 	host-util-linux \
 	host-patchelf \
 	host-libcap \
+	host-libxcrypt \
 	host-gperf \
 	host-python-jinja2
 
