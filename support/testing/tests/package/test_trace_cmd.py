@@ -50,5 +50,5 @@ class TestTraceCmd(infra.basetest.BRTest):
         # Check we have occurrences of "kmalloc:" in the trace report.
         cmd = "grep -Fc kmalloc: trace.txt"
         output, exit_code = self.emulator.run(cmd)
-        self.assertEquals(exit_code, 0)
+        self.assertEqual(exit_code, 0)
         self.assertTrue(int(output[0]) > 0)
