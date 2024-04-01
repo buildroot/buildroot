@@ -1,0 +1,12 @@
+config BR2_PACKAGE_PYTHON_AERICH
+	bool "python-aerich"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-pydantic -> python-pydantic-core
+	select BR2_PACKAGE_PYTHON_CLICK # runtime
+	select BR2_PACKAGE_PYTHON_DICTDIFFER # runtime
+	select BR2_PACKAGE_PYTHON_PYDANTIC # runtime
+	select BR2_PACKAGE_PYTHON_TOMLKIT # runtime
+	select BR2_PACKAGE_PYTHON_TORTOISE_ORM # runtime
+	help
+	  A database migrations tool for Tortoise ORM.
+
+	  https://github.com/tortoise/aerich

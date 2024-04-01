@@ -1,0 +1,29 @@
+From e729bb9b602ba74dea7ccc978dac709283a0934a Mon Sep 17 00:00:00 2001
+From: strayge <strayge@gmail.com>
+Date: Fri, 18 Aug 2023 15:03:38 +0400
+Subject: [PATCH] update poetry build-backend to support editable install
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Upstream: https://github.com/tortoise/aerich/commit/e729bb9b602ba74dea7ccc978dac709283a0934a
+---
+ pyproject.toml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/pyproject.toml b/pyproject.toml
+index b9390e1..7673d70 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -45,8 +45,8 @@ location = "./migrations"
+ src_folder = "./."
+ 
+ [build-system]
+-requires = ["poetry>=0.12"]
+-build-backend = "poetry.masonry.api"
++requires = ["poetry-core>=1.0.0"]
++build-backend = "poetry.core.masonry.api"
+ 
+ [tool.poetry.scripts]
+ aerich = "aerich.cli:main"
+-- 
+2.34.1
+
