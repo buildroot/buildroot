@@ -10,6 +10,10 @@ LUAPOSIX_LICENSE = MIT
 LUAPOSIX_LICENSE_FILES = LICENSE
 LUAPOSIX_DEPENDENCIES = luainterpreter host-lua
 
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+LUAPOSIX_DEPENDENCIES += libxcrypt
+endif
+
 define LUAPOSIX_BUILD_CMDS
 	(cd $(@D); \
 		$(LUA_RUN) build-aux/luke \
