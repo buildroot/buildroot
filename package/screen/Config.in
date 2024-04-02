@@ -1,6 +1,7 @@
 config BR2_PACKAGE_SCREEN
 	bool "screen"
 	depends on BR2_USE_MMU # fork()
+	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	select BR2_PACKAGE_NCURSES
 	help
 	  Screen is a full-screen window manager that multiplexes a
