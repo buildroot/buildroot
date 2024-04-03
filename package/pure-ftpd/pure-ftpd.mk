@@ -30,6 +30,10 @@ ifeq ($(BR2_PACKAGE_LIBSODIUM),y)
 PURE_FTPD_DEPENDENCIES += libsodium
 endif
 
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+PURE_FTPD_DEPENDENCIES += libxcrypt
+endif
+
 ifeq ($(BR2_PACKAGE_MARIADB),y)
 PURE_FTPD_CONF_OPTS += --with-mysql=$(STAGING_DIR)/usr
 PURE_FTPD_DEPENDENCIES += mariadb
