@@ -52,6 +52,10 @@ else
 SQUID_CONF_OPTS += --without-mit-krb5
 endif
 
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+SQUID_DEPENDENCIES += libxcrypt
+endif
+
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 SQUID_CONF_OPTS += --with-openssl
 SQUID_DEPENDENCIES += openssl
