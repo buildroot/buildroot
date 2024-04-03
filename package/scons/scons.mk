@@ -4,15 +4,12 @@
 #
 ################################################################################
 
-SCONS_VERSION = 4.5.2
+SCONS_VERSION = 4.7.0
 SCONS_SOURCE = SCons-$(SCONS_VERSION).tar.gz
-SCONS_SITE = http://downloads.sourceforge.net/project/scons/scons/$(SCONS_VERSION)
+SCONS_SITE = https://files.pythonhosted.org/packages/7b/68/6895065c86c65a9388eb760a43ea695ec5b9b1c98a9675a3bcd682dbe9c0
 SCONS_LICENSE = MIT
 SCONS_LICENSE_FILES = LICENSE
 SCONS_SETUP_TYPE = setuptools
-
-HOST_SCONS_INSTALL_OPTS = \
-	--install-lib=$(HOST_DIR)/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages
 
 $(eval $(host-python-package))
 
