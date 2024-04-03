@@ -14,6 +14,10 @@ LEAFNODE2_AUTORECONF = YES
 LEAFNODE2_CONF_ENV = \
 	PCRECONFIG="$(STAGING_DIR)/usr/bin/pcre-config"
 
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+LEAFNODE2_DEPENDENCIES += libxcrypt
+endif
+
 # --enable-runas-user use 'news' as default but the configure stop
 # if news doesn't exist on the build host.
 # Use 'root' while cross-compiling

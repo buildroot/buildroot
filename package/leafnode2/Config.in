@@ -1,6 +1,7 @@
 config BR2_PACKAGE_LEAFNODE2
 	bool "leafnode2"
 	depends on BR2_USE_MMU # fork()
+	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	select BR2_PACKAGE_PCRE
 	help
 	  Leafnode-2 is a store-and-forward NNTP (or Usenet) proxy
