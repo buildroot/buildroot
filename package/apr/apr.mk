@@ -68,6 +68,10 @@ else
 APR_CONF_OPTS += --disable-nonportable-atomics
 endif
 
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+APR_DEPENDENCIES += libxcrypt
+endif
+
 ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBUUID),y)
 APR_DEPENDENCIES += util-linux
 endif

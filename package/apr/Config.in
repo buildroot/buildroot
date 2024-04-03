@@ -3,6 +3,7 @@ config BR2_PACKAGE_APR
 	# apr really needs shared library support
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_USE_MMU # fork() in apr_proc_fork()
+	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	help
 	  The mission of the Apache Portable Runtime (APR) project is to
 	  create and maintain software libraries that provide a
