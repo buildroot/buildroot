@@ -32,7 +32,11 @@ Always use fixed versions or commit hashes for the different
 components, not the "latest" version. For example, set
 +BR2_LINUX_KERNEL_CUSTOM_VERSION=y+ and
 +BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE+ to the kernel version you tested
-with.
+with. If you are using the buildroot toolchain +BR2_TOOLCHAIN_BUILDROOT+
+(which is the default), additionally ensure that the same kernel headers
+are used (+BR2_KERNEL_HEADERS_AS_KERNEL+, which is also the default) and
+set the custom kernel headers series to match your kernel version
+(+BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_*+).
 
 It is recommended to use as much as possible upstream versions of the
 Linux kernel and bootloaders, and to use as much as possible default
