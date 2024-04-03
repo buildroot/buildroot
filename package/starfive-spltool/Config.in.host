@@ -1,0 +1,8 @@
+config BR2_PACKAGE_HOST_STARFIVE_SPLTOOL
+	bool "host starfive-spltool"
+	depends on BR2_riscv
+	help
+	  Add header to the Secondary Program Loader with the 3rd party
+	  software given by Starfive-Tech for their SoCs.
+
+	  https://github.com/starfive-tech/soft_3rdpart/tree/JH7110_VisionFive2_devel/spl_tool
