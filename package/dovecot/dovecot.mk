@@ -73,6 +73,10 @@ else
 DOVECOT_CONF_OPTS += --without-sodium
 endif
 
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+DOVECOT_DEPENDENCIES += libxcrypt
+endif
+
 ifeq ($(BR2_PACKAGE_LINUX_PAM),y)
 DOVECOT_CONF_OPTS += --with-pam
 DOVECOT_DEPENDENCIES += linux-pam
