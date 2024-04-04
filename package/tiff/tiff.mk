@@ -16,6 +16,7 @@ TIFF_INSTALL_STAGING = YES
 # support in tiff, or that would create a circular dependency.
 TIFF_CONF_OPTS = \
 	--disable-contrib \
+	--disable-lerc \
 	--disable-tests \
 	--disable-webp
 
@@ -24,6 +25,7 @@ TIFF_DEPENDENCIES = host-pkgconf
 HOST_TIFF_CONF_OPTS = \
 	--disable-cxx \
 	--disable-zlib \
+	--disable-lerc \
 	--disable-libdeflate \
 	--disable-lzma \
 	--disable-jpeg \
