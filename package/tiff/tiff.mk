@@ -17,6 +17,7 @@ TIFF_INSTALL_STAGING = YES
 TIFF_CONF_OPTS = \
 	--disable-contrib \
 	--disable-lerc \
+	--disable-jbig \
 	--disable-tests \
 	--disable-webp
 
@@ -28,6 +29,7 @@ HOST_TIFF_CONF_OPTS = \
 	--disable-lerc \
 	--disable-libdeflate \
 	--disable-lzma \
+	--disable-jbig \
 	--disable-jpeg \
 	--disable-tests \
 	--disable-webp \
@@ -99,10 +101,6 @@ endif
 
 ifneq ($(BR2_PACKAGE_TIFF_OLD_JPEG),y)
 TIFF_CONF_OPTS += --disable-old-jpeg
-endif
-
-ifneq ($(BR2_PACKAGE_TIFF_JBIG),y)
-TIFF_CONF_OPTS += --disable-jbig
 endif
 
 ifeq ($(BR2_PACKAGE_TIFF_UTILITIES),y)
