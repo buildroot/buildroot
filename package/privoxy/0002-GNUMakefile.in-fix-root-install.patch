@@ -1,0 +1,35 @@
+From 25bd5ae1664f5603c05c72b2c38525602f33da0a Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 31 Mar 2024 19:17:45 +0200
+Subject: [PATCH] GNUMakefile.in: fix root install
+
+Set GROUP_T when installing configuration files as root to avoid the
+following build failure since commit
+4b3b267db159dc23314de3062859481b7c397e32:
+
+/usr/bin/install: missing destination file operand after '/home/buildroot/instance-0/output-1/target/etc'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/eb4ccf248c9c5048e9b71058bb0311b1e0763883
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://lists.privoxy.org/pipermail/privoxy-devel/2024-March/000760.html
+---
+ GNUmakefile.in | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/GNUmakefile.in b/GNUmakefile.in
+index cf79aae1..db1bab59 100644
+--- a/GNUmakefile.in
++++ b/GNUmakefile.in
+@@ -927,6 +927,7 @@ install: CONF_DEST LOG_DEST PID_DEST check_doc GROUP_T
+ 					$(ECHO)  " and to install the config files as that user and/or group!" ;\
+ 					$(ECHO)  " Please read INSTALL, and create a privoxy user and group!" ;\
+ 					$(ECHO)  "*******************************************************************" ;\
++					GROUP_T=$(GROUP) ;\
+ 				fi ;\
+ 			else \
+ 				GROUP_T=$(GROUP) ;\
+-- 
+2.43.0
+
