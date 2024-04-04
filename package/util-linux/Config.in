@@ -280,6 +280,7 @@ config BR2_PACKAGE_UTIL_LINUX_MOUNTPOINT
 
 config BR2_PACKAGE_UTIL_LINUX_NEWGRP
 	bool "newgrp"
+	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	help
 	  Log in to a new group
 
@@ -402,6 +403,7 @@ comment "su needs a uClibc or glibc toolchain w/ wchar, locale, dynamic library,
 config BR2_PACKAGE_UTIL_LINUX_SULOGIN
 	bool "sulogin"
 	depends on BR2_USE_MMU # fork()
+	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	help
 	  Single-user login
 
