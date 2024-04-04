@@ -7,6 +7,7 @@ config BR2_PACKAGE_EXIM
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_PACKAGE_PCRE2
 	select BR2_PACKAGE_BERKELEYDB
+	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	help
 	  Exim is a message transfer agent (MTA) developed at the
 	  University of Cambridge for use on Unix systems connected to
