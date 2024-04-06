@@ -73,7 +73,24 @@ TI_K3_R5_LOADER_DEPENDENCIES += \
 	host-python-pylibfdt \
 	host-python-setuptools
 TI_K3_R5_LOADER_MAKE_OPTS += BINMAN_INDIRS=$(BINARIES_DIR)
-endif
+
+TI_K3_R5_LOADER_TIBOOT3_BIN = $(call qstrip,$(BR2_TARGET_TI_K3_R5_LOADER_TIBOOT3_BIN))
+
+define TI_K3_R5_LOADER_INSTALL_TIBOOT3_BIN
+	cp $(@D)/$(TI_K3_R5_LOADER_TIBOOT3_BIN) $(BINARIES_DIR)/tiboot3.bin
+endef
+
+TI_K3_R5_LOADER_SYSFW_ITB = $(call qstrip,$(BR2_TARGET_TI_K3_R5_LOADER_SYSFW_ITB))
+
+# sysfw*.itb are only generated for Split binary based Boot Flow (eg: am65, j721e).
+# So, if sysfw.itb symlink exist we must copy it or the custom sysfw.itb.
+define TI_K3_R5_LOADER_INSTALL_SWSFW_ITB
+	if test -e $(@D)/sysfw.itb ; then \
+		cp $(@D)/$(TI_K3_R5_LOADER_SYSFW_ITB) $(BINARIES_DIR)/sysfw.itb ; \
+	fi
+endef
+
+endif # BR2_TARGET_TI_K3_R5_LOADER_USE_BINMAN
 
 define TI_K3_R5_LOADER_BUILD_CMDS
 	$(TARGET_CONFIGURE_OPTS) $(TI_K3_R5_LOADER_MAKE) -C $(@D) $(TI_K3_R5_LOADER_MAKE_OPTS)
@@ -81,6 +98,22 @@ endef
 
 define TI_K3_R5_LOADER_INSTALL_IMAGES_CMDS
 	cp $(@D)/spl/u-boot-spl.bin $(BINARIES_DIR)/r5-u-boot-spl.bin
+	$(TI_K3_R5_LOADER_INSTALL_TIBOOT3_BIN)
+	$(TI_K3_R5_LOADER_INSTALL_SWSFW_ITB)
 endef
+
+# Checks to give errors that the user can understand
+# Must be before we call to kconfig-package
+ifeq ($(BR2_TARGET_TI_K3_R5_LOADER)$(BR_BUILDING),yy)
+
+ifeq ($(TI_K3_R5_LOADER_TIBOOT3_BIN),)
+$(error No custom tiboot3 name specified, check your BR2_TARGET_TI_K3_R5_LOADER_TIBOOT3_BIN setting)
+endif
+
+ifeq ($(TI_K3_R5_LOADER_SYSFW_ITB),)
+$(error No custom sysfw name specified, check your BR2_TARGET_TI_K3_R5_LOADER_SYSFW_ITB setting)
+endif
+
+endif # BR_BUILDING
 
 $(eval $(kconfig-package))
