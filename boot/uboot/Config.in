@@ -251,19 +251,6 @@ config BR2_TARGET_UBOOT_NEEDS_TI_K3_BOOT_FIRMWARE
 	  j721e) also need the Device Manager (DM) firmware to be
 	  available for the U-Boot build.
 
-if BR2_TARGET_UBOOT_NEEDS_TI_K3_BOOT_FIRMWARE
-
-# TI_K3_DM_SOCNAME is only needed when ti-k3-image-gen is used for
-# TI K3 devices using the Device Manager (DM) firmware.
-# We use the SoC selection defined for the ti-k3-image-gen
-# package.
-config BR2_TARGET_UBOOT_TI_K3_DM_SOCNAME
-	string
-	default "am62axx" if BR2_TARGET_TI_K3_IMAGE_GEN_SOC_AM62AX
-	default "am62xx"  if BR2_TARGET_TI_K3_IMAGE_GEN_SOC_AM62X
-
-endif
-
 config BR2_TARGET_UBOOT_NEEDS_OPENSBI
 	bool "U-Boot needs OpenSBI"
 	depends on BR2_TARGET_OPENSBI
