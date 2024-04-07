@@ -63,7 +63,10 @@ endif
 
 ifeq ($(BR2_PACKAGE_ANDROID_TOOLS_ADBD),y)
 ANDROID_TOOLS_TARGETS += adbd
-ANDROID_TOOLS_DEPENDENCIES += zlib openssl
+ANDROID_TOOLS_DEPENDENCIES += \
+	openssl \
+	zlib \
+	$(if $(BR2_PACKAGE_LIBXCRYPT),libxcrypt)
 endif
 
 # Build each tool in its own directory not to share object files
