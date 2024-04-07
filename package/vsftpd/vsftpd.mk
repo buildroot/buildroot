@@ -35,6 +35,10 @@ VSFTPD_DEPENDENCIES += libcap
 VSFTPD_LIBS += -lcap
 endif
 
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+VSFTPD_DEPENDENCIES += libxcrypt
+endif
+
 ifeq ($(BR2_PACKAGE_LINUX_PAM),y)
 VSFTPD_DEPENDENCIES += linux-pam
 VSFTPD_LIBS += -lpam
