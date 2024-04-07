@@ -30,6 +30,10 @@ else
 POLKIT_CONF_OPTS += -Dintrospection=false
 endif
 
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+POLKIT_DEPENDENCIES += libxcrypt
+endif
+
 ifeq ($(BR2_PACKAGE_LINUX_PAM),y)
 POLKIT_DEPENDENCIES += linux-pam
 POLKIT_CONF_OPTS += -Dauthfw=pam
