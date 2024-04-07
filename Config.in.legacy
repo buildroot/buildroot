@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2024.05"
 
+config BR2_PACKAGE_OMXPLAYER
+	bool "omxplayer removed"
+	select BR2_LEGACY
+	help
+	  Package was deprecated in 2020 and is broken with ffmpeg 6.x
+
 config BR2_KERNEL_HEADERS_6_7
 	bool "kernel headers version 6.7.x are no longer supported"
 	select BR2_LEGACY
