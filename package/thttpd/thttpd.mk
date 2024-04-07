@@ -12,6 +12,10 @@ THTTPD_CPE_ID_VENDOR = acme
 
 THTTPD_MAKE = $(MAKE1)
 
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+THTTPD_DEPENDENCIES += libxcrypt
+endif
+
 define THTTPD_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/thttpd $(TARGET_DIR)/usr/sbin/thttpd
 	$(INSTALL) -D -m 0755 $(@D)/extras/htpasswd $(TARGET_DIR)/usr/bin/htpasswd
