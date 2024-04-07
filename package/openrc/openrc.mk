@@ -33,6 +33,10 @@ else
 OPENRC_CONF_OPTS += -Dselinux=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+OPENRC_DEPENDENCIES += libxcrypt
+endif
+
 ifeq ($(BR2_PACKAGE_LINUX_PAM),y)
 OPENRC_CONF_OPTS += -Dpam=true
 OPENRC_DEPENDENCIES += linux-pam
