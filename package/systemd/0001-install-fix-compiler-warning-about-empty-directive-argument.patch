@@ -1,0 +1,45 @@
+From 8040fa55a1cbc34dede3205a902095ecd26c21e3 Mon Sep 17 00:00:00 2001
+From: Luca Boccassi <bluca@debian.org>
+Date: Sat, 24 Feb 2024 12:05:44 +0000
+Subject: [PATCH] install: fix compiler warning about empty directive argument
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On ppc64el with gcc 13.2 on Ubuntu 24.04:
+
+3s In file included from ../src/basic/macro.h:386,
+483s                  from ../src/basic/alloc-util.h:10,
+483s                  from ../src/shared/install.c:12:
+483s ../src/shared/install.c: In function ‘install_changes_dump’:
+483s ../src/shared/install.c:432:64: error: ‘%s’ directive argument is null [-Werror=format-overflow=]
+483s   432 |                         err = log_error_errno(changes[i].type, "Failed to %s unit, unit %s does not exist.",
+483s       |                                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+483s ../src/shared/install.c:432:75: note: format string is defined here
+483s   432 |                         err = log_error_errno(changes[i].type, "Failed to %s unit, unit %s does not exist.",
+
+Upstream: https://github.com/systemd/systemd/commit/8040fa55a1cbc34dede3205a902095ecd26c21e3
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/shared/install.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/src/shared/install.c b/src/shared/install.c
+index fabf5db7ed2e1..c3a94d1912165 100644
+--- a/src/shared/install.c
++++ b/src/shared/install.c
+@@ -340,9 +340,12 @@ void install_changes_dump(int r, const char *verb, const InstallChange *changes,
+         assert(verb || r >= 0);
+ 
+         for (size_t i = 0; i < n_changes; i++) {
+-                if (changes[i].type < 0)
+-                        assert(verb);
+                 assert(changes[i].path);
++                /* This tries to tell the compiler that it's safe to use 'verb' in a string format if there
++                 * was an error, but the compiler doesn't care and fails anyway, so strna(verb) is used
++                 * too. */
++                assert(verb || changes[i].type >= 0);
++                verb = strna(verb);
+ 
+                 /* When making changes here, make sure to also change install_error() in dbus-manager.c. */
+ 
