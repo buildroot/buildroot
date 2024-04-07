@@ -1,0 +1,48 @@
+From 2e75bb8b2c7f70c5d16c9e3d14b1427f4eb80c9c Mon Sep 17 00:00:00 2001
+From: Korynkai <matt@qmxtech.com>
+Date: Thu, 17 Aug 2023 21:10:31 +0200
+Subject: [PATCH] mod_av: fix build with ffmpeg 6.0
+
+Upstream: https://github.com/signalwire/freeswitch/issues/2202
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/mod/applications/mod_av/avformat.c | 2 ++
+ src/mod/applications/mod_av/mod_av.h   | 1 +
+ 2 files changed, 3 insertions(+)
+
+diff --git a/src/mod/applications/mod_av/avformat.c b/src/mod/applications/mod_av/avformat.c
+index 69475c169f..0a1662aed6 100644
+--- a/src/mod/applications/mod_av/avformat.c
++++ b/src/mod/applications/mod_av/avformat.c
+@@ -455,6 +455,7 @@ static int mod_avformat_alloc_output_context2(AVFormatContext **avctx, const cha
+ 	}
+ 
+ 	s->oformat = oformat;
++#if (LIBAVFORMAT_VERSION_MAJOR < LIBAVFORMAT_N)
+ 	if (s->oformat->priv_data_size > 0) {
+ 		s->priv_data = av_mallocz(s->oformat->priv_data_size);
+ 		if (!s->priv_data) {
+@@ -468,6 +469,7 @@ static int mod_avformat_alloc_output_context2(AVFormatContext **avctx, const cha
+ 	} else {
+ 		s->priv_data = NULL;
+ 	}
++#endif
+ 
+ 	if (filename) {
+ #if (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(58,7,100))
+diff --git a/src/mod/applications/mod_av/mod_av.h b/src/mod/applications/mod_av/mod_av.h
+index a89e6cb8f7..ef9bd48d73 100644
+--- a/src/mod/applications/mod_av/mod_av.h
++++ b/src/mod/applications/mod_av/mod_av.h
+@@ -42,6 +42,7 @@
+ 
+ #define LIBAVCODEC_V 59
+ #define LIBAVFORMAT_V 59
++#define LIBAVFORMAT_N 60
+ #define LIBAVUTIL_V 57
+ 
+ struct mod_av_globals {
+-- 
+2.39.2
+
