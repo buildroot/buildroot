@@ -60,6 +60,21 @@ TI_K3_R5_LOADER_MAKE_OPTS = \
 	HOSTCC="$(HOSTCC) $(subst -I/,-isystem /,$(subst -I /,-isystem /,$(HOST_CFLAGS)))" \
 	HOSTLDFLAGS="$(HOST_LDFLAGS)"
 
+ifeq ($(BR2_TARGET_TI_K3_R5_LOADER_USE_BINMAN),y)
+# https://source.denx.de/u-boot/u-boot/-/blob/v2024.01/tools/buildman/requirements.txt
+TI_K3_R5_LOADER_DEPENDENCIES += \
+	host-python-jsonschema \
+	host-python-pyyaml \
+	ti-k3-boot-firmware
+# Make sure that all binman requirements are build before ti-k3-r5-loader.
+TI_K3_R5_LOADER_DEPENDENCIES += \
+	host-python3 \
+	host-python-pyelftools \
+	host-python-pylibfdt \
+	host-python-setuptools
+TI_K3_R5_LOADER_MAKE_OPTS += BINMAN_INDIRS=$(BINARIES_DIR)
+endif
+
 define TI_K3_R5_LOADER_BUILD_CMDS
 	$(TARGET_CONFIGURE_OPTS) $(TI_K3_R5_LOADER_MAKE) -C $(@D) $(TI_K3_R5_LOADER_MAKE_OPTS)
 endef
