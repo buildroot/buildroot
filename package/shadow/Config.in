@@ -3,6 +3,7 @@ menuconfig BR2_PACKAGE_SHADOW
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14
 	depends on !BR2_TOOLCHAIN_USES_UCLIBC # reallocarray, explicit_bzero
+	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	help
 	  Utilities to deal with user accounts.
 

@@ -88,6 +88,10 @@ else
 SHADOW_CONF_OPTS += --without-selinux
 endif
 
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+SHADOW_DEPENDENCIES += libxcrypt
+endif
+
 # linux-pam is also used without account-tools-setuid enabled
 ifeq ($(BR2_PACKAGE_LINUX_PAM),y)
 SHADOW_CONF_OPTS += --with-libpam
