@@ -1,5 +1,6 @@
 config BR2_PACKAGE_FREERADIUS_CLIENT
 	bool "freeradius-client"
+	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	help
 	  FreeRADIUS Client is a framework and library for
 	  writing RADIUS Clients.
