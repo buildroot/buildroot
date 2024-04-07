@@ -25,6 +25,10 @@ MONIT_CONF_OPTS += \
 	--without-pam \
 	--with-largefiles
 
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+MONIT_DEPENDENCIES += libxcrypt
+endif
+
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 MONIT_CONF_ENV += LIBS=`$(PKG_CONFIG_HOST_BINARY) --libs openssl`
 ifeq ($(BR2_STATIC_LIBS),y)
