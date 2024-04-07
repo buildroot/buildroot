@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-KODI_INPUTSTREAM_ADAPTIVE_VERSION = 20.3.17-Nexus
+KODI_INPUTSTREAM_ADAPTIVE_VERSION = 21.4.4-Omega
 KODI_INPUTSTREAM_ADAPTIVE_SITE = $(call github,xbmc,inputstream.adaptive,$(KODI_INPUTSTREAM_ADAPTIVE_VERSION))
 KODI_INPUTSTREAM_ADAPTIVE_LICENSE = \
 	BSD-2-Clause-Views \
@@ -22,6 +22,6 @@ KODI_INPUTSTREAM_ADAPTIVE_LICENSE_FILES = \
 	LICENSES/GPL-2.0-or-later \
 	LICENSES/RSA-MD
 
-KODI_INPUTSTREAM_ADAPTIVE_DEPENDENCIES = bento4 expat kodi
+KODI_INPUTSTREAM_ADAPTIVE_DEPENDENCIES = bento4 kodi pugixml
 
 $(eval $(cmake-package))
