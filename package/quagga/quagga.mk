@@ -33,6 +33,10 @@ else
 QUAGGA_CONF_OPTS += --disable-capabilities
 endif
 
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+QUAGGA_DEPENDENCIES += libxcrypt
+endif
+
 ifeq ($(BR2_PACKAGE_PROTOBUF_C),y)
 QUAGGA_CONF_OPTS += --enable-protobuf
 QUAGGA_DEPENDENCIES += protobuf-c
