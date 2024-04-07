@@ -20,4 +20,11 @@ else
 OPENSC_CONF_OPTS += --disable-openssl
 endif
 
+ifeq ($(BR2_PACKAGE_ZLIB),y)
+OPENSC_DEPENDENCIES += zlib
+OPENSC_CONF_OPTS += --enable-zlib
+else
+OPENSC_CONF_OPTS += --disable-zlib
+endif
+
 $(eval $(autotools-package))
