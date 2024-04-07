@@ -18,6 +18,7 @@ config BR2_PACKAGE_FFMPEG_ARCH_SUPPORTS
 menuconfig BR2_PACKAGE_FFMPEG
 	bool "ffmpeg"
 	depends on BR2_PACKAGE_FFMPEG_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 	help
 	  FFmpeg is a complete, cross-platform solution to record,
 	  convert and stream audio and video.
@@ -73,11 +74,6 @@ config BR2_PACKAGE_FFMPEG_XCBGRAB
 	select BR2_PACKAGE_LIBXCB
 	help
 	  X11 screen grabbing using libxcb.
-
-config BR2_PACKAGE_FFMPEG_AVRESAMPLE
-	bool "Build libavresample"
-	help
-	  Avresample is a audio conversion library for compatibility.
 
 config BR2_PACKAGE_FFMPEG_POSTPROC
 	bool "Build libpostproc"
@@ -186,3 +182,6 @@ config BR2_PACKAGE_FFMPEG_EXTRACONF
 	  ./configure commandline.
 
 endif
+
+comment "ffmpeg needs a toolchain w/ threads"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS

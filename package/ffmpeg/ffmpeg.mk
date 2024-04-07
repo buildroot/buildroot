@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FFMPEG_VERSION = 4.4.4
+FFMPEG_VERSION = 6.1.1
 FFMPEG_SOURCE = ffmpeg-$(FFMPEG_VERSION).tar.xz
 FFMPEG_SITE = https://ffmpeg.org/releases
 FFMPEG_INSTALL_STAGING = YES
@@ -32,10 +32,6 @@ FFMPEG_CONF_OPTS = \
 	--disable-gray \
 	--enable-swscale-alpha \
 	--disable-small \
-	--enable-dct \
-	--enable-fft \
-	--enable-mdct \
-	--enable-rdft \
 	--disable-crystalhd \
 	--disable-dxva2 \
 	--enable-runtime-cpudetect \
@@ -91,12 +87,6 @@ FFMPEG_DEPENDENCIES += libv4l
 FFMPEG_CONF_OPTS += --enable-libv4l2
 else
 FFMPEG_CONF_OPTS += --disable-libv4l2
-endif
-
-ifeq ($(BR2_PACKAGE_FFMPEG_AVRESAMPLE),y)
-FFMPEG_CONF_OPTS += --enable-avresample
-else
-FFMPEG_CONF_OPTS += --disable-avresample
 endif
 
 ifeq ($(BR2_PACKAGE_FFMPEG_FFPROBE),y)

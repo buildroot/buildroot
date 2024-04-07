@@ -1,6 +1,7 @@
 config BR2_PACKAGE_GST1_LIBAV
 	bool "gst1-libav"
 	depends on BR2_PACKAGE_FFMPEG_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_HAS_THREADS # ffmpeg
 	select BR2_PACKAGE_FFMPEG
 	select BR2_PACKAGE_FFMPEG_SWSCALE
 	select BR2_PACKAGE_GST1_PLUGINS_BASE
@@ -14,3 +15,6 @@ config BR2_PACKAGE_GST1_LIBAV
 	  selected in the ffmpeg package.
 
 	  https://gstreamer.freedesktop.org/
+
+comment "gst1-libav needs a toolchain w/ threads"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS
