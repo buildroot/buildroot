@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BOTAN_VERSION = 3.2.0
+BOTAN_VERSION = 3.3.0
 BOTAN_SOURCE = Botan-$(BOTAN_VERSION).tar.xz
 BOTAN_SITE = http://botan.randombit.net/releases
 BOTAN_LICENSE = BSD-2-Clause
