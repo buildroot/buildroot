@@ -52,6 +52,10 @@ else
 APACHE_CONF_OPTS += --disable-brotli
 endif
 
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+APACHE_DEPENDENCIES += libxcrypt
+endif
+
 ifeq ($(BR2_PACKAGE_LIBXML2),y)
 APACHE_DEPENDENCIES += libxml2
 # Apache wants the path to the header file, where it can find
