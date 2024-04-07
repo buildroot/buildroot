@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2024.05"
 
+config BR2_TARGET_UBOOT_NEEDS_TI_K3_DM
+	bool "u-boot TI K3 DM option has been renamed."
+	select BR2_LEGACY
+	select BR2_TARGET_UBOOT_NEEDS_TI_K3_BOOT_FIRMWARE
+	help
+	  The TI K3 Device Manager is already included in
+	  ti-k3-boot-firmware.
+
 config BR2_PACKAGE_FLUTTER_GALLERY
 	bool "flutter-gallery removed"
 	select BR2_LEGACY
