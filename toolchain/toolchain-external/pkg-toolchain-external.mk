@@ -120,7 +120,7 @@ TOOLCHAIN_EXTERNAL_LIBS += libssp.so.*
 endif
 
 ifeq ($(BR2_TOOLCHAIN_EXTERNAL_GLIBC)$(BR2_TOOLCHAIN_EXTERNAL_UCLIBC),y)
-TOOLCHAIN_EXTERNAL_LIBS += libc.so.* libcrypt.so.* libdl.so.* libm.so.* libnsl.so.* libresolv.so.* librt.so.* libutil.so.*
+TOOLCHAIN_EXTERNAL_LIBS += libc.so.* libdl.so.* libm.so.* libnsl.so.* libresolv.so.* librt.so.* libutil.so.*
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
 TOOLCHAIN_EXTERNAL_LIBS += libpthread.so.*
 ifneq ($(BR2_PACKAGE_GDB)$(BR2_TOOLCHAIN_EXTERNAL_GDB_SERVER_COPY),)
@@ -129,8 +129,24 @@ endif # gdbserver
 endif # ! no threads
 endif
 
+ifeq ($(BR2_TOOLCHAIN_EXTERNAL_UCLIBC),y)
+# uClibc, though mono-lib, still has a separate libcrypt as a stub
+TOOLCHAIN_EXTERNAL_LIBS += libcrypt.so.*
+endif
+
 ifeq ($(BR2_TOOLCHAIN_EXTERNAL_GLIBC),y)
 TOOLCHAIN_EXTERNAL_LIBS += libnss_files.so.* libnss_dns.so.* libmvec.so.* libanl.so.*
+# Note: explicitly do copy libcrypt.so.1: it is not the same SONAME as the
+# one from libxcrypt, so no conflict, but some prebuilt binaries may have
+# it in their DT_NEEDED. However, do remove the headers, static lib, and
+# symlink to avoid conflict with libxcrypt (the prebuilt binaries do not
+# need those either).
+TOOLCHAIN_EXTERNAL_LIBS += libcrypt.so.1
+define TOOLCHAIN_EXTERNAL_GLIBC_NO_LIBCRYPT
+	rm -f $(STAGING_DIR)/usr/include/crypt.h \
+		$(STAGING_DIR)/usr/lib/libcrypt.so \
+		$(STAGING_DIR)/usr/lib/libcrypt.a
+endef
 endif
 
 ifeq ($(BR2_TOOLCHAIN_EXTERNAL_MUSL),y)
@@ -599,6 +615,7 @@ define $(2)_INSTALL_STAGING_CMDS
 	$$(TOOLCHAIN_WRAPPER_INSTALL)
 	$$(TOOLCHAIN_EXTERNAL_CREATE_STAGING_LIB_SYMLINK)
 	$$(TOOLCHAIN_EXTERNAL_INSTALL_SYSROOT_LIBS)
+	$$(TOOLCHAIN_EXTERNAL_GLIBC_NO_LIBCRYPT)
 	$$(TOOLCHAIN_EXTERNAL_INSTALL_WRAPPER)
 	$$(TOOLCHAIN_EXTERNAL_INSTALL_GDBINIT)
 	$$(TOOLCHAIN_EXTERNAL_FIXUP_PRETTY_PRINTER_LOADER)
