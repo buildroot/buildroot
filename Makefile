@@ -446,6 +446,7 @@ ZCAT := $(call qstrip,$(BR2_ZCAT))
 BZCAT := $(call qstrip,$(BR2_BZCAT))
 XZCAT := $(call qstrip,$(BR2_XZCAT))
 LZCAT := $(call qstrip,$(BR2_LZCAT))
+ZSTDCAT := $(call qstrip,$(BR2_ZSTDCAT))
 TAR_OPTIONS = $(call qstrip,$(BR2_TAR_OPTIONS)) -xf
 
 ifeq ($(BR2_PER_PACKAGE_DIRECTORIES),y)

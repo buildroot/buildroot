@@ -59,6 +59,7 @@ INFLATE.tbz  = $(BZCAT)
 INFLATE.tbz2 = $(BZCAT)
 INFLATE.tgz  = $(ZCAT)
 INFLATE.xz   = $(XZCAT)
+INFLATE.zst  = $(ZSTDCAT)
 INFLATE.tar  = cat
 # suitable-extractor(filename): returns extractor based on suffix
 suitable-extractor = $(INFLATE$(suffix $(1)))
@@ -66,6 +67,7 @@ suitable-extractor = $(INFLATE$(suffix $(1)))
 EXTRACTOR_PKG_DEPENDENCY.lzma = $(BR2_XZCAT_HOST_DEPENDENCY)
 EXTRACTOR_PKG_DEPENDENCY.xz   = $(BR2_XZCAT_HOST_DEPENDENCY)
 EXTRACTOR_PKG_DEPENDENCY.lz   = $(BR2_LZIP_HOST_DEPENDENCY)
+EXTRACTOR_PKG_DEPENDENCY.zst  = $(BR2_ZSTD_HOST_DEPENDENCY)
 
 # extractor-pkg-dependency(filename): returns a Buildroot package
 # dependency needed to extract file based on suffix
