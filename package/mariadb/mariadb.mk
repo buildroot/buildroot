@@ -26,7 +26,7 @@ MARIADB_DEPENDENCIES = \
 	libxml2
 
 MARIADB_CONF_OPTS += \
-	-DWITH_FMT=system \
+	-DWITH_LIBFMT=system \
 	-DWITH_PCRE=system
 
 # use bundled GPL-2.0+ licensed readline as package/readline is GPL-3.0+
