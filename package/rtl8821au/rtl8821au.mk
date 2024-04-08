@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RTL8821AU_VERSION = 0cab870ff635ba038705ab29363b0cbbedd5c258
+RTL8821AU_VERSION = 8ea0ed9da764448c7310a27744ab5814289f35a8
 RTL8821AU_SITE = $(call github,lwfinger,rtl8812au,$(RTL8821AU_VERSION))
 RTL8821AU_LICENSE = GPL-2.0
 RTL8821AU_LICENSE_FILES = LICENSE
