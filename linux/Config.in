@@ -126,6 +126,12 @@ config BR2_LINUX_KERNEL_CUSTOM_REPO_VERSION
 
 endif
 
+config BR2_LINUX_KERNEL_CUSTOM_REPO_GIT_SUBMODULES
+	bool "Download also git submodules"
+	depends on BR2_LINUX_KERNEL_CUSTOM_GIT
+	help
+	  Include git submodules in the kernel source tree.
+
 config BR2_LINUX_KERNEL_VERSION
 	string
 	default "6.8.6" if BR2_LINUX_KERNEL_LATEST_VERSION
