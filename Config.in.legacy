@@ -161,9 +161,8 @@ config BR2_TARGET_TI_K3_IMAGE_GEN
 	  U-Boot binman tool (requires U-boot >= 2023.10).
 
 config BR2_TARGET_UBOOT_NEEDS_TI_K3_DM
-	bool "u-boot TI K3 DM option has been renamed."
+	bool "u-boot TI K3 DM option has been removed."
 	select BR2_LEGACY
-	select BR2_TARGET_UBOOT_NEEDS_TI_K3_BOOT_FIRMWARE
 	help
 	  The TI K3 Device Manager is already included in
 	  ti-k3-boot-firmware.
