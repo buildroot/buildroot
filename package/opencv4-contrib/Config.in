@@ -251,6 +251,7 @@ config BR2_PACKAGE_OPENCV4_CONTRIB_LIB_SALIENCY
 
 config BR2_PACKAGE_OPENCV4_CONTRIB_LIB_SFM
 	bool "sfm"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_6 # glog
 	select BR2_PACKAGE_OPENCV4_LIB_IMGPROC
 	select BR2_PACKAGE_OPENCV4_LIB_IMGCODECS
 	select BR2_PACKAGE_EIGEN
@@ -260,6 +261,9 @@ config BR2_PACKAGE_OPENCV4_CONTRIB_LIB_SFM
 	  Structure from Motion -- This module contains algorithms
 	  to perform 3d reconstruction from 2d images. The core of
 	  the module is a light version of Libmv.
+
+comment "sfm needs a toolchain w/ gcc >= 6"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_6
 
 config BR2_PACKAGE_OPENCV4_CONTRIB_LIB_SHAPE
 	bool "shape"
