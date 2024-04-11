@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBCAP_NG_VERSION = 0.8.4
-LIBCAP_NG_SITE = http://people.redhat.com/sgrubb/libcap-ng
+LIBCAP_NG_VERSION = 0.8.5
+LIBCAP_NG_SITE = https://people.redhat.com/sgrubb/libcap-ng
 LIBCAP_NG_LICENSE = GPL-2.0+ (programs), LGPL-2.1+ (library)
 LIBCAP_NG_LICENSE_FILES = COPYING COPYING.LIB
 LIBCAP_NG_CPE_ID_VALID = YES
