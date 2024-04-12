@@ -31,4 +31,10 @@ ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
 LIBGCRYPT_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -marm"
 endif
 
+HOST_LIBGCRYPT_DEPENDENCIES = host-libgpg-error
+HOST_LIBGCRYPT_CONF_OPTS = \
+	--disable-tests \
+	--with-gpg-error-prefix=$(HOST_DIR)
+
 $(eval $(autotools-package))
+$(eval $(host-autotools-package))
