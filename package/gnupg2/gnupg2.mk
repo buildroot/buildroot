@@ -14,6 +14,8 @@ GNUPG2_CPE_ID_PRODUCT = gnupg
 GNUPG2_SELINUX_MODULES = gpg
 GNUPG2_DEPENDENCIES = zlib libgpg-error libgcrypt libassuan libksba libnpth \
 	$(if $(BR2_PACKAGE_LIBICONV),libiconv) host-pkgconf
+HOST_GNUPG2_DEPENDENCIES = host-zlib host-libgpg-error host-libgcrypt host-libassuan \
+	host-libksba host-libnpth host-pkgconf
 
 GNUPG2_CONF_OPTS = \
 	--disable-rpath \
@@ -23,9 +25,22 @@ GNUPG2_CONF_OPTS = \
 	--with-ksba-prefix=$(STAGING_DIR)/usr \
 	--with-npth-prefix=$(STAGING_DIR)/usr
 
+HOST_GNUPG2_CONF_OPTS = \
+	--with-gpg-error-prefix=$(HOST_DIR) \
+	--with-libgcrypt-prefix=$(HOST_DIR) \
+	--with-libassuan-prefix=$(HOST_DIR) \
+	--with-ksba-prefix=$(HOST_DIR) \
+	--with-npth-prefix=$(HOST_DIR) \
+	--disable-bzip2 \
+	--disable-gnutls \
+	--disable-ccid-driver \
+	--without-readline \
+	--disable-sqlite
+
 # Force the path to "gpgrt-config" (from the libgpg-error package) to
 # avoid using the one on host, if present.
 GNUPG2_CONF_ENV += GPGRT_CONFIG=$(STAGING_DIR)/usr/bin/gpgrt-config
+HOST_GNUPG2_CONF_ENV += GPGRT_CONFIG=$(HOST_DIR)/bin/gpgrt-config
 
 ifneq ($(BR2_PACKAGE_GNUPG2_GPGV),y)
 define GNUPG2_REMOVE_GPGV
@@ -71,3 +86,4 @@ GNUPG2_CONF_OPTS += --disable-sqlite
 endif
 
 $(eval $(autotools-package))
+$(eval $(host-autotools-package))
