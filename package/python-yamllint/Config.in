@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_YAMLLINT
+	bool "python-yamllint"
+	select BR2_PACKAGE_PYTHON_PATHSPEC # runtime
+	select BR2_PACKAGE_PYTHON_PYYAML # runtime
+	help
+	  A linter for YAML files.
+
+	  https://github.com/adrienverge/yamllint
