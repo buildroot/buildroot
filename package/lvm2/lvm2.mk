@@ -76,5 +76,10 @@ HOST_LVM2_CONF_OPTS = \
 	--disable-selinux \
 	--with-confdir=$(HOST_DIR)/etc
 
+define LVM2_LINUX_CONFIG_FIXUPS
+	$(call KCONFIG_ENABLE_OPT,CONFIG_MD)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_BLK_DEV_DM)
+endef
+
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
