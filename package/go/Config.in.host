@@ -32,6 +32,11 @@ config BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS
 	default y
 	depends on BR2_PACKAGE_HOST_GO_BOOTSTRAP_STAGE3_ARCH_SUPPORTS
 
+# Go packages should select BR2_PACKAGE_HOST_GO
+config BR2_PACKAGE_HOST_GO
+	bool
+	depends on BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS
+
 source "package/go/go-bootstrap-stage1/Config.in.host"
 source "package/go/go-bootstrap-stage2/Config.in.host"
 source "package/go/go-bootstrap-stage3/Config.in.host"

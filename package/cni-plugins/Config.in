@@ -5,6 +5,7 @@ config BR2_PACKAGE_CNI_PLUGINS
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on !BR2_TOOLCHAIN_USES_UCLIBC # no fexecve
 	depends on BR2_USE_MMU
+	select BR2_PACKAGE_HOST_GO
 	help
 	  Container Networking Interface plugins.
 
