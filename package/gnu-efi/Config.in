@@ -1,6 +1,7 @@
 config BR2_PACKAGE_GNU_EFI_ARCH_SUPPORTS
 	bool
 	default y if BR2_ARM_CPU_HAS_ARM
+	default y if BR2_RISCV_64
 	default y if BR2_aarch64
 	default y if BR2_aarch64_be
 	default y if BR2_i386
