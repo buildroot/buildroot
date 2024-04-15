@@ -129,4 +129,6 @@ define GO_BINARIES_INSTALL
 	find $(HOST_GO_ROOT) -type f -exec touch -r $(@D)/bin/go {} \;
 endef
 
+$(eval $(host-virtual-package))
+
 include $(sort $(wildcard package/go/*/*.mk))
