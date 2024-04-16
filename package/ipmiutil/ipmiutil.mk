@@ -4,12 +4,13 @@
 #
 ################################################################################
 
-IPMIUTIL_VERSION = 3.1.8
-IPMIUTIL_SITE = https://sourceforge.net/projects/ipmiutil/files
+IPMIUTIL_VERSION = 3.1.9
+IPMIUTIL_SITE = https://downloads.sourceforge.net/project/ipmiutil
 IPMIUTIL_LICENSE = BSD-3-Clause
 IPMIUTIL_LICENSE_FILES = COPYING
 
 IPMIUTIL_MAKE = $(MAKE1)
+IPMIUTIL_CONF_ENV = ac_cv_type_wchar_t=$(if $(BR2_USE_WCHAR),yes,no)
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 # tests against distro libcrypto so it might get a false positive when

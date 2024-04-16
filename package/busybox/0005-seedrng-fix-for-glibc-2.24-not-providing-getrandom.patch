@@ -1,0 +1,39 @@
+From 200a9669fbf6f06894e4243cccc9fc11a1a6073a Mon Sep 17 00:00:00 2001
+From: Denys Vlasenko <vda.linux@googlemail.com>
+Date: Mon, 10 Apr 2023 17:26:04 +0200
+Subject: [PATCH] seedrng: fix for glibc <= 2.24 not providing getrandom()
+
+Signed-off-by: Denys Vlasenko <vda.linux@googlemail.com>
+Upstream: https://git.busybox.net/busybox/commit/?id=200a9669fbf6f06894e4243cccc9fc11a1a6073a
+---
+ miscutils/seedrng.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/miscutils/seedrng.c b/miscutils/seedrng.c
+index 967741dc7..7cc855141 100644
+--- a/miscutils/seedrng.c
++++ b/miscutils/seedrng.c
+@@ -45,6 +45,20 @@
+ #include <sys/random.h>
+ #include <sys/file.h>
+ 
++/* Fix up glibc <= 2.24 not having getrandom() */
++#if defined(__GLIBC__) && __GLIBC__ == 2 && __GLIBC_MINOR__ <= 24
++#include <sys/syscall.h>
++# define getrandom(...) bb_getrandom(__VA_ARGS__)
++static ssize_t getrandom(void *buffer, size_t length, unsigned flags)
++{
++# if defined(__NR_getrandom)
++	return syscall(__NR_getrandom, buffer, length, flags);
++# else
++	return ENOSYS;
++# endif
++}
++#endif
++
+ #ifndef GRND_INSECURE
+ #define GRND_INSECURE 0x0004 /* Apparently some headers don't ship with this yet. */
+ #endif
+-- 
+2.39.1
+

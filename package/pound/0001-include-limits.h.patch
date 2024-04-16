@@ -1,0 +1,75 @@
+From a0374d946e55129b36ba1e0024e1d94675a8f044 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 17 Sep 2023 22:01:21 +0200
+Subject: [PATCH] include limits.h
+
+Include limits.h to avoid the following build failure:
+
+poundctl.c: In function 'oi_getn':
+poundctl.c:232:29: error: 'INT_MAX' undeclared (first use in this function)
+  232 |   if (errno || n < 0 || n > INT_MAX)
+      |                             ^~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/4edfffcd5d4383c57947d97139331e0bf2cb6155
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/graygnuorg/pound/pull/17
+---
+ src/config.c   | 1 +
+ src/poundctl.c | 1 +
+ src/svc.c      | 1 +
+ src/tmpl.c     | 1 +
+ 4 files changed, 4 insertions(+)
+
+diff --git a/src/config.c b/src/config.c
+index b7e3150..12f5cfa 100644
+--- a/src/config.c
++++ b/src/config.c
+@@ -21,6 +21,7 @@
+ #include "extern.h"
+ #include <openssl/x509v3.h>
+ #include <assert.h>
++#include <limits.h>
+ 
+ 
+ /*
+diff --git a/src/poundctl.c b/src/poundctl.c
+index bd1459f..7fa18c8 100644
+--- a/src/poundctl.c
++++ b/src/poundctl.c
+@@ -19,6 +19,7 @@
+ #include "pound.h"
+ #include "json.h"
+ #include <assert.h>
++#include <limits.h>
+ 
+ char *conf_name = POUND_CONF;
+ char *socket_name;
+diff --git a/src/svc.c b/src/svc.c
+index 6e810a6..457f1e0 100644
+--- a/src/svc.c
++++ b/src/svc.c
+@@ -20,6 +20,7 @@
+ #include "pound.h"
+ #include "extern.h"
+ #include "json.h"
++#include <limits.h>
+ 
+ /*
+  * basic hashing function, based on fmv
+diff --git a/src/tmpl.c b/src/tmpl.c
+index 2efa72f..0e5b65d 100644
+--- a/src/tmpl.c
++++ b/src/tmpl.c
+@@ -26,6 +26,7 @@
+ 
+ #include "pound.h"
+ #include <assert.h>
++#include <limits.h>
+ #include "json.h"
+ 
+ static void
+-- 
+2.40.1
+

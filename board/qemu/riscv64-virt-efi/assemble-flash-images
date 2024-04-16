@@ -1,0 +1,11 @@
+#! /bin/sh
+
+set -e
+
+BOARD_DIR="$(dirname "$0")"
+
+cp -f "${BOARD_DIR}"/grub.cfg "${BINARIES_DIR}"/efi-part/EFI/BOOT/grub.cfg
+
+# The QEMU riscv64 virt machine expects flash devices to be 32M.
+truncate -s 32M "${BINARIES_DIR}"/RISCV_VIRT_CODE.fd
+truncate -s 32M "${BINARIES_DIR}"/RISCV_VIRT_VARS.fd

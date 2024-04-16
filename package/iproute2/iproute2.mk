@@ -4,14 +4,14 @@
 #
 ################################################################################
 
-IPROUTE2_VERSION = 5.19.0
+IPROUTE2_VERSION = 6.8.0
 IPROUTE2_SOURCE = iproute2-$(IPROUTE2_VERSION).tar.xz
 IPROUTE2_SITE = $(BR2_KERNEL_MIRROR)/linux/utils/net/iproute2
 IPROUTE2_DEPENDENCIES = host-bison host-flex host-pkgconf \
 	$(if $(BR2_PACKAGE_LIBMNL),libmnl)
 IPROUTE2_LICENSE = GPL-2.0+
 IPROUTE2_LICENSE_FILES = COPYING
-IPROUTE2_CPE_ID_VENDOR = iproute2_project
+IPROUTE2_CPE_ID_VALID = YES
 
 ifeq ($(BR2_PACKAGE_ELFUTILS),y)
 IPROUTE2_DEPENDENCIES += elfutils
@@ -38,8 +38,16 @@ ifeq ($(BR2_PACKAGE_BERKELEYDB_COMPAT185),y)
 IPROUTE2_DEPENDENCIES += berkeleydb
 endif
 
+ifeq ($(BR2_PACKAGE_LIBBPF),y)
+IPROUTE2_DEPENDENCIES += libbpf
+IPROUTE2_CONFIGURE_OPTS += --libbpf_force on
+else
+IPROUTE2_CONFIGURE_OPTS += --libbpf_force off
+endif
+
 define IPROUTE2_CONFIGURE_CMDS
-	cd $(@D) && $(TARGET_CONFIGURE_OPTS) ./configure
+	cd $(@D) && $(TARGET_CONFIGURE_OPTS) ./configure \
+		$(IPROUTE2_CONFIGURE_OPTS)
 	$(IPROUTE2_DISABLE_IPTABLES)
 endef
 

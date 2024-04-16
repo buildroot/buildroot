@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_MUNCH
+	bool "python-munch"
+	select BR2_PACKAGE_PYTHON_SETUPTOOLS # runtime
+	select BR2_PACKAGE_PYTHON_SIX # runtime
+	help
+	  Munch is a dictionary that supports attribute-style access,
+	  a la JavaScript.
+
+	  https://github.com/Infinidat/munch

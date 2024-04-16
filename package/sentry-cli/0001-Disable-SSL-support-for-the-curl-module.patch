@@ -1,0 +1,62 @@
+From 5b4179af15b435a476c006260718d4f6e22ea2ab Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Mon, 31 Jul 2023 22:34:04 +0200
+Subject: [PATCH] Disable SSL support for the curl module
+
+Fixes build with OpenSSL v3.
+
+Downloaded Cargo.toml patch from
+https://cgit.freebsd.org/ports/tree/devel/sentry-cli/files/patch-Cargo.toml
+
+Upstream: https://github.com/getsentry/sentry-cli/issues/1706
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ Cargo.lock | 10 ----------
+ Cargo.toml |  2 +-
+ 2 files changed, 1 insertion(+), 11 deletions(-)
+
+diff --git a/Cargo.lock b/Cargo.lock
+index e5031db..7357215 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -1521,15 +1521,6 @@ version = "0.1.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "ff011a302c396a5197692431fc1948019154afc178baf7d8e37367442a4601cf"
+ 
+-[[package]]
+-name = "openssl-src"
+-version = "111.25.0+1.1.1t"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3173cd3626c43e3854b1b727422a276e568d9ec5fe8cec197822cf52cfb743d6"
+-dependencies = [
+- "cc",
+-]
+-
+ [[package]]
+ name = "openssl-sys"
+ version = "0.9.80"
+@@ -1539,7 +1530,6 @@ dependencies = [
+  "autocfg",
+  "cc",
+  "libc",
+- "openssl-src",
+  "pkg-config",
+  "vcpkg",
+ ]
+diff --git a/Cargo.toml b/Cargo.toml
+index c8c9ca9..117e77d 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -25,7 +25,7 @@ clap = { version = "4.1.6", default-features = false, features = [
+   "error-context",
+ ] }
+ console = "0.15.5"
+-curl = { version = "0.4.44", features = ["static-curl", "static-ssl"] }
++curl = { version = "0.4.44" }
+ dirs = "4.0.0"
+ dotenv = "0.15.0"
+ elementtree = "1.2.3"
+-- 
+2.39.2
+

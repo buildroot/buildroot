@@ -1,5 +1,5 @@
 config BR2_PACKAGE_CAIROMM
-	bool "cairomm"
+	bool "cairomm (latest)"
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 # libsigc
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2
 	depends on BR2_USE_WCHAR # libglib2
@@ -11,7 +11,7 @@ config BR2_PACKAGE_CAIROMM
 	help
 	  The cairomm package is a set of C++ bindings for Cairo.
 
-	  http://www.gtkmm.org/
+	  https://www.cairographics.org/cairomm/
 
 comment "cairomm needs a toolchain w/ C++, wchar, threads, gcc >= 7"
 	depends on BR2_USE_MMU

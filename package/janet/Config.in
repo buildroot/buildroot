@@ -1,5 +1,7 @@
 config BR2_PACKAGE_JANET
 	bool "janet"
+	depends on BR2_USE_MMU # fork()
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # C11/stdatomic.h
 	help
 	  Janet is a functional and imperative programming language.
 	  The entire language (core library, interpreter, compiler,
@@ -8,3 +10,7 @@ config BR2_PACKAGE_JANET
 	  and two headers.
 
 	  https://janet-lang.org/
+
+comment "janet needs a toolchain w/ gcc >= 4.9"
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9

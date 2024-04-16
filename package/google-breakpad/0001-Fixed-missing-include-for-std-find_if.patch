@@ -1,0 +1,26 @@
+From 898a997855168c0e6a689072fefba89246271a5d Mon Sep 17 00:00:00 2001
+From: Nathan Moinvaziri <nathan@nathanm.com>
+Date: Tue, 19 Dec 2023 14:35:05 -0800
+Subject: [PATCH] Fixed missing include for std::find_if.
+
+Throws an error when compiling on Windows.
+
+Change-Id: Ieb34c00cf199aaa1b45a440086c48b8ed363b3c7
+Reviewed-on: https://chromium-review.googlesource.com/c/breakpad/breakpad/+/5137658
+Reviewed-by: Ivan Penkov <ivanpe@chromium.org>
+Upstream: https://github.com/google/breakpad/commit/898a997855168c0e6a689072fefba89246271a5d
+Signed-off-by: Kadambini Nema <kadambini.nema@gmail.com>
+---
+
+diff --git a/src/common/module.cc b/src/common/module.cc
+index 0eb5aad..b6f5da7 100644
+--- a/src/common/module.cc
++++ b/src/common/module.cc
+@@ -42,6 +42,7 @@
+ #include <stdio.h>
+ #include <string.h>
+ 
++#include <algorithm>
+ #include <functional>
+ #include <iostream>
+ #include <memory>

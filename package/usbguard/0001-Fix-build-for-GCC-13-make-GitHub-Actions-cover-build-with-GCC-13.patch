@@ -1,0 +1,114 @@
+From 22b1e0897af977cc96af926c730ff948bd120bb5 Mon Sep 17 00:00:00 2001
+From: Sebastian Pipping <sebastian@pipping.org>
+Date: Fri, 31 Mar 2023 09:39:49 +0200
+Subject: [PATCH] Fix build for GCC 13 + make GitHub Actions cover build with
+ GCC 13 (#586)
+
+* include missing <cstdint>
+
+gcc 13 moved some includes around and as a result <cstdint> is no
+longer transitively included [1]. Explicitly include it for
+uint8_t.
+
+[1] https://gcc.gnu.org/gcc-13/porting_to.html#header-dep-changes
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+
+* docker.yml: Cover openSUSE Tumbleweed with GCC 13+
+
+Based on scripts/docker/build_on_centos_8_2.Dockerfile .
+
+---------
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+Co-authored-by: Khem Raj <raj.khem@gmail.com>
+Upstream: https://github.com/USBGuard/usbguard/commit/22b1e0897af977cc96af926c730ff948bd120bb5
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ .github/workflows/docker.yml                  |  1 +
+ .../build_on_opensuse_tumbleweed.Dockerfile   | 50 +++++++++++++++++++
+ src/Library/Base64.cpp                        |  1 -
+ src/Library/Base64.hpp                        |  1 +
+ 4 files changed, 52 insertions(+), 1 deletion(-)
+ create mode 100644 scripts/docker/build_on_opensuse_tumbleweed.Dockerfile
+
+diff --git a/scripts/docker/build_on_opensuse_tumbleweed.Dockerfile b/scripts/docker/build_on_opensuse_tumbleweed.Dockerfile
+new file mode 100644
+index 00000000..d0993d8c
+--- /dev/null
++++ b/scripts/docker/build_on_opensuse_tumbleweed.Dockerfile
+@@ -0,0 +1,50 @@
++##
++## Copyright (c) 2023 Sebastian Pipping <sebastian@pipping.org>
++##
++## This program is free software; you can redistribute it and/or modify
++## it under the terms of the GNU General Public License as published by
++## the Free Software Foundation; either version 2 of the License, or
++## (at your option) any later version.
++##
++## This program is distributed in the hope that it will be useful,
++## but WITHOUT ANY WARRANTY; without even the implied warranty of
++## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++## GNU General Public License for more details.
++##
++## You should have received a copy of the GNU General Public License
++## along with this program.  If not, see <http://www.gnu.org/licenses/>.
++
++FROM opensuse/tumbleweed:latest
++RUN zypper --non-interactive install dnf rpm-repos-openSUSE-Tumbleweed \
++        && \
++    dnf install -y \
++            asciidoc \
++            autoconf \
++            automake \
++            dbus-1-glib-devel \
++            diffutils \
++            file \
++            gcc-c++ \
++            git \
++            libgcrypt-devel \
++            libqb-devel \
++            libsodium-devel \
++            libtool \
++            libxslt \
++            make \
++            polkit-devel \
++            protobuf-devel
++ADD usbguard.tar usbguard/
++ADD catch.tar usbguard/src/ThirdParty/Catch/
++ADD pegtl.tar usbguard/src/ThirdParty/PEGTL/
++WORKDIR usbguard
++RUN git init &>/dev/null && ./autogen.sh
++RUN ./configure --with-bundled-catch --with-bundled-pegtl || ! cat config.log
++RUN make dist
++RUN tar xf usbguard-*.tar.gz
++RUN mv -v usbguard-*.*.*/ usbguard-release/
++RUN mkdir usbguard-release/build/
++WORKDIR usbguard-release/build/
++RUN ../configure --with-bundled-catch --with-bundled-pegtl || ! cat config.log
++RUN bash -c 'set -o pipefail; make V=1 "-j$(nproc)" |& tee build.log'
++RUN ! grep -F 'include file not found' build.log
+diff --git a/src/Library/Base64.cpp b/src/Library/Base64.cpp
+index ddb28dce..0246a134 100644
+--- a/src/Library/Base64.cpp
++++ b/src/Library/Base64.cpp
+@@ -22,7 +22,6 @@
+ 
+ #include "Base64.hpp"
+ #include <stdexcept>
+-#include <cstdint>
+ 
+ namespace usbguard
+ {
+diff --git a/src/Library/Base64.hpp b/src/Library/Base64.hpp
+index 0947f214..e0c745cb 100644
+--- a/src/Library/Base64.hpp
++++ b/src/Library/Base64.hpp
+@@ -23,6 +23,7 @@
+ #endif
+ 
+ #include <string>
++#include <cstdint>
+ #include <cstddef>
+ 
+ namespace usbguard

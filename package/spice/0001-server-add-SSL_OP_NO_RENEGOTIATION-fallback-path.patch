@@ -1,0 +1,43 @@
+From 5e580eefac44d0c709afcf93eb5fca2fb353166a Mon Sep 17 00:00:00 2001
+From: orbea <orbea@riseup.net>
+Date: Fri, 26 May 2023 13:38:34 -0700
+Subject: [PATCH] server: add SSL_OP_NO_RENEGOTIATION fallback path
+
+With LibreSSL SSL_OP_NO_CLIENT_RENEGOTIATION is opaque which is not
+compatible with the OpenSSL 1.0.2 and earlier code path in
+red-stream.cpp while SSL_OP_NO_RENEGOTIATION is not yet defined for the
+newer OpenSSL code path in reds.cpp.
+
+So with OpenSSL 1.1.0 and later if SSL_OP_NO_RENEGOTIATION is undefined
+and SSL_OP_NO_CLIENT_RENEGOTIATION is defined then define the former as
+the latter. This will allow the build to succeed with LibreSSL 3.7.2 and
+in the future when newer LibreSSL versions add SSL_OP_NO_RENEGOTIATION
+that code path will then be used automatically.
+
+Signed-off-by: orbea <orbea@riseup.net>
+Acked-by: Frediano Ziglio <freddy77@gmail.com>
+
+Upstream: https://gitlab.freedesktop.org/spice/spice/-/commit/5e580eefac44d0c709afcf93eb5fca2fb353166a
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ server/red-stream.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/server/red-stream.h b/server/red-stream.h
+index 716e93317..8e57c5e5e 100644
+--- a/server/red-stream.h
++++ b/server/red-stream.h
+@@ -25,6 +25,10 @@
+ 
+ SPICE_BEGIN_DECLS
+ 
++#if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(SSL_OP_NO_RENEGOTIATION) && defined(SSL_OP_NO_CLIENT_RENEGOTIATION)
++#define SSL_OP_NO_RENEGOTIATION SSL_OP_NO_CLIENT_RENEGOTIATION
++#endif
++
+ typedef void (*AsyncReadDone)(void *opaque);
+ typedef void (*AsyncReadError)(void *opaque, int err);
+ 
+-- 
+GitLab
+

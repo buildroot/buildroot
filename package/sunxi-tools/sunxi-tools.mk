@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-SUNXI_TOOLS_VERSION = 1.4.2
+SUNXI_TOOLS_VERSION = 1.4.2-168-ged3039cdbeeb28fc0011c3585d8f7dfb91038292
 SUNXI_TOOLS_SITE = $(call github,linux-sunxi,sunxi-tools,v$(SUNXI_TOOLS_VERSION))
 SUNXI_TOOLS_LICENSE = GPL-2.0+
 SUNXI_TOOLS_LICENSE_FILES = LICENSE.md
-HOST_SUNXI_TOOLS_DEPENDENCIES = host-libusb host-pkgconf
+HOST_SUNXI_TOOLS_DEPENDENCIES = host-dtc host-libzlib host-libusb host-pkgconf
 FEX2BIN = $(HOST_DIR)/bin/fex2bin
 
 SUNXI_TOOLS_TARGETS_$(BR2_PACKAGE_SUNXI_TOOLS_FEXC) += sunxi-fexc
@@ -26,13 +26,14 @@ SUNXI_TOOLS_FEXC_LINKS += fex2bin bin2fex
 endif
 
 ifeq ($(BR2_PACKAGE_SUNXI_TOOLS_FEL),y)
-SUNXI_TOOLS_DEPENDENCIES += libusb host-pkgconf
+SUNXI_TOOLS_DEPENDENCIES += dtc libusb zlib host-pkgconf
 endif
 
 define HOST_SUNXI_TOOLS_BUILD_CMDS
 	$(HOST_MAKE_ENV) $(MAKE) CROSS_COMPILE="" CC="$(HOSTCC)" \
 		PREFIX=$(HOST_DIR) EXTRA_CFLAGS="$(HOST_CFLAGS)" \
-		LDFLAGS="$(HOST_LDFLAGS)" -C $(@D) tools misc
+		LDFLAGS="$(HOST_LDFLAGS) -I$(HOST_DIR)/include/libfdt" \
+		-C $(@D) tools misc
 endef
 
 define HOST_SUNXI_TOOLS_INSTALL_CMDS

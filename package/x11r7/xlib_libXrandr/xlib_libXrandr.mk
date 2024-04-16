@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XLIB_LIBXRANDR_VERSION = 1.5.2
-XLIB_LIBXRANDR_SOURCE = libXrandr-$(XLIB_LIBXRANDR_VERSION).tar.bz2
-XLIB_LIBXRANDR_SITE = http://xorg.freedesktop.org/releases/individual/lib
+XLIB_LIBXRANDR_VERSION = 1.5.3
+XLIB_LIBXRANDR_SOURCE = libXrandr-$(XLIB_LIBXRANDR_VERSION).tar.xz
+XLIB_LIBXRANDR_SITE = https://xorg.freedesktop.org/archive/individual/lib
 XLIB_LIBXRANDR_LICENSE = MIT
 XLIB_LIBXRANDR_LICENSE_FILES = COPYING
 XLIB_LIBXRANDR_CPE_ID_VENDOR = x.org

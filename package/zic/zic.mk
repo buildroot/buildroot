@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ZIC_VERSION = 2022c
+ZIC_VERSION = 2024a
 ZIC_SOURCE = tzcode$(ZIC_VERSION).tar.gz
 ZIC_SITE = https://www.iana.org/time-zones/repository/releases
 ZIC_STRIP_COMPONENTS = 0
@@ -12,7 +12,7 @@ ZIC_LICENSE = Public domain
 ZIC_LICENSE_FILES = LICENSE
 
 define HOST_ZIC_BUILD_CMDS
-	$(HOST_MAKE_ENV) $(MAKE) -C $(@D) zic
+	$(HOST_MAKE_ENV) $(MAKE) $(HOST_CONFIGURE_OPTS) -C $(@D) zic
 endef
 
 define HOST_ZIC_INSTALL_CMDS

@@ -4,8 +4,9 @@
 #
 ################################################################################
 
-# Please keep in sync with package/libtextstyle/libtextstyle.mk
-GETTEXT_GNU_VERSION = 0.20.1
+# Please keep in sync with GETTEXT_TINY_ARCHIVE_VERSION in
+# gettext-tiny/gettext-tiny.mk
+GETTEXT_GNU_VERSION = 0.22.4
 GETTEXT_GNU_SITE = $(BR2_GNU_MIRROR)/gettext
 GETTEXT_GNU_SOURCE = gettext-$(GETTEXT_GNU_VERSION).tar.xz
 GETTEXT_GNU_INSTALL_STAGING = YES
@@ -13,13 +14,11 @@ GETTEXT_GNU_LICENSE = LGPL-2.1+ (libintl), GPL-3.0+ (the rest)
 GETTEXT_GNU_LICENSE_FILES = COPYING gettext-runtime/intl/COPYING.LIB
 GETTEXT_GNU_CPE_ID_VENDOR = gnu
 GETTEXT_GNU_CPE_ID_PRODUCT = gettext
-# 0002-restore-the-ability-to-buld-gettext-tools-seperately-part1.patch
-GETTEXT_GNU_AUTORECONF = YES
 GETTEXT_GNU_PROVIDES = gettext
 GETTEXT_GNU_DEPENDENCIES = $(if $(BR2_PACKAGE_LIBICONV),libiconv)
 
 # Avoid using the bundled subset of libxml2
-HOST_GETTEXT_GNU_DEPENDENCIES = host-libxml2 host-libtextstyle
+HOST_GETTEXT_GNU_DEPENDENCIES = host-libxml2
 
 GETTEXT_GNU_CONF_OPTS += \
 	--disable-libasprintf \
@@ -41,8 +40,7 @@ HOST_GETTEXT_GNU_CONF_OPTS = \
 	--disable-native-java \
 	--disable-csharp \
 	--disable-relocatable \
-	--without-emacs \
-	--with-installed-libtextstyle
+	--without-emacs
 
 # Force the build of libintl, even if the C library provides a stub
 # gettext implementation
@@ -52,10 +50,13 @@ else
 GETTEXT_GNU_CONF_OPTS += --without-included-gettext
 endif
 
-# For the target version, we only need the runtime, and for the host
-# version, we only need the tools.
+# For the target version, we only need the runtime.
 GETTEXT_GNU_SUBDIR = gettext-runtime
-HOST_GETTEXT_GNU_SUBDIR = gettext-tools
+# For the host variant, we only need the tools, but those need the
+# runtime, so it is much simpler to build the whole package. _SUBDIR
+# for the host is inherited from the target if not set or empty, so
+# we need to explicitly set it to build the whole package.
+HOST_GETTEXT_GNU_SUBDIR = .
 
 # Disable the build of documentation and examples of gettext-tools,
 # and the build of documentation and tests of gettext-runtime.
@@ -88,16 +89,6 @@ define HOST_GETTEXT_GNU_GETTEXTIZE_CONFIRMATION
 	$(SED) '/read dummy/d' $(HOST_DIR)/bin/gettextize
 endef
 HOST_GETTEXT_GNU_POST_INSTALL_HOOKS += HOST_GETTEXT_GNU_GETTEXTIZE_CONFIRMATION
-
-# autoreconf expects gettextize to install ABOUT-NLS, but it only gets
-# installed by gettext-runtime which we don't build/install for the
-# host, so do it manually
-define HOST_GETTEXT_GNU_ADD_ABOUT_NLS
-	$(INSTALL) -m 0644 $(@D)/$(HOST_GETTEXT_GNU_SUBDIR)/ABOUT-NLS \
-		$(HOST_DIR)/share/gettext/ABOUT-NLS
-endef
-
-HOST_GETTEXT_GNU_POST_INSTALL_HOOKS += HOST_GETTEXT_GNU_ADD_ABOUT_NLS
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))

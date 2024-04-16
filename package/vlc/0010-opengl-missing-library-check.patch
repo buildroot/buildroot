@@ -1,0 +1,57 @@
+From 4ab41404cb85684125d73977cadebf83bbc246f5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?R=C3=A9mi=20Denis-Courmont?= <remi@remlab.net>
+Date: Sat, 22 Jan 2022 11:34:38 +0200
+Subject: [PATCH] opengl: missing library check
+
+Traditionally the presence of the header file was not considered
+sufficient, though this was somewhat forgotten with the prevalence of
+pkg-config.
+
+However most libraries have portable headers, while the shared library
+is platform-dependent. It is common for the header to be present while
+the library is absent with "multilib" installations (i.e. Linux
+installation with multiple architectures).
+
+Downloaded from upstream commit:
+https://code.videolan.org/videolan/vlc/-/commit/4ab41404cb85684125d73977cadebf83bbc246f5
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ configure.ac | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 2f50808d597..0d57fadbf8b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -3169,7 +3169,6 @@ have_gl="no"
+ PKG_CHECK_MODULES([GL], [gl], [
+   have_gl="yes"
+ ], [
+-  AC_MSG_CHECKING([for OpenGL])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+ #ifdef _WIN32
+ # include <GL/glew.h>
+@@ -3179,13 +3178,17 @@ PKG_CHECK_MODULES([GL], [gl], [
+     [int t0 = GL_TEXTURE0;]])
+   ], [
+     GL_CFLAGS=""
+-    have_gl="yes"
+     AS_IF([test "${SYS}" != "mingw32"], [
+-      GL_LIBS="-lGL"
++      AC_CHECK_LIB([GL], [glTexture2D], [
++        have_gl="yes"
++        GL_LIBS="-lGL"
++      ])
+     ], [
++      have_gl="yes"
+       GL_LIBS="-lopengl32"
+     ])
+   ])
++  AC_MSG_CHECKING([for OpenGL])
+   AC_MSG_RESULT([${have_gl}])
+ ])
+ AM_CONDITIONAL([HAVE_GL], [test "${have_gl}" = "yes"])
+-- 
+GitLab
+

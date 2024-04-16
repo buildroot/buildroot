@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-ZBAR_VERSION = 0.23.90
+ZBAR_VERSION = 0.23.93
 ZBAR_SOURCE = zbar-$(ZBAR_VERSION).tar.bz2
 ZBAR_SITE = https://www.linuxtv.org/downloads/zbar
 ZBAR_LICENSE = LGPL-2.1+
 ZBAR_LICENSE_FILES = LICENSE.md
+ZBAR_CPE_ID_VALID = YES
 ZBAR_INSTALL_STAGING = YES
 ZBAR_DEPENDENCIES = libv4l jpeg $(TARGET_NLS_DEPENDENCIES)
 # uses C99 features

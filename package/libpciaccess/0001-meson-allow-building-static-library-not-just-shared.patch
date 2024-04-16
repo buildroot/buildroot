@@ -1,0 +1,48 @@
+From ad7e9cb4b291a46812eea321f0634cfc46fb94e2 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Thu, 14 Mar 2024 13:55:55 -0700
+Subject: [PATCH] meson: allow building static library, not just shared
+
+Lets builders specify -Ddefault_library={shared,static,both}
+to control which types of libpciaccess library are built
+
+Closes: #20
+Reported-by: Maxime Gauduin (@alucryd)
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+
+Upstream: https://gitlab.freedesktop.org/xorg/lib/libpciaccess/-/commit/ad7e9cb4b291a46812eea321f0634cfc46fb94e2
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ .gitlab-ci.yml  | 2 +-
+ src/meson.build | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index bcb75cf..185edc2 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -91,7 +91,7 @@ meson:
+       - MESON_OPTIONS: ['-Dzlib=disabled', '-Dzlib=enabled']
+   script:
+     - mkdir -p ../_inst
+-    - meson setup builddir --prefix="$PWD/../_inst" -Dwarning_level=3 $MESON_OPTIONS
++    - meson setup builddir --prefix="$PWD/../_inst" -Dwarning_level=3 -Ddefault_library=both $MESON_OPTIONS
+     - meson configure builddir
+     - ninja -C builddir test
+     - ninja -C builddir install
+diff --git a/src/meson.build b/src/meson.build
+index 24eee04..e319688 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -38,7 +38,7 @@ endif
+ 
+ inc_src = include_directories('.')
+ 
+-libpciaccess = shared_library(
++libpciaccess = library(
+   'pciaccess',
+   [
+     'common_bridge.c',
+-- 
+GitLab
+

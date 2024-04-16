@@ -1,0 +1,49 @@
+From 8c2d8fc60306a8edd21182a1f5f267a7aca55763 Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Sun, 29 Jan 2023 21:18:28 -0700
+Subject: [PATCH] CMake: don't enable CXX unless building tests/benchmarks
+
+We only need CXX support when building tests/benchmarks.
+
+Fixes:
+CMake Error at CMakeLists.txt:4 (PROJECT):
+  No CMAKE_CXX_COMPILER could be found.
+
+  Tell CMake where to find the compiler by setting either the environment
+  variable "CXX" or the CMake cache entry CMAKE_CXX_COMPILER to the full path
+  to the compiler, or to the compiler name if it is in the PATH.
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[Upstream status:
+https://github.com/Maratyszcza/FXdiv/pull/3]
+---
+ CMakeLists.txt | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index bcae6b5..c75f558 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,7 +1,7 @@
+ CMAKE_MINIMUM_REQUIRED(VERSION 3.5 FATAL_ERROR)
+ 
+ # ---[ Project
+-PROJECT(FXdiv C CXX)
++PROJECT(FXdiv C)
+ 
+ # ---[ Options.
+ OPTION(FXDIV_USE_INLINE_ASSEMBLY "Allow use of inline assembly in FXdiv" OFF)
+@@ -16,6 +16,10 @@ ENDIF()
+ # ---[ CMake options
+ INCLUDE(GNUInstallDirs)
+ 
++IF(FXDIV_BUILD_TESTS OR FXDIV_BUILD_BENCHMARKS)
++  ENABLE_LANGUAGE(CXX)
++ENDIF()
++
+ IF(FXDIV_BUILD_TESTS)
+   ENABLE_TESTING()
+ ENDIF()
+-- 
+2.34.1
+

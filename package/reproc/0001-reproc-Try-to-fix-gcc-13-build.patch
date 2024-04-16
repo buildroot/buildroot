@@ -1,0 +1,37 @@
+From 0b23d88894ccedde04537fa23ea55cb2f8365342 Mon Sep 17 00:00:00 2001
+From: Daan De Meyer <daan.j.demeyer@gmail.com>
+Date: Sat, 18 Mar 2023 19:38:19 +0100
+Subject: [PATCH] reproc++: Try to fix gcc 13 build
+
+Upstream: https://github.com/DaanDeMeyer/reproc/commit/0b23d88894ccedde04537fa23ea55cb2f8365342
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ reproc++/include/reproc++/reproc.hpp | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/reproc++/include/reproc++/reproc.hpp b/reproc++/include/reproc++/reproc.hpp
+index ab6f1394..e883ecec 100644
+--- a/reproc++/include/reproc++/reproc.hpp
++++ b/reproc++/include/reproc++/reproc.hpp
+@@ -88,7 +88,7 @@ struct redirect {
+ 
+ struct options {
+   struct {
+-    env::type behavior;
++    enum env::type behavior;
+     /*! Implicitly converts from any STL container of string pairs to the
+     environment format expected by `reproc_start`. */
+     class env extra;
+@@ -97,9 +97,9 @@ struct options {
+   const char *working_directory = nullptr;
+ 
+   struct {
+-    redirect in;
+-    redirect out;
+-    redirect err;
++    struct redirect in;
++    struct redirect out;
++    struct redirect err;
+     bool parent;
+     bool discard;
+     FILE *file;

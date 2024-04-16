@@ -7,10 +7,12 @@
 #
 dtb_list()
 {
-	local DTB_LIST="$(sed -n 's/^BR2_LINUX_KERNEL_INTREE_DTS_NAME="\([\/a-z0-9 \-]*\)"$/\1/p' ${BR2_CONFIG})"
+	local DTB_LIST
+
+	DTB_LIST="$(sed -n 's/^BR2_LINUX_KERNEL_INTREE_DTS_NAME="\([\/a-z0-9 \-]*\)"$/\1/p' "${BR2_CONFIG}")"
 
 	for dt in $DTB_LIST; do
-		echo -n "\"`basename $dt`.dtb\", "
+		echo -n "\"$(basename "${dt}").dtb\", "
 	done
 }
 
@@ -21,11 +23,11 @@ dtb_list()
 #
 linux_image()
 {
-	if grep -Eq "^BR2_LINUX_KERNEL_UIMAGE=y$" ${BR2_CONFIG}; then
+	if grep -Eq "^BR2_LINUX_KERNEL_UIMAGE=y$" "${BR2_CONFIG}"; then
 		echo "\"uImage\""
-	elif grep -Eq "^BR2_LINUX_KERNEL_IMAGE=y$" ${BR2_CONFIG}; then
+	elif grep -Eq "^BR2_LINUX_KERNEL_IMAGE=y$" "${BR2_CONFIG}"; then
 		echo "\"Image\""
-	elif grep -Eq "^BR2_LINUX_KERNEL_IMAGEGZ=y$" ${BR2_CONFIG}; then
+	elif grep -Eq "^BR2_LINUX_KERNEL_IMAGEGZ=y$" "${BR2_CONFIG}"; then
 		echo "\"Image.gz\""
 	else
 		echo "\"zImage\""
@@ -34,25 +36,31 @@ linux_image()
 
 genimage_type()
 {
-	if grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8=y$" ${BR2_CONFIG}; then
+	if grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8=y$" "${BR2_CONFIG}"; then
 		echo "genimage.cfg.template_imx8"
-	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8M=y$" ${BR2_CONFIG}; then
+	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8M=y$" "${BR2_CONFIG}"; then
 		echo "genimage.cfg.template_imx8"
-	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MM=y$" ${BR2_CONFIG}; then
+	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MM=y$" "${BR2_CONFIG}"; then
 		echo "genimage.cfg.template_imx8"
-	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MN=y$" ${BR2_CONFIG}; then
+	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MN=y$" "${BR2_CONFIG}"; then
 		echo "genimage.cfg.template_imx8"
-	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MP=y$" ${BR2_CONFIG}; then
+	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MP=y$" "${BR2_CONFIG}"; then
 		echo "genimage.cfg.template_imx8"
-	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X=y$" ${BR2_CONFIG}; then
+	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X=y$" "${BR2_CONFIG}"; then
 		echo "genimage.cfg.template_imx8"
-	elif grep -Eq "^BR2_LINUX_KERNEL_INSTALL_TARGET=y$" ${BR2_CONFIG}; then
-		if grep -Eq "^BR2_TARGET_UBOOT_SPL=y$" ${BR2_CONFIG}; then
+	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8DXL=y$" "${BR2_CONFIG}"; then
+		echo "genimage.cfg.template_imx8"
+	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX91=y$" "${BR2_CONFIG}"; then
+		echo "genimage.cfg.template_imx9"
+	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93=y$" "${BR2_CONFIG}"; then
+		echo "genimage.cfg.template_imx9"
+	elif grep -Eq "^BR2_LINUX_KERNEL_INSTALL_TARGET=y$" "${BR2_CONFIG}"; then
+		if grep -Eq "^BR2_TARGET_UBOOT_SPL=y$" "${BR2_CONFIG}"; then
 		    echo "genimage.cfg.template_no_boot_part_spl"
 		else
 		    echo "genimage.cfg.template_no_boot_part"
 		fi
-	elif grep -Eq "^BR2_TARGET_UBOOT_SPL=y$" ${BR2_CONFIG}; then
+	elif grep -Eq "^BR2_TARGET_UBOOT_SPL=y$" "${BR2_CONFIG}"; then
 		echo "genimage.cfg.template_spl"
 	else
 		echo "genimage.cfg.template"
@@ -61,9 +69,9 @@ genimage_type()
 
 imx_offset()
 {
-	if grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8M=y$" ${BR2_CONFIG}; then
+	if grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8M=y$" "${BR2_CONFIG}"; then
 		echo "33K"
-	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MM=y$" ${BR2_CONFIG}; then
+	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MM=y$" "${BR2_CONFIG}"; then
 		echo "33K"
 	else
 		echo "32K"
@@ -72,29 +80,30 @@ imx_offset()
 
 uboot_image()
 {
-	if grep -Eq "^BR2_TARGET_UBOOT_FORMAT_DTB_IMX=y$" ${BR2_CONFIG}; then
+	if grep -Eq "^BR2_TARGET_UBOOT_FORMAT_DTB_IMX=y$" "${BR2_CONFIG}"; then
 		echo "u-boot-dtb.imx"
-	elif grep -Eq "^BR2_TARGET_UBOOT_FORMAT_IMX=y$" ${BR2_CONFIG}; then
+	elif grep -Eq "^BR2_TARGET_UBOOT_FORMAT_IMX=y$" "${BR2_CONFIG}"; then
 		echo "u-boot.imx"
-	elif grep -Eq "^BR2_TARGET_UBOOT_FORMAT_DTB_IMG=y$" ${BR2_CONFIG}; then
+	elif grep -Eq "^BR2_TARGET_UBOOT_FORMAT_DTB_IMG=y$" "${BR2_CONFIG}"; then
 	    echo "u-boot-dtb.img"
-	elif grep -Eq "^BR2_TARGET_UBOOT_FORMAT_IMG=y$" ${BR2_CONFIG}; then
+	elif grep -Eq "^BR2_TARGET_UBOOT_FORMAT_IMG=y$" "${BR2_CONFIG}"; then
 	    echo "u-boot.img"
 	fi
 }
 
 main()
 {
-	local FILES="$(dtb_list) $(linux_image)"
-	local IMXOFFSET="$(imx_offset)"
-	local UBOOTBIN="$(uboot_image)"
-	local GENIMAGE_CFG="$(mktemp --suffix genimage.cfg)"
-	local GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
+	local FILES IMXOFFSET UBOOTBIN GENIMAGE_CFG GENIMAGE_TMP
+	FILES="$(dtb_list) $(linux_image)"
+	IMXOFFSET="$(imx_offset)"
+	UBOOTBIN="$(uboot_image)"
+	GENIMAGE_CFG="$(mktemp --suffix genimage.cfg)"
+	GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
 
 	sed -e "s/%FILES%/${FILES}/" \
 		-e "s/%IMXOFFSET%/${IMXOFFSET}/" \
 		-e "s/%UBOOTBIN%/${UBOOTBIN}/" \
-		board/freescale/common/imx/$(genimage_type) > ${GENIMAGE_CFG}
+		"board/freescale/common/imx/$(genimage_type)" > "${GENIMAGE_CFG}"
 
 	rm -rf "${GENIMAGE_TMP}"
 
@@ -105,9 +114,9 @@ main()
 		--outputpath "${BINARIES_DIR}" \
 		--config "${GENIMAGE_CFG}"
 
-	rm -f ${GENIMAGE_CFG}
+	rm -f "${GENIMAGE_CFG}"
 
 	exit $?
 }
 
-main $@
+main "$@"

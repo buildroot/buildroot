@@ -1,0 +1,37 @@
+################################################################################
+#
+# mm
+#
+################################################################################
+
+LINUX_TOOLS += mm
+
+define MM_BUILD_CMDS
+	$(Q)if test -f $(LINUX_DIR)/tools/vm/Makefile ; then \
+		MM_SUBDIR=vm; \
+	elif test -f $(LINUX_DIR)/tools/mm/Makefile ; then \
+		MM_SUBDIR=mm; \
+	else \
+		echo "Your kernel version is too old and does not have the mm tool." ; \
+		echo "At least kernel 3.4 must be used." ; \
+		exit 1 ; \
+	fi ; \
+	$(TARGET_MAKE_ENV) $(MAKE) $(LINUX_MAKE_FLAGS) -C $(LINUX_DIR)/tools \
+		$(MM_MAKE_OPTS) $${MM_SUBDIR}
+endef
+
+# For install no need to recheck both cases: we know at least one
+# exists, because that was checked at build time already; we just
+# need to find which of the two: if not one, then the other.
+define MM_INSTALL_TARGET_CMDS
+	$(Q)if test -f $(LINUX_DIR)/tools/vm/Makefile ; then \
+		MM_SUBDIR=vm; \
+	else \
+		MM_SUBDIR=mm; \
+	fi ; \
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(LINUX_DIR)/tools \
+		$(LINUX_MAKE_FLAGS) \
+		INSTALL_ROOT=$(TARGET_DIR) \
+		DESTDIR=$(TARGET_DIR) \
+		$${MM_SUBDIR}_install
+endef

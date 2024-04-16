@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_PYSPNEGO
+	bool "python-pyspnego"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-cryptography
+	select BR2_PACKAGE_PYTHON_CRYPTOGRAPHY # runtime
+	help
+	  Windows Negotiate Authentication Client and Server.
+
+	  https://github.com/jborean93/pyspnego

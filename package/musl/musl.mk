@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-MUSL_VERSION = 1.2.3
-MUSL_SITE = http://www.musl-libc.org/releases
+MUSL_VERSION = 1.2.5
+MUSL_SITE = http://musl.libc.org/releases
 MUSL_LICENSE = MIT
 MUSL_LICENSE_FILES = COPYRIGHT
 MUSL_CPE_ID_VENDOR = musl-libc
@@ -60,12 +60,14 @@ endef
 define MUSL_INSTALL_STAGING_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) \
 		DESTDIR=$(STAGING_DIR) install-libs install-tools install-headers
+	ln -sf libc.so $(STAGING_DIR)/lib/ld-musl*
 endef
 
 define MUSL_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) \
 		DESTDIR=$(TARGET_DIR) install-libs
 	$(RM) $(addprefix $(TARGET_DIR)/lib/,crt1.o crtn.o crti.o rcrt1.o Scrt1.o)
+	ln -sf libc.so $(TARGET_DIR)/lib/ld-musl*
 endef
 
 $(eval $(generic-package))

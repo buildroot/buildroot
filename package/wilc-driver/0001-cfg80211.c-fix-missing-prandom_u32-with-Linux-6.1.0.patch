@@ -1,0 +1,34 @@
+From f80e4343fa0a4d8b22933d1704c85a771fe234a4 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Wed, 28 Dec 2022 19:56:46 +0100
+Subject: [PATCH] cfg80211.c: fix missing prandom_u32() with Linux >= 6.1.0
+
+prandom_u32() previously was only calling get_random_u32() so it's been
+dropped with Linux 6.1.0. So let's directly call get_random_u32() if Linux
+version >= 6.1.0.
+
+[Upstream status: https://github.com/embeddedTS/wilc3000-external-module/pull/2]
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ cfg80211.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/cfg80211.c b/cfg80211.c
+index 016aa06..41edd02 100644
+--- a/cfg80211.c
++++ b/cfg80211.c
+@@ -1422,7 +1422,11 @@ static int mgmt_tx(struct wiphy *wiphy,
+ 	const u8 *vendor_ie;
+ 	int ret = 0;
+ 
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0))
++	*cookie = get_random_u32();
++#else
+ 	*cookie = prandom_u32();
++#endif
+ 	priv->tx_cookie = *cookie;
+ 	mgmt = (const struct ieee80211_mgmt *)buf;
+ 
+-- 
+2.34.1
+

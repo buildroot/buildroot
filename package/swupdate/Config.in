@@ -3,9 +3,9 @@ config BR2_PACKAGE_SWUPDATE
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_USE_MMU # fork()
-	# swupdate requires a parser and uses libconfig as default
-	select BR2_PACKAGE_LIBCONFIG if !BR2_PACKAGE_JSON_C && \
-		!BR2_PACKAGE_HAS_LUAINTERPRETER
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # json-c
+	select BR2_PACKAGE_JSON_C
+	select BR2_PACKAGE_LIBUBOOTENV
 	help
 	  swupdate provides a reliable way to update the software on
 	  an embedded system.
@@ -37,14 +37,12 @@ config BR2_PACKAGE_SWUPDATE
 	    remote handler.
 	  * Select BR2_PACKAGE_LIBRSYNC to add support for using
 	    rdiff handler.
-	  * Select BR2_PACKAGE_LIBUBOOTENV to add support for setting
-	    the U-Boot environment.
-	  * Select BR2_PACKAGE_LIBGPIOD to add support for
-	    microcontroller firmware update.
+	  * Select BR2_PACKAGE_LIBGPIOD or BR2_PACKAGE_LIBGPIOD2 to add
+	    support for microcontroller firmware update.
 	  * Select BR2_PACKAGE_EFIBOOTMGR to add support for EFI Boot
 	    Guard.
-	  * Select BR2_PACKAGE_LIBCURL, BR2_PACKAGE_JSON_C,
-	    BR2_PACKAGE_LIBWEBSOCKETS, and BR2_PACKAGE_LIBURIPARSER
+	  * Select BR2_PACKAGE_LIBCURL, BR2_PACKAGE_LIBWEBSOCKETS,
+	    and BR2_PACKAGE_LIBURIPARSER
 	    to add support for the SWU forwarder.
 
 	  https://sbabic.github.io/swupdate
@@ -89,4 +87,5 @@ endif
 
 comment "swupdate needs a toolchain w/ dynamic library, threads"
 	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS

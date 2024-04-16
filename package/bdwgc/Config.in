@@ -1,5 +1,6 @@
 config BR2_PACKAGE_BDWGC
 	bool "bdwgc"
+	depends on BR2_USE_MMU # madvise()
 	depends on BR2_PACKAGE_LIBATOMIC_OPS_ARCH_SUPPORTS
 	select BR2_PACKAGE_LIBATOMIC_OPS
 	help

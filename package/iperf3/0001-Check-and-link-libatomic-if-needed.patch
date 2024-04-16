@@ -1,0 +1,42 @@
+From bbf710e77e4a0438a2d995fd69b472e5ff054c69 Mon Sep 17 00:00:00 2001
+From: Jan Palus <jpalus@fastmail.com>
+Date: Sun, 3 Dec 2023 12:14:05 +0100
+Subject: [PATCH] Check and link libatomic if needed
+
+Some architectures without native support for 64-bit atomics need
+linking with libatomic.
+
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+Upstream: https://github.com/esnet/iperf/commit/1511e9f85b548891ea53d4e378903344df1fd31e
+---
+ configure.ac | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 2594b39..ad7eaf1 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -92,7 +92,19 @@ CXX="$PTHREAD_CXX"
+ ])
+ 
+ # Atomics
+-AC_CHECK_HEADERS([stdatomic.h])
++AC_CHECK_HEADERS([stdatomic.h],
++    [AC_MSG_CHECKING([whether libatomic is required])
++    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdatomic.h>]], [[atomic_uint_fast64_t i; i++;]])],
++        [AC_MSG_RESULT([no])],
++        [save_LIBS="$LIBS"
++        LIBS="$LIBS -latomic"
++        AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdatomic.h>]], [[atomic_uint_fast64_t i; i++;]])],
++            [AC_MSG_RESULT([yes])],
++            [AC_MSG_ERROR([failed to find working configuration with atomics])]
++        )]
++    )],
++    []
++)
+ 
+ # Check for poll.h (it's in POSIX so everyone should have it?)
+ AC_CHECK_HEADERS([poll.h])
+-- 
+2.44.0
+

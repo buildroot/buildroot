@@ -1,5 +1,9 @@
+comment "ramspeed needs a toolchain not affected by GCC bug 43744"
+	depends on BR2_TOOLCHAIN_HAS_GCC_BUG_43744
+
 config BR2_PACKAGE_RAMSPEED
 	bool "ramspeed"
+	depends on !BR2_TOOLCHAIN_HAS_GCC_BUG_43744
 	help
 	  RAMspeed is a free open source command line utility
 	  to measure cache and memory performance.

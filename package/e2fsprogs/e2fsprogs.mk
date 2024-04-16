@@ -4,16 +4,13 @@
 #
 ################################################################################
 
-E2FSPROGS_VERSION = 1.46.5
+E2FSPROGS_VERSION = 1.47.0
 E2FSPROGS_SOURCE = e2fsprogs-$(E2FSPROGS_VERSION).tar.xz
 E2FSPROGS_SITE = $(BR2_KERNEL_MIRROR)/linux/kernel/people/tytso/e2fsprogs/v$(E2FSPROGS_VERSION)
 E2FSPROGS_LICENSE = GPL-2.0, MIT-like with advertising clause (libss and libet)
 E2FSPROGS_LICENSE_FILES = NOTICE lib/ss/mit-sipb-copyright.h lib/et/internal.h
-E2FSPROGS_CPE_ID_VENDOR = e2fsprogs_project
+E2FSPROGS_CPE_ID_VALID = YES
 E2FSPROGS_INSTALL_STAGING = YES
-
-# 0001-libext2fs-add-sanity-check-to-extent-manipulation.patch
-E2FSPROGS_IGNORE_CVES += CVE-2022-1304
 
 # Use libblkid and libuuid from util-linux for host and target packages.
 # This prevents overriding them with e2fsprogs' ones, which may cause
@@ -68,6 +65,11 @@ endif
 
 ifeq ($(BR2_nios2),y)
 E2FSPROGS_CONF_ENV += ac_cv_func_fallocate=no
+endif
+
+# workaround gcc bug 111001
+ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_111001),y)
+E2FSPROGS_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -Os"
 endif
 
 E2FSPROGS_CONF_ENV += ac_cv_path_LDCONFIG=true

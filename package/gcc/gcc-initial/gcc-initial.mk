@@ -7,9 +7,11 @@
 GCC_INITIAL_VERSION = $(GCC_VERSION)
 GCC_INITIAL_SITE = $(GCC_SITE)
 GCC_INITIAL_SOURCE = $(GCC_SOURCE)
+HOST_GCC_INITIAL_LICENSE = $(HOST_GCC_LICENSE)
+HOST_GCC_INITIAL_LICENSE_FILES = $(HOST_GCC_LICENSE_FILES)
 
 # We do not have a 'gcc' package per-se; we only have two incarnations,
-# gcc-initial and gcc-final. gcc-initial is just am internal step that
+# gcc-initial and gcc-final. gcc-initial is just an internal step that
 # users should not care about, while gcc-final is the one they shall see.
 HOST_GCC_INITIAL_DL_SUBDIR = gcc
 
@@ -42,6 +44,13 @@ HOST_GCC_INITIAL_CONF_OPTS = \
 
 HOST_GCC_INITIAL_CONF_ENV = \
 	$(HOST_GCC_COMMON_CONF_ENV)
+
+# Enable GCC target libs optimizations to optimize out __register_frame
+# when needed for some architectures when building with glibc.
+ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_107728),y)
+HOST_GCC_INITIAL_CONF_ENV += CFLAGS_FOR_TARGET="$(GCC_COMMON_TARGET_CFLAGS) -O1"
+HOST_GCC_INITIAL_CONF_ENV += CXXFLAGS_FOR_TARGET="$(GCC_COMMON_TARGET_CXXFLAGS) -O1"
+endif
 
 HOST_GCC_INITIAL_MAKE_OPTS = $(HOST_GCC_COMMON_MAKE_OPTS) all-gcc all-target-libgcc
 HOST_GCC_INITIAL_INSTALL_OPTS = install-gcc install-target-libgcc

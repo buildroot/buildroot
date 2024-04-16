@@ -5,8 +5,8 @@
 # (e.g. tar options, compression ratio or method)), we MUST update the format
 # version in the variable BR_FMT_VERSION_git, in package/pkg-download.mk.
 
-# We want to catch any unexpected failure, and exit immediately
-set -E
+# We want to catch any unexpected failure
+set -e
 
 # Download helper for git, to be called from the download wrapper script
 #
@@ -21,6 +21,7 @@ set -E
 # Environment:
 #   GIT      : the git command to call
 
+# shellcheck disable=SC1090 # Only provides mk_tar_gz()
 . "${0%/*}/helpers"
 
 # Save our path and options in case we need to call ourselves again
@@ -77,17 +78,19 @@ pushd "${git_cache}" >/dev/null
 
 # Any error now should try to recover
 trap _on_error ERR
+set -E
 
 # Caller needs to single-quote its arguments to prevent them from
 # being expanded a second time (in case there are spaces in them)
 _git() {
     if [ -z "${quiet}" ]; then
-        printf '%s ' GIT_DIR="${git_cache}/.git" ${GIT} "${@}"; printf '\n'
+        printf '%s ' GIT_DIR="${git_cache}/.git" "${GIT}" "${@}"; printf '\n'
     fi
     _plain_git "$@"
 }
 # Note: please keep command below aligned with what is printed above
 _plain_git() {
+    # shellcheck disable=SC2086 # We want word-splitting for GIT
     eval GIT_DIR="${git_cache}/.git" ${GIT} "${@}"
 }
 
@@ -173,6 +176,7 @@ fi
 # the working copy as well as the repository, which means submodules
 # will not be cached for older versions.
 #
+# shellcheck disable=SC2016 # Will be expanded by git-foreach
 cmd='printf "Deregistering submodule \"%s\"\n" "${path}" && cd .. && rm -rf "${path##*/}"'
 _git submodule --quiet foreach "'${cmd}'"
 
@@ -199,11 +203,12 @@ if [ ${recurse} -eq 1 ]; then
     # that the archives are reproducible across a wider range of git
     # versions. However, we can't do that if git is too old and uses
     # full repositories for submodules.
+    # shellcheck disable=SC2016 # Will be expanded by git-foreach
     cmd='printf "%s\n" "${path}/"'
     for module_dir in $( _plain_git submodule --quiet foreach "'${cmd}'" ); do
         [ -f "${module_dir}/.git" ] || continue
         relative_dir="$( sed -r -e 's,/+,/,g; s,[^/]+/,../,g' <<<"${module_dir}" )"
-        sed -r -i -e "s:^gitdir\: $(pwd)/:gitdir\: "${relative_dir}":" "${module_dir}/.git"
+        sed -r -i -e "s:^gitdir\: $(pwd)/:gitdir\: ${relative_dir}:" "${module_dir}/.git"
     done
 fi
 
@@ -213,6 +218,7 @@ if [ ${large_file} -eq 1 ]; then
     _git lfs fetch
     _git lfs checkout
     # If there are also submodules, recurse into them,
+    # shellcheck disable=SC2086 # We want word-splitting for GIT
     if [ ${recurse} -eq 1 ]; then
         _git submodule foreach --recursive ${GIT} lfs install --local
         _git submodule foreach --recursive ${GIT} lfs fetch

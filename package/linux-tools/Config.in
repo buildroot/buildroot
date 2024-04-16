@@ -38,6 +38,25 @@ config BR2_PACKAGE_LINUX_TOOLS_IIO
 
 	  These tools are available only from kernel version 4.7.
 
+config BR2_PACKAGE_LINUX_TOOLS_MM
+	bool "mm"
+	select BR2_PACKAGE_LINUX_TOOLS
+	help
+	  mm is a toolset for testing/monitoring/tracing vm/pages/slabs
+	  objects.
+
+	  - page_owner_sort: userspace helper to sort the output of
+	  /sys/kernel/debug/page_owner, which helps to know who
+	  allocates the page from kernel context
+
+	  - slabinfo: the tool which gets reports about slabs, for
+	  example show empty slabs, modify of slab debug options at
+	  runtime, display all information about a slabcache
+
+	  - page-types: a handy tool for querying page flags
+
+	  These tools are available only from kernel version 3.4.
+
 config BR2_PACKAGE_LINUX_TOOLS_PCI
 	bool "pci"
 	select BR2_PACKAGE_LINUX_TOOLS
@@ -47,14 +66,15 @@ config BR2_PACKAGE_LINUX_TOOLS_PCI
 
 	  These tools are available only from kernel version 4.20.
 
-comment "perf needs a toolchain w/ dynamic library"
+comment "perf needs a toolchain w/ dynamic library, threads"
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
-	depends on BR2_STATIC_LIBS
+	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS
 
 config BR2_PACKAGE_LINUX_TOOLS_PERF
 	bool "perf"
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_STATIC_LIBS # dlfcn.h
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_PACKAGE_LINUX_TOOLS
 	help
 	  perf (sometimes "Perf Events" or perf tools, originally
@@ -101,6 +121,32 @@ config BR2_PACKAGE_LINUX_TOOLS_PERF_NEEDS_HOST_PYTHON3
 
 endif
 
+config BR2_PACKAGE_LINUX_TOOLS_RTLA
+	bool "rtla"
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libtracefs
+	depends on !BR2_STATIC_LIBS # libtracefs
+	select BR2_PACKAGE_LINUX_TOOLS
+	select BR2_PACKAGE_LIBTRACEFS
+	help
+	  These tracers allow performing latency analysis, for which the
+	  rtla tool provides wrapper commands to visualize and extract
+	  latency traces and reports.
+
+	  rtla includes three tracers, which have been introduced in
+	  different kernel versions:
+	    - Linux 5.19 introduced the osnoise and timerlat tracers,
+	    - Linux 6.3 introduced the hwnoise tracer
+
+	  osnoise and timerlat are always installed, while hwnoise is
+	  installed if your kernel is recent enough.
+
+	  Note: rtla in kernels before 5.19 had additional dependencies,
+	  not available in Buildroot, so only rtla in kernels 5.19
+	  onwards is actually supported in Buildroot.
+
+comment "rtla needs a toolchain w/ threads, dynamic library"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
+
 config BR2_PACKAGE_LINUX_TOOLS_SELFTESTS
 	bool"selftests"
 	depends on BR2_PACKAGE_BUSYBOX_SHOW_OTHERS # bash
@@ -133,6 +179,32 @@ comment "selftests needs BR2_PACKAGE_BUSYBOX_SHOW_OTHERS and a toolchain w/ dyna
 	depends on BR2_USE_MMU
 	depends on !BR2_PACKAGE_BUSYBOX_SHOW_OTHERS || \
 		BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_14
+
+config BR2_PACKAGE_LINUX_TOOLS_USBTOOLS
+	bool "USB test programs"
+	select BR2_PACKAGE_LINUX_TOOLS
+	help
+	  Build and install the USB test tools.
+
+	  These tools exist since Linux 2.6.35, but Buildroot can build
+	  them only with kernel versions 5.9 and later.
+
+if BR2_PACKAGE_LINUX_TOOLS_USBTOOLS
+
+config BR2_PACKAGE_LINUX_TOOLS_USBTOOLS_TESTUSB
+	bool "testusb"
+	help
+	  testusb issues ioctls to perform the tests implemented by the
+	  kernel driver.  It can generate a variety of transfer
+	  patterns.
+
+	  See http://www.linux-usb.org/usbtest/
+
+config BR2_PACKAGE_LINUX_TOOLS_USBTOOLS_FFSTEST
+	bool "ffs-test"
+	help
+	  User mode filesystem api for usb composite function
+endif
 
 config BR2_PACKAGE_LINUX_TOOLS_TMON
 	bool "tmon"

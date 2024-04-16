@@ -4,19 +4,21 @@
 #
 ################################################################################
 
-LIBQRTR_GLIB_VERSION = 1.0.0
-LIBQRTR_GLIB_SITE = http://www.freedesktop.org/software/libqmi
-LIBQRTR_GLIB_SOURCE = libqrtr-glib-$(LIBQRTR_GLIB_VERSION).tar.xz
+LIBQRTR_GLIB_VERSION = 1.2.2
+LIBQRTR_GLIB_SITE = https://gitlab.freedesktop.org/mobile-broadband/libqrtr-glib/-/archive/$(LIBQRTR_GLIB_VERSION)
 LIBQRTR_GLIB_LICENSE = LGPL-2.1+
-LIBQRTR_GLIB_LICENSE_FILES = COPYING.LIB
+LIBQRTR_GLIB_LICENSE_FILES = LICENSES/LGPL-2.1-or-later.txt
 LIBQRTR_GLIB_INSTALL_STAGING = YES
 LIBQRTR_GLIB_DEPENDENCIES = libglib2
 
 ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
-LIBQRTR_GLIB_CONF_OPTS += --enable-introspection
+LIBQRTR_GLIB_CONF_OPTS += -Dintrospection=true
 LIBQRTR_GLIB_DEPENDENCIES += gobject-introspection
 else
-LIBQRTR_GLIB_CONF_OPTS += --disable-introspection
+LIBQRTR_GLIB_CONF_OPTS += -Dintrospection=false
 endif
 
-$(eval $(autotools-package))
+# disable gtkdocize
+LIBQRTR_GLIB_CONF_OPTS += -Dgtk_doc=false
+
+$(eval $(meson-package))

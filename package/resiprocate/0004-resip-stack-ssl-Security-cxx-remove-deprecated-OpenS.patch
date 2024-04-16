@@ -1,0 +1,26 @@
+From 88f98702d908549d888aa7f0ee1b0763e09662b1 Mon Sep 17 00:00:00 2001
+From: Daniel Pocock <daniel@pocock.pro>
+Date: Thu, 4 Aug 2022 11:09:43 +0200
+Subject: [PATCH] resip/stack: ssl/Security.cxx: remove deprecated OpenSSL
+ ERR_GET_FUNC, not required
+
+Upstream: https://github.com/resiprocate/resiprocate/commit/88f98702d908549d888aa7f0ee1b0763e09662b1
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ resip/stack/ssl/Security.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/resip/stack/ssl/Security.cxx b/resip/stack/ssl/Security.cxx
+index 75dc6d838a..23c2ebbf09 100644
+--- a/resip/stack/ssl/Security.cxx
++++ b/resip/stack/ssl/Security.cxx
+@@ -967,7 +967,7 @@ BaseSecurity::addPrivateKeyPEM( PEMType type,
+          char buffer[120];
+          unsigned long err = ERR_get_error();
+          ERR_error_string(err, buffer);
+-         if(ERR_GET_LIB(err) == ERR_LIB_EVP && ERR_GET_FUNC(err) == EVP_F_EVP_DECRYPTFINAL_EX && ERR_GET_REASON(err) == EVP_R_BAD_DECRYPT)
++         if(ERR_GET_LIB(err) == ERR_LIB_EVP && ERR_GET_REASON(err) == EVP_R_BAD_DECRYPT)
+          {
+             ErrLog(<< "Could not read private key (error=" << buffer << ") - likely incorrect password provided, may load correctly when transports are added with appropriate password");
+          }

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GOOGLEFONTDIRECTORY_VERSION = 94dff3eaa9301b6640cccc63c56d6ff33d82882c
+GOOGLEFONTDIRECTORY_VERSION = 2125bc9b447971543caaa132530b828e5e682819
 GOOGLEFONTDIRECTORY_SITE = $(call github,google,fonts,$(GOOGLEFONTDIRECTORY_VERSION))
 
 GOOGLEFONTDIRECTORY_FONTS = \

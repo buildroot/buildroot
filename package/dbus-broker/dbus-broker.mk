@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DBUS_BROKER_VERSION = 32
+DBUS_BROKER_VERSION = 33
 DBUS_BROKER_SOURCE = dbus-broker-$(DBUS_BROKER_VERSION).tar.xz
 DBUS_BROKER_SITE = https://github.com/bus1/dbus-broker/releases/download/v$(DBUS_BROKER_VERSION)
 
@@ -23,12 +23,13 @@ DBUS_BROKER_LICENSE_FILES = \
 	subprojects/libcstdaux-1/AUTHORS subprojects/libcstdaux-1/README.md \
 	subprojects/libcutf8-1/AUTHORS subprojects/libcutf8-1/README.md
 
-DBUS_BROKER_CPE_ID_VENDOR = dbus-broker_project
+DBUS_BROKER_CPE_ID_VALID = YES
 DBUS_BROKER_DEPENDENCIES = expat systemd
 DBUS_BROKER_CONF_OPTS = -Dlauncher=true
 
 ifeq ($(BR2_PACKAGE_AUDIT),y)
-DBUS_BROKER_DEPENDENCIES += audit
+# libcap-ng selected from Config.in
+DBUS_BROKER_DEPENDENCIES += audit libcap-ng
 DBUS_BROKER_CONF_OPTS += -Daudit=true
 else
 DBUS_BROKER_CONF_OPTS += -Daudit=false

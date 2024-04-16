@@ -4,13 +4,14 @@
 #
 ################################################################################
 
-MCELOG_VERSION = 187
+MCELOG_VERSION = 194
 MCELOG_SITE = $(call github,andikleen,mcelog,v$(MCELOG_VERSION))
 MCELOG_LICENSE = GPL-2.0
 MCELOG_LICENSE_FILES = LICENSE
 MCELOG_SELINUX_MODULES = mcelog
 
 define MCELOG_BUILD_CMDS
+	echo "$(MCELOG_VERSION)" > $(@D)/.os_version
 	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) all
 endef
 

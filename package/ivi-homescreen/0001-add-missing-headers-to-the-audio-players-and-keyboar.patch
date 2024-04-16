@@ -1,0 +1,104 @@
+From 7e35ea4fbd94a1604907069bb9cc2e2dff4b43c7 Mon Sep 17 00:00:00 2001
+From: Adam Duskett <adam.duskett@amarulasolutions.com>
+Date: Sat, 6 Jan 2024 14:18:56 -0700
+Subject: [PATCH] add missing headers to the audio-players and keyboard_manager
+ plugin
+
+Fixes flutter::StandardMethodCodec not being declared on the following lines:
+plugins/audio_players/audio_players_registry.cc:83
+plugins/audio_players/audio_players_registry.cc:94
+plugins/audio_players/audio_players_registry.cc:152
+plugins/audio_players/audio_player.cc:257
+plugins/audio_players/audio_player.cc:623
+plugins/keyboard_manager/keyboard_manager.cc:25
+
+Upstream: https://github.com/toyota-connected/ivi-homescreen/pull/133
+
+Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
+---
+ shell/plugins/audio_players/audio_player.cc           | 3 ++-
+ shell/plugins/audio_players/audio_players.cc          | 4 +++-
+ shell/plugins/audio_players/audio_players_registry.cc | 3 ++-
+ shell/plugins/keyboard_manager/keyboard_manager.h     | 3 ++-
+ 4 files changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/shell/plugins/audio_players/audio_player.cc b/shell/plugins/audio_players/audio_player.cc
+index 56027eb..a85e9ae 100644
+--- a/shell/plugins/audio_players/audio_player.cc
++++ b/shell/plugins/audio_players/audio_player.cc
+@@ -20,6 +20,7 @@
+ #include <map>
+ #include <sstream>
+ 
++#include <flutter/standard_method_codec.h>
+ #include <flutter/standard_message_codec.h>
+ 
+ #include <gst/audio/audio.h>
+@@ -639,4 +640,4 @@ void AudioPlayer::OnPlatformMessage(const FlutterPlatformMessage* message,
+   engine->SendPlatformMessageResponse(message->response_handle, result->data(),
+                                       result->size());
+ }
+-}  // namespace Plugins
+\ No newline at end of file
++}  // namespace Plugins
+diff --git a/shell/plugins/audio_players/audio_players.cc b/shell/plugins/audio_players/audio_players.cc
+index 0605576..4290f5a 100644
+--- a/shell/plugins/audio_players/audio_players.cc
++++ b/shell/plugins/audio_players/audio_players.cc
+@@ -19,6 +19,8 @@
+ #include <memory>
+ #include <vector>
+ 
++#include <flutter/standard_method_codec.h>
++
+ #include "audio_player.h"
+ #include "audio_players_registry.h"
+ #include "engine.h"
+@@ -314,4 +316,4 @@ void AudioPlayers::OnPlatformMessage(const FlutterPlatformMessage* message,
+               : "Unknown AudioPlayersLinux error");
+   }
+ }
+-}
+\ No newline at end of file
++}
+diff --git a/shell/plugins/audio_players/audio_players_registry.cc b/shell/plugins/audio_players/audio_players_registry.cc
+index 6c9ef33..00c4f45 100644
+--- a/shell/plugins/audio_players/audio_players_registry.cc
++++ b/shell/plugins/audio_players/audio_players_registry.cc
+@@ -19,6 +19,7 @@
+ #include <memory>
+ #include <mutex>
+ 
++#include <flutter/standard_method_codec.h>
+ #include <flutter/standard_message_codec.h>
+ 
+ #include "audio_player.h"
+@@ -168,4 +169,4 @@ void AudioPlayersRegistry::OnPlatformMessageEvents(
+   engine->SendPlatformMessageResponse(message->response_handle, result->data(),
+                                       result->size());
+ }
+-}  // namespace Plugins
+\ No newline at end of file
++}  // namespace Plugins
+diff --git a/shell/plugins/keyboard_manager/keyboard_manager.h b/shell/plugins/keyboard_manager/keyboard_manager.h
+index 74b4e8d..cae1954 100644
+--- a/shell/plugins/keyboard_manager/keyboard_manager.h
++++ b/shell/plugins/keyboard_manager/keyboard_manager.h
+@@ -17,6 +17,7 @@
+ #pragma once
+ 
+ #include "flutter/fml/macros.h"
++#include <flutter/standard_method_codec.h>
+ 
+ #include <shell/platform/embedder/embedder.h>
+ 
+@@ -45,4 +46,4 @@ class KeyboardManager {
+ 
+  private:
+   static constexpr char kGetKeyboardState[] = "getKeyboardState";
+-};
+\ No newline at end of file
++};
+-- 
+2.43.0
+

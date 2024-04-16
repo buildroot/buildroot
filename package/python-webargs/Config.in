@@ -1,0 +1,11 @@
+config BR2_PACKAGE_PYTHON_WEBARGS
+	bool "python-webargs"
+	select BR2_PACKAGE_PYTHON_MARSHMALLOW # runtime
+	select BR2_PACKAGE_PYTHON_PACKAGING # runtime
+	help
+	  Declarative parsing and validation of HTTP request objects,
+	  with built-in support for popular web frameworks, including
+	  Flask, Django, Bottle, Tornado, Pyramid, Falcon, and
+	  aiohttp.
+
+	  https://github.com/marshmallow-code/webargs

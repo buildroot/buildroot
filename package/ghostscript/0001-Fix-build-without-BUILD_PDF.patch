@@ -1,0 +1,34 @@
+From 088f3cd6e58cff5fa51e072d1829f7691a5f6681 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 20 Sep 2023 13:44:28 +0100
+Subject: [PATCH] Fix build without BUILD_PDF
+
+The PDFSetParams PostScript extension operator was missing a stub function definition
+when the PDF interpreter is not built in.
+
+ Author:    Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://git.ghostscript.com/?p=ghostpdl.git;a=commit;h=088f3cd6e58cff5fa51e072d1829f7691a5f6681
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ psi/zpdfops.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/psi/zpdfops.c b/psi/zpdfops.c
+index e7e0a42ee..271687a18 100644
+--- a/psi/zpdfops.c
++++ b/psi/zpdfops.c
+@@ -1507,6 +1507,11 @@ static int zPDFdrawannots(i_ctx_t *i_ctx_p)
+     return_error(gs_error_undefined);
+ }
+ 
++static int zPDFSetParams(i_ctx_t *i_ctx_p)
++{
++    return_error(gs_error_undefined);
++}
++
+ static int zPDFInit(i_ctx_t *i_ctx_p)
+ {
+     return_error(gs_error_undefined);
+-- 
+2.34.1
+

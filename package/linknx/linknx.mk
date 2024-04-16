@@ -49,9 +49,9 @@ else
 LINKNX_CONF_OPTS += --without-lua
 endif
 
-ifeq ($(BR2_PACKAGE_MYSQL),y)
+ifeq ($(BR2_PACKAGE_MARIADB),y)
 LINKNX_CONF_OPTS += --with-mysql=$(STAGING_DIR)/usr
-LINKNX_DEPENDENCIES += mysql
+LINKNX_DEPENDENCIES += mariadb
 else
 LINKNX_CONF_OPTS += --without-mysql
 endif

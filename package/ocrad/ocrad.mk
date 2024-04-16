@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OCRAD_VERSION = 0.28
+OCRAD_VERSION = 0.29
 OCRAD_SOURCE = ocrad-$(OCRAD_VERSION).tar.lz
 OCRAD_SITE = $(BR2_GNU_MIRROR)/ocrad
 OCRAD_LICENSE = GPL-2.0+

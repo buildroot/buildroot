@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-KMOD_VERSION = 29
+KMOD_VERSION = 31
 KMOD_SOURCE = kmod-$(KMOD_VERSION).tar.xz
 KMOD_SITE = $(BR2_KERNEL_MIRROR)/linux/utils/kernel/kmod
 KMOD_INSTALL_STAGING = YES
@@ -60,11 +60,6 @@ KMOD_DEPENDENCIES += openssl
 KMOD_CONF_OPTS += --with-openssl
 else
 KMOD_CONF_OPTS += --without-openssl
-endif
-
-ifeq ($(BR2_PACKAGE_PYTHON3),y)
-KMOD_DEPENDENCIES += python3
-KMOD_CONF_OPTS += --enable-python
 endif
 
 ifeq ($(BR2_PACKAGE_KMOD_TOOLS),y)

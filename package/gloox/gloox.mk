@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GLOOX_VERSION = 1.0.24
+GLOOX_VERSION = 1.0.28
 GLOOX_SOURCE = gloox-$(GLOOX_VERSION).tar.bz2
 GLOOX_SITE = https://camaya.net/download
 GLOOX_LICENSE = GPL-3.0 with OpenSSL exception

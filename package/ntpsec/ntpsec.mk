@@ -4,18 +4,31 @@
 #
 ################################################################################
 
-NTPSEC_VERSION_MAJOR = 1
-NTPSEC_VERSION_MINOR = 2
-NTPSEC_VERSION_POINT = 1
-NTPSEC_VERSION = $(NTPSEC_VERSION_MAJOR)_$(NTPSEC_VERSION_MINOR)_$(NTPSEC_VERSION_POINT)
-NTPSEC_SOURCE = ntpsec-NTPsec_$(NTPSEC_VERSION).tar.bz2
-NTPSEC_SITE = https://gitlab.com/NTPsec/ntpsec/-/archive/NTPsec_$(NTPSEC_VERSION)
-NTPSEC_LICENSE = BSD-2-Clause, NTP, BSD-3-Clause, MIT
-NTPSEC_LICENSE_FILES = LICENSE.adoc docs/copyright.adoc
+NTPSEC_VERSION = 1.2.3
+NTPSEC_SOURCE = ntpsec-NTPsec_$(subst .,_,$(NTPSEC_VERSION)).tar.bz2
+NTPSEC_SITE = https://gitlab.com/NTPsec/ntpsec/-/archive/NTPsec_$(subst .,_,$(NTPSEC_VERSION))
+NTPSEC_LICENSE = Apache-2.0, \
+	Beerware, \
+	BSD-2-Clause.txt, \
+	BSD-3-Clause.txt, \
+	BSD-4-Clause.txt, \
+	ISC.txt, \
+	MIT.txt, \
+	NTP.txt, \
+	CC-BY-4.0.txt (docs)
+NTPSEC_LICENSE_FILES = \
+	LICENSES/Apache-2.0.txt \
+	LICENSES/Beerware.txt \
+	LICENSES/BSD-2-Clause.txt \
+	LICENSES/BSD-3-Clause.txt \
+	LICENSES/BSD-4-Clause.txt \
+	LICENSES/ISC.txt \
+	LICENSES/MIT.txt \
+	LICENSES/NTP.txt \
+	LICENSES/CC-BY-4.0.txt \
+	docs/copyright.adoc
 
 NTPSEC_CPE_ID_VENDOR = ntpsec
-NTPSEC_CPE_ID_VERSION = $(NTPSEC_VERSION_MAJOR).$(NTPSEC_VERSION_MINOR)
-NTPSEC_CPE_ID_UPDATE = $(NTPSEC_VERSION_POINT)
 
 NTPSEC_DEPENDENCIES = \
 	host-bison \

@@ -1,0 +1,36 @@
+From 1edb0e27e44196d1ebe449aba0b9be22d376bcb6 Mon Sep 17 00:00:00 2001
+From: Alexander Amelkin <alexander@amelkin.msk.ru>
+Date: Tue, 22 Nov 2022 13:55:33 +0300
+Subject: [PATCH] Fix enterprise-numbers URL
+
+IANA has changed their URL scheme, and the content at the old URL for
+enterprise-numbers switched from text/plain to text/html.
+
+Fix Makefile.am to use the new URL
+
+Resolves ipmitool/ipmitool#377
+
+Signed-off-by: Alexander Amelkin <alexander@amelkin.msk.ru>
+
+[vfazio: backport from upstream 1edb0e27e44196d1ebe449aba0b9be22d376bcb6]
+Signed-off-by: Vincent Fazio <vfazio@gmail.com>
+---
+ Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index ce3267f..3182a52 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -41,7 +41,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 configure configure-stamp \
+ 	$(distdir).tar.gz $(distdir).tar.bz2
+ 
+ SUBDIRS = lib src include doc contrib control
+-IANA_PEN = http://www.iana.org/assignments/enterprise-numbers
++IANA_PEN = http://www.iana.org/assignments/enterprise-numbers.txt
+ 
+ dist-hook:
+ 	cp control/ipmitool.spec $(distdir)
+-- 
+2.25.1
+

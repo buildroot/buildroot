@@ -1,6 +1,11 @@
 config BR2_PACKAGE_TEALDEER
 	bool "tealdeer"
 	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	# Crypto dependency (ring) not available for mips, PowerPC, Sparc, s390x
+	depends on !(BR2_mips || BR2_mipsel || BR2_mips64 || BR2_mips64el)
+	depends on !(BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le)
+	depends on !(BR2_sparc || BR2_sparc64)
+	depends on !BR2_s390x
 	select BR2_PACKAGE_HOST_RUSTC
 	help
 	  A fast and full-featured tldr client. tldr pages are

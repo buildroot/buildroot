@@ -1,0 +1,40 @@
+From 565c003ac412c9b0fa39d208d4a911f4300477c3 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 26 Feb 2023 20:39:11 +0100
+Subject: [PATCH] CMakeLists.txt: prefer pkg_check_modules
+
+Prefer pkg_check_modules over find_package to avoid the following static
+build failure with openssl and -latomic:
+
+/home/autobuild/autobuild/instance-8/output-1/host/lib/gcc/sparc-buildroot-linux-uclibc/10.4.0/../../../../sparc-buildroot-linux-uclibc/bin/ld: /home/autobuild/autobuild/instance-8/output-1/host/sparc-buildroot-linux-uclibc/sysroot/usr/lib/libssl.a(ssl_cert.o): in function `ssl_cert_free':
+ssl_cert.c:(.text+0x53c): undefined reference to `__atomic_fetch_sub_4'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/f606bb15bf4f88ba29ef0795413e13acc9cd0976
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/zhaojh329/ssl/pull/4]
+---
+ CMakeLists.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/ssl/CMakeLists.txt b/src/ssl/CMakeLists.txt
+index 4868bf7..36488c7 100644
+--- a/src/ssl/CMakeLists.txt
++++ b/src/ssl/CMakeLists.txt
+@@ -14,10 +14,10 @@ endif()
+ 
+ find_package(PkgConfig QUIET)
+ 
+-find_package(OpenSSL)
++pkg_check_modules(OPENSSL openssl)
+ 
+ if (NOT OPENSSL_FOUND)
+-    pkg_check_modules(OPENSSL openssl)
++    find_package(OpenSSL)
+ endif()
+ 
+ find_package(WolfSSL)
+-- 
+2.39.1
+

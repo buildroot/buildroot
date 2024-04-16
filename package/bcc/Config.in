@@ -1,0 +1,45 @@
+config BR2_PACKAGE_BCC
+	bool "bcc"
+	depends on BR2_PACKAGE_LLVM_ARCH_SUPPORTS
+	depends on BR2_USE_MMU # python3
+	depends on BR2_TOOLCHAIN_USES_GLIBC # hardcode GNU tuple (x86_64-unknown-linux-gnu)
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 # clang
+	depends on BR2_INSTALL_LIBSTDCPP # clang
+	depends on BR2_HOST_GCC_AT_LEAST_7 # clang
+	depends on BR2_USE_WCHAR # clang, python3
+	depends on BR2_TOOLCHAIN_HAS_THREADS # clang, python3
+	depends on !BR2_STATIC_LIBS # clang, python3
+	select BR2_PACKAGE_CLANG
+	select BR2_PACKAGE_ELFUTILS
+	select BR2_PACKAGE_FLEX # needs FlexLexer.h
+	select BR2_PACKAGE_HOST_ZIP
+	select BR2_PACKAGE_LLVM
+	select BR2_PACKAGE_LLVM_BPF
+	select BR2_PACKAGE_PYTHON3
+	help
+	  BPF Compiler Collection (BCC)
+
+	  BCC is a toolkit for creating efficient kernel tracing and
+	  manipulation programs, and includes several useful tools and
+	  examples. It makes use of extended BPF (Berkeley Packet
+	  Filters), formally known as eBPF, a new feature that was
+	  first added to Linux 3.15. Much of what BCC uses requires
+	  Linux 4.1 and above.
+
+	  Note: Before using bcc, you need either need to :
+	  - For kernel_ver = [4.1, 5.2) : Copy kernel source code
+	  to target folder /lib/module/<kernel_ver>/build.
+	  - Or kernel_ver >= 5.2 : Compile kernel with CONFIG_IKHEADERS
+	  and use generated headers under /sys/kernel/kheaders.tar.xz
+	  to populate /lib/module/<kernel_ver>/build.
+
+	  That's because the clang frontend build eBPF code at runtime.
+
+	  https://github.com/iovisor/bcc
+	  http://www.ebpf.io
+
+comment "bcc needs a glibc toolchain, C++, gcc >= 7, host gcc >= 7"
+	depends on BR2_PACKAGE_LLVM_ARCH_SUPPORTS
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_USES_GLIBC || !BR2_INSTALL_LIBSTDCPP \
+		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_7 || !BR2_HOST_GCC_AT_LEAST_7

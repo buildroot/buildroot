@@ -1,0 +1,43 @@
+From 14b5eccf4145e7a5afc8bc65a15f26ac691f98d8 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Wed, 27 Sep 2023 10:54:18 +0200
+Subject: [PATCH] Support Linux 6.3
+
+With Linux 6.3 commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=40fc56ee608cdb20022c225ac6f1e4b7ba63f8f1
+function of_get_named_gpio_flags() has been dropped but it was only a
+wrapper to call of_get_named_gpio() if the flags passed was NULL and this
+is the case. So let's use of_get_named_gpio() in place of
+of_get_named_gpio_flags() since of_get_named_gpio() never changed
+after its adding in Linux version 3.1.
+
+Upstream: https://github.com/embeddedTS/wilc3000-external-module/pull/4
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ power.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/power.c b/power.c
+index 6c59e0b..6ab8d63 100644
+--- a/power.c
++++ b/power.c
+@@ -25,13 +25,11 @@ int wilc_of_parse_power_pins(struct wilc *wilc)
+ 	const struct wilc_power_gpios *gpios = &default_gpios[0];
+ 	int ret;
+ 
+-	power->gpios.reset = of_get_named_gpio_flags(of, "reset-gpios", 0,
+-						     NULL);
++	power->gpios.reset = of_get_named_gpio(of, "reset-gpios", 0);
+ 	if (!gpio_is_valid(power->gpios.reset))
+ 		power->gpios.reset = gpios->reset;
+ 
+-	power->gpios.chip_en = of_get_named_gpio_flags(of, "chip_en-gpios", 0,
+-						       NULL);
++	power->gpios.chip_en = of_get_named_gpio(of, "chip_en-gpios", 0);
+ 	if (!gpio_is_valid(power->gpios.chip_en))
+ 		power->gpios.chip_en = gpios->chip_en;
+ 
+-- 
+2.34.1
+

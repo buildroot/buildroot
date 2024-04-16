@@ -25,6 +25,7 @@ config BR2_PACKAGE_MOSQUITTO_BROKER
 	depends on BR2_USE_MMU # fork()
 	depends on !BR2_STATIC_LIBS # include <dlfcn.h>
 	depends on BR2_PACKAGE_MOSQUITTO
+	select BR2_PACKAGE_LIBWEBSOCKETS_EXT_POLL if BR2_PACKAGE_LIBWEBSOCKETS
 	help
 	  Build and install the mosquitto broker onto target.
 

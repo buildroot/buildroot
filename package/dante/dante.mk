@@ -22,6 +22,10 @@ else
 DANTE_CONF_OPTS += --without-upnp
 endif
 
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+DANTE_DEPENDENCIES += libxcrypt
+endif
+
 ifeq ($(BR2_PACKAGE_LINUX_PAM),y)
 DANTE_DEPENDENCIES += linux-pam
 DANTE_CONF_OPTS += --with-pam

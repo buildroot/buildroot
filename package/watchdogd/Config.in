@@ -27,32 +27,38 @@ config BR2_PACKAGE_WATCHDOGD_TEST_SUITE
 	  They can be used to verify correct operation of watchdogd and
 	  the kernel watchdog driver.
 
-config BR2_PACKAGE_WATCHDOGD_GENERIC_POLL
-	int "Generic script monitor poll interval (sec)"
-	default "300"
+config BR2_PACKAGE_WATCHDOGD_GENERIC
+	bool "Generic script monitor"
+	default y if BR2_PACKAGE_WATCHDOGD_GENERIC_POLL_WRAP # legacy 2024.02
 	help
-	  Poll interval for generic script monitor, in seconds.  A value
-	  of zero (0) disables the monitor.
+	  Enable generic script monitor.
 
-config BR2_PACKAGE_WATCHDOGD_LOADAVG_POLL
-	int "CPU load average monitor poll interval (sec)"
-	default "300"
+config BR2_PACKAGE_WATCHDOGD_LOADAVG
+	bool "CPU load average monitor"
+	default y if BR2_PACKAGE_WATCHDOGD_LOADAVG_POLL_WRAP # legacy 2024.02
 	help
-	  Poll interval for CPU load average monitor, in seconds.  A
-	  value of zero (0) disables the monitor.
+	  Enable CPU load average monitor.
 
-config BR2_PACKAGE_WATCHDOGD_FILENR_POLL
-	int "File descriptor leak monitor poll interval (sec)"
-	default "300"
+config BR2_PACKAGE_WATCHDOGD_FILENR
+	bool "File descriptor leak monitor"
+	default y if BR2_PACKAGE_WATCHDOGD_FILENR_POLL_WRAP # legacy 2024.02
 	help
-	  Poll interval for file descriptor leak monitor, in seconds.  A
-	  value of zero (0) disables the monitor.
+	  Enable file descriptor leak monitor.
 
-config BR2_PACKAGE_WATCHDOGD_MEMINFO_POLL
-	int "Memory leak monitor poll interval (sec)"
-	default "300"
+config BR2_PACKAGE_WATCHDOGD_MEMINFO
+	bool "Memory leak monitor"
+	default y if BR2_PACKAGE_WATCHDOGD_MEMINFO_POLL_WRAP # legacy 2024.02
 	help
-	  Poll interval for memory leak monitor, in seconds.  A value of
-	  zero (0) disables the monitor.
+	  Enable memory leak monitor.
+
+config BR2_PACKAGE_WATCHDOGD_FSMON
+	bool "File system monitor"
+	help
+	  Enable file system monitor.
+
+config BR2_PACKAGE_WATCHDOGD_TEMPMON
+	bool "Temperature monitor"
+	help
+	  Enable temperature monitor.
 
 endif

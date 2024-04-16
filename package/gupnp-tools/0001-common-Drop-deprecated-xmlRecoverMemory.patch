@@ -1,0 +1,33 @@
+From f675ac7e0afe67a86f3f1191d3274d6ffbd4e5d7 Mon Sep 17 00:00:00 2001
+From: Jens Georg <mail@jensge.org>
+Date: Thu, 3 Aug 2023 23:44:15 +0200
+Subject: [PATCH] common: Drop deprecated xmlRecoverMemory
+
+Fixes #27
+
+Upstream: https://gitlab.gnome.org/GNOME/gupnp-tools/-/commit/f675ac7e0afe67a86f3f1191d3274d6ffbd4e5d7
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/common/pretty-print.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/common/pretty-print.c b/src/common/pretty-print.c
+index c692664..c8ebc9a 100644
+--- a/src/common/pretty-print.c
++++ b/src/common/pretty-print.c
+@@ -34,7 +34,11 @@ pretty_print_xml (const char *xml)
+         char *text;
+         int length;
+ 
+-        doc = xmlRecoverMemory (xml, strlen (xml));
++        doc = xmlReadMemory (xml,
++                             strlen (xml),
++                             NULL,
++                             NULL,
++                             XML_PARSE_NONET | XML_PARSE_RECOVER);
+ 
+         if (!doc)
+                 return NULL;
+-- 
+GitLab
+

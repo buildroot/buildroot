@@ -1,0 +1,18 @@
+config BR2_PACKAGE_KODI_IMAGEDECODER_HEIF
+	bool "kodi-imagedecoder-heif"
+	depends on BR2_INSTALL_LIBSTDCPP # libde265, libheif, tinyxml2
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libde265
+	depends on !BR2_TOOLCHAIN_HAS_BINUTILS_BUG_30730 # libheif
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # libheif
+	select BR2_PACKAGE_LIBDE265
+	select BR2_PACKAGE_LIBHEIF
+	select BR2_PACKAGE_TINYXML2
+	help
+	  HEIF image decoder add-on for Kodi
+
+	  https://github.com/xbmc/imagedecoder.heif
+
+comment "kodi-imagedecoder-heif needs a toolchain w/ C++, threads, gcc >= 4.8"
+	depends on !BR2_TOOLCHAIN_HAS_BINUTILS_BUG_30730 # libheif
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_8

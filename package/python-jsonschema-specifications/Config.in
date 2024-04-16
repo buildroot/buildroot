@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_JSONSCHEMA_SPECIFICATIONS
+	bool "python-jsonschema-specifications"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-referencing -> python-rpds-py
+	select BR2_PACKAGE_PYTHON_REFERENCING # runtime
+	help
+	  The JSON Schema meta-schemas and vocabularies, exposed as a
+	  Registry.
+
+	  https://github.com/python-jsonschema/jsonschema-specifications

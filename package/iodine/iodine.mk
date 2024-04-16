@@ -4,13 +4,17 @@
 #
 ################################################################################
 
-IODINE_VERSION = 0.7.0
+IODINE_VERSION = 0.8.0
 IODINE_SITE = http://code.kryo.se/iodine
-IODINE_DEPENDENCIES = zlib
 IODINE_LICENSE = MIT
-IODINE_LICENSE_FILES = README
+IODINE_LICENSE_FILES = LICENSE
 IODINE_CPE_ID_VENDOR = kryo
 IODINE_SELINUX_MODULES = iodine
+IODINE_DEPENDENCIES = \
+	host-pkgconf \
+	$(if $(BR2_PACKAGE_LIBSELINUX),libselinux) \
+	$(if $(BR2_PACKAGE_SYSTEMD),systemd) \
+	zlib
 
 IODINE_CFLAGS = $(TARGET_CFLAGS)
 

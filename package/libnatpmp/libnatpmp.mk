@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBNATPMP_VERSION = 20150609
+LIBNATPMP_VERSION = 20230423
 LIBNATPMP_SITE = http://miniupnp.free.fr/files
 LIBNATPMP_INSTALL_STAGING = YES
 LIBNATPMP_LICENSE = BSD-3-Clause
@@ -18,7 +18,7 @@ endef
 define LIBNATPMP_INSTALL_STAGING_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) \
 		PREFIX=$(STAGING_DIR) \
-		HEADERS='declspec.h natpmp.h' \
+		HEADERS='natpmp_declspec.h natpmp.h' \
 		$(TARGET_CONFIGURE_OPTS) install
 endef
 

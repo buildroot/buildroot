@@ -11,7 +11,6 @@ choice
 # Aarch64 (use ARM toolchain by default)
 source "toolchain/toolchain-external/toolchain-external-arm-aarch64/Config.in"
 source "toolchain/toolchain-external/toolchain-external-linaro-aarch64/Config.in"
-source "toolchain/toolchain-external/toolchain-external-codesourcery-aarch64/Config.in"
 
 # Aarch64 big-endian
 source "toolchain/toolchain-external/toolchain-external-arm-aarch64-be/Config.in"
@@ -23,15 +22,12 @@ source "toolchain/toolchain-external/toolchain-external-synopsys-arc/Config.in"
 # ARM (use ARM toolchain by default)
 source "toolchain/toolchain-external/toolchain-external-arm-arm/Config.in"
 source "toolchain/toolchain-external/toolchain-external-linaro-arm/Config.in"
-source "toolchain/toolchain-external/toolchain-external-codesourcery-arm/Config.in"
 
 # ARM big-endian
 source "toolchain/toolchain-external/toolchain-external-linaro-armeb/Config.in"
 
-# MIPS (use codesourcery toolchain by default)
+# MIPS
 source "toolchain/toolchain-external/toolchain-external-codesourcery-mips/Config.in"
-source "toolchain/toolchain-external/toolchain-external-codescape-img-mips/Config.in"
-source "toolchain/toolchain-external/toolchain-external-codescape-mti-mips/Config.in"
 
 # NIOSII
 source "toolchain/toolchain-external/toolchain-external-codesourcery-niosII/Config.in"
@@ -115,7 +111,6 @@ config BR2_TOOLCHAIN_EXTERNAL_PREFIX
 # Aarch64
 source "toolchain/toolchain-external/toolchain-external-arm-aarch64/Config.in.options"
 source "toolchain/toolchain-external/toolchain-external-linaro-aarch64/Config.in.options"
-source "toolchain/toolchain-external/toolchain-external-codesourcery-aarch64/Config.in.options"
 
 # Aarch64 big-endian
 source "toolchain/toolchain-external/toolchain-external-arm-aarch64-be/Config.in.options"
@@ -127,15 +122,12 @@ source "toolchain/toolchain-external/toolchain-external-synopsys-arc/Config.in.o
 # ARM
 source "toolchain/toolchain-external/toolchain-external-arm-arm/Config.in.options"
 source "toolchain/toolchain-external/toolchain-external-linaro-arm/Config.in.options"
-source "toolchain/toolchain-external/toolchain-external-codesourcery-arm/Config.in.options"
 
 # ARM big-endian
 source "toolchain/toolchain-external/toolchain-external-linaro-armeb/Config.in.options"
 
 # MIPS
 source "toolchain/toolchain-external/toolchain-external-codesourcery-mips/Config.in.options"
-source "toolchain/toolchain-external/toolchain-external-codescape-img-mips/Config.in.options"
-source "toolchain/toolchain-external/toolchain-external-codescape-mti-mips/Config.in.options"
 
 # NIOSII
 source "toolchain/toolchain-external/toolchain-external-codesourcery-niosII/Config.in.options"

@@ -1,0 +1,49 @@
+From 65e1b96bd40cb14b3729ac56bb9f1fcb77254403 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 1 Nov 2022 14:16:01 +0100
+Subject: [PATCH] fix build with kernel < 5.9
+
+linux/close_range.h is only available since kernel 5.9 and
+https://github.com/torvalds/linux/commit/60997c3d45d9a67daf01c56d805ae4fec37e0bd8
+resulting in the following build failure:
+
+catatonit.c:39:11: fatal error: linux/close_range.h: No such file or directory
+   39 | # include <linux/close_range.h>
+      |           ^~~~~~~~~~~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/ed9a847905083175c7fcb2f2df28f9ac5b9c3313
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/openSUSE/catatonit/commit/663ad1670689143f65af3a288f90cecb7feed54f
+---
+ catatonit.c  | 2 +-
+ configure.ac | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/catatonit.c b/catatonit.c
+index a33f4cd..b10d9b0 100644
+--- a/catatonit.c
++++ b/catatonit.c
+@@ -36,7 +36,7 @@
+ #include <limits.h>
+ #include <dirent.h>
+ 
+-#ifdef HAVE_CLOSE_RANGE
++#ifdef HAVE_LINUX_CLOSE_RANGE_H
+ # include <linux/close_range.h>
+ #else
+ # include <sys/syscall.h>
+diff --git a/configure.ac b/configure.ac
+index 69e89f0..b37f146 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -24,7 +24,7 @@ LT_PREREQ([2.4.2])
+ LT_INIT([disable-shared])
+ 
+ AC_CHECK_HEADERS([errno.h fcntl.h signal.h stdarg.h stdio.h stdlib.h unistd.h])
+-AC_CHECK_HEADERS([sys/prctl.h sys/signalfd.h sys/stat.h sys/types.h sys/wait.h])
++AC_CHECK_HEADERS([linux/close_range.h sys/prctl.h sys/signalfd.h sys/stat.h sys/types.h sys/wait.h])
+ 
+ AC_CHECK_FUNCS([close_range])
+ 

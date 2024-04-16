@@ -4,15 +4,15 @@
 #
 ################################################################################
 
-LIBQMI_VERSION = 1.30.8
+LIBQMI_VERSION = 1.34.0
 LIBQMI_SITE = https://gitlab.freedesktop.org/mobile-broadband/libqmi/-/archive/$(LIBQMI_VERSION)
 LIBQMI_LICENSE = LGPL-2.0+ (library), GPL-2.0+ (programs)
 LIBQMI_LICENSE_FILES = COPYING COPYING.LIB
-LIBQMI_CPE_ID_VENDOR = libqmi_project
+LIBQMI_CPE_ID_VALID = YES
 LIBQMI_INSTALL_STAGING = YES
 
 LIBQMI_DEPENDENCIES = libglib2
-LIBQMI_CONF_OPTS = -Dman=false
+LIBQMI_CONF_OPTS = -Dman=false -Dfuzzer=false
 
 ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
 LIBQMI_DEPENDENCIES += gobject-introspection

@@ -1,0 +1,23 @@
+comment "firmware-ele-imx needs an i.MX platform with EdgeLock Secure Enclave"
+	depends on !BR2_PACKAGE_FREESCALE_IMX_HAS_ELE
+
+config BR2_PACKAGE_FIRMWARE_ELE_IMX
+	bool "firmware-ele-imx"
+	depends on BR2_PACKAGE_FREESCALE_IMX_HAS_ELE
+	help
+	  Firmware blobs for the EdgeLock Secure Enclave (ELE)
+	  present on i.MX8ULP and i.MX9 SoCs.
+
+	  This library is provided by NXP as-is and doesn't have an
+	  upstream.
+
+if BR2_PACKAGE_FIRMWARE_ELE_IMX
+
+config BR2_PACKAGE_FIRMWARE_ELE_IMX_AHAB_CONTAINER_IMAGE
+	string
+	default "mx93a0-ahab-container.img" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93A0
+	default "mx93a1-ahab-container.img" if \
+		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX91 || \
+		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93A1
+
+endif # BR2_PACKAGE_FIRMWARE_ELE_IMX

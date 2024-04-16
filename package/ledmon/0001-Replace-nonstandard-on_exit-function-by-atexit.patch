@@ -1,0 +1,223 @@
+From e57ad4c71cce734de7f8aa75e84fce97bc148c2b Mon Sep 17 00:00:00 2001
+From: Maksim Kiselev <bigunclemax@gmail.com>
+Date: Mon, 15 May 2023 14:46:56 +0300
+Subject: [PATCH] Replace nonstandard on_exit() function by atexit()
+
+on_exit() is not portable and not available on the C libraries musl
+and uClibc.
+
+So let's replace it with standard atexit() function.
+
+Upstream: https://github.com/intel/ledmon/pull/139
+
+Signed-off-by: Maksim Kiselev <bigunclemax@gmail.com>
+---
+ src/ledctl.c | 12 ++++-------
+ src/ledmon.c | 59 +++++++++++++++++++++++++++-------------------------
+ 2 files changed, 35 insertions(+), 36 deletions(-)
+
+diff --git a/src/ledctl.c b/src/ledctl.c
+index 7a89a24..10fd57a 100644
+--- a/src/ledctl.c
++++ b/src/ledctl.c
+@@ -214,15 +214,11 @@ static void ibpi_state_fini(struct ibpi_state *p)
+  *
+  * This is internal function of ledctl utility. The function cleans up a memory
+  * allocated for the application and closes all opened handles. This function is
+- * design to be registered as on_exit() handler function.
+- *
+- * @param[in]      status         exit status of the ledctl application.
+- * @param[in]      ignored        function ignores this argument.
++ * design to be registered as atexit() handler function.
+  *
+  * @return The function does not return a value.
+  */
+-static void _ledctl_fini(int status __attribute__ ((unused)),
+-			 void *ignore __attribute__ ((unused)))
++static void _ledctl_fini(void)
+ {
+ 	sysfs_reset();
+ 	list_erase(&ibpi_list);
+@@ -948,7 +944,7 @@ static char *ledctl_strstatus(ledctl_status_code_t s)
+  * @brief Application's entry point.
+  *
+  * This is the entry point of ledctl utility. This function does all the work.
+- * It allocates and initializes all used structures. Registers on_exit()
++ * It allocates and initializes all used structures. Registers atexit()
+  * handlers.
+  * Then the function parses command line options and commands given and scans
+  * sysfs tree for controllers, block devices and RAID devices. If no error is
+@@ -983,7 +979,7 @@ int main(int argc, char *argv[])
+ 	status = _init_ledctl_conf();
+ 	if (status != LEDCTL_STATUS_SUCCESS)
+ 		return status;
+-	if (on_exit(_ledctl_fini, progname))
++	if (atexit(_ledctl_fini))
+ 		exit(LEDCTL_STATUS_ONEXIT_ERROR);
+ 	slot_request_init(&slot_req);
+ 	status = _cmdline_parse(argc, argv, &slot_req);
+diff --git a/src/ledmon.c b/src/ledmon.c
+index 6f52fd6..1329295 100644
+--- a/src/ledmon.c
++++ b/src/ledmon.c
+@@ -57,6 +57,19 @@
+ #include "utils.h"
+ #include "vmdssd.h"
+ 
++/**
++ * This macro is the alternative way to get exit status
++ * in atexit() callback function
++ */
++#define EXIT(x) ((exit)(exit_status = (x)))
++
++static int exit_status;
++
++/**
++ * Flag to print exit status
++ */
++static int ignore;
++
+ /**
+  * @brief List of active block devices.
+  *
+@@ -151,20 +164,16 @@ static int possible_params_size = ARRAY_SIZE(possible_params);
+  *
+  * This is internal function of monitor service. It is used to finalize daemon
+  * process i.e. free allocated memory, unlock and remove pidfile and close log
+- * file and syslog. The function is registered as on_exit() handler.
+- *
+- * @param[in]     status          The function ignores this parameter.
+- * @param[in]     program_name    The name of the binary file. This argument
+- *                                is passed via on_exit() function.
++ * file and syslog. The function is registered as atexit() handler.
+  *
+  * @return The function does not return a value.
+  */
+-static void _ledmon_fini(int __attribute__ ((unused)) status, void *program_name)
++static void _ledmon_fini(void)
+ {
+ 	sysfs_reset();
+ 	list_erase(&ledmon_block_list);
+ 	log_close();
+-	pidfile_remove(program_name);
++	pidfile_remove(progname);
+ }
+ 
+ typedef enum {
+@@ -207,30 +216,25 @@ static char *ledmon_strstatus(ledmon_status_code_t s)
+  *
+  * This is internal function of monitor service. It is used to report an exit
+  * status of the monitor service. The message is logged in to syslog and to log
+- * file. The function is registered as on_exit() hander.
+- *
+- * @param[in]     status            Status given in the last call to exit()
+- *                                  function.
+- * @param[in]     arg               Argument passed to on_exit().
++ * file. The function is registered as atexit() handler.
+  *
+  * @return The function does not return a value.
+  */
+-static void _ledmon_status(int status, void *arg)
++static void _ledmon_status(void)
+ {
+ 	int log_level;
+ 	char message[4096];
+-	int ignore = *((int *)arg);
+ 
+ 	if (ignore)
+ 		return;
+ 
+-	if (status == LEDMON_STATUS_SUCCESS)
++	if (exit_status == LEDMON_STATUS_SUCCESS)
+ 		log_level = LOG_LEVEL_INFO;
+ 	else
+ 		log_level = LOG_LEVEL_ERROR;
+ 
+ 	snprintf(message, sizeof(message), "exit status is %s.",
+-		 ledmon_strstatus(status));
++		 ledmon_strstatus(exit_status));
+ 
+ 	if (get_log_fd() >= 0)
+ 		_log(log_level, message);
+@@ -364,10 +368,10 @@ static ledmon_status_code_t _cmdline_parse_non_daemonise(int argc, char *argv[])
+ 			break;
+ 		case 'h':
+ 			_ledmon_help();
+-			exit(EXIT_SUCCESS);
++			EXIT(EXIT_SUCCESS);
+ 		case 'v':
+ 			_ledmon_version();
+-			exit(EXIT_SUCCESS);
++			EXIT(EXIT_SUCCESS);
+ 		case ':':
+ 		case '?':
+ 			return LEDMON_STATUS_CMDLINE_ERROR;
+@@ -890,14 +894,13 @@ static void _close_parent_fds(void)
+ int main(int argc, char *argv[])
+ {
+ 	ledmon_status_code_t status = LEDMON_STATUS_SUCCESS;
+-	static int ignore;
+ 
+ 	setup_options(&longopt, &shortopt, possible_params,
+ 			possible_params_size);
+ 	set_invocation_name(argv[0]);
+ 	openlog(progname, LOG_PID | LOG_PERROR, LOG_DAEMON);
+ 
+-	if (on_exit(_ledmon_status, &ignore))
++	if (atexit(_ledmon_status))
+ 		return LEDMON_STATUS_ONEXIT_ERROR;
+ 
+ 	if (_cmdline_parse_non_daemonise(argc, argv) != LEDMON_STATUS_SUCCESS)
+@@ -935,18 +938,18 @@ int main(int argc, char *argv[])
+ 
+ 		if (pid < 0) {
+ 			log_debug("main(): fork() failed (errno=%d).", errno);
+-			exit(EXIT_FAILURE);
++			EXIT(EXIT_FAILURE);
+ 		}
+ 		if (pid > 0) {
+ 			ignore = 1; /* parent: don't print exit status */
+-			exit(EXIT_SUCCESS);
++			EXIT(EXIT_SUCCESS);
+ 		}
+ 
+ 		pid_t sid = setsid();
+ 
+ 		if (sid < 0) {
+ 			log_debug("main(): setsid() failed (errno=%d).", errno);
+-			exit(EXIT_FAILURE);
++			EXIT(EXIT_FAILURE);
+ 		}
+ 
+ 		_close_parent_fds();
+@@ -960,16 +963,16 @@ int main(int argc, char *argv[])
+ 
+ 	if (chdir("/") < 0) {
+ 		log_debug("main(): chdir() failed (errno=%d).", errno);
+-		exit(EXIT_FAILURE);
++		EXIT(EXIT_FAILURE);
+ 	}
+ 	if (pidfile_create(progname)) {
+ 		log_debug("main(): pidfile_creat() failed.");
+-		exit(EXIT_FAILURE);
++		EXIT(EXIT_FAILURE);
+ 	}
+ 	_ledmon_setup_signals();
+ 
+-	if (on_exit(_ledmon_fini, progname))
+-		exit(LEDMON_STATUS_ONEXIT_ERROR);
++	if (atexit(_ledmon_fini))
++		EXIT(LEDMON_STATUS_ONEXIT_ERROR);
+ 	list_init(&ledmon_block_list, (item_free_t)block_device_fini);
+ 	sysfs_init();
+ 	log_info("monitor service has been started...");
+@@ -987,5 +990,5 @@ int main(int argc, char *argv[])
+ 	}
+ 	ledmon_remove_shared_conf();
+ 	stop_udev_monitor();
+-	exit(EXIT_SUCCESS);
++	EXIT(EXIT_SUCCESS);
+ }
+-- 
+2.39.2
+

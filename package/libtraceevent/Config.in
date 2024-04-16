@@ -1,0 +1,15 @@
+config BR2_PACKAGE_LIBTRACEEVENT
+	bool "libtraceevent"
+	depends on !BR2_STATIC_LIBS # dlfcn.h
+	help
+	  libtraceevent is a library that interfaces with the ftrace
+	  subsystem in the linux kernel.
+	  It used to be bundled directly in the trace-cmd
+	  tool, but it was eventually extracted so that it can be used
+	  by multiple other tools and libraries, such as libtracefs and
+	  rtla.
+
+	  https://git.kernel.org/pub/scm/libs/libtrace/libtraceevent.git/
+
+comment "libtraceevent needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS

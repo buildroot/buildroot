@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-VDR_VERSION = 2.6.1
+VDR_VERSION = 2.6.5
 VDR_SITE = $(call github,vdr-projects,vdr,$(VDR_VERSION))
 VDR_LICENSE = GPL-2.0+
 VDR_LICENSE_FILES = COPYING

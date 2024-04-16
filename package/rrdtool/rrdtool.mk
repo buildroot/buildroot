@@ -4,15 +4,15 @@
 #
 ################################################################################
 
-RRDTOOL_VERSION = 1.7.2
-RRDTOOL_SITE = http://oss.oetiker.ch/rrdtool/pub
+RRDTOOL_VERSION = 1.8.0
+RRDTOOL_SITE = https://github.com/oetiker/rrdtool-1.x/releases/download/v$(RRDTOOL_VERSION)
 RRDTOOL_LICENSE = GPL-2.0+ with FLOSS license exceptions as explained in COPYRIGHT
 RRDTOOL_LICENSE_FILES = COPYRIGHT LICENSE
 RRDTOOL_DEPENDENCIES = host-pkgconf libglib2 $(TARGET_NLS_DEPENDENCIES)
 # autoreconf needed to avoid link failure due to missing -lintl,
-# gettextize needed as a consequence of autoreconf
+# autopoint needed as a consequence of autoreconf
 RRDTOOL_AUTORECONF = YES
-RRDTOOL_GETTEXTIZE = YES
+RRDTOOL_AUTOPOINT = YES
 RRDTOOL_INSTALL_STAGING = YES
 RRDTOOL_CONF_OPTS = \
 	--disable-examples \

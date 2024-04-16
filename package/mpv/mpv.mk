@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MPV_VERSION = 0.33.1
+MPV_VERSION = 0.35.1
 MPV_SITE = $(call github,mpv-player,mpv,v$(MPV_VERSION))
 MPV_DEPENDENCIES = \
 	host-pkgconf ffmpeg libass zlib \
@@ -205,7 +205,13 @@ endif
 # xlib_libXrandr, xlib_libXScrnSaver.
 ifeq ($(BR2_PACKAGE_XORG7),y)
 MPV_CONF_OPTS += --enable-x11
-MPV_DEPENDENCIES += xlib_libX11 xlib_libXext xlib_libXinerama xlib_libXrandr xlib_libXScrnSaver
+MPV_DEPENDENCIES += \
+	xlib_libX11 \
+	xlib_libXext \
+	xlib_libXinerama \
+	xlib_libXpresent \
+	xlib_libXrandr \
+	xlib_libXScrnSaver
 # XVideo
 ifeq ($(BR2_PACKAGE_XLIB_LIBXV),y)
 MPV_CONF_OPTS += --enable-xv

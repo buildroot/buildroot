@@ -1,16 +1,20 @@
 #!/bin/sh
 
+DAEMON="dnsmasq"
+PIDFILE="/var/run/$DAEMON.pid"
+
 [ -f /etc/dnsmasq.conf ] || exit 0
 
 case "$1" in
 	start)
 		printf "Starting dnsmasq: "
-		start-stop-daemon -S -x /usr/sbin/dnsmasq
+		start-stop-daemon -S -p "$PIDFILE" -x "/usr/sbin/$DAEMON" -- \
+			--pid-file="$PIDFILE"
 		[ $? = 0 ] && echo "OK" || echo "FAIL"
 		;;
 	stop)
 		printf "Stopping dnsmasq: "
-		start-stop-daemon -K -q -x /usr/sbin/dnsmasq
+		start-stop-daemon -K -q -p "$PIDFILE" -x "/usr/sbin/$DAEMON"
 		[ $? = 0 ] && echo "OK" || echo "FAIL"
 		;;
 	restart|reload)

@@ -1,0 +1,140 @@
+From 8d8cc9087fd44c097775ca0a9ebb6c877605baec Mon Sep 17 00:00:00 2001
+From: Vincent Fazio <5265893+vfazio@users.noreply.github.com>
+Date: Wed, 28 Feb 2024 13:55:04 -0600
+Subject: [PATCH] gh-115382: Fix cross compiles when host and target use same
+ SOABI
+
+Previously, when a build was configured to use a host interpreter via
+--with-build-python, the PYTHON_FOR_BUILD config value included a path
+in PYTHONPATH that pointed to the target's built external modules.
+
+For "normal" foreign architecture cross compiles, when loading compiled
+external libraries, the target libraries were processed first due to
+their precedence in sys.path. These libraries were then ruled out due to
+a mismatch in the SOABI so the import mechanism continued searching
+until it found the host's native modules.
+
+However, if the host interpreter and the target python were on the same
+version + SOABI combination, the host interpreter would attempt to load
+the target's external modules due to their precedence in sys.path.
+
+Despite the "match", the target build may have been linked against a
+different libc or may include unsupported instructions so loading or
+executing the target's external modules can lead to crashes.
+
+Now, the path to the target's external modules is no longer defined in
+PYTHONPATH to prevent accidentally loading these foreign modules.
+
+One caveat is that during certain build stages, the target's sysconfig
+module requires higher precedence than the host's version in order to
+accurately query the target build's configuration.
+
+This worked previously due to the target's sysconfig data module having
+precedence over the host's (see above). In order to keep this desired
+behavior, a new environment variable, _PYTHON_SYSCONFIGDATA_PATH, has
+been defined so sysconfig can search this directory for the target's
+sysconfig data.
+
+Signed-off-by: Vincent Fazio <vfazio@gmail.com>
+Upstream-issue: https://github.com/python/cpython/issues/115382
+Upstream: https://github.com/python/cpython/pull/116294
+---
+ Lib/sysconfig.py             | 15 ++++++++++++++-
+ Lib/test/libregrtest/main.py |  1 +
+ Lib/test/pythoninfo.py       |  1 +
+ Tools/scripts/run_tests.py   |  1 +
+ configure                    |  2 +-
+ configure.ac                 |  2 +-
+ 6 files changed, 19 insertions(+), 3 deletions(-)
+
+diff --git a/Lib/sysconfig.py b/Lib/sysconfig.py
+index 6328ec41af..744f715fe2 100644
+--- a/Lib/sysconfig.py
++++ b/Lib/sysconfig.py
+@@ -535,7 +535,20 @@ def _init_posix(vars):
+     """Initialize the module as appropriate for POSIX systems."""
+     # _sysconfigdata is generated at build time, see _generate_posix_vars()
+     name = _get_sysconfigdata_name()
+-    _temp = __import__(name, globals(), locals(), ['build_time_vars'], 0)
++
++    # For cross builds, the path to the target's sysconfigdata must be specified
++    # so it can be imported. It cannot be in PYTHONPATH, as foreign modules in
++    # sys.path can cause crashes when loaded by the host interpreter.
++    # Rely on truthiness as a valueless env variable is still an empty string.
++    # See OS X note in _generate_posix_vars re _sysconfigdata.
++    if (path := os.environ.get('_PYTHON_SYSCONFIGDATA_PATH')):
++        from importlib.machinery import FileFinder, SourceFileLoader, SOURCE_SUFFIXES
++        from importlib.util import module_from_spec
++        spec = FileFinder(path, (SourceFileLoader, SOURCE_SUFFIXES)).find_spec(name)
++        _temp = module_from_spec(spec)
++        spec.loader.exec_module(_temp)
++    else:
++        _temp = __import__(name, globals(), locals(), ['build_time_vars'], 0)
+     build_time_vars = _temp.build_time_vars
+     vars.update(build_time_vars)
+ 
+diff --git a/Lib/test/libregrtest/main.py b/Lib/test/libregrtest/main.py
+index a9725fa967..121e2e7393 100644
+--- a/Lib/test/libregrtest/main.py
++++ b/Lib/test/libregrtest/main.py
+@@ -519,6 +519,7 @@ def _add_cross_compile_opts(self, regrtest_opts):
+                 '_PYTHON_PROJECT_BASE',
+                 '_PYTHON_HOST_PLATFORM',
+                 '_PYTHON_SYSCONFIGDATA_NAME',
++                "_PYTHON_SYSCONFIGDATA_PATH",
+                 'PYTHONPATH'
+             }
+             old_environ = os.environ
+diff --git a/Lib/test/pythoninfo.py b/Lib/test/pythoninfo.py
+index 74ebb5e5b8..fa7fbca34e 100644
+--- a/Lib/test/pythoninfo.py
++++ b/Lib/test/pythoninfo.py
+@@ -326,6 +326,7 @@ def format_groups(groups):
+         "_PYTHON_HOST_PLATFORM",
+         "_PYTHON_PROJECT_BASE",
+         "_PYTHON_SYSCONFIGDATA_NAME",
++        "_PYTHON_SYSCONFIGDATA_PATH",
+         "__PYVENV_LAUNCHER__",
+ 
+         # Sanitizer options
+diff --git a/Tools/scripts/run_tests.py b/Tools/scripts/run_tests.py
+index 445a34ae3e..4077a83424 100644
+--- a/Tools/scripts/run_tests.py
++++ b/Tools/scripts/run_tests.py
+@@ -42,6 +42,7 @@ def main(regrtest_args):
+             '_PYTHON_PROJECT_BASE',
+             '_PYTHON_HOST_PLATFORM',
+             '_PYTHON_SYSCONFIGDATA_NAME',
++            "_PYTHON_SYSCONFIGDATA_PATH",
+             'PYTHONPATH'
+         }
+         environ = {
+diff --git a/configure b/configure
+index a1ad0ae251..0657162d1a 100755
+--- a/configure
++++ b/configure
+@@ -3262,7 +3262,7 @@ fi
+     fi
+         ac_cv_prog_PYTHON_FOR_REGEN=$with_build_python
+     PYTHON_FOR_FREEZE="$with_build_python"
+-    PYTHON_FOR_BUILD='_PYTHON_PROJECT_BASE=$(abs_builddir) _PYTHON_HOST_PLATFORM=$(_PYTHON_HOST_PLATFORM) PYTHONPATH=$(shell test -f pybuilddir.txt && echo $(abs_builddir)/`cat pybuilddir.txt`:)$(srcdir)/Lib _PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata_$(ABIFLAGS)_$(MACHDEP)_$(MULTIARCH) '$with_build_python
++    PYTHON_FOR_BUILD='_PYTHON_PROJECT_BASE=$(abs_builddir) _PYTHON_HOST_PLATFORM=$(_PYTHON_HOST_PLATFORM) PYTHONPATH=$(srcdir)/Lib _PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata_$(ABIFLAGS)_$(MACHDEP)_$(MULTIARCH) _PYTHON_SYSCONFIGDATA_PATH=$(shell test -f pybuilddir.txt && echo $(abs_builddir)/`cat pybuilddir.txt`) '$with_build_python
+     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $with_build_python" >&5
+ $as_echo "$with_build_python" >&6; }
+ 
+diff --git a/configure.ac b/configure.ac
+index e5fb8bd99e..d444f5ec09 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -162,7 +162,7 @@ AC_ARG_WITH(
+     dnl Build Python interpreter is used for regeneration and freezing.
+     ac_cv_prog_PYTHON_FOR_REGEN=$with_build_python
+     PYTHON_FOR_FREEZE="$with_build_python"
+-    PYTHON_FOR_BUILD='_PYTHON_PROJECT_BASE=$(abs_builddir) _PYTHON_HOST_PLATFORM=$(_PYTHON_HOST_PLATFORM) PYTHONPATH=$(shell test -f pybuilddir.txt && echo $(abs_builddir)/`cat pybuilddir.txt`:)$(srcdir)/Lib _PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata_$(ABIFLAGS)_$(MACHDEP)_$(MULTIARCH) '$with_build_python
++    PYTHON_FOR_BUILD='_PYTHON_PROJECT_BASE=$(abs_builddir) _PYTHON_HOST_PLATFORM=$(_PYTHON_HOST_PLATFORM) PYTHONPATH=$(srcdir)/Lib _PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata_$(ABIFLAGS)_$(MACHDEP)_$(MULTIARCH) _PYTHON_SYSCONFIGDATA_PATH=$(shell test -f pybuilddir.txt && echo $(abs_builddir)/`cat pybuilddir.txt`) '$with_build_python
+     AC_MSG_RESULT([$with_build_python])
+   ], [
+     AS_VAR_IF([cross_compiling], [yes],
+-- 
+2.34.1
+

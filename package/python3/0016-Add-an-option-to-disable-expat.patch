@@ -1,4 +1,4 @@
-From 7e0e7dc25f50acd6922493ae620ee5cbf107a79a Mon Sep 17 00:00:00 2001
+From c9a2ea3edacf57746517600ccc11c254a9fd6c48 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:40:45 -0800
 Subject: [PATCH] Add an option to disable expat
@@ -17,23 +17,22 @@ Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
 ---
  Makefile.pre.in |  5 ++++-
- configure.ac    | 18 +++++++++++++-----
- setup.py        |  2 +-
- 3 files changed, 18 insertions(+), 7 deletions(-)
+ configure.ac    | 20 ++++++++++++++------
+ 2 files changed, 18 insertions(+), 7 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index f89f155..08c5e8a 100644
+index 8e879b35c6..80d617cf7f 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1450,7 +1450,6 @@ LIBSUBDIRS=	asyncio \
+@@ -1925,7 +1925,6 @@ LIBSUBDIRS=	asyncio \
  		urllib \
  		venv venv/scripts venv/scripts/common venv/scripts/posix \
  		wsgiref \
 -		$(XMLLIBSUBDIRS) \
  		xmlrpc \
- 		zoneinfo
- TESTSUBDIRS=	ctypes/test \
-@@ -1549,6 +1548,10 @@ ifeq (@CURSES@,yes)
+ 		zoneinfo \
+ 		__phello__
+@@ -2027,6 +2026,10 @@ ifeq (@CURSES@,yes)
  LIBSUBDIRS += curses
  endif
  
@@ -42,13 +41,13 @@ index f89f155..08c5e8a 100644
 +endif
 +
  TEST_MODULES=@TEST_MODULES@
- libinstall:	build_all $(srcdir)/Modules/xxmodule.c
+ libinstall:	all $(srcdir)/Modules/xxmodule.c
  	@for i in $(SCRIPTDIR) $(LIBDEST); \
 diff --git a/configure.ac b/configure.ac
-index 4f1cda5..e99a174 100644
+index 0ae9863cd6..201cad0bfc 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3094,13 +3094,21 @@ PKG_PROG_PKG_CONFIG
+@@ -3565,15 +3565,23 @@ LIBS="$withval $LIBS"
  AC_SUBST(DISABLED_EXTENSIONS)
  
  # Check for use of the system expat library
@@ -64,7 +63,8 @@ index 4f1cda5..e99a174 100644
  
 -AC_MSG_RESULT($with_system_expat)
 +AC_MSG_RESULT($with_expat)
-+
+ 
+-AS_VAR_IF([with_system_expat], [yes], [
 +if test "$with_expat" != "none"; then
 +   EXPAT=yes
 +else
@@ -72,22 +72,11 @@ index 4f1cda5..e99a174 100644
 +   EXPAT=no
 +fi
 +AC_SUBST(EXPAT)
- 
- # Check for use of the system libffi library
- AC_MSG_CHECKING(for --with-system-ffi)
-diff --git a/setup.py b/setup.py
-index 663fd44..e30ed52 100644
---- a/setup.py
-+++ b/setup.py
-@@ -1764,7 +1764,7 @@ class PyBuildExt(build_ext):
-         #
-         # More information on Expat can be found at www.libexpat.org.
-         #
--        if '--with-system-expat' in sysconfig.get_config_var("CONFIG_ARGS"):
-+        if '--with-expat=system' in sysconfig.get_config_var("CONFIG_ARGS"):
-             expat_inc = []
-             define_macros = []
-             extra_compile_args = []
++
++AS_VAR_IF([with_expat], [system], [
+   LIBEXPAT_CFLAGS=${LIBEXPAT_CFLAGS-""}
+   LIBEXPAT_LDFLAGS=${LIBEXPAT_LDFLAGS-"-lexpat"}
+   LIBEXPAT_INTERNAL=
 -- 
-2.30.2
+2.34.1
 

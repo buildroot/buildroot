@@ -22,17 +22,22 @@ post_process_unpack "${base_name}" "${output}"
 
 # Do the Cargo vendoring
 pushd "${base_name}" > /dev/null
-cargo vendor --manifest-path ${BR_CARGO_MANIFEST_PATH-Cargo.toml} --locked VENDOR
 
 # Create the local .cargo/config with vendor info
 mkdir -p .cargo/
-cat <<EOF >.cargo/config
-[source.crates-io]
-replace-with = "vendored-sources"
+mkdir -p "${CARGO_HOME}"
+flock "${CARGO_HOME}"/.br-lock \
+cargo vendor \
+    --manifest-path ${BR_CARGO_MANIFEST_PATH-Cargo.toml} \
+    --locked VENDOR \
+    > .cargo/config
 
-[source.vendored-sources]
-directory = "VENDOR"
-EOF
+# "cargo vendor' outputs on stderr a message directing to add some data
+# to the project's .cargo/config.toml, data that it outputs on stdout.
+# Since we redirect stdout to .cargo/config.toml, the message on stderr
+# gets confusing, so instruct the user that it's been handled.
+printf '(note: .cargo/config.toml automatically updated by Buildroot)\n\n'
+
 popd > /dev/null
 
 post_process_repack "$(pwd)" "${base_name}" "${output}"

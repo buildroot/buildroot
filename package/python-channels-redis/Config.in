@@ -2,10 +2,10 @@ config BR2_PACKAGE_PYTHON_CHANNELS_REDIS
 	bool "python-channels-redis"
 	# python-channels -> python-daphne -> python-autobahn -> python-cryptography
 	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
-	select BR2_PACKAGE_PYTHON_AIOREDIS # runtime
 	select BR2_PACKAGE_PYTHON_ASGIREF # runtime
 	select BR2_PACKAGE_PYTHON_CHANNELS # runtime
 	select BR2_PACKAGE_PYTHON_MSGPACK # runtime
+	select BR2_PACKAGE_PYTHON_REDIS # runtime
 	help
 	  A Django Channels channel layer that uses Redis as its
 	  backing store, and supports both a single-server and

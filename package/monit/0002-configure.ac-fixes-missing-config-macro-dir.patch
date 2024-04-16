@@ -1,0 +1,44 @@
+From 2c06ecdc02de75a9e7e1e30e9c3d7d3a64269b7c Mon Sep 17 00:00:00 2001
+From: Jens Maus <mail@jens-maus.de>
+Date: Fri, 22 Sep 2023 21:32:18 +0200
+Subject: [PATCH] configure.ac: fixes missing config macro dir
+
+This adds the config dir to the AC_CONFIG_MACRO_DIRS in configure.ac
+so that m4 macros are properly loaded upon autoreconf use.
+
+Upstream: N/A (specific to buildroot)
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+---
+ configure.ac          | 2 +-
+ libmonit/configure.ac | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 3c3d30a2..f4c5ea07 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -8,7 +8,7 @@ AC_PREREQ([2.53])
+ # Example: 5.0_beta2
+ AC_INIT([monit], [5.34.0], [monit-general@nongnu.org])
+ AC_CONFIG_AUX_DIR(config)
+-AC_CONFIG_MACRO_DIR([m4])
++AC_CONFIG_MACRO_DIRS([m4 config])
+ AM_INIT_AUTOMAKE
+ AC_CONFIG_SRCDIR([src/monit.c])
+ AC_CONFIG_SUBDIRS([libmonit])
+diff --git a/libmonit/configure.ac b/libmonit/configure.ac
+index d4cd0789..5366444a 100644
+--- a/libmonit/configure.ac
++++ b/libmonit/configure.ac
+@@ -4,7 +4,7 @@ AC_PREREQ([2.53])
+ 
+ AC_INIT([libmonit], [1.0], [monit-dev@tildeslash.com])
+ AC_CONFIG_AUX_DIR(config)
+-AC_CONFIG_MACRO_DIR([m4])
++AC_CONFIG_MACRO_DIRS([m4 config])
+ AM_INIT_AUTOMAKE
+ AC_CONFIG_SRCDIR([src])
+ 
+-- 
+2.34.1
+

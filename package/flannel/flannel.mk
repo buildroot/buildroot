@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-FLANNEL_VERSION = 0.14.0
-FLANNEL_SITE = https://github.com/flannel-io/flannel/archive
-FLANNEL_SOURCE = v$(FLANNEL_VERSION).tar.gz
+FLANNEL_VERSION = 0.24.2
+FLANNEL_SITE = $(call github,flannel-io,flannel,v$(FLANNEL_VERSION))
 
 FLANNEL_LICENSE = Apache-2.0
 FLANNEL_LICENSE_FILES = LICENSE

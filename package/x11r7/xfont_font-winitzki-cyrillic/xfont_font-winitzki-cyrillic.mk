@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XFONT_FONT_WINITZKI_CYRILLIC_VERSION = 1.0.3
-XFONT_FONT_WINITZKI_CYRILLIC_SOURCE = font-winitzki-cyrillic-$(XFONT_FONT_WINITZKI_CYRILLIC_VERSION).tar.bz2
-XFONT_FONT_WINITZKI_CYRILLIC_SITE = http://xorg.freedesktop.org/releases/individual/font
+XFONT_FONT_WINITZKI_CYRILLIC_VERSION = 1.0.4
+XFONT_FONT_WINITZKI_CYRILLIC_SOURCE = font-winitzki-cyrillic-$(XFONT_FONT_WINITZKI_CYRILLIC_VERSION).tar.xz
+XFONT_FONT_WINITZKI_CYRILLIC_SITE = https://xorg.freedesktop.org/archive/individual/font
 XFONT_FONT_WINITZKI_CYRILLIC_LICENSE = Public Domain
 XFONT_FONT_WINITZKI_CYRILLIC_LICENSE_FILES = COPYING
 

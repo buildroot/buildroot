@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBPAGEKITE_VERSION = 0.91.190530
+LIBPAGEKITE_VERSION = 0.91.201110
 LIBPAGEKITE_SITE = $(call github,pagekite,libpagekite,v$(LIBPAGEKITE_VERSION))
 
 # pkrelay is AGPL-3.0+ but is not built

@@ -1,0 +1,47 @@
+config BR2_PACKAGE_PETITBOOT
+	bool "petitboot"
+	depends on BR2_PACKAGE_KEXEC_ARCH_SUPPORTS || BR2_PACKAGE_KEXEC_LITE_ARCH_SUPPORTS
+	depends on BR2_USE_MMU # lvm2
+	depends on BR2_USE_WCHAR # elfutils, kexec-lite
+	depends on !BR2_STATIC_LIBS # elfutils, kexec-lite, lvm2
+	depends on BR2_TOOLCHAIN_HAS_THREADS # elfutils, kexec-lite, lvm2
+	depends on BR2_PACKAGE_HAS_UDEV
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17 || !BR2_PACKAGE_KEXEC_ARCH_SUPPORTS # kexec
+	select BR2_PACKAGE_ELFUTILS
+	select BR2_PACKAGE_LVM2 # devmapper
+	select BR2_PACKAGE_NCURSES
+	select BR2_PACKAGE_NCURSES_WCHAR
+	# run-time dependencies
+	select BR2_PACKAGE_KEXEC if !BR2_PACKAGE_KEXEC_LITE_ARCH_SUPPORTS
+	select BR2_PACKAGE_KEXEC_LITE if BR2_PACKAGE_KEXEC_LITE_ARCH_SUPPORTS && !BR2_PACKAGE_KEXEC
+	select BR2_PACKAGE_NVME if ( BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le )
+	select BR2_PACKAGE_POWERPC_UTILS if ( BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le )
+	help
+	  Petitboot is a small kexec-based bootloader
+
+	  NOTE: petitboot looks best in a UTF-8 locale; be sure there
+	  is one listed in BR2_GENERATE_LOCALE.
+
+	  http://www.kernel.org/pub/linux/kernel/people/geoff/petitboot/petitboot.html
+
+if BR2_PACKAGE_PETITBOOT
+
+config BR2_PACKAGE_PETITBOOT_GETTY_PORT
+	string "TTY port(s)"
+	default "console"
+	help
+	  Specify a space-separated list of ports to run the petitboot
+	  UI on. Wildcards are allowed. Example: "hvc* ttys0 ttyS*"
+
+endif # BR2_PACKAGE_PETITBOOT
+
+comment "petitboot needs a toolchain w/ wchar, dynamic library, threads, udev /dev management"
+	depends on BR2_PACKAGE_KEXEC_ARCH_SUPPORTS
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR || BR2_STATIC_LIBS || \
+		!BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_PACKAGE_HAS_UDEV
+
+comment "petitboot w/ kexec needs a toolchain w/ headers >= 3.17"
+	depends on BR2_PACKAGE_KEXEC_ARCH_SUPPORTS && !BR2_PACKAGE_KEXEC_LITE_ARCH_SUPPORTS
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17

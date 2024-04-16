@@ -1,0 +1,39 @@
+From 8b066a777b61600ff2c60cad0725f2089299ff56 Mon Sep 17 00:00:00 2001
+From: Maarten ter Huurne <maarten@treewalker.org>
+Date: Mon, 15 Sep 2014 00:24:41 +0200
+Subject: [PATCH] Renamed sched.h to eventqueue.h
+
+There is a <sched.h> system header that got shadowed by "sched.h".
+While Screen itself doesn't include <sched.h>, other system headers
+might include it indirectly. This broke the build when using uClibc
+with pthread support.
+
+Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
+[Julien: rebase on top of 4.9.1]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ sched.h => eventqueue.h | 0
+ screen.h                | 2 +-
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+ rename sched.h => eventqueue.h (100%)
+
+diff --git a/sched.h b/eventqueue.h
+similarity index 100%
+rename from sched.h
+rename to eventqueue.h
+diff --git a/screen.h b/screen.h
+index 4823efb..2d51788 100644
+--- a/screen.h
++++ b/screen.h
+@@ -43,7 +43,7 @@
+ #include "osdef.h"
+ 
+ #include "ansi.h"
+-#include "sched.h"
++#include "eventqueue.h"
+ #include "acls.h"
+ #include "comm.h"
+ #include "layer.h"
+-- 
+2.41.0
+

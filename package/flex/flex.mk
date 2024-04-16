@@ -9,7 +9,7 @@ FLEX_SITE = https://github.com/westes/flex/files/981163
 FLEX_INSTALL_STAGING = YES
 FLEX_LICENSE = FLEX
 FLEX_LICENSE_FILES = COPYING
-FLEX_CPE_ID_VENDOR = flex_project
+FLEX_CPE_ID_VENDOR = westes
 # bug does not cause stack overflows in the generated code and has been
 # noted upstream as a bug in the code generator
 FLEX_IGNORE_CVES = CVE-2019-6293
@@ -20,7 +20,7 @@ HOST_FLEX_DEPENDENCIES = host-m4
 # 0002-build-make-it-possible-to-disable-the-build-of-the-f.patch
 # 0003-build-make-it-possible-to-disable-the-build-of-the-d.patch
 FLEX_AUTORECONF = YES
-FLEX_GETTEXTIZE = YES
+FLEX_AUTOPOINT = YES
 FLEX_CONF_ENV = ac_cv_path_M4=/usr/bin/m4 \
 	ac_cv_func_reallocarray=no
 

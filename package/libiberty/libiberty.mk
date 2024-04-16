@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBIBERTY_VERSION = 2.32
+LIBIBERTY_VERSION = 2.41
 LIBIBERTY_SOURCE = binutils-$(LIBIBERTY_VERSION).tar.xz
 LIBIBERTY_SITE = $(BR2_GNU_MIRROR)/binutils
 HOST_LIBIBERTY_DL_SUBDIR = binutils

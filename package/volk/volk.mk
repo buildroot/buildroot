@@ -4,13 +4,11 @@
 #
 ################################################################################
 
-VOLK_VERSION = 2.5.2
+VOLK_VERSION = 3.0.0
 VOLK_SITE = https://github.com/gnuradio/volk/releases/download/v$(VOLK_VERSION)
 VOLK_SOURCE = volk-$(VOLK_VERSION).tar.xz
-# See https://github.com/gnuradio/volk/tree/v2.5.1#license for some
-# details on the licensing.
-VOLK_LICENSE = GPL-3.0+, LGPL-3.0+
-VOLK_LICENSE_FILES = COPYING COPYING-LGPL
+VOLK_LICENSE = LGPL-3.0+
+VOLK_LICENSE_FILES = COPYING
 
 VOLK_SUPPORTS_IN_SOURCE_BUILD = NO
 

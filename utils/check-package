@@ -3,20 +3,56 @@
 
 import argparse
 import inspect
+import magic
 import os
 import re
-import six
 import sys
 
 import checkpackagelib.base
 import checkpackagelib.lib_config
 import checkpackagelib.lib_hash
+import checkpackagelib.lib_ignore
 import checkpackagelib.lib_mk
 import checkpackagelib.lib_patch
+import checkpackagelib.lib_python
+import checkpackagelib.lib_shellscript
 import checkpackagelib.lib_sysv
 
 VERBOSE_LEVEL_TO_SHOW_IGNORED_FILES = 3
 flags = None  # Command line arguments.
+
+# There are two Python packages called 'magic':
+#   https://pypi.org/project/file-magic/
+#   https://pypi.org/project/python-magic/
+# Both allow to return a MIME file type, but with a slightly different
+# interface. Detect which one of the two we have based on one of the
+# attributes.
+if hasattr(magic, 'FileMagic'):
+    # https://pypi.org/project/file-magic/
+    def get_filetype(fname):
+        return magic.detect_from_filename(fname).mime_type
+else:
+    # https://pypi.org/project/python-magic/
+    def get_filetype(fname):
+        return magic.from_file(fname, mime=True)
+
+
+def get_ignored_parsers_per_file(intree_only, ignore_filename):
+    ignored = dict()
+    entry_base_dir = ''
+
+    if not ignore_filename:
+        return ignored
+
+    filename = os.path.abspath(ignore_filename)
+    entry_base_dir = os.path.join(os.path.dirname(filename))
+
+    with open(filename, "r") as f:
+        for line in f.readlines():
+            filename, warnings_str = line.split(' ', 1)
+            warnings = warnings_str.split()
+            ignored[os.path.join(entry_base_dir, filename)] = warnings
+    return ignored
 
 
 def parse_args():
@@ -29,9 +65,11 @@ def parse_args():
 
     parser.add_argument("--br2-external", "-b", dest='intree_only', action="store_false",
                         help="do not apply the pathname filters used for intree files")
+    parser.add_argument("--ignore-list", dest='ignore_filename', action="store",
+                        help='override the default list of ignored warnings')
 
     parser.add_argument("--manual-url", action="store",
-                        default="http://nightly.buildroot.org/",
+                        default="https://nightly.buildroot.org/",
                         help="default: %(default)s")
     parser.add_argument("--verbose", "-v", action="count", default=0)
     parser.add_argument("--quiet", "-q", action="count", default=0)
@@ -43,26 +81,56 @@ def parse_args():
                         help="do not run the specified functions (debug)")
     parser.add_argument("--dry-run", action="store_true", help="print the "
                         "functions that would be called for each file (debug)")
+    parser.add_argument("--failed-only", action="store_true", help="print only"
+                        " the name of the functions that failed (debug)")
 
-    return parser.parse_args()
+    flags = parser.parse_args()
+
+    flags.ignore_list = get_ignored_parsers_per_file(flags.intree_only, flags.ignore_filename)
+
+    if flags.failed_only:
+        flags.dry_run = False
+        flags.verbose = -1
+
+    return flags
+
+
+def get_lib_from_filetype(fname):
+    if not os.path.isfile(fname):
+        return None
+    filetype = get_filetype(fname)
+    if filetype == "text/x-shellscript":
+        return checkpackagelib.lib_shellscript
+    if filetype in ["text/x-python", "text/x-script.python"]:
+        return checkpackagelib.lib_python
+    return None
 
 
 CONFIG_IN_FILENAME = re.compile(r"Config\.\S*$")
 DO_CHECK_INTREE = re.compile(r"|".join([
+    r".checkpackageignore",
     r"Config.in",
     r"arch/",
+    r"board/",
     r"boot/",
     r"fs/",
     r"linux/",
     r"package/",
+    r"support/",
     r"system/",
     r"toolchain/",
+    r"utils/",
     ]))
 DO_NOT_CHECK_INTREE = re.compile(r"|".join([
     r"boot/barebox/barebox\.mk$",
     r"fs/common\.mk$",
     r"package/doc-asciidoc\.mk$",
     r"package/pkg-\S*\.mk$",
+    r"support/dependencies/[^/]+\.mk$",
+    r"support/gnuconfig/config\.",
+    r"support/kconfig/",
+    r"support/misc/[^/]+\.mk$",
+    r"support/testing/tests/.*br2-external/",
     r"toolchain/helpers\.mk$",
     r"toolchain/toolchain-external/pkg-toolchain-external\.mk$",
     ]))
@@ -80,6 +148,8 @@ def get_lib_from_filename(fname):
         if os.path.basename(fname) == "external.mk" and \
            os.path.exists(fname[:-2] + "desc"):
             return None
+    if fname == ".checkpackageignore":
+        return checkpackagelib.lib_ignore
     if CONFIG_IN_FILENAME.search(fname):
         return checkpackagelib.lib_config
     if fname.endswith(".hash"):
@@ -90,7 +160,7 @@ def get_lib_from_filename(fname):
         return checkpackagelib.lib_patch
     if SYSV_INIT_SCRIPT_FILENAME.search(fname):
         return checkpackagelib.lib_sysv
-    return None
+    return get_lib_from_filetype(fname)
 
 
 def common_inspect_rules(m):
@@ -120,21 +190,25 @@ def is_external_tool(m):
     return common_inspect_rules(m)
 
 
-def print_warnings(warnings):
+def print_warnings(warnings, xfail):
     # Avoid the need to use 'return []' at the end of every check function.
     if warnings is None:
-        return 0  # No warning generated.
+        return 0, 0  # No warning generated.
 
+    if xfail:
+        return 0, 1  # Warning not generated, fail expected for this file.
     for level, message in enumerate(warnings):
         if flags.verbose >= level:
             print(message.replace("\t", "< tab  >").rstrip())
-    return 1  # One more warning to count.
+    return 1, 1  # One more warning to count.
 
 
 def check_file_using_lib(fname):
     # Count number of warnings generated and lines processed.
     nwarnings = 0
     nlines = 0
+    xfail = flags.ignore_list.get(os.path.abspath(fname), [])
+    failed = set()
 
     lib = get_lib_from_filename(fname)
     if not lib:
@@ -150,30 +224,52 @@ def check_file_using_lib(fname):
         print("{}: would run: {}".format(fname, functions_to_run))
         return nwarnings, nlines
 
-    objects = [c[1](fname, flags.manual_url) for c in internal_functions]
+    objects = [[f"{lib.__name__[16:]}.{c[0]}", c[1](fname, flags.manual_url)] for c in internal_functions]
 
-    for cf in objects:
-        nwarnings += print_warnings(cf.before())
-    if six.PY3:
-        f = open(fname, "r", errors="surrogateescape")
-    else:
-        f = open(fname, "r")
+    for name, cf in objects:
+        warn, fail = print_warnings(cf.before(), name in xfail)
+        if fail > 0:
+            failed.add(name)
+        nwarnings += warn
+
     lastline = ""
-    for lineno, text in enumerate(f.readlines()):
-        nlines += 1
-        for cf in objects:
-            if cf.disable.search(lastline):
-                continue
-            nwarnings += print_warnings(cf.check_line(lineno + 1, text))
-        lastline = text
-    f.close()
-    for cf in objects:
-        nwarnings += print_warnings(cf.after())
+    with open(fname, "r", errors="surrogateescape") as f:
+        for lineno, text in enumerate(f):
+            nlines += 1
+            for name, cf in objects:
+                if cf.disable.search(lastline):
+                    continue
+                line_sts = cf.check_line(lineno + 1, text)
+                warn, fail = print_warnings(line_sts, name in xfail)
+                if fail > 0:
+                    failed.add(name)
+                nwarnings += warn
+            lastline = text
 
-    tools = [c[1](fname) for c in external_tools]
+    for name, cf in objects:
+        warn, fail = print_warnings(cf.after(), name in xfail)
+        if fail > 0:
+            failed.add(name)
+        nwarnings += warn
 
-    for tool in tools:
-        nwarnings += print_warnings(tool.run())
+    tools = [[c[0], c[1](fname)] for c in external_tools]
+
+    for name, tool in tools:
+        warn, fail = print_warnings(tool.run(), name in xfail)
+        if fail > 0:
+            failed.add(name)
+        nwarnings += warn
+
+    for should_fail in xfail:
+        if should_fail not in failed:
+            print("{}:0: {} was expected to fail, did you fix the file and forget to update {}?"
+                  .format(fname, should_fail, flags.ignore_filename))
+            nwarnings += 1
+
+    if flags.failed_only:
+        if len(failed) > 0:
+            f = " ".join(sorted(failed))
+            print("{} {}".format(fname, f))
 
     return nwarnings, nlines
 
@@ -213,7 +309,7 @@ def __main__():
         print("{} lines processed".format(total_lines), file=sys.stderr)
         print("{} warnings generated".format(total_warnings), file=sys.stderr)
 
-    if total_warnings > 0:
+    if total_warnings > 0 and not flags.failed_only:
         sys.exit(1)
 
 

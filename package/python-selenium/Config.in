@@ -1,0 +1,11 @@
+config BR2_PACKAGE_PYTHON_SELENIUM
+	bool "python-selenium"
+	select BR2_PACKAGE_PYTHON_CERTIFI # runtime
+	select BR2_PACKAGE_PYTHON_PYSOCKS # runtime
+	select BR2_PACKAGE_PYTHON_TRIO # runtime
+	select BR2_PACKAGE_PYTHON_TRIO_WEBSOCKET # runtime
+	select BR2_PACKAGE_PYTHON_URLLIB3 # runtime
+	help
+	  Python language bindings for Selenium WebDriver.
+
+	  https://www.selenium.dev

@@ -1,0 +1,43 @@
+From c9b3cbb654ca1e834d47f52af9f170b9f38c857a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
+Date: Thu, 20 Apr 2023 18:27:00 +0200
+Subject: [PATCH] libselinux: set CFLAGS for pip installation
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Explicitly set CFLAGS for the pip install command, similar to calling
+setup.py, to ignore known compiler warnings treated as errors, e.g.:
+
+    selinuxswig_python_wrap.c:3593:19: error: 'sidget' is deprecated [-Werror,-Wdeprecated-declarations]
+                result = (int)sidget(arg1);
+                              ^
+    selinuxswig_python_wrap.c:15024:1: error: no previous prototype for function 'PyInit__selinux' [-Werror,-Wmissing-prototypes]
+            SWIG_init(void) {
+            ^
+
+Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+Acked-by: Petr Lautrbach <lautrbach@redhat.com>
+Upstream: https://github.com/SELinuxProject/selinux/commit/c9b3cbb654ca1e834d47f52af9f170b9f38c857a
+[yann.morin.1998@free.fr: backport from upstream]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ libselinux/src/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libselinux/src/Makefile b/libselinux/src/Makefile
+index 36d57122..f9a1e5f5 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -187,7 +187,7 @@ install: all
+ 	ln -sf --relative $(DESTDIR)$(SHLIBDIR)/$(LIBSO) $(DESTDIR)$(LIBDIR)/$(TARGET)
+ 
+ install-pywrap: pywrap
+-	$(PYTHON) -m pip install --prefix=$(PREFIX) `test -n "$(DESTDIR)" && echo --root $(DESTDIR) --ignore-installed --no-deps` $(PYTHON_SETUP_ARGS) .
++	CFLAGS="$(CFLAGS) $(SWIG_CFLAGS)" $(PYTHON) -m pip install --prefix=$(PREFIX) `test -n "$(DESTDIR)" && echo --root $(DESTDIR) --ignore-installed --no-deps` $(PYTHON_SETUP_ARGS) .
+ 	install -m 644 $(SWIGPYOUT) $(DESTDIR)$(PYTHONLIBDIR)/selinux/__init__.py
+ 	ln -sf --relative $(DESTDIR)$(PYTHONLIBDIR)/selinux/_selinux$(PYCEXT) $(DESTDIR)$(PYTHONLIBDIR)/_selinux$(PYCEXT)
+ 
+-- 
+2.25.1
+

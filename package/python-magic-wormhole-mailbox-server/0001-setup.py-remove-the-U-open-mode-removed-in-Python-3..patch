@@ -1,0 +1,39 @@
+From df6126ee86c1f84c7e0c25fcf69543b83b1b32c6 Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Sat, 5 Nov 2022 13:06:07 +0100
+Subject: [PATCH] setup.py: remove the 'U' open mode removed in Python 3.11
+
+The 'U' open mode was removed in Python 3.11. See:
+https://docs.python.org/3.11/library/functions.html#open
+
+Installing with Python 3.11 fails with:
+
+    /path/to/python-magic-wormhole-mailbox-server-0.4.1/setup.py", line 20, in <module>
+        long_description=open('README.md', 'rU').read(),
+                         ^^^^^^^^^^^^^^^^^^^^^^^
+    ValueError: invalid mode: 'rU'
+
+This patch removes the 'U' open mode.
+
+Upstream: https://github.com/magic-wormhole/magic-wormhole-mailbox-server/commit/df6126ee86c1f84c7e0c25fcf69543b83b1b32c6
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ setup.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/setup.py b/setup.py
+index 6ef292f..ad9ff5a 100644
+--- a/setup.py
++++ b/setup.py
+@@ -17,7 +17,7 @@ trove_classifiers = [
+ setup(name="magic-wormhole-mailbox-server",
+       version=versioneer.get_version(),
+       description="Securely transfer data between computers",
+-      long_description=open('README.md', 'rU').read(),
++      long_description=open('README.md', 'r').read(),
+       long_description_content_type='text/markdown',
+       author="Brian Warner",
+       author_email="warner-magic-wormhole@lothar.com",
+-- 
+2.38.1
+

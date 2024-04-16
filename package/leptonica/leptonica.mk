@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LEPTONICA_VERSION = 1.82.0
-LEPTONICA_SITE = http://www.leptonica.org/source
+LEPTONICA_VERSION = 1.84.1
+LEPTONICA_SITE = https://github.com/DanBloomberg/leptonica/releases/download/$(LEPTONICA_VERSION)
 LEPTONICA_LICENSE = BSD-2-Clause
 LEPTONICA_LICENSE_FILES = leptonica-license.txt
 LEPTONICA_CPE_ID_VENDOR = leptonica
@@ -13,6 +13,10 @@ LEPTONICA_INSTALL_STAGING = YES
 LEPTONICA_DEPENDENCIES = host-pkgconf
 
 LEPTONICA_CONF_OPTS += --disable-programs
+
+ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_101737),y)
+LEPTONICA_CONF_OPTS += CFLAGS="$(TARGET_CFLAGS) -O0"
+endif
 
 ifeq ($(BR2_PACKAGE_GIFLIB),y)
 LEPTONICA_DEPENDENCIES += giflib

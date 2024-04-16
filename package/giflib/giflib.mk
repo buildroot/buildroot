@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-GIFLIB_VERSION = 5.2.1
+GIFLIB_VERSION = 5.2.2
 GIFLIB_SITE = http://downloads.sourceforge.net/project/giflib
 GIFLIB_INSTALL_STAGING = YES
 GIFLIB_LICENSE = MIT
 GIFLIB_LICENSE_FILES = COPYING
-GIFLIB_CPE_ID_VENDOR = giflib_project
+GIFLIB_CPE_ID_VALID = YES
 
 ifeq ($(BR2_STATIC_LIBS),y)
 GIFLIB_BUILD_LIBS = static-lib
@@ -27,7 +27,7 @@ define GIFLIB_BUILD_CMDS
 endef
 
 define HOST_GIFLIB_BUILD_CMDS
-	$(HOST_CONFIGURE_OPTS) $(MAKE) -C $(@D)
+	$(HOST_CONFIGURE_OPTS) $(MAKE) -C $(@D) shared-lib
 endef
 
 define GIFLIB_INSTALL_STAGING_CMDS
@@ -42,7 +42,7 @@ endef
 
 define HOST_GIFLIB_INSTALL_CMDS
 	$(HOST_CONFIGURE_OPTS) $(MAKE) -C $(@D) DESTDIR=$(HOST_DIR) \
-		PREFIX=/usr install
+		PREFIX=/usr install-include install-shared-lib
 endef
 
 $(eval $(generic-package))

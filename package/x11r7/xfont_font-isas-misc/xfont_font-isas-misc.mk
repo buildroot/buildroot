@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XFONT_FONT_ISAS_MISC_VERSION = 1.0.3
-XFONT_FONT_ISAS_MISC_SOURCE = font-isas-misc-$(XFONT_FONT_ISAS_MISC_VERSION).tar.bz2
-XFONT_FONT_ISAS_MISC_SITE = http://xorg.freedesktop.org/releases/individual/font
+XFONT_FONT_ISAS_MISC_VERSION = 1.0.4
+XFONT_FONT_ISAS_MISC_SOURCE = font-isas-misc-$(XFONT_FONT_ISAS_MISC_VERSION).tar.xz
+XFONT_FONT_ISAS_MISC_SITE = https://xorg.freedesktop.org/archive/individual/font
 XFONT_FONT_ISAS_MISC_LICENSE = MIT
 XFONT_FONT_ISAS_MISC_LICENSE_FILES = COPYING
 

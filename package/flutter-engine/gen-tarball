@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+# Call gclient and generate a flutter-engine source tarball if one does not
+# already exist.
+set -eu
+
+DL_DIR=
+DOT_GCLIENT=
+JOBS=
+SCRATCH_DIR=
+TARBALL_DL_PATH=
+VERSION=
+TARBALL_NAME=
+
+term_bold="$(tput smso 2>/dev/null || true)"
+term_reset="$(tput rmso 2>/dev/null || true)"
+
+# Print status messages in the same style Buildroot prints.
+message() {
+    printf "%s>>> flutter-engine %s %s%s\n" "${term_bold}" "${VERSION}" "${1}" "${term_reset}"
+}
+
+parse_opts() {
+    local o O opts
+
+    o='d:j:s:t:v:'
+    O='dot-gclient:,jobs:,scratch-dir:,tarball-dl-path:,version:'
+    opts="$(getopt -o "${o}" -l "${O}" -- "${@}")"
+    eval set -- "${opts}"
+
+    while [ ${#} -gt 0 ]; do
+        case "${1}" in
+          (-d|--dot-gclient)        DOT_GCLIENT="${2}"; shift 2;;
+          (-j|--jobs)               JOBS="${2}"; shift 2;;
+          (-s|--scratch-dir)        SCRATCH_DIR="${2}"; shift 2;;
+          (-t|--tarball-dl-path)    DL_DIR=$(dirname "${2}"); TARBALL_DL_PATH="${2}"; shift 2;;
+          (-v|--version)            VERSION="${2}"; TARBALL_NAME=flutter-"${VERSION}".tar.gz; shift 2;;
+          (--)                      shift; break;;
+        esac
+    done
+}
+
+prepare() {
+    rm -rf "${SCRATCH_DIR}"
+    mkdir -p "${SCRATCH_DIR}"
+    pushd "${SCRATCH_DIR}" >/dev/null
+}
+
+copy_dot_gclient() {
+    sed "s%!FLUTTER_VERSION!%${VERSION}%g" "${DOT_GCLIENT}" >.gclient
+}
+
+run_gclient() {
+    message "Downloading"
+    gclient.py \
+        sync \
+        --delete_unversioned_trees \
+        --no-history \
+        --reset \
+        --shallow \
+        -j"${JOBS}"
+}
+
+gen_tarball() {
+    message "Generating tarball"
+    mkdir -p "${DL_DIR}"
+    # There are two issues with the flutter-engine buildsystem:
+    # - it expects empty directories created by gclient.py to be present; that
+    #   means we can't use the mk_tar_gz helper method from support/download/helpers,
+    #   becasue it does not include emnpty directories;
+    # - it insists on having a full git repositoy, with .git et al., which means
+    #   we can't generate a reproducible archive anyway.
+    # So we jsut create a plain tarball.
+    tar -C "${SCRATCH_DIR}"/src -czf "${TARBALL_NAME}" .
+    mv "${TARBALL_NAME}" "${TARBALL_DL_PATH}"
+}
+
+cleanup() {
+    popd >/dev/null
+    rm -rf "${SCRATCH_DIR}"
+}
+
+main() {
+    parse_opts "${@}"
+    if [[ ! -e "${TARBALL_DL_PATH}" ]]; then
+        prepare
+        copy_dot_gclient
+        run_gclient
+        gen_tarball
+        cleanup
+    fi
+}
+
+main "${@}"

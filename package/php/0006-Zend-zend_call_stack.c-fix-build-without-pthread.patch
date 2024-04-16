@@ -1,0 +1,39 @@
+From c3e37c438a11d59d858fcc7b46eac00a8074972b Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 30 Mar 2024 17:51:55 +0100
+Subject: [PATCH] Zend/zend_call_stack.c: fix build without pthread
+
+Fix the following build failure without pthread raised since version
+8.3.0 and
+https://github.com/php/php-src/commit/a11c8a30399e90c17c287b9656c0077bc5131c9c:
+
+/home/buildroot/instance-0/output-1/build/php-8.3.4/Zend/zend_call_stack.c:39:11: fatal error: pthread.h: No such file or directory
+   39 | # include <pthread.h>
+      |           ^~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/a4ef648a9da50b26ed56d5d490e4cf5a1bfff970
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/php/php-src/pull/13843
+---
+ Zend/zend_call_stack.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Zend/zend_call_stack.c b/Zend/zend_call_stack.c
+index 97cbed9041..97de938a0f 100644
+--- a/Zend/zend_call_stack.c
++++ b/Zend/zend_call_stack.c
+@@ -35,7 +35,8 @@
+ #  include <sys/types.h>
+ # endif
+ #endif /* ZEND_WIN32 */
+-#if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__) || defined(__OpenBSD__)
++#if (defined(HAVE_PTHREAD_GETATTR_NP) && defined(HAVE_PTHREAD_ATTR_GETSTACK)) || \
++    defined(__FreeBSD__) || defined(__APPLE__) || defined(__OpenBSD__)
+ # include <pthread.h>
+ #endif
+ #ifdef __FreeBSD__
+-- 
+2.43.0
+

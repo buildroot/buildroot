@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-SEMODULE_UTILS_VERSION = 3.3
+SEMODULE_UTILS_VERSION = 3.5
 SEMODULE_UTILS_SITE = https://github.com/SELinuxProject/selinux/releases/download/$(SEMODULE_UTILS_VERSION)
 SEMODULE_UTILS_LICENSE = GPL-2.0
-SEMODULE_UTILS_LICENSE_FILES = COPYING
+SEMODULE_UTILS_LICENSE_FILES = LICENSE
 SEMODULE_UTILS_DEPENDENCIES = libsepol
 
 SEMODULE_UTILS_MAKE_OPTS += \

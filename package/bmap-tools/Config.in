@@ -1,5 +1,9 @@
+# Historically, the package was named bmap-tools, and that's the name
+# under which it was introduced in Buildroot. Since then, it has moved
+# to a new home, and got renamed to bmaptool. To avoid useless churn,
+# we keep the old symbols, and just refer to bmaptool in the prompt.
 config BR2_PACKAGE_BMAP_TOOLS
-	bool "bmap-tools"
+	bool "bmaptool (formerly bmap-tools)"
 	depends on BR2_PACKAGE_PYTHON3
 	select BR2_PACKAGE_PYTHON3_PYEXPAT # runtime
 	select BR2_PACKAGE_PYTHON_SETUPTOOLS # runtime, pkg_resources
@@ -40,4 +44,4 @@ config BR2_PACKAGE_BMAP_TOOLS
 	  python-gpgme is not available. Optimized bzip2 decompression
 	  is not supported as pbzip2 is not available.
 
-	  https://github.com/intel/bmap-tools
+	  https://github.com/yoctoproject/bmaptool

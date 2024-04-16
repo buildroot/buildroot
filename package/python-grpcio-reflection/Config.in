@@ -1,0 +1,14 @@
+config BR2_PACKAGE_PYTHON_GRPCIO_REFLECTION
+	bool "python-grpcio-reflection"
+	depends on BR2_PACKAGE_PYTHON_GRPCIO_ARCH_SUPPORTS # python-grpcio
+	depends on BR2_INSTALL_LIBSTDCPP # python-grpcio
+	select BR2_PACKAGE_PYTHON_GRPCIO # runtime
+	select BR2_PACKAGE_PYTHON_PROTOBUF # runtime
+	help
+	  Standard Protobuf Reflection Service for gRPC.
+
+	  https://grpc.io
+
+comment "python-grpcio-reflection needs a toolchain w/ C++"
+	depends on BR2_PACKAGE_PYTHON_GRPCIO_ARCH_SUPPORTS
+	depends on !BR2_INSTALL_LIBSTDCPP

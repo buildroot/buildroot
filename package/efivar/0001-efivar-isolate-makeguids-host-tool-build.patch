@@ -1,0 +1,51 @@
+From e1c3734bab27fd850b4ac6681d219ceaf0637616 Mon Sep 17 00:00:00 2001
+From: Erico Nunes <nunes.erico@gmail.com>
+Date: Mon, 3 Oct 2022 18:16:55 +0200
+Subject: [PATCH] efivar: isolate makeguids host tool build
+
+efivar build includes a 'makeguids' host tool which is normally built by
+distributions during the package build step. This is unfortunately not
+written with cross-compilation in mind, since it needs to build for the
+host architecture, including the build of object files which it then
+assumes can be linked into the target library.
+To make the packaging process simpler for a cross-compilation system
+like Buildroot, separate the 'makeguids' tool build to an explicit make
+target and remove target build dependencies from it.
+This way, Buildroot can build the tool separately in a host build step
+and the target build step can then be straightforward.
+
+Upstream: Not applicable (does not support cross compilation)
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+[Julien: rebased patch to version 39]
+Signed-off-by: Erico Nunes <nunes.erico@gmail.com>
+---
+ src/Makefile | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/src/Makefile b/src/Makefile
+index 6fc2a62..7fa63c6 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -70,7 +70,6 @@ makeguids : LDFLAGS=$(HOST_LDFLAGS)
+ makeguids : CCLDFLAGS=$(HOST_CCLDFLAGS)
+ makeguids : $(MAKEGUIDS_OBJECTS)
+ 
+-$(MAKEGUIDS_OUTPUT) : makeguids
+ $(MAKEGUIDS_OUTPUT) : guids.txt
+ 	@set -e ; \
+ 	missing=no ; \
+@@ -83,9 +82,9 @@ $(MAKEGUIDS_OUTPUT) : guids.txt
+ 	if [ "$${missing}" != "no" ]; then \
+ 		exit 1 ; \
+ 	fi
+-	./makeguids guids.txt guid-symbols.c include/efivar/efivar-guids.h
++	makeguids guids.txt guid-symbols.c include/efivar/efivar-guids.h
+ 
+-prep : makeguids $(GENERATED_SOURCES)
++prep : $(GENERATED_SOURCES)
+ 
+ $(LIBEFIVAR_OBJECTS) $(LIBEFIBOOT_OBJECTS) : include/efivar/efivar-guids.h
+ 
+-- 
+2.44.0
+

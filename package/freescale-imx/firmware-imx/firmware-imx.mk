@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FIRMWARE_IMX_VERSION = 8.15
+FIRMWARE_IMX_VERSION = 8.20
 FIRMWARE_IMX_SITE = $(FREESCALE_IMX_SITE)
 FIRMWARE_IMX_SOURCE = firmware-imx-$(FIRMWARE_IMX_VERSION).bin
 
@@ -13,6 +13,10 @@ FIRMWARE_IMX_LICENSE_FILES = EULA COPYING SCR.txt
 FIRMWARE_IMX_REDISTRIBUTE = NO
 
 FIRMWARE_IMX_INSTALL_IMAGES = YES
+
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE),y)
+FIRMWARE_IMX_DEPENDENCIES += linux-firmware
+endif
 
 define FIRMWARE_IMX_EXTRACT_CMDS
 	$(call NXP_EXTRACT_HELPER,$(FIRMWARE_IMX_DL_DIR)/$(FIRMWARE_IMX_SOURCE))
@@ -39,6 +43,33 @@ endef
 FIRMWARE_IMX_DDR_VERSION = $(call qstrip,$(BR2_PACKAGE_FIRMWARE_IMX_DDR_VERSION))
 ifneq ($(FIRMWARE_IMX_DDR_VERSION),)
 FIRMWARE_IMX_DDR_VERSION_SUFFIX = _$(FIRMWARE_IMX_DDR_VERSION)
+endif
+
+ifeq ($(BR2_PACKAGE_FIRMWARE_IMX_NEEDS_DDR_FW_IMX9),y)
+FIRMWARE_IMX_DDRFW_DIR = $(@D)/firmware/ddr/synopsys
+
+define FIRMWARE_IMX_INSTALL_IMAGE_DDR_FW
+	# Create padded versions of lpddr4_{d,i}mem_{1,2}d_* and generate lpddr4_fw.bin.
+	# lpddr4_fw.bin is needed when generating imx9-boot-sd.bin
+	# which is done in post-image script.
+	$(call FIRMWARE_IMX_PREPARE_DDR_FW, \
+		lpddr4_imem_1d_v202201,
+		lpddr4_dmem_1d_v202201,
+		lpddr4_1d_fw)
+	$(call FIRMWARE_IMX_PREPARE_DDR_FW, \
+		lpddr4_imem_2d_v202201,
+		lpddr4_dmem_2d_v202201,
+		lpddr4_2d_fw)
+	cat $(FIRMWARE_IMX_DDRFW_DIR)/lpddr4_1d_fw.bin \
+		$(FIRMWARE_IMX_DDRFW_DIR)/lpddr4_2d_fw.bin > \
+		$(BINARIES_DIR)/lpddr4_fw.bin
+	ln -sf $(BINARIES_DIR)/lpddr4_fw.bin $(BINARIES_DIR)/ddr_fw.bin
+
+	# U-Boot supports creation of the combined flash.bin image. To make
+	# sure that U-Boot can access all available files copy them to
+	# the binary dir.
+	cp $(FIRMWARE_IMX_DDRFW_DIR)/lpddr4*.bin $(BINARIES_DIR)/
+endef
 endif
 
 ifeq ($(BR2_PACKAGE_FIRMWARE_IMX_LPDDR4),y)

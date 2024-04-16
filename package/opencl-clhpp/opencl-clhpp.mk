@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPENCL_CLHPP_VERSION = 2.0.16
+OPENCL_CLHPP_VERSION = 2023.12.14
 OPENCL_CLHPP_SITE = $(call github,KhronosGroup,OpenCL-CLHPP,v$(OPENCL_CLHPP_VERSION))
 OPENCL_CLHPP_LICENSE = Apache-2.0
 OPENCL_CLHPP_LICENSE_FILES = LICENSE.txt

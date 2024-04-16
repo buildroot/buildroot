@@ -1,0 +1,54 @@
+From 84e62d57b90b41a0c96bb9fb6ec61ecaac76a1ab Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 5 Nov 2022 21:31:36 +0100
+Subject: [PATCH] configure.ac: fix build on powerpc and m68k
+
+Fix the following powerpc and m68k build failures on:
+ - musl raised because fpu_control.h is not available:
+
+In file included from fp.c:8:
+fp-gnuppc.c:21:10: fatal error: fpu_control.h: No such file or directory
+   21 | #include <fpu_control.h>
+      |          ^~~~~~~~~~~~~~~
+
+ - glibc raised because _FPU_RC_NEAREST is undefined if _SOFT_FLOAT is
+   set:
+
+   In file included from fp.c:8:
+fp-gnuppc.c: In function 'gsl_ieee_set_mode':
+fp-gnuppc.c:53:15: error: '_FPU_RC_NEAREST' undeclared (first use in this function)
+   53 |       mode |= _FPU_RC_NEAREST ;
+      |               ^~~~~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/d73e116c81bf16d2e55fced215d6bd3b382fef10
+ - http://autobuild.buildroot.org/results/48403946bb4cda9013e51db59c1b2ffdcf4e2854
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://lists.gnu.org/archive/html/bug-gsl/2022-11/msg00000.html
+---
+ configure.ac | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/configure.ac b/configure.ac
+index bfd9ca30..1ee6dca0 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -389,6 +389,14 @@ if test "$ac_cv_c_ieee_interface" = "gnux86" ; then
+    fi
+ fi
+ 
++if test "$ac_cv_c_ieee_interface" = "gnuppc" -o "$ac_cv_c_ieee_interface" = "gnum68k" ; then
++    AC_CACHE_CHECK([for _FPU_RC_NEAREST], ac_cv_c__fpu_rc_nearest,
++    [ac_cv_c__fpu_rc_nearest=no
++    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <fpu_control.h>
++]], [[ unsigned short mode = _FPU_RC_NEAREST ; ]])],[ac_cv_c__fpu_rc_nearest="yes"],[ac_cv_c_ieee_interface=unknown])
++    ])
++fi
++
+ ac_tr_ieee_interface=HAVE_`echo $ac_cv_c_ieee_interface | tr 'abcdefghijklmnopqrstuvwxyz' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'`_IEEE_INTERFACE
+ AC_DEFINE_UNQUOTED($ac_tr_ieee_interface,1,[IEEE Interface Type])
+ 
+-- 
+2.35.1
+

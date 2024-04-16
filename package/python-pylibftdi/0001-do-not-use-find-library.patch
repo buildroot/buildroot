@@ -15,17 +15,18 @@ this package.
 Signed-off-by: Christian Kellermann <christian.kellermann@solectrix.de>
 
 ---
-diff -purN pylibftdi-0.15.0.orig/pylibftdi/driver.py pylibftdi-0.15.0/pylibftdi/driver.py
---- pylibftdi-0.15.0.orig/pylibftdi/driver.py	2015-04-26 22:41:39.000000000 +0200
-+++ pylibftdi-0.15.0/pylibftdi/driver.py	2017-02-27 13:08:56.502958000 +0100
-@@ -121,8 +121,8 @@ class Driver(object):
+diff -purN pylibftdi-0.21.0.orig/src/pylibftdi/driver.py pylibftdi-0.21.0/src/pylibftdi/driver.py
+--- pylibftdi-0.21.0.orig/src/pylibftdi/driver.py	2015-04-26 22:41:39.000000000 +0200
++++ pylibftdi-0.21.0/src/pylibftdi/driver.py	2017-02-27 13:08:56.502958000 +0100
+@@ -148,9 +148,8 @@ class Driver:
                      lib = getattr(cdll, lib_path)
                      break
          if lib is None:
--            raise LibraryMissingError('{} library not found (search: {})'.format(
--                name, search_list))
+-            raise LibraryMissingError(
+-                f"{name} library not found (search: {str(search_list)})"
+-            )
 +            return cdll.LoadLibrary(name + '.so')
 +
          return lib
- 
+
      @property

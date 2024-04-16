@@ -1,0 +1,28 @@
+From 9e3dda0efb54fee6934c744a13a7336d24c6e9e9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20G=C3=B3rny?= <mgorny@gentoo.org>
+Date: Thu, 27 Jan 2022 10:33:08 +0100
+Subject: [PATCH] Switch build-backend to poetry-core
+
+poetry-core is the lightweight counterpart of poetry that is intended
+to be used as a build-backend.  Unlike poetry, it does not require
+installing all the dependencies of the package manager, making
+the builds much faster.  The generated artifacts are the same.
+
+Upstream: https://github.com/matthewdeanmartin/terminaltables/commit/9e3dda0efb54fee6934c744a13a7336d24c6e9e9
+Signed-off-by: Arnout Vandecappelle <arnout@mind.be>
+---
+ pyproject.toml     | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/pyproject.toml b/pyproject.toml
+index a861add..ff4b190 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -62,5 +62,5 @@ python = ">=2.6 || >=3.0"
+ pytest = "==6.0.1"
+ 
+ [build-system]
+-requires = ["poetry>=0.12"]
+-build-backend = "poetry.masonry.api"
++requires = ["poetry-core>=1.0.0"]
++build-backend = "poetry.core.masonry.api"

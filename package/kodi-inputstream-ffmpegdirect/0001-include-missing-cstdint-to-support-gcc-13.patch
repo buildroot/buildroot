@@ -1,0 +1,49 @@
+From fd7bd5ad86fd0006ad571a051fa5d5603a47e4b4 Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Wed, 26 Apr 2023 17:15:00 +0000
+Subject: [PATCH] include missing <cstdint> to support gcc-13
+
+gcc 13 moved some includes around and as a result <cstdint> is no longer transitively
+included [1]. Explicitly include it for uint{32,64}_t.
+
+[1] https://gcc.gnu.org/gcc-13/porting_to.html#header-dep-changes
+
+Signed-off-by: Rudi Heitbaum <rudi@heitbaum.com>
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+Upstream: https://github.com/xbmc/inputstream.ffmpegdirect/commit/fd7bd5ad86fd0006ad571a051fa5d5603a47e4b4
+---
+ src/utils/DiskUtils.h | 1 +
+ src/utils/HttpProxy.h | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/utils/DiskUtils.h b/src/utils/DiskUtils.h
+index 79e34268..f900ec58 100644
+--- a/src/utils/DiskUtils.h
++++ b/src/utils/DiskUtils.h
+@@ -7,6 +7,7 @@
+ 
+ #pragma once
+ 
++#include <cstdint>
+ #include <string>
+ 
+ namespace ffmpegdirect
+diff --git a/src/utils/HttpProxy.h b/src/utils/HttpProxy.h
+index eb0c99cb..d203ce36 100644
+--- a/src/utils/HttpProxy.h
++++ b/src/utils/HttpProxy.h
+@@ -7,6 +7,7 @@
+ 
+ #pragma once
+ 
++#include <cstdint>
+ #include <string>
+ 
+ namespace ffmpegdirect
+@@ -36,4 +37,4 @@ namespace ffmpegdirect
+     std::string m_user;
+     std::string m_password;
+   };
+-} //namespace ffmpegdirect
+\ No newline at end of file
++} //namespace ffmpegdirect

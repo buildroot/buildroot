@@ -1,0 +1,10 @@
+config BR2_PACKAGE_SPIRV_HEADERS
+	bool "spirv-headers"
+	depends on BR2_INSTALL_LIBSTDCPP
+	help
+	  Machine-readable files for the SPIR-V Registry
+
+	  https://www.khronos.org/registry/spir-v
+
+comment "spirv-headers needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP

@@ -1,0 +1,10 @@
+config BR2_PACKAGE_PYTHON_STACK_DATA
+	bool "python-stack-data"
+	select BR2_PACKAGE_PYTHON_ASTTOKENS # runtime
+	select BR2_PACKAGE_PYTHON_EXECUTING # runtime
+	select BR2_PACKAGE_PYTHON_PURE_EVAL # runtime
+	help
+	  Extract data from python stack frames and tracebacks
+	  for informative displays.
+
+	  http://github.com/alexmojaki/stack_data

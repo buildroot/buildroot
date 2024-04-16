@@ -1,0 +1,10 @@
+config BR2_PACKAGE_SSCEP
+	bool "sscep"
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_BLOWFISH if BR2_PACKAGE_LIBOPENSSL
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_DES if BR2_PACKAGE_LIBOPENSSL
+	select BR2_PACKAGE_OPENSSL
+	help
+	  SSCEP is a client-only implementation of the SCEP
+	  (Cisco System's Simple Certificate Enrollment Protocol).
+
+	  https://github.com/certnanny/sscep

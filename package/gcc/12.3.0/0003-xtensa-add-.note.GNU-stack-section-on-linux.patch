@@ -1,0 +1,105 @@
+From 38cdfcc4b2cca8d251ff8d8d34201dfe9849333e Mon Sep 17 00:00:00 2001
+From: Max Filippov <jcmvbkbc@gmail.com>
+Date: Thu, 2 Mar 2023 09:45:41 -0800
+Subject: [PATCH] xtensa: add .note.GNU-stack section on linux
+
+gcc/
+	* config/xtensa/linux.h (TARGET_ASM_FILE_END): New macro.
+
+libgcc/
+	* config/xtensa/crti.S: Add .note.GNU-stack section on linux.
+	* config/xtensa/crtn.S: Likewise.
+	* config/xtensa/lib1funcs.S: Likewise.
+	* config/xtensa/lib2funcs.S: Likewise.
+
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://gcc.gnu.org/git/?p=gcc.git;a=commit;h=6360bf9a2d08f08c151464c77c0da53cd702ff25
+---
+ gcc/config/xtensa/linux.h        | 1 +
+ libgcc/config/xtensa/crti.S      | 6 ++++++
+ libgcc/config/xtensa/crtn.S      | 6 ++++++
+ libgcc/config/xtensa/lib1funcs.S | 6 ++++++
+ libgcc/config/xtensa/lib2funcs.S | 6 ++++++
+ 5 files changed, 25 insertions(+)
+
+diff --git a/gcc/config/xtensa/linux.h b/gcc/config/xtensa/linux.h
+index edce618fb94..fe0e3a43797 100644
+--- a/gcc/config/xtensa/linux.h
++++ b/gcc/config/xtensa/linux.h
+@@ -69,3 +69,4 @@ along with GCC; see the file COPYING3.  If not see
+ 
+ #undef DBX_REGISTER_NUMBER
+ 
++#define TARGET_ASM_FILE_END file_end_indicate_exec_stack
+diff --git a/libgcc/config/xtensa/crti.S b/libgcc/config/xtensa/crti.S
+index 3de7bc101f4..0996e7cb29b 100644
+--- a/libgcc/config/xtensa/crti.S
++++ b/libgcc/config/xtensa/crti.S
+@@ -26,6 +26,12 @@
+ 
+ #include "xtensa-config.h"
+ 
++/* An executable stack is *not* required for these functions.  */
++#if defined(__ELF__) && defined(__linux__)
++.section .note.GNU-stack,"",%progbits
++.previous
++#endif
++
+ 	.section .init
+ 	.globl _init
+ 	.type _init,@function
+diff --git a/libgcc/config/xtensa/crtn.S b/libgcc/config/xtensa/crtn.S
+index 06b932edb14..a4cc9830096 100644
+--- a/libgcc/config/xtensa/crtn.S
++++ b/libgcc/config/xtensa/crtn.S
+@@ -27,6 +27,12 @@
+ 
+ #include "xtensa-config.h"
+ 
++/* An executable stack is *not* required for these functions.  */
++#if defined(__ELF__) && defined(__linux__)
++.section .note.GNU-stack,"",%progbits
++.previous
++#endif
++
+ 	.section .init
+ #if XCHAL_HAVE_WINDOWED && !__XTENSA_CALL0_ABI__
+ 	retw
+diff --git a/libgcc/config/xtensa/lib1funcs.S b/libgcc/config/xtensa/lib1funcs.S
+index 5a2bd20534f..7177dd4f73a 100644
+--- a/libgcc/config/xtensa/lib1funcs.S
++++ b/libgcc/config/xtensa/lib1funcs.S
+@@ -25,6 +25,12 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+ 
+ #include "xtensa-config.h"
+ 
++/* An executable stack is *not* required for these functions.  */
++#if defined(__ELF__) && defined(__linux__)
++.section .note.GNU-stack,"",%progbits
++.previous
++#endif
++
+ /* Define macros for the ABS and ADDX* instructions to handle cases
+    where they are not included in the Xtensa processor configuration.  */
+ 
+diff --git a/libgcc/config/xtensa/lib2funcs.S b/libgcc/config/xtensa/lib2funcs.S
+index 681bac1be8c..a40c1a45604 100644
+--- a/libgcc/config/xtensa/lib2funcs.S
++++ b/libgcc/config/xtensa/lib2funcs.S
+@@ -25,6 +25,12 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+ 
+ #include "xtensa-config.h"
+ 
++/* An executable stack is *not* required for these functions.  */
++#if defined(__ELF__) && defined(__linux__)
++.section .note.GNU-stack,"",%progbits
++.previous
++#endif
++
+ /* __xtensa_libgcc_window_spill: This function flushes out all but the
+    current register window.  This is used to set up the stack so that
+    arbitrary frames can be accessed.  */
+-- 
+2.39.2
+

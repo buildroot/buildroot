@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-LVM2_VERSION = 2.03.14
+LVM2_VERSION = 2.03.23
 LVM2_SOURCE = LVM2.$(LVM2_VERSION).tgz
 LVM2_SITE = https://sourceware.org/ftp/lvm2
 LVM2_INSTALL_STAGING = YES
 LVM2_LICENSE = GPL-2.0, LGPL-2.1
 LVM2_LICENSE_FILES = COPYING COPYING.LIB
-LVM2_CPE_ID_PRODUCT = redhat
+LVM2_CPE_ID_VENDOR = redhat
 # parallel build issues
 LVM2_MAKE = $(MAKE1)
 
@@ -25,7 +25,7 @@ LVM2_CONF_OPTS += \
 	--disable-nls \
 	--with-symvers=no
 
-LVM2_DEPENDENCIES += host-pkgconf libaio
+LVM2_DEPENDENCIES += host-pkgconf
 
 # LVM2 uses autoconf, but not automake, and the build system does not
 # take into account the toolchain passed at configure time.
@@ -49,6 +49,7 @@ LVM2_CONF_OPTS += --disable-selinux
 endif
 
 ifeq ($(BR2_PACKAGE_LVM2_STANDARD_INSTALL),y)
+LVM2_DEPENDENCIES += libaio
 LVM2_INSTALL_STAGING_OPTS += install
 LVM2_INSTALL_TARGET_OPTS += install
 ifeq ($(BR2_INIT_SYSTEMD),y)

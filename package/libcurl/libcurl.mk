@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBCURL_VERSION = 7.84.0
+LIBCURL_VERSION = 8.7.1
 LIBCURL_SOURCE = curl-$(LIBCURL_VERSION).tar.xz
 LIBCURL_SITE = https://curl.se/download
 LIBCURL_DEPENDENCIES = host-pkgconf \
@@ -13,20 +13,24 @@ LIBCURL_DEPENDENCIES = host-pkgconf \
 LIBCURL_LICENSE = curl
 LIBCURL_LICENSE_FILES = COPYING
 LIBCURL_CPE_ID_VENDOR = haxx
-LIBCURL_CPE_ID_PRODUCT = libcurl
 LIBCURL_INSTALL_STAGING = YES
-# We are patching configure.ac
-LIBCURL_AUTORECONF = YES
 
-# We disable NTLM support because it uses fork(), which doesn't work
-# on non-MMU platforms. Moreover, this authentication method is
-# probably almost never used. See
-# http://curl.se/docs/manpage.html#--ntlm.
+# We disable NTLM delegation to winbinds ntlm_auth ('--disable-ntlm-wb')
+# support because it uses fork(), which doesn't work on non-MMU platforms.
+# Moreover, this authentication method is probably almost never used (see
+# https://curl.se/docs/manpage.html#--ntlm), so disable NTLM support overall.
+#
 # Likewise, there is no compiler on the target, so libcurl-option (to
 # generate C code) isn't very useful
-LIBCURL_CONF_OPTS = --disable-manual --disable-ntlm-wb \
-	--with-random=/dev/urandom --disable-curldebug \
-	--disable-libcurl-option --disable-ldap --disable-ldaps
+LIBCURL_CONF_OPTS = \
+	--disable-manual \
+	--disable-ntlm \
+	--disable-ntlm-wb \
+	--with-random=/dev/urandom \
+	--disable-curldebug \
+	--disable-libcurl-option \
+	--disable-ldap \
+	--disable-ldaps
 
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
 LIBCURL_CONF_OPTS += --enable-threaded-resolver
@@ -52,17 +56,16 @@ endif
 
 LIBCURL_CONFIG_SCRIPTS = curl-config
 
+ifeq ($(BR2_PACKAGE_LIBCURL_TLS_NONE),y)
+LIBCURL_CONF_OPTS += --without-ssl
+endif
+
 ifeq ($(BR2_PACKAGE_LIBCURL_OPENSSL),y)
 LIBCURL_DEPENDENCIES += openssl
-# configure adds the cross openssl dir to LD_LIBRARY_PATH which screws up
-# native stuff during the rest of configure when target == host.
-# Fix it by setting LD_LIBRARY_PATH to something sensible so those libs
-# are found first.
-LIBCURL_CONF_ENV += LD_LIBRARY_PATH=$(if $(LD_LIBRARY_PATH),$(LD_LIBRARY_PATH):)/lib:/usr/lib
-LIBCURL_CONF_OPTS += --with-ssl=$(STAGING_DIR)/usr \
+LIBCURL_CONF_OPTS += --with-openssl=$(STAGING_DIR)/usr \
 	--with-ca-path=/etc/ssl/certs
 else
-LIBCURL_CONF_OPTS += --without-ssl
+LIBCURL_CONF_OPTS += --without-openssl
 endif
 
 ifeq ($(BR2_PACKAGE_LIBCURL_BEARSSL),y)
@@ -109,6 +112,13 @@ else
 LIBCURL_CONF_OPTS += --without-libidn2
 endif
 
+ifeq ($(BR2_PACKAGE_LIBPSL),y)
+LIBCURL_DEPENDENCIES += libpsl
+LIBCURL_CONF_OPTS += --with-libpsl
+else
+LIBCURL_CONF_OPTS += --without-libpsl
+endif
+
 # Configure curl to support libssh2
 ifeq ($(BR2_PACKAGE_LIBSSH2),y)
 LIBCURL_DEPENDENCIES += libssh2
@@ -148,6 +158,12 @@ ifeq ($(BR2_PACKAGE_LIBCURL_PROXY_SUPPORT),y)
 LIBCURL_CONF_OPTS += --enable-proxy
 else
 LIBCURL_CONF_OPTS += --disable-proxy
+endif
+
+ifeq ($(BR2_PACKAGE_LIBCURL_WEBSOCKETS_SUPPORT),y)
+LIBCURL_CONF_OPTS += --enable-websockets
+else
+LIBCURL_CONF_OPTS += --disable-websockets
 endif
 
 ifeq ($(BR2_PACKAGE_LIBCURL_EXTRA_PROTOCOLS_FEATURES),y)

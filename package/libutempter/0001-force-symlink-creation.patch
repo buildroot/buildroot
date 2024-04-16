@@ -1,0 +1,36 @@
+From 13e0a4ca67d860bc8f1e3b2ad6a3926758d76b47 Mon Sep 17 00:00:00 2001
+From: Adam Duskett <adam.duskett@amarulasolutions.com>
+Date: Wed, 22 Nov 2023 14:09:13 -0700
+Subject: [PATCH] force symlink creation
+
+Force symlink creation to avoid errors when reinstalling
+
+Upstream: https://github.com/altlinux/libutempter/pull/5
+Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
+---
+ Makefile | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 8c90121..1cfc627 100644
+--- a/Makefile
++++ b/Makefile
+@@ -83,12 +83,12 @@ install:
+ 	$(INSTALL) -p -m644 $(PROJECT).h $(DESTDIR)$(includedir)/
+ 	$(INSTALL) -p -m755 $(SHAREDLIB) $(DESTDIR)$(libdir)/$(SHAREDLIB).$(VERSION)
+ 	$(INSTALL) -p -m644 $(STATICLIB) $(DESTDIR)$(libdir)/
+-	ln -s $(SHAREDLIB).$(VERSION) $(DESTDIR)$(libdir)/$(SONAME)
+-	ln -s $(SONAME) $(DESTDIR)$(libdir)/$(SHAREDLIB)
++	ln -sf $(SHAREDLIB).$(VERSION) $(DESTDIR)$(libdir)/$(SONAME)
++	ln -sf $(SONAME) $(DESTDIR)$(libdir)/$(SHAREDLIB)
+ 	$(INSTALL) -p -m644 $(PROJECT).3 $(DESTDIR)$(man3dir)/
+ 	for n in lib$(PROJECT) utempter_add_record utempter_remove_record \
+ 	    utempter_remove_added_record utempter_set_helper; do \
+-		ln -s $(PROJECT).3 $(DESTDIR)$(man3dir)/$$n.3; \
++		ln -sf $(PROJECT).3 $(DESTDIR)$(man3dir)/$$n.3; \
+ 	done
+ 
+ clean:
+-- 
+2.42.0
+

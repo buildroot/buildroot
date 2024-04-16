@@ -1,0 +1,30 @@
+From ca07c86b2aeeb91213922eaf481c9e224679a7fd Mon Sep 17 00:00:00 2001
+From: Jiri Slaby <jirislaby@gmail.com>
+Date: Fri, 17 Mar 2023 20:28:24 +0100
+Subject: [PATCH] kvm: drop KVM_SET_MEMORY_REGION (#42)
+
+It was dropped in upstream in commit 61e15f871241 (KVM: Delete all
+references to removed KVM_SET_MEMORY_REGION ioctl).
+
+Co-authored-by: Jiri Slaby <jslaby@suse.cz>
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://github.com/kernelslacker/trinity/commit/ca07c86b2aeeb91213922eaf481c9e224679a7fd
+---
+ ioctls/kvm.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/ioctls/kvm.c b/ioctls/kvm.c
+index 14c55ef1..30aeed7a 100644
+--- a/ioctls/kvm.c
++++ b/ioctls/kvm.c
+@@ -8,7 +8,6 @@
+ #include "utils.h"
+ 
+ static const struct ioctl kvm_ioctls[] = {
+-	IOCTL(KVM_SET_MEMORY_REGION),
+ 	IOCTL(KVM_CREATE_VCPU),
+ 	IOCTL(KVM_GET_DIRTY_LOG),
+ 	IOCTL(KVM_SET_NR_MMU_PAGES),
+-- 
+2.39.2
+

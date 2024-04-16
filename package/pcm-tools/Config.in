@@ -1,11 +1,13 @@
-comment "pcm-tools needs a toolchain w/ C++"
+comment "pcm-tools needs a toolchain w/ C++, NPTL"
 	depends on BR2_i386 || BR2_x86_64
-	depends on !BR2_INSTALL_LIBSTDCPP
+	depends on !BR2_INSTALL_LIBSTDCPP || \
+		!BR2_TOOLCHAIN_HAS_THREADS_NPTL
 
 config BR2_PACKAGE_PCM_TOOLS
 	bool "pcm-tools"
 	depends on BR2_i386 || BR2_x86_64
 	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
 	select BR2_PACKAGE_HWDATA
 	select BR2_PACKAGE_HWDATA_PCI_IDS
 	help

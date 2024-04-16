@@ -12,6 +12,8 @@ as we're now using >= POSIX.1-2001 definitions of fd_set and friends.
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Signed-off-by: Vincent Fazio <vfazio@gmail.com>
+[Bernd: rebased for git rev 5452af422edeff70fcae8ea99dd28a0922051d7b]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  src/LibSupport.h     | 21 +++------------------
  src/TcpServerPosix.c |  1 +
@@ -22,7 +24,7 @@ diff --git a/src/LibSupport.h b/src/LibSupport.h
 index 5055560..48b1e16 100644
 --- a/src/LibSupport.h
 +++ b/src/LibSupport.h
-@@ -64,24 +64,9 @@
+@@ -64,32 +64,9 @@
  #ifndef _LIB_SUPPORT_H_
  #define _LIB_SUPPORT_H_
  
@@ -40,6 +42,14 @@ index 5055560..48b1e16 100644
 -    || defined(_M_ARM) || defined(__arm__) || defined(__thumb__)	\
 -    || defined(__powerpc__) || defined(__PPC__)
 -#       define RADIX_BITS                      32
+-#   elif defined(__riscv) || defined(__riscv__)
+-#       if __riscv_xlen == 32
+-#            define RADIX_BITS                 32
+-#       elif __riscv_xlen == 64
+-#            define RADIX_BITS                 64
+-#       else
+-#            error Unsupported __riscv_xlen value
+-#       endif
 -#   else
 -#       error Unable to determine RADIX_BITS from compiler environment
 -#   endif
@@ -66,7 +76,7 @@ diff --git a/src/makefile b/src/makefile
 index f124e78..6ee128e 100644
 --- a/src/makefile
 +++ b/src/makefile
-@@ -46,6 +46,8 @@ CCFLAGS = -Wall  			\
+@@ -47,6 +47,8 @@ CCFLAGS = -Wall  			\
  	 -c -ggdb -O0 			\
  	-DTPM_POSIX			\
  	-D_POSIX_			\

@@ -4,11 +4,15 @@
 #
 ################################################################################
 
-LUAPOSIX_VERSION = 35.1
+LUAPOSIX_VERSION = 36.2.1
 LUAPOSIX_SITE = $(call github,luaposix,luaposix,v$(LUAPOSIX_VERSION))
 LUAPOSIX_LICENSE = MIT
 LUAPOSIX_LICENSE_FILES = LICENSE
 LUAPOSIX_DEPENDENCIES = luainterpreter host-lua
+
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+LUAPOSIX_DEPENDENCIES += libxcrypt
+endif
 
 define LUAPOSIX_BUILD_CMDS
 	(cd $(@D); \

@@ -1,0 +1,55 @@
+From 95382246ddd889839633aa0da800a03936b93986 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 31 Oct 2021 18:26:01 +0100
+Subject: [PATCH] add --disable-stack-protector option
+
+Allow the user to disable stack-protector as not all toolchains support
+this feature
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/fenrus75/powertop/pull/138
+---
+ configure.ac    | 4 ++++
+ src/Makefile.am | 5 ++++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 37c1304..69160d5 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -43,6 +43,10 @@ AX_ADD_FORTIFY_SOURCE
+ AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
+ PKG_PROG_PKG_CONFIG
+ 
++AC_ARG_ENABLE([stack-protector],
++	AS_HELP_STRING([--disable-stack-protector], [Disable stack-protector]))
++AM_CONDITIONAL([ENABLE_STACK_PROTECTOR], [test x$enable_stack_protector != xno])
++
+ # Checks for libraries.
+ AX_PTHREAD([
+     LIBS="$PTHREAD_LIBS $LIBS"
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 6b523f6..ca30d20 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -138,13 +138,16 @@ powertop_CXXFLAGS = \
+ 	-Wformat \
+ 	-Wshadow \
+ 	-fno-omit-frame-pointer \
+-	-fstack-protector \
+ 	$(GLIB2_CFLAGS) \
+ 	$(LIBNL_CFLAGS) \
+ 	$(NCURSES_CFLAGS) \
+ 	$(PCIUTILS_CFLAGS) \
+ 	$(PTHREAD_CFLAGS)
+ 
++if ENABLE_STACK_PROTECTOR
++powertop_CXXFLAGS += \
++	-fstack-protector
++endif
+ 
+ powertop_CPPFLAGS = \
+ 	-DLOCALEDIR=\"$(localedir)\" \
+-- 
+2.33.0
+

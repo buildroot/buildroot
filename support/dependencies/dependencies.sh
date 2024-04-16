@@ -46,15 +46,6 @@ case ":${PATH:-unset}:" in
 	;;
 esac
 
-if test -n "$PERL_MM_OPT" ; then
-	echo
-	echo "You have PERL_MM_OPT defined because Perl local::lib"
-	echo "is installed on your system. Please unset this variable"
-	echo "before starting Buildroot, otherwise the compilation of"
-	echo "Perl related packages will fail"
-	exit 1
-fi
-
 check_prog_host()
 {
 	prog="$1"
@@ -183,6 +174,16 @@ for prog in perl tar wget cpio unzip rsync bc cmp find xargs ${DL_TOOLS} ; do
 			echo "  xargs is usually part of the findutils package in your distribution"
 		fi
 	fi
+
+	# we need git >= 2.0.0 for shallow clones / vendoring
+	if test $prog = "git" ; then
+		GIT_VERSION="$(git --version | sed -n 's/^git version \(.*\)/\1/p')"
+		GIT_MAJOR="$(echo "${GIT_VERSION}" | cut -d . -f 1)"
+		if [ "${GIT_MAJOR}" -lt 2 ]; then
+			echo "You have git '${GIT_VERSION}' installed. Git >= 2.0.0 is required"
+			exit 1
+		fi
+	fi
 done
 
 if test "${missing_progs}" = "yes" ; then
@@ -203,7 +204,7 @@ if [ "${PATCH_MAJOR}" -lt 2 ] || [ "${PATCH_MAJOR}" -eq 2 -a "${PATCH_MINOR}" -l
 	exit 1;
 fi
 
-if grep ^BR2_NEEDS_HOST_UTF8_LOCALE=y $BR2_CONFIG > /dev/null; then
+if grep -q ^BR2_NEEDS_HOST_UTF8_LOCALE=y $BR2_CONFIG ; then
 	if ! which locale > /dev/null ; then
 		echo
 		echo "You need locale support on your build machine to build a toolchain supporting locales"
@@ -263,7 +264,7 @@ if grep -q ^BR2_HOSTARCH_NEEDS_IA32_COMPILER=y $BR2_CONFIG ; then
 	fi
 fi
 
-if grep ^BR2_NEEDS_HOST_GCC_PLUGIN_SUPPORT=y $BR2_CONFIG ; then
+if grep -q ^BR2_NEEDS_HOST_GCC_PLUGIN_SUPPORT=y $BR2_CONFIG ; then
 	if ! echo "#include <gcc-plugin.h>" | $HOSTCXX_NOCCACHE -I$($HOSTCXX_NOCCACHE -print-file-name=plugin)/include -x c++ -c - -o /dev/null ; then
 		echo
 		echo "Your Buildroot configuration needs a host compiler capable of building gcc plugins."
@@ -275,12 +276,27 @@ fi
 
 # Check that the Perl installation is complete enough for Buildroot.
 required_perl_modules="Data::Dumper" # Needed to build host-autoconf
+required_perl_modules="$required_perl_modules English" # Used by host-libxml-parser-perl
 required_perl_modules="$required_perl_modules ExtUtils::MakeMaker" # Used by host-libxml-parser-perl
 required_perl_modules="$required_perl_modules Thread::Queue" # Used by host-automake
+required_perl_modules="$required_perl_modules FindBin" # Used by (host-)libopenssl
+required_perl_modules="$required_perl_modules IPC::Cmd" # Used by (host-)libopenssl
+
+if grep -q ^BR2_PACKAGE_LIBOPENSSL=y $BR2_CONFIG && grep -q ^BR2_s390x=y $BR2_CONFIG ; then
+    required_perl_modules="$required_perl_modules bigint"
+fi
+
+if grep -q ^BR2_PACKAGE_MOSH=y $BR2_CONFIG ; then
+    required_perl_modules="$required_perl_modules diagnostics"
+fi
 
 if grep -q ^BR2_PACKAGE_MPV=y $BR2_CONFIG ; then
     required_perl_modules="$required_perl_modules Math::BigInt"
     required_perl_modules="$required_perl_modules Math::BigRat"
+fi
+
+if grep -q ^BR2_PACKAGE_NETSURF=y $BR2_CONFIG ; then
+    required_perl_modules="$required_perl_modules Digest::MD5"
 fi
 
 if grep -q ^BR2_PACKAGE_WHOIS=y $BR2_CONFIG ; then
@@ -291,8 +307,19 @@ if grep -q -E '^BR2_PACKAGE_(WEBKITGTK|WPEWEBKIT)=y' $BR2_CONFIG ; then
     required_perl_modules="${required_perl_modules} JSON::PP"
 fi
 
+if grep -q -E '^BR2_(PACKAGE_ACE|TARGET_SYSLINUX)=y' $BR2_CONFIG ; then
+    required_perl_modules="$required_perl_modules FileHandle"
+fi
+
 # This variable will keep the modules that are missing in your system.
 missing_perl_modules=""
+
+if grep -q ^BR2_PACKAGE_LIBXCRYPT=y $BR2_CONFIG ; then
+	# open cannot be used with require
+	if ! perl -e "use open ':std'" > /dev/null 2>&1 ; then
+		missing_perl_modules="$missing_perl_modules open"
+	fi
+fi
 
 for pm in $required_perl_modules ; do
 	if ! perl  -e "require $pm" > /dev/null 2>&1 ; then

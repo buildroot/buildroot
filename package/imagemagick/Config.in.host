@@ -18,6 +18,7 @@ config BR2_PACKAGE_HOST_IMAGEMAGICK_SVG
 	bool "SVG support"
 	depends on BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS # host-librsvg
 	depends on BR2_HOST_GCC_AT_LEAST_4_9 # host-pango -> host-harfbuzz
+	select BR2_PACKAGE_HOST_IMAGEMAGICK_XML
 	help
 	  Say 'y' here is you need ImageMagick tools (like convert)
 	  to support SVG.
@@ -28,5 +29,15 @@ config BR2_PACKAGE_HOST_IMAGEMAGICK_SVG
 comment "SVG support needs host gcc >= 4.9"
 	depends on BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
 	depends on !BR2_HOST_GCC_AT_LEAST_4_9
+
+config BR2_PACKAGE_HOST_IMAGEMAGICK_XML
+	bool "XML support"
+	help
+	  Say 'y' here if you need ImageMagick to support XML. Indeed,
+	  ImageMagick does not trust unvalidated XMP profiles in
+	  images. If such a XML profile is encountered inside e.g. a
+	  PNG image the processing is aborted. Validating the XMP
+	  profile requires that ImageMagick is compiled with XML
+	  support.
 
 endif

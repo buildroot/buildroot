@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MBPFAN_VERSION = 2.3.0
+MBPFAN_VERSION = 2.4.0
 MBPFAN_SITE = $(call github,linux-on-mac,mbpfan,v$(MBPFAN_VERSION))
 MBPFAN_LICENSE = GPL-3.0+
 MBPFAN_LICENSE_FILES = COPYING

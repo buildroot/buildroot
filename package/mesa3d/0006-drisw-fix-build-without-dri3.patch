@@ -1,0 +1,58 @@
+From 3ab46dcfda9edf5c9bc27c8f5031146d9d9d8ade Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@smile.fr>
+Date: Thu, 18 Jan 2024 22:50:16 +0100
+Subject: [PATCH] drisw: fix build without dri3
+
+commit 1887368df41 ("glx/sw: check for modifier support in the kopper path")
+added dri3_priv.h header and dri3_check_multibuffer() function in drisw that
+can be build without dri3.
+
+  i686-buildroot-linux-gnu/bin/ld: src/glx/libglx.a.p/drisw_glx.c.o: in function `driswCreateScreenDriver':
+  drisw_glx.c:(.text.driswCreateScreenDriver+0x3a0): undefined reference to `dri3_check_multibuffer'
+  collect2: error: ld returned 1 exit status
+
+Add HAVE_DRI3 guard around dri3_priv.h header and the zink code using
+dri3_check_multibuffer().
+
+Fixes: 1887368df41 ("glx/sw: check for modifier support in the kopper path")
+
+Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/27478
+
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ src/glx/drisw_glx.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/glx/drisw_glx.c b/src/glx/drisw_glx.c
+index 3d3f75259bc..4b19e2d7707 100644
+--- a/src/glx/drisw_glx.c
++++ b/src/glx/drisw_glx.c
+@@ -32,7 +32,9 @@
+ #include <dlfcn.h>
+ #include "dri_common.h"
+ #include "drisw_priv.h"
++#ifdef HAVE_DRI3
+ #include "dri3_priv.h"
++#endif
+ #include <X11/extensions/shmproto.h>
+ #include <assert.h>
+ #include <vulkan/vulkan_core.h>
+@@ -995,6 +997,7 @@ driswCreateScreenDriver(int screen, struct glx_display *priv,
+        goto handle_error;
+    }
+ 
++#ifdef HAVE_DRI3
+    if (pdpyp->zink) {
+       bool err;
+       psc->has_multibuffer = dri3_check_multibuffer(priv->dpy, &err);
+@@ -1005,6 +1008,7 @@ driswCreateScreenDriver(int screen, struct glx_display *priv,
+          goto handle_error;
+       }
+    }
++#endif
+ 
+    glx_config_destroy_list(psc->base.configs);
+    psc->base.configs = configs;
+-- 
+2.43.0
+

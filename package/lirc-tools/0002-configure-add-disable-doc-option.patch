@@ -1,0 +1,52 @@
+From e9d5cbc01e3c0d6a31e2dba2f224b7f3dd21db37 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 23 Oct 2022 16:10:50 +0200
+Subject: [PATCH] configure: add --disable-doc option
+
+Allow the user to disable documentation through --disable-doc
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ Makefile.am  | 6 +++++-
+ configure.ac | 8 ++++++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 6718af13..58a321d8 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -45,7 +45,11 @@ if WITH_SYSTEMDSYSTEMUNITDIR
+     SYSTEMD_DIR         = systemd
+ endif
+ 
+-SUBDIRS                 = lib daemons tools plugins configs doc $(SYSTEMD_DIR)
++if HAVE_DOC
++    DOC_DIR             = doc
++endif
++
++SUBDIRS                 = lib daemons tools plugins configs $(DOC_DIR) $(SYSTEMD_DIR)
+ 
+ if INSTALL_ETC
+ 
+diff --git a/configure.ac b/configure.ac
+index d28c6732..f3384c95 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -486,6 +486,14 @@ AC_ARG_VAR(SETUPTOOLS_ENV,
+ )
+ 
+ 
++AC_ARG_ENABLE(doc,
++  [  --enable-doc       Build and install documentation (default=yes)],
++  [ enable_doc="${enableval}" ],
++  [ enable_doc=yes]
++)
++AM_CONDITIONAL([HAVE_DOC], [test x$enable_doc = xyes])
++
++
+ suffix=$(echo "$VERSION" | sed 's/.*-//')
+ AM_CONDITIONAL(DEVEL, [test x$suffix = xdevel])
+ 
+-- 
+2.35.1
+

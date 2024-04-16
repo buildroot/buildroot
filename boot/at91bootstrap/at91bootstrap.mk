@@ -32,8 +32,14 @@ endef
 AT91BOOTSTRAP_POST_PATCH_HOOKS += AT91BOOTSTRAP_APPLY_CUSTOM_PATCHES
 endif
 
+# The at91bootstrap Makefile doesn't support customizing
+# CFLAGS/LDFLAGS, so we cheat and pass our custom flags through CC and
+# LD.
 define AT91BOOTSTRAP_BUILD_CMDS
-	$(MAKE1) CROSS_COMPILE=$(TARGET_CROSS) -C $(@D)/$(AT91BOOTSTRAP_MAKE_SUBDIR)
+	$(MAKE1) CROSS_COMPILE=$(TARGET_CROSS) \
+		CC="$(TARGET_CC) -fno-stack-protector" \
+		LD="$(TARGET_CC) -fno-PIE" \
+		-C $(@D)/$(AT91BOOTSTRAP_MAKE_SUBDIR)
 endef
 
 define AT91BOOTSTRAP_INSTALL_IMAGES_CMDS

@@ -62,7 +62,7 @@ consoles over telnet connections:
 	-serial telnet:127.0.0.1:1235,server \
 	-serial telnet:127.0.0.1:1236,server \
 	-netdev user,id=vmnic -device virtio-net-device,netdev=vmnic \
-	-semihosting-config enable,target=native \
+	-semihosting-config enable=on,target=native \
 	-bios flash.bin
 
 QEMU is now waiting for the telnet connection. From another shell, open a
@@ -91,7 +91,7 @@ From a first shell:
 	-smp 1 -s -m 1024 -d unimp \
 	-serial stdio \
 	-netdev user,id=vmnic -device virtio-net-device,netdev=vmnic \
-	-semihosting-config enable,target=native \
+	-semihosting-config enable=on,target=native \
 	-bios flash.bin \
 	-S
 
@@ -123,7 +123,7 @@ Emulation has started, TF-A has loaded OP-TEE and U-boot images in memory and
 has booted OP-TEE. Emulation stopped at OP-TEE core entry.
 
 Note: QEMU hosts a GDB service listening to TCP port 1234, as set through
-qemu-system-arm command line option -s.
+qemu-system-arm command line option -S.
 
 Note: To build the GDB server, the following extra options have to be added to
 the Buildroot configuration:

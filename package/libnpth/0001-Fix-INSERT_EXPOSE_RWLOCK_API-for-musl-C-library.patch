@@ -1,0 +1,37 @@
+From 417abd56fd7bf45cd4948414050615cb1ad59134 Mon Sep 17 00:00:00 2001
+From: NIIBE Yutaka <gniibe@fsij.org>
+Date: Fri, 1 Mar 2024 13:53:52 +0900
+Subject: [PATCH] Fix INSERT_EXPOSE_RWLOCK_API for musl C library.
+
+* configure.ac: Add a case for musl system.
+
+--
+
+GnuPG-bug-id: 5664
+Signed-off-by: NIIBE Yutaka <gniibe@fsij.org>
+
+Upstream: https://git.gnupg.org/cgi-bin/gitweb.cgi?p=npth.git;a=commit;h=417abd56fd7bf45cd4948414050615cb1ad59134
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ configure.ac | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index c1091b1..576a26e 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -381,7 +381,10 @@ fi
+ AC_SUBST(INSERT_NO_RWLOCK)
+ 
+ case "${host}" in
+-    *-*-linux*|*-*-gnu*)
++    *-*-linux-musl*)
++        INSERT_EXPOSE_RWLOCK_API="1"
++        ;;
++    *-*-linux-gnu*|*-*-gnu*)
+         INSERT_EXPOSE_RWLOCK_API="defined(__USE_UNIX98) || defined(__USE_XOPEN2K)"
+         ;;
+     *)
+-- 
+2.30.2
+

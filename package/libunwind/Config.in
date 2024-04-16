@@ -1,3 +1,17 @@
+config BR2_PACKAGE_LIBUNWIND_MUSL_CONTEXT_REQUIRED
+	bool
+	default y
+	depends on !BR2_ARM_CPU_HAS_ARM
+	depends on !BR2_aarch64
+	depends on !BR2_aarch64_be
+	depends on !BR2_mips
+	depends on !BR2_mipsel
+	depends on !BR2_mips64
+	depends on !BR2_mips64el
+	depends on !BR2_riscv
+	depends on !BR2_x86_64
+	depends on BR2_TOOLCHAIN_USES_MUSL
+
 # libunwind is only available for a certain subset of the
 # architectures (as visible in the list of architectures supported
 # with the glibc C library below).
@@ -17,7 +31,8 @@ config BR2_PACKAGE_LIBUNWIND_ARCH_SUPPORTS
 		(BR2_ARM_CPU_HAS_ARM || BR2_mips || BR2_mipsel || \
 		 BR2_mips64 || BR2_mips64el || BR2_x86_64)
 	default y if BR2_TOOLCHAIN_USES_MUSL && \
-		(BR2_ARM_CPU_HAS_ARM || BR2_aarch64 || BR2_x86_64)
+		(!BR2_PACKAGE_LIBUNWIND_MUSL_CONTEXT_REQUIRED || \
+		 BR2_PACKAGE_LIBUCONTEXT_ARCH_SUPPORTS)
 
 config BR2_PACKAGE_LIBUNWIND
 	bool "libunwind"
@@ -27,6 +42,8 @@ config BR2_PACKAGE_LIBUNWIND
 	# forcefully links against libgcc_s, only available in dynamic
 	# linking configurations
 	depends on !BR2_STATIC_LIBS
+	select BR2_PACKAGE_LIBUCONTEXT if BR2_TOOLCHAIN_USES_MUSL && \
+		BR2_PACKAGE_LIBUNWIND_MUSL_CONTEXT_REQUIRED
 	help
 	  C API to determine the call-chain of a program.
 

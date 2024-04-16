@@ -1,0 +1,8 @@
+CONFIG_SYS_TEXT_BASE=0x60000000
+CONFIG_BOOTCOMMAND="setenv ipaddr 10.0.2.15 && setenv serverip 10.0.2.2 && tftp ${kernel_addr_r} zImage && tftp ${ramdisk_addr_r} rootfs.cpio.uboot && setenv bootargs console=ttyAMA0,115200 earlyprintk=serial,ttyAMA0,115200 && bootz ${kernel_addr_r} ${ramdisk_addr_r} ${fdt_addr}"
+CONFIG_SEMIHOSTING=y
+# Drop flash accesses
+CONFIG_ENV_IS_IN_FLASH=n
+CONFIG_MTD=n
+CONFIG_MTD_NOR_FLASH=n
+CONFIG_ENV_IS_NOWHERE=y

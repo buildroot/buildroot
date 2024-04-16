@@ -233,3 +233,41 @@ class Indent(_CheckFunction):
                 return ["{}:{}: should not be indented"
                         .format(self.filename, lineno),
                         text]
+
+
+class RedefinedConfig(_CheckFunction):
+    CONFIG = re.compile(r"^\s*(menu|)config\s+(BR2_\w+)\b")
+    IF = re.compile(r"^\s*if\s+([^#]*)\b")
+    ENDIF = re.compile(r"^\s*endif\b")
+
+    def before(self):
+        self.configs = {}
+        self.conditional = []
+
+    def check_line(self, lineno, text):
+        if _empty_or_comment(text) or _part_of_help_text(text):
+            return
+
+        m = self.IF.search(text)
+        if m is not None:
+            condition = m.group(1)
+            self.conditional.append(condition)
+            return
+
+        m = self.ENDIF.search(text)
+        if m is not None:
+            self.conditional.pop()
+            return
+
+        m = self.CONFIG.search(text)
+        if m is None:
+            return
+        config = m.group(2)
+
+        key = (config, ' AND '.join(self.conditional))
+        if key in self.configs.keys():
+            previous_line = self.configs[key]
+            return ["{}:{}: config {} redeclared (previous line: {})"
+                    .format(self.filename, lineno, config, previous_line),
+                    text]
+        self.configs[key] = lineno

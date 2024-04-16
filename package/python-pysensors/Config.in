@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_PYSENSORS
+	bool "python-pysensors"
+	select BR2_PACKAGE_LM_SENSORS # runtime
+	help
+	  Python bindings for libsensors.so from the lm-sensors project
+	  via ctypes. Supports API version 4, i.e. libsensors version
+	  3.x.
+
+	  https://pypi.org/project/PySensors

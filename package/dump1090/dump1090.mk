@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DUMP1090_VERSION = 7.2
+DUMP1090_VERSION = 9.0
 DUMP1090_SITE = $(call github,flightaware,dump1090,v$(DUMP1090_VERSION))
 DUMP1090_LICENSE = GPL-2.0+
 DUMP1090_LICENSE_FILES = LICENSE

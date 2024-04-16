@@ -18,6 +18,7 @@ config BR2_PACKAGE_WESTON
 	select BR2_PACKAGE_JPEG
 	select BR2_PACKAGE_LIBINPUT
 	select BR2_PACKAGE_LIBDRM
+	select BR2_PACKAGE_SEATD
 	# Runtime dependency
 	select BR2_PACKAGE_XKEYBOARD_CONFIG
 	select BR2_PACKAGE_WESTON_SHELL_DESKTOP if !BR2_PACKAGE_WESTON_HAS_SHELL
@@ -42,6 +43,15 @@ config BR2_PACKAGE_WESTON_DEFAULT_HEADLESS
 	bool "headless"
 	select BR2_PACKAGE_WESTON_HEADLESS
 
+config BR2_PACKAGE_WESTON_DEFAULT_RDP
+	bool "rdp"
+	depends on BR2_USE_MMU # freerdp, libglib2
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on BR2_USE_WCHAR # freerdp
+	depends on BR2_INSTALL_LIBSTDCPP # freerdp
+	depends on BR2_PACKAGE_XORG7 # freerdp-server
+	select BR2_PACKAGE_WESTON_RDP
+
 config BR2_PACKAGE_WESTON_DEFAULT_WAYLAND
 	bool "wayland (nested)"
 	select BR2_PACKAGE_WESTON_WAYLAND
@@ -60,6 +70,7 @@ config BR2_PACKAGE_WESTON_DEFAULT_COMPOSITOR
 	string
 	default "drm"      if BR2_PACKAGE_WESTON_DEFAULT_DRM
 	default "headless" if BR2_PACKAGE_WESTON_DEFAULT_HEADLESS
+	default "rdp"      if BR2_PACKAGE_WESTON_DEFAULT_RDP
 	default "wayland"  if BR2_PACKAGE_WESTON_DEFAULT_WAYLAND
 	default "x11"      if BR2_PACKAGE_WESTON_DEFAULT_X11
 
@@ -73,7 +84,9 @@ config BR2_PACKAGE_WESTON_RDP
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on BR2_USE_WCHAR # freerdp
 	depends on BR2_INSTALL_LIBSTDCPP # freerdp
+	depends on BR2_PACKAGE_XORG7 # freerdp-server
 	select BR2_PACKAGE_FREERDP
+	select BR2_PACKAGE_FREERDP_SERVER
 	help
 	  This enables the RDP backend, which allows accessing weston
 	  through the network with any RDP-compliant client.
@@ -87,10 +100,11 @@ config BR2_PACKAGE_WESTON_RDP
 	  /etc/freerdp/server/ so you may want to change them in a
 	  post-build script or a rootfs overlay.
 
-comment "RDP compositor needs a toolchain w/ wchar, C++"
+comment "RDP compositor needs a toolchain w/ wchar, C++, X.org"
 	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
-	depends on !BR2_USE_WCHAR || !BR2_INSTALL_LIBSTDCPP
+	depends on !BR2_USE_WCHAR || !BR2_INSTALL_LIBSTDCPP || \
+		!BR2_PACKAGE_XORG7
 
 config BR2_PACKAGE_WESTON_HEADLESS
 	bool "headless (testing) compositor"
@@ -109,15 +123,27 @@ comment "X11 (nested) compositor needs X.org enabled"
 
 config BR2_PACKAGE_WESTON_XWAYLAND
 	bool "XWayland support"
-	depends on BR2_PACKAGE_XORG7
 	depends on BR2_PACKAGE_LIBEPOXY
+	depends on BR2_PACKAGE_XORG7 # xwayland
+	depends on BR2_USE_MMU # xwayland
+	depends on !BR2_STATIC_LIBS # xwayland
+	depends on BR2_TOOLCHAIN_HAS_THREADS # xwayland
+	depends on !BR2_RISCV_32 # xwayland -> xlib_libxshmfence
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # xwayland -> xlib_libxshmfence
 	select BR2_PACKAGE_CAIRO
 	select BR2_PACKAGE_LIBXCB
 	select BR2_PACKAGE_XLIB_LIBX11
 	select BR2_PACKAGE_XLIB_LIBXCURSOR
+	select BR2_PACKAGE_XWAYLAND
 
 comment "XWayland support needs libepoxy and X.org enabled"
 	depends on !BR2_PACKAGE_XORG7 || !BR2_PACKAGE_LIBEPOXY
+
+comment "XWayland support needs a toolchain w/ threads, dynamic library"
+	depends on BR2_USE_MMU
+	depends on !BR2_RISCV_32
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
 
 # Weston needs at least one shell; this can be one of the bundled ones,
 # below, of from a third-party package, which should then select this.
@@ -143,6 +169,22 @@ config BR2_PACKAGE_WESTON_SHELL_KIOSK
 	default y
 	select BR2_PACKAGE_WESTON_HAS_SHELL
 
+config BR2_PACKAGE_WESTON_SCREENSHARE
+	bool "screenshare"
+	default y
+
+config BR2_PACKAGE_WESTON_SIMPLE_CLIENTS
+	bool "simple clients"
+	help
+	  Simple clients includes application such as:
+	  damage, dmabuf-feedback, dmabuf-egl, dmabuf-v4l, egl
+
+	  In the target filesystem, simple client program binaries are
+	  prefixed with "weston-simple-".
+
+	  Note: Weston has two sets of clients. See also the weston
+	  "demo clients" option.
+
 config BR2_PACKAGE_WESTON_DEMO_CLIENTS
 	bool "demo clients"
 	depends on BR2_USE_MMU # pango
@@ -156,6 +198,18 @@ config BR2_PACKAGE_WESTON_DEMO_CLIENTS
 	select BR2_PACKAGE_PANGO
 	help
 	  This enables the installation of Weston's demo clients.
+
+	  Demo clients includes application such as:
+	  clickdot, confine, content_protection, dnd, editor,
+	  eventdemo, flower, fullscreen, image, multi-resource,
+	  presentation-shm, resizor, scaler, smoke, stacking,
+	  subsurfaces, tablet, transformed...
+
+	  In the target filesystem, demo client program binaries are
+	  prefixed with "weston-".
+
+	  Note: Weston has two sets of clients. See also the weston
+	  "simple clients" option.
 
 comment "demo clients needs an OpenGL ES provider, an OpenEGL-capable Wayland backend and a toolchain w/ wchar, threads, C++, gcc >= 4.9"
 	depends on BR2_USE_MMU

@@ -1,0 +1,17 @@
+config BR2_PACKAGE_LIBSIGC2
+	bool "libsigc++ (2.x.x)"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # C++11
+	depends on BR2_INSTALL_LIBSTDCPP
+	help
+	  libsigc++ implements a typesafe callback system for standard
+	  C++. It allows you to define signals and to connect those
+	  signals to any callback function, either global or a member
+	  function, regardless of whether it is static or virtual.
+
+	  This is the last version before the API and ABI change
+	  introduced in 3.0.0 which requires C++17.
+
+	  https://libsigcplusplus.github.io/libsigcplusplus/
+
+comment "libsigc++ (2.x.x) needs a toolchain w/ C++, gcc >= 4.9"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9

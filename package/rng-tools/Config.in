@@ -2,12 +2,14 @@ config BR2_PACKAGE_RNG_TOOLS
 	bool "rng-tools"
 	# pthread_setaffinity_np
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
+	depends on BR2_USE_MMU # libcap
 	select BR2_PACKAGE_ARGP_STANDALONE if BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_MUSL
+	select BR2_PACKAGE_LIBCAP
 	select BR2_PACKAGE_OPENSSL
 	help
 	  Daemon to use hardware random number generators.
 
-	  http://sourceforge.net/projects/gkernel/
+	  https://github.com/nhorman/rng-tools
 
 if BR2_PACKAGE_RNG_TOOLS
 
@@ -35,7 +37,21 @@ config BR2_PACKAGE_RNG_TOOLS_NISTBEACON
 	  never be used for cryptographic purposes, or any use case in
 	  which random data should be known only by a single entity.
 
+config BR2_PACKAGE_RNG_TOOLS_QRYPT
+	bool "Qrypt Entropy Beacon support"
+	select BR2_PACKAGE_JANSSON
+	select BR2_PACKAGE_LIBCURL
+	help
+	  Enable Qrypt NIST-Beacon like entropy support.
+
+	  Entropy gathered from Qrypt server based entropy beacons. Like
+	  NIST, it should likely not be used directly in cryptographic
+	  operation, as the entropy may be intercepted over a network,
+	  but can provide copius amounts of entropy for non-crypto
+	  purposes.
+
 endif
 
 comment "rng-tools needs a toolchain w/ NPTL"
+	depends on BR2_USE_MMU
 	depends on !BR2_TOOLCHAIN_HAS_THREADS_NPTL

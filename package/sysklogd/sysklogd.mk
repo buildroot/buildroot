@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-SYSKLOGD_VERSION = 2.4.4
+SYSKLOGD_VERSION = 2.5.2
 SYSKLOGD_SITE = https://github.com/troglobit/sysklogd/releases/download/v$(SYSKLOGD_VERSION)
 SYSKLOGD_LICENSE = BSD-3-Clause
 SYSKLOGD_LICENSE_FILES = LICENSE
 SYSKLOGD_INSTALL_STAGING = YES
-SYSKLOGD_CPE_ID_VENDOR = sysklogd_project
+SYSKLOGD_CPE_ID_VALID = YES
 
 # Busybox install logger in /usr/bin, and syslogd in /sbin, so install in
 # the same locations so that busybox does not install its applets in there.

@@ -1,0 +1,7 @@
+config BR2_PACKAGE_LUA_UBJSON
+	bool "lua-ubjson"
+	select BR2_PACKAGE_LUA_COMPAT53 if BR2_PACKAGE_LUAINTERPRETER_ABI_VERSION_5_1 # runtime
+	help
+	  a pure Lua implementation of UBJSON.
+
+	  https://fperrad.frama.io/lua-ubjson/

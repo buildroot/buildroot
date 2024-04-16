@@ -1,0 +1,27 @@
+From 1c539d158ae73e867d0d30b8c3d27f48d742ed06 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 30 Mar 2024 09:18:15 +0100
+Subject: [PATCH] configure.ac: add neon version 0.33
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://savannah.nongnu.org/bugs/?65247
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 4f86cde..ede9b1e 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -36,7 +36,7 @@ AC_PROG_LN_S
+ # Checks for libraries.
+ AM_GNU_GETTEXT_VERSION(0.19.8)
+ AM_GNU_GETTEXT([external])
+-NE_REQUIRE_VERSIONS([0], [27 28 29 30 31 32])
++NE_REQUIRE_VERSIONS([0], [27 28 29 30 31 32 33])
+ DAV_CHECK_NEON
+ 
+ # Checks for header files.
+-- 
+2.43.0
+

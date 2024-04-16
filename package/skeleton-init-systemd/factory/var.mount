@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# Modelled after systemd's tmp.mount
+
+[Unit]
+Description=Buildroot /var tmpfs
+DefaultDependencies=no
+Conflicts=umount.target
+Before=local-fs.target umount.target
+After=swap.target
+
+[Mount]
+What=tmpfs
+Where=/var
+Type=tmpfs
+Options=nosuid,nodev,size=50%%,nr_inodes=1m

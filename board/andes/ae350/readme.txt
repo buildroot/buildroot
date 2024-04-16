@@ -30,12 +30,10 @@ Result of the build
 After building, you should obtain the following files:
 
   output/images/
-  |-- ae350.dtb
+  |-- ae350_ax45mp.dtb
   |-- boot.vfat
   |-- fw_dynamic.bin
   |-- fw_dynamic.elf
-  |-- fw_jump.bin
-  |-- fw_jump.elf
   |-- Image
   |-- rootfs.ext2
   |-- rootfs.ext4 -> rootfs.ext2

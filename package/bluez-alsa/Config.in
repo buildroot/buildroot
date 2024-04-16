@@ -13,6 +13,9 @@ config BR2_PACKAGE_BLUEZ_ALSA
 	select BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_AUDIO
 	select BR2_PACKAGE_LIBGLIB2
 	select BR2_PACKAGE_SBC
+	# samplerate ALSA plugin is needed for proper sample rate
+	# conversion with Bluetooth devices
+	select BR2_PACKAGE_LIBSAMPLERATE if BR2_PACKAGE_ALSA_PLUGINS
 	help
 	  Bluetooth Audio ALSA Backend.
 

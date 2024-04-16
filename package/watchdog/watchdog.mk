@@ -6,6 +6,7 @@
 
 WATCHDOG_VERSION = 5.16
 WATCHDOG_SITE = http://downloads.sourceforge.net/sourceforge/watchdog
+WATCHDOG_SELINUX_MODULES = watchdog
 WATCHDOG_LICENSE = GPL-2.0+
 WATCHDOG_LICENSE_FILES = COPYING
 # By default installs binaries in /usr/sbin/, but we want them in

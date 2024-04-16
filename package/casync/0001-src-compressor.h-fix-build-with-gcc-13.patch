@@ -1,0 +1,40 @@
+From 8db993c32f97188bdd6de4b2aa177fc513ee7e9f Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 15 Oct 2023 21:22:58 +0200
+Subject: [PATCH] src/compressor.h: fix build with gcc >= 13
+
+Fix the following build failure with gcc >= 13:
+
+In file included from ../src/compressor.c:3:
+../src/compressor.h:59:59: error: unknown type name 'size_t'
+   59 | int compressor_input(CompressorContext *c, const void *p, size_t sz);
+      |                                                           ^~~~~~
+../src/compressor.h:19:1: note: 'size_t' is defined in header '<stddef.h>'; did you forget to '#include <stddef.h>'?
+   18 | #include "cacompression.h"
+  +++ |+#include <stddef.h>
+   19 |
+
+Fixes:
+ - http://autobuild.buildroot.org/results/ab08f3b90d253db45643dd058b80ae1dd5f49d0f
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/systemd/casync/pull/270
+---
+ src/compressor.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/compressor.h b/src/compressor.h
+index 2c9f93b..ae2eb30 100644
+--- a/src/compressor.h
++++ b/src/compressor.h
+@@ -4,6 +4,7 @@
+ #define foocompresshorhfoo
+ 
+ #include <stdbool.h>
++#include <stddef.h>
+ 
+ #if HAVE_LIBLZMA
+ #  include <lzma.h>
+-- 
+2.42.0
+

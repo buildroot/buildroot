@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SLANG_VERSION = 2.3.2
+SLANG_VERSION = 2.3.3
 SLANG_SOURCE = slang-$(SLANG_VERSION).tar.bz2
 SLANG_SITE = http://www.jedsoft.org/releases/slang
 SLANG_LICENSE = GPL-2.0+
@@ -58,6 +58,15 @@ ifeq ($(BR2_STATIC_LIBS),y)
 SLANG_MAKE_OPTS = static
 SLANG_INSTALL_STAGING_OPTS = DESTDIR=$(STAGING_DIR) install-static
 SLANG_INSTALL_TARGET_OPTS = DESTDIR=$(TARGET_DIR) install-static
+endif
+
+ifeq ($(BR2_PACKAGE_SLANG_SLSH),)
+define SLANG_REMOVE_SLSH
+	rm -rf $(TARGET_DIR)/etc/slsh.rc \
+		$(TARGET_DIR)/usr/share/slsh \
+		$(TARGET_DIR)/usr/bin/slsh
+endef
+SLANG_POST_INSTALL_TARGET_HOOKS += SLANG_REMOVE_SLSH
 endif
 
 $(eval $(autotools-package))

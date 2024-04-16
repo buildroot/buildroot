@@ -11,6 +11,7 @@ config BR2_PACKAGE_ZFS
 	depends on BR2_PACKAGE_HAS_UDEV
 	depends on BR2_USE_MMU  # util-linux (libblkid)
 	depends on BR2_TOOLCHAIN_HAS_THREADS  # libtirpc
+	select BR2_LINUX_NEEDS_MODULES
 	select BR2_PACKAGE_UTIL_LINUX
 	select BR2_PACKAGE_UTIL_LINUX_LIBBLKID
 	select BR2_PACKAGE_UTIL_LINUX_LIBUUID

@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-ZEROMQ_VERSION = 4.3.4
+ZEROMQ_VERSION = 4.3.5
 ZEROMQ_SITE = https://github.com/zeromq/libzmq/releases/download/v$(ZEROMQ_VERSION)
 ZEROMQ_INSTALL_STAGING = YES
 ZEROMQ_CONF_OPTS = --disable-Werror --without-documentation
-ZEROMQ_LICENSE = LGPL-3.0+ with exceptions
-ZEROMQ_LICENSE_FILES = COPYING COPYING.LESSER
+ZEROMQ_LICENSE = MPL-2.0
+ZEROMQ_LICENSE_FILES = LICENSE
 ZEROMQ_CPE_ID_VENDOR = zeromq
 ZEROMQ_CPE_ID_PRODUCT = libzmq
 

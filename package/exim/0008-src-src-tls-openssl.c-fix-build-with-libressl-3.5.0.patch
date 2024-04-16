@@ -1,0 +1,43 @@
+From 88f45502272a9a674948204e460ebe90202827d4 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 11 Feb 2024 21:45:42 +0100
+Subject: [PATCH] src/src/tls-openssl.c: fix build with libressl >= 3.5.0
+
+OCSP_BASICRESP is an opaque structure since libressl 3.5.0 and
+https://github.com/libressl/openbsd/commit/57442b0028fb09287793f279ee57ebb38e9ab954
+resulting in the following build failure since version 4.97 and
+https://git.exim.org/exim.git/commit/6bf0021993572586f031ac7d973ca33358c2dac8:
+
+In file included from tls.c:473:
+tls-openssl.c: In function 'tls_client_stapling_cb':
+tls-openssl.c:2652:11: error: invalid use of incomplete typedef 'OCSP_BASICRESP' {aka 'struct ocsp_basic_response_st'}
+ 2652 |         bs->certs
+      |           ^~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/869fde62128d7b0c65e0ac596a3a3f69b332583d
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://bugs.exim.org/show_bug.cgi?id=3074
+---
+ src/src/tls-openssl.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/tls-openssl.c b/src/tls-openssl.c
+index 237303ba9..c7f94c160 100644
+--- a/src/tls-openssl.c
++++ b/src/tls-openssl.c
+@@ -98,6 +98,10 @@ change this guard and punt the issue for a while longer. */
+ # define EXIM_HAVE_OPENSSL_CIPHER_GET_ID
+ #endif
+ 
++#if LIBRESSL_VERSION_NUMBER >= 0x3050000fL
++# define EXIM_HAVE_OPENSSL_OCSP_RESP_GET0_CERTS
++#endif
++
+ #if !defined(LIBRESSL_VERSION_NUMBER) && (OPENSSL_VERSION_NUMBER >= 0x030000000L)
+ # define EXIM_HAVE_EXPORT_CHNL_BNGNG
+ # define EXIM_HAVE_OPENSSL_X509_STORE_GET1_ALL_CERTS
+-- 
+2.43.0
+

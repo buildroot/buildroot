@@ -1,0 +1,51 @@
+From a4a3d9b012c12cd8aaa2526f0eacdcffcdd9f8f1 Mon Sep 17 00:00:00 2001
+From: Roberto Oliveira <robertoguimaraes8@gmail.com>
+Date: Tue, 16 May 2023 20:01:18 +0200
+Subject: [PATCH] Include limits.h
+
+vdr package uses some macros like HOST_NAME_MAX, NAME_MAX, which are defined
+in limits.h.
+Needs to be explicitly included on ppc64le and for all archs for debug build.
+
+Downloaded from
+https://git.alpinelinux.org/aports/tree/community/vdr/include-missing-limits.patch
+
+Initial commits:
+https://git.alpinelinux.org/aports/commit/?id=c9d8942ccf4825fd734b5f37157a49fc4f0b4339
+https://git.alpinelinux.org/aports/commit/?id=47965644c390b1be1117769b1e08b31858267e9a
+
+Upstream: https://www.linuxtv.org/pipermail/vdr/2023-May/029743.html
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ config.h | 1 +
+ tools.c  | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/config.h b/config.h
+index 72dd3d2a..b9ea769f 100644
+--- a/config.h
++++ b/config.h
+@@ -19,6 +19,7 @@
+ #include "i18n.h"
+ #include "font.h"
+ #include "tools.h"
++#include <limits.h>
+ 
+ // VDR's own version number:
+ 
+diff --git a/tools.c b/tools.c
+index 8b161eec..56a2e0dd 100644
+--- a/tools.c
++++ b/tools.c
+@@ -27,6 +27,7 @@ extern "C" {
+ #include <utime.h>
+ #include "i18n.h"
+ #include "thread.h"
++#include <limits.h>
+ 
+ int SysLogLevel = 3;
+ 
+-- 
+2.39.2
+

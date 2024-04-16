@@ -1,0 +1,31 @@
+From aee92881ba80cf2ae7381d19f09e7fbeda57974c Mon Sep 17 00:00:00 2001
+From: Petr Vorel <petr.vorel@gmail.com>
+Date: Tue, 5 Dec 2023 23:20:33 +0100
+Subject: [PATCH] support/backend_sqlite.c: Add missing <sys/syscall.h>
+
+This fixes build on systems which actually needs getrandom()
+(to get SYS_getrandom).
+
+Fixes: f92fd6ca ("support/backend_sqlite.c: Add getrandom() fallback")
+Fixes: http://autobuild.buildroot.net/results/c5fde6099a8b228a8bdc3154d1e47dfa192e94ed/
+Reported-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+Upstream: https://lore.kernel.org/linux-nfs/20231205223543.31443-2-pvorel@suse.cz/
+---
+ support/reexport/backend_sqlite.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/support/reexport/backend_sqlite.c b/support/reexport/backend_sqlite.c
+index 0eb5ea37..54dfe447 100644
+--- a/support/reexport/backend_sqlite.c
++++ b/support/reexport/backend_sqlite.c
+@@ -7,6 +7,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <sys/syscall.h>
+ #include <unistd.h>
+
+ #ifdef HAVE_GETRANDOM
+--
+2.43.0

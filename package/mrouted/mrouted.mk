@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MROUTED_VERSION = 4.4
+MROUTED_VERSION = 4.5
 MROUTED_SITE = \
 	https://github.com/troglobit/mrouted/releases/download/$(MROUTED_VERSION)
 MROUTED_DEPENDENCIES = host-bison
@@ -18,6 +18,7 @@ define MROUTED_INSTALL_INIT_SYSV
 endef
 
 define MROUTED_INSTALL_INIT_SYSTEMD
+	mkdir -p $(TARGET_DIR)/var/lib/misc/
 	$(INSTALL) -D -m 644 $(@D)/mrouted.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/mrouted.service
 endef

@@ -1,10 +1,10 @@
 config BR2_PACKAGE_GSSDP
 	bool "gssdp"
-	depends on BR2_USE_WCHAR # glib2, libsoup
-	depends on BR2_TOOLCHAIN_HAS_THREADS # glib2, libsoup
-	depends on BR2_USE_MMU # glib2, libsoup
+	depends on BR2_USE_WCHAR # glib2, libsoup3
+	depends on BR2_TOOLCHAIN_HAS_THREADS # glib2, libsoup3
+	depends on BR2_USE_MMU # glib2, libsoup3
 	select BR2_PACKAGE_LIBGLIB2
-	select BR2_PACKAGE_LIBSOUP
+	select BR2_PACKAGE_LIBSOUP3
 	help
 	  GSSDP implements resource discovery and announcement over
 	  SSDP.

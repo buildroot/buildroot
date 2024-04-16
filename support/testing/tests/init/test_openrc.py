@@ -44,3 +44,16 @@ class TestInitSystemOpenrcRwFull(InitSystemOpenrcBase):
     def test_run(self):
         self.start_emulator("ext2")
         self.check_init()
+
+
+class TestInitSystemOpenrcMergedUsrFull(InitSystemOpenrcBase):
+    config = InitSystemOpenrcBase.config + \
+        """
+        BR2_ROOTFS_MERGED_USR=y
+        BR2_SYSTEM_DHCP="eth0"
+        BR2_TARGET_ROOTFS_EXT2=y
+        """
+
+    def test_run(self):
+        self.start_emulator("ext2")
+        self.check_init()

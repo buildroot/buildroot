@@ -1,0 +1,40 @@
+From ba750812f68f0f3314494558496c23f934f8faff Mon Sep 17 00:00:00 2001
+From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+Date: Thu, 22 Feb 2024 11:02:46 -0500
+Subject: libtracefs utest: Add PATH_MAX if it is not already defined
+
+In some setups PATH_MAX may not be defined (it is usually defined in
+linux/limits.h), but we just use PATH_MAX as something to hold the paths
+to the tracing files. In that case, just define it to 1024 if it's not
+already defined.
+
+Link: https://lore.kernel.org/linux-trace-devel/20240222-utest-fixes-v2-1-7b8ee8dca0b7@gmail.com/
+
+Fixes: 845f16976929 ("libtracefs: Add unit tests")
+Reported-by: Miko Larsson <mikoxyzzz@gmail.com>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+Upstream: https://git.kernel.org/pub/scm/libs/libtrace/libtracefs.git/commit/?id=ba750812f68f0f3314494558496c23f934f8faff
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ utest/tracefs-utest.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/utest/tracefs-utest.c b/utest/tracefs-utest.c
+index 963fac7..07ecd32 100644
+--- a/utest/tracefs-utest.c
++++ b/utest/tracefs-utest.c
+@@ -26,6 +26,10 @@
+ 
+ #define gettid() syscall(__NR_gettid)
+ 
++#ifndef PATH_MAX
++#define PATH_MAX 1024
++#endif
++
+ #define TRACEFS_SUITE		"tracefs library"
+ #define TEST_INSTANCE_NAME	"cunit_test_iter"
+ #define TEST_TRACE_DIR		"/tmp/trace_utest.XXXXXX"
+-- 
+cgit 1.2.3-korg
+

@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-LIBFREEGLUT_VERSION = 3.2.2
+LIBFREEGLUT_VERSION = 3.4.0
 LIBFREEGLUT_SOURCE = freeglut-$(LIBFREEGLUT_VERSION).tar.gz
-LIBFREEGLUT_SITE = http://downloads.sourceforge.net/freeglut
+LIBFREEGLUT_SITE = https://github.com/FreeGLUTProject/freeglut/releases/download/v$(LIBFREEGLUT_VERSION)
 LIBFREEGLUT_LICENSE = MIT
 LIBFREEGLUT_LICENSE_FILES = COPYING
 LIBFREEGLUT_INSTALL_STAGING = YES

@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XLIB_LIBFS_VERSION = 1.0.8
-XLIB_LIBFS_SOURCE = libFS-$(XLIB_LIBFS_VERSION).tar.bz2
-XLIB_LIBFS_SITE = http://xorg.freedesktop.org/releases/individual/lib
+XLIB_LIBFS_VERSION = 1.0.9
+XLIB_LIBFS_SOURCE = libFS-$(XLIB_LIBFS_VERSION).tar.xz
+XLIB_LIBFS_SITE = https://xorg.freedesktop.org/archive/individual/lib
 XLIB_LIBFS_LICENSE = MIT
 XLIB_LIBFS_LICENSE_FILES = COPYING
 XLIB_LIBFS_CPE_ID_VENDOR = x

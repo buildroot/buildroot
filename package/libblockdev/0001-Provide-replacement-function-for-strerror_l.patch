@@ -1,71 +1,63 @@
-From ccf93148aa3587dd98a02e253cdc42a7af14df1e Mon Sep 17 00:00:00 2001
+From 01883cc14904e55d90955ad7cd9fc55bc18364ac Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Date: Sat, 29 Aug 2020 16:04:15 +0200
+Date: Sat, 20 Jan 2024 13:29:28 +0100
 Subject: [PATCH] Provide replacement function for strerror_l()
 
 strerror_l() is not implemented in some C libraries, such as uClibc,
-so let's provide a simple replacement function that falls back on
-strerror().
+so let's provide a simple replacement define that falls back on
+strerror() in utils.h header and include it where missing.
+
+Upstream: N/A since it's due uclibc only
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-[Upstream status:
-https://github.com/storaged-project/libblockdev/pull/701]
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+[Giulio: ported to version 3.0 and 3.1]
 ---
- configure.ac         | 2 ++
- src/plugins/crypto.c | 7 +++++++
- src/utils/module.c   | 8 ++++++++
- 3 files changed, 17 insertions(+)
+ configure.ac       | 2 ++
+ src/utils/module.c | 1 +
+ src/utils/utils.h  | 4 ++++
+ 3 files changed, 7 insertions(+)
 
 diff --git a/configure.ac b/configure.ac
-index c2d22c2..36aeb51 100644
+index 02b26e3e..67341134 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -137,6 +137,8 @@ AC_CHECK_HEADERS([dlfcn.h string.h unistd.h sys/fcntl.h sys/ioctl.h linux/random
+@@ -120,6 +120,8 @@ AC_CHECK_HEADERS([dlfcn.h string.h unistd.h sys/fcntl.h sys/ioctl.h linux/random
                   [LIBBLOCKDEV_SOFT_FAILURE([Header file $ac_header not found.])],
                   [])
  
 +AC_CHECK_FUNCS([strerror_l])
 +
- AC_ARG_WITH([bcache],
-     AS_HELP_STRING([--with-bcache], [support bcache @<:@default=yes@:>@]),
+ AC_ARG_WITH([escrow],
+     AS_HELP_STRING([--with-escrow], [support escrow @<:@default=yes@:>@]),
      [],
-diff --git a/src/plugins/crypto.c b/src/plugins/crypto.c
-index f4a2e8f..c1bd7b5 100644
---- a/src/plugins/crypto.c
-+++ b/src/plugins/crypto.c
-@@ -52,6 +52,13 @@
+diff --git a/src/utils/module.c b/src/utils/module.c
+index 6557c3ab..5893f0ac 100644
+--- a/src/utils/module.c
++++ b/src/utils/module.c
+@@ -28,6 +28,7 @@
+ #include "module.h"
+ #include "exec.h"
+ #include "logging.h"
++#include "utils.h"
  
  #define UNUSED __attribute__((unused))
  
+diff --git a/src/utils/utils.h b/src/utils/utils.h
+index 801a8b6e..b2bdf0d0 100644
+--- a/src/utils/utils.h
++++ b/src/utils/utils.h
+@@ -9,6 +9,10 @@
+ #include "dbus.h"
+ #include "logging.h"
+ 
 +#if !defined(HAVE_STRERROR_L)
-+static char *strerror_l(int errnum, locale_t locale UNUSED)
-+{
-+	return strerror(errnum);
-+}
++#define strerror_l(errnum, locale)      strerror(errnum)
 +#endif
 +
  /**
-  * SECTION: crypto
-  * @short_description: plugin for operations with encrypted devices
-diff --git a/src/utils/module.c b/src/utils/module.c
-index 9750e24..086bec0 100644
---- a/src/utils/module.c
-+++ b/src/utils/module.c
-@@ -27,6 +27,14 @@
- 
- #include "module.h"
- 
-+#define UNUSED __attribute__((unused))
-+
-+#if !defined(HAVE_STRERROR_L)
-+static char *strerror_l(int errnum, locale_t locale UNUSED)
-+{
-+	return strerror(errnum);
-+}
-+#endif
- 
- /**
-  * bd_utils_module_error_quark: (skip)
+  * SECTION: utils
+  * @short_description: library providing utility functions used by the blockdev library and its plugins
 -- 
-2.26.2
+2.34.1
 

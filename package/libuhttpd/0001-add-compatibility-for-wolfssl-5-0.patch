@@ -1,0 +1,30 @@
+From 73aa4ef762b2de67bc8c7c260bd36b34fdb91e63 Mon Sep 17 00:00:00 2001
+From: "Sergey V. Lobanov" <sergey@lobanov.in>
+Date: Mon, 3 Jan 2022 19:36:52 +0300
+Subject: [PATCH] add compatibility for wolfssl >= 5.0
+
+NTRU support has been removed in wolfssl 5.0 so it is required to
+mask NTRU specific code if wolfssl >= 5.0
+
+Signed-off-by: Sergey V. Lobanov <sergey at lobanov.in>
+[Retrieved from:
+https://github.com/zhaojh329/ssl/commit/73aa4ef762b2de67bc8c7c260bd36b34fdb91e63]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ openssl.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/ssl/openssl.c b/src/ssl/openssl.c
+index 5a49267..278bab5 100644
+--- a/src/ssl/openssl.c
++++ b/src/ssl/openssl.c
+@@ -336,7 +336,9 @@ static bool handle_wolfssl_asn_error(void *ssl, int r,
+     case ASN_SIG_HASH_E:
+     case ASN_SIG_KEY_E:
+     case ASN_DH_KEY_E:
++#if LIBWOLFSSL_VERSION_HEX < 0x05000000
+     case ASN_NTRU_KEY_E:
++#endif
+     case ASN_CRIT_EXT_E:
+     case ASN_ALT_NAME_E:
+     case ASN_NO_PEM_HEADER:

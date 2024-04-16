@@ -1,0 +1,159 @@
+From fb44386acc2497ac250364bc08cebc26ded816cf Mon Sep 17 00:00:00 2001
+From: Carlo Landmeter <clandmeter@gmail.com>
+Date: Tue, 16 May 2023 19:57:39 +0200
+Subject: [PATCH] Fix musl build
+
+Downloaded from
+https://git.alpinelinux.org/aports/tree/community/vdr/musl-compat.patch
+
+Initial commit:
+https://git.alpinelinux.org/aports/commit/?id=140248605cee4a0160f80b47ce77a823be2f740a
+
+Upstream: https://www.linuxtv.org/pipermail/vdr/2023-May/029744.html
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ i18n.h   |  2 +-
+ osd.c    |  2 +-
+ thread.c |  4 +++-
+ tools.c  |  4 ++--
+ tools.h  | 14 ++++++++++++--
+ vdr.c    |  6 ++++++
+ 6 files changed, 25 insertions(+), 7 deletions(-)
+
+diff --git a/i18n.h b/i18n.h
+index 03deb6f2..85ce4077 100644
+--- a/i18n.h
++++ b/i18n.h
+@@ -46,7 +46,7 @@ const cStringList *I18nLanguages(void);
+    ///< have an actual locale installed. The rest are just dummy entries
+    ///< to allow having three letter language codes for other languages
+    ///< that have no actual locale on this system.
+-const char *I18nTranslate(const char *s, const char *Plugin = NULL) __attribute_format_arg__(1);
++const char *I18nTranslate(const char *s, const char *Plugin = NULL)  __attribute__((__format_arg__ (1)));
+    ///< Translates the given string (with optional Plugin context) into
+    ///< the current language. If no translation is available, the original
+    ///< string will be returned.
+diff --git a/osd.c b/osd.c
+index 47bda686..0d360c81 100644
+--- a/osd.c
++++ b/osd.c
+@@ -12,7 +12,7 @@
+ #include <stdlib.h>
+ #include <sys/ioctl.h>
+ #include <sys/stat.h>
+-#include <sys/unistd.h>
++#include <unistd.h>
+ #include "device.h"
+ #include "tools.h"
+ 
+diff --git a/thread.c b/thread.c
+index 93eb8c0d..6e854541 100644
+--- a/thread.c
++++ b/thread.c
+@@ -160,7 +160,9 @@ cRwLock::cRwLock(bool PreferWriter)
+   writeLockThreadId = 0;
+   pthread_rwlockattr_t attr;
+   pthread_rwlockattr_init(&attr);
++#if defined(__GLIBC__)
+   pthread_rwlockattr_setkind_np(&attr, PreferWriter ? PTHREAD_RWLOCK_PREFER_WRITER_NP : PTHREAD_RWLOCK_PREFER_READER_NP);
++#endif
+   pthread_rwlock_init(&rwlock, &attr);
+ }
+ 
+@@ -210,7 +212,7 @@ cMutex::cMutex(void)
+   locked = 0;
+   pthread_mutexattr_t attr;
+   pthread_mutexattr_init(&attr);
+-  pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK_NP);
++  pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK);
+   pthread_mutex_init(&mutex, &attr);
+ }
+ 
+diff --git a/tools.c b/tools.c
+index d04033b1..8b161eec 100644
+--- a/tools.c
++++ b/tools.c
+@@ -672,7 +672,7 @@ char *ReadLink(const char *FileName)
+ {
+   if (!FileName)
+      return NULL;
+-  char *TargetName = canonicalize_file_name(FileName);
++  char *TargetName = realpath(FileName, NULL);
+   if (!TargetName) {
+      if (errno == ENOENT) // file doesn't exist
+         TargetName = strdup(FileName);
+@@ -1562,7 +1562,7 @@ cReadDir::~cReadDir()
+ struct dirent *cReadDir::Next(void)
+ {
+   if (directory) {
+-#if !__GLIBC_PREREQ(2, 24) // readdir_r() is deprecated as of GLIBC 2.24
++#if __GLIBC__
+      while (readdir_r(directory, &u.d, &result) == 0 && result) {
+ #else
+      while ((result = readdir(directory)) != NULL) {
+diff --git a/tools.h b/tools.h
+index ff6169ee..60eda179 100644
+--- a/tools.h
++++ b/tools.h
+@@ -28,6 +28,16 @@
+ #include <sys/types.h>
+ #include "thread.h"
+ 
++#ifndef ACCESSPERMS
++# define ACCESSPERMS (S_IRWXU|S_IRWXG|S_IRWXO) /* 0777 */
++#endif
++#ifndef ALLPERMS
++# define ALLPERMS (S_ISUID|S_ISGID|S_ISVTX|S_IRWXU|S_IRWXG|S_IRWXO)/* 07777 */
++#endif
++#ifndef DEFFILEMODE
++# define DEFFILEMODE (S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH)/* 0666*/
++#endif
++
+ typedef unsigned char uchar;
+ 
+ extern int SysLogLevel;
+@@ -444,7 +454,7 @@ class cReadDir {
+ private:
+   DIR *directory;
+   struct dirent *result;
+-#if !__GLIBC_PREREQ(2, 24) // readdir_r() is deprecated as of GLIBC 2.24
++#if __GLIBC__
+   union { // according to "The GNU C Library Reference Manual"
+     struct dirent d;
+     char b[offsetof(struct dirent, d_name) + NAME_MAX + 1];
+@@ -818,7 +828,7 @@ public:
+         data[i] = T(0);
+     size = 0;
+   }
+-  void Sort(__compar_fn_t Compare)
++  void Sort(int (*Compare)(const void *, const void *))
+   {
+     qsort(data, size, sizeof(T), Compare);
+   }
+diff --git a/vdr.c b/vdr.c
+index 1bdc51ab..0f426e61 100644
+--- a/vdr.c
++++ b/vdr.c
+@@ -661,12 +661,18 @@ int main(int argc, char *argv[])
+         }
+      }
+   else if (Terminal) {
++#ifdef __GLIBC__
+      // Claim new controlling terminal
+      stdin  = freopen(Terminal, "r", stdin);
+      stdout = freopen(Terminal, "w", stdout);
+      stderr = freopen(Terminal, "w", stderr);
+      HasStdin = true;
+      tcgetattr(STDIN_FILENO, &savedTm);
++#else
++     // stdin, stdout, stderr are declared FILE const* by musl C library
++     fprintf(stderr, "Option '-t' is only supported if VDR has been built against glibc.\n");
++     return 2;
++#endif
+      }
+ 
+   // Set user id in case we were started as root:
+-- 
+2.39.2
+

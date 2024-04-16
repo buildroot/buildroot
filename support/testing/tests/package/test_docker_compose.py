@@ -4,6 +4,8 @@ import infra.basetest
 
 
 class TestDockerCompose(infra.basetest.BRTest):
+    scripts = ["conf/docker-compose.yml",
+               "tests/package/sample_python_docker.py"]
     config = \
         """
         BR2_x86_64=y
@@ -15,9 +17,11 @@ class TestDockerCompose(infra.basetest.BRTest):
         BR2_ROOTFS_POST_SCRIPT_ARGS="{}"
         BR2_LINUX_KERNEL=y
         BR2_LINUX_KERNEL_CUSTOM_VERSION=y
-        BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="4.19.204"
+        BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="4.19.262"
         BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG=y
         BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE="{}"
+        BR2_PACKAGE_PYTHON3=y
+        BR2_PACKAGE_PYTHON_DOCKER=y
         BR2_PACKAGE_CA_CERTIFICATES=y
         BR2_PACKAGE_DOCKER_CLI=y
         BR2_PACKAGE_DOCKER_COMPOSE=y
@@ -27,7 +31,7 @@ class TestDockerCompose(infra.basetest.BRTest):
         # BR2_TARGET_ROOTFS_TAR is not set
         """.format(
             infra.filepath("tests/package/copy-sample-script-to-target.sh"),
-            infra.filepath("conf/docker-compose.yml"),
+            " ".join([infra.filepath(i) for i in scripts]),
             infra.filepath("conf/docker-compose-kernel.config"))
 
     def wait_for_dockerd(self):
@@ -40,11 +44,14 @@ class TestDockerCompose(infra.basetest.BRTest):
 
     def docker_compose_test(self):
         # will download container if not available, which may take some time
-        self.assertRunOk('docker-compose up -d', 120)
+        self.assertRunOk('docker compose up -d --quiet-pull', 120)
         # container may take some time to start
-        self.assertRunOk('while ! docker inspect root_busybox_1 2>&1 >/dev/null; do sleep 1; done', 120)
-        self.assertRunOk('wget -O /tmp/busybox http://127.0.0.1/busybox', 120)
+        self.assertRunOk('while ! docker inspect root-busybox-1 2>&1 >/dev/null; do sleep 1; done', 120)
+        self.assertRunOk('wget -q -O /tmp/busybox http://127.0.0.1/busybox', 120)
         self.assertRunOk('cmp /bin/busybox /tmp/busybox', 120)
+
+    def python_docker_test(self):
+        self.assertRunOk('python3 ./sample_python_docker.py', 120)
 
     def test_run(self):
         kernel = os.path.join(self.builddir, "images", "bzImage")
@@ -62,3 +69,4 @@ class TestDockerCompose(infra.basetest.BRTest):
         self.wait_for_dockerd()
         self.docker_test()
         self.docker_compose_test()
+        self.python_docker_test()

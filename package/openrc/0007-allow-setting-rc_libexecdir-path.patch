@@ -1,0 +1,44 @@
+From 89c42e7e0d8d5913789a76b007ed6a0c43078c63 Mon Sep 17 00:00:00 2001
+From: artoo <artoo@artixlinux.org>
+Date: Wed, 8 Sep 2021 22:41:58 +0200
+Subject: [PATCH] allow setting rc_libexecdir path
+
+  - Allow to change the rc dir name of the rc_libexecdir path
+  - Introduce a librcdir option for override with value 'rc'
+
+Upstream: https://github.com/OpenRC/openrc/pull/443
+
+Signed-off-by: artoo <artoo@artixlinux.org>
+[Adam: update for 0.50]
+Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
+---
+ meson.build       | 2 +-
+ meson_options.txt | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 5b3f8fa..40d4be1 100644
+--- a/meson.build
++++ b/meson.build
+@@ -102,7 +102,7 @@ if os == 'Linux' and libexecdir == 'libexec'
+   libexecdir = 'lib'
+ endif
+ libexecdir = rootprefix / libexecdir
+-rc_libexecdir = libexecdir / 'rc'
++rc_libexecdir = libexecdir / get_option('librcdir')
+ rc_bindir = rc_libexecdir / 'bin'
+ rc_sbindir = rc_libexecdir / 'sbin'
+ rc_shdir = rc_libexecdir / 'sh'
+diff --git a/meson_options.txt b/meson_options.txt
+index 2c74152..d2f67e4 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -37,3 +37,5 @@ option('termcap', type : 'combo',
+   description : 'the termcap library to use')
+ option('zsh-completions', type : 'boolean',
+   description : 'install zsh completions')
++option('librcdir', type : 'string', value : 'rc',
++  description : 'default location of rc libexec dir')
+-- 
+2.41.0
+

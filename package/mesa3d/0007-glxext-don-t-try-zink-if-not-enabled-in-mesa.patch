@@ -1,0 +1,42 @@
+From 83b4ff6616708bd7ba5981d22cd5211ca6787d58 Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@smile.fr>
+Date: Wed, 24 Jan 2024 14:28:32 +0100
+Subject: [PATCH] glxext: don't try zink if not enabled in mesa
+
+Commit 7d9ea77b459 ("glx: add automatic zink fallback loading between hw and sw drivers")
+added an automatic zink fallback even when the zink gallium is not
+enabled at build time.
+
+It leads to unexpected error log while loading drisw driver and
+zink is not installed on the rootfs:
+
+  MESA-LOADER: failed to open zink: /usr/lib/dri/zink_dri.so
+
+Fixes: 7d9ea77b459 ("glx: add automatic zink fallback loading between hw and sw drivers")
+
+Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/27478
+
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ src/glx/glxext.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/glx/glxext.c b/src/glx/glxext.c
+index 39d5f08bdcf..e106eb40046 100644
+--- a/src/glx/glxext.c
++++ b/src/glx/glxext.c
+@@ -904,9 +904,11 @@ __glXInitialize(Display * dpy)
+ #endif /* HAVE_DRI3 */
+       if (!debug_get_bool_option("LIBGL_DRI2_DISABLE", false))
+          dpyPriv->dri2Display = dri2CreateDisplay(dpy);
++#if defined(HAVE_ZINK)
+       if (!dpyPriv->dri3Display && !dpyPriv->dri2Display)
+          try_zink = !debug_get_bool_option("LIBGL_KOPPER_DISABLE", false) &&
+                     !getenv("GALLIUM_DRIVER");
++#endif /* HAVE_ZINK */
+    }
+ #endif /* GLX_USE_DRM */
+    if (glx_direct)
+-- 
+2.43.0
+

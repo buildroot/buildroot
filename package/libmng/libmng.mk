@@ -14,7 +14,7 @@ LIBMNG_LICENSE = libmng license
 LIBMNG_LICENSE_FILES = LICENSE
 
 ifeq ($(BR2_PACKAGE_LCMS2),y)
-LIBMNG_DEPDENDENCIES += lcms2
+LIBMNG_DEPENDENCIES += lcms2
 else
 LIBMNG_CONF_OPTS += --without-lcms2
 endif

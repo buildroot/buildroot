@@ -1,0 +1,42 @@
+From cc9d40b7cdbd3e15ccaa324a0dda1680ef9dea13 Mon Sep 17 00:00:00 2001
+From: Jacob Heider <jacob@pkgx.dev>
+Date: Wed, 17 Jan 2024 11:49:26 -0500
+Subject: [PATCH] pam_namespace: include stdint.h
+
+pam_namespace.c makes use of SIZE_MAX but doesn't include stdint.h,
+resulting in the following build failures on 1.6.0:
+
+  pam_namespace.c: In function 'process_line':
+  pam_namespace.c:649:41: error: 'SIZE_MAX' undeclared (first use in this function)
+    649 |         if (count > UINT_MAX || count > SIZE_MAX / sizeof(uid_t)) {
+        |                                         ^~~~~~~~
+  pam_namespace.c:41:1: note: 'SIZE_MAX' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+     40 | #include "argv_parse.h"
+    +++ |+#include <stdint.h>
+     41 |
+  pam_namespace.c:649:41: note: each undeclared identifier is reported only once for each function it appears in
+    649 |         if (count > UINT_MAX || count > SIZE_MAX / sizeof(uid_t)) {
+        |                                         ^~~~~~~~
+
+Fixes: v1.6.0~100 ("pam_namespace: validate amount of uids in config")
+Resolves: https://github.com/linux-pam/linux-pam/issues/733
+
+Upstream: https://github.com/linux-pam/linux-pam/commit/cc9d40b7cdbd3e15ccaa324a0dda1680ef9dea13
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ modules/pam_namespace/pam_namespace.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/modules/pam_namespace/pam_namespace.c b/modules/pam_namespace/pam_namespace.c
+index f72d67189..b16731c22 100644
+--- a/modules/pam_namespace/pam_namespace.c
++++ b/modules/pam_namespace/pam_namespace.c
+@@ -34,6 +34,8 @@
+ 
+ #define _ATFILE_SOURCE
+ 
++#include "config.h"
++#include <stdint.h>
+ #include "pam_cc_compat.h"
+ #include "pam_inline.h"
+ #include "pam_namespace.h"

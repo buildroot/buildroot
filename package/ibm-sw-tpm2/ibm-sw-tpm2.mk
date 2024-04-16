@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-IBM_SW_TPM2_VERSION = 1661
-IBM_SW_TPM2_SOURCE = ibmtpm$(IBM_SW_TPM2_VERSION).tar.gz
-IBM_SW_TPM2_SITE = https://sourceforge.net/projects/ibmswtpm2/files
+IBM_SW_TPM2_VERSION = 5452af422edeff70fcae8ea99dd28a0922051d7b
+IBM_SW_TPM2_SITE = https://git.code.sf.net/p/ibmswtpm2/tpm2
+IBM_SW_TPM2_SITE_METHOD = git
 IBM_SW_TPM2_LICENSE = BSD-3-Clause
 IBM_SW_TPM2_LICENSE_FILES = LICENSE
 IBM_SW_TPM2_DEPENDENCIES = openssl

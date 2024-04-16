@@ -1,0 +1,61 @@
+From 3c441910aa25f57df2a4db55f75f5d99cea86620 Mon Sep 17 00:00:00 2001
+From: Sergei Trofimovich <slyich@gmail.com>
+Date: Sun, 8 Jan 2023 18:24:53 +0000
+Subject: [PATCH] add missing <cstdint> include
+
+Upcoming `gcc-13` made `<string>` leaner and does not include `<cstdint>`
+implicitly anymore. As a result build fails without the change as:
+
+    [  2%] Building CXX object CMakeFiles/wayland-scanner++.dir/scanner/scanner.cpp.o
+    scanner/scanner.cpp:378:3: error: 'uint32_t' does not name a type
+      378 |   uint32_t width = 0;
+          |   ^~~~~~~~
+
+Upstream: https://github.com/NilsBrause/waylandpp/pull/71
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ include/wayland-client.hpp | 1 +
+ scanner/scanner.cpp        | 3 +++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/include/wayland-client.hpp b/include/wayland-client.hpp
+index a3f782b..4598a0e 100644
+--- a/include/wayland-client.hpp
++++ b/include/wayland-client.hpp
+@@ -29,6 +29,7 @@
+ /** \file */
+ 
+ #include <atomic>
++#include <cstdint>
+ #include <functional>
+ #include <memory>
+ #include <string>
+diff --git a/scanner/scanner.cpp b/scanner/scanner.cpp
+index bebd71e..37cf7ff 100644
+--- a/scanner/scanner.cpp
++++ b/scanner/scanner.cpp
+@@ -23,6 +23,7 @@
+ #include <vector>
+ #include <cctype>
+ #include <cmath>
++#include <cstdint>
+ #include <stdexcept>
+ 
+ #include "pugixml.hpp"
+@@ -1106,6 +1107,7 @@ int main(int argc, char *argv[])
+   wayland_hpp << "#pragma once" << std::endl
+               << std::endl
+               << "#include <array>" << std::endl
++              << "#include <cstdint>" << std::endl
+               << "#include <functional>" << std::endl
+               << "#include <memory>" << std::endl
+               << "#include <string>" << std::endl
+@@ -1125,6 +1127,7 @@ int main(int argc, char *argv[])
+     wayland_server_hpp << "#pragma once" << std::endl
+                        << std::endl
+                        << "#include <array>" << std::endl
++                       << "#include <cstdint>" << std::endl
+                        << "#include <functional>" << std::endl
+                        << "#include <memory>" << std::endl
+                        << "#include <string>" << std::endl

@@ -1,0 +1,13 @@
+config BR2_PACKAGE_MINISIGN
+	bool "minisign"
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_PACKAGE_LIBSODIUM
+	select BR2_PACKAGE_LIBSODIUM_FULL
+	help
+	  Minisign is a dead simple tool to sign files and verify
+	  signatures.
+
+	  https://github.com/jedisct1/minisign
+
+comment "minisign needs a toolchain w/ threads"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS

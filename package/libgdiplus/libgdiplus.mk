@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBGDIPLUS_VERSION = 6.0.5
-LIBGDIPLUS_SITE = $(call github,mono,libgdiplus,$(LIBGDIPLUS_VERSION))
+LIBGDIPLUS_VERSION = 6.1
+LIBGDIPLUS_SITE = https://download.mono-project.com/sources/libgdiplus
 
 LIBGDIPLUS_LICENSE = MIT
 LIBGDIPLUS_LICENSE_FILES = LICENSE

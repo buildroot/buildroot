@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XFONT_FONT_BH_LUCIDATYPEWRITER_75DPI_VERSION = 1.0.3
-XFONT_FONT_BH_LUCIDATYPEWRITER_75DPI_SOURCE = font-bh-lucidatypewriter-75dpi-$(XFONT_FONT_BH_LUCIDATYPEWRITER_75DPI_VERSION).tar.bz2
-XFONT_FONT_BH_LUCIDATYPEWRITER_75DPI_SITE = http://xorg.freedesktop.org/releases/individual/font
+XFONT_FONT_BH_LUCIDATYPEWRITER_75DPI_VERSION = 1.0.4
+XFONT_FONT_BH_LUCIDATYPEWRITER_75DPI_SOURCE = font-bh-lucidatypewriter-75dpi-$(XFONT_FONT_BH_LUCIDATYPEWRITER_75DPI_VERSION).tar.xz
+XFONT_FONT_BH_LUCIDATYPEWRITER_75DPI_SITE = https://xorg.freedesktop.org/archive/individual/font
 XFONT_FONT_BH_LUCIDATYPEWRITER_75DPI_LICENSE = Bigelow & Holmes License (no modification)
 XFONT_FONT_BH_LUCIDATYPEWRITER_75DPI_LICENSE_FILES = COPYING
 

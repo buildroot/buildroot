@@ -1,0 +1,18 @@
+config BR2_PACKAGE_OPEN_ISCSI
+	bool "open-iscsi"
+	depends on BR2_USE_MMU # fork()
+	depends on BR2_TOOLCHAIN_HAS_THREADS # pthread
+	depends on !BR2_STATIC_LIBS # kmod
+	select BR2_PACKAGE_KMOD
+	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_OPEN_ISNS
+	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_LIBMOUNT
+	help
+	  iSCSI tools for Linux.
+
+	  https://www.open-iscsi.com
+
+comment "open-iscsi needs a toolchain w/ threads, dynamic library"
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PHP_VERSION = 8.1.11
+PHP_VERSION = 8.3.4
 PHP_SITE = https://www.php.net/distributions
 PHP_SOURCE = php-$(PHP_VERSION).tar.xz
 PHP_INSTALL_STAGING = YES
@@ -14,6 +14,7 @@ PHP_DEPENDENCIES = host-pkgconf pcre2
 PHP_LICENSE = PHP-3.01
 PHP_LICENSE_FILES = LICENSE
 PHP_CPE_ID_VENDOR = php
+
 PHP_CONF_OPTS = \
 	--mandir=/usr/share/man \
 	--infodir=/usr/share/info \
@@ -33,6 +34,15 @@ endif
 
 ifeq ($(BR2_STATIC_LIBS)$(BR2_TOOLCHAIN_HAS_THREADS),yy)
 PHP_STATIC_LIBS += -lpthread
+endif
+
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+PHP_EXTRA_LIBS += -latomic
+endif
+
+ifeq ($(BR2_PACKAGE_LIBUCONTEXT),y)
+PHP_DEPENDENCIES += libucontext
+PHP_EXTRA_LIBS += -lucontext
 endif
 
 ifeq ($(call qstrip,$(BR2_TARGET_LOCALTIME)),)
@@ -78,6 +88,13 @@ PHP_CONF_ENV += ac_cv_func_dlopen=yes ac_cv_lib_dl_dlopen=yes
 PHP_EXTRA_LIBS += -ldl
 else
 PHP_CONF_ENV += ac_cv_func_dlopen=no ac_cv_lib_dl_dlopen=no
+endif
+
+# php has some assembly function that is not present in Thumb mode:
+# Error: selected processor does not support `umlal r2,r1,r0,r3' in Thumb mode
+# so, we desactivate Thumb mode
+ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
+PHP_CFLAGS += -marm
 endif
 
 PHP_CONF_OPTS += $(if $(BR2_PACKAGE_PHP_SAPI_CLI),--enable-cli,--disable-cli)
@@ -343,4 +360,24 @@ PHP_POST_INSTALL_TARGET_HOOKS += PHP_INSTALL_FIXUP
 
 PHP_CONF_ENV += CFLAGS="$(PHP_CFLAGS)" CXXFLAGS="$(PHP_CXXFLAGS)"
 
+HOST_PHP_CONF_OPTS = \
+	--disable-all \
+	--without-pear \
+	--with-config-file-path=$(HOST_DIR)/etc \
+	--disable-phpdbg \
+	--with-external-pcre \
+	--enable-phar \
+	--enable-json \
+	--enable-filter \
+	--enable-mbstring \
+	--enable-tokenizer \
+	--with-openssl=$(HOST_DIR)
+
+HOST_PHP_DEPENDENCIES = \
+	host-oniguruma \
+	host-openssl \
+	host-pcre2 \
+	host-pkgconf
+
 $(eval $(autotools-package))
+$(eval $(host-autotools-package))

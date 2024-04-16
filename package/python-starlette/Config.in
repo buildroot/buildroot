@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_STARLETTE
+	bool "python-starlette"
+	select BR2_PACKAGE_PYTHON_ANYIO # runtime
+	help
+	  The little ASGI library that shines.
+
+	  https://github.com/encode/starlette

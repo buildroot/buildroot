@@ -4,9 +4,13 @@ config BR2_PACKAGE_INADYN
 	depends on !BR2_STATIC_LIBS # dlopen()
 	select BR2_PACKAGE_LIBCONFUSE
 	help
-	  INADYN is a free DynDNS client. It gives the possibility
-	  to have your own fixed hostname registered on the internet,
-	  although your IP might be changing.
+	  In-a-Dyn is Dynamic DNS (DDNS) client with HTTPS support used
+	  to automate the task of keeping your Internet name in sync
+	  with your public (DHCP/PPPoE) IP address.  It can also be used
+	  when you have backup connections to the Internet.
+
+	  For HTTPS support you need to select one of the libraries:
+	  OpenSSL, GnuTLS, or mbed TLS (PolarSSL).
 
 	  https://github.com/troglobit/inadyn
 

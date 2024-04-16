@@ -1,0 +1,45 @@
+From 77e2de892cd359f779c84739682431a66eb8cf31 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 8 Jan 2023 11:03:52 +0100
+Subject: [PATCH] Makefile: fix pcap-config call
+
+Fix the following build failure raised since libpcap version 1.10.2 and
+https://github.com/the-tcpdump-group/libpcap/commit/d0cba780dc2b2bb4f3ca9427d1a0f03479f45707:
+
+pcap-config: Invalid command-line option pcap-config specified
+Usage: pcap-config [ --help ] [ --static | --static-pcap-only ] [ --libs | --additional-libs ]
+perl -nle 'm/^Version:\s+(.*)$/ and print $1' \
+	bustle.cabal > dist/build/autogen/version.txt
+echo '#define BUSTLE_VERSION "'`cat dist/build/autogen/version.txt`'"' > dist/build/autogen/version.h
+/home/buildroot/autobuild/run/instance-2/output-1/host/bin/arm-linux-gcc -Idist/build/autogen -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -Os -g0  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  \
+	-o dist/build/bustle-pcap c-sources/pcap-reader.c c-sources/pcap-monitor.c c-sources/bustle-pcap.c \
+	-I/home/buildroot/autobuild/run/instance-2/output-1/host/bin/../arm-buildroot-linux-uclibcgnueabi/sysroot/usr/include/glib-2.0 -I/home/buildroot/autobuild/run/instance-2/output-1/host/bin/../arm-buildroot-linux-uclibcgnueabi/sysroot/usr/lib/glib-2.0/include -I/home/buildroot/autobuild/run/instance-2/output-1/host/bin/../arm-buildroot-linux-uclibcgnueabi/sysroot/usr/include/libmount -I/home/buildroot/autobuild/run/instance-2/output-1/host/bin/../arm-buildroot-linux-uclibcgnueabi/sysroot/usr/include/blkid -I/home/buildroot/autobuild/run/instance-2/output-1/host/bin/../arm-buildroot-linux-uclibcgnueabi/sysroot/usr/include/gio-unix-2.0 -pthread -L/home/buildroot/autobuild/run/instance-2/output-1/host/bin/../arm-buildroot-linux-uclibcgnueabi/sysroot/usr/lib -lgio-2.0 -lgobject-2.0 -lglib-2.0
+/home/buildroot/autobuild/run/instance-2/output-1/host/opt/ext-toolchain/bin/../lib/gcc/arm-buildroot-linux-uclibcgnueabi/10.3.0/../../../../arm-buildroot-linux-uclibcgnueabi/bin/ld: /tmp/cc5SQkTV.o: in function `bustle_pcap_reader_finalize':
+pcap-reader.c:(.text+0x254): undefined reference to `pcap_close'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/f3dcb617488e4172e639e3bd51a93bc9822ea186
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:
+https://gitlab.freedesktop.org/bustle/bustle/-/merge_requests/21]
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 8865819..721e714 100644
+--- a/Makefile
++++ b/Makefile
+@@ -2,7 +2,7 @@ CFLAGS = -g -O2 -Wall -Wunused -Waddress
+ DBUS_FLAGS = $(shell pkg-config --cflags --libs dbus-1)
+ GIO_FLAGS := $(shell pkg-config --cflags --libs 'glib-2.0 >= 2.26' gio-2.0 gio-unix-2.0)
+ PCAP_CONFIG ?= pcap-config
+-PCAP_FLAGS := $(shell $(PCAP_CONFIG) --cflags pcap-config --libs)
++PCAP_FLAGS := $(shell $(PCAP_CONFIG) --cflags --libs)
+ DESTDIR =
+ PREFIX = /usr/local
+ BINDIR = $(DESTDIR)$(PREFIX)/bin
+-- 
+2.39.0
+

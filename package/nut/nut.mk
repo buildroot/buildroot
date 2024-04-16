@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NUT_VERSION = 2.8.0
+NUT_VERSION = 2.8.2
 NUT_SITE = https://github.com/networkupstools/nut/releases/download/v$(NUT_VERSION)
 NUT_LICENSE = GPL-2.0+, GPL-3.0+ (python scripts), GPL/Artistic (perl client)
 NUT_LICENSE_FILES = COPYING LICENSE-GPL2 LICENSE-GPL3
@@ -12,19 +12,16 @@ NUT_SELINUX_MODULES = apache nut
 NUT_INSTALL_STAGING = YES
 NUT_DEPENDENCIES = host-pkgconf
 
-# prevent usage of unsafe paths
-define NUT_FIX_CONFIGURE
-	$(SED) 's%CFLAGS="-isystem /usr/local/include%_UNUSED_CFLAGS="-isystem /usr/local/include%' $(@D)/configure
-	$(SED) 's%CXXFLAGS="-isystem /usr/local/include%_UNUSED_CXXFLAGS="-isystem /usr/local/include%' $(@D)/configure
-endef
-NUT_POST_PATCH_HOOKS += NUT_FIX_CONFIGURE
-
 # Put the PID files in a read-write place (/var/run is a tmpfs)
 # since the default location (/var/state/ups) maybe readonly.
 NUT_CONF_OPTS = \
 	--with-altpidpath=/var/run/upsd \
 	--with-dev \
-	--without-doc
+	--without-doc \
+	--without-python \
+	--without-python2 \
+	--with-user=nut \
+	--with-group=nut
 
 NUT_CONF_ENV = \
 	ax_cv_check_cflags__Werror__Wno_unknown_warning_option=no \
@@ -33,6 +30,10 @@ NUT_CONF_ENV = \
 	ac_cv_func_strdup=yes \
 	ac_cv_func_strncasecmp=yes \
 	ax_cv__printf_string_null=yes
+
+define NUT_USERS
+	nut -1 nut -1 * - - - NUT user
+endef
 
 ifeq ($(call qstrip,$(BR2_PACKAGE_NUT_DRIVERS)),)
 NUT_CONF_OPTS += --with-drivers=auto
@@ -104,6 +105,18 @@ NUT_DEPENDENCIES += openssl
 NUT_CONF_OPTS += --with-ssl
 else
 NUT_CONF_OPTS += --without-ssl
+endif
+
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
+NUT_DEPENDENCIES += python3
+NUT_CONF_ENV += nut_cv_PYTHON3_SITE_PACKAGES=/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages
+NUT_CONF_OPTS += \
+	--with-pynut \
+	--with-python3
+else
+NUT_CONF_OPTS += \
+	--without-pynut \
+	--without-python3
 endif
 
 $(eval $(autotools-package))

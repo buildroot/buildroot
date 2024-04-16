@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-ELFUTILS_VERSION = 0.186
+ELFUTILS_VERSION = 0.189
 ELFUTILS_SOURCE = elfutils-$(ELFUTILS_VERSION).tar.bz2
 ELFUTILS_SITE = https://sourceware.org/elfutils/ftp/$(ELFUTILS_VERSION)
 ELFUTILS_INSTALL_STAGING = YES
 ELFUTILS_LICENSE = GPL-2.0+ or LGPL-3.0+ (library)
 ELFUTILS_LICENSE_FILES = COPYING COPYING-GPLV2 COPYING-LGPLV3
-ELFUTILS_CPE_ID_VENDOR = elfutils_project
+ELFUTILS_CPE_ID_VALID = YES
 ELFUTILS_DEPENDENCIES = host-pkgconf zlib $(TARGET_NLS_DEPENDENCIES)
 HOST_ELFUTILS_DEPENDENCIES = host-pkgconf host-zlib host-bzip2 host-xz
 
@@ -29,19 +29,6 @@ HOST_ELFUTILS_CONF_OPTS = \
 	--without-zstd \
 	--disable-progs
 
-# elfutils gets confused when lfs mode is forced, so don't
-ELFUTILS_CFLAGS = $(filter-out -D_FILE_OFFSET_BITS=64,$(TARGET_CFLAGS))
-ELFUTILS_CPPFLAGS = $(filter-out -D_FILE_OFFSET_BITS=64,$(TARGET_CPPFLAGS))
-
-# sparc64 needs -fPIC instead of -fpic
-ifeq ($(BR2_sparc64),y)
-ELFUTILS_CFLAGS += -fPIC
-endif
-
-ELFUTILS_CONF_ENV += \
-	CFLAGS="$(ELFUTILS_CFLAGS)" \
-	CPPFLAGS="$(ELFUTILS_CPPFLAGS)"
-
 ELFUTILS_LDFLAGS = $(TARGET_LDFLAGS) \
 	$(TARGET_NLS_LIBS)
 
@@ -50,8 +37,11 @@ ELFUTILS_LDFLAGS += -latomic
 endif
 
 ifeq ($(BR2_TOOLCHAIN_USES_GLIBC),)
-ELFUTILS_DEPENDENCIES += musl-fts
-ELFUTILS_LDFLAGS += -lfts
+ELFUTILS_DEPENDENCIES += musl-fts argp-standalone
+endif
+
+ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
+ELFUTILS_CONF_OPTS += --disable-symbol-versioning
 endif
 
 # disable for now, needs "distro" support
@@ -61,9 +51,10 @@ HOST_ELFUTILS_CONF_OPTS += --disable-libdebuginfod --disable-debuginfod
 ELFUTILS_CONF_ENV += \
 	LDFLAGS="$(ELFUTILS_LDFLAGS)"
 
-ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
-ELFUTILS_DEPENDENCIES += argp-standalone
-ELFUTILS_CONF_OPTS += --disable-symbol-versioning
+ifeq ($(BR2_INSTALL_LIBSTDCPP),y)
+ELFUTILS_CONF_OPTS += --enable-demangler
+else
+ELFUTILS_CONF_OPTS += --disable-demangler
 endif
 
 ifeq ($(BR2_PACKAGE_BZIP2),y)

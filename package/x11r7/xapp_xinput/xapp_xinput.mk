@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-XAPP_XINPUT_VERSION = 1.6.3
-XAPP_XINPUT_SOURCE = xinput-$(XAPP_XINPUT_VERSION).tar.bz2
+XAPP_XINPUT_VERSION = 1.6.4
+XAPP_XINPUT_SOURCE = xinput-$(XAPP_XINPUT_VERSION).tar.xz
 XAPP_XINPUT_SITE = https://xorg.freedesktop.org/archive/individual/app
 XAPP_XINPUT_LICENSE = MIT
 XAPP_XINPUT_LICENSE_FILES = COPYING

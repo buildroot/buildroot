@@ -36,8 +36,13 @@ config BR2_TARGET_BAREBOX_AUX_IMAGE_FILE
 	  the images directory.
 
 	  If left empty, defaults to:
-	  - barebox.bin for barebox versions older than 2012.10.
-	  - barebox-flash-image for later versions.
+	  - all images as listed in barebox-flash-images (>= v2015.12.0)
+	  - the image pointed at by barebox-flash-image (>= v2012.10.0)
+	  - barebox.bin for even older barebox versions
+
+	  In any case, this only influences the artifacts collected by
+	  Buildroot. They will still need to be referenced from image
+	  packages or flashed separately onto the hardware.
 
 config BR2_TARGET_BAREBOX_AUX_CUSTOM_ENV
 	bool "Generate an environment image"

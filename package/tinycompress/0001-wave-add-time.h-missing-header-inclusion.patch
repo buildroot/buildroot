@@ -1,0 +1,39 @@
+From 7d3b8ac47789545af5a4cd2fc1cf9bcfb91ae3b0 Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Sat, 29 Oct 2022 12:51:17 +0200
+Subject: [PATCH] wave: add <time.h> missing header inclusion
+
+When compiling tinycompress with some libc other than glibc
+(e.g. musl libc), compilation fails with the following error:
+
+    In file included from wave.c:11:0:
+    /path/to/gcc/sysroot/usr/include/sound/asound.h:404:18: error: field 'trigger_tstamp' has incomplete type
+      struct timespec trigger_tstamp; /* time when stream was started/stopped/paused */
+    [...]
+
+According to POSIX, "struct timespec" is defined in <time.h>. See:
+https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/time.h.html
+
+This patch fixes this build failure by including <time.h> prior
+<sound/asound.h>.
+
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ src/utils/wave.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/utils/wave.c b/src/utils/wave.c
+index a74149a..d17f66a 100644
+--- a/src/utils/wave.c
++++ b/src/utils/wave.c
+@@ -8,6 +8,7 @@
+ #include <stdio.h>
+ #include <stdint.h>
+ #include <string.h>
++#include <time.h>
+ #include <sound/asound.h>
+ 
+ #include "tinycompress/tinywave.h"
+-- 
+2.38.1
+

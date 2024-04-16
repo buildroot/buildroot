@@ -1,0 +1,45 @@
+From 73cd57c18066ff863335a8616d0b348541d26118 Mon Sep 17 00:00:00 2001
+From: Gary Bisson <gary.bisson@boundarydevices.com>
+Date: Tue, 15 Nov 2022 21:43:47 +0100
+Subject: [PATCH] Fix Linux kernel version header
+
+- Up to kernel 5.10, NXP was using ION for memory management
+- Starting with 5.15 kernels, NXP uses DMABUF and the ION header is no
+  longer in the kernel
+- So keep the previous patch for people using kernel <= 5.10
+- Add path to the version.h header as imx-vpu-hantro will only include
+  ion.h depending on the kernel version
+
+Signed-off-by: Gary Bisson <gary.bisson@boundarydevices.com>
+---
+ Makefile_G1G2 | 1 +
+ Makefile_H1   | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/Makefile_G1G2 b/Makefile_G1G2
+index 25884fa..8e03e91 100755
+--- a/Makefile_G1G2
++++ b/Makefile_G1G2
+@@ -11,6 +11,7 @@ INCLUDE_HEADERS = -I./decoder_sw -I$(SOURCE_ROOT)/source/inc -I$(SOURCE_ROOT)/so
+ INCLUDE_HEADERS += -I$(SOURCE_ROOT)/linux/memalloc
+ #INCLUDE_HEADERS += -I$(SOURCE_ROOT)/linux/ldriver
+ INCLUDE_HEADERS += -I$(LINUX_KERNEL_ROOT)/include/uapi -I$(LINUX_KERNEL_ROOT)/include
++INCLUDE_HEADERS += -I$(LINUX_KERNEL_ROOT)/include/generated/uapi
+ INCLUDE_HEADERS += -I$(LINUX_KERNEL_ROOT)/drivers/staging/android/uapi
+ 
+ CFLAGS += -DDEC_MODULE_PATH=\"/dev/mxc_hantro\" -DUSE_FAKE_RFC_TABLE -DFIFO_DATATYPE=void* -DNDEBUG -DDOWN_SCALER \
+diff --git a/Makefile_H1 b/Makefile_H1
+index 479940a..7ac6f8d 100755
+--- a/Makefile_H1
++++ b/Makefile_H1
+@@ -18,6 +18,7 @@ ENV = -DENC_MODULE_PATH=\\\"/dev/mxc_hantro_h1\\\"
+ ENV += -DEWL_NO_HW_TIMEOUT
+ ENV += -DUSE_ION
+ ENV += -I$(LINUX_KERNEL_ROOT)/include/uapi -I$(LINUX_KERNEL_ROOT)/include
++ENV += -I$(LINUX_KERNEL_ROOT)/include/generated/uapi
+ ENV += -I$(LINUX_KERNEL_ROOT)/drivers/staging/android/uapi
+ 
+ ifeq ($(CFG_SECURE_DATA_PATH), y)
+-- 
+2.35.1
+

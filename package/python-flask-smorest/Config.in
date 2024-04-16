@@ -1,0 +1,11 @@
+config BR2_PACKAGE_PYTHON_FLASK_SMOREST
+	bool "python-flask-smorest"
+	select BR2_PACKAGE_PYTHON_APISPEC # runtime
+	select BR2_PACKAGE_PYTHON_FLASK # runtime
+	select BR2_PACKAGE_PYTHON_MARSHMALLOW # runtime
+	select BR2_PACKAGE_PYTHON_WEBARGS # runtime
+	select BR2_PACKAGE_PYTHON_WERKZEUG # runtime
+	help
+	  Flask/Marshmallow-based REST API framework.
+
+	  https://github.com/marshmallow-code/flask-smorest

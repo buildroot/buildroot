@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SCRYPT_VERSION = 1.3.1
+SCRYPT_VERSION = 1.3.2
 SCRYPT_SOURCE = scrypt-$(SCRYPT_VERSION).tgz
 SCRYPT_SITE = http://www.tarsnap.com/scrypt
 SCRYPT_LICENSE = BSD-2-Clause

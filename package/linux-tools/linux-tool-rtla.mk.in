@@ -1,0 +1,52 @@
+################################################################################
+#
+# rtla
+#
+################################################################################
+
+LINUX_TOOLS += rtla
+
+RTLA_DEPENDENCIES = host-pkgconf libtracefs
+RTLA_MAKE_OPTS = $(LINUX_MAKE_FLAGS) \
+	CC=$(TARGET_CC) \
+	EXTRA_CFLAGS="-D_GNU_SOURCE" \
+	LDFLAGS="$(TARGET_LDFLAGS)" \
+	PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig
+
+ifeq ($(BR2_TOOLCHAIN_HAS_SSP),)
+define RTLA_DISABLE_STACK_PROTECTOR
+	$(SED) 's/-fstack-protector.* //' $(LINUX_DIR)/tools/tracing/rtla/Makefile
+endef
+endif
+
+define RTLA_LINUX_CONFIG_FIXUPS
+	$(call KCONFIG_ENABLE_OPT,CONFIG_FTRACE)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_TIMERLAT_TRACER)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_HIST_TRIGGERS)
+endef
+
+define RTLA_BUILD_CMDS
+	$(Q)if ! grep install $(LINUX_DIR)/tools/tracing/rtla/Makefile >/dev/null 2>&1 ; then \
+		echo "Your kernel version is too old and does not implement the rtla tool." ; \
+		echo "At least kernel 5.19 must be used." ; \
+		exit 1 ; \
+	fi
+	$(RTLA_DISABLE_STACK_PROTECTOR)
+	$(TARGET_MAKE_ENV) $(MAKE) $(RTLA_MAKE_OPTS) \
+		-C $(LINUX_DIR)/tools/tracing rtla
+endef
+
+# make rtla_install build and install by default documentation using rst2man
+# but it's not available in Buildroot and we don't want manual files in target
+# folder so let's simply install the resulting rtla binary and create symlinks
+# like Linux does in its tools/tracing/rtla/Makefile
+define RTLA_INSTALL_TARGET_CMDS
+	$(INSTALL) -m 0755 -D $(LINUX_DIR)/tools/tracing/rtla/rtla $(TARGET_DIR)/usr/bin
+	ln -sf rtla $(TARGET_DIR)/usr/bin/osnoise
+	ln -sf rtla $(TARGET_DIR)/usr/bin/timerlat
+
+	# Check if hwnoise is provided or not
+	if grep -q hwnoise $(LINUX_DIR)/tools/tracing/rtla/Makefile; then \
+		ln -sf rtla $(TARGET_DIR)/usr/bin/hwnoise ; \
+	fi
+endef

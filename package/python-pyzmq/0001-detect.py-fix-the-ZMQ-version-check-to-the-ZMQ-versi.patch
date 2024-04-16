@@ -1,0 +1,67 @@
+From 8eae1193457f72899f9cc2254ae1489026df9bb6 Mon Sep 17 00:00:00 2001
+From: Michael Rommel <rommel@layer-7.net>
+Date: Sat, 10 Aug 2013 00:44:35 +0200
+Subject: [PATCH] detect.py: fix the ZMQ version check to the ZMQ version of
+ the buildroot
+
+The setup.py script tries to compile a test C program and runs it, to
+retrieve a version string for the installed ZMQ library, but if the cross
+compiler links it together, the result cannot be run on the host, due to
+different architectures and libraries.
+
+And if the host compiler would compile/link it, it would not link with
+the library version inside buildroot but with the library from the
+host, possibly returning a wrong version number.
+
+Instead of trying to run the compiled test program to get the version
+dynamically, return the version of the buildroot environment.
+
+Written by Michael Rommel, modified for version 16.0.2 by Lionel
+Flandrin.
+
+Modified for version 18.0.2 by Asaf Kahlon
+
+Modified for version 24.0.1 by James Hilliard
+
+Signed-off-by: Michael Rommel <rommel@layer-7.net>
+Signed-off-by: Lionel Flandrin <lionel@svkt.org>
+Signed-off-by: Asaf Kahlon <asafka7@gmail.com>
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+---
+ buildutils/detect.py | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/buildutils/detect.py b/buildutils/detect.py
+index 842e3b14..e2eca744 100644
+--- a/buildutils/detect.py
++++ b/buildutils/detect.py
+@@ -120,18 +120,20 @@ def detect_zmq(basedir, compiler, **compiler_attrs):
+ 
+     cc = get_compiler(compiler=compiler, **compiler_attrs)
+     efile = test_compilation(cfile, compiler=cc, **compiler_attrs)
+-    patch_lib_paths(efile, cc.library_dirs)
++    #patch_lib_paths(efile, cc.library_dirs)
+ 
+     # add library dirs to %PATH% for windows
+     env = os.environ.copy()
+     if sys.platform.startswith("win"):
+         env["PATH"] = os.pathsep.join([env["PATH"]] + cc.library_dirs)
+ 
+-    rc, so, se = get_output_error([efile], env=env)
+-    if rc:
+-        msg = f"Error running version detection script:\n{so}\n{se}"
+-        logging.error(msg)
+-        raise OSError(msg)
++    #rc, so, se = get_output_error([efile], env=env)
++    #if rc:
++    #     msg = f"Error running version detection script:\n{so}\n{se}"
++    #     logging.error(msg)
++    #     raise OSError(msg)
++
++    so = "vers: ##ZEROMQ_VERSION##"
+ 
+     handlers = {'vers': lambda val: tuple(int(v) for v in val.split('.'))}
+ 
+-- 
+2.34.1
+

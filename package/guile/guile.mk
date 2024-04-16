@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GUILE_VERSION = 3.0.8
+GUILE_VERSION = 3.0.9
 GUILE_SOURCE = guile-$(GUILE_VERSION).tar.xz
 GUILE_SITE = $(BR2_GNU_MIRROR)/guile
 GUILE_INSTALL_STAGING = YES
@@ -42,11 +42,6 @@ endif
 
 ifeq ($(BR2_STATIC_LIBS),y)
 GUILE_CFLAGS += -DGC_NO_DLOPEN
-endif
-
-# Triggers assembler error with -Os
-ifeq ($(BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_ARM)$(BR2_OPTIMIZE_S),yy)
-GUILE_CFLAGS += -O2
 endif
 
 # jit triggers build failures with gcc < 5

@@ -1,0 +1,49 @@
+From 963edf3f87d34e274885d9cc448651d8a1601a6f Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 11 Jan 2024 17:38:41 +0100
+Subject: [PATCH] src/modules/rlm_python: fix build with -Ofast
+
+Stripping logic wrongly translates -Ofast into ast resulting in the
+following build failure:
+
+configure: /home/fabrice/buildroot/output/host/powerpc64-buildroot-linux-gnu/sysroot/usr/bin/python3-config's cflags were "-I/home/fabrice/buildroot/output/host/powerpc64-buildroot-linux-gnu/sysroot/usr/include/python3.11 -I/home/fabrice/buildroot/output/host/powerpc64-buildroot-linux-gnu/sysroot/usr/include/python3.11  -Wsign-compare -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -Ofast -g0 -D_FORTIFY_SOURCE=2 -DNDEBUG -g -fwrapv -O3 -Wall"
+configure: Sanitized cflags were " -isystem/home/fabrice/buildroot/output/host/powerpc64-buildroot-linux-gnu/sysroot/usr/include/python3.11 -isystem/home/fabrice/buildroot/output/host/powerpc64-buildroot-linux-gnu/sysroot/usr/include/python3.11   -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  ast  -D_FORTIFY_SOURCE=2 -fwrapv  "
+
+[...]
+
+powerpc64-buildroot-linux-gnu-gcc.br_real: error: ast: linker input file not found: No such file or directory
+
+Fixes:
+ - http://autobuild.buildroot.org/results/904c43241b99a8d848c1891cb5af132a291311b4
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/FreeRADIUS/freeradius-server/pull/5263
+---
+ src/modules/rlm_python/configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/modules/rlm_python3/configure.ac b/src/modules/rlm_python3/configure.ac
+index e2f74574fb..ee30b324d9 100644
+--- a/src/modules/rlm_python3/configure.ac
++++ b/src/modules/rlm_python3/configure.ac
+@@ -59,7 +59,7 @@ else
+ 
+ 	dnl # Convert -I to -isystem to get rid of warnings about issues in Python headers
+ 	dnl # Strip -systemroot
+-	dnl # Strip optimisation flags (-O[0-9]?). We decide our optimisation level, not python.
++	dnl # Strip optimisation flags (-O[0-9|fast]?). We decide our optimisation level, not python.
+ 	dnl # -D_FORTIFY_SOURCE needs -O.
+ 	dnl # Strip debug symbol flags (-g[0-9]?). We decide on debugging symbols, not python
+ 	dnl # Strip -W*, we decide what warnings are important
+@@ -73,7 +73,7 @@ else
+ 	mod_cflags=`echo " $python_cflags" | sed -e '\
+ 		s/ -I/ -isystem/g;\
+ 		s/ -isysroot[[ =]]\{0,1\}[[^-]]*/ /g;\
+-		s/ -O[[^[[:blank:]]]]*/ /g;\
++		s/ -O[[^[[:blank:]]*]]*/ /g;\
+ 		s/ -Wp,-D_FORTIFY_SOURCE=[[[:digit:]]]/ /g;\
+ 		s/ -g[[^ ]]*/ /g;\
+ 		s/ -W[[^ ]]*/ /g;\
+-- 
+2.43.0
+

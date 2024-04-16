@@ -1,0 +1,30 @@
+From 0dd97fcaeeb16ed836e8542d75e2396fb1d129d9 Mon Sep 17 00:00:00 2001
+From: Zdenek Dohnal <zdohnal@redhat.com>
+Date: Tue, 3 Oct 2023 14:39:33 +0200
+Subject: [PATCH] cups/hash.c: LibreSSL version does not support several hashes
+
+Upstream: https://github.com/OpenPrinting/cups/commit/0dd97fcaeeb16ed836e8542d75e2396fb1d129d9
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ cups/hash.c | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/cups/hash.c b/cups/hash.c
+index c447bab4e..5eefa1010 100644
+--- a/cups/hash.c
++++ b/cups/hash.c
+@@ -254,14 +254,6 @@ hash_data(const char    *algorithm,	// I - Algorithm
+   {
+     md = EVP_sha512();
+   }
+-  else if (!strcmp(algorithm, "sha2-512_224"))
+-  {
+-    md = EVP_sha512_224();
+-  }
+-  else if (!strcmp(algorithm, "sha2-512_256"))
+-  {
+-    md = EVP_sha512_256();
+-  }
+ 
+   if (md)
+   {

@@ -1,0 +1,145 @@
+From aa74fa2fb5acf54bd46ad4c1b10e0a23a2cb3d25 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 4 Nov 2021 18:45:11 +0100
+Subject: [PATCH] fix build with 32-bits kernel
+
+Use div_s64 or div_s64_rem to fix the following build failure on 32-bits
+kernels:
+
+ERROR: modpost: "__divdi3" [/home/fabrice/buildroot/output/build/dahdi-linux-5c840cf43838e0690873e73409491c392333b3b8/drivers/dahdi/xpp/xpp_usb.ko] undefined!
+ERROR: modpost: "__udivdi3" [/home/fabrice/buildroot/output/build/dahdi-linux-5c840cf43838e0690873e73409491c392333b3b8/drivers/dahdi/xpp/xpp_usb.ko] undefined!
+ERROR: modpost: "__moddi3" [/home/fabrice/buildroot/output/build/dahdi-linux-5c840cf43838e0690873e73409491c392333b3b8/drivers/dahdi/xpp/xpp.ko] undefined!
+ERROR: modpost: "__divdi3" [/home/fabrice/buildroot/output/build/dahdi-linux-5c840cf43838e0690873e73409491c392333b3b8/drivers/dahdi/xpp/xpp.ko] undefined!
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/asterisk/dahdi-linux/pull/32
+---
+ drivers/dahdi/xpp/xbus-core.c    |  9 ++++++---
+ drivers/dahdi/xpp/xbus-pcm.c     |  4 ++--
+ drivers/dahdi/xpp/xbus-sysfs.c   |  2 +-
+ drivers/dahdi/xpp/xframe_queue.c | 15 ++++++++++-----
+ drivers/dahdi/xpp/xpp_usb.c      |  2 +-
+ 5 files changed, 20 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/dahdi/xpp/xbus-core.c b/drivers/dahdi/xpp/xbus-core.c
+index fc4ce7b..b1d1fd7 100644
+--- a/drivers/dahdi/xpp/xbus-core.c
++++ b/drivers/dahdi/xpp/xbus-core.c
+@@ -1754,11 +1754,14 @@ out:
+ 
+ static void xbus_fill_proc_queue(struct seq_file *sfile, struct xframe_queue *q)
+ {
++	s64 msec = 0;
++	s32 rem = 0;
++
++	msec = div_s64_rem(q->worst_lag_usec, 1000, &rem);
+ 	seq_printf(sfile,
+-		"%-15s: counts %3d, %3d, %3d worst %3d, overflows %3d worst_lag %02lld.%lld ms\n",
++		"%-15s: counts %3d, %3d, %3d worst %3d, overflows %3d worst_lag %02lld.%d ms\n",
+ 		q->name, q->steady_state_count, q->count, q->max_count,
+-		q->worst_count, q->overflows, q->worst_lag_usec / 1000,
+-		q->worst_lag_usec % 1000);
++		q->worst_count, q->overflows, msec, rem);
+ 	xframe_queue_clearstats(q);
+ }
+ 
+diff --git a/drivers/dahdi/xpp/xbus-pcm.c b/drivers/dahdi/xpp/xbus-pcm.c
+index 8bb2fe7..e690ce7 100644
+--- a/drivers/dahdi/xpp/xbus-pcm.c
++++ b/drivers/dahdi/xpp/xbus-pcm.c
+@@ -129,7 +129,7 @@ static int xpp_ticker_step(struct xpp_ticker *ticker, const ktime_t t)
+ 		usec = ktime_us_delta(ticker->last_sample,
+ 					ticker->first_sample);
+ 		ticker->first_sample = ticker->last_sample;
+-		ticker->tick_period = usec / ticker->cycle;
++		ticker->tick_period = div_s64(usec, ticker->cycle);
+ 		cycled = 1;
+ 	}
+ 	ticker->count++;
+@@ -497,7 +497,7 @@ static void send_drift(xbus_t *xbus, int drift)
+ 	XBUS_DBG(SYNC, xbus,
+ 		 "%sDRIFT adjust %s (%d) (last update %lld seconds ago)\n",
+ 		 (disable_pll_sync) ? "Fake " : "", msg, drift,
+-		 msec_delta / MSEC_PER_SEC);
++		 div_s64(msec_delta, MSEC_PER_SEC));
+ 	if (!disable_pll_sync)
+ 		CALL_PROTO(GLOBAL, SYNC_SOURCE, xbus, NULL, SYNC_MODE_PLL,
+ 			   drift);
+diff --git a/drivers/dahdi/xpp/xbus-sysfs.c b/drivers/dahdi/xpp/xbus-sysfs.c
+index d8c11dc..35180d9 100644
+--- a/drivers/dahdi/xpp/xbus-sysfs.c
++++ b/drivers/dahdi/xpp/xbus-sysfs.c
+@@ -249,7 +249,7 @@ static DEVICE_ATTR_READER(driftinfo_show, dev, buf)
+ 	/*
+ 	 * Calculate lost ticks time
+ 	 */
+-	seconds = ktime_ms_delta(now, di->last_lost_tick) / 1000;
++	seconds = div_s64(ktime_ms_delta(now, di->last_lost_tick), 1000);
+ 	minutes = seconds / 60;
+ 	seconds = seconds % 60;
+ 	hours = minutes / 60;
+diff --git a/drivers/dahdi/xpp/xframe_queue.c b/drivers/dahdi/xpp/xframe_queue.c
+index e986083..8e5e508 100644
+--- a/drivers/dahdi/xpp/xframe_queue.c
++++ b/drivers/dahdi/xpp/xframe_queue.c
+@@ -35,15 +35,18 @@ static void __xframe_dump_queue(struct xframe_queue *q)
+ 	int i = 0;
+ 	char prefix[30];
+ 	ktime_t now = ktime_get();
++	s64 msec = 0;
++	s32 rem = 0;
+ 
+ 	printk(KERN_DEBUG "%s: dump queue '%s' (first packet in each frame)\n",
+ 	       THIS_MODULE->name, q->name);
+ 	list_for_each_entry_reverse(xframe, &q->head, frame_list) {
+ 		xpacket_t *pack = (xpacket_t *)&xframe->packets[0];
+ 		s64 usec = ktime_us_delta(now, xframe->kt_queued);
++		msec = div_s64_rem(usec, 1000, &rem);
+ 
+-		snprintf(prefix, ARRAY_SIZE(prefix), "  %3d> %5lld.%03lld msec",
+-			 i++, usec / 1000, usec % 1000);
++		snprintf(prefix, ARRAY_SIZE(prefix), "  %3d> %5lld.%03d msec",
++			 i++, msec, rem);
+ 		dump_packet(prefix, pack, 1);
+ 	}
+ }
+@@ -52,6 +55,8 @@ static bool __xframe_enqueue(struct xframe_queue *q, xframe_t *xframe)
+ {
+ 	int ret = 1;
+ 	static int overflow_cnt;
++	s64 msec = 0;
++	s32 rem = 0;
+ 
+ 	if (unlikely(q->disabled)) {
+ 		ret = 0;
+@@ -60,11 +65,11 @@ static bool __xframe_enqueue(struct xframe_queue *q, xframe_t *xframe)
+ 	if (q->count >= q->max_count) {
+ 		q->overflows++;
+ 		if ((overflow_cnt++ % 1000) < 5) {
+-			NOTICE("Overflow of %-15s: counts %3d, %3d, %3d worst %3d, overflows %3d worst_lag %02lld.%lld ms\n",
++			msec = div_s64_rem(q->worst_lag_usec, 1000, &rem);
++			NOTICE("Overflow of %-15s: counts %3d, %3d, %3d worst %3d, overflows %3d worst_lag %02lld.%d ms\n",
+ 			     q->name, q->steady_state_count, q->count,
+ 			     q->max_count, q->worst_count, q->overflows,
+-			     q->worst_lag_usec / 1000,
+-			     q->worst_lag_usec % 1000);
++			     msec, rem);
+ 			__xframe_dump_queue(q);
+ 		}
+ 		ret = 0;
+diff --git a/drivers/dahdi/xpp/xpp_usb.c b/drivers/dahdi/xpp/xpp_usb.c
+index 1a591b1..3741457 100644
+--- a/drivers/dahdi/xpp/xpp_usb.c
++++ b/drivers/dahdi/xpp/xpp_usb.c
+@@ -882,7 +882,7 @@ static void xpp_send_callback(struct urb *urb)
+ 		usec = 0; /* System clock jumped */
+ 	if (usec > xusb->max_tx_delay)
+ 		xusb->max_tx_delay = usec;
+-	i = usec / USEC_BUCKET;
++	i = div_s64(usec, USEC_BUCKET);
+ 	if (i >= NUM_BUCKETS)
+ 		i = NUM_BUCKETS - 1;
+ 	xusb->usb_tx_delay[i]++;
+-- 
+2.33.0
+

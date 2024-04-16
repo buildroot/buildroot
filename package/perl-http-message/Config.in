@@ -1,5 +1,7 @@
 config BR2_PACKAGE_PERL_HTTP_MESSAGE
 	bool "perl-http-message"
+	depends on !BR2_STATIC_LIBS # perl-clone
+	select BR2_PACKAGE_PERL_CLONE # runtime
 	select BR2_PACKAGE_PERL_ENCODE_LOCALE # runtime
 	select BR2_PACKAGE_PERL_HTTP_DATE # runtime
 	select BR2_PACKAGE_PERL_IO_HTML # runtime
@@ -9,3 +11,6 @@ config BR2_PACKAGE_PERL_HTTP_MESSAGE
 	  HTTP style message (base class).
 
 	  https://github.com/libwww-perl/HTTP-Message
+
+comment "perl-http-message needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS

@@ -62,7 +62,7 @@ if BR2_PACKAGE_QT5BASE_SQL
 config BR2_PACKAGE_QT5BASE_MYSQL
 	bool "MySQL Plugin"
 	depends on BR2_USE_MMU # mysql
-	select BR2_PACKAGE_MYSQL
+	select BR2_PACKAGE_MARIADB
 	select BR2_PACKAGE_NCURSES
 	select BR2_PACKAGE_READLINE
 	help
@@ -179,6 +179,16 @@ config BR2_PACKAGE_QT5BASE_OPENGL_LIB
 	  from Qt 4.x.
 
 endif
+
+config BR2_PACKAGE_QT5BASE_VULKAN
+	bool "Vulkan support"
+	depends on BR2_INSTALL_LIBSTDCPP # vulkan-loader
+	depends on !BR2_STATIC_LIBS # vulkan-loader
+	depends on BR2_TOOLCHAIN_HAS_THREADS # vulkan-loader
+	select BR2_PACKAGE_VULKAN_HEADERS
+	select BR2_PACKAGE_VULKAN_LOADER
+	help
+	  This option enables Vulkan support.
 
 config BR2_PACKAGE_QT5BASE_LINUXFB
 	bool "linuxfb support"

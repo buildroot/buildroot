@@ -28,6 +28,8 @@ functions when support is not available.
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Upstream: https://mailman.alsa-project.org/pipermail/alsa-devel/2022-July/203846.html
+[Bernd: update patch for 1.2.10]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  alsactl/info.c | 14 ++++++++++----
  1 file changed, 10 insertions(+), 4 deletions(-)
@@ -96,9 +98,9 @@ index 253539d..9bd72af 100644
 +#ifdef __ALSA_RAWMIDI_H
  	first = true;
  	if (err >= 0)
- 		err = rawmidi_device_list(ctl, SND_PCM_STREAM_PLAYBACK, &first);
+ 		err = rawmidi_device_list(ctl, SND_RAWMIDI_STREAM_INPUT, &first);
  	if (err >= 0)
- 		err = rawmidi_device_list(ctl, SND_PCM_STREAM_CAPTURE, &first);
+ 		err = rawmidi_device_list(ctl, SND_RAWMIDI_STREAM_OUTPUT, &first);
 +#endif
  
  	if (err >= 0)

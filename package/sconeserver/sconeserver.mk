@@ -10,7 +10,7 @@ SCONESERVER_LICENSE = GPL-2.0+
 SCONESERVER_LICENSE_FILES = COPYING
 SCONESERVER_DEPENDENCIES = \
 	host-pkgconf \
-	$(if $(BR2_PACKAGE_PCRE),pcre) \
+	pcre \
 	zlib
 # disable image as it fails to build with ImageMagick
 # disable markdown module because its git submodule cmark
@@ -63,7 +63,7 @@ SCONESERVER_CONF_OPTS += -DWITH_MATHS=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_SCONESERVER_MYSQL),y)
-SCONESERVER_DEPENDENCIES += mysql
+SCONESERVER_DEPENDENCIES += mariadb
 SCONESERVER_CONF_OPTS += -DWITH_MYSQL=ON
 else
 SCONESERVER_CONF_OPTS += -DWITH_MYSQL=OFF

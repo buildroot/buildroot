@@ -7,14 +7,16 @@ config BR2_PACKAGE_SSDP_RESPONDER
 	  targeted more at embedded systems that need to announce
 	  themselves to Windows systems.
 
-	  ssdpd is a stand-alone UNIX, no external dependencies but the
-	  standard C library.  It has a built-in web server for serving
-	  the UPnP XML description which Windows use to present the
-	  icon, by default an InternetGatewayDevice is announced.
+	  The project consists of ssdpd and ssdp-scan.  The former is a
+	  stand-alone UNIX daemon, it has no dependencies but a standard
+	  C library.  It comes with built-in web server for serving the
+	  UPnP XML description on port 1901, the XML is used by Windows
+	  to present the icon, by default an InternetGatewayDevice is
+	  announced.
 
-	  Also included is ssdp-scan, a tool similar to mdns-scan, which
-	  continuously scans for SSDP capable hosts on the network.
-	  Take care only to use for debugging since it scans the network
-	  quite aggressively.
+	  ssdp-scan is a tool, similar to mdns-scan, to find other SSDP
+	  capable hosts on the network.  Take care to only use it for
+	  debugging, or quicker device discovery operations, since it
+	  scans the network quite aggressively.
 
 	  https://github.com/troglobit/ssdp-responder/

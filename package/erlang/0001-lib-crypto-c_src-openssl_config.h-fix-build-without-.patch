@@ -1,0 +1,46 @@
+From 8c7d62662cf51902d759be0e8d3bfd96a3524b3c Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 8 Dec 2023 09:00:17 +0100
+Subject: [PATCH] lib/crypto/c_src/openssl_config.h: fix build without DES
+
+Fix the following build failure without DES raised since version 24.2
+and
+https://github.com/erlang/otp/commit/abf7f84c2f77bb07dbdbb8a29b9d41f1f24c5f14:
+
+cipher.c:51:42: error: 'EVP_des_ede3_cbc' undeclared here (not in a function); did you mean 'SN_des_ede3_cbc'?
+   51 |     {{"des_ede3_cbc"}, "des-ede3-cbc", {&EVP_des_ede3_cbc}, 0, 0},
+      |                                          ^~~~~~~~~~~~~~~~
+      |                                          SN_des_ede3_cbc
+
+Fixes:
+ - http://autobuild.buildroot.org/results/1aace0ee738f8ec4aa2c9a739fc7535c3b6bf884
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/erlang/otp/pull/7937
+---
+ lib/crypto/c_src/openssl_config.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/crypto/c_src/openssl_config.h b/lib/crypto/c_src/openssl_config.h
+index cb63f28369..f3904986c9 100644
+--- a/lib/crypto/c_src/openssl_config.h
++++ b/lib/crypto/c_src/openssl_config.h
+@@ -218,7 +218,6 @@
+ 
+ #ifndef OPENSSL_NO_DES
+ # define HAVE_DES
+-#endif
+ 
+ #if OPENSSL_VERSION_NUMBER >= PACKED_OPENSSL_VERSION(0,9,7,'e')
+ # define HAVE_DES_ede3_cfb
+@@ -227,6 +226,7 @@
+ #if OPENSSL_VERSION_NUMBER >= PACKED_OPENSSL_VERSION(0,9,7,'e')
+ # define HAVE_DES_ede3_cbc
+ #endif
++#endif
+ 
+ #ifndef OPENSSL_NO_DH
+ # define HAVE_DH
+-- 
+2.42.0
+

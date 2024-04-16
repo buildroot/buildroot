@@ -4,7 +4,8 @@
 #
 ################################################################################
 
-GHOSTSCRIPT_VERSION = 9.56.1
+GHOSTSCRIPT_VERSION = 10.02.1
+GHOSTSCRIPT_SOURCE = ghostscript-$(GHOSTSCRIPT_VERSION).tar.xz
 GHOSTSCRIPT_SITE = https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs$(subst .,,$(GHOSTSCRIPT_VERSION))
 GHOSTSCRIPT_LICENSE = AGPL-3.0
 GHOSTSCRIPT_LICENSE_FILES = LICENSE
@@ -43,7 +44,6 @@ GHOSTSCRIPT_CONF_OPTS = \
 	--enable-freetype \
 	--disable-gtk \
 	--without-libpaper \
-	--without-pdf \
 	--with-system-libtiff
 
 ifeq ($(BR2_PACKAGE_JBIG2DEC),y)
@@ -65,6 +65,15 @@ GHOSTSCRIPT_DEPENDENCIES += openjpeg
 GHOSTSCRIPT_CONF_OPTS += --enable-openjpeg
 else
 GHOSTSCRIPT_CONF_OPTS += --disable-openjpeg
+endif
+
+ifeq ($(BR2_PACKAGE_OPENJPEG)$(BR2_PACKAGE_JBIG2DEC),yy)
+# Dependencies already handle on per-package basis above,
+# but duplicated here for consistency.
+GHOSTSCRIPT_DEPENDENCIES += openjpeg jbig2dec
+GHOSTSCRIPT_CONF_OPTS += --with-pdf
+else
+GHOSTSCRIPT_CONF_OPTS += --without-pdf
 endif
 
 ifeq ($(BR2_PACKAGE_CUPS),y)

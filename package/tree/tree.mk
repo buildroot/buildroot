@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-TREE_VERSION = 2.0.2
+TREE_VERSION = 2.1.1
 TREE_SOURCE = tree-$(TREE_VERSION).tgz
-TREE_SITE = http://mama.indstate.edu/users/ice/tree/src
+TREE_SITE = http://oldmanprogrammer.net/tar/tree
 TREE_LICENSE = GPL-2.0+
 TREE_LICENSE_FILES = LICENSE
 

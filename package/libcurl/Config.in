@@ -31,6 +31,11 @@ config BR2_PACKAGE_LIBCURL_COOKIES_SUPPORT
 	help
 	  Enable support for cookies.
 
+config BR2_PACKAGE_LIBCURL_WEBSOCKETS_SUPPORT
+	bool "websockets support"
+	help
+	  Enable support for websockets.
+
 config BR2_PACKAGE_LIBCURL_EXTRA_PROTOCOLS_FEATURES
 	bool "enable extra protocols and features"
 	default y
@@ -57,7 +62,6 @@ choice
 config BR2_PACKAGE_LIBCURL_OPENSSL
 	bool "OpenSSL"
 	depends on BR2_PACKAGE_OPENSSL
-	select BR2_PACKAGE_LIBOPENSSL_ENABLE_DES if BR2_PACKAGE_LIBOPENSSL
 
 config BR2_PACKAGE_LIBCURL_BEARSSL
 	bool "BearSSL"

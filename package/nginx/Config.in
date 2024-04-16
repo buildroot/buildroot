@@ -2,11 +2,12 @@ menuconfig BR2_PACKAGE_NGINX
 	bool "nginx"
 	depends on BR2_USE_MMU # fork()
 	select BR2_PACKAGE_LIBATOMIC_OPS if BR2_sparc_v8 || BR2_sparc_leon3
+	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	help
 	  nginx is an HTTP and reverse proxy server, as well as a mail
 	  proxy server.
 
-	  http://nginx.org/
+	  https://nginx.org/
 
 if BR2_PACKAGE_NGINX
 
@@ -214,7 +215,7 @@ config BR2_PACKAGE_NGINX_HTTP_REFERER_MODULE
 config BR2_PACKAGE_NGINX_HTTP_REWRITE_MODULE
 	bool "ngx_http_rewrite_module"
 	default y
-	select BR2_PACKAGE_PCRE
+	select BR2_PACKAGE_PCRE2
 	help
 	  Enable ngx_http_rewrite_module
 

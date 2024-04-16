@@ -1,0 +1,33 @@
+From 53e34e3bff26fcbb7cc14178fa9fc80e7a73d556 Mon Sep 17 00:00:00 2001
+From: Baruch Siach <baruch@tkos.co.il>
+Date: Tue, 11 Oct 2022 16:34:44 +0300
+Subject: [PATCH] Makefile: disable stack protection
+
+The Buildroot toolchain might enable stack protection by default. That
+breaks linking because ATF does not provide the required __stack_chk
+routines.
+
+The mv-ddr-marvell Makefile provides no way to add custom CFLAGS. Patch
+Makefile to disable stack protection.
+
+Upstream: not applicable; Buildroot specific
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+ Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Makefile b/Makefile
+index 045284c30cbc..9641354bcf86 100644
+--- a/Makefile
++++ b/Makefile
+@@ -336,6 +336,7 @@ CFLAGS = -DMV_DDR_ATF -DCONFIG_DDR4
+ CFLAGS += -Wall -Werror -Os -ffreestanding -mlittle-endian -g -gdwarf-2 -nostdinc
+ CFLAGS += -march=armv8-a -fpie
+ CFLAGS += $(call cc_option, --param=min-pagesize=0)
++CFLAGS += -fno-stack-protector
+ 
+ # PLATFORM is set in ble/ble.mk
+ ifneq ($(findstring a80x0,$(PLATFORM)),)
+-- 
+2.40.1
+

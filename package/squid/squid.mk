@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-SQUID_VERSION = 5.6
+SQUID_VERSION = 6.6
 SQUID_SOURCE = squid-$(SQUID_VERSION).tar.xz
-SQUID_SITE = http://www.squid-cache.org/Versions/v5
+SQUID_SITE = http://www.squid-cache.org/Versions/v6
 SQUID_LICENSE = GPL-2.0+
 SQUID_LICENSE_FILES = COPYING
 SQUID_CPE_ID_VENDOR = squid-cache
@@ -21,7 +21,7 @@ SQUID_CONF_ENV = \
 	ac_cv_func_strnstr=no \
 	ac_cv_have_squid=yes \
 	BUILDCXX="$(HOSTCXX)" \
-	BUILDCXXFLAGS="$(HOST_CXXFLAGS)"
+	BUILDCXXFLAGS="$(HOST_CXXFLAGS) -std=c++17"
 SQUID_CONF_OPTS = \
 	--enable-async-io=8 \
 	--enable-linux-netfilter \
@@ -50,6 +50,10 @@ SQUID_CONF_OPTS += --with-mit-krb5
 SQUID_DEPENDENCIES += libkrb5
 else
 SQUID_CONF_OPTS += --without-mit-krb5
+endif
+
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+SQUID_DEPENDENCIES += libxcrypt
 endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)

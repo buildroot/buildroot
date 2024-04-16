@@ -1,0 +1,36 @@
+From 648c1cb66b571b037976b61363654f39448f5fac Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 7 May 2023 14:14:48 +0200
+Subject: [PATCH] displayid.c: Include sys/types.h
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes build error
+../displayid.c:377:10: error: ‘ssize_t’ undeclared (first use in this function); did you mean ‘size_t’?
+
+seen with:
+arc-linux-gcc.br_real (Buildroot 2021.11-4428-g6b6741b) 10.2.0
+
+Upstream: https://gitlab.freedesktop.org/emersion/libdisplay-info/-/commit/5c9801a75f2815790ad1ed5500cec2728a36c6ec
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ displayid.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/displayid.c b/displayid.c
+index 398772b..f1749c6 100644
+--- a/displayid.c
++++ b/displayid.c
+@@ -3,6 +3,7 @@
+ #include <inttypes.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <sys/types.h>
+ 
+ #include "bits.h"
+ #include "displayid.h"
+-- 
+2.39.2
+

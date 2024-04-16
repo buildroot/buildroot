@@ -1,0 +1,72 @@
+From 09ce52fe375a6fc1ccf51b6b691aaa2c3f53fbd5 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd.kuhls@t-online.de>
+Date: Fri, 3 Jun 2022 16:26:03 +0200
+Subject: [PATCH] Fix uClibc build
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes build errors with uClibc and gcc-9.3.0:
+
+../src/gallium/drivers/lima/lima_texture.c:47:15: error: expected
+ declaration specifiers or ‘...’ before ‘__builtin_offsetof’
+   47 | static_assert(offsetof(lima_tex_desc, va) == 24,
+ "lima_tex_desc->va offset isn't 24");
+
+../src/egl/main/egldisplay.c: In function ‘_eglGetNativePlatformFromEnv’:
+ ../src/egl/main/egldisplay.c:101:4: error: implicit declaration of
+ function ‘static_assert’ [-Werror=implicit-function-declaration] 101 |
+ static_assert(ARRAY_SIZE(egl_platforms) == _EGL_NUM_PLATFORMS,
+
+../src/util/macros.h:74:4: error: implicit declaration of function
+ ‘static_assert’ [-Werror=implicit-function-declaration]
+   74 |    static_assert(cond, #cond); \
+      |    ^~~~~~~~~~~~~
+
+Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13898
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[rebased for 23.2.0]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/util/compiler.h | 10 ++++++++++
+ src/util/macros.h   |  1 +
+ 2 files changed, 11 insertions(+)
+
+diff --git a/src/util/compiler.h b/src/util/compiler.h
+index d184ad455af..b5c56807acc 100644
+--- a/src/util/compiler.h
++++ b/src/util/compiler.h
+@@ -35,6 +35,17 @@
+ 
+ 
+ #include <assert.h>
++
++/*
++ * C11 static_assert() macro
++ * assert.h only defines that name for C11 and above
++ */
++#if !defined(__cplusplus)
++#ifndef static_assert
++#define static_assert _Static_assert
++#endif
++#endif
++
+ #include <limits.h>
+ #include <stdarg.h>
+ #include <stdbool.h>
+diff --git a/src/util/macros.h b/src/util/macros.h
+index 22b18303826..8f73ee72693 100644
+--- a/src/util/macros.h
++++ b/src/util/macros.h
+@@ -31,6 +31,7 @@
+ #include <stddef.h>
+ #include <stdint.h>
+ #include <stdio.h>
++#include "util/compiler.h"
+ 
+ #ifdef _GAMING_XBOX
+ #define strdup _strdup
+-- 
+2.34.1
+

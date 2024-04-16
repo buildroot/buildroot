@@ -1,0 +1,145 @@
+From 49471812d57adfb22dcce3cbea1a8956658731b9 Mon Sep 17 00:00:00 2001
+From: Kjell Ahlstedt <kjellahlstedt@gmail.com>
+Date: Sat, 18 Nov 2023 18:34:07 +0100
+Subject: [PATCH] Make it compatible with libxml2 >= 2.12.0
+
+* libxml++/document.cc:
+* libxml++/dtd.cc:
+* libxml++/nodes/entitydeclaration.cc:
+* libxml++/nodes/entityreference.cc:
+* libxml++/validators/relaxngvalidator.cc: Modify #include directives.
+* libxml++/keepblanks.cc: Ignore deprecation of xmlKeepBlanksDefault().
+* tests/saxparser_chunk_parsing_inconsistent_state/main.cc:
+Accept that MySaxParser::on_start_document() can be called before
+MySaxParser::on_error().
+
+Upstream: https://github.com/libxmlplusplus/libxmlplusplus/commit/49471812d57adfb22dcce3cbea1a8956658731b9
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ libxml++/document.cc                                   |  1 +
+ libxml++/dtd.cc                                        |  2 +-
+ libxml++/keepblanks.cc                                 |  5 ++++-
+ libxml++/nodes/entitydeclaration.cc                    |  2 +-
+ libxml++/nodes/entityreference.cc                      |  2 +-
+ libxml++/validators/relaxngvalidator.cc                |  1 +
+ .../saxparser_chunk_parsing_inconsistent_state/main.cc | 10 +++++++++-
+ 7 files changed, 18 insertions(+), 5 deletions(-)
+
+diff --git a/libxml++/document.cc b/libxml++/document.cc
+index da0a8f5..d5476c6 100644
+--- a/libxml++/document.cc
++++ b/libxml++/document.cc
+@@ -16,6 +16,7 @@
+ 
+ #include <libxml/tree.h>
+ #include <libxml/xinclude.h>
++#include <libxml/xmlsave.h>
+ #include <libxml/parser.h> // XML_PARSE_NOXINCNODE, XML_PARSE_NOBASEFIX
+ 
+ #include <iostream>
+diff --git a/libxml++/dtd.cc b/libxml++/dtd.cc
+index 238b3a0..8014c07 100644
+--- a/libxml++/dtd.cc
++++ b/libxml++/dtd.cc
+@@ -8,7 +8,7 @@
+ #include <libxml++/exceptions/parse_error.h>
+ #include <libxml++/io/istreamparserinputbuffer.h>
+ 
+-#include <libxml/tree.h>
++#include <libxml/parser.h>
+ 
+ #include <sstream>
+ 
+diff --git a/libxml++/keepblanks.cc b/libxml++/keepblanks.cc
+index 4228b8d..56b00cf 100644
+--- a/libxml++/keepblanks.cc
++++ b/libxml++/keepblanks.cc
+@@ -5,8 +5,11 @@
+  * included with libxml++ as the file COPYING.
+  */
+ 
+-#include <libxml++/keepblanks.h>
++// xmlKeepBlanksDefault() is deprecated since libxml2 2.12.0.
++// Ignore deprecations here.
++#define XML_DEPRECATED
+ 
++#include <libxml++/keepblanks.h>
+ #include <libxml/globals.h>
+ 
+ namespace xmlpp
+diff --git a/libxml++/nodes/entitydeclaration.cc b/libxml++/nodes/entitydeclaration.cc
+index 0a6390e..d5bfa75 100644
+--- a/libxml++/nodes/entitydeclaration.cc
++++ b/libxml++/nodes/entitydeclaration.cc
+@@ -5,7 +5,7 @@
+  */
+ 
+ #include <libxml++/nodes/entitydeclaration.h>
+-#include <libxml/tree.h>
++#include <libxml/entities.h>
+ 
+ namespace xmlpp
+ {
+diff --git a/libxml++/nodes/entityreference.cc b/libxml++/nodes/entityreference.cc
+index 19b1b22..278a126 100644
+--- a/libxml++/nodes/entityreference.cc
++++ b/libxml++/nodes/entityreference.cc
+@@ -6,7 +6,7 @@
+ 
+ #include <libxml++/nodes/entityreference.h>
+ 
+-#include <libxml/tree.h>
++#include <libxml/entities.h>
+ 
+ namespace xmlpp
+ {
+diff --git a/libxml++/validators/relaxngvalidator.cc b/libxml++/validators/relaxngvalidator.cc
+index 9bb10c2..68a814c 100644
+--- a/libxml++/validators/relaxngvalidator.cc
++++ b/libxml++/validators/relaxngvalidator.cc
+@@ -22,6 +22,7 @@
+ #include "libxml++/parsers/domparser.h"
+ #include "libxml++/relaxngschema.h"
+ 
++#include <libxml/tree.h>
+ #include <libxml/relaxng.h>
+ 
+ namespace xmlpp
+diff --git a/tests/saxparser_chunk_parsing_inconsistent_state/main.cc b/tests/saxparser_chunk_parsing_inconsistent_state/main.cc
+index 07cc3ef..53f55b3 100644
+--- a/tests/saxparser_chunk_parsing_inconsistent_state/main.cc
++++ b/tests/saxparser_chunk_parsing_inconsistent_state/main.cc
+@@ -24,10 +24,14 @@
+ 
+ class MySaxParser : public xmlpp::SaxParser
+ {
++public:
++  bool throw_on_start_doc = true;
++
+ protected:
+   void on_start_document() override
+   {
+-    throw std::runtime_error("some custom runtime exception");
++    if (throw_on_start_doc)
++      throw std::runtime_error("some custom runtime exception");
+   }
+   void on_error(const xmlpp::ustring& /* text */) override
+   {
+@@ -43,6 +47,9 @@ int main()
+     bool exceptionThrown = false;
+     try
+     {
++      // Depending on the libxml2 version, MySaxParser::on_start_document()
++      // may or may not be called before MySaxParser::on_error().
++      parser.throw_on_start_doc = false;
+       parser.parse_chunk("<?");
+       parser.finish_chunk_parsing();
+     }
+@@ -61,6 +68,7 @@ int main()
+     exceptionThrown = false;
+     try
+     {
++      parser.throw_on_start_doc = true;
+       std::stringstream ss("<root></root>");
+       parser.parse_stream(ss);
+     }

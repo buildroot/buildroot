@@ -1,0 +1,57 @@
+From f6fdb0a28e3bfcb3fd0aa1c81ad59c5411c0d660 Mon Sep 17 00:00:00 2001
+From: Andrew Sim <andrewsimz@gmail.com>
+Date: Sat, 10 Jun 2023 09:00:24 +0200
+Subject: [PATCH] Use perl module JSON:PP, part of core, instead of JSON
+ package
+
+This patch removes the need for an external package.
+
+Ported from
+https://github.com/openwrt/packages/blob/master/net/samba4/patches/105-perl-json-pp.patch
+https://github.com/openwrt/packages/commit/402f4ba4eff65b80a9deaa6085256112bec4d67b#diff-208d4e0345c9d29fbec23d6f655ba794afd3052f5cb8dd73944db72ce81b847b
+
+Upstream: https://github.com/heimdal/heimdal/pull/1176
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ cf/make-proto.pl | 4 ++--
+ configure.ac     | 1 -
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/cf/make-proto.pl b/cf/make-proto.pl
+index 36a040ce6..4af21916b 100644
+--- a/cf/make-proto.pl
++++ b/cf/make-proto.pl
+@@ -4,7 +4,7 @@
+ use Getopt::Std;
+ use File::Compare;
+ 
+-use JSON;
++use JSON::PP
+ 
+ my $comment = 0;
+ my $doxygen = 0;
+@@ -70,7 +70,7 @@ if($opt_x) {
+     my $EXP;
+     local $/;
+     open(EXP, '<', $opt_x) || die "open ${opt_x}";
+-    my $obj = JSON->new->utf8->decode(<EXP>);
++    my $obj = JSON::PP->new->utf8->decode(<EXP>);
+     close $EXP;
+ 
+     foreach my $x (keys %$obj) {
+diff --git a/configure.ac b/configure.ac
+index cedb4c01f..cecd030e6 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -56,7 +56,6 @@ if ! test -f "$srcdir/lib/asn1/der-protos.h" ||
+     AC_KRB_PROG_PERL
+     AC_KRB_PERL_MOD(Getopt::Std)
+     AC_KRB_PERL_MOD(File::Compare)
+-    AC_KRB_PERL_MOD(JSON)
+ fi
+ 
+ AC_KRB_PROG_YACC
+-- 
+2.39.2
+

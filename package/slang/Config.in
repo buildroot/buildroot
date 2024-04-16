@@ -5,3 +5,12 @@ config BR2_PACKAGE_SLANG
 	  Multi-platform console display library.
 
 	  http://www.jedsoft.org/slang/index.html
+
+if BR2_PACKAGE_SLANG
+
+config BR2_PACKAGE_SLANG_SLSH
+	bool "enable slsh"
+	help
+	  Enable the S-lang interpreter
+
+endif

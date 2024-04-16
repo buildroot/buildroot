@@ -8,8 +8,8 @@ EARLYOOM_ARGS=""
 [ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
 
 start() {
-	printf() 'Starting %s: ' "$DAEMON"
-	start-stop-daemon -b -m -S -q -p "$PIDFILE" -x "/bin/$DAEMON" \
+	printf 'Starting %s: ' "$DAEMON"
+	start-stop-daemon -b -m -S -q -p "$PIDFILE" -x "/usr/bin/$DAEMON" \
 	       -- $EARLYOOM_ARGS
 	status=$?
 	if [ "$status" -eq 0 ]; then

@@ -53,6 +53,11 @@ endmenu # Video
 
 menu "Bluetooth firmware"
 
+config BR2_PACKAGE_LINUX_FIRMWARE_AMLOGIC
+	bool "Amlogic SOC Bluetooth"
+	help
+	  Firmware files for Conexant Amlogic SOC bluetooth support.
+
 config BR2_PACKAGE_LINUX_FIRMWARE_IBT
 	bool "Intel Wireless Bluetooth"
 	help
@@ -64,10 +69,25 @@ config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7650
 	help
 	  Firmware files for MediaTek MT7650 bluetooth support
 
+config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7921_BT
+	bool "MediaTek MT7921"
+	help
+	  Firmware files for MediaTek MT7921 bluetooth support
+
+config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7922_BT
+	bool "MediaTek MT7922"
+	help
+	  Firmware files for MediaTek MT7922 bluetooth support
+
 config BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_6174A_BT
 	bool "Qualcomm Atheros Rome 6174A Bluetooth"
 	help
 	  Firmware files for QCA Rome 6174A bluetooth support.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_9377_BT
+	bool "Qualcomm Atheros QCA9377 Bluetooth"
+	help
+	  Firmware files for QCA9377 bluetooth support.
 
 config BR2_PACKAGE_LINUX_FIRMWARE_AR3011
 	bool "Qualcomm Atheros 3011"
@@ -268,6 +288,18 @@ config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_9XXX
 	  Firmware files for the Intel Wifi 9xxx devices supported by
 	  the iwlwifi kernel driver.
 
+config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_6E
+	bool "Intel iwlwifi 6/6E"
+	help
+	  Firmware files for the Intel Wi-Fi 6 and Wi-Fi 6E devices
+	  supported by the iwlwifi kernel driver.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_QUZ
+	bool "Intel iwlwifi QuZ"
+	help
+	  Firmware files for the Intel Wifi QuZ devices (used in NUC10)
+	  supported by the iwlwifi kernel driver.
+
 config BR2_PACKAGE_LINUX_FIRMWARE_LIBERTAS_SD8686_V8
 	bool "Libertas SD 8686 v8"
 	help
@@ -366,6 +398,16 @@ config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT76X2E
 	help
 	  MediaTek MT76x2e
 
+config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7921
+	bool "MediaTek MT7921"
+	help
+	  MediaTek MT7921
+
+config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7922
+	bool "MediaTek MT7922"
+	help
+	  MediaTek MT7922
+
 config BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_6174
 	bool "Qualcomm Atheros 6174"
 	help
@@ -405,7 +447,13 @@ config BR2_PACKAGE_LINUX_FIRMWARE_RTL_RTW88
 	bool "Realtek rtw88"
 	help
 	  Firmware images supported by Realtek's wireless
-	  driver rtw88.
+	  driver rtw88 (802.11n/ac chipsets).
+
+config BR2_PACKAGE_LINUX_FIRMWARE_RTL_RTW89
+	bool "Realtek rtw89"
+	help
+	  Firmware images supported by Realtek's wireless
+	  driver rtw89 (802.11ax chipsets).
 
 config BR2_PACKAGE_LINUX_FIRMWARE_REDPINE_RS9113
 	bool "Redpine rs9113"
@@ -443,8 +491,13 @@ config BR2_PACKAGE_LINUX_FIRMWARE_BROADCOM_TIGON3
 	  Firmware files for Broadcom Tigon3 ethernet cards
 	  (tigon)
 
-config BR2_PACKAGE_LINUX_FIRMWARE_BNX2X
+config BR2_PACKAGE_LINUX_FIRMWARE_BNX2
 	bool "Broadcom NetXtremeII"
+	help
+	  Firmware files for Broadcom NetXtreme ethernet cards (bnx2)
+
+config BR2_PACKAGE_LINUX_FIRMWARE_BNX2X
+	bool "Broadcom NetXtremeII 10Gb"
 	help
 	  Firmware files for Broadcom NetXtreme 10Gb ethernet cards
 	  (bnx2x)
@@ -472,6 +525,11 @@ config BR2_PACKAGE_LINUX_FIRMWARE_INTEL_ICE
 	help
 	  Firmware files for Intel Ethernet 800 Series Network Adapters
 	  (ice)
+
+config BR2_PACKAGE_LINUX_FIRMWARE_MARVELL_PRESTERA
+	bool "Marvell Prestera"
+	help
+	  Firmware files for Marvell Prestera ethernet cards
 
 config BR2_PACKAGE_LINUX_FIRMWARE_MICROCHIP_VSC85XX_PHY
 	bool "Microchip VSC85xx PHYs"
@@ -572,6 +630,12 @@ config BR2_PACKAGE_LINUX_FIRMWARE_CX231XX
 	help
 	  Firmware files for Conexant Cx23100/101/102 USB broadcast
 	  A/V decoder needed by the Linux CX231XX driver.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_CX23885
+	bool "Conexant Cx23885/7/8 PCIe broadcast A/V decoder"
+	help
+	  Firmware files for Conexant Cx23885/7/8 PCIe broadcast
+	  A/V decoder needed by the Linux CX23885 driver.
 
 endmenu
 

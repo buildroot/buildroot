@@ -1,0 +1,130 @@
+From ec8dcc7faf13c57f5f6d785e4429818f1239a058 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 8 Jan 2023 20:50:18 +0100
+Subject: [PATCH] drop decnet
+
+Drop decnet as it has been removed since kernel 6.1 and
+https://github.com/torvalds/linux/commit/1202cdd665315c525b5237e96e0bedc76d7e754f
+resulting in the following build failure:
+
+net/proto-decnet.c:5:10: fatal error: linux/dn.h: No such file or directory
+    5 | #include <linux/dn.h>
+      |          ^~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/47e0a5e0b6fcf33ab4f9848d5d8c2be9e5283950
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/kernelslacker/trinity/pull/41]
+---
+ include/net.h      |  1 -
+ net/proto-decnet.c | 59 ----------------------------------------------
+ net/proto-unix.c   |  1 -
+ net/protocols.c    |  1 -
+ 4 files changed, 62 deletions(-)
+ delete mode 100644 net/proto-decnet.c
+
+diff --git a/include/net.h b/include/net.h
+index 99d55363..791e8090 100644
+--- a/include/net.h
++++ b/include/net.h
+@@ -80,7 +80,6 @@ extern const struct netproto proto_atmpvc;
+ extern const struct netproto proto_atmsvc;
+ extern const struct netproto proto_x25;
+ extern const struct netproto proto_rose;
+-extern const struct netproto proto_decnet;
+ extern const struct netproto proto_llc;
+ extern const struct netproto proto_netlink;
+ extern const struct netproto proto_packet;
+diff --git a/net/proto-decnet.c b/net/proto-decnet.c
+deleted file mode 100644
+index 7711cf00..00000000
+--- a/net/proto-decnet.c
++++ /dev/null
+@@ -1,59 +0,0 @@
+-#include <sys/types.h>
+-#include <sys/socket.h>
+-#include <sys/un.h>
+-#include <netinet/in.h>
+-#include <linux/dn.h>
+-#include <stdlib.h>
+-#include "net.h"
+-#include "random.h"
+-#include "utils.h"	// RAND_ARRAY
+-#include "compat.h"
+-
+-static void decnet_gen_sockaddr(struct sockaddr **addr, socklen_t *addrlen)
+-{
+-	struct sockaddr_dn *dn;
+-	unsigned int i;
+-
+-	dn = zmalloc(sizeof(struct sockaddr_dn));
+-
+-	dn->sdn_family = PF_DECnet;
+-	dn->sdn_flags = rnd();
+-	dn->sdn_objnum = rnd();
+-	dn->sdn_objnamel = rnd() % 16;
+-	for (i = 0; i < dn->sdn_objnamel; i++)
+-		dn->sdn_objname[i] = rnd();
+-	dn->sdn_add.a_len = RAND_BOOL();
+-	dn->sdn_add.a_addr[0] = rnd();
+-	dn->sdn_add.a_addr[1] = rnd();
+-	*addr = (struct sockaddr *) dn;
+-	*addrlen = sizeof(struct sockaddr_dn);
+-}
+-
+-static const unsigned int decnet_opts[] = {
+-	SO_CONDATA, SO_CONACCESS, SO_PROXYUSR, SO_LINKINFO,
+-	DSO_CONDATA, DSO_DISDATA, DSO_CONACCESS, DSO_ACCEPTMODE,
+-	DSO_CONACCEPT, DSO_CONREJECT, DSO_LINKINFO, DSO_STREAM,
+-	DSO_SEQPACKET, DSO_MAXWINDOW, DSO_NODELAY, DSO_CORK,
+-	DSO_SERVICES, DSO_INFO
+-};
+-
+-static void decnet_setsockopt(struct sockopt *so, __unused__ struct socket_triplet *triplet)
+-{
+-	so->level = SOL_DECNET;
+-	so->optname = RAND_ARRAY(decnet_opts);
+-
+-	// TODO: set optlen correctly
+-}
+-
+-static struct socket_triplet decnet_triplets[] = {
+-	{ .family = PF_DECnet, .protocol = DNPROTO_NSP, .type = SOCK_SEQPACKET },
+-	{ .family = PF_DECnet, .protocol = DNPROTO_NSP, .type = SOCK_STREAM },
+-};
+-
+-const struct netproto proto_decnet = {
+-	.name = "decnet",
+-	.setsockopt = decnet_setsockopt,
+-	.gen_sockaddr = decnet_gen_sockaddr,
+-	.valid_triplets = decnet_triplets,
+-	.nr_triplets = ARRAY_SIZE(decnet_triplets),
+-};
+diff --git a/net/proto-unix.c b/net/proto-unix.c
+index f7427a22..119c1429 100644
+--- a/net/proto-unix.c
++++ b/net/proto-unix.c
+@@ -2,7 +2,6 @@
+ #include <sys/socket.h>
+ #include <sys/un.h>
+ #include <netinet/in.h>
+-#include <linux/dn.h>
+ #include <stdlib.h>
+ #include "net.h"
+ #include "random.h"
+diff --git a/net/protocols.c b/net/protocols.c
+index ea64d5f5..278f08b5 100644
+--- a/net/protocols.c
++++ b/net/protocols.c
+@@ -18,7 +18,6 @@ const struct protoptr net_protocols[TRINITY_PF_MAX] = {
+ #ifdef USE_IPV6
+ 	[PF_INET6] = { .proto = &proto_inet6 },
+ #endif
+-	[PF_DECnet] = { .proto = &proto_decnet },
+ 	[PF_PACKET] = { .proto = &proto_packet },
+ #ifdef USE_NETECONET
+ 	[PF_ECONET] = { .proto = &proto_econet },
+-- 
+2.39.0
+

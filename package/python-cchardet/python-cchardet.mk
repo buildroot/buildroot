@@ -10,5 +10,6 @@ PYTHON_CCHARDET_SITE = https://files.pythonhosted.org/packages/a8/5d/090c9f0312b
 PYTHON_CCHARDET_SETUP_TYPE = setuptools
 PYTHON_CCHARDET_LICENSE = MPL-1.1
 PYTHON_CCHARDET_LICENSE_FILES = COPYING
+PYTHON_CCHARDET_DEPENDENCIES = host-python-cython
 
 $(eval $(python-package))

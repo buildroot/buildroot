@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_AIOSQLITE
+	bool "python-aiosqlite"
+	select BR2_PACKAGE_PYTHON3_SQLITE # runtime
+	help
+	  aiosqlite provides a friendly, async interface to sqlite
+	  databases.
+
+	  https://aiosqlite.omnilib.dev

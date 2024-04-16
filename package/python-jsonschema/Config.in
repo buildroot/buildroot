@@ -1,8 +1,11 @@
 config BR2_PACKAGE_PYTHON_JSONSCHEMA
 	bool "python-jsonschema"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-rpds-py
 	select BR2_PACKAGE_PYTHON_ATTRS # runtime
-	select BR2_PACKAGE_PYTHON_PYRSISTENT # runtime
+	select BR2_PACKAGE_PYTHON_JSONSCHEMA_SPECIFICATIONS # runtime
+	select BR2_PACKAGE_PYTHON_REFERENCING # runtime
+	select BR2_PACKAGE_PYTHON_RPDS_PY # runtime
 	help
 	  An implementation of JSON Schema validation for Python.
 
-	  http://github.com/Julian/jsonschema
+	  https://github.com/python-jsonschema/jsonschema

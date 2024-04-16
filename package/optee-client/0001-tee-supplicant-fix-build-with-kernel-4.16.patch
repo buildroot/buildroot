@@ -1,0 +1,56 @@
+From acc5aec37f5f246ebf185d2129e7630eb80bb388 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 5 Jan 2024 09:47:43 +0100
+Subject: [PATCH] tee-supplicant: fix build with kernel < 4.16
+
+Commit 3ac968ee7c927271e83ea3a4247839649202ab5e moved linux/tee.h from
+libteec/include to libteec/src resulting in the following build failure
+with any kernel < 4.16 (i.e before
+https://github.com/torvalds/linux/commit/033ddf12bcf5326b93bd604f50a7474a434a35f9):
+
+/home/buildroot/autobuild/instance-3/output-1/build/optee-client-4.0.0/tee-supplicant/src/tee_supplicant.c: In function 'register_local_shm':
+/home/buildroot/autobuild/instance-3/output-1/build/optee-client-4.0.0/tee-supplicant/src/tee_supplicant.c:356:44: error: storage size of 'data' isn't known
+  356 |         struct tee_ioctl_shm_register_data data;
+      |                                            ^~~~
+
+To fix this build failure, update CMakeLists.txt and Makefile of
+tee-supplicant to add libteec/src to the include directories.
+
+Fixes: 3ac968ee7c92 ("Makefile, cmake: move teec related headers")
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/OP-TEE/optee_client/pull/369
+---
+ tee-supplicant/CMakeLists.txt | 5 ++++-
+ tee-supplicant/Makefile       | 2 +-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/tee-supplicant/CMakeLists.txt b/tee-supplicant/CMakeLists.txt
+index 31c6dac5..b44e9e95 100644
+--- a/tee-supplicant/CMakeLists.txt
++++ b/tee-supplicant/CMakeLists.txt
+@@ -93,7 +93,10 @@ endif()
+ ################################################################################
+ # Public and private header and library dependencies
+ ################################################################################
+-target_include_directories(${PROJECT_NAME} PRIVATE src)
++target_include_directories(${PROJECT_NAME}
++	PRIVATE src
++	PRIVATE ../libteec/src
++)
+ 
+ target_link_libraries(${PROJECT_NAME}
+ 	PRIVATE teec
+diff --git a/tee-supplicant/Makefile b/tee-supplicant/Makefile
+index 06c4b2e5..c3b32252 100644
+--- a/tee-supplicant/Makefile
++++ b/tee-supplicant/Makefile
+@@ -40,7 +40,7 @@ TEES_OBJ_DIR	:= $(OUT_DIR)
+ TEES_OBJS 	:= $(patsubst %.c,$(TEES_OBJ_DIR)/%.o, $(TEES_SRCS))
+ TEES_INCLUDES 	:= ${CURDIR}/../libteec/include \
+ 		   ${CURDIR}/src \
+-		   ${CURDIR}/../libteec/include \
++		   ${CURDIR}/../libteec/src \
+ 
+ TEES_CFLAGS	:= $(addprefix -I, $(TEES_INCLUDES)) $(CFLAGS) \
+ 		   -DDEBUGLEVEL_$(CFG_TEE_SUPP_LOG_LEVEL) \

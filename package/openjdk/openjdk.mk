@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-ifeq ($(BR2_PACKAGE_OPENJDK_VERSION_17),y)
-OPENJDK_VERSION_MAJOR = 17
-OPENJDK_VERSION_MINOR = 0.2+8
+ifeq ($(BR2_PACKAGE_OPENJDK_VERSION_21),y)
+OPENJDK_VERSION_MAJOR = 21
+OPENJDK_VERSION_MINOR = 0.1+12
 else
-OPENJDK_VERSION_MAJOR = 11
-OPENJDK_VERSION_MINOR = 0.14.1+1
+OPENJDK_VERSION_MAJOR = 17
+OPENJDK_VERSION_MINOR = 0.9+9
 endif
 OPENJDK_VERSION = $(OPENJDK_VERSION_MAJOR).$(OPENJDK_VERSION_MINOR)
 OPENJDK_SITE = $(call github,openjdk,jdk$(OPENJDK_VERSION_MAJOR)u,jdk-$(OPENJDK_VERSION))
@@ -83,7 +83,6 @@ OPENJDK_CONF_ENV = \
 
 OPENJDK_CONF_OPTS = \
 	--disable-full-docs \
-	--disable-hotspot-gtest \
 	--disable-manpages \
 	--disable-warnings-as-errors \
 	--enable-headless-only \

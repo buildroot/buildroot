@@ -1,0 +1,31 @@
+From cf7ac82a610bbfee57512cba345f7d49c02563a2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Eivind=20N=C3=A6ss?= <eivnaes@yahoo.com>
+Date: Wed, 14 Jun 2023 23:19:46 +0000
+Subject: [PATCH] Fixes issue #429, stray include of an openssl header was
+ removed
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Eivind Næss <eivnaes@yahoo.com>
+
+Upstream: https://github.com/ppp-project/ppp/pull/431
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ pppd/crypto_ms.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/pppd/crypto_ms.c b/pppd/crypto_ms.c
+index a9ddd5fda..ccf8129d4 100644
+--- a/pppd/crypto_ms.c
++++ b/pppd/crypto_ms.c
+@@ -122,8 +122,6 @@ MakeKey(const unsigned char *key, unsigned char *des_key)
+ 	DES_set_odd_parity((DES_cblock *)des_key);
+ }
+ 
+-#include <openssl/evp.h>
+-
+ int
+ DesEncrypt(const unsigned char *clear, const unsigned char *key, unsigned char *cipher)
+ {

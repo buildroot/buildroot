@@ -1,0 +1,12 @@
+config BR2_PACKAGE_TL_EXPECTED
+	bool "tl-expected"
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # C++11
+	help
+	  C++11/14/17 std::expected with functional-style extensions and
+	  reference support.
+
+	  https://github.com/TartanLlama/expected
+
+comment "tl-expected needs a toolchain w/ C++, gcc >= 4.8"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_8

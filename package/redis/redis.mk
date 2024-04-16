@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-REDIS_VERSION = 7.0.5
+REDIS_VERSION = 7.2.4
 REDIS_SITE = http://download.redis.io/releases
 REDIS_LICENSE = BSD-3-Clause (core); MIT and BSD family licenses (Bundled components)
 REDIS_LICENSE_FILES = COPYING
@@ -30,7 +30,7 @@ endif
 # https://github.com/antirez/redis/pull/609).  We set PREFIX
 # instead.
 REDIS_BUILDOPTS = $(TARGET_CONFIGURE_OPTS) \
-	PREFIX=$(TARGET_DIR)/usr MALLOC=libc
+	PREFIX=$(TARGET_DIR)/usr MALLOC=libc WARNINGS=
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 REDIS_DEPENDENCIES += systemd

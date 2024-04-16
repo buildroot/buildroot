@@ -1,25 +1,28 @@
-comment "multipath-tools needs udev and a uClibc or glibc toolchain w/ threads, dynamic library"
+comment "multipath-tools needs udev and a toolchain w/ threads, dynamic library, C++"
 	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
-	depends on !BR2_TOOLCHAIN_USES_MUSL
 	depends on BR2_PACKAGE_LIBURCU_ARCH_SUPPORTS
-	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS || !BR2_PACKAGE_HAS_UDEV
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS || \
+		!BR2_PACKAGE_HAS_UDEV || !BR2_INSTALL_LIBSTDCPP
 
 config BR2_PACKAGE_MULTIPATH_TOOLS
 	bool "multipath-tools"
 	depends on !BR2_STATIC_LIBS
-	depends on !BR2_TOOLCHAIN_USES_MUSL
 	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on BR2_PACKAGE_LIBURCU_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_HAS_UDEV
+	depends on BR2_INSTALL_LIBSTDCPP # liburcu
 	select BR2_PACKAGE_JSON_C
 	select BR2_PACKAGE_LIBURCU
 	select BR2_PACKAGE_LIBAIO
 	select BR2_PACKAGE_LVM2
 	select BR2_PACKAGE_LVM2_STANDARD_INSTALL
 	select BR2_PACKAGE_READLINE
+	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_LIBS
+	select BR2_PACKAGE_UTIL_LINUX_LIBMOUNT
 	help
 	  This package provides the following binaries to drive
 	  the Device Mapper multipathing driver:

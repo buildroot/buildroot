@@ -1,0 +1,112 @@
+From ed1daed074fba0dabff825e63525d751b6bb7b8d Mon Sep 17 00:00:00 2001
+From: Graham Leggett <minfrin@apache.org>
+Date: Tue, 31 Dec 2019 21:26:02 +0000
+Subject: [PATCH] Revert: Add the ability to cross compile APR.
+
+git-svn-id: https://svn.apache.org/repos/asf/apr/apr/branches/1.7.x@1872147 13f79535-47bb-0310-9956-ffa450edef68
+
+[Revert upstream commit https://github.com/apache/apr/commit/b6dbbc77da35a7b46754c99f465827f2a583e23c]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ CHANGES       |  2 --
+ apr-config.in | 22 ----------------------
+ 2 files changed, 24 deletions(-)
+
+diff --git a/CHANGES b/CHANGES
+index 71b2f0e..e751c90 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -56,8 +56,6 @@ Changes for APR 1.7.1
+   *) Don't try to use PROC_PTHREAD by default when cross compiling.
+      [Yann Ylavic]
+ 
+-  *) Add the ability to cross compile APR. [Graham Leggett]
+-
+   *) While cross-compiling, the tools/gen_test_char could not
+      be executed at build time, use AX_PROG_CC_FOR_BUILD to
+      build native tools/gen_test_char
+diff --git a/apr-config.in b/apr-config.in
+index 4873fc0..84b4073 100644
+--- a/apr-config.in
++++ b/apr-config.in
+@@ -48,14 +48,6 @@ APR_LIBNAME="@APR_LIBNAME@"
+ # NOTE: the following line is modified during 'make install': alter with care!
+ location=@APR_CONFIG_LOCATION@
+ 
+-# absolute path, but not installed path - we're cross compiling
+-case "$0" in
+-  "${bindir}/"*) ;;
+-  "/"*)         location=crosscompile;
+-                APR_TARGET_DIR=${0%${bindir}/apr-${APR_MAJOR_VERSION}-config} ;;
+-  *)            ;;
+-esac
+-
+ show_usage()
+ {
+     cat << EOF
+@@ -101,8 +93,6 @@ fi
+ 
+ if test "$location" = "installed"; then
+     LA_FILE="$libdir/lib${APR_LIBNAME}.la"
+-elif test "$location" = "crosscompile"; then
+-    LA_FILE="$APR_TARGET_DIR/$libdir/lib${APR_LIBNAME}.la"
+ else
+     LA_FILE="$APR_BUILD_DIR/lib${APR_LIBNAME}.la"
+ fi
+@@ -132,8 +122,6 @@ while test $# -gt 0; do
+     --includedir)
+     if test "$location" = "installed"; then
+         flags="$includedir"
+-    elif test "$location" = "crosscompile"; then
+-        flags="$APR_TARGET_DIR/$includedir"
+     elif test "$location" = "source"; then
+         flags="$APR_SOURCE_DIR/include"
+     else
+@@ -166,8 +154,6 @@ while test $# -gt 0; do
+     --includes)
+     if test "$location" = "installed"; then
+         flags="$flags -I$includedir $EXTRA_INCLUDES"
+-    elif test "$location" = "crosscompile"; then
+-        flags="$flags -I$APR_TARGET_DIR/$includedir $EXTRA_INCLUDES"
+     elif test "$location" = "source"; then
+         flags="$flags -I$APR_SOURCE_DIR/include $EXTRA_INCLUDES"
+     else
+@@ -182,8 +168,6 @@ while test $# -gt 0; do
+     --installbuilddir)
+     if test "$location" = "installed"; then
+         echo "${installbuilddir}"
+-    elif test "$location" = "crosscompile"; then
+-        echo "$APR_TARGET_DIR/${installbuilddir}"
+     elif test "$location" = "source"; then
+         echo "$APR_SOURCE_DIR/build"
+     else
+@@ -200,8 +184,6 @@ while test $# -gt 0; do
+     if test "$location" = "installed"; then
+         ### avoid using -L if libdir is a "standard" location like /usr/lib
+         flags="$flags -L$libdir -l${APR_LIBNAME}"
+-    elif test "$location" = "crosscompile"; then
+-        flags="$flags -L$APR_TARGET_DIR/$libdir -l${APR_LIBNAME}"
+     else
+         ### this surely can't work since the library is in .libs?
+         flags="$flags -L$APR_BUILD_DIR -l${APR_LIBNAME}"
+@@ -219,8 +201,6 @@ while test $# -gt 0; do
+         # Since the user is specifying they are linking with libtool, we
+         # *know* that -R will be recognized by libtool.
+         flags="$flags -L$libdir -R$libdir -l${APR_LIBNAME}"
+-    elif test "$location" = "crosscompile"; then
+-        flags="$flags  -L${APR_TARGET_DIR}/$libdir  -l${APR_LIBNAME}"
+     else
+         flags="$flags $LA_FILE"
+     fi
+@@ -245,8 +225,6 @@ while test $# -gt 0; do
+     --apr-libtool)
+     if test "$location" = "installed"; then
+         echo "${installbuilddir}/libtool"
+-    elif test "$location" = "crosscompile"; then
+-        echo "$APR_TARGET_DIR/${installbuilddir}/build"
+     else
+         echo "$APR_BUILD_DIR/libtool"
+     fi
+-- 
+2.39.2
+

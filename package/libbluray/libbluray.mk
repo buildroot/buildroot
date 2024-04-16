@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBBLURAY_VERSION = 1.3.1
+LIBBLURAY_VERSION = 1.3.4
 LIBBLURAY_SITE = http://download.videolan.org/pub/videolan/libbluray/$(LIBBLURAY_VERSION)
 LIBBLURAY_SOURCE = libbluray-$(LIBBLURAY_VERSION).tar.bz2
 LIBBLURAY_INSTALL_STAGING = YES
@@ -21,6 +21,8 @@ endif
 
 ifeq ($(BR2_PACKAGE_LIBUDFREAD),y)
 LIBBLURAY_DEPENDENCIES += libudfread
+else
+LIBBLURAY_CONF_OPTS += --without-external-libudfread
 endif
 
 ifeq ($(BR2_PACKAGE_FREETYPE),y)

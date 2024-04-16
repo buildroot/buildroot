@@ -1,0 +1,53 @@
+From 2ca9f53327308e85e376bcbef7f8259a6331a453 Mon Sep 17 00:00:00 2001
+From: Nirbheek Chauhan <nirbheek@centricular.com>
+Date: Thu, 8 Sep 2022 02:36:33 +0530
+Subject: [PATCH] meson: Fix detection of a system-provided proxy-libintl
+
+proxy-libintl defines ngettext() as a define in the header that points
+to the actual symbol in the library which is g_libintl_ngettext().
+Same with bind_textdomain_codeset().
+
+Upstream: https://gitlab.gnome.org/GNOME/glib/-/commit/32249a22fc39319651e7c23442d37ec837f05764
+Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
+---
+ meson.build | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 0cbc9689f..de0bee5a3 100644
+--- a/meson.build
++++ b/meson.build
+@@ -2089,6 +2089,7 @@ libz_dep = dependency('zlib')
+ # FIXME: glib-gettext.m4 has much more checks to detect broken/uncompatible
+ # implementations. This could be extended if issues are found in some platforms.
+ libintl_deps = []
++libintl_prefix = '#include <libintl.h>'
+ libintl = dependency('intl', required: false, allow_fallback: false)
+ if libintl.found()
+   # libintl supports different threading APIs, which may not
+@@ -2100,11 +2101,11 @@ if libintl.found()
+   #
+   # Meson's builtin dependency lookup as of 0.60.0 doesn't check for
+   # pthread, so we do this manually here.
+-  if cc.has_function('ngettext', dependencies : libintl)
++  if cc.has_function('ngettext', dependencies : libintl, prefix: libintl_prefix)
+     libintl_deps += [libintl]
+   else
+     libintl_pthread = cc.find_library('pthread', required : false)
+-    if libintl_pthread.found() and cc.has_function('ngettext', dependencies : [libintl, libintl_pthread])
++    if libintl_pthread.found() and cc.has_function('ngettext', dependencies : [libintl, libintl_pthread], prefix: libintl_prefix)
+       libintl_deps += [libintl, libintl_pthread]
+     else
+       libintl = disabler()
+@@ -2113,7 +2114,7 @@ if libintl.found()
+ endif
+ 
+ if libintl.found()
+-  have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset', dependencies: libintl_deps)
++  have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset', dependencies: libintl_deps, prefix: libintl_prefix)
+ else
+   libintl = dependency('intl', allow_fallback: true)
+   assert(libintl.type_name() == 'internal')
+-- 
+2.34.1
+

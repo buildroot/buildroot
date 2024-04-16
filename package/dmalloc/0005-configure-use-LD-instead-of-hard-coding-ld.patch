@@ -1,0 +1,67 @@
+From d77e5f3d45b0cbae850e3a6e23d52edc137be803 Mon Sep 17 00:00:00 2001
+From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Date: Wed, 8 Feb 2023 13:52:05 +0100
+Subject: [PATCH] configure: use ${LD} instead of hard-coding 'ld'
+
+When doing cross-compilation, we do not want to use the native tools to
+test, but the target tools.
+
+Note that the weird quoting is inherited from a legacy patch in
+Buildroot, which dates back ages (at least 2006), and as it has not been
+identified as breaking things, we keep it as-is... Meh...
+
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ configure    | 12 ++++++------
+ configure.ac | 12 ++++++------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/configure b/configure
+index 810636e..30a7ea3 100755
+--- a/configure
++++ b/configure
+@@ -4377,12 +4377,12 @@ if ac_fn_c_try_compile "$LINENO"; then :
+             ac_cv_shared_link_args='# Could not configure shlib linking'
+             enable_shlib=no
+           fi
+-       elif (ld -shared --whole-archive -soname conftest.so -o conftest.so.t conftest.a) 2>&5; then
+-		ac_cv_shared_link_args='ld -shared --whole-archive -soname $@ -o $@.t'
+-	elif (ld -shared -o conftest.so.t -all -soname conftest.so.t -none -lc -all conftest.a) 2>&5; then
+-		ac_cv_shared_link_args='ld -shared -o $@.t -all -soname $@ -none -lc -all'
+-	elif (ld -G -o conftest.so.t conftest.a) 2>&5; then
+-		ac_cv_shared_link_args='ld -G -o $@.t'
++       elif (${LD-ld} -shared --whole-archive -soname conftest.so -o conftest.so.t conftest.a) 2>&5; then
++		ac_cv_shared_link_args="${LD-ld}"' -shared --whole-archive -soname $@ -o $@.t'
++	elif (${LD-ld} -shared -o conftest.so.t -all -soname conftest.so.t -none -lc -all conftest.a) 2>&5; then
++		ac_cv_shared_link_args="${LD-ld}"' -shared -o $@.t -all -soname $@ -none -lc -all'
++	elif (${LD-ld} -G -o conftest.so.t conftest.a) 2>&5; then
++		ac_cv_shared_link_args="${LD-ld}"' -G -o $@.t'
+ 	else
+ 		# oh well, toss an error
+ 		ac_cv_shared_link_args='# Could not configure shlib linking'
+diff --git a/configure.ac b/configure.ac
+index 51bdf4d..0d80a78 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -169,12 +169,12 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([ int foo(int val) { return val + 1; } ])],[
+             ac_cv_shared_link_args='# Could not configure shlib linking'
+             enable_shlib=no
+           fi
+-       elif (ld -shared --whole-archive -soname conftest.so -o conftest.so.t conftest.a) 2>&5; then
+-		ac_cv_shared_link_args='ld -shared --whole-archive -soname $@ -o $@.t'
+-	elif (ld -shared -o conftest.so.t -all -soname conftest.so.t -none -lc -all conftest.a) 2>&5; then
+-		ac_cv_shared_link_args='ld -shared -o $@.t -all -soname $@ -none -lc -all'
+-	elif (ld -G -o conftest.so.t conftest.a) 2>&5; then
+-		ac_cv_shared_link_args='ld -G -o $@.t'
++       elif (${LD-ld} -shared --whole-archive -soname conftest.so -o conftest.so.t conftest.a) 2>&5; then
++		ac_cv_shared_link_args="${LD-ld}"' -shared --whole-archive -soname $@ -o $@.t'
++	elif (${LD-ld} -shared -o conftest.so.t -all -soname conftest.so.t -none -lc -all conftest.a) 2>&5; then
++		ac_cv_shared_link_args="${LD-ld}"' -shared -o $@.t -all -soname $@ -none -lc -all'
++	elif (${LD-ld} -G -o conftest.so.t conftest.a) 2>&5; then
++		ac_cv_shared_link_args="${LD-ld}"' -G -o $@.t'
+ 	else
+ 		# oh well, toss an error
+ 		ac_cv_shared_link_args='# Could not configure shlib linking'
+-- 
+2.25.1
+

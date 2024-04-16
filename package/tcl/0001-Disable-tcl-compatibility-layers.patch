@@ -1,0 +1,35 @@
+From c829552921f0c7c8e522f911135ee100742b441b Mon Sep 17 00:00:00 2001
+From: Andrew Ruder <andrew.ruder@elecsyscorp.com>
+Date: Tue, 8 Apr 2014 15:54:04 -0500
+Subject: [PATCH] Disable tcl compatibility layers
+
+Turn off building compatibility layers for old/broken versions of
+standard functions (strstr, strtoul, strtod) with the assumption that
+anything buildroot is using as a standard C library will be good enough
+to not have broken behavior.
+
+Signed-off-by: Andrew Ruder <andrew.ruder@elecsyscorp.com>
+[Fabrice: Update for 8.6.12]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Julien: Update for 8.6.13]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ unix/tcl.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/unix/tcl.m4 b/unix/tcl.m4
+index ca94abd4ad..42eb58d384 100644
+--- a/unix/tcl.m4
++++ b/unix/tcl.m4
+@@ -2646,7 +2646,7 @@ AC_DEFUN([SC_TCL_CHECK_BROKEN_FUNC],[
+ #include <stdlib.h>
+ #include <string.h>
+ int main() {]$2[}]]])],[tcl_cv_$1_unbroken=ok],
+-		[tcl_cv_$1_unbroken=broken],[tcl_cv_$1_unbroken=unknown]))
++		[tcl_cv_$1_unbroken=broken],[tcl_cv_$1_unbroken=ok]))
+ 	if test ["$tcl_cv_]$1[_unbroken"] = "ok"; then
+ 	    tcl_ok=1
+ 	else
+-- 
+2.41.0
+

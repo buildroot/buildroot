@@ -2,14 +2,18 @@
 
 PROGS="@PROGS@"
 PIDDIR="/var/run"
+DAEMON="hyperv"
 
 # shellcheck source=/dev/null
-[ -r "/etc/default/hyperv" ] && . "/etc/default/hyperv"
+[ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
+
+# only continue if we are in a HyperV platform
+[ -e "/sys/bus/vmbus" ] || exit 0
 
 start_one() {
 	printf 'Starting %s: ' "$1"
 	# shellcheck disable=SC2086 # we need the word splitting
-	start-stop-daemon -b -m -S -q -p "$PIDDIR/$1.pid" -x "/sbin/$1" -- -n
+	start-stop-daemon -b -m -S -q -p "$PIDDIR/$1.pid" -x "/usr/sbin/$1" -- -n
 	status=$?
 	if [ "$status" -eq 0 ]; then
 		echo "OK"
@@ -24,7 +28,7 @@ start() {
 	for prog in ${PROGS}; do
 		start_one "${prog}" || ret=$?
 	done
-    return $ret
+	return "$ret"
 }
 
 stop_one() {
@@ -45,7 +49,7 @@ stop() {
 	for prog in ${PROGS}; do
 		stop_one "${prog}" || ret=$?
 	done
-    return $ret
+	return "$ret"
 }
 
 restart() {

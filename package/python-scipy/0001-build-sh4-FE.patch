@@ -1,0 +1,36 @@
+From aae8b63ddffe014e9353c3e8d2604628433eb7d7 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 4 Dec 2022 14:14:21 +0100
+Subject: [PATCH] build sh4 FE
+
+ensures FE_UPWARD and FE_DOWNWARD are defined for sh4 architecture.
+
+Closes: #1007769.
+
+[Retrieved from:
+https://salsa.debian.org/python-team/packages/scipy/-/blob/master/debian/patches/build_sh4_FE.patch]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ scipy/special/_round.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/scipy/special/_round.h b/scipy/special/_round.h
+index 013a25620..c321a1939 100644
+--- a/scipy/special/_round.h
++++ b/scipy/special/_round.h
+@@ -69,5 +69,12 @@ int fegetround()
+ 
+ #endif
+ 
++/* SH4 is not C99 compliant, see https://github.com/scipy/scipy/issues/15584 */
++#ifndef FE_UPWARD
++#define FE_UPWARD -1
++#endif
++#ifndef FE_DOWNWARD
++#define FE_DOWNWARD -1
++#endif
+ 
+ #endif /* _round.h */
+-- 
+2.38.1
+

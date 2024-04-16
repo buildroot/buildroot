@@ -10,6 +10,7 @@ config BR2_PACKAGE_HIAWATHA
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # __sync_*_4 intrisics
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on !BR2_STATIC_LIBS
+	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	select BR2_PACKAGE_ZLIB
 	help
 	  Hiawatha is a webserver for Unix and has been built with

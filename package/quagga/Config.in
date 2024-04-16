@@ -1,6 +1,7 @@
 config BR2_PACKAGE_QUAGGA
 	bool "quagga"
 	depends on BR2_USE_MMU # fork()
+	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	help
 	  Routing software suite, providing implementations of OSPFv2,
 	  OSPFv3 (IPv6), RIP v1 and v2, RIPng (IPv6) and BGPv4+.

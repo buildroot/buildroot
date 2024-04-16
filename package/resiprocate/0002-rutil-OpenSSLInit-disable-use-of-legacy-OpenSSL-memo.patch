@@ -1,0 +1,38 @@
+From e7c33f4e078e6e5dfa7dea796fa4ffb88f48a37a Mon Sep 17 00:00:00 2001
+From: Daniel Pocock <daniel@pocock.pro>
+Date: Thu, 4 Aug 2022 10:55:30 +0200
+Subject: [PATCH] rutil: OpenSSLInit: disable use of legacy OpenSSL memory leak
+ checking with OpenSSL 3.0 and later
+
+Upstream: https://github.com/resiprocate/resiprocate/commit/e7c33f4e078e6e5dfa7dea796fa4ffb88f48a37a
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ rutil/ssl/OpenSSLInit.cxx | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/rutil/ssl/OpenSSLInit.cxx b/rutil/ssl/OpenSSLInit.cxx
+index d42486f96b..65afed09fe 100644
+--- a/rutil/ssl/OpenSSLInit.cxx
++++ b/rutil/ssl/OpenSSLInit.cxx
+@@ -69,14 +69,19 @@ OpenSSLInit::OpenSSLInit()
+ 	CRYPTO_set_dynlock_lock_callback(::resip_OpenSSLInit_dynLockFunction);
+ #endif
+ 
++/* The OpenSSL memory leak checking has been deprecated since
++   OpenSSL v3.0.  OpenSSL developers recommend that we rely
++   on modern compilers to provide the same functionality. */
+ #if (OPENSSL_VERSION_NUMBER < 0x10100000L) || defined(LIBRESSL_VERSION_NUMBER)
+ 	CRYPTO_malloc_debug_init();
+ 	CRYPTO_set_mem_debug_options(V_CRYPTO_MDEBUG_ALL);
+-#else
++#elsif (OPENSSL_VERSION_NUMBER < 0x30000000L)
+ 	CRYPTO_set_mem_debug(1);
+ #endif
+ 
++#if (OPENSSL_VERSION_NUMBER < 0x30000000L) || defined(LIBRESSL_VERSION_NUMBER)
+ 	CRYPTO_mem_ctrl(CRYPTO_MEM_CHECK_ON);
++#endif
+ 
+ 	SSL_library_init();
+ 	SSL_load_error_strings();

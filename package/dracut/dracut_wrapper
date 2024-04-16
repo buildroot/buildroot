@@ -31,8 +31,18 @@ if [ -z "${sysroot}" ]; then
 fi
 
 topdir="$(dirname "$(realpath "$(dirname "${0}")")")"
-export DRACUT_LDD="${topdir}/sbin/prelink-rtld --root='${sysroot}'"
+DRACUT_LDD="$(mktemp /tmp/dracut-ldd.XXXXXX)"
+cat >"${DRACUT_LDD}" <<EOL
+#!/bin/bash
+${topdir}/sbin/prelink-rtld --root='${sysroot}' \${1}
+EOL
+chmod +x "${DRACUT_LDD}"
+export DRACUT_LDD
 export DRACUT_INSTALL="${topdir}/lib/dracut/dracut-install"
 export DRACUT_LDCONFIG=/bin/true
 export dracutbasedir="${topdir}/lib/dracut"
-exec "${topdir}/bin/dracut.real" "${@}"
+(exec "${topdir}/bin/dracut.real" "${@}")
+
+if [ -n "${DRACUT_LDD}" ]; then
+	rm -f "${DRACUT_LDD}"
+fi

@@ -1,0 +1,41 @@
+From 03c5c4dd29bc7590baccb55a36d61e7f4b39c1fe Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 29 Oct 2023 18:56:35 +0100
+Subject: [PATCH] atop.h: include time.h
+
+Include time.h to avoid the following build failure with musl:
+
+atop.h:157:1: error: unknown type name 'time_t'
+  157 | time_t          normalize_epoch(time_t, long);
+      | ^~~~~~
+atop.h:157:1: note: 'time_t' is defined in header '<time.h>'; did you forget to '#include <time.h>'?
+atop.h:157:40: error: expected ')' before 'long'
+  157 | time_t          normalize_epoch(time_t, long);
+      |                                        ^~~~~
+      |                                        )
+
+Fixes:
+ - http://autobuild.buildroot.org/results/e7ec8d16f2299320f374a0198c8e9b18a102b037
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/Atoptool/atop/pull/280
+---
+ atop.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/atop.h b/atop.h
+index 9274fc5..3d5fea4 100644
+--- a/atop.h
++++ b/atop.h
+@@ -24,6 +24,8 @@
+ #ifndef __ATOP__
+ #define __ATOP__
+ 
++#include <time.h>
++
+ #define	EQ		0
+ #define SECONDSINDAY	86400
+ #define RAWNAMESZ	256
+-- 
+2.42.0
+

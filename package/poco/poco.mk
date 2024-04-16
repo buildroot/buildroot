@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-POCO_VERSION = 1.12.2
+POCO_VERSION = 1.13.2
 POCO_SITE = $(call github,pocoproject,poco,poco-$(POCO_VERSION)-release)
 POCO_LICENSE = BSL-1.0
 POCO_LICENSE_FILES = LICENSE
@@ -15,7 +15,7 @@ POCO_DEPENDENCIES = \
 	pcre2 \
 	zlib \
 	$(if $(BR2_PACKAGE_POCO_CRYPTO),openssl) \
-	$(if $(BR2_PACKAGE_POCO_DATA_MYSQL),mysql) \
+	$(if $(BR2_PACKAGE_POCO_DATA_MYSQL),mariadb) \
 	$(if $(BR2_PACKAGE_POCO_DATA_SQLITE),sqlite) \
 	$(if $(BR2_PACKAGE_POCO_DATA_PGSQL),postgresql) \
 	$(if $(BR2_PACKAGE_POCO_NETSSL_OPENSSL),openssl) \
@@ -57,13 +57,7 @@ ifeq ($(BR2_SOFT_FLOAT),y)
 POCO_CONF_OPTS += --no-fpenvironment
 endif
 
-ifeq ($(BR2_STATIC_LIBS),y)
-POCO_MAKE_TARGET = static_release
-else ifeq ($(BR2_SHARED_LIBS),y)
 POCO_MAKE_TARGET = shared_release
-else ifeq ($(BR2_SHARED_STATIC_LIBS),y)
-POCO_MAKE_TARGET = all_release
-endif
 
 POCO_LDFLAGS=$(TARGET_LDFLAGS)
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
@@ -74,7 +68,6 @@ define POCO_CONFIGURE_CMDS
 	(cd $(@D); $(TARGET_MAKE_ENV) ./configure \
 		--config=Linux \
 		--prefix=/usr \
-		--cflags=-std=c++14 \
 		--ldflags="$(POCO_LDFLAGS)" \
 		--omit="$(POCO_OMIT)" \
 		$(POCO_CONF_OPTS) \

@@ -1,0 +1,43 @@
+From ebd083223883d479b2dd6f8a0da272797f90d236 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Sat, 31 Dec 2022 18:38:33 +0100
+Subject: [PATCH] Fix cast warnings
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ cfg80211.c | 2 +-
+ netdev.c   | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/cfg80211.c b/cfg80211.c
+index 016aa06..2f40c9d 100644
+--- a/cfg80211.c
++++ b/cfg80211.c
+@@ -1794,7 +1794,7 @@ static int start_ap(struct wiphy *wiphy, struct net_device *dev,
+ 	if (ret != 0)
+ 		netdev_err(dev, "Error in setting channel\n");
+ 
+-	wilc_wlan_set_bssid(dev, dev->dev_addr, WILC_AP_MODE);
++	wilc_wlan_set_bssid(dev, (u8 *)dev->dev_addr, WILC_AP_MODE);
+ 
+ 	return wilc_add_beacon(vif, settings->beacon_interval,
+ 				   settings->dtim_period, &settings->beacon);
+diff --git a/netdev.c b/netdev.c
+index 824afea..5a1a51d 100644
+--- a/netdev.c
++++ b/netdev.c
+@@ -899,9 +899,9 @@ static int wilc_mac_open(struct net_device *ndev)
+ 				vif->idx);
+ 
+ 	if (is_valid_ether_addr(ndev->dev_addr))
+-		wilc_set_mac_address(vif, ndev->dev_addr);
++		wilc_set_mac_address(vif, (u8 *)ndev->dev_addr);
+ 	else
+-		wilc_get_mac_address(vif, ndev->dev_addr);
++		wilc_get_mac_address(vif, (u8 *)ndev->dev_addr);
+ 	netdev_dbg(ndev, "Mac address: %pM\n", ndev->dev_addr);
+ 
+ 	if (!is_valid_ether_addr(ndev->dev_addr)) {
+-- 
+2.34.1
+

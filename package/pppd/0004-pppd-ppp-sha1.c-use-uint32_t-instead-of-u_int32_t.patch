@@ -1,0 +1,64 @@
+From 7eb0cc63e38a1fcaff24bc3ca146c13414a1420e Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 18 Jun 2023 15:53:43 +0200
+Subject: [PATCH] pppd/ppp-sha1.c: use uint32_t instead of u_int32_t
+
+Fixes build with musl-libc toolchains.
+
+Upstream: https://github.com/ppp-project/ppp/pull/432
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ pppd/ppp-sha1.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/pppd/ppp-sha1.c b/pppd/ppp-sha1.c
+index ab4dcd5..9ff3a24 100644
+--- a/pppd/ppp-sha1.c
++++ b/pppd/ppp-sha1.c
+@@ -110,14 +110,14 @@ static void sha1_clean(PPP_MD_CTX *ctx)
+ #include <netinet/in.h>	/* htonl() */
+ 
+ typedef struct {
+-    u_int32_t state[5];
+-    u_int32_t count[2];
++    uint32_t state[5];
++    uint32_t count[2];
+     unsigned char buffer[64];
+ } SHA1_CTX;
+ 
+ 
+ static void
+-SHA1_Transform(u_int32_t[5], const unsigned char[64]);
++SHA1_Transform(uint32_t[5], const unsigned char[64]);
+ 
+ #define rol(value, bits) (((value) << (bits)) | ((value) >> (32 - (bits))))
+ 
+@@ -138,12 +138,12 @@ SHA1_Transform(u_int32_t[5], const unsigned char[64]);
+ /* Hash a single 512-bit block. This is the core of the algorithm. */
+ 
+ static void
+-SHA1_Transform(u_int32_t state[5], const unsigned char buffer[64])
++SHA1_Transform(uint32_t state[5], const unsigned char buffer[64])
+ {
+-    u_int32_t a, b, c, d, e;
++    uint32_t a, b, c, d, e;
+     typedef union {
+ 	unsigned char c[64];
+-	u_int32_t l[16];
++	uint32_t l[16];
+     } CHAR64LONG16;
+     CHAR64LONG16 *block;
+ 
+@@ -236,7 +236,7 @@ SHA1_Update(SHA1_CTX *context, const unsigned char *data, unsigned int len)
+ static void
+ SHA1_Final(unsigned char digest[20], SHA1_CTX *context)
+ {
+-    u_int32_t i, j;
++    uint32_t i, j;
+     unsigned char finalcount[8];
+ 
+     for (i = 0; i < 8; i++) {
+-- 
+2.39.2
+

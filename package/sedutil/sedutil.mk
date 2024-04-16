@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SEDUTIL_VERSION = 1.15.1
+SEDUTIL_VERSION = 1.20.0
 SEDUTIL_SITE = $(call github,Drive-Trust-Alliance,sedutil,$(SEDUTIL_VERSION))
 SEDUTIL_LICENSE = GPL-3.0+
 SEDUTIL_LICENSE_FILES = Common/LICENSE.txt

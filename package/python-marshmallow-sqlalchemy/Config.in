@@ -1,0 +1,10 @@
+config BR2_PACKAGE_PYTHON_MARSHMALLOW_SQLALCHEMY
+	bool "python-marshmallow-sqlalchemy"
+	select BR2_PACKAGE_PYTHON_MARSHMALLOW # runtime
+	select BR2_PACKAGE_PYTHON_PACKAGING # runtime
+	select BR2_PACKAGE_PYTHON_SQLALCHEMY # runtime
+	help
+	  SQLAlchemy integration with the marshmallow
+	  (de)serialization library.
+
+	  https://github.com/marshmallow-code/marshmallow-sqlalchemy

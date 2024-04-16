@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XAPP_XDPYINFO_VERSION = 1.3.3
+XAPP_XDPYINFO_VERSION = 1.3.4
 XAPP_XDPYINFO_SOURCE = xdpyinfo-$(XAPP_XDPYINFO_VERSION).tar.xz
-XAPP_XDPYINFO_SITE = http://xorg.freedesktop.org/releases/individual/app
+XAPP_XDPYINFO_SITE = https://xorg.freedesktop.org/archive/individual/app
 XAPP_XDPYINFO_LICENSE = MIT
 XAPP_XDPYINFO_LICENSE_FILES = COPYING
 XAPP_XDPYINFO_CONF_OPTS = --without-xf86misc # not in BR

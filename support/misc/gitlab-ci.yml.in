@@ -1,23 +1,39 @@
+stages:
+  - download
+  - test
+
+before_script:
+  - git config --global --add safe.directory ${CI_PROJECT_DIR}
+
 .check-check-package_base:
+    stage: test
     script:
         - python3 -m pytest -v utils/checkpackagelib/
 
+.check-check-symbol_base:
+    stage: test
+    script:
+        - python3 -m pytest -v utils/checksymbolslib/
+
 .check-DEVELOPERS_base:
+    stage: test
     script:
         - utils/get-developers -v
 
-.check-flake8_base:
-    script:
-        - make check-flake8
-
 .check-package_base:
+    stage: test
     script:
         - make check-package
 
-.defconfig_check:
-    before_script:
-        - DEFCONFIG_NAME=$(echo ${CI_JOB_NAME} | sed -e 's,_check$,,g')
+.check-symbol_base:
+    stage: test
     script:
+        - utils/check-symbols
+
+.defconfig_check:
+    stage: test
+    script:
+        - DEFCONFIG_NAME=$(echo ${CI_JOB_NAME} | sed -e 's,_check$,,g')
         - echo "Configure Buildroot for ${DEFCONFIG_NAME}"
         - make ${DEFCONFIG_NAME}
         - support/scripts/check-dotconfig.py .config configs/${DEFCONFIG_NAME}
@@ -36,10 +52,10 @@
       }
 
 .defconfig_base:
-    before_script:
+    stage: test
+    script:
         - DEFCONFIG_NAME=${CI_JOB_NAME}
         - OUTPUT_DIR=output
-    script:
         - echo "Configure Buildroot for ${DEFCONFIG_NAME}"
         - make ${DEFCONFIG_NAME}
         - ./support/scripts/check-dotconfig.py .config ./configs/${DEFCONFIG_NAME}
@@ -51,6 +67,11 @@
                 tail -200 runtime-test.log
                 exit 1
             }
+    retry:
+        max: 2
+        when:
+            - runner_system_failure
+            - stuck_or_timeout_failure
     artifacts:
         when: always
         expire_in: 2 weeks
@@ -63,16 +84,40 @@
             - output/build/*/.config
             - runtime-test.log
 
+.runtime_test_download:
+    stage: download
+    # Keep test-dl directory so the downloaded files can be an artifact of
+    # the job passed to all jobs of next stages.
+    script: ./support/testing/run-tests -d test-dl/ --prepare-only
+    artifacts:
+        when: always
+        paths:
+            - test-dl/
+
 .runtime_test_base:
-    before_script:
-        - TEST_CASE_NAME=${CI_JOB_NAME}
+    stage: test
     # Keep build directories so the rootfs can be an artifact of the job. The
     # runner will clean up those files for us.
     # Multiply every emulator timeout by 10 to avoid sporadic failures in
     # elastic runners.
     script:
+        - TEST_CASE_NAME=${CI_JOB_NAME}
         - echo "Starting runtime test ${TEST_CASE_NAME}"
-        - ./support/testing/run-tests -o test-output/ -d test-dl/ -k --timeout-multiplier 10 ${TEST_CASE_NAME}
+        - |
+            ./support/testing/run-tests -o test-output/ -d test-dl/ -k --timeout-multiplier 10 ${TEST_CASE_NAME} || {
+                echo 'Failed runtime test last output'
+                if [ -f test-output/*-run.log ]; then
+                    tail -200 test-output/*-run.log | sed 's/\r\r$//'
+                else
+                    tail -200 test-output/*-build.log
+                fi
+                exit 1
+            }
+    retry:
+        max: 2
+        when:
+            - runner_system_failure
+            - stuck_or_timeout_failure
     artifacts:
         when: always
         expire_in: 2 weeks
@@ -82,10 +127,9 @@
             - test-output/*/images/*
 
 .test_pkg:
-    stage: build
-    before_script:
-        - OUTPUT_DIR=${CI_JOB_NAME}
+    stage: test
     script:
+        - OUTPUT_DIR=${CI_JOB_NAME}
         - echo "Configure Buildroot for ${OUTPUT_DIR}"
         - make O=${OUTPUT_DIR} syncconfig
         - make O=${OUTPUT_DIR} savedefconfig
@@ -94,6 +138,11 @@
     needs:
         - pipeline: $PARENT_PIPELINE_ID
           job: generate-gitlab-ci-yml
+    retry:
+        max: 2
+        when:
+            - runner_system_failure
+            - stuck_or_timeout_failure
     artifacts:
         when: always
         expire_in: 2 weeks

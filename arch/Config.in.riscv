@@ -1,23 +1,5 @@
 # RISC-V CPU ISA extensions.
 
-config BR2_RISCV_ISA_RVI
-	bool
-
-config BR2_RISCV_ISA_RVM
-	bool
-
-config BR2_RISCV_ISA_RVA
-	bool
-
-config BR2_RISCV_ISA_RVF
-	bool
-
-config BR2_RISCV_ISA_RVD
-	bool
-
-config BR2_RISCV_ISA_RVC
-	bool
-
 choice
 	prompt "Target Architecture Variant"
 	default BR2_riscv_g
@@ -35,35 +17,33 @@ config BR2_riscv_g
 config BR2_riscv_custom
 	bool "Custom architecture"
 	select BR2_RISCV_ISA_RVI
-	select BR2_RISCV_ISA_CUSTOM_RVA
 
 endchoice
 
-if BR2_riscv_custom
-
 comment "Instruction Set Extensions"
 
-config BR2_RISCV_ISA_CUSTOM_RVM
+config BR2_RISCV_ISA_RVI
+	bool "Base Integer (I)"
+
+config BR2_RISCV_ISA_RVM
 	bool "Integer Multiplication and Division (M)"
-	select BR2_RISCV_ISA_RVM
 
-config BR2_RISCV_ISA_CUSTOM_RVA
+config BR2_RISCV_ISA_RVA
 	bool "Atomic Instructions (A)"
-	select BR2_RISCV_ISA_RVA
 
-config BR2_RISCV_ISA_CUSTOM_RVF
+config BR2_RISCV_ISA_RVF
 	bool "Single-precision Floating-point (F)"
-	select BR2_RISCV_ISA_RVF
 
-config BR2_RISCV_ISA_CUSTOM_RVD
+config BR2_RISCV_ISA_RVD
 	bool "Double-precision Floating-point (D)"
 	depends on BR2_RISCV_ISA_RVF
-	select BR2_RISCV_ISA_RVD
 
-config BR2_RISCV_ISA_CUSTOM_RVC
+config BR2_RISCV_ISA_RVC
 	bool "Compressed Instructions (C)"
-	select BR2_RISCV_ISA_RVC
-endif
+
+config BR2_RISCV_ISA_RVV
+	bool "Vector Instructions (V)"
+	select BR2_ARCH_NEEDS_GCC_AT_LEAST_12
 
 choice
 	prompt "Target Architecture Size"

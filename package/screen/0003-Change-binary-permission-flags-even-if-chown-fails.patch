@@ -1,0 +1,32 @@
+From 4231969c47a8379f9113e0c9c9586bcfdd545c37 Mon Sep 17 00:00:00 2001
+From: Maarten ter Huurne <maarten@treewalker.org>
+Date: Mon, 15 Sep 2014 00:03:05 +0200
+Subject: [PATCH] Change binary permission flags even if chown fails
+
+Typically when creating a package, the build is not run as root, so
+the chown will fail. But the chmod can still be done.
+
+Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
+[Julien: rebase on top of 4.9.1]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ Makefile.in | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index 3efbbfd..0315fde 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -84,7 +84,8 @@ screen: $(OFILES)
+ 
+ install_bin: .version screen installdirs
+ 	$(INSTALL_PROGRAM) screen $(DESTDIR)$(bindir)/$(SCREEN)
+-	-chown root $(DESTDIR)$(bindir)/$(SCREEN) && chmod 4755 $(DESTDIR)$(bindir)/$(SCREEN)
++	-chown root $(DESTDIR)$(bindir)/$(SCREEN)
++	-chmod 4755 $(DESTDIR)$(bindir)/$(SCREEN)
+ # This doesn't work if $(bindir)/screen is a symlink
+ 	rm -f $(DESTDIR)$(bindir)/screen
+ 	(cd $(DESTDIR)$(bindir) && ln -f -s $(SCREEN) screen)
+-- 
+2.41.0
+

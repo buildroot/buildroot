@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_WSPROTO
+	bool "python-wsproto"
+	select BR2_PACKAGE_PYTHON_H11 # runtime
+	help
+	  WebSockets state-machine based protocol implementation.
+
+	  https://github.com/python-hyper/wsproto/

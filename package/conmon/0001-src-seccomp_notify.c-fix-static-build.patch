@@ -1,0 +1,44 @@
+From 6cfcea9a16017f2a49cd792d39ebd9c86395946a Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 1 Nov 2023 16:45:21 +0100
+Subject: [PATCH] src/seccomp_notify.c: fix static build
+
+Fix the following static build failure raised even when seccomp is
+disabled:
+
+src/seccomp_notify.c:10:10: fatal error: dlfcn.h: No such file or directory
+   10 | #include <dlfcn.h>
+      |          ^~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/71b4f35b3150183c7b44bc3897f01b0019e10ebe
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/containers/conmon/issues/462
+---
+ src/seccomp_notify.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/seccomp_notify.c b/src/seccomp_notify.c
+index 8d34d9d..bf738ea 100644
+--- a/src/seccomp_notify.c
++++ b/src/seccomp_notify.c
+@@ -7,7 +7,6 @@
+ 
+ #include <errno.h>
+ #include <sys/ioctl.h>
+-#include <dlfcn.h>
+ #include <sys/wait.h>
+ #include <sys/mount.h>
+ #include <signal.h>
+@@ -19,6 +18,7 @@
+ 
+ #ifdef USE_SECCOMP
+ 
++#include <dlfcn.h>
+ #include <sys/sysmacros.h>
+ #include <linux/seccomp.h>
+ #include <seccomp.h>
+-- 
+2.42.0
+

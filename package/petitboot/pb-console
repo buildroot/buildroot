@@ -1,0 +1,36 @@
+#!/bin/sh
+
+DAEMON="pb-console"
+
+PB_CONSOLE_PORT=${2:-"console"}
+PB_CONSOLE_ARGS="--getty --detach -- -n -i 0 $PB_CONSOLE_PORT linux"
+
+# shellcheck source=/dev/null
+[ -r "/etc/default/petitboot" ] && . "/etc/default/petitboot"
+
+start() {
+	printf 'Starting %s on %s: ' "$DAEMON" "$PB_CONSOLE_PORT"
+	mkdir -p /var/log/petitboot
+
+	# shellcheck disable=SC2086 # we need the word splitting
+	start-stop-daemon -S -q -x "/usr/libexec/petitboot/$DAEMON" \
+		-- $PB_CONSOLE_ARGS
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+case "$1" in
+	start)
+		"$1";;
+	stop|restart|reload)
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart|reload} [port]"
+		exit 1
+		;;
+esac

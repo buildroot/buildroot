@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-EXIV2_VERSION = 0.27.5
+EXIV2_VERSION = 0.27.6
 EXIV2_SOURCE = exiv2-$(EXIV2_VERSION)-Source.tar.gz
-EXIV2_SITE = https://exiv2.org/builds
+EXIV2_SITE = https://github.com/Exiv2/exiv2/releases/download/v$(EXIV2_VERSION)
 EXIV2_INSTALL_STAGING = YES
 EXIV2_LICENSE = GPL-2.0+
 EXIV2_LICENSE_FILES = COPYING

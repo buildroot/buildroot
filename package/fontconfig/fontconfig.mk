@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-FONTCONFIG_VERSION = 2.13.1
-FONTCONFIG_SITE = http://fontconfig.org/release
-FONTCONFIG_SOURCE = fontconfig-$(FONTCONFIG_VERSION).tar.bz2
-# 0002-add-pthread-as-a-dependency-of-a-static-lib.patch
+FONTCONFIG_VERSION = 2.14.2
+FONTCONFIG_SITE = https://www.freedesktop.org/software/fontconfig/release
+FONTCONFIG_SOURCE = fontconfig-$(FONTCONFIG_VERSION).tar.xz
+# 0001-add-pthread-as-a-dependency-of-a-static-lib.patch
 FONTCONFIG_AUTORECONF = YES
 FONTCONFIG_INSTALL_STAGING = YES
 FONTCONFIG_DEPENDENCIES = freetype expat host-pkgconf host-gperf \
@@ -18,7 +18,7 @@ HOST_FONTCONFIG_DEPENDENCIES = \
 	host-gettext
 FONTCONFIG_LICENSE = fontconfig license
 FONTCONFIG_LICENSE_FILES = COPYING
-FONTCONFIG_CPE_ID_VENDOR = fontconfig_project
+FONTCONFIG_CPE_ID_VALID = YES
 
 FONTCONFIG_CONF_OPTS = \
 	--with-arch=$(GNU_TARGET_NAME) \

@@ -1,0 +1,38 @@
+From 656bff21c1d20b25058da9dbc27d28ad2ac7ae6e Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 25 Feb 2023 18:09:39 +0100
+Subject: [PATCH] src/server/listener.cc: fix libressl build
+
+Fix the following libressl build failure:
+
+../src/server/listener.cc: In member function 'void Pistache::Tcp::Listener::setupSSLAuth(const std::string&, const std::string&, int (*)(int, void*))':
+../src/server/listener.cc:582:29: error: 'SSL_verify_cb' was not declared in this scope; did you mean 'RSA_verify'?
+  582 |                            (SSL_verify_cb)cb
+      |                             ^~~~~~~~~~~~~
+      |                             RSA_verify
+
+Fixes:
+ - http://autobuild.buildroot.org/results/066fc078980e5216f38411eee455088e15fa1101
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/pistacheio/pistache/pull/1124]
+---
+ src/server/listener.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/server/listener.cc b/src/server/listener.cc
+index 38d2661..c09cb36 100644
+--- a/src/server/listener.cc
++++ b/src/server/listener.cc
+@@ -609,7 +609,7 @@ namespace Pistache::Tcp
+         SSL_CTX_set_verify(GetSSLContext(ssl_ctx_),
+                            SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT | SSL_VERIFY_CLIENT_ONCE,
+ /* Callback type did change in 1.0.1 */
+-#if OPENSSL_VERSION_NUMBER < 0x10100000L
++#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
+                            (int (*)(int, X509_STORE_CTX*))cb
+ #else
+                            (SSL_verify_cb)cb
+-- 
+2.39.1
+

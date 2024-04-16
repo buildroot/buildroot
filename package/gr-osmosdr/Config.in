@@ -11,13 +11,6 @@ config BR2_PACKAGE_GR_OSMOSDR
 
 if BR2_PACKAGE_GR_OSMOSDR
 
-config BR2_PACKAGE_GR_OSMOSDR_PYTHON
-	bool "python support"
-	depends on BR2_PACKAGE_GNURADIO_PYTHON
-	depends on BR2_PACKAGE_PYTHON3
-	help
-	  Enable Python support
-
 config BR2_PACKAGE_GR_OSMOSDR_IQFILE
 	bool "IQ File Source support"
 	help
@@ -42,5 +35,18 @@ config BR2_PACKAGE_GR_OSMOSDR_RFSPACE
 	bool "RFSPACE Receivers support"
 	help
 	  Enable RFSPACE Receivers support
+
+config BR2_PACKAGE_GR_OSMOSDR_HACKRF
+	bool "Osmocom HACKRF support"
+	depends on !BR2_STATIC_LIBS # hackrf
+	depends on BR2_TOOLCHAIN_HAS_THREADS # hackrf
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # hackrf
+	select BR2_PACKAGE_HACKRF
+	help
+	  Enable Osmocom HACKRF support
+
+comment "hackrf support needs a toolchain w/ threads, dynamic library, gcc >= 4.9"
+	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 
 endif

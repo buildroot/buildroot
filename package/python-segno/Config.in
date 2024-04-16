@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_SEGNO
+	bool "python-segno"
+	select BR2_PACKAGE_PYTHON3_PYEXPAT # runtime
+	select BR2_PACKAGE_PYTHON3_ZLIB # runtime
+	help
+	  QR Code and Micro QR Code generator for Python.
+
+	  https://github.com/heuer/segno/

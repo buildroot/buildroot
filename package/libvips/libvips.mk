@@ -9,7 +9,7 @@ LIBVIPS_SOURCE = vips-$(LIBVIPS_VERSION).tar.gz
 LIBVIPS_SITE = https://github.com/libvips/libvips/releases/download/v$(LIBVIPS_VERSION)
 LIBVIPS_LICENSE = LGPL-2.1+
 LIBVIPS_LICENSE_FILES = COPYING
-LIBVIPS_CPE_ID_VENDOR = libvips_project
+LIBVIPS_CPE_ID_VENDOR = libvips
 
 # Sparc64 compile fails, for all optimization levels except -O0. To
 # fix the problem, use -O0 with no optimization instead. Bug reported
@@ -130,6 +130,13 @@ LIBVIPS_CONF_OPTS += --with-libexif
 LIBVIPS_DEPENDENCIES += libexif
 else
 LIBVIPS_CONF_OPTS += --without-libexif
+endif
+
+ifeq ($(BR2_PACKAGE_LIBHEIF),y)
+LIBVIPS_CONF_OPTS += --with-heif
+LIBVIPS_DEPENDENCIES += libheif
+else
+LIBVIPS_CONF_OPTS += --without-heif
 endif
 
 ifeq ($(BR2_PACKAGE_WEBP_DEMUX)$(BR2_PACKAGE_WEBP_MUX),yy)

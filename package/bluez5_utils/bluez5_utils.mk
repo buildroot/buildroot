@@ -5,7 +5,7 @@
 ################################################################################
 
 # Keep the version and patches in sync with bluez5_utils-headers
-BLUEZ5_UTILS_VERSION = 5.65
+BLUEZ5_UTILS_VERSION = 5.72
 BLUEZ5_UTILS_SOURCE = bluez-$(BLUEZ5_UTILS_VERSION).tar.xz
 BLUEZ5_UTILS_SITE = $(BR2_KERNEL_MIRROR)/linux/bluetooth
 BLUEZ5_UTILS_INSTALL_STAGING = YES
@@ -64,9 +64,19 @@ endif
 
 # enable audio plugins (a2dp and avrcp)
 ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_AUDIO),y)
-BLUEZ5_UTILS_CONF_OPTS += --enable-a2dp --enable-avrcp
+BLUEZ5_UTILS_CONF_OPTS += \
+	--enable-a2dp \
+	--enable-avrcp \
+	--enable-bap \
+	--enable-mcp \
+	--enable-vcp
 else
-BLUEZ5_UTILS_CONF_OPTS += --disable-a2dp --disable-avrcp
+BLUEZ5_UTILS_CONF_OPTS += \
+	--disable-a2dp \
+	--disable-avrcp \
+	--disable-bap \
+	--disable-mcp \
+	--disable-vcp
 endif
 
 # enable health plugin
@@ -184,8 +194,8 @@ BLUEZ5_UTILS_CONF_OPTS += --disable-systemd
 endif
 
 define BLUEZ5_UTILS_INSTALL_INIT_SYSV
-	$(INSTALL) -m 0755 -D package/bluez5_utils/S40bluetooth \
-		$(TARGET_DIR)/etc/init.d/S40bluetooth
+	$(INSTALL) -m 0755 -D package/bluez5_utils/S40bluetoothd \
+		$(TARGET_DIR)/etc/init.d/S40bluetoothd
 endef
 
 $(eval $(autotools-package))

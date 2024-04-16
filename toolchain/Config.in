@@ -34,7 +34,6 @@ config BR2_TOOLCHAIN_USES_MUSL
 	select BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_TOOLCHAIN_HAS_THREADS_DEBUG
 	select BR2_TOOLCHAIN_HAS_THREADS_NPTL
-	select BR2_TOOLCHAIN_HAS_UCONTEXT
 	select BR2_TOOLCHAIN_SUPPORTS_PIE if !BR2_STATIC_LIBS
 
 choice
@@ -77,6 +76,12 @@ config BR2_TOOLCHAIN_HAS_BINUTILS_BUG_27597
 	bool
 	default y if BR2_nios2
 
+# https://sourceware.org/bugzilla/show_bug.cgi?id=30730
+# Affect toolchains built with binutils 2.40, still not fixed.
+config BR2_TOOLCHAIN_HAS_BINUTILS_BUG_30730
+	bool
+	default y if BR2_m68k_cf
+
 # Atomic types can be:
 #  - never lock-free
 #  - sometimes lock-free
@@ -115,7 +120,7 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_43744
 	bool
 	default y if !BR2_TOOLCHAIN_GCC_AT_LEAST_8
 	default y if BR2_TOOLCHAIN_GCC_AT_LEAST_9
-	depends on BR2_sh4
+	depends on BR2_sh
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63261. This bug no
 # longer exists in gcc 8.x.
@@ -140,6 +145,11 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_64735
 config BR2_TOOLCHAIN_HAS_GCC_BUG_68485
 	bool
 	default y if BR2_microblaze
+
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81426
+config BR2_TOOLCHAIN_HAS_GCC_BUG_81426
+	bool
+	default y if BR2_sh
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83143
 # Error: invalid operands (*UND* and .text sections) for `-' on sh4.
@@ -227,6 +237,36 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_104028
 	bool
 	default y if BR2_m68k
 
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=107728
+# https://sourceware.org/bugzilla/show_bug.cgi?id=29621
+config BR2_TOOLCHAIN_HAS_GCC_BUG_107728
+	bool
+	default y if BR2_microblazebe || BR2_microblazeel \
+		|| BR2_mips || BR2_mipsel \
+		|| BR2_nios2 \
+		|| BR2_or1k \
+		|| BR2_sh
+	depends on BR2_TOOLCHAIN_USES_GLIBC
+	depends on BR2_OPTIMIZE_0
+
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110934
+# ICE: on M68K: in change_address_1, at emit-rtl.cc:2287
+# This bug exists in gcc = 12.3.0 and gcc = 13.2.0
+config BR2_TOOLCHAIN_HAS_GCC_BUG_110934
+	bool
+	default y if BR2_m68k
+
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=111001
+# ICE: on SH4: during RTL pass: sh_treg_combine2
+# This bug exist in gcc = 13.2.0
+config BR2_TOOLCHAIN_HAS_GCC_BUG_111001
+	bool
+	default y if BR2_sh
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_13
+	depends on BR2_OPTIMIZE_1 || \
+		   BR2_OPTIMIZE_2 || \
+		   BR2_OPTIMIZE_3
+
 config BR2_TOOLCHAIN_HAS_NATIVE_RPC
 	bool
 
@@ -261,6 +301,8 @@ config BR2_TOOLCHAIN_HAS_SSP_STRONG
 	bool
 	default y if BR2_TOOLCHAIN_HAS_SSP && BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 
+# This boolean is true if the toolchain provides a full featured
+# ucontext implementation with ucontext_t and {get,make,set}context
 config BR2_TOOLCHAIN_HAS_UCONTEXT
 	bool
 
@@ -579,6 +621,38 @@ config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_19
 config BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_0
 	bool
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_19
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_1
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_0
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_2
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_1
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_3
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_2
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_4
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_3
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_5
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_4
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_6
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_5
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_7
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_6
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_8
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_7
 	select BR2_TOOLCHAIN_HEADERS_LATEST
 
 # This should be selected by the latest version, above, to indicate that
@@ -592,6 +666,14 @@ config BR2_TOOLCHAIN_HEADERS_LATEST
 # stops affecting a value on the first matching default.
 config BR2_TOOLCHAIN_HEADERS_AT_LEAST
 	string
+	default "6.8"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_8
+	default "6.7"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_7
+	default "6.6"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_6
+	default "6.5"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_5
+	default "6.4"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_4
+	default "6.3"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_3
+	default "6.2"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_2
+	default "6.1"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_1
 	default "6.0"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_0
 	default "5.19" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_19
 	default "5.18" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_18
@@ -715,10 +797,15 @@ config BR2_TOOLCHAIN_GCC_AT_LEAST_12
 	bool
 	select BR2_TOOLCHAIN_GCC_AT_LEAST_11
 
+config BR2_TOOLCHAIN_GCC_AT_LEAST_13
+	bool
+	select BR2_TOOLCHAIN_GCC_AT_LEAST_12
+
 # This order guarantees that the highest version is set, as kconfig
 # stops affecting a value on the first matching default.
 config BR2_TOOLCHAIN_GCC_AT_LEAST
 	string
+	default "13"	if BR2_TOOLCHAIN_GCC_AT_LEAST_13
 	default "12"	if BR2_TOOLCHAIN_GCC_AT_LEAST_12
 	default "11"	if BR2_TOOLCHAIN_GCC_AT_LEAST_11
 	default "10"	if BR2_TOOLCHAIN_GCC_AT_LEAST_10
@@ -809,7 +896,6 @@ config BR2_TOOLCHAIN_HAS_SYNC_8
 config BR2_TOOLCHAIN_HAS_LIBATOMIC
 	bool
 	default y if BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 && \
-		!BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_AARCH64 && \
 		BR2_TOOLCHAIN_HAS_THREADS && \
 		!BR2_BINFMT_FLAT
 
@@ -846,5 +932,16 @@ config BR2_TOOLCHAIN_HAS_LIBQUADMATH
 	bool
 	default y if BR2_i386 || BR2_x86_64
 	default y if BR2_POWERPC_CPU_HAS_VSX
+
+comment "Bare metal toolchain"
+
+config BR2_TOOLCHAIN_BARE_METAL_BUILDROOT
+	bool "Build a bare metal toolchain"
+	select BR2_PACKAGE_NEWLIB_BARE_METAL
+	help
+	  Select if you need a bare-metal toolchain for building
+	  platform specific firmware images.
+
+source "toolchain/toolchain-bare-metal-buildroot/Config.in"
 
 endmenu

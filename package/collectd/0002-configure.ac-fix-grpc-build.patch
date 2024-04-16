@@ -1,0 +1,96 @@
+From d355618813bb8180e460ba45a0ebd3ce5183e267 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 22 Jan 2024 22:15:21 +0100
+Subject: [PATCH] configure.ac: fix grpc build
+
+abseil and other google tools are now subject to
+"Google's Foundational C++ Support Policy" [0][1]. This currently
+mandates gcc 7.3.1 and C++14 as minimum versions. So replace -std=c++11
+by -std=c++14 to fix following build failure:
+
+checking whether /home/buildroot/autobuild/instance-0/output-1/host/bin/sparc64-linux-g++ accepts -std=c++11
+configure:25105: result: yes
+configure:25127: checking grpc++/grpc++.h usability
+configure:25127: /home/buildroot/autobuild/instance-0/output-1/host/bin/sparc64-linux-g++ -c -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -O1 -g0 -D_FORTIFY_SOURCE=2 -std=c++11  -DNOMINMAX  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 conftest.cpp >&5
+In file included from /home/buildroot/autobuild/instance-0/output-1/host/sparc64-buildroot-linux-gnu/sysroot/usr/include/absl/base/config.h:86,
+                 from /home/buildroot/autobuild/instance-0/output-1/host/sparc64-buildroot-linux-gnu/sysroot/usr/include/absl/base/const_init.h:25,
+                 from /home/buildroot/autobuild/instance-0/output-1/host/sparc64-buildroot-linux-gnu/sysroot/usr/include/absl/synchronization/mutex.h:67,
+                 from /home/buildroot/autobuild/instance-0/output-1/host/sparc64-buildroot-linux-gnu/sysroot/usr/include/grpcpp/impl/codegen/sync.h:32,
+                 from /home/buildroot/autobuild/instance-0/output-1/host/sparc64-buildroot-linux-gnu/sysroot/usr/include/grpcpp/completion_queue.h:41,
+                 from /home/buildroot/autobuild/instance-0/output-1/host/sparc64-buildroot-linux-gnu/sysroot/usr/include/grpcpp/channel.h:25,
+                 from /home/buildroot/autobuild/instance-0/output-1/host/sparc64-buildroot-linux-gnu/sysroot/usr/include/grpcpp/grpcpp.h:52,
+                 from /home/buildroot/autobuild/instance-0/output-1/host/sparc64-buildroot-linux-gnu/sysroot/usr/include/grpc++/grpc++.h:26,
+                 from conftest.cpp:167:
+/home/buildroot/autobuild/instance-0/output-1/host/sparc64-buildroot-linux-gnu/sysroot/usr/include/absl/base/policy_checks.h:79:2: error: #error "C++ versions less than C++14 are not supported."
+   79 | #error "C++ versions less than C++14 are not supported."
+      |  ^~~~~
+
+[0] https://github.com/abseil/abseil-cpp/releases/tag/20230125.0
+[1] https://github.com/google/oss-policies-info/blob/b842c39db88e6569dfe2cf98be434b03507cb503/foundational-cxx-support-matrix.md
+
+Fixes:
+ - http://autobuild.buildroot.org/results/e2cf909ab3c356f1881fd18cfa039e87faa10d7d
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/collectd/collectd/commit/d355618813bb8180e460ba45a0ebd3ce5183e267
+---
+ configure.ac | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index c816d3dbbc..dad27f53b0 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -2853,20 +2853,20 @@ PKG_CHECK_MODULES([GRPCPP], [grpc++],
+ fi
+ 
+ if test "x$withval" != "xno"; then
+-  AC_MSG_CHECKING([whether $CXX accepts -std=c++11])
+-  if test_cxx_flags -std=c++11; then
++  AC_MSG_CHECKING([whether $CXX accepts -std=c++14])
++  if test_cxx_flags -std=c++14; then
+     AC_MSG_RESULT([yes])
+   else
+     AC_MSG_RESULT([no])
+-    with_libgrpcpp="no (requires C++11 support)"
+-    with_libprotobuf="no (<google/protobuf/util/time_util.h> requires C++11 support)"
++    with_libgrpcpp="no (requires C++14 support)"
++    with_libprotobuf="no (<absl/base/policy_checks.h> requires C++14 support)"
+   fi
+ fi
+ 
+ if test "x$with_libgrpcpp" = "xyes"; then
+   AC_LANG_PUSH(C++)
+   SAVE_CPPFLAGS="$CPPFLAGS"
+-  CPPFLAGS="-std=c++11 $with_libgrpcpp_cppflags $GRPCPP_CFLAGS $CPPFLAGS"
++  CPPFLAGS="-std=c++14 $with_libgrpcpp_cppflags $GRPCPP_CFLAGS $CPPFLAGS"
+   AC_CHECK_HEADERS([grpc++/grpc++.h],
+     [with_libgrpcpp="yes"],
+     [with_libgrpcpp="no (<grpc++/grpc++.h> not found)"]
+@@ -2880,7 +2880,7 @@ if test "x$with_libgrpcpp" = "xyes"; then
+   SAVE_CPPFLAGS="$CPPFLAGS"
+   SAVE_LDFLAGS="$LDFLAGS"
+   SAVE_LIBS="$LIBS"
+-  CPPFLAGS="-std=c++11 $with_libgrpcpp_cppflags $GRPCPP_CFLAGS $CPPFLAGS"
++  CPPFLAGS="-std=c++14 $with_libgrpcpp_cppflags $GRPCPP_CFLAGS $CPPFLAGS"
+   LDFLAGS="$with_libgrpcpp_ldflags"
+   if test "x$GRPCPP_LIBS" = "x"; then
+     LIBS="-lgrpc++"
+@@ -2908,7 +2908,7 @@ if test "x$with_libgrpcpp" = "xyes"; then
+   AC_LANG_POP(C++)
+ fi
+ 
+-BUILD_WITH_LIBGRPCPP_CPPFLAGS="-std=c++11 $with_libgrpcpp_cppflags $GRPCPP_CFLAGS"
++BUILD_WITH_LIBGRPCPP_CPPFLAGS="-std=c++14 $with_libgrpcpp_cppflags $GRPCPP_CFLAGS"
+ BUILD_WITH_LIBGRPCPP_LDFLAGS="$with_libgrpcpp_ldflags"
+ BUILD_WITH_LIBGRPCPP_LIBS="$GRPCPP_LIBS"
+ AC_SUBST([BUILD_WITH_LIBGRPCPP_CPPFLAGS])
+@@ -4852,7 +4852,7 @@ if test "x$withval" != "xno"; then
+   AC_CHECK_LIB([protobuf], [main],
+     [
+       SAVE_CPPFLAGS="$CPPFLAGS"
+-      CPPFLAGS="-std=c++11 $with_libprotobuf_cppflags $PROTOBUF_CFLAGS"
++      CPPFLAGS="-std=c++14 $with_libprotobuf_cppflags $PROTOBUF_CFLAGS"
+       if test "x$PROTOBUF_LIBS" = "x"
+       then
+         PROTOBUF_LIBS="-lprotobuf"

@@ -7,7 +7,16 @@
 GCC_FINAL_VERSION = $(GCC_VERSION)
 GCC_FINAL_SITE = $(GCC_SITE)
 GCC_FINAL_SOURCE = $(GCC_SOURCE)
+GCC_FINAL_LICENSE = GPL-3.0-with-GCC-exception
+GCC_FINAL_LICENSE_FILES = COPYING.RUNTIME
+HOST_GCC_FINAL_LICENSE = $(HOST_GCC_LICENSE)
+HOST_GCC_FINAL_LICENSE_FILES = $(HOST_GCC_LICENSE_FILES)
 
+GCC_FINAL_DEPENDENCIES = host-gcc-final
+GCC_FINAL_ADD_TOOLCHAIN_DEPENDENCY = NO
+GCC_FINAL_INSTALL_STAGING = YES
+
+GCC_FINAL_DL_SUBDIR = gcc
 HOST_GCC_FINAL_DL_SUBDIR = gcc
 
 HOST_GCC_FINAL_DEPENDENCIES = \
@@ -135,85 +144,71 @@ HOST_GCC_FINAL_POST_INSTALL_HOOKS += TOOLCHAIN_WRAPPER_INSTALL
 # -cc symlink to the wrapper is not created.
 HOST_GCC_FINAL_POST_INSTALL_HOOKS += HOST_GCC_INSTALL_WRAPPER_AND_SIMPLE_SYMLINKS
 
-# coldfire is not working without removing these object files from libgcc.a
-ifeq ($(BR2_m68k_cf),y)
-define HOST_GCC_FINAL_M68K_LIBGCC_FIXUP
-	find $(STAGING_DIR) -name libgcc.a -print | \
-		while read t; do $(GNU_TARGET_NAME)-ar dv "$t" _ctors.o; done
-endef
-HOST_GCC_FINAL_POST_INSTALL_HOOKS += HOST_GCC_FINAL_M68K_LIBGCC_FIXUP
+GCC_FINAL_LIBS =
+
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+GCC_FINAL_LIBS += libatomic
 endif
 
-# Cannot use the HOST_GCC_FINAL_USR_LIBS mechanism below, because we want
-# libgcc_s to be installed in /lib and not /usr/lib.
-define HOST_GCC_FINAL_INSTALL_LIBGCC
-	-cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/libgcc_s* \
-		$(STAGING_DIR)/lib/
-	-cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/libgcc_s* \
-		$(TARGET_DIR)/lib/
-endef
-
-HOST_GCC_FINAL_POST_INSTALL_HOOKS += HOST_GCC_FINAL_INSTALL_LIBGCC
-
-define HOST_GCC_FINAL_INSTALL_LIBATOMIC
-	-cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/libatomic* \
-		$(STAGING_DIR)/lib/
-	-cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/libatomic* \
-		$(TARGET_DIR)/lib/
-endef
-
-HOST_GCC_FINAL_POST_INSTALL_HOOKS += HOST_GCC_FINAL_INSTALL_LIBATOMIC
-
-# Handle the installation of libraries in /usr/lib
-HOST_GCC_FINAL_USR_LIBS =
+ifeq ($(BR2_STATIC_LIBS),)
+GCC_FINAL_LIBS += libgcc_s
+endif
 
 ifeq ($(BR2_INSTALL_LIBSTDCPP),y)
-HOST_GCC_FINAL_USR_LIBS += libstdc++
+GCC_FINAL_USR_LIBS += libstdc++
 endif
 
 ifeq ($(BR2_TOOLCHAIN_BUILDROOT_DLANG),y)
-HOST_GCC_FINAL_USR_LIBS += libgdruntime libgphobos
+GCC_FINAL_USR_LIBS += libgdruntime libgphobos
 endif
 
 ifeq ($(BR2_TOOLCHAIN_BUILDROOT_FORTRAN),y)
-HOST_GCC_FINAL_USR_LIBS += libgfortran
+GCC_FINAL_USR_LIBS += libgfortran
 # fortran needs quadmath on x86 and x86_64
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBQUADMATH),y)
-HOST_GCC_FINAL_USR_LIBS += libquadmath
+GCC_FINAL_USR_LIBS += libquadmath
 endif
 endif
 
 ifeq ($(BR2_GCC_ENABLE_OPENMP),y)
-HOST_GCC_FINAL_USR_LIBS += libgomp
+GCC_FINAL_USR_LIBS += libgomp
 endif
 
-HOST_GCC_FINAL_USR_LIBS += $(call qstrip,$(BR2_TOOLCHAIN_EXTRA_LIBS))
+GCC_FINAL_USR_LIBS += $(call qstrip,$(BR2_TOOLCHAIN_EXTRA_LIBS))
 
-ifneq ($(HOST_GCC_FINAL_USR_LIBS),)
-define HOST_GCC_FINAL_INSTALL_STATIC_LIBS
-	for i in $(HOST_GCC_FINAL_USR_LIBS) ; do \
-		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$${i}.a \
-			$(STAGING_DIR)/usr/lib/ ; \
-	done
+define GCC_FINAL_INSTALL_STAGING_CMDS
+	$(foreach lib,$(GCC_FINAL_LIBS), \
+		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$(lib)* \
+			$(STAGING_DIR)/lib/
+	)
+	$(foreach lib,$(GCC_FINAL_USR_LIBS), \
+		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$(lib)* \
+			$(STAGING_DIR)/usr/lib/
+	)
 endef
 
 ifeq ($(BR2_STATIC_LIBS),)
-define HOST_GCC_FINAL_INSTALL_SHARED_LIBS
-	for i in $(HOST_GCC_FINAL_USR_LIBS) ; do \
-		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$${i}.so* \
-			$(STAGING_DIR)/usr/lib/ ; \
-		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$${i}.so* \
-			$(TARGET_DIR)/usr/lib/ ; \
-	done
+define GCC_FINAL_INSTALL_TARGET_CMDS
+	mkdir -p $(TARGET_DIR)/lib $(TARGET_DIR)/usr/lib
+	$(foreach lib,$(GCC_FINAL_LIBS), \
+		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$(lib).so* \
+			$(TARGET_DIR)/lib/
+	)
+	$(foreach lib,$(GCC_FINAL_USR_LIBS), \
+		cp -dpf $(HOST_GCC_FINAL_GCC_LIB_DIR)/$(lib).so* \
+			$(TARGET_DIR)/usr/lib/
+	)
 endef
 endif
 
-define HOST_GCC_FINAL_INSTALL_USR_LIBS
-	mkdir -p $(TARGET_DIR)/usr/lib
-	$(HOST_GCC_FINAL_INSTALL_STATIC_LIBS)
-	$(HOST_GCC_FINAL_INSTALL_SHARED_LIBS)
+# coldfire is not working without removing these object files from libgcc.a
+ifeq ($(BR2_m68k_cf),y)
+define GCC_FINAL_M68K_LIBGCC_FIXUP
+	find $(STAGING_DIR) -name libgcc.a -print | \
+		while read t; do $(GNU_TARGET_NAME)-ar dv "$t" _ctors.o; done
 endef
-HOST_GCC_FINAL_POST_INSTALL_HOOKS += HOST_GCC_FINAL_INSTALL_USR_LIBS
+GCC_FINAL_POST_INSTALL_STAGING_HOOKS += HOST_GCC_FINAL_M68K_LIBGCC_FIXUP
 endif
 
+$(eval $(generic-package))
 $(eval $(host-autotools-package))

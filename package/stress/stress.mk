@@ -4,8 +4,9 @@
 #
 ################################################################################
 
-STRESS_VERSION = 1.0.4
-STRESS_SITE = http://people.seas.harvard.edu/~apw/stress
+STRESS_VERSION = 1.0.7
+STRESS_SOURCE = stress-$(STRESS_VERSION).tar.bz2
+STRESS_SITE = https://github.com/resurrecting-open-source-projects/stress/releases/download/$(STRESS_VERSION)
 STRESS_LICENSE = GPL-2.0+
 STRESS_LICENSE_FILES = COPYING
 

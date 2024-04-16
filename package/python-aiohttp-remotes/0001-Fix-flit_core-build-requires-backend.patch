@@ -1,0 +1,32 @@
+From 3d39ee9a03a1c96b8e798dc6acf98165da31da1f Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Fri, 11 Mar 2022 12:59:53 -0700
+Subject: [PATCH] Fix flit_core build requires/backend.
+
+Only flit_core should be required by pyproject.toml, the regular flit
+package is the pep517 frontend which is not what should be set for the
+build system.
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+[Upstream status:
+https://github.com/aio-libs/aiohttp-remotes/pull/355]
+---
+ pyproject.toml     | 4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/pyproject.toml b/pyproject.toml
+index 214d64d..8c6b882 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -1,6 +1,6 @@
+ [build-system]
+-requires=["flit"]
+-build-backend="flit.buildapi"
++requires=["flit_core"]
++build-backend="flit_core.buildapi"
+ 
+ [tool.flit.metadata]
+ module="aiohttp_remotes"
+-- 
+2.38.1
+

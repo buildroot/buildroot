@@ -1,0 +1,49 @@
+From 4796a1eacc6a5ccb623e7d2e46a5196f8335e496 Mon Sep 17 00:00:00 2001
+From: Baruch Siach <baruch@tkos.co.il>
+Date: Fri, 11 Aug 2023 11:19:49 +0300
+Subject: [PATCH] Allow access to low addresses with gcc 12
+
+gcc 12 added a warning that triggers on access to low addresses. Add a
+compile option that allows access to lower addresses.
+
+Add the 'cc_option' macro to avoid the compile option when the compiler
+does not support it.
+
+This fixes build with TF-A. TF-A added a similar fix in commit
+dea23e245fb89.
+
+See some more details in
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105523
+
+Upstream: https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell/pull/42
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+ Makefile | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Makefile b/Makefile
+index 3f0dd89a7381..045284c30cbc 100644
+--- a/Makefile
++++ b/Makefile
+@@ -108,6 +108,10 @@ MV_DDR_VER_CSRC = mv_ddr_build_message.c
+ # create mv_ddr build message and version string source file
+ $(shell $(MV_DDR_ROOT)/scripts/localversion.sh $(MV_DDR_ROOT) $(MV_DDR_VER_CSRC) 2> /dev/null)
+ 
++define cc_option
++	$(shell if $(CC) $(1) -c -x c /dev/null -o /dev/null >/dev/null 2>&1; then echo $(1); fi )
++endef
++
+ # ******************
+ # U-BOOT SPL SUPPORT
+ # ******************
+@@ -331,6 +335,7 @@ OBJ_DIR ?= $(MV_DDR_ROOT)
+ CFLAGS = -DMV_DDR_ATF -DCONFIG_DDR4
+ CFLAGS += -Wall -Werror -Os -ffreestanding -mlittle-endian -g -gdwarf-2 -nostdinc
+ CFLAGS += -march=armv8-a -fpie
++CFLAGS += $(call cc_option, --param=min-pagesize=0)
+ 
+ # PLATFORM is set in ble/ble.mk
+ ifneq ($(findstring a80x0,$(PLATFORM)),)
+-- 
+2.40.1
+

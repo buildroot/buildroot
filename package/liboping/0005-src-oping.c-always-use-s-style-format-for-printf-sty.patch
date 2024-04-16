@@ -1,0 +1,59 @@
+From 670834fd8fbd2533ea25ca83065800e924116579 Mon Sep 17 00:00:00 2001
+From: Sergei Trofimovich <slyich@gmail.com>
+Date: Mon, 15 Nov 2021 08:05:43 +0000
+Subject: [PATCH] src/oping.c: always use "%s"-style format for
+ printf()-style functions
+
+`ncuses-6.3` added printf-style function attributes and now makes
+it easier to catch cases when user input is used in palce of format
+string when built with CFLAGS=-Werror=format-security:
+
+    oping.c:1265:41: error: format not a string literal and no format arguments [-Werror=format-security]
+     1265 |                                         hist_symbols_utf8[index]);
+          |                                         ^~~~~~~~~~~~~~~~~
+
+Let's wrap all the missing places with "%s" format.
+
+Downloaded from upstream PR https://github.com/octo/liboping/pull/61
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Bernd: rebased for liboping version 1.10.0]
+---
+ src/oping.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/src/oping.c b/src/oping.c
+index c087c80..af4a0cb 100644
+--- a/src/oping.c
++++ b/src/oping.c
+@@ -1156,7 +1156,7 @@ static int update_graph_prettyping (ping_context_t *ctx, /* {{{ */
+ 			wattron (ctx->window, COLOR_PAIR(color));
+ 
+ 		if (has_utf8())
+-			mvwprintw (ctx->window, /* y = */ 3, /* x = */ x + 2, symbol);
++			mvwprintw (ctx->window, /* y = */ 3, /* x = */ x + 2, "%s", symbol);
+ 		else
+ 			mvwaddch (ctx->window, /* y = */ 3, /* x = */ x + 2, symbolc);
+ 
+@@ -1262,7 +1262,7 @@ static int update_graph_histogram (ping_context_t *ctx) /* {{{ */
+ 			mvwaddch (ctx->window, /* y = */ 3, /* x = */ x + 2, ' ');
+ 		else if (has_utf8 ())
+ 			mvwprintw (ctx->window, /* y = */ 3, /* x = */ x + 2,
+-					hist_symbols_utf8[index]);
++					"%s", hist_symbols_utf8[index]);
+ 		else
+ 			mvwaddch (ctx->window, /* y = */ 3, /* x = */ x + 2,
+ 					hist_symbols_acs[index] | A_ALTCHARSET);
+@@ -1639,8 +1639,7 @@ static void update_host_hook (pingobj_iter_t *iter, /* {{{ */
+ 
+ 			HOST_PRINTF ("%zu bytes from %s (%s): icmp_seq=%u ttl=%i ",
+ 					data_len, context->host, context->addr,
+-					sequence, recv_ttl,
+-					format_qos (recv_qos, recv_qos_str, sizeof (recv_qos_str)));
++					sequence, recv_ttl);
+ 			if ((recv_qos != 0) || (opt_send_qos != 0))
+ 			{
+ 				HOST_PRINTF ("qos=%s ",
+-- 
+2.34.1
+

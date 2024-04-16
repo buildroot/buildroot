@@ -1,0 +1,133 @@
+From 82fe01821cd5cb8548598d7d93b07d6ef3f6b604 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 30 Mar 2024 16:50:46 +0100
+Subject: [PATCH] src/lxc/syscall_numbers.h: drop define -1
+
+Drop "#define -1" to avoid the following m68k build failure with gcc 12:
+
+In file included from ../src/lxc/syscall_wrappers.h:19,
+                 from ../src/lxc/mount_utils.h:15,
+                 from ../src/lxc/conf.h:24,
+                 from ../src/lxc/log.h:19,
+                 from ../src/lxc/storage/btrfs.c:20:
+../src/lxc/syscall_numbers.h:423:25: error: macro names must be identifiers
+  423 |                 #define -1
+      |                         ^
+
+Fixes:
+ - http://autobuild.buildroot.org/results/f40a517eba86838b11b4b1d6a8a05b8233a3394d
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/lxc/lxc/commit/82fe01821cd5cb8548598d7d93b07d6ef3f6b604
+---
+ src/lxc/syscall_numbers.h | 13 -------------
+ 1 file changed, 13 deletions(-)
+
+diff --git a/src/lxc/syscall_numbers.h b/src/lxc/syscall_numbers.h
+index 58840a5981..5e659d1b81 100644
+--- a/src/lxc/syscall_numbers.h
++++ b/src/lxc/syscall_numbers.h
+@@ -53,7 +53,6 @@
+ 	#elif defined __loongarch64
+ 		#define __NR_keyctl 219
+ 	#else
+-		#define -1
+ 		#warning "__NR_keyctl not defined for your architecture"
+ 	#endif
+ #endif
+@@ -92,7 +91,6 @@
+ 	#elif defined __loongarch64
+ 		#define __NR_memfd_create 279
+ 	#else
+-		#define -1
+ 		#warning "__NR_memfd_create not defined for your architecture"
+ 	#endif
+ #endif
+@@ -129,7 +127,6 @@
+ 	#elif defined __loongarch64
+ 		#define __NR_pivot_root 41
+ 	#else
+-		#define -1
+ 		#warning "__NR_pivot_root not defined for your architecture"
+ 	#endif
+ #endif
+@@ -166,7 +163,6 @@
+ 	#elif defined __loongarch64
+ 		#define __NR_setns 268
+ 	#else
+-		#define -1
+ 		#warning "__NR_setns not defined for your architecture"
+ 	#endif
+ #endif
+@@ -203,7 +199,6 @@
+ 	#elif defined __loongarch64
+ 		#define __NR_sethostname 161
+ 	#else
+-		#define -1
+ 		#warning "__NR_sethostname not defined for your architecture"
+ 	#endif
+ #endif
+@@ -272,7 +267,6 @@
+ 	#elif defined __loongarch64
+ 		#define __NR_signalfd4 74
+ 	#else
+-		#define -1
+ 		#warning "__NR_signalfd4 not defined for your architecture"
+ 	#endif
+ #endif
+@@ -309,7 +303,6 @@
+ 	#elif defined __loongarch64
+ 		#define __NR_unshare 97
+ 	#else
+-		#define -1
+ 		#warning "__NR_unshare not defined for your architecture"
+ 	#endif
+ #endif
+@@ -346,7 +339,6 @@
+ 	#elif defined __loongarch64
+ 		#define __NR_bpf 280
+ 	#else
+-		#define -1
+ 		#warning "__NR_bpf not defined for your architecture"
+ 	#endif
+ #endif
+@@ -383,7 +375,6 @@
+ 	#elif defined __loongarch64
+ 		#define __NR_faccessat 48
+ 	#else
+-		#define -1
+ 		#warning "__NR_faccessat not defined for your architecture"
+ 	#endif
+ #endif
+@@ -440,7 +431,6 @@
+ 	#elif defined __loongarch64
+ 		#define __NR_seccomp 277
+ 	#else
+-		#define -1
+ 		#warning "__NR_seccomp not defined for your architecture"
+ 	#endif
+ #endif
+@@ -477,7 +467,6 @@
+ 	#elif defined __loongarch64
+ 		#define __NR_gettid 178
+ 	#else
+-		#define -1
+ 		#warning "__NR_gettid not defined for your architecture"
+ 	#endif
+ #endif
+@@ -518,7 +507,6 @@
+ 	#elif defined __loongarch64
+ 		#define __NR_execveat 281
+ 	#else
+-		#define -1
+ 		#warning "__NR_execveat not defined for your architecture"
+ 	#endif
+ #endif
+@@ -759,7 +747,6 @@
+ 	#elif defined __loongarch64
+ 		#define __NR_personality 92
+ 	#else
+-		#define -1
+ 		#warning "__NR_personality not defined for your architecture"
+ 	#endif
+ #endif

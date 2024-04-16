@@ -1,0 +1,20 @@
+config BR2_PACKAGE_RAUC_HAWKBIT_UPDATER
+	bool "rauc-hawkbit-updater"
+	depends on BR2_TOOLCHAIN_HAS_THREADS # rauc, json-glib
+	depends on BR2_USE_MMU # rauc, json-glib
+	depends on BR2_USE_WCHAR # rauc, json-glib
+	select BR2_PACKAGE_JSON_GLIB
+	select BR2_PACKAGE_LIBCURL
+	# runtime
+	select BR2_PACKAGE_RAUC
+	help
+	  rauc-hawkbit-updater is a link between Pengutronix RAUC and
+	  the Eclipse Hawkbit API. Hawkbit can communicate to remote
+	  update servers, and use the d-bus interface to trigger
+	  updates from RAUC.
+
+	  http://rauc.io/
+
+comment "rauc-hawkbit-updater needs a toolchain w/ wchar, threads"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS

@@ -1,0 +1,28 @@
+From eab3bc1712e5af7e6aef942a24e833ce2c429436 Mon Sep 17 00:00:00 2001
+From: fundamental <mark.d.mccurry@gmail.com>
+Date: Wed, 19 Apr 2023 21:52:01 -0400
+Subject: [PATCH] Bank: Add stdint.h header include
+
+As uint8_t is used, this header should be included.
+
+Upstream: https://github.com/zynaddsubfx/zynaddsubfx/commit/f384d92486d6b515cb628d0f52008a9e03341d8c
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ src/Misc/Bank.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/Misc/Bank.h b/src/Misc/Bank.h
+index 5120441a..3f324dd8 100644
+--- a/src/Misc/Bank.h
++++ b/src/Misc/Bank.h
+@@ -18,6 +18,7 @@
+ #include <vector>
+ #include "../globals.h"
+ #include "Config.h"
++#include <stdint.h>
+ 
+ //entries in a bank
+ #define BANK_SIZE 160
+-- 
+2.41.0
+

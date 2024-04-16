@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-GPSD_VERSION = 3.24
+GPSD_VERSION = 3.25
 GPSD_SITE = http://download-mirror.savannah.gnu.org/releases/gpsd
 GPSD_LICENSE = BSD-2-Clause
 GPSD_LICENSE_FILES = COPYING
-GPSD_CPE_ID_VENDOR = gpsd_project
+GPSD_CPE_ID_VALID = YES
 GPSD_SELINUX_MODULES = gpsd
 GPSD_INSTALL_STAGING = YES
 
@@ -213,13 +213,13 @@ define GPSD_INSTALL_INIT_SYSV
 	$(SED) 's,^DEVICES=.*,DEVICES=$(BR2_PACKAGE_GPSD_DEVICES),' $(TARGET_DIR)/etc/init.d/S50gpsd
 endef
 
-# systemd unit files are installed automatically, but need to update the
-# /usr/local path references in the provided files to /usr.
+# When using chrony, wait for after Buildroot's chrony.service
+ifeq ($(BR2_PACKAGE_CHRONY),y)
 define GPSD_INSTALL_INIT_SYSTEMD
-	$(SED) 's%/usr/local%/usr%' \
-		$(TARGET_DIR)/usr/lib/systemd/system/gpsd.service \
-		$(TARGET_DIR)/usr/lib/systemd/system/gpsdctl@.service
+	$(INSTALL) -D -m 0644 $(GPSD_PKGDIR)/br-chrony.conf \
+		$(TARGET_DIR)/usr/lib/systemd/system/gpsd.service.d/br-chrony.conf
 endef
+endif
 
 define GPSD_INSTALL_STAGING_CMDS
 	(cd $(@D); \

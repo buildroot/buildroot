@@ -1,0 +1,42 @@
+From 933ad8a59f7fd9b2088badc3e97167d750a40b5a Mon Sep 17 00:00:00 2001
+From: Bin Meng <bmeng.cn@gmail.com>
+Date: Mon, 12 Jul 2021 11:52:31 +0800
+Subject: [PATCH] spl: Align device tree blob address at 8-byte boundary
+
+Since libfdt v1.6.1, a new requirement on the device tree address via:
+
+  commit 5e735860c478 ("libfdt: Check for 8-byte address alignment in fdt_ro_probe_()")
+
+must be met that the device tree must be loaded in to memory at an
+8-byte aligned address.
+
+Signed-off-by: Bin Meng <bmeng.cn@gmail.com>
+
+This patch was imported from U-boot patchwork:
+https://patchwork.ozlabs.org/project/uboot/patch/20210712035231.26475-1-bmeng.cn@gmail.com/
+
+Signed-off-by: Yu Chien Peter Lin <peterlin@andestech.com>
+---
+ common/spl/spl_fit.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/common/spl/spl_fit.c b/common/spl/spl_fit.c
+index a35be529..a76ad14a 100644
+--- a/common/spl/spl_fit.c
++++ b/common/spl/spl_fit.c
+@@ -382,6 +382,12 @@ static int spl_fit_append_fdt(struct spl_image_info *spl_image,
+ 	 */
+ 	image_info.load_addr = spl_image->load_addr + spl_image->size;
+ 
++	/*
++	 * Since libfdt v1.6.1, the device tree must be loaded in to memory
++	 * at an 8-byte aligned address.
++	 */
++	image_info.load_addr = roundup(image_info.load_addr, 8);
++
+ 	/* Figure out which device tree the board wants to use */
+ 	node = spl_fit_get_image_node(ctx, FIT_FDT_PROP, index++);
+ 	if (node < 0) {
+-- 
+2.34.1
+

@@ -1,0 +1,30 @@
+From 97a2c39fea591509ac1f8a31598b7555b63b8d55 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 30 Jul 2023 08:45:58 +0200
+Subject: [PATCH] CMakeLists.txt: Add LANGUAGES option to project variable
+
+Fixes build with toolchains without c++.
+
+Upstream: https://github.com/epsilonrt/mbpoll/pull/71
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6daa039..11dcd05 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -3,7 +3,7 @@
+ cmake_minimum_required(VERSION 2.9)
+ 
+ # Workspace name
+-project(mbpoll)
++project(mbpoll LANGUAGES C)
+ 
+ # This setting is useful for providing JSON file used by CodeLite for code completion
+ set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+-- 
+2.39.2
+

@@ -8,6 +8,7 @@ JOE_VERSION = 4.6
 JOE_SITE = http://downloads.sourceforge.net/project/joe-editor/JOE%20sources/joe-$(JOE_VERSION)
 JOE_LICENSE = GPL-2.0+
 JOE_LICENSE_FILES = COPYING
+JOE_CPE_ID_VENDOR = joseph_allen
 
 ifeq ($(BR2_PACKAGE_NCURSES),y)
 JOE_DEPENDENCIES += ncurses

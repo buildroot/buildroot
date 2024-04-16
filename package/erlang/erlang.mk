@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-# See note below when updating Erlang
-ERLANG_VERSION = 22.3.4.22
+ERLANG_VERSION = 26.0.2
+ERLANG_RELEASE = $(firstword $(subst ., ,$(ERLANG_VERSION)))
 ERLANG_SITE = \
 	https://github.com/erlang/otp/releases/download/OTP-$(ERLANG_VERSION)
 ERLANG_SOURCE = otp_src_$(ERLANG_VERSION).tar.gz
@@ -17,28 +17,26 @@ ERLANG_CPE_ID_VENDOR = erlang
 ERLANG_CPE_ID_PRODUCT = erlang\/otp
 ERLANG_INSTALL_STAGING = YES
 
-# windows specific issue: https://nvd.nist.gov/vuln/detail/CVE-2021-29221
-ERLANG_IGNORE_CVES += CVE-2021-29221
-
-# Remove the leftover deps directory from the ssl app
-# See https://bugs.erlang.org/browse/ERL-1168
-define ERLANG_REMOVE_SSL_DEPS
-	rm -rf $(@D)/lib/ssl/src/deps
+define ERLANG_FIX_AUTOCONF_VERSION
+	$(SED) "s/USE_AUTOCONF_VERSION=.*/USE_AUTOCONF_VERSION=$(AUTOCONF_VERSION)/" $(@D)/otp_build
 endef
-ERLANG_POST_PATCH_HOOKS += ERLANG_REMOVE_SSL_DEPS
 
 # Patched erts/aclocal.m4
 define ERLANG_RUN_AUTOCONF
-	cd $(@D) && PATH=$(BR_PATH) ./otp_build autoconf
+	cd $(@D) && PATH=$(BR_PATH) ./otp_build update_configure --no-commit
 endef
 ERLANG_DEPENDENCIES += host-autoconf
-ERLANG_PRE_CONFIGURE_HOOKS += ERLANG_RUN_AUTOCONF
+ERLANG_PRE_CONFIGURE_HOOKS += \
+	ERLANG_FIX_AUTOCONF_VERSION \
+	ERLANG_RUN_AUTOCONF
 HOST_ERLANG_DEPENDENCIES += host-autoconf
-HOST_ERLANG_PRE_CONFIGURE_HOOKS += ERLANG_RUN_AUTOCONF
+HOST_ERLANG_PRE_CONFIGURE_HOOKS += \
+	ERLANG_FIX_AUTOCONF_VERSION \
+	ERLANG_RUN_AUTOCONF
 
-# Whenever updating Erlang, this value should be updated as well, to the
-# value of EI_VSN in the file lib/erl_interface/vsn.mk
-ERLANG_EI_VSN = 3.13.2.2
+# Return the EIV (Erlang Interface Version, EI_VSN)
+# $(1): base directory, i.e. either $(HOST_DIR) or $(STAGING_DIR)/usr
+erlang_ei_vsn = `sed -r -e '/^erl_interface-(.+)/!d; s//\1/' $(1)/lib/erlang/releases/$(ERLANG_RELEASE)/installed_application_versions`
 
 # The configure checks for these functions fail incorrectly
 ERLANG_CONF_ENV = ac_cv_func_isnan=yes ac_cv_func_isinf=yes

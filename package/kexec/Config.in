@@ -1,9 +1,15 @@
-config BR2_PACKAGE_KEXEC
-	bool "kexec"
+config BR2_PACKAGE_KEXEC_ARCH_SUPPORTS
+	bool
+	default y
 	depends on BR2_i386 || BR2_x86_64 || BR2_arm || BR2_armeb || \
 		BR2_mips || BR2_mips64 || BR2_mipsel || BR2_mips64el || \
 		BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le || \
-		BR2_sh4 || BR2_sh4a || BR2_aarch64 || BR2_s390x
+		BR2_sh4 || BR2_sh4a || BR2_aarch64 || BR2_s390x || BR2_m68k
+
+config BR2_PACKAGE_KEXEC
+	bool "kexec"
+	depends on BR2_PACKAGE_KEXEC_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17 # memfd_create()
 	help
 	  Kexec is a user space utility for loading another kernel
 	  and asking the currently running kernel to do something with
@@ -20,3 +26,7 @@ config BR2_PACKAGE_KEXEC_ZLIB
 	  Support for compressed kernel images
 
 endif
+
+comment "kexec needs a toolchain w/ headers >= 3.17"
+	depends on BR2_PACKAGE_KEXEC_ARCH_SUPPORTS
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17

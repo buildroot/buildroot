@@ -12,7 +12,12 @@ config BR2_PACKAGE_PYTHON_GREENLET_ARCH_SUPPORTS
 config BR2_PACKAGE_PYTHON_GREENLET
 	bool "python-greenlet"
 	depends on BR2_PACKAGE_PYTHON_GREENLET_ARCH_SUPPORTS
+	depends on BR2_INSTALL_LIBSTDCPP
 	help
 	  Lightweight in-process concurrent programming.
 
 	  https://github.com/python-greenlet/greenlet
+
+comment "python-greenlet needs a toolchain w/ C++"
+	depends on BR2_PACKAGE_PYTHON_GREENLET_ARCH_SUPPORTS
+	depends on !BR2_INSTALL_LIBSTDCPP

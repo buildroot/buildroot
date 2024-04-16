@@ -15,8 +15,8 @@ OPEN2300_BINS = \
 OPEN2300_CFLAGS = $(TARGET_CFLAGS)
 OPEN2300_LDFLAGS = $(TARGET_LDFLAGS)
 
-ifeq ($(BR2_PACKAGE_MYSQL),y)
-OPEN2300_DEPENDENCIES += mysql
+ifeq ($(BR2_PACKAGE_MARIADB),y)
+OPEN2300_DEPENDENCIES += mariadb
 OPEN2300_BINS += mysql2300 mysqlhistlog2300
 OPEN2300_CFLAGS += $(shell $(STAGING_DIR)/usr/bin/mysql_config --cflags)
 OPEN2300_LDFLAGS += $(shell $(STAGING_DIR)/usr/bin/mysql_config --libs)

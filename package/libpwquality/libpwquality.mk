@@ -4,18 +4,20 @@
 #
 ################################################################################
 
-LIBPWQUALITY_VERSION = 1.4.4
+LIBPWQUALITY_VERSION = 1.4.5
 LIBPWQUALITY_SOURCE = libpwquality-$(LIBPWQUALITY_VERSION).tar.bz2
 LIBPWQUALITY_SITE = https://github.com/libpwquality/libpwquality/releases/download/libpwquality-$(LIBPWQUALITY_VERSION)
 LIBPWQUALITY_LICENSE = BSD-3-Clause or GPL-2.0+
 LIBPWQUALITY_INSTALL_STAGING = YES
 LIBPWQUALITY_DEPENDENCIES = cracklib
 LIBPWQUALITY_LICENSE_FILES = COPYING
+# We're patching python/Makefile.am
+LIBPWQUALITY_AUTORECONF = YES
 
 ifeq ($(BR2_PACKAGE_PYTHON3),y)
 LIBPWQUALITY_CONF_OPTS += --enable-python-bindings
-LIBPWQUALITY_DEPENDENCIES += python3
-LIBPWQUALITY_MAKE_ENV += $(PKG_PYTHON_DISTUTILS_ENV)
+LIBPWQUALITY_DEPENDENCIES += python3 host-python-setuptools
+LIBPWQUALITY_MAKE_ENV += $(PKG_PYTHON_SETUPTOOLS_ENV)
 else
 LIBPWQUALITY_CONF_OPTS += --disable-python-bindings
 endif

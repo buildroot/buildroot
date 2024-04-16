@@ -4,14 +4,15 @@
 #
 ################################################################################
 
-FLASHROM_VERSION = 1.2
+FLASHROM_VERSION = 1.3.0
 FLASHROM_SOURCE = flashrom-v$(FLASHROM_VERSION).tar.bz2
 FLASHROM_SITE = https://download.flashrom.org/releases
 FLASHROM_LICENSE = GPL-2.0+
 FLASHROM_LICENSE_FILES = COPYING
+FLASHROM_MAKE_OPTS = WARNERROR=no
 
-ifeq ($(BR2_PACKAGE_LIBFTDI),y)
-FLASHROM_DEPENDENCIES += host-pkgconf libftdi
+ifeq ($(BR2_PACKAGE_LIBFTDI1),y)
+FLASHROM_DEPENDENCIES += host-pkgconf libftdi1
 FLASHROM_MAKE_OPTS += \
 	CONFIG_FT2232_SPI=yes \
 	CONFIG_USBBLASTER_SPI=yes

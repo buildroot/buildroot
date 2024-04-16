@@ -1,0 +1,52 @@
+config BR2_PACKAGE_FCFT
+	bool "fcft"
+	depends on BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL # C11 threads
+	select BR2_PACKAGE_FONTCONFIG
+	select BR2_PACKAGE_FREETYPE
+	select BR2_PACKAGE_PIXMAN
+	select BR2_PACKAGE_TLLIST
+	help
+	  A simple library for font loading and glyph rasterization
+	  using FontConfig, FreeType and pixman.
+
+	  https://codeberg.org/dnkl/fcft
+
+if BR2_PACKAGE_FCFT
+
+config BR2_PACKAGE_FCFT_GRAPHEME_SHAPING
+	bool "grapheme-shaping"
+	depends on BR2_INSTALL_LIBSTDCPP # harfbuzz
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # harfbuzz
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # harfbuzz
+	select BR2_PACKAGE_HARFBUZZ
+	help
+	  Enables shaping of individual grapheme clusters
+
+comment "grapheme-shaping needs a toolchain w/ C++, gcc >= 4.9"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
+
+config BR2_PACKAGE_FCFT_RUN_SHAPING
+	bool "run-shaping"
+	depends on BR2_INSTALL_LIBSTDCPP # harfbuzz
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # harfbuzz
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # harfbuzz
+	select BR2_PACKAGE_HARFBUZZ
+	select BR2_PACKAGE_UTF8PROC
+	help
+	  Enables shaping of whole text runs.
+
+comment "run-shaping needs a toolchain w/ C++, gcc >= 4.9"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
+
+config BR2_PACKAGE_FCFT_SVG_SUPPORT
+	bool "svg support"
+	help
+	  Enables svg support. This option increases the size of the
+	  library by approximately 55KB.
+
+endif # BR2_PACKAGE_FCFT
+
+comment "fcft needs a glibc or musl toolchain"
+	depends on !(BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL)

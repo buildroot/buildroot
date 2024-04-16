@@ -1,0 +1,30 @@
+From 23a8ca6be87ad374d66854cee66ab758880cc651 Mon Sep 17 00:00:00 2001
+From: Mike Gerwitz <mike@mikegerwitz.com>
+Date: Tue, 24 Dec 2013 22:16:31 -0500
+Subject: [PATCH] comm.h now depends on term.h
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Patch retrieved and updated from:
+http://git.savannah.gnu.org/cgit/screen.git/commit/?id=39c5f1c]
+[Julien: rebase on top of 4.9.1]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index 4718f08..7082a3e 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -132,7 +132,7 @@ kmapdef.c: term.h
+ tty.c:	tty.sh 
+ 	sh $(srcdir)/tty.sh tty.c
+ 
+-comm.h: comm.c comm.sh config.h
++comm.h: comm.c comm.sh config.h term.h
+ 	AWK=$(AWK) CC="$(CC) $(CFLAGS)" srcdir=${srcdir} sh $(srcdir)/comm.sh
+ 
+ osdef.h: osdef.sh config.h osdef.h.in
+-- 
+2.41.0
+

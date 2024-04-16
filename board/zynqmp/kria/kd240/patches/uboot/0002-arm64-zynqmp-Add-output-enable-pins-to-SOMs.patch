@@ -1,0 +1,79 @@
+From bf35bdac2adfa7c65c2992d8dedcc24585561732 Mon Sep 17 00:00:00 2001
+From: Neal Frager <neal.frager@amd.com>
+Date: Wed, 13 Dec 2023 13:11:42 +0000
+Subject: [PATCH] arm64: zynqmp: Add output-enable pins to SOMs
+
+Now that the zynqmp pinctrl driver supports the tri-state registers, make
+sure that the pins requiring output-enable are configured appropriately for
+SOMs.
+
+Without it, all tristate setting for MIOs, which are not related to SOM
+itself, are using default configuration which is not correct setting.
+It means SDs, USBs, ethernet, etc. are not working properly.
+
+In past it was fixed through calling tristate configuration via bootcmd:
+usb_init=mw 0xFF180208 2020
+kv260_gem3=mw 0xFF18020C 0xFC0 && gpio toggle gpio@ff0a000038 && \
+  gpio toggle gpio@ff0a000038
+
+Signed-off-by: Neal Frager <neal.frager@amd.com>
+Upstream: https://patchwork.ozlabs.org/project/uboot/patch/20231213134052.2818879-1-neal.frager@amd.com/
+---
+ arch/arm/dts/zynqmp-sck-kd-g-revA.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm/dts/zynqmp-sck-kd-g-revA.dts b/arch/arm/dts/zynqmp-sck-kd-g-revA.dts
+index 56f3128528..12865392a3 100644
+--- a/arch/arm/dts/zynqmp-sck-kd-g-revA.dts
++++ b/arch/arm/dts/zynqmp-sck-kd-g-revA.dts
+@@ -175,6 +175,7 @@
+ 		conf-tx {
+ 			pins = "MIO36";
+ 			bias-disable;
++			output-enable;
+ 		};
+ 
+ 		mux {
+@@ -226,6 +227,7 @@
+ 		conf-bootstrap {
+ 			pins = "MIO44", "MIO49";
+ 			bias-disable;
++			output-enable;
+ 			low-power-disable;
+ 		};
+ 
+@@ -233,6 +235,7 @@
+ 			pins = "MIO38", "MIO39", "MIO40",
+ 				"MIO41", "MIO42", "MIO43";
+ 			bias-disable;
++			output-enable;
+ 			low-power-enable;
+ 		};
+ 
+@@ -241,6 +244,7 @@
+ 			slew-rate = <SLEW_RATE_SLOW>;
+ 			power-source = <IO_STANDARD_LVCMOS18>;
+ 			bias-disable;
++			output-enable;
+ 		};
+ 
+ 		mux-mdio {
+@@ -271,6 +275,7 @@
+ 			pins = "MIO54", "MIO56", "MIO57", "MIO58", "MIO59",
+ 			"MIO60", "MIO61", "MIO62", "MIO63";
+ 			bias-disable;
++			output-enable;
+ 			drive-strength = <4>;
+ 			slew-rate = <SLEW_RATE_SLOW>;
+ 		};
+@@ -298,6 +303,7 @@
+ 			pins = "MIO66", "MIO68", "MIO69", "MIO70", "MIO71",
+ 			"MIO72", "MIO73", "MIO74", "MIO75";
+ 			bias-disable;
++			output-enable;
+ 			drive-strength = <4>;
+ 			slew-rate = <SLEW_RATE_SLOW>;
+ 		};
+-- 
+2.25.1
+

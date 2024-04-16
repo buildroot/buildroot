@@ -1,0 +1,32 @@
+config BR2_PACKAGE_IGT_GPU_TOOLS
+	bool "igt-gpu-tools"
+	depends on BR2_USE_MMU # fork()
+	depends on BR2_ENABLE_LOCALE
+	depends on !BR2_STATIC_LIBS
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_PACKAGE_HAS_UDEV
+	depends on BR2_USE_WCHAR # elfutils
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_11 # linux/dma-buf.h
+	select BR2_PACKAGE_BUSYBOX_SHOW_OTHERS # procps-ng
+	select BR2_PACKAGE_CAIRO
+	select BR2_PACKAGE_CAIRO_PNG
+	select BR2_PACKAGE_ELFUTILS
+	select BR2_PACKAGE_KMOD
+	select BR2_PACKAGE_LIBDRM
+	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_LIBPCIACCESS
+	select BR2_PACKAGE_PIXMAN
+	select BR2_PACKAGE_PROCPS_NG
+	select BR2_PACKAGE_ZLIB
+	help
+	  IGT GPU Tools is a collection of tools for development and
+	  testing of the DRM drivers.
+
+	  https://gitlab.freedesktop.org/drm/igt-gpu-tools
+
+comment "igt-gpu-tools needs udev /dev management and toolchain w/ threads, wchar, dynamic library, locale, headers >= 4.11"
+	depends on BR2_USE_MMU
+	depends on !BR2_PACKAGE_HAS_UDEV || BR2_STATIC_LIBS || \
+		!BR2_TOOLCHAIN_HAS_THREADS || !BR2_USE_WCHAR || \
+		!BR2_ENABLE_LOCALE || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_11

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPENCV3_VERSION = 3.4.17
+OPENCV3_VERSION = 3.4.19
 OPENCV3_SITE = $(call github,opencv,opencv,$(OPENCV3_VERSION))
 OPENCV3_INSTALL_STAGING = YES
 OPENCV3_LICENSE = BSD-3-Clause
@@ -341,7 +341,7 @@ OPENCV3_CONF_OPTS += \
 	-DPYTHON3_NUMPY_VERSION=$(PYTHON_NUMPY_VERSION)
 OPENCV3_DEPENDENCIES += python3
 OPENCV3_KEEP_PY_FILES += usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages/cv2/config*.py
-OPENCV3_CONF_ENV += $(PKG_PYTHON_DISTUTILS_ENV)
+OPENCV3_CONF_ENV += $(PKG_PYTHON_SETUPTOOLS_ENV)
 OPENCV3_DEPENDENCIES += python-numpy
 else
 OPENCV3_CONF_OPTS += \

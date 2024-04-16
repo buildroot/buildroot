@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-HAWKTRACER_VERSION = 2ec19d71923344148928ef45fce549eda67030a4
-HAWKTRACER_SITE = $(call github,amzn,hawktracer,$(HAWKTRACER_VERSION))
+HAWKTRACER_VERSION = 0.11.0
+HAWKTRACER_SITE = $(call github,amzn,hawktracer,v$(HAWKTRACER_VERSION))
 HAWKTRACER_LICENSE = MIT
 HAWKTRACER_LICENSE_FILES = LICENSE
 HAWKTRACER_INSTALL_STAGING = YES

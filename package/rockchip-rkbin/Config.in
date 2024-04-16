@@ -1,0 +1,27 @@
+config BR2_PACKAGE_ROCKCHIP_RKBIN
+	bool "rockchip-rkbin"
+	depends on BR2_arm || BR2_aarch64
+	help
+	  This package provides Rockchip SoC binary blobs for U-Boot.
+
+if BR2_PACKAGE_ROCKCHIP_RKBIN
+
+config BR2_PACKAGE_ROCKCHIP_RKBIN_TPL_FILENAME
+	string "Rockchip rkbin tpl file path"
+	help
+	  Path to the tpl file inside the rkbin repository. The
+	  specified file will be copied and used by U-Boot as tpl.
+
+config BR2_PACKAGE_ROCKCHIP_RKBIN_BL31_FILENAME
+	string "Rockchip rkbin bl31 file path"
+	help
+	  Path to the bl31 file inside the rkbin repository. The
+	  specified file will be copied and used by U-Boot as bl31.
+
+config BR2_PACKAGE_ROCKCHIP_RKBIN_TEE_FILENAME
+	string "Rockchip rkbin tee file path"
+	help
+	  Path to the TEE file inside the rkbin repository. The
+	  specified file will be copied and used by U-Boot as TEE.
+
+endif # BR2_PACKAGE_ROCKCHIP_RKBIN

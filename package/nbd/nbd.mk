@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-NBD_VERSION = 3.24
+NBD_VERSION = 3.25
 NBD_SOURCE = nbd-$(NBD_VERSION).tar.xz
-NBD_SITE = http://downloads.sourceforge.net/project/nbd/nbd/$(NBD_VERSION)
+NBD_SITE = https://github.com/NetworkBlockDevice/nbd/releases/download/nbd-$(NBD_VERSION)
 NBD_CONF_OPTS = --enable-lfs
 NBD_DEPENDENCIES = host-bison host-pkgconf libglib2
 NBD_LICENSE = GPL-2.0

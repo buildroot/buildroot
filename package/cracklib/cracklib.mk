@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-CRACKLIB_VERSION = 2.9.8
-CRACKLIB_SOURCE = cracklib-$(CRACKLIB_VERSION).tar.bz2
+CRACKLIB_VERSION = 2.9.11
+CRACKLIB_SOURCE = cracklib-$(CRACKLIB_VERSION).tar.xz
 CRACKLIB_SITE = https://github.com/cracklib/cracklib/releases/download/v$(CRACKLIB_VERSION)
 CRACKLIB_LICENSE = LGPL-2.1
 CRACKLIB_LICENSE_FILES = COPYING.LIB
-CRACKLIB_CPE_ID_VENDOR = cracklib_project
+CRACKLIB_CPE_ID_VALID = YES
 CRACKLIB_INSTALL_STAGING = YES
 CRACKLIB_DEPENDENCIES = host-cracklib $(TARGET_NLS_DEPENDENCIES)
 CRACKLIB_CONF_ENV = LIBS=$(TARGET_NLS_LIBS)
@@ -34,8 +34,8 @@ endif
 HOST_CRACKLIB_CONF_OPTS += --without-python --without-zlib
 
 ifeq ($(BR2_PACKAGE_CRACKLIB_FULL_DICT),y)
-CRACKLIB_EXTRA_DOWNLOADS = cracklib-words-$(CRACKLIB_VERSION).bz2
-CRACKLIB_DICT_SOURCE = $(CRACKLIB_DL_DIR)/cracklib-words-$(CRACKLIB_VERSION).bz2
+CRACKLIB_EXTRA_DOWNLOADS = cracklib-words-$(CRACKLIB_VERSION).xz
+CRACKLIB_DICT_SOURCE = $(CRACKLIB_DL_DIR)/cracklib-words-$(CRACKLIB_VERSION).xz
 else
 CRACKLIB_DICT_SOURCE = $(@D)/dicts/cracklib-small
 endif

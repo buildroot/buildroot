@@ -1,0 +1,28 @@
+From 1fd99b71b063b1573beaf9f6b801ec5be2fbe24f Mon Sep 17 00:00:00 2001
+From: Mario Haustein <mario.haustein@hrz.tu-chemnitz.de>
+Date: Fri, 2 Sep 2022 23:20:14 +0200
+Subject: [PATCH] Make @hourly, @daily, ... work again
+
+closes #15
+
+Signed-off-by: Mario Haustein <mario.haustein@hrz.tu-chemnitz.de>
+Upstream: https://github.com/dubiousjim/dcron/pull/35
+---
+ database.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/database.c b/database.c
+index 37cf17a..6ec720e 100644
+--- a/database.c
++++ b/database.c
+@@ -455,6 +455,8 @@ SynchronizeFile(const char *dpath, const char *fileName, const char *userName)
+ 							line.cl_Days[j] = 1;
+ 						for (j=0; j<12; ++j)
+ 							line.cl_Mons[j] = 1;
++						for (j=0; j<7; ++j)
++							line.cl_Dow[j] = ALL_DOW;
+ 					}
+ 
+ 					while (*ptr == ' ' || *ptr == '\t')
+-- 
+2.35.1

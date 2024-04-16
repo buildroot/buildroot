@@ -86,11 +86,13 @@ ifneq ($$(wildcard $$($(2)_$(3)_ASCIIDOC_CONF)),)
 $(2)_$(3)_ASCIIDOC_OPTS += -f $$($(2)_$(3)_ASCIIDOC_CONF)
 endif
 
+$(2)_$(3)_A2X_OPTS = \
+	--xsltproc-opts "--stringparam toc.section.depth $$(or $$($(2)_TOC_DEPTH_$$(call UPPERCASE,$(4))),$$($(2)_TOC_DEPTH))"
+
 # Handle a2x warning about --destination-dir option only applicable to HTML
 # based outputs. So:
 # - use the --destination-dir option if possible (html and split-html),
 # - otherwise copy the generated document to the output directory
-$(2)_$(3)_A2X_OPTS =
 ifneq ($$(filter $(4),html split-html),)
 $(2)_$(3)_A2X_OPTS += --destination-dir="$$(@D)"
 else
@@ -122,7 +124,7 @@ $$(O)/docs/$(1)/$(1).$(5): $$($(2)_SOURCES) \
 			--resource="$$(abspath $$(r))") \
 		$$($(2)_$(3)_A2X_OPTS) \
 		--asciidoc-opts="$$($(2)_$(3)_ASCIIDOC_OPTS)" \
-		$$(BUILD_DIR)/docs/$(1)/$(1).txt
+		$$(BUILD_DIR)/docs/$(1)/$(1).adoc
 # install the generated document
 	$$($(2)_$(3)_INSTALL_CMDS)
 endif
@@ -153,19 +155,18 @@ $(1)-check-dependencies: asciidoc-check-dependencies $$($(2)_DEPENDENCIES)
 $$(BUILD_DIR)/docs/$(1)/.stamp_doc_rsynced:
 	$$(Q)$$(call MESSAGE,"Preparing the $(1) sources...")
 	$$(Q)mkdir -p $$(@D)
-	$$(Q)rsync -a $$($(2)_DOCDIR) $$(@D)
+	$$(Q)rsync -a $$($(2)_DOCDIR)/ $$(@D)/
 	$$(Q)$$(foreach hook,$$($(2)_POST_RSYNC_HOOKS),$$(call $$(hook))$$(sep))
 
 .PHONY: $(1)-prepare-sources
 $(1)-prepare-sources: $$(BUILD_DIR)/docs/$(1)/.stamp_doc_rsynced
 
+$(2)_TOC_DEPTH ?= 1
 $(2)_ASCIIDOC_CONF = $$($(2)_DOCDIR)/asciidoc.conf
 
-$(call ASCIIDOC_INNER,$(1),$(2),xhtml,html,html,HTML,\
-	--xsltproc-opts "--stringparam toc.section.depth 1")
+$(call ASCIIDOC_INNER,$(1),$(2),xhtml,html,html,HTML)
 
-$(call ASCIIDOC_INNER,$(1),$(2),chunked,split-html,chunked,split HTML,\
-	--xsltproc-opts "--stringparam toc.section.depth 1")
+$(call ASCIIDOC_INNER,$(1),$(2),chunked,split-html,chunked,split HTML)
 
 # dblatex needs to pass the '--maxvars ...' option to xsltproc to prevent it
 # from reaching the template recursion limit when processing the (long) target

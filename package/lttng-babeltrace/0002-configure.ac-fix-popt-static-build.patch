@@ -1,0 +1,48 @@
+From 35076fd4592ca23136ff5eacdf8eaebc926e0224 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 23 Feb 2023 13:04:08 +0100
+Subject: [PATCH] configure.ac: fix popt static build
+
+Fix the following popt static build failure:
+
+configure:18149: checking for poptGetContext in -lpopt
+configure:18172: /home/buildroot/autobuild/instance-2/output-1/host/bin/m68k-buildroot-linux-uclibc-gcc -o conftest -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -Os -g0  -static  -I/home/buildroot/autobuild/instance-2/output-1/host/bin/../m68k-buildroot-linux-uclibc/sysroot/usr/include/uuid  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -static conftest.c -lpopt  -L/home/buildroot/autobuild/instance-2/output-1/host/bin/../m68k-buildroot-linux-uclibc/sysroot/usr/lib -luuid    >&5
+/home/buildroot/autobuild/instance-2/output-1/host/lib/gcc/m68k-buildroot-linux-uclibc/10.4.0/../../../../m68k-buildroot-linux-uclibc/bin/ld: /home/buildroot/autobuild/instance-2/output-1/host/bin/../m68k-buildroot-linux-uclibc/sysroot/usr/lib/libpopt.a(poptint.o): in function `POPT_fprintf':
+poptint.c:(.text+0x28a): undefined reference to `libiconv_open'
+
+[...]
+
+checking for poptGetContext in -lpopt... no
+configure: error: Cannot find popt.
+
+Fixes:
+ - http://autobuild.buildroot.org/results/4f465fe15664b1f9df3f26c331dc550852972f2f
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: not upstreamable as popt has been removed with
+https://github.com/efficios/babeltrace/commit/916d0d910ad5407bc7826505aa05b277f5739a34]
+---
+ configure.ac | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index a17c23c3..8f700d3e 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -223,8 +223,11 @@ AC_CHECK_LIB([c], [faccessat],
+ ]
+ )
+ 
+-AC_CHECK_LIB([popt], [poptGetContext], [],
+-        [AC_MSG_ERROR([Cannot find popt.])]
++PKG_CHECK_MODULES([POPT], [popt], [LIBS="${POPT_LIBS} ${LIBS}"],
++[
++	AC_CHECK_LIB([popt], [poptGetContext], [],
++		[AC_MSG_ERROR([Cannot find popt.])])
++]
+ )
+ 
+ # For Python
+-- 
+2.39.1
+

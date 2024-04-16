@@ -12,8 +12,16 @@ brmake
     nothing.
 
 check-package
-    a script that checks the coding style of a package's Config.in and
-    .mk files, and also tests them for various types of typoes.
+    a script that checks the coding style across the buildroot tree. It
+    checks package's Config.in and .mk files, runs shellcheck for all shell
+    scripts, flake8 for python files, checks for typoes, etc.
+    It checks the .checkpackageignore file if errors should be ignored and
+    errors if there's a file listed that doesn't produce an error.
+
+docker-run
+    a script that runs a command (like make check-package) inside the
+    buildroot CI docker container; pass no command to get an interactive
+    shell.
 
 genrandconfig
     a script that generates a random configuration, used by the autobuilders

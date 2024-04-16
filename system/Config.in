@@ -78,7 +78,6 @@ endchoice # Passwd encoding
 
 config BR2_TARGET_GENERIC_PASSWD_METHOD
 	string
-	default "md5"       if BR2_TARGET_GENERIC_PASSWD_MD5
 	default "sha-256"   if BR2_TARGET_GENERIC_PASSWD_SHA256
 	default "sha-512"   if BR2_TARGET_GENERIC_PASSWD_SHA512
 
@@ -106,12 +105,13 @@ config BR2_INIT_OPENRC
 	bool "OpenRC"
 	depends on BR2_USE_MMU
 	depends on !BR2_STATIC_LIBS
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC # openrc
 	select BR2_PACKAGE_OPENRC
 	select BR2_PACKAGE_SKELETON_INIT_OPENRC if BR2_ROOTFS_SKELETON_DEFAULT
 
-comment "openrc needs a toolchain w/ dynamic library"
+comment "openrc needs a glibc or musl toolchain w/ dynamic library"
 	depends on BR2_USE_MMU
-	depends on BR2_STATIC_LIBS
+	depends on BR2_STATIC_LIBS && BR2_TOOLCHAIN_USES_UCLIBC
 
 # In Buildroot, we decided not to support a split-usr when systemd is
 # used as an init system. This is a design decision, not a systemd
@@ -125,21 +125,25 @@ config BR2_INIT_SYSTEMD
 	depends on BR2_TOOLCHAIN_USES_GLIBC
 	depends on BR2_TOOLCHAIN_HAS_SSP
 	depends on BR2_TOOLCHAIN_HAS_THREADS
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_13
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5
 	depends on BR2_HOST_GCC_AT_LEAST_5
 	select BR2_ROOTFS_MERGED_USR
 	select BR2_PACKAGE_SYSTEMD
 	select BR2_PACKAGE_SKELETON_INIT_SYSTEMD if BR2_ROOTFS_SKELETON_DEFAULT
 
-comment "systemd needs a glibc toolchain w/ SSP, headers >= 3.10, host and target gcc >= 5"
+comment "systemd needs a glibc toolchain w/ SSP, headers >= 4.14, host and target gcc >= 5"
 	depends on BR2_PACKAGE_SYSTEMD_ARCH_SUPPORTS
 	depends on BR2_USE_MMU
 	depends on !BR2_TOOLCHAIN_USES_GLIBC || \
 		!BR2_TOOLCHAIN_HAS_SSP || \
-		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_10 || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14 || \
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_5 || \
 		!BR2_HOST_GCC_AT_LEAST_5
+
+comment "systemd highly recommends Linux >= 4.15"
+	depends on BR2_INIT_SYSTEMD
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_15
 
 config BR2_INIT_NONE
 	bool "None"
@@ -154,16 +158,84 @@ source "$BR2_BASE_DIR/.br2-external.in.init"
 
 endchoice
 
+if BR2_INIT_SYSTEMD
+
+choice
+	bool "/var management"
+	default BR2_INIT_SYSTEMD_VAR_FACTORY  # legacy
+	depends on !BR2_TARGET_GENERIC_REMOUNT_ROOTFS_RW
+	help
+	  Select how Buildroot provides a read-write /var when the
+	  rootfs is not remounted read-write.
+
+	  Note: Buildroot uses a tmpfs, either as a mount point or as
+	  the upper of an overlayfs, so as to at least make the system
+	  bootable out of the box; mounting a filesystem from actual
+	  storage is left to the integration, as it is too specific and
+	  may need preparatory work like partitionning a device and/or
+	  formatting a filesystem first, which falls out of the scope
+	  of Buildroot.
+
+config BR2_INIT_SYSTEMD_VAR_FACTORY
+	bool "build a factory to populate a tmpfs"
+	help
+	  Build a factory of the content of /var as installed by
+	  packages, mount a tmpfs on /var at runtime, so that
+	  systemd-tmpfiles can populate it from the factory.
+
+	  This may help on a read-only rootfs.
+
+	  It probably does not play very well with triggering a call
+	  to systemd-tmpfiles at build time (below).
+
+	  To use persistent storage, provide a systemd dropin for the
+	  var.mount unit, that overrides the What and Type, and possibly
+	  the Options and After, fields.
+
+config BR2_INIT_SYSTEMD_VAR_OVERLAYFS
+	bool "mount an overlayfs backed by a tmpfs"
+	select BR2_INIT_SYSTEMD_POPULATE_TMPFILES
+	help
+	  Mount an overlayfs on /var, with the upper as a tmpfs.
+
+	  To use a persistent storage, provide either a mount unit or a
+	  fstab line to mount it on /run/buildroot/mounts/var, e.g.
+
+	  /dev/sdc1    /run/buildroot/mounts/var    ext4    defaults
+
+config BR2_INIT_SYSTEMD_VAR_NONE
+	bool "do nothing"
+	help
+	  Choose this if you have custom dispositions (like one or more
+	  of a post-build script, a fakeroot script, systemd units, an
+	  initramfs, or something else) that prepare /var to be writable
+	  on a read-only rootfs.
+
+endchoice
+
+config BR2_INIT_SYSTEMD_POPULATE_TMPFILES
+	bool "trigger systemd-tmpfiles during build"
+	default y  # legacy
+	help
+	  Act on the systemd-tmpfiles.d database at build time, when
+	  assembling the root filesystems.
+
+	  This may help on a read-only filesystem.
+
+	  It probably does not play very well with the /var factory
+	  (above).
+
 config BR2_PACKAGE_SYSTEMD_DEFAULT_TARGET
 	string "The default unit systemd starts at bootup"
 	default "multi-user.target"
-	depends on BR2_INIT_SYSTEMD
 	help
 	  Specify the name of the unit configuration file to be started
 	  at bootup by systemd. Should end in ".target".
 	  ex: multi-user.target
 
 	  https://www.freedesktop.org/software/systemd/man/systemd.special.html#default.target
+
+endif # BR2_INIT_SYSTEMD
 
 choice
 	prompt "/dev management" if !BR2_INIT_SYSTEMD
@@ -332,7 +404,7 @@ config BR2_SYSTEM_BIN_SH
 
 menuconfig BR2_TARGET_GENERIC_GETTY
 	bool "Run a getty (login prompt) after boot"
-	default y
+	default y if !BR2_PACKAGE_PETITBOOT
 
 if BR2_TARGET_GENERIC_GETTY
 config BR2_TARGET_GENERIC_GETTY_PORT
@@ -443,7 +515,7 @@ config BR2_ENABLE_LOCALE_WHITELIST
 	default "C en_US"
 	depends on BR2_ENABLE_LOCALE_PURGE
 	help
-	  Whitespace seperated list of locales to allow on target.
+	  Whitespace separated list of locales to allow on target.
 	  Locales not listed here will be removed from the target.
 	  See 'locale -a' on your host for a list of locales available
 	  on your build host, or have a look in /usr/share/locale in
@@ -623,20 +695,69 @@ config BR2_ROOTFS_POST_IMAGE_SCRIPT
 
 config BR2_ROOTFS_POST_SCRIPT_ARGS
 	string "Extra arguments passed to custom scripts"
-	depends on BR2_ROOTFS_POST_BUILD_SCRIPT != "" \
+	depends on BR2_ROOTFS_PRE_BUILD_SCRIPT != "" \
+	        || BR2_ROOTFS_POST_BUILD_SCRIPT != "" \
 		|| BR2_ROOTFS_POST_FAKEROOT_SCRIPT != "" \
 		|| BR2_ROOTFS_POST_IMAGE_SCRIPT != ""
 	help
-	  Pass these additional arguments to each post-build or
-	  post-image scripts.
+	  Pass these additional arguments to each pre-build, post-build,
+	  post-fakeroot and post-image scripts.
 
 	  Note that all the post-build and post-image scripts will be
 	  passed the same set of arguments, you can not pass different
 	  arguments to each script.
 
 	  Note also, as stated in their respective help text, that the
-	  first argument to each post-build or post-image script is the
-	  target directory / images directory. The arguments in this
-	  option will be passed *after* those.
+	  first argument to each script is the target directory / images
+	  directory. The arguments in this option will be passed *after*
+	  those.
+
+config BR2_ROOTFS_PRE_BUILD_SCRIPT_ARGS
+	string "Extra arguments passed to BR2_ROOTFS_PRE_BUILD_SCRIPT"
+	depends on BR2_ROOTFS_PRE_BUILD_SCRIPT != ""
+	help
+	  Pass these additional arguments to the pre-build script.
+
+	  Note also, as stated in the respective help text, that the
+	  first argument to each script is the target directory, then
+	  the common arguments specified in BR2_ROOTFS_POST_SCRIPT_ARGS
+	  above, and then the arguments in this option will be passed
+	  *after* those.
+
+config BR2_ROOTFS_POST_BUILD_SCRIPT_ARGS
+	string "Extra arguments passed to BR2_ROOTFS_POST_BUILD_SCRIPT"
+	depends on BR2_ROOTFS_POST_BUILD_SCRIPT != ""
+	help
+	  Pass these additional arguments to the post-build script.
+
+	  Note also, as stated in the respective help text, that the
+	  first argument to each script is the target directory, then
+	  the common arguments specified in BR2_ROOTFS_POST_SCRIPT_ARGS
+	  above, and then the arguments in this option will be passed
+	  *after* those.
+
+config BR2_ROOTFS_POST_FAKEROOT_SCRIPT_ARGS
+	string "Extra arguments passed to BR2_ROOTFS_POST_FAKEROOT_SCRIPT"
+	depends on BR2_ROOTFS_POST_FAKEROOT_SCRIPT != ""
+	help
+	  Pass these additional arguments to the post-fakeroot script.
+
+	  Note also, as stated in the respective help text, that the
+	  first argument to each script is the target directory, then
+	  the common arguments specified in BR2_ROOTFS_POST_SCRIPT_ARGS
+	  above, and then the arguments in this option will be passed
+	  *after* those.
+
+config BR2_ROOTFS_POST_IMAGE_SCRIPT_ARGS
+	string "Extra arguments passed to POST_IMAGE_SCRIPT"
+	depends on BR2_ROOTFS_POST_IMAGE_SCRIPT != ""
+	help
+	  Pass these additional arguments to the post-image script.
+
+	  Note also, as stated in the respective help text, that the
+	  first argument to each script is the images directory, then
+	  the common arguments specified in BR2_ROOTFS_POST_SCRIPT_ARGS
+	  above, and then the arguments in this option will be passed
+	  *after* those.
 
 endmenu

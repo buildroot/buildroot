@@ -4,15 +4,19 @@
 #
 ################################################################################
 
-WATCHDOGD_VERSION = 3.5
+WATCHDOGD_VERSION = 4.0
 WATCHDOGD_SITE = https://github.com/troglobit/watchdogd/releases/download/$(WATCHDOGD_VERSION)
 WATCHDOGD_LICENSE = ISC
 WATCHDOGD_LICENSE_FILES = LICENSE
 WATCHDOGD_CPE_ID_VENDOR = troglobit
 WATCHDOGD_INSTALL_STAGING = YES
 WATCHDOGD_DEPENDENCIES = host-pkgconf libconfuse libite libuev
-WATCHDOGD_CONF_OPTS = --disable-compat --disable-examples --disable-test-mode
 WATCHDOGD_SELINUX_MODULES = watchdog
+
+WATCHDOGD_CONF_OPTS = \
+	--disable-compat \
+	--disable-examples \
+	--disable-test-mode
 
 ifneq ($(BR2_PACKAGE_WATCHDOGD_TEST_SUITE),y)
 WATCHDOGD_CONF_OPTS += --disable-builtin-tests
@@ -20,28 +24,40 @@ else
 WATCHDOGD_CONF_OPTS += --enable-builtin-tests
 endif
 
-ifeq ($(BR2_PACKAGE_WATCHDOGD_GENERIC_POLL),0)
+ifneq ($(BR2_PACKAGE_WATCHDOGD_GENERIC),y)
 WATCHDOGD_CONF_OPTS += --without-generic
 else
-WATCHDOGD_CONF_OPTS += --with-generic=$(BR2_PACKAGE_WATCHDOGD_GENERIC_POLL)
+WATCHDOGD_CONF_OPTS += --with-generic
 endif
 
-ifeq ($(BR2_PACKAGE_WATCHDOGD_LOADAVG_POLL),0)
+ifneq ($(BR2_PACKAGE_WATCHDOGD_LOADAVG),y)
 WATCHDOGD_CONF_OPTS += --without-loadavg
 else
-WATCHDOGD_CONF_OPTS += --with-loadavg=$(BR2_PACKAGE_WATCHDOGD_LOADAVG_POLL)
+WATCHDOGD_CONF_OPTS += --with-loadavg
 endif
 
-ifeq ($(BR2_PACKAGE_WATCHDOGD_FILENR_POLL),0)
+ifneq ($(BR2_PACKAGE_WATCHDOGD_FILENR),y)
 WATCHDOGD_CONF_OPTS += --without-filenr
 else
-WATCHDOGD_CONF_OPTS += --with-filenr=$(BR2_PACKAGE_WATCHDOGD_FILENR_POLL)
+WATCHDOGD_CONF_OPTS += --with-filenr
 endif
 
-ifeq ($(BR2_PACKAGE_WATCHDOGD_MEMINFO_POLL),0)
+ifneq ($(BR2_PACKAGE_WATCHDOGD_MEMINFO),y)
 WATCHDOGD_CONF_OPTS += --without-meminfo
 else
-WATCHDOGD_CONF_OPTS += --with-meminfo=$(BR2_PACKAGE_WATCHDOGD_MEMINFO_POLL)
+WATCHDOGD_CONF_OPTS += --with-meminfo
+endif
+
+ifneq ($(BR2_PACKAGE_WATCHDOGD_FSMON),y)
+WATCHDOGD_CONF_OPTS += --without-fsmon
+else
+WATCHDOGD_CONF_OPTS += --with-fsmon
+endif
+
+ifneq ($(BR2_PACKAGE_WATCHDOGD_TEMPMON),y)
+WATCHDOGD_CONF_OPTS += --without-tempmon
+else
+WATCHDOGD_CONF_OPTS += --with-tempmon
 endif
 
 define WATCHDOGD_INSTALL_INIT_SYSV

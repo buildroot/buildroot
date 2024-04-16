@@ -1,0 +1,349 @@
+From c6cd5e9c10edc68caf6936a3d3274f758e9cd03d Mon Sep 17 00:00:00 2001
+From: Zdenek Dohnal <zdohnal@redhat.com>
+Date: Tue, 3 Oct 2023 13:59:40 +0200
+Subject: [PATCH] cups/hash.c: Put support for MacOS/Win SSL libs back
+
+- I mustn't remove their support in patch release - this should happen in
+2.5 only.
+- I have put back support for several hashes as well - they
+should be removed in 2.5.
+- restrict usage of second block hashing only if OpenSSL/LibreSSL/GnuTLS
+  is available
+
+Upstream: https://github.com/OpenPrinting/cups/commit/c6cd5e9c10edc68caf6936a3d3274f758e9cd03d
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ cups/hash.c | 271 +++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 260 insertions(+), 11 deletions(-)
+
+diff --git a/cups/hash.c b/cups/hash.c
+index 93ca552c8..c447bab4e 100644
+--- a/cups/hash.c
++++ b/cups/hash.c
+@@ -12,8 +12,13 @@
+ #include "md5-internal.h"
+ #ifdef HAVE_OPENSSL
+ #  include <openssl/evp.h>
+-#else // HAVE_GNUTLS
++#elif defined(HAVE_GNUTLS)
+ #  include <gnutls/crypto.h>
++#elif __APPLE__
++#  include <CommonCrypto/CommonDigest.h>
++#elif _WIN32
++#  include <windows.h>
++#  include <bcrypt.h>
+ #endif // HAVE_OPENSSL
+ 
+ 
+@@ -193,17 +198,18 @@ hash_data(const char    *algorithm,	// I - Algorithm
+           const void    *b,		// I - Second block or `NULL` for none
+           size_t        blen)		// I - Length of second block or `0` for none
+ {
++#if defined(HAVE_OPENSSL) || defined(HAVE_GNUTLS)
+   unsigned	hashlen;		// Length of hash
+   unsigned char	hashtemp[64];		// Temporary hash buffer
+-#ifdef HAVE_OPENSSL
+-  const EVP_MD	*md = NULL;		// Message digest implementation
+-  EVP_MD_CTX	*ctx;			// Context
+-#else // HAVE_GNUTLS
+-  gnutls_digest_algorithm_t alg = GNUTLS_DIG_UNKNOWN;
+-					// Algorithm
+-  gnutls_hash_hd_t ctx;			// Context
+-#endif // HAVE_OPENSSL
++#else
++  if (strcmp(algorithm, "md5") && (b || blen != 0))
++  {
++    // Second block hashing is not supported without OpenSSL or GnuTLS
++    _cupsSetError(IPP_STATUS_ERROR_INTERNAL, _("Unsupported without GnuTLS or OpenSSL/LibreSSL."), 1);
+ 
++    return (-1);
++  }
++#endif
+ 
+   if (!strcmp(algorithm, "md5"))
+   {
+@@ -223,6 +229,10 @@ hash_data(const char    *algorithm,	// I - Algorithm
+   }
+ 
+ #ifdef HAVE_OPENSSL
++  const EVP_MD	*md = NULL;		// Message digest implementation
++  EVP_MD_CTX	*ctx;			// Context
++
++
+   if (!strcmp(algorithm, "sha"))
+   {
+     // SHA-1
+@@ -244,6 +254,14 @@ hash_data(const char    *algorithm,	// I - Algorithm
+   {
+     md = EVP_sha512();
+   }
++  else if (!strcmp(algorithm, "sha2-512_224"))
++  {
++    md = EVP_sha512_224();
++  }
++  else if (!strcmp(algorithm, "sha2-512_256"))
++  {
++    md = EVP_sha512_256();
++  }
+ 
+   if (md)
+   {
+@@ -262,7 +280,13 @@ hash_data(const char    *algorithm,	// I - Algorithm
+     return ((ssize_t)hashlen);
+   }
+ 
+-#else // HAVE_GNUTLS
++#elif defined(HAVE_GNUTLS)
++  gnutls_digest_algorithm_t	alg = GNUTLS_DIG_UNKNOWN;	// Algorithm
++  gnutls_hash_hd_t		ctx;				// Context
++  unsigned char		temp[64];			// Temporary hash buffer
++  size_t			tempsize = 0;			// Truncate to this size?
++
++
+   if (!strcmp(algorithm, "sha"))
+   {
+     // SHA-1
+@@ -284,9 +308,32 @@ hash_data(const char    *algorithm,	// I - Algorithm
+   {
+     alg = GNUTLS_DIG_SHA512;
+   }
++  else if (!strcmp(algorithm, "sha2-512_224"))
++  {
++    alg      = GNUTLS_DIG_SHA512;
++    tempsize = 28;
++  }
++  else if (!strcmp(algorithm, "sha2-512_256"))
++  {
++    alg      = GNUTLS_DIG_SHA512;
++    tempsize = 32;
++  }
+ 
+   if (alg != GNUTLS_DIG_UNKNOWN)
+   {
++    if (tempsize > 0)
++    {
++      // Truncate result to tempsize bytes...
++
++      if (hashsize < tempsize)
++        goto too_small;
++
++      gnutls_hash_fast(alg, a, alen, temp);
++      memcpy(hash, temp, tempsize);
++
++      return ((ssize_t)tempsize);
++    }
++
+     hashlen = gnutls_hash_get_len(alg);
+ 
+     if (hashlen > hashsize)
+@@ -302,7 +349,209 @@ hash_data(const char    *algorithm,	// I - Algorithm
+ 
+     return ((ssize_t)hashlen);
+   }
+-#endif // HAVE_OPENSSL
++
++#elif __APPLE__
++  if (!strcmp(algorithm, "sha"))
++  {
++    // SHA-1...
++
++    CC_SHA1_CTX	ctx;			// SHA-1 context
++
++    if (hashsize < CC_SHA1_DIGEST_LENGTH)
++      goto too_small;
++
++    CC_SHA1_Init(&ctx);
++    CC_SHA1_Update(&ctx, a, (CC_LONG)alen);
++    CC_SHA1_Final(hash, &ctx);
++
++    return (CC_SHA1_DIGEST_LENGTH);
++  }
++#  ifdef CC_SHA224_DIGEST_LENGTH
++  else if (!strcmp(algorithm, "sha2-224"))
++  {
++    CC_SHA256_CTX	ctx;		// SHA-224 context
++
++    if (hashsize < CC_SHA224_DIGEST_LENGTH)
++      goto too_small;
++
++    CC_SHA224_Init(&ctx);
++    CC_SHA224_Update(&ctx, a, (CC_LONG)alen);
++    CC_SHA224_Final(hash, &ctx);
++
++    return (CC_SHA224_DIGEST_LENGTH);
++  }
++#  endif /* CC_SHA224_DIGEST_LENGTH */
++  else if (!strcmp(algorithm, "sha2-256"))
++  {
++    CC_SHA256_CTX	ctx;		// SHA-256 context
++
++    if (hashsize < CC_SHA256_DIGEST_LENGTH)
++      goto too_small;
++
++    CC_SHA256_Init(&ctx);
++    CC_SHA256_Update(&ctx, a, (CC_LONG)alen);
++    CC_SHA256_Final(hash, &ctx);
++
++    return (CC_SHA256_DIGEST_LENGTH);
++  }
++  else if (!strcmp(algorithm, "sha2-384"))
++  {
++    CC_SHA512_CTX	ctx;		// SHA-384 context
++
++    if (hashsize < CC_SHA384_DIGEST_LENGTH)
++      goto too_small;
++
++    CC_SHA384_Init(&ctx);
++    CC_SHA384_Update(&ctx, a, (CC_LONG)alen);
++    CC_SHA384_Final(hash, &ctx);
++
++    return (CC_SHA384_DIGEST_LENGTH);
++  }
++  else if (!strcmp(algorithm, "sha2-512"))
++  {
++    CC_SHA512_CTX	ctx;		// SHA-512 context
++
++    if (hashsize < CC_SHA512_DIGEST_LENGTH)
++      goto too_small;
++
++    CC_SHA512_Init(&ctx);
++    CC_SHA512_Update(&ctx, a, (CC_LONG)alen);
++    CC_SHA512_Final(hash, &ctx);
++
++    return (CC_SHA512_DIGEST_LENGTH);
++  }
++#  ifdef CC_SHA224_DIGEST_LENGTH
++  else if (!strcmp(algorithm, "sha2-512_224"))
++  {
++    CC_SHA512_CTX	ctx;		// SHA-512 context
++    unsigned char	temp[CC_SHA512_DIGEST_LENGTH];
++                                        // SHA-512 hash
++
++    // SHA2-512 truncated to 224 bits (28 bytes)...
++
++    if (hashsize < CC_SHA224_DIGEST_LENGTH)
++      goto too_small;
++
++    CC_SHA512_Init(&ctx);
++    CC_SHA512_Update(&ctx, a, (CC_LONG)alen);
++    CC_SHA512_Final(temp, &ctx);
++
++    memcpy(hash, temp, CC_SHA224_DIGEST_LENGTH);
++
++    return (CC_SHA224_DIGEST_LENGTH);
++  }
++#  endif // CC_SHA224_DIGEST_LENGTH
++  else if (!strcmp(algorithm, "sha2-512_256"))
++  {
++    CC_SHA512_CTX	ctx;		// SHA-512 context
++    unsigned char	temp[CC_SHA512_DIGEST_LENGTH];
++                                        // SHA-512 hash
++
++    // SHA2-512 truncated to 256 bits (32 bytes)...
++
++    if (hashsize < CC_SHA256_DIGEST_LENGTH)
++      goto too_small;
++
++    CC_SHA512_Init(&ctx);
++    CC_SHA512_Update(&ctx, a, (CC_LONG)alen);
++    CC_SHA512_Final(temp, &ctx);
++
++    memcpy(hash, temp, CC_SHA256_DIGEST_LENGTH);
++
++    return (CC_SHA256_DIGEST_LENGTH);
++  }
++
++#elif _WIN32
++  // Use Windows CNG APIs to perform hashing...
++  BCRYPT_ALG_HANDLE	alg;		// Algorithm handle
++  LPCWSTR		algid = NULL;	// Algorithm ID
++  ssize_t		hashlen;	// Hash length
++  NTSTATUS		status;		// Status of hash
++  unsigned char		temp[64];	// Temporary hash buffer
++  size_t		tempsize = 0;	// Truncate to this size?
++
++
++  if (!strcmp(algorithm, "sha"))
++  {
++    algid   = BCRYPT_SHA1_ALGORITHM;
++    hashlen = 20;
++  }
++  else if (!strcmp(algorithm, "sha2-256"))
++  {
++    algid   = BCRYPT_SHA256_ALGORITHM;
++    hashlen = 32;
++  }
++  else if (!strcmp(algorithm, "sha2-384"))
++  {
++    algid   = BCRYPT_SHA384_ALGORITHM;
++    hashlen = 48;
++  }
++  else if (!strcmp(algorithm, "sha2-512"))
++  {
++    algid   = BCRYPT_SHA512_ALGORITHM;
++    hashlen = 64;
++  }
++  else if (!strcmp(algorithm, "sha2-512_224"))
++  {
++    algid   = BCRYPT_SHA512_ALGORITHM;
++    hashlen = tempsize = 28;
++  }
++  else if (!strcmp(algorithm, "sha2-512_256"))
++  {
++    algid   = BCRYPT_SHA512_ALGORITHM;
++    hashlen = tempsize = 32;
++  }
++
++  if (algid)
++  {
++    if (hashsize < (size_t)hashlen)
++      goto too_small;
++
++    if ((status = BCryptOpenAlgorithmProvider(&alg, algid, NULL, 0)) < 0)
++    {
++      DEBUG_printf(("2cupsHashData: BCryptOpenAlgorithmProvider returned %d.", status));
++
++      if (status == STATUS_INVALID_PARAMETER)
++	_cupsSetError(IPP_STATUS_ERROR_INTERNAL, _("Bad algorithm parameter."), 1);
++      else
++	_cupsSetError(IPP_STATUS_ERROR_INTERNAL, _("Unable to access cryptographic provider."), 1);
++
++      return (-1);
++    }
++
++    if (tempsize > 0)
++    {
++      // Do a truncated SHA2-512 hash...
++      status = BCryptHash(alg, NULL, 0, (PUCHAR)a, (ULONG)alen, temp, sizeof(temp));
++      memcpy(hash, temp, hashlen);
++    }
++    else
++    {
++      // Hash directly to buffer...
++      status = BCryptHash(alg, NULL, 0, (PUCHAR)a, (ULONG)alen, hash, (ULONG)hashlen);
++    }
++
++    BCryptCloseAlgorithmProvider(alg, 0);
++
++    if (status < 0)
++    {
++      DEBUG_printf(("2cupsHashData: BCryptHash returned %d.", status));
++
++      if (status == STATUS_INVALID_PARAMETER)
++	_cupsSetError(IPP_STATUS_ERROR_INTERNAL, _("Bad hashing parameter."), 1);
++      else
++	_cupsSetError(IPP_STATUS_ERROR_INTERNAL, _("Hashing failed."), 1);
++
++      return (-1);
++    }
++
++    return (hashlen);
++  }
++
++#else
++  if (hashsize < 64)
++    goto too_small;
++#endif // __APPLE__
+ 
+   // Unknown hash algorithm...
+   _cupsSetError(IPP_STATUS_ERROR_INTERNAL, _("Unknown hash algorithm."), 1);

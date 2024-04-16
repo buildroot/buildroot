@@ -20,12 +20,17 @@ config BR2_PACKAGE_LIBOPENSSL_TARGET_ARCH
 	default "linux-ppc"			if BR2_PACKAGE_LIBOPENSSL_TARGET_ARCH_LINUX_PPC
 	default "linux-ppc64"			if BR2_powerpc64
 	default "linux-ppc64le"			if BR2_powerpc64le
-	default "linux-x86"			if BR2_i386
+	default "linux-x86"			if BR2_i386 && !BR2_TOOLCHAIN_HAS_LIBATOMIC
+	default "linux-x86-latomic"		if BR2_i386 && BR2_TOOLCHAIN_HAS_LIBATOMIC
 	default "linux-x86_64"			if BR2_x86_64
+	default "linux64-riscv64"               if BR2_riscv && BR2_ARCH_IS_64
+	default "linux32-riscv32"               if BR2_riscv && !BR2_ARCH_IS_64
+	default "linux64-s390x"                 if BR2_s390x
 	# no-asm is needed with generic architectures such as
 	# linux-generic{32,64}, see
 	# https://github.com/openssl/openssl/issues/9839
 	default "linux-generic64 no-asm"	if BR2_ARCH_IS_64 && !BR2_MIPS_NABI32
+	default "linux-latomic no-asm"		if BR2_TOOLCHAIN_HAS_LIBATOMIC
 	default "linux-generic32 no-asm"
 
 config BR2_PACKAGE_LIBOPENSSL_BIN
@@ -42,10 +47,6 @@ config BR2_PACKAGE_LIBOPENSSL_ENGINES
 
 config BR2_PACKAGE_LIBOPENSSL_ENABLE_CHACHA
 	bool "enable CHACHA"
-	default y
-
-config BR2_PACKAGE_LIBOPENSSL_ENABLE_RC5
-	bool "enable RC5"
 	default y
 
 config BR2_PACKAGE_LIBOPENSSL_ENABLE_RC2
@@ -67,6 +68,7 @@ config BR2_PACKAGE_LIBOPENSSL_ENABLE_MD4
 config BR2_PACKAGE_LIBOPENSSL_ENABLE_MDC2
 	bool "enable MDC2"
 	default y
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_DES
 
 config BR2_PACKAGE_LIBOPENSSL_ENABLE_BLAKE2
 	bool "enable BLAKE2"
@@ -98,10 +100,6 @@ config BR2_PACKAGE_LIBOPENSSL_ENABLE_BLOWFISH
 
 config BR2_PACKAGE_LIBOPENSSL_ENABLE_SSL
 	bool "enable SSL"
-	default y
-
-config BR2_PACKAGE_LIBOPENSSL_ENABLE_SSL2
-	bool "enable SSL2"
 	default y
 
 config BR2_PACKAGE_LIBOPENSSL_ENABLE_SSL3

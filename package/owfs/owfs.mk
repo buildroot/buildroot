@@ -28,7 +28,7 @@ OWFS_CONF_OPTS += \
 	--with-fuseinclude=$(STAGING_DIR)/usr/include \
 	--with-fuselib=$(STAGING_DIR)/usr/lib
 define OWFS_INSTALL_FUSE_INIT_SYSV
-	$(INSTALL) -D -m 0755 $(OWFS_PKGDIR)S60owfs \
+	$(INSTALL) -D -m 0755 $(OWFS_PKGDIR)/S60owfs \
 		$(TARGET_DIR)/etc/init.d/S60owfs
 endef
 define OWFS_CREATE_MOUNTPOINT
@@ -78,7 +78,7 @@ endif
 OWFS_MAKE = $(MAKE) $(OWFS_EXTRA_MAKE_OPTS)
 
 define OWFS_INSTALL_INIT_SYSV
-	$(INSTALL) -D -m 0755 $(OWFS_PKGDIR)S55owserver \
+	$(INSTALL) -D -m 0755 $(OWFS_PKGDIR)/S55owserver \
 		$(TARGET_DIR)/etc/init.d/S55owserver
 	$(OWFS_INSTALL_FUSE_INIT_SYSV)
 endef

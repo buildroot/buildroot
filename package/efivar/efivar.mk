@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EFIVAR_VERSION = 38
+EFIVAR_VERSION = 39
 EFIVAR_SITE = $(call github,rhboot,efivar,$(EFIVAR_VERSION))
 EFIVAR_LICENSE = LGPL-2.1
 EFIVAR_LICENSE_FILES = COPYING
@@ -39,7 +39,7 @@ define EFIVAR_BUILD_CMDS
 endef
 
 define HOST_EFIVAR_INSTALL_CMDS
-	$(INSTALL) -D -m 0755 $(@D)/src/makeguids $(HOST_DIR)/usr/bin/makeguids
+	$(INSTALL) -D -m 0755 $(@D)/src/makeguids $(HOST_DIR)/bin/makeguids
 endef
 
 define EFIVAR_INSTALL_STAGING_CMDS

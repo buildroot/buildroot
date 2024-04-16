@@ -11,6 +11,9 @@ LIBMNL_INSTALL_STAGING = YES
 LIBMNL_LICENSE = LGPL-2.1+
 LIBMNL_LICENSE_FILES = COPYING
 LIBMNL_CPE_ID_VENDOR = netfilter
+# 0001-examples-add-rtnl-link-can.patch patches Makefile.am
+# 0002-include-cache-copy-of-can.h-and-can-netlink.h.patch patches configure.ac
+LIBMNL_AUTORECONF = YES
 
 ifeq ($(BR2_PACKAGE_LIBMNL_EXAMPLES),y)
 define LIBMNL_EXAMPLES_BUILD_CMDS
@@ -18,17 +21,14 @@ define LIBMNL_EXAMPLES_BUILD_CMDS
 endef
 LIBMNL_POST_BUILD_HOOKS += LIBMNL_EXAMPLES_BUILD_CMDS
 
-LIBMNL_EXAMPLES_INSTALL_TARGETS += \
-	$(addprefix examples/genl/, genl-family-get genl-group-events)
-LIBMNL_EXAMPLES_INSTALL_TARGETS += \
-	$(addprefix examples/kobject/, kobject-event)
-LIBMNL_EXAMPLES_INSTALL_TARGETS += \
+LIBMNL_EXAMPLES_INSTALL_TARGETS = \
+	$(addprefix examples/genl/, genl-family-get genl-group-events) \
+	$(addprefix examples/kobject/, kobject-event) \
 	$(addprefix examples/netfilter/, nfct-create-batch \
 		nfct-daemon nfct-dump nfct-event nf-log \
-		nf-queue)
-LIBMNL_EXAMPLES_INSTALL_TARGETS += \
+		nf-queue) \
 	$(addprefix examples/rtnl/, rtnl-addr-add rtnl-addr-dump \
-		rtnl-link-dump rtnl-link-dump2 rtnl-link-dump3 \
+		rtnl-link-can rtnl-link-dump rtnl-link-dump2 rtnl-link-dump3 \
 		rtnl-link-event rtnl-link-set rtnl-neigh-dump \
 		rtnl-route-add rtnl-route-dump rtnl-route-event)
 

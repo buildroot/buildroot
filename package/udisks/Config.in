@@ -1,6 +1,6 @@
 config BR2_PACKAGE_UDISKS
 	bool "udisks"
-	depends on BR2_ENABLE_LOCALE # parted
+	depends on BR2_ENABLE_LOCALE # libblockdev, parted
 	depends on BR2_PACKAGE_HAS_UDEV
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 # polkit -> C++17
 	depends on BR2_TOOLCHAIN_HAS_THREADS # polkit
@@ -16,6 +16,7 @@ config BR2_PACKAGE_UDISKS
 	select BR2_PACKAGE_LIBBLOCKDEV_FS
 	select BR2_PACKAGE_LIBBLOCKDEV_LOOP
 	select BR2_PACKAGE_LIBBLOCKDEV_MDRAID
+	select BR2_PACKAGE_LIBBLOCKDEV_NVME
 	select BR2_PACKAGE_LIBBLOCKDEV_PART
 	select BR2_PACKAGE_LIBBLOCKDEV_SWAP
 	select BR2_PACKAGE_LIBGUDEV
@@ -31,8 +32,8 @@ config BR2_PACKAGE_UDISKS
 	     interfaces that can be used to query and manipulate
 	     storage devices.
 
-	   o a command-line tool, udisks(1), that can be used to query
-	     and use the daemon
+	   o a command-line tool, udisksctl(1), that can be used to
+	     query and use the daemon
 
 	  http://www.freedesktop.org/wiki/Software/udisks
 
@@ -49,3 +50,13 @@ comment "udisks needs a toolchain with dynamic library, locale, wchar, threads, 
 
 comment "udisks can't be built with Optimize for fast"
 	depends on BR2_OPTIMIZE_FAST
+
+if BR2_PACKAGE_UDISKS
+
+config BR2_PACKAGE_UDISKS_FHS_MEDIA
+	bool "Mount devices in /media instead of /run/media"
+	help
+	  Support mounting in /media for compatibility with the
+	  Filesystem Hierarchy Standard (FHS)
+
+endif

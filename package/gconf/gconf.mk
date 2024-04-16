@@ -6,7 +6,7 @@
 
 GCONF_VERSION = 3.2.6
 GCONF_SOURCE = GConf-$(GCONF_VERSION).tar.xz
-GCONF_SITE = http://ftp.gnome.org/pub/gnome/sources/GConf/3.2
+GCONF_SITE = https://download.gnome.org/sources/GConf/3.2
 GCONF_CONF_OPTS = --disable-orbit
 GCONF_DEPENDENCIES = dbus dbus-glib libglib2 libxml2 \
 	host-intltool $(TARGET_NLS_DEPENDENCIES)

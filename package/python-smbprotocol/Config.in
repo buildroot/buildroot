@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_SMBPROTOCOL
+	bool "python-smbprotocol"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-cryptography
+	select BR2_PACKAGE_PYTHON_CRYPTOGRAPHY # runtime
+	select BR2_PACKAGE_PYTHON_PYSPNEGO # runtime
+	help
+	  Interact with a server using the SMB 2/3 Protocol.
+
+	  https://github.com/jborean93/smbprotocol

@@ -1,0 +1,13 @@
+config BR2_PACKAGE_LIBHEIF
+	bool "libheif"
+	depends on !BR2_TOOLCHAIN_HAS_BINUTILS_BUG_30730
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # C++11
+	help
+	  libheif is an HEIF and AVIF file format decoder and encoder.
+
+	  https://github.com/strukturag/libheif
+
+comment "libheif needs a toolchain w/ C++, gcc >= 4.8"
+	depends on !BR2_TOOLCHAIN_HAS_BINUTILS_BUG_30730
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_8

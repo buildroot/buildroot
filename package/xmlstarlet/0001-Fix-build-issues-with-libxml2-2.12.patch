@@ -1,0 +1,97 @@
+From 702988467d67c3a33255de4c543f56767c64c72e Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 23 Dec 2023 21:30:30 +0100
+Subject: [PATCH] Fix build issues with libxml2 2.12
+
+Based on initial work from Bernd Kuhls <bernd@kuhls.net>, improved by
+Yaakov Selkowitz.
+
+Upstream: https://sourceforge.net/p/xmlstar/patches/22/
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/trans.h      | 1 +
+ src/xml.c        | 2 +-
+ src/xml_edit.c   | 1 +
+ src/xml_elem.c   | 2 +-
+ src/xml_format.c | 1 +
+ src/xmlstar.h    | 2 +-
+ 6 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/src/trans.h b/src/trans.h
+index 016304e..395462c 100644
+--- a/src/trans.h
++++ b/src/trans.h
+@@ -36,6 +36,7 @@ THE SOFTWARE.
+ #include <libxml/xinclude.h>
+ #include <libxml/parserInternals.h>
+ #include <libxml/uri.h>
++#include <libxml/globals.h>
+ 
+ #include <libxslt/xslt.h>
+ #include <libxslt/xsltInternals.h>
+diff --git a/src/xml.c b/src/xml.c
+index cf47cc2..e6f19c1 100644
+--- a/src/xml.c
++++ b/src/xml.c
+@@ -104,7 +104,7 @@ void reportGenericError(void* ctx, const char * msg, ...) {
+ /* by default all errors are reported */
+ static ErrorInfo errorInfo = { NULL, NULL, VERBOSE, CONTINUE };
+ 
+-void reportError(void *ptr, xmlErrorPtr error)
++void reportError(void *ptr, const xmlError *error)
+ {
+     ErrorInfo *errorInfo = (ErrorInfo*) ptr;
+     assert(errorInfo);
+diff --git a/src/xml_edit.c b/src/xml_edit.c
+index e199178..b3da8a4 100644
+--- a/src/xml_edit.c
++++ b/src/xml_edit.c
+@@ -42,6 +42,7 @@ THE SOFTWARE.
+ #include <libxml/xpointer.h>
+ #include <libxml/parserInternals.h>
+ #include <libxml/uri.h>
++#include <libxml/globals.h>
+ #include <libexslt/exslt.h>
+ 
+ #include "xmlstar.h"
+diff --git a/src/xml_elem.c b/src/xml_elem.c
+index 024e62a..a73038a 100644
+--- a/src/xml_elem.c
++++ b/src/xml_elem.c
+@@ -186,7 +186,7 @@ typedef struct {
+  * put @name into @data->array[@data->offset]
+  */
+ static void
+-hash_key_put(void *payload, void *data, xmlChar *name)
++hash_key_put(void *payload, void *data, const xmlChar *name)
+ {
+     ArrayDest *dest = data;
+     dest->array[dest->offset++] = name;
+diff --git a/src/xml_format.c b/src/xml_format.c
+index e9da4df..ddd6614 100644
+--- a/src/xml_format.c
++++ b/src/xml_format.c
+@@ -42,6 +42,7 @@ THE SOFTWARE.
+ #include <libxml/xpointer.h>
+ #include <libxml/parserInternals.h>
+ #include <libxml/uri.h>
++#include <libxml/globals.h>
+ 
+ #include "xmlstar.h"
+ 
+diff --git a/src/xmlstar.h b/src/xmlstar.h
+index 3e1eed3..e8d7177 100644
+--- a/src/xmlstar.h
++++ b/src/xmlstar.h
+@@ -32,7 +32,7 @@ typedef struct _errorInfo {
+     ErrorStop stop;
+ } ErrorInfo;
+ 
+-void reportError(void *ptr, xmlErrorPtr error);
++void reportError(void *ptr, const xmlError *error);
+ void suppressErrors(void);
+ 
+ typedef struct _gOptions {
+-- 
+2.43.0
+

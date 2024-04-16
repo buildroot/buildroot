@@ -6,10 +6,10 @@ buildroot environment for the Orangepi PC2. With the current configuration
 it will bring-up the board, and allow access through the serial console.
 
 Orangepi PC2 link:
-http://www.orangepi.org/orangepipc2/
+http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-PC-2.html
 
-Wiki link:
-https://openedev.amarulasolutions.com/display/ODWIKI/Orangepi+PC2
+Sunxi Wiki link:
+https://linux-sunxi.org/Xunlong_Orange_Pi_PC_2
 
 This configuration uses U-Boot mainline and kernel mainline.
 

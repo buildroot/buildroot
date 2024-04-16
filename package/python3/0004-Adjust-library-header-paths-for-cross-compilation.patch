@@ -1,4 +1,4 @@
-From 61af65485f1dade4aa08d0cf2b24082aeda24c51 Mon Sep 17 00:00:00 2001
+From 132b9dca3bb4d4682f7e318648ce11e1abb31b62 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 23 Dec 2015 11:33:14 +0100
 Subject: [PATCH] Adjust library/header paths for cross-compilation
@@ -23,10 +23,10 @@ Refresh for 3.10.0
  2 files changed, 15 insertions(+), 5 deletions(-)
 
 diff --git a/Lib/distutils/command/build_ext.py b/Lib/distutils/command/build_ext.py
-index 1a9bd12..3cf7d67 100644
+index f287b34998..298234d6a1 100644
 --- a/Lib/distutils/command/build_ext.py
 +++ b/Lib/distutils/command/build_ext.py
-@@ -234,7 +234,10 @@ class build_ext(Command):
+@@ -234,7 +234,10 @@ def finalize_options(self):
          if (sysconfig.get_config_var('Py_ENABLE_SHARED')):
              if not sysconfig.python_build:
                  # building third party extensions
@@ -39,10 +39,10 @@ index 1a9bd12..3cf7d67 100644
                  # building python standard extensions
                  self.library_dirs.append('.')
 diff --git a/Lib/sysconfig.py b/Lib/sysconfig.py
-index 95b48f6..9fb1956 100644
+index ebe3711827..6328ec41af 100644
 --- a/Lib/sysconfig.py
 +++ b/Lib/sysconfig.py
-@@ -123,10 +123,17 @@ _SCHEME_KEYS = ('stdlib', 'platstdlib', 'purelib', 'platlib', 'include',
+@@ -168,10 +168,17 @@ def joinuser(*args):
  _PY_VERSION = sys.version.split()[0]
  _PY_VERSION_SHORT = f'{sys.version_info[0]}.{sys.version_info[1]}'
  _PY_VERSION_SHORT_NO_DOT = f'{sys.version_info[0]}{sys.version_info[1]}'
@@ -65,5 +65,5 @@ index 95b48f6..9fb1956 100644
  _USER_BASE = None
  
 -- 
-2.30.2
+2.34.1
 

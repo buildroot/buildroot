@@ -1,0 +1,90 @@
+From af6adb3f5f05be4faa88a5aa83296c388c8085e7 Mon Sep 17 00:00:00 2001
+From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Date: Wed, 8 Feb 2023 12:30:10 +0100
+Subject: [PATCH] configure: fix build on mips
+
+This patch is a historical baggage that Buildroot has carried for ages
+(since 2006), and the reason for it are notentirely clear.
+
+Since dmalloc is pretty tricky, and as this patch has not been
+identified as causing issues, we keep it; we just add the configure.ac
+patchlet to match the one in configure.
+
+As for the title, the original patch was named dmalloc-mips.patch, so
+presumably it fixes some mips issue; let's title the commit that way.
+
+[Fabrice: Updated for 5.6.5]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[yann.morin.1998@free.fr: make it a git-formatted patch]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ configure    |  4 ++--
+ configure.ac |  2 +-
+ return.h     | 16 +++-------------
+ 3 files changed, 6 insertions(+), 16 deletions(-)
+
+diff --git a/configure b/configure
+index d52a1e8..c18dfb2 100755
+--- a/configure
++++ b/configure
+@@ -5413,8 +5413,8 @@ fi
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking return.h macros work" >&5
+ $as_echo_n "checking return.h macros work... " >&6; }
+ if test "$cross_compiling" = yes; then :
+-   $as_echo "#define RETURN_MACROS_WORK 0" >>confdefs.h
+- { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
++   $as_echo "#define RETURN_MACROS_WORK 1" >>confdefs.h
++ { $as_echo "$as_me:${as_lineno-$LINENO}: result: assume yes (cross-compiling)" >&5
+ $as_echo "no" >&6; }
+ 
+ else
+diff --git a/configure.ac b/configure.ac
+index a5295f1..9740fdc 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -705,7 +705,7 @@ int main()
+ ])],
+ [ AC_DEFINE(RETURN_MACROS_WORK, 1) AC_MSG_RESULT([yes]) ],
+ [ AC_DEFINE(RETURN_MACROS_WORK, 0) AC_MSG_RESULT([no]) ],
+-[ AC_DEFINE(RETURN_MACROS_WORK, 0) AC_MSG_RESULT([no]) ]
++[ AC_DEFINE(RETURN_MACROS_WORK, 1) AC_MSG_RESULT([assume yes (cross-compiling)]) ]
+ )
+ 
+ ##############################################################################
+diff --git a/return.h b/return.h
+index 9d3f5f1..d916c7a 100644
+--- a/return.h
++++ b/return.h
+@@ -117,26 +117,16 @@
+ /*************************************/
+ 
+ /*
+- * For DEC Mips machines running Ultrix
++ * For Mips machines running Linux
+  */
+ #if __mips
+ 
+-/*
+- * I have no idea how to get inline assembly with the default cc.
+- * Anyone know how?
+- */
+-
+-#if 0
+-
+ /*
+  * NOTE: we assume here that file is global.
+  *
+- * $31 is the frame pointer.  $2 looks to be the return address but maybe
+- * not consistently.
++ * $31 is the return address.
+  */
+-#define GET_RET_ADDR(file)	asm("sw $2, file")
+-
+-#endif
++#define GET_RET_ADDR(file)	asm("sw $31, %0" : "=m" (file))
+ 
+ #endif /* __mips */
+ 
+-- 
+2.25.1
+

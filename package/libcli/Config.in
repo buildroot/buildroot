@@ -1,5 +1,6 @@
 config BR2_PACKAGE_LIBCLI
 	bool "libcli"
+	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	help
 	  Libcli provides a shared library for including a Cisco-like
 	  command-line interface into other software. It's a telnet

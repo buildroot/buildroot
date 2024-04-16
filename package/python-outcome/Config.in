@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_OUTCOME
+	bool "python-outcome"
+	select BR2_PACKAGE_PYTHON_ATTRS # runtime
+	help
+	  Capture the outcome of Python function calls.
+
+	  https://github.com/python-trio/outcome

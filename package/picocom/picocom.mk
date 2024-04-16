@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-PICOCOM_VERSION = 3.1
-PICOCOM_SITE = $(call github,npat-efault,picocom,$(PICOCOM_VERSION))
+PICOCOM_VERSION = 2023-04
+PICOCOM_SITE = $(call gitlab,wsakernel,picocom,$(PICOCOM_VERSION))
 PICOCOM_LICENSE = GPL-2.0+
 PICOCOM_LICENSE_FILES = LICENSE.txt
-PICOCOM_CPE_ID_VENDOR = picocom_project
+PICOCOM_CPE_ID_VALID = YES
 
 define PICOCOM_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)

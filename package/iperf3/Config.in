@@ -1,5 +1,6 @@
 config BR2_PACKAGE_IPERF3
 	bool "iperf3"
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	help
 	  iperf is a tool for active measurements of the maximum
@@ -13,4 +14,5 @@ config BR2_PACKAGE_IPERF3
 	  http://software.es.net/iperf/index.html
 
 comment "iperf3 needs a toolchain w/ threads"
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC
 	depends on !BR2_TOOLCHAIN_HAS_THREADS

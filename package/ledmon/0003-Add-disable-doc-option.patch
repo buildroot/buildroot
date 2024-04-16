@@ -1,0 +1,63 @@
+From 141628519d227b59be3977b16ebaab0feb22b295 Mon Sep 17 00:00:00 2001
+From: Maksim Kiselev <bigunclemax@gmail.com>
+Date: Sun, 20 Aug 2023 11:35:57 +0300
+Subject: [PATCH] Add '--disable-doc' option
+
+Introduce a configure option to disable documentation installation
+in case if it is not required.
+
+Upstream: https://github.com/intel/ledmon/pull/154
+
+Signed-off-by: Maksim Kiselev <bigunclemax@gmail.com>
+---
+ Makefile.am  |  8 ++++++--
+ configure.ac | 11 ++++++++++-
+ 2 files changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index ddcd200..644a8d2 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -20,6 +20,10 @@ if SYSTEMD_CONDITION
+   OPTIONAL_SUBDIR = systemd
+ endif
+ 
+-SUBDIRS = doc src $(OPTIONAL_SUBDIR)
++if WITH_DOC
++  DOC_SUBDIR = doc
++  dist_doc_DATA = README.md
++endif
++
++SUBDIRS = src $(DOC_SUBDIR) $(OPTIONAL_SUBDIR)
+ EXTRA_DIST = config/config.h systemd/ledmon.service.in
+-dist_doc_DATA = README.md
+diff --git a/configure.ac b/configure.ac
+index 05baa62..114957f 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -74,6 +74,15 @@ AM_CONDITIONAL([SYSTEMD_CONDITION], [test "$SYSTEMD_STR" = yes])
+ # target directory for ledmon service file
+ AC_SUBST([SYSTEMD_PATH], "$(pkg-config systemd --variable=systemdsystemunitdir)")
+ 
++# Add configure option to disable documentation building
++AC_ARG_ENABLE([doc],
++    [AS_HELP_STRING([--disable-doc],
++        [do not install ledmon documentaion])],
++    [with_doc=${enableval}],
++    [with_doc=yes])
++
++AM_CONDITIONAL([WITH_DOC], [test "x$with_doc" = "xyes"])
++
+ AC_CONFIG_FILES([Makefile
+                  doc/Makefile
+                  src/Makefile
+@@ -86,5 +95,5 @@ $PACKAGE_NAME $VERSION configuration:
+   Preprocessor flags:      ${AM_CPPFLAGS} ${CPPFLAGS}
+   C compiler flags:        ${AM_CFLAGS} ${CFLAGS}
+   Common install location: ${prefix}
+-  configure parameters:    --enable-systemd=${SYSTEMD_STR}
++  configure parameters:    --enable-systemd=${SYSTEMD_STR} --enable-doc=${with_doc}
+ ])
+-- 
+2.39.2
+

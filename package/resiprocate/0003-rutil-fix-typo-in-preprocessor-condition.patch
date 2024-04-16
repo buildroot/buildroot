@@ -1,0 +1,25 @@
+From 53302195c339dfaa104788a50aa900a48dbff777 Mon Sep 17 00:00:00 2001
+From: Andrey Semashev <andrey.semashev@gmail.com>
+Date: Sat, 10 Sep 2022 12:15:06 +0200
+Subject: [PATCH] rutil: fix typo in preprocessor condition
+
+Upstream: https://github.com/resiprocate/resiprocate/commit/53302195c339dfaa104788a50aa900a48dbff777
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ rutil/ssl/OpenSSLInit.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/rutil/ssl/OpenSSLInit.cxx b/rutil/ssl/OpenSSLInit.cxx
+index 65afed09fe..0d87a9f9d8 100644
+--- a/rutil/ssl/OpenSSLInit.cxx
++++ b/rutil/ssl/OpenSSLInit.cxx
+@@ -75,7 +75,7 @@ OpenSSLInit::OpenSSLInit()
+ #if (OPENSSL_VERSION_NUMBER < 0x10100000L) || defined(LIBRESSL_VERSION_NUMBER)
+ 	CRYPTO_malloc_debug_init();
+ 	CRYPTO_set_mem_debug_options(V_CRYPTO_MDEBUG_ALL);
+-#elsif (OPENSSL_VERSION_NUMBER < 0x30000000L)
++#elif (OPENSSL_VERSION_NUMBER < 0x30000000L)
+ 	CRYPTO_set_mem_debug(1);
+ #endif
+ 

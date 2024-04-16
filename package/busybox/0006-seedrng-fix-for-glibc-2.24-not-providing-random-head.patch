@@ -1,0 +1,60 @@
+From cb57abb46f06f4ede8d9ccbdaac67377fdf416cf Mon Sep 17 00:00:00 2001
+From: Thomas Devoogdt <thomas@devoogdt.com>
+Date: Mon, 10 Apr 2023 19:58:15 +0200
+Subject: [PATCH] seedrng: fix for glibc <= 2.24 not providing random header
+
+ - dropped the wrong define (not sure why it was there)
+ - <sys/random.h> not available if glibc <= 2.24
+ - GRND_NONBLOCK not defined if <sys/random.h> not included
+ - ret < 0 && errno == ENOSYS has to be true to get creditable set
+
+Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
+Signed-off-by: Denys Vlasenko <vda.linux@googlemail.com>
+Upstream: https://git.busybox.net/busybox/commit/?id=cb57abb46f06f4ede8d9ccbdaac67377fdf416cf
+---
+ miscutils/seedrng.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/miscutils/seedrng.c b/miscutils/seedrng.c
+index 7cc855141..3bf6e2ea7 100644
+--- a/miscutils/seedrng.c
++++ b/miscutils/seedrng.c
+@@ -42,25 +42,31 @@
+ #include "libbb.h"
+ 
+ #include <linux/random.h>
+-#include <sys/random.h>
+ #include <sys/file.h>
+ 
+ /* Fix up glibc <= 2.24 not having getrandom() */
+ #if defined(__GLIBC__) && __GLIBC__ == 2 && __GLIBC_MINOR__ <= 24
+ #include <sys/syscall.h>
+-# define getrandom(...) bb_getrandom(__VA_ARGS__)
+ static ssize_t getrandom(void *buffer, size_t length, unsigned flags)
+ {
+ # if defined(__NR_getrandom)
+ 	return syscall(__NR_getrandom, buffer, length, flags);
+ # else
+-	return ENOSYS;
++	errno = ENOSYS;
++	return -1;
+ # endif
+ }
++#else
++#include <sys/random.h>
++#endif
++
++/* Apparently some headers don't ship with this yet. */
++#ifndef GRND_NONBLOCK
++#define GRND_NONBLOCK 0x0001
+ #endif
+ 
+ #ifndef GRND_INSECURE
+-#define GRND_INSECURE 0x0004 /* Apparently some headers don't ship with this yet. */
++#define GRND_INSECURE 0x0004
+ #endif
+ 
+ #define DEFAULT_SEED_DIR         "/var/lib/seedrng"
+-- 
+2.39.1
+

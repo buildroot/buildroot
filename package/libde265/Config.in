@@ -1,0 +1,12 @@
+config BR2_PACKAGE_LIBDE265
+	bool "libde265"
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	help
+	  libde265 is an open source implementation of the h.265 video
+	  codec.
+
+	  https://github.com/strukturag/libde265
+
+comment "libde265 needs a toolchain w/ threads, C++"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || !BR2_INSTALL_LIBSTDCPP

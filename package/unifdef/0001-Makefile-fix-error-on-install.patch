@@ -1,0 +1,31 @@
+From b5e4229918c13bc0c11a523105cdb3a464337b37 Mon Sep 17 00:00:00 2001
+From: Thomas Devoogdt <thomas.devoogdt@barco.com>
+Date: Mon, 12 Dec 2022 12:59:59 +0100
+Subject: [PATCH] Makefile: fix error on install
+
+ln: failed to create symbolic link '/home/thomas/Documents/buildroot/output/host/share/man/man1/unifdefall.1': File exists
+
+Seen while trying to add this package to buildroot.org.
+
+(upstream: https://github.com/fanf2/unifdef/pull/16)
+Signed-off-by: Thomas Devoogdt <thomas.devoogdt@barco.com>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 36c7028..485927a 100644
+--- a/Makefile
++++ b/Makefile
+@@ -28,7 +28,7 @@ install: unifdef unifdefall.sh unifdef.1
+ 	: manual
+ 	install -m 755 -d  ${man1dest}
+ 	install -m 644 unifdef.1  ${man1dest}/
+-	ln -s unifdef.1  ${man1dest}/unifdefall.1
++	ln -f -s unifdef.1  ${man1dest}/unifdefall.1
+ 
+ clean:
+ 	rm -f unifdef version.h
+-- 
+2.38.1
+

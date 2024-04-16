@@ -2,10 +2,12 @@ config BR2_PACKAGE_OPENRC
 	bool "openrc"
 	depends on BR2_USE_MMU # fork()
 	depends on !BR2_STATIC_LIBS
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC
 	depends on BR2_INIT_OPENRC
 	select BR2_PACKAGE_BUSYBOX_SHOW_OTHERS # kmod tools
 	select BR2_PACKAGE_KMOD # runtime
 	select BR2_PACKAGE_KMOD_TOOLS # runtime
+	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	select BR2_PACKAGE_NCURSES
 	help
 	  Init that works on top of pid 1 (for example
@@ -23,7 +25,7 @@ config BR2_PACKAGE_OPENRC
 
 	  https://github.com/OpenRC/openrc
 
-comment "openrc needs a toolchain w/ dynamic library"
+comment "openrc needs a glibc or musl toolchain w/ dynamic library"
 	depends on BR2_USE_MMU
 	depends on BR2_INIT_OPENRC
-	depends on BR2_STATIC_LIBS
+	depends on BR2_STATIC_LIBS && BR2_TOOLCHAIN_USES_UCLIBC

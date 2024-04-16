@@ -1,0 +1,96 @@
+From 0fa17ec3c7152cf0e1cbf965acf1426ac203bb1d Mon Sep 17 00:00:00 2001
+From: James Knight <james.d.knight@live.com>
+Date: Thu, 27 Apr 2023 20:23:30 -0400
+Subject: [PATCH] meson: wrap html documentation generation with gtk_doc option
+
+By default, if a host environment has the `rst2html5` application
+available, builds will automatically perform some HTML documentation
+generation from the documentation's glib reference content (e.g.
+creating `gvariant-specification-1.0.html`). The creation of this
+documentation is not required for all use cases.
+
+This commit tweaks the building of the HTML-based GLIB specification
+document to be guarded by `gtk_doc`.
+
+Signed-off-by: James Knight <james.d.knight@live.com>
+Upstream: https://gitlab.gnome.org/GNOME/glib/-/commit/0fa17ec3c7152cf0e1cbf965acf1426ac203bb1d
+[yann.morin.1998@free.fr: backport from upstream]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ docs/reference/glib/meson.build | 58 +++++++++++++++++----------------
+ 1 file changed, 30 insertions(+), 28 deletions(-)
+
+diff --git a/docs/reference/glib/meson.build b/docs/reference/glib/meson.build
+index 114de49da..3cfff2f0b 100644
+--- a/docs/reference/glib/meson.build
++++ b/docs/reference/glib/meson.build
+@@ -113,35 +113,37 @@ if get_option('man')
+   endforeach
+ endif
+ 
+-# GVariant specification is currently standalone
+-rst2html5 = find_program('rst2html5', 'rst2html5.py', required: false)
++if get_option('gtk_doc')
++  # GVariant specification is currently standalone
++  rst2html5 = find_program('rst2html5', 'rst2html5.py', required: false)
+ 
+-if rst2html5.found()
+-  spec_path = glib_datadir / 'doc' / 'glib-2.0'
++  if rst2html5.found()
++    spec_path = glib_datadir / 'doc' / 'glib-2.0'
+ 
+-  figures = files(
+-    'gvariant-byte-boundaries.svg',
+-    'gvariant-integer-and-string-structure.svg',
+-    'gvariant-integer-array.svg',
+-    'gvariant-string-array.svg',
+-  )
++    figures = files(
++      'gvariant-byte-boundaries.svg',
++      'gvariant-integer-and-string-structure.svg',
++      'gvariant-integer-array.svg',
++      'gvariant-string-array.svg',
++    )
+ 
+-  custom_target('gvariant-specification-1.0',
+-    input: 'gvariant-specification-1.0.rst',
+-    output: 'gvariant-specification-1.0.html',
+-    command: [
+-      rst2html5,
+-      '@INPUT@',
+-    ],
+-    capture: true,
+-    install: true,
+-    install_dir: spec_path,
+-    install_tag: 'doc',
+-    depend_files: figures,
+-  )
++    custom_target('gvariant-specification-1.0',
++      input: 'gvariant-specification-1.0.rst',
++      output: 'gvariant-specification-1.0.html',
++      command: [
++        rst2html5,
++        '@INPUT@',
++      ],
++      capture: true,
++      install: true,
++      install_dir: spec_path,
++      install_tag: 'doc',
++      depend_files: figures,
++    )
+ 
+-  install_data(figures,
+-    install_dir : spec_path,
+-    install_tag : 'doc',
+-  )
+-endif
+\ No newline at end of file
++    install_data(figures,
++      install_dir : spec_path,
++      install_tag : 'doc',
++    )
++  endif
++endif
+-- 
+2.25.1
+

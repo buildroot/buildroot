@@ -1,0 +1,28 @@
+From b4ae3313fb313b6acb7f701d898f834133f5bd53 Mon Sep 17 00:00:00 2001
+From: Jussi <jussi.hietanen@iki.fi>
+Date: Mon, 3 Jul 2023 15:59:07 +0300
+Subject: [PATCH] Add missing cstdint header for uint8_t type
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+Upstream: https://github.com/crayzeewulf/libserial/commit/3b50bc2b7464ed527d1709b5c7ba86688e6aa3ec
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ src/libserial/SerialPortConstants.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/libserial/SerialPortConstants.h b/src/libserial/SerialPortConstants.h
+index 4f05bd5..88dca0b 100644
+--- a/src/libserial/SerialPortConstants.h
++++ b/src/libserial/SerialPortConstants.h
+@@ -33,6 +33,7 @@
+ 
+ #pragma once
+ 
++#include <cstdint>
+ #include <limits>
+ #include <stdexcept>
+ #include <string>
+-- 
+2.41.0
+

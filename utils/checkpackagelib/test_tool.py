@@ -66,6 +66,34 @@ def test_NotExecutable_hint(testname, hint, filename, permissions, string, expec
     assert warnings == expected
 
 
+Flake8 = [
+    ('empty',
+     'empty.py',
+     '',
+     []),
+    ('W391',
+     'blank-line.py',
+     '\n',
+     ["dir/blank-line.py:0: run 'flake8' and fix the warnings",
+      "dir/blank-line.py:1:1: W391 blank line at end of file"]),
+    ('more than one warning',
+     'file',
+     'import os\n'
+     'import re\n'
+     '\n',
+     ["dir/file:0: run 'flake8' and fix the warnings",
+      "dir/file:1:1: F401 'os' imported but unused\n"
+      "dir/file:2:1: F401 're' imported but unused\n"
+      'dir/file:3:1: W391 blank line at end of file']),
+    ]
+
+
+@pytest.mark.parametrize('testname,filename,string,expected', Flake8)
+def test_Flake8(testname, filename, string, expected):
+    warnings = check_file(m.Flake8, filename, string)
+    assert warnings == expected
+
+
 Shellcheck = [
     ('missing shebang',
      'empty.sh',

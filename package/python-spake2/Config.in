@@ -1,0 +1,13 @@
+config BR2_PACKAGE_PYTHON_SPAKE2
+	bool "python-spake2"
+	select BR2_PACKAGE_PYTHON_HKDF # runtime
+	help
+	  SPAKE2 password-authenticated key exchange (in pure python).
+
+	  This library implements the SPAKE2 password-authenticated
+	  key exchange ("PAKE") algorithm. This allows two parties,
+	  who share a weak password, to safely derive a strong shared
+	  secret (and therefore build an encrypted+authenticated
+	  channel).
+
+	  https://github.com/warner/python-spake2

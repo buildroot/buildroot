@@ -1,0 +1,37 @@
+From b3e8930ccbaeeb77a4cd8b0fffbe52a208aa9a29 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 23 Nov 2023 22:45:56 +0100
+Subject: [PATCH] src/oatpp/core/base/Environment.hpp: include cstdarg
+
+Include cstdarg to fix the following build failure with uclibc-ng:
+
+In file included from /home/autobuild/autobuild/instance-4/output-1/build/oatpp-1.3.0/src/oatpp/algorithm/CRC.hpp:28,
+                 from /home/autobuild/autobuild/instance-4/output-1/build/oatpp-1.3.0/src/oatpp/algorithm/CRC.cpp:25:
+/home/autobuild/autobuild/instance-4/output-1/build/oatpp-1.3.0/src/oatpp/core/base/Environment.hpp:359:93: error: 'va_list' has not been declared
+  359 |   static void vlogFormatted(v_uint32 priority, const std::string& tag, const char* message, va_list args);
+      |                                                                                             ^~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/bcdf7548ff752f936defd111d13c63245ea70cbe
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/oatpp/oatpp/commit/1d11558e2cbbabc0db02a233bf00d651ce5ea758
+---
+ src/oatpp/core/base/Environment.hpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/oatpp/core/base/Environment.hpp b/src/oatpp/core/base/Environment.hpp
+index fd77a5c6..05d5c949 100644
+--- a/src/oatpp/core/base/Environment.hpp
++++ b/src/oatpp/core/base/Environment.hpp
+@@ -29,6 +29,7 @@
+ #include "./Compiler.hpp"
+ #include "./Config.hpp"
+
++#include <cstdarg>
+ #include <cstdio>
+ #include <atomic>
+ #include <mutex>
+--
+2.42.0
+

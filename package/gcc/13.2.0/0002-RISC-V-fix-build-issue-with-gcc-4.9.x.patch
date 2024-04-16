@@ -1,0 +1,48 @@
+From e5253b777eefef7d66d3bd1c641de6d133d3573d Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@gmail.com>
+Date: Tue, 2 May 2023 14:21:55 +0200
+Subject: [PATCH] RISC-V: fix build issue with gcc 4.9.x
+
+GCC should still build with GCC 4.8.3 or newer [1]
+using C++03 by default. But a recent change in
+RISC-V port introduced a C++11 feature "std::log2" [2].
+
+Use log2 from the C header, without the namespace [3].
+
+[1] https://gcc.gnu.org/install/prerequisites.html
+[2] https://gcc.gnu.org/git/?p=gcc.git;a=patch;h=7caa1ae5e451e780fbc4746a54e3f19d4f4304dc
+[3] https://stackoverflow.com/questions/26733413/error-log2-is-not-a-member-of-std
+
+Fixes:
+https://gitlab.com/buildroot.org/toolchains-builder/-/jobs/4202276589
+
+gcc/ChangeLog:
+	* config/riscv/genrvv-type-indexer.cc: Use log2 from the C header, without
+	the namespace.
+
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+Upstream: https://gcc.gnu.org/git/gitweb.cgi?p=gcc.git;h=87c347c2897537a6aa391efbfc5ed00c625434fe
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+---
+ gcc/config/riscv/genrvv-type-indexer.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/gcc/config/riscv/genrvv-type-indexer.cc b/gcc/config/riscv/genrvv-type-indexer.cc
+index e677b55290c..eebe382d1c3 100644
+--- a/gcc/config/riscv/genrvv-type-indexer.cc
++++ b/gcc/config/riscv/genrvv-type-indexer.cc
+@@ -115,9 +115,9 @@ same_ratio_eew_type (unsigned sew, int lmul_log2, unsigned eew, bool unsigned_p,
+   if (sew == eew)
+     elmul_log2 = lmul_log2;
+   else if (sew > eew)
+-    elmul_log2 = lmul_log2 - std::log2 (sew / eew);
++    elmul_log2 = lmul_log2 - log2 (sew / eew);
+   else /* sew < eew */
+-    elmul_log2 = lmul_log2 + std::log2 (eew / sew);
++    elmul_log2 = lmul_log2 + log2 (eew / sew);
+ 
+   if (float_p)
+     return floattype (eew, elmul_log2);
+-- 
+2.34.3
+

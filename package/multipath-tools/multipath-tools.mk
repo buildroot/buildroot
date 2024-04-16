@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MULTIPATH_TOOLS_VERSION = 0.9.0
+MULTIPATH_TOOLS_VERSION = 0.9.7
 MULTIPATH_TOOLS_SITE = $(call github,opensvc,multipath-tools,$(MULTIPATH_TOOLS_VERSION))
 
 MULTIPATH_TOOLS_LICENSE = \
@@ -16,12 +16,21 @@ MULTIPATH_TOOLS_LICENSE_FILES = \
 	LICENSES/GPL-2.0 \
 	LICENSES/GPL-3.0 \
 	LICENSES/LGPL-2.0 \
-	LICENSES/LGPL-2.1 \
-	README.md
+	LICENSES/LGPL-2.1
+MULTIPATH_TOOLS_CPE_ID_VENDOR = opensvc
 
-MULTIPATH_TOOLS_DEPENDENCIES = lvm2 json-c readline udev liburcu libaio host-pkgconf
+MULTIPATH_TOOLS_DEPENDENCIES = \
+	host-pkgconf \
+	json-c \
+	liburcu \
+	libaio \
+	lvm2 \
+	readline \
+	udev \
+	util-linux-libs
+
 MULTIPATH_TOOLS_MAKE_OPTS = \
-	LINUX_HEADERS_INCDIR=$(STAGING_DIR)/usr/include \
+	kernel_incdir=$(STAGING_DIR)/usr/include \
 	LIB="lib" \
 	RUN="run" \
 	OPTFLAGS="" \
@@ -30,7 +39,8 @@ MULTIPATH_TOOLS_MAKE_OPTS = \
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 MULTIPATH_TOOLS_DEPENDENCIES += systemd
-MULTIPATH_TOOLS_MAKE_OPTS += ENABLE_SYSTEMD=1
+else
+MULTIPATH_TOOLS_MAKE_OPTS += SYSTEMD=""
 endif
 
 define MULTIPATH_TOOLS_BUILD_CMDS

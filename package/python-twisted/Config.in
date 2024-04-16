@@ -31,7 +31,7 @@ config BR2_PACKAGE_PYTHON_TWISTED_TLS
 
 config BR2_PACKAGE_PYTHON_TWISTED_CONCH
 	bool "Conch support"
-	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-cryptography
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-cryptography, python-bcrypt
 	select BR2_PACKAGE_PYTHON_APPDIRS # runtime
 	select BR2_PACKAGE_PYTHON_BCRYPT # runtime
 	select BR2_PACKAGE_PYTHON_CRYPTOGRAPHY # runtime

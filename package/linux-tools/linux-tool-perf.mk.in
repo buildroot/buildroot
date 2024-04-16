@@ -27,7 +27,8 @@ PERF_MAKE_FLAGS = \
 	NO_GTK2=1 \
 	NO_LIBPERL=1 \
 	NO_LIBPYTHON=1 \
-	NO_LIBBIONIC=1
+	NO_LIBBIONIC=1 \
+	NO_LIBTRACEEVENT=1
 
 # We need to pass an argument to ld for setting the emulation when
 # building for MIPS architecture, otherwise the default one will always
@@ -119,6 +120,13 @@ else
 PERF_MAKE_FLAGS += NO_LZMA=1
 endif
 
+ifeq ($(BR2_PACKAGE_OPENCSD),y)
+PERF_DEPENDENCIES += opencsd
+PERF_MAKE_FLAGS += CORESIGHT=1
+# There is no "else CORESIGHT=0" case, because "perf" Makefile uses
+# bare "ifdef CORESIGHT" constructs.
+endif
+
 # We really do not want to build the perf documentation, because it
 # has stringent requirement on the documentation generation tools,
 # like xmlto and asciidoc), which may be lagging behind on some
@@ -166,9 +174,13 @@ endef
 # target unless BR2_PACKAGE_LINUX_TOOLS_PERF_SCRIPTS is enabled
 ifeq ($(BR2_PACKAGE_LINUX_TOOLS_PERF_SCRIPTS),)
 define PERF_INSTALL_REMOVE_SCRIPTS
-	$(RM) -rf $(TARGET_DIR)/usr/libexec/perf-core/scripts/
-	$(RM) -rf $(TARGET_DIR)/usr/libexec/perf-core/tests/
+	$(RM) -r $(TARGET_DIR)/usr/libexec/perf-core/scripts/
+	$(RM) -r $(TARGET_DIR)/usr/libexec/perf-core/tests/
 endef
+
+LINUX_TOOLS_BIN_ARCH_EXCLUDE += \
+	/usr/libexec/perf-core/tests/pe-file.exe \
+	/usr/libexec/perf-core/tests/pe-file.exe.debug
 endif
 
 define PERF_INSTALL_TARGET_CMDS

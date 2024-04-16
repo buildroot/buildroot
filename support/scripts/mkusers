@@ -26,6 +26,7 @@ error() {
     shift
 
     printf "%s: " "${myname}" >&2
+    # shellcheck disable=SC2059  # fmt is the format passed to error()
     printf "${fmt}" "${@}" >&2
 }
 fail() {
@@ -145,6 +146,8 @@ check_user_validity() {
         fail "invalid username '%s\n'" "${username}"
     fi
 
+    # shellcheck disable=SC2086  # gid is a non-empty int
+    # shellcheck disable=SC2166  # [ .. -o .. ] works well in this case
     if [ ${gid} -lt -2 -o ${gid} -eq 0 ]; then
         fail "invalid gid '%d' for '%s'\n" ${gid} "${username}"
     elif [ ${gid} -ge 0 ]; then
@@ -171,6 +174,8 @@ check_user_validity() {
         fi
     fi
 
+    # shellcheck disable=SC2086  # uid is a non-empty int
+    # shellcheck disable=SC2166  # [ .. -o .. ] works well in this case
     if [ ${uid} -lt -2 -o ${uid} -eq 0 ]; then
         fail "invalid uid '%d' for '%s'\n" ${uid} "${username}"
     elif [ ${uid} -ge 0 ]; then
@@ -190,6 +195,7 @@ check_user_validity() {
     fi
 
     # check the user does not already exist in another group
+    # shellcheck disable=SC2166  # [ .. -a .. ] works well in this case
     if [ -n "${_ugroup}" -a "${_ugroup}" != "${group}" ]; then
         fail "user '%s' already exists with group '%s' (wants '%s')\n" \
              "${username}" "${_ugroup}" "${group}"
@@ -218,6 +224,7 @@ generate_gid() {
                 break
             fi
         done
+        # shellcheck disable=SC2086  # gid and maxgid are non-empty ints
         if [ ${gid} -gt ${maxgid} ]; then
             fail "can not allocate a GID for group '%s'\n" "${group}"
         fi
@@ -233,6 +240,7 @@ add_one_group() {
     local members
 
     # Generate a new GID if needed
+    # shellcheck disable=SC2086  # gid is a non-empty int
     if [ ${gid} -eq ${AUTO_USER_ID} ]; then
         gid="$( generate_gid "${group}" $FIRST_USER_GID $LAST_USER_GID )"
     elif [ ${gid} -eq ${AUTO_SYSTEM_ID} ]; then
@@ -272,6 +280,7 @@ generate_uid() {
                 break
             fi
         done
+        # shellcheck disable=SC2086  # uid is a non-empty int
         if [ ${uid} -gt ${maxuid} ]; then
             fail "can not allocate a UID for user '%s'\n" "${username}"
         fi
@@ -323,10 +332,11 @@ add_one_user() {
     check_user_validity "${username}" "${uid}" "${group}" "${gid}"
 
     # Generate a new UID if needed
+    # shellcheck disable=SC2086  # uid is a non-empty int
     if [ ${uid} -eq ${AUTO_USER_ID} ]; then
-        uid="$( generate_uid "${username}" $FIRST_USER_GID $LAST_USER_GID )"
+        uid="$( generate_uid "${username}" $FIRST_USER_UID $LAST_USER_UID )"
     elif [ ${uid} -eq ${AUTO_SYSTEM_ID} ]; then
-        uid="$( generate_uid "${username}" $FIRST_SYSTEM_GID $LAST_SYSTEM_GID )"
+        uid="$( generate_uid "${username}" $FIRST_SYSTEM_UID $LAST_SYSTEM_UID )"
     fi
 
     # Remove any previous instance of this user
@@ -399,7 +409,7 @@ main() {
     fi
 
     # Read in all the file in memory, exclude empty lines and comments
-    while read line; do
+    while read -r line; do
         ENTRIES+=( "${line}" )
     done < <( sed -r -e 's/#.*//; /^[[:space:]]*$/d;' "${USERS_TABLE}" )
 
@@ -410,14 +420,16 @@ main() {
 
     # First, create all the main groups which gid is *not* automatic
     for line in "${ENTRIES[@]}"; do
-        read username uid group gid passwd home shell groups comment <<<"${line}"
+        read -r username uid group gid passwd home shell groups comment <<<"${line}"
+        # shellcheck disable=SC2086  # gid is a non-empty int
         [ ${gid} -ge 0 ] || continue    # Automatic gid
         add_one_group "${group}" "${gid}"
     done
 
     # Then, create all the main groups which gid *is* automatic
     for line in "${ENTRIES[@]}"; do
-        read username uid group gid passwd home shell groups comment <<<"${line}"
+        read -r username uid group gid passwd home shell groups comment <<<"${line}"
+        # shellcheck disable=SC2086  # gid is a non-empty int
         [ ${gid} -lt 0 ] || continue    # Non-automatic gid
         add_one_group "${group}" "${gid}"
     done
@@ -428,8 +440,9 @@ main() {
     # system gid if the uid is a system user (<= LAST_SYSTEM_UID),
     # otherwise a user gid.
     for line in "${ENTRIES[@]}"; do
-        read username uid group gid passwd home shell groups comment <<<"${line}"
+        read -r username uid group gid passwd home shell groups comment <<<"${line}"
         if [ "${groups}" != "-" ]; then
+            # shellcheck disable=SC2086  # uid is a non-empty int
             if [ ${uid} -le 0 ]; then
                 auto_id=${uid}
             elif [ ${uid} -le ${LAST_SYSTEM_UID} ]; then
@@ -450,8 +463,9 @@ main() {
 
     # Now, add users whose uid is *not* automatic
     for line in "${ENTRIES[@]}"; do
-        read username uid group gid passwd home shell groups comment <<<"${line}"
+        read -r username uid group gid passwd home shell groups comment <<<"${line}"
         [ "${username}" != "-" ] || continue # Magic string to skip user creation
+        # shellcheck disable=SC2086  # uid is a non-empty int
         [ ${uid} -ge 0         ] || continue # Automatic uid
         add_one_user "${username}" "${uid}" "${group}" "${gid}" "${passwd}" \
                      "${home}" "${shell}" "${groups}" "${comment}"
@@ -459,8 +473,9 @@ main() {
 
     # Finally, add users whose uid *is* automatic
     for line in "${ENTRIES[@]}"; do
-        read username uid group gid passwd home shell groups comment <<<"${line}"
+        read -r username uid group gid passwd home shell groups comment <<<"${line}"
         [ "${username}" != "-" ] || continue # Magic string to skip user creation
+        # shellcheck disable=SC2086  # uid is a non-empty int
         [ ${uid} -lt 0        ] || continue # Non-automatic uid
         add_one_user "${username}" "${uid}" "${group}" "${gid}" "${passwd}" \
                      "${home}" "${shell}" "${groups}" "${comment}"

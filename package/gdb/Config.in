@@ -4,6 +4,10 @@ config BR2_PACKAGE_GDB_ARCH_SUPPORTS
 	depends on !((BR2_arm || BR2_armeb) && BR2_BINFMT_FLAT)
 	depends on !BR2_microblaze
 
+comment "gdb needs a glibc or uclibc toolchain"
+	depends on BR2_or1k
+	depends on BR2_TOOLCHAIN_USES_MUSL
+
 comment "gdb/gdbserver needs a toolchain w/ threads, threads debug"
 	depends on BR2_PACKAGE_GDB_ARCH_SUPPORTS
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || !BR2_TOOLCHAIN_HAS_THREADS_DEBUG
@@ -17,8 +21,9 @@ config BR2_PACKAGE_GDB
 	depends on BR2_PACKAGE_GDB_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
 	depends on BR2_INSTALL_LIBSTDCPP
-	# no gdbserver on or1k
-	select BR2_PACKAGE_GDB_DEBUGGER if BR2_or1k
+	# The or1k musl port is incomplete, elf_gregset_t definition is missing:
+	# https://git.musl-libc.org/cgit/musl/tree/arch/or1k/bits/user.h?h=v1.2.3
+	depends on !BR2_or1k || !BR2_TOOLCHAIN_USES_MUSL
 	# When the external toolchain gdbserver is copied to the
 	# target, we don't allow building a separate gdbserver. The
 	# one from the external toolchain should be used.
@@ -45,7 +50,6 @@ if BR2_PACKAGE_GDB
 config BR2_PACKAGE_GDB_SERVER
 	bool "gdbserver"
 	depends on !BR2_TOOLCHAIN_EXTERNAL_GDB_SERVER_COPY
-	depends on !BR2_or1k
 	help
 	  Build the gdbserver stub to run on the target.
 	  A full gdb is needed to debug the progam.
@@ -54,8 +58,10 @@ config BR2_PACKAGE_GDB_DEBUGGER
 	bool "full debugger"
 	depends on BR2_USE_WCHAR
 	depends on !BR2_sh
-	select BR2_PACKAGE_GMP if !BR2_GDB_VERSION_10 && !BR2_arc
+	select BR2_PACKAGE_GMP
+	select BR2_PACKAGE_MPFR if (BR2_GDB_VERSION_14 || BR2_arc)
 	select BR2_PACKAGE_NCURSES
+	select BR2_PACKAGE_ZLIB
 
 comment "full gdb on target needs a toolchain w/ wchar"
 	depends on !BR2_sh

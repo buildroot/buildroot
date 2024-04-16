@@ -6,7 +6,7 @@
 # We use a specific tag for the base image *and* the corresponding date
 # for the repository., so do not forget to update the apt-sources.list
 # file that is shipped next to this Dockerfile.
-FROM debian:bullseye-20210902
+FROM debian:bullseye-20230202
 
 LABEL maintainer="Buildroot mailing list <buildroot@buildroot.org>" \
       vendor="Buildroot" \
@@ -20,8 +20,8 @@ COPY apt-sources.list /etc/apt/sources.list
 
 # The container has no package lists, so need to update first
 RUN dpkg --add-architecture i386 && \
-    apt-get update -y
-RUN apt-get install -y --no-install-recommends \
+    apt-get -o APT::Retries=3 update -y
+RUN apt-get -o APT::Retries=3 install -y --no-install-recommends \
         bc \
         build-essential \
         bzr \
@@ -39,10 +39,12 @@ RUN apt-get install -y --no-install-recommends \
         openssh-server \
         python3 \
         python3-flake8 \
+        python3-magic \
         python3-nose2 \
         python3-pexpect \
         python3-pytest \
         qemu-system-arm \
+        qemu-system-misc \
         qemu-system-x86 \
         rsync \
         shellcheck \

@@ -1,0 +1,23 @@
+From dabe9fcd3eaaa6b0b8723369b2565778341630c0 Mon Sep 17 00:00:00 2001
+From: a-andre <13609565+a-andre@users.noreply.github.com>
+Date: Thu, 29 Jun 2023 16:34:11 +0200
+Subject: [PATCH] Add missing cstdint header include (#1142)
+
+Upstream: https://github.com/pistacheio/pistache/commit/dabe9fcd3eaaa6b0b8723369b2565778341630c0
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ include/pistache/flags.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/pistache/flags.h b/include/pistache/flags.h
+index 9be2b32bb..6adcc74bc 100644
+--- a/include/pistache/flags.h
++++ b/include/pistache/flags.h
+@@ -13,6 +13,7 @@
+ #pragma once
+ 
+ #include <climits>
++#include <cstdint>
+ #include <iostream>
+ #include <type_traits>
+ 

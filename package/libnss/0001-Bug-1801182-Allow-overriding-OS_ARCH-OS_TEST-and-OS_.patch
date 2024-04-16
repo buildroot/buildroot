@@ -1,0 +1,45 @@
+From a1a5f3afea2ee59bdbb7a74eb2d7f82b635dbd1a Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Thu, 17 Nov 2022 20:38:48 +0100
+Subject: [PATCH] Bug 1801182 - Allow overriding OS_ARCH, OS_TEST and
+ OS_RELEASE in Makefile
+
+Starting from Make 4.3.91 simple expanded variables can't be safely
+overriden via command line anymore, so let's use conditional expanded
+variables to override OS_ARCH, OS_TEST and OS_RELEASE.
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+[Upstream status: https://bugzilla.mozilla.org/show_bug.cgi?id=1801182]
+---
+ nss/coreconf/arch.mk | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/nss/coreconf/arch.mk b/nss/coreconf/arch.mk
+index 17e9faeac..85aac9341 100644
+--- a/nss/coreconf/arch.mk
++++ b/nss/coreconf/arch.mk
+@@ -20,17 +20,17 @@
+ # Macros for getting the OS architecture
+ #
+ 
+-OS_ARCH := $(subst /,_,$(shell uname -s))
++OS_ARCH ?= $(subst /,_,$(shell uname -s))
+ 
+ #
+ # Attempt to differentiate between sparc and x86 Solaris
+ #
+ 
+-OS_TEST := $(shell uname -m)
++OS_TEST ?= $(shell uname -m)
+ ifeq ($(OS_TEST),i86pc)
+-    OS_RELEASE := $(shell uname -r)_$(OS_TEST)
++    OS_RELEASE ?= $(shell uname -r)_$(OS_TEST)
+ else
+-    OS_RELEASE := $(shell uname -r)
++    OS_RELEASE ?= $(shell uname -r)
+ endif
+ 
+ 
+-- 
+2.34.1
+

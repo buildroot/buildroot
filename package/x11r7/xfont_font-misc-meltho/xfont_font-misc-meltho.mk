@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XFONT_FONT_MISC_MELTHO_VERSION = 1.0.3
-XFONT_FONT_MISC_MELTHO_SOURCE = font-misc-meltho-$(XFONT_FONT_MISC_MELTHO_VERSION).tar.bz2
-XFONT_FONT_MISC_MELTHO_SITE = http://xorg.freedesktop.org/releases/individual/font
+XFONT_FONT_MISC_MELTHO_VERSION = 1.0.4
+XFONT_FONT_MISC_MELTHO_SOURCE = font-misc-meltho-$(XFONT_FONT_MISC_MELTHO_VERSION).tar.xz
+XFONT_FONT_MISC_MELTHO_SITE = https://xorg.freedesktop.org/archive/individual/font
 XFONT_FONT_MISC_MELTHO_LICENSE = Meltho License
 XFONT_FONT_MISC_MELTHO_LICENSE_FILES = COPYING
 

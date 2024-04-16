@@ -338,6 +338,8 @@ class Toolchain:
                 m = re.match("^BR2_TOOLCHAIN_EXTERNAL_GCC_([0-9_]*)=y$", frag)
                 assert m, "Cannot get gcc version for toolchain %s" % self.fname_prefix
                 selects.append("BR2_TOOLCHAIN_GCC_AT_LEAST_%s" % m[1])
+                # respect the GCC requirement for the selected CPU/arch tuning
+                depends.append("!BR2_ARCH_NEEDS_GCC_AT_LEAST_%s" % str(int(m[1]) + 1))
 
             # kernel headers version
             if frag.startswith("BR2_TOOLCHAIN_EXTERNAL_HEADERS_"):

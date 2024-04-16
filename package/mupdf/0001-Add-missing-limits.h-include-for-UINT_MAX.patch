@@ -1,0 +1,70 @@
+From ebce9f1b129ebc8f2b17afa02a4ffcb9453c11d9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Rapha=C3=ABl=20M=C3=A9lotte?= <raphael.melotte@mind.be>
+Date: Mon, 24 Apr 2023 17:27:35 +0200
+Subject: [PATCH] Add missing limits.h include for UINT_MAX
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+encode-basic.c uses 'UINT_MAX', which is available in the 'limits.h'
+header.
+
+In some configurations that build with zlib from [1], by chance
+limits.h gets indirectly included when including 'z-imp.h' (the
+includes are: 'z-imp.h' -> 'zlib.h' -> 'zconf.h' -> 'limits.h'), so
+the build succeeds.
+
+When using other zlib implementations however (for example from [2]),
+limits.h is not necessarily included indirectly, which leads to the
+build failing in the following way:
+
+source/fitz/encode-basic.c: In function 'deflate_write':
+source/fitz/encode-basic.c:343:27: error: 'UINT_MAX' undeclared (first use in this function)
+  343 |         newbufsize = n >= UINT_MAX ? UINT_MAX : deflateBound(&state->z, n);
+      |                           ^~~~~~~~
+source/fitz/encode-basic.c:26:1: note: 'UINT_MAX' is defined in header '<limits.h>'; did you forget to '#include <limits.h>'?
+
+Add the missing include, so that the build succeeds no matter if zlib
+indirectly includes 'limit.h' or not.
+
+Similarly, also add it in output-ps.c where it's also missing.
+
+[1]: https://zlib.net/
+[2]: https://github.com/zlib-ng/zlib-ng
+
+Signed-off-by: Raphaël Mélotte <raphael.melotte@mind.be>
+Upstream: https://bugs.ghostscript.com/show_bug.cgi?id=706667
+---
+ source/fitz/encode-basic.c | 2 ++
+ source/fitz/output-ps.c    | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/source/fitz/encode-basic.c b/source/fitz/encode-basic.c
+index 03a4ff76b..84f0c35e6 100644
+--- a/source/fitz/encode-basic.c
++++ b/source/fitz/encode-basic.c
+@@ -24,6 +24,8 @@
+ 
+ #include "z-imp.h"
+ 
++#include <limits.h>
++
+ struct ahx
+ {
+ 	fz_output *chain;
+diff --git a/source/fitz/output-ps.c b/source/fitz/output-ps.c
+index ef22c3cd6..3dc8ea17d 100644
+--- a/source/fitz/output-ps.c
++++ b/source/fitz/output-ps.c
+@@ -24,6 +24,8 @@
+ 
+ #include "z-imp.h"
+ 
++#include <limits.h>
++
+ typedef struct ps_band_writer_s
+ {
+ 	fz_band_writer super;
+-- 
+2.39.1
+

@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-XAPP_SESSREG_VERSION = 1.1.2
-XAPP_SESSREG_SOURCE = sessreg-$(XAPP_SESSREG_VERSION).tar.bz2
+XAPP_SESSREG_VERSION = 1.1.3
+XAPP_SESSREG_SOURCE = sessreg-$(XAPP_SESSREG_VERSION).tar.xz
 XAPP_SESSREG_SITE = https://xorg.freedesktop.org/archive/individual/app
 XAPP_SESSREG_LICENSE = MIT
 XAPP_SESSREG_LICENSE_FILES = COPYING

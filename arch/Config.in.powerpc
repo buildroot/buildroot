@@ -146,21 +146,6 @@ config BR2_powerpc_power9
 	select BR2_ARCH_NEEDS_GCC_AT_LEAST_6
 endchoice
 
-choice
-	prompt "Target ABI"
-	default BR2_powerpc_SPE if BR2_POWERPC_CPU_HAS_SPE
-	default BR2_powerpc_CLASSIC
-	help
-	  Application Binary Interface to use
-
-config BR2_powerpc_CLASSIC
-	bool "Classic"
-	depends on !BR2_POWERPC_CPU_HAS_SPE
-config BR2_powerpc_SPE
-	bool "SPE"
-	depends on BR2_POWERPC_CPU_HAS_SPE
-endchoice
-
 config BR2_POWERPC_SOFT_FLOAT
 	bool "Use soft-float"
 	select BR2_SOFT_FLOAT

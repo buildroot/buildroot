@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XFONT_FONT_SCHUMACHER_MISC_VERSION = 1.1.2
-XFONT_FONT_SCHUMACHER_MISC_SOURCE = font-schumacher-misc-$(XFONT_FONT_SCHUMACHER_MISC_VERSION).tar.bz2
-XFONT_FONT_SCHUMACHER_MISC_SITE = http://xorg.freedesktop.org/releases/individual/font
+XFONT_FONT_SCHUMACHER_MISC_VERSION = 1.1.3
+XFONT_FONT_SCHUMACHER_MISC_SOURCE = font-schumacher-misc-$(XFONT_FONT_SCHUMACHER_MISC_VERSION).tar.xz
+XFONT_FONT_SCHUMACHER_MISC_SITE = https://xorg.freedesktop.org/archive/individual/font
 XFONT_FONT_SCHUMACHER_MISC_LICENSE = MIT
 XFONT_FONT_SCHUMACHER_MISC_LICENSE_FILES = COPYING
 

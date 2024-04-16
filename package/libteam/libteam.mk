@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBTEAM_VERSION = 1.31
+LIBTEAM_VERSION = 1.32
 LIBTEAM_SITE = $(call github,jpirko,libteam,v$(LIBTEAM_VERSION))
 LIBTEAM_LICENSE = LGPL-2.1+
 LIBTEAM_LICENSE_FILES = COPYING
@@ -18,6 +18,7 @@ define LIBTEAM_LINUX_CONFIG_FIXUPS
 	$(call KCONFIG_ENABLE_OPT,CONFIG_NETDEVICES)
 	$(call KCONFIG_ENABLE_OPT,CONFIG_NET_CORE)
 	$(call KCONFIG_ENABLE_OPT,CONFIG_NET_TEAM)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_NET_TEAM_MODE_ROUNDROBIN)
 endef
 
 $(eval $(autotools-package))

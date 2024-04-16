@@ -1,0 +1,43 @@
+config BR2_PACKAGE_RLWRAP
+	bool "rlwrap"
+	depends on BR2_USE_MMU # fork()
+	select BR2_PACKAGE_READLINE
+	help
+	  rlwrap is a 'readline wrapper', a small utility that uses the
+	  GNU Readline library to allow the editing of keyboard input
+	  for any command.
+
+	  https://github.com/hanslub42/rlwrap
+
+if BR2_PACKAGE_RLWRAP
+
+config BR2_PACKAGE_RLWRAP_SPY_ON_READLINE
+	bool "spy on readline"
+	default y
+	help
+	  If we want to keep the display tidy when re-sizing the
+	  terminal window or printing multi-line prompts, we have to
+	  know whether or not readline is in horizontal-scroll-mode
+	  (i.e. wheter long lines are scrolled or wrapped). At present,
+	  this involves a look at a private readline variable - if you
+	  feel guilty about that, disable this option
+
+config BR2_PACKAGE_RLWRAP_HOMEGROWN_REDISPLAY
+	bool "homegrown redisplay"
+	help
+	  Some people report double echoing of user input. Enabling this
+	  option will cure the problem - though the display will then
+	  flicker over slow connections (cf. BUGS)
+
+config BR2_PACKAGE_RLWRAP_MULTIBYTE_AWARE
+	bool "multibyte awareness"
+	default y
+	depends on BR2_USE_WCHAR
+	help
+	  Prevent rlwrap from seeing multibyte characters as multiple
+	  characters
+
+comment "rlwrap multibyte awareness needs a toolchain w/ wchar"
+	depends on !BR2_USE_WCHAR
+
+endif

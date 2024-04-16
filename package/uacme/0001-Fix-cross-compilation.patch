@@ -1,0 +1,29 @@
+From cdf63e24dc475a558400c68714e32d32904e4c57 Mon Sep 17 00:00:00 2001
+From: Nicola Di Lieto <nicola.dilieto@gmail.com>
+Date: Tue, 20 Feb 2024 01:05:00 +0100
+Subject: [PATCH] Fix cross compilation
+
+Commit fe826f4b1931ae508047d8b2693b5b6ac2cb21fd broke cross compilation
+
+Closes https://github.com/ndilieto/uacme/issues/79
+
+Upstream: https://github.com/ndilieto/uacme/commit/cdf63e24dc475a558400c68714e32d32904e4c57
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ configure.ac | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 77d1230..3bec75b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -355,7 +355,8 @@ if test "x$OPT_UALPN" != "xno"; then
+                 AC_DEFINE(HAVE_MAP_DEVZERO, 1, [if mmap("/dev/zero", MAP_SHARED) works])
+                 AC_MSG_RESULT([yes]),
+                 AC_MSG_RESULT([no])
+-                AC_MSG_ERROR([ualpn requires MAP_ANON or mmap("/dev/zero", MAP_SHARED)])),
++                AC_MSG_ERROR([ualpn requires MAP_ANON or mmap("/dev/zero", MAP_SHARED)]))
++        ], [
+             AC_COMPILE_IFELSE([AC_LANG_SOURCE([#include <sys/mman.h>
+                              int main() {return mmap(0, 4096, PROT_READ|PROT_WRITE,
+                                 MAP_ANON|MAP_SHARED, -1, 0) == MAP_FAILED;}])],

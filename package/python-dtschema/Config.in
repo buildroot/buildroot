@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_DTSCHEMA
 	bool "python-dtschema"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-jsonschema -> python-rpds-py
 	select BR2_PACKAGE_PYTHON_JSONSCHEMA # runtime
 	select BR2_PACKAGE_PYTHON_PYLIBFDT # runtime
 	select BR2_PACKAGE_PYTHON_RFC3987 # runtime

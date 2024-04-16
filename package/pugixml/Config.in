@@ -39,15 +39,6 @@ config BR2_PACKAGE_PUGIXML_COMPACT
 
 	  http://pugixml.org/docs/manual.html#dom.memory.compact
 
-config BR2_PACKAGE_PUGIXML_HEADER_ONLY
-	bool "Enable header-only version"
-	help
-	  All source code for pugixml will be included in every
-	  translation unit that includes pugixml.hpp. This is how most
-	  of Boost and STL libraries work.
-
-	  http://pugixml.org/docs/manual.html#install.building.header
-
 endif
 
 comment "pugixml needs a toolchain w/ C++"

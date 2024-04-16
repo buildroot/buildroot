@@ -4,11 +4,14 @@
 #
 ################################################################################
 
-LIBMODPLUG_VERSION = 0.8.9.0
-LIBMODPLUG_SITE = http://downloads.sourceforge.net/project/modplug-xmms/libmodplug/$(LIBMODPLUG_VERSION)
+LIBMODPLUG_VERSION = d1b97ed0020bc620a059d3675d1854b40bd2608d
+LIBMODPLUG_SITE = $(call github,Konstanty,libmodplug,$(LIBMODPLUG_VERSION))
 LIBMODPLUG_INSTALL_STAGING = YES
 LIBMODPLUG_LICENSE = Public Domain
 LIBMODPLUG_LICENSE_FILES = COPYING
 LIBMODPLUG_CPE_ID_VENDOR = konstanty_bialkowski
+# Our version is actually newer than this, but having this allows to
+# not have reports about CVEs for versions older than 0.8.9.0.
+LIBMODPLUG_CPE_ID_VERSION = 0.8.9.0
 
-$(eval $(autotools-package))
+$(eval $(cmake-package))

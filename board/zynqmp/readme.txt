@@ -1,9 +1,9 @@
-******************************************
-Xilinx ZCU102 / ZCU106 boards - ZynqMP SoC
-******************************************
+***************************************************
+Xilinx ZCU102 / ZCU104 / ZCU106 boards - ZynqMP SoC
+***************************************************
 
-This document describes the Buildroot support for the ZCU102 and
-ZCU106 boards by Xilinx, based on the Zynq UltraScale+ MPSoC (aka
+This document describes the Buildroot support for the ZCU102, ZCU104
+and ZCU106 boards by Xilinx, based on the Zynq UltraScale+ MPSoC (aka
 ZynqMP).  It has been tested with the ZCU102 and ZCU106 production
 boards.
 
@@ -12,6 +12,9 @@ Evaluation board features can be found here with the links below.
 ZCU102:
 https://www.xilinx.com/products/boards-and-kits/zcu102.html
 
+ZCU104:
+https://www.xilinx.com/products/boards-and-kits/zcu104.html
+
 ZCU106:
 https://www.xilinx.com/products/boards-and-kits/zcu106.html
 
@@ -19,8 +22,10 @@ https://www.xilinx.com/products/boards-and-kits/zcu106.html
 How to build it
 ===============
 
-Configure Buildroot:
+Configure Buildroot: (use the command for the specific board)
 
+    $ make zynqmp_zcu102_defconfig
+    $ make zynqmp_zcu104_defconfig
     $ make zynqmp_zcu106_defconfig
 
 Compile everything and build the rootfs image:

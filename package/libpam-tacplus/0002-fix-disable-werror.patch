@@ -1,0 +1,62 @@
+From d6c6f043a08483b32bddcbc8cadec1d8edbe092d Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 6 Nov 2023 18:09:20 +0100
+Subject: [PATCH] fix --disable-werror
+
+-Werror is unconditionally set since version 1.6.2 and
+https://github.com/kravietz/pam_tacplus/commit/649e6f2efb2f3278c55d4c9704bb48cb9f74cb73
+resulting in the following build failure:
+
+In file included from /home/thomas/autobuild/instance-0/output-1/host/mips-buildroot-linux-gnu/sysroot/usr/include/bits/libc-header-start.h:33,
+                 from /home/thomas/autobuild/instance-0/output-1/host/mips-buildroot-linux-gnu/sysroot/usr/include/stdlib.h:26,
+                 from ./lib/stdlib.h:36,
+                 from ./libtac/include/libtac.h:35,
+                 from support.h:25,
+                 from support.c:28:
+/home/thomas/autobuild/instance-0/output-1/host/mips-buildroot-linux-gnu/sysroot/usr/include/features.h:413:4: error: #warning _FORTIFY_SOURCE requires compiling with optimization (-O) [-Werror=cpp]
+  413 | #  warning _FORTIFY_SOURCE requires compiling with optimization (-O)
+      |    ^~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/9b5ece5d01eac8a760ed9ca331a902d1c47387a7
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/kravietz/pam_tacplus/pull/204
+---
+ Makefile.am  | 6 +++++-
+ configure.ac | 2 +-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 04417e7..1255a9b 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -9,7 +9,11 @@
+ ACLOCAL_AMFLAGS = -I config -I m4
+ SUBDIRS = lib
+ AUTOMAKE_OPTIONS = subdir-objects
+-AM_CFLAGS = -Wall -Wextra -Werror
++AM_CFLAGS = -Wall -Wextra
++
++if ENABLE_WERROR
++AM_CFLAGS += -Werror
++endif
+ 
+ bin_PROGRAMS = tacc
+ tacc_SOURCES = tacc.c
+diff --git a/configure.ac b/configure.ac
+index 6914561..5cadca2 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -16,7 +16,7 @@ See the included file: LICENSE for copyright information.
+ ])
+ AC_INIT([pam_tacplus],[1.7.0],[https://github.com/kravietz/pam_tacplus/issues/],[pam_tacplus],[https://github.com/kravietz/pam_tacplus/])
+ AC_CONFIG_AUX_DIR(config)
+-AM_INIT_AUTOMAKE([foreign -Wall -Werror])
++AM_INIT_AUTOMAKE([foreign -Wall])
+ AC_CONFIG_SRCDIR([pam_tacplus.c])
+ AC_CONFIG_HEADERS([config.h])
+ AC_CONFIG_MACRO_DIR([config])
+-- 
+2.42.0
+

@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-LIBTOMMATH_VERSION = 1.2.0
+LIBTOMMATH_VERSION = 1.3.0
 LIBTOMMATH_SITE = https://github.com/libtom/libtommath/releases/download/v$(LIBTOMMATH_VERSION)
 LIBTOMMATH_SOURCE = ltm-$(LIBTOMMATH_VERSION).tar.xz
 LIBTOMMATH_LICENSE = Unlicense
 LIBTOMMATH_LICENSE_FILES = LICENSE
+LIBTOMMATH_CPE_ID_VENDOR = libtom
 LIBTOMMATH_INSTALL_STAGING = YES
 LIBTOMMATH_INSTALL_TARGET = NO  # only static library
 

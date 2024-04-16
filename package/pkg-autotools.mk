@@ -88,14 +88,6 @@ define CONFIGURE_FIX_POWERPC64_HOOK
 endef
 
 #
-# Hook to gettextize the package if needed
-#
-define GETTEXTIZE_HOOK
-	@$(call MESSAGE,"Gettextizing")
-	$(Q)cd $($(PKG)_SRCDIR) && $(GETTEXTIZE) $($(PKG)_GETTEXTIZE_OPTS)
-endef
-
-#
 # Hook to autoreconf the package if needed
 #
 define AUTORECONF_HOOK
@@ -144,17 +136,14 @@ ifndef $(2)_AUTORECONF
  endif
 endif
 
-ifndef $(2)_GETTEXTIZE
- ifdef $(3)_GETTEXTIZE
-  $(2)_GETTEXTIZE = $$($(3)_GETTEXTIZE)
+ifndef $(2)_AUTOPOINT
+ ifdef $(3)_AUTOPOINT
+  $(2)_AUTOPOINT = $$($(3)_AUTOPOINT)
  else
-  $(2)_GETTEXTIZE ?= NO
+  $(2)_AUTOPOINT ?= NO
  endif
 endif
 
-ifeq ($(4),host)
- $(2)_GETTEXTIZE_OPTS ?= $$($(3)_GETTEXTIZE_OPTS)
-endif
 
 ifeq ($(4),host)
  $(2)_AUTORECONF_OPTS ?= $$($(3)_AUTORECONF_OPTS)
@@ -240,10 +229,12 @@ $(2)_POST_PATCH_HOOKS += UPDATE_CONFIG_HOOK
 
 ifeq ($$($(2)_AUTORECONF),YES)
 
-# This has to come before autoreconf
-ifeq ($$($(2)_GETTEXTIZE),YES)
-$(2)_PRE_CONFIGURE_HOOKS += GETTEXTIZE_HOOK
+# autopoint is provided by gettext
+ifeq ($$($(2)_AUTOPOINT),YES)
 $(2)_DEPENDENCIES += host-gettext
+$(2)_AUTORECONF_ENV += AUTOPOINT=$$(HOST_DIR)/bin/autopoint
+else
+$(2)_AUTORECONF_ENV += AUTOPOINT=/bin/true
 endif
 $(2)_PRE_CONFIGURE_HOOKS += AUTORECONF_HOOK
 # default values are not evaluated yet, so don't rely on this defaulting to YES

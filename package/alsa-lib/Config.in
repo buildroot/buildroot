@@ -80,4 +80,9 @@ config BR2_PACKAGE_ALSA_LIB_OLD_SYMBOLS
 	bool "old-symbols"
 	default y
 
+config BR2_PACKAGE_ALSA_LIB_TOPOLOGY
+	bool "topology"
+	default y
+	depends on !BR2_STATIC_LIBS
+
 endif

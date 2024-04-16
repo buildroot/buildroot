@@ -9,6 +9,10 @@ APG_SITE = $(call github,wilx,apg,v$(APG_VERSION))
 APG_LICENSE = BSD-3-Clause
 APG_LICENSE_FILES = COPYING
 
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+APG_DEPENDENCIES += libxcrypt
+endif
+
 define APG_BUILD_CMDS
 	$(MAKE) $(TARGET_CONFIGURE_OPTS) FLAGS="$(TARGET_CFLAGS)" -C $(@D)
 endef

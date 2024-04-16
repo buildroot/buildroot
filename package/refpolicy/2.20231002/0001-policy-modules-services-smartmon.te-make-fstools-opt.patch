@@ -1,0 +1,44 @@
+From c6d1345732c463cb45d8ba490081ad92936bfd69 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 28 Nov 2023 22:30:01 +0100
+Subject: [PATCH] policy/modules/services/smartmon.te: make fstools optional
+
+Make fstools optional to avoid the following build failure raised since
+version 2.20231002 and
+https://github.com/SELinuxProject/refpolicy/commit/cb068f09d224f90a97fa63a574fb423bbe1ceeda:
+
+ Compiling targeted policy.33
+ env LD_LIBRARY_PATH="/home/thomas/autobuild/instance-2/output-1/host/lib:/home/thomas/autobuild/instance-2/output-1/host/usr/lib" /home/thomas/autobuild/instance-2/output-1/host/usr/bin/checkpolicy -c 33 -U deny -S -O -E policy.conf -o policy.33
+ policy/modules/services/smartmon.te:146:ERROR 'type fsadm_exec_t is not within scope' at token ';' on line 237472:
+ 	allow smartmon_update_drivedb_t fsadm_exec_t:file { { getattr open map read execute ioctl } ioctl lock execute_no_trans };
+ #line 146
+ checkpolicy:  error(s) encountered while parsing configuration
+ make[1]: *** [Rules.monolithic:80: policy.33] Error 1
+
+Fixes:
+ - http://autobuild.buildroot.org/results/a01123de9a8c1927060e7e4748666bebfc82ea44
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/SELinuxProject/refpolicy/pull/738
+---
+ policy/modules/services/smartmon.te | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/policy/modules/services/smartmon.te b/policy/modules/services/smartmon.te
+index 32c80f712..761280c11 100644
+--- a/policy/modules/services/smartmon.te
++++ b/policy/modules/services/smartmon.te
+@@ -143,7 +143,9 @@ corenet_tcp_connect_http_port(smartmon_update_drivedb_t)
+ 
+ files_read_etc_files(smartmon_update_drivedb_t)
+ 
+-fstools_exec(smartmon_update_drivedb_t)
++optional_policy(`
++	fstools_exec(smartmon_update_drivedb_t)
++')
+ 
+ kernel_dontaudit_read_system_state(smartmon_update_drivedb_t)
+ 
+-- 
+2.42.0
+

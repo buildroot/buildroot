@@ -1,0 +1,13 @@
+config BR2_PACKAGE_LIBUTEMPTER
+	bool "libutempter"
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14
+	depends on !BR2_STATIC_LIBS
+	help
+	  The libutempter library provides interface for terminal
+	  emulators such as screen and xterm to record user
+	  sessions to utmp and wtmp files.
+
+	  http://ftp.altlinux.org/pub/people/ldv/utempter/
+
+comment "libutempter needs a toolchain w/ headers >= 4.14, dynamic library"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14 || BR2_STATIC_LIBS

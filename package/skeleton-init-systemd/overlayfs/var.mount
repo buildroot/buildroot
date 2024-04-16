@@ -1,0 +1,14 @@
+[Unit]
+Description=Variable storage overlay
+Documentation=man:file-hierarchy(7)
+ConditionPathIsSymbolicLink=!/var
+DefaultDependencies=no
+After=prepare-var-overlay.service
+BindsTo=prepare-var-overlay.service
+
+[Mount]
+What=overlay_var
+Where=/var
+Type=overlay
+Options=lowerdir=/run/buildroot/mounts/var/lower,upperdir=/run/buildroot/mounts/var/upper,workdir=/run/buildroot/mounts/var/work,redirect_dir=on,index=on,xino=on
+LazyUnmount=true

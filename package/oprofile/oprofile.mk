@@ -11,7 +11,6 @@ OPROFILE_LICENSE_FILES = COPYING
 OPROFILE_CPE_ID_VENDOR = maynard_johnson
 OPROFILE_CONF_OPTS = \
 	--disable-account-check \
-	--enable-gui=no \
 	--with-kernel=$(STAGING_DIR)/usr
 
 OPROFILE_DEPENDENCIES = popt binutils host-pkgconf

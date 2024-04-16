@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GLI_VERSION = 559cbe1ec38878e182507d331e0780fbae5baf15
+GLI_VERSION = 779b99ac6656e4d30c3b24e96e0136a59649a869
 GLI_SITE = $(call github,g-truc,gli,$(GLI_VERSION))
 GLI_LICENSE = MIT
 GLI_LICENSE_FILES = manual.md

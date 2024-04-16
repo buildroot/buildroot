@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-SELINUX_PYTHON_VERSION = 3.3
+SELINUX_PYTHON_VERSION = 3.5
 SELINUX_PYTHON_SITE = https://github.com/SELinuxProject/selinux/releases/download/$(SELINUX_PYTHON_VERSION)
 SELINUX_PYTHON_LICENSE = GPL-2.0
-SELINUX_PYTHON_LICENSE_FILES = COPYING
+SELINUX_PYTHON_LICENSE_FILES = LICENSE
 SELINUX_PYTHON_DEPENDENCIES = python3
 
 SELINUX_PYTHON_MAKE_OPTS += \

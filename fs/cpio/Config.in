@@ -29,6 +29,11 @@ endchoice
 
 if BR2_TARGET_ROOTFS_CPIO_DRACUT
 
+config BR2_TARGET_ROOTFS_CPIO_DRACUT_MODULES
+	string "extra dracut modules"
+	help
+	  Space-separated list of directories containing dracut modules.
+
 config BR2_TARGET_ROOTFS_CPIO_DRACUT_CONF_FILES
 	string "dracut configuration files"
 	default "fs/cpio/dracut.conf"

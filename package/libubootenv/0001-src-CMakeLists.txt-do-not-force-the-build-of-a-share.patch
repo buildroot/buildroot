@@ -29,7 +29,7 @@ diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
 index 4b71bc5..0b515f4 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -12,18 +12,16 @@ SET(include_HEADERS
+@@ -15,17 +15,15 @@ SET(include_HEADERS
  
  include(GNUInstallDirs) # for the CMAKE_INSTALL_LIBDIR variable
  
@@ -40,16 +40,15 @@ index 4b71bc5..0b515f4 100644
 -ADD_LIBRARY(ubootenv_static STATIC ${libubootenv_SOURCES} ${include_HEADERS})
 -SET_TARGET_PROPERTIES(ubootenv_static PROPERTIES OUTPUT_NAME ubootenv)
  add_executable(fw_printenv fw_printenv.c)
- add_executable(fw_setenv fw_setenv.c)
- target_link_libraries(ubootenv z)
+ target_link_libraries(ubootenv z yaml)
  target_link_libraries(fw_printenv ubootenv)
- target_link_libraries(fw_setenv ubootenv)
+ add_custom_target(fw_setenv ALL ${CMAKE_COMMAND} -E create_symlink fw_printenv fw_setenv)
  
 -install (TARGETS ubootenv ubootenv_static DESTINATION ${CMAKE_INSTALL_LIBDIR})
 +install (TARGETS ubootenv DESTINATION ${CMAKE_INSTALL_LIBDIR})
  install (FILES libuboot.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
  install (TARGETS fw_printenv DESTINATION ${CMAKE_INSTALL_BINDIR})
- install (TARGETS fw_setenv DESTINATION ${CMAKE_INSTALL_BINDIR})
+ install (PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/fw_setenv DESTINATION ${CMAKE_INSTALL_BINDIR})
 -- 
 2.30.2
 

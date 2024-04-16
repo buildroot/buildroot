@@ -20,7 +20,7 @@ class Emulator(object):
     #
     # kernel: path to the kernel image, or the special string
     # 'builtin'. 'builtin' means a pre-built kernel image will be
-    # downloaded from ARTEFACTS_URL and suitable options are
+    # downloaded from ARTIFACTS_URL and suitable options are
     # automatically passed to qemu and added to the kernel cmdline. So
     # far only armv5, armv7 and i386 builtin kernels are available.
     # If None, then no kernel is used, and we assume a bootable device
@@ -54,16 +54,16 @@ class Emulator(object):
 
                 if arch == "armv7":
                     kernel = infra.download(self.downloaddir,
-                                            "kernel-vexpress-5.10.7")
+                                            "kernel-vexpress-5.10.202")
                     dtb = infra.download(self.downloaddir,
-                                         "vexpress-v2p-ca9-5.10.7.dtb")
+                                         "vexpress-v2p-ca9-5.10.202.dtb")
                     qemu_cmd += ["-dtb", dtb]
                     qemu_cmd += ["-M", "vexpress-a9"]
                 elif arch == "armv5":
                     kernel = infra.download(self.downloaddir,
-                                            "kernel-versatile-5.10.7")
+                                            "kernel-versatile-5.10.202")
                     dtb = infra.download(self.downloaddir,
-                                         "versatile-pb-5.10.7.dtb")
+                                         "versatile-pb-5.10.202.dtb")
                     qemu_cmd += ["-dtb", dtb]
                     qemu_cmd += ["-M", "versatilepb"]
                     qemu_cmd += ["-device", "virtio-rng-pci"]
@@ -84,11 +84,11 @@ class Emulator(object):
 
     # Wait for the login prompt to appear, and then login as root with
     # the provided password, or no password if not specified.
-    def login(self, password=None):
+    def login(self, password=None, timeout=60):
         # The login prompt can take some time to appear when running multiple
         # instances in parallel, so set the timeout to a large value
         index = self.qemu.expect(["buildroot login:", pexpect.TIMEOUT],
-                                 timeout=60 * self.timeout_multiplier)
+                                 timeout=timeout * self.timeout_multiplier)
         if index != 0:
             self.logfile.write("==> System does not boot")
             raise SystemError("System does not boot")

@@ -1,0 +1,114 @@
+From a6ff69873110c0a8ba6f7fd90532dbc11224828c Mon Sep 17 00:00:00 2001
+From: Bruno Haible <bruno@clisp.org>
+Date: Sun, 13 Mar 2022 15:04:06 +0100
+Subject: [PATCH] Add support for Linux/PowerPC (32-bit) with musl libc.
+
+Reported by Khem Raj <raj.khem@gmail.com> in
+<https://lists.gnu.org/archive/html/m4-patches/2022-03/msg00000.html>.
+
+* autogen.sh: Copy also musl.m4.
+* configure.ac: Invoke gl_MUSL_LIBC.
+* src/fault-linux-powerpc.h (SIGSEGV_FAULT_STACKPOINTER): In the 32-bit
+case, handle musl libc differently.
+* NEWS: Mention it.
+
+Upstream: https://git.savannah.gnu.org/gitweb/?p=libsigsegv.git;a=commit;h=a6ff69873110c0a8ba6f7fd90532dbc11224828c
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ ChangeLog                 | 11 +++++++++++
+ NEWS                      |  4 ++++
+ autogen.sh                |  3 ++-
+ configure.ac              |  2 ++
+ src/fault-linux-powerpc.h | 27 ++++++++++++++++++++++-----
+ 5 files changed, 41 insertions(+), 6 deletions(-)
+
+diff --git a/ChangeLog b/ChangeLog
+index c52b227..7c0a8fa 100644
+--- a/ChangeLog
++++ b/ChangeLog
+@@ -1,3 +1,14 @@
++2022-03-13  Bruno Haible  <bruno@clisp.org>
++
++	Add support for Linux/PowerPC (32-bit) with musl libc.
++	Reported by Khem Raj <raj.khem@gmail.com> in
++	<https://lists.gnu.org/archive/html/m4-patches/2022-03/msg00000.html>.
++	* autogen.sh: Copy also musl.m4.
++	* configure.ac: Invoke gl_MUSL_LIBC.
++	* src/fault-linux-powerpc.h (SIGSEGV_FAULT_STACKPOINTER): In the 32-bit
++	case, handle musl libc differently.
++	* NEWS: Mention it.
++
+ 2022-01-07  Bruno Haible  <bruno@clisp.org>
+ 
+ 	Prepare for version 2.14.
+diff --git a/NEWS b/NEWS
+index 4d012f8..82cc0f4 100644
+--- a/NEWS
++++ b/NEWS
+@@ -1,3 +1,7 @@
++New in 2.15:
++
++* Added support for Linux/PowerPC (32-bit) with musl libc.
++
+ New in 2.14:
+ 
+ * Added support for 64-bit Cygwin.
+diff --git a/configure.ac b/configure.ac
+index e87f13b..164786f 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -75,6 +75,8 @@ AC_MSG_RESULT([$sv_cv_host])
+ PLATFORM="$sv_cv_host"
+ AC_SUBST([PLATFORM])
+ 
++gl_MUSL_LIBC
++
+ dnl ========================== Done with PLATFORM ==========================
+ 
+ 
+diff --git a/src/fault-linux-powerpc.h b/src/fault-linux-powerpc.h
+index cba6ea7..b3f922a 100644
+--- a/src/fault-linux-powerpc.h
++++ b/src/fault-linux-powerpc.h
+@@ -1,5 +1,5 @@
+ /* Fault handler information.  Linux/PowerPC version when it supports POSIX.
+-   Copyright (C) 2002, 2009, 2017  Bruno Haible <bruno@clisp.org>
++   Copyright (C) 2002, 2009, 2017, 2022  Bruno Haible <bruno@clisp.org>
+ 
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+@@ -28,10 +28,27 @@
+ #if defined(__powerpc64__) || defined(_ARCH_PPC64) /* 64-bit */
+ # define SIGSEGV_FAULT_STACKPOINTER  ((ucontext_t *) ucp)->uc_mcontext.gp_regs[1]
+ #else /* 32-bit */
+-/* both should be equivalent */
+-# if 0
+-#  define SIGSEGV_FAULT_STACKPOINTER  ((ucontext_t *) ucp)->uc_mcontext.regs->gpr[1]
++# if MUSL_LIBC
++/* musl libc has a different structure of ucontext_t in
++   musl/arch/powerpc/bits/signal.h.  */
++/* The glibc comments say:
++     "Different versions of the kernel have stored the registers on signal
++      delivery at different offsets from the ucontext struct.  Programs should
++      thus use the uc_mcontext.uc_regs pointer to find where the registers are
++      actually stored."  */
++#  if 0
++#   define SIGSEGV_FAULT_STACKPOINTER  ((ucontext_t *) ucp)->uc_mcontext.gregs[1]
++#  else
++#   define SIGSEGV_FAULT_STACKPOINTER  ((ucontext_t *) ucp)->uc_regs->gregs[1]
++#  endif
+ # else
+-#  define SIGSEGV_FAULT_STACKPOINTER  ((ucontext_t *) ucp)->uc_mcontext.uc_regs->gregs[1]
++/* Assume the structure of ucontext_t in
++   glibc/sysdeps/unix/sysv/linux/powerpc/sys/ucontext.h.  */
++/* Because of the union, both definitions should be equivalent.  */
++#  if 0
++#   define SIGSEGV_FAULT_STACKPOINTER  ((ucontext_t *) ucp)->uc_mcontext.regs->gpr[1]
++#  else
++#   define SIGSEGV_FAULT_STACKPOINTER  ((ucontext_t *) ucp)->uc_mcontext.uc_regs->gregs[1]
++#  endif
+ # endif
+ #endif
+-- 
+2.17.1
+

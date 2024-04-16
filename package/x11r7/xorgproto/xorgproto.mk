@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-XORGPROTO_VERSION = 2022.1
-XORGPROTO_SOURCE = xorgproto-$(XORGPROTO_VERSION).tar.bz2
+XORGPROTO_VERSION = 2023.2
+XORGPROTO_SOURCE = xorgproto-$(XORGPROTO_VERSION).tar.xz
 XORGPROTO_SITE = https://xorg.freedesktop.org/archive/individual/proto
 XORGPROTO_LICENSE = MIT
 XORGPROTO_LICENSE_FILES = \
@@ -44,7 +44,8 @@ XORGPROTO_LICENSE_FILES = \
 	COPYING-xf86miscproto \
 	COPYING-xf86rushproto \
 	COPYING-xf86vidmodeproto \
-	COPYING-xineramaproto
+	COPYING-xineramaproto \
+	COPYING-xwaylandproto
 XORGPROTO_INSTALL_STAGING = YES
 XORGPROTO_INSTALL_TARGET = NO
 # xproxymngproto is needed by xfindproxy

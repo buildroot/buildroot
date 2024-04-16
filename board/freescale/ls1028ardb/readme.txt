@@ -8,6 +8,16 @@ for more details about the board and the QorIQ Layerscape SoC, see the following
   - https://www.nxp.com/design/qoriq-developer-resources/layerscape-ls1028a-reference-design-board:LS1028ARDB
   - https://www.nxp.com/LS1028A
 
+for the software NXP LSDK (Layerscape Software Development Kit), see
+  - https://www.nxp.com/docs/en/user-guide/LSDKUG_Rev21.08.pdf
+
+the components from NXP are:
+  - rcw, LSDK 21.08
+  - atf (fork), LSDK 21.08
+  - uboot (fork), LSDK 21.08
+  - cadence-dp-firmware (blob), LSDK 20.12
+  - linux (fork), LSDK 21.08
+
 Build
 =====
 
@@ -58,3 +68,20 @@ To boot your newly created system:
 - put a DB9F cable into the UART1 Port and connect using a terminal
   emulator at 115200 bps, 8n1;
 - power on the board.
+
+The Cadence DP (Display Port) firmware must loaded from uboot with the following commands:
+
+  => ext2load mmc 0 0x80000000 /boot/ls1028a-dp-fw.bin
+  102464 bytes read in 24 ms (4.1 MiB/s)
+  => hdp load 0x80000000 0x2000
+  Loading hdp firmware from 0x0000000080000000 offset 0x0000000000002000
+  Loading hdp firmware Complete
+  => boot
+
+The interfaces of Ethernet switch (Felix DSA) are bring up with the following commands:
+
+  ip link set eno2 up
+  ip link set swp0 up
+  ip link set swp1 up
+  ip link set swp2 up
+  ip link set swp3 up

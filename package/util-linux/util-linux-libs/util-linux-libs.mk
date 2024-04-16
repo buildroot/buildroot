@@ -24,6 +24,7 @@ UTIL_LINUX_LIBS_LICENSE_FILES = README.licensing \
 UTIL_LINUX_LIBS_INSTALL_STAGING = YES
 UTIL_LINUX_LIBS_DEPENDENCIES = \
 	host-pkgconf \
+	$(if $(BR2_PACKAGE_LIBXCRYPT),libxcrypt) \
 	$(TARGET_NLS_DEPENDENCIES)
 UTIL_LINUX_LIBS_CONF_OPTS += \
 	--disable-rpath \
@@ -51,6 +52,9 @@ UTIL_LINUX_LIBS_CONF_OPTS += --disable-widechar
 
 # No libs use ncurses
 UTIL_LINUX_LIBS_CONF_OPTS += --without-ncursesw --without-ncurses
+
+# workaround for static_assert on uclibc-ng < 1.0.42
+UTIL_LINUX_LIBS_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -Dstatic_assert=_Static_assert"
 
 # Unfortunately, the util-linux does LIBS="" at the end of its
 # configure script. So we have to pass the proper LIBS value when

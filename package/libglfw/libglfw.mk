@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBGLFW_VERSION = 3.3.6
+LIBGLFW_VERSION = 3.3.8
 LIBGLFW_SITE = $(call github,glfw,glfw,$(LIBGLFW_VERSION))
 LIBGLFW_INSTALL_STAGING = YES
 LIBGLFW_LICENSE = Zlib
@@ -29,7 +29,7 @@ LIBGLFW_DEPENDENCIES += libgles
 endif
 
 ifeq ($(BR2_PACKAGE_WAYLAND),y)
-LIBGLFW_DEPENDENCIES += libxkbcommon wayland-protocols
+LIBGLFW_DEPENDENCIES += libxkbcommon wayland wayland-protocols
 # Override pkg-config pkgdatadir variable, it needs the prefix
 LIBGLFW_CONF_OPTS += \
 	-DGLFW_USE_WAYLAND=1 \

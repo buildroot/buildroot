@@ -1,0 +1,59 @@
+From 3e93c1d43de8a662e402127462f28ef0bebf8997 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 1 Oct 2023 18:45:53 +0200
+Subject: [PATCH] Makefile: add USE_LIBEV
+
+Add USE_LIBEV to avoid the following build failure without libev raised
+since version 2.0 and
+https://github.com/yrutschle/sslh/commit/711c11c820f8be4f1399024bcaa1d7072de33217:
+
+sslh-ev.c:24:10: fatal error: ev.h: Aucun fichier ou dossier de ce type
+   24 | #include <ev.h>
+      |          ^~~~~~
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/yrutschle/sslh/commit/3e93c1d43de8a662e402127462f28ef0bebf8997
+---
+ Makefile | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index a4425c3..aa2689e 100644
+--- a/Makefile
++++ b/Makefile
+@@ -6,6 +6,7 @@ VERSION=$(shell ./genver.sh -r)
+ ENABLE_SANITIZER= # Enable ASAN/LSAN/UBSAN
+ ENABLE_REGEX=1  # Enable regex probes
+ USELIBCONFIG=1	# Use libconfig? (necessary to use configuration files)
++USELIBEV=1	# Use libev?
+ USELIBWRAP?=	# Use libwrap?
+ USELIBCAP=	# Use libcap?
+ USESYSTEMD=     # Make use of systemd socket activation
+@@ -72,6 +73,9 @@ ifneq ($(strip $(USELIBBSD)),)
+         CPPFLAGS+=-DLIBBSD
+ endif
+ 
++ifneq ($(strip $(USELIBEV)),)
++        CONDITIONAL_TARGETS+=sslh-ev
++endif
+ 
+ all: sslh $(MAN) echosrv $(CONDITIONAL_TARGETS)
+ 
+@@ -84,7 +88,7 @@ $(OBJS_A): $(OBJS)
+ version.h:
+ 	./genver.sh >version.h
+ 
+-sslh: sslh-fork sslh-select sslh-ev
++sslh: sslh-fork sslh-select
+ 
+ $(OBJS) $(FORK_OBJS) $(SELECT_OBJS) $(EV_OBJS): argtable3.h collection.h common.h gap.h hash.h log.h probe.h processes.h sslh-conf.h tcp-listener.h tcp-probe.h tls.h udp-listener.h version.h
+ 
+@@ -153,7 +157,7 @@ distclean: clean
+ 	rm -f tags sslh-conf.[ch] echosrv-conf.[ch] cscope.*
+ 
+ clean:
+-	rm -f sslh-fork sslh-select sslh-ev echosrv version.h $(MAN) systemd-sslh-generator *.o *.gcov *.gcno *.gcda *.png *.html *.css *.info
++	rm -f sslh-fork sslh-select $(CONDITIONAL_TARGETS) echosrv version.h $(MAN) systemd-sslh-generator *.o *.gcov *.gcno *.gcda *.png *.html *.css *.info
+ 
+ tags:
+ 	ctags --globals -T *.[ch]

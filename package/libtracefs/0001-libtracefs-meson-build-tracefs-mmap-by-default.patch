@@ -1,0 +1,34 @@
+From 7d15d7744d957b1721d8e202bd5095b7c449570f Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Wed, 10 Jan 2024 21:39:25 +0100
+Subject: [PATCH] libtracefs meson: build tracefs-mmap by default
+
+Accordingly to Makefile let's add tracefs-mmap.c to build, this is needed
+for linking by other object files.
+
+Link: https://lore.kernel.org/linux-trace-devel/20240110203925.266999-1-giulio.benetti@benettiengineering.com
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Upstream: https://git.kernel.org/pub/scm/libs/libtrace/libtracefs.git/commit/?id=7d15d7744d957b1721d8e202bd5095b7c449570f
+[yann.morin.1998@free.fr: do an actual backport]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ src/meson.build | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/meson.build b/src/meson.build
+index 5b76554..f7a98b9 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -11,6 +11,7 @@ sources= [
+    'tracefs-instance.c',
+    'tracefs-kprobes.c',
+    'tracefs-marker.c',
++   'tracefs-mmap.c',
+    'tracefs-record.c',
+    'tracefs-sqlhist.c',
+    'tracefs-tools.c',
+--
+2.43.0
+

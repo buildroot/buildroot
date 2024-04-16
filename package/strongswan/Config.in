@@ -35,18 +35,13 @@ config BR2_PACKAGE_STRONGSWAN_BOTAN
 	bool "botan"
 	depends on BR2_PACKAGE_BOTAN_ARCH_SUPPORTS
 	depends on BR2_INSTALL_LIBSTDCPP
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
-	depends on !BR2_TOOLCHAIN_HAS_GCC_BUG_64735
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_10 # botan
 	select BR2_PACKAGE_BOTAN
 
-comment "botan backend needs a toolchain w/ C++, gcc >= 4.8"
+comment "botan backend needs a toolchain w/ C++, gcc >= 10"
 	depends on !BR2_INSTALL_LIBSTDCPP \
-		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
+		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_10
 	depends on BR2_PACKAGE_BOTAN_ARCH_SUPPORTS
-
-comment "botan backend needs a toolchain not affected by GCC bug 64735"
-	depends on BR2_PACKAGE_BOTAN_ARCH_SUPPORTS
-	depends on BR2_TOOLCHAIN_HAS_GCC_BUG_64735
 
 config BR2_PACKAGE_STRONGSWAN_OPENSSL
 	bool "OpenSSL"
@@ -193,7 +188,7 @@ config BR2_PACKAGE_STRONGSWAN_STROKE
 
 config BR2_PACKAGE_STRONGSWAN_SQL
 	bool "Enable SQL database configuration backend"
-	depends on BR2_PACKAGE_SQLITE || BR2_PACKAGE_MYSQL
+	depends on BR2_PACKAGE_SQLITE || BR2_PACKAGE_MARIADB
 
 config BR2_PACKAGE_STRONGSWAN_BYPASS_LAN
 	bool "Enable BYPASS-LAN plugin"
@@ -203,9 +198,6 @@ endif
 config BR2_PACKAGE_STRONGSWAN_PKI
 	bool "Enable pki certificate utility"
 	default y
-
-config BR2_PACKAGE_STRONGSWAN_SCEP
-	bool "Enable SCEP client tool"
 
 config BR2_PACKAGE_STRONGSWAN_SCRIPTS
 	bool "Enable additional utilities (found in scripts directory)"

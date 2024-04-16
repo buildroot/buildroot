@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPKG_UTILS_VERSION = 0.4.5
+OPKG_UTILS_VERSION = 0.6.2
 OPKG_UTILS_SITE = https://git.yoctoproject.org/git/opkg-utils
 OPKG_UTILS_SITE_METHOD = git
 OPKG_UTILS_LICENSE = GPL-2.0+
@@ -16,7 +16,7 @@ HOST_OPKG_UTILS_DEPENDENCIES = \
 	host-xz
 
 # Nothing to build; only scripts to install.
-define OPKG_UTILS_INSTALL_CMDS
+define OPKG_UTILS_INSTALL_TARGET_CMDS
 	$(MAKE) -C $(@D) PREFIX=$(TARGET_DIR) install-utils
 endef
 

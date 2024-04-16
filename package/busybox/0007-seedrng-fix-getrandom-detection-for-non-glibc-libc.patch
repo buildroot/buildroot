@@ -1,0 +1,124 @@
+From b2d26d449ec855602b9a88f58c2eb675de0224f2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Rapha=C3=ABl=20M=C3=A9lotte?= <raphael.melotte@mind.be>
+Date: Tue, 18 Apr 2023 15:54:43 +0200
+Subject: [PATCH v4] seedrng: fix getrandom() detection for non-glibc libc
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+glibc <= 2.24 does not provide getrandom(). A check for it has been
+added in 200a9669fbf6f06894e4243cccc9fc11a1a6073a and fixed in
+cb57abb46f06f4ede8d9ccbdaac67377fdf416cf.
+
+However, building with a libc other than glibc can lead to the same
+problem as not every other libc has getrandom() either:
+
+- uClibc provides it from v1.0.2 onwards, but requires to define
+_GNU_SOURCE (all versions - we already define it by default), and
+stddef to be included first (when using uClibc < 1.0.35 - we already
+include it through libbb.h).
+
+- musl libc has getrandom(), but only from version 1.1.20 onwards. As
+musl does not provide __MUSL__ or version information, it's not
+possible to check for it like we did for glibc.
+
+All of this makes it difficult (or impossible in case of musl) to
+check what we need to do to have getrandom() based on each libc
+versions.
+
+On top of that, getrandom() is also not available on older kernels. As
+an example, when using a 3.10 kernel with uClibc 1.0.26, getrandom()
+is declared so compiling works, but it fails at link time because
+getrandom() is not defined.
+
+To make it easier, take a similar approach to what was done for the
+crypt library: try to build a sample program to see if we have
+getrandom(). To keep it compatible with different versions of
+make (for reference see [1]), a variable for '#' is also introduced.
+
+Based on the new Makefile variable, we now either use the
+libc-provided getrandom() when it's available, or use our own
+implementation when it's not (like it was the case already for glibc <
+2.25).
+
+This should fix compiling with many libc/kernel combinations.
+
+[1]: https://git.savannah.gnu.org/cgit/make.git/commit/?id=c6966b323811c37acedff05b576b907b06aea5f4
+
+Signed-off-by: Raphaël Mélotte <raphael.melotte@mind.be>
+Upstream: http://lists.busybox.net/pipermail/busybox/2023-May/090317.html
+---
+Changes v3 -> v4:
+  - use a variable for '#' for compatibility with GNU make 4.2.1 and earlier.
+
+Changes v2 -> v3:
+  - fix _GNU_SOURCE define location
+
+Changes v1 -> v2:
+  - move _GNU_SOURCE to bb_libtest.c
+  - remove GRND_NONBLOCK
+
+Note that I was not able to test every single combination, but I could
+confirm it builds successfully for:
+uClibc 10.0.24, linux headers 3.10 (libc getrandom NOT used)
+uClibc 1.0.36, linux headers 4.9 (libc getrandom used)
+musl 1.1.16, linux headers 4.12 (libc getrandom NOT used)
+musl 1.2.1, linux headers (libc getrandom used)
+glibc 2.25, linux headers 4.10 (libc getrandom used)
+
+ Makefile.flags      | 12 ++++++++++++
+ miscutils/seedrng.c |  8 ++++----
+ 2 files changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/Makefile.flags b/Makefile.flags
+index 1cec5ba20..0d437303a 100644
+--- a/Makefile.flags
++++ b/Makefile.flags
+@@ -161,6 +161,18 @@ ifeq ($(RT_AVAILABLE),y)
+ LDLIBS += rt
+ endif
+ 
++# GNU Make version 4.2.1 and earlier require number signs ('#')
++# inside function invocations to be escaped, while versions 4.3+
++# require them to be unescaped. Use a variable for it so that it works
++# for both versions:
++C := \#
++# Not all libc versions have getrandom, so check for it:
++HAVE_GETRANDOM := $(shell printf '$Cdefine _GNU_SOURCE\n$Cinclude <stddef.h>\n$Cinclude <sys/random.h>\nint main(void){char buf[256];\ngetrandom(buf,sizeof(buf),0);}' >bb_libtest.c; $(CC) $(CFLAGS) $(CFLAGS_busybox) -o /dev/null bb_libtest.c >/dev/null 2>&1 && echo "y"; rm bb_libtest.c)
++
++ifeq ($(HAVE_GETRANDOM),y)
++CFLAGS += -DHAVE_GETRANDOM
++endif
++
+ # libpam may use libpthread, libdl and/or libaudit.
+ # On some platforms that requires an explicit -lpthread, -ldl, -laudit.
+ # However, on *other platforms* it fails when some of those flags
+diff --git a/miscutils/seedrng.c b/miscutils/seedrng.c
+index 3bf6e2ea7..2f1e18c32 100644
+--- a/miscutils/seedrng.c
++++ b/miscutils/seedrng.c
+@@ -44,8 +44,10 @@
+ #include <linux/random.h>
+ #include <sys/file.h>
+ 
+-/* Fix up glibc <= 2.24 not having getrandom() */
+-#if defined(__GLIBC__) && __GLIBC__ == 2 && __GLIBC_MINOR__ <= 24
++/* Fix up some libc (e.g. glibc <= 2.24) not having getrandom() */
++#if defined HAVE_GETRANDOM
++#include <sys/random.h>
++#else /* No getrandom */
+ #include <sys/syscall.h>
+ static ssize_t getrandom(void *buffer, size_t length, unsigned flags)
+ {
+@@ -56,8 +58,6 @@ static ssize_t getrandom(void *buffer, size_t length, unsigned flags)
+ 	return -1;
+ # endif
+ }
+-#else
+-#include <sys/random.h>
+ #endif
+ 
+ /* Apparently some headers don't ship with this yet. */
+-- 
+2.39.1
+

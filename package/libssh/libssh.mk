@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBSSH_VERSION_MAJOR = 0.9
+LIBSSH_VERSION_MAJOR = 0.10
 LIBSSH_VERSION = $(LIBSSH_VERSION_MAJOR).6
 LIBSSH_SOURCE = libssh-$(LIBSSH_VERSION).tar.xz
 LIBSSH_SITE = https://www.libssh.org/files/$(LIBSSH_VERSION_MAJOR)
@@ -16,6 +16,14 @@ LIBSSH_SUPPORTS_IN_SOURCE_BUILD = NO
 LIBSSH_CONF_OPTS = \
 	-DWITH_STACK_PROTECTOR=OFF \
 	-DWITH_EXAMPLES=OFF
+
+# Not part of any release
+# https://www.libssh.org/2023/07/14/cve-2023-3603-potential-null-dereference-in-libsshs-sftp-server/
+LIBSSH_IGNORE_CVES += CVE-2023-3603
+
+ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
+LIBSSH_CONF_OPTS += -DWITH_STACK_CLASH_PROTECTION=OFF
+endif
 
 ifeq ($(BR2_PACKAGE_LIBSSH_SERVER),y)
 LIBSSH_CONF_OPTS += -DWITH_SERVER=ON

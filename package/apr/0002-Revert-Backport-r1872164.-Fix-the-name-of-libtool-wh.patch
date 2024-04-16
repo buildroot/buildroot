@@ -1,0 +1,30 @@
+From 0aa7e33372b479a26e5f04dfc4801e24573a8737 Mon Sep 17 00:00:00 2001
+From: Graham Leggett <minfrin@apache.org>
+Date: Wed, 1 Jan 2020 10:43:39 +0000
+Subject: [PATCH] Revert: Backport r1872164. Fix the name of libtool when
+ cross compiling.
+
+git-svn-id: https://svn.apache.org/repos/asf/apr/apr/branches/1.7.x@1872165 13f79535-47bb-0310-9956-ffa450edef68
+
+[Revert upstream commit https://github.com/apache/apr/commit/f82374627b3a6500a7a6cb11e48bcac59bcbb6a1]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ apr-config.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/apr-config.in b/apr-config.in
+index bed47ca..4873fc0 100644
+--- a/apr-config.in
++++ b/apr-config.in
+@@ -246,7 +246,7 @@ while test $# -gt 0; do
+     if test "$location" = "installed"; then
+         echo "${installbuilddir}/libtool"
+     elif test "$location" = "crosscompile"; then
+-        echo "$APR_TARGET_DIR/${installbuilddir}/libtool"
++        echo "$APR_TARGET_DIR/${installbuilddir}/build"
+     else
+         echo "$APR_BUILD_DIR/libtool"
+     fi
+-- 
+2.39.2
+

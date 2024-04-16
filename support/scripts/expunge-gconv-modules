@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 
 # This script is used to generate a gconv-modules file that takes into
-# account only the gconv modules installed by Buildroot. It receives
-# on its standard input the original complete gconv-modules file from
-# the toolchain, and as arguments the list of gconv modules that were
-# actually installed, and writes on its standard output the new
-# gconv-modules file.
+# account only the gconv modules installed by Buildroot, and generates
+# a stripped-down gconv-moduels file on its stdout.
+# It takes two arguments:
+#   $1: the directory where to look for gconv modules definitions
+#   $2: a space-separated list of gconv modules that were actually
+#       installed
+
+# Starting with glibc-2.34, modules definitions are located in multiple
+# files:
+#   ${1}/gconv-modules
+#   ${1}/gconv-modules.d/*.conf
 
 # The format of gconv-modules is precisely documented in the
 # file itself. It consists of two different directives:
@@ -19,7 +25,11 @@
 # we handle each with slightly different code, since the second never has
 # associated aliases.
 
-gawk -v files="${1}" '
+for f in ${1}/gconv-modules ${1}/gconv-modules.d/*.conf; do
+    [ -e "${f}" ] || continue
+    cat "${f}"
+done \
+|awk -v files="${2}" '
 $1 == "alias" {
     aliases[$3] = aliases[$3] " " $2;
 }

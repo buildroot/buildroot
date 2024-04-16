@@ -22,7 +22,7 @@ diff --git a/libswscale/x86/yuv2rgb.c b/libswscale/x86/yuv2rgb.c
 index c12e88cbb5..4791e5b93a 100644
 --- a/libswscale/x86/yuv2rgb.c
 +++ b/libswscale/x86/yuv2rgb.c
-@@ -83,6 +83,7 @@ av_cold SwsFunc ff_yuv2rgb_init_x86(SwsContext *c)
+@@ -71,6 +71,7 @@ av_cold SwsFunc ff_yuv2rgb_init_x86(SwsContext *c)
  #if HAVE_X86ASM
      int cpu_flags = av_get_cpu_flags();
  
@@ -30,7 +30,7 @@ index c12e88cbb5..4791e5b93a 100644
      if (EXTERNAL_SSSE3(cpu_flags)) {
          switch (c->dstFormat) {
          case AV_PIX_FMT_RGB32:
-@@ -111,6 +112,7 @@ av_cold SwsFunc ff_yuv2rgb_init_x86(SwsContext *c)
+@@ -99,6 +100,7 @@ av_cold SwsFunc ff_yuv2rgb_init_x86(SwsContext *c)
              return yuv420_rgb15_ssse3;
          }
      }

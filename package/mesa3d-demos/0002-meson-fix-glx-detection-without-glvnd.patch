@@ -1,0 +1,47 @@
+From e16117fc92688d76a042ad2c590c77d5a987a4ac Mon Sep 17 00:00:00 2001
+From: Erik Faye-Lund <erik.faye-lund@collabora.com>
+Date: Fri, 24 Mar 2023 13:31:58 +0100
+Subject: [PATCH] meson: fix glx-detection without glvnd
+
+When build without GLVND, Mesa provides GLX as a part of libGL, just
+like XQuartz does on MacOS. There's nothing really macOS specific about
+this fallback, so let's drop the condition.
+
+And just for good measure, let's add in dep_gl as a dependency for
+the header-check here, in case some one decides to install libGL outside
+of the default include directory.
+
+Fixes: 34300551 ("meson: explicitly check for glx dependency")
+Closes: https://gitlab.freedesktop.org/mesa/demos/-/issues/36
+Reviewed-by: Hoe Hao Cheng <haochengho12907@gmail.com>
+
+Upstream: https://gitlab.freedesktop.org/mesa/demos/-/commit/e16117fc92688d76a042ad2c590c77d5a987a4ac
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ meson.build | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index c1853f94..bc3278e1 100644
+--- a/meson.build
++++ b/meson.build
+@@ -99,10 +99,11 @@ if not dep_glu.found() and host_machine.system() != 'darwin'
+ endif
+ 
+ dep_glx = dependency('glx', required: false, disabler : true)
+-if not dep_glx.found() and host_machine.system() == 'darwin'
+-  # xquartz doesn't have a glx.pc, but it does have the header. And all the
+-  # symbols reside in libGL, so let's just use that.
+-  if cc.check_header('GL/glx.h', dependencies: dep_x11)
++if not dep_glx.found()
++  # Both Mesa build without GLVND and XQuartz lacks a glx.pc, but does
++  # provide the header. And all the symbols reside in libGL, so let's
++  # just use that.
++  if cc.check_header('GL/glx.h', dependencies: [dep_x11, dep_gl])
+     dep_glx = dep_gl
+   endif
+ endif
+-- 
+GitLab
+

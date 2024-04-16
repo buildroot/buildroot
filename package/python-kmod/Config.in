@@ -1,0 +1,12 @@
+config BR2_PACKAGE_PYTHON_KMOD
+	bool "python-kmod"
+	depends on !BR2_STATIC_LIBS # kmod
+	select BR2_PACKAGE_HOST_PYTHON_CYTHON
+	select BR2_PACKAGE_KMOD
+	help
+	  Python binding for kmod
+
+	  https://github.com/maurizio-lombardi/python-kmod
+
+comment "python-kmod needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS

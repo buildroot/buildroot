@@ -55,6 +55,16 @@ config BR2_HOST_GCC_AT_LEAST_9
 	default y if BR2_HOST_GCC_VERSION = "9"
 	select BR2_HOST_GCC_AT_LEAST_8
 
+config BR2_HOST_GCC_AT_LEAST_10
+	bool
+	default y if BR2_HOST_GCC_VERSION = "10"
+	select BR2_HOST_GCC_AT_LEAST_9
+
+config BR2_HOST_GCC_AT_LEAST_11
+	bool
+	default y if BR2_HOST_GCC_VERSION = "11"
+	select BR2_HOST_GCC_AT_LEAST_10
+
 # When adding new entries above, be sure to update
 # the HOSTCC_MAX_VERSION variable in the Makefile.
 
@@ -65,7 +75,7 @@ config BR2_NEEDS_HOST_JAVA
 
 # Hidden boolean selected by pre-built packages for x86, when they
 # need to run on x86-64 machines (example: pre-built external
-# toolchains, binary tools like SAM-BA, etc.).
+# toolchains, binary tools, etc.).
 config BR2_HOSTARCH_NEEDS_IA32_LIBS
 	bool
 
@@ -241,7 +251,7 @@ if !BR2_PRIMARY_SITE_ONLY
 
 config BR2_BACKUP_SITE
 	string "Backup download site"
-	default "http://sources.buildroot.net"
+	default "https://sources.buildroot.net"
 	help
 	  Backup site to download from. If this option is set then
 	  buildroot will fall back to download package sources from here
@@ -287,14 +297,15 @@ config BR2_LUAROCKS_MIRROR
 
 config BR2_CPAN_MIRROR
 	string "CPAN mirror (Perl packages)"
-	default "http://cpan.metacpan.org"
+	default "https://cpan.metacpan.org"
 	help
 	  CPAN (Comprehensive Perl Archive Network) is a repository of
 	  Perl packages. It has multiple software mirrors scattered
 	  around the world. This option allows you to select a mirror.
 
 	  The list of mirrors is available at:
-	  http://search.cpan.org/mirror
+	  http://mirrors.cpan.org/          (tabular)
+	  http://mirrors.cpan.org/map.html  (clickable world map)
 
 endif
 
@@ -463,7 +474,7 @@ config BR2_STRIP_EXCLUDE_DIRS
 
 choice
 	prompt "gcc optimization level"
-	default BR2_OPTIMIZE_S
+	default BR2_OPTIMIZE_2
 	help
 	  Set the optimization level for gcc
 
@@ -509,6 +520,7 @@ config BR2_OPTIMIZE_2
 	  -falign-loops -falign-labels -ftree-vrp -ftree-pre. Please
 	  note the warning under -fgcse about invoking -O2 on programs
 	  that use computed gotos.
+	  This is the default.
 
 config BR2_OPTIMIZE_3
 	bool "optimization level 3"
@@ -537,7 +549,6 @@ config BR2_OPTIMIZE_S
 	  -falign-loops -falign-labels -freorder-blocks
 	  -freorder-blocks-and-partition -fprefetch-loop-arrays
 	  -ftree-vect-loop-version
-	  This is the default.
 
 config BR2_OPTIMIZE_FAST
 	bool "optimize for fast (may break packages!)"
@@ -575,10 +586,10 @@ config BR2_ENABLE_LTO
 config BR2_GOOGLE_BREAKPAD_ENABLE
 	bool "Enable google-breakpad support"
 	depends on BR2_INSTALL_LIBSTDCPP
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # C++11
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 # C++17
 	depends on BR2_USE_WCHAR
 	depends on BR2_TOOLCHAIN_HAS_THREADS
-	depends on (BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_UCLIBC)
+	depends on BR2_TOOLCHAIN_USES_GLIBC
 	depends on BR2_PACKAGE_GOOGLE_BREAKPAD_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_HOST_GOOGLE_BREAKPAD_ARCH_SUPPORTS
 	select BR2_PACKAGE_GOOGLE_BREAKPAD
@@ -663,12 +674,12 @@ config BR2_PACKAGE_OVERRIDE_FILE
 	  documentation for more details on this feature.
 
 config BR2_GLOBAL_PATCH_DIR
-	string "global patch directories"
+	string "global patch and hash directories"
 	help
 	  You may specify a space separated list of one or more
-	  directories containing global package patches. For a specific
-	  version <packageversion> of a specific package <packagename>,
-	  patches are applied as follows:
+	  directories containing global package patches and/or hashes.
+	  For a specific version <packageversion> of a specific package
+	  <packagename>, patches are looked up as follows:
 
 	  First, the default Buildroot patch set for the package is
 	  applied from the package's directory in Buildroot.
@@ -682,25 +693,9 @@ config BR2_GLOBAL_PATCH_DIR
 	  exists, then all *.patch files in the directory will be
 	  applied.
 
+	  The hash files are looked up similarly to the patches.
+
 menu "Advanced"
-
-config BR2_COMPILER_PARANOID_UNSAFE_PATH
-	bool "paranoid check of library/header paths"
-	default y
-	help
-	  By default, when this option is disabled, when the Buildroot
-	  cross-compiler will encounter an unsafe library or header path
-	  (such as /usr/include, or /usr/lib), the compiler will display
-	  a warning.
-
-	  By enabling this option, this warning is turned into an error,
-	  which will completely abort the build when such unsafe paths
-	  are encountered.
-
-	  Note that this mechanism is available for both the internal
-	  toolchain (through the toolchain wrapper and binutils patches)
-	  and external toolchain backends (through the toolchain
-	  wrapper).
 
 config BR2_FORCE_HOST_BUILD
 	bool "Force the building of host dependencies"
@@ -713,6 +708,21 @@ config BR2_FORCE_HOST_BUILD
 	  different build hosts.
 
 	  This option will increase build time.
+
+config BR2_DOWNLOAD_FORCE_CHECK_HASHES
+	bool "Force all downloads to have a valid hash"
+	help
+	  Say 'y' here to enforce downloads to have at least one valid
+	  hash (and of course, that all hashes be valid).
+
+	  By default, Buildroot checks hashes of all packages
+	  downloaded, except those for which a custom version is
+	  used.
+
+	  With this option turned on, Buildroot will check hashes of
+	  all packages, including those that use a custom version. In
+	  order to provide hashes for such packages, place additional
+	  hash files in BR2_GLOBAL_PATCH_DIR directories.
 
 config BR2_REPRODUCIBLE
 	bool "Make the build reproducible (experimental)"
@@ -752,6 +762,20 @@ config BR2_PER_PACKAGE_DIRECTORIES
 	  packages behave properly with per-package directories.
 
 endmenu
+
+config BR2_TIME_BITS_64
+	bool "Build Y2038-ready code"
+	depends on BR2_TOOLCHAIN_USES_GLIBC && !BR2_ARCH_IS_64
+	help
+	  This option will pass -D_TIME_BITS=64 in the compiler flags
+	  to ensure the glibc C library uses a 64-bit representation
+	  for time_t and other time types, which ensures that
+	  programs/libraries will correctly handle time past year
+	  2038.
+
+	  This option only has an effect with glibc >= 2.34, as
+	  earlier glibc versions did not have support for 64-bit
+	  time_t.
 
 comment "Security Hardening Options"
 
@@ -928,6 +952,15 @@ config BR2_FORTIFY_SOURCE_2
 	  checking is added, but some conforming programs might fail.
 	  Also adds checks at run-time (detected buffer overflow
 	  terminates the program)
+
+config BR2_FORTIFY_SOURCE_3
+	bool "Extended"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_12
+	help
+	  This option sets _FORTIFY_SOURCES to 3 and even more
+	  checking is added compared to level 2. Extends checks at
+	  run-time that can introduce an additional performance
+	  overhead.
 
 endchoice
 

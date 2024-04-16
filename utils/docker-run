@@ -2,12 +2,86 @@
 set -o errexit -o pipefail
 DIR=$(dirname "${0}")
 MAIN_DIR=$(readlink -f "${DIR}/..")
-# shellcheck disable=SC2016
-IMAGE=$(grep ^image: "${MAIN_DIR}/.gitlab-ci.yml" | \
-        sed -e 's,^image: ,,g' | sed -e 's,\$CI_REGISTRY,registry.gitlab.com,g')
+if [ -L "${MAIN_DIR}/.git/config" ]; then
+    # Support git-new-workdir
+    GIT_DIR="$(dirname "$(realpath "${MAIN_DIR}/.git/config")")"
+else
+    # Support git-worktree
+    GIT_DIR="$(cd "${MAIN_DIR}" && git rev-parse --no-flags --git-common-dir)"
+fi
+if test -z "${IMAGE}" ; then
+    # shellcheck disable=SC2016
+    IMAGE=$(grep ^image: "${MAIN_DIR}/.gitlab-ci.yml" | \
+            sed -e 's,^image: ,,g' | sed -e 's,\$CI_REGISTRY,registry.gitlab.com,g')
+fi
 
-exec docker run -it --rm \
-    --user $(id -u):$(id -g) \
-    --mount "type=bind,src=${MAIN_DIR},dst=${MAIN_DIR}" \
-    --workdir "${MAIN_DIR}" \
-    "${IMAGE}" "${@}"
+declare -a docker_opts=(
+    -i
+    --rm
+    --user "$(id -u):$(id -g)"
+    --workdir "$(pwd)"
+    --security-opt label=disable
+    --network host
+)
+
+declare -a mountpoints=(
+    "${MAIN_DIR}"
+    "$(pwd)"
+)
+
+# curl lists (and recognises and uses) other types of *_proxy variables,
+# but only those make sense for Buildroot:
+for env in all_proxy http_proxy https_proxy ftp_proxy no_proxy; do
+    if [ "${!env}" ]; then
+        docker_opts+=( --env "${env}" )
+        # The lower-case variant takes precedence on the upper-case one
+        # (dixit curl)
+        continue
+    fi
+    # http_proxy is only lower-case (dixit curl)
+    if [ "${env}" = http_proxy ]; then
+        continue
+    fi
+    # All the others also exist in the upper-case variant
+    env="${env^^}"
+    if [ "${!env}" ]; then
+        docker_opts+=( --env "${env}" )
+    fi
+done
+
+# Empty GIT_DIR means that we are not in a workdir, *and* git is too old
+# to know about worktrees, so we're not in a worktree either. So it means
+# we're in the main git working copy, and thus we don't need to mount the
+# .git directory.
+if [ "${GIT_DIR}" ]; then
+    # GIT_DIR in the main working copy (when git supports worktrees) will
+    # be just '.git', but 'docker run' needs an absolute path. If it is
+    # not absolute, GIT_DIR is relative to MAIN_DIR. If it's an absolute
+    # path already (in a wordir), then that's a noop.
+    GIT_DIR="$(cd "${MAIN_DIR}"; readlink -e "${GIT_DIR}")"
+    mountpoints+=( "${GIT_DIR}" )
+
+    # 'repo' stores .git/objects separately.
+    if [ -L "${GIT_DIR}/objects" ]; then
+        # GITDIR is already an absolute path, but for symetry
+        # with the above, keep the same cd+readlink construct.
+        OBJECTS_DIR="$(cd "${MAIN_DIR}"; readlink -e "${GIT_DIR}/objects")"
+        mountpoints+=( "${OBJECTS_DIR}" )
+    fi
+fi
+
+if [ "${BR2_DL_DIR}" ]; then
+    mountpoints+=( "${BR2_DL_DIR}" )
+    docker_opts+=( --env BR2_DL_DIR )
+fi
+
+# shellcheck disable=SC2013 # can't use while-read because of the assignment
+for dir in $(printf '%s\n' "${mountpoints[@]}" |LC_ALL=C sort -u); do
+    docker_opts+=( --mount "type=bind,src=${dir},dst=${dir}" )
+done
+
+if tty -s; then
+    docker_opts+=( -t )
+fi
+
+exec docker run "${docker_opts[@]}" "${IMAGE}" "${@}"

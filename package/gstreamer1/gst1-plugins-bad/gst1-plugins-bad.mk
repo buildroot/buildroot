@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_PLUGINS_BAD_VERSION = 1.20.4
+GST1_PLUGINS_BAD_VERSION = 1.22.9
 GST1_PLUGINS_BAD_SOURCE = gst-plugins-bad-$(GST1_PLUGINS_BAD_VERSION).tar.xz
 GST1_PLUGINS_BAD_SITE = https://gstreamer.freedesktop.org/src/gst-plugins-bad
 GST1_PLUGINS_BAD_INSTALL_STAGING = YES
@@ -70,7 +70,6 @@ GST1_PLUGINS_BAD_CONF_OPTS += \
 	-Dsvthevcenc=disabled \
 	-Dtranscode=disabled \
 	-Dwasapi2=disabled \
-	-Dzxing=disabled \
 	-Dmagicleap=disabled \
 	-Disac=disabled \
 	-Diqa=disabled \
@@ -745,6 +744,16 @@ else
 GST1_PLUGINS_BAD_CONF_OPTS += -Duvch264=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_VA),y)
+GST1_PLUGINS_BAD_CONF_OPTS += -Dva=enabled
+GST1_PLUGINS_BAD_DEPENDENCIES += libva
+ifeq ($(BR2_PACKAGE_LIBDRM),y)
+GST1_PLUGINS_BAD_DEPENDENCIES += libdrm
+endif
+else
+GST1_PLUGINS_BAD_CONF_OPTS += -Dva=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_VOAACENC),y)
 GST1_PLUGINS_BAD_CONF_OPTS += -Dvoaacenc=enabled
 GST1_PLUGINS_BAD_DEPENDENCIES += vo-aacenc
@@ -800,6 +809,13 @@ GST1_PLUGINS_BAD_CONF_OPTS += -Dzbar=enabled
 GST1_PLUGINS_BAD_DEPENDENCIES += zbar
 else
 GST1_PLUGINS_BAD_CONF_OPTS += -Dzbar=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_ZXING),y)
+GST1_PLUGINS_BAD_CONF_OPTS += -Dzxing=enabled
+GST1_PLUGINS_BAD_DEPENDENCIES += zxing-cpp
+else
+GST1_PLUGINS_BAD_CONF_OPTS += -Dzxing=disabled
 endif
 
 # Add GPL license if GPL licensed plugins enabled.

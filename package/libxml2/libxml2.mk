@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-LIBXML2_VERSION_MAJOR = 2.10
-LIBXML2_VERSION = $(LIBXML2_VERSION_MAJOR).3
+LIBXML2_VERSION_MAJOR = 2.12
+LIBXML2_VERSION = $(LIBXML2_VERSION_MAJOR).6
 LIBXML2_SOURCE = libxml2-$(LIBXML2_VERSION).tar.xz
 LIBXML2_SITE = \
-	http://ftp.gnome.org/pub/gnome/sources/libxml2/$(LIBXML2_VERSION_MAJOR)
+	https://download.gnome.org/sources/libxml2/$(LIBXML2_VERSION_MAJOR)
 LIBXML2_INSTALL_STAGING = YES
 LIBXML2_LICENSE = MIT
 LIBXML2_LICENSE_FILES = Copyright
@@ -20,12 +20,26 @@ ifeq ($(BR2_m68k_cf),y)
 LIBXML2_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -mxgot"
 endif
 
-LIBXML2_CONF_OPTS = --with-gnu-ld --without-python --without-debug
+LIBXML2_CONF_OPTS = --with-gnu-ld --without-debug
 
 HOST_LIBXML2_DEPENDENCIES = host-pkgconf
 LIBXML2_DEPENDENCIES = host-pkgconf
 
-HOST_LIBXML2_CONF_OPTS = --without-zlib --without-lzma --without-python
+HOST_LIBXML2_CONF_OPTS = --without-zlib --without-lzma
+
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
+LIBXML2_DEPENDENCIES += python3
+LIBXML2_CONF_OPTS += --with-python
+else
+LIBXML2_CONF_OPTS += --without-python
+endif
+
+ifeq ($(BR2_PACKAGE_HOST_PYTHON3),y)
+HOST_LIBXML2_DEPENDENCIES += host-python3
+HOST_LIBXML2_CONF_OPTS += --with-python
+else
+HOST_LIBXML2_CONF_OPTS += --without-python
+endif
 
 ifeq ($(BR2_PACKAGE_ICU),y)
 LIBXML2_DEPENDENCIES += icu

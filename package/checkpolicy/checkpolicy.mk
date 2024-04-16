@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-CHECKPOLICY_VERSION = 3.3
+CHECKPOLICY_VERSION = 3.5
 CHECKPOLICY_SITE = https://github.com/SELinuxProject/selinux/releases/download/$(CHECKPOLICY_VERSION)
 CHECKPOLICY_LICENSE = GPL-2.0
-CHECKPOLICY_LICENSE_FILES = COPYING
+CHECKPOLICY_LICENSE_FILES = LICENSE
 
 CHECKPOLICY_DEPENDENCIES = libselinux flex host-flex host-bison
 
@@ -18,11 +18,6 @@ CHECKPOLICY_MAKE_OPTS = $(TARGET_CONFIGURE_OPTS) \
 # DESTDIR is used at build time to find libselinux
 define CHECKPOLICY_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) $(CHECKPOLICY_MAKE_OPTS) DESTDIR=$(STAGING_DIR)
-endef
-
-define CHECKPOLICY_STAGING_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) $(CHECKPOLICY_MAKE_OPTS) DESTDIR=$(STAGING_DIR) install
-
 endef
 
 define CHECKPOLICY_INSTALL_TARGET_CMDS

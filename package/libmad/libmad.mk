@@ -31,6 +31,13 @@ LIBMAD_IGNORE_CVES += CVE-2017-8374
 # is able to properly behave in the face of a missing C++ compiler.
 LIBMAD_AUTORECONF = YES
 
+# libmad has some assembly function that is not present in Thumb mode:
+# Error: selected processor does not support `smull r6,r7,r3,r1' in Thumb mode
+# so, we desactivate Thumb mode
+ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
+LIBMAD_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -marm"
+endif
+
 define LIBMAD_INSTALL_STAGING_PC
 	$(INSTALL) -D package/libmad/mad.pc \
 		$(STAGING_DIR)/usr/lib/pkgconfig/mad.pc
