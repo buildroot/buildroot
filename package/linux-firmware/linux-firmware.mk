@@ -90,7 +90,7 @@ endif
 # Realtek 88xx Bluetooth
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_RTL_88XX_BT),y)
 LINUX_FIRMWARE_FILES += \
-	rtl_bt/rtl88*_fw.bin rtl_bt/rtl88*_config.bin
+	rtl_bt/rtl88*.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.rtlwifi_firmware.txt
 endif
 
