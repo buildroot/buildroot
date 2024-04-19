@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBUSBGX_VERSION = 0.2.0
-LIBUSBGX_SITE = $(call github,libusbgx,libusbgx,libusbgx-v$(LIBUSBGX_VERSION))
+LIBUSBGX_VERSION = a5bfa81017a9b2064bc449cf74f5f9d106445f62
+LIBUSBGX_SITE = $(call github,linux-usb-gadgets,libusbgx,$(LIBUSBGX_VERSION))
 LIBUSBGX_LICENSE = GPL-2.0+ (examples), LGPL-2.1+ (library)
 LIBUSBGX_LICENSE_FILES = COPYING COPYING.LGPL
 LIBUSBGX_DEPENDENCIES = host-pkgconf libconfig
