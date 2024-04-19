@@ -1,0 +1,74 @@
+From 7b7fa3c02d4575c09362336bc310835c37859f1a Mon Sep 17 00:00:00 2001
+From: Angelo Compagnucci <angelo.compagnucci@gmail.com>
+Date: Fri, 19 Apr 2024 22:47:20 +0200
+Subject: [PATCH] setup.py: fix data relative paths
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+As per distutils documentation:
+
+The directory should be a relative path. It is interpreted relative to the
+installation prefix (Python’s sys.prefix for system installations;
+site.USER_BASE for user installations). Distutils allows directory to be an
+absolute installation path, but this is discouraged since it is incompatible
+with the wheel packaging format [1].
+
+When packaging to a bdist_wheel indeed, the files in the "data_files" dictionary
+are not picked at all as data files if they have an absolute path,
+but they are instead added to the wheel as python files.
+This has the effect of installing them as part of python files in the
+site-packages folder when the wheel is installed.
+
+This patch cannot be sent upstream because it breaks the legacy way of
+installing the package with *python setup.py install* and it is needed only to
+comply with the pep517 buildroot compatibility layer.
+
+[1] https://docs.python.org/3.10/distutils/setupscript.html#installing-additional-files
+Signed-off-by: Angelo Compagnucci <angelo.compagnucci@gmail.com>
+Upstream: N/A [breaks traditional setuptools installation]
+---
+ setup.py | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/setup.py b/setup.py
+index 91f71cf2..99ba2e32 100755
+--- a/setup.py
++++ b/setup.py
+@@ -238,26 +238,26 @@ setup(
+ 				for f in w[2]]
+ 	} if with_tests else {},
+ 	data_files = [
+-		('/etc/fail2ban',
++		('etc/fail2ban',
+ 			glob("config/*.conf")
+ 		),
+-		('/etc/fail2ban/filter.d',
++		('etc/fail2ban/filter.d',
+ 			glob("config/filter.d/*.conf")
+ 		),
+-		('/etc/fail2ban/filter.d/ignorecommands',
++		('etc/fail2ban/filter.d/ignorecommands',
+ 			[p for p in glob("config/filter.d/ignorecommands/*") if isfile(p)]
+ 		),
+-		('/etc/fail2ban/action.d',
++		('etc/fail2ban/action.d',
+ 			glob("config/action.d/*.conf") +
+ 			glob("config/action.d/*.py")
+ 		),
+-		('/etc/fail2ban/fail2ban.d',
++		('etc/fail2ban/fail2ban.d',
+ 			''
+ 		),
+-		('/etc/fail2ban/jail.d',
++		('etc/fail2ban/jail.d',
+ 			''
+ 		),
+-		('/var/lib/fail2ban',
++		('var/lib/fail2ban',
+ 			''
+ 		),
+ 	] + data_files_extra,
+-- 
+2.34.1
+
