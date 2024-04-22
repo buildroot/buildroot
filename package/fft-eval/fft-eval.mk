@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FFT_EVAL_VERSION = 6a82b383ce79afc4c1ba26ffcf34b15d3e95894b
+FFT_EVAL_VERSION = 777749c5c7cc0af1fe5a74e3c589581eabcf0f1e
 FFT_EVAL_SITE = $(call github,simonwunderlich,FFT_eval,$(FFT_EVAL_VERSION))
 FFT_EVAL_LICENSE = CC0-1.0 (doc), GPL-2.0, OFL-1.1 (LiberationSans-Regular.ttf)
 FFT_EVAL_LICENSE_FILES = \
