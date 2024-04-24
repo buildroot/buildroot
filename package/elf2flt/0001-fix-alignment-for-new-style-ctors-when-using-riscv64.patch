@@ -1,0 +1,34 @@
+From eead8d5e9f3911243182311f16178c25c6ea03c4 Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Sat, 23 Mar 2024 07:23:45 +0100
+Subject: [PATCH] fix alignment for new-style ctors when using riscv64
+
+Recently uClibc-ng enabled UCLIBC_CTOR_DTOR for riscv64, so
+that f.e. C++ applications are running fine. As a side effect
+this breaks noMMU support. The problem is the alignment for
+the ctors in elf2flt. This patch fixes it.
+
+Tested with Qemu for ARM, M68k and Xtensa with no regressions.
+
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://github.com/uclinux-dev/elf2flt/commit/eead8d5e9f3911243182311f16178c25c6ea03c4
+---
+ elf2flt.ld.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/elf2flt.ld.in b/elf2flt.ld.in
+index a99c69e..230c382 100644
+--- a/elf2flt.ld.in
++++ b/elf2flt.ld.in
+@@ -139,7 +139,7 @@ R_RODAT:	*(.gnu.linkonce.r*)
+ 		@SYMBOL_PREFIX@_ssro_size = @SYMBOL_PREFIX@_essro - @SYMBOL_PREFIX@_ssro;
+ 		PROVIDE(@SYMBOL_PREFIX@_SDA2_BASE_ = @SYMBOL_PREFIX@_ssro + (@SYMBOL_PREFIX@_ssro_size / 2));
+ 
+-		. = ALIGN(4) ;
++		. = ALIGN(8) ;
+ TOR:		@SYMBOL_PREFIX@__CTOR_LIST__ = .;
+ TOR:		LONG((@SYMBOL_PREFIX@__CTOR_END__ - @SYMBOL_PREFIX@__CTOR_LIST__) / 4 - 2)
+ SINGLE_LINK:	/* gcc uses crtbegin.o to find the start of
+-- 
+2.30.2
+
