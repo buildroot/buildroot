@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-RASPBERRYPI_USBBOOT_VERSION = 2021.07.01
+RASPBERRYPI_USBBOOT_VERSION = 20221215-105525
 RASPBERRYPI_USBBOOT_SITE = \
-	$(call github,raspberrypi,usbboot,v$(RASPBERRYPI_USBBOOT_VERSION))
+	$(call github,raspberrypi,usbboot,$(RASPBERRYPI_USBBOOT_VERSION))
 RASPBERRYPI_USBBOOT_LICENSE = Apache-2.0
 RASPBERRYPI_USBBOOT_LICENSE_FILES = LICENSE
 
