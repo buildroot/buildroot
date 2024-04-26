@@ -2,3 +2,7 @@ config BR2_PACKAGE_KERNEL_MODULE
         bool "kernel_module of seeed reterminal"
         depends on BR2_LINUX_KERNEL
 	depends on BR2_PACKAGE_DTC_PROGRAMS
+
+config BR2_DEV_NAME
+        string "Board type name"
+        depends on BR2_PACKAGE_KERNEL_MODULE
