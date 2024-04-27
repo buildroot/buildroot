@@ -1,0 +1,11 @@
+config BR2_PACKAGE_PYTHON_SYMPY
+	bool "python-sympy"
+	select BR2_PACKAGE_PYTHON_MPMATH # runtime
+	help
+	  SymPy is a Python library for symbolic mathematics. It aims
+	  to become a full-featured computer algebra system (CAS)
+	  while keeping the code as simple as possible in order to be
+	  comprehensible and easily extensible. SymPy is written
+	  entirely in Python.
+
+	  https://www.sympy.org/
