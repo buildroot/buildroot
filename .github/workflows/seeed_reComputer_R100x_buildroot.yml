@@ -28,7 +28,7 @@ jobs:
           cache-name: cache-download-files
         with:
           path: ${{ github.workspace }}/seeed-linux-buildroot/dl/
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/seeed-linux-buildroot/configs/reComputer_R100x__64_defconfig') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/seeed-linux-buildroot/configs/reComputer_R100x_64_defconfig') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
