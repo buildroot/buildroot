@@ -37,7 +37,7 @@ jobs:
       - name: Configure Buildroot
         run: |
           cd ${{ github.workspace }}/seeed-linux-buildroot/
-          make reComputer_R100x__64_defconfig
+          make reComputer_R100x_64_defconfig
 
       - name: Build
         run: |
