@@ -1,0 +1,49 @@
+From b4a692f46135af1011bf0adbfeb19abf354ca191 Mon Sep 17 00:00:00 2001
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Tue, 30 Apr 2024 09:40:55 +0200
+Subject: [PATCH] tests/fp/meson: don't build fp-bench test if fenv.h is
+ missing
+
+The fp-bench test (i. e. tests/fp/fp-bench.c) use fenv.h that is not
+always provided by the libc (uClibc). The patch disables its compilation
+in case the header is not available.
+
+The patch is based on a suggestion from Paolo Bonzini, which you can
+find at the following link.
+
+Link: https://lists.nongnu.org/archive/html/qemu-devel/2021-03/msg00492.html
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: https://patchwork.ozlabs.org/project/qemu-devel/patch/20240430164752.645521-1-dario.binacchi@amarulasolutions.com/
+---
+ tests/fp/meson.build | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/tests/fp/meson.build b/tests/fp/meson.build
+index cbc17392d678..cd052667e940 100644
+--- a/tests/fp/meson.build
++++ b/tests/fp/meson.build
+@@ -126,12 +126,14 @@ test('fp-test-mulAdd', fptest,
+            ['f16_mulAdd', 'f32_mulAdd', 'f64_mulAdd', 'f128_mulAdd'],
+      suite: ['softfloat-slow', 'softfloat-ops-slow', 'slow'], timeout: 90)
+ 
+-executable(
+-  'fp-bench',
+-  ['fp-bench.c', '../../fpu/softfloat.c'],
+-  dependencies: [qemuutil, libtestfloat, libsoftfloat],
+-  c_args: fpcflags,
+-)
++if cc.has_header('fenv.h')
++  executable(
++    'fp-bench',
++    ['fp-bench.c', '../../fpu/softfloat.c'],
++    dependencies: [qemuutil, libtestfloat, libsoftfloat],
++    c_args: fpcflags,
++  )
++endif
+ 
+ fptestlog2 = executable(
+   'fp-test-log2',
+-- 
+2.43.0
+
