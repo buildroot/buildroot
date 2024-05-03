@@ -9,3 +9,9 @@ config BR2_PACKAGE_BATS_CORE
 	  write behave as expected.
 
 	  https://github.com/bats-core/bats-core
+
+if BR2_PACKAGE_BATS_CORE
+
+source "package/bats-support/Config.in"
+
+endif
