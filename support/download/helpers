@@ -61,7 +61,7 @@ mk_tar_gz() {
     # Create POSIX tarballs, since that's the format the most reproducible
     tar cf - --transform="s#^\./#${base_dir}/#S" \
              --numeric-owner --owner=0 --group=0 --mtime="${date}" \
-             --format=posix --pax-option="${pax_options}" \
+             --format=posix --pax-option="${pax_options}" --mode='go=u,go-w' \
              -T "${tmp}.sorted" >"${tmp}.tar"
 
     # Compress the archive

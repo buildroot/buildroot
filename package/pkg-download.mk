@@ -19,9 +19,11 @@ export SFTP := $(call qstrip,$(BR2_SFTP))
 export LOCALFILES := $(call qstrip,$(BR2_LOCALFILES))
 
 # Version of the format of the archives we generate in the corresponding
-# download backend:
-BR_FMT_VERSION_git = -br2
-BR_FMT_VERSION_svn = -br3
+# download backend and post-process:
+BR_FMT_VERSION_git = -git3
+BR_FMT_VERSION_svn = -svn4
+BR_FMT_VERSION_go = -go1
+BR_FMT_VERSION_cargo = -cargo1
 
 DL_WRAPPER = support/download/dl-wrapper
 
