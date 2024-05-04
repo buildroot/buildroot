@@ -1,0 +1,56 @@
+From 142c3b2414f0adfb13b59dea993054a0daa6cd52 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 4 May 2024 10:04:20 +0200
+Subject: [PATCH] stress-sock.c: fix build without SO_ZEROCOPY
+
+uclibc-ng defines MSG_ZEROCOPY but not SO_ZEROCOPY resulting in the
+following build failure since version 0.17.04 and
+https://github.com/ColinIanKing/stress-ng/commit/2ad8aff9bc1ab822cf615c72712c6031a8f60bbd:
+
+stress-sock.c: In function 'stress_sock_client':
+stress-sock.c:656:35: error: 'SO_ZEROCOPY' undeclared (first use in this function); did you mean 'MSG_ZEROCOPY'?
+  656 |    if (setsockopt(fd, SOL_SOCKET, SO_ZEROCOPY, &so_zerocopy, sizeof(so_zerocopy)) == 0) {
+      |                                   ^~~~~~~~~~~
+      |                                   MSG_ZEROCOPY
+stress-sock.c:656:35: note: each undeclared identifier is reported only once for each function it appears in
+CC stress-sockfd.c
+stress-sock.c: In function 'stress_sock_server':
+stress-sock.c:1060:34: error: 'SO_ZEROCOPY' undeclared (first use in this function); did you mean 'MSG_ZEROCOPY'?
+ 1060 |   if (setsockopt(fd, SOL_SOCKET, SO_ZEROCOPY, &so_zerocopy, sizeof(so_zerocopy)) == 0) {
+      |                                  ^~~~~~~~~~~
+      |                                  MSG_ZEROCOPY
+
+Fixes:
+ - http://autobuild.buildroot.org/results/bcff31bd9820cf0b95f8d8c6de44fd4ab8e2f065
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/ColinIanKing/stress-ng/commit/142c3b2414f0adfb13b59dea993054a0daa6cd52
+---
+ stress-sock.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/stress-sock.c b/stress-sock.c
+index 253730168..880530d04 100644
+--- a/stress-sock.c
++++ b/stress-sock.c
+@@ -649,7 +649,7 @@ retry:
+ 				args->name, errno, strerror(errno));
+ 			goto free_controls;
+ 		}
+-#if defined(MSG_ZEROCOPY)
++#if defined(MSG_ZEROCOPY) && defined(SO_ZEROCOPY)
+ 		if (sock_zerocopy) {
+ 			int so_zerocopy = 1;
+
+@@ -1053,7 +1053,7 @@ static int OPTIMIZE3 stress_sock_server(
+ 		goto die;
+ 	}
+
+-#if defined(MSG_ZEROCOPY)
++#if defined(MSG_ZEROCOPY) && defined(SO_ZEROCOPY)
+ 	if (sock_zerocopy) {
+ 		int so_zerocopy = 1;
+
+--
+2.43.0
+
