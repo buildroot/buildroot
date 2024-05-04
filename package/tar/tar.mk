@@ -4,20 +4,24 @@
 #
 ################################################################################
 
-TAR_VERSION = 1.34
+TAR_VERSION = 1.35
 TAR_SOURCE = tar-$(TAR_VERSION).tar.xz
 TAR_SITE = $(BR2_GNU_MIRROR)/tar
-# busybox installs in /bin, so we need tar to install as well in /bin
-# so that we don't end up with two different tar
-TAR_CONF_OPTS = --exec-prefix=/
 TAR_LICENSE = GPL-3.0+
 TAR_LICENSE_FILES = COPYING
 TAR_CPE_ID_VENDOR = gnu
 TAR_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES)
 TAR_CONF_ENV = LIBS=$(TARGET_NLS_LIBS)
 
-# 0002-Fix-boundary-checking-in-base-256-decoder.patch
-TAR_IGNORE_CVES += CVE-2022-48303
+# busybox installs in /bin, so we need tar to install as well in /bin
+# so that we don't end up with two different tar
+#
+# --disable-year2038: tells the configure script to not abort if the
+# system is not Y2038 compliant. tar will support year2038 if the
+# system is compliant even with this option passed
+TAR_CONF_OPTS = \
+	--exec-prefix=/ \
+	--disable-year2038
 
 ifeq ($(BR2_PACKAGE_ACL),y)
 TAR_DEPENDENCIES += acl
