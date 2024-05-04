@@ -132,7 +132,7 @@ _git remote set-url origin "'${uri}'"
 
 printf "Fetching all references\n"
 _git fetch origin
-_git fetch origin -t
+_git fetch origin -t -f
 
 # Try to get the special refs exposed by some forges (pull-requests for
 # github, changes for gerrit...). There is no easy way to know whether
