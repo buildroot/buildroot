@@ -123,3 +123,13 @@ LIBFOO_PRE_PATCH_HOOKS += LIBFOO_ARCH_PATCHES
 
 Note that no package in Buildroot has architecture-specific patches, and
 that such patches will most probably not be accepted.
+
+[[migrating-git-attributes]]
+=== Migrating to 2024.05
+
+The git download backend now properly expands the `export-subst`
+https://git-scm.com/docs/gitattributes[git attribute] when generating
+archives. Because of this, the archive version suffix has been updated,
+to +-br2+, so the hash files must be updated accordingly. Since
+`export-subst` is usually not used, the hash itself usually doesn't change,
+so the update can be done with `sed -r -i e 's/-br1/-br2/'`.
