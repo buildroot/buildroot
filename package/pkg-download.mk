@@ -20,10 +20,10 @@ export LOCALFILES := $(call qstrip,$(BR2_LOCALFILES))
 
 # Version of the format of the archives we generate in the corresponding
 # download backend and post-process:
-BR_FMT_VERSION_git = -git3
-BR_FMT_VERSION_svn = -svn4
-BR_FMT_VERSION_go = -go1
-BR_FMT_VERSION_cargo = -cargo1
+BR_FMT_VERSION_git = -git4
+BR_FMT_VERSION_svn = -svn5
+BR_FMT_VERSION_go = -go2
+BR_FMT_VERSION_cargo = -cargo2
 
 DL_WRAPPER = support/download/dl-wrapper
 
