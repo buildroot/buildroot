@@ -33,15 +33,6 @@ LUAJIT_HOST_CC = $(HOSTCC) -m32
 LUAJIT_XCFLAGS += -DLUAJIT_DISABLE_GC64
 endif
 
-# emulation of git archive with .gitattributes & export-subst
-# Timestamp of the $(LUAJIT_VERSION) commit, obtained in the LuaJit
-# repo, with:   git show -s --format=%ct $(LUAJIT_VERSION)
-define LUAJIT_GEN_RELVER_FILE
-	echo 1693350652 >$(@D)/.relver
-endef
-LUAJIT_POST_EXTRACT_HOOKS = LUAJIT_GEN_RELVER_FILE
-HOST_LUAJIT_POST_EXTRACT_HOOKS = LUAJIT_GEN_RELVER_FILE
-
 # We unfortunately can't use TARGET_CONFIGURE_OPTS, because the luajit
 # build system uses non conventional variable names.
 define LUAJIT_BUILD_CMDS
