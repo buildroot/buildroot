@@ -1,0 +1,66 @@
+From 7a3f478a4b7128d4f70ea64d99fedec766b1c009 Mon Sep 17 00:00:00 2001
+From: Jaco Kroon <jaco@uls.co.za>
+Date: Tue, 31 Oct 2023 11:47:21 +0200
+Subject: [PATCH] pppd/sys-linux: Fix compile with older Linux kernel headers
+ (#452)
+
+When compiling pppd against kernel headers which don't provide
+the definitions for the NETLINK mechanisms, leave out the code
+which uses NETLINK, so as to avoid getting compile errors.
+
+Upstream commit in Linux refers.
+
+commit 10c9ead9f3c6bb24bddc9a96681f7d58e6623966
+Author: Roopa Prabhu <roopa@cumulusnetworks.com>
+Date:   Wed Apr 20 08:43:43 2016 -0700
+rtnetlink: add new RTM_GETSTATS message to dump link stats
+
+This commit adds the #defines and structs used, so simply not compiling
+this code if the required #defines isn't there should solve the problem.
+
+Closes: #450
+
+Signed-off-by: Jaco Kroon <jaco@uls.co.za>
+Upstream: https://github.com/ppp-project/ppp/commit/7a3f478a4b7128d4f70ea64d99fedec766b1c009
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ pppd/sys-linux.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
+
+diff --git a/pppd/sys-linux.c b/pppd/sys-linux.c
+index 561b150f2..a8d6cd95b 100644
+--- a/pppd/sys-linux.c
++++ b/pppd/sys-linux.c
+@@ -131,16 +131,6 @@
+ #include <linux/netlink.h>
+ #include <linux/rtnetlink.h>
+ #include <linux/if_link.h>
+-
+-/* Attempt at retaining compile-support with older than 4.7 kernels, or kernels
+- * where RTM_NEWSTATS isn't defined for whatever reason.
+- */
+-#ifndef RTM_NEWSTATS
+-#define RTM_NEWSTATS 92
+-#define RTM_GETSTATS 94
+-#define IFLA_STATS_LINK_64 1
+-#endif
+-
+ #include <linux/if_addr.h>
+ 
+ /* glibc versions prior to 2.24 do not define SOL_NETLINK */
+@@ -1776,6 +1766,7 @@ get_ppp_stats_ioctl(int u, struct pppd_stats *stats)
+ static int
+ get_ppp_stats_rtnetlink(int u, struct pppd_stats *stats)
+ {
++#ifdef RTM_NEWSTATS
+     static int fd = -1;
+ 
+     struct {
+@@ -1825,6 +1816,7 @@ get_ppp_stats_rtnetlink(int u, struct pppd_stats *stats)
+ err:
+     close(fd);
+     fd = -1;
++#endif
+     return 0;
+ }
+ 
