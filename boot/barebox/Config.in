@@ -76,7 +76,7 @@ config BR2_TARGET_BAREBOX_CUSTOM_GIT_VERSION
 
 endif
 
-source boot/barebox/barebox/Config.in
+source "boot/barebox/barebox/Config.in"
 
 menuconfig BR2_TARGET_BAREBOX_AUX
 	bool "Build barebox with an auxiliary config"
@@ -90,7 +90,7 @@ menuconfig BR2_TARGET_BAREBOX_AUX
 
 if BR2_TARGET_BAREBOX_AUX
 
-source boot/barebox/barebox-aux/Config.in
+source "boot/barebox/barebox-aux/Config.in"
 
 endif
 
