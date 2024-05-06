@@ -1,0 +1,52 @@
+From 6e1d8aceea8c4e49f00d8e630b681641a36c688f Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 6 May 2024 09:31:05 +0200
+Subject: [PATCH] configure.ac: fix static build
+
+static build is broken since
+https://github.com/OISF/suricata/commit/31ba4fd1522dd0d7f933767b9205c67a4e726fe5
+because AC_CHECK_LIB is called before PKG_CHECK_MODULES:
+
+configure:22378: checking for pcap_open_dead in -lpcap
+configure:22407: /home/buildroot/autobuild/run/instance-3/output-1/host/bin/x86_64-linux-gcc -o conftest -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -O2 -g0  -static -std=c11 -march=native -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -static -rdynamic conftest.c -lpcap  -ljansson -lpthread -lyaml -lpcre -latomic -lz >&5
+/home/buildroot/autobuild/run/instance-3/output-1/host/opt/ext-toolchain/bin/../lib/gcc/x86_64-buildroot-linux-musl/12.3.0/../../../../x86_64-buildroot-linux-musl/bin/ld: /home/buildroot/autobuild/run/instance-3/output-1/host/x86_64-buildroot-linux-musl/sysroot/usr/lib/../lib64/libpcap.a(pcap-linux.o): in function `nl80211_init':
+pcap-linux.c:(.text+0xc34): undefined reference to `nl_socket_alloc'
+
+[...]
+
+checking for pcap_open_dead in -lpcap... no
+
+Fixes:
+ - http://autobuild.buildroot.org/results/9e25c2508bd4100d2d1d3180e79060d762361213
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://redmine.openinfosecfoundation.org/issues/7008
+---
+ configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 232ee9bed..6277cb9b6 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1219,6 +1219,8 @@
+         fi
+     fi
+ 
++    PKG_CHECK_MODULES([PCAP],libpcap,[CPPFLAGS="${CPPFLAGS} ${PCAP_CFLAGS}" LIBS="${LIBS} ${PCAP_LIBS}"],[:])
++
+     if test "$have_wpcap" != "yes"; then
+         AC_CHECK_LIB(pcap, pcap_open_dead, [], [
+             echo
+@@ -1234,8 +1236,6 @@
+         PCAP_LIB_NAME="pcap"
+     fi
+ 
+-    PKG_CHECK_MODULES([PCAP],libpcap,[CPPFLAGS="${CPPFLAGS} ${PCAP_CFLAGS}" LIBS="${LIBS} ${PCAP_LIBS}"],[:])
+-
+     AC_PATH_PROG(HAVE_PCAP_CONFIG, pcap-config, "no")
+     if test "$HAVE_PCAP_CONFIG" = "no" -o "$cross_compiling" = "yes"; then
+         AC_MSG_RESULT(no pcap-config is use)
+-- 
+2.43.0
+
