@@ -17,6 +17,13 @@ PPPD_AUTORECONF = YES
 PPPD_INSTALL_STAGING = YES
 PPPD_CONF_OPTS = --enable-multilink
 
+ifeq ($(BR2_PACKAGE_LINUX_PAM),y)
+PPPD_CONF_OPTS += --with-pam=$(STAGING_DIR)/usr
+PPPD_DEPENDENCIES += linux-pam
+else
+PPPD_CONF_OPTS += --without-pam
+endif
+
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 PPPD_CONF_OPTS += \
 	--enable-eaptls \
