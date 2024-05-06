@@ -12,6 +12,13 @@ OPROFILE_CPE_ID_VENDOR = maynard_johnson
 OPROFILE_CONF_OPTS = \
 	--disable-account-check \
 	--with-kernel=$(STAGING_DIR)/usr
+# 0002-fix-static-build-with-binutils-2.40.patch
+OPROFILE_AUTORECONF = YES
+
+define OPROFILE_CREATE_MISSING_FILES
+	touch $(@D)/NEWS $(@D)/AUTHORS $(@D)/ChangeLog
+endef
+OPROFILE_POST_EXTRACT_HOOKS += OPROFILE_CREATE_MISSING_FILES
 
 OPROFILE_DEPENDENCIES = popt binutils host-pkgconf
 
