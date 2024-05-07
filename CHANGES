@@ -1,3 +1,31 @@
+2024.02.2, released May 7th, 2024
+
+	Important / security related fixes.
+
+        Security: The /dev/shm entry in the default /etc/fstab used
+        for busybox and sysv init systems was missing the sticky bit,
+        allowing users to delete and replace other users files.
+
+        Defconfigs: Mangopi mq1rdw1: Lock kernel headers to 6.6.x.
+
+	Updated/fixed packages: apache, botan,
+	brcmfmac_sdio-firmware-rpi, clamav, cmake, containerd,
+	crucible, dmenu-wayland, dmraid, docker-cli, docker-engine,
+	domoticz, fmc, freeipmi, gdal, gdb, giflib, gnupg2, go,
+	google-breakpad, googlefontdirectory, imx-gpu-viv, inih,
+	libassuan, libblockdev, libcurl, libdrm, libgpg-error,
+	libksba, libnpth, libressl, libtracefs, lxc, mbedtls, mesa3d,
+	oatpp, opensc, oprofile, perl-net-ssleay, petitboot,
+	php-xdebug, psplash, python-pypng, python-segno,
+	python-service-identity, python3, skeleton-init-sysv, systemd,
+	tcf-agent, tiff, uuu, wolfssl, xmrig, zic
+
+	Issues resolved (http://bugs.uclibc.org):
+
+        #14416: Mesa3D missing DRI3 support for various Gallium drivers
+        #16009: 'select' does not work with 'choice'
+        #16036: android-tools version is too old
+
 2024.02.1, released March 26th, 2024
 
 	Important / security related fixes.
