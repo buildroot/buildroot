@@ -41,10 +41,7 @@ PKG_PYTHON_ENV = \
 	PATH=$(BR_PATH) \
 	$(TARGET_CONFIGURE_OPTS) \
 	PYTHONPATH="$(PYTHON3_PATH)" \
-	PYTHONNOUSERSITE=1 \
-	_python_sysroot=$(STAGING_DIR) \
-	_python_prefix=/usr \
-	_python_exec_prefix=/usr
+	PYTHONNOUSERSITE=1
 
 # Host python packages
 HOST_PKG_PYTHON_ENV = \
