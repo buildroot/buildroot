@@ -1,4 +1,4 @@
-From c9a2ea3edacf57746517600ccc11c254a9fd6c48 Mon Sep 17 00:00:00 2001
+From 3ed9d35554631a1e0c438636b60b6b9b699cba4b Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:40:45 -0800
 Subject: [PATCH] Add an option to disable expat
@@ -21,10 +21,10 @@ Signed-off-by: Adam Duskett <aduskett@gmail.com>
  2 files changed, 18 insertions(+), 7 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 8e879b35c6..80d617cf7f 100644
+index 09408c3471f..8e5f6762d20 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1925,7 +1925,6 @@ LIBSUBDIRS=	asyncio \
+@@ -1938,7 +1938,6 @@ LIBSUBDIRS=	asyncio \
  		urllib \
  		venv venv/scripts venv/scripts/common venv/scripts/posix \
  		wsgiref \
@@ -32,7 +32,7 @@ index 8e879b35c6..80d617cf7f 100644
  		xmlrpc \
  		zoneinfo \
  		__phello__
-@@ -2027,6 +2026,10 @@ ifeq (@CURSES@,yes)
+@@ -2087,6 +2086,10 @@ ifeq (@CURSES@,yes)
  LIBSUBDIRS += curses
  endif
  
@@ -44,10 +44,10 @@ index 8e879b35c6..80d617cf7f 100644
  libinstall:	all $(srcdir)/Modules/xxmodule.c
  	@for i in $(SCRIPTDIR) $(LIBDEST); \
 diff --git a/configure.ac b/configure.ac
-index 0ae9863cd6..201cad0bfc 100644
+index 5d52c813ba6..6e577f19b8c 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3565,15 +3565,23 @@ LIBS="$withval $LIBS"
+@@ -3615,15 +3615,23 @@ LIBS="$withval $LIBS"
  AC_SUBST(DISABLED_EXTENSIONS)
  
  # Check for use of the system expat library
@@ -78,5 +78,5 @@ index 0ae9863cd6..201cad0bfc 100644
    LIBEXPAT_LDFLAGS=${LIBEXPAT_LDFLAGS-"-lexpat"}
    LIBEXPAT_INTERNAL=
 -- 
-2.34.1
+2.44.0
 

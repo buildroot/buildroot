@@ -1,4 +1,4 @@
-From 03e28cdd46dac1b7e4e9c8bbd2ea44b09e514205 Mon Sep 17 00:00:00 2001
+From d843bceff915b2a50b36a9db8552e0db5bd90f6d Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:31:51 -0800
 Subject: [PATCH] Add an option to disable the curses module
@@ -15,10 +15,10 @@ Signed-off-by: Adam Duskett <aduskett@gmail.com>
  2 files changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 4f83911200..8e879b35c6 100644
+index 6ab184fe5f8..09408c3471f 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1905,7 +1905,6 @@ LIBSUBDIRS=	asyncio \
+@@ -1918,7 +1918,6 @@ LIBSUBDIRS=	asyncio \
  		concurrent concurrent/futures \
  		csv \
  		ctypes ctypes/macholib \
@@ -26,7 +26,7 @@ index 4f83911200..8e879b35c6 100644
  		dbm \
  		distutils distutils/command \
  		email email/mime \
-@@ -2024,6 +2023,9 @@ TESTSUBDIRS += tkinter/test tkinter/test/test_tkinter \
+@@ -2084,6 +2083,9 @@ TESTSUBDIRS += tkinter/test tkinter/test/test_tkinter \
  	tkinter/test/test_ttk
  endif
  
@@ -37,10 +37,10 @@ index 4f83911200..8e879b35c6 100644
  TEST_MODULES=@TEST_MODULES@
  libinstall:	all $(srcdir)/Modules/xxmodule.c
 diff --git a/configure.ac b/configure.ac
-index f4ce506801..0ae9863cd6 100644
+index 342b295bcdd..5d52c813ba6 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4189,6 +4189,15 @@ if test "$TK" = "no"; then
+@@ -4240,6 +4240,15 @@ if test "$TK" = "no"; then
     DISABLED_EXTENSIONS="${DISABLED_EXTENSIONS} _tkinter"
  fi
  
@@ -57,5 +57,5 @@ index f4ce506801..0ae9863cd6 100644
  
  AC_ARG_ENABLE(pydoc,
 -- 
-2.34.1
+2.44.0
 

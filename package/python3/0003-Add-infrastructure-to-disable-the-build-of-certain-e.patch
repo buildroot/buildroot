@@ -1,4 +1,4 @@
-From 8e02cebdac536dfb6748da2c50656a26f70d9da7 Mon Sep 17 00:00:00 2001
+From 533aa8d7eb7ad27428410371504c6b94183852c1 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 16:33:22 -0800
 Subject: [PATCH] Add infrastructure to disable the build of certain extensions
@@ -44,7 +44,7 @@ Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
  3 files changed, 11 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 2957c8e5a1..c1cfb96767 100644
+index f90ec2eeb1d..5a40b7c5484 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
 @@ -239,6 +239,8 @@ FILEMODE=	644
@@ -56,7 +56,7 @@ index 2957c8e5a1..c1cfb96767 100644
  
  # Subdirectories with code
  SRCDIRS= 	@SRCDIRS@
-@@ -739,6 +741,7 @@ sharedmods: $(PYTHON_FOR_BUILD_DEPS) pybuilddir.txt @LIBMPDEC_INTERNAL@ @LIBEXPA
+@@ -743,6 +745,7 @@ sharedmods: $(PYTHON_FOR_BUILD_DEPS) pybuilddir.txt @LIBMPDEC_INTERNAL@ @LIBEXPA
  	    *) quiet="";; \
  	esac; \
  	echo "$(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' \
@@ -64,7 +64,7 @@ index 2957c8e5a1..c1cfb96767 100644
  		$(PYTHON_FOR_BUILD) $(srcdir)/setup.py $$quiet build"; \
  	$(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' \
  		$(PYTHON_FOR_BUILD) $(srcdir)/setup.py $$quiet build
-@@ -2228,7 +2231,8 @@ libainstall: all python-config
+@@ -2289,7 +2292,8 @@ libainstall: all python-config
  # Install the dynamically loadable modules
  # This goes into $(exec_prefix)
  sharedinstall: all
@@ -75,10 +75,10 @@ index 2957c8e5a1..c1cfb96767 100644
  		--install-scripts=$(BINDIR) \
  		--install-platlib=$(DESTSHARED) \
 diff --git a/configure.ac b/configure.ac
-index 830885fcb3..5a6a1fe608 100644
+index 1e84aa0bb7f..b4d7d2cca6a 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3562,6 +3562,8 @@ LIBS="$withval $LIBS"
+@@ -3612,6 +3612,8 @@ LIBS="$withval $LIBS"
  ],
  [AC_MSG_RESULT(no)])
  
@@ -88,7 +88,7 @@ index 830885fcb3..5a6a1fe608 100644
  AC_MSG_CHECKING(for --with-system-expat)
  AC_ARG_WITH(system_expat,
 diff --git a/setup.py b/setup.py
-index 15d0d4576a..e496ee34c2 100644
+index ad8fb81b218..2e15fedeab2 100644
 --- a/setup.py
 +++ b/setup.py
 @@ -56,7 +56,10 @@
@@ -104,5 +104,5 @@ index 15d0d4576a..e496ee34c2 100644
  # --list-module-names option used by Tools/scripts/generate_module_names.py
  LIST_MODULE_NAMES = False
 -- 
-2.34.1
+2.44.0
 

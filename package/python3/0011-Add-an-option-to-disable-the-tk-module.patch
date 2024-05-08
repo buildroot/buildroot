@@ -1,4 +1,4 @@
-From bbbfe699d648a5cb191203b16e1786e8cf4ea908 Mon Sep 17 00:00:00 2001
+From 61535b58452a18d6654a02fd25bfbc562bbbdbea Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:23:42 -0800
 Subject: [PATCH] Add an option to disable the tk module
@@ -12,15 +12,15 @@ Signed-off-by: Adam Duskett <aduskett@gmail.com>
 [ Bernd Kuhls: ported to Python 3.11.4]
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 ---
- Makefile.pre.in | 10 +++++++---
+ Makefile.pre.in | 11 +++++++----
  configure.ac    |  9 +++++++++
- 2 files changed, 16 insertions(+), 3 deletions(-)
+ 2 files changed, 16 insertions(+), 4 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 9f4cdf14cf..4f83911200 100644
+index 1c7b38ce4f6..6ab184fe5f8 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1920,7 +1920,6 @@ LIBSUBDIRS=	asyncio \
+@@ -1933,7 +1933,6 @@ LIBSUBDIRS=	asyncio \
  		multiprocessing multiprocessing/dummy \
  		re \
  		site-packages \
@@ -28,7 +28,7 @@ index 9f4cdf14cf..4f83911200 100644
  		tomllib \
  		turtledemo \
  		unittest \
-@@ -2038,9 +2038,6 @@
+@@ -2060,9 +2059,6 @@ TESTSUBDIRS=	ctypes/test \
  		test/xmltestdata \
  		test/xmltestdata/c14n-20 \
  		test/ziptestdata \
@@ -37,8 +37,8 @@ index 9f4cdf14cf..4f83911200 100644
 -		tkinter/test/test_ttk \
  		unittest/test \
  		unittest/test/testmock
- ifeq (@PYDOC@,yes)
-@@ -2021,6 +2018,13 @@ ifeq (@SQLITE3@,yes)
+ 
+@@ -2082,6 +2078,13 @@ ifeq (@SQLITE3@,yes)
  LIBSUBDIRS += sqlite3
  endif
  
@@ -53,10 +53,10 @@ index 9f4cdf14cf..4f83911200 100644
  libinstall:	all $(srcdir)/Modules/xxmodule.c
  	@for i in $(SCRIPTDIR) $(LIBDEST); \
 diff --git a/configure.ac b/configure.ac
-index 4cc0951ab9..f4ce506801 100644
+index 0013afc9aad..342b295bcdd 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4180,6 +4180,15 @@ if test "$SQLITE3" = "no" ; then
+@@ -4231,6 +4231,15 @@ if test "$SQLITE3" = "no" ; then
     DISABLED_EXTENSIONS="${DISABLED_EXTENSIONS} _sqlite3"
  fi
  
@@ -73,5 +73,5 @@ index 4cc0951ab9..f4ce506801 100644
  
  AC_ARG_ENABLE(pydoc,
 -- 
-2.34.1
+2.44.0
 

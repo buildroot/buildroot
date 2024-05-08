@@ -1,4 +1,4 @@
-From ef8c030e01b1be8be582e90c31298a5863094858 Mon Sep 17 00:00:00 2001
+From aba9392bf6bf68cfd63b1cecfdd3e96d5de2a0b7 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:20:45 -0800
 Subject: [PATCH] Add option to disable the sqlite3 module
@@ -15,10 +15,10 @@ Signed-off-by: Adam Duskett <aduskett@gmail.com>
  2 files changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index f5d0573067..9f4cdf14cf 100644
+index 1a0ab0de426..1c7b38ce4f6 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1920,7 +1920,6 @@ LIBSUBDIRS=	asyncio \
+@@ -1933,7 +1933,6 @@ LIBSUBDIRS=	asyncio \
  		multiprocessing multiprocessing/dummy \
  		re \
  		site-packages \
@@ -26,7 +26,7 @@ index f5d0573067..9f4cdf14cf 100644
  		tkinter \
  		tomllib \
  		turtledemo \
-@@ -2018,6 +2017,10 @@ TESTSUBDIRS += lib2to3/tests			\
+@@ -2079,6 +2078,10 @@ TESTSUBDIRS += lib2to3/tests			\
  	lib2to3/tests/data/fixers/myfixes
  endif
  
@@ -38,10 +38,10 @@ index f5d0573067..9f4cdf14cf 100644
  libinstall:	all $(srcdir)/Modules/xxmodule.c
  	@for i in $(SCRIPTDIR) $(LIBDEST); \
 diff --git a/configure.ac b/configure.ac
-index d8e10cf2b2..4cc0951ab9 100644
+index bf91fb2f824..0013afc9aad 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4171,6 +4171,15 @@ AS_VAR_IF([posix_threads], [stub], [
+@@ -4222,6 +4222,15 @@ AS_VAR_IF([posix_threads], [stub], [
    AC_DEFINE([HAVE_PTHREAD_STUBS], [1], [Define if platform requires stubbed pthreads support])
  ])
  
@@ -58,5 +58,5 @@ index d8e10cf2b2..4cc0951ab9 100644
  
  AC_ARG_ENABLE(pydoc,
 -- 
-2.34.1
+2.44.0
 

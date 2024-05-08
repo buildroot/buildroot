@@ -1,4 +1,4 @@
-From 7091fdf77f612425c178a75148560f9c3514e8b8 Mon Sep 17 00:00:00 2001
+From 12b5db4e25182962eb0b8bc21479a743c35a158c Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 23 Dec 2015 11:51:31 +0100
 Subject: [PATCH] Add an option to disable decimal
@@ -18,10 +18,10 @@ Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
  1 file changed, 13 insertions(+), 6 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 5e6d72f7db..e6b1f1e9de 100644
+index fe497ec9dfb..20b3c2459f4 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3630,14 +3630,21 @@ fi
+@@ -3680,14 +3680,21 @@ fi
  AC_SUBST(LIBFFI_INCLUDEDIR)
  
  # Check for use of the system libmpdec library
@@ -50,5 +50,5 @@ index 5e6d72f7db..e6b1f1e9de 100644
    LIBMPDEC_LDFLAGS=${LIBMPDEC_LDFLAGS-"-lmpdec"}
    LIBMPDEC_INTERNAL=
 -- 
-2.34.1
+2.44.0
 
