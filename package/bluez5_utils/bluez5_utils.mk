@@ -25,6 +25,7 @@ BLUEZ5_UTILS_DEPENDENCIES = \
 BLUEZ5_UTILS_CONF_OPTS = \
 	--enable-library \
 	--disable-cups \
+	--disable-datafiles \
 	--disable-manpages \
 	--disable-asan \
 	--disable-lsan \
