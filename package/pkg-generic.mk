@@ -525,7 +525,6 @@ endif
 
 $(2)_BASENAME	= $$(if $$($(2)_VERSION),$(1)-$$($(2)_VERSION),$(1))
 $(2)_BASENAME_RAW = $$(if $$($(2)_VERSION),$$($(2)_RAWNAME)-$$($(2)_VERSION),$$($(2)_RAWNAME))
-$(2)_DL_SUBDIR ?= $$($(2)_RAWNAME)
 $(2)_DL_DIR = $$(DL_DIR)/$$($(2)_DL_SUBDIR)
 $(2)_DIR	=  $$(BUILD_DIR)/$$($(2)_BASENAME)
 
@@ -538,6 +537,8 @@ endif
 ifndef $(2)_DL_SUBDIR
  ifdef $(3)_DL_SUBDIR
   $(2)_DL_SUBDIR = $$($(3)_DL_SUBDIR)
+ else
+  $(2)_DL_SUBDIR = $$($(2)_RAWNAME)
  endif
 endif
 
