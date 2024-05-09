@@ -18,7 +18,6 @@ ZBAR_CONF_ENV = \
 	LIBS=$(TARGET_NLS_LIBS)
 ZBAR_CONF_OPTS = \
 	--disable-doc \
-	--without-imagemagick \
 	--without-qt \
 	--without-qt5 \
 	--without-gtk \
@@ -30,6 +29,13 @@ ZBAR_DEPENDENCIES += dbus
 ZBAR_CONF_OPTS += --with-dbus
 else
 ZBAR_CONF_OPTS += --without-dbus
+endif
+
+ifeq ($(BR2_PACKAGE_IMAGEMAGICK),y)
+ZBAR_DEPENDENCIES += imagemagick
+ZBAR_CONF_OPTS += --with-imagemagick
+else
+ZBAR_CONF_OPTS += --without-imagemagick
 endif
 
 ifeq ($(BR2_PACKAGE_PYTHON3),y)
