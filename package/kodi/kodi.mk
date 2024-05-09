@@ -64,8 +64,8 @@ KODI_LIBDVDNAV_VERSION = 6.1.1-Next-Nexus-Alpha2-2
 KODI_LIBDVDREAD_VERSION = 6.1.3-Next-Nexus-Alpha2-2
 KODI_EXTRA_DOWNLOADS += \
 	https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-binary-4.0.16.zip \
-	https://dlcdn.apache.org/commons/lang/binaries/commons-lang3-3.14.0-bin.tar.gz \
-	https://dlcdn.apache.org/commons/text/binaries/commons-text-1.11.0-bin.tar.gz \
+	https://archive.apache.org/dist/commons/lang/binaries/commons-lang3-3.14.0-bin.tar.gz \
+	https://archive.apache.org/dist/commons/text/binaries/commons-text-1.11.0-bin.tar.gz \
 	$(call github,xbmc,libdvdcss,$(KODI_LIBDVDCSS_VERSION))/kodi-libdvdcss-$(KODI_LIBDVDCSS_VERSION).tar.gz \
 	$(call github,xbmc,libdvdnav,$(KODI_LIBDVDNAV_VERSION))/kodi-libdvdnav-$(KODI_LIBDVDNAV_VERSION).tar.gz \
 	$(call github,xbmc,libdvdread,$(KODI_LIBDVDREAD_VERSION))/kodi-libdvdread-$(KODI_LIBDVDREAD_VERSION).tar.gz
