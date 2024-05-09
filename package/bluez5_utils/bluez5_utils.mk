@@ -9,6 +9,7 @@ BLUEZ5_UTILS_VERSION = 5.75
 BLUEZ5_UTILS_SOURCE = bluez-$(BLUEZ5_UTILS_VERSION).tar.xz
 BLUEZ5_UTILS_SITE = $(BR2_KERNEL_MIRROR)/linux/bluetooth
 # 0001-configure.ac-Fix-disable-cups.patch
+# 0002-configure.ac-fix-sixaxis-build-without-tools.patch
 BLUEZ5_UTILS_AUTORECONF = YES
 BLUEZ5_UTILS_INSTALL_STAGING = YES
 BLUEZ5_UTILS_LICENSE = GPL-2.0+, LGPL-2.1+
