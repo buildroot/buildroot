@@ -31,7 +31,7 @@ ZIP_TARGET_CFLAGS = \
 define ZIP_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) \
 		CFLAGS="$(ZIP_TARGET_CFLAGS) $(ZIP_CFLAGS)" \
-		AS="$(TARGET_CC) -c" \
+		CC="$(TARGET_CC) -std=gnu89" AS="$(TARGET_CC) -c" \
 		-f unix/Makefile generic
 endef
 
@@ -43,7 +43,7 @@ endef
 define HOST_ZIP_BUILD_CMDS
 	$(HOST_MAKE_ENV) $(MAKE) $(HOST_CONFIGURE_OPTS) -C $(@D) \
 		CFLAGS="$(HOST_CFLAGS) $(ZIP_CFLAGS)" \
-		AS="$(HOSTCC) -c" \
+		CC="$(HOSTCC) -std=gnu89" AS="$(HOSTCC) -c" \
 		-f unix/Makefile generic
 endef
 
