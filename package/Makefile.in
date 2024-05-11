@@ -184,26 +184,13 @@ ifeq ($(BR2_BINFMT_FLAT),y)
 ifeq ($(BR2_RISCV_64),y)
 TARGET_CFLAGS += -fPIC
 endif
-ifeq ($(BR2_BINFMT_FLAT_ONE),y)
 ELF2FLT_FLAGS = $(if $($(PKG)_FLAT_STACKSIZE),\
 	-Wl$(comma)-elf2flt="-r -s$($(PKG)_FLAT_STACKSIZE)",\
         -Wl$(comma)-elf2flt=-r)
-else
-ELF2FLT_FLAGS = $(if $($(PKG)_FLAT_STACKSIZE),\
-	-Wl$(comma)-elf2flt=-s$($(PKG)_FLAT_STACKSIZE),\
-	-Wl$(comma)-elf2flt)
-endif
 TARGET_CFLAGS += $(ELF2FLT_FLAGS)
 TARGET_CXXFLAGS += $(ELF2FLT_FLAGS)
 TARGET_FCFLAGS += $(ELF2FLT_FLAGS)
 TARGET_LDFLAGS += $(ELF2FLT_FLAGS)
-endif
-
-ifeq ($(BR2_BINFMT_FLAT_SHARED),y)
-TARGET_LDFLAGS += -mid-shared-library -mshared-library-id=0
-TARGET_CFLAGS += -mid-shared-library -mshared-library-id=0
-TARGET_FCFLAGS += -mid-shared-library -mshared-library-id=0
-TARGET_CXXFLAGS += -mid-shared-library -mshared-library-id=0
 endif
 
 ifeq ($(BR2_TOOLCHAIN_BUILDROOT),y)
