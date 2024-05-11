@@ -85,7 +85,6 @@ config BR2_PTHREADS_NATIVE
 config BR2_PTHREADS
 	bool "linuxthreads"
 	depends on !BR2_aarch64 && !BR2_aarch64_be
-	depends on !BR2_RISCV_64
 	select BR2_TOOLCHAIN_HAS_THREADS
 
 config BR2_PTHREADS_NONE
