@@ -795,10 +795,15 @@ config BR2_TOOLCHAIN_GCC_AT_LEAST_13
 	bool
 	select BR2_TOOLCHAIN_GCC_AT_LEAST_12
 
+config BR2_TOOLCHAIN_GCC_AT_LEAST_14
+	bool
+	select BR2_TOOLCHAIN_GCC_AT_LEAST_13
+
 # This order guarantees that the highest version is set, as kconfig
 # stops affecting a value on the first matching default.
 config BR2_TOOLCHAIN_GCC_AT_LEAST
 	string
+	default "14"	if BR2_TOOLCHAIN_GCC_AT_LEAST_14
 	default "13"	if BR2_TOOLCHAIN_GCC_AT_LEAST_13
 	default "12"	if BR2_TOOLCHAIN_GCC_AT_LEAST_12
 	default "11"	if BR2_TOOLCHAIN_GCC_AT_LEAST_11
