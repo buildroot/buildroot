@@ -148,6 +148,7 @@ comment "Legacy options removed in 2024.05"
 
 config BR2_BINFMT_FLAT_SHARED
 	bool "FLAT shared binary format removed"
+	select BR2_LEGACY
 	help
 	  Support for the FLAT shared binary format has been removed:
 	  its support was removed from the Linux kernel, and also from
