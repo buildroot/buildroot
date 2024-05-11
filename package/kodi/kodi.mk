@@ -45,7 +45,6 @@ KODI_DEPENDENCIES = \
 	libfribidi \
 	libplist \
 	libpng \
-	libudfread \
 	lzo \
 	openssl \
 	pcre \
@@ -386,6 +385,13 @@ KODI_CONF_OPTS += -DENABLE_PULSEAUDIO=ON
 KODI_DEPENDENCIES += pulseaudio
 else
 KODI_CONF_OPTS += -DENABLE_PULSEAUDIO=OFF
+endif
+
+ifeq ($(BR2_PACKAGE_LIBUDFREAD),y)
+KODI_CONF_OPTS += -DENABLE_UDFREAD=ON
+KODI_DEPENDENCIES += libudfread
+else
+KODI_CONF_OPTS += -DENABLE_UDFREAD=OFF
 endif
 
 # Remove versioncheck addon, updating Kodi is done by building a new
