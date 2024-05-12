@@ -117,6 +117,11 @@ else
 HOST_GCC_FINAL_CONF_OPTS += --disable-libgomp
 endif
 
+# allow to build gcc 14.x
+ifeq ($(BR2_nios2),y)
+HOST_GCC_FINAL_CONF_OPTS += --enable-obsolete
+endif
+
 # End with user-provided options, so that they can override previously
 # defined options.
 HOST_GCC_FINAL_CONF_OPTS += \
