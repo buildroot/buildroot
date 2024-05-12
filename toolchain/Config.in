@@ -879,15 +879,19 @@ config BR2_TOOLCHAIN_HAS_SYNC_8
 	default y if BR2_TOOLCHAIN_ARM_HAS_SYNC_8
 	default y if BR2_TOOLCHAIN_X86_HAS_SYNC_8
 
-# libatomic is available since gcc 4.8, when thread support is
-# enabled. Also, libatomic doesn't recognize "uclinux" as a valid OS
-# part of the tuple, and is therefore not build on uclinux targets,
-# which is why BR2_BINFMT_FLAT configurations are excluded.
+# libatomic is available since gcc 4.8, when thread support is enabled.
+# However, the gcc logic in libatomic/configure.tgt does not recognize
+# "uclinux" as a valid OS part of the target tuple, and therefore it
+# does not build libatomic. The "uclinux" part of the tuple is used by
+# Buildroot when BR2_BINFMT_FLAT=y. This broken logic has only been
+# fixed for arm since gcc 10.1.0.
 config BR2_TOOLCHAIN_HAS_LIBATOMIC
 	bool
-	default y if BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 && \
-		BR2_TOOLCHAIN_HAS_THREADS && \
-		!BR2_BINFMT_FLAT
+	default y if BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_BINFMT_ELF || \
+		(BR2_BINFMT_FLAT && BR2_arm && \
+		BR2_TOOLCHAIN_GCC_AT_LEAST_10)
 
 # __atomic intrinsics are available:
 # - with gcc 4.8, either through built-ins or libatomic, on all
