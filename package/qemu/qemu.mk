@@ -6,7 +6,7 @@
 
 # When updating the version, check whether the list of supported targets
 # needs to be updated.
-QEMU_VERSION = 8.1.1
+QEMU_VERSION = 9.0.0
 QEMU_SOURCE = qemu-$(QEMU_VERSION).tar.xz
 QEMU_SITE = https://download.qemu.org
 QEMU_SELINUX_MODULES = qemu virt
@@ -320,6 +320,7 @@ define QEMU_CONFIGURE_CMDS
 			--disable-opengl \
 			--disable-oss \
 			--disable-pa \
+			--disable-plugins \
 			--disable-rbd \
 			--disable-sanitizers \
 			--disable-selinux \
@@ -504,6 +505,7 @@ define HOST_QEMU_CONFIGURE_CMDS
 		--disable-vde \
 		--disable-vhost-user-blk-server \
 		--disable-vnc-jpeg \
+		--disable-plugins \
 		--disable-png \
 		--disable-vnc-sasl \
 		--enable-slirp \
