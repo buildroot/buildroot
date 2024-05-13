@@ -52,7 +52,10 @@ class Builder(object):
                            "> end defconfig\n")
         self.logfile.flush()
 
-        env = {"PATH": os.environ["PATH"]}
+        env = {
+            "PATH": os.environ["PATH"],
+            "HOME": os.environ["HOME"]
+        }
         env.update(make_extra_env)
 
         cmd = ["make",
@@ -79,7 +82,11 @@ class Builder(object):
         in the environment that calls make.
         e.g. make_extra_env={"BR2_DL_DIR": "/path"}
         """
-        env = {"PATH": os.environ["PATH"]}
+        env = {
+            "PATH": os.environ["PATH"],
+            "HOME": os.environ["HOME"]
+        }
+
         if "http_proxy" in os.environ:
             self.logfile.write("Using system proxy: " +
                                os.environ["http_proxy"] + "\n")
