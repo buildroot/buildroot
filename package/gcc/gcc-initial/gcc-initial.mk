@@ -42,11 +42,6 @@ HOST_GCC_INITIAL_CONF_OPTS = \
 	--disable-largefile \
 	$(call qstrip,$(BR2_EXTRA_GCC_CONFIG_OPTIONS))
 
-# allow to build gcc 14.x
-ifeq ($(BR2_nios2),y)
-HOST_GCC_INITIAL_CONF_OPTS += --enable-obsolete
-endif
-
 HOST_GCC_INITIAL_CONF_ENV = \
 	$(HOST_GCC_COMMON_CONF_ENV)
 
