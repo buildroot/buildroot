@@ -1,0 +1,40 @@
+From 1ebecb83607e9c0cc44ad1e518169ae03c0f2d26 Mon Sep 17 00:00:00 2001
+From: Neal Frager <neal.frager@amd.com>
+Date: Mon, 13 May 2024 07:22:47 +0100
+Subject: [PATCH] libgloss: microblaze: fix read and _write declarations
+
+This patch resolves the following build error which occurs with gcc 14.1.0:
+../../.././libgloss/microblaze/linux-outbyte.c: In function 'outbyte':
+../../.././libgloss/microblaze/linux-outbyte.c:3:9: error: implicit declaration of function '_write' [-Wimplicit-function-declaration]
+    3 |         _write(1, &c, 1);
+
+Signed-off-by: Neal Frager <neal.frager@amd.com>
+Upstream: https://patchwork.sourceware.org/project/newlib/patch/20240513062419.2042278-1-neal.frager@amd.com/
+---
+ libgloss/microblaze/linux-inbyte.c  | 2 ++
+ libgloss/microblaze/linux-outbyte.c | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/libgloss/microblaze/linux-inbyte.c b/libgloss/microblaze/linux-inbyte.c
+index 58fdf1957..2f8d33871 100644
+--- a/libgloss/microblaze/linux-inbyte.c
++++ b/libgloss/microblaze/linux-inbyte.c
+@@ -1,3 +1,5 @@
++extern int read (int, char *, int);
++
+ int inbyte(void)
+ {
+ 	char ch = 0;
+diff --git a/libgloss/microblaze/linux-outbyte.c b/libgloss/microblaze/linux-outbyte.c
+index 9d7bc4890..46de511f6 100644
+--- a/libgloss/microblaze/linux-outbyte.c
++++ b/libgloss/microblaze/linux-outbyte.c
+@@ -1,3 +1,5 @@
++extern int _write (int, char *, int);
++
+ void outbyte (unsigned char c)
+ {
+ 	_write(1, &c, 1);
+-- 
+2.25.1
+
