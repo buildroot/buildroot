@@ -10,6 +10,7 @@ PYTHON_ML_DTYPES_SITE = https://files.pythonhosted.org/packages/39/7d/8d85fcba86
 PYTHON_ML_DTYPES_LICENSE = Apache-2.0
 PYTHON_ML_DTYPES_LICENSE_FILES = LICENSE
 PYTHON_ML_DTYPES_SETUP_TYPE = setuptools
+PYTHON_ML_DTYPES_BUILD_OPTS = --skip-dependency-check
 
 PYTHON_ML_DTYPES_DEPENDENCIES = \
 	host-python-numpy \
