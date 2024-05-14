@@ -41,8 +41,9 @@ endif
 ifeq ($(BR2_PACKAGE_READLINE),y)
 GNUPLOT_CONF_OPTS += --with-readline=gnu
 GNUPLOT_DEPENDENCIES += readline
-else
-GNUPLOT_CONF_OPTS += --without-readline
+else ifeq ($(BR2_PACKAGE_LIBEDIT),y)
+GNUPLOT_CONF_OPTS += --with-readline=bsd
+GNUPLOT_DEPENDENCIES += libedit
 endif
 
 # Remove Javascript scripts, lua scripts, PostScript files
