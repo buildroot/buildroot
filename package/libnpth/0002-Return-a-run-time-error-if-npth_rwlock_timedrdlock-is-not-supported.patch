@@ -1,0 +1,51 @@
+From 01f03a91c9bd63910995aeef412beb3ca6dc9a67 Mon Sep 17 00:00:00 2001
+From: NIIBE Yutaka <gniibe@fsij.org>
+Date: Tue, 7 May 2024 13:45:47 +0900
+Subject: [PATCH] Return a run-time error if npth_rwlock_timedrdlock is not
+ supported.
+
+* src/npth.c (npth_rwlock_timedrdlock): Return ENOSYS if not
+supported.
+(npth_rwlock_timedwrlock): Use HAVE_PTHREAD_RWLOCK_TRYWRLOCK.
+
+--
+
+GnuPG-bug-id: 7109
+Fixed-commit: 363c370bd35dd0bb4e5636b2d4f06ea88c658794
+Signed-off-by: NIIBE Yutaka <gniibe@fsij.org>
+
+Upstream: https://git.gnupg.org/cgi-bin/gitweb.cgi?p=npth.git;a=commit;h=01f03a91c9bd63910995aeef412beb3ca6dc9a67
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/npth.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/npth.c b/src/npth.c
+index c0ff8da..f02540c 100644
+--- a/src/npth.c
++++ b/src/npth.c
+@@ -488,9 +488,11 @@ npth_rwlock_timedrdlock (npth_rwlock_t *rwlock, const struct timespec *abstime)
+   ENTER();
+ #if HAVE_PTHREAD_RWLOCK_TIMEDRDLOCK
+   err = pthread_rwlock_timedrdlock (rwlock, abstime);
+-#else
++#elif HAVE_PTHREAD_RWLOCK_TRYRDLOCK
+   err = busy_wait_for ((trylock_func_t) pthread_rwlock_tryrdlock, rwlock,
+ 		       abstime);
++#else
++  err = ENOSYS;
+ #endif
+   LEAVE();
+   return err;
+@@ -533,7 +535,7 @@ npth_rwlock_timedwrlock (npth_rwlock_t *rwlock, const struct timespec *abstime)
+   ENTER();
+ #if HAVE_PTHREAD_RWLOCK_TIMEDWRLOCK
+   err = pthread_rwlock_timedwrlock (rwlock, abstime);
+-#elif HAVE_PTHREAD_RWLOCK_TRYRDLOCK
++#elif HAVE_PTHREAD_RWLOCK_TRYWRLOCK
+   err = busy_wait_for ((trylock_func_t) pthread_rwlock_trywrlock, rwlock,
+ 		       abstime);
+ #else
+-- 
+2.30.2
+
