@@ -1,0 +1,27 @@
+From 46b02f0655af0a9594e805f09a8ee99278f84777 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tomi=20L=C3=A4hteenm=C3=A4ki?= <lihis@lihis.net>
+Date: Mon, 19 Feb 2024 09:06:20 +0200
+Subject: [PATCH] Fix incompatible pointer type in sip_basic.c
+
+Closes #248
+
+Upstream: https://github.com/freeswitch/sofia-sip/pull/249
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ libsofia-sip-ua/sip/sip_basic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libsofia-sip-ua/sip/sip_basic.c b/libsofia-sip-ua/sip/sip_basic.c
+index 3444fb25..82e824e3 100644
+--- a/libsofia-sip-ua/sip/sip_basic.c
++++ b/libsofia-sip-ua/sip/sip_basic.c
+@@ -2901,7 +2901,7 @@ issize_t sip_identity_d(su_home_t *home, sip_header_t *h, char *s, isize_t slen)
+       ext = strchr(ppt, ';');
+ 
+       if (ext) {
+-          msg_param_t *params = su_alloc(home, sizeof(msg_param_t));
++          msg_param_t const *params = su_alloc(home, sizeof(msg_param_t));
+           if (msg_params_d(home, &ext, &params) >= 0) {
+               id->id_info_params = params;
+           }
