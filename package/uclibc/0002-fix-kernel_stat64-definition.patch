@@ -1,0 +1,35 @@
+From 186878405324e96f61d896a149f623e0c792c972 Mon Sep 17 00:00:00 2001
+From: Max Filippov <jcmvbkbc@gmail.com>
+Date: Tue, 14 May 2024 23:18:56 -0700
+Subject: [PATCH] fix kernel_stat64 definition
+
+The commit 74ca8d6f5d2e ("remove UCLIBC_HAS_LFS") removed conditional
+compilation dependent on __UCLIBC_HAS_LFS__, assuming it to be always
+defined, but removed the wrong branch in the definition of
+kernel_stat64.
+Fix kernel_stat64 definition to be stat64.
+
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+Tested-by: Chris Packham <judge.packham@gmail.com>
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://cgit.uclibc-ng.org/cgi/cgit/uclibc-ng.git/commit/?id=186878405324e96f61d896a149f623e0c792c972
+---
+ libc/sysdeps/linux/common-generic/bits/kernel_stat.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libc/sysdeps/linux/common-generic/bits/kernel_stat.h b/libc/sysdeps/linux/common-generic/bits/kernel_stat.h
+index 7a97bb4d7..e874a4a9f 100644
+--- a/libc/sysdeps/linux/common-generic/bits/kernel_stat.h
++++ b/libc/sysdeps/linux/common-generic/bits/kernel_stat.h
+@@ -18,7 +18,7 @@
+  * However that requires more #ifndef in relevant wrappers,
+  * further uglifying them
+  */
+-#define kernel_stat64	stat
++#define kernel_stat64	stat64
+ 
+ #endif	/*  _BITS_STAT_STRUCT_H */
+ 
+-- 
+2.30.2
+
