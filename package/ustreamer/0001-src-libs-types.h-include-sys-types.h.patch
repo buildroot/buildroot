@@ -1,0 +1,36 @@
+From 6c24c9ea610e7cc0e47d1e7124697098d5ef365e Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 15 May 2024 19:56:49 +0200
+Subject: [PATCH] src/libs/types.h: include sys/types.h (#273)
+
+Include sys/types.h to avoid the following uclibc build failure since
+version 5.52 and
+https://github.com/pikvm/ustreamer/commit/2d6716aa4762151f0fb1b900d3cd3295d328cab6:
+
+In file included from libs/base64.h:25,
+                 from libs/base64.c:23:
+libs/types.h:30:9: error: unknown type name 'ssize_t'
+   30 | typedef ssize_t sz;
+      |         ^~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/24498049d7beb4afaaf9f9a0c2fc0bcd26a3ee04
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/pikvm/ustreamer/commit/6c24c9ea610e7cc0e47d1e7124697098d5ef365e
+---
+ src/libs/types.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/libs/types.h b/src/libs/types.h
+index 54e42325..b35bbaea 100644
+--- a/src/libs/types.h
++++ b/src/libs/types.h
+@@ -24,6 +24,7 @@
+ #include <stdio.h>
+ #include <stdbool.h>
+ #include <stdint.h>
++#include <sys/types.h>
+ 
+ 
+ typedef long long sll;
