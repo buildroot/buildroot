@@ -1,0 +1,109 @@
+From d49c92c8420db6ee4c88515bdb014f68f4d471d9 Mon Sep 17 00:00:00 2001
+From: Daiki Ueno <ueno@gnu.org>
+Date: Sat, 2 Dec 2023 09:24:01 +0900
+Subject: [PATCH] import-object: Avoid integer truncation on 32-bit platforms
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The build fails when compiling for 32-bit platforms with
+-Werror=incompatible-pointer-types:
+
+  CFLAGS="-m32 -march=i686 -Werror=incompatible-pointer-types -Werror=implicit -Werror=int-conversion" setarch i686 -- meson setup _build
+  setarch i686 -- meson compile -C _build -v
+  ...
+
+  ../p11-kit/import-object.c: In function ‘add_attrs_pubkey_rsa’:
+  ../p11-kit/import-object.c:223:62: error: passing argument 3 of ‘p11_asn1_read’ from incompatible pointer type [-Werror=incompatible-pointer-types]
+    223 |         attr_modulus.pValue = p11_asn1_read (asn, "modulus", &attr_modulus.ulValueLen);
+        |                                                              ^~~~~~~~~~~~~~~~~~~~~~~~
+        |                                                              |
+        |                                                              long unsigned int *
+
+Reported by Sam James in:
+https://github.com/p11-glue/p11-kit/issues/608
+
+Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Upstream: https://github.com/p11-glue/p11-kit/commit/d49c92c8420db6ee4c88515bdb014f68f4d471d9
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ p11-kit/import-object.c | 30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
+
+diff --git a/p11-kit/import-object.c b/p11-kit/import-object.c
+index feee0765..fb47b964 100644
+--- a/p11-kit/import-object.c
++++ b/p11-kit/import-object.c
+@@ -55,6 +55,7 @@
+ #endif
+ 
+ #include <assert.h>
++#include <limits.h>
+ #include <stdbool.h>
+ #include <stdlib.h>
+ #include <string.h>
+@@ -201,6 +202,7 @@ add_attrs_pubkey_rsa (CK_ATTRIBUTE *attrs,
+ 	CK_ATTRIBUTE attr_encrypt = { CKA_ENCRYPT, &tval, sizeof (tval) };
+ 	CK_ATTRIBUTE attr_modulus = { CKA_MODULUS, };
+ 	CK_ATTRIBUTE attr_exponent = { CKA_PUBLIC_EXPONENT, };
++	size_t len = 0;
+ 
+ 	pubkey = p11_asn1_read (info, "subjectPublicKey", &pubkey_len);
+ 	if (pubkey == NULL) {
+@@ -220,17 +222,31 @@ add_attrs_pubkey_rsa (CK_ATTRIBUTE *attrs,
+ 		goto cleanup;
+ 	}
+ 
+-	attr_modulus.pValue = p11_asn1_read (asn, "modulus", &attr_modulus.ulValueLen);
++	attr_modulus.pValue = p11_asn1_read (asn, "modulus", &len);
+ 	if (attr_modulus.pValue == NULL) {
+ 		p11_message (_("failed to obtain modulus"));
+ 		goto cleanup;
+ 	}
++#if ULONG_MAX < SIZE_MAX
++	if (len > ULONG_MAX) {
++		p11_message (_("failed to obtain modulus"));
++		goto cleanup;
++	}
++#endif
++	attr_modulus.ulValueLen = len;
+ 
+-	attr_exponent.pValue = p11_asn1_read (asn, "publicExponent", &attr_exponent.ulValueLen);
++	attr_exponent.pValue = p11_asn1_read (asn, "publicExponent", &len);
+ 	if (attr_exponent.pValue == NULL) {
+ 		p11_message (_("failed to obtain exponent"));
+ 		goto cleanup;
+ 	}
++#if ULONG_MAX < SIZE_MAX
++	if (len > ULONG_MAX) {
++		p11_message (_("failed to obtain exponent"));
++		goto cleanup;
++	}
++#endif
++	attr_exponent.ulValueLen = len;
+ 
+ 	result = p11_attrs_build (attrs, &attr_key_type, &attr_encrypt, &attr_modulus, &attr_exponent, NULL);
+ 	if (result == NULL) {
+@@ -260,12 +276,20 @@ add_attrs_pubkey_ec (CK_ATTRIBUTE *attrs,
+ 	CK_ATTRIBUTE attr_key_type = { CKA_KEY_TYPE, &key_type, sizeof (key_type) };
+ 	CK_ATTRIBUTE attr_ec_params = { CKA_EC_PARAMS, };
+ 	CK_ATTRIBUTE attr_ec_point = { CKA_EC_POINT, };
++	size_t len = 0;
+ 
+-	attr_ec_params.pValue = p11_asn1_read (info, "algorithm.parameters", &attr_ec_params.ulValueLen);
++	attr_ec_params.pValue = p11_asn1_read (info, "algorithm.parameters", &len);
+ 	if (attr_ec_params.pValue == NULL) {
+ 		p11_message (_("failed to obtain EC parameters"));
+ 		goto cleanup;
+ 	}
++#if ULONG_MAX < SIZE_MAX
++	if (len > ULONG_MAX) {
++		p11_message (_("failed to obtain EC parameters"));
++		goto cleanup;
++	}
++#endif
++	attr_ec_params.ulValueLen = len;
+ 
+ 	/* subjectPublicKey is read as BIT STRING value which contains
+ 	 * EC point data. We need to DER encode this data as OCTET STRING.
