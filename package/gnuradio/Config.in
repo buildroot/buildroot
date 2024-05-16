@@ -136,6 +136,13 @@ config BR2_PACKAGE_GNURADIO_FILTER
 	help
 	  Filter signal processing blocks
 
+config BR2_PACKAGE_GNURADIO_IIO
+	bool "gr-iio support"
+	select BR2_PACKAGE_LIBIIO
+	select BR2_PACKAGE_GNURADIO_BLOCKS
+	help
+	  IIO support
+
 config BR2_PACKAGE_GNURADIO_NETWORK
 	bool "gr-network support"
 	select BR2_PACKAGE_GNURADIO_BLOCKS
