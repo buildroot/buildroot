@@ -43,7 +43,7 @@ run_logger() {
 				break
 			}
 			echo "* Applying $file ..."
-			/sbin/sysctl -p "$file" $SYSCTL_ARGS || prog_status="FAIL"
+			/sbin/sysctl $SYSCTL_ARGS -p "$file" || prog_status="FAIL"
 		done 2>&1 >&3 | /usr/bin/logger -t sysctl -p kern.err
 	} 3>&1 | /usr/bin/logger -t sysctl -p kern.info
 }
@@ -60,7 +60,7 @@ run_std() {
 				break
 			}
 			echo "* Applying $file ..."
-			/sbin/sysctl -p "$file" $SYSCTL_ARGS || prog_status="FAIL"
+			/sbin/sysctl $SYSCTL_ARGS -p "$file" || prog_status="FAIL"
 		done
 	}
 }
