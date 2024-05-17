@@ -12,6 +12,7 @@ config BR2_PACKAGE_MOKUTIL
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_12 # efivar
 	select BR2_PACKAGE_EFIVAR
 	select BR2_PACKAGE_KEYUTILS
+	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	select BR2_PACKAGE_OPENSSL
 	help
 	  mokutil is a tool to import or delete the machines owner

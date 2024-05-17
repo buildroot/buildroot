@@ -14,6 +14,7 @@ MOKUTIL_DEPENDENCIES = \
 	efivar \
 	host-pkgconf \
 	keyutils \
+	$(if $(BR2_PACKAGE_LIBXCRYPT),libxcrypt) \
 	openssl
 
 $(eval $(autotools-package))
