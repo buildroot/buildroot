@@ -1,4 +1,5 @@
 import os
+import time
 
 from tests.package.test_python import TestPythonPackageBase
 
@@ -46,9 +47,12 @@ class TestPythonPy3MagicWormhole(TestPythonPackageBase):
         wormhole_cmd = "wormhole --relay-url={} --transit-helper={}".format(
             relay_url, transit_helper)
 
-        cmd = wormhole_cmd + " send --code={} --text=\"{}\" & ".format(code, text)
-        cmd += "sleep 25"
-        self.assertRunOk(cmd, timeout=30)
+        cmd = wormhole_cmd
+        cmd += f" send --code={code} --text=\"{text}\""
+        cmd += " &> /dev/null &"
+        self.assertRunOk(cmd)
+
+        time.sleep(30 * self.timeout_multiplier)
 
         wormhole_env = "_MAGIC_WORMHOLE_TEST_KEY_TIMER=100 "
         wormhole_env += "_MAGIC_WORMHOLE_TEST_VERIFY_TIMER=100 "
