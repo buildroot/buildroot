@@ -1,4 +1,4 @@
-From 41c029755502acf01ed634db437ac06d09be6c41 Mon Sep 17 00:00:00 2001
+From ffc567b790005850c561f9f6590b069b61f5ba20 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Date: Fri, 13 Apr 2018 09:02:37 +0200
 Subject: [PATCH] Don't use fork() on noMMU platforms
@@ -12,18 +12,21 @@ Signed-off-by: Jörg Krause <joerg.krause@embedded.rocks>
 Upstream: http://mailman.alsa-project.org/pipermail/alsa-devel/2018-November/141376.html
 [Bernd: update patch for 1.2.4 & 1.2.7]
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+
 ---
  configure.ac         |  2 ++
  src/pcm/pcm_direct.c | 10 +++++++++-
  2 files changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index cce195ae..0c852434 100644
+index 7a152a4abd20..3cf88c37db56 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -52,6 +52,8 @@ dnl Checks for library functions.
- AC_CHECK_FUNCS([uselocale])
- AC_CHECK_FUNCS([eaccess])
+@@ -56,6 +56,8 @@ AC_CHECK_FUNCS([eaccess])
+ dnl Enable largefile support
+ AC_SYS_LARGEFILE
  
 +AC_CHECK_FUNC([fork])
 +
@@ -31,10 +34,10 @@ index cce195ae..0c852434 100644
  AC_SUBST(LIBTOOL_VERSION_INFO)
  
 diff --git a/src/pcm/pcm_direct.c b/src/pcm/pcm_direct.c
-index 2b07eff9..4dc3ea26 100644
+index e53e59238119..cf94c7c1dbf0 100644
 --- a/src/pcm/pcm_direct.c
 +++ b/src/pcm/pcm_direct.c
-@@ -437,13 +437,21 @@ int snd_pcm_direct_server_create(snd_pcm_direct_t *dmix)
+@@ -442,13 +442,21 @@ int snd_pcm_direct_server_create(snd_pcm_direct_t *dmix)
  		close(dmix->server_fd);
  		return ret;
  	}
@@ -58,5 +61,5 @@ index 2b07eff9..4dc3ea26 100644
  			server_job(dmix);
  		_exit(EXIT_SUCCESS);
 -- 
-2.14.3
+2.43.0
 
