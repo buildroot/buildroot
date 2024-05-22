@@ -19,6 +19,13 @@ OCTAVE_DEPENDENCIES = \
 	openblas \
 	pcre2
 
+ifeq ($(BR2_PACKAGE_BZIP2),y)
+OCTAVE_CONF_OPTS += --with-bz2
+OCTAVE_DEPENDENCIES += bzip2
+else
+OCTAVE_CONF_OPTS += --without-bz2
+endif
+
 ifeq ($(BR2_PACKAGE_READLINE),y)
 OCTAVE_CONF_OPTS += \
 	--enable-readline \
