@@ -1,4 +1,4 @@
-From ff3db531608eb0f9de8a88c1bc34fe0f1d93121c Mon Sep 17 00:00:00 2001
+From 03e9cae3f3a7e2bbd5110f1ce2739601571bc024 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Fri, 12 Nov 2021 18:01:05 +0100
 Subject: [PATCH] meson.build: add girdir to gio-2.0.pc and glib-2.0.pc
@@ -14,6 +14,8 @@ Fixes:
  - http://autobuild.buildroot.org/results/3088ef32b03e0bb984291b1227b187f1ff816eb7
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 Upstream: Never submitted
 ---
  gio/meson.build  | 1 +
@@ -21,22 +23,22 @@ Upstream: Never submitted
  2 files changed, 2 insertions(+)
 
 diff --git a/gio/meson.build b/gio/meson.build
-index 29473d26b..112d4ada9 100644
+index 462606f3b56c..e6b736167b8d 100644
 --- a/gio/meson.build
 +++ b/gio/meson.build
-@@ -841,6 +841,7 @@ pkg.generate(libgio,
+@@ -880,6 +880,7 @@ pkg.generate(libgio,
    variables : ['datadir=' + join_paths('${prefix}', get_option('datadir')),
                 'schemasdir=' + join_paths('${datadir}', schemas_subdir),
                 'bindir=' + join_paths('${prefix}', get_option('bindir')),
 +               'girdir=' + join_paths('${libdir}', '../share/gir-1.0'),
                 'giomoduledir=' + pkgconfig_giomodulesdir,
                 'gio=' + join_paths('${bindir}', 'gio'),
-                'gio_querymodules=' + join_paths('${bindir}', 'gio-querymodules'),
+                'gio_querymodules=@0@'.format(pkgconfig_multiarch_bindir / 'gio-querymodules'),
 diff --git a/glib/meson.build b/glib/meson.build
-index f78f32969..6c5486699 100644
+index da76fc005e46..cde2edb197c7 100644
 --- a/glib/meson.build
 +++ b/glib/meson.build
-@@ -384,6 +384,7 @@ pkg.generate(libglib,
+@@ -441,6 +441,7 @@ pkg.generate(libglib,
    subdirs : ['glib-2.0'],
    extra_cflags : ['-I${libdir}/glib-2.0/include'] + win32_cflags,
    variables : ['bindir=' + join_paths('${prefix}', get_option('bindir')),
@@ -45,5 +47,5 @@ index f78f32969..6c5486699 100644
                 'gobject_query=' + join_paths('${bindir}', 'gobject-query'),
                 'glib_mkenums=' + join_paths('${bindir}', 'glib-mkenums')],
 -- 
-2.33.0
+2.43.0
 
