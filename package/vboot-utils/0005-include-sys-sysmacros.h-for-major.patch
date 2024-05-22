@@ -1,4 +1,4 @@
-From 435fbcee218b37a87368e2b22fa33366875d458c Mon Sep 17 00:00:00 2001
+From 0495287f062a0cef989e02e0aee4f4329ab155b0 Mon Sep 17 00:00:00 2001
 From: Mike Frysinger <vapier@chromium.org>
 Date: Tue, 19 Apr 2016 13:58:49 -0400
 Subject: [PATCH] include sys/sysmacros.h for major()
@@ -17,13 +17,15 @@ Commit-Ready: Mike Frysinger <vapier@chromium.org>
 Tested-by: Mike Frysinger <vapier@chromium.org>
 Reviewed-by: Bill Richardson <wfrichar@google.com>
 Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  cgpt/cgpt_wrapper.c               | 1 +
  futility/dump_kernel_config_lib.c | 1 +
  2 files changed, 2 insertions(+)
 
 diff --git a/cgpt/cgpt_wrapper.c b/cgpt/cgpt_wrapper.c
-index dcfaab9c..1716cdde 100644
+index 4d07aadac72d..6fbfb235ba7b 100644
 --- a/cgpt/cgpt_wrapper.c
 +++ b/cgpt/cgpt_wrapper.c
 @@ -18,6 +18,7 @@
@@ -35,17 +37,17 @@ index dcfaab9c..1716cdde 100644
  #include <unistd.h>
  
 diff --git a/futility/dump_kernel_config_lib.c b/futility/dump_kernel_config_lib.c
-index 4fe990c3..abf37ae1 100644
+index c2d59433ba71..448a2f6a831f 100644
 --- a/futility/dump_kernel_config_lib.c
 +++ b/futility/dump_kernel_config_lib.c
 @@ -10,6 +10,7 @@
- #include <string.h>
  #include <sys/mman.h>
+ #include <sys/fcntl.h>
  #include <sys/stat.h>
 +#include <sys/sysmacros.h>
  #include <sys/types.h>
  #include <unistd.h>
  
 -- 
-2.17.1
+2.43.0
 
