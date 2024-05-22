@@ -1,7 +1,7 @@
-From 035dc537bee26e3b63a211b2835d8560439e161f Mon Sep 17 00:00:00 2001
+From 25a0057e8d7afaab3492e03efb3f85581f1cf9b2 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Fri, 27 Aug 2021 16:28:32 +0200
-Subject: Fix build on riscv32
+Subject: [PATCH] Fix build on riscv32
 
 riscv32 fails to build because __NR_futex is not defined on this
 architecture:
@@ -21,15 +21,17 @@ Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
 [Retrieved from:
 https://code.qt.io/cgit/qt/qtbase.git/commit/?id=035dc537bee26e3b63a211b2835d8560439e161f]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  src/corelib/thread/qfutex_p.h | 5 +++++
  1 file changed, 5 insertions(+)
 
 diff --git a/src/corelib/thread/qfutex_p.h b/src/corelib/thread/qfutex_p.h
-index 40482b6fc1..037207a5c0 100644
+index f287b752d75f..fd7d09ac8572 100644
 --- a/src/corelib/thread/qfutex_p.h
 +++ b/src/corelib/thread/qfutex_p.h
-@@ -103,6 +103,11 @@ QT_END_NAMESPACE
+@@ -81,6 +81,11 @@ QT_END_NAMESPACE
  // if not defined in linux/futex.h
  #  define FUTEX_PRIVATE_FLAG        128         // added in v2.6.22
  
@@ -38,9 +40,9 @@ index 40482b6fc1..037207a5c0 100644
 +#    define __NR_futex __NR_futex_time64
 +#  endif
 +
- QT_BEGIN_NAMESPACE
- namespace QtLinuxFutex {
-     constexpr inline bool futexAvailable() { return true; }
+ #  if __has_feature(thread_sanitizer) || defined(__SANITIZE_THREAD__)
+ #    include <sanitizer/tsan_interface.h>
+ inline void _q_tsan_acquire(void *addr, void *addr2)
 -- 
-cgit v1.2.1
+2.43.0
 
