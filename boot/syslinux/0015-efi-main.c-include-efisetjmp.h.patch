@@ -1,4 +1,4 @@
-From 7d68fa68cd9f2987bd85339f3391913a8b0e58c7 Mon Sep 17 00:00:00 2001
+From 26979f738518404b1d3dc9ecdcf4fa5811412c49 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Date: Tue, 24 Mar 2020 10:21:27 +0100
 Subject: [PATCH] efi/main.c: include <efisetjmp.h>
@@ -38,13 +38,15 @@ This is due to gnu-efi commit 486ba3c3bdd147b7d98159b9e650be60bce0f027
 So we act as specified, and include <efisetjmp.h> from efi/main.c.
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 Upstream: https://www.syslinux.org/archives/2020-March/026621.html
 ---
  efi/main.c | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/efi/main.c b/efi/main.c
-index 6a748412..e924cfb1 100644
+index 71d31a5c1f13..7dc7bca7aeba 100644
 --- a/efi/main.c
 +++ b/efi/main.c
 @@ -12,6 +12,7 @@
@@ -54,7 +56,7 @@ index 6a748412..e924cfb1 100644
 +#include <efisetjmp.h>
  #include "fio.h"
  #include "version.h"
- #include "efi_pxe.h"
+ 
 -- 
-2.25.1
+2.43.0
 
