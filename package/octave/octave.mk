@@ -28,4 +28,11 @@ else
 OCTAVE_CONF_OPTS += --disable-readline
 endif
 
+ifeq ($(BR2_PACKAGE_ZLIB),y)
+OCTAVE_CONF_OPTS += --with-z
+OCTAVE_DEPENDENCIES += zlib
+else
+OCTAVE_CONF_OPTS += --without-z
+endif
+
 $(eval $(autotools-package))
