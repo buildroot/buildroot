@@ -1,0 +1,45 @@
+From e75d656e1e3465dea1fdf605cb8fe7e25286bdd3 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 12 May 2024 18:29:09 +0200
+Subject: [PATCH] tftpd_pcre.c: fix build with pcre2 >= 10.43
+
+Fix the following build failure raised since pcre2 >= 10.43 and
+https://github.com/PCRE2Project/pcre2/commit/014c82d7bcc2873cdb1f3abc5e5348587f477ba4:
+
+tftpd_pcre.c: In function 'tftpd_pcre_open':
+tftpd_pcre.c:109:37: error: passing argument 1 of 'pcre2_substring_list_free_8' from incompatible pointer type [-Wincompatible-pointer-types]
+  109 |           pcre2_substring_list_free((const PCRE2_UCHAR **)substrlist);
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                     |
+      |                                     const PCRE2_UCHAR8 ** {aka const unsigned char **}
+In file included from tftpd_pcre.h:24,
+                 from tftpd_pcre.c:35:
+/home/autobuild/autobuild/instance-10/output-1/host/powerpc64le-buildroot-linux-gnu/sysroot/usr/include/pcre2.h:949:1: note: expected 'PCRE2_UCHAR8 **' {aka 'unsigned char **'} but argument is of type 'const PCRE2_UCHAR8 **' {aka 'const unsigned char **'}
+  949 | PCRE2_TYPES_STRUCTURES_AND_FUNCTIONS
+      | ^
+
+Fixes:
+ - http://autobuild.buildroot.org/results/46565c834a8162a651944885104027610a65f9c3
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/madmartin/atftp/pull/1
+---
+ tftpd_pcre.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tftpd_pcre.c b/tftpd_pcre.c
+index 24b2770..7b3d0e3 100644
+--- a/tftpd_pcre.c
++++ b/tftpd_pcre.c
+@@ -106,7 +106,7 @@ tftpd_pcre_self_t *tftpd_pcre_open(char *filename)
+                logger(LOG_DEBUG,"file: %s line: %d substring: %d value: %s",
+                       filename, linecount, subnum, substrlist[subnum]);
+           }
+-          pcre2_substring_list_free((const PCRE2_UCHAR **)substrlist);
++          pcre2_substring_list_free(substrlist);
+ 
+           if (matches != 3)
+           {
+-- 
+2.43.0
+
