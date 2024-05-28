@@ -97,6 +97,14 @@ for file in $BR_NO_CHECK_HASH_FOR; do
     done
 done
 
+# Symlink linux-headers to linux if identical
+linux_hash="$BR2_GLOBAL_PATCH_DIR/linux/linux.hash"
+linux_headers_hash="$BR2_GLOBAL_PATCH_DIR/linux-headers/linux-headers.hash"
+if [ -e "$linux_hash" ] && [ -e "$linux_headers_hash" ] \
+    && cmp -s "$linux_hash" "$linux_headers_hash"; then
+    ln -sf ../linux/linux.hash "$linux_headers_hash"
+fi
+
 message Verifying hashes
 
 make clean
