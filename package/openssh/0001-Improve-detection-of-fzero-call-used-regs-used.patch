@@ -1,0 +1,32 @@
+From f9193f03db0029fc9c31fbdb5c66a2737446bd8f Mon Sep 17 00:00:00 2001
+From: Darren Tucker <dtucker@dtucker.net>
+Date: Mon, 25 Mar 2024 09:28:02 +1100
+Subject: [PATCH] Improve detection of -fzero-call-used-regs=used.
+
+Should better detect problems with gcc 13 on m68k.  bz#3673 from Colin
+Watson via bz#3673 and https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110934
+
+Signed-off-by: Darren Tucker <dtucker@dtucker.net>
+Upstream: https://github.com/openssh/openssh-portable/commit/f9193f03db0029fc9c31fbdb5c66a2737446bd8f
+---
+ m4/openssh.m4 | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/m4/openssh.m4 b/m4/openssh.m4
+index 033df501c3d8..176a8d1c9282 100644
+--- a/m4/openssh.m4
++++ b/m4/openssh.m4
+@@ -20,7 +20,10 @@ char *f2(char *s, ...) {
+ 	va_end(args);
+ 	return strdup(ret);
+ }
++int i;
++double d;
+ const char *f3(int s) {
++	i = (int)d;
+ 	return s ? "good" : "gooder";
+ }
+ int main(int argc, char **argv) {
+-- 
+2.43.0
+
