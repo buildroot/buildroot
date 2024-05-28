@@ -2,6 +2,10 @@ BR2_arm=y
 BR2_arm1176jzf_s=y
 BR2_ARM_EABIHF=y
 
+# patches
+BR2_GLOBAL_PATCH_DIR="board/raspberrypi/patches"
+BR2_DOWNLOAD_FORCE_CHECK_HASHES=y
+
 BR2_SYSTEM_DHCP="eth0"
 
 # Linux headers same as kernel, a 6.1 series
