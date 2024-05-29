@@ -6,7 +6,7 @@
 
 MTD_VERSION = 2.1.6
 MTD_SOURCE = mtd-utils-$(MTD_VERSION).tar.bz2
-MTD_SITE = ftp://ftp.infradead.org/pub/mtd-utils
+MTD_SITE = https://infraroot.at/pub/mtd
 MTD_LICENSE = GPL-2.0
 MTD_LICENSE_FILES = COPYING
 MTD_CPE_ID_VENDOR = mtd-utils_project
