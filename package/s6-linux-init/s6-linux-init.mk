@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-S6_LINUX_INIT_VERSION = 1.0.8.0
-S6_LINUX_INIT_SITE = http://skarnet.org/software/s6-linux-init
+S6_LINUX_INIT_VERSION = 1.1.2.0
+S6_LINUX_INIT_SITE = https://skarnet.org/software/s6-linux-init
 S6_LINUX_INIT_LICENSE = ISC
 S6_LINUX_INIT_LICENSE_FILES = COPYING
 S6_LINUX_INIT_DEPENDENCIES = s6 s6-linux-utils s6-portable-utils
