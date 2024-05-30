@@ -1,3 +1,82 @@
+2024.05-rc1, released May 30th, 2024
+
+	Fixes all over the tree and new features.
+
+        Toolchains:
+        - Binutils 2.24 added, 2.39 dropped, 2.41 is now default
+        - GCC 14.x added, 11.x dropped, 13.x is now default
+        - uClibc-ng bumped to 1.0.48
+        - Musl bumped to 1.2.5, adds riscv32 support
+        - Glibc bumped to 2.39, libcrypt no longer available (see
+          libxcrypt package)
+        - External glibc based toolchains no longer install libcrypt
+          files (except for libcrypt.so.1) to not conflict with the
+          libxcrypt package
+        - Bootlin external toolchains updated to 2024.02
+        - Support for external toolchains using GCC version 14
+        - Old external Codesourcery ARM/AARCH64 toolchains removed
+        - Old external Codesourcery niosII toolchain removed
+        - Old external Codescape mips toolchains removed
+        - Support for Linux 6.7 / 6.8 kernel headers added
+
+	Architecture:
+        - Support for riscv32 noMMU added
+        - Internal toolchains for SPARC (re-)added
+        - Support for the Motorola m68k specific shared library
+	  support for the FLAT binary format dropped, as support has
+	  been removed from the Linux kernel as of v5.19.
+
+        Download (notice, Buildroot generated tarballs have changed):
+        - Tar 1.35 is now required (will be automatically built if not
+          available on the host). Notice that tar 1.35 changes the way
+          devmajor/minor is stored, so tarballs created with 1.35 are
+          not binary identical to <1.35
+        - The tarball creation logic has now been extended to
+          correctly handle when ACLs are set on the download
+          directory.
+        - An issue with conflicting git tags between (different
+          versions of) a package has been fixes
+        - Git attributes are now handled correctly
+
+        Security:
+        - The /dev/shm entry in the default /etc/fstab used for
+          busybox and sysv init systems was missing the sticky bit,
+          allowing users to delete and replace other users files.
+
+        Infrastructure:
+        - kconfig/menuconfig can now be built with GCC 14.x
+        - Git is now used to to fetch CVE data from the FKIE
+	  repository to work around an issue with missing meta files
+	  in the releases.
+        - utils/check-package now also checks if defconfigs use
+          BR2_DOWNLOAD_FORCE_CHECK_HASHES to ensure custom
+          bootloader/kernels are correctly downloaded.
+
+        New defconfigs: Beagleboneai64, Orangepi Zero2w, Pine64 star64
+
+	New packages: basu, bats-assert, bats-file, bats-support, bcc,
+	bpftrace, export-subst, flutter-adaptive-scaffold-example,
+	flutter-animations-example, flutter-dynamic-layouts-example,
+	flutter-go-router-example, flutter-image-example,
+	flutter-markdown-example, flutter-packages,
+	flutter-rfw-local-example, go-bootstrap-stage3, igt-gpu-tools,
+	libgpiod2, libxmlb, libzenoh-c, lmdb, lua-lightningmdb,
+	lua-lsdbus, mokutil, python-email-validator,
+	python-expandvars, python-fastui, python-hid, python-jc,
+	python-mpmath, python-poetry-core, python-sympy,
+	python-yamllint, qbee-agent, starfive-spltool, ustreamer
+
+	Removed packages: flutter-gallery, omxplayer, ti-k3-image-gen
+
+	Issues resolved (http://bugs.uclibc.org):
+
+        #14416: Mesa3D missing DRI3 support for various Gallium drivers
+        #15766: BR2_PACKAGE_WESTON_XWAYLAND -- 12.0.1 -- fails to build..
+        #15997: Build Squid with GCC12.3 in Buildroot 2024.02 will fail
+        #16009: 'select' does not work with 'choice'
+        #16036: android-tools version is too old
+        #16075: Cannot use linux kernel extensions from external tree..
+
 2024.02.2, released May 7th, 2024
 
 	Important / security related fixes.
