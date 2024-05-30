@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBGIT2_VERSION = 1.8.0
+LIBGIT2_VERSION = 1.8.1
 LIBGIT2_SITE = $(call github,libgit2,libgit2,v$(LIBGIT2_VERSION))
 LIBGIT2_LICENSE = \
 	GPL-2.0 with linking exception, \
@@ -22,7 +22,7 @@ LIBGIT2_CONF_OPTS = \
 	-DUSE_GSSAPI=OFF \
 	-DUSE_ICONV=ON \
 	-DREGEX_BACKEND=regcomp \
-	-DUSE_HTTP_PARSER=system \
+	-DUSE_HTTP_PARSER=http-parser \
 	-DUSE_NTLMCLIENT=OFF \
 	-DUSE_XDIFF=builtin \
 	-DUSE_THREADS=$(if $(BR2_TOOLCHAIN_HAS_THREADS),ON,OFF)
