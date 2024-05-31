@@ -1,0 +1,45 @@
+From 8c30a0c7fe0162de0618b26fb34cc91ea582e5f7 Mon Sep 17 00:00:00 2001
+From: Debbie Martin <Debbie.Martin@arm.com>
+Date: Wed, 27 Sep 2023 18:05:26 +0100
+Subject: [PATCH] feat(fvp): add stdout-path
+
+Add stdout-path to the fvp-base devicetree to be passed to BL33 (U-Boot)
+and then to the Linux kernel to be compliant to Arm SystemReady IR:
+https://developer.arm.com/documentation/DUI1101/2-0/
+Configure-U-Boot-for-SystemReady/Adapt-the-Devicetree
+
+This has been tested by booting fvp-base to Linux and ensuring the
+console is accessible.
+
+Change-Id: Iae98630f18f735ce344c1158f41f358c2a49eeb6
+Signed-off-by: Diego Sueiro <Diego.Sueiro@arm.com>
+Signed-off-by: Debbie Martin <Debbie.Martin@arm.com>
+Upstream: https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/+/8c30a0c7fe0162de0618b26fb34cc91ea582e5f7%5E!/
+Signed-off-by: Vincent Stehlé <vincent.stehle@arm.com>
+---
+ fdts/fvp-base-psci-common.dtsi | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/fdts/fvp-base-psci-common.dtsi b/fdts/fvp-base-psci-common.dtsi
+index 79cf37d3b0..ff31ba7616 100644
+--- a/fdts/fvp-base-psci-common.dtsi
++++ b/fdts/fvp-base-psci-common.dtsi
+@@ -27,11 +27,12 @@
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
+ 
++	chosen {
++		stdout-path = "serial0:115200n8";
+ #if (ENABLE_RME == 1)
+-	chosen { bootargs = "console=ttyAMA0 earlycon=pl011,0x1c090000 root=/dev/vda ip=on";};
+-#else
+-	chosen {};
++		bootargs = "console=ttyAMA0 earlycon=pl011,0x1c090000 root=/dev/vda ip=on";
+ #endif
++	};
+ 
+ 	aliases {
+ 		serial0 = &v2m_serial0;
+-- 
+2.43.0
+
