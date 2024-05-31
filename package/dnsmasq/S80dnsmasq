@@ -10,12 +10,21 @@ case "$1" in
 		printf "Starting dnsmasq: "
 		start-stop-daemon -S -p "$PIDFILE" -x "/usr/sbin/$DAEMON" -- \
 			--pid-file="$PIDFILE"
+		# shellcheck disable=SC2181
 		[ $? = 0 ] && echo "OK" || echo "FAIL"
 		;;
 	stop)
 		printf "Stopping dnsmasq: "
 		start-stop-daemon -K -q -p "$PIDFILE" -x "/usr/sbin/$DAEMON"
+		# shellcheck disable=SC2181
 		[ $? = 0 ] && echo "OK" || echo "FAIL"
+		# wait for dnsmasq process to be gone
+		while true; do
+			pid="$( cat "${PIDFILE}" 2>/dev/null || true )"
+			{ [ -n "${pid}" ] && [ -d "/proc/${pid}" ]; } || break
+			sleep 0.1
+		done
+		rm -f "$PIDFILE"
 		;;
 	restart|reload)
 		$0 stop
