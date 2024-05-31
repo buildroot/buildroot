@@ -26,6 +26,16 @@ else
 OCTAVE_CONF_OPTS += --without-bz2
 endif
 
+ifeq ($(BR2_PACKAGE_GRAPHICSMAGICK),y)
+OCTAVE_CONF_OPTS += --with-magick=GraphicsMagick++
+OCTAVE_DEPENDENCIES += graphicsmagick
+else ifeq ($(BR2_PACKAGE_IMAGEMAGICK),y)
+OCTAVE_CONF_OPTS += --with-magick=ImageMagick++
+OCTAVE_DEPENDENCIES += imagemagick
+else
+OCTAVE_CONF_OPTS += --without-magick
+endif
+
 ifeq ($(BR2_PACKAGE_READLINE),y)
 OCTAVE_CONF_OPTS += \
 	--enable-readline \
