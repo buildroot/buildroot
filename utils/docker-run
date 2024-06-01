@@ -29,11 +29,16 @@ declare -a mountpoints=(
     "$(pwd)"
 )
 
+# We use the PODMAN_USERNS environment variable rather than using the
+# --userns command line argument because Fedora system may have the
+# podman-docker package installed, providing the "docker"
+# compatibility command.
+export PODMAN_USERNS="keep-id"
+
 if command -v docker >/dev/null; then
     DOCKER="docker"
 elif command -v podman >/dev/null; then
     DOCKER="podman"
-    docker_opts+=( --userns=keep-id )
 else
     echo "ERROR: Neither docker nor podman available!" >&2
     exit 1
