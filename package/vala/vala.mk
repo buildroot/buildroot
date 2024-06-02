@@ -5,7 +5,7 @@
 ################################################################################
 
 VALA_VERSION_MAJOR = 0.56
-VALA_VERSION = $(VALA_VERSION_MAJOR).14
+VALA_VERSION = $(VALA_VERSION_MAJOR).17
 VALA_SITE = http://download.gnome.org/sources/vala/$(VALA_VERSION_MAJOR)
 VALA_SOURCE = vala-$(VALA_VERSION).tar.xz
 VALA_LICENSE = LGPL-2.1+
@@ -15,7 +15,9 @@ VALA_CPE_ID_VENDOR = gnome
 HOST_VALA_DEPENDENCIES = host-bison host-flex host-libglib2
 # Yes, the autoconf script understands ':' as "xsltproc is not
 # available".
-HOST_VALA_CONF_ENV = ac_cv_path_XSLTPROC=:
+HOST_VALA_CONF_ENV = \
+	ac_cv_path_XSLTPROC=: \
+	GI_GIRDIR="$(STAGING_DIR)/usr/share/gir-1.0"
 HOST_VALA_CONF_OPTS += --disable-valadoc
 
 # We wrap vala, valac and vapigen to point to the proper gir and vapi data dirs
