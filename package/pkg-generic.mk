@@ -1253,6 +1253,8 @@ else ifeq ($$($(2)_SITE_METHOD),hg)
 DL_TOOLS_DEPENDENCIES += hg
 else ifeq ($$($(2)_SITE_METHOD),cvs)
 DL_TOOLS_DEPENDENCIES += cvs
+else ifneq ($(filter ftp ftps,$$($(2)_SITE_METHOD)),)
+DL_TOOLS_DEPENDENCIES += curl
 endif # SITE_METHOD
 
 # cargo/go vendoring (may) need git

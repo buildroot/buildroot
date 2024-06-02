@@ -8,6 +8,7 @@
 ################################################################################
 
 # Download method commands
+export CURL := $(call qstrip,$(BR2_CURL))
 export WGET := $(call qstrip,$(BR2_WGET))
 export SVN := $(call qstrip,$(BR2_SVN))
 export CVS := $(call qstrip,$(BR2_CVS))

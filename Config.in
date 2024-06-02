@@ -103,6 +103,10 @@ menu "Build options"
 
 menu "Commands"
 
+config BR2_CURL
+	string "Curl command"
+	default "curl -q --ftp-pasv --retry 3"
+
 config BR2_WGET
 	string "Wget command"
 	default "wget -nd -t 3"

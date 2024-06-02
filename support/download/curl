@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+# We want to catch any unexpected failure, and exit immediately
+set -e
+
+# Download helper for curl, to be called from the download wrapper script
+#
+# Options:
+#   -q          Be quiet.
+#   -o FILE     Save into file FILE.
+#   -f FILENAME The filename of the tarball to get at URL
+#   -u URL      Download file at URL.
+#
+# Environment:
+#   CURL     : the curl command to call
+
+quiet=
+while getopts "${BR_BACKEND_DL_GETOPTS}" OPT; do
+    case "${OPT}" in
+    q)  quiet=-s;;
+    o)  output="${OPTARG}";;
+    f)  filename="${OPTARG}";;
+    u)  url="${OPTARG}";;
+    :)  printf "option '%s' expects a mandatory argument\n" "${OPTARG}"; exit 1;;
+    \?) printf "unknown option '%s'\n" "${OPTARG}" >&2; exit 1;;
+    esac
+done
+
+shift $((OPTIND-1)) # Get rid of our options
+
+# Caller needs to single-quote its arguments to prevent them from
+# being expanded a second time (in case there are spaces in them)
+_curl() {
+    if [ -z "${quiet}" ]; then
+        printf '%s ' "${CURL}" "${@}"; printf '\n'
+    fi
+    _plain_curl "$@"
+}
+# Note: please keep command below aligned with what is printed above
+_plain_curl() {
+    # shellcheck disable=SC2086  # We want splitting
+    eval ${CURL} "${@}"
+}
+
+_curl ${quiet} "${@}" --output "'${output}'" "'${url}/${filename}'"
