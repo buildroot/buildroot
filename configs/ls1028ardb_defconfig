@@ -2,8 +2,9 @@
 BR2_aarch64=y
 BR2_cortex_a72=y
 
-# patches
-BR2_GLOBAL_PATCH_DIR="board/freescale/common/patches"
+# Build
+BR2_GLOBAL_PATCH_DIR="board/freescale/ls1028ardb/patches board/freescale/common/patches"
+BR2_DOWNLOAD_FORCE_CHECK_HASHES=y
 
 # Toolchain
 # Linux headers same as kernel, a 5.10 series
