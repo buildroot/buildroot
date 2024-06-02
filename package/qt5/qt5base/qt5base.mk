@@ -5,8 +5,8 @@
 ################################################################################
 
 QT5BASE_VERSION = da6e958319e95fe564d3b30c931492dd666bfaff
-QT5BASE_SITE = $(QT5_SITE)/qtbase/-/archive/$(QT5BASE_VERSION)
-QT5BASE_SOURCE = qtbase-$(QT5BASE_VERSION).tar.bz2
+QT5BASE_SITE = $(QT5_SITE)/qtbase
+QT5BASE_SITE_METHOD = git
 QT5BASE_CPE_ID_VENDOR = qt
 QT5BASE_CPE_ID_PRODUCT = qt
 
