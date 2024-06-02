@@ -1,4 +1,4 @@
-From 18e19402fab3939223a58481734e685d25c3102b Mon Sep 17 00:00:00 2001
+From 3fbd10c59a777c4ef7ee1bd3fb70808e25e11703 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:15:31 -0800
 Subject: [PATCH] Add an option to disable lib2to3
@@ -14,14 +14,16 @@ Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
 [ Bernd Kuhls: ported to Python 3.11.4]
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[ Vincent Fazio: fix scripts array to reflect upstream ]
+Signed-off-by: Vincent Fazio <vfazio@gmail.com>
 ---
  Makefile.pre.in | 17 ++++++++++++-----
  configure.ac    |  6 ++++++
- setup.py        |  6 +++---
- 3 files changed, 21 insertions(+), 8 deletions(-)
+ setup.py        |  4 +++-
+ 3 files changed, 21 insertions(+), 6 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index e87bc1fcd32..1a0ab0de426 100644
+index e87bc1fcd3..1a0ab0de42 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
 @@ -1881,7 +1881,9 @@ ifeq (@PYDOC@,yes)
@@ -82,7 +84,7 @@ index e87bc1fcd32..1a0ab0de426 100644
  # bpo-21536: Misc/python-config.sh is generated in the build directory
  # from $(srcdir)Misc/python-config.sh.in.
 diff --git a/configure.ac b/configure.ac
-index d56d8f9d1c5..bf91fb2f824 100644
+index d56d8f9d1c..bf91fb2f82 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -7147,6 +7147,12 @@ PY_STDLIB_MOD([xxlimited_35], [test "$with_trace_refs" = "no"], [test "$ac_cv_fu
@@ -99,24 +101,23 @@ index d56d8f9d1c5..bf91fb2f824 100644
  AC_CONFIG_FILES(Makefile.pre Misc/python.pc Misc/python-embed.pc Misc/python-config.sh)
  AC_CONFIG_FILES([Modules/Setup.bootstrap Modules/Setup.stdlib])
 diff --git a/setup.py b/setup.py
-index d8647724650..e02591dae10 100644
+index 25e6f4fc26..78d880f9db 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -1598,11 +1598,11 @@ class DummyProcess:
+@@ -1598,10 +1598,12 @@ class DummyProcess:
      import warnings
      warnings.filterwarnings("ignore",category=DeprecationWarning)
  
--    scripts = ['Tools/scripts/idle3', 'Tools/scripts/2to3',
--               'Lib/smtpd.py']
-+    scripts = ['Tools/scripts/idle3', 'Lib/smtpd.py']
+-    scripts = ['Tools/scripts/idle3', 'Tools/scripts/2to3']
++    scripts = ['Tools/scripts/idle3']
+ 
      if not '--disable-pydoc' in sysconfig.get_config_var("CONFIG_ARGS"):
          scripts += [ 'Tools/scripts/pydoc3' ]
--
 +    if not '--disable-lib2to3' in sysconfig.get_config_var("CONFIG_ARGS"):
 +        scripts += [ 'Tools/scripts/2to3' ]
+ 
      setup(# PyPI Metadata (PEP 301)
            name = "Python",
-           version = sys.version.split()[0],
 -- 
-2.44.0
+2.34.1
 

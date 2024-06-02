@@ -1,4 +1,4 @@
-From 77fcd90a1236d59d40aa32d3bc4bef4303eb4066 Mon Sep 17 00:00:00 2001
+From e6284624679a525440dc4bfddc1347f8add22fd8 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:07:56 -0800
 Subject: [PATCH] Add an option to disable pydoc
@@ -12,6 +12,8 @@ Signed-off-by: Samuel Martin <s.martin49@gmail.com>
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 [ Adam Duskett: ported to Python 3.10.0 ]
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
+[ Vincent Fazio: fix scripts array to reflect upstream ]
+Signed-off-by: Vincent Fazio <vfazio@gmail.com>
 ---
  Makefile.pre.in | 7 ++++++-
  configure.ac    | 6 ++++++
@@ -19,7 +21,7 @@ Signed-off-by: Adam Duskett <aduskett@gmail.com>
  3 files changed, 19 insertions(+), 3 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 5a40b7c5484..e87bc1fcd32 100644
+index 5a40b7c548..e87bc1fcd3 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
 @@ -1877,7 +1877,9 @@ bininstall: commoninstall altbininstall
@@ -52,7 +54,7 @@ index 5a40b7c5484..e87bc1fcd32 100644
  libinstall:	all $(srcdir)/Modules/xxmodule.c
  	@for i in $(SCRIPTDIR) $(LIBDEST); \
 diff --git a/configure.ac b/configure.ac
-index b4d7d2cca6a..d56d8f9d1c5 100644
+index b4d7d2cca6..d56d8f9d1c 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -4222,6 +4222,12 @@ AS_VAR_IF([posix_threads], [stub], [
@@ -69,7 +71,7 @@ index b4d7d2cca6a..d56d8f9d1c5 100644
  AH_TEMPLATE(ENABLE_IPV6, [Define if --enable-ipv6 is specified])
  AC_MSG_CHECKING([if --enable-ipv6 is specified])
 diff --git a/setup.py b/setup.py
-index 53b066cb18b..d8647724650 100644
+index 53b066cb18..25e6f4fc26 100644
 --- a/setup.py
 +++ b/setup.py
 @@ -1597,6 +1597,12 @@ class DummyProcess:
@@ -77,8 +79,8 @@ index 53b066cb18b..d8647724650 100644
      import warnings
      warnings.filterwarnings("ignore",category=DeprecationWarning)
 +
-+    scripts = ['Tools/scripts/idle3', 'Tools/scripts/2to3',
-+               'Lib/smtpd.py']
++    scripts = ['Tools/scripts/idle3', 'Tools/scripts/2to3']
++
 +    if not '--disable-pydoc' in sysconfig.get_config_var("CONFIG_ARGS"):
 +        scripts += [ 'Tools/scripts/pydoc3' ]
 +
@@ -96,5 +98,5 @@ index 53b066cb18b..d8647724650 100644
  
  # --install-platlib
 -- 
-2.44.0
+2.34.1
 

@@ -1,4 +1,4 @@
-From f74c580b9e5bd8c710627b48cea4e152426e71e6 Mon Sep 17 00:00:00 2001
+From dd4ac2662ae1feaa3a29c4088193e48645b080f7 Mon Sep 17 00:00:00 2001
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:45:14 -0800
 Subject: [PATCH] Add an option to disable IDLE
@@ -11,14 +11,16 @@ Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 [ Adam Duskett: ported to Python 3.10.0 ]
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
+[ Vincent Fazio: fixup setup array to reflect upstream ]
+Signed-off-by: Vincent Fazio <vfazio@gmail.com>
 ---
  Makefile.pre.in | 7 ++++++-
  configure.ac    | 6 ++++++
- setup.py        | 5 ++++-
- 3 files changed, 16 insertions(+), 2 deletions(-)
+ setup.py        | 4 +++-
+ 3 files changed, 15 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 8e5f6762d20..4e407cbcfa9 100644
+index 8e5f6762d2..4e407cbcfa 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
 @@ -1875,7 +1875,9 @@ bininstall: commoninstall altbininstall
@@ -51,7 +53,7 @@ index 8e5f6762d20..4e407cbcfa9 100644
  libinstall:	all $(srcdir)/Modules/xxmodule.c
  	@for i in $(SCRIPTDIR) $(LIBDEST); \
 diff --git a/configure.ac b/configure.ac
-index cb7e980e5b5..fe497ec9dfb 100644
+index cb7e980e5b..fe497ec9df 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -7206,6 +7206,12 @@ AC_ARG_ENABLE(lib2to3,
@@ -68,25 +70,25 @@ index cb7e980e5b5..fe497ec9dfb 100644
  AC_CONFIG_FILES(Makefile.pre Misc/python.pc Misc/python-embed.pc Misc/python-config.sh)
  AC_CONFIG_FILES([Modules/Setup.bootstrap Modules/Setup.stdlib])
 diff --git a/setup.py b/setup.py
-index e02591dae10..ada914c5501 100644
+index 78d880f9db..ca05faec97 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -1598,11 +1598,14 @@ class DummyProcess:
+@@ -1598,12 +1598,14 @@ class DummyProcess:
      import warnings
      warnings.filterwarnings("ignore",category=DeprecationWarning)
  
--    scripts = ['Tools/scripts/idle3', 'Lib/smtpd.py']
-+    scripts = [ 'Lib/smtpd.py']
+-    scripts = ['Tools/scripts/idle3']
++    scripts = []
+ 
      if not '--disable-pydoc' in sysconfig.get_config_var("CONFIG_ARGS"):
          scripts += [ 'Tools/scripts/pydoc3' ]
      if not '--disable-lib2to3' in sysconfig.get_config_var("CONFIG_ARGS"):
          scripts += [ 'Tools/scripts/2to3' ]
 +    if not '--disable-idle3' in sysconfig.get_config_var("CONFIG_ARGS"):
 +        scripts += [ 'Tools/scripts/idle3' ]
-+
+ 
      setup(# PyPI Metadata (PEP 301)
            name = "Python",
-           version = sys.version.split()[0],
 -- 
-2.44.0
+2.34.1
 
