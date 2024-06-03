@@ -5,7 +5,7 @@
 ################################################################################
 
 NEWLIB_BARE_METAL_VERSION = 4.4.0.20231231
-NEWLIB_BARE_METAL_SITE = ftp://sourceware.org/pub/newlib
+NEWLIB_BARE_METAL_SITE = https://sourceware.org/ftp/newlib
 NEWLIB_BARE_METAL_SOURCE = newlib-$(NEWLIB_BARE_METAL_VERSION).tar.gz
 NEWLIB_BARE_METAL_DEPENDENCIES = host-gcc-bare-metal
 NEWLIB_BARE_METAL_ADD_TOOLCHAIN_DEPENDENCY = NO
