@@ -153,6 +153,12 @@ config BR2_TARGET_AT91BOOTSTRAP
 	  Upstream for at91bootstrap 1.x is no longer available and
 	  has been replaced by at91bootstrap3.
 
+config BR2_TARGET_AT91DATAFLASHBOOT
+	bool "at91dataflashboot removed"
+	select BR2_LEGACY
+	help
+	  at91dataflashboot has been replaced by at91bootstrap3.
+
 config BR2_PACKAGE_ON2_8170_MODULES
 	bool "on2-8170-modules removed"
 	select BR2_LEGACY
