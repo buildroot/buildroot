@@ -5,9 +5,9 @@
 ################################################################################
 
 ZIP_VERSION = 3.0
-# The version is really 3.0, but the tarball is named zip30.tgz
-ZIP_SOURCE = zip$(subst .,,$(ZIP_VERSION)).tgz
-ZIP_SITE = ftp://ftp.info-zip.org/pub/infozip/src
+# The version is really 3.0, but the tarball is named zip30.tar.gz
+ZIP_SOURCE = zip$(subst .,,$(ZIP_VERSION)).tar.gz
+ZIP_SITE = https://sourceforge.net/projects/infozip/files/Zip%203.x%20%28latest%29/$(ZIP_VERSION)
 ZIP_LICENSE = Info-ZIP
 ZIP_LICENSE_FILES = LICENSE
 ZIP_CPE_ID_VENDOR = info-zip_project
