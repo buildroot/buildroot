@@ -1,0 +1,37 @@
+From f8903bc2be7ae5ac9fb9bbeed8512e974c6e60ec Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Mon, 3 Jun 2024 21:53:38 +0200
+Subject: [PATCH] esp_hosted_ng: Fix Bluetooth build failure on Linux 6.8.11+
+
+After Linux commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=84a4bb6548a29326564f0e659fb8064503ecc1c7
+BT_HS has been removed and consequently AMP controllers can't be created,
+so at this point only HCI_PRIMARY has been left as unique controller type
+to be created and this became implicit with no need to define if the
+controller if HCI_PRIMARY or HCI_AMP. So let's assign HCI_PRIMARY up to
+Linux 6.8.11 only preventing build failure.
+
+Upstream: https://github.com/espressif/esp-hosted/pull/400
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ esp_hosted_ng/host/esp_bt.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/esp_hosted_ng/host/esp_bt.c b/esp_hosted_ng/host/esp_bt.c
+index 3b78c11698..4598ac0e0a 100644
+--- a/esp_hosted_ng/host/esp_bt.c
++++ b/esp_hosted_ng/host/esp_bt.c
+@@ -240,7 +240,9 @@ int esp_init_bt(struct esp_adapter *adapter)
+ 	hdev->set_bdaddr = esp_bt_set_bdaddr;
+ #endif
+ 
++#if (LINUX_VERSION_CODE <= KERNEL_VERSION(6, 8, 11))
+ 	hdev->dev_type = HCI_PRIMARY;
++#endif
+ 
+ 	SET_HCIDEV_DEV(hdev, adapter->dev);
+ 
+-- 
+2.34.1
+
