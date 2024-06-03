@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2024.05"
 
+config BR2_TARGET_AT91BOOTSTRAP
+	bool "at91bootstrap removed"
+	select BR2_LEGACY
+	help
+	  Upstream for at91bootstrap 1.x is no longer available and
+	  has been replaced by at91bootstrap3.
+
 config BR2_PACKAGE_ON2_8170_MODULES
 	bool "on2-8170-modules removed"
 	select BR2_LEGACY
