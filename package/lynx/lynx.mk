@@ -6,7 +6,7 @@
 
 LYNX_VERSION = 2.8.9rel.1
 LYNX_SOURCE = lynx$(LYNX_VERSION).tar.bz2
-LYNX_SITE = ftp://ftp.invisible-island.net/lynx/tarballs
+LYNX_SITE = https://invisible-mirror.net/archives/lynx/tarballs
 LYNX_PATCH = \
 	https://salsa.debian.org/lynx-team/lynx/-/raw/debian/2.9.0dev.6-3_deb11u1/debian/patches/90_CVE-2021-38165.patch
 # 90_CVE-2021-38165.patch
