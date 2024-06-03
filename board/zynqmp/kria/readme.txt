@@ -90,8 +90,8 @@ KV260 Flashing Instructions:
 Flashing u-boot.itb:
     $ sf probe
     $ fatload mmc 1 0x1000000 u-boot.itb
-    $ sf erase 0xf80000 +$filesize
-    $ sf write 0x1000000 0xf80000 $filesize
+    $ sf erase 0x280000 +$filesize
+    $ sf write 0x1000000 0x280000 $filesize
 
 Flashing boot.bin:
     $ sf probe
