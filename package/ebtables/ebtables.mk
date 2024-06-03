@@ -5,7 +5,7 @@
 ################################################################################
 
 EBTABLES_VERSION = 2.0.11
-EBTABLES_SITE = http://ftp.netfilter.org/pub/ebtables
+EBTABLES_SITE = https://netfilter.org/pub/ebtables
 EBTABLES_LICENSE = GPL-2.0+
 EBTABLES_LICENSE_FILES = COPYING
 EBTABLES_CPE_ID_VENDOR = netfilter
