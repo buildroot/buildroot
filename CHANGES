@@ -1,3 +1,35 @@
+2024.05-rc2, released June 4th, 2024
+
+	Fixes all over the tree.
+
+	Download:
+	- Dropped the (noop) --passive-ftp option from default wget
+	  options for compatibility with wget2
+
+	- Fixed an issue with the generated archives (for
+	  git/svn/cargo/go) when multiple packages share an archive
+	  (E.G. linux vs linux-headers).
+
+	Defconfigs: Fix build issue with binutils 2.41+ for
+	Acmesystems Aria / Arietta, add download hashes for a number
+	of defconfigs. Fix FIT external position for i.MX8 boards
+
+	Updated/fixed packages: dnsmasq, docker-compose, doom-wad,
+	ebtables, esp-hosted, file, freeradius-client,
+	freeradius-server, go, kmod, libmnl, libnetfilter_acct,
+	libnetfilter_log, linux, luarocks, lynx, makedumpfile,
+	micropython, mtd, ncftp, newlib-bare-metal, nfacct, ntp,
+	octave, proftpd, qt5base, systemd, tpm2-tss, uboot-tools,
+	ulogd, vala, zip
+
+	Removed packages: at91bootstrap, at91dataflashboot,
+	on2-8170-libs, on2-8170-modules
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#15973: imx8m bootloader image generation broken since update..
+	#16093: kmod and gcc-14 build error
+
 2024.05-rc1, released May 30th, 2024
 
 	Fixes all over the tree and new features.
