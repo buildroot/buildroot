@@ -170,6 +170,7 @@ endif
 
 # Generate a tarball if one does not already exist.
 define FLUTTER_ENGINE_GENERATE_TARBALL
+	TAR="$(TAR)" \
 	PATH=$(HOST_DIR)/share/depot_tools:$(BR_PATH) \
 	PYTHONPATH=$(HOST_DIR)/lib/python$(PYTHON3_VERSION_MAJOR) \
 	PUB_CACHE=$(FLUTTER_SDK_BIN_PUB_CACHE) \
