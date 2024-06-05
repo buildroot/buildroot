@@ -312,6 +312,18 @@ define BUSYBOX_INSTALL_SYSCTL_SCRIPT
 endef
 endif
 
+# Only install our crond script if no other package does it.
+ifeq ($(BR2_PACKAGE_DCRON),)
+define BUSYBOX_INSTALL_CROND_SCRIPT
+	if grep -q CONFIG_CROND=y $(@D)/.config; \
+	then \
+		mkdir -p $(TARGET_DIR)/etc/cron/crontabs ; \
+		$(INSTALL) -m 0755 -D package/busybox/S50crond \
+			$(TARGET_DIR)/etc/init.d/S50crond; \
+	fi;
+endef
+endif
+
 ifeq ($(BR2_INIT_BUSYBOX),y)
 define BUSYBOX_INSTALL_INITTAB
 	if test ! -e $(TARGET_DIR)/etc/inittab; then \
@@ -407,6 +419,7 @@ define BUSYBOX_INSTALL_INIT_OPENRC
 	$(BUSYBOX_INSTALL_MDEV_SCRIPT)
 	$(BUSYBOX_INSTALL_LOGGING_SCRIPT)
 	$(BUSYBOX_INSTALL_WATCHDOG_SCRIPT)
+	$(BUSYBOX_INSTALL_CROND_SCRIPT)
 	$(BUSYBOX_INSTALL_TELNET_SCRIPT)
 endef
 
@@ -419,6 +432,7 @@ define BUSYBOX_INSTALL_INIT_SYSV
 	$(BUSYBOX_INSTALL_LOGGING_SCRIPT)
 	$(BUSYBOX_INSTALL_WATCHDOG_SCRIPT)
 	$(BUSYBOX_INSTALL_SYSCTL_SCRIPT)
+	$(BUSYBOX_INSTALL_CROND_SCRIPT)
 	$(BUSYBOX_INSTALL_TELNET_SCRIPT)
 endef
 
