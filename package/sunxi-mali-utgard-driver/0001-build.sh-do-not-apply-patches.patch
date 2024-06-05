@@ -1,0 +1,39 @@
+From 079ed8aa57ba6629b992c3d0d01904d3e5170d3b Mon Sep 17 00:00:00 2001
+From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Date: Wed, 5 Jun 2024 13:06:16 +0200
+Subject: [PATCH] build.sh: do not apply patches
+
+In Buildroot, we handle applying the patches in a generic way, with
+appropriate tools (e.g. with a proper tar).
+
+Upstream: not applicable
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ build.sh | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/build.sh b/build.sh
+index d1fedff..26efc53 100755
+--- a/build.sh
++++ b/build.sh
+@@ -10,6 +10,8 @@ BUILD_OPTS="USING_UMP=0
+ 	    USING_DEVFREQ=1"
+ 
+ apply_patches() {
++    return 0  # Patching handled by Buildroot
++
+     pushd $2
+ 
+     quilt push -a
+@@ -22,6 +24,8 @@ apply_patches() {
+ }
+ 
+ unapply_patches() {
++    return 0  # Patching handled by Buildroot
++
+     pushd $2
+ 
+     quilt pop -a
+-- 
+2.45.1
+
