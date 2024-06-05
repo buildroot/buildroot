@@ -70,7 +70,7 @@ gen_tarball() {
     # - it insists on having a full git repositoy, with .git et al., which means
     #   we can't generate a reproducible archive anyway.
     # So we jsut create a plain tarball.
-    tar -C "${SCRATCH_DIR}"/src -czf "${TARBALL_NAME}" .
+    ${TAR} -C "${SCRATCH_DIR}"/src -czf "${TARBALL_NAME}" .
     mv "${TARBALL_NAME}" "${TARBALL_DL_PATH}"
 }
 
