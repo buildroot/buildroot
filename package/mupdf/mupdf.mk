@@ -23,8 +23,7 @@ MUPDF_DEPENDENCIES = \
 	zlib
 
 MUPDF_CFLAGS = \
-	$(TARGET_CFLAGS) \
-	-fPIC # -fPIC is needed because the Makefile doesn't append it.
+	$(TARGET_CFLAGS)
 
 MUPDF_LDFLAGS = \
 	$(TARGET_LDFLAGS)
@@ -39,6 +38,12 @@ MUPDF_MAKE_ENV = $(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) \
 MUPDF_MAKE_OPTS = \
 	HAVE_OBJCOPY=no \
 	prefix="/usr"
+
+ifeq ($(BR2_STATIC_LIBS),y)
+MUPDF_MAKE_OPTS += shared=no
+else
+MUPDF_MAKE_OPTS += shared=yes
+endif
 
 ifeq ($(BR2_PACKAGE_LIBFREEGLUT),y)
 MUPDF_DEPENDENCIES += libfreeglut
