@@ -186,6 +186,7 @@ $(BUILD_DIR)/%/.stamp_downloaded:
 		$(call DOWNLOAD, \
 			$($(PKG)_MAIN_DOWNLOAD), \
 			$(patsubst %,-p '%',$($(PKG)_DOWNLOAD_POST_PROCESS)) \
+			$(patsubst %,-P '%',$($(PKG)_DOWNLOAD_POST_PROCESS_OPTS)) \
 		) \
 	)
 	$(foreach p,$($(PKG)_ADDITIONAL_DOWNLOADS),$(call DOWNLOAD,$(p))$(sep))

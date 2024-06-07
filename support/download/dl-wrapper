@@ -25,10 +25,10 @@ export BR_BACKEND_DL_GETOPTS=":hc:d:o:n:N:H:lru:qf:e"
 main() {
     local OPT OPTARG
     local backend output large_file recurse quiet rc
-    local -a uris hfiles backend_opts
+    local -a uris hfiles backend_opts post_process_opts
 
     # Parse our options; anything after '--' is for the backend
-    while getopts ":c:d:D:o:n:N:H:lrf:u:qp:" OPT; do
+    while getopts ":c:d:D:o:n:N:H:lrf:u:qp:P:" OPT; do
         case "${OPT}" in
         c)  cset="${OPTARG}";;
         d)  dl_dir="${OPTARG}";;
@@ -42,6 +42,7 @@ main() {
         f)  filename="${OPTARG}";;
         u)  uris+=( "${OPTARG}" );;
         p)  post_process="${OPTARG}";;
+        P)  post_process_opts+=( "${OPTARG}" );;
         q)  quiet="-q";;
         :)  error "option '%s' expects a mandatory argument\n" "${OPTARG}";;
         \?) error "unknown option '%s'\n" "${OPTARG}";;
@@ -152,7 +153,8 @@ main() {
         if [ -n "${post_process}" ] ; then
             if ! "${OLDPWD}/support/download/${post_process}-post-process" \
                     -o "${tmpf}" \
-                    -n "${raw_base_name}"
+                    -n "${raw_base_name}" \
+                    "${post_process_opts[@]}"
             then
                 # cd back to keep path coherence
                 cd "${OLDPWD}"
