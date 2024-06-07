@@ -17,6 +17,9 @@
 # We want to catch any unexpected failure, and exit immediately.
 set -e
 
+# shellcheck source=helpers source-path=SCRIPTDIR
+. "${0%/*}/helpers"
+
 export BR_BACKEND_DL_GETOPTS=":hc:d:o:n:N:H:lru:qf:e"
 
 main() {
@@ -232,11 +235,6 @@ main() {
 
     return ${rc}
 }
-
-trace()  { local msg="${1}"; shift; printf "%s: ${msg}" "${my_name}" "${@}"; }
-warn()   { trace "${@}" >&2; }
-errorN() { local ret="${1}"; shift; warn "${@}"; exit "${ret}"; }
-error()  { errorN 1 "${@}"; }
 
 my_name="${0##*/}"
 main "${@}"
