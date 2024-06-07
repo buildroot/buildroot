@@ -182,7 +182,12 @@ $(BUILD_DIR)/%/.stamp_downloaded:
 			break ; \
 		fi ; \
 	done
-	$(if $($(PKG)_MAIN_DOWNLOAD),$(call DOWNLOAD,$($(PKG)_MAIN_DOWNLOAD),$(patsubst %,-p '%',$($(PKG)_DOWNLOAD_POST_PROCESS))))
+	$(if $($(PKG)_MAIN_DOWNLOAD), \
+		$(call DOWNLOAD, \
+			$($(PKG)_MAIN_DOWNLOAD), \
+			$(patsubst %,-p '%',$($(PKG)_DOWNLOAD_POST_PROCESS)) \
+		) \
+	)
 	$(foreach p,$($(PKG)_ADDITIONAL_DOWNLOADS),$(call DOWNLOAD,$(p))$(sep))
 	$(foreach hook,$($(PKG)_POST_DOWNLOAD_HOOKS),$(call $(hook))$(sep))
 	$(Q)mkdir -p $(@D)
