@@ -85,6 +85,9 @@ def parse_args():
     parser.add_argument("--failed-only", action="store_true", help="print only"
                         " the name of the functions that failed (debug)")
 
+    parser.add_argument("--test-suite", action="store_true", help="Run the"
+                        " test-suite")
+
     flags = parser.parse_args()
 
     flags.ignore_list = get_ignored_parsers_per_file(flags.intree_only, flags.ignore_filename)
@@ -287,6 +290,9 @@ def check_file_using_lib(fname):
 def __main__():
     global flags
     flags = parse_args()
+
+    if flags.test_suite:
+        return checkpackagelib.base.run_test_suite()
 
     if flags.intree_only:
         # change all paths received to be relative to the base dir

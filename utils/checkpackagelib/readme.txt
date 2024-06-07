@@ -23,6 +23,7 @@ How the scripts are structured:
 - lib_type.py contains check functions specific to files of this type.
 
 Some hints when changing this code:
+- test your changes: utils/check-package --test-suite
 - prefer O(n) algorithms, where n is the total number of lines in the files
   processed.
 - when there is no other reason for ordering, use alphabetical order (e.g. keep
