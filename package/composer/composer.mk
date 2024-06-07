@@ -9,8 +9,8 @@ COMPOSER_SOURCE = composer-$(COMPOSER_VERSION).phar
 # Here, we pass a dummy URL parameter in order to control the name the file
 # will have once downloaded.
 # Otherwise, the names will clash ifever we update the version.
-BASE_SITE = https://getcomposer.org/download/$(COMPOSER_VERSION)/composer.phar
-COMPOSER_SITE = $(BASE_SITE)?n=f/$(COMPOSER_SOURCE)
+COMPOSER_BASE_SITE = https://getcomposer.org/download/$(COMPOSER_VERSION)/composer.phar
+COMPOSER_SITE = $(COMPOSER_BASE_SITE)?n=f/$(COMPOSER_SOURCE)
 COMPOSER_LICENSE = MIT
 COMPOSER_LICENSE_FILES = LICENSE
 COMPOSER_CPE_ID_VENDOR = getcomposer
