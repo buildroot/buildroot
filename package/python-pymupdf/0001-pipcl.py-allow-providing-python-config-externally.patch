@@ -1,0 +1,125 @@
+From ca3417b8d605ccdb2e6c516c5e0c79180381627c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Rapha=C3=ABl=20M=C3=A9lotte?= <raphael.melotte@mind.be>
+Date: Sun, 4 Feb 2024 16:13:45 +0100
+Subject: [PATCH] pipcl.py: allow providing python-config externally
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When cross-compiling (e.g. using Buildroot), the python-config
+executable that resides next to the host python executable provides
+incorrect includes (the ones for the host).
+
+Since the correct path to python-config cannot be guessed, add an
+additional environment variable to allow setting the path to the
+correct python-config executable externally.
+
+Signed-off-by: Raphaël Mélotte <raphael.melotte@mind.be>
+Upstream: https://github.com/pymupdf/PyMuPDF/commit/3a214b0c144d86fd1329b26030f6b9f2a6b27020
+---
+ pipcl.py | 72 +++++++++++++++++++++++++++++---------------------------
+ setup.py |  3 +++
+ 2 files changed, 40 insertions(+), 35 deletions(-)
+
+diff --git a/pipcl.py b/pipcl.py
+index 209f660..c154774 100644
+--- a/pipcl.py
++++ b/pipcl.py
+@@ -1789,43 +1789,45 @@ class PythonFlags:
+             self.ldflags = f'-L {_lib_dir}'
+ 
+         else:
+-            # We use python-config which appears to work better than pkg-config
+-            # because it copes with multiple installed python's, e.g.
+-            # manylinux_2014's /opt/python/cp*-cp*/bin/python*.
+-            #
+-            # But... on non-macos it seems that we should not attempt to specify
+-            # libpython on the link command. The manylinux docker containers
+-            # don't actually contain libpython.so, and it seems that this
+-            # deliberate. And the link command runs ok.
+-            #
+-            python_exe = os.path.realpath( sys.executable)
+-            if darwin():
+-                # Basic install of dev tools with `xcode-select --install` doesn't
+-                # seem to provide a `python3-config` or similar, but there is a
+-                # `python-config.py` accessible via sysconfig.
++            python_config = os.environ.get("PYMUPDF_PYTHON_CONFIG")
++            if not python_config:
++                # We use python-config which appears to work better than pkg-config
++                # because it copes with multiple installed python's, e.g.
++                # manylinux_2014's /opt/python/cp*-cp*/bin/python*.
+                 #
+-                # We try different possibilities and use the last one that
+-                # works.
++                # But... on non-macos it seems that we should not attempt to specify
++                # libpython on the link command. The manylinux docker containers
++                # don't actually contain libpython.so, and it seems that this
++                # deliberate. And the link command runs ok.
+                 #
+-                python_config = None
+-                for pc in (
+-                        f'python3-config',
+-                        f'{sys.executable} {sysconfig.get_config_var("srcdir")}/python-config.py',
+-                        f'{python_exe}-config',
+-                        ):
+-                    e = subprocess.run(
+-                            f'{pc} --includes',
+-                            shell=1,
+-                            stdout=subprocess.DEVNULL,
+-                            stderr=subprocess.DEVNULL,
+-                            check=0,
+-                            ).returncode
+-                    log1(f'{e=} from {pc!r}.')
+-                    if e == 0:
+-                        python_config = pc
+-                assert python_config, f'Cannot find python-config'
+-            else:
+-                python_config = f'{python_exe}-config'
++                python_exe = os.path.realpath( sys.executable)
++                if darwin():
++                    # Basic install of dev tools with `xcode-select --install` doesn't
++                    # seem to provide a `python3-config` or similar, but there is a
++                    # `python-config.py` accessible via sysconfig.
++                    #
++                    # We try different possibilities and use the last one that
++                    # works.
++                    #
++                    python_config = None
++                    for pc in (
++                            f'python3-config',
++                            f'{sys.executable} {sysconfig.get_config_var("srcdir")}/python-config.py',
++                            f'{python_exe}-config',
++                            ):
++                        e = subprocess.run(
++                                f'{pc} --includes',
++                                shell=1,
++                                stdout=subprocess.DEVNULL,
++                                stderr=subprocess.DEVNULL,
++                                check=0,
++                                ).returncode
++                        log1(f'{e=} from {pc!r}.')
++                        if e == 0:
++                            python_config = pc
++                    assert python_config, f'Cannot find python-config'
++                else:
++                    python_config = f'{python_exe}-config'
+             log1(f'Using {python_config=}.')
+             try:
+                 self.includes = run( f'{python_config} --includes', capture=1).strip()
+diff --git a/setup.py b/setup.py
+index 23a5c78..4b3b5c7 100755
+--- a/setup.py
++++ b/setup.py
+@@ -36,6 +36,9 @@ Environmental variables:
+         PYMUPDF_MUPDF_LIB
+             Directory containing MuPDF libraries, (libmupdf.so,
+             libmupdfcpp.so).
++
++        PYMUPDF_PYTHON_CONFIG
++            Optional path to python-config.
+     
+     PYMUPDF_SETUP_IMPLEMENTATIONS
+         Must be one of 'a', 'b', 'ab'. If unset we use 'ab'.
+-- 
+2.41.0
+

@@ -1,4 +1,4 @@
-import fitz
+import fitz_old as fitz
 
 # Write a test PDF file
 outfile = "python-pymupdf.pdf"
