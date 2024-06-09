@@ -1,4 +1,4 @@
-From 3fbd10c59a777c4ef7ee1bd3fb70808e25e11703 Mon Sep 17 00:00:00 2001
+From 572f3164d1dce13db30e897ab0be7c706fa7b731 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:15:31 -0800
 Subject: [PATCH] Add an option to disable lib2to3
@@ -14,19 +14,18 @@ Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
 [ Bernd Kuhls: ported to Python 3.11.4]
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
-[ Vincent Fazio: fix scripts array to reflect upstream ]
-Signed-off-by: Vincent Fazio <vfazio@gmail.com>
+[ Adam Duskett: ported to Python 3.12.1 ]
+Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
 ---
- Makefile.pre.in | 17 ++++++++++++-----
+ Makefile.pre.in | 19 ++++++++++++++-----
  configure.ac    |  6 ++++++
- setup.py        |  4 +++-
- 3 files changed, 21 insertions(+), 6 deletions(-)
+ 2 files changed, 20 insertions(+), 5 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index e87bc1fcd3..1a0ab0de42 100644
+index 2243a658a9..3f314d1354 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1881,7 +1881,9 @@ ifeq (@PYDOC@,yes)
+@@ -2054,7 +2054,9 @@ ifeq (@PYDOC@,yes)
  	(cd $(DESTDIR)$(BINDIR); $(LN) -s pydoc$(VERSION) pydoc3)
  endif
  	-rm -f $(DESTDIR)$(BINDIR)/2to3
@@ -36,7 +35,7 @@ index e87bc1fcd3..1a0ab0de42 100644
  	if test "x$(LIPO_32BIT_FLAGS)" != "x" ; then \
  		rm -f $(DESTDIR)$(BINDIR)/python3-32$(EXE); \
  		(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(VERSION)-32$(EXE) python3-32$(EXE)) \
-@@ -1927,7 +1929,6 @@ LIBSUBDIRS=	asyncio \
+@@ -2101,7 +2103,6 @@ LIBSUBDIRS=	asyncio \
  		idlelib idlelib/Icons \
  		importlib importlib/resources importlib/metadata \
  		json \
@@ -44,34 +43,34 @@ index e87bc1fcd3..1a0ab0de42 100644
  		logging \
  		multiprocessing multiprocessing/dummy \
  		re \
-@@ -1947,10 +1948,6 @@ LIBSUBDIRS=	asyncio \
- TESTSUBDIRS=	ctypes/test \
- 		distutils/tests \
- 		idlelib/idle_test \
--		lib2to3/tests \
--		lib2to3/tests/data \
--		lib2to3/tests/data/fixers \
--		lib2to3/tests/data/fixers/myfixes \
- 		test \
- 		test/audiodata \
- 		test/certdata \
-@@ -2074,6 +2071,14 @@ ifeq (@PYDOC@,yes)
+@@ -2207,10 +2208,6 @@ TESTSUBDIRS=	idlelib/idle_test \
+ 		test/test_importlib/resources/zipdata02 \
+ 		test/test_importlib/source \
+ 		test/test_json \
+-		test/test_lib2to3 \
+-		test/test_lib2to3/data \
+-		test/test_lib2to3/data/fixers \
+-		test/test_lib2to3/data/fixers/myfixes \
+ 		test/test_module \
+ 		test/test_peg_generator \
+ 		test/test_pydoc \
+@@ -2262,6 +2259,14 @@ ifeq (@PYDOC@,yes)
  LIBSUBDIRS += pydoc_data
  endif
  
 +ifeq (@LIB2TO3@,yes)
 +LIBSUBDIRS += lib2to3 lib2to3/fixes lib2to3/pgen2
-+TESTSUBDIRS += lib2to3/tests			\
-+	lib2to3/tests/data			\
-+	lib2to3/tests/data/fixers		\
-+	lib2to3/tests/data/fixers/myfixes
++TESTSUBDIRS += test/test_lib2to3			\
++		test/test_lib2to3/data \
++		test/test_lib2to3/data/fixers \
++		test/test_lib2to3/data/fixers/myfixes
 +endif
 +
  TEST_MODULES=@TEST_MODULES@
- libinstall:	all $(srcdir)/Modules/xxmodule.c
- 	@for i in $(SCRIPTDIR) $(LIBDEST); \
-@@ -2176,10 +2181,12 @@ ifeq (@PYC_BUILD@,yes)
- 		-j0 -d $(LIBDEST)/site-packages -f \
+ 
+ .PHONY: libinstall
+@@ -2345,10 +2350,12 @@ ifeq (@PYC_BUILD@,yes)
+ 		-o 0 -o 1 -o 2 $(COMPILEALL_OPTS) -d $(LIBDEST)/site-packages -f \
  		-x badsyntax $(DESTDIR)$(LIBDEST)/site-packages
  endif
 +ifeq (@LIB2TO3@,yes)
@@ -83,11 +82,21 @@ index e87bc1fcd3..1a0ab0de42 100644
  
  # bpo-21536: Misc/python-config.sh is generated in the build directory
  # from $(srcdir)Misc/python-config.sh.in.
+@@ -2474,7 +2481,9 @@ libainstall: all scripts
+ 	$(INSTALL_SCRIPT) $(srcdir)/install-sh $(DESTDIR)$(LIBPL)/install-sh
+ 	$(INSTALL_SCRIPT) python-config.py $(DESTDIR)$(LIBPL)/python-config.py
+ 	$(INSTALL_SCRIPT) python-config $(DESTDIR)$(BINDIR)/python$(LDVERSION)-config
++ifeq (@LIB2TO3@,yes)
+ 	$(INSTALL_SCRIPT) $(SCRIPT_2TO3) $(DESTDIR)$(BINDIR)/2to3-$(VERSION)
++endif
+ 	$(INSTALL_SCRIPT) $(SCRIPT_IDLE) $(DESTDIR)$(BINDIR)/idle$(VERSION)
+ ifeq (@PYDOC@,yes)
+ 	$(INSTALL_SCRIPT) $(SCRIPT_PYDOC) $(DESTDIR)$(BINDIR)/pydoc$(VERSION)
 diff --git a/configure.ac b/configure.ac
-index d56d8f9d1c..bf91fb2f82 100644
+index 1a2dd28d1e..f0354c580d 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -7147,6 +7147,12 @@ PY_STDLIB_MOD([xxlimited_35], [test "$with_trace_refs" = "no"], [test "$ac_cv_fu
+@@ -7561,6 +7561,12 @@ PY_STDLIB_MOD([xxlimited_35], [test "$with_trace_refs" = "no"], [test "$ac_cv_fu
  # substitute multiline block, must come after last PY_STDLIB_MOD()
  AC_SUBST([MODULE_BLOCK])
  
@@ -98,26 +107,8 @@ index d56d8f9d1c..bf91fb2f82 100644
 +	[ LIB2TO3="${enableval}" ], [ LIB2TO3=yes ])
 +
  # generate output files
- AC_CONFIG_FILES(Makefile.pre Misc/python.pc Misc/python-embed.pc Misc/python-config.sh)
- AC_CONFIG_FILES([Modules/Setup.bootstrap Modules/Setup.stdlib])
-diff --git a/setup.py b/setup.py
-index 25e6f4fc26..78d880f9db 100644
---- a/setup.py
-+++ b/setup.py
-@@ -1598,10 +1598,12 @@ class DummyProcess:
-     import warnings
-     warnings.filterwarnings("ignore",category=DeprecationWarning)
- 
--    scripts = ['Tools/scripts/idle3', 'Tools/scripts/2to3']
-+    scripts = ['Tools/scripts/idle3']
- 
-     if not '--disable-pydoc' in sysconfig.get_config_var("CONFIG_ARGS"):
-         scripts += [ 'Tools/scripts/pydoc3' ]
-+    if not '--disable-lib2to3' in sysconfig.get_config_var("CONFIG_ARGS"):
-+        scripts += [ 'Tools/scripts/2to3' ]
- 
-     setup(# PyPI Metadata (PEP 301)
-           name = "Python",
+ AC_CONFIG_FILES(m4_normalize([
+   Makefile.pre
 -- 
 2.34.1
 

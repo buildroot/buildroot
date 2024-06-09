@@ -1,4 +1,4 @@
-From 33cd52fb1295a6eb4dd42fbc73e565c5ce01bbd0 Mon Sep 17 00:00:00 2001
+From 3a0d7824f7ddd4dd0336c8419cb4246ba936d711 Mon Sep 17 00:00:00 2001
 From: Vanya Sergeev <vsergeev@gmail.com>
 Date: Wed, 23 Dec 2015 11:30:33 +0100
 Subject: [PATCH] Disable buggy_getaddrinfo configure test when cross-compiling
@@ -10,10 +10,10 @@ Signed-off-by: Vanya Sergeev <vsergeev@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index 7b136bd2f0b..1e84aa0bb7f 100644
+index 611c33949a..059ac2f883 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -5137,7 +5137,7 @@ fi]))
+@@ -5428,7 +5428,7 @@ fi]))
  dnl if ac_cv_func_getaddrinfo
  ])
  
@@ -23,5 +23,5 @@ index 7b136bd2f0b..1e84aa0bb7f 100644
    AS_VAR_IF([ipv6], [yes], [
      AC_MSG_ERROR([m4_normalize([
 -- 
-2.44.0
+2.34.1
 

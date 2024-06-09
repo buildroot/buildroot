@@ -1,4 +1,4 @@
-From a1495856f48a8ce256d972f656184e38baced12e Mon Sep 17 00:00:00 2001
+From 3eccbd53df3c51c1c6ece217d19f1d01eb9575a7 Mon Sep 17 00:00:00 2001
 From: Peter Korsgaard <peter@korsgaard.com>
 Date: Fri, 2 Aug 2019 15:53:16 +0200
 Subject: [PATCH] configure.ac: fixup $CC --print-multiarch output for
@@ -25,15 +25,17 @@ to keep the configure script happy.
 
 Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
 [Peter: updated for 3.10.2]
+Signed-off-by: Vincent Fazio <vfazio@gmail.com>
+[Vincent: fixup offsets for 3.12.4]
 ---
  configure.ac | 6 +++++-
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index 6205e6782cf..da884ddf441 100644
+index 1cb95f41fd..d142af404a 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1104,7 +1104,11 @@ AC_MSG_CHECKING([for multiarch])
+@@ -1128,7 +1128,11 @@ AC_MSG_CHECKING([for multiarch])
  AS_CASE([$ac_sys_system],
    [Darwin*], [MULTIARCH=""],
    [FreeBSD*], [MULTIARCH=""],
@@ -47,5 +49,5 @@ index 6205e6782cf..da884ddf441 100644
  AC_SUBST([MULTIARCH])
  AC_MSG_RESULT([$MULTIARCH])
 -- 
-2.44.0
+2.34.1
 

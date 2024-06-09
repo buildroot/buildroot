@@ -1,4 +1,4 @@
-From ffe5a060a1b24bedc2aac5d60d6b3b7e40f55adc Mon Sep 17 00:00:00 2001
+From e7fa6023be567251b409527bd005b93335914501 Mon Sep 17 00:00:00 2001
 From: Vincent Fazio <5265893+vfazio@users.noreply.github.com>
 Date: Wed, 28 Feb 2024 13:55:04 -0600
 Subject: [PATCH] gh-115382: Fix cross compiles when host and target use same
@@ -48,10 +48,10 @@ Upstream: https://github.com/python/cpython/pull/116294
  6 files changed, 19 insertions(+), 3 deletions(-)
 
 diff --git a/Lib/sysconfig.py b/Lib/sysconfig.py
-index ebe37118274..ba424236e11 100644
+index 122d441bd1..260aec3127 100644
 --- a/Lib/sysconfig.py
 +++ b/Lib/sysconfig.py
-@@ -528,7 +528,20 @@ def _init_posix(vars):
+@@ -533,7 +533,20 @@ def _init_posix(vars):
      """Initialize the module as appropriate for POSIX systems."""
      # _sysconfigdata is generated at build time, see _generate_posix_vars()
      name = _get_sysconfigdata_name()
@@ -74,10 +74,10 @@ index ebe37118274..ba424236e11 100644
      vars.update(build_time_vars)
  
 diff --git a/Lib/test/libregrtest/main.py b/Lib/test/libregrtest/main.py
-index a9725fa9673..121e2e73938 100644
+index e41646d2d1..f54e570728 100644
 --- a/Lib/test/libregrtest/main.py
 +++ b/Lib/test/libregrtest/main.py
-@@ -519,6 +519,7 @@ def _add_cross_compile_opts(self, regrtest_opts):
+@@ -576,6 +576,7 @@ def _add_cross_compile_opts(self, regrtest_opts):
                  '_PYTHON_PROJECT_BASE',
                  '_PYTHON_HOST_PLATFORM',
                  '_PYTHON_SYSCONFIGDATA_NAME',
@@ -86,7 +86,7 @@ index a9725fa9673..121e2e73938 100644
              }
              old_environ = os.environ
 diff --git a/Lib/test/pythoninfo.py b/Lib/test/pythoninfo.py
-index 74ebb5e5b8a..fa7fbca34e1 100644
+index 6efeaad812..d43e52c9e4 100644
 --- a/Lib/test/pythoninfo.py
 +++ b/Lib/test/pythoninfo.py
 @@ -326,6 +326,7 @@ def format_groups(groups):
@@ -98,7 +98,7 @@ index 74ebb5e5b8a..fa7fbca34e1 100644
  
          # Sanitizer options
 diff --git a/Tools/scripts/run_tests.py b/Tools/scripts/run_tests.py
-index 445a34ae3e8..4077a834245 100644
+index 445a34ae3e..4077a83424 100644
 --- a/Tools/scripts/run_tests.py
 +++ b/Tools/scripts/run_tests.py
 @@ -42,6 +42,7 @@ def main(regrtest_args):
@@ -110,23 +110,23 @@ index 445a34ae3e8..4077a834245 100644
          }
          environ = {
 diff --git a/configure b/configure
-index cb3db60f9c2..5fc0cffa977 100755
+index 6dc8a66e48..a69346db8c 100755
 --- a/configure
 +++ b/configure
-@@ -3262,7 +3262,7 @@ fi
+@@ -3689,7 +3689,7 @@ fi
      fi
          ac_cv_prog_PYTHON_FOR_REGEN=$with_build_python
      PYTHON_FOR_FREEZE="$with_build_python"
 -    PYTHON_FOR_BUILD='_PYTHON_PROJECT_BASE=$(abs_builddir) _PYTHON_HOST_PLATFORM=$(_PYTHON_HOST_PLATFORM) PYTHONPATH=$(shell test -f pybuilddir.txt && echo $(abs_builddir)/`cat pybuilddir.txt`:)$(srcdir)/Lib _PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata_$(ABIFLAGS)_$(MACHDEP)_$(MULTIARCH) '$with_build_python
 +    PYTHON_FOR_BUILD='_PYTHON_PROJECT_BASE=$(abs_builddir) _PYTHON_HOST_PLATFORM=$(_PYTHON_HOST_PLATFORM) PYTHONPATH=$(srcdir)/Lib _PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata_$(ABIFLAGS)_$(MACHDEP)_$(MULTIARCH) _PYTHON_SYSCONFIGDATA_PATH=$(shell test -f pybuilddir.txt && echo $(abs_builddir)/`cat pybuilddir.txt`) '$with_build_python
-     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $with_build_python" >&5
- $as_echo "$with_build_python" >&6; }
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $with_build_python" >&5
+ printf "%s\n" "$with_build_python" >&6; }
  
 diff --git a/configure.ac b/configure.ac
-index 852cbaa6e4c..5ca316a948b 100644
+index 1cb95f41fd..de420dde2c 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -162,7 +162,7 @@ AC_ARG_WITH(
+@@ -169,7 +169,7 @@ AC_ARG_WITH([build-python],
      dnl Build Python interpreter is used for regeneration and freezing.
      ac_cv_prog_PYTHON_FOR_REGEN=$with_build_python
      PYTHON_FOR_FREEZE="$with_build_python"
@@ -136,5 +136,5 @@ index 852cbaa6e4c..5ca316a948b 100644
    ], [
      AS_VAR_IF([cross_compiling], [yes],
 -- 
-2.44.0
+2.34.1
 
