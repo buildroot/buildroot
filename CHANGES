@@ -109,6 +109,64 @@
         #16036: android-tools version is too old
         #16075: Cannot use linux kernel extensions from external tree..
 
+2024.02.3, released June 10th, 2024
+
+	Important / security related fixes.
+
+	Misc:
+	- Fixed a number of compilation issues for hosts using GCC
+          14.x, including for kconfig.
+
+	Download:
+	- Drop redundant --passive-ftp from default wget options and
+	  migrate a number of packages using FTP upstreams to HTTP(S)
+	  for compatibility with wget2 which does not have FTP support
+
+	- Ensure downloads are correctly shared for host packages that
+	  try to do so using <pkg>_DL_SUBDIR and ensure the correct
+	  toplevel directory name is used in generated tarballs when
+	  downloads are shared.
+
+	Arch: Enable SSE2 support for x86 Pentium M variant.
+
+	Defconfigs: Orangepi PC/R1, Raspberrypi zero2w, Sipeed
+	licheepi nano, Wandboard: Fix compilation issues. PC x86-64
+	bios/efi: add wireless regdb to fix kernel warning during
+	boot, iMX.8 boards: Adjust FIT external data position to match
+	imx-mkimage changes, fixing boot issues.
+
+	Updated/fixed packages: am33x-cm, apcupsd,
+	arm-trusted-firmware, binutils-bare-metal, bpftool, catch2,
+	ccache, cjson, clamav, cog, coreutils, cryptodev-linux,
+	dhcpcd, dmraid, dnsmasq, docker-cli, docker-compose,
+	docker-engine, doom-wad, duma, elf2flt, ebtables, elfutils,
+	evemu, file, fluidsynth, freeradius-client, freeradius-server,
+	freerdp, fwts, gcc, gcc-bare-metal, git, gnuplot, go,
+	gr-osmosdr, gst1-plugins-good, hidapi, imagemagick,
+	intel-gmmlib, ivi-homescreen, janus-gateway, kexec, kmod,
+	kodi, libarchive, libdrm, libedit, libffi, libglib2, libhtp,
+	libjwt, libkrb5, libmanette, libmdbx, libmnl,
+	libnetfilter_acct, libnetfilter_log, libnpth, libopenssl,
+	libpng, libuhttpd, liburiparser, libutempter, libvncserver,
+	libwpe, lightning, linux-firmware, linux-pam, lua-cffi,
+	luajit, lvm2, lynx, mariadb, mesa3d, micropython, minisign,
+	musl, mutt, ncftp, network-manager, newlib-bare-metal, nfacct,
+	nfs-utils, octave, openjpeg, openocd, oprofile,
+	perl-dbd-mysql, php, postgresql, pppd, privoxy, procps-ng,
+	proftpd, proj, putty, python-ml-dtypes, python-pillow,
+	python-rds-py, qemu, qt5base, redis-plus-plus, rtl8189fs,
+	ruby, samba4, shadow, smcroute, speech, squid, sscep,
+	suricata, swupdate, systemd, ti-sgx-km, tinycbor, tinyproxy,
+	tor, tpm2-tss, ttyd, uboot-tools, ulogd, vala, weston,
+	wpewebkit, x11vnc, zbar, zeromq, zfs, zip, zxing-cpp
+
+	Issues resolved (http://bugs.uclibc.org):
+
+        #15766: BR2_PACKAGE_WESTON_XWAYLAND -- 12.0.1 -- fails to build..
+	#15973: imx8m bootloader image generation broken since update..
+        #16075: Cannot use linux kernel extensions from external tree..
+	#16093: kmod and gcc-14 build error
+
 2024.02.2, released May 7th, 2024
 
 	Important / security related fixes.
