@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TFTPD_VERSION = b2b34cecc8cbc18ff6f1fc00bda6ae6e9011e6c7
+TFTPD_VERSION = e52af4207a6e09a1ba21f61d6f85d8b2b1e6efc0
 TFTPD_SITE = https://git.kernel.org/pub/scm/network/tftp/tftp-hpa.git
 TFTPD_SITE_METHOD = git
 TFTPD_CONF_OPTS = --without-tcpwrappers
