@@ -50,7 +50,7 @@ config BR2_PACKAGE_HOST_GO_HOST_CGO_LINKING_SUPPORTS
 
 # Go packages should select BR2_PACKAGE_HOST_GO
 config BR2_PACKAGE_HOST_GO
-	bool
+	bool "host go"
 	depends on BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS
 
 if BR2_PACKAGE_HOST_GO
