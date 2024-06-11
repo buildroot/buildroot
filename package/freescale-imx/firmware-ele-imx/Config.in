@@ -15,6 +15,9 @@ if BR2_PACKAGE_FIRMWARE_ELE_IMX
 
 config BR2_PACKAGE_FIRMWARE_ELE_IMX_AHAB_CONTAINER_IMAGE
 	string
+	default "mx8ulpa0-ahab-container.img" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULPA0
+	default "mx8ulpa1-ahab-container.img" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULPA1
+	default "mx8ulpa2-ahab-container.img" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULPA2
 	default "mx93a0-ahab-container.img" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93A0
 	default "mx93a1-ahab-container.img" if \
 		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX91 || \
