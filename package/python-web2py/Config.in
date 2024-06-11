@@ -17,6 +17,12 @@ if BR2_PACKAGE_PYTHON_WEB2PY
 config BR2_PACKAGE_PYTHON_WEB2PY_INSTALL_ADMIN
 	bool "install admin panel application"
 	default y
+	select BR2_PACKAGE_HOST_PYTHON3
+	# web2py will use pydal to generate the password (below), and that
+	# uses hashlib.pbkdf2_hmac(), which is only available when python
+	# is built with openssl since 3.12 (previously, there was a slow
+	# pure-python fallback, dropped in 3.12).
+	select BR2_PACKAGE_HOST_PYTHON3_SSL
 	help
 	  This option install web2py admin panel application.
 	  It can be removed to save space on embedded systems.
@@ -25,7 +31,7 @@ if BR2_PACKAGE_PYTHON_WEB2PY_INSTALL_ADMIN
 
 config BR2_PACKAGE_PYTHON_WEB2PY_PASSWORD
 	string "admin panel password"
-	default web2py
+	default "web2py"
 	help
 	  Set the admin panel password.
 
