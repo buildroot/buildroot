@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5BASE_VERSION = da6e958319e95fe564d3b30c931492dd666bfaff
+QT5BASE_VERSION = 2b9835f5c9bcfe3105b60a8dd33c1db7d8611378
 QT5BASE_SITE = $(QT5_SITE)/qtbase
 QT5BASE_SITE_METHOD = git
 QT5BASE_CPE_ID_VENDOR = qt

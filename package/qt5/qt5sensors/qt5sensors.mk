@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5SENSORS_VERSION = a41492b23cde20d1e00427d31e4637d06aea3638
+QT5SENSORS_VERSION = bf0b718cd0b6c7823e9d2037d3bdece44185f444
 QT5SENSORS_SITE = $(QT5_SITE)/qtsensors/-/archive/$(QT5SENSORS_VERSION)
 QT5SENSORS_SOURCE = qtsensors-$(QT5SENSORS_VERSION).tar.bz2
 QT5SENSORS_INSTALL_STAGING = YES

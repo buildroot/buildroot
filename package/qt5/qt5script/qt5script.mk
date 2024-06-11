@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5SCRIPT_VERSION = f237e324508dcf0dbabde9dd498eda9fa61c4ff0
+QT5SCRIPT_VERSION = 572daa83e990ce88cca27909470c5404657ec9de
 QT5SCRIPT_SITE = $(QT5_SITE)/qtscript/-/archive/$(QT5SCRIPT_VERSION)
 QT5SCRIPT_SOURCE = qtscript-$(QT5SCRIPT_VERSION).tar.bz2
 QT5SCRIPT_INSTALL_STAGING = YES
