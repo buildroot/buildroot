@@ -39,7 +39,7 @@ XZ_CONF_OPTS = \
 	--enable-unaligned-access=auto \
 	--disable-unsafe-type-punning \
 	--disable-werror \
-	--disable-year2038
+	--enable-year2038
 
 ifeq ($(BR2_SYSTEM_ENABLE_NLS),y)
 XZ_CONF_OPTS += --enable-nls
