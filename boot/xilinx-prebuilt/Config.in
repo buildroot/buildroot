@@ -1,0 +1,48 @@
+config BR2_TARGET_XILINX_PREBUILT
+	bool "xilinx-prebuilt"
+	depends on BR2_aarch64
+	help
+	  Pre-built firmware files for Xilinx boards.
+
+	  https://github.com/Xilinx/soc-prebuilt-firmware
+
+if BR2_TARGET_XILINX_PREBUILT
+
+config BR2_TARGET_XILINX_PREBUILT_VERSION
+	string "prebuilt version"
+	default "xilinx_v2024.1"
+	help
+	  Release version of Xilinx firmware.
+	  Must be xilinx_v2023.1 or newer.
+
+choice
+	bool "family variant"
+	default BR2_TARGET_XILINX_PREBUILT_ZYNQMP
+
+config BR2_TARGET_XILINX_PREBUILT_ZYNQMP
+	bool "zynqmp"
+
+config BR2_TARGET_XILINX_PREBUILT_KRIA
+	bool "kria"
+
+config BR2_TARGET_XILINX_PREBUILT_VERSAL
+	bool "versal"
+
+endchoice
+
+config BR2_TARGET_XILINX_PREBUILT_FAMILY
+	string
+	default "zynqmp" if BR2_TARGET_XILINX_PREBUILT_ZYNQMP
+	default "kria" if BR2_TARGET_XILINX_PREBUILT_KRIA
+	default "versal" if BR2_TARGET_XILINX_PREBUILT_VERSAL
+
+config BR2_TARGET_XILINX_PREBUILT_BOARD
+	string "board name"
+	default "zcu102" if BR2_TARGET_XILINX_PREBUILT_ZYNQMP
+	default "kr260" if BR2_TARGET_XILINX_PREBUILT_KRIA
+	default "vck190" if BR2_TARGET_XILINX_PREBUILT_VERSAL
+	help
+	  Name of Xilinx target board.
+	  Used for installing the appropriate firmware.
+
+endif # BR2_TARGET_XILINX_PREBUILT
