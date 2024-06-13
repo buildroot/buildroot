@@ -512,9 +512,23 @@ config BR2_TARGET_UBOOT_ZYNQMP
 
 if BR2_TARGET_UBOOT_ZYNQMP
 
-config BR2_TARGET_UBOOT_ZYNQMP_PMUFW
-	string "PMU firmware location"
+config BR2_TARGET_UBOOT_ZYNQMP_PMUFW_PREBUILT
+	bool "xilinx-prebuilt pmufw.elf"
 	depends on BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG
+	depends on BR2_TARGET_XILINX_PREBUILT_ZYNQMP || BR2_TARGET_XILINX_PREBUILT_KRIA
+	help
+	  Use xilinx-prebuilt boot package for downloading prebuilt
+	  zynqmp pmufw.elf from
+	    https://github.com/Xilinx/soc-prebuilt-firmware repo.
+
+	  U-Boot build process will generate a boot.bin (to be loaded by
+	  by the ZynqMP boot ROM) containing both the U-Boot SPL and the
+	  PMU firmware in the Xilinx-specific boot format.
+
+config BR2_TARGET_UBOOT_ZYNQMP_PMUFW
+	string "Custom PMU firmware location"
+	depends on BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG
+	depends on !BR2_TARGET_UBOOT_ZYNQMP_PMUFW_PREBUILT
 	help
 	  Location of a PMU firmware binary.
 
