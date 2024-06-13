@@ -29,6 +29,21 @@ declare -a mountpoints=(
     "$(pwd)"
 )
 
+# We use the PODMAN_USERNS environment variable rather than using the
+# --userns command line argument because Fedora system may have the
+# podman-docker package installed, providing the "docker"
+# compatibility command.
+export PODMAN_USERNS="keep-id"
+
+if command -v docker >/dev/null; then
+    DOCKER="docker"
+elif command -v podman >/dev/null; then
+    DOCKER="podman"
+else
+    echo "ERROR: Neither docker nor podman available!" >&2
+    exit 1
+fi
+
 # curl lists (and recognises and uses) other types of *_proxy variables,
 # but only those make sense for Buildroot:
 for env in all_proxy http_proxy https_proxy ftp_proxy no_proxy; do
@@ -84,4 +99,4 @@ if tty -s; then
     docker_opts+=( -t )
 fi
 
-exec docker run "${docker_opts[@]}" "${IMAGE}" "${@}"
+exec ${DOCKER} run "${docker_opts[@]}" "${IMAGE}" "${@}"

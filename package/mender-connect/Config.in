@@ -6,6 +6,7 @@ config BR2_PACKAGE_MENDER_CONNECT
 	depends on BR2_USE_WCHAR # libglib2 -> gettext
 	depends on BR2_USE_MMU # dbus -> fork()
 	select BR2_PACKAGE_DBUS # runtime
+	select BR2_PACKAGE_HOST_GO
 	select BR2_PACKAGE_LIBGLIB2
 	select BR2_PACKAGE_MENDER # runtime
 	select BR2_PACKAGE_OPENSSL

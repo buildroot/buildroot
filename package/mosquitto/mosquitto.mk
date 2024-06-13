@@ -91,7 +91,7 @@ endif
 
 MOSQUITTO_MAKE_DIRS = lib client
 ifeq ($(BR2_PACKAGE_MOSQUITTO_BROKER),y)
-MOSQUITTO_MAKE_DIRS += src
+MOSQUITTO_MAKE_DIRS += src apps/mosquitto_ctrl apps/mosquitto_passwd
 endif
 
 define MOSQUITTO_BUILD_CMDS

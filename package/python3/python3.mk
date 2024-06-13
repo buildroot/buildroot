@@ -36,8 +36,7 @@ HOST_PYTHON3_CONF_OPTS += \
 # Make python believe we don't have 'hg', so that it doesn't try to
 # communicate over the network during the build.
 HOST_PYTHON3_CONF_ENV += \
-	LDFLAGS="$(HOST_LDFLAGS) -Wl,--enable-new-dtags" \
-	ac_cv_prog_HAS_HG=/bin/false
+	LDFLAGS="$(HOST_LDFLAGS) -Wl,--enable-new-dtags"
 
 PYTHON3_DEPENDENCIES = host-python3 libffi
 
@@ -156,14 +155,11 @@ else
 PYTHON3_CONF_OPTS += --disable-ossaudiodev
 endif
 
-# Make python believe we don't have 'hg', so that it doesn't try to
-# communicate over the network during the build.
 PYTHON3_CONF_ENV += \
 	ac_cv_have_long_long_format=yes \
 	ac_cv_file__dev_ptmx=yes \
 	ac_cv_file__dev_ptc=yes \
-	ac_cv_working_tzset=yes \
-	ac_cv_prog_HAS_HG=/bin/false
+	ac_cv_working_tzset=yes
 
 # GCC is always compliant with IEEE754
 ifeq ($(BR2_ENDIAN),"LITTLE")
@@ -200,18 +196,11 @@ PYTHON3_CONF_OPTS += \
 #
 define PYTHON3_REMOVE_USELESS_FILES
 	rm -f $(TARGET_DIR)/usr/bin/python$(PYTHON3_VERSION_MAJOR)-config
-	rm -f $(TARGET_DIR)/usr/bin/python$(PYTHON3_VERSION_MAJOR)m-config
 	rm -f $(TARGET_DIR)/usr/bin/python3-config
-	rm -f $(TARGET_DIR)/usr/bin/smtpd.py.3
-	rm -f $(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/distutils/command/wininst*.exe
-	for i in `find $(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/config-$(PYTHON3_VERSION_MAJOR)*/ \
-		-type f -not -name Makefile` ; do \
-		rm -f $$i ; \
-	done
-	rm -rf $(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/__pycache__/
-	rm -rf $(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/lib-dynload/sysconfigdata/__pycache__
-	rm -rf $(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/collections/__pycache__
-	rm -rf $(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/importlib/__pycache__
+	find $(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/config-$(PYTHON3_VERSION_MAJOR)*/ \
+		-type f -not -name Makefile -exec rm -rf {} \;
+	find $(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/ -type d \
+		-name __pycache__ -exec rm -rf {} \;
 endef
 
 PYTHON3_POST_INSTALL_TARGET_HOOKS += PYTHON3_REMOVE_USELESS_FILES
