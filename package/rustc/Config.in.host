@@ -1,4 +1,5 @@
 # All host rust packages should depend on this option
+# When adding new entries below, update RUST_HOSTS in utils/update-rust
 config BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
 	bool
 	default y if BR2_HOSTARCH = "aarch64"
@@ -18,6 +19,7 @@ config BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
 
 # The below entries match Tier 1 platforms as described at
 # https://doc.rust-lang.org/nightly/rustc/platform-support.html.
+# When adding new entries below, update RUST_TARGETS in utils/update-rust
 config BR2_PACKAGE_HOST_RUSTC_TARGET_TIER1_PLATFORMS
 	bool
 	# aarch64-unknown-linux-gnu
@@ -30,6 +32,7 @@ config BR2_PACKAGE_HOST_RUSTC_TARGET_TIER1_PLATFORMS
 # The below entries match Tier 2 platforms with host tools as
 # described at
 # https://doc.rust-lang.org/nightly/rustc/platform-support.html.
+# When adding new entries below, update RUST_TARGETS in utils/update-rust
 config BR2_PACKAGE_HOST_RUSTC_TARGET_TIER2_HOST_TOOLS_PLATFORMS
 	bool
 	# aarch64-unknown-linux-musl
@@ -63,6 +66,7 @@ config BR2_PACKAGE_HOST_RUSTC_TARGET_TIER2_HOST_TOOLS_PLATFORMS
 # The below entries match Tier 2 platforms without host tools as
 # described at
 # https://doc.rust-lang.org/nightly/rustc/platform-support.html.
+# When adding new entries below, update RUST_TARGETS in utils/update-rust
 config BR2_PACKAGE_HOST_RUSTC_TARGET_TIER2_PLATFORMS
 	bool
 	# arm-unknown-linux-musleabi
