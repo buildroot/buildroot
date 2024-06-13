@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2024.08"
 
+config BR2_PACKAGE_VERSAL_FIRMWARE
+	bool "versal-firmware has been replaced by xilinx-prebuilt"
+	select BR2_TARGET_XILINX_PREBUILT
+	select BR2_LEGACY
+	help
+	  The versal-firmware package has been replaced by the more
+	  generic xilinx-prebuilt package.
+
 config BR2_KERNEL_HEADERS_6_8
 	bool "kernel headers version 6.8.x are no longer supported"
 	select BR2_LEGACY
