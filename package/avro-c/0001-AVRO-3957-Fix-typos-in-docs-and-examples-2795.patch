@@ -1,0 +1,59 @@
+From 52f051dbeefad0b7e73187becad6c33747b047d3 Mon Sep 17 00:00:00 2001
+From: Sahil Kang <sahil.kang@asilaycomputing.com>
+Date: Mon, 11 Mar 2024 03:01:21 -0700
+Subject: [PATCH] AVRO-3957: [C] Fix typos in docs and examples (#2795)
+
+* AVRO-3957: [C] Fix misformatted type in docs
+
+Signed-off-by: Sahil Kang <sahil.kang@asilaycomputing.com>
+Signed-off-by: Sahil Kang <sahilkang@google.com>
+
+* AVRO-3957: [C] Fix type in quickstop example
+
+This removes the following warning:
+
+  avro/lang/c/examples/quickstop.c:123:40: warning: incompatible pointer types passing 'int32_t **' (aka 'int **') to parameter of type
+        'const char **' [-Wincompatible-pointer-types]
+                          avro_value_get_string(&first_value, &p, &size);
+
+Signed-off-by: Sahil Kang <sahil.kang@asilaycomputing.com>
+Signed-off-by: Sahil Kang <sahilkang@google.com>
+
+---------
+
+Signed-off-by: Sahil Kang <sahil.kang@asilaycomputing.com>
+Signed-off-by: Sahil Kang <sahilkang@google.com>
+
+Upstream: https://github.com/apache/avro/commit/52f051dbeefad0b7e73187becad6c33747b047d3
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ lang/c/docs/index.txt       | 2 +-
+ lang/c/examples/quickstop.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/docs/index.txt b/docs/index.txt
+index a439a052631..df16f9d9678 100644
+--- a/docs/index.txt
++++ b/docs/index.txt
+@@ -178,7 +178,7 @@ different versions of the Avro library.  That means that it's really
+ only safe to use these hash values internally within the context of a
+ single execution of a single application.
+ 
+-The +reset+ method “clears out” an +avro_value_t instance, making sure
++The +reset+ method “clears out” an +avro_value_t+ instance, making sure
+ that it's ready to accept the contents of a new value.  For scalars,
+ this is usually a no-op, since the new value will just overwrite the old
+ one.  For arrays and maps, this removes any existing elements from the
+diff --git a/examples/quickstop.c b/examples/quickstop.c
+index ff9e9700590..b26dad10c04 100644
+--- a/examples/quickstop.c
++++ b/examples/quickstop.c
+@@ -107,7 +107,7 @@ int print_person(avro_file_reader_t db, avro_schema_t reader_schema)
+ 	if (rval == 0) {
+ 		int64_t id;
+ 		int32_t age;
+-		int32_t *p;
++		const char *p;
+ 		size_t size;
+ 		avro_value_t id_value;
+ 		avro_value_t first_value;
