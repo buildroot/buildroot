@@ -144,7 +144,14 @@ endif
 
 ###############################################################################
 
-comment "Legacy options removed in 2024.05"
+comment "Legacy options removed in 2024.08"
+
+config BR2_KERNEL_HEADERS_6_8
+	bool "kernel headers version 6.8.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 6.8.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
 
 config BR2_TARGET_AT91BOOTSTRAP
 	bool "at91bootstrap removed"
