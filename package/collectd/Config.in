@@ -430,13 +430,14 @@ config BR2_PACKAGE_COLLECTD_NTPD
 config BR2_PACKAGE_COLLECTD_NUT
 	bool "nut"
 	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_PACKAGE_NUT
 	help
 	  The NUT plugin collects uninterruptible power supply (UPS)
 	  statistics using the Network UPS Tools (NUT).
 
-comment "nut needs a toolchain w/ C++"
-	depends on !BR2_INSTALL_LIBSTDCPP
+comment "nut needs a toolchain w/ C++, threads"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS
 
 config BR2_PACKAGE_COLLECTD_OLSRD
 	bool "olsrd"
