@@ -36,6 +36,13 @@ else
 OCTAVE_CONF_OPTS += --without-magick
 endif
 
+ifeq ($(BR2_PACKAGE_LIBCURL),y)
+OCTAVE_CONF_OPTS += --with-curl
+OCTAVE_DEPENDENCIES += libcurl
+else
+OCTAVE_CONF_OPTS += --without-curl
+endif
+
 ifeq ($(BR2_PACKAGE_READLINE),y)
 OCTAVE_CONF_OPTS += \
 	--enable-readline \
