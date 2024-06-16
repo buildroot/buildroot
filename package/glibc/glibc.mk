@@ -7,7 +7,7 @@
 # Generate version string using:
 #   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master | cut -d '-' -f 2-
 # When updating the version, please also update localedef
-GLIBC_VERSION = 2.38-44-gd37c2b20a4787463d192b32041c3406c2bd91de0
+GLIBC_VERSION = 2.38-81-gc8cb4d2b86ece572793e31a3422ea29e88d77df5
 # Upstream doesn't officially provide an https download link.
 # There is one (https://sourceware.org/git/glibc.git) but it's not reliable,
 # sometimes the connection times out. So use an unofficial github mirror.
@@ -51,6 +51,19 @@ GLIBC_IGNORE_CVES += CVE-2023-6779
 # Fixed by d37c2b20a4787463d192b32041c3406c2bd91de0, which is between
 # 2.38 and the version we're really using.
 GLIBC_IGNORE_CVES += CVE-2023-6780
+
+# Fixed by glibc-2.38-66-ge1135387deded5d73924f6ca20c72a35dc8e1bda
+GLIBC_IGNORE_CVES += CVE-2024-2961
+
+# Fixed by glibc-2.38-72-g5968aebb86164034b8f8421b4abab2f837a5bdaf
+GLIBC_IGNORE_CVES += CVE-2024-33599
+
+# Fixed by glibc-2.38-73-g541ea5172aa658c4bd5c6c6d6fd13903c3d5bb0a +
+# glibc-2.38-74-g2ae9446c1b7a3064743b4a51c0bbae668ee43e4c
+GLIBC_IGNORE_CVES += CVE-2024-33600
+
+# Fixed by glibc-2.38-75-g71af8ca864345d39b746d5cee84b94b430fad5db
+GLIBC_IGNORE_CVES += CVE-2024-33601 CVE-2024-33602
 
 # All these CVEs are considered as not being security issues by
 # upstream glibc:
