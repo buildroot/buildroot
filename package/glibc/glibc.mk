@@ -24,34 +24,6 @@ GLIBC_CPE_ID_VENDOR = gnu
 # allow proper matching with the CPE database.
 GLIBC_CPE_ID_VERSION = $(word 1, $(subst -,$(space),$(GLIBC_VERSION)))
 
-# Fixed by b25508dd774b617f99419bdc3cf2ace4560cd2d6, which is between
-# 2.38 and the version we're really using
-GLIBC_IGNORE_CVES += CVE-2023-4527
-
-# Fixed by 5ee59ca371b99984232d7584fe2b1a758b4421d3, which is between
-# 2.38 and the version we're really using
-GLIBC_IGNORE_CVES += CVE-2023-4806
-
-# Fixed by 750a45a783906a19591fb8ff6b7841470f1f5710, which is between
-# 2.38 and the version we're really using.
-GLIBC_IGNORE_CVES += CVE-2023-4911
-
-# Fixed by 5ee59ca371b99984232d7584fe2b1a758b4421d3, which is between
-# 2.38 and the version we're really using.
-GLIBC_IGNORE_CVES += CVE-2023-5156
-
-# Fixed by 23514c72b780f3da097ecf33a793b7ba9c2070d2, which is between
-# 2.38 and the version we're really using.
-GLIBC_IGNORE_CVES += CVE-2023-6246
-
-# Fixed by d0338312aace5bbfef85e03055e1212dd0e49578, which is between
-# 2.38 and the version we're really using.
-GLIBC_IGNORE_CVES += CVE-2023-6779
-
-# Fixed by d37c2b20a4787463d192b32041c3406c2bd91de0, which is between
-# 2.38 and the version we're really using.
-GLIBC_IGNORE_CVES += CVE-2023-6780
-
 # All these CVEs are considered as not being security issues by
 # upstream glibc:
 #  https://security-tracker.debian.org/tracker/CVE-2010-4756
