@@ -27,17 +27,24 @@ else
 MTD_CONF_OPTS += --without-lzo
 endif
 
+ifeq ($(BR2_PACKAGE_ZLIB),y)
+MTD_DEPENDENCIES += zlib
+MTD_CONF_OPTS += --with-zlib
+else
+MTD_CONF_OPTS += --without-zlib
+endif
+
 MTD_CONF_ENV += LDFLAGS="$(MTD_LDFLAGS)"
 
 ifeq ($(BR2_PACKAGE_MTD_JFFS_UTILS),y)
-MTD_DEPENDENCIES += zlib host-pkgconf
+MTD_DEPENDENCIES += host-pkgconf
 MTD_CONF_OPTS += --with-jffs
 else
 MTD_CONF_OPTS += --without-jffs
 endif
 
 ifeq ($(BR2_PACKAGE_MTD_UBIFS_UTILS),y)
-MTD_DEPENDENCIES += util-linux zlib host-pkgconf
+MTD_DEPENDENCIES += util-linux host-pkgconf
 MTD_CONF_OPTS += --with-ubifs
 # crypto needs linux/hash_info.h
 ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12)$(BR2_PACKAGE_OPENSSL),yy)
