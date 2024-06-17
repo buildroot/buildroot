@@ -56,9 +56,9 @@ MTD_CONF_OPTS += --disable-ubihealthd
 endif
 
 ifeq ($(BR2_PACKAGE_MTD_TESTS),y)
-MTD_CONF_OPTS += --enable-tests
+MTD_CONF_OPTS += --with-tests
 else
-MTD_CONF_OPTS += --disable-tests
+MTD_CONF_OPTS += --without-tests
 endif
 
 # If extended attributes are required, the acl package must
@@ -75,7 +75,7 @@ HOST_MTD_CONF_OPTS = \
 	--with-jffs \
 	--with-ubifs \
 	--without-crypto \
-	--disable-tests
+	--without-tests
 
 MKFS_JFFS2 = $(HOST_DIR)/sbin/mkfs.jffs2
 SUMTOOL = $(HOST_DIR)/sbin/sumtool
