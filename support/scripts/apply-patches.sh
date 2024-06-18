@@ -46,6 +46,8 @@ patchdir=${2-../kernel-patches}
 shift 2
 patchpattern=${@-*}
 
+export TAR=${TAR:-tar}
+
 # use a well defined sorting order
 export LC_COLLATE=C
 
