@@ -83,7 +83,7 @@ HOST_GO_TARGET_ENV = \
 # any target package needing cgo support must include
 # 'depends on BR2_TOOLCHAIN_HAS_THREADS' in its config file.
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
-HOST_GO_DEPENDENCIES += toolchain
+HOST_GO_DEPENDENCIES_CGO += toolchain
 HOST_GO_CGO_ENABLED = 1
 else
 HOST_GO_CGO_ENABLED = 0
@@ -94,6 +94,9 @@ else # !BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
 # the arch stuff since we will not be cross-compiling.
 HOST_GO_CGO_ENABLED = 1
 endif # BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+
+# Ensure the toolchain is available, whatever the provider
+HOST_GO_DEPENDENCIES += $(HOST_GO_DEPENDENCIES_CGO)
 
 # For the convenience of host golang packages
 HOST_GO_HOST_ENV = \
