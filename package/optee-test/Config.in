@@ -31,3 +31,44 @@ comment "optee-test needs a toolchain w/ threads, C++, dynamic library, headers 
 	depends on BR2_USE_MMU
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || !BR2_INSTALL_LIBSTDCPP || \
 		BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_3
+
+if BR2_PACKAGE_OPTEE_TEST
+
+choice
+	prompt "optee-test version"
+	default BR2_PACKAGE_OPTEE_TEST_LATEST if BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
+	help
+	  Select the version of optee-test you want to use
+
+config BR2_PACKAGE_OPTEE_TEST_LATEST
+	bool "4.3.0"
+	help
+	  Use the latest release tag from the optee-test official Git
+	  repository.
+
+config BR2_PACKAGE_OPTEE_TEST_CUSTOM_TARBALL
+	bool "Custom tarball"
+	help
+	  This option allows to specify a URL pointing to an optee-test
+	  source tarball. This URL can use any protocol recognized by
+	  Buildroot, like http://, ftp://, file:// or scp://.
+
+	  When pointing to a local tarball using file://, you may want
+	  to use a make variable like $(TOPDIR) to reference the root of
+	  the Buildroot tree.
+
+endchoice
+
+if BR2_PACKAGE_OPTEE_TEST_CUSTOM_TARBALL
+
+config BR2_PACKAGE_OPTEE_TEST_CUSTOM_TARBALL_LOCATION
+	string "URL of custom optee-test tarball"
+
+endif
+
+config BR2_PACKAGE_OPTEE_TEST_VERSION
+	string
+	default "4.3.0"		if BR2_PACKAGE_OPTEE_TEST_LATEST
+	default "custom"	if BR2_PACKAGE_OPTEE_TEST_CUSTOM_TARBALL
+
+endif # BR2_PACKAGE_OPTEE_TEST
