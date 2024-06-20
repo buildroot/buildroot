@@ -54,12 +54,12 @@ config BR2_PACKAGE_HOST_GO_SRC
 
 endchoice
 
+endif
+
 config BR2_PACKAGE_PROVIDES_HOST_GO
 	string
-	# Default to host-go-src
-	default "host-go-src" if BR2_PACKAGE_HOST_GO_SRC
-
-endif
+	# Default to host-go-src, as the only provider for now
+	default "host-go-src"
 
 source "package/go/go-bootstrap-stage1/Config.in.host"
 source "package/go/go-bootstrap-stage2/Config.in.host"
