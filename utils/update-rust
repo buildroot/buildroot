@@ -2,7 +2,6 @@
 
 import argparse
 import pathlib
-import sys
 import urllib.request
 
 # When updating this list, also update:
@@ -68,11 +67,11 @@ LICENSES = {
 
 
 def update_mk_file(mk_file, new_version):
-    with open(mk_file, "r") as fd:
+    with mk_file.open("r") as fd:
         lines = fd.readlines()
 
     version_var = pathlib.Path(mk_file).stem.upper().replace("-", "_") + "_VERSION"
-    with open(mk_file, "w") as fd:
+    with mk_file.open("w") as fd:
         for line in lines:
             words = line.split()
             if len(words) == 3 and words[0] == version_var and words[1] == "=":
@@ -82,8 +81,8 @@ def update_mk_file(mk_file, new_version):
 
 
 def gen_hash_file_src(hash_file, new_version):
-    with open(hash_file, "w") as fd:
-        fd.write(f"# Generated with {sys.argv[0]}\n# Do not edit manually\n\n")
+    with hash_file.open("w") as fd:
+        fd.write("# Generated with utils/update-rust\n# Do not edit manually\n\n")
         f_name = f"rustc-{new_version}-src.tar.xz"
         print(f"\r\033[KUpdating {f_name}", end="")
         h_url = f"{RUST_DIST_URL}/{f_name}.sha256"
@@ -99,8 +98,8 @@ def gen_hash_file_src(hash_file, new_version):
 
 
 def gen_hash_file_bin(hash_file, new_version):
-    with open(hash_file, "w") as fd:
-        fd.write(f"# Generated with {sys.argv[0]}\n# Do not edit manually\n\n")
+    with hash_file.open("w") as fd:
+        fd.write("# Generated with utils/update-rust\n# Do not edit manually\n\n")
         for host in RUST_HOSTS:
             f_name = f"rust-{new_version}-{host}.tar.xz"
             print(f"\r\033[KUpdating {f_name}", end="")
@@ -132,13 +131,11 @@ def main():
 
     args = parser.parse_args()
 
-    try:
-        update_mk_file("package/rust/rust.mk", args.version)
-        update_mk_file("package/rust-bin/rust-bin.mk", args.version)
-        gen_hash_file_src("package/rust/rust.hash", args.version)
-        gen_hash_file_bin("package/rust-bin/rust-bin.hash", args.version)
-    except FileNotFoundError as e:
-        print(f"{e.filename}: {e.strerror} ({sys.argv[0]} must be run at the root of the Buildroot tree)")
+    TOPDIR = pathlib.Path(__file__).parent.parent
+    update_mk_file(TOPDIR / "package/rust/rust.mk", args.version)
+    update_mk_file(TOPDIR / "package/rust-bin/rust-bin.mk", args.version)
+    gen_hash_file_src(TOPDIR / "package/rust/rust.hash", args.version)
+    gen_hash_file_bin(TOPDIR / "package/rust-bin/rust-bin.hash", args.version)
 
     print("\r\033[K", end="")
 
