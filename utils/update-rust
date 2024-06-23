@@ -2,8 +2,8 @@
 
 import argparse
 import pathlib
-import requests
 import sys
+import urllib.request
 
 # When updating this list, also update:
 # - package/rustc/Config.in.host:
@@ -87,12 +87,12 @@ def gen_hash_file_src(hash_file, new_version):
         f_name = f"rustc-{new_version}-src.tar.xz"
         print(f"\r\033[KUpdating {f_name}", end="")
         h_url = f"{RUST_DIST_URL}/{f_name}.sha256"
-        r = requests.get(h_url)
-        if r.status_code != 200:
-            raise RuntimeError(f"No hash for {f_name}. Has source been removed?")
-        # rstrip() content, and explicitly add the \n, in case
-        # a hash file does not have a trailing \n.
-        fd.write(f"# From {h_url}\nsha256  {r.content.decode().rstrip()}\n")
+        with urllib.request.urlopen(h_url) as r:
+            if r.status != 200:
+                raise RuntimeError(f"No hash for {f_name}. Has source been removed?")
+            # rstrip() content, and explicitly add the \n, in case
+            # a hash file does not have a trailing \n.
+            fd.write(f"# From {h_url}\nsha256  {r.read().decode().rstrip()}\n")
         fd.write("# Locally generated\n")
         for license in LICENSES:
             fd.write(f"sha256  {LICENSES[license]}  LICENSE-{license}\n")
@@ -105,22 +105,22 @@ def gen_hash_file_bin(hash_file, new_version):
             f_name = f"rust-{new_version}-{host}.tar.xz"
             print(f"\r\033[KUpdating {f_name}", end="")
             h_url = f"{RUST_DIST_URL}/{f_name}.sha256"
-            r = requests.get(h_url)
-            if r.status_code != 200:
-                raise RuntimeError(f"No hash for {f_name}. Has host {host} been removed?")
-            # rstrip() content, and explicitly add the \n, in case
-            # a hash file does not have a trailing \n.
-            fd.write(f"# From {h_url}\nsha256  {r.content.decode().rstrip()}\n")
+            with urllib.request.urlopen(h_url) as r:
+                if r.status != 200:
+                    raise RuntimeError(f"No hash for {f_name}. Has host {host} been removed?")
+                # rstrip() content, and explicitly add the \n, in case
+                # a hash file does not have a trailing \n.
+                fd.write(f"# From {h_url}\nsha256  {r.read().decode().rstrip()}\n")
         for target in RUST_TARGETS:
             f_name = f"rust-std-{new_version}-{target}.tar.xz"
             print(f"\r\033[KUpdating {f_name}", end="")
             h_url = f"{RUST_DIST_URL}/{f_name}.sha256"
-            r = requests.get(h_url)
-            if r.status_code != 200:
-                raise RuntimeError(f"No hash for {f_name}. Has target {target} been removed?")
-            # rstrip() content, and explicitly add the \n, in case
-            # a hash file does not have a trailing \n.
-            fd.write(f"# From {h_url}\nsha256  {r.content.decode().rstrip()}\n")
+            with urllib.request.urlopen(h_url) as r:
+                if r.status != 200:
+                    raise RuntimeError(f"No hash for {f_name}. Has target {target} been removed?")
+                # rstrip() content, and explicitly add the \n, in case
+                # a hash file does not have a trailing \n.
+                fd.write(f"# From {h_url}\nsha256  {r.read().decode().rstrip()}\n")
         fd.write("# Locally generated\n")
         for license in LICENSES:
             fd.write(f"sha256  {LICENSES[license]}  LICENSE-{license}\n")
