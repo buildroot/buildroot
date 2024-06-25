@@ -84,7 +84,6 @@ HOST_QT6BASE_DEPENDENCIES = \
 	host-pcre2 \
 	host-zlib
 HOST_QT6BASE_CONF_OPTS = \
-	-DFEATURE_gui=OFF \
 	-DFEATURE_concurrent=OFF \
 	-DFEATURE_xml=ON \
 	-DFEATURE_sql=OFF \
@@ -97,6 +96,32 @@ HOST_QT6BASE_CONF_OPTS = \
 	-DFEATURE_system_libb2=ON \
 	-DFEATURE_system_pcre2=ON \
 	-DFEATURE_system_zlib=ON
+
+# We need host-qt6base with Gui support when building host-qt6shadertools,
+# otherwise the build is skipped and no qsb host tool is generated.
+# qt6shadertools fail to build if qsb is not available.
+ifeq ($(BR2_PACKAGE_HOST_QT6BASE_GUI),y)
+HOST_QT6BASE_CONF_OPTS += \
+	-DFEATURE_gui=ON \
+	-DFEATURE_freetype=OFF \
+	-DFEATURE_vulkan=OFF \
+	-DFEATURE_linuxfb=ON \
+	-DFEATURE_xcb=OFF \
+	-DFEATURE_opengl=OFF -DINPUT_opengl=no \
+	-DFEATURE_harfbuzz=OFF \
+	-DFEATURE_png=OFF \
+	-DFEATURE_gif=OFF \
+	-DFEATURE_jpeg=OFF \
+	-DFEATURE_printsupport=OFF \
+	-DFEATURE_kms=OFF \
+	-DFEATURE_fontconfig=OFF \
+	-DFEATURE_widgets=OFF \
+	-DFEATURE_libinput=OFF \
+	-DFEATURE_tslib=OFF \
+	-DFEATURE_eglfs=OFF
+else
+HOST_QT6BASE_CONF_OPTS += -DFEATURE_gui=OFF
+endif
 
 # Conditional blocks below are ordered by alphabetic ordering of the
 # BR2_PACKAGE_* option.
