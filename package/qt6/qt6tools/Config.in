@@ -1,0 +1,17 @@
+config BR2_PACKAGE_QT6TOOLS
+	bool "qt6tools"
+	select BR2_PACKAGE_QT6BASE_NETWORK
+	# qt6tools needs host-qt6tools, and host-qt6tools needs
+	# network support in qt6base. In addition, we also need
+	# host-qt6base with Sql support to build the qhelpgenerator
+	# tool, if target support for Sql is present
+	select BR2_PACKAGE_HOST_QT6BASE_NETWORK
+	select BR2_PACKAGE_HOST_QT6BASE_SQL if BR2_PACKAGE_QT6BASE_SQL
+	help
+	  Qt is a cross-platform application and UI framework for
+	  developers using C++.
+
+	  Qt Tools provides tools facilitate the development
+	  and design of applications.
+
+	  https://github.com/qt/qttools
