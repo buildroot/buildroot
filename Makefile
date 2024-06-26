@@ -63,6 +63,9 @@ ifneq ($(findstring @,$(CANONICAL_O)),)
 $(error The build directory can not contain a '@')
 endif
 
+# Create a default .gitignore file that ignores everything
+$(shell echo "*" > "$(CANONICAL_O)/.gitignore")
+
 CANONICAL_CURDIR = $(realpath $(CURDIR))
 
 REQ_UMASK = 0022
