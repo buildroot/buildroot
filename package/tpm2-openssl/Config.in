@@ -1,0 +1,17 @@
+config BR2_PACKAGE_TPM2_OPENSSL
+	bool "tpm2-openssl"
+	depends on !BR2_STATIC_LIBS # tpm2-tss
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_TPM2_TSS
+	help
+	  Provider for integration of TPM 2.0 to OpenSSL 3.0.
+
+	  tpm2-openssl is based on a major refactoring of the
+	  tpm2-tss-engine. The code is still there, but largely
+	  reshuffled to match the new OpenSSL API.
+
+	  https://github.com/tpm2-software/tpm2-openssl
+
+comment "tpm2-openssl needs a toolchain w/ dynamic library, threads"
+	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS
