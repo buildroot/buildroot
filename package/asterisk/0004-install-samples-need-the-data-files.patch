@@ -1,4 +1,4 @@
-From 05680ea9899c2246c23d11860c2c8e10aa8f80c7 Mon Sep 17 00:00:00 2001
+From d347deb0376a3254d7cd8bbfe46dd645d1bf1061 Mon Sep 17 00:00:00 2001
 From: "Yann E. MORIN" <yann.morin.1998@free.fr>
 Date: Fri, 1 Dec 2017 11:08:16 +0100
 Subject: [PATCH] install: samples need the data files
@@ -12,24 +12,26 @@ installed at the time we try to generate the voicemail data.
 
 Ensure the needed dependency.
 
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+[Julien: rebase patch on tag 20.7.0]
 Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
 ---
  Makefile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Makefile b/Makefile
-index f29c07f680..b58f707b61 100644
+index 7ef73342cc..bb60f5e380 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -779,7 +779,7 @@ adsi:
+@@ -819,7 +819,7 @@ adsi:
  		$(INSTALL) -m 644 "$$x" "$(DESTDIR)$(ASTETCDIR)/`$(BASENAME) $$x`" ; \
  	done
  
 -samples: adsi
 +samples: adsi datafiles
  	@echo Installing other config files...
- 	$(call INSTALL_CONFIGS,samples,.sample)
+ 	$(call INSTALL_CONFIGS,configs/samples,.sample)
  	$(INSTALL) -d "$(DESTDIR)$(ASTSPOOLDIR)/voicemail/default/1234/INBOX"
 -- 
-2.11.0
+2.45.2
 
