@@ -9,8 +9,8 @@ Inspired by:
 http://patch-tracker.debian.org/patch/series/view/exim4/4.76-2/35_install.dpatch
 
 Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-(rebased against exim 4.89)
-Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Bernd: rebased for version 4.89 & 4.97.1]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  scripts/exim_install |    7 +++++--
  1 files changed, 5 insertions(+), 2 deletions(-)
@@ -19,7 +19,7 @@ diff --git a/scripts/exim_install b/scripts/exim_install
 index e68e7d5..487a4e1 100755
 --- a/scripts/exim_install
 +++ b/scripts/exim_install
-@@ -58,6 +58,8 @@
+@@ -61,6 +61,8 @@
    shift
  done
  
@@ -28,7 +28,7 @@ index e68e7d5..487a4e1 100755
  # Get the values of BIN_DIRECTORY, CONFIGURE_FILE, INFO_DIRECTORY, NO_SYMLINK,
  # SYSTEM_ALIASES_FILE, and EXE from the global Makefile (in the build
  # directory). EXE is empty except in the Cygwin environment. In each case, keep
-@@ -217,9 +219,7 @@
+@@ -220,9 +223,7 @@
    # The exim binary is handled specially
  
    if [ $name = exim${EXE} ]; then
