@@ -57,6 +57,7 @@ HOST_GNUTLS_CONF_OPTS = \
 	--without-librt-prefix \
 	--without-libz-prefix \
 	--without-tpm \
+	--without-tpm2 \
 	--disable-openssl-compatibility \
 	--without-libbrotli \
 	--without-idn \
@@ -96,6 +97,13 @@ GNUTLS_CONF_OPTS += --with-p11-kit
 GNUTLS_DEPENDENCIES += p11-kit
 else
 GNUTLS_CONF_OPTS += --without-p11-kit
+endif
+
+ifeq ($(BR2_PACKAGE_TPM2_TSS),y)
+GNUTLS_CONF_OPTS += --with-tpm2
+GNUTLS_DEPENDENCIES += tpm2-tss
+else
+GNUTLS_CONF_OPTS += --without-tpm2
 endif
 
 ifeq ($(BR2_PACKAGE_ZLIB),y)
