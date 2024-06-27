@@ -1,0 +1,43 @@
+From 8ffd68a8dfa1e8671dd8c01b96faffd681deca4e Mon Sep 17 00:00:00 2001
+From: Steffen Persvold <spersvold@gmail.com>
+Date: Tue, 25 Jun 2024 14:14:49 +0200
+Subject: [PATCH] libdirect: define __NR_futex on 32bit architectures using
+ 64-bit time_t
+
+Newer 32bit architectures like RISCV32 and ARC are using 64bit time_t
+from the get go unlike other 32bit architectures, therefore aliasing
+__NR_futex to __NR_futex_time64 helps avoid the below errors :
+
+system.c:242:21: error: '__NR_futex' undeclared (first use in this function)
+  242 |      ret = syscall( __NR_futex, uaddr, op, val, timeout, uaddr2, val3 );
+      |                     ^~~~~~~~~~
+
+Upstream: dead
+Signed-off-by: Steffen Persvold <spersvold@gmail.com>
+---
+ lib/direct/os/linux/glibc/system.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/lib/direct/os/linux/glibc/system.c b/lib/direct/os/linux/glibc/system.c
+index 32086a25..7143442b 100644
+--- a/lib/direct/os/linux/glibc/system.c
++++ b/lib/direct/os/linux/glibc/system.c
+@@ -213,6 +213,10 @@ direct_getenv( const char *name )
+ 
+ /**********************************************************************************************************************/
+ 
++#if defined(__NR_futex_time64) && !defined(__NR_futex)
++#define __NR_futex __NR_futex_time64
++#endif
++
+ DirectResult
+ direct_futex( int *uaddr, int op, int val, const struct timespec *timeout, int *uaddr2, int val3 )
+ {
+@@ -245,4 +249,3 @@ direct_futex( int *uaddr, int op, int val, const struct timespec *timeout, int *
+ 
+      return DR_OK;
+ }
+-
+-- 
+2.40.1
+
