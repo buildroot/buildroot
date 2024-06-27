@@ -1,0 +1,43 @@
+From be8f5b7ab1223076ba0086f14aeeb53ace2d4b5c Mon Sep 17 00:00:00 2001
+From: Jeff Lawson <jeff.lawson@flightaware.com>
+Date: Tue, 18 Jun 2024 15:58:24 +0000
+Subject: [PATCH] swap size arguments to calloc
+
+fixes #241
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+Upstream: https://github.com/flightaware/dump1090/pull/243
+---
+ adaptive.c | 2 +-
+ net_io.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/adaptive.c b/adaptive.c
+index f16e16c..d656433 100644
+--- a/adaptive.c
++++ b/adaptive.c
+@@ -195,7 +195,7 @@ void adaptive_init()
+     adaptive_burst_window_remaining = adaptive_samples_per_window;
+     adaptive_burst_window_counter = 0;
+ 
+-    adaptive_range_radix = calloc(sizeof(unsigned), 65536);
++    adaptive_range_radix = calloc(65536, sizeof(unsigned));
+     adaptive_range_state = RANGE_RESCAN_UP;
+ 
+     // select and enforce gain limits
+diff --git a/net_io.c b/net_io.c
+index bf98028..8abd510 100644
+--- a/net_io.c
++++ b/net_io.c
+@@ -104,7 +104,7 @@ struct net_service *serviceInit(const char *descr, struct net_writer *writer, he
+ {
+     struct net_service *service;
+ 
+-    if (!(service = calloc(sizeof(*service), 1))) {
++    if (!(service = calloc(1, sizeof(*service)))) {
+         fprintf(stderr, "Out of memory allocating service %s\n", descr);
+         exit(1);
+     }
+-- 
+2.39.2
+
