@@ -1,4 +1,4 @@
-From e8f43832d401ad1e071e6860b2bf4a1e796d4356 Mon Sep 17 00:00:00 2001
+From ef88ee98855008cd8c8de807a12917a556e2ce7d Mon Sep 17 00:00:00 2001
 From: Adam Duskett <aduskett@gmail.com>
 Date: Fri, 28 Jul 2017 08:18:22 -0400
 Subject: [PATCH] Misc fixes from Archlinux
@@ -11,12 +11,15 @@ Signed-off-by: Adam Duskett <aduskett@gmail.com>
 Refresh for 1.0.17
 [Fabrice: refresh for 1.0.22]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+[Julien: regenerate with git format-patch for 1.0.22,
+as Fabrice refresh is incomplete for applying with fuzz 0]
 ---
- Makefile | 84 ++++++++++++++++++++++++++++++++--------------------------------
- 1 file changed, 42 insertions(+), 42 deletions(-)
+ Makefile | 49 ++++++++++++++++++++++++-------------------------
+ 1 file changed, 24 insertions(+), 25 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index d5c0c90..ef61bd5 100644
+index 2ad5e5d..2cb0b06 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -44,7 +44,7 @@ WAV49	= -DWAV49
@@ -36,7 +39,7 @@ index d5c0c90..ef61bd5 100644
 +LN		= ln -s -f
  BASENAME 	= basename
  AR		= ar
- ARFLAGS	= cr
+ ARFLAGS		= cr
 @@ -139,7 +139,7 @@ LFLAGS	= $(LDFLAGS) $(LDINC)
  
  # Targets
@@ -97,16 +100,16 @@ index d5c0c90..ef61bd5 100644
  
  
  # The local bin and lib directories
-@@ -425,7 +425,7 @@ semi-clean:
+@@ -425,7 +424,7 @@ semi-clean:
  			-print | xargs rm $(RMFLAGS)
  
  clean:	semi-clean
 -		-rm $(RMFLAGS) $(LIBGSM) $(ADDTST)/add		\
 +		-rm $(RMFLAGS) $(LIBGSMSO)* $(ADDTST)/add		\
  			$(TOAST) $(TCAT) $(UNTOAST)	\
- 			$(ROOT)/gsm-1.0.tar.Z
+ 			$(ROOT)/gsm-1.0.tar.gz
  
-@@ -473,22 +473,22 @@ $(ADDTST)/add:	$(ADDTST)/add_test.o
+@@ -473,22 +472,22 @@ $(ADDTST)/add:	$(ADDTST)/add_test.o
  $(TST)/test-result:	$(TST)/lin2cod $(TST)/cod2lin $(TOAST) $(TST)/run
  			( cd $(TST); ./run ) 
  
@@ -140,5 +143,5 @@ index d5c0c90..ef61bd5 100644
 -				$(TST)/cod2lin.o $(LIBGSM) $(LDLIB)
 +				$(TST)/cod2lin.o $(LIBGSMSO) $(LDLIB)
 -- 
-2.13.3
+2.45.2
 
