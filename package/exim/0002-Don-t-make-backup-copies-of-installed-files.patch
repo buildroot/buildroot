@@ -5,6 +5,8 @@ This leads to useless duplicated files on the target, so disable this
 piece of code.
 
 Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+[Bernd: rebased for version 4.97.1]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  scripts/exim_install |   18 +++++++++---------
  1 files changed, 9 insertions(+), 9 deletions(-)
@@ -13,7 +15,7 @@ diff --git a/scripts/exim_install b/scripts/exim_install
 index 616ab3c..e68e7d5 100755
 --- a/scripts/exim_install
 +++ b/scripts/exim_install
-@@ -344,15 +344,15 @@ while [ $# -gt 0 ]; do
+@@ -348,15 +348,15 @@ while [ $# -gt 0 ]; do
  
    else
      if ../scripts/newer ${name} ${BIN_DIRECTORY}/${name}; then
