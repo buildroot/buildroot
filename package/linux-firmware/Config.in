@@ -691,4 +691,14 @@ config BR2_PACKAGE_LINUX_FIRMWARE_INTEL_ATOMISP
 
 endmenu
 
+menu "GPU Firmware"
+
+config BR2_PACKAGE_LINUX_FIRMWARE_ARM_MALI_CSF
+	bool "Arm Mali CSF firmware"
+	help
+	  Firmware files for Arm Mali 10th generation GPU
+	  needed by the linux panthor kernel driver.
+
+endmenu
+
 endif
