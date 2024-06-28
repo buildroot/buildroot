@@ -20,7 +20,7 @@ ifeq ($(BR2_TARGET_XILINX_PREBUILT_VERSAL),y)
 # We need the *.pdi glob, because the file has different names for the
 # different boards, but htere is only one, and it has to be named
 # vpl_gen_fixed.pdi when installed.
-define XILINX_PREBUILT_INSTALL_VERSAL
+define XILINX_PREBUILT_INSTALL
 	$(INSTALL) -D -m 0755 $(XILINX_PREBUILT_BOARD_DIR)/plm.elf \
 		$(BINARIES_DIR)/plm.elf
 	$(INSTALL) -D -m 0755 $(XILINX_PREBUILT_BOARD_DIR)/psmfw.elf \
@@ -29,15 +29,14 @@ define XILINX_PREBUILT_INSTALL_VERSAL
 		$(BINARIES_DIR)/vpl_gen_fixed.pdi
 endef
 else # BR2_TARGET_XILINX_PREBUILT_VERSAL
-define XILINX_PREBUILT_INSTALL_OTHERS
+define XILINX_PREBUILT_INSTALL
 	$(INSTALL) -D -m 0755 $(XILINX_PREBUILT_BOARD_DIR)/pmufw.elf \
 		$(BINARIES_DIR)/pmufw.elf
 endef
 endif # BR2_TARGET_XILINX_PREBUILT_VERSAL
 
 define XILINX_PREBUILT_INSTALL_IMAGES_CMDS
-	$(XILINX_PREBUILT_INSTALL_VERSAL)
-	$(XILINX_PREBUILT_INSTALL_OTHERS)
+	$(XILINX_PREBUILT_INSTALL)
 endef
 
 $(eval $(generic-package))
