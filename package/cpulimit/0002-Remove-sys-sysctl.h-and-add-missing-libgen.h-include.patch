@@ -35,8 +35,8 @@ index 06d73a6f3541..d4f6fab3385c 100644
  #include <signal.h>
 +#include <libgen.h>
  
- #include <assert.h>
- 
+ #if defined(__APPLE__) || defined(__FREEBSD__)
+ #include <libgen.h>
 -- 
 2.25.1
 
