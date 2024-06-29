@@ -1,0 +1,25 @@
+From aeadf40bc0ebbb9fea8de8bc6786a2eccf02fa34 Mon Sep 17 00:00:00 2001
+From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Date: Sat, 29 Jun 2024 16:50:36 +0200
+Subject: [PATCH] libdnet: always build a static library
+
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+[Julien: rebased patch on version 7.95]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ libdnet-stripped/configure.gnu | 3 +++
+ 1 file changed, 3 insertions(+)
+ create mode 100644 libdnet-stripped/configure.gnu
+
+diff --git a/libdnet-stripped/configure.gnu b/libdnet-stripped/configure.gnu
+new file mode 100644
+index 0000000..989fee4
+--- /dev/null
++++ b/libdnet-stripped/configure.gnu
+@@ -0,0 +1,3 @@
++#!/bin/sh
++
++exec "${0%.gnu}" "${@}" --enable-static --disable-shared
+-- 
+2.45.2
+
