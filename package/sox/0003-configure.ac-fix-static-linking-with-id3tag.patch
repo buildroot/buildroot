@@ -1,4 +1,4 @@
-From 8df3a56cfb104c84d4701562ae2e3c9dc4686798 Mon Sep 17 00:00:00 2001
+From 06e5cc069dbdfa060c3d9e75a798ec121ecc9349 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Sat, 6 Feb 2021 11:08:45 +0100
 Subject: [PATCH] configure.ac: fix static linking with id3tag
@@ -23,6 +23,8 @@ util.c:(.text+0x240): undefined reference to `uncompress'
 Fixes:
  - http://autobuild.buildroot.org/results/73efdacf237e3d567fa66f3b3f68e624f5e35bc7
 
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+[Julien: rebased patch on package git version 7524160]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 [Upstream status: https://sourceforge.net/p/sox/patches/123]
 ---
@@ -30,10 +32,10 @@ Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index 39306398..896714f5 100644
+index a1665467..8f47a978 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -83,7 +83,7 @@ dnl Various libraries
+@@ -88,7 +88,7 @@ dnl Various libraries
  SOX_WITH_LIB([magic], [magic.h], [magic], [magic_open])
  SOX_CHECK_LIB([ZLIB], [zlib.h], [z], [uncompress])
  SOX_WITH_LIB([png], [png.h], [png], [png_set_rows], [], [], [], [$ZLIB_LIBS])
@@ -43,5 +45,5 @@ index 39306398..896714f5 100644
  
  dnl Optional formats
 -- 
-2.29.2
+2.45.2
 

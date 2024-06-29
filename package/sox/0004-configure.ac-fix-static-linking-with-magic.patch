@@ -1,4 +1,4 @@
-From 4630e574e6c0269b94fd910e7c72b8ad1ee62ce7 Mon Sep 17 00:00:00 2001
+From 76b78cb89cf8fc36b4ced568f3b34f778df53411 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Wed, 3 Mar 2021 16:48:57 +0100
 Subject: [PATCH] configure.ac: fix static linking with magic
@@ -24,6 +24,8 @@ compress.c:(.text+0x1d0): undefined reference to `inflateInit_'
 Fixes:
  - http://autobuild.buildroot.org/results/d96f27cd96926060046e2e1115777f5bceda3741
 
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+[Julien: rebased patch on package git version 7524160]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 [Upstream status: not sent yet (waiting for feedback on third patch)]
 ---
@@ -31,10 +33,10 @@ Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index 896714f5..8ae3202c 100644
+index 8f47a978..20454ed5 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -80,7 +80,7 @@ SOX_REPORT([other], [LADSPA effect plugins], [$HAVE_LADSPA])
+@@ -85,7 +85,7 @@ SOX_REPORT([other], [LADSPA effect plugins], [$HAVE_LADSPA])
  
  dnl Various libraries
  
@@ -44,5 +46,5 @@ index 896714f5..8ae3202c 100644
  SOX_WITH_LIB([png], [png.h], [png], [png_set_rows], [], [], [], [$ZLIB_LIBS])
  SOX_WITH_LIB([id3tag], [id3tag.h], [id3tag], [id3_file_open], [], [], [], [$ZLIB_LIBS])
 -- 
-2.30.1
+2.45.2
 
