@@ -1,0 +1,30 @@
+From 71530f72d21d9af00b5688948111666f62f5ec4b Mon Sep 17 00:00:00 2001
+From: Paul Eggert <eggert@cs.ucla.edu>
+Date: Wed, 19 Jul 2023 15:48:25 -0700
+Subject: tests: fix LDADD
+
+Problem reported by Christian Weisgerber <naddy@mips.inka.de> in:
+https://lists.gnu.org/r/bug-tar/2023-07/msg00015.html
+* tests/Makefile.am (LDADD): Add $(LIBINTL), $(LIBICONV).
+
+[yann.morin.1998@free.fr: backport from upstream]
+Upstream: https://git.savannah.gnu.org/cgit/tar.git/commit/?id=71530f72d21d9af00b5688948111666f62f5ec4b
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ tests/Makefile.am | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/tests/Makefile.am b/tests/Makefile.am
+index 1884b72..b696f01 100644
+--- a/tests/Makefile.am
++++ b/tests/Makefile.am
+@@ -337,4 +337,5 @@ AM_CPPFLAGS = \
+ LDADD = ../gnu/libgnu.a\
+  $(LIB_ACL) $(LIB_CLOCK_GETTIME) $(LIB_EACCESS)\
+  $(LIB_GETRANDOM) $(LIB_HARD_LOCALE) $(FILE_HAS_ACL_LIB) $(LIB_MBRTOWC)\
+- $(LIB_SELINUX) $(LIB_SETLOCALE_NULL)
++ $(LIB_SELINUX) $(LIB_SETLOCALE_NULL) \
++ $(LIBINTL) $(LIBICONV)
+-- 
+cgit v1.1
+
