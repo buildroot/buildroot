@@ -1,5 +1,5 @@
-config BR2_PACKAGE_ONEVPL_INTEL_GPU
-	bool "onevpl-intel-gpu"
+config BR2_PACKAGE_INTEL_VPL_GPU_RT
+	bool "intel-vpl-gpu-rt"
 	depends on BR2_x86_64 # intel-mediadriver
 	depends on BR2_PACKAGE_LIBVPL_ARCH_SUPPORTS # libvpl
 	depends on BR2_INSTALL_LIBSTDCPP # libvpl
@@ -12,12 +12,13 @@ config BR2_PACKAGE_ONEVPL_INTEL_GPU
 	select BR2_PACKAGE_LIBVA
 	select BR2_PACKAGE_LIBVPL
 	help
-	  Intel® oneVPL GPU Runtime is a Runtime implementation of
-	  oneVPL API for Intel Gen GPUs, starting with Tiger Lake.
+	  Intel® Video Processing Library (Intel® VPL) GPU Runtime is a
+	  Runtime implementation of Intel® VPL API for Intel Gen GPUs,
+	  starting with Tiger Lake.
 
-	  https://github.com/oneapi-src/oneVPL-intel-gpu
+	  https://github.com/intel/vpl-gpu-rt
 
-comment "onevpl-intel-gpu needs a toolchain w/ dynamic library, gcc >= 7, C++, NPTL"
+comment "intel-vpl-gpu-rt needs a toolchain w/ dynamic library, gcc >= 7, C++, NPTL"
 	depends on BR2_x86_64
 	depends on BR2_PACKAGE_LIBVPL_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_HAS_SYNC_1
