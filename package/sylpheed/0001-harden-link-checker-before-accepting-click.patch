@@ -1,4 +1,4 @@
-From ac286a71ed78429e16c612161251b9ea90ccd431 Mon Sep 17 00:00:00 2001
+From 876c54b2927e48ab6900e5e6b9395742f75e840e Mon Sep 17 00:00:00 2001
 From: Paul <paul@claws-mail.org>
 Date: Sun, 23 May 2021 12:16:40 +0100
 Subject: [PATCH] harden link checker before accepting click
@@ -6,25 +6,27 @@ Subject: [PATCH] harden link checker before accepting click
 [Retrieved from:
 https://git.claws-mail.org/?p=claws.git;a=commit;h=ac286a71ed78429e16c612161251b9ea90ccd431]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Julien: rebased patch on version 3.7.0]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
 ---
  src/textview.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/src/textview.c b/src/textview.c
-index 62ad46eaf..3cdf5d911 100644
+index e55eea9..6fbb8a1 100644
 --- a/src/textview.c
 +++ b/src/textview.c
-@@ -2885,7 +2885,7 @@ gboolean textview_uri_security_check(TextView *textview, ClickableText *uri)
+@@ -2689,7 +2689,7 @@ static gboolean textview_uri_security_check(TextView *textview, RemoteURI *uri)
  	gboolean retval = TRUE;
  
  	if (is_uri_string(uri->uri) == FALSE)
 -		return TRUE;
 +		return FALSE;
  
- 	visible_str = textview_get_visible_uri(textview, uri);
- 	if (visible_str == NULL)
-@@ -2922,6 +2922,8 @@ gboolean textview_uri_security_check(TextView *textview, ClickableText *uri)
- 		if (aval == G_ALERTALTERNATE)
+ 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview->text));
+ 	gtk_text_buffer_get_iter_at_offset(buffer, &start_iter, uri->start);
+@@ -2725,6 +2725,8 @@ static gboolean textview_uri_security_check(TextView *textview, RemoteURI *uri)
+ 		if (aval == G_ALERTDEFAULT)
  			retval = TRUE;
  	}
 +	if (strlen(uri->uri) > get_uri_len(uri->uri))
@@ -33,5 +35,5 @@ index 62ad46eaf..3cdf5d911 100644
  	g_free(visible_str);
  
 -- 
-2.25.1
+2.45.2
 
