@@ -21,7 +21,8 @@ diff --git a/pybind11/commands.py b/pybind11/commands.py
 index a29c8ca..de8a27c 100644
 --- a/pybind11/commands.py
 +++ b/pybind11/commands.py
-@@ -1,6 +1,7 @@
+@@ -2,7 +2,8 @@ from __future__ import annotations
+ 
  import os
  
 -DIR = os.path.abspath(os.path.dirname(__file__))
@@ -29,7 +30,7 @@ index a29c8ca..de8a27c 100644
 +    os.path.abspath(os.path.dirname(__file__))
  
  
- def get_include(user: bool = False) -> str:  # pylint: disable=unused-argument
+ def get_include(user: bool = False) -> str:  # noqa: ARG001
 -- 
 2.31.1
 
