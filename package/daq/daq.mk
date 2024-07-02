@@ -5,7 +5,11 @@
 ################################################################################
 
 DAQ_VERSION = 2.0.7
-DAQ_SITE = https://www.snort.org/downloads/snort
+# Upstream re-published a modified archive for the same 2.0.7 version, so change
+# its name locally, to avoid conflict with older BR versions which had a hash
+# for the previous archive.
+DAQ_SOURCE = daq-2.0.7-modified.tar.gz
+DAQ_SITE = https://www.snort.org/downloads/snort/daq-$(DAQ_VERSION).tar.gz?buildroot-path=filename
 DAQ_LICENSE = GPL-2.0
 DAQ_LICENSE_FILES = COPYING
 DAQ_INSTALL_STAGING = YES
