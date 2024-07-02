@@ -1,6 +1,8 @@
 [PATCH] Fix musl build
 
 Signed-off-by: Gary Bisson <gary.bisson@boundarydevices.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  src/mtd.c | 1 +
  src/mtd.h | 5 +++++
@@ -17,6 +19,7 @@ index 1edc441..6d2264c 100644
 +#include <stddef.h>
  #include <sys/types.h>
  #include <sys/ioctl.h>
+ #include <sys/utsname.h>
  
 diff --git a/src/mtd.h b/src/mtd.h
 index bd21add..debfc84 100644
