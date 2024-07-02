@@ -1,0 +1,18 @@
+configure.ac: drop GCC "-fforce-mem" option 
+
+As reported at [1], the option has been removed from version 4.3 of GCC.
+
+[1] https://ez.analog.com/dsp/software-and-development-tools/linux-blackfin/linux-bug-archive/w/documents/7460/5626-build-lib-mad-fail-at-option--fforce-mem-with-gcc-4-3
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: Dead
+
+--- libmad-0.15.1b-orig/configure.ac	2024-07-02 14:26:40.657984791 +0200
++++ libmad-0.15.1b/configure.ac	2024-07-02 14:27:07.098198997 +0200
+@@ -140,7 +140,6 @@
+     case "$optimize" in
+ 	-O|"-O "*)
+ 	    optimize="-O"
+-	    optimize="$optimize -fforce-mem"
+ 	    optimize="$optimize -fforce-addr"
+ 	    : #x optimize="$optimize -finline-functions"
+ 	    : #- optimize="$optimize -fstrength-reduce"
