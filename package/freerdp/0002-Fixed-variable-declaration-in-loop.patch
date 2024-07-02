@@ -1,19 +1,21 @@
-From 4f8a48d96e472e43a5f856c449f61669792ce9fa Mon Sep 17 00:00:00 2001
+From b0b856590b523869358875594841f3e6c2919569 Mon Sep 17 00:00:00 2001
 From: akallabeth <akallabeth@posteo.net>
 Date: Tue, 22 Sep 2020 07:43:56 +0200
 Subject: [PATCH] Fixed variable declaration in loop
 
 Upstream: https://github.com/FreeRDP/FreeRDP/commit/4f8a48d96e472e43a5f856c449f61669792ce9fa
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  client/X11/xf_graphics.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/client/X11/xf_graphics.c b/client/X11/xf_graphics.c
-index bf71b563c3..c50726c8e4 100644
+index c8f24362aec7..c8b604cc6ad4 100644
 --- a/client/X11/xf_graphics.c
 +++ b/client/X11/xf_graphics.c
-@@ -240,7 +240,7 @@ static BOOL _xf_Pointer_GetCursorForCurrentScale(rdpContext* context, const rdpP
+@@ -246,7 +246,7 @@ static BOOL xf_Pointer_GetCursorForCurrentScale(rdpContext* context, const rdpPo
  	double xscale;
  	double yscale;
  	size_t size;
@@ -22,12 +24,15 @@ index bf71b563c3..c50726c8e4 100644
  
  	if (!context || !pointer || !context->gdi)
  		return FALSE;
-@@ -255,7 +255,7 @@ static BOOL _xf_Pointer_GetCursorForCurrentScale(rdpContext* context, const rdpP
- 	xTargetSize = pointer->width * xscale;
- 	yTargetSize = pointer->height * yscale;
+@@ -264,7 +264,7 @@ static BOOL xf_Pointer_GetCursorForCurrentScale(rdpContext* context, const rdpPo
+ 	WLog_DBG(TAG, "%s: scaled: %" PRIu32 "x%" PRIu32 ", desktop: %" PRIu32 "x%" PRIu32, __func__,
+ 	         xfc->scaledWidth, xfc->savedHeight, settings->DesktopWidth, settings->DesktopHeight);
  
 -	for (int i = 0; i < xpointer->nCursors; i++)
 +	for (i = 0; i < xpointer->nCursors; i++)
  	{
  		if (xpointer->cursorWidths[i] == xTargetSize && xpointer->cursorHeights[i] == yTargetSize)
  		{
+-- 
+2.43.0
+
