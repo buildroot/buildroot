@@ -1,12 +1,14 @@
 Use pkg-config to determine alsa link flags. This fixes static linking.
 
 Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
 diff -Nuar flite-1.4-release.orig/configure.in flite-1.4-release/configure.in
 --- flite-1.4-release.orig/configure.in	2009-08-14 23:46:38.000000000 +0300
 +++ flite-1.4-release/configure.in	2014-04-30 18:52:33.253297236 +0300
-@@ -275,7 +275,10 @@
-                 #endif],
+@@ -383,7 +383,10 @@ AC_CHECK_HEADER(sys/audioio.h,
+ AC_CHECK_HEADER(alsa/asoundlib.h,
                [AUDIODRIVER="alsa"
  	       AUDIODEFS=-DCST_AUDIO_ALSA
 -               AUDIOLIBS=-lasound])
