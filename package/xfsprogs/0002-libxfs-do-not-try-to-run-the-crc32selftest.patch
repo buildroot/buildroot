@@ -1,4 +1,4 @@
-From 3a77dfc54271059dcac305384bf6ace34fe1f3d3 Mon Sep 17 00:00:00 2001
+From 94ae5db7d017480e103aa6f07cc86648b613d114 Mon Sep 17 00:00:00 2001
 From: "Yann E. MORIN" <yann.morin.1998@free.fr>
 Date: Sun, 18 Dec 2016 15:37:27 +0100
 Subject: [PATCH] libxfs: do not try to run the crc32selftest
@@ -19,17 +19,20 @@ generator is natively built, but with the target CFLAGS.
 Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
 Signed-off-by: "Fabrice Fontaine" <fontaine.fabrice@gmail.com>
 [Update for 4.18.0: crc32 has been moved from libxfs to libfrog]
+[Julien: rebased on v6.4.0]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+Upstream: patch to be superseded by https://git.kernel.org/pub/scm/fs/xfs/xfsprogs-dev.git/commit/?id=e51b89e657af7843d8c7aea3df49fe1f0f1d4ac2
 ---
- libxfs/Makefile | 4 ++--
+ libfrog/Makefile | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/libfrog/Makefile b/libxfs/Makefile
-index 62608bd..e021625 100644
+diff --git a/libfrog/Makefile b/libfrog/Makefile
+index f292afe3..1d0d2083 100644
 --- a/libfrog/Makefile
 +++ b/libfrog/Makefile
-@@ -112,9 +112,9 @@ LTLIBS = $(LIBPTHREAD) $(LIBRT)
- # don't try linking xfs_repair with a debug libxfs.
- DEBUG = -DNDEBUG
+@@ -57,9 +57,9 @@ ifeq ($(HAVE_GETMNTENT),yes)
+ LCFLAGS += -DHAVE_GETMNTENT
+ endif
  
 -LDIRT = gen_crc32table crc32table.h crc32selftest
 +LDIRT = gen_crc32table crc32table.h
@@ -37,8 +40,8 @@ index 62608bd..e021625 100644
 -default: crc32selftest ltdepend $(LTLIBRARY)
 +default: ltdepend $(LTLIBRARY)
  
- crc32table.h: gen_crc32table.c
+ crc32table.h: gen_crc32table.c crc32defs.h
  	@echo "    [CC]     gen_crc32table"
 -- 
-2.7.4
+2.45.2
 

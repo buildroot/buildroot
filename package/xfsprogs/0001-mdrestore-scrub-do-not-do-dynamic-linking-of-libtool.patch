@@ -1,4 +1,4 @@
-From d5cbb4f43cc9c30100fbf18a3e0d1fb95e1c1b0a Mon Sep 17 00:00:00 2001
+From fa3a4e036c8c78325216ed21eff6145aeb186686 Mon Sep 17 00:00:00 2001
 From: Vicente Olivert Riera <Vincent.Riera@imgtec.com>
 Date: Wed, 25 Nov 2015 10:50:00 +0000
 Subject: [PATCH] mdrestore, scrub: do not do dynamic linking of libtool
@@ -11,23 +11,25 @@ linking for libuuid only. Otherwise the build will fail like this:
 ld: attempted static link of dynamic object `/usr/lib/libuuid.so'
 
 Signed-off-by: Vicente Olivert Riera <Vincent.Riera@imgtec.com>
-[Sent upstream: https://www.spinics.net/lists/xfs/msg36149.html]
+Upstream: Proposed: https://www.spinics.net/lists/xfs/msg36149.html
 [baruch: update for v4.15.1; extend to include scrub]
 Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 [matt: update for v4.16.1; adjusted libunistring -> libicu]
 Signed-off-by: Matt Weber <matthew.weber@rockwellcollins.com>
+[Julien: rebased on v6.4.0]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
 ---
  mdrestore/Makefile | 2 +-
  scrub/Makefile     | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/mdrestore/Makefile b/mdrestore/Makefile
-index 136ae716d691..75ff1bad78e9 100644
+index 4a932efb..7ea1fd45 100644
 --- a/mdrestore/Makefile
 +++ b/mdrestore/Makefile
 @@ -10,7 +10,7 @@ CFILES = xfs_mdrestore.c
  
- LLDLIBS = $(LIBXFS) $(LIBFROG) $(LIBRT) $(LIBPTHREAD) $(LIBUUID)
+ LLDLIBS = $(LIBXFS) $(LIBFROG) $(LIBRT) $(LIBUUID) $(LIBURCU) $(LIBPTHREAD)
  LTDEPENDENCIES = $(LIBXFS) $(LIBFROG)
 -LLDFLAGS = -static
 +LLDFLAGS = -static-libtool-libs
@@ -35,12 +37,12 @@ index 136ae716d691..75ff1bad78e9 100644
  default: depend $(LTCOMMAND)
  
 diff --git a/scrub/Makefile b/scrub/Makefile
-index 063279400262..949f6fd8ba94 100644
+index aba14ed2..f0ef492f 100644
 --- a/scrub/Makefile
 +++ b/scrub/Makefile
-@@ -70,7 +70,7 @@ xfs_scrub.c
- 
- LLDLIBS += $(LIBHANDLE) $(LIBFROG) $(LIBPTHREAD) $(LIBICU_LIBS) $(LIBRT)
+@@ -71,7 +71,7 @@ xfs_scrub.c
+ LLDLIBS += $(LIBHANDLE) $(LIBFROG) $(LIBICU_LIBS) $(LIBRT) $(LIBURCU) \
+ 	$(LIBPTHREAD)
  LTDEPENDENCIES += $(LIBHANDLE) $(LIBFROG)
 -LLDFLAGS = -static
 +LLDFLAGS = -static-libtool-libs
@@ -48,5 +50,5 @@ index 063279400262..949f6fd8ba94 100644
  ifeq ($(HAVE_MALLINFO),yes)
  LCFLAGS += -DHAVE_MALLINFO
 -- 
-2.16.2
+2.45.2
 
