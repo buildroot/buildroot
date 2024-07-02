@@ -1,4 +1,4 @@
-From 236b019b83228d2e37fa07635fb6864ed7dc5fad Mon Sep 17 00:00:00 2001
+From 09758ebb191da659563b4c33334295ce21ecae71 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Thu, 1 Apr 2021 07:49:46 +0200
 Subject: [PATCH] lib/getrandom.c: fix build with uclibc < 1.0.35
@@ -25,6 +25,9 @@ Fixes:
  - http://autobuild.buildroot.org/results/30105094e39374ec6d4e47e2fb5e99696f7f7981
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: Not applicable (Buildroot specific)
+[Julien: refreshed the patch to be applied with fuzz factor 0]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
 ---
  gl-libpoke/getrandom.c          | 1 +
  gl/getrandom.c                  | 1 +
@@ -32,7 +35,7 @@ Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
  3 files changed, 3 insertions(+)
 
 diff --git a/gl-libpoke/getrandom.c b/gl-libpoke/getrandom.c
-index e146873..3948d8d 100644
+index 19bb342..0251e0f 100644
 --- a/gl-libpoke/getrandom.c
 +++ b/gl-libpoke/getrandom.c
 @@ -19,6 +19,7 @@
@@ -44,7 +47,7 @@ index e146873..3948d8d 100644
  
  #include <errno.h>
 diff --git a/gl/getrandom.c b/gl/getrandom.c
-index e146873..3948d8d 100644
+index 19bb342..0251e0f 100644
 --- a/gl/getrandom.c
 +++ b/gl/getrandom.c
 @@ -19,6 +19,7 @@
@@ -56,7 +59,7 @@ index e146873..3948d8d 100644
  
  #include <errno.h>
 diff --git a/jitter/gnulib-local/getrandom.c b/jitter/gnulib-local/getrandom.c
-index e146873..3948d8d 100644
+index 19bb342..0251e0f 100644
 --- a/jitter/gnulib-local/getrandom.c
 +++ b/jitter/gnulib-local/getrandom.c
 @@ -19,6 +19,7 @@
@@ -68,5 +71,5 @@ index e146873..3948d8d 100644
  
  #include <errno.h>
 -- 
-2.31.1
+2.45.2
 
