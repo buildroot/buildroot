@@ -21,6 +21,13 @@ else
 EROFS_UTILS_CONF_OPTS += --disable-lz4
 endif
 
+ifeq ($(BR2_PACKAGE_EROFS_UTILS_LZMA),y)
+EROFS_UTILS_DEPENDENCIES += xz
+EROFS_UTILS_CONF_OPTS += --enable-lzma
+else
+EROFS_UTILS_CONF_OPTS += --disable-lzma
+endif
+
 ifeq ($(BR2_PACKAGE_LIBSELINUX),y)
 EROFS_UTILS_CONF_OPTS += --with-selinux
 EROFS_UTILS_DEPENDENCIES += libselinux
@@ -35,8 +42,8 @@ else
 EROFS_UTILS_CONF_OPTS += --disable-fuse
 endif
 
-HOST_EROFS_UTILS_DEPENDENCIES = host-pkgconf host-util-linux host-lz4
-HOST_EROFS_UTILS_CONF_OPTS += --enable-lz4 --disable-fuse --without-selinux
+HOST_EROFS_UTILS_DEPENDENCIES = host-pkgconf host-util-linux host-lz4 host-xz
+HOST_EROFS_UTILS_CONF_OPTS += --enable-lz4 --enable-lzma --disable-fuse --without-selinux
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
