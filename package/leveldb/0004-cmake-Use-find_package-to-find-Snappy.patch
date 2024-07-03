@@ -1,4 +1,4 @@
-From 450c1d88b3e1af34614294830b4dc0612d198d26 Mon Sep 17 00:00:00 2001
+From aa658d96f59d0e29f0d9208b8fbb3cce42e57edc Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Pawe=C5=82=20Bylica?= <chfast@gmail.com>
 Date: Wed, 8 May 2019 10:42:03 +0200
 Subject: [PATCH] cmake: Use find_package() to find Snappy
@@ -9,6 +9,8 @@ in static link configurations]
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 [Fabrice : updated for 1.23]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  CMakeLists.txt         | 12 ++++++++----
  cmake/FindSnappy.cmake | 31 +++++++++++++++++++++++++++++++
@@ -16,7 +18,7 @@ Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
  create mode 100644 cmake/FindSnappy.cmake
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 78fead6..2efccda 100644
+index 436a9fe5513f..bbd179d3be59 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -6,6 +6,9 @@ cmake_minimum_required(VERSION 3.9)
@@ -29,9 +31,9 @@ index 78fead6..2efccda 100644
  # C standard can be overridden when this is used as a sub-project.
  if(NOT CMAKE_C_STANDARD)
    # This project can use C11, but will gracefully decay down to C89.
-@@ -31,13 +34,14 @@ option(LEVELDB_INSTALL "Install LevelDB's header and library" ON)
- include(TestBigEndian)
- test_big_endian(LEVELDB_IS_BIG_ENDIAN)
+@@ -34,13 +37,14 @@ option(LEVELDB_BUILD_TESTS "Build LevelDB's unit tests" ON)
+ option(LEVELDB_BUILD_BENCHMARKS "Build LevelDB's benchmarks" ON)
+ option(LEVELDB_INSTALL "Install LevelDB's header and library" ON)
  
 +find_package(Snappy)
 +
@@ -45,7 +47,7 @@ index 78fead6..2efccda 100644
  check_library_exists(tcmalloc malloc "" HAVE_TCMALLOC)
  
  include(CheckCXXSymbolExists)
-@@ -276,9 +280,9 @@ endif(HAVE_ATOMIC)
+@@ -298,9 +302,9 @@ endif(HAVE_ATOMIC)
  if(HAVE_CRC32C)
    target_link_libraries(leveldb crc32c)
  endif(HAVE_CRC32C)
@@ -60,7 +62,7 @@ index 78fead6..2efccda 100644
  endif(HAVE_TCMALLOC)
 diff --git a/cmake/FindSnappy.cmake b/cmake/FindSnappy.cmake
 new file mode 100644
-index 0000000..88c1de9
+index 000000000000..88c1de98f228
 --- /dev/null
 +++ b/cmake/FindSnappy.cmake
 @@ -0,0 +1,31 @@
@@ -96,5 +98,5 @@ index 0000000..88c1de9
 +  )
 +endif()
 -- 
-2.26.2
+2.43.0
 

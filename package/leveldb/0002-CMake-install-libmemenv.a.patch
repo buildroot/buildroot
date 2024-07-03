@@ -1,4 +1,4 @@
-From 2fa960098e5b6f9daa9f7d6cab27188566859be8 Mon Sep 17 00:00:00 2001
+From ef03beb64f5e8028f6b5d65f75ee60e8b2eec594 Mon Sep 17 00:00:00 2001
 From: Bernd Kuhls <bernd.kuhls@t-online.de>
 Date: Sat, 12 Oct 2019 14:43:46 +0200
 Subject: [PATCH] CMake: install libmemenv.a
@@ -10,15 +10,17 @@ https://git.busybox.net/buildroot/commit/?id=16f847340d07dce620e4c3fc0a099aa7989
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 [Fabrice : updated for 1.23]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
- CMakeLists.txt | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+ CMakeLists.txt | 32 +++++++++++++++++++++++++++++++-
+ 1 file changed, 31 insertions(+), 1 deletion(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index a65afbf..83b2425 100644
+index f8285b82c6a4..ffce93b01ed6 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -187,6 +187,30 @@ target_sources(leveldb
+@@ -209,6 +209,30 @@ target_sources(leveldb
      "${LEVELDB_PUBLIC_INCLUDE_DIR}/write_batch.h"
  )
  
@@ -49,7 +51,7 @@ index a65afbf..83b2425 100644
  if (WIN32)
    target_sources(leveldb
      PRIVATE
-@@ -418,7 +436,7 @@ endif(LEVELDB_BUILD_BENCHMARKS)
+@@ -445,7 +469,7 @@ int main() {
  endif(LEVELDB_BUILD_BENCHMARKS)
  
  if(LEVELDB_INSTALL)
@@ -58,8 +60,8 @@ index a65afbf..83b2425 100644
      EXPORT leveldbTargets
      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-@@ -444,6 +462,12 @@ if(LEVELDB_INSTALL)
-     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/leveldb
+@@ -471,6 +495,12 @@ if(LEVELDB_INSTALL)
+     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/leveldb"
    )
  
 +  install(
@@ -69,8 +71,8 @@ index a65afbf..83b2425 100644
 +  )
 +
    include(CMakePackageConfigHelpers)
-   write_basic_package_version_file(
-       "${PROJECT_BINARY_DIR}/leveldbConfigVersion.cmake"
+   configure_package_config_file(
+     "cmake/${PROJECT_NAME}Config.cmake.in"
 -- 
-2.20.1
+2.43.0
 
