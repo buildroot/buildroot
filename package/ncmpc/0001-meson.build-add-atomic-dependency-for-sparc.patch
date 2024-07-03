@@ -1,4 +1,4 @@
-From d2bd33ec18c146b27fb5aff7dd0089faa195ef9b Mon Sep 17 00:00:00 2001
+From 72ef4c1c3c11fc05c057f2b40b87de92a573f2eb Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Mon, 11 Feb 2019 21:42:01 +0100
 Subject: [PATCH] meson.build: add atomic dependency for sparc
@@ -11,16 +11,18 @@ Fixes:
  - http://autobuild.buildroot.org/results/7ac1a07e4f72633d3ec92b79dc5d8c062490abdc
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
-[Upstream status: https://github.com/MusicPlayerDaemon/ncmpc/pull/45]
+Upstream: https://github.com/MusicPlayerDaemon/ncmpc/pull/45
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  meson.build | 4 ++++
  1 file changed, 4 insertions(+)
 
 diff --git a/meson.build b/meson.build
-index 2e6defc..b393e39 100644
+index fa0eff9408b6..819674cbede4 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -174,6 +174,9 @@ else
+@@ -232,6 +232,9 @@ else
    pcre_dep = declare_dependency()
  endif
  
@@ -30,14 +32,14 @@ index 2e6defc..b393e39 100644
  inc = include_directories(
    'src',
  
-@@ -352,6 +355,7 @@ ncmpc = executable('ncmpc',
+@@ -445,6 +448,7 @@ ncmpc = executable('ncmpc',
    sources,
    include_directories: inc,
    dependencies: [
 +    atomic_dep,
      thread_dep,
-     boost_dep,
+     event_dep,
      pcre_dep,
 -- 
-2.14.1
+2.43.0
 
