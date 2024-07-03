@@ -1,6 +1,8 @@
 Add missing #include for PATH_MAX
 
 Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
 --- memstat-0.8.org/memstat.c	2009-06-08 14:38:05.000000000 +0200
 +++ memstat-0.8/memstat.c	2014-09-12 03:55:43.096035374 +0200
@@ -11,4 +13,4 @@ Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
 +#include <limits.h>
  
  /* blacklist devices that just map physical memory */
- char *blacklist[] = { "/dev/mem",
+ char *blacklist[] = {
