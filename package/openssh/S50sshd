@@ -3,6 +3,9 @@
 # sshd        Starts sshd.
 #
 
+DAEMON="sshd"
+PIDFILE="/var/run/$DAEMON.pid"
+
 # Make sure the ssh-keygen progam exists
 [ -f /usr/bin/ssh-keygen ] || exit 0
 
@@ -12,17 +15,35 @@ start() {
 	# Create any missing keys
 	/usr/bin/ssh-keygen -A
 
-	printf "Starting sshd: "
-	/usr/sbin/sshd
-	touch /var/lock/sshd
-	echo "OK"
+	printf "Starting %s: " "$DAEMON"
+	start-stop-daemon -S -q -p "$PIDFILE" \
+		-x "/usr/sbin/$DAEMON"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
 }
+
 stop() {
 	printf "Stopping sshd: "
-	killall sshd
-	rm -f /var/lock/sshd
-	echo "OK"
+	start-stop-daemon -K -q -p "$PIDFILE" \
+		-x "/usr/sbin/$DAEMON"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	# sshd deletes its PID file on exit, wait for it to be gone
+	while [ -f "$PIDFILE" ]; do
+		sleep 0.1
+	done
+	return "$status"
 }
+
 restart() {
 	stop
 	start
@@ -44,4 +65,3 @@ case "$1" in
 esac
 
 exit $?
-
