@@ -1,4 +1,4 @@
-From 2747e47393cbca2d09db56223e735bd94b21e2eb Mon Sep 17 00:00:00 2001
+From 8ebf1067390948d03330a5a0c814e5f7f860e678 Mon Sep 17 00:00:00 2001
 From: Joel Winarske <joel.winarske@gmail.com>
 Date: Mon, 28 Sep 2020 22:23:02 -0700
 Subject: [PATCH] Wayland: Remove extra-cmake-modules dependency
@@ -8,17 +8,18 @@ Fixes #1774.
 [Retrieved (and backported) from:
 https://github.com/glfw/glfw/commit/2747e47393cbca2d09db56223e735bd94b21e2eb]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Dario: make the patch to be applied with fuzz factor 0 dropping all Hunks]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
- .gitignore         |  4 ---
  CMakeLists.txt     | 16 ++++++------
  src/CMakeLists.txt | 62 ++++++++++++++++++++++++++++------------------
- 3 files changed, 45 insertions(+), 37 deletions(-)
+ 2 files changed, 45 insertions(+), 33 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 42bfa1806d..394827520b 100644
+index 75069161fc36..b315eaa15305 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -191,20 +191,18 @@ endif()
+@@ -249,20 +249,18 @@ endif()
  # Use Wayland for window creation
  #--------------------------------------------------------------------
  if (_GLFW_WAYLAND)
@@ -47,10 +48,10 @@ index 42bfa1806d..394827520b 100644
      include(CheckIncludeFiles)
      include(CheckFunctionExists)
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 2f2bdd883d..e834506c6c 100644
+index b6dd86c54512..29be6515ae58 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -45,30 +45,44 @@ if (_GLFW_X11 OR _GLFW_WAYLAND)
+@@ -40,30 +40,44 @@ elseif (_GLFW_WAYLAND)
                       posix_time.c posix_thread.c xkb_unicode.c
                       egl_context.c osmesa_context.c)
  
@@ -119,3 +120,6 @@ index 2f2bdd883d..e834506c6c 100644
  elseif (_GLFW_OSMESA)
      set(glfw_HEADERS ${common_HEADERS} null_platform.h null_joystick.h
                       posix_time.h posix_thread.h osmesa_context.h)
+-- 
+2.43.0
+
