@@ -1,0 +1,40 @@
+From 5f9e616b29fe272fffbb31e4b7ea8ff61f781601 Mon Sep 17 00:00:00 2001
+From: Leah Neukirchen <leah@vuxu.org>
+Date: Wed, 29 May 2024 19:42:27 +0200
+Subject: [PATCH] fix "snooze -n" format string
+
+Fixes #22.
+
+Signed-off-by: J. Neuschäfer <j.neuschaefer@gmx.net>
+
+Upstream: https://github.com/leahneukirchen/snooze/commit/5f9e616b29fe272fffbb31e4b7ea8ff61f781601
+---
+ snooze.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/snooze.c b/snooze.c
+index 06f0d07..e47ad11 100644
+--- a/snooze.c
++++ b/snooze.c
+@@ -329,13 +329,13 @@ main(int argc, char *argv[])
+ 			char weekstr[4];
+ 			struct tm *tm = localtime(&t);
+ 			strftime(weekstr, sizeof weekstr, "%a", tm);
+-			printf("%s %s %2ldd%3ldh%3ldm%3lds ",
++			printf("%s %s %2dd%3dh%3dm%3ds ",
+ 			    isotime(tm),
+ 			    weekstr,
+-			    ((t - now) / (60*60*24)),
+-			    ((t - now) / (60*60)) % 24,
+-			    ((t - now) / 60) % 60,
+-			    (t - now) % 60);
++			    ((int)(t - now) / (60*60*24)),
++			    ((int)(t - now) / (60*60)) % 24,
++			    ((int)(t - now) / 60) % 60,
++			    (int)(t - now) % 60);
+ 			if(jitter) {
+ 				printf("(plus up to %ds for jitter)\n", jitter);
+ 			} else {
+--
+2.43.0
+
