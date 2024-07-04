@@ -1,0 +1,38 @@
+From 2159684f1287b6bca2bd74c129b752a636ee807f Mon Sep 17 00:00:00 2001
+From: Peter Korsgaard <peter@korsgaard.com>
+Date: Wed, 17 Jan 2007 13:58:01 +0000
+Subject: [PATCH] Allow 8-bit colors
+
+Upstream: Reported as unmaintained on homepage http://www.rdesktop.org/
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+[Julien: refreshed the patch to be applied with fuzz factor 0]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ xwin.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/xwin.c b/xwin.c
+index d96d0f4..d11f4a6 100644
+--- a/xwin.c
++++ b/xwin.c
+@@ -1801,7 +1801,7 @@ select_visual(int screen_num)
+ 		}
+ 
+ 		/* we use a colourmap, so the default visual should do */
+-		g_owncolmap = True;
++//		g_owncolmap = True;
+ 		g_visual = vmatches[0].visual;
+ 		g_depth = vmatches[0].depth;
+ 	}
+@@ -2010,7 +2010,7 @@ ui_init(void)
+ 	{
+ 		g_xcolmap =
+ 			XCreateColormap(g_display, RootWindowOfScreen(g_screen), g_visual,
+-					AllocNone);
++					(g_depth <= 8) ? AllocAll : AllocNone);
+ 		if (g_depth <= 8)
+ 			logger(GUI, Warning,
+ 			       "Display colour depth is %d bit: you may want to use -C for a private colourmap",
+-- 
+2.45.2
+
