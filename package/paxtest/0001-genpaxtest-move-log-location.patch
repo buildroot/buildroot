@@ -7,6 +7,8 @@ Move log location to /var/log instead of local directory.
 (For read-only filesystems)
 
 Signed-off-by: David Graziano <david.graziano@rockwellcollins.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  genpaxtest | 14 +++++++-------
  1 file changed, 7 insertions(+), 7 deletions(-)
@@ -16,15 +18,14 @@ index 5a22e15..d62b15e 100644
 --- a/genpaxtest
 +++ b/genpaxtest
 @@ -35,7 +35,7 @@
-        exit 1
+ 	exit 1
  fi
-
+ 
 -LOG=\$HOME/paxtest.log
 +LOG=/var/log/paxtest.log
  [ -n "\$1" ] && LOG=\$1
  touch "\$LOG"
  if [ ! -e "\$LOG" ]; then
- 
 -- 
 1.9.1
 
