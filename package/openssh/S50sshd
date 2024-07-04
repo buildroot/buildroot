@@ -49,6 +49,19 @@ restart() {
 	start
 }
 
+reload() {
+	printf "Reloading sshd config: "
+	start-stop-daemon -K --signal HUP -q -p "$PIDFILE" \
+		-x "/usr/sbin/$DAEMON"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
 case "$1" in
 	start)
 		start
@@ -56,11 +69,14 @@ case "$1" in
 	stop)
 		stop
 		;;
-	restart|reload)
+	restart)
 		restart
 		;;
+	reload)
+		reload
+		;;
 	*)
-		echo "Usage: $0 {start|stop|restart}"
+		echo "Usage: $0 {start|stop|restart|reload}"
 		exit 1
 esac
 
