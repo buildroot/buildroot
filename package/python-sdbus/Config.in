@@ -1,0 +1,11 @@
+config BR2_PACKAGE_PYTHON_SDBUS
+	bool "python-sdbus"
+	depends on BR2_PACKAGE_SYSTEMD # required to get sd-bus
+	help
+	  Modern Python D-Bus library. Based on sd-bus from
+	  libsystemd.
+
+	  https://github.com/igo95862/python-sdbus
+
+comment "python-sdbus needs systemd"
+	depends on !BR2_PACKAGE_SYSTEMD
