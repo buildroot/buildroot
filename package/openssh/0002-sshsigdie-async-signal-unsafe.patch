@@ -1,0 +1,41 @@
+From 7f4a743171f9e6b283207d448de6562219774fbf Mon Sep 17 00:00:00 2001
+From: Salvatore Bonaccorso <carnil@debian.org>
+Date: Tue, 25 Jun 2024 12:24:29 +0100
+Subject: Disable async-signal-unsafe code from the sshsigdie() function
+
+Address signal handler race condition: if a client does not authenticate
+within LoginGraceTime seconds (120 by default, 600 in old OpenSSH
+versions), then sshd's SIGALRM handler is called asynchronously, but
+this signal handler calls various functions that are not
+async-signal-safe (for example, syslog()).
+
+This is a regression from CVE-2006-5051 ("Signal handler race condition
+in OpenSSH before 4.4 allows remote attackers to cause a denial of
+service (crash), and possibly execute arbitrary code")
+
+Signed-off-by: Salvatore Bonaccorso <carnil@debian.org>
+Upstream: https://salsa.debian.org/ssh-team/openssh/-/blob/525bb16e45edac4c03b95e106380d70aecbaf27e/debian/patches/sshsigdie-async-signal-unsafe.patch
+Patch-Name: sshsigdie-async-signal-unsafe.patch
+---
+ log.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/log.c b/log.c
+index 6a8b1fc4a..57256660f 100644
+--- a/log.c
++++ b/log.c
+@@ -452,12 +452,14 @@ void
+ sshsigdie(const char *file, const char *func, int line, int showfunc,
+     LogLevel level, const char *suffix, const char *fmt, ...)
+ {
++#if 0
+ 	va_list args;
+ 
+ 	va_start(args, fmt);
+ 	sshlogv(file, func, line, showfunc, SYSLOG_LEVEL_FATAL,
+ 	    suffix, fmt, args);
+ 	va_end(args);
++#endif
+ 	_exit(1);
+ }
+ 
