@@ -1,4 +1,4 @@
-From b3e8930ccbaeeb77a4cd8b0fffbe52a208aa9a29 Mon Sep 17 00:00:00 2001
+From 6ac376cec5c9573abf3ee3b82e71bd2b7e410dad Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Thu, 23 Nov 2023 22:45:56 +0100
 Subject: [PATCH] src/oatpp/core/base/Environment.hpp: include cstdarg
@@ -16,22 +16,24 @@ Fixes:
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Upstream: https://github.com/oatpp/oatpp/commit/1d11558e2cbbabc0db02a233bf00d651ce5ea758
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  src/oatpp/core/base/Environment.hpp | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/src/oatpp/core/base/Environment.hpp b/src/oatpp/core/base/Environment.hpp
-index fd77a5c6..05d5c949 100644
+index 984afdf2a7f5..2eb18be3e196 100644
 --- a/src/oatpp/core/base/Environment.hpp
 +++ b/src/oatpp/core/base/Environment.hpp
-@@ -29,6 +29,7 @@
- #include "./Compiler.hpp"
+@@ -28,6 +28,7 @@
+ 
  #include "./Config.hpp"
-
+ 
 +#include <cstdarg>
  #include <cstdio>
  #include <atomic>
  #include <mutex>
---
-2.42.0
+-- 
+2.43.0
 
