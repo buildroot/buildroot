@@ -7,6 +7,8 @@ When BUILD_SHARED_LIBS is off, you don't want to build the shared
 library.
 
 Signed-off-by: Samuel Martin <s.martin49@gmail.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  src/CMakeLists.txt | 4 ++++
  1 file changed, 4 insertions(+)
@@ -15,15 +17,15 @@ diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
 index 99cf9e9..9e9c77d 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -37,6 +37,7 @@ SET(LIBRARY_OUTPUT_PATH ${libDir})
- 
+@@ -38,6 +38,7 @@ SET(LIBRARY_OUTPUT_PATH ${libDir})
  ADD_LIBRARY(yajl_s STATIC ${SRCS} ${HDRS} ${PUB_HDRS})
+ SET_TARGET_PROPERTIES(yajl_s PROPERTIES OUTPUT_NAME yajl)
  
 +IF(BUILD_SHARED_LIBS)
  ADD_LIBRARY(yajl SHARED ${SRCS} ${HDRS} ${PUB_HDRS})
  
  #### setup shared library version number
-@@ -51,6 +52,7 @@ IF(APPLE)
+@@ -52,6 +53,7 @@ IF(APPLE)
    SET_TARGET_PROPERTIES(yajl PROPERTIES
                          INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
  ENDIF(APPLE)
@@ -31,7 +33,7 @@ index 99cf9e9..9e9c77d 100644
  
  #### build up an sdk as a post build step
  
-@@ -77,10 +79,12 @@ INCLUDE_DIRECTORIES(${incDir}/..)
+@@ -78,10 +80,12 @@ INCLUDE_DIRECTORIES(${incDir}/..)
  
  # at build time you may specify the cmake variable LIB_SUFFIX to handle
  # 64-bit systems which use 'lib64'
