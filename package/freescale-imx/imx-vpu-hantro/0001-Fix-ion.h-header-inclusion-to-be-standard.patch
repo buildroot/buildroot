@@ -9,6 +9,8 @@ https://elixir.bootlin.com/linux/v4.17/source/drivers/staging/android/uapi/ion.h
 
 Signed-off-by: Gary Bisson <gary.bisson@boundarydevices.com>
 Signed-off-by: Chris Dimich <chris.dimich@boundarydevices.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  Makefile_G1G2                                             | 4 ++--
  Makefile_H1                                               | 4 ++--
@@ -51,20 +53,20 @@ index 7d5e33b..c0e5727 100755
 --- a/decoder_sw/software/linux/dwl/dwl_linux.c
 +++ b/decoder_sw/software/linux/dwl/dwl_linux.c
 @@ -50,7 +50,7 @@
- #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0)
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0) || defined(ENABLE_DMABUF_HEAP)
  #include <linux/dma-heap.h>
  #else
 -#include <linux/ion.h>
 +#include <ion.h>
  #endif
  #ifdef ANDROID
- #include <linux/mxc_ion.h>
+ #if !defined(ENABLE_DMABUF_HEAP)
 diff --git a/h1_encoder/software/linux_reference/ewl/ewl_x280_common.c b/h1_encoder/software/linux_reference/ewl/ewl_x280_common.c
 index 312e4cc..70630c3 100755
 --- a/h1_encoder/software/linux_reference/ewl/ewl_x280_common.c
 +++ b/h1_encoder/software/linux_reference/ewl/ewl_x280_common.c
-@@ -52,7 +52,7 @@
- #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0)
+@@ -51,7 +51,7 @@
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0) || defined(ENABLE_DMABUF_HEAP)
  #include <linux/dma-heap.h>
  #else
 -#include <linux/ion.h>
