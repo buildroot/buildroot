@@ -18,15 +18,17 @@ Fixes:
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Upstream: https://github.com/FreeRADIUS/freeradius-server/pull/5263
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
- src/modules/rlm_python/configure.ac | 4 ++--
+ src/modules/rlm_python3/configure.ac | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/modules/rlm_python3/configure.ac b/src/modules/rlm_python3/configure.ac
 index e2f74574fb..ee30b324d9 100644
 --- a/src/modules/rlm_python3/configure.ac
 +++ b/src/modules/rlm_python3/configure.ac
-@@ -59,7 +59,7 @@ else
+@@ -44,7 +44,7 @@ else
  
  	dnl # Convert -I to -isystem to get rid of warnings about issues in Python headers
  	dnl # Strip -systemroot
@@ -35,8 +37,8 @@ index e2f74574fb..ee30b324d9 100644
  	dnl # -D_FORTIFY_SOURCE needs -O.
  	dnl # Strip debug symbol flags (-g[0-9]?). We decide on debugging symbols, not python
  	dnl # Strip -W*, we decide what warnings are important
-@@ -73,7 +73,7 @@ else
- 	mod_cflags=`echo " $python_cflags" | sed -e '\
+@@ -56,7 +56,7 @@ else
+ 	mod_cflags=`echo " $python3_cflags" | sed -e '\
  		s/ -I/ -isystem/g;\
  		s/ -isysroot[[ =]]\{0,1\}[[^-]]*/ /g;\
 -		s/ -O[[^[[:blank:]]]]*/ /g;\

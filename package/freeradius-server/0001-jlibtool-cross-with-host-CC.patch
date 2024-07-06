@@ -11,6 +11,8 @@ Signed-off-by: David Gouarin <david.gouarin@thalesgroup.com>
 Signed-off-by: Matt Weber <matthew.weber@rockwellcollins.com>
 [Fabrice: update for 3.2.3]
 SIgned-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  scripts/libtool.mk | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
@@ -19,8 +21,7 @@ diff --git a/scripts/libtool.mk b/scripts/libtool.mk
 index 57915e1053..c28260dd7e 100644
 --- a/scripts/libtool.mk
 +++ b/scripts/libtool.mk
-@@ -43,8 +43,8 @@ ifeq "${LIBTOOL}" "JLIBTOOL"
-
+@@ -48,8 +48,8 @@ ifeq "${LIBTOOL}" "JLIBTOOL"
      # binary!
      ${JLIBTOOL}: ${top_makedir}/jlibtool.c
  	$(Q)mkdir -p $(dir $@)
