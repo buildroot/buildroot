@@ -6,6 +6,8 @@ so the install step fails.
 Just disable them.
 
 Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
 diff -durN dahdi-tools-2.11.0.orig/xpp/Makefile.am dahdi-tools-2.11.0/xpp/Makefile.am
 --- dahdi-tools-2.11.0.orig/xpp/Makefile.am	2015-12-22 21:19:12.000000000 +0100
@@ -25,8 +27,8 @@ diff -durN dahdi-tools-2.11.0.orig/xpp/Makefile.am dahdi-tools-2.11.0/xpp/Makefi
 -man_MANS		+= $(perl_mans)
  CLEANFILES		= $(perl_checks) $(perl_mans)
  
- if	PBX_USB
-@@ -147,8 +145,6 @@
+ dracutconfdir = @prefix@/lib/dracut/dracut.conf.d
+@@ -150,8 +148,6 @@
  		astribank_allow.8 \
  		astribank_is_starting.8
  
