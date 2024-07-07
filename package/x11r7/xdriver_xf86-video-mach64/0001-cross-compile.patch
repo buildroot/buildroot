@@ -1,7 +1,9 @@
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 --- a/configure.ac	2008-06-23 10:39:28.000000000 -0400
 +++ b/configure.ac	2008-06-23 10:40:46.000000000 -0400
-@@ -85,14 +85,20 @@ sdkdir=$(pkg-config --variable=sdkdir xo
- AC_HEADER_STDC
+@@ -80,14 +80,20 @@
+ # Checks for libraries.
  
  if test "$DRI" != no; then
 -	AC_CHECK_FILE([${sdkdir}/dri.h],
