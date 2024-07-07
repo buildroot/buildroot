@@ -15,7 +15,9 @@ Fixes:
  - http://autobuild.buildroot.org/results/de324b733e09057c87352220069fe65f6e535eb8
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
-[Upstream status: https://github.com/mongrel2/mongrel2/pull/354]
+Upstream: https://github.com/mongrel2/mongrel2/pull/354
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  Makefile            | 1 -
  tools/m2sh/Makefile | 4 ++--
@@ -37,16 +39,16 @@ diff --git a/tools/m2sh/Makefile b/tools/m2sh/Makefile
 index 83e7ae4..86364af 100644
 --- a/tools/m2sh/Makefile
 +++ b/tools/m2sh/Makefile
-@@ -10,7 +10,7 @@ LIB_SRC=$(filter-out src/m2sh.c,${SOURCES})
+@@ -10,7 +10,7 @@
  LIB_OBJ=$(filter-out src/m2sh.o,${OBJECTS})
  RAGEL_OBJECTS=src/lexer.o src/cli.o
  
 -$(RAGEL_OBJECTS): CFLAGS += -Wno-unused-const-variable -Wimplicit-fallthrough=0 -Wno-unused-parameter
 +$(RAGEL_OBJECTS): CFLAGS += -Wno-unused-parameter
  
- all: ../lemon/lemon tests build/m2sh
+ all: ../lemon/lemon build/m2sh
  
-@@ -20,7 +20,7 @@ dev: all
+@@ -20,7 +20,7 @@
  install: build/m2sh
  	install build/m2sh ${DESTDIR}${PREFIX}/bin
  
