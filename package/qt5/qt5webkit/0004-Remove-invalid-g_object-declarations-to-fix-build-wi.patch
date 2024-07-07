@@ -8,6 +8,8 @@ g_object_ref_sink is defined as a macro meanwhile and so the build fails.
 Just remove the declarations, glib.h is included anyway.
 Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
 [Retrieved from: https://github.com/qtwebkit/qtwebkit/pull/1058]
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  Source/WTF/wtf/glib/GRefPtr.h | 3 ---
  1 file changed, 3 deletions(-)
@@ -17,8 +19,8 @@ index 06133d82cb35..d9a1d2f145f5 100644
 --- a/Source/WTF/wtf/glib/GRefPtr.h
 +++ b/Source/WTF/wtf/glib/GRefPtr.h
 @@ -29,9 +29,6 @@
+ #include <wtf/RefPtr.h>
  #include <algorithm>
- #include <glib.h>
  
 -extern "C" void g_object_unref(gpointer);
 -extern "C" gpointer g_object_ref_sink(gpointer);
