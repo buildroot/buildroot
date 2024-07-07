@@ -22,6 +22,8 @@ Signed-off-by: Natanael Copa <ncopa@alpinelinux.org>
 [Retrieved (and slightly updated) from:
 http://cgit.openembedded.org/meta-openembedded/tree/meta-oe/recipes-support/open-vm-tools/open-vm-tools/0007-Use-configure-to-test-for-feature-instead-of-platfor.patch?h=sumo]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  open-vm-tools/configure.ac               |  4 ++++
  open-vm-tools/lib/misc/idLinux.c         | 30 ++++++++++++++----------------
@@ -32,7 +34,7 @@ Index: open-vm-tools/configure.ac
 ===================================================================
 --- open-vm-tools.orig/configure.ac
 +++ open-vm-tools/configure.ac
-@@ -798,6 +798,7 @@ AC_CHECK_FUNCS(
+@@ -940,6 +940,7 @@
  
  AC_CHECK_FUNCS([ecvt])
  AC_CHECK_FUNCS([fcvt])
@@ -40,7 +42,7 @@ Index: open-vm-tools/configure.ac
  
  AC_CHECK_FUNC([mkdtemp], [have_mkdtemp=yes])
  
-@@ -1063,10 +1064,13 @@ AC_PATH_PROG(
+@@ -1149,10 +1150,13 @@
  ###
  
  AC_CHECK_HEADERS([crypt.h])
@@ -72,7 +74,7 @@ Index: open-vm-tools/lib/misc/idLinux.c
  #ifdef __APPLE__
  #include <sys/socket.h>
  #include <TargetConditionals.h>
-@@ -997,31 +994,32 @@ Id_EndSuperUser(uid_t uid)  // IN:
+@@ -1025,31 +1022,32 @@
  static Bool
  IdIsSetUGid(void)
  {
@@ -121,8 +123,7 @@ Index: open-vm-tools/lib/nicInfo/nicInfoPosix.c
 ===================================================================
 --- open-vm-tools.orig/lib/nicInfo/nicInfoPosix.c
 +++ open-vm-tools/lib/nicInfo/nicInfoPosix.c
-@@ -34,9 +34,13 @@
- #include <sys/socket.h>
+@@ -35,9 +35,13 @@
  #include <sys/stat.h>
  #include <errno.h>
  #include <limits.h>
@@ -137,7 +138,7 @@ Index: open-vm-tools/lib/nicInfo/nicInfoPosix.c
  # include <net/if.h>
  #endif
  #ifndef NO_DNET
-@@ -348,10 +352,7 @@ GuestInfoGetNicInfo(NicInfoV3 *nicInfo)
+@@ -499,10 +503,7 @@
   *
   ******************************************************************************
   */
