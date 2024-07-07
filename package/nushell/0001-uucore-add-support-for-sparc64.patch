@@ -28,6 +28,8 @@ Fixes:
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Upstream: https://github.com/uutils/coreutils/commit/d158f1a396d19cc2aed68131b80ec3b7325d108e
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  src/uucore/src/lib/features/fs.rs | 2 ++
  1 file changed, 2 insertions(+)
@@ -36,16 +38,16 @@ diff --git a/VENDOR/uucore/src/lib/features/fs.rs b/VENDOR/uucore/src/lib/featur
 index 20cc9e13d..3b9170bc3 100644
 --- a/VENDOR/uucore/src/lib/features/fs.rs
 +++ b/VENDOR/uucore/src/lib/features/fs.rs
-@@ -121,6 +121,7 @@ impl FileInformation {
-             not(target_os = "solaris"),
+@@ -116,6 +116,7 @@
+             not(target_os = "freebsd"),
              not(target_arch = "aarch64"),
              not(target_arch = "riscv64"),
 +            not(target_arch = "sparc64"),
              target_pointer_width = "64"
          ))]
          return self.0.st_nlink;
-@@ -137,6 +138,7 @@ impl FileInformation {
-                 target_os = "solaris",
+@@ -127,6 +128,7 @@
+                 target_os = "freebsd",
                  target_arch = "aarch64",
                  target_arch = "riscv64",
 +                target_arch = "sparc64",
