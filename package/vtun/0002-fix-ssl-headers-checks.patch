@@ -5,11 +5,13 @@ Do. Not. Do. That. It breaks cross-compilation.
 Also use the SSL headers dir to look for blowfish headers.
 
 Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
 diff -durN vtun-3.0.3.orig/configure.in vtun-3.0.3/configure.in
 --- vtun-3.0.3.orig/configure.in	2009-03-29 12:08:51.000000000 +0200
 +++ vtun-3.0.3/configure.in	2013-02-16 23:44:44.004339680 +0100
-@@ -166,7 +166,7 @@
+@@ -169,7 +169,7 @@
     AC_MSG_RESULT()
     AC_CHECKING( for md5 Library and Header files ... )
  AC_SEARCH_HEADERS(md5.h,
@@ -18,7 +20,7 @@ diff -durN vtun-3.0.3.orig/configure.in vtun-3.0.3/configure.in
      ,
      AC_MSG_ERROR( SSL headers not found. )
     )
-@@ -176,7 +176,7 @@
+@@ -179,7 +179,7 @@
     AC_MSG_RESULT()
     AC_CHECKING( for blowfish Library and Header files ... )
     AC_SEARCH_HEADERS(blowfish.h,
@@ -27,7 +29,7 @@ diff -durN vtun-3.0.3.orig/configure.in vtun-3.0.3/configure.in
  	AC_CHECK_LIB(crypto, BF_set_key,
  	    [
  	       LIBS="$LIBS -lcrypto"
-@@ -193,7 +193,7 @@
+@@ -196,7 +196,7 @@
     AC_MSG_RESULT()
     AC_CHECKING( for AES Library and Header files ... )
     AC_SEARCH_HEADERS(aes.h,
@@ -35,8 +37,8 @@ diff -durN vtun-3.0.3.orig/configure.in vtun-3.0.3/configure.in
 +    $SSL_HDR_DIR ,
  	AC_CHECK_LIB(crypto, AES_set_encrypt_key,
  	    [
- 	       AC_DEFINE(HAVE_SSL_AES)
-@@ -208,7 +208,7 @@
+ 	       AC_DEFINE(HAVE_SSL_AES, [1], [Define to 1 if you have AES in openssl])
+@@ -211,7 +211,7 @@
     AC_MSG_RESULT()
     AC_CHECKING( for EVP Library and Header files ... )
     AC_SEARCH_HEADERS(evp.h,
@@ -44,4 +46,4 @@ diff -durN vtun-3.0.3.orig/configure.in vtun-3.0.3/configure.in
 +    $SSL_HDR_DIR ,
  	AC_CHECK_LIB(crypto, EVP_EncryptInit,
  	    [
- 	       AC_DEFINE(HAVE_SSL_EVP)
+ 	       AC_DEFINE(HAVE_SSL_EVP, [1], [Define to 1 if you have EVP in openssl])
