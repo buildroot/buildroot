@@ -7,6 +7,8 @@ Re-add .inc file from 0.9.33 so we don't need host-lua.
 
 Signed-off-by: Peter Korsgaard <jacmet@sunsite.dk>
 Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  src/Makefile.in       |    3 -
  src/haserl_lualib.inc |   97 ++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -130,7 +132,7 @@ Index: haserl-0.9.29/src/Makefile.in
 ===================================================================
 --- haserl-0.9.29.orig/src/Makefile.in
 +++ haserl-0.9.29/src/Makefile.in
-@@ -32,7 +32,6 @@
+@@ -86,7 +86,6 @@
  NORMAL_UNINSTALL = :
  PRE_UNINSTALL = :
  POST_UNINSTALL = :
@@ -138,9 +140,9 @@ Index: haserl-0.9.29/src/Makefile.in
  @INCLUDE_LUASHELL_TRUE@@USE_LUA_TRUE@am__append_1 = h_lua.c h_lua.h
  @INCLUDE_LUACSHELL_TRUE@@USE_LUA_TRUE@am__append_2 = h_luac.c h_luac.h
  bin_PROGRAMS = haserl$(EXEEXT)
-@@ -515,7 +514,7 @@
- @USE_LUA_TRUE@	$(CC_FOR_BUILD) $(CFLAGS) $(LDFLAGS) $(lua2c_LDFLAGS) \
- @USE_LUA_TRUE@		-o $@ $^ $(LIBS)
+@@ -812,7 +811,7 @@
+ @USE_LUA_TRUE@	$(CC_FOR_BUILD) $(CFLAGS) $(LUA_CFLAGS) $(LDFLAGS) $(lua2c_LDFLAGS) \
+ @USE_LUA_TRUE@		-o $@ $^ $(LIBS) $(LUA_LIBS)
  
 -@USE_LUA_TRUE@haserl_lualib.inc : haserl_lualib.lua lua2c
 +@USE_LUA_TRUE@haserl_lualib.inc :
