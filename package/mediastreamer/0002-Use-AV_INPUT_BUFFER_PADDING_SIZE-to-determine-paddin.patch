@@ -19,6 +19,8 @@ https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=901735
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 [Fabrice: updated for 4.3.1]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  src/utils/ffmpeg-priv.h     | 4 ++++
  src/videofilters/nowebcam.c | 4 ++--
@@ -28,8 +30,8 @@ diff --git a/src/utils/ffmpeg-priv.h b/src/utils/ffmpeg-priv.h
 index c0745a9a..d59ea0e1 100644
 --- a/src/utils/ffmpeg-priv.h
 +++ b/src/utils/ffmpeg-priv.h
-@@ -102,6 +102,10 @@ static inline int avcodec_decode_video2(AVCodecContext *avctx, AVFrame *picture,
- #endif
+@@ -115,6 +115,10 @@
+ extern "C" {
  #endif
  
 +#ifndef AV_INPUT_BUFFER_PADDING_SIZE
