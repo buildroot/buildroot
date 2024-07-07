@@ -28,6 +28,8 @@ Fixes:
 http://autobuild.buildroot.net/results/9f1/9f1f1cb727b5c5407e69172280a3dee880e55cdf
 
 Signed-off-by: Romain Naour <romain.naour@gmail.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  include/sane/sanei_backend.h | 1 +
  1 file changed, 1 insertion(+)
@@ -42,8 +44,8 @@ index 1b5afe2..2a96532 100644
  
 +#include "../include/sane/config.h"
  
- /*
-  * Compiler related options
+ /** @name Compatibility macros
+  * @{
 -- 
 2.5.5
 
