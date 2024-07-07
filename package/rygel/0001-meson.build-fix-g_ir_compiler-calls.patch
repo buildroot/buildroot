@@ -20,7 +20,9 @@ Fixes:
  - http://autobuild.buildroot.org/results/2b8956818f03f66a53480f7ed5fc0abb4f05288d
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
-[Upstream status: probably not upstreamable]
+Upstream: probably not upstreamable
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  src/librygel-core/meson.build         | 4 +++-
  src/librygel-renderer-gst/meson.build | 1 +
@@ -32,7 +34,7 @@ diff --git a/src/librygel-core/meson.build b/src/librygel-core/meson.build
 index fd43bebe..e6be2b5e 100644
 --- a/src/librygel-core/meson.build
 +++ b/src/librygel-core/meson.build
-@@ -70,7 +70,9 @@ core_gir = custom_target('RygelCore-2.6.gir',
+@@ -73,7 +73,9 @@
  # so we depend on the custom_target from that step and pass the input through
  # commandline.
  custom_target('RygelCore-2.8.typelib',
@@ -47,7 +49,7 @@ diff --git a/src/librygel-renderer-gst/meson.build b/src/librygel-renderer-gst/m
 index ad98a3a7..e8baefe1 100644
 --- a/src/librygel-renderer-gst/meson.build
 +++ b/src/librygel-renderer-gst/meson.build
-@@ -36,6 +36,7 @@ custom_target('RygelRendererGst-2.6.typelib',
+@@ -37,6 +37,7 @@
                          '--output', '@OUTPUT@',
                          '--includedir', core_girdir,
                          '--includedir', renderer_girdir,
@@ -59,25 +61,25 @@ diff --git a/src/librygel-renderer/meson.build b/src/librygel-renderer/meson.bui
 index 5f401527..821273ff 100644
 --- a/src/librygel-renderer/meson.build
 +++ b/src/librygel-renderer/meson.build
-@@ -43,6 +43,7 @@ custom_target('RygelRenderer-2.6.typelib',
+@@ -44,6 +44,7 @@
                 command: [g_ir_compiler,
                          '--output', '@OUTPUT@',
                          '--includedir', core_girdir,
 +                        '--includedir', meson.get_external_property('sys_root') + get_option('prefix') + '/' + gir_dir,
                          join_paths(meson.current_build_dir(), 'RygelRenderer-2.8.gir')],
-                output: 'RygelRenderer-2.6.typelib',
+                output: 'RygelRenderer-2.8.typelib',
                 depends: [ renderer_lib, renderer_gir, core_gir ],
 diff --git a/src/librygel-server/meson.build b/src/librygel-server/meson.build
 index a3bd77d9..6b084eb6 100644
 --- a/src/librygel-server/meson.build
 +++ b/src/librygel-server/meson.build
-@@ -122,6 +122,7 @@ custom_target('RygelServer-2.6.typelib',
+@@ -125,6 +125,7 @@
                 command: [g_ir_compiler,
                          '--output', '@OUTPUT@',
                          '--includedir', core_girdir,
 +                        '--includedir', meson.get_external_property('sys_root') + get_option('prefix') + '/' + gir_dir,
                          join_paths(meson.current_build_dir(), 'RygelServer-2.8.gir')],
-                output: 'RygelServer-2.6.typelib',
+                output: 'RygelServer-2.8.typelib',
                 depends: [ server_lib, server_gir, core_gir ],
 -- 
 2.35.1
