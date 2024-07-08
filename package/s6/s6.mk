@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-S6_VERSION = 2.12.0.4
+S6_VERSION = 2.13.0.0
 S6_SITE = https://skarnet.org/software/s6
 S6_LICENSE = ISC
 S6_LICENSE_FILES = COPYING
