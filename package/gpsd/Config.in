@@ -76,17 +76,6 @@ config BR2_PACKAGE_GPSD_MAX_DEV_VALUE
 config BR2_PACKAGE_GPSD_SQUELCH
 	bool "squelch gpsd_report and gpsd_hexdump to save cpu"
 
-config BR2_PACKAGE_GPSD_PYTHON
-	bool "build Python support and modules"
-	depends on BR2_USE_WCHAR # python3
-	select BR2_PACKAGE_PYTHON3
-	help
-	  Python libraries and tools for the gpsd service daemon
-	  including gpsfake test harness.
-
-comment "python support needs a toolchain w/ wchar"
-	depends on !BR2_USE_WCHAR
-
 comment "Protocols"
 
 config BR2_PACKAGE_GPSD_AIVDM
@@ -220,5 +209,16 @@ config BR2_PACKAGE_GPSD_UBX
 	bool "UBX"
 	help
 	  uBlox UBX binary support
+
+config BR2_PACKAGE_GPSD_PYTHON
+	bool "build Python support and modules"
+	depends on BR2_USE_WCHAR # python3
+	select BR2_PACKAGE_PYTHON3
+	help
+	  Python libraries and tools for the gpsd service daemon
+	  including gpsfake test harness.
+
+comment "python support needs a toolchain w/ wchar"
+	depends on !BR2_USE_WCHAR
 
 endif
