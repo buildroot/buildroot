@@ -10,6 +10,10 @@ BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_6_6=y
 # glibc is needed for sunxi-mali-utgard package.
 BR2_TOOLCHAIN_BUILDROOT_GLIBC=y
 
+# Build
+BR2_GLOBAL_PATCH_DIR="board/olimex/a20_olinuxino/patches"
+BR2_DOWNLOAD_FORCE_CHECK_HASHES=y
+
 # System configuration
 BR2_TARGET_GENERIC_HOSTNAME="a20-olinuxino"
 BR2_TARGET_GENERIC_ISSUE="Welcome to OLinuXino!"
