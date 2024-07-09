@@ -1,0 +1,24 @@
+From 50ff131a0fd8f54fdeb14b48353f842ee8ae8c1a Mon Sep 17 00:00:00 2001
+From: "Sergey G. Brester" <serg.brester@sebres.de>
+Date: Wed, 3 Jul 2024 19:35:28 +0200
+Subject: [PATCH] filter.d/sshd.conf: ungroup (unneeded for _daemon)
+
+Upstream: https://github.com/fail2ban/fail2ban/commit/50ff131a0fd8f54fdeb14b48353f842ee8ae8c1a
+Signed-off-by: Fiona Klute (WIWA) <fiona.klute@gmx.de>
+---
+ config/filter.d/sshd.conf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/config/filter.d/sshd.conf b/config/filter.d/sshd.conf
+index a1fd749aed..3a84b1ba52 100644
+--- a/config/filter.d/sshd.conf
++++ b/config/filter.d/sshd.conf
+@@ -16,7 +16,7 @@ before = common.conf
+
+ [DEFAULT]
+
+-_daemon = (?:sshd(?:-session)?)
++_daemon = sshd(?:-session)?
+
+ # optional prefix (logged from several ssh versions) like "error: ", "error: PAM: " or "fatal: "
+ __pref = (?:(?:error|fatal): (?:PAM: )?)?

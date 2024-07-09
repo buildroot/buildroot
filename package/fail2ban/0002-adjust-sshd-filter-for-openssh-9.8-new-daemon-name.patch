@@ -1,0 +1,24 @@
+From 2fed408c05ac5206b490368d94599869bd6a056d Mon Sep 17 00:00:00 2001
+From: Fabian Dellwing <fabian.dellwing@mbconnectline.de>
+Date: Tue, 2 Jul 2024 07:54:15 +0200
+Subject: [PATCH] Adjust sshd filter for OpenSSH 9.8 new daemon name
+
+Upstream: https://github.com/fail2ban/fail2ban/commit/2fed408c05ac5206b490368d94599869bd6a056d
+Signed-off-by: Fiona Klute (WIWA) <fiona.klute@gmx.de>
+---
+ config/filter.d/sshd.conf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/config/filter.d/sshd.conf b/config/filter.d/sshd.conf
+index 1c8a02deb5..a1fd749aed 100644
+--- a/config/filter.d/sshd.conf
++++ b/config/filter.d/sshd.conf
+@@ -16,7 +16,7 @@ before = common.conf
+
+ [DEFAULT]
+
+-_daemon = sshd
++_daemon = (?:sshd(?:-session)?)
+
+ # optional prefix (logged from several ssh versions) like "error: ", "error: PAM: " or "fatal: "
+ __pref = (?:(?:error|fatal): (?:PAM: )?)?
