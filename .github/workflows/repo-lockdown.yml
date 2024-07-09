@@ -1,0 +1,25 @@
+name: 'Repo Lockdown'
+
+on:
+  pull_request_target:
+    types: opened
+
+permissions:
+  pull-requests: write
+
+jobs:
+  action:
+    if: github.repository == 'buildroot/buildroot'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: dessant/repo-lockdown@v4
+        with:
+          pr-comment: |
+            Please do not submit a Pull Request via GitHub. Buildroot makes use of a
+            [mailing list](http://lists.buildroot.org/mailman/listinfo/buildroot) for patch submission and review.
+            See [submitting your own patches](http://buildroot.org/manual.html#submitting-patches) for more info.
+
+            Thanks for your help!
+          lock-pr: true
+          close-pr: true
+
