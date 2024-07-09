@@ -210,6 +210,17 @@ config BR2_PACKAGE_GPSD_UBX
 	help
 	  uBlox UBX binary support
 
+config BR2_PACKAGE_GPSD_CLIENTS
+	bool "gpsd clients"
+	default y # legacy
+	help
+	  Build and install gspd client programs, like:
+	    - gpsctl
+	    - gpsdctl
+	    - gpsdecode
+	    - gpspipe
+	    - ...
+
 config BR2_PACKAGE_GPSD_PYTHON
 	bool "build Python support and modules"
 	depends on BR2_USE_WCHAR # python3

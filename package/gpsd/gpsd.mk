@@ -178,6 +178,12 @@ ifeq ($(BR2_PACKAGE_GPSD_MAX_DEV),y)
 GPSD_SCONS_OPTS += max_devices=$(BR2_PACKAGE_GPSD_MAX_DEV_VALUE)
 endif
 
+ifeq ($(BR2_PACKAGE_GPSD_CLIENTS),y)
+GPSD_SCONS_OPTS += gpsdclients=yes
+else
+GPSD_SCONS_OPTS += gpsdclients=no
+endif
+
 ifeq ($(BR2_PACKAGE_GPSD_PYTHON),y)
 GPSD_SCONS_OPTS += \
 	python=yes \
