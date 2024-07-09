@@ -84,7 +84,7 @@ config BR2_PACKAGE_GPSD_PYTHON
 	  Python libraries and tools for the gpsd service daemon
 	  including gpsfake test harness.
 
-comment "GPSD python support not available with toolchain w/o wide characters support"
+comment "python support needs a toolchain w/ wchar"
 	depends on !BR2_USE_WCHAR
 
 comment "Protocols"
