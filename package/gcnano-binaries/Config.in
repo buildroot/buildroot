@@ -1,15 +1,15 @@
 comment "gcnano-binaries needs a Linux kernel to be built"
-	depends on BR2_arm
+	depends on BR2_arm || BR2_aarch64
 	depends on !BR2_LINUX_KERNEL
 
 comment "gcnano-binaries needs a glibc toolchain w/ threads, dynamic library"
-	depends on BR2_arm
+	depends on BR2_arm || BR2_aarch64
 	depends on !BR2_TOOLCHAIN_USES_GLIBC || !BR2_TOOLCHAIN_HAS_THREADS \
 		|| BR2_STATIC_LIBS
 
 config BR2_PACKAGE_GCNANO_BINARIES
 	bool "gcnano-binaries"
-	depends on BR2_arm
+	depends on BR2_arm || BR2_aarch64
 	depends on BR2_LINUX_KERNEL
 	depends on BR2_TOOLCHAIN_USES_GLIBC
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libdrm, wayland
