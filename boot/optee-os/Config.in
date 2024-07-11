@@ -91,6 +91,12 @@ config BR2_TARGET_OPTEE_OS_NEEDS_PYTHON_CRYPTOGRAPHY
 	  python-cryptography. Select this option if optee-os needs
 	  python-cryptography to be built.
 
+config BR2_TARGET_OPTEE_OS_NEEDS_CMAKE
+	bool "OP-TEE OS needs cmake"
+	help
+	  Select this option if your OP-TEE OS platform configuration
+	  requires the cmake build system to be available.
+
 config BR2_TARGET_OPTEE_OS_CORE
 	bool "Build core"
 	default y
