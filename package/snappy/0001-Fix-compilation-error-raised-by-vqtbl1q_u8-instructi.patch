@@ -1,0 +1,52 @@
+From 284d5a6f267d4962b2b88540f218c10740a6c053 Mon Sep 17 00:00:00 2001
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Sat, 8 Jun 2024 18:42:16 +0200
+Subject: [PATCH] Fix compilation error raised by vqtbl1q_u8 instruction
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The compilation in Buildroot for the raspberrypi3_qt5we_defconfig
+configuration:
+
+make raspberrypi3_qt5we_defconfig
+make
+
+raises the following error:
+
+In file included from buildroot/output/build/snappy-1.2.1/snappy.cc:29:
+buildroot/output/build/snappy-1.2.1/snappy-internal.h: In function ‘snappy::internal::V128 snappy::internal::V128_Shuffle(V128, V128)’:
+buildroot/output/build/snappy-1.2.1/snappy-internal.h:109:10: error: ‘vqtbl1q_u8’ was not declared in this scope; did you mean ‘vtbl1_u8’?
+  109 |   return vqtbl1q_u8(input, shuffle_mask);
+      |          ^~~~~~~~~~
+      |          vtbl1_u8
+make[4]: *** [CMakeFiles/snappy.dir/build.make:118: CMakeFiles/snappy.dir/snappy.cc.o] Error 1
+
+As reported by [1], the vqtbl1q_u8 instruction is supported by A64
+architectures. For this reason, the patch enables the use of the
+instruction only for NEON of such architecture.
+
+[1] https://developer.arm.com/architectures/instruction-sets/intrinsics/vqtbl1q_u8
+
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: https://github.com/google/snappy/pull/185
+---
+ snappy-internal.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/snappy-internal.h b/snappy-internal.h
+index ae78247dbbc9..256d32344d1a 100644
+--- a/snappy-internal.h
++++ b/snappy-internal.h
+@@ -46,7 +46,7 @@
+ #include <arm_neon.h>
+ #endif
+ 
+-#if SNAPPY_HAVE_SSSE3 || SNAPPY_HAVE_NEON
++#if SNAPPY_HAVE_SSSE3 || (SNAPPY_HAVE_NEON && defined(__aarch64__))
+ #define SNAPPY_HAVE_VECTOR_BYTE_SHUFFLE 1
+ #else
+ #define SNAPPY_HAVE_VECTOR_BYTE_SHUFFLE 0
+-- 
+2.43.0
+
