@@ -10,7 +10,7 @@ NCFTP_VERSION = 3.2.6
 NCFTP_SOURCE = ncftp-$(NCFTP_VERSION)-src.tar.gz
 NCFTP_SITE = https://www.ncftp.com/public_ftp/ncftp/older_versions
 NCFTP_TARGET_BINS = ncftp
-NCFTP_LICENSE = Clarified Artistic License
+NCFTP_LICENSE = ClArtistic
 NCFTP_LICENSE_FILES = doc/LICENSE.txt
 
 NCFTP_DEPENDENCIES = host-autoconf
