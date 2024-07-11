@@ -55,6 +55,14 @@ config BR2_GDB_VERSION_13
 config BR2_GDB_VERSION_14
 	bool "gdb 14.x"
 
+config BR2_GDB_VERSION_15
+	bool "gdb 15.x"
+	depends on BR2_HOST_GCC_AT_LEAST_9 && BR2_TOOLCHAIN_GCC_AT_LEAST_9
+
+comment "gdb 15.x needs host and target gcc >= 9"
+	depends on !BR2_HOST_GCC_AT_LEAST_9 || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_9
+
 endchoice
 
 endif
@@ -68,4 +76,5 @@ config BR2_GDB_VERSION
 	# When making 14.x the default, or 14.x becomes the oldest version,
 	# be sure to update the target variant to properly select mpfr.
 	default "14.2"     if BR2_GDB_VERSION_14
+	default "15.1"	   if BR2_GDB_VERSION_15
 	depends on BR2_PACKAGE_GDB || BR2_PACKAGE_HOST_GDB
