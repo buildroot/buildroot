@@ -122,7 +122,7 @@ removed, but do update the rest of the patch comment when appropriate.
 
 At the end, the patch should look like:
 
----------------
+----
 configure.ac: add C++ support test
 
 Signed-off-by: John Doe <john.doe@noname.org>
@@ -142,7 +142,7 @@ AC_PROG_MAKE_SET
 +                AC_LANG_POP([C++])])
 +
 +AM_CONDITIONAL([CXX_WORKS], [test "x$rw_cv_prog_cxx_works" = "xyes"])
----------------
+----
 
 === Additional patch documentation
 
@@ -152,17 +152,17 @@ applicable, via the +Upstream+ trailer.
 When backporting an upstream patch that has been accepted into mainline, it is
 preferred that the URL to the commit is referenced:
 
----------------
+----
 Upstream: <URL to upstream commit>
----------------
+----
 
 If a new issue is identified in Buildroot and upstream is generally affected by 
 the issue (it's not a Buildroot specific issue), users should submit the patch
 upstream and provide a link to that submission when possible:
 
----------------
+----
 Upstream: <URL to upstream mailing list submission or merge request>
----------------
+----
 
 Patches that have been submitted but were denied upstream should note that and
 include comments about why the patch is being used despite the upstream status.
@@ -172,9 +172,9 @@ about any changes to the patch that may have been necessary.
 
 If a patch does not apply upstream then this should be noted with a comment:
 
----------------
+----
 Upstream: N/A <additional information about why patch is Buildroot specific>
----------------
+----
 
 Adding this documentation helps streamline the patch review process during
 package version updates.

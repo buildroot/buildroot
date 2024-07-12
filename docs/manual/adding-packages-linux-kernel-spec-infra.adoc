@@ -22,7 +22,7 @@ Let's look at an example of a Linux tool. For a new Linux tool named
 descriptions related to each kernel tool that will be used and
 displayed in the configuration tool. It would basically look like:
 
-------------------------------
+----
 01: config BR2_PACKAGE_LINUX_TOOLS_FOO
 02: 	bool "foo"
 03: 	select BR2_PACKAGE_LINUX_TOOLS
@@ -30,7 +30,7 @@ displayed in the configuration tool. It would basically look like:
 05: 	  This is a comment that explains what foo kernel tool is.
 06:
 07: 	  http://foosoftware.org/foo/
-------------------------------
+----
 
 The name of the option starts with the prefix +BR2_PACKAGE_LINUX_TOOLS_+,
 followed by the uppercase name of the tool (like is done for packages).
@@ -43,7 +43,7 @@ the `Target packages` main menu.
 Then for each linux tool, add a new +.mk.in+ file named
 +package/linux-tools/linux-tool-foo.mk.in+. It would basically look like:
 
-------------------------------
+----
 01: ################################################################################
 02: #
 03: # foo
@@ -69,7 +69,7 @@ Then for each linux tool, add a new +.mk.in+ file named
 23: 		DESTDIR=$(TARGET_DIR) \
 24: 		foo_install
 25: endef
---------------------------------
+----
 
 On line 7, we register the Linux tool +foo+ to the list of available
 Linux tools.
@@ -115,19 +115,19 @@ the existing +linux/Config.ext.in+. This file contains the option
 descriptions related to each kernel extension that will be used and
 displayed in the configuration tool. It would basically look like:
 
-------------------------------
+----
 01: config BR2_LINUX_KERNEL_EXT_FOO
 02: 	bool "foo"
 03: 	help
 04: 	  This is a comment that explains what foo kernel extension is.
 05:
 06: 	  http://foosoftware.org/foo/
-------------------------------
+----
 
 Then for each linux extension, add a new +.mk+ file named
 +linux/linux-ext-foo.mk+. It should basically contain:
 
-------------------------------
+----
 01: ################################################################################
 02: #
 03: # foo
@@ -139,7 +139,7 @@ Then for each linux extension, add a new +.mk+ file named
 09: define FOO_PREPARE_KERNEL
 10:	$(FOO_DIR)/prepare-kernel-tree.sh --linux-dir=$(@D)
 11: endef
---------------------------------
+----
 
 On line 7, we add the Linux extension +foo+ to the list of available
 Linux extensions.

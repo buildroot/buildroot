@@ -26,14 +26,14 @@ First, let's create the virtual package.
 
 The +Config.in+ file of virtual package 'something-virtual' should contain:
 
----------------------------
+----
 01: config BR2_PACKAGE_HAS_SOMETHING_VIRTUAL
 02:	bool
 03:
 04: config BR2_PACKAGE_PROVIDES_SOMETHING_VIRTUAL
 05:	depends on BR2_PACKAGE_HAS_SOMETHING_VIRTUAL
 06:	string
----------------------------
+----
 
 In this file, we declare two options, +BR2_PACKAGE_HAS_SOMETHING_VIRTUAL+ and
 +BR2_PACKAGE_PROVIDES_SOMETHING_VIRTUAL+, whose values will be used by the
@@ -43,7 +43,7 @@ providers.
 
 The +.mk+ for the virtual package should just evaluate the +virtual-package+ macro:
 
----------------------------
+----
 01: ################################################################################
 02: #
 03: # something-virtual
@@ -51,7 +51,7 @@ The +.mk+ for the virtual package should just evaluate the +virtual-package+ mac
 05: ################################################################################
 06:
 07: $(eval $(virtual-package))
----------------------------
+----
 
 The ability to have target and host packages is also available, with the
 +host-virtual-package+ macro.
@@ -64,7 +64,7 @@ modifications.
 The +Config.in+ file of the package 'some-provider', which provides the
 functionalities of 'something-virtual', should contain:
 
----------------------------
+----
 01: config BR2_PACKAGE_SOME_PROVIDER
 02:	bool "some-provider"
 03:	select BR2_PACKAGE_HAS_SOMETHING_VIRTUAL
@@ -77,7 +77,7 @@ functionalities of 'something-virtual', should contain:
 10: config BR2_PACKAGE_PROVIDES_SOMETHING_VIRTUAL
 11:	default "some-provider"
 12: endif
----------------------------
+----
 
 On line 3, we select +BR2_PACKAGE_HAS_SOMETHING_VIRTUAL+, and on line 11, we
 set the value of +BR2_PACKAGE_PROVIDES_SOMETHING_VIRTUAL+ to the name of the
@@ -89,9 +89,9 @@ The +.mk+ file should also declare an additional variable
 +SOME_PROVIDER_PROVIDES+ to contain the names of all the virtual
 packages it is an implementation of:
 
----------------------------
+----
 01: SOME_PROVIDER_PROVIDES = something-virtual
----------------------------
+----
 
 Of course, do not forget to add the proper build and runtime dependencies for
 this package!
@@ -101,14 +101,14 @@ this package!
 When adding a package that requires a certain +FEATURE+ provided by a virtual
 package, you have to use +depends on BR2_PACKAGE_HAS_FEATURE+, like so:
 
----------------------------
+----
 config BR2_PACKAGE_HAS_FEATURE
     bool
 
 config BR2_PACKAGE_FOO
     bool "foo"
     depends on BR2_PACKAGE_HAS_FEATURE
----------------------------
+----
 
 ==== Notes on depending on a specific provider
 
@@ -118,7 +118,7 @@ provider.
 
 Let's take an example with two providers for a +FEATURE+:
 
----------------------------
+----
 config BR2_PACKAGE_HAS_FEATURE
     bool
 
@@ -129,7 +129,7 @@ config BR2_PACKAGE_FOO
 config BR2_PACKAGE_BAR
     bool "bar"
     select BR2_PACKAGE_HAS_FEATURE
----------------------------
+----
 
 And you are adding a package that needs +FEATURE+ as provided by +foo+,
 but not as provided by +bar+.

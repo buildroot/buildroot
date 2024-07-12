@@ -52,14 +52,14 @@ These variables are 'lists' of variable names containing actions to be
 performed at this hook point. This allows several hooks to be
 registered at a given hook point. Here is an example:
 
-----------------------
+----
 define LIBFOO_POST_PATCH_FIXUP
 	action1
 	action2
 endef
 
 LIBFOO_POST_PATCH_HOOKS += LIBFOO_POST_PATCH_FIXUP
-----------------------
+----
 
 [[hooks-rsync]]
 ==== Using the +POST_RSYNC+ hook

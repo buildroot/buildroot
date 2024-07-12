@@ -8,21 +8,21 @@ This is a collection of tips that help you make the most of Buildroot.
 
 .Display all commands executed by make:
 
---------------------
+----
  $ make V=1 <target>
---------------------
+----
 
 .Display the list of boards with a defconfig:
 
---------------------
+----
  $ make list-defconfigs
---------------------
+----
 
 .Display all available targets:
 
---------------------
+----
  $ make help
---------------------
+----
 
 Not all targets are always available,
 some settings in the +.config+ file may hide some targets:
@@ -46,19 +46,19 @@ configuration options are changed.
 To delete all build products (including build directories, host, staging
 and target trees, the images and the toolchain):
 
---------------------
+----
  $ make clean
---------------------
+----
 
 .Generating the manual:
 
 The present manual sources are located in the 'docs/manual' directory.
 To generate the manual:
 
----------------------------------
+----
  $ make manual-clean
  $ make manual
----------------------------------
+----
 
 The manual outputs will be generated in 'output/docs/manual'.
 
@@ -70,9 +70,9 @@ The manual outputs will be generated in 'output/docs/manual'.
 
 To delete all build products as well as the configuration:
 
---------------------
+----
  $ make distclean
---------------------
+----
 
 .Notes
 If +ccache+ is enabled, running +make clean+ or +distclean+ does
