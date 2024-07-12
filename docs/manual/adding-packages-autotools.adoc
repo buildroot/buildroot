@@ -10,7 +10,7 @@
 First, let's see how to write a +.mk+ file for an autotools-based
 package, with an example :
 
-------------------------
+----
 01: ################################################################################
 02: #
 03: # libfoo
@@ -26,7 +26,7 @@ package, with an example :
 13: LIBFOO_DEPENDENCIES = libglib2 host-pkgconf
 14:
 15: $(eval $(autotools-package))
-------------------------
+----
 
 On line 7, we declare the version of the package.
 

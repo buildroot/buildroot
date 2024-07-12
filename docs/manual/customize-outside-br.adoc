@@ -40,23 +40,23 @@ xref:br2-external-converting[] for help on doing so.
 
 Some examples:
 
------
+----
 buildroot/ $ make BR2_EXTERNAL=/path/to/foo menuconfig
------
+----
 
 From now on, definitions from the +/path/to/foo+ br2-external tree
 will be used:
 
------
+----
 buildroot/ $ make
 buildroot/ $ make legal-info
------
+----
 
 We can switch to another br2-external tree at any time:
 
------
+----
 buildroot/ $ make BR2_EXTERNAL=/where/we/have/bar xconfig
------
+----
 
 We can also use multiple br2-external trees:
 
@@ -66,9 +66,9 @@ buildroot/ $ make BR2_EXTERNAL=/path/to/foo:/where/we/have/bar menuconfig
 
 Or disable the usage of any br2-external tree:
 
------
+----
 buildroot/ $ make BR2_EXTERNAL= xconfig
------
+----
 
 ==== Layout of a br2-external tree
 
@@ -152,16 +152,16 @@ makefile logic.
 The main usage of this is to store package recipes. The recommended way
 to do this is to write a +Config.in+ file that looks like:
 
-------
+----
 source "$BR2_EXTERNAL_BAR_42_PATH/package/package1/Config.in"
 source "$BR2_EXTERNAL_BAR_42_PATH/package/package2/Config.in"
-------
+----
 
 Then, have an +external.mk+ file that looks like:
 
-------
+----
 include $(sort $(wildcard $(BR2_EXTERNAL_BAR_42_PATH)/package/*/*.mk))
-------
+----
 
 And then in +$(BR2_EXTERNAL_BAR_42_PATH)/package/package1+ and
 +$(BR2_EXTERNAL_BAR_42_PATH)/package/package2+ create normal

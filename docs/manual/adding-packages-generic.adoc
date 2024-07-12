@@ -12,7 +12,7 @@ system is based on hand-written Makefiles or shell scripts.
 
 ==== +generic-package+ tutorial
 
-------------------------------
+----
 01: ################################################################################
 02: #
 03: # libfoo
@@ -56,7 +56,7 @@ system is based on hand-written Makefiles or shell scripts.
 41: endef
 42:
 43: $(eval $(generic-package))
---------------------------------
+----
 
 The Makefile begins on line 7 to 11 with metadata information: the
 version of the package (+LIBFOO_VERSION+), the name of the
@@ -103,9 +103,9 @@ Package divine installs shell script '$(STAGING_DIR)/usr/bin/divine-config'.
 
 So its fixup would be:
 
---------------------------------
+----
 DIVINE_CONFIG_SCRIPTS = divine-config
---------------------------------
+----
 ================================
 
 .Config script: 'imagemagick' package:
@@ -115,11 +115,11 @@ Package imagemagick installs the following scripts:
 
 So it's fixup would be:
 
---------------------------------
+----
 IMAGEMAGICK_CONFIG_SCRIPTS = \
    Magick-config Magick++-config \
    MagickCore-config MagickWand-config Wand-config
---------------------------------
+----
 ================================
 
 On line 14, we specify the list of dependencies this package relies
@@ -166,10 +166,10 @@ for the host. It is possible to call both of them in a single +.mk+
 file: once to create the rules to generate a target
 package and once to create the rules to generate a host package:
 
-----------------------
+----
 $(eval $(generic-package))
 $(eval $(host-generic-package))
-----------------------
+----
 
 This might be useful if the compilation of the target package requires
 some tools to be installed on the host. If the package name is
@@ -504,12 +504,12 @@ not and can not work as people would expect it should:
   Buildroot package. A Makefile comment must always precede the
   addition of a CVE to this variable. Example:
 +
-----------------------
+----
 # 0001-fix-cve-2020-12345.patch
 LIBFOO_IGNORE_CVES += CVE-2020-12345
 # only when built with libbaz, which Buildroot doesn't support
 LIBFOO_IGNORE_CVES += CVE-2020-54321
-----------------------
+----
 
 * [[cpe-id]] +LIBFOO_CPE_ID_*+ variables is a set of variables that allows the
   package to define its https://nvd.nist.gov/products/cpe[CPE
@@ -551,9 +551,9 @@ corresponding target package.
 The recommended way to define these variables is to use the following
 syntax:
 
-----------------------
+----
 LIBFOO_VERSION = 2.32
-----------------------
+----
 
 Now, the variables that define what should be performed at the
 different steps of the build process.
@@ -633,13 +633,13 @@ different steps of the build process.
 
 The preferred way to define these variables is:
 
-----------------------
+----
 define LIBFOO_CONFIGURE_CMDS
 	action 1
 	action 2
 	action 3
 endef
-----------------------
+----
 
 In the action definitions, you can use the following variables:
 

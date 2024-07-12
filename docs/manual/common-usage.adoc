@@ -13,9 +13,9 @@ If you intend to do an offline build and just want to download
 all sources that you previously selected in the configurator
 ('menuconfig', 'nconfig', 'xconfig' or 'gconfig'), then issue:
 
---------------------
+----
  $ make source
---------------------
+----
 
 You can now disconnect or copy the content of your +dl+
 directory to the build-host.
@@ -29,15 +29,15 @@ Buildroot also supports building out of tree with a syntax similar to
 the Linux kernel. To use it, add +O=<directory>+ to the make command
 line:
 
---------------------
+----
  $ make O=/tmp/build menuconfig
---------------------
+----
 
 Or:
 
---------------------
+----
  $ cd /tmp/build; make O=$PWD -C path/to/buildroot menuconfig
---------------------
+----
 
 All the output files will be located under +/tmp/build+. If the +O+
 path does not exist, Buildroot will create it.
@@ -56,9 +56,9 @@ For ease of use, Buildroot generates a Makefile wrapper in the output
 directory - so after the first run, you no longer need to pass +O=<...>+
 and +-C <...>+, simply run (in the output directory):
 
---------------------
+----
  $ make <target>
---------------------
+----
 
 [[env-vars]]
 
@@ -108,16 +108,16 @@ to +make+ or set in the environment:
 An example that uses config files located in the toplevel directory and
 in your $HOME:
 
---------------------
+----
  $ make UCLIBC_CONFIG_FILE=uClibc.config BUSYBOX_CONFIG_FILE=$HOME/bb.config
---------------------
+----
 
 If you want to use a compiler other than the default +gcc+
 or +g+++ for building helper-binaries on your host, then do
 
---------------------
+----
  $ make HOSTCXX=g++-4.3-HEAD HOSTCC=gcc-4.3-HEAD
---------------------
+----
 
 === Dealing efficiently with filesystem images
 
@@ -166,9 +166,9 @@ packages in the current configuration, together with their
 dependencies, licenses and other metadata. This JSON blurb is produced
 by using the +show-info+ make target:
 
-------------------------
+----
 make show-info
-------------------------
+----
 
 Buildroot can also produce details about packages as HTML and JSON
 output using the +pkg-stats+ make target. Amongst other things, these
@@ -176,9 +176,9 @@ details include whether known CVEs (security vulnerabilities) affect
 the packages in your current configuration. It also shows if there is
 a newer upstream version for those packages.
 
-------------------------
+----
 make pkg-stats
-------------------------
+----
 
 === Graphing the dependencies between packages
 
@@ -198,9 +198,9 @@ graphs.
 To generate a dependency graph of the full system you have compiled,
 simply run:
 
-------------------------
+----
 make graph-depends
-------------------------
+----
 
 You will find the generated graph in
 +output/graphs/graph-depends.pdf+.
@@ -209,9 +209,9 @@ If your system is quite large, the dependency graph may be too complex
 and difficult to read. It is therefore possible to generate the
 dependency graph just for a given package:
 
-------------------------
+----
 make <pkg>-graph-depends
-------------------------
+----
 
 You will find the generated graph in
 +output/graph/<pkg>-graph-depends.pdf+.
@@ -227,9 +227,9 @@ can switch to other output formats, such as PNG, PostScript or
 SVG. All formats supported by the +-T+ option of the +dot+ tool are
 supported.
 
---------------------------------
+----
 BR2_GRAPH_OUT=svg make graph-depends
---------------------------------
+----
 
 The +graph-depends+ behaviour can be controlled by setting options in the
 +BR2_GRAPH_DEPS_OPTS+ environment variable. The accepted options are:
@@ -253,9 +253,9 @@ The +graph-depends+ behaviour can be controlled by setting options in the
   root package (+R+), the target packages (+T+) and the host packages
   (+H+). Defaults to: +lightblue,grey,gainsboro+
 
---------------------------------
+----
 BR2_GRAPH_DEPS_OPTS='-d 3 --no-transitive --colors=red,green,blue' make graph-depends
---------------------------------
+----
 
 === Graphing the build duration
 
@@ -269,9 +269,9 @@ step of each package, and allows to generate graphs from this data.
 
 To generate the build time graph after a build, run:
 
-----------------
+----
 make graph-build
-----------------
+----
 
 This will generate a set of files in +output/graphs+ :
 
@@ -299,9 +299,9 @@ By default, the output format for the graph is PDF, but a different
 format can be selected using the +BR2_GRAPH_OUT+ environment variable. The
 only other format supported is PNG:
 
-----------------
+----
 BR2_GRAPH_OUT=png make graph-build
-----------------
+----
 
 [[graph-size]]
 === Graphing the filesystem size contribution of packages
@@ -315,9 +315,9 @@ the different packages.
 
 To generate these data after a build, run:
 
-----------------
+----
 make graph-size
-----------------
+----
 
 This will generate:
 
@@ -366,9 +366,9 @@ Buildroot release, use the +size-stats-compare+ script. It takes two
 +file-size-stats.csv+ files (produced by +make graph-size+) as input.
 Refer to the help text of this script for more details:
 
-----------------
+----
 utils/size-stats-compare -h
-----------------
+----
 
 [[top-level-parallel-build]]
 === Top-level parallel build
