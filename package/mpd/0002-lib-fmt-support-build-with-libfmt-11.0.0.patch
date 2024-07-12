@@ -1,0 +1,93 @@
+From 1402869715e3efca87942d79c3173a6b21a6925d Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Fri, 5 Jul 2024 14:27:45 +0000
+Subject: [PATCH] lib/fmt: support build with libfmt-11.0.0
+
+Upstream libfmt commit fmtlib/fmt@d707292
+now requires the format function to be const.
+
+Adjust the function prototype so it is const and can compile.
+
+Signed-off-by: Rudi Heitbaum <rudi@heitbaum.com>
+
+Context: https://github.com/MusicPlayerDaemon/MPD/issues/2071
+Pull request: https://github.com/MusicPlayerDaemon/MPD/pull/2069
+
+Fixes: http://autobuild.buildroot.net/results/73514ea76a5960f59b4c50e2074571b10e4682d4
+Fixes: http://autobuild.buildroot.net/results/a58ddbdfe35bd19021e65db0b8b8cc4c1c884d51
+
+Rebase for mpd-0.23.15
+
+Upstream: https://github.com/MusicPlayerDaemon/MPD/commit/3648475f871c33daa9e598c102a16e5a1a4d4dfc
+Signed-off-by: Andreas Ziegler <br015@umbiko.net>
+---
+ src/lib/ffmpeg/LibFmt.hxx            | 2 +-
+ src/lib/fmt/AudioFormatFormatter.hxx | 4 ++--
+ src/lib/fmt/ExceptionFormatter.hxx   | 2 +-
+ src/lib/fmt/PathFormatter.hxx        | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/src/lib/ffmpeg/LibFmt.hxx b/src/lib/ffmpeg/LibFmt.hxx
+index aa068711f..dee83ed2d 100644
+--- a/src/lib/ffmpeg/LibFmt.hxx
++++ b/src/lib/ffmpeg/LibFmt.hxx
+@@ -29,7 +29,7 @@
+ struct fmt::formatter<AVSampleFormat> : formatter<string_view>
+ {
+ 	template<typename FormatContext>
+-	auto format(const AVSampleFormat format, FormatContext &ctx) {
++	auto format(const AVSampleFormat format, FormatContext &ctx) const {
+ 		const char *name = av_get_sample_fmt_name(format);
+ 		if (name == nullptr)
+ 			name = "?";
+diff --git a/src/lib/fmt/AudioFormatFormatter.hxx b/src/lib/fmt/AudioFormatFormatter.hxx
+index e0ffb6216..8da98efd4 100644
+--- a/src/lib/fmt/AudioFormatFormatter.hxx
++++ b/src/lib/fmt/AudioFormatFormatter.hxx
+@@ -39,7 +39,7 @@
+ struct fmt::formatter<SampleFormat> : formatter<string_view>
+ {
+ 	template<typename FormatContext>
+-	auto format(const SampleFormat format, FormatContext &ctx) {
++	auto format(const SampleFormat format, FormatContext &ctx) const {
+ 		return formatter<string_view>::format(sample_format_to_string(format),
+ 						      ctx);
+ 	}
+@@ -49,7 +49,7 @@
+ struct fmt::formatter<AudioFormat> : formatter<string_view>
+ {
+ 	template<typename FormatContext>
+-	auto format(const AudioFormat &af, FormatContext &ctx) {
++	auto format(const AudioFormat &af, FormatContext &ctx) const {
+ 		return formatter<string_view>::format(ToString(af).c_str(),
+ 						      ctx);
+ 	}
+diff --git a/src/lib/fmt/ExceptionFormatter.hxx b/src/lib/fmt/ExceptionFormatter.hxx
+index 3f342df67..f08b3bb22 100644
+--- a/src/lib/fmt/ExceptionFormatter.hxx
++++ b/src/lib/fmt/ExceptionFormatter.hxx
+@@ -38,7 +38,7 @@
+ struct fmt::formatter<std::exception_ptr> : formatter<string_view>
+ {
+ 	template<typename FormatContext>
+-	auto format(std::exception_ptr e, FormatContext &ctx) {
++	auto format(std::exception_ptr e, FormatContext &ctx) const {
+ 		return formatter<string_view>::format(GetFullMessage(e), ctx);
+ 	}
+ };
+diff --git a/src/lib/fmt/PathFormatter.hxx b/src/lib/fmt/PathFormatter.hxx
+index e5ae89dec..add06df81 100644
+--- a/src/lib/fmt/PathFormatter.hxx
++++ b/src/lib/fmt/PathFormatter.hxx
+@@ -29,7 +29,7 @@
+ struct fmt::formatter<Path> : formatter<string_view>
+ {
+ 	template<typename FormatContext>
+-	auto format(Path path, FormatContext &ctx) {
++	auto format(Path path, FormatContext &ctx) const {
+ 		return formatter<string_view>::format(path.ToUTF8(), ctx);
+ 	}
+ };
+-- 
+2.43.0
+
