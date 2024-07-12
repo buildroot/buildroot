@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-IMA_EVM_UTILS_VERSION = 1.5
-IMA_EVM_UTILS_SITE = https://github.com/mimizohar/ima-evm-utils/releases/download/v$(IMA_EVM_UTILS_VERSION)
-IMA_EVM_UTILS_LICENSE = GPL-2.0
-IMA_EVM_UTILS_LICENSE_FILES = COPYING
+IMA_EVM_UTILS_VERSION = 1.6
+IMA_EVM_UTILS_SITE = https://github.com/linux-integrity/ima-evm-utils/releases/download/v$(IMA_EVM_UTILS_VERSION)
+IMA_EVM_UTILS_LICENSE = LGPL-2.0+ (libimaevm), GPL-2.0+ (evmctl)
+IMA_EVM_UTILS_LICENSE_FILES = LICENSES.txt
 IMA_EVM_UTILS_INSTALL_STAGING = YES
 IMA_EVM_UTILS_DEPENDENCIES = host-pkgconf keyutils openssl tpm2-tss
 
