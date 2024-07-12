@@ -681,7 +681,7 @@ async def gen_config(args):
         configlines += minimalf.readlines()
 
     # Allow hosts with old certificates to download over https
-    configlines.append("BR2_WGET=\"wget --passive-ftp -nd -t 3 --no-check-certificate\"\n")
+    configlines.append("BR2_WGET=\"wget -nd -t 3 --no-check-certificate\"\n")
 
     # Per-package folder
     if randint(0, 15) == 0:
