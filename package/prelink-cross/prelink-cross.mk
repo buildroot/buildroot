@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PRELINK_CROSS_VERSION = 440c0059a21f06b5577499a80b55482cb99d6d1c
+PRELINK_CROSS_VERSION = ff2561c02ade96c5d4d56ddd4e27ff064840a176
 PRELINK_CROSS_SITE = https://git.yoctoproject.org/git/prelink-cross
 PRELINK_CROSS_SITE_METHOD = git
 PRELINK_CROSS_LICENSE = GPL-2.0+
