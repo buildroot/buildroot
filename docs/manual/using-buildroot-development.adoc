@@ -47,17 +47,17 @@ option.
 
 In this _override_ file, Buildroot expects to find lines of the form:
 
-------------------
+----
 <pkg1>_OVERRIDE_SRCDIR = /path/to/pkg1/sources
 <pkg2>_OVERRIDE_SRCDIR = /path/to/pkg2/sources
-------------------
+----
 
 For example:
 
-------------------
+----
 LINUX_OVERRIDE_SRCDIR = /home/bob/linux/
 BUSYBOX_OVERRIDE_SRCDIR = /home/bob/busybox/
-------------------
+----
 
 When Buildroot finds that for a given package, an
 +<pkg>_OVERRIDE_SRCDIR+ has been defined, it will no longer attempt to
@@ -79,17 +79,17 @@ process of just this package.
 In the example of the +linux+ package above, the developer can then
 make a source code change in +/home/bob/linux+ and then run:
 
------------------------
+----
 make linux-rebuild all
------------------------
+----
 
 and in a matter of seconds gets the updated Linux kernel image in
 +output/images+. Similarly, a change can be made to the BusyBox source
 code in +/home/bob/busybox+, and after:
 
------------------------
+----
 make busybox-rebuild all
------------------------
+----
 
 the root filesystem image in +output/images+ contains the updated
 BusyBox.
@@ -102,13 +102,13 @@ from the source tree. For example, when working on the +webkitgtk+
 package, the following will exclude the tests and in-tree builds from
 a local WebKit source tree:
 
-------------------
+----
 WEBKITGTK_OVERRIDE_SRCDIR = /home/bob/WebKit
 WEBKITGTK_OVERRIDE_SRCDIR_RSYNC_EXCLUSIONS = \
 	--exclude JSTests --exclude ManualTests --exclude PerformanceTests \
 	--exclude WebDriverTests --exclude WebKitBuild --exclude WebKitLibraries \
 	--exclude WebKit.xcworkspace --exclude Websites --exclude Examples
-------------------
+----
 
 By default, Buildroot skips syncing of VCS artifacts (e.g., the *.git* and
 *.svn* directories). Some packages prefer to have these VCS directories
@@ -116,6 +116,6 @@ available during build, for example for automatically determining a precise
 commit reference for version information. To undo this built-in filtering at a
 cost of a slower speed, add these directories back:
 
-------------------
+----
 LINUX_OVERRIDE_SRCDIR_RSYNC_EXCLUSIONS = --include .git
-------------------
+----

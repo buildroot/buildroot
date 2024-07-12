@@ -16,7 +16,7 @@ this structure itself: either inside the Buildroot tree, or outside of
 it using a br2-external tree. Both options are valid, the choice is up
 to you.
 
------
+----
 +-- board/
 |   +-- <company>/
 |       +-- <boardname>/
@@ -51,7 +51,7 @@ to you.
 +-- Config.in (if using a br2-external tree)
 +-- external.mk (if using a br2-external tree)
 +-- external.desc (if using a br2-external tree)
-------
+----
 
 Details on the files shown above are given further in this chapter.
 
@@ -79,7 +79,7 @@ more than two layers.
 An example directory structure for where a user has two customization
 layers 'common' and 'fooboard' is:
 
------
+----
 +-- board/
     +-- <company>/
         +-- common/
@@ -98,14 +98,14 @@ layers 'common' and 'fooboard' is:
             |   +-- ...
             +-- patches/
                 +-- ...
------
+----
 
 For example, if the user has the +BR2_GLOBAL_PATCH_DIR+ configuration
 option set as:
 
------
+----
 BR2_GLOBAL_PATCH_DIR="board/<company>/common/patches board/<company>/fooboard/patches"
------
+----
 
 then first the patches from the 'common' layer would be applied,
 followed by the patches from the 'fooboard' layer.

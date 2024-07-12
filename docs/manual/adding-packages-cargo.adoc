@@ -14,7 +14,7 @@ called "crates".
 
 The +Config.in+ file of Cargo-based package 'foo' should contain:
 
----------------------------
+----
 01: config BR2_PACKAGE_FOO
 02: 	bool "foo"
 03: 	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
@@ -23,11 +23,11 @@ The +Config.in+ file of Cargo-based package 'foo' should contain:
 06: 	  This is a comment that explains what foo is.
 07:
 08: 	  http://foosoftware.org/foo/
----------------------------
+----
 
 And the +.mk+ file for this package should contain:
 
-------------------------------
+----
 01: ################################################################################
 02: #
 03: # foo
@@ -41,7 +41,7 @@ And the +.mk+ file for this package should contain:
 11: FOO_LICENSE_FILES = COPYING
 12:
 13: $(eval $(cargo-package))
---------------------------------
+----
 
 The Makefile starts with the definition of the standard variables for
 package declaration (lines 7 to 11).

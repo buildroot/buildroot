@@ -10,7 +10,7 @@
 First, let's see how to write a +.mk+ file for a LuaRocks-based package,
 with an example :
 
-------------------------
+----
 01: ################################################################################
 02: #
 03: # lua-foo
@@ -27,7 +27,7 @@ with an example :
 14: LUA_FOO_LICENSE_FILES = $(LUA_FOO_SUBDIR)/COPYING
 15:
 16: $(eval $(luarocks-package))
-------------------------
+----
 
 On line 7, we declare the version of the package (the same as in the rockspec,
 which is the concatenation of the upstream version and the rockspec revision,
