@@ -578,70 +578,17 @@ not start before +S40network+.  The scripts are started in alphabetical
 order, so +S01syslogd+ starts before +S01watchdogd+, and +S02sysctl+
 start thereafter.
 
+[source,sh]
 ----
-01: #!/bin/sh
-02:
-03: DAEMON="syslogd"
-04: PIDFILE="/var/run/$DAEMON.pid"
-05:
-06: SYSLOGD_ARGS=""
-07:
-08: # shellcheck source=/dev/null
-09: [ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
-10:
-11: # BusyBox' syslogd does not create a pidfile, so pass "-n" in the command line
-12: # and use "-m" to instruct start-stop-daemon to create one.
-13: start() {
-14: 	printf 'Starting %s: ' "$DAEMON"
-15: 	# shellcheck disable=SC2086 # we need the word splitting
-16: 	start-stop-daemon -b -m -S -q -p "$PIDFILE" -x "/sbin/$DAEMON" \
-17: 		-- -n $SYSLOGD_ARGS
-18: 	status=$?
-19: 	if [ "$status" -eq 0 ]; then
-20: 		echo "OK"
-21: 	else
-22: 		echo "FAIL"
-23: 	fi
-24: 	return "$status"
-25: }
-26:
-27: stop() {
-28: 	printf 'Stopping %s: ' "$DAEMON"
-29: 	start-stop-daemon -K -q -p "$PIDFILE"
-30: 	status=$?
-31: 	if [ "$status" -eq 0 ]; then
-32: 		rm -f "$PIDFILE"
-33: 		echo "OK"
-34: 	else
-35: 		echo "FAIL"
-36: 	fi
-37: 	return "$status"
-38: }
-39:
-40: restart() {
-41: 	stop
-42: 	sleep 1
-43: 	start
-44: }
-45:
-46: case "$1" in
-47: 	start|stop|restart)
-48: 		"$1";;
-49: 	reload)
-50: 		# Restart, since there is no true "reload" feature.
-51: 		restart;;
-52: 	*)
-53: 		echo "Usage: $0 {start|stop|restart|reload}"
-54: 		exit 1
-55: esac
+include::S01syslogd[]
 ----
 
 *Note:* programs that support reloading their configuration in some
 fashion (+SIGHUP+) should provide a +reload()+ function similar to
-+stop()+.  The +start-stop-daemon+ supports +-K -s HUP+ for this.
-It is recommended to always append +-x "/sbin/$DAEMON"+ to all the
-+start-stop-daemon+ commands to ensure signals are set to a PID that
-matches +$DAEMON+.
++stop()+. The +start-stop-daemon+ command supports +--stop --signal
+HUP+ for this. It is recommended to always append +--exec
+"/sbin/$DAEMON"+ to all +start-stop-daemon+ commands to ensure signals
+are set to a PID that matches +$DAEMON+.
 
 Both start scripts and unit files can source command line arguments from
 +/etc/default/foo+, in general, if such a file does not exist it should
