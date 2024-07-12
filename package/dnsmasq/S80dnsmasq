@@ -5,30 +5,47 @@ PIDFILE="/var/run/$DAEMON.pid"
 
 [ -f /etc/dnsmasq.conf ] || exit 0
 
+start() {
+	printf "Starting dnsmasq: "
+	start-stop-daemon --start --pidfile "$PIDFILE" \
+		--exec "/usr/sbin/$DAEMON" \
+		-- --pid-file="$PIDFILE"
+	status=$?
+	[ "$status" -eq 0 ] && echo "OK" || echo "FAIL"
+	return "$status"
+}
+
+stop() {
+	printf "Stopping dnsmasq: "
+	start-stop-daemon --stop --pidfile "$PIDFILE" \
+		--exec "/usr/sbin/$DAEMON"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+		return "$status"
+	fi
+	while start-stop-daemon --stop --test --quiet --pidfile "$PIDFILE" \
+		--exec "/usr/sbin/$DAEMON"; do
+		sleep 0.1
+	done
+	rm -f "$PIDFILE"
+	return "$status"
+}
+
+restart() {
+	stop
+	start
+}
+
 case "$1" in
-	start)
-		printf "Starting dnsmasq: "
-		start-stop-daemon -S -p "$PIDFILE" -x "/usr/sbin/$DAEMON" -- \
-			--pid-file="$PIDFILE"
-		# shellcheck disable=SC2181
-		[ $? = 0 ] && echo "OK" || echo "FAIL"
+	start|stop|restart)
+		"$1"
 		;;
-	stop)
-		printf "Stopping dnsmasq: "
-		start-stop-daemon -K -q -p "$PIDFILE" -x "/usr/sbin/$DAEMON"
-		# shellcheck disable=SC2181
-		[ $? = 0 ] && echo "OK" || echo "FAIL"
-		# wait for dnsmasq process to be gone
-		while true; do
-			pid="$( cat "${PIDFILE}" 2>/dev/null || true )"
-			{ [ -n "${pid}" ] && [ -d "/proc/${pid}" ]; } || break
-			sleep 0.1
-		done
-		rm -f "$PIDFILE"
-		;;
-	restart|reload)
-		$0 stop
-		$0 start
+	reload)
+		# Restart, since there is no true "reload" feature.
+		restart
 		;;
 	*)
 		echo "Usage: $0 {start|stop|restart}"
