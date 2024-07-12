@@ -1,0 +1,225 @@
+From ad5ce7ff1cae92c151dc6f350ef943106ddd852f Mon Sep 17 00:00:00 2001
+From: Aleksandr Makarov <aleksandr.o.makarov@gmail.com>
+Date: Fri, 12 Jul 2024 21:07:36 +0300
+Subject: [PATCH] package/libest: Add OpenSSL 3.0 compatibility
+
+The functions `FIPS_mode` and `FIPS_mode_set` are deprecated in OpenSSL 3.0, replaced by
+`EVP_default_properties_is_fips_enabled` and `EVP_default_properties_enable_fips` respectively.
+
+This commit introduces wrappers for these new EVP APIs to maintain compatibility with OpenSSL 3.0,
+while ensuring continued support for older versions of OpenSSL.
+
+- Implemented `is_fips_enabled` wrapper around `EVP_default_properties_is_fips_enabled`
+- Implemented `enable_fips` wrapper around `EVP_default_properties_enable_fips`
+- Added conditional compilation to support both new and legacy OpenSSL versions
+
+Upstream: https://github.com/cisco/libest/pull/132
+Signed-off-by: Aleksandr Makarov <aleksandr.o.makarov@gmail.com>
+---
+ example/client-brski/estclient-brski.c |  2 +-
+ example/client/estclient.c             |  2 +-
+ example/proxy/estproxy.c               |  2 +-
+ example/server/estserver.c             |  2 +-
+ java/jni/client.c                      |  2 +-
+ src/est/est_client.c                   | 12 ++++++------
+ src/est/est_ossl_util.c                | 18 ++++++++++++++++++
+ src/est/est_ossl_util.h                |  2 ++
+ src/est/est_server.c                   |  2 +-
+ test/UT/US1864/us1864.c                |  4 ++--
+ 10 files changed, 34 insertions(+), 14 deletions(-)
+
+diff --git a/example/client-brski/estclient-brski.c b/example/client-brski/estclient-brski.c
+index 9e63af5..6e03052 100644
+--- a/example/client-brski/estclient-brski.c
++++ b/example/client-brski/estclient-brski.c
+@@ -388,7 +388,7 @@ int main (int argc, char **argv)
+                 break;
+             case 'f':
+                 /* Turn FIPS on if requested and exit if failure */
+-                set_fips_return = FIPS_mode_set(1);
++                set_fips_return = est_enable_fips(1);
+                 if (!set_fips_return) {
+                     printf("\nERROR setting FIPS MODE ON ...\n");
+                     ERR_load_crypto_strings();
+diff --git a/example/client/estclient.c b/example/client/estclient.c
+index a8a2d6f..75b1272 100644
+--- a/example/client/estclient.c
++++ b/example/client/estclient.c
+@@ -1280,7 +1280,7 @@ int main (int argc, char **argv)
+                 break;
+             case 'f':
+                 /* Turn FIPS on if requested and exit if failure */
+-                set_fips_return = FIPS_mode_set(1);
++                set_fips_return = est_enable_fips(1);
+                 if (!set_fips_return) {
+                     printf("\nERROR setting FIPS MODE ON ...\n");
+                     ERR_load_crypto_strings();
+diff --git a/example/proxy/estproxy.c b/example/proxy/estproxy.c
+index 114bd65..6dbdbda 100644
+--- a/example/proxy/estproxy.c
++++ b/example/proxy/estproxy.c
+@@ -593,7 +593,7 @@ int main (int argc, char **argv)
+             /*
+              * Turn FIPS on if user requested it and exit if failure
+              */
+-            set_fips_return = FIPS_mode_set(1);
++            set_fips_return = est_enable_fips(1);
+             if (set_fips_return != 1) {
+                 set_fips_error = ERR_get_error();
+                 printf("\nERROR WHILE SETTING FIPS MODE ON exiting ....\n");
+diff --git a/example/server/estserver.c b/example/server/estserver.c
+index 3539dc4..90886cf 100644
+--- a/example/server/estserver.c
++++ b/example/server/estserver.c
+@@ -2285,7 +2285,7 @@ int main (int argc, char **argv)
+             /* turn FIPS on if user requested it
+              * and exit if failure.
+              */
+-            set_fips_return = FIPS_mode_set(1);
++            set_fips_return = est_enable_fips(1);
+             if (set_fips_return != 1) {
+                 set_fips_error = ERR_get_error();
+                 printf("\nERROR WHILE SETTING FIPS MODE ON exiting ....\n");
+diff --git a/java/jni/client.c b/java/jni/client.c
+index c5bc28e..f58d5c0 100644
+--- a/java/jni/client.c
++++ b/java/jni/client.c
+@@ -179,7 +179,7 @@ static int jni_est_client_X509_REQ_sign (X509_REQ *x, EVP_PKEY *pkey, const EVP_
+  */
+ JNIEXPORT jint JNICALL Java_com_cisco_c3m_est_ESTClient_enable_1fips(
+ 		JNIEnv *env, jclass obj) {
+-	if (!FIPS_mode() && !FIPS_mode_set(1)) {
++	if (!est_is_fips_enabled() && !est_enable_fips(1)) {
+ 		ERR_print_errors_fp(stderr);
+ 		return -1;
+ 	} else {
+diff --git a/src/est/est_client.c b/src/est/est_client.c
+index 5c25d4f..63069af 100644
+--- a/src/est/est_client.c
++++ b/src/est/est_client.c
+@@ -3183,7 +3183,7 @@ EST_ERROR est_client_enroll_internal (EST_CTX *ctx, char *cn, int *pkcs7_len, in
+          * HTTPS digest mode requires the use of MD5.  Make sure we're not
+          * in FIPS mode and can use MD5
+          */
+-        if (ctx->auth_mode == AUTH_DIGEST && (FIPS_mode())){
++        if (ctx->auth_mode == AUTH_DIGEST && (est_is_fips_enabled())){
+             EST_LOG_ERR("HTTP digest auth not allowed while in FIPS mode");
+             rv = EST_ERR_BAD_MODE;
+             goto err;
+@@ -3594,7 +3594,7 @@ EST_ERROR est_client_reenroll (EST_CTX *ctx, X509 *cert, int *pkcs7_len, EVP_PKE
+          * HTTPS digest mode requires the use of MD5.  Make sure we're not
+          * in FIPS mode and can use MD5
+          */
+-        if (ctx->auth_mode == AUTH_DIGEST && (FIPS_mode())){
++        if (ctx->auth_mode == AUTH_DIGEST && (est_is_fips_enabled())){
+ 	    EST_LOG_ERR("HTTP digest auth not allowed while in FIPS mode");
+ 	    rv = EST_ERR_BAD_MODE;
+             goto err;
+@@ -3680,7 +3680,7 @@ static EST_ERROR est_client_enroll_csr_internal (EST_CTX *ctx, X509_REQ *csr, in
+          * HTTPS digest mode requires the use of MD5.  Make sure we're not
+          * in FIPS mode and can use MD5
+          */
+-        if (ctx->auth_mode == AUTH_DIGEST && (FIPS_mode())){
++        if (ctx->auth_mode == AUTH_DIGEST && (est_is_fips_enabled())){
+             EST_LOG_ERR("HTTP digest auth not allowed while in FIPS mode");
+             rv = EST_ERR_BAD_MODE;
+             goto err;
+@@ -5872,7 +5872,7 @@ static EST_ERROR est_client_brski_send_get_voucher (EST_CTX *ctx, int *cacert_le
+          * HTTPS digest mode requires the use of MD5.  Make sure we're not
+          * in FIPS mode and can use MD5
+          */
+-        if (ctx->auth_mode == AUTH_DIGEST && (FIPS_mode())){
++        if (ctx->auth_mode == AUTH_DIGEST && (est_is_fips_enabled())){
+             EST_LOG_ERR("HTTP digest auth not allowed while in FIPS mode");
+             rv = EST_ERR_BAD_MODE;
+             goto err;
+@@ -6366,7 +6366,7 @@ EST_ERROR est_client_brski_send_voucher_status (EST_CTX *ctx, EST_BRSKI_STATUS_V
+          * HTTPS digest mode requires the use of MD5.  Make sure we're not
+          * in FIPS mode and can use MD5
+          */
+-        if (ctx->auth_mode == AUTH_DIGEST && (FIPS_mode())){
++        if (ctx->auth_mode == AUTH_DIGEST && (est_is_fips_enabled())){
+             EST_LOG_ERR("HTTP digest auth not allowed while in FIPS mode");
+             rv = EST_ERR_BAD_MODE;
+             goto err;
+@@ -6535,7 +6535,7 @@ EST_ERROR est_client_brski_send_enroll_status (EST_CTX *ctx, EST_BRSKI_STATUS_VA
+          * HTTPS digest mode requires the use of MD5.  Make sure we're not
+          * in FIPS mode and can use MD5
+          */
+-        if (ctx->auth_mode == AUTH_DIGEST && (FIPS_mode())){
++        if (ctx->auth_mode == AUTH_DIGEST && (est_is_fips_enabled())){
+             EST_LOG_ERR("HTTP digest auth not allowed while in FIPS mode");
+             rv = EST_ERR_BAD_MODE;
+             goto err;
+diff --git a/src/est/est_ossl_util.c b/src/est/est_ossl_util.c
+index daa54f2..0887daa 100644
+--- a/src/est/est_ossl_util.c
++++ b/src/est/est_ossl_util.c
+@@ -500,3 +500,21 @@ char *est_find_ser_num_in_subj(X509 *cert)
+     return(ser_num_str);
+ }
+ #endif
++
++int est_is_fips_enabled()
++{
++#if OPENSSL_VERSION_NUMBER >= 0x30000000L
++    return EVP_default_properties_is_fips_enabled(NULL);
++#else
++    return FIPS_mode();
++#endif
++}
++
++int est_enable_fips(int enable)
++{
++#if OPENSSL_VERSION_NUMBER >= 0x30000000L
++	return EVP_default_properties_enable_fips(NULL, enable);
++#else
++	return FIPS_mode_set(enable);
++#endif
++}
+diff --git a/src/est/est_ossl_util.h b/src/est/est_ossl_util.h
+index 68ad290..2389e45 100644
+--- a/src/est/est_ossl_util.h
++++ b/src/est/est_ossl_util.h
+@@ -44,4 +44,6 @@ LIBEST_TEST_API void ossl_dump_ssl_errors(void);
+ EST_ERROR ossl_init_cert_store(X509_STORE *store,
+                                unsigned char *raw1, int size1);
+ 
++int est_is_fips_enabled();
++int est_enable_fips(int);
+ #endif
+diff --git a/src/est/est_server.c b/src/est/est_server.c
+index d047b48..979ae53 100644
+--- a/src/est/est_server.c
++++ b/src/est/est_server.c
+@@ -3355,7 +3355,7 @@ EST_ERROR est_server_set_auth_mode (EST_CTX *ctx, EST_HTTP_AUTH_MODE amode)
+         /*
+          * Since HTTP digest auth uses MD5, make sure we're not in FIPS mode.
+          */
+-	if (FIPS_mode()) {
++	if (est_is_fips_enabled()) {
+ 	    EST_LOG_ERR("HTTP digest auth not allowed while in FIPS mode");
+ 	    return (EST_ERR_BAD_MODE);
+ 	}
+diff --git a/test/UT/US1864/us1864.c b/test/UT/US1864/us1864.c
+index 3e41cd7..1f57494 100644
+--- a/test/UT/US1864/us1864.c
++++ b/test/UT/US1864/us1864.c
+@@ -218,12 +218,12 @@ static void us1864_test1 (void)
+     /*
+      * Make sure we don't allow DIGEST mode when in FIPS mode
+      */
+-    if (!FIPS_mode_set(1)) {
++    if (!est_enable_fips(1)) {
+         printf("FIPS mode not supported, skipping test to prevent digest auth when in FIPS mode");
+     } else {
+         est_rv = est_server_set_auth_mode(ctx, AUTH_DIGEST);
+         CU_ASSERT(est_rv == EST_ERR_BAD_MODE);
+-        FIPS_mode_set(0);
++        est_enable_fips(0);
+     }
+ 
+     X509_free(x);
+-- 
+2.40.1
+
