@@ -1,14 +1,46 @@
+import os
+
 import pexpect
+import pexpect.replwrap
 
 import infra
 
-import os
+BR_PROMPT = '[BRTEST# '
+BR_CONTINUATION_PROMPT = '[BRTEST+ '
+
+
+def _repl_sh_child(child, orig_prompt, extra_init_cmd):
+    """Wrap the shell prompt to handle command output
+    Based on pexpect.replwrap._repl_sh() (ISC licensed)
+    https://github.com/pexpect/pexpect/blob/aa989594e1e413f45c18b26ded1783f7d5990fe5/pexpect/replwrap.py#L115
+    """
+
+    # If the user runs 'env', the value of PS1 will be in the output. To avoid
+    # replwrap seeing that as the next prompt, we'll embed the marker characters
+    # for invisible characters in the prompt; these show up when inspecting the
+    # environment variable, but not when bash displays the prompt.
+    non_printable_insert = '\\[\\]'
+    ps1 = BR_PROMPT[:5] + non_printable_insert + BR_PROMPT[5:]
+    ps2 = (BR_CONTINUATION_PROMPT[:5] + non_printable_insert +
+           BR_CONTINUATION_PROMPT[5:])
+    prompt_change = "PS1='{0}' PS2='{1}' PROMPT_COMMAND=''".format(ps1, ps2)
+    # Note: this will run various commands, each with the default timeout defined
+    # when qemu was spawned.
+    return pexpect.replwrap.REPLWrapper(
+            child,
+            orig_prompt,
+            prompt_change,
+            new_prompt=BR_PROMPT,
+            continuation_prompt=BR_CONTINUATION_PROMPT,
+            extra_init_cmd=extra_init_cmd
+        )
 
 
 class Emulator(object):
 
     def __init__(self, builddir, downloaddir, logtofile, timeout_multiplier):
         self.qemu = None
+        self.repl = None
         self.downloaddir = downloaddir
         self.logfile = infra.open_log_file(builddir, "run", logtofile)
         # We use elastic runners on the cloud to runs our tests. Those runners
@@ -104,26 +136,30 @@ class Emulator(object):
         if password:
             self.qemu.expect("Password:")
             self.qemu.sendline(password)
-        index = self.qemu.expect(["# ", pexpect.TIMEOUT])
-        if index != 0:
-            raise SystemError("Cannot login")
-        self.run("dmesg -n 1")
-        # Prevent the shell from wrapping the commands at 80 columns.
-        self.run("stty columns 29999")
+
+        extra_init_cmd = " && ".join([
+            'export PAGER=cat',
+            'dmesg -n 1',
+            # Prevent the shell from wrapping the commands at 80 columns.
+            'stty columns 29999',
+            # Fix the prompt of any subshells that get run
+            'printf "%s\n"  "PS1=\'$PS1\'" "PS2=\'$PS2\'" "PROMPT_COMMAND=\'\'" >>/etc/profile'
+        ])
+        self.repl = _repl_sh_child(self.qemu, '# ', extra_init_cmd)
+        if not self.repl:
+            raise SystemError("Cannot initialize REPL prompt")
 
     # Run the given 'cmd' with a 'timeout' on the target
     # return a tuple (output, exit_code)
     def run(self, cmd, timeout=-1):
-        self.qemu.sendline(cmd)
         if timeout != -1:
             timeout *= self.timeout_multiplier
-        self.qemu.expect("# ", timeout=timeout)
+        output = self.repl.run_command(cmd, timeout=timeout)
         # Remove double carriage return from qemu stdout so str.splitlines()
         # works as expected.
-        output = self.qemu.before.replace("\r\r", "\r").splitlines()[1:]
+        output = output.replace("\r\r", "\r").splitlines()[1:]
 
-        self.qemu.sendline("echo $?")
-        self.qemu.expect("# ")
+        exit_code = self.repl.run_command("echo $?")
         exit_code = self.qemu.before.splitlines()[2]
         exit_code = int(exit_code)
 
