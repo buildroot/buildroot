@@ -16,8 +16,8 @@ start() {
 	/usr/bin/ssh-keygen -A
 
 	printf "Starting %s: " "$DAEMON"
-	start-stop-daemon -S -q -p "$PIDFILE" \
-		-x "/usr/sbin/$DAEMON"
+	start-stop-daemon --start --pidfile "$PIDFILE" \
+		--exec "/usr/sbin/$DAEMON"
 	status=$?
 	if [ "$status" -eq 0 ]; then
 		echo "OK"
@@ -29,8 +29,8 @@ start() {
 
 stop() {
 	printf "Stopping sshd: "
-	start-stop-daemon -K -q -p "$PIDFILE" \
-		-x "/usr/sbin/$DAEMON"
+	start-stop-daemon --stop --pidfile "$PIDFILE" \
+		--exec "/usr/sbin/$DAEMON"
 	status=$?
 	if [ "$status" -eq 0 ]; then
 		echo "OK"
@@ -51,8 +51,8 @@ restart() {
 
 reload() {
 	printf "Reloading sshd config: "
-	start-stop-daemon -K --signal HUP -q -p "$PIDFILE" \
-		-x "/usr/sbin/$DAEMON"
+	start-stop-daemon --stop --signal HUP -q --pidfile "$PIDFILE" \
+		--exec "/usr/sbin/$DAEMON"
 	status=$?
 	if [ "$status" -eq 0 ]; then
 		echo "OK"
