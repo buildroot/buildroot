@@ -1,0 +1,64 @@
+From 28c65fd9dff2f30438b98f0b71f387468259a2c3 Mon Sep 17 00:00:00 2001
+From: Aleksandr Makarov <aleksandr.o.makarov@gmail.com>
+Date: Fri, 12 Jul 2024 21:07:10 +0300
+Subject: [PATCH] =?UTF-8?q?package/libest:=20fix=20error:=20implicit?=
+ =?UTF-8?q?=20declaration=20of=20function=20=E2=80=98ERR=5Ferror=5Fstring?=
+ =?UTF-8?q?=E2=80=99?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Added necessary header includes to fix 'implicit declaration' errors which occur when
+using -Wimplicit-function-declaration flag.
+
+Upstream: https://github.com/cisco/libest/pull/132
+Signed-off-by: Aleksandr Makarov <aleksandr.o.makarov@gmail.com>
+---
+ src/est/est.c             | 4 +++-
+ src/est/est_client.c      | 1 +
+ src/est/est_server_http.c | 2 ++
+ 3 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/est/est.c b/src/est/est.c
+index 8a65f87..24474c0 100644
+--- a/src/est/est.c
++++ b/src/est/est.c
+@@ -42,7 +42,9 @@
+ #include <DbgHelp.h>
+ #endif  /* DISABLE_BACKTRACE*/
+ #endif /* WIN32*/
+-
++#include <openssl/err.h>
++#include <openssl/ssl.h>
++#include <openssl/rand.h>
+ #ifndef ENABLE_CLIENT_ONLY
+ static char hex_chpw[] = {0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 
+ 			  0xF7, 0x0D, 0x01, 0x09, 0x07};
+diff --git a/src/est/est_client.c b/src/est/est_client.c
+index 8dff9d9..5c25d4f 100644
+--- a/src/est/est_client.c
++++ b/src/est/est_client.c
+@@ -40,6 +40,7 @@
+ #include <openssl/ssl.h>
+ #include <openssl/cms.h>
+ #include <openssl/rand.h>
++#include <openssl/crypto.h>
+ #include "est.h"
+ #include "est_locl.h"
+ #include "est_ossl_util.h"
+diff --git a/src/est/est_server_http.c b/src/est/est_server_http.c
+index 2bd08d5..ce1cece 100644
+--- a/src/est/est_server_http.c
++++ b/src/est/est_server_http.c
+@@ -42,6 +42,8 @@
+ #include <openssl/err.h>
+ #include <openssl/ssl.h>
+ #include <openssl/x509v3.h>
++#include <openssl/crypto.h>
++#include <openssl/rand.h>
+ #if defined(_WIN32)
+ #define _CRT_SECURE_NO_WARNINGS // Disable deprecation warning in VS2005
+ #else
+-- 
+2.40.1
+
