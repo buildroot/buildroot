@@ -1,0 +1,40 @@
+From 0088d29e7c75ea7f100a100aea4e2a797469427f Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 13 Jul 2024 10:10:54 +0200
+Subject: [PATCH] source/CMakeLists.txt: allow setting CPU_HAS_NEON when
+ CROSS_COMPILE_ARM
+
+The logic in source/cmake/FindNeon.cmake is not appropriate for
+cross-compilation scenarios, so in order to allow cross-compiling for
+ARM, CROSS_COMPILE_ARM needs to be defined. However that currently
+doesn't allow the enabling of NEON support, so let's allow the user to
+manually set CPU_HAS_NEON in this case.
+
+Upstream: https://bitbucket.org/multicoreware/x265_git/pull-requests/26
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ source/CMakeLists.txt | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/source/CMakeLists.txt b/source/CMakeLists.txt
+index a34bf4d4f..072bf62ab 100755
+--- a/source/CMakeLists.txt
++++ b/source/CMakeLists.txt
+@@ -239,8 +239,13 @@ if(GCC)
+         endif()
+     endif()
+     if(ARM AND CROSS_COMPILE_ARM)
+-        set(ARM_ARGS -fPIC)
+         message(STATUS "cross compile arm")
++        if(CPU_HAS_NEON)
++          set(ARM_ARGS -mfpu=neon -fPIC)
++          add_definitions(-DHAVE_NEON)
++        else()
++	  set(ARM_ARGS -fPIC)
++	endif()
+     elseif(ARM)
+         if(ARM64)
+             set(ARM_ARGS -fPIC)
+-- 
+2.45.2
+
