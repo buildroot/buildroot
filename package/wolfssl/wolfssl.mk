@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WOLFSSL_VERSION = 5.7.0
+WOLFSSL_VERSION = 5.7.2
 WOLFSSL_SITE = $(call github,wolfSSL,wolfssl,v$(WOLFSSL_VERSION)-stable)
 WOLFSSL_INSTALL_STAGING = YES
 
@@ -16,7 +16,10 @@ WOLFSSL_CONFIG_SCRIPTS = wolfssl-config
 WOLFSSL_AUTORECONF = YES
 WOLFSSL_DEPENDENCIES = host-pkgconf
 
-WOLFSSL_CONF_OPTS = --disable-examples --disable-crypttests
+WOLFSSL_CONF_OPTS = \
+	--disable-examples \
+	--disable-crypttests \
+	--disable-option-checking
 
 ifeq ($(BR2_PACKAGE_WOLFSSL_ALL),y)
 WOLFSSL_CONF_OPTS += --enable-all
