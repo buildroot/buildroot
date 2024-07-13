@@ -29,7 +29,7 @@ config BR2_PACKAGE_QT5WEBENGINE
 	depends on BR2_TOOLCHAIN_USES_GLIBC # execinfo.h, mallinfo
 	depends on BR2_HOST_GCC_AT_LEAST_4_9 # qt5base-icu
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_8 # re2
-	depends on BR2_TOOLCHAIN_HAS_THREADS # ffmpeg, libglib2, libvpx, qt5base-dbus
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2, libvpx, qt5base-dbus
 	depends on BR2_USE_WCHAR # libglib2
 	depends on BR2_PACKAGE_QT5_GL_AVAILABLE # qt5declarative, qt5base-eglfs
 	depends on BR2_PACKAGE_HAS_LIBEGL # qt5base-eglfs
@@ -40,7 +40,6 @@ config BR2_PACKAGE_QT5WEBENGINE
 	# flag (for 64-bits, it adds the -m64 flag).
 	# https://github.com/v8/v8/blob/5.6.326.55/gypfiles/toolchain.gypi#L1036-L1037
 	select BR2_HOSTARCH_NEEDS_IA32_COMPILER if !BR2_ARCH_IS_64 # v8/chromium
-	select BR2_PACKAGE_FFMPEG
 	select BR2_PACKAGE_LCMS2
 	select BR2_PACKAGE_LIBEVENT
 	select BR2_PACKAGE_LIBGLIB2

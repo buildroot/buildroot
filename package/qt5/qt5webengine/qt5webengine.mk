@@ -70,7 +70,6 @@ QT5WEBENGINE_DEPENDENCIES += \
 	host-python3 \
 	host-webp \
 	host-zlib \
-	ffmpeg \
 	freetype \
 	jpeg \
 	lcms2 \
@@ -85,7 +84,6 @@ QT5WEBENGINE_DEPENDENCIES += \
 
 QT5WEBENGINE_CONF_OPTS += \
 	-webengine-embedded-build \
-	-webengine-ffmpeg \
 	-webengine-opus \
 	-webengine-webchannel \
 	-webengine-webp \
