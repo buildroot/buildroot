@@ -8,6 +8,7 @@ LIBAVIF_VERSION = 1.0.4
 LIBAVIF_SITE = $(call github,AOMediaCodec,libavif,v$(LIBAVIF_VERSION))
 LIBAVIF_LICENSE = BSD-2-Clause, IJG, Apache-2.0
 LIBAVIF_LICENSE_FILES = LICENSE
+LIBAVIF_CPE_ID_VENDOR = aomedia
 LIBAVIF_INSTALL_STAGING = YES
 
 # Only the dav1d decoder is packaged at the moment.
