@@ -1,0 +1,48 @@
+From 8b7852149c45c8a837a9f5124e91812dd475a270 Mon Sep 17 00:00:00 2001
+From: Andrey Rakhmatullin <wrar@debian.org>
+Date: Sat, 13 Jul 2024 11:37:07 +0200
+Subject: [PATCH] Add missing header includes
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Bug-Debian: https://bugs.debian.org/1066264
+
+Fixes:
+
+genisoimage/genisoimage.c:1509:17: error: implicit declaration of function ‘parse_checksum_algo’ [-Wimplicit-function-declaration]
+
+Upstream: https://sources.debian.org/patches/cdrkit/9:1.1.11-3.5/fix-implicit-function-declaration.patch/
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ genisoimage/genisoimage.c | 1 +
+ genisoimage/jte.c         | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/genisoimage/genisoimage.c b/genisoimage/genisoimage.c
+index 46f0cb7..fa2f8bd 100644
+--- a/genisoimage/genisoimage.c
++++ b/genisoimage/genisoimage.c
+@@ -53,6 +53,7 @@
+ #include <ctype.h>
+ #include "match.h"
+ #include "exclude.h"
++#include "checksum.h"
+ #include <unls.h>	/* For UNICODE translation */
+ #include <schily.h>
+ #ifdef UDF
+diff --git a/genisoimage/jte.c b/genisoimage/jte.c
+index 0dff289..4c4d986 100644
+--- a/genisoimage/jte.c
++++ b/genisoimage/jte.c
+@@ -27,6 +27,7 @@
+ #include "ifo_read.h"
+ #include "endianconv.h"
+ #include "checksum.h"
++#include "md5.h"
+ #endif
+ #ifdef APPLE_HYB
+ #include <ctype.h>
+-- 
+2.45.2
+
