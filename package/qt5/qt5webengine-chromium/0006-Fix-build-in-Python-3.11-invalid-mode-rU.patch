@@ -1,0 +1,55 @@
+From fad0069037ec39d853e215fcddd3d130d9781ffe Mon Sep 17 00:00:00 2001
+From: Joanmarie Diggs <jdiggs@igalia.com>
+Date: Tue, 30 Aug 2022 06:00:13 +0000
+Subject: [PATCH] Fix build in Python 3.11 (invalid mode: 'rU')
+
+In Python 3.11, 'U' ("universal newline") is no longer accepted in
+the file mode, having been deprecated in Python 3.3. The "universal
+newline" is used by default when a file is open in text mode.
+
+This commit removes the 'U' from the two (non-third-party) places
+it is used.
+
+Bug: 1357549
+Change-Id: I3305707858d8ba7a9f518656a9b97dc1702bbe94
+Reviewed-on: https://chromium-review.googlesource.com/c/chromium/src/+/3859535
+Reviewed-by: Mike Pinkerton <pinkerton@chromium.org>
+Commit-Queue: Joanmarie Diggs <jdiggs@igalia.com>
+Reviewed-by: Nico Weber <thakis@chromium.org>
+Cr-Commit-Position: refs/heads/main@{#1040794}
+Upstream: https://github.com/chromium/chromium/commit/0991fc6acd3c85472000f2055af542515c3c6297
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ chromium/PRESUBMIT_test_mocks.py | 2 +-
+ chromium/tools/grit/grit/util.py | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/chromium/PRESUBMIT_test_mocks.py b/chromium/PRESUBMIT_test_mocks.py
+index 0a9e5a54ecd..6b0eca1e1c2 100644
+--- a/chromium/PRESUBMIT_test_mocks.py
++++ b/chromium/PRESUBMIT_test_mocks.py
+@@ -119,7 +119,7 @@ class MockInputApi(object):
+   def PresubmitLocalPath(self):
+     return self.presubmit_local_path
+ 
+-  def ReadFile(self, filename, mode='rU'):
++  def ReadFile(self, filename, mode='r'):
+     if hasattr(filename, 'AbsoluteLocalPath'):
+        filename = filename.AbsoluteLocalPath()
+     for file_ in self.files:
+diff --git a/chromium/tools/grit/grit/util.py b/chromium/tools/grit/grit/util.py
+index 77db06adffb..27f9aba5aa3 100644
+--- a/chromium/tools/grit/grit/util.py
++++ b/chromium/tools/grit/grit/util.py
+@@ -210,7 +210,7 @@ def ReadFile(filename, encoding):
+     mode = 'rb'
+     encoding = None
+   else:
+-    mode = 'rU'
++    mode = 'r'
+ 
+   with io.open(abs(filename), mode, encoding=encoding) as f:
+     return f.read()
+-- 
+2.25.1
+
