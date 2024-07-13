@@ -28,4 +28,4 @@ https://github.com/riscv-software-src/riscv-isa-sim/tree/v1.1.0#simulating-a-new
 https://github.com/riscv-software-src/riscv-isa-sim/tree/v1.1.0#debugging-with-gdb
 
 [3].
-https://github.com/riscv/riscv-openocd
+https://github.com/riscv-collab/riscv-openocd
