@@ -19,7 +19,6 @@ MUPDF_DEPENDENCIES = \
 	host-pkgconf \
 	jbig2dec jpeg \
 	lcms2 openjpeg \
-	xlib_libX11 \
 	zlib
 
 # mupdf doesn't use CFLAGS and LIBS but XCFLAGS and XLIBS instead.
@@ -37,6 +36,13 @@ ifeq ($(BR2_STATIC_LIBS),y)
 MUPDF_MAKE_OPTS += shared=no
 else
 MUPDF_MAKE_OPTS += shared=yes
+endif
+
+ifeq ($(BR2_PACKAGE_XLIB_LIBX11)$(BR2_PACKAGE_XLIB_LIBXEXT),yy)
+MUPDF_MAKE_OPTS += HAVE_X11=yes
+MUPDF_DEPENDENCIES += xlib_libX11 xlib_libXext
+else
+MUPDF_MAKE_OPTS += HAVE_X11=no
 endif
 
 ifeq ($(BR2_PACKAGE_LIBFREEGLUT),y)
