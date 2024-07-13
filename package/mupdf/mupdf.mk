@@ -22,17 +22,11 @@ MUPDF_DEPENDENCIES = \
 	xlib_libX11 \
 	zlib
 
-MUPDF_CFLAGS = \
-	$(TARGET_CFLAGS)
-
-MUPDF_LDFLAGS = \
-	$(TARGET_LDFLAGS)
-
 # mupdf doesn't use CFLAGS and LIBS but XCFLAGS and XLIBS instead.
 # with USE_SYSTEM_LIBS it will try to use system libraries instead of the bundled ones.
 MUPDF_MAKE_ENV = $(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) \
-	XCFLAGS="$(MUPDF_CFLAGS)" \
-	XLIBS="$(MUPDF_LDFLAGS)" \
+	XCFLAGS="$(TARGET_CFLAGS)" \
+	XLIBS="$(TARGET_LDFLAGS)" \
 	USE_SYSTEM_LIBS=yes
 
 MUPDF_MAKE_OPTS = \
