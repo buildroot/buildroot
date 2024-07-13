@@ -9,6 +9,7 @@ SKOPEO_SITE = $(call github,containers,skopeo,v$(SKOPEO_VERSION))
 
 SKOPEO_LICENSE = Apache-2.0
 SKOPEO_LICENSE_FILES = LICENSE
+SKOPEO_CPE_ID_VALID = YES
 
 HOST_SKOPEO_DEPENDENCIES = \
 	host-btrfs-progs \
