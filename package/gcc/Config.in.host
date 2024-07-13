@@ -106,6 +106,10 @@ config BR2_TOOLCHAIN_BUILDROOT_FORTRAN
 	# on architecture building libquadmath, wchar is required
 	depends on !BR2_TOOLCHAIN_HAS_LIBQUADMATH || \
 		(BR2_TOOLCHAIN_HAS_LIBQUADMATH && BR2_USE_WCHAR)
+	# internal compiler error: in gen_reg_rtx, at emit-rtl.cc:1167
+	# fixed in gcc 14.x, so disable gcc 12.x/13.x
+	depends on !(BR2_microblaze && \
+		(BR2_GCC_VERSION_12_X || BR2_GCC_VERSION_13_X))
 	select BR2_TOOLCHAIN_HAS_FORTRAN
 	help
 	  Enable this option if you want your toolchain to support the
