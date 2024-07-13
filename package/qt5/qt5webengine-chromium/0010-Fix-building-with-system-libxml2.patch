@@ -1,0 +1,57 @@
+From 67ceca4b097a2d3de28020c9461641d9670009cc Mon Sep 17 00:00:00 2001
+From: Martin Negyokru <negyokru@inf.u-szeged.hu>
+Date: Thu, 7 Dec 2023 15:37:53 +0100
+Subject: [PATCH] Fix building with system libxml2
+
+Libxml2 2.12.0 has changed the const-ness of the
+xmlError pointers, which results in a build error.
+
+Change-Id: Id86fcfbfe004f89109808b9bdb11c01133553884
+Reviewed-on: https://codereview.qt-project.org/c/qt/qtwebengine-chromium/+/523633
+Reviewed-by: Allan Sandfeld Jensen <allan.jensen@qt.io>
+(cherry picked from commit 159dff274a7f32f9b53711df6a5b6fbae8c64b4a)
+Reviewed-on: https://codereview.qt-project.org/c/qt/qtwebengine-chromium/+/525714
+Reviewed-by: Qt Cherry-pick Bot <cherrypick_bot@qt-project.org>
+Upstream: https://github.com/qt/qtwebengine-chromium/commit/c98d28f2f0f23721
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ .../third_party/blink/renderer/core/xml/xslt_processor.h     | 5 +++++
+ .../blink/renderer/core/xml/xslt_processor_libxslt.cc        | 4 ++++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/chromium/third_party/blink/renderer/core/xml/xslt_processor.h b/chromium/third_party/blink/renderer/core/xml/xslt_processor.h
+index e501cf17c37..e4550ec5009 100644
+--- a/chromium/third_party/blink/renderer/core/xml/xslt_processor.h
++++ b/chromium/third_party/blink/renderer/core/xml/xslt_processor.h
+@@ -79,7 +79,12 @@ class XSLTProcessor final : public ScriptWrappable {
+ 
+   void reset();
+ 
++#if LIBXML_VERSION >= 21200
++  static void ParseErrorFunc(void* user_data, const xmlError*);
++#else
+   static void ParseErrorFunc(void* user_data, xmlError*);
++#endif
++
+   static void GenericErrorFunc(void* user_data, const char* msg, ...);
+ 
+   // Only for libXSLT callbacks
+diff --git a/chromium/third_party/blink/renderer/core/xml/xslt_processor_libxslt.cc b/chromium/third_party/blink/renderer/core/xml/xslt_processor_libxslt.cc
+index b3ce345f320..2174d1df1da 100644
+--- a/chromium/third_party/blink/renderer/core/xml/xslt_processor_libxslt.cc
++++ b/chromium/third_party/blink/renderer/core/xml/xslt_processor_libxslt.cc
+@@ -60,7 +60,11 @@ void XSLTProcessor::GenericErrorFunc(void*, const char*, ...) {
+   // It would be nice to do something with this error message.
+ }
+ 
++#if LIBXML_VERSION >= 21200
++void XSLTProcessor::ParseErrorFunc(void* user_data, const xmlError* error) {
++#else
+ void XSLTProcessor::ParseErrorFunc(void* user_data, xmlError* error) {
++#endif
+   FrameConsole* console = static_cast<FrameConsole*>(user_data);
+   if (!console)
+     return;
+-- 
+2.25.1
+
