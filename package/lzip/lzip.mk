@@ -9,6 +9,9 @@ LZIP_SITE = http://download.savannah.gnu.org/releases/lzip
 LZIP_LICENSE = GPL-2.0+
 LZIP_LICENSE_FILES = COPYING
 
+# The package is a dependency to ccache so ccache cannot be a dependency
+HOST_LZIP_ADD_CCACHE_DEPENDENCY = NO
+
 define LZIP_CONFIGURE_CMDS
 	(cd $(@D); $(TARGET_MAKE_ENV) ./configure --prefix=/usr \
 		$(TARGET_CONFIGURE_OPTS) )

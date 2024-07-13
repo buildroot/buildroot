@@ -12,6 +12,9 @@ ZSTD_LICENSE_FILES = LICENSE COPYING
 ZSTD_CPE_ID_VENDOR = facebook
 ZSTD_CPE_ID_PRODUCT = zstandard
 
+# The package is a dependency to ccache so ccache cannot be a dependency
+HOST_ZSTD_ADD_CCACHE_DEPENDENCY = NO
+
 ZSTD_OPTS += PREFIX=/usr
 ZSTD_OPTS += ZSTD_LEGACY_SUPPORT=0
 ifeq ($(BR2_PACKAGE_ZLIB),y)

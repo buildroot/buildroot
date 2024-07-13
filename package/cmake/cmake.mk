@@ -14,6 +14,9 @@ CMAKE_CPE_ID_VALID = YES
 # Tool download MITM attack warning if using npm package to install cmake
 CMAKE_IGNORE_CVES = CVE-2016-10642
 
+# The package is a dependency to ccache so ccache cannot be a dependency
+HOST_CMAKE_ADD_CCACHE_DEPENDENCY = NO
+
 # CMake is a particular package:
 # * CMake can be built using the generic infrastructure or the cmake one.
 #   Since Buildroot has no requirement regarding the host system cmake

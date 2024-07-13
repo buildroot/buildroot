@@ -10,6 +10,9 @@ XXHASH_LICENSE = BSD-2-Clause (library), GPL-2.0+ (xxhsum)
 XXHASH_LICENSE_FILES = LICENSE cli/COPYING
 XXHASH_INSTALL_STAGING = YES
 
+# The package is a dependency to ccache so ccache cannot be a dependency
+HOST_XXHASH_ADD_CCACHE_DEPENDENCY = NO
+
 XXHASH_TARGETS = xxhsum libxxhash.pc
 XXHASH_INSTALL_TARGETS = \
 	install_libxxhash.includes \

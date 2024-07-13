@@ -10,6 +10,9 @@ BLAKE3_SUBDIR = c
 BLAKE3_LICENSE = Apache-2.0, CC0-1.0
 BLAKE3_LICENSE_FILES = LICENSE
 
+# The package is a dependency to ccache so ccache cannot be a dependency
+HOST_BLAKE3_ADD_CCACHE_DEPENDENCY = NO
+
 # We may be a ccache dependency, so we can't use ccache; reset the
 # options set by the cmake infra.
 HOST_BLAKE3_CONF_OPTS += \
