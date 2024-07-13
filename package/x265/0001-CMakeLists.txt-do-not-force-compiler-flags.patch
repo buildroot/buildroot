@@ -1,0 +1,83 @@
+From b56e9125db34614b2157516df3ee724180f2084f Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 13 Jul 2024 09:59:26 +0200
+Subject: [PATCH] CMakeLists.txt: do not force compiler flags
+
+The compiler flags enforced by CMakeLists.txt can be problematic:
+
+- When CROSS_COMPILE_ARM is set, one is not necessarily building for
+  armv6 with soft float-abi: one may be using ARMv7 with hard float
+
+- When CROSS_COMPILE_ARM is not set, forcing -mfloat-abi=hard is
+  similarly wrong
+
+Those compiler flags should be passed by the user depending on the
+exact target platform.
+
+Inspired from
+https://gitweb.gentoo.org/repo/gentoo.git/tree/media-libs/x265/files/arm-r1.patch,
+and earlier work from Bertrand Jacquin <bertrand@jacquin.bzh> and
+Bernd Kuhls <bernd.kuhls@t-online.de>.
+
+Upstream: https://bitbucket.org/multicoreware/x265_git/pull-requests/26
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ source/CMakeLists.txt              | 10 +++-------
+ source/dynamicHDR10/CMakeLists.txt |  6 +++---
+ 2 files changed, 6 insertions(+), 10 deletions(-)
+
+diff --git a/source/CMakeLists.txt b/source/CMakeLists.txt
+index a407271b4..a34bf4d4f 100755
+--- a/source/CMakeLists.txt
++++ b/source/CMakeLists.txt
+@@ -239,11 +239,7 @@ if(GCC)
+         endif()
+     endif()
+     if(ARM AND CROSS_COMPILE_ARM)
+-        if(ARM64)
+-            set(ARM_ARGS -fPIC)
+-        else()
+-            set(ARM_ARGS -march=armv6 -mfloat-abi=soft -mfpu=vfp -marm -fPIC)
+-        endif()
++        set(ARM_ARGS -fPIC)
+         message(STATUS "cross compile arm")
+     elseif(ARM)
+         if(ARM64)
+@@ -252,10 +248,10 @@ if(GCC)
+         else()
+             find_package(Neon)
+             if(CPU_HAS_NEON)
+-                set(ARM_ARGS -mcpu=native -mfloat-abi=hard -mfpu=neon -marm -fPIC)
++                set(ARM_ARGS -mfpu=neon -fPIC)
+                 add_definitions(-DHAVE_NEON)
+             else()
+-                set(ARM_ARGS -mcpu=native -mfloat-abi=hard -mfpu=vfp -marm)
++	        set(ARM_ARGS -fPIC)
+             endif()
+         endif()
+     endif()
+diff --git a/source/dynamicHDR10/CMakeLists.txt b/source/dynamicHDR10/CMakeLists.txt
+index 22fb79d44..2cea7c48a 100644
+--- a/source/dynamicHDR10/CMakeLists.txt
++++ b/source/dynamicHDR10/CMakeLists.txt
+@@ -43,14 +43,14 @@ if(GCC)
+         endif()
+     endif()
+     if(ARM AND CROSS_COMPILE_ARM)
+-        set(ARM_ARGS -march=armv6 -mfloat-abi=soft -mfpu=vfp -marm -fPIC)
++        set(ARM_ARGS -fPIC)
+     elseif(ARM)
+         find_package(Neon)
+         if(CPU_HAS_NEON)
+-            set(ARM_ARGS -mcpu=native -mfloat-abi=hard -mfpu=neon -marm -fPIC)
++            set(ARM_ARGS -fPIC)
+             add_definitions(-DHAVE_NEON)
+         else()
+-            set(ARM_ARGS -mcpu=native -mfloat-abi=hard -mfpu=vfp -marm)
++            set(ARM_ARGS -fPIC)
+         endif()
+     endif()
+     add_definitions(${ARM_ARGS})
+-- 
+2.45.2
+
