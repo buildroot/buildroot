@@ -1,5 +1,5 @@
 # Locally calculated
-sha256  14c0654d046fd1faf0204b79e33c091012a8f4df972777e5691875aa75d29a65  qtwebengine-chromium-0ad2814370799a2161057d92231fe3ee00e2fe98.tar.bz2
+sha256  fb0953b0cc7b980f128d5f66b8345eb4fbf2e05b70db3926958fb657953b64dc  qtwebengine-chromium-18c9261dc5b8aa57a0bdd5b62ce6f648cca1ef5e.tar.bz2
 
 # Locally calculated with:
 # for i in $(find * -type f \( -iname 'license*' -o -iname 'copying*' -o -name 'APPLE_LICENSE' -o -name 'Copyright' -o -path '*/license_texts/*' -o -path '*/licenses/*' \) -a -not -name '*.cc' -not -name '*.py' -not -name '*.pyc' -not -name '*.h' -not -name 'LICENSE.sha1' -not -name 'licensecheck.pl*' -not -name 'license.after' -not -name 'license.before' -not -path 'chromium/third_party/catapult/*') ; do echo -n "sha256  " ; sha256sum $i ; done | sort --key=3

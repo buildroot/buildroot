@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5WEBENGINE_CHROMIUM_VERSION = 0ad2814370799a2161057d92231fe3ee00e2fe98
+QT5WEBENGINE_CHROMIUM_VERSION = 18c9261dc5b8aa57a0bdd5b62ce6f648cca1ef5e
 QT5WEBENGINE_CHROMIUM_SITE = $(QT5_SITE)/qtwebengine-chromium/-/archive/$(QT5WEBENGINE_CHROMIUM_VERSION)
 QT5WEBENGINE_CHROMIUM_SOURCE = qtwebengine-chromium-$(QT5WEBENGINE_CHROMIUM_VERSION).tar.bz2
 QT5WEBENGINE_CHROMIUM_PATCH_DEPENDENCIES = qt5webengine-chromium-catapult
