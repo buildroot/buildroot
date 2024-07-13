@@ -22,22 +22,12 @@ MUPDF_DEPENDENCIES = \
 	xlib_libX11 \
 	zlib
 
-# The pkg-config name for gumbo-parser is `gumbo`.
-MUPDF_PKG_CONFIG_PACKAGES = \
-	freetype2 \
-	gumbo \
-	harfbuzz \
-	libjpeg \
-	zlib
-
 MUPDF_CFLAGS = \
 	$(TARGET_CFLAGS) \
-	`$(PKG_CONFIG_HOST_BINARY) --cflags $(MUPDF_PKG_CONFIG_PACKAGES)` \
 	-fPIC # -fPIC is needed because the Makefile doesn't append it.
 
 MUPDF_LDFLAGS = \
-	$(TARGET_LDFLAGS) \
-	`$(PKG_CONFIG_HOST_BINARY) --libs $(MUPDF_PKG_CONFIG_PACKAGES)`
+	$(TARGET_LDFLAGS)
 
 # mupdf doesn't use CFLAGS and LIBS but XCFLAGS and XLIBS instead.
 # with USE_SYSTEM_LIBS it will try to use system libraries instead of the bundled ones.
