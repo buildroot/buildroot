@@ -3,7 +3,6 @@ config BR2_PACKAGE_MUPDF
 	depends on BR2_INSTALL_LIBSTDCPP # harfbuzz
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # harfbuzz
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # harfbuzz
-	depends on BR2_PACKAGE_XORG7
 	select BR2_PACKAGE_FREETYPE
 	select BR2_PACKAGE_GUMBO_PARSER
 	select BR2_PACKAGE_HARFBUZZ
@@ -11,7 +10,6 @@ config BR2_PACKAGE_MUPDF
 	select BR2_PACKAGE_JPEG
 	select BR2_PACKAGE_LCMS2
 	select BR2_PACKAGE_OPENJPEG
-	select BR2_PACKAGE_XLIB_LIBX11
 	select BR2_PACKAGE_ZLIB
 	help
 	  MuPDF is a lightweight PDF, XPS, and E-book viewer.
