@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: ISC
+
 import pexpect
 import pexpect.replwrap
 
