@@ -8,6 +8,7 @@ CHICKEN_VERSION = 5.3.0
 CHICKEN_SITE = https://code.call-cc.org/releases/$(CHICKEN_VERSION)
 CHICKEN_LICENSE = BSD-3-Clause
 CHICKEN_LICENSE_FILES = LICENSE
+CHICKEN_CPE_ID_VENDOR = call-cc
 CHICKEN_INSTALL_STAGING = YES
 
 # If ARCH is not set, it attempts to autodiscover. But it is anyway not used.
