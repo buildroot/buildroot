@@ -93,7 +93,9 @@ takes care of downloading such dependencies as part of the download
 step of packages that use the +cargo-package+ infrastructure. Such
 dependencies are then kept together with the package source code in
 the tarball cached in Buildroot's +DL_DIR+, and therefore the hash of
-the package's tarball includes such dependencies.
-
-This mechanism ensures that any change in the dependencies will be
-detected, and allows the build to be performed completely offline.
+the package's tarball doesn't only cover the source of the package
+itself, but also covers the sources of the dependencies. Thus, a change
+injected into one of the dependencies will also be discovered by the
+hash check. In addition,  this mechanism allows the build to be
+performed completely offline since cargo will not do any downloads
+during the build. This mechanism is called vendoring the dependencies.
