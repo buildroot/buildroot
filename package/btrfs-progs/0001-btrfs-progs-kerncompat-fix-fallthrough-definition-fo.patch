@@ -1,0 +1,63 @@
+From 0d2bf742df7f6b6d91fff8abe3c2f8b6ef0e0c01 Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Sun, 14 Jul 2024 12:52:33 +0200
+Subject: [PATCH] btrfs-progs: kerncompat: fix fallthrough definition for gcc
+ 5.x and 6.x.
+
+Commit [1] 3a1d4aa089 "btrfs-progs: fix fallthrough cases with proper
+attributes" introduced a macro "fallthrough" to better handle compiler
+warnings of fallthrough situations.
+
+This macro is defined using the "__has_attribute" built-in
+function-like macro, which was introduced in GCC 5. See [2]. It then
+test for the "__fallthrough__" attribute, which was introduced in
+GCC 7. See [3].
+
+When compiling with a gcc version which supports "__has_attribute" and
+not the "__fallthrough__" attribute, compilation fails with error
+message:
+
+    common/format-output.c: In function 'print_escaped':
+    common/format-output.c:78:4: error: 'fallthrough' undeclared (first use in this function)
+        fallthrough;
+        ^
+btrfs-progs claim to support gcc at minimal version 4.8 in [4].
+
+This commit fixes this issue by adding the missing definition.
+
+The definition of the unsupported case is duplicated, because testing
+for "__has_attribute" and an attribute at the same time is not
+portable. See the cpp "__has_attribute" documentation [5].
+
+Note: the issue was found with Buildroot Linux [6], while testing with
+the command "utils/test-pkg -a -p btrfs-progs".
+
+[1] https://github.com/kdave/btrfs-progs/commit/3a1d4aa089419b7c94b31ff87122fa74907e1aa6
+[2] https://gcc.gnu.org/gcc-5/changes.html
+[3] https://gcc.gnu.org/gcc-7/changes.html
+[4] https://github.com/kdave/btrfs-progs/tree/v6.9.2#build-compatibility
+[5] https://gcc.gnu.org/onlinedocs/cpp/_005f_005fhas_005fattribute.html
+[6] https://buildroot.org/
+
+Upstream: Proposed: https://github.com/kdave/btrfs-progs/pull/842
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ include/kerncompat.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/kerncompat.h b/include/kerncompat.h
+index 31cd9d8d..bcd46bde 100644
+--- a/include/kerncompat.h
++++ b/include/kerncompat.h
+@@ -305,6 +305,8 @@ static inline void up_read(struct rw_semaphore *sem)
+ #if defined __has_attribute
+ # if __has_attribute(__fallthrough__)
+ #  define fallthrough			__attribute__((__fallthrough__))
++# else
++#  define fallthrough			do {} while (0)  /* fallthrough */
+ # endif
+ #else
+ # define fallthrough			do {} while (0)  /* fallthrough */
+-- 
+2.45.2
+
