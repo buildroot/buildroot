@@ -1,0 +1,54 @@
+From 83f9bed233b86dd2bbf603611b13b673caeccb69 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sun, 14 Jul 2024 11:46:51 +0200
+Subject: [PATCH] extras/ext4_utils/make_ext4fs_main.c: disable
+ Android-specific code
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Since we are not building with the Android code, we do not have the
+implementation of the selinux_android_file_context_handle(). However,
+its only call site is when 'mountpoint' is set, and 'mountpoint'
+cannot be non-NULL in non-Android cases due to how the -a option is
+parsed:
+
+		case 'a':
+ #ifdef ANDROID
+			fs_config_func = fs_config;
+			mountpoint = optarg;
+ #else
+			fprintf(stderr, "can't set android permissions - built without android support\n");
+			usage(argv[0]);
+			exit(EXIT_FAILURE);
+ #endif
+
+So also compile out the code calling
+selinux_android_file_context_handle() when ANDROID is not set.
+
+Fixes:
+
+make_ext4fs_main.c:155:25: error: implicit declaration of function ‘selinux_android_file_context_handle’ [-Wimplicit-function-declaration]
+
+Upstream: N/A, we're too far from upstream
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ extras/ext4_utils/make_ext4fs_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/extras/ext4_utils/make_ext4fs_main.c b/extras/ext4_utils/make_ext4fs_main.c
+index 17d3735..cb58011 100644
+--- a/extras/ext4_utils/make_ext4fs_main.c
++++ b/extras/ext4_utils/make_ext4fs_main.c
+@@ -149,7 +149,7 @@ int main(int argc, char **argv)
+ 		}
+ 	}
+ 
+-#if !defined(HOST)
++#if !defined(HOST) && defined(ANDROID)
+ 	// Use only if -S option not requested
+ 	if (!sehnd && mountpoint) {
+ 		sehnd = selinux_android_file_context_handle();
+-- 
+2.45.2
+

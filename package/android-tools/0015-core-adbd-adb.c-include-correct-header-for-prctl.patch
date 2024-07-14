@@ -1,0 +1,34 @@
+From c14070011e070d8674cf3578708cbae433090a47 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sun, 14 Jul 2024 13:00:02 +0200
+Subject: [PATCH] core/adbd/adb.c: include correct header for prctl()
+
+As documented by prctl(2), the correct header to include for prctl()
+is <sys/prctl.h>, not <linux/prctl.h>.
+
+Fixes:
+
+core/adbd/adb.c:1256:13: error: implicit declaration of function 'prctl' [-Wimplicit-function-declaration]
+
+Upstream: N/A, we're too far from upstream
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ core/adbd/adb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/core/adbd/adb.c b/core/adbd/adb.c
+index 98b1de1..10f420b 100644
+--- a/core/adbd/adb.c
++++ b/core/adbd/adb.c
+@@ -42,7 +42,7 @@
+ #include "android_filesystem_config.h"
+ #include <linux/capability.h>
+ #include <sys/syscall.h>
+-#include <linux/prctl.h>
++#include <sys/prctl.h>
+ #include <sys/mount.h>
+ #else
+ #include "usb_vendors.h"
+-- 
+2.45.2
+
