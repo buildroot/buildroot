@@ -1,0 +1,52 @@
+From 2b5060146b0890f7f1a63ef891af1358b8cdf9bc Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sun, 14 Jul 2024 12:57:22 +0200
+Subject: [PATCH] core/adbd/adb.c: open code capset()
+
+capset() is apparently implemented by C libraries (at least glibc and
+musl), but not exposed through a header as an official public API.
+
+In addition capset(2) says:
+
+  Note: glibc provides no wrappers for these system calls,
+  necessitating the use of syscall(2)
+
+The lack of a header with a prototype for capset() was not causing any
+problem so far, but GCC 14.x has become stricter on implicit
+declarations, causing the build to fail with:
+
+core/adbd/adb.c:1296:9: error: implicit declaration of function 'capset' [-Wimplicit-function-declaration]
+
+So fix that by open-coding it using syscall() as suggested by the man
+page.
+
+Upstream: N/A, we're too far from upstream
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ core/adbd/adb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/core/adbd/adb.c b/core/adbd/adb.c
+index 7fe6445..98b1de1 100644
+--- a/core/adbd/adb.c
++++ b/core/adbd/adb.c
+@@ -41,6 +41,7 @@
+ #if !ADB_HOST
+ #include "android_filesystem_config.h"
+ #include <linux/capability.h>
++#include <sys/syscall.h>
+ #include <linux/prctl.h>
+ #include <sys/mount.h>
+ #else
+@@ -1293,7 +1294,7 @@ int adb_main(int is_daemon, int server_port)
+         header.pid = 0;
+         cap[CAP_TO_INDEX(CAP_SYS_BOOT)].effective |= CAP_TO_MASK(CAP_SYS_BOOT);
+         cap[CAP_TO_INDEX(CAP_SYS_BOOT)].permitted |= CAP_TO_MASK(CAP_SYS_BOOT);
+-        capset(&header, cap);
++        syscall(SYS_capset, &header, cap);
+ 
+         D("Local port disabled\n");
+     } else {
+-- 
+2.45.2
+

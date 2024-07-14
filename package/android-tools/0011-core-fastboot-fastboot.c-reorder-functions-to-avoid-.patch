@@ -1,0 +1,54 @@
+From 9724d78fda4eb023f83d2fd30e665b436d7a7f97 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sun, 14 Jul 2024 11:41:10 +0200
+Subject: [PATCH] core/fastboot/fastboot.c: reorder functions to avoid implicit
+ definition
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The match_fastboot() function uses match_fastboot_with_serial() but is
+implemented before it, causing an implicit definition. Re-order the
+functions to avoid this.
+
+Fixes:
+
+core/fastboot/fastboot.c:191:12: error: implicit declaration of function ‘match_fastboot_with_serial’ [-Wimplicit-function-declaration]
+
+Upstream: N/A, we're too far from upstream
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ core/fastboot/fastboot.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/core/fastboot/fastboot.c b/core/fastboot/fastboot.c
+index 3de6d7d..9b2c86f 100644
+--- a/core/fastboot/fastboot.c
++++ b/core/fastboot/fastboot.c
+@@ -186,11 +186,6 @@ oops:
+ }
+ #endif
+ 
+-int match_fastboot(usb_ifc_info *info)
+-{
+-    return match_fastboot_with_serial(info, serial);
+-}
+-
+ int match_fastboot_with_serial(usb_ifc_info *info, const char *local_serial)
+ {
+     if(!(vendor_id && (info->dev_vendor == vendor_id)) &&
+@@ -217,6 +212,11 @@ int match_fastboot_with_serial(usb_ifc_info *info, const char *local_serial)
+     return 0;
+ }
+ 
++int match_fastboot(usb_ifc_info *info)
++{
++    return match_fastboot_with_serial(info, serial);
++}
++
+ int list_devices_callback(usb_ifc_info *info)
+ {
+     if (match_fastboot_with_serial(info, NULL) == 0) {
+-- 
+2.45.2
+
