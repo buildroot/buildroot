@@ -16,7 +16,6 @@ LIBASSUAN_CONF_OPTS = \
 LIBASSUAN_CONFIG_SCRIPTS = libassuan-config
 
 HOST_LIBASSUAN_DEPENDENCIES = host-libgpg-error
-HOST_LIBASSUAN_CONFIG_SCRIPTS = libassuan-config
 HOST_LIBASSUAN_CONF_OPTS = --with-gpg-error-prefix=$(HOST_DIR)
 
 # Force the path to "gpgrt-config" (from the libgpg-error package) to
