@@ -1,0 +1,27 @@
+From 85dcf4ca20a60689479bcb143ecf8c0402822abe Mon Sep 17 00:00:00 2001
+From: Mike Frysinger <vapier@gentoo.org>
+Date: Mon, 15 Jul 2024 11:09:18 +0200
+Subject: [PATCH] get prototypes for malloc/exit/strcpy
+
+Upstream: dead
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ dhry.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/dhry.h b/dhry.h
+index 482d343..825ef35 100644
+--- a/dhry.h
++++ b/dhry.h
+@@ -388,6 +388,8 @@
+ /* General definitions: */
+ 
+ #include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
+                 /* for strcpy, strcmp */
+ 
+ #define Null 0 
+-- 
+2.45.2
+

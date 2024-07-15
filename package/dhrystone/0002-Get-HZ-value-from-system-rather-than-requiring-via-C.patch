@@ -1,0 +1,29 @@
+From 7d890402dc5a32a72d5bc0532c87576937c18eb7 Mon Sep 17 00:00:00 2001
+From: Robin Getz <rgetz@blackfin.uclinux.org>
+Date: Mon, 15 Jul 2024 11:07:54 +0200
+Subject: [PATCH] Get HZ value from system rather than requiring via CPPFLAGS
+
+Upstream: dead
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ dhry.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/dhry.h b/dhry.h
+index 1714562..482d343 100644
+--- a/dhry.h
++++ b/dhry.h
+@@ -359,6 +359,10 @@
+                 /* for "times" */
+ #endif
+ 
++#ifndef HZ
++#include <sys/param.h>
++#endif
++
+ #define Mic_secs_Per_Second     1000000.0
+                 /* Berkeley UNIX C returns process times in seconds/HZ */
+ 
+-- 
+2.45.2
+
