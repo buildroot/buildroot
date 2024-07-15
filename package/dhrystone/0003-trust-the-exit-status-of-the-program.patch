@@ -1,0 +1,26 @@
+From acd266448386c805c0afded780a5d7e6903bb485 Mon Sep 17 00:00:00 2001
+From: Robin Getz <rgetz@blackfin.uclinux.org>
+Date: Mon, 15 Jul 2024 11:08:43 +0200
+Subject: [PATCH] trust the exit status of the program
+
+Upstream: dead
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ dhry_1.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/dhry_1.c b/dhry_1.c
+index 97bd30f..358bdc3 100644
+--- a/dhry_1.c
++++ b/dhry_1.c
+@@ -285,6 +285,7 @@ main(int argc, char *argv[])
+     printf ("\n");
+   }
+   
++  exit(0);
+ }
+ 
+ 
+-- 
+2.45.2
+
