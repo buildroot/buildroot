@@ -78,7 +78,6 @@ QT5WEBENGINE_DEPENDENCIES += \
 	libvpx \
 	libxml2 \
 	libxslt \
-	re2 \
 	snappy \
 	webp
 
@@ -104,7 +103,6 @@ QT5WEBENGINE_CONF_OPTS += \
 	-feature-webengine-system-ninja \
 	-feature-webengine-system-nss \
 	-feature-webengine-system-png \
-	-feature-webengine-system-re2 \
 	-feature-webengine-system-snappy \
 	-feature-webengine-system-zlib
 
