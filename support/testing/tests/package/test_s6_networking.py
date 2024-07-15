@@ -28,7 +28,7 @@ class TestS6Networking(infra.basetest.BRTest):
         self.assertEqual(output[1][0:5], "after")
 
         # Test the TCP server and client
-        _, exit_code = self.emulator.run("s6-tcpserver4 127.0.0.1 1024 cat &")
+        _, exit_code = self.emulator.run("s6-tcpserver 127.0.0.1 1024 cat &")
         self.emulator.run("sleep 2")
         cmd = "echo foobar | s6-tcpclient 127.0.0.1 1024 s6-ioconnect -67"
         output, exit_code = self.emulator.run(cmd)
