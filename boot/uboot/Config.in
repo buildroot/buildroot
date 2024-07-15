@@ -136,6 +136,35 @@ config BR2_TARGET_UBOOT_CONFIG_FRAGMENT_FILES
 	  that will be merged to the main U-Boot configuration file.
 endif
 
+config BR2_TARGET_UBOOT_DEFAULT_ENV_FILE
+	string "Text file with default environment"
+	select BR2_TARGET_UBOOT_NEEDS_XXD
+	help
+	  Text file containing the variables to be used as the default
+	  environment in U-Boot.
+
+	  If empty, let U-Boot generate the default enviromnent from the
+	  source code and other U-Boot configuration values, which is
+	  the default behaviour.
+
+	  If set to the path to a file, instructs U-Boot to define the
+	  entire U-Boot default environment from the provided file,
+	  disabling all the default behaviour.
+
+	  From the U-Boot documentation:
+
+	    The format is the same as accepted by the mkenvimage tool,
+	    with lines containing key=value pairs. Blank lines and
+	    lines beginning with '#' are ignored.
+
+	  Based on the USE_DEFAULT_ENV_FILE and DEFAULT_ENV_FILE U-Boot
+	  configuration variables.
+
+	  For more info see:
+	  https://docs.u-boot.org/en/latest/usage/environment.html#external-environment-file
+
+	  Requires U-Boot >= v2018.05.
+
 config BR2_TARGET_UBOOT_NEEDS_DTC
 	bool "U-Boot needs dtc"
 	select BR2_PACKAGE_HOST_DTC
