@@ -48,7 +48,6 @@ LIBGPGME_CONF_OPTS += --disable-linux-getdents
 endif
 
 HOST_LIBGPGME_DEPENDENCIES = host-libassuan host-libgpg-error
-HOST_LIBGPGME_CONFIG_SCRIPTS = gpgme-config
 
 # C++ bindings require a C++11 capable gcc, and -Wsuggest-override support
 # Let's assume the host toolchain always has C++
