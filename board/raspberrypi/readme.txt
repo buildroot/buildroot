@@ -87,6 +87,7 @@ Result of the build
 After building, you should obtain this tree:
 
     output/images/
+    +-- bcm2708-rpi-b-rev1.dtb      [1]
     +-- bcm2708-rpi-b.dtb           [1]
     +-- bcm2708-rpi-b-plus.dtb      [1]
     +-- bcm2708-rpi-cm.dtb          [1]
