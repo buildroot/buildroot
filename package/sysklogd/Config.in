@@ -15,8 +15,18 @@ config BR2_PACKAGE_SYSKLOGD
 
 if BR2_PACKAGE_SYSKLOGD
 
+config BR2_PACKAGE_SYSKLOGD_DNS_DELAY
+	int "Retry DNS delay (sec)"
+	default "60"
+	help
+	  Retry delay (seconds) for attempting to resolve DNS names of
+	  remote syslog servers.  This is the internal retry delay, not
+	  that of the resolver in your C library or DNS cache.
+
+	  Default: 60 seconds
+
 config BR2_PACKAGE_SYSKLOGD_REMOTE_DELAY
-	int "Retry delay (sec)"
+	int "Retry remote delay (sec)"
 	default "180"
 	help
 	  Retry delay (seconds) for sending to remote syslog servers.

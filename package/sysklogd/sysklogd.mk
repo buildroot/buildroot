@@ -16,6 +16,7 @@ SYSKLOGD_CPE_ID_VALID = YES
 SYSKLOGD_CONF_OPTS = \
 	--bindir=/usr/bin \
 	--sbindir=/sbin \
+	--with-dns-delay=$(BR2_PACKAGE_SYSKLOGD_DNS_DELAY) \
 	--with-suspend-time=$(BR2_PACKAGE_SYSKLOGD_REMOTE_DELAY)
 
 # Disable/Enable utilities
