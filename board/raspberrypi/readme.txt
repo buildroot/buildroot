@@ -95,6 +95,7 @@ After building, you should obtain this tree:
     +-- bcm2708-rpi-zero-w.dtb      [1]
     +-- bcm2710-rpi-zero-2-w.dtb    [1]
     +-- bcm2709-rpi-2-b.dtb         [1]
+    +-- bcm2710-rpi-2-b.dtb         [1]
     +-- bcm2710-rpi-3-b.dtb         [1]
     +-- bcm2710-rpi-3-b-plus.dtb    [1]
     +-- bcm2710-rpi-cm3.dtb         [1]
