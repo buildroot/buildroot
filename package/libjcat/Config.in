@@ -10,6 +10,6 @@ config BR2_PACKAGE_LIBJCAT
 
 	  https://github.com/hughsie/libjcat
 
-comment "fwupd needs a toolchain w/ wchar, threads"
+comment "libjcat needs a toolchain w/ wchar, threads"
 	depends on BR2_USE_MMU
 	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS
