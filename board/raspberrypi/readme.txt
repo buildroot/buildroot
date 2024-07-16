@@ -104,6 +104,7 @@ After building, you should obtain this tree:
     +-- bcm2711-rpi-cm4.dtb         [1]
     +-- bcm2711-rpi-cm4s.dtb        [1]
     +-- bcm2712-rpi-5-b.dtb         [1]
+    +-- bcm2712d0-rpi-5-b.dtb       [1]
     +-- boot.vfat
     +-- rootfs.ext4
     +-- rpi-firmware/
