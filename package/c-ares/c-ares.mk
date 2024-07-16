@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-C_ARES_VERSION = 1.27.0
-C_ARES_SITE = https://github.com/c-ares/c-ares/releases/download/cares-1_27_0
+C_ARES_VERSION = 1.32.2
+C_ARES_SITE = https://github.com/c-ares/c-ares/releases/download/v1.32.2
 C_ARES_INSTALL_STAGING = YES
 C_ARES_CONF_OPTS = --with-random=/dev/urandom
 C_ARES_LICENSE = MIT
