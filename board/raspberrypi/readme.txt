@@ -100,6 +100,7 @@ After building, you should obtain this tree:
     +-- bcm2710-rpi-3-b-plus.dtb    [1]
     +-- bcm2710-rpi-cm3.dtb         [1]
     +-- bcm2711-rpi-4-b.dtb         [1]
+    +-- bcm2711-rpi-400.dtb         [1]
     +-- bcm2711-rpi-cm4.dtb         [1]
     +-- bcm2712-rpi-5-b.dtb         [1]
     +-- boot.vfat
