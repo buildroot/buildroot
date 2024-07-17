@@ -6,7 +6,7 @@
 DAEMON="sshd"
 PIDFILE="/var/run/$DAEMON.pid"
 
-# Make sure the ssh-keygen progam exists
+# Make sure the ssh-keygen program exists
 [ -f /usr/bin/ssh-keygen ] || exit 0
 
 umask 077
