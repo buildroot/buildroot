@@ -1,0 +1,38 @@
+From e93ef3feb69994e3aa4e0ab66ccd66139b097e49 Mon Sep 17 00:00:00 2001
+From: Thomas Devoogdt <thomas.devoogdt@barco.com>
+Date: Thu, 18 Jul 2024 12:16:51 +0200
+Subject: [PATCH] meson: only require cpp for windows
+
+Allow to compile cairo without c++ toolchain.
+
+Fixes:
+ - http://autobuild.buildroot.net/results/98b62ab7ed3092f9f9085f723baf7d6267451e5c/
+
+Upstream: https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/573
+Signed-off-by: Thomas Devoogdt <thomas.devoogdt@barco.com>
+---
+ meson.build | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 9100152ee..297482b03 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1,4 +1,4 @@
+-project('cairo', 'c', 'cpp',
++project('cairo', 'c',
+   meson_version: '>= 0.59.0',
+   version: run_command(find_program('version.py'), check: true).stdout().strip(),
+   default_options: ['warning_level=2'],
+@@ -489,6 +489,8 @@ if host_machine.system() == 'darwin' and not get_option('quartz').disabled()
+ endif
+ 
+ if host_machine.system() == 'windows'
++  add_languages('cpp')
++
+   add_project_arguments('-DWIN32_LEAN_AND_MEAN', '-DNOMINMAX', language: ['c', 'cpp'])
+ 
+   win32_extra_deps = [
+-- 
+2.45.2
+
