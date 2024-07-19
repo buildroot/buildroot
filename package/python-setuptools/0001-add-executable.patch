@@ -1,4 +1,4 @@
-From 975379e84ae3229fac94cd0499fd4ba7baa574ba Mon Sep 17 00:00:00 2001
+From a35dffe950d7bb0f7988d78ec4a963c5ce67e3c8 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?J=C3=B6rg=20Krause?= <joerg.krause@embedded.rocks>
 Date: Mon, 7 Dec 2015 01:14:33 +0100
 Subject: [PATCH] add executable
@@ -22,10 +22,10 @@ Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
  2 files changed, 11 insertions(+)
 
 diff --git a/setuptools/command/install.py b/setuptools/command/install.py
-index 606cce9d8..f158e1b51 100644
+index c49fcda93..851950522 100644
 --- a/setuptools/command/install.py
 +++ b/setuptools/command/install.py
-@@ -16,6 +16,7 @@ class install(orig.install):
+@@ -18,6 +18,7 @@ class install(orig.install):
      """Use easy_install to install the package, w/dependencies"""
  
      user_options = orig.install.user_options + [
@@ -33,19 +33,19 @@ index 606cce9d8..f158e1b51 100644
          ('old-and-unmanageable', None, "Try not to use this!"),
          (
              'single-version-externally-managed',
-@@ -48,6 +49,7 @@ class install(orig.install):
+@@ -50,6 +51,7 @@ class install(orig.install):
          )
  
-         orig.install.initialize_options(self)
+         super().initialize_options()
 +        self.executable = None
          self.old_and_unmanageable = None
          self.single_version_externally_managed = None
  
 diff --git a/setuptools/command/install_scripts.py b/setuptools/command/install_scripts.py
-index 72b2e45cb..146a0bb58 100644
+index f44281b49..9e91cad87 100644
 --- a/setuptools/command/install_scripts.py
 +++ b/setuptools/command/install_scripts.py
-@@ -12,6 +12,13 @@ class install_scripts(orig.install_scripts):
+@@ -14,6 +14,13 @@ class install_scripts(orig.install_scripts):
      def initialize_options(self):
          orig.install_scripts.initialize_options(self)
          self.no_ep = False
@@ -57,9 +57,9 @@ index 72b2e45cb..146a0bb58 100644
 +                ('executable','executable')
 +        )
  
-     def run(self):
+     def run(self) -> None:
          self.run_command("egg_info")
-@@ -38,6 +45,8 @@ class install_scripts(orig.install_scripts):
+@@ -40,6 +47,8 @@ class install_scripts(orig.install_scripts):
          )
          bs_cmd = self.get_finalized_command('build_scripts')
          exec_param = getattr(bs_cmd, 'executable', None)
