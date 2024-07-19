@@ -136,9 +136,16 @@ config BR2_TARGET_UBOOT_CONFIG_FRAGMENT_FILES
 	  that will be merged to the main U-Boot configuration file.
 endif
 
+# Hidden boolean that allows to select BR2_TARGET_UBOOT_NEEDS_XXD when
+# needed.
+config BR2_TARGET_UBOOT_DEFAULT_ENV_FILE_ENABLED
+	bool
+	default y if BR2_TARGET_UBOOT_DEFAULT_ENV_FILE != ""
+	select BR2_TARGET_UBOOT_NEEDS_XXD
+
 config BR2_TARGET_UBOOT_DEFAULT_ENV_FILE
 	string "Text file with default environment"
-	select BR2_TARGET_UBOOT_NEEDS_XXD
+	depends on BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG
 	help
 	  Text file containing the variables to be used as the default
 	  environment in U-Boot.
