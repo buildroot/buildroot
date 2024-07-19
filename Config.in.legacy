@@ -146,6 +146,20 @@ endif
 
 comment "Legacy options removed in 2024.08"
 
+config BR2_x86_knightslanding
+	bool "knightslanding x86 architecture support dropped"
+	select BR2_LEGACY
+	help
+	  GCC 14.x has marked this architecture as obsolete, and emits
+	  a warning causing build failures.
+
+config BR2_x86_knightsmill
+	bool "knightsmill x86 architecture support dropped"
+	select BR2_LEGACY
+	help
+	  GCC 14.x has marked this architecture as obsolete, and emits
+	  a warning causing build failures.
+
 config BR2_PACKAGE_DVB_APPS
 	bool "dvb-apps package removed"
 	select BR2_LEGACY
