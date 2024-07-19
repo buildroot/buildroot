@@ -33,12 +33,13 @@ define TIPIDEE_INSTALL_TARGET_CMDS
 	rm -f $(TARGET_DIR)/libexec/tipidee-config-preprocess
 endef
 
-ifneq ($(BR2_PACKAGE_TIPIDEE_CONFIG_FILE),)
+TIPIDEE_CONFIG_FILE = $(call qstrip, $(BR2_PACKAGE_TIPIDEE_CONFIG_FILE))
+ifneq ($(TIPIDEE_CONFIG_FILE),)
 TIPIDEE_DEPENDENCIES += host-tipidee
 
 define TIPIDEE_INSTALL_CONFIG
 	$(HOST_DIR)/bin/tipidee-config \
-		-i $(call qstrip, $(BR2_PACKAGE_TIPIDEE_CONFIG_FILE)) \
+		-i "$(TIPIDEE_CONFIG_FILE)" \
 		-o $(TARGET_DIR)/etc/tipidee.conf.cdb
 endef
 TIPIDEE_POST_INSTALL_TARGET_HOOKS += TIPIDEE_INSTALL_CONFIG
