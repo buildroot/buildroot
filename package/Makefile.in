@@ -149,6 +149,15 @@ endif
 
 TARGET_LDFLAGS = $(call qstrip,$(BR2_TARGET_LDFLAGS))
 
+# musl's dynamic loader doesn't support DT_TEXTREL, which results in a runtime
+# crash if it gets used. The "-z text" linker option issues a build-time error
+# when DT_TEXREL is used, so we capture the problem earlier.
+#
+# See also: https://www.openwall.com/lists/musl/2020/09/25/4
+ifeq ($(BR2_TOOLCHAIN_USES_MUSL):$(BR2_STATIC_LIBS),y:)
+TARGET_LDFLAGS += -Wl,-z,text
+endif
+
 # By design, _FORTIFY_SOURCE requires gcc optimization to be enabled.
 # Therefore, we need to pass _FORTIFY_SOURCE and the optimization level
 # through the same mechanism, i.e currently through CFLAGS. Passing
