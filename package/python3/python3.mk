@@ -57,6 +57,12 @@ else
 HOST_PYTHON3_CONF_ENV += py_cv_module__bz2=n/a
 endif
 
+ifeq ($(BR2_PACKAGE_HOST_PYTHON3_XZ),y)
+HOST_PYTHON3_DEPENDENCIES += host-xz
+else
+HOST_PYTHON3_CONF_ENV += py_cv_module__lzma=n/a
+endif
+
 ifeq ($(BR2_PACKAGE_HOST_PYTHON3_CURSES),y)
 HOST_PYTHON3_DEPENDENCIES += host-ncurses
 else
