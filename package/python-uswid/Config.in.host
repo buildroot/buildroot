@@ -1,0 +1,8 @@
+config BR2_PACKAGE_HOST_PYTHON_USWID
+	bool "host python-uswid"
+	select BR2_PACKAGE_HOST_PYTHON3
+	select BR2_PACKAGE_HOST_PYTHON3_XZ
+	help
+	  A tiny tool for embedding CoSWID tags in EFI binaries.
+
+	  https://github.com/hughsie/python-uswid
