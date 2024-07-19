@@ -1,0 +1,44 @@
+From 88b73eedcfa0fc58aee2555377e6f7d4de153282 Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Fri, 3 Feb 2023 11:48:35 -0800
+Subject: [PATCH] Undef _TIME_BITS along with _FILE_OFFSET_BITS on Linux
+
+On 32-bit glibc>=2.34 systems using 64bit time_t build fails because
+_FILE_OFFSET_BITS is undefined here but _TIME_BITS is still set to 64
+
+Fixes
+
+```
+/usr/include/features-time64.h:26:5: error: "_TIME_BITS=64 is allowed
+ only with _FILE_OFFSET_BITS=64"
+| #   error "_TIME_BITS=64 is allowed only with _FILE_OFFSET_BITS=64"
+|     ^
+| 1 error generated.
+```
+
+Reviewed By: thesamesam, MaskRay
+
+Differential Revision: https://reviews.llvm.org/D140812
+
+Upstream: https://github.com/llvm/llvm-project/commit/26800a2c7e7996dc773b4e990dd5cca41c45e1a9
+Upstream: https://gcc.gnu.org/git/?p=gcc.git;a=commit;h=d53b3d94aaf211ffb2159614f5aaaf03ceb861cc
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ .../sanitizer_common/sanitizer_platform_limits_posix.cpp         | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.cpp b/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.cpp
+index bcbd143d19d..1b23898b374 100644
+--- a/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.cpp
++++ b/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.cpp
+@@ -18,6 +18,7 @@
+ // depends on _FILE_OFFSET_BITS setting.
+ // To get this "true" dirent definition, we undefine _FILE_OFFSET_BITS below.
+ #undef _FILE_OFFSET_BITS
++#undef _TIME_BITS
+ #endif
+ 
+ // Must go after undef _FILE_OFFSET_BITS.
+-- 
+2.45.2
+
