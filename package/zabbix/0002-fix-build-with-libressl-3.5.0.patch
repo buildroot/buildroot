@@ -30,7 +30,7 @@ Fixes:
  - http://autobuild.buildroot.org/results/acdfcb17b39d438ccf5e4621707a10f60577d233
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
-[Upstream status: not sent (no feedback on first patch)]
+Upstream: not sent (no feedback on first patch)
 ---
  include/zbxcomms.h      | 3 ++-
  src/libs/zbxcomms/tls.c | 5 +++--
@@ -54,9 +54,9 @@ diff --git a/src/libs/zbxcomms/tls.c b/src/libs/zbxcomms/tls.c
 index 54ab0a6ef4..bd4075b3e4 100644
 --- a/src/libs/zbxcomms/tls.c
 +++ b/src/libs/zbxcomms/tls.c
-@@ -30,8 +30,9 @@
- #include "zbxstr.h"
- #include "zbxtime.h"
+@@ -28,8 +28,9 @@
+ #include "log.h"
+ #include "zbxcrypto.h"
  
 -#if defined(HAVE_OPENSSL) && OPENSSL_VERSION_NUMBER < 0x1010000fL || defined(LIBRESSL_VERSION_NUMBER)
 -/* for OpenSSL 1.0.1/1.0.2 (before 1.1.0) or LibreSSL */
