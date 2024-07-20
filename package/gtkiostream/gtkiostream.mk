@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-GTKIOSTREAM_VERSION = v1.8.0
-GTKIOSTREAM_SITE = $(call github,flatmax,gtkiostream,$(GTKIOSTREAM_VERSION))
+GTKIOSTREAM_VERSION = 1.8.0
+GTKIOSTREAM_SITE = $(call github,flatmax,gtkiostream,v$(GTKIOSTREAM_VERSION))
 GTKIOSTREAM_LICENSE = GPL-2.0+
 GTKIOSTREAM_LICENSE_FILES = gpl.txt
 
