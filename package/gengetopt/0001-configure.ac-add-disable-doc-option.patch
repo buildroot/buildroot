@@ -1,22 +1,22 @@
-From 250bee9e02546846d70dbe88ac36bb83c6a7ebdf Mon Sep 17 00:00:00 2001
+From e3fe8db2b67cdb18e1a2a6765644c8cc476d0b0a Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Sun, 22 Sep 2019 09:27:24 +0200
-Subject: [PATCH] configure.ac: add --disable-doc option
+Subject: configure.ac: add --disable-doc option
 
 Add --disable-doc option to allow the user to disable documentation
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
-[Sent upstream: https://savannah.gnu.org/bugs/index.php?56931]
+Upstream: https://git.savannah.gnu.org/cgit/gengetopt.git/commit/?id=e3fe8db2b67cdb18e1a2a6765644c8cc476d0b0a
 ---
  Makefile.am  | 6 +++++-
  configure.ac | 7 +++++++
  2 files changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.am b/Makefile.am
-index dbb5719..2db307a 100644
+index 1f184c2..76ac21a 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -18,6 +18,10 @@
+@@ -18,7 +18,11 @@
  ACLOCAL_AMFLAGS = -I m4 -I gl/m4
  
  EXTRA_DIST = configure TODO LICENSE gl/m4/gnulib-cache.m4
@@ -28,6 +28,7 @@ index dbb5719..2db307a 100644
 +endif
  
  gengetoptdoc_DATA = ChangeLog COPYING NEWS THANKS INSTALL README LICENSE
+ 
 diff --git a/configure.ac b/configure.ac
 index 0ee89db..915706c 100644
 --- a/configure.ac
@@ -47,5 +48,5 @@ index 0ee89db..915706c 100644
  	[gengen],
  	[  --with-gengen=mygengen       gengen to use],
 -- 
-2.23.0
+cgit v1.1
 
