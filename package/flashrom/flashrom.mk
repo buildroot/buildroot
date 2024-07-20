@@ -4,14 +4,12 @@
 #
 ################################################################################
 
-FLASHROM_VERSION = 1.3.0
-FLASHROM_SOURCE = flashrom-v$(FLASHROM_VERSION).tar.bz2
-FLASHROM_SITE = https://download.flashrom.org/releases
+FLASHROM_VERSION = 1.4.0-rc2
+FLASHROM_SITE = $(call github,flashrom,flashrom,v$(FLASHROM_VERSION))
 FLASHROM_LICENSE = GPL-2.0+
 FLASHROM_LICENSE_FILES = COPYING
 FLASHROM_INSTALL_STAGING = YES
 FLASHROM_CONF_OPTS = \
-	-Dclassic_cli=enabled \
 	-Dclassic_cli_print_wiki=disabled \
 	-Dich_descriptors_tool=enabled \
 	-Dtests=disabled \
@@ -79,5 +77,11 @@ endif
 endif
 
 FLASHROM_CONF_OPTS += -Dprogrammer=$(subst $(space),$(comma),$(strip $(FLASHROM_PROGRAMMERS)))
+
+ifeq ($(BR2_SHARED_LIBS),)
+FLASHROM_CONF_OPTS += -Dclassic_cli=enabled
+else
+FLASHROM_CONF_OPTS += -Dclassic_cli=disabled
+endif
 
 $(eval $(meson-package))
