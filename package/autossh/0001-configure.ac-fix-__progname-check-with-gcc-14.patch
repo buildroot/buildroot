@@ -1,0 +1,52 @@
+From 3a74eff481f37975e04f00db4923b1c16f93497d Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 20 Jul 2024 16:06:37 +0200
+Subject: [PATCH] configure.ac: fix __progname check with gcc >= 14
+
+Include stdio.h to avoid that __progname check wrongly returns that
+the function is unavailable with gcc >= 14 which enables
+-Werror=implicit-function-declaration
+(https://gcc.gnu.org/gcc-14/porting_to.html):
+
+configure:5231: checking if libc defines __progname
+configure:5249: /home/autobuild/autobuild/instance-7/output-1/host/bin/sh4-buildroot-linux-musl-gcc -o conftest -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -Os -g0  -static -Wall -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -static conftest.c  >&5
+conftest.c: In function 'main':
+conftest.c:73:27: error: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   73 |  extern char *__progname; printf("%s", __progname);
+      |                           ^~~~~~
+conftest.c:1:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    1 | /* confdefs.h */
+conftest.c:73:27: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   73 |  extern char *__progname; printf("%s", __progname);
+      |                           ^~~~~~
+conftest.c:73:27: note: include '<stdio.h>' or provide a declaration of 'printf'
+
+resulting in the following static build failure:
+
+/home/autobuild/autobuild/instance-7/output-1/host/lib/gcc/sh4-buildroot-linux-musl/14.1.0/../../../../sh4-buildroot-linux-musl/bin/ld: /home/autobuild/autobuild/instance-7/output-1/host/sh4-buildroot-linux-musl/sysroot/lib/libc.a(libc.o):(.bss.__progname+0x0): multiple definition of `__progname'; autossh.o:(.bss+0x120): first defined here
+
+Fixes:
+ - http://autobuild.buildroot.org/results/5d80a8096d0f5529cbd86903a74f3bab3d230f4a
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/Autossh/autossh/pull/9
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 4bb9380..dadb523 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -132,7 +132,7 @@ AC_CHECK_LIB(socket, connect)
+ # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ AC_CACHE_CHECK([if libc defines __progname], ac_cv_libc_defines___progname, [
+-	AC_TRY_LINK([],
++	AC_TRY_LINK([ #include <stdio.h> ],
+ 		[ extern char *__progname; printf("%s", __progname); ],
+ 		[ ac_cv_libc_defines___progname="yes" ],
+ 		[ ac_cv_libc_defines___progname="no" ]
+-- 
+2.43.0
+
