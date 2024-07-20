@@ -16,6 +16,9 @@ OPENSSH_LICENSE_FILES = LICENCE
 # 0001-Improve-detection-of-fzero-call-used-regs-used.patch
 OPENSSH_AUTORECONF = YES
 
+# 0002-sshsigdie-async-signal-unsafe.patch
+OPENSSH_IGNORE_CVES += CVE-2024-6387
+
 OPENSSH_CONF_ENV = \
 	LD="$(TARGET_CC)" \
 	LDFLAGS="$(TARGET_CFLAGS)" \
