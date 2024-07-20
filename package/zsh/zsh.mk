@@ -13,6 +13,8 @@ ZSH_CONF_ENV = zsh_cv_sys_nis=no zsh_cv_sys_nis_plus=no
 ZSH_LICENSE = MIT-like
 ZSH_LICENSE_FILES = LICENCE
 ZSH_CPE_ID_VENDOR = zsh
+# 0001-52383-Avoid-incompatible-pointer-types-in-terminfo-global-variable.patch
+ZSH_AUTORECONF = YES
 
 # zsh uses TRY_RUN to determine these
 ZSH_CONF_OPTS += \
