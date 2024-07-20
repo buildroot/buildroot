@@ -15,7 +15,8 @@ FLASHROM_CONF_OPTS = \
 	-Dclassic_cli_print_wiki=disabled \
 	-Dich_descriptors_tool=enabled \
 	-Dtests=disabled \
-	-Duse_internal_dmi=true
+	-Duse_internal_dmi=true \
+	-Dwerror=false
 
 FLASHROM_PROGRAMMERS = \
 	buspirate_spi \
