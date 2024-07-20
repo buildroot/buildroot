@@ -1,0 +1,116 @@
+From bbc43ca6ae0bec4f64e69c9cd4c967005d6470eb Mon Sep 17 00:00:00 2001
+From: Mitchell Blank Jr <mitch@bodyfour.com>
+Date: Mon, 21 Dec 2020 12:05:19 +0000
+Subject: [PATCH] Fix configure failures with Xcode12
+
+Changes are needed becuase Xcode12 includes a default of
+-Werror,-Wimplicit-function-declaration which means that
+even something like calling "exit(0);" is a compile failure
+if you haven't done a "#include <stdlib.h>" first (as C99
+requires, but most other compilers will just warn about)
+
+I don't know if the "long long reliability test 2" test which
+tries to provoke a crash on a particular gcc 3.3 build still
+does what it was originally intended to do with my change.
+Of course, I doubt anyone has tried to use that compiler in
+years.
+
+Fixes #290
+
+Upstream: https://github.com/wbhart/mpir/commit/bbc43ca6ae0bec4f64e69c9cd4c967005d6470eb
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ acinclude.m4 | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
+
+diff --git a/acinclude.m4 b/acinclude.m4
+index 91c35bc23..620a629ef 100644
+--- a/acinclude.m4
++++ b/acinclude.m4
+@@ -589,9 +589,9 @@ extern
+ #endif
+ __inline__ t1 e(t2 rp,t2 up,int n,t1 v0)
+ {t1 c,x,r;int i;if(v0){c=1;for(i=1;i<n;i++){x=up[i];r=x+1;rp[i]=r;}}return c;}
+-f(){static const struct{t1 n;t1 src[9];t1 want[9];}d[]={{1,{0},{1}},};t1 got[9];int i;
++void f(){static const struct{t1 n;t1 src[9];t1 want[9];}d[]={{1,{0},{1}},};t1 got[9];int i;
+ for(i=0;i<1;i++){if(e(got,got,9,d[i].n)==0)h();g(i,d[i].src,d[i].n,got,d[i].want,9);if(d[i].n)h();}}
+-h(){}g(){}
++void h(){} void g(){}
+ #else
+ int dummy;
+ #endif
+@@ -603,8 +603,9 @@ GMP_PROG_CC_WORKS_PART([$1], [long long reliability test 2],
+    1666 to get an ICE with -O1 -mpowerpc64.  */
+ 
+ #ifdef __GNUC__
+-f(int u){int i;long long x;x=u?~0:0;if(x)for(i=0;i<9;i++);x&=g();if(x)g();}
+-g(){}
++extern int g();
++void f(int u){int i;long long x;x=u?~0:0;if(x)for(i=0;i<9;i++);x&=g();if(x)g();}
++int g(){return 0;}
+ #else
+ int dummy;
+ #endif
+@@ -3323,11 +3324,11 @@ check (va_alist)
+   ret = vsnprintf (buf, 4, fmt, ap);
+ 
+   if (strcmp (buf, "hel") != 0)
+-    exit (1);
++    return 1;
+ 
+   /* allowed return values */
+   if (ret != -1 && ret != 3 && ret != 11)
+-    exit (2);
++    return 2;
+ 
+   return 0;
+ }
+@@ -3336,7 +3337,7 @@ int
+ main ()
+ {
+ $i
+-  exit (0);
++  return 0;
+ }
+ ],
+       [:],
+@@ -3469,7 +3470,7 @@ cat >conftest.c <<EOF
+ int
+ main ()
+ {
+-  exit(0);
++  return 0;
+ }
+ EOF
+ gmp_compile="$1 conftest.c"
+@@ -3543,7 +3544,7 @@ AC_CACHE_CHECK([for build system executable suffix],
+ int
+ main ()
+ {
+-  exit (0);
++  return 0;
+ }
+ EOF
+ for i in .exe ,ff8 ""; do
+@@ -3577,7 +3578,7 @@ AC_CACHE_CHECK([whether build system compiler is ANSI],
+ int
+ main (int argc, char *argv[])
+ {
+-  exit(0);
++  return 0;
+ }
+ EOF
+ gmp_compile="$CC_FOR_BUILD conftest.c"
+@@ -3608,10 +3609,11 @@ AC_DEFUN([GMP_CHECK_LIBM_FOR_BUILD],
+ AC_CACHE_CHECK([for build system compiler math library],
+                gmp_cv_check_libm_for_build,
+ [cat >conftest.c <<EOF
++#include <math.h>
+ int
+ main ()
+ {
+-  exit(0);
++  return 0;
+ }
+ double d;
+ double
