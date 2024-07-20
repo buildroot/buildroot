@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-AUGEAS_VERSION = 1.12.0
-AUGEAS_SITE = http://download.augeas.net
+AUGEAS_VERSION = 1.14.1
+AUGEAS_SITE = https://github.com/hercules-team/augeas/releases/download/release-$(AUGEAS_VERSION)
 AUGEAS_INSTALL_STAGING = YES
 AUGEAS_LICENSE = LGPL-2.1+
 AUGEAS_LICENSE_FILES = COPYING
