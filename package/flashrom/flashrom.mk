@@ -65,7 +65,6 @@ FLASHROM_PROGRAMMERS += \
 	nicintel_eeprom \
 	nicintel_spi \
 	ogp_spi \
-	satamv \
 	satasii
 
 ifeq ($(BR2_i386)$(BR2_x86_64),y)
@@ -74,7 +73,8 @@ FLASHROM_PROGRAMMERS += \
 	atapromise \
 	nic3com \
 	nicnatsemi \
-	nicrealtek
+	nicrealtek \
+	satamv
 endif
 endif
 
