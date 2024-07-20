@@ -4,6 +4,7 @@ config BR2_PACKAGE_OPENSWAN
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_4 # iproute2
 	select BR2_PACKAGE_GMP
 	select BR2_PACKAGE_IPROUTE2
+	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	help
 	  Openswan is an implementation of IPsec for Linux
 
