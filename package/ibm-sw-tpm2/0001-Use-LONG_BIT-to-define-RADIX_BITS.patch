@@ -14,52 +14,49 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Signed-off-by: Vincent Fazio <vfazio@gmail.com>
 [Bernd: rebased for git rev 5452af422edeff70fcae8ea99dd28a0922051d7b]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[Fabrice: rebase for rev183-2024-03-27]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  src/LibSupport.h     | 21 +++------------------
  src/TcpServerPosix.c |  1 +
  src/makefile         |  2 ++
  3 files changed, 6 insertions(+), 18 deletions(-)
 
-diff --git a/src/LibSupport.h b/src/LibSupport.h
+diff --git a/src/tpm_radix.h b/src/tpm_radix.h
 index 5055560..48b1e16 100644
---- a/src/LibSupport.h
-+++ b/src/LibSupport.h
-@@ -64,32 +64,9 @@
- #ifndef _LIB_SUPPORT_H_
- #define _LIB_SUPPORT_H_
- 
--/* kgold added power and s390 */
+--- a/src/tpm_radix.h
++++ b/src/tpm_radix.h
+@@ -61,27 +61,9 @@
+ //** Introduction
+ // Common defines for supporting large numbers and cryptographic buffer sizing.
+ //*********************
 -#ifndef RADIX_BITS
--#   if defined(__x86_64__) || defined(__x86_64)				\
--    || defined(__amd64__) || defined(__amd64)				\
--    || defined(_WIN64) || defined(_M_X64)		 		\
--    || defined(_M_ARM64) || defined(__aarch64__) 			\
--    || defined(__powerpc64__) || defined(__PPC64__) || defined(__ppc64__) \
--    || defined(__s390x__)
--#       define RADIX_BITS                      64
--#   elif defined(__i386__) || defined(__i386) || defined(i386)		\
--    || defined(_WIN32) || defined(_M_IX86)				\
--    || defined(_M_ARM) || defined(__arm__) || defined(__thumb__)	\
--    || defined(__powerpc__) || defined(__PPC__)
--#       define RADIX_BITS                      32
--#   elif defined(__riscv) || defined(__riscv__)
--#       if __riscv_xlen == 32
--#            define RADIX_BITS                 32
--#       elif __riscv_xlen == 64
--#            define RADIX_BITS                 64
--#       else
--#            error Unsupported __riscv_xlen value
--#       endif
--#   else
--#       error Unable to determine RADIX_BITS from compiler environment
--#   endif
--#endif // RADIX_BITS
+-#  if defined(__x86_64__) || defined(__x86_64) || defined(__amd64__)	\
+-    || defined(__amd64) || defined(_WIN64) || defined(_M_X64) || defined(_M_ARM64) \
+-    || defined(__aarch64__) || defined(__PPC64__) || defined(__s390x__) \
+-    || defined(__powerpc64__) || defined(__ppc64__)
+-#    define RADIX_BITS 64
+-#  elif defined(__i386__) || defined(__i386) || defined(i386) || defined(_WIN32) \
+-    || defined(_M_IX86)
+-#    define RADIX_BITS 32
+-#  elif defined(_M_ARM) || defined(__arm__) || defined(__thumb__)
+-#    define RADIX_BITS 32
+-#  elif defined(__riscv)
+-// __riscv and __riscv_xlen are standardized by the RISC-V community and should be available
+-// on any compliant compiler.
+-//
+-// https://github.com/riscv-non-isa/riscv-toolchain-conventions
+-#    define RADIX_BITS __riscv_xlen
+-#  else
+-#    error Unable to determine RADIX_BITS from compiler environment
+-#  endif
+-#endif  // RADIX_BITS
 +#include <limits.h>
 +
 +#define RADIX_BITS LONG_BIT
  
- // These macros use the selected libraries to the proper include files.
- #define LIB_QUOTE(_STRING_) #_STRING_
+ #if RADIX_BITS == 64
+ #  define RADIX_BYTES 8
 diff --git a/src/TcpServerPosix.c b/src/TcpServerPosix.c
 index cad0402..6293cdd 100644
 --- a/src/TcpServerPosix.c
