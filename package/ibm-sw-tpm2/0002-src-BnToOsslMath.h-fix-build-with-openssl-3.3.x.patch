@@ -1,0 +1,40 @@
+From 1b5d9eb91f0d24d09d711ef839d301ee8b640d61 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 21 Jul 2024 09:08:39 +0200
+Subject: [PATCH] src/BnToOsslMath.h: fix build with openssl 3.3.x
+
+Fix the following build failure with openssl 3.3.x:
+
+In file included from BnValues.h:327,
+                 from Global.h:80,
+                 from Tpm.h:78,
+                 from AuditCommands.c:62:
+TpmToOsslMath.h:83:5: error: #error Untested OpenSSL version
+   83 | #   error Untested OpenSSL version
+      |     ^~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/2fb5e1cb792fe25ef860ff8111622cd1ff3770bf
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/kgoldman/ibmswtpm2/pull/15
+---
+ src/BnToOsslMath.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/BnToOsslMath.h b/src/BnToOsslMath.h
+index df4bcfb..72939ea 100644
+--- a/src/BnToOsslMath.h
++++ b/src/BnToOsslMath.h
+@@ -77,7 +77,7 @@
+ #include <openssl/ec.h>
+ #include <openssl/bn.h>
+ 
+-#if OPENSSL_VERSION_NUMBER >= 0x30200ff0L
++#if OPENSSL_VERSION_NUMBER >= 0x30300ff0L
+ // Check the bignum_st definition against the one below and either update the
+ // version check or provide the new definition for this version.
+ #  error Untested OpenSSL version
+-- 
+2.43.0
+
