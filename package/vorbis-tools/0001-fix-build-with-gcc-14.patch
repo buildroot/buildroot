@@ -1,0 +1,51 @@
+From f4a31fe975ea37537f39ace4420aee893b7e0b1a Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 21 Jul 2024 21:57:38 +0200
+Subject: [PATCH] fix build with gcc >= 14
+
+Add missing includes to avoid the following build failure with gcc >=
+14:
+
+codec_skeleton.c: In function 'skeleton_process_fisbone_message_header':
+codec_skeleton.c:119:9: error: implicit declaration of function 'utf8_decode' [-Wimplicit-function-declaration]
+  119 |     if (utf8_decode(header, &decoded) < 0) {
+      |         ^~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/bb5d56d836e7d0f2a62daa9954878ad6e0b190ed
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/xiph/vorbis-tools/pull/48
+---
+ ogginfo/codec_skeleton.c | 2 ++
+ share/utf8.c             | 1 +
+ 2 files changed, 3 insertions(+)
+
+diff --git a/ogginfo/codec_skeleton.c b/ogginfo/codec_skeleton.c
+index a27f8da..f906f8c 100644
+--- a/ogginfo/codec_skeleton.c
++++ b/ogginfo/codec_skeleton.c
+@@ -28,6 +28,8 @@
+ 
+ #include "private.h"
+ 
++#include "utf8.h"
++
+ typedef struct {
+     bool supported;
+     uint16_t version_major;
+diff --git a/share/utf8.c b/share/utf8.c
+index be378d1..e819b67 100644
+--- a/share/utf8.c
++++ b/share/utf8.c
+@@ -28,6 +28,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
++#include "charset.h"
+ #include "utf8.h"
+ 
+ 
+-- 
+2.43.0
+
