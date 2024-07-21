@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MXT_APP_VERSION = 1.36
+MXT_APP_VERSION = 1.38
 MXT_APP_SITE = $(call github,atmel-maxtouch,mxt-app,v$(MXT_APP_VERSION))
 MXT_APP_LICENSE = BSD-2-Clause
 MXT_APP_LICENSE_FILES = LICENSE
