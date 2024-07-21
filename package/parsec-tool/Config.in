@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PARSEC_TOOL
+	bool "parsec-tool"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_RUSTC
+	help
+	  The Parsec Command Line Interface
+	  This tool can be used to communicate with the PARSEC service.
+
+	  https://github.com/parallaxsecond/parsec-tool.git
