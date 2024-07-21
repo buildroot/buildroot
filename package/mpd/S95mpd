@@ -1,33 +1,61 @@
 #!/bin/sh
+#
+# S95mpd	Starts Music Player daemon.
+#
+# shellcheck disable=SC2317 # functions are called via variable
+
+DAEMON="mpd"
+PIDFILE="/var/run/$DAEMON.pid"
 
 # Sanity checks
-test -f /etc/mpd.conf || exit 0
+[ -f /etc/$DAEMON.conf ] || exit 0
 
 start() {
-	printf "Starting mpd: "
-	start-stop-daemon --start --quiet --background --exec /usr/bin/mpd \
-		&& echo "OK" || echo "FAIL"
+	printf "Starting %s: " "$DAEMON"
+	start-stop-daemon --start --pidfile "$PIDFILE" \
+		--exec "/usr/bin/$DAEMON"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
 }
 
 stop() {
-	printf "Stopping mpd: "
-	start-stop-daemon --stop --quiet --pidfile /var/run/mpd.pid \
-		&& echo "OK" || echo "FAIL"
+	printf "Stopping %s: " "$DAEMON"
+	start-stop-daemon --stop --pidfile "$PIDFILE" \
+		--exec "/usr/bin/$DAEMON"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	# $DAEMON deletes its PID file on exit, wait for it to be gone
+	while [ -f "$PIDFILE" ]; do
+		sleep 0.1
+	done
+	return "$status"
+}
+
+restart() {
+	stop
+	start
+}
+
+reload() {
+	restart
 }
 
 case "$1" in
-	start)
-		start
-		;;
-	stop)
-		stop
-		;;
-	restart|reload)
-		stop
-		sleep 1
-		start
+	start|stop|reload|restart)
+		"$1"
 		;;
 	*)
-		echo "Usage: $0 {start|stop|restart}"
+		echo "Usage: $0 {start|stop|reload|restart}"
 		exit 1
 esac
+
+exit $?
