@@ -14,6 +14,8 @@ GNUTLS_LICENSE_FILES = doc/COPYING.LESSER
 
 GNUTLS_DEPENDENCIES = host-pkgconf libtasn1 libunistring nettle
 GNUTLS_CPE_ID_VENDOR = gnu
+# Don't add an optional dependency on tpm2-tss as it creates a
+# circular dependency: tpm2-tss -> libcurl -> gnutls -> tmp2-tss.
 GNUTLS_CONF_OPTS = \
 	--disable-doc \
 	--disable-libdane \
