@@ -27,7 +27,6 @@ COREUTILS_CONF_ENV = ac_cv_c_restrict=no \
 	ac_cv_func_getgroups=yes \
 	ac_cv_func_getgroups_works=yes \
 	ac_cv_func_getloadavg=no \
-	ac_cv_func_strerror_r_char_p=no \
 	ac_cv_func_strnlen_working=yes \
 	ac_cv_have_decl_strerror_r=yes \
 	ac_cv_have_decl_strnlen=yes \
