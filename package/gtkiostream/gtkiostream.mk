@@ -19,15 +19,9 @@ GTKIOSTREAM_DEPENDENCIES = \
 	host-pkgconf
 
 GTKIOSTREAM_CONF_OPTS = \
+	--disable-octave \
 	--disable-tests \
 	$(if $(BR2_TOOLCHAIN_HAS_OPENMP),--disable,--enable)-openmp
-
-ifeq ($(BR2_PACKAGE_OCTAVE),y)
-GTKIOSTREAM_DEPENDENCIES += octave
-GTKIOSTREAM_CONF_OPTS += --enable-octave
-else
-GTKIOSTREAM_CONF_OPTS += --disable-octave
-endif
 
 # For the optional packages below, there's unfortunately no
 # ./configure option to explicitly enable/disable them. They are
