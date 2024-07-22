@@ -42,8 +42,28 @@ else
 EROFS_UTILS_CONF_OPTS += --disable-fuse
 endif
 
+ifeq ($(BR2_PACKAGE_LIBDEFLATE),y)
+EROFS_UTILS_DEPENDENCIES += libdeflate
+EROFS_UTILS_CONF_OPTS += --with-libdeflate
+else
+EROFS_UTILS_CONF_OPTS += --without-libdeflate
+endif
+
+ifeq ($(BR2_PACKAGE_ZLIB),y)
+EROFS_UTILS_DEPENDENCIES += zlib
+EROFS_UTILS_CONF_OPTS += --with-zlib
+else
+EROFS_UTILS_CONF_OPTS += --without-zlib
+endif
+
 HOST_EROFS_UTILS_DEPENDENCIES = host-pkgconf host-util-linux host-lz4 host-xz
-HOST_EROFS_UTILS_CONF_OPTS += --enable-lz4 --enable-lzma --disable-fuse --without-selinux
+HOST_EROFS_UTILS_CONF_OPTS += \
+	--enable-lz4 \
+	--enable-lzma \
+	--disable-fuse \
+	--without-libdeflate \
+	--without-selinux \
+	--without-zlib
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
