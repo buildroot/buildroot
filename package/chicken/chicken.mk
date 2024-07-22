@@ -11,9 +11,19 @@ CHICKEN_LICENSE_FILES = LICENSE
 CHICKEN_CPE_ID_VENDOR = call-cc
 CHICKEN_INSTALL_STAGING = YES
 
-# If ARCH is not set, it attempts to autodiscover. But it is anyway not used.
+# Chicken only uses the "arch" variable for some special-case compile
+# arguments If it's empty, it tries to detect the arch host Filter out
+# values that have an effect, or pass "unused" here
+ifeq ($(NORMALIZED_ARCH),x86_64)
+CHICKEN_ARCH = x86-64
+else ifeq ($(NORMALIZED_ARCH),xtensa)
+CHICKEN_ARCH = xtensa
+else
+CHICKEN_ARCH = unused
+endif
+
 CHICKEN_MAKE_OPTS = \
-	ARCH=unused \
+	ARCH="$(CHICKEN_ARCH)" \
 	C_COMPILER="$(TARGET_CC)" \
 	CXX_COMPILER="$(TARGET_CXX)" \
 	PREFIX=/usr \
