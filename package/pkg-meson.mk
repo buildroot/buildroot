@@ -82,6 +82,14 @@ else
 PKG_MESON_TARGET_FC = /bin/false
 endif
 
+ifeq ($(BR2_STATIC_LIBS),y)
+PKG_MESON_DEFAULT_LIBRARY=static
+else ifeq ($(BR2_SHARED_LIBS),y)
+PKG_MESON_DEFAULT_LIBRARY=shared
+else ifeq ($(BR2_SHARED_STATIC_LIBS),y)
+PKG_MESON_DEFAULT_LIBRARY=both
+endif
+
 # Generates sed patterns for patching the cross-compilation.conf template,
 # since Flags might contain commas the arguments are passed indirectly by
 # variable name (stripped to deal with whitespaces).
@@ -152,7 +160,7 @@ define $(2)_CONFIGURE_CMDS
 	$$(MESON) setup \
 		--prefix=/usr \
 		--libdir=lib \
-		--default-library=$(if $(BR2_STATIC_LIBS),static,shared) \
+		--default-library=$(PKG_MESON_DEFAULT_LIBRARY) \
 		--buildtype=$(if $(BR2_ENABLE_RUNTIME_DEBUG),debug,release) \
 		--cross-file=$$($$(PKG)_SRCDIR)/build/cross-compilation.conf \
 		-Db_pie=false \
