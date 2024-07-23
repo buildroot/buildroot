@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2024.08"
 
+config BR2_PACKAGE_DVB_APPS
+	bool "dvb-apps package removed"
+	select BR2_LEGACY
+	help
+	  The dvb-apps package was removed as it is not maintained
+	  anymore (no commit since 2014).
+
 config BR2_PACKAGE_GAMIN
 	bool "gamin package removed"
 	select BR2_LEGACY
