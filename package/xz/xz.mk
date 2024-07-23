@@ -12,6 +12,8 @@ XZ_CONF_ENV = ac_cv_prog_cc_c99='-std=gnu99'
 XZ_LICENSE = Public Domain, BSD-0-Clause, GPL-2.0+, GPL-3.0+, LGPL-2.1+
 XZ_LICENSE_FILES = COPYING COPYING.0BSD COPYING.GPLv2 COPYING.GPLv3 COPYING.LGPLv2.1
 XZ_CPE_ID_VENDOR = tukaani
+# autoreconf needed to fix a musl static build failure
+XZ_AUTORECONF = YES
 
 # The package is a dependency to ccache so ccache cannot be a dependency
 HOST_XZ_ADD_CCACHE_DEPENDENCY = NO
