@@ -22,6 +22,11 @@ LIBDEX_CONF_OPTS = \
 	-Deventfd=enabled \
 	-Dintrospection=disabled
 
+ifeq ($(BR2_PACKAGE_LIBUCONTEXT),y)
+LIBDEX_DEPENDENCIES += libucontext
+LIBDEX_LDFLAGS += $(TARGET_LDFLAGS) -lucontext
+endif
+
 ifeq ($(BR2_PACKAGE_LIBURING),y)
 LIBDEX_CONF_OPTS += -Dliburing=enabled
 LIBDEX_DEPENDENCIES += liburing
