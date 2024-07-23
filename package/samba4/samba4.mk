@@ -79,13 +79,6 @@ else
 SAMBA4_CONF_OPTS += --disable-avahi
 endif
 
-ifeq ($(BR2_PACKAGE_GAMIN),y)
-SAMBA4_CONF_OPTS += --with-fam
-SAMBA4_DEPENDENCIES += gamin
-else
-SAMBA4_CONF_OPTS += --without-fam
-endif
-
 ifeq ($(BR2_PACKAGE_LIBARCHIVE),y)
 SAMBA4_CONF_OPTS += --with-libarchive
 SAMBA4_DEPENDENCIES += libarchive
@@ -139,6 +132,7 @@ define SAMBA4_CONFIGURE_CMDS
 			--disable-rpath \
 			--disable-rpath-install \
 			--disable-iprint \
+			--without-fam \
 			--without-pam \
 			--without-dmapi \
 			--without-gpgme \

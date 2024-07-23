@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2024.08"
 
+config BR2_PACKAGE_GAMIN
+	bool "gamin package removed"
+	select BR2_LEGACY
+	help
+	  The gamin package was removed as it is not maintained
+	  anymore (no commit since 2016).
+
 config BR2_PACKAGE_CAIRO_SVG
 	bool "cairo svg support"
 	select BR2_LEGACY
