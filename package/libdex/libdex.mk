@@ -15,6 +15,7 @@ LIBDEX_DEPENDENCIES = libglib2
 LIBDEX_CONF_OPTS = \
 	-Ddocs=false \
 	-Dexamples=false \
+	-Dstack-protector=false \
 	-Dsysprof=false \
 	-Dtests=false \
 	-Dvapi=false \
