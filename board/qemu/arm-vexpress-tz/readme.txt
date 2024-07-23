@@ -26,7 +26,7 @@ If you want to emulate more cores, use "-smp {1|2|3|4}" to select the
 number of cores.
 
 Note: "-netdev user,id=vmnic -device virtio-net-device,netdev=vmnic"
-brings network support that is used i.e. in OP-TEE regression tests.
+brings network support that is used e.g. in OP-TEE regression tests.
 
 
 -- Boot Details --
@@ -38,7 +38,7 @@ non-secure bootloader (BL33 stage).
 QEMU natively hosts and loads in RAM the QEMU ARM target device tree. OP-TEE
 reads and modifies its content according to OP-TEE configuration.
 
-Enable TF-A traces from LOG_LEVEL (I.e LOG_LEVEL=40) from
+Enable TF-A traces from LOG_LEVEL (e.g. LOG_LEVEL=40) from
 BR2_TARGET_ARM_TRUSTED_FIRMWARE_ADDITIONAL_VARIABLES.
 
 
@@ -53,7 +53,7 @@ serial interface.
 The OP-TEE OS uses the QEMU second serial interface.
 
 To get the OP-TEE OS traces, append a second -serial argument after
--serial stdio in the QEMU command line. I.e, the following enables 2 serial
+-serial stdio in the QEMU command line. E.g., the following enables 2 serial
 consoles over telnet connections:
 
   cd output/images && ../host/bin/qemu-system-arm \
