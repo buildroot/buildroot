@@ -38,7 +38,7 @@ XZ_CONF_OPTS = \
 	--enable-sandbox=auto \
 	--enable-symbol-versions \
 	--enable-rpath \
-	--enable-largfile \
+	--enable-largefile \
 	--enable-unaligned-access=auto \
 	--disable-unsafe-type-punning \
 	--disable-werror \
