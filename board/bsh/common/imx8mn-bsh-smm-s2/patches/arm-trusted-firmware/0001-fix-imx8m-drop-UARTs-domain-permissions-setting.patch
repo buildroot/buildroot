@@ -1,0 +1,65 @@
+From 0d12fc41d6c68b257de1610a1511144d731f9af4 Mon Sep 17 00:00:00 2001
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Wed, 24 Jul 2024 10:46:49 +0200
+Subject: [PATCH] fix(imx8m): drop UARTs domain permissions setting
+
+The commit d76f012ea8fc0 ("refactor(imx8m): replace magic number with
+enum type") also hardcodes the domain permissions configuration for the
+UARTs, causing a regression for any board using a boot console different
+from UART2. Indeed, previously, the RDC_PDAP_UARTn registers were set to
+the reset value (0xff), meaning all domains were enabled for read and
+write access.
+
+This patch partially reverts that commit to fix the regression.
+
+Fixes: d76f012ea8fc0 ("refactor(imx8m): replace magic number with enum type")
+Change-Id: I2670bf485372f32ef45cebb72a7694a9a800f417
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: https://review.trustedfirmware.org/c/TF-A/trusted-firmware-a/+/30131
+---
+ plat/imx/imx8m/imx8mm/imx8mm_bl31_setup.c | 2 --
+ plat/imx/imx8m/imx8mn/imx8mn_bl31_setup.c | 2 --
+ plat/imx/imx8m/imx8mp/imx8mp_bl31_setup.c | 1 -
+ 3 files changed, 5 deletions(-)
+
+diff --git a/plat/imx/imx8m/imx8mm/imx8mm_bl31_setup.c b/plat/imx/imx8m/imx8mm/imx8mm_bl31_setup.c
+index f6e46eb67bc9..539df931a6a4 100644
+--- a/plat/imx/imx8m/imx8mm/imx8mm_bl31_setup.c
++++ b/plat/imx/imx8m/imx8mm/imx8mm_bl31_setup.c
+@@ -67,8 +67,6 @@ static const struct imx_rdc_cfg rdc[] = {
+ 	RDC_MDAn(RDC_MDA_M4, DID1),
+ 
+ 	/* peripherals domain permission */
+-	RDC_PDAPn(RDC_PDAP_UART4, D1R | D1W),
+-	RDC_PDAPn(RDC_PDAP_UART2, D0R | D0W),
+ 
+ 	/* memory region */
+ 
+diff --git a/plat/imx/imx8m/imx8mn/imx8mn_bl31_setup.c b/plat/imx/imx8m/imx8mn/imx8mn_bl31_setup.c
+index befa7698f912..604ef3cae6dc 100644
+--- a/plat/imx/imx8m/imx8mn/imx8mn_bl31_setup.c
++++ b/plat/imx/imx8m/imx8mn/imx8mn_bl31_setup.c
+@@ -53,8 +53,6 @@ static const struct imx_rdc_cfg rdc[] = {
+ 	RDC_MDAn(RDC_MDA_M7, DID1),
+ 
+ 	/* peripherals domain permission */
+-	RDC_PDAPn(RDC_PDAP_UART4, D1R | D1W),
+-	RDC_PDAPn(RDC_PDAP_UART2, D0R | D0W),
+ 
+ 	/* memory region */
+ 	RDC_MEM_REGIONn(16, 0x0, 0x0, 0xff),
+diff --git a/plat/imx/imx8m/imx8mp/imx8mp_bl31_setup.c b/plat/imx/imx8m/imx8mp/imx8mp_bl31_setup.c
+index ffad3d159e59..5251c28e6ba8 100644
+--- a/plat/imx/imx8m/imx8mp/imx8mp_bl31_setup.c
++++ b/plat/imx/imx8m/imx8mp/imx8mp_bl31_setup.c
+@@ -54,7 +54,6 @@ static const struct imx_rdc_cfg rdc[] = {
+ 	RDC_MDAn(RDC_MDA_M7, DID1),
+ 
+ 	/* peripherals domain permission */
+-	RDC_PDAPn(RDC_PDAP_UART2, D0R | D0W),
+ 
+ 	/* memory region */
+ 
+-- 
+2.43.0
+
