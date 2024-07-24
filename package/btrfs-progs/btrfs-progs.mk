@@ -59,5 +59,7 @@ HOST_BTRFS_PROGS_CONF_OPTS = \
 	--disable-python \
 	--disable-convert
 
+HOST_BTRFS_PROGS_INSTALL_OPTS = udevdir= install
+
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
