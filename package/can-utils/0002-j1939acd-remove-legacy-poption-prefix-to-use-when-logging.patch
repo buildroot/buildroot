@@ -1,0 +1,79 @@
+From d337863d9189501dbbb15467cc3dcba85946a2a3 Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Mon, 22 Jul 2024 16:12:04 +0200
+Subject: [PATCH] j1939acd: remove legacy '-p' option (prefix to use when
+ logging)
+
+- remove legacy '-p' option (prefix to use when logging), fixes uclibc
+  compile
+
+Fixes:
+
+  j1939acd.c: In function 'main':
+  j1939acd.c:489:38: error: passing argument 1 of 'asprintf' from incompatible pointer type [-Wincompatible-pointer-types]
+    489 |                         if (asprintf(&program_invocation_name, "%s.%s",
+        |                                      ^~~~~~~~~~~~~~~~~~~~~~~~
+        |                                      |
+        |                                      const char **
+
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+Upstream: https://github.com/linux-can/can-utils/commit/d337863d9189501dbbb15467cc3dcba85946a2a3
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ j1939acd.c | 16 +---------------
+ 1 file changed, 1 insertion(+), 15 deletions(-)
+
+diff --git a/j1939acd.c b/j1939acd.c
+index 44bb826c..ae4e58ac 100644
+--- a/j1939acd.c
++++ b/j1939acd.c
+@@ -38,7 +38,6 @@ static const char help_msg[] =
+ 	"			e.g. 80,50-100,200-210 (defaults to 0-253)" "\n"
+ 	"  -c, --cache=FILE	Cache file to save/restore the source address" "\n"
+ 	"  -a, --address=ADDRESS	Start with Source Address ADDRESS" "\n"
+-	"  -p, --prefix=STR	Prefix to use when logging" "\n"
+ 	"\n"
+ 	"NAME is the 64bit nodename" "\n"
+ 	"\n"
+@@ -54,14 +53,13 @@ static struct option long_opts[] = {
+ 	{ "range", required_argument, NULL, 'r', },
+ 	{ "cache", required_argument, NULL, 'c', },
+ 	{ "address", required_argument, NULL, 'a', },
+-	{ "prefix", required_argument, NULL, 'p', },
+ 	{ },
+ };
+ #else
+ #define getopt_long(argc, argv, optstring, longopts, longindex) \
+ 	getopt((argc), (argv), (optstring))
+ #endif
+-static const char optstring[] = "vr:c:a:p:?";
++static const char optstring[] = "vr:c:a:?";
+ 
+ /* byte swap functions */
+ static inline int host_is_little_endian(void)
+@@ -466,9 +464,6 @@ int main(int argc, char *argv[])
+ 	struct sockaddr_can saddr;
+ 	uint64_t cmd_name;
+ 
+-#ifdef _GNU_SOURCE
+-	program_invocation_name = program_invocation_short_name;
+-#endif
+ 	/* argument parsing */
+ 	while ((opt = getopt_long(argc, argv, optstring, long_opts, NULL)) != -1)
+ 		switch (opt) {
+@@ -484,15 +479,6 @@ int main(int argc, char *argv[])
+ 		case 'a':
+ 			s.current_sa = strtoul(optarg, 0, 0);
+ 			break;
+-		case 'p':
+-#ifdef _GNU_SOURCE
+-			if (asprintf(&program_invocation_name, "%s.%s",
+-				     program_invocation_short_name, optarg) < 0)
+-				err(1, "asprintf(program invocation name)");
+-#else
+-			err(0, "compile with -D_GNU_SOURCE to use -p");
+-#endif
+-			break;
+ 		default:
+ 			fputs(help_msg, stderr);
+ 			exit(1);
