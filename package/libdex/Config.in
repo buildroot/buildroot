@@ -3,6 +3,7 @@ config BR2_PACKAGE_LIBDEX
 	depends on BR2_USE_MMU # libglib2
 	depends on BR2_USE_WCHAR # libglib2, gettext
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2
+	depends on !BR2_STATIC_LIBS
 	depends on BR2_TOOLCHAIN_HAS_UCONTEXT || \
 		BR2_PACKAGE_LIBUCONTEXT_ARCH_SUPPORTS
 	select BR2_PACKAGE_LIBGLIB2
@@ -16,8 +17,9 @@ config BR2_PACKAGE_LIBDEX
 
 	  https://gitlab.gnome.org/GNOME/libdex
 
-comment "libdex needs a toolchain w/ wchar, threads, ucontext"
+comment "libdex needs a toolchain w/ wchar, threads, dynamic library, ucontext"
 	depends on BR2_USE_MMU
 	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
+		BR2_STATIC_LIBS || \
 		!(BR2_TOOLCHAIN_HAS_UCONTEXT || \
 			BR2_PACKAGE_LIBUCONTEXT_ARCH_SUPPORTS)
