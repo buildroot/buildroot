@@ -20,6 +20,10 @@ ifeq ($(BR2_m68k_cf),y)
 CAIRO_CFLAGS += -mxgot
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),)
+CAIRO_CFLAGS += -DCAIRO_NO_MUTEX=1
+endif
+
 # cairo can use C++11 atomics when available, so we need to link with
 # libatomic for the architectures who need libatomic.
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
