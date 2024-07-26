@@ -23,7 +23,7 @@ LIBPWQUALITY_CONF_OPTS += --disable-python-bindings
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_PAM),y)
-LIBPWQUALITY_CONF_OPTS += --enable-pam
+LIBPWQUALITY_CONF_OPTS += --enable-pam --with-securedir=/lib/security
 LIBPWQUALITY_DEPENDENCIES += linux-pam
 else
 LIBPWQUALITY_CONF_OPTS += --disable-pam
