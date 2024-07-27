@@ -329,6 +329,15 @@ config BR2_PACKAGE_SYSTEMD_MACHINED
 
 	  https://www.freedesktop.org/software/systemd/man/systemd-machined.service.html
 
+config BR2_PACKAGE_SYSTEMD_NSRESOURCED
+	bool "enable nsresourced"
+	help
+	  systemd-nsresourced is a system service that permits
+	  transient delegation of a a UID/GID range to a user
+	  namespace allocated by a client, via a Varlink IPC API.
+
+	  https://www.freedesktop.org/software/systemd/man/systemd-nsresourced.service.html
+
 config BR2_PACKAGE_SYSTEMD_MYHOSTNAME
 	bool "enable myhostname NSS plugin"
 	default y
@@ -483,6 +492,16 @@ config BR2_PACKAGE_SYSTEMD_SYSEXT
 
 	  https://www.freedesktop.org/software/systemd/man/systemd-sysext.html
 
+config BR2_PACKAGE_SYSTEMD_MOUNTFSD
+	bool "enable mountfsd support"
+	help
+	  systemd-mountfsd is a system service that dissects disk
+	  images, and returns mount file descriptors for the file
+	  systems contained therein to clients, via a Varlink IPC
+	  API.
+
+	  https://www.freedesktop.org/software/systemd/man/systemd-mountfsd.service.html
+
 config BR2_PACKAGE_SYSTEMD_SYSUPDATE
 	bool "enable sysupdate support"
 	select BR2_PACKAGE_OPENSSL
@@ -579,5 +598,15 @@ config BR2_PACKAGE_SYSTEMD_VCONSOLE_DEFAULT_KEYMAP
 	help
 	  Default keymap for the system. Leave empty to not set a
 	  default keymap.
+
+config BR2_PACKAGE_SYSTEMD_VMSPAWN
+	bool "enable vmspawn"
+	help
+	  systemd-vmspawn may be used to start a virtual machine
+	  from an OS image. In many ways it is similar to
+	  systemd-nspawn, but launches a full virtual machine
+	  instead of using namespaces.
+
+	  https://www.freedesktop.org/software/systemd/man/systemd-vmspawn.html
 
 endif
