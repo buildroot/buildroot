@@ -1,0 +1,39 @@
+From 034205b6b3acd64f9c75010d8da27e2c9f1bc82f Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 21 Jul 2024 18:04:05 +0200
+Subject: [PATCH] utils/nfs-stat.c: include time.h
+
+Include time.h to fix the following build failure with gcc >= 14 which
+enables -Werror=implicit-function-declaration
+(https://gcc.gnu.org/gcc-14/porting_to.html):
+
+nfs-stat.c: In function 'main':
+nfs-stat.c:287:30: error: implicit declaration of function 'ctime' [-Wimplicit-function-declaration]
+  287 |         printf("Access: %s", ctime( (const time_t *) &st.nfs_atime));
+      |                              ^~~~~
+nfs-stat.c:177:1: note: 'ctime' is defined in header '<time.h>'; this is probably fixable by adding '#include <time.h>'
+  176 | #include <pwd.h>
+  +++ |+#include <time.h>
+  177 | char *uid_to_name(int uid)
+
+Fixes:
+ - http://autobuild.buildroot.org/results/73c3828a4e5d275ca0dfdd5b314494e2b00393c8
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/sahlberg/libnfs/commit/39e1ae0206fb519c551b48b0e6de57f3e764e886
+---
+ utils/nfs-stat.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/utils/nfs-stat.c b/utils/nfs-stat.c
+index 17ddb311..0ec33544 100644
+--- a/utils/nfs-stat.c
++++ b/utils/nfs-stat.c
+@@ -50,6 +50,7 @@ WSADATA wsaData;
+ #include <inttypes.h>
+ #include <sys/types.h>
+ #include <fcntl.h>
++#include <time.h>
+ #include "libnfs.h"
+ #include "libnfs-raw.h"
+ #include "libnfs-raw-mount.h"
