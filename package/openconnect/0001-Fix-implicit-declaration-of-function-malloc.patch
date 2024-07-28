@@ -1,0 +1,40 @@
+From 5185f640045df2b4f8ee7f028fc59e6f02fdf367 Mon Sep 17 00:00:00 2001
+From: Brahmajit Das <brahmajit.xyz@gmail.com>
+Date: Mon, 29 Jan 2024 23:28:53 +0530
+Subject: [PATCH] Fix implicit declaration of function 'malloc'
+
+First observed on Gentoo Linux with GCC 14. This is due to GCC 14
+enabling -Werror=implicit-function-declaration by default.
+Thus resulting in errors such as:
+
+openconnect-internal.h: In function 'alloc_pkt':
+openconnect-internal.h:911:27: error: implicit declaration of function 'malloc' [-Werror=implicit-function-declaration]
+  911 |         struct pkt *pkt = malloc(alloc_len);
+      |                           ^~~~~~
+
+Plese refer gentoo bug: https://bugs.gentoo.org/923173
+Signed-off-by: Brahmajit Das <brahmajit.xyz@gmail.com>
+
+Upstream: https://gitlab.com/openconnect/openconnect/-/commit/5185f640045df2b4f8ee7f028fc59e6f02fdf367
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[rebased for 9.12]
+---
+ openconnect-internal.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/openconnect-internal.h b/openconnect-internal.h
+index 21460adf6..2830d693f 100644
+--- a/openconnect-internal.h
++++ b/openconnect-internal.h
+@@ -87,6 +87,7 @@
+ 
+ #include <libxml/tree.h>
+ #include <zlib.h>
++#include <stdlib.h>
+ 
+ #ifdef _WIN32
+ #ifndef _Out_cap_c_
+-- 
+GitLab
+
