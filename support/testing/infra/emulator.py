@@ -2,6 +2,8 @@ import pexpect
 
 import infra
 
+import os
+
 
 class Emulator(object):
 
@@ -73,6 +75,11 @@ class Emulator(object):
         if kernel_cmdline:
             qemu_cmd += ["-append", " ".join(kernel_cmdline)]
 
+        self.logfile.write(f"> host cpu count: {os.cpu_count()}\n")
+        ldavg = os.getloadavg()
+        ldavg_str = f"{ldavg[0]:.2f}, {ldavg[1]:.2f}, {ldavg[2]:.2f}"
+        self.logfile.write(f"> host loadavg: {ldavg_str}\n")
+        self.logfile.write(f"> timeout multiplier: {self.timeout_multiplier}\n")
         self.logfile.write("> starting qemu with '%s'\n" % " ".join(qemu_cmd))
         self.qemu = pexpect.spawn(qemu_cmd[0], qemu_cmd[1:],
                                   timeout=5 * self.timeout_multiplier,
