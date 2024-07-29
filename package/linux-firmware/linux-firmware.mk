@@ -854,6 +854,14 @@ LINUX_FIRMWARE_FILES += \
 # which is installed unconditionally
 endif
 
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_REDPINE_RS9116),y)
+LINUX_FIRMWARE_FILES += \
+	rsi/rs9116_wlan.rps \
+	rsi/rs9116_wlan_bt_classic.rps
+# No license file; the license is in the file WHENCE
+# which is installed unconditionally
+endif
+
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_QAT_DH895XCC),y)
 LINUX_FIRMWARE_FILES += qat_895xcc.bin qat_895xcc_mmp.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.qat_firmware
