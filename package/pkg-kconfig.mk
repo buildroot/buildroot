@@ -33,8 +33,7 @@ PKG_KCONFIG_COMMON_OPTS = \
 # Macro to save the defconfig file
 # $(1): the name of the package in upper-case letters
 define kconfig-package-savedefconfig
-	$($(1)_MAKE_ENV) $($(1)_MAKE) -C $($(1)_DIR) \
-		$(PKG_KCONFIG_COMMON_OPTS) $($(1)_KCONFIG_OPTS) savedefconfig
+	$($(1)_KCONFIG_MAKE) savedefconfig
 endef
 
 # The correct way to regenerate a .config file is to use 'make olddefconfig'.
