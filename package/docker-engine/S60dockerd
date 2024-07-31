@@ -10,10 +10,14 @@ DOCKERD_ARGS=""
 
 start() {
 	printf 'Starting %s: ' "$DAEMON"
+	# Dockerd logs only to stdout/stderr, which is lost with
+	# --background. The wrapper script runs the given command
+	# (after "--", including dockerd) and forwards stdout/stderr
+	# to syslog.
 	# shellcheck disable=SC2086 # we need word splitting for DOCKERD_ARGS
 	start-stop-daemon --start --background --pidfile "$PIDFILE" \
-		--exec "/usr/bin/$DAEMON" \
-		-- --pidfile "$PIDFILE" $DOCKERD_ARGS
+		--exec /usr/libexec/dockerd-syslog-wrapper.sh \
+		-- "/usr/bin/$DAEMON" --pidfile "$PIDFILE" $DOCKERD_ARGS
 	status=$?
 	if [ "$status" -eq 0 ]; then
 		echo "OK"
