@@ -78,6 +78,7 @@ QT5WEBENGINE_DEPENDENCIES += \
 	libvpx \
 	libxml2 \
 	libxslt \
+	opus \
 	snappy \
 	webp
 
