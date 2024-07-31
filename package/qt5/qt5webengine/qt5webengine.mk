@@ -88,6 +88,7 @@ QT5WEBENGINE_CONF_OPTS += \
 	-webengine-webp \
 	-feature-build-qtwebengine-core \
 	-feature-webengine-core-support \
+	-feature-webengine-noexecstack \
 	-feature-webengine-system-dbus \
 	-feature-webengine-system-fontconfig \
 	-feature-webengine-system-freetype \
@@ -117,7 +118,6 @@ QT5WEBENGINE_CONF_OPTS += \
 	-no-feature-webengine-developer-build \
 	-no-feature-webengine-full-debug-info \
 	-no-feature-webengine-native-spellchecker \
-	-no-feature-webengine-noexecstack \
 	-no-feature-webengine-system-minizip \
 	-no-feature-webengine-system-gn
 
