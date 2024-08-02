@@ -1,0 +1,40 @@
+From 8402c1ffccb2eeb47581d2d80b81e94433cdacb7 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Fri, 2 Aug 2024 19:35:02 +0200
+Subject: [PATCH] configure.in: replace obsolete AM_PATH_XML2 by
+ PKG_CHECK_MODULES
+
+According to the libxml2 code:
+
+  AM_PATH_XML2 is deprecated, use PKG_CHECK_MODULES instead
+
+See:
+
+  https://gitlab.gnome.org/GNOME/libxml2/-/blob/master/libxml.m4
+
+Upstream: https://sourceforge.net/p/bcusdk/patches/5/
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ configure.in | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/configure.in b/configure.in
+index 7f3a8bd..82176d9 100644
+--- a/configure.in
++++ b/configure.in
+@@ -81,7 +81,11 @@ AM_CONDITIONAL(HAVE_ONLYEIBD, test x$onlyeibd = xtrue)
+ 
+ if test x$onlyeibd = xfalse ; then
+ 
+-AM_PATH_XML2(2.6.16,,[AC_MSG_ERROR([limxml2 not found])])
++PKG_CHECK_MODULES(XML, [libxml-2.0 >= 2.6.16], [], [AC_MSG_ERROR([limxml2 not found])])
++XML_CPPFLAGS=$XML_CFLAGS
++AC_SUBST(XML_CPPFLAGS)
++AC_SUBST(XML_LIBS)
++
+ AC_PATH_PROG(TAS,[m68hc05-as],,[$PATH:$bindir:$prefix/bin])
+ AC_PATH_PROG(TLD,[m68hc05-ld],,[$PATH:$bindir:$prefix/bin])
+ AC_PATH_PROG(TAR,[m68hc05-ar],,[$PATH:$bindir:$prefix/bin])
+-- 
+2.45.2
+
