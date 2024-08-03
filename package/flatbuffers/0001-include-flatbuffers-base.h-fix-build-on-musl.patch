@@ -30,8 +30,8 @@ Fixes:
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 [Upstream status: Rejected:
  https://github.com/google/flatbuffers/pull/6773]
-Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
-(rebased and added fix for uClibc-build)
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+(rebased and added fix for uClibc-build, rebased again for 24.3.25)
 ---
  include/flatbuffers/base.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -40,7 +40,7 @@ diff --git a/include/flatbuffers/base.h b/include/flatbuffers/base.h
 index de7898dc..101c7598 100644
 --- a/include/flatbuffers/base.h
 +++ b/include/flatbuffers/base.h
-@@ -264,7 +264,8 @@ namespace flatbuffers {
+@@ -270,7 +270,8 @@ namespace flatbuffers {
    // strtoull_l}.
    #if (defined(_MSC_VER) && _MSC_VER >= 1800) || \
        (defined(__ANDROID_API__) && __ANDROID_API__>= 21) || \
