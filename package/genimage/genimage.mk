@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GENIMAGE_VERSION = 17
+GENIMAGE_VERSION = 18
 GENIMAGE_SOURCE = genimage-$(GENIMAGE_VERSION).tar.xz
 GENIMAGE_SITE = https://github.com/pengutronix/genimage/releases/download/v$(GENIMAGE_VERSION)
 HOST_GENIMAGE_DEPENDENCIES = host-pkgconf host-libconfuse
