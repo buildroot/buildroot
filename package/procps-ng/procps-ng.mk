@@ -52,6 +52,10 @@ else
 PROCPS_NG_CONF_OPTS += --enable-w
 endif
 
+ifeq ($(BR2_PACKAGE_PROCPS_NS_ORIGINAL_TOP),y)
+PROCPS_NG_CONF_OPTS += --disable-modern-top
+endif
+
 # Avoid installing S02sysctl, since openrc provides /etc/init.d/sysctl.
 define PROCPS_NG_INSTALL_INIT_OPENRC
 	@:

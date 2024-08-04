@@ -8,3 +8,13 @@ config BR2_PACKAGE_PROCPS_NG
 	  Provides things like kill, ps, uptime, free, top, etc...
 
 	  http://sourceforge.net/projects/procps-ng/
+
+if BR2_PACKAGE_PROCPS_NG
+
+config BR2_PACKAGE_PROCPS_NS_ORIGINAL_TOP
+	bool "Use original top layout"
+	help
+	  Disable modern top layout, return to original top with
+	  detail cpu usage.
+
+endif
