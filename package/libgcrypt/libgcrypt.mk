@@ -16,6 +16,7 @@ LIBGCRYPT_CPE_ID_VENDOR = gnupg
 
 # Patching configure.ac and Makefile.am in 0001
 LIBGCRYPT_AUTORECONF = YES
+LIBGCRYPT_CONF_ENV += GPGRT_CONFIG=$(STAGING_DIR)/usr/bin/gpgrt-config
 LIBGCRYPT_CONF_OPTS = \
 	--disable-tests \
 	$(if $(BR2_OPTIMIZE_0),--disable-ppc-crypto-support,) \
