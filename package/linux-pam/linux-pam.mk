@@ -54,6 +54,12 @@ else
 LINUX_PAM_CONF_OPTS += --disable-openssl
 endif
 
+ifeq ($(BR2_PACKAGE_LINUX_PAM_LASTLOG),y)
+LINUX_PAM_CONF_OPTS += --enable-lastlog
+else
+LINUX_PAM_CONF_OPTS += --disable-lastlog
+endif
+
 # Install default pam config (deny everything except login)
 define LINUX_PAM_INSTALL_CONFIG
 	$(INSTALL) -m 0644 -D package/linux-pam/login.pam \

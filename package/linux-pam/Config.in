@@ -13,6 +13,15 @@ config BR2_PACKAGE_LINUX_PAM
 
 	  http://linux-pam.org
 
+if BR2_PACKAGE_LINUX_PAM
+
+config BR2_PACKAGE_LINUX_PAM_LASTLOG
+	bool "pam_lastlog.so"
+	help
+	  Build pam_lastlog.so module.
+
+endif
+
 comment "linux-pam needs a toolchain w/ wchar, locale, dynamic library, gcc >= 4.9"
 	depends on BR2_USE_MMU
 	depends on !BR2_ENABLE_LOCALE || !BR2_USE_WCHAR \
