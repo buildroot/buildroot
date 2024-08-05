@@ -12,6 +12,7 @@ TIPIDEE_DEPENDENCIES = skalibs
 
 TIPIDEE_CONF_OPTS = \
 	--prefix=/usr \
+	--sysconfdir=/etc \
 	--with-sysdeps=$(STAGING_DIR)/lib/skalibs/sysdeps \
 	--with-include=$(STAGING_DIR)/include \
 	--with-dynlib=$(STAGING_DIR)/lib \
