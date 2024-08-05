@@ -10,7 +10,8 @@ Fixes https://trac.ffmpeg.org/ticket/9138
 Patch sent upstream:
 http://ffmpeg.org/pipermail/ffmpeg-devel/2021-June/281272.html
 
-Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Bernd: rebased for version 6.1.2]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 [Dario: make the patch to be applied with fuzz factor 0]
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
@@ -23,9 +24,9 @@ index a89cfa6d959d..6ec00df75312 100755
 --- a/configure
 +++ b/configure
 @@ -2227,6 +2227,7 @@ HEADERS_LIST="
-     opencv2_core_core_c_h
      OpenGL_gl3_h
      poll_h
+     pthread_np_h
 +    sys_auxv_h
      sys_param_h
      sys_resource_h
