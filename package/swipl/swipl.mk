@@ -9,6 +9,8 @@ SWIPL_SITE = https://www.swi-prolog.org/download/stable/src
 SWIPL_LICENSE = BSD-2-Clause
 SWIPL_LICENSE_FILES = LICENSE
 
+HOST_SWIPL_DEPENDENCIES = host-zlib
+
 SWIPL_DEPENDENCIES = host-swipl zlib
 
 # A host-swipl is needed to compile the target prolog boot
