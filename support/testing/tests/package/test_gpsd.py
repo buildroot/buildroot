@@ -11,7 +11,7 @@ class TestGpsd(infra.basetest.BRTest):
     config = infra.basetest.BASIC_TOOLCHAIN_CONFIG + \
         f"""
         BR2_PACKAGE_GPSD=y
-        BR2_PACKAGE_PYTHON3=y
+        BR2_PACKAGE_GPSD_PYTHON=y
         BR2_ROOTFS_OVERLAY="{rootfs_overlay}"
         BR2_TARGET_ROOTFS_CPIO=y
         # BR2_TARGET_ROOTFS_TAR is not set
