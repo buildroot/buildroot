@@ -144,6 +144,14 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2024.11"
+
+config BR2_BINUTILS_VERSION_2_40_X
+	bool "binutils 2.40 has been removed"
+	select BR2_LEGACY
+	help
+	  binutils 2.40 has been removed, use a newer version.
+
 comment "Legacy options removed in 2024.08"
 
 config BR2_PACKAGE_FLUTTER_DYNAMIC_LAYOUTS_EXAMPLE
