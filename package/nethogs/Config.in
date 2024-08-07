@@ -1,5 +1,6 @@
 config BR2_PACKAGE_NETHOGS
 	bool "nethogs"
+	depends on BR2_INSTALL_LIBSTDCPP
 	select BR2_PACKAGE_LIBPCAP
 	select BR2_PACKAGE_NCURSES
 	help
@@ -8,3 +9,6 @@ config BR2_PACKAGE_NETHOGS
 	  do, it groups bandwidth by process.
 
           https://github.com/raboof/nethogs
+
+comment "nethogs needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP
