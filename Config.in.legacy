@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2024.08"
 
+config BR2_PACKAGE_FLUTTER_DYNAMIC_LAYOUTS_EXAMPLE
+	bool "flutter-dynamic-layouts-example has been removed"
+	select BR2_LEGACY
+	help
+	  flutter-dynamic-layouts was removed from flutter-packages
+	  as of commit e35f29177495131f0f598fc7ae1ffd74d89edf15.
+
 config BR2_KERNEL_HEADERS_6_9
 	bool "kernel headers version 6.9.x are no longer supported"
 	select BR2_LEGACY
