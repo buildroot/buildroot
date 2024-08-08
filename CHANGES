@@ -1,3 +1,82 @@
+2024.08-rc1, released August 8th, 2024
+
+	Fixes all over the tree (especially related to GCC 14.x
+	compatibility) and package updates.
+
+	Toolchains:
+	- uClibc updated to 1.0.49
+	- GDB 15.x added, GDB 14.x now the default
+	- GCC 14.x updated to GCC 14.2.0
+	- Support for Linux 6.9/6.10 headers added
+
+	Infrastructure:
+	- Patches on packages are now applied with -F0, which means no
+	  fuzz is accepted anymore.
+	- Improvements to the canonical example of SysV init script
+
+	New defconfigs: arm_fvp_ebbr, beaglev_fire, cubieboard1,
+	imx6ulz_bsh_smm_m2_defconfig, spike_riscv32,
+
+	Removed defconfigs: beagleboardx15, beaglev, imx8mpico
+
+	New packages: blake3, chicken, cloudfared, docker-cli-buildx,
+	espflash, fd, freescale-imx/firmware-upower, fwupd, fwupd-efi,
+	gtkiostream, graphene, kmon, libavif, libdex, libgtk4,
+	libjcat, libopenmpt, libtpms, mxt-app, nethogs, openconnect,
+	parsec-tool, pico-sdk, picotool, python-aerich,
+	python-autocommand, python-betterproto, python-configobj,
+	python-grpclib, python-inflect, python-jaraco-collections,
+	python-jaraco-context, python-jaraco-text, python-pyasynchat,
+	python-pyasyncore, python-dictdiffer, python-pkgconfig,
+	python-pypika-tortoise, python-ruamel-yaml-clib,
+	python-tomlkit, python-tomli-w, python-tpm2-pytss,
+	python-tortoise-orm, python-uswid, qt6declarative,
+	qt6languageserver, qt6mqtt, qt6opcua, qt6shadertools,
+	qt6tools, qt6virtualkeyboard, qt6wayland, qt6websockets,
+	skopeo, sqlitecpp, swipl, swtpm, tig, tipidee, tpm2-openssl,
+	xilinx-prebuilt, zoxide
+
+	Removed packages: beaglev-ddrinit, beaglev-secondboot,
+	beecrypt, cgic, dvb-apps, gamin
+
+	New runtime tests: 4th, attr, atftp, bcc, btrfs, btrfsprogs,
+	dmidecode, go, gpsd, iproute2, kmod, lame, make, mariadb,
+	mawk, mosquitto, nmap, ntp, python-asn1crypto, python-pymupdf,
+	python-ruamel-yaml, rt-tests, swipl, vorbis-tools, xfsprogs
+
+	Issues resolved:
+	- Are there plans to add raspberrypizero2w_64_defconfig config?
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/1
+	- Some folders can't visit and some file is missing while running
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/2
+	- wpewebkit build fails on ARM Neon
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/3
+	- TAR-1.35 will not build for target (host-variant will build)
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/4
+	- package/xz without shared libraries breaks Python build
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/5
+	- unable to build - 404 at sources.buildroot.net
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/10
+	- OpenSSH 9.8 broken
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/11
+	- Update Openssh to Version 9.8p1 (CVE-2024-6387) in Long Term
+	  Support Release 2024.02.x
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/14
+	- Toolchain (host-gcc-final-14.1.0) build failure with
+	  y2038/BR2_TIME_BITS_64 enabled
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/16
+	- building go/golang gives error
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/18
+	- GCC 13.3 is missing
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/20
+	- package containerd update to avoid hanging docker exec
+	  commands
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/21
+	- "BR2_EXTERNAL broken missing srctree error Config.in"
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/24
+	- Can't subscribe buildroot mailing list
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/25
+
 2024.05.1, released July 13th, 2024
 
 	Important / security related fixes.
