@@ -12,9 +12,6 @@ ZFS_LICENSE_FILES = LICENSE COPYRIGHT
 ZFS_CPE_ID_VENDOR = openzfs
 ZFS_CPE_ID_PRODUCT = openzfs
 
-# 0001-tests-cp_files-ignore-if-SEEK_DATA-is-not-defined.patch
-ZFS_AUTORECONF = YES
-
 ZFS_DEPENDENCIES = libaio openssl udev util-linux zlib libcurl linux
 
 # sysvinit installs only a commented-out modules-load.d/ config file
