@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FLUTTER_SDK_BIN_VERSION = 3.19.5
+FLUTTER_SDK_BIN_VERSION = 3.24.0
 FLUTTER_SDK_BIN_SITE = https://storage.googleapis.com/flutter_infra_release/releases/stable/linux
 FLUTTER_SDK_BIN_SOURCE = flutter_linux_$(FLUTTER_SDK_BIN_VERSION)-stable.tar.xz
 FLUTTER_SDK_BIN_LICENSE = BSD-3-Clause
@@ -68,11 +68,11 @@ HOST_FLUTTER_SDK_BIN_SDK_VM_PROFILE = false
 endif
 
 # The Order matters.Taken from:
-# https://github.com/meta-flutter/meta-flutter/blob/kirkstone/classes/flutter-app.inc
+# https://github.com/meta-flutter/meta-flutter/blob/scarthgap/conf/include/common.inc
 HOST_FLUTTER_SDK_BIN_DART_ARGS = \
 	--verbose \
 	--disable-analytics \
-	--disable-dart-dev $(HOST_FLUTTER_SDK_BIN_SDK_ENGINE)/linux-x64/frontend_server.dart.snapshot \
+	--disable-dart-dev $(HOST_FLUTTER_SDK_BIN_SDK_ENGINE)/linux-x64/frontend_server_aot.dart.snapshot \
 	--sdk-root $(HOST_FLUTTER_SDK_BIN_SDK_ROOT) \
 	--target=flutter \
 	--no-print-incremental-dependencies \
@@ -85,7 +85,7 @@ HOST_FLUTTER_SDK_BIN_DART_ARGS = \
 	--target-os linux \
 	--packages .dart_tool/package_config.json \
 	--output-dill .dart_tool/flutter_build/*/app.dill \
-	--depfile .dart_tool/flutter_build/*/kernel_snapshot.d
+	--depfile .dart_tool/flutter_build/*/kernel_snapshot_program.d
 
 # Helper wrapper to run flutter when building flutter applications.
 HOST_FLUTTER_SDK_BIN_FLUTTER = \
@@ -95,7 +95,7 @@ HOST_FLUTTER_SDK_BIN_FLUTTER = \
 # Helper wrapper to run dart when building flutter applications.
 HOST_FLUTTER_SDK_BIN_DART_BIN = \
 	$(HOST_FLUTTER_SDK_BIN_ENV) \
-	$(HOST_FLUTTER_SDK_BIN_DART_SDK)/bin/dart \
+	$(HOST_FLUTTER_SDK_BIN_DART_SDK)/bin/dartaotruntime \
 	$(HOST_FLUTTER_SDK_BIN_DART_ARGS)
 
 $(eval $(host-generic-package))
