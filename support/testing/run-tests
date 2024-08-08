@@ -36,6 +36,8 @@ def main():
                         help='BR2_JLEVEL to use for each testcase')
     parser.add_argument('--timeout-multiplier', type=int, default=1,
                         help='increase timeouts (useful for slow machines)')
+    parser.add_argument('-D', '--debug', action='store_true',
+                        help='enable debug log')
 
     args = parser.parse_args()
 
@@ -47,10 +49,15 @@ def main():
 
     if args.list:
         print("List of tests")
-        nose2.discover(argv=[script_path,
-                             "-s", test_dir,
-                             "-v",
-                             "--collect-only"],
+        nose2_args = [
+            script_path,
+            "-s", test_dir,
+            "-v",
+            "--collect-only"
+        ]
+        if args.debug:
+            nose2_args += ["--log-level", "debug"]
+        nose2.discover(argv=nose2_args,
                        plugins=["nose2.plugins.collect"])
         return 0
 
@@ -124,6 +131,9 @@ def main():
                   "-N", str(args.testcases),
                   "-s", test_dir,
                   "-c", os.path.join(test_dir, "conf/unittest.cfg")]
+
+    if args.debug:
+        nose2_args += ["--log-level", "debug"]
 
     if args.testname:
         nose2_args += args.testname
