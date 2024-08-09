@@ -1,0 +1,132 @@
+From 354129807db12c792696b74d0cd38f2c5d2fd704 Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Fri, 9 Aug 2024 06:16:02 +0200
+Subject: [PATCH] bits/stat.h: Declare st_mtim if defined(__USE_XOPEN2K8),
+ add missing
+
+d0c8c185b439187b12644457bb2aa0326f25aaf7 was not complete, add
+missing architectures.
+
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://cgit.uclibc-ng.org/cgi/cgit/uclibc-ng.git/commit/?id=354129807db12c792696b74d0cd38f2c5d2fd704
+---
+ libc/sysdeps/linux/mips/bits/stat.h    | 4 ++--
+ libc/sysdeps/linux/sparc/bits/stat.h   | 4 ++--
+ libc/sysdeps/linux/sparc64/bits/stat.h | 4 ++--
+ libc/sysdeps/linux/x86_64/bits/stat.h  | 4 ++--
+ libc/sysdeps/linux/xtensa/bits/stat.h  | 4 ++--
+ 5 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/libc/sysdeps/linux/mips/bits/stat.h b/libc/sysdeps/linux/mips/bits/stat.h
+index bad2a0244..81d2e4687 100644
+--- a/libc/sysdeps/linux/mips/bits/stat.h
++++ b/libc/sysdeps/linux/mips/bits/stat.h
+@@ -145,7 +145,7 @@ struct stat64
+     __dev_t st_rdev;	/* Device number, if device.  */
+     long int st_pad2[2];
+     __off64_t st_size;		/* Size of file, in bytes.  */
+-#ifdef __USE_MISC
++#if defined(__USE_MISC) || defined(__USE_XOPEN2K8)
+     /* Nanosecond resolution timestamps are stored in a format
+        equivalent to 'struct timespec'.  This is the type used
+        whenever possible but the Unix namespace rules do not allow the
+@@ -184,7 +184,7 @@ struct stat64 {
+     unsigned int st_rdev;	/* Device number, if device.  */
+     int st_pad2[3];
+     __off_t st_size;		/* Size of file, in bytes.  */
+-#ifdef __USE_MISC
++#if defined(__USE_MISC) || defined(__USE_XOPEN2K8)
+     /* Nanosecond resolution timestamps are stored in a format
+        equivalent to 'struct timespec'.  This is the type used
+        whenever possible but the Unix namespace rules do not allow the
+diff --git a/libc/sysdeps/linux/sparc/bits/stat.h b/libc/sysdeps/linux/sparc/bits/stat.h
+index b88885fe2..0fbef8b3f 100644
+--- a/libc/sysdeps/linux/sparc/bits/stat.h
++++ b/libc/sysdeps/linux/sparc/bits/stat.h
+@@ -53,7 +53,7 @@ struct stat
+ #else
+     __blkcnt64_t st_blocks;		/* Number 512-byte blocks allocated. */
+ #endif
+-#ifdef __USE_MISC
++#if defined(__USE_MISC) || defined(__USE_XOPEN2K8)
+     /* Nanosecond resolution timestamps are stored in a format
+        equivalent to 'struct timespec'.  This is the type used
+        whenever possible but the Unix namespace rules do not allow the
+@@ -93,7 +93,7 @@ struct stat64
+     __blksize_t st_blksize;		/* Optimal block size for I/O.  */
+ 
+     __blkcnt64_t st_blocks;		/* Number 512-byte blocks allocated. */
+-#ifdef __USE_MISC
++#if defined(__USE_MISC) || defined(__USE_XOPEN2K8)
+     /* Nanosecond resolution timestamps are stored in a format
+        equivalent to 'struct timespec'.  This is the type used
+        whenever possible but the Unix namespace rules do not allow the
+diff --git a/libc/sysdeps/linux/sparc64/bits/stat.h b/libc/sysdeps/linux/sparc64/bits/stat.h
+index 8516b159c..62b48b745 100644
+--- a/libc/sysdeps/linux/sparc64/bits/stat.h
++++ b/libc/sysdeps/linux/sparc64/bits/stat.h
+@@ -58,7 +58,7 @@ struct stat
+ #else
+     __blkcnt64_t st_blocks;		/* Number 512-byte blocks allocated. */
+ #endif
+-#ifdef __USE_MISC
++#if defined(__USE_MISC) || defined(__USE_XOPEN2K8)
+     /* Nanosecond resolution timestamps are stored in a format
+        equivalent to 'struct timespec'.  This is the type used
+        whenever possible but the Unix namespace rules do not allow the
+@@ -101,7 +101,7 @@ struct stat64
+     __blksize_t st_blksize;		/* Optimal block size for I/O.  */
+ 
+     __blkcnt64_t st_blocks;		/* Number 512-byte blocks allocated. */
+-#ifdef __USE_MISC
++#if defined(__USE_MISC) || defined(__USE_XOPEN2K8)
+     /* Nanosecond resolution timestamps are stored in a format
+        equivalent to 'struct timespec'.  This is the type used
+        whenever possible but the Unix namespace rules do not allow the
+diff --git a/libc/sysdeps/linux/x86_64/bits/stat.h b/libc/sysdeps/linux/x86_64/bits/stat.h
+index a7412c8f9..a8c75feaa 100644
+--- a/libc/sysdeps/linux/x86_64/bits/stat.h
++++ b/libc/sysdeps/linux/x86_64/bits/stat.h
+@@ -77,7 +77,7 @@ struct stat
+ #else
+     __blkcnt64_t st_blocks;		/* Number 512-byte blocks allocated. */
+ #endif
+-#ifdef __USE_MISC
++#if defined(__USE_MISC) || defined(__USE_XOPEN2K8)
+     /* Nanosecond resolution timestamps are stored in a format
+        equivalent to 'struct timespec'.  This is the type used
+        whenever possible but the Unix namespace rules do not allow the
+@@ -138,7 +138,7 @@ struct stat64
+ #endif
+     __blksize_t st_blksize;	/* Optimal block size for I/O.  */
+     __blkcnt64_t st_blocks;	/* Nr. 512-byte blocks allocated.  */
+-#ifdef __USE_MISC
++#if defined(__USE_MISC) || defined(__USE_XOPEN2K8)
+     /* Nanosecond resolution timestamps are stored in a format
+        equivalent to 'struct timespec'.  This is the type used
+        whenever possible but the Unix namespace rules do not allow the
+diff --git a/libc/sysdeps/linux/xtensa/bits/stat.h b/libc/sysdeps/linux/xtensa/bits/stat.h
+index 045a017fd..43af825ec 100644
+--- a/libc/sysdeps/linux/xtensa/bits/stat.h
++++ b/libc/sysdeps/linux/xtensa/bits/stat.h
+@@ -54,7 +54,7 @@ struct stat
+     unsigned long __pad2;
+     __blkcnt64_t st_blocks;		/* Number 512-byte blocks allocated. */
+ #endif
+-#ifdef __USE_MISC
++#if defined(__USE_MISC) || defined(__USE_XOPEN2K8)
+     /* Nanosecond resolution timestamps are stored in a format
+        equivalent to 'struct timespec'.  This is the type used
+        whenever possible but the Unix namespace rules do not allow the
+@@ -94,7 +94,7 @@ struct stat64
+ 
+     unsigned long __pad2;
+     __blkcnt64_t st_blocks;		/* Number 512-byte blocks allocated. */
+-#ifdef __USE_MISC
++#if defined(__USE_MISC) || defined(__USE_XOPEN2K8)
+     /* Nanosecond resolution timestamps are stored in a format
+        equivalent to 'struct timespec'.  This is the type used
+        whenever possible but the Unix namespace rules do not allow the
+-- 
+2.30.2
+
