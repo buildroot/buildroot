@@ -155,12 +155,17 @@ TARGET_LDFLAGS = $(call qstrip,$(BR2_TARGET_LDFLAGS))
 #
 # See also: https://www.openwall.com/lists/musl/2020/09/25/4
 #
-# NOTE: We're using "-z text" instead of "-Wl,-z,text" here, because some
+# NOTE: We're using "-ztext" instead of "-Wl,-z,text" here, because some
 # packages pass TARGET_LDFLAGS directly to ld rather than gcc, and ld doesn't
 # support -Wl,[...]. -z is supported by both gcc and clang, so it probably
 # won't cause us problems.
+#
+# We're using "-ztext" instead of "-z text" here, because some buildsystems
+# (like scons, for gpsd) will reorder and/or drop LDFLAGS, causing a lone
+# "-z" to be passed and the "text" keyword to be dropped otherwise. Both
+# gcc and ld supports that, so it probably won't cause us problems.
 ifeq ($(BR2_TOOLCHAIN_USES_MUSL):$(BR2_STATIC_LIBS),y:)
-TARGET_LDFLAGS += -z text
+TARGET_LDFLAGS += -ztext
 endif
 
 # By design, _FORTIFY_SOURCE requires gcc optimization to be enabled.
