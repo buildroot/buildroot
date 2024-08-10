@@ -4,15 +4,12 @@
 #
 ################################################################################
 
-IPERF3_VERSION = 3.16
+IPERF3_VERSION = 3.17.1
 IPERF3_SITE = https://downloads.es.net/pub/iperf
 IPERF3_SOURCE = iperf-$(IPERF3_VERSION).tar.gz
 IPERF3_LICENSE = BSD-3-Clause, BSD-2-Clause, MIT
 IPERF3_LICENSE_FILES = LICENSE
 IPERF3_CPE_ID_VENDOR = es
-
-# 0001-Check-and-link-libatomic-if-needed.patch
-IPERF3_AUTORECONF = YES
 
 IPERF3_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -D_GNU_SOURCE"
 
