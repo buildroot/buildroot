@@ -19,7 +19,6 @@ class TestMariaDB(infra.basetest.BRTest):
         BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="6.1.78"
         BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG=y
         BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE="board/qemu/aarch64-virt/linux.config"
-        BR2_PACKAGE_MYSQL=y
         BR2_PACKAGE_MARIADB=y
         BR2_PACKAGE_MARIADB_SERVER=y
         BR2_TARGET_ROOTFS_EXT2=y
