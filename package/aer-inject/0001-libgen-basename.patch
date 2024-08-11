@@ -1,0 +1,35 @@
+From 197f51d29a01f46750fa6928409301aa8f1163d7 Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Mon, 25 Mar 2024 09:04:40 -0700
+Subject: aer-inject: Include libgen.h for explicit basename prototype
+
+The prototype for basename has been removed from string.h in the latest
+versions of musl [1]. This absence of prototype is flagged as an error
+by some compilers, such as clang-18. To resolve this, include libgen.h
+explicitly, which provides the prototype for basename.
+
+[1] https://git.musl-libc.org/cgit/musl/commit/?id=725e17ed6dff4d0cd22487bb64470881e86a92e7
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+[sathya: Updated the commit log]
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Upstream: https://git.kernel.org/pub/scm/linux/kernel/git/knsathya/aer-inject.git/commit/?id=197f51d29a01f46750fa6928409301aa8f1163d7
+Signed-off-by: J. Neuschaefer <j.neuschaefer@gmx.net>
+---
+ aer-inject.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/aer-inject.c b/aer-inject.c
+index 74e7f72..eed1211 100644
+--- a/aer-inject.c
++++ b/aer-inject.c
+@@ -11,6 +11,7 @@
+  */
+
+ #include <stdio.h>
++#include <libgen.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <fcntl.h>
+--
+cgit 1.2.3-korg
+
