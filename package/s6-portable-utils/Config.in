@@ -10,3 +10,13 @@ config BR2_PACKAGE_S6_PORTABLE_UTILS
 	  they work everywhere.
 
 	  http://skarnet.org/software/s6-portable-utils/
+
+if BR2_PACKAGE_S6_PORTABLE_UTILS
+
+config BR2_PACKAGE_S6_PORTABLE_UTILS_MULTICALL
+	bool "s6-portable-utils multicall binary"
+	help
+	  Build s6-portable-utils as a multicall binary to save disk
+	  space.
+
+endif
