@@ -4,6 +4,7 @@ Xilinx Versal boards:
 ******************************************
 Supported Versal Boards:
 Xilinx VCK190 board
+Xilinx VEK280 board
 Xilinx VPK180 board
 ******************************************
 
@@ -11,6 +12,9 @@ Evaluation board features can be found here with the links below.
 
 VCK190:
 https://www.xilinx.com/products/boards-and-kits/vck190.html
+
+VEK280:
+https://www.xilinx.com/products/boards-and-kits/vek280.html
 
 VPK180:
 https://www.xilinx.com/products/boards-and-kits/vpk180.html
