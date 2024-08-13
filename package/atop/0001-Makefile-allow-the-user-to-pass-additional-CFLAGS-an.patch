@@ -8,26 +8,25 @@ This is needed for some build systems. For example, Buildroot needs to
 disable optimizations on some CPU architectures.
 
 Upstream: https://github.com/Atoptool/atop/pull/314
+[Waldemar: rebase on top of 2.11.0]
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 ---
  Makefile | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index a6f196b..dae5cda 100644
+index 3a63f69..ab44eaa 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -20,8 +20,8 @@ PMPATH1  = /usr/lib/pm-utils/sleep.d
- PMPATH2  = /usr/lib64/pm-utils/sleep.d
+@@ -21,8 +21,8 @@ PMPATH2  = /usr/lib64/pm-utils/sleep.d
  PMPATHD  = /usr/lib/systemd/system-sleep
  
--CFLAGS  += -O2 -I. -Wall $(shell pkg-config --cflags glib-2.0)  -Wno-stringop-truncation -Wmissing-prototypes -Wmissing-declarations -Wformat-security # -DNOPERFEVENT   # -DHTTPSTATS
--LDFLAGS  = $(shell pkg-config --libs glib-2.0)
-+override CFLAGS  := -O2 -I. -Wall $(shell pkg-config --cflags glib-2.0)  -Wno-stringop-truncation -Wmissing-prototypes -Wmissing-declarations -Wformat-security $(CFLAGS) # -DNOPERFEVENT   # -DHTTPSTATS
-+override LDFLAGS  := $(shell pkg-config --libs glib-2.0) $(LDFLAGS)
+ PKG_CONFIG ?= pkg-config
+-CFLAGS  += -O2 -I. -Wall $(shell $(PKG_CONFIG) --cflags glib-2.0)  -Wno-stringop-truncation -Wmissing-prototypes -Wmissing-declarations -Wformat-security # -DNOPERFEVENT   # -DHTTPSTATS
+-LDFLAGS += $(shell $(PKG_CONFIG) --libs glib-2.0)
++override CFLAGS  += -O2 -I. -Wall $(shell $(PKG_CONFIG) --cflags glib-2.0)  -Wno-stringop-truncation -Wmissing-prototypes -Wmissing-declarations -Wformat-security # -DNOPERFEVENT   # -DHTTPSTATS
++override LDFLAGS += $(shell $(PKG_CONFIG) --libs glib-2.0)
  OBJMOD0  = version.o
  OBJMOD1  = various.o  deviate.o   procdbase.o
- OBJMOD2  = acctproc.o photoproc.o photosyst.o  rawlog.o ifprop.o parseable.o
--- 
-2.45.2
-
+ OBJMOD2  = acctproc.o photoproc.o photosyst.o cgroups.o rawlog.o ifprop.o parseable.o
