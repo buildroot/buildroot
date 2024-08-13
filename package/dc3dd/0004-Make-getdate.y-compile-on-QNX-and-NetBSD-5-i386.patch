@@ -1,0 +1,104 @@
+From: Bruno Haible <bruno@clisp.org>
+Date: Thu, 17 Sep 2009 22:42:33 +0200
+Subject: Make getdate.y compile on QNX and NetBSD 5 / i386.
+
+Forwarded: https://sourceforge.net/p/dc3dd/bugs/23/
+Origin: https://git.savannah.gnu.org/cgit/gnulib.git/commit/?id=a68c9ab3cfc8ac7cf2a709b0c1aa93229f8635e6
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://sources.debian.org/patches/dc3dd/7.3.1-3/Make-getdate.y-compile-on-QNX-and-NetBSD-5-i386.patch/
+---
+ lib/getdate.y | 33 ++++++++++++++++++++++-----------
+ m4/getdate.m4 | 14 ++++++++++++++
+ 2 files changed, 36 insertions(+), 11 deletions(-)
+
+diff --git a/lib/getdate.y b/lib/getdate.y
+index 1deec51..d2c23f2 100644
+--- a/lib/getdate.y
++++ b/lib/getdate.y
+@@ -108,12 +108,21 @@
+ 
+ #define HOUR(x) ((x) * 60)
+ 
+-/* Lots of this code assumes time_t and time_t-like values fit into
+-   long int.  It also assumes that signed integer overflow silently
+-   wraps around, but there's no portable way to check for that at
+-   compile-time.  */
++/* long_time_t is a signed integer type that contains all time_t values.  */
+ verify (TYPE_IS_INTEGER (time_t));
+-verify (LONG_MIN <= TYPE_MINIMUM (time_t) && TYPE_MAXIMUM (time_t) <= LONG_MAX);
++#if TIME_T_FITS_IN_LONG_INT
++typedef long int long_time_t;
++#else
++typedef time_t long_time_t;
++#endif
++
++/* Lots of this code assumes time_t and time_t-like values fit into
++   long_time_t.  */
++verify (TYPE_MINIMUM (long_time_t) <= TYPE_MINIMUM (time_t)
++        && TYPE_MAXIMUM (time_t) <= TYPE_MAXIMUM (long_time_t));
++
++/* FIXME: It also assumes that signed integer overflow silently wraps around,
++   but this is not true any more with recent versions of GCC 4.  */
+ 
+ /* An integer value, and the number of digits in its textual
+    representation.  */
+@@ -146,7 +155,7 @@ typedef struct
+   long int day;
+   long int hour;
+   long int minutes;
+-  long int seconds;
++  long_time_t seconds;
+   long int ns;
+ } relative_time;
+ 
+@@ -1492,20 +1501,22 @@ get_date (struct timespec *result, char const *p, struct timespec const *now)
+ 	time_t t1 = t0 + d1;
+ 	long int d2 = 60 * pc.rel.minutes;
+ 	time_t t2 = t1 + d2;
+-	long int d3 = pc.rel.seconds;
+-	time_t t3 = t2 + d3;
++	long_time_t d3 = pc.rel.seconds;
++	long_time_t t3 = t2 + d3;
+ 	long int d4 = (sum_ns - normalized_ns) / BILLION;
+-	time_t t4 = t3 + d4;
++	long_time_t t4 = t3 + d4;
++	time_t t5 = t4;
+ 
+ 	if ((d1 / (60 * 60) ^ pc.rel.hour)
+ 	    | (d2 / 60 ^ pc.rel.minutes)
+ 	    | ((t1 < t0) ^ (d1 < 0))
+ 	    | ((t2 < t1) ^ (d2 < 0))
+ 	    | ((t3 < t2) ^ (d3 < 0))
+-	    | ((t4 < t3) ^ (d4 < 0)))
++	    | ((t4 < t3) ^ (d4 < 0))
++	    | (t5 != t4))
+ 	  goto fail;
+ 
+-	result->tv_sec = t4;
++	result->tv_sec = t5;
+ 	result->tv_nsec = normalized_ns;
+       }
+     }
+diff --git a/m4/getdate.m4 b/m4/getdate.m4
+index d160329..cfbb86f 100644
+--- a/m4/getdate.m4
++++ b/m4/getdate.m4
+@@ -30,4 +30,18 @@ AC_DEFUN([gl_GETDATE],
+   AC_STRUCT_TIMEZONE
+   AC_REQUIRE([gl_CLOCK_TIME])
+   AC_REQUIRE([gl_TM_GMTOFF])
++  AC_COMPILE_IFELSE(
++    [AC_LANG_SOURCE([[
++#include <time.h> /* for time_t */
++#include <limits.h> /* for CHAR_BIT, LONG_MIN, LONG_MAX */
++#define TYPE_MINIMUM(t) \
++  ((t) ((t) 0 < (t) -1 ? (t) 0 : ~ (t) 0 << (sizeof (t) * CHAR_BIT - 1)))
++#define TYPE_MAXIMUM(t) \
++  ((t) ((t) 0 < (t) -1 ? (t) -1 : ~ (~ (t) 0 << (sizeof (t) * CHAR_BIT - 1))))
++typedef int verify_min[2 * (LONG_MIN <= TYPE_MINIMUM (time_t)) - 1];
++typedef int verify_max[2 * (TYPE_MAXIMUM (time_t) <= LONG_MAX) - 1];
++       ]])],
++    [AC_DEFINE([TIME_T_FITS_IN_LONG_INT], [1],
++       [Define to 1 if all 'time_t' values fit in a 'long int'.])
++    ])
+ ])
