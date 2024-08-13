@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-VBOOT_UTILS_VERSION = bbdd62f9b030db7ad8eef789aaf58a7ff9a25656
+VBOOT_UTILS_VERSION = 4b12d392e5b12de29c582df4e717b1228e9f1594
 VBOOT_UTILS_SITE = https://chromium.googlesource.com/chromiumos/platform/vboot_reference
 VBOOT_UTILS_SITE_METHOD = git
 VBOOT_UTILS_LICENSE = BSD-3-Clause
@@ -26,17 +26,20 @@ HOST_VBOOT_UTILS_DEPENDENCIES = host-openssl host-util-linux host-pkgconf
 # does not affect futil or cgpt in any way as long as it is one of the
 # supported targets.
 
+HOST_VBOOT_UTILS_MAKE_OPTS = USE_FLASHROM=0
+
 define HOST_VBOOT_UTILS_BUILD_CMDS
-	$(HOST_MAKE_ENV) $(MAKE) -C $(@D) \
+	$(HOST_MAKE_ENV) $(MAKE) $(HOST_VBOOT_UTILS_MAKE_OPTS) -C $(@D) \
 		CC="$(HOSTCC)" \
-		CFLAGS="$(HOST_CFLAGS) -D_LARGEFILE64_SOURCE -D_GNU_SOURCE" \
+		CPPFLAGS="$(HOST_CFLAGS) -D_LARGEFILE64_SOURCE -D_GNU_SOURCE" \
 		LDFLAGS="$(HOST_LDFLAGS)" \
 		ARCH=arm \
 		futil cgpt
 endef
 
 define HOST_VBOOT_UTILS_INSTALL_CMDS
-	$(HOST_MAKE_ENV) $(MAKE) -C $(@D) DESTDIR=$(HOST_DIR) \
+	$(HOST_MAKE_ENV) $(MAKE) $(HOST_VBOOT_UTILS_MAKE_OPTS) -C $(@D) \
+		DESTDIR=$(HOST_DIR) \
 		futil_install cgpt_install devkeys_install
 endef
 
