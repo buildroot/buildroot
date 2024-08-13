@@ -54,4 +54,8 @@ define UNBOUND_INSTALL_INIT_SYSV
 		$(TARGET_DIR)/etc/init.d/S70unbound
 endef
 
+define UNBOUND_USERS
+	unbound -1 unbound -1 * /etc/unbound - - unbound daemon
+endef
+
 $(eval $(autotools-package))
