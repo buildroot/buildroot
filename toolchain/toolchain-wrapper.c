@@ -477,6 +477,9 @@ int main(int argc, char **argv)
 			break;
 	}
 	if (i == argc && found_nonoption) {
+#ifdef BR2_ZTEXT
+		*cur++ = "-Wl,-z,text";
+#endif
 		/* https://wiki.gentoo.org/wiki/Hardened/Toolchain#Mark_Read-Only_Appropriate_Sections */
 #ifdef BR2_RELRO_PARTIAL
 		*cur++ = "-Wl,-z,relro";

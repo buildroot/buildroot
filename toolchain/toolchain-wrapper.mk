@@ -83,6 +83,15 @@ else ifeq ($(BR2_RELRO_FULL),y)
 TOOLCHAIN_WRAPPER_ARGS += -DBR2_RELRO_FULL
 endif
 
+# musl's dynamic loader doesn't support DT_TEXTREL, which results in a runtime
+# crash if it gets used. The "-z text" linker option issues a build-time error
+# when DT_TEXREL is used, so we capture the problem earlier.
+#
+# See also: https://www.openwall.com/lists/musl/2020/09/25/4
+ifeq ($(BR2_TOOLCHAIN_USES_MUSL):$(BR2_STATIC_LIBS),y:)
+TOOLCHAIN_WRAPPER_ARGS += -DBR2_ZTEXT
+endif
+
 define TOOLCHAIN_WRAPPER_BUILD
 	$(HOSTCC) $(HOST_CFLAGS) $(TOOLCHAIN_WRAPPER_ARGS) \
 		-s -Wl,--hash-style=$(TOOLCHAIN_WRAPPER_HASH_STYLE) \
