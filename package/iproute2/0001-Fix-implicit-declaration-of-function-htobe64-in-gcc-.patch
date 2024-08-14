@@ -1,0 +1,43 @@
+From ea78477cba25b50e7f63f02635e6870d72dcf68e Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Wed, 14 Aug 2024 19:10:09 +0200
+Subject: [PATCH] Fix implicit declaration of function 'htobe64' in gcc 14 on
+ musl systems
+
+On musl systems with GCC 14 and above, the htobe64 function cannot be
+found by default. From the man page[0], the function is from endian.h
+header file. If the file is not included in, then we get the following
+error message. The issue however cannot be reproduced on glibc systems.
+
+In file included from ../include/libgenl.h:5,
+                 from libgenl.c:12:
+../include/libnetlink.h: In function 'rta_getattr_be64':
+../include/libnetlink.h:281:16: error: implicit declaration of function 'htobe64' [-Wimplicit-function-declaration]
+  281 |         return htobe64(rta_getattr_u64(rta));
+      |                ^~~~~~~
+make[1]: *** [../config.include:24: libgenl.o] Error 1
+
+[0]: https://linux.die.net/man/3/htobe64
+
+Signed-off-by: Brahmajit Das <brahmajit.xyz@gmail.com>
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://lore.kernel.org/netdev/20240514084335.19f5b280@hermes.local/T/
+---
+ include/libnetlink.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/libnetlink.h b/include/libnetlink.h
+index 30f0c2d2..77e81815 100644
+--- a/include/libnetlink.h
++++ b/include/libnetlink.h
+@@ -12,6 +12,7 @@
+ #include <linux/neighbour.h>
+ #include <linux/netconf.h>
+ #include <arpa/inet.h>
++#include <endian.h>
+ 
+ struct rtnl_handle {
+ 	int			fd;
+-- 
+2.39.2
+
