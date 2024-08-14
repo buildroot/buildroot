@@ -22,7 +22,7 @@ main()
 	GENIMAGE_CFG="$(mktemp --suffix genimage.cfg)"
 
 	sed -e "s/%ATFBIN%/${ATFBIN}/" \
-		board/stmicroelectronics/common/stm32mp157/genimage.cfg.template > ${GENIMAGE_CFG}
+		board/stmicroelectronics/common/stm32mp1xx/genimage.cfg.template > ${GENIMAGE_CFG}
 
 	support/scripts/genimage.sh -c ${GENIMAGE_CFG}
 
