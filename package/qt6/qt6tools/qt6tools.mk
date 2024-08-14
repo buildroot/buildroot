@@ -41,5 +41,7 @@ ifeq ($(BR2_PACKAGE_QT6DECLARATIVE),y)
 QT6TOOLS_DEPENDENCIES += qt6declarative
 endif
 
+HOST_QT6TOOLS_DEPENDENCIES = host-qt6base
+
 $(eval $(cmake-package))
 $(eval $(host-cmake-package))
