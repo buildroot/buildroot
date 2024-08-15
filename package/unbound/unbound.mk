@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-UNBOUND_VERSION = 1.20.0
-UNBOUND_SITE = https://www.unbound.net/downloads
+UNBOUND_VERSION = 1.21.0
+UNBOUND_SITE = https://nlnetlabs.nl/downloads/unbound
 UNBOUND_INSTALL_STAGING = YES
 UNBOUND_DEPENDENCIES = host-pkgconf expat libevent openssl
 UNBOUND_LICENSE = BSD-3-Clause
