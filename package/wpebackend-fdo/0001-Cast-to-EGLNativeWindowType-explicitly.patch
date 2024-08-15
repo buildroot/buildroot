@@ -1,0 +1,36 @@
+From e56a2597eb66c2221b004aa3356b06c1b071b5b5 Mon Sep 17 00:00:00 2001
+From: Adrian Perez de Castro <aperez@igalia.com>
+Date: Wed, 14 Aug 2024 00:51:26 +0300
+Subject: [PATCH] Cast to EGLNativeWindowType explicitly
+
+In order to avoid off build failures due to mismatching (but
+compatible) declarations of wl_egl_window and EGLNativeWindowType,
+add an explicit cast to EGLNativeWindowType inside the
+TargetWayland::nativeWindow() function.
+
+Solves the following build issue found by the Buildroot autobuilders:
+
+  http://autobuild.buildroot.net/results/92c5cc3134e92c263a0cbb4c05ef8956569e434b/
+
+Signed-off-by: Adrian Perez de Castro <aperez@igalia.com>
+Upstream: https://github.com/Igalia/WPEBackend-fdo/commit/e56a2597eb66c2221b004aa3356b06c1b071b5b5
+---
+ src/egl-client-wayland.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/egl-client-wayland.cpp b/src/egl-client-wayland.cpp
+index 10e02f0..22bb212 100644
+--- a/src/egl-client-wayland.cpp
++++ b/src/egl-client-wayland.cpp
+@@ -63,7 +63,7 @@ TargetWayland::~TargetWayland()
+ 
+ EGLNativeWindowType TargetWayland::nativeWindow() const
+ {
+-    return m_egl.window;
++    return (EGLNativeWindowType) m_egl.window;
+ }
+ 
+ void TargetWayland::resize(uint32_t width, uint32_t height)
+-- 
+2.46.0
+
