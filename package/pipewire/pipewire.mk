@@ -120,8 +120,14 @@ PIPEWIRE_DEPENDENCIES += opus
 else
 PIPEWIRE_CONF_OPTS += -Dbluez5-codec-opus=disabled
 endif
+ifeq ($(BR2_PACKAGE_FDK_AAC),y)
+PIPEWIRE_CONF_OPTS += -Dbluez5-codec-aac=enabled
+PIPEWIRE_DEPENDENCIES += fdk-aac
 else
-PIPEWIRE_CONF_OPTS += -Dbluez5=disabled -Dbluez5-codec-opus=disabled
+PIPEWIRE_CONF_OPTS += -Dbluez5-codec-aac=disabled
+endif
+else
+PIPEWIRE_CONF_OPTS += -Dbluez5=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_FFMPEG),y)
