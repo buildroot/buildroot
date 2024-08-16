@@ -1,0 +1,34 @@
+From 232ac61984720401b0c3854da1644ec20ed218e0 Mon Sep 17 00:00:00 2001
+From: Martin Bark <martin@barkynet.com>
+Date: Thu, 15 Aug 2024 19:47:23 +0200
+Subject: [PATCH] auto/lib/openssl/conf: use pkg-config
+
+Change to using pkg-config to find the path to openssl and its
+dependencies.
+
+Signed-off-by: Martin Bark <martin@barkynet.com>
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: not suitable
+---
+ auto/lib/openssl/conf | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/auto/lib/openssl/conf b/auto/lib/openssl/conf
+index fdf430dff..c9fe4c8bf 100644
+--- a/auto/lib/openssl/conf
++++ b/auto/lib/openssl/conf
+@@ -63,8 +63,9 @@ else
+         ngx_feature_name="NGX_OPENSSL"
+         ngx_feature_run=no
+         ngx_feature_incs="#include <openssl/ssl.h>"
+-        ngx_feature_path=
+-        ngx_feature_libs="-lssl -lcrypto $NGX_LIBDL $NGX_LIBPTHREAD"
++        ngx_feature_path="$(${PKG_CONFIG:=pkg-config} --cflags-only-I openssl|
++			    sed -re 's/(^|\s)-I\s*(\S+)/\1\2/g')"
++        ngx_feature_libs="$(${PKG_CONFIG:=pkg-config} --libs openssl)"
+         ngx_feature_test="SSL_CTX_set_options(NULL, 0)"
+         . auto/feature
+ 
+-- 
+2.39.2
+
