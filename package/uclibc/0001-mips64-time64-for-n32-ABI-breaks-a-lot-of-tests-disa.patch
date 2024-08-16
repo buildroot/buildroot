@@ -1,0 +1,28 @@
+From dd01754e21da71706af07f3e56eade66fc9164fb Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Fri, 16 Aug 2024 16:59:28 +0200
+Subject: [PATCH] mips64: time64 for n32 ABI breaks a lot of tests, disable it
+ for now
+
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://cgit.uclibc-ng.org/cgi/cgit/uclibc-ng.git/commit/?id=dd01754e21da71706af07f3e56eade66fc9164fb
+---
+ extra/Configs/Config.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/extra/Configs/Config.in b/extra/Configs/Config.in
+index 454b6ddb8..86bd20d76 100644
+--- a/extra/Configs/Config.in
++++ b/extra/Configs/Config.in
+@@ -1032,7 +1032,7 @@ config UCLIBC_USE_TIME64
+ 		   TARGET_i386                           || \
+ 		   TARGET_m68k                           || \
+ 		   TARGET_microblaze                     || \
+-		   (TARGET_mips && !CONFIG_MIPS_N64_ABI) || \
++		   (TARGET_mips && !(CONFIG_MIPS_N64_ABI || CONFIG_MIPS_N32_ABI)) || \
+ 		   TARGET_or1k                           || \
+ 		   TARGET_powerpc                        || \
+ 		   TARGET_riscv32                        || \
+-- 
+2.30.2
+
