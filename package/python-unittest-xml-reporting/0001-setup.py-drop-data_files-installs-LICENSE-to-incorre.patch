@@ -1,0 +1,40 @@
+From 662cd67695c31126d72035a818b0f5f1da5a31ca Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 17 Aug 2024 12:24:28 +0200
+Subject: [PATCH] setup.py: drop data_files, installs LICENSE to incorrect
+ place
+
+As reported in issue
+https://github.com/xmlrunner/unittest-xml-reporting/issues/284, the
+data_files statement in the setup() calls installs the LICENSE file in
+the wrong place: in /usr/LICENSE, or even /LICENSE depending on the
+configuration.
+
+So let's drop this, and let setuptools install the LICENSE file
+automatically: since setuptools v56, the license_files attribute is
+automatically assigned to a default value, which includes "LICENSE",
+so there is in fact nothing to do to the get the LICENSE file
+installed at the correct location. See
+https://setuptools.pypa.io/en/latest/history.html#v56-0-0.
+
+Upstream: https://github.com/xmlrunner/unittest-xml-reporting/pull/287
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ setup.py | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/setup.py b/setup.py
+index c524ed4..afa5925 100755
+--- a/setup.py
++++ b/setup.py
+@@ -27,7 +27,6 @@ setup(
+     description = 'unittest-based test runner with Ant/JUnit like XML reporting.',
+     long_description = long_description,
+     long_description_content_type = 'text/markdown',
+-    data_files = [('', ['LICENSE'])],
+     install_requires = ['lxml'],
+     license = 'BSD',
+     platforms = ['Any'],
+-- 
+2.46.0
+
