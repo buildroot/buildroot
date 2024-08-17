@@ -1,0 +1,50 @@
+From ec39b03d891a77552ad7729ff79bf21bf3591842 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 17 Aug 2024 13:52:45 +0200
+Subject: [PATCH] src/or1k/ffi.c: fix incompatible pointer type
+
+The current code base of libffi on OpenRISC (or1k) fails to build with
+GCC 14.x with the following error:
+
+../src/or1k/ffi.c: In function 'ffi_closure_SYSV':
+../src/or1k/ffi.c:183:22: error: initialization of 'char *' from incompatible pointer type 'int *' [-Wincompatible-pointer-types]
+  183 |   char *stack_args = sp;
+      |                      ^~
+
+Indeed:
+
+  register int *sp __asm__ ("r17");
+  [..]
+  char *stack_args = sp;
+
+Adopt the same logic used for:
+
+  char *ptr = (char *) register_args;
+
+which consists in casting to the desired pointer type. Indeed, later
+in the code stack_args is assigned to ptr (so they need to be the same
+pointer type), and some arithmetic is done on ptr, so changing its
+pointer type would change the behavior.
+
+Upstream: https://github.com/libffi/libffi/pull/854
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/or1k/ffi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/or1k/ffi.c b/src/or1k/ffi.c
+index 157388e..7a6d28c 100644
+--- a/src/or1k/ffi.c
++++ b/src/or1k/ffi.c
+@@ -180,7 +180,7 @@ void ffi_closure_SYSV(unsigned long r3, unsigned long r4, unsigned long r5,
+   register int *r13 __asm__ ("r13");
+ 
+   ffi_closure* closure = (ffi_closure*) r13;
+-  char *stack_args = sp;
++  char *stack_args = (char*) sp;
+ 
+   /* Lay the register arguments down in a continuous chunk of memory.  */
+   unsigned register_args[6] =
+-- 
+2.46.0
+

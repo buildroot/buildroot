@@ -1,0 +1,47 @@
+From 4506e943289ed1363f3921bc201d5da76f750229 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 17 Aug 2024 12:56:22 +0200
+Subject: [PATCH] src/or1k/ffi.c: fix prototype of ffi_call_SYSV()
+
+The current code base of libffi on OpenRISC (or1k) fails to build with
+GCC 14.x with the following error:
+
+../src/or1k/ffi.c: In function 'ffi_call':
+../src/or1k/ffi.c:167:34: error: passing argument 3 of 'ffi_call_SYSV' from incompatible pointer type [-Wincompatible-pointer-types]
+  167 |       ffi_call_SYSV(size, &ecif, ffi_prep_args, rvalue, fn, cif->flags);
+      |                                  ^~~~~~~~~~~~~
+      |                                  |
+      |                                  void * (*)(char *, extended_cif *)
+../src/or1k/ffi.c:113:27: note: expected 'void * (*)(int *, extended_cif *)' but argument is of type 'void * (*)(char *, extended_cif *)'
+  113 |                           void *(*)(int *, extended_cif *),
+      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is due to the fact that ffi_prep_args() is in fact defined as:
+
+  void* ffi_prep_args(char *stack, extended_cif *ecif)
+
+so, let's fix the prototype of the function pointer, which anyway gets
+passed to assembly code, so the typing gets lost.
+
+Upstream: https://github.com/libffi/libffi/pull/854
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/or1k/ffi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/or1k/ffi.c b/src/or1k/ffi.c
+index 9451d4e..157388e 100644
+--- a/src/or1k/ffi.c
++++ b/src/or1k/ffi.c
+@@ -110,7 +110,7 @@ void* ffi_prep_args(char *stack, extended_cif *ecif)
+ 
+ extern void ffi_call_SYSV(unsigned,
+                           extended_cif *,
+-                          void *(*)(int *, extended_cif *),
++                          void *(*)(char *, extended_cif *),
+                           unsigned *,
+                           void (*fn)(void),
+                           unsigned);
+-- 
+2.46.0
+
