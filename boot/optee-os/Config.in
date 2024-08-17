@@ -1,6 +1,6 @@
 config BR2_TARGET_OPTEE_OS
 	bool "optee_os"
-	depends on BR2_ARM_CPU_ARMV8A || BR2_ARM_CPU_ARMV7A
+	depends on BR2_ARM_CPU_ARMV8A || BR2_ARM_CPU_ARMV7A || BR2_RISCV_64
 	help
 	  OP-TEE OS provides the secure world boot image and the trust
 	  application development kit of the OP-TEE project. OP-TEE OS
