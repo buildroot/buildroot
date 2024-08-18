@@ -15,7 +15,9 @@ FLASHROM_CONF_OPTS = \
 	-Dich_descriptors_tool=enabled \
 	-Dtests=disabled \
 	-Duse_internal_dmi=true \
-	-Dwerror=false
+	-Dwerror=false \
+	-Dman-pages=disabled \
+	-Ddocumentation=disabled
 
 FLASHROM_PROGRAMMERS = \
 	buspirate_spi \
