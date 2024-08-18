@@ -599,8 +599,22 @@ config BR2_PACKAGE_SYSTEMD_VCONSOLE_DEFAULT_KEYMAP
 	  Default keymap for the system. Leave empty to not set a
 	  default keymap.
 
+# See for which architectures QEMU_MACHINE_TYPE is defined in
+# src/vmspawn/vmspawn-util.h
+config BR2_PACKAGE_SYSTEMD_VMSPAWN_ARCH_SUPPORTS
+	bool
+	default y if BR2_aarch64 || BR2_aarch64_be
+	default y if BR2_arm || BR2_armeb
+	default y if BR2_i386
+	default y if BR2_mips || BR2_mips64 || BR2_mipsel || BR2_mips64el
+	default y if BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le
+	default y if BR2_riscv
+	default y if BR2_s390x
+	default y if BR2_x86_64
+
 config BR2_PACKAGE_SYSTEMD_VMSPAWN
 	bool "enable vmspawn"
+	depends on BR2_PACKAGE_SYSTEMD_VMSPAWN_ARCH_SUPPORTS
 	help
 	  systemd-vmspawn may be used to start a virtual machine
 	  from an OS image. In many ways it is similar to
