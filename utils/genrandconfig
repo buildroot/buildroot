@@ -510,64 +510,15 @@ async def gen_config(args):
 
     sysinfo = SystemInfo()
 
-    configlines = list()
-
-    # Combine with the minimal configuration
-    minimalconfigfile = os.path.join(args.buildrootdir,
-                                     'support/config-fragments/minimal.config')
-    with open(minimalconfigfile) as minimalf:
-        configlines += minimalf.readlines()
-
-    # Allow hosts with old certificates to download over https
-    configlines.append("BR2_WGET=\"wget -nd -t 3 --no-check-certificate\"\n")
-
-    # Per-package folder
-    if randint(0, 15) == 0:
-        configlines.append("BR2_PER_PACKAGE_DIRECTORIES=y\n")
-
-    # Amend the configuration with a few things.
-    if randint(0, 20) == 0:
-        configlines.append("BR2_ENABLE_DEBUG=y\n")
-    if randint(0, 20) == 0:
-        configlines.append("BR2_ENABLE_RUNTIME_DEBUG=y\n")
-    if randint(0, 1) == 0:
-        configlines.append("BR2_INIT_BUSYBOX=y\n")
-    elif randint(0, 15) == 0:
-        configlines.append("BR2_INIT_SYSTEMD=y\n")
-    elif randint(0, 10) == 0:
-        configlines.append("BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_EUDEV=y\n")
-    if randint(0, 20) == 0:
-        configlines.append("BR2_STATIC_LIBS=y\n")
-    if randint(0, 20) == 0:
-        configlines.append("BR2_PACKAGE_PYTHON3_PY_ONLY=y\n")
-    if randint(0, 5) == 0:
-        configlines.append("BR2_OPTIMIZE_2=y\n")
-    if randint(0, 4) == 0:
-        configlines.append("BR2_SYSTEM_ENABLE_NLS=y\n")
-    if randint(0, 4) == 0:
-        configlines.append("BR2_FORTIFY_SOURCE_2=y\n")
-
-    # Randomly enable BR2_REPRODUCIBLE 10% of times
-    # also enable tar filesystem images for testing
-    if await sysinfo.has("diffoscope") and randint(0, 10) == 0:
-        configlines.append("BR2_REPRODUCIBLE=y\n")
-        configlines.append("BR2_TARGET_ROOTFS_TAR=y\n")
-
-    # Write out the configuration file
+    # Create output directory
     if not os.path.exists(args.outputdir):
         os.makedirs(args.outputdir)
+
+    # Calculate path to config file
     if args.outputdir == os.path.abspath(os.path.join(args.buildrootdir, "output")):
         configfile = os.path.join(args.buildrootdir, ".config")
     else:
         configfile = os.path.join(args.outputdir, ".config")
-    with open(configfile, "w+") as configf:
-        configf.writelines(configlines)
-
-    proc = await asyncio.create_subprocess_exec(
-        "make", "O=%s" % args.outputdir, "-C", args.buildrootdir, "olddefconfig")
-    ret = await proc.wait()
-    if ret:
-        return ret
 
     # Now, generate the random selection of packages, and fixup
     # things if needed.
@@ -591,6 +542,21 @@ async def gen_config(args):
 
         if await fixup_config(sysinfo, configfile):
             break
+
+    configlines = list()
+
+    # Allow hosts with old certificates to download over https
+    configlines.append("BR2_WGET=\"wget -nd -t 3 --no-check-certificate\"\n")
+    configlines.append("BR2_CURL=\"curl --ftp-pasv --retry 3 --insecure\"\n")
+
+    # Randomly enable BR2_REPRODUCIBLE 10% of times
+    # also enable tar filesystem images for testing
+    if await sysinfo.has("diffoscope") and randint(0, 10) == 0:
+        configlines.append("BR2_REPRODUCIBLE=y\n")
+        configlines.append("BR2_TARGET_ROOTFS_TAR=y\n")
+
+    with open(configfile, "a") as configf:
+        configf.writelines(configlines)
 
     proc = await asyncio.create_subprocess_exec(
         "make", "O=%s" % args.outputdir, "-C", args.buildrootdir, "olddefconfig")
