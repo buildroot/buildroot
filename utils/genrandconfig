@@ -555,6 +555,11 @@ async def gen_config(args):
         configlines.append("BR2_REPRODUCIBLE=y\n")
         configlines.append("BR2_TARGET_ROOTFS_TAR=y\n")
 
+    # From time to time, ignore sources.buildroot.net to really fetch
+    # from upstream
+    if randint(0, 1) == 0:
+        configlines.append("""BR2_BACKUP_SITE=""\n""")
+
     with open(configfile, "a") as configf:
         configf.writelines(configlines)
 
