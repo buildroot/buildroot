@@ -524,23 +524,27 @@ async def gen_config(args):
     # things if needed.
     # Safe-guard, in case we can not quickly come to a valid
     # configuration: allow at most 100 (arbitrary) iterations.
-    bounded_loop = 100
+    loop = 0
     while True:
-        if bounded_loop == 0:
+        if loop == 100:
             print("ERROR: cannot generate random configuration after 100 iterations",
                   file=sys.stderr)
             return 1
-        bounded_loop -= 1
+        print("Generating configuration, loop %d" % loop)
+        loop += 1
         proc = await asyncio.create_subprocess_exec(
             "make", "O=%s" % args.outputdir, "-C", args.buildrootdir,
             "KCONFIG_SEED=0x%s" % hexlify(os.urandom(4)).decode("ascii").upper(),
             "KCONFIG_PROBABILITY=%d" % randint(1, 20),
-            "randconfig")
+            "randconfig",
+            stdout=asyncio.subprocess.DEVNULL,
+            stderr=asyncio.subprocess.DEVNULL)
         ret = await proc.wait()
         if ret:
             return ret
 
         if await fixup_config(sysinfo, configfile):
+            print("  configuration valid")
             break
 
     configlines = list()
@@ -563,20 +567,30 @@ async def gen_config(args):
     with open(configfile, "a") as configf:
         configf.writelines(configlines)
 
+    print("  olddefconfig")
     proc = await asyncio.create_subprocess_exec(
-        "make", "O=%s" % args.outputdir, "-C", args.buildrootdir, "olddefconfig")
+        "make", "O=%s" % args.outputdir, "-C", args.buildrootdir, "olddefconfig",
+        stdout=asyncio.subprocess.DEVNULL,
+        stderr=asyncio.subprocess.DEVNULL)
     ret = await proc.wait()
     if ret:
         return ret
 
+    print("  savedefconfig")
     proc = await asyncio.create_subprocess_exec(
-        "make", "O=%s" % args.outputdir, "-C", args.buildrootdir, "savedefconfig")
+        "make", "O=%s" % args.outputdir, "-C", args.buildrootdir, "savedefconfig",
+        stdout=asyncio.subprocess.DEVNULL,
+        stderr=asyncio.subprocess.DEVNULL)
+
     ret = await proc.wait()
     if ret:
         return ret
 
+    print("  dependencies")
     proc = await asyncio.create_subprocess_exec(
-        "make", "O=%s" % args.outputdir, "-C", args.buildrootdir, "dependencies")
+        "make", "O=%s" % args.outputdir, "-C", args.buildrootdir, "dependencies",
+        stdout=asyncio.subprocess.DEVNULL,
+        stderr=asyncio.subprocess.DEVNULL)
     return await proc.wait()
 
 
