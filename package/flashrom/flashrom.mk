@@ -10,6 +10,7 @@ FLASHROM_LICENSE = GPL-2.0+
 FLASHROM_LICENSE_FILES = COPYING
 FLASHROM_INSTALL_STAGING = YES
 FLASHROM_CONF_OPTS = \
+	-Dclassic_cli=enabled \
 	-Dclassic_cli_print_wiki=disabled \
 	-Dich_descriptors_tool=enabled \
 	-Dtests=disabled \
@@ -78,10 +79,8 @@ endif
 
 FLASHROM_CONF_OPTS += -Dprogrammer=$(subst $(space),$(comma),$(strip $(FLASHROM_PROGRAMMERS)))
 
-ifeq ($(BR2_SHARED_LIBS),)
-FLASHROM_CONF_OPTS += -Dclassic_cli=enabled
-else
-FLASHROM_CONF_OPTS += -Dclassic_cli=disabled
+ifeq ($(BR2_SHARED_LIBS),y)
+FLASHROM_CONF_OPTS += --default-library=both
 endif
 
 $(eval $(meson-package))
