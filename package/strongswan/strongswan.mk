@@ -83,6 +83,11 @@ STRONGSWAN_DEPENDENCIES += \
 	$(if $(BR2_PACKAGE_MARIADB),mariadb)
 endif
 
+# https://github.com/strongswan/strongswan/issues/2410
+ifeq ($(BR2_PACKAGE_STRONGSWAN_WOLFSSL),y)
+STRONGSWAN_CONF_ENV += CPPFLAGS="$(TARGET_CPPFLAGS) -DWC_NO_RNG"
+endif
+
 # disable connmark/forecast until net/if.h vs. linux/if.h conflict resolved
 # problem exist since linux 4.5 header changes
 STRONGSWAN_CONF_OPTS += \
