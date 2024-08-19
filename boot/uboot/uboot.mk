@@ -462,8 +462,10 @@ endif #BR2_TARGET_UBOOT_ZYNQMP_PMUFW_PREBUILT
 
 ifeq ($(suffix $(UBOOT_ZYNQMP_PMUFW_PATH)),.elf)
 UBOOT_ZYNQMP_PMUFW_PATH_FINAL = $(basename $(UBOOT_ZYNQMP_PMUFW_PATH)).bin
+# objcopy is arch-agnostic so we can use $(TARGET_OBJCOPY) in lack of a
+# microblaze objcopy
 define UBOOT_ZYNQMP_PMUFW_CONVERT
-	objcopy -O binary -I elf32-little $(UBOOT_ZYNQMP_PMUFW_PATH) $(UBOOT_ZYNQMP_PMUFW_PATH_FINAL)
+	$(TARGET_OBJCOPY) -O binary -I elf32-little $(UBOOT_ZYNQMP_PMUFW_PATH) $(UBOOT_ZYNQMP_PMUFW_PATH_FINAL)
 endef
 UBOOT_PRE_BUILD_HOOKS += UBOOT_ZYNQMP_PMUFW_CONVERT
 else
