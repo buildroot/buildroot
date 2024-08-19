@@ -1,0 +1,8 @@
+config BR2_PACKAGE_SUPERIOTOOL
+	bool "superiotool"
+	depends on BR2_x86_64 || BR2_i386
+	select BR2_PACKAGE_PCIUTILS
+	help
+	  Super I/O detection tool.
+
+	  https://www.coreboot.org/Superiotool
