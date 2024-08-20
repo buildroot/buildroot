@@ -9,7 +9,6 @@ config BR2_PACKAGE_EUDEV
 	select BR2_PACKAGE_UTIL_LINUX
 	select BR2_PACKAGE_UTIL_LINUX_LIBS
 	select BR2_PACKAGE_UTIL_LINUX_LIBBLKID
-	select BR2_PACKAGE_KMOD
 	help
 	  eudev is a fork of systemd-udev with the goal of obtaining
 	  better compatibility with existing software such as OpenRC and
@@ -22,6 +21,13 @@ if BR2_PACKAGE_EUDEV
 
 config BR2_PACKAGE_PROVIDES_UDEV
 	default "eudev"
+
+config BR2_PACKAGE_EUDEV_MODULE_LOADING
+	bool "enable kernel module loading"
+	default y
+	select BR2_PACKAGE_KMOD
+	help
+	  Enable kernel module loading support
 
 config BR2_PACKAGE_EUDEV_RULES_GEN
 	bool "enable rules generator"
