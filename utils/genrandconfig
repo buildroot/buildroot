@@ -611,7 +611,7 @@ if __name__ == '__main__':
                         help="Buildroot directory (relative to current directory)",
                         type=str, default='.')
     parser.add_argument("--toolchains-csv", help="Legacy, unused", type=str)
-    parser.add_argument("--no-toolchains-csv", help="Legacy, unused")
+    parser.add_argument("--no-toolchains-csv", help="Legacy, unused", type=bool)
 
     args = parser.parse_args()
 
