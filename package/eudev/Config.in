@@ -3,7 +3,7 @@ config BR2_PACKAGE_EUDEV
 	depends on BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_EUDEV
 	depends on BR2_USE_MMU # uses fork()
 	depends on BR2_USE_WCHAR # needs C99 compiler
-	depends on !BR2_STATIC_LIBS # kmod
+	depends on !BR2_STATIC_LIBS # dlfcn.h
 	select BR2_PACKAGE_HAS_UDEV
 	select BR2_PACKAGE_UDEV_GENTOO_SCRIPTS if BR2_INIT_OPENRC
 	select BR2_PACKAGE_UTIL_LINUX
