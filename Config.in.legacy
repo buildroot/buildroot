@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2024.08"
 
+config BR2_PACKAGE_FAN_CTRL
+	bool "fan-ctrl has been removed"
+	select BR2_LEGACY
+	help
+	  This package was no longer available from SourceForge, the
+	  upstream is completely dead.
+
 config BR2_PACKAGE_FLUTTER_DYNAMIC_LAYOUTS_EXAMPLE
 	bool "flutter-dynamic-layouts-example has been removed"
 	select BR2_LEGACY
