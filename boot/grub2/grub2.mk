@@ -25,6 +25,9 @@ GRUB2_IGNORE_CVES += CVE-2019-14865
 GRUB2_IGNORE_CVES += CVE-2020-15705
 # vulnerability is specific to the SUSE distribution
 GRUB2_IGNORE_CVES += CVE-2021-46705
+# vulnerability is specific to the Redhat distribution, affects a
+# downstream change from Redhat related to password authentication
+GRUB2_IGNORE_CVES += CVE-2023-4001
 # vulnerability is specific to the Redhat distribution, affects the
 # grub2-set-bootflag tool, which doesn't exist upstream
 GRUB2_IGNORE_CVES += CVE-2024-1048
