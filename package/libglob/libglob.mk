@@ -5,7 +5,7 @@
 ################################################################################
 
 LIBGLOB_VERSION = 1.0
-LIBGLOB_SITE = $(call github,voidlinux,libglob,$(LIBGLOB_VERSION))
+LIBGLOB_SITE = $(call github,void-linux,libglob,$(LIBGLOB_VERSION))
 LIBGLOB_LICENSE = BSD-3-Clause
 LIBGLOB_LICENSE_FILES = LICENSE
 LIBGLOB_INSTALL_STAGING = YES
