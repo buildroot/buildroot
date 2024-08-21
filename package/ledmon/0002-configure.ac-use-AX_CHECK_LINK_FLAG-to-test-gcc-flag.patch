@@ -1,0 +1,49 @@
+From 0d391dbcb808755a65fcc9a8a0ceaf3aa53d153f Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Mon, 19 Aug 2024 00:08:40 +0200
+Subject: [PATCH] configure.ac: use AX_CHECK_LINK_FLAG() to test gcc flags
+
+ledmon's configure.ac defines an AX_AM_CFLAGS_ADD() macro that allows
+to test if a flag is supported by gcc, and if so add it to
+AM_CFLAGS. In order to test if the flag works, it uses
+AX_CHECK_COMPILE_FLAG(), which only does a *compile* test, but not
+a *link* test. However, some flags such as -fstack-protector might
+appear to work at compile time, but not link time. Therefore
+-fstack-protector is considered functional:
+
+checking whether C compiler accepts -fstack-protector-strong... yes
+
+but the build later fails:
+
+/home/buildroot/autobuild/instance-0/output-1/host/lib/gcc/m68k-buildroot-linux-uclibc/13.3.0/../../../../m68k-buildroot-linux-uclibc/bin/ld: cannot find -lssp_nonshared: No such file or directory
+/home/buildroot/autobuild/instance-0/output-1/host/lib/gcc/m68k-buildroot-linux-uclibc/13.3.0/../../../../m68k-buildroot-linux-uclibc/bin/ld: cannot find -lssp: No such file or directory
+collect2: error: ld returned 1 exit status
+
+In order to fix this, we test all flags with AX_CHECK_LINK_FLAG()
+which does a full *link* of the test program. This allows to make sure
+that the flag is fully functional. In our test case,
+-fstack-protector-strong will be determined as being non-functional,
+and therefore won't be used.
+
+Upstream: https://github.com/intel/ledmon/pull/244
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index d3fada5..747b168 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -52,7 +52,7 @@ AC_CONFIG_HEADERS([config_ac.h])
+ AM_CFLAGS='-Wall -I../config'
+ AM_CPPFLAGS='-D_DEBUG -D_GNU_SOURCE -D_DEFAULT_SOURCE -DDMALLOC_DISABLE -DBUILD_LABEL=\""$(BUILD_LABEL)"\"'
+ 
+-AC_DEFUN([AX_AM_CFLAGS_ADD],[AX_CHECK_COMPILE_FLAG($1, AM_CFLAGS="$AM_CFLAGS $1")])
++AC_DEFUN([AX_AM_CFLAGS_ADD],[AX_CHECK_LINK_FLAG($1, AM_CFLAGS="$AM_CFLAGS $1")])
+ AX_AM_CFLAGS_ADD([-Wformat -Wformat-security])
+ AX_AM_CFLAGS_ADD([-Wformat-overflow=2])
+ AX_AM_CFLAGS_ADD([-Wno-strict-overflow])
+-- 
+2.46.0
+
