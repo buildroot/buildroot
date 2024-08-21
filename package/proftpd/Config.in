@@ -16,6 +16,13 @@ config BR2_PACKAGE_PROFTPD_MOD_CAP
 	help
 	  Compile ProFTPD with mod_cap support
 
+config BR2_PACKAGE_PROFTPD_MOD_LANG
+	bool "mod_lang support"
+	select BR2_PACKAGE_LIBICONV if !BR2_ENABLE_LOCALE
+	help
+	  The mod_lang module enables ProFTPD support for RFC 2640 LANG
+	  and OPTS UTF8 commands.
+
 config BR2_PACKAGE_PROFTPD_MOD_REWRITE
 	bool "mod_rewrite support"
 	help
