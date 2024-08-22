@@ -1,0 +1,48 @@
+From 01348087ee851f1781a27e7ce8a1ed0bda5441fe Mon Sep 17 00:00:00 2001
+From: Marc Mutz <marc.mutz@qt.io>
+Date: Tue, 12 Dec 2023 22:08:07 +0100
+Subject: [PATCH] HPack: fix incorrect integer overflow check
+
+This code never worked:
+
+For the comparison with max() - 32 to trigger, on 32-bit platforms (or
+Qt 5) signed interger overflow would have had to happen in the
+addition of the two sizes. The compiler can therefore remove the
+overflow check as dead code.
+
+On Qt 6 and 64-bit platforms, the signed integer addition would be
+very unlikely to overflow, but the following truncation to uint32
+would yield the correct result only in a narrow 32-value window just
+below UINT_MAX, if even that.
+
+Fix by using the proper tool, qAddOverflow.
+
+Pick-to: 6.7 6.6 6.5 6.2 5.15
+Change-Id: I7599f2e75ff7f488077b0c60b81022591005661c
+Reviewed-by: Allan Sandfeld Jensen <allan.jensen@qt.io>
+
+Fixes: https://security-tracker.debian.org/tracker/CVE-2023-51714
+Upstream: https://github.com/qt/qtbase/commit/ee5da1f2eaf8932aeca02ffea6e4c618585e29e3
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/network/access/http2/hpacktable.cpp | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/network/access/http2/hpacktable.cpp b/src/network/access/http2/hpacktable.cpp
+index 34da5594e2b..f20ec92d4c5 100644
+--- a/src/network/access/http2/hpacktable.cpp
++++ b/src/network/access/http2/hpacktable.cpp
+@@ -26,7 +26,9 @@ HeaderSize entry_size(QByteArrayView name, QByteArrayView value)
+     // for counting the number of references to the name and value would have
+     // 32 octets of overhead."
+ 
+-    const unsigned sum = unsigned(name.size() + value.size());
++    size_t sum;
++    if (qAddOverflow(size_t(name.size()), size_t(value.size()), &sum))
++        return HeaderSize();
+     if (sum > (std::numeric_limits<unsigned>::max() - 32))
+         return HeaderSize();
+     return HeaderSize(true, quint32(sum + 32));
+-- 
+2.46.0
+

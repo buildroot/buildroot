@@ -1,0 +1,43 @@
+From fc5e607b78dc6dc2a17e3586d2085e9d25412785 Mon Sep 17 00:00:00 2001
+From: Marc Mutz <marc.mutz@qt.io>
+Date: Tue, 12 Dec 2023 20:51:56 +0100
+Subject: [PATCH] HPack: fix a Yoda Condition
+
+Putting the variable on the LHS of a relational operation makes the
+expression easier to read. In this case, we find that the whole
+expression is nonsensical as an overflow protection, because if
+name.size() + value.size() overflows, the result will exactly _not_
+be > max() - 32, because UB will have happened.
+
+To be fixed in a follow-up commit.
+
+As a drive-by, add parentheses around the RHS.
+
+Pick-to: 6.7 6.6 6.5 6.2 5.15
+Change-Id: I35ce598884c37c51b74756b3bd2734b9aad63c09
+Reviewed-by: Allan Sandfeld Jensen <allan.jensen@qt.io>
+
+Upstream: https://github.com/qt/qtbase/commit/658607a34ead214fbacbc2cca44915655c318ea9
+[Thomas: needed to backport fix for
+https://security-tracker.debian.org/tracker/CVE-2023-51714]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/network/access/http2/hpacktable.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/network/access/http2/hpacktable.cpp b/src/network/access/http2/hpacktable.cpp
+index 0b69ee86a9b..34da5594e2b 100644
+--- a/src/network/access/http2/hpacktable.cpp
++++ b/src/network/access/http2/hpacktable.cpp
+@@ -27,7 +27,7 @@ HeaderSize entry_size(QByteArrayView name, QByteArrayView value)
+     // 32 octets of overhead."
+ 
+     const unsigned sum = unsigned(name.size() + value.size());
+-    if (std::numeric_limits<unsigned>::max() - 32 < sum)
++    if (sum > (std::numeric_limits<unsigned>::max() - 32))
+         return HeaderSize();
+     return HeaderSize(true, quint32(sum + 32));
+ }
+-- 
+2.46.0
+

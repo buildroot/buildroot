@@ -17,6 +17,8 @@ QT6BASE_IGNORE_CVES += CVE-2023-32762
 QT6BASE_IGNORE_CVES += CVE-2023-32763
 # 0009-QXmlStreamReader-Raise-error-on-unexpected-tokens.patch
 QT6BASE_IGNORE_CVES += CVE-2023-38197
+# 0011-HPack-fix-incorrect-integer-overflow-check.patch
+QT6BASE_IGNORE_CVES += CVE-2023-38197
 
 QT6BASE_CMAKE_BACKEND = ninja
 
