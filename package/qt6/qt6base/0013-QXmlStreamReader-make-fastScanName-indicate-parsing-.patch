@@ -1,0 +1,277 @@
+From 87f0d5c9212df3087b053a36165453f10205924d Mon Sep 17 00:00:00 2001
+From: Ahmad Samir <a.samirh78@gmail.com>
+Date: Thu, 22 Jun 2023 15:56:07 +0300
+Subject: [PATCH] QXmlStreamReader: make fastScanName() indicate parsing status
+ to callers
+
+This fixes a crash while parsing an XML file with garbage data, the file
+starts with '<' then garbage data:
+- The loop in the parse() keeps iterating until it hits "case 262:",
+  which calls fastScanName()
+- fastScanName() iterates over the text buffer scanning for the
+  attribute name (e.g. "xml:lang"), until it finds ':'
+- Consider a Value val, fastScanName() is called on it, it would set
+  val.prefix to a number > val.len, then it would hit the 4096 condition
+  and return (returned 0, now it returns the equivalent of
+  std::null_opt), which means that val.len doesn't get modified, making
+  it smaller than val.prefix
+- The code would try constructing an XmlStringRef with negative length,
+  which would hit an assert in one of QStringView's constructors
+
+Add an assert to the XmlStringRef constructor.
+
+Add unittest based on the file from the bug report.
+
+Later on I will replace FastScanNameResult with std::optional<qsizetype>
+(std::optional is C++17, which isn't required by Qt 5.15, and we want to
+backport this fix).
+
+Credit to OSS-Fuzz.
+
+Fixes: QTBUG-109781
+Fixes: QTBUG-114829
+Pick-to: 6.6 6.5 6.2 5.15
+Change-Id: I455a5eeb47870c2ac9ffd0cbcdcd99c1ae2dd374
+Reviewed-by: Allan Sandfeld Jensen <allan.jensen@qt.io>
+
+Fixes: https://security-tracker.debian.org/tracker/CVE-2023-37369
+Upstream: https://github.com/qt/qtbase/commit/6326bec46a618c72feba4a2bb994c4d475050aed
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/corelib/serialization/qxmlstream.cpp      | 23 ++++++++---
+ src/corelib/serialization/qxmlstream.g        | 12 +++++-
+ src/corelib/serialization/qxmlstream_p.h      | 14 ++++++-
+ .../serialization/qxmlstreamparser_p.h        | 12 +++++-
+ .../qxmlstream/tst_qxmlstream.cpp             | 39 +++++++++++++++++++
+ 5 files changed, 88 insertions(+), 12 deletions(-)
+
+diff --git a/src/corelib/serialization/qxmlstream.cpp b/src/corelib/serialization/qxmlstream.cpp
+index 466f456ee63..2c879fb4c20 100644
+--- a/src/corelib/serialization/qxmlstream.cpp
++++ b/src/corelib/serialization/qxmlstream.cpp
+@@ -1247,7 +1247,9 @@ inline qsizetype QXmlStreamReaderPrivate::fastScanContentCharList()
+     return n;
+ }
+ 
+-inline qsizetype QXmlStreamReaderPrivate::fastScanName(Value *val)
++// Fast scan an XML attribute name (e.g. "xml:lang").
++inline QXmlStreamReaderPrivate::FastScanNameResult
++QXmlStreamReaderPrivate::fastScanName(Value *val)
+ {
+     qsizetype n = 0;
+     uint c;
+@@ -1255,7 +1257,8 @@ inline qsizetype QXmlStreamReaderPrivate::fastScanName(Value *val)
+         if (n >= 4096) {
+             // This is too long to be a sensible name, and
+             // can exhaust memory, or the range of decltype(*prefix)
+-            return 0;
++            raiseNamePrefixTooLongError();
++            return {};
+         }
+         switch (c) {
+         case '\n':
+@@ -1289,18 +1292,18 @@ inline qsizetype QXmlStreamReaderPrivate::fastScanName(Value *val)
+                 putChar(':');
+                 --n;
+             }
+-            return n;
++            return FastScanNameResult(n);
+         case ':':
+             if (val) {
+                 if (val->prefix == 0) {
+                     val->prefix = qint16(n + 2);
+                 } else { // only one colon allowed according to the namespace spec.
+                     putChar(c);
+-                    return n;
++                    return FastScanNameResult(n);
+                 }
+             } else {
+                 putChar(c);
+-                return n;
++                return FastScanNameResult(n);
+             }
+             Q_FALLTHROUGH();
+         default:
+@@ -1314,7 +1317,7 @@ inline qsizetype QXmlStreamReaderPrivate::fastScanName(Value *val)
+     qsizetype pos = textBuffer.size() - n;
+     putString(textBuffer, pos);
+     textBuffer.resize(pos);
+-    return 0;
++    return FastScanNameResult(0);
+ }
+ 
+ enum NameChar { NameBeginning, NameNotBeginning, NotName };
+@@ -1795,6 +1798,14 @@ void QXmlStreamReaderPrivate::raiseWellFormedError(const QString &message)
+     raiseError(QXmlStreamReader::NotWellFormedError, message);
+ }
+ 
++void QXmlStreamReaderPrivate::raiseNamePrefixTooLongError()
++{
++    // TODO: add a ImplementationLimitsExceededError and use it instead
++    raiseError(QXmlStreamReader::NotWellFormedError,
++               QXmlStream::tr("Length of XML attribute name exceeds implemnetation limits (4KiB "
++                              "characters)."));
++}
++
+ void QXmlStreamReaderPrivate::parseError()
+ {
+ 
+diff --git a/src/corelib/serialization/qxmlstream.g b/src/corelib/serialization/qxmlstream.g
+index f3152bff378..fc122e66811 100644
+--- a/src/corelib/serialization/qxmlstream.g
++++ b/src/corelib/serialization/qxmlstream.g
+@@ -1420,7 +1420,11 @@ qname ::= LETTER;
+ /.
+         case $rule_number: {
+             Value &val = sym(1);
+-            val.len += fastScanName(&val);
++            if (auto res = fastScanName(&val))
++                val.len += *res;
++            else
++                return false;
++
+             if (atEnd) {
+                 resume($rule_number);
+                 return false;
+@@ -1431,7 +1435,11 @@ qname ::= LETTER;
+ name ::= LETTER;
+ /.
+         case $rule_number:
+-            sym(1).len += fastScanName();
++            if (auto res = fastScanName())
++                sym(1).len += *res;
++            else
++                return false;
++
+             if (atEnd) {
+                 resume($rule_number);
+                 return false;
+diff --git a/src/corelib/serialization/qxmlstream_p.h b/src/corelib/serialization/qxmlstream_p.h
+index efee742963b..be69921c7c3 100644
+--- a/src/corelib/serialization/qxmlstream_p.h
++++ b/src/corelib/serialization/qxmlstream_p.h
+@@ -38,7 +38,7 @@ public:
+ 
+     constexpr XmlStringRef() = default;
+     constexpr inline XmlStringRef(const QString *string, qsizetype pos, qsizetype length)
+-        : m_string(string), m_pos(pos), m_size(length)
++        : m_string(string), m_pos(pos), m_size((Q_ASSERT(length >= 0), length))
+     {
+     }
+     XmlStringRef(const QString *string)
+@@ -482,7 +482,16 @@ public:
+     qsizetype fastScanLiteralContent();
+     qsizetype fastScanSpace();
+     qsizetype fastScanContentCharList();
+-    qsizetype fastScanName(Value *val = nullptr);
++
++    struct FastScanNameResult {
++        FastScanNameResult() : ok(false) {}
++        explicit FastScanNameResult(qsizetype len) : addToLen(len), ok(true) { }
++        operator bool() { return ok; }
++        qsizetype operator*() { Q_ASSERT(ok); return addToLen; }
++        qsizetype addToLen;
++        bool ok;
++    };
++    FastScanNameResult fastScanName(Value *val = nullptr);
+     inline qsizetype fastScanNMTOKEN();
+ 
+ 
+@@ -491,6 +500,7 @@ public:
+ 
+     void raiseError(QXmlStreamReader::Error error, const QString& message = QString());
+     void raiseWellFormedError(const QString &message);
++    void raiseNamePrefixTooLongError();
+ 
+     QXmlStreamEntityResolver *entityResolver;
+ 
+diff --git a/src/corelib/serialization/qxmlstreamparser_p.h b/src/corelib/serialization/qxmlstreamparser_p.h
+index 59370a93106..afd83381b3f 100644
+--- a/src/corelib/serialization/qxmlstreamparser_p.h
++++ b/src/corelib/serialization/qxmlstreamparser_p.h
+@@ -948,7 +948,11 @@ bool QXmlStreamReaderPrivate::parse()
+ 
+         case 262: {
+             Value &val = sym(1);
+-            val.len += fastScanName(&val);
++            if (auto res = fastScanName(&val))
++                val.len += *res;
++            else
++                return false;
++
+             if (atEnd) {
+                 resume(262);
+                 return false;
+@@ -956,7 +960,11 @@ bool QXmlStreamReaderPrivate::parse()
+         } break;
+ 
+         case 263:
+-            sym(1).len += fastScanName();
++            if (auto res = fastScanName())
++                sym(1).len += *res;
++            else
++                return false;
++
+             if (atEnd) {
+                 resume(263);
+                 return false;
+diff --git a/tests/auto/corelib/serialization/qxmlstream/tst_qxmlstream.cpp b/tests/auto/corelib/serialization/qxmlstream/tst_qxmlstream.cpp
+index 8d2738700ea..ac41528e2a8 100644
+--- a/tests/auto/corelib/serialization/qxmlstream/tst_qxmlstream.cpp
++++ b/tests/auto/corelib/serialization/qxmlstream/tst_qxmlstream.cpp
+@@ -581,6 +581,8 @@ private slots:
+     void readBack() const;
+     void roundTrip() const;
+     void roundTrip_data() const;
++    void test_fastScanName_data() const;
++    void test_fastScanName() const;
+ 
+     void entityExpansionLimit() const;
+ 
+@@ -1757,6 +1759,43 @@ void tst_QXmlStream::roundTrip() const
+     QCOMPARE(out, in);
+ }
+ 
++void tst_QXmlStream::test_fastScanName_data() const
++{
++    QTest::addColumn<QByteArray>("data");
++    QTest::addColumn<QXmlStreamReader::Error>("errorType");
++
++    // 4096 is the limit in QXmlStreamReaderPrivate::fastScanName()
++
++    QByteArray arr = "<a"_ba + ":" + QByteArray("b").repeated(4096 - 1);
++    QTest::newRow("data1") << arr << QXmlStreamReader::PrematureEndOfDocumentError;
++
++    arr = "<a"_ba + ":" + QByteArray("b").repeated(4096);
++    QTest::newRow("data2") << arr << QXmlStreamReader::NotWellFormedError;
++
++    arr = "<"_ba + QByteArray("a").repeated(4000) + ":" + QByteArray("b").repeated(96);
++    QTest::newRow("data3") << arr << QXmlStreamReader::PrematureEndOfDocumentError;
++
++    arr = "<"_ba + QByteArray("a").repeated(4000) + ":" + QByteArray("b").repeated(96 + 1);
++    QTest::newRow("data4") << arr << QXmlStreamReader::NotWellFormedError;
++
++    arr = "<"_ba + QByteArray("a").repeated(4000 + 1) + ":" + QByteArray("b").repeated(96);
++    QTest::newRow("data5") << arr << QXmlStreamReader::NotWellFormedError;
++}
++
++void tst_QXmlStream::test_fastScanName() const
++{
++    QFETCH(QByteArray, data);
++    QFETCH(QXmlStreamReader::Error, errorType);
++
++    QXmlStreamReader reader(data);
++    QXmlStreamReader::TokenType tokenType;
++    while (!reader.atEnd())
++        tokenType = reader.readNext();
++
++    QCOMPARE(tokenType, QXmlStreamReader::Invalid);
++    QCOMPARE(reader.error(), errorType);
++}
++
+ void tst_QXmlStream::tokenErrorHandling_data() const
+ {
+     QTest::addColumn<QString>("fileName");
+-- 
+2.46.0
+

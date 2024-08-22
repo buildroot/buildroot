@@ -19,6 +19,8 @@ QT6BASE_IGNORE_CVES += CVE-2023-32763
 QT6BASE_IGNORE_CVES += CVE-2023-38197
 # 0011-HPack-fix-incorrect-integer-overflow-check.patch
 QT6BASE_IGNORE_CVES += CVE-2023-38197
+# 0013-QXmlStreamReader-make-fastScanName-indicate-parsing-.patch
+QT6BASE_IGNORE_CVES += CVE-2023-37369
 
 QT6BASE_CMAKE_BACKEND = ninja
 
