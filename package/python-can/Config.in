@@ -11,3 +11,13 @@ config BR2_PACKAGE_PYTHON_CAN
 	  Python.
 
 	  https://github.com/hardbyte/python-can
+
+if BR2_PACKAGE_PYTHON_CAN
+
+config BR2_PACKAGE_PYTHON_CAN_VIEWER
+	bool "python-can-viewer"
+	select BR2_PACKAGE_PYTHON3_CURSES # runtime
+	help
+	  Also install the viewer tool (requires ncurses).
+
+endif

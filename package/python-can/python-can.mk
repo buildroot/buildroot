@@ -11,4 +11,11 @@ PYTHON_CAN_SETUP_TYPE = setuptools
 PYTHON_CAN_LICENSE = LGPL-3.0
 PYTHON_CAN_LICENSE_FILES = LICENSE.txt
 
+ifneq ($(BR2_PACKAGE_PYTHON_CAN_VIEWER),y)
+define PYTHON_CAN_REMOVE_VIEWER
+	rm -f $(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages/can/viewer.py
+endef
+PYTHON_CAN_POST_INSTALL_TARGET_HOOKS += PYTHON_CAN_REMOVE_VIEWER
+endif
+
 $(eval $(python-package))
