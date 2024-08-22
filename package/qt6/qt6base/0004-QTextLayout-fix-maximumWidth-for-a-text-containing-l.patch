@@ -1,0 +1,168 @@
+From b58616bff6715a6c66bdc9019d008b7918d3ccc8 Mon Sep 17 00:00:00 2001
+From: Vladimir Belyavsky <belyavskyv@gmail.com>
+Date: Tue, 27 Sep 2022 16:57:08 +0300
+Subject: [PATCH] QTextLayout: fix maximumWidth() for a text containing line
+ separator
+
+This is improved version of previous fix
+013c346a8dcbd618febb07884c64c740daf9754d that was reverted because it
+broke some tests for Quick Text. The problem was that it did not work
+correctly in the case the text was wrapped to a fixed width.
+To deal with this we'll accumulate current line full width (as if it
+hadn't been wrapped) in layout data (layoutData->currentMaxWidth).
+Then when the next line is explicitly wrapped by line or paragraph
+separator, this accumulated width will be used to adjust layout's
+maximum width.
+
+Change-Id: Iad7119d9808e1db15fe1fbc5db049c3db928529f
+Fixes: QTBUG-89557
+Fixes: QTBUG-104986
+Reviewed-by: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
+
+Upstream: https://github.com/qt/qtbase/commit/991c056438b311566bc4ea543af0f33dfd5dffbb
+[Thomas: Needed to backport fix for
+https://security-tracker.debian.org/tracker/CVE-2023-32763]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/gui/text/qtextengine.cpp                     |  3 +++
+ src/gui/text/qtextengine_p.h                     |  1 +
+ src/gui/text/qtextlayout.cpp                     | 16 +++++++++++-----
+ .../gui/text/qtextlayout/tst_qtextlayout.cpp     | 16 +++++++++++++++-
+ 4 files changed, 30 insertions(+), 6 deletions(-)
+
+diff --git a/src/gui/text/qtextengine.cpp b/src/gui/text/qtextengine.cpp
+index ec528760e3b..ef3cdcbaaa7 100644
+--- a/src/gui/text/qtextengine.cpp
++++ b/src/gui/text/qtextengine.cpp
+@@ -2619,6 +2619,7 @@ QTextEngine::LayoutData::LayoutData()
+     haveCharAttributes = false;
+     logClustersPtr = nullptr;
+     available_glyphs = 0;
++    currentMaxWidth = 0;
+ }
+ 
+ QTextEngine::LayoutData::LayoutData(const QString &str, void **stack_memory, int _allocated)
+@@ -2651,6 +2652,7 @@ QTextEngine::LayoutData::LayoutData(const QString &str, void **stack_memory, int
+     hasBidi = false;
+     layoutState = LayoutEmpty;
+     haveCharAttributes = false;
++    currentMaxWidth = 0;
+ }
+ 
+ QTextEngine::LayoutData::~LayoutData()
+@@ -2736,6 +2738,7 @@ void QTextEngine::freeMemory()
+         layoutData->hasBidi = false;
+         layoutData->layoutState = LayoutEmpty;
+         layoutData->haveCharAttributes = false;
++        layoutData->currentMaxWidth = 0;
+         layoutData->items.clear();
+     }
+     if (specialData)
+diff --git a/src/gui/text/qtextengine_p.h b/src/gui/text/qtextengine_p.h
+index 925dafe04e2..59e332c64ae 100644
+--- a/src/gui/text/qtextengine_p.h
++++ b/src/gui/text/qtextengine_p.h
+@@ -385,6 +385,7 @@ public:
+         uint layoutState : 2;
+         uint memory_on_stack : 1;
+         uint haveCharAttributes : 1;
++        QFixed currentMaxWidth;
+         QString string;
+         bool reallocate(int totalGlyphs);
+     };
+diff --git a/src/gui/text/qtextlayout.cpp b/src/gui/text/qtextlayout.cpp
+index 9ae6bee2de3..2009dd3d0bb 100644
+--- a/src/gui/text/qtextlayout.cpp
++++ b/src/gui/text/qtextlayout.cpp
+@@ -1808,6 +1808,7 @@ void QTextLine::layout_helper(int maxGlyphs)
+     lbh.logClusters = eng->layoutData->logClustersPtr;
+     lbh.previousGlyph = 0;
+ 
++    bool manuallyWrapped = false;
+     bool hasInlineObject = false;
+     QFixed maxInlineObjectHeight = 0;
+ 
+@@ -1883,6 +1884,7 @@ void QTextLine::layout_helper(int maxGlyphs)
+                 lbh.calculateRightBearingForPreviousGlyph();
+             }
+             line += lbh.tmpData;
++            manuallyWrapped = true;
+             goto found;
+         } else if (current.analysis.flags == QScriptAnalysis::Object) {
+             lbh.whiteSpaceOrObject = true;
+@@ -1917,11 +1919,10 @@ void QTextLine::layout_helper(int maxGlyphs)
+                 addNextCluster(lbh.currentPosition, end, lbh.spaceData, lbh.glyphCount,
+                                current, lbh.logClusters, lbh.glyphs);
+             }
+-
+-            if (!lbh.manualWrap && lbh.spaceData.textWidth > line.width) {
+-                goto found;
+-            }
+         } else {
++            if (!lbh.manualWrap && lbh.spaceData.textWidth > line.width)
++                goto found;
++
+             lbh.whiteSpaceOrObject = false;
+             bool sb_or_ws = false;
+             lbh.saveCurrentGlyph();
+@@ -2104,7 +2105,12 @@ found:
+         eng->maxWidth = qMax(eng->maxWidth, line.textWidth);
+     } else {
+         eng->minWidth = qMax(eng->minWidth, lbh.minw);
+-        eng->maxWidth += line.textWidth + lbh.spaceData.textWidth;
++        eng->layoutData->currentMaxWidth += line.textWidth;
++        if (!manuallyWrapped)
++            eng->layoutData->currentMaxWidth += lbh.spaceData.textWidth;
++        eng->maxWidth = qMax(eng->maxWidth, eng->layoutData->currentMaxWidth);
++        if (manuallyWrapped)
++            eng->layoutData->currentMaxWidth = 0;
+     }
+ 
+     line.textWidth += trailingSpace;
+diff --git a/tests/auto/gui/text/qtextlayout/tst_qtextlayout.cpp b/tests/auto/gui/text/qtextlayout/tst_qtextlayout.cpp
+index 680c62e9825..5b14c4e1491 100644
+--- a/tests/auto/gui/text/qtextlayout/tst_qtextlayout.cpp
++++ b/tests/auto/gui/text/qtextlayout/tst_qtextlayout.cpp
+@@ -2670,17 +2670,28 @@ void tst_QTextLayout::min_maximumWidth_data()
+     QTest::newRow("long string") << QStringLiteral("lmong_long_crazy_87235982735_23857239682376923876923876-fuwhfhfw-names-AAAA-deeaois2019-03-03.and.more");
+     QTest::newRow("QTBUG-106947") << QStringLiteral("text                                text");
+     QTest::newRow("spaces") << QStringLiteral("                text                text                ");
++    QTest::newRow("QTBUG-104986") << QStringLiteral("text\ntext\ntext");
++    QTest::newRow("spaces + line breaks") << QStringLiteral("       \n         text\n                \ntext       \n         ");
+ }
+ 
+ void tst_QTextLayout::min_maximumWidth()
+ {
+     QFETCH(QString, text);
++    text.replace('\n', QChar::LineSeparator);
+ 
+     QTextLayout layout(text, testFont);
+     layout.setCacheEnabled(true);
+ 
++    QTextOption opt;
++    opt.setWrapMode(QTextOption::NoWrap);
++    layout.setTextOption(opt);
++    layout.beginLayout();
++    while (layout.createLine().isValid()) { }
++    layout.endLayout();
++
++    const qreal nonWrappedMaxWidth = layout.maximumWidth();
++
+     for (int wrapMode = QTextOption::NoWrap; wrapMode <= QTextOption::WrapAtWordBoundaryOrAnywhere; ++wrapMode) {
+-        QTextOption opt;
+         opt.setWrapMode((QTextOption::WrapMode)wrapMode);
+         layout.setTextOption(opt);
+         layout.beginLayout();
+@@ -2689,6 +2700,9 @@ void tst_QTextLayout::min_maximumWidth()
+         const qreal minWidth = layout.minimumWidth();
+         const qreal maxWidth = layout.maximumWidth();
+ 
++        QCOMPARE_LE(minWidth, maxWidth);
++        QCOMPARE_LE(maxWidth, nonWrappedMaxWidth); // maxWidth for wrapped text shouldn't exceed maxWidth for the text without wrapping.
++
+         // Try the layout from slightly wider than the widest (maxWidth)
+         // and narrow it down to slighly narrower than minWidth
+         // layout.maximumWidth() should return the same regardless
+-- 
+2.46.0
+

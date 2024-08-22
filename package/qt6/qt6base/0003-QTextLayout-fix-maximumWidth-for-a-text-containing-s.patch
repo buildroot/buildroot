@@ -1,0 +1,88 @@
+From ffa54deca4ee1e47c112b33ff37f296c4df6c559 Mon Sep 17 00:00:00 2001
+From: Vladimir Belyavsky <belyavskyv@gmail.com>
+Date: Mon, 26 Sep 2022 19:32:50 +0300
+Subject: [PATCH] QTextLayout: fix maximumWidth() for a text containing spaces
+
+When laying out a text and calculating maxWidth, we must _always_ take
+into account the accumulated width of spaces (lbh.spaceData.textWidth)
+regardless of wrapMode, other text content, spaces position, etc.
+
+Fixes: QTBUG-106947
+Change-Id: I2ac9af92ed7dd07c1e040bfcf83949a358d1c9c9
+Reviewed-by: Qt CI Bot <qt_ci_bot@qt-project.org>
+Reviewed-by: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
+
+Upstream: https://github.com/qt/qtbase/commit/4945fd93f13d2fc34adf260fd0e0325d0794f3f7
+[Thomas: Needed to backport fix for
+https://security-tracker.debian.org/tracker/CVE-2023-32763]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/gui/text/qtextlayout.cpp                     |  6 +-----
+ .../gui/text/qtextlayout/tst_qtextlayout.cpp     | 16 ++++++++++++++--
+ 2 files changed, 15 insertions(+), 7 deletions(-)
+
+diff --git a/src/gui/text/qtextlayout.cpp b/src/gui/text/qtextlayout.cpp
+index e3c69db7e57..9ae6bee2de3 100644
+--- a/src/gui/text/qtextlayout.cpp
++++ b/src/gui/text/qtextlayout.cpp
+@@ -1919,7 +1919,6 @@ void QTextLine::layout_helper(int maxGlyphs)
+             }
+ 
+             if (!lbh.manualWrap && lbh.spaceData.textWidth > line.width) {
+-                lbh.spaceData.textWidth = line.width; // ignore spaces that fall out of the line.
+                 goto found;
+             }
+         } else {
+@@ -2105,12 +2104,9 @@ found:
+         eng->maxWidth = qMax(eng->maxWidth, line.textWidth);
+     } else {
+         eng->minWidth = qMax(eng->minWidth, lbh.minw);
+-        eng->maxWidth += line.textWidth;
++        eng->maxWidth += line.textWidth + lbh.spaceData.textWidth;
+     }
+ 
+-    if (line.textWidth > 0 && item < eng->layoutData->items.size())
+-        eng->maxWidth += lbh.spaceData.textWidth;
+-
+     line.textWidth += trailingSpace;
+     if (lbh.spaceData.length) {
+         line.trailingSpaces = lbh.spaceData.length;
+diff --git a/tests/auto/gui/text/qtextlayout/tst_qtextlayout.cpp b/tests/auto/gui/text/qtextlayout/tst_qtextlayout.cpp
+index a8b42b88697..680c62e9825 100644
+--- a/tests/auto/gui/text/qtextlayout/tst_qtextlayout.cpp
++++ b/tests/auto/gui/text/qtextlayout/tst_qtextlayout.cpp
+@@ -124,6 +124,7 @@ private slots:
+     void tooManyDirectionalCharctersCrash_qtbug77819();
+     void softHyphens_data();
+     void softHyphens();
++    void min_maximumWidth_data();
+     void min_maximumWidth();
+ 
+ private:
+@@ -2662,10 +2663,21 @@ void tst_QTextLayout::softHyphens()
+     }
+ }
+ 
++void tst_QTextLayout::min_maximumWidth_data()
++{
++    QTest::addColumn<QString>("text");
++
++    QTest::newRow("long string") << QStringLiteral("lmong_long_crazy_87235982735_23857239682376923876923876-fuwhfhfw-names-AAAA-deeaois2019-03-03.and.more");
++    QTest::newRow("QTBUG-106947") << QStringLiteral("text                                text");
++    QTest::newRow("spaces") << QStringLiteral("                text                text                ");
++}
++
+ void tst_QTextLayout::min_maximumWidth()
+ {
+-    QString longString("lmong_long_crazy_87235982735_23857239682376923876923876-fuwhfhfw-names-AAAA-deeaois2019-03-03.and.more");
+-    QTextLayout layout(longString, testFont);
++    QFETCH(QString, text);
++
++    QTextLayout layout(text, testFont);
++    layout.setCacheEnabled(true);
+ 
+     for (int wrapMode = QTextOption::NoWrap; wrapMode <= QTextOption::WrapAtWordBoundaryOrAnywhere; ++wrapMode) {
+         QTextOption opt;
+-- 
+2.46.0
+

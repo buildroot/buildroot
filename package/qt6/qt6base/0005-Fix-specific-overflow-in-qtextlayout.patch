@@ -1,0 +1,79 @@
+From 693a617236d37e12798013c75d51fd02dd1e1963 Mon Sep 17 00:00:00 2001
+From: Allan Sandfeld Jensen <allan.jensen@qt.io>
+Date: Fri, 5 May 2023 09:51:32 +0200
+Subject: [PATCH] Fix specific overflow in qtextlayout
+
+Adds qAddOverflow and qMulOverflow definitions to QFixed
+
+Fixes: QTBUG-113337
+Pick-to: 6.5 6.5.1 6.2 5.15
+Change-Id: I13579306defceaccdc0fbb1ec0e9b77c6f8d1af9
+Reviewed-by: Eirik Aavitsland <eirik.aavitsland@qt.io>
+Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
+
+Fixes: https://security-tracker.debian.org/tracker/CVE-2023-32763
+Upstream: https://github.com/qt/qtbase/commit/7b7a01c266b507636eab51a36328c7c72d82d93c
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/gui/painting/qfixed_p.h  | 17 +++++++++++++++++
+ src/gui/text/qtextlayout.cpp |  9 ++++++---
+ 2 files changed, 23 insertions(+), 3 deletions(-)
+
+diff --git a/src/gui/painting/qfixed_p.h b/src/gui/painting/qfixed_p.h
+index f3718a097e5..c0a13d057f5 100644
+--- a/src/gui/painting/qfixed_p.h
++++ b/src/gui/painting/qfixed_p.h
+@@ -18,6 +18,7 @@
+ #include <QtGui/private/qtguiglobal_p.h>
+ #include "QtCore/qdebug.h"
+ #include "QtCore/qpoint.h"
++#include "QtCore/qnumeric.h"
+ #include "QtCore/qsize.h"
+ 
+ QT_BEGIN_NAMESPACE
+@@ -136,6 +137,22 @@ constexpr inline QFixed operator+(uint i, QFixed d) { return d+i; }
+ constexpr inline QFixed operator-(uint i, QFixed d) { return -(d-i); }
+ // constexpr inline QFixed operator*(qreal d, QFixed d2) { return d2*d; }
+ 
++inline bool qAddOverflow(QFixed v1, QFixed v2, QFixed *r)
++{
++    int val;
++    bool result = qAddOverflow(v1.value(), v2.value(), &val);
++    r->setValue(val);
++    return result;
++}
++
++inline bool qMulOverflow(QFixed v1, QFixed v2, QFixed *r)
++{
++    int val;
++    bool result = qMulOverflow(v1.value(), v2.value(), &val);
++    r->setValue(val);
++    return result;
++}
++
+ #ifndef QT_NO_DEBUG_STREAM
+ inline QDebug &operator<<(QDebug &dbg, QFixed f)
+ { return dbg << f.toReal(); }
+diff --git a/src/gui/text/qtextlayout.cpp b/src/gui/text/qtextlayout.cpp
+index 2009dd3d0bb..1844f777b4e 100644
+--- a/src/gui/text/qtextlayout.cpp
++++ b/src/gui/text/qtextlayout.cpp
+@@ -2105,9 +2105,12 @@ found:
+         eng->maxWidth = qMax(eng->maxWidth, line.textWidth);
+     } else {
+         eng->minWidth = qMax(eng->minWidth, lbh.minw);
+-        eng->layoutData->currentMaxWidth += line.textWidth;
+-        if (!manuallyWrapped)
+-            eng->layoutData->currentMaxWidth += lbh.spaceData.textWidth;
++        if (qAddOverflow(eng->layoutData->currentMaxWidth, line.textWidth, &eng->layoutData->currentMaxWidth))
++            eng->layoutData->currentMaxWidth = QFIXED_MAX;
++        if (!manuallyWrapped) {
++            if (qAddOverflow(eng->layoutData->currentMaxWidth, lbh.spaceData.textWidth, &eng->layoutData->currentMaxWidth))
++                eng->layoutData->currentMaxWidth = QFIXED_MAX;
++        }
+         eng->maxWidth = qMax(eng->maxWidth, eng->layoutData->currentMaxWidth);
+         if (manuallyWrapped)
+             eng->layoutData->currentMaxWidth = 0;
+-- 
+2.46.0
+
