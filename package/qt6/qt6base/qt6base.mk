@@ -24,6 +24,8 @@ QT6BASE_IGNORE_CVES += CVE-2023-37369
 # 0014-Schannel-Reject-certificate-not-signed-by-a-configur.patch
 # 0015-Ssl-Copy-the-on-demand-cert-loading-bool-from-defaul.patch
 QT6BASE_IGNORE_CVES += CVE-2023-34410
+# 0016-HTTP2-Delay-any-communication-until-encrypted-can-be.patch
+QT6BASE_IGNORE_CVES += CVE-2024-39936
 
 QT6BASE_CMAKE_BACKEND = ninja
 
