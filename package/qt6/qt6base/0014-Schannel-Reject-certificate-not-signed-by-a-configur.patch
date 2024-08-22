@@ -1,0 +1,295 @@
+From 4b68a00933a9803a8a374ef5bcfc0406538600c6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?M=C3=A5rten=20Nordheim?= <marten.nordheim@qt.io>
+Date: Wed, 10 May 2023 16:43:41 +0200
+Subject: [PATCH] Schannel: Reject certificate not signed by a configured CA
+ certificate
+
+Not entirely clear why, but when building the certificate chain for a
+peer the system certificate store is searched for root certificates.
+General expectation is that after calling
+`sslConfiguration.setCaCertificates()` the system certificates will
+not be taken into consideration.
+
+To work around this behavior, we do a manual check that the root of the
+chain is part of the configured CA certificates.
+
+Pick-to: 6.5 6.2 5.15
+Change-Id: I03666a4d9b0eac39ae97e150b4743120611a11b3
+Reviewed-by: Edward Welbourne <edward.welbourne@qt.io>
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+
+Fixes: https://security-tracker.debian.org/tracker/CVE-2023-34410
+Upstream: https://codereview.qt-project.org/gitweb?p=qt%2Fqtbase.git;a=commit;h=ada2c573c1a25f8d96577734968fe317ddfa292a
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/plugins/tls/schannel/qtls_schannel.cpp    |  21 ++++
+ .../network/ssl/client-auth/CMakeLists.txt    |  24 ++++
+ .../network/ssl/client-auth/certs/.gitignore  |   4 +
+ .../client-auth/certs/accepted-client.conf    |  14 +++
+ .../network/ssl/client-auth/certs/generate.sh |  33 +++++
+ .../tst_manual_ssl_client_auth.cpp            | 118 ++++++++++++++++++
+ 6 files changed, 214 insertions(+)
+ create mode 100644 tests/manual/network/ssl/client-auth/CMakeLists.txt
+ create mode 100644 tests/manual/network/ssl/client-auth/certs/.gitignore
+ create mode 100644 tests/manual/network/ssl/client-auth/certs/accepted-client.conf
+ create mode 100755 tests/manual/network/ssl/client-auth/certs/generate.sh
+ create mode 100644 tests/manual/network/ssl/client-auth/tst_manual_ssl_client_auth.cpp
+
+diff --git a/src/plugins/tls/schannel/qtls_schannel.cpp b/src/plugins/tls/schannel/qtls_schannel.cpp
+index 0372d4973b4..f0b2ca69a16 100644
+--- a/src/plugins/tls/schannel/qtls_schannel.cpp
++++ b/src/plugins/tls/schannel/qtls_schannel.cpp
+@@ -2104,6 +2104,27 @@ bool TlsCryptographSchannel::verifyCertContext(CERT_CONTEXT *certContext)
+         verifyDepth = DWORD(q->peerVerifyDepth());
+ 
+     const auto &caCertificates = q->sslConfiguration().caCertificates();
++
++    if (!rootCertOnDemandLoadingAllowed()
++            && !(chain->TrustStatus.dwErrorStatus & CERT_TRUST_IS_PARTIAL_CHAIN)
++            && (q->peerVerifyMode() == QSslSocket::VerifyPeer
++                    || (isClient && q->peerVerifyMode() == QSslSocket::AutoVerifyPeer))) {
++        // When verifying a peer Windows "helpfully" builds a chain that
++        // may include roots from the system store. But we don't want that if
++        // the user has set their own CA certificates.
++        // Since Windows claims this is not a partial chain the root is included
++        // and we have to check that it is one of our configured CAs.
++        CERT_CHAIN_ELEMENT *element = chain->rgpElement[chain->cElement - 1];
++        QSslCertificate certificate = getCertificateFromChainElement(element);
++        if (!caCertificates.contains(certificate)) {
++            auto error = QSslError(QSslError::CertificateUntrusted, certificate);
++            sslErrors += error;
++            emit q->peerVerifyError(error);
++            if (q->state() != QAbstractSocket::ConnectedState)
++                return false;
++        }
++    }
++
+     QList<QSslCertificate> peerCertificateChain;
+     for (DWORD i = 0; i < verifyDepth; i++) {
+         CERT_CHAIN_ELEMENT *element = chain->rgpElement[i];
+diff --git a/tests/manual/network/ssl/client-auth/CMakeLists.txt b/tests/manual/network/ssl/client-auth/CMakeLists.txt
+new file mode 100644
+index 00000000000..67ecc20bf4d
+--- /dev/null
++++ b/tests/manual/network/ssl/client-auth/CMakeLists.txt
+@@ -0,0 +1,24 @@
++# Copyright (C) 2023 The Qt Company Ltd.
++# SPDX-License-Identifier: BSD-3-Clause
++
++qt_internal_add_manual_test(tst_manual_ssl_client_auth
++    SOURCES
++        tst_manual_ssl_client_auth.cpp
++    LIBRARIES
++        Qt::Network
++)
++
++qt_internal_add_resource(tst_manual_ssl_client_auth "tst_manual_ssl_client_auth"
++    PREFIX
++        "/"
++    FILES
++        "certs/127.0.0.1.pem"
++        "certs/127.0.0.1-key.pem"
++        "certs/127.0.0.1-client.pem"
++        "certs/127.0.0.1-client-key.pem"
++        "certs/accepted-client.pem"
++        "certs/accepted-client-key.pem"
++        "certs/rootCA.pem"
++    BASE
++        "certs"
++)
+diff --git a/tests/manual/network/ssl/client-auth/certs/.gitignore b/tests/manual/network/ssl/client-auth/certs/.gitignore
+new file mode 100644
+index 00000000000..5866f7b609c
+--- /dev/null
++++ b/tests/manual/network/ssl/client-auth/certs/.gitignore
+@@ -0,0 +1,4 @@
++*
++!/.gitignore
++!/generate.sh
++!/accepted-client.conf
+diff --git a/tests/manual/network/ssl/client-auth/certs/accepted-client.conf b/tests/manual/network/ssl/client-auth/certs/accepted-client.conf
+new file mode 100644
+index 00000000000..a88b276efec
+--- /dev/null
++++ b/tests/manual/network/ssl/client-auth/certs/accepted-client.conf
+@@ -0,0 +1,14 @@
++[req]
++default_md = sha512
++basicConstraints = CA:FALSE
++extendedKeyUsage = clientAuth
++[req]
++distinguished_name = client_distinguished_name
++prompt = no
++[client_distinguished_name]
++C   = NO
++ST  = Oslo
++L   = Oslo
++O   = The Qt Project
++OU  = The Qt Project
++CN  = Fake Qt Project Client Certificate
+diff --git a/tests/manual/network/ssl/client-auth/certs/generate.sh b/tests/manual/network/ssl/client-auth/certs/generate.sh
+new file mode 100755
+index 00000000000..5dbe3b3712a
+--- /dev/null
++++ b/tests/manual/network/ssl/client-auth/certs/generate.sh
+@@ -0,0 +1,33 @@
++#!/bin/bash
++# Copyright (C) 2023 The Qt Company Ltd.
++# SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
++
++# Requires mkcert and openssl
++
++warn () { echo "$@" >&2; }
++die () { warn "$@"; exit 1; }
++
++
++command -v mkcert 1>/dev/null 2>&1 || die "Failed to find mkcert"
++command -v openssl 1>/dev/null 2>&1 || die "Failed to find openssl"
++
++SCRIPT=$(realpath "$0")
++SCRIPTPATH=$(dirname "$SCRIPT")
++
++pushd "$SCRIPTPATH" || die "Unable to pushd to $SCRIPTPATH"
++mkcert 127.0.0.1
++mkcert -client 127.0.0.1
++warn "Remember to run mkcert -install if you haven't already"
++
++# Generate CA
++openssl genrsa -out ca-key.pem 2048
++openssl req -new -x509 -noenc -days 365 -key ca-key.pem -out rootCA.pem
++
++# Generate accepted client certificate
++openssl genrsa -out accepted-client-key.pem 2048
++openssl req -new -sha512 -nodes -key accepted-client-key.pem -out accepted-client.csr -config accepted-client.conf
++openssl x509 -req -sha512 -days 45 -in accepted-client.csr -CA rootCA.pem -CAkey ca-key.pem -CAcreateserial -out accepted-client.pem
++rm accepted-client.csr
++rm rootCA.srl
++
++popd || die "Unable to popd"
+diff --git a/tests/manual/network/ssl/client-auth/tst_manual_ssl_client_auth.cpp b/tests/manual/network/ssl/client-auth/tst_manual_ssl_client_auth.cpp
+new file mode 100644
+index 00000000000..2307cbb1911
+--- /dev/null
++++ b/tests/manual/network/ssl/client-auth/tst_manual_ssl_client_auth.cpp
+@@ -0,0 +1,118 @@
++// Copyright (C) 2023 The Qt Company Ltd.
++// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
++
++#include <QtCore/qcoreapplication.h>
++
++#include <QtCore/qthread.h>
++#include <QtCore/qfile.h>
++#include <QtCore/qdir.h>
++
++#include <QtNetwork/qsslsocket.h>
++#include <QtNetwork/qsslserver.h>
++#include <QtNetwork/qsslconfiguration.h>
++#include <QtNetwork/qsslkey.h>
++
++// Client and/or server presents a certificate signed by a system-trusted CA
++// but the other side presents a certificate signed by a different CA.
++constexpr bool TestServerPresentsIncorrectCa = false;
++constexpr bool TestClientPresentsIncorrectCa = true;
++
++class ServerThread : public QThread
++{
++    Q_OBJECT
++public:
++    void run() override
++    {
++        QSslServer server;
++
++        QSslConfiguration config = server.sslConfiguration();
++        QList<QSslCertificate> certs = QSslCertificate::fromPath(QStringLiteral(":/rootCA.pem"));
++        config.setCaCertificates(certs);
++        config.setLocalCertificate(QSslCertificate::fromPath(QStringLiteral(":/127.0.0.1.pem"))
++                                           .first());
++        QFile keyFile(QStringLiteral(":/127.0.0.1-key.pem"));
++        if (!keyFile.open(QIODevice::ReadOnly))
++            qFatal("Failed to open key file");
++        config.setPrivateKey(QSslKey(&keyFile, QSsl::Rsa));
++        config.setPeerVerifyMode(QSslSocket::VerifyPeer);
++        server.setSslConfiguration(config);
++
++        connect(&server, &QSslServer::pendingConnectionAvailable, [&server]() {
++            QSslSocket *socket = static_cast<QSslSocket *>(server.nextPendingConnection());
++            qDebug() << "[s] newConnection" << socket->peerAddress() << socket->peerPort();
++            socket->disconnectFromHost();
++            qApp->quit();
++        });
++        connect(&server, &QSslServer::startedEncryptionHandshake, [](QSslSocket *socket) {
++            qDebug() << "[s] new handshake" << socket->peerAddress() << socket->peerPort();
++        });
++        connect(&server, &QSslServer::errorOccurred,
++                [](QSslSocket *socket, QAbstractSocket::SocketError error) {
++                    qDebug() << "[s] errorOccurred" << socket->peerAddress() << socket->peerPort()
++                             << error << socket->errorString();
++                });
++        connect(&server, &QSslServer::peerVerifyError,
++                [](QSslSocket *socket, const QSslError &error) {
++                    qDebug() << "[s] peerVerifyError" << socket->peerAddress() << socket->peerPort()
++                             << error;
++                });
++        server.listen(QHostAddress::LocalHost, 24242);
++
++        exec();
++
++        server.close();
++    }
++};
++
++int main(int argc, char **argv)
++{
++    QCoreApplication app(argc, argv);
++
++    using namespace Qt::StringLiterals;
++
++    if (!QFileInfo(u":/rootCA.pem"_s).exists())
++        qFatal("rootCA.pem not found. Did you run generate.sh in the certs directory?");
++
++    ServerThread serverThread;
++    serverThread.start();
++
++    QSslSocket socket;
++    QSslConfiguration config = socket.sslConfiguration();
++    QString certificatePath;
++    QString keyFileName;
++    if constexpr (TestClientPresentsIncorrectCa) { // true: Present cert signed with incorrect CA: should fail
++        certificatePath = u":/127.0.0.1-client.pem"_s;
++        keyFileName = u":/127.0.0.1-client-key.pem"_s;
++    } else { // false: Use correct CA: should succeed
++        certificatePath = u":/accepted-client.pem"_s;
++        keyFileName = u":/accepted-client-key.pem"_s;
++    }
++    config.setLocalCertificate(QSslCertificate::fromPath(certificatePath).first());
++    if (TestServerPresentsIncorrectCa) // true: Verify server using incorrect CA: should fail
++        config.setCaCertificates(QSslCertificate::fromPath(u":/rootCA.pem"_s));
++    QFile keyFile(keyFileName);
++    if (!keyFile.open(QIODevice::ReadOnly))
++        qFatal("Failed to open key file");
++    config.setPrivateKey(QSslKey(&keyFile, QSsl::Rsa));
++    socket.setSslConfiguration(config);
++
++    QObject::connect(&socket, &QSslSocket::encrypted, []() { qDebug() << "[c] encrypted"; });
++    QObject::connect(&socket, &QSslSocket::errorOccurred,
++            [&socket](QAbstractSocket::SocketError error) {
++                qDebug() << "[c] errorOccurred" << error << socket.errorString();
++                qApp->quit();
++            });
++    QObject::connect(&socket, &QSslSocket::sslErrors, [](const QList<QSslError> &errors) {
++        qDebug() << "[c] sslErrors" << errors;
++    });
++    QObject::connect(&socket, &QSslSocket::connected, []() { qDebug() << "[c] connected"; });
++
++    socket.connectToHostEncrypted(QStringLiteral("127.0.0.1"), 24242);
++
++    const int res = app.exec();
++    serverThread.quit();
++    serverThread.wait();
++    return res;
++}
++
++#include "tst_manual_ssl_client_auth.moc"
+-- 
+2.46.0
+
