@@ -11,6 +11,8 @@ QT6BASE_CPE_ID_VENDOR = qt
 QT6BASE_CPE_ID_PRODUCT = qt
 # 0001-QDnsLookup-Unix-make-sure-we-don-t-overflow-the-buff.patch
 QT6BASE_IGNORE_CVES += CVE-2023-33285
+# 0002-Hsts-match-header-names-case-insensitively.patch
+QT6BASE_IGNORE_CVES += CVE-2023-32762
 
 QT6BASE_CMAKE_BACKEND = ninja
 

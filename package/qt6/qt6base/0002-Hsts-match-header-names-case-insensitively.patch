@@ -1,0 +1,57 @@
+From 5e8697e3aa4e92643c52d34aacfa26890e7d417d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?M=C3=A5rten=20Nordheim?= <marten.nordheim@qt.io>
+Date: Fri, 5 May 2023 11:07:26 +0200
+Subject: [PATCH] Hsts: match header names case insensitively
+
+Header field names are always considered to be case-insensitive.
+
+Pick-to: 6.5 6.5.1 6.2 5.15
+Fixes: QTBUG-113392
+Change-Id: Ifb4def4bb7f2ac070416cdc76581a769f1e52b43
+Reviewed-by: Qt CI Bot <qt_ci_bot@qt-project.org>
+Reviewed-by: Edward Welbourne <edward.welbourne@qt.io>
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+
+Fixes: https://security-tracker.debian.org/tracker/CVE-2023-32762
+Upstream: https://github.com/qt/qtbase/commit/1b736a815be0222f4b24289cf17575fc15707305
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/network/access/qhsts.cpp                 | 4 ++--
+ tests/auto/network/access/hsts/tst_qhsts.cpp | 6 ++++++
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/src/network/access/qhsts.cpp b/src/network/access/qhsts.cpp
+index 39905f35480..82deede1729 100644
+--- a/src/network/access/qhsts.cpp
++++ b/src/network/access/qhsts.cpp
+@@ -327,8 +327,8 @@ quoted-pair    = "\" CHAR
+ bool QHstsHeaderParser::parse(const QList<QPair<QByteArray, QByteArray>> &headers)
+ {
+     for (const auto &h : headers) {
+-        // We use '==' since header name was already 'trimmed' for us:
+-        if (h.first == "Strict-Transport-Security") {
++        // We compare directly because header name was already 'trimmed' for us:
++        if (h.first.compare("Strict-Transport-Security", Qt::CaseInsensitive) == 0) {
+             header = h.second;
+             // RFC6797, 8.1:
+             //
+diff --git a/tests/auto/network/access/hsts/tst_qhsts.cpp b/tests/auto/network/access/hsts/tst_qhsts.cpp
+index 252f5e8f579..97a2d2889e5 100644
+--- a/tests/auto/network/access/hsts/tst_qhsts.cpp
++++ b/tests/auto/network/access/hsts/tst_qhsts.cpp
+@@ -216,6 +216,12 @@ void tst_QHsts::testSTSHeaderParser()
+     QVERIFY(parser.expirationDate() > QDateTime::currentDateTimeUtc());
+     QVERIFY(parser.includeSubDomains());
+ 
++    list.pop_back();
++    list << Header("strict-transport-security", "includeSubDomains;max-age=1000");
++    QVERIFY(parser.parse(list));
++    QVERIFY(parser.expirationDate() > QDateTime::currentDateTimeUtc());
++    QVERIFY(parser.includeSubDomains());
++
+     list.pop_back();
+     // Invalid (includeSubDomains twice):
+     list << Header("Strict-Transport-Security", "max-age = 1000 ; includeSubDomains;includeSubDomains");
+-- 
+2.46.0
+
