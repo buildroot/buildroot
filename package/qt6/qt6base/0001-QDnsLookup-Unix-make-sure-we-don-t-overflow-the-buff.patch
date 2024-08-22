@@ -1,0 +1,106 @@
+From fc233efad86101d49cd312b16c5a25e6a017e977 Mon Sep 17 00:00:00 2001
+From: Thiago Macieira <thiago.macieira@intel.com>
+Date: Thu, 11 May 2023 21:40:15 -0700
+Subject: [PATCH] QDnsLookup/Unix: make sure we don't overflow the buffer
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The DNS Records are variable length and encode their size in 16 bits
+before the Record Data (RDATA). Ensure that both the RDATA and the
+Record header fields before it fall inside the buffer we have.
+
+Additionally reject any replies containing more than one query records.
+
+[ChangeLog][QtNetwork][QDnsLookup] Fixed a bug that could cause a buffer
+overflow in Unix systems while parsing corrupt, malicious, or truncated
+replies.
+
+Pick-to: 5.15 6.2 6.5 6.5.1
+Change-Id: I3e3bfef633af4130a03afffd175e4b9547654b95
+Reviewed-by: Mårten Nordheim <marten.nordheim@qt.io>
+Reviewed-by: Jani Heikkinen <jani.heikkinen@qt.io>
+
+Fixes: https://security-tracker.debian.org/tracker/CVE-2023-33285
+Upstream: https://codereview.qt-project.org/gitweb?p=qt/qtbase.git;a=commitdiff;h=7dba2c87619d558a61a30eb30cc1d9c3fe6df94c
+[Thomas: changes needed to backport on 6.4.3: use local_dn_expand()
+instead of dn_expand(), since we didn't backport the changes in
+68b625901f9eb7c34e3d7aa302e1c0a454d3190b that are too invasive]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/network/kernel/qdnslookup_unix.cpp | 31 +++++++++++++++++++++-----
+ 1 file changed, 25 insertions(+), 6 deletions(-)
+
+diff --git a/src/network/kernel/qdnslookup_unix.cpp b/src/network/kernel/qdnslookup_unix.cpp
+index 75f7c6c440e..de0113494fc 100644
+--- a/src/network/kernel/qdnslookup_unix.cpp
++++ b/src/network/kernel/qdnslookup_unix.cpp
+@@ -193,7 +193,6 @@ void QDnsLookupRunnable::query(const int requestType, const QByteArray &requestN
+     // responseLength in case of error, we still can extract the
+     // exact error code from the response.
+     HEADER *header = (HEADER*)response;
+-    const int answerCount = ntohs(header->ancount);
+     switch (header->rcode) {
+     case NOERROR:
+         break;
+@@ -226,18 +225,31 @@ void QDnsLookupRunnable::query(const int requestType, const QByteArray &requestN
+         return;
+     }
+ 
+-    // Skip the query host, type (2 bytes) and class (2 bytes).
+     char host[PACKETSZ], answer[PACKETSZ];
+     unsigned char *p = response + sizeof(HEADER);
+-    int status = local_dn_expand(response, response + responseLength, p, host, sizeof(host));
+-    if (status < 0) {
++    int status;
++
++    if (ntohs(header->qdcount) == 1) {
++        // Skip the query host, type (2 bytes) and class (2 bytes).
++        status = local_dn_expand(response, response + responseLength, p, host, sizeof(host));
++        if (status < 0) {
++            reply->error = QDnsLookup::InvalidReplyError;
++            reply->errorString = tr("Could not expand domain name");
++            return;
++        }
++        if ((p - response) + status + 4 >= responseLength)
++            header->qdcount = 0xffff;   // invalid reply below
++        else
++            p += status + 4;
++    }
++    if (ntohs(header->qdcount) > 1) {
+         reply->error = QDnsLookup::InvalidReplyError;
+-        reply->errorString = tr("Could not expand domain name");
++        reply->errorString = tr("Invalid reply received");
+         return;
+     }
+-    p += status + 4;
+ 
+     // Extract results.
++    const int answerCount = ntohs(header->ancount);
+     int answerIndex = 0;
+     while ((p < response + responseLength) && (answerIndex < answerCount)) {
+         status = local_dn_expand(response, response + responseLength, p, host, sizeof(host));
+@@ -249,6 +261,11 @@ void QDnsLookupRunnable::query(const int requestType, const QByteArray &requestN
+         const QString name = QUrl::fromAce(host);
+ 
+         p += status;
++
++        if ((p - response) + 10 > responseLength) {
++            // probably just a truncated reply, return what we have
++            return;
++        }
+         const quint16 type = (p[0] << 8) | p[1];
+         p += 2; // RR type
+         p += 2; // RR class
+@@ -256,6 +273,8 @@ void QDnsLookupRunnable::query(const int requestType, const QByteArray &requestN
+         p += 4;
+         const quint16 size = (p[0] << 8) | p[1];
+         p += 2;
++        if ((p - response) + size > responseLength)
++            return;             // truncated
+ 
+         if (type == QDnsLookup::A) {
+             if (size != 4) {
+-- 
+2.46.0
+
