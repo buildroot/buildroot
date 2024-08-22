@@ -15,6 +15,8 @@ QT6BASE_IGNORE_CVES += CVE-2023-33285
 QT6BASE_IGNORE_CVES += CVE-2023-32762
 # 0005-Fix-specific-overflow-in-qtextlayout.patch
 QT6BASE_IGNORE_CVES += CVE-2023-32763
+# 0009-QXmlStreamReader-Raise-error-on-unexpected-tokens.patch
+QT6BASE_IGNORE_CVES += CVE-2023-38197
 
 QT6BASE_CMAKE_BACKEND = ninja
 

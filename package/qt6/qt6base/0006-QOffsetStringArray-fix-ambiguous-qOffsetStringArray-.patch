@@ -1,0 +1,49 @@
+From 0e0e075aeb4d8a1efa2178c0de3084b800ab62ed Mon Sep 17 00:00:00 2001
+From: Marc Mutz <marc.mutz@qt.io>
+Date: Sun, 4 Sep 2022 12:31:10 +0200
+Subject: [PATCH] QOffsetStringArray: fix ambiguous qOffsetStringArray
+ overloads
+
+There are two qOffsetStringArray overloads: one in QT_NAMESPACE, the
+other in QT_PREPEND_NAMESPACE(QtPrivate). In TUs which use using
+namespace QtPrivate, a call to qOffsetStringArray() may become
+ambiguous.
+
+Fix by renaming the qOffsetStringArray() to makeOffsetStringArray().
+
+Pick-to: 6.4 6.3 6.2
+Change-Id: I242a969f363e230d6a8dfb048601a0c024724f6a
+Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
+
+Upstream: https://github.com/qt/qtbase/commit/21c5eeba673694f865badfd137ee9fc474177ae0
+[Thomas: needed to backport fix for CVE-2023-38197]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/corelib/tools/qoffsetstringarray_p.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/corelib/tools/qoffsetstringarray_p.h b/src/corelib/tools/qoffsetstringarray_p.h
+index 461d61a2bae..fe3f7fbd5ff 100644
+--- a/src/corelib/tools/qoffsetstringarray_p.h
++++ b/src/corelib/tools/qoffsetstringarray_p.h
+@@ -118,7 +118,7 @@ template <size_t KL, size_t VL> struct StaticMapEntry
+ };
+ 
+ template <typename StringExtractor, typename... T>
+-constexpr auto qOffsetStringArray(StringExtractor extractString, const T &... entries)
++constexpr auto makeOffsetStringArray(StringExtractor extractString, const T &... entries)
+ {
+     constexpr size_t Count = sizeof...(T);
+     constexpr qsizetype StringLength = (sizeof(extractString(T{})) + ...);
+@@ -142,7 +142,7 @@ template<int ... Nx>
+ constexpr auto qOffsetStringArray(const char (&...strings)[Nx]) noexcept
+ {
+     auto extractString = [](const auto &s) -> decltype(auto) { return s; };
+-    return QtPrivate::qOffsetStringArray(extractString, QtPrivate::StaticString(strings)...);
++    return QtPrivate::makeOffsetStringArray(extractString, QtPrivate::StaticString(strings)...);
+ }
+ 
+ QT_WARNING_POP
+-- 
+2.46.0
+

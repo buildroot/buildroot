@@ -1,0 +1,114 @@
+From 7e50927d133e25577a0c3481c00b6877b581f411 Mon Sep 17 00:00:00 2001
+From: Sona Kurazyan <sona.kurazyan@qt.io>
+Date: Fri, 2 Sep 2022 16:52:04 +0200
+Subject: [PATCH] QXmlStreamReader: use qOffsetStringArray for storing token
+ types
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: I9e58c17d97c44e1b13899d30396f65b452d8600f
+Reviewed-by: Mårten Nordheim <marten.nordheim@qt.io>
+
+Upstream: https://github.com/qt/qtbase/commit/d674f3f5454fb39de9405484a8c01fb928523f67
+[Thomas: needed to backport fix for CVE-2023-38197]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/corelib/serialization/qxmlstream.cpp | 67 ++++++------------------
+ 1 file changed, 16 insertions(+), 51 deletions(-)
+
+diff --git a/src/corelib/serialization/qxmlstream.cpp b/src/corelib/serialization/qxmlstream.cpp
+index 70e65df9957..a31bd16f1ce 100644
+--- a/src/corelib/serialization/qxmlstream.cpp
++++ b/src/corelib/serialization/qxmlstream.cpp
+@@ -15,6 +15,8 @@
+ #include <qscopeguard.h>
+ #include <qcoreapplication.h>
+ 
++#include <private/qoffsetstringarray_p.h>
++
+ #include <iterator>
+ #include "qxmlstream_p.h"
+ #include "qxmlstreamparser_p.h"
+@@ -642,55 +644,19 @@ void QXmlStreamReader::skipCurrentElement()
+     }
+ }
+ 
+-/*
+- * Use the following Perl script to generate the error string index list:
+-===== PERL SCRIPT ====
+-print "static const char QXmlStreamReader_tokenTypeString_string[] =\n";
+-$counter = 0;
+-$i = 0;
+-while (<STDIN>) {
+-    chomp;
+-    print "    \"$_\\0\"\n";
+-    $sizes[$i++] = $counter;
+-    $counter += length 1 + $_;
+-}
+-print "    \"\\0\";\n\nstatic const short QXmlStreamReader_tokenTypeString_indices[] = {\n    ";
+-for ($j = 0; $j < $i; ++$j) {
+-    printf "$sizes[$j], ";
+-}
+-print "0\n};\n";
+-===== PERL SCRIPT ====
+-
+- * The input data is as follows (copied from qxmlstream.h):
+-NoToken
+-Invalid
+-StartDocument
+-EndDocument
+-StartElement
+-EndElement
+-Characters
+-Comment
+-DTD
+-EntityReference
+-ProcessingInstruction
+-*/
+-static const char QXmlStreamReader_tokenTypeString_string[] =
+-    "NoToken\0"
+-    "Invalid\0"
+-    "StartDocument\0"
+-    "EndDocument\0"
+-    "StartElement\0"
+-    "EndElement\0"
+-    "Characters\0"
+-    "Comment\0"
+-    "DTD\0"
+-    "EntityReference\0"
+-    "ProcessingInstruction\0";
+-
+-static const short QXmlStreamReader_tokenTypeString_indices[] = {
+-    0, 8, 16, 30, 42, 55, 66, 77, 85, 89, 105, 0
+-};
+-
++static constexpr auto QXmlStreamReader_tokenTypeString = qOffsetStringArray(
++    "NoToken",
++    "Invalid",
++    "StartDocument",
++    "EndDocument",
++    "StartElement",
++    "EndElement",
++    "Characters",
++    "Comment",
++    "DTD",
++    "EntityReference",
++    "ProcessingInstruction"
++);
+ 
+ /*!
+     \property  QXmlStreamReader::namespaceProcessing
+@@ -723,8 +689,7 @@ bool QXmlStreamReader::namespaceProcessing() const
+ QString QXmlStreamReader::tokenString() const
+ {
+     Q_D(const QXmlStreamReader);
+-    return QLatin1StringView(QXmlStreamReader_tokenTypeString_string +
+-                             QXmlStreamReader_tokenTypeString_indices[d->type]);
++    return QLatin1StringView(QXmlStreamReader_tokenTypeString.at(d->type));
+ }
+ 
+ #endif // QT_NO_XMLSTREAMREADER
+-- 
+2.46.0
+
