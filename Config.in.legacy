@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2024.11"
 
+config BR2_PACKAGE_FBV_GIF
+	bool "fbv GIF support has been removed"
+	select BR2_LEGACY
+	help
+	  Fbv GIF support has been removed, use PNG, BMP or JPEG.
+
 config BR2_BINUTILS_VERSION_2_40_X
 	bool "binutils 2.40 has been removed"
 	select BR2_LEGACY
