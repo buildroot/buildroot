@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2024.08"
 
+config BR2_PACKAGE_FROTZ
+	bool "frotz has been removed"
+	select BR2_LEGACY
+	help
+	  This package was causing build breakage, and was no longer
+	  maintained in Buildroot.
+
 config BR2_PACKAGE_FAN_CTRL
 	bool "fan-ctrl has been removed"
 	select BR2_LEGACY
