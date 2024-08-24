@@ -1,0 +1,27 @@
+From 7dd8752f5aa2dccbaccb4c28a23f659df3bc0d19 Mon Sep 17 00:00:00 2001
+From: DJ Delorie <dj@redhat.com>
+Date: Thu, 27 Apr 2023 17:24:58 -0400
+Subject: [PATCH] Fix C99 compatibility issue
+
+Related to:
+
+  <https://fedoraproject.org/wiki/Changes/PortingToModernC>
+  <https://fedoraproject.org/wiki/Toolchain/PortingToModernC>
+
+See Also https://bugzilla.redhat.com/show_bug.cgi?id=2190307
+Signed-off-by: DJ Delorie <dj@redhat.com>
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: https://src.fedoraproject.org/rpms/libcuefile/blob/7dd8752f5aa2dccbaccb4c28a23f659df3bc0d19/f/libcuefile-fedora-c99.patch
+---
+diff -rup a/src/cue_parse.c b/src/cue_parse.c
+--- a/src/cue_parse.c	2011-06-18 07:28:43.000000000 -0400
++++ b/src/cue_parse.c	2023-04-27 16:10:13.314263314 -0400
+@@ -1513,6 +1513,8 @@ void yyerror (char *s)
+ 	fprintf(stderr, "%d: %s\n", cue_lineno, s);
+ }
+ 
++void cue_delete_buffer(void);
++
+ Cd *cue_parse (FILE *fp)
+ {
+ 	cue_yyin = fp;
