@@ -5,7 +5,7 @@
 ################################################################################
 
 SZIP_VERSION = 2.1.1
-SZIP_SITE = http://www.hdfgroup.org/ftp/lib-external/szip/2.1.1/src
+SZIP_SITE = https://docs.hdfgroup.org/archive/support/ftp/lib-external/szip/$(SZIP_VERSION)/src
 SZIP_LICENSE = szip license
 SZIP_LICENSE_FILES = COPYING
 SZIP_INSTALL_STAGING = YES
