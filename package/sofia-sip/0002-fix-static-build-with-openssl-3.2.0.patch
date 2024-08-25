@@ -1,0 +1,109 @@
+From 145f80df25d23492ed3aa01b3750d7c002964332 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 5 Jan 2024 23:15:00 +0100
+Subject: [PATCH] fix static build with openssl >= 3.2.0
+
+Rename tls_free into sofia_sip_tls_free as openssl also defines tls_free
+since version 3.2.0 and
+https://github.com/openssl/openssl/commit/1853d20a008a85d327f4faa9e07be40a85549f8e
+resulting in the following static build failure:
+
+/home/autobuild/autobuild/instance-12/output-1/host/lib/gcc/powerpc-buildroot-linux-uclibcspe/8.4.0/../../../../powerpc-buildroot-linux-uclibcspe/bin/ld: /home/autobuild/autobuild/instance-12/output-1/host/bin/../powerpc-buildroot-linux-uclibcspe/sysroot/usr/lib/libssl.a(libssl-lib-tls_common.o): in function `tls_free':
+tls_common.c:(.text+0x808): multiple definition of `tls_free'; ../libsofia-sip-ua/.libs/libsofia-sip-ua.a(tport_tls.o):tport_tls.c:(.text+0x1128): first defined here
+
+Fixes:
+ - http://autobuild.buildroot.org/results/ee862bdafd44c8c56f77e2702ee0a7462634fa0b
+
+Upstream: https://github.com/freeswitch/sofia-sip/pull/240
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ libsofia-sip-ua/tport/tport_tls.c      | 10 +++++-----
+ libsofia-sip-ua/tport/tport_tls.h      |  2 +-
+ libsofia-sip-ua/tport/tport_type_tls.c |  4 ++--
+ 3 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/libsofia-sip-ua/tport/tport_tls.c b/libsofia-sip-ua/tport/tport_tls.c
+index a17186de..0739c93f 100644
+--- a/libsofia-sip-ua/tport/tport_tls.c
++++ b/libsofia-sip-ua/tport/tport_tls.c
+@@ -460,7 +460,7 @@ int tls_init_context(tls_t *tls, tls_issues_t const *ti)
+   return 0;
+ }
+ 
+-void tls_free(tls_t *tls)
++void sofia_sip_tls_free(tls_t *tls)
+ {
+   int ret;
+   if (!tls)
+@@ -473,7 +473,7 @@ void tls_free(tls_t *tls)
+         /* The return value -1 means that the connection wasn't actually established */
+         /* so it should be safe to not call shutdown again. We need to clear the eror */
+         /* queue for other connections though. */
+-        tls_log_errors(3, "tls_free", 0);
++        tls_log_errors(3, "sofia_sip_tls_free", 0);
+         ret = 1;
+       }
+     } while (ret != 1);
+@@ -514,7 +514,7 @@ tls_t *tls_init_master(tls_issues_t *ti)
+ 
+   if (tls_init_context(tls, ti) < 0) {
+     int err = errno;
+-    tls_free(tls);
++    sofia_sip_tls_free(tls);
+     errno = err;
+     return NULL;
+   }
+@@ -544,7 +544,7 @@ tls_t *tls_init_master(tls_issues_t *ti)
+ 
+     if (tls->bio_con == NULL) {
+       tls_log_errors(1, "tls_init_master", 0);
+-      tls_free(tls);
++      sofia_sip_tls_free(tls);
+       errno = EIO;
+       return NULL;
+     }
+@@ -581,7 +581,7 @@ tls_t *tls_init_secondary(tls_t *master, int sock, int accept)
+ 
+   if (tls->con == NULL) {
+     tls_log_errors(1, "tls_init_secondary", 0);
+-    tls_free(tls);
++    sofia_sip_tls_free(tls);
+     errno = EIO;
+     return NULL;
+   }
+diff --git a/libsofia-sip-ua/tport/tport_tls.h b/libsofia-sip-ua/tport/tport_tls.h
+index e8d04a14..3a5fde22 100644
+--- a/libsofia-sip-ua/tport/tport_tls.h
++++ b/libsofia-sip-ua/tport/tport_tls.h
+@@ -81,7 +81,7 @@ typedef struct tport_tls_primary_s {
+ 
+ tls_t *tls_init_master(tls_issues_t *tls_issues);
+ tls_t *tls_init_secondary(tls_t *tls_master, int sock, int accept);
+-void tls_free(tls_t *tls);
++void sofia_sip_tls_free(tls_t *tls);
+ int tls_get_socket(tls_t *tls);
+ void tls_log_errors(unsigned level, char const *s, unsigned long e);
+ ssize_t tls_read(tls_t *tls);
+diff --git a/libsofia-sip-ua/tport/tport_type_tls.c b/libsofia-sip-ua/tport/tport_type_tls.c
+index e030e706..fa72eed8 100644
+--- a/libsofia-sip-ua/tport/tport_type_tls.c
++++ b/libsofia-sip-ua/tport/tport_type_tls.c
+@@ -276,7 +276,7 @@ static int tport_tls_init_master(tport_primary_t *pri,
+ static void tport_tls_deinit_primary(tport_primary_t *pri)
+ {
+   tport_tls_primary_t *tlspri = (tport_tls_primary_t *)pri;
+-  tls_free(tlspri->tlspri_master), tlspri->tlspri_master = NULL;
++  sofia_sip_tls_free(tlspri->tlspri_master), tlspri->tlspri_master = NULL;
+ }
+ 
+ static int tport_tls_init_secondary(tport_t *self, int socket, int accepted,
+@@ -303,7 +303,7 @@ static void tport_tls_deinit_secondary(tport_t *self)
+ 
+   /* XXX - PPe: does the tls_shutdown zap everything but socket? */
+   if (tlstp->tlstp_context != NULL)
+-    tls_free(tlstp->tlstp_context);
++    sofia_sip_tls_free(tlstp->tlstp_context);
+   tlstp->tlstp_context = NULL;
+ 
+   su_free(self->tp_home, tlstp->tlstp_buffer);
