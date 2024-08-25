@@ -1,0 +1,56 @@
+From 5947db6bb8e336252337fb0194c3b8e834d100b6 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 25 Aug 2024 18:00:29 +0200
+Subject: [PATCH] Fix GH-15587: Autotools: fix configure check for aarch64
+ CRC32 API
+
+On arm32 bit the check succeeds leading to a build error later on:
+
+/home/autobuild/autobuild/instance-3/output-1/build/php-8.3.10/ext/standard/crc32.c:70:12:
+ error: 'armv8-a' does not support feature 'nothing'
+   70 | #   pragma GCC target ("+nothing+crc")
+
+Upstream: https://github.com/php/php-src/commit/5947db6bb8e336252337fb0194c3b8e834d100b6
+
+Co-authored-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+[http://lists.busybox.net/pipermail/buildroot/2024-August/761151.html]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ configure.ac | 24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 1142c9459d71..fb59a81700f4 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -738,11 +738,25 @@ AC_FUNC_ALLOCA
+ PHP_TIME_R_TYPE
+ PHP_CHECK_IN_ADDR_T
+ 
+-AC_CACHE_CHECK([for aarch64 CRC32 API], ac_cv_func___crc32d,
+-[AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <arm_acle.h>]],[[__crc32d(0, 0);]])],[ac_cv_func___crc32d=yes],[ac_cv_func___crc32d="no"])])
+-if test "$ac_cv_func___crc32d" = "yes"; then
+-  AC_DEFINE([HAVE_AARCH64_CRC32], [1], [Define when aarch64 CRC32 API is available.])
+-fi
++AC_CACHE_CHECK([for aarch64 CRC32 API], [ac_cv_func___crc32d],
++[AC_LINK_IFELSE([AC_LANG_PROGRAM([
++#include <arm_acle.h>
++# if defined(__GNUC__)
++#  if!defined(__clang__)
++#   pragma GCC push_options
++#   pragma GCC target ("+nothing+crc")
++#  elif defined(__APPLE__)
++#   pragma clang attribute push(__attribute__((target("crc"))), apply_to=function)
++#  else
++#   pragma clang attribute push(__attribute__((target("+nothing+crc"))), apply_to=function)
++#  endif
++# endif
++], [__crc32d(0, 0);])],
++[ac_cv_func___crc32d=yes],
++[ac_cv_func___crc32d=no])])
++AS_VAR_IF([ac_cv_func___crc32d], [yes],
++  [AC_DEFINE([HAVE_AARCH64_CRC32], [1],
++    [Define to 1 when aarch64 CRC32 API is available.])])
+ 
+ dnl Check for asm goto support.
+ AC_CACHE_CHECK([for asm goto], ac_cv__asm_goto,
