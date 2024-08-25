@@ -15,7 +15,6 @@ GOBJECT_INTROSPECTION_LICENSE_FILES = COPYING.LGPL COPYING.GPL giscanner/scanner
 GOBJECT_INTROSPECTION_DEPENDENCIES = \
 	host-autoconf-archive \
 	host-gobject-introspection \
-	host-prelink-cross \
 	host-qemu \
 	libffi \
 	libglib2 \
@@ -77,6 +76,8 @@ define GOBJECT_INTROSPECTION_INSTALL_PRE_WRAPPERS
 	$(SED) '1s%#!.*%#!$(HOST_DIR)/bin/python3%' $(@D)/tools/g-ir-tool-template.in
 
 	$(INSTALL) -D -m 755 $(GOBJECT_INTROSPECTION_PKGDIR)/g-ir-scanner-lddwrapper.in \
+		$(STAGING_DIR)/usr/bin/g-ir-scanner-lddwrapper
+	$(SED) "s%@TARGET_OBJDUMP@%$(TARGET_OBJDUMP)%" \
 		$(STAGING_DIR)/usr/bin/g-ir-scanner-lddwrapper
 
 	$(INSTALL) -D -m 755 $(GOBJECT_INTROSPECTION_PKGDIR)/g-ir-scanner-qemuwrapper.in \

@@ -1,3 +1,2 @@
 #!/usr/bin/env sh
-
-"${HOST_DIR}"/sbin/prelink-rtld --root="$(dirname "$0")/../../" "$@"
+@TARGET_OBJDUMP@ -p "$@"
