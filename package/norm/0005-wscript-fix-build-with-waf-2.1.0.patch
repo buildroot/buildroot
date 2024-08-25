@@ -1,0 +1,35 @@
+From 9f7a9b72ff5a7313793bba86962f9677970c9b4c Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 27 Jul 2024 20:41:45 +0200
+Subject: [PATCH] wscript: fix build with waf >= 2.1.0
+
+Replace add_option_group by add_argument_group to a build failure with
+waf 2.1.0 and
+https://gitlab.com/ita1024/waf/-/commit/bd5c22d484734f7c1b77e16c91a10c7a44fa6c8a:
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/USNavalResearchLaboratory/norm/pull/86
+[Thomas: small change needed to backport on version 1.5.8]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ wscript | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/wscript b/wscript
+index 0fdae96..6a8c22a 100644
+--- a/wscript
++++ b/wscript
+@@ -47,8 +47,8 @@ system = platform.system().lower()
+ 
+ def options(ctx):
+     ctx.recurse('protolib')    
+-    build_opts = ctx.parser.add_option_group('Compile/install Options', 'Use during build/install step.')
+-    build_opts.add_option('--enable-static-library', action='store_true',
++    build_opts = ctx.parser.add_argument_group('Compile/install Options', 'Use during build/install step.')
++    build_opts.add_argument('--enable-static-library', action='store_true',
+             help='Enable building and installing static library. [default:false]')
+ 
+ 
+-- 
+2.46.0
+

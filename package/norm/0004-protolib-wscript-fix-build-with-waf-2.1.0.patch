@@ -1,0 +1,53 @@
+From c35a9dc031cda1406eff7de1f199ad55949b17c6 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 24 Aug 2024 21:28:16 +0200
+Subject: [PATCH] protolib/wscript: fix build with waf >= 2.1.0
+
+Replace add_option_group by add_argument_group and add_option by
+add_argument to avoid the following build failure with waf 2.1.0 and
+https://gitlab.com/ita1024/waf/-/commit/bd5c22d484734f7c1b77e16c91a10c7a44fa6c8a:
+
+  File "/home/autobuild/autobuild/instance-21/output-1/build/norm-1.5.8/protolib/wscript", line 37, in options
+    bind_opts = ctx.parser.add_option_group('Language Bindings', 'Use during configure step.')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/USNavalResearchLaboratory/protolib/pull/47
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ protolib/wscript | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/protolib/wscript b/protolib/wscript
+index 97dda93..97f65f6 100644
+--- a/protolib/wscript
++++ b/protolib/wscript
+@@ -34,18 +34,18 @@ def options(ctx):
+     ctx.load('python')
+     ctx.load('java')
+ 
+-    bind_opts = ctx.parser.add_option_group('Language Bindings', 'Use during configure step.')
+-    bind_opts.add_option('--build-python', action='store_true',
++    bind_opts = ctx.parser.add_argument_group('Language Bindings', 'Use during configure step.')
++    bind_opts.add_argument('--build-python', action='store_true',
+             help='Build Python bindings [default:false]')
+-    bind_opts.add_option('--build-java', action='store_true',
++    bind_opts.add_argument('--build-java', action='store_true',
+             help='Build Java bindings [default:false]')
+ 
+-    build_opts = ctx.parser.add_option_group('Compile Options', 'Use during build step.')
+-    build_opts.add_option('--debug', action='store_true',
++    build_opts = ctx.parser.add_argument_group('Compile Options', 'Use during build step.')
++    build_opts.add_argument('--debug', action='store_true',
+             help='Build in debug mode [default:release]')
+-    build_opts.add_option('--enable-wx', action='store_true',
++    build_opts.add_argument('--enable-wx', action='store_true',
+             help='Enable checking for wxWidgets.')
+-    build_opts.add_option('--enable-static-library', action='store_true',
++    build_opts.add_argument('--enable-static-library', action='store_true',
+             help='Enable installing static library. [default:false]')
+ 
+ def configure(ctx):
+-- 
+2.46.0
+
