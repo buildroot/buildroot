@@ -6,7 +6,7 @@
 umask 077
 
 if [ ! -f /var/lib/pgsql/PG_VERSION ]; then
-	echo "Initializing postgresql data base..."
+	echo "Initializing postgresql database..."
 	su - postgres -c '/usr/bin/pg_ctl initdb -D /var/lib/pgsql'
 	echo "done"
 fi
