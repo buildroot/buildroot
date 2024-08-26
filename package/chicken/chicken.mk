@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CHICKEN_VERSION = 5.3.0
+CHICKEN_VERSION = 5.4.0
 CHICKEN_SITE = https://code.call-cc.org/releases/$(CHICKEN_VERSION)
 CHICKEN_LICENSE = BSD-3-Clause
 CHICKEN_LICENSE_FILES = LICENSE
