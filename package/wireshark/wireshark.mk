@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WIRESHARK_VERSION = 4.0.12
+WIRESHARK_VERSION = 4.2.6
 WIRESHARK_SOURCE = wireshark-$(WIRESHARK_VERSION).tar.xz
 WIRESHARK_SITE = https://www.wireshark.org/download/src/all-versions
 WIRESHARK_LICENSE = wireshark license
@@ -40,7 +40,7 @@ WIRESHARK_CONF_OPTS += -DENABLE_LTO=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_WIRESHARK_GUI),y)
-WIRESHARK_CONF_OPTS += -DBUILD_wireshark=ON
+WIRESHARK_CONF_OPTS += -DBUILD_wireshark=ON -DUSE_qt6=OFF
 WIRESHARK_DEPENDENCIES += qt5base qt5multimedia qt5svg qt5tools
 else
 WIRESHARK_CONF_OPTS += -DBUILD_wireshark=OFF
