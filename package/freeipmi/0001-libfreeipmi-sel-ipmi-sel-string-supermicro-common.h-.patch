@@ -1,0 +1,36 @@
+From 9239a686e4bfd862145f4654017112a0f8cbbb0d Mon Sep 17 00:00:00 2001
+From: Albert Chu <chu11@llnl.gov>
+Date: Fri, 22 Mar 2024 21:07:28 -0700
+Subject: [PATCH] libfreeipmi/sel/ipmi-sel-string-supermicro-common.h: Add
+ missing function prototype.
+
+Signed-off-by: Albert Chu <chu11@llnl.gov>
+[Waldemar: removed Changelog patching]
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: http://git.savannah.gnu.org/cgit/freeipmi.git/commit/?h=freeipmi-1-6-0-stable&id=9239a686e4bfd862145f4654017112a0f8cbbb0d
+---
+ libfreeipmi/sel/ipmi-sel-string-supermicro-common.h | 10 ++++++++++
+ 1 files changed, 15 insertions(+)
+
+diff --git a/libfreeipmi/sel/ipmi-sel-string-supermicro-common.h b/libfreeipmi/sel/ipmi-sel-string-supermicro-common.h
+index 5785f2b64..be5e41d7d 100644
+--- a/libfreeipmi/sel/ipmi-sel-string-supermicro-common.h
++++ b/libfreeipmi/sel/ipmi-sel-string-supermicro-common.h
+@@ -39,4 +39,14 @@ int sel_string_output_supermicro_overheat_event_data1_class_oem (ipmi_sel_ctx_t
+                                                                  unsigned int *wlen,
+                                                                  struct ipmi_sel_system_event_record_data *system_event_record_data);
+ 
++int sel_string_output_supermicro_dimm_event_data2_event_data3 (ipmi_sel_ctx_t ctx,
++                                                               struct ipmi_sel_entry *sel_entry,
++                                                               uint8_t sel_record_type,
++                                                               char *buf,
++                                                               unsigned int buflen,
++                                                               unsigned int flags,
++                                                               unsigned int *wlen,
++                                                               struct ipmi_sel_system_event_record_data *system_event_record_data,
++                                                               int *oem_rv);
++
+ #endif /* IPMI_SEL_STRING_SUPERMICRO_COMMON_H */
+-- 
+2.30.2
+
