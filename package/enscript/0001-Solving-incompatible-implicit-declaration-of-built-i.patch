@@ -1,0 +1,29 @@
+From 300ecf85a8fe166a39f9dd818945c7b8a970db39 Mon Sep 17 00:00:00 2001
+From: Wim Stockman <wim@thinkerwim.org>
+Date: Mon, 12 Feb 2024 22:52:50 +0100
+Subject: [PATCH] Solving incompatible implicit declaration of built-in
+ function 'strlen'
+
+Signed-off-by: Wim Stockman <wim@thinkerwim.org>
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://git.savannah.gnu.org/cgit/enscript.git/commit/?id=300ecf85a8fe166a39f9dd818945c7b8a970db39
+---
+ compat/getopt.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/compat/getopt.c b/compat/getopt.c
+index 752f28a..19f50e1 100644
+--- a/compat/getopt.c
++++ b/compat/getopt.c
+@@ -34,6 +34,8 @@
+ #include <config.h>
+ #endif
+ 
++#include <string.h>
++
+ #if !defined (__STDC__) || !__STDC__
+ /* This is a separate conditional since some stdc systems
+    reject `defined (const)'.  */
+-- 
+2.39.2
+
