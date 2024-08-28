@@ -5,10 +5,9 @@
 ################################################################################
 
 P910ND_VERSION = 0.97
-P910ND_SITE = http://downloads.sourceforge.net/project/p910nd/p910nd/$(P910ND_VERSION)
-P910ND_SOURCE = p910nd-$(P910ND_VERSION).tar.bz2
+P910ND_SITE = $(call github,kenyapcomau,p910nd,$(P910ND_VERSION))
 P910ND_LICENSE = GPL-2.0
-P910ND_LICENSE_FILES = COPYING
+P910ND_LICENSE_FILES = LICENSE.md
 
 define P910ND_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)
