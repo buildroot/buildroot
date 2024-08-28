@@ -5,8 +5,7 @@
 ################################################################################
 
 TLLIST_VERSION = 1.1.0
-TLLIST_SOURCE = $(TLLIST_VERSION).tar.gz
-TLLIST_SITE = https://codeberg.org/dnkl/tllist/archive
+TLLIST_SITE = https://codeberg.org/dnkl/tllist/releases/download/$(TLLIST_VERSION)
 TLLIST_LICENSE = MIT
 TLLIST_LICENSE_FILES = LICENSE
 # header only
