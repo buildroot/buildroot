@@ -1,0 +1,15 @@
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: N/A no SCM, not active anymore
+
+diff -Nur fbdump-0.4.2.orig/src/main.c fbdump-0.4.2/src/main.c
+--- fbdump-0.4.2.orig/src/main.c	2007-03-03 04:14:37.000000000 +0100
++++ fbdump-0.4.2/src/main.c	2024-08-16 09:25:42.828125778 +0200
+@@ -58,7 +58,7 @@
+ }
+ 
+ 
+-int main( int argc, char *argv[] )
++int main( int argc, const char *argv[] )
+ {
+   Options  opts = {
+     .fbdev = DEFAULT_DEVICE,
