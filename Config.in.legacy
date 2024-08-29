@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2024.08"
 
+config BR2_PACKAGE_MIDORI
+	bool "midori has been removed"
+	select BR2_LEGACY
+	help
+	  The original WebKitGTK-based Midori is no longer maintained
+	  and doesn't build since WebKitGTK moved to libsoup3 as of
+	  commit 38a098df133aaa2ebf09742054b02db5a44f58e5.
+
 config BR2_PACKAGE_FROTZ
 	bool "frotz has been removed"
 	select BR2_LEGACY
