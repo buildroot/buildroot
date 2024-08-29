@@ -12,8 +12,8 @@ EJABBERD_CPE_ID_VENDOR = process-one
 EJABBERD_DEPENDENCIES = getent openssl erlang-eimp host-erlang-lager \
 	erlang-lager erlang-p1-cache-tab erlang-p1-sip \
 	erlang-p1-stringprep erlang-stun erlang-p1-tls \
-	erlang-p1-utils erlang-fast-xml erlang-p1-xmpp erlang-p1-yaml \
-	erlang-p1-zlib host-erlang-p1-utils host-erlang-p1-xmpp
+	erlang-p1-utils erlang-fast-xml erlang-xmpp erlang-p1-yaml \
+	erlang-p1-zlib host-erlang-p1-utils host-erlang-xmpp
 
 # 0001-Makefile.in-do-not-download-or-compile-dependencies.patch
 # updates Makefile.in

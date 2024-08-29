@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2024.11"
 
+config BR2_PACKAGE_ERLANG_P1_XMPP
+	bool "erlang-p1-xmpp has been renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_ERLANG_XMPP
+	help
+	  The erlang-p1-xmpp package has been renamed to erlang-xmpp.
+
 config BR2_PACKAGE_ERLANG_P1_XML
 	bool "erlang-p1-xml has been renamed"
 	select BR2_LEGACY
