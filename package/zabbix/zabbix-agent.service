@@ -4,7 +4,7 @@ After=network.target
  
 [Service]
 Type=forking
-ExecStart=/usr/sbin/zabbix_agentd
+ExecStart=/usr/sbin/zabbix_agentd -f
 ExecReload=/usr/sbin/zabbix_agentd -R config_cache_reload
 RuntimeDirectory=zabbix
 PIDFile=/run/zabbix/zabbix_agentd.pid
