@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ERLANG_FAST_YAML_VERSION = 1.0.36
+ERLANG_FAST_YAML_VERSION = 1.0.37
 ERLANG_FAST_YAML_SITE = $(call github,processone,fast_yaml,$(ERLANG_FAST_YAML_VERSION))
 ERLANG_FAST_YAML_LICENSE = Apache-2.0
 ERLANG_FAST_YAML_LICENSE_FILES = LICENSE.txt
