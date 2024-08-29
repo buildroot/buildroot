@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ERLANG_STUN_VERSION = 1.2.7
+ERLANG_STUN_VERSION = 1.2.14
 ERLANG_STUN_SITE = $(call github,processone,stun,$(ERLANG_STUN_VERSION))
 ERLANG_STUN_LICENSE = Apache-2.0
 ERLANG_STUN_LICENSE_FILES = LICENSE.txt
