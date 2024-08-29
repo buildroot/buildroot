@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EJABBERD_VERSION = 23.04
+EJABBERD_VERSION = 24.07
 EJABBERD_SITE = https://static.process-one.net/ejabberd/downloads/$(EJABBERD_VERSION)
 EJABBERD_LICENSE = GPL-2.0+ with OpenSSL exception
 EJABBERD_LICENSE_FILES = COPYING
@@ -36,7 +36,8 @@ EJABBERD_CONF_ENV = \
 
 EJABBERD_CONF_OPTS = \
 	--enable-system-deps \
-	--disable-erlang-version-check
+	--disable-erlang-version-check \
+	--with-rebar="$(HOST_DIR)/bin/rebar"
 
 define EJABBERD_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) DESTDIR=$(TARGET_DIR) all install -C $(@D)
