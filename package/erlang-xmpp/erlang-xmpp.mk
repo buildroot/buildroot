@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ERLANG_XMPP_VERSION = 1.6.2
+ERLANG_XMPP_VERSION = 1.8.3
 ERLANG_XMPP_SITE = $(call github,processone,xmpp,$(ERLANG_XMPP_VERSION))
 ERLANG_XMPP_LICENSE = Apache-2.0
 ERLANG_XMPP_LICENSE_FILES = LICENSE.txt
