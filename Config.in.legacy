@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2024.11"
 
+config BR2_PACKAGE_ERLANG_P1_STUN
+	bool "erlang-p1-stun has been renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_ERLANG_STUN
+	help
+	  The erlang-p1-stun package has been renamed to erlang-stun.
+
 config BR2_PACKAGE_FBV_GIF
 	bool "fbv GIF support has been removed"
 	select BR2_LEGACY
