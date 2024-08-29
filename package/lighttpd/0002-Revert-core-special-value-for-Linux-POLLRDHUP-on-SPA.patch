@@ -1,0 +1,34 @@
+From 88ff3763dae65371eab9f8a22ac1c95c96fe4490 Mon Sep 17 00:00:00 2001
+From: Glenn Strauss <gstrauss@gluelogic.com>
+Date: Tue, 23 Apr 2024 00:16:29 -0400
+Subject: [PATCH] Revert "[core] special value for Linux POLLRDHUP on SPARC"
+ (fixes #3251)
+
+This reverts commit f14f9142f4487704e2ce0f196263c091accdb12c.
+
+x-ref:
+  "[1.4.76] buildroot compile error with bootlin-sparc{64-g,-uc}libc"
+  https://redmine.lighttpd.net/issues/3251
+
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://redmine.lighttpd.net/projects/lighttpd/repository/14/revisions/88ff3763dae65371eab9f8a22ac1c95c96fe4490
+---
+ src/fdevent.h | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/src/fdevent.h b/src/fdevent.h
+index e9c380b0..1b0a062f 100644
+--- a/src/fdevent.h
++++ b/src/fdevent.h
+@@ -40,8 +40,6 @@ struct fdnode_st {
+ #if (defined(__sun) && defined(__SVR4)) /* Solaris */ \
+  || defined(__FreeBSD__)
+ #define FDEVENT_RDHUP  0x4000
+-#elif (defined(__linux__) && (defined(__sparc__) || defined(__sparc)))
+-#define FDEVENT_RDHUP  0x0800
+ #else
+ #define FDEVENT_RDHUP  0x2000
+ #endif
+-- 
+2.30.2
+
