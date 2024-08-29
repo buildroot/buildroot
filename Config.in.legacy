@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2024.11"
 
+config BR2_PACKAGE_ERLANG_P1_XML
+	bool "erlang-p1-xml has been renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_ERLANG_FAST_XML
+	help
+	  The erlang-p1-xml package has been renamed to erlang-fast-xml.
+
 config BR2_PACKAGE_ERLANG_P1_STUN
 	bool "erlang-p1-stun has been renamed"
 	select BR2_LEGACY
