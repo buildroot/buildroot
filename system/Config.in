@@ -146,7 +146,7 @@ comment "systemd highly recommends Linux >= 4.15"
 	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_15
 
 config BR2_INIT_NONE
-	bool "None"
+	bool "Custom (none)"
 	select BR2_PACKAGE_SKELETON_INIT_NONE if BR2_ROOTFS_SKELETON_DEFAULT
 	help
 	  Buildroot will not install any init system. You will
