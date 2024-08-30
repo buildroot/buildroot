@@ -87,6 +87,8 @@ choice
 	prompt "Init system"
 	default BR2_INIT_BUSYBOX
 
+comment "General purpose"
+
 config BR2_INIT_BUSYBOX
 	bool "BusyBox"
 	select BR2_PACKAGE_BUSYBOX
@@ -144,6 +146,8 @@ comment "systemd needs a glibc toolchain w/ SSP, headers >= 3.15, host and targe
 comment "systemd highly recommends Linux >= 4.15"
 	depends on BR2_INIT_SYSTEMD
 	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_15
+
+comment "Special purpose (read help)"
 
 config BR2_INIT_NONE
 	bool "Custom (none)"
