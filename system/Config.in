@@ -149,6 +149,22 @@ comment "systemd highly recommends Linux >= 4.15"
 
 comment "Special purpose (read help)"
 
+config BR2_INIT_TINI
+	bool "tini"
+	depends on BR2_USE_MMU  # tini
+	select BR2_PACKAGE_TINI
+	select BR2_PACKAGE_SKELETON_INIT_NONE if BR2_ROOTFS_SKELETON_DEFAULT
+	help
+	  Tini - A tiny but valid init for containers
+
+	  Tini is the simplest init you could think of.
+
+	  All Tini does is spawn a single child (Tini is meant to be run
+	  in a container), and wait for it to exit all the while reaping
+	  zombies and performing signal forwarding.
+
+	  https://github.com/krallin/tini
+
 config BR2_INIT_NONE
 	bool "Custom (none)"
 	select BR2_PACKAGE_SKELETON_INIT_NONE if BR2_ROOTFS_SKELETON_DEFAULT
