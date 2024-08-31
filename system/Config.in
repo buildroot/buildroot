@@ -165,6 +165,15 @@ config BR2_INIT_TINI
 
 	  https://github.com/krallin/tini
 
+config BR2_INIT_TINYINIT
+	bool "tiny init"
+	select BR2_PACKAGE_TINYINIT
+	select BR2_PACKAGE_SKELETON_INIT_NONE if BR2_ROOTFS_SKELETON_DEFAULT
+	help
+	  A Linux tiny initialization script suitable for resource
+	  limited systems, which can be used as an alternative to the
+	  one provided by Busybox.
+
 config BR2_INIT_NONE
 	bool "Custom (none)"
 	select BR2_PACKAGE_SKELETON_INIT_NONE if BR2_ROOTFS_SKELETON_DEFAULT
