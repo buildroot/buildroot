@@ -26,6 +26,7 @@ LIBGTK4_DEPENDENCIES = \
 
 LIBGTK4_CONF_OPTS = \
 	-Dbuild-tests=false \
+	-Dbuild-testsuite=false \
 	-Dmedia-ffmpeg=disabled \
 	-Dprint-cpdb=disabled \
 	-Dvulkan=disabled \
