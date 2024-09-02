@@ -4,8 +4,9 @@
 #
 ################################################################################
 
-BABELD_VERSION = 1.9.2
-BABELD_SITE = http://www.pps.univ-paris-diderot.fr/~jch/software/files
+BABELD_VERSION = babeld-1.9.2
+BABELD_SITE = https://github.com/jech/babeld
+BABELD_SITE_METHOD = git
 BABELD_LICENSE = MIT
 BABELD_LICENSE_FILES = LICENCE
 
