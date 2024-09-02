@@ -24,3 +24,16 @@ You can also find us on #buildroot on OFTC IRC.
 
 If you would like to contribute patches, please read
 https://buildroot.org/manual.html#submitting-patches
+
+My part
+- Add .config file for qemu
+- Add build script to build
+- Add git submodule for my application
+- Add an external crosstool for build app and kernal( build script will help you to create external crosstool but you need to update for .config to internal crosstool then build and set it to external)
+- Overlay rootfs for config syslogd
+- Add script to run in fakeroot environment to modify your rootfs before building
+
+To run my setup just: 
+- Build your external crosstool: set crosstool as internal
+- Build all: ./build_script.sh -full
+
