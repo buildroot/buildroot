@@ -13,3 +13,14 @@ config BR2_PACKAGE_HOST_QT6TOOLS
 	  and design of applications.
 
 	  https://github.com/qt/qttools
+
+if BR2_PACKAGE_HOST_QT6TOOLS
+
+config BR2_PACKAGE_HOST_QT6TOOLS_LINGUIST_TOOLS
+	bool "host linguist tools"
+	select BR2_PACKAGE_HOST_QT6BASE_PRINTSUPPORT
+	help
+	  Translate Qt C++ and Qt Quick applications into local
+	  languages.
+
+endif

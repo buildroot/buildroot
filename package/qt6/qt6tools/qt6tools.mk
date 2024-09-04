@@ -43,5 +43,11 @@ endif
 
 HOST_QT6TOOLS_DEPENDENCIES = host-qt6base
 
+ifeq ($(BR2_PACKAGE_HOST_QT6TOOLS_LINGUIST_TOOLS),y)
+HOST_QT6TOOLS_CONF_OPTS += -DFEATURE_linguist=ON
+else
+HOST_QT6TOOLS_CONF_OPTS += -DFEATURE_linguist=OFF
+endif
+
 $(eval $(cmake-package))
 $(eval $(host-cmake-package))
