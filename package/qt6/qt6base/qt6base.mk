@@ -113,10 +113,8 @@ HOST_QT6BASE_CONF_OPTS += \
 	-DFEATURE_png=OFF \
 	-DFEATURE_gif=OFF \
 	-DFEATURE_jpeg=OFF \
-	-DFEATURE_printsupport=OFF \
 	-DFEATURE_kms=OFF \
 	-DFEATURE_fontconfig=OFF \
-	-DFEATURE_widgets=OFF \
 	-DFEATURE_libinput=OFF \
 	-DFEATURE_tslib=OFF \
 	-DFEATURE_eglfs=OFF
@@ -129,6 +127,12 @@ ifeq ($(BR2_PACKAGE_HOST_QT6BASE_NETWORK),y)
 HOST_QT6BASE_CONF_OPTS += -DFEATURE_network=ON
 else
 HOST_QT6BASE_CONF_OPTS += -DFEATURE_network=OFF
+endif
+
+ifeq ($(BR2_PACKAGE_HOST_QT6BASE_PRINTSUPPORT),y)
+HOST_QT6BASE_CONF_OPTS += -DFEATURE_printsupport=ON
+else
+HOST_QT6BASE_CONF_OPTS += -DFEATURE_printsupport=OFF
 endif
 
 # We need host qt6base with Sql support for host-qt6tools to generate the
@@ -148,6 +152,12 @@ ifeq ($(BR2_PACKAGE_HOST_QT6BASE_TEST),y)
 HOST_QT6BASE_CONF_OPTS += -DFEATURE_testlib=ON
 else
 HOST_QT6BASE_CONF_OPTS += -DFEATURE_testlib=OFF
+endif
+
+ifeq ($(BR2_PACKAGE_HOST_QT6BASE_WIDGETS),y)
+HOST_QT6BASE_CONF_OPTS += -DFEATURE_widgets=ON
+else
+HOST_QT6BASE_CONF_OPTS += -DFEATURE_widgets=OFF
 endif
 
 # Conditional blocks below are ordered by alphabetic ordering of the
