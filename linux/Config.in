@@ -492,6 +492,17 @@ config BR2_LINUX_KERNEL_NEEDS_HOST_PAHOLE
 	  such as "BTF: .tmp_vmlinux.btf: pahole (pahole) is not
 	  available".
 
+config BR2_LINUX_KERNEL_NEEDS_HOST_PYTHON3
+	bool "Needs host python3"
+	help
+	  Some Linux kernel configuration options (such as the
+	  CONFIG_DRM_MSM in v6.10 and greater) require a host python3
+	  interpreter. Enabling this option will ensure host-python3
+	  gets built before the Linux kernel.
+
+	  Enable this option if you get a Linux kernel build failure
+	  such as "python3: not found".
+
 # Linux extensions
 source "linux/Config.ext.in"
 
