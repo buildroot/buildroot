@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-FBV_VERSION = 1.0b
-FBV_SITE = http://s-tech.elsat.net.pl/fbv
-
+FBV_VERSION = 7c2000804226ca860ca80f3baa993582e29aa1a2
+FBV_SITE = $(call github,amadvance,fbv,$(FBV_VERSION))
 FBV_LICENSE = GPL-2.0
 FBV_LICENSE_FILES = COPYING
+FBV_AUTORECONF = YES
 
 ### image format dependencies and configure options
 FBV_DEPENDENCIES = # empty
@@ -29,29 +29,5 @@ FBV_DEPENDENCIES += jpeg
 else
 FBV_CONFIGURE_OPTS += --without-libjpeg
 endif
-ifeq ($(BR2_PACKAGE_FBV_GIF),y)
-FBV_DEPENDENCIES += giflib
-else
-FBV_CONFIGURE_OPTS += --without-libungif
-endif
-
-#fbv doesn't support cross-compilation
-define FBV_CONFIGURE_CMDS
-	(cd $(FBV_DIR); rm -f config.cache; \
-		$(TARGET_CONFIGURE_OPTS) \
-		$(TARGET_CONFIGURE_ARGS) \
-		./configure \
-		--prefix=/usr \
-		$(FBV_CONFIGURE_OPTS) \
-	)
-endef
-
-define FBV_BUILD_CMDS
-	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)
-endef
-
-define FBV_INSTALL_TARGET_CMDS
-	$(INSTALL) -D $(@D)/fbv $(TARGET_DIR)/usr/bin/fbv
-endef
 
 $(eval $(autotools-package))

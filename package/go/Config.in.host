@@ -36,6 +36,18 @@ config BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS
 	default y
 	depends on BR2_PACKAGE_HOST_GO_BOOTSTRAP_STAGE3_ARCH_SUPPORTS
 
+# CGO linking for the host. Since we use the same compiler for target
+# and host, if the target can't do CGO linking, then the host can't.
+# But if the target is not supported by Go, then the host can do CGO
+# linking (except when it itself does not support CGO linking).
+config BR2_PACKAGE_HOST_GO_HOST_CGO_LINKING_SUPPORTS
+	bool
+	default y if BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS
+	default y if !BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS
+	depends on BR2_HOSTARCH != "mips64"
+	depends on BR2_HOSTARCH != "mips64el"
+
 # Go packages should select BR2_PACKAGE_HOST_GO
 config BR2_PACKAGE_HOST_GO
 	bool

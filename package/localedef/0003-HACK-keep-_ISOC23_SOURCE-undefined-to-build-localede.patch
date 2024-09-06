@@ -1,0 +1,35 @@
+From efc989e7e5dcbc38ccc32634e49cfc2881c5a318 Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@gmail.com>
+Date: Sat, 9 Sep 2023 23:58:50 +0200
+Subject: [PATCH] HACK: keep _ISOC23_SOURCE undefined to build localedef with
+ old glibc
+
+Fixes:
+host-localedef-2.38-13-g92201f16cbcfd9eafe314ef6654be2ea7ba25675/build/locale/ld-ctype.o: in function `ctype_read':
+ld-ctype.c:(.text+0x6cef): undefined reference to `__isoc23_strtoul'
+
+Upstream: Not applicable
+
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+[Thomas: adapted to glibc 2.40, which required the logic to be changed
+to _ISOC23_SOURCE]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ include/features.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/include/features.h b/include/features.h
+index 093de6f44c..8d9ca6e402 100644
+--- a/include/features.h
++++ b/include/features.h
+@@ -215,7 +215,6 @@
+ # undef  _ISOC11_SOURCE
+ # define _ISOC11_SOURCE	1
+ # undef  _ISOC23_SOURCE
+-# define _ISOC23_SOURCE	1
+ # undef  _POSIX_SOURCE
+ # define _POSIX_SOURCE	1
+ # undef  _POSIX_C_SOURCE
+-- 
+2.45.2
+

@@ -4,9 +4,10 @@
 #
 ################################################################################
 
-BCC_VERSION = 0.29.1
-BCC_SITE = https://github.com/iovisor/bcc/releases/download/v$(BCC_VERSION)
-BCC_SOURCE = bcc-src-with-submodule.tar.gz
+BCC_VERSION = v0.31.0
+BCC_SITE = https://github.com/iovisor/bcc
+BCC_SITE_METHOD = git
+BCC_GIT_SUBMODULES = YES
 BCC_LICENSE = Apache-2.0
 BCC_LICENSE_FILES = LICENSE.txt
 BCC_INSTALL_STAGING = YES

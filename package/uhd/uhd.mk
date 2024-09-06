@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-UHD_VERSION = 4.3.0.0
+UHD_VERSION = 4.7.0.0
 UHD_SITE = $(call github,EttusResearch,uhd,v$(UHD_VERSION))
 UHD_LICENSE = GPL-3.0+, LGPL-3.0+ (fpga/usrp3)
 UHD_LICENSE_FILES = LICENSE.md host/LICENSE fpga/usrp3/LICENSE.md

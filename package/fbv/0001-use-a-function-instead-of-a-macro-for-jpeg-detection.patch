@@ -1,0 +1,29 @@
+From 3547055ba135dc1d8aacea68f16456aabb8c0a91 Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Fri, 23 Aug 2024 06:11:43 +0200
+Subject: [PATCH] use a function instead of a macro for jpeg detection
+
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://github.com/amadvance/fbv/pull/1
+---
+ configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 3fa4666..fc65903 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -28,8 +28,8 @@ AC_SEARCH_LIBS([png_create_read_struct], [png], [
+ 	]
+ )
+ 
+-AC_SEARCH_LIBS([jpeg_create_decompress], [jpeg], [
+-	LIBS="-ljpeg"
++AC_SEARCH_LIBS([jpeg_start_decompress], [jpeg], [
++	LIBS="$LIBS -ljpeg"
+ 	CFLAGS="$CFLAGS -DFBV_SUPPORT_JPEG"
+ 	], [
+ 	]
+-- 
+2.39.2
+

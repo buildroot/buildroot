@@ -1,0 +1,14 @@
+config BR2_PACKAGE_PYTHON_RGBMATRIX
+	bool "python-rgbmatrix"
+	depends on BR2_aarch64 || BR2_arm  # rpi-rgb-led-matrix
+	depends on BR2_INSTALL_LIBSTDCPP  # rpi-rgb-led-matrix
+	depends on BR2_TOOLCHAIN_HAS_THREADS  # rpi-rgb-led-matrix
+	depends on !BR2_STATIC_LIBS  # rpi-rgb-led-matrix
+	select BR2_PACKAGE_HOST_PYTHON_CYTHON
+	select BR2_PACKAGE_RPI_RGB_LED_MATRIX
+
+comment "python-rgbmatrix needs a toolchain w/ C++, threads, dynamic libraries"
+	depends on BR2_aarch64 || BR2_arm
+	depends on !BR2_INSTALL_LIBSTDCPP \
+		|| !BR2_TOOLCHAIN_HAS_THREADS \
+		|| BR2_STATIC_LIBS

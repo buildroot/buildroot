@@ -1,0 +1,16 @@
+comment "erlang-xmpp needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP
+
+config BR2_PACKAGE_ERLANG_XMPP
+	bool "erlang-xmpp"
+	depends on BR2_INSTALL_LIBSTDCPP # erlang-p1-stringprep
+	select BR2_PACKAGE_ERLANG_FAST_XML
+	select BR2_PACKAGE_ERLANG_IDNA
+	select BR2_PACKAGE_ERLANG_P1_STRINGPREP
+	select BR2_PACKAGE_ERLANG_P1_TLS
+	select BR2_PACKAGE_ERLANG_P1_UTILS
+	select BR2_PACKAGE_ERLANG_P1_ZLIB
+	help
+	  XMPP library for Erlang.
+
+	  https://github.com/processone/xmpp

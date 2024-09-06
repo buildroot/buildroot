@@ -144,6 +144,49 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2024.11"
+
+config BR2_PACKAGE_ERLANG_P1_YAML
+	bool "erlang-p1-yaml has been renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_ERLANG_FAST_YAML
+	help
+	  The erlang-p1-yaml package has been renamed to
+	  erlang-fast-yaml.
+
+config BR2_PACKAGE_ERLANG_P1_XMPP
+	bool "erlang-p1-xmpp has been renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_ERLANG_XMPP
+	help
+	  The erlang-p1-xmpp package has been renamed to erlang-xmpp.
+
+config BR2_PACKAGE_ERLANG_P1_XML
+	bool "erlang-p1-xml has been renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_ERLANG_FAST_XML
+	help
+	  The erlang-p1-xml package has been renamed to erlang-fast-xml.
+
+config BR2_PACKAGE_ERLANG_P1_STUN
+	bool "erlang-p1-stun has been renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_ERLANG_STUN
+	help
+	  The erlang-p1-stun package has been renamed to erlang-stun.
+
+config BR2_PACKAGE_FBV_GIF
+	bool "fbv GIF support has been removed"
+	select BR2_LEGACY
+	help
+	  Fbv GIF support has been removed, use PNG, BMP or JPEG.
+
+config BR2_BINUTILS_VERSION_2_40_X
+	bool "binutils 2.40 has been removed"
+	select BR2_LEGACY
+	help
+	  binutils 2.40 has been removed, use a newer version.
+
 comment "Legacy options removed in 2024.08"
 
 config BR2_PACKAGE_MIDORI

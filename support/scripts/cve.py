@@ -72,7 +72,7 @@ class CVE:
         print(f"Updating from {NVD_BASE_URL}")
         if os.path.exists(nvd_git_dir):
             subprocess.check_call(
-                ["git", "pull"],
+                ["git", "pull", "--depth", "1"],
                 cwd=nvd_git_dir,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
@@ -82,7 +82,7 @@ class CVE:
             # happily clones into an empty directory.
             os.makedirs(nvd_git_dir)
             subprocess.check_call(
-                ["git", "clone", NVD_BASE_URL, nvd_git_dir],
+                ["git", "clone", "--depth", "1", NVD_BASE_URL, nvd_git_dir],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             )

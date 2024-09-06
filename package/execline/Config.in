@@ -10,3 +10,12 @@ config BR2_PACKAGE_EXECLINE
 	  essentially useful inside an execlineb script.
 
 	  http://skarnet.org/software/execline/
+
+if BR2_PACKAGE_EXECLINE
+
+config BR2_PACKAGE_EXECLINE_MULTICALL
+	bool "execline multicall binary"
+	help
+	  Build execline as a multicall binary to save disk space.
+
+endif

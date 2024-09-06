@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SLIRP_VERSION = 4.7.0
+SLIRP_VERSION = 4.8.0
 SLIRP_SOURCE = libslirp-v$(SLIRP_VERSION).tar.bz2
 SLIRP_SITE = https://gitlab.freedesktop.org/slirp/libslirp/-/archive/v$(SLIRP_VERSION)
 SLIRP_LICENSE = BSD-3-Clause

@@ -4,16 +4,16 @@
 #
 ################################################################################
 
-EJABBERD_VERSION = 23.04
+EJABBERD_VERSION = 24.07
 EJABBERD_SITE = https://static.process-one.net/ejabberd/downloads/$(EJABBERD_VERSION)
 EJABBERD_LICENSE = GPL-2.0+ with OpenSSL exception
 EJABBERD_LICENSE_FILES = COPYING
 EJABBERD_CPE_ID_VENDOR = process-one
 EJABBERD_DEPENDENCIES = getent openssl erlang-eimp host-erlang-lager \
 	erlang-lager erlang-p1-cache-tab erlang-p1-sip \
-	erlang-p1-stringprep erlang-p1-stun erlang-p1-tls \
-	erlang-p1-utils erlang-p1-xml erlang-p1-xmpp erlang-p1-yaml \
-	erlang-p1-zlib host-erlang-p1-utils host-erlang-p1-xmpp
+	erlang-p1-stringprep erlang-stun erlang-p1-tls \
+	erlang-p1-utils erlang-fast-xml erlang-xmpp erlang-fast-yaml \
+	erlang-p1-zlib host-erlang-p1-utils host-erlang-xmpp
 
 # 0001-Makefile.in-do-not-download-or-compile-dependencies.patch
 # updates Makefile.in
@@ -36,7 +36,8 @@ EJABBERD_CONF_ENV = \
 
 EJABBERD_CONF_OPTS = \
 	--enable-system-deps \
-	--disable-erlang-version-check
+	--disable-erlang-version-check \
+	--with-rebar="$(HOST_DIR)/bin/rebar"
 
 define EJABBERD_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) DESTDIR=$(TARGET_DIR) all install -C $(@D)

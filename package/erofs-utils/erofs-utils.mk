@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EROFS_UTILS_VERSION = 1.7.1
+EROFS_UTILS_VERSION = 1.8.1
 EROFS_UTILS_SITE = https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git/snapshot
 EROFS_UTILS_LICENSE = GPL-2.0+, GPL-2.0+ or Apache-2.0 (liberofs)
 EROFS_UTILS_LICENSE_FILES = COPYING LICENSES/Apache-2.0 LICENSES/GPL-2.0
@@ -13,6 +13,10 @@ EROFS_UTILS_LICENSE_FILES = COPYING LICENSES/Apache-2.0 LICENSES/GPL-2.0
 EROFS_UTILS_AUTORECONF = YES
 
 EROFS_UTILS_DEPENDENCIES = host-pkgconf util-linux
+
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+EROFS_UTILS_CONF_ENV += LIBS=-latomic
+endif
 
 ifeq ($(BR2_PACKAGE_EROFS_UTILS_LZ4),y)
 EROFS_UTILS_DEPENDENCIES += lz4
@@ -56,12 +60,20 @@ else
 EROFS_UTILS_CONF_OPTS += --without-zlib
 endif
 
+ifeq ($(BR2_PACKAGE_ZSTD),y)
+EROFS_UTILS_DEPENDENCIES += zstd
+EROFS_UTILS_CONF_OPTS += --with-libzstd
+else
+EROFS_UTILS_CONF_OPTS += --without-libzstd
+endif
+
 HOST_EROFS_UTILS_DEPENDENCIES = host-pkgconf host-util-linux host-lz4 host-xz
 HOST_EROFS_UTILS_CONF_OPTS += \
 	--enable-lz4 \
 	--enable-lzma \
 	--disable-fuse \
 	--without-libdeflate \
+	--without-libzstd \
 	--without-selinux \
 	--without-zlib
 

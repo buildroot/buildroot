@@ -279,6 +279,7 @@ define $(2)_INSTALL_TARGET_CMDS
 			--root $$(TARGET_DIR)/usr/ \
 			--bins \
 			--path ./ \
+			--no-track \
 			--force \
 			--locked \
 			-Z target-applies-to-host \
@@ -298,6 +299,7 @@ define $(2)_INSTALL_CMDS
 			--root $$(HOST_DIR) \
 			--bins \
 			--path ./ \
+			--no-track \
 			--force \
 			--locked \
 			$$($(2)_CARGO_INSTALL_OPTS)

@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-BABELD_VERSION = babeld-1.9.2
-BABELD_SITE = https://github.com/jech/babeld
-BABELD_SITE_METHOD = git
+BABELD_VERSION = 1.13
+BABELD_SITE = https://www.irif.fr/~jch/software/files
 BABELD_LICENSE = MIT
 BABELD_LICENSE_FILES = LICENCE
 

@@ -16,18 +16,8 @@ HOST_ELF2FLT_AUTORECONF = YES
 
 # elf2flt needs to link against libbfd.a and libiberty.a which are
 # provided by host-binutils, but not installed, so we poke directly
-# into the host-binutils build directory. Turns out that the location
-# of libbfd.a has changed in binutils >= 2.41, so we special case
-# binutils 2.39 and 2.40, which are the two remaining versions still
-# using the "old" path". Note: the ARC-special binutils version is not
-# considered because Buildroot only supports ARC CPUs with a MMU and
-# therefore host-elf2flt is never used on ARC. libiberty.a has
-# remained at the same location.
-ifeq ($(BR2_BINUTILS_VERSION_2_40_X),y)
-HOST_ELF2FLT_LIBBFD_PATH = $(HOST_BINUTILS_DIR)/bfd/libbfd.a
-else
+# into the host-binutils build directory.
 HOST_ELF2FLT_LIBBFD_PATH = $(HOST_BINUTILS_DIR)/bfd/.libs/libbfd.a
-endif
 
 # It is not exactly a host variant, but more a cross variant, which is
 # why we pass a special --target option.

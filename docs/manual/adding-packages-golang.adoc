@@ -49,7 +49,8 @@ infrastructure should depend on +BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS+
 because Buildroot will automatically add a dependency on +host-go+
 to such packages.
 If you need CGO support in your package, you must add a dependency on
-+BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS+.
++BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS+; for host packages,
+add a dependency on +BR2_PACKAGE_HOST_GO_HOST_CGO_LINKING_SUPPORTS+.
 
 The main macro of the Go package infrastructure is
 +golang-package+. It is similar to the +generic-package+ macro. The

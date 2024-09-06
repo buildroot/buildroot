@@ -14,11 +14,17 @@ ALSA_PLUGINS_DEPENDENCIES = host-pkgconf alsa-lib
 ALSA_PLUGINS_CONF_OPTS = \
 	--disable-jack \
 	--disable-usbstream \
-	--disable-pulseaudio \
 	--disable-libav \
 	--disable-maemo-plugin \
 	--disable-maemo-resource-manager \
 	--with-speex=no
+
+ifeq ($(BR2_PACKAGE_PULSEAUDIO),y)
+ALSA_PLUGINS_DEPENDENCIES += pulseaudio
+ALSA_PLUGINS_CONF_OPTS += --enable-pulseaudio
+else
+ALSA_PLUGINS_CONF_OPTS += --disable-pulseaudio
+endif
 
 ifeq ($(BR2_PACKAGE_ALSA_UTILS),y)
 ALSA_PLUGINS_DEPENDENCIES += alsa-utils

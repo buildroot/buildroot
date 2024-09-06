@@ -1,5 +1,37 @@
 if BR2_TOOLCHAIN_EXTERNAL_SYNOPSYS_ARC
 
+choice
+	prompt "Synopsys toolchain variant"
+
+config BR2_TOOLCHAIN_EXTERNAL_SYNOPSYS_ARC700
+	bool "Linux/uClibc ARC 700"
+	depends on BR2_arc750d || BR2_arc770d
+	select BR2_TOOLCHAIN_EXTERNAL_UCLIBC
+	select BR2_USE_WCHAR
+	select BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_TOOLCHAIN_HAS_THREADS_NPTL
+	select BR2_TOOLCHAIN_HAS_THREADS_DEBUG
+
+config BR2_TOOLCHAIN_EXTERNAL_SYNOPSYS_ARCHS_UCLIBC
+	bool "Linux/uClibc ARC HS"
+	depends on BR2_archs38_64mpy || BR2_archs38_full || \
+		BR2_archs4x_rel31 || BR2_archs4x
+	select BR2_TOOLCHAIN_EXTERNAL_UCLIBC
+	select BR2_USE_WCHAR
+	select BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_TOOLCHAIN_HAS_THREADS_NPTL
+	select BR2_TOOLCHAIN_HAS_THREADS_DEBUG
+	select BR2_TOOLCHAIN_HAS_FORTRAN
+
+config BR2_TOOLCHAIN_EXTERNAL_SYNOPSYS_ARCHS_GLIBC
+	bool "Linux/glibc ARC HS"
+	depends on BR2_archs38_64mpy || BR2_archs38_full || \
+		BR2_archs4x_rel31 || BR2_archs4x
+	select BR2_TOOLCHAIN_EXTERNAL_GLIBC
+	select BR2_TOOLCHAIN_HAS_FORTRAN
+
+endchoice
+
 config BR2_TOOLCHAIN_EXTERNAL_PREFIX
 	default "arc-linux"		 if BR2_arcle
 	default "arceb-linux"		 if BR2_arceb
