@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-PYTHON_LXML_VERSION = 5.2.2
-PYTHON_LXML_SITE = https://files.pythonhosted.org/packages/63/f7/ffbb6d2eb67b80a45b8a0834baa5557a14a5ffce0979439e7cd7f0c4055b
+PYTHON_LXML_VERSION = 5.3.0
+PYTHON_LXML_SITE = https://files.pythonhosted.org/packages/e7/6b/20c3a4b24751377aaa6307eb230b66701024012c29dd374999cc92983269
 PYTHON_LXML_SOURCE = lxml-$(PYTHON_LXML_VERSION).tar.gz
 
 # Not including the GPL, because it is used only for the test scripts.
@@ -29,12 +29,12 @@ HOST_PYTHON_LXML_DEPENDENCIES = host-libxml2 host-libxslt host-zlib
 # libxslt compiler and linker flags
 PYTHON_LXML_BUILD_OPTS = \
 	--skip-dependency-check \
-	-C--build-option=--xslt-config=$(STAGING_DIR)/usr/bin/xslt-config \
-	-C--build-option=--xml2-config=$(STAGING_DIR)/usr/bin/xml2-config
+	-C--build-option=--with-xslt-config=$(STAGING_DIR)/usr/bin/xslt-config \
+	-C--build-option=--with-xml2-config=$(STAGING_DIR)/usr/bin/xml2-config
 HOST_PYTHON_LXML_BUILD_OPTS = \
 	--skip-dependency-check \
-	-C--build-option=--xslt-config=$(HOST_DIR)/bin/xslt-config \
-	-C--build-option=--xml2-config=$(HOST_DIR)/bin/xml2-config
+	-C--build-option=--with-xslt-config=$(HOST_DIR)/bin/xslt-config \
+	-C--build-option=--with-xml2-config=$(HOST_DIR)/bin/xml2-config
 
 $(eval $(python-package))
 $(eval $(host-python-package))
