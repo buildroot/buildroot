@@ -4,8 +4,9 @@
 #
 ################################################################################
 
-LMDB_VERSION = 0.9.31
-LMDB_SITE = $(call github,LMDB,lmdb,LMDB_$(LMDB_VERSION))
+LMDB_VERSION = 0.9.33
+LMDB_SOURCE = openldap-LMDB_$(LMDB_VERSION).tar.bz2
+LMDB_SITE = https://git.openldap.org/openldap/openldap/-/archive/LMDB_$(LMDB_VERSION)
 LMDB_LICENSE = OLDAP-2.8
 LMDB_LICENSE_FILES = libraries/liblmdb/LICENSE
 LMDB_INSTALL_STAGING = YES
