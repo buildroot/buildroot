@@ -1,0 +1,15 @@
+config BR2_PACKAGE_IANA_ASSIGNMENTS
+	bool "IANA assignments"
+	select BR2_PACKAGE_IANA_ASSIGNMENTS_PEN_REG
+	help
+	  Mirror of the IANA registries periodically updated
+	  from https://www.iana.org/protocols.
+
+	  https://github.com/larseggert/iana-assignments
+
+if BR2_PACKAGE_IANA_ASSIGNMENTS
+
+config BR2_PACKAGE_IANA_ASSIGNMENTS_PEN_REG
+	bool "PEN (Enterprise Numbers) registry"
+
+endif
