@@ -146,6 +146,18 @@ endif
 
 comment "Legacy options removed in 2024.11"
 
+config BR2_PACKAGE_IPMITOOL_PEN_REG_URI
+	string "IANA PEN registry moved to iana-assignment package"
+	help
+	  Installation of the IANA PEN is now handled by the
+	  iana-assignment package; to install a custom PEN,
+	  use a rootfs-overlay for example.
+
+config BR2_PACKAGE_IPMITOOL_PEN_REG_URI_WRAP
+	bool
+	default y if BR2_PACKAGE_IPMITOOL_PEN_REG_URI != ""
+	select BR2_LEGACY
+
 config BR2_PACKAGE_ERLANG_P1_YAML
 	bool "erlang-p1-yaml has been renamed"
 	select BR2_LEGACY
