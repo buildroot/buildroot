@@ -1,0 +1,30 @@
+From 6fe6b75bef4b4bb9723b12f0e9ebfd9877e00a44 Mon Sep 17 00:00:00 2001
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Date: Sat, 16 Oct 2021 19:52:28 +0200
+Subject: [PATCH] testsuite/latency: Use corresponding pclose for popen
+
+Was found by latest gcc-11 and -Werror=mismatched-dealloc.
+
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: https://source.denx.de/Xenomai/xenomai/-/commit/6fe6b75bef4b4bb9723b12f0e9ebfd9877e00a44
+---
+ testsuite/latency/latency.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/testsuite/latency/latency.c b/testsuite/latency/latency.c
+index a0e6f4826084..6cd3a28b44f6 100644
+--- a/testsuite/latency/latency.c
++++ b/testsuite/latency/latency.c
+@@ -412,7 +412,7 @@ static void dump_histo_gnuplot(int32_t *histogram, time_t duration)
+ 		fputs(buf, ofp);
+ 	}
+ 
+-	fclose(ifp);
++	pclose(ifp);
+ 
+ dump_data:
+ 	for (n = 0; n < histogram_size && histogram[n] == 0; n++)
+-- 
+2.43.0
+
