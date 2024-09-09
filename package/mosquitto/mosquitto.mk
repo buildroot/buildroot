@@ -94,6 +94,10 @@ ifeq ($(BR2_PACKAGE_MOSQUITTO_BROKER),y)
 MOSQUITTO_MAKE_DIRS += src apps/mosquitto_ctrl apps/mosquitto_passwd
 endif
 
+ifeq ($(BR2_PACKAGE_MOSQUITTO_BROKER_DYNAMIC_SECURITY_PLUGIN),y)
+MOSQUITTO_MAKE_DIRS += plugins/dynamic-security
+endif
+
 define MOSQUITTO_BUILD_CMDS
 	$(MAKE) -C $(@D) $(TARGET_CONFIGURE_OPTS) DIRS="$(MOSQUITTO_MAKE_DIRS)" \
 		$(MOSQUITTO_MAKE_OPTS)
