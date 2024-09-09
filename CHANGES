@@ -1,3 +1,41 @@
+2024.05.3, released September 9th, 2024
+
+	Important / security related fixes.
+
+        A large number of GCC 14.x compilation fixes and additional
+        runtime tests.
+
+        Infrastructure:
+        - Be more robust against text files (for package hashes and
+          users) incorrectly missing a terminating newline.
+
+        - Fix various issues with the pkg-kconfig infrastructure and
+          per-package-directories builds
+          (BR2_PER_PACKAGE_DIRECTORIES).
+
+	Updated/fixed packages: aer-inject, am335x-pru-package,
+	apache, apr, apr-util, attr, augeas, autossh, bandwidthd,
+	bcusdk, boost, brcm-patchram-plus, btrfs-progs, busybox,
+	can-utils, coreutils, cpuload, cryptsetup, cwiid, dhrystone,
+	dvb-apps, elfutils, faifa, fetchmail, ffmpeg, fluent-bit,
+	fluidsynth, freerdp, gcc, gcc-bare-metal, gdb, gnutls, gpsd,
+	hiawatha, hostapd, htop, ibm-sw-tpm2, intel-microcode, iperf3,
+	iproute2, ksmbd-tools, libcli, libcoap, libcurl, libest,
+	libfreefare, libgtk3, libngs, libpwquality, libressl, libupnp,
+	libxml2, libxslt, lrzsz, mdio-tools, micropython,
+	mjpg-streamer, mokutil, mpir, ncftp, nginx, nodejs, odb,
+	open-iscsi, openldap, openswan, openvpn, pistache, procps-ng,
+	python-django, quotatool, rtty, ruby, sconeserver, speex,
+	swaybg, tar, tftpd, tinyssh, uclibc, uclibc-ng-test, unbound,
+	uuu, vorbus-tools, wpewebkit, zfs, zsh
+
+        Issues resolved:
+	- TAR-1.35 will not build for target (host-variant will build)
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/4
+	- Toolchain (host-gcc-final-14.1.0) build failure with
+	  y2038/BR2_TIME_BITS_64 enabled
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/16
+
 2024.05.2, released August 14th, 2024
 
 	Important / security related fixes.
