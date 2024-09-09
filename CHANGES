@@ -1,3 +1,33 @@
+2024.02.6, released September 9th, 2024
+
+	Important / security related fixes.
+
+        Added a large number of additional runtime tests.
+
+        Infrastructure:
+        - Be more robust against text files (for package hashes and
+          users) incorrectly missing a terminating newline.
+
+        - Fix various issues with the pkg-kconfig infrastructure and
+          per-package-directories builds
+          (BR2_PER_PACKAGE_DIRECTORIES).
+
+	Updated/fixed packages: aer-inject, am335x-pru-package,
+	apache, apr, apr-util, attr, boost, btrfs-progs, busybox,
+	cryptsetup, dropbear, elfutils, fetchmail, ffmpeg, fluidsynth,
+	freerdp, gcc, gdb, gnutls, gpsd, hiawatha, hostapd, htop,
+	intel-microcode, iperf3, ksmbd-tools, libcoap, libcurl,
+	libest, libgtk3, libpwquality, libressl, libupnp, libxml2,
+	libxslt, lrzsz, mdio-tools, micropython, mjpg-streamer, mpir,
+	ncftp, nginx, nodejs, open-iscsi, openldap, openvpn, pistache,
+	procps-ng, python-django, ruby, speex, swaybg, tinyssh,
+	uclibc, uclibc-ng-test, unbound, uuu, wpewebkit, zfs
+
+        Issues resolved:
+	- Toolchain (host-gcc-final-14.1.0) build failure with
+	  y2038/BR2_TIME_BITS_64 enabled
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/16
+
 2024.02.5, released August 14th, 2024
 
 	Important / security related fixes.
