@@ -4,7 +4,7 @@ comment "boost needs a toolchain w/ C++, threads, wchar"
 config BR2_PACKAGE_BOOST
 	bool "boost"
 	depends on BR2_INSTALL_LIBSTDCPP
-	# Boost could theorically be built with threading=single, but
+	# Boost could theoretically be built with threading=single, but
 	# that unfortunately doesn't work. Until someone fixes that,
 	# let's depend on threads.
 	depends on BR2_TOOLCHAIN_HAS_THREADS
@@ -241,7 +241,7 @@ config BR2_PACKAGE_BOOST_MATH
 	  C++ standard.
 
 	  Quaternions are a relative of complex numbers often used to
-	  parameterise rotations in three dimentional space.
+	  parameterise rotations in three dimensional space.
 
 	  Octonions, like quaternions, are a relative of complex
 	  numbers.
