@@ -12,8 +12,8 @@ ALURE_INSTALL_STAGING = YES
 
 ALURE_DEPENDENCIES = openal
 
-# Disabling alure examples remove the dependecies on physfs and dump libraries.
-# Enable at least one built-in decoder (wave).
+# Disabling alure examples removes the dependencies on physfs and dump
+# libraries. Enable at least one built-in decoder (wave).
 ALURE_CONF_OPTS = -DALURE_INSTALL=ON \
 	-DALURE_BUILD_EXAMPLES=OFF \
 	-DALURE_ENABLE_WAVE=ON
