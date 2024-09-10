@@ -7,7 +7,7 @@ Actually if GOHOSTOS == GOOS || GOHOSTARCH == GOARCH the go build system
 assume it's not cross compiling and uses the same toolchain also for the
 bootstrap.  This is a problem in case the cross compilation mandates a
 different toolchain for bootstrap and target.  This patch adds
-GO_ASSUME_CROSSCOMPILING varible to assure that in case of cross
+GO_ASSUME_CROSSCOMPILING variable to assure that in case of cross
 compilation CC_FOR_TARGET can be different from CC.
 
 Signed-off-by: Angelo Compagnucci <angelo@amarulasolutions.com>
