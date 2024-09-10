@@ -20,7 +20,7 @@ FCGIWRAP_CONF_OPTS += --without-systemd
 endif
 
 # libfcgi needs libm and fcgiwrap does not use libtool or pkgconf to
-# detect libfcgi, so we need to add -lm explicitely when using static
+# detect libfcgi, so we need to add -lm explicitly when using static
 # libs.
 ifeq ($(BR2_STATIC_LIBS),y)
 FCGIWRAP_CONF_OPTS += LIBS=-lm
