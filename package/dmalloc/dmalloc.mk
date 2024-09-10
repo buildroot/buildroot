@@ -42,7 +42,7 @@ endif
 
 # dmalloc has some assembly function that are not present in thumb1 mode:
 # Error: lo register required -- `str lr,[sp,#4]'
-# so, we desactivate thumb mode
+# so, we deactivate thumb mode
 ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
 DMALLOC_CFLAGS += -marm
 endif
