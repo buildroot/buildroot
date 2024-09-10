@@ -38,7 +38,7 @@ endif
 COLLECTD_CONF_ENV += CFLAGS="$(COLLECTD_CFLAGS)"
 
 #
-# NOTE: There's also a third availible setting "intswap", which might
+# NOTE: There's also a third available setting "intswap", which might
 # be needed on some old ARM hardware (see [2]), but is not being
 # accounted for as per discussion [1]
 #
