@@ -48,6 +48,7 @@ config BR2_PACKAGE_LIBBLOCKDEV_LVM2
 	depends on BR2_ENABLE_LOCALE # parted
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # parted
 	select BR2_PACKAGE_PARTED
+	select BR2_PACKAGE_LIBYAML
 	select BR2_PACKAGE_LVM2
 
 comment "lvm2 support needs a toolchain w/ locale, gcc >= 5"
@@ -71,6 +72,25 @@ config BR2_PACKAGE_LIBBLOCKDEV_PART
 
 comment "part plugin needs a toolchain w/ locale, gcc >= 5"
 	depends on !BR2_ENABLE_LOCALE || !BR2_TOOLCHAIN_GCC_AT_LEAST_5
+
+config BR2_PACKAGE_LIBBLOCKDEV_SMART
+	bool "smart"
+	depends on BR2_PACKAGE_HAS_UDEV # libatasmart
+	select BR2_PACKAGE_LIBATASMART
+
+comment "smart support needs udev /dev management"
+	depends on !BR2_PACKAGE_HAS_UDEV
+
+config BR2_PACKAGE_LIBBLOCKDEV_SMARTMONTOOLS
+	bool "smartmontools"
+	depends on BR2_INSTALL_LIBSTDCPP # smartmontools
+	depends on BR2_USE_MMU # smartmontools
+	select BR2_PACKAGE_JSON_GLIB
+	select BR2_PACKAGE_SMARTMONTOOLS # runtime
+
+comment "smartmontools support needs a toolchain w/ C++"
+	depends on BR2_USE_MMU
+	depends on !BR2_INSTALL_LIBSTDCPP
 
 config BR2_PACKAGE_LIBBLOCKDEV_SWAP
 	bool "swap"
