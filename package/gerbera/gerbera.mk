@@ -80,7 +80,7 @@ else
 GERBERA_CONF_OPTS += -DWITH_MATROSKA=OFF
 endif
 
-# Either libupnp or libnpupnp are guranteed to be enabled
+# Either libupnp or libnpupnp are guaranteed to be enabled
 ifeq ($(BR2_PACKAGE_LIBNPUPNP),y)
 GERBERA_DEPENDENCIES += libnpupnp
 GERBERA_CONF_OPTS += -DWITH_NPUPNP=ON
