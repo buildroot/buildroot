@@ -65,7 +65,7 @@ else ifeq ($(BR2_s390x),y)
 GO_GOARCH = s390x
 endif
 
-# For the convienience of target packages.
+# For the convenience of target packages.
 HOST_GO_TOOLDIR = $(HOST_GO_ROOT)/pkg/tool/linux_$(GO_GOARCH)
 HOST_GO_TARGET_ENV = \
 	$(HOST_GO_COMMON_ENV) \
