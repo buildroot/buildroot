@@ -54,7 +54,7 @@ config BR2_PACKAGE_HOSTAPD_ACS
 	depends on BR2_PACKAGE_HOSTAPD_DRIVER_NL80211
 	help
 	  Enable support for standard ACS (Automatic Channel Selection).
-	  Some propietary drivers use a custom algorithm which requires
+	  Some proprietary drivers use a custom algorithm which requires
 	  channel to be set to '0' (which enables ACS in the config),
 	  causing hostapd to use the standard one which doesn't work
 	  for those cases.
