@@ -17,7 +17,7 @@ AUDIT_CONF_OPTS = --without-python --without-python3 --disable-zos-remote
 
 # src/libev has some assembly function that is not present in Thumb mode:
 # Error: selected processor does not support `mcr p15,0,r3,c7,c10,5' in Thumb mode
-# so, we desactivate Thumb mode
+# so, we deactivate Thumb mode
 ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
 AUDIT_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -marm"
 endif
