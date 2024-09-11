@@ -84,9 +84,9 @@ patch_file() {
     # work with the --make-rpath-relative ${rootdir} invocation as
     # the per-package host directory is not within ${rootdir}. So,
     # we rewrite all RPATHs pointing to per-package directories so
-    # that they point to the global host directry.
+    # that they point to the global host directory.
     # shellcheck disable=SC2001 # ${var//search/replace} hard when search or replace have / in them
-    changed_rpath="$(echo "${rpath}" | sed "s@${PER_PACKAGE_DIR}/[^/]\+/host@${HOST_DIR}@")"
+    changed_rpath="$(echo "${rpath}" | sed "s@${PER_PACKAGE_DIR}/[^/]\+/host@${HOST_DIR}@g")"
     if test "${rpath}" != "${changed_rpath}" ; then
         "${PATCHELF}" --set-rpath "${changed_rpath}" "${file}"
     fi
