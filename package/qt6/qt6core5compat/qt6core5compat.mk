@@ -36,4 +36,10 @@ QT6CORE5COMPAT_DEPENDENCIES = \
 	host-pkgconf \
 	qt6base
 
+# When Qt::Quick is available, qt6core5compat will build additional
+# QML compatibility modules
+ifeq ($(BR2_PACKAGE_QT6DECLARATIVE_QUICK),y)
+QT6CORE5COMPAT_DEPENDENCIES += qt6declarative
+endif
+
 $(eval $(cmake-package))
