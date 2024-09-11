@@ -1,0 +1,34 @@
+From 0dedba1051d781bfb3dd3b50101aa0e880cb6cde Mon Sep 17 00:00:00 2001
+From: Dmitry Chestnykh <dm.chestnykh@gmail.com>
+Date: Sat, 7 Sep 2024 10:48:47 +0300
+Subject: [PATCH] mips64n32, time64: Select correct _dl_fstat impl
+
+With time64 enabled we have to use statx() instead of stat() or fstat()
+If the _dl_fstat implementation isn't selected correctly
+we can have multiple errors inside dynamic linker
+during startup of the system and of the almost every process
+Add sparc exclusion like in other places inside this header
+
+Signed-off-by: Dmitry Chestnykh <dm.chestnykh@gmail.com>
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://cgit.uclibc-ng.org/cgi/cgit/uclibc-ng.git/commit/?id=0dedba1051d781bfb3dd3b50101aa0e880cb6cde
+---
+ ldso/include/dl-syscall.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ldso/include/dl-syscall.h b/ldso/include/dl-syscall.h
+index 180d03012..c143b8d45 100644
+--- a/ldso/include/dl-syscall.h
++++ b/ldso/include/dl-syscall.h
+@@ -168,7 +168,7 @@ static __always_inline int _dl_stat(const char *file_name,
+ #if defined __NR_fstat64 && !defined __NR_fstat && (!defined(__UCLIBC_USE_TIME64__) || defined(__sparc__))
+ # define __NR__dl_fstat __NR_fstat64
+ static __always_inline _syscall2(int, _dl_fstat, int, fd, struct stat *, buf)
+-#elif defined __NR_fstat
++#elif defined __NR_fstat && !defined __UCLIBC_USE_TIME64__ || defined(__sparc__)
+ # define __NR__dl_fstat __NR_fstat
+ static __always_inline _syscall2(int, _dl_fstat, int, fd, struct stat *, buf)
+ #elif defined __NR_statx && defined __UCLIBC_HAVE_STATX__
+-- 
+2.30.2
+
