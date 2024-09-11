@@ -103,7 +103,7 @@ BOOST_TARGET_CXXFLAGS += -I$(STAGING_DIR)/usr/include/python$(PYTHON3_VERSION_MA
 BOOST_DEPENDENCIES += python3
 endif
 
-HOST_BOOST_OPTS += --no-cmake-config toolset=gcc threading=multi \
+HOST_BOOST_OPTS += toolset=gcc threading=multi \
 	variant=release link=shared runtime-link=shared -j$(PARALLEL_JOBS) -q \
 	--ignore-site-config --layout=system --prefix=$(HOST_DIR) \
 	--user-config=$(@D)/user-config.jam
@@ -116,8 +116,7 @@ else
 BOOST_ABI = sysv
 endif
 
-BOOST_OPTS += --no-cmake-config \
-	toolset=gcc \
+BOOST_OPTS += toolset=gcc \
 	threading=multi \
 	abi=$(BOOST_ABI) \
 	variant=$(if $(BR2_ENABLE_RUNTIME_DEBUG),debug,release) \
