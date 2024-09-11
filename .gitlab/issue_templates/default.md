@@ -33,8 +33,8 @@ _Note: issues missing any information may get closed without further ado._
 ---
 ### What I did
 
-**Buildroot commit sha1**: _get this with `git describe HEAD`_
-**Distribution of the build machine**: _get this with `NAME` and `VERSION` from `/etc/os-release`_
+- **Buildroot commit sha1**: _get this with `git describe HEAD`_
+- **Distribution of the build machine**: _get this with `NAME` and `VERSION` from `/etc/os-release`_
 
 _Here, describe what you did:_
 - _any special environment variables: CC, CXX, TARGET, CROSS_COMPILE, etc…_
