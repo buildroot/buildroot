@@ -33,7 +33,7 @@ LIBMAD_AUTORECONF = YES
 
 # libmad has some assembly function that is not present in Thumb mode:
 # Error: selected processor does not support `smull r6,r7,r3,r1' in Thumb mode
-# so, we desactivate Thumb mode
+# so, we deactivate Thumb mode
 ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
 LIBMAD_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -marm"
 endif
