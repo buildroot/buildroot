@@ -1164,7 +1164,7 @@ ifneq ($$($(2)_OVERRIDE_SRCDIR),)
 	$$(Q)rm -rf  $$($(2)_BUILDDIR)/.legal-info-rsync
 	$$(Q)mkdir -p  $$($(2)_BUILDDIR)/.legal-info-rsync
 	$$(Q)rsync -au --chmod=u=rwX,go=rX $$(RSYNC_VCS_EXCLUSIONS) \
-		$(call qstrip,$$($(2)_OVERRIDE_SRCDIR))/ \
+		$$(call qstrip,$$($(2)_OVERRIDE_SRCDIR))/ \
 		 $$($(2)_BUILDDIR)/.legal-info-rsync/
 	$$(call prepare-per-package-directory,$$(BR2_GZIP_HOST_DEPENDENCY) $$(BR2_TAR_HOST_DEPENDENCY))
 	$$(Q)mkdir -p $$($(2)_REDIST_SOURCES_DIR)
