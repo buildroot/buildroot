@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-PYTHON_BENIGET_VERSION = 0.4.1
+PYTHON_BENIGET_VERSION = 0.4.2.post1
 PYTHON_BENIGET_SOURCE = beniget-$(PYTHON_BENIGET_VERSION).tar.gz
-PYTHON_BENIGET_SITE = https://files.pythonhosted.org/packages/14/e7/50cbac38f77eca8efd39516be6651fdb9f3c4c0fab8cf2cf05f612578737
+PYTHON_BENIGET_SITE = https://files.pythonhosted.org/packages/2e/27/5bb01af8f2860d431b98d0721b96ff2cea979106cae3f2d093ec74f6400c
 PYTHON_BENIGET_SETUP_TYPE = setuptools
 PYTHON_BENIGET_LICENSE = BSD-3-Clause
 PYTHON_BENIGET_LICENSE_FILES = LICENSE
