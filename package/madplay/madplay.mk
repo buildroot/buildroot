@@ -18,7 +18,7 @@ MADPLAY_AUTORECONF = YES
 # madplay uses libmad which has some assembly function that is not present in
 # Thumb mode:
 # Error: selected processor does not support `smull r8,r9,r2,r4' in Thumb mode
-# so, we desactivate Thumb mode
+# so, we deactivate Thumb mode
 ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
 MADPLAY_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -marm"
 endif
