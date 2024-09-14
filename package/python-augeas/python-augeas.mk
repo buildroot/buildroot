@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PYTHON_AUGEAS_VERSION = 1.1.0
+PYTHON_AUGEAS_VERSION = 1.2.0
 PYTHON_AUGEAS_SITE = $(call github,hercules-team,python-augeas,v$(PYTHON_AUGEAS_VERSION))
 PYTHON_AUGEAS_SETUP_TYPE = setuptools
 PYTHON_AUGEAS_LICENSE = LGPL-2.1+
