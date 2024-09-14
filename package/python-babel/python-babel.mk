@@ -4,13 +4,12 @@
 #
 ################################################################################
 
-PYTHON_BABEL_VERSION = 2.14.0
-PYTHON_BABEL_SOURCE = Babel-$(PYTHON_BABEL_VERSION).tar.gz
-PYTHON_BABEL_SITE = https://files.pythonhosted.org/packages/e2/80/cfbe44a9085d112e983282ee7ca4c00429bc4d1ce86ee5f4e60259ddff7f
+PYTHON_BABEL_VERSION = 2.16.0
+PYTHON_BABEL_SOURCE = babel-$(PYTHON_BABEL_VERSION).tar.gz
+PYTHON_BABEL_SITE = https://files.pythonhosted.org/packages/2a/74/f1bc80f23eeba13393b7222b11d95ca3af2c1e28edca18af487137eefed9
 PYTHON_BABEL_SETUP_TYPE = setuptools
 PYTHON_BABEL_LICENSE = BSD-3-Clause
 PYTHON_BABEL_LICENSE_FILES = LICENSE
-HOST_PYTHON_BABEL_DEPENDENCIES = host-python-pytz
 
 # purge locale data (if enabled), keep special en_US_POSIX data which
 # is used by default by the python-babel code
