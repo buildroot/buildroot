@@ -13,6 +13,20 @@ class TestGoBase(infra.basetest.BRTest):
         self.emulator.login()
 
 
+class TestGoBin(TestGoBase):
+    config = infra.basetest.BASIC_TOOLCHAIN_CONFIG + \
+        """
+        BR2_TARGET_ROOTFS_CPIO=y
+        BR2_PACKAGE_HOST_GO=y
+        BR2_PACKAGE_HOST_GO_BIN=y
+        BR2_PACKAGE_FLANNEL=y
+        """
+
+    def test_run(self):
+        self.login()
+        self.assertRunOk("/opt/bin/flanneld -h")
+
+
 class TestGoSource(TestGoBase):
     config = infra.basetest.BASIC_TOOLCHAIN_CONFIG + \
         """
