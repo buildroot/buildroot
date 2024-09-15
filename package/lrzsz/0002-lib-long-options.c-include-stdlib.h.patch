@@ -1,0 +1,44 @@
+From aa6779c2846f13bf58575486b374ef06b2844fe8 Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Tue, 21 May 2024 11:13:17 +0200
+Subject: [PATCH] lib/long-options.c: include stdlib.h
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes the following error (compiled with GCC 14.x):
+
+long-options.c:70:11: error: implicit declaration of function ‘exit’
+[-Wimplicit-function-declaration]
+   70 |           exit (0);
+      |           ^~~~
+
+Upstream: https://github.com/UweOhse/lrzsz/pull/4
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ lib/long-options.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/lib/long-options.c b/lib/long-options.c
+index 76b9796..19c84e0 100644
+--- a/lib/long-options.c
++++ b/lib/long-options.c
+@@ -22,6 +22,15 @@
+ #endif
+ 
+ #include <stdio.h>
++
++/* This needs to come after some library #include
++   to get __GNU_LIBRARY__ defined.  */
++#ifdef	__GNU_LIBRARY__
++/* Don't include stdlib.h for non-GNU C libraries because some of them
++   contain conflicting prototypes for getopt.  */
++#include <stdlib.h>
++#endif	/* GNU C library.  */
++
+ #include <getopt.h>
+ #include "long-options.h"
+ 
+-- 
+2.46.0
+

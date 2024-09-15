@@ -1,0 +1,26 @@
+From e164c9cd3207321e162f054357fcd37b06cb0b8a Mon Sep 17 00:00:00 2001
+From: Uwe Ohse <uwe@ohse.de>
+Date: Mon, 2 Mar 2020 22:38:16 +0000
+Subject: [PATCH] include stdio.h to remove warning
+
+Upstream: https://github.com/UweOhse/lrzsz/commit/937a2ff696fb600672eb0e8fab87f75d5e4fbc25
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/lsyslog.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/lsyslog.c b/src/lsyslog.c
+index 6baf4a2..d21ab35 100644
+--- a/src/lsyslog.c
++++ b/src/lsyslog.c
+@@ -24,6 +24,7 @@
+ #include <pwd.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <stdio.h>
+ #endif
+ 
+ #if __STDC__
+-- 
+2.46.0
+
