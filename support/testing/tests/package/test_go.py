@@ -19,9 +19,9 @@ class TestGoSource(TestGoBase):
         BR2_TARGET_ROOTFS_CPIO=y
         BR2_PACKAGE_HOST_GO=y
         BR2_PACKAGE_HOST_GO_SRC=y
-        BR2_PACKAGE_TINIFIER=y
+        BR2_PACKAGE_FLANNEL=y
         """
 
     def test_run(self):
         self.login()
-        self.assertRunOk("tinifier -h")
+        self.assertRunOk("/opt/bin/flanneld -h")
