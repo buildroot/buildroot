@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_PROTO_PLUS
+	bool "python-proto-plus"
+	depends on BR2_PACKAGE_HOST_PROTOBUF_ARCH_SUPPORTS
+	select BR2_PACKAGE_PYTHON_PROTOBUF # runtime
+	help
+	  Beautiful, Pythonic protocol buffers.
+
+	  https://github.com/googleapis/proto-plus-python
