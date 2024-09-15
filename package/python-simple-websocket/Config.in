@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_SIMPLE_WEBSOCKET
+	bool "python-simple-websocket"
+	select BR2_PACKAGE_PYTHON_WSPROTO # runtime
+	help
+	  Simple WebSocket server and client for Python.
+
+	  https://github.com/miguelgrinberg/simple-websocket
