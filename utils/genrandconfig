@@ -248,6 +248,10 @@ async def fixup_config(sysinfo, configfile):
             configlines.remove('BR2_LINUX_KERNEL_SIMPLEIMAGE=y\n')
             configlines.append('BR2_LINUX_KERNEL_VMLINUX=y\n')
 
+    if 'BR2_LINUX_KERNEL=y\n' in configlines and \
+       'BR2_LINUX_KERNEL_IMAGE_TARGET_CUSTOM=y\n' in configlines:
+        configlines.remove('BR2_LINUX_KERNEL_IMAGE_TARGET_CUSTOM=y')
+
     if 'BR2_LINUX_KERNEL_EXT_AUFS=y\n' in configlines and \
        'BR2_LINUX_KERNEL_EXT_AUFS_VERSION=""\n' in configlines:
         configlines.remove('BR2_LINUX_KERNEL_EXT_AUFS=y\n')
