@@ -1,8 +1,7 @@
 config BR2_PACKAGE_PYTHON_INFLECT
 	bool "python-inflect"
-	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-pydantic -> python-pydantic-core
-	select BR2_PACKAGE_PYTHON_PYDANTIC # runtime
-	select BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS # runtime
+	select BR2_PACKAGE_PYTHON_MORE_ITERTOOLS # runtime
+	select BR2_PACKAGE_PYTHON_TYPEGUARD # runtime
 	help
 	  Correctly generate plurals, singular nouns, ordinals,
 	  indefinite articles; convert numbers to words.
