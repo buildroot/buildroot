@@ -6,6 +6,7 @@
 
 GO_SRC_SITE = https://storage.googleapis.com/golang
 GO_SRC_SOURCE = go$(GO_VERSION).src.tar.gz
+GO_SRC_DL_SUBDIR = go
 
 GO_SRC_LICENSE = BSD-3-Clause
 GO_SRC_LICENSE_FILES = LICENSE
