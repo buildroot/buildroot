@@ -7,10 +7,7 @@ import infra
 
 
 class GitTestBase(infra.basetest.BRConfigTest):
-    config = \
-        """
-        BR2_BACKUP_SITE=""
-        """
+    config = ""
     gitremotedir = infra.filepath("tests/download/git-remote")
     gitremote = None
 
