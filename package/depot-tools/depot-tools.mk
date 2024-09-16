@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DEPOT_TOOLS_VERSION = 62fc3a1d244368a430ffd7a6b55377a6dfd5e348
+DEPOT_TOOLS_VERSION = 22df6f8e622dc3e8df8dc8b5d3e3503b169af78e
 DEPOT_TOOLS_SITE = https://chromium.googlesource.com/chromium/tools/depot_tools
 DEPOT_TOOLS_SITE_METHOD = git
 DEPOT_TOOLS_LICENSE = BSD-3-Clause
